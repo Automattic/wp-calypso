@@ -3,7 +3,6 @@ import {
 	CheckboxControl,
 	__experimentalView as View,
 	__experimentalVStack as VStack,
-	__experimentalHStack as HStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -102,34 +101,19 @@ export default function NameServersForm( { nameservers = [], onSubmit }: Props )
 				/>
 			</Text>
 			{ useCustomNameServers &&
-				Array.from( { length: Math.ceil( MAX_NAMESERVER_LENGTH / 2 ) }, ( _, i ) => i * 2 ).map(
-					( rowIndex ) => {
-						// Check if either input in this row would be shown
-						const shouldShowRow =
-							shouldShowNextInput( rowIndex ) || shouldShowNextInput( rowIndex + 1 );
-
-						return (
-							shouldShowRow && (
-								<HStack key={ rowIndex } spacing={ 4 } justify="space-between" alignment="top">
-									{ [ 0, 1 ].map( ( colIndex ) => {
-										const index = rowIndex + colIndex;
-										return (
-											shouldShowNextInput( index ) && (
-												<NameServerInput
-													key={ index }
-													index={ index }
-													field={ nameServerFields[ index ] }
-													disabled={ ! useCustomNameServers }
-													onChange={ handleNameServerChange }
-													onBlur={ handleNameServerBlur }
-												/>
-											)
-										);
-									} ) }
-								</HStack>
-							)
-						);
-					}
+				Array.from(
+					{ length: MAX_NAMESERVER_LENGTH },
+					( _, index ) =>
+						shouldShowNextInput( index ) && (
+							<NameServerInput
+								key={ index }
+								index={ index }
+								field={ nameServerFields[ index ] }
+								disabled={ ! useCustomNameServers }
+								onChange={ handleNameServerChange }
+								onBlur={ handleNameServerBlur }
+							/>
+						)
 				) }
 			<View>
 				<Button
