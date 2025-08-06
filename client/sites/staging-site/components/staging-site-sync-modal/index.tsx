@@ -13,13 +13,7 @@ import {
 	Notice,
 	Tooltip,
 } from '@wordpress/components';
-import {
-	createInterpolateElement,
-	useState,
-	useCallback,
-	useMemo,
-	useEffect,
-} from '@wordpress/element';
+import { createInterpolateElement, useState, useCallback, useMemo } from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
 import { error, chevronRight, chevronLeft } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -46,7 +40,6 @@ import type { FileBrowserConfig } from 'calypso/my-sites/backup/backup-contents-
 
 import './style.scss';
 
-const ROOT_PATH = '/';
 const WP_CONFIG_PATH = '/wp-config.php';
 const WP_CONTENT_PATH = '/wp-content';
 const SQL_PATH = '/sql';
@@ -294,22 +287,10 @@ export default function SyncModal( {
 
 	const shouldDisableGranularSync = ! lastKnownBackupAttempt;
 
-	useEffect( () => {
-		if ( shouldDisableGranularSync ) {
-			dispatch( setNodeCheckState( querySiteId, ROOT_PATH, 'checked' ) );
-			dispatch( setNodeCheckState( querySiteId, WP_CONTENT_PATH, 'checked' ) );
-			dispatch( setNodeCheckState( querySiteId, WP_CONFIG_PATH, 'checked' ) );
-			dispatch( setNodeCheckState( querySiteId, SQL_PATH, 'checked' ) );
-		}
-	}, [ dispatch, querySiteId, shouldDisableGranularSync ] );
-
 	const handleConfirm = () => {
 		let include_paths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
 		let exclude_paths = browserCheckList.excludeList.map( ( item ) => item.id ).join( ',' );
-		if (
-			shouldDisableGranularSync ||
-			( filesAndFoldersNodesCheckState === 'checked' && sqlNode?.checkState === 'checked' )
-		) {
+		if ( filesAndFoldersNodesCheckState === 'checked' && sqlNode?.checkState === 'checked' ) {
 			// Sync everything
 			include_paths = '';
 			exclude_paths = '';
@@ -419,10 +400,7 @@ export default function SyncModal( {
 							<CheckboxControl
 								__nextHasNoMarginBottom
 								label={ __( 'Files and folders' ) }
-								disabled={ shouldDisableGranularSync }
-								checked={
-									shouldDisableGranularSync || filesAndFoldersNodesCheckState === 'checked'
-								}
+								checked={ filesAndFoldersNodesCheckState === 'checked' }
 								indeterminate={ filesAndFoldersNodesCheckState === 'mixed' }
 								onChange={ onCheckboxChange }
 							/>
@@ -473,8 +451,7 @@ export default function SyncModal( {
 						<CheckboxControl
 							__nextHasNoMarginBottom
 							label={ __( 'Database tables' ) }
-							disabled={ shouldDisableGranularSync }
-							checked={ shouldDisableGranularSync || sqlNode?.checkState === 'checked' }
+							checked={ sqlNode?.checkState === 'checked' }
 							onChange={ handleDatabaseCheckboxChange }
 						/>
 						<Tooltip
