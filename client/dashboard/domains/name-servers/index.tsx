@@ -24,6 +24,7 @@ export default function NameServers() {
 			<Card>
 				<CardBody className="domains-management__name-servers">
 					<NameServersForm
+						serviceName="WordPress.com"
 						queryError={ queryError?.message }
 						mutationError={ mutationError?.message }
 						isBusy={ isUpdatingNameservers }

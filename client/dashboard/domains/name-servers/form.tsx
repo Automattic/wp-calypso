@@ -9,7 +9,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
 import { NameServerInput, validateField } from './form-input';
 import {
@@ -17,10 +17,12 @@ import {
 	MIN_NAMESERVER_LENGTH,
 	MAX_NAMESERVER_LENGTH,
 	WPCOM_DEFAULT_NAMESERVERS,
+	ServiceName,
 } from './types';
 import { areAllWpcomNameServers } from './utils';
 
 interface Props {
+	serviceName: ServiceName;
 	nameservers?: string[];
 	isBusy?: boolean;
 	queryError?: string;
@@ -29,6 +31,7 @@ interface Props {
 }
 
 export default function NameServersForm( {
+	serviceName,
 	nameservers = [],
 	isBusy,
 	queryError,
@@ -129,7 +132,11 @@ export default function NameServersForm( {
 	return (
 		<VStack spacing={ 4 }>
 			<ToggleControl
-				label={ __( 'Use WordPress.com name servers' ) }
+				label={ sprintf(
+					/* translators: %s is the name of the service */
+					__( 'Use %s name servers' ),
+					serviceName
+				) }
 				checked={ useWpcomNameservers }
 				onChange={ () => {
 					const willUseWpcom = ! useWpcomNameservers;
