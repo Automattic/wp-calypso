@@ -29,7 +29,6 @@ interface Props {
 	nameservers?: string[];
 	isBusy?: boolean;
 	queryError?: string;
-	mutationError?: string;
 	onSubmit: ( nameServers: string[] ) => void;
 }
 
@@ -40,7 +39,6 @@ export default function NameServersForm( {
 	nameservers = [],
 	isBusy,
 	queryError,
-	mutationError,
 	onSubmit,
 }: Props ) {
 	const [ nameServerFields, setNameServerFields ] = useState< NameServerField[] >(
@@ -165,7 +163,6 @@ export default function NameServersForm( {
 			{ queryError && <Notice variant="error">{ queryError }</Notice> }
 			{ ! queryError && (
 				<>
-					{ mutationError && <Notice variant="warning">{ mutationError }</Notice> }
 					{ ! useWpcomNameservers && (
 						<Text>
 							{ createInterpolateElement(

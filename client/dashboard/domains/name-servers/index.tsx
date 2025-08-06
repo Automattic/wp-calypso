@@ -1,5 +1,7 @@
 import { Card, CardBody } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 // eslint-disable-next-line no-restricted-imports
 import useDomainNameserversQuery from 'calypso/data/domains/nameservers/use-domain-nameservers-query';
 // eslint-disable-next-line no-restricted-imports
@@ -12,12 +14,16 @@ import './styles.scss';
 
 export default function NameServers() {
 	const { domainName } = domainRoute.useParams();
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: nameservers, error: queryError } = useDomainNameserversQuery( domainName );
-	const {
-		updateNameservers,
-		isPending: isUpdatingNameservers,
-		error: mutationError,
-	} = useUpdateNameserversMutation( domainName );
+	const { updateNameservers, isPending: isUpdatingNameservers } = useUpdateNameserversMutation(
+		domainName,
+		{
+			onSuccess: () =>
+				createSuccessNotice( __( 'Nameservers updated successfully.' ), { type: 'snackbar' } ),
+			onError: ( e: Error ) => createErrorNotice( e.message, { type: 'snackbar' } ),
+		}
+	);
 
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Name Servers' ) } /> }>
@@ -27,7 +33,6 @@ export default function NameServers() {
 						domainName={ domainName }
 						serviceName="WordPress.com"
 						queryError={ queryError?.message }
-						mutationError={ mutationError?.message }
 						isBusy={ isUpdatingNameservers }
 						nameservers={ nameservers }
 						onSubmit={ updateNameservers }
