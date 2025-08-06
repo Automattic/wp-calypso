@@ -25,11 +25,15 @@ function renderServiceNameDescription(
 
 	// Hide domains for siteless transactions (Passport URL (siteless.marketplace.wp.com), A4A agency, and a4a purchases)
 	// These are internal/system domains that don't represent user sites
-	const isSitelessDomain = /^siteless\.(marketplace\.wp|agencies\.automattic|a4a)\.com$/.test(
+	const isSitelessDomain = /^siteless\.(marketplace\.wp|agencies\.automattic|a4a)\.com($|\/)/.test(
 		transaction.domain
 	);
 	const shouldShowDomain =
 		transaction.domain && ! isSitelessDomain && ! isInternalA4AAgencyDomain( transaction.domain );
+
+	// const shouldShowDomain =
+	// 	transaction.domain && ! transaction.domain.startsWith( 'siteless.marketplace.wp.com' );
+
 	return (
 		<div>
 			<strong>{ plan }</strong>
