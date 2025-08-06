@@ -10,6 +10,9 @@ export interface ActivityLogEntry {
 	};
 	gridicon: string;
 	name: string;
+	object: {
+		rewind_id: string;
+	};
 	published: string;
 	summary: string;
 }

@@ -16,6 +16,7 @@ import UpsellCTAButton from '../../components/upsell-cta-button';
 import { HostingFeatures } from '../../data/constants';
 import { hasHostingFeature } from '../../utils/site-features';
 import { DEFAULT_PER_PAGE_SIZES } from '../views';
+import { getActions } from './actions';
 import illustrationUrl from './backups-callout-illustration.svg';
 import { getFields } from './fields';
 import type { ActivityLogEntry, Site } from '../../data/types';
@@ -70,6 +71,7 @@ function Backups( { site }: { site: Site } ) {
 
 	const rawData = activityLog || [];
 	const fields = getFields();
+	const actions = getActions( site );
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( rawData, view, fields );
 
 	return (
@@ -78,6 +80,7 @@ function Backups( { site }: { site: Site } ) {
 				getItemId={ ( item ) => item.activity_id }
 				data={ filteredData }
 				fields={ fields }
+				actions={ actions }
 				view={ view }
 				onChangeView={ setView }
 				isLoading={ isLoadingActivityLog }
