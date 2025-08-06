@@ -21,7 +21,7 @@ import {
 	isMarketplaceTemporarySitePurchase,
 } from './util';
 import type { StoredPaymentMethod } from '../../data/me-payment-methods';
-import type { Purchase } from '../../data/me-purchases';
+import type { Purchase } from '../../data/purchase';
 import type { Site } from '../../data/site';
 
 const purchasesWideFields = [ 'status', 'payment-method' ];

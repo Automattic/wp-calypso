@@ -1,8 +1,8 @@
 import { queryOptions } from '@tanstack/react-query';
-import { fetchPurchasesForUser } from '../../data/me-purchases';
+import { fetchUserPurchases } from '../../data/me-purchases';
 
-export const purchasesQuery = ( { siteId }: { siteId?: string | number } ) =>
+export const userPurchasesQuery = () =>
 	queryOptions( {
-		queryKey: [ 'me', 'active-subscriptions', { siteId } ],
-		queryFn: () => fetchPurchasesForUser( { siteId } ),
+		queryKey: [ 'me', 'active-subscriptions' ],
+		queryFn: () => fetchUserPurchases(),
 	} );

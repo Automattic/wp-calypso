@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { PaymentMethodImage } from './payment-method-image';
 import { isAutoRenewEnabled, isExpired, isRenewing, isAkismetFreeProduct } from './util';
-import type { Purchase } from '../../data/me-purchases';
+import type { Purchase } from '../../data/purchase';
 
 export function PurchasePaymentMethod( {
 	purchase,

@@ -21,7 +21,7 @@ import {
 	creditCardHasAlreadyExpired,
 	creditCardExpiresBeforeSubscription,
 } from './util';
-import type { Purchase } from '../../data/me-purchases';
+import type { Purchase } from '../../data/purchase';
 
 export function PurchaseStatus( {
 	purchase,

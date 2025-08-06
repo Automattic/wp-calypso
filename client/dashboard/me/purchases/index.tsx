@@ -4,7 +4,7 @@ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
 import { paymentMethodsQuery } from '../../app/queries/me-payment-methods';
-import { purchasesQuery } from '../../app/queries/me-purchases';
+import { userPurchasesQuery } from '../../app/queries/me-purchases';
 import { transferredPurchasesQuery } from '../../app/queries/me-transferred-purchases';
 import { sitesQuery } from '../../app/queries/sites';
 import { PageHeader } from '../../components/page-header';
@@ -17,10 +17,10 @@ import {
 	getPurchaseUrl,
 } from './data-view-shared';
 import { isTransferredOwnership } from './util';
-import type { Purchase } from '../../data/me-purchases';
+import type { Purchase } from '../../data/purchase';
 
 export default function PurchasesList() {
-	const { data: purchases, isLoading: isLoadingPurchases } = useQuery( purchasesQuery );
+	const { data: purchases, isLoading: isLoadingPurchases } = useQuery( userPurchasesQuery() );
 	const { data: transferredPurchases, isLoading: isLoadingTransferredPurchases } = useQuery(
 		transferredPurchasesQuery( {} )
 	);

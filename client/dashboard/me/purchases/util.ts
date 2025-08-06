@@ -1,6 +1,6 @@
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { SubscriptionBillPeriod, AkismetPlans } from './constants';
-import type { Purchase } from '../../data/me-active-subscriptions';
+import type { Purchase } from '../../data/purchase';
 
 const msPerHour = 60 * 60 * 1000;
 const msPerDay = 24 * msPerHour;

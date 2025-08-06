@@ -2,7 +2,7 @@ import { Link } from '@tanstack/react-router';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { isTemporarySitePurchase, isA4ATemporarySitePurchase } from './util';
-import type { Purchase } from '../../data/me-purchases';
+import type { Purchase } from '../../data/purchase';
 
 function purchaseType( purchase: Purchase ): string | null {
 	if ( 'theme' === purchase.product_type ) {
