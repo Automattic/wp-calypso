@@ -12,6 +12,6 @@ export const domainForwardingDeleteMutation = ( domainName: string ) =>
 	mutationOptions( {
 		mutationFn: ( forwardingId: number ) => deleteDomainForwarding( domainName, forwardingId ),
 		onSuccess: () => {
-			queryClient.removeQueries( domainForwardingQuery( domainName ) );
+			queryClient.invalidateQueries( domainForwardingQuery( domainName ) );
 		},
 	} );

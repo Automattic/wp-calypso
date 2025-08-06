@@ -14,6 +14,10 @@ export interface DomainForwardingObject {
 	source_path?: string;
 }
 
+export interface DomainForwardingSuccessResponse {
+	success: true;
+}
+
 export function fetchDomainForwarding( domainName: string ): Promise< DomainForwardingObject[] > {
 	return wp.req.get( `/sites/all/domain/${ domainName }/redirects?new-endpoint=true` );
 }
@@ -21,7 +25,7 @@ export function fetchDomainForwarding( domainName: string ): Promise< DomainForw
 export function deleteDomainForwarding(
 	domainName: string,
 	forwardingId: number
-): Promise< DomainForwardingObject[] > {
+): Promise< DomainForwardingSuccessResponse > {
 	return wp.req.post( `/sites/all/domain/${ domainName }/redirects/delete`, {
 		domain_redirect_id: forwardingId,
 	} );
