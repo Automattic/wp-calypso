@@ -4,10 +4,10 @@ import AgencyPartnerLogo from 'calypso/assets/images/a8c-for-agencies/agency-tie
 import EmergingPartnerBackground from 'calypso/assets/images/a8c-for-agencies/agency-tier/emerging-partner-background.svg';
 import EmergingPartnerLogo from 'calypso/assets/images/a8c-for-agencies/agency-tier/emerging-partner-logo-small.svg';
 import NoTierLogo from 'calypso/assets/images/a8c-for-agencies/agency-tier/no-tier-logo-small.svg';
+import PremierPartnerBackground from 'calypso/assets/images/a8c-for-agencies/agency-tier/premier-partner-background.svg';
+import PremierPartnerLogo from 'calypso/assets/images/a8c-for-agencies/agency-tier/premier-partner-logo-small.svg';
 import ProAgencyPartnerBackground from 'calypso/assets/images/a8c-for-agencies/agency-tier/pro-agency-partner-background.svg';
 import ProAgencyPartnerLogo from 'calypso/assets/images/a8c-for-agencies/agency-tier/pro-agency-partner-logo-small.svg';
-import StrategicAgencyPartnerBackground from 'calypso/assets/images/a8c-for-agencies/agency-tier/strategic-agency-partner-background.svg';
-import StrategicAgencyPartnerLogo from 'calypso/assets/images/a8c-for-agencies/agency-tier/strategic-agency-partner-logo-small.svg';
 import { preventWidows } from 'calypso/lib/formatting';
 import type { AgencyTierInfo, AgencyTier } from '../types';
 
@@ -173,11 +173,11 @@ const getAgencyTierInfo = (
 					'https://agencieshelp.automattic.com/knowledge-base/agency-tiering-benefits/#pro-partner',
 			};
 			break;
-		case 'strategic-agency-partner':
+		case 'premier-partner':
 			tierInfo = {
-				title: translate( 'Strategic Agency Partner' ),
+				title: translate( 'Premier Partner' ),
 				fullTitle: translate(
-					"{{label}}You're currently a{{/label}} {{title}}Strategic Agency Partner{{/title}}",
+					"{{label}}You're currently a{{/label}} {{title}}Premier Partner{{/title}}",
 					{
 						components: {
 							label: <div className="agency-tier-overview__current-agency-tier-label"></div>,
@@ -187,34 +187,41 @@ const getAgencyTierInfo = (
 				),
 				subtitle: preventWidows( translate( "You've reached the highest tier!" ) ),
 				description: translate(
-					"You're at the pinnacle of our agency partnership program! Enjoy our most exclusive benefits and recognition."
+					"You've unlocked our most prestigious partnership level, with enhanced access and exclusive benefits."
 				),
-				logo: StrategicAgencyPartnerLogo,
+				logo: PremierPartnerLogo,
 				includedTiers: [
 					'emerging-partner',
 					'agency-partner',
 					'pro-agency-partner',
-					'strategic-agency-partner',
+					'premier-partner',
 				],
 				celebrationModal: {
-					title: translate( "Congratulations, you've reached the Strategic Agency Partner tier!" ),
+					title: translate( "Congratulations, you've reached the Premier Partner tier!" ),
 					description: translate(
-						"You've reached the highest tier and unlocked our most exclusive benefits:"
+						"You've unlocked our most prestigious partnership level, with enhanced access and exclusive benefits:"
 					),
 					benefits: [
-						translate( 'A dedicated partner manager and priority support access.' ),
+						translate( 'Highest priority support and dedicated strategic partnership management.' ),
 						translate(
-							"Advanced sales training sessions at request to sharpen your team's expertise."
+							'Invitation-only access to executive leadership sessions and strategic advisory boards.'
 						),
-						translate( "Access to pre-qualified leads provided by Automattic's sales teams." ),
-						translate( 'Co-marketing opportunities.' ),
-						translate( 'Access to the Automattic for Agencies advisory board.' ),
+						translate(
+							'Largest revenue share, marketing development funds, and co-branded campaign opportunities.'
+						),
+						translate( 'Priority distribution of enterprise sales leads and referrals.' ),
+						translate(
+							'Complimentary free WooCommerce and Jetpack extensions and advanced analytics with a free Parse.ly trial (coming soon).'
+						),
+						translate(
+							'Early access to new Automattic products, exclusive certifications, and featured directory listings.'
+						),
 					],
-					image: StrategicAgencyPartnerBackground,
+					image: PremierPartnerBackground,
 					cta: translate( 'Explore your benefits' ),
 				},
 				learnMoreLink:
-					'https://agencieshelp.automattic.com/knowledge-base/agency-tiering-benefits/#strategic-partner',
+					'https://agencieshelp.automattic.com/knowledge-base/agency-tiering-benefits/#premier-partner',
 			};
 			break;
 	}
