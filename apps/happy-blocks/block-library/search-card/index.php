@@ -50,7 +50,7 @@ if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 					<?php if ( empty( $active_page ) || 'support' !== $active_page ) : ?>
 						<span class="separator">/</span>
 						<span class="active-page-text">
-							<?php 
+							<?php
 							switch ( $active_page ) {
 								case 'guides':
 									echo esc_html( __( 'Guides', 'happy-blocks' ) );
