@@ -69,14 +69,29 @@ export interface RawPurchasePriceTierEntry extends PriceTierEntry {
  *
  * To determine if the subscription is active or not, use the
  * `subscription_status` property.
+ *
+ * Corresponds to a WordPress.com Store Subscription.
  */
 export interface Purchase {
-	ID: number | string;
-	amount: number | string;
-	attached_to_purchase_id: number | string;
+	/**
+	 * The WordPress.com subscription ID number as a string.
+	 */
+	ID: string;
+
+	amount: number;
+	attached_to_purchase_id: string | null;
 	auto_renew_coupon_code: string | null;
 	auto_renew_coupon_discount_percentage: number | null;
-	bill_period_days: number | string;
+
+	/**
+	 * The number of days in the bill period type. This is not necessarily the
+	 * number of days in every billing period! It's just a numeric key that is
+	 * close to the average billing period for this billing plan. For example,
+	 * `31` means "monthly" although the expiry date may be fewer than 31 days
+	 * from the last renewal.
+	 */
+	bill_period_days: number;
+
 	bill_period_label: string;
 	most_recent_renew_date: string;
 	can_disable_auto_renew: boolean;
@@ -94,13 +109,28 @@ export interface Purchase {
 	domain_registration_agreement_url: string | undefined;
 	blog_created_date: string;
 	expiry_date: string;
-	expiry_status: string;
+	expiry_message: string;
+	expiry_sub_message: string;
+	expiry_status:
+		| 'expiring'
+		| 'included'
+		| 'auto-renewing'
+		| 'active'
+		| 'manual-renew'
+		| 'expired'
+		| 'one-time-purchase';
 	iap_purchase_management_link: string | null;
 	included_domain: string;
 	included_domain_purchase_amount: number;
 	introductory_offer: RawPurchaseIntroductoryOffer | null;
 	is_cancelable: boolean;
-	is_domain: boolean;
+
+	/**
+	 * If this is a domain product (eg: registration, mapping, or transfer), it
+	 * will be the string 'true'.
+	 */
+	is_domain?: 'true';
+
 	is_domain_registration: boolean;
 	is_free_jetpack_stats_product: boolean;
 	is_google_workspace_product: boolean;
@@ -116,8 +146,17 @@ export interface Purchase {
 	is_renewal: boolean;
 	is_titan_mail_product: boolean;
 	is_woo_express_trial: boolean;
+
+	/**
+	 * The domain name of this product, if any.
+	 */
 	meta: string | undefined;
-	ownership_id: number | undefined;
+
+	/**
+	 * The Ownership number as a string.
+	 */
+	ownership_id: string;
+
 	partner_name: string | undefined;
 	partner_slug: string | undefined;
 	partner_type: string | undefined;
@@ -135,14 +174,18 @@ export interface Purchase {
 	payment_country_code: string | null;
 	stored_details_id: string | null;
 	pending_transfer: boolean;
-	product_id: number | string;
+
+	/**
+	 * The WordPress.com Store product_id number as a string.
+	 */
+	product_id: string;
+
 	product_name: string;
 	product_slug: string;
 	product_type: string;
 	product_display_price: string;
 	price_integer: number;
-	purchaser_id?: number;
-	total_refund_amount: number | undefined;
+	total_refund_amount: number;
 	total_refund_currency: string;
 	total_refund_integer: number;
 	total_refund_text: string;
@@ -155,18 +198,27 @@ export interface Purchase {
 	regular_price_text: string;
 	regular_price_integer: number;
 	renew_date: string;
-	sale_amount: number | undefined;
-	sale_amount_integer: number | undefined;
-	blog_id: number | string;
+
+	sale_amount?: number;
+	sale_amount_integer?: number;
+
+	/**
+	 * The WordPress.com site ID number, as a string. Eg: '12345'.
+	 */
+	blog_id: string;
+
 	blogname: string;
 	site_slug?: string;
 	subscribed_date: string;
 	subscription_status: 'active' | 'inactive';
-	tag_line: string;
-	tax_amount: number | string | undefined;
-	tax_text: string | undefined;
+	tag_line?: string;
 	renewal_price_tier_usage_quantity: number | undefined | null;
-	user_id: number | string;
+
+	/**
+	 * The WordPress.com user ID number as a string. Eg: '12345'.
+	 */
+	user_id: string;
+
 	auto_renew: '1' | '0' | null;
 	payment_card_id: number | string | undefined;
 	payment_card_type: string | undefined;
