@@ -79,7 +79,7 @@ export default function DomainDNSSEC() {
 		} );
 	};
 
-	if ( ! domain.is_dnssec_supported ) {
+	if ( ! siteDomain.is_dnssec_supported ) {
 		return (
 			<PageLayout size="small" header={ <PageHeader title="DNSSEC" /> }>
 				<Card>
