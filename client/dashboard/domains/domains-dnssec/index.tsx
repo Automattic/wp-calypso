@@ -11,7 +11,8 @@ import { DataForm, Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { domainsQuery, updateDNSSECMutation } from '../../app/queries/domains';
+import { domainsQuery } from '../../app/queries/domains';
+import { domainDnssecMutation } from '../../app/queries/domains-dnssec';
 import { siteDomainsQuery } from '../../app/queries/site-domains';
 import { domainRoute } from '../../app/routes/domain-routes';
 import { PageHeader } from '../../components/page-header';
@@ -56,7 +57,7 @@ export default function DomainDNSSEC() {
 		throw new Error( 'Site domain not found' );
 	}
 
-	const mutation = useMutation( updateDNSSECMutation( domainName, siteDomain.blog_id ) );
+	const mutation = useMutation( domainDnssecMutation( domainName, siteDomain.blog_id ) );
 
 	const [ formData, setFormData ] = useState< DNSSECFormData >( {
 		enabled: siteDomain?.is_dnssec_enabled ?? false,

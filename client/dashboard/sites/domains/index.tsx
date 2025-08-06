@@ -9,7 +9,7 @@ import DataViewsCard from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { useFields, actions, DEFAULT_VIEW, DEFAULT_LAYOUTS } from '../../domains/dataviews';
-import type { SiteDomain } from '../../data/types';
+import type { SiteDomain } from '../../data/site-domains';
 import type { DomainsView } from '../../domains/dataviews';
 
 function getDomainId( domain: SiteDomain ) {
