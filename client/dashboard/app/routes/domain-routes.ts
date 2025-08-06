@@ -133,7 +133,7 @@ export const domainForwardingAddRoute = createRoute( {
 
 export const domainForwardingEditRoute = createRoute( {
 	getParentRoute: () => domainRoute,
-	path: 'forwarding/edit',
+	path: 'forwarding/edit/$forwardingId',
 } ).lazy( () =>
 	import( '../../sites/domains/placeholder' ).then( ( d ) =>
 		createLazyRoute( 'domain-forwarding-edit' )( {

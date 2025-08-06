@@ -1,15 +1,16 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
+import { Link, useRouter } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
 import { domainForwardingQuery } from '../../app/queries/domain-forwarding';
-import { domainRoute } from '../../app/router';
+import { domainRoute, domainForwardingAddRoute, domainForwardingEditRoute } from '../../app/router';
 import DataViewsCard from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import type { DomainForwardingObject } from '../../data/domain-forwarding';
-import type { Field, ViewTable, ViewList, View } from '@wordpress/dataviews';
+import type { Action, Field, ViewTable, ViewList, View } from '@wordpress/dataviews';
 
 function getForwardingId( forwarding: DomainForwardingObject ) {
 	return `${ forwarding.domain_redirect_id }-${ forwarding.domain }`;
@@ -37,9 +38,36 @@ const DEFAULT_LAYOUTS = {
 };
 
 function DomainForwarding() {
+	const router = useRouter();
+
 	const { domainName } = domainRoute.useParams();
 	const { data: forwardingData, isLoading } = useSuspenseQuery(
 		domainForwardingQuery( domainName )
+	);
+
+	const actions: Action< DomainForwardingObject >[] = useMemo(
+		() => [
+			{
+				id: 'edit',
+				label: __( 'Edit' ),
+				callback: ( items: DomainForwardingObject[] ) => {
+					const item = items[ 0 ];
+					router.navigate( {
+						to: domainForwardingEditRoute.fullPath,
+						params: { domainName, forwardingId: item?.domain_redirect_id },
+					} );
+				},
+			},
+			{
+				id: 'delete',
+				label: __( 'Delete' ),
+				callback: ( items: DomainForwardingObject[] ) => {
+					const item = items[ 0 ]; // eslint-disable-line @typescript-eslint/no-unused-vars
+					// TODO: delete item
+				},
+			},
+		],
+		[]
 	);
 
 	const fields: Field< DomainForwardingObject >[] = useMemo(
@@ -56,6 +84,14 @@ function DomainForwarding() {
 					const sourcePath = item.source_path || '';
 					return `${ fqdn }${ sourcePath }`;
 				},
+				render: ( { field, item } ) => (
+					<Link
+						to={ domainForwardingEditRoute.fullPath }
+						params={ { domainName, forwardingId: item.domain_redirect_id } }
+					>
+						{ field.getValue( { item } ) }
+					</Link>
+				),
 			},
 			{
 				id: 'destination',
@@ -109,7 +145,16 @@ function DomainForwarding() {
 					title={ __( 'Domain Forwarding' ) }
 					actions={
 						<>
-							<Button variant="primary" __next40pxDefaultSize>
+							<Button
+								onClick={ () => {
+									router.navigate( {
+										to: domainForwardingAddRoute.fullPath,
+										params: { domainName },
+									} );
+								} }
+								variant="primary"
+								__next40pxDefaultSize
+							>
 								{ __( 'Add Domain Forwarding' ) }
 							</Button>
 						</>
@@ -128,6 +173,7 @@ function DomainForwarding() {
 						fields={ fields }
 						onChangeView={ ( view: View ) => setView( view as ForwardingView ) }
 						view={ view }
+						actions={ actions }
 						search
 						paginationInfo={ paginationInfo }
 						getItemId={ getForwardingId }
