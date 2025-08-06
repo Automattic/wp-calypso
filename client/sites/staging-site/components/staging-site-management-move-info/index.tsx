@@ -120,7 +120,7 @@ const InfoCard: FunctionComponent< InfoCardProps > = ( { item } ) => {
 							<Icon icon={ item.locationIcon } size={ 16 } style={ { fill: '#757575' } } />
 							{ item.link ? (
 								<Text variant="muted">
-									<a href={ item.link } style={ { textDecoration: 'none', color: 'inherit' } }>
+									<a href={ item.link } style={ { textDecoration: 'none' } }>
 										{ item.location }
 									</a>
 								</Text>
