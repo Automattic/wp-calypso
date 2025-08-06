@@ -33,7 +33,7 @@ interface InfoCardItem {
 	link?: string;
 }
 
-const infoCardItems: InfoCardItem[] = [
+const getInfoCardItems = ( settingsLink?: string ): InfoCardItem[] => [
 	{
 		title: __( 'Create new staging site' ),
 		description: __(
@@ -72,6 +72,7 @@ const infoCardItems: InfoCardItem[] = [
 		},
 		locationIcon: cog,
 		location: __( 'Available in staging site settings' ),
+		link: settingsLink,
 	},
 	{
 		title: __( 'Try selective sync' ),
@@ -152,12 +153,7 @@ const StagingSiteManagementMoveInfo: FunctionComponent = () => {
 		? `/sites/${ urlToSlug( targetSite.URL ) }/settings`
 		: undefined;
 
-	const updatedInfoCardItems = infoCardItems.map( ( item ) => {
-		if ( item.locationIcon === cog && settingsLink ) {
-			return { ...item, link: settingsLink };
-		}
-		return item;
-	} );
+	const infoCardItems = getInfoCardItems( settingsLink );
 
 	return (
 		<VStack spacing={ 10 }>
@@ -179,7 +175,7 @@ const StagingSiteManagementMoveInfo: FunctionComponent = () => {
 				gap={ 6 }
 				style={ { maxWidth: '748px' } }
 			>
-				{ updatedInfoCardItems.map( ( item, index ) => (
+				{ infoCardItems.map( ( item, index ) => (
 					<Item key={ index } style={ { padding: '0' } }>
 						<InfoCard item={ item } />
 					</Item>
