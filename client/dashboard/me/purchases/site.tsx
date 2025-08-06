@@ -23,7 +23,7 @@ export default function PurchasesForSite() {
 		sitePurchasesQuery( siteSlugOrId )
 	);
 	const { data: transferredPurchases, isLoading: isLoadingTransferredPurchases } = useQuery(
-		transferredPurchasesQuery( {} )
+		transferredPurchasesQuery()
 	);
 	const { data: sites, isLoading: isLoadingSites } = useQuery( sitesQuery() );
 	const [ currentView, setView ] = useState( purchasesDataView );

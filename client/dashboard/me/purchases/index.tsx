@@ -22,7 +22,7 @@ import type { Purchase } from '../../data/purchase';
 export default function PurchasesList() {
 	const { data: purchases, isLoading: isLoadingPurchases } = useQuery( userPurchasesQuery() );
 	const { data: transferredPurchases, isLoading: isLoadingTransferredPurchases } = useQuery(
-		transferredPurchasesQuery( {} )
+		transferredPurchasesQuery()
 	);
 	const { data: sites } = useQuery( sitesQuery() );
 	const [ currentView, setView ] = useState( purchasesDataView );
