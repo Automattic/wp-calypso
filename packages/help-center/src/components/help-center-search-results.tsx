@@ -268,7 +268,7 @@ function HelpSearchResults( {
 		}
 	}, [ isSearching, hasAPIResults, searchQuery ] );
 
-	const onLinkClickHandler = async (
+	const onLinkClickHandler = (
 		event: React.MouseEvent< HTMLAnchorElement, MouseEvent >,
 		result: SearchResult,
 		type: string

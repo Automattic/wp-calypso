@@ -54,7 +54,16 @@ export interface FeatureFlags {
 }
 
 export interface SearchResult {
-	railcar: any;
+	railcar: {
+		railcar?: string;
+		fetch_algo?: string;
+		fetch_lang?: string;
+		fetch_position?: string;
+		fetch_query?: string;
+		rec_post_id?: number;
+		rec_blog_id?: number;
+		session_id?: string;
+	};
 	link: string;
 	title: string;
 	content?: string;
