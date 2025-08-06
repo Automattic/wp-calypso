@@ -9,10 +9,9 @@ import { getLocalizedRoutes, getCurrentTab } from './routes';
 
 const discoverSsr = ( context, next ) => {
 	context.renderHeaderSection = renderHeaderSection;
-
 	const selectedTab = getCurrentTab( context.path, getDefaultTab() );
-
 	const tabTitle = getSelectedTabTitle( selectedTab );
+
 	context.primary = (
 		<>
 			<DiscoverDocumentHead tabTitle={ tabTitle } />
