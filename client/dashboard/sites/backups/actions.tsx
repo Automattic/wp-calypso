@@ -14,7 +14,7 @@ export function getActions( site: Site ): Action< ActivityLogEntry >[] {
 			label: __( 'Restore to this point ↗' ),
 			callback: ( items: ActivityLogEntry[] ) => {
 				const item = items[ 0 ];
-				const url = `${ getBackupUrl( site ) }/restore/${ item.object.rewind_id }`;
+				const url = `${ getBackupUrl( site ) }/restore/${ item.rewind_id }`;
 				window.open( url, '_blank' );
 			},
 		},
@@ -23,7 +23,7 @@ export function getActions( site: Site ): Action< ActivityLogEntry >[] {
 			label: __( 'View files ↗' ),
 			callback: ( items: ActivityLogEntry[] ) => {
 				const item = items[ 0 ];
-				const url = `${ getBackupUrl( site ) }/contents/${ item.object.rewind_id }`;
+				const url = `${ getBackupUrl( site ) }/contents/${ item.rewind_id }`;
 				window.open( url, '_blank' );
 			},
 			isEligible: ( item: ActivityLogEntry ) => item.name === 'rewind__backup_complete_full',
@@ -33,7 +33,7 @@ export function getActions( site: Site ): Action< ActivityLogEntry >[] {
 			label: __( 'Download backup ↗' ),
 			callback: ( items: ActivityLogEntry[] ) => {
 				const item = items[ 0 ];
-				const url = `${ getBackupUrl( site ) }/download/${ item.object.rewind_id }`;
+				const url = `${ getBackupUrl( site ) }/download/${ item.rewind_id }`;
 				window.open( url, '_blank' );
 			},
 		},
