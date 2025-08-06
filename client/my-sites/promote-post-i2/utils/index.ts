@@ -31,7 +31,7 @@ export const paymentStatus = {
 	PENDING: 'PENDING',
 	ON_HOLD: 'ON-HOLD',
 	REFUNDED: 'REFUNDED',
-	CANCELED: 'CANCELLED',
+	CANCELED: 'CANCELED',
 };
 
 export const getPostType = ( type: string ) => {
@@ -416,7 +416,7 @@ export const getPaymentStatusBadgeColor = ( status?: string ) => {
 			return 'info-blue';
 		}
 		case paymentStatus.REFUNDED: {
-			return 'info-green';
+			return 'info-blue';
 		}
 		case paymentStatus.CANCELED: {
 			return 'error';
