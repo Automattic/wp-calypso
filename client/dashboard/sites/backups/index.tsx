@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalText as Text } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
-import { dateI18n } from '@wordpress/date';
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
 import { useState } from 'react';
@@ -18,8 +17,9 @@ import { HostingFeatures } from '../../data/constants';
 import { hasHostingFeature } from '../../utils/site-features';
 import { DEFAULT_PER_PAGE_SIZES } from '../views';
 import illustrationUrl from './backups-callout-illustration.svg';
+import { getFields } from './fields';
 import type { ActivityLogEntry, Site } from '../../data/types';
-import type { Field, View } from '@wordpress/dataviews';
+import type { View } from '@wordpress/dataviews';
 
 export function SiteBackupsCallout( {
 	siteSlug,
@@ -58,36 +58,6 @@ export function SiteBackupsCallout( {
 	);
 }
 
-const fields: Field< ActivityLogEntry >[] = [
-	{
-		id: 'date',
-		label: __( 'Date' ),
-		render: ( { item } ) => (
-			<>
-				<strong>{ dateI18n( 'F j, Y', item.published ) }</strong>
-				&nbsp;
-				{ dateI18n( 'g:i A', item.published ) }
-			</>
-		),
-	},
-	{
-		id: 'action',
-		label: __( 'Action' ),
-		getValue: ( { item } ) => `${ item.summary }: ${ item.content.text }`,
-		render: ( { item } ) => (
-			<>
-				<strong>{ item.summary }</strong>: { item.content.text }
-			</>
-		),
-		enableGlobalSearch: true,
-	},
-	{
-		id: 'user',
-		label: __( 'User' ),
-		getValue: ( { item } ) => item.actor.name,
-	},
-];
-
 function Backups( { site }: { site: Site } ) {
 	const [ view, setView ] = useState< View >( {
 		type: 'table',
@@ -99,6 +69,7 @@ function Backups( { site }: { site: Site } ) {
 	);
 
 	const rawData = activityLog || [];
+	const fields = getFields();
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( rawData, view, fields );
 
 	return (
