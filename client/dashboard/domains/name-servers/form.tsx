@@ -19,10 +19,13 @@ import {
 	WPCOM_DEFAULT_NAMESERVERS,
 	ServiceName,
 } from './types';
+import UpsellNudge from './upsell-nudge';
 import { areAllWpcomNameServers } from './utils';
 
 interface Props {
+	domainName: string;
 	serviceName: ServiceName;
+	showUpsellNudge?: boolean;
 	nameservers?: string[];
 	isBusy?: boolean;
 	queryError?: string;
@@ -31,7 +34,9 @@ interface Props {
 }
 
 export default function NameServersForm( {
+	domainName,
 	serviceName,
+	showUpsellNudge,
 	nameservers = [],
 	isBusy,
 	queryError,
@@ -156,6 +161,7 @@ export default function NameServersForm( {
 					setNameServerFields( newFields );
 				} }
 			/>
+			{ showUpsellNudge && <UpsellNudge domainName={ domainName } /> }
 			{ queryError && (
 				<Notice status="error" isDismissible={ false }>
 					{ queryError }
