@@ -15,7 +15,7 @@ import {
 	getFields,
 	getItemId,
 	getPurchaseUrl,
-} from './data-view-shared';
+} from './dataviews';
 import { isTransferredOwnership } from './util';
 import type { Purchase } from '../../data/purchase';
 

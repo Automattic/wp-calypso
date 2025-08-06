@@ -1,11 +1,10 @@
 import { formatNumber } from '@automattic/number-formatters';
 import { JETPACK_CONTACT_SUPPORT } from '@automattic/urls';
 import { Popover, Icon } from '@wordpress/components';
-import { type SortDirection, type View, type Fields } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { info } from '@wordpress/icons';
-import { useState, type ReactNode } from 'react';
+import { useState } from 'react';
 import akismetIcon from 'calypso/assets/images/icons/akismet-icon.svg';
 import jetpackIcon from 'calypso/assets/images/icons/jetpack-icon.svg';
 import passportIcon from 'calypso/assets/images/icons/passport-icon.svg';
@@ -23,6 +22,8 @@ import {
 import type { StoredPaymentMethod } from '../../data/me-payment-methods';
 import type { Purchase } from '../../data/purchase';
 import type { Site } from '../../data/site';
+import type { SortDirection, View, Fields } from '@wordpress/dataviews';
+import type { ReactNode } from 'react';
 
 const purchasesWideFields = [ 'status', 'payment-method' ];
 const purchasesDesktopFields = [ 'status' ];

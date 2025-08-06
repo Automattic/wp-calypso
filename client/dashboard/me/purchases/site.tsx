@@ -10,12 +10,7 @@ import { sitesQuery } from '../../app/queries/sites';
 import { purchasesSiteRoute } from '../../app/router';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import {
-	purchasesDataView,
-	adjustViewFieldsForWidth,
-	getFields,
-	getItemId,
-} from './data-view-shared';
+import { purchasesDataView, adjustViewFieldsForWidth, getFields, getItemId } from './dataviews';
 
 export default function PurchasesForSite() {
 	const { siteSlug: siteSlugOrId } = purchasesSiteRoute.useParams();
