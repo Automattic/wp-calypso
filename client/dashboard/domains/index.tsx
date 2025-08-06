@@ -3,11 +3,12 @@ import { Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
+import { useAuth } from '../app/auth';
 import { domainsQuery } from '../app/queries/domains';
 import DataViewsCard from '../components/dataviews-card';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
-import { actions, useFields, DEFAULT_VIEW, DEFAULT_LAYOUTS } from './dataviews';
+import { useActions, useFields, DEFAULT_VIEW, DEFAULT_LAYOUTS } from './dataviews';
 import type { DomainsView } from './dataviews';
 import type { Domain } from '../data/types';
 
@@ -16,7 +17,9 @@ export function getDomainId( domain: Domain ): string {
 }
 
 function Domains() {
+	const { user } = useAuth();
 	const fields = useFields();
+	const actions = useActions( { user } );
 	const [ view, setView ] = useState< DomainsView >( () => ( {
 		...DEFAULT_VIEW,
 		type: 'table',

@@ -1,8 +1,8 @@
-import moment from 'moment';
+import { isAfter, subMinutes } from 'date-fns';
 
 export function isRecentlyRegistered( registrationDate: string, numberOfMinutes = 30 ) {
 	return (
 		registrationDate &&
-		moment.utc( registrationDate ).isAfter( moment.utc().subtract( numberOfMinutes, 'minutes' ) )
+		isAfter( new Date( registrationDate ), subMinutes( new Date(), numberOfMinutes ) )
 	);
 }

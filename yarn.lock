@@ -1193,6 +1193,7 @@ __metadata:
     "@wordpress/components": "npm:^29.9.0"
     "@wordpress/react-i18n": "npm:^4.23.0"
     clsx: "npm:^2.1.1"
+    date-fns: "npm:^4.1.0"
     jest: "npm:^29.7.0"
     postcss: "npm:^8.5.3"
     react: "npm:^18.3.1"

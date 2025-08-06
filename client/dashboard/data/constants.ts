@@ -22,6 +22,7 @@ export enum DotcomFeatures {
 	LEGACY_CONTACT = 'legacy-contact',
 	LOCKED_MODE = 'locked-mode',
 	SCAN = 'scan',
+	SET_PRIMARY_CUSTOM_DOMAIN = 'set-primary-custom-domain',
 	SECURITY_SETTINGS = 'security-settings',
 	SFTP = 'sftp',
 	SSH = 'ssh',
