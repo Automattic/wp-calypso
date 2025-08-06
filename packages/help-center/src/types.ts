@@ -54,6 +54,7 @@ export interface FeatureFlags {
 }
 
 export interface SearchResult {
+	railcar: any;
 	link: string;
 	title: string;
 	content?: string;
