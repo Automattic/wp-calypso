@@ -3,21 +3,23 @@ import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useLocale } from '../../app/locale';
-import { formatDate } from '../../utils/datetime';
+import {
+	formatDate,
+	isWithinLast,
+	isWithinNext,
+	getRelativeTimeString,
+} from '../../utils/datetime';
 import { SubscriptionBillPeriod } from './constants';
 import {
 	isTemporarySitePurchase,
 	isA4ATemporarySitePurchase,
 	isRecentMonthlyPurchase,
-	getRelativeTimeString,
 	isRenewing,
 	isExpiring,
 	isExpired,
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isAkismetFreeProduct,
-	isWithinNext,
-	isWithinLast,
 	creditCardHasAlreadyExpired,
 	creditCardExpiresBeforeSubscription,
 } from './util';
