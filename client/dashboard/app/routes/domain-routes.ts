@@ -1,4 +1,5 @@
 import { createRoute, createLazyRoute, notFound } from '@tanstack/react-router';
+import { domainForwardingQuery } from '../queries/domain-forwarding';
 import { domainsQuery } from '../queries/domains';
 import { siteDomainsQuery } from '../queries/site-domains';
 import { queryClient } from '../query-client';
@@ -109,8 +110,10 @@ export const domainDnsEditRoute = createRoute( {
 export const domainForwardingRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'forwarding',
+	loader: ( { params } ) =>
+		queryClient.ensureQueryData( domainForwardingQuery( params.domainName ) ),
 } ).lazy( () =>
-	import( '../../sites/domains/placeholder' ).then( ( d ) =>
+	import( '../../domains/forwarding' ).then( ( d ) =>
 		createLazyRoute( 'domain-forwarding' )( {
 			component: d.default,
 		} )
