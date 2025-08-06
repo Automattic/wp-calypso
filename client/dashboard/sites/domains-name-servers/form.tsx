@@ -2,6 +2,7 @@
 import { CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS } from '@automattic/urls';
 import {
 	Button,
+	Notice,
 	ToggleControl,
 	__experimentalText as Text,
 	__experimentalView as View,
@@ -21,10 +22,19 @@ import { areAllWpcomNameServers } from './utils';
 
 interface Props {
 	nameservers?: string[];
+	isBusy?: boolean;
+	queryError?: string;
+	mutationError?: string;
 	onSubmit: ( nameServers: string[] ) => void;
 }
 
-export default function NameServersForm( { nameservers = [], onSubmit }: Props ) {
+export default function NameServersForm( {
+	nameservers = [],
+	isBusy,
+	queryError,
+	mutationError,
+	onSubmit,
+}: Props ) {
 	const [ nameServerFields, setNameServerFields ] = useState< NameServerField[] >(
 		Array.from( { length: MAX_NAMESERVER_LENGTH }, ( _, index ) => ( {
 			value: nameservers[ index ] || '',
@@ -66,8 +76,8 @@ export default function NameServersForm( { nameservers = [], onSubmit }: Props )
 	}, [ nameServerFields ] );
 
 	const canSubmit = useMemo( () => {
-		return isFormValid && hasFieldsChanged;
-	}, [ isFormValid, hasFieldsChanged ] );
+		return isFormValid && hasFieldsChanged && ! isBusy;
+	}, [ isFormValid, hasFieldsChanged, isBusy ] );
 
 	const handleNameServerChange = useCallback( ( index: number, value: string ) => {
 		setNameServerFields( ( current ) => {
@@ -139,52 +149,67 @@ export default function NameServersForm( { nameservers = [], onSubmit }: Props )
 					setNameServerFields( newFields );
 				} }
 			/>
-			{ ! useWpcomNameservers && (
-				<Text>
-					{ createInterpolateElement(
-						/* translators: <link> will be replaced with an anchor tag to open the support article in a new tab */
-						__( '<link>Look up</link> the name servers for popular hosts.' ),
-						{
-							link: (
-								<a
-									href={ CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS }
-									target="_blank"
-									rel="noopener noreferrer"
-								/>
-							),
-						}
+			{ queryError && (
+				<Notice status="error" isDismissible={ false }>
+					{ queryError }
+				</Notice>
+			) }
+			{ ! queryError && (
+				<>
+					{ mutationError && (
+						<Notice status="warning" isDismissible={ false }>
+							{ mutationError }
+						</Notice>
 					) }
-				</Text>
+					{ ! useWpcomNameservers && (
+						<Text>
+							{ createInterpolateElement(
+								/* translators: <link> will be replaced with an anchor tag to open the support article in a new tab */
+								__( '<link>Look up</link> the name servers for popular hosts.' ),
+								{
+									link: (
+										<a
+											href={ CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS }
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								}
+							) }
+						</Text>
+					) }
+					{ Array.from(
+						{ length: MAX_NAMESERVER_LENGTH },
+						( _, index ) =>
+							nameServerFields[ index ] &&
+							shouldShowNextInput( index ) && (
+								<NameServerInput
+									key={ index }
+									index={ index }
+									field={ nameServerFields[ index ] }
+									disabled={ useWpcomNameservers }
+									onChange={ handleNameServerChange }
+									onBlur={ handleNameServerBlur }
+								/>
+							)
+					) }
+					<View>
+						<Button
+							__next40pxDefaultSize
+							variant="primary"
+							disabled={ ! canSubmit }
+							isBusy={ isBusy }
+							onClick={ () =>
+								onSubmit(
+									nameServerFields.filter( ( ns ) => ns.value !== '' ).map( ( ns ) => ns.value )
+								)
+							}
+						>
+							{ __( 'Save' ) }
+						</Button>
+					</View>
+				</>
 			) }
-			{ Array.from(
-				{ length: MAX_NAMESERVER_LENGTH },
-				( _, index ) =>
-					nameServerFields[ index ] &&
-					shouldShowNextInput( index ) && (
-						<NameServerInput
-							key={ index }
-							index={ index }
-							field={ nameServerFields[ index ] }
-							disabled={ useWpcomNameservers }
-							onChange={ handleNameServerChange }
-							onBlur={ handleNameServerBlur }
-						/>
-					)
-			) }
-			<View>
-				<Button
-					__next40pxDefaultSize
-					variant="primary"
-					disabled={ ! canSubmit }
-					onClick={ () =>
-						onSubmit(
-							nameServerFields.filter( ( ns ) => ns.value !== '' ).map( ( ns ) => ns.value )
-						)
-					}
-				>
-					{ __( 'Save' ) }
-				</Button>
-			</View>
 		</VStack>
 	);
 }
