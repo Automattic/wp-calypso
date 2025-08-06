@@ -3,6 +3,6 @@ import { fetchUserPurchases } from '../../data/me-purchases';
 
 export const userPurchasesQuery = () =>
 	queryOptions( {
-		queryKey: [ 'me', 'active-subscriptions' ],
+		queryKey: [ 'me', 'purchases' ],
 		queryFn: () => fetchUserPurchases(),
 	} );

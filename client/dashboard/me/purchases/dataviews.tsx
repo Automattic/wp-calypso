@@ -112,7 +112,7 @@ function getAddPaymentMethodUrlFor( purchase: Purchase ): string {
 }
 
 function getUrlForSiteLevelView( siteId: number | string ): string {
-	return `/v2/me/billing/active-subscriptions/${ siteId }`;
+	return `/v2/me/billing/purchases/${ siteId }`;
 }
 
 function InfoPopover( { children }: { children: ReactNode } ) {
