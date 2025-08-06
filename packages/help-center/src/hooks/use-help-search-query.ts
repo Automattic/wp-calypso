@@ -6,6 +6,7 @@ import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import type { ReactNode } from 'react';
 
 export interface SearchResult {
+	railcar: any;
 	link: string;
 	title: ReactNode;
 	content?: string;
@@ -41,7 +42,7 @@ const fetchArticlesAPI = async (
 	}
 
 	// Record TrainTracks render events
-	searchResultResponse?.forEach( ( source: Source, index: number ) => {
+	searchResultResponse?.forEach( ( source: SearchResult, index: number ) => {
 		if ( source.railcar ) {
 			Promise.resolve().then( () => {
 				recordTracksEvent( 'calypso_help_center_search_traintracks_render', {
