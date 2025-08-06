@@ -2,9 +2,10 @@ import { Card, CardBody } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-// eslint-disable-next-line no-restricted-imports
-import useUpdateNameserversMutation from 'calypso/data/domains/nameservers/use-update-nameservers-mutation';
-import useDomainNameserversQuery from '../../app/queries/domain-nameservers';
+import {
+	useDomainNameserversQuery,
+	useUpdateNameserversMutation,
+} from '../../app/queries/domain-nameservers';
 import { domainRoute } from '../../app/router';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
