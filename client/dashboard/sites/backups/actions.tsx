@@ -2,6 +2,7 @@ import { Icon } from '@wordpress/components';
 import { Action } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { backup } from '@wordpress/icons';
+import { getBackupUrl } from '../../utils/site-backup';
 import type { ActivityLogEntry, Site } from '../../data/types';
 
 export function getActions( site: Site ): Action< ActivityLogEntry >[] {
@@ -13,7 +14,7 @@ export function getActions( site: Site ): Action< ActivityLogEntry >[] {
 			label: __( 'Restore to this point ↗' ),
 			callback: ( items: ActivityLogEntry[] ) => {
 				const item = items[ 0 ];
-				const url = `https://cloud.jetpack.com/backup/${ site.slug }/restore/${ item.object.rewind_id }`;
+				const url = `${ getBackupUrl( site ) }/restore/${ item.object.rewind_id }`;
 				window.open( url, '_blank' );
 			},
 		},
@@ -22,7 +23,7 @@ export function getActions( site: Site ): Action< ActivityLogEntry >[] {
 			label: __( 'View files ↗' ),
 			callback: ( items: ActivityLogEntry[] ) => {
 				const item = items[ 0 ];
-				const url = `https://cloud.jetpack.com/backup/${ site.slug }/contents/${ item.object.rewind_id }`;
+				const url = `${ getBackupUrl( site ) }/contents/${ item.object.rewind_id }`;
 				window.open( url, '_blank' );
 			},
 			isEligible: ( item: ActivityLogEntry ) => item.name === 'rewind__backup_complete_full',
@@ -32,7 +33,7 @@ export function getActions( site: Site ): Action< ActivityLogEntry >[] {
 			label: __( 'Download backup ↗' ),
 			callback: ( items: ActivityLogEntry[] ) => {
 				const item = items[ 0 ];
-				const url = `https://cloud.jetpack.com/backup/${ site.slug }/download/${ item.object.rewind_id }`;
+				const url = `${ getBackupUrl( site ) }/download/${ item.object.rewind_id }`;
 				window.open( url, '_blank' );
 			},
 		},
