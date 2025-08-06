@@ -39,6 +39,7 @@ describe( 'Dashboard: Site Visibility Settings', function () {
 	const siteName = DataHelper.getBlogName();
 
 	beforeAll( async function () {
+		incognitoContext = await browser.newContext();
 		page = await browser.newPage();
 
 		// Using a newly created user avoid having too many sites.
@@ -67,6 +68,10 @@ describe( 'Dashboard: Site Visibility Settings', function () {
 	} );
 
 	afterAll( async function () {
+		if ( incognitoContext ) {
+			await incognitoContext.close();
+		}
+
 		if ( ! newUserDetails ) {
 			return;
 		}
@@ -81,14 +86,6 @@ describe( 'Dashboard: Site Visibility Settings', function () {
 			username: newUserDetails.body.username,
 			email: testUser.email,
 		} );
-	} );
-
-	beforeEach( async function () {
-		incognitoContext = await browser.newContext();
-	} );
-
-	afterEach( async function () {
-		await incognitoContext.close();
 	} );
 
 	it( 'Can change site visibility to Private', async function () {
