@@ -27,16 +27,17 @@ export default function DomainContactInfo() {
 			<div className="domain-contact-info">
 				<ContactForm
 					initialData={ {
-						firstName: 'Value',
-						lastName: 'Value',
-						organization: '',
-						email: 'email@email.com',
+						firstName: 'John',
+						lastName: 'Doe',
+						organization: 'WordPress',
+						email: 'john.doe@wordpress.org',
 						phone: '+44 1234 567890',
-						country: 'GB',
-						addressLine1: '',
-						addressLine2: '',
+						countryCode: 'BR',
+						address1: '123 Main St',
+						address2: 'Apt 4B',
 						city: 'London',
-						postCode: 'NW1 1ED',
+						postalCode: 'NW1 1ED',
+						optOutTransferLock: false,
 					} }
 					onSubmit={ handleSubmit }
 					onCancel={ handleCancel }

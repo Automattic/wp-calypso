@@ -1,36 +1,22 @@
 import {
-	CheckboxControl,
 	ExternalLink,
 	Flex,
-	FlexBlock,
 	Notice,
-	SelectControl,
-	TextControl,
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	Button,
 } from '@wordpress/components';
+import { DataForm, Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
+import type { DomainContactDetails } from './types';
 
 import './contact-form.scss';
-
-interface ContactFormData {
-	firstName: string;
-	lastName: string;
-	organization: string;
-	email: string;
-	phone: string;
-	country: string;
-	addressLine1: string;
-	addressLine2: string;
-	city: string;
-	postCode: string;
-	optOutTransferLock: boolean;
-}
-
 interface ContactFormProps {
-	initialData?: Partial< ContactFormData >;
-	onSubmit?: ( data: ContactFormData ) => void;
+	initialData?: Partial< DomainContactDetails >;
+	onSubmit?: ( data: DomainContactDetails ) => void;
 	onCancel?: () => void;
-	errors?: Partial< Record< keyof ContactFormData, string > >;
+	errors?: Partial< Record< keyof DomainContactDetails, string > >;
 	isSubmitting?: boolean;
 }
 
@@ -55,138 +41,117 @@ export default function ContactForm( {
 	errors = {},
 	isSubmitting = false,
 }: ContactFormProps ) {
-	const [ formData, setFormData ] = useState< ContactFormData >( {
-		firstName: 'Value',
-		lastName: 'Value',
-		organization: '',
-		email: 'email@email.com',
-		phone: '+44 1234 567890',
-		country: 'GB',
-		addressLine1: '',
-		addressLine2: '',
-		city: 'London',
-		postCode: 'NW1 1ED',
-		optOutTransferLock: false,
+	const [ formData, setFormData ] = useState< DomainContactDetails >( {
 		...initialData,
 	} );
 
-	const handleFieldChange = ( field: keyof ContactFormData, value: string | boolean ) => {
+	console.log( 'formData', formData );
+
+	const handleFieldChange = ( field: keyof DomainContactDetails, value: string | boolean ) => {
 		setFormData( ( prev ) => ( {
 			...prev,
 			[ field ]: value,
 		} ) );
 	};
 
-	const handleSubmit = ( e: React.FormEvent ) => {
-		e.preventDefault();
-		onSubmit?.( formData );
+	const handleSubmit = ( data: DomainContactDetails ) => {
+		onSubmit?.( data );
+	};
+
+	const fields: Field< DomainContactDetails >[] = [
+		{
+			id: 'firstName',
+			label: 'First Name',
+			type: 'text',
+		},
+		{
+			id: 'lastName',
+			label: 'Last Name',
+			type: 'text',
+		},
+		{
+			id: 'organization',
+			label: 'Organization',
+			type: 'text',
+		},
+		{
+			id: 'email',
+			label: 'Email',
+			type: 'email',
+		},
+		{
+			id: 'phone',
+			label: 'Phone',
+			type: 'text',
+		},
+		{
+			id: 'countryCode',
+			label: 'Country',
+			type: 'select',
+			elements: COUNTRIES,
+		},
+		{
+			id: 'address1',
+			label: 'Address Line 1',
+			type: 'text',
+		},
+		{
+			id: 'address2',
+			label: 'Address Line 2',
+			type: 'text',
+		},
+		{
+			id: 'city',
+			label: 'City',
+			type: 'text',
+		},
+		{
+			id: 'postalCode',
+			label: 'Post Code',
+			type: 'text',
+		},
+		{
+			id: 'optOutTransferLock',
+			label: 'Opt Out Transfer Lock',
+			type: 'checkbox',
+		},
+	];
+
+	const form = {
+		type: 'regular' as const,
+		labelPosition: 'top' as const,
+		fields: [
+			'firstName',
+			'lastName',
+			'organization',
+			'email',
+			'phone',
+			'countryCode',
+			'address1',
+			'address2',
+			'city',
+			'postalCode',
+			'optOutTransferLock',
+		],
 	};
 
 	return (
-		<form onSubmit={ handleSubmit } className="contact-form">
-			{ /* First Name & Last Name */ }
-			<Flex gap={ 4 }>
-				<FlexBlock>
-					<TextControl
-						label={ __( 'FIRST NAME' ) }
-						value={ formData.firstName }
-						onChange={ ( value ) => handleFieldChange( 'firstName', value ) }
-						error={ errors.firstName }
-					/>
-				</FlexBlock>
-				<FlexBlock>
-					<TextControl
-						label={ __( 'LAST NAME' ) }
-						value={ formData.lastName }
-						onChange={ ( value ) => handleFieldChange( 'lastName', value ) }
-						error={ errors.lastName }
-					/>
-				</FlexBlock>
-			</Flex>
-
-			{ /* Organisation */ }
-			<TextControl
-				label={ __( 'ORGANISATION' ) }
-				value={ formData.organization }
-				onChange={ ( value ) => handleFieldChange( 'organization', value ) }
-				placeholder={ __( 'Your organization' ) }
-				error={ errors.organization }
-			/>
-
-			{ /* Email & Phone */ }
-			<Flex gap={ 4 }>
-				<FlexBlock>
-					<TextControl
-						type="email"
-						label={ __( 'EMAIL' ) }
-						value={ formData.email }
-						onChange={ ( value ) => handleFieldChange( 'email', value ) }
-						error={ errors.email }
-					/>
-				</FlexBlock>
-				<FlexBlock>
-					<TextControl
-						label={ __( 'PHONE' ) }
-						value={ formData.phone }
-						onChange={ ( value ) => handleFieldChange( 'phone', value ) }
-						error={ errors.phone }
-					/>
-				</FlexBlock>
-			</Flex>
-
-			{ /* Country */ }
-			<SelectControl
-				label={ __( 'COUNTRY' ) }
-				value={ formData.country }
-				onChange={ ( value ) => handleFieldChange( 'country', value ) }
-				options={ COUNTRIES }
-				error={ errors.country }
-			/>
-
-			{ /* Address Line 1 */ }
-			<TextControl
-				label={ __( 'ADDRESS LINE 1' ) }
-				value={ formData.addressLine1 }
-				onChange={ ( value ) => handleFieldChange( 'addressLine1', value ) }
-				placeholder={ __( 'Address line 1' ) }
-				error={ errors.addressLine1 }
-			/>
-
-			{ /* Address Line 2 */ }
-			<TextControl
-				label={ __( 'ADDRESS LINE 2' ) }
-				value={ formData.addressLine2 }
-				onChange={ ( value ) => handleFieldChange( 'addressLine2', value ) }
-				placeholder={ __( 'Address line 2' ) }
-				error={ errors.addressLine2 }
-			/>
-
-			{ /* City & Post Code */ }
-			<Flex gap={ 4 }>
-				<FlexBlock>
-					<TextControl
-						label={ __( 'CITY' ) }
-						value={ formData.city }
-						onChange={ ( value ) => handleFieldChange( 'city', value ) }
-						error={ errors.city }
-					/>
-				</FlexBlock>
-				<FlexBlock>
-					<TextControl
-						label={ __( 'POST CODE' ) }
-						value={ formData.postCode }
-						onChange={ ( value ) => handleFieldChange( 'postCode', value ) }
-						error={ errors.postCode }
-					/>
-				</FlexBlock>
-			</Flex>
-
-			{ /* Transfer Lock Checkbox */ }
-			<CheckboxControl
-				label={ __( 'Opt-out of the 60-day transfer lock' ) }
-				checked={ formData.optOutTransferLock }
-				onChange={ ( value ) => handleFieldChange( 'optOutTransferLock', value ) }
-			/>
+		<div className="contact-form">
+			<VStack spacing={ 4 }>
+				<DataForm< DomainContactDetails >
+					data={ formData }
+					fields={ fields }
+					form={ form }
+					onChange={ ( edits: Partial< DomainContactDetails > ) => {
+						setFormData( ( data ) => ( { ...data, ...edits } ) );
+					} }
+				/>
+				<HStack justify="flex-start">
+					<Button variant="primary" type="submit" isBusy={ isSubmitting } disabled={ isSubmitting }>
+						{ __( 'Save' ) }
+					</Button>
+				</HStack>
+			</VStack>
 
 			{ /* Legal Disclaimer */ }
 			<Notice status="info" isDismissible={ false } className="contact-form__legal-notice">
@@ -200,13 +165,10 @@ export default function ContactForm( {
 				</p>
 			</Notice>
 
-			{ /* Action Buttons */ }
-			<div className="contact-form__actions">
-				<Flex gap={ 3 } justify="start">
-					<button type="submit" className="contact-form__submit-button" disabled={ isSubmitting }>
-						{ __( 'Save contact info' ) }
-					</button>
-					{ onCancel && (
+			{ /* Cancel Button */ }
+			{ onCancel && (
+				<div className="contact-form__actions">
+					<Flex gap={ 3 } justify="start">
 						<button
 							type="button"
 							className="contact-form__cancel-button"
@@ -215,9 +177,9 @@ export default function ContactForm( {
 						>
 							{ __( 'Cancel' ) }
 						</button>
-					) }
-				</Flex>
-			</div>
-		</form>
+					</Flex>
+				</div>
+			) }
+		</div>
 	);
 }
