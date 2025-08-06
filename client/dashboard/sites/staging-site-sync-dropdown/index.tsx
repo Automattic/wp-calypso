@@ -42,6 +42,7 @@ export default function StagingSiteSyncDropdown( {
 
 	const { data: stagingSiteSyncState, refetch: fetchStagingSiteSyncState } = useQuery( {
 		...stagingSiteSyncStateQuery( productionSiteId ?? 0 ),
+		enabled: !! productionSiteId,
 		refetchInterval: ( query ) => {
 			return isStagingSiteSyncing( query.state.data ) ? 5000 : false;
 		},

@@ -15,7 +15,7 @@ import { siteByIdQuery } from '../../app/queries/site';
 import { stagingSiteCreateMutation } from '../../app/queries/site-staging-sites';
 import { production, staging } from '../../components/icons';
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
-import { getStagingSiteId } from '../../utils/site-staging-site';
+import { hasStagingSite } from '../../utils/site-staging-site';
 import { canManageSite, canCreateStagingSite } from '../features';
 import type { Site } from '../../data/types';
 
@@ -134,7 +134,7 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 			<Dropdown
 				renderToggle={ ( { onToggle } ) => {
 					const canToggle =
-						( otherEnvironment === 'staging' && !! getStagingSiteId( site ) ) ||
+						hasStagingSite( site ) ||
 						( otherEnvironmentSite && canManageSite( otherEnvironmentSite ) );
 
 					return (
