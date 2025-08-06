@@ -34,7 +34,7 @@ const form = {
 	fields: [ 'enabled' ],
 };
 
-export default function DomainPlaceholder() {
+export default function DomainDNSSEC() {
 	const { data: allDomains } = useSuspenseQuery( domainsQuery() );
 
 	// get the current domain from the current route
@@ -78,6 +78,18 @@ export default function DomainPlaceholder() {
 			},
 		} );
 	};
+
+	if ( ! domain.is_dnssec_supported ) {
+		return (
+			<PageLayout size="small" header={ <PageHeader title="DNSSEC" /> }>
+				<Card>
+					<CardBody>
+						<p>DNSSEC is not supported for this domain.</p>
+					</CardBody>
+				</Card>
+			</PageLayout>
+		);
+	}
 
 	return (
 		<PageLayout size="small" header={ <PageHeader title="DNSSEC" /> }>
