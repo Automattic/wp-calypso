@@ -18,17 +18,19 @@ export default function UpsaleNudge( { domainName }: Props ) {
 				domainName
 			) }
 			image={ illustrationUrl }
+			variant="highlight"
 			description={
 				<Text as="p">
 					{ createInterpolateElement(
 						sprintf(
 							// translators: %(domain)s is the domain name
 							__(
-								'Upgrade to a paid plan to make <strong>%s</strong> the primary address that your visitors see when they visit your site. <a>Learn more</a>'
+								'Upgrade to a paid plan to make <strong>%s</strong> the primary address that your visitors see when they visit your site.<br /><a>Learn more</a>'
 							),
 							domainName
 						),
 						{
+							br: <br />,
 							strong: <strong>{ domainName }</strong>,
 							a: <a href="https://wordpress.com/" target="_blank" rel="noopener noreferrer" />,
 						}
