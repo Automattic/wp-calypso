@@ -55,7 +55,7 @@ export default function DiscoverHeaderAndNavigation(
 			} );
 			break;
 		case FRESHLY_PRESSED_TAB:
-			subHeaderText = translate( 'Some copy related to freshly pressed' );
+			subHeaderText = translate( "Our team's favorite blog posts." );
 			break;
 	}
 
