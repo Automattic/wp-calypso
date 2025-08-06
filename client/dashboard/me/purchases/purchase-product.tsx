@@ -3,6 +3,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { isTemporarySitePurchase, isA4ATemporarySitePurchase } from '../../utils/purchase';
 import type { Purchase } from '../../data/purchase';
+import type { Site } from '../../data/site';
 
 function purchaseType( purchase: Purchase ): string | null {
 	if ( 'theme' === purchase.product_type ) {
@@ -82,7 +83,7 @@ export function PurchaseProduct( {
 	getUrlForSiteLevelView,
 }: {
 	purchase: Purchase;
-	site?: { name: string; slug: string; ID: number };
+	site?: Site;
 	getUrlForSiteLevelView: ( siteId: number ) => string;
 } ) {
 	if ( isTemporarySitePurchase( purchase ) ) {
@@ -221,5 +222,5 @@ export function PurchaseProduct( {
 		);
 	}
 
-	return <div>{ productType }</div>;
+	return productType;
 }
