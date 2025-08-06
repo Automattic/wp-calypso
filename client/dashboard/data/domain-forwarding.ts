@@ -17,3 +17,12 @@ export interface DomainForwardingObject {
 export function fetchDomainForwarding( domainName: string ): Promise< DomainForwardingObject[] > {
 	return wp.req.get( `/sites/all/domain/${ domainName }/redirects?new-endpoint=true` );
 }
+
+export function deleteDomainForwarding(
+	domainName: string,
+	forwardingId: number
+): Promise< DomainForwardingObject[] > {
+	return wp.req.post( `/sites/all/domain/${ domainName }/redirects/delete`, {
+		domain_redirect_id: forwardingId,
+	} );
+}

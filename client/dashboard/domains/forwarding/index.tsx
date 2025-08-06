@@ -1,10 +1,13 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { Link, useRouter } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
-import { domainForwardingQuery } from '../../app/queries/domain-forwarding';
+import {
+	domainForwardingDeleteMutation,
+	domainForwardingQuery,
+} from '../../app/queries/domain-forwarding';
 import { domainRoute, domainForwardingAddRoute, domainForwardingEditRoute } from '../../app/router';
 import DataViewsCard from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
@@ -44,6 +47,7 @@ function DomainForwarding() {
 	const { data: forwardingData, isLoading } = useSuspenseQuery(
 		domainForwardingQuery( domainName )
 	);
+	const deleteMutation = useMutation( domainForwardingDeleteMutation( domainName ) );
 
 	const actions: Action< DomainForwardingObject >[] = useMemo(
 		() => [
@@ -62,8 +66,8 @@ function DomainForwarding() {
 				id: 'delete',
 				label: __( 'Delete' ),
 				callback: ( items: DomainForwardingObject[] ) => {
-					const item = items[ 0 ]; // eslint-disable-line @typescript-eslint/no-unused-vars
-					// TODO: delete item
+					const item = items[ 0 ];
+					deleteMutation.mutate( item.domain_redirect_id );
 				},
 			},
 		],
