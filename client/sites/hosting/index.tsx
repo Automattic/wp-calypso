@@ -24,7 +24,9 @@ const redirectForNonSimpleSite = ( context: PageJSContext, next: () => void ) =>
 	const state = context.store.getState();
 	const site = getSelectedSite( state );
 	if ( site && site.jetpack && ! site.plan?.expired ) {
-		return page.redirect( addQueryArgs( `/overview/${ context.params.site }`, context.query ) );
+		return page.redirect(
+			addQueryArgs( `/sites/${ context.params.site }/settings`, context.query )
+		);
 	}
 	return next();
 };
