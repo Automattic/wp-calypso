@@ -28,6 +28,58 @@ export default function PaymentItem( props: Props ) {
 		page( getAdvertisingDashboardPath( path ) );
 	};
 
+	const getActionButton = ( status: Payment[ 'status' ] ) => {
+		let actionButton;
+
+		switch ( status ) {
+			case paymentStatus.FAILED:
+			case paymentStatus.PENDING:
+				actionButton = (
+					<div className="payment-item__pay-action">
+						<ExternalLink href={ payment.payment_link } target="_blank">
+							{ translate( 'Pay' ) }
+							<span className="sr-only">
+								{
+									// Translators: This is a payment button. "Pay" is the call-to-action button
+									// text and the param %(name) is the payment ID.
+									translate( 'Pay for %(name)s', {
+										args: { name: payment.id },
+									} )
+								}
+							</span>
+						</ExternalLink>
+					</div>
+				);
+				break;
+
+			case paymentStatus.CANCELED:
+				actionButton = null;
+				break;
+
+			default:
+				actionButton = (
+					<Button
+						isBusy={ false }
+						disabled={ false }
+						onClick={ getReceipt }
+						className="payment-item__view-receipt-action"
+					>
+						<span aria-hidden="true">{ __( 'Receipt' ) }</span>
+						<span className="sr-only">
+							{
+								// Translators: Text for a button with action to view the receipt.
+								// "%(name)s" is the payment ID
+								translate( 'View receipt for payment %(name)s', {
+									args: { name: payment.id },
+								} )
+							}
+						</span>
+					</Button>
+				);
+		}
+		return actionButton;
+	};
+
 	return (
 		<tr>
 			<td className="payment-item__payment-id">{ payment.id }</td>
@@ -48,42 +100,7 @@ export default function PaymentItem( props: Props ) {
 				2
 			) }` }</td>
 			<td className="payment-item__total">{ `$${ formatCents( payment.total_paid || 0, 2 ) }` }</td>
-			<td className="payment-item__actions">
-				{ payment.status === paymentStatus.FAILED || payment.status === paymentStatus.PENDING ? (
-					<div className="payment-item__pay-action">
-						<ExternalLink href={ payment.payment_link } target="_blank">
-							{ translate( 'Pay' ) }
-							<span className="sr-only">
-								{
-									// Translators: This is a payment button. "Pay" is the call-to-action button
-									// text and the param %(name) is the payment ID.
-									translate( 'Pay for %(name)s', {
-										args: { name: payment.id },
-									} )
-								}
-							</span>
-						</ExternalLink>
-					</div>
-				) : (
-					<Button
-						isBusy={ false }
-						disabled={ false }
-						onClick={ getReceipt }
-						className="payment-item__view-receipt-action"
-					>
-						<span aria-hidden="true">{ __( 'Receipt' ) }</span>
-						<span className="sr-only">
-							{
-								// Translators: Text for a button with action to view the receipt.
-								// "%(name)s" is the payment ID
-								translate( 'View receipt for payment %(name)s', {
-									args: { name: payment.id },
-								} )
-							}
-						</span>
-					</Button>
-				) }
-			</td>
+			<td className="payment-item__actions">{ getActionButton( payment.status ) }</td>
 		</tr>
 	);
 }
