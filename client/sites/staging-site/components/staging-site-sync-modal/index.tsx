@@ -485,7 +485,7 @@ export default function SyncModal( {
 									<Text as="p" weight="bold" style={ { lineHeight: '24px' } }>
 										{ __( 'Warning! Database will be overwritten.' ) }
 									</Text>
-									<Text as="p" style={ { lineHeight: '24px' } }>
+									<Text as="p">
 										{ __(
 											'Selecting this option will overwrite the site database, including any posts, pages, products, or orders.'
 										) }
