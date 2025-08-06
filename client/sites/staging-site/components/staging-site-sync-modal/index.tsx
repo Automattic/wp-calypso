@@ -478,6 +478,21 @@ export default function SyncModal( {
 							onChange={ handleDatabaseCheckboxChange }
 						/>
 					</HStack>
+					{ ( shouldDisableGranularSync || sqlNode?.checkState === 'checked' ) &&
+						! showWooCommerceWarning && (
+							<VStack style={ { paddingBottom: '52px' } }>
+								<Notice status="warning" isDismissible={ false }>
+									<Text as="p" weight="bold" style={ { lineHeight: '24px' } }>
+										{ __( 'Warning! Database will be overwritten.' ) }
+									</Text>
+									<Text as="p" style={ { lineHeight: '24px' } }>
+										{ __(
+											'Selecting this option will overwrite the site database, including any posts, pages, products, or orders.'
+										) }
+									</Text>
+								</Notice>
+							</VStack>
+						) }
 					{ showWooCommerceWarning && (
 						<VStack style={ { paddingBottom: '52px' } }>
 							<Notice status="warning" isDismissible={ false }>
