@@ -42,7 +42,7 @@ export default function AgencyTierOverview() {
 	const ALL_TIERS: AgencyTier[] =
 		currentAgencyTier === 'premier-partner' ? [ ...baseTiers, 'premier-partner' ] : baseTiers;
 
-	// Show download badges button for Agency Partner, Pro Agency Partner, and Strategic Agency Partner tiers
+	// Show download badges button for Agency Partner, Pro Agency Partner, and Premier Partner tiers
 	const showDownloadBadges =
 		currentAgencyTier &&
 		[ 'agency-partner', 'pro-agency-partner', 'premier-partner' ].includes( currentAgencyTier );

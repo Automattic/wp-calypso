@@ -143,12 +143,12 @@ const getTierBenefits = ( translate: ( key: string ) => string ): Benefit[] => [
 		availableTiers: [ 'pro-agency-partner', 'premier-partner' ],
 	},
 	{
-		title: translate( 'Free products (coming soon)' ),
+		title: translate( 'Free products' ),
 		description: translate(
 			'Free agency site on WordPress.com or Pressable. Premier partners receive a complimentary three-month Parse.ly trial, and free WooCommerce and Jetpack extensions.'
 		),
 		features: [],
-		isComingSoon: false,
+		isComingSoon: true,
 		availableTiers: [ 'premier-partner' ],
 	},
 ];
