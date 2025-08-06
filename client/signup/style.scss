@@ -66,7 +66,7 @@ body.is-section-signup {
 
 		.card.logged-out-form {
 			box-shadow: none;
-    		background-color: initial;
+			background-color: initial;
 			padding: 0;
 			.form-fieldset {
 				margin-bottom: 0;
@@ -78,7 +78,7 @@ body.is-section-signup {
 			padding-top: 0;
 			padding-bottom: 0;
 			box-shadow: none;
-    		background-color: initial;
+			background-color: initial;
 		}
 
 		.auth-form__separator {
@@ -93,11 +93,11 @@ body.is-section-signup {
 			&::before,
 			&::after {
 				position: absolute;
-    			border-inline-start: 0;
-    			border-block-start: 1px solid #e6e6e6;
-    			inset-block-start: 50%;
-    			inset-inline-start: 0;
-    			width: 42%;
+				border-inline-start: 0;
+				border-block-start: 1px solid #e6e6e6;
+				inset-block-start: 50%;
+				inset-inline-start: 0;
+				width: 42%;
 			}
 
 			&::after {
