@@ -1,14 +1,17 @@
 import {
 	ExternalLink,
-	Flex,
-	Notice,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
+	__experimentalText as Text,
 	Button,
+	Card,
+	CardBody,
 } from '@wordpress/components';
 import { DataForm, Field } from '@wordpress/dataviews';
-import { __ } from '@wordpress/i18n';
+import { createInterpolateElement } from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
+import Notice from '../../components/notice';
 import type { DomainContactDetails } from './types';
 
 import './contact-form.scss';
@@ -136,50 +139,67 @@ export default function ContactForm( {
 	};
 
 	return (
-		<div className="contact-form">
-			<VStack spacing={ 4 }>
-				<DataForm< DomainContactDetails >
-					data={ formData }
-					fields={ fields }
-					form={ form }
-					onChange={ ( edits: Partial< DomainContactDetails > ) => {
-						setFormData( ( data ) => ( { ...data, ...edits } ) );
-					} }
-				/>
-				<HStack justify="flex-start">
-					<Button variant="primary" type="submit" isBusy={ isSubmitting } disabled={ isSubmitting }>
-						{ __( 'Save' ) }
-					</Button>
-				</HStack>
-			</VStack>
-
-			{ /* Legal Disclaimer */ }
-			<Notice status="info" isDismissible={ false } className="contact-form__legal-notice">
-				<p>
-					{ __( 'By clicking **Save contact info**, you agree to the applicable' ) }{ ' ' }
-					<ExternalLink href="#">{ __( 'Domain Registration Agreement' ) }</ExternalLink>{ ' ' }
-					{ __(
-						'and confirm that the Transferee has agreed in writing to be bound by the same agreement. You authorize the respective registrar to act as your'
-					) }{ ' ' }
-					<ExternalLink href="#">{ __( 'Designated Agent' ) }</ExternalLink>.
-				</p>
+		<VStack spacing={ 10 }>
+			<Notice>
+				<VStack>
+					<Text as="p">{ __( 'Provide accurate contact information' ) }</Text>
+					<Text as="p">
+						{ createInterpolateElement(
+							sprintf(
+								/* translators: %1$s: ICANN acronym */
+								__(
+									'<external>%s</external> requires accurate contact information for registrants. This information will be validated after purchase. Failure to validate your contact information will result in domain suspension.'
+								),
+								'ICANN'
+							),
+							{
+								external: (
+									<Button
+										variant="link"
+										target="_blank"
+										href="https://www.icann.org/resources/pages/contact-verification-2013-05-03-en"
+									>
+										ICANN
+									</Button>
+								),
+							}
+						) }
+					</Text>
+					<Text as="p">
+						{ __( 'Domain privacy service is included for free on applicable domains.' ) }{ ' ' }
+						<ExternalLink href="#">{ __( 'Learn more' ) }</ExternalLink>.
+					</Text>
+				</VStack>
 			</Notice>
 
-			{ /* Cancel Button */ }
-			{ onCancel && (
-				<div className="contact-form__actions">
-					<Flex gap={ 3 } justify="start">
-						<button
-							type="button"
-							className="contact-form__cancel-button"
-							onClick={ onCancel }
-							disabled={ isSubmitting }
-						>
-							{ __( 'Cancel' ) }
-						</button>
-					</Flex>
-				</div>
-			) }
-		</div>
+			<Card>
+				<CardBody>
+					<VStack spacing={ 4 }>
+						<DataForm< DomainContactDetails >
+							data={ formData }
+							fields={ fields }
+							form={ form }
+							onChange={ ( edits: Partial< DomainContactDetails > ) => {
+								setFormData( ( data ) => ( { ...data, ...edits } ) );
+							} }
+						/>
+						<HStack justify="flex-start" spacing={ 2 }>
+							<Button
+								onClick={ () => handleSubmit( formData ) }
+								variant="primary"
+								type="submit"
+								isBusy={ isSubmitting }
+								disabled={ isSubmitting }
+							>
+								{ __( 'Save' ) }
+							</Button>
+							<Button variant="secondary" onClick={ onCancel }>
+								{ __( 'Cancel' ) }
+							</Button>
+						</HStack>
+					</VStack>
+				</CardBody>
+			</Card>
+		</VStack>
 	);
 }
