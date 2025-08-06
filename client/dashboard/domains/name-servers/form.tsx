@@ -2,7 +2,6 @@
 import { CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS } from '@automattic/urls';
 import {
 	Button,
-	Notice,
 	ToggleControl,
 	__experimentalText as Text,
 	__experimentalView as View,
@@ -11,6 +10,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
+import Notice from '../../components/notice';
 import { NameServerInput, validateField } from './form-input';
 import {
 	NameServerField,
@@ -162,18 +162,10 @@ export default function NameServersForm( {
 				} }
 			/>
 			{ showUpsellNudge && <UpsellNudge domainName={ domainName } /> }
-			{ queryError && (
-				<Notice status="error" isDismissible={ false }>
-					{ queryError }
-				</Notice>
-			) }
+			{ queryError && <Notice variant="error">{ queryError }</Notice> }
 			{ ! queryError && (
 				<>
-					{ mutationError && (
-						<Notice status="warning" isDismissible={ false }>
-							{ mutationError }
-						</Notice>
-					) }
+					{ mutationError && <Notice variant="warning">{ mutationError }</Notice> }
 					{ ! useWpcomNameservers && (
 						<Text>
 							{ createInterpolateElement(
