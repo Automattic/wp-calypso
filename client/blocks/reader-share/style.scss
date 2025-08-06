@@ -151,11 +151,6 @@
 	.site-selector {
 		height: auto;
 		max-height: 220px;
-		// The long-content-fade mixin applied further below fades to --color-surface, but for
-		// the highlighted item we need to ensure that matches the background.
-		.site.is-highlighted {
-			--color-surface: var(--color-sidebar-submenu-background);
-		}
 	}
 
 	&.is-top .popover__arrow::before,
