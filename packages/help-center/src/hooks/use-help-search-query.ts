@@ -43,17 +43,19 @@ const fetchArticlesAPI = async (
 	// Record TrainTracks render events
 	searchResultResponse?.forEach( ( source: Source, index: number ) => {
 		if ( source.railcar ) {
-			recordTracksEvent( 'calypso_help_center_search_traintracks_render', {
-				fetch_algo: source?.railcar?.fetch_algo,
-				ui_algo: 'default',
-				railcar: source?.railcar?.railcar,
-				fetch_position: source?.railcar?.fetch_position,
-				fetch_query: source?.railcar?.fetch_query,
-				fetch_lang: source?.railcar?.fetch_lang,
-				ui_position: index,
-				rec_blog_id: source?.railcar?.rec_blog_id,
-				rec_post_id: source?.railcar?.rec_post_id,
-				session_id: source?.railcar?.session_id,
+			Promise.resolve().then( () => {
+				recordTracksEvent( 'calypso_help_center_search_traintracks_render', {
+					fetch_algo: source?.railcar?.fetch_algo,
+					ui_algo: 'default',
+					railcar: source?.railcar?.railcar,
+					fetch_position: source?.railcar?.fetch_position,
+					fetch_query: source?.railcar?.fetch_query,
+					fetch_lang: source?.railcar?.fetch_lang,
+					ui_position: index,
+					rec_blog_id: source?.railcar?.rec_blog_id,
+					rec_post_id: source?.railcar?.rec_post_id,
+					session_id: source?.railcar?.session_id,
+				} );
 			} );
 		}
 	} );
