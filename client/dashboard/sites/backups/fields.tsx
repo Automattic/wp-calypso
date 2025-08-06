@@ -1,7 +1,20 @@
+import { Icon } from '@wordpress/components';
 import { dateI18n } from '@wordpress/date';
 import { __ } from '@wordpress/i18n';
+import { cloud, globe, image } from '@wordpress/icons';
 import type { ActivityLogEntry } from '../../data/types';
 import type { Field } from '@wordpress/dataviews';
+
+function getIcon( item: ActivityLogEntry ) {
+	switch ( item.name ) {
+		case 'attachment__uploaded':
+			return image;
+		case 'plugin__updated':
+			return globe;
+		default:
+			return cloud;
+	}
+}
 
 export function getFields(): Field< ActivityLogEntry >[] {
 	return [
@@ -22,6 +35,8 @@ export function getFields(): Field< ActivityLogEntry >[] {
 			getValue: ( { item } ) => `${ item.summary }: ${ item.content.text }`,
 			render: ( { item } ) => (
 				<>
+					<Icon icon={ getIcon( item ) } />
+					&nbsp;
 					<strong>{ item.summary }</strong>: { item.content.text }
 				</>
 			),
