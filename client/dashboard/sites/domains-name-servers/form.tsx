@@ -1,3 +1,5 @@
+// eslint-disable-next-line no-restricted-imports
+import { CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS } from '@automattic/urls';
 import {
 	Button,
 	ToggleControl,
@@ -5,6 +7,7 @@ import {
 	__experimentalView as View,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
 import { NameServerInput, validateField } from './form-input';
@@ -136,7 +139,23 @@ export default function NameServersForm( { nameservers = [], onSubmit }: Props )
 					setNameServerFields( newFields );
 				} }
 			/>
-			<Text>Look up the name servers for popular hosts.</Text>
+			{ ! useWpcomNameservers && (
+				<Text>
+					{ createInterpolateElement(
+						/* translators: <link> will be replaced with an anchor tag to open the support article in a new tab */
+						__( '<link>Look up</link> the name servers for popular hosts.' ),
+						{
+							link: (
+								<a
+									href={ CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS }
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
+						}
+					) }
+				</Text>
+			) }
 			{ Array.from(
 				{ length: MAX_NAMESERVER_LENGTH },
 				( _, index ) =>
