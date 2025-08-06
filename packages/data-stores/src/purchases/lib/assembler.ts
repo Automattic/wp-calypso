@@ -4,7 +4,6 @@ import type { PurchasePriceTier, Purchase, RawPurchase, RawPurchaseCreditCard } 
 export function createPurchaseObject( purchase: RawPurchase | RawPurchaseCreditCard ): Purchase {
 	const object: Purchase = {
 		id: Number( purchase.ID ),
-		active: Boolean( purchase.active ),
 		amount: Number( purchase.amount ),
 		attachedToPurchaseId: Number( purchase.attached_to_purchase_id ),
 		autoRenewCouponCode: purchase.auto_renew_coupon_code,
