@@ -122,17 +122,14 @@ export default function DomainsCard( {
 	const { data: sitePlan } = useQuery( siteCurrentPlanQuery( site.ID ) );
 	const { data: siteDomains } = useQuery( siteDomainsQuery( site.ID ) );
 	const filteredSiteDomains = useMemo( () => {
-		if ( ! siteDomains || ! siteDomains.find( ( domain ) => domain.is_wpcom_staging_domain ) ) {
-			return siteDomains;
+		// If the site has *.wpcomstaging.com domain, exclude *.wordpress.com
+		if ( siteDomains && siteDomains.find( ( domain ) => domain.is_wpcom_staging_domain ) ) {
+			return siteDomains.filter(
+				( domain ) => ! domain.wpcom_domain || domain.is_wpcom_staging_domain
+			);
 		}
 
-		return siteDomains.filter( ( domain ) => {
-			if ( domain.wpcom_domain ) {
-				return domain.is_wpcom_staging_domain;
-			}
-
-			return true;
-		} );
+		return siteDomains;
 	}, [ siteDomains ] );
 
 	if ( site.is_wpcom_staging_site ) {
