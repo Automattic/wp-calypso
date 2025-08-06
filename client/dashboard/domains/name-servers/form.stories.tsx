@@ -61,7 +61,7 @@ export const WithUpsellNudge: Story = {
 	},
 };
 
-export const Loading: Story = {
+export const IsBusy: Story = {
 	args: {
 		domainName: 'example.com',
 		serviceName: 'WordPress.com',

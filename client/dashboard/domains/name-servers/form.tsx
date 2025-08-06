@@ -141,6 +141,7 @@ export default function NameServersForm( {
 					serviceName
 				) }
 				checked={ useWpcomNameservers }
+				disabled={ isBusy }
 				onChange={ () => {
 					const willUseWpcom = ! useWpcomNameservers;
 					const newFields = willUseWpcom
@@ -189,7 +190,7 @@ export default function NameServersForm( {
 									key={ index }
 									index={ index }
 									field={ nameServerFields[ index ] }
-									disabled={ useWpcomNameservers }
+									disabled={ useWpcomNameservers || isBusy }
 									onChange={ handleNameServerChange }
 									onBlur={ handleNameServerBlur }
 								/>
