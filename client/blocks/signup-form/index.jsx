@@ -955,20 +955,10 @@ class SignupForm extends Component {
 	}
 
 	footerLink() {
-		const { isWoo, isBlazePro } = this.props;
+		const { isWoo } = this.props;
 
 		if ( isWoo ) {
 			return null;
-		}
-
-		if ( isBlazePro ) {
-			return (
-				<p className="signup-form__login-link">
-					{ this.props.translate( 'Already have an account? {{link}}Log in here{{/link}}.', {
-						components: { link: <a href={ this.getLoginLink() } /> },
-					} ) }
-				</p>
-			);
 		}
 
 		return null;
@@ -1067,7 +1057,7 @@ class SignupForm extends Component {
 			);
 		}
 
-		const isUnifiedCreateAccount = this.props.isWoo || this.props.isA4A;
+		const isUnifiedCreateAccount = this.props.isWoo || this.props.isA4A || this.props.isBlazePro;
 		const isGravatar = this.props.isGravatar;
 		const emailErrorMessage = this.getErrorMessagesWithLogin( 'email' );
 		const showSeparator =

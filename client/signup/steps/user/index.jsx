@@ -538,11 +538,7 @@ export class UserStep extends Component {
 		}
 
 		if ( isBlazeProOAuth2Client( oauth2Client ) ) {
-			return translate( 'Welcome to %(clientTitle)s', {
-				args: { clientTitle: oauth2Client.title },
-				comment:
-					"'clientTitle' is the name of the app that uses WordPress.com Connect (e.g. 'Akismet' or 'VaultPress')",
-			} );
+			return translate( 'Sign up to Blaze Pro with WordPress.com' );
 		}
 
 		if ( isPartnerPortalOAuth2Client( oauth2Client ) ) {
@@ -591,23 +587,20 @@ export class UserStep extends Component {
 	}
 
 	renderSignupForm() {
-		const { oauth2Client, isWCCOM, isWoo, isUnifiedCreateAccount, isA4A } = this.props;
+		const { oauth2Client, isWCCOM, isWoo, isUnifiedCreateAccount, isA4A, isBlazePro } = this.props;
 		const isPasswordless =
 			isMobile() ||
 			this.props.isPasswordless ||
 			isNewsletterFlow( this.props?.queryObject?.variationName ) ||
 			isWoo ||
-			isA4A;
+			isA4A ||
+			isBlazePro;
 		let socialService;
 		let socialServiceResponse;
 		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
 
 		if ( isWCCOM || isUnifiedCreateAccount ) {
 			isSocialSignupEnabled = true;
-		}
-
-		if ( isBlazeProOAuth2Client( oauth2Client ) ) {
-			isSocialSignupEnabled = false;
 		}
 
 		const hashObject = this.props.initialContext && this.props.initialContext.hash;
@@ -757,7 +750,8 @@ const ConnectedUser = connect(
 		const oauth2Client = getCurrentOAuth2Client( state );
 		const isWoo = getIsWoo( state );
 		const isA4A = isA4AOAuth2Client( oauth2Client );
-		const isUnifiedCreateAccount = isWoo || isA4A;
+		const isBlazePro = getIsBlazePro( state );
+		const isUnifiedCreateAccount = isWoo || isA4A || isBlazePro;
 
 		return {
 			oauth2Client: oauth2Client,
@@ -766,7 +760,7 @@ const ConnectedUser = connect(
 			isWCCOM: getIsWCCOM( state ),
 			isWoo,
 			isWooJPC: isWooJPCFlow( state ),
-			isBlazePro: getIsBlazePro( state ),
+			isBlazePro,
 			from: get( getCurrentQueryArguments( state ), 'from' ),
 			userLoggedIn: isUserLoggedIn( state ),
 			isOnboardingAffiliateFlow: getIsOnboardingAffiliateFlow( state ),
