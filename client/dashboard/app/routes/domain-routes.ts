@@ -176,7 +176,7 @@ export const domainDnssecRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../domains/domains-dnssec' ).then( ( d ) =>
+	import( '../../domains/overview-dnssec' ).then( ( d ) =>
 		createLazyRoute( 'domain-dnssec' )( {
 			component: d.default,
 		} )
