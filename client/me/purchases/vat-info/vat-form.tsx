@@ -51,25 +51,27 @@ function VatIdControl( { data, field, onChange }: VatFormControlProps ) {
 	const { getValue, id, isDisabled, isVatAlreadySet, canUserEdit, label, taxName } = field;
 	const { country } = data;
 
-	const vatIdHelp = translate(
-		/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-		'To change your %(taxName)s ID, {{contactSupportLink}}please contact support{{/contactSupportLink}}.',
-		{
-			args: { taxName: taxName ?? translate( 'VAT', { textOnly: true } ) },
-			components: {
-				contactSupportLink: (
-					<a
-						target="_blank"
-						href={ CALYPSO_CONTACT }
-						rel="noreferrer"
-						onClick={ () => {
-							dispatch( recordTracksEvent( 'calypso_vat_details_support_click' ) );
-						} }
-					/>
-				),
-			},
-		}
-	);
+	const vatIdHelp =
+		! canUserEdit &&
+		translate(
+			/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+			'To change your %(taxName)s ID, {{contactSupportLink}}please contact support{{/contactSupportLink}}.',
+			{
+				args: { taxName: taxName ?? translate( 'VAT', { textOnly: true } ) },
+				components: {
+					contactSupportLink: (
+						<a
+							target="_blank"
+							href={ CALYPSO_CONTACT }
+							rel="noreferrer"
+							onClick={ () => {
+								dispatch( recordTracksEvent( 'calypso_vat_details_support_click' ) );
+							} }
+						/>
+					),
+				},
+			}
+		);
 
 	return (
 		<InputControl
