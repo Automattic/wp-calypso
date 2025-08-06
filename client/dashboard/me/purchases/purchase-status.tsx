@@ -3,13 +3,13 @@ import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useLocale } from '../../app/locale';
+import { SubscriptionBillPeriod } from '../../data/constants';
 import {
 	formatDate,
 	isWithinLast,
 	isWithinNext,
 	getRelativeTimeString,
 } from '../../utils/datetime';
-import { SubscriptionBillPeriod } from './constants';
 import {
 	isTemporarySitePurchase,
 	isA4ATemporarySitePurchase,
@@ -22,7 +22,7 @@ import {
 	isAkismetFreeProduct,
 	creditCardHasAlreadyExpired,
 	creditCardExpiresBeforeSubscription,
-} from './util';
+} from '../../utils/purchase';
 import type { Purchase } from '../../data/purchase';
 
 export function PurchaseStatus( {

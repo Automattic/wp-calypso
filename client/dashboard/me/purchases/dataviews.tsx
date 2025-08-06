@@ -10,15 +10,15 @@ import jetpackIcon from 'calypso/assets/images/icons/jetpack-icon.svg';
 import passportIcon from 'calypso/assets/images/icons/passport-icon.svg';
 import { useAuth } from '../../app/auth';
 import SiteIcon from '../../sites/site-icon';
-import { PurchasePaymentMethod } from './purchase-payment-method';
-import { PurchaseProduct } from './purchase-product';
-import { PurchaseStatus } from './purchase-status';
 import {
 	isRenewing,
 	isTransferredOwnership,
 	isAkismetTemporarySitePurchase,
 	isMarketplaceTemporarySitePurchase,
-} from './util';
+} from '../../utils/purchase';
+import { PurchasePaymentMethod } from './purchase-payment-method';
+import { PurchaseProduct } from './purchase-product';
+import { PurchaseStatus } from './purchase-status';
 import type { StoredPaymentMethod } from '../../data/me-payment-methods';
 import type { Purchase } from '../../data/purchase';
 import type { Site } from '../../data/site';

@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { isTemporarySitePurchase, isA4ATemporarySitePurchase } from './util';
+import { isTemporarySitePurchase, isA4ATemporarySitePurchase } from '../../utils/purchase';
 import type { Purchase } from '../../data/purchase';
 
 function purchaseType( purchase: Purchase ): string | null {

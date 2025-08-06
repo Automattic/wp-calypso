@@ -1,6 +1,6 @@
-import { isWithinLast, isWithinNext, getDateFromCreditCardExpiry } from '../../utils/datetime';
-import { SubscriptionBillPeriod, AkismetPlans } from './constants';
-import type { Purchase } from '../../data/purchase';
+import { SubscriptionBillPeriod, AkismetPlans } from '../data/constants';
+import { isWithinLast, isWithinNext, getDateFromCreditCardExpiry } from './datetime';
+import type { Purchase } from '../data/purchase';
 
 export function isTemporarySitePurchase( purchase: Purchase ): boolean {
 	const { domain } = purchase;

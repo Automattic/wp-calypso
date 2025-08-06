@@ -9,6 +9,7 @@ import { transferredPurchasesQuery } from '../../app/queries/me-transferred-purc
 import { sitesQuery } from '../../app/queries/sites';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { isTransferredOwnership } from '../../utils/purchase';
 import {
 	purchasesDataView,
 	adjustViewFieldsForWidth,
@@ -16,7 +17,6 @@ import {
 	getItemId,
 	getPurchaseUrl,
 } from './dataviews';
-import { isTransferredOwnership } from './util';
 import type { Purchase } from '../../data/purchase';
 
 export default function PurchasesList() {
