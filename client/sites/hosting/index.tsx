@@ -8,7 +8,7 @@ import {
 } from 'calypso/controller';
 import {
 	hostingConfiguration,
-	redirectToServerSettingsIfDuplicatedView,
+	redirectToSettingsIfDuplicatedView,
 } from 'calypso/hosting/overview/controller';
 import { handleHostingPanelRedirect } from 'calypso/hosting/server-settings/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
@@ -39,7 +39,7 @@ export default function () {
 		// @ts-ignore
 		redirectIfCurrentUserCannot( 'manage_options' ),
 		redirectToHostingFeaturesIfNotAtomic,
-		redirectToServerSettingsIfDuplicatedView,
+		redirectToSettingsIfDuplicatedView,
 		handleHostingPanelRedirect,
 		hostingConfiguration,
 		siteDashboard( HOSTING_CONFIG ),
