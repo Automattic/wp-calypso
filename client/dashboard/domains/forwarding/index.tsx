@@ -69,6 +69,26 @@ function DomainForwarding() {
 					return `${ protocol }${ item.target_host }${ targetPath }`;
 				},
 			},
+			{
+				id: 'forward_paths',
+				label: __( 'Path Forwarding' ),
+				enableHiding: true,
+				enableSorting: true,
+				enableGlobalSearch: false,
+				getValue: ( { item }: { item: DomainForwardingObject } ) => {
+					return item.forward_paths ? __( 'Yes' ) : __( 'No' );
+				},
+			},
+			{
+				id: 'is_permanent',
+				label: __( 'Redirect Type' ),
+				enableHiding: true,
+				enableSorting: true,
+				enableGlobalSearch: false,
+				getValue: ( { item }: { item: DomainForwardingObject } ) => {
+					return item.is_permanent ? __( 'Permanent (301)' ) : __( 'Temporary (307)' );
+				},
+			},
 		],
 		[]
 	);
@@ -106,7 +126,7 @@ function DomainForwarding() {
 					<DataViews< DomainForwardingObject >
 						data={ filteredData || [] }
 						fields={ fields }
-						onChangeView={ ( view: View ) => setView( view ) }
+						onChangeView={ ( view: View ) => setView( view as ForwardingView ) }
 						view={ view }
 						search
 						paginationInfo={ paginationInfo }
