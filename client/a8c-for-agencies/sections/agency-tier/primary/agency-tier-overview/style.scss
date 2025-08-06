@@ -7,6 +7,8 @@ $dark-blue: #022836;
 $light-blue: #5ab7e8;
 $dark-green: #104e30;
 $light-green: #53dc81;
+$dark-golden-beige: #d8a45f;
+$light-golden-beige: #f2d6b0;
 
 .agency-tier-overview {
 	.hosting-dashboard-layout__header-actions {
@@ -24,26 +26,28 @@ $light-green: #53dc81;
 
 	@include break-wide {
 		grid-template-columns: 2fr 1fr;
+		align-items: stretch;
 	}
 }
 
 .agency-tier-overview__top-content-left {
 	.agency-tier-overview__current-tier-container {
 		display: flex;
+		height: 100%;
 
 		@include break-medium {
-			height: 180px;
+			min-height: 180px;
 		}
 
 		@include break-xlarge {
-			height: 220px;
+			min-height: 220px;
 			background-color: var(--color-neutral-0);
 			border-radius: 8px; /* stylelint-disable-line scales/radii */
 			border: 1px solid var(--color-gray-5);
 		}
 
 		@include break-wide {
-			height: 230px;
+			min-height: 230px;
 		}
 	}
 
@@ -170,6 +174,40 @@ $light-green: #53dc81;
 
 			&::before {
 				background: url(calypso/assets/images/a8c-for-agencies/agency-tier/pro-agency-partner-logo.svg) no-repeat center/contain;
+			}
+		}
+
+		&.strategic-agency-partner {
+			background: $dark-golden-beige;
+
+			&::before {
+				background: url(calypso/assets/images/a8c-for-agencies/agency-tier/strategic-agency-partner-logo.svg) no-repeat center/contain;
+			}
+
+			&::after {
+				content: "";
+				position: absolute;
+				bottom: 24px;
+				left: 24px;
+				width: 80px;
+				height: 32px;
+				background: url(calypso/assets/images/a8c-for-agencies/agency-tier/strategic-agency-partner-vip-logo.svg) no-repeat center/contain;
+				z-index: 2;
+
+				@include break-large {
+					width: 100px;
+					height: 40px;
+				}
+
+				@include break-xlarge {
+					bottom: 32px;
+					left: 32px;
+				}
+			}
+
+			.agency-tier-overview__current-agency-tier-label,
+			.agency-tier-overview__current-agency-tier-title {
+				color: var(--color-text-black);
 			}
 		}
 
@@ -371,7 +409,16 @@ $light-green: #53dc81;
 						fill: var(--color-text-white);
 						stroke: $light-green;
 					}
+				}
 
+				&.strategic-agency-partner {
+					span {
+						background: $dark-golden-beige
+					}
+					svg {
+						fill: var(--color-text-white);
+						stroke: $light-golden-beige;
+					}
 				}
 			}
 		}

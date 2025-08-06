@@ -28,8 +28,6 @@ export const domainsRoute = createRoute( {
 	)
 );
 
-// TODO: Add all domains domain management routes here or figure out how to do that with the definitions below
-
 // Site domains route
 export const siteDomainsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
@@ -42,152 +40,159 @@ export const siteDomainsRoute = createRoute( {
 	)
 );
 
-// Site domain management route
-export const siteDomainRoute = createRoute( {
-	getParentRoute: () => siteRoute,
+// Domain management root route
+export const domainRoute = createRoute( {
+	getParentRoute: () => rootRoute,
 	path: 'domains/$domainName',
+	// TODO: add the submenu nav components here
+} );
+
+export const domainOverviewRoute = createRoute( {
+	getParentRoute: () => domainRoute,
+	path: '/',
 } ).lazy( () =>
 	import( '../../sites/domains/placeholder' ).then( ( d ) =>
-		createLazyRoute( 'site-domains' )( {
+		createLazyRoute( 'domain' )( {
 			component: d.default,
 		} )
 	)
 );
 
-// Site domain DNS routes
-export const siteDomainDnsRoute = createRoute( {
-	getParentRoute: () => siteDomainRoute,
+// Domain DNS routes
+export const domainDnsRoute = createRoute( {
+	getParentRoute: () => domainRoute,
 	path: 'dns',
 } ).lazy( () =>
 	import( '../../sites/domains/placeholder' ).then( ( d ) =>
-		createLazyRoute( 'site-domain-dns' )( {
+		createLazyRoute( 'domain-dns' )( {
 			component: d.default,
 		} )
 	)
 );
 
-export const siteDomainDnsAddRoute = createRoute( {
-	getParentRoute: () => siteDomainRoute,
+export const domainDnsAddRoute = createRoute( {
+	getParentRoute: () => domainRoute,
 	path: 'dns/add',
 } ).lazy( () =>
 	import( '../../sites/domains/placeholder' ).then( ( d ) =>
-		createLazyRoute( 'site-domain-dns-add' )( {
+		createLazyRoute( 'domain-dns-add' )( {
 			component: d.default,
 		} )
 	)
 );
 
-export const siteDomainDnsEditRoute = createRoute( {
-	getParentRoute: () => siteDomainRoute,
+export const domainDnsEditRoute = createRoute( {
+	getParentRoute: () => domainRoute,
 	path: 'dns/edit',
 } ).lazy( () =>
 	import( '../../sites/domains/placeholder' ).then( ( d ) =>
-		createLazyRoute( 'site-domain-dns-edit' )( {
+		createLazyRoute( 'domain-dns-edit' )( {
 			component: d.default,
 		} )
 	)
 );
 
-// Site domain forwarding routes
-export const siteDomainForwardingRoute = createRoute( {
-	getParentRoute: () => siteDomainRoute,
+// Domain forwarding routes
+export const domainForwardingRoute = createRoute( {
+	getParentRoute: () => domainRoute,
 	path: 'forwarding',
 } ).lazy( () =>
 	import( '../../sites/domains/placeholder' ).then( ( d ) =>
-		createLazyRoute( 'site-domain-forwarding' )( {
+		createLazyRoute( 'domain-forwarding' )( {
 			component: d.default,
 		} )
 	)
 );
 
-export const siteDomainForwardingAddRoute = createRoute( {
-	getParentRoute: () => siteDomainRoute,
+export const domainForwardingAddRoute = createRoute( {
+	getParentRoute: () => domainRoute,
 	path: 'forwarding/add',
 } ).lazy( () =>
 	import( '../../sites/domains/placeholder' ).then( ( d ) =>
-		createLazyRoute( 'site-domain-forwarding-add' )( {
+		createLazyRoute( 'domain-forwarding-add' )( {
 			component: d.default,
 		} )
 	)
 );
 
-export const siteDomainForwardingEditRoute = createRoute( {
-	getParentRoute: () => siteDomainRoute,
+export const domainForwardingEditRoute = createRoute( {
+	getParentRoute: () => domainRoute,
 	path: 'forwarding/edit',
 } ).lazy( () =>
 	import( '../../sites/domains/placeholder' ).then( ( d ) =>
-		createLazyRoute( 'site-domain-forwarding-edit' )( {
+		createLazyRoute( 'domain-forwarding-edit' )( {
 			component: d.default,
 		} )
 	)
 );
 
-export const siteDomainContactInfoRoute = createRoute( {
-	getParentRoute: () => siteDomainRoute,
-	path: 'contact_info',
+export const domainContactInfoRoute = createRoute( {
+	getParentRoute: () => domainRoute,
+	path: 'contact-info',
 } ).lazy( () =>
 	import( '../../sites/domains/placeholder' ).then( ( d ) =>
-		createLazyRoute( 'site-domain-contact-info' )( {
+		createLazyRoute( 'domain-contact-info' )( {
 			component: d.default,
 		} )
 	)
 );
 
-export const siteDomainNameServersRoute = createRoute( {
-	getParentRoute: () => siteDomainRoute,
-	path: 'name_servers',
+export const domainNameServersRoute = createRoute( {
+	getParentRoute: () => domainRoute,
+	path: 'name-servers',
 } ).lazy( () =>
 	import( '../../sites/domains/placeholder' ).then( ( d ) =>
-		createLazyRoute( 'site-domain-name-servers' )( {
+		createLazyRoute( 'domain-name-servers' )( {
 			component: d.default,
 		} )
 	)
 );
 
-export const siteDomainGlueRecordsRoute = createRoute( {
-	getParentRoute: () => siteDomainRoute,
-	path: 'glue_records',
+export const domainGlueRecordsRoute = createRoute( {
+	getParentRoute: () => domainRoute,
+	path: 'glue-records',
 } ).lazy( () =>
 	import( '../../sites/domains/placeholder' ).then( ( d ) =>
-		createLazyRoute( 'site-domain-glue-records' )( {
+		createLazyRoute( 'domain-glue-records' )( {
 			component: d.default,
 		} )
 	)
 );
 
-export const siteDomainDnssecRoute = createRoute( {
-	getParentRoute: () => siteDomainRoute,
+export const domainDnssecRoute = createRoute( {
+	getParentRoute: () => domainRoute,
 	path: 'dnssec',
 } ).lazy( () =>
 	import( '../../sites/domains/placeholder' ).then( ( d ) =>
-		createLazyRoute( 'site-domain-dnssec' )( {
+		createLazyRoute( 'domain-dnssec' )( {
 			component: d.default,
 		} )
 	)
 );
 
-export const siteDomainTransferRoute = createRoute( {
-	getParentRoute: () => siteDomainRoute,
+export const domainTransferRoute = createRoute( {
+	getParentRoute: () => domainRoute,
 	path: 'transfer',
 } ).lazy( () =>
 	import( '../../sites/domains/placeholder' ).then( ( d ) =>
-		createLazyRoute( 'site-domain-transfer' )( {
+		createLazyRoute( 'domain-transfer' )( {
 			component: d.default,
 		} )
 	)
 );
 
-// Export all site domain child routes for easy inclusion
-export const siteDomainChildRoutes: AnyRoute[] = [
-	siteDomainDnsRoute,
-	siteDomainDnsAddRoute,
-	siteDomainDnsEditRoute,
-	siteDomainForwardingRoute,
-	siteDomainForwardingAddRoute,
-	siteDomainForwardingEditRoute,
-	siteDomainContactInfoRoute,
-	siteDomainNameServersRoute,
-	siteDomainGlueRecordsRoute,
-	siteDomainDnssecRoute,
-	siteDomainTransferRoute,
+// Export all domain child routes for easy inclusion
+export const domainChildRoutes: AnyRoute[] = [
+	domainOverviewRoute,
+	domainDnsRoute,
+	domainDnsAddRoute,
+	domainDnsEditRoute,
+	domainForwardingRoute,
+	domainForwardingAddRoute,
+	domainForwardingEditRoute,
+	domainContactInfoRoute,
+	domainNameServersRoute,
+	domainGlueRecordsRoute,
+	domainDnssecRoute,
+	domainTransferRoute,
 ];

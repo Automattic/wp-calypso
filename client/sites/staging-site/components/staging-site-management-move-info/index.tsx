@@ -126,7 +126,7 @@ const StagingSiteManagementMoveInfo: FunctionComponent = () => {
 
 	return (
 		<VStack spacing={ 10 }>
-			<div>
+			<VStack spacing={ 2 }>
 				<Heading level={ 1 } weight={ 500 } size={ 20 }>
 					{ __( 'Staging site management has moved' ) }
 				</Heading>
@@ -137,7 +137,7 @@ const StagingSiteManagementMoveInfo: FunctionComponent = () => {
 					<br />
 					{ __( 'Find everything you need in the new locations highlighted below.' ) }
 				</Text>
-			</div>
+			</VStack>
 			<Grid
 				alignment="topLeft"
 				columns={ isMobile ? 1 : 2 }

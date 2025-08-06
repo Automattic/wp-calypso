@@ -47,6 +47,7 @@ import clsx from 'clsx';
 import { localize, useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import { useSelector } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
@@ -973,6 +974,14 @@ const PlansFeaturesMain = ( {
 					</>
 				) }
 			</div>
+			{ config.isEnabled( 'summer-special-2025' ) && (
+				<AsyncLoad
+					require="calypso/blocks/summer-special-banner"
+					placeholder={ null }
+					visiblePlans={ gridPlansForFeaturesGrid }
+					isFixed
+				/>
+			) }
 			{ isPlansGridReady && renderSiblingWhenLoaded?.() }
 		</>
 	);
