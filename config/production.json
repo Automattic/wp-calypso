@@ -39,7 +39,6 @@
 		"current-site/domain-warning": false,
 		"current-site/notice": true,
 		"dashboard/v2/backport/site-overview": false,
-		"dashboard/v2/backport/site-settings": true,
 		"dashboard/v2/backport/sites-list": true,
 		"dashboard/v2/security-settings": false,
 		"domains/ui-redesign": true,
@@ -175,5 +174,5 @@
 	"boom_analytics_key": "production",
 	"theme_color": "#1D2327",
 	"hotjar_enabled": true,
-	"survicate_enabled": false
+	"survicate_enabled": true
 }
