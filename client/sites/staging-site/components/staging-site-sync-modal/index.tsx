@@ -21,7 +21,7 @@ import {
 	useEffect,
 } from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
-import { error, chevronRight, chevronLeft } from '@wordpress/icons';
+import { chevronRight, chevronLeft } from '@wordpress/icons';
 import clsx from 'clsx';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import InlineSupportLink from 'calypso/dashboard/components/inline-support-link';
@@ -477,18 +477,6 @@ export default function SyncModal( {
 							checked={ shouldDisableGranularSync || sqlNode?.checkState === 'checked' }
 							onChange={ handleDatabaseCheckboxChange }
 						/>
-						<Tooltip
-							text={ __(
-								'Selecting this option will overwrite the site database, including any posts, pages, products, or orders.'
-							) }
-						>
-							<span>
-								<Icon
-									icon={ error }
-									style={ { fill: 'var(--studio-orange-50)', display: 'flex' } }
-								/>
-							</span>
-						</Tooltip>
 					</HStack>
 					{ showWooCommerceWarning && (
 						<VStack style={ { paddingBottom: '52px' } }>
