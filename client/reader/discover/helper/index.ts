@@ -38,10 +38,13 @@ export function getSelectedTabTitle( selectedTab: string ) {
 	if ( selectedTab === FIRST_POSTS_TAB ) {
 		return 'fresh';
 	}
+	if ( selectedTab === FRESHLY_PRESSED_TAB ) {
+		return 'Freshly Pressed';
+	}
 	return decodeURIComponent( selectedTab );
 }
 
-export function getDefaultSelectedTab() {
+export function getDefaultTab() {
 	return isEnabled( 'reader/discover/freshly-pressed' ) ? FRESHLY_PRESSED_TAB : RECOMMENDED_TAB;
 }
 
