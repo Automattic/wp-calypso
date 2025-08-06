@@ -1,5 +1,5 @@
 import { mutationOptions } from '@tanstack/react-query';
-import { updateDNSSEC } from '../../data/domains-dnssec';
+import { updateDNSSEC } from '../../data/domain-dnssec';
 import { queryClient } from '../query-client';
 import { siteDomainsQuery } from './site-domains';
 
