@@ -27,11 +27,9 @@ import type { Purchase } from '../../data/purchase';
 
 export function PurchaseStatus( {
 	purchase,
-	isJetpack,
 	isDisconnectedSite,
 }: {
 	purchase: Purchase;
-	isJetpack?: boolean;
 	isDisconnectedSite?: boolean;
 } ) {
 	const locale = useLocale();
@@ -80,6 +78,7 @@ export function PurchaseStatus( {
 	const isKnownTemporarySiteProductType =
 		isTemporarySitePurchase( purchase ) &&
 		temporarySitePurchaseProductTypes.includes( purchase.product_type );
+	const isJetpack = purchase.is_jetpack_plan_or_product;
 
 	if ( isDisconnectedSite && ! isA4APurchase && ! isKnownTemporarySiteProductType && isJetpack ) {
 		return <span>{ __( 'Disconnected from WordPress.com' ) }</span>;
