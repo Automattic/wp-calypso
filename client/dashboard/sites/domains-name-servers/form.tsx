@@ -1,14 +1,20 @@
 import {
 	Button,
-	CheckboxControl,
+	ToggleControl,
+	__experimentalText as Text,
 	__experimentalView as View,
 	__experimentalVStack as VStack,
-	__experimentalText as Text,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
 import { NameServerInput, validateField } from './form-input';
-import { NameServerField, MIN_NAMESERVER_LENGTH, MAX_NAMESERVER_LENGTH } from './types';
+import {
+	NameServerField,
+	MIN_NAMESERVER_LENGTH,
+	MAX_NAMESERVER_LENGTH,
+	WPCOM_DEFAULT_NAMESERVERS,
+} from './types';
+import { areAllWpcomNameServers } from './utils';
 
 interface Props {
 	nameservers?: string[];
@@ -16,23 +22,36 @@ interface Props {
 }
 
 export default function NameServersForm( { nameservers = [], onSubmit }: Props ) {
-	const [ useCustomNameServers, setUseCustomNameServers ] = useState( nameservers.length > 0 );
 	const [ nameServerFields, setNameServerFields ] = useState< NameServerField[] >(
-		Array( MAX_NAMESERVER_LENGTH )
-			.fill( null )
-			.map( ( _, index ) => ( {
-				value: nameservers[ index ] || '',
-				error: '',
-				touched: false,
-			} ) )
+		Array.from( { length: MAX_NAMESERVER_LENGTH }, ( _, index ) => ( {
+			value: nameservers[ index ] || '',
+			error: '',
+			touched: false,
+		} ) )
+	);
+	const [ useWpcomNameservers, setUseWpcomNameservers ] = useState(
+		areAllWpcomNameServers( nameservers )
 	);
 
-	const isFormValid = useMemo( () => {
-		// If custom nameservers are disabled, form is valid
-		if ( ! useCustomNameServers ) {
+	const hasFieldsChanged = useMemo( () => {
+		// Get current non-empty values
+		const currentValues = nameServerFields
+			.filter( ( ns ) => ns.value !== '' )
+			.map( ( ns ) => ns.value )
+			.sort();
+
+		// Get initial values
+		const initialValues = [ ...nameservers ].sort();
+
+		// Compare arrays
+		if ( currentValues.length !== initialValues.length ) {
 			return true;
 		}
 
+		return currentValues.some( ( value, index ) => value !== initialValues[ index ] );
+	}, [ nameServerFields, nameservers ] );
+
+	const isFormValid = useMemo( () => {
 		// Check if there are any errors
 		if ( nameServerFields.some( ( ns ) => ns.error !== '' ) ) {
 			return false;
@@ -41,7 +60,11 @@ export default function NameServersForm( { nameservers = [], onSubmit }: Props )
 		// Check if minimum required nameservers are provided
 		const filledNameServers = nameServerFields.filter( ( ns ) => ns.value !== '' ).length;
 		return filledNameServers >= MIN_NAMESERVER_LENGTH;
-	}, [ useCustomNameServers, nameServerFields ] );
+	}, [ nameServerFields ] );
+
+	const canSubmit = useMemo( () => {
+		return isFormValid && hasFieldsChanged;
+	}, [ isFormValid, hasFieldsChanged ] );
 
 	const handleNameServerChange = useCallback( ( index: number, value: string ) => {
 		setNameServerFields( ( current ) => {
@@ -72,6 +95,12 @@ export default function NameServersForm( { nameservers = [], onSubmit }: Props )
 
 	const shouldShowNextInput = useCallback(
 		( index: number ) => {
+			// When using WP.com nameservers, only show fields that have values
+			if ( useWpcomNameservers ) {
+				return nameServerFields[ index ]?.value !== '';
+			}
+
+			// For custom nameservers
 			if ( index >= MAX_NAMESERVER_LENGTH ) {
 				return false;
 			} else if ( index < MIN_NAMESERVER_LENGTH ) {
@@ -79,47 +108,55 @@ export default function NameServersForm( { nameservers = [], onSubmit }: Props )
 			}
 
 			// Show next if previous has value
-			return nameServerFields[ index - 1 ].value !== '';
+			return nameServerFields[ index - 1 ]?.value !== '';
 		},
-		[ nameServerFields ]
+		[ nameServerFields, useWpcomNameservers ]
 	);
 
 	return (
 		<VStack spacing={ 4 }>
-			<Text>
-				<CheckboxControl
-					label={ __( 'Use custom name servers' ) }
-					checked={ useCustomNameServers }
-					onChange={ () => {
-						setUseCustomNameServers( ( current ) => ! current );
-						setNameServerFields(
-							Array( MAX_NAMESERVER_LENGTH )
-								.fill( null )
-								.map( () => ( { value: '', error: '', touched: false } ) )
-						);
-					} }
-				/>
-			</Text>
-			{ useCustomNameServers &&
-				Array.from(
-					{ length: MAX_NAMESERVER_LENGTH },
-					( _, index ) =>
-						shouldShowNextInput( index ) && (
-							<NameServerInput
-								key={ index }
-								index={ index }
-								field={ nameServerFields[ index ] }
-								disabled={ ! useCustomNameServers }
-								onChange={ handleNameServerChange }
-								onBlur={ handleNameServerBlur }
-							/>
-						)
-				) }
+			<ToggleControl
+				label={ __( 'Use WordPress.com name servers' ) }
+				checked={ useWpcomNameservers }
+				onChange={ () => {
+					const willUseWpcom = ! useWpcomNameservers;
+					const newFields = willUseWpcom
+						? WPCOM_DEFAULT_NAMESERVERS.map( ( ns ) => ( {
+								value: ns.toUpperCase(),
+								error: '',
+								touched: false,
+						  } ) )
+						: Array.from( { length: MAX_NAMESERVER_LENGTH }, () => ( {
+								value: '',
+								error: '',
+								touched: false,
+						  } ) );
+
+					setUseWpcomNameservers( willUseWpcom );
+					setNameServerFields( newFields );
+				} }
+			/>
+			<Text>Look up the name servers for popular hosts.</Text>
+			{ Array.from(
+				{ length: MAX_NAMESERVER_LENGTH },
+				( _, index ) =>
+					nameServerFields[ index ] &&
+					shouldShowNextInput( index ) && (
+						<NameServerInput
+							key={ index }
+							index={ index }
+							field={ nameServerFields[ index ] }
+							disabled={ useWpcomNameservers }
+							onChange={ handleNameServerChange }
+							onBlur={ handleNameServerBlur }
+						/>
+					)
+			) }
 			<View>
 				<Button
 					__next40pxDefaultSize
 					variant="primary"
-					disabled={ ! isFormValid }
+					disabled={ ! canSubmit }
 					onClick={ () =>
 						onSubmit(
 							nameServerFields.filter( ( ns ) => ns.value !== '' ).map( ( ns ) => ns.value )
