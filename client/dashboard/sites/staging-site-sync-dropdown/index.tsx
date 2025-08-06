@@ -13,6 +13,9 @@ import {
 } from '../../utils/site-staging-site';
 import type { StagingSiteSyncDirection } from '../../data/types';
 
+// TODO: We need to rewrite the modal, as it’s not compatible with v2.
+// Both the Modal and especially the FileBrowser rely heavily on Redux state
+// which makes integration problematic in the current setup.
 const StagingSiteSyncModal = lazy(
 	() =>
 		import(
