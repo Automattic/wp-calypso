@@ -70,7 +70,7 @@ async function AppBoot() {
 	setStore( store );
 	setupContextMiddleware( store, queryClient );
 
-	// Set selected  ID & current user
+	// Set selected site ID & current user
 	store.dispatch( setSelectedSiteId( config( 'blog_id' ) ) );
 	store.dispatch( setCurrentUser( user ) );
 

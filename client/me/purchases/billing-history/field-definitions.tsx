@@ -30,7 +30,6 @@ function renderServiceNameDescription(
 	);
 	const shouldShowDomain =
 		transaction.domain && ! isSitelessDomain && ! isInternalA4AAgencyDomain( transaction.domain );
-
 	return (
 		<div>
 			<strong>{ plan }</strong>
