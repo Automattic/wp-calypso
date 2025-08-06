@@ -466,7 +466,7 @@ describe( '<SiteVisibilitySettings>', () => {
 			await waitFor( () => {
 				expect( screen.getByRole( 'radio', { name: 'Public' } ) ).toBeChecked();
 				expect(
-					screen.getByText( /This domain is intended for temporary use/ )
+					screen.getByText( /Staging sites are intended for testing purposes/ )
 				).toBeInTheDocument();
 			} );
 

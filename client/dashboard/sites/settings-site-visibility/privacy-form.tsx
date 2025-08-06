@@ -196,18 +196,8 @@ export function PrivacyForm( {
 								isPrimaryDomainStaging &&
 								( site.is_wpcom_staging_site ? (
 									<Notice variant="warning" density="medium">
-										{ createInterpolateElement(
-											__(
-												/* translators: <domain /> is a placeholder for the site's domain name. */
-												'Your site’s current primary domain is <domain />. This domain is intended for temporary use and will not be indexed by search engines.'
-											),
-											{
-												domain: (
-													<strong style={ { overflowWrap: 'anywhere' } }>
-														{ primaryDomain?.domain }
-													</strong>
-												),
-											}
+										{ __(
+											'Staging sites are intended for testing purposes and will not be indexed by search engines.'
 										) }
 									</Notice>
 								) : (
