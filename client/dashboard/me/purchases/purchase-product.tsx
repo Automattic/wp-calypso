@@ -2,9 +2,9 @@ import { Link } from '@tanstack/react-router';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { isTemporarySitePurchase, isA4ATemporarySitePurchase } from './util';
-import type { ActiveSubscription } from '../../data/me-active-subscriptions';
+import type { Purchase } from '../../data/me-purchases';
 
-function purchaseType( purchase: ActiveSubscription ): string | null {
+function purchaseType( purchase: Purchase ): string | null {
 	if ( 'theme' === purchase.product_type ) {
 		return __( 'Premium Theme' );
 	}
@@ -76,12 +76,12 @@ function purchaseType( purchase: ActiveSubscription ): string | null {
 	return null;
 }
 
-export function ActiveSubscriptionDescription( {
+export function PurchaseProduct( {
 	purchase,
 	site,
 	getUrlForSiteLevelView,
 }: {
-	purchase: ActiveSubscription;
+	purchase: Purchase;
 	site?: { name: string; slug: string; ID: number };
 	getUrlForSiteLevelView: ( siteId: number ) => string;
 } ) {

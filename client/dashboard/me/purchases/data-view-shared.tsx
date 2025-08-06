@@ -11,17 +11,17 @@ import jetpackIcon from 'calypso/assets/images/icons/jetpack-icon.svg';
 import passportIcon from 'calypso/assets/images/icons/passport-icon.svg';
 import { useAuth } from '../../app/auth';
 import SiteIcon from '../../sites/site-icon';
-import { ActiveSubscriptionDescription } from './active-subscription-description';
-import { ActiveSubscriptionExpiry } from './active-subscription-expiry';
-import { ActiveSubscriptionPaymentMethod } from './active-subscription-payment-method';
+import { PurchasePaymentMethod } from './purchase-payment-method';
+import { PurchaseProduct } from './purchase-product';
+import { PurchaseStatus } from './purchase-status';
 import {
 	isRenewing,
 	isTransferredOwnership,
 	isAkismetTemporarySitePurchase,
 	isMarketplaceTemporarySitePurchase,
 } from './util';
-import type { ActiveSubscription } from '../../data/me-active-subscriptions';
 import type { StoredPaymentMethod } from '../../data/me-payment-methods';
+import type { Purchase } from '../../data/me-purchases';
 import type { Site } from '../../data/site';
 
 const purchasesWideFields = [ 'status', 'payment-method' ];
@@ -47,7 +47,7 @@ export const purchasesDataView: View = {
 	layout: {},
 };
 
-function getDisplayName( item: ActiveSubscription ): string {
+function getDisplayName( item: Purchase ): string {
 	if (
 		item.is_jetpack_ai_product &&
 		item.renewal_price_tier_usage_quantity &&
@@ -90,7 +90,7 @@ function getDisplayName( item: ActiveSubscription ): string {
 	return item.product_name;
 }
 
-export function getPurchaseUrl( item: ActiveSubscription ) {
+export function getPurchaseUrl( item: Purchase ) {
 	const siteUrl = item.site_slug || item.domain;
 	const subscriptionId = item.ID;
 	if ( ! siteUrl ) {
@@ -106,7 +106,7 @@ export function getPurchaseUrl( item: ActiveSubscription ) {
 	return `/me/purchases/${ siteUrl }/${ subscriptionId }`;
 }
 
-function getAddPaymentMethodUrlFor( purchase: ActiveSubscription ): string {
+function getAddPaymentMethodUrlFor( purchase: Purchase ): string {
 	return `/me/purchases/${ purchase.site_slug ?? 'unknown' }/${ purchase.ID }/payment-method/add`;
 }
 
@@ -124,7 +124,7 @@ function InfoPopover( { children }: { children: ReactNode } ) {
 	);
 }
 
-function PurchaseItemSiteIcon( { site, purchase }: { site?: Site; purchase: ActiveSubscription } ) {
+function PurchaseItemSiteIcon( { site, purchase }: { site?: Site; purchase: Purchase } ) {
 	const size = 36;
 
 	if (
@@ -204,7 +204,7 @@ function OwnerInfo( {
 	purchase,
 	isTransferredOwnership = false,
 }: {
-	purchase: ActiveSubscription;
+	purchase: Purchase;
 	isTransferredOwnership?: boolean;
 } ) {
 	const { user } = useAuth();
@@ -248,8 +248,8 @@ export function getFields( {
 }: {
 	sites: Site[];
 	paymentMethods: Array< StoredPaymentMethod >;
-	transferredPurchases: Array< ActiveSubscription >;
-} ): Fields< ActiveSubscription > {
+	transferredPurchases: Array< Purchase >;
+} ): Fields< Purchase > {
 	const backupPaymentMethods = paymentMethods.filter(
 		( paymentMethod ) => paymentMethod.is_backup === true
 	);
@@ -272,12 +272,12 @@ export function getFields( {
 						filterBy: { operators: [ 'isAny' ] },
 				  }
 				: { filterBy: false } ),
-			getValue: ( { item }: { item: ActiveSubscription } ) => {
+			getValue: ( { item }: { item: Purchase } ) => {
 				// getValue must return a string because the DataViews search feature calls `trim()` on it.
 				return String( item.blog_id );
 			},
 			// Render the site icon
-			render: ( { item }: { item: ActiveSubscription } ) => {
+			render: ( { item }: { item: Purchase } ) => {
 				const site = sites.find( ( site ) => String( site.ID ) === item.blog_id );
 				return (
 					<a title={ __( 'Manage purchase' ) } href={ getPurchaseUrl( item ) }>
@@ -294,7 +294,7 @@ export function getFields( {
 			enableSorting: true,
 			enableHiding: false,
 			filterBy: false,
-			getValue: ( { item }: { item: ActiveSubscription } ) => {
+			getValue: ( { item }: { item: Purchase } ) => {
 				const site = sites.find( ( site ) => String( site.ID ) === item.blog_id );
 				// Render a bunch of things to make this easily searchable.
 				return (
@@ -307,7 +307,7 @@ export function getFields( {
 					( site?.URL ?? '' )
 				);
 			},
-			render: ( { item }: { item: ActiveSubscription } ) => {
+			render: ( { item }: { item: Purchase } ) => {
 				const isTransferred = isTransferredOwnership( item.ID, transferredPurchases );
 				return (
 					<div>
@@ -331,15 +331,15 @@ export function getFields( {
 			enableSorting: true,
 			enableHiding: false,
 			filterBy: false,
-			getValue: ( { item }: { item: ActiveSubscription } ) => {
+			getValue: ( { item }: { item: Purchase } ) => {
 				// Render a bunch of things to make this easily searchable.
 				const site = sites.find( ( site ) => String( site.ID ) === item.blog_id );
 				return item.blogname + ' ' + ( item.site_slug || item.domain ) + ' ' + ( site?.URL ?? '' );
 			},
-			render: ( { item }: { item: ActiveSubscription } ) => {
+			render: ( { item }: { item: Purchase } ) => {
 				const site = sites.find( ( site ) => String( site.ID ) === item.blog_id );
 				return (
-					<ActiveSubscriptionDescription
+					<PurchaseProduct
 						purchase={ item }
 						site={ site }
 						getUrlForSiteLevelView={ getUrlForSiteLevelView }
@@ -437,7 +437,7 @@ export function getFields( {
 			enableSorting: true,
 			enableHiding: false,
 			filterBy: false,
-			getValue: ( { item }: { item: ActiveSubscription } ) => {
+			getValue: ( { item }: { item: Purchase } ) => {
 				if ( item.expiry_status === 'expired' ) {
 					// Prefix expired items with a z so they sort to the end of the list.
 					return 'zzz ' + item.expiry_status + ' ' + item.expiry_date;
@@ -445,11 +445,11 @@ export function getFields( {
 				// Include date in value to sort similar expiries together.
 				return item.expiry_date + ' ' + item.expiry_status;
 			},
-			render: ( { item }: { item: ActiveSubscription } ) => {
+			render: ( { item }: { item: Purchase } ) => {
 				const site = sites.find( ( site ) => String( site.ID ) === item.blog_id );
 				return (
 					<div>
-						<ActiveSubscriptionExpiry purchase={ item } isDisconnectedSite={ ! site } />
+						<PurchaseStatus purchase={ item } isDisconnectedSite={ ! site } />
 					</div>
 				);
 			},
@@ -462,7 +462,7 @@ export function getFields( {
 			enableSorting: true,
 			enableHiding: false,
 			filterBy: false,
-			getValue: ( { item }: { item: ActiveSubscription } ) => {
+			getValue: ( { item }: { item: Purchase } ) => {
 				// Allows sorting by card number or payment partner (eg: `type === 'paypal'`).
 				return item.expiry_status === 'expired'
 					? // Do not return card number for expired purchases because it
@@ -471,7 +471,7 @@ export function getFields( {
 					  'expired'
 					: item.payment_details ?? item.payment_card_type ?? 'no-payment-method';
 			},
-			render: ( { item }: { item: ActiveSubscription } ) => {
+			render: ( { item }: { item: Purchase } ) => {
 				let isBackupMethodAvailable = false;
 				if ( backupPaymentMethods ) {
 					const backupPaymentMethodsWithoutCurrentPurchase = backupPaymentMethods.filter(
@@ -483,7 +483,7 @@ export function getFields( {
 				const site = sites.find( ( site ) => String( site.ID ) === item.blog_id );
 				return (
 					<div>
-						<ActiveSubscriptionPaymentMethod
+						<PurchasePaymentMethod
 							purchase={ item }
 							isDisconnectedSite={ ! site }
 							getAddPaymentMethodUrlFor={ getAddPaymentMethodUrlFor }
@@ -496,7 +496,7 @@ export function getFields( {
 	];
 }
 
-export const getItemId = ( item: ActiveSubscription ) => {
+export const getItemId = ( item: Purchase ) => {
 	return item.ID.toString();
 };
 

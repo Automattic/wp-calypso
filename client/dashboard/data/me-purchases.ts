@@ -66,9 +66,8 @@ export interface RawPurchasePriceTierEntry extends PriceTierEntry {
 	maximum_price_monthly_display: never;
 }
 
-export interface ActiveSubscription {
+export interface Purchase {
 	ID: number | string;
-	active: boolean;
 	amount: number | string;
 	attached_to_purchase_id: number | string;
 	auto_renew_coupon_code: string | null;
@@ -172,15 +171,13 @@ export interface ActiveSubscription {
 	payment_expiry: string | undefined;
 }
 
-export async function fetchActiveSubscriptionsForUser( options?: {
-	siteId?: string | number;
-} ): Promise< ActiveSubscription[] > {
-	if ( options?.siteId ) {
-		return await wpcom.req.get( {
-			path: `/sites/${ encodeURIComponent( options.siteId ) }/purchases`,
-			apiVersion: '1.1',
-		} );
-	}
+export async function fetchPurchasesForSite( siteId: string | number ): Promise< Purchase[] > {
+	return await wpcom.req.get( {
+		path: `/sites/${ encodeURIComponent( siteId ) }/purchases`,
+		apiVersion: '1.1',
+	} );
+}
+export async function fetchPurchasesForUser(): Promise< Purchase[] > {
 	return await wpcom.req.get( {
 		path: '/me/purchases',
 		apiVersion: '1.1',

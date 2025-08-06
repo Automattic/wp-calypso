@@ -2,7 +2,7 @@ import { __experimentalVStack as VStack, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { backup, payment, receipt, institution } from '@wordpress/icons';
 import {
-	activeSubscriptionsRoute,
+	purchasesRoute,
 	billingHistoryRoute,
 	paymentMethodsRoute,
 	taxDetailsRoute,
@@ -19,7 +19,7 @@ function Billing() {
 					title={ __( 'Active subscriptions' ) }
 					description={ __( 'View your current plan and usage.' ) }
 					decoration={ <Icon icon={ receipt } /> }
-					to={ activeSubscriptionsRoute.to }
+					to={ purchasesRoute.to }
 				/>
 				<RouterLinkSummaryButton
 					title={ __( 'Billing history' ) }

@@ -587,23 +587,23 @@ const billingHistoryRoute = createRoute( {
 	)
 );
 
-const activeSubscriptionsRoute = createRoute( {
+const purchasesRoute = createRoute( {
 	getParentRoute: () => meRoute,
-	path: 'billing/active-subscriptions',
+	path: 'billing/purchases',
 } ).lazy( () =>
-	import( '../me/active-subscriptions' ).then( ( d ) =>
-		createLazyRoute( 'active-subscriptions' )( {
+	import( '../me/purchases' ).then( ( d ) =>
+		createLazyRoute( 'purchases' )( {
 			component: d.default,
 		} )
 	)
 );
 
-const activeSubscriptionsSiteRoute = createRoute( {
+const purchasesSiteRoute = createRoute( {
 	getParentRoute: () => meRoute,
-	path: 'billing/active-subscriptions/$siteSlug',
+	path: 'billing/purchases/$siteSlug',
 } ).lazy( () =>
-	import( '../me/active-subscriptions/site' ).then( ( d ) =>
-		createLazyRoute( 'active-subscriptions-site' )( {
+	import( '../me/purchases/site' ).then( ( d ) =>
+		createLazyRoute( 'purchases-site' )( {
 			component: d.default,
 		} )
 	)
@@ -746,8 +746,8 @@ const createRouteTree = ( config: AppConfig ) => {
 				profileRoute,
 				billingRoute,
 				billingHistoryRoute,
-				activeSubscriptionsRoute,
-				activeSubscriptionsSiteRoute,
+				purchasesRoute,
+				purchasesSiteRoute,
 				paymentMethodsRoute,
 				taxDetailsRoute,
 				securityRoute,
@@ -825,8 +825,8 @@ export {
 	profileRoute,
 	billingRoute,
 	billingHistoryRoute,
-	activeSubscriptionsRoute,
-	activeSubscriptionsSiteRoute,
+	purchasesRoute,
+	purchasesSiteRoute,
 	paymentMethodsRoute,
 	taxDetailsRoute,
 	securityRoute,

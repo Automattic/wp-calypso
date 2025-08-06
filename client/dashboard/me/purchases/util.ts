@@ -1,6 +1,6 @@
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { SubscriptionBillPeriod, AkismetPlans } from './constants';
-import type { ActiveSubscription } from '../../data/me-active-subscriptions';
+import type { Purchase } from '../../data/me-active-subscriptions';
 
 const msPerHour = 60 * 60 * 1000;
 const msPerDay = 24 * msPerHour;
@@ -148,7 +148,7 @@ export function getRelativeTimeString( date: Date ): string {
 	}
 }
 
-export function isTemporarySitePurchase( purchase: ActiveSubscription ): boolean {
+export function isTemporarySitePurchase( purchase: Purchase ): boolean {
 	const { domain } = purchase;
 	// Currently only Jetpack, Akismet, A4A, and some Marketplace products allow siteless/userless(license-based) purchases which require a temporary
 	// site(s) to work. This function may need to be updated in the future as additional products types
@@ -158,29 +158,29 @@ export function isTemporarySitePurchase( purchase: ActiveSubscription ): boolean
 	);
 }
 
-export function isRenewing( purchase: ActiveSubscription ): boolean {
+export function isRenewing( purchase: Purchase ): boolean {
 	return [ 'active', 'auto-renewing' ].includes( purchase.expiry_status );
 }
 
-export function isExpiring( purchase: ActiveSubscription ) {
+export function isExpiring( purchase: Purchase ) {
 	return [ 'manual-renew', 'expiring' ].includes( purchase.expiry_status );
 }
 
-export function isExpired( purchase: ActiveSubscription ) {
+export function isExpired( purchase: Purchase ) {
 	return 'expired' === purchase.expiry_status;
 }
 
-export function isIncludedWithPlan( purchase: ActiveSubscription ) {
+export function isIncludedWithPlan( purchase: Purchase ) {
 	return 'included' === purchase.expiry_status;
 }
 
-export function isOneTimePurchase( purchase: ActiveSubscription ) {
+export function isOneTimePurchase( purchase: Purchase ) {
 	return 'one-time-purchase' === purchase.expiry_status;
 }
 
 // AKISMET_ENTERPRISE_YEARLY has a $0 plan for nonprofits, so we need to check the amount
 // to determine if it's free or not.
-export function isAkismetFreeProduct( product: ActiveSubscription ): boolean {
+export function isAkismetFreeProduct( product: Purchase ): boolean {
 	return (
 		AkismetPlans.PRODUCT_AKISMET_FREE === product.product_slug ||
 		( AkismetPlans.PRODUCT_AKISMET_ENTERPRISE_YEARLY === product.product_slug &&
@@ -195,7 +195,7 @@ export function isAkismetFreeProduct( product: ActiveSubscription ): boolean {
  * "soon" are not displayed with error styling to a user who just purchased a
  * monthly subscription (which by definition will expire relatively soon).
  */
-export function isRecentMonthlyPurchase( purchase: ActiveSubscription ): boolean {
+export function isRecentMonthlyPurchase( purchase: Purchase ): boolean {
 	return Boolean(
 		purchase.subscribed_date &&
 			isWithinLast( new Date( purchase.subscribed_date ), 7, 'days' ) &&
@@ -210,7 +210,7 @@ export function isRecentMonthlyPurchase( purchase: ActiveSubscription ): boolean
  * subscriptions (i.e., one billing period) and within three months of
  * expiration for everything else.
  */
-export function isCloseToExpiration( purchase: ActiveSubscription ): boolean {
+export function isCloseToExpiration( purchase: Purchase ): boolean {
 	if ( ! purchase.expiry_date ) {
 		return false;
 	}
@@ -249,7 +249,7 @@ function getDateFromCreditCardExpiry( cardExpiryDate: string ): Date {
 	return new Date( fullYear, monthNumber, 0 );
 }
 
-export function creditCardExpiresBeforeSubscription( purchase: ActiveSubscription ): boolean {
+export function creditCardExpiresBeforeSubscription( purchase: Purchase ): boolean {
 	if ( 'credit_card' !== purchase.payment_type || ! purchase.payment_expiry ) {
 		return false;
 	}
@@ -271,7 +271,7 @@ export function creditCardExpiresBeforeSubscription( purchase: ActiveSubscriptio
 	return false;
 }
 
-export function creditCardHasAlreadyExpired( purchase: ActiveSubscription ): boolean {
+export function creditCardHasAlreadyExpired( purchase: Purchase ): boolean {
 	if ( 'credit_card' !== purchase.payment_type || ! purchase.payment_expiry ) {
 		return false;
 	}
@@ -290,31 +290,31 @@ export function creditCardHasAlreadyExpired( purchase: ActiveSubscription ): boo
 	return false;
 }
 
-export function isAutoRenewEnabled( purchase: ActiveSubscription ): boolean {
+export function isAutoRenewEnabled( purchase: Purchase ): boolean {
 	return parseInt( purchase.auto_renew ?? '' ) === 1;
 }
 
 export function isTransferredOwnership(
 	purchaseId: string | number,
-	transferredOwnershipPurchases: ActiveSubscription[]
+	transferredOwnershipPurchases: Purchase[]
 ): boolean {
 	return transferredOwnershipPurchases.some(
 		( purchase ) => String( purchase.ID ) === String( purchaseId )
 	);
 }
 
-export function isA4ATemporarySitePurchase( purchase: ActiveSubscription ): boolean {
+export function isA4ATemporarySitePurchase( purchase: Purchase ): boolean {
 	return isTemporarySitePurchase( purchase ) && purchase.meta === 'is-a4a';
 }
 
-export function isAkismetTemporarySitePurchase( purchase: ActiveSubscription ): boolean {
+export function isAkismetTemporarySitePurchase( purchase: Purchase ): boolean {
 	return isTemporarySitePurchase( purchase ) && purchase.product_type === 'akismet';
 }
 
-export function isMarketplaceTemporarySitePurchase( purchase: ActiveSubscription ): boolean {
+export function isMarketplaceTemporarySitePurchase( purchase: Purchase ): boolean {
 	return isTemporarySitePurchase( purchase ) && purchase.product_type === 'saas_plugin';
 }
 
-export function isJetpackTemporarySitePurchase( purchase: ActiveSubscription ): boolean {
+export function isJetpackTemporarySitePurchase( purchase: Purchase ): boolean {
 	return isTemporarySitePurchase( purchase ) && purchase.product_type === 'jetpack';
 }

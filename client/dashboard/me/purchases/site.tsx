@@ -1,12 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import { useResizeObserver } from '@wordpress/compose';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
-import { activeSubscriptionsQuery } from '../../app/queries/me-active-subscriptions';
 import { paymentMethodsQuery } from '../../app/queries/me-payment-methods';
+import { purchasesQuery } from '../../app/queries/me-purchases';
 import { transferredPurchasesQuery } from '../../app/queries/me-transferred-purchases';
 import { sitesQuery } from '../../app/queries/sites';
+import { purchasesSiteRoute } from '../../app/router';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import {
@@ -14,19 +15,17 @@ import {
 	adjustViewFieldsForWidth,
 	getFields,
 	getItemId,
-	getPurchaseUrl,
 } from './data-view-shared';
-import { isTransferredOwnership } from './util';
-import type { ActiveSubscription } from '../../data/me-active-subscriptions';
 
-export default function ActiveSubscriptions() {
-	const { data: activeSubscriptions, isLoading: isLoadingPurchases } = useQuery(
-		activeSubscriptionsQuery( {} )
+export default function PurchasesForSite() {
+	const { siteSlug: siteSlugOrId } = purchasesSiteRoute.useParams();
+	const { data: purchases, isLoading: isLoadingPurchases } = useQuery(
+		purchasesQuery( { siteId: siteSlugOrId } )
 	);
 	const { data: transferredPurchases, isLoading: isLoadingTransferredPurchases } = useQuery(
 		transferredPurchasesQuery( {} )
 	);
-	const { data: sites } = useQuery( sitesQuery() );
+	const { data: sites, isLoading: isLoadingSites } = useQuery( sitesQuery() );
 	const [ currentView, setView ] = useState( purchasesDataView );
 	const ref = useResizeObserver( ( entries ) => {
 		const firstEntry = entries[ 0 ];
@@ -34,6 +33,11 @@ export default function ActiveSubscriptions() {
 			adjustViewFieldsForWidth( firstEntry.contentRect.width, setView );
 		}
 	} );
+	const site = siteSlugOrId
+		? sites?.find(
+				( site ) => site.slug === siteSlugOrId || String( site.ID ) === String( siteSlugOrId )
+		  )
+		: undefined;
 	const { data: paymentMethods } = useQuery( paymentMethodsQuery( {} ) );
 	const purchasesDataFields = getFields( {
 		sites: sites ?? [],
@@ -41,45 +45,41 @@ export default function ActiveSubscriptions() {
 		transferredPurchases: transferredPurchases ?? [],
 	} );
 	const allSubscriptions = useMemo( () => {
-		return [ ...( activeSubscriptions ?? [] ), ...( transferredPurchases ?? [] ) ];
-	}, [ activeSubscriptions, transferredPurchases ] );
+		return [ ...( purchases ?? [] ), ...( transferredPurchases ?? [] ) ];
+	}, [ purchases, transferredPurchases ] );
 	const { data: filteredSubscriptions, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( allSubscriptions, currentView, purchasesDataFields );
 	}, [ allSubscriptions, currentView, purchasesDataFields ] );
 
-	const actions = useMemo(
-		() => [
-			{
-				id: 'manage-purchase',
-				label: __( 'Manage purchase' ),
-				isEligible: ( item: ActiveSubscription ) => {
-					// Hide manage button for transferred ownership purchases
-					const hasTransferredOwnership = isTransferredOwnership(
-						item.ID,
-						transferredPurchases ?? []
-					);
-					return Boolean( item.domain && item.ID ) && ! hasTransferredOwnership;
-				},
-				callback: ( items: ActiveSubscription[] ) => {
-					const item = items[ 0 ];
-					window.location.href = getPurchaseUrl( item );
-				},
-			},
-		],
-		[ transferredPurchases ]
-	);
+	const siteSlug = site?.slug;
+
+	if ( ! siteSlug ) {
+		return null;
+	}
 
 	return (
-		<PageLayout size="large" header={ <PageHeader title={ __( 'Active Subscriptions' ) } /> }>
+		<PageLayout
+			size="large"
+			header={
+				<PageHeader
+					title={
+						// translators: siteSlug is the name of the site
+						sprintf( __( 'Active Subscriptions for %(siteSlug)s' ), { siteSlug } )
+					}
+				/>
+			}
+		>
+			<div>
+				<a href="/v2/me/billing/active-subscriptions">{ __( 'View all active subscriptions' ) }</a>
+			</div>
 			<div ref={ ref }>
 				<DataViews
-					isLoading={ isLoadingPurchases || isLoadingTransferredPurchases }
+					isLoading={ isLoadingPurchases || isLoadingTransferredPurchases || isLoadingSites }
 					data={ filteredSubscriptions ?? [] }
 					fields={ purchasesDataFields }
 					view={ currentView }
 					onChangeView={ setView }
 					defaultLayouts={ { table: {} } }
-					actions={ actions }
 					getItemId={ getItemId }
 					paginationInfo={ paginationInfo }
 				/>

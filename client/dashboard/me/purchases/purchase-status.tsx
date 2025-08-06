@@ -21,14 +21,14 @@ import {
 	creditCardHasAlreadyExpired,
 	creditCardExpiresBeforeSubscription,
 } from './util';
-import type { ActiveSubscription } from '../../data/me-active-subscriptions';
+import type { Purchase } from '../../data/me-purchases';
 
-export function ActiveSubscriptionExpiry( {
+export function PurchaseStatus( {
 	purchase,
 	isJetpack,
 	isDisconnectedSite,
 }: {
-	purchase: ActiveSubscription;
+	purchase: Purchase;
 	isJetpack?: boolean;
 	isDisconnectedSite?: boolean;
 } ) {

@@ -1,16 +1,16 @@
 import { __ } from '@wordpress/i18n';
 import { PaymentMethodImage } from './payment-method-image';
 import { isAutoRenewEnabled, isExpired, isRenewing, isAkismetFreeProduct } from './util';
-import type { ActiveSubscription } from '../../data/me-active-subscriptions';
+import type { Purchase } from '../../data/me-purchases';
 
-export function ActiveSubscriptionPaymentMethod( {
+export function PurchasePaymentMethod( {
 	purchase,
 	isDisconnectedSite,
 	getAddPaymentMethodUrlFor,
 }: {
-	purchase: ActiveSubscription;
+	purchase: Purchase;
 	isDisconnectedSite?: boolean;
-	getAddPaymentMethodUrlFor: ( purchase: ActiveSubscription ) => string;
+	getAddPaymentMethodUrlFor: ( purchase: Purchase ) => string;
 } ) {
 	if ( purchase.expiry_status === 'included' ) {
 		return __( 'Included with Plan' );
