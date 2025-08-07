@@ -120,9 +120,9 @@ export const domainForwardingAddRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'forwarding/add',
 } ).lazy( () =>
-	import( '../../sites/domains/placeholder' ).then( ( d ) =>
+	import( '../../domains/domain-forwarding-form' ).then( ( d ) =>
 		createLazyRoute( 'domain-forwarding-add' )( {
-			component: d.default,
+			component: () => d.default( { isEdit: false } ),
 		} )
 	)
 );
@@ -131,9 +131,9 @@ export const domainForwardingEditRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'forwarding/edit/$forwardingId',
 } ).lazy( () =>
-	import( '../../sites/domains/placeholder' ).then( ( d ) =>
+	import( '../../domains/domain-forwarding-form' ).then( ( d ) =>
 		createLazyRoute( 'domain-forwarding-edit' )( {
-			component: d.default,
+			component: () => d.default( { isEdit: true } ),
 		} )
 	)
 );
