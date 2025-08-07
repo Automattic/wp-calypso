@@ -210,7 +210,7 @@ export default connect( ( state ) => {
 		showButtons: siteId && canManageOptions,
 		showConnections: !! siteId,
 		// Temporary "Marketing > Traffic" menu for existing users that shows a callout informing that the screen has moved to "Jetpack (> Settings) > Traffic".
-		showTraffic: canManageOptions && !! siteId && userId < 269660000,
+		showTraffic: canManageOptions && !! siteId && userId < 269750000,
 		isVip: isVipSite( state, siteId ),
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
