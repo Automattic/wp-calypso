@@ -43,12 +43,7 @@ const AkismetCheckoutThankYou: FunctionComponent< AkismetCheckoutThankYouProps >
 		);
 	};
 
-	const userActivePurchases = useSelector(
-		( state ) =>
-			getUserPurchases( state )?.filter(
-				( purchase ) => purchase.subscriptionStatus === 'active'
-			) ?? []
-	);
+	const userActivePurchases = useSelector( ( state ) => getUserPurchases( state ) ?? [] );
 
 	const { thanksHeadline, thanksMessage } = useMemo( () => {
 		const akismetPurchases = userActivePurchases.filter(

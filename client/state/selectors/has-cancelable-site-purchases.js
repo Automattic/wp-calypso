@@ -17,10 +17,6 @@ export const hasCancelableSitePurchases = ( state, siteId, userId = null ) => {
 	}
 
 	let purchases = getSitePurchases( state, siteId ).filter( ( purchase ) => {
-		if ( purchase.subscriptionStatus !== 'active' ) {
-			return false;
-		}
-
 		if ( purchase.isRefundable ) {
 			return true;
 		}

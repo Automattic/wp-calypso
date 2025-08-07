@@ -9,11 +9,7 @@ export const siteHasCancelablePurchasesQuery = ( siteId: number, userId: number 
 			const cancelables = purchases
 				.filter( ( purchase ) => {
 					// Exclude inactive purchases and legacy premium theme purchases.
-					if (
-						purchase.subscription_status !== 'active' ||
-						purchase.expiry_status === 'expired' ||
-						purchase.product_slug === 'premium_theme'
-					) {
+					if ( purchase.expiry_status === 'expired' || purchase.product_slug === 'premium_theme' ) {
 						return false;
 					}
 

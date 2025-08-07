@@ -25,8 +25,7 @@ const PluginDetailsNotices = ( { selectedSite, plugin, translate } ) => {
 		: false;
 	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
 	const marketplacePluginHasSubscription = !! (
-		plugin.isMarketplaceProduct &&
-		getPluginPurchased( plugin, purchases )?.subscriptionStatus === 'active'
+		plugin.isMarketplaceProduct && Boolean( getPluginPurchased( plugin, purchases ) )
 	);
 
 	if (
