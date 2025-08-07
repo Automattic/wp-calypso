@@ -11,12 +11,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useMemo } from 'react';
 import { siteSetPrimaryDomainMutation } from '../../app/queries/site-domains';
 import { DomainTypes } from '../../data/domains';
-import {
-	isRecentlyRegistered,
-	isDomainRenewable,
-	shouldUpgradeToMakeDomainPrimary,
-	canSetAsPrimary,
-} from '../../utils/domain';
+import { isRecentlyRegistered, isDomainRenewable, canSetAsPrimary } from '../../utils/domain';
 import type { Domain, Site, User } from '../../data/types';
 import type { Action } from '@wordpress/dataviews';
 
@@ -117,10 +112,7 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				isEligible: ( item: Domain ) => {
 					return (
 						!! site &&
-						canSetAsPrimary(
-							item,
-							shouldUpgradeToMakeDomainPrimary( { domain: item, site, user } )
-						) &&
+						canSetAsPrimary( { domain: item, site, user } ) &&
 						! isRecentlyRegistered( item.registrationDate )
 					);
 				},

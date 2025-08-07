@@ -29,7 +29,7 @@ export function isDomainRenewable( domain: Domain ) {
 	);
 }
 
-export const shouldUpgradeToMakeDomainPrimary = ( {
+const shouldUpgradeToMakeDomainPrimary = ( {
 	domain,
 	site,
 	user,
@@ -50,11 +50,23 @@ export const shouldUpgradeToMakeDomainPrimary = ( {
 	);
 };
 
-export function canSetAsPrimary( domain: Domain, shouldUpgradeToMakePrimary: boolean ): boolean {
+export function canSetAsPrimary( {
+	domain,
+	site,
+	user,
+}: {
+	domain: Domain;
+	site: Site;
+	user: User;
+} ): boolean {
 	return (
 		domain.can_set_as_primary &&
 		! domain.primary_domain &&
-		! shouldUpgradeToMakePrimary &&
-		! domain.aftermarket_auction
+		! domain.aftermarket_auction &&
+		! shouldUpgradeToMakeDomainPrimary( {
+			domain,
+			site,
+			user,
+		} )
 	);
 }
