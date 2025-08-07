@@ -4,11 +4,12 @@ import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useState, useMemo } from 'react';
+import { useAuth } from '../../app/auth';
 import { siteDomainsQuery } from '../../app/queries/site-domains';
 import { siteCurrentPlanQuery } from '../../app/queries/site-plans';
 import { CalloutSkeleton } from '../../components/callout-skeleton';
 import { SectionHeader } from '../../components/section-header';
-import { useFields, actions, DEFAULT_VIEW, DEFAULT_LAYOUTS } from '../../domains/dataviews';
+import { useActions, useFields, DEFAULT_VIEW, DEFAULT_LAYOUTS } from '../../domains/dataviews';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import DomainTransferUpsellCard from '../overview-domain-transfer-upsell-card';
@@ -29,10 +30,14 @@ const SiteDomainDataViews = ( {
 	domains: SiteDomain[];
 	type?: DomainsView[ 'type' ];
 } ) => {
+	const { user } = useAuth();
 	const fields = useFields( {
 		site,
 		showPrimaryDomainBadge: type === 'table',
 	} );
+
+	const actions = useActions( { user, site } );
+
 	const [ initialView, setView ] = useState< DomainsView >( {
 		...DEFAULT_VIEW,
 		type,

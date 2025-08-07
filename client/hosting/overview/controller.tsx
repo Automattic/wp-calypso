@@ -35,6 +35,6 @@ export async function hostingConfiguration( context: PageJSContext, next: () => 
 	next();
 }
 
-export async function redirectToServerSettingsIfDuplicatedView( context: PageJSContext ) {
-	return page.redirect( `/sites/settings/server/${ context.params.site_id }` );
+export async function redirectToSettingsIfDuplicatedView( context: PageJSContext ) {
+	return page.redirect( `/sites/${ context.params.site_id }/settings` );
 }

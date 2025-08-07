@@ -1,24 +1,20 @@
-import { useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { ExternalLink, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import filesize from 'filesize';
 import { siteMediaStorageQuery } from '../../app/queries/site-media-storage';
 import { Stat } from '../../components/stat';
+import { getStorageAlertLevel } from '../../utils/site-storage';
 import type { Site } from '../../data/types';
 
 const MINIMUM_DISPLAYED_USAGE = 2.5;
 
-const ALERT_PERCENT = 80;
-
 export default function SiteStorageStat( { site }: { site: Site } ) {
-	const { data: mediaStorage, isLoading: isLoadingMediaStorage } = useQuery(
-		siteMediaStorageQuery( site.ID )
-	);
+	const { data: mediaStorage } = useSuspenseQuery( siteMediaStorageQuery( site.ID ) );
 
-	const storageUsagePercent = ! mediaStorage
-		? 0
-		: Math.round(
-				( ( mediaStorage.storage_used_bytes / mediaStorage.max_storage_bytes ) * 1000 ) / 10
-		  );
+	const storageUsagePercent = Math.round(
+		( ( mediaStorage.storage_used_bytes / mediaStorage.max_storage_bytes ) * 1000 ) / 10
+	);
 
 	// Ensure that the displayed usage is never fully empty to avoid a confusing UI.
 	const progressBarValue = Math.max(
@@ -26,23 +22,29 @@ export default function SiteStorageStat( { site }: { site: Site } ) {
 		Math.min( storageUsagePercent, 100 )
 	);
 
+	const alertLevel = getStorageAlertLevel( mediaStorage );
+
 	let storageWarningColor = undefined;
-	if ( storageUsagePercent > 100 ) {
+	if ( alertLevel === 'exceeded' ) {
 		storageWarningColor = 'alert-red' as const;
-	} else if ( storageUsagePercent > ALERT_PERCENT ) {
+	} else if ( alertLevel === 'warning' ) {
 		storageWarningColor = 'alert-yellow' as const;
 	}
 
 	return (
-		<Stat
-			density="high"
-			strapline={ __( 'Storage' ) }
-			metric={ mediaStorage && filesize( mediaStorage.storage_used_bytes, { round: 0 } ) }
-			description={ mediaStorage && filesize( mediaStorage.max_storage_bytes, { round: 0 } ) }
-			progressValue={ progressBarValue }
-			progressColor={ storageWarningColor }
-			progressLabel={ `${ storageUsagePercent }%` }
-			isLoading={ isLoadingMediaStorage }
-		/>
+		<VStack spacing={ 2 }>
+			<Stat
+				density="high"
+				strapline={ __( 'Storage' ) }
+				metric={ filesize( mediaStorage.storage_used_bytes, { round: 0 } ) }
+				description={ filesize( mediaStorage.max_storage_bytes, { round: 0 } ) }
+				progressValue={ progressBarValue }
+				progressColor={ storageWarningColor }
+				progressLabel={ `${ storageUsagePercent }%` }
+			/>
+			{ alertLevel !== 'none' && (
+				<ExternalLink href={ `/add-ons/${ site.slug }` }>{ __( 'Add more storage' ) }</ExternalLink>
+			) }
+		</VStack>
 	);
 }

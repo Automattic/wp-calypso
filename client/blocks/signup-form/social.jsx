@@ -12,6 +12,7 @@ import {
 	GithubSocialButton,
 	UsernameOrEmailButton,
 } from 'calypso/components/social-buttons';
+import { isA4AOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { isWpccFlow } from 'calypso/signup/is-flow';
 import { recordTracksEvent as recordTracks } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -95,8 +96,11 @@ class SocialSignupForm extends Component {
 			isSocialFirst,
 			flowName,
 			isWoo,
+			isA4A,
 			setCurrentStep,
 		} = this.props;
+
+		const isUnifiedCreateAccount = isWoo || isA4A;
 
 		return (
 			<Card
@@ -131,9 +135,8 @@ class SocialSignupForm extends Component {
 							<UsernameOrEmailButton onClick={ () => setCurrentStep( 'email' ) } />
 						) }
 					</div>
-					{ ! isWoo && ! disableTosText && <SocialToS /> }
+					{ ! isUnifiedCreateAccount && ! disableTosText && <SocialToS /> }
 				</div>
-				{ isWoo && ! disableTosText && <SocialToS /> }
 			</Card>
 		);
 	}
@@ -151,6 +154,7 @@ export default connect(
 			oauth2Client: getCurrentOAuth2Client( state ),
 			isDevAccount: isDevAccount,
 			isWoo: getIsWoo( state ),
+			isA4A: isA4AOAuth2Client( getCurrentOAuth2Client( state ) ),
 		};
 	},
 	{ showErrorNotice: errorNotice }

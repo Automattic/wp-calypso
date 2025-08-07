@@ -5,6 +5,7 @@ import { createRequestCartProduct, useShoppingCart } from '@automattic/shopping-
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
+import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import useProductsById from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-products-by-id';
 import { getClientReferralQueryArgs } from 'calypso/a8c-for-agencies/sections/marketplace/lib/get-client-referral-query-args';
 import { getStripeConfiguration, getRazorpayConfiguration } from 'calypso/lib/store-transactions';
@@ -141,6 +142,11 @@ function ClientCheckoutContent() {
 
 	return (
 		<div className="client-checkout-v2">
+			<div className="client-checkout-v2__top-bar">
+				<div className="client-checkout-v2__top-bar-logo">
+					<A4ALogo full size={ 14 } />
+				</div>
+			</div>
 			<CheckoutMain
 				sitelessCheckoutType="a4a"
 				redirectTo={ window.location.origin + '/client/subscriptions' }

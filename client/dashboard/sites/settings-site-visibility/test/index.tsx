@@ -1,24 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { RouterProvider, createRouter, createRootRoute } from '@tanstack/react-router';
-import { render as testingLibraryRender, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { render } from '../../../test-utils';
 import SiteVisibilitySettings from '../index';
-
-function render( ui: React.ReactElement ) {
-	const queryClient = new QueryClient();
-	const router = createRouter( {
-		routeTree: createRootRoute( { component: () => ui } ),
-	} );
-	return testingLibraryRender(
-		<QueryClientProvider client={ queryClient }>
-			<RouterProvider router={ router } context={ { config: { basePath: '/' } } } />
-		</QueryClientProvider>
-	);
-}
 
 interface TestSiteOptions {
 	blog_public: 0 | 1 | -1;
