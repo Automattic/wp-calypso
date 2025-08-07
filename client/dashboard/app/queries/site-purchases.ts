@@ -1,14 +1,7 @@
 import { queryOptions } from '@tanstack/react-query';
 import { fetchSitePurchases } from '../../data/site-purchases';
 
-/**
- * TODO: standardize on either number (site ID) or string (site slug) for
- * these queries to make sure caching behaves correctly. ID is the most
- * reliable since it will never be affected by custom domains. However,
- * sometimes all we have is the site slug from the URL.
- */
-
-export const siteHasCancelablePurchasesQuery = ( siteId: number | string, userId: number ) =>
+export const siteHasCancelablePurchasesQuery = ( siteId: number, userId: number ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'purchases', 'has-cancelable' ],
 		queryFn: () => fetchSitePurchases( siteId ),
@@ -32,14 +25,14 @@ export const siteHasCancelablePurchasesQuery = ( siteId: number | string, userId
 		},
 	} );
 
-export const sitePurchaseQuery = ( siteId: number | string, purchaseId: number ) =>
+export const sitePurchaseQuery = ( siteId: number, purchaseId: number ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'purchases', purchaseId ],
 		queryFn: () => fetchSitePurchases( siteId ),
 		select: ( purchases ) => purchases.find( ( p ) => parseInt( p.ID ) === purchaseId ),
 	} );
 
-export const sitePurchasesQuery = ( siteId: number | string ) =>
+export const sitePurchasesQuery = ( siteId: number ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'purchases' ],
 		queryFn: () => fetchSitePurchases( siteId ),

@@ -15,13 +15,19 @@ import { purchasesDataView, adjustViewFieldsForWidth, getFields, getItemId } fro
 
 export default function PurchasesForSite() {
 	const { siteSlug: siteSlugOrId } = purchasesSiteRoute.useParams();
-	const { data: purchases, isLoading: isLoadingPurchases } = useQuery(
-		sitePurchasesQuery( siteSlugOrId )
-	);
+	const { data: sites, isLoading: isLoadingSites } = useQuery( sitesQuery() );
+	const site = siteSlugOrId
+		? sites?.find(
+				( site ) => site.slug === siteSlugOrId || String( site.ID ) === String( siteSlugOrId )
+		  )
+		: undefined;
+	const { data: purchases, isLoading: isLoadingPurchases } = useQuery( {
+		...sitePurchasesQuery( site?.ID ),
+		enabled: Boolean( site?.ID ),
+	} );
 	const { data: transferredPurchases, isLoading: isLoadingTransferredPurchases } = useQuery(
 		userTransferredPurchasesQuery()
 	);
-	const { data: sites, isLoading: isLoadingSites } = useQuery( sitesQuery() );
 	const [ currentView, setView ] = useState( purchasesDataView );
 	const ref = useResizeObserver( ( entries ) => {
 		const firstEntry = entries[ 0 ];
@@ -29,11 +35,6 @@ export default function PurchasesForSite() {
 			adjustViewFieldsForWidth( firstEntry.contentRect.width, setView );
 		}
 	} );
-	const site = siteSlugOrId
-		? sites?.find(
-				( site ) => site.slug === siteSlugOrId || String( site.ID ) === String( siteSlugOrId )
-		  )
-		: undefined;
 	const { data: paymentMethods } = useQuery( userPaymentMethodsQuery( {} ) );
 	const purchasesDataFields = getFields( {
 		sites: sites ?? [],
