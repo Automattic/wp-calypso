@@ -10,6 +10,7 @@ export function getFields(): Field< ActivityLogEntry >[] {
 		{
 			id: 'date',
 			label: __( 'Date' ),
+			getValue: ( { item } ) => item.published,
 			render: ( { item } ) => (
 				<>
 					<strong>{ dateI18n( 'F j, Y', item.published ) }</strong>
