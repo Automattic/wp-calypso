@@ -1,5 +1,13 @@
 import { dispatch, useSelect } from '@wordpress/data';
 import { useCallback, useState, useRef } from 'react';
+// eslint-disable-next-line no-restricted-imports
+import type {
+	HelpCenterSelect,
+	HelpCenterDispatch as HelpCenterDispatchObject,
+} from '@automattic/data-stores';
+import type { HelpCenterShowOptions } from '@automattic/data-stores/src/help-center/types'; // eslint-disable-line no-restricted-imports
+
+type HelpCenterDispatch = HelpCenterDispatchObject[ 'dispatch' ];
 
 const HELP_CENTER_STORE = 'automattic/help-center';
 
@@ -7,10 +15,7 @@ export function useHelpCenter() {
 	const loadingPromiseRef = useRef< Promise< unknown > >();
 	const [ isLoading, setIsLoading ] = useState( false );
 	const isShown = useSelect(
-		( select ) =>
-			!! (
-				select( HELP_CENTER_STORE ) as import('@automattic/data-stores').HelpCenterSelect
-			 )?.isHelpCenterShown?.(),
+		( select ) => !! ( select( HELP_CENTER_STORE ) as HelpCenterSelect )?.isHelpCenterShown?.(),
 		[ isLoading ] // We need to re-evaluate this incase a component used the hook before the store was loaded.
 	);
 
@@ -40,16 +45,17 @@ export function useHelpCenter() {
 		async (
 			show: boolean,
 			allowPremiumSupport?: boolean,
-			options?: import('@automattic/data-stores/src/help-center/types').HelpCenterShowOptions,
+			options?: HelpCenterShowOptions,
 			forceClose?: boolean
 		) => {
 			await ensureHelpCenterLoaded();
 
-			return (
-				dispatch(
-					HELP_CENTER_STORE
-				) as import('@automattic/data-stores').HelpCenterDispatch[ 'dispatch' ]
-			 ).setShowHelpCenter( show, allowPremiumSupport, options, forceClose );
+			return ( dispatch( HELP_CENTER_STORE ) as HelpCenterDispatch ).setShowHelpCenter(
+				show,
+				allowPremiumSupport,
+				options,
+				forceClose
+			);
 		},
 		[]
 	);
@@ -57,21 +63,13 @@ export function useHelpCenter() {
 	const setNavigateToRoute = useCallback( async ( route?: string ) => {
 		await ensureHelpCenterLoaded();
 
-		return (
-			dispatch(
-				HELP_CENTER_STORE
-			) as import('@automattic/data-stores').HelpCenterDispatch[ 'dispatch' ]
-		 ).setNavigateToRoute( route );
+		return ( dispatch( HELP_CENTER_STORE ) as HelpCenterDispatch ).setNavigateToRoute( route );
 	}, [] );
 
 	const setSubject = useCallback( async ( subject: string ) => {
 		await ensureHelpCenterLoaded();
 
-		return (
-			dispatch(
-				HELP_CENTER_STORE
-			) as import('@automattic/data-stores').HelpCenterDispatch[ 'dispatch' ]
-		 ).setSubject( subject );
+		return ( dispatch( HELP_CENTER_STORE ) as HelpCenterDispatch ).setSubject( subject );
 	}, [] );
 
 	return {
