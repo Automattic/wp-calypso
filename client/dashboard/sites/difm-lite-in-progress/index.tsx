@@ -14,7 +14,6 @@ import RouterLinkButton from '../../components/router-link-button';
 import { formatDate } from '../../utils/datetime';
 import { hasGSuiteWithUs, hasTitanMailWithUs } from '../../utils/domain-features';
 import type { Site } from '../../data/types';
-import './style.scss';
 
 function WebsiteContentSubmitted( { site }: { site: Site } ) {
 	const { recordTracksEvent } = useAnalytics();
