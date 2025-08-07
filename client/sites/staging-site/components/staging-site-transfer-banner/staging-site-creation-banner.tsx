@@ -8,6 +8,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import createStagingSiteIllustration from './create-staging-site-illustration.svg';
 import { StagingSiteBannerWrapper } from './staging-site-banner-wrapper';
+import './style.scss';
 
 export function StagingSiteCreationBanner() {
 	const heading = __( 'Creating staging site' );
