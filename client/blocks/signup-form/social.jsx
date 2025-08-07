@@ -17,6 +17,7 @@ import {
 	isA4AOAuth2Client,
 	isBlazeProOAuth2Client,
 	isCrowdsignalOAuth2Client,
+	isVIPOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { isWpccFlow } from 'calypso/signup/is-flow';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -104,10 +105,12 @@ class SocialSignupForm extends Component {
 			isBlazePro,
 			isAkismet,
 			isCrowdsignal,
+			isVIPClient,
 			setCurrentStep,
 		} = this.props;
 
-		const isUnifiedCreateAccount = isWoo || isA4A || isCrowdsignal || isBlazePro || isAkismet;
+		const isUnifiedCreateAccount =
+			isWoo || isA4A || isCrowdsignal || isBlazePro || isAkismet || isVIPClient;
 
 		return (
 			<Card
@@ -165,6 +168,7 @@ export default connect(
 			isBlazePro: isBlazeProOAuth2Client( oauth2Client ),
 			isCrowdsignal: isCrowdsignalOAuth2Client( oauth2Client ),
 			isAkismet: getIsAkismet( state ),
+			isVIPClient: isVIPOAuth2Client( oauth2Client ),
 		};
 	},
 	{ showErrorNotice: errorNotice }
