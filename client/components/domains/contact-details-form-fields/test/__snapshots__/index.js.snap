@@ -80,7 +80,26 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
         <p
           class="form-setting-explanation"
         >
-          If provided, the organization name will be considered the legal domain owner and made public. You can hide it using {{a}}privacy protection{{/a}}.
+          <div
+            class="components-notice is-info"
+          >
+            <div
+              class="components-visually-hidden css-161q9d5-PolymorphicDiv e19lxcc00"
+              data-wp-c16t="true"
+              data-wp-component="VisuallyHidden"
+              style="border: 0px; clip: rect(1px, 1px, 1px, 1px); clip-path: inset( 50% ); height: 1px; margin: -1px; overflow: hidden; padding: 0px; position: absolute; width: 1px; word-wrap: normal;"
+            >
+              Information notice
+            </div>
+            <div
+              class="components-notice__content"
+            >
+              If provided, the organization name will be considered the legal domain owner and made public. You can hide it using {{a}}privacy protection{{/a}}.
+              <div
+                class="components-notice__actions"
+              />
+            </div>
+          </div>
         </p>
       </div>
     </div>
