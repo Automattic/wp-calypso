@@ -166,7 +166,9 @@ export default function HeaderStagingSiteButton( {
 			label={ disabledReason }
 			tooltipPosition="top"
 		>
-			{ __( 'Add staging site' ) }
+			{ isLoadingAddStagingSite || isCreatingStagingSite
+				? __( 'Adding staging site…' )
+				: __( 'Add staging site' ) }
 		</Button>
 	);
 }
