@@ -11,6 +11,7 @@ import { sitePurchasesQuery } from '../../app/queries/site-purchases';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
+import { WPCOM_DIFM_LITE } from '../../data/constants';
 import { formatDate } from '../../utils/datetime';
 import { hasGSuiteWithUs, hasTitanMailWithUs } from '../../utils/domain-features';
 import type { Site } from '../../data/types';
@@ -71,7 +72,7 @@ function WebsiteContentSubmissionPending( { site }: { site: Site } ) {
 	const locale = useLocale();
 	const { data: difmPurchase } = useSuspenseQuery( {
 		...sitePurchasesQuery( site.ID ),
-		select: ( data ) => data.find( ( purchase ) => purchase.product_slug === 'wp_difm_lite' ),
+		select: ( data ) => data.find( ( purchase ) => purchase.product_slug === WPCOM_DIFM_LITE ),
 	} );
 
 	let contentSubmissionDueDate: Date | null = null;
