@@ -3,9 +3,9 @@ import type { DomainSummary } from './domains';
 
 export interface Domain extends DomainSummary {}
 
-export async function fetchDomain( domainName: string ): Promise< Domain > {
+export function fetchDomain( domainName: string ): Promise< Domain > {
 	return wpcom.req.get( {
 		path: `/domain-details/${ domainName }`,
-		apiNamespace: 'rest/v1.2',
+		apiVersion: '1.2',
 	} );
 }
