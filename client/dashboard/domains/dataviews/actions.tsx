@@ -1,4 +1,3 @@
-import { isRecentlyRegistered } from '@automattic/domains-table/src/utils/is-recently-registered';
 import {
 	domainManagementLink,
 	domainMappingSetup,
@@ -13,6 +12,7 @@ import { useMemo } from 'react';
 import { siteSetPrimaryDomainMutation } from '../../app/queries/site-domains';
 import { DomainTypes } from '../../data/domains';
 import {
+	isRecentlyRegistered,
 	isDomainRenewable,
 	shouldUpgradeToMakeDomainPrimary,
 	canSetAsPrimary,

@@ -1,8 +1,16 @@
+import { isAfter, subMinutes } from 'date-fns';
 import { DotcomFeatures } from '../data/constants';
 import { DomainTypes } from '../data/domains';
 import { hasPlanFeature } from './site-features';
 import { userHasFlag } from './user';
 import type { Domain, Site, User } from '../data/types';
+
+export function isRecentlyRegistered( registrationDate: string, numberOfMinutes = 30 ) {
+	return (
+		!! registrationDate &&
+		isAfter( new Date( registrationDate ), subMinutes( new Date(), numberOfMinutes ) )
+	);
+}
 
 export function isDomainRenewable( domain: Domain ) {
 	// Only registered domains can be manually renewed
