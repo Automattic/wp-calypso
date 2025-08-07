@@ -106,8 +106,8 @@ export const domainDnsEditRoute = createRoute( {
 export const domainForwardingsRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'forwardings',
-	loader: ( { params } ) =>
-		queryClient.ensureQueryData( domainForwardingQuery( params.domainName ) ),
+	loader: ( { params: { domainName } } ) =>
+		queryClient.ensureQueryData( domainForwardingQuery( domainName ) ),
 } ).lazy( () =>
 	import( '../../domains/domain-forwardings' ).then( ( d ) =>
 		createLazyRoute( 'domain-forwardings' )( {
@@ -174,9 +174,6 @@ export const domainGlueRecordsRoute = createRoute( {
 export const domainDnssecRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'dnssec',
-	loader: ( { params: { domainName } } ) => {
-		return queryClient.ensureQueryData( domainQuery( domainName ) );
-	},
 } ).lazy( () =>
 	import( '../../domains/overview-dnssec' ).then( ( d ) =>
 		createLazyRoute( 'domain-dnssec' )( {
