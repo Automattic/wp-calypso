@@ -1,4 +1,4 @@
-import wp from 'calypso/lib/wp';
+import wpcom from 'calypso/lib/wp';
 
 export interface DomainForwardingObject {
 	domain_redirect_id: number;
@@ -19,14 +19,14 @@ export interface DomainForwardingSuccessResponse {
 }
 
 export function fetchDomainForwarding( domainName: string ): Promise< DomainForwardingObject[] > {
-	return wp.req.get( `/sites/all/domain/${ domainName }/redirects?new-endpoint=true` );
+	return wpcom.req.get( `/sites/all/domain/${ domainName }/redirects`, { 'new-endpoint': 'true' } );
 }
 
 export function deleteDomainForwarding(
 	domainName: string,
 	forwardingId: number
 ): Promise< DomainForwardingSuccessResponse > {
-	return wp.req.post( `/sites/all/domain/${ domainName }/redirects/delete`, {
+	return wpcom.req.post( `/sites/all/domain/${ domainName }/redirects/delete`, {
 		domain_redirect_id: forwardingId,
 	} );
 }
