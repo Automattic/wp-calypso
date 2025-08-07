@@ -591,7 +591,7 @@ const purchasesRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'billing/purchases',
 } ).lazy( () =>
-	import( '../me/purchases' ).then( ( d ) =>
+	import( '../me/billing-purchases' ).then( ( d ) =>
 		createLazyRoute( 'purchases' )( {
 			component: d.default,
 		} )
@@ -602,7 +602,7 @@ const purchasesSiteRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'billing/purchases/$siteSlug',
 } ).lazy( () =>
-	import( '../me/purchases/site' ).then( ( d ) =>
+	import( '../me/billing-purchases/site' ).then( ( d ) =>
 		createLazyRoute( 'purchases-site' )( {
 			component: d.default,
 		} )
