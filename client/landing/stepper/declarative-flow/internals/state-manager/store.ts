@@ -22,6 +22,8 @@ const PERSISTENCE_CONFIG = {
 	networkMode: 'always',
 } as const;
 
+const DEFAULT_STATE: Partial< FlowStateManifest > = {};
+
 /**
  * Returns a setter and a getter for the flow state. This persists the state for 7 days. The persistence is based on the flow and the session ID.
  */
@@ -30,7 +32,7 @@ export function useFlowState() {
 	const flow = getFlowFromURL() || 'flow';
 	const session = getSessionId();
 	const queryKey = useMemo( () => [ PREFIX, flow, session, VERSION ] as const, [ flow, session ] );
-	const state = ( queryClient.getQueryData( queryKey ) ?? {} ) as FlowStateManifest;
+	const state = queryClient.getQueryData< FlowStateManifest >( queryKey ) ?? DEFAULT_STATE;
 
 	useEffect( () => {
 		queryClient.setQueryDefaults( queryKey, PERSISTENCE_CONFIG );
