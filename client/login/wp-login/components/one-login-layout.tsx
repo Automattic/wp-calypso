@@ -21,7 +21,7 @@ interface OneLoginLayoutProps {
 	signupUrl?: string;
 	isSectionSignup?: boolean;
 	loginUrl?: string;
-	shouldHideCreateAccountLink?: boolean;
+	isLostPasswordView?: boolean;
 }
 
 const OneLoginLayout = ( {
@@ -30,7 +30,7 @@ const OneLoginLayout = ( {
 	signupUrl: signupUrlProp,
 	isSectionSignup,
 	loginUrl,
-	shouldHideCreateAccountLink,
+	isLostPasswordView,
 }: OneLoginLayoutProps ) => {
 	const translate = useTranslate();
 	const locale = useSelector( getCurrentUserLocale );
@@ -55,7 +55,8 @@ const OneLoginLayout = ( {
 				dispatch( redirectToLogout( signupUrl ) );
 			}
 		};
-		if ( shouldHideCreateAccountLink ) {
+
+		if ( isLostPasswordView ) {
 			return null;
 		}
 

@@ -380,8 +380,7 @@ export class Login extends Component {
 			</Main>
 		);
 
-		const shouldHideCreateAccountLink =
-			action === 'lostpassword' || action === 'jetpack/lostpassword';
+		const isLostPasswordView = action === 'lostpassword' || action === 'jetpack/lostpassword';
 
 		return (
 			<>
@@ -390,7 +389,7 @@ export class Login extends Component {
 						isJetpack={ isJetpack }
 						isFromAkismet={ isFromAkismet }
 						signupUrl={ this.props.signupUrl }
-						shouldHideCreateAccountLink={ shouldHideCreateAccountLink }
+						isLostPasswordView={ isLostPasswordView }
 					>
 						{ mainContent }
 					</OneLoginLayout>
