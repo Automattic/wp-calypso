@@ -44,7 +44,6 @@ export const shouldUpgradeToMakeDomainPrimary = ( {
 
 export function canSetAsPrimary( domain: Domain, shouldUpgradeToMakePrimary: boolean ): boolean {
 	return (
-		domain &&
 		domain.can_set_as_primary &&
 		! domain.primary_domain &&
 		! shouldUpgradeToMakePrimary &&

@@ -9,7 +9,7 @@ export const siteDomainsQuery = ( siteId: number ) =>
 		queryFn: () => fetchSiteDomains( siteId ),
 	} );
 
-export const createSetPrimaryDomainMutation = () =>
+export const siteSetPrimaryDomainMutation = () =>
 	mutationOptions( {
 		mutationFn: ( { siteId, domain }: { siteId: number; domain: string } ) =>
 			setPrimaryDomain( siteId, domain ),

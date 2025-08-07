@@ -10,7 +10,7 @@ import { sprintf, __ } from '@wordpress/i18n';
 import { payment, tool } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo } from 'react';
-import { createSetPrimaryDomainMutation } from '../../app/queries/site-domains';
+import { siteSetPrimaryDomainMutation } from '../../app/queries/site-domains';
 import { DomainTypes } from '../../data/domains';
 import {
 	isDomainRenewable,
@@ -22,7 +22,7 @@ import type { Action } from '@wordpress/dataviews';
 
 export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const setPrimaryDomainMutation = useMutation( createSetPrimaryDomainMutation() );
+	const setPrimaryDomainMutation = useMutation( siteSetPrimaryDomainMutation() );
 
 	const actions: Action< Domain >[] = useMemo(
 		() => [
