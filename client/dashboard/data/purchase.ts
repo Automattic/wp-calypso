@@ -184,6 +184,7 @@ export interface Purchase {
 		| 'netbanking'
 		| 'tef'
 		| 'credits'
+		| 'upi'
 		| 'razorpay';
 	payment_card_display_brand: string | null;
 	payment_country_name: string;
