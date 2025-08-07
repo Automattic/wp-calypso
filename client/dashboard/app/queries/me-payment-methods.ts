@@ -1,10 +1,8 @@
 import { queryOptions } from '@tanstack/react-query';
-import { fetchPaymentMethods } from '../../data/me-payment-methods';
+import { fetchUserPaymentMethods } from '../../data/me-payment-methods';
 import type { PaymentMethodRequestType } from '../../data/me-payment-methods';
 
-const storedPaymentMethodsQueryKey = 'payment-methods';
-
-export const paymentMethodsQuery = ( {
+export const userPaymentMethodsQuery = ( {
 	type = 'all',
 	expired = false,
 	isForBusiness = false,
@@ -31,8 +29,8 @@ export const paymentMethodsQuery = ( {
 	isForBusiness?: boolean | null;
 } ) =>
 	queryOptions( {
-		queryKey: [ storedPaymentMethodsQueryKey, type, expired ],
-		queryFn: () => fetchPaymentMethods( type, expired ),
+		queryKey: [ 'me', 'payment-methods', type, expired ],
+		queryFn: () => fetchUserPaymentMethods( type, expired ),
 		select: ( data ) =>
 			Array.isArray( data ) && isForBusiness
 				? data.filter( ( method ) => method?.tax_location?.is_for_business === isForBusiness )

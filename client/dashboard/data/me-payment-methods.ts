@@ -88,7 +88,7 @@ export interface StoredPaymentMethodTaxLocation {
 
 export type PaymentMethodRequestType = 'card' | 'agreement' | 'all';
 
-export async function fetchPaymentMethods(
+export async function fetchUserPaymentMethods(
 	type: PaymentMethodRequestType,
 	expired: boolean
 ): Promise< StoredPaymentMethod[] > {

@@ -3,7 +3,7 @@ import { useResizeObserver } from '@wordpress/compose';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
-import { paymentMethodsQuery } from '../../app/queries/me-payment-methods';
+import { userPaymentMethodsQuery } from '../../app/queries/me-payment-methods';
 import { userTransferredPurchasesQuery } from '../../app/queries/me-purchases';
 import { sitePurchasesQuery } from '../../app/queries/site-purchases';
 import { sitesQuery } from '../../app/queries/sites';
@@ -33,7 +33,7 @@ export default function PurchasesForSite() {
 				( site ) => site.slug === siteSlugOrId || String( site.ID ) === String( siteSlugOrId )
 		  )
 		: undefined;
-	const { data: paymentMethods } = useQuery( paymentMethodsQuery( {} ) );
+	const { data: paymentMethods } = useQuery( userPaymentMethodsQuery( {} ) );
 	const purchasesDataFields = getFields( {
 		sites: sites ?? [],
 		paymentMethods: paymentMethods ?? [],
