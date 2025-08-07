@@ -12,5 +12,3 @@ export interface NameServerField {
 	error: string;
 	touched: boolean;
 }
-
-export type ServiceName = 'WordPress.com' | string;

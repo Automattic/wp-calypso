@@ -11,20 +11,21 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
 import Notice from '../../components/notice';
+import { getServiceName } from '../../utils/service-name';
 import { NameServerInput, validateField } from './form-input';
 import {
 	NameServerField,
 	MIN_NAMESERVER_LENGTH,
 	MAX_NAMESERVER_LENGTH,
 	WPCOM_DEFAULT_NAMESERVERS,
-	ServiceName,
 } from './types';
 import UpsellNudge from './upsell-nudge';
 import { areAllWpcomNameServers } from './utils';
+import type { InstanceType } from '../../app/context';
 
 interface Props {
 	domainName: string;
-	serviceName: ServiceName;
+	instanceType: InstanceType;
 	showUpsellNudge?: boolean;
 	nameservers?: string[];
 	isBusy?: boolean;
@@ -34,7 +35,7 @@ interface Props {
 
 export default function NameServersForm( {
 	domainName,
-	serviceName,
+	instanceType,
 	showUpsellNudge,
 	nameservers = [],
 	isBusy,
@@ -136,9 +137,9 @@ export default function NameServersForm( {
 		<VStack spacing={ 4 }>
 			<ToggleControl
 				label={ sprintf(
-					/* translators: %s is the name of the service */
+					/* translators: %s is the name of the service like: WordPress.com */
 					__( 'Use %s name servers' ),
-					serviceName
+					getServiceName( instanceType )
 				) }
 				checked={ useWpcomNameservers }
 				disabled={ isBusy }
@@ -190,7 +191,7 @@ export default function NameServersForm( {
 									key={ index }
 									index={ index }
 									field={ nameServerFields[ index ] }
-									disabled={ useWpcomNameservers || isBusy }
+									disabled={ useWpcomNameservers || !! isBusy }
 									onChange={ handleNameServerChange }
 									onBlur={ handleNameServerBlur }
 								/>

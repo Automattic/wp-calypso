@@ -2,6 +2,7 @@ import { Card, CardBody } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { useAppContext } from '../../app/context';
 import {
 	useDomainNameserversQuery,
 	useUpdateNameserversMutation,
@@ -13,6 +14,7 @@ import NameServersForm from './form';
 import './styles.scss';
 
 export default function NameServers() {
+	const { instanceType } = useAppContext();
 	const { domainName } = domainRoute.useParams();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: nameservers, error: queryError } = useDomainNameserversQuery( domainName );
@@ -31,7 +33,7 @@ export default function NameServers() {
 				<CardBody className="domains-management__name-servers">
 					<NameServersForm
 						domainName={ domainName }
-						serviceName="WordPress.com"
+						instanceType={ instanceType }
 						queryError={ queryError?.message }
 						isBusy={ isUpdatingNameservers }
 						nameservers={ nameservers }
