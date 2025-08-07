@@ -190,7 +190,7 @@ const sections = [
 	},
 	{
 		name: 'settings-newsletter',
-		paths: [ '/settings/newsletter' ],
+		paths: [ '/settings/newsletter', '/settings/jetpack-newsletter' ],
 		module: 'calypso/my-sites/site-settings/settings-newsletter',
 	},
 	{

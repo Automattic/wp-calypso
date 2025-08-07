@@ -1,4 +1,5 @@
 import { createRoute, createLazyRoute, notFound } from '@tanstack/react-router';
+import { domainForwardingQuery } from '../queries/domain-forwarding';
 import { domainsQuery } from '../queries/domains';
 import { siteDomainsQuery } from '../queries/site-domains';
 import { queryClient } from '../query-client';
@@ -105,13 +106,15 @@ export const domainDnsEditRoute = createRoute( {
 	)
 );
 
-// Domain forwarding routes
-export const domainForwardingRoute = createRoute( {
+// Domain forwardings routes
+export const domainForwardingsRoute = createRoute( {
 	getParentRoute: () => domainRoute,
-	path: 'forwarding',
+	path: 'forwardings',
+	loader: ( { params } ) =>
+		queryClient.ensureQueryData( domainForwardingQuery( params.domainName ) ),
 } ).lazy( () =>
-	import( '../../sites/domains/placeholder' ).then( ( d ) =>
-		createLazyRoute( 'domain-forwarding' )( {
+	import( '../../domains/domain-forwardings' ).then( ( d ) =>
+		createLazyRoute( 'domain-forwardings' )( {
 			component: d.default,
 		} )
 	)
@@ -130,7 +133,7 @@ export const domainForwardingAddRoute = createRoute( {
 
 export const domainForwardingEditRoute = createRoute( {
 	getParentRoute: () => domainRoute,
-	path: 'forwarding/edit',
+	path: 'forwarding/edit/$forwardingId',
 } ).lazy( () =>
 	import( '../../sites/domains/placeholder' ).then( ( d ) =>
 		createLazyRoute( 'domain-forwarding-edit' )( {
@@ -212,7 +215,7 @@ export const domainChildRoutes: AnyRoute[] = [
 	domainDnsRoute,
 	domainDnsAddRoute,
 	domainDnsEditRoute,
-	domainForwardingRoute,
+	domainForwardingsRoute,
 	domainForwardingAddRoute,
 	domainForwardingEditRoute,
 	domainContactInfoRoute,

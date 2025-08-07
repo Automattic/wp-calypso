@@ -52,7 +52,7 @@ import {
 	domainDnsRoute,
 	domainDnsAddRoute,
 	domainDnsEditRoute,
-	domainForwardingRoute,
+	domainForwardingsRoute,
 	domainForwardingAddRoute,
 	domainForwardingEditRoute,
 	domainContactInfoRoute,
@@ -215,13 +215,39 @@ const siteMonitoringRoute = createRoute( {
 const siteLogsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'logs',
+} );
+
+const siteLogsIndexRoute = createRoute( {
+	getParentRoute: () => siteLogsRoute,
+	path: '/',
+	beforeLoad: ( { params } ) => {
+		throw redirect( { to: `/sites/${ params.siteSlug }/logs/php` } );
+	},
+} );
+
+const siteLogsPhpRoute = createRoute( {
+	getParentRoute: () => siteLogsRoute,
+	path: 'php',
 } ).lazy( () =>
 	import( '../sites/logs' ).then( ( d ) =>
-		createLazyRoute( 'site-logs' )( {
-			component: d.default,
+		createLazyRoute( 'site-logs-php' )( {
+			component: ( props ) => <d.default { ...props } key="php" />,
 		} )
 	)
 );
+
+const siteLogsServerRoute = createRoute( {
+	getParentRoute: () => siteLogsRoute,
+	path: 'server',
+} ).lazy( () =>
+	import( '../sites/logs' ).then( ( d ) =>
+		createLazyRoute( 'site-logs-server' )( {
+			component: ( props ) => <d.default { ...props } key="server" />,
+		} )
+	)
+);
+
+const siteLogsChildRoutes = [ siteLogsIndexRoute, siteLogsPhpRoute, siteLogsServerRoute ];
 
 const siteBackupsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
@@ -708,7 +734,7 @@ const createRouteTree = ( config: AppConfig ) => {
 		}
 
 		if ( config.supports.sites.logs ) {
-			siteChildren.push( siteLogsRoute );
+			siteChildren.push( siteLogsRoute.addChildren( siteLogsChildRoutes ) );
 		}
 
 		if ( config.supports.sites.backups ) {
@@ -806,7 +832,7 @@ export {
 	domainDnsRoute,
 	domainDnsAddRoute,
 	domainDnsEditRoute,
-	domainForwardingRoute,
+	domainForwardingsRoute,
 	domainForwardingAddRoute,
 	domainForwardingEditRoute,
 	domainContactInfoRoute,
