@@ -490,7 +490,7 @@ export default function SyncModal( {
 									) }
 								</Text>
 								{ showWooCommerceWarning && (
-									<Text as="p">
+									<Text as="p" style={ { marginTop: '16px' } }>
 										{ createInterpolateElement(
 											__(
 												'This site has also WooCommerce installed. We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins. <a>Learn more</a>'
