@@ -81,12 +81,12 @@ export default function PaymentsList( props: Props ) {
 
 	const paymentFilterOptions: Array< DropdownOption > = [
 		{
-			value: 'unified',
-			label: translate( 'All' ),
+			value: 'currentSite',
+			label: translate( 'Current site' ),
 		},
 		{
-			value: 'currentSite',
-			label: translate( 'Current site only' ),
+			value: 'unified',
+			label: translate( 'All Sites' ),
 		},
 	];
 
@@ -126,22 +126,33 @@ export default function PaymentsList( props: Props ) {
 							</div>
 						</div>
 					) : (
-						<table className="promote-post-i2__table payments-list__table">
-							<thead>
-								<tr>
-									{ getHeaderColumns().map( ( item, key ) => (
-										<th className={ `payment-item__${ item.key }` } key={ key }>
-											{ item.title }
-										</th>
+						<>
+							{ selectedPaymentsFilter && (
+								<div className="promote-post-i2__aux-wrapper">
+									<p className="payments-list__info">
+										{ translate(
+											'If you share the payment method across multiple sites, you may see a cost breakdown for those here too.'
+										) }
+									</p>
+								</div>
+							) }
+							<table className="promote-post-i2__table payments-list__table">
+								<thead>
+									<tr>
+										{ getHeaderColumns().map( ( item, key ) => (
+											<th className={ `payment-item__${ item.key }` } key={ key }>
+												{ item.title }
+											</th>
+										) ) }
+									</tr>
+								</thead>
+								<tbody>
+									{ payments?.map( ( payment ) => (
+										<PaymentItem payment={ payment } key={ payment.id } />
 									) ) }
-								</tr>
-							</thead>
-							<tbody>
-								{ payments?.map( ( payment ) => (
-									<PaymentItem payment={ payment } key={ payment.id } />
-								) ) }
-							</tbody>
-						</table>
+								</tbody>
+							</table>
+						</>
 					) }
 				</>
 			) }

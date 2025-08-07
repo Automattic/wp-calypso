@@ -60,6 +60,10 @@ export const Receipt = ( {
 					<div className="payment-receipt__label">{ __( 'Payment ID' ) }</div>
 					<div className="payment-receipt__value">{ payment.id }</div>
 				</div>
+				<div className="payment-receipt__row">
+					<div className="payment-receipt__label">{ __( 'Status' ) }</div>
+					<div className="payment-receipt__value">{ _.capitalize( payment.status ) }</div>
+				</div>
 				<div className="payment-receipt__billing-details">
 					<div className="payment-receipt__label">{ __( 'Billing Details' ) }</div>
 					{ ! isPrintView && (
@@ -124,7 +128,7 @@ export const Receipt = ( {
 									<div className="payment-receipt__value payment-receipt__item-with-margin">
 										{ sprintf(
 											/* translators: %s is the number of impressions */
-											__( 'Impressions: %s' ),
+											__( 'Total Impressions: %s' ),
 											campaign.impressions.toLocaleString()
 										) }
 									</div>
