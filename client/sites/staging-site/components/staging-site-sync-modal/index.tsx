@@ -464,7 +464,6 @@ export default function SyncModal( {
 						spacing={ 2 }
 						style={ {
 							borderTop: '1px solid var(--wp-components-color-gray-300, #ddd)',
-							borderBottom: '1px solid var(--wp-components-color-gray-300, #ddd)',
 							padding: '16px 0',
 							marginTop: '8px',
 							marginBottom: '24px',
