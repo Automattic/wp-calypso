@@ -18,6 +18,7 @@ export type DetailedPayment = {
 		name: string;
 		impressions: number;
 		total: number;
+		site_id: number;
 	} >;
 };
 export const usePaymentDetailsQuery = ( paymentId: number ) => {

@@ -20,6 +20,7 @@ export type Payment = {
 		impressions: number;
 		subtotal: number;
 		total: number;
+		site_id: number;
 	} >;
 };
 

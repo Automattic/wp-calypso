@@ -4,9 +4,11 @@ import { getLocaleSlug } from 'i18n-calypso';
 import _ from 'lodash';
 import moment from 'moment';
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { DetailedPayment } from 'calypso/data/promote-post/use-promote-post-payment-details-query';
 import { Payment } from 'calypso/data/promote-post/use-promote-post-payments-query';
 import { WPCOMPrintLogo } from 'calypso/my-sites/promote-post-i2/components/payments-receipt/WPComPrintLogo';
+import { getSite } from 'calypso/state/sites/selectors';
 
 interface ReceiptTemplateProps {
 	payment: Payment | DetailedPayment;
@@ -30,6 +32,22 @@ export const Receipt = ( {
 }: ReceiptTemplateProps ) => {
 	const localeSlug = getLocaleSlug() || 'en_US';
 	const paymentDate = moment( payment.date ).locale( localeSlug ).format( 'LL' );
+
+	// Get all the sites from the campaigns
+	const sites = useSelector( ( state ) => {
+		if ( ! Array.isArray( payment.campaigns ) ) {
+			return {};
+		}
+
+		const sitesData: Record< number, any > = {};
+		payment.campaigns.forEach( ( campaign ) => {
+			const site = getSite( state, campaign.site_id );
+			if ( site ) {
+				sitesData[ campaign.site_id ] = site;
+			}
+		} );
+		return sitesData;
+	} );
 
 	return (
 		<>
@@ -112,30 +130,45 @@ export const Receipt = ( {
 
 				{ ! isLoading && Array.isArray( payment.campaigns ) && payment.campaigns.length > 0 && (
 					<>
-						{ payment.campaigns.map( ( campaign ) => (
-							<div className="payment-receipt__list-item" key={ campaign.campaign_id }>
-								<div className="payment-receipt__item-content">
-									<div className="payment-receipt__label payment-receipt__item-with-margin">
-										{ campaign.name }
-									</div>
-									<div className="payment-receipt__value payment-receipt__item-with-margin">
-										{ sprintf(
-											/* translators: %d is the campaign ID */
-											__( 'Campaign ID: %d' ),
-											campaign.campaign_id
+						{ payment.campaigns.map( ( campaign ) => {
+							const site = sites[ campaign.site_id ];
+
+							return (
+								<div className="payment-receipt__list-item" key={ campaign.campaign_id }>
+									<div className="payment-receipt__item-content">
+										<div className="payment-receipt__label payment-receipt__item-with-margin">
+											{ campaign.name }
+										</div>
+										<div className="payment-receipt__value payment-receipt__item-with-margin">
+											{ sprintf(
+												/* translators: %d is the campaign ID */
+												__( 'Campaign ID: %d' ),
+												campaign.campaign_id
+											) }
+										</div>
+										<div className="payment-receipt__value payment-receipt__item-with-margin">
+											{ sprintf(
+												/* translators: %s is the number of impressions */
+												__( 'Total Impressions: %s' ),
+												campaign.impressions.toLocaleString()
+											) }
+										</div>
+										{ site?.domain && (
+											<div className="payment-receipt__value payment-receipt__item-with-margin">
+												{ sprintf(
+													/* translators: %s is the site domain */
+													__( 'Site: %s' ),
+													site.domain
+												) }
+											</div>
 										) }
 									</div>
-									<div className="payment-receipt__value payment-receipt__item-with-margin">
-										{ sprintf(
-											/* translators: %s is the number of impressions */
-											__( 'Total Impressions: %s' ),
-											campaign.impressions.toLocaleString()
-										) }
+									<div className="payment-receipt__value-bold">
+										${ campaign.total.toFixed( 2 ) }
 									</div>
 								</div>
-								<div className="payment-receipt__value-bold">${ campaign.total.toFixed( 2 ) }</div>
-							</div>
-						) ) }
+							);
+						} ) }
 					</>
 				) }
 			</div>
