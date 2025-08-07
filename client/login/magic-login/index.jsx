@@ -9,7 +9,6 @@ import { shouldUseMagicCode } from 'calypso/blocks/login/utils/should-use-magic-
 import GlobalNotices from 'calypso/components/global-notices';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import Main from 'calypso/components/main';
-import isAkismetRedirect from 'calypso/lib/akismet/is-akismet-redirect';
 import { isGravPoweredOAuth2Client, isStudioAppOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import OneLoginFooter from 'calypso/login/wp-login/components/one-login-footer';
@@ -293,11 +292,7 @@ class MagicLogin extends Component {
 			</Main>
 		);
 
-		return (
-			<OneLoginLayout isJetpack={ isJetpackLogin } isFromAkismet={ this.props.isFromAkismet }>
-				{ mainContent }
-			</OneLoginLayout>
-		);
+		return <OneLoginLayout isJetpack={ isJetpackLogin }>{ mainContent }</OneLoginLayout>;
 	}
 }
 
@@ -321,9 +316,6 @@ const mapState = ( state ) => ( {
 		'jetpack-onboarding',
 	isWooJPC: isWooJPCFlow( state ),
 	publicToken: getMagicLoginPublicToken( state ),
-	isFromAkismet: isAkismetRedirect(
-		new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'back' )
-	),
 } );
 
 const mapDispatch = {

@@ -23,6 +23,7 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import getIsAkismet from 'calypso/state/selectors/get-is-akismet';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 
 class SocialSignupForm extends Component {
@@ -101,11 +102,12 @@ class SocialSignupForm extends Component {
 			isWoo,
 			isA4A,
 			isBlazePro,
+			isAkismet,
 			isCrowdsignal,
 			setCurrentStep,
 		} = this.props;
 
-		const isUnifiedCreateAccount = isWoo || isA4A || isBlazePro || isCrowdsignal;
+		const isUnifiedCreateAccount = isWoo || isA4A || isCrowdsignal || isBlazePro || isAkismet;
 
 		return (
 			<Card
@@ -162,6 +164,7 @@ export default connect(
 			isA4A: isA4AOAuth2Client( oauth2Client ),
 			isBlazePro: isBlazeProOAuth2Client( oauth2Client ),
 			isCrowdsignal: isCrowdsignalOAuth2Client( oauth2Client ),
+			isAkismet: getIsAkismet( state ),
 		};
 	},
 	{ showErrorNotice: errorNotice }
