@@ -25,7 +25,6 @@ import type { InstanceType } from '../../app/context';
 
 interface Props {
 	domainName: string;
-	serviceName: string;
 	instanceType: InstanceType;
 	showUpsellNudge?: boolean;
 	nameServers?: string[];
