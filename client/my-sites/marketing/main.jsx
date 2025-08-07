@@ -81,10 +81,7 @@ export const Sharing = ( {
 	if ( showTraffic ) {
 		filters.push( {
 			id: 'traffic',
-			route: isJetpackClassic
-				? siteAdminUrl + 'admin.php?page=jetpack#/traffic'
-				: '/marketing/jetpack-traffic' + pathSuffix,
-			isExternalLink: isJetpackClassic,
+			route: '/marketing/jetpack-traffic' + pathSuffix,
 			title: translate( 'Traffic' ),
 			description: translate(
 				'Manage settings and tools related to the traffic your website receives. {{learnMoreLink/}}',
