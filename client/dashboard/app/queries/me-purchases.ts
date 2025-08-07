@@ -1,8 +1,15 @@
 import { queryOptions } from '@tanstack/react-query';
-import { fetchUserPurchases } from '../../data/me-purchases';
+import { fetchUserPurchases, fetchUserTransferredPurchases } from '../../data/me-purchases';
 
 export const userPurchasesQuery = () =>
 	queryOptions( {
 		queryKey: [ 'me', 'purchases' ],
 		queryFn: () => fetchUserPurchases(),
 	} );
+
+export function userTransferredPurchasesQuery() {
+	return queryOptions( {
+		queryKey: [ 'me', 'purchases', 'transferred' ],
+		queryFn: () => fetchUserTransferredPurchases(),
+	} );
+}

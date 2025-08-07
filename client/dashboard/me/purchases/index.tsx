@@ -4,8 +4,7 @@ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
 import { paymentMethodsQuery } from '../../app/queries/me-payment-methods';
-import { userPurchasesQuery } from '../../app/queries/me-purchases';
-import { transferredPurchasesQuery } from '../../app/queries/me-transferred-purchases';
+import { userPurchasesQuery, userTransferredPurchasesQuery } from '../../app/queries/me-purchases';
 import { sitesQuery } from '../../app/queries/sites';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -22,7 +21,7 @@ import type { Purchase } from '../../data/purchase';
 export default function PurchasesList() {
 	const { data: purchases, isLoading: isLoadingPurchases } = useQuery( userPurchasesQuery() );
 	const { data: transferredPurchases, isLoading: isLoadingTransferredPurchases } = useQuery(
-		transferredPurchasesQuery()
+		userTransferredPurchasesQuery()
 	);
 	const { data: sites } = useQuery( sitesQuery() );
 	const [ currentView, setView ] = useState( purchasesDataView );
