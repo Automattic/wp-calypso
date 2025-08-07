@@ -1,4 +1,5 @@
 export type * from './agency';
+export type * from './domain';
 export type * from './domains';
 export type * from './emails';
 export type * from './me';
