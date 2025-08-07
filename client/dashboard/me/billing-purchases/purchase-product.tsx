@@ -100,17 +100,13 @@ export function PurchaseProduct( {
 					{ createInterpolateElement(
 						sprintf(
 							// translators: The string contains the product name, the name of the site, and the URL for the site e.g. Premium plan for Block Store (blockstore.com)
-							__(
-								'%(purchaseType)s for <button>%(siteName)s</button> (<link>%(siteDomain)s</link>)'
-							),
+							__( '%(purchaseType)s for <siteName /> (<siteDomain />)' ),
 							{
 								purchaseType: productType,
-								siteName: site.name,
-								siteDomain: site.slug,
 							}
 						),
 						{
-							button: (
+							siteName: (
 								<Link
 									to={ getUrlForSiteLevelView( site.ID ) }
 									title={
@@ -119,14 +115,12 @@ export function PurchaseProduct( {
 											siteName: site.name,
 										} )
 									}
-								/>
+								>
+									{ site.name }
+								</Link>
 							),
-							link: (
+							siteDomain: (
 								<ExternalLink
-									children={
-										// children prop is injected by createInterpolateElement
-										null
-									}
 									href={ 'https://' + site.slug }
 									rel="noreferrer"
 									title={
@@ -135,7 +129,9 @@ export function PurchaseProduct( {
 											siteName: site.name,
 										} )
 									}
-								/>
+								>
+									{ site.slug }
+								</ExternalLink>
 							),
 						}
 					) }
@@ -148,12 +144,11 @@ export function PurchaseProduct( {
 				<div>
 					{ createInterpolateElement(
 						// translators: The string contains the product name, and the URL of the site e.g. Premium plan for blockstore.com
-						sprintf( __( '%(purchaseType)s for <button>%(siteDomain)s</button>' ), {
+						sprintf( __( '%(purchaseType)s for <siteDomain />' ), {
 							purchaseType: productType,
-							siteDomain: site.slug,
 						} ),
 						{
-							button: (
+							siteDomain: (
 								<Link
 									to={ getUrlForSiteLevelView( site.ID ) }
 									title={
@@ -162,7 +157,9 @@ export function PurchaseProduct( {
 											siteName: site.slug,
 										} )
 									}
-								/>
+								>
+									{ site.slug }
+								</Link>
 							),
 						}
 					) }
@@ -175,9 +172,8 @@ export function PurchaseProduct( {
 				<div>
 					{ createInterpolateElement(
 						// translators: The string contains the name of the site, and the URL of the site e.g. for Block Store (blockstore.com)
-						sprintf( __( 'for <button>%(siteName)s</button> (<link>%(siteDomain)s</link>)' ), {
+						sprintf( __( 'for <button>%(siteName)s</button> (<siteDomain />)' ), {
 							siteName: site.name,
-							siteDomain: site.slug,
 						} ),
 						{
 							button: (
@@ -191,10 +187,9 @@ export function PurchaseProduct( {
 									}
 								/>
 							),
-							link: (
-								<a
+							siteDomain: (
+								<ExternalLink
 									href={ 'https://' + site.slug }
-									target="_blank"
 									rel="noreferrer"
 									title={
 										// translators: the siteName is the name of the site
@@ -202,7 +197,9 @@ export function PurchaseProduct( {
 											siteName: site.name,
 										} )
 									}
-								/>
+								>
+									{ site.slug }
+								</ExternalLink>
 							),
 						}
 					) }

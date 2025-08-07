@@ -120,7 +120,7 @@ export function PurchaseStatus( {
 			sprintf(
 				// translators: date is a formatted date, amount is a currency amount, and excludeTaxStringAbbreviation is something like "excludes VAT"
 				__(
-					'Free trial ends on <span>%(date)s</span>, renews automatically at %(amount)s <abbr>%(excludeTaxStringAbbreviation)s</abbr>'
+					'Free trial ends on %(date)s, renews automatically at %(amount)s <excludeTaxStringAbbreviation />'
 				),
 				{
 					date: formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } ),
@@ -128,12 +128,12 @@ export function PurchaseStatus( {
 						isSmallestUnit: true,
 						stripZeros: true,
 					} ),
-					excludeTaxStringAbbreviation: excludeTaxStringAbbreviation,
 				}
 			),
 			{
-				span: <span />,
-				abbr: <abbr title={ excludeTaxStringTitle } />,
+				excludeTaxStringAbbreviation: (
+					<abbr title={ excludeTaxStringTitle }>{ excludeTaxStringAbbreviation }</abbr>
+				),
 			}
 		);
 	}
@@ -141,15 +141,12 @@ export function PurchaseStatus( {
 	if ( purchase.introductory_offer?.is_within_period && isIntroductoryOfferFreeTrial ) {
 		return (
 			<span>
-				{ createInterpolateElement(
+				{
 					// translators: date is a formatted date
-					sprintf( __( 'Free trial ends on <span>%(date)s</span>' ), {
+					sprintf( __( 'Free trial ends on %(date)s' ), {
 						date: formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } ),
-					} ),
-					{
-						span: <span />,
-					}
-				) }
+					} )
+				}
 			</span>
 		);
 	}
@@ -162,16 +159,11 @@ export function PurchaseStatus( {
 	if ( isRenewingOnDate && creditCardExpiresBeforeSubscription( purchase ) ) {
 		return (
 			<span>
-				{ createInterpolateElement(
-					sprintf(
-						// translators: date is a formatted date
-						__( 'Credit card expires before your next renewal on <span>%(date)s</span>' ),
-						{
-							date: formatDate( new Date( purchase.renew_date ), locale, { dateStyle: 'long' } ),
-						}
-					),
+				{ sprintf(
+					// translators: date is a formatted date
+					__( 'Credit card expires before your next renewal on %(date)s' ),
 					{
-						span: <span />,
+						date: formatDate( new Date( purchase.renew_date ), locale, { dateStyle: 'long' } ),
 					}
 				) }
 			</span>
@@ -184,21 +176,19 @@ export function PurchaseStatus( {
 				isSmallestUnit: true,
 				stripZeros: true,
 			} ),
-			excludeTaxStringAbbreviation: excludeTaxStringAbbreviation,
 			date: formatDate( new Date( purchase.renew_date ), locale, { dateStyle: 'long' } ),
 		};
 		const translateComponents = {
-			abbr: <abbr title={ excludeTaxStringTitle } />,
-			span: <span />,
+			excludeTaxStringAbbreviation: (
+				<abbr title={ excludeTaxStringTitle }>{ excludeTaxStringAbbreviation }</abbr>
+			),
 		};
 		switch ( purchase.bill_period_days ) {
 			case SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD:
 				return createInterpolateElement(
 					sprintf(
 						// translators: date is a formatted date, amount is a currency amount, and excludeTaxStringAbbreviation is something like "excludes VAT"
-						__(
-							'Renews monthly at %(amount)s <abbr>%(excludeTaxStringAbbreviation)s</abbr> on <span>%(date)s</span>'
-						),
+						__( 'Renews monthly at %(amount)s <excludeTaxStringAbbreviation /> on %(date)s' ),
 						translateArgs
 					),
 					translateComponents
@@ -207,9 +197,7 @@ export function PurchaseStatus( {
 				return createInterpolateElement(
 					sprintf(
 						// translators: date is a formatted date, amount is a currency amount, and excludeTaxStringAbbreviation is something like "excludes VAT"
-						__(
-							'Renews yearly at %(amount)s <abbr>%(excludeTaxStringAbbreviation)s</abbr> on <span>%(date)s</span>'
-						),
+						__( 'Renews yearly at %(amount)s <excludeTaxStringAbbreviation /> on %(date)s' ),
 						translateArgs
 					),
 					translateComponents
@@ -219,7 +207,7 @@ export function PurchaseStatus( {
 					sprintf(
 						// translators: date is a formatted date, amount is a currency amount, and excludeTaxStringAbbreviation is something like "excludes VAT"
 						__(
-							'Renews every two years at %(amount)s <abbr>%(excludeTaxStringAbbreviation)s</abbr> on <span>%(date)s</span>'
+							'Renews every two years at %(amount)s <excludeTaxStringAbbreviation /> on %(date)s'
 						),
 						translateArgs
 					),
@@ -230,34 +218,22 @@ export function PurchaseStatus( {
 					sprintf(
 						// translators: date is a formatted date, amount is a currency amount, and excludeTaxStringAbbreviation is something like "excludes VAT"
 						__(
-							'Renews every three years at %(amount)s <abbr>%(excludeTaxStringAbbreviation)s</abbr> on <span>%(date)s</span>'
+							'Renews every three years at %(amount)s <excludeTaxStringAbbreviation /> on %(date)s'
 						),
 						translateArgs
 					),
 					translateComponents
 				);
+			default:
+				return createInterpolateElement(
+					sprintf(
+						// translators: date is a formatted date, amount is a currency amount, and excludeTaxStringAbbreviation is something like "excludes VAT"
+						__( 'Renews at %(amount)s <excludeTaxStringAbbreviation /> on %(date)s' ),
+						translateArgs
+					),
+					translateComponents
+				);
 		}
-
-		return createInterpolateElement(
-			sprintf(
-				// translators: date is a formatted date, amount is a currency amount, and excludeTaxStringAbbreviation is something like "excludes VAT"
-				__(
-					'Renews at %(amount)s <abbr>%(excludeTaxStringAbbreviation)s</abbr> on <span>%(date)s</span>'
-				),
-				{
-					amount: formatCurrency( purchase.price_integer, purchase.currency_code, {
-						isSmallestUnit: true,
-						stripZeros: true,
-					} ),
-					excludeTaxStringAbbreviation: excludeTaxStringAbbreviation,
-					date: formatDate( new Date( purchase.renew_date ), locale, { dateStyle: 'long' } ),
-				}
-			),
-			{
-				abbr: <abbr title={ excludeTaxStringTitle } />,
-				span: <span />,
-			}
-		);
 	}
 
 	if (
@@ -268,14 +244,13 @@ export function PurchaseStatus( {
 	) {
 		return (
 			<span>
-				{ createInterpolateElement(
+				{
 					// translators: timeUntilExpiry is a formatted expiration string like "in 30 days" and date is a formatted expiry date
-					sprintf( __( 'Expires %(timeUntilExpiry)s on <span>%(date)s</span>' ), {
+					sprintf( __( 'Expires %(timeUntilExpiry)s on %(date)s' ), {
 						timeUntilExpiry: getRelativeTimeString( new Date( purchase.expiry_date ) ),
 						date: formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } ),
-					} ),
-					{ span: <span /> }
-				) }
+					} )
+				}
 			</span>
 		);
 	}

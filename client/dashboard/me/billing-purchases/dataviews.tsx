@@ -216,17 +216,12 @@ function OwnerInfo( {
 	const tooltipContent = isTransferredOwnership ? (
 		<span>
 			{ createInterpolateElement(
-				sprintf(
-					// translators: domain is a domain name
-					__(
-						"This license was activated on <strong>%(domain)s</strong> by another user. If you haven't given the license to them on purpose, <link>contact our support team</link> for more assistance."
-					),
-					{
-						domain: purchase.domain || purchase.site_slug || __( 'a site' ),
-					}
+				// translators: domain is a domain name
+				__(
+					"This license was activated on <domain /> by another user. If you haven't given the license to them on purpose, <link>contact our support team</link> for more assistance."
 				),
 				{
-					strong: <strong />,
+					domain: <strong>{ purchase.domain || purchase.site_slug || __( 'a site' ) }</strong>,
 					link: <a href={ JETPACK_CONTACT_SUPPORT } target="_blank" rel="noopener noreferrer" />,
 				}
 			) }
