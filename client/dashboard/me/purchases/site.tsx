@@ -60,7 +60,7 @@ export default function PurchasesForSite() {
 				<PageHeader
 					title={
 						// translators: siteSlug is the name of the site
-						sprintf( __( 'Active Subscriptions for %(siteSlug)s' ), { siteSlug } )
+						sprintf( __( 'Active Upgrades for %(siteSlug)s' ), { siteSlug } )
 					}
 				/>
 			}

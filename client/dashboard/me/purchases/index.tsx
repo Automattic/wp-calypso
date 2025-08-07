@@ -67,7 +67,7 @@ export default function PurchasesList() {
 	);
 
 	return (
-		<PageLayout size="large" header={ <PageHeader title={ __( 'Active Subscriptions' ) } /> }>
+		<PageLayout size="large" header={ <PageHeader title={ __( 'Active Upgrades' ) } /> }>
 			<div ref={ ref }>
 				<DataViews
 					isLoading={ isLoadingPurchases || isLoadingTransferredPurchases }
