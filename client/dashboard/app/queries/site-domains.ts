@@ -1,6 +1,7 @@
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { fetchSiteDomains, setPrimaryDomain } from '../../data/site-domains';
 import { queryClient } from '../query-client';
+import { siteQueryFilter } from './site';
 
 export const siteDomainsQuery = ( siteId: number ) =>
 	queryOptions( {
@@ -13,6 +14,7 @@ export const createSetPrimaryDomainMutation = () =>
 		mutationFn: ( { siteId, domain }: { siteId: number; domain: string } ) =>
 			setPrimaryDomain( siteId, domain ),
 		onSuccess: ( data, { siteId } ) => {
+			queryClient.invalidateQueries( siteQueryFilter( siteId ) );
 			queryClient.invalidateQueries( siteDomainsQuery( siteId ) );
 		},
 	} );
