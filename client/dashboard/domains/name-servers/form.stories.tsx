@@ -32,7 +32,7 @@ export const Default: Story = {
 	args: {
 		domainName: 'example.com',
 		serviceName: 'WordPress.com',
-		nameservers: [],
+		nameServers: [],
 		isBusy: false,
 		showUpsellNudge: false,
 		onSubmit: action( 'onSubmit' ),
@@ -43,7 +43,7 @@ export const WithNameservers: Story = {
 	args: {
 		domainName: 'example.com',
 		serviceName: 'WordPress.com',
-		nameservers: [ 'ns1.wordpress.com', 'ns2.wordpress.com', 'ns3.wordpress.com' ],
+		nameServers: [ 'ns1.wordpress.com', 'ns2.wordpress.com', 'ns3.wordpress.com' ],
 		isBusy: false,
 		showUpsellNudge: false,
 		onSubmit: action( 'onSubmit' ),
@@ -54,7 +54,7 @@ export const WithUpsellNudge: Story = {
 	args: {
 		domainName: 'example.com',
 		serviceName: 'WordPress.com',
-		nameservers: [],
+		nameServers: [],
 		isBusy: false,
 		showUpsellNudge: true,
 		onSubmit: action( 'onSubmit' ),
@@ -65,7 +65,7 @@ export const IsBusy: Story = {
 	args: {
 		domainName: 'example.com',
 		serviceName: 'WordPress.com',
-		nameservers: [],
+		nameServers: [],
 		isBusy: true,
 		showUpsellNudge: false,
 		onSubmit: action( 'onSubmit' ),
@@ -76,10 +76,10 @@ export const WithError: Story = {
 	args: {
 		domainName: 'example.com',
 		serviceName: 'WordPress.com',
-		nameservers: [],
+		nameServers: [],
 		isBusy: false,
 		showUpsellNudge: false,
-		queryError: 'An error occurred while fetching nameservers.',
+		queryError: 'An error occurred while fetching name servers.',
 		onSubmit: action( 'onSubmit' ),
 	},
 };

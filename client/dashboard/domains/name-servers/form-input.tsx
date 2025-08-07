@@ -1,11 +1,11 @@
 import { __experimentalInputControl as InputControl } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { NameServerField, MIN_NAMESERVER_LENGTH } from './types';
+import { NameServerField, MIN_NAME_SERVERS_LENGTH } from './types';
 import { validateHostname } from './utils';
 
 export const validateField = ( value: string, index: number ): string => {
 	if ( value === '' ) {
-		if ( index < MIN_NAMESERVER_LENGTH ) {
+		if ( index < MIN_NAME_SERVERS_LENGTH ) {
 			return __( 'This field is required' );
 		}
 		return '';
@@ -35,7 +35,7 @@ export const NameServerInput = ( { index, field, disabled, onChange, onBlur }: P
 			// translators: %s is the name server number (1-4)
 			label={ sprintf( __( 'Custom name server %s' ), index + 1 ) }
 			placeholder={
-				index < MIN_NAMESERVER_LENGTH
+				index < MIN_NAME_SERVERS_LENGTH
 					? // translators: %s is the name server number (1-4)
 					  sprintf( __( 'ns%s.domain.com' ), index + 1 )
 					: // translators: %s is the name server number (1-4)

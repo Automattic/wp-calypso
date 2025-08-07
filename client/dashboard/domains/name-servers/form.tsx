@@ -15,9 +15,9 @@ import { getServiceName } from '../../utils/service-name';
 import { NameServerInput, validateField } from './form-input';
 import {
 	NameServerField,
-	MIN_NAMESERVER_LENGTH,
-	MAX_NAMESERVER_LENGTH,
-	WPCOM_DEFAULT_NAMESERVERS,
+	MIN_NAME_SERVERS_LENGTH,
+	MAX_NAME_SERVERS_LENGTH,
+	WPCOM_DEFAULT_NAME_SERVERS,
 } from './types';
 import UpsellNudge from './upsell-nudge';
 import { areAllWpcomNameServers } from './utils';
@@ -25,9 +25,10 @@ import type { InstanceType } from '../../app/context';
 
 interface Props {
 	domainName: string;
+	serviceName: string;
 	instanceType: InstanceType;
 	showUpsellNudge?: boolean;
-	nameservers?: string[];
+	nameServers?: string[];
 	isBusy?: boolean;
 	queryError?: string;
 	onSubmit: ( nameServers: string[] ) => void;
@@ -37,20 +38,20 @@ export default function NameServersForm( {
 	domainName,
 	instanceType,
 	showUpsellNudge,
-	nameservers = [],
+	nameServers = [],
 	isBusy,
 	queryError,
 	onSubmit,
 }: Props ) {
 	const [ nameServerFields, setNameServerFields ] = useState< NameServerField[] >(
-		Array.from( { length: MAX_NAMESERVER_LENGTH }, ( _, index ) => ( {
-			value: nameservers[ index ] || '',
+		Array.from( { length: MAX_NAME_SERVERS_LENGTH }, ( _, index ) => ( {
+			value: nameServers[ index ] || '',
 			error: '',
 			touched: false,
 		} ) )
 	);
 	const [ useWpcomNameservers, setUseWpcomNameservers ] = useState(
-		areAllWpcomNameServers( nameservers )
+		areAllWpcomNameServers( nameServers )
 	);
 
 	const hasFieldsChanged = useMemo( () => {
@@ -61,7 +62,7 @@ export default function NameServersForm( {
 			.sort();
 
 		// Get initial values
-		const initialValues = [ ...nameservers ].sort();
+		const initialValues = [ ...nameServers ].sort();
 
 		// Compare arrays
 		if ( currentValues.length !== initialValues.length ) {
@@ -69,7 +70,7 @@ export default function NameServersForm( {
 		}
 
 		return currentValues.some( ( value, index ) => value !== initialValues[ index ] );
-	}, [ nameServerFields, nameservers ] );
+	}, [ nameServerFields, nameServers ] );
 
 	const isFormValid = useMemo( () => {
 		// Check if there are any errors
@@ -77,9 +78,9 @@ export default function NameServersForm( {
 			return false;
 		}
 
-		// Check if minimum required nameservers are provided
+		// Check if minimum required name servers are provided
 		const filledNameServers = nameServerFields.filter( ( ns ) => ns.value !== '' ).length;
-		return filledNameServers >= MIN_NAMESERVER_LENGTH;
+		return filledNameServers >= MIN_NAME_SERVERS_LENGTH;
 	}, [ nameServerFields ] );
 
 	const canSubmit = useMemo( () => {
@@ -115,15 +116,15 @@ export default function NameServersForm( {
 
 	const shouldShowNextInput = useCallback(
 		( index: number ) => {
-			// When using WP.com nameservers, only show fields that have values
+			// When using WP.com name servers, only show fields that have values
 			if ( useWpcomNameservers ) {
 				return nameServerFields[ index ]?.value !== '';
 			}
 
-			// For custom nameservers
-			if ( index >= MAX_NAMESERVER_LENGTH ) {
+			// For custom name servers
+			if ( index >= MAX_NAME_SERVERS_LENGTH ) {
 				return false;
-			} else if ( index < MIN_NAMESERVER_LENGTH ) {
+			} else if ( index < MIN_NAME_SERVERS_LENGTH ) {
 				return true;
 			}
 
@@ -146,12 +147,12 @@ export default function NameServersForm( {
 				onChange={ () => {
 					const willUseWpcom = ! useWpcomNameservers;
 					const newFields = willUseWpcom
-						? WPCOM_DEFAULT_NAMESERVERS.map( ( ns ) => ( {
+						? WPCOM_DEFAULT_NAME_SERVERS.map( ( ns ) => ( {
 								value: ns.toUpperCase(),
 								error: '',
 								touched: false,
 						  } ) )
-						: Array.from( { length: MAX_NAMESERVER_LENGTH }, () => ( {
+						: Array.from( { length: MAX_NAME_SERVERS_LENGTH }, () => ( {
 								value: '',
 								error: '',
 								touched: false,
@@ -183,7 +184,7 @@ export default function NameServersForm( {
 						</Text>
 					) }
 					{ Array.from(
-						{ length: MAX_NAMESERVER_LENGTH },
+						{ length: MAX_NAME_SERVERS_LENGTH },
 						( _, index ) =>
 							nameServerFields[ index ] &&
 							shouldShowNextInput( index ) && (

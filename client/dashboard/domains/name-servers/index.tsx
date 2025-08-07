@@ -18,13 +18,13 @@ export default function NameServers() {
 	const { instanceType } = useAppContext();
 	const { domainName } = domainRoute.useParams();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const { data: nameservers, error: queryError } = useQuery( domainNameServersQuery( domainName ) );
+	const { data: nameServers, error: queryError } = useQuery( domainNameServersQuery( domainName ) );
 
-	const { mutate: updateNameservers, isPending: isUpdatingNameservers } = useMutation( {
+	const { mutate: updateNameServers, isPending: isUpdatingNameServers } = useMutation( {
 		...domainNameServersMutation( domainName ),
 		onError: ( e: Error ) => createErrorNotice( e.message, { type: 'snackbar' } ),
 		onSuccess: () =>
-			createSuccessNotice( __( 'Nameservers updated successfully.' ), { type: 'snackbar' } ),
+			createSuccessNotice( __( 'Name servers updated successfully.' ), { type: 'snackbar' } ),
 	} );
 
 	return (
@@ -35,9 +35,9 @@ export default function NameServers() {
 						domainName={ domainName }
 						instanceType={ instanceType }
 						queryError={ queryError?.message }
-						isBusy={ isUpdatingNameservers }
-						nameservers={ nameservers }
-						onSubmit={ updateNameservers }
+						isBusy={ isUpdatingNameServers }
+						nameServers={ nameServers }
+						onSubmit={ updateNameServers }
 					/>
 				</CardBody>
 			</Card>
