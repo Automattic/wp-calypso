@@ -4,6 +4,7 @@ import {
 	getCountryTaxRequirements,
 	CountryListItem,
 } from '@automattic/wpcom-checkout';
+import { Notice } from '@wordpress/components';
 import debugFactory from 'debug';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { camelCase, deburr } from 'lodash';
@@ -359,19 +360,23 @@ export class ManagedContactDetailsFormFields extends Component<
 						name="organization"
 						text={ translate( '+ Add organization name' ) }
 						toggled={ this.props.contactDetails.organization || isOrganizationFieldRequired }
-						description={ translate(
-							'If provided, the organization name will be considered the legal domain owner and made public. You can hide it using {{a}}privacy protection{{/a}}.',
-							{
-								components: {
-									a: (
-										<InlineSupportLink
-											supportContext="domain-registrations-and-privacy"
-											showIcon={ false }
-										/>
-									),
-								},
-							}
-						) }
+						description={
+							<Notice status="info" isDismissible={ false }>
+								{ translate(
+									'If provided, the organization name will be considered the legal domain owner and made public. You can hide it using {{a}}privacy protection{{/a}}.',
+									{
+										components: {
+											a: (
+												<InlineSupportLink
+													supportContext="domain-registrations-and-privacy"
+													showIcon={ false }
+												/>
+											),
+										},
+									}
+								) }
+							</Notice>
+						}
 					/>
 				</div>
 

@@ -4,6 +4,7 @@ import {
 	tryToGuessPostalCodeFormat,
 	getCountryPostalCodeSupport,
 } from '@automattic/wpcom-checkout';
+import { Notice } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get, kebabCase, pick, includes, isEqual, isEmpty, camelCase } from 'lodash';
@@ -384,18 +385,22 @@ export class ContactDetailsFormFields extends Component {
 						{
 							label: translate( 'Organization' ),
 							text: labelTexts.organization || translate( '+ Add organization name' ),
-							description: translate(
-								'If provided, the organization name will be considered the legal domain owner and made public. You can hide it using {{a}}privacy protection{{/a}}.',
-								{
-									components: {
-										a: (
-											<InlineSupportLink
-												supportContext="domain-registrations-and-privacy"
-												showIcon={ false }
-											/>
-										),
-									},
-								}
+							description: (
+								<Notice status="info" isDismissible={ false }>
+									{ translate(
+										'If provided, the organization name will be considered the legal domain owner and made public. You can hide it using {{a}}privacy protection{{/a}}.',
+										{
+											components: {
+												a: (
+													<InlineSupportLink
+														supportContext="domain-registrations-and-privacy"
+														showIcon={ false }
+													/>
+												),
+											},
+										}
+									) }
+								</Notice>
 							),
 						},
 						{
