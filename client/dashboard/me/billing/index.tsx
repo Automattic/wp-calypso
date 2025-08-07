@@ -16,8 +16,10 @@ function Billing() {
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Billing' ) } /> }>
 			<VStack spacing={ 4 }>
 				<RouterLinkSummaryButton
-					title={ __( 'Active subscriptions' ) }
-					description={ __( 'View your current plan and usage.' ) }
+					title={ __( 'Active upgrades' ) }
+					description={ __(
+						'View your current plan and usage as well as other active purchases.'
+					) }
 					decoration={ <Icon icon={ receipt } /> }
 					to={ purchasesRoute.to }
 				/>

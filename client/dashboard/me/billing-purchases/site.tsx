@@ -67,7 +67,7 @@ export default function PurchasesForSite() {
 			}
 		>
 			<div>
-				<Link to="/v2/me/billing/purchases">{ __( 'View all active subscriptions' ) }</Link>
+				<Link to="/v2/me/billing/purchases">{ __( 'View all active upgrades' ) }</Link>
 			</div>
 			<div ref={ ref }>
 				<DataViews
