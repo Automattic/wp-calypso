@@ -105,7 +105,7 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 							},
 							onError: () => {
 								createErrorNotice(
-									__( "Something went wrong and we couldn't change your primary domain." ),
+									__( 'Something went wrong and we couldn’t change your primary domain.' ),
 									{
 										type: 'snackbar',
 									}
