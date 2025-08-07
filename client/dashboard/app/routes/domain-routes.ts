@@ -113,7 +113,7 @@ export const domainForwardingsRoute = createRoute( {
 	loader: ( { params } ) =>
 		queryClient.ensureQueryData( domainForwardingQuery( params.domainName ) ),
 } ).lazy( () =>
-	import( '../../domains/forwardings' ).then( ( d ) =>
+	import( '../../domains/domain-forwardings' ).then( ( d ) =>
 		createLazyRoute( 'domain-forwardings' )( {
 			component: d.default,
 		} )
