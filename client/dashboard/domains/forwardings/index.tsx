@@ -1,4 +1,4 @@
-import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { Link, useRouter } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
@@ -44,9 +44,7 @@ function DomainForwardings() {
 	const router = useRouter();
 
 	const { domainName } = domainRoute.useParams();
-	const { data: forwardingData, isLoading } = useSuspenseQuery(
-		domainForwardingQuery( domainName )
-	);
+	const { data: forwardingData, isLoading } = useQuery( domainForwardingQuery( domainName ) );
 	const deleteMutation = useMutation( domainForwardingDeleteMutation( domainName ) );
 
 	const actions: Action< DomainForwarding >[] = useMemo(
@@ -54,7 +52,7 @@ function DomainForwardings() {
 			{
 				id: 'edit',
 				label: __( 'Edit' ),
-				callback: ( items: DomainForwarding[] ) => {
+				callback: ( items ) => {
 					const item = items[ 0 ];
 					router.navigate( {
 						to: domainForwardingEditRoute.fullPath,
@@ -65,7 +63,7 @@ function DomainForwardings() {
 			{
 				id: 'delete',
 				label: __( 'Delete' ),
-				callback: ( items: DomainForwarding[] ) => {
+				callback: ( items ) => {
 					const item = items[ 0 ];
 					deleteMutation.mutate( item.domain_redirect_id );
 				},
@@ -82,7 +80,7 @@ function DomainForwardings() {
 				enableHiding: false,
 				enableSorting: true,
 				enableGlobalSearch: true,
-				getValue: ( { item }: { item: DomainForwarding } ) => {
+				getValue: ( { item } ) => {
 					// Create full source URL
 					const fqdn = item.fqdn || '';
 					const sourcePath = item.source_path || '';
@@ -103,7 +101,7 @@ function DomainForwardings() {
 				enableHiding: false,
 				enableSorting: true,
 				enableGlobalSearch: true,
-				getValue: ( { item }: { item: DomainForwarding } ) => {
+				getValue: ( { item } ) => {
 					const protocol = item.is_secure ? 'https://' : 'http://';
 					const targetPath = item.target_path || '';
 					return `${ protocol }${ item.target_host }${ targetPath }`;
@@ -115,7 +113,7 @@ function DomainForwardings() {
 				enableHiding: true,
 				enableSorting: true,
 				enableGlobalSearch: false,
-				getValue: ( { item }: { item: DomainForwarding } ) => {
+				getValue: ( { item } ) => {
 					return item.forward_paths ? __( 'Yes' ) : __( 'No' );
 				},
 			},
@@ -125,7 +123,7 @@ function DomainForwardings() {
 				enableHiding: true,
 				enableSorting: true,
 				enableGlobalSearch: false,
-				getValue: ( { item }: { item: DomainForwarding } ) => {
+				getValue: ( { item } ) => {
 					return item.is_permanent ? __( 'Permanent (301)' ) : __( 'Temporary (307)' );
 				},
 			},
@@ -148,20 +146,18 @@ function DomainForwardings() {
 				<PageHeader
 					title={ __( 'Domain Forwarding' ) }
 					actions={
-						<>
-							<Button
-								onClick={ () => {
-									router.navigate( {
-										to: domainForwardingAddRoute.fullPath,
-										params: { domainName },
-									} );
-								} }
-								variant="primary"
-								__next40pxDefaultSize
-							>
-								{ __( 'Add Domain Forwarding' ) }
-							</Button>
-						</>
+						<Button
+							onClick={ () => {
+								router.navigate( {
+									to: domainForwardingAddRoute.fullPath,
+									params: { domainName },
+								} );
+							} }
+							variant="primary"
+							__next40pxDefaultSize
+						>
+							{ __( 'Add Domain Forwarding' ) }
+						</Button>
 					}
 				/>
 			}
