@@ -19,9 +19,9 @@ export default function NameServers() {
 	const { updateNameservers, isPending: isUpdatingNameservers } = useUpdateNameserversMutation(
 		domainName,
 		{
+			onError: ( e: Error ) => createErrorNotice( e.message, { type: 'snackbar' } ),
 			onSuccess: () =>
 				createSuccessNotice( __( 'Nameservers updated successfully.' ), { type: 'snackbar' } ),
-			onError: ( e: Error ) => createErrorNotice( e.message, { type: 'snackbar' } ),
 		}
 	);
 

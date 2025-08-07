@@ -1,16 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
-import wp from 'calypso/lib/wp';
+import { fetchDomainNameservers, updateDomainNameservers } from '../../data/domain-nameservers';
 
 const useDomainNameserversQuery = ( domainName: string ) =>
 	useQuery( {
 		queryKey: [ 'domains', domainName, 'nameservers' ],
-		queryFn: () => wp.req.get( `/domains/${ domainName }/nameservers/` ) as Promise< string[] >,
+		queryFn: () => fetchDomainNameservers( domainName ),
 		refetchOnWindowFocus: false,
 	} );
 
 interface UpdateNameserversOptions {
-	onSuccess?: ( data: unknown, variables: { nameservers: string[] }, context: unknown ) => void;
+	onSuccess?: ( nameservers: string[] ) => void;
 	onError?: ( error: Error ) => void;
 }
 
@@ -21,15 +21,13 @@ function useUpdateNameserversMutation(
 	const queryClient = useQueryClient();
 	const mutation = useMutation( {
 		mutationFn: ( { nameservers }: { nameservers: string[] } ) =>
-			wp.req.post( `/domains/${ domainName }/nameservers`, {
-				nameservers: nameservers.map( ( nameserver ) => ( { nameserver } ) ),
-			} ),
+			updateDomainNameservers( domainName, nameservers ),
 		...queryOptions,
-		onSuccess( ...args ) {
+		onSuccess( nameservers ) {
 			queryClient.invalidateQueries( {
 				queryKey: [ 'domains', domainName, 'nameservers' ],
 			} );
-			queryOptions.onSuccess?.( ...args );
+			queryOptions.onSuccess?.( nameservers );
 		},
 	} );
 
