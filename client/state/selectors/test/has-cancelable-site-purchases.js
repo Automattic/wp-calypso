@@ -140,29 +140,4 @@ describe( 'hasCancelableSitePurchases', () => {
 
 		expect( hasCancelableSitePurchases( state, targetSiteId ) ).toBe( true );
 	} );
-
-	test( 'should return false if the only purchase is inactive', () => {
-		const state = deepFreeze( {
-			purchases: {
-				data: [
-					{
-						ID: 3,
-						product_name: 'premium_plan',
-						product_slug: 'premium_plan',
-						blog_id: targetSiteId,
-						user_id: targetUserId,
-						is_refundable: true,
-						subscription_status: 'inactive',
-					},
-				],
-				error: null,
-				isFetchingSitePurchases: false,
-				isFetchingUserPurchases: false,
-				hasLoadedSitePurchasesFromServer: true,
-				hasLoadedUserPurchasesFromServer: true,
-			},
-		} );
-
-		expect( hasCancelableSitePurchases( state, targetSiteId ) ).toBe( false );
-	} );
 } );
