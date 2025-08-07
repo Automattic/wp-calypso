@@ -5,9 +5,9 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useAppContext } from '../../app/context';
 import {
-	domainNameserversQuery,
-	domainNameserversUpdateMutation,
-} from '../../app/queries/domain-nameservers';
+	domainNameServersQuery,
+	domainNameServersMutation,
+} from '../../app/queries/domain-name-servers';
 import { domainRoute } from '../../app/router';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -18,10 +18,10 @@ export default function NameServers() {
 	const { instanceType } = useAppContext();
 	const { domainName } = domainRoute.useParams();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const { data: nameservers, error: queryError } = useQuery( domainNameserversQuery( domainName ) );
+	const { data: nameservers, error: queryError } = useQuery( domainNameServersQuery( domainName ) );
 
 	const { mutate: updateNameservers, isPending: isUpdatingNameservers } = useMutation( {
-		...domainNameserversUpdateMutation( domainName ),
+		...domainNameServersMutation( domainName ),
 		onError: ( e: Error ) => createErrorNotice( e.message, { type: 'snackbar' } ),
 		onSuccess: () =>
 			createSuccessNotice( __( 'Nameservers updated successfully.' ), { type: 'snackbar' } ),
