@@ -2,12 +2,41 @@ import { Spinner, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import React, { useRef, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { usePaymentDetailsQuery } from 'calypso/data/promote-post/use-promote-post-payment-details-query';
+import {
+	DetailedPayment,
+	usePaymentDetailsQuery,
+} from 'calypso/data/promote-post/use-promote-post-payment-details-query';
 import { Payment } from 'calypso/data/promote-post/use-promote-post-payments-query';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getSite } from 'calypso/state/sites/selectors';
+import { AppState } from 'calypso/types';
 import { Receipt } from './Receipt';
 import { printReceipt } from './print-utils';
 import './style.scss';
+
+/**
+ * Extract site information from a payment's campaigns
+ * @param payment The payment object containing campaign data
+ * @param state Redux state for site lookups
+ * @returns Record of site data indexed by site_id
+ */
+const getSitesFromPayment = (
+	payment: Payment | DetailedPayment,
+	state: AppState
+): Record< number, any > => {
+	if ( ! Array.isArray( payment.campaigns ) ) {
+		return {};
+	}
+
+	const sitesData: Record< number, any > = {};
+	payment.campaigns.forEach( ( campaign ) => {
+		const site = getSite( state, campaign.site_id );
+		if ( site ) {
+			sitesData[ campaign.site_id ] = site;
+		}
+	} );
+	return sitesData;
+};
 
 interface PaymentReceiptProps {
 	paymentId: number;
@@ -28,6 +57,11 @@ export const PaymentReceipt = ( {
 
 	// Use detailed payment if available, otherwise fall back to the provided payment
 	const payment = detailedPayment || fallbackPayment;
+
+	// Extract sites data from Redux state for the payment
+	const sites = useSelector( ( state ) =>
+		payment ? getSitesFromPayment( payment, state ) : {}
+	);
 
 	// Initialize billing details with the current user's name if available
 	useEffect( () => {
@@ -79,12 +113,13 @@ export const PaymentReceipt = ( {
 				isPrintView={ isPrintView }
 				isLoading={ isLoading && ! detailedPayment }
 				onBillingDetailsChange={ setBillingDetails }
+				sites={ sites }
 			/>
 
 			<div className="payment-receipt__print">
 				<Button
 					className="payment-receipt__print-button"
-					onClick={ () => printReceipt( payment, billingDetails ) }
+					onClick={ () => printReceipt( payment, billingDetails, sites ) }
 				>
 					{ __( 'Print Receipt' ) }
 				</Button>

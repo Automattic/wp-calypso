@@ -4,11 +4,9 @@ import { getLocaleSlug } from 'i18n-calypso';
 import _ from 'lodash';
 import moment from 'moment';
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { DetailedPayment } from 'calypso/data/promote-post/use-promote-post-payment-details-query';
 import { Payment } from 'calypso/data/promote-post/use-promote-post-payments-query';
 import { WPCOMPrintLogo } from 'calypso/my-sites/promote-post-i2/components/payments-receipt/WPComPrintLogo';
-import { getSite } from 'calypso/state/sites/selectors';
 
 interface ReceiptTemplateProps {
 	payment: Payment | DetailedPayment;
@@ -16,6 +14,7 @@ interface ReceiptTemplateProps {
 	isPrintView?: boolean;
 	isLoading?: boolean;
 	onBillingDetailsChange?: ( value: string ) => void;
+	sites: Record< number, any >; // Sites data must be passed in directly
 }
 
 type CampaignType = {
@@ -38,25 +37,10 @@ export const Receipt = ( {
 	isPrintView = false,
 	isLoading = false,
 	onBillingDetailsChange,
+	sites,
 }: ReceiptTemplateProps ) => {
 	const localeSlug = getLocaleSlug() || 'en_US';
 	const paymentDate = moment( payment.date ).locale( localeSlug ).format( 'LL' );
-
-	// Get all the sites from the campaigns
-	const sites = useSelector( ( state ) => {
-		if ( ! Array.isArray( payment.campaigns ) ) {
-			return {};
-		}
-
-		const sitesData: Record< number, any > = {};
-		payment.campaigns.forEach( ( campaign ) => {
-			const site = getSite( state, campaign.site_id );
-			if ( site ) {
-				sitesData[ campaign.site_id ] = site;
-			}
-		} );
-		return sitesData;
-	} );
 
 	// Group campaigns by domain
 	const campaignsByDomain: Record< string, CampaignType[] > = {};
@@ -73,6 +57,9 @@ export const Receipt = ( {
 			campaignsByDomain[ domain ].push( campaign as CampaignType );
 		} );
 	}
+
+	// Check if we have multiple domains
+	const hasMultipleDomains = Object.keys( campaignsByDomain ).length > 1;
 
 	return (
 		<>
@@ -157,15 +144,19 @@ export const Receipt = ( {
 					<>
 						{ Object.entries( campaignsByDomain ).map( ( [ domain, domainCampaigns = [] ] ) => (
 							<div key={ domain } className="payment-receipt__domain-group">
-								{ /* Domain header */ }
-								<div className="payment-receipt__domain-header">
-									<h4 className="payment-receipt__domain-name">{ domain }</h4>
-								</div>
+								{ /* Domain header - only show if multiple domains */ }
+								{ hasMultipleDomains && (
+									<div className="payment-receipt__domain-header">
+										<h4 className="payment-receipt__domain-name">{ domain }</h4>
+									</div>
+								) }
 
 								{ /* Campaigns for this domain */ }
 								{ domainCampaigns.map( ( campaign ) => (
 									<div
-										className="payment-receipt__list-item payment-receipt__campaign-item"
+										className={ `payment-receipt__list-item ${
+											hasMultipleDomains ? 'payment-receipt__campaign-item' : ''
+										}` }
 										key={ campaign.campaign_id }
 									>
 										<div className="payment-receipt__item-content">

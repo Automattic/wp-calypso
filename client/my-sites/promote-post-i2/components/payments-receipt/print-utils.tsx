@@ -15,10 +15,12 @@ import './style.scss';
 const PrintableReceipt = ( {
 	payment,
 	billingDetails,
+	sites,
 	onRenderComplete,
 }: {
 	payment: Payment | DetailedPayment;
 	billingDetails: string;
+	sites: Record< number, any >;
 	onRenderComplete: () => void;
 } ) => {
 	// Use React's useEffect to signal when rendering is complete
@@ -29,7 +31,7 @@ const PrintableReceipt = ( {
 
 	return (
 		<div className="payment-receipt">
-			<Receipt payment={ payment } billingDetails={ billingDetails } isPrintView />
+			<Receipt payment={ payment } billingDetails={ billingDetails } isPrintView sites={ sites } />
 		</div>
 	);
 };
@@ -37,7 +39,11 @@ const PrintableReceipt = ( {
 /**
  * Utility function to handle printing of a receipt
  */
-export const printReceipt = ( payment: Payment | DetailedPayment, billingDetails: string ) => {
+export const printReceipt = (
+	payment: Payment | DetailedPayment,
+	billingDetails: string,
+	sites: Record< number, any >
+) => {
 	const printReceiptStyles = `
 		body{margin:0;background:white;font-family:system-ui,sans-serif}
 		.print-iframe{display:none}
@@ -67,6 +73,11 @@ export const printReceipt = ( payment: Payment | DetailedPayment, billingDetails
 		.payment-receipt__inline-loading{display:flex;align-items:center;margin-bottom:16px}
 		.wpcom-print-logo{max-width:100%;max-height:100%}
 		.payment-receipt__print{display:none}
+		.payment-receipt__domain-group{margin-bottom:16px}
+		.payment-receipt__domain-group:not(:first-child){margin-top:16px;padding-top:8px}
+		.payment-receipt__domain-header{margin-bottom:16px;padding-bottom:4px;border-bottom:1px solid #e0e0e0}
+		.payment-receipt__domain-name{font-size:15px;font-weight:600;color:#3c4043;margin:0}
+		.payment-receipt__campaign-item{margin-bottom:8px}
 	`;
 
 	// Create a hidden iframe for printing
@@ -132,6 +143,7 @@ export const printReceipt = ( payment: Payment | DetailedPayment, billingDetails
 							<PrintableReceipt
 								payment={ payment }
 								billingDetails={ billingDetails }
+								sites={ sites }
 								onRenderComplete={ handleRenderComplete }
 							/>
 						);
