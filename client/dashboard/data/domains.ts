@@ -4,19 +4,29 @@ import type { DomainSuggestion, DomainSuggestionQuery } from '@automattic/data-s
 // Export types again to avoid other places to access `@automattic/data-stores`.
 export type { DomainSuggestion, DomainSuggestionQuery };
 
-export enum DomainTypes {
-	MAPPED = 'mapping',
-	REGISTERED = 'registered',
-	SITE_REDIRECT = 'redirect',
-	WPCOM = 'wpcom',
-	TRANSFER = 'transfer',
-}
+export const DomainTypes = {
+	MAPPED: 'mapping',
+	REGISTERED: 'registered',
+	SITE_REDIRECT: 'redirect',
+	WPCOM: 'wpcom',
+	TRANSFER: 'transfer',
+} as const;
+
+export const TransferStatus = {
+	PENDING_OWNER: 'pending_owner',
+	PENDING_REGISTRY: 'pending_registry',
+	CANCELLED: 'cancelled',
+	COMPLETED: 'completed',
+	PENDING_START: 'pending_start',
+	PENDING_ASYNC: 'pending_async',
+} as const;
 
 export interface DomainSummary {
 	aftermarket_auction: boolean;
 	auto_renewing: boolean;
 	blog_id: number;
 	blog_name: string;
+	can_manage_dns_records: boolean;
 	can_set_as_primary: boolean;
 	current_user_can_create_site_from_domain_only: boolean;
 	current_user_can_manage: boolean;
@@ -39,7 +49,8 @@ export interface DomainSummary {
 	registrationDate: string;
 	site_slug: string;
 	subscription_id: string;
-	type: `${ DomainTypes }`;
+	transfer_status: ( typeof TransferStatus )[ keyof typeof TransferStatus ] | null;
+	type: ( typeof DomainTypes )[ keyof typeof DomainTypes ];
 	wpcom_domain: boolean;
 }
 

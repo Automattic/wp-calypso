@@ -1,4 +1,5 @@
 import {
+	domainManagementDNS,
 	domainManagementLink,
 	domainMappingSetup,
 } from '@automattic/domains-table/src/utils/paths';
@@ -11,14 +12,19 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useMemo } from 'react';
 import { siteSetPrimaryDomainMutation } from '../../app/queries/site-domains';
 import { DomainTypes } from '../../data/domains';
-import { isRecentlyRegistered, isDomainRenewable, canSetAsPrimary } from '../../utils/domain';
+import {
+	isRecentlyRegistered,
+	isDomainRenewable,
+	canSetAsPrimary,
+	getDomainSiteSlug,
+} from '../../utils/domain';
 import type { DomainSummary, Site, User } from '../../data/types';
 import type { Action } from '@wordpress/dataviews';
 
 export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const setPrimaryDomainMutation = useMutation( siteSetPrimaryDomainMutation() );
-
+	const context = site ? 'site' : 'domains';
 	const actions: Action< DomainSummary >[] = useMemo(
 		() => [
 			{
@@ -36,7 +42,7 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				label: __( 'Setup' ),
 				callback: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
-					const siteSlug = domain.primary_domain ? domain.domain : domain.site_slug;
+					const siteSlug = getDomainSiteSlug( domain );
 					window.location.pathname = domainMappingSetup( siteSlug, domain.domain );
 				},
 				isEligible: ( item: DomainSummary ) => item.type === DomainTypes.MAPPED,
@@ -52,7 +58,7 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				supportsBulk: false,
 				callback: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
-					const siteSlug = domain.primary_domain ? domain.domain : domain.site_slug;
+					const siteSlug = getDomainSiteSlug( domain );
 					window.location.pathname = domainManagementLink( domain, siteSlug, false );
 				},
 				isEligible: ( item: DomainSummary ) => {
@@ -63,8 +69,18 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				id: 'manage-dns-settings',
 				label: __( 'Manage DNS' ),
 				supportsBulk: false,
-				callback: () => {},
-				isEligible: () => false,
+				callback: ( items: Domain[] ) => {
+					const domain = items[ 0 ];
+					const siteSlug = getDomainSiteSlug( domain );
+					window.location.pathname = domainManagementDNS( siteSlug, domain.domain, context );
+				},
+				isEligible: ( item: Domain ) => {
+					return (
+						item.can_manage_dns_records &&
+						item.transfer_status !== TransferStatus.PENDING_ASYNC &&
+						item.type !== DomainTypes.SITE_REDIRECT
+					);
+				},
 			},
 			{
 				id: 'manage-contact-info',
@@ -147,7 +163,7 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				isEligible: () => false,
 			},
 		],
-		[ user, site, setPrimaryDomainMutation, createSuccessNotice, createErrorNotice ]
+		[ user, site, context, setPrimaryDomainMutation, createSuccessNotice, createErrorNotice ]
 	);
 
 	return actions;

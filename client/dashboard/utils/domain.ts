@@ -5,6 +5,10 @@ import { hasPlanFeature } from './site-features';
 import { userHasFlag } from './user';
 import type { DomainSummary, Site, User } from '../data/types';
 
+export function getDomainSiteSlug( domain: Domain ) {
+	return domain.primary_domain ? domain.domain : domain.site_slug;
+}
+
 export function isRecentlyRegistered( registrationDate: string, numberOfMinutes = 30 ) {
 	return (
 		!! registrationDate &&
