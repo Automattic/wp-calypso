@@ -4,7 +4,7 @@ import wp from 'calypso/lib/wp';
 
 const useDomainNameserversQuery = ( domainName: string ) =>
 	useQuery( {
-		queryKey: [ 'domain-nameservers', domainName ],
+		queryKey: [ 'domains', domainName, 'nameservers' ],
 		queryFn: () => wp.req.get( `/domains/${ domainName }/nameservers/` ) as Promise< string[] >,
 		refetchOnWindowFocus: false,
 	} );
@@ -27,7 +27,7 @@ function useUpdateNameserversMutation(
 		...queryOptions,
 		onSuccess( ...args ) {
 			queryClient.invalidateQueries( {
-				queryKey: [ 'domain-nameservers', domainName ],
+				queryKey: [ 'domains', domainName, 'nameservers' ],
 			} );
 			queryOptions.onSuccess?.( ...args );
 		},
