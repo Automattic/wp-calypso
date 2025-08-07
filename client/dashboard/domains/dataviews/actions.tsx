@@ -12,14 +12,14 @@ import { useMemo } from 'react';
 import { siteSetPrimaryDomainMutation } from '../../app/queries/site-domains';
 import { DomainTypes } from '../../data/domains';
 import { isRecentlyRegistered, isDomainRenewable, canSetAsPrimary } from '../../utils/domain';
-import type { Domain, Site, User } from '../../data/types';
+import type { DomainSummary, Site, User } from '../../data/types';
 import type { Action } from '@wordpress/dataviews';
 
 export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const setPrimaryDomainMutation = useMutation( siteSetPrimaryDomainMutation() );
 
-	const actions: Action< Domain >[] = useMemo(
+	const actions: Action< DomainSummary >[] = useMemo(
 		() => [
 			{
 				id: 'renew',
@@ -27,35 +27,35 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				icon: <Icon icon={ payment } />,
 				label: __( 'Renew now' ),
 				callback: () => {},
-				isEligible: ( item: Domain ) => isDomainRenewable( item ),
+				isEligible: ( item: DomainSummary ) => isDomainRenewable( item ),
 			},
 			{
 				id: 'setup',
 				isPrimary: true,
 				icon: <Icon icon={ tool } />,
 				label: __( 'Setup' ),
-				callback: ( items: Domain[] ) => {
+				callback: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
 					const siteSlug = domain.primary_domain ? domain.domain : domain.site_slug;
 					window.location.pathname = domainMappingSetup( siteSlug, domain.domain );
 				},
-				isEligible: ( item: Domain ) => item.type === DomainTypes.MAPPED,
+				isEligible: ( item: DomainSummary ) => item.type === DomainTypes.MAPPED,
 			},
 			{
 				id: 'manage-domain',
-				label: ( items: Domain[] ) => {
+				label: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
 					return domain.type === DomainTypes.TRANSFER
 						? __( 'View transfer' )
 						: __( 'View settings' );
 				},
 				supportsBulk: false,
-				callback: ( items: Domain[] ) => {
+				callback: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
 					const siteSlug = domain.primary_domain ? domain.domain : domain.site_slug;
 					window.location.pathname = domainManagementLink( domain, siteSlug, false );
 				},
-				isEligible: ( item: Domain ) => {
+				isEligible: ( item: DomainSummary ) => {
 					return item.type !== DomainTypes.WPCOM;
 				},
 			},
@@ -77,7 +77,7 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				id: 'set-primary-site-address',
 				label: __( 'Make primary site address' ),
 				supportsBulk: false,
-				callback: ( domains: Domain[] ) => {
+				callback: ( domains: DomainSummary[] ) => {
 					if ( ! site ) {
 						return;
 					}
@@ -109,7 +109,7 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 						}
 					);
 				},
-				isEligible: ( item: Domain ) => {
+				isEligible: ( item: DomainSummary ) => {
 					return (
 						!! site &&
 						canSetAsPrimary( { domain: item, site, user } ) &&
