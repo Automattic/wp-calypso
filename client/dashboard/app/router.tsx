@@ -18,7 +18,10 @@ import { isAutomatticianQuery } from './queries/me-a8c';
 import { rawUserPreferencesQuery } from './queries/me-preferences';
 import { profileQuery } from './queries/me-profile';
 import { siteByIdQuery, siteBySlugQuery } from './queries/site';
-import { siteLastFiveActivityLogEntriesQuery } from './queries/site-activity-log';
+import {
+	siteLastFiveActivityLogEntriesQuery,
+	siteLastRewindableActivityLogEntriesQuery,
+} from './queries/site-activity-log';
 import { siteAgencyBlogQuery } from './queries/site-agency';
 import { siteLastBackupQuery } from './queries/site-backups';
 import { siteEdgeCacheStatusQuery } from './queries/site-cache';
@@ -252,6 +255,11 @@ const siteLogsChildRoutes = [ siteLogsIndexRoute, siteLogsPhpRoute, siteLogsServ
 const siteBackupsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'backups',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		// Preload activity log backup-related entries.
+		queryClient.ensureQueryData( siteLastRewindableActivityLogEntriesQuery( site.ID ) );
+	},
 } ).lazy( () =>
 	import( '../sites/backups' ).then( ( d ) =>
 		createLazyRoute( 'site-backups' )( {
