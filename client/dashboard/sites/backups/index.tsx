@@ -65,14 +65,13 @@ function Backups( { site }: { site: Site } ) {
 		perPage: 10,
 	} );
 
-	const { data: activityLog, isLoading: isLoadingActivityLog } = useQuery(
+	const { data: activityLog = [], isLoading: isLoadingActivityLog } = useQuery(
 		siteRewindableActivityLogEntriesQuery( site.ID )
 	);
 
-	const rawData = activityLog || [];
 	const fields = getFields();
 	const actions = getActions( site );
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate( rawData, view, fields );
+	const { data: filteredData, paginationInfo } = filterSortAndPaginate( activityLog, view, fields );
 
 	return (
 		<DataViewsCard>
