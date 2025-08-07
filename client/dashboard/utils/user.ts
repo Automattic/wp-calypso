@@ -1,7 +1,6 @@
-import { UserFlags } from '../data/me';
-import type { User } from '../data/types';
+import type { User, UserFlags } from '../data/types';
 
-export const userHasFlag = ( user: User, flag: `${ UserFlags }` ) => {
+export const userHasFlag = ( user: User, flag: UserFlags ) => {
 	if ( ! user ) {
 		return false;
 	}

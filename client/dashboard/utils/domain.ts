@@ -1,6 +1,5 @@
 import { DotcomFeatures } from '../data/constants';
 import { DomainTypes } from '../data/domains';
-import { UserFlags } from '../data/me';
 import { hasPlanFeature } from './site-features';
 import { userHasFlag } from './user';
 import type { Domain, Site, User } from '../data/types';
@@ -28,7 +27,7 @@ export const shouldUpgradeToMakeDomainPrimary = ( {
 	user,
 }: {
 	domain: Domain;
-	site?: Site;
+	site: Site;
 	user: User;
 } ) => {
 	return (
@@ -37,9 +36,9 @@ export const shouldUpgradeToMakeDomainPrimary = ( {
 		! domain.primary_domain &&
 		! domain.wpcom_domain &&
 		! domain.is_wpcom_staging_domain &&
-		userHasFlag( user, UserFlags.CALYPSO_ALLOW_NONPRIMARY_DOMAINS_WITHOUT_PLAN ) &&
-		!! site?.plan?.is_free &&
-		! ( site && hasPlanFeature( site, DotcomFeatures.SET_PRIMARY_CUSTOM_DOMAIN ) )
+		userHasFlag( user, 'calypso_allow_nonprimary_domains_without_plan' ) &&
+		!! site.plan?.is_free &&
+		! hasPlanFeature( site, DotcomFeatures.SET_PRIMARY_CUSTOM_DOMAIN )
 	);
 };
 

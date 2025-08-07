@@ -1,8 +1,6 @@
 import wpcom from 'calypso/lib/wp';
 
-export enum UserFlags {
-	CALYPSO_ALLOW_NONPRIMARY_DOMAINS_WITHOUT_PLAN = 'calypso_allow_nonprimary_domains_without_plan',
-}
+export type UserFlags = 'calypso_allow_nonprimary_domains_without_plan';
 
 export interface User {
 	ID: number;
@@ -16,7 +14,7 @@ export interface User {
 	meta: {
 		data: {
 			flags: {
-				active_flags: `${ UserFlags }`[];
+				active_flags: UserFlags[];
 			};
 		};
 	};
