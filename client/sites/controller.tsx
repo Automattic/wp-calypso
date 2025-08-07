@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { siteLaunchStatusGroupValues } from '@automattic/sites';
 import { Global, css } from '@emotion/react';
@@ -152,10 +151,7 @@ export function redirectToHostingFeaturesIfNotAtomic( context: PageJSContext, ne
 	const state = context.store.getState();
 	const site = getSelectedSite( state );
 
-	if (
-		! areHostingFeaturesSupported( site ) &&
-		! isEnabled( 'hosting/hosting-features-callout' )
-	) {
+	if ( ! areHostingFeaturesSupported( site ) ) {
 		return page.redirect( `/hosting-features/${ site?.slug }` );
 	}
 

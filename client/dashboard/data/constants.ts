@@ -23,6 +23,7 @@ export enum DotcomFeatures {
 	LOCKED_MODE = 'locked-mode',
 	SCAN = 'scan',
 	SECURITY_SETTINGS = 'security-settings',
+	SET_PRIMARY_CUSTOM_DOMAIN = 'set-primary-custom-domain',
 	SFTP = 'sftp',
 	SSH = 'ssh',
 	SITE_PREVIEW_LINKS = 'site-preview-links',

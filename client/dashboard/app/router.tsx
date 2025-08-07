@@ -26,6 +26,7 @@ import { siteDefensiveModeSettingsQuery } from './queries/site-defensive-mode';
 import { siteDomainsQuery } from './queries/site-domains';
 import { siteJetpackModulesQuery } from './queries/site-jetpack-module';
 import { siteJetpackSettingsQuery } from './queries/site-jetpack-settings';
+import { siteMediaStorageQuery } from './queries/site-media-storage';
 import { sitePHPVersionQuery } from './queries/site-php-version';
 import { siteCurrentPlanQuery } from './queries/site-plans';
 import { sitePreviewLinksQuery } from './queries/site-preview-links';
@@ -51,7 +52,7 @@ import {
 	domainDnsRoute,
 	domainDnsAddRoute,
 	domainDnsEditRoute,
-	domainForwardingRoute,
+	domainForwardingsRoute,
 	domainForwardingAddRoute,
 	domainForwardingEditRoute,
 	domainContactInfoRoute,
@@ -175,6 +176,11 @@ const siteOverviewRoute = createRoute( {
 				}
 			} );
 		}
+		// Ensure storage specifically is loaded because the warning notice can cause a layout shift
+		await Promise.all( [
+			queryClient.ensureQueryData( siteMediaStorageQuery( site.ID ) ),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+		] );
 	},
 } ).lazy( () =>
 	import( '../sites/overview' ).then( ( d ) =>
@@ -826,7 +832,7 @@ export {
 	domainDnsRoute,
 	domainDnsAddRoute,
 	domainDnsEditRoute,
-	domainForwardingRoute,
+	domainForwardingsRoute,
 	domainForwardingAddRoute,
 	domainForwardingEditRoute,
 	domainContactInfoRoute,

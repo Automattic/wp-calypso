@@ -65,12 +65,6 @@ const PreviewPaneHeaderButtons = ( { focusRef, itemData }: Props ) => {
 		? site?.options?.wpcom_production_blog_id ?? 0
 		: itemData.blogId ?? 0;
 
-	const stagingSiteId = hasStagingSite
-		? site?.options?.wpcom_staging_blog_ids?.[ 0 ] ?? 0
-		: itemData.blogId ?? 0;
-
-	const environment = isStagingSite ? 'staging' : 'production';
-
 	const { resetSyncStatus, isSyncInProgress, status } = useCheckSyncStatus( productionSiteId );
 
 	useEffect( () => {
@@ -87,13 +81,10 @@ const PreviewPaneHeaderButtons = ( { focusRef, itemData }: Props ) => {
 
 	return (
 		<>
-			{ shouldShowSyncDropdown && (
+			{ site && shouldShowSyncDropdown && (
 				<SyncDropdown
 					className="item-preview__sync-dropdown"
-					environment={ environment }
-					productionSiteId={ productionSiteId }
-					stagingSiteId={ stagingSiteId }
-					isSyncInProgress={ isSyncInProgress }
+					siteSlug={ site.slug }
 					onSyncStart={ resetSyncStatus }
 				/>
 			) }

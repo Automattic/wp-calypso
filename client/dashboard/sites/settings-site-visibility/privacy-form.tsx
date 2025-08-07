@@ -192,42 +192,50 @@ export function PrivacyForm( {
 								form={ visibilityForm }
 								onChange={ handleChange }
 							/>
-							{ formData.visibility === 'public' && isPrimaryDomainStaging && (
-								<Notice
-									variant="warning"
-									density="medium"
-									actions={
-										hasNonWpcomDomain ? (
-											<Button variant="secondary" href={ `/domains/manage/${ site.slug }` }>
-												{ __( 'Manage domains' ) }
-											</Button>
-										) : (
-											<Button
-												variant="secondary"
-												href={ addQueryArgs( `/domains/add/${ site.slug }`, {
-													redirect_to: window.location.pathname,
-												} ) }
-											>
-												{ __( 'Add new domain' ) }
-											</Button>
-										)
-									}
-								>
-									{ createInterpolateElement(
-										__(
-											/* translators: <domain /> is a placeholder for the site's domain name. */
-											'Your site’s current primary domain is <domain />. This domain is intended for temporary use and will not be indexed by search engines. To ensure your site can be indexed, please register or connect a custom primary domain.'
-										),
-										{
-											domain: (
-												<strong style={ { overflowWrap: 'anywhere' } }>
-													{ primaryDomain?.domain }
-												</strong>
-											),
+							{ formData.visibility === 'public' &&
+								isPrimaryDomainStaging &&
+								( site.is_wpcom_staging_site ? (
+									<Notice variant="warning" density="medium">
+										{ __(
+											'Staging sites are intended for testing purposes and will not be indexed by search engines.'
+										) }
+									</Notice>
+								) : (
+									<Notice
+										variant="warning"
+										density="medium"
+										actions={
+											hasNonWpcomDomain ? (
+												<Button variant="secondary" href={ `/domains/manage/${ site.slug }` }>
+													{ __( 'Manage domains' ) }
+												</Button>
+											) : (
+												<Button
+													variant="secondary"
+													href={ addQueryArgs( `/domains/add/${ site.slug }`, {
+														redirect_to: window.location.pathname,
+													} ) }
+												>
+													{ __( 'Add new domain' ) }
+												</Button>
+											)
 										}
-									) }
-								</Notice>
-							) }
+									>
+										{ createInterpolateElement(
+											__(
+												/* translators: <domain /> is a placeholder for the site's domain name. */
+												'Your site’s current primary domain is <domain />. This domain is intended for temporary use and will not be indexed by search engines. To ensure your site can be indexed, please register or connect a custom primary domain.'
+											),
+											{
+												domain: (
+													<strong style={ { overflowWrap: 'anywhere' } }>
+														{ primaryDomain?.domain }
+													</strong>
+												),
+											}
+										) }
+									</Notice>
+								) ) }
 							<DataForm< PrivacyFormData & { isPrimaryDomainStaging: boolean } >
 								data={ { ...formData, isPrimaryDomainStaging } }
 								fields={ robotFields }

@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalDivider as Divider,
@@ -29,8 +30,10 @@ import SiteActionMenu from '../overview-site-action-menu';
 import SiteOverviewFields from '../overview-site-fields';
 import SitePreviewCard from '../overview-site-preview-card';
 import VisibilityCard from '../overview-visibility-card';
-import './style.scss';
+import StagingSiteSyncDropdown from '../staging-site-sync-dropdown';
+import { StorageWarningBanner } from './storage-warning-banner';
 import type { WPBreakpoint } from '@wordpress/compose/build-types/hooks/use-viewport-match';
+import './style.scss';
 
 const SPACING = {
 	DEFAULT: 6,
@@ -95,6 +98,9 @@ function SiteOverview( {
 						actions={
 							site.options?.admin_url && (
 								<>
+									{ isEnabled( 'hosting/staging-sites-redesign' ) && (
+										<StagingSiteSyncDropdown siteSlug={ siteSlug } />
+									) }
 									<Button
 										__next40pxDefaultSize
 										variant="primary"
@@ -113,6 +119,7 @@ function SiteOverview( {
 			}
 		>
 			<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
+				<StorageWarningBanner site={ site } />
 				<Grid { ...gridLayout } gap={ spacing }>
 					{ showSitePreview && <SitePreviewCard site={ site } /> }
 					<Grid columns={ 1 } rows={ 2 } gap={ spacing }>

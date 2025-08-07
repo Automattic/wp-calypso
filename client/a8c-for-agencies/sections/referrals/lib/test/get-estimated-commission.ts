@@ -240,5 +240,152 @@ describe( 'get-estimated-commission', () => {
 				13.95
 			);
 		} );
+
+		it( 'uses API commissions data when available', () => {
+			const referrals: Referral[] = [
+				{
+					client: { id: 1, email: 'test@example.com' },
+					purchaseStatuses: [ 'active' ],
+					referralStatuses: [ 'active' ],
+					purchases: [
+						{
+							product_id: 1,
+							status: 'active',
+							quantity: 1,
+							license: {
+								issued_at: '2024-03-01T00:00:00Z',
+								revoked_at: null,
+							},
+							commissions: {
+								estimated_commission_current_quarter: 150,
+								estimated_commission_previous_quarter: 75,
+							},
+						},
+					],
+				} as never,
+				{
+					client: { id: 2, email: 'test2@example.com' },
+					purchaseStatuses: [ 'active' ],
+					referralStatuses: [ 'active' ],
+					purchases: [
+						{
+							product_id: 1,
+							status: 'active',
+							quantity: 1,
+							license: {
+								issued_at: '2024-03-01T00:00:00Z',
+								revoked_at: null,
+							},
+							commissions: {
+								estimated_commission_current_quarter: 200,
+								estimated_commission_previous_quarter: 100,
+							},
+						},
+					],
+				} as never,
+			];
+
+			// Should use the sum of current quarter commissions from API
+			expect(
+				getEstimatedCommission( referrals, [ mockProduct ], mockActivityWindow, false )
+			).toBe( 350 );
+
+			// Should use the sum of previous quarter commissions from API
+			expect( getEstimatedCommission( referrals, [ mockProduct ], mockActivityWindow, true ) ).toBe(
+				175
+			);
+		} );
+
+		it( 'combines API commissions with calculated commissions', () => {
+			const referrals: Referral[] = [
+				{
+					client: { id: 1, email: 'test@example.com' },
+					purchaseStatuses: [ 'active' ],
+					referralStatuses: [ 'active' ],
+					purchases: [
+						{
+							product_id: 1,
+							status: 'active',
+							quantity: 1,
+							license: {
+								issued_at: '2024-03-01T00:00:00Z',
+								revoked_at: null,
+							},
+							commissions: {
+								estimated_commission_current_quarter: 150,
+								estimated_commission_previous_quarter: 75,
+							},
+						},
+					],
+				} as never,
+				{
+					client: { id: 2, email: 'test2@example.com' },
+					purchaseStatuses: [ 'active' ],
+					referralStatuses: [ 'active' ],
+					purchases: [
+						{
+							product_id: 1,
+							status: 'active',
+							quantity: 1,
+							license: {
+								issued_at: '2024-03-01T00:00:00Z',
+								revoked_at: null,
+							},
+							// Missing commissions data - will be calculated
+						},
+					],
+				} as never,
+			];
+
+			// Should combine API commissions (150) + calculated commissions (15.5) = 165.5
+			expect(
+				getEstimatedCommission( referrals, [ mockProduct ], mockActivityWindow, false )
+			).toBe( 165.5 );
+
+			// Should combine API commissions (75) + calculated commissions (15.5) = 90.5
+			expect( getEstimatedCommission( referrals, [ mockProduct ], mockActivityWindow, true ) ).toBe(
+				90.5
+			);
+		} );
+
+		it( 'falls back to calculation when no referrals have commissions data', () => {
+			const referrals: Referral[] = [
+				{
+					purchaseStatuses: [ 'active' ],
+					referralStatuses: [ 'active' ],
+					purchases: [
+						{
+							product_id: 1,
+							status: 'active',
+							quantity: 1,
+							license: {
+								issued_at: '2024-03-01T00:00:00Z',
+								revoked_at: null,
+							},
+						},
+					],
+				} as never,
+				{
+					purchaseStatuses: [ 'active' ],
+					referralStatuses: [ 'active' ],
+					purchases: [
+						{
+							product_id: 1,
+							status: 'active',
+							quantity: 1,
+							license: {
+								issued_at: '2024-03-01T00:00:00Z',
+								revoked_at: null,
+							},
+						},
+					],
+				} as never,
+			];
+
+			// Should fall back to calculation method
+			// 31 days * $100 daily price * 50% commission * 2 referrals = 3100 cents
+			// Convert to dollars by dividing by 100
+			expect( getEstimatedCommission( referrals, [ mockProduct ], mockActivityWindow ) ).toBe( 31 );
+		} );
 	} );
 } );

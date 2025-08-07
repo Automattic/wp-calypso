@@ -23,7 +23,7 @@ export function hostingFeatures( context: PageJSContext, next: () => void ) {
 
 		let redirectUrl = context.query.redirect_to;
 		if ( redirectUrl ) {
-			redirectUrl = hasSftpFeature ? `/hosting-config/${ site.slug }` : `/overview/${ site.slug }`;
+			redirectUrl = hasSftpFeature ? `/sites/${ site.slug }/settings` : `/overview/${ site.slug }`;
 		}
 
 		content = (
