@@ -271,6 +271,7 @@ export default function SyncModal( {
 
 	const { pushToStaging } = usePushToStagingMutation( productionSiteId, stagingSiteId, {
 		onSuccess: ( _, options ) => {
+			onSyncStart();
 			dispatch(
 				recordTracksEvent( 'calypso_hosting_configuration_staging_site_push_success', options )
 			);
@@ -314,8 +315,6 @@ export default function SyncModal( {
 			include_paths = '';
 			exclude_paths = '';
 		}
-
-		onSyncStart();
 
 		if (
 			( syncType === 'pull' && environment === 'production' ) ||
