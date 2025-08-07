@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router';
+import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { isTemporarySitePurchase, isA4ATemporarySitePurchase } from '../../utils/purchase';
@@ -121,9 +122,12 @@ export function PurchaseProduct( {
 								/>
 							),
 							link: (
-								<a
+								<ExternalLink
+									children={
+										// children prop is injected by createInterpolateElement
+										null
+									}
 									href={ 'https://' + site.slug }
-									target="_blank"
 									rel="noreferrer"
 									title={
 										// translators: the siteName is the name of the site
