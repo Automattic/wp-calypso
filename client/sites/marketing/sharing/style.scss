@@ -3,3 +3,15 @@
 		width: 100%;
 	}
 }
+
+.sharing-buttons {
+	min-height: 80vh;
+
+	.feature-moved {
+		padding: 0 16px;
+
+		@include break-large {
+			padding: 0;
+		}
+	}
+}
