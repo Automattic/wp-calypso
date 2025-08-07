@@ -11,7 +11,7 @@ describe( 'hasCancelableSitePurchases', () => {
 			product_slug: 'domain_registration',
 			blog_id: targetSiteId,
 			user_id: targetUserId,
-			active: true,
+			subscription_status: 'active',
 		},
 		{
 			ID: 2,
@@ -19,7 +19,7 @@ describe( 'hasCancelableSitePurchases', () => {
 			blog_id: targetSiteId,
 			user_id: targetUserId,
 			product_slug: 'premium_plan',
-			active: true,
+			subscription_status: 'active',
 		},
 		{
 			ID: 3,
@@ -27,7 +27,7 @@ describe( 'hasCancelableSitePurchases', () => {
 			product_slug: 'premium_theme',
 			blog_id: targetSiteId,
 			user_id: targetUserId,
-			active: true,
+			subscription_status: 'active',
 		},
 	];
 
@@ -102,7 +102,7 @@ describe( 'hasCancelableSitePurchases', () => {
 						blog_id: targetSiteId,
 						user_id: targetUserId,
 						is_refundable: false,
-						active: true,
+						subscription_status: 'active',
 					},
 				],
 				error: null,
@@ -127,7 +127,7 @@ describe( 'hasCancelableSitePurchases', () => {
 						blog_id: targetSiteId,
 						user_id: targetUserId,
 						is_refundable: true,
-						active: true,
+						subscription_status: 'active',
 					},
 				],
 				error: null,
@@ -152,7 +152,7 @@ describe( 'hasCancelableSitePurchases', () => {
 						blog_id: targetSiteId,
 						user_id: targetUserId,
 						is_refundable: true,
-						active: false,
+						subscription_status: 'inactive',
 					},
 				],
 				error: null,
