@@ -513,7 +513,7 @@ export default function SyncModal( {
 						</VStack>
 					) }
 				</div>
-				<VStack className="staging-site-card__footer" spacing={ 6 }>
+				<VStack className="staging-site-card__footer" spacing={ 4 }>
 					{ showDomainConfirmation && (
 						<InputControl
 							__next40pxDefaultSize
