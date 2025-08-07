@@ -22,7 +22,7 @@ export default function PurchasesForSite() {
 		  )
 		: undefined;
 	const { data: purchases, isLoading: isLoadingPurchases } = useQuery( {
-		...sitePurchasesQuery( site?.ID ),
+		...sitePurchasesQuery( site?.ID ?? 0 ),
 		enabled: Boolean( site?.ID ),
 	} );
 	const { data: transferredPurchases, isLoading: isLoadingTransferredPurchases } = useQuery(
