@@ -1,9 +1,17 @@
 import { Icon } from '@wordpress/components';
-import { dateI18n } from '@wordpress/date';
 import { __ } from '@wordpress/i18n';
+import { useFormattedTime } from '../../../components/formatted-time';
 import { gridiconToWordPressIcon } from '../../../utils/gridicons';
 import type { ActivityLogEntry } from '../../../data/types';
 import type { Field } from '@wordpress/dataviews';
+
+const FormattedTime = ( { timestamp }: { timestamp: string } ) => {
+	const formattedTime = useFormattedTime( timestamp, {
+		dateStyle: 'long',
+		timeStyle: 'short',
+	} );
+	return <strong>{ formattedTime }</strong>;
+};
 
 export function getFields(): Field< ActivityLogEntry >[] {
 	return [
@@ -11,13 +19,7 @@ export function getFields(): Field< ActivityLogEntry >[] {
 			id: 'date',
 			label: __( 'Date' ),
 			getValue: ( { item } ) => item.published,
-			render: ( { item } ) => (
-				<>
-					<strong>{ dateI18n( 'F j, Y', item.published ) }</strong>
-					&nbsp;
-					{ dateI18n( 'g:i A', item.published ) }
-				</>
-			),
+			render: ( { item } ) => <FormattedTime timestamp={ item.published } />,
 		},
 		{
 			id: 'action',
