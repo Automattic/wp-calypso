@@ -1,4 +1,3 @@
-import page from '@automattic/calypso-router';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { envelope } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -6,6 +5,7 @@ import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FeatureMoved from 'calypso/components/feature-moved';
 import Main from 'calypso/components/main';
+import { navigate } from 'calypso/lib/navigate';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
@@ -99,6 +99,9 @@ const JetpackNewsletter = () => {
 	const imagesForSite = images[ isSiteAtomic ? 'atomic' : 'simple' ];
 	const image = imagesForSite[ userLocale ] ?? imagesForSite.en;
 
+	let description;
+	let buttonText;
+	let buttonLink;
 	let areTranslationsReady = hasEnTranslation( 'Newsletter has moved' );
 	if ( isSiteAtomic ) {
 		areTranslationsReady =
@@ -107,6 +110,11 @@ const JetpackNewsletter = () => {
 				'Newsletter is now part of Jetpack. Access it via Jetpack → Settings → Newsletter in your dashboard.'
 			) &&
 			hasEnTranslation( 'Go to Jetpack Settings' );
+		description = translate(
+			'Newsletter is now part of Jetpack. Access it via Jetpack → Settings → Newsletter in your dashboard.'
+		);
+		buttonText = translate( 'Go to Jetpack Settings' );
+		buttonLink = wpAdminUrl;
 	} else {
 		areTranslationsReady =
 			areTranslationsReady &&
@@ -114,28 +122,16 @@ const JetpackNewsletter = () => {
 				'Newsletter is now part of Jetpack for enhanced features. Access it via Jetpack → Newsletter in your dashboard.'
 			) &&
 			hasEnTranslation( 'Go to Jetpack Newsletter' );
-	}
-
-	if ( ! areTranslationsReady ) {
-		page.redirect( `/settings/newsletter/${ siteSlug }` );
-		return null;
-	}
-
-	let description;
-	let buttonText;
-	let buttonLink;
-	if ( isSiteAtomic ) {
-		description = translate(
-			'Newsletter is now part of Jetpack. Access it via Jetpack → Settings → Newsletter in your dashboard.'
-		);
-		buttonText = translate( 'Go to Jetpack Settings' );
-		buttonLink = wpAdminUrl;
-	} else {
 		description = translate(
 			'Newsletter is now part of Jetpack for enhanced features. Access it via Jetpack → Newsletter in your dashboard.'
 		);
 		buttonText = translate( 'Go to Jetpack Newsletter' );
 		buttonLink = `/settings/newsletter/${ siteSlug }`;
+	}
+
+	if ( ! areTranslationsReady ) {
+		navigate( buttonLink );
+		return null;
 	}
 
 	return (
