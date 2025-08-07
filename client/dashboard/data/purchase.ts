@@ -64,8 +64,15 @@ export interface PurchasePriceTier {
 }
 
 export interface RawPurchasePriceTierEntry extends PriceTierEntry {
-	minimum_price_monthly_display: never;
-	maximum_price_monthly_display: never;
+	/**
+	 * The formatted minimum price for the tier.
+	 */
+	minimum_price_monthly_display: string;
+
+	/**
+	 * The formatted maxiumum price for the tier, if any.
+	 */
+	maximum_price_monthly_display: string | null;
 }
 
 /**
@@ -105,7 +112,7 @@ export interface Purchase {
 	cost_to_unbundle: undefined | number | string;
 	cost_to_unbundle_display: undefined | string;
 	price_text: string;
-	price_tier_list?: Array< RawPurchasePriceTierEntry >;
+	price_tier_list: Array< RawPurchasePriceTierEntry >;
 	currency_code: string;
 	currency_symbol: string;
 	description: string;
@@ -173,7 +180,11 @@ export interface Purchase {
 		| 'paypal'
 		| 'emergent-paywall'
 		| 'brazil-tef'
-		| string;
+		| 'id_wallet'
+		| 'netbanking'
+		| 'tef'
+		| 'credits'
+		| 'razorpay';
 	payment_card_display_brand: string | null;
 	payment_country_name: string;
 	payment_country_code: string | null;
