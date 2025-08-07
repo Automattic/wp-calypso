@@ -231,7 +231,7 @@ const siteLogsPhpRoute = createRoute( {
 } ).lazy( () =>
 	import( '../sites/logs' ).then( ( d ) =>
 		createLazyRoute( 'site-logs-php' )( {
-			component: ( props ) => <d.default { ...props } key="php" />,
+			component: () => <d.default logType="php" />,
 		} )
 	)
 );
@@ -242,7 +242,7 @@ const siteLogsServerRoute = createRoute( {
 } ).lazy( () =>
 	import( '../sites/logs' ).then( ( d ) =>
 		createLazyRoute( 'site-logs-server' )( {
-			component: ( props ) => <d.default { ...props } key="server" />,
+			component: () => <d.default logType="server" />,
 		} )
 	)
 );

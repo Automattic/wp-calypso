@@ -1,16 +1,25 @@
+import { Badge } from '@automattic/ui';
 import { useQuery } from '@tanstack/react-query';
-import { __experimentalText as Text } from '@wordpress/components';
+import { useRouter } from '@tanstack/react-router';
+import { __experimentalText as Text, TabPanel, Notice } from '@wordpress/components';
+import { DataViews } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
+import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
+import { useSiteLogsData } from '../../app/hooks/site-logs-data';
 import { siteBySlugQuery } from '../../app/queries/site';
 import { siteRoute } from '../../app/router';
 import { Callout } from '../../components/callout';
 import { CalloutOverlay } from '../../components/callout-overlay';
+import DataViewsCard from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { HostingFeatures } from '../../data/constants';
+import { LogType, PHPLog, ServerLog } from '../../data/site-logs';
 import { hasHostingFeature } from '../../utils/site-features';
+import { toFilterParams } from '../../utils/site-logs-view';
 import illustrationUrl from './logs-callout-illustration.svg';
 
 export function SiteLogsCallout( {
@@ -52,19 +61,231 @@ export function SiteLogsCallout( {
 
 function SiteLogs() {
 	const { siteSlug } = siteRoute.useParams();
+	const router = useRouter();
+	const { pathname } = router.state.location;
+
 	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
+
+	const logType: LogType = pathname.endsWith( '/server' ) ? 'server' : 'php';
+
+	// @todo, this will be replaced when importing the use-view data.
+	const view = useMemo( () => {
+		if ( logType === 'php' ) {
+			return {
+				type: 'table',
+				page: 1,
+				perPage: 50,
+				fields: [ 'severity', 'name', 'message' ],
+				titleField: 'timestamp',
+				sort: {
+					field: 'timestamp',
+					order: 'desc',
+				},
+			};
+		}
+		return {
+			type: 'table',
+			page: 1,
+			perPage: 50,
+			fields: [ 'request_type', 'status', 'request_url' ],
+			titleField: 'date',
+			sort: {
+				field: 'date',
+				order: 'desc',
+			},
+		};
+	}, [ logType ] );
+
+	const siteId = site.ID;
+
+	// @todo, this will be replaced when importing / replacing moment usage and related functionality.
+	const [ startTime, endTime ] = useMemo( () => {
+		const now = Math.floor( Date.now() / 1000 );
+		return [ now - 1209600, now ];
+	}, [] );
+
+	const filter = useMemo( () => toFilterParams( { view, logType } ), [ view, logType ] );
+
+	const {
+		logs: siteLogs,
+		paginationInfo,
+		isLoading,
+	} = useSiteLogsData( {
+		siteId,
+		view,
+		logType,
+		startTime,
+		endTime,
+		filter,
+	} );
+
+	const handleTabChange = ( tab ) => {
+		if ( tab === LogType.PHP ) {
+			router.navigate( { to: `/sites/${ siteSlug }/logs/php` } );
+		} else {
+			router.navigate( { to: `/sites/${ siteSlug }/logs/server` } );
+		}
+	};
+
+	const translate = useTranslate();
+
+	// @todo, this will be replaced when importing the use-field data.
+	const VALUES_REQUEST_TYPE = [ 'GET', 'HEAD', 'POST', 'PUT', 'DELETE' ];
+	const VALUES_SEVERITY = [ 'User', 'Warning', 'Deprecated', 'Fatal error' ];
+	const VALUES_STATUS = [ '200', '301', '302', '400', '401', '403', '404', '429', '500' ];
+	const fields = useMemo( () => {
+		if ( logType === LogType.PHP ) {
+			return [
+				{
+					id: 'timestamp',
+					type: 'date',
+					label: 'Date & time',
+					render: () => '2025-08-05T08:18:18.000Z',
+					enableHiding: false,
+				},
+				{
+					id: 'severity',
+					type: 'text',
+					label: 'Severity',
+					elements: VALUES_SEVERITY.map( ( severity ) => ( { value: severity, label: severity } ) ),
+					filterBy: {
+						operators: [ 'isAny' as Operator ],
+					},
+					render: ( { item }: { item: PHPLog } ) => {
+						const severity = item.severity;
+						// @todo, the Badge styling needs updating due to the new component.
+						return <Badge className={ `badge--${ severity }` }>{ severity }</Badge>;
+					},
+					enableSorting: false,
+				},
+				{
+					id: 'message',
+					type: 'text',
+					label: 'Message',
+					render: ( { item }: { item: PHPLog } ) => {
+						return <span className="site-logs-table__message">{ item.message }</span>;
+					},
+					enableSorting: false,
+				},
+			];
+		}
+
+		return [
+			{
+				id: 'date',
+				type: 'datetime',
+				label: 'Date & time',
+				render: () => '2025-08-05T08:18:18.000Z',
+				enableHiding: false,
+			},
+			{
+				id: 'request_type',
+				type: 'text',
+				label: 'Request type',
+				elements: VALUES_REQUEST_TYPE.map( ( type ) => ( { value: type, label: type } ) ),
+				filterBy: {
+					operators: [ 'isAny' as Operator ],
+				},
+				render: ( { item }: { item: ServerLog } ) => {
+					const requestType = item.request_type;
+					return <Badge className={ `badge--${ requestType }` }>{ requestType }</Badge>;
+				},
+				enableSorting: false,
+			},
+			{
+				id: 'status',
+				type: 'text',
+				label: 'Status',
+				elements: VALUES_STATUS.map( ( status ) => ( { value: status, label: status } ) ),
+				filterBy: {
+					operators: [ 'isAny' as Operator ],
+				},
+				enableSorting: false,
+			},
+			{
+				id: 'request_url',
+				type: 'text',
+				label: 'Request URL',
+				render: ( { item }: { item: ServerLog } ) => {
+					return <span className="site-logs-table__request-url">{ item.request_url }</span>;
+				},
+				enableSorting: false,
+			},
+		];
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ logType ] );
+
+	// @todo, this will be replaced when importing the use-view data.
+	const actions = useMemo(
+		() => [
+			{
+				id: 'copy-msg',
+				label: 'Copy message',
+				disabled: isLoading,
+				supportsBulk: false,
+				callback: async ( items: ( PHPLog | ServerLog )[] ) => {
+					const message = ( items[ 0 ] as PHPLog ).message;
+					try {
+						await navigator.clipboard.writeText( message );
+						dispatch( successNotice( 'Copied message' ) );
+					} catch ( error ) {
+						dispatch( errorNotice( 'Message could not be copied' ) );
+					}
+				},
+			},
+		],
+		[ isLoading ]
+	);
 
 	if ( ! site ) {
 		return;
 	}
 
+	const LOG_TABS = [
+		{ name: 'php', title: translate( 'PHP error' ) },
+		{ name: 'server', title: translate( 'Web server' ) },
+	];
+
 	return (
-		<PageLayout header={ <PageHeader title={ __( 'Monitoring' ) } /> }>
+		<PageLayout
+			header={ <PageHeader title={ __( 'Logs' ) } /> }
+			notices={
+				<Notice status="warning" isDismissible={ false }>
+					{ __( 'This is in progress: Functionality is limited.' ) }
+				</Notice>
+			}
+		>
 			<CalloutOverlay
 				showCallout={ ! hasHostingFeature( site, HostingFeatures.LOGS ) }
 				callout={ <SiteLogsCallout siteSlug={ site.slug } /> }
 				main={ null }
 			/>
+			<TabPanel
+				className="site-logs-tabs"
+				activeClass="is-active"
+				tabs={ LOG_TABS }
+				onSelect={ ( tabName ) => {
+					if ( tabName === LogType.PHP || tabName === LogType.SERVER ) {
+						handleTabChange( tabName );
+					}
+				} }
+				initialTabName={ logType }
+			>
+				{ () => (
+					<DataViewsCard>
+						<DataViews< PHPLog | ServerLog >
+							data={ siteLogs ?? [] }
+							isLoading={ isLoading }
+							paginationInfo={ paginationInfo }
+							fields={ fields ?? [] }
+							view={ view }
+							actions={ actions }
+							search={ false }
+							defaultLayouts={ { table: {} } }
+						/>
+					</DataViewsCard>
+				) }
+			</TabPanel>
 		</PageLayout>
 	);
 }
