@@ -254,6 +254,7 @@ export default function SyncModal( {
 
 	const { pullFromStaging } = usePullFromStagingMutation( productionSiteId, stagingSiteId, {
 		onSuccess: ( _, options ) => {
+			onSyncStart();
 			dispatch(
 				recordTracksEvent( 'calypso_hosting_configuration_staging_site_pull_success', options )
 			);
