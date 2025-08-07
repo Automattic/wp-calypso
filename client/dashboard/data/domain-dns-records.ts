@@ -23,8 +23,6 @@ export async function addDNSRecord(
 			records_to_add: [ recordData ],
 		} ),
 	};
-	console.log( 'payload = ' );
-	console.log( payload );
 
 	return wpcom.req.post(
 		{

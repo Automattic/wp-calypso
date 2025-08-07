@@ -362,7 +362,6 @@ export default function DomainAddDNS() {
 	} );
 
 	const [ formData, setFormData ] = useState< AddDNSRecordFormData >( {
-		type: 'A',
 		name: '',
 		data: '',
 		ttl: 3600,
@@ -390,16 +389,16 @@ export default function DomainAddDNS() {
 				formattedData = {
 					type: typeFormData.type,
 					name: formData.name,
-					ttl: formData.ttl,
 					data: formData.data,
+					ttl: formData.ttl,
 				};
 				break;
 			case 'AAAA':
 				formattedData = {
 					type: typeFormData.type,
 					name: formData.name,
-					ttl: formData.ttl,
 					data: formData.data,
+					ttl: formData.ttl,
 				};
 				break;
 			case 'ALIAS':
@@ -423,46 +422,46 @@ export default function DomainAddDNS() {
 				formattedData = {
 					type: typeFormData.type,
 					name: formData.name,
-					ttl: formData.ttl,
 					data: formData.data,
+					ttl: formData.ttl,
 				};
 				break;
 			case 'MX':
 				formattedData = {
 					type: typeFormData.type,
 					name: formData.name,
-					ttl: formData.ttl,
 					data: formData.data,
 					aux: formData.aux,
+					ttl: formData.ttl,
 				};
 				break;
 			case 'NS':
 				formattedData = {
 					type: typeFormData.type,
 					name: formData.name,
-					ttl: formData.ttl,
 					data: formData.data,
+					ttl: formData.ttl,
 				};
 				break;
 			case 'SRV':
 				formattedData = {
 					type: typeFormData.type,
 					name: formData.name,
-					ttl: formData.ttl,
 					service: formData.service,
 					aux: formData.aux,
 					weight: formData.weight,
 					target: formData.target,
 					port: formData.port,
 					protocol: formData.protocol,
+					ttl: formData.ttl,
 				};
 				break;
 			case 'TXT':
 				formattedData = {
 					type: typeFormData.type,
 					name: formData.name,
-					ttl: formData.ttl,
 					data: formData.data,
+					ttl: formData.ttl,
 				};
 				break;
 		}
@@ -472,7 +471,7 @@ export default function DomainAddDNS() {
 				createSuccessNotice( __( 'DNS record added successfully.' ), { type: 'snackbar' } );
 			},
 			onError: ( error ) => {
-				console.log( 'error = ', error );
+				// TODO: Get DNS exception class and display correct error message
 				createErrorNotice( __( 'Failed to add DNS record.' ), {
 					type: 'snackbar',
 				} );
