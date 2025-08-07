@@ -123,6 +123,13 @@ export const itemLinkMatches = ( path, currentPath ) => {
 		return fragmentIsEqual( path, currentPath, 2 );
 	}
 
+	if (
+		currentPath.startsWith( '/marketing/tools-marketing/' ) ||
+		path.startsWith( '/marketing/tools-marketing/' )
+	) {
+		return fragmentIsEqual( path, currentPath, 2 );
+	}
+
 	return fragmentIsEqual( path, currentPath, 1 );
 };
 

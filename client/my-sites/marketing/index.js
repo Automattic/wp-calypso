@@ -13,6 +13,7 @@ import {
 	redirectSharingButtons,
 	sharingButtons,
 	traffic,
+	toolsMarketing,
 } from './controller';
 
 export default function () {
@@ -80,6 +81,15 @@ export default function () {
 		navigation,
 		marketingTools,
 		layout,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/marketing/tools-marketing/:domain',
+		siteSelection,
+		navigation,
+		toolsMarketing,
 		makeLayout,
 		clientRender
 	);
