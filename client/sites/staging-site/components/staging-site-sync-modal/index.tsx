@@ -352,9 +352,13 @@ export default function SyncModal( {
 
 	const showDomainConfirmation = targetEnvironment === 'production';
 
+	// Allow button if there is no backup if the confirmation passes
+	// regardless of browserCheckList
 	const isButtonDisabled =
 		( showDomainConfirmation && domainConfirmation !== productionSiteSlug ) ||
-		( browserCheckList.totalItems === 0 && browserCheckList.includeList.length === 0 );
+		( browserCheckList.totalItems === 0 &&
+			browserCheckList.includeList.length === 0 &&
+			lastKnownBackupAttempt );
 
 	return (
 		<Modal
@@ -400,7 +404,10 @@ export default function SyncModal( {
 							<CheckboxControl
 								__nextHasNoMarginBottom
 								label={ __( 'Files and folders' ) }
-								checked={ filesAndFoldersNodesCheckState === 'checked' }
+								disabled={ shouldDisableGranularSync }
+								checked={
+									shouldDisableGranularSync || filesAndFoldersNodesCheckState === 'checked'
+								}
 								indeterminate={ filesAndFoldersNodesCheckState === 'mixed' }
 								onChange={ onCheckboxChange }
 							/>
@@ -451,7 +458,8 @@ export default function SyncModal( {
 						<CheckboxControl
 							__nextHasNoMarginBottom
 							label={ __( 'Database tables' ) }
-							checked={ sqlNode?.checkState === 'checked' }
+							disabled={ shouldDisableGranularSync }
+							checked={ shouldDisableGranularSync || sqlNode?.checkState === 'checked' }
 							onChange={ handleDatabaseCheckboxChange }
 						/>
 						<Tooltip
@@ -504,6 +512,7 @@ export default function SyncModal( {
 								</HStack>
 							}
 							onChange={ handleDomainConfirmation }
+							value={ domainConfirmation }
 						/>
 					) }
 					<HStack>
