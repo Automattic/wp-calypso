@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
@@ -10,7 +11,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { help, bellUnread, bell, commentAuthorAvatar } from '@wordpress/icons';
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useCallback } from 'react';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
 import { useAuth } from '../auth';
@@ -20,7 +21,7 @@ import { useHelpCenter } from '../help-center';
 
 import './style.scss';
 
-const AsyncHelpCenterApp = lazy( () => import( 'calypso/components/help-center/help-center-app' ) );
+const AsyncHelpCenterApp = lazy( () => import( '../help-center/help-center-app' ) );
 
 function Help() {
 	const { user } = useAuth();
@@ -29,6 +30,10 @@ function Help() {
 	const handleToggleHelpCenter = () => {
 		setShowHelpCenter( ! isShown );
 	};
+
+	const handleCloseHelpCenterApp = useCallback( () => {
+		setShowHelpCenter( false, undefined, undefined, true );
+	}, [ setShowHelpCenter ] );
 
 	return (
 		<>
@@ -44,7 +49,9 @@ function Help() {
 				{ isShown && (
 					<AsyncHelpCenterApp
 						currentUser={ user }
+						handleClose={ handleCloseHelpCenterApp }
 						locale={ user.language }
+						onboardingUrl={ config( 'wpcom_signup_url' ) }
 						sectionName="dashboard"
 					/>
 				) }

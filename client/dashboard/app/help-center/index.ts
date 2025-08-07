@@ -25,26 +25,34 @@ export function useHelpCenter() {
 		}
 
 		setIsLoading( true );
-		loadingPromiseRef.current = import(
-			/* webpackChunkName: "async-load-automattic-data-stores" */ '@automattic/data-stores'
-		).then( ( { HelpCenter: HelpCenterStore } ) => {
-			HelpCenterStore.register();
-			setIsLoading( false );
-			loadingPromiseRef.current = undefined;
-		} );
+		loadingPromiseRef.current = import( '@automattic/data-stores' ).then(
+			( { HelpCenter: HelpCenterStore } ) => {
+				HelpCenterStore.register();
+				setIsLoading( false );
+				loadingPromiseRef.current = undefined;
+			}
+		);
 
 		return loadingPromiseRef.current;
 	}
 
-	const setShowHelpCenter = useCallback( async ( show: boolean ) => {
-		await ensureHelpCenterLoaded();
+	const setShowHelpCenter = useCallback(
+		async (
+			show: boolean,
+			allowPremiumSupport?: boolean,
+			options?: import('@automattic/data-stores/src/help-center/types').HelpCenterShowOptions,
+			forceClose?: boolean
+		) => {
+			await ensureHelpCenterLoaded();
 
-		return (
-			dispatch(
-				HELP_CENTER_STORE
-			) as import('@automattic/data-stores').HelpCenterDispatch[ 'dispatch' ]
-		 ).setShowHelpCenter( show );
-	}, [] );
+			return (
+				dispatch(
+					HELP_CENTER_STORE
+				) as import('@automattic/data-stores').HelpCenterDispatch[ 'dispatch' ]
+			 ).setShowHelpCenter( show, allowPremiumSupport, options, forceClose );
+		},
+		[]
+	);
 
 	const setNavigateToRoute = useCallback( async ( route?: string ) => {
 		await ensureHelpCenterLoaded();
