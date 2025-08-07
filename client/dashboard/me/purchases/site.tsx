@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { Link } from '@tanstack/react-router';
 import { useResizeObserver } from '@wordpress/compose';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
@@ -65,7 +66,7 @@ export default function PurchasesForSite() {
 			}
 		>
 			<div>
-				<a href="/v2/me/billing/purchases">{ __( 'View all active subscriptions' ) }</a>
+				<Link to="/v2/me/billing/purchases">{ __( 'View all active subscriptions' ) }</Link>
 			</div>
 			<div ref={ ref }>
 				<DataViews
