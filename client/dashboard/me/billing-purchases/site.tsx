@@ -6,6 +6,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
 import { userPaymentMethodsQuery } from '../../app/queries/me-payment-methods';
 import { userTransferredPurchasesQuery } from '../../app/queries/me-purchases';
+import { siteBySlugQuery } from '../../app/queries/site';
 import { sitePurchasesQuery } from '../../app/queries/site-purchases';
 import { sitesQuery } from '../../app/queries/sites';
 import { purchasesSiteRoute } from '../../app/router';
@@ -14,13 +15,9 @@ import PageLayout from '../../components/page-layout';
 import { purchasesDataView, adjustViewFieldsForWidth, getFields, getItemId } from './dataviews';
 
 export default function PurchasesForSite() {
-	const { siteSlug: siteSlugOrId } = purchasesSiteRoute.useParams();
+	const { siteSlug } = purchasesSiteRoute.useParams();
+	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
 	const { data: sites, isLoading: isLoadingSites } = useQuery( sitesQuery() );
-	const site = siteSlugOrId
-		? sites?.find(
-				( site ) => site.slug === siteSlugOrId || String( site.ID ) === String( siteSlugOrId )
-		  )
-		: undefined;
 	const { data: purchases, isLoading: isLoadingPurchases } = useQuery( {
 		...sitePurchasesQuery( site?.ID ?? 0 ),
 		enabled: Boolean( site?.ID ),
@@ -47,8 +44,6 @@ export default function PurchasesForSite() {
 	const { data: filteredSubscriptions, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( allSubscriptions, currentView, purchasesDataFields );
 	}, [ allSubscriptions, currentView, purchasesDataFields ] );
-
-	const siteSlug = site?.slug;
 
 	if ( ! siteSlug ) {
 		return null;
