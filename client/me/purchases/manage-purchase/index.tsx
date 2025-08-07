@@ -885,6 +885,10 @@ class ManagePurchase extends Component<
 	renderReinstall() {
 		const { purchase, productsList, translate } = this.props;
 		const { isReinstalling } = this.state;
+		if ( ! purchase ) {
+			return null;
+		}
+
 		if ( ! hasMarketplaceProduct( productsList, purchase.productSlug ) ) {
 			return null;
 		}
