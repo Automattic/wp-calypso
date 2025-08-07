@@ -3,6 +3,7 @@ import {
 	createStagingSite,
 	deleteStagingSite,
 	fetchStagingSiteOf,
+	fetchStagingSiteSyncState,
 } from '../../data/site-staging-site';
 import { queryClient } from '../query-client';
 
@@ -31,4 +32,10 @@ export const stagingSiteDeleteMutation = ( stagingSiteId: number, productionSite
 		onSuccess: () => {
 			queryClient.setQueryData( isDeletingStagingSiteQuery( stagingSiteId ).queryKey, true );
 		},
+	} );
+
+export const stagingSiteSyncStateQuery = ( siteId: number ) =>
+	queryOptions( {
+		queryKey: [ 'site', siteId, 'staging-site-sync-state' ],
+		queryFn: () => fetchStagingSiteSyncState( siteId ),
 	} );

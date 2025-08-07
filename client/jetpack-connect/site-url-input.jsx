@@ -63,9 +63,16 @@ class JetpackConnectSiteUrlInput extends Component {
 		window.removeEventListener( 'beforeunload', this.beforeUnloadHandler );
 	}
 
-	handleKeyPress = ( event ) => {
-		if ( 13 === event.keyCode && ! this.isFormSubmitDisabled() && ! this.isFormSubmitBusy() ) {
-			this.handleFormSubmit();
+	handleFormSubmit = ( event ) => {
+		if ( event ) {
+			event.preventDefault();
+		}
+		const { onSubmit } = this.props;
+
+		const isFormValid = this.validateForm();
+
+		if ( isFormValid ) {
+			onSubmit();
 		}
 	};
 
@@ -119,16 +126,6 @@ class JetpackConnectSiteUrlInput extends Component {
 
 		return true;
 	}
-
-	handleFormSubmit = () => {
-		const { onSubmit } = this.props;
-
-		const isFormValid = this.validateForm();
-
-		if ( isFormValid ) {
-			onSubmit();
-		}
-	};
 
 	handleChange = ( event ) => {
 		const { onChange } = this.props;
@@ -185,7 +182,7 @@ class JetpackConnectSiteUrlInput extends Component {
 		const isBusy = this.isFormSubmitBusy();
 
 		return (
-			<div>
+			<form onSubmit={ this.handleFormSubmit }>
 				<FormLabel htmlFor="siteUrl">{ translate( 'Site address' ) }</FormLabel>
 				<div className="jetpack-connect__site-address-container">
 					<Gridicon className="jetpack-connect__site-address-icon" size={ 24 } icon="domains" />
@@ -198,7 +195,6 @@ class JetpackConnectSiteUrlInput extends Component {
 							onChange={ this.handleChange }
 							disabled={ isBusy }
 							placeholder="https://yourjetpack.blog"
-							onKeyUp={ this.handleKeyPress }
 							value={ url }
 						/>
 					) }
@@ -216,16 +212,16 @@ class JetpackConnectSiteUrlInput extends Component {
 				<Card className="jetpack-connect__connect-button-card">
 					{ this.renderTermsOfServiceLink() }
 					<Button
+						type="submit"
 						className="jetpack-connect__connect-button"
 						primary
 						disabled={ isDisabled && ! isBusy }
 						busy={ isBusy }
-						onClick={ this.handleFormSubmit }
 					>
 						{ this.renderButtonLabel() }
 					</Button>
 				</Card>
-			</div>
+			</form>
 		);
 	}
 }

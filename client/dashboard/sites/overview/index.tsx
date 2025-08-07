@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalDivider as Divider,
@@ -29,6 +30,7 @@ import SiteActionMenu from '../overview-site-action-menu';
 import SiteOverviewFields from '../overview-site-fields';
 import SitePreviewCard from '../overview-site-preview-card';
 import VisibilityCard from '../overview-visibility-card';
+import StagingSiteSyncDropdown from '../staging-site-sync-dropdown';
 import './style.scss';
 import type { WPBreakpoint } from '@wordpress/compose/build-types/hooks/use-viewport-match';
 
@@ -95,6 +97,9 @@ function SiteOverview( {
 						actions={
 							site.options?.admin_url && (
 								<>
+									{ isEnabled( 'hosting/staging-sites-redesign' ) && (
+										<StagingSiteSyncDropdown siteSlug={ siteSlug } />
+									) }
 									<Button
 										__next40pxDefaultSize
 										variant="primary"

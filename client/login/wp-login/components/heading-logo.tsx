@@ -73,7 +73,7 @@ const HeadingLogo = ( { isFromAkismet, isJetpack }: Props ) => {
 		logo = <img src={ gravatarLogo } alt="Gravatar Logo" />;
 	}
 
-	return logo ? <div className="wp-login__heading-logo">{ logo }</div> : null;
+	return logo ? <div className="wp-login__one-login-layout-heading-logo">{ logo }</div> : null;
 };
 
 export default HeadingLogo;

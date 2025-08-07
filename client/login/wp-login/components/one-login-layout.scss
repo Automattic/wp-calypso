@@ -1,0 +1,60 @@
+.wp-login__one-login-layout-content-wrapper {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 2em;
+}
+
+.wp-login__one-login-layout-heading {
+	color: var( --color-neutral-100 );
+	font-size: $font-body;
+	text-align: center;
+}
+
+.wp-login__one-login-layout-heading-logo {
+	margin-bottom: 16px;
+
+	> img {
+		width: 64px;
+		height: 64px;
+	}
+}
+
+.wp-login__one-login-layout-tos {
+	a {
+		color: var(--color-text);
+		text-decoration: underline;
+	}
+}
+
+.wp-login__one-login-layout-heading-subtext-wrapper {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.wp-login__one-login-layout-heading-subtext {
+	text-wrap: balance;
+	color: var(--studio-gray-50, #646970);
+	margin-block: 0.5rem 0;
+	font-size: $font-body;
+
+	a {
+		color: var(--studio-gray-50, #646970);
+		text-decoration: underline;
+	}
+
+	&.is-secondary {
+		font-size: $font-body-extra-small;
+		color: var(--studio-gray-30);
+
+		a {
+			color: var(--studio-gray-30);
+		}
+	}
+}
+
+.wp-login__one-login-layout-content-wrapper .login__body--continue-as-user {
+	max-width: 540px;
+}

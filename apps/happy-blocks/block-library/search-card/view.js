@@ -38,4 +38,40 @@ document.addEventListener( 'DOMContentLoaded', function () {
 			} );
 		} );
 	}
+
+	// Mobile dropdown functionality
+	const dropdown = document.querySelector( '.mobile-nav-dropdown' );
+	if ( dropdown ) {
+		const trigger = dropdown.querySelector( '.dropdown-trigger' );
+		const menu = dropdown.querySelector( '.dropdown-menu' );
+
+		const setOpen = ( open ) => {
+			trigger.setAttribute( 'aria-expanded', open );
+			menu.classList.toggle( 'show', open );
+			document
+				.querySelector( '.happy-blocks-search-card' )
+				.classList.toggle( 'mobile-dropdown-open', open );
+			// Add class to body for global styling
+			document.body.classList.toggle( 'mobile-nav-open', open );
+		};
+
+		trigger.addEventListener( 'click', ( e ) => {
+			e.preventDefault();
+			e.stopPropagation();
+
+			setOpen( trigger.getAttribute( 'aria-expanded' ) !== 'true' );
+		} );
+
+		document.addEventListener( 'click', ( e ) => {
+			if ( ! e.target.closest( '.mobile-nav-dropdown' ) ) {
+				setOpen( false );
+			}
+		} );
+
+		document.addEventListener( 'keydown', ( e ) => {
+			if ( e.key === 'Escape' ) {
+				setOpen( false );
+			}
+		} );
+	}
 } );

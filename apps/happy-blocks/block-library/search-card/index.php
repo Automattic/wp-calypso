@@ -32,7 +32,8 @@ if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 ?>
 <div class="happy-blocks-search-card<?php echo $show_search ? '' : ' navigation-only'; ?>">
 	<nav class="navigation-header">
-		<ul class="navigation">
+		<!-- Desktop navigation -->
+		<ul class="navigation desktop-nav">
 			<li class="active"><a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/support' ) ); ?>"><?php echo esc_html( __( 'Support Center', 'happy-blocks' ) ); ?></a></li>
 			<li class="separator"></li>
 			<li class="<?php echo ( 'guides' === $active_page ) ? 'active' : ''; ?>"><a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/support/guides' ) ); ?>"><?php echo esc_html( __( 'Guides', 'happy-blocks' ) ); ?></a></li>
@@ -40,9 +41,49 @@ if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 			<li class="<?php echo ( 'forums' === $active_page ) ? 'active' : ''; ?>"><a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/forums' ) ); ?>"><?php echo esc_html( __( 'Forums', 'happy-blocks' ) ); ?></a></li>
 			<li class="<?php echo ( 'contact' === $active_page ) ? 'active' : ''; ?>"><a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/support/contact' ) ); ?>"><?php echo esc_html( __( 'Contact', 'happy-blocks' ) ); ?></a></li>
 		</ul>
+		
+		<!-- Mobile dropdown navigation -->
+		<div class="mobile-nav-dropdown">
+			<button class="dropdown-trigger" aria-haspopup="true" aria-expanded="false">
+				<span class="dropdown-current">
+					<span class="support-center-text"><?php echo esc_html( __( 'Support Center', 'happy-blocks' ) ); ?></span>
+					<?php if ( empty( $active_page ) || 'support' !== $active_page ) : ?>
+						<span class="separator">/</span>
+						<span class="active-page-text">
+							<?php 
+							switch ( $active_page ) {
+								case 'guides':
+									echo esc_html( __( 'Guides', 'happy-blocks' ) );
+									break;
+								case 'courses':
+									echo esc_html( __( 'Courses', 'happy-blocks' ) );
+									break;
+								case 'forums':
+									echo esc_html( __( 'Forums', 'happy-blocks' ) );
+									break;
+								case 'contact':
+									echo esc_html( __( 'Contact', 'happy-blocks' ) );
+									break;
+							}
+							?>
+						</span>
+					<?php endif; ?>
+				</span>
+				<svg class="dropdown-arrow" width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+				</svg>
+			</button>
+			<ul class="dropdown-menu" role="menu">
+				<li><a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/support' ) ); ?>" class="<?php echo ( 'support' === $active_page ) ? 'active' : ''; ?>" role="menuitem"><?php echo esc_html( __( 'Support Center', 'happy-blocks' ) ); ?></a></li>
+				<li><a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/support/guides' ) ); ?>" class="<?php echo ( 'guides' === $active_page ) ? 'active' : ''; ?>" role="menuitem"><?php echo esc_html( __( 'Guides', 'happy-blocks' ) ); ?></a></li>
+				<li><a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/support/courses' ) ); ?>" class="<?php echo ( 'courses' === $active_page ) ? 'active' : ''; ?>" role="menuitem"><?php echo esc_html( __( 'Courses', 'happy-blocks' ) ); ?></a></li>
+				<li><a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/forums' ) ); ?>" class="<?php echo ( 'forums' === $active_page ) ? 'active' : ''; ?>" role="menuitem"><?php echo esc_html( __( 'Forums', 'happy-blocks' ) ); ?></a></li>
+				<li><a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/support/contact' ) ); ?>" class="<?php echo ( 'contact' === $active_page ) ? 'active' : ''; ?>" role="menuitem"><?php echo esc_html( __( 'Contact', 'happy-blocks' ) ); ?></a></li>
+			</ul>
+		</div>
 	</nav>
 	<?php if ( $show_search ) : ?>
-	<div class="content">
+	<div class="support-search-content">
 			<h2><?php echo esc_html( __( 'How can we help you?', 'happy-blocks' ) ); ?></h2>
 			<form id="support-search-form" class="" role="search" method="get" action="">
 				<div class="input-wrapper" dir="auto">

@@ -62,7 +62,7 @@ export const ReviveAutoRevertedAtomic = ( { card }: { card: string } ) => {
 					),
 					timing: 2,
 					actionText: translate( 'Activate Hosting Features' ),
-					actionUrl: `/hosting-config/${ siteSlug }`,
+					actionUrl: `/hosting-features/${ siteSlug }`,
 					enableSkipOptions: false,
 					skipText: translate( 'I do not need hosting features' ),
 				};

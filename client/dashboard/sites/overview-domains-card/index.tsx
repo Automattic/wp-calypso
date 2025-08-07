@@ -121,19 +121,33 @@ export default function DomainsCard( {
 } ) {
 	const { data: sitePlan } = useQuery( siteCurrentPlanQuery( site.ID ) );
 	const { data: siteDomains } = useQuery( siteDomainsQuery( site.ID ) );
+	const filteredSiteDomains = useMemo( () => {
+		// If the site has *.wpcomstaging.com domain, exclude *.wordpress.com
+		if ( siteDomains && siteDomains.find( ( domain ) => domain.is_wpcom_staging_domain ) ) {
+			return siteDomains.filter(
+				( domain ) => ! domain.wpcom_domain || domain.is_wpcom_staging_domain
+			);
+		}
 
-	if ( ! sitePlan || ! siteDomains ) {
+		return siteDomains;
+	}, [ siteDomains ] );
+
+	if ( site.is_wpcom_staging_site ) {
+		return null;
+	}
+
+	if ( ! sitePlan || ! filteredSiteDomains ) {
 		return <CalloutSkeleton />;
 	}
 
 	if (
 		isSelfHostedJetpackConnected( site ) &&
-		siteDomains.find( ( domain ) => isTransferrableToWpcom( domain ) )
+		filteredSiteDomains.find( ( domain ) => isTransferrableToWpcom( domain ) )
 	) {
 		return <DomainTransferUpsellCard />;
 	}
 
-	if ( ! siteDomains.find( ( domain ) => ! domain.wpcom_domain ) ) {
+	if ( ! filteredSiteDomains.find( ( domain ) => ! domain.wpcom_domain ) ) {
 		return <DomainUpsellCard site={ site } />;
 	}
 
@@ -141,7 +155,7 @@ export default function DomainsCard( {
 		<SiteDomainDataViews
 			type={ isCompact ? 'list' : 'table' }
 			site={ site }
-			domains={ siteDomains }
+			domains={ filteredSiteDomains }
 		/>
 	);
 }

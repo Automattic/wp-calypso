@@ -177,32 +177,11 @@ $light-golden-beige: #f2d6b0;
 			}
 		}
 
-		&.strategic-agency-partner {
+		&.premier-partner {
 			background: $dark-golden-beige;
 
 			&::before {
-				background: url(calypso/assets/images/a8c-for-agencies/agency-tier/strategic-agency-partner-logo.svg) no-repeat center/contain;
-			}
-
-			&::after {
-				content: "";
-				position: absolute;
-				bottom: 24px;
-				left: 24px;
-				width: 80px;
-				height: 32px;
-				background: url(calypso/assets/images/a8c-for-agencies/agency-tier/strategic-agency-partner-vip-logo.svg) no-repeat center/contain;
-				z-index: 2;
-
-				@include break-large {
-					width: 100px;
-					height: 40px;
-				}
-
-				@include break-xlarge {
-					bottom: 32px;
-					left: 32px;
-				}
+				background: url(calypso/assets/images/a8c-for-agencies/agency-tier/premier-partner-logo.svg) no-repeat center/contain;
 			}
 
 			.agency-tier-overview__current-agency-tier-label,
@@ -411,7 +390,7 @@ $light-golden-beige: #f2d6b0;
 					}
 				}
 
-				&.strategic-agency-partner {
+				&.premier-partner {
 					span {
 						background: $dark-golden-beige
 					}

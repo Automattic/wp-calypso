@@ -1,46 +1,83 @@
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Button, Dropdown, MenuGroup, MenuItem } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { chevronDown, cloudDownload, cloudUpload } from '@wordpress/icons';
 import { lazy, Suspense } from 'react';
+import { siteBySlugQuery } from '../../app/queries/site';
+import { stagingSiteSyncStateQuery } from '../../app/queries/site-staging-sites';
+import {
+	getProductionSiteId,
+	getStagingSiteId,
+	isStagingSiteSyncing,
+} from '../../utils/site-staging-site';
+import type { StagingSiteSyncDirection } from '../../data/types';
 
+// TODO: We need to rewrite the modal, as it’s not compatible with v2.
+// Both the Modal and especially the FileBrowser rely heavily on Redux state
+// which makes integration problematic in the current setup.
 const StagingSiteSyncModal = lazy(
-	() => import( 'calypso/sites/staging-site/components/staging-site-sync-modal' )
+	() =>
+		import(
+			/* webpackChunkName: "async-load-staging-site-sync-modal" */ 'calypso/sites/staging-site/components/staging-site-sync-modal'
+		)
 );
 
-interface SyncDropdownProps {
+interface StagingSiteSyncDropdownProps {
+	siteSlug: string;
 	className?: string;
-	environment: 'production' | 'staging';
-	productionSiteId: number;
-	stagingSiteId: number;
-	isSyncInProgress: boolean;
-	onSyncStart: () => void;
+	onSyncStart?: () => void;
 }
 
-export default function SyncDropdown( {
+export default function StagingSiteSyncDropdown( {
+	siteSlug,
 	className,
-	environment,
-	productionSiteId,
-	stagingSiteId,
-	isSyncInProgress,
-	onSyncStart,
-}: SyncDropdownProps ) {
+	onSyncStart = () => {},
+}: StagingSiteSyncDropdownProps ) {
 	const [ isModalOpen, setIsModalOpen ] = useState< boolean >( false );
-	const [ syncType, setSyncType ] = useState< 'pull' | 'push' >( 'pull' );
+	const [ syncDirection, setSyncDirection ] = useState< StagingSiteSyncDirection >( 'pull' );
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const environment = site.is_wpcom_staging_site ? 'staging' : 'production';
+
+	const productionSiteId = getProductionSiteId( site );
+
+	const stagingSiteId = getStagingSiteId( site );
+
+	const { data: stagingSiteSyncState, refetch: fetchStagingSiteSyncState } = useQuery( {
+		...stagingSiteSyncStateQuery( productionSiteId ?? 0 ),
+		enabled: !! productionSiteId,
+		refetchInterval: ( query ) => {
+			return isStagingSiteSyncing( query.state.data ) ? 5000 : false;
+		},
+		refetchIntervalInBackground: true,
+	} );
+
+	const isSyncing = isStagingSiteSyncing( stagingSiteSyncState );
 
 	const pullLabel =
 		environment === 'staging' ? __( 'Pull from Production' ) : __( 'Pull from Staging' );
 	const pushLabel =
 		environment === 'staging' ? __( 'Push to Production' ) : __( 'Push to Staging' );
 
-	const handleOpenModal = ( type: 'pull' | 'push' ): void => {
-		setSyncType( type );
+	const handleOpenModal = ( direction: StagingSiteSyncDirection ): void => {
+		setSyncDirection( direction );
 		setIsModalOpen( true );
 	};
 
 	const handleCloseModal = (): void => {
 		setIsModalOpen( false );
 	};
+
+	const handleSyncStart = () => {
+		fetchStagingSiteSyncState();
+		onSyncStart();
+	};
+
+	// The sync is not allowed if the staging site is in a transition or is deleting.
+	// We should consider this when we start to rewrite the StagingSiteSyncModal.
+	if ( ! productionSiteId || ! stagingSiteId ) {
+		return null;
+	}
 
 	return (
 		<>
@@ -54,9 +91,9 @@ export default function SyncDropdown( {
 						variant="secondary"
 						aria-expanded={ isOpen }
 						onClick={ () => onToggle() }
-						disabled={ isSyncInProgress }
+						disabled={ isSyncing }
 					>
-						{ isSyncInProgress ? __( 'Syncing…' ) : __( 'Sync' ) }
+						{ isSyncing ? __( 'Syncing…' ) : __( 'Sync' ) }
 					</Button>
 				) }
 				renderContent={ ( { onClose } ) => (
@@ -90,11 +127,11 @@ export default function SyncDropdown( {
 				<Suspense fallback={ null }>
 					<StagingSiteSyncModal
 						onClose={ handleCloseModal }
-						syncType={ syncType }
+						syncType={ syncDirection }
 						environment={ environment }
 						productionSiteId={ productionSiteId }
 						stagingSiteId={ stagingSiteId }
-						onSyncStart={ onSyncStart }
+						onSyncStart={ handleSyncStart }
 					/>
 				</Suspense>
 			) }
