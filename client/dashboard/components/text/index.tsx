@@ -4,7 +4,7 @@ import { forwardRef } from 'react';
 import './style.scss';
 
 export interface TextProps extends React.ComponentProps< typeof WPText > {
-	intent?: 'warning' | 'error';
+	intent?: 'success' | 'warning' | 'error';
 }
 
 function UnforwardedText(
@@ -17,6 +17,7 @@ function UnforwardedText(
 			{ ...props }
 			className={ clsx(
 				{
+					'dashboard-text--success': intent === 'success',
 					'dashboard-text--warning': intent === 'warning',
 					'dashboard-text--error': intent === 'error',
 				},
