@@ -85,7 +85,7 @@ export function PurchaseProduct( {
 }: {
 	purchase: Purchase;
 	site?: Site;
-	getUrlForSiteLevelView: ( siteId: number ) => string;
+	getUrlForSiteLevelView: ( site: Site ) => string;
 } ) {
 	if ( isTemporarySitePurchase( purchase ) ) {
 		return null;
@@ -108,10 +108,10 @@ export function PurchaseProduct( {
 						{
 							siteName: (
 								<Link
-									to={ getUrlForSiteLevelView( site.ID ) }
+									to={ getUrlForSiteLevelView( site ) }
 									title={
 										// translators: the siteName is the name of the site
-										sprintf( __( 'View subscriptions for %(siteName)s' ), {
+										sprintf( __( 'View active upgrades for %(siteName)s' ), {
 											siteName: site.name,
 										} )
 									}
@@ -150,11 +150,11 @@ export function PurchaseProduct( {
 						{
 							siteDomain: (
 								<Link
-									to={ getUrlForSiteLevelView( site.ID ) }
+									to={ getUrlForSiteLevelView( site ) }
 									title={
 										// translators: the siteDomain is the domain of the site
-										sprintf( __( 'View subscriptions for %(siteDomain)s' ), {
-											siteName: site.slug,
+										sprintf( __( 'View active upgrades for %(siteDomain)s' ), {
+											siteDomain: site.slug,
 										} )
 									}
 								>
@@ -172,20 +172,20 @@ export function PurchaseProduct( {
 				<div>
 					{ createInterpolateElement(
 						// translators: The string contains the name of the site, and the URL of the site e.g. for Block Store (blockstore.com)
-						sprintf( __( 'for <button>%(siteName)s</button> (<siteDomain />)' ), {
-							siteName: site.name,
-						} ),
+						__( 'for <siteName /> (<siteDomain />)' ),
 						{
-							button: (
+							siteName: (
 								<Link
-									to={ getUrlForSiteLevelView( site.ID ) }
+									to={ getUrlForSiteLevelView( site ) }
 									title={
 										// translators: the siteName is the name of the site
-										sprintf( __( 'View subscriptions for %(siteName)s' ), {
+										sprintf( __( 'View active upgrades for %(siteName)s' ), {
 											siteName: site.name,
 										} )
 									}
-								/>
+								>
+									{ site.name }
+								</Link>
 							),
 							siteDomain: (
 								<ExternalLink

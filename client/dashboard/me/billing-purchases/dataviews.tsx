@@ -111,8 +111,8 @@ function getAddPaymentMethodUrlFor( purchase: Purchase ): string {
 	return `/me/purchases/${ purchase.site_slug ?? 'unknown' }/${ purchase.ID }/payment-method/add`;
 }
 
-function getUrlForSiteLevelView( siteId: number | string ): string {
-	return `/v2/me/billing/purchases/${ siteId }`;
+function getUrlForSiteLevelView( site: Site ): string {
+	return `/v2/me/billing/purchases/${ site.slug }`;
 }
 
 function InfoPopover( { children }: { children: ReactNode } ) {
