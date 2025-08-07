@@ -136,6 +136,7 @@
 		"d3-scale": "^3.2.1",
 		"d3-selection": "^1.4.2",
 		"d3-shape": "^1.3.7",
+		"date-fns": "^4.1.0",
 		"debug": "^4.4.1",
 		"deep-freeze": "^0.0.1",
 		"deepmerge": "^4.3.1",

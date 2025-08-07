@@ -1,5 +1,6 @@
-import { createRoute, createLazyRoute } from '@tanstack/react-router';
+import { createRoute, createLazyRoute, notFound } from '@tanstack/react-router';
 import { domainsQuery } from '../queries/domains';
+import { siteDomainsQuery } from '../queries/site-domains';
 import { queryClient } from '../query-client';
 import type { AnyRoute } from '@tanstack/react-router';
 
@@ -44,8 +45,20 @@ export const siteDomainsRoute = createRoute( {
 export const domainRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'domains/$domainName',
-	// TODO: add the submenu nav components here
-} );
+	loader: async ( { params: { domainName } } ) => {
+		const domains = await queryClient.ensureQueryData( domainsQuery() );
+		const domain = domains.find( ( domain ) => domain.domain === domainName );
+		if ( ! domain ) {
+			throw notFound();
+		}
+	},
+} ).lazy( () =>
+	import( '../../domains/domain' ).then( ( d ) =>
+		createLazyRoute( 'domain' )( {
+			component: d.default,
+		} )
+	)
+);
 
 export const domainOverviewRoute = createRoute( {
 	getParentRoute: () => domainRoute,
@@ -162,8 +175,20 @@ export const domainGlueRecordsRoute = createRoute( {
 export const domainDnssecRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'dnssec',
+	loader: async ( { params: { domainName } } ) => {
+		// TODO: Replace with the new api that query for a specific domain
+
+		// Prefetch the domains data
+		const allDomains = await queryClient.ensureQueryData( domainsQuery() );
+		// Find the domain to get the blog_id
+		const domain = allDomains.find( ( domain ) => domain.domain === domainName );
+		if ( domain ) {
+			// Prefetch the site domains data
+			await queryClient.ensureQueryData( siteDomainsQuery( domain.blog_id ) );
+		}
+	},
 } ).lazy( () =>
-	import( '../../sites/domains/placeholder' ).then( ( d ) =>
+	import( '../../domains/overview-dnssec' ).then( ( d ) =>
 		createLazyRoute( 'domain-dnssec' )( {
 			component: d.default,
 		} )
