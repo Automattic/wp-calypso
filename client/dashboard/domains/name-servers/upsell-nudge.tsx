@@ -40,7 +40,7 @@ export default function UpsaleNudge( { domainName }: Props ) {
 			actions={
 				<UpsellCTAButton
 					text={ __( 'Upgrade plan' ) }
-					tracksId="dseployments"
+					tracksId="nameservers"
 					variant="primary"
 					href={ `/checkout/${ domainName }/business` }
 				/>
