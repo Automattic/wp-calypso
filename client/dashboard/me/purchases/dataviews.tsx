@@ -48,52 +48,52 @@ export const purchasesDataView: View = {
 	layout: {},
 };
 
-function getDisplayName( item: Purchase ): string {
+function getDisplayName( purchase: Purchase ): string {
 	if (
-		item.is_jetpack_ai_product &&
-		item.renewal_price_tier_usage_quantity &&
-		item.price_tier_list?.length
+		purchase.is_jetpack_ai_product &&
+		purchase.renewal_price_tier_usage_quantity &&
+		purchase.price_tier_list?.length
 	) {
 		// translators: productName is the name of the product and quantity is a number
 		return sprintf( __( '%(productName)s (%(quantity)s requests per month)' ), {
-			productName: item.product_name,
-			quantity: formatNumber( item.renewal_price_tier_usage_quantity ),
+			productName: purchase.product_name,
+			quantity: formatNumber( purchase.renewal_price_tier_usage_quantity ),
 		} );
 	}
 
 	if (
-		item.is_jetpack_stats_product &&
-		! item.is_free_jetpack_stats_product &&
-		item.renewal_price_tier_usage_quantity &&
-		item.price_tier_list?.length
+		purchase.is_jetpack_stats_product &&
+		! purchase.is_free_jetpack_stats_product &&
+		purchase.renewal_price_tier_usage_quantity &&
+		purchase.price_tier_list?.length
 	) {
 		// translators: productName is the name of the product and quantity is a number
 		return sprintf( __( '%(productName)s (%(quantity)s views per month)' ), {
-			productName: item.product_name,
-			quantity: formatNumber( item.renewal_price_tier_usage_quantity ),
+			productName: purchase.product_name,
+			quantity: formatNumber( purchase.renewal_price_tier_usage_quantity ),
 		} );
 	}
 
 	if (
-		'wordpress_com_1gb_space_addon_yearly' === item.product_slug &&
-		item.renewal_price_tier_usage_quantity
+		'wordpress_com_1gb_space_addon_yearly' === purchase.product_slug &&
+		purchase.renewal_price_tier_usage_quantity
 	) {
 		// translators: productName is the name of the product and quantity is a number (GB stands for GigaBytes)
 		return sprintf( __( '%(productName)s %(quantity)s GB' ), {
-			productName: item.product_name,
-			quantity: item.renewal_price_tier_usage_quantity,
+			productName: purchase.product_name,
+			quantity: purchase.renewal_price_tier_usage_quantity,
 		} );
 	}
 
-	if ( item.meta && ( item.is_domain_registration || item.is_domain ) ) {
-		return item.meta;
+	if ( purchase.meta && ( purchase.is_domain_registration || purchase.is_domain ) ) {
+		return purchase.meta;
 	}
-	return item.product_name;
+	return purchase.product_name;
 }
 
-export function getPurchaseUrl( item: Purchase ) {
-	const siteUrl = item.site_slug || item.domain;
-	const subscriptionId = item.ID;
+export function getPurchaseUrl( purchase: Purchase ) {
+	const siteUrl = purchase.site_slug || purchase.domain;
+	const subscriptionId = purchase.ID;
 	if ( ! siteUrl ) {
 		// eslint-disable-next-line no-console
 		console.error( 'Cannot display manage purchase page for subscription without site' );
@@ -497,8 +497,8 @@ export function getFields( {
 	];
 }
 
-export const getItemId = ( item: Purchase ) => {
-	return item.ID.toString();
+export const getItemId = ( purchase: Purchase ) => {
+	return purchase.ID.toString();
 };
 
 export function adjustViewFieldsForWidth(
