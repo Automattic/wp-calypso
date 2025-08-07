@@ -15,7 +15,6 @@ import PageLayout from '../../components/page-layout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { HostingFeatures } from '../../data/constants';
 import { hasHostingFeature } from '../../utils/site-features';
-import { DEFAULT_PER_PAGE_SIZES } from '../views';
 import illustrationUrl from './backups-callout-illustration.svg';
 import { getActions } from './dataviews/actions';
 import { getFields } from './dataviews/fields';
@@ -86,7 +85,6 @@ function Backups( { site }: { site: Site } ) {
 				isLoading={ isLoadingActivityLog }
 				defaultLayouts={ { table: {} } }
 				paginationInfo={ paginationInfo }
-				perPageSizes={ DEFAULT_PER_PAGE_SIZES }
 				searchLabel={ __( 'Search backups' ) }
 			/>
 		</DataViewsCard>
