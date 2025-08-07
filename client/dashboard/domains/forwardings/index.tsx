@@ -1,6 +1,5 @@
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Link, useRouter } from '@tanstack/react-router';
-import { Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
@@ -12,6 +11,7 @@ import { domainRoute, domainForwardingAddRoute, domainForwardingEditRoute } from
 import DataViewsCard from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import RouterLinkButton from '../../components/router-link-button';
 import type { DomainForwarding } from '../../data/domain-forwarding';
 import type { Action, Field, ViewTable, ViewList, View } from '@wordpress/dataviews';
 
@@ -146,18 +146,14 @@ function DomainForwardings() {
 				<PageHeader
 					title={ __( 'Domain Forwarding' ) }
 					actions={
-						<Button
-							onClick={ () => {
-								router.navigate( {
-									to: domainForwardingAddRoute.fullPath,
-									params: { domainName },
-								} );
-							} }
+						<RouterLinkButton
+							to={ domainForwardingAddRoute.fullPath }
+							params={ { domainName } }
 							variant="primary"
 							__next40pxDefaultSize
 						>
 							{ __( 'Add Domain Forwarding' ) }
-						</Button>
+						</RouterLinkButton>
 					}
 				/>
 			}
