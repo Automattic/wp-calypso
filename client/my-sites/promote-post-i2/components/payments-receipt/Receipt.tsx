@@ -18,6 +18,15 @@ interface ReceiptTemplateProps {
 	onBillingDetailsChange?: ( value: string ) => void;
 }
 
+type CampaignType = {
+	campaign_id: number;
+	name: string;
+	impressions: number;
+	total: number;
+	site_id: number;
+	subtotal?: number; // Make subtotal optional to work with both types
+};
+
 /**
  * The receipt template is shown in the user's view and the print dialogue.
  * When isPrintView is true, it renders a simplified version suitable for printing
@@ -48,6 +57,22 @@ export const Receipt = ( {
 		} );
 		return sitesData;
 	} );
+
+	// Group campaigns by domain
+	const campaignsByDomain: Record< string, CampaignType[] > = {};
+
+	if ( Array.isArray( payment.campaigns ) ) {
+		payment.campaigns.forEach( ( campaign ) => {
+			const site = sites[ campaign.site_id ];
+			const domain = site?.domain || 'Unknown Domain';
+
+			if ( ! campaignsByDomain[ domain ] ) {
+				campaignsByDomain[ domain ] = [];
+			}
+			// Cast the campaign to the unified type
+			campaignsByDomain[ domain ].push( campaign as CampaignType );
+		} );
+	}
 
 	return (
 		<>
@@ -130,45 +155,45 @@ export const Receipt = ( {
 
 				{ ! isLoading && Array.isArray( payment.campaigns ) && payment.campaigns.length > 0 && (
 					<>
-						{ payment.campaigns.map( ( campaign ) => {
-							const site = sites[ campaign.site_id ];
+						{ Object.entries( campaignsByDomain ).map( ( [ domain, domainCampaigns = [] ] ) => (
+							<div key={ domain } className="payment-receipt__domain-group">
+								{ /* Domain header */ }
+								<div className="payment-receipt__domain-header">
+									<h4 className="payment-receipt__domain-name">{ domain }</h4>
+								</div>
 
-							return (
-								<div className="payment-receipt__list-item" key={ campaign.campaign_id }>
-									<div className="payment-receipt__item-content">
-										<div className="payment-receipt__label payment-receipt__item-with-margin">
-											{ campaign.name }
-										</div>
-										<div className="payment-receipt__value payment-receipt__item-with-margin">
-											{ sprintf(
-												/* translators: %d is the campaign ID */
-												__( 'Campaign ID: %d' ),
-												campaign.campaign_id
-											) }
-										</div>
-										<div className="payment-receipt__value payment-receipt__item-with-margin">
-											{ sprintf(
-												/* translators: %s is the number of impressions */
-												__( 'Total Impressions: %s' ),
-												campaign.impressions.toLocaleString()
-											) }
-										</div>
-										{ site?.domain && (
+								{ /* Campaigns for this domain */ }
+								{ domainCampaigns.map( ( campaign ) => (
+									<div
+										className="payment-receipt__list-item payment-receipt__campaign-item"
+										key={ campaign.campaign_id }
+									>
+										<div className="payment-receipt__item-content">
+											<div className="payment-receipt__label payment-receipt__item-with-margin">
+												{ campaign.name }
+											</div>
 											<div className="payment-receipt__value payment-receipt__item-with-margin">
 												{ sprintf(
-													/* translators: %s is the site domain */
-													__( 'Site: %s' ),
-													site.domain
+													/* translators: %d is the campaign ID */
+													__( 'Campaign ID: %d' ),
+													campaign.campaign_id
 												) }
 											</div>
-										) }
+											<div className="payment-receipt__value payment-receipt__item-with-margin">
+												{ sprintf(
+													/* translators: %s is the number of impressions */
+													__( 'Total Impressions: %s' ),
+													campaign.impressions.toLocaleString()
+												) }
+											</div>
+										</div>
+										<div className="payment-receipt__value-bold">
+											${ campaign.total.toFixed( 2 ) }
+										</div>
 									</div>
-									<div className="payment-receipt__value-bold">
-										${ campaign.total.toFixed( 2 ) }
-									</div>
-								</div>
-							);
-						} ) }
+								) ) }
+							</div>
+						) ) }
 					</>
 				) }
 			</div>
@@ -210,7 +235,7 @@ export const Receipt = ( {
 						) }
 
 						<div className="payment-receipt__row">
-							<div className="payment-receipt__label">{ __( 'Total paid:' ) }</div>
+							<div className="payment-receipt__label">{ __( 'Total:' ) }</div>
 							<div className="payment-receipt__value payment-receipt__value-bold">
 								${ payment.total_paid.toFixed( 2 ) }
 							</div>
