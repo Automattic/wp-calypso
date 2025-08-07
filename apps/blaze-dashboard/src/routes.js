@@ -65,7 +65,7 @@ export default function ( pageBase = '/' ) {
 
 	blazePage( getAdvertisingDashboardPath( '/:tab/promote/:item/:site' ), promoteWidget );
 
-	blazePage( getAdvertisingDashboardPath( '/:tab?/receipt/:receiptId/:site?' ), promotedPosts );
+	blazePage( getAdvertisingDashboardPath( '/payments/receipt/:receiptId/:site?' ), promotedPosts );
 
 	// Compatibility: Redirects to new navigation style
 	page( getAdvertisingDashboardPath( '/:site/:tab/promote/:item' ), ( { params } ) => {

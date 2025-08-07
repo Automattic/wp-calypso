@@ -18,7 +18,9 @@ export const checkValidTabInNavigation = ( context, next ) => {
 
 export const promotedPosts = ( context, next ) => {
 	const { tab, receiptId = undefined } = context.params;
-	context.primary = <PromotedPostsRedesignI2 tab={ tab } receiptId={ receiptId } />;
+	// Force 'payments' tab when viewing a receipt
+	const effectiveTab = receiptId ? 'payments' : tab;
+	context.primary = <PromotedPostsRedesignI2 tab={ effectiveTab } receiptId={ receiptId } />;
 	next();
 };
 

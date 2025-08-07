@@ -83,5 +83,8 @@ export default () => {
 
 	promotePage( getAdvertisingDashboardPath( '/:tab?/promote/:item?/:site?' ), promoteWidget );
 
-	promotePage( getAdvertisingDashboardPath( '/:tab?/receipt/:receiptId/:site?' ), promotedPosts );
+	promotePage(
+		getAdvertisingDashboardPath( '/payments/receipt/:receiptId/:site?' ),
+		promotedPosts
+	);
 };
