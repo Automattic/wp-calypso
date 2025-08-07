@@ -16,6 +16,7 @@ import { requestSite } from 'calypso/state/sites/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Sharing from './main';
+import ToolsMarketing from './tools-marketing';
 
 export const redirectConnections = ( context ) => {
 	const serviceParam = context.params.service ? `?service=${ context.params.service }` : '';
@@ -121,6 +122,12 @@ export const traffic = ( context, next ) => {
 
 export const jetpackTraffic = ( context, next ) => {
 	context.contentComponent = createElement( JetpackTraffic );
+
+	next();
+};
+
+export const toolsMarketing = ( context, next ) => {
+	context.primary = createElement( ToolsMarketing );
 
 	next();
 };
