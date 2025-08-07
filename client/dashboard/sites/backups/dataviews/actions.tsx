@@ -2,8 +2,8 @@ import { Icon } from '@wordpress/components';
 import { Action } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { backup } from '@wordpress/icons';
-import { getBackupUrl } from '../../utils/site-backup';
-import type { ActivityLogEntry, Site } from '../../data/types';
+import { getBackupUrl } from '../../../utils/site-backup';
+import type { ActivityLogEntry, Site } from '../../../data/types';
 
 export function getActions( site: Site ): Action< ActivityLogEntry >[] {
 	return [

@@ -2,7 +2,7 @@ import { Icon } from '@wordpress/components';
 import { dateI18n } from '@wordpress/date';
 import { __ } from '@wordpress/i18n';
 import { cloud, globe, image } from '@wordpress/icons';
-import type { ActivityLogEntry } from '../../data/types';
+import type { ActivityLogEntry } from '../../../data/types';
 import type { Field } from '@wordpress/dataviews';
 
 function getIcon( item: ActivityLogEntry ) {

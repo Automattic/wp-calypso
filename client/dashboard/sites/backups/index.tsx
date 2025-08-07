@@ -16,9 +16,9 @@ import UpsellCTAButton from '../../components/upsell-cta-button';
 import { HostingFeatures } from '../../data/constants';
 import { hasHostingFeature } from '../../utils/site-features';
 import { DEFAULT_PER_PAGE_SIZES } from '../views';
-import { getActions } from './actions';
 import illustrationUrl from './backups-callout-illustration.svg';
-import { getFields } from './fields';
+import { getActions } from './dataviews/actions';
+import { getFields } from './dataviews/fields';
 import type { ActivityLogEntry, Site } from '../../data/types';
 import type { View } from '@wordpress/dataviews';
 
