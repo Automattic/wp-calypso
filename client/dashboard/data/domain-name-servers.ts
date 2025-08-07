@@ -8,20 +8,12 @@ export async function fetchDomainNameServers( domainName: string ): Promise< str
 
 export async function updateDomainNameServers(
 	domainName: string,
-	nameservers: string[]
+	nameServers: string[]
 ): Promise< string[] > {
-	return wpcom.req
-		.post( {
-			path: `/domains/${ domainName }/nameservers`,
-			body: {
-				nameservers: nameservers.map( ( nameserver ) => ( { nameserver } ) ),
-			},
-		} )
-		.then( ( response: { success: boolean } ) => {
-			if ( response.success ) {
-				return nameservers;
-			}
-
-			throw new Error( 'Failed to update nameservers' );
-		} );
+	return wpcom.req.post( {
+		path: `/domains/${ domainName }/nameservers`,
+		body: {
+			nameservers: nameServers.map( ( nameserver ) => ( { nameserver } ) ),
+		},
+	} );
 }
