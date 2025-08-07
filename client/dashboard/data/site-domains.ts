@@ -1,43 +1,17 @@
 import wpcom from 'calypso/lib/wp';
 import type { DomainSummary } from './domains';
 
-export type EmailCost = {
-	amount: number;
-	currency: string;
-	text: string;
-};
-
 interface EmailSubscription {
-	expiryDate?: string;
-	hasExpectedDnsRecords?: boolean | null;
-	isEligibleForIntroductoryOffer?: boolean;
-	ownedByUserId?: number;
-	purchaseCostPerMailbox?: EmailCost | null;
-	renewalCostPerMailbox?: EmailCost | null;
 	status?: string;
 }
 
-export type GoogleEmailSubscription = EmailSubscription & {
-	expiryDate?: string;
-	pendingTosAcceptance?: boolean;
-	productSlug?: string;
-	subscribedDate?: string;
-	subscriptionId?: string;
-	totalUserCount?: number;
-};
+export interface GoogleEmailSubscription extends EmailSubscription {}
 
-export type TitanEmailSubscription = EmailSubscription & {
-	appsUrl?: string;
-	maximumMailboxCount?: number;
-	numberOfMailboxes?: number;
-	orderId?: number;
-	productSlug?: string;
-	subscriptionId?: number | null;
-};
+export interface TitanEmailSubscription extends EmailSubscription {}
 
 export type SiteDomain = Omit< DomainSummary, 'domain_status' > & {
-	googleAppsSubscription?: GoogleEmailSubscription | null;
-	titanMailSubscription?: TitanEmailSubscription | null;
+	google_apps_subscription?: GoogleEmailSubscription | null;
+	titan_mail_subscription?: TitanEmailSubscription | null;
 };
 
 export async function fetchSiteDomains( siteId: number ): Promise< SiteDomain[] > {
