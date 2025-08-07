@@ -19,7 +19,7 @@ export function isDomainRenewable( domain: Domain ) {
 	}
 
 	return (
-		domain.subscription_id &&
+		!! domain.subscription_id &&
 		! domain.pending_renewal &&
 		! domain.pending_registration_at_registry &&
 		! domain.pending_registration &&
