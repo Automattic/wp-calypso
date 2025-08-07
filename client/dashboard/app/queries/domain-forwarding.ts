@@ -4,7 +4,7 @@ import { queryClient } from '../query-client';
 
 export const domainForwardingQuery = ( domainName: string ) =>
 	queryOptions( {
-		queryKey: [ 'domain-forwarding', domainName ],
+		queryKey: [ 'domains', domainName, 'domain-forwarding' ],
 		queryFn: () => fetchDomainForwarding( domainName ),
 	} );
 
