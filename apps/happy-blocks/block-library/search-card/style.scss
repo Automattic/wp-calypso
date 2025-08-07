@@ -6,7 +6,6 @@ $breakpoint-desktop: 1440px; //Desktop size.
 	background:
 		#F7F8FE url(./assets/hero-bg.png) no-repeat bottom right;
 	background-size: contain;
-	
 	flex-shrink: 0;
 	padding: 0;
 
@@ -14,6 +13,7 @@ $breakpoint-desktop: 1440px; //Desktop size.
 		background: #fff;
 		position: sticky;
 		top: 0;
+		z-index: 1;
 	}
 
 	.navigation-header {
@@ -315,7 +315,10 @@ $breakpoint-desktop: 1440px; //Desktop size.
 
 // If we have the admin bar, push the search card down to make room for it.
 #wpadminbar ~ .happy-blocks-search-card {
-	top: 32px;
+	@media ( min-width: $breakpoint-mobile ) {
+		margin-left: 0;
+		top: 32px;
+	}
 }
 
 // Global styles for mobile navigation blur effect
