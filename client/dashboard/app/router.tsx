@@ -132,7 +132,7 @@ const sitesRoute = createRoute( {
 const siteRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites/$siteSlug',
-	beforeLoad: async ( { cause, params: { siteSlug }, location } ) => {
+	beforeLoad: async ( { cause, params: { siteSlug }, location, matches } ) => {
 		if ( cause !== 'enter' ) {
 			return;
 		}
@@ -145,7 +145,11 @@ const siteRoute = createRoute( {
 		}
 
 		const difmUrl = `/sites/${ siteSlug }/site-building-in-progress`;
-		if ( site.options?.is_difm_lite_in_progress && ! location.pathname.includes( difmUrl ) ) {
+		const difmAllowedRoutes = getDifmLiteAllowedRoutes();
+		if (
+			site.options?.is_difm_lite_in_progress &&
+			! matches.some( ( match ) => difmAllowedRoutes.includes( match.routeId ) )
+		) {
 			throw redirect( { to: difmUrl } );
 		}
 	},
@@ -863,6 +867,12 @@ export const getRouter = ( config: AppConfig ) => {
 		defaultViewTransition: true,
 	} );
 };
+
+// Site routes which are still allowed to be accessed while a site gets the DIFM lite process.
+// Defined as a `function` so that routes defined earlier can reference routes defined later.
+function getDifmLiteAllowedRoutes() {
+	return [ siteDifmLiteInProgressRoute.id, siteDomainsRoute.id, siteEmailsRoute.id ];
+}
 
 export {
 	rootRoute,
