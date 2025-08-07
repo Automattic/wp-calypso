@@ -13,7 +13,7 @@ import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
 import { WPCOM_DIFM_LITE } from '../../data/constants';
 import { formatDate } from '../../utils/datetime';
-import { hasGSuiteWithUs, hasTitanMailWithUs } from '../../utils/domain-features';
+import { hasGSuiteWithUs, hasTitanMailWithUs } from '../../utils/domain';
 import type { Site } from '../../data/types';
 
 function WebsiteContentSubmitted( { site }: { site: Site } ) {

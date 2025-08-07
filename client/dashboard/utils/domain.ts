@@ -3,7 +3,7 @@ import { DotcomFeatures } from '../data/constants';
 import { DomainTypes } from '../data/domains';
 import { hasPlanFeature } from './site-features';
 import { userHasFlag } from './user';
-import type { DomainSummary, Site, User } from '../data/types';
+import type { SiteDomain, DomainSummary, Site, User } from '../data/types';
 
 export function isRecentlyRegistered( registrationDate: string, numberOfMinutes = 30 ) {
 	return (
@@ -69,4 +69,14 @@ export function canSetAsPrimary( {
 			user,
 		} )
 	);
+}
+
+export function hasGSuiteWithUs( domain: SiteDomain ) {
+	const status = domain.google_apps_subscription?.status ?? '';
+	return ! [ '', 'no_subscription', 'other_provider' ].includes( status );
+}
+
+export function hasTitanMailWithUs( domain: SiteDomain ) {
+	const subscriptionStatus = domain.titan_mail_subscription?.status ?? '';
+	return subscriptionStatus === 'active' || subscriptionStatus === 'suspended';
 }
