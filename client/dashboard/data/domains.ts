@@ -6,7 +6,6 @@ export type { DomainSuggestion, DomainSuggestionQuery };
 
 export const DomainTypes = {
 	MAPPED: 'mapping',
-	REGISTERED: 'registered',
 	SITE_REDIRECT: 'redirect',
 	WPCOM: 'wpcom',
 	TRANSFER: 'transfer',
@@ -27,14 +26,18 @@ export interface DomainSummary {
 	blog_id: number;
 	blog_name: string;
 	can_manage_dns_records: boolean;
+	can_update_contact_info: boolean;
 	can_set_as_primary: boolean;
 	current_user_can_create_site_from_domain_only: boolean;
 	current_user_can_manage: boolean;
+	current_user_is_owner: boolean | null;
 	domain: string;
 	domain_status?: {
 		status: string;
 	};
+	expired: boolean;
 	expiry: string | false;
+	has_registration: boolean;
 	is_dnssec_enabled: boolean;
 	is_dnssec_supported: boolean;
 	is_eligible_for_inbound_transfer: boolean;
@@ -45,6 +48,7 @@ export interface DomainSummary {
 	pending_registration: boolean;
 	pending_registration_at_registry: boolean;
 	pending_renewal: boolean;
+	pending_transfer: boolean;
 	primary_domain: boolean;
 	registrationDate: string;
 	site_slug: string;

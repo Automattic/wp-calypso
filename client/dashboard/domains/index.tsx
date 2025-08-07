@@ -19,7 +19,7 @@ export function getDomainId( domain: DomainSummary ): string {
 function Domains() {
 	const { user } = useAuth();
 	const fields = useFields();
-	const actions = useActions( { user } );
+	const actions = useActions( { user, supportsBulk: true } );
 	const [ view, setView ] = useState< DomainsView >( () => ( {
 		...DEFAULT_VIEW,
 		type: 'table',

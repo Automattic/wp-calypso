@@ -26,7 +26,7 @@ function SiteDomains() {
 		site,
 	} );
 
-	const actions = useActions( { user, site } );
+	const actions = useActions( { user, site, supportsBulk: true } );
 
 	const [ view, setView ] = useState< DomainsView >( () => ( {
 		...DEFAULT_VIEW,

@@ -1,4 +1,4 @@
-import { isAfter, subMinutes } from 'date-fns';
+import { isAfter, subMinutes, subDays } from 'date-fns';
 import { DotcomFeatures } from '../data/constants';
 import { DomainTypes } from '../data/domains';
 import { hasPlanFeature } from './site-features';
@@ -7,6 +7,10 @@ import type { DomainSummary, Site, User } from '../data/types';
 
 export function getDomainSiteSlug( domain: DomainSummary ) {
 	return domain.primary_domain ? domain.domain : domain.site_slug;
+}
+
+export function isRegisteredDomain( domain: DomainSummary ) {
+	return ! domain.wpcom_domain && domain.has_registration;
 }
 
 export function isRecentlyRegistered( registrationDate: string, numberOfMinutes = 30 ) {
@@ -18,7 +22,7 @@ export function isRecentlyRegistered( registrationDate: string, numberOfMinutes 
 
 export function isDomainRenewable( domain: DomainSummary ) {
 	// Only registered domains can be manually renewed
-	if ( domain.type !== DomainTypes.REGISTERED ) {
+	if ( ! isRegisteredDomain( domain ) ) {
 		return false;
 	}
 
@@ -33,6 +37,18 @@ export function isDomainRenewable( domain: DomainSummary ) {
 	);
 }
 
+export function isDomainUpdatable( domain: DomainSummary ) {
+	return ! domain.pending_transfer && ! domain.expired;
+}
+
+export function isDomainInGracePeriod( domain: DomainSummary ) {
+	if ( ! domain.expiry ) {
+		return true;
+	}
+
+	return isAfter( new Date( domain.expiry ), subDays( new Date(), 18 ) );
+}
+
 const shouldUpgradeToMakeDomainPrimary = ( {
 	domain,
 	site,
@@ -43,7 +59,7 @@ const shouldUpgradeToMakeDomainPrimary = ( {
 	user: User;
 } ) => {
 	return (
-		( domain.type === DomainTypes.REGISTERED || domain.type === DomainTypes.MAPPED ) &&
+		( isRegisteredDomain( domain ) || domain.type === DomainTypes.MAPPED ) &&
 		! domain.current_user_can_create_site_from_domain_only &&
 		! domain.primary_domain &&
 		! domain.wpcom_domain &&
