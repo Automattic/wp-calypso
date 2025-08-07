@@ -1,11 +1,12 @@
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { Card, CardBody } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useAppContext } from '../../app/context';
 import {
-	useDomainNameserversQuery,
-	useUpdateNameserversMutation,
+	domainNameserversQuery,
+	domainNameserversUpdateMutation,
 } from '../../app/queries/domain-nameservers';
 import { domainRoute } from '../../app/router';
 import { PageHeader } from '../../components/page-header';
@@ -17,15 +18,14 @@ export default function NameServers() {
 	const { instanceType } = useAppContext();
 	const { domainName } = domainRoute.useParams();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const { data: nameservers, error: queryError } = useDomainNameserversQuery( domainName );
-	const { updateNameservers, isPending: isUpdatingNameservers } = useUpdateNameserversMutation(
-		domainName,
-		{
-			onError: ( e: Error ) => createErrorNotice( e.message, { type: 'snackbar' } ),
-			onSuccess: () =>
-				createSuccessNotice( __( 'Nameservers updated successfully.' ), { type: 'snackbar' } ),
-		}
-	);
+	const { data: nameservers, error: queryError } = useQuery( domainNameserversQuery( domainName ) );
+
+	const { mutate: updateNameservers, isPending: isUpdatingNameservers } = useMutation( {
+		...domainNameserversUpdateMutation( domainName ),
+		onError: ( e: Error ) => createErrorNotice( e.message, { type: 'snackbar' } ),
+		onSuccess: () =>
+			createSuccessNotice( __( 'Nameservers updated successfully.' ), { type: 'snackbar' } ),
+	} );
 
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Name Servers' ) } /> }>
