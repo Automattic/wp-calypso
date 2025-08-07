@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { isMobile } from '@automattic/viewport';
 import debug from 'debug';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 
@@ -16,6 +17,11 @@ export function addSurvicate() {
 	// Only add survicate for en languages
 	if ( ! getLocaleSlug().startsWith( 'en' ) ) {
 		survicateDebug( 'Not loading Survicate script for non-en language' );
+		return;
+	}
+
+	if ( isMobile() ) {
+		survicateDebug( 'Not loading Survicate script on mobile device' );
 		return;
 	}
 

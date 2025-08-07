@@ -107,25 +107,13 @@ $dark-golden-beige: #d8a55f;
 		position: relative;
 	}
 
-	&.strategic-agency-partner {
+	&.premier-partner {
 		.a4a-themed-modal__sidebar-image {
 			width: 370px;
 		}
 
 		&.a4a-themed-modal .components-modal__content.hide-header {
 			background: $dark-golden-beige;
-		}
-
-		.a4a-themed-modal__sidebar-image-container {
-			&::after {
-				content: '';
-				position: absolute;
-				inset: auto 16px 16px 16px;
-				width: 80px;
-				height: 32px;
-				background: url(calypso/assets/images/a8c-for-agencies/agency-tier/strategic-agency-partner-vip-logo.svg) center / contain no-repeat;
-				z-index: 2;
-			}
 		}
 	}
 }

@@ -4,11 +4,12 @@ import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useState, useMemo } from 'react';
+import { useAuth } from '../../app/auth';
 import { siteDomainsQuery } from '../../app/queries/site-domains';
 import { siteCurrentPlanQuery } from '../../app/queries/site-plans';
 import { CalloutSkeleton } from '../../components/callout-skeleton';
 import { SectionHeader } from '../../components/section-header';
-import { useFields, actions, DEFAULT_VIEW, DEFAULT_LAYOUTS } from '../../domains/dataviews';
+import { useActions, useFields, DEFAULT_VIEW, DEFAULT_LAYOUTS } from '../../domains/dataviews';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import DomainTransferUpsellCard from '../overview-domain-transfer-upsell-card';
@@ -29,10 +30,14 @@ const SiteDomainDataViews = ( {
 	domains: SiteDomain[];
 	type?: DomainsView[ 'type' ];
 } ) => {
+	const { user } = useAuth();
 	const fields = useFields( {
 		site,
 		showPrimaryDomainBadge: type === 'table',
 	} );
+
+	const actions = useActions( { user, site } );
+
 	const [ initialView, setView ] = useState< DomainsView >( {
 		...DEFAULT_VIEW,
 		type,
@@ -121,19 +126,33 @@ export default function DomainsCard( {
 } ) {
 	const { data: sitePlan } = useQuery( siteCurrentPlanQuery( site.ID ) );
 	const { data: siteDomains } = useQuery( siteDomainsQuery( site.ID ) );
+	const filteredSiteDomains = useMemo( () => {
+		// If the site has *.wpcomstaging.com domain, exclude *.wordpress.com
+		if ( siteDomains && siteDomains.find( ( domain ) => domain.is_wpcom_staging_domain ) ) {
+			return siteDomains.filter(
+				( domain ) => ! domain.wpcom_domain || domain.is_wpcom_staging_domain
+			);
+		}
 
-	if ( ! sitePlan || ! siteDomains ) {
+		return siteDomains;
+	}, [ siteDomains ] );
+
+	if ( site.is_wpcom_staging_site ) {
+		return null;
+	}
+
+	if ( ! sitePlan || ! filteredSiteDomains ) {
 		return <CalloutSkeleton />;
 	}
 
 	if (
 		isSelfHostedJetpackConnected( site ) &&
-		siteDomains.find( ( domain ) => isTransferrableToWpcom( domain ) )
+		filteredSiteDomains.find( ( domain ) => isTransferrableToWpcom( domain ) )
 	) {
 		return <DomainTransferUpsellCard />;
 	}
 
-	if ( ! siteDomains.find( ( domain ) => ! domain.wpcom_domain ) ) {
+	if ( ! filteredSiteDomains.find( ( domain ) => ! domain.wpcom_domain ) ) {
 		return <DomainUpsellCard site={ site } />;
 	}
 
@@ -141,7 +160,7 @@ export default function DomainsCard( {
 		<SiteDomainDataViews
 			type={ isCompact ? 'list' : 'table' }
 			site={ site }
-			domains={ siteDomains }
+			domains={ filteredSiteDomains }
 		/>
 	);
 }

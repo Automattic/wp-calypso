@@ -12,7 +12,7 @@ export type SitesViewPreferences = Partial< Omit< SitesView, 'type' | 'layout' >
 
 export interface UserPreferences {
 	'sites-view'?: SitesViewPreferences;
-	'some-string'?: string;
+	[ key: `hosting-dashboard-overview-storage-notice-dismissed-${ number }` ]: string | undefined; // Timestamp when the user dismissed the notice
 }
 
 export async function fetchPreferences(): Promise< UserPreferences > {

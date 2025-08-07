@@ -36,14 +36,14 @@ $image-height: 47px;
 			font-family: Inter, -apple-system, system-ui, blinkmacsystemfont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 		}
 
-		.wp-login__heading-text {
+		.wp-login__one-login-layout-heading-text {
 			font-family: Inter, -apple-system, system-ui, blinkmacsystemfont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 			font-size: 2rem;
 			font-weight: 700;
 			line-height: 40px;
 		}
 
-		.wp-login__heading-subtext {
+		.wp-login__one-login-layout-heading-subtext {
 			font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 			font-size: rem(18px);
 			font-weight: 500;
@@ -58,7 +58,7 @@ $image-height: 47px;
 	* If we're on a Woo page, we don't want to apply the Jetpack font styles, as Woo brings in its own font styles.
 	*/
 	&.is-jetpack-login:not(.is-woo-passwordless) {
-		.wp-login__heading-text {
+		.wp-login__one-login-layout-heading-text {
 			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif
 		}
 	}
@@ -66,76 +66,15 @@ $image-height: 47px;
 
 	/* Start: Jetpack Cloud font styles for login page */
 	&.jetpack-cloud {
-		.wp-login__heading-text {
+		.wp-login__one-login-layout-heading-text {
 			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif
 		}
 	}
 	/* End: Jetpack Cloud font styles for login page */
 }
 
-.wp-login__heading-logo {
-	margin-bottom: 16px;
-
-	> img {
-		width: 64px;
-		height: 64px;
-	}
-}
-
-.wp-login__tos {
-	a {
-		color: var(--color-text);
-		text-decoration: underline;
-	}
-}
-
-.wp-login__heading-subtext-wrapper {
-	display: flex;
-	flex-direction: column;
-	gap: 0.5rem;
-}
-
-.wp-login__heading-subtext {
-	text-wrap: balance;
-	color: var(--studio-gray-50, #646970);
-	margin-block: 0.5rem 0;
-	font-size: $font-body;
-
-	a {
-		color: var(--studio-gray-50, #646970);
-		text-decoration: underline;
-	}
-
-	&.is-secondary {
-		font-size: $font-body-extra-small;
-		color: var(--studio-gray-30);
-
-		a {
-			color: var(--studio-gray-30);
-		}
-	}
-}
-
-.wp-login__header {
-	color: var( --color-neutral-100 );
-	font-size: $font-body;
-	text-align: center;
-
-	body.is-section-signup & {
-		color: var(--color-text-inverted);
-	}
-}
-
 .wp-login__main {
 	width: 100%;
-}
-
-.wp-login__one-login-layout-content-wrapper {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	gap: 2em;
 }
 
 .wp-login__site-return-link {

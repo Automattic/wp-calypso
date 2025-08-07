@@ -59,6 +59,14 @@
 	padding: 16px;
 	box-sizing: border-box;
 
+	.is-unified-create-account & {
+		width: 100%;
+		// Below is the same as .card.logged-out-form
+		margin: 0 auto 16px;
+		// max-width: 360px;
+		padding: 16px;
+	}
+
 	p {
 		font-size: $font-body-small;
 		color: var(--color-text-inverted);
