@@ -10,10 +10,6 @@ $breakpoint-desktop: 1440px; //Desktop size.
 	flex-shrink: 0;
 	padding: 0;
 
-	@media ( max-width: $breakpoint-mobile ) {
-		display: none;
-	}
-
 	&.navigation-only {
 		background: none;
 	}
@@ -22,14 +18,14 @@ $breakpoint-desktop: 1440px; //Desktop size.
 		padding: 0 24px;
 
 		@media ( max-width: $breakpoint-mobile ) {
-			padding: 0 16px;
+			padding: 0;
 		}
 	}
 
-	.navigation {
+	.navigation.desktop-nav {
 		display: flex;
 		align-items: center;
-		gap: 32px;
+		gap: 16px;
 		list-style: none;
 		margin: 0;
 		padding: 16px 0;
@@ -37,14 +33,7 @@ $breakpoint-desktop: 1440px; //Desktop size.
 		margin-right: auto;
 
 		@media ( max-width: $breakpoint-mobile ) {
-			gap: 16px;
-			padding: 12px 0;
-			overflow-x: auto;
-			white-space: nowrap;
-			scrollbar-width: none;
-			&::-webkit-scrollbar {
-				display: none;
-			}
+			display: none;
 		}
 
 		li {
@@ -53,16 +42,12 @@ $breakpoint-desktop: 1440px; //Desktop size.
 				font-weight: 500;
 				position: relative;
 			}
-			overflow: hidden;
 			color: #646970;
-			text-align: justify;
-			text-overflow: ellipsis;
-			font-size: 14px;
+			font-size: 13px;
 			font-style: normal;
 			font-weight: 400;
 			line-height: 20px;
 			cursor: pointer;
-			transition: color 0.2s ease;
 
 			&:hover:not(.separator) {
 				color: #000;
@@ -85,7 +70,115 @@ $breakpoint-desktop: 1440px; //Desktop size.
 		}
 	}
 
-	.content {
+	.mobile-nav-dropdown {
+		display: none;
+		position: relative;
+		
+		@media ( max-width: $breakpoint-mobile ) {
+			display: block;
+			padding: 16px 0;
+		}
+
+
+		.dropdown-trigger {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			width: 100%;
+			background: transparent;
+			border: none;
+			padding: 0 16px;
+
+			&[aria-expanded="true"] .dropdown-arrow {
+				transform: rotate(180deg);
+			}
+
+			.dropdown-current {
+				font-weight: 500;
+				display: flex;
+				align-items: center;
+				font-size: 16px;
+
+				.support-center-text {
+					color: #000;
+					font-weight: 600;
+					margin-right: 8px;
+				}
+
+				.separator {
+					color: var(--gray-200, #E0E0E0);
+					font-weight: 400;
+				}
+
+				.active-page-text {
+					color: #000;
+					position: relative;
+					margin-left: 8px;
+				}
+			}
+
+			.dropdown-arrow {
+				transition: transform 0.2s ease;
+			}
+		}
+
+		.dropdown-menu {
+			position: absolute;
+			top: 100%;
+			width: 100%;
+			background: #fff;
+			list-style: none;
+			margin: 0;
+			padding: 8px 16px;
+			opacity: 0;
+			visibility: hidden;
+			transform: translateY(-10px);
+			transition: all 0.2s ease;
+			z-index: 1000;
+
+			&.show {
+				opacity: 1;
+				visibility: visible;
+				transform: translateY(0);
+			}
+
+			li {
+				margin-bottom: 16px;
+
+				a {
+					display: block;
+					color: var(--gray-90, #1D2327);
+					line-height: 20px;
+					text-decoration: none;
+
+					&.active {
+						color: var(--blue-50, #3858E9);
+						font-weight: 600;
+						margin-left: -12px;
+
+						&::before {
+							content: "•";
+							display: inline-block;
+							margin-right: 4px;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Blur backdrop for mobile dropdown
+	&.mobile-dropdown-open {
+		@media ( max-width: $breakpoint-mobile ) {
+			.support-search-content {
+				filter: blur(10px);
+				pointer-events: none;
+				transition: filter 0.2s ease;
+			}
+		}
+	}
+
+	.support-search-content {
 		padding: 33px 24px 72px 24px;
 		max-width: 1260px;
 		margin-left: auto;
@@ -214,6 +307,25 @@ $breakpoint-desktop: 1440px; //Desktop size.
 					}
 				}
 			}
+		}
+	}
+}
+
+// Global styles for mobile navigation blur effect
+body.mobile-nav-open {
+	@media ( max-width: 782px ) {
+		// Blur everything except the mobile dropdown and global nav
+		> *:not(.x-wpcom-global-nav):not(.happy-blocks-search-card) {
+			filter: blur(4px);
+			pointer-events: none;
+			transition: filter 0.2s ease;
+		}
+		
+		// Ensure global nav stays visible and interactive
+		.x-wpcom-global-nav {
+			filter: none !important;
+			pointer-events: auto !important;
+			z-index: 1001;
 		}
 	}
 }

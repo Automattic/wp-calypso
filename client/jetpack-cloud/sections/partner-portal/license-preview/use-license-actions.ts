@@ -49,7 +49,7 @@ export default function useLicenseActions(
 			},
 			{
 				name: translate( 'Hosting configuration' ),
-				href: `https://wordpress.com/hosting-config/${ siteSlug }`,
+				href: `https://wordpress.com/sites/${ siteSlug }/settings`,
 				onClick: () =>
 					handleClickMenuItem( 'calypso_jetpack_licenses_hosting_configuration_click' ),
 				isExternalLink: true,

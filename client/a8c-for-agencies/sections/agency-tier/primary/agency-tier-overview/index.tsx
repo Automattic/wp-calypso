@@ -37,19 +37,15 @@ export default function AgencyTierOverview() {
 	const baseTiers: AgencyTier[] = [ 'emerging-partner', 'agency-partner', 'pro-agency-partner' ];
 
 	// All tiers available to the current agency.
-	// If the current agency tier is 'strategic-agency-partner',
+	// If the current agency tier is 'premier-partner',
 	// include it in the list of tiers.
 	const ALL_TIERS: AgencyTier[] =
-		currentAgencyTier === 'strategic-agency-partner'
-			? [ ...baseTiers, 'strategic-agency-partner' ]
-			: baseTiers;
+		currentAgencyTier === 'premier-partner' ? [ ...baseTiers, 'premier-partner' ] : baseTiers;
 
-	// Show download badges button for Agency Partner, Pro Agency Partner, and Strategic Agency Partner tiers
+	// Show download badges button for Agency Partner, Pro Agency Partner, and Premier Partner tiers
 	const showDownloadBadges =
 		currentAgencyTier &&
-		[ 'agency-partner', 'pro-agency-partner', 'strategic-agency-partner' ].includes(
-			currentAgencyTier
-		);
+		[ 'agency-partner', 'pro-agency-partner', 'premier-partner' ].includes( currentAgencyTier );
 
 	return (
 		<Layout className="agency-tier-overview" title={ title } wide>
@@ -165,10 +161,9 @@ export default function AgencyTierOverview() {
 										<div className="agency-tier-overview__benefit-card-icons">
 											{ benefit.availableTiers
 												.filter( ( tier ) => {
-													// Hide strategic-agency-partner tier from users who are not strategic-agency-partner
+													// Hide Premier Partner tier from users who are not Premier Partner
 													return (
-														tier !== 'strategic-agency-partner' ||
-														currentAgencyTier === 'strategic-agency-partner'
+														tier !== 'premier-partner' || currentAgencyTier === 'premier-partner'
 													);
 												} )
 												.map( ( tier ) => {

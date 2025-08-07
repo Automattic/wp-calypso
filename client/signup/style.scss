@@ -32,8 +32,55 @@ body.is-section-signup {
 
 	// Adjust the padding as we no longer
 	// show the masterbar.
-	.layout__content {
+	.layout:not(.is-unified-create-account) .layout__content {
 		padding: 48px 0 0;
+	}
+
+	.layout.is-unified-create-account {
+		.layout__content {
+			padding: 0;
+		}
+
+		.locale-suggestions {
+			margin: 0;
+		}
+
+		.locale-suggestions__notice {
+			&.calypso-notice.is-compact.is-light.is-info {
+				margin: 0;
+			}
+		}
+
+		.signup-form {
+			max-width: 400px;
+		}
+
+		.card.logged-out-form {
+			padding: 0;
+			.form-fieldset {
+				margin-bottom: 0;
+			}
+		}
+
+		.auth-form__social {
+			margin: 0;
+			padding-top: 0;
+			padding-bottom: 0;
+
+		}
+
+		.auth-form__separator {
+			margin: 0 auto;
+			max-width: 360px;
+			.auth-form__separator-text {
+				padding: 0 24px;
+			}
+		}
+
+		.signup-form.is-horizontal {
+			gap: 1em;
+		}
+
 	}
 
 	// Hide the masterbar for realz

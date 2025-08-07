@@ -136,6 +136,30 @@ export default function ItemView( {
 		);
 	}
 
+	const renderHeader = () => {
+		if ( shouldHideHeader ) {
+			return null;
+		}
+
+		return (
+			<ItemViewHeader
+				closeItemView={ closeItemView }
+				itemData={ itemData }
+				isPreviewLoaded={ !! selectedFeature.preview }
+				extraProps={ itemViewHeaderExtraProps }
+			/>
+		);
+	};
+
+	if ( isStagingSiteTransferInProgress ) {
+		return (
+			<div className={ clsx( 'hosting-dashboard-item-view', className ) }>
+				{ renderHeader() }
+				<StagingSiteTransferBanner />
+			</div>
+		);
+	}
+
 	return (
 		<div className={ clsx( 'hosting-dashboard-item-view', className ) }>
 			{ renderHeader() }
