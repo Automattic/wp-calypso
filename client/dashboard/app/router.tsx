@@ -20,7 +20,7 @@ import { profileQuery } from './queries/me-profile';
 import { siteByIdQuery, siteBySlugQuery } from './queries/site';
 import {
 	siteLastFiveActivityLogEntriesQuery,
-	siteLastRewindableActivityLogEntriesQuery,
+	siteRewindableActivityLogEntriesQuery,
 } from './queries/site-activity-log';
 import { siteAgencyBlogQuery } from './queries/site-agency';
 import { siteLastBackupQuery } from './queries/site-backups';
@@ -258,7 +258,7 @@ const siteBackupsRoute = createRoute( {
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		// Preload activity log backup-related entries.
-		queryClient.ensureQueryData( siteLastRewindableActivityLogEntriesQuery( site.ID ) );
+		queryClient.ensureQueryData( siteRewindableActivityLogEntriesQuery( site.ID ) );
 	},
 } ).lazy( () =>
 	import( '../sites/backups' ).then( ( d ) =>

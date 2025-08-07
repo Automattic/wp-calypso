@@ -8,9 +8,12 @@ export const siteLastFiveActivityLogEntriesQuery = ( siteId: number ) =>
 		select: ( data ) => data.current?.orderedItems?.slice( 0, 5 ) ?? [],
 	} );
 
-export const siteLastRewindableActivityLogEntriesQuery = ( siteId: number, number: number = 20 ) =>
+export const siteRewindableActivityLogEntriesQuery = (
+	siteId: number,
+	number: number = 1000 // 1000 is the maximum number of entries that can be fetched.
+) =>
 	queryOptions( {
-		queryKey: [ 'site', siteId, 'activity-log', 'last-rewindable', number ],
+		queryKey: [ 'site', siteId, 'activity-log', 'rewindable', number ],
 		queryFn: () => fetchSiteRewindableActivityLog( siteId, { number } ),
 		select: ( data ) => data.current?.orderedItems?.slice( 0, number ) ?? [],
 	} );

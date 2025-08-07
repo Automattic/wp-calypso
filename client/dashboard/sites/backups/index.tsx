@@ -5,7 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
 import { useState } from 'react';
 import { siteBySlugQuery } from '../../app/queries/site';
-import { siteLastRewindableActivityLogEntriesQuery } from '../../app/queries/site-activity-log';
+import { siteRewindableActivityLogEntriesQuery } from '../../app/queries/site-activity-log';
 import { siteRoute } from '../../app/router';
 import { Callout } from '../../components/callout';
 import { CalloutOverlay } from '../../components/callout-overlay';
@@ -62,10 +62,11 @@ function Backups( { site }: { site: Site } ) {
 	const [ view, setView ] = useState< View >( {
 		type: 'table',
 		fields: [ 'date', 'action', 'user' ],
+		perPage: 10,
 	} );
 
 	const { data: activityLog, isLoading: isLoadingActivityLog } = useQuery(
-		siteLastRewindableActivityLogEntriesQuery( site.ID )
+		siteRewindableActivityLogEntriesQuery( site.ID )
 	);
 
 	const rawData = activityLog || [];
