@@ -1,7 +1,9 @@
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Link, useRouter } from '@tanstack/react-router';
+import { useDispatch } from '@wordpress/data';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { useState, useMemo } from 'react';
 import {
 	domainForwardingDeleteMutation,
@@ -46,6 +48,7 @@ function DomainForwardings() {
 	const { domainName } = domainRoute.useParams();
 	const { data: forwardingData, isLoading } = useQuery( domainForwardingQuery( domainName ) );
 	const deleteMutation = useMutation( domainForwardingDeleteMutation( domainName ) );
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const actions: Action< DomainForwarding >[] = useMemo(
 		() => [
@@ -65,7 +68,18 @@ function DomainForwardings() {
 				label: __( 'Delete' ),
 				callback: ( items ) => {
 					const item = items[ 0 ];
-					deleteMutation.mutate( item.domain_redirect_id );
+					deleteMutation.mutate( item.domain_redirect_id, {
+						onSuccess: () => {
+							createSuccessNotice( __( 'Domain forwarding rule was deleted successfully.' ), {
+								type: 'snackbar',
+							} );
+						},
+						onError: () => {
+							createErrorNotice( __( 'Failed to delete domain forwarding rule.' ), {
+								type: 'snackbar',
+							} );
+						},
+					} );
 				},
 			},
 		],
