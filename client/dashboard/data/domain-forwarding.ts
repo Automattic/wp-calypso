@@ -1,6 +1,6 @@
 import wpcom from 'calypso/lib/wp';
 
-export interface DomainForwardingObject {
+export interface DomainForwarding {
 	domain_redirect_id: number;
 	domain: string;
 	subdomain: string;
@@ -18,7 +18,7 @@ export interface DomainForwardingSuccessResponse {
 	success: true;
 }
 
-export function fetchDomainForwarding( domainName: string ): Promise< DomainForwardingObject[] > {
+export function fetchDomainForwarding( domainName: string ): Promise< DomainForwarding[] > {
 	return wpcom.req.get( `/sites/all/domain/${ domainName }/redirects`, { 'new-endpoint': 'true' } );
 }
 

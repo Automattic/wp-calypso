@@ -12,10 +12,10 @@ import { domainRoute, domainForwardingAddRoute, domainForwardingEditRoute } from
 import DataViewsCard from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import type { DomainForwardingObject } from '../../data/domain-forwarding';
+import type { DomainForwarding } from '../../data/domain-forwarding';
 import type { Action, Field, ViewTable, ViewList, View } from '@wordpress/dataviews';
 
-function getForwardingId( forwarding: DomainForwardingObject ) {
+function getForwardingId( forwarding: DomainForwarding ) {
 	return `${ forwarding.domain_redirect_id }-${ forwarding.domain }`;
 }
 
@@ -40,7 +40,7 @@ const DEFAULT_LAYOUTS = {
 	list: {},
 };
 
-function DomainForwarding() {
+function DomainForwardings() {
 	const router = useRouter();
 
 	const { domainName } = domainRoute.useParams();
@@ -49,12 +49,12 @@ function DomainForwarding() {
 	);
 	const deleteMutation = useMutation( domainForwardingDeleteMutation( domainName ) );
 
-	const actions: Action< DomainForwardingObject >[] = useMemo(
+	const actions: Action< DomainForwarding >[] = useMemo(
 		() => [
 			{
 				id: 'edit',
 				label: __( 'Edit' ),
-				callback: ( items: DomainForwardingObject[] ) => {
+				callback: ( items: DomainForwarding[] ) => {
 					const item = items[ 0 ];
 					router.navigate( {
 						to: domainForwardingEditRoute.fullPath,
@@ -65,7 +65,7 @@ function DomainForwarding() {
 			{
 				id: 'delete',
 				label: __( 'Delete' ),
-				callback: ( items: DomainForwardingObject[] ) => {
+				callback: ( items: DomainForwarding[] ) => {
 					const item = items[ 0 ];
 					deleteMutation.mutate( item.domain_redirect_id );
 				},
@@ -74,7 +74,7 @@ function DomainForwarding() {
 		[]
 	);
 
-	const fields: Field< DomainForwardingObject >[] = useMemo(
+	const fields: Field< DomainForwarding >[] = useMemo(
 		() => [
 			{
 				id: 'source',
@@ -82,7 +82,7 @@ function DomainForwarding() {
 				enableHiding: false,
 				enableSorting: true,
 				enableGlobalSearch: true,
-				getValue: ( { item }: { item: DomainForwardingObject } ) => {
+				getValue: ( { item }: { item: DomainForwarding } ) => {
 					// Create full source URL
 					const fqdn = item.fqdn || '';
 					const sourcePath = item.source_path || '';
@@ -103,7 +103,7 @@ function DomainForwarding() {
 				enableHiding: false,
 				enableSorting: true,
 				enableGlobalSearch: true,
-				getValue: ( { item }: { item: DomainForwardingObject } ) => {
+				getValue: ( { item }: { item: DomainForwarding } ) => {
 					const protocol = item.is_secure ? 'https://' : 'http://';
 					const targetPath = item.target_path || '';
 					return `${ protocol }${ item.target_host }${ targetPath }`;
@@ -115,7 +115,7 @@ function DomainForwarding() {
 				enableHiding: true,
 				enableSorting: true,
 				enableGlobalSearch: false,
-				getValue: ( { item }: { item: DomainForwardingObject } ) => {
+				getValue: ( { item }: { item: DomainForwarding } ) => {
 					return item.forward_paths ? __( 'Yes' ) : __( 'No' );
 				},
 			},
@@ -125,7 +125,7 @@ function DomainForwarding() {
 				enableHiding: true,
 				enableSorting: true,
 				enableGlobalSearch: false,
-				getValue: ( { item }: { item: DomainForwardingObject } ) => {
+				getValue: ( { item }: { item: DomainForwarding } ) => {
 					return item.is_permanent ? __( 'Permanent (301)' ) : __( 'Temporary (307)' );
 				},
 			},
@@ -172,7 +172,7 @@ function DomainForwarding() {
 						{ __( 'No forwarding rules found for this domain.' ) }
 					</div>
 				) : (
-					<DataViews< DomainForwardingObject >
+					<DataViews< DomainForwarding >
 						data={ filteredData || [] }
 						fields={ fields }
 						onChangeView={ ( view: View ) => setView( view as ForwardingView ) }
@@ -190,4 +190,4 @@ function DomainForwarding() {
 	);
 }
 
-export default DomainForwarding;
+export default DomainForwardings;

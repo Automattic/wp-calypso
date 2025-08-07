@@ -106,15 +106,15 @@ export const domainDnsEditRoute = createRoute( {
 	)
 );
 
-// Domain forwarding routes
-export const domainForwardingRoute = createRoute( {
+// Domain forwardings routes
+export const domainForwardingsRoute = createRoute( {
 	getParentRoute: () => domainRoute,
-	path: 'forwarding',
+	path: 'forwardings',
 	loader: ( { params } ) =>
 		queryClient.ensureQueryData( domainForwardingQuery( params.domainName ) ),
 } ).lazy( () =>
-	import( '../../domains/forwarding' ).then( ( d ) =>
-		createLazyRoute( 'domain-forwarding' )( {
+	import( '../../domains/forwardings' ).then( ( d ) =>
+		createLazyRoute( 'domain-forwardings' )( {
 			component: d.default,
 		} )
 	)
@@ -215,7 +215,7 @@ export const domainChildRoutes: AnyRoute[] = [
 	domainDnsRoute,
 	domainDnsAddRoute,
 	domainDnsEditRoute,
-	domainForwardingRoute,
+	domainForwardingsRoute,
 	domainForwardingAddRoute,
 	domainForwardingEditRoute,
 	domainContactInfoRoute,
