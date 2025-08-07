@@ -6,6 +6,6 @@ export interface Domain extends DomainSummary {}
 export async function fetchDomain( domainName: string ): Promise< Domain > {
 	return wpcom.req.get( {
 		path: `/domain-details/${ domainName }`,
-		version: '1.2',
+		apiNamespace: 'rest/v1.2',
 	} );
 }

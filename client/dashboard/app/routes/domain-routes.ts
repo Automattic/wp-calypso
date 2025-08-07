@@ -1,4 +1,5 @@
-import { createRoute, createLazyRoute, notFound } from '@tanstack/react-router';
+import { createRoute, createLazyRoute } from '@tanstack/react-router';
+import { domainQuery } from '../queries/domain';
 import { domainForwardingQuery } from '../queries/domain-forwarding';
 import { domainsQuery } from '../queries/domains';
 import { siteDomainsQuery } from '../queries/site-domains';
@@ -46,12 +47,8 @@ export const siteDomainsRoute = createRoute( {
 export const domainRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'domains/$domainName',
-	loader: async ( { params: { domainName } } ) => {
-		const domains = await queryClient.ensureQueryData( domainsQuery() );
-		const domain = domains.find( ( domain ) => domain.domain === domainName );
-		if ( ! domain ) {
-			throw notFound();
-		}
+	loader: ( { params: { domainName } } ) => {
+		return queryClient.ensureQueryData( domainQuery( domainName ) );
 	},
 } ).lazy( () =>
 	import( '../../domains/domain' ).then( ( d ) =>
