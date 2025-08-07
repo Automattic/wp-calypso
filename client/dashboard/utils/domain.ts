@@ -10,15 +10,15 @@ export function isDomainRenewable( domain: Domain ) {
 		return false;
 	}
 
-	const shouldNotAllowManualRenew =
-		! domain.subscription_id ||
-		domain.pending_renewal ||
-		domain.pending_registration_at_registry ||
-		domain.pending_registration ||
-		! domain.current_user_can_manage ||
-		( ! domain.is_renewable && ! domain.is_redeemable ) ||
-		domain.aftermarket_auction;
-	return ! shouldNotAllowManualRenew;
+	return (
+		domain.subscription_id &&
+		! domain.pending_renewal &&
+		! domain.pending_registration_at_registry &&
+		! domain.pending_registration &&
+		domain.current_user_can_manage &&
+		( domain.is_renewable || domain.is_redeemable ) &&
+		! domain.aftermarket_auction
+	);
 }
 
 export const shouldUpgradeToMakeDomainPrimary = ( {
