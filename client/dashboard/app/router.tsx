@@ -214,13 +214,10 @@ const siteLogsRoute = createRoute( {
 const siteLogsIndexRoute = createRoute( {
 	getParentRoute: () => siteLogsRoute,
 	path: '/',
-} ).lazy( () =>
-	import( '../sites/logs' ).then( ( d ) =>
-		createLazyRoute( 'site-logs' )( {
-			component: d.default,
-		} )
-	)
-);
+	beforeLoad: ( { params } ) => {
+		throw redirect( { to: `/sites/${ params.siteSlug }/logs/php` } );
+	},
+} );
 
 const siteLogsPhpRoute = createRoute( {
 	getParentRoute: () => siteLogsRoute,
@@ -228,7 +225,7 @@ const siteLogsPhpRoute = createRoute( {
 } ).lazy( () =>
 	import( '../sites/logs' ).then( ( d ) =>
 		createLazyRoute( 'site-logs-php' )( {
-			component: d.default,
+			component: ( props ) => <d.default { ...props } key="php" />,
 		} )
 	)
 );
@@ -239,7 +236,7 @@ const siteLogsServerRoute = createRoute( {
 } ).lazy( () =>
 	import( '../sites/logs' ).then( ( d ) =>
 		createLazyRoute( 'site-logs-server' )( {
-			component: d.default,
+			component: ( props ) => <d.default { ...props } key="server" />,
 		} )
 	)
 );
