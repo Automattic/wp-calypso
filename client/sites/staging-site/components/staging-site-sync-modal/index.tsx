@@ -493,7 +493,7 @@ export default function SyncModal( {
 									<Text as="p" style={ { marginTop: '16px' } }>
 										{ createInterpolateElement(
 											__(
-												'This site has also WooCommerce installed. We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins. <a>Learn more</a>'
+												'This site also has WooCommerce installed. We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins. <a>Learn more</a>'
 											),
 											{
 												a: (
