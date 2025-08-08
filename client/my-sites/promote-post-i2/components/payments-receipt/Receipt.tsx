@@ -58,15 +58,12 @@ export const Receipt = ( {
 		} );
 	}
 
-	// Check if we have multiple domains
-	const hasMultipleDomains = Object.keys( campaignsByDomain ).length > 1;
-
 	return (
 		<>
 			{ /* Header */ }
 			<div className="payment-receipt__header">
 				<div className="payment-receipt__organization-logo">
-					{ /* Inline logo because we need to insert it in the iframe. So relative path won't work. */ }
+					{ /* Inline logo because we need to insert it in the iframe for printing. Relative paths won't work since the iframe's document may have a different base URL or origin, causing relative asset paths to break. */ }
 					<WPCOMPrintLogo />
 				</div>
 				<div className="payment-receipt__organization-details">
@@ -144,19 +141,14 @@ export const Receipt = ( {
 					<>
 						{ Object.entries( campaignsByDomain ).map( ( [ domain, domainCampaigns = [] ] ) => (
 							<div key={ domain } className="payment-receipt__domain-group">
-								{ /* Domain header - only show if multiple domains */ }
-								{ hasMultipleDomains && (
-									<div className="payment-receipt__domain-header">
-										<h4 className="payment-receipt__domain-name">{ domain }</h4>
-									</div>
-								) }
+								<div className="payment-receipt__domain-header">
+									<h4 className="payment-receipt__domain-name">{ domain }</h4>
+								</div>
 
 								{ /* Campaigns for this domain */ }
 								{ domainCampaigns.map( ( campaign ) => (
 									<div
-										className={ `payment-receipt__list-item ${
-											hasMultipleDomains ? 'payment-receipt__campaign-item' : ''
-										}` }
+										className="payment-receipt__list-item 'payment-receipt__campaign-item"
 										key={ campaign.campaign_id }
 									>
 										<div className="payment-receipt__item-content">
