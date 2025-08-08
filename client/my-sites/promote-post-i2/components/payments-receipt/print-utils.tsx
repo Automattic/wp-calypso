@@ -77,7 +77,7 @@ export const printReceipt = (
 		.payment-receipt__domain-group { margin-bottom: 1rem; }
 		.payment-receipt__domain-group:not(:first-child) { margin-top: 1rem; padding-top: 0.5rem; }
 		.payment-receipt__domain-header { margin-bottom: 1rem; padding-bottom: 0.25rem; border-bottom: 1px solid #e0e0e0; }
-		.payment-receipt__domain-name { font-size: 1.125rem; font-weight: 600; color: #3c4043; margin: 0; }
+		.payment-receipt__domain-name { font-size: 1rem; font-weight: 600; color: #3c4043; margin: 0; }
 		.payment-receipt__campaign-item { margin-bottom: 0.5rem; }
 	`;
 

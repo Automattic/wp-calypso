@@ -118,7 +118,7 @@ export const PaymentReceipt = ( {
 
 			<div className="payment-receipt__print">
 				<Button
-					className="payment-receipt__print-button"
+					className="payment-receipt__print-button components-button is-primary"
 					onClick={ () => printReceipt( payment, billingDetails, sites ) }
 				>
 					{ __( 'Print Receipt' ) }

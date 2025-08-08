@@ -251,7 +251,7 @@
 		padding: 8px 16px;
 		cursor: pointer;
 		transition: background-color 0.2s ease;
-		margin-bottom: 8px;
+		margin-bottom: 8px !important;
 
 		&:hover {
 			background-color: var(--color-accent-dark);
