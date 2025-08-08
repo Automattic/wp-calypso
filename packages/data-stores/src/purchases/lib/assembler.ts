@@ -123,6 +123,7 @@ export function createPurchaseObject( purchase: RawPurchase | RawPurchaseCreditC
 		purchaseRenewalQuantity: purchase.renewal_price_tier_usage_quantity || null,
 		userId: Number( purchase.user_id ),
 		isAutoRenewEnabled: parseInt( purchase.auto_renew ?? '' ) === 1,
+		isJetpackPlanOrProduct: purchase.is_jetpack_plan_or_product,
 	};
 
 	if ( purchase.purchaser_id ) {

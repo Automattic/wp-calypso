@@ -1,7 +1,7 @@
-import { createRoute, createLazyRoute, notFound } from '@tanstack/react-router';
+import { createRoute, createLazyRoute } from '@tanstack/react-router';
+import { domainQuery } from '../queries/domain';
 import { domainForwardingQuery } from '../queries/domain-forwarding';
 import { domainsQuery } from '../queries/domains';
-import { siteDomainsQuery } from '../queries/site-domains';
 import { queryClient } from '../query-client';
 import type { AnyRoute } from '@tanstack/react-router';
 
@@ -46,12 +46,8 @@ export const siteDomainsRoute = createRoute( {
 export const domainRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'domains/$domainName',
-	loader: async ( { params: { domainName } } ) => {
-		const domains = await queryClient.ensureQueryData( domainsQuery() );
-		const domain = domains.find( ( domain ) => domain.domain === domainName );
-		if ( ! domain ) {
-			throw notFound();
-		}
+	loader: ( { params: { domainName } } ) => {
+		return queryClient.ensureQueryData( domainQuery( domainName ) );
 	},
 } ).lazy( () =>
 	import( '../../domains/domain' ).then( ( d ) =>
@@ -110,8 +106,8 @@ export const domainDnsEditRoute = createRoute( {
 export const domainForwardingsRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'forwardings',
-	loader: ( { params } ) =>
-		queryClient.ensureQueryData( domainForwardingQuery( params.domainName ) ),
+	loader: ( { params: { domainName } } ) =>
+		queryClient.ensureQueryData( domainForwardingQuery( domainName ) ),
 } ).lazy( () =>
 	import( '../../domains/domain-forwardings' ).then( ( d ) =>
 		createLazyRoute( 'domain-forwardings' )( {
@@ -178,18 +174,6 @@ export const domainGlueRecordsRoute = createRoute( {
 export const domainDnssecRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'dnssec',
-	loader: async ( { params: { domainName } } ) => {
-		// TODO: Replace with the new api that query for a specific domain
-
-		// Prefetch the domains data
-		const allDomains = await queryClient.ensureQueryData( domainsQuery() );
-		// Find the domain to get the blog_id
-		const domain = allDomains.find( ( domain ) => domain.domain === domainName );
-		if ( domain ) {
-			// Prefetch the site domains data
-			await queryClient.ensureQueryData( siteDomainsQuery( domain.blog_id ) );
-		}
-	},
 } ).lazy( () =>
 	import( '../../domains/overview-dnssec' ).then( ( d ) =>
 		createLazyRoute( 'domain-dnssec' )( {

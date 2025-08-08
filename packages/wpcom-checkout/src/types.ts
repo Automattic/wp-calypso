@@ -458,6 +458,7 @@ export interface VatDetails {
 	name?: string | null;
 	address?: string | null;
 	isForBusiness?: boolean | null;
+	can_user_edit?: boolean | false;
 }
 
 /*
