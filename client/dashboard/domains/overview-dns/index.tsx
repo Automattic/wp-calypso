@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
@@ -97,7 +98,17 @@ export default function DomainDns() {
 	);
 
 	return (
-		<PageLayout size="small" header={ <PageHeader title={ __( 'DNS Records' ) } /> }>
+		<PageLayout
+			size="small"
+			header={
+				<VStack>
+					<PageHeader
+						title={ __( 'DNS Records' ) }
+						actions={ <Button variant="primary">{ __( 'Add DNS Record' ) }</Button> }
+					/>
+				</VStack>
+			}
+		>
 			<DataViewsCard>
 				{ dnsData?.records?.length === 0 && ! isLoading ? (
 					<div style={ { padding: '20px', textAlign: 'center' } }>
