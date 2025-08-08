@@ -26,7 +26,7 @@ const DEFAULT_VIEW: DnsView = {
 		field: 'type',
 		direction: 'asc',
 	},
-	fields: [ 'name' ],
+	fields: [ 'name', 'value' ],
 	filters: [],
 };
 
@@ -67,6 +67,21 @@ export default function DomainDns() {
 					}
 
 					return name;
+				},
+			},
+			{
+				id: 'value',
+				label: __( 'Value' ),
+				enableHiding: false,
+				enableSorting: true,
+				getValue: ( { item } ) => {
+					// For SRV records, construct the full value
+					if ( item.type === 'SRV' ) {
+						return `${ item.weight || 0 } ${ item.port || 0 } ${ item.target || '' }`;
+					}
+
+					// For other records, use target or data property
+					return item.target || item.data || '';
 				},
 			},
 		],
