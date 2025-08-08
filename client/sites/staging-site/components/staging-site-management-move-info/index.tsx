@@ -89,9 +89,10 @@ const getInfoCardItems = ( settingsLink?: string ): InfoCardItem[] => [
 
 interface InfoCardProps {
 	item: InfoCardItem;
+	onLocationClick?: () => void;
 }
 
-const InfoCard: FunctionComponent< InfoCardProps > = ( { item } ) => {
+const InfoCard: FunctionComponent< InfoCardProps > = ( { item, onLocationClick } ) => {
 	return (
 		<Card>
 			<CardBody style={ { padding: '16px' } }>
@@ -118,15 +119,30 @@ const InfoCard: FunctionComponent< InfoCardProps > = ( { item } ) => {
 						<Text>{ item.description }</Text>
 						<HStack alignment="left" spacing={ 1 }>
 							<Icon icon={ item.locationIcon } size={ 16 } style={ { fill: '#757575' } } />
-							{ item.link ? (
-								<Text variant="muted">
+							<Text variant="muted">
+								{ item.link && (
 									<a href={ item.link } style={ { textDecoration: 'none' } }>
 										{ item.location }
 									</a>
-								</Text>
-							) : (
-								<Text variant="muted">{ item.location }</Text>
-							) }
+								) }
+								{ onLocationClick && ! item.link && (
+									<button
+										onClick={ onLocationClick }
+										style={ {
+											background: 'none',
+											border: 'none',
+											padding: 0,
+											textDecoration: 'none',
+											cursor: 'pointer',
+											color: 'var(--wp-admin-theme-color, #0073aa)',
+											font: 'inherit',
+										} }
+									>
+										{ item.location }
+									</button>
+								) }
+								{ ! item.link && ! onLocationClick && item.location }
+							</Text>
 						</HStack>
 					</VStack>
 				</HStack>
@@ -155,6 +171,23 @@ const StagingSiteManagementMoveInfo: FunctionComponent = () => {
 
 	const infoCardItems = getInfoCardItems( settingsLink );
 
+	// Check if we should enable highlighting - only on production sites without staging sites
+	const canHighlightStagingButton = ! isCurrentSiteStaging && ! stagingSiteId;
+
+	const handleCreateStagingSiteLocationClick = () => {
+		if ( canHighlightStagingButton ) {
+			const button = document.querySelector( '.hosting-dashboard-item-view__header-add-staging' );
+			if ( button ) {
+				button.classList.add( 'staging-button-highlighted' );
+
+				// Reset the highlight after 3 seconds
+				setTimeout( () => {
+					button.classList.remove( 'staging-button-highlighted' );
+				}, 3000 );
+			}
+		}
+	};
+
 	return (
 		<VStack spacing={ 10 }>
 			<VStack spacing={ 2 }>
@@ -177,7 +210,14 @@ const StagingSiteManagementMoveInfo: FunctionComponent = () => {
 			>
 				{ infoCardItems.map( ( item, index ) => (
 					<Item key={ index } style={ { padding: '0' } }>
-						<InfoCard item={ item } />
+						<InfoCard
+							item={ item }
+							onLocationClick={
+								index === 0 && canHighlightStagingButton
+									? handleCreateStagingSiteLocationClick
+									: undefined
+							}
+						/>
 					</Item>
 				) ) }
 			</Grid>

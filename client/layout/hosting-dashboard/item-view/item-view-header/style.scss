@@ -50,6 +50,23 @@ $blueberry-color: #3858e9;
 				&.components-button.has-icon {
 					padding: 0 0 0 2px;
 				}
+
+				&.staging-button-highlighted {
+					outline: 2px solid #3858e9;
+					outline-offset: 0;
+					border-radius: 2px;
+					animation: highlightPulse 0.5s ease-in-out;
+
+					&:hover {
+						outline-color: #2c4ccc;
+						background-color: rgba(56, 88, 233, 0.05);
+					}
+
+					&:focus {
+						outline-color: #2c4ccc;
+						outline-offset: 2px;
+					}
+				}
 			}
 		}
 
@@ -161,5 +178,20 @@ $blueberry-color: #3858e9;
 				}
 			}
 		}
+	}
+}
+
+@keyframes highlightPulse {
+	0% {
+		outline-width: 2px;
+		outline-color: rgba(56, 88, 233, 0.8);
+	}
+	50% {
+		outline-width: 3px;
+		outline-color: rgba(56, 88, 233, 1);
+	}
+	100% {
+		outline-width: 2px;
+		outline-color: rgba(56, 88, 233, 0.8);
 	}
 }

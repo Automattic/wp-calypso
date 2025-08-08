@@ -118,6 +118,11 @@ export default function HeaderStagingSiteButton( {
 		isAtomic && ! isStagingSite && ( stagingSites.length === 0 || isCreatingStagingSite );
 
 	const onAddClick = useCallback( () => {
+		// Reset highlight when user clicks the button
+		const button = document.querySelector( '.hosting-dashboard-item-view__header-add-staging' );
+		if ( button ) {
+			button.classList.remove( 'staging-button-highlighted' );
+		}
 		dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.INITIATE_TRANSFERRING ) );
 		dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_click' ) );
 		addStagingSite( { name: '' } );
