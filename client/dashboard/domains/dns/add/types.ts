@@ -1,6 +1,5 @@
 import { Field } from '@wordpress/dataviews';
-
-export type DNSRecordType = 'A' | 'AAAA' | 'ALIAS' | 'CAA' | 'CNAME' | 'MX' | 'NS' | 'SRV' | 'TXT';
+import { DNSRecordType } from '../../../data/domain-dns-records';
 
 export type DNSRecordTypeFormData = {
 	type: DNSRecordType;
