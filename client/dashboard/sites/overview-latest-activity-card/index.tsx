@@ -73,7 +73,7 @@ export default function LatestActivityCard( {
 	};
 
 	return (
-		<Card>
+		<Card className="dashboard-overview-latest-activity-card">
 			<CardHeader>
 				<SectionHeader title={ __( 'Latest activity' ) } level={ 3 } />
 			</CardHeader>
