@@ -414,9 +414,13 @@ export function signupForm( context, next ) {
 		} );
 
 		const authorizeUrlWithApproval = addQueryArgs( { auth_approved: true }, context.path );
+		const { woodna_service_name, woodna_help_url, plugin_name } = context.query || {};
 		const urlQueryArgs = {
 			redirect_to: authorizeUrlWithApproval,
 			from,
+			...( woodna_service_name ? { woodna_service_name } : {} ),
+			...( woodna_help_url ? { woodna_help_url } : {} ),
+			...( plugin_name ? { plugin_name } : {} ),
 		};
 
 		return page( addQueryArgs( urlQueryArgs, '/start/account' ) );
