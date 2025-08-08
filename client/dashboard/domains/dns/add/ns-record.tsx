@@ -5,21 +5,27 @@ export const NSRecordConfig: DNSRecordConfig = {
 	fields: [
 		{
 			id: 'name',
+			type: 'text',
 			label: __( 'Name (optional)' ),
-			Edit: 'text',
 			placeholder: 'Enter subdomain',
 		},
 		{
 			id: 'data',
+			type: 'text',
 			label: __( 'Host' ),
-			Edit: 'text',
 			placeholder: 'e.g. ns1.your-provider.com',
+			isValid: {
+				required: true,
+			},
 		},
 		{
 			id: 'ttl',
+			type: 'integer',
 			label: __( 'TTL (time to live)' ),
-			Edit: 'text',
 			placeholder: 'e.g. 3600',
+			isValid: {
+				required: true,
+			},
 		},
 	],
 	form: {

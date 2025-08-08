@@ -5,15 +5,18 @@ export const SRVRecordConfig: DNSRecordConfig = {
 	fields: [
 		{
 			id: 'name',
+			type: 'text',
 			label: __( 'Name (optional)' ),
-			Edit: 'text',
 			placeholder: 'Enter subdomain',
 		},
 		{
 			id: 'service',
+			type: 'text',
 			label: __( 'Service' ),
-			Edit: 'text',
 			placeholder: 'e.g. sip',
+			isValid: {
+				required: true,
+			},
 		},
 		{
 			id: 'protocol',
@@ -27,33 +30,48 @@ export const SRVRecordConfig: DNSRecordConfig = {
 		},
 		{
 			id: 'aux',
+			type: 'integer',
 			label: __( 'Priority' ),
-			Edit: 'text',
 			placeholder: 'e.g. 10',
+			isValid: {
+				required: true,
+			},
 		},
 		{
 			id: 'weight',
+			type: 'integer',
 			label: __( 'Weight' ),
-			Edit: 'text',
 			placeholder: 'e.g. 10',
+			isValid: {
+				required: true,
+			},
 		},
 		{
 			id: 'target',
+			type: 'text',
 			label: __( 'Target host' ),
-			Edit: 'text',
 			placeholder: 'e.g. sip.your-provider.com',
+			isValid: {
+				required: true,
+			},
 		},
 		{
 			id: 'port',
+			type: 'integer',
 			label: __( 'Target port' ),
-			Edit: 'text',
 			placeholder: 'e.g. 5060',
+			isValid: {
+				required: true,
+			},
 		},
 		{
 			id: 'ttl',
+			type: 'integer',
 			label: __( 'TTL (time to live)' ),
-			Edit: 'text',
 			placeholder: 'e.g. 3600',
+			isValid: {
+				required: true,
+			},
 		},
 	],
 	form: {

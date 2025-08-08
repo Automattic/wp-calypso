@@ -5,21 +5,27 @@ export const TXTRecordConfig: DNSRecordConfig = {
 	fields: [
 		{
 			id: 'name',
+			type: 'text',
 			label: __( 'Name (optional)' ),
-			Edit: 'text',
 			placeholder: 'Enter subdomain',
 		},
 		{
 			id: 'data',
+			type: 'text',
 			label: __( 'Text' ),
-			Edit: 'text',
 			placeholder: 'e.g. "v=spf1 include:example.com ~all"',
+			isValid: {
+				required: true,
+			},
 		},
 		{
 			id: 'ttl',
+			type: 'integer',
 			label: __( 'TTL (time to live)' ),
-			Edit: 'text',
 			placeholder: 'e.g. 3600',
+			isValid: {
+				required: true,
+			},
 		},
 	],
 	form: {

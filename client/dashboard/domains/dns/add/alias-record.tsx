@@ -5,15 +5,21 @@ export const AliasRecordConfig: DNSRecordConfig = {
 	fields: [
 		{
 			id: 'data',
+			type: 'text',
 			label: __( 'Alias of (points to)' ),
-			Edit: 'text',
 			placeholder: 'e.g. example.com',
+			isValid: {
+				required: true,
+			},
 		},
 		{
 			id: 'ttl',
+			type: 'integer',
 			label: __( 'TTL (time to live)' ),
-			Edit: 'text',
 			placeholder: 'e.g. 3600',
+			isValid: {
+				required: true,
+			},
 		},
 	],
 	form: {

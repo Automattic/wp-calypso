@@ -5,15 +5,18 @@ export const CAARecordConfig: DNSRecordConfig = {
 	fields: [
 		{
 			id: 'name',
+			type: 'text',
 			label: __( 'Name (optional)' ),
-			Edit: 'text',
 			placeholder: 'Enter subdomain',
 		},
 		{
 			id: 'flags',
+			type: 'integer',
 			label: __( 'Flag' ),
-			Edit: 'text',
 			placeholder: 'e.g. 0',
+			isValid: {
+				required: true,
+			},
 		},
 		{
 			id: 'tag',
@@ -28,15 +31,21 @@ export const CAARecordConfig: DNSRecordConfig = {
 		},
 		{
 			id: 'data',
+			type: 'text',
 			label: __( 'Value' ),
-			Edit: 'text',
 			placeholder: 'e.g. "letsencrypt.org"',
+			isValid: {
+				required: true,
+			},
 		},
 		{
 			id: 'ttl',
+			type: 'integer',
 			label: __( 'TTL (time to live)' ),
-			Edit: 'text',
 			placeholder: 'e.g. 3600',
+			isValid: {
+				required: true,
+			},
 		},
 	],
 	form: {

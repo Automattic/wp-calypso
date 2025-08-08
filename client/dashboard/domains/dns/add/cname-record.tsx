@@ -5,21 +5,30 @@ export const CNAMERecordConfig: DNSRecordConfig = {
 	fields: [
 		{
 			id: 'name',
+			type: 'text',
 			label: __( 'Name (host)' ),
-			Edit: 'text',
 			placeholder: 'Enter subdomain (required)',
+			isValid: {
+				required: true,
+			},
 		},
 		{
 			id: 'data',
+			type: 'text',
 			label: __( 'Alias of (points to)' ),
-			Edit: 'text',
 			placeholder: 'e.g. example.com',
+			isValid: {
+				required: true,
+			},
 		},
 		{
 			id: 'ttl',
+			type: 'integer',
 			label: __( 'TTL (time to live)' ),
-			Edit: 'text',
 			placeholder: 'e.g. 3600',
+			isValid: {
+				required: true,
+			},
 		},
 	],
 	form: {

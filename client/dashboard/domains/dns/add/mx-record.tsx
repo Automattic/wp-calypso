@@ -5,27 +5,36 @@ export const MXRecordConfig: DNSRecordConfig = {
 	fields: [
 		{
 			id: 'name',
+			type: 'text',
 			label: __( 'Name (optional)' ),
-			Edit: 'text',
 			placeholder: 'Enter subdomain',
 		},
 		{
 			id: 'data',
+			type: 'text',
 			label: __( 'Handled by' ),
-			Edit: 'text',
 			placeholder: 'e.g. mail.your-provider.com',
+			isValid: {
+				required: true,
+			},
 		},
 		{
 			id: 'aux',
+			type: 'integer',
 			label: __( 'Priority' ),
-			Edit: 'text',
 			placeholder: 'e.g. 10',
+			isValid: {
+				required: true,
+			},
 		},
 		{
 			id: 'ttl',
+			type: 'integer',
 			label: __( 'TTL (time to live)' ),
-			Edit: 'text',
 			placeholder: 'e.g. 3600',
+			isValid: {
+				required: true,
+			},
 		},
 	],
 	form: {
