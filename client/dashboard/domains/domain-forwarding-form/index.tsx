@@ -1,5 +1,5 @@
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { Link, useRouter } from '@tanstack/react-router';
+import { useRouter } from '@tanstack/react-router';
 import {
 	Card,
 	CardBody,
@@ -9,9 +9,9 @@ import {
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
+import { useState, useMemo, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useState, useMemo } from 'react';
 import {
 	domainForwardingQuery,
 	domainForwardingSaveMutation,
@@ -19,6 +19,7 @@ import {
 import { domainRoute, domainForwardingsRoute } from '../../app/router';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import RouterLinkButton from '../../components/router-link-button';
 import type { DomainForwardingFormData } from '../../data/domain-forwarding';
 import type { Field } from '@wordpress/dataviews';
 
@@ -67,33 +68,32 @@ export default function DomainForwardingForm( { isEdit = false }: DomainForwardi
 		if ( ! isEdit || ! forwardingData || ! forwardingId ) {
 			return null;
 		}
-		return forwardingData.find( ( f ) => f.domain_redirect_id === parseInt( forwardingId ) );
+		return forwardingData.find( ( f ) => f.domain_redirect_id === parseInt( forwardingId, 10 ) );
 	}, [ isEdit, forwardingData, forwardingId ] );
 
-	const [ formData, setFormData ] = useState< FormData >( () => {
-		if ( existingForwarding ) {
-			const protocol = existingForwarding.is_secure ? 'https://' : 'http://';
-			const targetUrl = `${ protocol }${ existingForwarding.target_host }${
-				existingForwarding.target_path || ''
-			}`;
-
-			return {
-				sourceType: existingForwarding.subdomain ? 'subdomain' : 'root',
-				subdomain: existingForwarding.subdomain || '',
-				targetUrl,
-				redirectType: existingForwarding.is_permanent ? 'permanent' : 'temporary',
-				pathForwarding: existingForwarding.forward_paths ? 'yes' : 'no',
-			};
-		}
-
-		return {
-			sourceType: 'subdomain',
-			subdomain: '',
-			targetUrl: '',
-			redirectType: 'temporary',
-			pathForwarding: 'no',
-		};
+	const [ formData, setFormData ] = useState< FormData >( {
+		sourceType: 'subdomain',
+		subdomain: '',
+		targetUrl: '',
+		redirectType: 'temporary',
+		pathForwarding: 'no',
 	} );
+
+	useEffect( () => {
+		if ( ! isEdit || ! existingForwarding ) {
+			return;
+		}
+		const protocol = existingForwarding.is_secure ? 'https://' : 'http://';
+		setFormData( {
+			sourceType: existingForwarding.subdomain ? 'subdomain' : 'root',
+			subdomain: existingForwarding.subdomain || '',
+			targetUrl: `${ protocol }${ existingForwarding.target_host }${
+				existingForwarding.target_path || ''
+			}`,
+			redirectType: existingForwarding.is_permanent ? 'permanent' : 'temporary',
+			pathForwarding: existingForwarding.forward_paths ? 'yes' : 'no',
+		} );
+	}, [ isEdit, existingForwarding ] );
 
 	const fields: Field< FormData >[] = useMemo(
 		() => [
@@ -242,14 +242,17 @@ export default function DomainForwardingForm( { isEdit = false }: DomainForwardi
 								} }
 							/>
 
-							<HStack justify="space-between">
-								<Link to={ domainForwardingsRoute.fullPath } params={ { domainName } }>
-									<Button variant="tertiary">{ __( 'Cancel' ) }</Button>
-								</Link>
-
+							<HStack justify="start" spacing={ 4 }>
 								<Button variant="primary" type="submit" isBusy={ isPending } disabled={ isPending }>
 									{ isEdit ? __( 'Update' ) : __( 'Add' ) }
 								</Button>
+								<RouterLinkButton
+									to={ domainForwardingsRoute.fullPath }
+									params={ { domainName } }
+									variant="tertiary"
+								>
+									{ __( 'Cancel' ) }
+								</RouterLinkButton>
 							</HStack>
 						</VStack>
 					</form>
