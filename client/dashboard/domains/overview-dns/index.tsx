@@ -125,7 +125,11 @@ export default function DomainDns() {
 						getItemId={ getDnsRecordId }
 						isLoading={ isLoading }
 						defaultLayouts={ DEFAULT_LAYOUTS }
-					/>
+					>
+						<>
+							<DataViews.Layout />
+						</>
+					</DataViews>
 				) }
 			</DataViewsCard>
 		</PageLayout>
