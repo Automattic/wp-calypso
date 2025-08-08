@@ -126,6 +126,7 @@ export default function OverviewCard( {
 						</Heading>
 						<Text
 							intent={ intent === 'warning' || intent === 'error' ? intent : undefined }
+							variant={ intent === 'warning' || intent === 'error' ? undefined : 'muted' }
 							lineHeight="16px"
 							size={ 12 }
 						>

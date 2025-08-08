@@ -15,15 +15,7 @@ function UnforwardedText(
 		<WPText
 			ref={ ref }
 			{ ...props }
-			className={ clsx(
-				{
-					'dashboard-text--success': intent === 'success',
-					'dashboard-text--warning': intent === 'warning',
-					'dashboard-text--error': intent === 'error',
-				},
-				props.className
-			) }
-			variant={ intent ? undefined : ( 'muted' as const ) }
+			className={ clsx( intent && `dashboard-text--${ intent }`, props.className ) }
 		/>
 	);
 }
