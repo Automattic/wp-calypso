@@ -276,7 +276,7 @@ function HelpSearchResults( {
 		const { link, post_id, blog_id, source } = result;
 
 		// Make the first recordTracksEvent call asynchronous
-		Promise.resolve().then( () => {
+		queueMicrotask( () => {
 			recordTracksEvent( 'calypso_help_center_search_traintracks_interact', {
 				action: 'click',
 				railcar: result.railcar.railcar,

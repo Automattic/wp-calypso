@@ -3,27 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import { buildQueryString } from '@wordpress/url';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-import type { ReactNode } from 'react';
-
-export interface SearchResult {
-	railcar: {
-		railcar?: string;
-		fetch_algo?: string;
-		fetch_lang?: string;
-		fetch_position?: string;
-		fetch_query?: string;
-		rec_post_id?: number;
-		rec_blog_id?: number;
-		session_id?: string;
-	};
-	link: string;
-	title: ReactNode;
-	content?: string;
-	icon?: string;
-	post_id?: number;
-	blog_id?: number;
-	source?: string;
-}
+import { SearchResult } from '../types';
 
 interface APIFetchOptions {
 	global: boolean;
@@ -53,18 +33,11 @@ const fetchArticlesAPI = async (
 	// Record TrainTracks render events
 	searchResultResponse?.forEach( ( source: SearchResult, index: number ) => {
 		if ( source.railcar ) {
-			Promise.resolve().then( () => {
+			queueMicrotask( () => {
 				recordTracksEvent( 'calypso_help_center_search_traintracks_render', {
-					fetch_algo: source?.railcar?.fetch_algo,
+					...source.railcar,
 					ui_algo: 'default',
-					railcar: source?.railcar?.railcar,
-					fetch_position: source?.railcar?.fetch_position,
-					fetch_query: source?.railcar?.fetch_query,
-					fetch_lang: source?.railcar?.fetch_lang,
 					ui_position: index,
-					rec_blog_id: source?.railcar?.rec_blog_id,
-					rec_post_id: source?.railcar?.rec_post_id,
-					session_id: source?.railcar?.session_id,
 				} );
 			} );
 		}
