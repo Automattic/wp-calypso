@@ -53,27 +53,55 @@ body.is-section-signup {
 
 		.signup-form {
 			max-width: 400px;
+			width: 100%;
+			margin: 0 auto;
+			padding: 0;
+			display: flex;
+			flex-direction: column;
+
+			input[type="email"].form-text-input {
+				margin-bottom: 0;
+			}
 		}
 
 		.card.logged-out-form {
+			box-shadow: none;
+			background-color: initial;
 			padding: 0;
 			.form-fieldset {
 				margin-bottom: 0;
 			}
 		}
 
-		.auth-form__social {
+		.card.auth-form__social {
 			margin: 0;
 			padding-top: 0;
 			padding-bottom: 0;
-
+			box-shadow: none;
+			background-color: initial;
 		}
 
 		.auth-form__separator {
 			margin: 0 auto;
 			max-width: 360px;
+			width: 100%;
+
 			.auth-form__separator-text {
 				padding: 0 24px;
+			}
+
+			&::before,
+			&::after {
+				position: absolute;
+				border-inline-start: 0;
+				border-block-start: 1px solid #e6e6e6;
+				inset-block-start: 50%;
+				inset-inline-start: 0;
+				width: 42%;
+			}
+
+			&::after {
+				left: 58%;
 			}
 		}
 

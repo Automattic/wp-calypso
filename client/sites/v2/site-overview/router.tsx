@@ -16,8 +16,8 @@ const siteOverviewRoute = createRoute( {
 			component: function SiteOverview() {
 				const isWide = useBreakpoint( WIDE_BREAKPOINT );
 				const breakpoints = isWide
-					? { large: 'huge' as WPBreakpoint, small: 'huge' as WPBreakpoint }
-					: { large: 'large' as WPBreakpoint, small: 'large' as WPBreakpoint };
+					? { large: 'wide' as WPBreakpoint, small: 'wide' as WPBreakpoint }
+					: { large: 'medium' as WPBreakpoint, small: 'medium' as WPBreakpoint };
 				return (
 					<d.default
 						siteSlug={ siteRoute.useParams().siteSlug }

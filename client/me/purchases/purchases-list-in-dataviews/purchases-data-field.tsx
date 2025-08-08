@@ -42,10 +42,9 @@ function PurchaseItemRowStatus( props: {
 	purchase: Purchases.Purchase;
 	translate: LocalizeProps[ 'translate' ];
 	moment: ReturnType< typeof useLocalizedMoment >;
-	isJetpack?: boolean;
 	isDisconnectedSite?: boolean;
 } ) {
-	const { purchase, translate, moment, isJetpack, isDisconnectedSite } = props;
+	const { purchase, translate, moment, isDisconnectedSite } = props;
 
 	return (
 		<div className="purchase-item__status purchases-layout__status">
@@ -53,7 +52,6 @@ function PurchaseItemRowStatus( props: {
 				purchase={ purchase }
 				translate={ translate }
 				moment={ moment }
-				isJetpack={ isJetpack }
 				isDisconnectedSite={ isDisconnectedSite }
 			/>
 		</div>
@@ -302,8 +300,14 @@ export function getPurchasesFieldDefinitions( {
 				return item.expiryDate + ' ' + item.expiryStatus;
 			},
 			render: ( { item }: { item: Purchases.Purchase } ) => {
+				const site = sites.find( ( site ) => site.ID === item.siteId );
 				return (
-					<PurchaseItemRowStatus purchase={ item } translate={ translate } moment={ moment } />
+					<PurchaseItemRowStatus
+						purchase={ item }
+						translate={ translate }
+						moment={ moment }
+						isDisconnectedSite={ ! site }
+					/>
 				);
 			},
 		},

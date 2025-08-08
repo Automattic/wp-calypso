@@ -10,7 +10,7 @@ export const siteHasCancelablePurchasesQuery = ( siteId: number, userId: number 
 				.filter( ( purchase ) => {
 					// Exclude inactive purchases and legacy premium theme purchases.
 					if (
-						! purchase.active ||
+						purchase.subscription_status !== 'active' ||
 						purchase.expiry_status === 'expired' ||
 						purchase.product_slug === 'premium_theme'
 					) {
@@ -19,15 +19,21 @@ export const siteHasCancelablePurchasesQuery = ( siteId: number, userId: number 
 
 					return purchase.is_cancelable;
 				} )
-				.filter( ( purchase ) => Number( purchase.user_id ) === userId );
+				.filter( ( purchase ) => purchase.user_id === String( userId ) );
 
 			return cancelables.length > 0;
 		},
 	} );
 
-export const sitePurchaseQuery = ( siteId: number, purchaseId: string ) =>
+export const sitePurchaseQuery = ( siteId: number, purchaseId: number ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'purchases', purchaseId ],
 		queryFn: () => fetchSitePurchases( siteId ),
-		select: ( purchases ) => purchases.find( ( p ) => p.ID === purchaseId ),
+		select: ( purchases ) => purchases.find( ( p ) => parseInt( p.ID ) === purchaseId ),
+	} );
+
+export const sitePurchasesQuery = ( siteId: number ) =>
+	queryOptions( {
+		queryKey: [ 'site', siteId, 'purchases' ],
+		queryFn: () => fetchSitePurchases( siteId ),
 	} );

@@ -175,6 +175,8 @@ export interface Purchase {
 	 * Example: If the discount is 10%, this will have the value `10`.
 	 */
 	autoRenewCouponDiscountPercentage: number | null;
+
+	isJetpackPlanOrProduct: boolean;
 }
 
 export interface PurchasePriceTier {
@@ -232,6 +234,7 @@ export interface RawPurchase {
 	is_renewable: boolean;
 	is_renewal: boolean;
 	is_woo_express_trial: boolean;
+	is_jetpack_plan_or_product: boolean;
 	meta: string | undefined;
 	ownership_id: number | undefined;
 	partner_name: string | undefined;

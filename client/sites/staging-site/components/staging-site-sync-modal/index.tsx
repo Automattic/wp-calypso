@@ -21,7 +21,7 @@ import {
 	useEffect,
 } from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
-import { error, chevronRight, chevronLeft } from '@wordpress/icons';
+import { chevronRight, chevronLeft } from '@wordpress/icons';
 import clsx from 'clsx';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import InlineSupportLink from 'calypso/dashboard/components/inline-support-link';
@@ -477,37 +477,34 @@ export default function SyncModal( {
 							checked={ shouldDisableGranularSync || sqlNode?.checkState === 'checked' }
 							onChange={ handleDatabaseCheckboxChange }
 						/>
-						<Tooltip
-							text={ __(
-								'Selecting this option will overwrite the site database, including any posts, pages, products, or orders.'
-							) }
-						>
-							<span>
-								<Icon
-									icon={ error }
-									style={ { fill: 'var(--studio-orange-50)', display: 'flex' } }
-								/>
-							</span>
-						</Tooltip>
 					</HStack>
-					{ showWooCommerceWarning && (
+					{ ( shouldDisableGranularSync || sqlNode?.checkState === 'checked' ) && (
 						<VStack style={ { paddingBottom: '52px' } }>
 							<Notice status="warning" isDismissible={ false }>
 								<Text as="p" weight="bold" style={ { lineHeight: '24px' } }>
-									{ __( 'Warning! WooCommerce data will be overwritten.' ) }
+									{ __( 'Warning! Database will be overwritten.' ) }
 								</Text>
-								{ createInterpolateElement(
-									__(
-										'This site has WooCommerce installed. We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins. <a>Learn more</a>'
-									),
-									{
-										a: (
-											<ExternalLink
-												href="https://developer.wordpress.com/docs/developer-tools/staging-sites/sync-staging-production/#staging-to-production"
-												children={ null }
-											/>
-										),
-									}
+								<Text as="p">
+									{ __(
+										'Selecting this option will overwrite the site database, including any posts, pages, products, or orders.'
+									) }
+								</Text>
+								{ showWooCommerceWarning && (
+									<Text as="p" style={ { marginTop: '16px' } }>
+										{ createInterpolateElement(
+											__(
+												'This site also has WooCommerce installed. We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins. <a>Learn more</a>'
+											),
+											{
+												a: (
+													<ExternalLink
+														href="https://developer.wordpress.com/docs/developer-tools/staging-sites/sync-staging-production/#staging-to-production"
+														children={ null }
+													/>
+												),
+											}
+										) }
+									</Text>
 								) }
 							</Notice>
 						</VStack>

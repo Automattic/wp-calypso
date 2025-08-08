@@ -147,12 +147,16 @@ body.is-section-promote-post-i2 {
 					width: 100%;
 
 					.section-nav-tabs__list {
-						align-items: center;
+						align-items: start;
 						display: flex;
-						height: 55px;
 						margin: 0 64px;
 						max-width: 1040px;
 						width: auto;
+
+						@media (min-width: 481px) {
+							height: 55px;
+							align-items: center;
+						}
 
 						@media screen and (max-width: $break-medium) {
 							overflow: auto;
@@ -187,6 +191,7 @@ body.is-section-promote-post-i2 {
 				.promote-post-i2__aux-wrapper,
 				.posts-list__table,
 				.campaigns-list__table,
+				.payments-list__table,
 				.posts-list__loading-container,
 				.campaigns-total-stats__container,
 				.blaze-credits-container,
@@ -352,7 +357,45 @@ body.is-section-promote-post-i2 {
 		}
 
 		.section-nav__mobile-header {
-			display: none;
+			box-sizing: border-box;
+			color: var(--color-neutral-70);
+			cursor: pointer;
+			display: flex;
+			font-size: .875rem;
+			font-weight: 600;
+			height: 46px;
+			line-height: 16px;
+			padding: 15px;
+			width: 100%;
+		}
+
+		@media (min-width: 481px) {
+			.section-nav__mobile-header {
+				display: none;
+			}
+		}
+
+		.section-nav-group {
+			display: block;
+		}
+
+		@media (max-width: 480px) {
+			.section-nav-group {
+				display: none;
+			}
+
+			&.is-open {
+				.section-nav-group {
+					display: block;
+
+					.section-nav-tabs__list {
+						display: flex;
+						flex-direction: column;
+						height: auto;
+						align-items: start;
+					}
+				}
+			}
 		}
 	}
 
@@ -362,10 +405,21 @@ body.is-section-promote-post-i2 {
 	}
 
 	.section-nav-tab {
-		margin-right: 16px;
+		@media (min-width: 481px) {
+			margin-right: 16px;
+
+			&.payments {
+				margin-right: 0;
+				margin-left: auto;
+			}
+		}
 
 		&__link {
-			padding: 16px 5px;
+			padding: 16px 0;
+
+			@media (min-width: 481px) {
+				padding: 16px 5px;
+			}
 
 			.section-nav-tab__text {
 				@include promote-post-i2-font;
@@ -387,6 +441,11 @@ body.is-section-promote-post-i2 {
 					font-size: 0.875rem;
 					line-height: 1.41; // Position tabs Posts and Campaigns vertically equal
 					padding: 0 8px;
+					display: none;
+
+					@media (min-width: 481px) {
+						display: inline-block;
+					}
 				}
 			}
 		}
@@ -400,10 +459,11 @@ body.is-section-promote-post-i2 {
 			}
 		}
 	}
-
-	.section-nav-tab.is-selected {
-		border-bottom: 3px solid var(--color-neutral-70);
-		height: 53px;
+	@media (min-width: 481px) {
+		.section-nav-tab.is-selected {
+			border-bottom: 3px solid var(--color-neutral-70);
+			height: 53px;
+		}
 	}
 
 	@include blazepress-search-component;
@@ -521,8 +581,12 @@ body.is-section-promote-post-i2 {
 		main.main.promote-post-i2 {
 			&.is-wide-layout {
 				.section-nav-tabs__list {
-					height: 54px;
-					margin: 0 16px;
+					margin: 0 15px;
+
+					@media (min-width: 481px) {
+						margin: 0 16px;
+						height: 54px;
+					}
 				}
 
 				.promote-post-i2__header-subtitle_mobile,
@@ -543,6 +607,7 @@ body.is-section-promote-post-i2 {
 					width: calc(100% - 32px);
 				}
 
+				.payments-list__table,
 				.campaigns-list__table {
 					margin: 16px 16px 0 16px !important;
 					width: calc(100% - 32px);
@@ -578,10 +643,6 @@ body.is-section-promote-post-i2 {
 				font-size: 1rem;
 				line-height: 1.5;
 			}
-		}
-
-		.section-nav-group {
-			display: block;
 		}
 
 		.section-nav-tab {

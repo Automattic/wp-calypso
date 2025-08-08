@@ -22,7 +22,8 @@ import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import OverviewCard from '../overview-card';
 import SiteBandwidthStat from './site-bandwidth-stat';
 import SiteStorageStat from './site-storage-stat';
-import type { Site, Purchase } from '../../data/types';
+import type { Purchase } from '../../data/purchase';
+import type { Site } from '../../data/types';
 import './style.scss';
 
 function getJetpackProductsDescription( products: typeof JETPACK_PRODUCTS ) {
@@ -165,7 +166,7 @@ function AgencyPlanCard( { site, isLoading }: { site: Site; isLoading: boolean }
 export default function PlanCard( { site }: { site: Site } ) {
 	const { data: plan, isLoading: isLoadingPlan } = useQuery( siteCurrentPlanQuery( site.ID ) );
 	const { data: purchase, isLoading: isLoadingPurchase } = useQuery( {
-		...sitePurchaseQuery( site.ID, plan?.id ?? '' ),
+		...sitePurchaseQuery( site.ID, parseInt( plan?.id ?? '' ) ),
 		enabled: !! plan?.id,
 	} );
 
