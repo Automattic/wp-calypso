@@ -18,7 +18,11 @@ export const dashboardSitesCompatibilityRoute = createRoute( {
 		if ( cause !== 'enter' ) {
 			return;
 		}
-		page.replace( '/sites' );
+
+		// Do the redirection only when the path is fully matched.
+		if ( location.pathname === '/sites' ) {
+			page.replace( '/sites' );
+		}
 	},
 } );
 

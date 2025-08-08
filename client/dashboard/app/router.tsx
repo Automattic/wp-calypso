@@ -17,6 +17,7 @@ import { emailsQuery } from './queries/emails';
 import { isAutomatticianQuery } from './queries/me-a8c';
 import { rawUserPreferencesQuery } from './queries/me-preferences';
 import { profileQuery } from './queries/me-profile';
+import { userPurchasesQuery } from './queries/me-purchases';
 import { siteByIdQuery, siteBySlugQuery } from './queries/site';
 import { siteLastFiveActivityLogEntriesQuery } from './queries/site-activity-log';
 import { siteAgencyBlogQuery } from './queries/site-agency';
@@ -31,7 +32,7 @@ import { sitePHPVersionQuery } from './queries/site-php-version';
 import { siteCurrentPlanQuery } from './queries/site-plans';
 import { sitePreviewLinksQuery } from './queries/site-preview-links';
 import { sitePrimaryDataCenterQuery } from './queries/site-primary-data-center';
-import { sitePurchaseQuery } from './queries/site-purchases';
+import { sitePurchaseQuery, sitePurchasesQuery } from './queries/site-purchases';
 import { siteScanQuery } from './queries/site-scan';
 import { siteSettingsQuery } from './queries/site-settings';
 import { siteSftpUsersQuery } from './queries/site-sftp';
@@ -52,7 +53,7 @@ import {
 	domainDnsRoute,
 	domainDnsAddRoute,
 	domainDnsEditRoute,
-	domainForwardingRoute,
+	domainForwardingsRoute,
 	domainForwardingAddRoute,
 	domainForwardingEditRoute,
 	domainContactInfoRoute,
@@ -172,7 +173,7 @@ const siteOverviewRoute = createRoute( {
 				site.is_a4a_dev_site && queryClient.ensureQueryData( sitePreviewLinksQuery( site.ID ) ),
 			] ).then( ( [ currentPlan ] ) => {
 				if ( currentPlan.id ) {
-					queryClient.ensureQueryData( sitePurchaseQuery( site.ID, currentPlan.id ) );
+					queryClient.ensureQueryData( sitePurchaseQuery( site.ID, parseInt( currentPlan.id ) ) );
 				}
 			} );
 		}
@@ -215,13 +216,39 @@ const siteMonitoringRoute = createRoute( {
 const siteLogsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'logs',
+} );
+
+const siteLogsIndexRoute = createRoute( {
+	getParentRoute: () => siteLogsRoute,
+	path: '/',
+	beforeLoad: ( { params } ) => {
+		throw redirect( { to: `/sites/${ params.siteSlug }/logs/php` } );
+	},
+} );
+
+const siteLogsPhpRoute = createRoute( {
+	getParentRoute: () => siteLogsRoute,
+	path: 'php',
 } ).lazy( () =>
 	import( '../sites/logs' ).then( ( d ) =>
-		createLazyRoute( 'site-logs' )( {
-			component: d.default,
+		createLazyRoute( 'site-logs-php' )( {
+			component: ( props ) => <d.default { ...props } key="php" />,
 		} )
 	)
 );
+
+const siteLogsServerRoute = createRoute( {
+	getParentRoute: () => siteLogsRoute,
+	path: 'server',
+} ).lazy( () =>
+	import( '../sites/logs' ).then( ( d ) =>
+		createLazyRoute( 'site-logs-server' )( {
+			component: ( props ) => <d.default { ...props } key="server" />,
+		} )
+	)
+);
+
+const siteLogsChildRoutes = [ siteLogsIndexRoute, siteLogsPhpRoute, siteLogsServerRoute ];
 
 const siteBackupsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
@@ -593,12 +620,30 @@ const billingHistoryRoute = createRoute( {
 	)
 );
 
-const activeSubscriptionsRoute = createRoute( {
+const purchasesRoute = createRoute( {
 	getParentRoute: () => meRoute,
-	path: 'billing/active-subscriptions',
+	loader: async () => {
+		queryClient.ensureQueryData( userPurchasesQuery() );
+	},
+	path: 'billing/purchases',
 } ).lazy( () =>
-	import( '../me/active-subscriptions' ).then( ( d ) =>
-		createLazyRoute( 'active-subscriptions' )( {
+	import( '../me/billing-purchases' ).then( ( d ) =>
+		createLazyRoute( 'purchases' )( {
+			component: d.default,
+		} )
+	)
+);
+
+const purchasesSiteRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		queryClient.ensureQueryData( sitePurchasesQuery( site.ID ) );
+	},
+	path: 'billing/purchases/$siteSlug',
+} ).lazy( () =>
+	import( '../me/billing-purchases/site' ).then( ( d ) =>
+		createLazyRoute( 'purchases-site' )( {
 			component: d.default,
 		} )
 	)
@@ -708,7 +753,7 @@ const createRouteTree = ( config: AppConfig ) => {
 		}
 
 		if ( config.supports.sites.logs ) {
-			siteChildren.push( siteLogsRoute );
+			siteChildren.push( siteLogsRoute.addChildren( siteLogsChildRoutes ) );
 		}
 
 		if ( config.supports.sites.backups ) {
@@ -741,7 +786,8 @@ const createRouteTree = ( config: AppConfig ) => {
 				profileRoute,
 				billingRoute,
 				billingHistoryRoute,
-				activeSubscriptionsRoute,
+				purchasesRoute,
+				purchasesSiteRoute,
 				paymentMethodsRoute,
 				taxDetailsRoute,
 				securityRoute,
@@ -806,7 +852,7 @@ export {
 	domainDnsRoute,
 	domainDnsAddRoute,
 	domainDnsEditRoute,
-	domainForwardingRoute,
+	domainForwardingsRoute,
 	domainForwardingAddRoute,
 	domainForwardingEditRoute,
 	domainContactInfoRoute,
@@ -819,7 +865,8 @@ export {
 	profileRoute,
 	billingRoute,
 	billingHistoryRoute,
-	activeSubscriptionsRoute,
+	purchasesRoute,
+	purchasesSiteRoute,
 	paymentMethodsRoute,
 	taxDetailsRoute,
 	securityRoute,

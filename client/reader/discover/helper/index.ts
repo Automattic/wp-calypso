@@ -1,5 +1,8 @@
+import { isEnabled } from '@automattic/calypso-config';
+
 const DEFAULT_DISCOVER_TAGS = [ 'dailyprompt', 'wordpress' ];
-export const DEFAULT_TAB = 'recommended';
+export const RECOMMENDED_TAB = 'recommended';
+export const FRESHLY_PRESSED_TAB = 'freshly-pressed';
 export const LATEST_TAB = 'latest';
 export const FIRST_POSTS_TAB = 'firstposts';
 export const ADD_NEW_TAB = 'add-new';
@@ -13,7 +16,7 @@ export const REDDIT_TAB = 'reddit';
  * @param {Array | null} tags Array of tag slugs to evaluate
  * @returns {Array} Array of tag slugs that will be used for the discover stream.
  */
-export function getDiscoverStreamTags( tags, isLoggedIn ) {
+export function getDiscoverStreamTags( tags: string[] | null, isLoggedIn: boolean ) {
 	// If tags === [], we load default discover tags. If tags is falsy, we need to wait for the data
 	// before determining whether or not to load defaults or use the followed tags array.
 	if ( ! tags && isLoggedIn ) {
@@ -24,17 +27,25 @@ export function getDiscoverStreamTags( tags, isLoggedIn ) {
 	return tags;
 }
 
-export function getSelectedTabTitle( selectedTab ) {
-	if ( selectedTab === DEFAULT_TAB ) {
+export function getSelectedTabTitle( selectedTab: string ) {
+	if ( selectedTab === RECOMMENDED_TAB ) {
 		return 'popular';
 	}
+
 	if ( selectedTab === LATEST_TAB ) {
 		return 'new';
 	}
 	if ( selectedTab === FIRST_POSTS_TAB ) {
 		return 'fresh';
 	}
+	if ( selectedTab === FRESHLY_PRESSED_TAB ) {
+		return 'Freshly Pressed';
+	}
 	return decodeURIComponent( selectedTab );
+}
+
+export function getDefaultTab() {
+	return isEnabled( 'reader/discover/freshly-pressed' ) ? FRESHLY_PRESSED_TAB : RECOMMENDED_TAB;
 }
 
 /**
@@ -43,10 +54,10 @@ export function getSelectedTabTitle( selectedTab ) {
  * @param {Array} tags The list of tags to use for the recommended feed.
  * @returns {string} The stream key
  */
-export function buildDiscoverStreamKey( selectedTab, tags ) {
+export function buildDiscoverStreamKey( selectedTab: string, tags: string[] ) {
 	let streamKey = `discover:${ selectedTab }`;
 	// We want a different stream key for recommended depending on the followed tags that are available.
-	if ( selectedTab === DEFAULT_TAB || selectedTab === LATEST_TAB ) {
+	if ( selectedTab === RECOMMENDED_TAB || selectedTab === LATEST_TAB ) {
 		// Ensures a different key depending on the users stream tags list. So the stream can update
 		// when the user follows/unfollows other tags. Sort the list first so the key is the same
 		// per same tags followed. This is necessary since we load a default tag list when none are
@@ -64,7 +75,7 @@ export function buildDiscoverStreamKey( selectedTab, tags ) {
  */
 export function getTagsFromStreamKey( streamKey = '' ) {
 	if (
-		streamKey.includes( `discover:${ DEFAULT_TAB }` ) ||
+		streamKey.includes( `discover:${ RECOMMENDED_TAB }` ) ||
 		streamKey.includes( `discover:${ LATEST_TAB }` )
 	) {
 		const tags = streamKey.split( '--' );

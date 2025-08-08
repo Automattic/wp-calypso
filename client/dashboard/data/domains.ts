@@ -12,7 +12,7 @@ export enum DomainTypes {
 	TRANSFER = 'transfer',
 }
 
-export interface Domain {
+export interface DomainSummary {
 	aftermarket_auction: boolean;
 	auto_renewing: boolean;
 	blog_id: number;
@@ -43,7 +43,7 @@ export interface Domain {
 	wpcom_domain: boolean;
 }
 
-export async function fetchDomains(): Promise< Domain[] > {
+export async function fetchDomains(): Promise< DomainSummary[] > {
 	const { domains } = await wpcom.req.get( '/all-domains', {
 		no_wpcom: true,
 		resolve_status: true,

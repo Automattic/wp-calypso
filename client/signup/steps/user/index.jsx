@@ -11,7 +11,6 @@ import { get, isEmpty, omit } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import SignupForm from 'calypso/blocks/signup-form';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
@@ -535,22 +534,11 @@ export class UserStep extends Component {
 		}
 
 		if ( isA4AOAuth2Client( oauth2Client ) ) {
-			return (
-				<div className={ clsx( 'signup-form__wrapper' ) }>
-					<A4ALogo size={ 60 } />
-					<h3>
-						{ translate( 'Sign up to Automattic for Agencies with a WordPress.com account.' ) }
-					</h3>
-				</div>
-			);
+			return translate( 'Sign up to Automattic for Agencies with WordPress.com' );
 		}
 
 		if ( isBlazeProOAuth2Client( oauth2Client ) ) {
-			return translate( 'Welcome to %(clientTitle)s', {
-				args: { clientTitle: oauth2Client.title },
-				comment:
-					"'clientTitle' is the name of the app that uses WordPress.com Connect (e.g. 'Akismet' or 'VaultPress')",
-			} );
+			return translate( 'Sign up to Blaze Pro with WordPress.com' );
 		}
 
 		if ( isPartnerPortalOAuth2Client( oauth2Client ) ) {
@@ -599,22 +587,20 @@ export class UserStep extends Component {
 	}
 
 	renderSignupForm() {
-		const { oauth2Client, isWCCOM, isWoo, isUnifiedCreateAccount } = this.props;
+		const { oauth2Client, isWCCOM, isWoo, isUnifiedCreateAccount, isA4A, isBlazePro } = this.props;
 		const isPasswordless =
 			isMobile() ||
 			this.props.isPasswordless ||
 			isNewsletterFlow( this.props?.queryObject?.variationName ) ||
-			isWoo;
+			isWoo ||
+			isA4A ||
+			isBlazePro;
 		let socialService;
 		let socialServiceResponse;
 		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
 
-		if ( isWCCOM ) {
+		if ( isWCCOM || isUnifiedCreateAccount ) {
 			isSocialSignupEnabled = true;
-		}
-
-		if ( isBlazeProOAuth2Client( oauth2Client ) ) {
-			isSocialSignupEnabled = false;
 		}
 
 		const hashObject = this.props.initialContext && this.props.initialContext.hash;
@@ -648,7 +634,8 @@ export class UserStep extends Component {
 					horizontal
 					shouldDisplayUserExistsError={ ! isWCCOM && ! isBlazeProOAuth2Client( oauth2Client ) }
 					isSocialFirst={ this.props.isSocialFirst }
-					labelText={ isWoo ? this.props.translate( 'Your email' ) : null }
+					labelText={ isUnifiedCreateAccount ? this.props.translate( 'Your email' ) : null }
+					disableTosText={ isUnifiedCreateAccount }
 				/>
 				{ isUnifiedCreateAccount && (
 					<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
@@ -762,7 +749,9 @@ const ConnectedUser = connect(
 	( state ) => {
 		const oauth2Client = getCurrentOAuth2Client( state );
 		const isWoo = getIsWoo( state );
-		const isUnifiedCreateAccount = isWoo;
+		const isA4A = isA4AOAuth2Client( oauth2Client );
+		const isBlazePro = getIsBlazePro( state );
+		const isUnifiedCreateAccount = isWoo || isA4A || isBlazePro;
 
 		return {
 			oauth2Client: oauth2Client,
@@ -771,11 +760,12 @@ const ConnectedUser = connect(
 			isWCCOM: getIsWCCOM( state ),
 			isWoo,
 			isWooJPC: isWooJPCFlow( state ),
-			isBlazePro: getIsBlazePro( state ),
+			isBlazePro,
 			from: get( getCurrentQueryArguments( state ), 'from' ),
 			userLoggedIn: isUserLoggedIn( state ),
 			isOnboardingAffiliateFlow: getIsOnboardingAffiliateFlow( state ),
 			isUnifiedCreateAccount,
+			isA4A: isA4AOAuth2Client( oauth2Client ),
 		};
 	},
 	{

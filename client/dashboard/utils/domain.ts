@@ -3,7 +3,7 @@ import { DotcomFeatures } from '../data/constants';
 import { DomainTypes } from '../data/domains';
 import { hasPlanFeature } from './site-features';
 import { userHasFlag } from './user';
-import type { Domain, Site, User } from '../data/types';
+import type { DomainSummary, Site, User } from '../data/types';
 
 export function isRecentlyRegistered( registrationDate: string, numberOfMinutes = 30 ) {
 	return (
@@ -12,7 +12,7 @@ export function isRecentlyRegistered( registrationDate: string, numberOfMinutes 
 	);
 }
 
-export function isDomainRenewable( domain: Domain ) {
+export function isDomainRenewable( domain: DomainSummary ) {
 	// Only registered domains can be manually renewed
 	if ( domain.type !== DomainTypes.REGISTERED ) {
 		return false;
@@ -34,7 +34,7 @@ const shouldUpgradeToMakeDomainPrimary = ( {
 	site,
 	user,
 }: {
-	domain: Domain;
+	domain: DomainSummary;
 	site: Site;
 	user: User;
 } ) => {
@@ -55,7 +55,7 @@ export function canSetAsPrimary( {
 	site,
 	user,
 }: {
-	domain: Domain;
+	domain: DomainSummary;
 	site: Site;
 	user: User;
 } ): boolean {

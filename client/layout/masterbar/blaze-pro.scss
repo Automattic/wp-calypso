@@ -16,7 +16,8 @@ $inter: Inter, $sans; // for general
 $sfProText: "SF Pro Text", $sans; // for sub title
 $colorBlack: #1f1f1f;
 
-body.is-section-signup {
+body.is-section-signup,
+body.is-section-login {
 	--font-inter:
 		"Inter",
 		-apple-system,
@@ -31,7 +32,6 @@ body.is-section-signup {
 		sans-serif;
 
 	&:has(.is-blaze-pro) {
-		background: #fff;
 
 		.layout:not(.dops):not(.is-wccom-oauth-flow) .formatted-header .formatted-header__title {
 			color: $colorBlack;
@@ -39,6 +39,20 @@ body.is-section-signup {
 			font-size: 2rem;
 			font-weight: 700;
 			line-height: 40px;
+		}
+
+		.wp-login__one-login-layout-heading-text {
+			font-family: Inter, -apple-system, system-ui, blinkmacsystemfont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+			font-size: 2rem;
+			font-weight: 700;
+			line-height: 40px;
+		}
+
+		.wp-login__one-login-layout-heading-subtext {
+			font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+			font-size: rem(18px);
+			font-weight: 500;
+			line-height: 25px;
 		}
 	}
 }
@@ -56,10 +70,6 @@ body.is-section-signup {
 	min-height: 100%;
 
 	$login-form-max-width: 327px;
-
-	.components-button {
-		font-weight: 600;
-	}
 
 	.masterbar__blaze-pro-nav {
 		display: flex;
@@ -321,46 +331,6 @@ body.is-section-signup {
 		}
 	}
 
-	.auth-form__separator + .card {
-		clip-path: none;
-		border: none;
-	}
-
-	.signup__step {
-		.step-wrapper__header {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-		}
-
-		.formatted-header {
-			margin-bottom: 20px;
-
-			& > div {
-				width: 360px;
-
-				.formatted-header__title {
-					font-family: $inter;
-					font-size: 2rem;
-					font-weight: 700;
-					line-height: 40px;
-
-					@media (min-width: 661px) {
-						margin-bottom: 24px;
-					}
-				}
-
-				.formatted-header__subtitle {
-					font-family: $sfProText;
-					font-size: rem(18px);
-					font-weight: 500;
-					line-height: 25px;
-					margin-bottom: 0;
-				}
-			}
-		}
-	}
-
 	.logged-out-form__link-item.logged-out-form__back-link {
 		display: none;
 	}
@@ -401,14 +371,6 @@ body.is-section-signup {
 			font-weight: 500;
 			line-height: 25px;
 		}
-	}
-
-	.signup-form__login-link {
-		color: var(--studio-gray-60);
-		font-size: rem(18px);
-		font-weight: 500;
-		line-height: 25px;
-		text-align: center;
 	}
 
 	// Log in Styles
@@ -463,45 +425,6 @@ body.is-section-signup {
 
 	.login__lostpassword-subtitle {
 		width: 360px;
-	}
-
-	.login form.is-blaze-pro {
-		display: flex;
-		flex-direction: row;
-		margin-top: 48px;
-		padding: 0;
-		justify-content: center;
-		max-width: 758px;
-
-		@media (max-width: $break-medium) {
-			flex-direction: column;
-		}
-
-		.card.login__form {
-			padding: 0;
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-			width: 100%;
-			max-width: $login-form-max-width;
-			margin: 0;
-
-			~ .auth-form__social.card {
-				width: 100%;
-				max-width: $login-form-max-width;
-				margin: 0;
-			}
-		}
-
-		.auth-form__separator {
-			@media screen and (min-width: $break-medium) {
-				margin-block: 0;
-			}
-		}
-	}
-
-	.wp-login__main.main:has(.login form.is-blaze-pro) {
-		max-width: unset;
 	}
 }
 
