@@ -1,4 +1,4 @@
-import HelpCenter from '@automattic/help-center'; // eslint-disable-line no-restricted-imports
+import HelpCenter from '@automattic/help-center';
 import './help-center-app.scss';
 
 /**
