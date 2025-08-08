@@ -16,7 +16,7 @@ import type { DomainContactDetails } from './types';
 
 import './contact-form.scss';
 interface ContactFormProps {
-	initialData?: Partial< DomainContactDetails >;
+	initialData?: DomainContactDetails;
 	onSubmit?: ( data: DomainContactDetails ) => void;
 	onCancel?: () => void;
 	errors?: Partial< Record< keyof DomainContactDetails, string > >;
@@ -38,24 +38,15 @@ const COUNTRIES = [
 ];
 
 export default function ContactForm( {
-	initialData = {},
+	initialData,
 	onSubmit,
 	onCancel,
 	errors = {},
 	isSubmitting = false,
 }: ContactFormProps ) {
-	const [ formData, setFormData ] = useState< DomainContactDetails >( {
-		...initialData,
-	} );
-
-	console.log( 'formData', formData );
-
-	const handleFieldChange = ( field: keyof DomainContactDetails, value: string | boolean ) => {
-		setFormData( ( prev ) => ( {
-			...prev,
-			[ field ]: value,
-		} ) );
-	};
+	const [ formData, setFormData ] = useState< DomainContactDetails >(
+		initialData ?? ( {} as DomainContactDetails )
+	);
 
 	const handleSubmit = ( data: DomainContactDetails ) => {
 		onSubmit?.( data );

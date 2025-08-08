@@ -61,6 +61,21 @@ export function fetchDomainWhois( domainName: string ): Promise< WhoisData > {
 	} );
 }
 
+export function updateDomainWhois(
+	domainName: string,
+	whoisData: any,
+	transferLock: boolean
+): Promise< WhoisData > {
+	return wpcom.req.post( {
+		path: `/domains/${ domainName }/whois`,
+		apiVersion: '1.1',
+		body: {
+			whois: whoisData,
+			transfer_lock: transferLock,
+		},
+	} );
+}
+
 export function fetchDomainWhoisValidate(
 	domainName: string,
 	contactInformation: any
