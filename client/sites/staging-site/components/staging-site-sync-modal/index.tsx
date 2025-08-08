@@ -292,7 +292,7 @@ export default function SyncModal( {
 		} );
 	const rewindId = lastKnownBackupAttempt?.rewindId;
 
-	const shouldDisableGranularSync = ! lastKnownBackupAttempt;
+	const shouldDisableGranularSync = ! lastKnownBackupAttempt && ! isLoadingBackupAttempt;
 
 	const handleConfirm = () => {
 		let include_paths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
@@ -357,7 +357,7 @@ export default function SyncModal( {
 	const showWooCommerceWarning =
 		isSiteWooStore && targetEnvironment === 'production' && sqlNode?.checkState === 'checked';
 
-	const showDomainConfirmation = targetEnvironment === 'production';
+	const showDomainConfirmation = targetEnvironment === 'production' && ! isLoadingBackupAttempt;
 
 	// Allow button if there is no backup if the confirmation passes
 	// regardless of browserCheckList
@@ -470,7 +470,7 @@ export default function SyncModal( {
 						) : (
 							<CheckboxControl
 								__nextHasNoMarginBottom
-								label={ __( 'Database tables' ) }
+								label={ __( 'Database' ) }
 								disabled={ shouldDisableGranularSync }
 								checked={ shouldDisableGranularSync || sqlNode?.checkState === 'checked' }
 								onChange={ handleDatabaseCheckboxChange }
