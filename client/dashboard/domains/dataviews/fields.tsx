@@ -11,7 +11,7 @@ import { caution, reusableBlock } from '@wordpress/icons';
 import { useMemo } from 'react';
 import { domainOverviewRoute } from '../../app/router';
 import { DomainTypes } from '../../data/domains';
-import type { Domain, Site } from '../../data/types';
+import type { DomainSummary, Site } from '../../data/types';
 import type { Field } from '@wordpress/dataviews';
 
 const textOverflowStyles = {
@@ -28,7 +28,7 @@ const DomainName = ( {
 	value,
 	showPrimaryDomainBadge,
 }: {
-	domain: Domain;
+	domain: DomainSummary;
 	site?: Site;
 	value: string;
 	showPrimaryDomainBadge?: boolean;
@@ -58,7 +58,7 @@ const DomainExpiry = ( {
 	value,
 	isCompact = false,
 }: {
-	domain: Domain;
+	domain: DomainSummary;
 	value: string;
 	isCompact?: boolean;
 } ) => {
@@ -122,7 +122,7 @@ export const useFields = ( {
 	site?: Site;
 	showPrimaryDomainBadge?: boolean;
 } = {} ) => {
-	const fields: Field< Domain >[] = useMemo(
+	const fields: Field< DomainSummary >[] = useMemo(
 		() => [
 			{
 				id: 'domain',
@@ -130,7 +130,7 @@ export const useFields = ( {
 				enableHiding: false,
 				enableSorting: true,
 				enableGlobalSearch: true,
-				getValue: ( { item }: { item: Domain } ) => item.domain,
+				getValue: ( { item }: { item: DomainSummary } ) => item.domain,
 				render: ( { field, item } ) => (
 					<DomainName
 						domain={ item }
@@ -142,7 +142,7 @@ export const useFields = ( {
 			},
 			{
 				id: 'is_primary_domain',
-				getValue: ( { item }: { item: Domain } ) => item.primary_domain,
+				getValue: ( { item }: { item: DomainSummary } ) => item.primary_domain,
 				render: ( { field, item } ) =>
 					field.getValue( { item } ) ? <Text>{ __( 'Primary' ) }</Text> : null,
 			},
@@ -163,7 +163,7 @@ export const useFields = ( {
 				label: __( 'Site' ),
 				enableHiding: false,
 				enableSorting: true,
-				getValue: ( { item }: { item: Domain } ) => item.blog_name ?? '',
+				getValue: ( { item }: { item: DomainSummary } ) => item.blog_name ?? '',
 			},
 			// {
 			// 	id: 'ssl_status',
@@ -176,7 +176,7 @@ export const useFields = ( {
 				label: __( 'Expires/Renews on' ),
 				enableHiding: false,
 				enableSorting: true,
-				getValue: ( { item }: { item: Domain } ) =>
+				getValue: ( { item }: { item: DomainSummary } ) =>
 					item.expiry ? dateI18n( 'F j, Y', item.expiry ) : '',
 				render: ( { field, item } ) => (
 					<DomainExpiry
@@ -191,7 +191,7 @@ export const useFields = ( {
 				label: __( 'Status' ),
 				enableHiding: false,
 				enableSorting: true,
-				getValue: ( { item }: { item: Domain } ) => item.domain_status?.status ?? '',
+				getValue: ( { item }: { item: DomainSummary } ) => item.domain_status?.status ?? '',
 				render: ( { field, item } ) => {
 					const value = field.getValue( { item } );
 					return value || <IneligibleIndicator />;

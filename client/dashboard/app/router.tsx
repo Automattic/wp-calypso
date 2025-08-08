@@ -26,6 +26,7 @@ import { siteDefensiveModeSettingsQuery } from './queries/site-defensive-mode';
 import { siteDomainsQuery } from './queries/site-domains';
 import { siteJetpackModulesQuery } from './queries/site-jetpack-module';
 import { siteJetpackSettingsQuery } from './queries/site-jetpack-settings';
+import { siteMediaStorageQuery } from './queries/site-media-storage';
 import { sitePHPVersionQuery } from './queries/site-php-version';
 import { siteCurrentPlanQuery } from './queries/site-plans';
 import { sitePreviewLinksQuery } from './queries/site-preview-links';
@@ -51,7 +52,7 @@ import {
 	domainDnsRoute,
 	domainDnsAddRoute,
 	domainDnsEditRoute,
-	domainForwardingRoute,
+	domainForwardingsRoute,
 	domainForwardingAddRoute,
 	domainForwardingEditRoute,
 	domainContactInfoRoute,
@@ -175,6 +176,11 @@ const siteOverviewRoute = createRoute( {
 				}
 			} );
 		}
+		// Ensure storage specifically is loaded because the warning notice can cause a layout shift
+		await Promise.all( [
+			queryClient.ensureQueryData( siteMediaStorageQuery( site.ID ) ),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+		] );
 	},
 } ).lazy( () =>
 	import( '../sites/overview' ).then( ( d ) =>
@@ -209,13 +215,39 @@ const siteMonitoringRoute = createRoute( {
 const siteLogsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'logs',
+} );
+
+const siteLogsIndexRoute = createRoute( {
+	getParentRoute: () => siteLogsRoute,
+	path: '/',
+	beforeLoad: ( { params } ) => {
+		throw redirect( { to: `/sites/${ params.siteSlug }/logs/php` } );
+	},
+} );
+
+const siteLogsPhpRoute = createRoute( {
+	getParentRoute: () => siteLogsRoute,
+	path: 'php',
 } ).lazy( () =>
 	import( '../sites/logs' ).then( ( d ) =>
-		createLazyRoute( 'site-logs' )( {
-			component: d.default,
+		createLazyRoute( 'site-logs-php' )( {
+			component: ( props ) => <d.default { ...props } key="php" />,
 		} )
 	)
 );
+
+const siteLogsServerRoute = createRoute( {
+	getParentRoute: () => siteLogsRoute,
+	path: 'server',
+} ).lazy( () =>
+	import( '../sites/logs' ).then( ( d ) =>
+		createLazyRoute( 'site-logs-server' )( {
+			component: ( props ) => <d.default { ...props } key="server" />,
+		} )
+	)
+);
+
+const siteLogsChildRoutes = [ siteLogsIndexRoute, siteLogsPhpRoute, siteLogsServerRoute ];
 
 const siteBackupsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
@@ -702,7 +734,7 @@ const createRouteTree = ( config: AppConfig ) => {
 		}
 
 		if ( config.supports.sites.logs ) {
-			siteChildren.push( siteLogsRoute );
+			siteChildren.push( siteLogsRoute.addChildren( siteLogsChildRoutes ) );
 		}
 
 		if ( config.supports.sites.backups ) {
@@ -800,7 +832,7 @@ export {
 	domainDnsRoute,
 	domainDnsAddRoute,
 	domainDnsEditRoute,
-	domainForwardingRoute,
+	domainForwardingsRoute,
 	domainForwardingAddRoute,
 	domainForwardingEditRoute,
 	domainContactInfoRoute,

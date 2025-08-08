@@ -129,6 +129,7 @@ export default function HeaderStagingSiteButton( {
 	}
 
 	const hasCompletedLoading = ! isLoadingQuotaValidation;
+	const isAddingStagingSite = isLoadingAddStagingSite || isCreatingStagingSite;
 
 	let disabledReason: string | undefined;
 	if ( ! hasCompletedLoading ) {
@@ -149,8 +150,6 @@ export default function HeaderStagingSiteButton( {
 		);
 	} else if ( transferStatus === transferStates.RELOCATING_REVERT ) {
 		disabledReason = __( 'We are deleting your staging site.' );
-	} else if ( isLoadingAddStagingSite || isCreatingStagingSite ) {
-		disabledReason = __( 'Adding staging site…' );
 	}
 
 	return (
@@ -158,15 +157,15 @@ export default function HeaderStagingSiteButton( {
 			variant="link"
 			onClick={ onAddClick }
 			className="hosting-dashboard-item-view__header-add-staging"
-			icon={ plus }
+			icon={ isAddingStagingSite ? null : plus }
 			iconPosition="right"
 			accessibleWhenDisabled
 			showTooltip
-			disabled={ !! disabledReason }
+			disabled={ !! disabledReason || isAddingStagingSite }
 			label={ disabledReason }
 			tooltipPosition="top"
 		>
-			{ __( 'Add staging site' ) }
+			{ isAddingStagingSite ? __( 'Adding staging site…' ) : __( 'Add staging site' ) }
 		</Button>
 	);
 }

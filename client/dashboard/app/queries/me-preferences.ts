@@ -5,7 +5,6 @@ import type { UserPreferences } from '../../data/me-preferences';
 
 const defaultValues: Required< UserPreferences > = {
 	'sites-view': {},
-	'some-string': '',
 };
 
 // Returns all user preferences, without applying any defaults.
@@ -35,7 +34,7 @@ export const userPreferenceMutation = < P extends keyof UserPreferences >( prefe
 		mutationFn: ( data: Required< UserPreferences >[ P ] ) =>
 			updatePreferences( {
 				[ preferenceName ]: data,
-			} ),
+			} as Partial< UserPreferences > ),
 		onSuccess: ( newData ) => {
 			queryClient.setQueryData( rawUserPreferencesQuery().queryKey, ( oldData ) =>
 				oldData ? { ...oldData, ...newData } : newData

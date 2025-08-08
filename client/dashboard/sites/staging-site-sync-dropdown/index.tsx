@@ -98,7 +98,7 @@ export default function StagingSiteSyncDropdown( {
 				) }
 				renderContent={ ( { onClose } ) => (
 					<div>
-						<MenuGroup>
+						<MenuGroup className={ className }>
 							<MenuItem
 								onClick={ () => {
 									onClose();

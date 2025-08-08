@@ -12,25 +12,38 @@ export enum DomainTypes {
 	TRANSFER = 'transfer',
 }
 
-export interface Domain {
+export interface DomainSummary {
+	aftermarket_auction: boolean;
 	auto_renewing: boolean;
 	blog_id: number;
 	blog_name: string;
+	can_set_as_primary: boolean;
+	current_user_can_create_site_from_domain_only: boolean;
+	current_user_can_manage: boolean;
 	domain: string;
 	domain_status?: {
 		status: string;
 	};
 	expiry: string | false;
+	is_dnssec_enabled: boolean;
+	is_dnssec_supported: boolean;
 	is_eligible_for_inbound_transfer: boolean;
 	is_hundred_year_domain: boolean;
+	is_redeemable: boolean;
+	is_renewable: boolean;
 	is_wpcom_staging_domain: boolean;
+	pending_registration: boolean;
+	pending_registration_at_registry: boolean;
+	pending_renewal: boolean;
 	primary_domain: boolean;
+	registrationDate: string;
 	site_slug: string;
+	subscription_id: string;
 	type: `${ DomainTypes }`;
 	wpcom_domain: boolean;
 }
 
-export async function fetchDomains(): Promise< Domain[] > {
+export async function fetchDomains(): Promise< DomainSummary[] > {
 	const { domains } = await wpcom.req.get( '/all-domains', {
 		no_wpcom: true,
 		resolve_status: true,

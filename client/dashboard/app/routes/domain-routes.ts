@@ -1,4 +1,6 @@
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
+import { domainQuery } from '../queries/domain';
+import { domainForwardingQuery } from '../queries/domain-forwarding';
 import { domainsQuery } from '../queries/domains';
 import { queryClient } from '../query-client';
 import type { AnyRoute } from '@tanstack/react-router';
@@ -44,8 +46,16 @@ export const siteDomainsRoute = createRoute( {
 export const domainRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'domains/$domainName',
-	// TODO: add the submenu nav components here
-} );
+	loader: ( { params: { domainName } } ) => {
+		return queryClient.ensureQueryData( domainQuery( domainName ) );
+	},
+} ).lazy( () =>
+	import( '../../domains/domain' ).then( ( d ) =>
+		createLazyRoute( 'domain' )( {
+			component: d.default,
+		} )
+	)
+);
 
 export const domainOverviewRoute = createRoute( {
 	getParentRoute: () => domainRoute,
@@ -92,13 +102,15 @@ export const domainDnsEditRoute = createRoute( {
 	)
 );
 
-// Domain forwarding routes
-export const domainForwardingRoute = createRoute( {
+// Domain forwardings routes
+export const domainForwardingsRoute = createRoute( {
 	getParentRoute: () => domainRoute,
-	path: 'forwarding',
+	path: 'forwardings',
+	loader: ( { params: { domainName } } ) =>
+		queryClient.ensureQueryData( domainForwardingQuery( domainName ) ),
 } ).lazy( () =>
-	import( '../../sites/domains/placeholder' ).then( ( d ) =>
-		createLazyRoute( 'domain-forwarding' )( {
+	import( '../../domains/domain-forwardings' ).then( ( d ) =>
+		createLazyRoute( 'domain-forwardings' )( {
 			component: d.default,
 		} )
 	)
@@ -117,7 +129,7 @@ export const domainForwardingAddRoute = createRoute( {
 
 export const domainForwardingEditRoute = createRoute( {
 	getParentRoute: () => domainRoute,
-	path: 'forwarding/edit',
+	path: 'forwarding/edit/$forwardingId',
 } ).lazy( () =>
 	import( '../../sites/domains/placeholder' ).then( ( d ) =>
 		createLazyRoute( 'domain-forwarding-edit' )( {
@@ -163,7 +175,7 @@ export const domainDnssecRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'dnssec',
 } ).lazy( () =>
-	import( '../../sites/domains/placeholder' ).then( ( d ) =>
+	import( '../../domains/overview-dnssec' ).then( ( d ) =>
 		createLazyRoute( 'domain-dnssec' )( {
 			component: d.default,
 		} )
@@ -187,7 +199,7 @@ export const domainChildRoutes: AnyRoute[] = [
 	domainDnsRoute,
 	domainDnsAddRoute,
 	domainDnsEditRoute,
-	domainForwardingRoute,
+	domainForwardingsRoute,
 	domainForwardingAddRoute,
 	domainForwardingEditRoute,
 	domainContactInfoRoute,

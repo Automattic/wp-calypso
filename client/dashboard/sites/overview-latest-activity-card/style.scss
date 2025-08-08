@@ -1,10 +1,25 @@
 @import "@wordpress/base-styles/colors";
 
+.dashboard-overview-latest-activity-card {
+    // Hacks to make DataViews look non-interactive
+    .dataviews-view-list {
+        button.dataviews-view-list__item {
+            display: none;
+        }
+
+        div[role="row"]:hover {
+            .dataviews-view-list__fields {
+                color: $gray-700;
+            }
+        }
+    }
+}
+
 .dashboard-overview-latest-activity-card__icon {
     display: block;
     position: relative;
     top: 50%;
-    left: 50%;
+    inset-inline-start: 50%;
     transform: translate(-50%, -50%);
     fill: $gray-700;
 }

@@ -10,6 +10,7 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import { getCurrentQueryArguments } from 'calypso/state/selectors/get-current-query-arguments';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import HeadingLogo from './heading-logo';
+import './one-login-layout.scss';
 
 interface OneLoginLayoutProps {
 	isJetpack: boolean;
@@ -19,6 +20,8 @@ interface OneLoginLayoutProps {
 	 * `signupUrl` prop should merge with `getSignupLinkComponent` logic in `/client/block/login/index.js`, so we have a single source for this logic.
 	 */
 	signupUrl?: string;
+	isSectionSignup?: boolean;
+	loginUrl?: string;
 }
 
 const OneLoginLayout = ( {
@@ -26,6 +29,8 @@ const OneLoginLayout = ( {
 	isFromAkismet,
 	children,
 	signupUrl: signupUrlProp,
+	isSectionSignup,
+	loginUrl,
 }: OneLoginLayoutProps ) => {
 	const translate = useTranslate();
 	const locale = useSelector( getCurrentUserLocale );
@@ -58,20 +63,39 @@ const OneLoginLayout = ( {
 		);
 	};
 
+	const LoginLink = () => {
+		if ( ! loginUrl ) {
+			return null;
+		}
+
+		return (
+			<Step.LinkButton href={ loginUrl } key="login-link" rel="external">
+				{ translate( 'Log in' ) }
+			</Step.LinkButton>
+		);
+	};
+
 	return (
 		<Step.CenteredColumnLayout
 			columnWidth={ 6 }
-			topBar={ <Step.TopBar rightElement={ <SignUpLink /> } compactLogo="always" /> }
+			topBar={
+				<Step.TopBar
+					rightElement={ isSectionSignup ? <LoginLink /> : <SignUpLink /> }
+					compactLogo="always"
+				/>
+			}
 			verticalAlign="center"
 		>
 			<div className="wp-login__one-login-layout-content-wrapper">
-				<div className="wp-login__header">
+				<div className="wp-login__one-login-layout-heading">
 					<HeadingLogo isFromAkismet={ isFromAkismet } isJetpack={ isJetpack } />
-					<Step.Heading text={ <div className="wp-login__heading-text">{ headingText }</div> } />
-					<div className="wp-login__heading-subtext-wrapper">
-						<h2 className="wp-login__heading-subtext">{ subHeadingText }</h2>
+					<Step.Heading
+						text={ <div className="wp-login__one-login-layout-heading-text">{ headingText }</div> }
+					/>
+					<div className="wp-login__one-login-layout-heading-subtext-wrapper">
+						<h2 className="wp-login__one-login-layout-heading-subtext">{ subHeadingText }</h2>
 						{ subHeadingTextSecondary && (
-							<h3 className="wp-login__heading-subtext is-secondary">
+							<h3 className="wp-login__one-login-layout-heading-subtext is-secondary">
 								{ subHeadingTextSecondary }
 							</h3>
 						) }
