@@ -40,6 +40,7 @@ import type { FileBrowserConfig } from 'calypso/my-sites/backup/backup-contents-
 
 import './style.scss';
 
+const WP_ROOT_PATH = '/';
 const WP_CONFIG_PATH = '/wp-config.php';
 const WP_CONTENT_PATH = '/wp-content';
 const SQL_PATH = '/sql';
@@ -245,6 +246,11 @@ export default function SyncModal( {
 		return 'mixed';
 	}, [ wpContentNode, wpConfigNode ] );
 
+	const handleClose = useCallback( () => {
+		dispatch( setNodeCheckState( querySiteId, WP_ROOT_PATH, 'unchecked' ) );
+		onClose();
+	}, [ dispatch, onClose, querySiteId ] );
+
 	const { pullFromStaging } = usePullFromStagingMutation( productionSiteId, stagingSiteId, {
 		onSuccess: ( _, options ) => {
 			dispatch(
@@ -307,7 +313,7 @@ export default function SyncModal( {
 			pushToStaging( { types: 'paths', include_paths, exclude_paths } );
 		}
 
-		onClose();
+		handleClose();
 	};
 
 	const updateFilesAndFoldersCheckState = useCallback(
@@ -363,7 +369,7 @@ export default function SyncModal( {
 	return (
 		<Modal
 			title={ syncConfig[ environment ].title }
-			onRequestClose={ onClose }
+			onRequestClose={ handleClose }
 			style={ { maxWidth: '668px' } }
 		>
 			<QueryRewindState siteId={ querySiteId } />
@@ -520,14 +526,17 @@ export default function SyncModal( {
 							<Text className="staging-site-card__footer-text">
 								{ createInterpolateElement( syncConfig.learnMore, {
 									a: (
-										<InlineSupportLink onClick={ onClose } supportContext="hosting-staging-site" />
+										<InlineSupportLink
+											onClick={ handleClose }
+											supportContext="hosting-staging-site"
+										/>
 									),
 								} ) }
 							</Text>
 						</HStack>
 
 						<HStack justify="flex-end" spacing={ 4 }>
-							<Button variant="tertiary" onClick={ onClose }>
+							<Button variant="tertiary" onClick={ handleClose }>
 								{ __( 'Cancel' ) }
 							</Button>
 							<Button variant="primary" onClick={ handleConfirm } disabled={ isButtonDisabled }>
