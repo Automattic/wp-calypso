@@ -285,10 +285,11 @@ export default function SyncModal( {
 		},
 	} );
 
-	const { backupAttempt: lastKnownBackupAttempt } = useFirstMatchingBackupAttempt( querySiteId, {
-		sortOrder: 'desc',
-		successOnly: true,
-	} );
+	const { backupAttempt: lastKnownBackupAttempt, isLoading: isLoadingBackupAttempt } =
+		useFirstMatchingBackupAttempt( querySiteId, {
+			sortOrder: 'desc',
+			successOnly: true,
+		} );
 	const rewindId = lastKnownBackupAttempt?.rewindId;
 
 	const shouldDisableGranularSync = ! lastKnownBackupAttempt;
@@ -407,18 +408,21 @@ export default function SyncModal( {
 						}
 					>
 						<HStack spacing={ 2 } justify="space-between" alignment="center">
-							<CheckboxControl
-								__nextHasNoMarginBottom
-								label={ __( 'Files and folders' ) }
-								disabled={ shouldDisableGranularSync }
-								checked={
-									shouldDisableGranularSync || filesAndFoldersNodesCheckState === 'checked'
-								}
-								indeterminate={ filesAndFoldersNodesCheckState === 'mixed' }
-								onChange={ onCheckboxChange }
-							/>
+							{ isLoadingBackupAttempt ? (
+								<div className="file-browser-node__loading placeholder" />
+							) : (
+								<CheckboxControl
+									__nextHasNoMarginBottom
+									label={ __( 'Files and folders' ) }
+									disabled={ shouldDisableGranularSync }
+									checked={
+										shouldDisableGranularSync || filesAndFoldersNodesCheckState === 'checked'
+									}
+									indeterminate={ filesAndFoldersNodesCheckState === 'mixed' }
+									onChange={ onCheckboxChange }
+								/>
+							) }
 							<SelectControl
-								style={ shouldDisableGranularSync ? { backgroundColor: 'white' } : {} }
 								value={ isFileBrowserVisible ? 'true' : 'false' }
 								variant="minimal"
 								disabled={ shouldDisableGranularSync }
@@ -461,25 +465,20 @@ export default function SyncModal( {
 							marginBottom: '24px',
 						} }
 					>
-						<CheckboxControl
-							__nextHasNoMarginBottom
-							label={ __( 'Database tables' ) }
-							disabled={ shouldDisableGranularSync }
-							checked={ shouldDisableGranularSync || sqlNode?.checkState === 'checked' }
-							onChange={ handleDatabaseCheckboxChange }
-						/>
-						<Tooltip
-							text={ __(
-								'Selecting this option will overwrite the site database, including any posts, pages, products, or orders.'
-							) }
-						>
-							<span>
-								<Icon
-									icon={ error }
-									style={ { fill: 'var(--studio-orange-50)', display: 'flex' } }
-								/>
-							</span>
-						</Tooltip>
+						{ isLoadingBackupAttempt ? (
+							<div className="file-browser-node__loading placeholder" />
+						) : (
+							<CheckboxControl
+								__nextHasNoMarginBottom
+								label={ __( 'Database tables' ) }
+								disabled={ shouldDisableGranularSync }
+								checked={ shouldDisableGranularSync || sqlNode?.checkState === 'checked' }
+								onChange={ handleDatabaseCheckboxChange }
+							/>
+						) }
+						<span>
+							<Icon icon={ error } style={ { fill: 'var(--studio-orange-50)', display: 'flex' } } />
+						</span>
 					</HStack>
 					{ showWooCommerceWarning && (
 						<VStack style={ { paddingBottom: '52px' } }>
