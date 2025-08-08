@@ -220,18 +220,11 @@ const validateAgentConfig = ( config: {
 	} );
 };
 
-// Default config helper
-const createDefaultAgentConfig = () => ( {
-	agentId: 'agenttic-client',
-	agentUrl: 'https://public-api.wordpress.com/wpcom/v2/ai/agent',
-	sessionId: `session-${ Date.now() }`,
-} );
-
 // Hook configuration interface
 export interface UseAgentChatConfig {
 	agentId: string;
-	agentUrl?: string;
-	sessionId?: string;
+	agentUrl: string;
+	sessionId: string;
 	contextProvider?: ContextProvider;
 	toolProvider?: ToolProvider;
 	authProvider?: AuthProvider;
@@ -283,11 +276,11 @@ interface AgentChatState {
  */
 export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 	// Create config with defaults
-	const defaultConfig = createDefaultAgentConfig();
+
 	const agentConfig = {
 		agentId: config.agentId,
-		agentUrl: config.agentUrl || defaultConfig.agentUrl,
-		sessionId: config.sessionId || defaultConfig.sessionId,
+		agentUrl: config.agentUrl,
+		sessionId: config.sessionId,
 	};
 
 	// Validate configuration
