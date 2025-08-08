@@ -7,7 +7,7 @@ export default function DomainDNSSEC() {
 	const { domainName } = domainRoute.useParams();
 
 	return (
-		<PageLayout size="small" header={ <PageHeader title="DNSSEC" /> }>
+		<PageLayout size="small" header={ <PageHeader title="DNS Records" /> }>
 			<Card>
 				<CardBody>
 					<Text>DNS Placeholder { domainName }</Text>
