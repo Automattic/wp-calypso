@@ -72,7 +72,7 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 		}, [ prompt ] );
 
 		useEffect( () => {
-			if ( ! isWithinBreakpoint( '<782px' ) ) {
+			if ( isWithinBreakpoint( '<782px' ) ) {
 				recordTracksEvent( 'calypso_big_sky_incompatible_screen', {
 					flow: AI_SITE_BUILDER_FLOW,
 					size: getWindowInnerWidth(),
