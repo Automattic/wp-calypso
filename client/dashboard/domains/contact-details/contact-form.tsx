@@ -7,7 +7,7 @@ import {
 	Card,
 	CardBody,
 } from '@wordpress/components';
-import { DataForm, Field } from '@wordpress/dataviews';
+import { DataForm, Field, isItemValid } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { isEqual } from 'lodash';
@@ -42,7 +42,6 @@ export default function ContactForm( {
 	initialData,
 	onSubmit,
 	onCancel,
-	errors = {},
 	isSubmitting = false,
 }: ContactFormProps ) {
 	const [ formData, setFormData ] = useState< DomainContactDetails >(
@@ -60,11 +59,17 @@ export default function ContactForm( {
 			id: 'firstName',
 			label: 'First Name',
 			type: 'text',
+			isValid: {
+				required: true,
+			},
 		},
 		{
 			id: 'lastName',
 			label: 'Last Name',
 			type: 'text',
+			isValid: {
+				required: true,
+			},
 		},
 		{
 			id: 'organization',
@@ -75,22 +80,34 @@ export default function ContactForm( {
 			id: 'email',
 			label: 'Email',
 			type: 'email',
+			isValid: {
+				required: true,
+			},
 		},
 		{
 			id: 'phone',
 			label: 'Phone',
 			type: 'text',
+			isValid: {
+				required: true,
+			},
 		},
 		{
 			id: 'countryCode',
 			label: 'Country',
 			type: 'select',
 			elements: COUNTRIES,
+			isValid: {
+				required: true,
+			},
 		},
 		{
 			id: 'address1',
 			label: 'Address Line 1',
 			type: 'text',
+			isValid: {
+				required: true,
+			},
 		},
 		{
 			id: 'address2',
@@ -101,11 +118,25 @@ export default function ContactForm( {
 			id: 'city',
 			label: 'City',
 			type: 'text',
+			isValid: {
+				required: true,
+			},
+		},
+		{
+			id: 'state',
+			label: 'State',
+			type: 'text',
+			isValid: {
+				required: true,
+			},
 		},
 		{
 			id: 'postalCode',
 			label: 'Post Code',
 			type: 'text',
+			isValid: {
+				required: true,
+			},
 		},
 		{
 			id: 'optOutTransferLock',
@@ -127,10 +158,13 @@ export default function ContactForm( {
 			'address1',
 			'address2',
 			'city',
+			'state',
 			'postalCode',
 			'optOutTransferLock',
 		],
 	};
+
+	const canSave = isItemValid( formData, fields, form );
 
 	return (
 		<VStack spacing={ 10 }>
@@ -189,7 +223,7 @@ export default function ContactForm( {
 								variant="primary"
 								type="submit"
 								isBusy={ isSubmitting }
-								disabled={ isSubmitting || ! isDirty }
+								disabled={ ! canSave || ! isDirty || isSubmitting }
 							>
 								{ __( 'Save' ) }
 							</Button>
