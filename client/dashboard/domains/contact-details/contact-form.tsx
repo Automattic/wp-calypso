@@ -10,6 +10,7 @@ import {
 import { DataForm, Field } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { isEqual } from 'lodash';
 import { useState } from 'react';
 import Notice from '../../components/notice';
 import type { DomainContactDetails } from './types';
@@ -47,6 +48,8 @@ export default function ContactForm( {
 	const [ formData, setFormData ] = useState< DomainContactDetails >(
 		initialData ?? ( {} as DomainContactDetails )
 	);
+
+	const isDirty = ! isEqual( formData, initialData );
 
 	const handleSubmit = ( data: DomainContactDetails ) => {
 		onSubmit?.( data );
@@ -158,7 +161,13 @@ export default function ContactForm( {
 					</Text>
 					<Text as="p">
 						{ __( 'Domain privacy service is included for free on applicable domains.' ) }{ ' ' }
-						<ExternalLink href="#">{ __( 'Learn more' ) }</ExternalLink>.
+						<ExternalLink
+							// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
+							href="https://wordpress.com/support/domains/private-domain-registration/#what-is-privacy-protection"
+						>
+							{ __( 'Learn more' ) }
+						</ExternalLink>
+						.
 					</Text>
 				</VStack>
 			</Notice>
@@ -180,7 +189,7 @@ export default function ContactForm( {
 								variant="primary"
 								type="submit"
 								isBusy={ isSubmitting }
-								disabled={ isSubmitting }
+								disabled={ isSubmitting || ! isDirty }
 							>
 								{ __( 'Save' ) }
 							</Button>
