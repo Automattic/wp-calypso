@@ -1,8 +1,9 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
-import { Outlet, notFound } from '@tanstack/react-router';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { Outlet } from '@tanstack/react-router';
 import { __experimentalHStack as HStack, Icon } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { globe } from '@wordpress/icons';
+import { domainQuery } from '../../app/queries/domain';
 import { domainsQuery } from '../../app/queries/domains';
 import { domainRoute } from '../../app/router';
 import HeaderBar from '../../components/header-bar';
@@ -15,12 +16,8 @@ import './style.scss';
 function Domain() {
 	const isDesktop = useViewportMatch( 'medium' );
 	const { domainName } = domainRoute.useParams();
-	const { data: domains } = useSuspenseQuery( domainsQuery() );
-	const domain = domains.find( ( domain ) => domain.domain === domainName );
-
-	if ( ! domain ) {
-		throw notFound();
-	}
+	const domains = useQuery( domainsQuery() ).data;
+	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 
 	return (
 		<>

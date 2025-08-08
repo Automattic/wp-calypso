@@ -27,15 +27,15 @@
 }
 
 .dashboard-stat__progress-bar--alert-yellow {
-	--wp-components-color-foreground: #{$alert-yellow};
+	--wp-components-color-foreground: var(--dashboard__background-color-warning);
 }
 
 .dashboard-stat__progress-bar--alert-red {
-	--wp-components-color-foreground: #{$alert-red};
+	--wp-components-color-foreground: var(--dashboard__background-color-error);
 }
 
 .dashboard-stat__progress-bar--alert-green {
-	--wp-components-color-foreground: #{$alert-green};
+	--wp-components-color-foreground: var(--dashboard__background-color-success);
 }
 
 .dashboard-stat--is-loading .dashboard-stat__progress-bar > * {
@@ -59,4 +59,3 @@
 		line-height: $font-line-height-small;
 	}
 }
-

@@ -7,7 +7,6 @@ import {
 	__experimentalDivider as Divider,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
-	__experimentalText as Text,
 	__experimentalHeading as Heading,
 	Icon,
 } from '@wordpress/components';
@@ -16,6 +15,7 @@ import { chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useAnalytics } from '../../app/analytics';
 import ComponentViewTracker from '../../components/component-view-tracker';
+import { Text } from '../../components/text';
 import { TextSkeleton } from '../../components/text-skeleton';
 import type { ComponentProps, ReactElement, ReactNode } from 'react';
 import './style.scss';
@@ -125,8 +125,8 @@ export default function OverviewCard( {
 							{ renderHeading() }
 						</Heading>
 						<Text
-							className="dashboard-overview-card__description"
-							variant="muted"
+							intent={ intent === 'warning' || intent === 'error' ? intent : undefined }
+							variant={ intent === 'warning' || intent === 'error' ? undefined : 'muted' }
 							lineHeight="16px"
 							size={ 12 }
 						>
