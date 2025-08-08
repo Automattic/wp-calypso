@@ -633,7 +633,7 @@ export class UserStep extends Component {
 					recaptchaClientId={ this.state.recaptchaClientId }
 					horizontal
 					shouldDisplayUserExistsError={ ! isWCCOM && ! isBlazeProOAuth2Client( oauth2Client ) }
-					isSocialFirst={ this.props.isSocialFirst }
+					isSocialFirst={ this.props.isSocialFirst && ! isUnifiedCreateAccount }
 					labelText={ isUnifiedCreateAccount ? this.props.translate( 'Your email' ) : null }
 					disableTosText={ isUnifiedCreateAccount }
 				/>
