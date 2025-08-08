@@ -15,6 +15,7 @@ import { domainAddDNSRecordMutation } from '../../app/queries/domain-add-dns';
 import { domainRoute } from '../../app/routes/domain-routes';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import RequiredSelect from '../../components/required-select';
 import {
 	DNS_RECORD_CONFIGS,
 	type DNSRecordTypeFormData,
@@ -51,7 +52,7 @@ export default function DomainAddDNS() {
 		{
 			id: 'type',
 			label: __( 'Type' ),
-			Edit: 'select',
+			Edit: RequiredSelect, // TODO: use DataForm's validation when available. See: DOTCOM-13298
 			elements: [
 				{ label: __( 'A' ), value: 'A' },
 				{ label: __( 'AAAA' ), value: 'AAAA' },

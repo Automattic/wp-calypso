@@ -1,4 +1,5 @@
 import { __ } from '@wordpress/i18n';
+import RequiredSelect from '../../../components/required-select';
 import type { AddDNSRecordFormData, DNSRecordConfig } from './types';
 
 export const CAARecordConfig: DNSRecordConfig = {
@@ -21,7 +22,7 @@ export const CAARecordConfig: DNSRecordConfig = {
 		{
 			id: 'tag',
 			label: __( 'Tag' ),
-			Edit: 'select',
+			Edit: RequiredSelect, // TODO: use DataForm's validation when available. See: DOTCOM-13298
 			elements: [
 				{ label: __( 'issue' ), value: 'issue' },
 				{ label: __( 'issuewild' ), value: 'issuewild' },
