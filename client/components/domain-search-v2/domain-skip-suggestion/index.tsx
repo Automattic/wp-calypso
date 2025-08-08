@@ -48,7 +48,7 @@ const DomainSkipSuggestion = ( {
 	const { cart } = useDomainSearch();
 
 	const hasExistingSite = !! selectedSite;
-	const hasSubdomainSuggestion = subdomainSuggestion !== undefined;
+	const hasSubdomainSuggestion = !! subdomainSuggestion;
 	const domain = hasExistingSite ? selectedSite?.slug : subdomainSuggestion?.domain_name;
 	const [ subdomain, ...tlds ] = domain?.split( '.' ) ?? [];
 
