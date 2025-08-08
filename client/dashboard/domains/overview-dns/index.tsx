@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
-import { __experimentalVStack as VStack, Button } from '@wordpress/components';
+import { __experimentalVStack as VStack, Button, Icon } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
+import { edit, trash } from '@wordpress/icons';
 import { useState, useMemo } from 'react';
 import { domainDnsQuery } from '../../app/queries/domain-dns';
 import { domainRoute } from '../../app/routes/domain-routes';
@@ -9,7 +10,7 @@ import DataViewsCard from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import type { DnsRecord } from '../../data/domain-dns';
-import type { Field, ViewTable, ViewList, View } from '@wordpress/dataviews';
+import type { Action, Field, ViewTable, ViewList, View } from '@wordpress/dataviews';
 
 function getDnsRecordId( record: DnsRecord ) {
 	return `${ record.id }-${ record.name }`;
@@ -39,6 +40,33 @@ const DEFAULT_LAYOUTS = {
 export default function DomainDns() {
 	const { domainName } = domainRoute.useParams();
 	const { data: dnsData, isLoading } = useQuery( domainDnsQuery( domainName ) );
+
+	const actions: Action< DnsRecord >[] = useMemo(
+		() => [
+			{
+				id: 'edit',
+				label: __( 'Edit' ),
+				icon: <Icon icon={ edit } />,
+				isPrimary: true,
+				callback: ( items ) => {
+					// eslint-disable-next-line @typescript-eslint/no-unused-vars
+					const item = items[ 0 ];
+					// TODO: Implement edit functionality
+				},
+			},
+			{
+				id: 'delete',
+				label: __( 'Delete' ),
+				icon: <Icon icon={ trash } />,
+				callback: ( items ) => {
+					// eslint-disable-next-line @typescript-eslint/no-unused-vars
+					const item = items[ 0 ];
+					// TODO: Implement delete functionality
+				},
+			},
+		],
+		[]
+	);
 
 	const fields: Field< DnsRecord >[] = useMemo(
 		() => [
@@ -84,6 +112,11 @@ export default function DomainDns() {
 					// For other records, use target or data property
 					return item.target || item.data || '';
 				},
+				render: ( { field, item } ) => (
+					<div style={ { whiteSpace: 'pre-wrap', wordBreak: 'break-word' } }>
+						{ field.getValue( { item } ) }
+					</div>
+				),
 			},
 		],
 		[ domainName ]
@@ -121,6 +154,7 @@ export default function DomainDns() {
 						onChangeView={ ( view: View ) => setView( view as DnsView ) }
 						search={ false }
 						view={ view }
+						actions={ actions }
 						paginationInfo={ paginationInfo }
 						getItemId={ getDnsRecordId }
 						isLoading={ isLoading }
