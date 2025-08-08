@@ -9,6 +9,7 @@ import { domainRoute } from '../../app/routes/domain-routes';
 import DataViewsCard from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import DnsActionsMenu from './dns-actions-menu';
 import type { DnsRecord } from '../../data/domain-dns';
 import type { Action, Field, ViewTable, ViewList, View } from '@wordpress/dataviews';
 
@@ -137,7 +138,12 @@ export default function DomainDns() {
 				<VStack>
 					<PageHeader
 						title={ __( 'DNS Records' ) }
-						actions={ <Button variant="primary">{ __( 'Add DNS Record' ) }</Button> }
+						actions={
+							<>
+								<Button variant="primary">{ __( 'Add DNS Record' ) }</Button>
+								<DnsActionsMenu />
+							</>
+						}
 					/>
 				</VStack>
 			}
