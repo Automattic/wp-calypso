@@ -41,7 +41,11 @@ import {
 	isCrowdsignalOAuth2Client,
 	isGravatarOAuth2Client,
 	isVIPOAuth2Client,
+<<<<<<< HEAD
 	isJetpackCloudOAuth2Client,
+=======
+	isStudioAppOAuth2Client,
+>>>>>>> 715cf36e3b3 (Connect Refresh: Migrate Studio create-account to unified Signup)
 } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
 import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
@@ -1045,7 +1049,8 @@ class SignupForm extends Component {
 			this.props.isBlazePro ||
 			this.props.isAkismet ||
 			this.props.isVIPClient ||
-			this.props.isJetpackCloud;
+			this.props.isJetpackCloud ||
+			isStudioAppOAuth2Client( this.props.oauth2Client );
 		const isGravatar = this.props.isGravatar;
 		const emailErrorMessage = this.getErrorMessagesWithLogin( 'email' );
 		const showSeparator =

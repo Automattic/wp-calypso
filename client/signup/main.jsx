@@ -51,6 +51,7 @@ import {
 	isCrowdsignalOAuth2Client,
 	isVIPOAuth2Client,
 	isJetpackCloudOAuth2Client,
+	isStudioAppOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import SignupFlowController from 'calypso/lib/signup/flow-controller';
 import FlowProgressIndicator from 'calypso/signup/flow-progress-indicator';
@@ -885,7 +886,8 @@ class Signup extends Component {
 				this.props.isBlazePro ||
 				this.props.isAkismet ||
 				this.props.isVIPClient ||
-				this.props.isJetpackCloud );
+				this.props.isJetpackCloud ||
+				isStudioAppOAuth2Client( this.props.oauth2Client ) );
 
 		const showPageHeader = ! this.props.isGravatar && ! isUnifiedCreateAccount;
 		const isGravatarDomain = isDomainForGravatarFlow( this.props.flowName );

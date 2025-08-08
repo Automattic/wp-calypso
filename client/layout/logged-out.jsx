@@ -29,6 +29,7 @@ import {
 	isA4AOAuth2Client,
 	isCrowdsignalOAuth2Client,
 	isVIPOAuth2Client,
+	isStudioAppOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
@@ -128,7 +129,14 @@ const LayoutLoggedOut = ( {
 
 	const isUnifiedCreateAccount =
 		sectionName === 'signup' &&
-		( isWoo || isA4A || isCrowdsignal || isBlazePro || isAkismet || isVIPClient || isJetpackCloud );
+		( isWoo ||
+			isA4A ||
+			isCrowdsignal ||
+			isBlazePro ||
+			isAkismet ||
+			isVIPClient ||
+			isJetpackCloud ||
+			isStudioAppOAuth2Client( oauth2Client ) );
 
 	const classes = {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,

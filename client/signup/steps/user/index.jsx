@@ -25,6 +25,7 @@ import {
 	isJetpackCloudOAuth2Client,
 	isPartnerPortalOAuth2Client,
 	isVIPOAuth2Client,
+	isStudioAppOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import LoginContextProvider, { useLoginContext } from 'calypso/login/login-context';
@@ -605,6 +606,7 @@ export class UserStep extends Component {
 			isAkismet,
 			isVIPClient,
 			isJetpackCloud,
+			isStudioApp,
 		} = this.props;
 		const isPasswordless =
 			isMobile() ||
@@ -616,7 +618,8 @@ export class UserStep extends Component {
 			isBlazePro ||
 			isAkismet ||
 			isVIPClient ||
-			isJetpackCloud;
+			isJetpackCloud ||
+			isStudioApp;
 		let socialService;
 		let socialServiceResponse;
 		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
@@ -772,8 +775,16 @@ const ConnectedUser = connect(
 		const isAkismet = getIsAkismet( state );
 		const isVIPClient = isVIPOAuth2Client( oauth2Client );
 		const isJetpackCloud = isJetpackCloudOAuth2Client( oauth2Client );
+		const isStudioApp = isStudioAppOAuth2Client( oauth2Client );
 		const isUnifiedCreateAccount =
-			isWoo || isA4A || isCrowdsignal || isBlazePro || isAkismet || isVIPClient || isJetpackCloud;
+			isWoo ||
+			isA4A ||
+			isCrowdsignal ||
+			isBlazePro ||
+			isAkismet ||
+			isVIPClient ||
+			isJetpackCloud ||
+			isStudioApp;
 
 		return {
 			oauth2Client: oauth2Client,
@@ -792,6 +803,7 @@ const ConnectedUser = connect(
 			isAkismet,
 			isVIPClient,
 			isJetpackCloud,
+			isStudioApp,
 		};
 	},
 	{
