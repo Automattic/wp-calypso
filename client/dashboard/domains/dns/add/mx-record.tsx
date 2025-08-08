@@ -10,7 +10,7 @@ export const MXRecordConfig: DNSRecordConfig = {
 			id: 'name',
 			type: 'text',
 			label: __( 'Name (optional)' ),
-			placeholder: 'Enter subdomain',
+			placeholder: __( 'Enter subdomain' ),
 		},
 		{
 			id: 'data',

@@ -10,7 +10,7 @@ export const ARecordConfig: DNSRecordConfig = {
 			id: 'name',
 			type: 'text',
 			label: __( 'Name (optional)' ),
-			placeholder: 'Enter subdomain',
+			placeholder: __( 'Enter subdomain' ),
 		},
 		{
 			// TODO: Add validation for IPv4 address

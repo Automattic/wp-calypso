@@ -11,7 +11,7 @@ export const SRVRecordConfig: DNSRecordConfig = {
 			id: 'name',
 			type: 'text',
 			label: __( 'Name (optional)' ),
-			placeholder: 'Enter subdomain',
+			placeholder: __( 'Enter subdomain' ),
 		},
 		{
 			id: 'service',
