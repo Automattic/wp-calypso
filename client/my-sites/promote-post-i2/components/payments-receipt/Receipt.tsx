@@ -7,6 +7,7 @@ import React from 'react';
 import { DetailedPayment } from 'calypso/data/promote-post/use-promote-post-payment-details-query';
 import { Payment } from 'calypso/data/promote-post/use-promote-post-payments-query';
 import { WPCOMPrintLogo } from 'calypso/my-sites/promote-post-i2/components/payments-receipt/WPComPrintLogo';
+import { paymentStatus } from 'calypso/my-sites/promote-post-i2/utils';
 
 interface ReceiptTemplateProps {
 	payment: Payment | DetailedPayment;
@@ -220,7 +221,16 @@ export const Receipt = ( {
 						<div className="payment-receipt__row">
 							<div className="payment-receipt__label">{ __( 'Total:' ) }</div>
 							<div className="payment-receipt__value payment-receipt__value-bold">
-								${ payment.total_paid.toFixed( 2 ) }
+								{ payment.status === paymentStatus.REFUNDED ? (
+									<>
+										<span style={ { textDecoration: 'line-through' } }>
+											${ payment.total_paid.toFixed( 2 ) }
+										</span>{ ' ' }
+										<span>$0.00</span>
+									</>
+								) : (
+									`$${ payment.total_paid.toFixed( 2 ) }`
+								) }
 							</div>
 						</div>
 					</div>

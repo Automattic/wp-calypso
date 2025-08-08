@@ -99,7 +99,14 @@ export default function PaymentItem( props: Props ) {
 				payment.credits_used || 0,
 				2
 			) }` }</td>
-			<td className="payment-item__total">{ `$${ formatCents( payment.total_paid || 0, 2 ) }` }</td>
+			<td
+				className="payment-item__total"
+				style={
+					payment.status === paymentStatus.REFUNDED ? { textDecoration: 'line-through' } : undefined
+				}
+			>
+				{ `$${ formatCents( payment.total_paid || 0, 2 ) }` }
+			</td>
 			<td className="payment-item__actions">{ getActionButton( payment.status ) }</td>
 		</tr>
 	);
