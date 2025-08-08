@@ -171,7 +171,6 @@ const StagingSiteManagementMoveInfo: FunctionComponent = () => {
 
 	const infoCardItems = getInfoCardItems( settingsLink );
 
-	// Check if we should enable highlighting - only on production sites without staging sites
 	const canHighlightStagingButton = ! isCurrentSiteStaging && ! stagingSiteId;
 
 	const handleCreateStagingSiteLocationClick = () => {
@@ -180,7 +179,6 @@ const StagingSiteManagementMoveInfo: FunctionComponent = () => {
 			if ( button ) {
 				button.classList.add( 'staging-button-highlighted' );
 
-				// Reset the highlight after 3 seconds
 				setTimeout( () => {
 					button.classList.remove( 'staging-button-highlighted' );
 				}, 3000 );
