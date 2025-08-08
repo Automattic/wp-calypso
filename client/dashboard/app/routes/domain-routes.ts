@@ -73,7 +73,7 @@ export const domainDnsRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'dns',
 } ).lazy( () =>
-	import( '../../sites/domains/placeholder' ).then( ( d ) =>
+	import( '../../domains/overview-dns' ).then( ( d ) =>
 		createLazyRoute( 'domain-dns' )( {
 			component: d.default,
 		} )
