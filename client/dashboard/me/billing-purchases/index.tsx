@@ -23,7 +23,7 @@ export default function PurchasesList() {
 	const { data: transferredPurchases, isLoading: isLoadingTransferredPurchases } = useQuery(
 		userTransferredPurchasesQuery()
 	);
-	const { data: sites } = useQuery( sitesQuery() );
+	const { data: sites, isLoading: isLoadingSites } = useQuery( sitesQuery() );
 	const [ currentView, setView ] = useState( purchasesDataView );
 	const ref = useResizeObserver( ( entries ) => {
 		const firstEntry = entries[ 0 ];
@@ -70,7 +70,7 @@ export default function PurchasesList() {
 		<PageLayout size="large" header={ <PageHeader title={ __( 'Active Upgrades' ) } /> }>
 			<div ref={ ref }>
 				<DataViews
-					isLoading={ isLoadingPurchases || isLoadingTransferredPurchases }
+					isLoading={ isLoadingPurchases || isLoadingTransferredPurchases || isLoadingSites }
 					data={ filteredSubscriptions ?? [] }
 					fields={ purchasesDataFields }
 					view={ currentView }
