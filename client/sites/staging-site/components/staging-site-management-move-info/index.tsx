@@ -134,7 +134,7 @@ const InfoCard: FunctionComponent< InfoCardProps > = ( { item, onLocationClick }
 											padding: 0,
 											textDecoration: 'none',
 											cursor: 'pointer',
-											color: 'var(--wp-admin-theme-color, #0073aa)',
+											color: '#3858e9',
 											font: 'inherit',
 										} }
 									>
