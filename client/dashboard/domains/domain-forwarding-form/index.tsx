@@ -35,6 +35,92 @@ interface FormData {
 	pathForwarding: 'no' | 'yes';
 }
 
+// Validation helpers (copied to keep this UI self-contained)
+const SOFT_URL_REGEX =
+	/^(https?:)?(?:[a-zA-Z0-9-.]+\.)?[a-zA-Z]{0,}(?:\/[^\s]*){0,}(:[0-9/a-z-#]*)?$/i;
+const SUBDOMAIN_LABEL_REGEX = /^(?!-)[a-zA-Z0-9-]{0,62}[a-zA-Z0-9]$|^[a-zA-Z0-9]$/i;
+
+function normalizeUrlWithDefaultProtocol( input: string ): string {
+	if ( ! input ) {
+		return '';
+	}
+	return /^https?:\/\//i.test( input ) ? input : `https://${ input }`;
+}
+
+function getDomainPartsAndLevel( domain: string ): [ string[], number ] {
+	const parts = domain.split( '.' );
+	return [ parts, parts.length ];
+}
+
+function isSameDomain(
+	domainParts: string[],
+	targetHostParts: string[],
+	domainLevel: number
+): boolean {
+	for ( let i = 0; i < domainLevel; i++ ) {
+		if ( domainParts[ i ] !== targetHostParts[ i ] ) {
+			return false;
+		}
+	}
+	return true;
+}
+
+function isSubdomain(
+	domainParts: string[],
+	targetHostParts: string[],
+	domainLevel: number,
+	targetHostLevel: number
+): boolean {
+	for ( let i = 1; i <= Math.min( domainLevel, targetHostLevel ); i++ ) {
+		if ( domainParts[ domainLevel - i ] !== targetHostParts[ targetHostLevel - i ] ) {
+			return false;
+		}
+	}
+	return true;
+}
+
+function isTargetUrlValid( value: string, fullDomain: string ): boolean {
+	const input = value?.trim() || '';
+	if ( ! input ) {
+		return false;
+	}
+	const normalized = normalizeUrlWithDefaultProtocol( input );
+	if ( ! SOFT_URL_REGEX.test( normalized ) ) {
+		return false;
+	}
+	try {
+		const url = new URL( normalized );
+		const [ domainParts, domainLevel ] = getDomainPartsAndLevel( fullDomain );
+		const [ targetHostParts, targetHostLevel ] = getDomainPartsAndLevel( url.hostname );
+
+		if ( domainLevel > targetHostLevel ) {
+			return true;
+		}
+		if ( domainLevel === targetHostLevel ) {
+			if ( isSameDomain( domainParts, targetHostParts, domainLevel ) ) {
+				const targetPath = url.pathname + url.search + url.hash;
+				if ( ! targetPath || /^\/+$/.test( targetPath ) ) {
+					return false; // same domain root disallowed
+				}
+			}
+			return true;
+		}
+		if ( isSubdomain( domainParts, targetHostParts, domainLevel, targetHostLevel ) ) {
+			return false; // further nested subdomain disallowed
+		}
+		return true;
+	} catch {
+		return false;
+	}
+}
+
+function isSubdomainValid( value: string ): boolean {
+	if ( ! value ) {
+		return true; // treat empty as valid; field presence is controlled by form config
+	}
+	return SUBDOMAIN_LABEL_REGEX.test( value );
+}
+
 function parseTargetUrl( targetUrl: string ) {
 	try {
 		// Add protocol if missing
@@ -118,6 +204,14 @@ export default function DomainForwardingForm( { isEdit = false }: DomainForwardi
 				label: __( 'Subdomain' ),
 				help: __( 'Enter the subdomain (e.g., "blog")' ),
 				type: 'text',
+				isValid: {
+					custom: ( item ) => {
+						if ( ! isSubdomainValid( item.subdomain ) ) {
+							return 'Error subdomain is not valid';
+						}
+						return false;
+					},
+				},
 			},
 			{
 				id: 'targetUrl',
@@ -172,8 +266,12 @@ export default function DomainForwardingForm( { isEdit = false }: DomainForwardi
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
 
-		if ( ! formData.targetUrl.trim() ) {
-			createErrorNotice( __( 'Target URL is required.' ), { type: 'snackbar' } );
+		// Guard via same checks used by DataForm isValid
+		const urlOk = isTargetUrlValid( formData.targetUrl, domainName );
+		const subdomainOk =
+			formData.sourceType !== 'subdomain' || isSubdomainValid( formData.subdomain );
+		if ( ! urlOk || ! subdomainOk ) {
+			createErrorNotice( __( 'Please fix the errors in the form.' ), { type: 'snackbar' } );
 			return;
 		}
 
@@ -220,6 +318,35 @@ export default function DomainForwardingForm( { isEdit = false }: DomainForwardi
 
 	const { isPending } = saveMutation;
 
+	/*
+	const renderNoticeForPrimaryDomain = () => {
+		if ( ! domain?.isPrimary || domain?.is_domain_only_site ) {
+			return;
+		}
+
+		const noticeText = __(
+			"This domain is your site's main address. You can forward subdomains or {{a}}set a new primary site address{{/a}} to forward the root domain."
+			{
+				components: {
+					a: <a href={ `/domains/manage/${ domain.domain }` } />,
+				},
+			}
+		);
+
+		return (
+			<div className="domain-forwarding-card-notice">
+				<Icon
+					icon={ info }
+					size={ 18 }
+					className="domain-forwarding-card-notice__icon gridicon"
+					viewBox="2 2 20 20"
+				/>
+				<div className="domain-forwarding-card-notice__message">{ noticeText }</div>
+			</div>
+		);
+	};
+	*/
+
 	return (
 		<PageLayout
 			size="small"
@@ -243,7 +370,7 @@ export default function DomainForwardingForm( { isEdit = false }: DomainForwardi
 							/>
 
 							<HStack justify="start" spacing={ 4 }>
-								<Button variant="primary" type="submit" isBusy={ isPending } disabled={ isPending }>
+								<Button variant="primary" type="submit" isBusy={ isPending }>
 									{ isEdit ? __( 'Update' ) : __( 'Add' ) }
 								</Button>
 								<RouterLinkButton
