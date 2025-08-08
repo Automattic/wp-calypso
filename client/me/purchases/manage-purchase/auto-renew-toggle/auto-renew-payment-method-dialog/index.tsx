@@ -1,19 +1,20 @@
 import { Dialog } from '@automattic/components';
-import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
+import { localize, type LocalizeProps } from 'i18n-calypso';
 import { Component } from 'react';
+import type { Purchases } from '@automattic/data-stores';
 
 import './style.scss';
 
-class AutoRenewPaymentMethodDialog extends Component {
-	static propTypes = {
-		isVisible: PropTypes.bool,
-		translate: PropTypes.func.isRequired,
-		purchase: PropTypes.object.isRequired,
-		onClose: PropTypes.func.isRequired,
-		onAddClick: PropTypes.func.isRequired,
-	};
+interface AutoRenewPaymentMethodDialogProps {
+	isVisible: boolean;
+	purchase: Purchases.Purchase;
+	onClose: () => void;
+	onAddClick: () => void;
+}
 
+class AutoRenewPaymentMethodDialog extends Component<
+	AutoRenewPaymentMethodDialogProps & LocalizeProps
+> {
 	render() {
 		const { isVisible, translate } = this.props;
 		const buttons = [
