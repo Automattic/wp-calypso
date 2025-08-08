@@ -13,9 +13,10 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import { setExpandedService } from 'calypso/state/sharing/actions';
 import { requestSite } from 'calypso/state/sites/actions';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Sharing from './main';
+import SettingsSharing from './settings-sharing';
 import ToolsMarketing from './tools-marketing';
 
 export const redirectConnections = ( context ) => {
@@ -109,7 +110,9 @@ export const sharingButtons = ( context, next ) => {
 		);
 	}
 
-	context.contentComponent = createElement( SharingButtons );
+	const isJetpack = isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } );
+
+	context.contentComponent = createElement( isJetpack ? SharingButtons : SettingsSharing );
 
 	next();
 };
