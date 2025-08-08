@@ -1,3 +1,4 @@
+import { TextareaControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import type { AddDNSRecordFormData, DNSRecordConfig } from './types';
 
@@ -11,11 +12,24 @@ export const TXTRecordConfig: DNSRecordConfig = {
 		},
 		{
 			id: 'data',
-			type: 'text',
 			label: __( 'Text' ),
 			placeholder: 'e.g. "v=spf1 include:example.com ~all"',
 			isValid: {
 				required: true,
+			},
+			Edit: ( { data, field, onChange, hideLabelFromVision } ) => {
+				const { id, getValue } = field;
+
+				return (
+					<TextareaControl
+						__nextHasNoMarginBottom
+						value={ getValue( { item: data } ) || '' }
+						onChange={ ( value ) => onChange( { [ id ]: value } ) }
+						placeholder={ field.placeholder }
+						label={ hideLabelFromVision ? undefined : field.label }
+						rows={ 4 }
+					/>
+				);
 			},
 		},
 		{
