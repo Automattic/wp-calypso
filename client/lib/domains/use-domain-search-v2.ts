@@ -4,7 +4,7 @@ import { useExperiment } from 'calypso/lib/explat';
 
 const isDomainSearchV2Enabled = config.isEnabled( 'domains/ui-redesign' );
 
-const EXPERIMENT_NAME = 'calypso_signup_onboarding_domain_search_redesign_202508';
+const EXPERIMENT_NAME = 'calypso_signup_onboarding_domain_search_redesign_202508_v2';
 
 /**
  * This hook is used to determine if the domain search redesign is enabled for a given flow.
