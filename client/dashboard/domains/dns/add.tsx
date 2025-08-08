@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import {
 	Card,
 	CardBody,
@@ -73,6 +74,7 @@ export default function DomainAddDNS() {
 	const { domainName } = domainRoute.useParams();
 	const mutation = useMutation( domainAddDNSRecordMutation( domainName ) );
 	const { isPending } = mutation;
+	const navigate = useNavigate();
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
@@ -89,6 +91,15 @@ export default function DomainAddDNS() {
 					type: 'snackbar',
 				} );
 			},
+		} );
+	};
+
+	const handleCancel = ( e: React.MouseEvent< HTMLButtonElement > ) => {
+		e.preventDefault();
+
+		navigate( {
+			to: '/domains/$domainName/dns',
+			params: { domainName },
 		} );
 	};
 
@@ -117,10 +128,12 @@ export default function DomainAddDNS() {
 								} }
 							/>
 							<HStack justify="flex-start">
-								<Button variant="primary" type="submit" isBusy={ isPending }>
+								<Button variant="primary" type="submit" isBusy={ isPending } disabled={ isPending }>
 									{ __( 'Add DNS record' ) }
 								</Button>
-								<Button type="button">{ __( 'Cancel' ) }</Button>
+								<Button type="button" disabled={ isPending } onClick={ handleCancel }>
+									{ __( 'Cancel' ) }
+								</Button>
 							</HStack>
 						</VStack>
 					</form>
