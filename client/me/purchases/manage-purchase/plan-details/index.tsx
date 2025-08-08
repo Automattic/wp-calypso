@@ -34,8 +34,8 @@ export interface PurchasePlanDetailsConnectedProps {
 
 export interface PurchasePlanDetailsProps {
 	purchaseId: number;
-	isPlaceholder: boolean;
-	isProductOwner: boolean;
+	isPlaceholder?: boolean;
+	isProductOwner?: boolean;
 }
 
 export class PurchasePlanDetails extends Component<

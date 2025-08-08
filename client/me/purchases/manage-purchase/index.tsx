@@ -1262,7 +1262,7 @@ class ManagePurchase extends Component<
 						}
 					/>
 				</Card>
-				<PurchasePlanDetails isPlaceholder />
+				<PurchasePlanDetails isPlaceholder purchaseId={ 0 } />
 				<VerticalNavItem isPlaceholder />
 				<VerticalNavItem isPlaceholder />
 			</Fragment>
@@ -1405,7 +1405,7 @@ class ManagePurchase extends Component<
 				{ ! isPartnerPurchase( purchase ) && (
 					<PurchasePlanDetails
 						purchaseId={ this.props.purchaseId }
-						isProductOwner={ isProductOwner }
+						isProductOwner={ isProductOwner ?? undefined }
 					/>
 				) }
 				{ isProductOwner && ! purchase.isLocked && (
