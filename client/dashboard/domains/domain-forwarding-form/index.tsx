@@ -162,7 +162,7 @@ export default function DomainForwardingForm( { isEdit = false }: DomainForwardi
 	);
 
 	const form = {
-		type: 'regular',
+		type: 'regular' as const,
 		fields:
 			formData.sourceType === 'subdomain'
 				? [ 'sourceType', 'subdomain', 'targetUrl', 'redirectType', 'pathForwarding' ]
