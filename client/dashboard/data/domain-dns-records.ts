@@ -1,17 +1,24 @@
 import wpcom from 'calypso/lib/wp';
 
-export interface DNSRecord {
-	type: string;
+export type DNSRecordType = 'A' | 'AAAA' | 'CAA' | 'CNAME' | 'MX' | 'NS' | 'SRV' | 'TXT';
+
+export type DNSRecord = {
+	domain: string;
+	id: string;
 	name: string;
-	data: string;
-	ttl: number;
-}
+	protected_field: boolean;
+	type: DNSRecordType;
+	target?: string;
+	data?: string;
+	weight?: number;
+	port?: number;
+	aux?: number;
+	service?: string;
+	protocol?: string;
+};
 
 export type AddDNSRecordResponse = {
-	data?: {
-		records: DNSRecord[];
-	} | null;
-	status: string;
+	records: DNSRecord[];
 };
 
 export async function addDNSRecord(
