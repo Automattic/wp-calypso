@@ -34,6 +34,7 @@ export default function StagingSiteSyncDropdown( {
 	className,
 	onSyncStart = () => {},
 }: StagingSiteSyncDropdownProps ) {
+	const [ hasSyncStarted, setHasSyncStarted ] = useState< boolean >( false );
 	const [ isModalOpen, setIsModalOpen ] = useState< boolean >( false );
 	const [ syncDirection, setSyncDirection ] = useState< StagingSiteSyncDirection >( 'pull' );
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
@@ -52,7 +53,7 @@ export default function StagingSiteSyncDropdown( {
 		refetchIntervalInBackground: true,
 	} );
 
-	const isSyncing = isStagingSiteSyncing( stagingSiteSyncState );
+	const isSyncing = isStagingSiteSyncing( stagingSiteSyncState ) || hasSyncStarted;
 
 	const pullLabel =
 		environment === 'staging' ? __( 'Pull from Production' ) : __( 'Pull from Staging' );
@@ -68,9 +69,15 @@ export default function StagingSiteSyncDropdown( {
 		setIsModalOpen( false );
 	};
 
-	const handleSyncStart = () => {
-		fetchStagingSiteSyncState();
-		onSyncStart();
+	const handleSyncStart = async ( hasSyncStarted: boolean ) => {
+		if ( hasSyncStarted ) {
+			onSyncStart();
+		} else {
+			// Once the sync started completes, we can read state from the server
+			await fetchStagingSiteSyncState();
+		}
+		// The state must be updated after awaiting for the fetch to complete
+		setHasSyncStarted( hasSyncStarted );
 	};
 
 	// The sync is not allowed if the staging site is in a transition or is deleting.

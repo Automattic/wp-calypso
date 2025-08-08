@@ -109,7 +109,7 @@ interface SyncModalProps {
 	environment: 'production' | 'staging';
 	productionSiteId: number;
 	stagingSiteId: number;
-	onSyncStart: () => void;
+	onSyncStart: ( hasSyncStarted: boolean ) => void;
 }
 
 interface EnvironmentConfig {
@@ -254,7 +254,6 @@ export default function SyncModal( {
 
 	const { pullFromStaging } = usePullFromStagingMutation( productionSiteId, stagingSiteId, {
 		onSuccess: ( _, options ) => {
-			onSyncStart();
 			dispatch(
 				recordTracksEvent( 'calypso_hosting_configuration_staging_site_pull_success', options )
 			);
@@ -268,11 +267,13 @@ export default function SyncModal( {
 			);
 			// setSyncError( error.code );
 		},
+		onSettled: () => {
+			onSyncStart( false );
+		},
 	} );
 
 	const { pushToStaging } = usePushToStagingMutation( productionSiteId, stagingSiteId, {
 		onSuccess: ( _, options ) => {
-			onSyncStart();
 			dispatch(
 				recordTracksEvent( 'calypso_hosting_configuration_staging_site_push_success', options )
 			);
@@ -285,6 +286,9 @@ export default function SyncModal( {
 				} )
 			);
 			// setSyncError( error.code );
+		},
+		onSettled: () => {
+			onSyncStart( false );
 		},
 	} );
 
@@ -316,6 +320,8 @@ export default function SyncModal( {
 			include_paths = '';
 			exclude_paths = '';
 		}
+
+		onSyncStart( true );
 
 		if (
 			( syncType === 'pull' && environment === 'production' ) ||
