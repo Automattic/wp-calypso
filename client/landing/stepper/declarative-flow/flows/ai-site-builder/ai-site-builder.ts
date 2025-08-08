@@ -2,6 +2,7 @@ import { Onboard } from '@automattic/data-stores';
 import { getAssemblerDesign } from '@automattic/design-picker';
 import { addPlanToCart, addProductsToCart, AI_SITE_BUILDER_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import { isWithinBreakpoint, getWindowInnerWidth } from '@automattic/viewport';
 import { resolveSelect, useDispatch as useWpDataDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
@@ -10,6 +11,7 @@ import { useAddBlogStickerMutation } from 'calypso/blocks/blog-stickers/use-add-
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useDispatch } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
@@ -68,6 +70,15 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 				window.sessionStorage.setItem( 'stored_ai_prompt', prompt );
 			}
 		}, [ prompt ] );
+
+		useEffect( () => {
+			if ( ! isWithinBreakpoint( '<782px' ) ) {
+				recordTracksEvent( 'calypso_big_sky_incompatible_screen', {
+					flow: AI_SITE_BUILDER_FLOW,
+					size: getWindowInnerWidth(),
+				} );
+			}
+		}, [] );
 	},
 	initialize,
 	useStepNavigation( _, navigate ) {
