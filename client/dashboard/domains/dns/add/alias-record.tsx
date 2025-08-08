@@ -26,9 +26,14 @@ export const AliasRecordConfig: DNSRecordConfig = {
 		type: 'regular',
 		fields: [ 'data', 'ttl' ],
 	},
-	transformData: ( data: AddDNSRecordFormData ) => ( {
-		type: 'ALIAS',
-		data: data.data,
-		ttl: data.ttl,
-	} ),
+	transformData: ( data: AddDNSRecordFormData ) => {
+		// Remove trailing dot from the hostname
+		const hostName = data.data.endsWith( '.' ) ? data.data.slice( 0, -1 ) : data.data;
+
+		return {
+			type: 'ALIAS',
+			data: hostName + '.', // we need a FQDN here
+			ttl: data.ttl,
+		};
+	},
 };

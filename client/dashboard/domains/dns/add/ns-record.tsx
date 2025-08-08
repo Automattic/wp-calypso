@@ -32,10 +32,15 @@ export const NSRecordConfig: DNSRecordConfig = {
 		type: 'regular',
 		fields: [ 'name', 'data', 'ttl' ],
 	},
-	transformData: ( data: AddDNSRecordFormData ) => ( {
-		type: 'NS',
-		name: data.name,
-		data: data.data,
-		ttl: data.ttl,
-	} ),
+	transformData: ( data: AddDNSRecordFormData ) => {
+		// Remove trailing dot from the hostname
+		const hostName = data.data.endsWith( '.' ) ? data.data.slice( 0, -1 ) : data.data;
+
+		return {
+			type: 'NS',
+			name: data.name,
+			data: hostName + '.', // we need a FQDN here
+			ttl: data.ttl,
+		};
+	},
 };

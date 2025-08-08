@@ -35,10 +35,15 @@ export const CNAMERecordConfig: DNSRecordConfig = {
 		type: 'regular',
 		fields: [ 'name', 'data', 'ttl' ],
 	},
-	transformData: ( data: AddDNSRecordFormData ) => ( {
-		type: 'CNAME',
-		name: data.name,
-		data: data.data,
-		ttl: data.ttl,
-	} ),
+	transformData: ( data: AddDNSRecordFormData ) => {
+		// Remove trailing dot from the hostname
+		const hostName = data.data.endsWith( '.' ) ? data.data.slice( 0, -1 ) : data.data;
+
+		return {
+			type: 'CNAME',
+			name: data.name,
+			data: hostName + '.', // we need a FQDN here
+			ttl: data.ttl,
+		};
+	},
 };

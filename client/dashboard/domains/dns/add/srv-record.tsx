@@ -78,15 +78,20 @@ export const SRVRecordConfig: DNSRecordConfig = {
 		type: 'regular',
 		fields: [ 'name', 'service', 'protocol', 'aux', 'weight', 'target', 'port', 'ttl' ],
 	},
-	transformData: ( data: AddDNSRecordFormData ) => ( {
-		type: 'SRV',
-		name: data.name,
-		service: data.service,
-		aux: data.aux,
-		weight: data.weight,
-		target: data.target,
-		port: data.port,
-		protocol: data.protocol,
-		ttl: data.ttl,
-	} ),
+	transformData: ( data: AddDNSRecordFormData ) => {
+		// Remove trailing dot from the hostname
+		const target = data.target.endsWith( '.' ) ? data.target.slice( 0, -1 ) : data.target;
+
+		return {
+			type: 'SRV',
+			name: data.name,
+			service: data.service,
+			aux: data.aux,
+			weight: data.weight,
+			target: target + '.', // we need a FQDN here
+			port: data.port,
+			protocol: data.protocol,
+			ttl: data.ttl,
+		};
+	},
 };

@@ -41,11 +41,16 @@ export const MXRecordConfig: DNSRecordConfig = {
 		type: 'regular',
 		fields: [ 'name', 'data', 'aux', 'ttl' ],
 	},
-	transformData: ( data: AddDNSRecordFormData ) => ( {
-		type: 'MX',
-		name: data.name,
-		data: data.data,
-		aux: data.aux,
-		ttl: data.ttl,
-	} ),
+	transformData: ( data: AddDNSRecordFormData ) => {
+		// Remove trailing dot from the hostname
+		const hostName = data.data.endsWith( '.' ) ? data.data.slice( 0, -1 ) : data.data;
+
+		return {
+			type: 'MX',
+			name: data.name,
+			data: hostName + '.', // we need a FQDN here
+			aux: data.aux,
+			ttl: data.ttl,
+		};
+	},
 };

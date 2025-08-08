@@ -8,11 +8,9 @@ export const ARecordConfig: DNSRecordConfig = {
 			type: 'text',
 			label: __( 'Name (optional)' ),
 			placeholder: 'Enter subdomain',
-			isValid: {
-				required: true,
-			},
 		},
 		{
+			// TODO: Add validation for IPv4 address
 			id: 'data',
 			type: 'text',
 			label: __( 'Points to' ),
