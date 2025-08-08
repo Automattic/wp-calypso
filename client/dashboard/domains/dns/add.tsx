@@ -21,25 +21,6 @@ import {
 	type AddDNSRecordFormData,
 } from './add/index';
 
-const typeFields: Field< DNSRecordTypeFormData >[] = [
-	{
-		id: 'type',
-		label: __( 'Type' ),
-		Edit: 'select',
-		elements: [
-			{ label: __( 'A' ), value: 'A' },
-			{ label: __( 'AAAA' ), value: 'AAAA' },
-			{ label: __( 'ALIAS' ), value: 'ALIAS' },
-			{ label: __( 'CAA' ), value: 'CAA' },
-			{ label: __( 'CNAME' ), value: 'CNAME' },
-			{ label: __( 'MX' ), value: 'MX' },
-			{ label: __( 'NS' ), value: 'NS' },
-			{ label: __( 'SRV' ), value: 'SRV' },
-			{ label: __( 'TXT' ), value: 'TXT' },
-		],
-	},
-];
-
 const typeForm = {
 	type: 'regular' as const,
 	fields: [ 'type' ],
@@ -56,13 +37,35 @@ export default function DomainAddDNS() {
 		ttl: 3600,
 		flags: 0, // CAA
 		tag: 'issue', // CAA
-		aux: 0, // MX, SRV
-		service: '', // SRV
-		protocol: '', // SRV
-		weight: 0, // SRV
+		aux: 10, // MX, SRV
+		service: 'sip', // SRV
+		protocol: '_tcp', // SRV
+		weight: 10, // SRV
 		target: '', // SRV
-		port: 0, // SRV
+		port: 5060, // SRV
 	} );
+
+	const config = DNS_RECORD_CONFIGS[ typeFormData.type ];
+
+	const typeFields: Field< DNSRecordTypeFormData >[] = [
+		{
+			id: 'type',
+			label: __( 'Type' ),
+			Edit: 'select',
+			elements: [
+				{ label: __( 'A' ), value: 'A' },
+				{ label: __( 'AAAA' ), value: 'AAAA' },
+				{ label: __( 'ALIAS' ), value: 'ALIAS' },
+				{ label: __( 'CAA' ), value: 'CAA' },
+				{ label: __( 'CNAME' ), value: 'CNAME' },
+				{ label: __( 'MX' ), value: 'MX' },
+				{ label: __( 'NS' ), value: 'NS' },
+				{ label: __( 'SRV' ), value: 'SRV' },
+				{ label: __( 'TXT' ), value: 'TXT' },
+			],
+			description: config.description,
+		},
+	];
 
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { domainName } = domainRoute.useParams();
@@ -72,7 +75,6 @@ export default function DomainAddDNS() {
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
 
-		const config = DNS_RECORD_CONFIGS[ typeFormData.type ];
 		const formattedData = config.transformData( formData );
 
 		mutation.mutate( formattedData, {
@@ -87,8 +89,6 @@ export default function DomainAddDNS() {
 			},
 		} );
 	};
-
-	const config = DNS_RECORD_CONFIGS[ typeFormData.type ];
 
 	return (
 		<PageLayout size="small" header={ <PageHeader title="Add a new DNS record" /> }>

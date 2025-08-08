@@ -2,6 +2,9 @@ import { __ } from '@wordpress/i18n';
 import type { AddDNSRecordFormData, DNSRecordConfig } from './types';
 
 export const SRVRecordConfig: DNSRecordConfig = {
+	description: __(
+		'SRV (service) records define the information to access certain internet services.'
+	),
 	fields: [
 		{
 			id: 'name',

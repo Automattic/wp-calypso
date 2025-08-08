@@ -2,6 +2,9 @@ import { __ } from '@wordpress/i18n';
 import type { AddDNSRecordFormData, DNSRecordConfig } from './types';
 
 export const AliasRecordConfig: DNSRecordConfig = {
+	description: __(
+		'An ALIAS record is a non-standard DNS record that is used to direct your domain to the target domain. The IP address of the target is resolved on the DNS server.'
+	),
 	fields: [
 		{
 			id: 'data',

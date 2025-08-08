@@ -2,6 +2,9 @@ import { __ } from '@wordpress/i18n';
 import type { AddDNSRecordFormData, DNSRecordConfig } from './types';
 
 export const MXRecordConfig: DNSRecordConfig = {
+	description: __(
+		'MX (mail exchange) records are used to route emails to the correct mail servers.'
+	),
 	fields: [
 		{
 			id: 'name',

@@ -2,6 +2,9 @@ import { __ } from '@wordpress/i18n';
 import type { AddDNSRecordFormData, DNSRecordConfig } from './types';
 
 export const ARecordConfig: DNSRecordConfig = {
+	description: __(
+		'An A record is used to point a domain (e.g. example.com) or a subdomain (e.g. subdomain.example.com) to an IP address (192.168.1.1).'
+	),
 	fields: [
 		{
 			id: 'name',

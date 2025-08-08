@@ -22,6 +22,7 @@ export type AddDNSRecordFormData = {
 };
 
 export type DNSRecordConfig = {
+	description: string;
 	fields: Field< AddDNSRecordFormData >[];
 	form: {
 		type: 'regular';

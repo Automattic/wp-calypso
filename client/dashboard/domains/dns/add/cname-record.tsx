@@ -2,6 +2,9 @@ import { __ } from '@wordpress/i18n';
 import type { AddDNSRecordFormData, DNSRecordConfig } from './types';
 
 export const CNAMERecordConfig: DNSRecordConfig = {
+	description: __(
+		'CNAME (canonical name) records are typically used to link a subdomain (e.g. subdomain.example.com) to a domain (e.g. example.com).'
+	),
 	fields: [
 		{
 			id: 'name',

@@ -2,6 +2,9 @@ import { __ } from '@wordpress/i18n';
 import type { AddDNSRecordFormData, DNSRecordConfig } from './types';
 
 export const NSRecordConfig: DNSRecordConfig = {
+	description: __(
+		'NS (name server) records are used to delegate the authoritative DNS servers for a subdomain.'
+	),
 	fields: [
 		{
 			id: 'name',
