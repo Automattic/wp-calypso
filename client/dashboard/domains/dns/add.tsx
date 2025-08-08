@@ -32,7 +32,7 @@ export default function DomainAddDNS() {
 		type: 'A',
 	} );
 
-	const [ formData, setFormData ] = useState< AddDNSRecordFormData >( {
+	const defaultFormData = {
 		name: '',
 		data: '',
 		ttl: 3600,
@@ -44,7 +44,8 @@ export default function DomainAddDNS() {
 		weight: 10, // SRV
 		target: '', // SRV
 		port: 5060, // SRV
-	} );
+	};
+	const [ formData, setFormData ] = useState< AddDNSRecordFormData >( defaultFormData );
 
 	const config = DNS_RECORD_CONFIGS[ typeFormData.type ];
 
@@ -103,6 +104,8 @@ export default function DomainAddDNS() {
 								form={ typeForm }
 								onChange={ ( edits: Partial< DNSRecordTypeFormData > ) => {
 									setTypeFormData( ( data ) => ( { ...data, ...edits } ) );
+									// Reset form data when changing record type
+									setFormData( defaultFormData );
 								} }
 							/>
 							<DataForm< AddDNSRecordFormData >
