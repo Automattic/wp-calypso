@@ -1,11 +1,4 @@
-import {
-	GROUP_WPCOM,
-	PLAN_BUSINESS,
-	TYPE_BUSINESS,
-	WPCOM_FEATURES_SCAN,
-	findSimilarPlansKeys,
-	getPlan,
-} from '@automattic/calypso-products';
+import { PLAN_BUSINESS, WPCOM_FEATURES_SCAN, getPlan } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -27,7 +20,6 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isSimpleSite } from 'calypso/state/sites/selectors';
-import getSitePlanSlug from 'calypso/state/sites/selectors/get-site-plan-slug';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './style.scss';
 
@@ -97,15 +89,6 @@ const ScanUpsellBody = () => {
 		siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN )
 	);
 
-	// Get current plan to preserve the term
-	const currentPlanSlug = useSelector( ( state ) => getSitePlanSlug( state, siteId ) );
-	const currentPlan = currentPlanSlug ? getPlan( currentPlanSlug ) : null;
-
-	// Find Business plan with the same term as current plan
-	const businessPlanSlug = currentPlan
-		? findSimilarPlansKeys( currentPlanSlug, { type: TYPE_BUSINESS, group: GROUP_WPCOM } )[ 0 ]
-		: PLAN_BUSINESS;
-
 	// Show Business plan upsell for simple/atomic sites without scan feature
 	const shouldShowBusinessUpsell = ( isSimple || isAtomic ) && ! hasScanFeature;
 
@@ -136,15 +119,12 @@ const ScanUpsellBody = () => {
 					<PromoCardCTA
 						cta={ {
 							text: translate( 'Upgrade to %(planName)s Plan', {
-								args: { planName: getPlan( businessPlanSlug )?.getTitle() ?? '' },
+								args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
 							} ),
 							action: {
-								url: addQueryArgs(
-									`/checkout/${ siteSlug }/${ getPlan( businessPlanSlug )?.getStoreSlug() }`,
-									{
-										redirect_to: postCheckoutUrl,
-									}
-								),
+								url: addQueryArgs( `/checkout/${ siteSlug }/business`, {
+									redirect_to: postCheckoutUrl,
+								} ),
 								onClick: onUpgradeClick,
 								selfTarget: true,
 							},
