@@ -6,7 +6,7 @@ import WPCOMScanUpsellPage from 'calypso/my-sites/scan/wpcom-upsell';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-export function wpcomJetpackScanAtomicTransfer() {
+export function wpcomJetpackScanAtomicTransfer(): ( context: any, next: () => void ) => void {
 	return ( context, next ) => {
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );
