@@ -1,8 +1,10 @@
+import { useMyDomainInputMode } from '@automattic/domains-table/src/utils/constants';
 import {
 	domainManagementDNS,
 	domainManagementEditContactInfo,
 	domainManagementLink,
 	domainMappingSetup,
+	domainUseMyDomain,
 } from '@automattic/domains-table/src/utils/paths';
 import { useMutation } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
@@ -21,6 +23,7 @@ import {
 	canSetAsPrimary,
 	getDomainSiteSlug,
 } from '../../utils/domain';
+import { isTransferrableToWpcom } from '../../utils/domain-types';
 import type { DomainSummary, Site, User } from '../../data/types';
 import type { Action } from '@wordpress/dataviews';
 
@@ -158,8 +161,18 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				id: 'transfer-domain',
 				label: __( 'Transfer to WordPress.com' ),
 				supportsBulk: false,
-				callback: () => {},
-				isEligible: () => false,
+				callback: ( items: DomainSummary[] ) => {
+					const domain = items[ 0 ];
+					const siteSlug = getDomainSiteSlug( domain );
+					window.location.pathname = domainUseMyDomain(
+						siteSlug,
+						domain.domain,
+						useMyDomainInputMode.transferDomain
+					);
+				},
+				isEligible: ( item: DomainSummary ) => {
+					return isTransferrableToWpcom( item );
+				},
 			},
 			{
 				id: 'connect-to-site',
