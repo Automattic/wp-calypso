@@ -1,39 +1,41 @@
 import page from '@automattic/calypso-router';
 import { notFound, makeLayout, render as clientRender } from 'calypso/controller';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import wpcomAtomicTransfer from 'calypso/lib/jetpack/wpcom-atomic-transfer';
 import wrapInSiteOffsetProvider from 'calypso/lib/wrap-in-site-offset';
 import {
-	backupDownload,
-	backupRestore,
-	backupClone,
-	backupContents,
-	backupGranularRestore,
-	backups,
 	showJetpackIsDisconnected,
 	showNotAuthorizedForNonAdmins,
 	showUpsellIfNoBackup,
 	showUnavailableForVaultPressSites,
 	showUnavailableForMultisites,
+	backups,
+	backupDownload,
+	backupRestore,
+	backupClone,
+	backupContents,
+	backupGranularRestore,
 } from 'calypso/my-sites/backup/controller';
-import WPCOMUpsellPage from 'calypso/my-sites/backup/wpcom-backup-upsell';
+import { wpcomJetpackBackupAtomicTransfer } from 'calypso/my-sites/backup/wpcom-atomic-transfer';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
-	backupMainPath,
-	backupRestorePath,
 	backupDownloadPath,
+	backupRestorePath,
 	backupClonePath,
+	backupMainPath,
 	backupContentsPath,
 	backupGranularRestorePath,
 } from './paths';
+import WPCOMUpsellPage from './wpcom-upsell';
 
 const notFoundIfNotEnabled = ( context, next ) => {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 	const showJetpackSection = isJetpackSectionEnabledForSite( state, siteId );
 
+	// Only show 404 if not in Jetpack Cloud AND Jetpack section is not enabled
+	// Allow WordPress.com sites to access backup features (they'll see upsell)
 	if ( ! isJetpackCloud() && ! showJetpackSection ) {
 		return notFound( context, next );
 	}
@@ -42,6 +44,9 @@ const notFoundIfNotEnabled = ( context, next ) => {
 };
 
 export default function () {
+	/* handles /backups, see `backupMainPath` */
+	page( backupMainPath(), siteSelection, sites, makeLayout, clientRender );
+
 	/* handles /backup/:site/download/:rewindId, see `backupDownloadPath` */
 	page(
 		backupDownloadPath( ':site', ':rewindId' ),
@@ -49,7 +54,7 @@ export default function () {
 		navigation,
 		backupDownload,
 		wrapInSiteOffsetProvider,
-		wpcomAtomicTransfer( WPCOMUpsellPage ),
+		wpcomJetpackBackupAtomicTransfer( WPCOMUpsellPage ),
 		showUnavailableForVaultPressSites,
 		showJetpackIsDisconnected,
 		showUnavailableForMultisites,
@@ -66,7 +71,7 @@ export default function () {
 		navigation,
 		backupRestore,
 		wrapInSiteOffsetProvider,
-		wpcomAtomicTransfer( WPCOMUpsellPage ),
+		wpcomJetpackBackupAtomicTransfer( WPCOMUpsellPage ),
 		showUnavailableForVaultPressSites,
 		showJetpackIsDisconnected,
 		showUnavailableForMultisites,
@@ -83,7 +88,7 @@ export default function () {
 		navigation,
 		backupClone,
 		wrapInSiteOffsetProvider,
-		wpcomAtomicTransfer( WPCOMUpsellPage ),
+		wpcomJetpackBackupAtomicTransfer( WPCOMUpsellPage ),
 		showUnavailableForVaultPressSites,
 		showJetpackIsDisconnected,
 		showUnavailableForMultisites,
@@ -101,7 +106,7 @@ export default function () {
 		backups,
 		wrapInSiteOffsetProvider,
 		showUpsellIfNoBackup,
-		wpcomAtomicTransfer( WPCOMUpsellPage ),
+		wpcomJetpackBackupAtomicTransfer( WPCOMUpsellPage ),
 		showUnavailableForVaultPressSites,
 		showJetpackIsDisconnected,
 		showUnavailableForMultisites,
@@ -118,7 +123,7 @@ export default function () {
 		navigation,
 		backupContents,
 		wrapInSiteOffsetProvider,
-		wpcomAtomicTransfer( WPCOMUpsellPage ),
+		wpcomJetpackBackupAtomicTransfer( WPCOMUpsellPage ),
 		showUnavailableForVaultPressSites,
 		showJetpackIsDisconnected,
 		showUnavailableForMultisites,
@@ -135,7 +140,7 @@ export default function () {
 		navigation,
 		backupGranularRestore,
 		wrapInSiteOffsetProvider,
-		wpcomAtomicTransfer( WPCOMUpsellPage ),
+		wpcomJetpackBackupAtomicTransfer( WPCOMUpsellPage ),
 		showUnavailableForVaultPressSites,
 		showJetpackIsDisconnected,
 		showUnavailableForMultisites,
@@ -144,7 +149,4 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
-
-	/* handles /backups, see `backupMainPath` */
-	page( backupMainPath(), siteSelection, sites, makeLayout, clientRender );
 }
