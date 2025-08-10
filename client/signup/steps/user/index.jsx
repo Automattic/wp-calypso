@@ -483,6 +483,7 @@ export class UserStep extends Component {
 			userLoggedIn,
 			isBlazePro,
 			isWCCOM,
+			isCrowdsignal,
 		} = this.props;
 
 		if ( userLoggedIn ) {
@@ -492,8 +493,27 @@ export class UserStep extends Component {
 			return translate( 'Is this you?' );
 		}
 
-		if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
-			return translate( 'Sign up for Crowdsignal with WordPress.com' );
+		/**
+		 * BEGIN: Unified create account
+		 */
+
+		// TODO clk This will encompass all unified OAuth2 clients,
+		// similar to get-header-text in wp-login (potentially the two being merged too)
+		if ( oauth2Client && isCrowdsignal ) {
+			const clientName = oauth2Client.name;
+
+			return translate( 'Sign up for {{span}}%(clientName)s{{/span}} with WordPress.com', {
+				args: { clientName },
+				components: { span: <span className="wp-login__one-login-header-client-name" /> },
+			} );
+		}
+
+		if ( isA4AOAuth2Client( oauth2Client ) ) {
+			return translate( 'Sign up to Automattic for Agencies with WordPress.com' );
+		}
+
+		if ( isBlazeProOAuth2Client( oauth2Client ) ) {
+			return translate( 'Sign up to Blaze Pro with WordPress.com' );
 		}
 
 		if ( isWCCOM ) {
@@ -508,6 +528,10 @@ export class UserStep extends Component {
 			);
 		}
 
+		/**
+		 * END: Unified create account
+		 */
+
 		if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
 			return (
 				<div className={ clsx( 'signup-form__wrapper' ) }>
@@ -515,14 +539,6 @@ export class UserStep extends Component {
 					<h3>{ translate( 'Sign up to Jetpack.com with a WordPress.com account.' ) }</h3>
 				</div>
 			);
-		}
-
-		if ( isA4AOAuth2Client( oauth2Client ) ) {
-			return translate( 'Sign up to Automattic for Agencies with WordPress.com' );
-		}
-
-		if ( isBlazeProOAuth2Client( oauth2Client ) ) {
-			return translate( 'Sign up to Blaze Pro with WordPress.com' );
 		}
 
 		if ( isPartnerPortalOAuth2Client( oauth2Client ) ) {
