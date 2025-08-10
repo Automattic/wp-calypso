@@ -26,25 +26,25 @@ const typeForm = {
 	fields: [ 'type' ],
 };
 
+const defaultFormData = {
+	type: 'A' as DNSRecordType,
+	name: '',
+	data: '',
+	ttl: 3600,
+	flags: 0, // CAA
+	tag: 'issue', // CAA
+	aux: 10, // MX, SRV
+	service: 'sip', // SRV
+	protocol: '_tcp', // SRV
+	weight: 10, // SRV
+	target: '', // SRV
+	port: 5060, // SRV
+};
+
 export default function DomainAddDNS() {
 	const [ typeFormData, setTypeFormData ] = useState< DNSRecordTypeFormData >( {
 		type: 'A',
 	} );
-
-	const defaultFormData = {
-		type: 'A' as DNSRecordType,
-		name: '',
-		data: '',
-		ttl: 3600,
-		flags: 0, // CAA
-		tag: 'issue', // CAA
-		aux: 10, // MX, SRV
-		service: 'sip', // SRV
-		protocol: '_tcp', // SRV
-		weight: 10, // SRV
-		target: '', // SRV
-		port: 5060, // SRV
-	};
 	const [ formData, setFormData ] = useState< DNSRecordFormData >( defaultFormData );
 
 	const config = DNS_RECORD_CONFIGS[ typeFormData.type ];
@@ -69,11 +69,11 @@ export default function DomainAddDNS() {
 		},
 	];
 
+	const navigate = useNavigate();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { domainName } = domainRoute.useParams();
 	const mutation = useMutation( domainAddDNSRecordMutation( domainName ) );
 	const { isPending } = mutation;
-	const navigate = useNavigate();
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
