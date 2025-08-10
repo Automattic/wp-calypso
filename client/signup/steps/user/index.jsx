@@ -490,6 +490,7 @@ export class UserStep extends Component {
 			isVIPClient,
 			isA4A,
 			isJetpackCloud,
+			isStudioApp,
 		} = this.props;
 
 		if ( userLoggedIn ) {
@@ -507,7 +508,12 @@ export class UserStep extends Component {
 		// similar to get-header-text in wp-login (potentially the two being merged too)
 		if (
 			( oauth2Client &&
-				( isCrowdsignal || isVIPClient || isA4A || isBlazePro || isJetpackCloud ) ) ||
+				( isCrowdsignal ||
+					isVIPClient ||
+					isA4A ||
+					isBlazePro ||
+					isJetpackCloud ||
+					isStudioApp ) ) ||
 			isAkismet
 		) {
 			let clientName = oauth2Client?.name;
@@ -531,6 +537,14 @@ export class UserStep extends Component {
 					components: { span: <span className="wp-login__one-login-header-client-name" /> },
 				} ),
 				oldCopy: translate( 'Create your account' ),
+			} );
+		}
+
+		if ( isStudioApp ) {
+			const clientName = 'Studio';
+			return translate( 'Sign up for {{span}}%(client)s{{/span}} with WordPress.com', {
+				args: { client: clientName },
+				components: { span: <span className="wp-login__one-login-header-client-name" /> },
 			} );
 		}
 
