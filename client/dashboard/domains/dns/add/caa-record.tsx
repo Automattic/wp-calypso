@@ -15,9 +15,6 @@ export const CAARecordConfig: DNSRecordConfig = {
 			type: 'integer',
 			label: __( 'Flag' ),
 			placeholder: 'e.g. 0',
-			isValid: {
-				required: true,
-			},
 		},
 		{
 			id: 'tag',
@@ -35,18 +32,12 @@ export const CAARecordConfig: DNSRecordConfig = {
 			type: 'text',
 			label: __( 'Value' ),
 			placeholder: 'e.g. "letsencrypt.org"',
-			isValid: {
-				required: true,
-			},
 		},
 		{
 			id: 'ttl',
 			type: 'integer',
 			label: __( 'TTL (time to live)' ),
 			placeholder: 'e.g. 3600',
-			isValid: {
-				required: true,
-			},
 		},
 	],
 	form: {

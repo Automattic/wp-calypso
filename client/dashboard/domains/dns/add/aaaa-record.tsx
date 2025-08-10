@@ -14,18 +14,12 @@ export const AAAARecordConfig: DNSRecordConfig = {
 			type: 'text',
 			label: __( 'Points to' ),
 			placeholder: 'e.g. 2001:500:84::b',
-			isValid: {
-				required: true,
-			},
 		},
 		{
 			id: 'ttl',
 			type: 'integer',
 			label: __( 'TTL (time to live)' ),
 			placeholder: 'e.g. 3600',
-			isValid: {
-				required: true,
-			},
 		},
 	],
 	form: {

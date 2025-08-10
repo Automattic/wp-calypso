@@ -18,18 +18,12 @@ export const ARecordConfig: DNSRecordConfig = {
 			type: 'text',
 			label: __( 'Points to' ),
 			placeholder: 'e.g. 123.45.67.89',
-			isValid: {
-				required: true,
-			},
 		},
 		{
 			id: 'ttl',
 			type: 'integer',
 			label: __( 'TTL (time to live)' ),
 			placeholder: 'e.g. 3600',
-			isValid: {
-				required: true,
-			},
 		},
 	],
 	form: {

@@ -18,9 +18,6 @@ export const SRVRecordConfig: DNSRecordConfig = {
 			type: 'text',
 			label: __( 'Service' ),
 			placeholder: 'e.g. sip',
-			isValid: {
-				required: true,
-			},
 		},
 		{
 			id: 'protocol',
@@ -37,45 +34,30 @@ export const SRVRecordConfig: DNSRecordConfig = {
 			type: 'integer',
 			label: __( 'Priority' ),
 			placeholder: 'e.g. 10',
-			isValid: {
-				required: true,
-			},
 		},
 		{
 			id: 'weight',
 			type: 'integer',
 			label: __( 'Weight' ),
 			placeholder: 'e.g. 10',
-			isValid: {
-				required: true,
-			},
 		},
 		{
 			id: 'target',
 			type: 'text',
 			label: __( 'Target host' ),
 			placeholder: 'e.g. sip.your-provider.com',
-			isValid: {
-				required: true,
-			},
 		},
 		{
 			id: 'port',
 			type: 'integer',
 			label: __( 'Target port' ),
 			placeholder: 'e.g. 5060',
-			isValid: {
-				required: true,
-			},
 		},
 		{
 			id: 'ttl',
 			type: 'integer',
 			label: __( 'TTL (time to live)' ),
 			placeholder: 'e.g. 3600',
-			isValid: {
-				required: true,
-			},
 		},
 	],
 	form: {

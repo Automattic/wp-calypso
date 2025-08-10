@@ -17,18 +17,12 @@ export const NSRecordConfig: DNSRecordConfig = {
 			type: 'text',
 			label: __( 'Host' ),
 			placeholder: 'e.g. ns1.your-provider.com',
-			isValid: {
-				required: true,
-			},
 		},
 		{
 			id: 'ttl',
 			type: 'integer',
 			label: __( 'TTL (time to live)' ),
 			placeholder: 'e.g. 3600',
-			isValid: {
-				required: true,
-			},
 		},
 	],
 	form: {

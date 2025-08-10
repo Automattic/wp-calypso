@@ -17,9 +17,6 @@ export const TXTRecordConfig: DNSRecordConfig = {
 			id: 'data',
 			label: __( 'Text' ),
 			placeholder: 'e.g. "v=spf1 include:example.com ~all"',
-			isValid: {
-				required: true,
-			},
 			Edit: ( { data, field, onChange, hideLabelFromVision } ) => {
 				const { id, getValue } = field;
 
@@ -40,9 +37,6 @@ export const TXTRecordConfig: DNSRecordConfig = {
 			type: 'integer',
 			label: __( 'TTL (time to live)' ),
 			placeholder: 'e.g. 3600',
-			isValid: {
-				required: true,
-			},
 		},
 	],
 	form: {

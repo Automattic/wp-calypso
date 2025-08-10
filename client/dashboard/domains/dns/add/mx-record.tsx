@@ -17,27 +17,18 @@ export const MXRecordConfig: DNSRecordConfig = {
 			type: 'text',
 			label: __( 'Handled by' ),
 			placeholder: 'e.g. mail.your-provider.com',
-			isValid: {
-				required: true,
-			},
 		},
 		{
 			id: 'aux',
 			type: 'integer',
 			label: __( 'Priority' ),
 			placeholder: 'e.g. 10',
-			isValid: {
-				required: true,
-			},
 		},
 		{
 			id: 'ttl',
 			type: 'integer',
 			label: __( 'TTL (time to live)' ),
 			placeholder: 'e.g. 3600',
-			isValid: {
-				required: true,
-			},
 		},
 	],
 	form: {
