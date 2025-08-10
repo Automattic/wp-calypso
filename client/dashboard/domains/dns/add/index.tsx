@@ -17,8 +17,8 @@ import { domainRoute } from '../../../app/routes/domain-routes';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import RequiredSelect from '../../../components/required-select';
-import { DNS_RECORD_CONFIGS } from './types';
-import type { DNSRecordTypeFormData, DNSRecordFormData } from './types';
+import { DNS_RECORD_CONFIGS } from './dns-record-configs';
+import type { DNSRecordTypeFormData, DNSRecordFormData } from './dns-record-configs';
 import type { DNSRecordType } from '../../../data/domain-dns-records';
 
 const typeForm = {

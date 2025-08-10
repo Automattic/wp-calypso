@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import RequiredSelect from '../../../components/required-select';
-import type { DNSRecordFormData, DNSRecordConfig } from './types';
+import type { DNSRecordFormData, DNSRecordConfig } from './dns-record-configs';
 
 export const SRVRecordConfig: DNSRecordConfig = {
 	description: __(

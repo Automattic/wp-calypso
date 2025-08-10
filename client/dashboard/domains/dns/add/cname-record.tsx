@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import type { DNSRecordFormData, DNSRecordConfig } from './types';
+import type { DNSRecordFormData, DNSRecordConfig } from './dns-record-configs';
 
 export const CNAMERecordConfig: DNSRecordConfig = {
 	description: __(
