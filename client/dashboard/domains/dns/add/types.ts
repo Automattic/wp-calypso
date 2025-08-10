@@ -1,5 +1,14 @@
 import { Field } from '@wordpress/dataviews';
-import { DNSRecordType } from '../../../data/domain-dns-records';
+import { DNSRecord, DNSRecordType } from '../../../data/domain-dns-records';
+import { ARecordConfig } from './a-record';
+import { AAAARecordConfig } from './aaaa-record';
+import { AliasRecordConfig } from './alias-record';
+import { CAARecordConfig } from './caa-record';
+import { CNAMERecordConfig } from './cname-record';
+import { MXRecordConfig } from './mx-record';
+import { NSRecordConfig } from './ns-record';
+import { SRVRecordConfig } from './srv-record';
+import { TXTRecordConfig } from './txt-record';
 
 export type DNSRecordTypeFormData = {
 	type: DNSRecordType;
@@ -20,11 +29,24 @@ export type DNSRecordFormData = {
 };
 
 export type DNSRecordConfig = {
-	description: string;
-	fields: Field< AddDNSRecordFormData >[];
+	description?: string;
+	fields: Field< DNSRecordFormData >[];
 	form: {
 		type: 'regular';
 		fields: string[];
 	};
-	transformData: ( data: AddDNSRecordFormData ) => Record< string, any >;
+	// Function to transform the form data into the format expected by the DNS endpoint
+	transformData: ( data: DNSRecordFormData ) => DNSRecord;
+};
+
+export const DNS_RECORD_CONFIGS: Record< DNSRecordType, DNSRecordConfig > = {
+	A: ARecordConfig,
+	AAAA: AAAARecordConfig,
+	ALIAS: AliasRecordConfig,
+	CAA: CAARecordConfig,
+	CNAME: CNAMERecordConfig,
+	MX: MXRecordConfig,
+	NS: NSRecordConfig,
+	SRV: SRVRecordConfig,
+	TXT: TXTRecordConfig,
 };

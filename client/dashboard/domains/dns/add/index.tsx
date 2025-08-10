@@ -17,29 +17,9 @@ import { domainRoute } from '../../../app/routes/domain-routes';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import RequiredSelect from '../../../components/required-select';
-import { DNSRecord, DNSRecordType } from '../../../data/domain-dns-records';
-import { ARecordConfig } from './a-record';
-import { AAAARecordConfig } from './aaaa-record';
-import { AliasRecordConfig } from './alias-record';
-import { CAARecordConfig } from './caa-record';
-import { CNAMERecordConfig } from './cname-record';
-import { MXRecordConfig } from './mx-record';
-import { NSRecordConfig } from './ns-record';
-import { SRVRecordConfig } from './srv-record';
-import { TXTRecordConfig } from './txt-record';
-import type { DNSRecordTypeFormData, AddDNSRecordFormData, DNSRecordConfig } from './types';
-
-const DNS_RECORD_CONFIGS: Record< DNSRecordType, DNSRecordConfig > = {
-	A: ARecordConfig,
-	AAAA: AAAARecordConfig,
-	ALIAS: AliasRecordConfig,
-	CAA: CAARecordConfig,
-	CNAME: CNAMERecordConfig,
-	MX: MXRecordConfig,
-	NS: NSRecordConfig,
-	SRV: SRVRecordConfig,
-	TXT: TXTRecordConfig,
-};
+import { DNS_RECORD_CONFIGS } from './types';
+import type { DNSRecordTypeFormData, DNSRecordFormData } from './types';
+import type { DNSRecordType } from '../../../data/domain-dns-records';
 
 const typeForm = {
 	type: 'regular' as const,
