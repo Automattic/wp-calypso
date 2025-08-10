@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import type { AddDNSRecordFormData, DNSRecordConfig } from './types';
+import type { DNSRecordFormData, DNSRecordConfig } from './types';
 
 export const NSRecordConfig: DNSRecordConfig = {
 	description: __(
@@ -35,7 +35,7 @@ export const NSRecordConfig: DNSRecordConfig = {
 		type: 'regular',
 		fields: [ 'name', 'data', 'ttl' ],
 	},
-	transformData: ( data: AddDNSRecordFormData ) => {
+	transformData: ( data: DNSRecordFormData ) => {
 		// Remove trailing dot from the hostname
 		const hostName = data.data.endsWith( '.' ) ? data.data.slice( 0, -1 ) : data.data;
 

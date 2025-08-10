@@ -65,7 +65,7 @@ export default function DomainAddDNS() {
 		target: '', // SRV
 		port: 5060, // SRV
 	};
-	const [ formData, setFormData ] = useState< DNSRecord >( defaultFormData );
+	const [ formData, setFormData ] = useState< DNSRecordFormData >( defaultFormData );
 
 	const config = DNS_RECORD_CONFIGS[ typeFormData.type ];
 
@@ -138,11 +138,11 @@ export default function DomainAddDNS() {
 									setFormData( defaultFormData );
 								} }
 							/>
-							<DataForm< AddDNSRecordFormData >
+							<DataForm< DNSRecordFormData >
 								data={ formData }
 								fields={ config.fields }
 								form={ config.form }
-								onChange={ ( edits: Partial< AddDNSRecordFormData > ) => {
+								onChange={ ( edits: Partial< DNSRecordFormData > ) => {
 									setFormData( ( data ) => ( { ...data, ...edits } ) );
 								} }
 							/>

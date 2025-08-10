@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import RequiredSelect from '../../../components/required-select';
-import type { AddDNSRecordFormData, DNSRecordConfig } from './types';
+import type { DNSRecordFormData, DNSRecordConfig } from './types';
 
 export const CAARecordConfig: DNSRecordConfig = {
 	fields: [
@@ -53,7 +53,7 @@ export const CAARecordConfig: DNSRecordConfig = {
 		type: 'regular',
 		fields: [ 'name', 'flags', 'tag', 'data', 'ttl' ],
 	},
-	transformData: ( data: AddDNSRecordFormData ) => ( {
+	transformData: ( data: DNSRecordFormData ) => ( {
 		type: 'CAA',
 		name: data.name,
 		flags: data.flags,

@@ -5,8 +5,7 @@ export type DNSRecordTypeFormData = {
 	type: DNSRecordType;
 };
 
-export type AddDNSRecordFormData = {
-	type: DNSRecordType;
+export type DNSRecordFormData = {
 	name: string;
 	data: string;
 	ttl: number;

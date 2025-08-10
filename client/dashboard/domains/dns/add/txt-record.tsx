@@ -1,6 +1,6 @@
 import { TextareaControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import type { AddDNSRecordFormData, DNSRecordConfig } from './types';
+import type { DNSRecordFormData, DNSRecordConfig } from './types';
 
 export const TXTRecordConfig: DNSRecordConfig = {
 	description: __(
@@ -49,7 +49,7 @@ export const TXTRecordConfig: DNSRecordConfig = {
 		type: 'regular',
 		fields: [ 'name', 'data', 'ttl' ],
 	},
-	transformData: ( data: AddDNSRecordFormData ) => ( {
+	transformData: ( data: DNSRecordFormData ) => ( {
 		type: 'TXT',
 		name: data.name,
 		data: data.data,
