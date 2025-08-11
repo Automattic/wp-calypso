@@ -4,7 +4,7 @@ import type { DNSRecordFormData, DNSRecordConfig } from './dns-record-configs';
 
 export const TXTRecordConfig: DNSRecordConfig = {
 	description: __(
-		"TXT (text) records are used to record any textual information on a domain. They're typically used by other service providers (e.g. email services) to ensure you are the owner of the domain."
+		'TXT (text) records are used to record any textual information on a domain. They’re typically used by other service providers (e.g. email services) to ensure you are the owner of the domain.'
 	),
 	fields: [
 		{
