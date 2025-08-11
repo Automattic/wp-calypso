@@ -34,7 +34,6 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { startAuthorizeStep } from 'calypso/state/jetpack-connect/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors';
 import { hideMasterbar, showMasterbar } from 'calypso/state/ui/actions';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -60,7 +59,6 @@ import {
 } from './persistence-utils';
 import OrgCredentialsForm from './remote-credentials';
 import SearchPurchase from './search';
-import JetpackSignup from './signup';
 import JetpackSsoForm from './sso';
 import StoreHeader from './store-header';
 import { parseAuthorizationQuery } from './utils';
@@ -403,10 +401,8 @@ export function signupForm( context, next ) {
 		return window.location.replace( login( { redirectTo: context.path } ) );
 	}
 
-	// For WooJPC and WooDNA flows, redirect signup to Start/account and return here afterwards.
-	const isWooFlow = isWooJPCFlow( context.store.getState() );
-
-	if ( isWooFlow ) {
+	// Redirect signup to Start/account and return here afterwards.
+	if ( ! isLoggedIn ) {
 		// Track the redirect to Start/account instead of rendering the inline signup form.
 		recordTracksEvent( 'calypso_jpc_signup_redirect_to_start', {
 			from,
@@ -426,18 +422,6 @@ export function signupForm( context, next ) {
 		return page( addQueryArgs( urlQueryArgs, '/start/account' ) );
 	}
 
-	const transformedQuery = parseAuthorizationQuery( query );
-
-	if ( transformedQuery ) {
-		context.store.dispatch( startAuthorizeStep( transformedQuery.clientId ) );
-
-		const { lang } = context.params;
-		context.primary = (
-			<JetpackSignup path={ context.path } locale={ lang } authQuery={ transformedQuery } />
-		);
-	} else {
-		context.primary = <NoDirectAccessError />;
-	}
 	next();
 }
 
