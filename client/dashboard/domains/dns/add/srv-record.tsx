@@ -74,7 +74,7 @@ export const SRVRecordConfig: DNSRecordConfig = {
 			service: data.service,
 			aux: data.aux,
 			weight: data.weight,
-			target: target + '.', // we need a FQDN here
+			target: target + '.', // we're appending a dot to make the host name a FQDN
 			port: data.port,
 			protocol: data.protocol,
 			ttl: data.ttl,

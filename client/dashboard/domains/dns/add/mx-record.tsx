@@ -42,7 +42,7 @@ export const MXRecordConfig: DNSRecordConfig = {
 		return {
 			type: 'MX',
 			name: data.name,
-			data: hostName + '.', // we need a FQDN here
+			data: hostName + '.', // we're appending a dot to make the host name a FQDN
 			aux: data.aux,
 			ttl: data.ttl,
 		};

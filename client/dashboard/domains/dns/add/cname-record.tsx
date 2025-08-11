@@ -36,7 +36,7 @@ export const CNAMERecordConfig: DNSRecordConfig = {
 		return {
 			type: 'CNAME',
 			name: data.name,
-			data: hostName + '.', // we need a FQDN here
+			data: hostName + '.', // we're appending a dot to make the host name a FQDN
 			ttl: data.ttl,
 		};
 	},

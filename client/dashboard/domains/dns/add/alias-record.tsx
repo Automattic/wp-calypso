@@ -29,7 +29,7 @@ export const AliasRecordConfig: DNSRecordConfig = {
 
 		return {
 			type: 'ALIAS',
-			data: hostName + '.', // we need a FQDN here
+			data: hostName + '.', // we're appending a dot to make the host name a FQDN
 			ttl: data.ttl,
 		};
 	},

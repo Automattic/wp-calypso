@@ -36,7 +36,7 @@ export const NSRecordConfig: DNSRecordConfig = {
 		return {
 			type: 'NS',
 			name: data.name,
-			data: hostName + '.', // we need a FQDN here
+			data: hostName + '.', // we're appending a dot to make the host name a FQDN
 			ttl: data.ttl,
 		};
 	},
