@@ -10,6 +10,7 @@ export const ARecordConfig: DNSRecordConfig = {
 			id: 'name',
 			type: 'text',
 			label: __( 'Name (optional)' ),
+			/* translators: This is a placeholder for a DNS A record `name` property */
 			placeholder: __( 'Enter subdomain' ),
 		},
 		{
@@ -17,13 +18,15 @@ export const ARecordConfig: DNSRecordConfig = {
 			id: 'data',
 			type: 'text',
 			label: __( 'Points to' ),
-			placeholder: 'e.g. 123.45.67.89',
+			/* translators: This is a placeholder for a DNS A record `data` property */
+			placeholder: __( 'e.g. 123.45.67.89' ),
 		},
 		{
 			id: 'ttl',
 			type: 'integer',
 			label: __( 'TTL (time to live)' ),
-			placeholder: 'e.g. 3600',
+			/* translators: This is a placeholder for a DNS A record `ttl` property */
+			placeholder: __( 'e.g. 3600' ),
 		},
 	],
 	form: {

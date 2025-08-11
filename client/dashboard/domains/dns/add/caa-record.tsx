@@ -8,13 +8,15 @@ export const CAARecordConfig: DNSRecordConfig = {
 			id: 'name',
 			type: 'text',
 			label: __( 'Name (optional)' ),
+			/* translators: This is a placeholder for a DNS CAA record `name` property */
 			placeholder: __( 'Enter subdomain' ),
 		},
 		{
 			id: 'flags',
 			type: 'integer',
 			label: __( 'Flag' ),
-			placeholder: 'e.g. 0',
+			/* translators: This is a placeholder for a DNS CAA record `flags` property */
+			placeholder: __( 'e.g. 0' ),
 		},
 		{
 			id: 'tag',
@@ -31,13 +33,15 @@ export const CAARecordConfig: DNSRecordConfig = {
 			id: 'data',
 			type: 'text',
 			label: __( 'Value' ),
-			placeholder: 'e.g. "letsencrypt.org"',
+			/* translators: This is a placeholder for a DNS CAA record `data` property */
+			placeholder: __( 'e.g. "letsencrypt.org"' ),
 		},
 		{
 			id: 'ttl',
 			type: 'integer',
 			label: __( 'TTL (time to live)' ),
-			placeholder: 'e.g. 3600',
+			/* translators: This is a placeholder for a DNS CAA record `ttl` property */
+			placeholder: __( 'e.g. 3600' ),
 		},
 	],
 	form: {

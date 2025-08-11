@@ -10,25 +10,29 @@ export const MXRecordConfig: DNSRecordConfig = {
 			id: 'name',
 			type: 'text',
 			label: __( 'Name (optional)' ),
+			/* translators: This is a placeholder for a DNS MX record `name` property */
 			placeholder: __( 'Enter subdomain' ),
 		},
 		{
 			id: 'data',
 			type: 'text',
 			label: __( 'Handled by' ),
-			placeholder: 'e.g. mail.your-provider.com',
+			/* translators: This is a placeholder for a DNS MX record `data` property */
+			placeholder: __( 'e.g. mail.your-provider.com' ),
 		},
 		{
 			id: 'aux',
 			type: 'integer',
 			label: __( 'Priority' ),
-			placeholder: 'e.g. 10',
+			/* translators: This is a placeholder for a DNS MX record `aux` property */
+			placeholder: __( 'e.g. 10' ),
 		},
 		{
 			id: 'ttl',
 			type: 'integer',
 			label: __( 'TTL (time to live)' ),
-			placeholder: 'e.g. 3600',
+			/* translators: This is a placeholder for a DNS MX record `ttl` property */
+			placeholder: __( 'e.g. 3600' ),
 		},
 	],
 	form: {

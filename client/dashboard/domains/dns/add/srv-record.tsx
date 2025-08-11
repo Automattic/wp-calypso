@@ -17,7 +17,8 @@ export const SRVRecordConfig: DNSRecordConfig = {
 			id: 'service',
 			type: 'text',
 			label: __( 'Service' ),
-			placeholder: 'e.g. sip',
+			/* translators: This is a placeholder for a DNS SRV record `service` property */
+			placeholder: __( 'e.g. sip' ),
 		},
 		{
 			id: 'protocol',
@@ -33,31 +34,36 @@ export const SRVRecordConfig: DNSRecordConfig = {
 			id: 'aux',
 			type: 'integer',
 			label: __( 'Priority' ),
-			placeholder: 'e.g. 10',
+			/* translators: This is a placeholder for a DNS SRV record `priority` property */
+			placeholder: __( 'e.g. 10' ),
 		},
 		{
 			id: 'weight',
 			type: 'integer',
 			label: __( 'Weight' ),
-			placeholder: 'e.g. 10',
+			/* translators: This is a placeholder for a DNS SRV record `weight` property */
+			placeholder: __( 'e.g. 10' ),
 		},
 		{
 			id: 'target',
 			type: 'text',
 			label: __( 'Target host' ),
-			placeholder: 'e.g. sip.your-provider.com',
+			/* translators: This is a placeholder for a DNS SRV record `target` property */
+			placeholder: __( 'e.g. sip.your-provider.com' ),
 		},
 		{
 			id: 'port',
 			type: 'integer',
 			label: __( 'Target port' ),
-			placeholder: 'e.g. 5060',
+			/* translators: This is a placeholder for a DNS SRV record `port` property */
+			placeholder: __( 'e.g. 5060' ),
 		},
 		{
 			id: 'ttl',
 			type: 'integer',
 			label: __( 'TTL (time to live)' ),
-			placeholder: 'e.g. 3600',
+			/* translators: This is a placeholder for a DNS SRV record `ttl` property */
+			placeholder: __( 'e.g. 3600' ),
 		},
 	],
 	form: {

@@ -11,12 +11,14 @@ export const TXTRecordConfig: DNSRecordConfig = {
 			id: 'name',
 			type: 'text',
 			label: __( 'Name (optional)' ),
+			/* translators: This is a placeholder for a DNS TXT record `name` property */
 			placeholder: __( 'Enter subdomain' ),
 		},
 		{
 			id: 'data',
 			label: __( 'Text' ),
-			placeholder: 'e.g. "v=spf1 include:example.com ~all"',
+			/* translators: This is a placeholder for a DNS TXT record `data` property */
+			placeholder: __( 'e.g. "v=spf1 include:example.com ~all"' ),
 			Edit: ( { data, field, onChange, hideLabelFromVision } ) => {
 				const { id, getValue } = field;
 
@@ -36,7 +38,8 @@ export const TXTRecordConfig: DNSRecordConfig = {
 			id: 'ttl',
 			type: 'integer',
 			label: __( 'TTL (time to live)' ),
-			placeholder: 'e.g. 3600',
+			/* translators: This is a placeholder for a DNS TXT record `ttl` property */
+			placeholder: __( 'e.g. 3600' ),
 		},
 	],
 	form: {

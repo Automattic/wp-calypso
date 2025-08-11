@@ -10,19 +10,22 @@ export const CNAMERecordConfig: DNSRecordConfig = {
 			id: 'name',
 			type: 'text',
 			label: __( 'Name (host)' ),
-			placeholder: 'Enter subdomain (required)',
+			/* translators: This is a placeholder for a DNS CNAME record `name` property */
+			placeholder: __( 'Enter subdomain (required)' ),
 		},
 		{
 			id: 'data',
 			type: 'text',
 			label: __( 'Alias of (points to)' ),
-			placeholder: 'e.g. example.com',
+			/* translators: This is a placeholder for a DNS CNAME record `data` property */
+			placeholder: __( 'e.g. example.com' ),
 		},
 		{
 			id: 'ttl',
 			type: 'integer',
 			label: __( 'TTL (time to live)' ),
-			placeholder: 'e.g. 3600',
+			/* translators: This is a placeholder for a DNS CNAME record `ttl` property */
+			placeholder: __( 'e.g. 3600' ),
 		},
 	],
 	form: {

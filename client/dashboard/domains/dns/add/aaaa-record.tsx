@@ -7,19 +7,22 @@ export const AAAARecordConfig: DNSRecordConfig = {
 			id: 'name',
 			type: 'text',
 			label: __( 'Name (optional)' ),
+			/* translators: This is a placeholder for a DNS AAAA record `name` property */
 			placeholder: __( 'Enter subdomain' ),
 		},
 		{
 			id: 'data',
 			type: 'text',
 			label: __( 'Points to' ),
-			placeholder: 'e.g. 2001:500:84::b',
+			/* translators: This is a placeholder for a DNS AAAA record `data` property */
+			placeholder: __( 'e.g. 2001:500:84::b' ),
 		},
 		{
 			id: 'ttl',
 			type: 'integer',
 			label: __( 'TTL (time to live)' ),
-			placeholder: 'e.g. 3600',
+			/* translators: This is a placeholder for a DNS AAAA record `ttl` property */
+			placeholder: __( 'e.g. 3600' ),
 		},
 	],
 	form: {

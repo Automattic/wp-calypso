@@ -10,13 +10,15 @@ export const AliasRecordConfig: DNSRecordConfig = {
 			id: 'data',
 			type: 'text',
 			label: __( 'Alias of (points to)' ),
-			placeholder: 'e.g. example.com',
+			/* translators: This is a placeholder for a DNS ALIAS record `data` property */
+			placeholder: __( 'e.g. example.com' ),
 		},
 		{
 			id: 'ttl',
 			type: 'integer',
 			label: __( 'TTL (time to live)' ),
-			placeholder: 'e.g. 3600',
+			/* translators: This is a placeholder for a DNS ALIAS record `ttl` property */
+			placeholder: __( 'e.g. 3600' ),
 		},
 	],
 	form: {

@@ -10,19 +10,22 @@ export const NSRecordConfig: DNSRecordConfig = {
 			id: 'name',
 			type: 'text',
 			label: __( 'Name (optional)' ),
+			/* translators: This is a placeholder for a DNS NS record `name` property */
 			placeholder: __( 'Enter subdomain' ),
 		},
 		{
 			id: 'data',
 			type: 'text',
 			label: __( 'Host' ),
-			placeholder: 'e.g. ns1.your-provider.com',
+			/* translators: This is a placeholder for a DNS NS record `data` property */
+			placeholder: __( 'e.g. ns1.your-provider.com' ),
 		},
 		{
 			id: 'ttl',
 			type: 'integer',
 			label: __( 'TTL (time to live)' ),
-			placeholder: 'e.g. 3600',
+			/* translators: This is a placeholder for a DNS NS record `ttl` property */
+			placeholder: __( 'e.g. 3600' ),
 		},
 	],
 	form: {
