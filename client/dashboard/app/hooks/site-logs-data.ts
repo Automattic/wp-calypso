@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { LogType, PHPLog, ServerLog, FilterType } from '../../data/site-logs';
+import { LogType, PHPLog, ServerLog, FilterType, SiteLogsParams } from '../../data/site-logs';
 import { siteLogsQuery } from '../queries/site-logs';
 import type { View } from '@wordpress/dataviews';
 
@@ -43,6 +43,7 @@ export function useSiteLogsData( {
 	filter: FilterType;
 } ) {
 	const params: SiteLogsParams = {
+		siteId,
 		logType,
 		start: startTime,
 		end: endTime,

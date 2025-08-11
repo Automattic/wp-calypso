@@ -2,7 +2,7 @@ import { Badge } from '@automattic/ui';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { __experimentalText as Text, TabPanel, Notice } from '@wordpress/components';
-import { DataViews } from '@wordpress/dataviews';
+import { DataViews, Operator, Field, ViewTable } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -59,17 +59,14 @@ export function SiteLogsCallout( {
 	);
 }
 
-function SiteLogs() {
+function SiteLogs( { logType }: { logType: LogType } ) {
 	const { siteSlug } = siteRoute.useParams();
 	const router = useRouter();
-	const { pathname } = router.state.location;
 
 	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
 
-	const logType: LogType = pathname.endsWith( '/server' ) ? 'server' : 'php';
-
 	// @todo, this will be replaced when importing the use-view data.
-	const view = useMemo( () => {
+	const view: ViewTable = useMemo( () => {
 		if ( logType === 'php' ) {
 			return {
 				type: 'table',
@@ -79,7 +76,7 @@ function SiteLogs() {
 				titleField: 'timestamp',
 				sort: {
 					field: 'timestamp',
-					order: 'desc',
+					direction: 'desc',
 				},
 			};
 		}
@@ -91,12 +88,10 @@ function SiteLogs() {
 			titleField: 'date',
 			sort: {
 				field: 'date',
-				order: 'desc',
+				direction: 'desc',
 			},
 		};
 	}, [ logType ] );
-
-	const siteId = site.ID;
 
 	// @todo, this will be replaced when importing / replacing moment usage and related functionality.
 	const [ startTime, endTime ] = useMemo( () => {
@@ -105,6 +100,8 @@ function SiteLogs() {
 	}, [] );
 
 	const filter = useMemo( () => toFilterParams( { view, logType } ), [ view, logType ] );
+
+	const siteId = site?.ID ?? null;
 
 	const {
 		logs: siteLogs,
@@ -119,7 +116,7 @@ function SiteLogs() {
 		filter,
 	} );
 
-	const handleTabChange = ( tab ) => {
+	const handleTabChange = ( tab: LogType ) => {
 		if ( tab === LogType.PHP ) {
 			router.navigate( { to: `/sites/${ siteSlug }/logs/php` } );
 		} else {
@@ -167,7 +164,7 @@ function SiteLogs() {
 					},
 					enableSorting: false,
 				},
-			];
+			] as Field< PHPLog | ServerLog >[];
 		}
 
 		return [
@@ -211,7 +208,7 @@ function SiteLogs() {
 				},
 				enableSorting: false,
 			},
-		];
+		] as Field< PHPLog | ServerLog >[];
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ logType ] );
 
@@ -225,26 +222,23 @@ function SiteLogs() {
 				supportsBulk: false,
 				callback: async ( items: ( PHPLog | ServerLog )[] ) => {
 					const message = ( items[ 0 ] as PHPLog ).message;
-					try {
-						await navigator.clipboard.writeText( message );
-						dispatch( successNotice( 'Copied message' ) );
-					} catch ( error ) {
-						dispatch( errorNotice( 'Message could not be copied' ) );
-					}
+					// Removing any actual message confirmation functionality for now, with dummy data
+					// eslint-disable-next-line no-console
+					console.log( 'Copied message:', message );
 				},
 			},
 		],
 		[ isLoading ]
 	);
 
-	if ( ! site ) {
-		return;
-	}
-
 	const LOG_TABS = [
 		{ name: 'php', title: translate( 'PHP error' ) },
 		{ name: 'server', title: translate( 'Web server' ) },
 	];
+
+	if ( ! site ) {
+		return;
+	}
 
 	return (
 		<PageLayout
@@ -282,6 +276,7 @@ function SiteLogs() {
 							actions={ actions }
 							search={ false }
 							defaultLayouts={ { table: {} } }
+							onChangeView={ () => {} }
 						/>
 					</DataViewsCard>
 				) }

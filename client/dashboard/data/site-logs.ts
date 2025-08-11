@@ -8,10 +8,15 @@ export interface SiteLogsAPIResponse {
 	};
 }
 
-export interface SiteLogsData {
-	total_results: number;
-	logs: ( ServerLog | PHPLog )[];
-	has_more: boolean;
+export interface PHPLogFromEndpoint {
+	timestamp: string;
+	severity: 'User' | 'Warning' | 'Deprecated' | 'Fatal error';
+	message: string;
+	kind: string;
+	name: string;
+	file: string;
+	line: number;
+	atomic_site_id: number;
 }
 
 export interface PHPLog extends Omit< PHPLogFromEndpoint, 'atomic_site_id' > {
@@ -21,18 +26,6 @@ export interface PHPLog extends Omit< PHPLogFromEndpoint, 'atomic_site_id' > {
 export enum LogType {
 	PHP = 'php',
 	SERVER = 'server',
-}
-
-export interface LogQueryParams {
-	from: string;
-	to: string;
-	// PHP filters
-	severity: string;
-	// Server filters
-	request_type: string;
-	status: string;
-	renderer: string;
-	cached: string;
 }
 
 export interface FilterType {
@@ -65,16 +58,27 @@ export interface ServerLog extends ServerLogFromEndpoint {
 	id: string;
 }
 
-export async function fetchSiteLogs(
-	siteId: number | null | undefined,
-	logType: LogType,
-	start: number,
-	end: number,
-	filter: FilterType,
-	sortOrder?: string,
-	pageSize?: number,
-	pageIndex?: number
-): Promise< SiteLogsAPIResponse > {
+export interface SiteLogsParams {
+	siteId: number | null | undefined;
+	logType: LogType;
+	start: number;
+	end: number;
+	filter: FilterType;
+	sortOrder?: string;
+	pageSize?: number;
+	pageIndex?: number;
+}
+
+export async function fetchSiteLogs( {
+	siteId,
+	logType,
+	start,
+	end,
+	filter,
+	sortOrder,
+	pageSize,
+	pageIndex,
+}: SiteLogsParams ): Promise< SiteLogsAPIResponse > {
 	const logTypeFragment = logType === LogType.PHP ? 'error-logs' : 'logs';
 	const path = `/sites/${ siteId }/hosting/${ logTypeFragment }`;
 
@@ -89,7 +93,9 @@ export async function fetchSiteLogs(
 
 	// Remove undefined values from queryParams
 	Object.keys( queryParams ).forEach(
-		( key ) => queryParams[ key ] === undefined && delete queryParams[ key ]
+		( key ) =>
+			( queryParams as Record< string, unknown > )[ key ] === undefined &&
+			delete ( queryParams as Record< string, unknown > )[ key ]
 	);
 
 	const logs = await wpcom.req.get(
@@ -100,5 +106,5 @@ export async function fetchSiteLogs(
 		{ ...queryParams }
 	);
 
-	return logs.data;
+	return logs;
 }
