@@ -1,5 +1,5 @@
 import { Badge } from '@automattic/ui';
-import { useQuery, keepPreviousData } from '@tanstack/react-query';
+import { useQuery, keepPreviousData, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { __experimentalText as Text, TabPanel, Notice } from '@wordpress/components';
 import { DataViews, Operator, Field, ViewTable } from '@wordpress/dataviews';
@@ -63,7 +63,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	const { siteSlug } = siteRoute.useParams();
 	const router = useRouter();
 
-	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
 	// @todo, this will be replaced when importing the use-view data.
 	const view: ViewTable = useMemo( () => {
