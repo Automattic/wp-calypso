@@ -45,7 +45,7 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				id: 'setup',
 				isPrimary: true,
 				icon: <Icon icon={ tool } />,
-				label: __( 'Connection setup' ),
+				label: __( 'Set up connection' ),
 				callback: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
 					const siteSlug = getDomainSiteSlug( domain );
