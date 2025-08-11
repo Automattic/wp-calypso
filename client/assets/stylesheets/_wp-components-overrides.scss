@@ -105,7 +105,7 @@
 /* Crowdsignal */
 .signup.is-crowdsignal {
 	.components-button:not(.is-destructive) {
-		&.is-primary:not(.signup-form__crowdsignal-wpcom) {
+		&.is-primary {
 			--wp-components-color-accent: var(--color-primary);
 			--wp-components-color-accent-darker-10: var(--color-primary-dark);
 			--wp-components-color-accent-darker-20: var(--color-primary-dark);

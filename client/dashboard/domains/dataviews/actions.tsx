@@ -45,13 +45,16 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				id: 'setup',
 				isPrimary: true,
 				icon: <Icon icon={ tool } />,
-				label: __( 'Setup' ),
+				label: __( 'Set up connection' ),
 				callback: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
 					const siteSlug = getDomainSiteSlug( domain );
-					window.location.pathname = domainMappingSetup( siteSlug, domain.domain );
+
+					// Use href instead of pathname to preserve query parameters.
+					window.location.href = domainMappingSetup( siteSlug, domain.domain );
 				},
-				isEligible: ( item: DomainSummary ) => item.type === DomainTypes.MAPPED,
+				isEligible: ( item: DomainSummary ) =>
+					item.type === DomainTypes.MAPPED && ! item.points_to_wpcom,
 			},
 			{
 				id: 'manage-domain',
@@ -152,7 +155,7 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 					return (
 						!! site &&
 						canSetAsPrimary( { domain: item, site, user } ) &&
-						! isRecentlyRegistered( item.registrationDate )
+						! isRecentlyRegistered( item.registration_date )
 					);
 				},
 				disabled: setPrimaryDomainMutation.isPending,

@@ -28,6 +28,7 @@ import {
 	isAndroidOAuth2Client,
 	isIosOAuth2Client,
 	isA4AOAuth2Client,
+	isCrowdsignalOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
@@ -82,6 +83,7 @@ const LayoutLoggedOut = ( {
 	userAllowedToHelpCenter,
 	colorScheme,
 	isA4A,
+	isCrowdsignal,
 } ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const currentRoute = useSelector( getCurrentRoute );
@@ -121,7 +123,8 @@ const LayoutLoggedOut = ( {
 			currentRoute?.startsWith( '/start/do-it-for-me/' ) ) &&
 		userAllowedToHelpCenter;
 
-	const isUnifiedCreateAccount = sectionName === 'signup' && ( isWoo || isA4A || isBlazePro );
+	const isUnifiedCreateAccount =
+		sectionName === 'signup' && ( isWoo || isA4A || isBlazePro || isCrowdsignal );
 
 	const classes = {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,
@@ -390,6 +393,7 @@ export default withCurrentRoute(
 				twoFactorEnabled,
 				colorScheme,
 				isA4A: isA4AOAuth2Client( oauth2Client ),
+				isCrowdsignal: isCrowdsignalOAuth2Client( oauth2Client ),
 			};
 		},
 		{ clearLastActionRequiresLogin }

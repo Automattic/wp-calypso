@@ -58,7 +58,7 @@ export default function HeaderStagingSiteButton( {
 	// Notice IDs for staging site operations
 	const stagingSiteAddFailureNoticeId = 'staging-site-add-failure';
 
-	const { data: stagingSites = [] } = useStagingSite( siteId, {
+	const { data: stagingSites = [], isLoading: isLoadingStagingSites } = useStagingSite( siteId, {
 		enabled: ! hideEnvDataInHeader && isAtomic,
 	} );
 
@@ -115,7 +115,10 @@ export default function HeaderStagingSiteButton( {
 	);
 
 	const showAddStagingButton =
-		isAtomic && ! isStagingSite && ( stagingSites.length === 0 || isCreatingStagingSite );
+		isAtomic &&
+		! isStagingSite &&
+		! isLoadingStagingSites &&
+		( stagingSites.length === 0 || isCreatingStagingSite );
 
 	const onAddClick = useCallback( () => {
 		dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.INITIATE_TRANSFERRING ) );

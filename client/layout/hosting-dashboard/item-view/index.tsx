@@ -8,7 +8,8 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import { isDeletingStagingSiteQuery } from 'calypso/dashboard/app/queries/site-staging-sites';
 import { queryClient } from 'calypso/dashboard/app/query-client';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
-import StagingSiteTransferBanner from 'calypso/sites/staging-site/components/staging-site-transfer-banner';
+import { StagingSiteCreationBanner } from 'calypso/sites/staging-site/components/staging-site-transfer-banner/staging-site-creation-banner';
+import { StagingSiteDeletionBanner } from 'calypso/sites/staging-site/components/staging-site-transfer-banner/staging-site-deletion-banner';
 import { useSelector } from 'calypso/state';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import ItemViewContent from './item-view-content';
@@ -110,10 +111,7 @@ export default function ItemView( {
 
 	const shouldHideHeader = hideHeader || shouldShowBreadcrumbs;
 	const shouldHideNav =
-		( hideNavIfSingleTab && featureTabs.length <= 1 ) ||
-		isMobileApp ||
-		shouldShowBreadcrumbs ||
-		isStagingSiteDeletionInProgress;
+		( hideNavIfSingleTab && featureTabs.length <= 1 ) || isMobileApp || shouldShowBreadcrumbs;
 
 	const renderHeader = () => {
 		if ( shouldHideHeader ) {
@@ -130,11 +128,15 @@ export default function ItemView( {
 		);
 	};
 
-	if ( isStagingSiteTransferInProgress ) {
+	if ( isStagingSiteTransferInProgress || isStagingSiteDeletionInProgress ) {
 		return (
 			<div className={ clsx( 'hosting-dashboard-item-view', className ) }>
 				{ renderHeader() }
-				<StagingSiteTransferBanner />
+				{ isStagingSiteDeletionInProgress ? (
+					<StagingSiteDeletionBanner />
+				) : (
+					<StagingSiteCreationBanner />
+				) }
 			</div>
 		);
 	}

@@ -104,6 +104,7 @@
 			&.placeholder {
 				height: 26px;
 				margin: 6px;
+				width: 280px;
 				@include placeholder();
 			}
 		}

@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
@@ -12,9 +13,12 @@ import {
 	GithubSocialButton,
 	UsernameOrEmailButton,
 } from 'calypso/components/social-buttons';
-import { isA4AOAuth2Client, isBlazeProOAuth2Client } from 'calypso/lib/oauth2-clients';
+import {
+	isA4AOAuth2Client,
+	isBlazeProOAuth2Client,
+	isCrowdsignalOAuth2Client,
+} from 'calypso/lib/oauth2-clients';
 import { isWpccFlow } from 'calypso/signup/is-flow';
-import { recordTracksEvent as recordTracks } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -39,7 +43,8 @@ class SocialSignupForm extends Component {
 	};
 
 	handleSignup = ( result ) => {
-		const { recordTracksEvent, isDevAccount, handleResponse } = this.props;
+		const { isDevAccount, handleResponse } = this.props;
+
 		recordTracksEvent( 'calypso_signup_social_button_success', {
 			social_account_type: result.service,
 		} );
@@ -54,9 +59,7 @@ class SocialSignupForm extends Component {
 
 	trackSignupAndRememberRedirect = ( event ) => {
 		const service = event.currentTarget.getAttribute( 'data-social-service' );
-
-		const { recordTracksEvent, oauth2Client, redirectToAfterLoginUrl, showErrorNotice, translate } =
-			this.props;
+		const { oauth2Client, redirectToAfterLoginUrl, showErrorNotice, translate } = this.props;
 
 		recordTracksEvent( 'calypso_signup_social_button_click', {
 			social_account_type: service,
@@ -98,10 +101,11 @@ class SocialSignupForm extends Component {
 			isWoo,
 			isA4A,
 			isBlazePro,
+			isCrowdsignal,
 			setCurrentStep,
 		} = this.props;
 
-		const isUnifiedCreateAccount = isWoo || isA4A || isBlazePro;
+		const isUnifiedCreateAccount = isWoo || isA4A || isBlazePro || isCrowdsignal;
 
 		return (
 			<Card
@@ -148,15 +152,16 @@ export default connect(
 		const query = getCurrentQueryArguments( state );
 		const devAccountLandingPageRefs = [ 'hosting-lp', 'developer-lp' ];
 		const isDevAccount = devAccountLandingPageRefs.includes( query?.ref );
+		const oauth2Client = getCurrentOAuth2Client( state );
 
 		return {
-			recordTracksEvent: recordTracks,
 			currentRoute: getCurrentRoute( state ),
-			oauth2Client: getCurrentOAuth2Client( state ),
+			oauth2Client: oauth2Client,
 			isDevAccount: isDevAccount,
 			isWoo: getIsWoo( state ),
-			isA4A: isA4AOAuth2Client( getCurrentOAuth2Client( state ) ),
-			isBlazePro: isBlazeProOAuth2Client( getCurrentOAuth2Client( state ) ),
+			isA4A: isA4AOAuth2Client( oauth2Client ),
+			isBlazePro: isBlazeProOAuth2Client( oauth2Client ),
+			isCrowdsignal: isCrowdsignalOAuth2Client( oauth2Client ),
 		};
 	},
 	{ showErrorNotice: errorNotice }

@@ -1,18 +1,18 @@
 import { Badge } from '@automattic/ui';
 import { Link } from '@tanstack/react-router';
-import {
-	Icon,
-	__experimentalText as Text,
-	__experimentalHStack as HStack,
-} from '@wordpress/components';
+import { Icon, __experimentalHStack as HStack } from '@wordpress/components';
 import { dateI18n } from '@wordpress/date';
 import { sprintf, __ } from '@wordpress/i18n';
 import { caution, reusableBlock } from '@wordpress/icons';
 import { useMemo } from 'react';
 import { domainOverviewRoute } from '../../app/router';
+import { Text } from '../../components/text';
 import { DomainTypes } from '../../data/domains';
+import { isRecentlyRegistered } from '../../utils/domain';
 import type { DomainSummary, Site } from '../../data/types';
 import type { Field } from '@wordpress/dataviews';
+
+const THREE_DAYS_IN_MINUTES = 3 * 1440;
 
 const textOverflowStyles = {
 	overflowX: 'hidden',
@@ -178,13 +178,23 @@ export const useFields = ( {
 				enableSorting: true,
 				getValue: ( { item }: { item: DomainSummary } ) =>
 					item.expiry ? dateI18n( 'F j, Y', item.expiry ) : '',
-				render: ( { field, item } ) => (
-					<DomainExpiry
-						domain={ item }
-						value={ field.getValue( { item } ) }
-						isCompact={ !! site }
-					/>
-				),
+				render: ( { field, item } ) => {
+					if (
+						item.type === DomainTypes.MAPPED &&
+						! item.points_to_wpcom &&
+						! isRecentlyRegistered( item.registration_date, THREE_DAYS_IN_MINUTES )
+					) {
+						return <Text intent="error">{ __( 'Connection error' ) }</Text>;
+					}
+
+					return (
+						<DomainExpiry
+							domain={ item }
+							value={ field.getValue( { item } ) }
+							isCompact={ !! site }
+						/>
+					);
+				},
 			},
 			{
 				id: 'domain_status',
