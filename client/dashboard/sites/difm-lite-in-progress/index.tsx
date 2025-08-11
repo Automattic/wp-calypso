@@ -1,8 +1,10 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { addDays, isPast } from 'date-fns';
 import { useAnalytics } from '../../app/analytics';
+import { useHelpCenter } from '../../app/help-center';
 import { useLocale } from '../../app/locale';
 import { siteBySlugQuery } from '../../app/queries/site';
 import { siteDifmWebsiteContentQuery } from '../../app/queries/site-do-it-for-me';
@@ -15,6 +17,30 @@ import { WPCOM_DIFM_LITE } from '../../data/constants';
 import { formatDate } from '../../utils/datetime';
 import { hasGSuiteWithUs, hasTitanMailWithUs } from '../../utils/domain';
 import type { Site } from '../../data/types';
+
+function ContactSupport() {
+	const { setNavigateToRoute, setShowHelpCenter, setSubject } = useHelpCenter();
+
+	// Create URLSearchParams for send feedback by email command
+	const emailUrl = `/contact-form?${ new URLSearchParams( {
+		mode: 'EMAIL',
+		'disable-gpt': 'true',
+		'skip-resources': 'true',
+	} ).toString() }`;
+
+	return createInterpolateElement( __( '<a>Contact support</a> if you have any questions.' ), {
+		a: (
+			<Button
+				variant="link"
+				onClick={ () => {
+					setNavigateToRoute( emailUrl );
+					setSubject( __( 'I have a question about my project' ) );
+					setShowHelpCenter( true );
+				} }
+			/>
+		),
+	} );
+}
 
 function WebsiteContentSubmitted( { site }: { site: Site } ) {
 	const { recordTracksEvent } = useAnalytics();
@@ -41,13 +67,19 @@ function WebsiteContentSubmitted( { site }: { site: Site } ) {
 			header={
 				<PageHeader
 					title={ __( 'Your content submission was successful!' ) }
-					description={ sprintf(
-						// translators: %d is the number of business days it will take to build the site. Always greater than 1.
-						__(
-							'We are currently building your site and will send you an email when it’s ready, within %d business days.'
-						),
-						4
-					) }
+					description={
+						<>
+							{ sprintf(
+								// translators: %d is the number of business days it will take to build the site. Always greater than 1.
+								__(
+									'We are currently building your site and will send you an email when it’s ready, within %d business days.'
+								),
+								4
+							) }
+							<br />
+							<ContactSupport />
+						</>
+					}
 				/>
 			}
 			size="small"
@@ -91,19 +123,25 @@ function WebsiteContentSubmissionPending( { site }: { site: Site } ) {
 				<PageHeader
 					title={ __( 'Website content not submitted' ) }
 					description={
-						contentSubmissionDueDate
-							? sprintf(
-									// translators: contentSubmissionDueDate includes a date, month, and year e.g. "January 1, 2023".
-									__(
-										'Click the button below to provide the content we need to build your site by %(contentSubmissionDueDate)s.'
-									),
-									{
-										contentSubmissionDueDate: formatDate( contentSubmissionDueDate, locale, {
-											dateStyle: 'long',
-										} ),
-									}
-							  )
-							: __( 'Click the button below to provide the content we need to build your site.' )
+						<>
+							{ contentSubmissionDueDate
+								? sprintf(
+										// translators: contentSubmissionDueDate includes a date, month, and year e.g. "January 1, 2023".
+										__(
+											'Click the button below to provide the content we need to build your site by %(contentSubmissionDueDate)s.'
+										),
+										{
+											contentSubmissionDueDate: formatDate( contentSubmissionDueDate, locale, {
+												dateStyle: 'long',
+											} ),
+										}
+								  )
+								: __(
+										'Click the button below to provide the content we need to build your site.'
+								  ) }
+							<br />
+							<ContactSupport />
+						</>
 					}
 				/>
 			}
