@@ -1,15 +1,80 @@
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
 import {
 	__experimentalText as Text,
 	__experimentalHeading as Heading,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
+import { useEffect } from 'react';
+import { siteByIdQuery } from 'calypso/dashboard/app/queries/site';
+import {
+	isDeletingStagingSiteQuery,
+	hasStagingSiteQuery,
+} from 'calypso/dashboard/app/queries/site-staging-sites';
+import { getProductionSiteId } from 'calypso/dashboard/utils/site-staging-site';
 import deleteStagingSiteIllustration from './delete-staging-site-illustration.svg';
 import { StagingSiteBannerWrapper } from './staging-site-banner-wrapper';
 
-export function StagingSiteDeletionBanner() {
+interface StagingSiteDeletionBannerProps {
+	siteId: number;
+}
+
+export function StagingSiteDeletionBanner( { siteId }: StagingSiteDeletionBannerProps ) {
 	const heading = __( 'Deleting staging site' );
+
+	const router = useRouter();
+	const queryClient = useQueryClient();
+	const { createSuccessNotice } = useDispatch( noticesStore );
+
+	// Fetch the current site data
+	const { data: site = {} } = useQuery( {
+		...siteByIdQuery( siteId ),
+		enabled: !! siteId,
+	} );
+
+	const productionSiteId = getProductionSiteId( site ) ?? 0;
+
+	// Poll for staging site status
+	const { data: hasStagingSite } = useQuery( {
+		...hasStagingSiteQuery( productionSiteId ),
+		refetchInterval: 3000,
+		enabled: !! productionSiteId,
+	} );
+
+	// Fetch production site data for redirect
+	const { data: productionSite } = useQuery( {
+		...siteByIdQuery( productionSiteId ?? 0 ),
+		enabled: !! productionSiteId,
+	} );
+
+	// Redirect to the production site when the staging site is deleted
+	useEffect( () => {
+		if ( ! hasStagingSite && productionSite?.slug && site ) {
+			queryClient.removeQueries( isDeletingStagingSiteQuery( site.ID ) );
+
+			// Clear the staging site query to stop polling
+			queryClient.removeQueries( hasStagingSiteQuery( productionSiteId ) );
+
+			// Staging site has been deleted, redirect to production site
+			router.navigate( {
+				to: '/overview/$siteSlug',
+				params: { siteSlug: productionSite.slug },
+			} );
+			createSuccessNotice( __( 'Staging site deleted.' ), { type: 'snackbar' } );
+		}
+	}, [
+		hasStagingSite,
+		productionSite,
+		router,
+		queryClient,
+		productionSiteId,
+		createSuccessNotice,
+		site,
+	] );
 
 	return (
 		<StagingSiteBannerWrapper>
