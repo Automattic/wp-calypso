@@ -150,6 +150,9 @@ export default function DomainForwardingForm( { isEdit = false }: DomainForwardi
 						return null;
 					},
 				},
+				isVisible: ( item: FormData ) => {
+					return item.sourceType === 'subdomain';
+				},
 			},
 			{
 				id: 'targetUrl',
@@ -172,11 +175,7 @@ export default function DomainForwardingForm( { isEdit = false }: DomainForwardi
 	);
 
 	// Split fields into basic and advanced
-	const basicFieldIds =
-		formData.sourceType === 'subdomain'
-			? [ 'sourceType', 'subdomain', 'targetUrl' ]
-			: [ 'sourceType', 'targetUrl' ];
-
+	const basicFieldIds = [ 'sourceType', 'subdomain', 'targetUrl' ];
 	const basicFields = fields.filter( ( field ) => basicFieldIds.includes( field.id ) );
 
 	const form = {
