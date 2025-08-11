@@ -463,7 +463,8 @@ export default function SyncModal( {
 							borderBottom: '1px solid var(--wp-components-color-gray-300, #ddd)',
 							padding: '16px 0',
 							marginTop: '8px',
-							marginBottom: '24px',
+							marginBottom:
+								shouldDisableGranularSync || sqlNode?.checkState === 'checked' ? '0px' : '24px',
 						} }
 					>
 						<CheckboxControl
@@ -475,7 +476,7 @@ export default function SyncModal( {
 						/>
 					</HStack>
 					{ ( shouldDisableGranularSync || sqlNode?.checkState === 'checked' ) && (
-						<VStack style={ { paddingBottom: '48px' } }>
+						<VStack style={ { paddingTop: '20px', paddingBottom: '48px' } }>
 							<Notice status="warning" isDismissible={ false }>
 								<Text as="p" weight="bold" style={ { lineHeight: '24px' } }>
 									{ __( 'Warning! Database will be overwritten.' ) }
