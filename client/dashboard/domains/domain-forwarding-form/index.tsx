@@ -251,7 +251,7 @@ export default function DomainForwardingForm( { isEdit = false }: DomainForwardi
 				isValid: {
 					custom: ( item ) => {
 						if ( ! isSubdomainValid( item.subdomain ) ) {
-							return 'Error subdomain is not valid';
+							return 'Subdomain should be a valid domain label - up to 63 characters, starting with a letter or number, and containing only letters, numbers, and hyphens.';
 						}
 						return null;
 					},
@@ -265,7 +265,7 @@ export default function DomainForwardingForm( { isEdit = false }: DomainForwardi
 				isValid: {
 					custom: ( item ) => {
 						if ( ! isTargetUrlValid( item.targetUrl, domainName ) ) {
-							return 'Error target URL is not valid';
+							return 'Please enter a valid URL.';
 						}
 						return null;
 					},
@@ -398,10 +398,7 @@ export default function DomainForwardingForm( { isEdit = false }: DomainForwardi
 												onChange={ ( value: string ) => {
 													setFormData( ( data ) => ( {
 														...data,
-														redirectType:
-															FormData.redirectType === value
-																? 'no'
-																: ( value as 'temporary' | 'permanent' ),
+														redirectType: value as 'temporary' | 'permanent',
 													} ) );
 												} }
 											/>
