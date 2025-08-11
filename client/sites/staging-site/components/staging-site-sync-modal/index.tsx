@@ -379,7 +379,7 @@ export default function SyncModal( {
 			style={ { maxWidth: '668px' } }
 		>
 			<QueryRewindState siteId={ querySiteId } />
-			<VStack spacing={ 6 }>
+			<VStack spacing={ 5 }>
 				<Text>
 					{ createInterpolateElement( syncConfig[ environment ].description, {
 						a: <ExternalLink href={ `/backup/${ targetSiteSlug }` } children={ null } />,
