@@ -7,8 +7,8 @@ import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import { useSiteLogsData } from '../../app/hooks/site-logs-data';
 import { siteBySlugQuery } from '../../app/queries/site';
+import { siteLogsQuery } from '../../app/queries/site-logs';
 import { siteRoute } from '../../app/router';
 import { Callout } from '../../components/callout';
 import { CalloutOverlay } from '../../components/callout-overlay';
@@ -103,18 +103,30 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 
 	const siteId = site?.ID ?? null;
 
-	const {
-		logs: siteLogs,
-		paginationInfo,
-		isLoading,
-	} = useSiteLogsData( {
+	const EMPTY_ARRAY: ( ServerLog | PHPLog )[] = [];
+
+	const params: SiteLogsParams = {
 		siteId,
-		view,
 		logType,
-		startTime,
-		endTime,
+		start: startTime,
+		end: endTime,
 		filter,
-	} );
+		sortOrder: view.sort?.direction,
+		pageSize: view.perPage,
+		pageIndex: view.page,
+	};
+
+	const { data: siteLogs, isFetching } = useQuery( siteLogsQuery( siteId, params ) );
+
+	const logs = Array.isArray( siteLogs?.logs ) ? siteLogs.logs : EMPTY_ARRAY;
+
+	const paginationInfo = {
+		totalItems: siteLogs?.total_results || 0,
+		totalPages:
+			!! siteLogs?.total_results && !! view.perPage
+				? Math.ceil( siteLogs.total_results / view.perPage )
+				: 0,
+	};
 
 	const handleTabChange = ( tab: LogType ) => {
 		if ( tab === LogType.PHP ) {
@@ -218,7 +230,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 			{
 				id: 'copy-msg',
 				label: 'Copy message',
-				disabled: isLoading,
+				disabled: isFetching,
 				supportsBulk: false,
 				callback: async ( items: ( PHPLog | ServerLog )[] ) => {
 					const message = ( items[ 0 ] as PHPLog ).message;
@@ -228,7 +240,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 				},
 			},
 		],
-		[ isLoading ]
+		[ isFetching ]
 	);
 
 	const LOG_TABS = [
@@ -268,8 +280,8 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 				{ () => (
 					<DataViewsCard>
 						<DataViews< PHPLog | ServerLog >
-							data={ siteLogs ?? [] }
-							isLoading={ isLoading }
+							data={ logs ?? [] }
+							isLoading={ isFetching }
 							paginationInfo={ paginationInfo }
 							fields={ fields ?? [] }
 							view={ view }
