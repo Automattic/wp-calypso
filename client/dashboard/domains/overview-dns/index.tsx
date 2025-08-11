@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button, Icon } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { edit, trash } from '@wordpress/icons';
 import { useState, useMemo } from 'react';
 import { domainDnsQuery } from '../../app/queries/domain-dns';
@@ -16,6 +16,10 @@ import type { Action, Field, ViewTable, ViewList, View } from '@wordpress/datavi
 function getDnsRecordId( record: DnsRecord ) {
 	return `${ record.id }-${ record.name }`;
 }
+
+const trimDot = ( str?: string ) => {
+	return str ? str.replace( /\.$/, '' ) : '';
+};
 
 type DnsView = ViewTable | ViewList;
 
@@ -41,6 +45,9 @@ const DEFAULT_LAYOUTS = {
 export default function DomainDns() {
 	const { domainName } = domainRoute.useParams();
 	const { data: dnsData, isLoading } = useQuery( domainDnsQuery( domainName ) );
+
+	const hasDefaultARecords =
+		dnsData?.records?.some( ( record ) => record?.type === 'A' && record?.protected_field ) ?? true;
 
 	const actions: Action< DnsRecord >[] = useMemo(
 		() => [
@@ -105,13 +112,39 @@ export default function DomainDns() {
 				enableHiding: false,
 				enableSorting: true,
 				getValue: ( { item } ) => {
-					// For SRV records, construct the full value
-					if ( item.type === 'SRV' ) {
-						return `${ item.weight || 0 } ${ item.port || 0 } ${ item.target || '' }`;
+					const { type, aux, port, weight } = item;
+					const data = trimDot( item.data );
+					const target = '.' !== item.target ? trimDot( item.target ) : '.';
+					if ( item.protected_field ) {
+						if ( 'MX' === type ) {
+							return __( 'Mail handled by WordPress.com email forwarding' );
+						}
+						return __( 'Handled by WordPress.com' );
 					}
 
-					// For other records, use target or data property
-					return item.target || item.data || '';
+					switch ( type ) {
+						case 'MX':
+							return sprintf(
+								// translators: %(data)s is a hostname, %(aux)d is a priority
+								__( '%(data)s with priority %(aux)d' ),
+								{
+									data,
+									aux: aux as number,
+								}
+							);
+						case 'SRV':
+							return sprintf(
+								// translators: %(target)s is a hostname, %(port)d is a port, %(aux)d is a priority, %(weight)d is a weight
+								__( '%(target)s:%(port)d, with priority %(aux)d and weight %(weight)d' ),
+								{
+									target,
+									port: port as number,
+									aux: aux as number,
+									weight: weight as number,
+								}
+							);
+					}
+					return data;
 				},
 				render: ( { field, item } ) => (
 					<div style={ { whiteSpace: 'pre-wrap', wordBreak: 'break-word' } }>
@@ -141,7 +174,11 @@ export default function DomainDns() {
 						actions={
 							<>
 								<Button variant="primary">{ __( 'Add DNS Record' ) }</Button>
-								<DnsActionsMenu />
+								<DnsActionsMenu
+									hasDefaultARecords={ ! hasDefaultARecords }
+									hasDefaultCnameRecord={ false }
+									hasDefaultEmailRecords={ false }
+								/>
 							</>
 						}
 					/>
