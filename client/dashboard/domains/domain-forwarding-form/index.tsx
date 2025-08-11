@@ -185,6 +185,46 @@ export default function DomainForwardingForm( { isEdit = false }: DomainForwardi
 		} );
 	}, [ isEdit, existingForwarding ] );
 
+	const redirectTypeField = {
+		id: 'redirectType',
+		label: __( 'HTTP Redirect Type' ),
+		type: 'text',
+		Edit: 'radio',
+		elements: [
+			{
+				label: __( 'Temporary redirect (307)' ),
+				value: 'temporary',
+				description: __( 'Enables quick propagation of changes to your forwarding address.' ),
+			},
+			{
+				label: __( 'Permanent redirect (301)' ),
+				value: 'permanent',
+				description: __(
+					'Enables browser caching of the forwarding address for quicker resolution. Note that changes might take longer to fully propagate.'
+				),
+			},
+		],
+	};
+	const pathForwardingField = {
+		id: 'pathForwarding',
+		label: __( 'Path forwarding' ),
+		type: 'text',
+		Edit: 'radio',
+		elements: [
+			{
+				label: __( 'Do not forward' ),
+				value: 'no',
+			},
+			{
+				label: __( 'Forward path' ),
+				value: 'yes',
+				description: __(
+					'Redirects the path after the domain name to the corresponding path at the new address.'
+				),
+			},
+		],
+	};
+
 	const fields: Field< FormData >[] = useMemo(
 		() => [
 			{
@@ -231,38 +271,8 @@ export default function DomainForwardingForm( { isEdit = false }: DomainForwardi
 					},
 				},
 			},
-			{
-				id: 'redirectType',
-				label: __( 'HTTP Redirect Type' ),
-				type: 'text',
-				Edit: 'radio',
-				elements: [
-					{
-						label: __( 'Temporary redirect (307)' ),
-						value: 'temporary',
-					},
-					{
-						label: __( 'Permanent redirect (301)' ),
-						value: 'permanent',
-					},
-				],
-			},
-			{
-				id: 'pathForwarding',
-				label: __( 'Path forwarding' ),
-				type: 'text',
-				Edit: 'radio',
-				elements: [
-					{
-						label: __( 'Do not forward' ),
-						value: 'no',
-					},
-					{
-						label: __( 'Forward path' ),
-						value: 'yes',
-					},
-				],
-			},
+			redirectTypeField,
+			pathForwardingField,
 		],
 		[ domainName ]
 	);
@@ -282,15 +292,6 @@ export default function DomainForwardingForm( { isEdit = false }: DomainForwardi
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-
-		// Guard via same checks used by DataForm isValid
-		const urlOk = isTargetUrlValid( formData.targetUrl, domainName );
-		const subdomainOk =
-			formData.sourceType !== 'subdomain' || isSubdomainValid( formData.subdomain );
-		if ( ! urlOk || ! subdomainOk ) {
-			createErrorNotice( __( 'Please fix the errors in the form.' ), { type: 'snackbar' } );
-			return;
-		}
 
 		const { target_host, target_path, is_secure } = parseTargetUrl( formData.targetUrl );
 
@@ -391,38 +392,23 @@ export default function DomainForwardingForm( { isEdit = false }: DomainForwardi
 									<PanelRow>
 										<VStack style={ { width: '100%' } } spacing={ 6 }>
 											<RadioControl
-												label={ __( 'HTTP Redirect Type' ) }
+												label={ redirectTypeField.label }
 												selected={ formData.redirectType }
-												options={ [
-													{
-														label: __( 'Temporary redirect (307)' ),
-														value: 'temporary',
-													},
-													{
-														label: __( 'Permanent redirect (301)' ),
-														value: 'permanent',
-													},
-												] }
+												options={ redirectTypeField.elements }
 												onChange={ ( value: string ) => {
 													setFormData( ( data ) => ( {
 														...data,
-														redirectType: value as 'temporary' | 'permanent',
+														redirectType:
+															FormData.redirectType === value
+																? 'no'
+																: ( value as 'temporary' | 'permanent' ),
 													} ) );
 												} }
 											/>
 											<RadioControl
-												label={ __( 'Path forwarding' ) }
+												label={ pathForwardingField.label }
 												selected={ formData.pathForwarding }
-												options={ [
-													{
-														label: __( 'Do not forward' ),
-														value: 'no',
-													},
-													{
-														label: __( 'Forward path' ),
-														value: 'yes',
-													},
-												] }
+												options={ pathForwardingField.elements }
 												onChange={ ( value: string ) => {
 													setFormData( ( data ) => ( {
 														...data,
@@ -435,7 +421,7 @@ export default function DomainForwardingForm( { isEdit = false }: DomainForwardi
 								</PanelBody>
 							</Panel>
 
-							<HStack justify="space-between">
+							<HStack justify="start" spacing={ 4 }>
 								<Button variant="primary" type="submit" isBusy={ isPending } disabled={ isPending }>
 									{ isEdit ? __( 'Update' ) : __( 'Add' ) }
 								</Button>
