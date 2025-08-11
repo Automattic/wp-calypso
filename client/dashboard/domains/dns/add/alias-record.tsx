@@ -25,12 +25,13 @@ export const AliasRecordConfig: DNSRecordConfig = {
 		type: 'regular',
 		fields: [ 'data', 'ttl' ],
 	},
-	transformData: ( data: DNSRecordFormData ) => {
+	transformData: ( data: DNSRecordFormData, domainName?: string ) => {
 		// Remove trailing dot from the hostname
 		const hostName = data.data.endsWith( '.' ) ? data.data.slice( 0, -1 ) : data.data;
 
 		return {
 			type: 'ALIAS',
+			name: domainName + '.', // We limit ALIAS records to be set only at the root
 			data: hostName + '.', // we're appending a dot to make the host name a FQDN
 			ttl: data.ttl,
 		};

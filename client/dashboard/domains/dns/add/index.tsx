@@ -85,7 +85,7 @@ export default function DomainAddDNS() {
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
 
-		const formattedData = config.transformData( formData );
+		const formattedData = config.transformData( formData, domainName );
 
 		mutation.mutate( formattedData, {
 			onSuccess: () => {

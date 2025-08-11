@@ -36,7 +36,7 @@ export type DNSRecordConfig = {
 		fields: string[];
 	};
 	// Function to transform the form data into the format expected by the DNS endpoint
-	transformData: ( data: DNSRecordFormData ) => DNSRecord;
+	transformData: ( data: DNSRecordFormData, domainName?: string ) => DNSRecord;
 };
 
 export const DNS_RECORD_CONFIGS: Record< DNSRecordType, DNSRecordConfig > = {
