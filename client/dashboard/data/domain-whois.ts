@@ -1,4 +1,5 @@
 import wpcom from 'calypso/lib/wp';
+import { camelToSnakeCase, mapRecordKeysRecursively } from '../utils/domain';
 
 export interface WhoisDataEntry {
 	fname: string;
@@ -57,5 +58,22 @@ export function fetchDomainWhois( domainName: string ): Promise< WhoisData > {
 	return wpcom.req.get( {
 		path: `/domains/${ domainName }/whois`,
 		apiVersion: '1.1',
+	} );
+}
+
+export function fetchDomainWhoisValidate(
+	domainName: string,
+	contactInformation: any
+): Promise< WhoisData > {
+	return wpcom.req.post( {
+		path: '/me/domain-contact-information/validate',
+		apiVersion: '1.1',
+		body: mapRecordKeysRecursively(
+			{
+				contactInformation: contactInformation,
+				domainNames: [ domainName ],
+			},
+			camelToSnakeCase
+		),
 	} );
 }

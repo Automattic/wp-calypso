@@ -1,11 +1,14 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
+import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { get } from 'lodash';
 import { domainWhoisQuery } from '../../app/queries/domain-whois';
 import { domainRoute } from '../../app/routes/domain-routes';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { fetchDomainWhoisValidate } from '../../data/domain-whois';
 import { findRegistrantWhois } from '../../utils/domain-whois';
 import ContactForm from './contact-form';
 
@@ -13,15 +16,26 @@ import './style.scss';
 
 export default function DomainContactInfo() {
 	const { domainName } = domainRoute.useParams();
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const navigate = useNavigate();
 	const { data: whoisData } = useQuery( domainWhoisQuery( domainName ) );
 	const registrantWhoisData = findRegistrantWhois( whoisData );
 
+	const mutation = useMutation( {
+		mutationFn: ( formData: any ) => fetchDomainWhoisValidate( domainName, formData ),
+		onSuccess: ( data: any ) => {
+			if ( data.success ) {
+				createSuccessNotice( __( 'Contact details saved.' ), { type: 'snackbar' } );
+			} else {
+				createErrorNotice( data.messages_simple, {
+					type: 'snackbar',
+				} );
+			}
+		},
+	} );
+
 	const handleSubmit = ( formData: any ) => {
-		// TODO: Implement form submission
-		// Form data will be processed here
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		void formData;
+		mutation.mutate( formData );
 	};
 
 	const handleCancel = () => {
