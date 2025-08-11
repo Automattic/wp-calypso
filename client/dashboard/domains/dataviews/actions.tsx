@@ -10,7 +10,6 @@ import { useDispatch } from '@wordpress/data';
 import { sprintf, __ } from '@wordpress/i18n';
 import { payment, tool } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
-import { addQueryArgs } from '@wordpress/url';
 import { useMemo } from 'react';
 import { siteSetPrimaryDomainMutation } from '../../app/queries/site-domains';
 import { DomainTypes, DomainTransferStatus } from '../../data/domains';
@@ -25,15 +24,7 @@ import {
 import type { DomainSummary, Site, User } from '../../data/types';
 import type { Action } from '@wordpress/dataviews';
 
-export const useActions = ( {
-	user,
-	site,
-	supportsBulk,
-}: {
-	user: User;
-	site?: Site;
-	supportsBulk?: boolean;
-} ) => {
+export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const setPrimaryDomainMutation = useMutation( siteSetPrimaryDomainMutation() );
 	const context = site ? 'site' : 'domains';
@@ -97,26 +88,16 @@ export const useActions = ( {
 			{
 				id: 'manage-contact-info',
 				label: __( 'Manage contact information' ),
-				supportsBulk,
+				supportsBulk: false,
 				callback: ( items: DomainSummary[] ) => {
-					if ( items.length === 1 ) {
-						const domain = items[ 0 ];
-						const siteSlug = getDomainSiteSlug( domain );
-						window.location.pathname = domainManagementEditContactInfo(
-							siteSlug,
-							domain.domain,
-							null,
-							context
-						);
-					} else if ( items.length > 1 ) {
-						const bulkManageContactInfoUrl = site
-							? `/domains/manage/edit-selected-contact-info/${ site.slug }`
-							: '/domains/manage/all/edit-selected-contact-info';
-
-						window.location.pathname = addQueryArgs( bulkManageContactInfoUrl, {
-							selected: items.map( ( { domain } ) => domain ),
-						} );
-					}
+					const domain = items[ 0 ];
+					const siteSlug = getDomainSiteSlug( domain );
+					window.location.pathname = domainManagementEditContactInfo(
+						siteSlug,
+						domain.domain,
+						null,
+						context
+					);
 				},
 				isEligible: ( item: DomainSummary ) => {
 					return (
@@ -197,20 +178,12 @@ export const useActions = ( {
 			{
 				id: 'manage-auto-renew',
 				label: __( 'Manage auto-renew' ),
-				supportsBulk,
+				supportsBulk: false,
 				callback: () => {},
 				isEligible: () => false,
 			},
 		],
-		[
-			user,
-			site,
-			context,
-			supportsBulk,
-			setPrimaryDomainMutation,
-			createSuccessNotice,
-			createErrorNotice,
-		]
+		[ user, site, context, setPrimaryDomainMutation, createSuccessNotice, createErrorNotice ]
 	);
 
 	return actions;
