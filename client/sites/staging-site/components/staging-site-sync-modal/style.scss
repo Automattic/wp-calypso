@@ -15,6 +15,33 @@
 		display: none;
 	}
 
+	// Override WordPress styling for disabled checkboxes to show proper disabled appearance
+	.components-checkbox-control__input[type="checkbox"]:disabled {
+		background: #f0f0f0;
+		border-color: #ddd;
+		
+		&::before {
+			display: none;
+		}
+	}
+
+	.components-checkbox-control:has(input[disabled]) {
+		.components-checkbox-control__label {
+			color: #a0a5aa;
+		}
+		
+		.components-checkbox-control__checked {
+			display: none;
+		}
+	}
+	
+	.components-select-control__input[disabled] {
+		color: #a0a5aa;
+		background-color: #f7f7f7;
+		border-color: #ddd;
+		opacity: 1;
+	}
+
 	&__back-button.components-button.is-link {
 		color: #000;
 		padding: 12px 0;
