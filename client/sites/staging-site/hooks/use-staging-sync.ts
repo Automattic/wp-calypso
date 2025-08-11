@@ -42,9 +42,6 @@ export const usePushToStagingMutation = (
 		onSuccess: async ( ...args ) => {
 			options.onSuccess?.( ...args );
 		},
-		onSettled: async ( ...args ) => {
-			options.onSettled?.( ...args );
-		},
 	} );
 
 	const { mutate } = mutation;
@@ -78,9 +75,6 @@ export const usePullFromStagingMutation = (
 		mutationKey: [ PULL_FROM_STAGING, stagingSiteId ],
 		onSuccess: async ( ...args ) => {
 			options.onSuccess?.( ...args );
-		},
-		onSettled: async ( ...args ) => {
-			options.onSettled?.( ...args );
 		},
 	} );
 
