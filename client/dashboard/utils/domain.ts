@@ -5,7 +5,7 @@ import { hasPlanFeature } from './site-features';
 import { userHasFlag } from './user';
 import type { DomainSummary, Site, User } from '../data/types';
 
-export function getDomainSiteSlug( domain: Domain ) {
+export function getDomainSiteSlug( domain: DomainSummary ) {
 	return domain.primary_domain ? domain.domain : domain.site_slug;
 }
 

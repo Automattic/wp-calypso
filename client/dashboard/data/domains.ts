@@ -12,7 +12,7 @@ export const DomainTypes = {
 	TRANSFER: 'transfer',
 } as const;
 
-export const TransferStatus = {
+export const DomainTransferStatus = {
 	PENDING_OWNER: 'pending_owner',
 	PENDING_REGISTRY: 'pending_registry',
 	CANCELLED: 'cancelled',
@@ -49,7 +49,7 @@ export interface DomainSummary {
 	registrationDate: string;
 	site_slug: string;
 	subscription_id: string;
-	transfer_status: ( typeof TransferStatus )[ keyof typeof TransferStatus ] | null;
+	transfer_status: ( typeof DomainTransferStatus )[ keyof typeof DomainTransferStatus ] | null;
 	type: ( typeof DomainTypes )[ keyof typeof DomainTypes ];
 	wpcom_domain: boolean;
 }

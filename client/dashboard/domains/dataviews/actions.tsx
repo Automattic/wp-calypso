@@ -11,7 +11,7 @@ import { payment, tool } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo } from 'react';
 import { siteSetPrimaryDomainMutation } from '../../app/queries/site-domains';
-import { DomainTypes } from '../../data/domains';
+import { DomainTypes, DomainTransferStatus } from '../../data/domains';
 import {
 	isRecentlyRegistered,
 	isDomainRenewable,
@@ -69,15 +69,15 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				id: 'manage-dns-settings',
 				label: __( 'Manage DNS' ),
 				supportsBulk: false,
-				callback: ( items: Domain[] ) => {
+				callback: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
 					const siteSlug = getDomainSiteSlug( domain );
 					window.location.pathname = domainManagementDNS( siteSlug, domain.domain, context );
 				},
-				isEligible: ( item: Domain ) => {
+				isEligible: ( item: DomainSummary ) => {
 					return (
 						item.can_manage_dns_records &&
-						item.transfer_status !== TransferStatus.PENDING_ASYNC &&
+						item.transfer_status !== DomainTransferStatus.PENDING_ASYNC &&
 						item.type !== DomainTypes.SITE_REDIRECT
 					);
 				},
