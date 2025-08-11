@@ -75,6 +75,13 @@ export default function DomainAddDNS() {
 	const mutation = useMutation( domainAddDNSRecordMutation( domainName ) );
 	const { isPending } = mutation;
 
+	const navigateToDNSOverviewPage = () => {
+		navigate( {
+			to: '/domains/$domainName/dns',
+			params: { domainName },
+		} );
+	};
+
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
 
@@ -83,6 +90,7 @@ export default function DomainAddDNS() {
 		mutation.mutate( formattedData, {
 			onSuccess: () => {
 				createSuccessNotice( __( 'DNS record added successfully.' ), { type: 'snackbar' } );
+				navigateToDNSOverviewPage();
 			},
 			onError: () => {
 				// TODO: Get DNS exception class and display correct error message
@@ -95,11 +103,7 @@ export default function DomainAddDNS() {
 
 	const handleCancel = ( e: React.MouseEvent< HTMLButtonElement > ) => {
 		e.preventDefault();
-
-		navigate( {
-			to: '/domains/$domainName/dns',
-			params: { domainName },
-		} );
+		navigateToDNSOverviewPage();
 	};
 
 	return (
