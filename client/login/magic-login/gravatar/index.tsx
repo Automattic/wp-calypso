@@ -24,12 +24,18 @@ import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import wpcom from 'calypso/lib/wp';
 import { useDispatch, useSelector } from 'calypso/state';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
+import { rebootAfterLogin } from 'calypso/state/login/actions';
 import {
 	hideMagicLoginRequestForm,
 	fetchMagicLoginAuthenticate,
 } from 'calypso/state/login/magic-login/actions';
 import { CHECK_YOUR_EMAIL_PAGE } from 'calypso/state/login/magic-login/constants';
-import { getLastCheckedUsernameOrEmail } from 'calypso/state/login/selectors';
+import {
+	getLastCheckedUsernameOrEmail,
+	getTwoFactorNotificationSent,
+	getRedirectToSanitized,
+	isTwoFactorEnabled,
+} from 'calypso/state/login/selectors';
 import {
 	infoNotice,
 	errorNotice,
@@ -546,6 +552,7 @@ const GravPoweredSecondaryEmailOptions = ( {
 };
 
 interface GravPoweredEmailCodeVerificationProps {
+	locale: string;
 	oauth2Client: any;
 	oauth2ClientId: string | number | null;
 	isGravatarFlow: boolean;
@@ -567,6 +574,7 @@ interface GravPoweredEmailCodeVerificationProps {
 }
 
 const GravPoweredEmailCodeVerification = ( {
+	locale,
 	oauth2Client,
 	oauth2ClientId,
 	isGravatarFlow,
@@ -587,11 +595,33 @@ const GravPoweredEmailCodeVerification = ( {
 	recordTracksEvent,
 }: GravPoweredEmailCodeVerificationProps ) => {
 	const translate = useTranslate();
-
+	const dispatch = useDispatch();
 	const isValidatingCode = useSelector( isFetchingMagicLoginAuth );
 	const isCodeValidated = useSelector( getMagicLoginRequestedAuthSuccessfully );
 	const codeValidationError = useSelector( getMagicLoginRequestAuthError );
+	const twoFactorEnabled = useSelector( isTwoFactorEnabled );
+	const twoFactorNotificationSent = useSelector( getTwoFactorNotificationSent );
+	const redirectToSanitized = useSelector( getRedirectToSanitized );
 	const isProcessingCode = isValidatingCode || isCodeValidated;
+
+	useEffect( () => {
+		// Proceed to the next step if the magic code is validated.
+		if ( isCodeValidated ) {
+			if ( ! twoFactorEnabled ) {
+				dispatch( rebootAfterLogin( { magic_login: 1 } ) );
+			} else {
+				page(
+					login( {
+						// If no notification is sent, the user is using the authenticator for 2FA by default.
+						twoFactorAuthType: twoFactorNotificationSent?.replace( 'none', 'authenticator' ) ?? '',
+						redirectTo: redirectToSanitized ?? '',
+						oauth2ClientId: oauth2Client.id,
+						locale,
+					} )
+				);
+			}
+		}
+	} );
 
 	let errorText = translate( 'Something went wrong. Please try again.' );
 
@@ -1169,6 +1199,7 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 	} else if ( showEmailCodeVerification ) {
 		mainContent = (
 			<GravPoweredEmailCodeVerification
+				locale={ locale }
 				oauth2Client={ oauth2Client }
 				oauth2ClientId={ oauth2ClientId }
 				isGravatarFlow={ isGravatarFlow }
