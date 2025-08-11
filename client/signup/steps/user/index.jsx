@@ -6,7 +6,7 @@ import { WPCC } from '@automattic/urls';
 import { isMobile } from '@automattic/viewport';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
-import { localize } from 'i18n-calypso';
+import { localize, fixMe } from 'i18n-calypso';
 import { get, isEmpty, omit } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -502,9 +502,13 @@ export class UserStep extends Component {
 		if ( oauth2Client && isCrowdsignal ) {
 			const clientName = oauth2Client.name;
 
-			return translate( 'Sign up for {{span}}%(clientName)s{{/span}} with WordPress.com', {
-				args: { clientName },
-				components: { span: <span className="wp-login__one-login-header-client-name" /> },
+			return fixMe( {
+				text: 'Sign up for {{span}}%(client)s{{/span}} with WordPress.com',
+				newCopy: translate( 'Sign up for {{span}}%(client)s{{/span}} with WordPress.com', {
+					args: { client: clientName },
+					components: { span: <span className="wp-login__one-login-header-client-name" /> },
+				} ),
+				oldCopy: translate( 'Create your account' ),
 			} );
 		}
 
