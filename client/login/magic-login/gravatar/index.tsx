@@ -604,9 +604,15 @@ const GravPoweredEmailCodeVerification = ( {
 	const redirectToSanitized = useSelector( getRedirectToSanitized );
 	const isProcessingCode = isValidatingCode || isCodeValidated;
 
+	// Only proceed when validation transitions from false -> true
+	const previousIsCodeValidatedRef = useRef( isCodeValidated );
+
 	useEffect( () => {
-		// Proceed to the next step if the magic code is validated.
-		if ( isCodeValidated ) {
+		// Proceed to the next step only when the magic code becomes validated (false -> true)
+		const becameValidated = isCodeValidated && ! previousIsCodeValidatedRef.current;
+		previousIsCodeValidatedRef.current = isCodeValidated;
+
+		if ( becameValidated ) {
 			if ( ! twoFactorEnabled ) {
 				dispatch( rebootAfterLogin( { magic_login: 1 } ) );
 			} else {
@@ -621,7 +627,15 @@ const GravPoweredEmailCodeVerification = ( {
 				);
 			}
 		}
-	} );
+	}, [
+		isCodeValidated,
+		twoFactorEnabled,
+		twoFactorNotificationSent,
+		redirectToSanitized,
+		oauth2Client,
+		locale,
+		dispatch,
+	] );
 
 	let errorText = translate( 'Something went wrong. Please try again.' );
 
