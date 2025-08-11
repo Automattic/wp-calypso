@@ -975,12 +975,11 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 	const [ resendEmailCountdown, setResendEmailCountdown ] = useState( RESEND_EMAIL_COUNTDOWN_TIME );
 
 	const resetResendEmailCountdown = () => {
-		if ( ! resendEmailCountdownId.current ) {
-			return;
+		if ( resendEmailCountdownId.current ) {
+			clearInterval( resendEmailCountdownId.current );
+			resendEmailCountdownId.current = null;
 		}
 
-		clearInterval( resendEmailCountdownId.current );
-		resendEmailCountdownId.current = null;
 		setResendEmailCountdown( RESEND_EMAIL_COUNTDOWN_TIME );
 	};
 
