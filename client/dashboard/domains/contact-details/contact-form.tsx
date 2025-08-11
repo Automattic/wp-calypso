@@ -14,6 +14,7 @@ import { isEqual } from 'lodash';
 import { useState } from 'react';
 import Notice from '../../components/notice';
 import type { DomainContactDetails } from './types';
+import type { CountryListItem } from '../../data/domain';
 
 import './contact-form.scss';
 interface ContactFormProps {
@@ -22,31 +23,24 @@ interface ContactFormProps {
 	onCancel?: () => void;
 	errors?: Partial< Record< keyof DomainContactDetails, string > >;
 	isSubmitting?: boolean;
+	countryList: CountryListItem[];
 }
-
-// Mock data - in a real implementation, this would come from an API
-const COUNTRIES = [
-	{ label: 'United Kingdom', value: 'GB' },
-	{ label: 'United States', value: 'US' },
-	{ label: 'Canada', value: 'CA' },
-	{ label: 'Brazil', value: 'BR' },
-	{ label: 'Germany', value: 'DE' },
-	{ label: 'France', value: 'FR' },
-	{ label: 'Spain', value: 'ES' },
-	{ label: 'Italy', value: 'IT' },
-	{ label: 'Netherlands', value: 'NL' },
-	{ label: 'Australia', value: 'AU' },
-];
 
 export default function ContactForm( {
 	initialData,
 	onSubmit,
 	onCancel,
 	isSubmitting = false,
+	countryList,
 }: ContactFormProps ) {
 	const [ formData, setFormData ] = useState< DomainContactDetails >(
 		initialData ?? ( {} as DomainContactDetails )
 	);
+
+	const formattedCountryList = countryList.map( ( country ) => ( {
+		label: country.name,
+		value: country.code,
+	} ) );
 
 	const isDirty = ! isEqual( formData, initialData );
 
@@ -96,7 +90,7 @@ export default function ContactForm( {
 			id: 'countryCode',
 			label: 'Country',
 			type: 'select',
-			elements: COUNTRIES,
+			elements: formattedCountryList,
 			isValid: {
 				required: true,
 			},

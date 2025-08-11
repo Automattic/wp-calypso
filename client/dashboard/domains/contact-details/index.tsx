@@ -5,6 +5,7 @@ import { useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { get } from 'lodash';
+import { countryListQuery } from '../../app/queries/domain';
 import { domainWhoisQuery } from '../../app/queries/domain-whois';
 import { domainRoute } from '../../app/routes/domain-routes';
 import { PageHeader } from '../../components/page-header';
@@ -22,6 +23,7 @@ export default function DomainContactInfo() {
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const { data: whoisData } = useQuery( domainWhoisQuery( domainName ) );
+	const { data: countryList } = useQuery( countryListQuery() );
 	const registrantWhoisData = findRegistrantWhois( whoisData );
 	const formDataRef = useRef< any >( null );
 
@@ -84,6 +86,7 @@ export default function DomainContactInfo() {
 							fax: get( registrantWhoisData, 'fax' ),
 						} as DomainContactDetails
 					}
+					countryList={ countryList ?? [] }
 					onSubmit={ handleSubmit }
 					onCancel={ handleCancel }
 					errors={ {} }
