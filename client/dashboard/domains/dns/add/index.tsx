@@ -107,7 +107,7 @@ export default function DomainAddDNS() {
 	};
 
 	return (
-		<PageLayout size="small" header={ <PageHeader title="Add a new DNS record" /> }>
+		<PageLayout size="small" header={ <PageHeader title={ __( 'Add a new DNS record' ) } /> }>
 			<Card>
 				<CardBody>
 					<form onSubmit={ handleSubmit }>
