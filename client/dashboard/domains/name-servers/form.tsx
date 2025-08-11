@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-restricted-imports
 import { CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS } from '@automattic/urls';
 import {
 	Button,
@@ -10,6 +9,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
+import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { NameServerInput, validateField } from './form-input';
 import {
@@ -164,11 +164,7 @@ export default function NameServersForm( {
 								__( '<link>Look up</link> the name servers for popular hosts.' ),
 								{
 									link: (
-										<a
-											href={ CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS }
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
+										<InlineSupportLink supportLink={ CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS } />
 									),
 								}
 							) }
