@@ -1,7 +1,7 @@
 import { Button, CheckboxControl, Icon } from '@wordpress/components';
 import { useCallback, useState, useEffect } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
-import { chevronDown, chevronRight } from '@wordpress/icons';
+import { __, sprintf, isRTL } from '@wordpress/i18n';
+import { chevronDown, chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import { FunctionComponent } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -312,7 +312,8 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 			return null;
 		}
 
-		return <Icon icon={ isOpen ? chevronDown : chevronRight } />;
+		const rightIcon = isRTL() ? chevronLeft : chevronRight;
+		return <Icon icon={ isOpen ? chevronDown : rightIcon } />;
 	};
 
 	const expandButton = () => {
@@ -321,10 +322,12 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 		// translators: %s: file or directory name
 		const hideLabel = sprintf( __( 'Hide contents of %s' ), item.name );
 
+		const rightIcon = isRTL() ? chevronLeft : chevronRight;
+
 		return (
 			<Button
 				onClick={ handleClick }
-				icon={ isOpen ? chevronDown : chevronRight }
+				icon={ isOpen ? chevronDown : rightIcon }
 				className="file-browser-node__separate-expand-button"
 				variant="tertiary"
 				aria-label={ isOpen ? hideLabel : showLabel }
