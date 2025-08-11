@@ -16,7 +16,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { HostingFeatures } from '../../data/constants';
-import { LogType, PHPLog, ServerLog } from '../../data/site-logs';
+import { LogType, PHPLog, ServerLog, SiteLogsParams } from '../../data/site-logs';
 import { hasHostingFeature } from '../../utils/site-features';
 import { toFilterParams } from './dataviews/views';
 import illustrationUrl from './logs-callout-illustration.svg';
