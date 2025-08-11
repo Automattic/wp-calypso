@@ -21,7 +21,7 @@ export const siteLogsQuery = ( siteId: number, params: SiteLogsParams ) =>
 				pageIndex: params.pageIndex,
 			} ),
 		placeholderData: keepPreviousData,
-		enabled: !! siteId && params.start <= params.end,
+		enabled: params.start <= params.end,
 		staleTime: Infinity, // The logs within a specified time range never change.
 		select: ( data ) => ( {
 			logs: Array.isArray( data.data.logs )
