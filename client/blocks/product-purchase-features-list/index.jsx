@@ -34,6 +34,7 @@ import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedu
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { hasDomainCredit, getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { getSiteOptions } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import AdvertisingRemoved from './advertising-removed';
 import BusinessOnboarding from './business-onboarding';
@@ -447,7 +448,7 @@ export default connect(
 			currentPlan: getCurrentPlan( state, selectedSiteId ),
 			scheduleId: getConciergeScheduleId( state ),
 			isMonthlyPlan: TERM_MONTHLY === getPlan( ownProps.plan )?.term,
-			isSummerSpecial: selectedSite?.options?.is_summer_special_2025 ?? false,
+			isSummerSpecial: getSiteOptions( state, selectedSiteId )?.is_summer_special_2025 ?? false,
 		};
 	},
 	{
