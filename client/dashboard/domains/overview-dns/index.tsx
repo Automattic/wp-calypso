@@ -1,8 +1,9 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
+import { domainQuery } from '../../app/queries/domain';
 import { domainDnsQuery } from '../../app/queries/domain-dns';
 import { domainRoute } from '../../app/routes/domain-routes';
 import DataViewsCard from '../../components/dataviews-card';
@@ -11,6 +12,9 @@ import PageLayout from '../../components/page-layout';
 import { useDnsActions } from './actions';
 import DnsActionsMenu from './dns-actions-menu';
 import { useDnsFields } from './fields';
+import RestoreDefaultARecords from './restore-default-a-records';
+import RestoreDefaultCnameRecord from './restore-default-cname-record';
+import RestoreDefaultEmailRecords from './restore-default-email-records';
 import type { DnsRecord } from '../../data/domain-dns';
 import type { ViewTable, ViewList, View } from '@wordpress/dataviews';
 
@@ -41,7 +45,14 @@ const DEFAULT_LAYOUTS = {
 
 export default function DomainDns() {
 	const { domainName } = domainRoute.useParams();
+	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const { data: dnsData, isLoading } = useQuery( domainDnsQuery( domainName ) );
+	const [ isRestoreDefaultARecordsDialogOpen, setIsRestoreDefaultARecordsDialogOpen ] =
+		useState( false );
+	const [ isRestoreDefaultCnameRecordDialogOpen, setIsRestoreDefaultCnameRecordDialogOpen ] =
+		useState( false );
+	const [ isRestoreDefaultEmailRecordsDialogOpen, setIsRestoreDefaultEmailRecordsDialogOpen ] =
+		useState( false );
 
 	const hasDefaultARecords =
 		dnsData?.records?.some( ( record ) => record?.type === 'A' && record?.protected_field ) ?? true;
@@ -58,6 +69,18 @@ export default function DomainDns() {
 		fields
 	);
 
+	const handleRestoreDefaultARecords = () => {
+		setIsRestoreDefaultARecordsDialogOpen( true );
+	};
+
+	const handleRestoreDefaultCnameRecord = () => {
+		setIsRestoreDefaultCnameRecordDialogOpen( true );
+	};
+
+	const handleRestoreDefaultEmailRecords = () => {
+		setIsRestoreDefaultEmailRecordsDialogOpen( true );
+	};
+
 	return (
 		<PageLayout
 			size="small"
@@ -72,6 +95,9 @@ export default function DomainDns() {
 									hasDefaultARecords={ ! hasDefaultARecords }
 									hasDefaultCnameRecord={ false }
 									hasDefaultEmailRecords={ false }
+									onRestoreDefaultARecords={ handleRestoreDefaultARecords }
+									onRestoreDefaultCnameRecord={ handleRestoreDefaultCnameRecord }
+									onRestoreDefaultEmailRecords={ handleRestoreDefaultEmailRecords }
 								/>
 							</>
 						}
@@ -103,6 +129,22 @@ export default function DomainDns() {
 					</DataViews>
 				) }
 			</DataViewsCard>
+			<RestoreDefaultARecords
+				onConfirm={ () => setIsRestoreDefaultARecordsDialogOpen( false ) }
+				onCancel={ () => setIsRestoreDefaultARecordsDialogOpen( false ) }
+				isGravatarDomain={ domain?.is_gravatar_domain ?? false }
+				isOpen={ isRestoreDefaultARecordsDialogOpen }
+			/>
+			<RestoreDefaultCnameRecord
+				onConfirm={ () => setIsRestoreDefaultCnameRecordDialogOpen( false ) }
+				onCancel={ () => setIsRestoreDefaultCnameRecordDialogOpen( false ) }
+				isOpen={ isRestoreDefaultCnameRecordDialogOpen }
+			/>
+			<RestoreDefaultEmailRecords
+				onConfirm={ () => setIsRestoreDefaultEmailRecordsDialogOpen( false ) }
+				onCancel={ () => setIsRestoreDefaultEmailRecordsDialogOpen( false ) }
+				isOpen={ isRestoreDefaultEmailRecordsDialogOpen }
+			/>
 		</PageLayout>
 	);
 }
