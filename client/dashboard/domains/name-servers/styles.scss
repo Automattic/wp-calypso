@@ -1,12 +1,6 @@
 @import '@wordpress/base-styles/colors';
 
 .domains-management__name-servers {
-
-	&.components-card__body {
-		padding-top: 1.5rem;
-		padding-bottom: 1.5rem;
-	}
-
 	.nameserver-input-container {
 		width: 100%;
 		display: flex;
