@@ -15,6 +15,7 @@ import { blockTable } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { siteBySlugQuery } from '../../app/queries/site';
+import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
 import { HostingFeatures } from '../../data/constants';
@@ -75,8 +76,13 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 			header={
 				<SettingsPageHeader
 					title={ __( 'Database' ) }
-					description={ __(
-						'For the tech-savvy, manage your database with phpMyAdmin and run a wide range of operations with MySQL.'
+					description={ createInterpolateElement(
+						__(
+							'For the tech-savvy, manage your database with phpMyAdmin and run a wide range of operations with MySQL. <link>Learn more</link>'
+						),
+						{
+							link: <InlineSupportLink supportContext="hosting-mysql" />,
+						}
 					) }
 				/>
 			}
