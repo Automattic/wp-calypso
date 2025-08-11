@@ -17,12 +17,17 @@ import { emailsQuery } from './queries/emails';
 import { isAutomatticianQuery } from './queries/me-a8c';
 import { rawUserPreferencesQuery } from './queries/me-preferences';
 import { profileQuery } from './queries/me-profile';
+import { userPurchasesQuery } from './queries/me-purchases';
 import { siteByIdQuery, siteBySlugQuery } from './queries/site';
-import { siteLastFiveActivityLogEntriesQuery } from './queries/site-activity-log';
+import {
+	siteLastFiveActivityLogEntriesQuery,
+	siteRewindableActivityLogEntriesQuery,
+} from './queries/site-activity-log';
 import { siteAgencyBlogQuery } from './queries/site-agency';
 import { siteLastBackupQuery } from './queries/site-backups';
 import { siteEdgeCacheStatusQuery } from './queries/site-cache';
 import { siteDefensiveModeSettingsQuery } from './queries/site-defensive-mode';
+import { siteDifmWebsiteContentQuery } from './queries/site-do-it-for-me';
 import { siteDomainsQuery } from './queries/site-domains';
 import { siteJetpackModulesQuery } from './queries/site-jetpack-module';
 import { siteJetpackSettingsQuery } from './queries/site-jetpack-settings';
@@ -31,7 +36,7 @@ import { sitePHPVersionQuery } from './queries/site-php-version';
 import { siteCurrentPlanQuery } from './queries/site-plans';
 import { sitePreviewLinksQuery } from './queries/site-preview-links';
 import { sitePrimaryDataCenterQuery } from './queries/site-primary-data-center';
-import { sitePurchaseQuery } from './queries/site-purchases';
+import { sitePurchaseQuery, sitePurchasesQuery } from './queries/site-purchases';
 import { siteScanQuery } from './queries/site-scan';
 import { siteSettingsQuery } from './queries/site-settings';
 import { siteSftpUsersQuery } from './queries/site-sftp';
@@ -127,15 +132,25 @@ const sitesRoute = createRoute( {
 const siteRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites/$siteSlug',
-	beforeLoad: async ( { cause, params: { siteSlug }, location } ) => {
+	beforeLoad: async ( { cause, params: { siteSlug }, location, matches } ) => {
 		if ( cause !== 'enter' ) {
 			return;
 		}
 
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+
 		const trialExpiredUrl = `/sites/${ siteSlug }/trial-ended`;
 		if ( hasSiteTrialEnded( site ) && ! location.pathname.includes( trialExpiredUrl ) ) {
 			throw redirect( { to: trialExpiredUrl } );
+		}
+
+		const difmUrl = `/sites/${ siteSlug }/site-building-in-progress`;
+		const difmAllowedRoutes = getDifmLiteAllowedRoutes();
+		if (
+			site.options?.is_difm_lite_in_progress &&
+			! matches.some( ( match ) => difmAllowedRoutes.includes( match.routeId ) )
+		) {
+			throw redirect( { to: difmUrl } );
 		}
 	},
 	loader: async ( { params: { siteSlug } } ) => {
@@ -172,7 +187,7 @@ const siteOverviewRoute = createRoute( {
 				site.is_a4a_dev_site && queryClient.ensureQueryData( sitePreviewLinksQuery( site.ID ) ),
 			] ).then( ( [ currentPlan ] ) => {
 				if ( currentPlan.id ) {
-					queryClient.ensureQueryData( sitePurchaseQuery( site.ID, currentPlan.id ) );
+					queryClient.ensureQueryData( sitePurchaseQuery( site.ID, parseInt( currentPlan.id ) ) );
 				}
 			} );
 		}
@@ -252,6 +267,11 @@ const siteLogsChildRoutes = [ siteLogsIndexRoute, siteLogsPhpRoute, siteLogsServ
 const siteBackupsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'backups',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		// Preload activity log backup-related entries.
+		queryClient.ensureQueryData( siteRewindableActivityLogEntriesQuery( site.ID ) );
+	},
 } ).lazy( () =>
 	import( '../sites/backups' ).then( ( d ) =>
 		createLazyRoute( 'site-backups' )( {
@@ -551,6 +571,37 @@ const siteTrialEndedRoute = createRoute( {
 	)
 );
 
+const siteDifmLiteInProgressRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'site-building-in-progress',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause !== 'enter' ) {
+			return;
+		}
+
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! site.options?.is_difm_lite_in_progress ) {
+			throw redirect( { to: `/sites/${ siteSlug }` } );
+		}
+	},
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		const [ websiteContent ] = await Promise.all( [
+			queryClient.ensureQueryData( siteDifmWebsiteContentQuery( site.ID ) ),
+			queryClient.ensureQueryData( siteDomainsQuery( site.ID ) ),
+		] );
+		if ( ! websiteContent.is_website_content_submitted ) {
+			await queryClient.ensureQueryData( sitePurchasesQuery( site.ID ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../sites/difm-lite-in-progress' ).then( ( d ) =>
+		createLazyRoute( 'site-difm-lite-in-progress' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 const emailsRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'emails',
@@ -619,12 +670,30 @@ const billingHistoryRoute = createRoute( {
 	)
 );
 
-const activeSubscriptionsRoute = createRoute( {
+const purchasesRoute = createRoute( {
 	getParentRoute: () => meRoute,
-	path: 'billing/active-subscriptions',
+	loader: async () => {
+		queryClient.ensureQueryData( userPurchasesQuery() );
+	},
+	path: 'billing/purchases',
 } ).lazy( () =>
-	import( '../me/active-subscriptions' ).then( ( d ) =>
-		createLazyRoute( 'active-subscriptions' )( {
+	import( '../me/billing-purchases' ).then( ( d ) =>
+		createLazyRoute( 'purchases' )( {
+			component: d.default,
+		} )
+	)
+);
+
+const purchasesSiteRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		queryClient.ensureQueryData( sitePurchasesQuery( site.ID ) );
+	},
+	path: 'billing/purchases/$siteSlug',
+} ).lazy( () =>
+	import( '../me/billing-purchases/site' ).then( ( d ) =>
+		createLazyRoute( 'purchases-site' )( {
 			component: d.default,
 		} )
 	)
@@ -719,6 +788,7 @@ const createRouteTree = ( config: AppConfig ) => {
 			siteSettingsSftpSshRoute,
 			siteSettingsWebApplicationFirewallRoute,
 			siteTrialEndedRoute,
+			siteDifmLiteInProgressRoute,
 		];
 
 		if ( config.supports.sites.deployments ) {
@@ -767,7 +837,8 @@ const createRouteTree = ( config: AppConfig ) => {
 				profileRoute,
 				billingRoute,
 				billingHistoryRoute,
-				activeSubscriptionsRoute,
+				purchasesRoute,
+				purchasesSiteRoute,
 				paymentMethodsRoute,
 				taxDetailsRoute,
 				securityRoute,
@@ -796,6 +867,12 @@ export const getRouter = ( config: AppConfig ) => {
 		defaultViewTransition: true,
 	} );
 };
+
+// Site routes which are still allowed to be accessed while a site gets the DIFM lite process.
+// Defined as a `function` so that routes defined earlier can reference routes defined later.
+function getDifmLiteAllowedRoutes() {
+	return [ siteDifmLiteInProgressRoute.id, siteDomainsRoute.id, siteEmailsRoute.id ];
+}
 
 export {
 	rootRoute,
@@ -845,7 +922,8 @@ export {
 	profileRoute,
 	billingRoute,
 	billingHistoryRoute,
-	activeSubscriptionsRoute,
+	purchasesRoute,
+	purchasesSiteRoute,
 	paymentMethodsRoute,
 	taxDetailsRoute,
 	securityRoute,

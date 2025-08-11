@@ -6,7 +6,7 @@ import { WPCC } from '@automattic/urls';
 import { isMobile } from '@automattic/viewport';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
-import { localize } from 'i18n-calypso';
+import { localize, fixMe } from 'i18n-calypso';
 import { get, isEmpty, omit } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -246,22 +246,6 @@ export class UserStep extends Component {
 							}
 						);
 				}
-			} else if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
-				subHeaderText = translate(
-					'By creating an account via any of the options below, {{br/}}you agree to our {{a}}Terms of Service{{/a}}.',
-					{
-						components: {
-							a: (
-								<a
-									href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-									target="_blank"
-									rel="noopener noreferrer"
-								/>
-							),
-							br: <br />,
-						},
-					}
-				);
 			} else if ( isBlazeProOAuth2Client( oauth2Client ) ) {
 				subHeaderText = translate( 'Create your new Blaze Pro account.' );
 			} else {
@@ -499,6 +483,7 @@ export class UserStep extends Component {
 			userLoggedIn,
 			isBlazePro,
 			isWCCOM,
+			isCrowdsignal,
 		} = this.props;
 
 		if ( userLoggedIn ) {
@@ -508,8 +493,31 @@ export class UserStep extends Component {
 			return translate( 'Is this you?' );
 		}
 
-		if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
-			return translate( 'Sign up for Crowdsignal' );
+		/**
+		 * BEGIN: Unified create account
+		 */
+
+		// TODO clk This will encompass all unified OAuth2 clients,
+		// similar to get-header-text in wp-login (potentially the two being merged too)
+		if ( oauth2Client && isCrowdsignal ) {
+			const clientName = oauth2Client.name;
+
+			return fixMe( {
+				text: 'Sign up for {{span}}%(client)s{{/span}} with WordPress.com',
+				newCopy: translate( 'Sign up for {{span}}%(client)s{{/span}} with WordPress.com', {
+					args: { client: clientName },
+					components: { span: <span className="wp-login__one-login-header-client-name" /> },
+				} ),
+				oldCopy: translate( 'Create your account' ),
+			} );
+		}
+
+		if ( isA4AOAuth2Client( oauth2Client ) ) {
+			return translate( 'Sign up to Automattic for Agencies with WordPress.com' );
+		}
+
+		if ( isBlazeProOAuth2Client( oauth2Client ) ) {
+			return translate( 'Sign up to Blaze Pro with WordPress.com' );
 		}
 
 		if ( isWCCOM ) {
@@ -524,6 +532,10 @@ export class UserStep extends Component {
 			);
 		}
 
+		/**
+		 * END: Unified create account
+		 */
+
 		if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
 			return (
 				<div className={ clsx( 'signup-form__wrapper' ) }>
@@ -531,18 +543,6 @@ export class UserStep extends Component {
 					<h3>{ translate( 'Sign up to Jetpack.com with a WordPress.com account.' ) }</h3>
 				</div>
 			);
-		}
-
-		if ( isA4AOAuth2Client( oauth2Client ) ) {
-			return translate( 'Sign up to Automattic for Agencies with WordPress.com' );
-		}
-
-		if ( isBlazeProOAuth2Client( oauth2Client ) ) {
-			return translate( 'Welcome to %(clientTitle)s', {
-				args: { clientTitle: oauth2Client.title },
-				comment:
-					"'clientTitle' is the name of the app that uses WordPress.com Connect (e.g. 'Akismet' or 'VaultPress')",
-			} );
 		}
 
 		if ( isPartnerPortalOAuth2Client( oauth2Client ) ) {
@@ -591,23 +591,29 @@ export class UserStep extends Component {
 	}
 
 	renderSignupForm() {
-		const { oauth2Client, isWCCOM, isWoo, isUnifiedCreateAccount, isA4A } = this.props;
+		const {
+			oauth2Client,
+			isWCCOM,
+			isWoo,
+			isUnifiedCreateAccount,
+			isA4A,
+			isBlazePro,
+			isCrowdsignal,
+		} = this.props;
 		const isPasswordless =
 			isMobile() ||
 			this.props.isPasswordless ||
 			isNewsletterFlow( this.props?.queryObject?.variationName ) ||
 			isWoo ||
-			isA4A;
+			isA4A ||
+			isBlazePro ||
+			isCrowdsignal;
 		let socialService;
 		let socialServiceResponse;
 		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
 
 		if ( isWCCOM || isUnifiedCreateAccount ) {
 			isSocialSignupEnabled = true;
-		}
-
-		if ( isBlazeProOAuth2Client( oauth2Client ) ) {
-			isSocialSignupEnabled = false;
 		}
 
 		const hashObject = this.props.initialContext && this.props.initialContext.hash;
@@ -640,7 +646,7 @@ export class UserStep extends Component {
 					recaptchaClientId={ this.state.recaptchaClientId }
 					horizontal
 					shouldDisplayUserExistsError={ ! isWCCOM && ! isBlazeProOAuth2Client( oauth2Client ) }
-					isSocialFirst={ this.props.isSocialFirst }
+					isSocialFirst={ this.props.isSocialFirst && ! isUnifiedCreateAccount }
 					labelText={ isUnifiedCreateAccount ? this.props.translate( 'Your email' ) : null }
 					disableTosText={ isUnifiedCreateAccount }
 				/>
@@ -757,7 +763,9 @@ const ConnectedUser = connect(
 		const oauth2Client = getCurrentOAuth2Client( state );
 		const isWoo = getIsWoo( state );
 		const isA4A = isA4AOAuth2Client( oauth2Client );
-		const isUnifiedCreateAccount = isWoo || isA4A;
+		const isBlazePro = getIsBlazePro( state );
+		const isCrowdsignal = isCrowdsignalOAuth2Client( oauth2Client );
+		const isUnifiedCreateAccount = isWoo || isA4A || isBlazePro || isCrowdsignal;
 
 		return {
 			oauth2Client: oauth2Client,
@@ -766,12 +774,13 @@ const ConnectedUser = connect(
 			isWCCOM: getIsWCCOM( state ),
 			isWoo,
 			isWooJPC: isWooJPCFlow( state ),
-			isBlazePro: getIsBlazePro( state ),
+			isBlazePro,
 			from: get( getCurrentQueryArguments( state ), 'from' ),
 			userLoggedIn: isUserLoggedIn( state ),
 			isOnboardingAffiliateFlow: getIsOnboardingAffiliateFlow( state ),
 			isUnifiedCreateAccount,
-			isA4A: isA4AOAuth2Client( oauth2Client ),
+			isA4A,
+			isCrowdsignal,
 		};
 	},
 	{

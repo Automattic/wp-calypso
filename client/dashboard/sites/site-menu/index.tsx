@@ -23,6 +23,26 @@ const SiteMenu = ( { site }: { site: Site } ) => {
 		);
 	}
 
+	if ( site.options?.is_difm_lite_in_progress ) {
+		return (
+			<ResponsiveMenu label={ __( 'Site Menu' ) }>
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/site-building-in-progress` }>
+					{ __( 'Site building' ) }
+				</ResponsiveMenu.Item>
+				{ hasAppSupport( supports, 'domains' ) && (
+					<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/domains` }>
+						{ __( 'Domains' ) }
+					</ResponsiveMenu.Item>
+				) }
+				{ hasAppSupport( supports, 'emails' ) && (
+					<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/emails` }>
+						{ __( 'Emails' ) }
+					</ResponsiveMenu.Item>
+				) }
+			</ResponsiveMenu>
+		);
+	}
+
 	return (
 		<ResponsiveMenu label={ __( 'Site Menu' ) }>
 			<ResponsiveMenu.Item to={ `/sites/${ siteSlug }` } activeOptions={ { exact: true } }>

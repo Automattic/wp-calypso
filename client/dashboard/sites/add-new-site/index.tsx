@@ -13,7 +13,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import { download, reusableBlock, Icon } from '@wordpress/icons';
 import devSiteBanner from 'calypso/assets/images/a8c-for-agencies/dev-site-banner.svg';
-import { useShowHelpCenter } from 'calypso/components/help-center'; // eslint-disable-line no-restricted-imports
+import { useHelpCenter } from '../../app/help-center';
 import Column from './column';
 import MenuItem from './menu-item';
 import type { AddNewSiteProps } from './types';
@@ -59,7 +59,7 @@ function AddNewSite( { context }: AddNewSiteProps ) {
 		} )
 	);
 
-	const { setShowHelpCenter } = useShowHelpCenter();
+	const { setShowHelpCenter } = useHelpCenter();
 
 	return (
 		<Wrapper alignment="flex-start" style={ { padding: '16px' } } spacing={ 6 }>
@@ -79,7 +79,7 @@ function AddNewSite( { context }: AddNewSiteProps ) {
 						'Prompt, edit, and launch WordPress websites with Artificial Intelligence.'
 					) }
 					onClick={ () => {
-						setShowHelpCenter( false ); // Close the help center
+						setShowHelpCenter( false );
 						recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
 							action: 'big-sky',
 						} );
