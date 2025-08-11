@@ -53,13 +53,13 @@ function WebsiteContentSubmitted( { site }: { site: Site } ) {
 			size="small"
 		>
 			<HStack spacing={ 4 } justify="start">
-				<RouterLinkButton variant="primary" to={ `/v2/sites/${ site.slug }/domains` }>
+				<RouterLinkButton variant="primary" to={ `/sites/${ site.slug }/domains` }>
 					{ __( 'Manage domain' ) }
 				</RouterLinkButton>
 				<RouterLinkButton
 					variant="secondary"
 					onClick={ recordEmailClick }
-					to={ `/v2/sites/${ site.slug }/emails` }
+					to={ `/sites/${ site.slug }/emails` }
 				>
 					{ hasEmailWithUs ? __( 'Manage email' ) : __( 'Add email' ) }
 				</RouterLinkButton>
