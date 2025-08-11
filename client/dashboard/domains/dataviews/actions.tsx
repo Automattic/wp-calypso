@@ -49,7 +49,9 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				callback: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
 					const siteSlug = getDomainSiteSlug( domain );
-					window.location.pathname = domainMappingSetup( siteSlug, domain.domain );
+
+					// Use href instead of pathname to preserve query parameters.
+					window.location.href = domainMappingSetup( siteSlug, domain.domain );
 				},
 				isEligible: ( item: DomainSummary ) =>
 					item.type === DomainTypes.MAPPED && ! item.points_to_wpcom,
