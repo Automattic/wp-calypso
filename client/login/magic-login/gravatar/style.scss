@@ -322,6 +322,11 @@
 			text-align: left;
 			cursor: pointer;
 			text-decoration: underline;
+			
+			&:disabled {
+			  opacity: 0.3;
+			  cursor: not-allowed;
+			}
 		}
 	}
 
