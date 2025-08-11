@@ -18,12 +18,6 @@ export type DNSRecord = {
 	ttl: number;
 };
 
-export type WPCOMDNSRecord = DNSRecord & {
-	domain: string;
-	id: string;
-	protected_field: boolean;
-};
-
 export type AddDNSRecordResponse = {
 	records: DNSRecord[];
 };
