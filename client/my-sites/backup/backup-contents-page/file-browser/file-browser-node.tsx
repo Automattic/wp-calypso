@@ -173,7 +173,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 			}
 		}
 
-		// If we are not showing the file card and the items doesn't have children or it is directory with restricted children,
+		// If we are not showing the file card and the item doesn't have children, or it is directory with restricted children,
 		// let's toggle the checkbox
 		if ( ( ! showFileCard && ! item.hasChildren ) || shouldRestrictChildren( item ) ) {
 			onCheckboxChange();
