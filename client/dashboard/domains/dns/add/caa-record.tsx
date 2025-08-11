@@ -21,10 +21,10 @@ export const CAARecordConfig: DNSRecordConfig = {
 			label: __( 'Tag' ),
 			Edit: RequiredSelect, // TODO: use DataForm's validation when available. See: DOTCOM-13298
 			elements: [
-				{ label: __( 'issue' ), value: 'issue' },
-				{ label: __( 'issuewild' ), value: 'issuewild' },
-				{ label: __( 'issueemail' ), value: 'issueemail' },
-				{ label: __( 'iodef' ), value: 'iodef' },
+				{ label: 'issue', value: 'issue' },
+				{ label: 'issuewild', value: 'issuewild' },
+				{ label: 'issueemail', value: 'issueemail' },
+				{ label: 'iodef', value: 'iodef' },
 			],
 		},
 		{
