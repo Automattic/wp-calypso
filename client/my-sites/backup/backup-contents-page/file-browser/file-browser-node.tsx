@@ -353,7 +353,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 						{ renderCheckbox() }
 						<Button
 							icon={ renderSeparateExpandButton ? null : buttonExpandIcon }
-							className="file-browser-node__title has-icon"
+							className="file-browser-node__title has-text has-icon"
 							onClick={ handleClick }
 							showTooltip={ isLabelTruncated }
 							label={ item.name }
