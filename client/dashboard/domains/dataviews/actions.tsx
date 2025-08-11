@@ -155,7 +155,7 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 					return (
 						!! site &&
 						canSetAsPrimary( { domain: item, site, user } ) &&
-						! isRecentlyRegistered( item.registrationDate )
+						! isRecentlyRegistered( item.registration_date )
 					);
 				},
 				disabled: setPrimaryDomainMutation.isPending,
