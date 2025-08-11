@@ -5,7 +5,6 @@ import { __experimentalText as Text, TabPanel, Notice } from '@wordpress/compone
 import { DataViews, Operator, Field, ViewTable } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { siteBySlugQuery } from '../../app/queries/site';
 import { siteLogsQuery } from '../../app/queries/site-logs';
@@ -139,8 +138,6 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		}
 	};
 
-	const translate = useTranslate();
-
 	// @todo, this will be replaced when importing the use-field data.
 	const VALUES_REQUEST_TYPE = [ 'GET', 'HEAD', 'POST', 'PUT', 'DELETE' ];
 	const VALUES_SEVERITY = [ 'User', 'Warning', 'Deprecated', 'Fatal error' ];
@@ -247,8 +244,8 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	);
 
 	const LOG_TABS = [
-		{ name: 'php', title: translate( 'PHP error' ) },
-		{ name: 'server', title: translate( 'Web server' ) },
+		{ name: 'php', title: __( 'PHP error' ) },
+		{ name: 'server', title: __( 'Web server' ) },
 	];
 
 	if ( ! site ) {
