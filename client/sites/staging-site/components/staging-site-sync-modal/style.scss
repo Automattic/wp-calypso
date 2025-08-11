@@ -15,7 +15,6 @@
 		display: none;
 	}
 
-	// Override WordPress styling only for disabled AND checked checkboxes
 	.components-checkbox-control__input[type="checkbox"]:disabled:checked {
 		background: #f0f0f0;
 		border-color: #ddd;
