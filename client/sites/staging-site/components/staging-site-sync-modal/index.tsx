@@ -289,7 +289,7 @@ export default function SyncModal( {
 		} );
 	const rewindId = lastKnownBackupAttempt?.rewindId;
 
-	const shouldDisableGranularSync = ! lastKnownBackupAttempt && ! isLoadingBackupAttempt;
+	const shouldDisableGranularSync = true;
 
 	const handleConfirm = () => {
 		let include_paths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );

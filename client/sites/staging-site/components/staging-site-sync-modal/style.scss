@@ -15,17 +15,13 @@
 		display: none;
 	}
 
-	// Override WordPress styling for disabled checkboxes to show proper disabled appearance
-	.components-checkbox-control__input[type="checkbox"]:disabled {
+	// Override WordPress styling only for disabled AND checked checkboxes
+	.components-checkbox-control__input[type="checkbox"]:disabled:checked {
 		background: #f0f0f0;
 		border-color: #ddd;
 	}
 
-	.components-checkbox-control:has(input[disabled]) {
-		.components-checkbox-control__label {
-			color: #a0a5aa;
-		}
-		
+	.components-checkbox-control:has(input[disabled]:checked) {
 		.components-checkbox-control__checked {
 			fill: #a0a5aa;
 		}
