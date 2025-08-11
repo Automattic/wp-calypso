@@ -234,6 +234,10 @@ class AutoRenewToggle extends Component<
 			return null;
 		}
 
+		if ( ! planName ) {
+			return null;
+		}
+
 		let toggle;
 		if ( showLink ) {
 			toggle = this.isUpdatingAutoRenew() ? (

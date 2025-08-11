@@ -20,6 +20,7 @@ type BaseProps = {
 	flowName?: string;
 	query?: string;
 	onSkip: () => void;
+	isLoadingSubdomainSuggestions?: boolean;
 };
 
 type WithSelectedSite = BaseProps & {
@@ -37,6 +38,7 @@ type Props = WithSelectedSite | WithSubdomainSuggestion;
 const DomainSkipSuggestion = ( {
 	selectedSite,
 	subdomainSuggestion,
+	isLoadingSubdomainSuggestions,
 	flowName,
 	query,
 	onSkip,
@@ -51,6 +53,10 @@ const DomainSkipSuggestion = ( {
 	const [ subdomain, ...tlds ] = domain?.split( '.' ) ?? [];
 
 	useEffect( () => {
+		if ( isLoadingSubdomainSuggestions ) {
+			return;
+		}
+
 		if ( ! hasExistingSite && ! hasSubdomainSuggestion ) {
 			recordTracksEvent( 'calypso_domain_search_skip_no_site_and_suggestion', {
 				query,
@@ -58,7 +64,14 @@ const DomainSkipSuggestion = ( {
 				flow_name: flowName,
 			} );
 		}
-	}, [ hasExistingSite, hasSubdomainSuggestion, query, currentUser?.ID, flowName ] );
+	}, [
+		hasExistingSite,
+		hasSubdomainSuggestion,
+		query,
+		currentUser?.ID,
+		flowName,
+		isLoadingSubdomainSuggestions,
+	] );
 
 	const onSkipClick = useCallback( () => {
 		if ( selectedSite ) {

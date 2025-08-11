@@ -121,7 +121,7 @@ const LayoutLoggedOut = ( {
 			currentRoute?.startsWith( '/start/do-it-for-me/' ) ) &&
 		userAllowedToHelpCenter;
 
-	const isUnifiedCreateAccount = sectionName === 'signup' && ( isWoo || isA4A );
+	const isUnifiedCreateAccount = sectionName === 'signup' && ( isWoo || isA4A || isBlazePro );
 
 	const classes = {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,
