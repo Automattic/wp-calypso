@@ -475,7 +475,7 @@ export default function SyncModal( {
 						/>
 					</HStack>
 					{ ( shouldDisableGranularSync || sqlNode?.checkState === 'checked' ) && (
-						<VStack style={ { paddingBottom: '52px' } }>
+						<VStack style={ { paddingBottom: '48px' } }>
 							<Notice status="warning" isDismissible={ false }>
 								<Text as="p" weight="bold" style={ { lineHeight: '24px' } }>
 									{ __( 'Warning! Database will be overwritten.' ) }
