@@ -124,7 +124,6 @@ interface SyncConfig {
 	production: EnvironmentConfig;
 	fromLabel: string;
 	toLabel: string;
-	syncSelectionHeading: string;
 	learnMore: string;
 	submit: string;
 }
@@ -150,7 +149,6 @@ const getSyncConfig = ( type: 'pull' | 'push' ): SyncConfig => {
 			},
 			fromLabel: __( 'Pull' ),
 			toLabel: __( 'To' ),
-			syncSelectionHeading: __( 'What would you like to pull?' ),
 			learnMore: __( 'Read more about <a>environment pull</a>.' ),
 			submit: __( 'Pull' ),
 		};
@@ -175,7 +173,6 @@ const getSyncConfig = ( type: 'pull' | 'push' ): SyncConfig => {
 		},
 		fromLabel: __( 'Push' ),
 		toLabel: __( 'To' ),
-		syncSelectionHeading: __( 'What would you like to push?' ),
 		learnMore: __( 'Read more about <a>environment push</a>.' ),
 		submit: __( 'Push' ),
 	};
@@ -382,7 +379,7 @@ export default function SyncModal( {
 			style={ { maxWidth: '668px' } }
 		>
 			<QueryRewindState siteId={ querySiteId } />
-			<VStack>
+			<VStack spacing={ 6 }>
 				<Text>
 					{ createInterpolateElement( syncConfig[ environment ].description, {
 						a: <ExternalLink href={ `/backup/${ targetSiteSlug }` } children={ null } />,
@@ -401,7 +398,6 @@ export default function SyncModal( {
 						siteTitle={ targetSiteTitle }
 					/>
 				</HStack>
-				<SectionHeader level={ 3 } title={ syncConfig.syncSelectionHeading } />
 
 				<div
 					className={ clsx( 'staging-site-card', {
@@ -464,6 +460,7 @@ export default function SyncModal( {
 						spacing={ 2 }
 						style={ {
 							borderTop: '1px solid var(--wp-components-color-gray-300, #ddd)',
+							borderBottom: '1px solid var(--wp-components-color-gray-300, #ddd)',
 							padding: '16px 0',
 							marginTop: '8px',
 							marginBottom: '24px',
@@ -509,7 +506,7 @@ export default function SyncModal( {
 						</VStack>
 					) }
 				</div>
-				<VStack className="staging-site-card__footer" spacing={ 4 }>
+				<VStack className="staging-site-card__footer" spacing={ 6 }>
 					{ showDomainConfirmation && (
 						<InputControl
 							__next40pxDefaultSize
