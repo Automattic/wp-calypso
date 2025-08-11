@@ -2,7 +2,7 @@ import wpcom from 'calypso/lib/wp';
 
 export async function fetchDomainNameServers( domainName: string ): Promise< string[] > {
 	return wpcom.req.get( {
-		path: `/domains/${ domainName }/nameservers/`,
+		path: `/domains/${ domainName }/nameservers`,
 	} );
 }
 
