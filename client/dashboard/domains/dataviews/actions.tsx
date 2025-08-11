@@ -45,13 +45,14 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				id: 'setup',
 				isPrimary: true,
 				icon: <Icon icon={ tool } />,
-				label: __( 'Setup' ),
+				label: __( 'Connection setup' ),
 				callback: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
 					const siteSlug = getDomainSiteSlug( domain );
 					window.location.pathname = domainMappingSetup( siteSlug, domain.domain );
 				},
-				isEligible: ( item: DomainSummary ) => item.type === DomainTypes.MAPPED,
+				isEligible: ( item: DomainSummary ) =>
+					item.type === DomainTypes.MAPPED && ! item.points_to_wpcom,
 			},
 			{
 				id: 'manage-domain',

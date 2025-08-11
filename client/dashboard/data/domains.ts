@@ -49,6 +49,7 @@ export interface DomainSummary {
 	pending_registration_at_registry: boolean;
 	pending_renewal: boolean;
 	pending_transfer: boolean;
+	points_to_wpcom: boolean;
 	primary_domain: boolean;
 	registrationDate: string;
 	site_slug: string;
