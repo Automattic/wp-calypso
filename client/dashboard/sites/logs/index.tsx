@@ -1,5 +1,5 @@
 import { Badge } from '@automattic/ui';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { __experimentalText as Text, TabPanel, Notice } from '@wordpress/components';
 import { DataViews, Operator, Field, ViewTable } from '@wordpress/dataviews';
@@ -101,6 +101,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 
 	const filter = useMemo( () => toFilterParams( { view, logType } ), [ view, logType ] );
 
+	// @todo: We'll be able to remove the fallbacks once the temporary data (fields, views, actions) are removed and this component is cleaned up, as we'll return earlier if site doesn't exist.
 	const siteId = site?.ID ?? null;
 
 	const EMPTY_ARRAY: ( ServerLog | PHPLog )[] = [];
@@ -116,8 +117,10 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		pageIndex: view.page,
 	};
 
-	const { data: siteLogs, isFetching } = useQuery( siteLogsQuery( siteId, params ) );
-
+	const { data: siteLogs, isFetching } = useQuery( {
+		...siteLogsQuery( siteId, params ),
+		placeholderData: keepPreviousData,
+	} );
 	const logs = Array.isArray( siteLogs?.logs ) ? siteLogs.logs : EMPTY_ARRAY;
 
 	const paginationInfo = {

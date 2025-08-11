@@ -1,4 +1,4 @@
-import { queryOptions, keepPreviousData } from '@tanstack/react-query';
+import { queryOptions } from '@tanstack/react-query';
 import {
 	fetchSiteLogs,
 	SiteLogsParams,
@@ -20,7 +20,6 @@ export const siteLogsQuery = ( siteId: number, params: SiteLogsParams ) =>
 				pageSize: params.pageSize,
 				pageIndex: params.pageIndex,
 			} ),
-		placeholderData: keepPreviousData,
 		enabled: params.start <= params.end,
 		staleTime: Infinity, // The logs within a specified time range never change.
 		select: ( data ) => ( {
