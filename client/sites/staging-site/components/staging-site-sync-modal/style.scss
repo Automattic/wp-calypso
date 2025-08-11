@@ -19,10 +19,6 @@
 	.components-checkbox-control__input[type="checkbox"]:disabled {
 		background: #f0f0f0;
 		border-color: #ddd;
-		
-		&::before {
-			display: none;
-		}
 	}
 
 	.components-checkbox-control:has(input[disabled]) {
@@ -31,7 +27,7 @@
 		}
 		
 		.components-checkbox-control__checked {
-			display: none;
+			fill: #a0a5aa;
 		}
 	}
 	
