@@ -1,7 +1,6 @@
 import { PriceTierEntry } from '@automattic/calypso-products';
 
 export interface Purchase {
-	active?: boolean;
 	amount: number;
 	attachedToPurchaseId: number;
 	billPeriodDays: number;

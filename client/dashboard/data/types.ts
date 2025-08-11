@@ -10,6 +10,7 @@ export type * from './me-ssh';
 export type * from './site';
 export type * from './site-activity-log';
 export type * from './site-atomic-transfers';
+export type * from './site-do-it-for-me';
 export type * from './site-domains';
 export type * from './site-hosting-edge-cache';
 export type * from './site-hosting-sftp';

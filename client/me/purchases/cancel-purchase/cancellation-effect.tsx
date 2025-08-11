@@ -9,8 +9,13 @@ import {
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { getName, getSubscriptionEndDate, isRefundable } from 'calypso/lib/purchases';
 import { isTemporarySitePurchase } from '../utils';
+import type { Purchases } from '@automattic/data-stores';
+import type { LocalizeProps } from 'i18n-calypso';
 
-export function cancellationEffectHeadline( purchase, translate ) {
+export function cancellationEffectHeadline(
+	purchase: Purchases.Purchase,
+	translate: LocalizeProps[ 'translate' ]
+) {
 	const { domain } = purchase;
 	const purchaseName = getName( purchase );
 
@@ -51,7 +56,13 @@ export function cancellationEffectHeadline( purchase, translate ) {
 	);
 }
 
-function refundableCancellationEffectDetail( purchase, translate, overrides ) {
+function refundableCancellationEffectDetail(
+	purchase: Purchases.Purchase,
+	translate: LocalizeProps[ 'translate' ],
+	overrides: {
+		refundText?: string;
+	}
+) {
 	const refundText = overrides.refundText || purchase.refundText;
 
 	if ( isThemePurchase( purchase ) ) {
@@ -109,7 +120,10 @@ function refundableCancellationEffectDetail( purchase, translate, overrides ) {
 	} );
 }
 
-function nonrefundableCancellationEffectDetail( purchase, translate ) {
+function nonrefundableCancellationEffectDetail(
+	purchase: Purchases.Purchase,
+	translate: LocalizeProps[ 'translate' ]
+) {
 	const subscriptionEndDate = getSubscriptionEndDate( purchase );
 
 	if ( isGSuiteOrGoogleWorkspace( purchase ) ) {
@@ -150,7 +164,13 @@ function nonrefundableCancellationEffectDetail( purchase, translate ) {
 	return '';
 }
 
-export function cancellationEffectDetail( purchase, translate, overrides = {} ) {
+export function cancellationEffectDetail(
+	purchase: Purchases.Purchase,
+	translate: LocalizeProps[ 'translate' ],
+	overrides: {
+		refundText?: string;
+	} = {}
+) {
 	if ( isRefundable( purchase ) ) {
 		return refundableCancellationEffectDetail( purchase, translate, overrides );
 	}

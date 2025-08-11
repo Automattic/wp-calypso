@@ -3,8 +3,8 @@ import page from '@automattic/calypso-router';
 import { Button, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { JETPACK_SUPPORT } from '@automattic/urls';
-import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
+import { localize, type LocalizeProps } from 'i18n-calypso';
+import moment from 'moment';
 import { Fragment, Component } from 'react';
 import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -19,14 +19,28 @@ import {
 } from 'calypso/lib/purchases';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isTemporarySitePurchase } from '../../utils';
+import type { Purchases, SiteDetails } from '@automattic/data-stores';
 
-export class PlanBillingPeriod extends Component {
-	static propTypes = {
-		purchase: PropTypes.object,
-		site: PropTypes.object,
-		isProductOwner: PropTypes.bool,
-	};
+interface MomentProps {
+	moment: typeof moment;
+}
 
+export interface PlanBillingPeriodProps {
+	purchase: Purchases.Purchase;
+	site: SiteDetails | null | undefined;
+	isProductOwner: boolean;
+}
+
+export class PlanBillingPeriod extends Component<
+	PlanBillingPeriodProps &
+		LocalizeProps &
+		MomentProps & {
+			recordTracksEvent: (
+				event: string,
+				options: { current_plan: string; upgrading_to: string }
+			) => void;
+		}
+> {
 	handleMonthlyToYearlyButtonClick = () => {
 		const { purchase } = this.props;
 		const yearlyPlanSlug = getYearlyPlanByMonthly( purchase.productSlug );

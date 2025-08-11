@@ -19,11 +19,15 @@ import { rawUserPreferencesQuery } from './queries/me-preferences';
 import { profileQuery } from './queries/me-profile';
 import { userPurchasesQuery } from './queries/me-purchases';
 import { siteByIdQuery, siteBySlugQuery } from './queries/site';
-import { siteLastFiveActivityLogEntriesQuery } from './queries/site-activity-log';
+import {
+	siteLastFiveActivityLogEntriesQuery,
+	siteRewindableActivityLogEntriesQuery,
+} from './queries/site-activity-log';
 import { siteAgencyBlogQuery } from './queries/site-agency';
 import { siteLastBackupQuery } from './queries/site-backups';
 import { siteEdgeCacheStatusQuery } from './queries/site-cache';
 import { siteDefensiveModeSettingsQuery } from './queries/site-defensive-mode';
+import { siteDifmWebsiteContentQuery } from './queries/site-do-it-for-me';
 import { siteDomainsQuery } from './queries/site-domains';
 import { siteJetpackModulesQuery } from './queries/site-jetpack-module';
 import { siteJetpackSettingsQuery } from './queries/site-jetpack-settings';
@@ -128,15 +132,25 @@ const sitesRoute = createRoute( {
 const siteRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites/$siteSlug',
-	beforeLoad: async ( { cause, params: { siteSlug }, location } ) => {
+	beforeLoad: async ( { cause, params: { siteSlug }, location, matches } ) => {
 		if ( cause !== 'enter' ) {
 			return;
 		}
 
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+
 		const trialExpiredUrl = `/sites/${ siteSlug }/trial-ended`;
 		if ( hasSiteTrialEnded( site ) && ! location.pathname.includes( trialExpiredUrl ) ) {
 			throw redirect( { to: trialExpiredUrl } );
+		}
+
+		const difmUrl = `/sites/${ siteSlug }/site-building-in-progress`;
+		const difmAllowedRoutes = getDifmLiteAllowedRoutes();
+		if (
+			site.options?.is_difm_lite_in_progress &&
+			! matches.some( ( match ) => difmAllowedRoutes.includes( match.routeId ) )
+		) {
+			throw redirect( { to: difmUrl } );
 		}
 	},
 	loader: async ( { params: { siteSlug } } ) => {
@@ -253,6 +267,11 @@ const siteLogsChildRoutes = [ siteLogsIndexRoute, siteLogsPhpRoute, siteLogsServ
 const siteBackupsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'backups',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		// Preload activity log backup-related entries.
+		queryClient.ensureQueryData( siteRewindableActivityLogEntriesQuery( site.ID ) );
+	},
 } ).lazy( () =>
 	import( '../sites/backups' ).then( ( d ) =>
 		createLazyRoute( 'site-backups' )( {
@@ -552,6 +571,37 @@ const siteTrialEndedRoute = createRoute( {
 	)
 );
 
+const siteDifmLiteInProgressRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'site-building-in-progress',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause !== 'enter' ) {
+			return;
+		}
+
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! site.options?.is_difm_lite_in_progress ) {
+			throw redirect( { to: `/sites/${ siteSlug }` } );
+		}
+	},
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		const [ websiteContent ] = await Promise.all( [
+			queryClient.ensureQueryData( siteDifmWebsiteContentQuery( site.ID ) ),
+			queryClient.ensureQueryData( siteDomainsQuery( site.ID ) ),
+		] );
+		if ( ! websiteContent.is_website_content_submitted ) {
+			await queryClient.ensureQueryData( sitePurchasesQuery( site.ID ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../sites/difm-lite-in-progress' ).then( ( d ) =>
+		createLazyRoute( 'site-difm-lite-in-progress' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 const emailsRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'emails',
@@ -738,6 +788,7 @@ const createRouteTree = ( config: AppConfig ) => {
 			siteSettingsSftpSshRoute,
 			siteSettingsWebApplicationFirewallRoute,
 			siteTrialEndedRoute,
+			siteDifmLiteInProgressRoute,
 		];
 
 		if ( config.supports.sites.deployments ) {
@@ -816,6 +867,12 @@ export const getRouter = ( config: AppConfig ) => {
 		defaultViewTransition: true,
 	} );
 };
+
+// Site routes which are still allowed to be accessed while a site gets the DIFM lite process.
+// Defined as a `function` so that routes defined earlier can reference routes defined later.
+function getDifmLiteAllowedRoutes() {
+	return [ siteDifmLiteInProgressRoute.id, siteDomainsRoute.id, siteEmailsRoute.id ];
+}
 
 export {
 	rootRoute,

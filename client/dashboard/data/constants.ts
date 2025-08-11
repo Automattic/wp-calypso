@@ -125,3 +125,5 @@ export const AkismetPlans = {
 	PRODUCT_AKISMET_ENTERPRISE_25K_YEARLY: 'ak_ep25k_yearly',
 	PRODUCT_AKISMET_ENTERPRISE_25K_BI_YEARLY: 'ak_ep25k_bi_yearly',
 } as const;
+
+export const WPCOM_DIFM_LITE = 'wp_difm_lite';

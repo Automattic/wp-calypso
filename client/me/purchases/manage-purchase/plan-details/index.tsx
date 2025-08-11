@@ -1,7 +1,6 @@
 import { isJetpackPlan, isFreeJetpackPlan } from '@automattic/calypso-products';
 import { Card, FormLabel } from '@automattic/components';
-import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
+import { localize, LocalizeProps } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
@@ -17,29 +16,31 @@ import {
 } from 'calypso/state/purchases/selectors';
 import { isRequestingSites, getSite } from 'calypso/state/sites/selectors';
 import PlanBillingPeriod from './billing-period';
+import type { Purchases, SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
 
-export class PurchasePlanDetails extends Component {
-	static propTypes = {
-		purchaseId: PropTypes.number,
-		isPlaceholder: PropTypes.bool,
-		isProductOwner: PropTypes.bool,
+export interface PurchasePlanDetailsConnectedProps {
+	purchase: Purchases.Purchase | undefined;
+	hasLoadedSites: boolean;
+	hasLoadedPurchasesFromServer: boolean;
+	pluginList: Array< {
+		slug: string;
+		key: string;
+	} >;
+	site: SiteDetails | null | undefined;
+	siteId: number | null | undefined;
+}
 
-		// Connected props
-		purchase: PropTypes.object,
-		hasLoadedSites: PropTypes.bool,
-		hasLoadedPurchasesFromServer: PropTypes.bool,
-		pluginList: PropTypes.arrayOf(
-			PropTypes.shape( {
-				slug: PropTypes.string.isRequired,
-				key: PropTypes.string,
-			} ).isRequired
-		).isRequired,
-		site: PropTypes.object,
-		siteId: PropTypes.number,
-	};
+export interface PurchasePlanDetailsProps {
+	purchaseId: number;
+	isPlaceholder?: boolean;
+	isProductOwner?: boolean;
+}
 
+export class PurchasePlanDetails extends Component<
+	PurchasePlanDetailsProps & PurchasePlanDetailsConnectedProps & LocalizeProps
+> {
 	renderPlaceholder() {
 		return (
 			<div className="plan-details__wrapper is-placeholder">
@@ -52,7 +53,7 @@ export class PurchasePlanDetails extends Component {
 		);
 	}
 
-	renderPluginLabel( slug ) {
+	renderPluginLabel( slug: string ) {
 		switch ( slug ) {
 			case 'vaultpress':
 				return this.props.translate( 'Backups and security scanning API key' );
@@ -61,7 +62,7 @@ export class PurchasePlanDetails extends Component {
 		}
 	}
 
-	isDataLoading( props ) {
+	isDataLoading( props: PurchasePlanDetailsProps & PurchasePlanDetailsConnectedProps ) {
 		return ! props.hasLoadedSites || ! props.hasLoadedPurchasesFromServer;
 	}
 
@@ -77,7 +78,7 @@ export class PurchasePlanDetails extends Component {
 			return this.renderPlaceholder();
 		}
 
-		if ( isExpired( purchase ) ) {
+		if ( ! purchase || isExpired( purchase ) ) {
 			return null;
 		}
 
@@ -116,7 +117,7 @@ export class PurchasePlanDetails extends Component {
 	}
 }
 
-export default connect( ( state, props ) => {
+export default connect( ( state, props: PurchasePlanDetailsProps ) => {
 	const purchase = getByPurchaseId( state, props.purchaseId );
 	const siteId = purchase ? purchase.siteId : null;
 	return {
@@ -126,7 +127,7 @@ export default connect( ( state, props ) => {
 			? hasLoadedSitePurchasesFromServer( state )
 			: hasLoadedUserPurchasesFromServer( state ),
 		purchase,
-		pluginList: getPluginsForSite( state, siteId ),
+		pluginList: getPluginsForSite( state, siteId ?? 0 ),
 		siteId,
 	};
 } )( localize( PurchasePlanDetails ) );

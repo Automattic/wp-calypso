@@ -5,7 +5,7 @@ import { siteLastBackupQuery } from '../../app/queries/site-backups';
 import { useFormattedTime } from '../../components/formatted-time';
 import { useTimeSince } from '../../components/time-since';
 import { HostingFeatures } from '../../data/constants';
-import { isSelfHostedJetpackConnected } from '../../utils/site-types';
+import { getBackupUrl } from '../../utils/site-backup';
 import HostingFeatureGatedWithOverviewCard from '../hosting-feature-gated-with-overview-card';
 import OverviewCard from '../overview-card';
 import type { Site } from '../../data/types';
@@ -15,12 +15,6 @@ const CARD_PROPS = {
 	title: __( 'Last backup' ),
 	tracksId: 'backup',
 };
-
-function getBackupUrl( site: Site ) {
-	return isSelfHostedJetpackConnected( site )
-		? `https://cloud.jetpack.com/backup/${ site.slug }`
-		: `https://wordpress.com/backup/${ site.slug }`;
-}
 
 function BackupCardContent( { site }: { site: Site } ) {
 	const { data: lastBackup } = useQuery( siteLastBackupQuery( site.ID ) );

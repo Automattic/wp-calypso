@@ -7,7 +7,7 @@ import {
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
+import moment from 'moment';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import CancelJetpackForm from 'calypso/components/marketing-survey/cancel-jetpack-form';
@@ -26,43 +26,61 @@ import { clearPurchases } from 'calypso/state/purchases/actions';
 import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
 import { MarketPlaceSubscriptionsDialog } from '../marketplace-subscriptions-dialog';
 import { willShowDomainOptionsRadioButtons } from './domain-options';
+import type { Purchases } from '@automattic/data-stores';
+import type { LocalizeProps } from 'i18n-calypso';
 
-class CancelPurchaseButton extends Component {
-	static propTypes = {
-		purchase: PropTypes.object.isRequired,
-		purchaseListUrl: PropTypes.string,
-		siteSlug: PropTypes.string.isRequired,
-		cancelBundledDomain: PropTypes.bool.isRequired,
-		includedDomainPurchase: PropTypes.object,
-		disabled: PropTypes.bool,
-		activeSubscriptions: PropTypes.array,
-		onCancellationStart: PropTypes.func,
-		onCancellationComplete: PropTypes.func,
-		onSurveyComplete: PropTypes.func,
-		moment: PropTypes.func,
-		// Props from parent component
-		showDialog: PropTypes.bool,
-		isLoading: PropTypes.bool,
-		onDialogClose: PropTypes.func,
-		onSetLoading: PropTypes.func,
-		// Methods from parent component
-		downgradeClick: PropTypes.func,
-		freeMonthOfferClick: PropTypes.func,
-		// Control marketplace dialog visibility
-		showMarketplaceDialog: PropTypes.bool,
-	};
+interface MomentProps {
+	moment: typeof moment;
+}
 
-	static defaultProps = {
-		purchaseListUrl: purchasesRoot,
-		showMarketplaceDialog: true,
-	};
+export interface CancelPurchaseButtonConnectedProps {
+	isJetpack: boolean;
+	isAkismet: boolean;
+}
 
+export interface CancelPurchaseButtonProps {
+	purchase: Purchases.Purchase;
+	purchaseListUrl?: string;
+	siteSlug: string;
+	cancelBundledDomain: boolean;
+	includedDomainPurchase: Purchases.Purchase;
+	disabled?: boolean;
+	activeSubscriptions: Array< { id: number; productName: string } >;
+	onCancellationStart: null | ( () => void );
+	onCancellationComplete: () => void;
+	onSurveyComplete: () => void;
+	// Props from parent component
+	showDialog: boolean;
+	isLoading: boolean;
+	onDialogClose: () => void;
+	onSetLoading: ( isLoading: boolean ) => void;
+	// Methods from parent component
+	downgradeClick: ( upsell: string ) => void;
+	freeMonthOfferClick: () => void;
+	// Control marketplace dialog visibility
+	showMarketplaceDialog?: boolean;
+}
+
+export type CancelPurchaseButtonAllProps = CancelPurchaseButtonProps &
+	CancelPurchaseButtonConnectedProps &
+	LocalizeProps &
+	MomentProps;
+
+export interface CancelPurchaseButtonState {
+	disabled: boolean;
+	isShowingMarketplaceSubscriptionsDialog: boolean;
+}
+
+class CancelPurchaseButton extends Component<
+	CancelPurchaseButtonAllProps,
+	CancelPurchaseButtonState
+> {
 	state = {
 		disabled: false,
 		isShowingMarketplaceSubscriptionsDialog: false,
 	};
 
-	setDisabled = ( disabled ) => {
+	setDisabled = ( disabled: boolean ) => {
 		this.setState( { disabled } );
 	};
 
@@ -101,13 +119,13 @@ class CancelPurchaseButton extends Component {
 		}
 
 		// Always redirect to purchases page when dialog is closed
-		page.redirect( this.props.purchaseListUrl );
+		page.redirect( this.props.purchaseListUrl ?? purchasesRoot );
 	};
 
 	shouldHandleMarketplaceSubscriptions() {
 		const { activeSubscriptions, showMarketplaceDialog } = this.props;
 
-		return activeSubscriptions?.length > 0 && showMarketplaceDialog;
+		return activeSubscriptions?.length > 0 && ( showMarketplaceDialog ?? true );
 	}
 
 	showMarketplaceDialog = () => {
@@ -203,7 +221,7 @@ class CancelPurchaseButton extends Component {
 					<CancelJetpackForm
 						disableButtons={ disableButtons }
 						purchase={ purchase }
-						purchaseListUrl={ purchaseListUrl }
+						purchaseListUrl={ purchaseListUrl ?? purchasesRoot }
 						isVisible={ showDialog }
 						onClose={ this.closeDialog }
 						onSurveyComplete={ this.props.onSurveyComplete }
@@ -217,7 +235,7 @@ class CancelPurchaseButton extends Component {
 					<DomainCancellationSurvey
 						disableButtons={ disableButtons }
 						purchase={ purchase }
-						purchaseListUrl={ purchaseListUrl }
+						purchaseListUrl={ purchaseListUrl ?? purchasesRoot }
 						isVisible={ showDialog }
 						onClose={ this.closeDialog }
 						onSurveyComplete={ this.props.onSurveyComplete }
@@ -252,7 +270,7 @@ class CancelPurchaseButton extends Component {
 }
 
 export default connect(
-	( state, { purchase } ) => ( {
+	( state, { purchase }: CancelPurchaseButtonProps ) => ( {
 		isJetpack: purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) ),
 		isAkismet: purchase && isAkismetProduct( purchase ),
 	} ),

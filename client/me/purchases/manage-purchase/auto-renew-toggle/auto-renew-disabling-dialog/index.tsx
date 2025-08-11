@@ -5,8 +5,8 @@ import {
 	isTitanMail,
 } from '@automattic/calypso-products';
 import { Button } from '@wordpress/components';
-import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
+import { localize, type LocalizeProps } from 'i18n-calypso';
+import moment from 'moment';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { ConfirmDialog, DialogContent, DialogFooter } from 'calypso/components/confirm-dialog';
@@ -14,23 +14,48 @@ import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import CancelAutoRenewalForm from 'calypso/components/marketing-survey/cancel-auto-renewal-form';
 import { isAkismetTemporarySitePurchase } from 'calypso/me/purchases/utils';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
+import type { Purchases } from '@automattic/data-stores';
 
 const DIALOG = {
 	GENERAL: 'general',
 	ATOMIC: 'atomic',
 	SURVEY: 'survey',
-};
+} as const;
 
-class AutoRenewDisablingDialog extends Component {
-	static propTypes = {
-		isVisible: PropTypes.bool,
-		translate: PropTypes.func.isRequired,
-		planName: PropTypes.string.isRequired,
-		siteDomain: PropTypes.string.isRequired,
-		purchase: PropTypes.object.isRequired,
-	};
+type DialogType = typeof DIALOG.GENERAL | typeof DIALOG.ATOMIC | typeof DIALOG.SURVEY;
 
-	state = {
+interface MomentProps {
+	moment: typeof moment;
+}
+
+interface AutoRenewDisablingDialogConnectedProps {
+	isAtomicSite: boolean;
+}
+
+interface AutoRenewDisablingDialogProps {
+	isVisible: boolean;
+	planName: string;
+	siteDomain: string;
+	purchase: Purchases.Purchase;
+	onConfirm: () => void;
+	onClose: () => void;
+}
+
+interface AutoRenewDisablingDialogState {
+	dialogType: DialogType;
+	surveyHasShown: boolean;
+}
+
+type AutoRenewDisablingDialogAllProps = AutoRenewDisablingDialogProps &
+	AutoRenewDisablingDialogConnectedProps &
+	LocalizeProps &
+	MomentProps;
+
+class AutoRenewDisablingDialog extends Component<
+	AutoRenewDisablingDialogAllProps,
+	AutoRenewDisablingDialogState
+> {
+	state: AutoRenewDisablingDialogState = {
 		dialogType: DIALOG.GENERAL,
 		surveyHasShown: false,
 	};
@@ -60,7 +85,7 @@ class AutoRenewDisablingDialog extends Component {
 		return null;
 	}
 
-	getCopy( variation ) {
+	getCopy( variation: string ) {
 		const { planName, siteDomain, purchase, translate, moment } = this.props;
 		const expiryDate = moment( purchase.expiryDate ).format( 'LL' );
 
@@ -94,7 +119,7 @@ class AutoRenewDisablingDialog extends Component {
 					{
 						args: {
 							// in case of a domain registration, we need the actual domain bound to this purchase instead of the primary domain bound to the site.
-							domain: purchase.meta,
+							domain: purchase.meta ?? '',
 							expiryDate,
 						},
 						components: {
@@ -132,7 +157,7 @@ class AutoRenewDisablingDialog extends Component {
 						'To avoid that, turn auto-renewal back on or manually renew your subscription before the expiration date.',
 					{
 						args: {
-							domainName: purchase.meta,
+							domainName: purchase.meta ?? '',
 							// Use the purchased product name to make sure it's correct
 							emailProductName: purchase.productName,
 							expiryDate,
@@ -260,7 +285,7 @@ class AutoRenewDisablingDialog extends Component {
 
 	renderGeneralDialog = () => {
 		const { isVisible, translate } = this.props;
-		const description = this.getCopy( this.getVariation() );
+		const description = this.getCopy( this.getVariation() ?? '' );
 
 		if ( ! isVisible ) {
 			return null;
@@ -312,6 +337,6 @@ class AutoRenewDisablingDialog extends Component {
 	}
 }
 
-export default connect( ( state, { purchase } ) => ( {
+export default connect( ( state, { purchase }: AutoRenewDisablingDialogProps ) => ( {
 	isAtomicSite: isSiteAtomic( state, purchase.siteId ),
 } ) )( localize( withLocalizedMoment( AutoRenewDisablingDialog ) ) );

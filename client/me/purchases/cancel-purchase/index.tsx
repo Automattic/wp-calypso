@@ -12,8 +12,8 @@ import {
 import page from '@automattic/calypso-router';
 import { Card, CompactCard } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
-import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
+import { localize, LocalizeProps } from 'i18n-calypso';
+import moment from 'moment';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import BackupRetentionOptionOnCancelPurchase from 'calypso/components/backup-retention-management/retention-option-on-cancel-purchase';
@@ -69,25 +69,71 @@ import CancelPurchaseButton from './button';
 import CancelPurchaseDomainOptions, { willShowDomainOptionsRadioButtons } from './domain-options';
 import CancelPurchaseFeatureList from './feature-list';
 import CancelPurchaseRefundInformation from './refund-information';
+import type { Purchases, SiteDetails } from '@automattic/data-stores';
+import type { GetManagePurchaseUrlFor } from 'calypso/lib/purchases/types';
+import type { ReactNode } from 'react';
 
 import './style.scss';
 
-class CancelPurchase extends Component {
-	static propTypes = {
-		purchaseListUrl: PropTypes.string,
-		getManagePurchaseUrlFor: PropTypes.func,
-		getConfirmCancelDomainUrlFor: PropTypes.func,
-		hasLoadedSites: PropTypes.bool.isRequired,
-		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
-		includedDomainPurchase: PropTypes.object,
-		isJetpackPurchase: PropTypes.bool,
-		purchase: PropTypes.object,
-		purchaseId: PropTypes.number.isRequired,
-		site: PropTypes.object,
-		siteSlug: PropTypes.string.isRequired,
-		atomicTransfer: PropTypes.object,
-	};
+interface MomentProps {
+	moment: typeof moment;
+}
 
+export interface CancelPurchaseState {
+	cancelBundledDomain: boolean;
+	confirmCancelBundledDomain: boolean;
+	surveyShown: boolean;
+	atomicRevertConfirmed: boolean;
+	isLoading: boolean;
+	domainConfirmationConfirmed: boolean;
+	showDomainOptionsStep: boolean;
+	showDialog: boolean;
+}
+
+export interface CancelPurchaseActions {
+	recordTracksEvent: (
+		name: string,
+		properties: { [ key: string ]: string | boolean | number }
+	) => void;
+	clearPurchases: () => void;
+	refreshSitePlans: ( siteId: string | number ) => void;
+	successNotice: (
+		message: string | ReactNode,
+		properties: { displayOnNextPage?: boolean; duration?: number }
+	) => void;
+	errorNotice: ( message: string | ReactNode ) => void;
+}
+
+export interface CancelPurchaseConnectedProps {
+	atomicTransfer: { created_at: string };
+	hasLoadedSites: boolean;
+	hasLoadedUserPurchasesFromServer: boolean;
+	includedDomainPurchase: Purchases.Purchase;
+	isAkismet: boolean;
+	isDomainRegistrationPurchase: boolean;
+	isHundredYearDomain: boolean | undefined;
+	isJetpack: boolean;
+	isJetpackPurchase: boolean;
+	productsList: Record< string, { product_type: string; billing_product_slug: string } >;
+	purchase: Purchases.Purchase;
+	purchases: Purchases.Purchase[];
+	site: SiteDetails;
+}
+
+export interface CancelPurchaseProps {
+	getManagePurchaseUrlFor?: GetManagePurchaseUrlFor;
+	purchaseId: number;
+	purchaseListUrl?: string;
+	siteSlug: string;
+}
+
+export type CancelPurchaseAllProps = CancelPurchaseProps &
+	CancelPurchaseConnectedProps &
+	LocalizeProps &
+	MomentProps &
+	CancelPurchaseActions;
+
+class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseState > {
 	state = {
 		cancelBundledDomain: false,
 		confirmCancelBundledDomain: false,
@@ -100,11 +146,6 @@ class CancelPurchase extends Component {
 		showDialog: false,
 	};
 
-	static defaultProps = {
-		getManagePurchaseUrlFor: managePurchase,
-		purchaseListUrl: purchasesRoot,
-	};
-
 	componentDidMount() {
 		if ( ! this.isDataValid() ) {
 			this.redirect();
@@ -112,7 +153,7 @@ class CancelPurchase extends Component {
 		}
 	}
 
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate( prevProps: CancelPurchaseAllProps ) {
 		if ( this.state.surveyShown ) {
 			return;
 		}
@@ -147,21 +188,27 @@ class CancelPurchase extends Component {
 
 	redirect = () => {
 		const { purchase, siteSlug } = this.props;
-		let redirectPath = this.props.purchaseListUrl;
+		let redirectPath = this.props.purchaseListUrl ?? purchasesRoot;
 
 		if (
 			siteSlug &&
 			purchase &&
 			( ! canAutoRenewBeTurnedOff( purchase ) || isDomainTransfer( purchase ) )
 		) {
-			redirectPath = this.props.getManagePurchaseUrlFor( siteSlug, purchase.id );
+			redirectPath = ( this.props.getManagePurchaseUrlFor ?? managePurchase )(
+				siteSlug,
+				purchase.id
+			);
 		}
 
 		page.redirect( redirectPath );
 	};
 
-	onCancelConfirmationStateChange = ( newState ) => {
-		this.setState( newState );
+	onCancelConfirmationStateChange = ( newState: Partial< CancelPurchaseState > ) => {
+		this.setState( ( state ) => ( {
+			...state,
+			newState,
+		} ) );
 	};
 
 	onCancellationStart = () => {
@@ -186,7 +233,10 @@ class CancelPurchase extends Component {
 		}
 	};
 
-	onDomainOptionsComplete = ( domainOptions ) => {
+	onDomainOptionsComplete = ( domainOptions: {
+		cancelBundledDomain: boolean;
+		confirmCancelBundledDomain: boolean;
+	} ) => {
 		this.setState( {
 			showDomainOptionsStep: false,
 			surveyShown: true,
@@ -195,7 +245,7 @@ class CancelPurchase extends Component {
 		} );
 	};
 
-	cancelPurchase = async ( purchase ) => {
+	cancelPurchase = async ( purchase: Purchases.Purchase ) => {
 		const { translate, moment } = this.props;
 		try {
 			const success = await cancelPurchaseAsync( purchase.id );
@@ -230,7 +280,7 @@ class CancelPurchase extends Component {
 		}
 	};
 
-	cancelAndRefund = async ( purchase ) => {
+	cancelAndRefund = async ( purchase: Purchases.Purchase ) => {
 		const { cancelBundledDomain } = this.state;
 		try {
 			await cancelAndRefundPurchaseAsync( purchase.id, {
@@ -244,11 +294,11 @@ class CancelPurchase extends Component {
 				),
 			};
 		} catch ( error ) {
-			return { success: false, error: error.message };
+			return { success: false, error: ( error as Error ).message };
 		}
 	};
 
-	submitCancelAndRefundPurchase = async ( purchase ) => {
+	submitCancelAndRefundPurchase = async ( purchase: Purchases.Purchase ) => {
 		const refundable = hasAmountAvailableToRefund( purchase );
 		if ( refundable ) {
 			return await this.cancelAndRefund( purchase );
@@ -256,7 +306,7 @@ class CancelPurchase extends Component {
 		return await this.cancelPurchase( purchase );
 	};
 
-	handleMarketplaceSubscriptions = async ( isPlanRefundable ) => {
+	handleMarketplaceSubscriptions = async ( isPlanRefundable: boolean ) => {
 		const activeSubscriptions = this.getActiveMarketplaceSubscriptions();
 		if ( activeSubscriptions?.length > 0 ) {
 			return Promise.all(
@@ -283,12 +333,12 @@ class CancelPurchase extends Component {
 				this.props.refreshSitePlans( this.props.purchase.siteId );
 				this.props.clearPurchases();
 				this.props.successNotice( result.message, { displayOnNextPage: true, duration: 10000 } );
-				page.redirect( this.props.purchaseListUrl );
+				page.redirect( this.props.purchaseListUrl ?? purchasesRoot );
 			} else {
 				this.props.errorNotice( result.error );
 			}
 		} catch ( error ) {
-			this.props.errorNotice( error.message );
+			this.props.errorNotice( ( error as Error ).message );
 		} finally {
 			// Reset loading state
 			this.setState( { surveyShown: false, isLoading: false } );
@@ -302,7 +352,7 @@ class CancelPurchase extends Component {
 		} );
 	};
 
-	onSetLoading = ( isLoading ) => {
+	onSetLoading = ( isLoading: boolean ) => {
 		this.setState( { isLoading } );
 	};
 
@@ -324,7 +374,7 @@ class CancelPurchase extends Component {
 		}
 	};
 
-	downgradeClick = ( upsell ) => {
+	downgradeClick = ( upsell: string ) => {
 		const { purchase } = this.props;
 		let downgradePlan = getDowngradePlanFromPurchase( purchase );
 		if ( 'downgrade-monthly' === upsell ) {
@@ -333,6 +383,9 @@ class CancelPurchase extends Component {
 		}
 
 		this.setState( { isLoading: true } );
+		if ( ! downgradePlan ) {
+			throw new Error( 'Cannot find a plan to downgrade to' );
+		}
 
 		cancelAndRefundPurchase(
 			purchase.id,
@@ -341,7 +394,7 @@ class CancelPurchase extends Component {
 				type: 'downgrade',
 				to_product_id: downgradePlan.getProductId(),
 			},
-			( error, response ) => {
+			( error: Error, response: { message: string } ) => {
 				this.setState( { isLoading: false } );
 
 				if ( error ) {
@@ -352,7 +405,7 @@ class CancelPurchase extends Component {
 				this.props.refreshSitePlans( purchase.siteId );
 				this.props.clearPurchases();
 				this.props.successNotice( response.message, { displayOnNextPage: true } );
-				page.redirect( this.props.purchaseListUrl );
+				page.redirect( this.props.purchaseListUrl ?? purchasesRoot );
 			}
 		);
 	};
@@ -368,16 +421,16 @@ class CancelPurchase extends Component {
 				this.props.refreshSitePlans( purchase.siteId );
 				this.props.clearPurchases();
 				this.props.successNotice( res.message, { displayOnNextPage: true } );
-				page.redirect( this.props.purchaseListUrl );
+				page.redirect( this.props.purchaseListUrl ?? purchasesRoot );
 			}
 		} catch ( err ) {
-			this.props.errorNotice( err.message );
+			this.props.errorNotice( ( err as Error ).message );
 		} finally {
 			this.setState( { isLoading: false } );
 		}
 	};
 
-	onAtomicRevertConfirmationChange = ( isConfirmed ) => {
+	onAtomicRevertConfirmationChange = ( isConfirmed: boolean ) => {
 		this.setState( { atomicRevertConfirmed: isConfirmed } );
 	};
 
@@ -410,9 +463,8 @@ class CancelPurchase extends Component {
 			return [];
 		}
 
-		return purchases.filter(
-			( _purchase ) =>
-				_purchase.active && hasMarketplaceProduct( productsList, _purchase.productSlug )
+		return purchases.filter( ( _purchase ) =>
+			hasMarketplaceProduct( productsList, _purchase.productSlug )
 		);
 	}
 
@@ -503,7 +555,11 @@ class CancelPurchase extends Component {
 		}
 	};
 
-	renderRefundAmountString = ( purchase, cancelBundledDomain, includedDomainPurchase ) => {
+	renderRefundAmountString = (
+		purchase: Purchases.Purchase,
+		cancelBundledDomain: boolean,
+		includedDomainPurchase: Purchases.Purchase
+	) => {
 		const { refundInteger, totalRefundInteger, totalRefundCurrency } = purchase;
 
 		if ( hasAmountAvailableToRefund( purchase ) ) {
@@ -526,7 +582,6 @@ class CancelPurchase extends Component {
 			includedDomainPurchase,
 			siteSlug,
 			purchaseListUrl,
-			getConfirmCancelDomainUrlFor,
 			isDomainRegistrationPurchase,
 		} = this.props;
 
@@ -548,8 +603,7 @@ class CancelPurchase extends Component {
 				disabled={ isDisabled }
 				siteSlug={ siteSlug }
 				cancelBundledDomain={ this.state.cancelBundledDomain }
-				purchaseListUrl={ purchaseListUrl }
-				getConfirmCancelDomainUrlFor={ getConfirmCancelDomainUrlFor }
+				purchaseListUrl={ purchaseListUrl ?? purchasesRoot }
 				activeSubscriptions={ this.getActiveMarketplaceSubscriptions() }
 				onCancellationStart={ this.onCancellationStart }
 				onCancellationComplete={ this.onCancellationComplete }
@@ -572,7 +626,10 @@ class CancelPurchase extends Component {
 		return (
 			<FormButton
 				isPrimary={ false }
-				href={ this.props.getManagePurchaseUrlFor( siteSlug, this.props.purchaseId ) }
+				href={ ( this.props.getManagePurchaseUrlFor ?? managePurchase )(
+					siteSlug,
+					this.props.purchaseId
+				) }
 				onClick={ this.onKeepSubscriptionClick }
 			>
 				{ translate( 'Keep subscription' ) }
@@ -689,7 +746,9 @@ class CancelPurchase extends Component {
 					atomicTransfer={ atomicTransfer }
 					purchase={ purchase }
 					onConfirmationChange={ this.onAtomicRevertConfirmationChange }
-					needsAtomicRevertConfirmation={ atomicTransfer?.created_at && ! isRefundable( purchase ) }
+					needsAtomicRevertConfirmation={ Boolean(
+						atomicTransfer?.created_at && ! isRefundable( purchase )
+					) }
 					isLoading={ this.state.isLoading }
 				/>
 
@@ -711,8 +770,11 @@ class CancelPurchase extends Component {
 			return null;
 		}
 
-		const onCancelConfirmationStateChange = ( newState ) => {
-			this.setState( newState );
+		const onCancelConfirmationStateChange = ( newState: Partial< CancelPurchaseState > ) => {
+			this.setState( ( state ) => ( {
+				...state,
+				newState,
+			} ) );
 		};
 
 		const canContinue = () => {
@@ -738,7 +800,7 @@ class CancelPurchase extends Component {
 						disabled={ ! canContinue() }
 						siteSlug={ this.props.siteSlug }
 						cancelBundledDomain={ cancelBundledDomain }
-						purchaseListUrl={ this.props.purchaseListUrl }
+						purchaseListUrl={ this.props.purchaseListUrl ?? purchasesRoot }
 						activeSubscriptions={ this.getActiveMarketplaceSubscriptions() }
 						onCancellationComplete={ this.onCancellationComplete }
 						onSurveyComplete={ this.onSurveyComplete }
@@ -824,7 +886,7 @@ class CancelPurchase extends Component {
 					<div className="cancel-purchase__back">
 						<HeaderCakeBack
 							icon="chevron-left"
-							href={ this.props.getManagePurchaseUrlFor(
+							href={ ( this.props.getManagePurchaseUrlFor ?? managePurchase )(
 								this.props.siteSlug,
 								this.props.purchaseId
 							) }
@@ -859,7 +921,7 @@ class CancelPurchase extends Component {
 }
 
 export default connect(
-	( state, props ) => {
+	( state, props: CancelPurchaseProps ) => {
 		const purchase = getByPurchaseId( state, props.purchaseId );
 		const isJetpackPurchase =
 			purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) );

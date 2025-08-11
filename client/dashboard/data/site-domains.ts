@@ -1,7 +1,18 @@
 import wpcom from 'calypso/lib/wp';
 import type { DomainSummary } from './domains';
 
-export type SiteDomain = Omit< DomainSummary, 'domain_status' >;
+interface EmailSubscription {
+	status?: string;
+}
+
+export interface GoogleEmailSubscription extends EmailSubscription {}
+
+export interface TitanEmailSubscription extends EmailSubscription {}
+
+export type SiteDomain = Omit< DomainSummary, 'domain_status' > & {
+	google_apps_subscription?: GoogleEmailSubscription | null;
+	titan_mail_subscription?: TitanEmailSubscription | null;
+};
 
 export async function fetchSiteDomains( siteId: number ): Promise< SiteDomain[] > {
 	const { domains } = await wpcom.req.get( {

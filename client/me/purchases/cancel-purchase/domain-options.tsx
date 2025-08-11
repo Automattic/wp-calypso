@@ -13,9 +13,14 @@ import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormRadio from 'calypso/components/forms/form-radio';
 import { getName, isRefundable, isSubscription } from 'calypso/lib/purchases';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import type { CancelPurchaseState } from './index';
+import type { Purchases } from '@automattic/data-stores';
 
 // Helper function to determine if radio buttons will be shown
-export const willShowDomainOptionsRadioButtons = ( includedDomainPurchase, purchase ) => {
+export const willShowDomainOptionsRadioButtons = (
+	includedDomainPurchase: Purchases.Purchase,
+	purchase: Purchases.Purchase
+) => {
 	return (
 		isDomainRegistration( includedDomainPurchase ) &&
 		isRefundable( purchase ) &&
@@ -23,8 +28,15 @@ export const willShowDomainOptionsRadioButtons = ( includedDomainPurchase, purch
 	);
 };
 
-const NonRefundableDomainMappingMessage = ( { includedDomainPurchase } ) => {
+const NonRefundableDomainMappingMessage = ( {
+	includedDomainPurchase,
+}: {
+	includedDomainPurchase: Purchases.Purchase;
+} ) => {
 	const translate = useTranslate();
+	if ( ! includedDomainPurchase.meta ) {
+		return null;
+	}
 	return (
 		<div>
 			<p>
@@ -42,8 +54,17 @@ const NonRefundableDomainMappingMessage = ( { includedDomainPurchase } ) => {
 	);
 };
 
-const CancelableDomainMappingMessage = ( { includedDomainPurchase, purchase } ) => {
+const CancelableDomainMappingMessage = ( {
+	includedDomainPurchase,
+	purchase,
+}: {
+	includedDomainPurchase: Purchases.Purchase;
+	purchase: Purchases.Purchase;
+} ) => {
 	const translate = useTranslate();
+	if ( ! includedDomainPurchase.meta ) {
+		return null;
+	}
 	return (
 		<div>
 			<p>
@@ -83,8 +104,17 @@ const CancelableDomainMappingMessage = ( { includedDomainPurchase, purchase } ) 
 	);
 };
 
-const CancelPlanWithoutCancellingDomainMessage = ( { planPurchase, includedDomainPurchase } ) => {
+const CancelPlanWithoutCancellingDomainMessage = ( {
+	planPurchase,
+	includedDomainPurchase,
+}: {
+	planPurchase: Purchases.Purchase;
+	includedDomainPurchase: Purchases.Purchase;
+} ) => {
 	const translate = useTranslate();
+	if ( ! includedDomainPurchase.meta ) {
+		return null;
+	}
 	return (
 		<div>
 			<p>
@@ -131,13 +161,19 @@ const CancelPurchaseDomainOptions = ( {
 	purchase,
 	onCancelConfirmationStateChange,
 	isLoading = false,
+}: {
+	includedDomainPurchase: Purchases.Purchase;
+	cancelBundledDomain: boolean;
+	purchase: Purchases.Purchase;
+	onCancelConfirmationStateChange: ( newState: Partial< CancelPurchaseState > ) => void;
+	isLoading: boolean;
 } ) => {
 	const translate = useTranslate();
 	const [ confirmCancel, setConfirmCancel ] = useState( false );
 	const dispatch = useDispatch();
 
 	const onCancelBundledDomainChange = useCallback(
-		( event ) => {
+		( event: { currentTarget: { value: string } } ) => {
 			const newCancelBundledDomainValue = event.currentTarget.value === 'cancel';
 			onCancelConfirmationStateChange( {
 				cancelBundledDomain: newCancelBundledDomainValue,
@@ -148,7 +184,7 @@ const CancelPurchaseDomainOptions = ( {
 	);
 
 	const onConfirmCancelBundledDomainChange = useCallback(
-		( event ) => {
+		( event: { target: { checked: boolean } } ) => {
 			const checked = event.target.checked;
 			setConfirmCancel( checked );
 			onCancelConfirmationStateChange( {
@@ -224,6 +260,10 @@ const CancelPurchaseDomainOptions = ( {
 				planPurchase={ purchase }
 			/>
 		);
+	}
+
+	if ( ! includedDomainPurchase.meta ) {
+		return null;
 	}
 
 	return (
