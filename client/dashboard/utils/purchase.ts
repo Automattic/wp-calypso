@@ -42,6 +42,10 @@ export function isAkismetFreeProduct( product: Purchase ): boolean {
 	);
 }
 
+export function isAkismetProduct( product: Purchase ): boolean {
+	return Object.values( AkismetPlans ).includes( product.product_slug );
+}
+
 /**
  * Determines if this is a recent monthly purchase (bought within the past week).
  *
