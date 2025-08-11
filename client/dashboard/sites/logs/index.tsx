@@ -19,7 +19,7 @@ import UpsellCTAButton from '../../components/upsell-cta-button';
 import { HostingFeatures } from '../../data/constants';
 import { LogType, PHPLog, ServerLog } from '../../data/site-logs';
 import { hasHostingFeature } from '../../utils/site-features';
-import { toFilterParams } from '../../utils/site-logs-view';
+import { toFilterParams } from './dataviews/views';
 import illustrationUrl from './logs-callout-illustration.svg';
 
 export function SiteLogsCallout( {

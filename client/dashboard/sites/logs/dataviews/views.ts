@@ -1,4 +1,4 @@
-import { LogType, FilterType } from '../data/site-logs';
+import { LogType, FilterType } from '../../../data/site-logs';
 import type { View } from '@wordpress/dataviews';
 
 const getFilterParamsFromView = ( view: View, fieldNames: string[] ): FilterType => {
