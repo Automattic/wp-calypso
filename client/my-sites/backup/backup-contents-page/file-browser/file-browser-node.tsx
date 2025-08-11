@@ -150,13 +150,13 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	}, [ isCurrentNodeClicked, isRoot ] );
 
 	// A simple toggle.  Mixed will go to unchecked.
-	const onCheckboxChange = () => {
+	const onCheckboxChange = useCallback( () => {
 		updateNodeCheckState(
 			siteId,
 			path,
 			browserNodeItem && browserNodeItem.checkState === 'unchecked' ? 'checked' : 'unchecked'
 		);
-	};
+	}, [ siteId, path, browserNodeItem, updateNodeCheckState ] );
 
 	const handleClick = useCallback( () => {
 		if ( ! isOpen ) {
@@ -171,6 +171,12 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 			}
 		}
 
+		// If we are not showing the file card and the items doesn't have children or it is directory with restricted children,
+		// let's toggle the checkbox
+		if ( ( ! showFileCard && ! item.hasChildren ) || shouldRestrictChildren( item ) ) {
+			onCheckboxChange();
+		}
+
 		// If the node doesn't have children, let's open the file info card
 		if ( ! item.hasChildren ) {
 			if ( ! isOpen ) {
@@ -181,7 +187,16 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 		}
 
 		setIsOpen( ! isOpen );
-	}, [ dispatch, isOpen, item, path, setActiveNodePath ] );
+	}, [
+		dispatch,
+		isOpen,
+		item,
+		path,
+		setActiveNodePath,
+		onCheckboxChange,
+		showFileCard,
+		shouldRestrictChildren,
+	] );
 
 	const filterItems = useCallback(
 		( item: FileBrowserItem ) => {
