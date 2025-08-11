@@ -15,6 +15,7 @@ import { useDnsFields } from './fields';
 import RestoreDefaultARecords from './restore-default-a-records';
 import RestoreDefaultCnameRecord from './restore-default-cname-record';
 import RestoreDefaultEmailRecords from './restore-default-email-records';
+import { hasDefaultARecords, hasDefaultCnameRecord, hasDefaultEmailRecords } from './utils';
 import type { DnsRecord } from '../../data/domain-dns';
 import type { ViewTable, ViewList, View } from '@wordpress/dataviews';
 
@@ -54,14 +55,13 @@ export default function DomainDns() {
 	const [ isRestoreDefaultEmailRecordsDialogOpen, setIsRestoreDefaultEmailRecordsDialogOpen ] =
 		useState( false );
 
-	const hasDefaultARecords =
-		dnsData?.records?.some( ( record ) => record?.type === 'A' && record?.protected_field ) ?? true;
-
 	const actions = useDnsActions();
-
 	const fields = useDnsFields( domainName );
-
 	const [ view, setView ] = useState< DnsView >( DEFAULT_VIEW );
+
+	const hasDefaultARecordsValue = hasDefaultARecords( dnsData?.records ?? [] );
+	const hasDefaultCnameRecordValue = hasDefaultCnameRecord( dnsData?.records ?? [], domainName );
+	const hasDefaultEmailRecordsValue = hasDefaultEmailRecords( dnsData?.records ?? [], domainName );
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
 		dnsData?.records ?? [],
@@ -92,9 +92,9 @@ export default function DomainDns() {
 							<>
 								<Button variant="primary">{ __( 'Add DNS Record' ) }</Button>
 								<DnsActionsMenu
-									hasDefaultARecords={ ! hasDefaultARecords }
-									hasDefaultCnameRecord={ false }
-									hasDefaultEmailRecords={ false }
+									hasDefaultARecords={ hasDefaultARecordsValue }
+									hasDefaultCnameRecord={ hasDefaultCnameRecordValue }
+									hasDefaultEmailRecords={ hasDefaultEmailRecordsValue }
 									onRestoreDefaultARecords={ handleRestoreDefaultARecords }
 									onRestoreDefaultCnameRecord={ handleRestoreDefaultCnameRecord }
 									onRestoreDefaultEmailRecords={ handleRestoreDefaultEmailRecords }

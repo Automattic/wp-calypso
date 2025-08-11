@@ -9,21 +9,25 @@ export function useDnsActions(): Action< DnsRecord >[] {
 	return useMemo(
 		() => [
 			{
+				isEligible: ( item: DnsRecord ) => ! item.protected_field,
 				id: 'edit',
 				label: __( 'Edit' ),
 				icon: <Icon icon={ edit } />,
 				isPrimary: true,
-				callback: ( items ) => {
+				callback: ( items: DnsRecord[] ) => {
 					// eslint-disable-next-line @typescript-eslint/no-unused-vars
 					const item = items[ 0 ];
 					// TODO: Implement edit functionality
 				},
 			},
 			{
+				isEligible: ( item: DnsRecord ) => {
+					return ! ( item.protected_field && 'MX' !== item.type ) || item.type === 'A';
+				},
 				id: 'delete',
 				label: __( 'Delete' ),
 				icon: <Icon icon={ trash } />,
-				callback: ( items ) => {
+				callback: ( items: DnsRecord[] ) => {
 					// eslint-disable-next-line @typescript-eslint/no-unused-vars
 					const item = items[ 0 ];
 					// TODO: Implement delete functionality
