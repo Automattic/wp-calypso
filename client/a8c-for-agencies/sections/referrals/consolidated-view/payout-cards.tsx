@@ -103,11 +103,10 @@ export default function PayoutCards( {
 		currentCyclePayoutDate,
 		currentCycleActivityWindow,
 		areNextAndCurrentPayoutDatesEqual,
+		isFullQuarter,
 	} = useGetPayoutData();
 
 	const previousQuarterTitle = translate( 'Estimated earnings in previous quarter' );
-
-	const isFullQuarter = new Date().toISOString().split( 'T' )[ 0 ] === currentCyclePayoutDate;
 
 	const handleHalfQuarter = isWooPayments && ! isFullQuarter;
 
