@@ -24,9 +24,9 @@ export const SRVRecordConfig: DNSRecordConfig = {
 			label: __( 'Protocol' ),
 			Edit: RequiredSelect, // TODO: use DataForm's validation when available. See: DOTCOM-13298
 			elements: [
-				{ label: __( '_tcp' ), value: '_tcp' },
-				{ label: __( '_udp' ), value: '_udp' },
-				{ label: __( '_tls' ), value: '_tls' },
+				{ label: '_tcp', value: '_tcp' },
+				{ label: '_udp', value: '_udp' },
+				{ label: '_tls', value: '_tls' },
 			],
 		},
 		{
