@@ -289,7 +289,7 @@ export default function SyncModal( {
 		} );
 	const rewindId = lastKnownBackupAttempt?.rewindId;
 
-	const shouldDisableGranularSync = true;
+	const shouldDisableGranularSync = ! lastKnownBackupAttempt && ! isLoadingBackupAttempt;
 
 	const handleConfirm = () => {
 		let include_paths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
@@ -402,109 +402,112 @@ export default function SyncModal( {
 								? __( 'Selective Sync will be enabled automatically once your backup is complete.' )
 								: ''
 						}
+						placement="top-start"
 					>
-						<HStack spacing={ 2 } justify="space-between" alignment="center">
-							{ isLoadingBackupAttempt ? (
-								<div className="file-browser-node__loading placeholder" />
-							) : (
-								<CheckboxControl
-									__nextHasNoMarginBottom
-									label={ __( 'Files and folders' ) }
-									disabled={ shouldDisableGranularSync }
-									checked={
-										shouldDisableGranularSync || filesAndFoldersNodesCheckState === 'checked'
-									}
-									indeterminate={ filesAndFoldersNodesCheckState === 'mixed' }
-									onChange={ onCheckboxChange }
-								/>
-							) }
-							<SelectControl
-								value={ isFileBrowserVisible ? 'true' : 'false' }
-								variant="minimal"
-								disabled={ shouldDisableGranularSync }
-								options={ [
-									{
-										label: __( 'All files and folders' ),
-										value: 'false',
-									},
-									{
-										label: __( 'Specific files and folders' ),
-										value: 'true',
-									},
-								] }
-								onChange={ handleExpanderChange }
-								__next40pxDefaultSize
-								__nextHasNoMarginBottom
-								aria-label={ __( 'Select files and folders to sync' ) }
-							/>
-						</HStack>
-					</Tooltip>
-					{ /*
-					 * Keep the FileBrowser component rendered (using a CSS 'hidden' class instead of conditional rendering)
-					 * to ensure its child nodes initialize properly and can be selected by default.
-					 */ }
-					<div className={ isFileBrowserVisible ? '' : 'hidden' }>
-						<FileBrowser
-							rewindId={ rewindId }
-							siteId={ querySiteId }
-							fileBrowserConfig={ fileBrowserConfig }
-						/>
-					</div>
-					<HStack
-						alignment="left"
-						spacing={ 2 }
-						style={ {
-							borderTop: '1px solid var(--wp-components-color-gray-300, #ddd)',
-							borderBottom: '1px solid var(--wp-components-color-gray-300, #ddd)',
-							padding: '16px 0',
-							marginTop: '8px',
-							marginBottom:
-								shouldDisableGranularSync || sqlNode?.checkState === 'checked' ? '0px' : '24px',
-						} }
-					>
-						{ isLoadingBackupAttempt ? (
-							<div className="file-browser-node__loading placeholder" />
-						) : (
-							<CheckboxControl
-								__nextHasNoMarginBottom
-								label={ __( 'Database' ) }
-								disabled={ shouldDisableGranularSync }
-								checked={ shouldDisableGranularSync || sqlNode?.checkState === 'checked' }
-								onChange={ handleDatabaseCheckboxChange }
-							/>
-						) }
-					</HStack>
-					{ ( shouldDisableGranularSync || sqlNode?.checkState === 'checked' ) && (
-						<VStack style={ { paddingTop: '20px', paddingBottom: '48px' } }>
-							<Notice status="warning" isDismissible={ false }>
-								<Text as="p" weight="bold" style={ { lineHeight: '24px' } }>
-									{ __( 'Warning! Database will be overwritten.' ) }
-								</Text>
-								<Text as="p">
-									{ __(
-										'Selecting this option will overwrite the site database, including any posts, pages, products, or orders.'
-									) }
-								</Text>
-								{ showWooCommerceWarning && (
-									<Text as="p" style={ { marginTop: '16px' } }>
-										{ createInterpolateElement(
-											__(
-												'This site also has WooCommerce installed. We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins. <a>Learn more</a>'
-											),
-											{
-												a: (
-													<ExternalLink
-														href="https://developer.wordpress.com/docs/developer-tools/staging-sites/sync-staging-production/#staging-to-production"
-														children={ null }
-													/>
-												),
-											}
-										) }
-									</Text>
+						<div>
+							<HStack spacing={ 2 } justify="space-between" alignment="center">
+								{ isLoadingBackupAttempt ? (
+									<div className="file-browser-node__loading placeholder" />
+								) : (
+									<CheckboxControl
+										__nextHasNoMarginBottom
+										label={ __( 'Files and folders' ) }
+										disabled={ shouldDisableGranularSync }
+										checked={
+											shouldDisableGranularSync || filesAndFoldersNodesCheckState === 'checked'
+										}
+										indeterminate={ filesAndFoldersNodesCheckState === 'mixed' }
+										onChange={ onCheckboxChange }
+									/>
 								) }
-							</Notice>
-						</VStack>
-					) }
+								<SelectControl
+									value={ isFileBrowserVisible ? 'true' : 'false' }
+									variant="minimal"
+									disabled={ shouldDisableGranularSync }
+									options={ [
+										{
+											label: __( 'All files and folders' ),
+											value: 'false',
+										},
+										{
+											label: __( 'Specific files and folders' ),
+											value: 'true',
+										},
+									] }
+									onChange={ handleExpanderChange }
+									__next40pxDefaultSize
+									__nextHasNoMarginBottom
+									aria-label={ __( 'Select files and folders to sync' ) }
+								/>
+							</HStack>
+							{ /*
+							 * Keep the FileBrowser component rendered (using a CSS 'hidden' class instead of conditional rendering)
+							 * to ensure its child nodes initialize properly and can be selected by default.
+							 */ }
+							<div className={ isFileBrowserVisible ? '' : 'hidden' }>
+								<FileBrowser
+									rewindId={ rewindId }
+									siteId={ querySiteId }
+									fileBrowserConfig={ fileBrowserConfig }
+								/>
+							</div>
+							<HStack
+								alignment="left"
+								spacing={ 2 }
+								style={ {
+									borderTop: '1px solid var(--wp-components-color-gray-300, #ddd)',
+									borderBottom: '1px solid var(--wp-components-color-gray-300, #ddd)',
+									padding: '16px 0',
+									marginTop: '8px',
+									marginBottom:
+										shouldDisableGranularSync || sqlNode?.checkState === 'checked' ? '0px' : '24px',
+								} }
+							>
+								{ isLoadingBackupAttempt ? (
+									<div className="file-browser-node__loading placeholder" />
+								) : (
+									<CheckboxControl
+										__nextHasNoMarginBottom
+										label={ __( 'Database' ) }
+										disabled={ shouldDisableGranularSync }
+										checked={ shouldDisableGranularSync || sqlNode?.checkState === 'checked' }
+										onChange={ handleDatabaseCheckboxChange }
+									/>
+								) }
+							</HStack>
+							{ ( shouldDisableGranularSync || sqlNode?.checkState === 'checked' ) && (
+								<VStack style={ { paddingTop: '20px', paddingBottom: '48px' } }>
+									<Notice status="warning" isDismissible={ false }>
+										<Text as="p" weight="bold" style={ { lineHeight: '24px' } }>
+											{ __( 'Warning! Database will be overwritten.' ) }
+										</Text>
+										<Text as="p">
+											{ __(
+												'Selecting this option will overwrite the site database, including any posts, pages, products, or orders.'
+											) }
+										</Text>
+										{ showWooCommerceWarning && (
+											<Text as="p" style={ { marginTop: '16px' } }>
+												{ createInterpolateElement(
+													__(
+														'This site also has WooCommerce installed. We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins. <a>Learn more</a>'
+													),
+													{
+														a: (
+															<ExternalLink
+																href="https://developer.wordpress.com/docs/developer-tools/staging-sites/sync-staging-production/#staging-to-production"
+																children={ null }
+															/>
+														),
+													}
+												) }
+											</Text>
+										) }
+									</Notice>
+								</VStack>
+							) }
+						</div>
+					</Tooltip>
 				</div>
 				<VStack className="staging-site-card__footer" spacing={ 6 }>
 					{ showDomainConfirmation && (
