@@ -8,10 +8,9 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
 import Notice from '../../components/notice';
-import { getServiceName } from '../../utils/service-name';
 import { NameServerInput, validateField } from './form-input';
 import {
 	NameServerField,
@@ -21,11 +20,9 @@ import {
 } from './types';
 import UpsellNudge from './upsell-nudge';
 import { areAllWpcomNameServers } from './utils';
-import type { InstanceType } from '../../app/context';
 
 interface Props {
 	domainName: string;
-	instanceType: InstanceType;
 	showUpsellNudge?: boolean;
 	nameServers?: string[];
 	isBusy?: boolean;
@@ -35,7 +32,6 @@ interface Props {
 
 export default function NameServersForm( {
 	domainName,
-	instanceType,
 	showUpsellNudge,
 	nameServers = [],
 	isBusy,
@@ -136,11 +132,7 @@ export default function NameServersForm( {
 	return (
 		<VStack spacing={ 4 }>
 			<ToggleControl
-				label={ sprintf(
-					/* translators: %s is the name of the service like: WordPress.com */
-					__( 'Use %s name servers' ),
-					getServiceName( instanceType )
-				) }
+				label={ __( 'Use WordPress.com name servers' ) }
 				checked={ useWpcomNameservers }
 				disabled={ isBusy }
 				onChange={ () => {

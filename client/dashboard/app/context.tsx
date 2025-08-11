@@ -1,6 +1,5 @@
 import { createContext, useContext } from 'react';
 
-export type InstanceType = 'dotcom' | 'a4a';
 export type SiteFeatureSupports = {
 	deployments: boolean;
 	performance: boolean;
@@ -12,7 +11,6 @@ export type SiteFeatureSupports = {
 };
 
 export type AppConfig = {
-	instanceType: InstanceType;
 	basePath: string;
 	mainRoute: string;
 	Logo: React.FC | null;
@@ -30,7 +28,6 @@ export type AppConfig = {
 };
 
 const AppContext = createContext< AppConfig >( {
-	instanceType: 'dotcom',
 	basePath: '',
 	mainRoute: '',
 	Logo: null,

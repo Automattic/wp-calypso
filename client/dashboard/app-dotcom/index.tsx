@@ -3,7 +3,6 @@ import Logo from './logo';
 import './style.scss';
 
 boot( {
-	instanceType: 'dotcom',
 	basePath: '/v2',
 	mainRoute: '/sites',
 	Logo,

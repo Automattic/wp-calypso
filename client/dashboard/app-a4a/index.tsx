@@ -3,7 +3,6 @@ import { Logo, LoadingLogo } from './logo';
 import './style.scss';
 
 boot( {
-	instanceType: 'a4a',
 	basePath: '/v2-a4a',
 	mainRoute: '/overview',
 	LoadingLogo,
