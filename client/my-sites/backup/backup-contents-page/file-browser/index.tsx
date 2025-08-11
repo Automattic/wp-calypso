@@ -23,6 +23,7 @@ export interface FileBrowserConfig {
 	showHeaderButtons?: boolean;
 	showFileCard?: boolean;
 	showBackupTime?: boolean;
+	showSeparateExpandButton?: boolean;
 	siteId?: number;
 }
 

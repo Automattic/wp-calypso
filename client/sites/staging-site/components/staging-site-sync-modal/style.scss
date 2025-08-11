@@ -125,9 +125,9 @@
 			overflow: hidden;
 		}
 
-		// Move directory dropdown icons to the right
-		&.dir > .file-browser-node__item .components-button > :first-child {
-			order: 1;
+		.file-browser-node__separate-expand-button {
+			min-width: 22px;
+			padding: 6px 0;
 		}
 
 		.components-button.has-icon.has-text svg {
@@ -295,7 +295,7 @@
 }
 
 .staging-site-card__footer {
-	border-top: 1px solid var(--studio-gray-5);
+	border-top: 1px solid var( --studio-gray-5 );
 	position: absolute;
 	bottom: 0;
 	width: 100%;

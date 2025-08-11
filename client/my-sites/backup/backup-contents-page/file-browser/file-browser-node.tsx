@@ -1,5 +1,6 @@
 import { Button, CheckboxControl, Icon } from '@wordpress/components';
 import { useCallback, useState, useEffect } from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
 import { chevronDown, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import { FunctionComponent } from 'react';
@@ -41,6 +42,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	const dispatch = useDispatch();
 	const isCurrentNodeClicked = activeNodePath === path;
 	const showFileCard = fileBrowserConfig?.showFileCard ?? true;
+	const showSeparateExpandButton = fileBrowserConfig?.showSeparateExpandButton ?? false;
 	const applyFiltering = !! fileBrowserConfig;
 	const [ fetchContentsOnMount, setFetchContentsOnMount ] = useState< boolean >( isRoot );
 	const [ isOpen, setIsOpen ] = useState< boolean >( isRoot );
@@ -305,12 +307,30 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 		);
 	};
 
-	const renderExpandIcon = () => {
+	const buttonExpandIcon = () => {
 		if ( ! item.hasChildren || shouldRestrictChildren( item ) ) {
 			return null;
 		}
 
 		return <Icon icon={ isOpen ? chevronDown : chevronRight } />;
+	};
+
+	const expandButton = () => {
+		// translators: %s: file or directory name
+		const showLabel = sprintf( __( 'Show contents of %s' ), item.name );
+		// translators: %s: file or directory name
+		const hideLabel = sprintf( __( 'Hide contents of %s' ), item.name );
+
+		return (
+			<Button
+				onClick={ handleClick }
+				icon={ isOpen ? chevronDown : chevronRight }
+				className="file-browser-node__separate-expand-button"
+				variant="tertiary"
+				aria-label={ isOpen ? hideLabel : showLabel }
+				aria-expanded={ isOpen }
+			/>
+		);
 	};
 
 	const nodeItemClassName = clsx( 'file-browser-node__item', {
@@ -322,6 +342,9 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 		'is-root': isRoot,
 	} );
 
+	const renderSeparateExpandButton =
+		showSeparateExpandButton && item.hasChildren && ! shouldRestrictChildren( item );
+
 	return (
 		<div className={ nodeClassName }>
 			<div className={ nodeItemClassName }>
@@ -329,7 +352,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 					<>
 						{ renderCheckbox() }
 						<Button
-							icon={ renderExpandIcon }
+							icon={ renderSeparateExpandButton ? null : buttonExpandIcon }
 							className="file-browser-node__title has-icon"
 							onClick={ handleClick }
 							showTooltip={ isLabelTruncated }
@@ -338,6 +361,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 						>
 							<FileTypeIcon type={ item.type } /> { label }
 						</Button>
+						{ renderSeparateExpandButton && expandButton() }
 					</>
 				) }
 			</div>
