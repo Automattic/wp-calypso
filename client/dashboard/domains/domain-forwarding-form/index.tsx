@@ -6,6 +6,10 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
+	Panel,
+	PanelBody,
+	PanelRow,
+	RadioControl,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
@@ -209,7 +213,7 @@ export default function DomainForwardingForm( { isEdit = false }: DomainForwardi
 						if ( ! isSubdomainValid( item.subdomain ) ) {
 							return 'Error subdomain is not valid';
 						}
-						return false;
+						return null;
 					},
 				},
 			},
@@ -218,6 +222,14 @@ export default function DomainForwardingForm( { isEdit = false }: DomainForwardi
 				label: __( 'Target URL' ),
 				help: __( 'The URL to redirect to (e.g., https://example.com/path)' ),
 				type: 'text',
+				isValid: {
+					custom: ( item ) => {
+						if ( ! isTargetUrlValid( item.targetUrl, domainName ) ) {
+							return 'Error target URL is not valid';
+						}
+						return null;
+					},
+				},
 			},
 			{
 				id: 'redirectType',
@@ -255,12 +267,17 @@ export default function DomainForwardingForm( { isEdit = false }: DomainForwardi
 		[ domainName ]
 	);
 
+	// Split fields into basic and advanced
+	const basicFieldIds =
+		formData.sourceType === 'subdomain'
+			? [ 'sourceType', 'subdomain', 'targetUrl' ]
+			: [ 'sourceType', 'targetUrl' ];
+
+	const basicFields = fields.filter( ( field ) => basicFieldIds.includes( field.id ) );
+
 	const form = {
 		type: 'regular' as const,
-		fields:
-			formData.sourceType === 'subdomain'
-				? [ 'sourceType', 'subdomain', 'targetUrl', 'redirectType', 'pathForwarding' ]
-				: [ 'sourceType', 'targetUrl', 'redirectType', 'pathForwarding' ],
+		fields: basicFieldIds,
 	};
 
 	const handleSubmit = ( e: React.FormEvent ) => {
@@ -362,15 +379,64 @@ export default function DomainForwardingForm( { isEdit = false }: DomainForwardi
 						<VStack spacing={ 4 }>
 							<DataForm< FormData >
 								data={ formData }
-								fields={ fields }
+								fields={ basicFields }
 								form={ form }
 								onChange={ ( edits: Partial< FormData > ) => {
 									setFormData( ( data ) => ( { ...data, ...edits } ) );
 								} }
 							/>
 
-							<HStack justify="start" spacing={ 4 }>
-								<Button variant="primary" type="submit" isBusy={ isPending }>
+							<Panel>
+								<PanelBody title={ __( 'Advanced settings' ) } initialOpen={ false }>
+									<PanelRow>
+										<VStack style={ { width: '100%' } } spacing={ 6 }>
+											<RadioControl
+												label={ __( 'HTTP Redirect Type' ) }
+												selected={ formData.redirectType }
+												options={ [
+													{
+														label: __( 'Temporary redirect (307)' ),
+														value: 'temporary',
+													},
+													{
+														label: __( 'Permanent redirect (301)' ),
+														value: 'permanent',
+													},
+												] }
+												onChange={ ( value: string ) => {
+													setFormData( ( data ) => ( {
+														...data,
+														redirectType: value as 'temporary' | 'permanent',
+													} ) );
+												} }
+											/>
+											<RadioControl
+												label={ __( 'Path forwarding' ) }
+												selected={ formData.pathForwarding }
+												options={ [
+													{
+														label: __( 'Do not forward' ),
+														value: 'no',
+													},
+													{
+														label: __( 'Forward path' ),
+														value: 'yes',
+													},
+												] }
+												onChange={ ( value: string ) => {
+													setFormData( ( data ) => ( {
+														...data,
+														pathForwarding: value as 'no' | 'yes',
+													} ) );
+												} }
+											/>
+										</VStack>
+									</PanelRow>
+								</PanelBody>
+							</Panel>
+
+							<HStack justify="space-between">
+								<Button variant="primary" type="submit" isBusy={ isPending } disabled={ isPending }>
 									{ isEdit ? __( 'Update' ) : __( 'Add' ) }
 								</Button>
 								<RouterLinkButton
