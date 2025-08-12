@@ -190,7 +190,9 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 			}
 		}
 
-		setIsOpen( expandDirectoriesOnClick && ! isOpen );
+		if ( expandDirectoriesOnClick ) {
+			setIsOpen( ! isOpen );
+		}
 	}, [
 		dispatch,
 		expandDirectoriesOnClick,
