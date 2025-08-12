@@ -1,5 +1,5 @@
 import { Badge } from '@automattic/ui';
-import { useQuery, keepPreviousData, useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { __experimentalText as Text, TabPanel } from '@wordpress/components';
 import { DataViews, Operator, Field, ViewTable } from '@wordpress/dataviews';
@@ -121,8 +121,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	};
 
 	const { data: siteLogs, isFetching } = useQuery( {
-		...siteLogsQuery( siteId, params ),
-		placeholderData: keepPreviousData,
+		...siteLogsQuery( siteId, params, { keepPreviousData: true } ),
 	} );
 	const logs = Array.isArray( siteLogs?.logs ) ? siteLogs.logs : EMPTY_ARRAY;
 

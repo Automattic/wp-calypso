@@ -23,6 +23,8 @@ export interface PHPLog extends Omit< PHPLogFromEndpoint, 'atomic_site_id' > {
 	id: string;
 }
 
+export type SiteLogsQueryOptions = { keepPreviousData?: boolean };
+
 export const LogType = {
 	PHP: 'php',
 	SERVER: 'server',
