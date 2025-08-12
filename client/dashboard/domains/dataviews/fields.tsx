@@ -179,7 +179,9 @@ export const useFields = ( {
 				getValue: ( { item }: { item: DomainSummary } ) =>
 					item.expiry ? dateI18n( 'F j, Y', item.expiry ) : '',
 				render: ( { field, item } ) => {
+					// Site Overview does not show the Status column, so we use this column for error messages.
 					if (
+						site &&
 						item.type === DomainTypes.MAPPED &&
 						! item.points_to_wpcom &&
 						! isRecentlyRegistered( item.registration_date, THREE_DAYS_IN_MINUTES )
