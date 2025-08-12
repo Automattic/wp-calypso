@@ -12,7 +12,7 @@ import { DataForm, Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { domainAddDNSRecordMutation } from '../../../app/queries/domain-add-dns';
+import { domainDnsMutation } from '../../../app/queries/domain-dns-records';
 import { domainRoute } from '../../../app/routes/domain-routes';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
@@ -72,7 +72,7 @@ export default function DomainAddDNS() {
 	const navigate = useNavigate();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { domainName } = domainRoute.useParams();
-	const mutation = useMutation( domainAddDNSRecordMutation( domainName ) );
+	const mutation = useMutation( domainDnsMutation( domainName ) );
 	const { isPending } = mutation;
 
 	const navigateToDNSOverviewPage = () => {
@@ -87,7 +87,7 @@ export default function DomainAddDNS() {
 
 		const formattedData = config.transformData( formData, domainName );
 
-		mutation.mutate( formattedData, {
+		mutation.mutate( [ formattedData ], {
 			onSuccess: () => {
 				createSuccessNotice( __( 'DNS record added successfully.' ), { type: 'snackbar' } );
 				navigateToDNSOverviewPage();

@@ -5,7 +5,7 @@ export type DnsRecordType = 'A' | 'AAAA' | 'ALIAS' | 'CAA' | 'CNAME' | 'MX' | 'N
 export type DnsRecord = {
 	aux?: number;
 	data?: string;
-	domain: string;
+	domain?: string;
 	flags?: number;
 	id?: string;
 	name: string;
@@ -21,25 +21,25 @@ export type DnsRecord = {
 	weight?: number;
 };
 
-export type AddDNSRecordResponse = {
+export type DnsResponse = {
 	records: DnsRecord[];
 };
 
-export async function addDNSRecord(
-	domain: string,
-	recordData: DnsRecord
-): Promise< AddDNSRecordResponse > {
-	const payload = {
-		dns: JSON.stringify( {
-			records_to_add: [ recordData ],
-		} ),
-	};
-
-	return wpcom.req.post(
-		{
-			path: `/domains/${ domain }/dns`,
-			apiVersion: '1.1',
+export function updateDomainDns(
+	domainName: string,
+	recordsToAdd?: DnsRecord[],
+	recordsToRemove?: DnsRecord[],
+	restoreDefaultARecords?: boolean
+): Promise< DnsResponse > {
+	return wpcom.req.post( {
+		path: `/domains/${ domainName }/dns`,
+		apiVersion: '1.1',
+		body: {
+			dns: JSON.stringify( {
+				records_to_add: recordsToAdd,
+				records_to_remove: recordsToRemove,
+				restore_default_a_records: restoreDefaultARecords,
+			} ),
 		},
-		payload
-	);
+	} );
 }
