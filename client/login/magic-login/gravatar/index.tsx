@@ -604,28 +604,23 @@ const GravPoweredEmailCodeVerification = ( {
 	const redirectToSanitized = useSelector( getRedirectToSanitized );
 	const isProcessingCode = isValidatingCode || isCodeValidated;
 
-	// Only proceed when validation transitions from false -> true
-	const previousIsCodeValidatedRef = useRef( isCodeValidated );
-
 	useEffect( () => {
-		// Proceed to the next step only when the magic code becomes validated (false -> true)
-		const becameValidated = isCodeValidated && ! previousIsCodeValidatedRef.current;
-		previousIsCodeValidatedRef.current = isCodeValidated;
+		if ( ! isCodeValidated ) {
+			return;
+		}
 
-		if ( becameValidated ) {
-			if ( ! twoFactorEnabled ) {
-				dispatch( rebootAfterLogin( { magic_login: 1 } ) );
-			} else {
-				page(
-					login( {
-						// If no notification is sent, the user is using the authenticator for 2FA by default.
-						twoFactorAuthType: twoFactorNotificationSent?.replace( 'none', 'authenticator' ) ?? '',
-						redirectTo: redirectToSanitized ?? '',
-						oauth2ClientId: oauth2Client.id,
-						locale,
-					} )
-				);
-			}
+		if ( ! twoFactorEnabled ) {
+			dispatch( rebootAfterLogin( { magic_login: 1 } ) );
+		} else {
+			page(
+				login( {
+					// If no notification is sent, the user is using the authenticator for 2FA by default.
+					twoFactorAuthType: twoFactorNotificationSent?.replace( 'none', 'authenticator' ) ?? '',
+					redirectTo: redirectToSanitized ?? '',
+					oauth2ClientId: oauth2Client.id,
+					locale,
+				} )
+			);
 		}
 	}, [
 		isCodeValidated,
