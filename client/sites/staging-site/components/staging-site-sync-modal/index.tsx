@@ -13,7 +13,13 @@ import {
 	Notice,
 	Tooltip,
 } from '@wordpress/components';
-import { createInterpolateElement, useState, useCallback, useMemo } from '@wordpress/element';
+import {
+	createInterpolateElement,
+	useState,
+	useCallback,
+	useMemo,
+	useEffect,
+} from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronRight, chevronLeft } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -291,10 +297,22 @@ export default function SyncModal( {
 
 	const shouldDisableGranularSync = ! lastKnownBackupAttempt && ! isLoadingBackupAttempt;
 
+	useEffect( () => {
+		if ( shouldDisableGranularSync ) {
+			// Ensure all content and database are marked as selected in state when granular sync is disabled
+			dispatch( setNodeCheckState( querySiteId, WP_CONTENT_PATH, 'checked' ) );
+			dispatch( setNodeCheckState( querySiteId, WP_CONFIG_PATH, 'checked' ) );
+			dispatch( setNodeCheckState( querySiteId, SQL_PATH, 'checked' ) );
+		}
+	}, [ shouldDisableGranularSync, dispatch, querySiteId ] );
+
 	const handleConfirm = () => {
 		let include_paths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
 		let exclude_paths = browserCheckList.excludeList.map( ( item ) => item.id ).join( ',' );
-		if ( filesAndFoldersNodesCheckState === 'checked' && sqlNode?.checkState === 'checked' ) {
+		if (
+			shouldDisableGranularSync ||
+			( filesAndFoldersNodesCheckState === 'checked' && sqlNode?.checkState === 'checked' )
+		) {
 			// Sync everything
 			include_paths = '';
 			exclude_paths = '';
