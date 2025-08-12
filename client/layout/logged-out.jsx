@@ -28,6 +28,7 @@ import {
 	isIosOAuth2Client,
 	isA4AOAuth2Client,
 	isCrowdsignalOAuth2Client,
+	isVIPOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
@@ -84,6 +85,7 @@ const LayoutLoggedOut = ( {
 	colorScheme,
 	isA4A,
 	isCrowdsignal,
+	isVIPClient,
 } ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const currentRoute = useSelector( getCurrentRoute );
@@ -124,7 +126,8 @@ const LayoutLoggedOut = ( {
 		userAllowedToHelpCenter;
 
 	const isUnifiedCreateAccount =
-		sectionName === 'signup' && ( isWoo || isA4A || isCrowdsignal || isBlazePro || isAkismet );
+		sectionName === 'signup' &&
+		( isWoo || isA4A || isCrowdsignal || isBlazePro || isAkismet || isVIPClient );
 
 	const classes = {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,
@@ -392,6 +395,7 @@ export default withCurrentRoute(
 				colorScheme,
 				isA4A: isA4AOAuth2Client( oauth2Client ),
 				isCrowdsignal: isCrowdsignalOAuth2Client( oauth2Client ),
+				isVIPClient: isVIPOAuth2Client( oauth2Client ),
 			};
 		},
 		{ clearLastActionRequiresLogin }
