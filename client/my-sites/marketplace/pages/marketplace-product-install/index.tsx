@@ -206,7 +206,7 @@ const MarketplaceProductInstall = ( {
 		) {
 			const triggerInstallFlow = () => {
 				setInitializeInstallFlow( true );
-				waitFor( 5 ).then( () => setCurrentStep( 1 ) );
+				waitFor( 1 ).then( () => setCurrentStep( 1 ) );
 			};
 
 			if ( isJetpack || isAtomic ) {
