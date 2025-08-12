@@ -303,6 +303,9 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 				checked={ browserNodeItem ? browserNodeItem.checkState === 'checked' : false }
 				indeterminate={ browserNodeItem && browserNodeItem.checkState === 'mixed' }
 				onChange={ onCheckboxChange }
+				aria-checked={ browserNodeItem ? browserNodeItem.checkState === 'checked' : false }
+				// translators: %s is the file or directory name
+				aria-label={ sprintf( __( 'Select %s' ), item.name ) }
 			/>
 		);
 	};
