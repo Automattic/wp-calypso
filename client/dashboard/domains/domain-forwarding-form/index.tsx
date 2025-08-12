@@ -82,7 +82,7 @@ export default function DomainForwardingForm( { isEdit = false }: DomainForwardi
 	const redirectTypeField = {
 		id: 'redirectType',
 		label: __( 'HTTP Redirect Type' ),
-		type: 'text',
+		type: 'text' as const,
 		Edit: 'radio',
 		elements: [
 			{
@@ -102,7 +102,7 @@ export default function DomainForwardingForm( { isEdit = false }: DomainForwardi
 	const pathForwardingField = {
 		id: 'pathForwarding',
 		label: __( 'Path forwarding' ),
-		type: 'text',
+		type: 'text' as const,
 		Edit: 'radio',
 		elements: [
 			{
@@ -124,7 +124,7 @@ export default function DomainForwardingForm( { isEdit = false }: DomainForwardi
 			{
 				id: 'sourceType',
 				label: __( 'Source URL' ),
-				type: 'text',
+				type: 'text' as const,
 				Edit: 'select',
 				elements: [
 					{
@@ -141,7 +141,7 @@ export default function DomainForwardingForm( { isEdit = false }: DomainForwardi
 				id: 'subdomain',
 				label: __( 'Subdomain' ),
 				help: __( 'Enter the subdomain (e.g., "blog")' ),
-				type: 'text',
+				type: 'text' as const,
 				isValid: {
 					custom: ( item ) => {
 						if ( ! isSubdomainValid( item.subdomain ) ) {
