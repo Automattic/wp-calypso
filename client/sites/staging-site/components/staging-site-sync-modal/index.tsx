@@ -54,6 +54,7 @@ const fileBrowserConfig: FileBrowserConfig = {
 	showFileCard: false,
 	showBackupTime: true,
 	showSeparateExpandButton: true,
+	expandDirectoriesOnClick: false,
 };
 
 const DirectionArrow = () => {

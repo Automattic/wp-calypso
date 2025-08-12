@@ -49,6 +49,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	const [ addedAnyChildren, setAddedAnyChildren ] = useState< boolean >( false );
 	const browserNodeItem = useSelector( ( state ) => getBackupBrowserNode( state, siteId, path ) );
 	const expandIcon = isRTL() ? chevronLeft : chevronRight;
+	const expandDirectoriesOnClick = fileBrowserConfig?.expandDirectoriesOnClick ?? true;
 
 	const {
 		isSuccess,
@@ -174,9 +175,9 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 			}
 		}
 
-		// If we are not showing the file card and the item doesn't have children, or it is directory with restricted children,
+		// If we are not showing the file card or it is directory with restricted children,
 		// let's toggle the checkbox
-		if ( ( ! showFileCard && ! item.hasChildren ) || shouldRestrictChildren( item ) ) {
+		if ( ! showFileCard || shouldRestrictChildren( item ) ) {
 			onCheckboxChange();
 		}
 
@@ -189,9 +190,10 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 			}
 		}
 
-		setIsOpen( ! isOpen );
+		setIsOpen( expandDirectoriesOnClick && ! isOpen );
 	}, [
 		dispatch,
+		expandDirectoriesOnClick,
 		isOpen,
 		item,
 		path,
@@ -321,7 +323,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	const expandButton = () => {
 		return (
 			<Button
-				onClick={ handleClick }
+				onClick={ () => setIsOpen( ! isOpen ) }
 				icon={ isOpen ? chevronDown : expandIcon }
 				className="file-browser-node__separate-expand-button"
 				variant="tertiary"

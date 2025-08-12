@@ -19,6 +19,7 @@ export interface FileBrowserConfig {
 	restrictedPaths?: string[];
 	restrictedTypes?: string[];
 	excludeTypes?: string[];
+	expandDirectoriesOnClick?: boolean;
 	alwaysInclude?: string[];
 	showHeaderButtons?: boolean;
 	showFileCard?: boolean;
