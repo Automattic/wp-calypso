@@ -66,15 +66,6 @@ export const useSendOdieMessage = () => {
 		trigger: boolean;
 	} >( { isFromError: false, trigger: false } );
 
-	useEffect( () => {
-		const { createdFrom, isFromError, trigger } = shouldCreateConversation;
-
-		if ( trigger ) {
-			newConversation( { createdFrom, isFromError } );
-			setShouldCreateConversation( { createdFrom: undefined, isFromError: false, trigger: false } );
-		}
-	}, [ newConversation, shouldCreateConversation ] );
-
 	const {
 		botNameSlug,
 		selectedSiteId,
@@ -87,7 +78,17 @@ export const useSendOdieMessage = () => {
 		isUserEligibleForPaidSupport,
 		canConnectToZendesk,
 		forceEmailSupport,
+		sectionName,
 	} = useOdieAssistantContext();
+
+	useEffect( () => {
+		const { createdFrom, isFromError, trigger } = shouldCreateConversation;
+
+		if ( trigger ) {
+			newConversation( { createdFrom, isFromError, section: sectionName } );
+			setShouldCreateConversation( { createdFrom: undefined, isFromError: false, trigger: false } );
+		}
+	}, [ newConversation, shouldCreateConversation, sectionName ] );
 
 	/*
 		Adds a message to the chat.
@@ -180,6 +181,7 @@ export const useSendOdieMessage = () => {
 					newConversation( {
 						createdFrom: 'empty_response_error',
 						isFromError: true,
+						section: sectionName,
 					} );
 				} else {
 					// User is not eligible for premium support - show error message with support buttons
@@ -234,6 +236,7 @@ export const useSendOdieMessage = () => {
 				newConversation( {
 					createdFrom: 'api_error',
 					isFromError: true,
+					section: sectionName,
 				} );
 			} else {
 				// User is not eligible for premium support - show error message with support buttons

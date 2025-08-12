@@ -16,7 +16,7 @@ export const useCreateZendeskConversation = (): ( ( {
 }: {
 	avoidTransfer?: boolean;
 	interactionId?: string;
-	section?: string | null;
+	section: string;
 	createdFrom?: string;
 	isFromError?: boolean;
 } ) => Promise< void > ) => {
@@ -43,13 +43,13 @@ export const useCreateZendeskConversation = (): ( ( {
 	const createConversation = async ( {
 		avoidTransfer = false,
 		interactionId = '',
-		section = '',
+		section,
 		createdFrom = '',
 		isFromError = false,
 	}: {
 		avoidTransfer?: boolean;
 		interactionId?: string;
-		section?: string | null;
+		section: string;
 		createdFrom?: string;
 		isFromError?: boolean;
 	} ) => {
@@ -78,7 +78,7 @@ export const useCreateZendeskConversation = (): ( ( {
 			messaging_initial_message: userFieldMessage || undefined,
 			messaging_site_id: selectedSiteId || null,
 			messaging_ai_chat_id: chatId || undefined,
-			messaging_url: selectedSiteURL || null,
+			messaging_url: selectedSiteURL || window.location.href,
 			messaging_flow: userFieldFlowName || null,
 			messaging_source: section,
 		} );
