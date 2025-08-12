@@ -14,7 +14,6 @@ import './one-login-layout.scss';
 
 interface OneLoginLayoutProps {
 	isJetpack: boolean;
-	isFromAkismet: boolean;
 	children: React.ReactNode;
 	/**
 	 * `signupUrl` prop should merge with `getSignupLinkComponent` logic in `/client/block/login/index.js`, so we have a single source for this logic.
@@ -26,7 +25,6 @@ interface OneLoginLayoutProps {
 
 const OneLoginLayout = ( {
 	isJetpack,
-	isFromAkismet,
 	children,
 	signupUrl: signupUrlProp,
 	isSectionSignup,
@@ -88,7 +86,7 @@ const OneLoginLayout = ( {
 		>
 			<div className="wp-login__one-login-layout-content-wrapper">
 				<div className="wp-login__one-login-layout-heading">
-					<HeadingLogo isFromAkismet={ isFromAkismet } isJetpack={ isJetpack } />
+					<HeadingLogo isJetpack={ isJetpack } />
 					<Step.Heading
 						text={ <div className="wp-login__one-login-layout-heading-text">{ headingText }</div> }
 					/>

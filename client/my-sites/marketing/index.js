@@ -13,6 +13,7 @@ import {
 	redirectSharingButtons,
 	sharingButtons,
 	traffic,
+	jetpackTraffic,
 	toolsMarketing,
 } from './controller';
 
@@ -60,6 +61,15 @@ export default function () {
 		siteSelection,
 		navigation,
 		traffic,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/marketing/jetpack-traffic/:domain',
+		siteSelection,
+		navigation,
+		jetpackTraffic,
 		layout,
 		makeLayout,
 		clientRender

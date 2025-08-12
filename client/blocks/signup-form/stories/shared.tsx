@@ -36,13 +36,7 @@ export const BlazeWrapper = ( Story: StoryFn ) => (
 
 export const CrowdsignalWrapper = ( Story: StoryFn ) => (
 	<div className="crowdsignal">
-		<div className="signup is-crowdsignal">
-			<div className="signup-form__crowdsignal" style={ { maxWidth: '360px', padding: '30px' } }>
-				<div className="card logged-out-form__footer">
-					<Story />
-				</div>
-			</div>
-		</div>
+		<Story />
 	</div>
 );
 

@@ -47,20 +47,20 @@
 	fill: var(--wp-admin-theme-color);
 
 	.dashboard-overview-card--success & {
-		color: $alert-green;
-		fill: $alert-green;
+		color: var(--dashboard__background-color-success);
+		fill: var(--dashboard__background-color-success);
 	}
 
 	.dashboard-overview-card--error & {
-		background-color: color-mix(in srgb, $alert-red 8%, transparent);
-		color: $alert-red;
-		fill: $alert-red;
+		background-color: color-mix(in srgb, var(--dashboard__background-color-error) 8%, transparent);
+		color: var(--dashboard__background-color-error );
+		fill: var(--dashboard__background-color-error );
 	}
 
 	.dashboard-overview-card--warning & {
-		background-color: color-mix(in srgb, #b36100 8%, transparent);
-		color: #b36100;
-		fill: #b36100;
+		background-color: color-mix(in srgb, var(--dashboard__background-color-warning) 8%, transparent);
+		color: var(--dashboard__background-color-warning);
+		fill: var(--dashboard__background-color-warning);
 	}
 
 	.dashboard-overview-card--disabled & {
@@ -117,15 +117,6 @@
 	width: 100%;
 	padding: 0;
 	text-align: start;
-}
-
-.dashboard-overview-card__description {
-	.dashboard-overview-card--error & {
-		color: $alert-red;
-	}
-	.dashboard-overview-card--warning & {
-		color: #b36100;
-	}
 }
 
 .dashboard-overview-card__progress-bar {

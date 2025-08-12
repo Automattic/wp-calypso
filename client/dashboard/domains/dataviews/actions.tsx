@@ -1,61 +1,105 @@
+import { useMyDomainInputMode } from '@automattic/domains-table/src/utils/constants';
 import {
+	domainManagementDNS,
+	domainManagementEditContactInfo,
 	domainManagementLink,
 	domainMappingSetup,
+	domainUseMyDomain,
 } from '@automattic/domains-table/src/utils/paths';
-import { useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { sprintf, __ } from '@wordpress/i18n';
 import { payment, tool } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
+import { addQueryArgs } from '@wordpress/url';
 import { useMemo } from 'react';
+import { userPurchasesQuery } from '../../app/queries/me-purchases';
 import { siteSetPrimaryDomainMutation } from '../../app/queries/site-domains';
-import { DomainTypes } from '../../data/domains';
-import { isRecentlyRegistered, isDomainRenewable, canSetAsPrimary } from '../../utils/domain';
-import type { Domain, Site, User } from '../../data/types';
+import { DomainTypes, DomainTransferStatus } from '../../data/domains';
+import {
+	isRecentlyRegistered,
+	isDomainRenewable,
+	isDomainUpdatable,
+	isDomainInGracePeriod,
+	canSetAsPrimary,
+	getDomainSiteSlug,
+} from '../../utils/domain';
+import { isTransferrableToWpcom } from '../../utils/domain-types';
+import { isAkismetProduct, isMarketplaceTemporarySitePurchase } from '../../utils/purchase';
+import { encodeProductForUrl } from '../../utils/wpcom-checkout';
+import type { DomainSummary, Site, User } from '../../data/types';
 import type { Action } from '@wordpress/dataviews';
 
 export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { data: purchases } = useQuery( userPurchasesQuery() );
 	const setPrimaryDomainMutation = useMutation( siteSetPrimaryDomainMutation() );
-
-	const actions: Action< Domain >[] = useMemo(
+	const context = site ? 'site' : 'domains';
+	const actions: Action< DomainSummary >[] = useMemo(
 		() => [
 			{
 				id: 'renew',
 				isPrimary: true,
 				icon: <Icon icon={ payment } />,
 				label: __( 'Renew now' ),
-				callback: () => {},
-				isEligible: ( item: Domain ) => isDomainRenewable( item ),
+				callback: ( items: DomainSummary[] ) => {
+					const domain = items[ 0 ];
+					const siteSlug = getDomainSiteSlug( domain );
+					const purchase = purchases?.find( ( p ) => p.ID === domain.subscription_id );
+					if ( purchase ) {
+						const productSlug = [ purchase.product_slug, domain.domain ]
+							.map( ( productSlug ) => encodeProductForUrl( productSlug ) )
+							.join( ':' );
+						const backUrl = window.location.href.replace( window.location.origin, '' );
+						let serviceSlug = '';
+						if ( isAkismetProduct( purchase ) ) {
+							serviceSlug = 'akismet/';
+						} else if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
+							serviceSlug = 'marketplace/';
+						}
+
+						window.location.href = addQueryArgs(
+							`/checkout/${ serviceSlug }${ productSlug }/renew/${ purchase.ID }/${ siteSlug }`,
+							{
+								cancel_to: backUrl,
+								redirect_to: backUrl,
+							}
+						);
+					}
+				},
+				isEligible: ( item: DomainSummary ) => isDomainRenewable( item ),
 			},
 			{
 				id: 'setup',
 				isPrimary: true,
 				icon: <Icon icon={ tool } />,
-				label: __( 'Setup' ),
-				callback: ( items: Domain[] ) => {
+				label: __( 'Set up connection' ),
+				callback: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
-					const siteSlug = domain.primary_domain ? domain.domain : domain.site_slug;
-					window.location.pathname = domainMappingSetup( siteSlug, domain.domain );
+					const siteSlug = getDomainSiteSlug( domain );
+
+					// Use href instead of pathname to preserve query parameters.
+					window.location.href = domainMappingSetup( siteSlug, domain.domain );
 				},
-				isEligible: ( item: Domain ) => item.type === DomainTypes.MAPPED,
+				isEligible: ( item: DomainSummary ) =>
+					item.type === DomainTypes.MAPPED && ! item.points_to_wpcom,
 			},
 			{
 				id: 'manage-domain',
-				label: ( items: Domain[] ) => {
+				label: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
 					return domain.type === DomainTypes.TRANSFER
 						? __( 'View transfer' )
 						: __( 'View settings' );
 				},
 				supportsBulk: false,
-				callback: ( items: Domain[] ) => {
+				callback: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
-					const siteSlug = domain.primary_domain ? domain.domain : domain.site_slug;
+					const siteSlug = getDomainSiteSlug( domain );
 					window.location.pathname = domainManagementLink( domain, siteSlug, false );
 				},
-				isEligible: ( item: Domain ) => {
+				isEligible: ( item: DomainSummary ) => {
 					return item.type !== DomainTypes.WPCOM;
 				},
 			},
@@ -63,21 +107,48 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				id: 'manage-dns-settings',
 				label: __( 'Manage DNS' ),
 				supportsBulk: false,
-				callback: () => {},
-				isEligible: () => false,
+				callback: ( items: DomainSummary[] ) => {
+					const domain = items[ 0 ];
+					const siteSlug = getDomainSiteSlug( domain );
+					window.location.pathname = domainManagementDNS( siteSlug, domain.domain, context );
+				},
+				isEligible: ( item: DomainSummary ) => {
+					return (
+						item.can_manage_dns_records &&
+						item.transfer_status !== DomainTransferStatus.PENDING_ASYNC &&
+						item.type !== DomainTypes.SITE_REDIRECT
+					);
+				},
 			},
 			{
 				id: 'manage-contact-info',
 				label: __( 'Manage contact information' ),
-				supportsBulk: true,
-				callback: () => {},
-				isEligible: () => false,
+				supportsBulk: false,
+				callback: ( items: DomainSummary[] ) => {
+					const domain = items[ 0 ];
+					const siteSlug = getDomainSiteSlug( domain );
+					window.location.pathname = domainManagementEditContactInfo(
+						siteSlug,
+						domain.domain,
+						null,
+						context
+					);
+				},
+				isEligible: ( item: DomainSummary ) => {
+					return (
+						!! item.current_user_is_owner &&
+						item.can_update_contact_info &&
+						! item.wpcom_domain &&
+						item.has_registration &&
+						( isDomainUpdatable( item ) || isDomainInGracePeriod( item ) )
+					);
+				},
 			},
 			{
 				id: 'set-primary-site-address',
 				label: __( 'Make primary site address' ),
 				supportsBulk: false,
-				callback: ( domains: Domain[] ) => {
+				callback: ( domains: DomainSummary[] ) => {
 					if ( ! site ) {
 						return;
 					}
@@ -109,11 +180,11 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 						}
 					);
 				},
-				isEligible: ( item: Domain ) => {
+				isEligible: ( item: DomainSummary ) => {
 					return (
 						!! site &&
 						canSetAsPrimary( { domain: item, site, user } ) &&
-						! isRecentlyRegistered( item.registrationDate )
+						! isRecentlyRegistered( item.registration_date )
 					);
 				},
 				disabled: setPrimaryDomainMutation.isPending,
@@ -122,8 +193,18 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				id: 'transfer-domain',
 				label: __( 'Transfer to WordPress.com' ),
 				supportsBulk: false,
-				callback: () => {},
-				isEligible: () => false,
+				callback: ( items: DomainSummary[] ) => {
+					const domain = items[ 0 ];
+					const siteSlug = getDomainSiteSlug( domain );
+					window.location.pathname = domainUseMyDomain(
+						siteSlug,
+						domain.domain,
+						useMyDomainInputMode.transferDomain
+					);
+				},
+				isEligible: ( item: DomainSummary ) => {
+					return isTransferrableToWpcom( item );
+				},
 			},
 			{
 				id: 'connect-to-site',
@@ -142,12 +223,20 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 			{
 				id: 'manage-auto-renew',
 				label: __( 'Manage auto-renew' ),
-				supportsBulk: true,
+				supportsBulk: false,
 				callback: () => {},
 				isEligible: () => false,
 			},
 		],
-		[ user, site, setPrimaryDomainMutation, createSuccessNotice, createErrorNotice ]
+		[
+			user,
+			site,
+			context,
+			purchases,
+			setPrimaryDomainMutation,
+			createSuccessNotice,
+			createErrorNotice,
+		]
 	);
 
 	return actions;
