@@ -8,6 +8,10 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import { isDeletingStagingSiteQuery } from 'calypso/dashboard/app/queries/site-staging-sites';
 import { queryClient } from 'calypso/dashboard/app/query-client';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
+import { StagingSiteCreationBanner } from 'calypso/sites/staging-site/components/staging-site-transfer-banner/staging-site-creation-banner';
+import { StagingSiteDeletionBanner } from 'calypso/sites/staging-site/components/staging-site-transfer-banner/staging-site-deletion-banner';
+import { useSelector } from 'calypso/state';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import ItemViewContent from './item-view-content';
 import ItemViewHeader from './item-view-header';
 import ItemViewBreadcrumbsHeader from './item-view-header/breadcrumbs';
@@ -56,6 +60,16 @@ export default function ItemView( {
 		queryClient
 	);
 
+	// The is_wpcom_staging_site flag isn't site while the site is being transferred
+	// so it can't be used here to determine if the site is a staging site
+	const isStagingSite = itemData.subtitle?.toString().startsWith( 'staging-' );
+
+	const isAtomicSite = useSelector( ( state ) =>
+		isSiteWpcomAtomic( state, itemData.blogId ?? null )
+	);
+
+	const isStagingSiteTransferInProgress = isStagingSite && ! isAtomicSite;
+
 	// Ensure we have features
 	if ( ! features || ! features.length ) {
 		return null;
@@ -97,21 +111,39 @@ export default function ItemView( {
 
 	const shouldHideHeader = hideHeader || shouldShowBreadcrumbs;
 	const shouldHideNav =
-		( hideNavIfSingleTab && featureTabs.length <= 1 ) ||
-		isMobileApp ||
-		shouldShowBreadcrumbs ||
-		isStagingSiteDeletionInProgress;
+		( hideNavIfSingleTab && featureTabs.length <= 1 ) || isMobileApp || shouldShowBreadcrumbs;
+
+	const renderHeader = () => {
+		if ( shouldHideHeader ) {
+			return null;
+		}
+
+		return (
+			<ItemViewHeader
+				closeItemView={ closeItemView }
+				itemData={ itemData }
+				isPreviewLoaded={ !! selectedFeature.preview }
+				extraProps={ itemViewHeaderExtraProps }
+			/>
+		);
+	};
+
+	if ( isStagingSiteTransferInProgress || isStagingSiteDeletionInProgress ) {
+		return (
+			<div className={ clsx( 'hosting-dashboard-item-view', className ) }>
+				{ renderHeader() }
+				{ isStagingSiteDeletionInProgress ? (
+					<StagingSiteDeletionBanner />
+				) : (
+					<StagingSiteCreationBanner />
+				) }
+			</div>
+		);
+	}
 
 	return (
 		<div className={ clsx( 'hosting-dashboard-item-view', className ) }>
-			{ ! shouldHideHeader && (
-				<ItemViewHeader
-					closeItemView={ closeItemView }
-					itemData={ itemData }
-					isPreviewLoaded={ !! selectedFeature.preview }
-					extraProps={ itemViewHeaderExtraProps }
-				/>
-			) }
+			{ renderHeader() }
 			{ shouldShowBreadcrumbs && <ItemViewBreadcrumbsHeader breadcrumbs={ breadcrumbs } /> }
 			<div ref={ setNavRef }>
 				<SectionNav

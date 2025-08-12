@@ -71,8 +71,8 @@ export function canDeleteSite( site: Site ) {
 	return ! site.is_wpcom_staging_site;
 }
 
-export function canViewStagingSite( site: Site ) {
-	return ! isSelfHostedJetpackConnected( site );
+export function canSwitchEnvironment( site: Site ) {
+	return hasHostingFeature( site, HostingFeatures.STAGING_SITE );
 }
 
 export function canCreateStagingSite( site: Site ) {

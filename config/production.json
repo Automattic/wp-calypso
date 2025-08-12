@@ -39,17 +39,16 @@
 		"current-site/domain-warning": false,
 		"current-site/notice": true,
 		"dashboard/v2/backport/site-overview": false,
-		"dashboard/v2/backport/site-settings": true,
 		"dashboard/v2/backport/sites-list": true,
 		"dashboard/v2/security-settings": false,
-		"domains/ui-redesign": false,
+		"domains/ui-redesign": true,
 		"global-styles/on-personal-plan": false,
 		"google-my-business": true,
 		"help": true,
 		"help/gpt-response": true,
-		"hosting/hosting-features-callout": false,
+		"hosting/hosting-features-callout": true,
 		"hosting-server-settings-enhancements": true,
-		"summer-special-2025": false,
+		"summer-special-2025": true,
 		"hosting/staging-sites-redesign": false,
 		"i18n/empathy-mode": false,
 		"i18n/translation-scanner": true,
@@ -175,5 +174,5 @@
 	"boom_analytics_key": "production",
 	"theme_color": "#1D2327",
 	"hotjar_enabled": true,
-	"survicate_enabled": false
+	"survicate_enabled": true
 }

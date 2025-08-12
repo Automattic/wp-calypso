@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { MaterialIcon, ExternalLink } from '@automattic/components';
+import { MaterialIcon, ExternalLink, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from '@automattic/urls';
 import i18n from 'i18n-calypso';
@@ -123,6 +123,7 @@ import {
 	FEATURE_UNLIMITED_PRODUCTS_SERVICES,
 	FEATURE_UNLIMITED_STORAGE,
 	FEATURE_UPLOAD_PLUGINS,
+	FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL,
 	FEATURE_UPLOAD_THEMES,
 	FEATURE_UPLOAD_THEMES_PLUGINS,
 	FEATURE_VIDEO_HOSTING_V2,
@@ -792,6 +793,58 @@ const FEATURES_LIST: FeatureList = {
 				'Plugins extend the functionality of your site and ' +
 					'open up endless possibilities for presenting your content and interacting with visitors.'
 			),
+	},
+	[ FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL ]: {
+		getSlug: () => FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL,
+		getTitle: () => {
+			return (
+				<span style={ { fontWeight: 500 } }>
+					{ i18n.translate( 'Install plugins' ) }
+					<Gridicon
+						icon="info-outline"
+						size={ 16 }
+						style={ {
+							fill: 'var(--studio-blue-50)',
+							verticalAlign: 'middle',
+							marginLeft: '2px',
+							marginTop: '-2px',
+						} }
+					/>
+				</span>
+			);
+		},
+		getDescription: () => {
+			const result = i18n.fixMe( {
+				text: 'Until %(date)s: Unlock plugin access on new Personal and Premium plans.',
+				newCopy: i18n.translate(
+					// translators: %(date)s is a date string in the format of "August 25, 2025"
+					'Until %(date)s: Unlock plugin access on new Personal and Premium plans.',
+					{
+						args: {
+							date: new Intl.DateTimeFormat( i18n.getLocaleSlug() || 'en-US', {
+								month: 'long',
+								day: 'numeric',
+								year: 'numeric',
+							} ).format( new Date( '2025-08-25' ) ),
+						},
+					}
+				),
+				oldCopy: i18n.translate(
+					// translators: %(date)s is a date string in the format of "August 25, 2025"
+					'One-time offer: Install plugins available in all paid plans. Valid until %(date)s!',
+					{
+						args: {
+							date: new Intl.DateTimeFormat( i18n.getLocaleSlug() || 'en-US', {
+								month: 'long',
+								day: 'numeric',
+								year: 'numeric',
+							} ).format( new Date( '2025-08-25' ) ),
+						},
+					}
+				),
+			} );
+			return result || '';
+		},
 	},
 
 	[ FEATURE_INSTALL_PLUGINS ]: {

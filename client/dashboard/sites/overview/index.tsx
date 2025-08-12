@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalDivider as Divider,
@@ -14,20 +15,25 @@ import { siteBySlugQuery } from '../../app/queries/site';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getSiteDisplayName } from '../../utils/site-name';
+import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import AgencySiteShareCard from '../overview-agency-site-share-card';
 import BackupCard from '../overview-backup-card';
 import OverviewCard from '../overview-card';
 import DIFMUpsellCard from '../overview-difm-upsell-card';
 import DomainsCard from '../overview-domains-card';
 import LatestActivityCard from '../overview-latest-activity-card';
+import MigrateSiteCard from '../overview-migrate-site-card';
+import PerformanceCard from '../overview-performance-card';
 import PlanCard from '../overview-plan-card';
 import ScanCard from '../overview-scan-card';
 import SiteActionMenu from '../overview-site-action-menu';
 import SiteOverviewFields from '../overview-site-fields';
 import SitePreviewCard from '../overview-site-preview-card';
 import VisibilityCard from '../overview-visibility-card';
-import './style.scss';
+import StagingSiteSyncDropdown from '../staging-site-sync-dropdown';
+import { StorageWarningBanner } from './storage-warning-banner';
 import type { WPBreakpoint } from '@wordpress/compose/build-types/hooks/use-viewport-match';
+import './style.scss';
 
 const SPACING = {
 	DEFAULT: 6,
@@ -92,6 +98,9 @@ function SiteOverview( {
 						actions={
 							site.options?.admin_url && (
 								<>
+									{ isEnabled( 'hosting/staging-sites-redesign' ) && (
+										<StagingSiteSyncDropdown siteSlug={ siteSlug } />
+									) }
 									<Button
 										__next40pxDefaultSize
 										variant="primary"
@@ -110,6 +119,7 @@ function SiteOverview( {
 			}
 		>
 			<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
+				<StorageWarningBanner site={ site } />
 				<Grid { ...gridLayout } gap={ spacing }>
 					{ showSitePreview && <SitePreviewCard site={ site } /> }
 					<Grid columns={ 1 } rows={ 2 } gap={ spacing }>
@@ -117,17 +127,26 @@ function SiteOverview( {
 						<BackupCard site={ site } />
 					</Grid>
 					<Grid columns={ 1 } rows={ 2 } gap={ spacing }>
-						{ site.is_a4a_dev_site ? (
-							<AgencySiteShareCard site={ site } />
-						) : (
-							<OverviewCard
-								title={ __( 'Performance' ) }
-								icon={ chartBar }
-								heading="TBA"
-								description="TBA"
-								disabled
-							/>
-						) }
+						{ ( () => {
+							if ( site.is_a4a_dev_site ) {
+								return <AgencySiteShareCard site={ site } />;
+							}
+							if ( isSelfHostedJetpackConnected( site ) ) {
+								return (
+									<OverviewCard
+										title="TBA"
+										icon={ chartBar }
+										heading="TBA"
+										description="TBA"
+										disabled
+									/>
+								);
+							}
+							if ( site.plan?.is_free && ! site.is_wpcom_staging_site ) {
+								return <MigrateSiteCard site={ site } />;
+							}
+							return <PerformanceCard site={ site } />;
+						} )() }
 						<ScanCard site={ site } />
 					</Grid>
 					<PlanCard site={ site } />

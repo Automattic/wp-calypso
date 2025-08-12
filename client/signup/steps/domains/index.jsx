@@ -61,7 +61,7 @@ import {
 	getFixedDomainSearch,
 } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import { useDomainSearchV2 } from 'calypso/lib/domains/use-domain-search-v2';
+import { useIsDomainSearchV2Enabled } from 'calypso/lib/domains/use-domain-search-v2';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
@@ -153,7 +153,11 @@ class RenderDomainsStepComponent extends Component {
 		) {
 			this.skipRender = true;
 			const productSlug = getDomainProductSlug( domain );
-			const domainItem = domainRegistration( { productSlug, domain } );
+			const domainItem = domainRegistration( {
+				productSlug,
+				domain,
+				extra: { flow_name: props.flowName },
+			} );
 			const domainCart = shouldUseMultipleDomainsInCart( props.flowName )
 				? getDomainsInCart( this.props.cart )
 				: {};
@@ -486,6 +490,7 @@ class RenderDomainsStepComponent extends Component {
 			? domainRegistration( {
 					domain: suggestion.domain_name,
 					productSlug: suggestion.product_slug,
+					extra: { flow_name: this.props.flowName },
 			  } )
 			: undefined;
 
@@ -525,6 +530,7 @@ class RenderDomainsStepComponent extends Component {
 				productSlug: suggestion.product_slug,
 				extra: {
 					is_gravatar_domain: true,
+					flow_name: this.props.flowName,
 				},
 			} );
 
@@ -720,7 +726,7 @@ class RenderDomainsStepComponent extends Component {
 		let registration = domainRegistration( {
 			domain,
 			productSlug,
-			extra: { privacy_available: supportsPrivacy },
+			extra: { privacy_available: supportsPrivacy, flow_name: this.props.flowName },
 		} );
 
 		if ( supportsPrivacy ) {
@@ -960,7 +966,7 @@ class RenderDomainsStepComponent extends Component {
 		const { step, cart, multiDomainDefaultPlan, shoppingCartManager, goToNextStep } = this.props;
 		const { lastDomainSearched } = step.domainForm ?? {};
 
-		const domainCart = getDomainsInCart( this.props.cart );
+		const domainCart = sortProductsByPriceDescending( getDomainsInCart( this.props.cart ) );
 		const { suggestion } = step;
 		const isPurchasingItem =
 			( suggestion && Boolean( suggestion.product_slug ) ) || domainCart?.length > 0;
@@ -978,6 +984,7 @@ class RenderDomainsStepComponent extends Component {
 			domainItem = domainRegistration( {
 				domain: selectedDomain?.domain_name || selectedDomain?.meta,
 				productSlug: selectedDomain?.product_slug,
+				extra: { flow_name: this.props.flowName },
 			} );
 		}
 
@@ -1778,7 +1785,7 @@ class RenderDomainsStepComponent extends Component {
 }
 
 const StyleWrappedDomainsStepComponent = ( props ) => {
-	const [ isLoading, shouldUseDomainSearchV2 ] = useDomainSearchV2( props.flowName );
+	const [ isLoading, shouldUseDomainSearchV2 ] = useIsDomainSearchV2Enabled( props.flowName );
 
 	if ( isLoading ) {
 		if ( shouldUseStepContainerV2( props.flowName ) ) {

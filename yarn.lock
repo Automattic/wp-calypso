@@ -754,31 +754,37 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/charts@npm:^0.11.4":
-  version: 0.11.4
-  resolution: "@automattic/charts@npm:0.11.4"
+"@automattic/charts@npm:^0.23.1":
+  version: 0.23.1
+  resolution: "@automattic/charts@npm:0.23.1"
   dependencies:
-    "@babel/runtime": "npm:7.26.10"
-    "@react-spring/web": "npm:9.7.3"
+    "@automattic/number-formatters": "npm:^1.0.10"
+    "@babel/runtime": "npm:7.27.6"
+    "@react-spring/web": "npm:9.7.5"
+    "@visx/annotation": "npm:^3.12.0"
     "@visx/axis": "npm:^3.12.0"
-    "@visx/curve": "npm:3.12.0"
-    "@visx/event": "npm:^3.8.0"
-    "@visx/gradient": "npm:3.12.0"
+    "@visx/curve": "npm:^3.12.0"
+    "@visx/event": "npm:^3.12.0"
+    "@visx/gradient": "npm:^3.12.0"
     "@visx/grid": "npm:^3.12.0"
     "@visx/group": "npm:^3.12.0"
     "@visx/legend": "npm:^3.12.0"
-    "@visx/responsive": "npm:3.12.0"
+    "@visx/pattern": "npm:^3.12.0"
+    "@visx/responsive": "npm:^3.12.0"
     "@visx/scale": "npm:^3.12.0"
     "@visx/shape": "npm:^3.12.0"
-    "@visx/text": "npm:3.12.0"
-    "@visx/tooltip": "npm:^3.8.0"
-    "@visx/xychart": "npm:3.12.0"
+    "@visx/text": "npm:^3.12.0"
+    "@visx/tooltip": "npm:^3.12.0"
+    "@visx/xychart": "npm:^3.12.0"
     clsx: "npm:2.1.1"
+    date-fns: "npm:^4.1.0"
+    deepmerge: "npm:4.3.1"
+    gridicons: "npm:3.4.2"
     tslib: "npm:2.5.0"
   peerDependencies:
     react: ^17.0.0 || ^18.0.0
     react-dom: ^17.0.0 || ^18.0.0
-  checksum: 523787f199979c2c5af458eae078f2f1809b7a9a41913531161e905a39a56f6833c3b998bfe314619e199f6ed3b39b5b04b40d1cd5230f82009da33280059876
+  checksum: b8557f87b40306506902e4e32cbb879effc90d6fe6f84f2873bdf8a19d566825b6aac48721e8109a1db11a957111c712bee507b94bf490960888cff9c498dd0b
   languageName: node
   linkType: hard
 
@@ -1187,6 +1193,7 @@ __metadata:
     "@wordpress/components": "npm:^29.9.0"
     "@wordpress/react-i18n": "npm:^4.23.0"
     clsx: "npm:^2.1.1"
+    date-fns: "npm:^4.1.0"
     jest: "npm:^29.7.0"
     postcss: "npm:^8.5.3"
     react: "npm:^18.3.1"
@@ -1677,14 +1684,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/number-formatters@npm:^1.0.1":
-  version: 1.0.2
-  resolution: "@automattic/number-formatters@npm:1.0.2"
+"@automattic/number-formatters@npm:^1.0.1, @automattic/number-formatters@npm:^1.0.10":
+  version: 1.0.10
+  resolution: "@automattic/number-formatters@npm:1.0.10"
   dependencies:
     "@wordpress/date": "npm:^5.19.0"
     debug: "npm:^4.4.0"
     tslib: "npm:^2.5.0"
-  checksum: eb3823c04ea85d6bbdc786ba33501c2b07c6e8f9ff15d45027859b59f25a666dd739c33a2aee6b71034f3eddb326678c71bf3855732c6857ab40b64fcaae67dd
+  checksum: 60c9f8463d646c912df1a5a1df42d3eb772a878c78f00c628215312e79c35019076b75b9e207a12cb7e05ff0497b86fabda34ec1dd5fdd70b9a971e0b9cb1493
   languageName: node
   linkType: hard
 
@@ -4115,19 +4122,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:7.26.10":
-  version: 7.26.10
-  resolution: "@babel/runtime@npm:7.26.10"
-  dependencies:
-    regenerator-runtime: "npm:^0.14.0"
-  checksum: 6dc6d88c7908f505c4f7770fb4677dfa61f68f659b943c2be1f2a99cb6680343462867abf2d49822adc435932919b36c77ac60125793e719ea8745f2073d3745
-  languageName: node
-  linkType: hard
-
-"@babel/runtime@npm:^7.1.2, @babel/runtime@npm:^7.10.3, @babel/runtime@npm:^7.12.13, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.17.8, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.25.9, @babel/runtime@npm:^7.27.1, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.6.3, @babel/runtime@npm:^7.7.6, @babel/runtime@npm:^7.9.2":
-  version: 7.27.1
-  resolution: "@babel/runtime@npm:7.27.1"
-  checksum: 530a7332f86ac5a7442250456823a930906911d895c0b743bf1852efc88a20a016ed4cd26d442d0ca40ae6d5448111e02a08dd638a4f1064b47d080e2875dc05
+"@babel/runtime@npm:7.27.6, @babel/runtime@npm:^7.1.2, @babel/runtime@npm:^7.10.3, @babel/runtime@npm:^7.12.13, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.17.8, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.25.9, @babel/runtime@npm:^7.27.1, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.6.3, @babel/runtime@npm:^7.7.6, @babel/runtime@npm:^7.9.2":
+  version: 7.27.6
+  resolution: "@babel/runtime@npm:7.27.6"
+  checksum: 89726be83f356f511dcdb74d3ea4d873a5f0cf0017d4530cb53aa27380c01ca102d573eff8b8b77815e624b1f8c24e7f0311834ad4fb632c90a770fda00bd4c8
   languageName: node
   linkType: hard
 
@@ -5903,7 +5901,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@floating-ui/react-dom@npm:^2.0.8":
+"@floating-ui/react-dom@npm:2.0.8":
   version: 2.0.8
   resolution: "@floating-ui/react-dom@npm:2.0.8"
   dependencies:
@@ -7922,7 +7920,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-spring/animated@npm:~9.7.3, @react-spring/animated@npm:~9.7.5":
+"@react-spring/animated@npm:~9.7.5":
   version: 9.7.5
   resolution: "@react-spring/animated@npm:9.7.5"
   dependencies:
@@ -7934,7 +7932,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-spring/core@npm:~9.7.3":
+"@react-spring/core@npm:~9.7.5":
   version: 9.7.5
   resolution: "@react-spring/core@npm:9.7.5"
   dependencies:
@@ -7954,7 +7952,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-spring/shared@npm:~9.7.3, @react-spring/shared@npm:~9.7.5":
+"@react-spring/shared@npm:~9.7.5":
   version: 9.7.5
   resolution: "@react-spring/shared@npm:9.7.5"
   dependencies:
@@ -7966,25 +7964,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-spring/types@npm:~9.7.3, @react-spring/types@npm:~9.7.5":
+"@react-spring/types@npm:~9.7.5":
   version: 9.7.5
   resolution: "@react-spring/types@npm:9.7.5"
   checksum: 85c05121853cacb64f7cf63a4855e9044635e1231f70371cd7b8c78bc10be6f4dd7c68f592f92a2607e8bb68051540989b4677a2ccb525dba937f5cd95dc8bc1
   languageName: node
   linkType: hard
 
-"@react-spring/web@npm:9.7.3, @react-spring/web@npm:^9.4.5":
-  version: 9.7.3
-  resolution: "@react-spring/web@npm:9.7.3"
+"@react-spring/web@npm:9.7.5, @react-spring/web@npm:^9.4.5":
+  version: 9.7.5
+  resolution: "@react-spring/web@npm:9.7.5"
   dependencies:
-    "@react-spring/animated": "npm:~9.7.3"
-    "@react-spring/core": "npm:~9.7.3"
-    "@react-spring/shared": "npm:~9.7.3"
-    "@react-spring/types": "npm:~9.7.3"
+    "@react-spring/animated": "npm:~9.7.5"
+    "@react-spring/core": "npm:~9.7.5"
+    "@react-spring/shared": "npm:~9.7.5"
+    "@react-spring/types": "npm:~9.7.5"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0
     react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-  checksum: a5b4847a2921a29a3e8ce569f4951abeb268b6e8eb230f8c49d98709216b2b3a23ba1e58628c51c9eaa0bd20d83f9d7b8f8f03df98215e933de4c66c39e17fe1
+  checksum: bcd1e052e1b16341a12a19bf4515f153ca09d1fa86ff7752a5d02d7c4db58e8baf80e6283e64411f1e388c65340dce2254b013083426806b5dbae38bd151e53e
   languageName: node
   linkType: hard
 
@@ -10979,7 +10977,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@visx/annotation@npm:3.12.0":
+"@visx/annotation@npm:3.12.0, @visx/annotation@npm:^3.12.0":
   version: 3.12.0
   resolution: "@visx/annotation@npm:3.12.0"
   dependencies:
@@ -11028,7 +11026,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@visx/curve@npm:3.12.0":
+"@visx/curve@npm:3.12.0, @visx/curve@npm:^3.12.0":
   version: 3.12.0
   resolution: "@visx/curve@npm:3.12.0"
   dependencies:
@@ -11052,7 +11050,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@visx/event@npm:3.12.0, @visx/event@npm:^3.8.0":
+"@visx/event@npm:3.12.0, @visx/event@npm:^3.12.0":
   version: 3.12.0
   resolution: "@visx/event@npm:3.12.0"
   dependencies:
@@ -11078,7 +11076,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@visx/gradient@npm:3.12.0":
+"@visx/gradient@npm:^3.12.0":
   version: 3.12.0
   resolution: "@visx/gradient@npm:3.12.0"
   dependencies:
@@ -11136,6 +11134,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@visx/pattern@npm:^3.12.0":
+  version: 3.12.0
+  resolution: "@visx/pattern@npm:3.12.0"
+  dependencies:
+    "@types/react": "npm:*"
+    classnames: "npm:^2.3.1"
+    prop-types: "npm:^15.5.10"
+  peerDependencies:
+    react: ^16.0.0-0 || ^17.0.0-0 || ^18.0.0-0
+  checksum: 1c4f982e0752e03fdfb07419be67c8720be57df28eab183e0dd590826ab915bab2287225fbe9709952449fbee7ee1a4c5c80afd3d97e2b9e5cf4037d40f3d669
+  languageName: node
+  linkType: hard
+
 "@visx/point@npm:3.12.0":
   version: 3.12.0
   resolution: "@visx/point@npm:3.12.0"
@@ -11161,7 +11172,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@visx/responsive@npm:3.12.0":
+"@visx/responsive@npm:3.12.0, @visx/responsive@npm:^3.12.0":
   version: 3.12.0
   resolution: "@visx/responsive@npm:3.12.0"
   dependencies:
@@ -11206,7 +11217,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@visx/text@npm:3.12.0":
+"@visx/text@npm:3.12.0, @visx/text@npm:^3.12.0":
   version: 3.12.0
   resolution: "@visx/text@npm:3.12.0"
   dependencies:
@@ -11222,7 +11233,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@visx/tooltip@npm:3.12.0, @visx/tooltip@npm:^3.8.0":
+"@visx/tooltip@npm:3.12.0, @visx/tooltip@npm:^3.12.0":
   version: 3.12.0
   resolution: "@visx/tooltip@npm:3.12.0"
   dependencies:
@@ -11280,7 +11291,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@visx/xychart@npm:3.12.0":
+"@visx/xychart@npm:^3.12.0":
   version: 3.12.0
   resolution: "@visx/xychart@npm:3.12.0"
   dependencies:
@@ -11822,9 +11833,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/components@npm:^29.9.0":
-  version: 29.9.0
-  resolution: "@wordpress/components@npm:29.9.0"
+"@wordpress/components@npm:^30.1.0":
+  version: 30.1.0
+  resolution: "@wordpress/components@npm:30.1.0"
   dependencies:
     "@ariakit/react": "npm:^0.4.15"
     "@babel/runtime": "npm:7.25.7"
@@ -11834,27 +11845,27 @@ __metadata:
     "@emotion/serialize": "npm:^1.0.2"
     "@emotion/styled": "npm:^11.6.0"
     "@emotion/utils": "npm:^1.0.0"
-    "@floating-ui/react-dom": "npm:^2.0.8"
+    "@floating-ui/react-dom": "npm:2.0.8"
     "@types/gradient-parser": "npm:0.1.3"
     "@types/highlight-words-core": "npm:1.2.1"
     "@use-gesture/react": "npm:^10.3.1"
-    "@wordpress/a11y": "npm:^4.23.0"
-    "@wordpress/compose": "npm:^7.23.0"
-    "@wordpress/date": "npm:^5.23.0"
-    "@wordpress/deprecated": "npm:^4.23.0"
-    "@wordpress/dom": "npm:^4.23.0"
-    "@wordpress/element": "npm:^6.23.0"
-    "@wordpress/escape-html": "npm:^3.23.0"
-    "@wordpress/hooks": "npm:^4.23.0"
-    "@wordpress/html-entities": "npm:^4.23.0"
-    "@wordpress/i18n": "npm:^5.23.0"
-    "@wordpress/icons": "npm:^10.23.0"
-    "@wordpress/is-shallow-equal": "npm:^5.23.0"
-    "@wordpress/keycodes": "npm:^4.23.0"
-    "@wordpress/primitives": "npm:^4.23.0"
-    "@wordpress/private-apis": "npm:^1.23.0"
-    "@wordpress/rich-text": "npm:^7.23.0"
-    "@wordpress/warning": "npm:^3.23.0"
+    "@wordpress/a11y": "npm:^4.28.0"
+    "@wordpress/compose": "npm:^7.28.0"
+    "@wordpress/date": "npm:^5.28.0"
+    "@wordpress/deprecated": "npm:^4.28.0"
+    "@wordpress/dom": "npm:^4.28.0"
+    "@wordpress/element": "npm:^6.28.0"
+    "@wordpress/escape-html": "npm:^3.28.0"
+    "@wordpress/hooks": "npm:^4.28.0"
+    "@wordpress/html-entities": "npm:^4.28.0"
+    "@wordpress/i18n": "npm:^6.1.0"
+    "@wordpress/icons": "npm:^10.28.0"
+    "@wordpress/is-shallow-equal": "npm:^5.28.0"
+    "@wordpress/keycodes": "npm:^4.28.0"
+    "@wordpress/primitives": "npm:^4.28.0"
+    "@wordpress/private-apis": "npm:^1.28.0"
+    "@wordpress/rich-text": "npm:^7.28.0"
+    "@wordpress/warning": "npm:^3.28.0"
     change-case: "npm:^4.1.2"
     clsx: "npm:^2.1.1"
     colord: "npm:^2.7.0"
@@ -11869,12 +11880,13 @@ __metadata:
     path-to-regexp: "npm:^6.2.1"
     re-resizable: "npm:^6.4.0"
     react-colorful: "npm:^5.3.1"
+    react-day-picker: "npm:^9.7.0"
     remove-accents: "npm:^0.5.0"
     uuid: "npm:^9.0.1"
   peerDependencies:
     react: ^18.0.0
     react-dom: ^18.0.0
-  checksum: 7827598c023dd7dcc6ae17ace2008ab793bbb592097738e637f5fd3e1b5f635e92f12bc839ebc2dd26b9b13de2adc2728b3408f1e6b47cc575c925c9facf47d4
+  checksum: 69b42d3b19be98a27f4ca2f5c9aa566c34e1e69434d79f25d271152ec8bfa7fac8984e26fab4b3f91a9674a83631eff830426a80ee50124c48286651c84ad549
   languageName: node
   linkType: hard
 
@@ -11998,24 +12010,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/dataviews@npm:^5.0.1-next.719a03cbe.0":
-  version: 5.0.1-next.719a03cbe.0
-  resolution: "@wordpress/dataviews@npm:5.0.1-next.719a03cbe.0"
+"@wordpress/dataviews@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "@wordpress/dataviews@npm:6.0.0"
   dependencies:
     "@ariakit/react": "npm:^0.4.15"
     "@babel/runtime": "npm:7.25.7"
-    "@wordpress/base-styles": "npm:^6.2.1-next.719a03cbe.0"
-    "@wordpress/components": "npm:^29.13.1-next.719a03cbe.0"
-    "@wordpress/compose": "npm:^7.26.1-next.719a03cbe.0"
-    "@wordpress/data": "npm:^10.26.1-next.719a03cbe.0"
-    "@wordpress/date": "npm:^5.26.1-next.719a03cbe.0"
-    "@wordpress/element": "npm:^6.26.1-next.719a03cbe.0"
-    "@wordpress/i18n": "npm:^6.0.1-next.719a03cbe.0"
-    "@wordpress/icons": "npm:^10.26.2-next.719a03cbe.0"
-    "@wordpress/primitives": "npm:^4.26.1-next.719a03cbe.0"
-    "@wordpress/private-apis": "npm:^1.26.1-next.719a03cbe.0"
-    "@wordpress/url": "npm:^4.26.1-next.719a03cbe.0"
-    "@wordpress/warning": "npm:^3.26.1-next.719a03cbe.0"
+    "@wordpress/base-styles": "npm:^6.4.0"
+    "@wordpress/components": "npm:^30.1.0"
+    "@wordpress/compose": "npm:^7.28.0"
+    "@wordpress/data": "npm:^10.28.0"
+    "@wordpress/date": "npm:^5.28.0"
+    "@wordpress/element": "npm:^6.28.0"
+    "@wordpress/i18n": "npm:^6.1.0"
+    "@wordpress/icons": "npm:^10.28.0"
+    "@wordpress/keycodes": "npm:^4.28.0"
+    "@wordpress/primitives": "npm:^4.28.0"
+    "@wordpress/private-apis": "npm:^1.28.0"
+    "@wordpress/url": "npm:^4.28.0"
+    "@wordpress/warning": "npm:^3.28.0"
     clsx: "npm:^2.1.1"
     date-fns: "npm:^4.1.0"
     fast-deep-equal: "npm:^3.1.3"
@@ -12023,7 +12036,7 @@ __metadata:
   peerDependencies:
     react: ^18.0.0
     react-dom: ^18.0.0
-  checksum: f503a503bd88c72826a3199a48e41d88ae97a15920d1ffeb9e67ca3964f9fd37d40c6c59d44a0de994df6daae5068ab8d743ceb44f699839825cc9f68fc2ccc9
+  checksum: a467883e1d57a6bd506372594a68d2e4bfaede1c1e1f9c0690f839931761eba18e83879dbe3d0abd446b8734a64f4a2d23b615e981a4c5fc273ed0e7c58999a7
   languageName: node
   linkType: hard
 
@@ -15026,6 +15039,7 @@ __metadata:
     d3-scale: "npm:^3.2.1"
     d3-selection: "npm:^1.4.2"
     d3-shape: "npm:^1.3.7"
+    date-fns: "npm:^4.1.0"
     debug: "npm:^4.4.1"
     deep-freeze: "npm:^0.0.1"
     deepmerge: "npm:^4.3.1"
@@ -17699,7 +17713,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"deepmerge@npm:^4.2.2, deepmerge@npm:^4.3.0, deepmerge@npm:^4.3.1":
+"deepmerge@npm:4.3.1, deepmerge@npm:^4.2.2, deepmerge@npm:^4.3.0, deepmerge@npm:^4.3.1":
   version: 4.3.1
   resolution: "deepmerge@npm:4.3.1"
   checksum: e53481aaf1aa2c4082b5342be6b6d8ad9dfe387bc92ce197a66dea08bd4265904a087e75e464f14d1347cf2ac8afe1e4c16b266e0561cc5df29382d3c5f80044
@@ -21494,7 +21508,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"gridicons@npm:^3.4.2":
+"gridicons@npm:3.4.2, gridicons@npm:^3.4.2":
   version: 3.4.2
   resolution: "gridicons@npm:3.4.2"
   dependencies:
@@ -37909,7 +37923,7 @@ __metadata:
     "@automattic/calypso-razorpay": "workspace:^"
     "@automattic/calypso-router": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
-    "@automattic/charts": "npm:^0.11.4"
+    "@automattic/charts": "npm:^0.23.1"
     "@automattic/color-studio": "npm:^4.1.0"
     "@automattic/command-palette": "workspace:^"
     "@automattic/components": "workspace:^"

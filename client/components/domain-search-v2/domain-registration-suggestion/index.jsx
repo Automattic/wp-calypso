@@ -410,57 +410,56 @@ class DomainRegistrationSuggestion extends Component {
 
 		const matchReasons = this.renderMatchReasons();
 
+		const priceRule = this.getPriceRule();
+
+		let cta = null;
+		let price = null;
+		let onClick = null;
+
 		if ( premiumDomain?.is_price_limit_exceeded ) {
-			return (
-				<SuggestionComponent
-					badges={ badges }
-					matchReasons={ matchReasons }
-					notice={ notice }
-					domain={ domainName }
-					tld={ tld.join( '.' ) }
-					cta={
-						<DomainSuggestionCTA.Primary
-							href="https://wordpress.com/help/contact"
-							label={ translate( 'Interested in this domain? Contact support' ) }
-							icon={ envelope }
-						>
-							{ translate( 'Contact support' ) }
-						</DomainSuggestionCTA.Primary>
-					}
-					price={
-						<DomainSuggestionPrice
-							salePrice={ productSaleCost }
-							price={ productCost }
-							renewPrice={ renewCost }
-						/>
-					}
+			cta = (
+				<DomainSuggestionCTA.Primary
+					href="https://wordpress.com/help/contact"
+					label={ translate( 'Interested in this domain? Contact support' ) }
+					icon={ envelope }
+				>
+					{ translate( 'Contact support' ) }
+				</DomainSuggestionCTA.Primary>
+			);
+
+			price = (
+				<DomainSuggestionPrice
+					salePrice={ productSaleCost }
+					price={ productCost }
+					renewPrice={ renewCost }
+				/>
+			);
+		} else {
+			onClick = this.onButtonClick;
+			price = ! isHundredYearPlanFlow( flowName ) && (
+				<DomainProductPrice
+					zeroCost={ zeroCost }
+					rule={ priceRule }
+					salePrice={ productSaleCost }
+					price={ productCost }
+					renewPrice={ renewCost }
 				/>
 			);
 		}
 
-		const priceRule = this.getPriceRule();
-
 		return (
 			<SuggestionComponent
+				isSingleFeaturedSuggestion={ this.props.isSingleFeaturedSuggestion }
 				badges={ badges }
 				uuid={ fullDomain }
 				domain={ domainName }
-				onClick={ this.onButtonClick }
 				isHighlighted={ isFeatured && this.isExactMatch() }
 				matchReasons={ matchReasons }
 				notice={ notice }
 				tld={ tld.join( '.' ) }
-				price={
-					! isHundredYearPlanFlow( flowName ) && (
-						<DomainProductPrice
-							zeroCost={ zeroCost }
-							rule={ priceRule }
-							salePrice={ productSaleCost }
-							price={ productCost }
-							renewPrice={ renewCost }
-						/>
-					)
-				}
+				onClick={ onClick }
+				price={ price }
+				cta={ cta }
 			/>
 		);
 	}

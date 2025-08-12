@@ -29,7 +29,8 @@ export const DomainSuggestionPrice = ( {
 	}
 
 	const alignment =
-		containerContext.alignment ?? ( containerContext.activeQuery === 'large' ? 'right' : 'left' );
+		containerContext.priceAlignment ??
+		( containerContext.activeQuery === 'large' ? 'right' : 'left' );
 
 	const getPriceSize = () => {
 		if ( containerContext.priceSize ) {

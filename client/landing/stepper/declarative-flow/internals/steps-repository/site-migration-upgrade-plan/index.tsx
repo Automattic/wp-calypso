@@ -105,7 +105,13 @@ const SiteMigrationUpgradePlan: StepType< {
 			<DocumentHead title={ headerText } />
 			<Step.CenteredColumnLayout
 				columnWidth={ 5 }
-				topBar={ <Step.TopBar leftElement={ <Step.BackButton onClick={ navigation.goBack } /> } /> }
+				topBar={
+					<Step.TopBar
+						leftElement={
+							navigation?.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : null
+						}
+					/>
+				}
 				heading={ <Step.Heading text={ headerText } subText={ subHeaderText } /> }
 				className="site-migration-upgrade-plan-v2"
 			>

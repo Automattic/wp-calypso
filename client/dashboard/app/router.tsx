@@ -8,28 +8,36 @@ import {
 } from '@tanstack/react-router';
 import { HostingFeatures } from '../data/constants';
 import { fetchTwoStep } from '../data/me';
+import { LogType } from '../data/site-logs';
 import { canViewHundredYearPlanSettings, canViewWordPressSettings } from '../sites/features';
 import { hasHostingFeature } from '../utils/site-features';
+import { hasSiteTrialEnded } from '../utils/site-trial';
 import NotFound from './404';
 import UnknownError from './500';
-import { domainsQuery } from './queries/domains';
 import { emailsQuery } from './queries/emails';
 import { isAutomatticianQuery } from './queries/me-a8c';
 import { rawUserPreferencesQuery } from './queries/me-preferences';
 import { profileQuery } from './queries/me-profile';
+import { userPurchasesQuery } from './queries/me-purchases';
 import { siteByIdQuery, siteBySlugQuery } from './queries/site';
-import { siteLastFiveActivityLogEntriesQuery } from './queries/site-activity-log';
+import {
+	siteLastFiveActivityLogEntriesQuery,
+	siteRewindableActivityLogEntriesQuery,
+} from './queries/site-activity-log';
 import { siteAgencyBlogQuery } from './queries/site-agency';
 import { siteLastBackupQuery } from './queries/site-backups';
 import { siteEdgeCacheStatusQuery } from './queries/site-cache';
 import { siteDefensiveModeSettingsQuery } from './queries/site-defensive-mode';
+import { siteDifmWebsiteContentQuery } from './queries/site-do-it-for-me';
 import { siteDomainsQuery } from './queries/site-domains';
 import { siteJetpackModulesQuery } from './queries/site-jetpack-module';
+import { siteJetpackSettingsQuery } from './queries/site-jetpack-settings';
+import { siteMediaStorageQuery } from './queries/site-media-storage';
 import { sitePHPVersionQuery } from './queries/site-php-version';
 import { siteCurrentPlanQuery } from './queries/site-plans';
 import { sitePreviewLinksQuery } from './queries/site-preview-links';
 import { sitePrimaryDataCenterQuery } from './queries/site-primary-data-center';
-import { sitePurchaseQuery } from './queries/site-purchases';
+import { sitePurchaseQuery, sitePurchasesQuery } from './queries/site-purchases';
 import { siteScanQuery } from './queries/site-scan';
 import { siteSettingsQuery } from './queries/site-settings';
 import { siteSftpUsersQuery } from './queries/site-sftp';
@@ -39,6 +47,26 @@ import { siteWordPressVersionQuery } from './queries/site-wordpress-version';
 import { sitesQuery } from './queries/sites';
 import { queryClient } from './query-client';
 import Root from './root';
+import {
+	setSiteRoute,
+	setRootRoute,
+	domainsRoute,
+	siteDomainsRoute,
+	domainRoute,
+	domainChildRoutes,
+	domainOverviewRoute,
+	domainDnsRoute,
+	domainDnsAddRoute,
+	domainDnsEditRoute,
+	domainForwardingsRoute,
+	domainForwardingAddRoute,
+	domainForwardingEditRoute,
+	domainContactInfoRoute,
+	domainNameServersRoute,
+	domainGlueRecordsRoute,
+	domainDnssecRoute,
+	domainTransferRoute,
+} from './routes/domain-routes';
 import type { AppConfig } from './context';
 import type { AnyRoute } from '@tanstack/react-router';
 
@@ -105,6 +133,27 @@ const sitesRoute = createRoute( {
 const siteRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites/$siteSlug',
+	beforeLoad: async ( { cause, params: { siteSlug }, location, matches } ) => {
+		if ( cause !== 'enter' ) {
+			return;
+		}
+
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+
+		const trialExpiredUrl = `/sites/${ siteSlug }/trial-ended`;
+		if ( hasSiteTrialEnded( site ) && ! location.pathname.includes( trialExpiredUrl ) ) {
+			throw redirect( { to: trialExpiredUrl } );
+		}
+
+		const difmUrl = `/sites/${ siteSlug }/site-building-in-progress`;
+		const difmAllowedRoutes = getDifmLiteAllowedRoutes();
+		if (
+			site.options?.is_difm_lite_in_progress &&
+			! matches.some( ( match ) => difmAllowedRoutes.includes( match.routeId ) )
+		) {
+			throw redirect( { to: difmUrl } );
+		}
+	},
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		const otherEnvironmentSiteId = site.is_wpcom_staging_site
@@ -139,10 +188,15 @@ const siteOverviewRoute = createRoute( {
 				site.is_a4a_dev_site && queryClient.ensureQueryData( sitePreviewLinksQuery( site.ID ) ),
 			] ).then( ( [ currentPlan ] ) => {
 				if ( currentPlan.id ) {
-					queryClient.ensureQueryData( sitePurchaseQuery( site.ID, currentPlan.id ) );
+					queryClient.ensureQueryData( sitePurchaseQuery( site.ID, parseInt( currentPlan.id ) ) );
 				}
 			} );
 		}
+		// Ensure storage specifically is loaded because the warning notice can cause a layout shift
+		await Promise.all( [
+			queryClient.ensureQueryData( siteMediaStorageQuery( site.ID ) ),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+		] );
 	},
 } ).lazy( () =>
 	import( '../sites/overview' ).then( ( d ) =>
@@ -177,31 +231,51 @@ const siteMonitoringRoute = createRoute( {
 const siteLogsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'logs',
+} );
+
+const siteLogsIndexRoute = createRoute( {
+	getParentRoute: () => siteLogsRoute,
+	path: '/',
+	beforeLoad: ( { params } ) => {
+		throw redirect( { to: `/sites/${ params.siteSlug }/logs/php` } );
+	},
+} );
+
+const siteLogsPhpRoute = createRoute( {
+	getParentRoute: () => siteLogsRoute,
+	path: 'php',
 } ).lazy( () =>
 	import( '../sites/logs' ).then( ( d ) =>
-		createLazyRoute( 'site-logs' )( {
-			component: d.default,
+		createLazyRoute( 'site-logs-php' )( {
+			component: () => <d.default logType={ LogType.PHP } />,
 		} )
 	)
 );
+
+const siteLogsServerRoute = createRoute( {
+	getParentRoute: () => siteLogsRoute,
+	path: 'server',
+} ).lazy( () =>
+	import( '../sites/logs' ).then( ( d ) =>
+		createLazyRoute( 'site-logs-server' )( {
+			component: () => <d.default logType={ LogType.SERVER } />,
+		} )
+	)
+);
+
+const siteLogsChildRoutes = [ siteLogsIndexRoute, siteLogsPhpRoute, siteLogsServerRoute ];
 
 const siteBackupsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'backups',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		// Preload activity log backup-related entries.
+		queryClient.ensureQueryData( siteRewindableActivityLogEntriesQuery( site.ID ) );
+	},
 } ).lazy( () =>
 	import( '../sites/backups' ).then( ( d ) =>
 		createLazyRoute( 'site-backups' )( {
-			component: d.default,
-		} )
-	)
-);
-
-const siteDomainsRoute = createRoute( {
-	getParentRoute: () => siteRoute,
-	path: 'domains',
-} ).lazy( () =>
-	import( '../sites/domains' ).then( ( d ) =>
-		createLazyRoute( 'site-domains' )( {
 			component: d.default,
 		} )
 	)
@@ -463,7 +537,10 @@ const siteSettingsWebApplicationFirewallRoute = createRoute( {
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( hasHostingFeature( site, HostingFeatures.SECURITY_SETTINGS ) ) {
-			await queryClient.ensureQueryData( siteJetpackModulesQuery( site.ID ) );
+			await Promise.all( [
+				queryClient.ensureQueryData( siteJetpackModulesQuery( site.ID ) ),
+				queryClient.ensureQueryData( siteJetpackSettingsQuery( site.ID ) ),
+			] );
 		}
 	},
 } ).lazy( () =>
@@ -474,14 +551,54 @@ const siteSettingsWebApplicationFirewallRoute = createRoute( {
 	)
 );
 
-const domainsRoute = createRoute( {
-	getParentRoute: () => rootRoute,
-	path: 'domains',
-	loader: () => queryClient.ensureQueryData( domainsQuery() ),
+const siteTrialEndedRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'trial-ended',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause !== 'enter' ) {
+			return;
+		}
+
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! hasSiteTrialEnded( site ) ) {
+			throw redirect( { to: `/sites/${ siteSlug }` } );
+		}
+	},
 } ).lazy( () =>
-	import( '../domains' ).then( ( d ) =>
-		createLazyRoute( 'domains' )( {
-			component: d.default,
+	import( '../sites/trial-ended' ).then( ( d ) =>
+		createLazyRoute( 'site-trial-ended' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+const siteDifmLiteInProgressRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'site-building-in-progress',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause !== 'enter' ) {
+			return;
+		}
+
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! site.options?.is_difm_lite_in_progress ) {
+			throw redirect( { to: `/sites/${ siteSlug }` } );
+		}
+	},
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		const [ websiteContent ] = await Promise.all( [
+			queryClient.ensureQueryData( siteDifmWebsiteContentQuery( site.ID ) ),
+			queryClient.ensureQueryData( siteDomainsQuery( site.ID ) ),
+		] );
+		if ( ! websiteContent.is_website_content_submitted ) {
+			await queryClient.ensureQueryData( sitePurchasesQuery( site.ID ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../sites/difm-lite-in-progress' ).then( ( d ) =>
+		createLazyRoute( 'site-difm-lite-in-progress' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
 );
@@ -554,12 +671,30 @@ const billingHistoryRoute = createRoute( {
 	)
 );
 
-const activeSubscriptionsRoute = createRoute( {
+const purchasesRoute = createRoute( {
 	getParentRoute: () => meRoute,
-	path: 'billing/active-subscriptions',
+	loader: async () => {
+		queryClient.ensureQueryData( userPurchasesQuery() );
+	},
+	path: 'billing/purchases',
 } ).lazy( () =>
-	import( '../me/active-subscriptions' ).then( ( d ) =>
-		createLazyRoute( 'active-subscriptions' )( {
+	import( '../me/billing-purchases' ).then( ( d ) =>
+		createLazyRoute( 'purchases' )( {
+			component: d.default,
+		} )
+	)
+);
+
+const purchasesSiteRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		queryClient.ensureQueryData( sitePurchasesQuery( site.ID ) );
+	},
+	path: 'billing/purchases/$siteSlug',
+} ).lazy( () =>
+	import( '../me/billing-purchases/site' ).then( ( d ) =>
+		createLazyRoute( 'purchases-site' )( {
 			component: d.default,
 		} )
 	)
@@ -623,6 +758,12 @@ const notificationsRoute = createRoute( {
 const createRouteTree = ( config: AppConfig ) => {
 	const children = [];
 
+	// Set up the rootRoute reference for domain routes
+	setRootRoute( rootRoute );
+
+	// Set up the siteRoute reference for domain routes
+	setSiteRoute( siteRoute );
+
 	children.push( indexRoute );
 
 	if ( config.supports.overview ) {
@@ -647,6 +788,8 @@ const createRouteTree = ( config: AppConfig ) => {
 			siteSettingsTransferSiteRoute,
 			siteSettingsSftpSshRoute,
 			siteSettingsWebApplicationFirewallRoute,
+			siteTrialEndedRoute,
+			siteDifmLiteInProgressRoute,
 		];
 
 		if ( config.supports.sites.deployments ) {
@@ -662,7 +805,7 @@ const createRouteTree = ( config: AppConfig ) => {
 		}
 
 		if ( config.supports.sites.logs ) {
-			siteChildren.push( siteLogsRoute );
+			siteChildren.push( siteLogsRoute.addChildren( siteLogsChildRoutes ) );
 		}
 
 		if ( config.supports.sites.backups ) {
@@ -682,6 +825,7 @@ const createRouteTree = ( config: AppConfig ) => {
 
 	if ( config.supports.domains ) {
 		children.push( domainsRoute );
+		children.push( domainRoute.addChildren( domainChildRoutes ) );
 	}
 
 	if ( config.supports.emails ) {
@@ -694,7 +838,8 @@ const createRouteTree = ( config: AppConfig ) => {
 				profileRoute,
 				billingRoute,
 				billingHistoryRoute,
-				activeSubscriptionsRoute,
+				purchasesRoute,
+				purchasesSiteRoute,
 				paymentMethodsRoute,
 				taxDetailsRoute,
 				securityRoute,
@@ -723,6 +868,12 @@ export const getRouter = ( config: AppConfig ) => {
 		defaultViewTransition: true,
 	} );
 };
+
+// Site routes which are still allowed to be accessed while a site gets the DIFM lite process.
+// Defined as a `function` so that routes defined earlier can reference routes defined later.
+function getDifmLiteAllowedRoutes() {
+	return [ siteDifmLiteInProgressRoute.id, siteDomainsRoute.id, siteEmailsRoute.id ];
+}
 
 export {
 	rootRoute,
@@ -754,12 +905,26 @@ export {
 	siteSettingsSftpSshRoute,
 	siteSettingsWebApplicationFirewallRoute,
 	domainsRoute,
+	domainRoute,
+	domainOverviewRoute,
+	domainDnsRoute,
+	domainDnsAddRoute,
+	domainDnsEditRoute,
+	domainForwardingsRoute,
+	domainForwardingAddRoute,
+	domainForwardingEditRoute,
+	domainContactInfoRoute,
+	domainNameServersRoute,
+	domainGlueRecordsRoute,
+	domainDnssecRoute,
+	domainTransferRoute,
 	emailsRoute,
 	meRoute,
 	profileRoute,
 	billingRoute,
 	billingHistoryRoute,
-	activeSubscriptionsRoute,
+	purchasesRoute,
+	purchasesSiteRoute,
 	paymentMethodsRoute,
 	taxDetailsRoute,
 	securityRoute,

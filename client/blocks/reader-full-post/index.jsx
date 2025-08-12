@@ -869,7 +869,7 @@ export class FullPostView extends Component {
 							postId={ +post.ID }
 							isVisible={ this.state.isSuggestedFollowsModalOpen }
 							prefetch
-							author={ post.author }
+							author={ feed?.blog_owner }
 						/>
 					) }
 				</ReaderMain>

@@ -1644,6 +1644,7 @@ class RegisterDomainStep extends Component {
 				lastDomainSearched: domain,
 				railcarId: this.getNewRailcarId(),
 				loadingResults: true,
+				loadingSubdomainResults: this.isSubdomainResultsVisible(),
 			},
 			() => {
 				const timestamp = Date.now();
@@ -1815,6 +1816,7 @@ class RegisterDomainStep extends Component {
 				suggestions={ suggestions }
 				premiumDomains={ premiumDomains }
 				isLoadingSuggestions={ this.state.loadingResults || this.props.hasPendingRequests }
+				isLoadingSubdomainSuggestions={ this.state.loadingSubdomainResults }
 				products={ this.props.products }
 				selectedSite={ this.props.selectedSite }
 				offerUnavailableOption={ this.props.offerUnavailableOption }

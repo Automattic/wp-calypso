@@ -15,6 +15,7 @@ import { siteByIdQuery } from '../../app/queries/site';
 import { stagingSiteCreateMutation } from '../../app/queries/site-staging-sites';
 import { production, staging } from '../../components/icons';
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
+import { hasStagingSite } from '../../utils/site-staging-site';
 import { canManageSite, canCreateStagingSite } from '../features';
 import type { Site } from '../../data/types';
 
@@ -118,9 +119,6 @@ const EnvironmentSwitcherDropdown = ( {
 };
 
 const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
-	const hasStagingSite =
-		! site.is_wpcom_staging_site && site?.options?.wpcom_staging_blog_ids?.length;
-
 	const otherEnvironment = site.is_wpcom_staging_site ? 'production' : 'staging';
 	const otherEnvironmentSiteId = site.is_wpcom_staging_site
 		? site.options?.wpcom_production_blog_id
@@ -136,7 +134,7 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 			<Dropdown
 				renderToggle={ ( { onToggle } ) => {
 					const canToggle =
-						( otherEnvironment === 'staging' && ! hasStagingSite ) ||
+						hasStagingSite( site ) ||
 						( otherEnvironmentSite && canManageSite( otherEnvironmentSite ) );
 
 					return (

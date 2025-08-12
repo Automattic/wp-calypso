@@ -1,6 +1,6 @@
 /**
  * Returns true if we are requesting all sites.
- * @param {Object}    state  Global state tree
+ * @param {import("calypso/types").AppState}    state  Global state tree
  * @returns {boolean}        Request State
  */
 export default function isRequestingSites( state ) {

@@ -449,6 +449,7 @@ import {
 	FEATURE_SUPPORT_FROM_EXPERTS,
 	FEATURE_AI_ASSISTANT,
 	FEATURE_ADVANCED_FORM_FEATURES_JP,
+	FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL,
 } from './constants';
 import { isBigSkyOnboarding } from './is-big-sky-onboarding';
 import { isGlobalStylesOnPersonalEnabled } from './is-global-styles-on-personal-enabled';
@@ -822,7 +823,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		let features = baseFeatures;
 
 		if ( props?.isSummerSpecial ) {
-			features = [ FEATURE_UPLOAD_PLUGINS, ...features ];
+			features = [ FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL, ...features ];
 		}
 
 		if ( isGlobalStylesOnPersonalEnabled() ) {
@@ -905,6 +906,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		const baseFeatures = [
 			...( isBigSkyOnboarding() ? [ FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT ] : [] ),
 			FEATURE_CUSTOM_DOMAIN,
+			...( isEnabled( 'summer-special-2025' ) ? [ FEATURE_PLUGINS_THEMES ] : [] ),
 			FEATURE_AD_FREE_EXPERIENCE,
 			FEATURE_FAST_DNS,
 			FEATURE_PAID_SUBSCRIBERS_JP,
@@ -1430,7 +1432,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		let features = baseFeatures;
 
 		if ( props?.isSummerSpecial ) {
-			features = [ FEATURE_UPLOAD_PLUGINS, ...features ];
+			features = [ FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL, ...features ];
 		}
 
 		return features;
@@ -1458,6 +1460,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	getCheckoutFeatures: () => [
 		...( isBigSkyOnboarding() ? [ FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT ] : [] ),
 		FEATURE_CUSTOM_DOMAIN,
+		...( isEnabled( 'summer-special-2025' ) ? [ FEATURE_PLUGINS_THEMES ] : [] ),
 		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 		FEATURE_WORDADS,

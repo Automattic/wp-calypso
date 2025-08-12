@@ -282,7 +282,7 @@ class ReaderPostCard extends Component {
 						siteId={ +post.site_ID }
 						postId={ +post.ID }
 						isVisible={ this.state.isSuggestedFollowsModalOpen }
-						author={ post.author }
+						author={ feed?.blog_owner }
 					/>
 				) }
 				{ shouldShowPostCardComments && (

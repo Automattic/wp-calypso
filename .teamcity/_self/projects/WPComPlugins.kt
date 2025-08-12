@@ -140,7 +140,7 @@ object CalypsoApps: BuildType({
 		}
 
 		// Automatically generate a list of apps to build by scanning the directories,
-		// then build every app in parallel using yarn workspaces.
+		// then build every app in parallel using xargs for proper error handling.
 		bashNodeScript {
 			name = "Build artifacts"
 			scriptContent = """
@@ -159,7 +159,12 @@ object CalypsoApps: BuildType({
 				export build_number="%build.number%"
 				export commit_sha="%build.vcs.number%"
 
-				yarn workspaces foreach --all --verbose --parallel --include "{${'$'}apps}" run teamcity:build-app
+				# Convert comma-separated list to newline-separated and run in parallel
+				# xargs -P 0 runs unlimited parallel processes, -I {} replaces {} with each app name
+				echo "${'$'}{apps%,}" | tr ',' '\n' | xargs -I {} -P 0 -n 1 bash -c '
+					echo "Building {}"
+					yarn workspace "{}" run teamcity:build-app || exit 1
+				'
 			"""
 		}
 

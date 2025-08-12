@@ -147,6 +147,7 @@ import {
 	FEATURE_SUPPORT_FROM_EXPERTS,
 	FEATURE_AI_ASSISTANT,
 	FEATURE_ADVANCED_FORM_FEATURES_JP,
+	FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL,
 } from './constants';
 import { FeatureGroupMap } from './types';
 
@@ -457,7 +458,7 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 	[ FEATURE_GROUP_CUSTOM_PLUGINS ]: {
 		slug: FEATURE_GROUP_CUSTOM_PLUGINS,
 		getTitle: () => null,
-		getFeatures: () => [ FEATURE_UPLOAD_PLUGINS ],
+		getFeatures: () => [ FEATURE_UPLOAD_PLUGINS, FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL ],
 	},
 	[ FEATURE_GROUP_DEV_TOOLS ]: {
 		slug: FEATURE_GROUP_DEV_TOOLS,

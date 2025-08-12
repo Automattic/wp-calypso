@@ -147,7 +147,7 @@ export const ManageStagingSiteCardContent = ( {
 						<SiteInfo>
 							<SiteNameContainer>
 								<SiteName
-									href={ `/hosting-config/${ urlToSlug( stagingSite.url ) }` }
+									href={ `/sites/${ urlToSlug( stagingSite.url ) }` }
 									title={ translate( 'Visit Dashboard' ) }
 								>
 									{ stagingSite.name }

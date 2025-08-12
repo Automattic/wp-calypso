@@ -1,6 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { useAppContext } from '../../app/context';
 import ResponsiveMenu from '../../components/responsive-menu';
+import { hasSiteTrialEnded } from '../../utils/site-trial';
 import type { AppConfig, SiteFeatureSupports } from '../../app/context';
 import type { Site } from '../../data/types';
 
@@ -11,6 +12,36 @@ const hasAppSupport = ( supports: AppConfig[ 'supports' ], feature: keyof SiteFe
 const SiteMenu = ( { site }: { site: Site } ) => {
 	const { supports } = useAppContext();
 	const siteSlug = site.slug;
+
+	if ( hasSiteTrialEnded( site ) ) {
+		return (
+			<ResponsiveMenu label={ __( 'Site Menu' ) }>
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/trial-ended` }>
+					{ __( 'Trial ended' ) }
+				</ResponsiveMenu.Item>
+			</ResponsiveMenu>
+		);
+	}
+
+	if ( site.options?.is_difm_lite_in_progress ) {
+		return (
+			<ResponsiveMenu label={ __( 'Site Menu' ) }>
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/site-building-in-progress` }>
+					{ __( 'Site building' ) }
+				</ResponsiveMenu.Item>
+				{ hasAppSupport( supports, 'domains' ) && (
+					<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/domains` }>
+						{ __( 'Domains' ) }
+					</ResponsiveMenu.Item>
+				) }
+				{ hasAppSupport( supports, 'emails' ) && (
+					<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/emails` }>
+						{ __( 'Emails' ) }
+					</ResponsiveMenu.Item>
+				) }
+			</ResponsiveMenu>
+		);
+	}
 
 	return (
 		<ResponsiveMenu label={ __( 'Site Menu' ) }>
