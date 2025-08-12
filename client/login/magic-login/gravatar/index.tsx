@@ -1107,7 +1107,7 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 		dispatch(
 			fetchMagicLoginAuthenticate(
 				`${ publicToken }:${ btoa( verificationCodeInputValue ) }`,
-				currentQueryArguments?.email_address ?? '',
+				currentQueryArguments?.redirect_to ?? '',
 				oauth2Client ? getGravatarOAuth2Flow( oauth2Client ) : undefined,
 				true
 			)
