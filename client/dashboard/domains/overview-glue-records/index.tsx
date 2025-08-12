@@ -1,9 +1,14 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { Link, useRouter } from '@tanstack/react-router';
+import { useDispatch } from '@wordpress/data';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { useState, useMemo } from 'react';
-import { domainGlueRecordsQuery } from '../../app/queries/domain-glue-records';
+import {
+	domainGlueRecordDeleteMutation,
+	domainGlueRecordsQuery,
+} from '../../app/queries/domain-glue-records';
 import {
 	domainRoute,
 	domainGlueRecordsAddRoute,
@@ -42,6 +47,8 @@ function DomainGlueRecords() {
 
 	const { domainName } = domainRoute.useParams();
 	const { data: glueRecordsData, isLoading } = useQuery( domainGlueRecordsQuery( domainName ) );
+	const deleteMutation = useMutation( domainGlueRecordDeleteMutation( domainName ) );
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const actions: Action< DomainGlueRecord >[] = useMemo(
 		() => [
@@ -53,6 +60,25 @@ function DomainGlueRecords() {
 					router.navigate( {
 						to: domainGlueRecordsEditRoute.fullPath,
 						params: { domainName, nameServer: item?.nameserver },
+					} );
+				},
+			},
+			{
+				id: 'delete',
+				label: __( 'Delete' ),
+				callback: ( items ) => {
+					const item = items[ 0 ];
+					deleteMutation.mutate( item.nameserver, {
+						onSuccess: () => {
+							createSuccessNotice( __( 'Glue record was deleted successfully.' ), {
+								type: 'snackbar',
+							} );
+						},
+						onError: () => {
+							createErrorNotice( __( 'Failed to delete glue record.' ), {
+								type: 'snackbar',
+							} );
+						},
 					} );
 				},
 			},
