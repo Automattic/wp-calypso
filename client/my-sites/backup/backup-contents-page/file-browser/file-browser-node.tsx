@@ -48,6 +48,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	const [ isOpen, setIsOpen ] = useState< boolean >( isRoot );
 	const [ addedAnyChildren, setAddedAnyChildren ] = useState< boolean >( false );
 	const browserNodeItem = useSelector( ( state ) => getBackupBrowserNode( state, siteId, path ) );
+	const expandIcon = isRTL() ? chevronLeft : chevronRight;
 
 	const {
 		isSuccess,
@@ -303,8 +304,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 				checked={ browserNodeItem ? browserNodeItem.checkState === 'checked' : false }
 				indeterminate={ browserNodeItem && browserNodeItem.checkState === 'mixed' }
 				onChange={ onCheckboxChange }
-				aria-checked={ browserNodeItem ? browserNodeItem.checkState === 'checked' : false }
-				// translators: %s is the file or directory name
+				// translators: %s is a file or directory name
 				aria-label={ sprintf( __( 'Select %s' ), item.name ) }
 			/>
 		);
@@ -315,25 +315,18 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 			return null;
 		}
 
-		const rightIcon = isRTL() ? chevronLeft : chevronRight;
-		return <Icon icon={ isOpen ? chevronDown : rightIcon } />;
+		return <Icon icon={ isOpen ? chevronDown : expandIcon } />;
 	};
 
 	const expandButton = () => {
-		// translators: %s: file or directory name
-		const showLabel = sprintf( __( 'Show contents of %s' ), item.name );
-		// translators: %s: file or directory name
-		const hideLabel = sprintf( __( 'Hide contents of %s' ), item.name );
-
-		const rightIcon = isRTL() ? chevronLeft : chevronRight;
-
 		return (
 			<Button
 				onClick={ handleClick }
-				icon={ isOpen ? chevronDown : rightIcon }
+				icon={ isOpen ? chevronDown : expandIcon }
 				className="file-browser-node__separate-expand-button"
 				variant="tertiary"
-				aria-label={ isOpen ? hideLabel : showLabel }
+				// translators: %s is a directory name
+				aria-label={ sprintf( __( 'Contents of %s' ), item.name ) }
 				aria-expanded={ isOpen }
 			/>
 		);
@@ -364,6 +357,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 							showTooltip={ isLabelTruncated }
 							label={ item.name }
 							variant="tertiary"
+							tabIndex={ showSeparateExpandButton ? -1 : 0 }
 						>
 							<FileTypeIcon type={ item.type } /> { label }
 						</Button>
