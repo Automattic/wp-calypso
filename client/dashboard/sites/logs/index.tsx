@@ -1,7 +1,7 @@
 import { Badge } from '@automattic/ui';
 import { useQuery, keepPreviousData, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { __experimentalText as Text, TabPanel, Notice } from '@wordpress/components';
+import { __experimentalText as Text, TabPanel } from '@wordpress/components';
 import { DataViews, Operator, Field, ViewTable } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
@@ -253,14 +253,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	}
 
 	return (
-		<PageLayout
-			header={ <PageHeader title={ __( 'Logs' ) } /> }
-			notices={
-				<Notice status="warning" isDismissible={ false }>
-					{ __( 'This is in progress: Functionality is limited.' ) }
-				</Notice>
-			}
-		>
+		<PageLayout header={ <PageHeader title={ __( 'Logs' ) } /> }>
 			<CalloutOverlay
 				showCallout={ ! hasHostingFeature( site, HostingFeatures.LOGS ) }
 				callout={ <SiteLogsCallout siteSlug={ site.slug } /> }
