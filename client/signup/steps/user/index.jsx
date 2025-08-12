@@ -25,6 +25,7 @@ import {
 	isJetpackCloudOAuth2Client,
 	isPartnerPortalOAuth2Client,
 	isVIPOAuth2Client,
+	isStudioAppOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import LoginContextProvider, { useLoginContext } from 'calypso/login/login-context';
@@ -489,6 +490,7 @@ export class UserStep extends Component {
 			isVIPClient,
 			isA4A,
 			isJetpackCloud,
+			isStudioApp,
 		} = this.props;
 
 		if ( userLoggedIn ) {
@@ -506,7 +508,12 @@ export class UserStep extends Component {
 		// similar to get-header-text in wp-login (potentially the two being merged too)
 		if (
 			( oauth2Client &&
-				( isCrowdsignal || isVIPClient || isA4A || isBlazePro || isJetpackCloud ) ) ||
+				( isCrowdsignal ||
+					isVIPClient ||
+					isA4A ||
+					isBlazePro ||
+					isJetpackCloud ||
+					isStudioApp ) ) ||
 			isAkismet
 		) {
 			let clientName = oauth2Client?.name;
@@ -530,6 +537,14 @@ export class UserStep extends Component {
 					components: { span: <span className="wp-login__one-login-header-client-name" /> },
 				} ),
 				oldCopy: translate( 'Create your account' ),
+			} );
+		}
+
+		if ( isStudioApp ) {
+			const clientName = 'Studio';
+			return translate( 'Sign up for {{span}}%(client)s{{/span}} with WordPress.com', {
+				args: { client: clientName },
+				components: { span: <span className="wp-login__one-login-header-client-name" /> },
 			} );
 		}
 
@@ -605,6 +620,7 @@ export class UserStep extends Component {
 			isAkismet,
 			isVIPClient,
 			isJetpackCloud,
+			isStudioApp,
 		} = this.props;
 		const isPasswordless =
 			isMobile() ||
@@ -616,7 +632,8 @@ export class UserStep extends Component {
 			isBlazePro ||
 			isAkismet ||
 			isVIPClient ||
-			isJetpackCloud;
+			isJetpackCloud ||
+			isStudioApp;
 		let socialService;
 		let socialServiceResponse;
 		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
@@ -772,8 +789,16 @@ const ConnectedUser = connect(
 		const isAkismet = getIsAkismet( state );
 		const isVIPClient = isVIPOAuth2Client( oauth2Client );
 		const isJetpackCloud = isJetpackCloudOAuth2Client( oauth2Client );
+		const isStudioApp = isStudioAppOAuth2Client( oauth2Client );
 		const isUnifiedCreateAccount =
-			isWoo || isA4A || isCrowdsignal || isBlazePro || isAkismet || isVIPClient || isJetpackCloud;
+			isWoo ||
+			isA4A ||
+			isCrowdsignal ||
+			isBlazePro ||
+			isAkismet ||
+			isVIPClient ||
+			isJetpackCloud ||
+			isStudioApp;
 
 		return {
 			oauth2Client: oauth2Client,
@@ -792,6 +817,7 @@ const ConnectedUser = connect(
 			isAkismet,
 			isVIPClient,
 			isJetpackCloud,
+			isStudioApp,
 		};
 	},
 	{
