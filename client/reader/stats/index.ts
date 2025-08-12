@@ -8,17 +8,21 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 const debug = debugFactory( 'calypso:reader:stats' );
 
-export function recordAction( action ) {
+export function recordAction( action: string ) {
 	debug( 'reader action', action );
 	bumpStat( 'reader_actions', action );
 }
 
-export function recordGaEvent( action, label, value ) {
+export function recordGaEvent( action: string, label?: string, value?: string ) {
 	debug( 'reader ga event', action, label, value );
 	gaRecordEvent( 'Reader', action, label, value );
 }
 
-export function recordPermalinkClick( source, post, eventProperties = {} ) {
+export function recordPermalinkClick(
+	source: string,
+	post: Record< string, unknown >,
+	eventProperties: Record< string, unknown > = {}
+) {
 	bumpStat( {
 		reader_actions: 'visited_post_permalink',
 		reader_permalink_source: source,
@@ -36,7 +40,7 @@ export function recordPermalinkClick( source, post, eventProperties = {} ) {
 	}
 }
 
-export function getLocation( fullPath ) {
+export function getLocation( fullPath: string ) {
 	const [ path, queryString ] = fullPath.split( '?' );
 	const searchParams = new URLSearchParams( queryString );
 
@@ -78,6 +82,12 @@ export function getLocation( fullPath ) {
 	}
 
 	if ( path.startsWith( '/discover' ) ) {
+		if ( path === '/discover' ) {
+			return isEnabled( 'reader/discover/freshly-pressed' )
+				? 'freshly-pressed'
+				: 'discover_recommended';
+		}
+
 		if ( path.startsWith( '/discover/add-new' ) ) {
 			return 'discover_addnew';
 		}
@@ -85,9 +95,11 @@ export function getLocation( fullPath ) {
 		if ( path.startsWith( '/discover/firstposts' ) ) {
 			return 'discover_firstposts';
 		}
+
 		if ( path.startsWith( '/discover/reddit' ) ) {
 			return 'discover_reddit';
 		}
+
 		if ( path.startsWith( '/discover/latest' ) ) {
 			return 'discover_latest';
 		}
@@ -97,18 +109,12 @@ export function getLocation( fullPath ) {
 			return `discover_tag:${ selectedTag }`;
 		}
 
-		if ( path.split( '?' )[ 0 ] === '/discover' ) {
-			return isEnabled( 'reader/discover/freshly-pressed' )
-				? 'freshly-pressed'
-				: 'discover_recommended';
-		}
-
 		if ( path.startsWith( '/discover/recommended' ) ) {
 			return 'discover_recommended';
 		}
 		// Ideally we should not get here, but its good to have a fallback if other tabs are
 		// added and not handled.
-		return `discover_unknown`;
+		return 'discover_unknown';
 	}
 
 	if ( path.match( new RegExp( `^(/${ localeRegexString })?/reader/search` ) ) ) {
@@ -137,7 +143,11 @@ export function getLocation( fullPath ) {
  * @param {Object|null} post Optional post object used to build post event props.
  * @returns new eventProperties object with default reader values added.
  */
-export function buildReaderTracksEventProps( eventProperties, pathnameOverride, post ) {
+export function buildReaderTracksEventProps(
+	eventProperties: Record< string, unknown >,
+	pathnameOverride?: string,
+	post?: Record< string, unknown >
+) {
 	const location = getLocation(
 		pathnameOverride || window.location.pathname + window.location.search
 	);
@@ -159,8 +169,12 @@ export function buildReaderTracksEventProps( eventProperties, pathnameOverride, 
  *   Tracks event to correctly specify which stream the post was opened.
  * @deprecated Use the recordReaderTracksEvent action instead.
  */
-export function recordTrack( eventName, eventProperties, { pathnameOverride } = {} ) {
-	debug( 'reader track', ...arguments );
+export function recordTrack(
+	eventName: string,
+	eventProperties: Record< string, unknown >,
+	{ pathnameOverride }: { pathnameOverride?: string } = {}
+) {
+	debug( 'reader track', eventName, eventProperties, pathnameOverride );
 
 	eventProperties = buildReaderTracksEventProps( eventProperties, pathnameOverride );
 
@@ -206,21 +220,34 @@ export function recordTracksRailcar( action, eventName, railcar, overrides = {} 
 	);
 }
 
-export function recordTracksRailcarRender( eventName, railcar, overrides ) {
+export function recordTracksRailcarRender(
+	eventName: string,
+	railcar: Record< string, unknown >,
+	overrides: Record< string, unknown > = {}
+) {
 	return recordTracksRailcar( 'calypso_traintracks_render', eventName, railcar, overrides );
 }
 
-export function recordTracksRailcarInteract( eventName, railcar, overrides ) {
+export function recordTracksRailcarInteract(
+	eventName: string,
+	railcar: Record< string, unknown >,
+	overrides: Record< string, unknown > = {}
+) {
 	return recordTracksRailcar( 'calypso_traintracks_interact', eventName, railcar, overrides );
 }
 
-export function recordTrackForPost( eventName, post = {}, additionalProps = {}, options ) {
+export function recordTrackForPost(
+	eventName: string,
+	post: Record< string, unknown > = {},
+	additionalProps: Record< string, unknown > = {},
+	options?: Record< string, unknown >
+) {
 	recordTrack( eventName, { ...getTracksPropertiesForPost( post ), ...additionalProps }, options );
 	if ( post.railcar && allowedTracksRailcarEventNames.has( eventName ) ) {
 		// check for overrides for the railcar
 		recordTracksRailcarInteract(
 			eventName,
-			post.railcar,
+			pick( post, [ 'railcar' ] ),
 			pick( additionalProps, [ 'ui_position', 'ui_algo' ] )
 		);
 	} else if ( process.env.NODE_ENV !== 'production' && post.railcar ) {
@@ -229,7 +256,20 @@ export function recordTrackForPost( eventName, post = {}, additionalProps = {}, 
 	}
 }
 
-export function getTracksPropertiesForPost( post = {} ) {
+interface TrackPost {
+	blog_id: number;
+	post_id: number;
+	feed_id: number;
+	feed_item_id: number;
+	is_jetpack: boolean;
+	is_external: boolean;
+	site_ID: number;
+	ID: number;
+	feed_ID: number;
+	feed_item_ID: number;
+}
+
+export function getTracksPropertiesForPost( post: TrackPost ) {
 	return {
 		blog_id: ! post.is_external && post.site_ID > 0 ? post.site_ID : undefined,
 		post_id: ! post.is_external && post.ID > 0 ? post.ID : undefined,
@@ -239,7 +279,11 @@ export function getTracksPropertiesForPost( post = {} ) {
 	};
 }
 
-export function recordTrackWithRailcar( eventName, railcar, eventProperties ) {
+export function recordTrackWithRailcar(
+	eventName: string,
+	railcar: Record< string, unknown >,
+	eventProperties: Record< string, unknown >
+) {
 	recordTrack( eventName, eventProperties );
 	recordTracksRailcarInteract(
 		eventName,
@@ -248,7 +292,12 @@ export function recordTrackWithRailcar( eventName, railcar, eventProperties ) {
 	);
 }
 
-export function pageViewForPost( blogId, blogUrl, postId, isPrivate ) {
+export function pageViewForPost(
+	blogId: number,
+	blogUrl: string,
+	postId: number,
+	isPrivate: boolean
+) {
 	if ( ! blogId || ! blogUrl || ! postId ) {
 		return;
 	}
@@ -259,17 +308,20 @@ export function pageViewForPost( blogId, blogUrl, postId, isPrivate ) {
 		host: blogUrl.replace( /.*?:\/\//g, '' ),
 		blog: blogId,
 		post: postId,
+		priv: isPrivate ? 1 : undefined,
 	};
-	if ( isPrivate ) {
-		params.priv = 1;
-	}
+
 	debug( 'reader page view for post', params );
 	bumpStatWithPageView( params );
 }
 
-export function recordFollow( url, railcar, additionalProps = {} ) {
+export function recordFollow(
+	url: string,
+	railcar: Record< string, unknown >,
+	additionalProps: Record< string, unknown > = {}
+) {
 	const source =
-		additionalProps.follow_source ||
+		( additionalProps.follow_source as string ) ??
 		getLocation( window.location.pathname + window.location.search );
 	bumpStat( 'reader_follows', source );
 	recordAction( 'followed_blog' );
@@ -284,9 +336,13 @@ export function recordFollow( url, railcar, additionalProps = {} ) {
 	}
 }
 
-export function recordUnfollow( url, railcar, additionalProps = {} ) {
+export function recordUnfollow(
+	url: string,
+	railcar: Record< string, unknown >,
+	additionalProps: Record< string, unknown > = {}
+) {
 	const source =
-		additionalProps.follow_source ||
+		( additionalProps.follow_source as string ) ??
 		getLocation( window.location.pathname + window.location.search );
 	bumpStat( 'reader_unfollows', source );
 	recordAction( 'unfollowed_blog' );
