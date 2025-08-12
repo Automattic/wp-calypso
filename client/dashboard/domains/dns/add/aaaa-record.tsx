@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
-import type { DNSRecordFormData, DNSRecordConfig } from './dns-record-configs';
+import type { DnsRecordFormData, DnsRecordConfig } from './dns-record-configs';
 
-export const AAAARecordConfig: DNSRecordConfig = {
+export const AAAARecordConfig: DnsRecordConfig = {
 	fields: [
 		{
 			id: 'name',
@@ -29,7 +29,7 @@ export const AAAARecordConfig: DNSRecordConfig = {
 		type: 'regular',
 		fields: [ 'name', 'data', 'ttl' ],
 	},
-	transformData: ( data: DNSRecordFormData ) => ( {
+	transformData: ( data: DnsRecordFormData ) => ( {
 		type: 'AAAA',
 		name: data.name,
 		data: data.data,

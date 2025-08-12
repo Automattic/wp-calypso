@@ -1,8 +1,8 @@
 import { __ } from '@wordpress/i18n';
 import RequiredSelect from '../../../components/required-select';
-import type { DNSRecordFormData, DNSRecordConfig } from './dns-record-configs';
+import type { DnsRecordFormData, DnsRecordConfig } from './dns-record-configs';
 
-export const CAARecordConfig: DNSRecordConfig = {
+export const CAARecordConfig: DnsRecordConfig = {
 	fields: [
 		{
 			id: 'name',
@@ -48,7 +48,7 @@ export const CAARecordConfig: DNSRecordConfig = {
 		type: 'regular',
 		fields: [ 'name', 'flags', 'tag', 'data', 'ttl' ],
 	},
-	transformData: ( data: DNSRecordFormData ) => ( {
+	transformData: ( data: DnsRecordFormData ) => ( {
 		type: 'CAA',
 		name: data.name,
 		flags: data.flags,

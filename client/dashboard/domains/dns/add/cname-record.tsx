@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
-import type { DNSRecordFormData, DNSRecordConfig } from './dns-record-configs';
+import type { DnsRecordFormData, DnsRecordConfig } from './dns-record-configs';
 
-export const CNAMERecordConfig: DNSRecordConfig = {
+export const CNAMERecordConfig: DnsRecordConfig = {
 	description: __(
 		'CNAME (canonical name) records are typically used to link a subdomain (e.g. subdomain.example.com) to a domain (e.g. example.com).'
 	),
@@ -32,7 +32,7 @@ export const CNAMERecordConfig: DNSRecordConfig = {
 		type: 'regular',
 		fields: [ 'name', 'data', 'ttl' ],
 	},
-	transformData: ( data: DNSRecordFormData ) => {
+	transformData: ( data: DnsRecordFormData ) => {
 		// Remove trailing dot from the hostname
 		const hostName = data.data.endsWith( '.' ) ? data.data.slice( 0, -1 ) : data.data;
 

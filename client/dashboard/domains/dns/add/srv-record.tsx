@@ -1,8 +1,8 @@
 import { __ } from '@wordpress/i18n';
 import RequiredSelect from '../../../components/required-select';
-import type { DNSRecordFormData, DNSRecordConfig } from './dns-record-configs';
+import type { DnsRecordFormData, DnsRecordConfig } from './dns-record-configs';
 
-export const SRVRecordConfig: DNSRecordConfig = {
+export const SRVRecordConfig: DnsRecordConfig = {
 	description: __(
 		'SRV (service) records define the information to access certain internet services.'
 	),
@@ -70,7 +70,7 @@ export const SRVRecordConfig: DNSRecordConfig = {
 		type: 'regular',
 		fields: [ 'name', 'service', 'protocol', 'aux', 'weight', 'target', 'port', 'ttl' ],
 	},
-	transformData: ( data: DNSRecordFormData ) => {
+	transformData: ( data: DnsRecordFormData ) => {
 		// Remove trailing dot from the hostname
 		const target = data.target.endsWith( '.' ) ? data.target.slice( 0, -1 ) : data.target;
 

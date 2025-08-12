@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
-import type { DNSRecordFormData, DNSRecordConfig } from './dns-record-configs';
+import type { DnsRecordFormData, DnsRecordConfig } from './dns-record-configs';
 
-export const AliasRecordConfig: DNSRecordConfig = {
+export const AliasRecordConfig: DnsRecordConfig = {
 	description: __(
 		'An ALIAS record is a non-standard DNS record that is used to direct your domain to the target domain. The IP address of the target is resolved on the DNS server.'
 	),
@@ -25,7 +25,7 @@ export const AliasRecordConfig: DNSRecordConfig = {
 		type: 'regular',
 		fields: [ 'data', 'ttl' ],
 	},
-	transformData: ( data: DNSRecordFormData, domainName?: string ) => {
+	transformData: ( data: DnsRecordFormData, domainName?: string ) => {
 		// Remove trailing dot from the hostname
 		const hostName = data.data.endsWith( '.' ) ? data.data.slice( 0, -1 ) : data.data;
 

@@ -10,11 +10,11 @@ import { NSRecordConfig } from './ns-record';
 import { SRVRecordConfig } from './srv-record';
 import { TXTRecordConfig } from './txt-record';
 
-export type DNSRecordTypeFormData = {
+export type DnsRecordTypeFormData = {
 	type: DnsRecordType;
 };
 
-export type DNSRecordFormData = {
+export type DnsRecordFormData = {
 	name: string;
 	data: string;
 	ttl: number;
@@ -28,18 +28,18 @@ export type DNSRecordFormData = {
 	port: number; // SRV
 };
 
-export type DNSRecordConfig = {
+export type DnsRecordConfig = {
 	description?: string;
-	fields: Field< DNSRecordFormData >[];
+	fields: Field< DnsRecordFormData >[];
 	form: {
 		type: 'regular';
 		fields: string[];
 	};
 	// Function to transform the form data into the format expected by the DNS endpoint
-	transformData: ( data: DNSRecordFormData, domainName?: string ) => Partial< DnsRecord >;
+	transformData: ( data: DnsRecordFormData, domainName?: string ) => Partial< DnsRecord >;
 };
 
-export const DNS_RECORD_CONFIGS: Record< DnsRecordType, DNSRecordConfig > = {
+export const DNS_RECORD_CONFIGS: Record< DnsRecordType, DnsRecordConfig > = {
 	A: ARecordConfig,
 	AAAA: AAAARecordConfig,
 	ALIAS: AliasRecordConfig,

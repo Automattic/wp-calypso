@@ -1,8 +1,8 @@
 import { TextareaControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import type { DNSRecordFormData, DNSRecordConfig } from './dns-record-configs';
+import type { DnsRecordFormData, DnsRecordConfig } from './dns-record-configs';
 
-export const TXTRecordConfig: DNSRecordConfig = {
+export const TXTRecordConfig: DnsRecordConfig = {
 	description: __(
 		'TXT (text) records are used to record any textual information on a domain. They’re typically used by other service providers (e.g. email services) to ensure you are the owner of the domain.'
 	),
@@ -46,7 +46,7 @@ export const TXTRecordConfig: DNSRecordConfig = {
 		type: 'regular',
 		fields: [ 'name', 'data', 'ttl' ],
 	},
-	transformData: ( data: DNSRecordFormData ) => ( {
+	transformData: ( data: DnsRecordFormData ) => ( {
 		type: 'TXT',
 		name: data.name,
 		data: data.data,

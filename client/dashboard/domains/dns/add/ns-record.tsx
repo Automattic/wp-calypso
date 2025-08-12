@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
-import type { DNSRecordFormData, DNSRecordConfig } from './dns-record-configs';
+import type { DnsRecordFormData, DnsRecordConfig } from './dns-record-configs';
 
-export const NSRecordConfig: DNSRecordConfig = {
+export const NSRecordConfig: DnsRecordConfig = {
 	description: __(
 		'NS (name server) records are used to delegate the authoritative DNS servers for a subdomain.'
 	),
@@ -32,7 +32,7 @@ export const NSRecordConfig: DNSRecordConfig = {
 		type: 'regular',
 		fields: [ 'name', 'data', 'ttl' ],
 	},
-	transformData: ( data: DNSRecordFormData ) => {
+	transformData: ( data: DnsRecordFormData ) => {
 		// Remove trailing dot from the hostname
 		const hostName = data.data.endsWith( '.' ) ? data.data.slice( 0, -1 ) : data.data;
 

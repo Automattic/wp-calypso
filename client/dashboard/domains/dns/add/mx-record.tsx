@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
-import type { DNSRecordFormData, DNSRecordConfig } from './dns-record-configs';
+import type { DnsRecordFormData, DnsRecordConfig } from './dns-record-configs';
 
-export const MXRecordConfig: DNSRecordConfig = {
+export const MXRecordConfig: DnsRecordConfig = {
 	description: __(
 		'MX (mail exchange) records are used to route emails to the correct mail servers.'
 	),
@@ -39,7 +39,7 @@ export const MXRecordConfig: DNSRecordConfig = {
 		type: 'regular',
 		fields: [ 'name', 'data', 'aux', 'ttl' ],
 	},
-	transformData: ( data: DNSRecordFormData ) => {
+	transformData: ( data: DnsRecordFormData ) => {
 		// Remove trailing dot from the hostname
 		const hostName = data.data.endsWith( '.' ) ? data.data.slice( 0, -1 ) : data.data;
 

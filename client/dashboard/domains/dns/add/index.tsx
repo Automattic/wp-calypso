@@ -18,7 +18,7 @@ import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import RequiredSelect from '../../../components/required-select';
 import { DNS_RECORD_CONFIGS } from './dns-record-configs';
-import type { DNSRecordTypeFormData, DNSRecordFormData } from './dns-record-configs';
+import type { DnsRecordTypeFormData, DnsRecordFormData } from './dns-record-configs';
 import type { DnsRecordType } from '../../../data/domain-dns-records';
 
 const typeForm = {
@@ -42,14 +42,14 @@ const defaultFormData = {
 };
 
 export default function DomainAddDNS() {
-	const [ typeFormData, setTypeFormData ] = useState< DNSRecordTypeFormData >( {
+	const [ typeFormData, setTypeFormData ] = useState< DnsRecordTypeFormData >( {
 		type: 'A',
 	} );
-	const [ formData, setFormData ] = useState< DNSRecordFormData >( defaultFormData );
+	const [ formData, setFormData ] = useState< DnsRecordFormData >( defaultFormData );
 
 	const config = DNS_RECORD_CONFIGS[ typeFormData.type ];
 
-	const typeFields: Field< DNSRecordTypeFormData >[] = [
+	const typeFields: Field< DnsRecordTypeFormData >[] = [
 		{
 			id: 'type',
 			label: __( 'Type' ),
@@ -112,21 +112,21 @@ export default function DomainAddDNS() {
 				<CardBody>
 					<form onSubmit={ handleSubmit }>
 						<VStack spacing={ 4 }>
-							<DataForm< DNSRecordTypeFormData >
+							<DataForm< DnsRecordTypeFormData >
 								data={ typeFormData }
 								fields={ typeFields }
 								form={ typeForm }
-								onChange={ ( edits: Partial< DNSRecordTypeFormData > ) => {
+								onChange={ ( edits: Partial< DnsRecordTypeFormData > ) => {
 									setTypeFormData( ( data ) => ( { ...data, ...edits } ) );
 									// Reset form data when changing record type
 									setFormData( defaultFormData );
 								} }
 							/>
-							<DataForm< DNSRecordFormData >
+							<DataForm< DnsRecordFormData >
 								data={ formData }
 								fields={ config.fields }
 								form={ config.form }
-								onChange={ ( edits: Partial< DNSRecordFormData > ) => {
+								onChange={ ( edits: Partial< DnsRecordFormData > ) => {
 									setFormData( ( data ) => ( { ...data, ...edits } ) );
 								} }
 							/>

@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
-import type { DNSRecordFormData, DNSRecordConfig } from './dns-record-configs';
+import type { DnsRecordFormData, DnsRecordConfig } from './dns-record-configs';
 
-export const ARecordConfig: DNSRecordConfig = {
+export const ARecordConfig: DnsRecordConfig = {
 	description: __(
 		'An A record is used to point a domain (e.g. example.com) or a subdomain (e.g. subdomain.example.com) to an IP address (192.168.1.1).'
 	),
@@ -33,7 +33,7 @@ export const ARecordConfig: DNSRecordConfig = {
 		type: 'regular',
 		fields: [ 'name', 'data', 'ttl' ],
 	},
-	transformData: ( data: DNSRecordFormData ) => ( {
+	transformData: ( data: DnsRecordFormData ) => ( {
 		type: 'A',
 		name: data.name,
 		data: data.data,
