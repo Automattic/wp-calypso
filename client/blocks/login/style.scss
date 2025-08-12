@@ -1,15 +1,17 @@
+@import "@automattic/typography/styles/fonts";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-@import "calypso/assets/stylesheets/p2-extends";
 @import "@automattic/color-studio/dist/color-variables";
+@import "@wordpress/base-styles/variables";
+@import "../../assets/stylesheets/shared/mixins/breakpoints";
 
 $breakpoint-mobile: 782px; //Mobile size.
 
-.layout:not(.is-jetpack-woo-dna-flow):not(.is-wccom-oauth-flow):not(.is-woocommerce-core-profiler-flow) {
+.layout:not(.is-wccom-oauth-flow):not(.is-woocommerce-core-profiler-flow) {
 	.login.is-jetpack:not(.is-automattic-for-agencies-flow) {
 		.button.is-primary {
 			background-color: var(--studio-jetpack-green-50);
-			border-color: var(--studio-jetpack-green-70);
+			border-color: var(--studio-jetpack-green-50);
 
 			&:hover,
 			&:focus {
@@ -50,14 +52,6 @@ $breakpoint-mobile: 782px; //Mobile size.
 		display: none;
 	}
 
-	.wp-login__footer-links {
-		display: none;
-	}
-}
-
-.layout.is-jetpack-woo-dna-flow,
-.layout.is-wccom-oauth-flow {
-	.login__jetpack-logo,
 	.login__woocommerce-logo {
 		text-align: center;
 		border-bottom: 1px solid var(--color-neutral-5);
@@ -93,18 +87,6 @@ $breakpoint-mobile: 782px; //Mobile size.
 		svg {
 			margin-top: 15px;
 		}
-	}
-
-	.login__form-header {
-		margin-top: 32px;
-	}
-
-	.login__header-subtitle {
-		color: var(--color-primary-10);
-		margin-top: 1em;
-		font-size: $font-body;
-		line-height: 24px;
-		font-weight: 400;
 	}
 
 	.jetpack-logo__icon-circle {
@@ -174,15 +156,6 @@ $breakpoint-mobile: 782px; //Mobile size.
 }
 
 .login__form .login__form-userdata {
-	label {
-		color: var(--color-neutral-70);
-		display: block;
-		font-size: $font-body-small;
-		line-height: 1.5;
-		font-weight: 600;
-		margin-bottom: 5px;
-	}
-
 	input.form-text-input,
 	input {
 		margin-bottom: 20px;
@@ -208,23 +181,11 @@ $breakpoint-mobile: 782px; //Mobile size.
 }
 
 .login__form-change-username {
-	color: var(--color-link);
 	font-weight: inherit;
-	cursor: pointer;
-
-	&:hover,
-	&:focus,
-	&:active {
-		color: var(--color-link-dark);
-	}
 
 	.gridicon {
 		margin-right: 3px;
 		vertical-align: text-bottom;
-	}
-
-	&.button.is-borderless .gridicon {
-		top: 3px;
 	}
 }
 
@@ -238,7 +199,7 @@ $breakpoint-mobile: 782px; //Mobile size.
 	}
 }
 
-.login__form-header-wrapper {
+.grav-powered-login__form-header-wrapper {
 	text-align: center;
 
 	.gridicon {
@@ -253,9 +214,17 @@ $breakpoint-mobile: 782px; //Mobile size.
 			text-align: center;
 		}
 	}
+
+	&.is-jetpack-login {
+		padding: 0 16px;
+
+		@include break-mobile {
+			padding: 0;
+		}
+	}
 }
 
-.login__form-header {
+.grav-powered-login__form-header {
 	font-size: $font-title-small;
 	margin-bottom: 24px;
 	margin-top: 16px;
@@ -266,27 +235,12 @@ $breakpoint-mobile: 782px; //Mobile size.
 	}
 }
 
-.login__form-terms,
-.login__form-signup-link {
+.login__form-terms {
 	font-size: $font-body-extra-small;
 	text-align: center;
 
 	a {
 		white-space: pre;
-	}
-}
-
-.login__form-signup-link {
-	clear: both;
-	font-size: $font-body-small;
-	padding-top: 20px;
-
-	&.disabled {
-		a,
-		a:hover {
-			pointer-events: none;
-			color: var(--color-text-subtle);
-		}
 	}
 }
 
@@ -308,10 +262,18 @@ $breakpoint-mobile: 782px; //Mobile size.
 	}
 }
 
-.login__jetpack-logo {
-	@include breakpoint-deprecated( "<660px" ) {
-		margin-top: 20px;
-	}
+.login__jetpack-pre-header {
+	margin-top: 0;
+	margin-bottom: 16px;
+
+	@include heading-2x-large;
+
+	text-align: initial;
+}
+
+.login__jetpack-header {
+	@include body-large;
+	text-align: initial;
 }
 
 .login__form-gutenboarding-wordpress-logo {
@@ -330,9 +292,7 @@ $breakpoint-mobile: 782px; //Mobile size.
 	}
 }
 
-.login__jetpack-plus-wpcom-logo,
-.login__a4a-plus-wpcom-logo,
-.login__wpcloud-logo {
+.login__jetpack-plus-wpcom-logo {
 	margin: 40px 0 16px;
 }
 
@@ -345,312 +305,10 @@ $breakpoint-mobile: 782px; //Mobile size.
 	text-transform: initial;
 }
 
-.layout.is-p2-login {
-	background: var(--p2-color-white);
-	font-family: var(--p2-font-inter);
-	color: var(--p2-color-text);
-	letter-spacing: -0.01em;
-	min-height: 100%;
-	display: flex;
-	flex-direction: column;
-
-	a {
-		@extend %p2-link;
-	}
-
-	&.is-section-login {
-		padding-bottom: 0;
-		min-height: auto;
-	}
-
-	&.is-section-login.has-no-masterbar .layout__content {
-		padding: 0;
-		height: 100%;
-	}
-
-	.layout__primary {
-		padding: 0;
-		height: 100%;
-
-		> div {
-			display: flex;
-			flex-direction: column;
-			height: 100%;
+.layout:not(.is-grav-powered-client) {
+	&.is-mobile {
+		.login__lostpassword-form  {
+			padding: 16px 16px 0;
 		}
-	}
-
-	.wp-login__main.main {
-		padding: 96px 24px 0;
-		display: flex;
-		flex-direction: column;
-		flex: 1;
-
-		@include break-mobile {
-			padding: 80px 20px 0;
-			max-width: 400px;
-		}
-	}
-
-	.login__form-header-wrapper {
-		margin-bottom: 3em;
-	}
-
-	form {
-		padding: 0;
-		margin-bottom: 3em;
-	}
-
-	.login__form {
-		padding: 0;
-		margin-bottom: 2em;
-		box-shadow: none;
-	}
-
-	.login__form label {
-		font-size: var(--p2-font-size-form-xxs);
-		color: var(--p2-color-text);
-		font-weight: 500;
-		margin-bottom: 0.5em;
-		line-height: 1.8;
-	}
-
-	.form-text-input {
-		@extend %p2-form-input-text;
-		margin-bottom: 0;
-	}
-
-	.form-input-validation {
-		@extend %p2-form-input-validation;
-	}
-
-	.form-password-input {
-		@extend %p2-form-input-password;
-	}
-
-	.login__form-header {
-		color: var(--p2-color-text);
-		font-size: var(--p2-font-size-form-xxl);
-		font-weight: 900; /* stylelint-disable-line scales/font-weights */
-		text-align: center;
-		line-height: 1.3;
-		margin-top: 0;
-		margin-bottom: 0.5em;
-	}
-
-	.login__header-subtitle {
-		line-height: 1.8;
-		color: var(--p2-color-text);
-		margin-bottom: 0;
-	}
-
-	.login__form-terms {
-		margin-bottom: 1rem;
-		color: var(--p2-color-text);
-	}
-
-	.login__form-action {
-		button:last-child {
-			margin-bottom: 0;
-		}
-	}
-
-	.auth-form__social {
-		padding: 0;
-		box-shadow: none;
-		margin-bottom: 2em;
-		clip-path: unset;
-	}
-
-	.login__social-tos {
-		color: var(--p2-color-text);
-		margin: 1em 0 0;
-	}
-
-	.login button {
-		@extend %p2-form-button;
-
-		&.login__form-change-username {
-			background: none;
-			color: var(--p2-color-link);
-			font-size: var(--p2-font-size-form-xs);
-			padding: 12px 0;
-			width: auto;
-		}
-
-		&.login__form-change-username:hover:not(:disabled):not(.disabled) {
-			background: none;
-			color: var(--p2-color-link-dark);
-		}
-
-		&.social-buttons__button:not(:focus) {
-			box-shadow: none;
-		}
-	}
-
-	.auth-form__social-buttons {
-		gap: 1em;
-
-		.social-buttons__button {
-			margin-bottom: 0;
-		}
-	}
-
-	.wp-login__links {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		margin-bottom: 2em;
-
-		a {
-			@extend %p2-link;
-			border-bottom: 1px solid currentColor;
-			font-size: var(--p2-font-size-form-xs);
-			font-weight: 400;
-			margin: 0 0 0.8em;
-			padding: 0;
-			line-height: 1.5;
-			display: inline-block;
-			width: auto;
-		}
-	}
-
-	.auth-form__separator {
-		margin: 2rem 0;
-	}
-}
-
-.is-wpcom-migration.main {
-	--color-accent: var(--studio-blue);
-	--color-accent-light: var(--studio-blue-20);
-	--color-accent-dark: var(--studio-blue-60);
-	--color-accent-60: var(--studio-blue-60);
-	--color-primary: var(--studio-blue-40);
-	--color-primary-light: var(--studio-blue-20);
-	--color-primary-dark: var(--studio-blue-60);
-
-	max-width: 472px !important;
-	$login-border-radius: 4px;
-
-	.login {
-		form {
-			max-width: 400px;
-			margin: 0 auto;
-
-			.login__form-userdata input:last-of-type {
-				margin-bottom: 10px;
-			}
-
-			input[disabled] {
-				border: 1px solid var(--studio-gray-10);
-			}
-		}
-
-		.card {
-			padding-left: 0;
-			padding-right: 0;
-		}
-
-		.login__form,
-		.auth-form__social {
-			border: none;
-			background: none;
-			box-shadow: none;
-		}
-
-		.login__form {
-			margin-top: 1.5rem;
-			margin-bottom: 1.5rem;
-		}
-
-		.auth-form__social {
-			padding-top: 2rem;
-			padding-bottom: 2rem;
-
-			.auth-form__social-buttons {
-				align-items: center;
-			}
-
-			.social-buttons__button {
-				border: none;
-				background: none;
-				text-align: unset;
-
-				svg {
-					border: 1px solid var(--studio-gray-10);
-					padding: 12px;
-					border-radius: 24px; /* stylelint-disable-line scales/radii */
-				}
-			}
-		}
-
-		.auth-form__separator {
-			margin-top: -12px;
-		}
-
-		.login__form-header {
-			font-size: rem(44px);
-			line-height: rem(48px);
-			font-family: $brand-serif;
-			margin-bottom: 0;
-		}
-
-		.login__form-terms {
-			text-align: left;
-			font-size: 0.875rem;
-			margin-bottom: 2rem;
-			color: var(--studio-gray-50);
-		}
-
-		.button.is-primary {
-			border: none !important;
-			background-color: var(--color-accent) !important;
-			box-shadow: 0 0 0 2px var(--color-accent) !important;
-
-			&:hover,
-			&:focus {
-				background-color: var(--color-accent-dark) !important;
-				box-shadow: 0 0 0 2px var(--color-accent-dark) !important;
-			}
-
-			.accessible-focus &:focus {
-				box-shadow: 0 0 0 2px var(--color-accent) !important;
-			}
-		}
-	}
-}
-
-.login__form-subheader-terms {
-	display: none;
-}
-
-.is-white-login {
-	.is-social-first {
-		.login__form-subheader-terms {
-			display: block;
-			max-width: 450px;
-			margin: 0 auto;
-
-			color: var(--studio-gray-50, #646970);
-			text-align: center;
-			font-size: $font-body-small;
-			font-style: normal;
-			font-weight: 400;
-			line-height: 20px;
-
-			a {
-				color: var(--studio-gray-50, #646970);
-				text-decoration: underline;
-			}
-		}
-
-		.login__form-terms {
-			display: none;
-		}
-	}
-}
-
-.is-gravatar {
-	.login__form-terms {
-		display: block;
 	}
 }

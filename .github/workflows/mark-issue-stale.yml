@@ -1,77 +1,47 @@
-
-name: 'Mark stale issues'
+name: 'Mark stale pull requests'
 on:
   schedule:
     # Run every 6 hours at xx:30.
     - cron: '30 */6 * * *'
+  workflow_dispatch:
 
 jobs:
   stale:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - name: Mark issues and pull requests as stale
-        id: stale
-        uses: actions/stale@v8
+      - uses: actions/stale@v9
         with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          # Message to be added to stale issues.
-          stale-issue-message: 'This issue is stale because 180 days have passed with no activity. A member of the Dotcom Product Ambassadors Guild will review and if required close this issue within 7 days. If you disagree and would like this issue to remain open, please provide additional context, updated reproduction steps and/or screenshots.'
-          # Days before issue is considered stale.
-          days-before-issue-stale: 180
-          # Override stale setting for PRs.
-          days-before-pr-stale: -1
-          # Exempted issue labels.
-          exempt-issue-labels: '[Pri] High,[Pri] BLOCKER,[Status] Keep Open,'
-          # Message to be added to stale PRs.
-          stale-pr-message: 'This PR has been marked as stale due to lack of activity within the last 30 days.'
-          # Exempted PR labels.
-          exempt-pr-labels: '[Pri] High,[Pri] BLOCKER,[Status] Keep Open'
-          # Disable auto-close of both issues and PRs.
-          days-before-close: -1
-          # Get issues in ascending (oldest first) order.
+          # Get PRs in ascending (oldest first) order.
           ascending: true
-          # Label to apply when issue is marked stale.
-          stale-issue-label: '[Status] Stale'
-          # Label to apply when PR is marked as stale.
+          operations-per-run: 50
+          # PRs: Mark as stale after 2 months, close after 1 month more
+          days-before-pr-stale: 60
+          days-before-pr-close: 31
+          delete-branch: true
+          # Label to use when marking a PR as stale
           stale-pr-label: '[Status] Stale'
-          # Increase number of operations executed per run.
-          operations-per-run: 525
-      - name: Build Stale issues list
-        id: stale-build-list
-        uses: actions/github-script@v6
-        env:
-          ISSUES: ${{ steps.stale.outputs.staled-issues-prs }}
-        with:
-          script: |
-            const staleIssues = JSON.parse( process.env.ISSUES );
-            let staleIssuesList = '';
-            staleIssues.forEach(function(issue) {
-                if ( true === issue.markedStaleThisRun ) {
-                    staleIssuesList += `\\n- ${issue.title} (https://github.com/automattic/wp-calypso/issues/${issue.number})`;
-                }
-            });
-            return staleIssuesList;
-      - name: Post about Stale issues on Slack
-        id: stale-post-slack
-        uses: slackapi/slack-github-action@v1.24.0
-        if: ${{ fromJSON( steps.stale-build-list.outputs.result ) != '' }}
-        with:
-          channel-id: ${{ secrets.SLACK_QUALITY_CHANNEL }}
-          payload: |
-            {
-                "blocks": [
-                    {
-                        "type": "section",
-                        "text": {
-                            "type": "mrkdwn",
-                            "text": "The following issues have just been marked as stale. Please review them and take appropriate action:\n ${{ fromJSON( steps.stale-build-list.outputs.result ) }}"
-                        }
-                    }
-                ],
-                "text": "The following issues have just been marked as stale. Please review them and take appropriate action.",
-                "unfurl_links": false,
-                "unfurl_media": false
-            }
-        env:
-          SLACK_QUALITY_CHANNEL: ${{ secrets.SLACK_QUALITY_CHANNEL }}
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          # PRs with these labels will never be considered stale.
+          exempt-pr-labels: '[Pri] High,[Pri] BLOCKER,[Status] Keep Open'
+          # Message to be added to stale PRs.
+          stale-pr-message: |
+            <p>This PR has been marked as stale. This happened because:</p>
+
+            <ul>
+              <li>It has been inactive for the past 3 months.</li>
+              <li>It hasn't been labeled `[Pri] BLOCKER`, `[Pri] High`, `[Status] Keep Open`, etc.</li>
+            </ul>
+
+            <p>If this PR is still useful, please do a trunk merge or rebase
+            and otherwise make sure it's up to date and has clear testing instructions.
+            You may also want to ping possible reviewers in case they've forgotten about it.
+            Please close this PR if you think it's not valid anymore — if you
+            do, please add a brief explanation.</p>
+
+            <p>If the PR is not updated (or at least commented on) in another month, it will be automatically closed.</p>
+          close-pr-message: |
+            <p>This PR has been automatically closed as it has not been updated in some time.
+            If you want to resume work on the PR, feel free to restore the branch and reopen the PR.</p>
+          # Ignore issues, only operating on pull requests.
+          days-before-issue-stale: -1
+          days-before-issue-close: -1

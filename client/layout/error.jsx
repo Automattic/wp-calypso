@@ -11,10 +11,7 @@ import { setSection } from 'calypso/state/ui/section/actions';
 const log = debug( 'calypso:layout' );
 const noop = () => {};
 const LoadingErrorMessage = localize( ( { translate } ) => (
-	<EmptyContent
-		illustration="/calypso/images/illustrations/error.svg"
-		title={ translate( "We're sorry, but an unexpected error has occurred" ) }
-	/>
+	<EmptyContent title={ translate( "We're sorry, but an unexpected error has occurred" ) } />
 ) );
 
 export function isRetry() {

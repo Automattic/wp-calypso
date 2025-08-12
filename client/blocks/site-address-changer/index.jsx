@@ -1,12 +1,12 @@
-import { Dialog, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
+import { FormInputValidation, FormLabel } from '@automattic/components';
+import { Button, CheckboxControl, Icon, Modal } from '@wordpress/components';
+import { check, closeSmall, chevronDown, info } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { debounce, get, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import Banner from 'calypso/components/banner';
-import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
-import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
@@ -58,6 +58,7 @@ export class SiteAddressChanger extends Component {
 		domainFieldValue: '',
 		newDomainSuffix: this.props.currentDomainSuffix,
 		confirmEmailSent: 0,
+		isConfirmationChecked: false,
 	};
 
 	componentDidMount() {
@@ -145,21 +146,16 @@ export class SiteAddressChanger extends Component {
 		}
 	};
 
-	onConfirmationFormClose = () => {
-		this.setState( {
-			step: 0,
-		} );
-	};
-
 	toggleConfirmationChecked = () => {
 		this.setState( {
 			isConfirmationChecked: ! this.state.isConfirmationChecked,
 		} );
 	};
 
-	onConfirmationFormSubmit = () => {
-		this.onConfirmationFormClose();
-		this.onConfirm();
+	goBackToFirstStep = () => {
+		this.setState( {
+			step: 0,
+		} );
 	};
 
 	handleDomainChange( domainFieldValue ) {
@@ -290,7 +286,7 @@ export class SiteAddressChanger extends Component {
 		return (
 			<span className="site-address-changer__affix">
 				{ newDomainSuffix }
-				<Gridicon icon="chevron-down" size={ 18 } className="site-address-changer__select-icon" />
+				<Icon icon={ chevronDown } size={ 18 } className="site-address-changer__select-icon" />
 				<FormSelect
 					className="site-address-changer__select"
 					value={ newDomainSuffix }
@@ -314,7 +310,7 @@ export class SiteAddressChanger extends Component {
 	};
 
 	getStepButtons = () => {
-		const { translate, isEmailVerified } = this.props;
+		const { translate, isEmailVerified, onClose } = this.props;
 
 		if ( 0 === this.state.step ) {
 			const { isAvailabilityPending, isAvailable, isSiteAddressChangeRequesting } = this.props;
@@ -333,33 +329,35 @@ export class SiteAddressChanger extends Component {
 			return [
 				{
 					action: 'cancel',
-					onClick: this.onClose,
-					isPrimary: false,
+					onClick: onClose,
+					variant: 'tertiary',
 					label: translate( 'Cancel' ),
 				},
 				{
 					action: 'confirm',
-					additionalClassNames: [ isBusy ? 'is-busy' : '' ],
-					isPrimary: true,
+					variant: 'primary',
 					disabled: isDisabled,
+					isBusy: isBusy,
 					label: translate( 'Next' ),
 					onClick: this.onSubmit,
 				},
 			];
 		} else if ( 1 === this.state.step ) {
+			const { isSiteAddressChangeRequesting } = this.props;
 			return [
 				{
 					action: 'cancel',
-					onClick: this.onConfirmationFormClose,
-					isPrimary: false,
+					onClick: this.goBackToFirstStep,
+					variant: 'tertiary',
 					label: translate( 'Cancel' ),
 				},
 				{
 					action: 'confirm',
-					disabled: ! this.state.isConfirmationChecked,
-					isPrimary: true,
-					onClick: this.onConfirmationFormSubmit,
-					label: translate( 'Change site address' ),
+					disabled: ! this.state.isConfirmationChecked || isSiteAddressChangeRequesting,
+					variant: 'primary',
+					isBusy: isSiteAddressChangeRequesting,
+					onClick: this.onConfirm,
+					label: translate( 'Confirm' ),
 				},
 			];
 		}
@@ -379,26 +377,32 @@ export class SiteAddressChanger extends Component {
 
 		if ( isAtomicSite ) {
 			return (
-				<div className="site-address-changer__content">
-					<Gridicon icon="info-outline" />
-					{ translate( 'wpcomstaging.com addresses cannot be changed.' ) }
+				<div className="site-address-changer__info-message">
+					<span className="site-address-changer__info-icon">
+						<Icon icon={ info } size={ 18 } />
+					</span>
+					<span>{ translate( 'wpcomstaging.com addresses cannot be changed.' ) }</span>
 				</div>
 			);
 		}
 
 		if ( ! currentDomain.currentUserCanManage ) {
 			return (
-				<div className="site-address-changer site-address-changer__only-owner-info">
-					<Gridicon icon="info-outline" />
-					{ isEmpty( currentDomain.owner )
-						? translate( 'Only the site owner can edit this domain name.' )
-						: translate(
-								'Only the site owner ({{strong}}%(ownerInfo)s{{/strong}}) can edit this domain name.',
-								{
-									args: { ownerInfo: currentDomain.owner },
-									components: { strong: <strong /> },
-								}
-						  ) }
+				<div className="site-address-changer__info-message site-address-changer__only-owner-info">
+					<span className="site-address-changer__info-icon">
+						<Icon icon={ info } size={ 18 } />
+					</span>
+					<span>
+						{ isEmpty( currentDomain.owner )
+							? translate( 'Only the site owner can edit this domain name.' )
+							: translate(
+									'Only the site owner ({{strong}}%(ownerInfo)s{{/strong}}) can edit this domain name.',
+									{
+										args: { ownerInfo: currentDomain.owner },
+										components: { strong: <strong /> },
+									}
+							  ) }
+					</span>
 				</div>
 			);
 		}
@@ -429,22 +433,9 @@ export class SiteAddressChanger extends Component {
 						disableHref
 					/>
 				) }
-				<FormSectionHeading>
-					<strong>{ translate( 'Change your site address' ) }</strong>
-				</FormSectionHeading>
-				<div className="site-address-changer__info">
-					<p>
-						{ translate(
-							'Once you change your site address, %(currentDomainName)s will no longer be available.',
-							{
-								args: { currentDomainName },
-							}
-						) }
-					</p>
-				</div>
 				<div className="site-address-changer__details">
 					<FormLabel htmlFor="site-address-changer__text-input">
-						{ translate( 'Enter your new site address' ) }
+						{ translate( 'New site address' ) }
 					</FormLabel>
 					<FormTextInputWithAffixes
 						id="site-address-changer__text-input"
@@ -460,15 +451,25 @@ export class SiteAddressChanger extends Component {
 					{ shouldShowValidationMessage && (
 						<FormInputValidation isError={ ! isAvailable } text={ validationMessage || '\u00A0' } />
 					) }
-					{ ! hasNonWpcomDomains && (
-						<div className="site-address-changer__info-custom-domain">
-							{ translate( 'Did you want to {{a}}add a custom domain{{/a}} instead?', {
-								components: {
-									a: <a href={ addDomainPath } onClick={ this.handleAddDomainClick } />,
-								},
-							} ) }
-						</div>
-					) }
+					<div className="site-address-changer__info">
+						<p className="site-address-changer__message">
+							{ translate(
+								'Keep in mind that once you change your site address, %(currentDomainName)s will no longer be available.',
+								{
+									args: { currentDomainName },
+								}
+							) }
+						</p>
+						{ ! hasNonWpcomDomains && (
+							<p>
+								{ translate( '{{a}}Add a custom domain{{/a}} instead?', {
+									components: {
+										a: <a href={ addDomainPath } onClick={ this.handleAddDomainClick } />,
+									},
+								} ) }
+							</p>
+						) }
+					</div>
 				</div>
 			</div>
 		);
@@ -480,7 +481,7 @@ export class SiteAddressChanger extends Component {
 		const currentDomainPrefix = this.getCurrentDomainPrefix();
 
 		return (
-			<form className="site-address-changer__dialog">
+			<form className="site-address-changer__content">
 				<TrackComponentView
 					eventName="calypso_siteaddresschange_areyousure_view"
 					eventProperties={ {
@@ -488,81 +489,71 @@ export class SiteAddressChanger extends Component {
 						new_domain: newDomainName,
 					} }
 				/>
-				<h1 className="site-address-changer__dialog-heading">
-					{ translate( 'Confirm your decision' ) }
-				</h1>
+				<p>{ translate( 'Once you confirm, this will be the new address for your site:' ) }</p>
 				<div className="site-address-changer__confirmation-detail">
-					<Gridicon
-						icon="cross-circle"
-						size={ 18 }
-						className="site-address-changer__copy-deletion"
-					/>
-					<p className="site-address-changer__confirmation-detail-copy site-address-changer__copy-deletion">
-						{ translate(
-							'{{strong}}%(currentDomainPrefix)s{{/strong}}%(currentDomainSuffix)s will be removed and unavailable for use.',
-							{
-								components: {
-									strong: <strong />,
-								},
-								args: {
-									currentDomainPrefix,
-									currentDomainSuffix,
-								},
-							}
-						) }
-					</p>
-				</div>
-				<div className="site-address-changer__confirmation-detail">
-					<Gridicon
-						icon="checkmark-circle"
-						size={ 18 }
-						className="site-address-changer__copy-addition"
-					/>
-					<p className="site-address-changer__confirmation-detail-copy site-address-changer__copy-addition">
-						{ translate(
-							'{{strong}}%(newDomainName)s{{/strong}}%(newDomainSuffix)s will be your new site address.',
-							{
-								components: {
-									strong: <strong />,
-								},
-								args: {
-									newDomainName,
-									newDomainSuffix,
-								},
-							}
-						) }
-					</p>
-				</div>
-				<h2>{ translate( 'Check the box to confirm' ) }</h2>
-				<FormLabel>
-					<FormInputCheckbox
-						checked={ this.state.isConfirmationChecked }
-						onChange={ this.toggleConfirmationChecked }
-					/>
-					<span>
-						{ translate(
-							"I understand that I won't be able to undo this change to my site address."
-						) }
+					<span className="site-address-changer__icon-wrapper">
+						<Icon icon={ check } size={ 24 } className="site-address-changer__copy-addition" />
 					</span>
-				</FormLabel>
+					<p className="site-address-changer__confirmation-detail-copy site-address-changer__copy-addition">
+						<strong>{ newDomainName }</strong>
+						{ newDomainSuffix }
+					</p>
+				</div>
+
+				<p>{ translate( 'And this address will be removed and unavailable for use:' ) }</p>
+
+				<div className="site-address-changer__confirmation-detail">
+					<span className="site-address-changer__icon-wrapper">
+						<Icon icon={ closeSmall } size={ 24 } className="site-address-changer__copy-deletion" />
+					</span>
+					<p className="site-address-changer__confirmation-detail-copy site-address-changer__copy-deletion">
+						<strong>{ currentDomainPrefix }</strong>
+						{ currentDomainSuffix }
+					</p>
+				</div>
+				<CheckboxControl
+					label={ translate( "I understand that I won't be able to undo this change." ) }
+					checked={ this.state.isConfirmationChecked }
+					onChange={ this.toggleConfirmationChecked }
+					__nextHasNoMarginBottom
+				/>
 			</form>
 		);
 	};
 
 	render() {
-		const { isDialogVisible, onClose } = this.props;
+		const { isDialogVisible, onClose, translate } = this.props;
+		const buttons = this.getStepButtons();
+		const modalTitle =
+			this.state.step === 0
+				? translate( 'Change your site address' )
+				: translate( 'Confirm the address change' );
 
 		return (
-			<Dialog
-				buttons={ this.getStepButtons() }
+			<Modal
+				title={ modalTitle }
+				size="medium"
 				isVisible={ isDialogVisible }
-				onClose={ onClose }
-				leaveTimeout={ 0 }
+				onRequestClose={ onClose }
 				showCloseIcon
 			>
 				{ 0 === this.state.step && this.renderNewAddressForm() }
 				{ 1 === this.state.step && this.renderConfirmationForm() }
-			</Dialog>
+
+				<div className="site-address-changer__modal-buttons">
+					{ buttons.map( ( button ) => (
+						<Button
+							key={ button.action }
+							variant={ button.variant }
+							disabled={ button.disabled }
+							isBusy={ button.isBusy }
+							onClick={ button.onClick }
+						>
+							{ button.label }
+						</Button>
+					) ) }
+				</div>
+			</Modal>
 		);
 	}
 }

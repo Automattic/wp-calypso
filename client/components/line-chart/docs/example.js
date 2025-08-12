@@ -103,7 +103,7 @@ export default class LineChartExample extends Component {
 				{ this.state.showDataControls && (
 					<div>
 						<FormLabel>
-							Data Min
+							Data min
 							<FormTextInput
 								type="number"
 								value={ this.state.dataMin }
@@ -113,7 +113,7 @@ export default class LineChartExample extends Component {
 						</FormLabel>
 
 						<FormLabel>
-							Data Max
+							Data max
 							<FormTextInput
 								type="number"
 								value={ this.state.dataMax }
@@ -123,7 +123,7 @@ export default class LineChartExample extends Component {
 						</FormLabel>
 
 						<FormLabel>
-							Series Length
+							Series length
 							<FormTextInput
 								type="number"
 								value={ this.state.seriesLength }
@@ -138,7 +138,7 @@ export default class LineChartExample extends Component {
 									checked={ this.state.fillArea }
 									onChange={ this.toggleFillArea }
 								/>
-								Fill Area
+								Fill area
 							</FormLabel>
 						</div>
 					</div>

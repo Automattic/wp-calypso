@@ -65,6 +65,11 @@ export const handleMembershipProductsList = dispatchRequest( {
 			action
 		),
 	fromApi: function ( endpointResponse ) {
+		// If the response has an error, return an empty array for products.
+		if ( endpointResponse.hasOwnProperty( 'error' ) ) {
+			return [];
+		}
+
 		const products = endpointResponse.products.map( membershipProductFromApi );
 		return products;
 	},

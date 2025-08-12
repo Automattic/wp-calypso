@@ -105,6 +105,7 @@ export interface SiteDetailsPlan {
 	billing_period: string;
 	user_is_owner: boolean;
 	is_free: boolean;
+	license_key?: string;
 	features: {
 		active: string[];
 		available: Record< string, string[] >;
@@ -121,10 +122,11 @@ export interface DifmLiteSiteOptions {
 export interface SiteDetails {
 	ID: number;
 	URL: string;
-	capabilities: SiteDetailsCapabilities;
+	capabilities?: SiteDetailsCapabilities;
 	description: string;
 	domain: string;
 	icon?: { ico: string; img: string; media_id: number };
+	is_a8c?: boolean;
 	is_coming_soon?: boolean;
 	is_multisite?: boolean;
 	is_private?: boolean;
@@ -213,7 +215,10 @@ export interface SiteDetailsCapabilities {
 	remove_users: boolean;
 	upload_files: boolean;
 	update_plugins: boolean;
-	view_hosting: boolean;
+	/**
+	 * @deprecated `view_hosting` is no longer used and will be removed in a future release.
+	 */
+	view_hosting?: boolean;
 	view_stats: boolean;
 }
 
@@ -253,6 +258,7 @@ export interface SiteDetailsOptions {
 	is_automated_transfer?: boolean;
 	is_cloud_eligible?: boolean;
 	is_difm_lite_in_progress?: boolean;
+	is_summer_special_2025?: boolean;
 	is_domain_only?: boolean;
 	is_mapped_domain?: boolean;
 	is_pending_plan?: boolean;
@@ -388,6 +394,7 @@ export interface Domain {
 	product_slug?: any;
 	owner: string;
 	is_pending_icann_verification?: boolean;
+	is_root_domain_registered_with_automattic: boolean;
 	is_mapped_to_atomic_site: boolean;
 }
 
@@ -625,6 +632,8 @@ export interface SourceSiteMigrationBase {
 	recent_migration?: boolean;
 	failed_backup_source?: boolean;
 	migration_status?: string;
+	is_complete?: boolean;
+	in_progress?: boolean;
 }
 
 export interface Page {

@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
 .guided-tour__popover {
 	z-index: 9999999;
 
@@ -14,12 +17,12 @@
 
 .guided-tour__popover-heading {
 	color: var(--color-neutral-100);
-	@include a4a-font-label-button;
+	@include heading-medium;
 }
 
 .guided-tour__popover-description {
 	color: var(--color-neutral-80);
-	@include a4a-font-body-sm;
+	@include body-small;
 	max-width: 220px;
 	text-align: left;
 	margin-block-end: 0;
@@ -33,7 +36,7 @@
 
 	.guided-tour__popover-step-count {
 		color: var(--color-neutral-60);
-		@include a4a-font-body-sm;
+		@include body-small;
 	}
 
 	.guided-tour__popover-footer-right-content {
@@ -42,7 +45,7 @@
 
 		button {
 			padding: 4px 8px;
-			@include a4a-font-body-sm;
+			@include body-small;
 		}
 	}
 }

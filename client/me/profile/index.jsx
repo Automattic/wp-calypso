@@ -7,7 +7,6 @@ import { connect } from 'react-redux';
 import EditGravatar from 'calypso/blocks/edit-gravatar';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -18,11 +17,13 @@ import { CompleteLaunchpadTaskWithNoticeOnLoad } from 'calypso/launchpad/hooks/u
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { protectForm } from 'calypso/lib/protect-form';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import { addSchemeIfMissing } from 'calypso/lib/url/scheme-utils';
 import DomainUpsell from 'calypso/me/domain-upsell';
 import EmailVerificationBanner from 'calypso/me/email-verification-banner';
 import withFormBase from 'calypso/me/form-base/with-form-base';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
+import { getValidUrl } from 'calypso/site-profiler/utils/get-valid-url';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import WPAndGravatarLogo from './wp-and-gravatar-logo';
@@ -42,6 +43,21 @@ class Profile extends Component {
 
 	toggleIsDevAccount = ( isDevAccount ) => {
 		this.props.setUserSetting( 'is_dev_account', isDevAccount );
+	};
+
+	/**
+	 * Handles URL normalization on blur
+	 * @param {Event} event - The blur event
+	 */
+	handleUrlBlur = ( event ) => {
+		const { value } = event.target;
+		const normalizedUrl = addSchemeIfMissing( value, 'https' );
+		if ( normalizedUrl !== value ) {
+			const validUrl = getValidUrl( normalizedUrl );
+			if ( validUrl ) {
+				this.props.setUserSetting( 'user_URL', validUrl );
+			}
+		}
 	};
 
 	render() {
@@ -116,9 +132,6 @@ class Profile extends Component {
 								onFocus={ this.getFocusHandler( 'Display Name Field' ) }
 								value={ this.props.getSetting( 'display_name' ) }
 							/>
-							<FormSettingExplanation>
-								{ this.props.translate( 'Shown publicly when you comment on blogs.' ) }
-							</FormSettingExplanation>
 						</FormFieldset>
 
 						<FormFieldset>
@@ -134,27 +147,8 @@ class Profile extends Component {
 								onFocus={ this.getFocusHandler( 'Web Address Field' ) }
 								placeholder="https://example.com"
 								value={ this.props.getSetting( 'user_URL' ) }
+								onBlur={ this.handleUrlBlur }
 							/>
-							<FormSettingExplanation>
-								{ this.props.translate( 'Shown publicly when you comment on blogs.' ) }
-							</FormSettingExplanation>
-						</FormFieldset>
-
-						<FormFieldset>
-							<div className="form-label">{ this.props.translate( 'Public profile' ) }</div>
-							<FormSettingExplanation>
-								<span>
-									{ this.props.translate(
-										'You can find your public profile at {{a}}{{url/}}{{/a}}',
-										{
-											components: {
-												a: <a href={ relativeProfileUrl }></a>,
-												url: <>{ absoluteProfileUrl }</>,
-											},
-										}
-									) }
-								</span>
-							</FormSettingExplanation>
 						</FormFieldset>
 
 						<FormFieldset>
@@ -169,26 +163,37 @@ class Profile extends Component {
 							/>
 						</FormFieldset>
 
-						<p className="profile__gravatar-profile-description">
-							<span>
-								{ this.props.translate(
-									'Your WordPress.com profile is connected to Gravatar. Your Gravatar is public by default and may appear on any site using Gravatar when you’re logged in with {{strong}}%(email)s{{/strong}}.' +
-										' To manage your Gravatar profile, profile links, and visibility settings, {{a}}visit your Gravatar profile{{/a}}.',
-									{
-										components: {
-											strong: <strong />,
-											a: <ExternalLink href="https://gravatar.com/profile" />,
-										},
-										args: {
-											email: this.props.getSetting( 'user_email' ),
-										},
-									}
-								) }
-							</span>
-							<span>
-								<WPAndGravatarLogo />
-							</span>
+						<p className="profile__public-url">
+							{ this.props.translate( 'View your public profile at {{a}}{{url/}}{{/a}}.', {
+								components: {
+									a: <ExternalLink href={ relativeProfileUrl } />,
+									url: <>{ absoluteProfileUrl }</>,
+								},
+							} ) }
 						</p>
+
+						<div className="profile__gravatar-profile-disclosure">
+							<div>
+								<h4 className="profile__gravatar-profile-title">
+									{ this.props.translate( 'Your WordPress.com profile is powered by Gravatar.' ) }
+								</h4>
+								<p className="profile__gravatar-profile-description">
+									{ this.props.translate(
+										'Updating your avatar, name, and about info here will also update it across all sites that use Gravatar profiles. {{a}}What is Gravatar?{{/a}}',
+										{
+											components: {
+												a: (
+													<ExternalLink href="https://support.gravatar.com/basic/what-is-gravatar/" />
+												),
+											},
+										}
+									) }
+								</p>
+							</div>
+							<div>
+								<WPAndGravatarLogo />
+							</div>
+						</div>
 
 						<p className="profile__submit-button-wrapper">
 							<FormButton

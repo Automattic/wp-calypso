@@ -196,6 +196,7 @@ export interface UrlPerformanceInsightsQueryResponse {
 	};
 	wpscan: {
 		status: string;
+		errors?: Record< string, Array< string > >;
 	};
 }
 

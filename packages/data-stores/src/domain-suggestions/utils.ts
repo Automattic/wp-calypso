@@ -1,5 +1,5 @@
+import { formatCurrency } from '@automattic/number-formatters';
 import deterministicStringify from 'fast-json-stable-stringify';
-import { formatCurrency } from 'i18n-calypso';
 import type { DomainSuggestionQuery, DomainSuggestionSelectorOptions } from './types';
 
 /**

@@ -17,15 +17,8 @@ import {
 	magicLoginUse,
 	redirectJetpack,
 	redirectDefaultLocale,
-	redirectLostPassword,
 	desktopLogin,
 	desktopLoginFinalize,
-	jetpackAppleAuth,
-	jetpackAppleAuthCallback,
-	jetpackGoogleAuthCallback,
-	jetpackGoogleAuth,
-	jetpackGitHubAuth,
-	jetpackGitHubAuthCallback,
 } from './controller';
 import redirectLoggedIn from './redirect-logged-in';
 import { setShouldServerSideRenderLogin, ssrSetupLocaleLogin, setMetaTags } from './ssr';
@@ -96,18 +89,8 @@ export default ( router ) => {
 
 	if ( config.isEnabled( 'login/magic-login' ) ) {
 		router(
-			[ `/log-in/link/use/${ lang }` ],
+			[ `/log-in/link/use/${ lang }`, `/log-in/jetpack/link/use/${ lang }` ],
 			redirectLoggedIn,
-			setLocaleMiddleware(),
-			setMetaTags,
-			setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
-			magicLoginUse,
-			makeLoggedOutLayout
-		);
-
-		// For Jetpack link use, we don't want to stop when the user is logged in
-		router(
-			[ `/log-in/jetpack/link/use/${ lang }` ],
 			setLocaleMiddleware(),
 			setMetaTags,
 			setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
@@ -126,7 +109,7 @@ export default ( router ) => {
 	}
 
 	router(
-		[ `/log-in/qr/${ lang }` ],
+		[ `/log-in/qr/${ lang }`, `/log-in/jetpack/qr/${ lang }` ],
 		redirectLoggedIn,
 		setLocaleMiddleware(),
 		setMetaTags,
@@ -136,59 +119,12 @@ export default ( router ) => {
 	);
 
 	router(
-		`/log-in/jetpack/google/${ lang }`,
-		setLocaleMiddleware(),
-		setMetaTags,
-		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
-		jetpackGoogleAuth
-	);
-
-	router(
-		`/log-in/jetpack/google/callback/${ lang }`,
-		setLocaleMiddleware(),
-		setMetaTags,
-		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
-		jetpackGoogleAuthCallback
-	);
-
-	router(
-		`/log-in/jetpack/apple/${ lang }`,
-		setLocaleMiddleware(),
-		setMetaTags,
-		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
-		jetpackAppleAuth
-	);
-
-	router(
-		`/log-in/jetpack/apple/callback/${ lang }`,
-		setLocaleMiddleware(),
-		setMetaTags,
-		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
-		jetpackAppleAuthCallback
-	);
-
-	router(
-		`/log-in/jetpack/github/${ lang }`,
-		setLocaleMiddleware(),
-		setMetaTags,
-		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
-		jetpackGitHubAuth
-	);
-
-	router(
-		`/log-in/jetpack/github/callback/${ lang }`,
-		setLocaleMiddleware(),
-		setMetaTags,
-		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
-		jetpackGitHubAuthCallback
-	);
-
-	router(
 		[
 			`/log-in/:twoFactorAuthType(authenticator|backup|sms|push|webauthn)/${ lang }`,
-			`/log-in/:flow(social-connect|private-site)/${ lang }`,
+			`/log-in/:flow(social-connect)/${ lang }`,
 			`/log-in/:socialService(google|apple|github)/callback/${ lang }`,
 			`/log-in/:isJetpack(jetpack)/${ lang }`,
+			`/log-in/:isJetpack(jetpack)/:socialService(google|apple|github)/${ lang }`,
 			`/log-in/:isJetpack(jetpack)/:twoFactorAuthType(authenticator|backup|sms|push|webauthn)/${ lang }`,
 			`/log-in/:isJetpack(jetpack)/:action(lostpassword)/${ lang }`,
 			`/log-in/:isGutenboarding(new)/${ lang }`,
@@ -205,7 +141,6 @@ export default ( router ) => {
 		login,
 		setShouldServerSideRenderLogin,
 		ssrSetupLocaleLogin,
-		makeLoggedOutLayout,
-		redirectLostPassword
+		makeLoggedOutLayout
 	);
 };

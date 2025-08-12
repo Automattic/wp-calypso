@@ -36,7 +36,7 @@ export const PluginsScheduledUpdatesMultisite = ( {
 	const title = {
 		create: translate( 'New schedule' ),
 		edit: translate( 'Edit schedule' ),
-		list: translate( 'Scheduled Updates' ),
+		list: translate( 'Scheduled updates' ),
 	}[ context ];
 
 	useEffect( () => {

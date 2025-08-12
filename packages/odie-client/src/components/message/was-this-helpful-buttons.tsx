@@ -1,3 +1,4 @@
+import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { ODIE_THUMBS_DOWN_RATING_VALUE, ODIE_THUMBS_UP_RATING_VALUE } from '../../constants';
@@ -79,29 +80,37 @@ const WasThisHelpfulButtons = ( {
 	return (
 		<div className={ containerClasses }>
 			<div className="odie-feedback-message">
-				<span className={ questionClasses }>
-					{ __( 'Was this helpful?', __i18n_text_domain__ ) }
-				</span>
-				<span className={ thanksClasses }>
-					{ __( 'We appreciate your feedback.', __i18n_text_domain__ ) }
-				</span>
+				{ ! rated && (
+					<span className={ questionClasses }>
+						{ __( 'Was this helpful?', __i18n_text_domain__ ) }
+					</span>
+				) }
+				{ rated && (
+					<span className={ thanksClasses }>
+						{ __( 'We appreciate your feedback.', __i18n_text_domain__ ) }
+					</span>
+				) }
 			</div>
-			<span className="odie-feedback-component-button-container">
-				<button
+			<div className="odie-feedback-component-button-container">
+				<Button
 					className={ buttonLikedClasses }
 					onClick={ () => handleIsHelpful( true ) }
 					disabled={ notLiked }
+					tabIndex={ rated ? -1 : undefined }
+					aria-label={ __( 'Yes, this was helpful', __i18n_text_domain__ ) }
 				>
 					<ThumbsUpIcon className={ thumbsUpClasses } />
-				</button>
-				<button
+				</Button>
+				<Button
 					className={ buttonDislikedClasses }
 					onClick={ () => handleIsHelpful( false ) }
 					disabled={ liked }
+					tabIndex={ rated ? -1 : undefined }
+					aria-label={ __( 'No, this was not helpful', __i18n_text_domain__ ) }
 				>
 					<ThumbsDownIcon className={ thumbsDownClasses } />
-				</button>
-			</span>
+				</Button>
+			</div>
 		</div>
 	);
 };

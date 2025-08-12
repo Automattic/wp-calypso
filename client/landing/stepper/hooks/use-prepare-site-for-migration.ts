@@ -1,9 +1,11 @@
 import config from '@automattic/calypso-config';
+import { UseMutationResult } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
-import { usePluginAutoInstallation } from './use-plugin-auto-installation';
+import { useRequestTransferWithSoftware } from 'calypso/sites/hooks/use-transfer-with-software-start-mutation';
+import { useTransferWithSoftwareStatus } from 'calypso/sites/hooks/use-transfer-with-software-status-query';
 import { useSiteMigrationKey } from './use-site-migration-key';
-import { useSiteTransfer } from './use-site-transfer';
+import type { TransferWithSoftwareResponse } from 'calypso/sites/hooks/use-transfer-with-software-start-mutation';
 
 type Status = 'idle' | 'pending' | 'success' | 'error';
 
@@ -69,45 +71,64 @@ type Options = {
  *  This hook manages the site transfer, plugin installation and migration key fetching.
  */
 export const usePrepareSiteForMigration = (
-	siteId?: number,
+	siteId: number,
 	from?: string,
 	options: Options = {}
 ) => {
-	const plugin = { name: 'wpcom-migration/wpcom_migration', slug: 'wpcom-migration' };
+	// Request the transfer with software
+	const transferMutation: UseMutationResult< TransferWithSoftwareResponse, Error, void > =
+		useRequestTransferWithSoftware( {
+			siteId,
+			apiSettings: {
+				migration_source_site_domain: from,
+			},
+			plugin_slug: 'wpcom-migration',
+		} );
 
-	const siteTransferState = useSiteTransfer( siteId, {
+	// Trigger the mutation when the hook is first used
+	useEffect( () => {
+		if ( siteId && from ) {
+			transferMutation.mutate();
+		}
+	}, [ siteId, from ] ); // Dependencies that should trigger a new transfer
+
+	const {
+		data: { transfer_status } = {},
+		error: softwareTransferError,
+		status: softwareTransferStatus,
+	} = useTransferWithSoftwareStatus( siteId, transferMutation.data?.transfer_id ?? undefined, {
 		retry: options.retry ?? 0,
-		from,
 	} );
 
-	const pluginInstallationState = usePluginAutoInstallation( plugin, siteId, {
-		enabled: Boolean( siteTransferState.completed ),
-	} );
+	const softwareTransferCompleted = 'completed' === transfer_status;
 
 	const {
 		data: { migrationKey } = {},
 		error: migrationKeyError,
 		status: migrationKeyStatus,
 	} = useSiteMigrationKey( siteId, {
-		enabled: Boolean( pluginInstallationState.completed ),
+		enabled: Boolean( softwareTransferCompleted ),
 		retry: options.retry ?? 0,
 	} );
 
-	const completed = siteTransferState.completed && pluginInstallationState.completed;
-	const error = siteTransferState.error || pluginInstallationState.error || migrationKeyError;
-	const criticalError = siteTransferState.error || pluginInstallationState.error;
+	const error = softwareTransferError || migrationKeyError;
+	const criticalError = softwareTransferError;
 
 	const detailedStatus = {
-		siteTransfer: siteTransferState.status,
-		pluginInstallation: pluginInstallationState.status,
-		migrationKey: ! pluginInstallationState.completed ? 'idle' : migrationKeyStatus,
+		siteTransferStatus: transfer_status ?? 'idle',
+		migrationKeyStatus: ! softwareTransferCompleted ? 'idle' : migrationKeyStatus,
 	};
 
-	useLogMigration( completed, siteTransferState.status, criticalError, siteId );
+	useLogMigration(
+		softwareTransferCompleted,
+		softwareTransferStatus as Status,
+		criticalError,
+		siteId
+	);
 
 	return {
 		detailedStatus,
-		completed,
+		softwareTransferCompleted,
 		error,
 		migrationKey: migrationKey ?? null,
 	};

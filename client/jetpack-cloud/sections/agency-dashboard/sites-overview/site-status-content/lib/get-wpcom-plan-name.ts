@@ -1,5 +1,4 @@
-import { planMatches, GROUP_WPCOM } from '@automattic/calypso-products';
-import { getPlan } from '@automattic/calypso-products/src';
+import { getPlan, planMatches, GROUP_WPCOM } from '@automattic/calypso-products';
 
 /**
  * Function to get the name of a WordPress.com plan.

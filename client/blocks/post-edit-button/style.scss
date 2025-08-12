@@ -31,10 +31,14 @@
 			display: none;
 		}
 	}
+
+	&.tooltip {
+		@include tooltip-base;
+		@include tooltip-top;
+	}
 }
 
 .post-edit-button__label {
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 13px;
 	margin-left: 4px;
 

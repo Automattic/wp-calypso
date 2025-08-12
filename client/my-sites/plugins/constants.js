@@ -81,7 +81,11 @@ export const ECOMMERCE_BUNDLED_PLUGINS = [
 	'mailpoet-business',
 ];
 
-export const UNLISTED_PLUGINS = [ 'automated-db-schenker-shipping', 'wp-fusion-lite' ];
+export const UNLISTED_PLUGINS = [
+	'automated-db-schenker-shipping',
+	'wp-fusion-lite',
+	'social-blend',
+];
 
 export const WPBEGINNER_PLUGINS = [
 	'optinmonster',

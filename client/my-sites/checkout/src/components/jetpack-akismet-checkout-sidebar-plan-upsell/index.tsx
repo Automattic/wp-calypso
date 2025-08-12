@@ -1,11 +1,11 @@
 import { isAkismetProduct, isJetpackPlan, isJetpackProduct } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
+import { formatCurrency } from '@automattic/number-formatters';
 import { ResponseCartProduct, useShoppingCart } from '@automattic/shopping-cart';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import debugFactory from 'debug';
-import { formatCurrency } from 'i18n-calypso';
 import { useCallback, type FC, useMemo } from 'react';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
@@ -14,7 +14,7 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useGetProductVariants } from '../../hooks/product-variants';
-import { getItemVariantDiscountPercentage } from '../item-variation-picker/util';
+import { getItemVariantDiscount } from '../item-variation-picker/util';
 
 import './style.scss';
 
@@ -172,7 +172,7 @@ const useCalculatedDiscounts = () => {
 	];
 
 	return {
-		percentSavings: getItemVariantDiscountPercentage( biennial, current ),
+		percentSavings: getItemVariantDiscount( biennial, current ),
 		priceBreakdown,
 		finalBreakdown,
 	};

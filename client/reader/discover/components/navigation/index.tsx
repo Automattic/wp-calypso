@@ -1,25 +1,26 @@
-import { useLocale } from '@automattic/i18n-utils/src/locale-context';
-import { addLocaleToPathLocaleInFront } from '@automattic/i18n-utils/src/utils';
-import { translate } from 'i18n-calypso';
+import { isEnabled } from '@automattic/calypso-config';
+import { addLocaleToPathLocaleInFront, useLocale } from '@automattic/i18n-utils';
+import { translate, TranslateResult } from 'i18n-calypso';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import {
-	DEFAULT_TAB,
 	FIRST_POSTS_TAB,
 	LATEST_TAB,
 	ADD_NEW_TAB,
 	REDDIT_TAB,
+	RECOMMENDED_TAB,
 } from 'calypso/reader/discover/helper';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { useDispatch, useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { FRESHLY_PRESSED_TAB } from '../../helper';
 import './style.scss';
 
 interface Tab {
 	slug: string;
-	title: string;
+	title: TranslateResult;
 	path: string;
 }
 
@@ -42,11 +43,20 @@ const DiscoverNavigation = ( { selectedTab }: Props ) => {
 		return addLocaleToPathLocaleInFront( path, currentLocale );
 	};
 
+	const FRESHLY_PRESSED_OPTION = isEnabled( 'reader/discover/freshly-pressed' )
+		? {
+				slug: FRESHLY_PRESSED_TAB,
+				title: translate( 'Freshly Pressed' ),
+				path: '/discover',
+		  }
+		: null;
+
 	const baseTabs: Tab[] = [
+		...( FRESHLY_PRESSED_OPTION ? [ FRESHLY_PRESSED_OPTION ] : [] ),
 		{
-			slug: DEFAULT_TAB,
+			slug: RECOMMENDED_TAB,
 			title: translate( 'Recommended' ),
-			path: '/discover',
+			path: isEnabled( 'reader/discover/freshly-pressed' ) ? '/discover/recommended' : '/discover',
 		},
 		{
 			slug: ADD_NEW_TAB,
@@ -70,7 +80,9 @@ const DiscoverNavigation = ( { selectedTab }: Props ) => {
 		},
 		{
 			slug: LATEST_TAB,
-			title: translate( 'Latest' ),
+			title: translate( 'Latest', {
+				context: 'latest blog posts',
+			} ),
 			path: '/discover/latest',
 		},
 	];

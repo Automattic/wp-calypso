@@ -1,6 +1,6 @@
 import { PLAN_PERSONAL } from '@automattic/calypso-products';
 import { DomainSuggestion } from '@automattic/data-stores';
-import { useStepPersistedState } from '@automattic/onboarding';
+import { isOnboardingFlow, useStepPersistedState } from '@automattic/onboarding';
 import { withShoppingCart, type ResponseCartProduct } from '@automattic/shopping-cart';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
@@ -30,7 +30,6 @@ import { fetchUsernameSuggestion } from 'calypso/state/signup/optional-dependenc
 import { removeStep } from 'calypso/state/signup/progress/actions';
 import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
-import { useGoalsFirstExperiment } from '../../../helpers/use-goals-first-experiment';
 import { useIsManagedSiteFlowProps } from './use-is-managed-site-flow';
 import type { ProvidedDependencies, Step } from '../../types';
 
@@ -44,6 +43,10 @@ type DomainStepSubmittedTypes = {
 	domainCart?: ResponseCartProduct[] | object;
 	shouldSkipSubmitTracking?: boolean;
 	domainItem?: DomainSuggestion;
+	navigateToUseMyDomain?: boolean;
+	domainForm?: {
+		lastQuery?: string;
+	};
 };
 
 const RenderDomainsStepConnect = connect(
@@ -99,17 +102,18 @@ const RenderDomainsStepConnect = connect(
  */
 let mostRecentState: ProvidedDependencies = {};
 
-const DomainsStep: Step< { submits: DomainStepSubmittedTypes } > = ( props ) => {
+const DomainsStep: Step< { submits: DomainStepSubmittedTypes } > = ( { navigation, ...props } ) => {
 	const [ stepState, setStepState ] =
 		useStepPersistedState< ProvidedDependencies >( 'domains-step' );
 	const managedSiteFlowProps = useIsManagedSiteFlowProps();
-	const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
 
 	return (
 		<CalypsoShoppingCartProvider>
 			<RenderDomainsStepConnect
+				showSkipButton={ isOnboardingFlow( props.flow ) }
 				{ ...props }
 				{ ...managedSiteFlowProps }
+				{ ...navigation }
 				page={ ( url: string ) => window.location.assign( url ) }
 				saveSignupStep={ ( step: ProvidedDependencies ) => {
 					setStepState( ( mostRecentState = { ...stepState, ...step } ) );
@@ -118,7 +122,7 @@ const DomainsStep: Step< { submits: DomainStepSubmittedTypes } > = ( props ) => 
 					setStepState( ( mostRecentState = { ...stepState, ...step } ) );
 				} }
 				goToNextStep={ ( state: ProvidedDependencies ) => {
-					props.navigation.submit?.( {
+					navigation.submit?.( {
 						...mostRecentState,
 						...state,
 						shouldSkipSubmitTracking: state?.navigateToUseMyDomain ? true : false,
@@ -126,7 +130,6 @@ const DomainsStep: Step< { submits: DomainStepSubmittedTypes } > = ( props ) => 
 				} }
 				step={ stepState }
 				flowName={ props.flow }
-				goBack={ isGoalsAtFrontExperiment ? props.navigation.goBack : undefined }
 				useStepperWrapper
 			/>
 		</CalypsoShoppingCartProvider>

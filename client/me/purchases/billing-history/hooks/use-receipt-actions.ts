@@ -1,4 +1,4 @@
-import pageRedirect from '@automattic/calypso-router';
+import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useDispatch } from 'react-redux';
@@ -30,7 +30,7 @@ function handleViewReceipt(
 	if ( ! items?.length || ! items[ 0 ]?.id ) {
 		return;
 	}
-	pageRedirect.redirect( getReceiptUrlFor( items[ 0 ].id ) );
+	page( getReceiptUrlFor( items[ 0 ].id ) );
 }
 
 function handleEmailReceipt( items: BillingTransaction[], dispatch: AppDispatch ): void {
@@ -52,14 +52,14 @@ export function useReceiptActions(
 			{
 				id: 'view-receipt',
 				label: translate( 'View receipt' ),
-				isPrimary: true,
+				isPrimary: false,
 				iconName: 'pages',
 				callback: ( items: BillingTransaction[] ) => handleViewReceipt( items, getReceiptUrlFor ),
 			},
 			{
 				id: 'email-receipt',
 				label: translate( 'Email receipt' ),
-				isPrimary: true,
+				isPrimary: false,
 				iconName: 'mail',
 				callback: ( items: BillingTransaction[] ) => handleEmailReceipt( items, dispatch ),
 			},

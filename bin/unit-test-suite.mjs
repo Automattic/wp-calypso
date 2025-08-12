@@ -1,7 +1,18 @@
 #!/usr/bin/env node
+import { basename, dirname } from 'node:path';
 import util from 'node:util';
 import glob from 'glob';
 import runTask from './teamcity-task-runner.mjs';
+
+// TEMPORARY: These apps *should* be type-checked, but there are existing issues that need to be
+// resolved.
+const APPS_EXCLUDED_FROM_TYPE_CHECK = [
+	'happy-blocks',
+	'o2-blocks',
+	'odyssey-stats',
+	'notifications',
+	'wpcom-block-editor',
+];
 
 const globPromise = util.promisify( glob );
 
@@ -33,15 +44,26 @@ function withUnitTestInfo( cmd ) {
 	};
 }
 
-const allPackageTsconfigs = ( await globPromise( 'packages/*/tsconfig.json' ) ).join( ' ' );
+const [ packagesTsconfigs, appsTsconfigs ] = await Promise.all(
+	[ 'packages', 'apps' ].map( ( path ) => globPromise( `${ path }/*/tsconfig.json` ) )
+);
+
+const isTypeCheckedApp = ( path ) =>
+	! APPS_EXCLUDED_FROM_TYPE_CHECK.includes( basename( dirname( path ) ) );
+
 const tscPackages = withTscInfo( {
-	cmd: `tsc --build ${ allPackageTsconfigs }`,
+	cmd: `tsc --build ${ packagesTsconfigs.join( ' ' ) }`,
 	id: 'type_check_packages',
 } );
 
 const tscCommands = [
+	{ cmd: 'tsc --noEmit --project build-tools/tsconfig.json', id: 'type_check_build_tools' },
 	{ cmd: 'tsc --noEmit --project client/tsconfig.json', id: 'type_check_client' },
 	{ cmd: 'tsc --noEmit --project test/e2e/tsconfig.json', id: 'type_check_tests' },
+	...appsTsconfigs.filter( isTypeCheckedApp ).map( ( path ) => ( {
+		cmd: `tsc --noEmit --project ${ path }`,
+		id: `type_check_apps_${ basename( dirname( path ) ) }`,
+	} ) ),
 ].map( withTscInfo );
 
 // When Jest runs without --maxWorkers, each instance of Jest will try to use all
@@ -68,7 +90,7 @@ const testApps = withUnitTestInfo( 'test-apps --maxWorkers=1 --workerIdleMemoryL
 
 const testWorkspaces = {
 	name: 'yarn',
-	args: 'workspaces foreach -A --verbose --parallel run storybook --ci --smoke-test',
+	args: 'workspaces foreach -A --verbose --parallel run storybook:start --ci --smoke-test',
 	testId: 'check_storybook',
 };
 

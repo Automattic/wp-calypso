@@ -1,6 +1,6 @@
-import { eye } from '@automattic/components/src/icons';
-import { Icon, people, starEmpty, chevronRight, postContent } from '@wordpress/icons';
-import { numberFormat, translate } from 'i18n-calypso';
+import { formatNumber } from '@automattic/number-formatters';
+import { Icon, starEmpty } from '@wordpress/icons';
+import { translate } from 'i18n-calypso';
 import { capitalize } from 'lodash';
 import moment from 'moment';
 import memoizeLast from 'calypso/lib/memoize-last';
@@ -76,7 +76,7 @@ function addTooltipData( chartTab, item, period ) {
 		case 'opens_count':
 			tooltipData.push( {
 				label: translate( 'Opens' ),
-				value: numberFormat( item.value ),
+				value: formatNumber( item.value ),
 				className: 'is-opens',
 				icon: <Icon className="gridicon" icon={ starEmpty } />,
 			} );
@@ -84,60 +84,20 @@ function addTooltipData( chartTab, item, period ) {
 		case 'unique_opens_count':
 			tooltipData.push( {
 				label: translate( 'Unique opens' ),
-				value: numberFormat( item.value ),
+				value: formatNumber( item.value ),
 				className: 'is-unqiue-opens',
 				icon: <Icon className="gridicon" icon={ starEmpty } />,
 			} );
 			break;
-		default:
+		case 'clicks_count':
 			tooltipData.push( {
-				label: translate( 'Views' ),
-				value: numberFormat( item.data.views ),
-				className: 'is-views',
-				icon: <Icon className="gridicon" icon={ eye } />,
+				label: translate( 'Clicks' ),
+				value: formatNumber( item.value ),
+				className: 'is-clicks',
+				icon: <Icon className="gridicon" icon={ starEmpty } />,
 			} );
-			tooltipData.push( {
-				label: translate( 'Visitors' ),
-				value: numberFormat( item.data.visitors ),
-				className: 'is-visitors',
-				icon: <Icon className="gridicon" icon={ people } />,
-			} );
-			tooltipData.push( {
-				label: translate( 'Views Per Visitor' ),
-				value: numberFormat( item.data.views / item.data.visitors, { decimals: 2 } ),
-				className: 'is-views-per-visitor',
-				icon: <Icon className="gridicon" icon={ chevronRight } />,
-			} );
-
-			if ( item.data.post_titles && item.data.post_titles.length ) {
-				// only show two post titles
-				if ( item.data.post_titles.length > 2 ) {
-					tooltipData.push( {
-						label: translate( 'Posts Published' ),
-						value: numberFormat( item.data.post_titles.length ),
-						className: 'is-published-nolist',
-						icon: <Icon className="gridicon" icon={ postContent } />,
-					} );
-				} else {
-					tooltipData.push( {
-						label:
-							translate( 'Post Published', 'Posts Published', {
-								textOnly: true,
-								count: item.data.post_titles.length,
-							} ) + ':',
-						className: 'is-published',
-						icon: <Icon className="gridicon" icon={ postContent } />,
-						value: '',
-					} );
-					item.data.post_titles.forEach( ( post_title ) => {
-						tooltipData.push( {
-							className: 'is-published-item',
-							label: post_title,
-						} );
-					} );
-				}
-			}
 			break;
+		default:
 	}
 
 	return { ...item, tooltipData };

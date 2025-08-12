@@ -1,5 +1,8 @@
 /*
-    Global styles for Stepper framework
+	Global styles for Stepper framework
+	PLEASE AVOID ADDING FLOW OR STEP STYLES HERE.
+	IN CASE OF STEPS, PLEASE ADD THEM TO THE STEP'S OWN STYLE.SCSS.
+	IN CASE OF FLOWS, PLEASE ADD THEM TO THE FLOW'S OWN STYLE.SCSS.
 */
 @import "@automattic/calypso-color-schemes";
 @import "@automattic/typography/styles/fonts";
@@ -11,14 +14,6 @@
  * Importers styles
  */
 @import "calypso/blocks/import/style/base";
-
-/**
- * General onboarding styling
- */
-body {
-	--color-body-background: #fdfdfd;
-	background-color: var(--color-body-background);
-}
 
 body,
 button {
@@ -64,16 +59,21 @@ button {
 	}
 }
 
+.step-route:has(.step-container-v2) {
+	.signup-header {
+		display: none;
+	}
+}
+
 /**
  * Site Setup
  */
-.new-hosted-site,
 .site-setup:not(:has(.step-container-v2)),
-.onboarding.goals,
-.onboarding.design-setup,
+.onboarding.goals:not(:has(.step-container-v2)),
+.onboarding.design-setup:not(:has(.step-container-v2)),
 .onboarding.design-choices:not(:has(.step-container-v2)),
-.onboarding.difm-starting-point,
-.site-migration,
+.onboarding.difm-starting-point:not(:has(.step-container-v2)),
+.site-migration:not(:has(.step-container-v2)),
 .migration,
 .plugin-bundle,
 .newsletter-setup,
@@ -98,8 +98,9 @@ button {
 .hundred-year-domain,
 .entrepreneur,
 .generate-content,
-.processing,
-.create-site {
+.playground:not(:has(.step-container-v2)),
+.processing:not(:has(.step-container-v2)),
+.create-site:not(:has(.step-container-v2)) {
 	box-sizing: border-box;
 
 	.wpcom-loading__boot {
@@ -119,7 +120,7 @@ button {
 			&.courses,
 			&.site-picker,
 			&.new-or-existing-site,
-			&.domains:not(.copy-site):not(.onboarding) {
+			&.domains:not(.copy-site):not(.ai-site-builder):not(.domain-upsell):not(.onboarding):not(.newsletter):not(.readymade-template):not(.reblogging):not(.start-writing) {
 				margin-top: -60px;
 			}
 		}
@@ -188,28 +189,30 @@ button {
 		}
 	}
 
-	// While we don't standardize all Calypso interfaces, we need to override this for onboarding flows #79851
-	.components-button.is-primary {
-		border-radius: 4px;
-		font-size: 0.875rem;
-		font-weight: 500;
-		justify-content: center;
+	&:not(:has(.wpcom-domain-search-v2)) {
+		// While we don't standardize all Calypso interfaces, we need to override this for onboarding flows #79851
+		.components-button.is-primary {
+			border-radius: 4px;
+			font-size: 0.875rem;
+			font-weight: 500;
+			justify-content: center;
 
-		&[disabled],
-		&:disabled,
-		&.disabled {
-			color: #fff;
-			background-color: var(--studio-wordpress-blue-20);
-			border-color: var(--studio-wordpress-blue-20);
+			&[disabled],
+			&:disabled,
+			&.disabled {
+				color: #fff;
+				background-color: var(--studio-wordpress-blue-20);
+				border-color: var(--studio-wordpress-blue-20);
+			}
 		}
-	}
 
-	.components-button.is-link {
-		color: var(--color-accent);
+		.components-button.is-link {
+			color: var(--color-accent);
 
-		&:hover:not(:disabled):not(.disabled),
-		&:focus:not(:disabled):not(.disabled) {
-			color: var(--color-neutral-70);
+			&:hover:not(:disabled):not(.disabled),
+			&:focus:not(:disabled):not(.disabled) {
+				color: var(--color-neutral-70);
+			}
 		}
 	}
 

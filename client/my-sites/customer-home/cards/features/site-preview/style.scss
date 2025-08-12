@@ -41,7 +41,6 @@
 				max-width: 357%;
 				transform: scale(0.28);
 				transform-origin: top left;
-				translate: 0 -10px;
 			}
 
 			.home-site-preview__thumbnail-placeholder {
@@ -87,13 +86,11 @@
 			}
 
 			.home-site-preview__info-domain {
-				text-overflow: ellipsis;
-				overflow: hidden;
-				font-size: rem(14px);
-				color: var(--studio-gray-60);
+				font-size: $font-body-small;
+				color: var(--color-text-subtle);
 
-				&:hover {
-					text-decoration: underline;
+				span {
+					display: block;
 				}
 			}
 		}

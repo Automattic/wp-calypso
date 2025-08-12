@@ -5,6 +5,7 @@ import {
 	isBiennially,
 	isTriennially,
 } from '@automattic/calypso-products';
+import colorStudio from '@automattic/color-studio';
 import { Gridicon, MaterialIcon } from '@automattic/components';
 import {
 	Button,
@@ -22,19 +23,24 @@ import {
 	useTransactionStatus,
 	TransactionStatus,
 } from '@automattic/composite-checkout';
+import { formatCurrency } from '@automattic/number-formatters';
+import { Step } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	styled,
 	joinClasses,
 	getContactDetailsType,
 	ContactDetailsType,
+	RestorableProductsProvider,
 } from '@automattic/wpcom-checkout';
-import { keyframes } from '@emotion/react';
+import { css, keyframes } from '@emotion/react';
+import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
-import { formatCurrency, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
 import Loading from 'calypso/components/loading';
+import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import {
 	hasGoogleApps,
@@ -59,6 +65,10 @@ import { prepareDomainContactValidationRequest } from 'calypso/my-sites/checkout
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import SitePreview from 'calypso/my-sites/customer-home/cards/features/site-preview';
 import useOneDollarOfferTrack from 'calypso/my-sites/plans/hooks/use-onedollar-offer-track';
+import {
+	useStreamlinedPriceExperiment,
+	isStreamlinedPriceCheckoutTreatment,
+} from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
 import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -68,6 +78,7 @@ import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selector
 import { getWpComDomainBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useUpdateCachedContactDetails } from '../hooks/use-cached-contact-details';
+import { useCheckoutHelpCenter } from '../hooks/use-checkout-help-center';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import { validateContactDetails } from '../lib/contact-validation';
 import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-details-for-checkout';
@@ -83,7 +94,9 @@ import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
 import { GoogleDomainsCopy } from './google-transfers-copy';
 import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-sidebar-plan-upsell';
+import { LeaveCheckoutModal, useCheckoutLeaveModal } from './leave-checkout-modal';
 import BeforeSubmitCheckoutHeader from './payment-method-step';
+import { PaymentMethodFilter } from './payment-methods-filter';
 import SecondaryCartPromotions from './secondary-cart-promotions';
 import WPCheckoutOrderReview, { CouponFieldArea } from './wp-checkout-order-review';
 import {
@@ -177,7 +190,7 @@ function ConditionalContactDetailsMessage( {
 
 function LoadingSidebarContent() {
 	return (
-		<LoadingSidebar>
+		<LoadingSidebar className="checkout-loading-sidebar">
 			<SideBarLoadingCopy />
 			<LoadingCheckoutSummaryFeaturesList />
 			<LoadingFooter>
@@ -279,6 +292,7 @@ function CheckoutSidebarNudge( {
 	const hasMonthlyProduct = responseCart?.products?.some( isMonthlyProduct );
 	const isPurchaseRenewal = responseCart?.products?.some?.( ( product ) => product.is_renewal );
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
+	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
 
 	const domainWithoutPlanInCartOrSite =
 		areThereDomainProductsInCart && ! hasPlan( responseCart ) && ! siteHasPaidPlan( selectedSite );
@@ -293,7 +307,11 @@ function CheckoutSidebarNudge( {
 
 	if ( isDIFMInCart ) {
 		return (
-			<CheckoutSidebarNudgeWrapper>
+			<CheckoutSidebarNudgeWrapper
+				isStreamlinedPrice={ isStreamlinedPriceCheckoutTreatment(
+					streamlinedPriceExperimentAssignment
+				) }
+			>
 				<CheckoutNextSteps responseCart={ responseCart } />
 			</CheckoutSidebarNudgeWrapper>
 		);
@@ -305,7 +323,11 @@ function CheckoutSidebarNudge( {
 	 */
 
 	return (
-		<CheckoutSidebarNudgeWrapper>
+		<CheckoutSidebarNudgeWrapper
+			isStreamlinedPrice={ isStreamlinedPriceCheckoutTreatment(
+				streamlinedPriceExperimentAssignment
+			) }
+		>
 			{ ! ( productsWithVariants.length > 1 ) && (
 				<>
 					<CheckoutSidebarPlanUpsell />
@@ -332,6 +354,8 @@ export default function CheckoutMainContent( {
 	isLoggedOutCart,
 	onPageLoadError,
 	paymentMethods,
+	areStoredCardsFiltered,
+	isBusinessCardsFilterEmpty,
 	removeProductFromCart,
 	showErrorMessageBriefly,
 	siteId,
@@ -353,6 +377,8 @@ export default function CheckoutMainContent( {
 	isLoggedOutCart: boolean;
 	onPageLoadError: CheckoutPageErrorCallback;
 	paymentMethods: PaymentMethod[];
+	areStoredCardsFiltered?: boolean;
+	isBusinessCardsFilterEmpty?: boolean;
 	removeProductFromCart: RemoveProductFromCart;
 	showErrorMessageBriefly: ( error: string ) => void;
 	siteId: number | undefined;
@@ -371,10 +397,18 @@ export default function CheckoutMainContent( {
 		applyCoupon,
 		updateLocation,
 		replaceProductInCart,
+		addProductsToCart,
 		isPendingUpdate: isCartPendingUpdate,
 		removeCoupon,
 		couponStatus,
 	} = useShoppingCart( cartKey );
+
+	const leaveModalProps = useCheckoutLeaveModal( { siteUrl: siteUrl ?? '' } );
+
+	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
+	const isStreamlinedPrice = isStreamlinedPriceCheckoutTreatment(
+		streamlinedPriceExperimentAssignment
+	);
 
 	const searchParams = new URLSearchParams( window.location.search );
 	const isDIFMInCart = hasDIFMProduct( responseCart );
@@ -489,6 +523,11 @@ export default function CheckoutMainContent( {
 
 	useOneDollarOfferTrack( siteId, 'checkout' );
 
+	const isStepContainerV2 = useInitialIsInStepContainerV2FlowContext();
+	const isLargeViewport = useViewportMatch( 'large', '>=' );
+
+	const { helpCenterButtonCopy, helpCenterButtonLink, toggleHelpCenter } = useCheckoutHelpCenter();
+
 	if ( ! checkoutActions ) {
 		return null;
 	}
@@ -500,14 +539,22 @@ export default function CheckoutMainContent( {
 	} = checkoutActions;
 
 	if ( transactionStatus === TransactionStatus.COMPLETE ) {
+		if ( isStepContainerV2 ) {
+			return (
+				<>
+					<PerformanceTrackerStop />
+					<Step.Loading />
+				</>
+			);
+		}
+
+		const headingText = translate( 'Almost there—we’re currently finalizing your order.' );
+
 		return (
 			<WPCheckoutCompletedWrapper>
 				<WPCheckoutCompletedMainContent>
 					<PerformanceTrackerStop />
-					<Loading
-						className="checkout__pending-content"
-						title={ translate( "Almost there – we're currently finalizing your order." ) }
-					/>
+					<Loading className="checkout__pending-content" title={ headingText } />
 				</WPCheckoutCompletedMainContent>
 			</WPCheckoutCompletedWrapper>
 		);
@@ -556,59 +603,81 @@ export default function CheckoutMainContent( {
 		return true;
 	};
 
-	return (
-		<WPCheckoutWrapper>
-			<WPCheckoutSidebarContent>
-				{ isLoading && <LoadingSidebarContent /> }
-				{ ! isLoading && (
-					<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
-						<CheckoutErrorBoundary
-							errorMessage={ translate( 'Sorry, there was an error loading this information.' ) }
-							onError={ onSummaryError }
+	const checkoutSummary = (
+		<WPCheckoutSidebarContent className="checkout-sidebar-content">
+			{ isLoading && <LoadingSidebarContent /> }
+			{ ! isLoading && (
+				<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
+					<CheckoutErrorBoundary
+						errorMessage={ translate( 'Sorry, there was an error loading this information.' ) }
+						onError={ onSummaryError }
+					>
+						<CheckoutSummaryTitleLink
+							className="checkout__summary-button"
+							onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }
 						>
-							<CheckoutSummaryTitleLink onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }>
-								<CheckoutSummaryTitleContent>
-									<CheckoutSummaryTitle>
+							<CheckoutSummaryTitleContent className="checkout__summary-title">
+								<CheckoutSummaryTitle>
+									{ ! isStepContainerV2 && (
 										<CheckoutSummaryTitleIcon icon="info-outline" size={ 20 } />
-										{ translate( 'Purchase Details' ) }
-										<CheckoutSummaryTitleToggle icon="keyboard_arrow_down" />
-									</CheckoutSummaryTitle>
-									<CheckoutSummaryTitlePrice className="wp-checkout__total-price">
-										{ formatCurrency( responseCart.total_cost_integer, responseCart.currency, {
-											isSmallestUnit: true,
-											stripZeros: true,
-										} ) }
-									</CheckoutSummaryTitlePrice>
-								</CheckoutSummaryTitleContent>
-							</CheckoutSummaryTitleLink>
+									) }
+									{ translate( 'Purchase Details' ) }
+									<CheckoutSummaryTitleToggle icon="keyboard_arrow_down" />
+								</CheckoutSummaryTitle>
+								<CheckoutSummaryTitlePrice className="wp-checkout__total-price">
+									{ formatCurrency( responseCart.total_cost_integer, responseCart.currency, {
+										isSmallestUnit: true,
+										stripZeros: true,
+									} ) }
+								</CheckoutSummaryTitlePrice>
+							</CheckoutSummaryTitleContent>
+						</CheckoutSummaryTitleLink>
 
-							<CheckoutSummaryBody className="checkout__summary-body">
-								{ shouldShowSitePreview && (
-									<div className="checkout-site-preview">
-										<SitePreviewWrapper>
-											<SitePreview showEditSite={ false } showSiteDetails={ false } />
-										</SitePreviewWrapper>
-									</div>
-								) }
+						<CheckoutSummaryBody className="checkout__summary-body">
+							{ shouldShowSitePreview && (
+								<div className="checkout-site-preview">
+									<SitePreviewWrapper>
+										<SitePreview showEditSite={ false } showSiteDetails={ false } />
+									</SitePreviewWrapper>
+								</div>
+							) }
 
+							{ isStreamlinedPrice ? (
+								<WPCheckoutOrderSummary siteId={ siteId } />
+							) : (
 								<WPCheckoutOrderSummary
 									siteId={ siteId }
 									onChangeSelection={ changeSelection }
 									showFeaturesList
 								/>
-								<CheckoutSidebarNudge
-									addItemToCart={ addItemToCart }
-									areThereDomainProductsInCart={ areThereDomainProductsInCart }
-								/>
-							</CheckoutSummaryBody>
-						</CheckoutErrorBoundary>
-					</CheckoutSummaryArea>
-				) }
-			</WPCheckoutSidebarContent>
+							) }
+							<CheckoutSidebarNudge
+								addItemToCart={ addItemToCart }
+								areThereDomainProductsInCart={ areThereDomainProductsInCart }
+							/>
+						</CheckoutSummaryBody>
+					</CheckoutErrorBoundary>
+				</CheckoutSummaryArea>
+			) }
+		</WPCheckoutSidebarContent>
+	);
 
-			<WPCheckoutMainContent>
+	const checkoutMainContent = (
+		<RestorableProductsProvider>
+			<WPCheckoutMainContent
+				className="checkout-main-content"
+				isStreamlinedPrice={ isStreamlinedPrice }
+			>
 				<CheckoutOrderBanner />
-				<WPCheckoutTitle>{ translate( 'Checkout' ) }</WPCheckoutTitle>
+				{ isStepContainerV2 ? (
+					<Step.Heading
+						text={ translate( 'Checkout' ) }
+						align="left"
+						size={ ! isLargeViewport ? 'small' : undefined }
+					/>
+				) : (
+					<WPCheckoutTitle>{ translate( 'Checkout' ) }</WPCheckoutTitle>
+				) }
 				<CheckoutStepGroup loadingHeader={ loadingHeader } onStepChanged={ onStepChanged }>
 					<PerformanceTrackerStop />
 					{ infoMessage }
@@ -624,6 +693,7 @@ export default function CheckoutMainContent( {
 							<WPCheckoutOrderReview
 								removeProductFromCart={ removeProductFromCart }
 								replaceProductInCart={ replaceProductInCart }
+								addProductsToCart={ addProductsToCart }
 								couponFieldStateProps={ couponFieldStateProps }
 								removeCouponAndClearField={ removeCouponAndClearField }
 								isCouponFieldVisible={ isCouponFieldVisible }
@@ -746,7 +816,15 @@ export default function CheckoutMainContent( {
 						/>
 					) }
 					<PaymentMethodStep
-						activeStepHeader={ <GoogleDomainsCopy responseCart={ responseCart } /> }
+						activeStepHeader={
+							<>
+								<GoogleDomainsCopy responseCart={ responseCart } />
+								<PaymentMethodFilter
+									areStoredCardsFiltered={ areStoredCardsFiltered }
+									isBusinessCardsFilterEmpty={ isBusinessCardsFilterEmpty }
+								/>
+							</>
+						}
 						canEditStep={ canEditPaymentStep() }
 						editButtonText={ String( translate( 'Edit' ) ) }
 						editButtonAriaLabel={ String( translate( 'Edit the payment method' ) ) }
@@ -795,9 +873,233 @@ export default function CheckoutMainContent( {
 					/>
 				</CheckoutStepGroup>
 			</WPCheckoutMainContent>
-		</WPCheckoutWrapper>
+		</RestorableProductsProvider>
+	);
+
+	if ( ! isStepContainerV2 ) {
+		return (
+			<WPCheckoutWrapper
+				className="checkout-wrapper"
+				isLargeViewport={ isLargeViewport }
+				isStreamlinedPrice={ isStreamlinedPriceCheckoutTreatment(
+					streamlinedPriceExperimentAssignment
+				) }
+			>
+				{ checkoutSummary }
+				{ checkoutMainContent }
+			</WPCheckoutWrapper>
+		);
+	}
+
+	return (
+		<StepContainerV2CheckoutFixer
+			isLargeViewport={ isLargeViewport }
+			isStreamlinedPrice={ isStreamlinedPriceCheckoutTreatment(
+				streamlinedPriceExperimentAssignment
+			) }
+		>
+			<Step.TwoColumnLayout
+				firstColumnWidth={ 8 }
+				secondColumnWidth={ 4 }
+				topBar={ ( { isLargeViewport } ) => {
+					const topBar = (
+						<Step.TopBar
+							leftElement={ <Step.BackButton onClick={ leaveModalProps.clickClose } /> }
+							rightElement={
+								<span className="checkout-skip-button">
+									{ helpCenterButtonCopy && <label>{ helpCenterButtonCopy }</label> }
+									<Step.LinkButton onClick={ toggleHelpCenter }>
+										{ helpCenterButtonLink }
+									</Step.LinkButton>
+								</span>
+							}
+						/>
+					);
+
+					if ( isLargeViewport ) {
+						return <div className="checkout-top-bar-wrapper">{ topBar }</div>;
+					}
+
+					return (
+						<>
+							{ topBar }
+							{ checkoutSummary }
+						</>
+					);
+				} }
+			>
+				{ ( { isLargeViewport } ) => {
+					if ( isLargeViewport ) {
+						return (
+							<>
+								{ checkoutMainContent }
+								{ checkoutSummary }
+							</>
+						);
+					}
+
+					return checkoutMainContent;
+				} }
+			</Step.TwoColumnLayout>
+			<LeaveCheckoutModal { ...leaveModalProps } />
+		</StepContainerV2CheckoutFixer>
 	);
 }
+
+const StepContainerV2CheckoutFixer = styled.div< {
+	isLargeViewport: boolean;
+	isStreamlinedPrice: boolean;
+} >`
+	background: ${ colorStudio.colors[ 'White' ] };
+
+	// This shouldn't exist. It's a hack to make the top bar appear on top of the checkout sidebar, which extends from the top of the page.
+	.checkout-top-bar-wrapper {
+		position: relative;
+		z-index: 1;
+	}
+
+	.checkout-skip-button {
+		label {
+			display: none;
+
+			@media ( ${ ( props ) => props.theme.breakpoints.bigPhoneUp } ) {
+				display: inline;
+			}
+		}
+	}
+
+	.checkout-sidebar-plan-upsell {
+		margin-inline: 0;
+		max-width: 100%;
+	}
+
+	${ ( props ) =>
+		! props.isLargeViewport &&
+		css`
+			.checkout-sidebar-content {
+				margin-top: 0;
+			}
+
+			.checkout__summary-button {
+				border-bottom: none;
+			}
+
+			.checkout__summary-body {
+				padding: var( --step-container-v2-content-block-padding )
+					var( --step-container-v2-content-inline-padding );
+				max-width: 100%;
+			}
+
+			.checkout__summary-features {
+				padding: 0;
+				padding-bottom: 24px;
+				width: 100%;
+			}
+
+			.checkout__summary-title {
+				margin: 0;
+				padding: 1rem var( --step-container-v2-content-inline-padding );
+				max-width: 100%;
+			}
+
+			.checkout-sidebar-plan-upsell {
+				margin: 0;
+				max-width: 100%;
+			}
+
+			.checkout-main-content {
+				margin: 0;
+				padding: 0;
+				max-width: 100%;
+			}
+
+			.wp-checkout__review-order-step,
+			.checkout-contact-form-step,
+			.checkout__payment-method-step,
+			.checkout-terms-and-checkboxes,
+			.checkout-steps__step-complete-content,
+			.checkout-steps__step-content {
+				padding-inline: 0;
+			}
+
+			.wp-checkout__review-order-step {
+				padding-block: 2rem;
+			}
+
+			.checkout-steps__submit-button-wrapper {
+				max-width: 100%;
+				padding-inline: var( --step-container-v2-content-inline-padding );
+
+				@media ( ${ props.theme.breakpoints.tabletUp } ) {
+					padding-inline: 0;
+				}
+			}
+
+			.checkout-steps__submit-footer-wrapper {
+				min-height: auto;
+			}
+		` }
+
+	${ ( props ) =>
+		props.isLargeViewport &&
+		css`
+			.checkout-main-content {
+				padding: 0;
+				margin-top: 1rem;
+				max-width: 100%;
+			}
+
+			.checkout-sidebar-content {
+				--left-padding: 4rem;
+				padding: 0 0 0 var( --left-padding );
+				background: none;
+				position: relative;
+				height: 100%;
+
+				&:before {
+					content: '';
+					display: block;
+					background: var( --color-neutral-0 );
+					position: fixed;
+					top: calc( var( --step-container-v2-top-bar-height ) * -1 );
+					transform: translateX( calc( var( --left-padding ) * -1 ) );
+					width: 100vw;
+					bottom: 0;
+				}
+			}
+
+			.checkout__summary-area,
+			.checkout__summary-body {
+				max-width: 100%;
+			}
+
+			.checkout__summary-area,
+			.checkout-loading-sidebar {
+				min-width: 300px;
+			}
+
+			.checkout__summary-body {
+				margin: 0;
+			}
+
+			.checkout__summary-features {
+				padding-top: 32px;
+			}
+		` }
+	${ ( props ) =>
+		props.isLargeViewport &&
+		props.isStreamlinedPrice &&
+		css`
+			div:has( .checkout-sidebar-content ) {
+				position: sticky;
+				top: 32px;
+			}
+			.checkout__summary-area,
+			.checkout-loading-sidebar {
+				min-width: 384px;
+			}
+		` }
+`;
 
 const CheckoutSummary = styled.div`
 	box-sizing: border-box;
@@ -940,7 +1242,9 @@ const CheckoutSummaryBody = styled.div`
 	}
 `;
 
-const CheckoutSidebarNudgeWrapper = styled.div`
+const CheckoutSidebarNudgeWrapper = styled.div< {
+	isStreamlinedPrice: boolean;
+} >`
 	display: flex;
 	flex-direction: column;
 	grid-area: nudge;
@@ -948,6 +1252,11 @@ const CheckoutSidebarNudgeWrapper = styled.div`
 
 	& > * {
 		max-width: 288px;
+		${ ( props ) =>
+			props.isStreamlinedPrice &&
+			css`
+				max-width: 384px;
+			` }
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
@@ -992,7 +1301,7 @@ function CheckoutTermsAndCheckboxes( {
 	const translate = useTranslate();
 
 	return (
-		<CheckoutTermsAndCheckboxesWrapper>
+		<CheckoutTermsAndCheckboxesWrapper className="checkout-terms-and-checkboxes">
 			<BeforeSubmitCheckoutHeader />
 
 			{ hasMarketplaceProduct && (
@@ -1001,7 +1310,7 @@ function CheckoutTermsAndCheckboxes( {
 					onChange={ setIs3PDAccountConsentAccepted }
 					isSubmitted={ isSubmitted }
 					message={ translate(
-						'You agree that an account may be created on a third party developer’s site related to the products you have purchased.'
+						"You agree that an account may be created on a third party developer's site related to the products you have purchased."
 					) }
 				/>
 			) }
@@ -1155,7 +1464,11 @@ const SubmitButtonHeaderWrapper = styled.div`
 	}
 `;
 
-const WPCheckoutWrapper = styled.div`
+const WPCheckoutWrapper = styled.div< {
+	isLargeViewport?: boolean;
+	isStreamlinedPrice?: boolean;
+} >`
+	background: ${ colorStudio.colors[ 'White' ] };
 	display: grid;
 	grid-template-rows: auto;
 	grid-template-columns: 1fr;
@@ -1168,6 +1481,11 @@ const WPCheckoutWrapper = styled.div`
 		grid-template-columns: 1fr minmax( 500px, 688px ) 376px 1fr;
 		grid-template-areas: 'main-content main-content sidebar-content sidebar-content';
 		justify-items: end;
+		${ ( props ) =>
+			props.isStreamlinedPrice &&
+			css`
+				grid-template-columns: 1fr minmax( 500px, 688px ) 475px 1fr;
+			` }
 	}
 
 	& > * {
@@ -1182,9 +1500,29 @@ const WPCheckoutWrapper = styled.div`
 	& *:focus {
 		outline: ${ ( props ) => props.theme.colors.outline } solid 2px;
 	}
+
+	${ ( props ) =>
+		props.isStreamlinedPrice &&
+		css`
+			.checkout__summary-area {
+				position: sticky;
+				top: 32px;
+			}
+		` }
+	${ ( props ) =>
+		props.isStreamlinedPrice &&
+		props.isLargeViewport &&
+		css`
+			.checkout__summary-body,
+			.checkout-loading-sidebar,
+			.checkout-sidebar-plan-upsell {
+				min-width: 384px;
+			}
+		` }
 `;
 
 const WPCheckoutCompletedWrapper = styled.div`
+	background: ${ colorStudio.colors[ 'White' ] };
 	display: flex;
 	justify-content: center;
 	justify-items: center;
@@ -1201,7 +1539,9 @@ const WPCheckoutCompletedWrapper = styled.div`
 	}
 `;
 
-const WPCheckoutMainContent = styled.div`
+const WPCheckoutMainContent = styled.div< {
+	isStreamlinedPrice?: boolean;
+} >`
 	grid-area: main-content;
 	margin-top: 50px;
 	min-height: 100vh;
@@ -1220,10 +1560,29 @@ const WPCheckoutMainContent = styled.div`
 			padding: 0 24px 0 64px;
 		}
 	}
-
-	.editor-checkout-modal & {
-		margin-top: 20px;
-	}
+	${ ( props ) =>
+		props.isStreamlinedPrice &&
+		css`
+			.checkout-line-item .checkout-line-item__remove-product {
+				font-size: 14px;
+			}
+			.form-fieldset.contact-details-form-fields .form__hidden-input a {
+				font-weight: 500;
+				text-decoration: none;
+				color: ${ props.theme.colors.textColorDark };
+				font-size: 14px;
+			}
+			.form-fieldset.contact-details-form-fields .contact-details-form-fields__row,
+			.form-fieldset.contact-details-form-fields .custom-form-fieldsets__address-fields {
+				gap: 10px;
+			}
+			.form-fieldset.contact-details-form-fields .contact-details-form-fields__field {
+				margin-bottom: 10px;
+			}
+			.checkout-terms-and-checkboxes a {
+				color: ${ props.theme.colors.textColorDark };
+			}
+		` }
 `;
 
 const WPCheckoutCompletedMainContent = styled.div`
@@ -1250,14 +1609,6 @@ const WPCheckoutSidebarContent = styled.div`
 
 		.rtl & {
 			padding: 144px 64px 0 24px;
-		}
-	}
-
-	.editor-checkout-modal & {
-		padding: 68px 24px 144px 64px;
-
-		.rtl & {
-			padding: 68px 64px 0 24px;
 		}
 	}
 `;

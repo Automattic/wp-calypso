@@ -173,11 +173,9 @@ const JetpackBenefitsStep: React.FC< Props > = ( props ) => {
 				align="center"
 				isSecondary
 			/>
-
 			{ hasBenefitsToShow( productSlug ) && (
 				<JetpackBenefits siteId={ siteId } productSlug={ productSlug } />
 			) }
-
 			{ isJetpackPlanSlug( productSlug ) && ( // show general benefits for plans
 				<div className="cancel-jetpack-form__jetpack-general-benefits">
 					<p className="cancel-jetpack-form__jetpack-general-benefits-title">

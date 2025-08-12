@@ -2,6 +2,7 @@
 // the 'calypso/a8c-for-agencies/lib/permission.ts' file
 // to include the necessary permissions for the new routes.
 export const A4A_LANDING_LINK = '/landing';
+export const A4A_FEEDBACK_LINK = '/feedback';
 export const A4A_OVERVIEW_LINK = '/overview';
 export const A4A_SITES_LINK = '/sites';
 export const A4A_SITES_LINK_NEEDS_ATTENTION = '/sites?issue_types=all_issues';
@@ -15,18 +16,16 @@ export const A4A_PLUGINS_LINK = '/plugins';
 export const A4A_MARKETPLACE_LINK = '/marketplace';
 export const A4A_MARKETPLACE_PRODUCTS_LINK = `${ A4A_MARKETPLACE_LINK }/products`;
 export const A4A_MARKETPLACE_HOSTING_LINK = `${ A4A_MARKETPLACE_LINK }/hosting`;
+export const A4A_MARKETPLACE_HOSTING_REFER_ENTERPRISE_LINK = `${ A4A_MARKETPLACE_HOSTING_LINK }/refer-enterprise-hosting`;
 export const A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK = `${ A4A_MARKETPLACE_HOSTING_LINK }/pressable`;
 export const A4A_MARKETPLACE_HOSTING_WPCOM_LINK = `${ A4A_MARKETPLACE_HOSTING_LINK }/wpcom`;
 export const A4A_MARKETPLACE_CHECKOUT_LINK = `${ A4A_MARKETPLACE_LINK }/checkout`;
 export const A4A_MARKETPLACE_ASSIGN_LICENSE_LINK = `${ A4A_MARKETPLACE_LINK }/assign-license`;
 export const A4A_PURCHASES_LINK = '/purchases';
 export const A4A_REFERRALS_LINK = '/referrals';
-export const A4A_REFERRALS_BANK_DETAILS_LINK = '/referrals/bank-details';
-export const A4A_REFERRALS_COMMISSIONS_LINK = '/referrals/commissions';
 export const A4A_REFERRALS_DASHBOARD = `${ A4A_REFERRALS_LINK }/dashboard`;
 export const A4A_REFERRALS_PAYMENT_SETTINGS = `${ A4A_REFERRALS_LINK }/payment-settings`;
 export const A4A_REFERRALS_FAQ = `${ A4A_REFERRALS_LINK }/faq`;
-export const A4A_REFERRALS_ARCHIVED = `${ A4A_REFERRALS_LINK }/archived`;
 export const A4A_LICENSES_LINK = `${ A4A_PURCHASES_LINK }/licenses`;
 export const A4A_UNASSIGNED_LICENSES_LINK = `${ A4A_LICENSES_LINK }/unassigned`;
 export const A4A_BILLING_LINK = `${ A4A_PURCHASES_LINK }/billing`;
@@ -54,6 +53,7 @@ export const A4A_WOOPAYMENTS_LINK = '/woopayments';
 export const A4A_WOOPAYMENTS_DASHBOARD_LINK = `${ A4A_WOOPAYMENTS_LINK }/dashboard`;
 export const A4A_WOOPAYMENTS_PAYMENT_SETTINGS_LINK = `${ A4A_WOOPAYMENTS_LINK }/payment-settings`;
 export const A4A_WOOPAYMENTS_SITE_SETUP_LINK = `${ A4A_WOOPAYMENTS_LINK }/site-setup`;
+export const A4A_WOOPAYMENTS_OVERVIEW_LINK = `${ A4A_WOOPAYMENTS_LINK }/overview`;
 
 // Client
 export const A4A_CLIENT_LANDING_LINK = '/client/landing';

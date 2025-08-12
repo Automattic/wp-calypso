@@ -44,10 +44,29 @@ export async function validatePublishedFormFields(
  * @param {Locator} parentFormBlock Locator for the parent form block.
  * @param {FieldLabelDetails} details The details for labeling.
  */
-export async function labelFormFieldBlock( parentFormBlock: Locator, details: FieldLabelDetails ) {
-	const { blockName, accessibleLabelName, labelText } = details;
-	await parentFormBlock
+export async function labelFormFieldBlock(
+	parentFormBlock: Locator,
+	{
+		blockName,
+		accessibleLabelName,
+		labelText,
+		parentBlockName = undefined,
+		isRefactor = false,
+	}: {
+		blockName: string;
+		accessibleLabelName: string;
+		labelText: string;
+		parentBlockName?: string;
+		isRefactor?: boolean;
+	}
+) {
+	let scope = parentFormBlock;
+	if ( isRefactor && parentBlockName ) {
+		scope = scope.locator( makeSelectorFromBlockName( parentBlockName ) );
+	}
+	await scope
 		.locator( makeSelectorFromBlockName( blockName ) )
 		.getByRole( 'textbox', { name: accessibleLabelName } )
+		.first()
 		.fill( labelText );
 }

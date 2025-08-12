@@ -1,6 +1,7 @@
 import { isFreeHostingTrial, isDotComPlan } from '@automattic/calypso-products';
 import { NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import { useDispatch, useSelect, dispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
 import { useIsValidWooPartner } from 'calypso/landing/stepper/hooks/use-is-valid-woo-partner';
@@ -14,39 +15,83 @@ import {
 	setSignupCompleteSiteID,
 	getSignupCompleteSlug,
 } from 'calypso/signup/storageUtils';
-import { useDispatch as reduxUseDispatch, useSelector } from 'calypso/state';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
-import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE } from '../../../stores';
+import { getCurrentQueryParams } from '../../../utils/get-current-query-params';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
-import { Flow, ProvidedDependencies } from '../../internals/types';
-import type { OnboardSelect } from '@automattic/data-stores';
-import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import './new-hosted-site-flow.scss';
+import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
+import type { FlowV2, SubmitHandler } from '../../internals/types';
+import type { DomainSuggestion, OnboardActions, OnboardSelect } from '@automattic/data-stores';
+import type { Store } from 'redux';
 
-function useShowDomainStep(): boolean {
-	const query = useQuery();
-	return query.has( 'showDomainStep' );
+async function initialize( reduxStore: Store ) {
+	const { resetOnboardStore, setPlanCartItem } = dispatch( ONBOARD_STORE ) as OnboardActions;
+
+	await resetOnboardStore();
+
+	const queryParams = getCurrentQueryParams();
+	const showDomainStep = queryParams.has( 'showDomainStep' );
+	const productSlug = queryParams.get( 'plan' );
+
+	const eligibleForFreeHostingTrial = isUserEligibleForFreeHostingTrial( reduxStore.getState() );
+
+	const steps = [];
+
+	if ( showDomainStep ) {
+		steps.push( STEPS.UNIFIED_DOMAINS );
+	}
+
+	const utmSource = queryParams.get( 'utm_source' );
+
+	if ( ! productSlug || ! isDotComPlan( { product_slug: productSlug } ) ) {
+		steps.push( STEPS.UNIFIED_PLANS, STEPS.TRIAL_ACKNOWLEDGE );
+	} else if ( ! isFreeHostingTrial( productSlug ) ) {
+		await setPlanCartItem( {
+			product_slug: productSlug,
+			extra: {
+				...( utmSource && {
+					hideProductVariants: utmSource === 'wordcamp',
+				} ),
+			},
+		} );
+	} else if ( eligibleForFreeHostingTrial ) {
+		await setPlanCartItem( {
+			product_slug: productSlug,
+			extra: {
+				...( utmSource && {
+					hideProductVariants: utmSource === 'wordcamp',
+				} ),
+			},
+		} );
+
+		steps.push( STEPS.TRIAL_ACKNOWLEDGE, STEPS.UNIFIED_PLANS );
+	} else {
+		steps.push( STEPS.UNIFIED_PLANS );
+	}
+
+	steps.push( STEPS.SITE_CREATION_STEP, STEPS.PROCESSING );
+
+	return stepsWithRequiredLogin( steps );
 }
 
-const hosting: Flow = {
+const hosting: FlowV2< typeof initialize > = {
 	name: NEW_HOSTED_SITE_FLOW,
 	__experimentalUseBuiltinAuth: true,
 	isSignupFlow: true,
-	useSteps() {
-		const showDomainStep = useShowDomainStep();
-		return stepsWithRequiredLogin( [
-			...( showDomainStep ? [ STEPS.DOMAINS ] : [] ),
-			STEPS.PLANS,
-			STEPS.TRIAL_ACKNOWLEDGE,
-			STEPS.SITE_CREATION_STEP,
-			STEPS.PROCESSING,
-		] );
-	},
+	initialize,
 	useStepNavigation( _currentStepSlug, navigate ) {
-		const { setPlanCartItem, resetCouponCode } = useDispatch( ONBOARD_STORE );
+		const {
+			setDomain,
+			setDomainCartItem,
+			setDomainCartItems,
+			setPlanCartItem,
+			setProductCartItems,
+			setSiteUrl,
+			setSignupDomainOrigin,
+			resetCouponCode,
+		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
 		const planCartItem = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 			[]
@@ -57,157 +102,143 @@ const hosting: Flow = {
 		);
 
 		const query = useQuery();
-		const queryParams = Object.fromEntries( query );
-		const plan = queryParams.plan;
+
+		const utmSource = query.get( 'utm_source' );
+		const studioSiteId = query.get( 'studioSiteId' );
+
 		const flowName = this.name;
-		const showDomainStep = useShowDomainStep();
+		const showDomainStep = query.has( 'showDomainStep' );
 		const isWooPartner = useIsValidWooPartner();
 
-		const goBack = () => {
-			if ( _currentStepSlug === 'plans' ) {
-				if ( showDomainStep ) {
-					return navigate( 'domains' );
-				}
-				return window.location.assign( '/sites?hosting-flow=true' );
+		const getGoBack = () => {
+			if ( _currentStepSlug === STEPS.UNIFIED_PLANS.slug && showDomainStep ) {
+				return () => navigate( STEPS.UNIFIED_DOMAINS.slug );
 			}
-			if ( _currentStepSlug === 'trialAcknowledge' ) {
-				navigate( 'plans' );
+
+			if ( _currentStepSlug === STEPS.TRIAL_ACKNOWLEDGE.slug ) {
+				return () => navigate( STEPS.UNIFIED_PLANS.slug );
 			}
 		};
 
-		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
-			if ( providedDependencies.siteId ) {
-				setSignupCompleteSiteID( providedDependencies.siteId );
-			}
+		const submit: SubmitHandler< typeof initialize > = ( submittedStep ) => {
+			const { slug, providedDependencies } = submittedStep;
 
-			switch ( _currentStepSlug ) {
-				case 'domains': {
-					// If the plan is already supplied as a query param, add it to cart, and skip plans step
-					if ( plan && isDotComPlan( { product_slug: plan } ) ) {
-						setPlanCartItem( {
-							product_slug: plan,
-						} );
-						return navigate( 'create-site' );
+			switch ( slug ) {
+				case STEPS.UNIFIED_DOMAINS.slug: {
+					setSiteUrl( providedDependencies.siteUrl as string );
+					setDomain( providedDependencies.suggestion as DomainSuggestion );
+					setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
+					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
+					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
+
+					if ( planCartItem ) {
+						return navigate( STEPS.SITE_CREATION_STEP.slug );
 					}
-					return navigate( 'plans' );
+
+					return navigate( STEPS.UNIFIED_PLANS.slug );
 				}
-				case 'plans': {
-					const productSlug = ( providedDependencies.plan as MinimalRequestCartProduct )
-						.product_slug;
+				case STEPS.UNIFIED_PLANS.slug: {
+					const cartItems = providedDependencies.cartItems;
+					const [ pickedPlan, ...extraProducts ] = cartItems ?? [];
+
+					if ( ! pickedPlan ) {
+						throw new Error( 'No product slug found' );
+					}
 
 					setPlanCartItem( {
-						product_slug: productSlug,
+						...pickedPlan,
 						extra: {
-							...( queryParams?.utm_source && {
-								hideProductVariants: queryParams.utm_source === 'wordcamp',
+							...pickedPlan.extra,
+							...( utmSource && {
+								hideProductVariants: utmSource === 'wordcamp',
 							} ),
 						},
 					} );
 
-					if ( isFreeHostingTrial( productSlug ) ) {
-						return navigate( 'trialAcknowledge' );
+					setProductCartItems( extraProducts.filter( ( product ) => product !== null ) );
+
+					if ( isFreeHostingTrial( pickedPlan.product_slug ) ) {
+						return navigate( STEPS.TRIAL_ACKNOWLEDGE.slug );
 					}
 
 					setSignupCompleteFlowName( flowName );
-					return navigate( 'create-site' );
+					return navigate( STEPS.SITE_CREATION_STEP.slug );
 				}
 
-				case 'trialAcknowledge': {
-					return navigate( 'create-site' );
+				case STEPS.TRIAL_ACKNOWLEDGE.slug: {
+					return navigate( STEPS.SITE_CREATION_STEP.slug );
 				}
 
-				case 'create-site':
-					return navigate( 'processing' );
+				case STEPS.SITE_CREATION_STEP.slug:
+					return navigate( STEPS.PROCESSING.slug );
 
-				case 'processing': {
-					const hasStudioSyncSiteId = queryParams.studioSiteId;
-					const siteId = providedDependencies.siteId || getSignupCompleteSiteID();
-					const siteSlug = providedDependencies.siteSlug || getSignupCompleteSlug();
-					const destinationParams: Record< string, string > = {
-						siteId,
-					};
-					if ( hasStudioSyncSiteId ) {
-						destinationParams[ 'redirect_to' ] = addQueryArgs( `/home/${ siteId }`, {
-							studioSiteId: queryParams.studioSiteId,
-						} );
-					} else if ( isWooPartner ) {
-						// For partners, we'll redirect to the WooCommerce admin page
-						destinationParams[
-							'redirect_to'
-						] = `https://${ siteSlug }/wp-admin/admin.php?page=wc-admin`;
-					}
-					// Purchasing Business or Commerce plans will trigger an atomic transfer, so go to stepper flow where we wait for it to complete.
-					const destination = addQueryArgs( '/setup/transferring-hosted-site', destinationParams );
-
-					// If the product is a free trial, record the trial start event for ad tracking.
-					if ( planCartItem && isFreeHostingTrial( planCartItem?.product_slug ) ) {
-						recordFreeHostingTrialStarted( flowName );
-					}
-
-					if ( providedDependencies.goToCheckout ) {
-						persistSignupDestination( destination );
-						setSignupCompleteSlug( providedDependencies?.siteSlug );
-						setSignupCompleteFlowName( flowName );
-
-						couponCode && resetCouponCode();
-						return window.location.assign(
-							addQueryArgs(
-								`/checkout/${ encodeURIComponent(
-									( providedDependencies?.siteSlug as string ) ?? ''
-								) }`,
-								{ redirect_to: destination, coupon: couponCode }
-							)
+				case STEPS.PROCESSING.slug: {
+					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {
+						const siteId = providedDependencies.siteId || getSignupCompleteSiteID();
+						setSignupCompleteSiteID( providedDependencies.siteId );
+						const siteSlug = providedDependencies.siteSlug || getSignupCompleteSlug();
+						const destinationParams: Record< string, string > = {
+							siteId,
+						};
+						if ( studioSiteId ) {
+							destinationParams[ 'redirect_to' ] = addQueryArgs( `/home/${ siteId }`, {
+								studioSiteId,
+							} );
+						} else if ( isWooPartner ) {
+							// For partners, we'll redirect to the WooCommerce admin page
+							destinationParams[
+								'redirect_to'
+							] = `https://${ siteSlug }/wp-admin/admin.php?page=wc-admin`;
+						}
+						// Purchasing Business or Commerce plans will trigger an atomic transfer, so go to stepper flow where we wait for it to complete.
+						const destination = addQueryArgs(
+							'/setup/transferring-hosted-site',
+							destinationParams
 						);
-					}
 
-					return navigate( 'plans' );
+						// If the product is a free trial, record the trial start event for ad tracking.
+						if ( planCartItem && isFreeHostingTrial( planCartItem?.product_slug ) ) {
+							recordFreeHostingTrialStarted( flowName );
+						}
+
+						if ( providedDependencies.goToCheckout ) {
+							persistSignupDestination( destination );
+							setSignupCompleteSlug( providedDependencies?.siteSlug );
+							setSignupCompleteFlowName( flowName );
+
+							couponCode && resetCouponCode();
+							return window.location.assign(
+								addQueryArgs(
+									`/checkout/${ encodeURIComponent(
+										( providedDependencies?.siteSlug as string ) ?? ''
+									) }`,
+									{ redirect_to: destination, coupon: couponCode }
+								)
+							);
+						}
+
+						return navigate( STEPS.UNIFIED_PLANS.slug );
+					}
 				}
 			}
 		};
 
 		return {
-			goBack,
+			goBack: getGoBack(),
 			submit,
 		};
 	},
-	useSideEffect( currentStepSlug, navigate ) {
-		const dispatch = reduxUseDispatch();
-		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
-		const query = useQuery();
-		const isEligible = useSelector( isUserEligibleForFreeHostingTrial );
-		// Support for FlowV1 and V2, remove useSteps once FlowV1 is removed.
-		const steps = 'useSteps' in this ? this.useSteps() : this.getSteps?.();
-
-		const queryParams = Object.fromEntries( query );
+	useSideEffect( currentStepSlug ) {
+		const studioSiteId = useQuery().get( 'studioSiteId' );
 
 		useEffect( () => {
-			if ( currentStepSlug === 'trialAcknowledge' && ! isEligible && steps?.[ 0 ] ) {
-				// Go to the first step if the user is not eligible for a free hosting trial
-				navigate( steps[ 0 ].slug );
-			}
-		}, [ isEligible, currentStepSlug, navigate, steps ] );
-
-		useEffect( () => {
-			if ( queryParams.studioSiteId ) {
+			if ( studioSiteId ) {
 				recordTracksEvent( 'calypso_studio_sync_step', {
 					flow: NEW_HOSTED_SITE_FLOW,
 					step: currentStepSlug,
 				} );
 			}
-			// eslint-disable-next-line react-hooks/exhaustive-deps
-		}, [ currentStepSlug ] );
-
-		useEffect(
-			() => {
-				if ( ! currentStepSlug ) {
-					resetOnboardStore();
-				}
-				dispatch( setSelectedSiteId( null ) );
-			},
-			// We only need to reset the store and/or check the `campaign` param when the flow is mounted.
-			// eslint-disable-next-line react-hooks/exhaustive-deps
-			[]
-		);
+		}, [ currentStepSlug, studioSiteId ] );
 	},
 };
 

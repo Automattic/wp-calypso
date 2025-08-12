@@ -64,7 +64,7 @@ export function Purchases() {
 					navigationItems={ [] }
 					title={ titles.sectionTitle }
 					subtitle={ translate(
-						'View, manage, or cancel your plan and other purchases for this site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						'Manage your site’s plan and upgrades. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						{
 							components: {
 								learnMoreLink: <InlineSupportLink supportContext="purchases" showIcon={ false } />,

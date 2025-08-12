@@ -33,6 +33,7 @@ interface MasterbarItemProps {
 	hasGlobalBorderStyle?: boolean;
 	as?: React.ComponentType;
 	variant?: string;
+	ariaLabel?: string;
 }
 
 class MasterbarItem extends Component< MasterbarItemProps > {
@@ -51,6 +52,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		hasGlobalBorderStyle: PropTypes.bool,
 		as: PropTypes.elementType,
 		variant: PropTypes.string,
+		ariaLabel: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -141,6 +143,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 								{ item.label }
 							</a>
 						) }
+						{ ! item.onClick && ! item.url && <div>{ item.label }</div> }
 					</li>
 				) )
 			)
@@ -227,6 +230,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 			onTouchStart: this.preload,
 			onMouseEnter: this.preload,
 			disabled: this.props.disabled,
+			'aria-label': this.props.ariaLabel,
 		};
 
 		return (
@@ -251,6 +255,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 	}
 }
 
+// eslint-disable-next-line react/display-name
 export default forwardRef< HTMLButtonElement | HTMLAnchorElement, MasterbarItemProps >(
 	( props, ref ) => <MasterbarItem innerRef={ ref } { ...props } />
 );

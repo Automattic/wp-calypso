@@ -1,6 +1,7 @@
 import { Spinner } from '@automattic/components';
+import { formatCurrency } from '@automattic/number-formatters';
 import styled from '@emotion/styled';
-import { formatCurrency, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { QRCodeSVG } from 'qrcode.react';
 
 const WeChatConfirmationDiv = styled.dialog`
@@ -50,13 +51,10 @@ export function WeChatConfirmation( {
 					}
 				) }
 			</p>
-
 			<div className="we-chat-confirmation__qrcode">
 				<QRCodeSVG value={ redirectUrl } />
 			</div>
-
 			<Spinner size={ 30 } />
-
 			<p className="we-chat-confirmation__qrcode-redirect">
 				{ translate(
 					'On mobile? To open and pay with the WeChat Pay app directly, {{a}}click here{{/a}}.',

@@ -33,37 +33,6 @@
 						fill: var(--studio-purple-40);
 					}
 				}
-
-				&.help-center-more-resources__new-releases {
-					padding: 0;
-					font-size: $font-body-small !important;
-					color: var(--studio-gray-100);
-					text-decoration: none !important;
-					width: 100%;
-
-					> svg:first-child {
-						fill: var(--studio-blue-70);
-					}
-
-					span {
-						color: var(--studio-gray-100);
-						flex-grow: 0;
-						text-decoration: none;
-					}
-
-					.help-center-more-resources__new-releases_dot {
-						align-self: auto;
-						background: none;
-						color: var(--color-masterbar-unread-dot-background);
-						padding-left: 8px;
-					}
-
-					&:active,
-					&:focus {
-						box-shadow: none;
-						outline: $help-center-blue solid 2px;
-					}
-				}
 			}
 		}
 	}

@@ -107,14 +107,7 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 		let feedbackInboxPage: FeedbackInboxPage;
 
 		beforeAll( async function () {
-			if ( accountName === 'jetpackAtomicEcommPlanUser' ) {
-				// eCommerce plan sites attempt to load Calypso, but with
-				// third-party cookies disabled the fallback route to WP-Admin
-				// kicks in after some time.
-				await testAccount.authenticate( page, { url: /wp-admin/ } );
-			} else {
-				await testAccount.authenticate( page );
-			}
+			await testAccount.authenticate( page );
 
 			// Atomic tests sites might have local users, so the Jetpack SSO login will
 			// show up when visiting the Jetpack dashboard directly. We can bypass it if
@@ -144,7 +137,10 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 			const searchAndClickFolderWithResult = async () => {
 				await feedbackInboxPage.clearSearch();
 				await feedbackInboxPage.searchResponses( formData.email );
-				await page.getByRole( 'tab', { name: /(Inbox|Spam) 1/ } ).click( { timeout: 4 * 1000 } );
+				await page
+					.getByRole( 'tab', { name: /(Inbox|Spam) 1/ } )
+					.or( page.getByRole( 'radio', { name: /(Inbox|Spam)\s*\(\s*1\s*\)/ } ) )
+					.click( { timeout: 4000 } );
 			};
 
 			const MAX_ATTEMPTS = 3;

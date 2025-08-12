@@ -1,7 +1,7 @@
 @import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-
+@import "@wordpress/base-styles/variables";
 
 .is-section-themes {
 	&.theme-default.color-scheme {
@@ -9,8 +9,6 @@
 	}
 
 	&.is-global-sidebar-visible {
-		background: var(--studio-gray-0);
-
 		.layout__content {
 			min-height: 100vh;
 			@media screen and (min-width: 782px) {
@@ -21,10 +19,14 @@
 		.layout__primary > * {
 			background-color: var(--color-surface);
 			border-radius: 8px; /* stylelint-disable-line scales/radii */
-			box-shadow: 0 0 17.4px 0 rgba(0, 0, 0, 0.05);
 			height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom));
 			max-width: none;
 			padding-bottom: 0;
+
+			@include break-small {
+				border: 1px solid $gray-200;
+			}
+
 			@media (max-width: $break-mobile), (max-height: $break-mobile) {
 				overflow-y: auto;
 				overflow-x: hidden;
@@ -42,8 +44,8 @@
 			}
 		}
 		.navigation-header {
-			padding-top: 24px;
-			padding-inline: 48px;
+			padding-block: 16px;
+			padding-inline: 24px;
 			@media (max-width: 402px) {
 				padding-inline: 24px;
 			}
@@ -88,13 +90,14 @@
 			.theme-showcase__all-themes {
 				@media (min-width: $break-mobile) and (min-height: $break-mobile) {
 					overflow-y: auto;
+					overflow-x: hidden;
 				}
 				height: 100%;
 			}
 
 			.themes__controls .theme__search-container, .themes__controls .themes__filters, .themes__showcase .theme-showcase__all-themes {
 				margin: 0 auto;
-				padding-inline: 48px;
+				padding-inline: 24px;
 				@media (max-width: 402px) {
 					padding-inline: 24px;
 				}
@@ -103,7 +106,7 @@
 		}
 	}
 
-	.main > .notice.is-error {
+	.main > .calypso-notice.is-error {
 		margin-top: 24px;
 		margin-bottom: 0;
 	}
@@ -160,6 +163,24 @@
 				padding: 0 32px;
 			}
 		}
+
+		.theme__search {
+			.theme__search-input {
+				.components-input-control__container {
+					background-color: #fff;
+				}
+
+				.components-input-base {
+					height: 55px;
+				}
+			}
+
+			.theme__tier-select {
+				.components-input-control__container {
+					height: 55px;
+				}
+			}
+		}
 	}
 
 	.search-themes-card {
@@ -198,7 +219,7 @@
 		}
 
 		.keyed-suggestions__value.is-selected {
-			background-color: rgba(var(--studio-blue-rgb), 0.1);
+			background-color: color-mix(in srgb, var(--studio-blue) 10%, transparent);
 		}
 	}
 
@@ -218,8 +239,12 @@
 		&:not(.is-pressed) {
 			color: var(--studio-blue-90);
 
+			&::before {
+				background-color: transparent;
+			}
+
 			&:hover::before {
-				background-color: rgba(var(--studio-blue-rgb), 0.1);
+				background-color: color-mix(in srgb, var(--studio-blue) 10%, transparent);
 			}
 		}
 
@@ -298,7 +323,7 @@
 
 			.select-dropdown__item:not(.is-selected):hover {
 				color: var(--studio-blue-90);
-				background-color: rgba(var(--studio-blue-rgb), 0.1);
+				background-color: color-mix(in srgb, var(--studio-blue) 10%, transparent);
 			}
 		}
 	}
@@ -411,6 +436,20 @@
 			white-space: nowrap;
 		}
 	}
+
+	.theme__tier-select {
+		min-width: 220px;
+		width: 220px;
+
+		@media ( max-width: $break-small ) {
+			width: 100%;
+			min-width: auto;
+		}
+
+		.components-custom-select-control__item.is-selected {
+			background-color: var(--wp-components-color-gray-300, #ddd);
+		}
+	}
 }
 
 .themes:not(.is-logged-out) {
@@ -502,8 +541,8 @@
 		}
 
 		@include break-medium {
-			padding-top: 24px;
-			margin-top: -24px;
+			padding-top: 16px;
+			margin-top: -16px;
 			box-sizing: content-box;
 
 			.is-global-sidebar-visible & {

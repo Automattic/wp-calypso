@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { MaterialIcon, ExternalLink } from '@automattic/components';
+import { MaterialIcon, ExternalLink, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from '@automattic/urls';
 import i18n from 'i18n-calypso';
@@ -40,7 +40,6 @@ import {
 	FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
 	FEATURE_BLANK,
 	FEATURE_BLOG_DOMAIN,
-	FEATURE_CLOUDFLARE_ANALYTICS,
 	FEATURE_COLLECT_PAYMENTS_V2,
 	FEATURE_COMMUNITY_SUPPORT,
 	FEATURE_CRM_INTEGRATED_WITH_WORDPRESS,
@@ -124,6 +123,7 @@ import {
 	FEATURE_UNLIMITED_PRODUCTS_SERVICES,
 	FEATURE_UNLIMITED_STORAGE,
 	FEATURE_UPLOAD_PLUGINS,
+	FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL,
 	FEATURE_UPLOAD_THEMES,
 	FEATURE_UPLOAD_THEMES_PLUGINS,
 	FEATURE_VIDEO_HOSTING_V2,
@@ -192,6 +192,8 @@ import {
 	FEATURE_SECURITY_MALWARE,
 	FEATURE_SECURITY_DDOS,
 	FEATURE_DEV_TOOLS,
+	FEATURE_DEV_TOOLS_SSH,
+	FEATURE_DEV_TOOLS_GIT,
 	FEATURE_WP_UPDATES,
 	FEATURE_MULTI_SITE,
 	FEATURE_SELL_SHIP,
@@ -335,6 +337,7 @@ import {
 	FEATURE_SUPPORT,
 	FEATURE_SUPPORT_FROM_EXPERTS,
 	FEATURE_AI_ASSISTANT,
+	FEATURE_ADVANCED_FORM_FEATURES_JP,
 } from './constants';
 import type { FeatureList } from './types';
 
@@ -542,11 +545,6 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_UPLOAD_THEMES_PLUGINS,
 		getTitle: () => i18n.translate( 'Upload themes and plugins' ),
 		getDescription: () => i18n.translate( 'Upload custom themes and plugins on your site.' ),
-	},
-
-	[ FEATURE_CLOUDFLARE_ANALYTICS ]: {
-		getSlug: () => FEATURE_CLOUDFLARE_ANALYTICS,
-		getTitle: () => i18n.translate( 'Cloudflare Web Analytics' ),
 	},
 
 	[ FEATURE_FREE_THEMES_SIGNUP ]: {
@@ -795,6 +793,58 @@ const FEATURES_LIST: FeatureList = {
 				'Plugins extend the functionality of your site and ' +
 					'open up endless possibilities for presenting your content and interacting with visitors.'
 			),
+	},
+	[ FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL ]: {
+		getSlug: () => FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL,
+		getTitle: () => {
+			return (
+				<span style={ { fontWeight: 500 } }>
+					{ i18n.translate( 'Install plugins' ) }
+					<Gridicon
+						icon="info-outline"
+						size={ 16 }
+						style={ {
+							fill: 'var(--studio-blue-50)',
+							verticalAlign: 'middle',
+							marginLeft: '2px',
+							marginTop: '-2px',
+						} }
+					/>
+				</span>
+			);
+		},
+		getDescription: () => {
+			const result = i18n.fixMe( {
+				text: 'Until %(date)s: Unlock plugin access on new Personal and Premium plans.',
+				newCopy: i18n.translate(
+					// translators: %(date)s is a date string in the format of "August 25, 2025"
+					'Until %(date)s: Unlock plugin access on new Personal and Premium plans.',
+					{
+						args: {
+							date: new Intl.DateTimeFormat( i18n.getLocaleSlug() || 'en-US', {
+								month: 'long',
+								day: 'numeric',
+								year: 'numeric',
+							} ).format( new Date( '2025-08-25' ) ),
+						},
+					}
+				),
+				oldCopy: i18n.translate(
+					// translators: %(date)s is a date string in the format of "August 25, 2025"
+					'One-time offer: Install plugins available in all paid plans. Valid until %(date)s!',
+					{
+						args: {
+							date: new Intl.DateTimeFormat( i18n.getLocaleSlug() || 'en-US', {
+								month: 'long',
+								day: 'numeric',
+								year: 'numeric',
+							} ).format( new Date( '2025-08-25' ) ),
+						},
+					}
+				),
+			} );
+			return result || '';
+		},
 	},
 
 	[ FEATURE_INSTALL_PLUGINS ]: {
@@ -1942,6 +1992,19 @@ const FEATURES_LIST: FeatureList = {
 		getDescription: () =>
 			i18n.translate( 'Use familiar developer tools to manage and deploy your site.' ),
 	},
+	[ FEATURE_DEV_TOOLS_SSH ]: {
+		getSlug: () => FEATURE_DEV_TOOLS_SSH,
+		getTitle: () => i18n.translate( 'SFTP/SSH, WP-CLI' ),
+		getDescription: () => i18n.translate( 'Access your site via SSH and manage it with WP-CLI.' ),
+	},
+	[ FEATURE_DEV_TOOLS_GIT ]: {
+		getSlug: () => FEATURE_DEV_TOOLS_GIT,
+		getTitle: () => i18n.translate( 'Git commands and GitHub Deployments' ),
+		getDescription: () =>
+			i18n.translate(
+				'Deploy from GitHub with a few clicks. Simple and advanced deployment modes supported.'
+			),
+	},
 	[ FEATURE_SITE_STAGING_SITES ]: {
 		getSlug: () => FEATURE_SITE_STAGING_SITES,
 		getTitle: () => i18n.translate( 'Free staging site' ),
@@ -2187,9 +2250,19 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_CONTACT_FORM_JP ]: {
 		getSlug: () => FEATURE_CONTACT_FORM_JP,
-		getTitle: () => i18n.translate( 'Contact form' ),
+		getTitle: () => i18n.translate( 'Forms' ),
 		getDescription: () =>
-			i18n.translate( 'Make it easy for your visitors to get in touch, right from your site.' ),
+			i18n.translate(
+				'Make it easy for your visitors to get in touch and create beautiful forms for any need.'
+			),
+	},
+	[ FEATURE_ADVANCED_FORM_FEATURES_JP ]: {
+		getSlug: () => FEATURE_ADVANCED_FORM_FEATURES_JP,
+		getTitle: () => i18n.translate( 'Advanced form features' ),
+		getDescription: () =>
+			i18n.translate(
+				'Build smarter forms with features like file uploads, multi-step logic, and seamless integrations.'
+			),
 	},
 	[ FEATURE_PAID_SUBSCRIBERS_JP ]: {
 		getSlug: () => FEATURE_PAID_SUBSCRIBERS_JP,
@@ -2292,9 +2365,11 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_WOOCOMMERCE_HOSTING ]: {
 		getSlug: () => FEATURE_WOOCOMMERCE_HOSTING,
-		getTitle: () => {
-			return i18n.translate( 'eCommerce tools and optimized WooCommerce hosting' );
-		},
+		getTitle: () =>
+			i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+			i18n.hasTranslation( 'eCommerce tools and optimized WooCommerce experience' )
+				? i18n.translate( 'eCommerce tools and optimized WooCommerce experience' )
+				: i18n.translate( 'eCommerce tools and optimized WooCommerce hosting' ),
 		getDescription: () =>
 			i18n.translate(
 				'Enjoy a hosting solution tailored to enhance the performance and security of sites running WooCommerce.'

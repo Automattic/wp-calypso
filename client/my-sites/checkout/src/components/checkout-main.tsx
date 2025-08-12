@@ -3,7 +3,13 @@ import { useStripe } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { CheckoutProvider, checkoutTheme } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { isValueTruthy, getContactDetailsType } from '@automattic/wpcom-checkout';
+import {
+	isValueTruthy,
+	getContactDetailsType,
+	filterAppropriatePaymentMethods,
+	translateCheckoutPaymentMethodToWpcomPaymentMethod,
+	translateCheckoutPaymentMethodToTracksPaymentMethod,
+} from '@automattic/wpcom-checkout';
 import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
 import DOMPurify from 'dompurify';
@@ -13,14 +19,11 @@ import { useCheckoutMigrationIntroductoryOfferSticker } from 'calypso/data/site-
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import useSiteDomains from 'calypso/my-sites/checkout/src/hooks/use-site-domains';
-import {
-	translateCheckoutPaymentMethodToWpcomPaymentMethod,
-	translateCheckoutPaymentMethodToTracksPaymentMethod,
-} from 'calypso/my-sites/checkout/src/lib/translate-payment-method-names';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
+import hasGravatarDomainQueryParam from 'calypso/state/selectors/has-gravatar-domain-query-param';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -40,7 +43,6 @@ import useRemoveFromCartAndRedirect from '../hooks/use-remove-from-cart-and-redi
 import { useStoredPaymentMethods } from '../hooks/use-stored-payment-methods';
 import { logStashLoadErrorEvent, logStashEvent, convertErrorToString } from '../lib/analytics';
 import existingCardProcessor from '../lib/existing-card-processor';
-import filterAppropriatePaymentMethods from '../lib/filter-appropriate-payment-methods';
 import freePurchaseProcessor from '../lib/free-purchase-processor';
 import genericRedirectProcessor from '../lib/generic-redirect-processor';
 import multiPartnerCardProcessor from '../lib/multi-partner-card-processor';
@@ -145,10 +147,12 @@ export default function CheckoutMain( {
 			return siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
 		} ) || sitelessCheckoutType === 'jetpack';
 	const isPrivate = useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
+	const isGravatarDomain = useSelector( hasGravatarDomainQueryParam );
 	const isSiteless =
 		sitelessCheckoutType === 'jetpack' ||
 		sitelessCheckoutType === 'akismet' ||
-		sitelessCheckoutType === 'marketplace';
+		sitelessCheckoutType === 'marketplace' ||
+		sitelessCheckoutType === 'a4a';
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
 	const { razorpayConfiguration, isRazorpayLoading, razorpayLoadingError } = useRazorpay();
 	const createUserAndSiteBeforeTransaction =
@@ -169,6 +173,11 @@ export default function CheckoutMain( {
 
 		if ( sitelessCheckoutType === 'marketplace' ) {
 			return marketplaceSiteSlug;
+		}
+
+		// Onboarding unified siteless checkout should return undefined to avoid using siteSlug which becomes "no-user"
+		if ( sitelessCheckoutType === 'unified' ) {
+			return undefined;
 		}
 
 		return siteSlug;
@@ -281,6 +290,7 @@ export default function CheckoutMain( {
 		connectAfterCheckout,
 		adminUrl,
 		fromSiteSlug,
+		isGravatarDomain,
 	} );
 
 	const getThankYouUrl = useCallback( () => {
@@ -348,6 +358,8 @@ export default function CheckoutMain( {
 			customizedPreviousPath
 		);
 
+	const isForBusiness = responseCart?.tax?.location?.is_for_business ?? false;
+
 	const {
 		paymentMethods: storedCards,
 		isLoading: isLoadingStoredCards,
@@ -355,8 +367,14 @@ export default function CheckoutMain( {
 	} = useStoredPaymentMethods( {
 		isLoggedOut: isLoggedOutCart,
 		type: 'card',
-		isForBusiness: responseCart ? responseCart?.tax?.location?.is_for_business : null,
+		isForBusiness,
 	} );
+
+	// If tax_location->is_for_business is set to true, then only business
+	// cards will show in Checkout. We should announce this filtering to the
+	// user which these variables will do.
+	const areStoredCardsFiltered = isForBusiness;
+	const isBusinessCardsFilterEmpty = isForBusiness && storedCards.length ? false : true;
 
 	useActOnceOnStrings( [ storedCardsError ].filter( isValueTruthy ), ( messages ) => {
 		messages.forEach( ( message ) => {
@@ -368,8 +386,11 @@ export default function CheckoutMain( {
 		} );
 	} );
 
+	const currentTaxCountryCode = responseCart.tax.location.country_code;
+
 	const paymentMethodObjects = useCreatePaymentMethods( {
 		contactDetailsType,
+		currentTaxCountryCode,
 		isStripeLoading,
 		stripeLoadingError,
 		stripeConfiguration,
@@ -536,6 +557,23 @@ export default function CheckoutMain( {
 		[ dataForProcessor, translate ]
 	);
 
+	let gravatarColors = {};
+	let gravatarFontWeights = {};
+
+	if ( isGravatarDomain ) {
+		gravatarColors = {
+			primary: '#1d4fc4',
+			primaryBorder: '#001c5f',
+			primaryOver: '#002e9b',
+			success: '#1d4fc4',
+			discount: '#1d4fc4',
+		};
+
+		gravatarFontWeights = {
+			bold: '700',
+		};
+	}
+
 	const jetpackColors = isJetpackNotAtomic
 		? {
 				primary: colors[ 'Jetpack Green' ],
@@ -548,7 +586,22 @@ export default function CheckoutMain( {
 				highlightOver: colors[ 'WordPress Blue 60' ],
 		  }
 		: {};
-	const theme = { ...checkoutTheme, colors: { ...checkoutTheme.colors, ...jetpackColors } };
+	const a4aColors =
+		sitelessCheckoutType === 'a4a'
+			? {
+					primary: colors[ 'Automattic Blue' ],
+					primaryBorder: colors[ 'Automattic Blue 80' ],
+					primaryOver: colors[ 'Automattic Blue 60' ],
+					highlight: colors[ 'Automattic Blue 50' ],
+					highlightBorder: colors[ 'Automattic Blue 80' ],
+					highlightOver: colors[ 'Automattic Blue 60' ],
+			  }
+			: {};
+	const theme = {
+		...checkoutTheme,
+		colors: { ...checkoutTheme.colors, ...gravatarColors, ...jetpackColors, ...a4aColors },
+		weights: { ...checkoutTheme.weights, ...gravatarFontWeights },
+	};
 
 	const isCheckoutV2ExperimentLoading = false;
 
@@ -714,7 +767,7 @@ export default function CheckoutMain( {
 			paymentMethodId,
 		}: {
 			transactionError: string | null;
-			paymentMethodId: string | null;
+			paymentMethodId: string | null | undefined;
 		} ) => {
 			const errorNoticeText = transactionError ? (
 				<div dangerouslySetInnerHTML={ { __html: DOMPurify.sanitize( transactionError ) } } /> // eslint-disable-line react/no-danger -- The API response can contain anchor elements that we need to parse so they are rendered properly
@@ -798,6 +851,8 @@ export default function CheckoutMain( {
 					isLoggedOutCart={ !! isLoggedOutCart }
 					onPageLoadError={ onPageLoadError }
 					paymentMethods={ paymentMethods }
+					areStoredCardsFiltered={ areStoredCardsFiltered }
+					isBusinessCardsFilterEmpty={ isBusinessCardsFilterEmpty }
 					removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
 					showErrorMessageBriefly={ showErrorMessageBriefly }
 					siteId={ updatedSiteId }

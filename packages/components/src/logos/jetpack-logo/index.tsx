@@ -89,7 +89,10 @@ export const JetpackLogo = ( {
 	if ( 24 === size ) {
 		return (
 			<svg className={ classes } height="24" width="24" viewBox="0 0 24 24" { ...props }>
-				<path d="M12,2C6.5,2,2,6.5,2,12s4.5,10,10,10s10-4.5,10-10S17.5,2,12,2z M11,14H6l5-10V14z M13,20V10h5L13,20z" />
+				<path
+					d="M12,2C6.5,2,2,6.5,2,12s4.5,10,10,10s10-4.5,10-10S17.5,2,12,2z M11,14H6l5-10V14z M13,20V10h5L13,20z"
+					{ ...( ! monochrome ? { fill: COLOR_JETPACK } : {} ) }
+				/>
 			</svg>
 		);
 	}

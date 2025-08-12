@@ -1,5 +1,5 @@
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
@@ -45,11 +45,20 @@ const AutomatedCopySite: Step = function AutomatedCopySite( { navigation } ) {
 		( select ) => select( SITE_STORE ) as SiteSelect,
 		[]
 	);
+	const instanceRef = useRef< { siteId?: number; sourceSiteId?: number } >( {} );
 
 	useEffect( () => {
 		if ( ! site?.ID || ! sourceSiteId ) {
 			return;
 		}
+		if (
+			instanceRef.current.siteId === site.ID &&
+			instanceRef.current.sourceSiteId === sourceSiteId
+		) {
+			return;
+		}
+		instanceRef.current = { siteId: site.ID, sourceSiteId };
+
 		async function initCopySite() {
 			try {
 				await wpcom.req.post( {

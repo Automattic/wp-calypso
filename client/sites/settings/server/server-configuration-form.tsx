@@ -11,11 +11,9 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import { HostingCardDescription } from 'calypso/components/hosting-card';
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
-import { useDataCenterOptions } from 'calypso/data/data-center/use-data-center-options';
-import { usePhpVersions } from 'calypso/data/php-versions/use-php-versions';
-import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
+import { getDataCenterOptions } from 'calypso/data/data-center';
+import { getPHPVersions } from 'calypso/data/php-versions';
 import { useSelector } from 'calypso/state';
 import {
 	updateAtomicPhpVersion,
@@ -31,6 +29,7 @@ import { isFetchingAtomicHostingGeoAffinity } from 'calypso/state/selectors/is-f
 import { isFetchingAtomicHostingWpVersion } from 'calypso/state/selectors/is-fetching-atomic-hosting-wp-version';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import type { DataCenterOption } from 'calypso/data/data-center/types';
 
 import './server-configuration-form.scss';
 
@@ -95,8 +94,8 @@ export default function ServerConfigurationForm( { disabled }: ServerConfigurati
 	const isPhpVersionChanged = selectedPhpVersion && selectedPhpVersion !== phpVersion;
 	const isStaticFile404Changed = selectedStaticFile404 && selectedStaticFile404 !== staticFile404;
 
-	const { recommendedValue, phpVersions } = usePhpVersions();
-	const dataCenterOptions = useDataCenterOptions();
+	const { recommendedValue, phpVersions } = getPHPVersions( siteId );
+	const dataCenterOptions = getDataCenterOptions();
 
 	const wpVersionRef = useRef< HTMLLabelElement >( null );
 	const wpVersionDropdownRef = useRef< HTMLSelectElement >( null );
@@ -109,8 +108,6 @@ export default function ServerConfigurationForm( { disabled }: ServerConfigurati
 		isGettingGeoAffinity || isGettingPhpVersion || isGettingStaticFile404 || isGettingWpVersion;
 	const isDirty = isWpVersionChanged || isPhpVersionChanged || isStaticFile404Changed;
 	const isUpdating = isUpdatingWpVersion || isUpdatingPhpVersion || isUpdatingStaticFile404;
-
-	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
 
 	useEffect( () => {
 		function scrollTo( hash: string ) {
@@ -226,12 +223,12 @@ export default function ServerConfigurationForm( { disabled }: ServerConfigurati
 		}
 
 		const displayValue = dataCenterOptions.hasOwnProperty( geoAffinity )
-			? dataCenterOptions[ geoAffinity ]
+			? dataCenterOptions[ geoAffinity as DataCenterOption ]
 			: geoAffinity;
 
 		return (
 			<FormFieldset>
-				<FormLabel>{ translate( 'Primary Data Center' ) }</FormLabel>
+				<FormLabel>{ translate( 'Primary data center' ) }</FormLabel>
 				<FormTextInput
 					className="web-server-settings-card__data-center-input"
 					value={ displayValue }
@@ -402,13 +399,8 @@ export default function ServerConfigurationForm( { disabled }: ServerConfigurati
 			<QuerySiteWpVersion siteId={ siteId } />
 			<QuerySiteStaticFile404 siteId={ siteId } />
 			<PanelCardHeading id="web-server-settings">
-				{ isUntangled ? translate( 'Server configuration' ) : translate( 'Web server settings' ) }
+				{ translate( 'Server configuration' ) }
 			</PanelCardHeading>
-			<HostingCardDescription hide={ isUntangled }>
-				{ translate(
-					'For sites with specialized needs, fine-tune how the web server runs your website.'
-				) }
-			</HostingCardDescription>
 			{ ! isLoading && getWpVersionContent() }
 			{ ! isLoading && getPhpVersionContent() }
 			{ ! isLoading && getGeoAffinityContent() }

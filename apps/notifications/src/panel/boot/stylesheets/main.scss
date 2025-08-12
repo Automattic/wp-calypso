@@ -1,3 +1,4 @@
+$notification-panel-width: 450px;
 $no-sidebar-min-page-width: 800px;
 $with-sidebar-min-page-width: 1114px;
 
@@ -17,11 +18,11 @@ $with-sidebar-min-page-width: 1114px;
 
 	.wpnc__note-list {
 		left: auto;
-		width: 400px;
+		width: $notification-panel-width; // For reader/notifications screen.
 	}
 
 	.wpnc__single-view {
-		right: 400px;
+		right: $notification-panel-width;
 		left: 10px;
 		top: 0;
 		bottom: 0;
@@ -97,7 +98,7 @@ $with-sidebar-min-page-width: 1114px;
 		color: var(--color-primary);
 	}
 
-	button {
+	button:not(.components-toggle-group-control-option-base) {
 		background-color: transparent;
 		border: none;
 		color: var(--color-primary);
@@ -242,72 +243,29 @@ $with-sidebar-min-page-width: 1114px;
 		box-sizing: border-box;
 		direction: ltr;
 		display: table; //fallback for browsers not supporting flexbox
+
+		.components-base-control {
+			padding: 6px 8px;
+		}
+	
+		.components-toggle-group-control {
+			border: 1px solid var(--wp-components-color-gray-600, #949494);
+			padding: 3px;
+
+			> div {
+				flex-basis: auto;
+			}
+		}
+
+		.components-toggle-group-control-option-base {
+			padding: 0 6px;
+			white-space: nowrap;
+			z-index: initial;
+		}
 	}
 
 	.wpnc__note-list:not(.is-note-open) .wpnc__filter {
 		border-left: 1px solid var(--color-neutral-0);
-	}
-
-	.wpnc__filter--segmented-control {
-		display: flex;
-		padding: 6px 8px;
-
-		&:focus {
-			box-shadow: 0 0 0 2px var(--color-primary-light);
-		}
-	}
-
-	.wpnc__filter--segmented-control-item {
-		background: var(--color-surface);
-		border: 1px solid var(--color-neutral-light);
-		border-right: none;
-		font-size: 13px; /* stylelint-disable-line declaration-property-unit-allowed-list */
-		height: 26px;
-		cursor: pointer;
-		user-select: none; // Makes text unselectable
-		box-sizing: border-box;
-		vertical-align: middle;
-
-		// Flexbox
-		display: flex;
-		align-items: center; // Vertically center text
-		justify-content: center; // Horizontally center text
-		flex: auto; // Fill horizontal space
-
-		&:hover {
-			color: var(--color-neutral-70);
-		}
-
-		&:focus {
-			outline: var(--color-primary-light) solid 2px;
-			outline-offset: -2px;
-		}
-
-		&:first-of-type {
-			border-top-left-radius: 4px;
-			border-bottom-left-radius: 4px;
-		}
-
-		&:last-of-type {
-			border-right: 1px solid var(--color-neutral-light);
-			border-top-right-radius: 4px;
-			border-bottom-right-radius: 4px;
-
-
-			&.selected {
-				border-right-color: var(--color-primary);
-			}
-		}
-
-		&.selected {
-			background: var(--color-primary);
-			border-color: var(--color-primary);
-			color: var(--color-text-inverted);
-
-			+ .segmented-control-item {
-				border-left-color: var(--color-primary); // Color left border on adjacent item to match active filter
-			}
-		}
 	}
 
 	.wpnc__list-view .wpnc__notes,
@@ -378,12 +336,12 @@ $with-sidebar-min-page-width: 1114px;
 		transform: translateY(-50%);
 
 		h2 {
-			font: 400 21px/24px $sans; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			font: 400 21px/24px $sans;
 			margin-bottom: 4px;
 		}
 
 		p {
-			font: 400 16px/24px $sans; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			font: 400 16px/24px $sans;
 		}
 	}
 
@@ -403,7 +361,7 @@ $with-sidebar-min-page-width: 1114px;
 		bottom: 0;
 		overflow: hidden;
 		&:not(.is-note-open) {
-			box-shadow: -3px 1px 10px -2px rgba(var(--color-neutral-70-rgb), 0.075);
+			box-shadow: -3px 1px 10px -2px color-mix(in srgb, var(--color-neutral-70) 7.5%, transparent);
 		}
 	}
 
@@ -454,7 +412,7 @@ $with-sidebar-min-page-width: 1114px;
 		}
 
 		.unread {
-			background: rgba(var(--color-primary-rgb), 0.1); // rgba is used to meet AA contrast standard
+			background: color-mix(in srgb, var(--color-primary) 10%, transparent); // rgba is used to meet AA contrast standard
 		}
 
 		.wpnc__traffic_surge .wpnc__note-icon img {
@@ -595,7 +553,7 @@ $with-sidebar-min-page-width: 1114px;
 		}
 	}
 
-	.wpnc__close-link {
+	button.wpnc__close-link {
 		color: var(--color-text-inverted);
 		margin-left: auto;
 		padding: 0 10px;
@@ -616,7 +574,7 @@ $with-sidebar-min-page-width: 1114px;
 		height: 100%;
 		left: 0;
 		right: 0;
-		box-shadow: -3px 1px 10px -2px rgba(var(--color-neutral-70-rgb), 0.075);
+		box-shadow: -3px 1px 10px -2px color-mix(in srgb, var(--color-neutral-70) 7.5%, transparent);
 
 		@media only screen and (min-width: 480px) {
 			border-left: 1px solid var(--color-neutral-0);
@@ -681,7 +639,7 @@ $with-sidebar-min-page-width: 1114px;
 		.wpnc__comment .wpnc__user p.wpnc__excerpt {
 			color: var(--color-secondary);
 			max-height: 1.5em;
-			font-size: 14px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			font-size: 14px;
 		}
 
 		.wpnc__reply {
@@ -714,7 +672,7 @@ $with-sidebar-min-page-width: 1114px;
 		}
 
 		.wpnc__note-icon .wpnc__gridicon {
-			font-size: 2em; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			font-size: 2em;
 			background-color: var(--color-neutral-10);
 			border-color: var(--color-neutral-10);
 		}
@@ -812,7 +770,7 @@ $with-sidebar-min-page-width: 1114px;
 
 			code {
 				font-family: $code;
-				font-size: 90%; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				font-size: 90%;
 				color: var(--color-neutral-50);
 				background: var(--color-neutral-0);
 				border: 1px solid var(--color-neutral-10);

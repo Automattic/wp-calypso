@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 
 import { FEATURE_WOOP, PLAN_FREE } from '@automattic/calypso-products';
 import { renderHook } from '@testing-library/react';

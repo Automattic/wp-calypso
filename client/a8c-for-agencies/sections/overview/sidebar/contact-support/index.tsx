@@ -17,7 +17,7 @@ export default function OverviewSidebarContactSupport() {
 
 	return (
 		<Button
-			className="overview__contact-support-button"
+			className="overview__sidebar-button"
 			onClick={ toggleContactForm }
 			href={ CONTACT_URL_HASH_FRAGMENT }
 		>

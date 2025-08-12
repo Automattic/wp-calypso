@@ -1,13 +1,12 @@
 import { TITAN_MAIL_YEARLY_SLUG } from '@automattic/calypso-products';
 import { Button, Card, Gridicon } from '@automattic/components';
-import { Icon } from '@wordpress/icons';
+import { Icon, tip } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import tip from 'calypso/components/domains/register-domain-step/tip';
 import EmailProductPrice from 'calypso/components/emails/email-product-price';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';

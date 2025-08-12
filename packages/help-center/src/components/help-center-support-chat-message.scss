@@ -49,7 +49,7 @@
 			border-radius: 50%;
 		}
 
-		&.has-badge {
+		&.has-unread-messages {
 			margin-right: 10px;
 		}
 
@@ -66,7 +66,7 @@
 			box-sizing: border-box;
 			min-width: 26px;
 			height: 20px;
-			font-size: 12px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			font-size: 12px;
 			background-color: $help-center-blue;
 			color: #FFF;
 		}
@@ -109,6 +109,10 @@
 				-webkit-line-clamp: 1;
 				-webkit-box-orient: vertical;
 			}
+
+			.help-center-support-chat__conversation-information-time {
+				flex: 0 0 auto;
+			}
 		}
 	}
 
@@ -120,9 +124,8 @@
 }
 .help-center-chat-history__no-results {
 	display: flex;
-    flex-direction: row;
-    justify-content: center;
-    border-top: solid 1px #C3C4C7;
-    padding-top: 20px;
+	flex-direction: row;
+	justify-content: center;
+	border-top: solid 1px #C3C4C7;
+	padding-top: 20px;
 }
-

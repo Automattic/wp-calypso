@@ -1,13 +1,31 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+
+body.is-reader-page,
+.is-reader-page .layout,
+.layout.is-section-reader,
+.layout.is-section-reader .layout__content,
+.is-section-reader {
+	background: initial;
+}
+
+// Ensure this is only applied in logged in 'global' interface.
+// Applying this more broadly breaks scrolling in logged out reader.
+.is-section-reader.is-global {
+	overflow-y: hidden;
+}
 
 body.is-section-reader {
 	div.layout.is-global-sidebar-visible {
 		.main {
-			padding: 24px;
+			&:not(.no-padding) {
+				padding: 24px;
 
-			@media (max-width: $break-small) {
-				padding: 24px 0;
+				@media (max-width: $break-small) {
+					padding: 24px 0;
+				}
 			}
 		}
 
@@ -58,8 +76,22 @@ body.is-section-reader {
 				height: 1px;
 				background: var(--color-border-secondary);
 
+				@media (max-width: $break-medium) {
+					left: 0;
+					width: 100%;
+				}
+
 				@media screen and (min-width: $break-medium) {
 					margin: 24px 0;
+				}
+			}
+		}
+
+		// For reader/search
+		main.search-stream {
+			.navigation-header {
+				&::after {
+					margin: 24px 0 0;
 				}
 			}
 		}
@@ -74,11 +106,14 @@ body.is-section-reader {
 		.layout__primary > div:not(:has(.recent-feed)) {
 			background: var(--color-surface);
 			border-radius: 8px; /* stylelint-disable-line scales/radii */
-			box-shadow: 0 0 17.4px 0 rgba(0, 0, 0, 0.05);
 			height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom));
 			overflow: hidden;
+
+			@include break-small {
+				border: 1px solid $gray-200;
+			}
 		}
-		.layout__primary > div > div:not(.tags__header) {
+		.layout__primary > div > div:not(.tags__header):not(.reader-notifications__3pc-notice) {
 			height: 100%;
 			overflow-y: auto;
 			overflow-x: hidden;
@@ -228,7 +263,7 @@ body.is-section-reader {
 		font-weight: 600;
 		line-height: 1.6;
 		border-top: 1px solid var(--color-neutral-10);
-		background: linear-gradient(to bottom, rgba(var(--color-neutral-0-rgb), 1) 0%, rgba(var(--color-neutral-0-rgb), 0) 100%);
+		background: linear-gradient(to bottom, color-mix(in srgb, var(--color-neutral-0) 100%, transparent) 0%, color-mix(in srgb, var(--color-neutral-0) 0%, transparent) 100%);
 
 		.avatar {
 			display: none;
@@ -297,17 +332,6 @@ body.is-section-reader {
 
 	@media (min-width: 661px) and (max-width: 790px) {
 		@include hide-content-accessibly();
-	}
-}
-
-.is-group-reader .reader-notifications__panel {
-	@media only screen and (min-width: 1114px) {
-		.wpnc__main {
-			width: calc(100vw - 310px);
-			.wpnc__note-list {
-				left: 0;
-			}
-		}
 	}
 }
 
@@ -415,19 +439,6 @@ body.is-section-reader {
 	opacity: 0;
 }
 
-.is-group-reader .main .empty-content:not(.conversations__empty-content),
-.is-reader-page .main .empty-content:not(.conversations__empty-content) {
-	padding-top: 0;
-
-	.empty-content__title {
-		margin-top: -10px;
-	}
-
-	&.stream__empty {
-		margin-top: 40px;
-	}
-}
-
 .is-group-reader .empty-content__action,
 .is-reader-page .empty-content__action {
 	@include breakpoint-deprecated( "<480px" ) {
@@ -519,13 +530,13 @@ body.is-section-reader {
 	text-align: center;
 
 	h2 {
-		font-size: 18px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		font-size: 18px;
 		font-weight: 500;
 		margin-bottom: 10px;
 	}
 
 	h1 {
-		font-size: 40px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		font-size: 40px;
 		font-weight: 500;
 	}
 }

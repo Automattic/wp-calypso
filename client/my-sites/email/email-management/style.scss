@@ -274,6 +274,10 @@
 	}
 }
 
+.email-plan-mailboxes-list__mailbox-list {
+	margin-top: 15px;
+}
+
 .email-plan-mailboxes-list__mailbox-list-item.card.is-compact {
 	flex-direction: column;
 	display: flex;
@@ -396,7 +400,6 @@
  * Context: All Domain Management
  */
 .wpcom-site .hosting-dashboard-layout.sites-dashboard .hosting-dashboard-item-view__content .context-all-domain-management,
-.is-section-email,
 /* For Domain and Email related pages under site context. */
 .context-all-domain-management {
 	&.main {
@@ -428,6 +431,7 @@
 	/* Mailboxes */
 	.email-plan-mailboxes-list {
 		&__mailbox-list {
+			margin-top: 0;
 			padding-bottom: 1.875rem;
 
 			@include break-medium {

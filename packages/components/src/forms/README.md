@@ -31,7 +31,16 @@ The `FormInputValidation` component is used to display a validation notice to th
 
 ### FormLabel
 
-The `FormLabel` component is a light wrapper around the traditional HTML label. It provides standardized styling and the ability to display "optional" and "required" subtext alongside the label.
+The `FormLabel` component is a light wrapper around the traditional HTML label. It provides standardized styling and the ability to display "optional" and "required" subtext alongside the label. It also has options to enable styling like @wordpress/component labels.
+
+#### Props
+
+| Prop                  | Type    | Default | Description                                                                                                                          |
+| --------------------- | ------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `optional`            | boolean | false   | Displays an "Optional" subtext next to the label.                                                                                    |
+| `required`            | boolean | false   | Displays a "Required" subtext next to the label.                                                                                     |
+| `hasCoreStyles`       | boolean | false   | Applies label styles matching those for core @wordpress/components labels, including uppercase text, lighter font weight, and color. |
+| `hasCoreStylesNoCaps` | boolean | false   | Applies core label styles but keeps the label text in its original case (not uppercase).                                             |
 
 ### General guidelines
 

@@ -27,7 +27,6 @@ export default function MigrationsCommissionsEmptyState( {
 	return (
 		<StepSection heading={ translate( 'View your migrated websites and commisions right here.' ) }>
 			<StepSectionItem
-				isNewLayout
 				heading={ translate( "We'll tag the sites we moved for you once they're transferred." ) }
 				description={ preventWidows(
 					translate(
@@ -36,7 +35,6 @@ export default function MigrationsCommissionsEmptyState( {
 				) }
 			/>
 			<StepSectionItem
-				isNewLayout
 				heading={ translate( 'Tag your transferred sites so we can pay you for them.' ) }
 				description={
 					<>

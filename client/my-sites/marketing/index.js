@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import {
@@ -12,6 +13,8 @@ import {
 	redirectSharingButtons,
 	sharingButtons,
 	traffic,
+	jetpackTraffic,
+	toolsMarketing,
 } from './controller';
 
 export default function () {
@@ -20,7 +23,7 @@ export default function () {
 	} );
 
 	page( '/marketing/ultimate-traffic-guide*', function redirectToWPCoursesPage() {
-		window.location.replace( 'https://wordpress.com/learn/courses/intro-to-seo/' );
+		window.location.replace( localizeUrl( 'https://wordpress.com/support/courses/seo/' ) );
 	} );
 
 	const paths = [
@@ -58,6 +61,15 @@ export default function () {
 		siteSelection,
 		navigation,
 		traffic,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/marketing/jetpack-traffic/:domain',
+		siteSelection,
+		navigation,
+		jetpackTraffic,
 		layout,
 		makeLayout,
 		clientRender
@@ -79,6 +91,15 @@ export default function () {
 		navigation,
 		marketingTools,
 		layout,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/marketing/tools-marketing/:domain',
+		siteSelection,
+		navigation,
+		toolsMarketing,
 		makeLayout,
 		clientRender
 	);

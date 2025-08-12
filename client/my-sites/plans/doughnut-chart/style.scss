@@ -8,10 +8,10 @@
 	}
 	--width: 80px;
 	--line-width: 9px;
-	--main-color: var(--color-accent-rgb);
+	--main-color: var(--color-accent);
 
 	&.blue {
-		--main-color: var(--studio-blue-60-rgb);
+		--main-color: var(--studio-blue-60);
 	}
 
 	background-color: var(--color-surface);
@@ -24,7 +24,7 @@
 	font-size: $font-title-medium;
 	border-radius: 50%;
 	box-shadow:
-		inset 0 0 0 var(--line-width) rgba(var(--main-color), 0.1),
+		inset 0 0 0 var(--line-width) color-mix(in srgb, var(--main-color) 10%, transparent),
 		inset 0 0 0 10px var(--color-surface);
 
 	&::before,
@@ -37,15 +37,15 @@
 	&::before {
 		inset: 0;
 		background:
-			radial-gradient(farthest-side, rgb(var(--main-color)) 98%, transparent) top/var(--line-width) var(--line-width) no-repeat,
-			conic-gradient(rgb(var(--main-color)) calc(var(--percentage) * 1%), transparent 0);
+			radial-gradient(farthest-side, var(--main-color) 98%, transparent) top/var(--line-width) var(--line-width) no-repeat,
+			conic-gradient(var(--main-color) calc(var(--percentage) * 1%), transparent 0);
 		-webkit-mask: radial-gradient(farthest-side, transparent calc(99% - var(--line-width)), var(--studio-black) calc(100% - var(--line-width)));
 		mask: radial-gradient(farthest-side, transparent calc(99% - var(--line-width)), var(--studio-black) calc(100% - var(--line-width)));
 	}
 
 	&::after {
 		inset: calc(50% - var(--line-width) / 2);
-		background: rgb(var(--main-color));
+		background: var(--main-color);
 		transform: rotate(calc(var(--percentage) * 3.6deg)) translateY(calc(50% - var(--width) / 2));
 
 		.rtl & {

@@ -116,20 +116,7 @@ export function createNavigation( context ) {
 		basePath = sectionify( context.pathname );
 	}
 
-	let allSitesPath = basePath === '/home' ? '/sites' : basePath;
-
-	// Update allSitesPath if it is plugins page in Jetpack Cloud
-	if ( isJetpackCloud() && basePath.startsWith( '/plugins' ) ) {
-		allSitesPath = '/plugins';
-	}
-
-	return (
-		<NavigationComponent
-			path={ context.path }
-			allSitesPath={ allSitesPath }
-			siteBasePath={ basePath }
-		/>
-	);
+	return <NavigationComponent path={ context.path } siteBasePath={ basePath } />;
 }
 
 export function renderRebloggingEmptySites( context ) {
@@ -337,6 +324,10 @@ function onSelectedSiteAvailable( context ) {
 		! wasUpgradedFromTrialSite( state, selectedSite.ID ) &&
 		[ PLAN_FREE, PLAN_JETPACK_FREE ].includes( currentPlanSlug )
 	) {
+		const isDeleteSitePath = /^\/sites\/settings\/site\/[^/]+\/delete-site\?options=noCrumbs$/.test(
+			context.path
+		);
+
 		const permittedPathPrefixes = [
 			'/checkout/',
 			'/domains/',
@@ -347,7 +338,11 @@ function onSelectedSiteAvailable( context ) {
 			'/settings/delete-site/',
 		];
 
-		if ( ! permittedPathPrefixes.some( ( prefix ) => context.pathname.startsWith( prefix ) ) ) {
+		const isPermittedPath = permittedPathPrefixes.some( ( prefix ) =>
+			context.pathname.startsWith( prefix )
+		);
+
+		if ( ! isDeleteSitePath && ! isPermittedPath ) {
 			page.redirect( `/plans/my-plan/trial-expired/${ selectedSite.slug }` );
 			return false;
 		}
@@ -497,6 +492,7 @@ export function noSite( context, next ) {
 	const isJetpackCheckoutFlow = context.pathname.includes( '/checkout/jetpack' );
 	const isAkismetCheckoutFlow = context.pathname.includes( '/checkout/akismet' );
 	const isMarketplaceSitelessCheckoutFlow = context.pathname.includes( '/checkout/marketplace' );
+	const isUnifiedCheckoutFlow = context.pathname.includes( '/checkout/unified' );
 	const isDomainsManage = context.pathname === '/domains/manage/';
 	const isGiftCheckoutFlow = context.pathname.includes( '/gift/' );
 	const isRenewal = context.pathname.includes( '/renew/' );
@@ -506,6 +502,7 @@ export function noSite( context, next ) {
 		! isJetpackCheckoutFlow &&
 		! isAkismetCheckoutFlow &&
 		! isMarketplaceSitelessCheckoutFlow &&
+		! isUnifiedCheckoutFlow &&
 		! isGiftCheckoutFlow &&
 		! isDomainsManage &&
 		// We allow renewals without a site through because we want to show these

@@ -10,6 +10,7 @@ import {
 	JETPACK_BACKUP_ID,
 	JETPACK_BOOST_ID,
 	JETPACK_MONITOR_ID,
+	JETPACK_PERFORMANCE_ID,
 	JETPACK_PLUGINS_ID,
 	JETPACK_SCAN_ID,
 	JETPACK_STATS_ID,
@@ -18,6 +19,7 @@ import {
 } from 'calypso/a8c-for-agencies/sections/sites/features/features';
 import { PreviewPaneProps } from 'calypso/a8c-for-agencies/sections/sites/site-preview-pane/types';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
+import { SitePerformance } from 'calypso/hosting/performance/site-performance';
 import { useJetpackAgencyDashboardRecordTrackEvent } from 'calypso/jetpack-cloud/sections/agency-dashboard/hooks';
 import ItemView, { createFeaturePreview } from 'calypso/layout/hosting-dashboard/item-view';
 import { ItemData } from 'calypso/layout/hosting-dashboard/item-view/types';
@@ -144,6 +146,20 @@ export function OverviewPreviewPane( {
 					<JetpackMonitorPreview site={ site } trackEvent={ trackEvent } hasError={ hasError } />
 				)
 			),
+			...( site.is_atomic
+				? [
+						createFeaturePreview(
+							JETPACK_PERFORMANCE_ID,
+							'Performance',
+							true,
+							selectedSiteFeature,
+							setSelectedSiteFeature,
+							<div className="a4a-site-performance">
+								<SitePerformance />
+							</div>
+						),
+				  ]
+				: [] ),
 			createFeaturePreview(
 				JETPACK_PLUGINS_ID,
 				translate( 'Plugins' ),

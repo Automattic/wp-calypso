@@ -1,6 +1,6 @@
 @import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
-@import "@automattic/components/src/highlight-cards/variables";
+@import "calypso/my-sites/stats/components/highlight-cards/variables";
 
 $mobile-layout-breakpoint: $break-small;
 $common-border-radius: 4px;

@@ -1,7 +1,6 @@
 const fs = require( 'fs' );
 const path = require( 'path' );
 const _ = require( 'lodash' );
-const mkdirp = require( 'mkdirp' );
 
 function AssetsWriter( options ) {
 	this.options = Object.assign(
@@ -19,7 +18,7 @@ function AssetsWriter( options ) {
 Object.assign( AssetsWriter.prototype, {
 	createOutputStream: function () {
 		this.outputPath = path.join( this.options.path, this.options.filename );
-		mkdirp.sync( this.options.path );
+		fs.mkdirSync( this.options.path, { recursive: true } );
 		this.outputStream = fs.createWriteStream( this.outputPath );
 	},
 	apply: function ( compiler ) {

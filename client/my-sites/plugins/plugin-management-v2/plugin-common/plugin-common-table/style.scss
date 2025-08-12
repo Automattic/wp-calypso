@@ -43,10 +43,7 @@
 		border-collapse: collapse;
 		vertical-align: middle;
 		@include break-xlarge() {
-			padding: 0 8px;
-		}
-		@include break-wide() {
-			padding: 0 16px;
+			padding: 0 48px;
 		}
 	}
 	.partner-portal-text-placeholder {

@@ -9,19 +9,19 @@
 
 @mixin onboarding-heading-text {
 	@include onboarding-font-recoleta;
-	font-size: 42px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+	font-size: 42px;
 	line-height: 57px;
 }
 
 @mixin onboarding-heading-text-tablet {
 	@include onboarding-font-recoleta;
-	font-size: 36px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+	font-size: 36px;
 	line-height: 40px;
 }
 
 @mixin onboarding-heading-text-mobile {
 	@include onboarding-font-recoleta;
-	font-size: 32px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+	font-size: 32px;
 	line-height: 40px;
 }
 
@@ -39,7 +39,7 @@
 }
 
 @mixin onboarding-large-text {
-	font-size: 16px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+	font-size: 16px;
 	line-height: 24px;
 }
 

@@ -1,4 +1,4 @@
-import { SITE_MIGRATION_FLOW, StepContainer } from '@automattic/onboarding';
+import { StepContainer } from '@automattic/onboarding';
 import {
 	DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE,
 	GroupableSiteLaunchStatuses,
@@ -9,7 +9,6 @@ import { defer } from 'lodash';
 import React, { useState, useEffect } from 'react';
 import ConfirmModal from 'calypso/blocks/importer/components/confirm-modal';
 import DocumentHead from 'calypso/components/data/document-head';
-import useMigrationConfirmation from 'calypso/landing/stepper/hooks/use-migration-confirmation';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { SitesDashboardQueryParams } from 'calypso/sites-dashboard/components/sites-content-controls';
@@ -27,7 +26,7 @@ const SitePickerStep: Step< {
 		queryParams?: Partial< SitesDashboardQueryParams >;
 		site?: SiteExcerptData;
 	};
-} > = function SitePickerStep( { navigation, flow } ) {
+} > = function SitePickerStep( { navigation } ) {
 	const { __ } = useI18n();
 	const urlQueryParams = useQuery();
 	const page = Number( urlQueryParams.get( 'page' ) ) || 1;
@@ -38,10 +37,7 @@ const SitePickerStep: Step< {
 	const sourceSiteSlug = urlQueryParams.get( 'from' ) || '';
 	const [ destinationSite, setDestinationSite ] = useState< SiteExcerptData >();
 	const [ showConfirmModal, setShowConfirmModal ] = useState( false );
-	const [ , setMigrationConfirmed ] = useMigrationConfirmation();
 	const siteCount = useSelector( getCurrentUserSiteCount );
-
-	useEffect( () => setMigrationConfirmed( false ), [] );
 
 	useEffect( () => {
 		// If the user has no sites, we should skip the site picker and go straight to the site creation step
@@ -82,7 +78,6 @@ const SitePickerStep: Step< {
 				setShowConfirmModal( false );
 			} }
 			onConfirm={ () => {
-				setMigrationConfirmed( true );
 				defer( () => destinationSite && selectSite( destinationSite ) );
 			} }
 		>
@@ -106,11 +101,7 @@ const SitePickerStep: Step< {
 			<DocumentHead title={ __( 'Pick your destination' ) } />
 			<StepContainer
 				stepName="site-picker"
-				hideBack
-				goBack={ navigation.goBack }
-				hideSkip={ SITE_MIGRATION_FLOW === flow }
-				skipLabelText={ __( 'Skip and create a new site' ) }
-				goNext={ createNewSite }
+				goBack={ () => history.back() }
 				stepContent={
 					<SitePicker
 						page={ page }

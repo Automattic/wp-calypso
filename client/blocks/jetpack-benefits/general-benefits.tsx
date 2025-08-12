@@ -1,6 +1,5 @@
 import {
 	planHasFeature,
-	FEATURE_GOOGLE_ANALYTICS,
 	FEATURE_JETPACK_VIDEOPRESS,
 	FEATURE_PREMIUM_SUPPORT,
 	FEATURE_SIMPLE_PAYMENTS,
@@ -58,19 +57,6 @@ const JetpackGeneralBenefits: React.FC< Props > = ( { productSlug } ) => {
 		benefits.push(
 			<React.Fragment>
 				{ translate( 'The {{strong}}Ad program{{/strong}} for WordPress.', {
-					components: {
-						strong: <strong />,
-					},
-				} ) }
-			</React.Fragment>
-		);
-	}
-
-	// Google Analytics
-	if ( planHasFeature( productSlug, FEATURE_GOOGLE_ANALYTICS ) ) {
-		benefits.push(
-			<React.Fragment>
-				{ translate( 'The {{strong}}Google Analytics{{/strong}} integration.', {
 					components: {
 						strong: <strong />,
 					},

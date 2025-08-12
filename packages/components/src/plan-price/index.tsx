@@ -1,5 +1,6 @@
+import { getCurrencyObject } from '@automattic/number-formatters';
 import clsx from 'clsx';
-import { useTranslate, TranslateResult, getCurrencyObject } from 'i18n-calypso';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { Component, createElement } from 'react';
 import { Badge } from '../';
 

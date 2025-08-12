@@ -1,5 +1,6 @@
 import { Button, Card, FoldableCard } from '@automattic/components';
-import { numberFormat, translate } from 'i18n-calypso';
+import { formatNumber } from '@automattic/number-formatters';
+import { translate } from 'i18n-calypso';
 import * as React from 'react';
 import InfoPopover from 'calypso/components/info-popover';
 import FixAllThreatsDialog from 'calypso/components/jetpack/fix-all-threats-dialog';
@@ -65,7 +66,7 @@ const getThreatCountMessage = (
 		lowThreatsSummary = String(
 			translate( '%(lowCount)s low risk item', '%(lowCount)s low risk items', {
 				args: {
-					lowCount: numberFormat( countLowSeverity ),
+					lowCount: formatNumber( countLowSeverity ),
 				},
 				comment: '$(lowCount)s is the number of low severity items found.',
 				count: countLowSeverity,
@@ -78,7 +79,7 @@ const getThreatCountMessage = (
 		highThreatsSummary = String(
 			translate( '%(threatCount)s threat', '%(threatCount)s threats', {
 				args: {
-					threatCount: numberFormat( countHighSeverity ),
+					threatCount: formatNumber( countHighSeverity ),
 				},
 				comment: '%(threatCount)s represents the number of higher severity threats found.',
 				count: countHighSeverity,
@@ -123,9 +124,13 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 		triggerScanRun( site.ID )( dispatch );
 	}, [ dispatch, site ] );
 
-	const allFixableThreats = threats.filter(
-		( threat ): threat is FixableThreat =>
-			threat.fixable !== false && threat.fixerStatus !== 'in_progress'
+	const allFixableThreats = React.useMemo(
+		() =>
+			threats.filter(
+				( threat ): threat is FixableThreat =>
+					threat.fixable !== false && threat.fixerStatus !== 'in_progress'
+			),
+		[ threats ]
 	);
 	const hasFixableThreats = !! allFixableThreats.length;
 
@@ -184,15 +189,24 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 		[ updatingThreats ]
 	);
 
-	const maxSeverity = threats.reduce( ( max, threat ) => Math.max( max, threat.severity ), 0 );
-	const countMap = {
-		low: threats.filter( ( threat ) => threat.severity < 3 ).length,
-		high: threats.filter( ( threat ) => threat.severity >= 3 ).length,
-	};
-	const countMapFixable = {
-		low: allFixableThreats.filter( ( threat ) => threat.severity < 3 ).length,
-		high: allFixableThreats.filter( ( threat ) => threat.severity >= 3 ).length,
-	};
+	const maxSeverity = React.useMemo(
+		() => threats.reduce( ( max, threat ) => Math.max( max, threat.severity ), 0 ),
+		[ threats ]
+	);
+	const countMap = React.useMemo(
+		() => ( {
+			low: threats.filter( ( threat ) => threat.severity < 3 ).length,
+			high: threats.filter( ( threat ) => threat.severity >= 3 ).length,
+		} ),
+		[ threats ]
+	);
+	const countMapFixable = React.useMemo(
+		() => ( {
+			low: allFixableThreats.filter( ( threat ) => threat.severity < 3 ).length,
+			high: allFixableThreats.filter( ( threat ) => threat.severity >= 3 ).length,
+		} ),
+		[ allFixableThreats ]
+	);
 
 	const headerSummary = getThreatCountMessage(
 		countMap.high,
@@ -215,10 +229,17 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 		securityIcon = 'okay';
 	}
 
-	const highSeverityThreats = threats
-		.filter( ( threat ) => threat.severity >= 3 )
-		.sort( ( a, b ) => b.severity - a.severity );
-	const lowSeverityThreats = threats.filter( ( threat ) => threat.severity < 3 );
+	const highSeverityThreats = React.useMemo(
+		() =>
+			threats
+				.filter( ( threat ) => threat.severity >= 3 )
+				.sort( ( a, b ) => b.severity - a.severity ),
+		[ threats ]
+	);
+	const lowSeverityThreats = React.useMemo(
+		() => threats.filter( ( threat ) => threat.severity < 3 ),
+		[ threats ]
+	);
 
 	return (
 		<>

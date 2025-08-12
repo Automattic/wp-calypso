@@ -43,8 +43,9 @@
 }
 
 .reader-related-card__list-item {
-	flex-basis: 0;
-	flex-grow: 1;
+	flex: 1 1 0;
+	// Ensures flex items can shrink properly and prevents overflow in flexbox layouts.
+	min-width: 0;
 	list-style-type: none;
 	margin-top: -3px;
 
@@ -144,7 +145,6 @@
 
 	&.has-thumbnail {
 		.reader-related-card__title {
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 17px;
 		}
 
@@ -250,7 +250,6 @@
 
 .reader-related-card__byline-author {
 	cursor: pointer;
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 12px;
 	margin-top: 2px;
 	white-space: nowrap;
@@ -322,7 +321,6 @@
 }
 
 .reader-related-card__title {
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 17px;
 	font-weight: 700;
 	line-height: 25px;

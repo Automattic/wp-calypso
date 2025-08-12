@@ -4,11 +4,6 @@ import { updateConciergeBookingStatus } from 'calypso/state/concierge/actions';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { cancelConciergeAppointment } from '../';
 
-// we are mocking uuid.v4 here, so that conciergeShiftsFetchError() will contain the expected id in the tests
-jest.mock( 'uuid', () => ( {
-	v4: () => 'fake-uuid',
-} ) );
-
 describe( 'wpcom-api', () => {
 	describe( 'concierge', () => {
 		test( 'cancelConciergeAppointment()', () => {

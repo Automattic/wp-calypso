@@ -154,3 +154,8 @@ body.is-section-plugins .plugin-management-wrapper,
 	color: inherit;
 	cursor: pointer;
 }
+
+.plugin-name-container {
+	text-overflow: ellipsis;
+	overflow: hidden;
+}

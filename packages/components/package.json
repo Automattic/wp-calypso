@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/components",
-	"version": "2.2.0",
+	"version": "3.0.1",
 	"description": "Automattic Components.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -8,6 +8,20 @@
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"calypso:src": "src/index.ts",
+	"exports": {
+		".": {
+			"calypso:src": "./src/index.ts",
+			"types": "./dist/types/index.d.ts",
+			"import": "./dist/esm/index.js",
+			"require": "./dist/cjs/index.js"
+		},
+		"./src/*": {
+			"calypso:src": "./src/*"
+		},
+		"./styles/*": {
+			"calypso:src": "./styles/*"
+		}
+	},
 	"sideEffects": [
 		"*.css",
 		"*.scss"
@@ -28,69 +42,72 @@
 	],
 	"types": "dist/types",
 	"dependencies": {
+		"@ariakit/react": "^0.4.15",
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-url": "workspace:^",
 		"@automattic/color-studio": "^4.1.0",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/load-script": "workspace:^",
 		"@automattic/material-design-icons": "workspace:^",
+		"@automattic/number-formatters": "^1.0.1",
 		"@automattic/typography": "workspace:^",
+		"@automattic/ui": "workspace:^",
 		"@automattic/viewport-react": "workspace:^",
 		"@emotion/css": "^11.11.2",
 		"@emotion/react": "^11.11.1",
 		"@emotion/styled": "^11.11.0",
-		"@wordpress/base-styles": "^5.20.0",
-		"@wordpress/components": "^29.6.0",
-		"@wordpress/compose": "7.20.0",
-		"@wordpress/date": "5.20.0",
-		"@wordpress/html-entities": "4.20.0",
-		"@wordpress/i18n": "^5.20.0",
-		"@wordpress/icons": "^10.20.0",
-		"@wordpress/primitives": "^4.20.0",
-		"@wordpress/react-i18n": "^4.20.0",
-		"@wordpress/url": "^4.20.0",
+		"@storybook/addon-actions": "^8.6.14",
+		"@wordpress/base-styles": "^5.23.0",
+		"@wordpress/components": "^29.9.0",
+		"@wordpress/compose": "7.23.0",
+		"@wordpress/date": "5.23.0",
+		"@wordpress/html-entities": "4.23.0",
+		"@wordpress/i18n": "^5.23.0",
+		"@wordpress/icons": "^10.23.0",
+		"@wordpress/primitives": "^4.23.0",
+		"@wordpress/react-i18n": "^4.23.0",
+		"@wordpress/url": "^4.23.0",
+		"@wordpress/warning": "3.23.0",
 		"canvas-confetti": "^1.6.0",
 		"clsx": "^2.1.1",
 		"colord": "2.9.3",
-		"debug": "^4.4.0",
+		"debug": "^4.4.1",
 		"gridicons": "^3.4.2",
 		"i18n-calypso": "workspace:^",
 		"lodash": "^4.17.21",
-		"prop-types": "^15.7.2",
-		"react-modal": "^3.16.1",
+		"prop-types": "^15.8.1",
+		"react-modal": "^3.16.3",
 		"react-router-dom": "^6.23.1",
-		"react-slider": "^2.0.5",
-		"utility-types": "^3.10.0",
-		"uuid": "^9.0.1"
+		"utility-types": "^3.10.0"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^10.20.0",
+		"@wordpress/data": "^10.23.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1"
 	},
 	"devDependencies": {
+		"@ariakit/test": "0.4.7",
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@storybook/addon-actions": "^7.6.20",
-		"@storybook/cli": "^7.6.20",
-		"@storybook/react": "^7.6.20",
+		"@storybook/react": "^8.6.14",
+		"@storybook/test": "^8.6.14",
 		"@testing-library/dom": "^10.4.0",
 		"@testing-library/jest-dom": "^6.6.3",
-		"@testing-library/react": "^16.2.0",
+		"@testing-library/react": "^16.3.0",
 		"@testing-library/user-event": "^14.6.1",
 		"@types/canvas-confetti": "^1.6.0",
 		"@types/node": "^22.7.5",
-		"@types/react-slider": "^1.3.6",
 		"postcss": "^8.5.3",
-		"resize-observer-polyfill": "^1.5.1",
-		"typescript": "^5.8.2",
-		"webpack": "^5.97.1"
+		"storybook": "^8.6.14",
+		"typescript": "^5.8.3",
+		"webpack": "^5.99.8"
 	},
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
 		"prepack": "yarn run clean && yarn run build",
-		"storybook": "sb dev -p 56833"
+		"storybook:start": "storybook dev -p 56833",
+		"storybook:build": "storybook build"
 	}
 }

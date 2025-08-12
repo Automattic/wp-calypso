@@ -21,7 +21,6 @@ import {
 	NewUserResponse,
 	MyProfilePage,
 	MeSidebarComponent,
-	cancelPurchaseFlow,
 	NoticeComponent,
 	PurchasesPage,
 } from '@automattic/calypso-e2e';
@@ -178,7 +177,7 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 			await tmpPage.goto( newSiteDetails.blog_details.url as string );
 
 			// View site.
-			const comingSoonPage = new ComingSoonPage( page );
+			const comingSoonPage = new ComingSoonPage( tmpPage );
 			await comingSoonPage.validateComingSoonState();
 
 			// Dispose the test page and context.
@@ -217,6 +216,7 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 			await mePage.visit();
 
 			const meSidebarComponent = new MeSidebarComponent( page );
+			await meSidebarComponent.openMobileMenu();
 			await meSidebarComponent.navigate( 'Purchases' );
 		} );
 
@@ -227,19 +227,17 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 				`WordPress.com ${ planName }`,
 				newSiteDetails.blog_details.site_slug
 			);
-			await purchasesPage.purchaseAction( 'Cancel plan' );
 		} );
 
 		it( 'Cancel plan renewal', async function () {
-			await cancelPurchaseFlow( page, {
-				reason: 'Another reason…',
-				customReasonText: 'E2E TEST CANCELLATION',
-			} );
-
 			noticeComponent = new NoticeComponent( page );
-			await noticeComponent.noticeShown( 'You successfully canceled your purchase', {
-				timeout: 30 * 1000,
-			} );
+			await purchasesPage.cancelPurchase( 'Cancel plan' );
+			await noticeComponent.noticeShown(
+				'Your refund has been processed and your purchase removed.',
+				{
+					timeout: 30 * 1000,
+				}
+			);
 		} );
 	} );
 

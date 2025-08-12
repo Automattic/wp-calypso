@@ -9,7 +9,6 @@ import {
 	render as clientRender,
 	setSelectedSiteIdByOrigin,
 } from 'calypso/controller';
-import { getUserProfileBasePath } from 'calypso/reader/user-profile/user-profile.utils';
 import { RedirectRouteList, setupRedirectRoutes } from 'calypso/utils';
 import {
 	blogListing,
@@ -27,7 +26,7 @@ import {
 	pendingSubscriptionsManager,
 	setupReadRoutes,
 } from './controller';
-import { userPosts, userLists } from './user-profile/controller';
+import { userProfile } from './user-profile/controller';
 
 import './style.scss';
 
@@ -85,31 +84,21 @@ export default async function (): Promise< void > {
 
 		// User profile
 		page(
-			getUserProfileBasePath(),
-			blogDiscoveryByFeedId,
-			redirectLoggedOutToSignup,
-			sidebar,
-			userPosts,
-			makeLayout,
-			clientRender
-		);
-
-		page(
 			'/reader/users/id/:user_id',
 			blogDiscoveryByFeedId,
 			redirectLoggedOutToSignup,
 			sidebar,
-			userPosts,
+			userProfile,
 			makeLayout,
 			clientRender
 		);
 
 		page(
-			getUserProfileBasePath( 'lists' ),
+			[ '/reader/users/:user_login', '/reader/users/:user_login/:view' ],
 			blogDiscoveryByFeedId,
 			redirectLoggedOutToSignup,
 			sidebar,
-			userLists,
+			userProfile,
 			makeLayout,
 			clientRender
 		);

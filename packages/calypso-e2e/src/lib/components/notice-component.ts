@@ -2,7 +2,7 @@ import { Page } from 'playwright';
 
 type NoticeType = 'Success' | 'Error' | 'Info';
 
-const parent = 'div.notice';
+const parent = 'div.calypso-notice';
 
 const selectors = {
 	notificationToast: ( text: string ) => `${ parent }.is-dismissable:has-text("${ text }")`,
@@ -55,7 +55,7 @@ export class NoticeComponent {
 	): Promise< void > {
 		const noticeType = type ? `.is-${ type?.toLowerCase() }` : '';
 
-		const selector = `div.notice${ noticeType } :text("${ text }")`;
+		const selector = `div.calypso-notice${ noticeType } :text("${ text }")`;
 
 		const locator = this.page.locator( selector );
 		await locator.waitFor( { state: 'visible', timeout: timeout } );

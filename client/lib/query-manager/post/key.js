@@ -11,7 +11,8 @@ import { DEFAULT_POST_QUERY } from './constants';
  */
 function isDefaultOrNullQueryValue( value, key ) {
 	return (
-		null == value || DEFAULT_POST_QUERY[ key ] === value // Double-equals null checks undefined, null
+		// Double-equals null checks undefined, null
+		null == value || DEFAULT_POST_QUERY[ key ] === value
 	);
 }
 

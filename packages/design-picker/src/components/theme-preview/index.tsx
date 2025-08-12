@@ -5,7 +5,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { v4 as uuid } from 'uuid';
+
 import './style.scss';
 
 interface Viewport {
@@ -55,7 +55,7 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 	const [ frameLocation, setFrameLocation ] = useState( '' );
 	const [ viewport, setViewport ] = useState< Viewport >();
 	const [ containerResizeListener, { width: containerWidth } ] = useResizeObserver();
-	const calypso_token = useMemo( () => iframeToken || uuid(), [ iframeToken ] );
+	const calypso_token = useMemo( () => iframeToken || crypto.randomUUID(), [ iframeToken ] );
 	const scale = containerWidth && viewportWidth ? containerWidth / viewportWidth : iframeScaleRatio;
 	const { title, tagline } = siteInfo || {};
 

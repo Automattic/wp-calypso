@@ -1,7 +1,10 @@
 import { useTranslate } from 'i18n-calypso';
 import LayoutBanner from 'calypso/a8c-for-agencies/components/layout/banner';
 import { useDispatch, useSelector } from 'calypso/state';
-import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import {
+	getActiveAgency,
+	hasApprovedAgencyStatus,
+} from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { ApprovalStatus } from 'calypso/state/a8c-for-agencies/types';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
@@ -11,7 +14,7 @@ import './style.scss';
 
 const AGENCY_APPROVAL_DISMISS_PREFERENCE = 'a4a-agency-approval-notice-dismissed';
 
-const A4AAgencyApprovalNotice = () => {
+const A4AAgencyApprovalNotice = ( { isFullWidth }: { isFullWidth?: boolean } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const agency = useSelector( getActiveAgency );
@@ -24,13 +27,15 @@ const A4AAgencyApprovalNotice = () => {
 		getPreference( state, AGENCY_APPROVAL_DISMISS_PREFERENCE )
 	);
 
+	const isAgencyApproved = useSelector( hasApprovedAgencyStatus );
+
 	if ( isDismissed ) {
 		return null;
 	}
 
 	// If approved, only show banner for 1 week after signup
 	if (
-		agency?.approval_status === ApprovalStatus.APPROVED &&
+		isAgencyApproved &&
 		agency?.created_at &&
 		new Date( agency.created_at ) < new Date( Date.now() - 7 * 24 * 60 * 60 * 1000 ) // 7 days
 	) {
@@ -76,9 +81,9 @@ const A4AAgencyApprovalNotice = () => {
 
 	return (
 		<LayoutBanner
+			isFullWidth={ isFullWidth }
 			level={ bannerDetails.level as 'warning' | 'success' | 'error' }
 			onClose={ dismissNotice }
-			className="a4a-agency-approval-notice"
 			hideCloseButton={ bannerDetails.hideCloseButton }
 		>
 			<div className="a4a-agency-approval-notice__text">{ bannerDetails.text }</div>

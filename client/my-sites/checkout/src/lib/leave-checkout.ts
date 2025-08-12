@@ -1,4 +1,4 @@
-import { isTailoredSignupFlow, HOSTED_SITE_MIGRATION_FLOW } from '@automattic/onboarding';
+import { isTailoredSignupFlow, SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import debugFactory from 'debug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -70,7 +70,7 @@ export const leaveCheckout = ( {
 	if (
 		siteSlug &&
 		sendMessageToOpener( siteSlug, 'checkoutCancelled' ) &&
-		! [ HOSTED_SITE_MIGRATION_FLOW ].includes( signupFlowName )
+		! [ SITE_MIGRATION_FLOW ].includes( signupFlowName )
 	) {
 		return;
 	}
@@ -112,6 +112,11 @@ export const leaveCheckout = ( {
 			// this point, then window.location will reload with the cookies applied and takes to the /plans page.
 			// (page.redirect() will take to the log in page instead).
 			window.location.href = closeUrl;
+			return;
+		}
+
+		if ( searchParams.has( 'history_back' ) ) {
+			window.history.back();
 			return;
 		}
 

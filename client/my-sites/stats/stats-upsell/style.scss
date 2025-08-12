@@ -78,7 +78,6 @@
 
 	.stats-upsell__title {
 		@extend .wp-brand-font;
-		/* stylelint-disable declaration-property-unit-allowed-list -- typography-exception */
 		font-size: 28px;
 		text-wrap: wrap;
 		line-height: 34px; /* 125% */

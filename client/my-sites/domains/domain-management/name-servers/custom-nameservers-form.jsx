@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
@@ -146,10 +147,9 @@ class CustomNameserversForm extends PureComponent {
 		const subtitle = translate( '{{link}}Look up{{/link}} the name servers for popular hosts', {
 			components: {
 				link: (
-					<a
-						href={ localizeUrl( CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS ) }
-						target="_blank"
-						rel="noopener noreferrer"
+					<InlineSupportLink
+						supportContext="change-name-servers-finding-out-new-ns"
+						showIcon={ false }
 						onClick={ this.handleLookUpClick }
 					/>
 				),

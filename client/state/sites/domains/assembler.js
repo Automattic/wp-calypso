@@ -137,6 +137,9 @@ export const createSiteDomainObject = ( domain ) => {
 		isPremium: Boolean( domain.is_premium ),
 		isPrimary: Boolean( domain.primary_domain ),
 		isPendingWhoisUpdate: Boolean( domain.pending_whois_update ),
+		isRootDomainRegisteredWithAutomattic: Boolean(
+			domain.is_root_domain_registered_with_automattic
+		),
 		isSubdomain: Boolean( domain.is_subdomain ),
 		isWPCOMDomain: Boolean( domain.wpcom_domain ),
 		isWpcomStagingDomain: Boolean( domain.is_wpcom_staging_domain ),

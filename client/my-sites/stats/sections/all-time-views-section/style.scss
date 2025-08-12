@@ -1,6 +1,22 @@
 @import "calypso/my-sites/stats/modernized-stats-table-styles";
 
+.stats__all-time-views-section {
+	.highlight-cards-list {
+		display: block;
+	}
+
+	.highlight-card-heading {
+		flex-wrap: wrap;
+		gap: 8px 16px;
+	}
+
+	.segmented-control {
+		margin-left: auto;
+	}
+}
+
 // TODO: Consolidate the overlay styles back into the highlight card component.
+
 .highlight-card {
 	&.highlight-card--has-overlay {
 		.highlight-card-content {

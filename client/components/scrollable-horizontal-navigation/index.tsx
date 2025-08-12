@@ -1,8 +1,7 @@
 import { Button, Gridicon, SegmentedControl } from '@automattic/components';
 import clsx from 'clsx';
 import { throttle } from 'lodash';
-import React, { useEffect, useRef } from 'react';
-import { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
+import { useEffect, useRef } from 'react';
 
 import './styles.scss';
 
@@ -23,7 +22,6 @@ interface Props< T extends object > {
 	selectedTab: string;
 	tabs: Tab< T >[];
 	titleField?: keyof Tab< T >;
-	width: number;
 }
 
 const ScrollableHorizontalNavigation = < T extends object >( {
@@ -32,7 +30,6 @@ const ScrollableHorizontalNavigation = < T extends object >( {
 	selectedTab,
 	tabs,
 	titleField = 'title',
-	width,
 }: Props< T > ) => {
 	const scrollRef = useRef< HTMLDivElement >( null );
 
@@ -83,11 +80,7 @@ const ScrollableHorizontalNavigation = < T extends object >( {
 	}, 50 );
 
 	return (
-		<div
-			className={ clsx( 'scrollable-horizontal-navigation', className, {
-				'reader-dual-column': width > WIDE_DISPLAY_CUTOFF,
-			} ) }
-		>
+		<div className={ clsx( 'scrollable-horizontal-navigation', className ) }>
 			<div
 				className={ clsx( 'scrollable-horizontal-navigation__left-button-wrapper', {
 					'display-none': shouldHideLeftScrollButton(),

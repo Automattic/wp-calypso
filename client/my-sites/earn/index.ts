@@ -7,13 +7,15 @@ import {
 	redirectToAdsSettings,
 	redirectToSettings,
 	layout,
+	jetpackMonetize,
 } from './controller';
 
 const earnPath = ! isJetpackCloud() ? '/earn' : '/monetize';
 
 export default function () {
 	page( earnPath, siteSelection, sites, makeLayout, clientRender );
-	page( earnPath + '/supporters', siteSelection, sites, makeLayout, clientRender );
+	page( earnPath + '/paid-subscriptions', siteSelection, sites, makeLayout, clientRender );
+	page( earnPath + '/supporters', siteSelection, sites, makeLayout, clientRender ); // Old path for /paid-subscriptions, we keep it for backwards compatibility, it can be removed later
 	page( earnPath + '/payments', siteSelection, sites, makeLayout, clientRender );
 	// This is legacy, we are leaving it here because it may have been public
 	page(
@@ -41,6 +43,15 @@ export default function () {
 	page( '/ads/:site_id', redirectToAdsEarnings, makeLayout, clientRender );
 	page( '/ads', '/earn' );
 	page( '/ads/*', '/earn' );
+
+	page(
+		'/earn/jetpack-monetize/:site_id',
+		siteSelection,
+		navigation,
+		jetpackMonetize,
+		makeLayout,
+		clientRender
+	);
 
 	page( earnPath + '/:site_id', siteSelection, navigation, layout, makeLayout, clientRender );
 

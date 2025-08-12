@@ -11,11 +11,13 @@
 
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import { localizeUrl } from '@automattic/i18n-utils';
 import NotificationsPanel, {
 	refreshNotes,
 } from '@automattic/notifications/src/panel/Notifications';
 import clsx from 'clsx';
 import debugFactory from 'debug';
+import { useTranslate } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import localStorageHelper from 'store';
@@ -28,6 +30,7 @@ import { didForceRefresh } from 'calypso/state/notifications-panel/actions';
 import { shouldForceRefresh } from 'calypso/state/notifications-panel/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentLocaleVariant from 'calypso/state/selectors/get-current-locale-variant';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
 import './style.scss';
@@ -52,6 +55,26 @@ const getIsVisible = () => {
 const isDesktop = config.isEnabled( 'desktop' );
 
 const debug = debugFactory( 'notifications:panel' );
+
+const Notifications3PCNotice = ( { className } ) => {
+	const translate = useTranslate();
+	return (
+		<div className={ `reader-notifications__3pc-notice ${ className }` }>
+			<p>
+				{ translate(
+					"Didn't expect to see this page? {{learnMoreLink}}Learn about 3rd party cookies.{{/learnMoreLink}}",
+					{
+						components: {
+							learnMoreLink: (
+								<a href={ localizeUrl( 'https://wordpress.com/support/third-party-cookies/' ) } />
+							),
+						},
+					}
+				) }
+			</p>
+		</div>
+	);
+};
 
 export class Notifications extends Component {
 	state = {
@@ -275,6 +298,7 @@ export class Notifications extends Component {
 
 	render() {
 		const localeSlug = this.props.currentLocaleSlug || config( 'i18n_default_locale_slug' );
+		const isDedicatedReaderPage = this.props.currentRoute?.startsWith( '/reader/notifications' );
 
 		if ( this.props.forceRefresh ) {
 			debug( 'Refreshing notes panel...' );
@@ -283,21 +307,34 @@ export class Notifications extends Component {
 		}
 
 		return (
-			<div
-				id="wpnc-panel"
-				className={ clsx( 'wide', 'wpnc__main', {
-					'wpnt-open': this.props.isShowing,
-					'wpnt-closed': ! this.props.isShowing,
-				} ) }
-			>
-				<NotificationsPanel
-					actionHandlers={ this.actionHandlers }
-					isShowing={ this.props.isShowing }
-					isVisible={ this.state.isVisible }
-					locale={ localeSlug }
-					wpcom={ wpcom }
-				/>
-			</div>
+			<>
+				{ /*
+					Due to how the notifs panel width is set differently on this page to control fly-out vs. in place
+					nested levels, this notice makes sense at different places in the DOM depending on the
+					breakpoint. We remove display for one or the other via CSS depending on the breakpoint.
+				*/ }
+				{ isDedicatedReaderPage && (
+					<Notifications3PCNotice className="reader-notifications__3pc-notice-external" />
+				) }
+				<div
+					id="wpnc-panel"
+					className={ clsx( 'wide', 'wpnc__main', {
+						'wpnt-open': this.props.isShowing,
+						'wpnt-closed': ! this.props.isShowing,
+					} ) }
+				>
+					{ isDedicatedReaderPage && (
+						<Notifications3PCNotice className="reader-notifications__3pc-notice-internal" />
+					) }
+					<NotificationsPanel
+						actionHandlers={ this.actionHandlers }
+						isShowing={ this.props.isShowing }
+						isVisible={ this.state.isVisible }
+						locale={ localeSlug }
+						wpcom={ wpcom }
+					/>
+				</div>
+			</>
 		);
 	}
 }
@@ -307,6 +344,7 @@ export default connect(
 		currentLocaleSlug: getCurrentLocaleVariant( state ) || getCurrentLocaleSlug( state ),
 		forceRefresh: shouldForceRefresh( state ),
 		selectedSiteId: getSelectedSiteId( state ),
+		currentRoute: getCurrentRoute( state ),
 	} ),
 	( dispatch ) => ( {
 		recordTracksEventAction: ( name, properties ) =>

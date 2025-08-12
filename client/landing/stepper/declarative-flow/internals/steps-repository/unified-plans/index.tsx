@@ -1,49 +1,46 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
-import {
-	ActiveTheme,
-	OnboardSelect,
-	updateLaunchpadSettings,
-	useStarterDesignBySlug,
-} from '@automattic/data-stores';
+import { OnboardSelect } from '@automattic/data-stores';
 import {
 	AI_SITE_BUILDER_FLOW,
 	EXAMPLE_FLOW,
-	isOnboardingFlow,
 	NEW_HOSTED_SITE_FLOW,
 	NEWSLETTER_FLOW,
+	ONBOARDING_FLOW,
+	ONBOARDING_UNIFIED_FLOW,
 	START_WRITING_FLOW,
+	Step,
 	useStepPersistedState,
 } from '@automattic/onboarding';
-import { useDispatch, useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
+import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
 import { useState } from 'react';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
 import Loading from 'calypso/components/loading';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
-import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
-import {
-	getHidePlanPropsBasedOnCreateWithBigSky,
-	getHidePlanPropsBasedOnThemeType,
-} from 'calypso/my-sites/plans-features-main/components/utils/utils';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { getHidePlanPropsBasedOnThemeType } from 'calypso/my-sites/plans-features-main/components/utils/utils';
 import { getSignupCompleteSiteID, getSignupCompleteSlug } from 'calypso/signup/storageUtils';
-import { useSelector, useDispatch as useReduxDispatch } from 'calypso/state';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
-import { setActiveTheme } from 'calypso/state/themes/actions';
 import { getTheme, getThemeType } from 'calypso/state/themes/selectors';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
-import { useGoalsFirstExperiment } from '../../../helpers/use-goals-first-experiment';
+import { playgroundPlansIntent } from '../playground/lib/plans';
 import UnifiedPlansStep from './unified-plans-step';
 import { getIntervalType } from './util';
-import type { ProvidedDependencies, Step } from '../../types';
+import type { Step as StepType } from '../../types';
 import type { PlansIntent } from '@automattic/plans-grid-next';
-
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import './style.scss';
 
 /**
  * Copied from steps-repository/plans (which should be removed)
  */
-function getPlansIntent( flowName: string | null, isWordCampPromo?: boolean ): PlansIntent | null {
+/**
+ * Copied from steps-repository/plans (which should be removed)
+ */
+function getPlansIntent( flowName: string | null ): PlansIntent | null {
+	const search = new URLSearchParams( location.search );
+
 	switch ( flowName ) {
 		case START_WRITING_FLOW:
 			return 'plans-blog-onboarding';
@@ -51,48 +48,56 @@ function getPlansIntent( flowName: string | null, isWordCampPromo?: boolean ): P
 		case EXAMPLE_FLOW:
 			return 'plans-newsletter';
 		case NEW_HOSTED_SITE_FLOW:
-			if ( isWordCampPromo ) {
+			/**
+			 * isWordCampPromo is temporary
+			 */
+			if ( search.has( 'utm_source', 'wordcamp' ) ) {
 				return 'plans-new-hosted-site-business-only';
 			}
+
 			return 'plans-new-hosted-site';
+		case AI_SITE_BUILDER_FLOW:
+			return 'plans-ai-assembler-free-trial';
+		case ONBOARDING_FLOW:
+			if ( search.has( 'playground' ) ) {
+				return playgroundPlansIntent( search.get( 'playground' )! );
+			}
+			break;
+		case ONBOARDING_UNIFIED_FLOW:
+			return 'plans-affiliate';
 		default:
 			return null;
 	}
+	return null;
 }
 
-const PlansStepAdaptor: Step< {
-	// TODO: work on more specific types
-	submits: Record< string, unknown >;
+type ProvidedDependencies = {
+	stepName: 'plans';
+	cartItems: MinimalRequestCartProduct[] | null;
+};
+
+const PlansStepAdaptor: StepType< {
+	submits: ProvidedDependencies;
 } > = ( props ) => {
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
 	const siteSlug = useSiteSlug();
 
-	const { siteTitle, domainItem, domainItems, selectedDesign, createWithBigSky } = useSelect(
+	const { siteTitle, domainItem, domainItems, selectedDesign } = useSelect(
 		( select: ( key: string ) => OnboardSelect ) => {
-			const {
-				getSelectedSiteTitle,
-				getDomainCartItem,
-				getDomainCartItems,
-				getSelectedDesign,
-				getCreateWithBigSky,
-			} = select( ONBOARD_STORE );
+			const { getSelectedSiteTitle, getDomainCartItem, getDomainCartItems, getSelectedDesign } =
+				select( ONBOARD_STORE );
 			return {
 				siteTitle: getSelectedSiteTitle(),
 				domainItem: getDomainCartItem(),
 				domainItems: getDomainCartItems(),
 				selectedDesign: getSelectedDesign(),
-				createWithBigSky: getCreateWithBigSky(),
 			};
 		},
 		[]
 	);
 	const username = useSelector( getCurrentUserName );
 	const coupon = useQuery().get( 'coupon' ) ?? undefined;
-	const { data: defaultDesign } = useStarterDesignBySlug( 'twentytwentyfour' );
-	const [ , isGoalFirstExperiment ] = useGoalsFirstExperiment();
-	const { setSiteUrl, setSelectedDesign, setPendingAction } = useWPDispatch( ONBOARD_STORE );
-	const { setDesignOnSite } = useDispatch( SITE_STORE );
-	const reduxDispatch = useReduxDispatch();
+	const { setSiteUrl } = useWPDispatch( ONBOARD_STORE );
 
 	const theme = useSelector( ( state ) =>
 		selectedDesign ? getTheme( state, 'wpcom', selectedDesign.slug ) : null
@@ -126,25 +131,9 @@ const PlansStepAdaptor: Step< {
 	const customerType = useQuery().get( 'customerType' ) ?? undefined;
 	const [ planInterval, setPlanInterval ] = useState< string | undefined >( undefined );
 
-	/**
-	 * isWordCampPromo is temporary
-	 */
-	const isWordCampPromo = new URLSearchParams( location.search ).has( 'utm_source', 'wordcamp' );
-	const plansIntent = getPlansIntent( props.flow, isWordCampPromo );
+	useQueryTheme( 'wpcom', selectedDesign?.slug );
 
-	let hidePlanProps;
-	if ( createWithBigSky && isGoalFirstExperiment ) {
-		hidePlanProps = getHidePlanPropsBasedOnCreateWithBigSky();
-	} else if ( props.flow === AI_SITE_BUILDER_FLOW ) {
-		hidePlanProps = {
-			hideFreePlan: true,
-			hidePersonalPlan: true,
-			hideEcommercePlan: true,
-			hideEnterprisePlan: true,
-		};
-	} else {
-		hidePlanProps = getHidePlanPropsBasedOnThemeType( selectedThemeType || '' );
-	}
+	const plansIntent = getPlansIntent( props.flow );
 
 	/**
 	 * The plans step has a quirk where it calls `submitSignupStep` then synchronously calls `goToNextStep` after it.
@@ -157,65 +146,37 @@ const PlansStepAdaptor: Step< {
 		setPlanInterval( intervalType );
 	};
 
-	/**
-	 *  Plan step switches the selected theme to default twentytwentyfour when the plan is free
-	 *  but the selected design requires a paid plan.
-	 */
-	const switchPaidDesignToDefault = ( stepInfo: ProvidedDependencies ) => {
-		const hasPaidDesign = Boolean(
-			selectedDesign?.design_tier && selectedDesign?.design_tier !== 'free'
-		);
-		const isOnboarding = isOnboardingFlow( props.flow ) && isGoalFirstExperiment;
-
-		if ( ! hasPaidDesign || !! stepInfo.cartItems || ! isOnboarding ) {
-			return;
-		}
-
-		if ( site ) {
-			setPendingAction( async () => {
-				return setDesignOnSite( site?.ID, defaultDesign, {
-					styleVariation: defaultDesign?.style_variations?.[ 0 ],
-					enableThemeSetup: true,
-				} ).then( async ( theme: ActiveTheme ) => {
-					await updateLaunchpadSettings( site?.ID || '', {
-						checklist_statuses: { design_completed: false },
-					} );
-					return reduxDispatch( setActiveTheme( site?.ID || -1, theme ) );
-				} );
-			} );
-		}
-		setSelectedDesign( { ...defaultDesign, default: true } );
-
-		recordTracksEvent( 'calypso_paid_theme_auto_switch', {
-			from: selectedDesign?.slug,
-			to: defaultDesign?.slug,
-		} );
-	};
-	useQueryTheme( 'wpcom', selectedDesign?.slug );
+	const isUsingStepContainerV2 = shouldUseStepContainerV2( props.flow );
 
 	if ( isLoadingSelectedTheme ) {
-		return <Loading />;
+		return isUsingStepContainerV2 ? <Step.Loading /> : <Loading />;
 	}
 
 	return (
 		<UnifiedPlansStep
-			{ ...hidePlanProps }
+			{ ...getHidePlanPropsBasedOnThemeType( selectedThemeType || '' ) }
 			selectedSite={ site ?? undefined }
 			saveSignupStep={ ( step ) => {
-				setStepState( ( mostRecentState = { ...stepState, ...step } ) );
+				setStepState( ( mostRecentState = { ...stepState, ...step } as ProvidedDependencies ) );
 			} }
 			submitSignupStep={ ( stepInfo ) => {
 				if ( stepInfo.stepName === 'domains' && stepInfo.siteUrl ) {
 					setSiteUrl( stepInfo.siteUrl );
 				} else {
-					setStepState( ( mostRecentState = { ...stepState, ...stepInfo } ) );
+					setStepState(
+						( mostRecentState = { ...stepState, ...( stepInfo as ProvidedDependencies ) } )
+					);
 				}
 			} }
 			goToNextStep={ () => {
-				switchPaidDesignToDefault( mostRecentState );
 				props.navigation.submit?.( { ...stepState, ...mostRecentState } );
 			} }
-			step={ stepState }
+			step={
+				stepState as {
+					status?: string | undefined;
+					errors?: { message: string } | undefined;
+				}
+			}
 			customerType={ customerType }
 			signupDependencies={ signupDependencies }
 			stepName="plans"
@@ -230,7 +191,7 @@ const PlansStepAdaptor: Step< {
 				isExtraWideLayout: false,
 			} }
 			useStepperWrapper
-			useStepContainerV2={ shouldUseStepContainerV2( props.flow ) }
+			useStepContainerV2={ isUsingStepContainerV2 }
 		/>
 	);
 };

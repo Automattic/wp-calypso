@@ -22,6 +22,7 @@ const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'fa
 const isDevelopment = process.env.NODE_ENV !== 'production';
 const outBasePath = process.env.STATS_PACKAGE_PATH ? process.env.STATS_PACKAGE_PATH : __dirname;
 const outputPath = path.join( outBasePath, 'dist' );
+const sourceMap = isDevelopment ? 'source-map' : false;
 
 const defaultBrowserslistEnv = 'evergreen';
 const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
@@ -29,8 +30,6 @@ const extraPath = browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv;
 const cachePath = path.resolve( '.cache', extraPath );
 
 const excludedPackages = [
-	/^calypso\/components\/inline-support-link$/,
-	/^calypso\/components\/web-preview.*$/,
 	/^calypso\/my-sites\/stats\/mini-carousel.*$/,
 	/^calypso\/blocks\/jetpack-backup-creds-banner.*$/,
 	/^calypso\/components\/data\/query-keyring-connections$/,
@@ -55,7 +54,7 @@ module.exports = {
 		'widget-loader': path.join( __dirname, 'src', 'widget-loader' ),
 	},
 	mode: isDevelopment ? 'development' : 'production',
-	devtool: false,
+	devtool: sourceMap,
 	output: {
 		path: outputPath,
 		filename: '[name].min.js',
@@ -160,6 +159,7 @@ module.exports = {
 		! isDevelopment &&
 			new GenerateChunksMapPlugin( {
 				output: path.resolve( outBasePath, 'dist/chunks-map.json' ),
+				base_dir: '../../',
 			} ),
 		/*
 		 * ExPlat: Don't import the server logger when we are in the browser

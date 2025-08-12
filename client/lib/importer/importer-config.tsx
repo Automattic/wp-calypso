@@ -91,49 +91,50 @@ function getConfig( {
 		weight: 1,
 	};
 
-	importerConfig.blogger = {
-		engine: 'blogger',
-		key: 'importer-type-blogger',
-		type: 'file',
-		priority: 'primary',
-		title: 'Blogger',
-		icon: 'blogger-alt',
-		description: (
-			<p>
-				{ translate(
-					'Import posts, pages, comments, tags, and images from a %(importerName)s export file to {{b}}%(siteTitle)s{{/b}}.',
-					{
-						args: {
-							importerName: 'Blogger',
-							siteTitle,
-						},
-						components: {
-							b: <strong />,
-						},
-					}
-				) }
-			</p>
-		),
-		uploadDescription: translate(
-			'A %(importerName)s export file is an XML file ' +
-				'containing your page and post content. ' +
-				'{{supportLink/}}',
-			{
-				args: {
-					importerName: 'Blogger',
-				},
-				components: {
-					supportLink: (
-						<InlineSupportLink supportContext="importers-blogger" showIcon={ false }>
-							{ translate( 'Need help exporting your content?' ) }
-						</InlineSupportLink>
-					),
-				},
-			}
-		),
-		acceptedFileTypes: [ '.xml' ],
-		weight: 0,
-	};
+	// Hide Blogger as they currently do not work. See DOTCON-98.
+	// importerConfig.blogger = {
+	// 	engine: 'blogger',
+	// 	key: 'importer-type-blogger',
+	// 	type: 'file',
+	// 	priority: 'primary',
+	// 	title: 'Blogger',
+	// 	icon: 'blogger-alt',
+	// 	description: (
+	// 		<p>
+	// 			{ translate(
+	// 				'Import posts, pages, comments, tags, and images from a %(importerName)s export file to {{b}}%(siteTitle)s{{/b}}.',
+	// 				{
+	// 					args: {
+	// 						importerName: 'Blogger',
+	// 						siteTitle,
+	// 					},
+	// 					components: {
+	// 						b: <strong />,
+	// 					},
+	// 				}
+	// 			) }
+	// 		</p>
+	// 	),
+	// 	uploadDescription: translate(
+	// 		'A %(importerName)s export file is an XML file ' +
+	// 			'containing your page and post content. ' +
+	// 			'{{supportLink/}}',
+	// 		{
+	// 			args: {
+	// 				importerName: 'Blogger',
+	// 			},
+	// 			components: {
+	// 				supportLink: (
+	// 					<InlineSupportLink supportContext="importers-blogger" showIcon={ false }>
+	// 						{ translate( 'Need help exporting your content?' ) }
+	// 					</InlineSupportLink>
+	// 				),
+	// 			},
+	// 		}
+	// 	),
+	// 	acceptedFileTypes: [ '.xml' ],
+	// 	weight: 0,
+	// };
 
 	importerConfig.medium = {
 		engine: 'medium',

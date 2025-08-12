@@ -1,7 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
 import Notice, { NoticeStatus } from 'calypso/components/notice';
-import { preventWidows } from 'calypso/lib/formatting';
 import { useSelector, useDispatch } from 'calypso/state';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
@@ -44,17 +43,15 @@ export const TimeMismatchWarning: FC< ExternalProps > = ( {
 
 	return (
 		<Notice status={ status } onDismissClick={ dismissClick }>
-			{ preventWidows(
-				translate(
-					'This page reflects the time zone set on your site. ' +
-						'It looks like that does not match your current time zone. ' +
-						'{{SiteSettings}}You can update your site time zone here{{/SiteSettings}}.',
-					{
-						components: {
-							SiteSettings: <a href={ settingsUrl } />,
-						},
-					}
-				)
+			{ translate(
+				'This page reflects the time zone set on your site. ' +
+					'It looks like that does not match your current time zone. ' +
+					'{{SiteSettings}}You can update your site time zone here{{/SiteSettings}}.',
+				{
+					components: {
+						SiteSettings: <a href={ settingsUrl } />,
+					},
+				}
 			) }
 		</Notice>
 	);

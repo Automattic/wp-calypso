@@ -65,7 +65,7 @@ export default function PluginsList( {
 					href={ `/plugins/${ plugin.slug }${ selectedSite ? `/${ selectedSite.domain }` : '' }` }
 					onClick={ trackManagePlugin( plugin.slug ) }
 				>
-					{ translate( 'Manage Plugin' ) }
+					{ translate( 'Manage plugin' ) }
 				</PopoverMenuItem>
 				{ selectedSite ? (
 					<RemovePlugin site={ selectedSite } plugin={ plugin } />

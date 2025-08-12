@@ -1,4 +1,8 @@
 /* stylelint-disable-next-line scss/load-no-partial-leading-underscore */
+@import "@wordpress/base-styles/_variables";
+@import "@automattic/color-studio/dist/color-variables";
+
+/* stylelint-disable-next-line scss/load-no-partial-leading-underscore */
 @import "calypso/assets/stylesheets/shared/_rendered-blocks";
 
 // Style tiled galleries.
@@ -73,7 +77,7 @@
 	.wp-block-jetpack-slideshow_slide img,
 	.wp-block-media-text__media img,
 	.wp-block-image img {
-		border-radius: 6px; /* stylelint-disable-line scales/radii */
+		border-radius: $radius-large;
 		display: inherit;
 	}
 
@@ -81,27 +85,15 @@
 	.image-wrapper {
 		position: relative;
 
-		.image-border {
-			content: "";
-			position: absolute;
-			pointer-events: none;
-			top: 0;
-			left: 0;
-			bottom: 0;
-			right: 0;
-			box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
-			border-radius: 6px; /* stylelint-disable-line scales/radii */
-			margin: auto;
-			max-width: 100%;
-		}
-
 		figcaption {
-			border-bottom-left-radius: 6px; /* stylelint-disable-line scales/radii */
-			border-bottom-right-radius: 6px; /* stylelint-disable-line scales/radii */
+			border-bottom-left-radius: $radius-large;
+			border-bottom-right-radius: $radius-large;
 		}
 	}
 	.image-wrapper img {
+		border-radius: $radius-large;
 		display: inherit;
+		border: 1px solid $studio-gray-5;
 	}
 }
 

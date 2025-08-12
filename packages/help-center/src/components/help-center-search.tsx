@@ -1,7 +1,6 @@
 /* eslint-disable no-restricted-imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { NewThirdPartyCookiesNotice } from '@automattic/odie-client';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import { useState, useCallback, useEffect } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
@@ -14,7 +13,7 @@ import { SearchResult } from '../types';
 import { HelpCenterLaunchpad } from './help-center-launchpad';
 import { HelpCenterMoreResources } from './help-center-more-resources';
 import HelpCenterSearchResults from './help-center-search-results';
-import type { HelpCenterSelect } from '@automattic/data-stores';
+import { BlockedZendeskNotice } from './notices';
 import './help-center-search.scss';
 import './help-center-launchpad.scss';
 
@@ -27,15 +26,9 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 	const navigate = useNavigate();
 	const { search } = useLocation();
 	const params = new URLSearchParams( search );
-	const { sectionName, site, canConnectToZendesk } = useHelpCenterContext();
-	const { searchTerm } = useSelect( ( select ) => {
-		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
-		return {
-			searchTerm: helpCenterSelect.getMessage(),
-		};
-	}, [] );
+	const { sectionName, site, currentUser } = useHelpCenterContext();
 	const query = params.get( 'query' );
-	const [ searchQuery, setSearchQuery ] = useState( query || searchTerm || '' );
+	const [ searchQuery, setSearchQuery ] = useState( query || '' );
 	const { setSubject, setMessage } = useDispatch( HELP_CENTER_STORE );
 
 	// when the user sets the search query, let's also populate the email subject and body
@@ -52,7 +45,8 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 		[ setSubject, setMessage, onSearchChange ]
 	);
 
-	const launchpadEnabled = site?.options?.launchpad_screen === 'full';
+	const isSiteOwner = site?.site_owner === currentUser?.ID;
+	const launchpadEnabled = site?.options?.launchpad_screen === 'full' && isSiteOwner;
 
 	// Search query can be a query param, if the user searches or clears the search field
 	// we need to keep the query param up-to-date with that
@@ -99,7 +93,7 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 
 	return (
 		<div className="inline-help__search">
-			{ ! canConnectToZendesk && <NewThirdPartyCookiesNotice /> }
+			<BlockedZendeskNotice />
 			{ launchpadEnabled && <HelpCenterLaunchpad /> }
 			<InlineHelpSearchCard
 				searchQuery={ searchQuery }

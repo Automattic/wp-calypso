@@ -43,6 +43,7 @@ const useSubscribersQuery = ( {
 				...( search && { search } ),
 				...( sortTerm && { sort: sortTerm } ),
 				...( sortOrder && { sort_order: sortOrder } ),
+				use_new_helper: 'true',
 			} );
 
 			filters.forEach( ( filter ) => {

@@ -14,15 +14,22 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import Main from 'calypso/components/main';
+import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { getSelectedDomain, canCurrentUserAddEmail } from 'calypso/lib/domains';
+import {
+	getSelectedDomain,
+	canCurrentUserAddEmail,
+	getCurrentUserCannotAddEmailReason,
+} from 'calypso/lib/domains';
 import {
 	hasEmailForwards,
 	getDomainsWithEmailForwards,
 } from 'calypso/lib/domains/email-forwarding';
+import { EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED } from 'calypso/lib/emails/email-provider-constants';
 import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
 import { GOOGLE_WORKSPACE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
 import { domainAddNew } from 'calypso/my-sites/domains/paths';
+import { EmailDomainStateRestrictedMessage } from 'calypso/my-sites/email/email-domain-state-restricted-message';
 import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-existing-forwards-notice';
 import EmailExistingPaidServiceNotice from 'calypso/my-sites/email/email-existing-paid-service-notice';
 import { EmailNonDomainOwnerMessage } from 'calypso/my-sites/email/email-non-domain-owner-message';
@@ -92,7 +99,7 @@ const EmailProvidersStackedComparison = ( {
 	);
 
 	const currentUserCanAddEmail = canCurrentUserAddEmail( domain );
-	const showNonOwnerMessage = ! currentUserCanAddEmail && ! isDomainInCart;
+	const showEmailPurchaseDisabledMessage = ! currentUserCanAddEmail && ! isDomainInCart;
 
 	const isGSuiteSupported =
 		domain && canPurchaseGSuite && ( isDomainInCart || hasGSuiteSupportedDomain( [ domain ] ) );
@@ -100,7 +107,7 @@ const EmailProvidersStackedComparison = ( {
 	const shouldPromoteGoogleWorkspace = isGSuiteSupported && hasDiscount( gSuiteProduct );
 
 	const initialExpandedCards = () => {
-		if ( showNonOwnerMessage ) {
+		if ( showEmailPurchaseDisabledMessage ) {
 			return {
 				google: false,
 				titan: false,
@@ -131,7 +138,7 @@ const EmailProvidersStackedComparison = ( {
 
 	useEffect( () => {
 		setDetailsExpanded( initialExpandedCards() );
-	}, [ showNonOwnerMessage ] );
+	}, [ showEmailPurchaseDisabledMessage ] );
 
 	const changeExpandedState = ( providerKey: string, isCurrentlyExpanded: boolean ) => {
 		const expandedEntries = Object.entries( detailsExpanded ).map( ( entry ) => {
@@ -201,7 +208,7 @@ const EmailProvidersStackedComparison = ( {
 			intervalLength={ selectedIntervalLength }
 			isDomainInCart={ isDomainInCart }
 			key="ProfessionalEmailCard"
-			onExpandedChange={ ! showNonOwnerMessage ? changeExpandedState : undefined }
+			onExpandedChange={ ! showEmailPurchaseDisabledMessage ? changeExpandedState : undefined }
 			selectedDomainName={ selectedDomainName }
 			source={ source }
 		/>,
@@ -211,7 +218,7 @@ const EmailProvidersStackedComparison = ( {
 			intervalLength={ selectedIntervalLength }
 			isDomainInCart={ isDomainInCart }
 			key="GoogleWorkspaceCard"
-			onExpandedChange={ ! showNonOwnerMessage ? changeExpandedState : undefined }
+			onExpandedChange={ ! showEmailPurchaseDisabledMessage ? changeExpandedState : undefined }
 			selectedDomainName={ selectedDomainName }
 			source={ source }
 		/>,
@@ -232,6 +239,24 @@ const EmailProvidersStackedComparison = ( {
 		),
 	};
 
+	const renderEmailPurchaseDisabledMessage = () => {
+		const cannotAddEmailWarningReason = getCurrentUserCannotAddEmailReason( domain );
+		const cannotAddEmailWarningCode = cannotAddEmailWarningReason?.code ?? null;
+
+		switch ( cannotAddEmailWarningCode ) {
+			case EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED:
+				return <EmailDomainStateRestrictedMessage domainName={ selectedDomainName } />;
+			default:
+				return (
+					<EmailNonDomainOwnerMessage
+						domain={ domain }
+						selectedSite={ selectedSite }
+						source="email-comparison"
+					/>
+				);
+		}
+	};
+
 	return (
 		<Main
 			className={ clsx( className, {
@@ -239,6 +264,7 @@ const EmailProvidersStackedComparison = ( {
 			} ) }
 			wideLayout
 		>
+			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 			<QueryProductsList />
 
 			{ ! isDomainInCart && selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
@@ -273,7 +299,7 @@ const EmailProvidersStackedComparison = ( {
 				</div>
 			) }
 
-			{ ! showNonOwnerMessage && (
+			{ ! showEmailPurchaseDisabledMessage && (
 				<BillingIntervalToggle
 					intervalLength={ selectedIntervalLength }
 					onIntervalChange={ changeIntervalLength }
@@ -290,17 +316,13 @@ const EmailProvidersStackedComparison = ( {
 			{ ! isDomainInCart && domain && <EmailExistingPaidServiceNotice domain={ domain } /> }
 
 			<>
-				{ showNonOwnerMessage && (
-					<EmailNonDomainOwnerMessage
-						domain={ domain }
-						selectedSite={ selectedSite }
-						source="email-comparison"
-					/>
-				) }
+				{ showEmailPurchaseDisabledMessage && renderEmailPurchaseDisabledMessage() }
 				{ shouldPromoteGoogleWorkspace ? [ ...emailProviderCards ].reverse() : emailProviderCards }
 			</>
 
-			{ ! isDomainInCart && <EmailForwardingLink selectedDomainName={ selectedDomainName } /> }
+			{ ! isDomainInCart && ! showEmailPurchaseDisabledMessage && (
+				<EmailForwardingLink selectedDomainName={ selectedDomainName } />
+			) }
 
 			<TrackComponentView
 				eventName="calypso_email_providers_comparison_page_view"

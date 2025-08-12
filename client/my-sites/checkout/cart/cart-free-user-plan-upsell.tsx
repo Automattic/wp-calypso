@@ -6,12 +6,13 @@ import {
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { StoreProductSlug, useProducts } from '@automattic/data-stores/src/products-list';
+import { formatCurrency } from '@automattic/number-formatters';
 import {
 	type MinimalRequestCartProduct,
 	type ResponseCartProduct,
 	useShoppingCart,
 } from '@automattic/shopping-cart';
-import { formatCurrency, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import SectionHeader from 'calypso/components/section-header';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';

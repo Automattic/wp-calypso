@@ -1,40 +1,27 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { ProvisionStatus } from '..';
 
 describe( 'ProvisionStatus', () => {
-	it( 'renders "in progress" status', () => {
-		const status = {
-			siteTransfer: 'success',
-			pluginInstallation: 'pending',
-			migrationKey: 'error',
-		};
-
-		render( <ProvisionStatus status={ status } /> );
-
-		expect( screen.getByText( 'Installing the required plugins' ) ).toBeVisible();
-	} );
-
 	it( 'shows the number of in-progress steps', () => {
 		const status = {
-			siteTransfer: 'success',
-			pluginInstallation: 'pending',
-			migrationKey: 'error',
+			siteTransferStatus: 'idle',
+			migrationKeyStatus: 'error',
 		};
 
 		render( <ProvisionStatus status={ status } /> );
 
-		expect( screen.getByText( '2/3' ) ).toBeVisible();
+		expect( screen.getByText( '1/2' ) ).toBeVisible();
 	} );
 
 	it( 'should render success message when all actions are successul', () => {
 		const status = {
-			siteTransfer: 'success',
-			pluginInstallation: 'success',
-			migrationKey: 'success',
+			siteTransferStatus: 'completed',
+			migrationKeyStatus: 'success',
 		};
 
 		render( <ProvisionStatus status={ status } /> );
@@ -48,9 +35,8 @@ describe( 'ProvisionStatus', () => {
 
 	it( "shows instructions to the user get the key by itself when we can't get the key", () => {
 		const status = {
-			siteTransfer: 'success',
-			pluginInstallation: 'success',
-			migrationKey: 'error',
+			siteTransferStatus: 'completed',
+			migrationKeyStatus: 'error',
 		};
 
 		render( <ProvisionStatus status={ status } /> );
@@ -64,9 +50,8 @@ describe( 'ProvisionStatus', () => {
 
 	it( 'should render error message when one of ther first two action fails', () => {
 		const status = {
-			siteTransfer: 'success',
-			pluginInstallation: 'error',
-			migrationKey: 'idle',
+			siteTransferStatus: 'error',
+			migrationKeyStatus: 'idle',
 		};
 
 		render( <ProvisionStatus status={ status } /> );

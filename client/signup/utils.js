@@ -115,11 +115,6 @@ export function getFlowDestination(
 		: flow?.destination;
 }
 
-export function getValueFromProgressStore( { signupProgress, stepName, fieldName } ) {
-	const siteStepProgress = find( signupProgress, ( step ) => step.stepName === stepName );
-	return siteStepProgress ? siteStepProgress[ fieldName ] : null;
-}
-
 export function getDestination( destination, dependencies, flowName, localeSlug ) {
 	return flows.filterDestination( destination, dependencies, flowName, localeSlug );
 }

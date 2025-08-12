@@ -8,6 +8,14 @@
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"calypso:src": "src/index.ts",
+	"exports": {
+		".": {
+			"calypso:src": "./src/index.ts",
+			"types": "./dist/types/index.d.ts",
+			"import": "./dist/esm/index.js",
+			"require": "./dist/cjs/index.js"
+		}
+	},
 	"sideEffects": [
 		"*.css",
 		"*.scss"
@@ -30,18 +38,19 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
+		"@automattic/color-studio": "^4.1.0",
 		"@automattic/components": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
-		"@wordpress/url": "^4.20.0",
+		"@wordpress/url": "^4.23.0",
 		"i18n-calypso": "workspace:^",
-		"social-logos": "^3.1.16"
+		"social-logos": "^3.1.18"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"typescript": "^5.8.2"
+		"typescript": "^5.8.3"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^10.20.0",
+		"@wordpress/data": "^10.23.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1"
 	}

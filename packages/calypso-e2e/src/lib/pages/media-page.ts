@@ -1,5 +1,4 @@
 import { ElementHandle, Page } from 'playwright';
-import { number } from 'yargs';
 import { getCalypsoURL } from '../../data-helper';
 import { waitForElementEnabled, clickNavTab } from '../../element-helper';
 
@@ -105,7 +104,7 @@ export class MediaPage {
 	 * @throws {Error} If requested item could not be located in the gallery, or if the click action failed to select the gallery item.
 	 */
 	async selectItem( { index, name }: { index?: number; name?: string } = {} ): Promise< void > {
-		if ( ! name && ! number ) {
+		if ( ! index && ! name ) {
 			throw new Error( 'Specify either index or name.' );
 		}
 

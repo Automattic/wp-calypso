@@ -3,7 +3,6 @@ import I18NContext from './context';
 
 function bindI18nProps( i18n ) {
 	return {
-		numberFormat: i18n.numberFormat.bind( i18n ),
 		translate: i18n.translate.bind( i18n ),
 		locale: i18n.getLocaleSlug(),
 	};
@@ -20,8 +19,7 @@ export default function localize( ComposedComponent ) {
 		const [ counter, setCounter ] = useState( 0 );
 		useEffect( () => {
 			const onChange = () => setCounter( ( c ) => c + 1 );
-			i18n.on( 'change', onChange );
-			return () => i18n.off( 'change', onChange );
+			return i18n.subscribe( onChange );
 		}, [ i18n ] );
 
 		const i18nProps = useMemo( () => bindI18nProps( i18n, counter ), [ i18n, counter ] );

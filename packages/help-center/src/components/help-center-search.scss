@@ -5,7 +5,7 @@
 /**
  * Styling for '/' route.
  */
-.inline-help__search {
+.help-center .inline-help__search {
 	padding: 16px;
 
 	// Search Bar
@@ -20,7 +20,7 @@
 			border: 1px;
 
 			input.search__input {
-				font-size: $font-body-small;
+				font-size: $font-body;
 				min-height: 40px;
 			}
 
@@ -42,4 +42,3 @@
 		}
 	}
 }
-

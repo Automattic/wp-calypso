@@ -1,7 +1,8 @@
 import { Card, Spinner } from '@automattic/components';
+import { formatNumber } from '@automattic/number-formatters';
 import { createSelector } from '@automattic/state-utils';
 import clsx from 'clsx';
-import { numberFormat, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useEffect } from 'react';
 import { connect, useDispatch } from 'react-redux';
@@ -13,11 +14,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import { preventWidows } from 'calypso/lib/formatting';
 import { buildChartData } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
-import {
-	getSiteAdminUrl,
-	getSiteOption,
-	isAdminInterfaceWPAdmin,
-} from 'calypso/state/sites/selectors';
+import { getSiteAdminUrl, getSiteOption } from 'calypso/state/sites/selectors';
 import { requestChartCounts } from 'calypso/state/stats/chart-tabs/actions';
 import { getCountRecords, getLoadingTabs } from 'calypso/state/stats/chart-tabs/selectors';
 import {
@@ -25,7 +22,7 @@ import {
 	getTopPostAndPage,
 	isRequestingSiteStatsForQuery,
 } from 'calypso/state/stats/lists/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
@@ -39,12 +36,10 @@ export const StatsV2 = ( {
 	insightsQuery,
 	isLoading,
 	isSiteUnlaunched,
-	adminInterfaceIsWPAdmin,
 	mostPopularDay,
 	mostPopularTime,
 	siteCreatedAt,
 	siteId,
-	siteSlug,
 	siteAdminUrl,
 	topPage,
 	topPost,
@@ -158,25 +153,18 @@ export const StatsV2 = ( {
 							{ showViews && (
 								<div className="stats__data-item">
 									<div className="stats__data-label">{ translate( 'Total views' ) }</div>
-									<div className="stats__data-value">{ numberFormat( views ) }</div>
+									<div className="stats__data-value">{ formatNumber( views ) }</div>
 								</div>
 							) }
 							{ showVisitors && (
 								<div className="stats__data-item">
 									<div className="stats__data-label">{ translate( 'Total visitors' ) }</div>
-									<div className="stats__data-value">{ numberFormat( visitors ) }</div>
+									<div className="stats__data-value">{ formatNumber( visitors ) }</div>
 								</div>
 							) }
 						</div>
 						<div className="stats__all">
-							<a
-								href={
-									adminInterfaceIsWPAdmin
-										? `${ siteAdminUrl }admin.php?page=stats`
-										: `/stats/day/${ siteSlug }`
-								}
-								className="stats__all-link"
-							>
+							<a href={ `${ siteAdminUrl }admin.php?page=stats` } className="stats__all-link">
 								{ translate( 'See all stats' ) }
 							</a>
 						</div>
@@ -289,10 +277,8 @@ const isLoadingStats = ( state, siteId, chartQuery, insightsQuery, topPostsQuery
 
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
-	const siteSlug = getSelectedSiteSlug( state );
 	const siteAdminUrl = getSiteAdminUrl( state, siteId );
 	const isSiteUnlaunched = isUnlaunchedSite( state, siteId );
-	const adminInterfaceIsWPAdmin = isAdminInterfaceWPAdmin( state, siteId );
 	const siteCreatedAt = getSiteOption( state, siteId, 'created_at' );
 
 	const { chartQuery, insightsQuery, topPostsQuery, visitsQuery } = getStatsQueries(
@@ -320,10 +306,8 @@ const mapStateToProps = ( state ) => {
 		insightsQuery,
 		isLoading: canShowStatsData ? statsData.chartData.length !== chartQuery.quantity : isLoading,
 		isSiteUnlaunched,
-		adminInterfaceIsWPAdmin,
 		siteCreatedAt,
 		siteId,
-		siteSlug,
 		siteAdminUrl,
 		topPostsQuery,
 		visitsQuery,

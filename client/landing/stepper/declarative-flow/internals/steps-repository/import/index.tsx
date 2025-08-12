@@ -1,47 +1,60 @@
-import { StepContainer } from '@automattic/onboarding';
+import { Step, StepContainer } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { ReactElement, useEffect } from 'react';
+import React, { ReactElement } from 'react';
 import CaptureStep from 'calypso/blocks/import/capture';
 import DocumentHead from 'calypso/components/data/document-head';
-import useMigrationConfirmation from 'calypso/landing/stepper/hooks/use-migration-confirmation';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { generateStepPath } from './helper';
-import type { Step } from '../../types';
+import type { Step as StepType } from '../../types';
 import type { ImporterPlatform } from 'calypso/lib/importer/types';
 import './style.scss';
 
-export const ImportWrapper: Step< {
+export const ImportWrapper: StepType< {
 	submits: {
 		platform: ImporterPlatform;
 		url: string;
 	};
+	accepts: {
+		text?: string;
+		subText?: string;
+	};
 } > = function ( props ) {
 	const { __ } = useI18n();
-	const { navigation, children, stepName } = props;
-	const [ , setMigrationConfirmed ] = useMigrationConfirmation();
+	const { navigation, children, stepName, text, subText } = props;
+	const useContainerV2 = stepName === 'importList';
+	const documentTitle = __( 'Import your site content' );
+	const showHeading = text && subText;
 
-	useEffect(
-		() => setMigrationConfirmed( false ),
-		// setMigrationConfirmed should be a stable function,
-		// since it's part of the return value of `useState` call
-		// (see useMigrationConfirmation's implementation)
-		[ setMigrationConfirmed ]
-	);
+	if ( useContainerV2 ) {
+		return (
+			<>
+				<DocumentHead title={ documentTitle } />
+				<Step.CenteredColumnLayout
+					className="importv2__onboarding-page"
+					columnWidth={ 4 }
+					topBar={
+						<Step.TopBar leftElement={ <Step.BackButton onClick={ navigation.goBack } /> } />
+					}
+					heading={ showHeading ? <Step.Heading text={ text } subText={ subText } /> : undefined }
+				>
+					{ children as ReactElement }
+				</Step.CenteredColumnLayout>
+			</>
+		);
+	}
 
 	return (
 		<>
-			<DocumentHead title={ __( 'Import your site content' ) } />
+			<DocumentHead title={ documentTitle } />
 
 			<StepContainer
 				stepName={ stepName || 'import-step' }
 				flowName="importer"
 				className="import__onboarding-page"
-				hideSkip
 				hideFormattedHeader
 				goBack={ navigation.goBack }
-				goNext={ navigation.goNext }
 				skipLabelText={ __( "I don't have a site address" ) }
 				isFullLayout
 				stepContent={ children as ReactElement }
@@ -51,7 +64,7 @@ export const ImportWrapper: Step< {
 	);
 };
 
-const ImportStep: Step< {
+const ImportStep: StepType< {
 	submits: {
 		platform: ImporterPlatform;
 		url: string;

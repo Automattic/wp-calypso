@@ -9,9 +9,11 @@ import useGridPlans, { usePlanTypesWithIntent } from './hooks/data-store/use-gri
 import useGridPlansForComparisonGrid from './hooks/data-store/use-grid-plans-for-comparison-grid';
 import useGridPlansForFeaturesGrid from './hooks/data-store/use-grid-plans-for-features-grid';
 import usePlanBillingDescription from './hooks/data-store/use-plan-billing-description';
+import usePlanBillingPeriod from './hooks/data-store/use-plan-billing-period';
 import usePlanFeaturesForGridPlans from './hooks/data-store/use-plan-features-for-grid-plans';
 import usePlansFromTypes from './hooks/data-store/use-plans-from-types';
 import useRestructuredPlanFeaturesForComparisonGrid from './hooks/data-store/use-restructured-plan-features-for-comparison-grid';
+import { useSummerSpecialStatus } from './hooks/data-store/use-summer-special-status';
 import { useManageTooltipToggle } from './hooks/use-manage-tooltip-toggle';
 
 /**
@@ -33,11 +35,13 @@ export {
 	useGridPlansForFeaturesGrid,
 	useGridPlansForComparisonGrid,
 	useGridPlanForSpotlight,
+	usePlanBillingPeriod,
 	usePlanBillingDescription,
 	usePlanFeaturesForGridPlans,
 	usePlansFromTypes,
 	usePlanTypesWithIntent,
 	useRestructuredPlanFeaturesForComparisonGrid,
+	useSummerSpecialStatus,
 };
 
 /**

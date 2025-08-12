@@ -53,7 +53,6 @@ export default function NoMultiAgencyMessage( { currentAgency, targetAgency }: P
 
 			<StepSection heading={ translate( 'How to fix this:' ) }>
 				<StepSectionItem
-					isNewLayout
 					stepNumber={ 1 }
 					heading={
 						translate( 'Leave the %(currentAgencyName)s Dashboard', {
@@ -82,7 +81,6 @@ export default function NoMultiAgencyMessage( { currentAgency, targetAgency }: P
 				/>
 
 				<StepSectionItem
-					isNewLayout
 					stepNumber={ 2 }
 					heading={
 						translate( 'Join the %(targetAgencyName)s Dashboard', {

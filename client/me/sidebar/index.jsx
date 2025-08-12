@@ -7,7 +7,6 @@ import {
 	code,
 	cog,
 	commentAuthorAvatar,
-	help,
 	lockOutline,
 	notAllowed,
 	payment,
@@ -184,7 +183,7 @@ class MeSidebar extends Component {
 					/>
 
 					<SidebarItem
-						link="https://dashboard.wordpress.com/wp-admin/index.php?page=my-blogs"
+						link="/sites"
 						label={ translate( 'Manage Blogs' ) }
 						icon={ category }
 						forceInternalLink
@@ -218,14 +217,6 @@ class MeSidebar extends Component {
 						icon="plans"
 						onNavigate={ this.onNavigate }
 					/>
-
-					<SidebarItem
-						selected={ itemLinkMatches( '/help', path ) }
-						link="/help"
-						label={ translate( 'Support' ) }
-						icon={ help }
-						onNavigate={ this.onNavigate }
-					/>
 				</SidebarMenu>
 			</>
 		);
@@ -250,9 +241,12 @@ class MeSidebar extends Component {
 export default withCurrentRoute(
 	connect(
 		( state, { currentSection } ) => {
-			const sectionGroup = currentSection?.group ?? null;
 			const siteId = getSelectedSiteId( state );
-			const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, siteId, sectionGroup );
+			const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( {
+				state,
+				siteId,
+				section: currentSection,
+			} );
 			return {
 				currentUser: getCurrentUser( state ),
 				shouldShowGlobalSidebar,

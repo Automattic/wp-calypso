@@ -20,6 +20,7 @@ import wpcom from 'calypso/lib/wp';
 import ValidationFieldset from 'calypso/signup/validation-fieldset';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
+import SignupSubmitButton from './signup-submit-button';
 
 class PasswordlessSignupForm extends Component {
 	static propTypes = {
@@ -114,7 +115,7 @@ class PasswordlessSignupForm extends Component {
 				locale: getLocaleSlug(),
 				client_id: config( 'wpcom_signup_id' ),
 				client_secret: config( 'wpcom_signup_key' ),
-				...( flowName === 'wpcc' && {
+				...( ( flowName === 'wpcc' || flowName === 'crowdsignal' ) && {
 					oauth2_client_id,
 					oauth2_redirect: oauth2_redirect && `0@${ oauth2_redirect }`,
 				} ),
@@ -197,7 +198,7 @@ class PasswordlessSignupForm extends Component {
 			marketing_price_group,
 			bearer_token: response.bearer_token,
 			is_new_account: true,
-			...( flowName === 'wpcc'
+			...( [ 'wpcc', 'crowdsignal' ].includes( flowName )
 				? { oauth2_client_id, oauth2_redirect }
 				: { redirect: redirect_to } ),
 		} );
@@ -312,14 +313,12 @@ class PasswordlessSignupForm extends Component {
 
 		return (
 			<LoggedOutFormFooter>
-				<Button
-					type="submit"
-					primary
-					busy={ isSubmitting }
-					disabled={ isSubmitting || !! this.props.disabled || !! this.props.disableSubmitButton }
+				<SignupSubmitButton
+					isBusy={ isSubmitting }
+					isDisabled={ isSubmitting || !! this.props.disabled || !! this.props.disableSubmitButton }
 				>
 					{ submitButtonText }
-				</Button>
+				</SignupSubmitButton>
 				{ this.props.secondaryFooterButton }
 			</LoggedOutFormFooter>
 		);

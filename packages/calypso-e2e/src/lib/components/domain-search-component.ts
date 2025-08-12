@@ -1,6 +1,5 @@
 import { Page } from 'playwright';
-import { reloadAndRetry } from '../../element-helper';
-import { plansPageUrl } from '../pages';
+import { reloadAndRetry, waitForElementEnabled } from '../../element-helper';
 
 const selectors = {
 	searchInput: '.search-component__input',
@@ -74,30 +73,34 @@ export class DomainSearchComponent {
 	 * @param {string} keyword Unique keyword to select domains.
 	 * @returns {string} Domain that was selected.
 	 */
-	async selectDomain( keyword: string ): Promise< string > {
+	async selectDomain( keyword: string, waitForContinueButton: boolean = true ): Promise< string > {
 		const targetRow = this.page.locator( selectors.domainSuggestionRow ).filter( {
-			hasText: keyword,
+			has: this.page.getByLabel( keyword ),
 		} );
 		await targetRow.waitFor();
 
 		const target = targetRow.getByRole( 'button' );
 		await target.waitFor();
 
-		// The `heading` element represents the entire domain (including the tld).
-		const selectedDomain = await targetRow.getByRole( 'heading' ).innerText();
+		const selectedDomain = await targetRow.getByRole( 'heading' ).getAttribute( 'aria-label' );
+
+		if ( ! selectedDomain ) {
+			throw new Error( `No domain found for keyword: ${ keyword }` );
+		}
 
 		await target.click();
 
-		// If multiple domain selections are enabled, the Continue button appears
-		// on the right hand sidebar.
-		// See: 21483-explat-experiment
-		// Note: this page object does not currently support multiple domain selection.
-		await Promise.race( [
-			this.page
-				.getByRole( 'button', { name: 'Continue', exact: true } )
-				.click( { timeout: 30 * 1000 } ),
-			this.page.waitForURL( plansPageUrl ),
-		] );
+		if ( waitForContinueButton ) {
+			const continueButton = await waitForElementEnabled( this.page, 'button:text("Continue")', {
+				timeout: 30 * 1000,
+			} );
+
+			// Now click the enabled button using dispatchEvent to handle issues with the environment badge staying on top of the button.
+			await Promise.all( [
+				continueButton.dispatchEvent( 'click' ),
+				this.page.waitForNavigation(),
+			] );
+		}
 
 		return selectedDomain;
 	}

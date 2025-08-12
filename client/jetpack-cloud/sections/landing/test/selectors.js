@@ -3,7 +3,6 @@ import {
 	FEATURE_SOCIAL_SHARES_1000,
 	WPCOM_FEATURES_AKISMET,
 	WPCOM_FEATURES_BACKUPS,
-	WPCOM_FEATURES_CDN,
 	WPCOM_FEATURES_INSTANT_SEARCH,
 	WPCOM_FEATURES_SCAN,
 	WPCOM_FEATURES_VIDEOPRESS,
@@ -139,7 +138,7 @@ describe( 'getLandingPath', () => {
 		expect( landingPath ).toEqual( `/jetpack-social/${ FAKE_SITE_SLUG }` );
 	} );
 
-	it.each( [ [ WPCOM_FEATURES_AKISMET ], [ WPCOM_FEATURES_VIDEOPRESS ], [ WPCOM_FEATURES_CDN ] ] )(
+	it.each( [ [ WPCOM_FEATURES_AKISMET ], [ WPCOM_FEATURES_VIDEOPRESS ] ] )(
 		'should return /backup/<site> for sites with any other feature set',
 		( featureSet ) => {
 			isJetpackSite.mockReturnValue( true );

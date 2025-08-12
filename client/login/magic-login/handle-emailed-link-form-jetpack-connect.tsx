@@ -1,9 +1,10 @@
 import page from '@automattic/calypso-router';
+import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { FC, useCallback, useEffect, useState } from 'react';
-import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
+// import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import EmptyContent from 'calypso/components/empty-content';
-import JetpackLogo from 'calypso/components/jetpack-logo';
+import Main from 'calypso/components/main';
 import { login } from 'calypso/lib/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -25,6 +26,7 @@ import getMagicLoginRequestedAuthSuccessfully from 'calypso/state/selectors/get-
 import isFetchingMagicLoginAuth from 'calypso/state/selectors/is-fetching-magic-login-auth';
 import isWooDnaFlow from 'calypso/state/selectors/is-woo-dna-flow';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
+import { useLoginContext } from '../login-context';
 import EmailedLoginLinkExpired from './emailed-login-link-expired';
 
 interface Props {
@@ -54,6 +56,8 @@ const HandleEmailedLinkFormJetpackConnect: FC< Props > = ( { emailAddress, token
 		new URLSearchParams( redirectToOriginal.split( '?' )[ 1 ] ).get( 'from' ) ===
 		'automattic-for-agencies-client';
 
+	const { setHeaders } = useLoginContext();
+
 	useEffect( () => {
 		if ( ! emailAddress || ! token ) {
 			dispatch( showMagicLoginLinkExpiredPage() );
@@ -61,6 +65,11 @@ const HandleEmailedLinkFormJetpackConnect: FC< Props > = ( { emailAddress, token
 			setHasSubmitted( true );
 			dispatch( fetchMagicLoginAuthenticate( token, redirectToOriginal ) );
 		}
+
+		setHeaders( {
+			heading: translate( 'Email confirmed!' ),
+			subHeading: null,
+		} );
 	}, [] );
 
 	// Lifted from `blocks/login`
@@ -96,19 +105,15 @@ const HandleEmailedLinkFormJetpackConnect: FC< Props > = ( { emailAddress, token
 	}, [ authError, dispatch, handleValidToken, hasSubmitted, isAuthenticated, isFetching ] );
 
 	if ( isExpired ) {
-		return <EmailedLoginLinkExpired />;
+		return <EmailedLoginLinkExpired emailAddress={ emailAddress } isJetpack />;
 	}
 
 	dispatch( recordTracksEvent( 'calypso_login_email_link_handle_click_view' ) );
 
-	return (
-		<EmptyContent className="magic-login__handle-link jetpack" title={ null } illustration={ null }>
-			{ ! isWooFlow && ! isFromAutomatticForAgenciesPlugin && <JetpackLogo size={ 74 } full /> }
-			{ isFromAutomatticForAgenciesPlugin && <A4ALogo fullA4A size={ 58 } /> }
+	return isWooFlow || isFromAutomatticForAgenciesPlugin ? (
+		<EmptyContent className="magic-login__handle-link jetpack" title={ null }>
+			{ /* { isFromAutomatticForAgenciesPlugin && <A4ALogo fullA4A size={ 58 } /> } */ }
 
-			<h2 className="magic-login__title empty-content__title">
-				{ translate( 'Email confirmed!' ) }
-			</h2>
 			<h3 className="magic-login__line empty-content__line">
 				{ [
 					translate( 'Logging in as %(emailAddress)s', {
@@ -120,6 +125,22 @@ const HandleEmailedLinkFormJetpackConnect: FC< Props > = ( { emailAddress, token
 				] }
 			</h3>
 		</EmptyContent>
+	) : (
+		<Main className="magic-login">
+			<div className="magic-login__successfully-jetpack">
+				<p>
+					{ translate( 'Logging in as {{strong}}%(emailAddress)s{{/strong}}…', {
+						args: {
+							emailAddress,
+						},
+						components: {
+							strong: <strong></strong>,
+						},
+					} ) }
+				</p>
+				<Spinner className="magic-login__loading-spinner--jetpack" />
+			</div>
+		</Main>
 	);
 };
 

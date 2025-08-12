@@ -6,7 +6,7 @@ import steps from '../steps';
 import { generateSteps } from '../steps-pure';
 
 jest.mock( 'calypso/lib/signup/step-actions', () => ( {} ) );
-jest.mock( 'component-file-picker', () => <div></div> );
+jest.mock( 'calypso/components/file-picker/component-file-picker', () => <div></div> );
 jest.mock( 'calypso/lib/explat', () => {
 	() => {
 		return [ false, null ];
@@ -142,6 +142,10 @@ describe( 'index', () => {
 
 		// Remove the `site` step manually since it is used in tests.
 		definedSteps.delete( 'site' );
+
+		// Do not consider the user step as deprecated since there is still a config flag
+		// deciding whether user-social or user is used.
+		definedSteps.delete( 'user' );
 
 		expect( definedSteps ).toEqual( new Set() );
 	} );

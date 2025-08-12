@@ -8,6 +8,10 @@ $gray-50: #646970;
 $breakpoint-mobile: 660px;
 
 .step-route.user {
+	.form-fieldset {
+		margin-bottom: 8px;
+	}
+
 	.locale-suggestions {
 		margin: 0 auto;
 	}
@@ -16,11 +20,10 @@ $breakpoint-mobile: 660px;
 	.signup-form-social-first__email-tos-link {
 		color: var(--studio-gray-60, #646970);
 		font-family: "SF Pro Text", sans-serif;
-		font-size: 0.75rem;
+		font-size: 0.875rem;
 		font-style: normal;
 		font-weight: 400;
 		line-height: 20px;
-		margin-bottom: 0;
 
 		a {
 			color: var(--studio-gray-60, #646970);
@@ -29,7 +32,7 @@ $breakpoint-mobile: 660px;
 	}
 
 	.signup-form-social-first__tos-link {
-		margin-top: 3rem;
+		margin-bottom: 2rem;
 		text-align: center;
 	}
 
@@ -207,12 +210,13 @@ $breakpoint-mobile: 660px;
 			max-width: 500px;
 		}
 
-		.notice {
+		.calypso-notice {
 			margin-bottom: 0;
 		}
 	}
 
 	.signup-form-social-first {
+
 		&,
 		.card.auth-form__social,
 		.card.logged-out-form {

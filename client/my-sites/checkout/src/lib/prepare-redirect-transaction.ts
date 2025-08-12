@@ -1,9 +1,9 @@
+import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import {
 	createTransactionEndpointRequestPayload,
 	createTransactionEndpointCartFromResponseCart,
 } from './translate-cart';
-import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from './translate-payment-method-names';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type {
 	TransactionRequest,

@@ -180,8 +180,11 @@ const ThreatItem: React.FC< Props > = ( {
 				diff={ threat.diff }
 				rows={ threat.rows }
 				table={ threat.table }
+				primaryKeyColumn={ threat.primaryKeyColumn }
+				value={ threat.value }
 				filename={ threat.filename }
 				isFixable={ isFixable }
+				details={ threat.details }
 			/>
 
 			<div className="threat-item__buttons">

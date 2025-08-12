@@ -1,5 +1,8 @@
 import { useStripe } from '@automattic/calypso-stripe';
-import { isValueTruthy } from '@automattic/wpcom-checkout';
+import {
+	isValueTruthy,
+	translateCheckoutPaymentMethodToWpcomPaymentMethod,
+} from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import {
@@ -8,7 +11,6 @@ import {
 	useCreatePayPalExpress,
 } from 'calypso/my-sites/checkout/src/hooks/use-create-payment-methods';
 import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
-import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/src/lib/translate-payment-method-names';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { PaymentMethodSelectorSubmitButtonContent } from '../payment-method-selector/payment-method-selector-submit-button-content';

@@ -6,12 +6,15 @@
 import {
 	DataHelper,
 	EditorPage,
-	SecretsManager,
+	envToFeatureKey,
+	envVariables,
+	getTestAccountByFeature,
 	SocialConnectionsManager,
 	TestAccount,
 	TestAccountName,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
+import { skipDescribeIf } from '../../jest-helpers';
 
 declare const browser: Browser;
 
@@ -22,6 +25,13 @@ const features4SimpleSites = {
 	socialImageGenerator: false,
 };
 
+const features4BusinessPlan = {
+	resharing: true,
+	manualSharing: true,
+	mediaSharing: true,
+	socialImageGenerator: true,
+};
+
 const testCases: Array< {
 	plan: string;
 	platform: 'Simple' | 'Atomic';
@@ -30,74 +40,59 @@ const testCases: Array< {
 		'resharing' | 'manualSharing' | 'mediaSharing' | 'socialImageGenerator',
 		boolean
 	>;
-} > = [
-	{
-		plan: 'Free',
-		platform: 'Simple',
-		testAccountName: 'simpleSiteFreePlanUser',
-		features: features4SimpleSites,
-	},
-	{
-		plan: 'Personal',
-		platform: 'Simple',
-		testAccountName: 'simpleSitePersonalPlanUser',
-		features: features4SimpleSites,
-	},
-	{
-		plan: 'Paid',
-		platform: 'Atomic',
-		testAccountName: 'atomicUser',
-		features: {
-			resharing: true,
-			manualSharing: true,
-			mediaSharing: true,
-			socialImageGenerator: false,
+	isPrivate?: boolean;
+} > = [];
+
+if ( envVariables.JETPACK_TARGET === 'wpcom-deployment' ) {
+	testCases.push( {
+		plan: envVariables.TEST_ON_ATOMIC ? 'Paid' : 'Business',
+		platform: envVariables.TEST_ON_ATOMIC ? 'Atomic' : 'Simple',
+		testAccountName: getTestAccountByFeature( envToFeatureKey( envVariables ) ),
+		features: features4BusinessPlan,
+		isPrivate: envVariables.TEST_ON_ATOMIC && envVariables.ATOMIC_VARIATION === 'private',
+	} );
+} else {
+	testCases.push(
+		{
+			plan: 'Free',
+			platform: 'Simple',
+			testAccountName: 'simpleSiteFreePlanUser',
+			features: features4SimpleSites,
 		},
-	},
-];
-
-const getShareModal = async (
-	page: Page,
-	platform: ( typeof testCases )[ number ][ 'platform' ]
-) => {
-	let shareModal;
-	if ( 'Atomic' !== platform ) {
-		// Get the main editor iframe
-		const editorFrame = page.frameLocator( 'iframe' ).first();
-		shareModal = editorFrame.getByRole( 'dialog' );
-	} else {
-		shareModal = page.getByRole( 'dialog' );
-	}
-
-	await shareModal.waitFor( { state: 'visible' } );
-
-	return shareModal;
-};
+		{
+			plan: 'Personal',
+			platform: 'Simple',
+			testAccountName: 'simpleSitePersonalPlanUser',
+			features: features4SimpleSites,
+		}
+	);
+}
 
 /**
  * Tests features offered by Jetpack Social on a Simple site with Free plan.
  *
- * Keywords: Social, Jetpack, Publicize
+ * Keywords: Social, Jetpack, Publicize, Editor
  */
 describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () {
-	for ( const { plan, platform, testAccountName, features } of testCases ) {
+	for ( const { plan, platform, testAccountName, features, isPrivate } of testCases ) {
 		const title = `For ${ platform } sites with ${ plan } plan`;
 
-		describe( DataHelper.createSuiteTitle( title ), function () {
+		skipDescribeIf( isPrivate ?? false )( DataHelper.createSuiteTitle( title ), function () {
 			let page: Page;
 			let editorPage: EditorPage;
 			let socialConnectionsManager: SocialConnectionsManager;
 
-			const credentials = SecretsManager.secrets.testAccounts[ testAccountName ];
-			const siteSlug = credentials.testSites?.primary?.url;
-			const siteId = credentials.testSites?.primary?.id;
+			let siteSlug: string;
+			let siteId: number;
 
 			beforeAll( async () => {
 				page = await browser.newPage();
 				editorPage = new EditorPage( page );
-				socialConnectionsManager = new SocialConnectionsManager( page, siteId! );
 
 				const testAccount = new TestAccount( testAccountName );
+				siteId = testAccount.credentials.testSites?.primary?.id || 0;
+				siteSlug = testAccount.getSiteURL( { protocol: false } );
+				socialConnectionsManager = new SocialConnectionsManager( page, siteId! );
 				await testAccount.authenticate( page );
 			} );
 
@@ -158,7 +153,11 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 				} );
 				await sharePostModalButton.click();
 
-				let shareModal = await getShareModal( page, platform );
+				const shareModal = ( await editorPage.getEditorParent() ).getByRole( 'dialog' ).filter( {
+					hasText: 'Social Preview',
+				} );
+
+				await shareModal.waitFor();
 				let reshareButton = shareModal.getByRole( 'button', { name: 'Share', exact: true } );
 
 				expect( await reshareButton.isVisible() ).toBe( false );
@@ -170,11 +169,8 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 				await editorPage.enterTitle( 'Resharing: ' + DataHelper.getRandomPhrase() );
 				// Publish the post.
 				await editorPage.publish();
+				connectionTestPromise = socialConnectionsManager.waitForConnectionTests();
 				await editorPage.closeAllPanels();
-
-				if ( features.resharing ) {
-					connectionTestPromise = socialConnectionsManager.waitForConnectionTests();
-				}
 
 				// Open the Jetpack sidebar.
 				await editorPage.openSettings( 'Jetpack' );
@@ -201,7 +197,10 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 				if ( features.resharing ) {
 					await sharePostModalButton.click();
 
-					shareModal = await getShareModal( page, platform );
+					const shareModal = ( await editorPage.getEditorParent() ).getByRole( 'dialog' ).filter( {
+						hasText: 'Share Post',
+					} );
+					await shareModal.waitFor();
 
 					// Look for the Share button within the modal dialog
 					reshareButton = shareModal.getByRole( 'button', { name: 'Share', exact: true } );
@@ -251,11 +250,7 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 					name: 'Manual sharing',
 				} );
 
-				// For some reason the manual sharing is not visible on the post publish panel for Simple sites with personal plan.
-				const isPostPublishManualSharingVisible =
-					features.manualSharing && ! ( platform === 'Simple' && plan === 'Personal' );
-
-				if ( isPostPublishManualSharingVisible ) {
+				if ( features.manualSharing ) {
 					await manualSharing.waitFor();
 				}
 

@@ -1,15 +1,14 @@
 import page from '@automattic/calypso-router';
+import { captureException } from '@automattic/calypso-sentry';
 import { fetchLaunchpad } from '@automattic/data-stores';
 import { areLaunchpadTasksCompleted } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/launchpad/task-helper';
 import { isRemovedFlow } from 'calypso/landing/stepper/utils/flow-redirect-handler';
 import { getQueryArgs } from 'calypso/lib/query-args';
+import { getSiteFragment } from 'calypso/lib/route';
 import { bumpStat } from 'calypso/state/analytics/actions';
-import { fetchModuleList } from 'calypso/state/jetpack/modules/actions';
-import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
-import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
-import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import { shouldShowLaunchpadFirst } from 'calypso/state/selectors/should-show-launchpad-first';
-import { isSiteOnWooExpressEcommerceTrial } from 'calypso/state/sites/plans/selectors';
+import { requestSite } from 'calypso/state/sites/actions';
+import isSiteBigSkyTrial from 'calypso/state/sites/plans/selectors/is-site-big-sky-trial';
 import { canCurrentUserUseCustomerHome, getSiteUrl } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSiteSlug,
@@ -34,6 +33,14 @@ export default async function renderHome( context, next ) {
 }
 
 export async function maybeRedirect( context, next ) {
+	const siteFragment = context.params.site || getSiteFragment( context.path );
+	try {
+		await context.store.dispatch( requestSite( siteFragment ) );
+	} catch ( e ) {
+		// If the network returns an error we don't want the page to fail to load
+		captureException( e );
+	}
+
 	const state = context.store.getState();
 	const slug = getSelectedSiteSlug( state );
 
@@ -52,26 +59,13 @@ export async function maybeRedirect( context, next ) {
 
 	const siteId = getSelectedSiteId( state );
 
-	if ( isSiteOnWooExpressEcommerceTrial( state, siteId ) ) {
-		// Pre-fetch plugins and modules to avoid flashing content prior deciding whether to redirect.
-		await Promise.allSettled( [
-			context.store.dispatch( fetchSitePlugins( siteId ) ),
-			context.store.dispatch( fetchModuleList( siteId ) ),
-		] );
-
-		// Ecommerce Plan's Home redirects to WooCommerce Home.
-		// Temporary redirection until we create a dedicated Home for Ecommerce.
-		// We need to make sure that sites on the eCommerce plan actually have WooCommerce installed before we redirect to the WooCommerce Home
-		// So we need to trigger a fetch of site plugins
+	if ( isSiteBigSkyTrial( state, siteId ) ) {
 		const siteUrl = getSiteUrl( state, siteId );
 		if ( siteUrl !== null ) {
-			const refetchedState = context.store.getState();
-			const installedWooCommercePlugin = getPluginOnSite( refetchedState, siteId, 'woocommerce' );
-			const isSSOEnabled = !! isJetpackModuleActive( refetchedState, siteId, 'sso' );
-			if ( isSSOEnabled && installedWooCommercePlugin && installedWooCommercePlugin.active ) {
-				window.location.replace( siteUrl + '/wp-admin/admin.php?page=wc-admin' );
-				return;
-			}
+			window.location.replace(
+				siteUrl + '/wp-admin/site-editor.php?canvas=edit&ai-website-builder-trial=home'
+			);
+			return;
 		}
 	}
 

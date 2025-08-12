@@ -156,7 +156,7 @@ $heading-font-body-small: 15px;
 	}
 
 	&.dialog__backdrop {
-		background-color: rgba(var(--color-neutral-100-rgb), 0.6);
+		background-color: color-mix(in srgb, var(--color-neutral-100) 60%, transparent);
 
 		.dialog.card {
 			max-width: 480px;

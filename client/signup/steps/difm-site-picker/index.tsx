@@ -60,19 +60,17 @@ export default function DIFMSitePickerStep( props: Props ) {
 
 	const { data: geoData } = useGeoLocationQuery();
 
-	const queryParams = new URLSearchParams( window?.location.search );
-	const flags = queryParams.get( 'flags' )?.split( ',' );
-	const isHelpCenterLinkEnabled =
-		flags?.includes( 'signup/help-center-link' ) && geoData?.country_short === 'US';
+	const isPremiumHelpCenterLinkEnabled = geoData?.country_short === 'US';
 
 	const subHeaderText = translate(
 		'Please {{SupportLink}}contact support{{/SupportLink}} if your existing WordPress.com site isn’t listed, or create a {{NewSiteLink}}new site{{/NewSiteLink}} instead.',
 		{
 			components: {
-				SupportLink: isHelpCenterLinkEnabled ? (
-					<HelpCenterInlineButton className="subtitle-link" flowName={ props.flowName } />
-				) : (
-					<a className="subtitle-link" rel="noopener noreferrer" href="/help/contact" />
+				SupportLink: (
+					<HelpCenterInlineButton
+						className="subtitle-link"
+						flowName={ isPremiumHelpCenterLinkEnabled ? props.flowName : undefined }
+					/>
 				),
 				NewSiteLink: (
 					<Button variant="link" className="subtitle-link" onClick={ onNewSiteClicked } />

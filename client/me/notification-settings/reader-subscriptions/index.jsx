@@ -1,16 +1,21 @@
 import { Card, FormLabel } from '@automattic/components';
+import { getNumericFirstDayOfWeek, withLocale } from '@automattic/i18n-utils';
+import {
+	Button,
+	CheckboxControl,
+	__experimentalConfirmDialog as ConfirmDialog,
+} from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
-import FormButton from 'calypso/components/forms/form-button';
-import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -20,12 +25,23 @@ import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import withFormBase from 'calypso/me/form-base/with-form-base';
 import Navigation from 'calypso/me/notification-settings/navigation';
 import ReauthRequired from 'calypso/me/reauth-required';
+import { useSiteSubscriptions } from 'calypso/reader/following/use-site-subscriptions';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
 import SubscriptionManagementBackButton from '../subscription-management-back-button';
 
 class NotificationSubscriptions extends Component {
+	state = {
+		showConfirmModal: false,
+	};
+
+	checkboxNameToActionMap = {
+		subscription_delivery_jabber_default: 'Notification delivery by Jabber',
+		subscription_delivery_email_blocked: 'Block All Email Updates',
+		p2_disable_autofollow_on_comment: 'Enable auto-follow P2 upon comment',
+	};
+
 	handleClickEvent( action ) {
 		return () => this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
 	}
@@ -35,11 +51,65 @@ class NotificationSubscriptions extends Component {
 	}
 
 	handleCheckboxEvent( action, invert = false ) {
-		return ( event ) => {
-			const optionValue = invert ? ! event.target.checked : event.target.checked;
-			this.props.recordGoogleEvent( 'Me', `Clicked ${ action } checkbox`, 'checked', +optionValue );
+		return ( checked ) => {
+			const optionValue = invert ? ! checked : checked;
+			// Create a synthetic event object that matches what updateSetting expects
+			const syntheticEvent = {
+				currentTarget: {
+					name: action,
+					value: optionValue,
+				},
+			};
+			this.props.toggleSetting( syntheticEvent );
+			const actionLabel = this.checkboxNameToActionMap[ action ];
+			this.props.recordGoogleEvent(
+				'Me',
+				`Clicked ${ actionLabel } checkbox`,
+				'checked',
+				+optionValue
+			);
 		};
 	}
+
+	handleSubmit = ( event ) => {
+		event.preventDefault();
+		const isBlockingEmails = this.props.getSetting( 'subscription_delivery_email_blocked' );
+		const { hasSubscriptions } = this.props;
+
+		if ( isBlockingEmails && hasSubscriptions ) {
+			this.setState( { showConfirmModal: true } );
+			return;
+		}
+
+		this.props.submitForm( event );
+	};
+
+	handleSubmitButtonClick = ( event ) => {
+		this.props.recordGoogleEvent( 'Me', 'Clicked on Save Notification Settings Button' );
+		this.handleSubmit( event );
+	};
+
+	handleModalCancel = () => {
+		// Create a synthetic event object that matches what updateSetting expects
+		const syntheticEvent = {
+			currentTarget: {
+				name: 'subscription_delivery_email_blocked',
+				value: false,
+			},
+		};
+
+		this.props.updateSetting( syntheticEvent );
+		this.setState( { showConfirmModal: false } );
+	};
+
+	handleModalConfirm = () => {
+		// Create a synthetic event object that matches what updateSetting expects
+		const syntheticEvent = {
+			preventDefault: () => {},
+		};
+		this.props.submitForm( syntheticEvent );
+		this.setState( { showConfirmModal: false } );
+	};
 
 	getDeliveryHourLabel( hour ) {
 		return this.props.translate( '%(fromHour)s - %(toHour)s', {
@@ -53,6 +123,37 @@ class NotificationSubscriptions extends Component {
 					.format( 'LT' ),
 			},
 		} );
+	}
+
+	renderLocalizedWeekdayOptions() {
+		const { translate, locale } = this.props;
+		const startOfWeek = getNumericFirstDayOfWeek( locale );
+
+		const weekDays = [
+			{ value: '1', label: translate( 'Monday' ) },
+			{ value: '2', label: translate( 'Tuesday' ) },
+			{ value: '3', label: translate( 'Wednesday' ) },
+			{ value: '4', label: translate( 'Thursday' ) },
+			{ value: '5', label: translate( 'Friday' ) },
+			{ value: '6', label: translate( 'Saturday' ) },
+			{ value: '0', label: translate( 'Sunday' ) },
+		];
+
+		// Rotate the array based on startOfWeek
+		const rotatedWeekdays = [
+			...weekDays.slice( startOfWeek - 1 ),
+			...weekDays.slice( 0, startOfWeek - 1 ),
+		];
+
+		return (
+			<>
+				{ rotatedWeekdays.map( ( { value, label } ) => (
+					<option key={ value } value={ value }>
+						{ label }
+					</option>
+				) ) }
+			</>
+		);
 	}
 
 	render() {
@@ -82,14 +183,14 @@ class NotificationSubscriptions extends Component {
 					<form
 						id="notification-settings"
 						onChange={ this.props.markChanged }
-						onSubmit={ this.props.submitForm }
+						onSubmit={ this.handleSubmit }
 					>
 						<FormSectionHeading>
-							{ this.props.translate( 'Email subscriptions' ) }
+							{ this.props.translate( 'Subscription settings' ) }
 						</FormSectionHeading>
 						<p>
 							{ this.props.translate(
-								'{{readerLink}}Visit the Reader{{/readerLink}} to adjust individual site subscriptions.',
+								'To manage individual site subscriptions, {{readerLink}}go to the Reader{{/readerLink}}.',
 								{
 									components: {
 										readerLink: (
@@ -125,23 +226,6 @@ class NotificationSubscriptions extends Component {
 						</FormFieldset>
 
 						<FormFieldset>
-							<FormLegend>{ this.props.translate( 'Jabber subscription delivery' ) }</FormLegend>
-							<FormLabel>
-								<FormCheckbox
-									checked={ this.props.getSetting( 'subscription_delivery_jabber_default' ) }
-									disabled={ this.props.getDisabledState() }
-									id="subscription_delivery_jabber_default"
-									name="subscription_delivery_jabber_default"
-									onChange={ this.props.toggleSetting }
-									onClick={ this.handleCheckboxEvent( 'Notification delivery by Jabber' ) }
-								/>
-								<span>
-									{ this.props.translate( 'Default delivery via Jabber instant message' ) }
-								</span>
-							</FormLabel>
-						</FormFieldset>
-
-						<FormFieldset>
 							<FormLabel htmlFor="subscription_delivery_mail_option">
 								{ this.props.translate( 'Email delivery format' ) }
 							</FormLabel>
@@ -153,8 +237,8 @@ class NotificationSubscriptions extends Component {
 								onFocus={ this.handleFocusEvent( 'Email delivery format' ) }
 								value={ this.props.getSetting( 'subscription_delivery_mail_option' ) }
 							>
-								<option value="html">{ this.props.translate( 'HTML' ) }</option>
-								<option value="text">{ this.props.translate( 'Plain Text' ) }</option>
+								<option value="html">{ this.props.translate( 'Visual (HTML)' ) }</option>
+								<option value="text">{ this.props.translate( 'Plain text' ) }</option>
 							</FormSelect>
 						</FormFieldset>
 
@@ -171,13 +255,7 @@ class NotificationSubscriptions extends Component {
 								onFocus={ this.handleFocusEvent( 'Email delivery window day' ) }
 								value={ this.props.getSetting( 'subscription_delivery_day' ) }
 							>
-								<option value="0">{ this.props.translate( 'Sunday' ) }</option>
-								<option value="1">{ this.props.translate( 'Monday' ) }</option>
-								<option value="2">{ this.props.translate( 'Tuesday' ) }</option>
-								<option value="3">{ this.props.translate( 'Wednesday' ) }</option>
-								<option value="4">{ this.props.translate( 'Thursday' ) }</option>
-								<option value="5">{ this.props.translate( 'Friday' ) }</option>
-								<option value="6">{ this.props.translate( 'Saturday' ) }</option>
+								{ this.renderLocalizedWeekdayOptions() }
 							</FormSelect>
 
 							<FormSelect
@@ -210,22 +288,37 @@ class NotificationSubscriptions extends Component {
 						</FormFieldset>
 
 						<FormFieldset>
+							<FormLegend>{ this.props.translate( 'Jabber subscription delivery' ) }</FormLegend>
+							<CheckboxControl
+								checked={ this.props.getSetting( 'subscription_delivery_jabber_default' ) }
+								disabled={ this.props.getDisabledState() }
+								id="subscription_delivery_jabber_default"
+								name="subscription_delivery_jabber_default"
+								onChange={ this.handleCheckboxEvent( 'subscription_delivery_jabber_default' ) }
+								label={
+									<span>
+										{ this.props.translate( 'Receive subscription updates via instant message.' ) }{ ' ' }
+										<InlineSupportLink
+											supportContext="jabber-subscription-updates"
+											showIcon={ false }
+										/>
+									</span>
+								}
+							/>
+						</FormFieldset>
+
+						<FormFieldset>
 							<FormLegend>{ this.props.translate( 'Pause emails' ) }</FormLegend>
-							<FormLabel>
-								<FormCheckbox
-									checked={ this.props.getSetting( 'subscription_delivery_email_blocked' ) }
-									disabled={ this.props.getDisabledState() }
-									id="subscription_delivery_email_blocked"
-									name="subscription_delivery_email_blocked"
-									onChange={ this.props.toggleSetting }
-									onClick={ this.handleCheckboxEvent( 'Block All Notification Emails' ) }
-								/>
-								<span>
-									{ this.props.translate(
-										'Pause all email updates from sites you’re subscribed to on WordPress.com'
-									) }
-								</span>
-							</FormLabel>
+							<CheckboxControl
+								checked={ this.props.getSetting( 'subscription_delivery_email_blocked' ) }
+								disabled={ this.props.getDisabledState() }
+								id="subscription_delivery_email_blocked"
+								name="subscription_delivery_email_blocked"
+								onChange={ this.handleCheckboxEvent( 'subscription_delivery_email_blocked' ) }
+								label={ this.props.translate(
+									'Pause all email updates from sites you’re subscribed to on WordPress.com'
+								) }
+							/>
 							<FormSettingExplanation>
 								{ this.props.translate(
 									'Newsletters are sent via WordPress.com. If you pause emails, you will not receive newsletters from the sites you are subscribed to.'
@@ -236,36 +329,44 @@ class NotificationSubscriptions extends Component {
 						{ isAutomattician && (
 							<FormFieldset>
 								<FormLegend>Auto-follow P2 posts (Automatticians only)</FormLegend>
-								<FormLabel>
-									<FormCheckbox
-										checked={ ! this.props.getSetting( 'p2_disable_autofollow_on_comment' ) }
-										disabled={ this.props.getDisabledState() }
-										id="p2_disable_autofollow_on_comment"
-										name="p2_disable_autofollow_on_comment"
-										onChange={ this.props.toggleSetting }
-										onClick={ this.handleCheckboxEvent(
-											'Enable auto-follow P2 upon comment',
-											true
-										) }
-									/>
-									<span>
-										Automatically subscribe to P2 post notifications when you leave a comment.
-									</span>
-								</FormLabel>
+								<CheckboxControl
+									checked={ ! this.props.getSetting( 'p2_disable_autofollow_on_comment' ) }
+									disabled={ this.props.getDisabledState() }
+									id="p2_disable_autofollow_on_comment"
+									name="p2_disable_autofollow_on_comment"
+									onChange={ this.handleCheckboxEvent( 'p2_disable_autofollow_on_comment', true ) }
+									label={ this.props.translate(
+										'Automatically subscribe to P2 post notifications when you leave a comment.'
+									) }
+								/>
 							</FormFieldset>
 						) }
 
-						<FormButton
-							isSubmitting={ this.props.isUpdatingUserSettings }
+						<Button
+							accessibleWhenDisabled
+							variant="primary"
+							showTooltip={ ! this.props.hasUnsavedUserSettings }
+							label={ this.props.translate( 'No unsaved changes' ) }
 							disabled={ this.props.isUpdatingUserSettings || ! this.props.hasUnsavedUserSettings }
-							onClick={ this.handleClickEvent( 'Save Notification Settings Button' ) }
+							isBusy={ this.props.isUpdatingUserSettings }
+							onClick={ this.handleSubmitButtonClick }
 						>
-							{ this.props.isUpdatingUserSettings
-								? this.props.translate( 'Saving…' )
-								: this.props.translate( 'Save notification settings' ) }
-						</FormButton>
+							{ this.props.translate( 'Save notification settings' ) }
+						</Button>
 					</form>
 				</Card>
+
+				<ConfirmDialog
+					isOpen={ this.state.showConfirmModal }
+					onConfirm={ () => this.handleModalConfirm() }
+					onCancel={ () => this.handleModalCancel() }
+					confirmButtonText={ this.props.translate( 'Confirm' ) }
+					style={ { maxWidth: '480px' } }
+				>
+					{ this.props.translate(
+						"You have active newsletter subscriptions. Pausing emails means you won't receive any newsletter updates. Are you sure you want to continue?"
+					) }
+				</ConfirmDialog>
 			</Main>
 		);
 	}
@@ -279,10 +380,16 @@ const mapDispatchToProps = {
 	recordGoogleEvent,
 };
 
+const NotificationSubscriptionsWithHooks = ( props ) => {
+	const { hasNonSelfSubscriptions } = useSiteSubscriptions();
+	return <NotificationSubscriptions hasSubscriptions={ hasNonSelfSubscriptions } { ...props } />;
+};
+
 export default compose(
 	connect( mapStateToProps, mapDispatchToProps ),
 	localize,
 	protectForm,
+	withLocale,
 	withLocalizedMoment,
 	withFormBase
-)( NotificationSubscriptions );
+)( NotificationSubscriptionsWithHooks );

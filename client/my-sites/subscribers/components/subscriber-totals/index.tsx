@@ -1,5 +1,6 @@
+import { formatNumber } from '@automattic/number-formatters';
 import { Spinner } from '@wordpress/components';
-import { translate, numberFormat } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import { SubscribersFilterBy } from '../../constants';
 import './style.scss';
 
@@ -99,7 +100,7 @@ const SubscriberTotals: React.FC< SubscriberTotalsProps > = ( {
 						'%(subscriberCount)s total subscribers',
 						{
 							count: totalSubscribers,
-							args: { subscriberCount: numberFormat( totalSubscribers ) },
+							args: { subscriberCount: formatNumber( totalSubscribers ) },
 						}
 					) }
 				</span>
@@ -131,19 +132,19 @@ const SubscriberTotals: React.FC< SubscriberTotalsProps > = ( {
 							'%(matchingSubscriberCount)s matching results',
 							{
 								count: filteredCount,
-								args: { matchingSubscriberCount: numberFormat( filteredCount ) },
+								args: { matchingSubscriberCount: formatNumber( filteredCount ) },
 							}
 					  )
 					: translate( '%(filteredSubscriberCount)s %(filterLabel)s', {
 							args: {
-								filteredSubscriberCount: numberFormat( filteredCount ),
+								filteredSubscriberCount: formatNumber( filteredCount ),
 								filterLabel,
 							},
 					  } ) }
 			</span>
 			<span className="subscriber-totals__total">
 				{ translate( 'out of %(totalSubscriberCount)s total subscribers', {
-					args: { totalSubscriberCount: numberFormat( totalSubscribers ) },
+					args: { totalSubscriberCount: formatNumber( totalSubscribers ) },
 				} ) }
 			</span>
 		</div>

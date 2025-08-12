@@ -5,7 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import withProductLightbox, {
 	ProductLightboxActivatorProps,
 	WithProductLightboxProps,
-} from 'calypso/a8c-for-agencies/sections/marketplace/products-overview-v2/hocs/with-product-lightbox';
+} from 'calypso/a8c-for-agencies/sections/marketplace/products-overview/hocs/with-product-lightbox';
 import WooPaymentsLogo from 'calypso/assets/images/a8c-for-agencies/product-logos/woopayments.svg';
 
 type Props = WithProductLightboxProps &

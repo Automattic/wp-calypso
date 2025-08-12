@@ -15,9 +15,13 @@ import {
 	NewUserResponse,
 	MyProfilePage,
 	MeSidebarComponent,
-	cancelPurchaseFlow,
 	NoticeComponent,
 	PurchasesPage,
+	envVariables,
+	LoggedOutHomePage,
+	LoggedOutThemesPage,
+	ThemesDetailPage,
+	cancelAtomicPurchaseFlow,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiCloseAccount } from '../shared';
@@ -57,38 +61,23 @@ describe( 'Lifecyle: Logged Out Home Page, signup, onboard, launch and cancel su
 			await page.goto( 'https://WordPress.com' );
 		} );
 
-		it( 'Selects a theme', async function () {
-			// Hovering over the container to stop the carousel scrolling
-			// The force is necessary as the container is not considered stable due to the scrolling
-			const themeContainer = page.locator( '.lp-content.lp-content-area--scrolling' ).first();
-			await themeContainer.hover( { force: true } );
+		it( 'Select a theme', async function () {
+			const lohp = new LoggedOutHomePage( page );
 
-			// Hovering over the theme card is necessary to make the "Start with this theme" button visible.
-			const themeCard = themeContainer.locator( '.lp-image-top-row' ).last();
-			await themeCard.hover();
-
-			const themeButton = themeCard.getByText( 'Start with this theme' );
-			const calypsoUrl = new URL( DataHelper.getCalypsoURL() );
-			const themeButtonUrl = new URL( ( await themeButton.getAttribute( 'href' ) ) || '' );
-
-			if ( calypsoUrl.hostname !== 'wordpress.com' ) {
-				// Reroute the click to the current Calypso URL.
-				await page.route( themeButtonUrl.href, async ( route ) => {
-					themeButtonUrl.host = calypsoUrl.host;
-					themeButtonUrl.protocol = calypsoUrl.protocol;
-
-					await route.abort();
-					await page.unrouteAll( { behavior: 'ignoreErrors' } );
-					await page.goto( themeButtonUrl.href, { waitUntil: 'load' } );
-				} );
+			if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
+				themeSlug = await lohp.selectFirstTheme();
+				return;
 			}
-			// Get theme slug
-			const pageMatch = new URL( themeButtonUrl.href ).search.match( 'theme=([a-z]*)?&' );
-			themeSlug = pageMatch?.[ 1 ] || null;
 
-			// Hover, otherwise the element isn't considered stable, and is out of the viewport.
-			await themeCard.hover( { force: true } );
-			await themeCard.getByText( 'Start with this theme' ).click( { force: true } );
+			await lohp.clickExploreThemes();
+
+			const themeShowcase = new LoggedOutThemesPage( page );
+
+			await themeShowcase.filterBy( 'Free' );
+			await themeShowcase.clickFirstTheme();
+
+			const themeDetails = new ThemesDetailPage( page );
+			themeSlug = await themeDetails.pickThisDesign();
 		} );
 
 		it( 'Sign up as new user', async function () {
@@ -100,7 +89,7 @@ describe( 'Lifecyle: Logged Out Home Page, signup, onboard, launch and cancel su
 			const domainSearch = new DomainSearchComponent( page );
 
 			await domainSearch.search( testUser.siteName );
-			await domainSearch.selectDomain( `${ testUser.siteName }.wordpress.com` );
+			await domainSearch.selectDomain( `${ testUser.siteName }.wordpress.com`, false );
 		} );
 
 		it( `Select WordPress.com ${ planName } plan`, async function () {
@@ -151,29 +140,33 @@ describe( 'Lifecyle: Logged Out Home Page, signup, onboard, launch and cancel su
 			await mePage.visit();
 
 			const meSidebarComponent = new MeSidebarComponent( page );
+			await meSidebarComponent.openMobileMenu();
 			await meSidebarComponent.navigate( 'Purchases' );
 		} );
 
-		it( 'View details of purchased plan', async function () {
+		it( 'View details of purchased plan and cancel plan renewal', async function () {
 			purchasesPage = new PurchasesPage( page );
 
 			await purchasesPage.clickOnPurchase(
 				`WordPress.com ${ planName }`,
 				newSiteDetails.blog_details.site_slug
 			);
-			await purchasesPage.purchaseAction( 'Cancel plan' );
+			await purchasesPage.cancelPurchase( 'Cancel plan' );
 		} );
 
 		it( 'Cancel plan renewal', async function () {
-			await cancelPurchaseFlow( page, {
+			await cancelAtomicPurchaseFlow( page, {
 				reason: 'Another reason…',
 				customReasonText: 'E2E TEST CANCELLATION',
 			} );
 
 			noticeComponent = new NoticeComponent( page );
-			await noticeComponent.noticeShown( 'You successfully canceled your purchase', {
-				timeout: 30 * 1000,
-			} );
+			await noticeComponent.noticeShown(
+				'Your refund has been processed and your purchase removed.',
+				{
+					timeout: 30 * 1000,
+				}
+			);
 		} );
 	} );
 

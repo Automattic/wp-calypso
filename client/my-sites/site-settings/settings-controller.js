@@ -1,17 +1,14 @@
+import { isWpComPersonalPlan, isWpComPremiumPlan } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import titlecase from 'to-title-case';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { navigate } from 'calypso/lib/navigate';
-import { isRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import { sectionify } from 'calypso/lib/route';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getSiteOption, getSiteUrl } from 'calypso/state/sites/selectors';
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-	getSelectedSiteSlug,
-} from 'calypso/state/ui/selectors';
+import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export function redirectToJetpackNewsletterSettingsIfNeeded( context, next ) {
 	const state = context.store.getState();
@@ -22,7 +19,14 @@ export function redirectToJetpackNewsletterSettingsIfNeeded( context, next ) {
 	const hasClassicAdminInterfaceStyle =
 		getSiteOption( state, siteId, 'wpcom_admin_interface' ) === 'wp-admin';
 
-	if ( hasClassicAdminInterfaceStyle && isAtomic ) {
+	// Check if site has Personal or Premium plan
+	const sitePlan = getSitePlan( state, siteId );
+	const isPersonalOrPremiumPlan =
+		sitePlan &&
+		( isWpComPersonalPlan( sitePlan.product_slug ) || isWpComPremiumPlan( sitePlan.product_slug ) );
+
+	// Only redirect if it's atomic with classic admin interface AND not Personal/Premium plan
+	if ( hasClassicAdminInterfaceStyle && isAtomic && ! isPersonalOrPremiumPlan ) {
 		navigate( `${ siteUrl }/wp-admin/admin.php?page=jetpack#/newsletter` );
 		return;
 	}
@@ -38,30 +42,23 @@ export function redirectToJetpackNewsletterSettingsIfNeeded( context, next ) {
  * @returns
  */
 export const redirectToolsIfRemoveDuplicateViewsExperimentEnabled = async ( context, next ) => {
-	const { getState, dispatch } = context.store;
-	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState, dispatch );
-
-	if ( isUntangled ) {
-		const slug = context.path.split( '/' )[ 2 ];
-		if ( ! slug ) {
-			return next();
-		}
-		const URL_MAP = {
-			'delete-site': 'delete-site',
-			'start-over': 'reset-site',
-			'start-site-transfer': 'transfer-site',
-		};
-		if ( ! URL_MAP[ slug ] ) {
-			return next();
-		}
-
-		const queryParams = context.querystring ? `?${ context.querystring }` : '';
-		return page.redirect(
-			`/sites/settings/site/${ context.params.site_id }/${ URL_MAP[ slug ] }${ queryParams }`
-		);
+	const slug = context.path.split( '/' )[ 2 ];
+	if ( ! slug ) {
+		return next();
+	}
+	const URL_MAP = {
+		'delete-site': 'delete-site',
+		'start-over': 'reset-site',
+		'start-site-transfer': 'transfer-site',
+	};
+	if ( ! URL_MAP[ slug ] ) {
+		return next();
 	}
 
-	next();
+	const queryParams = context.querystring ? `?${ context.querystring }` : '';
+	return page.redirect(
+		`/sites/settings/site/${ context.params.site_id }/${ URL_MAP[ slug ] }${ queryParams }`
+	);
 };
 
 /**
@@ -76,32 +73,9 @@ export const redirectToolsIfRemoveDuplicateViewsExperimentEnabled = async ( cont
  * - /settings can always redirect to /sites/settings/site
  * - /settings/general can always redirect to /wp-admin/options-general.php
  */
-export const redirectSettingsIfDuplciatedViewsEnabled = async ( context ) => {
-	const { getState, dispatch } = context.store;
-	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState, dispatch );
-
-	if ( isUntangled ) {
-		return page.redirect( `/sites/settings/site` );
-	}
-
-	return page.redirect( '/settings/general' );
+export const redirectSettingsIfDuplciatedViewsEnabled = async () => {
+	return page.redirect( `/sites/settings/site` );
 };
-
-/**
- * Redirect to /settings/general if the Remove Duplicate Views experiment is DISABLED
- * since /sites/settings/site/:site looks broken for those users.
- */
-export async function redirectSiteSettingsIfDuplicatedViewsDisabled( context, next ) {
-	const { getState, dispatch } = context.store;
-	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState, dispatch );
-	const siteSlug = getSelectedSiteSlug( getState() );
-
-	if ( ! isUntangled ) {
-		return page.redirect( `/settings/general/${ siteSlug }` );
-	}
-
-	next();
-}
 
 export async function siteSettings( context, next ) {
 	let analyticsPageTitle = 'Site Settings';

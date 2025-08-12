@@ -15,9 +15,9 @@ const SiteEditorQuickStart = () => {
 
 	return (
 		<EducationalContent
-			title={ translate( 'Design like an expert' ) }
+			title={ translate( 'Course: Create your website' ) }
 			description={ translate(
-				'Master the basics of Site Editing with four short videos. Learn how to edit colors, fonts, layouts, and bring your style to your site.'
+				'In this series of videos, we’ll walk you through the process of designing your website and publishing it online.'
 			) }
 			modalLinks={ [
 				{
@@ -31,7 +31,7 @@ const SiteEditorQuickStart = () => {
 						courseSlug: COURSE_SLUGS.SITE_EDITOR_QUICK_START,
 					},
 					onClick: openModal,
-					text: translate( 'Start learning' ),
+					text: translate( 'Start course' ),
 				},
 			] }
 			illustration={ startLearningPrompt }

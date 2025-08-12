@@ -148,13 +148,7 @@ export class EditorPage {
 	 * @param {number} timeout Timeout for waiting for the final requests.
 	 */
 	private async waitForEditorLoadedRequests( timeout: number = 60 * 1000 ): Promise< void > {
-		// In a typical loading scenario, this request is one of the last to fire.
-		// Lacking a perfect cross-site type (Simple/Atomic) way to check the loading state,
-		// it is a fairly good stand-in.
-		await Promise.all( [
-			this.page.waitForURL( /(\/post\/.+|\/page\/+|\/post-new.php|\/post.php+)/, { timeout } ),
-			this.page.waitForResponse( /.*posts.*/, { timeout } ),
-		] );
+		await this.page.waitForURL( /(\/post\/.+|\/page\/+|\/post-new.php|\/post.php+)/, { timeout } );
 	}
 
 	/**
@@ -291,13 +285,22 @@ export class EditorPage {
 	async addBlockFromSidebar(
 		blockName: string,
 		blockEditorSelector: string,
-		{ noSearch, blockFallBackName }: { noSearch?: boolean; blockFallBackName?: string } = {}
+		{
+			noSearch,
+			blockFallBackName,
+			blockInsertedPopupConfirmButtonSelector,
+		}: {
+			noSearch?: boolean;
+			blockFallBackName?: string;
+			blockInsertedPopupConfirmButtonSelector?: string;
+		} = {}
 	): Promise< ElementHandle > {
 		await this.editorGutenbergComponent.resetSelectedBlock();
 		await this.editorToolbarComponent.openBlockInserter();
 		await this.addBlockFromInserter( blockName, this.editorSidebarBlockInserterComponent, {
 			noSearch: noSearch,
 			blockFallBackName: blockFallBackName,
+			blockInsertedPopupConfirmButtonSelector: blockInsertedPopupConfirmButtonSelector,
 		} );
 
 		const blockHandle =
@@ -366,12 +369,42 @@ export class EditorPage {
 	private async addBlockFromInserter(
 		blockName: string,
 		inserter: BlockInserter,
-		{ noSearch, blockFallBackName }: { noSearch?: boolean; blockFallBackName?: string } = {}
-	): Promise< void > {
+		{
+			noSearch,
+			blockFallBackName,
+			blockInsertedPopupConfirmButtonSelector,
+		}: {
+			noSearch?: boolean;
+			blockFallBackName?: string;
+			blockInsertedPopupConfirmButtonSelector?: string;
+		} = {}
+	): Promise< Locator > {
 		if ( ! noSearch ) {
 			await inserter.searchBlockInserter( blockName );
 		}
-		await inserter.selectBlockInserterResult( blockName, { blockFallBackName } );
+
+		const locator = await inserter.selectBlockInserterResult( blockName, { blockFallBackName } );
+
+		if ( blockInsertedPopupConfirmButtonSelector ) {
+			const editorParent = await this.editor.parent();
+			const blockInsertedPopupConfirmButtonLocator = editorParent.locator(
+				blockInsertedPopupConfirmButtonSelector
+			);
+
+			// Whether the popup confirm button is not deterministic.
+			// If it is not present, exit early.
+			try {
+				await blockInsertedPopupConfirmButtonLocator.waitFor( { timeout: 100 } );
+			} catch ( e ) {
+				// Probably doesn't exist. That's ok.
+			}
+
+			if ( ( await blockInsertedPopupConfirmButtonLocator.count() ) > 0 ) {
+				await blockInsertedPopupConfirmButtonLocator.click();
+			}
+		}
+
+		return locator;
 	}
 
 	/**
@@ -379,16 +412,28 @@ export class EditorPage {
 	 *
 	 * The name is expected to be formatted in the same manner as it
 	 * appears on the label when visible in the block inserter panel.
+	 * When exactMatch is false, it will select the first pattern that
+	 * contains the given name in its aria-label.
 	 *
 	 * Example:
 	 * 		- Two images side by side
 	 *
 	 * @param {string} patternName Name of the pattern to insert.
+	 * @param {boolean} exactMatch Whether to use exact matching for pattern names.
 	 */
-	async addPatternFromSidebar( patternName: string ): Promise< void > {
-		await this.editorGutenbergComponent.resetSelectedBlock();
+	async addPatternFromSidebar(
+		patternName: string,
+		exactMatch: boolean = true
+	): Promise< Locator > {
+		if ( ! ( envVariables.TEST_ON_ATOMIC && envVariables.VIEWPORT_NAME === 'mobile' ) ) {
+			await this.editorGutenbergComponent.resetSelectedBlock();
+		}
 		await this.editorToolbarComponent.openBlockInserter();
-		await this.addPatternFromInserter( patternName, this.editorSidebarBlockInserterComponent );
+		return await this.addPatternFromInserter(
+			patternName,
+			this.editorSidebarBlockInserterComponent,
+			exactMatch
+		);
 	}
 
 	/**
@@ -406,11 +451,14 @@ export class EditorPage {
 	 * @param {string} patternName Name of the pattern to insert as it matches the label in the inserter.
 	 * @param {Locator} inserterLocator Locator to the element that will open the pattern/block inserter when clicked.
 	 */
-	async addPatternInline( patternName: string, inserterLocator: Locator ): Promise< void > {
+	async addPatternInline( patternName: string, inserterLocator: Locator ): Promise< Locator > {
 		// Perform a click action on the locator.
 		await inserterLocator.click();
 		// Add the specified pattern from the inserter.
-		await this.addPatternFromInserter( patternName, this.editorInlineBlockInserterComponent );
+		return await this.addPatternFromInserter(
+			patternName,
+			this.editorInlineBlockInserterComponent
+		);
 	}
 
 	/**
@@ -418,19 +466,32 @@ export class EditorPage {
 	 *
 	 * @param {string} patternName Name of the pattern.
 	 * @param {BlockInserter} inserter Block inserter component.
+	 * @param {boolean} exactMatch Whether to use exact matching for pattern names.
 	 */
 	private async addPatternFromInserter(
 		patternName: string,
-		inserter: BlockInserter
-	): Promise< void > {
+		inserter: BlockInserter,
+		exactMatch = true
+	): Promise< Locator > {
 		const editorParent = await this.editor.parent();
 
 		await inserter.searchBlockInserter( patternName );
-		await inserter.selectBlockInserterResult( patternName, { type: 'pattern' } );
+		const locator = await inserter.selectBlockInserterResult( patternName, {
+			type: 'pattern',
+			exactMatch,
+		} );
+
+		// For partial matches, get the actual pattern name from the selected element.
+		let actualPatternName = patternName;
+		if ( ! exactMatch ) {
+			actualPatternName = ( await locator.getAttribute( 'aria-label' ) ) ?? '';
+		}
+
 		const insertConfirmationToastLocator = editorParent.locator(
-			`.components-snackbar__content:text('Block pattern "${ patternName }" inserted.')`
+			`.components-snackbar__content:text('Block pattern "${ actualPatternName }" inserted.')`
 		);
 		await insertConfirmationToastLocator.waitFor();
+		return locator;
 	}
 
 	/**
@@ -488,12 +549,18 @@ export class EditorPage {
 		if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
 			await this.editorBlockToolbarComponent.clickParentBlockButton( expectedParentBlockName );
 		} else {
-			await this.editorBlockToolbarComponent.clickOptionsButton();
+			// If the menu was already open due to another action, don't open it again.
+			if ( ! ( await this.editorBlockToolbarComponent.isOptionsMenuOpen() ) ) {
+				await this.editorBlockToolbarComponent.clickOptionsButton();
+			}
 			await this.editorPopoverMenuComponent.clickMenuButton(
 				`Select parent block (${ expectedParentBlockName })`
 			);
-			// It stays open on modal! We have to close it again.
-			await this.editorBlockToolbarComponent.clickOptionsButton();
+			// The menu usually closes itself on click, but this might be inconsistent.
+			// Check if it did close and if not, close it for sure.
+			if ( await this.editorBlockToolbarComponent.isOptionsMenuOpen() ) {
+				await this.editorBlockToolbarComponent.clickOptionsButton();
+			}
 		}
 	}
 

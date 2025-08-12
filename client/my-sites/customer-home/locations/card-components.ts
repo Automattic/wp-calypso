@@ -47,7 +47,6 @@ import {
 	TASK_USE_BUILT_BY,
 	TASK_VERIFY_EMAIL,
 	TASK_WEBINARS,
-	TASK_WP_COURSES,
 	LAUNCHPAD_INTENT_NEWSLETTER_GOAL,
 } from 'calypso/my-sites/customer-home/cards/constants';
 import DomainUpsellFeature from 'calypso/my-sites/customer-home/cards/features/domain-upsell';
@@ -93,7 +92,6 @@ import TitanBanner from 'calypso/my-sites/customer-home/cards/tasks/titan-banner
 import UseBuiltBy from 'calypso/my-sites/customer-home/cards/tasks/use-built-by';
 import VerifyEmail from 'calypso/my-sites/customer-home/cards/tasks/verify-email';
 import Webinars from 'calypso/my-sites/customer-home/cards/tasks/webinars';
-import WPCourses from 'calypso/my-sites/customer-home/cards/tasks/wp-courses';
 import LearnGrow from 'calypso/my-sites/customer-home/locations/secondary/learn-grow';
 import type { ReactNode } from 'react';
 
@@ -135,7 +133,6 @@ const PRIMARY_CARD_COMPONENTS: CardComponentMap = {
 	[ TASK_USE_BUILT_BY ]: UseBuiltBy,
 	[ TASK_VERIFY_EMAIL ]: VerifyEmail,
 	[ TASK_WEBINARS ]: Webinars,
-	[ TASK_WP_COURSES ]: WPCourses,
 };
 
 const CARD_COMPONENTS: CardComponentMap = {

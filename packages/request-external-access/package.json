@@ -5,6 +5,14 @@
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"calypso:src": "src/index.js",
+	"exports": {
+		".": {
+			"calypso:src": "./src/index.js",
+			"types": "./dist/types/index.d.ts",
+			"import": "./dist/esm/index.js",
+			"require": "./dist/cjs/index.js"
+		}
+	},
 	"sideEffects": false,
 	"types": "dist/types",
 	"keywords": [
@@ -35,7 +43,8 @@
 	},
 	"dependencies": {
 		"@automattic/popup-monitor": "workspace:^",
-		"@babel/runtime": "^7.26.9"
+		"@babel/runtime": "^7.27.1",
+		"debug": "^4.4.1"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^"

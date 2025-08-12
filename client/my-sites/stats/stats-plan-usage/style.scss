@@ -1,8 +1,14 @@
 @import "@automattic/components/src/styles/typography";
+@import "@wordpress/base-styles/breakpoints";
 
 .stats__plan-usage {
 	margin-bottom: 32px;
 	border-top: 1px solid var(--studio-gray-5);
+
+	@media (max-width: $break-medium) {
+		border-bottom: 1px solid var(--studio-gray-5);
+		margin-bottom: 0;
+	}
 }
 
 .plan-usage {
@@ -15,6 +21,11 @@
 	font-weight: 500;
 	color: var(--studio-gray-100);
 	background-color: var(--studio-white);
+
+	@media (max-width: $break-medium) {
+		border: 0;
+		margin-top: 0;
+	}
 }
 
 .plan-usage-heading {
@@ -39,7 +50,7 @@
 
 	&.is-over-limit {
 		.plan-usage-progress-bar {
-			background-color: rgba(var(--studio-red-40-rgb), 0.15);
+			background-color: color-mix(in srgb, var(--studio-red-40) 15%, transparent);
 		}
 	}
 
@@ -47,7 +58,7 @@
 		position: absolute;
 		left: 0;
 		height: 100%;
-		background-color: rgba(var(--studio-jetpack-green-40-rgb), 0.15);
+		background-color: color-mix(in srgb, var(--studio-jetpack-green-40) 15%, transparent);
 		border-radius: 2px;
 	}
 }

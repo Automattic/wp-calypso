@@ -14,6 +14,8 @@ export const siteLaunchStatuses = [
 export type SiteLaunchStatus = ( typeof siteLaunchStatuses )[ number ];
 
 export interface SiteObjectWithStatus {
+	ID?: number;
+	slug?: string;
 	is_coming_soon?: boolean;
 	is_private?: boolean;
 	is_deleted?: boolean;
@@ -27,11 +29,16 @@ export interface SiteObjectWithStatus {
 }
 
 export const getSiteLaunchStatus = ( site: SiteObjectWithStatus ): SiteLaunchStatus => {
-	if ( site.site_migration?.migration_status?.startsWith( 'migration-pending' ) ) {
+	const migrationStatus = site.site_migration?.migration_status;
+
+	if ( migrationStatus?.startsWith( 'migration-pending' ) ) {
 		return 'migration-pending';
 	}
 
-	if ( site.site_migration?.migration_status?.startsWith( 'migration-started' ) ) {
+	if (
+		migrationStatus?.startsWith( 'migration-started' ) ||
+		migrationStatus?.includes( 'migration-in-progress' )
+	) {
 		return 'migration-started';
 	}
 

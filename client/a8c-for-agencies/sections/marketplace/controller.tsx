@@ -11,14 +11,18 @@ import MarketplaceSidebar from '../../components/sidebar-menu/marketplace';
 import AssignLicense from './assign-license';
 import Checkout from './checkout';
 import { MARKETPLACE_TYPE_REFERRAL } from './hoc/with-marketplace-type';
-import HostingOverviewV3 from './hosting-overview-v3';
+import HostingOverview from './hosting-overview';
 import { getValidHostingSection } from './lib/hosting';
 import { getValidBrand } from './lib/product-brand';
 import DownloadProducts from './primary/download-products';
-import ProductsOverviewV2 from './products-overview-v2';
+import ProductsOverview from './products-overview';
+import ReferEnterpriseHosting from './refer-enterprise-hosting';
 
-export const marketplaceContext: Callback = () => {
-	page.redirect( A4A_MARKETPLACE_HOSTING_LINK );
+export const marketplaceContext: Callback = ( context ) => {
+	const { purchase_type } = context.query;
+	const purchaseType = purchase_type === 'referral' ? 'referral' : undefined;
+	const purchaseTypeURLQuery = purchaseType ? `?purchase_type=${ purchaseType }` : '';
+	page.redirect( A4A_MARKETPLACE_HOSTING_LINK + purchaseTypeURLQuery );
 };
 
 export const marketplaceProductsContext: Callback = ( context, next ) => {
@@ -31,7 +35,7 @@ export const marketplaceProductsContext: Callback = ( context, next ) => {
 	context.primary = (
 		<>
 			<PageViewTracker title="Marketplace > Products" path={ context.path } />
-			<ProductsOverviewV2
+			<ProductsOverview
 				siteId={ site_id }
 				suggestedProduct={ product_slug }
 				defaultMarketplaceType={ purchaseType }
@@ -44,13 +48,19 @@ export const marketplaceProductsContext: Callback = ( context, next ) => {
 };
 
 export const marketplaceHostingContext: Callback = ( context, next ) => {
+	const { purchase_type } = context.query;
+	const purchaseType = purchase_type === 'referral' ? 'referral' : undefined;
+
 	if ( ! context.params.section ) {
 		const currentAgency = getActiveAgency( context.store.getState() );
+
+		const purchaseTypeURLQuery = purchaseType ? `?purchase_type=${ purchaseType }` : '';
+
 		page.redirect(
 			// If the agency is managing less than 5 sites, then we make wpcom as default section.
-			currentAgency?.signup_meta?.number_sites === '1-5'
+			( currentAgency?.signup_meta?.number_sites === '1-5'
 				? A4A_MARKETPLACE_HOSTING_WPCOM_LINK
-				: A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK
+				: A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK ) + purchaseTypeURLQuery
 		);
 		return;
 	}
@@ -61,7 +71,21 @@ export const marketplaceHostingContext: Callback = ( context, next ) => {
 	context.primary = (
 		<>
 			<PageViewTracker title="Marketplace > Hosting" path={ context.path } />
-			<HostingOverviewV3 section={ section } />
+			<HostingOverview section={ section } defaultMarketplaceType={ purchaseType } />
+		</>
+	);
+	next();
+};
+
+export const marketplaceReferEnterpriseHostingContext: Callback = ( context, next ) => {
+	context.secondary = <MarketplaceSidebar path={ context.path } />;
+	context.primary = (
+		<>
+			<PageViewTracker
+				title="Marketplace > Hosting > Refer Enterprise Hosting"
+				path={ context.path }
+			/>
+			<ReferEnterpriseHosting />
 		</>
 	);
 	next();

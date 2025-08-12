@@ -1,14 +1,17 @@
 import page from '@automattic/calypso-router';
 import { Button, Card, FormLabel } from '@automattic/components';
+import { formatCurrency } from '@automattic/number-formatters';
 import { IntroductoryOfferTerms } from '@automattic/shopping-cart';
 import {
 	LineItemCostOverrideForDisplay,
 	doesIntroductoryOfferHaveDifferentTermLengthThanProduct,
 	getIntroductoryOfferIntervalDisplay,
 	isUserVisibleCostOverride,
+	PARTNER_PAYPAL_EXPRESS,
+	PARTNER_PAYPAL_PPCP,
 } from '@automattic/wpcom-checkout';
 import clsx from 'clsx';
-import { formatCurrency, localize, useTranslate } from 'i18n-calypso';
+import { localize, useTranslate } from 'i18n-calypso';
 import { Component, useState, useCallback } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -19,9 +22,12 @@ import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import TextareaAutosize from 'calypso/components/textarea-autosize';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { PARTNER_PAYPAL_EXPRESS, PARTNER_PAYPAL_PPCP } from 'calypso/lib/checkout/payment-methods';
 import { billingHistory, vatDetails as vatDetailsPath } from 'calypso/me/purchases/paths';
 import titles from 'calypso/me/purchases/titles';
+import {
+	isInternalA4AAgencyDomain,
+	isSitelessDomainForBillingAndReceipts,
+} from 'calypso/me/purchases/utils';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
 import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list';
 import { useDispatch } from 'calypso/state';
@@ -32,6 +38,7 @@ import {
 	requestBillingTransaction,
 } from 'calypso/state/billing-transactions/individual-transactions/actions';
 import getPastBillingTransaction from 'calypso/state/selectors/get-past-billing-transaction';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isPastBillingTransactionError from 'calypso/state/selectors/is-past-billing-transaction-error';
 import {
 	getTransactionTermLabel,
@@ -54,6 +61,18 @@ import type { FormEvent } from 'react';
 
 import './style.scss';
 
+function getBillingHistoryUrl( previousRoute: string ): string {
+	/**
+	 * Preserve the previous route if it's the billing history page because it
+	 * may contain a query string with pagination and other view properties
+	 * that we want to return to.
+	 */
+	if ( previousRoute.includes( '/purchases/billing' ) ) {
+		return previousRoute;
+	}
+	return billingHistory;
+}
+
 interface BillingReceiptProps {
 	transactionId: number;
 	recordGoogleEvent: ( key: string, message: string ) => void;
@@ -64,6 +83,7 @@ interface BillingReceiptConnectedProps {
 	transactionFetchError?: string;
 	transaction: BillingTransaction | undefined;
 	translate: LocalizeProps[ 'translate' ];
+	previousRoute: string;
 }
 
 class BillingReceipt extends Component< BillingReceiptProps & BillingReceiptConnectedProps > {
@@ -96,7 +116,7 @@ class BillingReceipt extends Component< BillingReceiptProps & BillingReceiptConn
 	}
 
 	render() {
-		const { transaction, transactionId, translate } = this.props;
+		const { transaction, transactionId, translate, previousRoute } = this.props;
 
 		return (
 			<Main wideLayout className="receipt">
@@ -110,7 +130,7 @@ class BillingReceipt extends Component< BillingReceiptProps & BillingReceiptConn
 
 				<QueryBillingTransaction transactionId={ transactionId } />
 
-				<ReceiptTitle backHref={ billingHistory } />
+				<ReceiptTitle backHref={ getBillingHistoryUrl( previousRoute ) } />
 
 				{ transaction ? (
 					<ReceiptBody
@@ -195,11 +215,7 @@ export function ReceiptBody( {
 					</li>
 					<ReceiptTransactionId transaction={ transaction } />
 					<ReceiptPaymentMethod transaction={ transaction } />
-					{ transaction.cc_num !== 'XXXX' ? (
-						<ReceiptDetails transaction={ transaction } />
-					) : (
-						<EmptyReceiptDetails />
-					) }
+					<ReceiptDetails transaction={ transaction } />
 					<VatDetails transaction={ transaction } />
 				</ul>
 				<ReceiptLineItems transaction={ transaction } />
@@ -552,6 +568,11 @@ function ReceiptLineItem( {
 		isSmallestUnit: true,
 		stripZeros: true,
 	} );
+
+	const isSitelessDomain = isSitelessDomainForBillingAndReceipts( item.domain );
+	const shouldShowDomain =
+		item.domain && ! isSitelessDomain && ! isInternalA4AAgencyDomain( item.domain );
+
 	return (
 		<>
 			<tr>
@@ -559,7 +580,7 @@ function ReceiptLineItem( {
 					<span>{ item.variation }</span>
 					<small>({ item.type_localized })</small>
 					{ termLabel && <em>{ termLabel }</em> }
-					{ item.domain && <em>{ item.domain }</em> }
+					{ shouldShowDomain && <em>{ item.domain }</em> }
 					{ item.licensed_quantity && (
 						<em>{ renderTransactionQuantitySummary( item, translate ) }</em>
 					) }
@@ -642,50 +663,63 @@ function ReceiptLineItems( { transaction }: { transaction: BillingTransaction } 
 }
 
 function ReceiptDetails( { transaction }: { transaction: BillingTransaction } ) {
-	if ( ! transaction.cc_name && ! transaction.cc_email ) {
+	// Pre-load the billing details textarea and hidden div with the name and email if available.
+	const initialDetailsText =
+		transaction.cc_num !== 'XXXX' ? transaction.cc_name + '\n' + transaction.cc_email : '';
+	// When the content of the text area is empty, hide the "Billing Details" label for printing.
+	const [ hideDetailsOnPrint, setHideDetailsOnPrint ] = useState(
+		initialDetailsText.trim().length === 0
+	);
+	// Keep the billing details textarea and hidden div for printing values in sync
+	const [ billingDetailsText, setPrintableBillingDetailsText ] = useState( initialDetailsText );
+
+	const onChange = useCallback(
+		( e: React.ChangeEvent< HTMLTextAreaElement > ) => {
+			const value = e.target.value.trim();
+			setHideDetailsOnPrint( value.length === 0 );
+			setPrintableBillingDetailsText( e.target.value );
+		},
+		[ hideDetailsOnPrint, setHideDetailsOnPrint ]
+	);
+
+	if ( transaction.cc_num !== 'XXXX' && ! transaction.cc_name && ! transaction.cc_email ) {
 		return null;
 	}
 
 	return (
 		<li className="billing-history__billing-details">
-			<ReceiptLabels />
+			<ReceiptLabels hideDetailsOnPrint={ hideDetailsOnPrint } />
 			<TextareaAutosize
-				className="billing-history__billing-details-editable"
+				className="billing-history__billing-details-editable receipt__no-print"
 				aria-labelledby="billing-history__billing-details-description"
 				id="billing-history__billing-details-textarea"
 				rows="1"
-				defaultValue={ transaction.cc_name + '\n' + transaction.cc_email }
+				value={ billingDetailsText }
+				onChange={ onChange }
+			/>
+			<ReceiptDetailsPrintableArea
+				billingDetailsText={ billingDetailsText }
+				hideDetailsOnPrint={ hideDetailsOnPrint }
 			/>
 		</li>
 	);
 }
 
-function EmptyReceiptDetails() {
-	// When the content of the text area is empty, hide the "Billing Details" label for printing.
-	const [ hideDetailsLabelOnPrint, setHideDetailsLabelOnPrint ] = useState( true );
-	const onChange = useCallback(
-		( e: React.ChangeEvent< HTMLTextAreaElement > ) => {
-			const value = e.target.value.trim();
-			if ( hideDetailsLabelOnPrint && value.length > 0 ) {
-				setHideDetailsLabelOnPrint( false );
-			} else if ( ! hideDetailsLabelOnPrint && value.length === 0 ) {
-				setHideDetailsLabelOnPrint( true );
-			}
-		},
-		[ hideDetailsLabelOnPrint, setHideDetailsLabelOnPrint ]
-	);
-
+function ReceiptDetailsPrintableArea( {
+	billingDetailsText,
+	hideDetailsOnPrint,
+}: {
+	billingDetailsText: string;
+	hideDetailsOnPrint?: boolean;
+} ) {
 	return (
-		<li className="billing-history__billing-details">
-			<ReceiptLabels hideDetailsLabelOnPrint={ hideDetailsLabelOnPrint } />
-			<TextareaAutosize
-				className="billing-history__billing-details-editable"
-				aria-labelledby="billing-history__billing-details-description"
-				id="billing-history__billing-details-textarea"
-				rows="1"
-				onChange={ onChange }
-			/>
-		</li>
+		<div
+			className={ clsx( 'billing-history__billing-details-readonly', {
+				'receipt__no-print': hideDetailsOnPrint,
+			} ) }
+		>
+			{ billingDetailsText }
+		</div>
 	);
 }
 
@@ -705,16 +739,13 @@ export function ReceiptPlaceholder() {
 	);
 }
 
-function ReceiptLabels( { hideDetailsLabelOnPrint }: { hideDetailsLabelOnPrint?: boolean } ) {
+function ReceiptLabels( { hideDetailsOnPrint }: { hideDetailsOnPrint?: boolean } ) {
 	const translate = useTranslate();
 
 	return (
-		<div>
-			<FormLabel
-				htmlFor="billing-history__billing-details-textarea"
-				className={ clsx( { 'receipt__no-print': hideDetailsLabelOnPrint } ) }
-			>
-				{ translate( 'Billing Details' ) }
+		<div className={ clsx( { 'receipt__no-print': hideDetailsOnPrint } ) }>
+			<FormLabel htmlFor="billing-history__billing-details-textarea">
+				{ translate( 'Billing details' ) }
 			</FormLabel>
 			<div
 				className="billing-history__billing-details-description"
@@ -739,6 +770,7 @@ export default connect(
 		return {
 			transaction: transaction && 'service' in transaction ? transaction : undefined,
 			transactionFetchError: isPastBillingTransactionError( state, transactionId ),
+			previousRoute: getPreviousRoute( state ),
 		};
 	},
 	{

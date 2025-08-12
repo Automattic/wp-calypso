@@ -1,5 +1,5 @@
 // Initialize polyfills before any dependencies are loaded
-import './polyfills';
+import '@automattic/calypso-polyfills';
 
 import { bootApp } from './common';
 

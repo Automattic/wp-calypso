@@ -1,4 +1,4 @@
-import { numberFormatCompact } from 'i18n-calypso';
+import { formatNumberCompact } from '@automattic/number-formatters';
 import { FILTER_TYPE_INSTALL, FILTER_TYPE_STORAGE, FILTER_TYPE_VISITS } from '../constants';
 import { FilterType } from '../types';
 import { PressablePlan } from './get-pressable-plan';
@@ -19,7 +19,7 @@ export default function getSliderOptions(
 			if ( type === FILTER_TYPE_INSTALL ) {
 				label = `${ plan.install }`;
 			} else if ( type === FILTER_TYPE_VISITS ) {
-				label = `${ numberFormatCompact( plan.visits ) }`;
+				label = `${ formatNumberCompact( plan.visits ) }`;
 			} else if ( type === FILTER_TYPE_STORAGE ) {
 				label = `${ plan.storage }${ compact ? '' : 'GB' }`;
 			}

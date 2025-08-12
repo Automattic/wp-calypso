@@ -1,6 +1,7 @@
 import { omit, merge, get, includes, reduce, isEqual } from 'lodash';
 import {
 	MEDIA_DELETE,
+	SITE_LEAVE_RECEIVE,
 	SITE_DELETE_RECEIVE,
 	JETPACK_DISCONNECT_RECEIVE,
 	JETPACK_SITE_DISCONNECT_REQUEST,
@@ -116,8 +117,8 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 					memo[ site.ID ] = {
 						...site,
 						...memo[ site.ID ],
-						options: { ...site?.options, ...memo[ site.ID ]?.options },
-						capabilities: { ...site?.capabilities, ...memo[ site.ID ]?.capabilities },
+						options: { ...memo[ site.ID ]?.options, ...site?.options },
+						capabilities: { ...memo[ site.ID ]?.capabilities, ...site?.capabilities },
 					};
 					return memo;
 				},
@@ -125,6 +126,7 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 			);
 		}
 
+		case SITE_LEAVE_RECEIVE:
 		case SITE_DELETE_RECEIVE:
 		case JETPACK_DISCONNECT_RECEIVE:
 			return omit( state, action.siteId );

@@ -4,7 +4,7 @@
 	height: 100%;
 }
 
-.image-editor .notice.image-editor__notice {
+.image-editor .calypso-notice.image-editor__notice {
 	margin-top: 0;
 }
 
@@ -31,7 +31,7 @@
 }
 
 .image-editor__toolbar-button {
-	background: rgba(var(--color-surface-rgb), 0);
+	background: color-mix(in srgb, var(--color-surface) 0%, transparent);
 	border: none;
 	color: var(--color-text-inverted);
 	margin: 0 10px;

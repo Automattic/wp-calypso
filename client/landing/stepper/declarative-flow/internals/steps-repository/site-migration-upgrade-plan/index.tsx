@@ -5,29 +5,24 @@ import {
 	getPlan,
 	getPlanByPathSlug,
 } from '@automattic/calypso-products';
-import { useHasEnTranslation } from '@automattic/i18n-utils';
-import { SITE_MIGRATION_FLOW, StepContainer } from '@automattic/onboarding';
-import clsx from 'clsx';
+import { Step } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { UpgradePlan } from 'calypso/blocks/importer/wordpress/upgrade-plan';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
 import { useSelectedPlanUpgradeQuery } from 'calypso/data/import-flow/use-selected-plan-upgrade';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import type { Step } from '../../types';
+import type { Step as StepType } from '../../types';
 
 import './style.scss';
 
-const SiteMigrationUpgradePlan: Step< {
+const SiteMigrationUpgradePlan: StepType< {
 	accepts: {
 		skipLabelText?: string;
 		onSkip?: () => void;
 		skipPosition?: 'top' | 'bottom';
 		headerText?: string;
-		customizedActionButtons?: React.ReactElement;
 	};
 	submits: {
 		goToCheckout?: boolean;
@@ -35,13 +30,10 @@ const SiteMigrationUpgradePlan: Step< {
 		sendIntentWhenCreatingTrial?: boolean;
 		verifyEmail?: boolean;
 	};
-} > = ( { navigation, data, customizedActionButtons, flow, ...props } ) => {
-	const showVariants = SITE_MIGRATION_FLOW === flow;
-	const { onSkip, skipLabelText, skipPosition } = props;
+} > = ( { navigation, data } ) => {
 	const siteItem = useSite();
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
-	const hasEnTranslation = useHasEnTranslation();
 	const queryParams = useQuery();
 	const hideFreeMigrationTrialForNonVerifiedEmail =
 		( data?.hideFreeMigrationTrialForNonVerifiedEmail as boolean | undefined ) ?? true;
@@ -92,69 +84,39 @@ const SiteMigrationUpgradePlan: Step< {
 			hideFreeMigrationTrialForNonVerifiedEmail={ hideFreeMigrationTrialForNonVerifiedEmail }
 			trackingEventsProps={ customTracksEventProps }
 			visiblePlan={ plan.getStoreSlug() }
-			showVariants={ showVariants }
+			showVariants
 		/>
 	);
 
-	const className = clsx(
-		'is-step-site-migration-upgrade-plan',
-		showVariants && 'is-step-site-migration-upgrade-plan-with-variants'
-	);
-
-	let headerText =
-		props.headerText ??
-		( hasEnTranslation( 'Upgrade your plan' )
-			? translate( 'Upgrade your plan' )
-			: translate( 'Upgrade your plan to migrate your site' ) );
-
-	showVariants && ( headerText = translate( 'There is a plan for you' ) );
-
+	const headerText = translate( 'There is a plan for you' );
 	const planName = getPlan( PLAN_BUSINESS )?.getTitle() ?? '';
 
-	let subHeaderText = hasEnTranslation( 'Migrations are exclusive to the %(planName)s plan.' )
-		? translate( 'Migrations are exclusive to the %(planName)s plan.', {
-				args: {
-					planName,
-				},
-		  } )
-		: translate(
-				'Migrations are exclusive to the Creator plan. Check out all its benefits, and upgrade to get started.'
-		  );
-	showVariants &&
-		( subHeaderText = translate(
-			'A %(planName)s plan is needed for Migrations. Choose an option below to access our lightning-fast infrastructure for a faster, more reliable site.',
-			{
-				args: {
-					planName,
-				},
-			}
-		) );
+	const subHeaderText = translate(
+		'A %(planName)s plan is needed for Migrations. Choose an option below to access our lightning-fast infrastructure for a faster, more reliable site.',
+		{
+			args: {
+				planName,
+			},
+		}
+	);
 
 	return (
 		<>
-			<DocumentHead title={ translate( 'Upgrade your plan', { textOnly: true } ) } />
-			<StepContainer
-				stepName="site-migration-upgrade-plan"
-				shouldHideNavButtons={ false }
-				className={ className }
-				goBack={ navigation.goBack }
-				skipLabelText={ skipLabelText }
-				skipButtonAlign={ skipPosition }
-				goNext={ onSkip }
-				hideSkip={ ! onSkip }
-				isWideLayout={ showVariants }
-				customizedActionButtons={ customizedActionButtons }
-				formattedHeader={
-					<FormattedHeader
-						id="site-migration-instructions-header"
-						headerText={ headerText }
-						subHeaderText={ subHeaderText }
-						align="center"
+			<DocumentHead title={ headerText } />
+			<Step.CenteredColumnLayout
+				columnWidth={ 5 }
+				topBar={
+					<Step.TopBar
+						leftElement={
+							navigation?.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : null
+						}
 					/>
 				}
-				stepContent={ stepContent }
-				recordTracksEvent={ recordTracksEvent }
-			/>
+				heading={ <Step.Heading text={ headerText } subText={ subHeaderText } /> }
+				className="site-migration-upgrade-plan-v2"
+			>
+				{ stepContent }
+			</Step.CenteredColumnLayout>
 		</>
 	);
 };

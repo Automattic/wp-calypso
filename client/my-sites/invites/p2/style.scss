@@ -1,7 +1,6 @@
 @import url( https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap );
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-@import "calypso/assets/stylesheets/p2-extends";
 
 .is-p2-invite.invite-accept {
 	position: fixed;
@@ -16,10 +15,6 @@
 	overflow-y: scroll;
 	overflow-x: hidden;
 
-	a {
-		@extend %p2-link;
-	}
-
 	.invite-accept__form {
 		max-width: unset;
 		padding: 2rem 1.5rem 0;
@@ -29,10 +24,6 @@
 			display: flex;
 			flex-direction: column;
 			height: 100%;
-		}
-
-		button {
-			@extend %p2-form-button;
 		}
 	}
 

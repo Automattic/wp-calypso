@@ -3,10 +3,12 @@ import { getDIFMTieredPriceDetails, WPCOM_DIFM_LITE } from '@automattic/calypso-
 import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { Button } from '@automattic/components';
+import { BraveTick } from '@automattic/components/src/icons';
+import { formatCurrency } from '@automattic/number-formatters';
 import { createRequestCartProduct } from '@automattic/shopping-cart';
 import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
-import { formatCurrency, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import InfoPopover from 'calypso/components/info-popover';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
@@ -360,7 +362,12 @@ interface StepProps {
 
 const StyledButton = styled( Button )`
 	&.button.is-primary {
+		min-width: 230px;
 		padding: 10px 27px 10px 28px;
+
+		@media ( max-width: 600px ) {
+			min-width: auto;
+		}
 	}
 `;
 
@@ -371,6 +378,24 @@ const Placeholder = styled.span`
 	min-height: 16px;
 	display: inline-block;
 	min-width: 32px;
+`;
+
+const RefundText = styled.div`
+	display: flex;
+	align-items: center;
+	width: 100%;
+	margin-top: 24px;
+
+	@media ( max-width: 600px ) {
+		font-size: smaller;
+	}
+`;
+
+const StyledBraveTickIcon = styled( BraveTick )`
+	margin-inline-end: 6px;
+	path {
+		fill: var( --color-accent );
+	}
 `;
 
 function OneClickPurchaseModal( {
@@ -578,6 +603,17 @@ function DIFMPagePicker( props: StepProps ) {
 				}
 		  );
 
+	const renderRefundText = () => {
+		return (
+			<RefundText className="refund-text">
+				<StyledBraveTickIcon />
+				{ translate( '%(days)d-day money-back guarantee', {
+					args: { days: 14 },
+				} ) }
+			</RefundText>
+		);
+	};
+
 	return (
 		<StepWrapper
 			headerText={ headerText }
@@ -609,21 +645,27 @@ function DIFMPagePicker( props: StepProps ) {
 			isHorizontalLayout
 			isWideLayout={ false }
 			headerButton={
-				<StyledButton
-					disabled={ isProductsLoading }
-					busy={ isCheckoutButtonBusy }
-					primary
-					onClick={ submitPickedPages }
-				>
-					{ translate( 'Go to Checkout' ) }
-				</StyledButton>
+				<>
+					<StyledButton
+						disabled={ isProductsLoading }
+						busy={ isCheckoutButtonBusy }
+						primary
+						onClick={ submitPickedPages }
+					>
+						{ translate( 'Go to Checkout' ) }
+					</StyledButton>
+
+					{ renderRefundText() }
+				</>
 			}
 			headerContent={
 				<ShoppingCartForDIFM
 					selectedPages={ selectedPages }
 					isStoreFlow={ isStoreFlow }
 					currentPlanSlug={ currentPlan?.product_slug }
-				/>
+				>
+					{ renderRefundText() }
+				</ShoppingCartForDIFM>
 			}
 			{ ...props }
 		/>

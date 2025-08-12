@@ -20,8 +20,6 @@ const NoSitePurchasesMessage: React.FC = () => {
 						{ translate( 'Upgrade for quick restores' ) }
 					</a>
 				}
-				illustration="/calypso/images/illustrations/security.svg"
-				illustrationWidth={ 200 }
 				title={ preventWidows( translate( 'Upgrade for quick restores' ) ) }
 				line={ preventWidows(
 					translate(

@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Button, Gridicon } from '@automattic/components';
+import { formatCurrency } from '@automattic/number-formatters';
 import {
 	PaymentLogo,
 	getCreditsLineItemFromCart,
@@ -10,7 +11,7 @@ import {
 } from '@automattic/wpcom-checkout';
 import { sprintf } from '@wordpress/i18n';
 import clsx from 'clsx';
-import { formatCurrency, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import React, { useCallback } from 'react';
 import CheckoutTerms from 'calypso/my-sites/checkout/src/components/checkout-terms';
 import { CheckIcon } from '../src/components/check-icon';
@@ -18,7 +19,7 @@ import CheckoutNextSteps from '../src/components/checkout-next-steps';
 import { CheckoutSummaryFeaturesList } from '../src/components/wp-checkout-order-summary';
 import { BEFORE_SUBMIT } from './constants';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
-import type { StoredPaymentMethodCard } from 'calypso/lib/checkout/payment-methods';
+import type { StoredPaymentMethodCard } from '@automattic/wpcom-checkout';
 import type { MouseEventHandler, ReactNode } from 'react';
 
 function formatDate( cardExpiry: string ): string {
@@ -31,11 +32,11 @@ function formatDate( cardExpiry: string ): string {
 	return formattedDate;
 }
 
-function PurchaseModalStep( { children, id }: { children: ReactNode; id: string } ) {
+function PurchaseModalStep( { children }: { children: ReactNode } ) {
 	return (
 		<div className="purchase-modal__step">
 			<span className="purchase-modal__step-icon">
-				<CheckIcon id={ id } />
+				<CheckIcon />
 			</span>
 			{ children }
 		</div>
@@ -110,7 +111,7 @@ function OrderStep( {
 	const translate = useTranslate();
 
 	return (
-		<PurchaseModalStep id="purchase-modal-step">
+		<PurchaseModalStep>
 			<div className="purchase-modal__step-title">{ translate( 'Your order' ) }</div>
 			<div className="purchase-modal__step-content">
 				<div>{ translate( 'Site: %(siteSlug)s', { args: { siteSlug } } ) }</div>
@@ -138,7 +139,7 @@ function PaymentMethodStep( {
 	const maskedCard = sprintf( translate( '**** %s' ), card?.card_last_4 || '' );
 
 	return (
-		<PurchaseModalStep id="payment-method">
+		<PurchaseModalStep>
 			<div className="purchase-modal__step-title">
 				{ translate( 'Payment method' ) }
 				<a href={ `/checkout/${ siteSlug }` } onClick={ clickHandler }>

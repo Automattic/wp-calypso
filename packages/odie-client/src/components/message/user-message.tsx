@@ -1,77 +1,106 @@
+import { HelpCenterSelect } from '@automattic/data-stores';
+import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { ExternalLink } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
+import { useSelect } from '@wordpress/data';
+import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
-import Markdown from 'react-markdown';
-import { ODIE_FORWARD_TO_FORUMS_MESSAGE, ODIE_FORWARD_TO_ZENDESK_MESSAGE } from '../../constants';
+import { ReactNode } from 'react';
+import {
+	getOdieForwardToForumsMessage,
+	getOdieForwardToZendeskMessage,
+	getOdieThirdPartyMessageContent,
+	getOdieEmailFallbackMessageContent,
+	getOdieErrorMessage,
+	getOdieErrorMessageNonEligible,
+} from '../../constants';
 import { useOdieAssistantContext } from '../../context';
+import {
+	interactionHasZendeskEvent,
+	userProvidedEnoughInformation,
+	getIsRequestingHumanSupport,
+} from '../../utils';
 import CustomALink from './custom-a-link';
 import { DirectEscalationLink } from './direct-escalation-link';
 import { GetSupport } from './get-support';
+import { MarkdownOrChildren } from './mardown-or-children';
 import Sources from './sources';
-import { uriTransformer } from './uri-transformer';
 import WasThisHelpfulButtons from './was-this-helpful-buttons';
 import type { Message } from '../../types';
+
+const getDisplayMessage = (
+	isUserEligibleForPaidSupport: boolean,
+	canConnectToZendesk: boolean,
+	isRequestingHumanSupport: boolean,
+	messageContent: ReactNode,
+	hasCannedResponse?: boolean,
+	forceEmailSupport?: boolean,
+	isErrorMessage?: boolean
+) => {
+	if ( isUserEligibleForPaidSupport && ! canConnectToZendesk && isRequestingHumanSupport ) {
+		return getOdieThirdPartyMessageContent();
+	}
+
+	if ( isUserEligibleForPaidSupport && hasCannedResponse ) {
+		return messageContent;
+	}
+
+	if ( isUserEligibleForPaidSupport && forceEmailSupport && isRequestingHumanSupport ) {
+		return getOdieEmailFallbackMessageContent();
+	}
+
+	if ( isErrorMessage && ! isUserEligibleForPaidSupport ) {
+		return getOdieErrorMessageNonEligible();
+	}
+
+	const forwardMessage = isUserEligibleForPaidSupport
+		? getOdieForwardToZendeskMessage()
+		: getOdieForwardToForumsMessage();
+
+	return isErrorMessage ? getOdieErrorMessage() : forwardMessage;
+};
 
 export const UserMessage = ( {
 	message,
 	isDisliked = false,
-	isMessageWithoutEscalationOption = false,
+	isMessageWithEscalationOption = false,
 }: {
 	isDisliked?: boolean;
 	message: Message;
-	isMessageWithoutEscalationOption?: boolean;
+	isMessageWithEscalationOption?: boolean;
 } ) => {
-	const {
-		isUserEligibleForPaidSupport,
-		hasUserEverEscalatedToHumanSupport,
-		trackEvent,
-		chat,
-		experimentVariationName,
-	} = useOdieAssistantContext();
+	const { isUserEligibleForPaidSupport, trackEvent, chat, canConnectToZendesk, forceEmailSupport } =
+		useOdieAssistantContext();
+
+	const currentSupportInteraction = useSelect(
+		( select ) =>
+			( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getCurrentSupportInteraction(),
+		[]
+	);
 
 	const hasCannedResponse = message.context?.flags?.canned_response;
-	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support ?? false;
-	const hasFeedback = !! message?.rating_value;
-	const isBot = message.role === 'bot';
-	const isConnectedToZendesk = chat?.provider === 'zendesk';
-	const isPositiveFeedback =
-		hasFeedback && message && message.rating_value && +message.rating_value === 1;
+	const isRequestingHumanSupport = getIsRequestingHumanSupport( message );
 
-	const isExperimentGiveWapuuAChance = experimentVariationName === 'give_wapuu_a_chance';
-
-	let showExtraContactOptions = false;
-	if ( isExperimentGiveWapuuAChance ) {
-		showExtraContactOptions = isRequestingHumanSupport;
-	} else {
-		showExtraContactOptions = ( hasFeedback && ! isPositiveFeedback ) || isRequestingHumanSupport;
-	}
-
-	const showDirectEscalationLink = isExperimentGiveWapuuAChance
-		? hasUserEverEscalatedToHumanSupport
-		: ! ( hasFeedback && ! isPositiveFeedback ) || isRequestingHumanSupport;
-
-	const forwardMessage = isUserEligibleForPaidSupport
-		? ODIE_FORWARD_TO_ZENDESK_MESSAGE
-		: ODIE_FORWARD_TO_FORUMS_MESSAGE;
-
-	const displayMessage =
-		isUserEligibleForPaidSupport && hasCannedResponse ? message.content : forwardMessage;
-
-	const handleContactSupportClick = ( destination: string ) => {
-		trackEvent( 'chat_get_support', {
-			location: 'user-message',
-			destination,
-		} );
-	};
-
-	const renderExtraContactOptions = () => {
+	const showDirectEscalationLink = useMemo( () => {
 		return (
-			chat.provider === 'odie' && (
-				<GetSupport onClickAdditionalEvent={ handleContactSupportClick } />
-			)
+			canConnectToZendesk &&
+			! chat.conversationId &&
+			userProvidedEnoughInformation( chat?.messages ) &&
+			! interactionHasZendeskEvent( currentSupportInteraction )
 		);
-	};
+	}, [ chat.conversationId, currentSupportInteraction, chat?.messages, canConnectToZendesk ] );
+
+	const displayMessage = getDisplayMessage(
+		isUserEligibleForPaidSupport,
+		canConnectToZendesk,
+		isRequestingHumanSupport,
+		message.content,
+		hasCannedResponse,
+		forceEmailSupport,
+		message?.context?.flags?.is_error_message
+	);
+	const displayingThirdPartyMessage =
+		isUserEligibleForPaidSupport && ! canConnectToZendesk && isRequestingHumanSupport;
 
 	const isMessageShowingDisclaimer =
 		message.context?.question_tags?.inquiry_type !== 'request-for-human-support';
@@ -99,35 +128,49 @@ export const UserMessage = ( {
 					}
 				) }
 			</div>
-			{ showDirectEscalationLink && <DirectEscalationLink messageId={ message.message_id } /> }
-			{ ! isConnectedToZendesk && (
-				<WasThisHelpfulButtons message={ message } isDisliked={ isDisliked } />
+			{ ! interactionHasZendeskEvent( currentSupportInteraction ) && (
+				<>
+					{ showDirectEscalationLink && <DirectEscalationLink messageId={ message.message_id } /> }
+					{ ! message.rating_value && (
+						<WasThisHelpfulButtons message={ message } isDisliked={ isDisliked } />
+					) }
+				</>
 			) }
 		</>
 	);
 
+	const messageContent = isRequestingHumanSupport ? displayMessage : message.content;
+
 	return (
 		<>
 			<div className="odie-chatbox-message__content">
-				<Markdown
-					urlTransform={ uriTransformer }
+				<MarkdownOrChildren
+					messageContent={ messageContent }
 					components={ {
 						a: ( props: React.ComponentProps< 'a' > ) => (
 							<CustomALink { ...props } target="_blank" />
 						),
 					} }
-				>
-					{ isRequestingHumanSupport ? displayMessage : message.content }
-				</Markdown>
+				/>
 			</div>
-			{ ! isMessageWithoutEscalationOption && isBot && (
+			{ isMessageWithEscalationOption && (
 				<div
 					className={ clsx( 'chat-feedback-wrapper', {
-						'chat-feedback-wrapper-no-extra-contact': ! showExtraContactOptions,
+						'chat-feedback-wrapper-no-extra-contact': ! isRequestingHumanSupport,
+						'chat-feedback-wrapper-third-party-cookies': displayingThirdPartyMessage,
 					} ) }
 				>
 					<Sources message={ message } />
-					{ showExtraContactOptions && renderExtraContactOptions() }
+					{ isRequestingHumanSupport && (
+						<GetSupport
+							onClickAdditionalEvent={ ( destination ) => {
+								trackEvent( 'chat_get_support', {
+									location: 'user-message',
+									destination,
+								} );
+							} }
+						/>
+					) }
 					{ isMessageShowingDisclaimer && renderDisclaimers() }
 				</div>
 			) }

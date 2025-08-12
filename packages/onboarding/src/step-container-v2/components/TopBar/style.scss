@@ -1,47 +1,86 @@
-@import '../../mixins';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 .step-container-v2__top-bar {
-	height: var(--step-container-v2-top-bar-height);
-	box-sizing: border-box;
 	width: 100%;
+	box-sizing: border-box;
 	display: flex;
 	align-items: center;
 	padding: 1rem;
 
-	@include step-medium-viewport {
+	@include break-small {
 		padding-inline: 1.5rem;
 	}
+}
 
-	&-left-button,
-	&-right-button,
-	&-wordpress-logo,
-	.step-container-v2__back-button,
-	.step-container-v2__skip-button {
-		height: 24px;
+.step-container-v2__top-bar-wrapper {
+	width: 100%;
+}
+
+.step-container-v2__top-bar-left-element,
+.step-container-v2__top-bar-right-element,
+.step-container-v2__top-bar-wordpress-logo {
+	height: 24px;
+}
+
+.step-container-v2__top-bar-left-element,
+.step-container-v2__top-bar-right-element {
+	display: flex;
+	align-items: center;
+}
+
+.step-container-v2__top-bar-wordpress-logo {
+	color: var( --color-text );
+	margin: 0;
+
+	@include break-small {
+		margin-right: 0.5rem;
 	}
+}
 
-	&-divider {
-		width: 1px;
-		height: 1rem;
-		background-color: var(--color-border-subtle);
+.step-container-v2__top-bar-wordpress-logo--wordmark {
+	display: none;
 
-		margin-inline: 1rem 0;
+	@include break-small {
+		display: block;
+	}
+}
 
-		@include step-medium-viewport {
-			margin-inline: 1.5rem 0.75rem;
+.step-container-v2__top-bar-wordpress-logo--logo {
+	display: block;
+
+	@include break-small {
+		/**
+		 * Hide the logo only when the wrapper is not compact.
+		 * This is important for current Login views, where the logo is always visible.
+		 * -- Confirm with Design before changing this --
+		 */
+		.step-container-v2__top-bar-wordpress-logo-wrapper:not( .is-compact ) & {
+			display: none;
 		}
 	}
+}
 
-	&-right-button {
-		margin-left: auto;
+.step-container-v2__top-bar-divider {
+	width: 1px;
+	height: 1rem;
+	background-color: var( --color-border-subtle );
+	margin-inline: 1rem 0;
+
+	@include break-small {
+		margin-inline: 1.5rem 0.75rem;
 	}
+}
 
-	&-wordpress-logo {
-		color: var(--color-text);
-		margin: 0;
+.step-container-v2__top-bar-right-element {
+	margin-left: auto;
+	font-size: 0.875rem;
+	line-height: 1;
 
-		@include step-medium-viewport {
-			margin-right: 0.5rem;
+	a,
+	button {
+		&.components-button:not(.is-destructive).is-link {
+			--wp-components-color-accent: var( --color-neutral-100 );
 		}
 	}
 }

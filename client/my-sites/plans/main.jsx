@@ -3,6 +3,7 @@ import {
 	FEATURE_LEGACY_STORAGE_200GB,
 	getIntervalTypeForTerm,
 	getPlan,
+	is100Year,
 	isFreePlanProduct,
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
@@ -17,7 +18,7 @@ import page from '@automattic/calypso-router';
 import { WpcomPlansUI, Plans } from '@automattic/data-stores';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { useDispatch } from '@wordpress/data';
-import { addQueryArgs } from '@wordpress/url';
+import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { localize, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -35,6 +36,8 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getDomainRegistrations } from 'calypso/lib/cart-values/cart-items';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { isPlansPageUntangled } from 'calypso/lib/plans/untangling-plans-experiment';
+import { isPartnerPurchase } from 'calypso/lib/purchases';
+import { isExternal } from 'calypso/lib/url';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
@@ -349,7 +352,13 @@ class PlansComponent extends Component {
 		);
 	}
 
-	renderMainContent( { isEcommerceTrial, isBusinessTrial, isWooExpressPlan } ) {
+	renderMainContent( {
+		isEcommerceTrial,
+		isBusinessTrial,
+		isWooExpressPlan,
+		isA4APlan,
+		is100YearPlan,
+	} ) {
 		if ( isEcommerceTrial ) {
 			return this.renderEcommerceTrialPage();
 		}
@@ -358,6 +367,9 @@ class PlansComponent extends Component {
 		}
 		if ( isBusinessTrial ) {
 			return this.renderBusinessTrialPage();
+		}
+		if ( isA4APlan || is100YearPlan ) {
+			return null;
 		}
 
 		return this.renderPlansMain();
@@ -376,6 +388,20 @@ class PlansComponent extends Component {
 		);
 	}
 
+	getBackLink() {
+		const backTo = getQueryArg( window.location.href, 'back_to' ) ?? '';
+		if ( ! isExternal( backTo ) ) {
+			return backTo;
+		}
+
+		const { selectedSite, isDomainUpsell, isDomainUpsellSuggested } = this.props;
+		return isDomainUpsell && isDomainUpsellSuggested
+			? addQueryArgs( `/home/${ selectedSite.slug }` )
+			: addQueryArgs( `/domains/add/${ selectedSite.slug }`, {
+					domainAndPlanPackage: true,
+			  } );
+	}
+
 	renderContent() {
 		const {
 			selectedSite,
@@ -387,7 +413,6 @@ class PlansComponent extends Component {
 			isDomainAndPlanPackageFlow,
 			isJetpackNotAtomic,
 			isDomainUpsell,
-			isDomainUpsellSuggested,
 			isFreePlan,
 			currentPlanIntervalType,
 			domainFromHomeUpsellFlow,
@@ -422,6 +447,8 @@ class PlansComponent extends Component {
 			} );
 
 		const isWooExpressTrial = purchase?.isWooExpressTrial;
+		const isA4APlan = purchase && isPartnerPurchase( purchase );
+		const is100YearPlan = purchase && is100Year( purchase );
 
 		// Use the Woo Express subheader text if the current plan has the Performance or trial plans or fallback to the default subheader text.
 		let subHeaderText = null;
@@ -433,13 +460,6 @@ class PlansComponent extends Component {
 		const yourDomainName = allDomains.length
 			? allDomains.slice( -1 )[ 0 ]?.meta
 			: translate( 'your domain name' );
-		const goBackLink =
-			isDomainUpsell && isDomainUpsellSuggested
-				? addQueryArgs( `/home/${ selectedSite.slug }` )
-				: addQueryArgs( `/domains/add/${ selectedSite.slug }`, {
-						domainAndPlanPackage: true,
-				  } );
-		// eslint-disable-next-line no-nested-ternary
 
 		const headline =
 			currentPlanIntervalType === 'monthly'
@@ -480,7 +500,7 @@ class PlansComponent extends Component {
 							<>
 								<div className="plans__header">
 									{ ! jetpackAppPlans && (
-										<DomainAndPlanPackageNavigation goBackLink={ goBackLink } step={ 2 } />
+										<DomainAndPlanPackageNavigation goBackLink={ this.getBackLink() } step={ 2 } />
 									) }
 
 									<FormattedHeader brandFont headerText={ headline } align="center" />
@@ -504,6 +524,8 @@ class PlansComponent extends Component {
 									isEcommerceTrial,
 									isBusinessTrial,
 									isWooExpressPlan,
+									isA4APlan,
+									is100YearPlan,
 								} ) }
 								<PerformanceTrackerStop />
 							</Main>
@@ -511,10 +533,7 @@ class PlansComponent extends Component {
 					</div>
 				) }
 				{ ! canAccessPlans && (
-					<EmptyContent
-						illustration="/calypso/images/illustrations/illustration-404.svg"
-						title={ translate( 'You are not authorized to view this page' ) }
-					/>
+					<EmptyContent title={ translate( 'You are not authorized to view this page' ) } />
 				) }
 			</div>
 		);

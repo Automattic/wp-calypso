@@ -34,6 +34,7 @@
 	.banner__info .banner__title {
 		color: var(--color-text-inverted);
 		font-weight: 400;
+		text-wrap: pretty;
 	}
 	.card__link-indicator {
 		fill: var(--color-text-inverted);

@@ -335,14 +335,12 @@ export const topHosts: Host[] = [
 	},
 ];
 
-export const genericInfo: Host = {
-	id: 'generic',
-	name: 'Other',
-	supportLink: 'https://jetpack.com/support/activating-jetpack-backups/',
-};
-
 export const otherHosts: Host[] = [
-	genericInfo,
+	{
+		id: 'generic',
+		name: 'Other',
+		supportLink: 'https://jetpack.com/support/activating-jetpack-backups/',
+	},
 	{
 		id: 'land1',
 		name: '1&1',

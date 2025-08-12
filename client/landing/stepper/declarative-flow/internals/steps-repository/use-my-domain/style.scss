@@ -15,27 +15,9 @@
 .step-route.use-my-domain:not(:has(.step-container-v2)) {
 	padding: 36px 0;
 
-	#choose-a-domain-writer-header {
-		p {
-			text-align: center;
-		}
-
-		button {
-			margin-left: 5px;
-		}
-	}
-
 	.start-writing .register-domain-step__next-page-button {
 		padding-bottom: 8px !important;
 	}
-
-	#choose-a-domain-onboarding-header {
-		p {
-			text-align: center;
-			font-size: 1rem;
-		}
-	}
-
 }
 
 .use-my-domain:has(.step-container-v2) {

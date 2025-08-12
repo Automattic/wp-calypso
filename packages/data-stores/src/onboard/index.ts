@@ -62,7 +62,6 @@ export function register(): typeof STORE_KEY {
 			'domainCartItem',
 			'planCartItem',
 			'productCartItems',
-			'createWithBigSky',
 			'partnerBundle',
 		],
 	} );

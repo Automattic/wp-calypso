@@ -8,12 +8,12 @@ import {
 } from '@automattic/sites';
 import { useQueryClient } from '@tanstack/react-query';
 import { sprintf } from '@wordpress/i18n';
-import { drawerLeft, external, wordpress } from '@wordpress/icons';
+import { backup, drawerLeft, external, wordpress } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useMemo } from 'react';
+import AsyncLoad from 'calypso/components/async-load';
 import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
-import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import useRestoreSiteMutation from 'calypso/sites/hooks/use-restore-site-mutation';
 import {
 	getAdminInterface,
@@ -25,12 +25,13 @@ import {
 	isP2Site,
 	isSimpleSite,
 	isStagingSite,
+	isSitePreviewPaneEligible,
 } from 'calypso/sites-dashboard/utils';
-import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
-import type { Action } from '@wordpress/dataviews';
+import type { Action, RenderModalProps } from '@wordpress/dataviews';
 
 type Capabilities = Record< string, Record< string, boolean > >;
 
@@ -40,13 +41,7 @@ export const isActionEligible = (
 ): ( ( site: SiteExcerptData ) => boolean ) => {
 	const canOpenHosting = ( site: SiteExcerptData ) => {
 		const canManageOptions = capabilities[ site.ID ]?.manage_options;
-		if (
-			site.is_deleted ||
-			! canManageOptions ||
-			isP2Site( site ) ||
-			isNotAtomicJetpack( site ) ||
-			isDisconnectedJetpackAndNotAtomic( site )
-		) {
+		if ( site.is_deleted || ! isSitePreviewPaneEligible( site, canManageOptions ) ) {
 			return false;
 		}
 		return true;
@@ -248,6 +243,14 @@ export const isActionEligible = (
 					! site.is_vip
 				);
 			};
+		case 'leave-site':
+			return ( site: SiteExcerptData ) => {
+				if ( isP2Site( site ) ) {
+					return false;
+				}
+
+				return true;
+			};
 		default:
 			return () => true;
 	}
@@ -264,13 +267,10 @@ export function useActions( {
 	viewType: 'list' | 'table' | 'grid';
 } ): Action< SiteExcerptData >[] {
 	const { __ } = useI18n();
-
 	const localizeUrl = useLocalizeUrl();
-
-	const dispatch = useReduxDispatch();
-
+	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
-	const reduxDispatch = useReduxDispatch();
+
 	const { mutate: restoreSite } = useRestoreSiteMutation( {
 		onSuccess() {
 			queryClient.invalidateQueries( {
@@ -291,23 +291,17 @@ export function useActions( {
 					'deleted',
 				],
 			} );
-			reduxDispatch(
-				successNotice( __( 'The site has been restored.' ), {
-					duration: 3000,
-				} )
-			);
+			dispatch( successNotice( __( 'The site has been restored.' ), { duration: 3000 } ) );
 		},
 		onError: ( error ) => {
 			if ( error.status === 403 ) {
-				reduxDispatch(
+				dispatch(
 					errorNotice( __( 'Only an administrator can restore a deleted site.' ), {
 						duration: 5000,
 					} )
 				);
 			} else {
-				reduxDispatch(
-					errorNotice( __( 'We were unable to restore the site.' ), { duration: 5000 } )
-				);
+				dispatch( errorNotice( __( 'We were unable to restore the site.' ), { duration: 5000 } ) );
 			}
 		},
 	} );
@@ -320,8 +314,6 @@ export function useActions( {
 		},
 		Capabilities
 	>( ( state ) => state.currentUser.capabilities );
-
-	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
 
 	return useMemo(
 		() => [
@@ -393,7 +385,9 @@ export function useActions( {
 				id: 'prepare-for-launch',
 				label: __( 'Prepare for launch' ),
 				callback: ( sites ) => {
-					page( `/sites/settings/site/${ sites[ 0 ].ID }` );
+					const url = `/sites/${ sites[ 0 ].slug }/settings/site-visibility`;
+
+					page( url );
 					dispatch(
 						recordTracksEvent( 'calypso_sites_dashboard_site_action_prepare_for_launch_click' )
 					);
@@ -465,6 +459,8 @@ export function useActions( {
 
 			{
 				id: 'restore',
+				isPrimary: true,
+				icon: backup,
 				label: __( 'Restore' ),
 				callback: ( sites ) => {
 					const site = sites[ 0 ];
@@ -514,6 +510,38 @@ export function useActions( {
 			},
 
 			{
+				id: 'leave-site',
+				label: __( 'Leave site' ),
+				callback: () => {
+					recordTracksEvent( 'calypso_sites_dashboard_site_action_leave_site_click' );
+				},
+				isEligible: isActionEligible( 'leave-site', capabilities ),
+				RenderModal: ( { items, closeModal }: RenderModalProps< SiteExcerptData > ) => {
+					return (
+						<AsyncLoad
+							require="calypso/sites/settings/administration/tools/leave-site/leave-site-modal-form"
+							placeholder={ null }
+							siteId={ items[ 0 ]?.ID ?? 0 }
+							onSuccess={ () => {
+								queryClient.invalidateQueries( {
+									queryKey: [
+										USE_SITE_EXCERPTS_QUERY_KEY,
+										SITE_EXCERPT_REQUEST_FIELDS,
+										SITE_EXCERPT_REQUEST_OPTIONS,
+										[],
+										'all',
+									],
+								} );
+							} }
+							onClose={ closeModal }
+						/>
+					);
+				},
+				modalSize: 'small',
+				hideModalHeader: true,
+			},
+
+			{
 				id: 'delete-site',
 				label: __( 'Delete site' ),
 				callback: ( sites ) => {
@@ -522,10 +550,8 @@ export function useActions( {
 
 					if ( isStagingSite( site ) ) {
 						urlPath = `/staging-site/${ site.slug }`;
-					} else if ( isUntangled ) {
-						urlPath = `/sites/settings/site/${ site.slug }/delete-site`;
 					} else {
-						urlPath = `/settings/delete-site/${ site.slug }`;
+						urlPath = `/sites/settings/site/${ site.slug }/delete-site`;
 					}
 
 					page( urlPath );
@@ -542,7 +568,7 @@ export function useActions( {
 			restoreSite,
 			viewType,
 			localizeUrl,
-			isUntangled,
+			queryClient,
 		]
 	);
 }

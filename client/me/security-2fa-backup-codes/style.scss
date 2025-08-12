@@ -1,3 +1,24 @@
 .security-2fa-backup-codes .security-2fa-backup-codes-prompt {
 	margin-top: 16px;
 }
+
+.banner.card{
+	&.warning {
+		border-left-color: var(--studio-red);
+
+		.banner__icons {
+			.banner__icon-circle {
+				background-color: var(--studio-red);
+			}
+		}
+	}
+	&.success {
+		border-left-color: var(--studio-green);
+
+		.banner__icons {
+			.banner__icon-circle {
+				background-color: var(--studio-green);
+			}
+		}
+	}
+}

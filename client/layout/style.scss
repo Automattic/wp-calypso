@@ -83,6 +83,11 @@ body.command-palette-modal-open {
 		margin: 0;
 	}
 
+	.is-section-marketplace.has-no-sidebar & {
+		padding: 0;
+		margin: 0;
+	}
+
 	.is-section-themes.has-no-sidebar.is-logged-in &,
 	.theme-default .is-section-themes.has-no-sidebar.is-logged-in & {
 		padding: 79px 32px 32px;
@@ -102,13 +107,6 @@ body.command-palette-modal-open {
 		}
 	}
 
-	// This is needed to ensure the WebPreview component
-	// displays at full height.
-	.is-section-preview & {
-		height: 100%;
-		padding: calc(var(--masterbar-height) + 1px) 0 0 calc(var(--sidebar-width-max) + 1px);
-	}
-
 	// Tablets
 	@include breakpoint-deprecated( "<960px" ) {
 		padding: 71px 24px 24px calc(var(--sidebar-width-min) + 24px + 1px);
@@ -126,10 +124,6 @@ body.command-palette-modal-open {
 		.is-section-themes.has-no-sidebar.is-logged-in & {
 			padding: 47px 0 0;
 		}
-
-		.is-section-preview & {
-			padding: calc(var(--masterbar-height) + 1px) 0 0 ( 228px + 1px );
-		}
 	}
 
 	// Mobile (Full Width)
@@ -140,10 +134,6 @@ body.command-palette-modal-open {
 
 		.has-no-sidebar & {
 			padding-left: 0;
-		}
-
-		.is-section-preview & {
-			padding: calc(var(--masterbar-height) + 1px) 0 0;
 		}
 	}
 }
@@ -343,15 +333,6 @@ body.is-mobile-app-view {
 	}
 }
 
-// Use all available space for the WebPreview component on /view
-.layout.is-section-preview {
-	height: 100%;
-
-	.layout__primary {
-		height: 100%;
-	}
-}
-
 // Display sidebar as a panel under a main payment component in mobile checkout
 .layout.is-section-checkout {
 	@include breakpoint-deprecated( "<660px" ) {
@@ -439,6 +420,107 @@ body.is-mobile-app-view {
 
 		@include breakpoint-deprecated( "<660px" ) {
 			margin: 0 16px;
+		}
+	}
+}
+
+// Handle Gravatar domain flow styles
+.layout.is-domain-for-gravatar {
+	* {
+		font-family:
+			'SF Pro Text',
+			-apple-system,
+			BlinkMacSystemFont,
+			'Segoe UI',
+			Roboto,
+			Oxygen-Sans,
+			Ubuntu,
+			Cantarell,
+			'Helvetica Neue',
+			sans-serif !important;
+	}
+
+	.masterbar__secure-checkout {
+		column-gap: 8px;
+	}
+
+	.gravatar-text-logo {
+		width: 119px;
+		height: 22px;
+	}
+
+	h1.formatted-header__title,
+	.checkout-title,
+	h1.thank-you__header-title {
+		font-family:
+			'SF Pro Display',
+			-apple-system,
+			BlinkMacSystemFont,
+			'Segoe UI',
+			Roboto,
+			Oxygen-Sans,
+			Ubuntu,
+			Cantarell,
+			'Helvetica Neue',
+			sans-serif !important;
+	}
+
+	h1.formatted-header__title,
+	h1.thank-you__header-title {
+		font-weight: 700 !important;
+	}
+
+	.domain-suggestion__action.is-primary:not( :disabled ),
+	.checkout-modal__button.is-status-primary,
+	.thank-you__product-actions .components-button.is-primary:not( :disabled ) {
+		background-color: #1d4fc4;
+		border-color: #1d4fc4;
+
+		&:hover,
+		&:focus {
+			background-color: #002e9b;
+			border-color: #002e9b;
+		}
+	}
+
+	// Domain pages
+	&.is-section-signup {
+		.gravatar-text-logo {
+			position: absolute;
+			top: 20px;
+			left: 24px;
+			width: 130px;
+			height: 24px;
+		}
+	}
+
+	&.is-section-checkout,
+	&.is-section-checkout-pending {
+		.gravatar-text-logo {
+			margin-bottom: 3px;
+		}
+	}
+
+	&.is-section-checkout {
+		.cost-overrides-list-item__reason--is-discount {
+			color: #1d4fc4;;
+		}
+
+		.checkout-payment-methods .is-checked:not( .has-highlight ) {
+			border: #c3c4c7 1px solid;
+		}
+	}
+
+	&.is-section-checkout-pending {
+		.gravatar-text-logo {
+			margin-left: 19.5px;
+		}
+	}
+
+	&.is-section-checkout-thank-you {
+		.gravatar-text-logo {
+			margin-left: 24px;
+			align-self: center;
 		}
 	}
 }

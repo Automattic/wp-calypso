@@ -57,7 +57,7 @@ const updateImporter = ( siteId, importerStatus ) =>
 		formData: [ [ 'importStatus', JSON.stringify( importerStatus ) ] ],
 	} );
 
-const uploadExportFile = ( siteId, params ) =>
+export const uploadExportFile = ( siteId, params ) =>
 	new Promise( ( resolve, reject ) => {
 		const resolver = ( error, data ) => {
 			error ? reject( error ) : resolve( data );

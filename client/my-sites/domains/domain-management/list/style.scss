@@ -150,11 +150,7 @@
 			padding-inline: 0;
 
 			.navigation-header__main {
-				padding-inline: 21px;
-
-				@include break-mobile {
-					padding-inline: 48px;
-				}
+				padding-inline: 24px;
 			}
 
 			@include break-huge {
@@ -162,7 +158,7 @@
 
 				.navigation-header__main {
 					margin: 0 auto;
-					padding-inline: 48px;
+					padding-inline: 24px;
 				}
 			}
 		}
@@ -172,17 +168,6 @@
 				padding-inline: 16px;
 
 				@include break-mobile {
-					padding-inline: 48px;
-				}
-			}
-
-			@include break-huge {
-				max-width: 100%;
-
-				.bulk-domains-empty-state__main {
-					box-sizing: border-box;
-					max-width: 1400px;
-					margin: 0 auto;
 					padding-inline: 48px;
 				}
 			}
@@ -223,7 +208,7 @@
 			}
 
 			.components-input-control__input {
-				font-size: 13px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				font-size: 13px;
 				height: 32px;
 				padding-left: 8px;
 				padding-right: 8px;

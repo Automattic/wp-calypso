@@ -2,6 +2,7 @@ import { WPCOM_FEATURES_SITE_PREVIEW_LINKS } from '@automattic/calypso-products'
 import { FormLabel } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormRadio from 'calypso/components/forms/form-radio';
@@ -10,6 +11,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import SitePreviewLinks from 'calypso/components/site-preview-links';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import {
@@ -17,7 +19,10 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import SiteSettingPrivacyNotice from './notice';
+import {
+	SiteSettingPrivacyPremiumStylesNotice,
+	SiteSettingsPrivacyDiscourageSearchEnginesNotice,
+} from './notice';
 import type { Fields } from './index';
 
 interface SiteSettingPrivacyFormProps {
@@ -55,6 +60,9 @@ const SiteSettingPrivacyForm = ( {
 	const hasSitePreviewLink = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_SITE_PREVIEW_LINKS )
 	);
+
+	const primaryDomain = useSelector( ( state ) => getPrimaryDomainBySiteId( state, siteId ) );
+
 	const { globalStylesInUse, shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( siteId );
 
 	const blogPublic = Number( fields.blog_public );
@@ -77,7 +85,8 @@ const SiteSettingPrivacyForm = ( {
 
 	const discourageSearchChecked =
 		( wpcomPublicComingSoon && blogPublic === 0 && isComingSoonDisabled ) ||
-		( 0 === blogPublic && ! wpcomPublicComingSoon );
+		( 0 === blogPublic && ! wpcomPublicComingSoon ) ||
+		primaryDomain?.isWpcomStagingDomain;
 
 	const recordEvent = ( message: string ) => {
 		dispatch( recordGoogleEvent( 'Site Settings', message ) );
@@ -103,13 +112,17 @@ const SiteSettingPrivacyForm = ( {
 
 	return (
 		<form>
+			{ siteId && <QuerySiteDomains siteId={ siteId } /> }
 			<FormFieldset>
 				{ ! isNonAtomicJetpackSite &&
 					! isWPForTeamsSite &&
 					! isAtomicAndEditingToolkitDeactivated && (
 						<>
 							{ shouldShowPremiumStylesNotice && (
-								<SiteSettingPrivacyNotice selectedSite={ selectedSite } siteSlug={ siteSlug } />
+								<SiteSettingPrivacyPremiumStylesNotice
+									selectedSite={ selectedSite }
+									siteSlug={ siteSlug }
+								/>
 							) }
 							<FormLabel
 								className={ clsx( 'site-settings__visibility-label is-coming-soon', {
@@ -202,7 +215,8 @@ const SiteSettingPrivacyForm = ( {
 										wpcom_data_sharing_opt_out: true,
 									} )
 								}
-								disabled={ isRequestingSettings }
+								// See https://github.com/Automattic/wp-calypso/issues/101828.
+								disabled={ isRequestingSettings || primaryDomain?.isWpcomStagingDomain }
 								onClick={ () => {
 									recordEvent( 'Clicked Site Visibility Radio Button' );
 								} }
@@ -213,6 +227,12 @@ const SiteSettingPrivacyForm = ( {
 									'This option does not block access to your site — it is up to search engines to honor your request.'
 								) }
 							</FormSettingExplanation>
+							{ primaryDomain?.isWpcomStagingDomain && (
+								<SiteSettingsPrivacyDiscourageSearchEnginesNotice
+									selectedSite={ selectedSite }
+									siteSlug={ siteSlug }
+								/>
+							) }
 						</FormLabel>
 						{ ! isNonAtomicJetpackSite && (
 							<FormLabel className="site-settings__visibility-label is-checkbox is-hidden">

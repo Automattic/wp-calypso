@@ -1,8 +1,10 @@
-import { PricingSlider, RenderThumbFunction, Popover } from '@automattic/components';
+import { Popover } from '@automattic/components';
 import { Icon, info } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useState, useRef } from 'react';
+import PricingSlider from './pricing-slider';
 import './styles.scss';
+import type { RenderThumbFunction } from './pricing-slider/types';
 
 type TierUIStrings = {
 	limits: string;

@@ -8,7 +8,7 @@ import {
 } from '@automattic/i18n-utils';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { removeQueryArgs } from '@wordpress/url';
-import { translate } from 'i18n-calypso';
+import { translate, fixMe } from 'i18n-calypso';
 import { Provider as ReduxProvider } from 'react-redux';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import EmptyContent from 'calypso/components/empty-content';
@@ -16,11 +16,9 @@ import MomentProvider from 'calypso/components/localized-moment/provider';
 import { RouteProvider } from 'calypso/components/route';
 import Layout from 'calypso/layout';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
-import { isE2ETest } from 'calypso/lib/e2e';
 import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl, login } from 'calypso/lib/paths';
 import { CalypsoReactQueryDevtools } from 'calypso/lib/react-query-devtools-helper';
-import { isRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import { addQueryArgs, getSiteFragment } from 'calypso/lib/route';
 import {
 	getProductSlugFromContext,
@@ -312,19 +310,13 @@ export function redirectIfJetpackNonAtomic( context, next ) {
  * @returns {void}
  */
 export async function redirectToHostingPromoIfNotAtomic( context, next ) {
-	const { getState, dispatch } = context.store;
+	const { getState } = context.store;
 	const state = getState();
 	const site = getSelectedSite( state );
 	const isAtomicSite = !! site?.is_wpcom_atomic || !! site?.is_wpcom_staging_site;
 
 	if ( ! isAtomicSite || site.plan?.expired ) {
-		// Keep the user within the Settings tab
-		const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState, dispatch );
-		if ( isUntangled ) {
-			return page.redirect( '/sites/settings/site/' + context.params.site_id );
-		}
-
-		return page.redirect( `/hosting-features/${ site?.slug }` );
+		return page.redirect( '/sites/settings/site/' + context.params.site_id );
 	}
 
 	next();
@@ -371,8 +363,11 @@ export const notFound = ( context, next ) => {
 	context.primary = (
 		<EmptyContent
 			className="content-404"
-			illustration="/calypso/images/illustrations/illustration-404.svg"
-			title={ translate( 'Uh oh. Page not found.' ) }
+			title={ fixMe( {
+				text: 'Page not found.',
+				newCopy: translate( 'Page not found.' ),
+				oldCopy: translate( 'Uh oh. Page not found.' ),
+			} ) }
 			line={ translate( "Sorry, the page you were looking for doesn't exist or has been moved." ) }
 		/>
 	);
@@ -401,17 +396,14 @@ export const ssrSetupLocale = ( _context, next ) => {
 };
 
 export const redirectIfDuplicatedView = ( wpAdminPath ) => async ( context, next ) => {
-	const { getState, dispatch } = context.store;
-	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState, dispatch );
+	const { getState } = context.store;
+	const state = getState();
+	const siteId = getSelectedSiteId( state );
+	const wpAdminUrl = getSiteAdminUrl( state, siteId, wpAdminPath );
 
-	if ( isE2ETest() || isUntangled ) {
-		const state = getState();
-		const siteId = getSelectedSiteId( state );
-		const wpAdminUrl = getSiteAdminUrl( state, siteId, wpAdminPath );
-		if ( wpAdminUrl ) {
-			window.location = wpAdminUrl;
-			return;
-		}
+	if ( wpAdminUrl ) {
+		window.location = wpAdminUrl;
+		return;
 	}
 	next();
 };

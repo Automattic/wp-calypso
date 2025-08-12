@@ -38,7 +38,7 @@ type ExchangeCodeForTokenResponse = {
 	access_token: string;
 };
 
-const GitHubLoginButton = ( {
+export const GitHubLoginButton = ( {
 	children,
 	responseHandler,
 	onClick,
@@ -127,8 +127,11 @@ const GitHubLoginButton = ( {
 	};
 
 	useEffect( () => {
-		if ( service === 'github' && socialServiceResponse ) {
-			responseHandler( { ...socialServiceResponse, service: 'github' } );
+		if ( service === 'github' && socialServiceResponse?.access_token ) {
+			responseHandler( {
+				access_token: socialServiceResponse.access_token,
+				service: 'github',
+			} );
 		}
 	}, [ socialServiceResponse, service, responseHandler ] );
 
@@ -178,9 +181,8 @@ const GitHubLoginButton = ( {
 				customButton
 			) : (
 				<Button
-					className={ clsx( 'a8c-components-wp-button social-buttons__button github', {
-						disabled: isDisabled,
-					} ) }
+					className="a8c-components-wp-button social-buttons__button github"
+					disabled={ isDisabled }
 					data-social-service="github"
 					{ ...eventHandlers }
 					variant="secondary"

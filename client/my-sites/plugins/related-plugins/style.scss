@@ -28,6 +28,9 @@
 	column-gap: 24px;
 	row-gap: 32px;
 
+	.related-plugins-item {
+		text-decoration: none;
+	}
 
 	.related-plugins-item__icon {
 		float: left;

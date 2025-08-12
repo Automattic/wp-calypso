@@ -3,7 +3,6 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React, { LegacyRef, RefObject } from 'react';
-import illustrationEmptyResults from 'calypso/assets/images/illustrations/illustration-empty-results.svg';
 import './style.scss';
 
 interface EmptyContentProps {
@@ -17,7 +16,6 @@ interface EmptyContentProps {
 	actionURL?: string;
 	actionCallback?: () => void;
 	actionTarget?: string;
-	actionHoverCallback?: () => void;
 	actionDisabled?: boolean;
 	actionRef?: RefObject< HTMLElement > | LegacyRef< HTMLButtonElement >;
 	secondaryAction?: React.ReactNode;
@@ -49,8 +47,6 @@ export default function EmptyContent( props: EmptyContentProps ): JSX.Element {
 					target={ props.actionTarget }
 					disabled={ props.actionDisabled }
 					ref={ props.actionRef as LegacyRef< HTMLButtonElement > }
-					onMouseEnter={ props.actionHoverCallback }
-					onTouchStart={ props.actionHoverCallback }
 				>
 					{ props.action }
 				</Button>
@@ -77,7 +73,7 @@ export default function EmptyContent( props: EmptyContentProps ): JSX.Element {
 		}
 	}
 
-	const { line, illustration = illustrationEmptyResults, isCompact = false } = props;
+	const { line, illustration, isCompact = false } = props;
 	const translate = useTranslate();
 	const action = props.action && primaryAction();
 	const secondaryActionEl = props.secondaryAction && secondaryAction();

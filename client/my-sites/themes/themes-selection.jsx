@@ -135,15 +135,19 @@ class ThemesSelection extends Component {
 	};
 
 	fetchNextPage = ( options ) => {
-		if ( this.props.isRequesting || this.props.isLastPage ) {
+		if ( this.props.isRequesting ) {
 			return;
 		}
 
 		if ( options.triggeredByScroll ) {
-			this.trackScrollPage();
-		}
+			if ( this.props.isLastPage ) {
+				this.trackLastPage();
+				return;
+			}
 
-		this.props.incrementPage();
+			this.trackScrollPage();
+			this.props.incrementPage();
+		}
 	};
 
 	//intercept preview and add primary and secondary

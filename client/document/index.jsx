@@ -1,6 +1,8 @@
-import path from 'path';
+import { parse } from 'path';
 import config from '@automattic/calypso-config';
+import { WordPressLogo } from '@automattic/components';
 import { isLocaleRtl } from '@automattic/i18n-utils';
+import { Step } from '@automattic/onboarding';
 import clsx from 'clsx';
 import { Component } from 'react';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
@@ -17,9 +19,7 @@ import EnvironmentBadge, {
 import Head from 'calypso/components/head';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import Loading from 'calypso/components/loading';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { isGravPoweredOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { jsonStringifyForHtml } from 'calypso/server/sanitize';
@@ -52,8 +52,7 @@ class Document extends Component {
 			initialReduxState,
 			inlineScriptNonce,
 			isSupportSession,
-			disableHelpCenterAutoOpen,
-			isWooDna,
+			isSSP,
 			lang,
 			languageRevisions,
 			manifests,
@@ -68,11 +67,12 @@ class Document extends Component {
 			target,
 			user,
 			useTranslationChunks,
+			showStepContainerV2Loader,
 		} = this.props;
 
 		const installedChunks = entrypoint.js
 			.concat( chunkFiles.js )
-			.map( ( chunk ) => path.parse( chunk ).name );
+			.map( ( chunk ) => parse( chunk ).name );
 
 		const inlineScript =
 			`var COMMIT_SHA = ${ jsonStringifyForHtml( commitSha ) };\n` +
@@ -80,7 +80,7 @@ class Document extends Component {
 			`var BUILD_TARGET = ${ jsonStringifyForHtml( target ) };\n` +
 			( user ? `var currentUser = ${ jsonStringifyForHtml( user ) };\n` : '' ) +
 			( isSupportSession ? 'var isSupportSession = true;\n' : '' ) +
-			( disableHelpCenterAutoOpen ? 'var disableHelpCenterAutoOpen = true;\n' : '' ) +
+			( isSSP ? 'var isSSP = true;\n' : '' ) +
 			( app ? `var app = ${ jsonStringifyForHtml( app ) };\n` : '' ) +
 			( initialReduxState
 				? `var initialReduxState = ${ jsonStringifyForHtml( initialReduxState ) };\n`
@@ -97,8 +97,6 @@ class Document extends Component {
 			( params && params.hasOwnProperty( 'lang' )
 				? `var localeFromRoute = ${ jsonStringifyForHtml( params.lang ?? '' ) };\n`
 				: '' );
-
-		const isJetpackWooDnaFlow = 'jetpack-connect' === sectionName && isWooDna;
 
 		const theme = config( 'theme' );
 
@@ -132,21 +130,8 @@ class Document extends Component {
 			}
 		}
 
-		const shouldNotShowLoadingLogo =
-			sectionName === 'checkout' || sectionName === 'stepper' || sectionName === 'signup';
-
-		const LoadingLogo = chooseLoadingLogo( this.props, {
-			isWpMobileApp: app?.isWpMobileApp,
-			isWcMobileApp: app?.isWcMobileApp,
-			isWCCOM,
-		} );
-
 		return (
-			<html
-				lang={ lang }
-				dir={ isRTL ? 'rtl' : 'ltr' }
-				className={ clsx( { 'is-iframe': sectionName === 'gutenberg-editor' } ) }
-			>
+			<html lang={ lang } dir={ isRTL ? 'rtl' : 'ltr' }>
 				<Head
 					title={ headTitle }
 					branchName={ branchName }
@@ -191,15 +176,16 @@ class Document extends Component {
 								className={ clsx( 'layout', {
 									[ 'is-group-' + sectionGroup ]: sectionGroup,
 									[ 'is-section-' + sectionName ]: sectionName,
-									'is-jetpack-woo-dna-flow': isJetpackWooDnaFlow,
 								} ) }
 							>
 								<div className="layout__content">
-									{ shouldNotShowLoadingLogo ? (
-										<Loading className="wpcom-loading__boot" />
-									) : (
-										<LoadingLogo size={ 72 } className="wpcom-site__logo" />
-									) }
+									<LoadingPlaceholder
+										app={ app }
+										sectionName={ sectionName }
+										isWCCOM={ isWCCOM }
+										isOneTapAuth={ !! query?.oneTapAuth }
+										showStepContainerV2Loader={ showStepContainerV2Loader }
+									/>
 								</div>
 							</div>
 						</div>
@@ -304,12 +290,36 @@ class Document extends Component {
 		);
 	}
 }
+function LoadingPlaceholder( {
+	app,
+	sectionName,
+	isWCCOM,
+	isOneTapAuth,
+	showStepContainerV2Loader,
+} ) {
+	const shouldNotShowLoadingLogo =
+		sectionName === 'checkout' ||
+		sectionName === 'stepper' ||
+		sectionName === 'signup' ||
+		isOneTapAuth;
 
-function chooseLoadingLogo( { useLoadingEllipsis }, { isWpMobileApp, isWcMobileApp, isWCCOM } ) {
-	if ( useLoadingEllipsis ) {
-		return LoadingEllipsis;
+	if ( shouldNotShowLoadingLogo ) {
+		return showStepContainerV2Loader || isOneTapAuth ? (
+			<Step.Loading />
+		) : (
+			<Loading className="wpcom-loading__boot" />
+		);
 	}
 
+	const LoadingLogo = chooseLoadingLogo( {
+		isWpMobileApp: app?.isWpMobileApp,
+		isWcMobileApp: app?.isWcMobileApp,
+		isWCCOM,
+	} );
+	return <LoadingLogo size={ 72 } className="wpcom-site__logo" />;
+}
+
+function chooseLoadingLogo( { isWpMobileApp, isWcMobileApp, isWCCOM } ) {
 	if ( isWcMobileApp || isWCCOM ) {
 		return WooCommerceLogo;
 	}

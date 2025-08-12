@@ -94,14 +94,14 @@ export class EditorSettingsSidebarComponent {
 	 * text box.
 	 *
 	 * @param {string} text Text to enter.
-	 * @param param1 Keyed object parametr.
+	 * @param param1 Keyed object parameter.
 	 * @param {string} param1.label Locate text field by label.
 	 */
 	async enterText( text: string, { label }: { label: string } ): Promise< void > {
 		const editorParent = await this.editor.parent();
 
 		if ( label ) {
-			return await editorParent.getByLabel( label ).fill( text );
+			return await editorParent.getByRole( 'textbox', { name: label } ).fill( text );
 		}
 
 		throw new Error( 'Must specify a method to locate the text field.' );

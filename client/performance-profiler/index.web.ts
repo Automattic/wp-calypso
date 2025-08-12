@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { getLanguageRouteParam } from '@automattic/i18n-utils/';
+import { getLanguageRouteParam } from '@automattic/i18n-utils';
 import { makeLayout, render as clientRender } from 'calypso/controller/index.web';
 import {
 	PerformanceProfilerDashboardContext,

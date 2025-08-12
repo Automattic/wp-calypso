@@ -1,3 +1,4 @@
+import './style.scss';
 import { isDefaultLocale } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -16,14 +17,16 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import { Interval, EVERY_MINUTE } from 'calypso/lib/interval';
 import scrollTo from 'calypso/lib/scroll-to';
 import withDimensions from 'calypso/lib/with-dimensions';
-import ReaderBackButton from 'calypso/reader/components/back-button';
 import { isEditorIframeFocused } from 'calypso/reader/components/quick-post/utils';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { shouldShowLikes } from 'calypso/reader/like-helper';
 import { keysAreEqual, keyToString } from 'calypso/reader/post-key';
+import { MAX_POSTS_FOR_LOGGED_OUT_USERS } from 'calypso/reader/reader.const';
+import ReaderStreamLoginPrompt from 'calypso/reader/stream/login-prompt';
 import UpdateNotice from 'calypso/reader/update-notice';
 import { showSelectedPost, getStreamType } from 'calypso/reader/utils';
 import XPostHelper from 'calypso/reader/xpost-helper';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { PER_FETCH, INITIAL_FETCH } from 'calypso/state/data-layer/wpcom/read/streams';
 import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
@@ -54,7 +57,6 @@ import { CustomerCouncilBanner } from './customer-council-banner';
 import EmptyContent from './empty';
 import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
-import './style.scss';
 
 // minimal size for the two-column layout to show without cut off
 // 64 is padding, 8 is margin
@@ -79,7 +81,6 @@ class ReaderStream extends Component {
 		showDefaultEmptyContentIfMissing: PropTypes.bool,
 		showFollowButton: PropTypes.bool,
 		showFollowInHeader: PropTypes.bool,
-		showBack: PropTypes.bool,
 		sidebarTabTitle: PropTypes.string,
 		streamHeader: PropTypes.func,
 		streamSidebar: PropTypes.func,
@@ -89,6 +90,7 @@ class ReaderStream extends Component {
 		useCompactCards: PropTypes.bool,
 		fixedHeaderHeight: PropTypes.number,
 		selectedStreamName: PropTypes.string,
+		isLoggedIn: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -101,9 +103,9 @@ class ReaderStream extends Component {
 		showDefaultEmptyContentIfMissing: true,
 		showFollowButton: true,
 		showFollowInHeader: false,
-		showBack: true,
 		suppressSiteNameLink: false,
 		useCompactCards: false,
+		isLoggedIn: false,
 	};
 
 	state = {
@@ -482,6 +484,10 @@ class ReaderStream extends Component {
 	};
 
 	fetchNextPage = ( options, props = this.props ) => {
+		if ( this.isLoginPromptVisible() ) {
+			return;
+		}
+
 		const { streamKey, stream, startDate, localeSlug, selectedFeedId } = props;
 		if ( options.triggeredByScroll ) {
 			const pageId = pagesByKey.get( streamKey ) || 0;
@@ -491,6 +497,11 @@ class ReaderStream extends Component {
 		}
 		const pageHandle = stream ? this.getPageHandle( stream.pageHandle, startDate ) : null;
 		props.requestPage( { feedId: selectedFeedId, streamKey, pageHandle, localeSlug } );
+	};
+
+	isLoginPromptVisible = () => {
+		// Show login prompt for all logged out users after few posts.
+		return ! this.props.isLoggedIn && this.props.items.length > MAX_POSTS_FOR_LOGGED_OUT_USERS;
 	};
 
 	showUpdates = () => {
@@ -674,7 +685,12 @@ class ReaderStream extends Component {
 
 			// Exclude the sidebar layout for the search stream, since it's handled by `<SiteResults>`.
 			if ( ! sidebarContentFn || streamType === 'search' ) {
-				body = <div className="reader__content">{ bodyContent }</div>;
+				body = (
+					<div className="reader__content">
+						{ isReaderCouncilStream && <CustomerCouncilBanner translate={ translate } /> }
+						{ bodyContent }
+					</div>
+				);
 			} else if ( wideDisplay ) {
 				body = (
 					<div className="stream__two-column">
@@ -740,11 +756,13 @@ class ReaderStream extends Component {
 				<div ref={ this.overlayRef } className="stream__init-overlay" />
 				{ shouldPoll && <Interval onTick={ this.poll } period={ EVERY_MINUTE } /> }
 				<UpdateNotice streamKey={ streamKey } onClick={ this.showUpdates } />
-				{ this.props.showBack && <ReaderBackButton /> }
 				{ this.props.children }
 				{ showingStream && items.length ? this.props.intro?.() : null }
 				{ body }
 				{ showingStream && items.length && ! isRequesting ? <ListEnd /> : null }
+				{ this.isLoginPromptVisible() && (
+					<ReaderStreamLoginPrompt redirectPath={ window.location.pathname } />
+				) }
 			</TopLevel>
 		);
 	}
@@ -770,6 +788,7 @@ export default connect(
 		const streamKey = getStreamKey( state, tempStreamKey );
 		const stream = getStream( state, streamKey );
 		const selectedPost = getPostByKey( state, stream.selected );
+		const isLoggedIn = isUserLoggedIn( state );
 
 		let localeSlug = getCurrentLocaleSlug( state );
 		if ( isDefaultLocale( localeSlug ) ) {
@@ -796,6 +815,7 @@ export default connect(
 			organizations: getReaderOrganizations( state ),
 			primarySiteId: getPrimarySiteId( state ),
 			localeSlug,
+			isLoggedIn,
 		};
 	},
 	{

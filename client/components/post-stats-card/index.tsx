@@ -1,9 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Card, Button } from '@automattic/components';
 import { eye } from '@automattic/components/src/icons';
+import { formatNumberCompact } from '@automattic/number-formatters';
 import { Icon, commentContent, starEmpty } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useTranslate, numberFormatCompact } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import './style.scss';
 
@@ -79,7 +80,7 @@ export default function PostStatsCard( {
 					<div className="post-stats-card__count-header">{ translate( 'Views' ) }</div>
 					<div className="post-stats-card__count-value">
 						<span>
-							{ ! isLoading && viewCount !== null ? numberFormatCompact( viewCount ) : '-' }
+							{ ! isLoading && viewCount !== null ? formatNumberCompact( viewCount ) : '-' }
 						</span>
 					</div>
 				</div>
@@ -88,7 +89,7 @@ export default function PostStatsCard( {
 					<div className="post-stats-card__count-header">{ translate( 'Likes' ) }</div>
 					<div className="post-stats-card__count-value">
 						<span>
-							{ ! isLoading && likeCount !== null ? numberFormatCompact( likeCount ) : '-' }
+							{ ! isLoading && likeCount !== null ? formatNumberCompact( likeCount ) : '-' }
 						</span>
 					</div>
 				</div>
@@ -97,7 +98,7 @@ export default function PostStatsCard( {
 					<div className="post-stats-card__count-header">{ translate( 'Comments' ) }</div>
 					<div className="post-stats-card__count-value">
 						<span>
-							{ ! isLoading && commentCount !== null ? numberFormatCompact( commentCount ) : '-' }
+							{ ! isLoading && commentCount !== null ? formatNumberCompact( commentCount ) : '-' }
 						</span>
 					</div>
 				</div>

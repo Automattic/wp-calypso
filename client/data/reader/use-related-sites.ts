@@ -56,9 +56,13 @@ const selectRelatedSites = ( response: { sites?: Site[] } ): RelatedSite[] | nul
 
 export const useRelatedSites = (
 	siteId: number,
-	postId?: number
+	postId?: number,
+	options?: {
+		enabled?: boolean;
+	}
 ): UseQueryResult< RelatedSite[] | null > => {
 	const SITE_RECOMMENDATIONS_COUNT = 5;
+	const { enabled } = options || {};
 	return useQuery( {
 		queryKey: [ 'related-sites', SITE_RECOMMENDATIONS_COUNT, siteId, postId ],
 		queryFn: () =>
@@ -73,7 +77,7 @@ export const useRelatedSites = (
 					http_envelope: 1,
 				}
 			),
-		enabled: !! siteId,
+		enabled: enabled ?? true,
 		staleTime: 3600000, // 1 hour
 		select: selectRelatedSites,
 		retry: false,

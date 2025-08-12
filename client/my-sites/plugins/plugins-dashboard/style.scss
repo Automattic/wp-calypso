@@ -1,5 +1,6 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
 
 :root {
 	--color-light-backdrop: var( --studio-white );
@@ -35,7 +36,7 @@
 	}
 
 	.hosting-dashboard-layout__top-wrapper:not( .preview-hidden ) {
-		padding-block-start: 24px;
+		padding-block-start: 16px;
 	}
 
 	.plugin-manage-sites-pane {
@@ -58,7 +59,11 @@
 		.plugin-details-v2__title {
 			color: var( --studio-gray-100 );
 			font-size: 1.25rem;
-			padding: 16px 16px;
+			padding: 16px 24px;
+
+			@include break-medium {
+				padding-inline: 48px;
+			}
 		}
 	}
 
@@ -372,7 +377,7 @@
 body.is-section-plugins .hosting-dashboard-layout,
 .is-section-jetpack-cloud-plugin-management .hosting-dashboard-layout {
 	.hosting-dashboard-layout-with-columns__container {
-		background-color: var( --studio-gray-0 );
+		background-color: var( --color-main-background );
 	}
 	.dataviews-wrapper {
 		margin: auto;
@@ -384,6 +389,7 @@ body.is-section-plugins .hosting-dashboard-layout,
 				.plugin-icon {
 					max-width: 35px;
 					max-height: 35px;
+					margin: 0;
 				}
 
 				td:nth-child( 2 ) {

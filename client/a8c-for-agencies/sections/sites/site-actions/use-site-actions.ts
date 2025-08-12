@@ -85,7 +85,7 @@ export default function useSiteActions( {
 		return [
 			{
 				name: translate( 'Prepare for launch' ),
-				href: `https://wordpress.com/sites/settings/site/${ blog_id }`,
+				href: `https://wordpress.com/sites/settings/v2/${ url }/site-visibility`,
 				onClick: () => handleClickMenuItem( 'prepare_for_launch' ),
 				isExternalLink: true,
 				isEnabled: isDevSite,
@@ -106,7 +106,7 @@ export default function useSiteActions( {
 			},
 			{
 				name: translate( 'Hosting configuration' ),
-				href: `https://wordpress.com/hosting-config/${ blog_id }`,
+				href: `https://wordpress.com/sites/${ blog_id }/settings`,
 				onClick: () => handleClickMenuItem( 'hosting_configuration' ),
 				isExternalLink: true,
 				isEnabled: isWPCOMSite && ! isUrlOnly,
@@ -275,7 +275,9 @@ export function useSiteActionsDataViews( {
 					return canHaveActions( item ) && isDevSite( item );
 				},
 				callback( items: SiteData[] ) {
-					window.open( `https://wordpress.com/sites/settings/site/${ getBlogId( items[ 0 ] ) }` );
+					window.open(
+						`https://wordpress.com/sites/settings/v2/${ getSiteSlug( items[ 0 ] ) }/site-visibility`
+					);
 					dispatch(
 						recordTracksEvent( getActionEventName( 'prepare_for_launch', isLargeScreen ) )
 					);
@@ -313,7 +315,7 @@ export function useSiteActionsDataViews( {
 					return canHaveActions( item ) && isAtomicSite( item ) && ! isUrlOnly( item );
 				},
 				callback( items: SiteData[] ) {
-					window.open( `https://wordpress.com/hosting-config/${ getBlogId( items[ 0 ] ) }` );
+					window.open( `https://wordpress.com/sites/${ getBlogId( items[ 0 ] ) }/settings` );
 					dispatch(
 						recordTracksEvent( getActionEventName( 'hosting_configuration', isLargeScreen ) )
 					);
@@ -405,7 +407,7 @@ export function useSiteActionsDataViews( {
 					return canHaveActions( item ) && isAtomicSite( item ) && ! isUrlOnly( item );
 				},
 				callback( items: SiteData[] ) {
-					window.open( `https://wordpress.com/settings/general/${ getBlogId( items[ 0 ] ) }` );
+					window.open( `https://wordpress.com/sites/settings/site/${ getSiteSlug( items[ 0 ] ) }` );
 					dispatch( recordTracksEvent( getActionEventName( 'site_settings', isLargeScreen ) ) );
 				},
 			},

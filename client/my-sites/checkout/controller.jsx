@@ -83,6 +83,10 @@ export function checkoutMarketplaceSiteless( context, next ) {
 	sitelessCheckout( context, next, { sitelessCheckoutType: 'marketplace' } );
 }
 
+export function checkoutUnifiedSiteless( context, next ) {
+	sitelessCheckout( context, next, { sitelessCheckoutType: 'unified' } );
+}
+
 function sitelessCheckout( context, next, extraProps ) {
 	const state = context.store.getState();
 	const isLoggedOut = ! isUserLoggedIn( state );
@@ -274,7 +278,7 @@ export function checkoutPending( context, next ) {
 	/**
 	 * @type {string|undefined}
 	 */
-	const redirectTo = context.query.redirectTo;
+	const redirectTo = context.query.redirect_to;
 
 	const receiptId = Number.isInteger( Number( context.query.receiptId ) )
 		? Number( context.query.receiptId )
@@ -605,6 +609,7 @@ function getRememberedCoupon() {
 		'SBDC',
 		'TXAM',
 		'WC',
+		'grad25',
 	];
 	const THIRTY_DAYS_MILLISECONDS = 30 * 24 * 60 * 60 * 1000;
 	const now = Date.now();

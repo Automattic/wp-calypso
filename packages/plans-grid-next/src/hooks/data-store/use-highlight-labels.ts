@@ -70,6 +70,8 @@ const useHighlightLabels = ( {
 				if ( isPremiumPlan( planSlug ) ) {
 					label = translate( 'Best for Blog' );
 				}
+			} else if ( 'plans-affiliate' === intent && isBusinessPlan( planSlug ) ) {
+				label = translate( 'Popular' );
 			} else if ( isBusinessPlan( planSlug ) && ! selectedPlan ) {
 				label = translate( 'Best for devs' );
 			} else if ( isPopularPlan( planSlug ) && ! selectedPlan ) {

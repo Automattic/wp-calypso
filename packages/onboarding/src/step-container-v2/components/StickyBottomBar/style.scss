@@ -1,26 +1,36 @@
 .step-container-v2__sticky-bottom-bar {
-	position: sticky;
-	height: var(--step-container-v2-sticky-bottom-bar-height);
-	bottom: 0;
+	&-wrapper {
+		position: sticky;
+		bottom: 0;
+		width: 100%;
+	}
+
 	width: 100%;
 	display: flex;
 	justify-content: space-between;
 	box-sizing: border-box;
 	align-items: center;
-	padding: 1rem;
-	box-shadow: var(--color-border-subtle) 0 1px 0 inset;
-	background-color: var(--color-surface);
+	box-shadow: var( --color-border-subtle ) 0 1px 0 inset;
+	background-color: var( --color-surface );
 
-	&-left-button {
+	&-left-element,
+	&-center-element,
+	&-right-element {
+		margin-block: 1rem;
+	}
+
+	&-left-element {
+		margin-left: 1rem;
 		margin-right: auto;
 	}
 
-	&-content {
+	&-center-element {
 		margin-inline: 2rem;
 		min-width: 0;
 	}
 
-	&-right-button {
+	&-right-element {
 		margin-left: auto;
+		margin-right: 1rem;
 	}
 }

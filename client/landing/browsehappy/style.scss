@@ -6,7 +6,6 @@ nav.browsehappy__nav {
 	height: 48px;
 	padding: 0 18px 0 24px;
 	margin-top: 9px;
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 16px;
 	font-weight: 600;
 
@@ -31,7 +30,6 @@ main.browsehappy__main {
 
 	h1 {
 		@extend .wp-brand-font;
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 34px;
 	}
 }
@@ -39,7 +37,6 @@ main.browsehappy__main {
 a.browsehappy__anyway {
 	color: inherit;
 	text-decoration: underline;
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 13px;
 	padding-top: 1em;
 }

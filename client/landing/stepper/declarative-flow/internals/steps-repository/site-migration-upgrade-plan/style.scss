@@ -1,9 +1,9 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/onboarding/styles/mixins";
 
-:root .site-migration-upgrade-plan .is-step-site-migration-upgrade-plan-with-variants {
+:root .site-migration-upgrade-plan {
 	@include onboarding-block-margin;
-	
+
 	padding-bottom: 5rem;
 
 	@media ( min-width: 1040px ) {

@@ -1,21 +1,31 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
+import { PLAN_BUSINESS, getPlan, PLAN_ECOMMERCE } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { getLocaleSlug } from 'i18n-calypso';
 import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
 import rocket from 'calypso/assets/images/customer-home/illustration--rocket.svg';
 import earnIllustration from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
+import activityPubLogo from 'calypso/assets/images/icons/activitypub-logo.svg';
 import wordPressLogo from 'calypso/assets/images/icons/wordpress-logo.svg';
+import facebookLogo from 'calypso/assets/images/illustrations/facebook-logo.png';
 import { marketingConnections } from 'calypso/my-sites/marketing/paths';
 import * as T from 'calypso/types';
 import { MarketingToolsFeatureData } from './types';
 
 export const getMarketingFeaturesData = (
 	selectedSiteSlug: T.SiteSlug | null,
-	translate: ( text: string ) => string,
+	translate: ( text: string, options?: any ) => string,
 	localizeUrl: ( url: string ) => string
 ): MarketingToolsFeatureData[] => {
 	const isEnglish = ( config( 'english_locales' ) as string[] ).includes( getLocaleSlug() ?? '' );
+	const currentDate = new Date();
+	const shouldShowFacebook =
+		( currentDate.getFullYear() === 2025 &&
+			currentDate.getMonth() >= 6 &&
+			currentDate.getMonth() <= 9 ) ||
+		config.isEnabled( 'marketing-force-facebook-display' ); // July-October 2025 OR if the feature flag is enabled.
+
 	const result: MarketingToolsFeatureData[] = [
 		{
 			title: translate( 'Let our WordPress.com experts build your site!' ),
@@ -25,10 +35,9 @@ export const getMarketingFeaturesData = (
 			categories: [ 'design', 'favourite' ],
 			imagePath: wordPressLogo,
 			buttonText: translate( 'Get started' ),
-			buttonHref: localizeUrl( 'https://wordpress.com/website-design-service/?ref=tools-banner' ),
-			buttonTarget: '_blank',
 			onClick: () => {
 				recordTracksEvent( 'calypso_marketing_tools_built_by_wp_button_click' );
+				page( '/start/do-it-for-me/new-or-existing-site' );
 			},
 		},
 		{
@@ -62,6 +71,21 @@ export const getMarketingFeaturesData = (
 			},
 		},
 		{
+			title: translate( 'Share your blog with a new audience' ),
+			description: translate(
+				'Connect your WordPress.com site to the social web. Let people follow your posts from platforms like Mastodon, Threads, and more—no extra work needed.'
+			),
+			categories: [ 'share', 'new' ],
+			imagePath: activityPubLogo,
+			imageAlt: translate( 'Activitypub logo' ),
+			buttonText: translate( 'Enter the fediverse' ),
+			onClick: () => {
+				recordTracksEvent( 'calypso_marketing_tools_activitypub_button_click' );
+
+				page( marketingConnections( selectedSiteSlug ) );
+			},
+		},
+		{
 			title: translate( 'Hire an SEO expert' ),
 			description: translate(
 				'In today‘s digital age, visibility is key. Hire an SEO expert to boost your online presence and capture valuable opportunities.'
@@ -81,7 +105,7 @@ export const getMarketingFeaturesData = (
 			description: translate(
 				"Use your site's Jetpack Social tools to connect your site and your social media accounts, and share your new posts automatically. Connect to Facebook, LinkedIn, and more."
 			),
-			categories: [ 'share', 'new' ],
+			categories: [ 'share' ],
 			imagePath: '/calypso/images/marketing/social-media-logos.svg',
 			imageAlt: translate( 'Logos for Facebook, Twitter, LinkedIn, and Tumblr' ),
 			buttonText: translate( 'Start sharing' ),
@@ -92,6 +116,33 @@ export const getMarketingFeaturesData = (
 			},
 		},
 	];
+
+	// Add Facebook feature conditionally as 3rd item
+	if ( shouldShowFacebook ) {
+		const facebookDescription = translate(
+			'Discover an easy way to advertise your brand across Facebook and Instagram. Capture website actions to help you target audiences and measure results. Available on %(businessPlanName)s and %(commercePlanName)s plans.',
+			{
+				args: {
+					businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+					commercePlanName: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
+				},
+			}
+		);
+
+		result.splice( 3, 0, {
+			title: translate( 'Want to connect with your audience on Facebook and Instagram?' ),
+			description: facebookDescription,
+			categories: [ 'share', 'new' ],
+			imagePath: facebookLogo,
+			imageAlt: translate( 'Facebook Logo' ),
+			buttonText: translate( 'Add Facebook for WordPress.com' ),
+			onClick: () => {
+				recordTracksEvent( 'calypso_marketing_tools_facebook_button_click' );
+				page( `/plugins/official-facebook-pixel/${ selectedSiteSlug }` );
+			},
+		} );
+	}
+
 	if ( isEnglish ) {
 		result.push( {
 			title: translate( 'Increase traffic to your WordPress.com site' ),
@@ -102,7 +153,7 @@ export const getMarketingFeaturesData = (
 			imagePath: rocket,
 			imageAlt: translate( 'A rocketship' ),
 			buttonText: translate( 'Register now' ),
-			buttonHref: 'https://wordpress.com/learn/courses/intro-to-seo/',
+			buttonHref: localizeUrl( 'https://wordpress.com/support/courses/seo/' ),
 			buttonTarget: '_blank',
 			onClick: () => {
 				recordTracksEvent( 'calypso_marketing_tools_seo_course_button_click' );

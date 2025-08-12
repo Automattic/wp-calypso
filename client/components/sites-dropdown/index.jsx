@@ -23,6 +23,7 @@ export class SitesDropdown extends PureComponent {
 		filter: PropTypes.func,
 		isPlaceholder: PropTypes.bool,
 		hasMultipleSites: PropTypes.bool,
+		disabled: PropTypes.bool,
 
 		// connected props
 		selectedSite: PropTypes.object,
@@ -34,6 +35,7 @@ export class SitesDropdown extends PureComponent {
 		onSiteSelect: noop,
 		isPlaceholder: false,
 		hasMultipleSites: false,
+		disabled: false,
 	};
 
 	constructor( props ) {
@@ -94,6 +96,7 @@ export class SitesDropdown extends PureComponent {
 				className={ clsx(
 					'sites-dropdown',
 					{ 'is-open': this.state.open },
+					{ 'is-disabled': this.props.disabled },
 					{ 'has-multiple-sites': this.props.hasMultipleSites }
 				) }
 			>
@@ -111,7 +114,9 @@ export class SitesDropdown extends PureComponent {
 						) : (
 							<Site siteId={ this.state.selectedSiteId } indicator={ false } />
 						) }
-						{ this.props.hasMultipleSites && <Gridicon icon="chevron-down" /> }
+						{ this.props.hasMultipleSites && (
+							<Gridicon icon="chevron-down" height={ 16 } width={ 16 } />
+						) }
 					</div>
 					{ this.props.hasMultipleSites && this.state.open && (
 						<SiteSelector

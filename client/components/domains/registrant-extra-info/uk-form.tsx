@@ -111,7 +111,7 @@ export class RegistrantExtraInfoUkForm extends PureComponent< FormProps & Locali
 			<div>
 				<FormFieldset>
 					<FormLabel className="registrant-extra-info__trading-name" htmlFor="trading-name">
-						{ translate( 'Trading Name' ) }
+						{ translate( 'Trading name' ) }
 					</FormLabel>
 					<FormTextInput
 						id="trading-name"
@@ -147,7 +147,7 @@ export class RegistrantExtraInfoUkForm extends PureComponent< FormProps & Locali
 						className="registrant-extra-info__registration-number"
 						htmlFor="registration-number"
 					>
-						{ translate( 'Registration Number' ) }
+						{ translate( 'Registration number' ) }
 					</FormLabel>
 					<FormTextInput
 						id="registration-number"

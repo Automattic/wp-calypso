@@ -28,6 +28,8 @@ import {
 	FEATURE_CUSTOM_PRODUCT_KITS,
 	FEATURE_DATACENTRE_FAILOVER,
 	FEATURE_DEV_TOOLS,
+	FEATURE_DEV_TOOLS_SSH,
+	FEATURE_DEV_TOOLS_GIT,
 	FEATURE_DISCOUNTED_SHIPPING,
 	FEATURE_DISPLAY_PRODUCTS_BRAND,
 	FEATURE_DONATIONS_AND_TIPS_JP,
@@ -144,6 +146,8 @@ import {
 	FEATURE_SUPPORT,
 	FEATURE_SUPPORT_FROM_EXPERTS,
 	FEATURE_AI_ASSISTANT,
+	FEATURE_ADVANCED_FORM_FEATURES_JP,
+	FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL,
 } from './constants';
 import { FeatureGroupMap } from './types';
 
@@ -190,6 +194,7 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 			FEATURE_PLUGINS_THEMES,
 			FEATURE_PLUGIN_AUTOUPDATE_JP,
 			FEATURE_CONTACT_FORM_JP,
+			FEATURE_ADVANCED_FORM_FEATURES_JP,
 			FEATURE_ES_SEARCH_JP,
 			FEATURE_SMART_REDIRECTS,
 		],
@@ -220,6 +225,8 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 		getTitle: () => i18n.translate( 'Developer tools' ),
 		getFeatures: () => [
 			FEATURE_DEV_TOOLS,
+			FEATURE_DEV_TOOLS_SSH,
+			FEATURE_DEV_TOOLS_GIT,
 			FEATURE_SITE_STAGING_SITES,
 			FEATURE_MULTI_SITE,
 			FEATURE_WP_UPDATES,
@@ -277,6 +284,7 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 			FEATURE_NEWSLETTERS_RSS,
 			FEATURE_AD_FREE_EXPERIENCE,
 			FEATURE_WORDADS,
+			FEATURE_CONNECT_ANALYTICS,
 			FEATURE_STATS_PAID,
 			FEATURE_UNLTD_SOCIAL_MEDIA_JP,
 			FEATURE_SEO_JP,
@@ -450,7 +458,7 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 	[ FEATURE_GROUP_CUSTOM_PLUGINS ]: {
 		slug: FEATURE_GROUP_CUSTOM_PLUGINS,
 		getTitle: () => null,
-		getFeatures: () => [ FEATURE_UPLOAD_PLUGINS ],
+		getFeatures: () => [ FEATURE_UPLOAD_PLUGINS, FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL ],
 	},
 	[ FEATURE_GROUP_DEV_TOOLS ]: {
 		slug: FEATURE_GROUP_DEV_TOOLS,
@@ -466,8 +474,10 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 
 export function resolveFeatureGroupsForFeaturesGrid( {
 	showSimplifiedFeatures,
+	isSummerSpecial,
 }: {
 	showSimplifiedFeatures?: boolean;
+	isSummerSpecial?: boolean;
 } = {} ): Partial< FeatureGroupMap > {
 	if ( showSimplifiedFeatures ) {
 		return {
@@ -481,12 +491,17 @@ export function resolveFeatureGroupsForFeaturesGrid( {
 			...( isStatsGroupTranslated() && {
 				[ FEATURE_GROUP_STATS ]: featureGroups[ FEATURE_GROUP_STATS ],
 			} ),
+			...( isSummerSpecial && {
+				[ FEATURE_GROUP_CUSTOM_PLUGINS ]: featureGroups[ FEATURE_GROUP_CUSTOM_PLUGINS ],
+			} ),
 			[ FEATURE_GROUP_CUSTOMIZE_STYLE ]: featureGroups[ FEATURE_GROUP_CUSTOMIZE_STYLE ],
 			[ FEATURE_GROUP_ANALYTICS ]: featureGroups[ FEATURE_GROUP_ANALYTICS ],
 			...( isUploadVideosTranslated() && {
 				[ FEATURE_GROUP_UPLOAD_VIDEOS ]: featureGroups[ FEATURE_GROUP_UPLOAD_VIDEOS ],
 			} ),
-			[ FEATURE_GROUP_CUSTOM_PLUGINS ]: featureGroups[ FEATURE_GROUP_CUSTOM_PLUGINS ],
+			...( ! isSummerSpecial && {
+				[ FEATURE_GROUP_CUSTOM_PLUGINS ]: featureGroups[ FEATURE_GROUP_CUSTOM_PLUGINS ],
+			} ),
 			[ FEATURE_GROUP_DEV_TOOLS ]: featureGroups[ FEATURE_GROUP_DEV_TOOLS ],
 			[ FEATURE_GROUP_WOO ]: featureGroups[ FEATURE_GROUP_WOO ],
 		};

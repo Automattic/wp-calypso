@@ -1,10 +1,11 @@
+import { formatNumber } from '@automattic/number-formatters';
 import { NextButton } from '@automattic/onboarding';
 import { Icon, loop, backup, shield } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, type TranslateResult } from 'i18n-calypso';
 
 interface AuthorizationBenefitsItem {
 	icon: React.ReactElement;
-	text: string;
+	text: TranslateResult;
 }
 
 interface AuthorizationBenefitsProps {
@@ -64,7 +65,17 @@ const Authorization = ( { onShareCredentialsClick, onAuthorizationClick }: Autho
 						},
 						{
 							icon: backup,
-							text: translate( 'Unmatched reliability with 99.999% uptime and unmetered traffic.' ),
+							text: translate(
+								'Unmatched reliability with %(uptimePercent)s uptime and unmetered traffic.',
+								{
+									args: {
+										uptimePercent: formatNumber( 0.99999, {
+											numberFormatOptions: { style: 'percent', maximumFractionDigits: 3 },
+										} ),
+									},
+									comment: '99.999% uptime',
+								}
+							),
 						},
 						{
 							icon: shield,

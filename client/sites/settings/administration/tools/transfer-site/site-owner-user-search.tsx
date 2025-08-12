@@ -1,14 +1,13 @@
 import { Button, FormLabel, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
-import { Icon, check } from '@wordpress/icons';
+import { check, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useState, FormEvent, ChangeEvent } from 'react';
+import { ChangeEvent, FormEvent, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { PanelCardHeading } from 'calypso/components/panel';
 import useUsersQuery from 'calypso/data/users/use-users-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import TeamMembersSiteTransfer from 'calypso/my-sites/people/team-members-site-transfer';
 import { useCheckSiteTransferEligibility } from './use-check-site-transfer-eligibility';
 import type { UsersQuery } from '@automattic/data-stores';
@@ -96,6 +95,7 @@ const SiteOwnerTransferEligibility = ( {
 		const value = recipient.trim();
 		setTempSiteOwner( value );
 	}
+
 	const recipientError = false;
 
 	const form = (
@@ -159,11 +159,9 @@ const SiteOwnerTransferEligibility = ( {
 		</form>
 	);
 
-	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
-
 	return (
 		<>
-			{ isUntangled && <PanelCardHeading>{ translate( 'Confirm new owner' ) }</PanelCardHeading> }
+			<PanelCardHeading>{ translate( 'Confirm new owner' ) }</PanelCardHeading>
 			{ form }
 		</>
 	);

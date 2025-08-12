@@ -1,7 +1,7 @@
 import isWooDnaFlow from 'calypso/state/selectors/is-woo-dna-flow';
 
 describe( 'isWooDnaFlow', () => {
-	test( 'should return false when no argument', () => {
+	test( 'should return false if no state', () => {
 		expect( isWooDnaFlow() ).toBe( false );
 	} );
 
@@ -10,19 +10,20 @@ describe( 'isWooDnaFlow', () => {
 			route: {
 				query: {
 					current: {
-						email_address: 'user@wordpress.com',
+						from: 'test',
 					},
 				},
 			},
 		};
 		expect( isWooDnaFlow( state ) ).toBe( false );
 	} );
+
 	test( 'should return true when current woodna_service_name parameter is present', () => {
 		const state = {
 			route: {
 				query: {
 					current: {
-						woodna_service_name: 'meh',
+						woodna_service_name: 'WooCommerce Shipping',
 					},
 				},
 			},
@@ -46,10 +47,10 @@ describe( 'isWooDnaFlow', () => {
 			route: {
 				query: {
 					initial: {
-						woodna_service_name: 'meh',
+						woodna_service_name: 'test',
 					},
 					current: {
-						email_address: 'x@wordpress.com',
+						from: 'foo',
 					},
 				},
 			},
@@ -60,15 +61,52 @@ describe( 'isWooDnaFlow', () => {
 		const state = {
 			route: {
 				query: {
-					current: {
-						woodna_service_name: 'meh',
-					},
 					initial: {
-						email_address: 'x@wordpress.com',
+						from: 'foo',
+					},
+					current: {
+						woodna_service_name: 'test',
 					},
 				},
 			},
 		};
 		expect( isWooDnaFlow( state ) ).toBe( true );
+	} );
+
+	test( 'should return true when woodna_service_name parameter is present in redirect_to URL', () => {
+		const state = {
+			route: {
+				query: {
+					current: {
+						from: 'woocommerce-shipping',
+					},
+				},
+			},
+			login: {
+				redirectTo: {
+					original:
+						'/jetpack/connect/authorize?client_id=123&woodna_service_name=WooCommerce+Shipping&from=woocommerce-shipping',
+				},
+			},
+		};
+		expect( isWooDnaFlow( state ) ).toBe( true );
+	} );
+
+	test( 'should return false when no woodna_service_name parameter is present anywhere', () => {
+		const state = {
+			route: {
+				query: {
+					current: {
+						from: 'woocommerce-shipping',
+					},
+				},
+			},
+			login: {
+				redirectTo: {
+					original: '/jetpack/connect/authorize?client_id=123&from=woocommerce-shipping',
+				},
+			},
+		};
+		expect( isWooDnaFlow( state ) ).toBe( false );
 	} );
 } );

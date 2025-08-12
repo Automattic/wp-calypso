@@ -20,7 +20,7 @@ import './style.scss';
 
 const noop = () => {};
 
-class GoogleSocialButton extends Component {
+export class GoogleSocialButton extends Component {
 	static propTypes = {
 		isFormDisabled: PropTypes.bool,
 		onClick: PropTypes.func,
@@ -198,9 +198,7 @@ class GoogleSocialButton extends Component {
 					customButton
 				) : (
 					<Button
-						className={ clsx( 'a8c-components-wp-button social-buttons__button google', {
-							disabled: isDisabled,
-						} ) }
+						className="a8c-components-wp-button social-buttons__button google"
 						onClick={ this.handleClick }
 						data-social-service="google"
 						disabled={ isDisabled }

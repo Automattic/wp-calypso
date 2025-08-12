@@ -4,6 +4,7 @@ import {
 	PLAN_BUSINESS_2_YEARS,
 } from '@automattic/calypso-products';
 import { JetpackLogo } from '@automattic/components';
+import { formatNumber } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
 import type { PlanSlug } from '@automattic/calypso-products';
 import type { PricingMetaForGridPlan } from '@automattic/data-stores';
@@ -24,12 +25,17 @@ export const MigrationPlanFeatureList = ( {
 	}
 
 	const selectedPlanPricing = pricing.originalPrice?.monthly;
+	const selectedPlanDiscountedPrice = pricing.introOffer?.rawPrice?.monthly;
 
-	let percentageString = '0%';
-	if ( fullMonthlyPrice && selectedPlanPricing ) {
-		percentageString =
-			Math.floor( ( ( fullMonthlyPrice - selectedPlanPricing ) / fullMonthlyPrice ) * 100 ) + '%';
-	}
+	const annualSavingsDecimal =
+		fullMonthlyPrice && selectedPlanPricing
+			? ( fullMonthlyPrice - selectedPlanPricing ) / fullMonthlyPrice
+			: 0;
+
+	const discountedPriceDecimal =
+		selectedPlanPricing && selectedPlanDiscountedPrice
+			? ( selectedPlanPricing - selectedPlanDiscountedPrice ) / selectedPlanPricing
+			: 0;
 
 	const jetpackFeatures = [
 		translate( 'In-depth site analytics dashboard' ),
@@ -48,7 +54,9 @@ export const MigrationPlanFeatureList = ( {
 		// translators: %(percentage)s is the percentage of annual savings formatted like '50%'
 		translate( '{{strong}}%(percentage)s{{/strong}} annual savings', {
 			args: {
-				percentage: percentageString,
+				percentage: formatNumber( annualSavingsDecimal, {
+					numberFormatOptions: { style: 'percent' },
+				} ),
 			},
 			components: { strong: <strong /> },
 		} ),
@@ -69,9 +77,17 @@ export const MigrationPlanFeatureList = ( {
 	} = {
 		wpcomFeatures: {
 			[ PLAN_BUSINESS ]: [
-				translate( '{{strong}}50% off{{/strong}} your first year', {
-					components: { strong: <strong /> },
-				} ),
+				discountedPriceDecimal
+					? translate( '{{strong}}%(percentage)s off{{/strong}} your first year', {
+							args: {
+								percentage: formatNumber( discountedPriceDecimal, {
+									numberFormatOptions: { style: 'percent' },
+								} ),
+								comment: 'percentage like 50% off',
+							},
+							components: { strong: <strong /> },
+					  } )
+					: translate( 'No first year discount' ),
 				...commonDiscountedFeatures,
 				...businessFeatures,
 			],
@@ -88,9 +104,17 @@ export const MigrationPlanFeatureList = ( {
 				...businessFeatures,
 			],
 			[ PLAN_BUSINESS_2_YEARS ]: [
-				translate( '{{strong}}50% off{{/strong}} your first two years', {
-					components: { strong: <strong /> },
-				} ),
+				discountedPriceDecimal
+					? translate( '{{strong}}%(percentage)s off{{/strong}} your first two years', {
+							args: {
+								percentage: formatNumber( discountedPriceDecimal, {
+									numberFormatOptions: { style: 'percent' },
+								} ),
+								comment: 'percentage like 50% off',
+							},
+							components: { strong: <strong /> },
+					  } )
+					: translate( 'No discount on your first two years' ),
 				...commonDiscountedFeatures,
 				...businessFeatures,
 			],

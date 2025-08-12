@@ -215,6 +215,13 @@ const DesignCardGroup = ( {
 		return [ ...boosted, ...remaining ];
 	}, [ isCollapsed, designs, category, shuffleSeed ] );
 
+	const handleShowAllClick = () => {
+		setIsCollapsed( false );
+		recordTracksEvent( 'calypso_design_picker_category_show_all_click', {
+			category: category,
+		} );
+	};
+
 	const content = (
 		<div className="design-picker__grid">
 			{ visibleDesigns.map( ( design, index ) => {
@@ -255,7 +262,7 @@ const DesignCardGroup = ( {
 			{ content }
 			{ isCollapsed && designs.length > COLLAPSED_DESIGNS_VISIBLE_COUNT && (
 				<div className="design-picker__design-card-group-footer">
-					<Button onClick={ () => setIsCollapsed( false ) }>
+					<Button onClick={ handleShowAllClick }>
 						{ translate( 'Show all %s themes', {
 							args: categoryName,
 							comment: '%s will be a name of the theme category. e.g. Blog.',

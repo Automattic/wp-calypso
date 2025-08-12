@@ -1,6 +1,8 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
 import './style.scss';
+import { formatNumber } from '@automattic/number-formatters';
 import { InfiniteData, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
@@ -22,11 +24,15 @@ import {
 import useBillingSummaryQuery from 'calypso/data/promote-post/use-promote-post-billing-summary-query';
 import useCampaignsQueryPaged from 'calypso/data/promote-post/use-promote-post-campaigns-query-paged';
 import useCreditBalanceQuery from 'calypso/data/promote-post/use-promote-post-credit-balance-query';
+import { usePaymentsQuery } from 'calypso/data/promote-post/use-promote-post-payments-query';
 import usePostsQueryPaged, {
 	usePostsQueryStats,
 } from 'calypso/data/promote-post/use-promote-post-posts-query-paged';
+import { useJetpackBlazeVersionCheck } from 'calypso/lib/promote-post';
 import CampaignsList from 'calypso/my-sites/promote-post-i2/components/campaigns-list';
 import PaymentLinks from 'calypso/my-sites/promote-post-i2/components/payment-links';
+import PaymentsList from 'calypso/my-sites/promote-post-i2/components/payments-list';
+import { PaymentReceipt } from 'calypso/my-sites/promote-post-i2/components/payments-receipt';
 import PostsList, {
 	postsNotReadyErrorMessage,
 } from 'calypso/my-sites/promote-post-i2/components/posts-list';
@@ -37,18 +43,18 @@ import {
 } from 'calypso/my-sites/promote-post-i2/components/search-bar';
 import { getPagedBlazeSearchData } from 'calypso/my-sites/promote-post-i2/utils';
 import { useSelector } from 'calypso/state';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import BlazePageViewTracker from './components/blaze-page-view-tracker';
 import BlazePluginBanner from './components/blaze-plugin-banner';
 import CampaignsTotalStats from './components/campaigns-total-stats';
-import CreditBalance from './components/credit-balance';
 import MainWrapper from './components/main-wrapper';
 import PostsListBanner from './components/posts-list-banner';
 import TspBanner from './components/tsp-banner';
-import useIsRunningInWpAdmin from './hooks/use-is-running-in-wpadmin';
 import useOpenPromoteWidget from './hooks/use-open-promote-widget';
 import { getAdvertisingDashboardPath } from './utils';
-export const TAB_OPTIONS = [ 'posts', 'campaigns', 'credits' ] as const;
+
+export const TAB_OPTIONS = [ 'posts', 'campaigns', 'credits', 'payments' ] as const;
 const isWooStore = config.isEnabled( 'is_running_in_woo_site' );
 export type TabType = ( typeof TAB_OPTIONS )[ number ];
 export type TabOption = {
@@ -58,10 +64,12 @@ export type TabOption = {
 	isCountAmount?: boolean;
 	className?: string;
 	enabled?: boolean;
+	label?: string;
 };
 
 interface Props {
 	tab?: TabType;
+	receiptId?: number;
 }
 
 export type DSPMessage = {
@@ -100,16 +108,18 @@ const setTspBannerCollapsedCookie = ( value: boolean ) => {
 	} );
 };
 
-export default function PromotedPosts( { tab }: Props ) {
+export default function PromotedPosts( { tab, receiptId }: Props ) {
 	const selectedTab = tab && TAB_OPTIONS.includes( tab ) ? tab : 'posts';
 	const selectedSite = useSelector( getSelectedSite );
-	const isRunningInWpAdmin = useIsRunningInWpAdmin();
 	const selectedSiteId = selectedSite?.ID || 0;
 	const translate = useTranslate();
 	const onClickPromote = useOpenPromoteWidget( {
 		keyValue: 'post-0', // post 0 means to open post selector in widget
 		entrypoint: 'promoted_posts-header',
 	} );
+	const isSelfHosted = useSelector( ( state ) =>
+		isJetpackSite( state, selectedSiteId, { treatAtomicAsJetpackSite: false } )
+	);
 
 	const { data: creditBalance = '0.00' } = useCreditBalanceQuery();
 
@@ -135,6 +145,19 @@ export default function PromotedPosts( { tab }: Props ) {
 	] );
 
 	const { data, isLoading: isLoadingBillingSummary } = useBillingSummaryQuery();
+
+	const [ fetchPaymentsForCurrentSite, setFetchPaymentsForCurrentSite ] = useState( true );
+	const arePaymentsEnabled = useJetpackBlazeVersionCheck( selectedSiteId, '14.9-alpha', '0.8.0' );
+	/* query for payments */
+	const {
+		data: payments,
+		isLoading: isLoadingPayments,
+		isFetching: isFetchingPayments,
+	} = usePaymentsQuery(
+		arePaymentsEnabled,
+		fetchPaymentsForCurrentSite ? selectedSiteId : undefined
+	);
+
 	const paymentBlocked = data?.paymentsBlocked ?? false;
 
 	const shouldDisplayDebtAndPaymentLinks =
@@ -143,7 +166,8 @@ export default function PromotedPosts( { tab }: Props ) {
 		! data?.paymentsBlocked &&
 		data?.paymentLinks &&
 		data?.paymentLinks.length > 0 &&
-		parseFloat( data.debt ) > 0;
+		parseFloat( data.debt ) > 0 &&
+		selectedTab !== 'payments';
 
 	const {
 		has_more_pages: campaignsHasMorePages,
@@ -189,21 +213,25 @@ export default function PromotedPosts( { tab }: Props ) {
 			id: 'posts',
 			name: translate( 'Ready to promote' ),
 			itemCount: totalPostsUnfiltered,
+			label: translate( 'Posts' ),
 		},
 		{
 			id: 'campaigns',
 			name: translate( 'Campaigns' ),
 			itemCount: totalCampaignsUnfiltered,
-		},
-		{
-			id: 'credits',
-			name: translate( 'Credits' ),
-			className: 'pull-right',
-			itemCount: parseFloat( creditBalance ),
-			isCountAmount: true,
-			enabled: parseFloat( creditBalance ) > 0,
+			label: translate( 'Campaigns' ),
 		},
 	];
+
+	if ( arePaymentsEnabled ) {
+		tabs.push( {
+			id: 'payments',
+			name: translate( 'Payments' ),
+			className: 'payments',
+			itemCount: payments?.total,
+			label: translate( 'Payments' ),
+		} );
+	}
 
 	const cookies = cookie.parse( document.cookie );
 	const userHasCollapsedTspBanner = ( cookies[ TSP_BANNER_COLLAPSED_COOKIE ] ?? '0' ) === '1';
@@ -238,7 +266,6 @@ export default function PromotedPosts( { tab }: Props ) {
 						},
 					}
 				) }
-				illustration={ null }
 			/>
 		);
 	}
@@ -323,7 +350,7 @@ export default function PromotedPosts( { tab }: Props ) {
 						supportContext="advertising"
 						className="button posts-list-banner__learn-more"
 						showIcon={ false }
-						showSupportModal={ ! isRunningInWpAdmin }
+						showSupportModal={ ! isSelfHosted }
 					/>
 					<Button
 						variant="primary"
@@ -341,6 +368,29 @@ export default function PromotedPosts( { tab }: Props ) {
 
 			{ ! showRegularBanner && showTspBanner && (
 				<TspBanner onToggle={ toggleTspBanner } isCollapsed={ isTspBannerCollapsed } />
+			) }
+
+			{ parseFloat( creditBalance ) > 0 && (
+				<div className="blaze-credits-container">
+					<div className="blaze-credits-container__item">
+						<div className="blaze-credits-container__label">
+							{ translate( 'Credits' ) }
+							<InlineSupportLink
+								showIcon
+								className="credits-inline-support-link"
+								iconSize={ 18 }
+								showText={ false }
+								supportPostId={ 240330 }
+								supportLink={ localizeUrl(
+									'https://wordpress.com/support/promote-a-post/blaze-credits/'
+								) }
+							/>
+						</div>
+						<div className="blaze-credits-container__result">
+							{ '$' + formatNumber( parseFloat( creditBalance ), { decimals: 2 } ) }
+						</div>
+					</div>
+				</div>
 			) }
 
 			{
@@ -424,19 +474,43 @@ export default function PromotedPosts( { tab }: Props ) {
 				</>
 			) }
 
-			{ /* Render credits tab */ }
-			{ selectedTab === 'credits' && (
+			{ /* Render payments tab */ }
+			{ selectedTab === 'payments' && (
 				<>
 					<BlazePageViewTracker
-						path={ getAdvertisingDashboardPath( '/credits/:site' ) }
-						title="Advertising > Credits"
+						path={ getAdvertisingDashboardPath(
+							receiptId ? '/payments/receipt/:receiptId/:site' : '/payments/:site'
+						) }
+						title={ receiptId ? 'Advertising > Payment Receipt' : 'Advertising > Payments' }
 					/>
-					<CreditBalance balance={ creditBalance } />
+
+					{ receiptId ? (
+						<div className="payment-receipt-container">
+							<div className="payment-receipt-container__header">
+								<button
+									className="payment-receipt-container__back-button"
+									onClick={ () => page( getAdvertisingDashboardPath( '/payments' ) ) }
+								>
+									{ translate( '← Back to payments' ) }
+								</button>
+							</div>
+							<PaymentReceipt paymentId={ receiptId } />
+						</div>
+					) : (
+						<PaymentsList
+							isLoading={ isLoadingPayments }
+							isError={ campaignError as DSPMessage }
+							isFetching={ isFetchingPayments }
+							payments={ payments?.payments }
+							selectedPaymentsFilter={ fetchPaymentsForCurrentSite }
+							setFetchPaymentsForCurrentSite={ setFetchPaymentsForCurrentSite }
+						/>
+					) }
 				</>
 			) }
 
 			{ /* Render posts tab */ }
-			{ selectedTab !== 'campaigns' && selectedTab !== 'credits' && (
+			{ selectedTab !== 'campaigns' && selectedTab !== 'credits' && selectedTab !== 'payments' && (
 				<>
 					{ renderWarningNotices( postsWarnings ) }
 

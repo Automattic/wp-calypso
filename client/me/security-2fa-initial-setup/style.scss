@@ -1,5 +1,13 @@
-.security-2fa-initial-setup__item-title {
-	margin-left: 5px;
-	font-size: $font-body;
-	vertical-align: top;
+.security-2fa-setup__steps-container {
+	.security-2fa-initial-setup__item-title {
+		margin-left: 5px;
+		font-size: $font-body;
+		vertical-align: top;
+	}
+
+	.security-initial-setup-nav-item {
+		cursor: pointer;
+	}
 }
+
+

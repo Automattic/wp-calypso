@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 
 import { PLAN_100_YEARS } from '@automattic/calypso-products';
 import { screen } from '@testing-library/react';

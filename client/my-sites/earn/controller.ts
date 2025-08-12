@@ -1,6 +1,7 @@
 import page, { type Callback } from '@automattic/calypso-router';
 import { createElement } from 'react';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import JetpackMonetize from './jetpack-monetize';
 import Main from './main';
 
 const earnPath = ! isJetpackCloud() ? '/earn' : '/monetize';
@@ -28,5 +29,10 @@ export const layout: Callback = ( context, next ) => {
 		path: context.path,
 		query: context.query,
 	} );
+	next();
+};
+
+export const jetpackMonetize: Callback = ( context, next ) => {
+	context.primary = createElement( JetpackMonetize );
 	next();
 };

@@ -7,7 +7,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import wpcom from 'calypso/lib/wp';
 import { storedPaymentMethodsQueryKey } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
-import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
+import type { StoredPaymentMethod } from '@automattic/wpcom-checkout';
 
 async function fetchIsBackup( storedDetailsId: string ): Promise< { is_backup: boolean } > {
 	return await wpcom.req.get( `/me/payment-methods/${ storedDetailsId }/is-backup` );
@@ -78,7 +78,7 @@ export default function PaymentMethodBackupToggle( { card }: { card: StoredPayme
 				checked={ isBackup }
 				onChange={ toggleIsBackup }
 				label={
-					translate( 'Use as backup.{{supportLink /}}', {
+					translate( 'Use as backup{{supportLink /}}', {
 						components: {
 							supportLink: (
 								<InlineSupportLink

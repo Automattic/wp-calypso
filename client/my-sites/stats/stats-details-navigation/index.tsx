@@ -1,22 +1,26 @@
+import page from '@automattic/calypso-router';
+import { TabPanel } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { useCallback, useMemo } from 'react';
-import SectionNav from 'calypso/components/section-nav';
-import NavItem from 'calypso/components/section-nav/item';
-import NavTabs from 'calypso/components/section-nav/tabs';
+import { useMemo } from 'react';
 
-interface propTypes {
+interface StatsDetailsNavigationProps {
 	postId: number;
 	period?: string;
 	statType?: string;
 	givenSiteId: string | number;
 }
 
-function StatsDetailsNavigation( { postId, period, statType, givenSiteId }: propTypes ) {
+function StatsDetailsNavigationImproved( {
+	postId,
+	period,
+	statType,
+	givenSiteId,
+}: StatsDetailsNavigationProps ) {
 	const translate = useTranslate();
 	const tabs = useMemo(
 		() => ( {
-			highlights: translate( 'Highlights' ),
+			highlights: translate( 'Post traffic' ),
 			opens: translate( 'Email opens' ),
 			clicks: translate( 'Email clicks' ),
 		} ),
@@ -25,35 +29,44 @@ function StatsDetailsNavigation( { postId, period, statType, givenSiteId }: prop
 
 	const selectedTab = statType ? statType : 'highlights';
 
-	const navItems = useCallback(
-		( postId: number, period: string | undefined = 'day', givenSiteId: string | number ) => {
-			return Object.keys( tabs ).map( ( item ) => {
-				const selected = selectedTab === item;
+	const tabPanelTabs = useMemo(
+		() =>
+			Object.keys( tabs ).map( ( item ) => {
 				const pathParam = [ 'opens', 'clicks' ].includes( item )
-					? `email/${ item }/${ period }`
+					? `email/${ item }/${ period || 'day' }`
 					: 'post';
-				const attr = {
+				return {
+					name: item,
+					title: tabs[ item as keyof typeof tabs ],
+					className: `stats-navigation__${ item }`,
 					path: `/stats/${ pathParam }/${ postId }/${ givenSiteId }`,
-					selected,
 				};
-				const label = tabs[ item as keyof typeof tabs ];
-
-				// uppercase first character of item
-				return (
-					<NavItem key={ item } { ...attr }>
-						{ label }
-					</NavItem>
-				);
-			} );
-		},
-		[ tabs, selectedTab ]
+			} ),
+		[ tabs, postId, period, givenSiteId ]
 	);
 
 	return (
-		<SectionNav selectedText={ tabs[ selectedTab ] }>
-			<NavTabs label="Stats">{ navItems( postId, period, givenSiteId ) }</NavTabs>
-		</SectionNav>
+		<TabPanel
+			className="stats-navigation__tabs"
+			tabs={ tabPanelTabs }
+			initialTabName={ selectedTab }
+			onSelect={ ( tabName ) => {
+				// Skip navigation if the clicked tab is already active to avoid redundant actions.
+				if ( tabName !== selectedTab ) {
+					const tab = tabPanelTabs.find( ( tab ) => tab.name === tabName );
+					if ( tab?.path ) {
+						page( tab.path );
+					}
+				}
+			} }
+		>
+			{ () => null /* Placeholder div since content is rendered elsewhere */ }
+		</TabPanel>
 	);
+}
+
+function StatsDetailsNavigation( props: StatsDetailsNavigationProps ) {
+	return <StatsDetailsNavigationImproved { ...props } />;
 }
 
 StatsDetailsNavigation.propTypes = {

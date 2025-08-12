@@ -1,8 +1,8 @@
 import config from '@automattic/calypso-config';
 import { SiteDetails } from '@automattic/data-stores';
+import { getCurrencyObject } from '@automattic/number-formatters';
 import { InfiniteData } from '@tanstack/react-query';
 import { __, _x } from '@wordpress/i18n';
-import { getCurrencyObject } from 'i18n-calypso';
 import moment from 'moment';
 import {
 	BlazablePost,
@@ -23,6 +23,15 @@ export const campaignStatus = {
 	FINISHED: 'finished',
 	PROCESSING: 'processing',
 	SUSPENDED: 'suspended',
+};
+
+export const paymentStatus = {
+	COMPLETED: 'COMPLETED',
+	FAILED: 'FAILED',
+	PENDING: 'PENDING',
+	ON_HOLD: 'ON-HOLD',
+	REFUNDED: 'REFUNDED',
+	CANCELED: 'CANCELED',
 };
 
 export const getPostType = ( type: string ) => {
@@ -190,37 +199,6 @@ export const getCampaignActiveDays = ( start_date?: string, end_date?: string ) 
 	}
 
 	return calculateDurationDays( dateStart, dateEnd );
-};
-
-export const getCampaignBudgetData = (
-	budget_cents: number,
-	start_date: string,
-	end_date: string,
-	spent_budget_cents: number,
-	is_evergreen = 0
-) => {
-	let campaignDays;
-	if ( is_evergreen ) {
-		campaignDays = 7;
-	} else {
-		campaignDays = getCampaignDurationDays( start_date, end_date );
-	}
-
-	const spentBudgetCents =
-		spent_budget_cents > budget_cents * campaignDays
-			? budget_cents * campaignDays
-			: spent_budget_cents;
-
-	const totalBudget = ( budget_cents * campaignDays ) / 100;
-	const totalBudgetUsed = spentBudgetCents / 100;
-	const totalBudgetLeft = totalBudget - totalBudgetUsed;
-
-	return {
-		totalBudget,
-		totalBudgetUsed,
-		totalBudgetLeft,
-		campaignDays,
-	};
 };
 
 export const formatCents = ( amount: number, decimals?: number ) => {
@@ -421,4 +399,54 @@ export const cvsStatsDownload = ( csvData: string, fileName: string = 'report.cs
 	link.download = fileName;
 	link.click();
 	URL.revokeObjectURL( link.href );
+};
+
+export const getPaymentStatusBadgeColor = ( status?: string ) => {
+	switch ( status ) {
+		case paymentStatus.COMPLETED: {
+			return 'info-green';
+		}
+		case paymentStatus.FAILED: {
+			return 'error';
+		}
+		case paymentStatus.PENDING: {
+			return 'info';
+		}
+		case paymentStatus.ON_HOLD: {
+			return 'info-blue';
+		}
+		case paymentStatus.REFUNDED: {
+			return 'info-blue';
+		}
+		case paymentStatus.CANCELED: {
+			return 'error';
+		}
+		default:
+			return 'warning';
+	}
+};
+
+export const getPaymentStatus = ( status?: string ) => {
+	switch ( status ) {
+		case paymentStatus.COMPLETED: {
+			return __( 'Completed' );
+		}
+		case paymentStatus.FAILED: {
+			return __( 'Failed' );
+		}
+		case paymentStatus.PENDING: {
+			return __( 'Pending' );
+		}
+		case paymentStatus.ON_HOLD: {
+			return __( 'On hold' );
+		}
+		case paymentStatus.REFUNDED: {
+			return __( 'Refunded' );
+		}
+		case paymentStatus.CANCELED: {
+			return __( 'Canceled' );
+		}
+		default:
+			return status;
+	}
 };

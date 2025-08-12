@@ -1,4 +1,4 @@
-import { formatCurrency } from 'i18n-calypso';
+import { formatCurrency } from '@automattic/number-formatters';
 import { useSelector } from 'react-redux';
 import { getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
 import {

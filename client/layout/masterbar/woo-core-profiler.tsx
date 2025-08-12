@@ -1,7 +1,7 @@
 import { ProgressBar } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { getQueryArg } from '@wordpress/url';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import { isWebUri } from 'valid-url';
 import WooLogo from 'calypso/assets/images/icons/Woo_logo_color.svg';
@@ -13,12 +13,15 @@ import { useSelector } from 'calypso/state';
 import { getRedirectToOriginal } from 'calypso/state/login/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { isWooCommercePaymentsOnboardingFlow } from 'calypso/state/selectors/is-woo-jpc-flow';
 
 // Masterbar for WooCommerce Core Profiler Jetpack step
-const WooCoreProfilerMasterbar = ( { translate }: { translate: ( text: string ) => string } ) => {
+export default function WooCoreProfilerMasterbar() {
+	const translate = useTranslate();
 	const currentQueryArguments = useSelector( getCurrentQueryArguments );
 	const currentRoute = useSelector( getCurrentRoute );
 	const redirectToOriginal = useSelector( getRedirectToOriginal );
+	const isWooPaymentsFlow = useSelector( isWooCommercePaymentsOnboardingFlow );
 
 	let redirectTo = null;
 	let shouldShowProgressBar = true;
@@ -39,6 +42,10 @@ const WooCoreProfilerMasterbar = ( { translate }: { translate: ( text: string ) 
 	) {
 		shouldShowProgressBar = false;
 		shouldShowNoThanks = false;
+	}
+
+	if ( isWooPaymentsFlow ) {
+		shouldShowProgressBar = false;
 	}
 
 	return (
@@ -79,6 +86,4 @@ const WooCoreProfilerMasterbar = ( { translate }: { translate: ( text: string ) 
 			</header>
 		</Fragment>
 	);
-};
-
-export default localize( WooCoreProfilerMasterbar );
+}

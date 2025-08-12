@@ -8,6 +8,7 @@ import {
 	isPremiumPlan,
 	isFreePlan,
 	PlanSlug,
+	isPartnerBundleOnboarding,
 } from '@automattic/calypso-products';
 import { CloudLogo, VIPLogo, WooLogo } from '@automattic/components';
 import clsx from 'clsx';
@@ -30,6 +31,7 @@ const PlanLogo: React.FunctionComponent< {
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const translate = useTranslate();
 	const shouldShowWooLogo = isEcommercePlan( planSlug ) && ! isWooExpressPlan( planSlug );
+	const shouldShowPopularBadge = ! isPartnerBundleOnboarding();
 	const { gridPlansIndex } = usePlansGridContext();
 	const { current } = gridPlansIndex[ planSlug ];
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
@@ -65,11 +67,13 @@ const PlanLogo: React.FunctionComponent< {
 			className={ tableItemClasses }
 			isTableCell={ isTableCell }
 		>
-			<PopularBadge
-				isInSignup={ isInSignup }
-				planSlug={ planSlug }
-				additionalClassName={ popularBadgeClasses }
-			/>
+			{ shouldShowPopularBadge && (
+				<PopularBadge
+					isInSignup={ isInSignup }
+					planSlug={ planSlug }
+					additionalClassName={ popularBadgeClasses }
+				/>
+			) }
 			<header className={ headerClasses }>
 				{ isBusinessPlan( planSlug ) && (
 					<Plans2023Tooltip

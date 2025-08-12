@@ -3,11 +3,11 @@ import { makeLayout, redirectLoggedOut, render as clientRender } from 'calypso/c
 import { siteSelection, sites } from 'calypso/my-sites/controller';
 import {
 	authenticate,
-	post,
 	redirect,
 	exitPost,
 	redirectSiteEditor,
 	redirectToPermalinkIfLoggedOut,
+	redirectPostEditor,
 } from './controller';
 
 export default function () {
@@ -20,9 +20,7 @@ export default function () {
 		siteSelection,
 		redirect,
 		authenticate,
-		post,
-		makeLayout,
-		clientRender
+		redirectPostEditor
 	);
 	page.exit( '/post/:site?/:post?', exitPost );
 	page( '/post/:site?', redirectLoggedOut, siteSelection, redirect, makeLayout, clientRender );
@@ -35,9 +33,7 @@ export default function () {
 		siteSelection,
 		redirect,
 		authenticate,
-		post,
-		makeLayout,
-		clientRender
+		redirectPostEditor
 	);
 	page.exit( '/page/:site?/:post?', exitPost );
 	page( '/page/:site?', redirectLoggedOut, siteSelection, redirect, makeLayout, clientRender );
@@ -56,9 +52,7 @@ export default function () {
 		siteSelection,
 		redirect,
 		authenticate,
-		post,
-		makeLayout,
-		clientRender
+		redirectPostEditor
 	);
 	page(
 		'/edit/:customPostType/:site?',

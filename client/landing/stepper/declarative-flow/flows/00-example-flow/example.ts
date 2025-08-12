@@ -4,8 +4,6 @@ import { dispatch, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useLaunchpadDecider } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-launchpad-decider';
-import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import {
 	clearSignupDestinationCookie,
@@ -15,19 +13,37 @@ import {
 } from 'calypso/signup/storageUtils';
 import { useCreateSite } from '../../../hooks/use-create-site-hook';
 import { useExitFlow } from '../../../hooks/use-exit-flow';
-import { useSiteIdParam } from '../../../hooks/use-site-id-param';
 import { useSiteSlug } from '../../../hooks/use-site-slug';
 import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
-import { getQuery } from '../../../utils/get-query';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { useFlowState } from '../../internals/state-manager/store';
 import { STEPS } from '../../internals/steps';
-import { ProvidedDependencies } from '../../internals/types';
-import type { Flow } from '../../internals/types';
+import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
+import type { FlowV2, SubmitHandler, Navigate } from '../../internals/types';
 
 const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
 
-const newsletter: Flow = {
+function initialize() {
+	const { setHidePlansFeatureComparison, setIntent } = dispatch( ONBOARD_STORE ) as OnboardActions;
+
+	// We can just call these. They're guaranteed to run once.
+	setHidePlansFeatureComparison( true );
+	clearSignupDestinationCookie();
+	setIntent( Onboard.SiteIntent.Newsletter );
+
+	return stepsWithRequiredLogin( [
+		STEPS.NEWSLETTER_SETUP,
+		STEPS.NEWSLETTER_GOALS,
+		STEPS.UNIFIED_DOMAINS,
+		STEPS.UNIFIED_PLANS,
+		STEPS.PROCESSING,
+		STEPS.SUBSCRIBERS,
+		STEPS.LAUNCHPAD,
+		STEPS.ERROR,
+	] );
+}
+
+const exampleFlow: FlowV2< typeof initialize > = {
 	name: EXAMPLE_FLOW,
 	get title() {
 		return translate( 'Newsletter Example Flow' );
@@ -35,45 +51,12 @@ const newsletter: Flow = {
 	__experimentalUseSessions: true,
 	__experimentalUseBuiltinAuth: true,
 	isSignupFlow: true,
-	initialize() {
-		const query = getQuery();
-		const isComingFromMarketingPage = query[ 'ref' ] === 'newsletter-lp';
-
-		const { setHidePlansFeatureComparison, setIntent } = dispatch(
-			ONBOARD_STORE
-		) as OnboardActions;
-
-		// We can just call these. They're guaranteed to run once.
-		setHidePlansFeatureComparison( true );
-		clearSignupDestinationCookie();
-		setIntent( Onboard.SiteIntent.Newsletter );
-
-		const privateSteps = stepsWithRequiredLogin( [
-			STEPS.NEWSLETTER_SETUP,
-			STEPS.NEWSLETTER_GOALS,
-			STEPS.UNIFIED_DOMAINS,
-			STEPS.UNIFIED_PLANS,
-			STEPS.PROCESSING,
-			STEPS.SUBSCRIBERS,
-			STEPS.LAUNCHPAD,
-			STEPS.ERROR,
-		] );
-
-		if ( ! isComingFromMarketingPage ) {
-			return [ STEPS.INTRO, ...privateSteps ];
-		}
-
-		return privateSteps;
-	},
-
+	initialize,
 	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
-		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
-		const query = useQuery();
 		const { get, set } = useFlowState();
 		const { exitFlow } = useExitFlow();
-		const isComingFromMarketingPage = query.get( 'ref' ) === 'newsletter-lp';
 		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 		const { saveSiteSettings } = useDispatch( SITE_STORE );
 
@@ -81,7 +64,7 @@ const newsletter: Flow = {
 
 		const { getPostFlowUrl, initializeLaunchpadState } = useLaunchpadDecider( {
 			exitFlow,
-			navigate,
+			navigate: navigate as Navigate,
 		} );
 
 		const completeSubscribersTask = async () => {
@@ -94,13 +77,14 @@ const newsletter: Flow = {
 
 		triggerGuidesForStep( flowName, _currentStep );
 
-		async function submit( providedDependencies: ProvidedDependencies = {} ) {
-			const launchpadUrl = `/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
+		/**
+		 * This is where step's submitted data is processed.
+		 * @param submittedStep - The step that was submitted. It contains the step's slug and the step's submitted data.
+		 */
+		const submit: SubmitHandler< typeof initialize > = ( submittedStep ) => {
+			const { slug, providedDependencies } = submittedStep;
 
-			switch ( _currentStep ) {
-				case 'intro':
-					return navigate( 'newsletterSetup' );
-
+			switch ( slug ) {
 				case 'newsletterSetup':
 					set( 'newsletterSetup', providedDependencies );
 					return navigate( 'newsletterGoals' );
@@ -129,7 +113,9 @@ const newsletter: Flow = {
 					return navigate( 'processing' );
 				case 'processing': {
 					const site = get( 'site' );
-					if ( site ) {
+					if ( site && providedDependencies?.processingResult === ProcessingResult.SUCCESS ) {
+						const launchpadUrl = `/setup/${ flowName }/launchpad?siteSlug=${ site.siteSlug }`;
+
 						const { siteId, siteSlug } = site;
 						initializeLaunchpadState( {
 							siteId: siteId,
@@ -174,32 +160,10 @@ const newsletter: Flow = {
 					completeSubscribersTask();
 					return navigate( 'launchpad' );
 			}
-		}
-
-		const goBack = () => {
-			return;
 		};
 
-		const goNext = async () => {
-			switch ( _currentStep ) {
-				case 'launchpad':
-					skipLaunchpad( {
-						siteId,
-						siteSlug,
-					} );
-					return;
-
-				default:
-					return navigate( isComingFromMarketingPage ? 'newsletterSetup' : 'intro' );
-			}
-		};
-
-		const goToStep = ( step: string ) => {
-			navigate( step );
-		};
-
-		return { goNext, goBack, goToStep, submit };
+		return { submit };
 	},
 };
 
-export default newsletter;
+export default exampleFlow;

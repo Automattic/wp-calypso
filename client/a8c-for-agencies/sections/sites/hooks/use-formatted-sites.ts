@@ -133,7 +133,7 @@ const useFormatMonitorData = () => {
 				INITIAL_UNIX_EPOCH !== site.monitor_last_status_change
 			) {
 				monitor.status = 'failed';
-				monitor.value = translate( 'Site Down' );
+				monitor.value = translate( 'Site down' );
 				monitor.error = true;
 			} else {
 				monitor.status = 'success';

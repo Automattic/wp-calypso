@@ -15,6 +15,7 @@ import {
 	checkoutPending,
 	checkoutJetpackSiteless,
 	checkoutMarketplaceSiteless,
+	checkoutUnifiedSiteless,
 	checkoutThankYou,
 	licensingPendingAsyncActivation,
 	licensingThankYouManualActivationInstructions,
@@ -164,6 +165,16 @@ export default function () {
 		redirectLoggedOut,
 		noSite,
 		akismetCheckoutThankYou,
+		makeLayout,
+		clientRender
+	);
+
+	// Onboarding unified siteless checkout with product slug
+	page(
+		'/checkout/unified/:productSlug',
+		setLocaleMiddleware(),
+		noSite,
+		checkoutUnifiedSiteless,
 		makeLayout,
 		clientRender
 	);

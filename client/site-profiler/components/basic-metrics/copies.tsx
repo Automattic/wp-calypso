@@ -33,7 +33,7 @@ export function getCopies(
 	translate: I18N[ 'translate' ],
 	domain: string
 ): CopiesReturnValue {
-	const migrateUrl = `/setup/hosted-site-migration?ref=site-profiler&from=${ domain }`;
+	const migrateUrl = `/setup/site-migration?ref=site-profiler&from=${ domain }`;
 	const supportUrl = localizeUrl( 'https://wordpress.com/support' );
 
 	const clsValue = basicMetrics?.cls?.value.toFixed( 2 );

@@ -1,0 +1,16 @@
+.dashboard-site-settings-privacy-form .components-checkbox-control:has(input[type="checkbox"]:disabled:checked) {
+	label {
+		cursor: default;
+	}
+
+	input[type="checkbox"] {
+		background: #f0f0f0;
+		border-color: #ddd;
+		cursor: default;
+		opacity: 1;
+	}
+
+	svg {
+		fill: var( --dashboard__text-color );
+	}
+}

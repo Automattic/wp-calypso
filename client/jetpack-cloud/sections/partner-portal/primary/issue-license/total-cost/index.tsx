@@ -1,4 +1,5 @@
-import { formatCurrency, useTranslate } from 'i18n-calypso';
+import { formatCurrency } from '@automattic/number-formatters';
+import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { getTotalInvoiceValue } from '../lib/pricing';

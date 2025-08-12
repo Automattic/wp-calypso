@@ -86,8 +86,22 @@ const useAssignLicensesToSite = (
 					// dependencies assigned first.
 					await assignLicense
 						.mutateAsync( { licenseKey: key, selectedSite: selectedSiteId } )
-						.then( () => ( { key, name, status: 'fulfilled' } ) as ProductInfo )
-						.catch( () => ( { key, name, status: 'rejected' } ) as ProductInfo )
+						.then(
+							() =>
+								( {
+									key,
+									name,
+									status: 'fulfilled',
+								} ) as ProductInfo
+						)
+						.catch(
+							() =>
+								( {
+									key,
+									name,
+									status: 'rejected',
+								} ) as ProductInfo
+						)
 				);
 			}
 

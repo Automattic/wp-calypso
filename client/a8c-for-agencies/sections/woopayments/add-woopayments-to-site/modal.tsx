@@ -7,7 +7,7 @@ import {
 	A4A_WOOPAYMENTS_SITE_SETUP_LINK,
 	A4A_SITES_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import useIssueAndAssignLicenses from 'calypso/a8c-for-agencies/sections/marketplace/products-overview-v2/hooks/use-issue-and-assign-licenses';
+import useIssueAndAssignLicenses from 'calypso/a8c-for-agencies/sections/marketplace/products-overview/hooks/use-issue-and-assign-licenses';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import AddWooPaymentsToSiteTable, { type WooPaymentsSiteItem } from './add-site-table';

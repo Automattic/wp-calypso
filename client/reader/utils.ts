@@ -1,8 +1,8 @@
 import page from '@automattic/calypso-router';
 import { safeImageUrl, getUrlParts } from '@automattic/calypso-url';
+import { addQueryArgs, getQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { Dispatch } from 'redux';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { AppState } from 'calypso/types';
 
@@ -28,12 +28,6 @@ export function showSelectedPost( { postKey, comments }: ShowSelectedPostArgs ) 
 		}
 
 		const post = getPostByKey( getState(), postKey );
-
-		const isLoggedIn = isUserLoggedIn( getState() );
-
-		if ( ! isLoggedIn ) {
-			return window.open( post.URL + ( comments ? '#comments' : '' ), '_blank' );
-		}
 
 		if ( isXPost( post ) ) {
 			return showFullXPost( XPostHelper.getXPostMetadata( post ) as ShowFullXPostArgs );
@@ -132,4 +126,33 @@ export function getSafeImageUrlForReader( url: string ): string {
 	}
 
 	return safeImageUrl( url ) ?? '';
+}
+
+export const SEARCH_QUERY_PARAM: string = 's';
+
+export function getUrlQuerySearchTerm( pathname: string = '' ): string {
+	// If a pathname is provided, make sure that we get search key only for the given page. Prevents situation where we get search key from a different page.
+	if ( pathname && location.pathname !== pathname ) {
+		return '';
+	}
+
+	const queryArgs = getQueryArgs( window.location.href );
+	return ( queryArgs[ SEARCH_QUERY_PARAM ] as string ) ?? '';
+}
+
+export function setUrlQuery( key: string, value: string, pathname: string = '' ): void {
+	// If a pathname is provided, make sure that we set search key only for the given page. Prevents situation where we set search key for a different page.
+	if ( pathname && location.pathname !== pathname ) {
+		return;
+	}
+
+	const path = window.location.pathname + window.location.search;
+	const nextPath = ! value
+		? removeQueryArgs( path, key )
+		: addQueryArgs( path, { [ key ]: value } );
+
+	// Only trigger a page show when path has changed.
+	if ( nextPath !== path ) {
+		page.replace( nextPath );
+	}
 }

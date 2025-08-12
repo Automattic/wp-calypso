@@ -1,4 +1,24 @@
 .dialog.threat-dialog {
+	.dialog__content {
+		max-width: 630px;
+	}
+
+	code {
+		font-size: $font-body-small;
+		font-family: $font-family-mono;
+		padding: 3px;
+	}
+
+	.dashboard-notice {
+		margin: 23px 0 23px;
+	}
+	.dashboard-notice.is-error {
+		color: var(--color-error);
+	}
+	.dashboard-notice.is-warning {
+		color: var(--color-warning);
+	}
+
 	.threat-dialog {
 		&__header {
 			font-size: $font-title-small;

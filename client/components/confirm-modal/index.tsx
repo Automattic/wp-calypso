@@ -12,6 +12,9 @@ type ConfirmModalProps = {
 	onConfirm: () => void;
 };
 
+/**
+ * @deprecated Use ConfirmDialog instead to follow the new design system
+ */
 const ConfirmModal = ( {
 	isVisible,
 	cancelButtonLabel,

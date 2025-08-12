@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 
 import page from '@automattic/calypso-router';
 import { render, screen } from '@testing-library/react';
@@ -22,6 +23,10 @@ jest.mock( 'calypso/reader/user-profile/views/posts', () => () => (
 
 jest.mock( 'calypso/reader/user-profile/views/lists', () => () => (
 	<div data-testid="user-lists">User Lists</div>
+) );
+
+jest.mock( 'calypso/reader/user-profile/views/recommended-blogs', () => () => (
+	<div data-testid="user-recommended-blogs">User Recommended Blogs</div>
 ) );
 
 jest.mock( 'calypso/reader/components/back-button', () => () => (
@@ -46,6 +51,7 @@ describe( 'UserProfile', () => {
 		requestUser: mockRequestUser,
 		user: undefined,
 		isLoading: false,
+		view: 'posts',
 	};
 
 	beforeEach( () => {
@@ -74,7 +80,7 @@ describe( 'UserProfile', () => {
 		expect( screen.getByTestId( 'user-posts' ) ).toBeInTheDocument();
 	} );
 
-	test( 'should render lists view when path includes /lists', () => {
+	test( 'should render lists view when view is lists', () => {
 		const user = {
 			ID: 123,
 			user_login: 'testuser',
@@ -82,10 +88,38 @@ describe( 'UserProfile', () => {
 			avatar_URL: 'https://example.com/avatar.jpg',
 		};
 
-		render( <UserProfile { ...defaultProps } user={ user } path="/reader/users/testuser/lists" /> );
+		render(
+			<UserProfile
+				{ ...defaultProps }
+				user={ user }
+				view="lists"
+				path="/reader/users/testuser/lists"
+			/>
+		);
 
 		expect( screen.getByTestId( 'user-profile-header' ) ).toBeInTheDocument();
 		expect( screen.getByTestId( 'user-lists' ) ).toBeInTheDocument();
+	} );
+
+	test( 'should render recommended-blogs view when view is recommended-blogs', () => {
+		const user = {
+			ID: 123,
+			user_login: 'testuser',
+			display_name: 'Test User',
+			avatar_URL: 'https://example.com/avatar.jpg',
+		};
+
+		render(
+			<UserProfile
+				{ ...defaultProps }
+				user={ user }
+				view="recommended-blogs"
+				path="/reader/users/testuser/recommended-blogs"
+			/>
+		);
+
+		expect( screen.getByTestId( 'user-profile-header' ) ).toBeInTheDocument();
+		expect( screen.getByTestId( 'user-recommended-blogs' ) ).toBeInTheDocument();
 	} );
 
 	test( 'should not show content when isLoading is true', () => {

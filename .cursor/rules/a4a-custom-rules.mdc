@@ -13,20 +13,9 @@ Use this rules on top of [calypso-client-rules.mdc](mdc:.cursor/rules/calypso-cl
 ### Style Conventions
 
 - Use [style.scss](mdc:client/a8c-for-agencies/style.scss) as an example.
-- When possible use [_a4a-typography.scss](mdc:client/assets/stylesheets/shared/mixins/_a4a-typography.scss) typography.
 - Don't use `&--` & `&__` selectors and write full name when defining styles.
 - Avoid using `--studio*` colors and instead use `--color*`. Example, instead of `var(--studio-gray-50)` use `var(--color-neutral-50)`.
 
 ### Color and Typography Conventions
 
 #### Typography
-- Use only the following typography mixins from `_a4a-typography.scss`:
-  - `@include a4a-font-heading-xxl` - For extra large headings (32px)
-  - `@include a4a-font-heading-xl` - For large headings (24px)
-  - `@include a4a-font-heading-lg` - For medium-large headings (20px)
-  - `@include a4a-font-heading-md` - For medium headings (16px)
-  - `@include a4a-font-heading-sm` - For small headings (11px)
-  - `@include a4a-font-body-lg` - For large body text (16px)
-  - `@include a4a-font-body-md` - For medium body text (14px)
-  - `@include a4a-font-body-sm` - For small body text (12px)
-  - `@include a4a-font-label-button` - For labels and buttons (14px)

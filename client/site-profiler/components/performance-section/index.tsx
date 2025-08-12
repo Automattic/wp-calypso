@@ -63,9 +63,7 @@ export const PerformanceSection: React.FC< PerformanceSectionProps > = ( props )
 			name={ translate( 'Performance Metrics' ) }
 			title={ title }
 			subtitle={ ! isWPcom ? translate( "Boost your site's performance" ) : null }
-			subtitleOnClick={ () =>
-				page( `/setup/hosted-site-migration?ref=site-profiler&from=${ url }` )
-			}
+			subtitleOnClick={ () => page( `/setup/site-migration?ref=site-profiler&from=${ url }` ) }
 			ref={ performanceMetricsRef }
 		>
 			{ Object.values( performanceData ).map( ( metric: any ) => (

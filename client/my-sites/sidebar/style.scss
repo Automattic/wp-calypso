@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/variables";
 @import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 // The following changes should be merged in their respective files before nav unification goes to production
 @import url( //s0.wp.com/wp-includes/css/dashicons.min.css?v=20250127 );
 @import "@automattic/typography/styles/variables";
@@ -16,11 +17,11 @@ $brand-text: "SF Pro Text", $sans;
 		--sidebar-width-max: 295px;
 		--sidebar-width-min: 295px;
 
-		--color-sidebar-background: var(--studio-gray-0);
+		--color-sidebar-background: var(--color-main-background);
 		// Resetting these colors to prevent bleeding from dashboard color schemes
 		--color-sidebar-text: var(--studio-gray-80);
 		--color-sidebar-text-alternative: var(--studio-gray-40);
-		--color-sidebar-text-alternative-selected: rgba(var(--studio-white-rgb), 0.7);
+		--color-sidebar-text-alternative-selected: color-mix(in srgb, var(--studio-white) 70%, transparent);
 		--color-sidebar-menu-selected-background: #e3e8fc;
 		--color-sidebar-menu-selected-text: var(--color-accent);
 		--color-sidebar-menu-hover-text: var(--studio-gray-80);
@@ -44,6 +45,9 @@ $brand-text: "SF Pro Text", $sans;
 		--color-masterbar-submenu-hover-text: var(--color-accent);
 		--color-global-masterbar-submenu-background: var(--studio-white);
 		--color-global-masterbar-submenu-hover-background: var(--studio-white);
+		--color-global-masterbar-site-info-background: #{$gray-100};
+		--color-global-masterbar-site-info-badge-background: #{$gray-300};
+		--color-global-masterbar-site-info-badge-color: #{$gray-900};
 		--content-padding-top: 16px;
 		--content-padding-bottom: 16px;
 
@@ -87,9 +91,9 @@ $brand-text: "SF Pro Text", $sans;
 				display: none;
 			}
 
-			.notice {
-				.notice__content,
-				.notice__action {
+			.calypso-notice {
+				.calypso-notice__content,
+				.calypso-notice__action {
 					display: none;
 				}
 			}
@@ -144,6 +148,10 @@ $font-size: rem(14px);
 .theme-default {
 	// client/layout/style.scss
 	.layout__content {
+		min-height: 100vh;
+	}
+
+	&:has(.sidebar) .layout__content {
 		min-height: 101vh; // Hack to give JS the chance to trigger the scroll event when the content is short. JS code: client/layout/utils.ts:36.
 	}
 
@@ -155,17 +163,16 @@ $font-size: rem(14px);
 		min-height: calc(100vh - var(--masterbar-height));
 		box-sizing: border-box;
 
+		a {
+			text-decoration: none;
+		}
+
 		.sidebar__separator {
 			margin: 0 0 11px;
 		}
 
 		.site__content {
 			padding: 10px 0 10px 8px;
-		}
-
-		.site__home {
-			left: 8px;
-			top: 10px;
 		}
 
 		.sidebar__heading,
@@ -233,7 +240,11 @@ $font-size: rem(14px);
 			box-sizing: border-box;
 		}
 
-		.sidebar__expandable-arrow,
+		.sidebar__expandable-arrow {
+			height: initial;
+			width: initial;
+		}
+
 		.gridicons-external {
 			width: 20px;
 			height: 20px;
@@ -389,11 +400,7 @@ $font-size: rem(14px);
 			}
 		}
 
-		.sidebar__menu.is-togglable .sidebar__expandable-arrow {
-			margin-right: 10px;
-		}
-
-		.notice {
+		.calypso-notice {
 			/* stylelint-disable-next-line scales/font-weights */
 			font-weight: 300;
 
@@ -403,11 +410,11 @@ $font-size: rem(14px);
 				min-height: 34px;
 			}
 
-			.notice__icon-wrapper {
+			.calypso-notice__icon-wrapper {
 				background-color: transparent;
 				width: 35px;
 
-				.notice__icon-wrapper-drop {
+				.calypso-notice__icon-wrapper-drop {
 					top: calc(50% - 9px);
 					left: calc(50% - 9px);
 					width: 18px;
@@ -416,12 +423,12 @@ $font-size: rem(14px);
 				}
 			}
 
-			.notice__content {
+			.calypso-notice__content {
 				padding: 10px 10px 10px 4px;
 				overflow-wrap: anywhere;
 			}
 
-			.notice__action {
+			.calypso-notice__action {
 				color: #fff;
 				font-weight: 600;
 				padding-right: 12px;
@@ -452,7 +459,7 @@ $font-size: rem(14px);
 			padding: 12px 10px;
 			margin: 0 12px;
 			border-radius: 4px;
-			max-height: 44px;
+			max-height: 40px;
 		}
 
 		.sidebar__expandable-content .sidebar__menu-link {
@@ -520,12 +527,6 @@ $font-size: rem(14px);
 				background-color: var(--color-sidebar-submenu-background);
 				border-bottom-left-radius: 0;
 				border-bottom-right-radius: 0;
-
-				&:not(:hover) {
-					.sidebar_svg-a8c g {
-						fill: var(--color-sidebar-submenu-background);
-					}
-				}
 			}
 			.sidebar__expandable-content {
 				border-top-left-radius: 0;
@@ -580,7 +581,6 @@ $font-size: rem(14px);
 
 		.upsell-nudge.banner.card.is-compact .banner__info .banner__title {
 			color: var(--studio-black);
-			text-wrap: wrap;
 		}
 
 		.upsell-nudge.banner.card.is-compact .dismissible-card__close-button .gridicon {
@@ -767,10 +767,6 @@ $font-size: rem(14px);
 			width: auto;
 		}
 
-		.current-site .site .site__info {
-			display: none;
-		}
-
 		.sidebar .site__content {
 			padding: 10px 2px;
 
@@ -781,10 +777,6 @@ $font-size: rem(14px);
 			.site__title::after {
 				display: none;
 			}
-		}
-
-		.site__home {
-			left: 2px;
 		}
 
 		.sidebar .site .site-icon {
@@ -817,7 +809,6 @@ $font-size: rem(14px);
 				content: "\f534";
 				/* stylelint-disable-next-line font-family-no-missing-generic-family-keyword */
 				font-family: dashicons;
-				/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
 				font-size: 20px;
 				line-height: 20px;
 				background-color: #a7aaad;
@@ -855,9 +846,9 @@ $font-size: rem(14px);
 			max-height: 34px;
 		}
 
-		.sidebar .notice {
-			.notice__content,
-			.notice__action {
+		.sidebar .calypso-notice {
+			.calypso-notice__content,
+			.calypso-notice__action {
 				display: none;
 			}
 		}
@@ -918,58 +909,6 @@ $font-size: rem(14px);
 
 	.sidebar__sparkline {
 		margin-right: 8px;
-	}
-
-	// Reader specific styles
-	// client/reader/sidebar/style.scss
-	&.is-section-reader {
-		.sidebar__menu .components-button.has-icon {
-			padding: 0 0 0 6px;
-		}
-
-		.sidebar__menu .count {
-			background: transparent;
-			color: var(--color-sidebar-menu-text);
-			border-color: var(--color-sidebar-menu-text);
-		}
-
-		.selected .sidebar__menu-link {
-			.count {
-				color: var(--color-sidebar-submenu-selected-text);
-				border-color: var(--color-sidebar-submenu-selected-text);
-			}
-			.sidebar__menu-item-last-updated {
-				color: var(--studio-gray-50);
-			}
-		}
-
-		.sidebar__menu.sidebar__menu--selected {
-			.sidebar__heading {
-				background: var(--color-sidebar-submenu-background);
-				color: var(--color-sidebar-text);
-
-				&::after {
-					display: block;
-				}
-			}
-		}
-
-		.sidebar__menu--selected.is-togglable:not(.is-toggle-open):not(:hover) {
-			.sidebar__heading {
-				background: var(--color-sidebar-menu-selected-background);
-				color: var(--color-sidebar-menu-selected-text);
-			}
-			.sidebar__expandable-arrow {
-				fill: var(--color-sidebar-menu-selected-text);
-			}
-			.sidebar__menu-icon g {
-				stroke: var(--color-sidebar-menu-selected-text);
-			}
-			.sidebar_svg-a8c g {
-				stroke: var(--color-sidebar-menu-selected-text);
-				fill: var(--color-sidebar-menu-selected-background);
-			}
-		}
 	}
 }
 
@@ -1040,22 +979,12 @@ $font-size: rem(14px);
 @media screen and (max-width: 781px) {
 	// client/layout/sidebar/style.scss
 	.theme-default {
-		.focus-content .layout__content {
+		&:has(.sidebar) .focus-content .layout__content {
 			padding: 70px 24px 24px;
 			transition: padding 0.15s ease-in-out;
 		}
 
 		.sidebar {
-			// client/my-sites/current-site/style.scss
-			.site__content {
-				padding: 18px 0 18px 12px;
-			}
-
-			.site__home {
-				left: 12px;
-				top: 18px;
-			}
-
 			.sidebar__separator {
 				margin: 0 0 11px;
 			}

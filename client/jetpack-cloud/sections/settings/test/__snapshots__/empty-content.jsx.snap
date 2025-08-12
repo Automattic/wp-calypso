@@ -9,12 +9,6 @@ exports[`NoSitePurchasesMessage should render correctly 1`] = `
     <div
       class="empty-content"
     >
-      <img
-        alt=""
-        class="empty-content__illustration"
-        src="/calypso/images/illustrations/security.svg"
-        width="200"
-      />
       <h2
         class="empty-content__title"
       >

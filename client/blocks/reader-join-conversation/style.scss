@@ -1,3 +1,9 @@
+.reader-join-conversation-dialog__overlay.dialog__backdrop {
+	// Ensure z-index value is greater than gravatar hovercards, since their subscribe button can
+	// trigger this.
+	z-index: z-index('root', '.reader-join-conversation-dialog__overlay');
+}
+
 .reader-join-conversation-dialog {
 	border-radius: 6px; /* stylelint-disable scales/radii */
 	width: 321px;
@@ -70,5 +76,5 @@
 
 .dialog__backdrop,
 .dialog__backdrop.card {
-	background-color: rgba(var(--color-neutral-70-rgb), 0.8) !important;
+	background-color: color-mix(in srgb, var(--color-neutral-70) 80%, transparent) !important;
 }

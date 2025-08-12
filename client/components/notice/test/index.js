@@ -7,7 +7,7 @@ import Notice from '../index';
 describe( 'Notice', () => {
 	test( 'should output the component', () => {
 		render( <Notice /> );
-		expect( screen.queryByRole( 'status' ) ).toHaveClass( 'notice' );
+		expect( screen.queryByRole( 'status' ) ).toHaveClass( 'calypso-notice' );
 	} );
 
 	test( 'should have dismiss button when showDismiss passed as true', () => {

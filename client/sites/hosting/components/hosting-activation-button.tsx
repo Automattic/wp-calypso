@@ -1,6 +1,6 @@
 import { FEATURE_SFTP } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Dialog } from '@automattic/components';
+import { Button, Modal } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -9,12 +9,17 @@ import { HostingHeroButton } from 'calypso/components/hosting-hero';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import type { ComponentProps } from 'react';
 
 interface HostingActivationButtonProps {
 	redirectUrl?: string;
 }
 
-export default function HostingActivationButton( { redirectUrl }: HostingActivationButtonProps ) {
+export default function HostingActivationButton( {
+	text,
+	redirectUrl,
+	...props
+}: HostingActivationButtonProps & ComponentProps< typeof Button > ) {
 	const dispatch = useDispatch();
 	const { searchParams } = new URL( document.location.toString() );
 	const showActivationModal = searchParams.get( 'activate' ) !== null;
@@ -39,30 +44,32 @@ export default function HostingActivationButton( { redirectUrl }: HostingActivat
 	return (
 		<>
 			<HostingHeroButton
+				{ ...props }
+				text={ text ?? translate( 'Activate now' ) }
 				onClick={ () => {
 					dispatch( recordTracksEvent( 'calypso_hosting_features_activate_click' ) );
 					return setShowEligibility( true );
 				} }
-			>
-				{ translate( 'Activate now' ) }
-			</HostingHeroButton>
+			/>
 
-			<Dialog
-				additionalClassNames="plugin-details-cta__dialog-content"
-				additionalOverlayClassNames="plugin-details-cta__modal-overlay"
-				isVisible={ showEligibility }
-				onClose={ () => setShowEligibility( false ) }
-				showCloseIcon
-			>
-				<EligibilityWarnings
-					className="hosting__activating-warnings"
-					onProceed={ handleTransfer }
-					backUrl={ redirectUrl }
-					showDataCenterPicker
-					standaloneProceed
-					currentContext="hosting-features"
-				/>
-			</Dialog>
+			{ showEligibility && (
+				<Modal
+					className="plugin-details-cta__dialog-content"
+					title={ translate( 'Before you continue' ) }
+					onRequestClose={ () => setShowEligibility( false ) }
+					size="medium"
+				>
+					<EligibilityWarnings
+						className="hosting__activating-warnings"
+						onDismiss={ () => setShowEligibility( false ) }
+						onProceed={ handleTransfer }
+						backUrl={ redirectUrl }
+						showDataCenterPicker
+						standaloneProceed
+						currentContext="hosting-features"
+					/>
+				</Modal>
+			) }
 		</>
 	);
 }

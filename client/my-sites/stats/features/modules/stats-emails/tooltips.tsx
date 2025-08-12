@@ -1,5 +1,6 @@
 import { Tooltip } from '@automattic/components';
-import { useTranslate, numberFormat } from 'i18n-calypso';
+import { formatNumber } from '@automattic/number-formatters';
+import { useTranslate } from 'i18n-calypso';
 import React, { useRef, useState } from 'react';
 
 export interface EmailStatsItem {
@@ -58,20 +59,20 @@ export const OpensTooltipContent: React.FC< { item: EmailStatsItem } > = ( { ite
 		<div className="stats-email__tooltip">
 			<div>
 				{ translate( 'Recipients: %(sendsCountFormatted)s', {
-					args: { sendsCountFormatted: numberFormat( item.total_sends ) },
+					args: { sendsCountFormatted: formatNumber( item.total_sends ) },
 				} ) }
 			</div>
 			<div>
 				{ translate( 'Total opens: %(opensCountFormatted)s', {
-					args: { opensCountFormatted: numberFormat( item.opens ) },
+					args: { opensCountFormatted: formatNumber( item.opens ) },
 				} ) }
 			</div>
 			<div>
 				{ hasUniques
 					? translate( 'Unique opens: %(uniqueOpensCountFormatted)s (%(opensRate)s%)', {
 							args: {
-								uniqueOpensCountFormatted: numberFormat( item.unique_opens ),
-								opensRate: numberFormat( item.opens_rate, {
+								uniqueOpensCountFormatted: formatNumber( item.unique_opens ),
+								opensRate: formatNumber( item.opens_rate, {
 									numberFormatOptions: { maximumFractionDigits: 2 },
 								} ),
 							},
@@ -93,20 +94,20 @@ export const ClicksTooltipContent: React.FC< { item: EmailStatsItem } > = ( { it
 		<div className="stats-email__tooltip">
 			<div>
 				{ translate( 'Recipients: %(sendsCountFormatted)s', {
-					args: { sendsCountFormatted: numberFormat( item.total_sends ) },
+					args: { sendsCountFormatted: formatNumber( item.total_sends ) },
 				} ) }
 			</div>
 			<div>
 				{ translate( 'Total clicks: %(clicksCountFormatted)s', {
-					args: { clicksCountFormatted: numberFormat( item.clicks ) },
+					args: { clicksCountFormatted: formatNumber( item.clicks ) },
 				} ) }
 			</div>
 			<div>
 				{ hasUniques
 					? translate( 'Unique clicks: %(uniqueClicksCountFormatted)s (%(clicksRate)s%)', {
 							args: {
-								uniqueClicksCountFormatted: numberFormat( item.unique_clicks ),
-								clicksRate: numberFormat( item.clicks_rate, {
+								uniqueClicksCountFormatted: formatNumber( item.unique_clicks ),
+								clicksRate: formatNumber( item.clicks_rate, {
 									numberFormatOptions: { maximumFractionDigits: 2 },
 								} ),
 							},

@@ -56,7 +56,7 @@ const CTASectionWrapper = styled.div`
 	display: flex;
 	align-items: center;
 	justify-content: flex-start;
-	gap: 18px;
+	gap: 16px;
 	margin: 2rem 0;
 	.components-button.is-primary {
 		border-radius: 4px;
@@ -110,10 +110,9 @@ export default function DIFMLanding( {
 
 	const ctas = showNewOrExistingSiteChoice ? (
 		<>
-			<NextButton onClick={ onPrimarySubmit }>{ translate( 'Use an existing site' ) }</NextButton>
-			<span>{ translate( 'or' ) }</span>
+			<NextButton onClick={ onPrimarySubmit }>{ translate( 'Start a new site' ) }</NextButton>
 			<NextButton onClick={ onSecondarySubmit } variant="secondary">
-				{ translate( 'Start a new site' ) }
+				{ translate( 'Use an existing site' ) }
 			</NextButton>
 		</>
 	) : (

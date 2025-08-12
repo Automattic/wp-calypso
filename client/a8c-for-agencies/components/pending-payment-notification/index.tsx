@@ -11,7 +11,7 @@ import './style.scss';
 // TODO: Uncomment this if we would want to dismiss the notification.
 // const PENDING_PAYMENT_NOTIFICATION_DISMISS_PREFERENCE = 'pending-payment-notification-dismissed';
 
-export default function PendingPaymentNotification() {
+export default function PendingPaymentNotification( { isFullWidth }: { isFullWidth?: boolean } ) {
 	const invoices = useFetchInvoices( { starting_after: '', ending_before: '' }, undefined, 'open' );
 
 	const translate = useTranslate();
@@ -78,6 +78,7 @@ export default function PendingPaymentNotification() {
 
 	return (
 		<LayoutBanner
+			isFullWidth={ isFullWidth }
 			className="pending-payment-notification"
 			level={ level }
 			title={ title }

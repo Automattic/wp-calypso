@@ -1,0 +1,21 @@
+name: Build Design System Docs
+
+description: Build the Design System Docs site
+
+runs:
+  using: composite
+  steps:
+    # 1. Set up Node
+    - uses: actions/setup-node@v4
+      with:
+        node-version-file: .nvmrc
+        cache: yarn
+
+    # 2. Install dependencies for just the design-system-docs package
+    - run: yarn workspaces focus --production @automattic/design-system-docs
+      shell: bash
+
+    # 3. Build the design-system-docs workspace
+    - name: Build design system docs
+      run: yarn workspace @automattic/design-system-docs build
+      shell: bash

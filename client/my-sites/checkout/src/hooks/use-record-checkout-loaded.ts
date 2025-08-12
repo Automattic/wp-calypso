@@ -4,7 +4,7 @@ import { hasRenewalItem } from 'calypso/lib/cart-values/cart-items';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import type { ResponseCart } from '@automattic/shopping-cart';
-import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
+import type { StoredPaymentMethod } from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-record-checkout-loaded' );
 

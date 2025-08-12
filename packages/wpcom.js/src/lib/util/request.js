@@ -29,15 +29,24 @@ Req.prototype.get = function ( params, query, fn ) {
  * Make `update` request
  * @param {Object | string} params
  * @param {Object} [query] - query object parameter
- * @param {Object} body - body object parameter
+ * @param {Object} [body] - body object parameter
  * @param {Function} fn - callback function
  */
 Req.prototype.post = Req.prototype.put = function ( params, query, body, fn ) {
 	if ( undefined === fn ) {
 		if ( undefined === body ) {
-			body = query;
-			query = {};
+			if ( 'function' === typeof query ) {
+				// post( params, fn )
+				fn = query;
+				body = null;
+				query = {};
+			} else {
+				// post( params, body )
+				body = query;
+				query = {};
+			}
 		} else if ( 'function' === typeof body ) {
+			// post( params, body, fn )
 			fn = body;
 			body = query;
 			query = {};

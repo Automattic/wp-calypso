@@ -1,9 +1,15 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
-import { useState, createInterpolateElement } from '@wordpress/element';
+import { useState, createInterpolateElement, useEffect } from '@wordpress/element';
 import { chevronLeft } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import { getQueryArg } from '@wordpress/url';
+import clsx from 'clsx';
+import {
+	LOCAL_STORAGE_KEY_FOR_PG_ID,
+	LOCAL_STORAGE_KEY_FOR_PG_ID_TS,
+} from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/playground/lib/initialize-playground';
 import { isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
 import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
@@ -65,6 +71,8 @@ const options = {
 	),
 };
 
+type Screen = 'initial' | 'email';
+
 const SignupFormSocialFirst = ( {
 	goToNextStep,
 	stepName,
@@ -82,11 +90,22 @@ const SignupFormSocialFirst = ( {
 	backButtonInFooter = true,
 	emailLabelText,
 }: SignupFormSocialFirst ) => {
-	const [ currentStep, setCurrentStep ] = useState( 'initial' );
+	const [ currentStep, setCurrentStep ] = useState< Screen >( 'initial' );
 	const { __ } = useI18n();
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const isWoo = useSelector( getIsWoo );
 	const isGravatar = isGravatarOAuth2Client( oauth2Client );
+
+	useEffect( () => {
+		// save in localstorage for domain step in playground onboarding flow,
+		// just in case if we lose it in any possible combination of login/create-account/recover-account flow
+		const playgroundIdFromUrl = getQueryArg( window.location.href, 'playground' );
+		if ( playgroundIdFromUrl && typeof playgroundIdFromUrl === 'string' ) {
+			// ok to always overwrite with the latest playground
+			window.localStorage.setItem( LOCAL_STORAGE_KEY_FOR_PG_ID, playgroundIdFromUrl );
+			window.localStorage.setItem( LOCAL_STORAGE_KEY_FOR_PG_ID_TS, '' + Date.now() );
+		}
+	}, [] );
 
 	const renderTermsOfService = () => {
 		let tosText;
@@ -103,7 +122,7 @@ const SignupFormSocialFirst = ( {
 				),
 				options
 			);
-		} else if ( currentStep === 'initial' ) {
+		} else {
 			tosText = createInterpolateElement(
 				__(
 					'If you continue with Google, Apple or GitHub, you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
@@ -112,53 +131,46 @@ const SignupFormSocialFirst = ( {
 			);
 		}
 
-		if ( ! tosText ) {
-			return null;
-		}
-
 		return <p className="signup-form-social-first__tos-link">{ tosText }</p>;
 	};
 
 	const renderEmailStepTermsOfService = () => {
-		if ( currentStep === 'email' ) {
-			return (
-				<p className="signup-form-social-first__email-tos-link">
-					{ createInterpolateElement(
-						__(
-							'By clicking "Continue," you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
-						),
-						options
-					) }
-				</p>
-			);
-		}
+		return (
+			<p className="signup-form-social-first__email-tos-link">
+				{ createInterpolateElement(
+					__(
+						'By clicking "Continue," you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
+					),
+					options
+				) }
+			</p>
+		);
 	};
 
-	const renderContent = () => {
-		if ( currentStep === 'initial' ) {
-			return (
-				<>
-					{ notice }
-					<SocialSignupForm
-						handleResponse={ handleSocialResponse }
-						setCurrentStep={ setCurrentStep }
-						socialServiceResponse={ socialServiceResponse }
-						redirectToAfterLoginUrl={ redirectToAfterLoginUrl }
-						disableTosText
-						compact
-						isSocialFirst={ isSocialFirst }
-					/>
-				</>
-			);
-		} else if ( currentStep === 'email' ) {
-			const gravatarProps = isGravatar
-				? {
-						inputPlaceholder: __( 'Enter your email address' ),
-						submitButtonLoadingLabel: __( 'Continue' ),
-				  }
-				: {};
+	// This component uses a technique from this video https://www.youtube.com/watch?v=8327_1PINWI
+	// to handle the visibility of the steps while preserving their layout properties and avoiding shifts.
+	const getVisibilityClassName = ( step: Screen ) => {
+		return clsx( 'signup-form-social-first-screen', {
+			visible: currentStep === step,
+		} );
+	};
 
-			return (
+	return (
+		<div className="signup-form signup-form-social-first">
+			<div className={ getVisibilityClassName( 'initial' ) }>
+				{ notice }
+				{ renderTermsOfService() }
+				<SocialSignupForm
+					handleResponse={ handleSocialResponse }
+					setCurrentStep={ setCurrentStep }
+					socialServiceResponse={ socialServiceResponse }
+					redirectToAfterLoginUrl={ redirectToAfterLoginUrl }
+					disableTosText
+					compact
+					isSocialFirst={ isSocialFirst }
+				/>
+			</div>
+			<div className={ getVisibilityClassName( 'email' ) }>
 				<div className="signup-form-social-first-email">
 					<PasswordlessSignupForm
 						stepName={ stepName }
@@ -193,7 +205,8 @@ const SignupFormSocialFirst = ( {
 							}
 						} }
 						onCreateAccountSuccess={ onCreateAccountSuccess }
-						{ ...gravatarProps }
+						inputPlaceholder={ isGravatar ? __( 'Enter your email address' ) : undefined }
+						submitButtonLoadingLabel={ isGravatar ? __( 'Continue' ) : undefined }
 					/>
 					{ backButtonInFooter ? (
 						<Button
@@ -205,14 +218,7 @@ const SignupFormSocialFirst = ( {
 						</Button>
 					) : null }
 				</div>
-			);
-		}
-	};
-
-	return (
-		<div className="signup-form signup-form-social-first">
-			{ renderContent() }
-			{ renderTermsOfService() }
+			</div>
 		</div>
 	);
 };

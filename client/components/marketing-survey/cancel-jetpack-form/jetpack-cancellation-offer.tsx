@@ -5,7 +5,8 @@ import {
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { useTranslate, formatCurrency } from 'i18n-calypso';
+import { formatCurrency } from '@automattic/number-formatters';
+import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import AkismetLogo from 'calypso/components/akismet-logo';
 import FormattedHeader from 'calypso/components/formatted-header';

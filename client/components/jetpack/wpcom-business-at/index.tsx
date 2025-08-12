@@ -1,3 +1,4 @@
+import { WPCOM_FEATURES_BACKUPS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { CompactCard, Dialog } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -14,6 +15,7 @@ import {
 import WarningList from 'calypso/blocks/eligibility-warnings/warning-list';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryAutomatedTransferEligibility from 'calypso/components/data/query-atat-eligibility';
+import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
 import Main from 'calypso/components/main';
@@ -24,6 +26,7 @@ import SpinnerButton from 'calypso/components/spinner-button';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
+import WPCOMUpsellPage from 'calypso/my-sites/backup/wpcom-upsell';
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
@@ -34,6 +37,9 @@ import {
 	EligibilityData,
 } from 'calypso/state/automated-transfer/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
+import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
+import isRequestingSiteFeatures from 'calypso/state/selectors/is-requesting-site-features';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -43,6 +49,7 @@ import 'calypso/blocks/eligibility-warnings/style.scss';
 
 interface BlockingHoldNoticeProps {
 	siteId: number;
+	productName: string;
 }
 
 // This gets the values of the object transferStates.
@@ -50,11 +57,24 @@ export type TransferStatus = ( typeof transferStates )[ keyof typeof transferSta
 
 interface TransferFailureNoticeProps {
 	transferStatus: TransferStatus | null;
+	productName: string;
 }
 
-const content = {
-	documentHeadTitle: 'Activate Jetpack VaultPress Backup now',
-	header: String( translate( 'Jetpack VaultPress Backup' ) ),
+export interface AtomicContentSwitch {
+	documentHeadTitle: string;
+	header: string;
+	primaryPromo: {
+		image: { path: string };
+		promoCTA: { loadingText: string; text: string };
+		title: string;
+		content: string;
+	};
+	getProductUrl: ( siteSlug: string ) => string;
+}
+
+const vaultpressContent: AtomicContentSwitch = {
+	documentHeadTitle: translate( 'Activate Jetpack VaultPress Backup now' ) as string,
+	header: translate( 'Jetpack VaultPress Backup' ) as string,
 	primaryPromo: {
 		title: translate( 'Get time travel for your site with Jetpack VaultPress Backup' ),
 		image: { path: JetpackBackupSVG },
@@ -66,9 +86,11 @@ const content = {
 			loadingText: translate( 'Activating Jetpack VaultPress Backup' ),
 		},
 	},
+
+	getProductUrl: ( siteSlug: string ) => `/backup/${ siteSlug }`,
 };
 
-function BlockingHoldNotice( { siteId }: BlockingHoldNoticeProps ) {
+function BlockingHoldNotice( { siteId, productName }: BlockingHoldNoticeProps ) {
 	const { eligibilityHolds: holds } = useSelector( ( state ) => getEligibility( state, siteId ) );
 	if ( ! holds ) {
 		return null;
@@ -79,7 +101,7 @@ function BlockingHoldNotice( { siteId }: BlockingHoldNoticeProps ) {
 	blockingMessages.BLOCKED_ATOMIC_TRANSFER.message = String(
 		translate(
 			'This site is currently not eligible for %s. Please contact our support team for help.',
-			{ args: [ content.header ] }
+			{ args: [ productName ] }
 		)
 	);
 
@@ -92,7 +114,7 @@ function BlockingHoldNotice( { siteId }: BlockingHoldNoticeProps ) {
 	);
 }
 
-function TransferFailureNotice( { transferStatus }: TransferFailureNoticeProps ) {
+function TransferFailureNotice( { transferStatus, productName }: TransferFailureNoticeProps ) {
 	if ( transferStatus !== transferStates.FAILURE && transferStatus !== transferStates.ERROR ) {
 		return null;
 	}
@@ -100,7 +122,7 @@ function TransferFailureNotice( { transferStatus }: TransferFailureNoticeProps )
 	const errorMessage = translate(
 		'There is an issue activating %s. Please contact our support team for help.',
 		{
-			args: [ content.header ],
+			args: [ productName ],
 			comment: '%s is a Jetpack product name like: Jetpack Backup, Jetpack Scan, Jetpack Anti-spam',
 		}
 	);
@@ -114,7 +136,9 @@ function TransferFailureNotice( { transferStatus }: TransferFailureNoticeProps )
 	);
 }
 
-export default function WPCOMBusinessAT() {
+export default function WPCOMBusinessAT( {
+	content = vaultpressContent,
+}: { content?: AtomicContentSwitch } = {} ) {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const siteSlug = useSelector( getSelectedSiteSlug ) as string;
 
@@ -151,6 +175,17 @@ export default function WPCOMBusinessAT() {
 
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 
+	// Check if features are loaded
+	const featuresNotLoaded = useSelector(
+		( state ) =>
+			null === getFeaturesBySiteId( state, siteId ) && ! isRequestingSiteFeatures( state, siteId )
+	);
+
+	// Check if the site has the backup feature
+	const hasBackupFeature = useSelector( ( state ) =>
+		siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS )
+	);
+
 	useEffect( () => {
 		// Check if a reverted site still has the COMPLETE status
 		if ( automatedTransferStatus === COMPLETE ) {
@@ -184,7 +219,7 @@ export default function WPCOMBusinessAT() {
 			)
 		);
 		// Reload the page, whatever siteSlug is
-		page( `/backup/${ siteSlug }` );
+		page( content.getProductUrl( siteSlug ) );
 	}, [ automatedTransferStatus, isJetpack ] );
 
 	// If there are any issues, show a dialog.
@@ -196,6 +231,31 @@ export default function WPCOMBusinessAT() {
 			setShowDialog( true );
 		}
 	};
+
+	// If features are not loaded yet, show loading state
+	if ( featuresNotLoaded ) {
+		return (
+			<Main className="wpcom-business-at">
+				<QuerySiteFeatures siteIds={ [ siteId ] } />
+				<DocumentHead title={ content.documentHeadTitle } />
+				<FormattedHeader
+					id="wpcom-business-at-header"
+					className="wpcom-business-at__header"
+					headerText={ content.header }
+					align="left"
+					brandFont
+				/>
+				<div className="wpcom-business-at__loading">
+					<p>{ translate( 'Loading…' ) }</p>
+				</div>
+			</Main>
+		);
+	}
+
+	// If the site doesn't have the backup feature, show the upsell instead
+	if ( ! hasBackupFeature ) {
+		return <WPCOMUpsellPage />;
+	}
 
 	return (
 		<Main className="wpcom-business-at">
@@ -210,8 +270,11 @@ export default function WPCOMBusinessAT() {
 				align="left"
 				brandFont
 			/>
-			<BlockingHoldNotice siteId={ siteId } />
-			<TransferFailureNotice transferStatus={ automatedTransferStatus as TransferStatus } />
+			<BlockingHoldNotice siteId={ siteId } productName={ content.header } />
+			<TransferFailureNotice
+				transferStatus={ automatedTransferStatus as TransferStatus }
+				productName={ content.header }
+			/>
 			<PromoCard
 				title={ content.primaryPromo.title }
 				image={ content.primaryPromo.image }

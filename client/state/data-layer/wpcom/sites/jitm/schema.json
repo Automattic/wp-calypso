@@ -1,91 +1,87 @@
 {
 	"$schema": "http://json-schema.org/draft-04/schema#",
-	"properties": {
-		"data": {
-			"items": {
+	"type": "array",
+	"items": {
+		"type": "object",
+		"properties": {
+			"CTA": {
+				"type": "object",
 				"properties": {
-					"CTA": {
-						"properties": {
-							"hook": {
-								"type": [ "string", "null" ]
-							},
-							"message": {
-								"type": "string"
-							},
-							"primary": {
-								"type": "boolean"
-							},
-							"newWindow": {
-								"type": "boolean"
-							}
-						},
-						"type": "object"
+					"hook": {
+						"type": [ "string", "null" ]
 					},
-					"content": {
-						"properties": {
-							"classes": {
-								"type": "string"
-							},
-							"description": {
-								"type": "string"
-							},
-							"icon": {
-								"type": [ "string", "null" ]
-							},
-							"message": {
-								"type": "string"
-							},
-							"list": {
-								"items": {
-									"properties": {
-										"item": {
-											"type": "string"
-										},
-										"url": {
-											"type": [ "string", "null" ]
-										}
-									}
-								},
-								"type": "array"
-							}
-						},
-						"type": "object"
-					},
-					"expires": {
-						"type": "integer"
-					},
-					"feature_class": {
+					"message": {
 						"type": "string"
 					},
-					"id": {
-						"type": "string"
+					"primary": {
+						"type": "boolean"
 					},
-					"jitm_stats_url": {
-						"type": "string"
-					},
-					"template": {
-						"type": "string"
-					},
-					"ttl": {
-						"type": "integer"
-					},
-					"url": {
-						"type": "string"
-					},
-					"tracks": {
-						"type": "object"
-					},
-					"action": {
-						"type": "object"
-					},
-					"is_dismissible": {
+					"newWindow": {
 						"type": "boolean"
 					}
-				},
+				}
+			},
+			"content": {
+				"type": "object",
+				"properties": {
+					"classes": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"icon": {
+						"type": [ "string", "null" ]
+					},
+					"message": {
+						"type": "string"
+					},
+					"list": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"item": {
+									"type": "string"
+								},
+								"url": {
+									"type": [ "string", "null" ]
+								}
+							}
+						}
+					}
+				}
+			},
+			"expires": {
+				"type": "integer"
+			},
+			"feature_class": {
+				"type": "string"
+			},
+			"id": {
+				"type": "string"
+			},
+			"jitm_stats_url": {
+				"type": "string"
+			},
+			"template": {
+				"type": "string"
+			},
+			"ttl": {
+				"type": "integer"
+			},
+			"url": {
+				"type": "string"
+			},
+			"tracks": {
 				"type": "object"
 			},
-			"type": "array"
+			"action": {
+				"type": "object"
+			},
+			"is_dismissible": {
+				"type": "boolean"
+			}
 		}
-	},
-	"type": "object"
+	}
 }

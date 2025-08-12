@@ -32,7 +32,7 @@ const SiteOptions: Step< {
 		[]
 	);
 
-	const { goBack, goNext, submit } = navigation;
+	const { goBack, submit } = navigation;
 	const [ siteTitle, setSiteTitle ] = React.useState( currentSiteTitle ?? '' );
 	const [ tagline, setTagline ] = React.useState( currentTagline ?? '' );
 	const [ formTouched, setFormTouched ] = React.useState( false );
@@ -166,9 +166,7 @@ const SiteOptions: Step< {
 				shouldHideNavButtons={ false }
 				className={ `is-step-${ intent }` }
 				headerImageUrl={ headerImage }
-				hideSkip
 				goBack={ goBack }
-				goNext={ goNext }
 				isHorizontalLayout
 				formattedHeader={
 					<FormattedHeader id="site-options-header" headerText={ headerText } align="left" />

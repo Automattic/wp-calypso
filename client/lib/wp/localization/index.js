@@ -1,4 +1,4 @@
-import i18n from 'i18n-calypso';
+import { getLocaleData } from '@wordpress/i18n';
 import { parse, stringify } from 'qs';
 
 /**
@@ -8,7 +8,8 @@ import { parse, stringify } from 'qs';
  * @returns {Object}        Revised parameters, if non-default locale
  */
 export function addLocaleQueryParam( params ) {
-	const locale = i18n.getLocaleVariant() || i18n.getLocaleSlug();
+	const localeData = getLocaleData();
+	const locale = localeData?.[ '' ]?.localeVariant || localeData?.[ '' ]?.localeSlug;
 
 	if ( ! locale || 'en' === locale ) {
 		return params;

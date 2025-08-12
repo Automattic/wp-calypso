@@ -1,12 +1,7 @@
 import { Page } from 'playwright';
 import { getCalypsoURL } from '../../../data-helper';
 
-type PurchaseActions =
-	| 'Renew annually'
-	| 'Renew monthly'
-	| 'Pick another plan'
-	| 'Remove plan'
-	| 'Cancel plan';
+type PurchaseActions = 'Cancel plan' | 'Cancel subscription';
 
 /**
  * Represents the /me endpoint.
@@ -40,32 +35,25 @@ export class PurchasesPage {
 	 */
 	async clickOnPurchase( name: string, siteSlug: string ) {
 		await this.page
-			.locator( '.card.purchase-item' )
+			.locator( '#purchases-list .dataviews-view-table__row' )
 			.filter( { hasText: name } )
 			.filter( { hasText: siteSlug } )
+			.locator( '.purchase-item__title-link' )
 			.click();
 	}
 
 	/* Purchase detail view */
 
 	/**
-	 * Clicks on an action for the purchase.
+	 * Clicks a cancellation action for the purchase.
 	 *
 	 * @param {PurchaseActions} action Action to click.
 	 */
-	async purchaseAction( action: PurchaseActions ) {
-		if ( action === 'Pick another plan' ) {
-			await this.page.getByRole( 'link', { name: action } ).click();
-			return await this.page.waitForURL( /plan/ );
-		}
+	async cancelPurchase( action: PurchaseActions ) {
+		await this.page.getByRole( 'link', { name: action } ).click();
 
-		await Promise.race( [
-			this.page.getByRole( 'button', { name: action } ).click(),
-			this.page.getByRole( 'link', { name: action } ).click(),
-		] );
-
-		if ( action === 'Cancel plan' ) {
-			await this.page.getByRole( 'button', { name: 'Cancel Subscription' } ).click();
+		if ( action === 'Cancel plan' || action === 'Cancel subscription' ) {
+			await this.page.getByRole( 'button', { name: 'Cancel subscription' } ).click();
 		}
 	}
 }

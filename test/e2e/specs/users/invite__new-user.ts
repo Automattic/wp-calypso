@@ -1,5 +1,5 @@
 /**
- * @group quarantined
+ * @group calypso-pr
  */
 
 import {
@@ -9,7 +9,6 @@ import {
 	AddPeoplePage,
 	InvitePeoplePage,
 	PeoplePage,
-	LoginPage,
 	UserSignupPage,
 	RoleValue,
 	CloseAccountFlow,
@@ -30,6 +29,7 @@ describe( DataHelper.createSuiteTitle( 'Invite: New User' ), function () {
 	let userManagementRevampFeature = false;
 	let acceptInviteLink: string;
 	let page: Page;
+	let invitePage: Page;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
@@ -84,6 +84,13 @@ describe( DataHelper.createSuiteTitle( 'Invite: New User' ), function () {
 	} );
 
 	describe( 'Accept invite', function () {
+		beforeAll( async () => {
+			// Create a fresh context in the same browser for invite acceptance
+			invitePage = await browser.newContext().then( ( context ) => context.newPage() );
+		} );
+
+		// Keep invitePage open as we'll need it for the close account flow
+
 		it( 'Invite email was received for test user', async function () {
 			const emailClient = new EmailClient();
 			const message = await emailClient.getLastMatchingMessage( {
@@ -98,10 +105,10 @@ describe( DataHelper.createSuiteTitle( 'Invite: New User' ), function () {
 		} );
 
 		it( 'Sign up as invited user from the invite link', async function () {
-			await page.goto( acceptInviteLink );
+			await invitePage.goto( acceptInviteLink );
 
-			const userSignupPage = new UserSignupPage( page );
-			await userSignupPage.signup( testUser.email, testUser.username, testUser.password );
+			const userSignupPage = new UserSignupPage( invitePage );
+			await userSignupPage.signupThroughInvite( testUser.email );
 		} );
 
 		it( 'User sees welcome banner after signup', async function () {
@@ -109,7 +116,7 @@ describe( DataHelper.createSuiteTitle( 'Invite: New User' ), function () {
 			// TODO: Once PostsPage is implemented, call a method from that
 			// POM instead.
 			const bannerText = `You're now an ${ role } of: `;
-			await page.waitForSelector( `:has-text("${ bannerText }")` );
+			await invitePage.waitForSelector( `:has-text("${ bannerText }")` );
 		} );
 	} );
 
@@ -133,23 +140,22 @@ describe( DataHelper.createSuiteTitle( 'Invite: New User' ), function () {
 		} );
 
 		it( 'Remove invited user from site', async function () {
-			await peoplePage.deleteUser();
+			await peoplePage.deleteUser( testUser.username );
 		} );
 	} );
 
 	describe( 'Close account', function () {
-		it( 'Log in as invited user', async function () {
-			const loginPage = new LoginPage( page );
-			await loginPage.visit();
-			await Promise.all( [
-				page.waitForNavigation( { url: '**/reader' } ),
-				loginPage.logInWithCredentials( testUser.email, testUser.password ),
-			] );
+		it( 'Close account', async function () {
+			// Use the existing authenticated session from invitePage
+			const closeAccountFlow = new CloseAccountFlow( invitePage );
+			await closeAccountFlow.closeAccount();
 		} );
 
-		it( 'Close account', async function () {
-			const closeAccountFlow = new CloseAccountFlow( page );
-			await closeAccountFlow.closeAccount();
+		afterAll( async () => {
+			// Now we can close invitePage since we're done with all tests
+			if ( invitePage ) {
+				await invitePage.context().close();
+			}
 		} );
 	} );
 } );

@@ -20,6 +20,10 @@
 			}
 		}
 	}
+
+	.dataviews-view-list .dataviews-view-list__item-wrapper .dataviews-view-list__media-wrapper {
+		background: var(--color-surface);
+	}
 }
 
 .wpcom-site .main.hosting-dashboard-layout.sites-dashboard {
@@ -44,5 +48,25 @@
 		@media (max-width: 430px) {
 			padding-inline: 24px;
 		}
+	}
+}
+
+// Apply consistent 24px paddings to dataviews.
+.wpcom-site:has(.is-global-sidebar-visible) .dataviews-wrapper {
+	.dataviews__view-actions,
+	.dataviews-filters__container,
+	.dataviews-footer,
+	.dataviews-view-grid {
+		padding-inline: $grid-unit-30;
+	}
+
+	.dataviews-view-table tr td:first-child,
+	.dataviews-view-table tr th:first-child {
+		padding-inline-start: $grid-unit-30;
+	}
+
+	.dataviews-view-table tr td:last-child,
+	.dataviews-view-table tr th:last-child {
+		padding-inline-end: $grid-unit-30;
 	}
 }

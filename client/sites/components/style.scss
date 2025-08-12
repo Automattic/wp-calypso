@@ -27,7 +27,7 @@
 	}
 
 	.hosting-dashboard-layout__top-wrapper {
-		padding-block-start: 24px;
+		padding-block-start: 16px;
 	}
 
 	.sites-dataviews__site {
@@ -793,7 +793,7 @@
 		}
 
 		@include break-large {
-			padding: 32px 48px 48px;
+			padding: 32px 24px 24px;
 		}
 	}
 }

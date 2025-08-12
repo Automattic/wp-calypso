@@ -1,3 +1,4 @@
+// @ts-nocheck - TODO: Fix TypeScript issues
 import deepFreeze from 'deep-freeze';
 import {
 	DEACTIVATE_PLUGIN,

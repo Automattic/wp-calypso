@@ -1,4 +1,3 @@
-import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -23,15 +22,16 @@ class SecurityAccountRecoveryManageContactButtons extends Component {
 					{ this.props.saveText ? this.props.saveText : this.props.translate( 'Save' ) }
 				</FormButton>
 
-				<FormButton isPrimary={ false } onClick={ this.props.onCancel }>
-					{ this.props.translate( 'Cancel' ) }
-				</FormButton>
+				{ this.props.isDeletable && this.props.onDelete ? (
+					<FormButton isPrimary={ false } scary onClick={ this.props.onDelete }>
+						{ this.props.translate( 'Remove' ) }
+					</FormButton>
+				) : null }
 
-				{ this.props.isDeletable ? (
-					<button className="security-account-recovery__remove" onClick={ this.props.onDelete }>
-						<Gridicon icon="trash" size={ 24 } />
-						<span>{ this.props.translate( 'Remove' ) }</span>
-					</button>
+				{ this.props.onCancel ? (
+					<FormButton isPrimary={ false } onClick={ this.props.onCancel }>
+						{ this.props.translate( 'Cancel' ) }
+					</FormButton>
 				) : null }
 			</div>
 		);

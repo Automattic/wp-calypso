@@ -32,7 +32,7 @@ class FeedError extends Component {
 
 		return (
 			<ReaderMain>
-				<EmptyContent action={ action } title={ this.props.message } illustration="" />
+				<EmptyContent action={ action } title={ this.props.message } />
 			</ReaderMain>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */

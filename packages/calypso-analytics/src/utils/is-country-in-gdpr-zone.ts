@@ -41,9 +41,9 @@ const GDPR_COUNTRIES = [
  * @returns Whether the country is in the GDPR zone
  */
 export default function isCountryInGdprZone( countryCode: string | undefined ): boolean {
-	if ( 'unknown' === countryCode ) {
+	if ( 'unknown' === countryCode || undefined === countryCode ) {
 		// Fail safe: if we don't know the countryCode, assume it's in the Gdpr zone.
 		return true;
 	}
-	return countryCode !== undefined && GDPR_COUNTRIES.includes( countryCode );
+	return GDPR_COUNTRIES.includes( countryCode );
 }

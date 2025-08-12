@@ -1,41 +1,43 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Popover } from '@wordpress/components';
+import { Dropdown } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useCallback, PropsWithChildren } from 'react';
+import { AsyncContent } from './async';
 import AddNewSiteButton from './button';
-import { AsyncContent } from './content/async';
+import type { AddNewSiteProps } from '../../dashboard/sites/add-new-site/types';
+import type { PropsWithChildren } from 'react';
 import './style.scss';
 
 interface Props extends PropsWithChildren {
 	showCompact: boolean;
+	context: AddNewSiteProps[ 'context' ];
 }
 
-export const SitesAddNewSitePopover = ( { showCompact }: Props ) => {
-	const [ isOpen, setIsOpen ] = useState< boolean >( false );
+export const SitesAddNewSitePopover = ( { showCompact, context }: Props ) => {
 	const translate = useTranslate();
 
-	const toggleMenu = useCallback( () => {
-		if ( ! isOpen ) {
-			recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_open' );
-		}
-		setIsOpen( ( open ) => ! open );
-	}, [ isOpen ] );
-
 	return (
-		<AddNewSiteButton
-			showMainButtonLabel={ ! showCompact }
-			mainButtonLabelText={ translate( 'Add new site' ) }
-			isMenuVisible={ isOpen }
-			isPrimary={ ! showCompact }
-			toggleMenu={ toggleMenu }
-		>
-			{ isOpen && (
-				<Popover noArrow={ false } placement="bottom-end" offset={ 10 }>
-					<div className="sites-add-new-site__popover-content">
-						<AsyncContent />
-					</div>
-				</Popover>
+		<Dropdown
+			popoverProps={ { placement: 'bottom-end', offset: 10, noArrow: false } }
+			focusOnMount
+			renderToggle={ ( { isOpen, onToggle } ) => (
+				<AddNewSiteButton
+					showMainButtonLabel={ ! showCompact }
+					mainButtonLabelText={ translate( 'Add new site' ) }
+					isMenuVisible={ isOpen }
+					isPrimary={ ! showCompact }
+					toggleMenu={ onToggle }
+				/>
 			) }
-		</AddNewSiteButton>
+			renderContent={ () => (
+				<div className="sites-add-new-site__popover-content">
+					<AsyncContent context={ context } />
+				</div>
+			) }
+			onToggle={ ( isOpen ) => {
+				if ( isOpen ) {
+					recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_open' );
+				}
+			} }
+		/>
 	);
 };

@@ -1,4 +1,5 @@
-import { useTranslate, formatCurrency } from 'i18n-calypso';
+import { formatCurrency } from '@automattic/number-formatters';
+import { useTranslate } from 'i18n-calypso';
 import { getProductCommissionPercentage } from '../../referrals/lib/commissions';
 import type { ShoppingCartItem } from '../types';
 

@@ -4,9 +4,9 @@ import styled from '@emotion/styled';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
+import SitePreviewLink from 'calypso/dashboard/components/site-preview-link';
 import { useDispatch } from 'calypso/state';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
-import SitePreviewLink from './site-preview-link';
 import { useCreateSitePreviewLink } from './use-create-site-preview-link';
 import { useDeleteSitePreviewLink } from './use-delete-site-preview-link';
 import { useSitePreviewLinks } from './use-site-preview-links';
@@ -100,6 +100,10 @@ export default function SitePreviewLinks( {
 		}
 	}
 
+	const handleCopy = () => {
+		showSuccessNotice( translate( 'Preview link copied to clipboard.' ) );
+	};
+
 	const checkedAndEnabled = checked && ! forceOff;
 	const isBusy = isFirstLoading || isCreating || isDeleting;
 
@@ -129,8 +133,11 @@ export default function SitePreviewLinks( {
 							<SitePreviewLink
 								key={ link.code }
 								{ ...link }
+								label={ translate( 'preview link' ) }
+								hideLabelFromVision
 								disabled={ disabled || isBusy }
 								siteUrl={ siteUrl }
+								onCopy={ handleCopy }
 							/>
 						) ) }
 				</>

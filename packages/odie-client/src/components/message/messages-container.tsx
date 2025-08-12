@@ -4,9 +4,10 @@ import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { getShortDateString } from '@automattic/i18n-utils';
 import { Spinner } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
+import clx from 'classnames';
 import { useEffect, useRef, useState } from 'react';
 import { NavigationType, useNavigationType, useSearchParams } from 'react-router-dom';
-import { ThumbsDown } from '../../assets/thumbs-down';
+import { getOdieInitialMessage } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
 import {
 	useAutoScroll,
@@ -15,29 +16,17 @@ import {
 	useUpdateDocumentTitle,
 } from '../../hooks';
 import { useHelpCenterChatScroll } from '../../hooks/use-help-center-chat-scroll';
-import { getOdieInitialMessage } from '../../utils';
-import { ViewMostRecentOpenConversationNotice } from '../odie-notice/view-most-recent-conversation-notice';
-import { DislikeFeedbackMessage } from './dislike-feedback-message';
+import {
+	interactionHasZendeskEvent,
+	interactionHasEnded,
+	hasCSATMessage,
+	hasSubmittedCSATRating,
+} from '../../utils';
+import useViewMostRecentOpenConversationNotice from '../notices/use-view-most-recent-conversation-notice';
 import { JumpToRecent } from './jump-to-recent';
 import { ThinkingPlaceholder } from './thinking-placeholder';
 import ChatMessage from '.';
 import type { Chat, CurrentUser } from '../../types';
-
-const DislikeThumb = () => {
-	return (
-		<div className="chatbox-message__dislike-thumb">
-			<ThumbsDown />
-		</div>
-	);
-};
-
-const LoadingChatSpinner = () => {
-	return (
-		<div className="chatbox-loading-chat__spinner">
-			<Spinner />
-		</div>
-	);
-};
 
 const ChatDate = ( { chat }: { chat: Chat } ) => {
 	// chat.messages[ 1 ] contains the first user interaction, therefore the date, otherwise the current date.
@@ -52,7 +41,7 @@ interface ChatMessagesProps {
 }
 
 export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
-	const { chat, botNameSlug, experimentVariationName, isChatLoaded, isUserEligibleForPaidSupport } =
+	const { chat, botNameSlug, isChatLoaded, isUserEligibleForPaidSupport, forceEmailSupport } =
 		useOdieAssistantContext();
 	const createZendeskConversation = useCreateZendeskConversation();
 	const resetSupportInteraction = useResetSupportInteraction();
@@ -67,17 +56,23 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	const messagesContainerRef = useRef< HTMLDivElement >( null );
 	const scrollParentRef = useRef< HTMLElement | null >( null );
 
-	const { currentSupportInteraction } = useSelect( ( select ) => {
+	useViewMostRecentOpenConversationNotice(
+		chatMessagesLoaded && chat?.provider === 'odie' && ! forceEmailSupport
+	);
+
+	const { alreadyHasActiveZendeskChat, chatHasEnded } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
+		const currentInteraction = helpCenterSelect.getCurrentSupportInteraction();
 		return {
-			currentSupportInteraction: helpCenterSelect.getCurrentSupportInteraction(),
+			alreadyHasActiveZendeskChat:
+				interactionHasZendeskEvent( currentInteraction ) &&
+				! interactionHasEnded( currentInteraction ),
+			chatHasEnded: interactionHasEnded( currentInteraction ),
 		};
 	}, [] );
 
-	const chatHasEnded = [ 'solved', 'closed' ].includes( currentSupportInteraction?.status || '' );
-
 	useZendeskMessageListener();
-	useAutoScroll( messagesContainerRef, shouldEnableAutoScroll );
+	const isScrolling = useAutoScroll( messagesContainerRef, shouldEnableAutoScroll );
 	useHelpCenterChatScroll( chat?.supportInteractionId, scrollParentRef, ! shouldEnableAutoScroll );
 
 	useEffect( () => {
@@ -121,15 +116,19 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 			! chat.conversationId &&
 			createZendeskConversation &&
 			resetSupportInteraction &&
-			isChatLoaded
+			isChatLoaded &&
+			! forceEmailSupport
 		) {
 			searchParams.delete( 'provider' );
 			searchParams.set( 'direct-zd-chat', '1' );
 			setSearchParams( searchParams );
 			setHasForwardedToZendesk( true );
 
-			resetSupportInteraction().then( ( interaction ) => {
-				if ( isChatLoaded ) {
+			// when forwarding to zd avoid creating new chats
+			if ( alreadyHasActiveZendeskChat ) {
+				setChatMessagesLoaded( true );
+			} else {
+				resetSupportInteraction().then( ( interaction ) => {
 					createZendeskConversation( {
 						avoidTransfer: true,
 						interactionId: interaction?.uuid,
@@ -138,8 +137,8 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 					} ).then( () => {
 						setChatMessagesLoaded( true );
 					} );
-				}
-			} );
+				} );
+			}
 		}
 	}, [
 		isForwardingToZendesk,
@@ -148,6 +147,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		chat?.conversationId,
 		resetSupportInteraction,
 		createZendeskConversation,
+		alreadyHasActiveZendeskChat,
 	] );
 
 	// Used to apply the correct styling on messages
@@ -155,68 +155,79 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		return currentMessage === nextMessage;
 	};
 
-	const removeDislikeStatus = experimentVariationName === 'give_wapuu_a_chance';
-
-	const availableStatusWithFeedback = removeDislikeStatus
-		? [ 'sending', 'transfer' ]
-		: [ 'sending', 'dislike', 'transfer' ];
-
+	const chatHasCSATMessage = hasCSATMessage( chat );
+	const displayCSAT = chatHasCSATMessage && ! hasSubmittedCSATRating( chat );
 	return (
-		<>
-			<div className="chatbox-messages" ref={ messagesContainerRef }>
-				<ChatDate chat={ chat } />
-				{ ! chatMessagesLoaded ? (
-					<LoadingChatSpinner />
-				) : (
-					<>
-						{ ( chat.odieId || chat.provider === 'odie' ) && (
-							<ChatMessage
-								message={ getOdieInitialMessage( botNameSlug ) }
-								key={ 0 }
-								currentUser={ currentUser }
-								isNextMessageFromSameSender={ false }
-								displayChatWithSupportLabel={ false }
-							/>
-						) }
-						{ chat.messages.map( ( message, index ) => {
-							const nextMessage = chat.messages[ index + 1 ];
-							const displayChatWithSupportLabel =
-								! nextMessage?.context?.flags?.show_contact_support_msg &&
-								message.context?.flags?.show_contact_support_msg &&
-								! chatHasEnded;
-
-							const displayChatWithSupportEndedLabel = ! nextMessage && chatHasEnded;
-
-							return (
-								<ChatMessage
-									message={ message }
-									key={ index }
-									currentUser={ currentUser }
-									isNextMessageFromSameSender={ isNextMessageFromSameSender(
-										message.role,
-										chat.messages[ index + 1 ]?.role
-									) }
-									displayChatWithSupportLabel={ displayChatWithSupportLabel }
-									displayChatWithSupportEndedLabel={ displayChatWithSupportEndedLabel }
-								/>
-							);
-						} ) }
-						<JumpToRecent containerReference={ messagesContainerRef } />
-						{ chat.provider === 'odie' && (
-							<>
-								<ViewMostRecentOpenConversationNotice />
-								{ chat.status === 'dislike' && ! removeDislikeStatus && <DislikeThumb /> }
-								{ availableStatusWithFeedback.includes( chat.status ) && (
-									<div className="odie-chatbox__action-message">
-										{ chat.status === 'sending' && <ThinkingPlaceholder /> }
-										{ chat.status === 'dislike' && <DislikeFeedbackMessage /> }
-									</div>
-								) }
-							</>
-						) }
-					</>
-				) }
+		<div
+			className={ clx( 'chatbox-messages', {
+				'force-email-support': forceEmailSupport && chat.provider === 'zendesk',
+			} ) }
+			ref={ messagesContainerRef }
+		>
+			<div
+				className="screen-reader-text"
+				aria-live="polite"
+				aria-atomic="false"
+				aria-relevant="additions"
+			>
+				{ chat.messages.map( ( message, index ) => (
+					<div key={ index }>
+						{ [ 'bot', 'business' ].includes( message.role ) && message.content }
+					</div>
+				) ) }
 			</div>
-		</>
+			<ChatDate chat={ chat } />
+			<>
+				<div
+					className={ clx( 'chatbox-loading-chat__spinner', {
+						'is-visible': ! chatMessagesLoaded || isScrolling,
+					} ) }
+				>
+					<Spinner />
+				</div>
+				{ ( chat.odieId || chat.provider === 'odie' ) && (
+					<ChatMessage
+						message={ getOdieInitialMessage( botNameSlug ) }
+						key={ 0 }
+						currentUser={ currentUser }
+						isNextMessageFromSameSender={ false }
+						displayChatWithSupportLabel={ false }
+					/>
+				) }
+				{ chat.messages.map( ( message, index ) => {
+					const nextMessage = chat.messages[ index + 1 ];
+					const displayChatWithSupportLabel =
+						! nextMessage?.context?.flags?.show_contact_support_msg &&
+						message.context?.flags?.show_contact_support_msg &&
+						! chatHasEnded &&
+						! message.context?.flags?.is_error_message;
+
+					const displayChatWithSupportEndedLabel =
+						! chatHasCSATMessage && ! nextMessage && chatHasEnded;
+
+					return (
+						<ChatMessage
+							message={ message }
+							key={ index }
+							currentUser={ currentUser }
+							isNextMessageFromSameSender={ isNextMessageFromSameSender(
+								message.role,
+								chat.messages[ index + 1 ]?.role
+							) }
+							displayChatWithSupportLabel={ displayChatWithSupportLabel }
+							displayChatWithSupportEndedLabel={ displayChatWithSupportEndedLabel }
+							displayCSAT={ displayCSAT }
+						/>
+					);
+				} ) }
+				<JumpToRecent containerReference={ messagesContainerRef } />
+
+				{ chat.provider === 'odie' && chat.status === 'sending' && (
+					<div className="odie-chatbox__action-message">
+						<ThinkingPlaceholder />
+					</div>
+				) }
+			</>
+		</div>
 	);
 };

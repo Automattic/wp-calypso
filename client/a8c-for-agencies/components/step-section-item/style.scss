@@ -111,27 +111,6 @@
 	}
 }
 
-.referrals-layout--automated .step-section-item {
-	.step-section-item__button .button {
-		min-width: 120px;
-	}
-
-	.step-section-item__button {
-		@include break-large {
-			margin-block: auto;
-		}
-	}
-
-	.step-section-item__status.is-large-screen {
-		@include break-large {
-			display: inline-flex;
-			position: relative;
-			left: 4px;
-		}
-
-	}
-}
-
 .step-section-item__step-number {
 	display: none;
 	color: var(--color-accent);

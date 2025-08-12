@@ -2,6 +2,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { getQueryArg, addQueryArgs } from '@wordpress/url';
 import { QueryArgParsed } from '@wordpress/url/build-types/get-query-arg';
+import { fixMe } from 'i18n-calypso';
 import StripeLogoSvg from 'calypso/assets/images/jetpack/stripe-logo-white.svg';
 import { navigate } from 'calypso/lib/navigate';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -80,7 +81,13 @@ export default function ConnectStripe( {
 					navigate={ () => {
 						navigate( `/import/newsletter/${ engine }/${ siteSlug }/summary?from=${ fromSite }` );
 					} }
-					label={ __( 'I have only free subscribers' ) }
+					label={
+						fixMe( {
+							text: 'Continue with free subscribers',
+							newCopy: __( 'Continue with free subscribers' ),
+							oldCopy: __( 'I have only free subscribers' ),
+						} ) as string
+					}
 				/>
 			</ImporterActionButtonContainer>
 		</>

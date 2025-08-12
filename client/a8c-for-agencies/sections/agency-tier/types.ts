@@ -1,4 +1,8 @@
-export type AgencyTier = 'emerging-partner' | 'agency-partner' | 'pro-agency-partner';
+export type AgencyTier =
+	| 'emerging-partner'
+	| 'agency-partner'
+	| 'pro-agency-partner'
+	| 'premier-partner';
 
 export interface AgencyTierCelebrationModal {
 	title: string;

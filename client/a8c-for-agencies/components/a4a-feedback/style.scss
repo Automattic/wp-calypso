@@ -11,14 +11,17 @@ $highlight-color: #3858E9;
 }
 
 .a4a-feedback__content {
-	padding-block-start: 32px;
+	margin-block-start: calc(48px + 8px);
 	display: flex;
 	align-items: flex-start;
 	flex-direction: row;
 	flex-wrap: wrap;
+	border: 1px solid var(--color-neutral-5);
+	border-radius: 8px; /* stylelint-disable-line scales/radii */
+	padding: 16px 24px;
 
 	@include break-large {
-		width: 600px;
+		width: 470px;
 		max-width: 90%;
 	}
 }
@@ -28,37 +31,49 @@ $highlight-color: #3858E9;
 }
 
 .a4a-feedback__description {
-	@include body-large;
+	@include body-medium;
 	color: var(--color-neutral-60);
-	padding-block: 4px 32px;
+	padding-block: 8px 12px;
+	border-bottom: 1px solid var(--color-neutral-0);
+	flex: 1 1 auto;
 }
 
 .a4a-feedback__questions {
+	padding-block-start: 16px;
 	display: flex;
 	flex-direction: column;
 	gap: 24px;
-	border: 1px solid var(--color-neutral-5);
-	border-radius: 4px;
-	padding: 16px 24px;
 	flex: 1 1 auto;
+
+	.form-fieldset {
+		margin-block-end: 0;
+	}
+
+	.a8c-experience-control .components-base-control__label {
+		@include heading-medium;
+		margin-block-end: 12px;
+		text-transform: uppercase;
+		color: var(--color-text);
+	}
+
 }
 
 .a4a-feedback__question-details {
 	@include heading-large;
+	padding-block-end: 8px;
 }
 
 .a4a-feedback__experience-selector-label {
 	@include heading-medium;
-	padding-block-end: 8px;
+	padding-block-end: 12px;
+	text-transform: uppercase;
 }
 
-.a4a-feedback__comments-label {
+.form-label.a4a-feedback__comments-label {
 	@include heading-medium;
-	padding-block-end: 8px;
-
-	span {
-		opacity: 0.8;
-	}
+	padding-block-end: 12px;
+	text-transform: uppercase;
+	margin-block-end: 0;
 }
 
 .a4a-feedback__comments {
@@ -95,36 +110,9 @@ $highlight-color: #3858E9;
 	}
 }
 
-.theme-a8c-for-agencies .a4a-feedback__experience-selector-buttons {
+.a4a-feedback__suggestions {
 	display: flex;
-	gap: 10px;
-
-	.components-button {
-		box-shadow: none;
-		height: 40px;
-		padding: 8px;
-
-		&.is-primary {
-			border: 2px solid $highlight-color;
-			background-color: unset;
-
-			&:focus:not(:disabled), &:hover:not(:disabled), &:focus-visible:not(:disabled) {
-				border: 2px solid $highlight-color;
-			}
-		}
-		&.is-secondary {
-			border: 2px solid transparent;
-
-			&:focus:not(:disabled), &:hover:not(:disabled), &:focus-visible:not(:disabled) {
-				border: 2px solid transparent;
-			}
-		}
-
-		&.is-primary, &.is-secondary {
-			&:focus:not(:disabled), &:hover:not(:disabled), &:focus-visible:not(:disabled) {
-				box-shadow: none;
-				background-color: unset;
-			}
-		}
-	}
+	flex-direction: column;
+	gap: 8px;
 }
+

@@ -1,12 +1,9 @@
-import config from '@automattic/calypso-config';
-import { StatsCard } from '@automattic/components';
 import clsx from 'clsx';
 import { STATS_TYPE_DEVICE_STATS } from 'calypso/my-sites/stats/constants';
 import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import { default as usePlanUsageQuery } from '../../../hooks/use-plan-usage-query';
 import useStatsPurchases from '../../../hooks/use-stats-purchases';
-import StatsModulePlaceholder from '../../../stats-module/placeholder';
-import statsStrings from '../../../stats-strings';
+import useStatsStrings from '../../../hooks/use-stats-strings';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import StatsModuleDevices from './stats-module-devices';
 import StatsModuleUpgradeOverlay from './stats-module-upgrade-overlay';
@@ -21,8 +18,7 @@ const StatsModuleDevicesWrapper: React.FC< StatsAdvancedModuleWrapperProps > = (
 	query,
 	className,
 } ) => {
-	const isNewEmptyStateEnabled = config.isEnabled( 'stats/empty-module-traffic' );
-	const { devices: devicesStrings } = statsStrings();
+	const { devices: devicesStrings } = useStatsStrings();
 	const shouldGateStats = useShouldGateStats( STATS_TYPE_DEVICE_STATS );
 
 	// Check if blog is internal.
@@ -41,22 +37,13 @@ const StatsModuleDevicesWrapper: React.FC< StatsAdvancedModuleWrapperProps > = (
 
 	return (
 		<>
-			{ isFetching && isNewEmptyStateEnabled && (
+			{ isFetching && (
 				<StatsCardSkeleton
 					isLoading={ isFetching }
 					className={ className }
 					title={ devicesStrings?.title }
 					type={ 1 }
 				/>
-			) }
-			{ isFetching && ! isNewEmptyStateEnabled && (
-				<StatsCard
-					title={ devicesStrings.title }
-					className={ clsx( className, DEVICES_CLASS_NAME, 'stats-module__card', 'devices' ) }
-					isNew
-				>
-					<StatsModulePlaceholder isLoading />
-				</StatsCard>
 			) }
 			{ ! isFetching && ! isAdvancedFeatureEnabled && (
 				<StatsModuleUpgradeOverlay className={ className } siteId={ siteId } />

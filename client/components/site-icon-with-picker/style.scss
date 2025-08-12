@@ -231,7 +231,7 @@ button.components-button.site-icon-with-picker__upload-button {
 		top: 0;
 		left: 50%;
 		transform: translateX(-50%);
-		background-color: rgba(var(--color-primary-rgb));
+		background-color: var(--color-primary);
 		border: 1px solid var(--studio-gray-10);
 		border-radius: $icon-border-radius;
 		transition: ease 1s;

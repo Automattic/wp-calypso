@@ -116,7 +116,6 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextSte
 					) }
 				</FilePicker>
 			</div>
-
 			{ isSelectedFileValid && selectedFile && ! hasImportError && (
 				<p>
 					{ createInterpolateElement(
@@ -140,11 +139,9 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextSte
 					) }
 				</p>
 			) }
-
 			{ hasImportError && importSelector?.error && (
 				<ImportSubscribersError error={ importSelector?.error } />
 			) }
-
 			<ImporterActionButtonContainer noSpacing>
 				<ImporterActionButton
 					type="submit"

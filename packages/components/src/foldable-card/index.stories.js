@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { Button, FoldableCard } from '..';
 
-export default { title: 'packages/components/FoldableCard' };
+export default { title: 'Unaudited/FoldableCard' };
 
 export const Default = () => (
 	<FoldableCard header="This is a foldable card" screenReaderText="More">

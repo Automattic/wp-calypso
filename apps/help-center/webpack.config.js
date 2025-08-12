@@ -8,37 +8,16 @@ const GenerateChunksMapPlugin = require( '../../build-tools/webpack/generate-chu
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
-/* Arguments to this function replicate webpack's so this config can be used on the command line,
- * with individual options overridden by command line args.
- * @see {@link https://webpack.js.org/configuration/configuration-types/#exporting-a-function}
- * @see {@link https://webpack.js.org/api/cli/}
- * @param   {Object}  env                           environment options
- * @param   {string}  env.source                    plugin slugs, comma separated list
- * @param   {Object}  argv                          options map
- * @param   {string}  argv.entry                    entry path
- * @returns {Object}                                webpack config
- */
-function getWebpackConfig( env = { source: '' }, argv = {} ) {
-	env.WP = true;
-	const outputPath = path.join( __dirname, 'dist' );
+function getIndividualConfig( options = {} ) {
+	const { name, env, argv, injectPolyfill = true } = options;
 
+	const outputPath = path.join( __dirname, 'dist' );
 	const webpackConfig = getBaseWebpackConfig( env, argv );
 
 	return {
 		...webpackConfig,
 		mode: isDevelopment ? 'development' : 'production',
-		entry: {
-			'help-center-gutenberg': path.join( __dirname, 'help-center-gutenberg.js' ),
-			'help-center-wp-admin': path.join( __dirname, 'help-center-wp-admin.js' ),
-			'help-center-gutenberg-disconnected': path.join(
-				__dirname,
-				'help-center-gutenberg-disconnected.js'
-			),
-			'help-center-wp-admin-disconnected': path.join(
-				__dirname,
-				'help-center-wp-admin-disconnected.js'
-			),
-		},
+		entry: { [ name ]: path.join( __dirname, `${ name }.js` ) },
 		output: {
 			...webpackConfig.output,
 			path: outputPath,
@@ -62,7 +41,7 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 				output: path.resolve( './dist/chunks-map.json' ),
 			} ),
 			new DependencyExtractionWebpackPlugin( {
-				injectPolyfill: true,
+				injectPolyfill,
 				outputFilename: '[name].asset.json',
 				outputFormat: 'json',
 				requestToExternal( request ) {
@@ -85,6 +64,32 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 			} ),
 		],
 	};
+}
+
+/* Arguments to this function replicate webpack's so this config can be used on the command line,
+ * with individual options overridden by command line args.
+ * @see {@link https://webpack.js.org/configuration/configuration-types/#exporting-a-function}
+ * @see {@link https://webpack.js.org/api/cli/}
+ * @param   {Object}  env                           environment options
+ * @param   {string}  env.source                    plugin slugs, comma separated list
+ * @param   {Object}  argv                          options map
+ * @param   {string}  argv.entry                    entry path
+ * @returns {Object}                                webpack config
+ */
+function getWebpackConfig( env = { source: '' }, argv = {} ) {
+	env.WP = true;
+
+	return [
+		getIndividualConfig( { env, argv, name: 'help-center-gutenberg' } ),
+		getIndividualConfig( { env, argv, name: 'help-center-wp-admin' } ),
+		getIndividualConfig( { env, argv, name: 'help-center-gutenberg-disconnected' } ),
+		getIndividualConfig( {
+			env,
+			argv,
+			injectPolyfill: false,
+			name: 'help-center-wp-admin-disconnected',
+		} ),
+	];
 }
 
 module.exports = getWebpackConfig;

@@ -1,15 +1,19 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/components/src/styles/typography";
+@import "@wordpress/base-styles/variables";
 @import "@wordpress/base-styles/colors";
+@import "@wordpress/base-styles/mixins";
 @import "colors";
 
 // TODO: Audit and remove since there is no footer colophon anymore.
 $colophon-height: 50px;
 
-.jetpack-connect__main:not(.is-woocommerce):not(.is-wpcom-migration):not(.is-automattic-for-agencies-flow),
-.layout.is-section-jetpack-connect:not(.is-jetpack-mobile-flow):not(.is-jetpack-woo-dna-flow):not(.is-wpcom-migration):not(.is-woocommerce-core-profiler-flow):not(.is-automattic-for-agencies-flow) {
+.jetpack-connect__main:not(.is-woocommerce):not(.is-automattic-for-agencies-flow),
+.layout.is-section-jetpack-connect:not(.is-jetpack-mobile-flow):not(.is-woocommerce-core-profiler-flow):not(.is-automattic-for-agencies-flow) {
 	@include jetpack-connect-colors();
 }
 
-.layout.is-jetpack-woo-dna-flow {
+.layout.is-woocommerce-core-profiler-flow {
 	@include woocommerce-colors();
 }
 
@@ -47,7 +51,6 @@ $colophon-height: 50px;
 	&.layout {
 		position: relative;
 		min-height: calc(100% - #{$colophon-height});
-		padding-bottom: $colophon-height;
 	}
 
 	// Hide the masterbar for real
@@ -120,6 +123,27 @@ $colophon-height: 50px;
 	margin-bottom: 35px;
 }
 
+.jetpack-connect__compact-logo {
+	display: flex;
+	position: absolute;
+	top: 24px;
+	left: 24px;
+
+	align-items: center;
+	column-gap: 16px;
+
+	.jetpack-connect__back-button {
+		--wp-components-color-accent: var(--color-accent-dark);
+
+		margin-top: 0;
+
+		&:focus {
+			outline: none;
+			box-shadow: none;
+		}
+	}
+}
+
 .jetpack-connect__main.is-wide {
 	max-width: 100%;
 	text-align: center;
@@ -134,7 +158,7 @@ $colophon-height: 50px;
 
 .jetpack-connect__site-url-entry-container,
 .purchase-product__site-url-entry-container {
-	margin: 0 auto;
+	margin: 10vh auto 0; // match spacing of onboarding flow (.jetpack-connect__authorize-form-wrapper--onboarding)
 	max-width: 400px;
 
 	.formatted-header {
@@ -197,8 +221,8 @@ $colophon-height: 50px;
 }
 
 .jetpack-connect__site-address {
-	padding: 0 24px 24px;
-	margin: 0 -24px;
+	padding: 0 0 20px; // this is 20px because the icon element has a -4px margin for alignment
+	margin-bottom: 24px;
 	border-bottom: 1px solid var(--color-border-subtle);
 	display: flex;
 }
@@ -216,24 +240,143 @@ $colophon-height: 50px;
 		fill: var(--color-neutral-0);
 	}
 }
-.jetpack-connect__wordpress-logo {
-	margin: 32px auto;
-	text-align: center;
-
-	.wordpress-logo {
-		margin: 0;
-		fill: var(--color-neutral);
-	}
-}
-
-.jetpack-connect__note {
-	font-size: $font-body-extra-small;
-	text-align: center;
-}
 
 .jetpack-connect__authorize-form {
 	.jetpack-connect__authorize-form-header {
 		text-align: center;
+	}
+
+	.jetpack-connect__authorize-form-header--left-aligned {
+		padding-bottom: 48px;
+
+		h1 {
+			margin-bottom: 16px;
+			@include heading-2x-large;
+		}
+
+		p {
+			@include body-large;
+			margin-bottom: 0;
+		}
+	}
+}
+
+.jetpack-connect__authorize-form-wrapper--onboarding {
+	margin-top: 10vh;
+	min-width: 450px;
+
+	@media screen and ( max-width: $break-mobile ) {
+		min-width: 250px;
+		padding: 0 8px;
+	}
+}
+
+.jetpack-connect__logged-in-user-card {
+	display: flex;
+	border-radius: 4px;
+	border: 1px solid var(--studio-gray-5);
+
+	.jetpack-connect__user-card-gravatar.gravatar {
+		border-radius: 4px 0 0 4px;
+		margin: 0;
+	}
+}
+
+.jetpack-connect__switch-account-link {
+	@include body-medium;
+	margin: 12px 0 0;
+	padding: 0;
+	color: var(--studio-green-60);
+}
+
+.jetpack-connect__benefits {
+	padding: 32px 0;
+
+	.jetpack-connect__benefits-title {
+		@include heading-large;
+
+		padding-bottom: 16px;
+	}
+
+	ul {
+		margin: 0;
+		padding: 0;
+	}
+
+	li {
+		@include heading-medium;
+
+		list-style: none;
+		display: flex;
+		align-items: center;
+		gap: 6px;
+
+		& + li {
+			margin-top: 10px;
+		}
+
+		svg {
+			display: block;
+		}
+	}
+}
+
+.jetpack-connect__user-card-text {
+	padding: 10px 12px 10px 16px;
+
+	.jetpack-connect__logged-in-user-text-name {
+		@include heading-large;
+	}
+
+	.jetpack-connect__logged-in-user-text-email {
+		@include body-small;
+	}
+}
+
+.card.logged-out-form__footer {
+	&.jetpack-connect__action--onboarding {
+		margin: 0;
+		padding: 0;
+
+		button {
+			width: 100%;
+			padding: 12px 16px;
+			min-height: 48px;
+			font-weight: 500;
+			font-size: 16px;
+			line-height: 24px;
+			border: 1px solid var(--jp-green-60, #007117);
+			border-radius: var(--jp-button-radius, 4px);
+			box-sizing: border-box;
+			color: var(--jp-white, #fff);
+			background: var(--jp-green-60, #007117);
+			justify-content: center;
+
+			&:hover,
+			&:focus {
+				background: var(--jp-green-70, #00801a);
+				color: var(--jp-white, #fff);
+			}
+
+			&:focus {
+				border-color: var(--jp-white, #FFF);
+				outline: 2px solid var(--jp-green-60, #007117);
+			}
+
+			&:disabled {
+				background: var(--jp-gray, #dcdcde);
+				border-color: var(--jp-gray, #dcdcde);
+				color: var(--jp-gray-50, #646970);
+			}
+		}
+
+		.jetpack-connect__action--onboarding-disclaimer {
+			p {
+				padding-top: 20px;
+				color: var(--jp-gray-70, #757575);
+				text-align: start;
+			}
+		}
 	}
 }
 
@@ -337,7 +480,7 @@ $colophon-height: 50px;
 	margin: 0;
 	line-height: 0;
 	box-shadow:
-		0 0 0 1px rgba(var(--color-neutral-10-rgb), 0.5),
+		0 0 0 1px color-mix(in srgb, var(--color-neutral-10) 50%, transparent),
 		0 1px 2px var(--color-neutral-0);
 }
 
@@ -618,11 +761,11 @@ $colophon-height: 50px;
 	}
 }
 
-.jetpack-connect__sso .email-verification-gate .notice {
+.jetpack-connect__sso .email-verification-gate .calypso-notice {
 	margin-bottom: 0;
 }
 
-.jetpack-connect__sso .email-verification-gate .notice__text {
+.jetpack-connect__sso .email-verification-gate .calypso-notice__text {
 	word-wrap: break-word;
 	word-break: break-word;
 }
@@ -657,7 +800,7 @@ $colophon-height: 50px;
 
 .jetpack-connect__creds-form-footer {
 	.button {
-		margin-top: 22px;
+		margin-top: 0;
 	}
 }
 
@@ -718,7 +861,6 @@ $colophon-height: 50px;
 	&.layout {
 		position: relative;
 		min-height: calc(100% - #{$colophon-height});
-		padding-bottom: $colophon-height;
 	}
 
 	.site__title::after,
@@ -803,21 +945,6 @@ $colophon-height: 50px;
 			}
 		}
 
-		.social-buttons__button {
-			border: 1px solid var(--color-accent-dark);
-			color: var(--color-accent-dark);
-			box-shadow: none;
-			max-width: 310px;
-			height: 48px;
-			margin-left: auto;
-			margin-right: auto;
-
-			&.disabled {
-				border-color: var(--studio-gray-30);
-				color: var(--studio-gray-30);
-			}
-		}
-
 		.card {
 			padding: 0;
 			box-shadow: none;
@@ -853,9 +980,12 @@ $colophon-height: 50px;
 	.site-topic__content .form-fieldset {
 		position: relative;
 	}
+}
 
+.layout.is-section-jetpack-connect,
+.layout.is-section-purchase-product {
 	/** WooCommerce Onboarding Styles **/
-	&.is-jetpack-woo-dna-flow {
+	&.is-woocommerce-core-profiler-flow {
 		background-color: var(--color-woocommerce-onboarding-background);
 
 		.jetpack-connect__main-logo {
@@ -962,19 +1092,6 @@ $colophon-height: 50px;
 			font-size: $font-body-small;
 		}
 
-		.auth-form__social,
-		.login__form-social {
-			.social-buttons__button {
-				border-color: var(--studio-woocommerce-purple);
-				color: var(--studio-woocommerce-purple);
-
-				&.disabled {
-					border-color: var(--studio-gray-30);
-					color: var(--studio-gray-30);
-				}
-			}
-		}
-
 		.logged-out-form__footer,
 		.login__form-footer {
 			text-align: center;
@@ -1033,11 +1150,6 @@ $colophon-height: 50px;
 			gap: 14px;
 		}
 
-		.form-input-validation {
-			padding-bottom: 0;
-			padding-top: 0;
-		}
-
 		.jetpack-connect__magic-link-card {
 			text-align: center;
 			border-radius: 2px;
@@ -1065,10 +1177,6 @@ $colophon-height: 50px;
 				}
 			}
 		}
-	}
-
-	&.is-jetpack-woo-dna-flow .login__form-header-wrapper {
-		display: none;
 	}
 }
 
@@ -1392,17 +1500,17 @@ $colophon-height: 50px;
 			margin: 0 20px;
 		}
 
-		.notice__icon-wrapper {
+		.calypso-notice__icon-wrapper {
 			background: inherit;
 			padding: 0 3px 0 11px;
 			width: fit-content;
 
-			.notice__icon {
+			.calypso-notice__icon {
 				color: var(--studio-green-30);
 			}
 		}
 
-		.notice__content {
+		.calypso-notice__content {
 			font-size: 0.8125rem; /* stylelint-disable-line scales/font-sizes */
 			line-height: 16px;
 			padding: 17px 8px;
@@ -1413,7 +1521,7 @@ $colophon-height: 50px;
 	.jetpack-connect__authorize-form {
 		.jetpack-connect__site.card {
 			.site-icon {
-				background-color: rgba(var(--wp-admin-theme-color--rgb), 0.15);
+				background-color: color-mix(in srgb, var(--wp-admin-theme-color) 15%, transparent);
 
 				svg {
 					fill: var(--wp-admin-theme-color);
@@ -1434,12 +1542,6 @@ $colophon-height: 50px;
 
 body.is-section-jetpack-connect {
 	background-color: var(--color-surface);
-
-	.layout.is-jetpack-woo-dna-flow {
-		.wpcom-site__logo {
-			display: none;
-		}
-	}
 }
 
 // ProductCard overrides
@@ -1506,68 +1608,4 @@ body.is-section-jetpack-connect {
 .is-section-jetpack-connect .selector__main {
 	--color-accent: var(--studio-jetpack-green-40);
 	--color-primary: var(--studio-jetpack-green-40);
-}
-
-// wpcom migration plugin adjustments
-.jetpack-connect__main.is-wpcom-migration {
-	@include wpcom-migration-colors();
-	max-width: 472px;
-
-	.formatted-header__title {
-		color: var(--studio-gray-100);
-		font-size: rem(44px);
-		font-family: $brand-serif;
-	}
-
-	.formatted-header__subtitle {
-		font-size: rem(16px);
-		margin-bottom: rem(40px);
-	}
-
-	.jetpack-connect__site.card,
-	.jetpack-connect__logged-in-card.card {
-		max-width: 472px;
-		border-radius: 4px;
-		box-shadow: 0 0 0 1px #c3c4c7;
-	}
-
-	.gravatar {
-		border: solid 1px #a7aaad;
-		padding: 8px;
-	}
-
-	.jetpack-connect__logged-in-form-user-text {
-		font-size: $font-title-small;
-		margin-bottom: 0;
-	}
-
-	.jetpack-connect__tos-link {
-		font-size: $font-body-small;
-		margin-bottom: rem(50px);
-		color: var(--studio-gray-50);
-
-		a {
-			text-decoration: underline;
-		}
-	}
-
-	.button {
-		width: auto;
-		min-width: 170px;
-		margin: auto;
-		display: block;
-	}
-
-	.logged-out-form__links::before {
-		background: #c3c4c7;
-	}
-
-	.logged-out-form__link-item {
-		color: var(--color-accent-dark);
-
-		&:hover,
-		&:focus {
-			color: var(--color-accent);
-		}
-	}
 }

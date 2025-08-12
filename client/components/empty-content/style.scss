@@ -12,6 +12,8 @@
 	}
 
 	&.has-title-only {
+		padding-top: 150px;
+
 		.empty-content__title {
 			margin-bottom: 40px;
 		}
@@ -25,8 +27,8 @@
 }
 
 .empty-content__title {
+	@extend .wp-brand-font;
 	color: var(--color-neutral-70);
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 34px;
 
 	@include breakpoint-deprecated( "<660px" ) {

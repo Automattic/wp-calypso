@@ -3,14 +3,14 @@ import { snakeCase } from 'lodash';
 import { STEPPER_TRACKS_EVENTS_STEP_NAV } from 'calypso/landing/stepper/constants';
 import { getStepOldSlug } from 'calypso/landing/stepper/declarative-flow/helpers/get-step-old-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { ProvidedDependencies } from '../types';
+import { ProvidedDependencies, StepperStep } from '../types';
 
 export interface RecordStepNavigationParams {
 	event: ( typeof STEPPER_TRACKS_EVENTS_STEP_NAV )[ number ];
 	intent: string;
 	goals?: string[];
 	flow: string;
-	step: string;
+	step: StepperStep[ 'slug' ];
 	variant?: string;
 	providedDependencies?: ProvidedDependencies;
 	additionalProps?: ProvidedDependencies;

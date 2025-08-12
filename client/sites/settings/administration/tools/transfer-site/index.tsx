@@ -1,12 +1,9 @@
-import page from '@automattic/calypso-router';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useQueryUserPurchases } from 'calypso/components/data/query-user-purchases';
 import { PanelCardHeading } from 'calypso/components/panel';
 import { ResponseDomain } from 'calypso/lib/domains/types';
-import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
-import { getSettingsSource } from 'calypso/my-sites/site-settings/site-tools/utils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
@@ -26,8 +23,6 @@ const Strong = styled( 'strong' )( {
 
 const SiteTransferComplete = () => {
 	const translate = useTranslate();
-	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
-
 	const userEmail = useSelector( getCurrentUserEmail );
 	if ( ! userEmail ) {
 		return null;
@@ -47,9 +42,7 @@ const SiteTransferComplete = () => {
 	);
 	return (
 		<>
-			{ isUntangled && (
-				<PanelCardHeading>{ translate( 'Confirmation email sent' ) }</PanelCardHeading>
-			) }
+			<PanelCardHeading>{ translate( 'Confirmation email sent' ) }</PanelCardHeading>
 			{ message }
 		</>
 	);
@@ -71,7 +64,6 @@ const SiteOwnerTransfer = () => {
 	const pendingDomain = nonWpcomDomains?.find(
 		( wpcomDomain: ResponseDomain ) => wpcomDomain.pendingTransfer
 	);
-	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
 
 	useEffect( () => {
 		dispatch( recordTracksEvent( 'calypso_site_owner_transfer_page_view' ) );
@@ -81,25 +73,16 @@ const SiteOwnerTransfer = () => {
 		return null;
 	}
 
-	const onBackClick = () => {
-		if ( ! pendingDomain && newSiteOwner && ! transferSiteSuccess ) {
-			setNewSiteOwner( null );
-		} else {
-			const source = isUntangled ? '/sites/settings/site' : getSettingsSource();
-			page( `${ source }/${ selectedSite.slug }` );
-		}
-	};
-
 	if ( confirmationHash ) {
 		return (
-			<SiteTransferCard siteId={ selectedSite.ID } onClick={ onBackClick }>
+			<SiteTransferCard siteId={ selectedSite.ID }>
 				<ConfirmationTransfer siteId={ selectedSite.ID } confirmationHash={ confirmationHash } />
 			</SiteTransferCard>
 		);
 	}
 
 	return (
-		<SiteTransferCard siteId={ selectedSite.ID } onClick={ onBackClick }>
+		<SiteTransferCard siteId={ selectedSite.ID }>
 			{ pendingDomain && <PendingDomainTransfer domain={ pendingDomain } /> }
 			{ ! pendingDomain && ! newSiteOwner && (
 				<SiteOwnerTransferEligibility

@@ -10,16 +10,41 @@ import {
 	REBLOGGING_FLOW,
 	SITE_MIGRATION_FLOW,
 	ENTREPRENEUR_FLOW,
-	HOSTED_SITE_MIGRATION_FLOW,
-	NEW_HOSTED_SITE_FLOW_USER_INCLUDED,
 	ONBOARDING_FLOW,
 	HUNDRED_YEAR_DOMAIN_FLOW,
 	EXAMPLE_FLOW,
 	AI_SITE_BUILDER_FLOW,
+	ONBOARDING_UNIFIED_FLOW,
 } from '@automattic/onboarding';
-import type { Flow } from '../declarative-flow/internals/types';
+import type { Flow, FlowV2 } from '../declarative-flow/internals/types';
 
-const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
+const availableFlows: Record< string, () => Promise< { default: FlowV2< any > } > > = {
+	[ NEW_HOSTED_SITE_FLOW ]: () =>
+		import(
+			/* webpackChunkName: "new-hosted-site-flow" */ './flows/new-hosted-site-flow/new-hosted-site-flow'
+		),
+
+	[ ONBOARDING_FLOW ]: () =>
+		import( /* webpackChunkName: "onboarding-flow" */ './flows/onboarding/onboarding' ),
+
+	[ SITE_MIGRATION_FLOW ]: () =>
+		import(
+			/* webpackChunkName: "site-migration-flow" */ './flows/site-migration-flow/site-migration-flow'
+		),
+
+	[ EXAMPLE_FLOW ]: () =>
+		import( /* webpackChunkName: "example-flow" */ './flows/00-example-flow/example' ),
+
+	[ ONBOARDING_UNIFIED_FLOW ]: () =>
+		import(
+			/* webpackChunkName: "onboarding-unified-flow" */ './flows/onboarding-unified/onboarding-unified'
+		),
+};
+
+/**
+ * These flows use FlowV1 API. Which is deprecated and they should be upgraded to FlowV2.
+ */
+export const deprecatedV1Flows: Record< string, () => Promise< { default: Flow } > > = {
 	'site-setup': () =>
 		import( /* webpackChunkName: "site-setup-flow" */ './flows/site-setup-flow/site-setup-flow' ),
 
@@ -58,16 +83,6 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	[ CONNECT_DOMAIN_FLOW ]: () =>
 		import( /* webpackChunkName: "connect-domain" */ './flows/connect-domain/connect-domain' ),
 
-	[ NEW_HOSTED_SITE_FLOW ]: () =>
-		import(
-			/* webpackChunkName: "new-hosted-site-flow" */ './flows/new-hosted-site-flow/new-hosted-site-flow'
-		),
-
-	[ NEW_HOSTED_SITE_FLOW_USER_INCLUDED ]: () =>
-		import(
-			/* webpackChunkName: "new-hosted-site-flow-user-included" */ './flows/new-hosted-site-flow-user-included/new-hosted-site-flow-user-included'
-		),
-
 	[ TRANSFERRING_HOSTED_SITE_FLOW ]: () =>
 		import(
 			/* webpackChunkName: "transferring-hosted-site-flow" */ './flows/transferring-hosted-site-flow/transferring-hosted-site-flow'
@@ -78,9 +93,6 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	[ GOOGLE_TRANSFER ]: () =>
 		import( /* webpackChunkName: "google-transfer" */ './flows/google-transfer/google-transfer' ),
-
-	[ ONBOARDING_FLOW ]: () =>
-		import( /* webpackChunkName: "onboarding-flow" */ './flows/onboarding/onboarding' ),
 
 	[ 'plugin-bundle' ]: () =>
 		import(
@@ -99,29 +111,14 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	[ REBLOGGING_FLOW ]: () =>
 		import( /* webpackChunkName: "reblogging-flow" */ './flows/reblogging/reblogging' ),
-
-	[ SITE_MIGRATION_FLOW ]: () =>
-		import(
-			/* webpackChunkName: "site-migration-flow" */ './flows/site-migration-flow/site-migration-flow'
-		),
-	[ EXAMPLE_FLOW ]: () =>
-		import( /* webpackChunkName: "example-flow" */ './flows/00-example-flow/example' ),
 };
 
-const aiSiteBuilderFlows: Record< string, () => Promise< { default: Flow } > > = config.isEnabled(
-	'calypso/ai-site-builder-flow'
-)
-	? {
-			[ AI_SITE_BUILDER_FLOW ]: () => import( './flows/ai-site-builder/ai-site-builder' ),
-	  }
-	: {};
-
-const hostedSiteMigrationFlow: Record< string, () => Promise< { default: Flow } > > = {
-	[ HOSTED_SITE_MIGRATION_FLOW ]: () =>
-		import(
-			/* webpackChunkName: "hosted-site-migration-flow" */ './flows/hosted-site-migration-flow/hosted-site-migration-flow'
-		),
-};
+const aiSiteBuilderFlows: Record< string, () => Promise< { default: FlowV2< any > } > > =
+	config.isEnabled( 'calypso/ai-site-builder-flow' )
+		? {
+				[ AI_SITE_BUILDER_FLOW ]: () => import( './flows/ai-site-builder/ai-site-builder' ),
+		  }
+		: {};
 
 const hundredYearDomainFlow: Record< string, () => Promise< { default: Flow } > > = {
 	[ HUNDRED_YEAR_DOMAIN_FLOW ]: () =>
@@ -136,7 +133,7 @@ const hundredYearDomainFlow: Record< string, () => Promise< { default: Flow } > 
 
 export default {
 	...availableFlows,
-	...hostedSiteMigrationFlow,
+	...deprecatedV1Flows,
 	...hundredYearDomainFlow,
 	...aiSiteBuilderFlows,
 };

@@ -27,10 +27,10 @@ export const THEME_COLLECTIONS = {
 			tier: 'marketplace',
 		},
 		get title() {
-			return translate( 'Partner Themes' );
+			return translate( 'Partner themes' );
 		},
 		get fullTitle() {
-			return translate( 'Partner Themes' );
+			return translate( 'Partner themes' );
 		},
 		collectionSlug: 'partner-themes',
 		get description() {
@@ -48,10 +48,10 @@ export const THEME_COLLECTIONS = {
 			tier: 'partner',
 		},
 		get title() {
-			return translate( 'Partner Themes' );
+			return translate( 'Partner themes' );
 		},
 		get fullTitle() {
-			return translate( 'Partner Themes' );
+			return translate( 'Partner themes' );
 		},
 		collectionSlug: 'partner-themes',
 		get description() {

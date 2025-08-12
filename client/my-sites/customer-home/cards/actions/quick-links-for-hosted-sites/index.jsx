@@ -1,4 +1,4 @@
-import { getAllFeaturesForPlan } from '@automattic/calypso-products/';
+import { getAllFeaturesForPlan } from '@automattic/calypso-products';
 import { JetpackLogo, FoldableCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -7,7 +7,6 @@ import { useDebouncedCallback } from 'use-debounce';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import getSelectedEditor from 'calypso/state/selectors/get-selected-editor';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { getSitePlanSlug, getSite, getSiteOption } from 'calypso/state/sites/selectors';
@@ -48,13 +47,13 @@ const QuickLinksForHostedSites = ( props ) => {
 	const quickLinks = (
 		<div className="quick-links-for-hosted-sites__boxes quick-links__boxes">
 			<ActionBox
-				href={ `/hosting-config/${ siteSlug }#sftp-credentials` }
+				href={ `/sites/${ siteSlug }/settings/sftp-ssh` }
 				hideLinkIndicator
 				label={ translate( 'Set up SSH' ) }
 				materialIcon="key"
 			/>
 			<ActionBox
-				href={ `/hosting-config/${ siteSlug }#staging-site` }
+				href={ `/staging-site/${ siteSlug }` }
 				hideLinkIndicator
 				label={ translate( 'Create staging site' ) }
 				gridicon="science"
@@ -148,9 +147,7 @@ const QuickLinksForHostedSites = ( props ) => {
 
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
-	const isClassicEditor = getSelectedEditor( state, siteId ) === 'classic';
-	const isStaticHomePage =
-		! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' );
+	const isStaticHomePage = 'page' === getSiteOption( state, siteId, 'show_on_front' );
 
 	return {
 		isStaticHomePage,

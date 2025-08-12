@@ -13,17 +13,12 @@ import type { ZendeskMessage } from '../types';
 export const useZendeskMessageListener = () => {
 	const { setChat, chat } = useOdieAssistantContext();
 
-	const { isChatLoaded, currentSupportInteraction } = useSelect( ( select ) => {
+	const { isChatLoaded } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return {
-			currentSupportInteraction: helpCenterSelect.getCurrentSupportInteraction(),
 			isChatLoaded: helpCenterSelect.getIsChatLoaded(),
 		};
 	}, [] );
-
-	const currentZendeskConversationId = currentSupportInteraction?.events.find(
-		( event ) => event.event_source === 'zendesk'
-	)?.event_external_id;
 
 	const messageListener = useCallback(
 		( message: unknown, data: { conversation: { id: string } } ) => {
@@ -53,12 +48,5 @@ export const useZendeskMessageListener = () => {
 			// @ts-expect-error -- 'off' is not part of the def.
 			Smooch?.off?.( 'message:received', messageListener );
 		};
-	}, [
-		isChatLoaded,
-		currentZendeskConversationId,
-		chat,
-		setChat,
-		currentSupportInteraction,
-		messageListener,
-	] );
+	}, [ isChatLoaded, messageListener ] );
 };

@@ -34,6 +34,10 @@
 	margin: 0;
 	list-style: none;
 
+	a {
+		text-decoration: none;
+	}
+
 	@mixin tabs-view-styles {
 		display: flex;
 		width: 100%;

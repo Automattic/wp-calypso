@@ -127,7 +127,7 @@ export function generateAdminSections(
 		},
 		{
 			title: __( "View my site's latest stats" ),
-			link: `/stats/day/${ siteSlug }`,
+			link: `https://${ siteSlug }/wp-admin/admin.php?page=stats`,
 			synonyms: [ 'analytics' ],
 			icon: 'stats-alt',
 		},
@@ -390,7 +390,7 @@ export function generateAdminSections(
 		},
 		{
 			title: __( 'View contact form messages', __i18n_text_domain__ ),
-			link: `https://${ siteSlug }/wp-admin/edit.php?post_type=feedback&calypsoify=1`,
+			link: `https://${ siteSlug }/wp-admin/admin.php?page=jetpack-forms-admin`,
 			synonyms: [ 'contact', 'form' ],
 			icon: 'cog',
 		},

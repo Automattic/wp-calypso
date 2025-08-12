@@ -1,0 +1,53 @@
+@import "@wordpress/base-styles/colors";
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
+
+.dashboard-callout {
+	overflow: hidden;
+
+	&.is-highlight {
+		background: rgba(56, 88, 233, 0.04);
+	}
+
+	&.is-image-full-bleed {
+		.dashboard-callout__h-container {
+			padding: 0;
+		}
+
+		.dashboard-callout__content {
+			padding: $grid-unit-30;
+		}
+	}
+}
+
+.dashboard-callout__h-container {
+	padding: $grid-unit-30;
+	@include body-medium;
+	color: $gray-700;
+
+	> * {
+		flex: 1 0;
+	}
+}
+
+.dashboard-callout__title {
+	@include heading-large;
+	color: $gray-900;
+	margin: 0;
+}
+
+.dashboard-callout__image {
+	position: relative;
+
+	img,
+	svg {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+	}
+
+	img {
+		object-fit: cover;
+	}
+}
+

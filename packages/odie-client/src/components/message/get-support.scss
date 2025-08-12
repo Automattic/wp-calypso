@@ -31,6 +31,12 @@
 			gap: 4px;
 			color: var( --studio-gray-70 );
 
+			&:disabled {
+				pointer-events: none;
+				color: var( --studio-gray-30 );
+				border-color: var( --studio-gray-30 );
+			}
+
 			&:hover {
 				border: 1px solid var( --studio-gray-20 );
 				cursor: pointer;
@@ -43,19 +49,8 @@
 		}
 	}
 
-	.help-center__cookie-warning {
+	.help-center__notice.cookie-warning {
 		margin-top: 16px;
-	}
-}
-
-.help-center__cookie-warning {
-	background-color: var( --studio-yellow-0 );
-	border-left: 4px solid var( --studio-yellow-20 );
-	padding: 8px 16px;
-	margin-bottom: 30px;
-
-	p {
-		margin: 0;
 	}
 }
 

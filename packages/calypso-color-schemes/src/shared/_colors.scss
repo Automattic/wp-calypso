@@ -1,5 +1,4 @@
 @import "../__color-studio/color-properties";
-@import "../__color-studio/color-properties-rgb";
 
 // Legacy blue values were taken from https://github.com/Automattic/color-studio/pull/764/
 :root {
@@ -16,18 +15,4 @@
 	--color-deprecated-blue-90: #01283d;
 	--color-deprecated-blue-100: #001621;
 	--color-deprecated-blue: #0675c4;
-
-	--color-deprecated-blue-0-rgb: 233, 240, 245;
-	--color-deprecated-blue-5-rgb: 187, 224, 250;
-	--color-deprecated-blue-10-rgb: 145, 202, 242;
-	--color-deprecated-blue-20-rgb: 104, 179, 232;
-	--color-deprecated-blue-30-rgb: 57, 156, 227;
-	--color-deprecated-blue-40-rgb: 22, 137, 219;
-	--color-deprecated-blue-50-rgb: 6, 117, 196;
-	--color-deprecated-blue-60-rgb: 5, 93, 156;
-	--color-deprecated-blue-70-rgb: 4, 75, 122;
-	--color-deprecated-blue-80-rgb: 2, 57, 92;
-	--color-deprecated-blue-90-rgb: 1, 40, 61;
-	--color-deprecated-blue-100-rgb: 0, 22, 33;
-	--color-deprecated-blue-rgb: 6, 117, 196;
 }

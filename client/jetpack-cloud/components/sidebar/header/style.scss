@@ -50,8 +50,8 @@ html.accessible-focus .jetpack-cloud-sidebar__profile-dropdown-button:focus {
 	border: 1px solid var(--studio-gray-0);
 	border-radius: 2px;
 	box-shadow:
-		0 4px 6px rgba(var(--studio-gray-100-rgb), 0.1),
-		0 1px 2px rgba(var(--studio-gray-100-rgb), 0.1);
+		0 4px 6px color-mix(in srgb, var(--studio-gray-100) 10%, transparent),
+		0 1px 2px color-mix(in srgb, var(--studio-gray-100) 10%, transparent);
 	list-style-type: none;
 
 	font-size: $font-body-small;

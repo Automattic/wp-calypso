@@ -1,0 +1,9 @@
+@import '@wordpress/base-styles/variables';
+
+.leave-site-modal__form {
+	font-size: $font-size-medium;
+
+	a {
+		text-decoration: none;
+	}
+}

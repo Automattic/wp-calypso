@@ -17,10 +17,12 @@ type Props = {
 };
 
 const BlueprintFormRadio = ( {
+	id,
 	label,
 	checked,
 	onChange,
 }: {
+	id?: string;
 	label: string;
 	checked: boolean;
 	onChange: () => void;
@@ -37,7 +39,13 @@ const BlueprintFormRadio = ( {
 				}
 			} }
 		>
-			<FormRadio label={ label } checked={ checked } onChange={ onChange } />
+			<FormRadio
+				id={ id }
+				htmlFor={ id }
+				label={ label }
+				checked={ checked }
+				onChange={ onChange }
+			/>
 		</div>
 	);
 };
@@ -111,6 +119,7 @@ const BlueprintForm: React.FC< Props > = ( { onContinue, initialFormData, goBack
 					{ topGoalOptions.map( ( option ) => (
 						<BlueprintFormRadio
 							key={ `goal-option-${ option.value }` }
+							id={ `goal-option-${ option.value }` }
 							label={ option.label }
 							checked={ formData.topPartneringGoal === option.value }
 							onChange={ () => {
@@ -131,6 +140,7 @@ const BlueprintForm: React.FC< Props > = ( { onContinue, initialFormData, goBack
 					{ mainGoal2025Options.map( ( option ) => (
 						<BlueprintFormRadio
 							key={ `main-goal-2025-option-${ option.value }` }
+							id={ `main-goal-2025-option-${ option.value }` }
 							label={ option.label }
 							checked={ formData.topYearlyGoal === option.value }
 							onChange={ () => {

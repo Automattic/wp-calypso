@@ -1,9 +1,9 @@
+import { formatCurrency } from '@automattic/number-formatters';
 import { DropdownMenu, MenuGroup, MenuItem, MenuItemsChoice, Button } from '@wordpress/components';
 import { Fragment } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { chevronDown, Icon, arrowRight } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { formatCurrency } from 'i18n-calypso';
 import { useState, KeyboardEvent } from 'react';
 import { Product, Plan } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 

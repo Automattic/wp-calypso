@@ -38,7 +38,6 @@ export const SiteSettingsSecurity = ( {
 				actionURL={ '/settings/general/' + site.slug }
 				title={ translate( 'No security configuration is required.' ) }
 				line={ translate( 'Security management is automatic for WordPress.com sites.' ) }
-				illustration="/calypso/images/illustrations/illustration-jetpack.svg"
 			/>
 		);
 	}

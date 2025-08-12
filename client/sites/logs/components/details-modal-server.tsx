@@ -1,5 +1,6 @@
 import { Badge } from '@automattic/components';
-import { useTranslate, numberFormat } from 'i18n-calypso';
+import { formatNumber } from '@automattic/number-formatters';
+import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { ServerLog } from 'calypso/data/hosting/use-site-logs-query';
 import { useSelector } from 'calypso/state';
@@ -45,7 +46,7 @@ const DetailsModalServer = ( { item }: DetailsModalServerProps ) => {
 			<div className="site-logs-details-modal__field-title">{ translate( 'Request URL' ) }</div>
 			<div>{ item.request_url }</div>
 			<div className="site-logs-details-modal__field-title">{ translate( 'Body Bytes Sent' ) }</div>
-			<div>{ numberFormat( item.body_bytes_sent ) }</div>
+			<div>{ formatNumber( item.body_bytes_sent ) }</div>
 			<div className="site-logs-details-modal__field-title">{ translate( 'Cached' ) }</div>
 			<div>{ item.cached }</div>
 			<div className="site-logs-details-modal__field-title">{ translate( 'HTTP Host' ) }</div>

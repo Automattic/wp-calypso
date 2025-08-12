@@ -1,3 +1,4 @@
+import { formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -9,7 +10,7 @@ import StatsModulePlaceholder from '../stats-module/placeholder';
 import toggleInfo from '../toggle-info';
 
 const StatsPostDetailMonths = ( props ) => {
-	const { dataKey, isRequesting, postId, numberFormat, siteId, stats, total, translate } = props;
+	const { dataKey, isRequesting, postId, siteId, stats, total, translate } = props;
 	const noData = ! stats;
 	const isLoading = isRequesting && noData;
 	const classes = {
@@ -65,7 +66,7 @@ const StatsPostDetailMonths = ( props ) => {
 				if ( hasData ) {
 					cells.push(
 						<td className={ cellClass } key={ 'y' + i + 'm' + j }>
-							<span className="value">{ numberFormat( year.months[ j ] ) }</span>
+							<span className="value">{ formatNumber( year.months[ j ] ) }</span>
 						</td>
 					);
 				} else {
@@ -75,7 +76,7 @@ const StatsPostDetailMonths = ( props ) => {
 
 			cells.push(
 				<td key={ 'total' + i }>
-					{ numberFormat( 'years' === dataKey ? year.total : year.overall ) }
+					{ formatNumber( 'years' === dataKey ? year.total : year.overall ) }
 				</td>
 			);
 

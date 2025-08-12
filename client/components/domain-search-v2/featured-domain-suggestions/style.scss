@@ -1,0 +1,21 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.featured-domain-suggestions-v2 {
+	container-type: inline-size;
+	container-name: featured-suggestions;
+}
+
+.featured-domain-suggestions-v2__content {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+
+	@container featured-suggestions (min-width: 600px) {
+		flex-direction: row;
+	}
+}
+
+.featured-domain-suggestions-v2__item {
+	flex: 1;
+}

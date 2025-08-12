@@ -27,16 +27,19 @@ import {
 	isJetpackStatsPaidProductSlug,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
+import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import { encodeProductForUrl } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
-import { formatCurrency } from 'i18n-calypso';
-import i18n, { numberFormat, type TranslateResult } from 'i18n-calypso';
+import i18n, { type TranslateResult } from 'i18n-calypso';
 import moment from 'moment';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { isMarketplaceTemporarySitePurchase } from 'calypso/me/purchases/utils';
+import {
+	isMarketplaceTemporarySitePurchase,
+	isA4ATemporarySitePurchase,
+} from 'calypso/me/purchases/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
 import type { Purchase } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -83,7 +86,9 @@ const siteStatus: SiteStatus = {
 	hasExpired: 30,
 	hasExpiringSoon: 40,
 	hasPaymentMethodExpired: 50,
+	sitelessPlan: 55, // i.e. - Akismet plans
 	noPaymentActionNeeded: 60,
+	hasOwnershipTransferred: 80,
 	hasCannotManage: 100,
 };
 
@@ -93,18 +98,23 @@ const purchaseStatus: PurchaseStatus = {
 	paymentMethodExpired: 20,
 	expiringSoon: 30,
 	noPaymentActionNeeded: 40,
+	ownershipTransferred: 80,
 	cannotManage: 100,
 };
 
 function getSitePurchasesStatus( site: SiteWithPurchases ) {
-	if ( ! site.isConnected ) {
+	if ( ! site.isConnected && ! site.slug?.startsWith( 'siteless.akismet.com' ) ) {
 		if ( site.slug === 'siteless.jetpack.com' ) {
 			return 'pendingActivation';
 		}
 		return 'disconnected';
 	}
 	const { purchases } = site;
-
+	if (
+		purchases.some( ( purchase ) => purchase.currentPurchaseStatus === 'ownershipTransferred' )
+	) {
+		return 'hasOwnershipTransferred';
+	}
 	if ( purchases.some( ( purchase ) => purchase.currentPurchaseStatus === 'cannotManage' ) ) {
 		return 'hasCannotManage';
 	}
@@ -119,12 +129,19 @@ function getSitePurchasesStatus( site: SiteWithPurchases ) {
 	if ( purchases.some( ( purchase ) => purchase.currentPurchaseStatus === 'expiringSoon' ) ) {
 		return 'hasExpiringSoon';
 	}
+	if ( ! site.isConnected && site.slug?.startsWith( 'siteless.akismet.com' ) ) {
+		return 'sitelessPlan'; // i.e. - Akismet plans
+	}
 
 	return 'noPaymentActionNeeded';
 }
 
-function getPurchaseStatus( purchase: PurchaseWithStatus ) {
+function getPurchaseStatus( purchase: PurchaseWithStatus, userId?: number ) {
 	const expiry = moment( purchase.expiryDate );
+
+	if ( userId && purchase.userId !== userId && purchase.purchaserId === userId ) {
+		return 'ownershipTransferred';
+	}
 
 	if ( purchase.isInAppPurchase || isPartnerPurchase( purchase ) ) {
 		return 'cannotManage';
@@ -155,7 +172,8 @@ function getPurchaseStatus( purchase: PurchaseWithStatus ) {
  */
 export function getPurchasesBySite(
 	purchases: Purchase[],
-	sites: SiteDetails[]
+	sites: SiteDetails[],
+	userId?: number
 ): SiteWithPurchases[] {
 	const purchasesBySite = purchases.reduce( ( result: SiteWithPurchases[], currentValue ) => {
 		const site = result.find( ( site ) => site.id === currentValue.siteId );
@@ -163,7 +181,7 @@ export function getPurchasesBySite(
 		if ( site ) {
 			site.purchases = site.purchases.concat( {
 				...currentValue,
-				currentPurchaseStatus: getPurchaseStatus( currentValue as PurchaseWithStatus ),
+				currentPurchaseStatus: getPurchaseStatus( currentValue as PurchaseWithStatus, userId ),
 			} ) as PurchaseWithStatus[];
 			site.isConnected = true;
 			return result;
@@ -183,7 +201,7 @@ export function getPurchasesBySite(
 			purchases: [
 				{
 					...currentValue,
-					currentPurchaseStatus: getPurchaseStatus( currentValue as PurchaseWithStatus ),
+					currentPurchaseStatus: getPurchaseStatus( currentValue as PurchaseWithStatus, userId ),
 				},
 			],
 			isConnected: siteObject ? true : false,
@@ -261,7 +279,7 @@ export function getDisplayName( purchase: Purchase ): TranslateResult {
 		return i18n.translate( '%(productName)s (%(quantity)s requests per month)', {
 			args: {
 				productName: jetpackProductsDisplayNames[ productSlug ],
-				quantity: numberFormat( purchase.purchaseRenewalQuantity ),
+				quantity: formatNumber( purchase.purchaseRenewalQuantity ),
 			},
 		} );
 	}
@@ -274,7 +292,7 @@ export function getDisplayName( purchase: Purchase ): TranslateResult {
 		return i18n.translate( '%(productName)s (%(quantity)s views per month)', {
 			args: {
 				productName: jetpackProductsDisplayNames[ productSlug ],
-				quantity: numberFormat( purchase.purchaseRenewalQuantity ),
+				quantity: formatNumber( purchase.purchaseRenewalQuantity ),
 			},
 		} );
 	}
@@ -911,6 +929,10 @@ export function purchaseType( purchase: Purchase ): string | null {
 	}
 
 	if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
+		return null;
+	}
+
+	if ( isA4ATemporarySitePurchase( purchase ) ) {
 		return null;
 	}
 

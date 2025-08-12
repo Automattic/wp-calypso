@@ -12,7 +12,7 @@
 	}
 
 	.step-container {
-		background: #fdfdfd;
+		background: var( --color-main-background, #fcfcfc );
 		padding: 0 0 60px;
 		margin: 0;
 		max-width: none;

@@ -1,5 +1,9 @@
 import page from '@automattic/calypso-router';
-import { CompactCard, SegmentedControl } from '@automattic/components';
+import { CompactCard } from '@automattic/components';
+import {
+	__experimentalToggleGroupControl as ToggleGroupControl,
+	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
+} from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { trim, flatMap } from 'lodash';
@@ -11,7 +15,6 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import SearchInput from 'calypso/components/search';
 import { addQueryArgs } from 'calypso/lib/url';
 import withDimensions from 'calypso/lib/with-dimensions';
-import ReaderBackButton from 'calypso/reader/components/back-button';
 import BlankSuggestions from 'calypso/reader/components/reader-blank-suggestions';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { READER_SEARCH_POPULAR_SITES } from 'calypso/reader/follow-sources';
@@ -83,23 +86,27 @@ class SearchStream extends React.Component {
 		window.scrollTo( 0, 0 );
 	};
 
-	useRelevanceSort = () => {
-		const sort = 'relevance';
-		recordAction( 'search_page_clicked_relevance_sort' );
-		this.props.recordReaderTracksEvent( 'calypso_reader_clicked_search_sort', {
-			query: this.props.query,
-			sort,
-		} );
-		updateQueryArg( { sort } );
-	};
+	onChangeSortPicker = ( sort ) => {
+		if ( typeof sort !== 'string' ) {
+			return;
+		}
 
-	useDateSort = () => {
-		const sort = 'date';
-		recordAction( 'search_page_clicked_date_sort' );
-		this.props.recordReaderTracksEvent( 'calypso_reader_clicked_search_sort', {
-			query: this.props.query,
-			sort,
-		} );
+		switch ( sort ) {
+			case 'date':
+				recordAction( 'search_page_clicked_date_sort' );
+				break;
+			case 'relevance':
+				recordAction( 'search_page_clicked_relevance_sort' );
+				break;
+		}
+
+		if ( recordReaderTracksEvent ) {
+			this.props.recordReaderTracksEvent( 'calypso_reader_clicked_search_sort', {
+				query: this.props.query,
+				sort,
+			} );
+		}
+
 		updateQueryArg( { sort } );
 	};
 
@@ -116,7 +123,7 @@ class SearchStream extends React.Component {
 		const { query, translate, searchType, suggestions, isLoggedIn } = this.props;
 		const sortOrder = this.props.sort;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
-		const segmentedControlClass = wideDisplay
+		const toggleGroupControlClasses = wideDisplay
 			? 'search-stream__sort-picker is-wide'
 			: 'search-stream__sort-picker';
 		// Hide posts and sites if the only result has no feed ID. This can happen when searching
@@ -165,12 +172,11 @@ class SearchStream extends React.Component {
 		return (
 			<div>
 				<DocumentHead title={ documentTitle } />
+				<NavigationHeader
+					title={ translate( 'Search' ) }
+					subtitle={ translate( 'Search for specific topics, authors, or blogs.' ) }
+				/>
 				<div className="search-stream__fixed-area" ref={ this.handleFixedAreaMounted }>
-					<ReaderBackButton />
-					<NavigationHeader
-						title={ translate( 'Search' ) }
-						subtitle={ translate( 'Search for specific topics, authors, or blogs.' ) }
-					/>
 					<CompactCard className="search-stream__input-card">
 						<SearchInput
 							onSearch={ this.updateQuery }
@@ -186,17 +192,20 @@ class SearchStream extends React.Component {
 					</CompactCard>
 					<SearchFollowButton query={ query } feeds={ this.state.feeds } />
 					{ query && (
-						<SegmentedControl compact className={ segmentedControlClass }>
-							<SegmentedControl.Item
-								selected={ sortOrder !== 'date' }
-								onClick={ this.useRelevanceSort }
+						<div className={ toggleGroupControlClasses }>
+							<ToggleGroupControl
+								hideLabelFromVision
+								isBlock
+								label=""
+								value={ sortOrder }
+								onChange={ this.onChangeSortPicker }
+								__nextHasNoMarginBottom
+								__next40pxDefaultSize
 							>
-								{ TEXT_RELEVANCE_SORT }
-							</SegmentedControl.Item>
-							<SegmentedControl.Item selected={ sortOrder === 'date' } onClick={ this.useDateSort }>
-								{ TEXT_DATE_SORT }
-							</SegmentedControl.Item>
-						</SegmentedControl>
+								<ToggleGroupControlOption label={ TEXT_RELEVANCE_SORT } value="relevance" />
+								<ToggleGroupControlOption label={ TEXT_DATE_SORT } value="date" />
+							</ToggleGroupControl>
+						</div>
 					) }
 					{ ! query && (
 						<BlankSuggestions

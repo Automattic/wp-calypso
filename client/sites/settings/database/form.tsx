@@ -1,17 +1,16 @@
 import { Button, MaterialIcon } from '@automattic/components';
 import { PanelBody } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
-import { useState, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
+import { useCallback, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { HostingCard } from 'calypso/components/hosting-card';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import wpcom from 'calypso/lib/wp';
 import {
-	composeAnalytics,
-	recordTracksEvent,
-	recordGoogleEvent,
 	bumpStat,
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -69,8 +68,6 @@ export default function PhpMyAdminForm( { disabled }: PhpMyAdminFormProps ) {
 	const [ isRestorePasswordDialogVisible, setIsRestorePasswordDialogVisible ] = useState( false );
 	const { openPhpMyAdmin, loading } = useOpenPhpMyAdmin();
 	const dispatch = useDispatch();
-
-	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
 
 	const form = (
 		<div className="phpmyadmin-card__wrapper">
@@ -134,13 +131,8 @@ export default function PhpMyAdminForm( { disabled }: PhpMyAdminFormProps ) {
 			className="phpmyadmin-card"
 			headingId="database-access"
 			title={ translate( 'Database access' ) }
-			fallthrough={ isUntangled }
+			fallthrough
 		>
-			<HostingCardDescription hide={ isUntangled }>
-				{ translate(
-					'For the tech-savvy, manage your database with phpMyAdmin and run a wide range of operations with MySQL.'
-				) }
-			</HostingCardDescription>
 			{ form }
 		</HostingCard>
 	);

@@ -5,6 +5,14 @@
 	"calypso:src": "src/index.ts",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
+	"exports": {
+		".": {
+			"calypso:src": "./src/index.ts",
+			"types": "./dist/types/index.d.ts",
+			"import": "./dist/esm/index.js",
+			"require": "./dist/cjs/index.js"
+		}
+	},
 	"sideEffects": [
 		"*.css",
 		"*.scss"
@@ -47,16 +55,16 @@
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@testing-library/dom": "^10.4.0",
 		"@testing-library/jest-dom": "^6.6.3",
-		"@testing-library/react": "^16.2.0",
+		"@testing-library/react": "^16.3.0",
 		"postcss": "^8.5.3",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
-		"typescript": "^5.8.2",
-		"webpack": "^5.97.1"
+		"typescript": "^5.8.3",
+		"webpack": "^5.99.8"
 	},
 	"peerDependencies": {
-		"@babel/runtime": "^7.26.9",
-		"@wordpress/data": "^10.20.0",
+		"@babel/runtime": "^7.27.1",
+		"@wordpress/data": "^10.23.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1"
 	},
@@ -71,6 +79,6 @@
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/languages": "workspace:^",
 		"clsx": "^2.1.1",
-		"debug": "^4.4.0"
+		"debug": "^4.4.1"
 	}
 }

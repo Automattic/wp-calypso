@@ -1,8 +1,16 @@
+@import "@wordpress/base-styles/variables";
+
 .two-factor-authentication__verification-code-form-wrapper {
 	.two-factor-authentication__actions {
-		padding: 24px;
+		padding: $grid-unit-30 $grid-unit-20;
+
+		@media (min-width: 480px) {
+			padding-inline: $grid-unit-30;
+		}
+
 		button {
 			display: block;
+			width: 100%;
 			margin-left: auto;
 			margin-right: auto;
 		}

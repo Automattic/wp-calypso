@@ -20,12 +20,6 @@ import { getMarketingFeaturesData } from './marketing-features-data';
 
 import './style.scss';
 
-const items = [
-	{ key: '', text: 'All' },
-	{ key: 'new', text: 'New tools' },
-	{ key: 'favourite', text: 'User favorites' },
-];
-
 export default function MarketingTools() {
 	const translate = useTranslate();
 	const [ searchTerm, setSearchTerm ] = useState( '' );
@@ -34,6 +28,11 @@ export default function MarketingTools() {
 	const searchRef = useRef< ImperativeHandle >( null );
 	const selectedSiteSlug: T.SiteSlug | null = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId ) || 0;
+	const items = [
+		{ key: '', text: translate( 'All' ) },
+		{ key: 'new', text: translate( 'New tools' ) },
+		{ key: 'favourite', text: translate( 'User favorites' ) },
+	];
 
 	const marketingFeatures = getMarketingFeaturesData( selectedSiteSlug, translate, localizeUrl );
 

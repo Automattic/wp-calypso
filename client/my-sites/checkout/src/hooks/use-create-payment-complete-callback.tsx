@@ -14,6 +14,7 @@ import {
 import { useSelector, useDispatch } from 'calypso/state';
 import { clearPurchases } from 'calypso/state/purchases/actions';
 import { fetchReceiptCompleted } from 'calypso/state/receipts/actions';
+import hasGravatarDomainQueryParam from 'calypso/state/selectors/has-gravatar-domain-query-param';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { requestSite } from 'calypso/state/sites/actions';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
@@ -100,6 +101,7 @@ export default function useCreatePaymentCompleteCallback( {
 					isSearchPluginActive( state, siteId ) ) &&
 				! isAtomicSite( state, siteId )
 		) || false;
+	const isGravatarDomain = useSelector( hasGravatarDomainQueryParam );
 	const adminPageRedirect = useSelector( ( state ) =>
 		getJetpackCheckoutRedirectUrl( state, siteId )
 	);
@@ -127,6 +129,7 @@ export default function useCreatePaymentCompleteCallback( {
 
 			const getThankYouPageUrlArguments: PostCheckoutUrlArguments = {
 				siteSlug: siteSlug || undefined,
+				siteId: siteId || undefined,
 				adminUrl,
 				receiptId: 'receipt_id' in transactionResult ? transactionResult.receipt_id : undefined,
 				redirectTo,
@@ -135,6 +138,7 @@ export default function useCreatePaymentCompleteCallback( {
 				cart: responseCart,
 				sitelessCheckoutType,
 				isJetpackNotAtomic,
+				isGravatarDomain,
 				productAliasFromUrl,
 				hideNudge: isComingFromUpsell,
 				isInModal,
@@ -235,6 +239,7 @@ export default function useCreatePaymentCompleteCallback( {
 					siteSlug,
 					orderId: 'order_id' in transactionResult ? transactionResult.order_id : undefined,
 					receiptId: 'receipt_id' in transactionResult ? transactionResult.receipt_id : undefined,
+					fromExternalCheckout: sitelessCheckoutType === 'a4a',
 				} );
 				return;
 			}
@@ -252,6 +257,7 @@ export default function useCreatePaymentCompleteCallback( {
 					orderId: 'order_id' in transactionResult ? transactionResult.order_id : undefined,
 					receiptId: 'receipt_id' in transactionResult ? transactionResult.receipt_id : undefined,
 					fromSiteSlug,
+					fromExternalCheckout: sitelessCheckoutType === 'a4a',
 				} );
 				return;
 			}
@@ -263,6 +269,8 @@ export default function useCreatePaymentCompleteCallback( {
 				siteSlug,
 				orderId: 'order_id' in transactionResult ? transactionResult.order_id : undefined,
 				receiptId: 'receipt_id' in transactionResult ? transactionResult.receipt_id : undefined,
+				fromExternalCheckout: sitelessCheckoutType === 'a4a',
+				isGravatarDomain,
 			} );
 		},
 		[
@@ -273,6 +281,7 @@ export default function useCreatePaymentCompleteCallback( {
 			purchaseId,
 			feature,
 			isJetpackNotAtomic,
+			isGravatarDomain,
 			productAliasFromUrl,
 			isComingFromUpsell,
 			isInModal,

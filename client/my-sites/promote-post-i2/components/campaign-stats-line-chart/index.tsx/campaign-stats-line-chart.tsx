@@ -26,7 +26,6 @@ type GraphProps = {
 
 const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 	const [ width, setWidth ] = useState( DEFAULT_DIMENSIONS.width );
-	const hourly = resolution === ChartResolution.Hour;
 	const tooltipRef = useRef< HTMLDivElement | null >( null );
 
 	const accentColor = getComputedStyle( document.body ).getPropertyValue( '--color-accent' ).trim();
@@ -65,14 +64,25 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 	const locale = useLocale();
 
 	const options = useMemo( () => {
-		const formatDate = ( date: Date, hourly: boolean ) => {
-			const options: Intl.DateTimeFormatOptions = hourly
-				? { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' }
-				: { month: 'short', day: 'numeric' };
+		const formatDate = ( date: Date, resolution: ChartResolution ) => {
+			let options: Intl.DateTimeFormatOptions;
+			switch ( resolution ) {
+				case ChartResolution.Month:
+					options = { year: 'numeric', month: 'short' };
+					break;
+				case ChartResolution.Week:
+				case ChartResolution.Day:
+					options = { month: 'short', day: 'numeric' };
+					break;
+				case ChartResolution.Hour:
+					options = { month: 'short', day: 'numeric', hour: 'numeric' };
+					break;
+			}
+
 			return new Intl.DateTimeFormat( locale, options ).format( date );
 		};
 
-		const tooltipPlugin = tooltip( tooltipRef, formatDate, hourly, formatValue );
+		const tooltipPlugin = tooltip( tooltipRef, formatDate, resolution, formatValue );
 
 		function formatValue( rawValue: number ) {
 			if ( rawValue == null ) {
@@ -104,7 +114,7 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 					values: ( u: uPlot, splits: number[] ) => {
 						// Filter the splits to show only non-overlapping labels
 						return splits.map( ( s, i ) =>
-							i % 4 === 0 ? formatDate( new Date( s * 1000 ), hourly ) : ''
+							i % 4 === 0 ? formatDate( new Date( s * 1000 ), resolution ) : ''
 						);
 					},
 				},
@@ -118,6 +128,7 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 						show: false,
 					},
 					gap: 16,
+					size: 72,
 				},
 			],
 			cursor: {
@@ -134,10 +145,15 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 			},
 			scales: {
 				y: {
-					range: ( self: uPlot, min: number, max: number ): [ number, number ] => [
-						min,
-						max + ( max - min ) * 0.4, // Increase the scale by 40%, this allows extra space for the tooltip
-					],
+					range: ( self: uPlot, min: number, max: number ): [ number, number ] => {
+						if ( min === 0 && max === 0 ) {
+							// If all values are 0, set a default range
+							return [ 0, 1 ];
+						}
+						// Increase the scale by 40%, this allows extra space for the tooltip
+						const padding = ( max - min ) * 0.4;
+						return [ min, max + padding ];
+					},
 				},
 			},
 			series: [
@@ -147,7 +163,7 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 						if ( rawValue == null ) {
 							return '-';
 						}
-						return formatDate( new Date( rawValue * 1000 ), hourly );
+						return formatDate( new Date( rawValue * 1000 ), resolution );
 					},
 				},
 				{
@@ -183,7 +199,7 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 			],
 			plugins: [ tooltipPlugin ],
 		};
-	}, [ hourly, width, source, accentColor, locale, chartColor ] );
+	}, [ resolution, width, source, accentColor, locale, chartColor ] );
 
 	return (
 		<div style={ { position: 'relative' } }>

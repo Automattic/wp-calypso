@@ -1,6 +1,5 @@
 import { PLAN_JETPACK_FREE } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Button, Gridicon } from '@automattic/components';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 import { flowRight, get, omit } from 'lodash';
@@ -68,7 +67,6 @@ const jetpackConnection = ( WrappedComponent ) => {
 
 		/**
 		 * Check if there is a history of pages to go back to
-		 *
 		 * @returns {boolean}
 		 */
 		canGoBack = () => {
@@ -83,19 +81,6 @@ const jetpackConnection = ( WrappedComponent ) => {
 						{ translate( 'Install Jetpack manually' ) }
 					</LoggedOutFormLinkItem>
 					<HelpButton />
-					{ this.canGoBack() && (
-						<div className="jetpack-connect__navigation">
-							<Button
-								compact
-								borderless
-								className="jetpack-connect__back-button"
-								onClick={ this.goBack }
-							>
-								<Gridicon icon="arrow-left" size={ 18 } />
-								{ translate( 'Back' ) }
-							</Button>
-						</div>
-					) }
 				</LoggedOutFormLinks>
 			);
 		};
@@ -326,6 +311,8 @@ const jetpackConnection = ( WrappedComponent ) => {
 					status={ this.state.status }
 					renderFooter={ this.renderFooter }
 					renderNotices={ this.renderNotices }
+					canGoBack={ this.canGoBack() }
+					goBack={ this.goBack }
 					isCurrentUrlFetching={ this.isCurrentUrlFetching() }
 					{ ...props }
 				/>

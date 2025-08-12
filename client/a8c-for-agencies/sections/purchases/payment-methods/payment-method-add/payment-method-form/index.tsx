@@ -23,7 +23,7 @@ import {
 	A4A_CLIENT_PAYMENT_METHODS_LINK,
 	A4A_CLIENT_CHECKOUT,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import useIssueAndAssignLicenses from 'calypso/a8c-for-agencies/sections/marketplace/products-overview-v2/hooks/use-issue-and-assign-licenses';
+import useIssueAndAssignLicenses from 'calypso/a8c-for-agencies/sections/marketplace/products-overview/hooks/use-issue-and-assign-licenses';
 import { parseQueryStringProducts } from 'calypso/jetpack-cloud/sections/partner-portal/lib/querystring-products';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector, useDispatch } from 'calypso/state';

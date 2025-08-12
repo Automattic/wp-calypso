@@ -9,6 +9,9 @@ import cardExpansions from './card-expansions/reducer';
 import hasUnseenPosts from './seen-posts/reducer';
 import sidebar from './sidebar/reducer';
 
+const PENDING_ACTION_STORAGE_KEY = 'wp-reader-pending-signup-action';
+const PENDING_ACTION_MAX_AGE = 5 * 60 * 1000; // 5 minutes
+
 /**
  * Keep the last reader stream path selected by the user, for the purpose of autoselecting it
  * when user navigates back to Reader
@@ -39,10 +42,72 @@ export const currentStream = ( state = null, action ) => {
 	}
 };
 
+// We bridge the gap between logged out and logged in with local storage. A new user liking a post
+// while logged out will have their state cleared when logged in, even using withPersistence. This
+// allows us to complete the action after they have signed up and logged in.
+const getInitialLastActionState = () => {
+	// avoid SSR errors
+	if ( typeof window === 'undefined' ) {
+		return null;
+	}
+
+	const storedAction = window.localStorage.getItem( PENDING_ACTION_STORAGE_KEY );
+	if ( ! storedAction ) {
+		return null;
+	}
+
+	const parsedAction = JSON.parse( storedAction );
+
+	// To prevent lingering storage causing bugs, we only allow this action to be used for 5
+	// minutes.
+	if ( parsedAction?.timestamp ) {
+		const { timestamp, ...actionWithoutTimestamp } = parsedAction;
+		const currentTime = Date.now();
+		const actionAge = currentTime - timestamp;
+
+		if ( actionAge <= PENDING_ACTION_MAX_AGE ) {
+			return actionWithoutTimestamp;
+		}
+	}
+
+	return null;
+};
+
 /*
  * Holds the last action that requires the user to be logged in
  */
 export const lastActionRequiresLogin = ( state = null, action ) => {
+	switch ( action.type ) {
+		case READER_REGISTER_LAST_ACTION_REQUIRES_LOGIN:
+			window.localStorage.setItem(
+				PENDING_ACTION_STORAGE_KEY,
+				JSON.stringify( { ...action.lastAction, timestamp: Date.now() } )
+			);
+			return action.lastAction;
+		case READER_CLEAR_LAST_ACTION_REQUIRES_LOGIN:
+			window.localStorage.removeItem( PENDING_ACTION_STORAGE_KEY );
+			return null;
+		default:
+			return state;
+	}
+};
+
+/*
+ * Holds the last action that required the user to login, persisted by the above
+ * lastActionRequiresLogin reducer.
+ *
+ * We keep this separate since at truthy value of lastActionRequiresLogin singals the join
+ * conversation dialog to open. The persisted value is only useful for the pending action handler in
+ * cases that required a reload or new window, and should not trigger another dialog to appear while
+ * logged out after reload or new window.
+ */
+const persistedLastActionPriorToLogin = ( state, action ) => {
+	// Since we use localStorage, we cannot call getInitialLastActionState() in the declaration
+	// above as it may initialize before window object is available (ssr).
+	if ( typeof state === 'undefined' ) {
+		state = getInitialLastActionState();
+	}
+
 	switch ( action.type ) {
 		case READER_REGISTER_LAST_ACTION_REQUIRES_LOGIN:
 			return action.lastAction;
@@ -59,6 +124,7 @@ const combinedReducer = combineReducers( {
 	lastPath,
 	currentStream,
 	lastActionRequiresLogin,
+	persistedLastActionPriorToLogin,
 	hasUnseenPosts,
 } );
 

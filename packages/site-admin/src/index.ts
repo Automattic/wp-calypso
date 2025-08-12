@@ -1,7 +1,17 @@
 /**
  * Components
  */
-export { SidebarContent, SidebarNavigationItem, SidebarNavigationScreen } from './components/';
+export { Link } from './router';
+
+export {
+	Page,
+	SidebarContent,
+	SiteHub,
+	SidebarNavigationItem,
+	SidebarNavigationScreen,
+} from './components';
+
+export { NavigableRegion } from './interface';
 
 /**
  * Hooks

@@ -43,7 +43,6 @@
 	.environment {
 		position: relative;
 		display: none;
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 9px;
 		font-weight: 600;
 		line-height: 1;
@@ -107,8 +106,17 @@
 }
 
 @include breakpoint-deprecated( "<960px" ) {
-	// Don't show environment badge on smaller screens. It just gets in the way.
 	.environment-badge {
-		display: none;
+		right: 20px;
+
+		&.hovered {
+			display: flex;
+			flex-wrap: wrap-reverse;
+			justify-content: flex-end;
+			padding-left: 20px;
+		}
+	}
+	.bug-report {
+		margin-top: -10px;
 	}
 }

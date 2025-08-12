@@ -10,7 +10,7 @@
 		margin-bottom: 1.5rem;
 	}
 
-    strong.is-highlighted {
+	strong.is-highlighted {
 		font-size: 0.75rem;
 		display: inline-block;
 		background-color: var(--studio-yellow-20);
@@ -29,52 +29,52 @@
 	}
 
 	.required-checkboxes {
-        .components-base-control__field {
-            font-family: $font-sf-pro-text;
-            margin-bottom: 1.25rem;
-            background-color: var(--studio-white);
-            padding: 1.2rem;
-            border-radius: 4px;
-            border: 1px solid var(--studio-gray-5);
-            display: flex;
-            align-items: center;
+		.components-base-control__field {
+			font-family: $font-sf-pro-text;
+			margin-bottom: 1.25rem;
+			background-color: var(--studio-white);
+			padding: 1.2rem;
+			border-radius: 4px;
+			border: 1px solid var(--studio-gray-5);
+			display: flex;
+			align-items: center;
 
-            .components-checkbox-control__label {
-                font-family: $font-sf-pro-text;
-                line-height: 20px;
-                font-size: 0.875rem;
-                color: var(--studio-gray-100);
-                text-wrap: pretty;
-            }
+			.components-checkbox-control__label {
+				font-family: $font-sf-pro-text;
+				line-height: 20px;
+				font-size: 0.875rem;
+				color: var(--studio-gray-100);
+				text-wrap: pretty;
+			}
 
-            .components-checkbox-control__input-container,
-            .components-checkbox-control__input[type="checkbox"],
-            svg.components-checkbox-control__checked {
-                width: 1rem;
-                height: 1rem;
-                margin-top: 0.125rem;
-            }
+			.components-checkbox-control__input-container,
+			.components-checkbox-control__input[type="checkbox"],
+			svg.components-checkbox-control__checked {
+				width: 1rem;
+				height: 1rem;
+				margin-top: 0.125rem;
+			}
 
-            
-        }
-        
-        &.downgrade-plan-form__atomic-revert-checkbox-enabled {
-            .components-base-control__field {
-                border: 1px solid var(--color-accent);
-                background: #f9fbfd;
-            }
-        }
-    }
+			
+		}
+		
+		&.downgrade-plan-form__atomic-revert-checkbox-enabled {
+			.components-base-control__field {
+				border: 1px solid var(--color-accent);
+				background: #f9fbfd;
+			}
+		}
+	}
 
-    .downgrade-purchase-form__atomic-lossless-revert{
-        margin-top: 1.25rem;
-        background-color: var(--studio-white);
-        padding: 1.2rem 1.2rem 0.5rem 1.2rem;
-        border-radius: 4px;
-        border: 1px solid var(--studio-gray-5);
-        display: flex;
-        align-items: center;
-    }
+	.downgrade-purchase-form__atomic-lossless-revert{
+		margin-top: 1.25rem;
+		background-color: var(--studio-white);
+		padding: 1.2rem 1.2rem 0.5rem 1.2rem;
+		border-radius: 4px;
+		border: 1px solid var(--studio-gray-5);
+		display: flex;
+		align-items: center;
+	}
 
 
 
@@ -82,33 +82,31 @@
 		margin-top: 1.25rem;
 	}
 
-    .downgrade-plan-form__backups {
-        display: flex;
-        gap: 1rem;
-        align-items: center;
-        border: 1px solid var(--studio-gray-5);
-        padding: 12px 10px 12px 20px;
-        font-size: 0.75rem;
-        border-left: 3px solid var(--color-accent);
-    
-        h4 {
-            color: var(--studio-gray-70);
-            font-weight: 600;
-            margin-bottom: 0;
-            font-size: 0.875rem;
-        }
-    
-        p {
-            margin-bottom: 0;
-        }
-    
-        a {
-            font-size: 0.75rem;
-            padding: 0.5rem;
-            border-radius: 2px;
-            height: 28px;
-        }
-    }
+	.downgrade-plan-form__backups {
+		display: flex;
+		gap: 1rem;
+		align-items: center;
+		border: 1px solid var(--studio-gray-5);
+		padding: 12px 10px 12px 20px;
+		font-size: 0.75rem;
+		border-left: 3px solid var(--color-accent);
+	
+		h4 {
+			color: var(--studio-gray-70);
+			font-weight: 600;
+			margin-bottom: 0;
+			font-size: 0.875rem;
+		}
+	
+		p {
+			margin-bottom: 0;
+		}
+	
+		a {
+			font-size: 0.75rem;
+			padding: 0.5rem;
+			border-radius: 2px;
+			height: 28px;
+		}
+	}
 }
-
-

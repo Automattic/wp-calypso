@@ -5,7 +5,6 @@ import {
 	redirectIfCurrentUserCannot,
 } from 'calypso/controller';
 import { siteSelection, navigation, sites } from 'calypso/my-sites/controller';
-import { redirectSiteSettingsIfDuplicatedViewsDisabled } from 'calypso/my-sites/site-settings/settings-controller';
 import {
 	SETTINGS_SITE,
 	SETTINGS_ADMINISTRATION_RESET_SITE,
@@ -17,6 +16,7 @@ import {
 	SETTINGS_SFTP_SSH,
 } from 'calypso/sites/components/site-preview-pane/constants';
 import { siteDashboard } from 'calypso/sites/controller';
+import { redirectToHostingDashboardBackportIfEnabled } from '../v2/site-settings/controller';
 import {
 	redirectIfCantDeleteSite,
 	redirectIfCantStartSiteOwnerTransfer,
@@ -32,7 +32,7 @@ import {
 	performanceSettings,
 	redirectToSiteSettingsIfAdvancedHostingFeaturesNotSupported,
 	redirectToSiteSettingsIfHostingFeaturesNotSupported,
-	redirectToHostingConfigIfDuplicatedViewsDisabled,
+	redirectToSiteSettingsNewUrl,
 } from './controller';
 
 export default function () {
@@ -42,7 +42,7 @@ export default function () {
 		siteSelection,
 		navigation,
 		redirectIfCurrentUserCannot( 'manage_options' ),
-		redirectSiteSettingsIfDuplicatedViewsDisabled,
+		redirectToHostingDashboardBackportIfEnabled,
 		siteSettings,
 		siteDashboard( SETTINGS_SITE ),
 		makeLayout,
@@ -84,7 +84,7 @@ export default function () {
 	page(
 		'/sites/settings/server/:site',
 		siteSelection,
-		redirectToHostingConfigIfDuplicatedViewsDisabled,
+		redirectToHostingDashboardBackportIfEnabled,
 		redirectToSiteSettingsIfAdvancedHostingFeaturesNotSupported,
 		navigation,
 		serverSettings,
@@ -97,7 +97,7 @@ export default function () {
 	page(
 		'/sites/settings/sftp-ssh/:site',
 		siteSelection,
-		redirectToHostingConfigIfDuplicatedViewsDisabled,
+		redirectToHostingDashboardBackportIfEnabled,
 		redirectToSiteSettingsIfAdvancedHostingFeaturesNotSupported,
 		navigation,
 		sftpSshSettings,
@@ -110,7 +110,7 @@ export default function () {
 	page(
 		'/sites/settings/database/:site',
 		siteSelection,
-		redirectToHostingConfigIfDuplicatedViewsDisabled,
+		redirectToHostingDashboardBackportIfEnabled,
 		redirectToSiteSettingsIfAdvancedHostingFeaturesNotSupported,
 		navigation,
 		databaseSettings,
@@ -123,12 +123,23 @@ export default function () {
 	page(
 		'/sites/settings/performance/:site',
 		siteSelection,
-		redirectToHostingConfigIfDuplicatedViewsDisabled,
+		redirectToHostingDashboardBackportIfEnabled,
 		redirectToSiteSettingsIfHostingFeaturesNotSupported,
 		navigation,
 		performanceSettings,
 		siteDashboard( SETTINGS_PERFORMANCE ),
 		makeLayout,
 		clientRender
+	);
+
+	/**
+	 * Settings V2
+	 */
+	page( '/sites/settings/v2', siteSelection, sites, makeLayout, clientRender );
+	page(
+		'/sites/settings/v2/:site/:feature?',
+		siteSelection,
+		navigation,
+		redirectToSiteSettingsNewUrl
 	);
 }

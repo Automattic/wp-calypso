@@ -16,4 +16,10 @@ export interface SubmitContactSupportParams {
 	contact_type?: string;
 	pressable_id?: number;
 	tags?: string[];
+	issues?: string;
+	location?: string;
+	screenshot?: File;
+	feature?: string;
+	inspiration?: string;
+	workflow?: string;
 }

@@ -24,7 +24,7 @@ export function getAvailabilityErrorMessage( {
 			);
 		}
 
-		if ( registerNowAction ) {
+		if ( registerNowAction && status !== domainAvailability.TLD_NOT_SUPPORTED ) {
 			return createInterpolateElement( __( "This domain isn't registered. <a>Register now.</a>" ), {
 				a: createElement( 'a', {
 					href: '#',

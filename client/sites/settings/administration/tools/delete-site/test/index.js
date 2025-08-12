@@ -37,9 +37,6 @@ const initialState = {
 		hasLoadedSitePurchasesFromServer: true,
 		data: [],
 	},
-	explatExperiments: {
-		experimentAssignments: {},
-	},
 	preferences: {},
 };
 
@@ -58,11 +55,6 @@ describe( 'index', () => {
 	jest.mock( 'calypso/state/sites/actions', () => {
 		return {
 			deleteSite: mockDeleteSite,
-		};
-	} );
-	jest.mock( 'calypso/state/explat-experiments/actions', () => {
-		return {
-			getRemoveDuplicateViewsExperimentAssignment: jest.fn(),
 		};
 	} );
 
@@ -112,7 +104,7 @@ describe( 'index', () => {
 		storeData.purchases.data = [
 			{
 				blog_id: 1,
-				active: true,
+				subscription_status: 'active',
 				is_refundable: true,
 			},
 		];

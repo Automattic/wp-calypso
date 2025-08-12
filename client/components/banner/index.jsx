@@ -19,7 +19,6 @@ import { connect } from 'react-redux';
 import DismissibleCard from 'calypso/blocks/dismissible-card';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { preventWidows } from 'calypso/lib/formatting';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -226,10 +225,10 @@ export class Banner extends Component {
 		}
 		if ( typeof description === 'string' ) {
 			return (
-				<div
+				<p
 					className="banner__description"
 					dangerouslySetInnerHTML={ { __html: this.sanitize( description ) } } // eslint-disable-line react/no-danger
-				></div>
+				></p>
 			);
 		}
 		return <div className="banner__description">{ description }</div>;
@@ -274,7 +273,7 @@ export class Banner extends Component {
 					/>
 				) }
 				<div className="banner__info">
-					<div className="banner__title">{ title }</div>
+					<h3 className="banner__title">{ title }</h3>
 					{ this.renderDescription( description ) }
 					{ size( list ) > 0 && (
 						<ul className="banner__list">
@@ -301,6 +300,16 @@ export class Banner extends Component {
 								<PlanPrice rawPrice={ prices[ 1 ] } discounted />
 							</div>
 						) }
+						{ secondaryCallToAction && (
+							<Button
+								compact={ compactButton }
+								href={ secondaryHref }
+								onClick={ this.handleSecondaryClick }
+								primary={ false }
+							>
+								{ secondaryCallToAction }
+							</Button>
+						) }
 						{ callToAction &&
 							( forceHref ? (
 								<Button
@@ -309,7 +318,7 @@ export class Banner extends Component {
 									target={ target }
 									busy={ isBusy }
 								>
-									{ preventWidows( callToAction ) }
+									{ callToAction }
 								</Button>
 							) : (
 								<Button
@@ -320,20 +329,9 @@ export class Banner extends Component {
 									target={ target }
 									busy={ isBusy }
 								>
-									{ preventWidows( callToAction ) }
+									{ callToAction }
 								</Button>
 							) ) }
-
-						{ secondaryCallToAction && (
-							<Button
-								compact={ compactButton }
-								href={ secondaryHref }
-								onClick={ this.handleSecondaryClick }
-								primary={ false }
-							>
-								{ preventWidows( secondaryCallToAction ) }
-							</Button>
-						) }
 					</div>
 				) }
 			</div>

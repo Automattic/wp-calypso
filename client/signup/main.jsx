@@ -6,9 +6,11 @@ import {
 	isPlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
+import { GravatarTextLogo } from '@automattic/components';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { camelToSnakeCase } from '@automattic/js-utils';
 import * as oauthToken from '@automattic/oauth-token';
+import { isDomainForGravatarFlow } from '@automattic/onboarding';
 import debugModule from 'debug';
 import {
 	clone,
@@ -44,10 +46,15 @@ import {
 	isWooOAuth2Client,
 	isGravatarOAuth2Client,
 	isPartnerPortalOAuth2Client,
+	isA4AOAuth2Client,
+	isBlazeProOAuth2Client,
+	isCrowdsignalOAuth2Client,
+	isVIPOAuth2Client,
+	isJetpackCloudOAuth2Client,
+	isStudioAppOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import SignupFlowController from 'calypso/lib/signup/flow-controller';
 import FlowProgressIndicator from 'calypso/signup/flow-progress-indicator';
-import P2SignupProcessingScreen from 'calypso/signup/p2-processing-screen';
 import SignupHeader from 'calypso/signup/signup-header';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import {
@@ -59,6 +66,8 @@ import {
 } from 'calypso/state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import getIsAkismet from 'calypso/state/selectors/get-is-akismet';
+import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
@@ -75,8 +84,6 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import flows from './config/flows';
 import { getStepComponent } from './config/step-components';
 import steps from './config/steps';
-import { addP2SignupClassName } from './controller';
-import { isP2Flow } from './is-flow';
 import ProcessingScreen from './processing-screen';
 import {
 	persistSignupDestination,
@@ -108,22 +115,6 @@ function dependenciesContainCartItem( dependencies ) {
 	);
 }
 
-function addLoadingScreenClassNamesToBody() {
-	if ( ! document ) {
-		return;
-	}
-
-	document.body.classList.add( 'has-loading-screen-signup' );
-}
-
-function removeLoadingScreenClassNamesFromBody() {
-	if ( ! document ) {
-		return;
-	}
-
-	document.body.classList.remove( 'has-loading-screen-signup' );
-}
-
 function showProgressIndicator( flowName ) {
 	const flow = flows.getFlow( flowName );
 	return ! flow.hideProgressIndicator;
@@ -153,7 +144,6 @@ class Signup extends Component {
 		shouldShowLoadingScreen: false,
 		resumingStep: undefined,
 		previousFlowName: null,
-		signupSiteName: null,
 	};
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
@@ -260,7 +250,8 @@ class Signup extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { flowName, stepName, sitePlanName, sitePlanSlug, signupDependencies } = this.props;
+		const { flowName, stepName, sitePlanName, sitePlanSlug, signupDependencies, siteDomains } =
+			this.props;
 
 		if (
 			( flowName !== prevProps.flowName || stepName !== prevProps.stepName ) &&
@@ -291,28 +282,18 @@ class Signup extends Component {
 			);
 		}
 
-		// Several steps in the P2 signup flow require a logged in user.
-		if ( isP2Flow( this.props.flowName ) && ! this.props.isLoggedIn && stepName !== 'user' ) {
-			debug( 'P2 signup: logging in user', this.props.signupDependencies );
-
-			// We want to be redirected to the next step.
-			const destinationStep = flows.getFlow( this.props.flowName, this.props.isLoggedIn )
-				.steps[ 1 ];
-			const stepUrl = getStepUrl(
-				this.props.flowName,
-				destinationStep,
-				undefined,
-				this.props.locale
-			);
-			this.handleLogin( this.props.signupDependencies, stepUrl, false );
-			this.handleDestination( this.props.signupDependencies, stepUrl, this.props.flowName );
+		// Clear domains dependencies when the domains data is updated.
+		if (
+			stepName === 'domains' &&
+			signupDependencies.domainItem !== prevProps.signupDependencies.domainItem
+		) {
+			clearDomainsDependencies();
 		}
 
-		const { domainItem: prevDomainItem } = prevProps.signupDependencies;
-
-		// Clear domains dependencies when the domains data is updated.
-		if ( stepName === 'domains' && signupDependencies.domainItem !== prevDomainItem ) {
-			clearDomainsDependencies();
+		// Re-check fulfilled steps when siteDomains data changes
+		// This ensures that isDomainFulfilled is called again when domain data loads
+		if ( flowName === 'launch-site' && siteDomains !== prevProps.siteDomains ) {
+			this.removeFulfilledSteps( this.props );
 		}
 	}
 
@@ -461,28 +442,10 @@ class Signup extends Component {
 			);
 
 			this.setState( { shouldShowLoadingScreen: true } );
-
-			if ( isP2Flow( this.props.flowName ) ) {
-				// Record submitted site name for displaying it in the loading screen
-				if ( ! this.state.signupSiteName ) {
-					this.setState( {
-						signupSiteName: this.props.progress?.[ 'p2-site' ]?.form?.siteTitle?.value || '',
-					} );
-				}
-
-				addLoadingScreenClassNamesToBody();
-
-				// We have to add the P2 signup class name as well because it gets removed in the 'users' step.
-				addP2SignupClassName();
-			}
 		}
 
 		if ( hasInvalidSteps ) {
 			this.setState( { shouldShowLoadingScreen: false } );
-
-			if ( isP2Flow( this.props.flowName ) ) {
-				removeLoadingScreenClassNamesFromBody();
-			}
 		}
 	};
 
@@ -796,10 +759,6 @@ class Signup extends Component {
 	}
 
 	renderProcessingScreen() {
-		if ( isP2Flow( this.props.flowName ) ) {
-			return <P2SignupProcessingScreen signupSiteName={ this.state.signupSiteName } />;
-		}
-
 		const domainItem = get( this.props, 'signupDependencies.domainItem', {} );
 		const hasPaidDomain = isDomainRegistration( domainItem );
 		const destination = this.signupFlowController.getDestination();
@@ -813,7 +772,7 @@ class Signup extends Component {
 		);
 	}
 
-	renderCurrentStep() {
+	renderCurrentStep( isUnifiedCreateAccount ) {
 		const { stepName, flowName } = this.props;
 
 		const flow = flows.getFlow( flowName, this.props.isLoggedIn );
@@ -827,7 +786,8 @@ class Signup extends Component {
 			...flowStepProps,
 		};
 		const stepKey = this.state.shouldShowLoadingScreen ? 'processing' : stepName;
-		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;
+		const shouldRenderLocaleSuggestions =
+			0 === this.getPositionInFlow() && ! this.props.isLoggedIn && ! isUnifiedCreateAccount;
 
 		let propsForCurrentStep = propsFromConfig;
 		if ( this.props.isManageSiteFlow ) {
@@ -917,7 +877,20 @@ class Signup extends Component {
 			return this.props.siteId && waitToRenderReturnValue;
 		}
 
-		const showPageHeader = ! isP2Flow( this.props.flowName ) && ! this.props.isGravatar;
+		const isUnifiedCreateAccount =
+			0 === this.getPositionInFlow() &&
+			! this.props.isLoggedIn &&
+			( this.props.isWoo ||
+				this.props.isA4A ||
+				this.props.isCrowdsignal ||
+				this.props.isBlazePro ||
+				this.props.isAkismet ||
+				this.props.isVIPClient ||
+				this.props.isJetpackCloud ||
+				isStudioAppOAuth2Client( this.props.oauth2Client ) );
+
+		const showPageHeader = ! this.props.isGravatar && ! isUnifiedCreateAccount;
+		const isGravatarDomain = isDomainForGravatarFlow( this.props.flowName );
 
 		return (
 			<>
@@ -939,9 +912,10 @@ class Signup extends Component {
 									/>
 								)
 							}
+							logoComponent={ isGravatarDomain ? <GravatarTextLogo /> : undefined }
 						/>
 					) }
-					<div className="signup__steps">{ this.renderCurrentStep() }</div>
+					<div className="signup__steps">{ this.renderCurrentStep( isUnifiedCreateAccount ) }</div>
 					{ this.state.bearerToken && (
 						<WpcomLoginForm
 							authorization={ 'Bearer ' + this.state.bearerToken }
@@ -989,6 +963,13 @@ export default connect(
 			isGravatar: isGravatarOAuth2Client( oauth2Client ),
 			wccomFrom: getWccomFrom( state ),
 			hostingFlow,
+			isWoo: getIsWoo( state ),
+			isA4A: isA4AOAuth2Client( oauth2Client ),
+			isBlazePro: isBlazeProOAuth2Client( oauth2Client ),
+			isCrowdsignal: isCrowdsignalOAuth2Client( oauth2Client ),
+			isAkismet: getIsAkismet( state ),
+			isVIPClient: isVIPOAuth2Client( oauth2Client ),
+			isJetpackCloud: isJetpackCloudOAuth2Client( oauth2Client ),
 		};
 	},
 	{

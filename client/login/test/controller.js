@@ -1,10 +1,6 @@
 import page from '@automattic/calypso-router';
-import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
-import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
-import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
-import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
-import { redirectJetpack, redirectLostPassword, login } from '../controller';
+import { redirectJetpack, login } from '../controller';
 
 jest.mock( 'calypso/state/oauth2-clients/actions', () => ( {
 	...jest.requireActual( 'calypso/state/oauth2-clients/actions' ),
@@ -127,59 +123,5 @@ describe( 'login', () => {
 
 		expect( getOAuth2Client ).toHaveBeenCalledWith( state, '1234' );
 		expect( next ).toHaveBeenCalled();
-	} );
-} );
-
-describe( 'redirectLostPassword', () => {
-	let context;
-	let next;
-
-	beforeEach( () => {
-		context = {
-			params: {},
-			query: {},
-			store: {
-				getState: jest.fn(),
-			},
-			redirect: jest.fn(),
-		};
-		next = jest.fn();
-
-		// Reset all mocks before each test
-		jest.clearAllMocks();
-	} );
-
-	it( 'should call next() if action is not "lostpassword"', () => {
-		context.params.action = 'someOtherAction';
-
-		redirectLostPassword( context, next );
-
-		expect( next ).toHaveBeenCalled();
-		expect( context.redirect ).not.toHaveBeenCalled();
-	} );
-
-	it( 'should call next() if isWooOAuth2Client returns true', () => {
-		context.params.action = 'lostpassword';
-		context.store.getState.mockReturnValueOnce( {} );
-		getCurrentOAuth2Client.mockReturnValueOnce( 'mocked-client' );
-		isWooOAuth2Client.mockReturnValueOnce( true );
-
-		redirectLostPassword( context, next );
-
-		expect( context.redirect ).not.toHaveBeenCalled();
-		expect( next ).toHaveBeenCalled();
-	} );
-
-	it( 'should redirect to "/wp-login.php?action=lostpassword" if none of the conditions are true', () => {
-		context.params.action = 'lostpassword';
-		context.store.getState.mockReturnValueOnce( {} );
-		getIsBlazePro.mockReturnValueOnce( false );
-		isWooOAuth2Client.mockReturnValueOnce( false );
-		isWooJPCFlow.mockReturnValueOnce( false );
-
-		redirectLostPassword( context, next );
-
-		expect( context.redirect ).toHaveBeenCalledWith( 301, '/wp-login.php?action=lostpassword' );
-		expect( next ).not.toHaveBeenCalled();
 	} );
 } );

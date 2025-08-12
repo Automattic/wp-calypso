@@ -1,6 +1,7 @@
 import { Gridicon, Spinner } from '@automattic/components';
 import clsx from 'clsx';
 import { get } from 'lodash';
+import { InView } from 'react-intersection-observer';
 import { connect } from 'react-redux';
 import QuerySites from 'calypso/components/data/query-sites';
 import Image from 'calypso/components/image';
@@ -13,12 +14,14 @@ import { getSite } from 'calypso/state/sites/selectors';
 
 import './style.scss';
 
-type Site = {
+export type Site = {
 	ID?: number;
 	icon?: {
 		img: string;
 	};
 };
+
+export type SiteIconVariant = 'primary' | 'blank';
 
 type SiteIconProps = {
 	siteId?: number;
@@ -31,6 +34,8 @@ type SiteIconProps = {
 	alt?: string;
 	href?: string;
 	title?: string;
+	lazy?: boolean;
+	variant?: SiteIconVariant;
 	onClick?: () => void;
 };
 
@@ -45,13 +50,15 @@ export function SiteIcon( {
 	alt = '',
 	href = '',
 	title = '',
+	lazy = false,
+	variant = 'blank',
 	onClick = () => {},
 }: SiteIconProps ) {
 	iconUrl = iconUrl?.replace( /\/$/, '' ); // Remove trailing slash from URL as it may lead to 404 errors when adding size parameters.
 	const iconSrc = resizeImageUrl( iconUrl, imgSize, null );
 
 	const classes = clsx( 'site-icon', {
-		'is-blank': ! iconSrc,
+		[ `is-${ variant }` ]: ! iconSrc,
 		'is-transient': isTransientIcon,
 	} );
 
@@ -66,7 +73,6 @@ export function SiteIcon( {
 
 	const children = (
 		<>
-			{ ! site && typeof siteId === 'number' && siteId > 0 && <QuerySites siteId={ siteId } /> }
 			{ iconSrc ? (
 				<MediaImage component={ Image } className="site-icon__img" src={ iconSrc } alt={ alt } />
 			) : (
@@ -76,16 +82,25 @@ export function SiteIcon( {
 		</>
 	);
 
+	// The component need to request the site data if it's not available in the Redux state.
+	// To avoid excessive network requests, render the <QuerySites /> component only when it enters the viewport.
 	return (
-		<div className={ classes } style={ style }>
-			{ href ? (
-				<a href={ href } title={ title } onClick={ onClick }>
-					{ children }
-				</a>
-			) : (
-				children
+		<InView triggerOnce fallbackInView skip={ ! lazy }>
+			{ ( { inView, ref } ) => (
+				<div className={ classes } style={ style } ref={ ref }>
+					{ ( ! lazy || inView ) && ! site && typeof siteId === 'number' && siteId > 0 && (
+						<QuerySites siteId={ siteId } />
+					) }
+					{ href ? (
+						<a href={ href } title={ title } onClick={ onClick }>
+							{ children }
+						</a>
+					) : (
+						children
+					) }
+				</div>
 			) }
-		</div>
+		</InView>
 	);
 }
 

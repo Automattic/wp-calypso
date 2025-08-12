@@ -1,15 +1,16 @@
 import { Card, ComponentSwapper, DotPager } from '@automattic/components';
-import {
-	formatPercentage,
-	percentCalculator,
-} from '@automattic/components/src/highlight-cards/lib/numbers';
 import { eye } from '@automattic/components/src/icons';
+import { formatNumber, formatNumberCompact } from '@automattic/number-formatters';
 import { Icon, people, postContent, starEmpty, commentContent } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useTranslate, numberFormat, numberFormatCompact } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import React, { useMemo } from 'react';
 import QueryPosts from 'calypso/components/data/query-posts';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import {
+	formatPercentage,
+	percentCalculator,
+} from 'calypso/my-sites/stats/components/highlight-cards/lib/numbers';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import {
@@ -148,7 +149,7 @@ export default function AllTimeHighlightsSection( {
 				{
 					id: 'views',
 					header: translate( 'Views' ),
-					content: <span>{ numberFormatCompact( viewsBestDayTotal ) }</span>,
+					content: <span>{ formatNumberCompact( viewsBestDayTotal ) }</span>,
 					footer: translate( '%(percent)s of views', {
 						args: { percent: formatPercentage( bestViewsEverPercent, true ) },
 						context: 'Stats: Percentage of views',
@@ -245,7 +246,7 @@ function AllTimeStatsCard( { infoItems, siteId }: AllTimeStatsCardProps ) {
 										className="highlight-card-info-item-count"
 										title={ Number.isFinite( info.count ) ? String( info.count ) : undefined }
 									>
-										{ numberFormat( info.count ) }
+										{ formatNumber( info.count ) }
 									</span>
 								</div>
 							);

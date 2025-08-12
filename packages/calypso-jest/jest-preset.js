@@ -11,7 +11,7 @@ module.exports = {
 	testEnvironment: 'node',
 	testMatch: [ '<rootDir>/**/test/*.[jt]s?(x)', '!**/.eslintrc.*' ],
 	transform: {
-		'\\.[jt]sx?$': [ 'babel-jest', { rootMode: 'upward' } ],
+		'\\.(?:[jt]sx?|mjs)$': [ 'babel-jest', { rootMode: 'upward' } ],
 		'\\.(gif|jpg|jpeg|png|svg|scss|sass|css)$': require.resolve( './src/asset-transform.js' ),
 	},
 	testPathIgnorePatterns: [ ...defaults.testPathIgnorePatterns, '/dist/' ],

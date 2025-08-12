@@ -50,7 +50,10 @@ const onLearnMoreClick = () => {
 	recordTracksEvent( 'calypso_site_profiler_cta', {
 		cta_name: 'crux_learn_more',
 	} );
-	window.open( 'https://developer.chrome.com/docs/crux', '_blank' );
+	window.open(
+		'https://developer.wordpress.com/docs/site-performance/speed-test/#accessing-the-speed-test-tool',
+		'_blank'
+	);
 };
 
 export const FootNote = () => {

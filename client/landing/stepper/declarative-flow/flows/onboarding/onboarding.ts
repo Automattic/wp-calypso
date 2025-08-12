@@ -1,10 +1,14 @@
-import { PLAN_PERSONAL } from '@automattic/calypso-products';
-import { OnboardSelect, Onboard, UserSelect, ProductsList } from '@automattic/data-stores';
+import { isEnabled } from '@automattic/calypso-config';
+import { DomainSuggestion, OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import { ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding';
+import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
-import { useState, useMemo, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
+import { isSimplifiedOnboarding } from 'calypso/landing/stepper/hooks/use-simplified-onboarding';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
+import { addSurvicate } from 'calypso/lib/analytics/survicate';
+import { useIsDomainSearchV2Enabled } from 'calypso/lib/domains/use-domain-search-v2';
 import { pathToUrl } from 'calypso/lib/url';
 import {
 	persistSignupDestination,
@@ -13,36 +17,25 @@ import {
 	clearSignupCompleteSlug,
 	clearSignupCompleteFlowName,
 	clearSignupDestinationCookie,
+	clearSignupCompleteSiteID,
 } from 'calypso/signup/storageUtils';
-import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
-import {
-	STEPPER_TRACKS_EVENT_SIGNUP_START,
-	STEPPER_TRACKS_EVENT_SIGNUP_STEP_START,
-	STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
-} from '../../../constants';
+import { STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT } from '../../../constants';
 import { useFlowLocale } from '../../../hooks/use-flow-locale';
-import { useIsBigSkyEligible } from '../../../hooks/use-is-site-big-sky-eligible';
-import { useMarketplaceThemeProducts } from '../../../hooks/use-marketplace-theme-products';
 import { useQuery } from '../../../hooks/use-query';
-import { ONBOARD_STORE, USER_STORE } from '../../../stores';
-import { getLoginUrl } from '../../../utils/path';
+import { ONBOARD_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
-import { useBigSkyBeforePlans } from '../../helpers/use-bigsky-before-plans-experiment';
-import { useGoalsFirstExperiment } from '../../helpers/use-goals-first-experiment';
-import { useRedirectDesignSetupOldSlug } from '../../helpers/use-redirect-design-setup-old-slug';
 import { recordStepNavigation } from '../../internals/analytics/record-step-navigation';
+import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-plan-notification';
 import { STEPS } from '../../internals/steps';
-import { AssertConditionState, Flow, ProvidedDependencies } from '../../internals/types';
-
-declare global {
-	interface Window {
-		__a8cBigSkyOnboarding?: boolean;
-	}
-}
-
-const SiteIntent = Onboard.SiteIntent;
+import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
+import {
+	AssertConditionState,
+	type FlowV2,
+	type ProvidedDependencies,
+	type SubmitHandler,
+} from '../../internals/types';
 
 const clearUseMyDomainsQueryParams = ( currentStepSlug: string | undefined ) => {
 	const isDomainsStep = currentStepSlug === 'domains';
@@ -60,73 +53,27 @@ const withLocale = ( url: string, locale: string ) => {
 	return locale && locale !== 'en' ? `${ url }/${ locale }` : url;
 };
 
-const onboarding: Flow = {
+function initialize() {
+	const steps = [
+		STEPS.UNIFIED_DOMAINS,
+		STEPS.USE_MY_DOMAIN,
+		STEPS.UNIFIED_PLANS,
+		STEPS.SITE_CREATION_STEP,
+		STEPS.PROCESSING,
+		STEPS.POST_CHECKOUT_ONBOARDING,
+	];
+
+	return [ ...stepsWithRequiredLogin( steps ), STEPS.PLAYGROUND ];
+}
+
+const onboarding: FlowV2< typeof initialize > = {
 	name: ONBOARDING_FLOW,
 	isSignupFlow: true,
 	__experimentalUseBuiltinAuth: true,
-	useTracksEventProps() {
-		const [ isLoading, isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
-		const userIsLoggedIn = useSelector( isUserLoggedIn );
-		const goals = useSelect(
-			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
-			[]
-		);
-
-		// we are only interested in the initial values and not when they values change
-		const initialGoals = useRef( goals );
-		const initialLoggedOut = useRef( ! userIsLoggedIn );
-
-		return useMemo(
-			() => ( {
-				isLoading,
-				eventsProperties: {
-					[ STEPPER_TRACKS_EVENT_SIGNUP_START ]: {
-						is_goals_first: isGoalsAtFrontExperiment.toString(),
-						...( isGoalsAtFrontExperiment && { step: 'goals' } ),
-						is_logged_out: initialLoggedOut.current.toString(),
-					},
-
-					[ STEPPER_TRACKS_EVENT_SIGNUP_STEP_START ]: {
-						...( isGoalsAtFrontExperiment && {
-							is_goals_first: 'true',
-						} ),
-						...( initialGoals.current.length && {
-							goals: initialGoals.current.join( ',' ),
-						} ),
-					},
-				},
-			} ),
-			[ isGoalsAtFrontExperiment, initialLoggedOut, initialGoals, isLoading ]
-		);
-	},
-	useSteps() {
-		// We have already checked the value has loaded in useAssertConditions
-		const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
-
-		const steps = stepsWithRequiredLogin( [
-			STEPS.UNIFIED_DOMAINS,
-			STEPS.USE_MY_DOMAIN,
-			STEPS.UNIFIED_PLANS,
-			STEPS.SITE_CREATION_STEP,
-			STEPS.PROCESSING,
-			STEPS.POST_CHECKOUT_ONBOARDING,
-		] );
-
-		if ( isGoalsAtFrontExperiment ) {
-			// Note: these steps are not wrapped in `stepsWithRequiredLogin`
-			steps.unshift(
-				STEPS.GOALS,
-				STEPS.DESIGN_CHOICES,
-				STEPS.DESIGN_SETUP,
-				STEPS.DIFM_STARTING_POINT
-			);
-		}
-
-		return steps;
-	},
-
+	initialize,
 	useStepNavigation( currentStepSlug, navigate ) {
 		const flowName = this.name;
+
 		const {
 			setDomain,
 			setDomainCartItem,
@@ -135,157 +82,89 @@ const onboarding: Flow = {
 			setProductCartItems,
 			setSiteUrl,
 			setSignupDomainOrigin,
-			setCreateWithBigSky,
-		} = useDispatch( ONBOARD_STORE );
+		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
 		const locale = useFlowLocale();
 
-		const { planCartItem, signupDomainOrigin, isUserLoggedIn, createWithBigSky } = useSelect(
+		const { signupDomainOrigin } = useSelect(
 			( select ) => ( {
-				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 				signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
-				isUserLoggedIn: ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
-				createWithBigSky: ( select( ONBOARD_STORE ) as OnboardSelect ).getCreateWithBigSky(),
 			} ),
 			[]
 		);
 		const coupon = useQuery().get( 'coupon' );
 
-		const [ redirectedToUseMyDomain, setRedirectedToUseMyDomain ] = useState( false );
-		const [ useMyDomainQueryParams, setUseMyDomainQueryParams ] = useState( {} );
 		const [ useMyDomainTracksEventProps, setUseMyDomainTracksEventProps ] = useState( {} );
-
-		const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
-		const [ , isBigSkyBeforePlansExperiment ] = useBigSkyBeforePlans();
-		const { isEligible: isBigSkyEligible } = useIsBigSkyEligible();
-		const isDesignChoicesStepEnabled = isBigSkyEligible && isGoalsAtFrontExperiment;
-
-		const { selectedMarketplaceProduct } = useMarketplaceThemeProducts();
-
-		if ( typeof window !== 'undefined' && createWithBigSky ) {
-			window.__a8cBigSkyOnboarding = true;
-		} else if ( typeof window !== 'undefined' ) {
-			window.__a8cBigSkyOnboarding = false;
-		}
+		const { setShouldShowNotification } = usePurchasePlanNotification();
 
 		/**
 		 * Returns [destination, backDestination] for the post-checkout destination.
 		 */
-		const getPostCheckoutDestination = (
+		const getPostCheckoutDestination = async (
 			providedDependencies: ProvidedDependencies
-		): [ string, string | null ] => {
-			if ( createWithBigSky && isBigSkyBeforePlansExperiment && isGoalsAtFrontExperiment ) {
-				const destination = addQueryArgs(
-					withLocale( '/setup/site-setup/launch-big-sky', locale ),
-					{
-						siteSlug: providedDependencies.siteSlug,
-						isBigSkyBeforePlansFlow: true,
-					}
-				);
-
-				return [
-					destination,
-					addQueryArgs( withLocale( '/setup/onboarding/plans', locale ), {
-						skippedCheckout: 1,
-						isBigSkyBeforePlansFlow: true,
-					} ),
-				];
-			}
-
+		): Promise< [ string, string | null ] > => {
 			if ( ! providedDependencies.hasExternalTheme && providedDependencies.hasPluginByGoal ) {
 				return [ `/home/${ providedDependencies.siteSlug }`, null ];
 			}
 
+			const playgroundId = getQueryArg( window.location.href, 'playground' );
+			if ( playgroundId && providedDependencies.siteSlug ) {
+				return [
+					addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
+						siteSlug: providedDependencies.siteSlug,
+						siteId: providedDependencies.siteId,
+						playground: playgroundId,
+					} ),
+					null,
+				];
+			}
+
+			/**
+			 * If the dashboard/v2/onboarding feature flag is enabled, we'll redirect the user to the new hosting Dashboard.
+			 * We aren't using the dashboard/v2 FF because it's enabled by default on wpcalypso.json which would break e2e tests.
+			 * Since we're aiming to remove steps after the isMvpOnboarding experiment ends,
+			 * we'll redirect the user to the new Dashboard here.
+			 */
+			if ( isEnabled( 'dashboard/v2/onboarding' ) ) {
+				return [
+					addQueryArgs( `/v2/sites/${ providedDependencies.siteSlug }`, { ref: flowName } ),
+					addQueryArgs( withLocale( `/setup/${ flowName }/plans`, locale ), {
+						siteSlug: providedDependencies.siteSlug,
+					} ),
+				];
+			}
+
+			if ( await isSimplifiedOnboarding() ) {
+				return [
+					addQueryArgs( `/home/${ providedDependencies.siteSlug }`, { ref: flowName } ),
+					addQueryArgs( withLocale( `/setup/${ flowName }/plans`, locale ), {
+						siteSlug: providedDependencies.siteSlug,
+					} ),
+				];
+			}
+
 			const destination = addQueryArgs( withLocale( '/setup/site-setup', locale ), {
 				siteSlug: providedDependencies.siteSlug,
-				...( isGoalsAtFrontExperiment && { 'goals-at-front-experiment': true } ),
 			} );
 
 			return [ destination, addQueryArgs( destination, { skippedCheckout: 1 } ) ];
 		};
 
 		clearUseMyDomainsQueryParams( currentStepSlug );
-		useRedirectDesignSetupOldSlug( currentStepSlug, navigate );
 
-		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
-			switch ( currentStepSlug ) {
-				case 'goals': {
-					const goalsUrl = withLocale( '/setup/onboarding/goals', locale );
-					const { intent } = providedDependencies;
-
-					switch ( intent ) {
-						case SiteIntent.Import: {
-							const migrationFlowLink = withLocale( '/setup/hosted-site-migration', locale );
-							return window.location.assign(
-								addQueryArgs( migrationFlowLink, {
-									back_to: goalsUrl,
-								} )
-							);
-						}
-
-						case SiteIntent.DIFM:
-							return navigate( 'difmStartingPoint' );
-
-						default: {
-							if ( isDesignChoicesStepEnabled ) {
-								return navigate( 'design-choices' );
-							}
-							return navigate( 'design-setup' );
-						}
-					}
-				}
-
-				case 'design-setup': {
-					return navigate( 'domains' );
-				}
-
-				case 'design-choices': {
-					// __a8cBigSkyOnboarding is set as a hack so that the @automattic/calypso-products can know what the users
-					// selection was. Accessing the data store is tricky from there.
-					// See is-big-sky-onboarding.ts
-					if ( providedDependencies.destination === 'launch-big-sky' ) {
-						setCreateWithBigSky( true );
-						return navigate( 'domains' );
-					}
-					setCreateWithBigSky( false );
-					return navigate( providedDependencies.destination as string );
-				}
-
-				case 'difmStartingPoint': {
-					const difmFlowLink = addQueryArgs(
-						withLocale( '/start/website-design-services', locale ),
-						{
-							back_to: window.location.href.replace( window.location.origin, '' ),
-						}
-					);
-
-					if ( isUserLoggedIn ) {
-						return window.location.assign( difmFlowLink );
-					}
-
-					const loginUrl = getLoginUrl( {
-						variationName: flowName,
-						redirectTo: difmFlowLink,
-						locale,
-						extra: {
-							back_to: window.location.href.replace( window.location.origin, '' ),
-						},
-					} );
-
-					return window.location.assign( loginUrl );
-				}
-
+		const submit: SubmitHandler< typeof initialize > = async ( submittedStep ) => {
+			const { slug, providedDependencies } = submittedStep;
+			switch ( slug ) {
 				case 'domains':
-					setSiteUrl( providedDependencies.siteUrl );
-					setDomain( providedDependencies.suggestion );
-					setDomainCartItem( providedDependencies.domainItem );
-					setDomainCartItems( providedDependencies.domainCart );
-					setSignupDomainOrigin( providedDependencies.signupDomainOrigin );
+					setSiteUrl( providedDependencies.siteUrl as string );
+					setDomain( providedDependencies.suggestion as DomainSuggestion );
+					setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
+					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
+					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
 
 					if ( providedDependencies.navigateToUseMyDomain ) {
 						const currentQueryArgs = getQueryArgs( window.location.href );
 						currentQueryArgs.step = 'domain-input';
 
-						setRedirectedToUseMyDomain( true );
 						let useMyDomainURL = addQueryArgs( '/use-my-domain', currentQueryArgs );
 
 						const lastQueryParam = ( providedDependencies?.domainForm as { lastQuery?: string } )
@@ -301,10 +180,9 @@ const onboarding: Flow = {
 							signup_domain_origin: signupDomainOrigin,
 							domain_item: providedDependencies.domainItem,
 						} );
-						return navigate( useMyDomainURL );
+						return navigate( useMyDomainURL as typeof currentStepSlug );
 					}
 
-					setRedirectedToUseMyDomain( false );
 					return navigate( 'plans' );
 				case 'use-my-domain':
 					setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
@@ -319,7 +197,7 @@ const onboarding: Flow = {
 							step: providedDependencies.mode,
 							initialQuery: providedDependencies.domain,
 						} );
-						return navigate( destination );
+						return navigate( destination as typeof currentStepSlug );
 					}
 
 					// We trigger the event here, because we skip it in the domains step if
@@ -332,12 +210,14 @@ const onboarding: Flow = {
 						providedDependencies: useMyDomainTracksEventProps,
 					} );
 
-					setUseMyDomainQueryParams( getQueryArgs( window.location.href ) );
 					return navigate( 'plans' );
 				case 'plans': {
-					const cartItems = providedDependencies.cartItems as Array< typeof planCartItem >;
-					setPlanCartItem( cartItems?.[ 0 ] ?? null );
-					if ( ! cartItems?.[ 0 ] ) {
+					const cartItems = providedDependencies.cartItems;
+					const [ pickedPlan, ...products ] = cartItems ?? [];
+
+					setPlanCartItem( pickedPlan );
+
+					if ( ! pickedPlan ) {
 						// Since we're removing the paid domain, it means that the user chose to continue
 						// with a free domain. Because signupDomainOrigin should reflect the last domain
 						// selection status before they land on the checkout page, this value can be
@@ -350,10 +230,7 @@ const onboarding: Flow = {
 					}
 
 					// Make sure to put the rest of products into the cart, e.g. the storage add-ons.
-					setProductCartItems( [
-						...( selectedMarketplaceProduct ? [ selectedMarketplaceProduct ] : [] ),
-						...( cartItems || [] ).slice( 1 ),
-					] );
+					setProductCartItems( products.filter( ( product ) => product !== null ) );
 
 					setSignupCompleteFlowName( flowName );
 					return navigate( 'create-site', undefined, false );
@@ -361,99 +238,67 @@ const onboarding: Flow = {
 				case 'create-site':
 					return navigate( 'processing', undefined, true );
 				case 'post-checkout-onboarding':
+					setShouldShowNotification( providedDependencies?.siteId as number );
 					return navigate( 'processing' );
 				case 'processing': {
 					const [ destination, backDestination ] =
-						getPostCheckoutDestination( providedDependencies );
+						await getPostCheckoutDestination( providedDependencies );
+					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {
+						persistSignupDestination( destination );
+						setSignupCompleteFlowName( flowName );
+						setSignupCompleteSlug( providedDependencies.siteSlug );
 
-					persistSignupDestination( destination );
-					setSignupCompleteFlowName( flowName );
-					setSignupCompleteSlug( providedDependencies.siteSlug );
+						if ( providedDependencies.goToCheckout ) {
+							const siteSlug = providedDependencies.siteSlug as string;
 
-					if ( providedDependencies.goToCheckout ) {
-						const siteSlug = providedDependencies.siteSlug as string;
-
-						// replace the location to delete processing step from history.
-						window.location.replace(
-							addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
-								// Go to the post-checkout step to see whether to wait for the atomic transfer
-								redirect_to: addQueryArgs(
-									withLocale( '/setup/onboarding/post-checkout-onboarding', locale ),
-									{
+							/**
+							 * If the user comes from the Playground onboarding flow,
+							 * redirect the user back to Playground to start the import.
+							 */
+							const playgroundId = getQueryArg( window.location.href, 'playground' );
+							const redirectTo: string = playgroundId
+								? addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
 										siteSlug,
-									}
-								),
-								signup: 1,
-								checkoutBackUrl: pathToUrl( backDestination ?? '' ),
-								coupon,
-								...( createWithBigSky && isBigSkyBeforePlansExperiment && isGoalsAtFrontExperiment
-									? { [ 'big-sky-checkout' ]: 1 }
-									: {} ),
-							} )
-						);
+										siteId: providedDependencies.siteId,
+										playground: playgroundId,
+								  } )
+								: addQueryArgs(
+										withLocale( '/setup/onboarding/post-checkout-onboarding', locale ),
+										{
+											siteSlug,
+										}
+								  );
+
+							// replace the location to delete processing step from history.
+							window.location.replace(
+								addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
+									redirect_to: redirectTo,
+									signup: 1,
+									checkoutBackUrl: pathToUrl( backDestination ?? '' ),
+									coupon,
+								} )
+							);
+						} else {
+							// replace the location to delete processing step from history.
+							window.location.replace( destination );
+						}
 					} else {
-						// replace the location to delete processing step from history.
-						window.location.replace( destination );
+						// TODO: Handle errors
+						// navigate( 'error' );
 					}
+					return;
 				}
+				case 'playground':
+					return navigate( 'domains' );
 				default:
 					return;
 			}
 		};
 
-		const goBack = () => {
-			switch ( currentStepSlug ) {
-				case 'use-my-domain':
-					if ( getQueryArg( window.location.href, 'step' ) === 'transfer-or-connect' ) {
-						const destination = addQueryArgs( '/use-my-domain', {
-							...getQueryArgs( window.location.href ),
-							step: 'domain-input',
-							initialQuery: getQueryArg( window.location.href, 'initialQuery' ),
-						} );
-						return navigate( destination );
-					}
-
-					if ( window.location.search ) {
-						window.history.replaceState( {}, document.title, window.location.pathname );
-					}
-					return navigate( 'domains' );
-				case 'plans':
-					if ( redirectedToUseMyDomain ) {
-						if ( Object.keys( useMyDomainQueryParams ).length ) {
-							// restore query params
-							const useMyDomainURL = addQueryArgs( 'use-my-domain', useMyDomainQueryParams );
-							return navigate( useMyDomainURL );
-						}
-						return navigate( 'use-my-domain' );
-					}
-					return navigate( 'domains' );
-				case 'domains':
-					if ( isGoalsAtFrontExperiment ) {
-						if ( isBigSkyBeforePlansExperiment && createWithBigSky ) {
-							return navigate( 'design-choices' );
-						}
-						return navigate( 'design-setup' );
-					}
-				case 'design-setup':
-					if ( isDesignChoicesStepEnabled ) {
-						return navigate( 'design-choices' );
-					}
-					if ( isGoalsAtFrontExperiment ) {
-						return navigate( 'goals' );
-					}
-				case 'difmStartingPoint':
-					return navigate( 'goals' );
-				case 'design-choices':
-					return navigate( 'goals' );
-				default:
-					return;
-			}
-		};
-
-		return { goBack, submit };
+		return { submit };
 	},
 	useAssertConditions() {
-		const [ isLoading ] = useGoalsFirstExperiment();
+		const [ isLoading ] = useIsDomainSearchV2Enabled( this.name );
 
 		return {
 			state: isLoading ? AssertConditionState.CHECKING : AssertConditionState.SUCCESS,
@@ -476,25 +321,14 @@ const onboarding: Flow = {
 				clearSignupDestinationCookie();
 				clearSignupCompleteFlowName();
 				clearSignupCompleteSlug();
-
-				if ( typeof window !== 'undefined' ) {
-					delete window.__a8cBigSkyOnboarding;
-				}
+				clearSignupCompleteSiteID();
 			}
 		}, [ currentStepSlug, reduxDispatch, resetOnboardStore ] );
 
-		const [ isGoalsFirstExperimentLoading, isGoalsFirstExperiment ] = useGoalsFirstExperiment();
-		// The personal plan price appears on the design choice step under these conditions. Pre-load it so it doesn't flash into existence
-		// Preload even before we know whether use is in the big-sky-before-plans experiment. By the time we know it will be too late.
-		const preloadPersonalProduct = ! isGoalsFirstExperimentLoading && isGoalsFirstExperiment;
-
-		useSelect(
-			( select ) =>
-				preloadPersonalProduct
-					? select( ProductsList.store ).getProductBySlug( PLAN_PERSONAL )
-					: undefined,
-			[ preloadPersonalProduct ]
-		);
+		// Load Survicate
+		useEffect( () => {
+			addSurvicate();
+		}, [] );
 	},
 };
 

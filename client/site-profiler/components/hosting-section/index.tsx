@@ -34,9 +34,7 @@ export const HostingSection: React.FC< HostingSectionProps > = ( props ) => {
 					  )
 			}
 			subtitle={ ! isWPcom ? translate( 'Upgrade your hosting with WordPress.com' ) : null }
-			subtitleOnClick={ () =>
-				page( `/setup/hosted-site-migration?ref=site-profiler&from=${ url }` )
-			}
+			subtitleOnClick={ () => page( `/setup/site-migration?ref=site-profiler&from=${ url }` ) }
 			ref={ hostingRef }
 		>
 			<HostingInformation

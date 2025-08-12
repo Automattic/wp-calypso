@@ -5,7 +5,6 @@ import { sprintf } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { PanelCardHeading } from 'calypso/components/panel';
 import { ResponseDomain } from 'calypso/lib/domains/types';
-import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 
 const Strong = styled( 'strong' )( {
 	fontWeight: 500,
@@ -13,13 +12,10 @@ const Strong = styled( 'strong' )( {
 
 const PendingDomainTransfer = ( { domain }: { domain: ResponseDomain } ) => {
 	const translate = useTranslate();
-	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
 	return (
 		<>
 			<>
-				{ isUntangled && (
-					<PanelCardHeading>{ translate( 'Pending domain transfers' ) }</PanelCardHeading>
-				) }
+				<PanelCardHeading>{ translate( 'Pending domain transfers' ) }</PanelCardHeading>
 				<p>
 					{ createInterpolateElement(
 						sprintf(

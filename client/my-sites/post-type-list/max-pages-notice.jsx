@@ -1,62 +1,39 @@
-import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 
 import './max-pages-notice.scss';
 
-class PostTypeListMaxPagesNotice extends Component {
-	static propTypes = {
-		displayedPosts: PropTypes.number,
-		totalPosts: PropTypes.number,
-	};
+function PostTypeListMaxPagesNotice( { displayedPosts, totalPosts } ) {
+	const translate = useTranslate();
+	const dispatch = useDispatch();
 
-	componentDidMount() {
-		this.props.recordTracksEvent( 'calypso_post_type_list_max_pages_view' );
-	}
+	useEffect( () => {
+		dispatch( recordTracksEvent( 'calypso_post_type_list_max_pages_view' ) );
+	}, [ dispatch ] );
 
-	focusSiteSelector = ( event ) => {
-		event.preventDefault();
-
-		this.props.setLayoutFocus( 'sites' );
-	};
-
-	render() {
-		const { displayedPosts, totalPosts, translate } = this.props;
-
-		return (
-			<div className="post-type-list__max-pages-notice">
-				{ translate(
-					'Showing %(displayedPosts)d post of %(totalPosts)d.',
-					'Showing %(displayedPosts)d posts of %(totalPosts)d.',
-					{
-						count: displayedPosts,
-						args: {
-							displayedPosts,
-							totalPosts,
-						},
-					}
-				) }
-				<br />
-				{ translate( 'To view more posts, {{a}}switch to a specific site{{/a}}.', {
-					components: {
-						a: (
-							/* eslint-disable jsx-a11y/anchor-is-valid,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
-							<a
-								className="post-type-list__max-pages-notice-link"
-								onClick={ this.focusSiteSelector }
-							/>
-							/* eslint-enable jsx-a11y/anchor-is-valid,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
-						),
+	return (
+		<div className="post-type-list__max-pages-notice">
+			{ translate(
+				'Showing %(displayedPosts)d post of %(totalPosts)d.',
+				'Showing %(displayedPosts)d posts of %(totalPosts)d.',
+				{
+					count: displayedPosts,
+					args: {
+						displayedPosts,
+						totalPosts,
 					},
-				} ) }
-			</div>
-		);
-	}
+				}
+			) }
+			<br />
+			{ translate( 'To view more posts, {{a}}switch to a specific site{{/a}}.', {
+				components: {
+					a: <a className="post-type-list__max-pages-notice-link" href="/sites" />,
+				},
+			} ) }
+		</div>
+	);
 }
 
-export default connect( null, { recordTracksEvent, setLayoutFocus } )(
-	localize( PostTypeListMaxPagesNotice )
-);
+export default PostTypeListMaxPagesNotice;

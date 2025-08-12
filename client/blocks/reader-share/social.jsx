@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { getWindowInnerWidth } from '@automattic/viewport';
 import { useTranslate } from 'i18n-calypso';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import PopoverMenuItemClipboard from 'calypso/components/popover-menu/item-clipboard';
@@ -33,16 +34,22 @@ const actionMap = {
 		} );
 		baseUrl.search = params.toString();
 
+		const viewportWidth = getWindowInnerWidth();
+
 		const xUrl = baseUrl.href;
 		const width = 550;
 		const height = 420;
 		const { left, top } = getWindowCenterPosition( width, height );
 
-		window.open(
-			xUrl,
-			'x',
-			`width=${ width },height=${ height },left=${ left },top=${ top },resizable,scrollbars`
-		);
+		if ( viewportWidth > width ) {
+			window.open(
+				xUrl,
+				'x',
+				`width=${ width },height=${ height },left=${ left },top=${ top },resizable,scrollbars`
+			);
+		} else {
+			window.open( xUrl, '_blank' );
+		}
 	},
 	facebook( post ) {
 		const baseUrl = new URL( 'https://www.facebook.com/sharer.php' );
@@ -52,17 +59,25 @@ const actionMap = {
 		} );
 		baseUrl.search = params.toString();
 
+		const viewportWidth = getWindowInnerWidth();
 		const facebookUrl = baseUrl.href;
 
-		const width = 626;
-		const height = 436;
+		// This must be wide enough to accomodate facebook's login redirect screen, which
+		// unfortunately is not responsive to smaller viewports.
+		const width = 1000;
+		// Facebook resizes to about 850px, so this prevents jumpyness after opening the window.
+		const height = 850;
 		const { left, top } = getWindowCenterPosition( width, height );
 
-		window.open(
-			facebookUrl,
-			'facebook',
-			`width=${ width },height=${ height },left=${ left },top=${ top },resizable,scrollbars`
-		);
+		if ( viewportWidth > width ) {
+			window.open(
+				facebookUrl,
+				'facebook',
+				`width=${ width },height=${ height },left=${ left },top=${ top },resizable,scrollbars`
+			);
+		} else {
+			window.open( facebookUrl, '_blank' );
+		}
 	},
 	copy_link() {},
 };

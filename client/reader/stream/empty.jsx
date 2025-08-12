@@ -47,7 +47,6 @@ class FollowingEmptyContent extends Component {
 				}
 				actionURL={ isFullSiteFeed ? `/reader/feeds/${ selectedFeedId }` : '/discover' }
 				actionCallback={ () => this.recordAction( isFullSiteFeed ) }
-				illustration=""
 			/>
 		);
 	}

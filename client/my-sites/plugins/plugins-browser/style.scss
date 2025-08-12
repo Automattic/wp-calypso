@@ -80,6 +80,8 @@
 }
 
 body.is-section-plugins #primary .main.is-logged-out {
+	// Need to specifically set this, to override the classic blue.
+	--wp-admin-theme-color: var(--studio-blue-50);
 	padding-top: 0;
 
 	.responsive-toolbar-group__swipe-list {
@@ -93,9 +95,14 @@ body.is-section-plugins #primary .main.is-logged-out {
 
 		.responsive-toolbar-group__button-item {
 			padding: 4px 12px;
-		}
-		.responsive-toolbar-group__button-item:not([class*="is-pressed"]):hover::before {
-			background: rgba(6, 117, 196, 0.1);
+
+			&::before {
+				background-color: transparent;
+			}
+
+			&:not([class*="is-pressed"]):hover::before {
+				background-color: color-mix(in srgb, var(--studio-blue) 10%, transparent);
+			}
 		}
 	}
 

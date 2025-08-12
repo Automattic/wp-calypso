@@ -18,6 +18,14 @@
 		margin: 0 auto;
 	}
 
+	.migration-pending__primary-actions {
+		display: flex;
+		flex-direction: row;
+		gap: 0.75rem;
+		width: fit-content;
+		align-items: center;
+		margin: 0 auto;
+	}
 
 	.migration-pending__cancel-button {
 		color: var(--studio-gray-80);
@@ -29,13 +37,12 @@
 	.migration-started-difm {
 		display: flex;
 		flex-direction: column;
-		gap: 1rem;
 		margin: 0 auto;
-		padding-bottom: 2rem;
-		max-width: 720px;
+		max-width: 500px;
 		.migration-started-difm__title {
 			font-size: 1rem;
 			font-weight: 600;
+			margin-bottom: 1rem;
 		}
 
 		.migration-started-difm__list {
@@ -63,5 +70,23 @@
 			background-color: #F7F8FE;
 			flex-shrink: 0;
 		}
+
+		.migration-started-difm__cancel-form {
+			display: flex;
+			justify-content: center;
+
+			button {
+				color: var(--studio-gray-80);
+			}
+		}
+	}
+}
+
+.migration-started-difm__cancel-dialog {
+	.migration-started-difm__cancel-dialog-buttons {
+		display: flex;
+		flex-direction: row;
+		gap: 1rem;
+		justify-content: flex-end;
 	}
 }

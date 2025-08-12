@@ -7,12 +7,12 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { addChildNodes, setNodeCheckState } from 'calypso/state/rewind/browser/actions';
 import getBackupBrowserNode from 'calypso/state/rewind/selectors/get-backup-browser-node';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import FileInfoCard from './file-info-card';
 import FileTypeIcon from './file-type-icon';
 import { useTruncatedFileName } from './hooks';
 import { FileBrowserItem, FileBrowserCheckState } from './types';
 import { useBackupContentsQuery } from './use-backup-contents-query';
+import type { FileBrowserConfig } from './index';
 
 interface FileBrowserNodeProps {
 	item: FileBrowserItem;
@@ -22,6 +22,8 @@ interface FileBrowserNodeProps {
 	setActiveNodePath: ( path: string ) => void;
 	activeNodePath: string;
 	parentItem?: FileBrowserItem; // This is used to pass the extension details to the child node
+	fileBrowserConfig?: FileBrowserConfig;
+	siteId: number;
 }
 
 const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
@@ -32,14 +34,17 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	setActiveNodePath,
 	activeNodePath,
 	parentItem,
+	fileBrowserConfig,
+	siteId,
 } ) => {
 	const isRoot = path === '/';
 	const dispatch = useDispatch();
 	const isCurrentNodeClicked = activeNodePath === path;
+	const showFileCard = fileBrowserConfig?.showFileCard ?? true;
+	const applyFiltering = !! fileBrowserConfig;
 	const [ fetchContentsOnMount, setFetchContentsOnMount ] = useState< boolean >( isRoot );
 	const [ isOpen, setIsOpen ] = useState< boolean >( isRoot );
 	const [ addedAnyChildren, setAddedAnyChildren ] = useState< boolean >( false );
-	const siteId = useSelector( getSelectedSiteId ) as number;
 	const browserNodeItem = useSelector( ( state ) => getBackupBrowserNode( state, siteId, path ) );
 
 	const {
@@ -72,6 +77,19 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 			return true;
 		},
 		[ item.extensionVersion ]
+	);
+
+	const shouldRestrictChildren = useCallback(
+		( childItem: FileBrowserItem ) => {
+			if (
+				fileBrowserConfig?.restrictedTypes &&
+				fileBrowserConfig?.restrictedTypes.includes( childItem.type )
+			) {
+				return true;
+			}
+			return false;
+		},
+		[ fileBrowserConfig?.restrictedTypes ]
 	);
 
 	// When we load the children from the API we'll add their check status info to the state
@@ -165,6 +183,49 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 		setIsOpen( ! isOpen );
 	}, [ dispatch, isOpen, item, path, setActiveNodePath ] );
 
+	const filterItems = useCallback(
+		( item: FileBrowserItem ) => {
+			// No filter is needed
+			if ( ! applyFiltering ) {
+				return true;
+			}
+
+			// Check if this node should always be included
+			if ( fileBrowserConfig?.alwaysInclude?.includes( item.name ) ) {
+				return true;
+			}
+
+			// Check if this node type should always be excluded
+			if ( fileBrowserConfig?.excludeTypes?.includes( item.type ) ) {
+				return false;
+			}
+
+			// Check if we're at root and this item is in restricted paths
+			if ( isRoot && fileBrowserConfig?.restrictedPaths?.includes( item.name ) ) {
+				return true;
+			}
+
+			// Check if current path includes any restricted path
+			if (
+				fileBrowserConfig?.restrictedPaths &&
+				fileBrowserConfig.restrictedPaths.some( ( restrictedPath ) =>
+					path.includes( restrictedPath )
+				)
+			) {
+				return true;
+			}
+			return false;
+		},
+		[
+			applyFiltering,
+			fileBrowserConfig?.alwaysInclude,
+			fileBrowserConfig?.excludeTypes,
+			fileBrowserConfig?.restrictedPaths,
+			isRoot,
+			path,
+		]
+	);
+
 	const renderChildren = () => {
 		if ( isInitialLoading ) {
 			return (
@@ -180,7 +241,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 		if ( isSuccess && addedAnyChildren ) {
 			let childIsAlternate = isAlternate;
 
-			return backupFiles.map( ( childItem ) => {
+			return backupFiles.filter( filterItems ).map( ( childItem ) => {
 				// Let's hide archives that don't have an extension version
 				// and changed extensions item node
 				if (
@@ -201,6 +262,8 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 						isAlternate={ childIsAlternate }
 						activeNodePath={ activeNodePath }
 						setActiveNodePath={ setActiveNodePath }
+						fileBrowserConfig={ fileBrowserConfig }
+						siteId={ siteId }
 						// Hacky way to pass extensions details to the child node
 						{ ...( childItem.type === 'archive' ? { parentItem: item } : {} ) }
 					/>
@@ -228,7 +291,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	};
 
 	const renderExpandIcon = () => {
-		if ( ! item.hasChildren ) {
+		if ( ! item.hasChildren || shouldRestrictChildren( item ) ) {
 			return null;
 		}
 
@@ -263,7 +326,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 					</>
 				) }
 			</div>
-			{ isCurrentNodeClicked && (
+			{ isCurrentNodeClicked && showFileCard && (
 				<FileInfoCard
 					siteId={ siteId }
 					rewindId={ rewindId }
@@ -274,7 +337,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 			) }
 			{ isOpen && (
 				<>
-					{ item.hasChildren && (
+					{ item.hasChildren && ! shouldRestrictChildren( item ) && (
 						<div className="file-browser-node__contents">{ renderChildren() }</div>
 					) }
 				</>

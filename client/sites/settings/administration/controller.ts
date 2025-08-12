@@ -1,5 +1,4 @@
 import page from '@automattic/calypso-router';
-import { isRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import canCurrentUserStartSiteOwnerTransfer from 'calypso/state/selectors/can-current-user-start-site-owner-transfer';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -53,9 +52,5 @@ export function redirectIfCantStartSiteOwnerTransfer( context: PageJSContext, ne
 }
 
 async function redirectToAdministration( context: PageJSContext, siteSlug: string | null ) {
-	const { getState, dispatch } = context.store;
-	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState, dispatch );
-	return isUntangled
-		? page.redirect( '/sites/settings/site/' + siteSlug )
-		: page.redirect( '/settings/general/' + siteSlug );
+	return page.redirect( '/sites/settings/site/' + siteSlug );
 }

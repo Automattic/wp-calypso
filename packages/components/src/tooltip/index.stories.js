@@ -69,6 +69,6 @@ export const Default = () => {
 };
 
 export default {
-	title: 'packages/components/Tooltip',
+	title: 'Unaudited/Tooltip',
 	component: Tooltip,
 };

@@ -58,14 +58,14 @@
 	.add-subscribers-modal__notice {
 		margin-bottom: 24px !important;
 
-		.notice__content {
+		.calypso-notice__content {
 			padding-right: 13px;
 		}
 
 		.add-subscribers-modal__notice-text {
 			margin-right: 6px;
 
-			+ a.notice__action {
+			+ a.calypso-notice__action {
 				margin: 0;
 				padding: 0;
 				cursor: pointer;

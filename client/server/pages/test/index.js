@@ -3,10 +3,6 @@ import cloneDeep from 'lodash/cloneDeep';
 import mockFs from 'mock-fs';
 import sections from 'calypso/sections';
 
-jest.mock( 'browserslist-useragent', () => ( {
-	matchesUA: jest.fn(),
-} ) );
-
 jest.mock( 'child_process', () => ( {
 	execSync: jest.fn(),
 } ) );
@@ -125,6 +121,7 @@ const buildApp = ( environment ) => {
 	const tearDown = [];
 	let defaultUrl = '/';
 	const defaultCookies = {};
+	let userAgent = '';
 
 	// We need to restore modules and filesystem so requiring modules inside `isolatedModules` works
 	mockFs.restore();
@@ -137,7 +134,6 @@ const buildApp = ( environment ) => {
 		// Requiring them here will give us the same instance used by the app, this will allow
 		// us to change the mock implementation later or make assertions about it.
 		mocks.config = require( '@automattic/calypso-config' );
-		mocks.matchesUA = require( 'browserslist-useragent' ).matchesUA;
 		const {
 			attachBuildTimestamp,
 			attachI18n,
@@ -228,13 +224,14 @@ const buildApp = ( environment ) => {
 			tearDown.push( () => mockFs.restore() );
 		},
 		withEvergreenBrowser() {
-			mocks.matchesUA.mockImplementation( () => true );
-			tearDown.push( () => mocks.matchesUA.mockReset() );
+			userAgent =
+				'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36';
+			tearDown.push( () => ( userAgent = '' ) );
 			return this;
 		},
 		withNonEvergreenBrowser() {
-			mocks.matchesUA.mockImplementation( () => false );
-			tearDown.push( () => mocks.matchesUA.mockReset() );
+			userAgent = 'Mozilla/5.0 (Windows NT 10.0; Trident/7.0; rv:11.0) like Gecko';
+			tearDown.push( () => ( userAgent = '' ) );
 			return this;
 		},
 		withConfigEnabled( enabledOptions ) {
@@ -303,7 +300,7 @@ const buildApp = ( environment ) => {
 						source: '',
 					},
 					headers: {
-						'user-agent': '',
+						'user-agent': userAgent,
 					},
 					url: defaultUrl,
 					method: 'GET',

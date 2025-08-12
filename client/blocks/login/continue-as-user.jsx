@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import Gravatar from 'calypso/components/gravatar';
@@ -38,7 +38,6 @@ export default function ContinueAsUser( {
 	redirectPath,
 	isWoo,
 	isBlazePro,
-	notYouText,
 } ) {
 	const translate = useTranslate();
 
@@ -51,23 +50,21 @@ export default function ContinueAsUser( {
 	// like that, but it is better than the alternative, and in practice it should happen quicker than
 	// the user can notice.
 
-	const notYouDisplayedText = notYouText
-		? notYouText
-		: translate( 'Not you?{{br/}}Log in with {{link}}another account{{/link}}', {
-				components: {
-					br: <br />,
-					link: (
-						<button
-							type="button"
-							id="loginAsAnotherUser"
-							className="continue-as-user__change-user-link"
-							onClick={ onChangeAccount }
-						/>
-					),
-				},
-				args: { userName },
-				comment: 'Link to continue login as different user',
-		  } );
+	const notYouText = translate( 'Not you?{{br/}}Log in with {{link}}another account{{/link}}', {
+		components: {
+			br: <br />,
+			link: (
+				<Button
+					variant="link"
+					id="loginAsAnotherUser"
+					className="continue-as-user__change-user-link"
+					onClick={ onChangeAccount }
+				/>
+			),
+		},
+		args: { userName },
+		comment: 'Link to continue login as different user',
+	} );
 
 	const gravatarLink = (
 		<div className="continue-as-user__gravatar-content">
@@ -88,21 +85,22 @@ export default function ContinueAsUser( {
 				<div className="continue-as-user__user-info">
 					{ gravatarLink }
 					<div className="continue-as-user__not-you">
-						<button
-							type="button"
+						<Button
+							variant="tertiary"
 							id="loginAsAnotherUser"
 							className="continue-as-user__change-user-link"
 							onClick={ onChangeAccount }
 						>
 							{ translate( 'Sign in as a different user' ) }
-						</button>
+						</Button>
 					</div>
 				</div>
 				<Button
-					primary
+					variant="primary"
 					className="continue-as-user__continue-button"
-					busy={ validatingPath }
+					isBusy={ validatingPath }
 					href={ validatedPath || '/' }
+					__next40pxDefaultSize
 				>
 					{ translate( 'Continue' ) }
 				</Button>
@@ -116,21 +114,22 @@ export default function ContinueAsUser( {
 				<div className="continue-as-user__user-info">
 					{ gravatarLink }
 					<div className="continue-as-user__not-you">
-						<button
-							type="button"
+						<Button
+							variant="tertiary"
 							id="loginAsAnotherUser"
 							className="continue-as-user__change-user-link"
 							onClick={ onChangeAccount }
 						>
 							{ translate( 'Sign in as a different user' ) }
-						</button>
+						</Button>
 					</div>
 				</div>
 				<Button
-					primary
+					variant="primary"
 					className="continue-as-user__continue-button"
-					busy={ validatingPath }
+					isBusy={ validatingPath }
 					href={ validatedPath || '/' }
+					__next40pxDefaultSize
 				>
 					{ `${ translate( 'Continue as', {
 						context: 'Continue as an existing WordPress.com user',
@@ -145,11 +144,17 @@ export default function ContinueAsUser( {
 		<div className="continue-as-user">
 			<div className="continue-as-user__user-info">
 				{ gravatarLink }
-				<Button primary busy={ validatingPath } href={ validatedPath || '/' }>
+				<Button
+					variant="primary"
+					isBusy={ validatingPath }
+					href={ validatedPath || '/' }
+					__next40pxDefaultSize
+					className="continue-as-user__continue-button"
+				>
 					{ translate( 'Continue' ) }
 				</Button>
 			</div>
-			<div className="continue-as-user__not-you">{ notYouDisplayedText }</div>
+			<div className="continue-as-user__not-you">{ notYouText }</div>
 		</div>
 	);
 }

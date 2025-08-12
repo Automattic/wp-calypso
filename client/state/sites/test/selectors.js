@@ -3148,7 +3148,7 @@ describe( 'selectors', () => {
 				77203199
 			);
 
-			expect( customizerUrl ).toEqual( '/customize' );
+			expect( customizerUrl ).toEqual( null );
 		} );
 
 		test( 'should return customizer URL for WordPress.com site', () => {
@@ -3160,6 +3160,9 @@ describe( 'selectors', () => {
 								ID: 77203199,
 								URL: 'https://example.com',
 								jetpack: false,
+								options: {
+									admin_url: 'https://example.com/wp-admin/',
+								},
 							},
 						},
 					},
@@ -3167,7 +3170,7 @@ describe( 'selectors', () => {
 				77203199
 			);
 
-			expect( customizerUrl ).toEqual( '/customize/example.com' );
+			expect( customizerUrl ).toEqual( 'https://example.com/wp-admin/customize.php' );
 		} );
 
 		test( 'should return customizer URL with return query for WordPress.com site', () => {
@@ -3179,6 +3182,9 @@ describe( 'selectors', () => {
 								ID: 77203199,
 								URL: 'https://example.com',
 								jetpack: false,
+								options: {
+									admin_url: 'https://example.com/wp-admin/',
+								},
 							},
 						},
 					},
@@ -3189,7 +3195,7 @@ describe( 'selectors', () => {
 			);
 
 			expect( customizerUrl ).toEqual(
-				`/customize/example.com?return=${ encodeURIComponent(
+				`https://example.com/wp-admin/customize.php?return=${ encodeURIComponent(
 					'https://wordpress.com/things/are/going?to=be&okay=true'
 				) }`
 			);
@@ -3245,6 +3251,9 @@ describe( 'selectors', () => {
 								ID: 77203199,
 								URL: 'https://example.com',
 								jetpack: false,
+								options: {
+									admin_url: 'https://example.com/wp-admin/',
+								},
 							},
 						},
 					},
@@ -3253,7 +3262,9 @@ describe( 'selectors', () => {
 				'identity'
 			);
 
-			expect( customizerUrl ).toEqual( '/customize/identity/example.com' );
+			expect( customizerUrl ).toEqual(
+				'https://example.com/wp-admin/customize.php?autofocus%5Bsection%5D=title_tagline'
+			);
 		} );
 
 		test( 'should prepend panel path parameter for Jetpack site', () => {
@@ -3290,6 +3301,9 @@ describe( 'selectors', () => {
 								ID: 77203199,
 								URL: 'https://example.com',
 								jetpack: false,
+								options: {
+									admin_url: 'https://example.com/wp-admin/',
+								},
 							},
 						},
 					},
@@ -3300,7 +3314,9 @@ describe( 'selectors', () => {
 				'test-guide'
 			);
 
-			expect( customizerUrl ).toEqual( '/customize/identity/example.com?guide=test-guide' );
+			expect( customizerUrl ).toEqual(
+				'https://example.com/wp-admin/customize.php?autofocus%5Bsection%5D=title_tagline&guide=test-guide'
+			);
 		} );
 
 		test( 'should prepend guide parameter for Jetpack site', () => {

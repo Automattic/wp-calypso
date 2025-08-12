@@ -6,6 +6,17 @@ import { setStore } from 'calypso/state/redux-store';
 import { receiveTheme, themeRequestFailure } from 'calypso/state/themes/actions';
 import ThemeSheetComponent from '../main';
 
+jest.mock( '@automattic/odie-client/src/data', () => ( {
+	useManageSupportInteraction: jest.fn().mockReturnValue( {
+		startNewInteraction: jest.fn(),
+		resolveInteraction: jest.fn(),
+		addEventToInteraction: jest.fn(),
+	} ),
+	useGetZendeskConversation: jest.fn(),
+	useOdieChat: jest.fn(),
+	broadcastOdieMessage: jest.fn(),
+} ) );
+
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 jest.mock( 'calypso/my-sites/themes/theme-preview', () =>
 	require( 'calypso/components/empty-component' )

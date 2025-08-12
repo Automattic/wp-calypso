@@ -1,19 +1,26 @@
-import { useTranslate, numberFormatCompact, formatCurrency } from 'i18n-calypso';
+import { formatCurrency, formatNumberCompact } from '@automattic/number-formatters';
+import { useTranslate } from 'i18n-calypso';
 import wpcomIcon from 'calypso/assets/images/icons/wordpress-logo.svg';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
+import { VendorInfo } from 'calypso/components/jetpack/jetpack-lightbox/types';
 import { useLicenseLightboxData } from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox/hooks/use-license-lightbox-data';
 import getProductIcon from 'calypso/my-sites/plans/jetpack-plans/product-store/utils/get-product-icon';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getPressablePlan from '../pressable-overview/lib/get-pressable-plan';
 import type { ShoppingCartItem } from '../types';
 
 export default function ProductInfo( {
 	product,
 	isAutomatedReferrals,
+	vendor,
 }: {
 	product: ShoppingCartItem;
 	isAutomatedReferrals?: boolean;
+	vendor?: VendorInfo | null;
 } ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const { title, product: productInfo } = useLicenseLightboxData( product );
 
@@ -39,7 +46,7 @@ export default function ProductInfo( {
 			{
 				args: {
 					install: presablePlan.install,
-					visits: numberFormatCompact( presablePlan.visits ),
+					visits: formatNumberCompact( presablePlan.visits ),
 					storage: presablePlan.storage,
 				},
 				count: presablePlan.install,
@@ -115,9 +122,30 @@ export default function ProductInfo( {
 			<div className="product-info__text-content">
 				<div className="product-info__header">
 					<label htmlFor={ productTitle } className="product-info__label">
-						{ productTitle }
+						<h3>{ productTitle }</h3>
+						{ vendor &&
+							translate( 'By {{a/}}', {
+								components: {
+									a: (
+										<a
+											href={ vendor.vendorUrl }
+											target="_blank"
+											rel="noopener noreferrer"
+											onClick={ () => {
+												dispatch(
+													recordTracksEvent( 'calypso_marketplace_products_overview_vendor_click', {
+														vendor: vendor.vendorName,
+													} )
+												);
+											} }
+										>
+											{ vendor.vendorName }
+										</a>
+									),
+								},
+							} ) }
 					</label>
-					<span className="product-info__count">{ countInfo }</span>
+					{ ! isAutomatedReferrals && <span className="product-info__count">{ countInfo }</span> }
 				</div>
 				<p className="product-info__description">{ productDescription }</p>
 				{
@@ -134,7 +162,7 @@ export default function ProductInfo( {
 										trafficCharge: formatCurrency( 8, 'USD', {
 											stripZeros: true,
 										} ),
-										visits: numberFormatCompact( 10000 ),
+										visits: formatNumberCompact( 10000 ),
 									},
 								}
 							) }
