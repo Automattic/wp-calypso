@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 
-import { URL } from 'url';
 import { navigate } from 'calypso/lib/navigate';
 import { leaveCheckout, isRelativeUrl } from '../lib/leave-checkout';
 
@@ -14,9 +13,6 @@ jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 jest.mock( 'calypso/lib/navigate', () => ( {
 	navigate: jest.fn(),
 } ) );
-
-Object.defineProperty( window, 'URL', { value: URL } );
-Object.defineProperty( window, 'history', { value: { length: 2, back: jest.fn() } } );
 
 describe( 'leaveCheckout', () => {
 	beforeEach( () => {
@@ -31,40 +27,11 @@ describe( 'leaveCheckout', () => {
 			},
 			writable: true,
 		} );
-		Object.defineProperty( document, 'referrer', {
-			value: 'https://wordpress.com',
+		Object.defineProperty( window, 'history', {
+			value: {
+				back: jest.fn(),
+			},
 			writable: true,
-		} );
-	} );
-
-	describe( 'forceCheckoutBackUrl parameter handling', () => {
-		it( 'should navigate to checkoutBackUrl when it is set', () => {
-			leaveCheckout( {
-				tracksEvent: 'checkout_cancel',
-				forceCheckoutBackUrl: 'https://wordpress.com/plans',
-			} );
-
-			expect( window.location.href ).toBe( 'https://wordpress.com/plans' );
-		} );
-		it( 'should ignore it, if history.length is 2+ and referrer is a WP.com property, and prioritizeHistoryWhenBacking is set', () => {
-			window.location.search = '?prioritizeHistoryWhenBacking=1';
-
-			leaveCheckout( {
-				tracksEvent: 'checkout_cancel',
-				forceCheckoutBackUrl: 'https://wordpress.com/some-ignored-url',
-			} );
-
-			expect( history.back ).toHaveBeenCalled();
-			expect( window.location.href ).toBe( 'https://wordpress.com/checkout' );
-		} );
-		it( 'should respect it, if history.length is 2+ and referrer is a WP.com property, and prioritizeHistoryWhenBacking is NOT set', () => {
-			leaveCheckout( {
-				tracksEvent: 'checkout_cancel',
-				forceCheckoutBackUrl: 'https://wordpress.com/some-ignored-url',
-			} );
-
-			expect( history.back ).not.toHaveBeenCalled();
-			expect( window.location.href ).toBe( 'https://wordpress.com/some-ignored-url' );
 		} );
 	} );
 
@@ -99,6 +66,14 @@ describe( 'leaveCheckout', () => {
 			leaveCheckout( { tracksEvent: 'checkout_cancel' } );
 
 			expect( navigate ).not.toHaveBeenCalledWith( '/\\example.com' );
+		} );
+	} );
+
+	describe( 'history_back parameter handling', () => {
+		it( 'should use history back to return to previous page when the flag is present', () => {
+			window.location.search = '?history_back=1';
+			leaveCheckout( { tracksEvent: 'checkout_cancel' } );
+			expect( window.history.back ).toHaveBeenCalled();
 		} );
 	} );
 
