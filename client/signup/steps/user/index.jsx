@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { isHostingSignupFlow, isNewsletterFlow } from '@automattic/onboarding';
-import { isMobile } from '@automattic/viewport';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize, fixMe } from 'i18n-calypso';
@@ -10,7 +9,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import SignupForm from 'calypso/blocks/signup-form';
-import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
 import WPCloudLogo from 'calypso/components/wp-cloud-logo';
 import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
@@ -31,7 +29,6 @@ import OneLoginLayout from 'calypso/login/wp-login/components/one-login-layout';
 import getHeadingSubText from 'calypso/login/wp-login/hooks/get-heading-subtext';
 import flows from 'calypso/signup/config/flows';
 import GravatarStepWrapper from 'calypso/signup/gravatar-step-wrapper';
-import StepWrapper from 'calypso/signup/step-wrapper';
 import {
 	getFlowDestination,
 	getFlowSteps,
@@ -544,37 +541,11 @@ export class UserStep extends Component {
 	}
 
 	renderSignupForm() {
-		const {
-			oauth2Client,
-			isWoo,
-			isUnifiedCreateAccount,
-			isA4A,
-			isBlazePro,
-			isCrowdsignal,
-			isAkismet,
-			isVIPClient,
-			isJetpackCloud,
-			isStudioApp,
-		} = this.props;
-		const isPasswordless =
-			isMobile() ||
-			this.props.isPasswordless ||
-			isNewsletterFlow( this.props?.queryObject?.variationName ) ||
-			isWoo ||
-			isA4A ||
-			isCrowdsignal ||
-			isBlazePro ||
-			isAkismet ||
-			isVIPClient ||
-			isJetpackCloud ||
-			isStudioApp;
+		const { oauth2Client, isWoo } = this.props;
+		const isPasswordless = true;
 		let socialService;
 		let socialServiceResponse;
-		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
-
-		if ( isUnifiedCreateAccount ) {
-			isSocialSignupEnabled = true;
-		}
+		const isSocialSignupEnabled = true;
 
 		const hashObject = this.props.initialContext && this.props.initialContext.hash;
 		if ( isSocialSignupEnabled && ! isEmpty( hashObject ) ) {
@@ -606,13 +577,10 @@ export class UserStep extends Component {
 					recaptchaClientId={ this.state.recaptchaClientId }
 					horizontal
 					shouldDisplayUserExistsError={ ! isWoo && ! isBlazeProOAuth2Client( oauth2Client ) }
-					isSocialFirst={ this.props.isSocialFirst && ! isUnifiedCreateAccount }
-					labelText={ isUnifiedCreateAccount ? this.props.translate( 'Your email' ) : null }
-					disableTosText={ isUnifiedCreateAccount }
+					isSocialFirst={ false }
+					labelText={ this.props.translate( 'Your email' ) }
+					disableTosText
 				/>
-				{ isUnifiedCreateAccount && (
-					<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
-				) }
 				<div id="g-recaptcha"></div>
 			</>
 		);
@@ -676,39 +644,22 @@ export class UserStep extends Component {
 			return null;
 		}
 
-		if ( this.props.isUnifiedCreateAccount ) {
-			return (
-				<LoginContextProvider>
-					<LoginContextWrapper
-						headerText={ this.getHeaderText() }
-						subHeaderText={ getHeadingSubText( {
-							isSocialFirst: true,
-							twoFactorAuthType: false,
-							translate: this.props.translate,
-							isWooJPC: this.props.isWooJPC,
-						} ) }
-					>
-						<OneLoginLayout isJetpack={ false } isSectionSignup loginUrl={ this.getLoginUrl() }>
-							{ this.renderSignupForm() }
-						</OneLoginLayout>
-					</LoginContextWrapper>
-				</LoginContextProvider>
-			);
-		}
-
-		// TODO: decouple hideBack flag from the flow name.
 		return (
-			<StepWrapper
-				flowName={ this.props.flowName }
-				stepName={ this.props.stepName }
-				headerText={ this.getHeaderText() }
-				subHeaderText={ this.getSubHeaderText() }
-				positionInFlow={ this.props.positionInFlow }
-				fallbackHeaderText={ this.props.translate( 'Create your account.' ) }
-				stepContent={ this.renderSignupForm() }
-				customizedActionButtons={ this.getCustomizedActionButtons() }
-				isSticky={ this.getIsSticky() }
-			/>
+			<LoginContextProvider>
+				<LoginContextWrapper
+					headerText={ this.getHeaderText() }
+					subHeaderText={ getHeadingSubText( {
+						isSocialFirst: true,
+						twoFactorAuthType: false,
+						translate: this.props.translate,
+						isWooJPC: this.props.isWooJPC,
+					} ) }
+				>
+					<OneLoginLayout isJetpack={ false } isSectionSignup loginUrl={ this.getLoginUrl() }>
+						{ this.renderSignupForm() }
+					</OneLoginLayout>
+				</LoginContextWrapper>
+			</LoginContextProvider>
 		);
 	}
 }
@@ -724,15 +675,6 @@ const ConnectedUser = connect(
 		const isVIPClient = isVIPOAuth2Client( oauth2Client );
 		const isJetpackCloud = isJetpackCloudOAuth2Client( oauth2Client );
 		const isStudioApp = isStudioAppOAuth2Client( oauth2Client );
-		const isUnifiedCreateAccount =
-			isWoo ||
-			isA4A ||
-			isCrowdsignal ||
-			isBlazePro ||
-			isAkismet ||
-			isVIPClient ||
-			isJetpackCloud ||
-			isStudioApp;
 
 		return {
 			oauth2Client: oauth2Client,
@@ -744,7 +686,6 @@ const ConnectedUser = connect(
 			from: get( getCurrentQueryArguments( state ), 'from' ),
 			userLoggedIn: isUserLoggedIn( state ),
 			isOnboardingAffiliateFlow: getIsOnboardingAffiliateFlow( state ),
-			isUnifiedCreateAccount,
 			isA4A,
 			isCrowdsignal,
 			isAkismet,
