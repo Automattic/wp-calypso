@@ -87,18 +87,21 @@ export default function DomainAddDNS() {
 
 		const formattedData = config.transformData( formData, domainName );
 
-		mutation.mutate( [ formattedData ], {
-			onSuccess: () => {
-				createSuccessNotice( __( 'DNS record added successfully.' ), { type: 'snackbar' } );
-				navigateToDNSOverviewPage();
-			},
-			onError: () => {
-				// TODO: Get DNS exception class and display correct error message
-				createErrorNotice( __( 'Failed to add DNS record.' ), {
-					type: 'snackbar',
-				} );
-			},
-		} );
+		mutation.mutate(
+			{ recordsToAdd: [ formattedData ] },
+			{
+				onSuccess: () => {
+					createSuccessNotice( __( 'DNS record added successfully.' ), { type: 'snackbar' } );
+					navigateToDNSOverviewPage();
+				},
+				onError: () => {
+					// TODO: Get DNS exception class and display correct error message
+					createErrorNotice( __( 'Failed to add DNS record.' ), {
+						type: 'snackbar',
+					} );
+				},
+			}
+		);
 	};
 
 	const handleCancel = ( e: React.MouseEvent< HTMLButtonElement > ) => {
