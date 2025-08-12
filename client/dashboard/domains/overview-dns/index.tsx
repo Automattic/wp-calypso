@@ -100,7 +100,7 @@ export default function DomainDns() {
 										// const formData = [ [ 'files[]', file, file.name ] ];
 									} }
 								>
-									<Button variant="secondary">{ __( 'Import BIND file' ) }</Button>
+									{ /* <Button variant="secondary">{ __( 'Import BIND file' ) }</Button> */ }
 								</FormFileUpload>
 								<Button variant="primary">{ __( 'Add DNS Record' ) }</Button>
 								<DnsActionsMenu
