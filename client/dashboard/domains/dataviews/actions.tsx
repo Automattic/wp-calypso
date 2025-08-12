@@ -6,7 +6,6 @@ import {
 	domainMappingSetup,
 	domainUseMyDomain,
 } from '@automattic/domains-table/src/utils/paths';
-import { encodeProductForUrl } from '@automattic/wpcom-checkout'; // eslint-disable-line no-restricted-imports
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -28,6 +27,7 @@ import {
 } from '../../utils/domain';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
 import { isAkismetProduct, isMarketplaceTemporarySitePurchase } from '../../utils/purchase';
+import { encodeProductForUrl } from '../../utils/wpcom-checkout';
 import type { DomainSummary, Site, User } from '../../data/types';
 import type { Action } from '@wordpress/dataviews';
 
