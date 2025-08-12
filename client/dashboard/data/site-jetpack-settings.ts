@@ -26,6 +26,7 @@ export async function updateJetpackSettings(
 ) {
 	return wpcom.req.post( `/jetpack-blogs/${ siteId }/rest-api/`, {
 		path: '/jetpack/v4/settings/',
-		body: settings,
+		body: JSON.stringify( settings ),
+		json: true,
 	} );
 }
