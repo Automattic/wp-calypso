@@ -398,11 +398,18 @@ export default function SyncModal( {
 				>
 					<Tooltip
 						text={
-							shouldDisableGranularSync
-								? __(
-										'Selecting individual items to sync will be enabled automatically once your first backup is complete. Wait a few minutes or run a full sync in the meantime.'
-								  )
-								: ''
+							/* Tooltip.text is string-only. We need a visible line break; "\n" won't render
+							 * in this tooltip. Using <br/> requires createInterpolateElement, which returns
+							 * a React element, so we cast to string as a pragmatic workaround. Keeping <br/>
+							 * inside __() preserves a single translatable message. */
+							( shouldDisableGranularSync
+								? ( createInterpolateElement(
+										__(
+											'Selecting individual items to sync will be enabled automatically once your first backup is complete.<br/>Wait a few minutes or run a full sync in the meantime.'
+										),
+										{ br: <br /> }
+								  ) as unknown as string )
+								: '' ) as string
 						}
 						placement="top-start"
 					>
