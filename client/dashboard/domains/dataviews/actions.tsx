@@ -59,7 +59,7 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 							serviceSlug = 'marketplace/';
 						}
 
-						window.location.pathname = addQueryArgs(
+						window.location.href = addQueryArgs(
 							`/checkout/${ serviceSlug }${ productSlug }/renew/${ purchase.ID }/${ siteSlug }`,
 							{
 								cancel_to: backUrl,
