@@ -58,6 +58,13 @@ export function SiteLogsCallout( {
 	);
 }
 
+const LOG_TABS = [
+	{ name: 'php', title: __( 'PHP error' ) },
+	{ name: 'server', title: __( 'Web server' ) },
+];
+
+const EMPTY_ARRAY: ( ServerLog | PHPLog )[] = [];
+
 function SiteLogs( { logType }: { logType: LogType } ) {
 	const { siteSlug } = siteRoute.useParams();
 	const router = useRouter();
@@ -102,8 +109,6 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 
 	// @todo: We'll be able to remove the fallbacks once the temporary data (fields, views, actions) are removed and this component is cleaned up, as we'll return earlier if site doesn't exist.
 	const siteId = site?.ID ?? null;
-
-	const EMPTY_ARRAY: ( ServerLog | PHPLog )[] = [];
 
 	const params: SiteLogsParams = {
 		siteId,
@@ -243,11 +248,6 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		[ isFetching ]
 	);
 
-	const LOG_TABS = [
-		{ name: 'php', title: __( 'PHP error' ) },
-		{ name: 'server', title: __( 'Web server' ) },
-	];
-
 	if ( ! site ) {
 		return;
 	}
@@ -257,35 +257,36 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 			<CalloutOverlay
 				showCallout={ ! hasHostingFeature( site, HostingFeatures.LOGS ) }
 				callout={ <SiteLogsCallout siteSlug={ site.slug } /> }
-				main={ null }
+				main={
+					<TabPanel
+						className="site-logs-tabs"
+						activeClass="is-active"
+						tabs={ LOG_TABS }
+						onSelect={ ( tabName ) => {
+							if ( tabName === LogType.PHP || tabName === LogType.SERVER ) {
+								handleTabChange( tabName );
+							}
+						} }
+						initialTabName={ logType }
+					>
+						{ () => (
+							<DataViewsCard>
+								<DataViews< PHPLog | ServerLog >
+									data={ logs ?? [] }
+									isLoading={ isFetching }
+									paginationInfo={ paginationInfo }
+									fields={ fields ?? [] }
+									view={ view }
+									actions={ actions }
+									search={ false }
+									defaultLayouts={ { table: {} } }
+									onChangeView={ () => {} }
+								/>
+							</DataViewsCard>
+						) }
+					</TabPanel>
+				}
 			/>
-			<TabPanel
-				className="site-logs-tabs"
-				activeClass="is-active"
-				tabs={ LOG_TABS }
-				onSelect={ ( tabName ) => {
-					if ( tabName === LogType.PHP || tabName === LogType.SERVER ) {
-						handleTabChange( tabName );
-					}
-				} }
-				initialTabName={ logType }
-			>
-				{ () => (
-					<DataViewsCard>
-						<DataViews< PHPLog | ServerLog >
-							data={ logs ?? [] }
-							isLoading={ isFetching }
-							paginationInfo={ paginationInfo }
-							fields={ fields ?? [] }
-							view={ view }
-							actions={ actions }
-							search={ false }
-							defaultLayouts={ { table: {} } }
-							onChangeView={ () => {} }
-						/>
-					</DataViewsCard>
-				) }
-			</TabPanel>
 		</PageLayout>
 	);
 }

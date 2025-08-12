@@ -23,10 +23,12 @@ export interface PHPLog extends Omit< PHPLogFromEndpoint, 'atomic_site_id' > {
 	id: string;
 }
 
-export enum LogType {
-	PHP = 'php',
-	SERVER = 'server',
-}
+export const LogType = {
+	PHP: 'php',
+	SERVER: 'server',
+} as const;
+
+export type LogType = ( typeof LogType )[ keyof typeof LogType ];
 
 export interface FilterType {
 	[ key: string ]: Array< string >;
@@ -120,17 +122,21 @@ export async function fetchSiteLogs( {
 
 	if ( logType === LogType.PHP ) {
 		const normalized = ( logs as PHPLogFromEndpoint[] ).map(
-			( { atomic_site_id, ...logWithoutAtomicId } ) => ( {
+			( { atomic_site_id, ...logWithoutAtomicId }, index ) => ( {
 				...logWithoutAtomicId,
-				id: `${ logWithoutAtomicId.timestamp }|${ String( logWithoutAtomicId.line ) }`,
+				id: `${ logWithoutAtomicId.timestamp }|${ logWithoutAtomicId.file }|${ String(
+					logWithoutAtomicId.line
+				) }|${ String( pageIndex ?? 0 ) }|${ String( index ) }`,
 			} )
 		);
 		return { total_results: totalResults, logs: normalized };
 	}
 
-	const normalized = ( logs as ServerLogFromEndpoint[] ).map( ( log ) => ( {
+	const normalized = ( logs as ServerLogFromEndpoint[] ).map( ( log, index ) => ( {
 		...log,
-		id: `${ String( log.timestamp ) }|${ log.status }`,
+		id: `${ String( log.timestamp ) }|${ log.request_type }|${ log.status }|${ log.request_url }|${
+			log.user_ip
+		}|${ String( pageIndex ?? 0 ) }|${ String( index ) }`,
 	} ) );
 	return { total_results: totalResults, logs: normalized };
 }
