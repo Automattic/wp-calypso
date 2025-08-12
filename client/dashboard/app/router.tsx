@@ -8,6 +8,7 @@ import {
 } from '@tanstack/react-router';
 import { HostingFeatures } from '../data/constants';
 import { fetchTwoStep } from '../data/me';
+import { LogType } from '../data/site-logs';
 import { canViewHundredYearPlanSettings, canViewWordPressSettings } from '../sites/features';
 import { hasHostingFeature } from '../utils/site-features';
 import { hasSiteTrialEnded } from '../utils/site-trial';
@@ -246,7 +247,7 @@ const siteLogsPhpRoute = createRoute( {
 } ).lazy( () =>
 	import( '../sites/logs' ).then( ( d ) =>
 		createLazyRoute( 'site-logs-php' )( {
-			component: ( props ) => <d.default { ...props } key="php" />,
+			component: () => <d.default logType={ LogType.PHP } />,
 		} )
 	)
 );
@@ -257,7 +258,7 @@ const siteLogsServerRoute = createRoute( {
 } ).lazy( () =>
 	import( '../sites/logs' ).then( ( d ) =>
 		createLazyRoute( 'site-logs-server' )( {
-			component: ( props ) => <d.default { ...props } key="server" />,
+			component: () => <d.default logType={ LogType.SERVER } />,
 		} )
 	)
 );
