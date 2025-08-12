@@ -9,6 +9,7 @@ import akismetIcon from 'calypso/assets/images/icons/akismet-icon.svg';
 import jetpackIcon from 'calypso/assets/images/icons/jetpack-icon.svg';
 import passportIcon from 'calypso/assets/images/icons/passport-icon.svg';
 import { useAuth } from '../../app/auth';
+import { PurchaseExpiryStatus } from '../../components/purchase-expiry-status';
 import SiteIcon from '../../sites/site-icon';
 import {
 	isRenewing,
@@ -18,7 +19,6 @@ import {
 } from '../../utils/purchase';
 import { PurchasePaymentMethod } from './purchase-payment-method';
 import { PurchaseProduct } from './purchase-product';
-import { PurchaseStatus } from './purchase-status';
 import type { StoredPaymentMethod } from '../../data/me-payment-methods';
 import type { Purchase } from '../../data/purchase';
 import type { Site } from '../../data/site';
@@ -445,7 +445,7 @@ export function getFields( {
 				const site = sites.find( ( site ) => String( site.ID ) === item.blog_id );
 				return (
 					<div>
-						<PurchaseStatus purchase={ item } isDisconnectedSite={ ! site } />
+						<PurchaseExpiryStatus purchase={ item } isDisconnectedSite={ ! site } />
 					</div>
 				);
 			},
