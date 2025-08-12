@@ -66,6 +66,15 @@ export const useSendOdieMessage = () => {
 		trigger: boolean;
 	} >( { isFromError: false, trigger: false } );
 
+	useEffect( () => {
+		const { createdFrom, isFromError, trigger } = shouldCreateConversation;
+
+		if ( trigger ) {
+			newConversation( { createdFrom, isFromError } );
+			setShouldCreateConversation( { createdFrom: undefined, isFromError: false, trigger: false } );
+		}
+	}, [ newConversation, shouldCreateConversation ] );
+
 	const {
 		botNameSlug,
 		selectedSiteId,
@@ -78,17 +87,7 @@ export const useSendOdieMessage = () => {
 		isUserEligibleForPaidSupport,
 		canConnectToZendesk,
 		forceEmailSupport,
-		sectionName,
 	} = useOdieAssistantContext();
-
-	useEffect( () => {
-		const { createdFrom, isFromError, trigger } = shouldCreateConversation;
-
-		if ( trigger ) {
-			newConversation( { createdFrom, isFromError } );
-			setShouldCreateConversation( { createdFrom: undefined, isFromError: false, trigger: false } );
-		}
-	}, [ newConversation, shouldCreateConversation, sectionName ] );
 
 	/*
 		Adds a message to the chat.
