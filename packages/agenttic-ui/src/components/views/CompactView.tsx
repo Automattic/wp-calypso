@@ -10,6 +10,8 @@ interface CompactViewProps {
 	placeholder?: string;
 	isProcessing: boolean;
 	onBlur?: () => void;
+	onExpand?: () => void;
+	showExpandButton?: boolean;
 }
 
 export function CompactView( {
@@ -21,6 +23,8 @@ export function CompactView( {
 	placeholder,
 	isProcessing,
 	onBlur,
+	onExpand,
+	showExpandButton = true,
 }: CompactViewProps ) {
 	return (
 		<ChatInput
@@ -32,6 +36,8 @@ export function CompactView( {
 			placeholder={ placeholder }
 			isProcessing={ isProcessing }
 			onBlur={ onBlur }
+			onExpand={ onExpand }
+			showExpandButton={ showExpandButton }
 		/>
 	);
 }

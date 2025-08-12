@@ -15,9 +15,18 @@
     padding-left: var(--spacing);
     padding-right: var(--spacing);
     height: var(--spacing-10);
+    gap: var(--spacing);
     align-items: center;
 }
 
 .button {
     border-radius: var(--radius-full);
+}
+
+.expandButton {
+    color: var(--color-muted-foreground);
+}
+
+.expandButton:hover:not(:disabled) {
+    color: var(--color-foreground);
 }

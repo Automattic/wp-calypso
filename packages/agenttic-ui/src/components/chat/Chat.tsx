@@ -156,10 +156,11 @@ export function Chat( {
 		}
 	}, [ input, onSubmit, chat, onExpand ] );
 
-	// Handle minimize (go back to compact state)
-	const handleMinimize = useCallback( () => {
-		chat.setState( 'compact' );
-	}, [ chat ] );
+	// Handle expand (go to expanded state)
+	const handleExpand = useCallback( () => {
+		onExpand?.();
+		chat.setState( 'expanded' );
+	}, [ onExpand, chat ] );
 
 	// Handle close (go back to collapsed state)
 	const handleClose = useCallback( () => {
@@ -330,6 +331,7 @@ export function Chat( {
 					error={ error }
 					emptyView={ emptyView }
 					messageRenderer={ messageRenderer }
+					onExpand={ handleExpand }
 				/>
 			</div>
 		);
@@ -352,7 +354,9 @@ export function Chat( {
 				ref={ chatRef }
 				data-slot="chat-floating"
 				className={ cn( styles.container, styles.floating ) }
-				onMouseLeave={ handleAutoCollapse }
+				onMouseLeave={
+					chat.state === 'compact' ? handleAutoCollapse : undefined
+				}
 				drag={ chat.state === 'expanded' }
 				dragControls={ dragControls }
 				dragListener={ false }
@@ -415,6 +419,8 @@ export function Chat( {
 									placeholder={ placeholder }
 									isProcessing={ isProcessing }
 									onBlur={ handleAutoCollapse }
+									onExpand={ handleExpand }
+									showExpandButton={ ! input.value.trim() }
 								/>
 							</div>
 						) }
@@ -430,8 +436,7 @@ export function Chat( {
 								placeholder={ placeholder }
 								isProcessing={ isProcessing }
 								showHeader={ true }
-								onClose={ onClose }
-								onMinimize={ handleMinimize }
+								onClose={ handleClose }
 								fromCompact={ fromCompact }
 								notice={ notice }
 								suggestions={ suggestions }
@@ -439,6 +444,7 @@ export function Chat( {
 								error={ error }
 								emptyView={ emptyView }
 								messageRenderer={ messageRenderer }
+								onExpand={ handleExpand }
 							/>
 						) }
 					</AnimatePresence>

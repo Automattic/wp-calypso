@@ -31,7 +31,7 @@ interface ConversationViewProps extends InputHandlers {
 	// Header configuration
 	showHeader?: boolean;
 	onClose?: () => void;
-	onMinimize?: () => void;
+	onExpand?: () => void;
 
 	// Notifications
 	notice?: NoticeConfig;
@@ -60,7 +60,7 @@ export function ConversationView( {
 	fromCompact = false,
 	showHeader = false,
 	onClose,
-	onMinimize,
+	onExpand,
 	notice,
 	emptyView,
 	suggestions,
@@ -74,9 +74,7 @@ export function ConversationView( {
 				showHeader ? ` ${ styles.withHeader }` : ''
 			}` }
 		>
-			{ showHeader && (
-				<ChatHeader onClose={ onClose } onMinimize={ onMinimize } />
-			) }
+			{ showHeader && <ChatHeader onClose={ onClose } /> }
 			<Messages
 				messages={ messages }
 				isProcessing={ isProcessing }
@@ -115,6 +113,8 @@ export function ConversationView( {
 						placeholder={ placeholder }
 						isProcessing={ isProcessing }
 						fromCompact={ fromCompact }
+						onExpand={ onExpand }
+						showExpandButton={ false }
 					/>
 				</div>
 			</div>

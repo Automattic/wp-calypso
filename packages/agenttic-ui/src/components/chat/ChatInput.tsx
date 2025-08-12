@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import { fastSpring, fastSpringWithDelay } from '../animations';
 import { DEFAULT_PLACEHOLDER } from '../../types';
 import styles from './ChatInput.module.css';
+import { ChevronUpIcon } from '../icons/ChevronUpIcon';
 
 interface ChatInputProps {
 	value: string;
@@ -18,6 +19,8 @@ interface ChatInputProps {
 	isProcessing: boolean;
 	onBlur?: () => void;
 	fromCompact?: boolean;
+	onExpand?: () => void;
+	showExpandButton?: boolean;
 }
 
 export function ChatInput( {
@@ -30,6 +33,8 @@ export function ChatInput( {
 	isProcessing,
 	onBlur,
 	fromCompact = false,
+	onExpand,
+	showExpandButton = true,
 }: ChatInputProps ) {
 	const textareaId = useId();
 	const canSubmit = value.trim() || isProcessing;
@@ -75,6 +80,15 @@ export function ChatInput( {
 					transition: value.trim() ? { duration: 0 } : fastSpring,
 				} }
 			>
+				{ showExpandButton && onExpand && (
+					<Button
+						className={ `${ styles.button } ${ styles.expandButton }` }
+						onClick={ onExpand }
+						variant="ghost"
+						icon={ <ChevronUpIcon /> }
+						aria-label="Expand conversation"
+					/>
+				) }
 				<Button
 					className={ styles.button }
 					onClick={ onSubmit }
