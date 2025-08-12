@@ -4,11 +4,7 @@ import { fetchSiteLogs, SiteLogsParams } from '../../data/site-logs';
 export const siteLogsQuery = ( siteId: number, params: SiteLogsParams ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'logs', params ],
-		queryFn: () =>
-			fetchSiteLogs( {
-				...params,
-				siteId,
-			} ),
+		queryFn: () => fetchSiteLogs( siteId, params ),
 		enabled: params.start <= params.end,
 		staleTime: Infinity, // The logs within a specified time range never change.
 	} );

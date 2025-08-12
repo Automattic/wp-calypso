@@ -111,7 +111,6 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	const siteId = site?.ID ?? null;
 
 	const params: SiteLogsParams = {
-		siteId,
 		logType,
 		start: startTime,
 		end: endTime,

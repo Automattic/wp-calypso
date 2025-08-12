@@ -1,6 +1,6 @@
 import wpcom from 'calypso/lib/wp';
 
-export interface SiteLogsAPIResponse {
+interface SiteLogsAPIResponse {
 	message: string;
 	data: {
 		total_results: number | { value: number; relation: string };
@@ -8,7 +8,7 @@ export interface SiteLogsAPIResponse {
 	};
 }
 
-export interface PHPLogFromEndpoint {
+interface PHPLogFromEndpoint {
 	timestamp: string;
 	severity: 'User' | 'Warning' | 'Deprecated' | 'Fatal error';
 	message: string;
@@ -61,12 +61,11 @@ export interface ServerLog extends ServerLogFromEndpoint {
 }
 
 export interface SiteLogsParams {
-	siteId: number | null | undefined;
 	logType: LogType;
 	start: number;
 	end: number;
 	filter: FilterType;
-	sortOrder?: string;
+	sortOrder?: 'asc' | 'desc';
 	pageSize?: number;
 	pageIndex?: number;
 }
@@ -76,23 +75,17 @@ export interface SiteLogsData {
 	logs: ( PHPLog | ServerLog )[];
 }
 
-export async function fetchSiteLogs( {
-	siteId,
-	logType,
-	start,
-	end,
-	filter,
-	sortOrder,
-	pageSize,
-	pageIndex,
-}: SiteLogsParams ): Promise< SiteLogsData > {
+export async function fetchSiteLogs(
+	siteId: number,
+	{ logType, start, end, filter, sortOrder, pageSize, pageIndex }: SiteLogsParams
+): Promise< SiteLogsData > {
 	const logTypeFragment = logType === LogType.PHP ? 'error-logs' : 'logs';
 	const path = `/sites/${ siteId }/hosting/${ logTypeFragment }`;
 
 	const queryParams = {
-		start: start,
-		end: end,
-		filter: filter,
+		start,
+		end,
+		filter,
 		sort_order: sortOrder,
 		page_size: pageSize,
 		page_index: pageIndex,
