@@ -1,5 +1,4 @@
 import page from '@automattic/calypso-router';
-import { FormInputValidation } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Spinner } from '@wordpress/components';
 import clsx from 'clsx';
@@ -26,8 +25,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import { FormDivider } from 'calypso/blocks/authentication';
 import ContinueAsUser from 'calypso/blocks/login/continue-as-user';
-import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
 import Notice from 'calypso/components/notice';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import formState from 'calypso/lib/form-state';
@@ -51,7 +48,6 @@ import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { resetSignup } from 'calypso/state/signup/actions';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import PasswordlessSignupForm from './passwordless';
-import SignupSubmitButton from './signup-submit-button';
 import SocialSignupForm from './social';
 
 import './style.scss';
@@ -77,15 +73,11 @@ class SignupForm extends Component {
 		disableBlurValidation: PropTypes.bool,
 		disableContinueAsUser: PropTypes.bool,
 		disabled: PropTypes.bool,
-		disableEmailExplanation: PropTypes.string,
-		disableEmailInput: PropTypes.bool,
 		disableSubmitButton: PropTypes.bool,
 		displayNameInput: PropTypes.bool,
 		displayUsernameInput: PropTypes.bool,
 		email: PropTypes.string,
 		flowName: PropTypes.string,
-		footerLink: PropTypes.node,
-		formHeader: PropTypes.node,
 		goToNextStep: PropTypes.func,
 		handleCreateAccountError: PropTypes.func,
 		handleCreateAccountSuccess: PropTypes.func,
@@ -104,7 +96,6 @@ class SignupForm extends Component {
 		step: PropTypes.object,
 		submitButtonLabel: PropTypes.string,
 		submitButtonLoadingLabel: PropTypes.string,
-		submitButtonText: PropTypes.string,
 		submitForm: PropTypes.func,
 		submitting: PropTypes.bool,
 		suggestedUsername: PropTypes.string.isRequired,
@@ -471,18 +462,10 @@ class SignupForm extends Component {
 		} );
 	};
 
-	isJetpack() {
-		return 'jetpack-connect' === this.props.sectionName;
-	}
-
-	getLoginLinkFrom() {
-		return this.props.from;
-	}
-
 	getLoginLink( { emailAddress } = {} ) {
 		return login( {
 			emailAddress,
-			isJetpack: this.isJetpack(),
+			isJetpack: 'jetpack-connect' === this.props.sectionName,
 			from: this.props.from,
 			redirectTo: this.props.redirectToAfterLoginUrl,
 			locale: this.props.locale,
@@ -612,7 +595,7 @@ class SignupForm extends Component {
 	}
 
 	displayUsernameInput() {
-		return this.props.displayUsernameInput && ! this.props.isBlazePro;
+		return this.props.displayUsernameInput;
 	}
 
 	handlePasswordlessSubmit = ( passwordLessData ) => {
@@ -634,10 +617,6 @@ class SignupForm extends Component {
 	};
 
 	termsOfServiceLink = () => {
-		if ( this.props.isWoo ) {
-			return null;
-		}
-
 		const options = {
 			components: {
 				tosLink: (
@@ -658,31 +637,11 @@ class SignupForm extends Component {
 				),
 			},
 		};
-		let tosText = this.props.translate(
-			'By creating an account you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+
+		const tosText = this.props.translate(
+			'By entering your email address, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
 			options
 		);
-
-		if ( this.props.isGravatar ) {
-			tosText = this.props.translate(
-				'By entering your email address, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
-				options
-			);
-		}
-
-		if ( this.props.isBlazePro ) {
-			tosText = (
-				<>
-					{ this.props.translate(
-						'By creating an account, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and acknowledge you have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
-						options
-					) }{ ' ' }
-					{ this.props.translate(
-						'Blaze Pro uses WordPress.com accounts under the hood. Tumblr, Blaze Pro, and WordPress.com are properties of Automattic, Inc.'
-					) }
-				</>
-			);
-		}
 
 		return <p className="signup-form__terms-of-service-link">{ tosText }</p>;
 	};
@@ -732,81 +691,6 @@ class SignupForm extends Component {
 		}
 
 		return false;
-	}
-
-	emailDisableExplanation() {
-		if ( this.props.disableEmailInput && this.props.disableEmailExplanation ) {
-			return (
-				<FormSettingExplanation>{ this.props.disableEmailExplanation }</FormSettingExplanation>
-			);
-		}
-	}
-
-	passwordValidationExplanation() {
-		const passwordValue = formState.getFieldValue( this.state.form, 'password' );
-
-		if ( formState.isFieldInvalid( this.state.form, 'password' ) ) {
-			return <FormInputValidation isError text={ this.getErrorMessagesWithLogin( 'password' ) } />;
-		}
-
-		if ( passwordValue && passwordValue < 6 ) {
-			return (
-				<FormSettingExplanation>
-					{ this.props.translate( 'Your password must be at least six characters long.' ) }
-				</FormSettingExplanation>
-			);
-		}
-
-		return false;
-	}
-
-	hasFilledInputValues = () => {
-		const userInputFields = [ 'email', 'username', 'password' ];
-		return userInputFields.every( ( field ) => {
-			const value = formState.getFieldValue( this.state.form, field );
-			if ( typeof value === 'string' ) {
-				return value.trim().length > 0;
-			}
-			// eslint-disable-next-line no-console
-			console.warn(
-				`hasFilledInputValues: field ${ field } has a value of type ${ typeof value }. Expected string.`
-			);
-			// If we can't determine if the field is filled, we assume it is so that the user can submit the form.
-			return true;
-		} );
-	};
-
-	formFooter() {
-		const params = new URLSearchParams( window.location.search );
-		const variationName = params.get( 'variationName' );
-
-		return (
-			<LoggedOutFormFooter isBlended={ this.props.isSocialSignupEnabled }>
-				{ ! this.props.disableTosText && this.termsOfServiceLink() }
-				<SignupSubmitButton
-					isDisabled={
-						this.state.submitting ||
-						this.props.disabled ||
-						this.props.disableSubmitButton ||
-						( this.props.isWoo &&
-							( ! this.hasFilledInputValues() || formState.hasErrors( this.state.form ) ) )
-					}
-					variationName={ variationName }
-				>
-					{ this.props.submitButtonText }
-				</SignupSubmitButton>
-			</LoggedOutFormFooter>
-		);
-	}
-
-	footerLink() {
-		const { isWoo } = this.props;
-
-		if ( isWoo ) {
-			return null;
-		}
-
-		return null;
 	}
 
 	handleOnChangeAccount = () => {
@@ -914,8 +798,7 @@ class SignupForm extends Component {
 							stepName={ this.props.stepName }
 							flowName={ this.props.flowName }
 							goToNextStep={ this.props.goToNextStep }
-							renderTerms={ this.termsOfServiceLink }
-							disableTosText={ this.props.disableTosText }
+							disableTosText
 							submitForm={ this.handlePasswordlessSubmit }
 							logInUrl={ logInUrl }
 							disabled={ this.props.disabled }
