@@ -561,6 +561,29 @@ describe( 'reader stats', () => {
 	} );
 
 	describe( 'getLocation', () => {
+		describe( 'base urls', () => {
+			const scenarios = [
+				{
+					url: '/unknown-url',
+					expected: 'unknown',
+					description: 'home page',
+				},
+				{
+					url: '/home',
+					expected: 'home',
+					description: 'home page',
+				},
+				{
+					url: '',
+					expected: 'unknown',
+					description: 'home page',
+				},
+			] as const;
+
+			it.each( scenarios )( 'should return $expected for "$description" ($url)', ( scenario ) => {
+				expect( getLocation( scenario.url ) ).toBe( scenario.expected );
+			} );
+		} );
 		describe( 'reader urls', () => {
 			const scenarios = [
 				{
@@ -597,6 +620,26 @@ describe( 'reader stats', () => {
 					url: '/reader/list/',
 					expected: 'list',
 					description: 'reader list page',
+				},
+				{
+					url: '/reader/feeds/123/posts/123',
+					expected: 'single_post',
+					description: 'reader feed page with post',
+				},
+				{
+					url: '/reader/search',
+					expected: 'search',
+					description: 'reader search page',
+				},
+				{
+					url: '/reader/conversations',
+					expected: 'conversations',
+					description: 'reader conversations page',
+				},
+				{
+					url: '/reader/conversations/a8c',
+					expected: 'conversations_a8c',
+					description: 'reader conversations a8c page',
 				},
 			] as const;
 
@@ -650,6 +693,12 @@ describe( 'reader stats', () => {
 					expected: 'discover_tag:test',
 					description: 'discover tags page with tag and sort',
 					searchParams: { selectedTag: 'test', sort: 'relevance' },
+				},
+				{
+					url: '/discover/wrong-url',
+					expected: 'discover_unknown',
+					description: 'discover wrong url',
+					searchParams: {},
 				},
 			] as const;
 
