@@ -52,6 +52,7 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { createSocialUserFailed } from 'calypso/state/login/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getIsAkismet from 'calypso/state/selectors/get-is-akismet';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
@@ -1036,7 +1037,11 @@ class SignupForm extends Component {
 		}
 
 		const isUnifiedCreateAccount =
-			this.props.isWoo || this.props.isA4A || this.props.isBlazePro || this.props.isCrowdsignal;
+			this.props.isWoo ||
+			this.props.isA4A ||
+			this.props.isCrowdsignal ||
+			this.props.isBlazePro ||
+			this.props.isAkismet;
 		const isGravatar = this.props.isGravatar;
 		const emailErrorMessage = this.getErrorMessagesWithLogin( 'email' );
 		const showSeparator =
@@ -1193,6 +1198,7 @@ export default connect(
 			isBlazePro: getIsBlazePro( state ),
 			isA4A: isA4AOAuth2Client( oauth2Client ),
 			isCrowdsignal: isCrowdsignalOAuth2Client( oauth2Client ),
+			isAkismet: getIsAkismet( state ),
 		};
 	},
 	{

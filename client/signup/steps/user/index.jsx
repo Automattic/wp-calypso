@@ -47,6 +47,7 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getIsAkismet from 'calypso/state/selectors/get-is-akismet';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getIsWCCOM from 'calypso/state/selectors/get-is-wccom';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
@@ -484,6 +485,7 @@ export class UserStep extends Component {
 			isBlazePro,
 			isWCCOM,
 			isCrowdsignal,
+			isAkismet,
 		} = this.props;
 
 		if ( userLoggedIn ) {
@@ -499,8 +501,8 @@ export class UserStep extends Component {
 
 		// TODO clk This will encompass all unified OAuth2 clients,
 		// similar to get-header-text in wp-login (potentially the two being merged too)
-		if ( oauth2Client && isCrowdsignal ) {
-			const clientName = oauth2Client.name;
+		if ( ( oauth2Client && isCrowdsignal ) || isAkismet ) {
+			const clientName = isAkismet ? 'Akismet' : oauth2Client.name;
 
 			return fixMe( {
 				text: 'Sign up for {{span}}%(client)s{{/span}} with WordPress.com',
@@ -599,6 +601,7 @@ export class UserStep extends Component {
 			isA4A,
 			isBlazePro,
 			isCrowdsignal,
+			isAkismet,
 		} = this.props;
 		const isPasswordless =
 			isMobile() ||
@@ -606,8 +609,9 @@ export class UserStep extends Component {
 			isNewsletterFlow( this.props?.queryObject?.variationName ) ||
 			isWoo ||
 			isA4A ||
+			isCrowdsignal ||
 			isBlazePro ||
-			isCrowdsignal;
+			isAkismet;
 		let socialService;
 		let socialServiceResponse;
 		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
@@ -728,12 +732,7 @@ export class UserStep extends Component {
 							isWooJPC: this.props.isWooJPC,
 						} ) }
 					>
-						<OneLoginLayout
-							isJetpack={ false }
-							isFromAkismet={ false }
-							isSectionSignup
-							loginUrl={ this.getLoginUrl() }
-						>
+						<OneLoginLayout isJetpack={ false } isSectionSignup loginUrl={ this.getLoginUrl() }>
 							{ this.renderSignupForm() }
 						</OneLoginLayout>
 					</LoginContextWrapper>
@@ -765,7 +764,8 @@ const ConnectedUser = connect(
 		const isA4A = isA4AOAuth2Client( oauth2Client );
 		const isBlazePro = getIsBlazePro( state );
 		const isCrowdsignal = isCrowdsignalOAuth2Client( oauth2Client );
-		const isUnifiedCreateAccount = isWoo || isA4A || isBlazePro || isCrowdsignal;
+		const isAkismet = getIsAkismet( state );
+		const isUnifiedCreateAccount = isWoo || isA4A || isCrowdsignal || isBlazePro || isAkismet;
 
 		return {
 			oauth2Client: oauth2Client,
@@ -781,6 +781,7 @@ const ConnectedUser = connect(
 			isUnifiedCreateAccount,
 			isA4A,
 			isCrowdsignal,
+			isAkismet,
 		};
 	},
 	{
