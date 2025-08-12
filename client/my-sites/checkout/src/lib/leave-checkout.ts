@@ -88,28 +88,20 @@ export const leaveCheckout = ( {
 		return;
 	}
 
-	const referringHost = URL.canParse( document.referrer )
+	const referringHost = URL.canParse?.( document.referrer )
 		? new URL( document.referrer ).origin
 		: null;
 
 	const searchParams = new URLSearchParams( window.location.search );
 
-	/**
-	 * Please see https://github.com/Automattic/wp-calypso/issues/105027
-	 */
+	// If there is no wp.com page in the history, go to forceCheckoutBackUrl as last-ditch effort.
+	// This is admittedly confusing, but `forceCheckoutBackUrl` and `history_back` are in conflict,
+	// but we stick to `history_back` when feasible.
 	if (
-		history.length > 1 &&
-		referringHost === window.location.origin &&
-		/**
-		 * prioritizeHistoryWhenBacking means the browser's native history is preferred over the checkoutBackUrl and `cancel_to`.
-		 */
-		searchParams.has( 'prioritizeHistoryWhenBacking' )
+		forceCheckoutBackUrl &&
+		! searchParams.has( 'history_back' ) &&
+		( referringHost !== window.location.origin || history.length < 2 )
 	) {
-		history.back();
-		return;
-	}
-
-	if ( forceCheckoutBackUrl ) {
 		window.location.href = forceCheckoutBackUrl;
 		return;
 	}

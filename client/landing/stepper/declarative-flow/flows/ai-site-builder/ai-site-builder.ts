@@ -204,7 +204,7 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 									: addQueryArgs( bigSkyUrl, {
 											checkout: 'success',
 									  } ),
-							// TODO: add `?prioritizeHistoryWhenBacking=1` param to fix going back.
+							// TODO: add `?history_back=1` param to fix going back.
 							checkoutBackUrl: addQueryArgs( bigSkyUrl, {
 								checkout: 'cancel',
 							} ),
