@@ -11,14 +11,8 @@ export const siteLogsQuery = ( siteId: number, params: SiteLogsParams ) =>
 		queryKey: [ 'site', siteId, 'logs', params ],
 		queryFn: () =>
 			fetchSiteLogs( {
+				...params,
 				siteId,
-				logType: params.logType,
-				start: params.start,
-				end: params.end,
-				filter: params.filter,
-				sortOrder: params.sortOrder,
-				pageSize: params.pageSize,
-				pageIndex: params.pageIndex,
 			} ),
 		enabled: params.start <= params.end,
 		staleTime: Infinity, // The logs within a specified time range never change.
