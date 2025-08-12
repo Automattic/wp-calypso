@@ -132,7 +132,6 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 					createZendeskConversation( {
 						avoidTransfer: true,
 						interactionId: interaction?.uuid,
-						section: searchParams.get( 'section' ),
 						createdFrom: 'direct_url',
 					} ).then( () => {
 						setChatMessagesLoaded( true );
