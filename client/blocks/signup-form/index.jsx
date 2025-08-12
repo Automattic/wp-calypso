@@ -41,11 +41,8 @@ import {
 	isCrowdsignalOAuth2Client,
 	isGravatarOAuth2Client,
 	isVIPOAuth2Client,
-<<<<<<< HEAD
 	isJetpackCloudOAuth2Client,
-=======
 	isStudioAppOAuth2Client,
->>>>>>> 715cf36e3b3 (Connect Refresh: Migrate Studio create-account to unified Signup)
 } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
 import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
