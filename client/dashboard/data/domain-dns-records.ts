@@ -1,30 +1,33 @@
 import wpcom from 'calypso/lib/wp';
 
-export type DNSRecordType = 'A' | 'AAAA' | 'ALIAS' | 'CAA' | 'CNAME' | 'MX' | 'NS' | 'SRV' | 'TXT';
+export type DnsRecordType = 'A' | 'AAAA' | 'ALIAS' | 'CAA' | 'CNAME' | 'MX' | 'NS' | 'SRV' | 'TXT';
 
-export type DNSRecord = {
-	type?: DNSRecordType;
-	name: string;
-	flags?: number;
-	tag?: string;
-	value?: string;
-	target?: string;
-	data?: string;
-	weight?: number;
-	port?: number;
+export type DnsRecord = {
 	aux?: number;
-	service?: string;
+	data?: string;
+	domain: string;
+	flags?: number;
+	id?: string;
+	name: string;
+	port?: number;
+	protected_field?: boolean;
 	protocol?: string;
-	ttl: number;
+	service?: string;
+	tag?: string;
+	target?: string;
+	ttl?: number;
+	type: DnsRecordType;
+	value?: string;
+	weight?: number;
 };
 
 export type AddDNSRecordResponse = {
-	records: DNSRecord[];
+	records: DnsRecord[];
 };
 
 export async function addDNSRecord(
 	domain: string,
-	recordData: DNSRecord
+	recordData: DnsRecord
 ): Promise< AddDNSRecordResponse > {
 	const payload = {
 		dns: JSON.stringify( {

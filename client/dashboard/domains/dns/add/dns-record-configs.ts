@@ -1,5 +1,5 @@
 import { Field } from '@wordpress/dataviews';
-import { DNSRecord, DNSRecordType } from '../../../data/domain-dns-records';
+import { DnsRecord, DnsRecordType } from '../../../data/domain-dns-records';
 import { ARecordConfig } from './a-record';
 import { AAAARecordConfig } from './aaaa-record';
 import { AliasRecordConfig } from './alias-record';
@@ -11,7 +11,7 @@ import { SRVRecordConfig } from './srv-record';
 import { TXTRecordConfig } from './txt-record';
 
 export type DNSRecordTypeFormData = {
-	type: DNSRecordType;
+	type: DnsRecordType;
 };
 
 export type DNSRecordFormData = {
@@ -36,10 +36,10 @@ export type DNSRecordConfig = {
 		fields: string[];
 	};
 	// Function to transform the form data into the format expected by the DNS endpoint
-	transformData: ( data: DNSRecordFormData, domainName?: string ) => DNSRecord;
+	transformData: ( data: DNSRecordFormData, domainName?: string ) => Partial< DnsRecord >;
 };
 
-export const DNS_RECORD_CONFIGS: Record< DNSRecordType, DNSRecordConfig > = {
+export const DNS_RECORD_CONFIGS: Record< DnsRecordType, DNSRecordConfig > = {
 	A: ARecordConfig,
 	AAAA: AAAARecordConfig,
 	ALIAS: AliasRecordConfig,
