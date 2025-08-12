@@ -1,4 +1,4 @@
-import { useQuery, useSuspenseQuery, useIsMutating } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Button, Dropdown, MenuGroup, MenuItem } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -12,10 +12,6 @@ import {
 	isStagingSiteSyncing,
 } from '../../utils/site-staging-site';
 import type { StagingSiteSyncDirection } from '../../data/types';
-
-// Mutation keys duplicated locally to avoid restricted imports from calypso/
-const PUSH_TO_STAGING_KEY = 'push-to-staging-site-mutation-key';
-const PULL_FROM_STAGING_KEY = 'pull-from-staging-site-mutation-key';
 
 // TODO: We need to rewrite the modal, as it’s not compatible with v2.
 // Both the Modal and especially the FileBrowser rely heavily on Redux state
@@ -56,14 +52,7 @@ export default function StagingSiteSyncDropdown( {
 		refetchIntervalInBackground: true,
 	} );
 
-	// Disable while mutations are in-flight
-	const isPushMutating =
-		useIsMutating( { mutationKey: [ PUSH_TO_STAGING_KEY, stagingSiteId ] } ) > 0;
-	const isPullMutating =
-		useIsMutating( { mutationKey: [ PULL_FROM_STAGING_KEY, stagingSiteId ] } ) > 0;
-
-	const isSyncing =
-		isStagingSiteSyncing( stagingSiteSyncState ) || isPushMutating || isPullMutating;
+	const isSyncing = isStagingSiteSyncing( stagingSiteSyncState );
 
 	const pullLabel =
 		environment === 'staging' ? __( 'Pull from Production' ) : __( 'Pull from Staging' );
