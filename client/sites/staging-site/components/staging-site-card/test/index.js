@@ -145,9 +145,7 @@ describe( 'StagingSiteCard component', () => {
 				<StagingSiteCard { ...defaultProps } />
 			</Provider>
 		);
-		expect( useStagingSite ).toHaveBeenCalledWith( defaultProps.siteId, {
-			enabled: true,
-		} );
+		expect( useStagingSite ).toHaveBeenCalledWith( defaultProps.siteId );
 
 		expect( screen.getByTestId( 'loading-placeholder' ) ).toBeInTheDocument();
 	} );

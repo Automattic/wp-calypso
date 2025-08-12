@@ -18,8 +18,6 @@ import Geochart from '../geochart';
 import { shouldGateStats } from '../hooks/use-should-gate-stats';
 import StatsCardUpsell from '../stats-card-upsell';
 import DatePicker from '../stats-date-picker';
-import DownloadCsv from '../stats-download-csv';
-import DownloadCsvUpsell from '../stats-download-csv-upsell';
 import ErrorPanel from '../stats-error';
 import StatsListCard from '../stats-list/stats-list-card';
 import StatsModulePlaceholder from './placeholder';
@@ -39,10 +37,12 @@ class StatsModule extends Component {
 		query: PropTypes.object,
 		statType: PropTypes.string,
 		showSummaryLink: PropTypes.bool,
+		summaryLinkModifier: PropTypes.func,
 		translate: PropTypes.func,
 		metricLabel: PropTypes.string,
 		mainItemLabel: PropTypes.string,
 		additionalColumns: PropTypes.object,
+		toggleControl: PropTypes.node,
 		listItemClassName: PropTypes.string,
 		gateStats: PropTypes.bool,
 		gateDownloads: PropTypes.bool,
@@ -60,6 +60,7 @@ class StatsModule extends Component {
 		valueField: 'value',
 		minutesLimit: 30,
 		isRealTime: false,
+		summaryLinkModifier: ( link ) => link,
 	};
 
 	state = {
@@ -183,7 +184,7 @@ class StatsModule extends Component {
 	}
 
 	getSummaryLink() {
-		const { summary, period, path, siteSlug, query } = this.props;
+		const { summary, period, path, siteSlug, query, summaryLinkModifier } = this.props;
 		if ( summary ) {
 			return;
 		}
@@ -201,13 +202,12 @@ class StatsModule extends Component {
 			url += `?startDate=${ period.endOf.format( 'YYYY-MM-DD' ) }`;
 		}
 
-		return url;
+		return summaryLinkModifier( url );
 	}
 
 	isAllTimeList() {
 		const { summary, statType } = this.props;
 		const summarizedTypes = [
-			'statsTopPosts',
 			'statsSearchTerms',
 			'statsClicks',
 			'statsReferrers',
@@ -218,6 +218,12 @@ class StatsModule extends Component {
 			'statsEmailsOpen',
 			'statsEmailsClick',
 		];
+
+		// TODO: Remove this once the archive breakdown is enabled by default.
+		if ( ! config.isEnabled( 'stats/archive-breakdown' ) ) {
+			summarizedTypes.push( 'statsTopPosts' );
+		}
+
 		return summary && includes( summarizedTypes, statType );
 	}
 
@@ -265,15 +271,14 @@ class StatsModule extends Component {
 			moduleStrings,
 			statType,
 			query,
-			period,
 			translate,
 			useShortLabel,
 			metricLabel,
 			additionalColumns,
+			toggleControl,
 			mainItemLabel,
 			listItemClassName,
 			gateStats,
-			gateDownloads,
 			hasNoBackground,
 			skipQuery,
 			titleNodes,
@@ -292,36 +297,6 @@ class StatsModule extends Component {
 		const summaryLink = ! this.props.hideSummaryLink && this.getSummaryLink();
 		const displaySummaryLink = data && summaryLink;
 		const isAllTime = this.isAllTimeList();
-		const isStatsNavigationImprovementEnabled = config.isEnabled( 'stats/navigation-improvement' );
-
-		const renderDownloadCsv = () => {
-			// Disable the Download button for the new navigation.
-			if ( isStatsNavigationImprovementEnabled ) {
-				return null;
-			}
-
-			// Disable for the email module as it doesn't work correctly.
-			if ( statType === 'statsEmailsSummary' ) {
-				return null;
-			}
-
-			if ( gateDownloads ) {
-				return <DownloadCsvUpsell siteId={ siteId } borderless />;
-			}
-
-			return (
-				<DownloadCsv
-					statType={ statType }
-					query={ query }
-					path={ path }
-					borderless
-					period={ period }
-					skipQuery={ skipQuery }
-				/>
-			);
-		};
-
-		const downloadCsv = renderDownloadCsv();
 
 		const emptyMessage = isRealTime ? 'gathering info…' : moduleStrings.empty;
 		// TODO: Translate empty message
@@ -339,13 +314,12 @@ class StatsModule extends Component {
 					useShortLabel={ useShortLabel }
 					title={ this.props.moduleStrings?.title }
 					titleNodes={ titleNodes }
-					downloadCsv={ downloadCsv }
 					emptyMessage={ emptyMessage }
 					metricLabel={ metricLabel }
 					showMore={
 						displaySummaryLink && ! summary
 							? {
-									url: this.getSummaryLink(),
+									url: summaryLink,
 									label:
 										data.length >= 10
 											? translate( 'View all', {
@@ -365,7 +339,8 @@ class StatsModule extends Component {
 						)
 					}
 					additionalColumns={ additionalColumns }
-					splitHeader={ !! additionalColumns }
+					splitHeader={ !! toggleControl || !! additionalColumns || !! mainItemLabel }
+					toggleControl={ toggleControl }
 					multiHeader={ isAllTime }
 					mainItemLabel={ mainItemLabel }
 					showLeftIcon={ path === 'authors' }

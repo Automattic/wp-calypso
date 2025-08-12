@@ -1,38 +1,47 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .language-picker__modal-search {
 	position: relative;
 	width: 250px;
 }
 
-.language-picker__dialog {
-	&.dialog.card {
-		width: 90%;
-		height: 80%;
-		justify-content: space-between;
+.language-picker__overlay {
+	justify-content: center;
+}
+
+.language-picker-modal__wrapper {
+	// Limit the height to prevent modal resize on content change, when the modal is not full height.
+	@media (min-width: $break-small) {
+		max-height: 600px;
+		// Limit height on smaller screens.
+		height:80%;
 	}
 
-	.dialog__content {
-		flex: 1 1 auto;
+	.language-picker-modal__content {
+		display:flex;
+		flex-direction: column;
+		// Limit height to container, instead of overflowing and pushing down the footer.
+		height: 100%;
+	}
+	.language-picker-modal__body {
+		overflow-y: auto;
+		// Fix cropped box shadow.
+		padding:1px;
+		margin:-1px;
+	}
+	.language-picker-modal__footer {
+		margin-top: auto;
 	}
 
-	.dialog__action-buttons {
+	.components-modal__content {
 		display: flex;
-		flex-direction: row;
-		flex-wrap: wrap;
-		justify-content: space-between;
-		position: relative;
-		margin: 0;
-		padding: 0;
-		// prevent buttons div from covering language options
-		margin-top: 1.5rem;
-
-		.components-button {
-			margin-left: 1rem;
-		}
+	}
+	// Force width to 100% even if the content is not that wide.
+	.components-modal__content > div {
+		width: 100%;
 	}
 
-	.language-picker-component .language-picker-component__heading {
-		margin: 6px 0 24px;
-	}
 }
 
 .language-picker__modal-empathy-mode {
@@ -88,7 +97,7 @@
 }
 
 .language-picker__modal-buttons {
-	padding: 24px;
+	padding: 24px 24px 0;
 	width: 100%;
 	display: flex;
 	flex-direction: row;

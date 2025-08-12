@@ -1,15 +1,15 @@
 import { Button } from '@automattic/components';
+import { PaymentMethodSummary } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useState, useCallback } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { PaymentMethodSummary } from 'calypso/lib/checkout/payment-methods';
 import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSitePurchases, getUserPurchases } from 'calypso/state/purchases/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PaymentMethodDeleteDialog from './payment-method-delete-dialog';
-import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
+import type { StoredPaymentMethod } from '@automattic/wpcom-checkout';
 
 interface Props {
 	card: StoredPaymentMethod;

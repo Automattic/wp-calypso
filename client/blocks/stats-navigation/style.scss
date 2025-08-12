@@ -6,7 +6,7 @@
 	// When the feature flag is enabled, adjust TabPanel padding
 	.stats-navigation__tabs {
 		margin: 0 -16px;  // This creates a negative margin to counteract the parent's padding
-		
+
 		.components-tab-panel__tabs {
 			padding: 0 16px;  // This sets the actual padding to 16px
 		}
@@ -61,8 +61,6 @@
 			}
 
 			@media (max-width: $break-small) {
-				margin-left: 0;
-				
 				.components-tab-panel__tabs {
 					padding-left: 16px;
 					padding-right: 16px;

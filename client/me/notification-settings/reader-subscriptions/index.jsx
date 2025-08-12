@@ -1,5 +1,10 @@
-import { Card, FormLabel, Dialog } from '@automattic/components';
-import { Button, CheckboxControl } from '@wordpress/components';
+import { Card, FormLabel } from '@automattic/components';
+import { getNumericFirstDayOfWeek, withLocale } from '@automattic/i18n-utils';
+import {
+	Button,
+	CheckboxControl,
+	__experimentalConfirmDialog as ConfirmDialog,
+} from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import { Component } from 'react';
@@ -97,6 +102,15 @@ class NotificationSubscriptions extends Component {
 		this.setState( { showConfirmModal: false } );
 	};
 
+	handleModalConfirm = () => {
+		// Create a synthetic event object that matches what updateSetting expects
+		const syntheticEvent = {
+			preventDefault: () => {},
+		};
+		this.props.submitForm( syntheticEvent );
+		this.setState( { showConfirmModal: false } );
+	};
+
 	getDeliveryHourLabel( hour ) {
 		return this.props.translate( '%(fromHour)s - %(toHour)s', {
 			context: 'Hour range between which subscriptions are delivered',
@@ -109,6 +123,37 @@ class NotificationSubscriptions extends Component {
 					.format( 'LT' ),
 			},
 		} );
+	}
+
+	renderLocalizedWeekdayOptions() {
+		const { translate, locale } = this.props;
+		const startOfWeek = getNumericFirstDayOfWeek( locale );
+
+		const weekDays = [
+			{ value: '1', label: translate( 'Monday' ) },
+			{ value: '2', label: translate( 'Tuesday' ) },
+			{ value: '3', label: translate( 'Wednesday' ) },
+			{ value: '4', label: translate( 'Thursday' ) },
+			{ value: '5', label: translate( 'Friday' ) },
+			{ value: '6', label: translate( 'Saturday' ) },
+			{ value: '0', label: translate( 'Sunday' ) },
+		];
+
+		// Rotate the array based on startOfWeek
+		const rotatedWeekdays = [
+			...weekDays.slice( startOfWeek - 1 ),
+			...weekDays.slice( 0, startOfWeek - 1 ),
+		];
+
+		return (
+			<>
+				{ rotatedWeekdays.map( ( { value, label } ) => (
+					<option key={ value } value={ value }>
+						{ label }
+					</option>
+				) ) }
+			</>
+		);
 	}
 
 	render() {
@@ -141,11 +186,11 @@ class NotificationSubscriptions extends Component {
 						onSubmit={ this.handleSubmit }
 					>
 						<FormSectionHeading>
-							{ this.props.translate( 'Email subscriptions' ) }
+							{ this.props.translate( 'Subscription settings' ) }
 						</FormSectionHeading>
 						<p>
 							{ this.props.translate(
-								'{{readerLink}}Visit the Reader{{/readerLink}} to adjust individual site subscriptions.',
+								'To manage individual site subscriptions, {{readerLink}}go to the Reader{{/readerLink}}.',
 								{
 									components: {
 										readerLink: (
@@ -192,8 +237,8 @@ class NotificationSubscriptions extends Component {
 								onFocus={ this.handleFocusEvent( 'Email delivery format' ) }
 								value={ this.props.getSetting( 'subscription_delivery_mail_option' ) }
 							>
-								<option value="html">{ this.props.translate( 'HTML' ) }</option>
-								<option value="text">{ this.props.translate( 'Plain Text' ) }</option>
+								<option value="html">{ this.props.translate( 'Visual (HTML)' ) }</option>
+								<option value="text">{ this.props.translate( 'Plain text' ) }</option>
 							</FormSelect>
 						</FormFieldset>
 
@@ -210,13 +255,7 @@ class NotificationSubscriptions extends Component {
 								onFocus={ this.handleFocusEvent( 'Email delivery window day' ) }
 								value={ this.props.getSetting( 'subscription_delivery_day' ) }
 							>
-								<option value="0">{ this.props.translate( 'Sunday' ) }</option>
-								<option value="1">{ this.props.translate( 'Monday' ) }</option>
-								<option value="2">{ this.props.translate( 'Tuesday' ) }</option>
-								<option value="3">{ this.props.translate( 'Wednesday' ) }</option>
-								<option value="4">{ this.props.translate( 'Thursday' ) }</option>
-								<option value="5">{ this.props.translate( 'Friday' ) }</option>
-								<option value="6">{ this.props.translate( 'Saturday' ) }</option>
+								{ this.renderLocalizedWeekdayOptions() }
 							</FormSelect>
 
 							<FormSelect
@@ -304,7 +343,10 @@ class NotificationSubscriptions extends Component {
 						) }
 
 						<Button
+							accessibleWhenDisabled
 							variant="primary"
+							showTooltip={ ! this.props.hasUnsavedUserSettings }
+							label={ this.props.translate( 'No unsaved changes' ) }
 							disabled={ this.props.isUpdatingUserSettings || ! this.props.hasUnsavedUserSettings }
 							isBusy={ this.props.isUpdatingUserSettings }
 							onClick={ this.handleSubmitButtonClick }
@@ -314,36 +356,17 @@ class NotificationSubscriptions extends Component {
 					</form>
 				</Card>
 
-				<Dialog
-					isVisible={ this.state.showConfirmModal }
-					onClose={ () => this.setState( { showConfirmModal: false } ) }
-					buttons={ [
-						{
-							action: 'cancel',
-							label: this.props.translate( 'Cancel' ),
-							onClick: () => this.handleModalCancel(),
-						},
-						{
-							action: 'confirm',
-							label: this.props.translate( 'Confirm' ),
-							onClick: () => {
-								this.setState( { showConfirmModal: false } );
-								// Create a synthetic event object
-								const syntheticEvent = {
-									preventDefault: () => {},
-								};
-								this.props.submitForm( syntheticEvent );
-							},
-							isPrimary: true,
-						},
-					] }
+				<ConfirmDialog
+					isOpen={ this.state.showConfirmModal }
+					onConfirm={ () => this.handleModalConfirm() }
+					onCancel={ () => this.handleModalCancel() }
+					confirmButtonText={ this.props.translate( 'Confirm' ) }
+					style={ { maxWidth: '480px' } }
 				>
-					<p>
-						{ this.props.translate(
-							"You have active newsletter subscriptions. Pausing emails means you won't receive any newsletter updates. Are you sure you want to continue?"
-						) }
-					</p>
-				</Dialog>
+					{ this.props.translate(
+						"You have active newsletter subscriptions. Pausing emails means you won't receive any newsletter updates. Are you sure you want to continue?"
+					) }
+				</ConfirmDialog>
 			</Main>
 		);
 	}
@@ -366,6 +389,7 @@ export default compose(
 	connect( mapStateToProps, mapDispatchToProps ),
 	localize,
 	protectForm,
+	withLocale,
 	withLocalizedMoment,
 	withFormBase
 )( NotificationSubscriptionsWithHooks );

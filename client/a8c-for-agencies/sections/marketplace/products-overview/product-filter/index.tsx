@@ -1,6 +1,8 @@
+import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { DropdownMenu, MenuGroup } from '@wordpress/components';
 import { funnel } from '@wordpress/icons';
+import { getQueryArg, removeQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import {
@@ -59,6 +61,20 @@ export default function ProductFilter( {
 			[ type ]: newFilters,
 		} );
 	};
+
+	const category = getQueryArg( window.location.href, 'category' ) as string | undefined;
+
+	useEffect( () => {
+		if ( category ) {
+			updateFilter( PRODUCT_FILTER_KEY_CATEGORIES, category );
+			// Remove the category query arg from the URL as we don't support URL params for filters
+			page.redirect(
+				removeQueryArgs( window.location.pathname + window.location.search, 'category' )
+			);
+		}
+		// Do not add updateFilter to the dependency array as it will cause an infinite loop
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ category ] );
 
 	useEffect( () => {
 		// Dropdown doesn't play well with our layout when scrolling. We need to close it when the toggle is not visible to avoid overlapping issues.

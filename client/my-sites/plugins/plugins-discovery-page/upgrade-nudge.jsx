@@ -127,6 +127,7 @@ const UpgradeNudge = ( {
 				feature={ FEATURE_INSTALL_PLUGINS }
 				plan={ PLAN_ECOMMERCE_MONTHLY }
 				title={ translate( 'To install additional plugins, please upgrade to a paid plan.' ) }
+				isOneClickCheckoutEnabled={ false }
 			/>
 		);
 	}
@@ -153,7 +154,7 @@ const UpgradeNudge = ( {
 			feature={ FEATURE_INSTALL_PLUGINS }
 			plan={ plan }
 			title={ title }
-			isOneClickCheckoutEnabled
+			isOneClickCheckoutEnabled={ false }
 		/>
 	);
 };

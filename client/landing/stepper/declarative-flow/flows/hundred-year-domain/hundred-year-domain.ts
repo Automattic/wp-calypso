@@ -13,6 +13,7 @@ import { ONBOARD_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
 import type { ProvidedDependencies, Flow } from '../../internals/types';
+import './style.scss';
 
 const steps = [ STEPS.DOMAINS, ...stepsWithRequiredLogin( [ STEPS.PROCESSING ] ) ];
 
@@ -47,7 +48,7 @@ const HundredYearDomainFlow: Flow = {
 			const submittedDomainCartItem = domainRegistration( {
 				productSlug: productSlug as string,
 				domain: domainName as string,
-				extra: { is_hundred_year_domain: true },
+				extra: { is_hundred_year_domain: true, flow_name: HUNDRED_YEAR_DOMAIN_FLOW },
 				volume: 100,
 			} );
 

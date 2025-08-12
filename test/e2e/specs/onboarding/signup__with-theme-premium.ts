@@ -15,11 +15,11 @@ import {
 	NewUserResponse,
 	MyProfilePage,
 	MeSidebarComponent,
-	cancelPurchaseFlow,
 	NoticeComponent,
 	PurchasesPage,
 	ThemesDetailPage,
 	ThemesPage,
+	cancelAtomicPurchaseFlow,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiCloseAccount } from '../shared';
@@ -83,7 +83,7 @@ describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscripti
 			const domainSearch = new DomainSearchComponent( page );
 
 			await domainSearch.search( testUser.siteName );
-			await domainSearch.selectDomain( `${ testUser.siteName }.wordpress.com` );
+			await domainSearch.selectDomain( `${ testUser.siteName }.wordpress.com`, false );
 		} );
 
 		it( `Select WordPress.com ${ planName } plan`, async function () {
@@ -142,7 +142,7 @@ describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscripti
 			await meSidebarComponent.navigate( 'Purchases' );
 		} );
 
-		it( 'View details of purchased plan', async function () {
+		it( 'View details of purchased plan and cancel plan', async function () {
 			purchasesPage = new PurchasesPage( page );
 
 			await purchasesPage.clickOnPurchase(
@@ -150,18 +150,17 @@ describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscripti
 				newSiteDetails.blog_details.site_slug
 			);
 			await purchasesPage.cancelPurchase( 'Cancel plan' );
-		} );
-
-		it( 'Cancel plan renewal', async function () {
-			await cancelPurchaseFlow( page, {
+			await cancelAtomicPurchaseFlow( page, {
 				reason: 'Another reason…',
 				customReasonText: 'E2E TEST CANCELLATION',
 			} );
-
 			noticeComponent = new NoticeComponent( page );
-			await noticeComponent.noticeShown( 'You successfully canceled your purchase', {
-				timeout: 30 * 1000,
-			} );
+			await noticeComponent.noticeShown(
+				'Your refund has been processed and your purchase removed.',
+				{
+					timeout: 30 * 1000,
+				}
+			);
 		} );
 	} );
 

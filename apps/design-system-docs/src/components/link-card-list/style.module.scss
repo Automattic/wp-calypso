@@ -1,0 +1,14 @@
+.link-card-list {
+	--ifm-list-item-margin: 0;
+
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+	gap: 16px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.link-card-list__card {
+	height: 100%; 
+}

@@ -76,7 +76,7 @@ class TitanControlPanelRedirect extends Component {
 			<div className="titan-control-panel-redirect__main">
 				<QuerySites allSites />
 				{ siteId && <QuerySiteDomains siteId={ siteId } /> }
-				<EmptyContent illustration="" title="">
+				<EmptyContent title="">
 					<Card>
 						<Spinner size={ 40 } />
 						<h1>

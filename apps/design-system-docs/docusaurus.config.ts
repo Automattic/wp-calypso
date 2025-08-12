@@ -6,15 +6,12 @@ import type { Config } from '@docusaurus/types';
 
 const config: Config = {
 	title: 'Automattic Design System',
-	tagline: 'TODO: Do we have a tagline?',
-	// TODO: Add a favicon
-	favicon: 'img/favicon.ico',
+	tagline: 'Build sustainably with WordPress and Automattic components.',
+	favicon: 'img/ds-favicon.png',
 
-	// TODO: Set the production url here
-	url: 'https://your-docusaurus-site.example.com',
-	// Set the /<baseUrl>/ pathname under which your site is served
-	// For GitHub pages deployment, it is often '/<projectName>/'
+	url: 'https://system.automattic.design',
 	baseUrl: '/',
+	noIndex: true,
 
 	onBrokenLinks: 'throw',
 	onBrokenMarkdownLinks: 'warn',
@@ -26,6 +23,8 @@ const config: Config = {
 		defaultLocale: 'en',
 		locales: [ 'en' ],
 	},
+
+	plugins: [ 'docusaurus-plugin-sass' ],
 
 	presets: [
 		[
@@ -51,11 +50,9 @@ const config: Config = {
 		// TODO: Replace with your project's social card
 		image: 'img/docusaurus-social-card.jpg',
 		navbar: {
-			title: 'A8C DS',
 			logo: {
 				alt: 'Automattic Design System',
-				// TODO: Replace with the our logo
-				src: 'img/logo.svg',
+				src: 'img/ds-logo.png',
 			},
 			items: [
 				{
@@ -99,7 +96,7 @@ const config: Config = {
 						},
 						{
 							label: 'Components',
-							to: '/components/',
+							to: '/components/ds/',
 						},
 					],
 				},

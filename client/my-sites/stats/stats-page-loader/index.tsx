@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, type ReactNode } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import illustration404 from 'calypso/assets/images/illustrations/illustration-404.svg';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
@@ -40,7 +39,6 @@ const EnableStatsModuleNotice = ( { siteId, path }: { siteId: number; path: stri
 
 	return (
 		<EmptyContent
-			illustration={ illustration404 }
 			title={ translate( 'Looking for stats?' ) }
 			line={
 				<p>
@@ -60,7 +58,6 @@ const InsufficientPermissionsNotice = () => {
 	const translate = useTranslate();
 	return (
 		<EmptyContent
-			illustration={ illustration404 }
 			title={ translate( 'Looking for stats?' ) }
 			line={
 				<p>

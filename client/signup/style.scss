@@ -32,24 +32,88 @@ body.is-section-signup {
 
 	// Adjust the padding as we no longer
 	// show the masterbar.
-	.layout__content {
+	.layout:not(.is-unified-create-account) .layout__content {
 		padding: 48px 0 0;
+	}
+
+	.layout.is-unified-create-account {
+		.layout__content {
+			padding: 0;
+		}
+
+		.locale-suggestions {
+			margin: 0;
+		}
+
+		.locale-suggestions__notice {
+			&.calypso-notice.is-compact.is-light.is-info {
+				margin: 0;
+			}
+		}
+
+		.signup-form {
+			max-width: 400px;
+			width: 100%;
+			margin: 0 auto;
+			padding: 0;
+			display: flex;
+			flex-direction: column;
+
+			input[type="email"].form-text-input {
+				margin-bottom: 0;
+			}
+		}
+
+		.card.logged-out-form {
+			box-shadow: none;
+			background-color: initial;
+			padding: 0;
+			.form-fieldset {
+				margin-bottom: 0;
+			}
+		}
+
+		.card.auth-form__social {
+			margin: 0;
+			padding-top: 0;
+			padding-bottom: 0;
+			box-shadow: none;
+			background-color: initial;
+		}
+
+		.auth-form__separator {
+			margin: 0 auto;
+			max-width: 360px;
+			width: 100%;
+
+			.auth-form__separator-text {
+				padding: 0 24px;
+			}
+
+			&::before,
+			&::after {
+				position: absolute;
+				border-inline-start: 0;
+				border-block-start: 1px solid #e6e6e6;
+				inset-block-start: 50%;
+				inset-inline-start: 0;
+				width: 42%;
+			}
+
+			&::after {
+				left: 58%;
+			}
+		}
+
+		.signup-form.is-horizontal {
+			gap: 1em;
+		}
+
 	}
 
 	// Hide the masterbar for realz
 	&.has-no-masterbar .masterbar {
 		display: none;
-	}
-
-	// Force the masterbar for Crowdsignal OAuth pages
-	.crowdsignal {
-		.masterbar__crowdsignal {
-			display: block;
-		}
-
-		.layout__content {
-			padding: 140px 0 0;
-		}
 	}
 
 	.layout__secondary {
@@ -197,7 +261,7 @@ body.is-section-signup .layout:not(.dops) {
 }
 
 body.is-section-stepper,
-body.is-section-signup .layout:not(.dops):not(.is-wccom-oauth-flow) {
+body.is-section-signup .layout:not(.dops):not(.is-wccom-oauth-flow):not(.is-unified-create-account) {
 	$gray-100: #101517;
 	$gray-60: #50575e;
 	$gray-50: #646970;
@@ -307,14 +371,14 @@ body.is-section-signup .layout:not(.dops):not(.is-wccom-oauth-flow) {
 
 	.signup__step.is-user,
 	.signup__step.is-user-social {
-		button.signup-form__submit[disabled],
-		button.signup-form__submit:disabled,
-		button.signup-form__submit.disabled {
+		.button.signup-form__submit[disabled],
+		.button.signup-form__submit:disabled,
+		.button.signup-form__submit.disabled {
 			background-color: var(--studio-gray-20);
 			color: var(--color-surface);
 		}
 
-		button.signup-form__submit {
+		.button.signup-form__submit {
 			border-radius: 4px;
 			max-width: 408px;
 			height: 44px;

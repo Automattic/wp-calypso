@@ -449,6 +449,6 @@ export const useJetpackBlazeVersionCheck = (
 
 	return Boolean(
 		( siteJetpackVersion && versionCompare( siteJetpackVersion, minJetpackVersion, '>=' ) ) ||
-			( blazeAdsVersion && versionCompare( siteJetpackVersion, minBlazeAdsVersion, '>=' ) )
+			( blazeAdsVersion && versionCompare( blazeAdsVersion, minBlazeAdsVersion, '>=' ) )
 	);
 };

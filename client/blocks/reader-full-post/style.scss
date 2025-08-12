@@ -845,3 +845,24 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 		}
 	}
 }
+
+.reader-full-post.is-reddit-post {
+	.reader-full-post__story-content {
+		// Remove Reddit table styles
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			display: block;
+
+			tr, td {
+				display: block;
+				width: 100%;
+			}
+
+			// Add a margin above the submitted by meta
+			td .md {
+				margin-bottom: 24px;
+			}
+		}
+	}
+}

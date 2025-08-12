@@ -30,7 +30,7 @@ class NotificationSettingsNavigation extends Component {
 			'/me/notifications': this.props.translate( 'Notifications' ),
 			'/me/notifications/comments': this.props.translate( 'Comments' ),
 			'/me/notifications/updates': this.props.translate( 'Updates' ),
-			'/me/notifications/subscriptions': this.props.translate( 'Email Subscriptions' ),
+			'/me/notifications/subscriptions': this.props.translate( 'Subscription settings' ),
 		};
 	};
 

@@ -1,5 +1,5 @@
 @import '@wordpress/base-styles/variables';
-@import '@automattic/dataviews/build-style/style.css';
+@import '@wordpress/dataviews/build-style/style.css';
 
 // Should be implemented differently once v2 is not loaded via the v1 stack
 // I'm tempted to even just replace all this with a display:none on the logo
@@ -8,6 +8,23 @@
 // Hacks that shouldn't be necessary.
 .environment-badge {
 	display: none;
+}
+
+// BaseControl currently has an override for the label to accommodate the use case where the label is shown next to the control.
+// In site settings forms, the label is above the control for regular fields so we need to override this override for UI consistency.
+.dataforms-layouts-regular__field .components-base-control__label {
+	font-size: 11px;
+	font-weight: 500;
+	text-transform: uppercase;
+}
+
+// We manually compose the UI of the dataview without including the view actions, which results in extra padding and a border.
+.components-card__header + .components-card__body:has( > .dataviews-wrapper ):not( :has( .dataviews__view-actions ) ) {
+	padding-top: 0;
+
+	.dataviews-view-list div[role="row"]:first-child {
+		border-top: none;
+	}
 }
 
 // Global Styles
@@ -24,17 +41,19 @@ body {
 	background: var( --dashboard__background-color );
 	color: var( --dashboard__text-color );
 	line-height: $font-line-height-small;
+
+	/* stylelint-disable-next-line unit-allowed-list */
+	@media ( -webkit-min-device-pixel-ratio: 1.25 ), ( min-resolution: 120dpi ) {
+		text-rendering: optimizeLegibility;
+		-moz-osx-font-smoothing: grayscale;
+		-webkit-font-smoothing: antialiased;
+	}
 }
 
 a {
-	color: var( --dashboard__link-color );
+	color: var( --wp-admin-theme-color );
 }
 
 #wpcom {
 	font-size: $font-size-medium;
-}
-
-h1 {
-	font-family: var( --dashboard-h1__font-family );
-	font-weight: var( --dashboard-h1__font-weight ) !important;
 }

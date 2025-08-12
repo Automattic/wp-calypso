@@ -45,7 +45,7 @@
 		"@automattic/components": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/typography": "workspace:^",
-		"@tanstack/react-query": "^5.15.5",
+		"@tanstack/react-query": "^5.83.0",
 		"@wordpress/block-editor": "^14.18.0",
 		"@wordpress/block-library": "^9.23.0",
 		"@wordpress/components": "^29.9.0",
@@ -59,19 +59,19 @@
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"react-intersection-observer": "^9.4.3",
-		"tslib": "^2.3.0",
+		"tslib": "^2.8.1",
 		"wpcom-proxy-request": "workspace:^"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^10.23.0",
 		"@wordpress/element": "^6.23.0",
 		"@wordpress/i18n": "^5.23.0",
-		"debug": "^4.4.0"
+		"debug": "^4.4.1"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@types/wordpress__block-library": "^2.6.3",
-		"typescript": "^5.8.2"
+		"typescript": "^5.8.3"
 	},
 	"private": true
 }

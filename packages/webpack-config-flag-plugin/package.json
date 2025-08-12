@@ -6,7 +6,7 @@
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"main": "index.js",
 	"peerDependencies": {
-		"webpack": "^5.97.1"
+		"webpack": "^5.99.8"
 	},
 	"author": "Automattic Inc.",
 	"private": true,

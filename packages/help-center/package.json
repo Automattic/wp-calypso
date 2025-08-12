@@ -17,9 +17,6 @@
 		},
 		"./src/*": {
 			"calypso:src": "./src/*"
-		},
-		"./?stepper": {
-			"calypso:src": "./src/index.ts?stepper"
 		}
 	},
 	"sideEffects": [
@@ -50,7 +47,7 @@
 		"@automattic/viewport-react": "workspace:^",
 		"@automattic/zendesk-client": "workspace:^",
 		"@popperjs/core": "^2.11.8",
-		"@tanstack/react-query": "^5.15.5",
+		"@tanstack/react-query": "^5.83.0",
 		"@wordpress/base-styles": "^5.23.0",
 		"@wordpress/components": "^29.9.0",
 		"@wordpress/i18n": "^5.23.0",
@@ -66,7 +63,7 @@
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@types/smooch": "^5.3.7",
-		"typescript": "^5.8.2"
+		"typescript": "^5.8.3"
 	},
 	"peerDependencies": {
 		"@automattic/calypso-router": "workspace:^",

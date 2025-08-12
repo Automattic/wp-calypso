@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createRef, PureComponent } from 'react';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
@@ -72,12 +73,15 @@ class SuggestionsList extends PureComponent {
 			'is-expanded': this.props.isExpanded && this.props.suggestions.length > 0,
 		} );
 
-		// We set `tabIndex` here because otherwise Firefox sets focus on this
-		// div when tabbing off of the input in `TokenField` -- not really sure
-		// why, since usually a div isn't focusable by default
-		// TODO does this still apply now that it's a <ul> and not a <div>?
 		return (
-			<ul ref={ this.listRef } className={ classes } tabIndex="-1">
+			<ul
+				id="options-list"
+				ref={ this.listRef }
+				className={ classes }
+				role="listbox"
+				tabIndex="0"
+				aria-label={ translate( 'Options' ) }
+			>
 				{ this._renderSuggestions() }
 			</ul>
 		);
@@ -112,7 +116,13 @@ class SuggestionsList extends PureComponent {
 
 			if ( isLabel ) {
 				return (
-					<li className={ classes } key={ `label_${ suggestion.label }` }>
+					<li
+						id={ `option-${ index }` }
+						className={ classes }
+						key={ `label_${ suggestion.label }` }
+						role="presentation"
+						aria-hidden="true"
+					>
 						{ suggestion.label }
 					</li>
 				);
@@ -123,11 +133,21 @@ class SuggestionsList extends PureComponent {
 			return (
 				// eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions
 				<li
+					id={ `option-${ suggestion }` }
 					className={ classes }
 					key={ suggestion }
 					onMouseDown={ this._handleMouseDown }
 					onClick={ this._handleClick( suggestion ) }
 					onMouseEnter={ this._handleHover( suggestion ) }
+					role="option"
+					aria-selected={ index === this.props.selectedIndex }
+					onKeyDown={ this._handleKeyDown( suggestion ) }
+					/* translators: %(item)s is the option that can be selected */
+					aria-label={ translate( 'Option %(item)s', {
+						args: {
+							item: this.props.displayTransform( suggestion ),
+						},
+					} ) }
 				>
 					{ match ? (
 						<span>
@@ -161,6 +181,15 @@ class SuggestionsList extends PureComponent {
 		// By preventing default here, we will not lose focus of <input> when clicking a suggestion
 		e.preventDefault();
 	};
+
+	_handleKeyDown( suggestion ) {
+		return ( event ) => {
+			if ( event.key === 'Enter' || event.key === ' ' ) {
+				event.preventDefault();
+				this.props.onSelect( suggestion );
+			}
+		};
+	}
 }
 
 export default SuggestionsList;

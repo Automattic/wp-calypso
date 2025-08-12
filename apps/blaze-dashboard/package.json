@@ -26,17 +26,18 @@
 		"translate": "rm -rf dist/strings && mkdir -p dist && wp-babel-makepot '../../{client,packages,apps}/**/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base '../../' --dir './dist/strings' --output './dist/blaze-dashboard-strings.pot' && build-app-languages --stringsFilePath='./dist/blaze-dashboard-strings.pot'"
 	},
 	"dependencies": {
+		"@automattic/accessible-focus": "workspace:^",
 		"@automattic/calypso-config": "workspace:^",
 		"@automattic/calypso-polyfills": "workspace:^",
 		"@automattic/calypso-router": "workspace:^",
 		"@automattic/calypso-url": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
-		"@tanstack/react-query": "^5.15.5",
+		"@tanstack/react-query": "^5.83.0",
 		"@wordpress/data": "^10.23.0",
 		"calypso": "workspace:^",
 		"clsx": "^2.1.1",
-		"debug": "^4.4.0",
+		"debug": "^4.4.1",
 		"i18n-calypso": "workspace:^",
 		"moment": "^2.30.1",
 		"prop-types": "^15.8.1",
@@ -58,14 +59,14 @@
 		"@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^",
 		"@automattic/webpack-inline-constant-exports-plugin": "workspace:^",
 		"@automattic/wp-babel-makepot": "workspace:^",
-		"@wordpress/dependency-extraction-webpack-plugin": "^6.19.0",
-		"autoprefixer": "^10.2.5",
+		"@wordpress/dependency-extraction-webpack-plugin": "^6.24.0",
+		"autoprefixer": "^10.4.21",
 		"gettext-parser": "^6.0.0",
 		"html-webpack-plugin": "^5.6.3",
 		"lodash": "^4.17.21",
 		"path-browserify": "^1.0.1",
 		"postcss": "^8.5.3",
-		"webpack": "^5.97.1",
+		"webpack": "^5.99.8",
 		"webpack-bundle-analyzer": "^4.10.2"
 	}
 }

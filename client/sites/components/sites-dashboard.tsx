@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import pagejs from '@automattic/calypso-router';
 import {
 	type SiteExcerptData,
@@ -12,7 +13,8 @@ import { DESKTOP_BREAKPOINT, WIDE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
+import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import GuidedTour from 'calypso/components/guided-tour';
 import { GuidedTourContextProvider } from 'calypso/components/guided-tour/data/guided-tour-context';
@@ -34,6 +36,7 @@ import {
 import { useSelector } from 'calypso/state';
 import { shouldShowSiteDashboard } from 'calypso/state/global-sidebar/selectors';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
+import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useInitializeDataViewsPage } from '../hooks/use-initialize-dataviews-page';
 import { useShowSiteCreationNotice } from '../hooks/use-show-site-creation-notice';
@@ -51,7 +54,7 @@ import SitesDashboardBannersManager from './sites-dashboard-banners-manager';
 import SitesDashboardHeader from './sites-dashboard-header';
 import DotcomSitesDataViews, { useSiteStatusGroups } from './sites-dataviews';
 import { getSitesPagination } from './sites-dataviews/utils';
-import type { View } from '@automattic/dataviews';
+import type { View } from '@wordpress/dataviews';
 
 // todo: we are using A4A styles until we extract them as common styles in the ItemsDashboard component
 import './style.scss';
@@ -138,6 +141,9 @@ const SitesDashboard = ( {
 	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
 	const selectedSite = useSelector( getSelectedSite );
+	const getSiteFromState = useSelector(
+		( state ) => ( siteId: number ) => getSite( state, siteId )
+	);
 	const { shouldShow: isRestoringAccount } = useRestoreSitesBanner();
 
 	const sitesFilterCallback = ( site: SiteExcerptData ) => {
@@ -359,25 +365,37 @@ const SitesDashboard = ( {
 		}
 	};
 
-	const sitePreviewPane = {
-		getUrl: ( site: SiteExcerptData ) => {
-			return `/${ FEATURE_TO_ROUTE_MAP[ initialSiteFeature ].replace( ':site', site.slug ) }`;
-		},
-		open: (
-			site: SiteExcerptData,
-			source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher',
-			openInNewTab?: boolean
-		) => {
-			recordTracksEvent( 'calypso_sites_dashboard_open_site_preview_pane', {
-				site_id: site.ID,
-				source,
-			} );
-			showSitesPage( sitePreviewPane.getUrl( site ), openInNewTab );
-		},
-	};
+	const initialSiteFeatureRef = useRef( initialSiteFeature );
+	initialSiteFeatureRef.current = initialSiteFeature;
+
+	const sitePreviewPane = useMemo(
+		() => ( {
+			getUrl: ( site: SiteExcerptData ) => {
+				return `/${ FEATURE_TO_ROUTE_MAP[ initialSiteFeatureRef.current ].replace(
+					':site',
+					site.slug
+				) }`;
+			},
+			open: (
+				site: SiteExcerptData,
+				source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher',
+				openInNewTab?: boolean
+			) => {
+				recordTracksEvent( 'calypso_sites_dashboard_open_site_preview_pane', {
+					site_id: site.ID,
+					source,
+				} );
+				showSitesPage( sitePreviewPane.getUrl( site ), openInNewTab );
+			},
+		} ),
+		[]
+	);
 
 	const changeSitePreviewPane = ( siteId: number ) => {
-		const targetSite = allSites.find( ( site ) => site.ID === siteId );
+		// allSites does not always query all sites (e.g. for small screens),
+		// so we need to get the site from the state in those cases
+		const targetSite =
+			allSites.find( ( site ) => site.ID === siteId ) || getSiteFromState( siteId );
 		if ( targetSite ) {
 			sitePreviewPane.open( targetSite, 'environment_switcher' );
 		}
@@ -437,16 +455,22 @@ const SitesDashboard = ( {
 						sitesCount={ paginatedSites.length }
 					/>
 
-					<DotcomSitesDataViews
-						sites={ paginatedSites }
-						siteType={ siteType }
-						isLoading={ isLoading || ! initialSortApplied }
-						paginationInfo={ getSitesPagination( filteredSites, perPage ) }
-						dataViewsState={ dataViewsState }
-						setDataViewsState={ setDataViewsState }
-						selectedItem={ selectedSite }
-						sitePreviewPane={ sitePreviewPane }
-					/>
+					{ ! selectedSite &&
+					siteType === DEFAULT_SITE_TYPE &&
+					isEnabled( 'dashboard/v2/backport/sites-list' ) ? (
+						<AsyncLoad require="../v2/sites-list" placeholder={ null } />
+					) : (
+						<DotcomSitesDataViews
+							sites={ paginatedSites }
+							siteType={ siteType }
+							isLoading={ isLoading || ! initialSortApplied }
+							paginationInfo={ getSitesPagination( filteredSites, perPage ) }
+							dataViewsState={ dataViewsState }
+							setDataViewsState={ setDataViewsState }
+							selectedItem={ selectedSite }
+							sitePreviewPane={ sitePreviewPane }
+						/>
+					) }
 				</LayoutColumn>
 			) }
 

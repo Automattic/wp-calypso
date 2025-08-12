@@ -22,6 +22,8 @@ export default function removeContentStyles( post, dom ) {
 		'mark.has-inline-color, ' +
 		// Gallery
 		'.gallery, .gallery *, .gallery-row, .gallery-row *, .gallery-group, .gallery-group *, ' +
+		// Jetpack Paywall. These styles are coming from backend and we are keeping it so that it will be consistent with the email styles.
+		'.jetpack-paywall-simple, .jetpack-paywall-simple *, ' +
 		// Instagram
 		'blockquote[class^="instagram-"], blockquote[class^="instagram-"] *, ' +
 		// Twitter

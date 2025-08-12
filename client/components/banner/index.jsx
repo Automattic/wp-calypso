@@ -273,7 +273,7 @@ export class Banner extends Component {
 					/>
 				) }
 				<div className="banner__info">
-					<p className="banner__title">{ title }</p>
+					<h3 className="banner__title">{ title }</h3>
 					{ this.renderDescription( description ) }
 					{ size( list ) > 0 && (
 						<ul className="banner__list">

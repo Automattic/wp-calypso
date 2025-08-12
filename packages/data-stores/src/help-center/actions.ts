@@ -13,11 +13,60 @@ import type {
 	HelpCenterShowOptions,
 } from './types';
 import type { SupportInteraction } from '@automattic/odie-client/src/types';
+import type { Location } from 'history';
+
+/**
+ * Save the open state of the help center to the remote user preferences.
+ * @param isShown - Whether the help center is shown.
+ * @param isMinimized - Whether the help center is minimized.
+ */
+export const saveOpenState = ( isShown: boolean | undefined, isMinimized: boolean | undefined ) => {
+	const saveState: Record< string, boolean | null > = {};
+
+	if ( typeof isShown === 'boolean' ) {
+		saveState.help_center_open = isShown;
+		if ( ! isShown ) {
+			// Delete the remote version of the navigation history when closing the help center
+			saveState.help_center_router_history = null;
+		}
+	}
+
+	if ( typeof isMinimized === 'boolean' ) {
+		saveState.help_center_minimized = isMinimized;
+	}
+
+	if ( canAccessWpcomApis() ) {
+		// Use the promise version to do that action without waiting for the result.
+		wpcomRequestPromise( {
+			path: '/me/preferences',
+			apiNamespace: 'wpcom/v2',
+			method: 'PUT',
+			body: { calypso_preferences: saveState },
+		} ).catch( () => {} );
+	} else {
+		// Use the promise version to do that action without waiting for the result.
+		apiFetchPromise( {
+			global: true,
+			path: '/help-center/open-state',
+			method: 'PUT',
+			data: saveState,
+		} as APIFetchOptions ).catch( () => {} );
+	}
+};
 
 export function setCurrentSupportInteraction( supportInteraction: SupportInteraction ) {
 	return {
 		type: 'HELP_CENTER_SET_CURRENT_SUPPORT_INTERACTION',
 		supportInteraction,
+	} as const;
+}
+
+export function setHelpCenterRouterHistory(
+	history: { entries: Location[]; index: number } | undefined
+) {
+	return {
+		type: 'HELP_CENTER_SET_HELP_CENTER_ROUTER_HISTORY',
+		history,
 	} as const;
 }
 
@@ -45,11 +94,13 @@ export const setOdieBotNameSlug = ( odieBotNameSlug: string ) =>
 		odieBotNameSlug,
 	} ) as const;
 
-export const setIsMinimized = ( minimized: boolean ) =>
-	( {
+export const setIsMinimized = function* ( minimized: boolean ) {
+	yield saveOpenState( undefined, minimized );
+	return {
 		type: 'HELP_CENTER_SET_MINIMIZED',
 		minimized,
-	} ) as const;
+	} as const;
+};
 
 export const setIsChatLoaded = ( isChatLoaded: boolean ) =>
 	( {
@@ -87,6 +138,12 @@ export const setMessage = ( message: string ) =>
 		message,
 	} ) as const;
 
+export const setContextTerm = ( contextTerm: string ) =>
+	( {
+		type: 'HELP_CENTER_SET_CONTEXT_TERM',
+		contextTerm,
+	} ) as const;
+
 export const setAllowPremiumSupport = ( allow: boolean ) =>
 	( {
 		type: 'HELP_CENTER_SET_ALLOW_PREMIUM_SUPPORT',
@@ -101,12 +158,20 @@ export const setHelpCenterOptions = ( options: HelpCenterOptions ) => ( {
 export const setShowHelpCenter = function* (
 	show: boolean,
 	allowPremiumSupport = false,
-	options: HelpCenterShowOptions = { hideBackButton: false, searchTerm: '' }
+	options: HelpCenterShowOptions = { hideBackButton: false, contextTerm: '' },
+	/**
+	 * When the Help Center is minimized and someone clicks the (?) toggle button, we should maximize it.
+	 * But this means ignoring the `show=false` value the button will send. The problem is we'll also ignore the `show=false` when the close (x) buttons is clicked too.
+	 * `forceClose` listens to the show value always. Which the (x) button sets to true.
+	 */
+	forceClose = false
 ): Generator< unknown, { type: 'HELP_CENTER_SET_SHOW'; show: boolean }, unknown > {
-	const isMinimized = ( select( STORE_KEY ) as HelpCenterSelect ).getIsMinimized();
+	let isMinimized = ( select( STORE_KEY ) as HelpCenterSelect ).getIsMinimized();
 
-	if ( ! show && isMinimized ) {
+	// Opening or closing the Help Center should reset the minimized state.
+	if ( ! show && ! forceClose && isMinimized ) {
 		yield setIsMinimized( false );
+		isMinimized = false;
 
 		return {
 			type: 'HELP_CENTER_SET_SHOW',
@@ -115,34 +180,18 @@ export const setShowHelpCenter = function* (
 	}
 
 	if ( ! isE2ETest() ) {
-		if ( canAccessWpcomApis() ) {
-			// Use the promise version to do that action without waiting for the result.
-			wpcomRequestPromise( {
-				path: '/me/preferences',
-				apiNamespace: 'wpcom/v2',
-				method: 'PUT',
-				body: {
-					calypso_preferences: { help_center_open: show },
-				},
-			} ).catch( () => {} );
-		} else {
-			// Use the promise version to do that action without waiting for the result.
-			apiFetchPromise( {
-				global: true,
-				path: '/help-center/open-state',
-				method: 'PUT',
-				data: { help_center_open: show },
-			} as APIFetchOptions ).catch( () => {} );
-		}
+		saveOpenState( show, isMinimized );
 	}
 
 	if ( ! show ) {
 		yield setNavigateToRoute( undefined );
+		// Reset the local navigation history when closing the help center.
+		yield setHelpCenterRouterHistory( undefined );
 	} else {
 		yield setShowMessagingWidget( false );
 	}
 
-	yield setMessage( options?.searchTerm || '' );
+	yield setContextTerm( options?.contextTerm || '' );
 	yield setIsMinimized( false );
 
 	if ( allowPremiumSupport ) {
@@ -187,11 +236,13 @@ export const setNewMessagingChat = function* ( {
 	section,
 	siteUrl,
 	siteId,
+	userFieldFlowName,
 }: {
 	initialMessage: string;
 	section?: string;
 	siteUrl?: string;
 	siteId?: string;
+	userFieldFlowName?: string;
 } ) {
 	const url = addQueryArgs( '/odie', {
 		provider: 'zendesk',
@@ -199,8 +250,14 @@ export const setNewMessagingChat = function* ( {
 		section,
 		siteUrl,
 		siteId,
+		userFieldFlowName,
 	} );
 	yield setNavigateToRoute( url );
+	yield setShowHelpCenter( true );
+};
+
+export const setNavigateToOdie = function* () {
+	yield setNavigateToRoute( '/odie' );
 	yield setShowHelpCenter( true );
 };
 
@@ -223,10 +280,11 @@ export type HelpCenterAction =
 			| typeof setSubject
 			| typeof resetStore
 			| typeof setMessage
+			| typeof setContextTerm
 			| typeof setUserDeclaredSite
 			| typeof setUserDeclaredSiteUrl
 			| typeof setUnreadCount
-			| typeof setIsMinimized
+			| typeof setHelpCenterRouterHistory
 			| typeof setIsChatLoaded
 			| typeof setAreSoundNotificationsEnabled
 			| typeof setZendeskClientId
@@ -237,4 +295,5 @@ export type HelpCenterAction =
 			| typeof setAllowPremiumSupport
 			| typeof setHelpCenterOptions
 	  >
-	| GeneratorReturnType< typeof setShowHelpCenter >;
+	| GeneratorReturnType< typeof setShowHelpCenter >
+	| GeneratorReturnType< typeof setIsMinimized >;

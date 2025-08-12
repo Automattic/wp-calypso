@@ -42,8 +42,6 @@ export function getAvailableUpsells() {
 				'antispam',
 				'backups',
 				'backups-daily',
-				'cloudflare-analytics',
-				'cloudflare-cdn',
 				'core/audio',
 				'full-activity-log',
 				'google-analytics',

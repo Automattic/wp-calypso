@@ -17,6 +17,7 @@ import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { ItemData, ItemViewHeaderExtraProps } from '../types';
+import HeaderStagingSiteButton from './header-staging-site-button';
 
 import './style.scss';
 
@@ -88,6 +89,7 @@ export default function ItemViewHeader( {
 									color={ itemData.color }
 									className="hosting-dashboard-item-view__header-favicon"
 									size={ size }
+									variant="primary"
 								/>
 							) }
 							<div className="hosting-dashboard-item-view__header-info">
@@ -115,7 +117,6 @@ export default function ItemViewHeader( {
 										) : (
 											itemData.subtitle
 										) }
-
 										{ extraProps && extraProps.subtitleExtra ? (
 											<span>
 												<extraProps.subtitleExtra />
@@ -123,6 +124,12 @@ export default function ItemViewHeader( {
 										) : (
 											''
 										) }
+										<HeaderStagingSiteButton
+											siteId={ siteId }
+											isAtomic={ isAtomic }
+											isStagingSite={ isStagingSite }
+											hideEnvDataInHeader={ itemData.hideEnvDataInHeader }
+										/>
 									</div>
 
 									{ shouldDisplayVersionNumbers && (
@@ -132,7 +139,7 @@ export default function ItemViewHeader( {
 													WordPress{ ' ' }
 													<a
 														className="hosting-dashboard-item-view__header-env-data-item-link"
-														href={ `/hosting-config/${ selectedSite?.domain }#wp` }
+														href={ `/sites/${ selectedSite?.domain }/settings/wordpress` }
 														onClick={ handleWpVersionClick }
 													>
 														{ wpVersion }
@@ -147,7 +154,7 @@ export default function ItemViewHeader( {
 													<a
 														className="hosting-dashboard-item-view__header-env-data-item-link"
 														onClick={ handlePhpVersionClick }
-														href={ `/hosting-config/${ selectedSite?.domain }#php` }
+														href={ `/sites/${ selectedSite?.domain }/settings/php` }
 													>
 														{ phpVersion }
 													</a>

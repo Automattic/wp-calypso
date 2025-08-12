@@ -1,4 +1,4 @@
-# Data Library and Layer
+# Data Library and Layers
 
 ## Overview
 
@@ -6,7 +6,7 @@ The dashboard uses a light approach to data fetching and state management. It le
 
 ## Architecture
 
-The data layer is organized around these key principles:
+The data library is organized around these key principles:
 
 1. **REST API-centric**: All data is fetched from the WordPress.com REST API
 2. **Type safety**: Strong TypeScript types for all data structures
@@ -14,131 +14,157 @@ The data layer is organized around these key principles:
 4. **Caching**: Simple caching strategies for optimized performance: Load from local cache first and refetch on navigation/focus.
 5. **Loader pattern**: Data is prefetched through route loaders where possible
 
-## Core Components
+The data library consist of two layers:
 
-### Data Types
+- data source
+- data queries (with state management)
 
-The data layer defines clear TypeScript interfaces for all data structures in `/client/dashboard/data/types.ts`. These include:
+## Data source: `client/dashboard/data/`
 
-- User and profile information
-- Site data structures
-- Domain information
-- Email configurations
-- Performance metrics
-- Media storage details
-- ...
+This layer exports the API integration with the REST API, and the data types that are consumed by the dashboard components.
 
-The Data Layer might be slightly different that the raw data returned from the REST API endpoints. In this case, we rely on an adapter layer that transforms the temporary REST API types to the final data types used in the dashboard. This is done to ensure that the data layer is decoupled from the API and can evolve independently. It can potentially adapt to various API layers if needed later.
+### API integration
 
-### API Integration
+The data source layer uses `wpcom` from `calypso/lib/wp` for REST API calls. Each data requirement has corresponding fetch functions in `client/dashboard/data/<endpoint-group>.ts`. For example:
 
-The data layer uses `wpcom` from `calypso/lib/wp` for REST API calls. Each data requirement has corresponding fetch functions in `/client/dashboard/data/index.ts`:
-
+`client/dashboard/data/site-reset.ts`:
 ```typescript
-export const fetchSite = async ( id: string ): Promise< Site > => {
-	if ( ! id ) {
-		return Promise.reject( new Error( 'Site ID is undefined' ) );
-	}
-	return await wpcom.req.get( {
-		path: `/sites/${ id }?fields=ID,URL,name,icon,subscribers_count,plan,active_modules,options`,
+export async function fetchSiteResetStatus( siteId: number ): Promise< SiteResetStatus > {
+	return wpcom.req.get( {
+		path: `/sites/${ siteId }/reset-site/status`,
+		apiNamespace: 'wpcom/v2',
 	} );
+}
+```
+
+We usually return the raw response from the API. If you need to process the response (e.g. filter), you can do so in the query layer via TanStack's [select](https://tanstack.com/query/latest/docs/framework/react/guides/render-optimizations#select) option.
+
+### Data types
+
+The data source layer defines clear TypeScript interfaces for the data structures returned / consumed by the endpoints, in the same file as the fetch functions. For example:
+
+`client/dashboard/data/site-reset.ts`:
+```typescript
+export type SiteResetStatus = {
+	status: 'in-progress' | 'ready' | 'completed';
+	progress: number;
 };
 ```
 
-## Data Fetching Patterns
+An "index" (or "barrel") `client/dashboard/data/types.ts` is provided, which re-exports all data types from all endpoints. This allows for easy import of all data types from the dashboard components. Import types using `import type ...` syntax to avoid the disadvantages of barrel files.
 
-The dashboard sets uses a combination of route loaders and component-level queries to fetch data, all using TanStack Query. This allows for both prefetching data for routes and fetching data on-demand within components.
+## Data queries (fetching and mutation): `client/dashboard/app/queries/`
 
-### Route Loaders
+The dashboard uses a combination of route loaders and component-level queries to fetch data, all using TanStack Query. This allows for both prefetching data for routes and fetching data on-demand within components.
+
+### Queries object centralization
+
+Queries are reused between loaders and components. To encourage cache reusability between different parts of the app, we centralize the queries definitions in the `client/dashboard/app/queries/` directory.
+
+The query layer does not export hooks; it only exports the option objects which are passed to hooks (e.g. `useQuery()`). This makes the queries more reusable. You won't always want to use `useQuery()`, sometimes depending on the situation you may need `useSuspenseQuery()` or `queryClient.getQueryData()`. These all accept the same query options object. It also makes queries more easily composable. When your component has some unique requirement other queries don't, you do not need to parameterize the query options—you can compose your own query options:
+
+```typescript
+useQuery( {
+	...siteResetStatusQuery( site.ID ),
+	select: ( data ) => data.status,
+	enabled: transferStatus.status !== 'completed',
+} );
+```
+
+### `queryOptions` and `mutationOptions`
+
+React Query's tyes are very fancy. The downside is they can be hard to get write when written by hand. That is why React Query provides the `queryOptions` and `mutationOptions` utility functions.
+
+At runtime these functions are a no-op. But by you using them your editor will give you code completion and TypeScript will be able to confirm they are well formed. Callback functions like `onSuccess` and `select` in particular are tricky when you have to provide your own parameter types. These utility functions define the types for you.
+
+### Route loaders
 
 The primary data-fetching pattern uses route loaders to prefetch data before rendering components:
 
 ```typescript
-const siteRoute = createRoute( {
-	getParentRoute: () => rootRoute,
-	path: 'sites/$siteId',
-	loader: ( { params: { siteId } } ) =>
-		queryClient.ensureQueryData( {
-			queryKey: [ 'site', siteId ],
-			queryFn: async () => {
-				const [
-					site,
-					phpVersion,
-				] = await Promise.all( [
-					fetchSite( siteId ),
-					fetchPHPVersion( siteId ),
-				] );
-				return {
-					site,
-					phpVersion,
-				};
-			},
-		} ),
-	notFoundComponent: NotFound,
-} ).lazy( () => import( '../site' ).then( ( d ) => d.Route ) );
+const siteSettingsPHPRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/php',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( hasHostingFeature( site, HostingFeatures.PHP ) ) {
+			await queryClient.ensureQueryData( sitePHPVersionQuery( site.ID ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../sites/settings-php' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-php' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
 ```
 
-The `queryClient.ensureQueryData` helper checks if data is already cached before fetching, improving performance by avoiding unnecessary requests.
+TanStack's `queryClient.ensureQueryData` checks if data is already cached before fetching, improving performance by avoiding unnecessary requests.
 
-### Component-Level Queries
+### Component-level queries
 
-For data needs that are specific to a component or that need more dynamic control, components can use the `useQuery` hook directly:
+At the component level, we use the `useQuery` and `useSuspenseQuery` hooks to fetch data. This includes the data that we preloaded in the route loader:
+
 
 ```typescript
-const { data, isLoading, error } = useQuery( {
-	queryKey: [ 'siteStats', siteId ],
-	queryFn: () => fetchSiteStats( siteId ),
-	staleTime: 5 * 60 * 1000, // 5 minutes
+const { data: currentVersion } = useSuspenseQuery( {
+	...sitePHPVersionQuery( site.ID ),
+	enabled: hasHostingFeature( site, HostingFeatures.PHP ),
 } );
 ```
 
-### Queries centralization
+as well as data that are specific to a component that you want to load dynamically:
 
-Queries are reused between loaders and components, to encourage cache reusability between different parts of the app, it is possible to centralize the queries definitions in `client/dashboard/app/queries.ts` and use them in both loaders and components.
+```typescript
+const { data: siteContentSummary, isLoading } = useQuery(
+	siteResetContentSummaryQuery( site.ID )
+);
+```
 
-## Adding New Data Sources
+## Adding new data sources
 
 To add a new data source to the dashboard:
 
-1. Define the TypeScript interfaces in `/client/dashboard/data/types.ts`
-2. Create fetch functions in `/client/dashboard/data/index.ts`
-3. Define a query in `/client/dashboard/app/queries.ts` if needed
-4. Use the query in a router loader or component
+1. Create fetch functions and related types in `client/dashboard/data/<endpoint-group>.ts`.
+3. Define a new query in `client/dashboard/app/queries/` if needed.
+4. Use the query in a router loader or component.
 
-### Example: Adding a New Data Entity
+### Example: adding a new data entity
 
+`client/dashboard/data/entity.ts`:
 ```typescript
-// 1. Define the type
+// Define the type
 export interface NewEntity {
   id: string;
   name: string;
   // other properties...
 }
 
-// 2. Create the fetch function
-export const fetchNewEntity = async (id: string): Promise<NewEntity> => {
-  if (!id) {
-    return Promise.reject(new Error('Entity ID is undefined'));
-  }
-  return wpcom.req.get({
+// Create the fetch function
+export async function fetchNewEntity( id: string ): Promise< NewEntity > {
+  return wpcom.req.get( {
     path: `/entity/${id}`,
     apiNamespace: 'rest/v1.1',
-  });
-};
+  } );
+}
+```
 
-// 3. Define the query in queries.ts
-export const newEntityQuery = (id: string) => {
-  return {
-	queryKey: ['newEntity', id],
-	queryFn: () => fetchNewEntity(id),
+`client/dashboard/app/queries/entity.ts`:
+```typescript
+// Define the query
+export const newEntityQuery = ( id: string ) => queryOptions( {
+	queryKey: [ 'newEntity', id ],
+	queryFn: () => fetchNewEntity( id ),
 	staleTime: 5 * 60 * 1000, // 5 minutes
-  };
-};
+} );
+```
 
-// 4. Use in a component
-const { data, isLoading, error } = useQuery(newEntityQuery(entityId));
+```typescript
+// Use in a component
+const { data, isLoading, error } = useQuery( newEntityQuery( id ) );
 
-// 5. Use in a route loader
-loader: ({ params: { id } }) =>
-  queryClient.ensureQueryData(newEntityQuery(id)),
-
+// Use in a route loader
+loader: ( { params: { id } } ) =>
+  queryClient.ensureQueryData( newEntityQuery( id ) ),
+```

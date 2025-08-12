@@ -2,8 +2,7 @@ import page from '@automattic/calypso-router';
 import { WordPressLogo } from '@automattic/components';
 import { useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState } from 'react';
-import MigrationOfferV3 from 'calypso/a8c-for-agencies/components/a4a-migration-offer-v3';
+import { useCallback } from 'react';
 import Offering from 'calypso/a8c-for-agencies/components/offering';
 import { OfferingItemProps } from 'calypso/a8c-for-agencies/components/offering/types';
 import { A4A_MARKETPLACE_HOSTING_WPCOM_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
@@ -14,8 +13,6 @@ import PressableOffering from './pressable-offering';
 const OverviewBodyHosting = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-
-	const [ isMigrationOfferExpanded, setIsMigrationOfferExpanded ] = useState( true );
 
 	const actionHandlerCallback = useCallback(
 		( section: string, product: string ) => {
@@ -66,10 +63,6 @@ const OverviewBodyHosting = () => {
 			) }
 			items={ [ wpcom ] }
 		>
-			<MigrationOfferV3
-				isExpanded={ isMigrationOfferExpanded }
-				onToggleView={ () => setIsMigrationOfferExpanded( ( prev ) => ! prev ) }
-			/>
 			<PressableOffering />
 		</Offering>
 	);

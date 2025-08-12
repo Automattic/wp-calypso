@@ -133,6 +133,9 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 				domainRegistration( {
 					productSlug: domainSuggestionProductSlug,
 					domain: domainSuggestionName,
+					extra: {
+						flow_name: 'domain-upsell',
+					},
 				} ),
 			] );
 		} catch {

@@ -2,39 +2,39 @@
 @import "@wordpress/base-styles/mixins";
 
 .email-forward-verification-status {
-    display: flex;
-    align-items: center;
-    gap: 5px;
+	display: flex;
+	align-items: center;
+	gap: 5px;
 
-    &.active {
-        svg {
-            fill: var(--studio-green-50);
-        }
+	&.active {
+		svg {
+			fill: var(--studio-green-50);
+		}
 
-        // hide text on mobile.
-        span {
-            display: none;
-        }
+		// hide text on mobile.
+		span {
+			display: none;
+		}
 
-        @include break-large {
-            span {
-                display: inline-block;
-            }
-        }
-    }
+		@include break-large {
+			span {
+				display: inline-block;
+			}
+		}
+	}
 
-    &.verification-pending {
-        color: var(--studio-orange-50);
+	&.verification-pending {
+		color: var(--studio-orange-50);
 
-        svg {
-            fill: var(--studio-orange-50);
-            display: none;
-        }
+		svg {
+			fill: var(--studio-orange-50);
+			display: none;
+		}
 
-        @include break-large {
-            svg {
-                display: flex;
-            }
-        }
-    }
+		@include break-large {
+			svg {
+				display: flex;
+			}
+		}
+	}
 }

@@ -20,7 +20,6 @@ export class AuthFormHeader extends Component {
 	static propTypes = {
 		authQuery: authQueryPropTypes.isRequired,
 		isWooJPC: PropTypes.bool,
-		isWpcomMigration: PropTypes.bool,
 		wooDnaConfig: PropTypes.object,
 		isFromAutomatticForAgenciesPlugin: PropTypes.bool,
 
@@ -53,14 +52,8 @@ export class AuthFormHeader extends Component {
 	}
 
 	getHeaderText() {
-		const {
-			translate,
-			partnerSlug,
-			isWooJPC,
-			wooDnaConfig,
-			isWpcomMigration,
-			isFromAutomatticForAgenciesPlugin,
-		} = this.props;
+		const { translate, partnerSlug, isWooJPC, wooDnaConfig, isFromAutomatticForAgenciesPlugin } =
+			this.props;
 
 		if ( wooDnaConfig && wooDnaConfig.isWooDnaFlow() ) {
 			return wooDnaConfig.getServiceName();
@@ -103,13 +96,6 @@ export class AuthFormHeader extends Component {
 			}
 		}
 
-		if ( isWpcomMigration ) {
-			switch ( currentState ) {
-				case 'logged-in':
-					return translate( 'Log in to your account' );
-			}
-		}
-
 		if ( isFromAutomatticForAgenciesPlugin ) {
 			switch ( currentState ) {
 				case 'logged-out':
@@ -137,13 +123,7 @@ export class AuthFormHeader extends Component {
 	}
 
 	getSubHeaderText() {
-		const {
-			translate,
-			isWooJPC,
-			wooDnaConfig,
-			isWpcomMigration,
-			isFromAutomatticForAgenciesPlugin,
-		} = this.props;
+		const { translate, isWooJPC, wooDnaConfig, isFromAutomatticForAgenciesPlugin } = this.props;
 		const currentState = this.getState();
 
 		if ( isWooJPC ) {
@@ -225,13 +205,6 @@ export class AuthFormHeader extends Component {
 			}
 		}
 
-		if ( isWpcomMigration ) {
-			switch ( currentState ) {
-				case 'logged-in':
-					return translate( 'Connect your site with your WordPress.com account' );
-			}
-		}
-
 		if ( isFromAutomatticForAgenciesPlugin ) {
 			return undefined;
 		}
@@ -250,17 +223,13 @@ export class AuthFormHeader extends Component {
 	}
 
 	getSiteCard() {
-		const { isWpcomMigration, isWooJPC } = this.props;
+		const { isWooJPC } = this.props;
 		const { jpVersion } = this.props.authQuery;
 		if (
 			// Always show the site card for Woo Core Profiler
 			! isWooJPC &&
 			! versionCompare( jpVersion, '4.0.3', '>' )
 		) {
-			return null;
-		}
-
-		if ( isWpcomMigration ) {
 			return null;
 		}
 

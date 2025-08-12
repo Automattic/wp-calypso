@@ -14,6 +14,13 @@ export type ThreatFix = {
 	fixer: ThreatFixType;
 	file?: string;
 	target?: string;
+	extensionStatus?: 'active' | 'inactive';
+	extras?: ThreatFixExtras;
+};
+
+export type ThreatFixExtras = {
+	is_bulk_fixable?: boolean;
+	is_dotorg?: boolean;
 };
 
 export type ThreatStatus = 'fixed' | 'ignored' | 'current';
@@ -32,11 +39,14 @@ export interface BaseThreat {
 	extension?: Extension;
 	rows?: Record< string, unknown >;
 	table?: string;
+	primaryKeyColumn?: string;
+	value?: string;
 	diff?: string;
 	context?: Record< string, unknown >;
 	severity: number;
 	source?: string;
 	version?: string;
+	details?: Record< string, unknown >;
 }
 
 export interface FixableThreat extends BaseThreat {

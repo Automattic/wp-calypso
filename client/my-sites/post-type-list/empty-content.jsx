@@ -31,13 +31,7 @@ function PostTypeListEmptyContent( {
 	return (
 		<div>
 			{ siteId && <QueryPostTypes siteId={ siteId } /> }
-			<EmptyContent
-				title={ title }
-				action={ action }
-				actionURL={ editPath }
-				illustration="/calypso/images/pages/illustration-pages.svg"
-				illustrationWidth={ 150 }
-			/>
+			<EmptyContent title={ title } action={ action } actionURL={ editPath } />
 		</div>
 	);
 }

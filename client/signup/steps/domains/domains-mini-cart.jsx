@@ -140,6 +140,9 @@ export class DomainsMiniCart extends Component {
 						borderless
 						className="button domains__domain-cart-remove"
 						onClick={ this.props.freeDomainRemoveClickHandler }
+						aria-label={ translate( 'Remove %(domain)s from cart', {
+							args: { domain: this.props.wpcomSubdomainSelected.domain_name },
+						} ) }
 					>
 						{ translate( 'Remove' ) }
 					</Button>
@@ -181,6 +184,7 @@ export class DomainsMiniCart extends Component {
 					primary
 					className="domains__domain-cart-continue"
 					onClick={ this.props.goToNext }
+					disabled={ this.props.isMiniCartContinueButtonBusy }
 					busy={ this.props.isMiniCartContinueButtonBusy }
 				>
 					{ translate( 'Continue' ) }
@@ -227,6 +231,10 @@ export class DomainsMiniCart extends Component {
 			return this.mobile();
 		}
 
+		const shouldRenderChooseDomainLater = ! [ 'domain', 'domains/add' ].includes(
+			this.props.flowName
+		);
+
 		return (
 			<div className="domains__domain-side-content domains__domain-cart">
 				<div className="domains__domain-cart-title">{ translate( 'Your domains' ) }</div>
@@ -253,11 +261,12 @@ export class DomainsMiniCart extends Component {
 					primary
 					className="domains__domain-cart-continue"
 					onClick={ this.props.goToNext }
+					disabled={ this.props.isMiniCartContinueButtonBusy }
 					busy={ this.props.isMiniCartContinueButtonBusy }
 				>
 					{ translate( 'Continue' ) }
 				</Button>
-				{ this.props.flowName !== 'domain' && (
+				{ shouldRenderChooseDomainLater && (
 					<Button
 						borderless
 						className="domains__domain-cart-choose-later"

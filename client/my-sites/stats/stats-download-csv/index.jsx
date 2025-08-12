@@ -28,9 +28,10 @@ class StatsDownloadCsv extends Component {
 		query: PropTypes.object,
 		statType: PropTypes.string,
 		siteId: PropTypes.number,
-		borderless: PropTypes.bool,
 		isMobile: PropTypes.bool,
 		hideIfNoData: PropTypes.bool,
+		headers: PropTypes.array,
+		rowModifierFn: PropTypes.func,
 	};
 
 	processExportData = ( data ) => {
@@ -52,7 +53,7 @@ class StatsDownloadCsv extends Component {
 
 	downloadCsv = ( event ) => {
 		event.preventDefault();
-		const { siteSlug, path, period, data } = this.props;
+		const { siteSlug, path, period, data, headers } = this.props;
 
 		const fileName =
 			[
@@ -65,7 +66,11 @@ class StatsDownloadCsv extends Component {
 
 		this.props.recordGoogleEvent( 'Stats', 'CSV Download ' + titlecase( path ) );
 
-		const csvData = this.processExportData( data )
+		const csvData = headers
+			? [ headers, ...this.processExportData( data ) ]
+			: this.processExportData( data );
+
+		const csvString = csvData
 			.map( ( row ) => {
 				if ( Array.isArray( row ) ) {
 					return row.join( ',' );
@@ -77,7 +82,7 @@ class StatsDownloadCsv extends Component {
 			} )
 			.join( '\n' );
 
-		const blob = new Blob( [ csvData ], { type: 'text/csv;charset=utf-8' } );
+		const blob = new Blob( [ csvString ], { type: 'text/csv;charset=utf-8' } );
 
 		saveAs( blob, fileName );
 	};
@@ -90,7 +95,6 @@ class StatsDownloadCsv extends Component {
 			query,
 			translate,
 			isLoading,
-			borderless,
 			skipQuery,
 			isMobile,
 			hideIfNoData = false,
@@ -111,7 +115,6 @@ class StatsDownloadCsv extends Component {
 				className="stats-download-csv"
 				onClick={ this.downloadCsv }
 				disabled={ disabled }
-				borderless={ borderless }
 				icon={ download }
 			>
 				{ ! skipQuery && siteId && statType && query && (
@@ -140,11 +143,11 @@ const connectComponent = connect(
 			return { data: ownProps.data, siteSlug, siteId, isLoading: false };
 		}
 
-		const { statType, query } = ownProps;
+		const { statType, query, rowModifierFn } = ownProps;
 		const data =
 			statType === 'statsVideoPlays'
 				? getSiteStatsNormalizedData( state, siteId, statType, query )
-				: getSiteStatsCSVData( state, siteId, statType, query );
+				: getSiteStatsCSVData( state, siteId, statType, query, rowModifierFn );
 		const isLoading = isRequestingSiteStatsForQuery( state, siteId, statType, query );
 
 		return { data, siteSlug, siteId, isLoading };

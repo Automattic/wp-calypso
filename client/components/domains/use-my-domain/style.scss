@@ -13,6 +13,10 @@
 		box-shadow: none;
 	}
 
+	&.card {
+		display: flex; // NOTE: To increase specificity
+	}
+
 	& &__page-heading {
 		.formatted-header__title {
 			font-size: 2.25rem;

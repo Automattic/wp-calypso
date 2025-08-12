@@ -177,6 +177,7 @@ export const domainProduct: ResponseCartProduct = {
 	...getEmptyResponseCartProduct(),
 	product_name: '.cash Domain',
 	product_slug: 'domain_reg',
+	cart_item_id: 'domain_reg',
 	currency: 'BRL',
 	extra: {
 		context: 'signup',
@@ -195,6 +196,7 @@ export const caDomainProduct: ResponseCartProduct = {
 	...getEmptyResponseCartProduct(),
 	product_name: '.ca Domain',
 	product_slug: 'domain_reg',
+	cart_item_id: 'domain_reg',
 	currency: 'BRL',
 	extra: {
 		context: 'signup',
@@ -213,6 +215,7 @@ export const gSuiteProduct: ResponseCartProduct = {
 	...getEmptyResponseCartProduct(),
 	product_name: 'G Suite',
 	product_slug: 'gapps',
+	cart_item_id: 'gapps',
 	currency: 'BRL',
 	extra: {},
 	meta: 'foo.cash',
@@ -229,6 +232,7 @@ export const domainTransferProduct: ResponseCartProduct = {
 	...getEmptyResponseCartProduct(),
 	product_name: '.cash Domain',
 	product_slug: 'domain_transfer',
+	cart_item_id: 'domain_transfer',
 	currency: 'BRL',
 	extra: {
 		context: 'signup',
@@ -246,6 +250,7 @@ export const planWithBundledDomain: ResponseCartProduct = {
 	...getEmptyResponseCartProduct(),
 	product_name: 'WordPress.com Personal',
 	product_slug: 'personal-bundle',
+	cart_item_id: 'personal-bundle',
 	currency: 'BRL',
 	extra: {
 		context: 'signup',
@@ -264,6 +269,7 @@ export const oneTimePurchase: ResponseCartProduct = {
 	...getEmptyResponseCartProduct(),
 	product_name: 'Premium Theme',
 	product_slug: 'premium_theme',
+	cart_item_id: 'premium_theme',
 	currency: 'BRL',
 	extra: {
 		context: 'signup',
@@ -282,6 +288,7 @@ export const planWithoutDomain: ResponseCartProduct = {
 	...getEmptyResponseCartProduct(),
 	product_name: 'WordPress.com Personal',
 	product_slug: 'personal-bundle',
+	cart_item_id: 'personal-bundle',
 	currency: 'BRL',
 	extra: {
 		context: 'signup',
@@ -299,6 +306,7 @@ export const planWithoutDomainMonthly: ResponseCartProduct = {
 	...getEmptyResponseCartProduct(),
 	product_name: 'WordPress.com Personal Monthly',
 	product_slug: 'personal-bundle-monthly',
+	cart_item_id: 'personal-bundle-monthly',
 	currency: 'BRL',
 	extra: {
 		context: 'signup',
@@ -316,6 +324,7 @@ export const planWithoutDomainBiannual: ResponseCartProduct = {
 	...getEmptyResponseCartProduct(),
 	product_name: 'WordPress.com Personal 2 Year',
 	product_slug: 'personal-bundle-2y',
+	cart_item_id: 'personal-bundle-2y',
 	currency: 'BRL',
 	extra: {
 		context: 'signup',
@@ -333,6 +342,7 @@ export const planLevel2: ResponseCartProduct = {
 	...getEmptyResponseCartProduct(),
 	product_name: 'WordPress.com Business',
 	product_slug: 'business-bundle',
+	cart_item_id: 'business-bundle',
 	currency: 'BRL',
 	extra: {
 		context: 'signup',
@@ -350,6 +360,7 @@ export const planLevel2Monthly: ResponseCartProduct = {
 	...getEmptyResponseCartProduct(),
 	product_name: 'WordPress.com Business Monthly',
 	product_slug: 'business-bundle-monthly',
+	cart_item_id: 'business-bundle-monthly',
 	currency: 'BRL',
 	extra: {
 		context: 'signup',
@@ -367,6 +378,7 @@ export const planLevel2Biannual: ResponseCartProduct = {
 	...getEmptyResponseCartProduct(),
 	product_name: 'WordPress.com Business 2 Year',
 	product_slug: 'business-bundle-2y',
+	cart_item_id: 'business-bundle-2y',
 	currency: 'BRL',
 	extra: {
 		context: 'signup',
@@ -384,6 +396,7 @@ export const jetpackMonthly: ResponseCartProduct = {
 	...getEmptyResponseCartProduct(),
 	product_name: 'Jetpack Scan Monthly',
 	product_slug: 'jetpack_scan_monthly',
+	cart_item_id: 'jetpack_scan_monthly',
 	currency: 'BRL',
 	meta: '',
 	product_id: 2107,
@@ -398,6 +411,7 @@ export const jetpackYearly: ResponseCartProduct = {
 	...getEmptyResponseCartProduct(),
 	product_name: 'Jetpack Scan Yearly',
 	product_slug: 'jetpack_scan',
+	cart_item_id: 'jetpack_scan',
 	currency: 'BRL',
 	meta: '',
 	product_id: 2106,
@@ -412,6 +426,7 @@ export const jetpackBiannual: ResponseCartProduct = {
 	...getEmptyResponseCartProduct(),
 	product_name: 'Jetpack Scan Bi-yearly',
 	product_slug: 'jetpack_scan_bi_yearly',
+	cart_item_id: 'jetpack_scan_bi_yearly',
 	currency: 'BRL',
 	meta: '',
 	product_id: 2038,
@@ -426,6 +441,7 @@ export const professionalEmailAnnual: ResponseCartProduct = {
 	...getEmptyResponseCartProduct(),
 	product_name: 'Professional Email',
 	product_slug: 'wp_titan_mail_yearly',
+	cart_item_id: 'wp_titan_mail_yearly',
 	currency: 'USD',
 	extra: {
 		email_users: [],
@@ -444,6 +460,7 @@ export const professionalEmailMonthly: ResponseCartProduct = {
 	...getEmptyResponseCartProduct(),
 	product_name: 'Professional Email',
 	product_slug: 'wp_titan_mail_monthly',
+	cart_item_id: 'wp_titan_mail_monthly',
 	currency: 'USD',
 	extra: {
 		email_users: [],
@@ -517,6 +534,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2111,
 				product_name: 'Jetpack Akismet Anti-spam',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2111`,
 				bill_period: 'monthly',
 				currency: 'USD',
 			};
@@ -526,6 +544,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2110,
 				product_name: 'Jetpack Akismet Anti-spam',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2110`,
 				bill_period: 'yearly',
 				currency: 'USD',
 			};
@@ -535,6 +554,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2039,
 				product_name: 'Jetpack Akismet Anti-spam',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2039`,
 				bill_period: 'bi-yearly',
 				currency: 'USD',
 			};
@@ -544,6 +564,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2113,
 				product_name: 'Jetpack VaultPress Backup (10GB)',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2113`,
 				bill_period: 'monthly',
 				currency: 'USD',
 			};
@@ -553,6 +574,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2112,
 				product_name: 'Jetpack VaultPress Backup (10GB)',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2112`,
 				bill_period: 'yearly',
 				currency: 'USD',
 			};
@@ -562,6 +584,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2123,
 				product_name: 'Jetpack VaultPress Backup (10GB)',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2123`,
 				bill_period: 'bi-yearly',
 				currency: 'USD',
 			};
@@ -571,6 +594,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2115,
 				product_name: 'Jetpack VaultPress Backup (1TB)',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2115`,
 				bill_period: 'monthly',
 				currency: 'USD',
 			};
@@ -580,6 +604,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2114,
 				product_name: 'Jetpack VaultPress Backup (1TB)',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2114`,
 				bill_period: 'yearly',
 				currency: 'USD',
 			};
@@ -589,6 +614,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2400,
 				product_name: 'Jetpack Boost',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2400`,
 				bill_period: 'monthly',
 				currency: 'USD',
 			};
@@ -598,6 +624,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2401,
 				product_name: 'Jetpack Boost',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2401`,
 				bill_period: 'yearly',
 				currency: 'USD',
 			};
@@ -607,6 +634,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2036,
 				product_name: 'Jetpack Boost',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2036`,
 				bill_period: 'bi-yearly',
 				currency: 'USD',
 			};
@@ -616,6 +644,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2015,
 				product_name: 'Jetpack Complete',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2015`,
 				bill_period: 'monthly',
 				currency: 'USD',
 			};
@@ -625,6 +654,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2014,
 				product_name: 'Jetpack Complete',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2014`,
 				bill_period: 'yearly',
 				currency: 'USD',
 			};
@@ -634,6 +664,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2035,
 				product_name: 'Jetpack Complete',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2035`,
 				bill_period: 'bi-yearly',
 				currency: 'USD',
 			};
@@ -643,6 +674,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2021,
 				product_name: 'Jetpack Growth',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2021`,
 				bill_period: 'monthly',
 				currency: 'USD',
 			};
@@ -652,6 +684,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2023,
 				product_name: 'Jetpack Growth',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2023`,
 				bill_period: 'bi-yearly',
 				currency: 'USD',
 			};
@@ -661,6 +694,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2022,
 				product_name: 'Jetpack Growth',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2022`,
 				bill_period: 'yearly',
 				currency: 'USD',
 			};
@@ -670,6 +704,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2107,
 				product_name: 'Jetpack Scan',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2107`,
 				bill_period: 'monthly',
 				currency: 'USD',
 			};
@@ -679,6 +714,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2106,
 				product_name: 'Jetpack Scan',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2106`,
 				bill_period: 'yearly',
 				currency: 'USD',
 			};
@@ -688,6 +724,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2038,
 				product_name: 'Jetpack Scan',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2038`,
 				bill_period: 'bi-yearly',
 				currency: 'USD',
 			};
@@ -697,6 +734,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2105,
 				product_name: 'Jetpack Search',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2105`,
 				bill_period: 'monthly',
 				currency: 'USD',
 			};
@@ -706,6 +744,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2104,
 				product_name: 'Jetpack Search',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2104`,
 				bill_period: 'yearly',
 				currency: 'USD',
 			};
@@ -715,6 +754,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2131,
 				product_name: 'Jetpack Search',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2131`,
 				bill_period: 'bi-yearly',
 				currency: 'USD',
 			};
@@ -724,6 +764,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2017,
 				product_name: 'Jetpack Security T1',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2017`,
 				bill_period: 'monthly',
 				currency: 'USD',
 			};
@@ -733,6 +774,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2034,
 				product_name: 'Jetpack Security T1',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2034`,
 				bill_period: 'bi-yearly',
 				currency: 'USD',
 			};
@@ -742,6 +784,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2016,
 				product_name: 'Jetpack Security T1',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2016`,
 				bill_period: 'yearly',
 				currency: 'USD',
 			};
@@ -751,6 +794,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2020,
 				product_name: 'Jetpack Security T2',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2020`,
 				bill_period: 'monthly',
 				currency: 'USD',
 			};
@@ -760,6 +804,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2019,
 				product_name: 'Jetpack Security T2',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2019`,
 				bill_period: 'yearly',
 				currency: 'USD',
 			};
@@ -769,6 +814,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2504,
 				product_name: 'Jetpack Social Basic',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2504`,
 				bill_period: 'monthly',
 				currency: 'USD',
 			};
@@ -778,6 +824,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2503,
 				product_name: 'Jetpack Social Basic',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2503`,
 				bill_period: 'yearly',
 				currency: 'USD',
 			};
@@ -787,6 +834,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2037,
 				product_name: 'Jetpack Social Basic',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2037`,
 				bill_period: 'bi-yearly',
 				currency: 'USD',
 			};
@@ -796,6 +844,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2603,
 				product_name: 'Jetpack Social Advanced',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2603`,
 				bill_period: 'monthly',
 				currency: 'USD',
 			};
@@ -805,6 +854,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2602,
 				product_name: 'Jetpack Social Advanced',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2602`,
 				bill_period: 'yearly',
 				currency: 'USD',
 			};
@@ -814,6 +864,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2604,
 				product_name: 'Jetpack Social Advanced',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2604`,
 				bill_period: 'bi-yearly',
 				currency: 'USD',
 			};
@@ -823,6 +874,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2117,
 				product_name: 'Jetpack VideoPress',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2117`,
 				bill_period: 'monthly',
 				currency: 'USD',
 			};
@@ -832,6 +884,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2116,
 				product_name: 'Jetpack VideoPress',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2116`,
 				bill_period: 'yearly',
 				currency: 'USD',
 			};
@@ -841,6 +894,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2119,
 				product_name: 'Jetpack VideoPress',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2119`,
 				bill_period: 'bi-yearly',
 				currency: 'USD',
 			};
@@ -850,6 +904,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2300,
 				product_name: 'Akismet Personal (Free non-commercial license)',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2300`,
 				bill_period: 'yearly',
 				currency: 'USD',
 			};
@@ -859,6 +914,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2309,
 				product_name: 'Akismet Personal (Paid)',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2309`,
 				bill_period: 'monthly',
 				currency: 'USD',
 			};
@@ -868,6 +924,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2310,
 				product_name: 'Akismet Personal (Paid)',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2310`,
 				bill_period: 'yearly',
 				currency: 'USD',
 			};
@@ -877,6 +934,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2312,
 				product_name: 'Akismet Pro (10K requests/month)',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2312`,
 				bill_period: 'monthly',
 				currency: 'USD',
 			};
@@ -886,6 +944,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2311,
 				product_name: 'Akismet Pro (10K requests/month)',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2311`,
 				bill_period: 'yearly',
 				currency: 'USD',
 			};
@@ -895,6 +954,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2314,
 				product_name: 'Akismet Pro (20K requests/month)',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2314`,
 				bill_period: 'monthly',
 				currency: 'USD',
 			};
@@ -904,6 +964,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2313,
 				product_name: 'Akismet Pro (20K requests/month)',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2313`,
 				bill_period: 'yearly',
 				currency: 'USD',
 			};
@@ -913,6 +974,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2316,
 				product_name: 'Akismet Pro (30K requests/month)',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2316`,
 				bill_period: 'monthly',
 				currency: 'USD',
 			};
@@ -922,6 +984,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2315,
 				product_name: 'Akismet Pro (30K requests/month)',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2315`,
 				bill_period: 'yearly',
 				currency: 'USD',
 			};
@@ -931,6 +994,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2318,
 				product_name: 'Akismet Pro (40K requests/month)',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2318`,
 				bill_period: 'monthly',
 				currency: 'USD',
 			};
@@ -940,6 +1004,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2317,
 				product_name: 'Akismet Pro (40K requests/month)',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2317`,
 				bill_period: 'yearly',
 				currency: 'USD',
 			};
@@ -949,6 +1014,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2320,
 				product_name: 'Akismet Business',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2320`,
 				bill_period: 'monthly',
 				currency: 'USD',
 			};
@@ -958,6 +1024,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2319,
 				product_name: 'Akismet Business',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2319`,
 				bill_period: 'yearly',
 				currency: 'USD',
 			};
@@ -967,6 +1034,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2322,
 				product_name: 'Akismet Enterprise (350K requests/month)',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2322`,
 				bill_period: 'monthly',
 				currency: 'USD',
 			};
@@ -976,6 +1044,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2321,
 				product_name: 'Akismet Enterprise (350K requests/month)',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2321`,
 				bill_period: 'yearly',
 				currency: 'USD',
 			};
@@ -985,6 +1054,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2324,
 				product_name: 'Akismet Enterprise (2M requests/month)',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2324`,
 				bill_period: 'monthly',
 				currency: 'USD',
 			};
@@ -994,6 +1064,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2323,
 				product_name: 'Akismet Enterprise (2M requests/month)',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2323`,
 				bill_period: 'yearly',
 				currency: 'USD',
 			};
@@ -1003,6 +1074,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2326,
 				product_name: 'Akismet Enterprise (2M+ requests/month)',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2326`,
 				bill_period: 'monthly',
 				currency: 'USD',
 			};
@@ -1012,6 +1084,7 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_id: 2325,
 				product_name: 'Akismet Enterprise (2M+ requests/month)',
 				product_slug: productSlug,
+				cart_item_id: `${ productSlug }-2325`,
 				bill_period: 'yearly',
 				currency: 'USD',
 			};
@@ -1033,6 +1106,7 @@ function convertRequestProductToResponseProduct(
 					product_id: 1009,
 					product_name: 'WordPress.com Personal',
 					product_slug: 'personal-bundle',
+					cart_item_id: 'personal-bundle',
 					currency: currency,
 					is_domain_registration: false,
 					item_original_cost_integer: 14400,
@@ -1050,6 +1124,7 @@ function convertRequestProductToResponseProduct(
 					product_id: 5,
 					product_name: 'Domain Mapping',
 					product_slug: 'domain_map',
+					cart_item_id: 'domain_map',
 					currency: currency,
 					is_domain_registration: false,
 					item_original_cost_integer: 0,
@@ -1067,6 +1142,7 @@ function convertRequestProductToResponseProduct(
 					product_id: 6,
 					product_name: 'Domain Registration',
 					product_slug: 'domain_reg',
+					cart_item_id: 'domain_reg',
 					currency: currency,
 					is_domain_registration: true,
 					item_original_cost_integer: 70,
@@ -1084,6 +1160,7 @@ function convertRequestProductToResponseProduct(
 					product_id: 9,
 					product_name: 'G Suite',
 					product_slug: 'gapps',
+					cart_item_id: 'gapps',
 					currency: currency,
 					is_domain_registration: false,
 					item_original_cost_integer: 7000,
@@ -1105,6 +1182,7 @@ function convertRequestProductToResponseProduct(
 						product.quantity ?? ''
 					}'`,
 					product_slug: GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
+					cart_item_id: GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 					currency: currency,
 					is_domain_registration: false,
 					item_original_cost_integer: 7000,
@@ -1133,6 +1211,7 @@ function convertRequestProductToResponseProduct(
 					product_id: 39,
 					product_name: 'Premium Theme: Ovation',
 					product_slug: 'premium_theme',
+					cart_item_id: 'premium_theme',
 					currency: currency,
 					is_domain_registration: false,
 					item_original_cost_integer: 6900,
@@ -1148,6 +1227,7 @@ function convertRequestProductToResponseProduct(
 					product_id: 371,
 					product_name: 'Support Session',
 					product_slug: 'concierge-session',
+					cart_item_id: 'concierge-session',
 					currency: currency,
 					is_domain_registration: false,
 					item_original_cost_integer: 4900,
@@ -1163,6 +1243,7 @@ function convertRequestProductToResponseProduct(
 					product_id: 2106,
 					product_name: 'Jetpack Scan Daily',
 					product_slug: 'jetpack_scan',
+					cart_item_id: 'jetpack_scan',
 					currency: currency,
 					is_domain_registration: false,
 					item_original_cost_integer: 4100,
@@ -1180,6 +1261,7 @@ function convertRequestProductToResponseProduct(
 					product_id: 2100,
 					product_name: 'Jetpack Backup (Daily)',
 					product_slug: 'jetpack_backup_daily',
+					cart_item_id: 'jetpack_backup_daily',
 					currency: currency,
 					is_domain_registration: false,
 					item_original_cost_integer: 4200,
@@ -1198,6 +1280,7 @@ function convertRequestProductToResponseProduct(
 					product_id: 2311,
 					product_name: 'Akismet Plus (10K requests/month)',
 					product_slug: 'ak_plus_yearly_1',
+					cart_item_id: 'ak_plus_yearly_1',
 					bill_period: '365',
 					currency: currency,
 					is_domain_registration: false,
@@ -1216,6 +1299,7 @@ function convertRequestProductToResponseProduct(
 					product_id: 2313,
 					product_name: 'Akismet Plus (20K requests/month)',
 					product_slug: 'ak_plus_yearly_2',
+					cart_item_id: 'ak_plus_yearly_2',
 					bill_period: '365',
 					currency: currency,
 					is_domain_registration: false,
@@ -1234,6 +1318,7 @@ function convertRequestProductToResponseProduct(
 					product_id: jetpackMonthly.product_id,
 					product_name: jetpackMonthly.product_name,
 					product_slug: jetpackMonthly.product_slug,
+					cart_item_id: jetpackMonthly.product_slug,
 					currency: currency,
 					is_domain_registration: false,
 					item_original_cost_integer: jetpackMonthly.item_original_cost_integer,
@@ -1251,6 +1336,7 @@ function convertRequestProductToResponseProduct(
 					product_id: jetpackYearly.product_id,
 					product_name: jetpackYearly.product_name,
 					product_slug: jetpackYearly.product_slug,
+					cart_item_id: jetpackYearly.product_slug,
 					currency: currency,
 					is_domain_registration: false,
 					item_original_cost_integer: jetpackYearly.item_original_cost_integer,
@@ -1268,6 +1354,7 @@ function convertRequestProductToResponseProduct(
 					product_id: jetpackBiannual.product_id,
 					product_name: jetpackBiannual.product_name,
 					product_slug: jetpackBiannual.product_slug,
+					cart_item_id: jetpackBiannual.product_slug,
 					currency: currency,
 					is_domain_registration: false,
 					item_original_cost_integer: jetpackBiannual.item_original_cost_integer,
@@ -1285,6 +1372,7 @@ function convertRequestProductToResponseProduct(
 					product_id: planLevel2.product_id,
 					product_name: planLevel2.product_name,
 					product_slug: planLevel2.product_slug,
+					cart_item_id: planLevel2.product_slug,
 					currency: currency,
 					is_domain_registration: false,
 					item_original_cost_integer: planLevel2.item_original_cost_integer,
@@ -1302,6 +1390,7 @@ function convertRequestProductToResponseProduct(
 					product_id: planLevel2Biannual.product_id,
 					product_name: planLevel2Biannual.product_name,
 					product_slug: planLevel2Biannual.product_slug,
+					cart_item_id: planLevel2Biannual.product_slug,
 					currency: currency,
 					is_domain_registration: false,
 					item_original_cost_integer: planLevel2Biannual.item_original_cost_integer,
@@ -1319,6 +1408,7 @@ function convertRequestProductToResponseProduct(
 					product_id: professionalEmailAnnual.product_id,
 					product_name: professionalEmailAnnual.product_name,
 					product_slug: professionalEmailAnnual.product_slug,
+					cart_item_id: professionalEmailAnnual.product_slug,
 					currency: currency,
 					is_domain_registration: false,
 					item_original_cost_integer: professionalEmailAnnual.item_original_cost_integer,
@@ -1336,6 +1426,7 @@ function convertRequestProductToResponseProduct(
 					product_id: professionalEmailMonthly.product_id,
 					product_name: professionalEmailMonthly.product_name,
 					product_slug: professionalEmailMonthly.product_slug,
+					cart_item_id: professionalEmailMonthly.product_slug,
 					currency: currency,
 					is_domain_registration: false,
 					item_original_cost_integer: professionalEmailMonthly.item_original_cost_integer,
@@ -1354,6 +1445,7 @@ function convertRequestProductToResponseProduct(
 			product_id: Math.ceil( Math.random() * 3000 ),
 			product_name: `Unknown mocked product: ${ product_slug }`,
 			product_slug: 'unknown',
+			cart_item_id: 'unknown',
 			currency: currency,
 			is_domain_registration: false,
 			item_subtotal_integer: 0,

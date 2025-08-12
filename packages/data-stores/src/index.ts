@@ -61,9 +61,14 @@ export type { Section } from './contextual-help/contextual-help';
 export { generateAdminSections } from './contextual-help/admin-sections';
 export type { LinksForSection } from './contextual-help/contextual-help';
 export * from './contextual-help/constants';
-export type { HelpCenterSite, HelpCenterSelect } from './help-center/types';
+export type {
+	HelpCenterSite,
+	HelpCenterSelect,
+	Dispatch as HelpCenterDispatch,
+} from './help-center/types';
 export type { OnboardSelect, OnboardActions } from './onboard';
 export type { StepperInternalSelect } from './stepper-internal';
 export type { SiteActions } from './site';
 export type { UserActions } from './user';
 export type { Member, UseQuery, UsersQuery } from './users/types';
+export { isInSupportSession } from './help-center';

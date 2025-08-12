@@ -84,7 +84,7 @@ const Header = styled.div`
 		font-size: 16px;
 		font-weight: 500;
 		margin-right: 8px;
-		width: 15px;
+		width: 20px;
 		text-align: right;
 	}
 `;
@@ -112,8 +112,6 @@ export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 		translate.localeSlug,
 		activeTab
 	);
-
-	const isLoadingLlmAnswer = isLoading || ! isFetched;
 
 	const { data } = useUrlPerformanceInsightsQuery( url, hash );
 	const wpscanErrors = data?.wpscan?.errors;
@@ -156,7 +154,8 @@ export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 						description: llmAnswer?.messages,
 					} }
 					secondaryArea={ tip && <Tip { ...tip } /> }
-					isLoading={ isLoadingLlmAnswer }
+					isLoading={ isLoading }
+					isFetched={ isFetched }
 					isWpscanLoading={ isWpscanLoading }
 					AIGenerated
 					hash={ hash }

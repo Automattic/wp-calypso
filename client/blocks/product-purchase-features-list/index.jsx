@@ -34,6 +34,7 @@ import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedu
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { hasDomainCredit, getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { getSiteOptions } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import AdvertisingRemoved from './advertising-removed';
 import BusinessOnboarding from './business-onboarding';
@@ -60,10 +61,12 @@ export class ProductPurchaseFeaturesList extends Component {
 	static propTypes = {
 		plan: PropTypes.oneOf( Object.keys( PLANS_LIST ) ).isRequired,
 		isPlaceholder: PropTypes.bool,
+		isSummerSpecial: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		isPlaceholder: false,
+		isSummerSpecial: false,
 	};
 
 	// TODO: Define feature list.
@@ -161,6 +164,7 @@ export class ProductPurchaseFeaturesList extends Component {
 			plan,
 			planHasDomainCredit,
 			selectedSite,
+			isSummerSpecial,
 		} = this.props;
 
 		return (
@@ -175,6 +179,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
 				{ canActivateWordadsInstant && <MonetizeSite selectedSite={ selectedSite } /> }
 				{ isEnabled( 'themes/premium' ) && <FindNewTheme selectedSite={ selectedSite } /> }
+				{ isSummerSpecial && <UploadPlugins selectedSite={ selectedSite } /> }
 				<SiteActivity />
 				<MobileApps onClick={ this.handleMobileAppsClick } />
 				<SellOnlinePaypal isJetpack={ false } />
@@ -183,7 +188,8 @@ export class ProductPurchaseFeaturesList extends Component {
 	}
 
 	getPersonalFeatures() {
-		const { isPlaceholder, isMonthlyPlan, selectedSite, planHasDomainCredit } = this.props;
+		const { isPlaceholder, isMonthlyPlan, selectedSite, planHasDomainCredit, isSummerSpecial } =
+			this.props;
 
 		return (
 			<Fragment>
@@ -192,6 +198,7 @@ export class ProductPurchaseFeaturesList extends Component {
 					<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
 				) }
 				<AdvertisingRemoved isEligiblePlan selectedSite={ selectedSite } />
+				{ isSummerSpecial && <UploadPlugins selectedSite={ selectedSite } /> }
 				<SiteActivity />
 				<MobileApps onClick={ this.handleMobileAppsClick } />
 			</Fragment>
@@ -441,6 +448,7 @@ export default connect(
 			currentPlan: getCurrentPlan( state, selectedSiteId ),
 			scheduleId: getConciergeScheduleId( state ),
 			isMonthlyPlan: TERM_MONTHLY === getPlan( ownProps.plan )?.term,
+			isSummerSpecial: getSiteOptions( state, selectedSiteId )?.is_summer_special_2025 ?? false,
 		};
 	},
 	{

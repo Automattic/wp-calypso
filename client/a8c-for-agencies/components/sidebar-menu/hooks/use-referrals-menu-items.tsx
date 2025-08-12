@@ -1,4 +1,4 @@
-import { category, cog, help, trash } from '@wordpress/icons';
+import { category, cog, help } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/status-badge';
@@ -9,7 +9,6 @@ import {
 	A4A_REFERRALS_DASHBOARD,
 	A4A_REFERRALS_PAYMENT_SETTINGS,
 	A4A_REFERRALS_FAQ,
-	A4A_REFERRALS_ARCHIVED,
 } from '../lib/constants';
 import { createItem } from '../lib/utils';
 
@@ -67,18 +66,6 @@ const useReferralsMenuItems = ( path: string ) => {
 					title: translate( 'FAQ' ),
 					trackEventProps: {
 						menu_item: 'Automattic for Agencies / Referrals / FAQ',
-					},
-				},
-				path
-			),
-			createItem(
-				{
-					icon: trash,
-					path: A4A_REFERRALS_LINK,
-					link: A4A_REFERRALS_ARCHIVED,
-					title: translate( 'Archived' ),
-					trackEventProps: {
-						menu_item: 'Automattic for Agencies / Referrals / Archived',
 					},
 				},
 				path

@@ -1,7 +1,35 @@
 import { translate, getLocaleSlug } from 'i18n-calypso';
-import { sortBy, camelCase, get, filter, map, flatten } from 'lodash';
+import { sortBy, camelCase, get, filter, map, flatten, capitalize } from 'lodash';
 import moment from 'moment';
 import { PUBLICIZE_SERVICES_LABEL_ICON } from './constants';
+
+/** @type ( key: string ) => string */
+function getArchiveKeyLabel( key ) {
+	const archiveKeyLabelMap = {
+		author: translate( 'Authors' ),
+		cat: translate( 'Categories' ),
+		err: translate( 'Error' ),
+		// This category is dedicated to the homepage set to Latest posts under the Archive tab.
+		home: translate( 'Homepage (Latest posts)' ),
+		search: translate( 'Searches' ),
+		tag: translate( 'Tags' ),
+		tax: translate( 'Taxonomies' ),
+		date: translate( 'Dates' ),
+		multiple: translate( 'Aggregated' ),
+		other: translate( 'Others' ),
+	};
+
+	return archiveKeyLabelMap[ key ] ?? capitalize( key );
+}
+
+/** @type ( str: string ) => string */
+function decodeUriEncoding( str ) {
+	try {
+		return decodeURIComponent( str );
+	} catch ( _ ) {
+		return str;
+	}
+}
 
 /**
  * Returns a string of the moment format for the period. Supports store stats
@@ -84,11 +112,12 @@ export function parseAvatar( avatarUrl ) {
 
 /**
  * Builds data into escaped array for CSV export
- * @param   {Object} data   Normalized stats data object
- * @param   {string} parent Label of parent
- * @returns {Array}         CSV Row
+ * @param   {Object} data                                               Normalized stats data object
+ * @param   {string} parent                                             Label of parent
+ * @param   {(value: unknown[], data?: Object) => unknown[]} modifierFn Modifies the export row.
+ * @returns {Array}                                                     CSV Row
  */
-export function buildExportArray( data, parent = null ) {
+export function buildExportArray( data, parent = null, modifierFn = null ) {
 	if ( ! data || ! data.label || ! data.value ) {
 		return [];
 	}
@@ -102,9 +131,13 @@ export function buildExportArray( data, parent = null ) {
 		exportData = [ [ '"' + escapedLabel + '"', data.value, data.actions[ 0 ].data ] ];
 	}
 
+	if ( modifierFn ) {
+		exportData = [ modifierFn( exportData[ 0 ], data ) ];
+	}
+
 	if ( data.children ) {
 		const childData = map( data.children, ( child ) => {
-			return buildExportArray( child, label );
+			return buildExportArray( child, label, modifierFn );
 		} );
 
 		exportData = exportData.concat( flatten( childData ) );
@@ -358,7 +391,8 @@ export const normalizers = {
 		const viewData = get( data, dataPath, [] );
 
 		return map( viewData, ( item ) => {
-			const detailPage = site ? `/stats/post/${ item.id }/${ site.slug }` : null;
+			// To avoid showing a detail page for the Homepage set as latest posts.
+			const detailPage = site && item.href ? `/stats/post/${ item.id }/${ site.slug }` : null;
 			let inPeriod = false;
 
 			// Archive and home pages do not have dates
@@ -390,6 +424,98 @@ export const normalizers = {
 				className: inPeriod ? 'published' : null,
 			};
 		} );
+	},
+
+	/**
+	 * Returns a normalized payload from `/sites/{ site }/stats/archives`
+	 * @param   {Object} data    Stats data
+	 * @param   {Object} query   Stats query
+	 * @returns {Array}          Normalized stats data
+	 */
+	statsArchives: ( data, query ) => {
+		if ( ! data || ! query.period || ! query.date ) {
+			return [];
+		}
+
+		const { startOf } = rangeOfPeriod( query.period, query.date );
+		const dataPath = query.summarize ? [ 'summary' ] : [ 'days', startOf ];
+		const archivesData = get( data, dataPath, [] );
+
+		const archives = Object.keys( archivesData ).reduce( ( accumulatedArchives, archiveKey ) => {
+			const archiveItems = archivesData[ archiveKey ];
+
+			// Taxonomy items are grouped by taxonomy term.
+			if ( 'tax' === archiveKey ) {
+				let totalTaxViews = 0;
+
+				const taxItems = Object.keys( archiveItems ).map( ( taxKey ) => {
+					const taxItem = archiveItems[ taxKey ];
+					const hasSubItems = Array.isArray( taxItem ) && taxItem.length > 0;
+					let itemViews = 0;
+
+					if ( hasSubItems ) {
+						const children = taxItem.map( ( item ) => {
+							itemViews += item.views;
+							totalTaxViews += item.views;
+
+							return {
+								label: decodeUriEncoding( item.value ),
+								value: item.views,
+								link: item.href,
+							};
+						} );
+
+						return {
+							label: taxKey,
+							value: itemViews,
+							children,
+						};
+					}
+
+					return {
+						label: taxKey,
+						value: itemViews,
+					};
+				} );
+
+				accumulatedArchives.push( {
+					label: getArchiveKeyLabel( archiveKey ),
+					value: totalTaxViews,
+					children: taxItems,
+				} );
+			} else {
+				const hasItems = Array.isArray( archiveItems ) && archiveItems.length > 0;
+
+				if ( hasItems ) {
+					let totalViews = 0;
+
+					const children = archiveItems
+						.filter( ( i ) => !! i.value )
+						.map( ( item ) => {
+							totalViews += item.views;
+
+							return {
+								label: [ 'home' ].includes( archiveKey )
+									? item.href
+									: decodeUriEncoding( item.value ),
+								value: item.views,
+								link: item.href,
+							};
+						} );
+
+					accumulatedArchives.push( {
+						label: getArchiveKeyLabel( archiveKey ),
+						value: totalViews,
+						// Show the Homepage without children if there are no other pages under it.
+						children: 'home' === archiveKey && children.length < 2 ? null : children,
+					} );
+				}
+			}
+
+			return accumulatedArchives;
+		}, [] );
+
+		return archives.sort( ( a, b ) => b.value - a.value );
 	},
 
 	/**

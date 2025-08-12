@@ -178,8 +178,6 @@ class Pages extends Component {
 				line={ attributes.line }
 				action={ attributes.action }
 				actionURL={ attributes.actionURL }
-				illustration={ attributes.illustration }
-				illustrationWidth={ attributes.illustrationWidth }
 			/>
 		);
 	}

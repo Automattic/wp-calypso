@@ -75,6 +75,14 @@
 	--color-yellow-0: var(--studio-yellow-0);
 	--color-yellow-20: var(--studio-yellow-20);
 	--color-yellow-50: var(--studio-yellow-50);
+
+	// Brand colors
+	--color-klaviyo: #b84f0a;
+	--color-woo: var(--studio-woocommerce-purple-60);
+	--color-vip: #9E6C29;
+
+	// A4A Brand Colors
+	--a4a-brand-blue-80: #12304a;
 }
 
 .theme-a8c-for-agencies {
@@ -117,6 +125,20 @@
 
 	.button.split-button__main {
 		border-radius: 4px 0 0 4px;
+	}
+
+	.components-button.is-primary:disabled {
+		background-color: var(--color-primary-50);
+	}
+
+	.components-button.is-link {
+		&:hover {
+			background-color: transparent;
+		}
+		&:focus-visible,
+		&:focus {
+			color: inherit;
+		}
 	}
 
 	.components-button.is-primary,
@@ -590,6 +612,14 @@ html {
 			}
 		}
 	}
+
+	&.bordered {
+		.dataviews-view-table {
+			border: 1px solid var(--color-neutral-5);
+			border-radius: 2px;
+		}
+	}
+
 }
 
 

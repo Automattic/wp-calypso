@@ -1,0 +1,14 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.step-container-v2--fixed-column-on-the-left-layout {
+	&__fixed-column {
+		display: flex;
+		flex-direction: column;
+		gap: 2rem;
+
+		@include break-large {
+			padding-top: 1.5rem;
+		}
+	}
+}

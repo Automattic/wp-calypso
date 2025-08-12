@@ -4,15 +4,14 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
-import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import DocumentHead from 'calypso/components/data/document-head';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
-import NavigationHeader from 'calypso/components/navigation-header';
 import PageHeader from 'calypso/my-sites/stats/components/headers/page-header';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import StatsModuleEmails from 'calypso/my-sites/stats/features/modules/stats-emails';
-import statsStrings from 'calypso/my-sites/stats/stats-strings';
+import { recordCurrentScreen } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
+import useStatsStrings from 'calypso/my-sites/stats/hooks/use-stats-strings';
 import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
 import { SubscriberLaunchpad } from 'calypso/my-sites/subscribers/components/subscriber-launchpad';
 import { useSelector } from 'calypso/state';
@@ -27,6 +26,7 @@ import PageViewTracker from '../../stats-page-view-tracker';
 import SubscribersChartSection, { PeriodType } from '../../stats-subscribers-chart-section';
 import SubscribersHighlightSection from '../../stats-subscribers-highlight-section';
 import StatsModuleListing from '../shared/stats-module-listing';
+import type { Context } from '@automattic/calypso-router';
 import type { Moment } from 'moment';
 
 function StatsSubscribersPageError() {
@@ -59,6 +59,7 @@ interface StatsSubscribersPageProps {
 		startOf: Moment;
 		endOf: Moment;
 	};
+	context: Context;
 }
 
 type TranslationStringType = {
@@ -68,8 +69,7 @@ type TranslationStringType = {
 	empty: string;
 };
 
-const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
-	const translate = useTranslate();
+const StatsSubscribersPage = ( { period, context }: StatsSubscribersPageProps ) => {
 	// Use hooks for Redux pulls.
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
@@ -77,8 +77,7 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 		getEnvStatsFeatureSupportChecks( state, siteId )
 	);
 	const today = new Date().toISOString().slice( 0, 10 );
-	const moduleStrings = statsStrings().emails as TranslationStringType;
-	const isStatsNavigationImprovementEnabled = config.isEnabled( 'stats/navigation-improvement' );
+	const { emails: moduleStrings } = useStatsStrings() as { emails: TranslationStringType };
 
 	const className = clsx( 'subscribers-page', {
 		'is-email-stats-unavailable': ! supportsEmailStats,
@@ -98,6 +97,18 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 			sessionStorage.setItem( 'jp-stats-last-tab', 'subscribers' ),
 		[]
 	); // Track the last viewed tab.
+
+	useEffect( () => {
+		const query = context.query;
+		recordCurrentScreen(
+			'subscribers',
+			{
+				queryParams: query,
+				period: period.period,
+			},
+			true
+		);
+	}, [ context.query, period?.period ] );
 
 	const summaryUrl = `/stats/${ period?.period }/emails/${ siteSlug }?startDate=${ period?.startOf?.format(
 		'YYYY-MM-DD'
@@ -128,17 +139,7 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 			<DocumentHead title={ STATS_PRODUCT_NAME } />
 			<PageViewTracker path="/stats/subscribers/:site" title="Stats > Subscribers" />
 			<div className={ subscribersPageClasses }>
-				{ ! isStatsNavigationImprovementEnabled ? (
-					<NavigationHeader
-						className="stats__section-header modernized-header"
-						title={ STATS_PRODUCT_NAME }
-						subtitle={ translate( 'Track your subscriber growth and engagement.' ) }
-						screenReader={ navItems.subscribers?.label }
-						navigationItems={ [] }
-					></NavigationHeader>
-				) : (
-					<PageHeader />
-				) }
+				<PageHeader />
 				<StatsNavigation selectedItem="subscribers" siteId={ siteId } slug={ siteSlug } />
 				{ isLoading && <StatsModulePlaceholder className="is-subscriber-page" isLoading /> }
 				{ isError && <StatsSubscribersPageError /> }

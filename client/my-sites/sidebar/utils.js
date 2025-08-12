@@ -109,6 +109,34 @@ export const itemLinkMatches = ( path, currentPath ) => {
 		return pathIncludes( path, 'themes', 1 );
 	}
 
+	if (
+		currentPath.startsWith( '/earn/jetpack-monetize/' ) ||
+		path.startsWith( '/earn/jetpack-monetize/' )
+	) {
+		return fragmentIsEqual( path, currentPath, 2 );
+	}
+
+	if (
+		currentPath.startsWith( '/subscribers/jetpack-subscribers/' ) ||
+		path.startsWith( '/subscribers/jetpack-subscribers/' )
+	) {
+		return fragmentIsEqual( path, currentPath, 2 );
+	}
+
+	if (
+		currentPath.startsWith( '/marketing/traffic/' ) ||
+		path.startsWith( '/marketing/traffic/' )
+	) {
+		return fragmentIsEqual( path, currentPath, 2 );
+	}
+
+	if (
+		currentPath.startsWith( '/marketing/tools-marketing/' ) ||
+		path.startsWith( '/marketing/tools-marketing/' )
+	) {
+		return fragmentIsEqual( path, currentPath, 2 );
+	}
+
 	return fragmentIsEqual( path, currentPath, 1 );
 };
 

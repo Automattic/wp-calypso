@@ -7,6 +7,7 @@ import './style.scss';
 
 type Props = {
 	label: string;
+	labelFor?: string;
 	sub?: string;
 	description?: string | ReactNode;
 	showOptionalLabel?: boolean;
@@ -17,6 +18,7 @@ type Props = {
 
 function FormField( {
 	label,
+	labelFor,
 	sub,
 	children,
 	description,
@@ -29,12 +31,12 @@ function FormField( {
 	return (
 		<div className="a4a-form__section-field">
 			<div className="a4a-form__section-field-heading">
-				<h3 className="a4a-form__section-field-label">
+				<label className="a4a-form__section-field-label" htmlFor={ labelFor }>
 					{ label } { isRequired && <span className="a4a-form__section-field-required">*</span> }
 					{ ! isRequired && showOptionalLabel && (
 						<span className="a4a-form__section-field-optional">({ translate( 'optional' ) })</span>
 					) }
-				</h3>
+				</label>
 				{ sub && <p className="a4a-form__section-field-sub">{ sub }</p> }
 			</div>
 

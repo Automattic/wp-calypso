@@ -115,6 +115,11 @@ export const leaveCheckout = ( {
 			return;
 		}
 
+		if ( searchParams.has( 'history_back' ) ) {
+			window.history.back();
+			return;
+		}
+
 		if ( searchParams.has( 'cancel_to' ) ) {
 			const cancelPath = searchParams.get( 'cancel_to' ) ?? '';
 			// Only allow redirecting to relative paths.

@@ -1,13 +1,15 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
+import { useResetSupportInteraction } from './use-reset-support-interaction';
 
 /**
  * Add your conditions here to open the Help Center automatically when they're met.
  */
 export const useActionHooks = () => {
-	const { setShowHelpCenter, setShowSupportDoc, setNavigateToRoute } =
+	const { setShowHelpCenter, setShowSupportDoc, setNavigateToRoute, setNewMessagingChat } =
 		useDispatch( 'automattic/help-center' );
+	const resetSupportInteraction = useResetSupportInteraction();
 	const queryParams = new URLSearchParams( window.location.search );
 
 	const actionHooks = [
@@ -46,7 +48,8 @@ export const useActionHooks = () => {
 			condition() {
 				return queryParams.get( 'help-center' ) === 'wapuu';
 			},
-			action() {
+			async action() {
+				await resetSupportInteraction();
 				setNavigateToRoute( '/odie' );
 				setShowHelpCenter( true );
 			},
@@ -60,14 +63,11 @@ export const useActionHooks = () => {
 				return queryParams.get( 'help-center' ) === 'happiness-engineer';
 			},
 			action() {
-				const message = queryParams.get( 'user-message' ) ?? '';
-				const siteUrl = queryParams.get( 'site-url' ) ?? '';
-				const siteId = queryParams.get( 'site-id' ) ?? '';
-
-				setNavigateToRoute(
-					`/odie?provider=zendesk&userFieldMessage=${ message }&siteUrl=${ siteUrl }&siteId=${ siteId }`
-				);
-				setShowHelpCenter( true );
+				setNewMessagingChat( {
+					initialMessage: queryParams.get( 'user-message' ) ?? '',
+					siteUrl: queryParams.get( 'site-url' ) ?? '',
+					siteId: queryParams.get( 'site-id' ) ?? '',
+				} );
 			},
 		},
 	];

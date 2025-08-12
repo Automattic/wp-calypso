@@ -8,7 +8,7 @@ import {
 } from '@automattic/i18n-utils';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { removeQueryArgs } from '@wordpress/url';
-import { translate } from 'i18n-calypso';
+import { translate, fixMe } from 'i18n-calypso';
 import { Provider as ReduxProvider } from 'react-redux';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import EmptyContent from 'calypso/components/empty-content';
@@ -363,8 +363,11 @@ export const notFound = ( context, next ) => {
 	context.primary = (
 		<EmptyContent
 			className="content-404"
-			illustration="/calypso/images/illustrations/illustration-404.svg"
-			title={ translate( 'Uh oh. Page not found.' ) }
+			title={ fixMe( {
+				text: 'Page not found.',
+				newCopy: translate( 'Page not found.' ),
+				oldCopy: translate( 'Uh oh. Page not found.' ),
+			} ) }
 			line={ translate( "Sorry, the page you were looking for doesn't exist or has been moved." ) }
 		/>
 	);

@@ -210,6 +210,10 @@ export const usePlanTypesWithIntent = ( {
 		case 'plans-playground':
 			planTypes = [ TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
+		case 'plans-playground-premium':
+			// This plan intent is currently not utilized but will be soon
+			planTypes = [ TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
+			break;
 		default:
 			planTypes = availablePlanTypes;
 	}

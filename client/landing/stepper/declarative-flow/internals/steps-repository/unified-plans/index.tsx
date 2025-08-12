@@ -5,6 +5,7 @@ import {
 	NEW_HOSTED_SITE_FLOW,
 	NEWSLETTER_FLOW,
 	ONBOARDING_FLOW,
+	ONBOARDING_UNIFIED_FLOW,
 	START_WRITING_FLOW,
 	Step,
 	useStepPersistedState,
@@ -59,11 +60,15 @@ function getPlansIntent( flowName: string | null ): PlansIntent | null {
 			return 'plans-ai-assembler-free-trial';
 		case ONBOARDING_FLOW:
 			if ( search.has( 'playground' ) ) {
-				return playgroundPlansIntent();
+				return playgroundPlansIntent( search.get( 'playground' )! );
 			}
+			break;
+		case ONBOARDING_UNIFIED_FLOW:
+			return 'plans-affiliate';
 		default:
 			return null;
 	}
+	return null;
 }
 
 type ProvidedDependencies = {

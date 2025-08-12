@@ -1,15 +1,15 @@
 @import "@wordpress/base-styles/breakpoints";
 
 .calypso-navigation-header {
-    .stats-download-csv {
-        gap: 4px;
+	.stats-download-csv {
+		gap: 4px;
 
-        @media (min-width: $break-mobile) {
-            color: var(--color-primary-50)
-        }
+		@media (min-width: $break-mobile) {
+			color: var(--color-primary-50)
+		}
 
-        &:disabled {
-            color: var(--studio-gray-50);
-        }
-    }
+		&:disabled {
+			color: var(--studio-gray-50);
+		}
+	}
 }

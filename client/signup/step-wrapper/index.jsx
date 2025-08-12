@@ -212,7 +212,7 @@ class StepWrapper extends Component {
 			sticky = isSticky;
 		}
 
-		const isHelpCenterLinkEnabled = flow?.enabledHelpCenterGeos && userLoggedIn;
+		const isHelpCenterLinkEnabled = flow?.enabledHelpCenterLocales && userLoggedIn;
 
 		return (
 			<>
@@ -225,7 +225,7 @@ class StepWrapper extends Component {
 						{ isHelpCenterLinkEnabled && (
 							<HelpCenterStepButton
 								flowName={ flowName }
-								enabledGeos={ flow?.enabledHelpCenterGeos }
+								enabledLocales={ flow?.enabledHelpCenterLocales }
 								helpCenterButtonCopy={ flow?.helpCenterButtonCopy }
 								helpCenterButtonLink={ flow?.helpCenterButtonLink }
 							/>

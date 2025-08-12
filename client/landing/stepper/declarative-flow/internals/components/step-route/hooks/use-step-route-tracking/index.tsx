@@ -9,7 +9,7 @@ import recordStepComplete, {
 } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-complete';
 import recordStepStart from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-start';
 import { useIntent } from 'calypso/landing/stepper/hooks/use-intent';
-import { isMvpOnboardingExperiment } from 'calypso/landing/stepper/hooks/use-mvp-onboarding-experiment';
+import { isSimplifiedOnboarding } from 'calypso/landing/stepper/hooks/use-simplified-onboarding';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import kebabCase from 'calypso/landing/stepper/utils/kebabCase';
 import useSnakeCasedKeys from 'calypso/landing/stepper/utils/use-snake-cased-keys';
@@ -132,9 +132,7 @@ export const useStepRouteTracking = ( { flow, stepSlug, skipStepRender }: Props 
 			const params = {
 				flow: flowName,
 				is_simplified_onboarding:
-					flowName === 'onboarding' &&
-					stepSlug === 'plans' &&
-					( await isMvpOnboardingExperiment() ),
+					flowName === 'onboarding' && stepSlug === 'plans' && ( await isSimplifiedOnboarding() ),
 				skip_step_render: skipStepRender,
 				...reenteringStepAfterSignupCompleteProps,
 			};

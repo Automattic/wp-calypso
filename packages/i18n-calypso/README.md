@@ -432,16 +432,6 @@ i18n.numberFormat( 2500.1, 2 ); // '2.500,10'
 i18n.numberFormat( 2500.33, { decimals: 3 } ); // '2.500,330'
 ```
 
-### geolocateCurrencySymbol()
-
-`geolocateCurrencySymbol( callback?: ( geoLocation: string ) => void ): Promise<void>`
-
-This will attempt to make an unauthenticated network request to `https://public-api.wordpress.com/geo/`. This is to determine the country code to provide better USD formatting. By default, the currency symbol for USD will be based on the locale (unlike other currency codes which use a hard-coded list of overrides); for `en-US`/`en` it will be `$` and for all other locales it will be `US$`. However, if the geolocation determines that the country is not inside the US, the USD symbol will be `US$` regardless of locale. This is to prevent confusion for users in non-US countries using an English locale.
-
-In the US, users will expect to see USD prices rendered with the currency symbol `$`. However, there are many other currencies which use `$` as their currency symbol (eg: `CAD`). This package tries to prevent confusion between these symbols by using an international version of the symbol when the locale does not match the currency. So if your locale is `en-CA`, USD prices will be rendered with the symbol `US$`.
-
-However, this relies on the user having set their interface language to something other than `en-US`/`en`, and many English-speaking non-US users still have that interface language (eg: there's no English locale available in our settings for Argentinian English so such users would probably still have `en`). As a result, those users will see a price with `$` and could be misled about what currency is being displayed. `geolocateCurrencySymbol()` helps prevent that from happening by showing `US$` for those users.
-
 ### formatCurrency()
 
 #### Why does this API exist?

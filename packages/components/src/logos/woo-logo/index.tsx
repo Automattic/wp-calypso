@@ -11,6 +11,7 @@ export const WooLogo = ( props: React.SVGProps< SVGSVGElement > ) => (
 		viewBox="0 0 183.6 47.5"
 		{ ...props }
 	>
+		<title>WooCommerce</title>
 		<style type="text/css">
 			{ `
 				.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#873EFF;}

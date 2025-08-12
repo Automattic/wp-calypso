@@ -15,6 +15,10 @@ $button-border: 4px;
 		z-index: 100201;
 	}
 
+	&.theme-default.color-scheme {
+		--color-surface-backdrop: var(--studio-white);
+	}
+
 	.layout.is-logged-in .layout__content {
 		overflow: clip;
 		padding-top: 47px;
@@ -365,16 +369,16 @@ $button-border: 4px;
 		}
 	}
 
-    &.is-clickable {
-      cursor: pointer;
+	&.is-clickable {
+		cursor: pointer;
 
-      &:hover,
-      &:focus {
-          .theme-preview__frame-wrapper {
-              opacity: 0.8;
-          }
-      }
-    }
+		&:hover,
+		&:focus {
+			.theme-preview__frame-wrapper {
+				opacity: 0.8;
+			}
+		}
+	}
 
 	.theme-preview__container {
 		position: relative;
@@ -737,44 +741,6 @@ $button-border: 4px;
 		display: inline-block;
 		position: relative;
 		z-index: 0;
-	}
-}
-
-.theme__sheet-card-support {
-	display: flex;
-	align-items: center;
-
-	&:not(:last-child) {
-		margin-bottom: 0;
-	}
-
-	@include breakpoint-deprecated( "<960px" ) {
-		flex-wrap: wrap;
-	}
-
-	.gridicon {
-		color: var(--color-neutral-10);
-		flex: 0 0 auto;
-	}
-
-	.button {
-		flex: 0 0 auto;
-
-		@include breakpoint-deprecated( "<960px" ) {
-			flex: 1 1 100%;
-			margin-top: 20px;
-			text-align: center;
-		}
-	}
-}
-
-.theme__sheet-card-support-details {
-	flex: 1 1 20px;
-	padding: 0 20px;
-
-	small {
-		display: block;
-		color: var(--color-neutral-light);
 	}
 }
 

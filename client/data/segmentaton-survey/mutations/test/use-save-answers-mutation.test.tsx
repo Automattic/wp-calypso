@@ -31,10 +31,10 @@ jest.mock( 'calypso/lib/wp', () => ( {
 
 describe( 'useSaveAnswersMutation', () => {
 	let queryClient: QueryClient;
-	let wrapper: React.FC< React.PropsWithChildren< any > >;
+	let wrapper: React.FC< React.PropsWithChildren >;
 
 	beforeEach( () => {
-		( wpcom.req.post as jest.MockedFunction< typeof wpcom.req.post > ).mockReset();
+		jest.mocked( wpcom.req.post ).mockReset();
 
 		queryClient = new QueryClient( {
 			defaultOptions: {
@@ -44,7 +44,7 @@ describe( 'useSaveAnswersMutation', () => {
 			},
 		} );
 
-		wrapper = ( { children }: React.PropsWithChildren< any > ) => (
+		wrapper = ( { children } ) => (
 			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
 		);
 	} );

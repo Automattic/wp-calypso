@@ -33,7 +33,6 @@ import {
 	FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
 	FEATURE_BLANK,
 	FEATURE_BLOG_DOMAIN,
-	FEATURE_CLOUDFLARE_ANALYTICS,
 	FEATURE_COLLECT_PAYMENTS_V2,
 	FEATURE_COMMUNITY_SUPPORT,
 	FEATURE_CRM_V2,
@@ -449,6 +448,8 @@ import {
 	FEATURE_SUPPORT,
 	FEATURE_SUPPORT_FROM_EXPERTS,
 	FEATURE_AI_ASSISTANT,
+	FEATURE_ADVANCED_FORM_FEATURES_JP,
+	FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL,
 } from './constants';
 import { isBigSkyOnboarding } from './is-big-sky-onboarding';
 import { isGlobalStylesOnPersonalEnabled } from './is-global-styles-on-personal-enabled';
@@ -808,7 +809,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			? [ ...baseFeatures, FEATURE_STYLE_CUSTOMIZATION ]
 			: baseFeatures;
 	},
-	get2023PricingGridSignupWpcomFeatures: () => {
+	get2023PricingGridSignupWpcomFeatures: ( props?: { isSummerSpecial?: boolean } ) => {
 		const baseFeatures = [
 			...( isBigSkyOnboarding() ? [ FEATURE_BIG_SKY_WEBSITE_BUILDER ] : [] ),
 			FEATURE_UNLIMITED_ENTITIES,
@@ -819,14 +820,22 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_STATS_BASIC_20250206,
 		];
 
-		return isGlobalStylesOnPersonalEnabled()
-			? [ ...baseFeatures, FEATURE_STYLE_CUSTOMIZATION ]
-			: baseFeatures;
+		let features = baseFeatures;
+
+		if ( props?.isSummerSpecial ) {
+			features = [ FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL, ...features ];
+		}
+
+		if ( isGlobalStylesOnPersonalEnabled() ) {
+			features = [ ...features, FEATURE_STYLE_CUSTOMIZATION ];
+		}
+
+		return features;
 	},
 	get2023PricingGridSignupJetpackFeatures: () => {
 		return [];
 	},
-	get2023PlanComparisonFeatureOverride: () => {
+	get2023PlanComparisonFeatureOverride: ( props?: { isSummerSpecial?: boolean } ) => {
 		const baseFeatures = [
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_AD_FREE_EXPERIENCE,
@@ -836,9 +845,20 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_SUPPORT,
 		];
 
-		return isGlobalStylesOnPersonalEnabled()
-			? [ ...baseFeatures, FEATURE_STYLE_CUSTOMIZATION ]
-			: baseFeatures;
+		let features = baseFeatures;
+
+		if ( isGlobalStylesOnPersonalEnabled() ) {
+			features = [ ...features, FEATURE_STYLE_CUSTOMIZATION ];
+		}
+
+		if ( props?.isSummerSpecial ) {
+			features = [ ...features, FEATURE_PLUGINS_THEMES ];
+		}
+
+		return features;
+	},
+	get2023PlanComparisonJetpackFeatureOverride: () => {
+		return [ FEATURE_ADVANCED_FORM_FEATURES_JP ];
 	},
 	getStorageFeature: () => FEATURE_6GB_STORAGE,
 	getPlanComparisonFeatureLabels: () => {
@@ -886,6 +906,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		const baseFeatures = [
 			...( isBigSkyOnboarding() ? [ FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT ] : [] ),
 			FEATURE_CUSTOM_DOMAIN,
+			...( isEnabled( 'summer-special-2025' ) ? [ FEATURE_PLUGINS_THEMES ] : [] ),
 			FEATURE_AD_FREE_EXPERIENCE,
 			FEATURE_FAST_DNS,
 			FEATURE_PAID_SUBSCRIBERS_JP,
@@ -1112,7 +1133,6 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,
 		FEATURE_GOOGLE_MY_BUSINESS,
-		FEATURE_CLOUDFLARE_ANALYTICS,
 		WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 		FEATURE_UPLOAD_THEMES_PLUGINS,
 		FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
@@ -1395,8 +1415,8 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			isEnabled( 'themes/premium' ) ? WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED : null,
 			FEATURE_GOOGLE_ANALYTICS,
 		].filter( isValueTruthy ),
-	get2023PricingGridSignupWpcomFeatures: () => {
-		return [
+	get2023PricingGridSignupWpcomFeatures: ( props?: { isSummerSpecial?: boolean } ) => {
+		const baseFeatures = [
 			...( isBigSkyOnboarding() ? [ FEATURE_BIG_SKY_WEBSITE_BUILDER ] : [] ),
 			FEATURE_UNLIMITED_ENTITIES,
 			FEATURE_CUSTOM_DOMAIN,
@@ -1408,9 +1428,17 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_UPLOAD_VIDEO,
 			FEATURE_STATS_ADVANCED_20250206,
 		];
+
+		let features = baseFeatures;
+
+		if ( props?.isSummerSpecial ) {
+			features = [ FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL, ...features ];
+		}
+
+		return features;
 	},
-	get2023PlanComparisonFeatureOverride: () => {
-		return [
+	get2023PlanComparisonFeatureOverride: ( props?: { isSummerSpecial?: boolean } ) => {
+		const baseFeatures = [
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
@@ -1420,10 +1448,19 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_PAYMENT_TRANSACTION_FEES_4,
 			FEATURE_SUPPORT,
 		];
+
+		let features = baseFeatures;
+
+		if ( props?.isSummerSpecial ) {
+			features = [ ...features, FEATURE_PLUGINS_THEMES ];
+		}
+
+		return features;
 	},
 	getCheckoutFeatures: () => [
 		...( isBigSkyOnboarding() ? [ FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT ] : [] ),
 		FEATURE_CUSTOM_DOMAIN,
+		...( isEnabled( 'summer-special-2025' ) ? [ FEATURE_PLUGINS_THEMES ] : [] ),
 		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 		FEATURE_WORDADS,
@@ -1461,12 +1498,12 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_PAYPAL_JP,
 			FEATURE_UPLOAD_VIDEO,
 			isEnabled( 'stats/paid-wpcom-v3' ) ? FEATURE_STATS_COMMERCIAL : FEATURE_STATS_PAID,
+			FEATURE_ADVANCED_FORM_FEATURES_JP,
 		];
 	},
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,
-		FEATURE_CLOUDFLARE_ANALYTICS,
 		WPCOM_FEATURES_SCAN,
 		WPCOM_FEATURES_ANTISPAM,
 		WPCOM_FEATURES_BACKUPS,
@@ -1651,6 +1688,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_UPTIME_MONITOR_JP,
 			FEATURE_PLUGIN_AUTOUPDATE_JP,
 			FEATURE_SEO_JP,
+			FEATURE_ADVANCED_FORM_FEATURES_JP,
 		];
 	},
 	getPlanComparisonFeatureLabels: () => {
@@ -1740,7 +1778,6 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,
 		FEATURE_GOOGLE_MY_BUSINESS,
-		FEATURE_CLOUDFLARE_ANALYTICS,
 		WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 		FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
 		FEATURE_SEO_PREVIEW_TOOLS,
@@ -1819,7 +1856,6 @@ const getPlanProDetails = (): IncompleteWPcomPlan => ( {
 	getIncludedFeatures: () => [
 		FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
 		FEATURE_AUDIO_UPLOADS,
-		FEATURE_CLOUDFLARE_ANALYTICS,
 		FEATURE_COLLECT_PAYMENTS_V2,
 		FEATURE_EARN_AD,
 		FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,

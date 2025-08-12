@@ -1,12 +1,22 @@
-import { WordPressLogo } from '@automattic/components';
+import { WordPressLogo } from '@automattic/components/src/logos/wordpress-logo';
 import { useIsFetching } from '@tanstack/react-query';
 import { CatchNotFound, Outlet, useRouterState } from '@tanstack/react-router';
+import { Suspense, lazy } from 'react';
 import { LoadingLine } from '../../components/loading-line';
+import { PageViewTracker } from '../../components/page-view-tracker';
 import NotFound from '../404';
 import CommandPalette from '../command-palette';
 import { useAppContext } from '../context';
 import Header from '../header';
+import Snackbars from '../snackbars';
 import './style.scss';
+
+const WebpackBuildMonitor = lazy(
+	() =>
+		import(
+			/* webpackChunkName: "async-webpack-build-monitor" */ 'calypso/components/webpack-build-monitor'
+		)
+);
 
 function Root() {
 	const { LoadingLogo = WordPressLogo } = useAppContext();
@@ -29,6 +39,13 @@ function Root() {
 				</CatchNotFound>
 			</main>
 			<CommandPalette />
+			<Snackbars />
+			<PageViewTracker />
+			{ 'development' === process.env.NODE_ENV && (
+				<Suspense fallback={ null }>
+					<WebpackBuildMonitor />
+				</Suspense>
+			) }
 		</div>
 	);
 }

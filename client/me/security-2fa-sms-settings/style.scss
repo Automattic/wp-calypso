@@ -33,4 +33,14 @@
 
 .security-2fa-sms-settings__buttons {
 	margin-top: 10px;
+	display: flex;
+	justify-content: flex-end;
+
+	.button {
+		margin-right: 0;
+	}
+
+	.security-2fa-sms-settings__cancel-button {
+		margin-right: 10px;
+	}
 }

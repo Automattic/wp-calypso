@@ -45,7 +45,6 @@ class SearchEmptyContent extends Component {
 				title={ this.props.translate( 'No results' ) }
 				line={ <p> { message } </p> }
 				action={ action }
-				illustration=""
 			/>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */

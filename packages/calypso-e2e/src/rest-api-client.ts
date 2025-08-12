@@ -278,6 +278,8 @@ export class RestAPIClient {
 			return null;
 		}
 
+		console.log( `Deleting site ${ targetSite.domain }.` );
+
 		const scheme = 'http://';
 		const targetDomain = targetSite.domain.startsWith( scheme )
 			? targetSite.domain.replace( scheme, '' )
@@ -307,11 +309,13 @@ export class RestAPIClient {
 		);
 
 		if ( response.hasOwnProperty( 'error' ) ) {
+			console.warn( `Failed to delete site ID ${ targetSite.domain }` );
 			throw new Error(
 				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
 			);
 		}
 
+		console.log( `Successfully deleted site ID ${ targetSite.domain }` );
 		return response;
 	}
 

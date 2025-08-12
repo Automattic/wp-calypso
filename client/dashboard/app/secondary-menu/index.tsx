@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
@@ -10,14 +11,54 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { help, bellUnread, bell, commentAuthorAvatar } from '@wordpress/icons';
+import { Suspense, lazy, useCallback } from 'react';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
-import MenuDivider from '../../components/menu-divider';
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
 import { useAuth } from '../auth';
 import { useOpenCommandPalette } from '../command-palette/utils';
 import { useAppContext } from '../context';
+import { useHelpCenter } from '../help-center';
 
 import './style.scss';
+
+const AsyncHelpCenterApp = lazy( () => import( '../help-center/help-center-app' ) );
+
+function Help() {
+	const { user } = useAuth();
+	const { isLoading, isShown, setShowHelpCenter } = useHelpCenter();
+
+	const handleToggleHelpCenter = () => {
+		setShowHelpCenter( ! isShown );
+	};
+
+	const handleCloseHelpCenterApp = useCallback( () => {
+		setShowHelpCenter( false, undefined, undefined, true );
+	}, [ setShowHelpCenter ] );
+
+	return (
+		<>
+			<Button
+				className="dashboard-secondary-menu__item"
+				label={ __( 'Help' ) }
+				icon={ help }
+				variant="tertiary"
+				isBusy={ isLoading }
+				onClick={ handleToggleHelpCenter }
+			/>
+			<Suspense fallback={ null }>
+				{ isShown && (
+					<AsyncHelpCenterApp
+						currentUser={ user }
+						handleClose={ handleCloseHelpCenterApp }
+						locale={ user.language }
+						onboardingUrl={ config( 'wpcom_signup_url' ) }
+						sectionName="dashboard"
+					/>
+				) }
+			</Suspense>
+		</>
+	);
+}
 
 // User profile dropdown component
 function UserProfile() {
@@ -57,7 +98,9 @@ function UserProfile() {
 						<Text variant="muted">@{ user.username }</Text>
 					</VStack>
 					<MenuGroup>
-						<RouterLinkMenuItem to="/me/profile">{ __( 'Account' ) }</RouterLinkMenuItem>
+						<RouterLinkMenuItem to="/me/profile" onClick={ onClose }>
+							{ __( 'Account' ) }
+						</RouterLinkMenuItem>
 					</MenuGroup>
 					<MenuGroup>
 						<MenuItem
@@ -91,33 +134,18 @@ function SecondaryMenu() {
 	const hasUnreadNotifications = false;
 	const notificationsPath = '/me/notifications';
 
-	const openHelpCenter = () => {
-		// Open help center action would go here
-	};
-
 	return (
-		<HStack spacing={ 3 } justify="flex-end">
+		<HStack spacing={ 2 } justify="flex-end">
 			{ supports.reader && (
-				<>
-					<Button
-						className="dashboard-secondary-menu__item"
-						icon={ <ReaderIcon /> }
-						label={ __( 'Reader' ) }
-						text={ __( 'Reader' ) }
-						href="/reader"
-					/>
-					<MenuDivider />
-				</>
-			) }
-			{ supports.help && (
 				<Button
 					className="dashboard-secondary-menu__item"
-					label={ __( 'Help' ) }
-					onClick={ openHelpCenter }
-					icon={ help }
-					variant="tertiary"
+					icon={ <ReaderIcon /> }
+					label={ __( 'Reader' ) }
+					text={ __( 'Reader' ) }
+					href="/reader"
 				/>
 			) }
+			{ supports.help && <Help /> }
 			{ supports.notifications && (
 				<Button
 					className="dashboard-secondary-menu__item"

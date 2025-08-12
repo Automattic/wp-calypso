@@ -5,7 +5,7 @@ import { useSelect } from '@wordpress/data';
 import { createContext, useCallback, useContext, useState } from 'react';
 import { useOdieBroadcastWithCallbacks } from '../data';
 import { useGetCombinedChat } from '../hooks';
-import { isOdieAllowedBot, getHelpCenterZendeskConversationStarted } from '../utils';
+import { isOdieAllowedBot, getIsRequestingHumanSupport } from '../utils';
 import type {
 	Chat,
 	Message,
@@ -35,6 +35,7 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 	botNameSlug: 'wpcom-support-chat' as OdieAllowedBots,
 	chat: emptyChat,
 	canConnectToZendesk: false,
+	isLoadingCanConnectToZendesk: false,
 	clearChat: noop,
 	currentUser: { display_name: 'Me' },
 	experimentVariationName: null,
@@ -47,9 +48,10 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 	setChatStatus: noop,
 	setExperimentVariationName: noop,
 	setMessageLikedStatus: noop,
-	setWaitAnswerToFirstMessageFromHumanSupport: noop,
 	trackEvent: noop,
-	waitAnswerToFirstMessageFromHumanSupport: false,
+	forceEmailSupport: false,
+	setNotice: noop,
+	notices: {},
 } );
 
 // Custom hook to access the OdieAssistantContext
@@ -65,13 +67,14 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	botName = 'Wapuu assistant',
 	isUserEligibleForPaidSupport = true,
 	canConnectToZendesk = false,
-	extraContactOptions,
+	isLoadingCanConnectToZendesk = false,
 	selectedSiteId,
 	selectedSiteURL,
 	userFieldMessage,
 	userFieldFlowName,
 	version = null,
 	currentUser,
+	forceEmailSupport = false,
 	children,
 } ) => {
 	const { botNameSlug, isMinimized, isChatLoaded } = useSelect( ( select ) => {
@@ -97,14 +100,17 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	 * This is where we manage the state of the chat.
 	 */
 	const { mainChatState, setMainChatState } = useGetCombinedChat(
-		isUserEligibleForPaidSupport && canConnectToZendesk
+		isUserEligibleForPaidSupport && canConnectToZendesk,
+		isLoadingCanConnectToZendesk
 	);
+
+	const [ notices, setNotices ] = useState< Record< string, string | React.ReactNode > >( {} );
 
 	/**
 	 * Has the user ever escalated to get human support?
 	 */
-	const hasUserEverEscalatedToHumanSupport = mainChatState?.messages.some(
-		( message ) => message.context?.flags?.forward_to_human_support
+	const hasUserEverEscalatedToHumanSupport = mainChatState?.messages.some( ( message ) =>
+		getIsRequestingHumanSupport( message )
 	);
 
 	/**
@@ -131,9 +137,6 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 		setMainChatState( emptyChat );
 		resetSupportInteraction();
 	}, [ trackEvent, resetSupportInteraction, setMainChatState ] );
-
-	const [ waitAnswerToFirstMessageFromHumanSupport, setWaitAnswerToFirstMessageFromHumanSupport ] =
-		useState( getHelpCenterZendeskConversationStarted() !== null );
 
 	/**
 	 * Add a new message to the chat.
@@ -170,7 +173,30 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 		} );
 	};
 
-	useOdieBroadcastWithCallbacks( { addMessage, clearChat }, odieBroadcastClientId );
+	useOdieBroadcastWithCallbacks( { addMessage }, odieBroadcastClientId );
+	/**
+	 * Set a notice with a specific ID.
+	 * If noticeText is null, the notice with the given ID will be removed.
+	 */
+	const setNotice = useCallback(
+		( noticeId: string, content: string | React.ReactNode | null ) => {
+			setNotices( ( prevNotices ) => {
+				if ( content === null ) {
+					// Remove the notice if content is null
+					const newNotices = { ...prevNotices };
+					delete newNotices[ noticeId ];
+					return newNotices;
+				}
+
+				// Add or update the notice
+				return {
+					...prevNotices,
+					[ noticeId ]: content,
+				};
+			} );
+		},
+		[ setNotices ]
+	);
 
 	/**
 	 * Version for Odie API.
@@ -190,14 +216,15 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				setChat: setMainChatState,
 				clearChat,
 				currentUser,
-				extraContactOptions,
 				isChatLoaded,
 				isMinimized,
 				experimentVariationName,
 				isUserEligibleForPaidSupport,
 				canConnectToZendesk,
+				isLoadingCanConnectToZendesk,
 				hasUserEverEscalatedToHumanSupport,
 				odieBroadcastClientId,
+				notices,
 				selectedSiteId,
 				selectedSiteURL,
 				userFieldMessage,
@@ -205,10 +232,10 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				setChatStatus,
 				setExperimentVariationName,
 				setMessageLikedStatus,
-				setWaitAnswerToFirstMessageFromHumanSupport,
+				setNotice,
 				trackEvent,
 				version: overriddenVersion,
-				waitAnswerToFirstMessageFromHumanSupport,
+				forceEmailSupport,
 			} }
 		>
 			{ children }

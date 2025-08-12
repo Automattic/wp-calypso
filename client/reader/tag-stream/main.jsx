@@ -7,7 +7,6 @@ import titleCase from 'to-title-case';
 import QueryReaderFollowedTags from 'calypso/components/data/query-reader-followed-tags';
 import QueryReaderTag from 'calypso/components/data/query-reader-tag';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
-import ReaderBackButton from 'calypso/reader/components/back-button';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import Stream from 'calypso/reader/stream';
@@ -119,7 +118,6 @@ class TagStream extends Component {
 				<ReaderMain className="tag-stream__main">
 					<QueryReaderFollowedTags />
 					<QueryReaderTag tag={ this.props.decodedTagSlug } />
-					<ReaderBackButton />
 					<TagStreamHeader
 						title={ titleText }
 						encodedTagSlug={ encodedTagSlug }

@@ -1,4 +1,5 @@
 import { Card } from '@automattic/components';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import AsyncLoad from 'calypso/components/async-load';
 import Main from 'calypso/components/main';
@@ -12,10 +13,9 @@ function QrCodeLoginPlaceholder() {
 
 function QrCodeLoginPage( { locale, redirectTo, isJetpack = false } ) {
 	const translate = useTranslate();
-	const isWhiteLogin = true;
 
 	return (
-		<Main className="qr-code-login-page">
+		<Main className={ clsx( 'qr-code-login-page', { 'is-jetpack': isJetpack } ) }>
 			<div className="qr-code-login-page__form">
 				{ isJetpack ? (
 					<div className="magic-login__gutenboarding-wordpress-logo">
@@ -53,9 +53,10 @@ function QrCodeLoginPage( { locale, redirectTo, isJetpack = false } ) {
 					size={ 300 }
 					locale={ locale }
 					redirectToAfterLoginUrl={ redirectTo }
+					isJetpack={ isJetpack }
 				/>
 				<div className="qr-code-login-page__footer">
-					<a href={ login( { locale, redirectTo, isWhiteLogin, isJetpack } ) }>
+					<a href={ login( { locale, redirectTo, isJetpack } ) }>
 						{ translate( 'Enter a password instead' ) }
 					</a>
 				</div>

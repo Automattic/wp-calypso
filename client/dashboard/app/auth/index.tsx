@@ -1,15 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
 import { createContext, useContext } from 'react';
-import { fetchUser } from '../../data';
+import { fetchUser } from '../../data/me';
 import type { User } from '../../data/types';
 
 export const AUTH_QUERY_KEY = [ 'auth', 'user' ];
-export const TWO_STEP_QUERY_KEY = [ 'me', 'two-step' ];
 
 interface AuthContextType {
 	user: User;
 }
-const AuthContext = createContext< AuthContextType | undefined >( undefined );
+export const AuthContext = createContext< AuthContextType | undefined >( undefined );
 
 /**
  * This component:
@@ -28,6 +27,9 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 		queryFn: fetchUser,
 		staleTime: 30 * 60 * 1000, // Consider auth valid for 30 minutes
 		retry: false, // Don't retry on 401 errors
+		meta: {
+			persist: false,
+		},
 	} );
 
 	if ( userIsError ) {

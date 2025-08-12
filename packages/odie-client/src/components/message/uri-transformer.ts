@@ -36,7 +36,7 @@ export function uriTransformer( uri: string ) {
 		if ( colon === protocol.length && url.slice( 0, protocol.length ).toLowerCase() === protocol ) {
 			const urlObj = new URL( url );
 			// Add referral code to the URL
-			if ( protocol !== 'blob' ) {
+			if ( protocol !== 'blob' && urlObj.hostname === 'wordpress.com' ) {
 				urlObj.searchParams.set( 'ref', referralCodes[ protocol ] );
 			}
 			return urlObj.toString();

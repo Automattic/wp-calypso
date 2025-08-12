@@ -1,4 +1,3 @@
-import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { useContext, createContext } from '@wordpress/element';
 import type { CurrentUser, HelpCenterSite } from '@automattic/data-stores';
 
@@ -8,14 +7,13 @@ export type HelpCenterRequiredInformation = {
 	currentUser: CurrentUser;
 	// some users have no sites at all.
 	site: HelpCenterSite | null;
-	hasPurchases: false;
+	hasPurchases: boolean;
 	primarySiteId: number;
 	googleMailServiceFamily: string;
 	onboardingUrl: string;
-	canConnectToZendesk: boolean;
 };
 
-const HelpCenterRequiredContext = createContext< HelpCenterRequiredInformation >( {
+const defaultContext: HelpCenterRequiredInformation = {
 	locale: '',
 	sectionName: '',
 	currentUser: {
@@ -34,18 +32,20 @@ const HelpCenterRequiredContext = createContext< HelpCenterRequiredInformation >
 	primarySiteId: 0,
 	googleMailServiceFamily: '',
 	onboardingUrl: '',
-	canConnectToZendesk: false,
-} );
+};
+
+const HelpCenterRequiredContext = createContext< HelpCenterRequiredInformation >( defaultContext );
 
 export const HelpCenterRequiredContextProvider: React.FC< {
 	children: JSX.Element;
-	value: HelpCenterRequiredInformation;
+	value: Partial< HelpCenterRequiredInformation > &
+		Pick< HelpCenterRequiredInformation, 'currentUser' | 'sectionName' >;
 } > = function ( { children, value } ) {
-	const { data: canConnectToZendesk, isLoading } = useCanConnectToZendeskMessaging();
-
 	return (
 		<HelpCenterRequiredContext.Provider
-			value={ { ...value, canConnectToZendesk: isLoading ? false : canConnectToZendesk ?? false } }
+			value={ {
+				...Object.assign( defaultContext, value ),
+			} }
 		>
 			{ children }
 		</HelpCenterRequiredContext.Provider>

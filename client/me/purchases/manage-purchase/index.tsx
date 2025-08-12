@@ -166,6 +166,7 @@ import {
 	isJetpackTemporarySitePurchase,
 	isAkismetTemporarySitePurchase,
 	isMarketplaceTemporarySitePurchase,
+	isA4ATemporarySitePurchase,
 	getCancelPurchaseSurveyCompletedPreferenceKey,
 } from '../utils';
 import PurchaseNotice from './notices';
@@ -858,7 +859,7 @@ class ManagePurchase extends Component<
 				linkedPurchases={ this.getActiveMarketplaceSubscriptions() }
 				isVisible={ this.state.isCancelSurveyVisible }
 				onClose={ this.closeDialog }
-				onClickFinalConfirm={ this.cancelSubscription }
+				onSurveyComplete={ this.cancelSubscription }
 				flowType={ getPurchaseCancellationFlowType( purchase ) }
 			/>
 		);
@@ -884,7 +885,11 @@ class ManagePurchase extends Component<
 	renderReinstall() {
 		const { purchase, productsList, translate } = this.props;
 		const { isReinstalling } = this.state;
-		if ( ! ( purchase?.active && hasMarketplaceProduct( productsList, purchase.productSlug ) ) ) {
+		if ( ! purchase ) {
+			return null;
+		}
+
+		if ( ! hasMarketplaceProduct( productsList, purchase.productSlug ) ) {
 			return null;
 		}
 
@@ -1155,7 +1160,10 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
+		if (
+			isMarketplaceTemporarySitePurchase( purchase ) ||
+			isA4ATemporarySitePurchase( purchase )
+		) {
 			return null;
 		}
 
@@ -1254,7 +1262,7 @@ class ManagePurchase extends Component<
 						}
 					/>
 				</Card>
-				<PurchasePlanDetails isPlaceholder />
+				<PurchasePlanDetails isPlaceholder purchaseId={ 0 } />
 				<VerticalNavItem isPlaceholder />
 				<VerticalNavItem isPlaceholder />
 			</Fragment>
@@ -1296,9 +1304,8 @@ class ManagePurchase extends Component<
 			return [];
 		}
 
-		return purchases.filter(
-			( _purchase ) =>
-				_purchase.active && hasMarketplaceProduct( productsList, _purchase.productSlug )
+		return purchases.filter( ( _purchase ) =>
+			hasMarketplaceProduct( productsList, _purchase.productSlug )
 		);
 	}
 
@@ -1398,7 +1405,7 @@ class ManagePurchase extends Component<
 				{ ! isPartnerPurchase( purchase ) && (
 					<PurchasePlanDetails
 						purchaseId={ this.props.purchaseId }
-						isProductOwner={ isProductOwner }
+						isProductOwner={ isProductOwner ?? undefined }
 					/>
 				) }
 				{ isProductOwner && ! purchase.isLocked && (

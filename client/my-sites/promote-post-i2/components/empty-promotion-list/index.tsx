@@ -1,16 +1,20 @@
 import './style.scss';
 import { useTranslate } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import useIsRunningInWpAdmin from '../../hooks/use-is-running-in-wpadmin';
+import { useSelector } from 'calypso/state';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 type Props = {
-	type: 'campaigns' | 'posts';
+	type: 'campaigns' | 'posts' | 'payments';
 };
 
 export default function EmptyPromotionList( props: Props ) {
 	const { type } = props;
-
-	const isRunningInWpAdmin = useIsRunningInWpAdmin();
+	const siteId = useSelector( getSelectedSiteId );
+	const isSelfHosted = useSelector( ( state ) =>
+		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
+	);
 
 	const translate = useTranslate();
 
@@ -27,7 +31,7 @@ export default function EmptyPromotionList( props: Props ) {
 						<InlineSupportLink
 							supportContext="advertising"
 							showIcon={ false }
-							showSupportModal={ ! isRunningInWpAdmin }
+							showSupportModal={ ! isSelfHosted }
 						/>
 					),
 				},
@@ -38,6 +42,9 @@ export default function EmptyPromotionList( props: Props ) {
 		subtitle = translate(
 			'You have not published any posts, pages or products yet. Make sure your content is published and come back to promote it.'
 		);
+	} else if ( type === 'payments' ) {
+		title = translate( 'We couldn’t find any payments.' );
+		subtitle = translate( 'You haven’t made any payments yet. Once you do, they’ll show up here.' );
 	}
 
 	return (

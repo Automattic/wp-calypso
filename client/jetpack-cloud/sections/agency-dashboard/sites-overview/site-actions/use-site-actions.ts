@@ -64,7 +64,7 @@ export default function useSiteActions( { site, isLargeScreen, siteError }: Prop
 			},
 			{
 				name: translate( 'Hosting configuration' ),
-				href: `https://wordpress.com/hosting-config/${ siteSlug }`,
+				href: `https://wordpress.com/sites/${ siteSlug }/settings`,
 				onClick: () => handleClickMenuItem( 'hosting_configuration' ),
 				isExternalLink: true,
 				isEnabled: isWPCOMAtomicSiteCreationEnabled && ! isUrlOnly,

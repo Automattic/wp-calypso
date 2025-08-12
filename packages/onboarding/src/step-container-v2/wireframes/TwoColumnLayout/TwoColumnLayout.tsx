@@ -17,6 +17,7 @@ interface TwoColumnLayoutProps {
 	stickyBottomBar?: ContentProp;
 	firstColumnWidth: number;
 	secondColumnWidth: number;
+	noBottomPadding?: boolean;
 }
 
 export const TwoColumnLayout = ( {
@@ -28,6 +29,7 @@ export const TwoColumnLayout = ( {
 	className,
 	footer,
 	stickyBottomBar,
+	noBottomPadding = false,
 }: TwoColumnLayoutProps ) => {
 	const getChildFlexGrow = ( index: number ) => {
 		switch ( index ) {
@@ -59,7 +61,7 @@ export const TwoColumnLayout = ( {
 				return (
 					<>
 						<TopBarRenderer topBar={ topBar } />
-						<ContentWrapper>
+						<ContentWrapper noBottomPadding={ noBottomPadding }>
 							{ heading && <ContentRow columns={ 6 }>{ heading }</ContentRow> }
 							<ContentRow
 								columns={ 10 }

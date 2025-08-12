@@ -79,12 +79,23 @@ export function getPlans(): Record< string, Plan > {
 	return PLANS_LIST;
 }
 
-export function getSimplifiedPlanFeaturesGroupedForFeaturesGrid() {
-	return resolveFeatureGroupsForFeaturesGrid( { showSimplifiedFeatures: true } );
+export function getSimplifiedPlanFeaturesGroupedForFeaturesGrid( props?: {
+	isSummerSpecial?: boolean;
+} ) {
+	const { isSummerSpecial } = props || {};
+	return resolveFeatureGroupsForFeaturesGrid( {
+		showSimplifiedFeatures: true,
+		isSummerSpecial,
+	} );
 }
 
-export function getPlanFeaturesGroupedForFeaturesGrid(): Partial< FeatureGroupMap > {
-	return resolveFeatureGroupsForFeaturesGrid();
+export function getPlanFeaturesGroupedForFeaturesGrid( props?: {
+	isSummerSpecial?: boolean;
+} ): Partial< FeatureGroupMap > {
+	const { isSummerSpecial } = props || {};
+	return resolveFeatureGroupsForFeaturesGrid( {
+		isSummerSpecial,
+	} );
 }
 
 export function getPlanFeaturesGroupedForComparisonGrid(): Partial< FeatureGroupMap > {

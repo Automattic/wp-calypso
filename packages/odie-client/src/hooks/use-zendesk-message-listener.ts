@@ -1,11 +1,10 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useSelect } from '@wordpress/data';
 import { useCallback, useEffect } from '@wordpress/element';
 import Smooch from 'smooch';
 import { useOdieAssistantContext } from '../context';
-import { getConversationIdFromInteraction, zendeskMessageConverter } from '../utils';
+import { zendeskMessageConverter } from '../utils';
 import type { ZendeskMessage } from '../types';
 
 /**
@@ -14,16 +13,12 @@ import type { ZendeskMessage } from '../types';
 export const useZendeskMessageListener = () => {
 	const { setChat, chat } = useOdieAssistantContext();
 
-	const { isChatLoaded, currentSupportInteraction } = useSelect( ( select ) => {
+	const { isChatLoaded } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return {
-			currentSupportInteraction: helpCenterSelect.getCurrentSupportInteraction(),
 			isChatLoaded: helpCenterSelect.getIsChatLoaded(),
 		};
 	}, [] );
-
-	const currentZendeskConversationId =
-		getConversationIdFromInteraction( currentSupportInteraction );
 
 	const messageListener = useCallback(
 		( message: unknown, data: { conversation: { id: string } } ) => {
@@ -37,11 +32,6 @@ export const useZendeskMessageListener = () => {
 					status: 'loaded',
 				} ) );
 				Smooch.markAllAsRead( data.conversation.id );
-			} else {
-				recordTracksEvent( 'calypso_zendesk_message_received_wrong_conversation', {
-					conversation_id: data?.conversation?.id,
-					chat_id: chat?.conversationId,
-				} );
 			}
 		},
 		[ chat.conversationId, setChat ]
@@ -58,12 +48,5 @@ export const useZendeskMessageListener = () => {
 			// @ts-expect-error -- 'off' is not part of the def.
 			Smooch?.off?.( 'message:received', messageListener );
 		};
-	}, [
-		isChatLoaded,
-		currentZendeskConversationId,
-		chat,
-		setChat,
-		currentSupportInteraction,
-		messageListener,
-	] );
+	}, [ isChatLoaded, messageListener ] );
 };

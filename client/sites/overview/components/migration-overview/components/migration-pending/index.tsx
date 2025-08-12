@@ -6,10 +6,10 @@ import { useSelector } from 'react-redux';
 import ConfirmModal from 'calypso/components/confirm-modal';
 import { HostingHeroButton } from 'calypso/components/hosting-hero';
 import Notice from 'calypso/components/notice';
+import { getMigrationState } from 'calypso/data/site-migration';
 import { useSiteMigrationKey } from 'calypso/landing/stepper/hooks/use-site-migration-key';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { addQueryArgs } from 'calypso/lib/url';
-import { getMigrationType } from 'calypso/sites-dashboard/utils';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import Cards from '../cards';
 import { Container, Header } from '../layout';
@@ -20,7 +20,7 @@ const getContinueMigrationUrl = (
 	site: SiteDetails,
 	migrationSourceSiteDomain?: string
 ): string | null => {
-	const migrationType = getMigrationType( site );
+	const migrationState = getMigrationState( site?.site_migration );
 
 	const baseQueryArgs = {
 		siteId: site.ID,
@@ -28,7 +28,7 @@ const getContinueMigrationUrl = (
 		ref: 'hosting-migration-overview',
 	};
 
-	if ( migrationType === 'diy' ) {
+	if ( migrationState?.type === 'diy' ) {
 		if ( migrationSourceSiteDomain ) {
 			return addQueryArgs(
 				{
@@ -46,7 +46,7 @@ const getContinueMigrationUrl = (
 
 export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 	const translate = useTranslate();
-	const migrationType = getMigrationType( site );
+	const migrationState = getMigrationState( site?.site_migration );
 	const migrationSourceSiteDomain = useSelector( ( state ) =>
 		getSiteOption( state, site.ID, 'migration_source_site_domain' )
 	);
@@ -85,7 +85,7 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 
 	const title = translate( 'Your WordPress site is ready to be migrated' );
 	const subTitle =
-		'diy' === migrationType
+		'diy' === migrationState?.type
 			? translate(
 					'Get ready for unmatched WordPress hosting. Use your migration key to complete your migration in the {{em}}Migrate to WordPress.com{{/em}} plugin.',
 					{
@@ -160,7 +160,7 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 				{ continueMigrationUrl && (
 					<div className="migration-pending__buttons">
 						<div className="migration-pending__primary-actions">
-							{ 'diy' === migrationType && migrationKey && (
+							{ 'diy' === migrationState?.type && migrationKey && (
 								<>
 									<ClipboardButton
 										style={ {
@@ -175,7 +175,7 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 								</>
 							) }
 							<HostingHeroButton href={ continueMigrationUrl }>
-								{ 'diy' === migrationType
+								{ 'diy' === migrationState?.type
 									? translate( 'Complete migration' )
 									: translate( 'Start your migration' ) }
 							</HostingHeroButton>

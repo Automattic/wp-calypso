@@ -160,40 +160,9 @@ exports[`JetpackAuthorize renders as expected 1`] = `
         >
           <a
             class="logged-out-form__link-item"
-            href="http://an.example.site/wp-admin/admin.php?page=jetpack"
-          >
-            <svg
-              class="gridicon gridicons-arrow-left needs-offset-y"
-              height="18"
-              viewBox="0 0 24 24"
-              width="18"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <use
-                xlink:href="gridicons.svg#gridicons-arrow-left"
-              />
-            </svg>
-             
-            Return to %(sitename)s
-          </a>
-          <a
-            class="logged-out-form__link-item"
             href="/log-in/jetpack?redirect_to=https%3A%2F%2Fexample.com%2F&from=banner-44-slide-1-dashboard"
           >
             Sign in as a different user
-          </a>
-          <a
-            class="logged-out-form__link-item"
-          >
-            Create a new account
-          </a>
-          <a
-            class="logged-out-form__link-item jetpack-connect__help-button"
-            href="https://jetpack.com/contact-support?hpi=1"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Get help setting up Jetpack
           </a>
         </div>
       </div>

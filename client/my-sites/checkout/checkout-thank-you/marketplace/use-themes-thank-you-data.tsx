@@ -133,6 +133,7 @@ export function useThemesThankYouData(
 	}, [
 		hasExternallyManagedThemes,
 		hasExternallyManagedThemesSubscribed,
+		hasLoadedSitePurchases,
 		isRequestingSitePurchases,
 		siteSlug,
 	] );
@@ -168,7 +169,7 @@ export function useThemesThankYouData(
 				} )
 			);
 		}
-	}, [ firstTheme, isAtomicNeeded, isJetpack, isOnboardingFlow ] );
+	}, [ firstTheme, isAtomicNeeded, isJetpack, isOnboardingFlow, siteSlug ] );
 
 	return [
 		firstTheme,

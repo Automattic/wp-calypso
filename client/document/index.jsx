@@ -52,8 +52,7 @@ class Document extends Component {
 			initialReduxState,
 			inlineScriptNonce,
 			isSupportSession,
-			disableHelpCenterAutoOpen,
-			isWooDna,
+			isSSP,
 			lang,
 			languageRevisions,
 			manifests,
@@ -81,7 +80,7 @@ class Document extends Component {
 			`var BUILD_TARGET = ${ jsonStringifyForHtml( target ) };\n` +
 			( user ? `var currentUser = ${ jsonStringifyForHtml( user ) };\n` : '' ) +
 			( isSupportSession ? 'var isSupportSession = true;\n' : '' ) +
-			( disableHelpCenterAutoOpen ? 'var disableHelpCenterAutoOpen = true;\n' : '' ) +
+			( isSSP ? 'var isSSP = true;\n' : '' ) +
 			( app ? `var app = ${ jsonStringifyForHtml( app ) };\n` : '' ) +
 			( initialReduxState
 				? `var initialReduxState = ${ jsonStringifyForHtml( initialReduxState ) };\n`
@@ -98,8 +97,6 @@ class Document extends Component {
 			( params && params.hasOwnProperty( 'lang' )
 				? `var localeFromRoute = ${ jsonStringifyForHtml( params.lang ?? '' ) };\n`
 				: '' );
-
-		const isJetpackWooDnaFlow = 'jetpack-connect' === sectionName && isWooDna;
 
 		const theme = config( 'theme' );
 
@@ -179,7 +176,6 @@ class Document extends Component {
 								className={ clsx( 'layout', {
 									[ 'is-group-' + sectionGroup ]: sectionGroup,
 									[ 'is-section-' + sectionName ]: sectionName,
-									'is-jetpack-woo-dna-flow': isJetpackWooDnaFlow,
 								} ) }
 							>
 								<div className="layout__content">
@@ -187,6 +183,7 @@ class Document extends Component {
 										app={ app }
 										sectionName={ sectionName }
 										isWCCOM={ isWCCOM }
+										isOneTapAuth={ !! query?.oneTapAuth }
 										showStepContainerV2Loader={ showStepContainerV2Loader }
 									/>
 								</div>
@@ -293,12 +290,21 @@ class Document extends Component {
 		);
 	}
 }
-function LoadingPlaceholder( { app, sectionName, isWCCOM, showStepContainerV2Loader } ) {
+function LoadingPlaceholder( {
+	app,
+	sectionName,
+	isWCCOM,
+	isOneTapAuth,
+	showStepContainerV2Loader,
+} ) {
 	const shouldNotShowLoadingLogo =
-		sectionName === 'checkout' || sectionName === 'stepper' || sectionName === 'signup';
+		sectionName === 'checkout' ||
+		sectionName === 'stepper' ||
+		sectionName === 'signup' ||
+		isOneTapAuth;
 
 	if ( shouldNotShowLoadingLogo ) {
-		return showStepContainerV2Loader ? (
+		return showStepContainerV2Loader || isOneTapAuth ? (
 			<Step.Loading />
 		) : (
 			<Loading className="wpcom-loading__boot" />

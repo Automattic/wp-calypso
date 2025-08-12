@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { WPCOM_FEATURES_MANAGE_PLUGINS } from '@automattic/calypso-products';
 import { CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
@@ -11,7 +10,6 @@ import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
-import Cloudflare from 'calypso/my-sites/site-settings/cloudflare';
 import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mode-notice';
 import MediaSettingsPerformance from 'calypso/my-sites/site-settings/media-settings-performance';
 import SiteSettingsNavigation from 'calypso/my-sites/site-settings/navigation';
@@ -42,7 +40,6 @@ class SiteSettingsPerformance extends Component {
 			siteIsAtomicPrivate,
 			siteIsUnlaunched,
 			siteSlug,
-			showCloudflare,
 			submitForm,
 			translate,
 			trackEvent,
@@ -88,8 +85,6 @@ class SiteSettingsPerformance extends Component {
 					trackEvent={ trackEvent }
 					activateModule={ activateModule }
 				/>
-
-				{ showCloudflare && ! siteIsJetpackNonAtomic && <Cloudflare /> }
 
 				{ ( siteIsJetpackNonAtomic || ( siteIsAtomic && hasManagePluginsFeature ) ) && (
 					<Fragment>
@@ -149,7 +144,6 @@ const connectComponent = connect( ( state ) => {
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const siteIsAtomic = isSiteAutomatedTransfer( state, siteId );
 	const siteIsAtomicPrivate = siteIsAtomic && isPrivateSite( state, siteId );
-	const showCloudflare = config.isEnabled( 'cloudflare' );
 
 	return {
 		hasManagePluginsFeature: siteHasFeature( state, siteId, WPCOM_FEATURES_MANAGE_PLUGINS ),
@@ -159,7 +153,6 @@ const connectComponent = connect( ( state ) => {
 		siteIsAtomicPrivate,
 		siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
-		showCloudflare,
 	};
 } );
 

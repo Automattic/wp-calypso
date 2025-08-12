@@ -148,13 +148,7 @@ export class EditorPage {
 	 * @param {number} timeout Timeout for waiting for the final requests.
 	 */
 	private async waitForEditorLoadedRequests( timeout: number = 60 * 1000 ): Promise< void > {
-		// In a typical loading scenario, this request is one of the last to fire.
-		// Lacking a perfect cross-site type (Simple/Atomic) way to check the loading state,
-		// it is a fairly good stand-in.
-		await Promise.all( [
-			this.page.waitForURL( /(\/post\/.+|\/page\/+|\/post-new.php|\/post.php+)/, { timeout } ),
-			this.page.waitForResponse( /.*posts.*/, { timeout } ),
-		] );
+		await this.page.waitForURL( /(\/post\/.+|\/page\/+|\/post-new.php|\/post.php+)/, { timeout } );
 	}
 
 	/**
@@ -418,20 +412,27 @@ export class EditorPage {
 	 *
 	 * The name is expected to be formatted in the same manner as it
 	 * appears on the label when visible in the block inserter panel.
+	 * When exactMatch is false, it will select the first pattern that
+	 * contains the given name in its aria-label.
 	 *
 	 * Example:
 	 * 		- Two images side by side
 	 *
 	 * @param {string} patternName Name of the pattern to insert.
+	 * @param {boolean} exactMatch Whether to use exact matching for pattern names.
 	 */
-	async addPatternFromSidebar( patternName: string ): Promise< Locator > {
+	async addPatternFromSidebar(
+		patternName: string,
+		exactMatch: boolean = true
+	): Promise< Locator > {
 		if ( ! ( envVariables.TEST_ON_ATOMIC && envVariables.VIEWPORT_NAME === 'mobile' ) ) {
 			await this.editorGutenbergComponent.resetSelectedBlock();
 		}
 		await this.editorToolbarComponent.openBlockInserter();
 		return await this.addPatternFromInserter(
 			patternName,
-			this.editorSidebarBlockInserterComponent
+			this.editorSidebarBlockInserterComponent,
+			exactMatch
 		);
 	}
 
@@ -465,17 +466,29 @@ export class EditorPage {
 	 *
 	 * @param {string} patternName Name of the pattern.
 	 * @param {BlockInserter} inserter Block inserter component.
+	 * @param {boolean} exactMatch Whether to use exact matching for pattern names.
 	 */
 	private async addPatternFromInserter(
 		patternName: string,
-		inserter: BlockInserter
+		inserter: BlockInserter,
+		exactMatch = true
 	): Promise< Locator > {
 		const editorParent = await this.editor.parent();
 
 		await inserter.searchBlockInserter( patternName );
-		const locator = await inserter.selectBlockInserterResult( patternName, { type: 'pattern' } );
+		const locator = await inserter.selectBlockInserterResult( patternName, {
+			type: 'pattern',
+			exactMatch,
+		} );
+
+		// For partial matches, get the actual pattern name from the selected element.
+		let actualPatternName = patternName;
+		if ( ! exactMatch ) {
+			actualPatternName = ( await locator.getAttribute( 'aria-label' ) ) ?? '';
+		}
+
 		const insertConfirmationToastLocator = editorParent.locator(
-			`.components-snackbar__content:text('Block pattern "${ patternName }" inserted.')`
+			`.components-snackbar__content:text('Block pattern "${ actualPatternName }" inserted.')`
 		);
 		await insertConfirmationToastLocator.waitFor();
 		return locator;
@@ -536,12 +549,18 @@ export class EditorPage {
 		if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
 			await this.editorBlockToolbarComponent.clickParentBlockButton( expectedParentBlockName );
 		} else {
-			await this.editorBlockToolbarComponent.clickOptionsButton();
+			// If the menu was already open due to another action, don't open it again.
+			if ( ! ( await this.editorBlockToolbarComponent.isOptionsMenuOpen() ) ) {
+				await this.editorBlockToolbarComponent.clickOptionsButton();
+			}
 			await this.editorPopoverMenuComponent.clickMenuButton(
 				`Select parent block (${ expectedParentBlockName })`
 			);
-			// It stays open on modal! We have to close it again.
-			await this.editorBlockToolbarComponent.clickOptionsButton();
+			// The menu usually closes itself on click, but this might be inconsistent.
+			// Check if it did close and if not, close it for sure.
+			if ( await this.editorBlockToolbarComponent.isOptionsMenuOpen() ) {
+				await this.editorBlockToolbarComponent.clickOptionsButton();
+			}
 		}
 	}
 

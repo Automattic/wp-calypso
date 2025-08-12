@@ -61,7 +61,7 @@ const ECommerceTrialExpired = (): JSX.Element => {
 		siteIsAtomic && selectedSite?.URL
 			? `${ selectedSite.URL }/wp-admin/export.php`
 			: `/export/${ siteSlug }`;
-	const settingsDeleteSiteUrl = `/settings/delete-site/${ siteSlug }`;
+	const settingsDeleteSiteUrl = `/settings/delete-site/${ siteSlug }?options=noCrumbs`;
 
 	const onDeleteClick = useCallback(
 		( e: React.MouseEvent< HTMLButtonElement > ) => {
@@ -77,7 +77,7 @@ const ECommerceTrialExpired = (): JSX.Element => {
 	);
 
 	const isWooExpressTrial = purchase?.isWooExpressTrial;
-	const isEntrepreneurTrial = purchase?.isWooExpressTrial === false;
+	const isEntrepreneurTrial = ! purchase?.isWooExpressTrial;
 
 	return (
 		<>

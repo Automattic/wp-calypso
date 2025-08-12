@@ -15,11 +15,13 @@ import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
+import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import {
 	domainRegistration,
 	domainMapping,
 	domainTransfer,
 } from 'calypso/lib/cart-values/cart-items';
+import { useIsDomainSearchV2Enabled } from 'calypso/lib/domains/use-domain-search-v2';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
 import {
 	composeAnalytics,
@@ -52,6 +54,7 @@ const DomainsStep: Step< {
 		  }
 		| undefined;
 } > = function DomainsStep( { navigation, flow } ) {
+	const [ , shouldUseDomainSearchV2 ] = useIsDomainSearchV2Enabled( flow );
 	const { setHideFreePlan, setDomainCartItem, setDomain } = useDispatch( ONBOARD_STORE );
 	const { __ } = useI18n();
 
@@ -128,6 +131,7 @@ const DomainsStep: Step< {
 			const domainCartItem = domainRegistration( {
 				domain: suggestion.domain_name,
 				productSlug: suggestion.product_slug || '',
+				extra: { flow_name: flow },
 			} );
 			dispatch( submitDomainStepSelection( suggestion, getAnalyticsSection() ) );
 
@@ -192,18 +196,18 @@ const DomainsStep: Step< {
 				);
 			case COPY_SITE_FLOW:
 				return __( 'Make your copied site unique with a custom domain all of its own.' );
-			case DOMAIN_UPSELL_FLOW:
-				return __( 'Enter some descriptive keywords to get started.' );
 			case HUNDRED_YEAR_PLAN_FLOW:
 			case HUNDRED_YEAR_DOMAIN_FLOW:
 				return __( 'Secure your 100-Year domain and start building your legacy.' );
 			default:
-				return createInterpolateElement(
-					__(
-						'Help your site stand out with a custom domain. Not sure yet? <span>Decide later</span>.'
-					),
-					decideLaterComponent
-				);
+				return shouldUseDomainSearchV2
+					? __( 'Make it yours with a .com, .blog, or one of 350+ domain options.' )
+					: createInterpolateElement(
+							__(
+								'Help your site stand out with a custom domain. Not sure yet? <span>Decide later</span>.'
+							),
+							decideLaterComponent
+					  );
 		}
 	};
 
@@ -218,6 +222,10 @@ const DomainsStep: Step< {
 
 		if ( [ HUNDRED_YEAR_PLAN_FLOW, HUNDRED_YEAR_DOMAIN_FLOW ].includes( flow ) ) {
 			return __( 'Find the perfect domain' );
+		}
+
+		if ( shouldUseDomainSearchV2 ) {
+			return __( 'Claim your space on the web' );
 		}
 
 		return __( 'Choose a domain' );
@@ -279,6 +287,8 @@ const DomainsStep: Step< {
 
 	const renderContent = () => (
 		<DomainFormControl
+			// TODO: Implement this in DOTOBRD-233.
+			onContinue={ () => {} }
 			analyticsSection={ getAnalyticsSection() }
 			flow={ flow }
 			onAddDomain={ handleAddDomain }
@@ -356,4 +366,22 @@ const DomainsStep: Step< {
 	);
 };
 
-export default DomainsStep;
+const StyleWrappedDomainsStep: typeof DomainsStep = ( props ) => {
+	const [ isLoading, shouldUseDomainSearchV2 ] = useIsDomainSearchV2Enabled( props.flow );
+
+	if ( isLoading ) {
+		// TODO: Add a loading state to indicate that the experiment is loading.
+		return null;
+	}
+
+	return (
+		<>
+			<DomainsStep { ...props } />
+			{ ! shouldUseDomainSearchV2 && (
+				<BodySectionCssClass bodyClass={ [ 'domain-search-legacy--stepper' ] } />
+			) }
+		</>
+	);
+};
+
+export default StyleWrappedDomainsStep;

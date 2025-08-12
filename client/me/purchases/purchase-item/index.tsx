@@ -13,7 +13,8 @@ import page from '@automattic/calypso-router';
 import { CompactCard, Gridicon } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
 import { CALYPSO_CONTACT } from '@automattic/urls';
-import { ExternalLink } from '@wordpress/components';
+import { getPaymentMethodImageURL, razorpayImage as upiImage } from '@automattic/wpcom-checkout';
+import { ExternalLink, Button } from '@wordpress/components';
 import { Icon, warning as warningIcon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize, useTranslate } from 'i18n-calypso';
@@ -21,13 +22,12 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import akismetIcon from 'calypso/assets/images/icons/akismet-icon.svg';
 import jetpackIcon from 'calypso/assets/images/icons/jetpack-icon.svg';
+import passportIcon from 'calypso/assets/images/icons/passport-icon.svg';
 import payPalImage from 'calypso/assets/images/upgrades/paypal-full.svg';
-import upiImage from 'calypso/assets/images/upgrades/upi.svg';
 import SiteIcon from 'calypso/blocks/site-icon';
 import InfoPopover from 'calypso/components/info-popover';
 import { withLocalizedMoment, useLocalizedMoment } from 'calypso/components/localized-moment';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { getPaymentMethodImageURL } from 'calypso/lib/checkout/payment-methods';
 import {
 	getDisplayName,
 	isExpired,
@@ -45,15 +45,18 @@ import {
 	isWithinIntroductoryOfferPeriod,
 	isIntroductoryOfferFreeTrial,
 	hasPaymentMethod,
+	isPaidWithCredits,
 } from 'calypso/lib/purchases';
 import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
 import getSiteIconUrl from 'calypso/state/selectors/get-site-icon-url';
 import { getSite } from 'calypso/state/sites/selectors';
+import { isTransferredOwnership } from '../hooks/use-is-transferred-ownership';
 import {
 	isTemporarySitePurchase,
 	isJetpackTemporarySitePurchase,
 	isAkismetTemporarySitePurchase,
 	isMarketplaceTemporarySitePurchase,
+	isA4ATemporarySitePurchase,
 } from '../utils';
 import OwnerInfo from './owner-info';
 import type { Purchases, SiteDetails } from '@automattic/data-stores';
@@ -79,6 +82,7 @@ interface PurchaseItemProps {
 	isJetpack?: boolean;
 	isDisconnectedSite?: boolean;
 	isBackupMethodAvailable?: boolean;
+	transferredOwnershipPurchases?: Purchases.Purchase[];
 }
 
 interface PurchaseItemPropsConnected {
@@ -118,7 +122,15 @@ export function PurchaseItemSiteIcon( {
 		);
 	}
 	if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
-		content = <SiteIcon size={ 36 } />;
+		if ( purchase.productSlug.startsWith( 'passport' ) ) {
+			content = (
+				<div className="purchase-item__static-icon">
+					<img src={ passportIcon } alt="Passport icon" />
+				</div>
+			);
+		} else {
+			content = <SiteIcon size={ 36 } />;
+		}
 	}
 
 	if ( isDisconnectedSite ) {
@@ -298,13 +310,11 @@ export function PurchaseItemStatus( {
 	purchase,
 	translate,
 	moment,
-	isJetpack,
 	isDisconnectedSite,
 }: {
 	purchase: Purchases.Purchase;
 	translate: LocalizeProps[ 'translate' ];
 	moment: ReturnType< typeof useLocalizedMoment >;
-	isJetpack?: boolean;
 	isDisconnectedSite?: boolean;
 } ) {
 	const expiry = moment( purchase.expiryDate );
@@ -343,7 +353,8 @@ export function PurchaseItemStatus( {
 	if (
 		isDisconnectedSite &&
 		! isAkismetTemporarySitePurchase( purchase ) &&
-		! isMarketplaceTemporarySitePurchase( purchase )
+		! isMarketplaceTemporarySitePurchase( purchase ) &&
+		! isA4ATemporarySitePurchase( purchase )
 	) {
 		if ( isJetpackTemporarySitePurchase( purchase ) ) {
 			return (
@@ -367,7 +378,7 @@ export function PurchaseItemStatus( {
 			);
 		}
 
-		if ( isJetpack ) {
+		if ( purchase.isJetpackPlanOrProduct ) {
 			return (
 				<span className="purchase-item__is-error">
 					{ translate( 'Disconnected from WordPress.com' ) }
@@ -610,9 +621,11 @@ export function PurchaseItemStatus( {
 export function PurchaseItemPaymentMethod( {
 	purchase,
 	translate,
+	isDisconnectedSite,
 }: {
 	purchase: Purchases.Purchase;
 	translate: LocalizeProps[ 'translate' ];
+	isDisconnectedSite?: boolean;
 } ) {
 	if ( isIncludedWithPlan( purchase ) ) {
 		return translate( 'Included with Plan' );
@@ -626,16 +639,37 @@ export function PurchaseItemPaymentMethod( {
 		);
 	}
 
+	const goToAddPaymentMethod = (
+		e: React.MouseEvent< HTMLButtonElement >,
+		siteSlug: string | number,
+		purchaseId: number
+	) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		page( `/me/purchases/${ siteSlug }/${ purchaseId }/payment-method/add` );
+	};
+
 	if (
 		purchase.isAutoRenewEnabled &&
-		! hasPaymentMethod( purchase ) &&
+		! isExpired( purchase ) &&
+		( ! hasPaymentMethod( purchase ) || isPaidWithCredits( purchase ) ) &&
 		! isPartnerPurchase( purchase ) &&
 		! isAkismetFreeProduct( purchase )
 	) {
 		return (
 			<div className="purchase-item__no-payment-method">
-				<Icon icon={ warningIcon } />
-				<span>{ translate( 'You don’t have a payment method to renew this subscription' ) }</span>
+				{ ! isDisconnectedSite && (
+					<Button
+						variant="link"
+						size="compact"
+						onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) =>
+							goToAddPaymentMethod( e, purchase.siteId, purchase.id )
+						}
+					>
+						{ translate( 'Add payment method' ) }
+					</Button>
+				) }
 			</div>
 		);
 	}
@@ -643,7 +677,7 @@ export function PurchaseItemPaymentMethod( {
 	if (
 		! isAkismetFreeProduct( purchase ) &&
 		! isRechargeable( purchase ) &&
-		hasPaymentMethod( purchase ) &&
+		hasPaymentMethod( purchase ) && // why does it check for payment method type but shows missing method?
 		purchase.isAutoRenewEnabled
 	) {
 		return (
@@ -720,9 +754,14 @@ class PurchaseItem extends Component<
 			iconUrl,
 			isBackupMethodAvailable,
 			moment,
-			isJetpack,
 			isDisconnectedSite,
+			transferredOwnershipPurchases = [],
 		} = this.props;
+
+		const isOwnershipTransferred = isTransferredOwnership(
+			purchase.id,
+			transferredOwnershipPurchases
+		);
 
 		return (
 			<div className="purchase-item__wrapper purchases-layout__wrapper">
@@ -740,7 +779,7 @@ class PurchaseItem extends Component<
 					<div className="purchase-item__title">
 						{ getDisplayName( purchase ) }
 						&nbsp;
-						<OwnerInfo purchase={ purchase } />
+						<OwnerInfo purchase={ purchase } isTransferredOwnership={ isOwnershipTransferred } />
 					</div>
 
 					<div className="purchase-item__purchase-type">
@@ -760,13 +799,16 @@ class PurchaseItem extends Component<
 						purchase={ purchase }
 						translate={ translate }
 						moment={ moment }
-						isJetpack={ isJetpack }
 						isDisconnectedSite={ isDisconnectedSite }
 					/>
 				</div>
 
 				<div className="purchase-item__payment-method purchases-layout__payment-method">
-					<PurchaseItemPaymentMethod purchase={ purchase } translate={ translate } />
+					<PurchaseItemPaymentMethod
+						purchase={ purchase }
+						translate={ translate }
+						isDisconnectedSite={ isDisconnectedSite }
+					/>
 					{ isBackupMethodAvailable && isRenewing( purchase ) && <BackupPaymentMethodNotice /> }
 				</div>
 			</div>
@@ -785,20 +827,35 @@ class PurchaseItem extends Component<
 			);
 		}
 
-		const { isDisconnectedSite, getManagePurchaseUrlFor, purchase, slug, isJetpack } = this.props;
+		const {
+			isDisconnectedSite,
+			getManagePurchaseUrlFor,
+			purchase,
+			slug,
+			transferredOwnershipPurchases = [],
+		} = this.props;
 
 		const classes = clsx( 'purchase-item', {
 			'purchase-item--disconnected': isDisconnectedSite,
 		} );
 
+		const isOwnershipTransferred = isTransferredOwnership(
+			purchase.id,
+			transferredOwnershipPurchases
+		);
+
 		let onClick;
 		let href;
 
-		if ( getManagePurchaseUrlFor && slug ) {
+		if ( getManagePurchaseUrlFor && slug && ! isOwnershipTransferred ) {
 			// A "disconnected" Jetpack site's purchases may be managed.
 			// A "disconnected" WordPress.com site may *NOT* be managed (the user has been removed), unless it is a
 			// WPCOM generated temporary site, which is created during the siteless checkout flow. (currently Jetpack & Akismet can have siteless purchases).
-			if ( ! isDisconnectedSite || isJetpack || isTemporarySitePurchase( purchase ) ) {
+			if (
+				! isDisconnectedSite ||
+				purchase.isJetpackPlanOrProduct ||
+				isTemporarySitePurchase( purchase )
+			) {
 				onClick = () => {
 					window.scrollTo( 0, 0 );
 				};

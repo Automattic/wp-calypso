@@ -34,7 +34,7 @@ import {
 import { useSelector } from 'calypso/state';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
-import { useMvpOnboardingExperiment } from '../../../../hooks/use-mvp-onboarding-experiment';
+import { useSimplifiedOnboarding } from '../../../../hooks/use-simplified-onboarding';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import type { Step as StepType } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
@@ -139,11 +139,13 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		wasSignupCheckoutPageUnloaded() && signupDestinationCookieExists && isReEnteringFlow
 	);
 	const urlQueryParams = useQuery();
-	const skipMigration = urlQueryParams.get( 'skipMigration' ) || '';
 	const platform = urlQueryParams.get( 'platform' ) || '';
-	const useThemeHeadstart = ! isStartWritingFlow( flow ) && ! isNewHostedSiteCreationFlow( flow );
+	const useThemeHeadstart =
+		! isStartWritingFlow( flow ) &&
+		! isNewHostedSiteCreationFlow( flow ) &&
+		! isNewSiteMigrationFlow( flow );
 	const shouldGoToCheckout = Boolean( planCartItem );
-	const [ , isMvpOnboarding ] = useMvpOnboardingExperiment();
+	const [ , isSimplifiedOnboarding ] = useSimplifiedOnboarding();
 
 	async function createSite() {
 		if ( isManageSiteFlow ) {
@@ -167,7 +169,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		// eslint-disable-next-line no-nested-ternary
 		const siteIntent = isNewSiteMigrationFlow( flow )
 			? 'migration'
-			: isMvpOnboarding
+			: isSimplifiedOnboarding
 			? // For the simplified onboarding flow, we'll use the build intent since user can't choose the intent.
 			  Onboard.SiteIntent.Build
 			: '';
@@ -214,7 +216,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		}
 
 		if ( domainCartItems?.length && site?.siteSlug ) {
-			await addProductsToCart( site.siteSlug, flow, productCartItems );
+			await addProductsToCart( site.siteSlug, flow, domainCartItems );
 		}
 
 		return {
@@ -222,7 +224,6 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			siteSlug: site?.siteSlug,
 			goToCheckout: shouldGoToCheckout,
 			siteCreated: true,
-			skipMigration,
 			platform,
 		};
 	}

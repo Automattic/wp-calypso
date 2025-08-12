@@ -1,0 +1,13 @@
+.domain-suggestion-popover {
+	.components-popover__content {
+		width: 100%;
+		/* stylelint-disable-next-line unit-allowed-list */
+		max-width: 30ch;
+	}
+}
+
+.domain-suggestion-popover__content {
+	font-size: 0.875rem;
+	padding: 0.75rem;
+	text-wrap: pretty;
+}

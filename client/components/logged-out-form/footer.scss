@@ -1,3 +1,5 @@
+@import "../../assets/stylesheets/shared/mixins/elevation";
+
 .card.logged-out-form__footer {
 	box-shadow: none;
 	background: none;
@@ -15,5 +17,9 @@
 		margin: 0;
 		width: 100%;
 		@include elevation( 1dp );
+	}
+
+	.components-button.is-primary {
+		width: 100%;
 	}
 }

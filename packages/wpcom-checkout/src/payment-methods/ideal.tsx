@@ -14,8 +14,8 @@ import type {
 	StoreActions,
 	StoreState,
 } from '../payment-method-store';
+import type { AnyAction } from '../types';
 import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
-import type { AnyAction } from 'redux';
 
 const debug = debugFactory( 'wpcom-checkout:ideal-payment-method' );
 

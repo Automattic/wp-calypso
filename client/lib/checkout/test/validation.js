@@ -3,7 +3,6 @@
  */
 
 import moment from 'moment';
-import * as processorSpecificMethods from '../processor-specific';
 import {
 	validatePaymentDetails,
 	getCreditCardType,
@@ -11,14 +10,6 @@ import {
 	getCreditCardFieldRules,
 	mergeValidationRules,
 } from '../validation';
-
-jest.mock( '../processor-specific', () => {
-	const realProcessorSpecificMethods = jest.requireActual( '../processor-specific' );
-	return {
-		...realProcessorSpecificMethods,
-		isValidCPF: jest.fn(),
-	};
-} );
 
 describe( 'validation', () => {
 	const validCard = {
@@ -162,10 +153,6 @@ describe( 'validation', () => {
 		} );
 
 		describe( 'validate ebanx non-credit card details', () => {
-			beforeAll( () => {
-				processorSpecificMethods.isValidCPF.mockImplementation( () => true );
-			} );
-
 			test( 'should return no errors when details are valid', () => {
 				const result = validatePaymentDetails( validBrazilianEbanxCard, 'ebanx' );
 
@@ -239,7 +226,6 @@ describe( 'validation', () => {
 			} );
 
 			test( 'should return error when CPF is invalid', () => {
-				processorSpecificMethods.isValidCPF.mockImplementation( () => false );
 				const invalidCPF = { ...validBrazilianEbanxCard, document: 'blah' };
 				const result = validatePaymentDetails( invalidCPF, 'ebanx' );
 				expect( result ).toEqual( {

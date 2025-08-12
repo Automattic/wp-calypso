@@ -1,9 +1,12 @@
 import { useIsMutating, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { TransferStates } from 'calypso/state/automated-transfer/constants';
+import { setStagingSiteStatus } from 'calypso/state/staging-site/actions';
+import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
+import { getStagingSiteStatus } from 'calypso/state/staging-site/selectors/get-staging-site-status';
 import { SiteId } from 'calypso/types';
 import { useIsStatusReverting } from './use-is-status-reverting';
 import { USE_STAGING_SITE_QUERY_KEY } from './use-staging-site';
@@ -29,13 +32,20 @@ export const useDeleteStagingSite = ( options: UseDeleteStagingSiteOptions ) => 
 	const queryClient = useQueryClient();
 	const dispatch = useDispatch();
 	const [ isDeletingInitiated, setIsDeletingInitiated ] = useState( false );
-	const onReverted = useCallback( () => {
+	const stagingSiteStatus = useSelector( ( state ) => getStagingSiteStatus( state, siteId ) );
+
+	const invalidateQueries = useCallback( () => {
 		queryClient.invalidateQueries( {
-			queryKey: [ USE_STAGING_SITE_QUERY_KEY ],
+			queryKey: [ USE_STAGING_SITE_QUERY_KEY, siteId ],
 		} );
+	}, [ queryClient, siteId ] );
+
+	const onReverted = useCallback( () => {
+		invalidateQueries();
 		setIsDeletingInitiated( false );
+		dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.NONE ) );
 		onSuccess?.();
-	}, [ onSuccess, queryClient ] );
+	}, [ onSuccess, dispatch, siteId, invalidateQueries ] );
 
 	const isStatusReverting = useIsStatusReverting( transferStatus );
 
@@ -44,9 +54,7 @@ export const useDeleteStagingSite = ( options: UseDeleteStagingSiteOptions ) => 
 		if ( isDeletingInitiated ) {
 			if ( stagingSiteId ) {
 				timeoutId = setInterval( () => {
-					queryClient.invalidateQueries( {
-						queryKey: [ USE_STAGING_SITE_QUERY_KEY ],
-					} );
+					invalidateQueries();
 				}, 3000 );
 			} else {
 				onReverted();
@@ -55,7 +63,7 @@ export const useDeleteStagingSite = ( options: UseDeleteStagingSiteOptions ) => 
 		return () => {
 			clearInterval( timeoutId );
 		};
-	}, [ isDeletingInitiated, onReverted, queryClient, stagingSiteId ] );
+	}, [ isDeletingInitiated, onReverted, invalidateQueries, stagingSiteId ] );
 
 	const mutation = useMutation( {
 		mutationFn: () => {
@@ -70,6 +78,7 @@ export const useDeleteStagingSite = ( options: UseDeleteStagingSiteOptions ) => 
 			onMutate?.();
 		},
 		onSuccess: async () => {
+			invalidateQueries();
 			// Wait for the staging site async job to start
 			setTimeout( () => {
 				dispatch( fetchAutomatedTransferStatus( stagingSiteId ) );
@@ -77,6 +86,7 @@ export const useDeleteStagingSite = ( options: UseDeleteStagingSiteOptions ) => 
 		},
 		onError: ( error: MutationError ) => {
 			setIsDeletingInitiated( false );
+			dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.NONE ) );
 			onError?.( error );
 		},
 	} );
@@ -91,8 +101,18 @@ export const useDeleteStagingSite = ( options: UseDeleteStagingSiteOptions ) => 
 	useEffect( () => {
 		if ( isLoading ) {
 			setIsDeletingInitiated( true );
+			dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.INITIATE_REVERTING ) );
 		}
-	}, [ isLoading ] );
+	}, [ isLoading, dispatch, siteId ] );
+
+	useEffect( () => {
+		if (
+			stagingSiteStatus === StagingSiteStatus.INITIATE_REVERTING ||
+			stagingSiteStatus === StagingSiteStatus.REVERTING
+		) {
+			setIsDeletingInitiated( true );
+		}
+	}, [ stagingSiteStatus ] );
 
 	return {
 		deleteStagingSite: mutate,

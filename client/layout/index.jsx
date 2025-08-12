@@ -18,24 +18,30 @@ import JetpackCloudMasterbar from 'calypso/components/jetpack/masterbar';
 import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
 import { retrieveMobileRedirect } from 'calypso/jetpack-connect/persistence-utils';
-import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
 import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWcMobileApp, isWpMobileApp } from 'calypso/lib/mobile-app';
-import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import {
+	isWooOAuth2Client,
+	isJetpackCloudOAuth2Client,
+	isA4AOAuth2Client,
+	isCrowdsignalOAuth2Client,
+} from 'calypso/lib/oauth2-clients';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import { isFetchingAdminColor } from 'calypso/state/admin-color/selectors';
+import { loadTrackingTool } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSidebarType, SidebarType } from 'calypso/state/global-sidebar/selectors';
 import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tours/contexts';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
+import hasGravatarDomainQueryParam from 'calypso/state/selectors/has-gravatar-domain-query-param';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
@@ -131,6 +137,7 @@ class Layout extends Component {
 		sectionGroup: PropTypes.string,
 		sectionName: PropTypes.string,
 		colorScheme: PropTypes.string,
+		isGravatarDomain: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -146,6 +153,9 @@ class Layout extends Component {
 		} );
 
 		refreshColorScheme( undefined, this.props.colorScheme );
+
+		// Load Survicate survey on all pages
+		this.props.dispatch( loadTrackingTool( 'Survicate' ) );
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -193,6 +203,8 @@ class Layout extends Component {
 		const sectionClass = clsx( 'layout', `focus-${ this.props.currentLayoutFocus }`, {
 			[ 'is-group-' + this.props.sectionGroup ]: this.props.sectionGroup,
 			[ 'is-section-' + this.props.sectionName ]: this.props.sectionName,
+			'a8c-for-agencies': isA4AOAuth2Client( this.props.oauth2Client ),
+			crowdsignal: isCrowdsignalOAuth2Client( this.props.oauth2Client ),
 			'is-support-session': this.props.isSupportSession,
 			'has-no-sidebar': this.props.sidebarIsHidden,
 			'has-no-masterbar': this.props.masterbarIsHidden,
@@ -200,7 +212,6 @@ class Layout extends Component {
 			'is-jetpack-login': this.props.isJetpackLogin,
 			'is-jetpack-site': this.props.isJetpack,
 			'is-jetpack-mobile-flow': this.props.isJetpackMobileFlow,
-			'is-jetpack-woo-dna-flow': this.props.isJetpackWooDnaFlow,
 			'is-woocommerce-core-profiler-flow': this.props.isWooJPC,
 			'is-automattic-for-agencies-flow': this.props.isFromAutomatticForAgenciesPlugin,
 			woo: this.props.isWooJPC,
@@ -209,7 +220,9 @@ class Layout extends Component {
 			'is-unified-site-sidebar-visible': this.props.isUnifiedSiteSidebarVisible,
 			'is-blaze-pro': this.props.isBlazePro,
 			'is-woo-com-oauth': isWooOAuth2Client( this.props.oauth2Client ),
+			'jetpack-cloud': isJetpackCloudOAuth2Client( this.props.oauth2Client ),
 			'feature-flag-woocommerce-core-profiler-passwordless-auth': true,
+			'is-domain-for-gravatar': this.props.isGravatarDomain,
 		} );
 
 		const optionalBodyProps = () => {
@@ -319,6 +332,9 @@ class Layout extends Component {
 				{ config.isEnabled( 'cookie-banner' ) && (
 					<AsyncLoad require="calypso/blocks/cookie-banner" placeholder={ null } />
 				) }
+				{ config.isEnabled( 'layout/app-banner' ) && (
+					<AsyncLoad require="calypso/blocks/app-banner" placeholder={ null } />
+				) }
 				{ config.isEnabled( 'legal-updates-banner' ) && (
 					<AsyncLoad require="calypso/blocks/legal-updates-banner" placeholder={ null } />
 				) }
@@ -379,9 +395,6 @@ export default withCurrentRoute(
 			isA8CForAgencies() ||
 			isInStepContainerV2FlowContext( currentRoute, currentQuery );
 		const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
-		const isJetpackWooDnaFlow =
-			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
-			wooDnaConfig( currentQuery ).isWooDnaFlow();
 		const oauth2Client = getCurrentOAuth2Client( state );
 		const wccomFrom = currentQuery?.[ 'wccom-from' ];
 		const isEligibleForJITM = [ 'home', 'plans', 'themes', 'plugins', 'comments' ].includes(
@@ -403,12 +416,18 @@ export default withCurrentRoute(
 			( sidebarType === SidebarType.UnifiedSiteDefault ||
 				sidebarType === SidebarType.UnifiedSiteClassic );
 
+		const isCheckoutSection = [ 'checkout', 'checkout-pending', 'checkout-thank-you' ].includes(
+			sectionName
+		);
+		const isGravatarDomain =
+			currentRoute.startsWith( '/start/domain-for-gravatar' ) ||
+			( isCheckoutSection && hasGravatarDomainQueryParam( state ) );
+
 		return {
 			masterbarIsHidden,
 			sidebarIsHidden,
 			isJetpack,
 			isJetpackLogin,
-			isJetpackWooDnaFlow,
 			isJetpackMobileFlow,
 			isWooJPC,
 			isFromAutomatticForAgenciesPlugin,
@@ -439,6 +458,7 @@ export default withCurrentRoute(
 			isGlobalSidebarCollapsed: shouldShowCollapsedGlobalSidebar && ! sidebarIsHidden,
 			isUnifiedSiteSidebarVisible: shouldShowUnifiedSiteSidebar && ! sidebarIsHidden,
 			isNewUser: isUserNewerThan( WEEK_IN_MILLISECONDS )( state ),
+			isGravatarDomain,
 		};
 	} )( Layout )
 );

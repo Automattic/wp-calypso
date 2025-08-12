@@ -307,13 +307,13 @@ export type Plan = BillingTerm & {
 	 * this feature list will be ignored in the plans comparison table only.
 	 * Context - pdgrnI-26j
 	 */
-	get2023PricingGridSignupWpcomFeatures?: () => Feature[];
+	get2023PricingGridSignupWpcomFeatures?: ( props?: { isSummerSpecial?: boolean } ) => Feature[];
 
 	/**
 	 * This function returns the features that are to be overridden and shown in the plans comparison table.
 	 * Context - pdgrnI-26j
 	 */
-	get2023PlanComparisonFeatureOverride?: () => Feature[];
+	get2023PlanComparisonFeatureOverride?: ( props?: { isSummerSpecial?: boolean } ) => Feature[];
 
 	/**
 	 * Features to be shown in the plan details jetpack section and the jetpack features in the plans comparison table.

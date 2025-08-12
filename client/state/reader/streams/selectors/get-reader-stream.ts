@@ -37,7 +37,7 @@ const emptyStream = {
 	pendingItems: { lastUpdated: null, items: [] },
 	selected: null,
 	lastPage: false,
-	isRequesting: true, // `true` indicates that the stream is yet to fetch.
+	isRequesting: false, // `true` may prevent the stream from requesting at all, as is the case with the recommendations stream.
 };
 
 function getStream( state: AppState, streamKey: string ): ReaderStreamState {

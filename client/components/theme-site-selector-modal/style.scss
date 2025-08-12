@@ -1,5 +1,30 @@
 .theme-site-selector-modal {
 	z-index: z-index("root", ".theme-site-selector-modal");
+
+	.theme-site-selector-modal__selector {
+		.site.is-highlighted {
+			background-color: var(--color-neutral-5);
+
+			.site__title {
+				color: var(--color-text);
+			}
+
+			.site__domain {
+				color: var(--color-text-subtle);
+			}
+
+			.site__badge {
+				background-color: var(--color-surface);
+			}
+
+			.site__title,
+			.site__domain {
+				&::after {
+					@include long-content-fade($color: var(--color-neutral-5));
+				}
+			}
+		}
+	}
 }
 
 .theme-site-selector-modal__content {

@@ -1,9 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { englishLocales } from '@automattic/i18n-utils';
 import {
 	HOSTING_LP_FLOW,
 	ONBOARDING_FLOW,
 	DIFM_FLOW,
 	DIFM_FLOW_STORE,
+	DOMAIN_FOR_GRAVATAR_FLOW,
 	WEBSITE_DESIGN_SERVICES,
 } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
@@ -196,6 +198,7 @@ export function generateFlows( {
 			description: 'Checkout without user account or site. Read more https://wp.me/pau2Xa-1hW',
 			lastModified: '2020-06-26',
 			showRecaptcha: true,
+			hideProgressIndicator: true,
 		},
 		{
 			name: 'rewind-setup',
@@ -278,7 +281,7 @@ export function generateFlows( {
 			hideProgressIndicator: true,
 		},
 		{
-			name: 'domain-for-gravatar',
+			name: DOMAIN_FOR_GRAVATAR_FLOW,
 			steps: [ 'domain-only', 'site-or-domain', 'site-picker' ],
 			destination: getDomainSignupFlowDestination,
 			description: 'Checkout flow for domains on Gravatar',
@@ -301,6 +304,7 @@ export function generateFlows( {
 			destination: getLaunchDestination,
 			description: 'A flow to launch a private site.',
 			providesDependenciesInQuery: [ 'siteSlug' ],
+			hideProgressIndicator: true,
 			lastModified: '2019-11-22',
 			get pageTitle() {
 				return translate( 'Launch your site' );
@@ -400,6 +404,7 @@ export function generateFlows( {
 			enableBranchSteps: true,
 			hideProgressIndicator: true,
 			enabledHelpCenterGeos: [ 'US' ],
+			enabledHelpCenterLocales: englishLocales,
 			get helpCenterButtonCopy() {
 				return translate( 'Questions?' );
 			},

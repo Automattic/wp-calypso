@@ -4,6 +4,7 @@ import type { ReactNode, PropsWithChildren, SetStateAction } from 'react';
 export type OdieAssistantContextInterface = {
 	isChatLoaded: boolean;
 	canConnectToZendesk: boolean;
+	isLoadingCanConnectToZendesk: boolean;
 	addMessage: ( message: Message | Message[] ) => void;
 	botName?: string;
 	botNameSlug: OdieAllowedBots;
@@ -14,39 +15,39 @@ export type OdieAssistantContextInterface = {
 	hasUserEverEscalatedToHumanSupport: boolean;
 	isMinimized?: boolean;
 	isUserEligibleForPaidSupport: boolean;
-	extraContactOptions?: ReactNode;
+	notices: Record< string, string | ReactNode >;
 	odieBroadcastClientId: string;
 	selectedSiteId?: number | null;
 	selectedSiteURL?: string | null;
 	userFieldMessage?: string | null;
 	userFieldFlowName?: string | null;
-	waitAnswerToFirstMessageFromHumanSupport: boolean;
+	forceEmailSupport: boolean;
 	setExperimentVariationName: ( variationName: string | null | undefined ) => void;
 	setMessageLikedStatus: ( message: Message, liked: boolean ) => void;
 	setChat: ( chat: Chat | SetStateAction< Chat > ) => void;
 	setChatStatus: ( status: ChatStatus ) => void;
+	setNotice: ( noticeId: string, content: string | ReactNode | null ) => void;
 	trackEvent: ( event: string, properties?: Record< string, unknown > ) => void;
 	version?: string | null;
-	setWaitAnswerToFirstMessageFromHumanSupport: (
-		waitAnswerToFirstMessageFromHumanSupport: boolean
-	) => void;
 };
 
 export type OdieAssistantProviderProps = {
 	canConnectToZendesk?: boolean;
+	isLoadingCanConnectToZendesk?: boolean;
 	botName?: string;
 	botNameSlug?: OdieAllowedBots;
 	isUserEligibleForPaidSupport?: boolean;
 	isMinimized?: boolean;
 	currentUser: CurrentUser;
-	extraContactOptions?: ReactNode;
 	selectedSiteId?: number | null;
 	selectedSiteURL?: string | null;
 	userFieldMessage?: string | null;
 	userFieldFlowName?: string | null;
 	version?: string | null;
+	forceEmailSupport?: boolean;
 	children?: ReactNode;
 	setChatStatus?: ( status: ChatStatus ) => void;
+	setNotice?: ( noticeId: string, content: string | ReactNode | null ) => void;
 } & PropsWithChildren;
 
 export type CurrentUser = {
@@ -129,6 +130,7 @@ export type Context = {
 		hide_disclaimer_content?: boolean;
 		show_contact_support_msg?: boolean;
 		show_ai_avatar?: boolean;
+		is_error_message?: boolean;
 	};
 };
 
@@ -145,10 +147,18 @@ export type MessageType =
 	| 'help-link'
 	| 'file'
 	| 'image'
-	| 'introduction';
+	| 'introduction'
+	| 'form'
+	| 'formResponse';
+
+export type ChatFeedbackActions = {
+	score: string;
+	account_id: number;
+	ticket_id: number;
+};
 
 export type Message = {
-	content: string;
+	content: ReactNode;
 	context?: Context;
 	internal_message_id?: string;
 	message_id?: number;
@@ -160,6 +170,9 @@ export type Message = {
 	type: MessageType;
 	directEscalationSupport?: boolean;
 	created_at?: string;
+	feedbackOptions?: MessageAction[];
+	metadata?: Record< string, any >;
+	payload?: string;
 };
 
 export type ChatStatus = 'loading' | 'loaded' | 'sending' | 'dislike' | 'transfer' | 'closed';
@@ -196,19 +209,25 @@ interface ConversationParticipant {
 	lastRead: number;
 }
 
-type MessageAction = {
+export type MessageAction = {
 	id: string;
-	default: boolean;
-	fallback: string;
-	uri: string;
+	payload: boolean;
+	text: string;
+	type: string;
+	metadata: ChatFeedbackActions;
 };
 
-export type ZendeskMessage = {
-	avatarUrl?: string;
+export type OdieMessage = {
 	displayName: string;
-	id: string;
 	received: number;
 	role: string;
+	text: string;
+	altText?: string;
+};
+
+export type ZendeskMessage = OdieMessage & {
+	avatarUrl?: string;
+	id: string;
 	actions?: MessageAction[];
 	source?: {
 		type: 'web' | 'slack' | 'zd:surveys' | 'zd:answerBot';
@@ -216,9 +235,9 @@ export type ZendeskMessage = {
 		integrationId: string;
 	};
 	type: ZendeskContentType;
-	text: string;
 	mediaUrl?: string;
-	altText?: string;
+	metadata?: Record< string, any >;
+	htmlText?: string;
 };
 
 export type ZendeskContentType =
@@ -240,6 +259,13 @@ type Metadata = {
 	status: InteractionStatus;
 };
 
+export type OdieConversation = {
+	id: string;
+	createdAt: number;
+	messages: OdieMessage[];
+	metadata?: Metadata;
+};
+
 export type ZendeskConversation = {
 	id: string;
 	lastUpdatedAt: number;
@@ -252,6 +278,8 @@ export type ZendeskConversation = {
 	messages: ZendeskMessage[];
 	metadata: Metadata;
 };
+
+export type Conversations = Array< OdieConversation | ZendeskConversation >;
 
 export type SupportInteractionUser = {
 	user_id: string;

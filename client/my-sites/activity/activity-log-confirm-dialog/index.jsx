@@ -37,27 +37,27 @@ const ActivityLogConfirmDialog = ( {
 					</p>
 					<FormLabel>
 						<FormCheckbox name="themes" onChange={ onSettingsChange } defaultChecked />
-						{ __( 'WordPress Themes' ) }
+						{ __( 'WordPress themes' ) }
 					</FormLabel>
 					<FormLabel>
 						<FormCheckbox name="plugins" onChange={ onSettingsChange } defaultChecked />
-						{ __( 'WordPress Plugins' ) }
+						{ __( 'WordPress plugins' ) }
 					</FormLabel>
 					<FormLabel>
 						<FormCheckbox name="uploads" onChange={ onSettingsChange } defaultChecked />
-						{ __( 'Media Uploads' ) }
+						{ __( 'Media uploads' ) }
 					</FormLabel>
 					<FormLabel>
 						<FormCheckbox name="roots" onChange={ onSettingsChange } defaultChecked />
-						{ __( 'WordPress Root (includes wp-config.php and any non-WordPress files)' ) }
+						{ __( 'WordPress root (includes wp-config.php and any non-WordPress files)' ) }
 					</FormLabel>
 					<FormLabel>
 						<FormCheckbox name="contents" onChange={ onSettingsChange } defaultChecked />
-						{ __( 'WP-Content Directory (excluding themes, plugins, and uploads)' ) }
+						{ __( 'WP-Content directory (excluding themes, plugins, and uploads)' ) }
 					</FormLabel>
 					<FormLabel>
 						<FormCheckbox name="sqls" onChange={ onSettingsChange } defaultChecked />
-						{ __( 'Site Database (SQL)' ) }
+						{ __( 'Site database (SQL)' ) }
 					</FormLabel>
 				</div>
 

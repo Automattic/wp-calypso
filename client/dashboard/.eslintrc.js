@@ -7,16 +7,22 @@ module.exports = {
 					{
 						group: [
 							'calypso/*',
+							// Allowed: calypso/data/php-versions
+							'!calypso/data',
+							'calypso/data/*',
+							'!calypso/data/php-versions',
+							// Allowed: calypso/data/data-center
+							'!calypso/data/data-center',
 							// Allowed: calypso/lib/wp
 							'!calypso/lib',
 							'calypso/lib/*',
 							'!calypso/lib/wp',
-							'!calypso/components',
-							'calypso/components/*',
 							// Allowed: calypso/assets/icons
+							// Allowed: calypso/assets/images
 							'!calypso/assets',
 							'calypso/assets/*',
 							'!calypso/assets/icons',
+							'!calypso/assets/images',
 							// Please do not add exceptions unless agreed on
 							// with the #architecture group.
 						],
@@ -30,9 +36,19 @@ module.exports = {
 							'@automattic/components/*',
 							'!@automattic/components/src',
 							'@automattic/components/src/*',
+							'!@automattic/components/src/circular-progress-bar',
 							'!@automattic/components/src/summary-button',
-							'!@automattic/components/src/core-badge',
-							'!@automattic/dataviews',
+							'!@automattic/components/src/breadcrumbs',
+							'!@automattic/components/src/breadcrumbs/types',
+							'!@automattic/components/src/logos',
+							'!@automattic/calypso-analytics',
+							'!@automattic/domains-table',
+							'!@automattic/domains-table/src/utils/*',
+							'!@automattic/help-center',
+							'!@automattic/number-formatters',
+							'!@automattic/ui',
+							'!@automattic/urls',
+							'!@automattic/viewport',
 							// Please do not add exceptions unless agreed on
 							// with the #architecture group.
 						],

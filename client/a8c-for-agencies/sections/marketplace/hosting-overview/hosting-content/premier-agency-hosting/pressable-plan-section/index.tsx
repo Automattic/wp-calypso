@@ -4,7 +4,11 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
 import useProductAndPlans from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-product-and-plans';
-import { PLAN_CATEGORY_STANDARD } from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/constants';
+import {
+	PLAN_CATEGORY_SIGNATURE,
+	PLAN_CATEGORY_SIGNATURE_HIGH,
+	PLAN_CATEGORY_STANDARD,
+} from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/constants';
 import getPressablePlan, {
 	PressablePlan,
 } from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/lib/get-pressable-plan';
@@ -48,15 +52,37 @@ export default function PressablePlanSection( {
 
 	const selectedPlanInfo = selectedPlan ? getPressablePlan( selectedPlan.slug ) : null;
 
+	const areSignaturePlans = useMemo( () => {
+		return (
+			isReferralMode ||
+			! existingPlanInfo ||
+			existingPlanInfo?.category === PLAN_CATEGORY_SIGNATURE ||
+			existingPlanInfo?.category === PLAN_CATEGORY_SIGNATURE_HIGH
+		);
+	}, [ existingPlanInfo, isReferralMode ] );
+
+	const filteredPressablePlans = useMemo( () => {
+		if ( ! pressablePlans ) {
+			return [];
+		}
+
+		if ( areSignaturePlans ) {
+			return pressablePlans.filter( ( plan ) => plan.slug.startsWith( 'pressable-signature-' ) );
+		}
+
+		return pressablePlans.filter( ( plan ) => ! plan.slug.startsWith( 'pressable-signature-' ) );
+	}, [ pressablePlans, areSignaturePlans ] );
+
 	useEffect( () => {
 		if ( pressablePlans?.length ) {
+			const defaultSlug = areSignaturePlans ? 'pressable-signature-1' : 'pressable-build';
 			setSelectedPlan(
 				isReferralMode
-					? pressablePlans.find( ( plan ) => plan.slug === 'pressable-build' ) ?? null
-					: pressablePlans[ 0 ]
+					? pressablePlans.find( ( plan ) => plan.slug === defaultSlug ) ?? null
+					: pressablePlans.find( ( plan ) => plan.slug === defaultSlug ) ?? pressablePlans[ 0 ]
 			);
 		}
-	}, [ isReferralMode, pressablePlans, setSelectedPlan ] );
+	}, [ isReferralMode, pressablePlans, setSelectedPlan, areSignaturePlans ] );
 
 	useEffect( () => {
 		if ( ! isReferralMode && existingPlan ) {
@@ -84,20 +110,22 @@ export default function PressablePlanSection( {
 			<HostingPlanSection.Banner>
 				<PlanSelectionFilter
 					selectedPlan={ selectedPlan }
-					plans={ pressablePlans }
+					plans={ filteredPressablePlans }
 					onSelectPlan={ setSelectedPlan }
 					pressablePlan={ isReferralMode ? null : existingPlanInfo }
 					isLoading={ ! isFetching }
+					areSignaturePlans={ areSignaturePlans }
 				/>
 			</HostingPlanSection.Banner>
 		);
 	}, [
 		pressableOwnership,
 		selectedPlan,
-		pressablePlans,
+		filteredPressablePlans,
 		isReferralMode,
 		existingPlanInfo,
 		isFetching,
+		areSignaturePlans,
 	] );
 
 	const heading = useMemo( () => {
@@ -112,7 +140,8 @@ export default function PressablePlanSection( {
 		return translate( 'Choose from a variety of high performance hosting plans' );
 	}, [ existingPlan, isReferralMode, pressableOwnership, translate ] );
 
-	const isStandardPlan = selectedPlanInfo?.category === PLAN_CATEGORY_STANDARD;
+	const isStandardPlan =
+		! areSignaturePlans && selectedPlanInfo?.category === PLAN_CATEGORY_STANDARD;
 
 	const onScheduleDemo = useCallback( () => {
 		dispatch(
@@ -152,7 +181,7 @@ export default function PressablePlanSection( {
 					</p>
 				) : (
 					<p>
-						{ isStandardPlan
+						{ areSignaturePlans || isStandardPlan
 							? translate(
 									'With Signature Plans, your traffic & storage limits are shared amongst your total sites.'
 							  )

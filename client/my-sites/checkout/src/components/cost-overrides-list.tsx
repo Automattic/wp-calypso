@@ -3,7 +3,9 @@ import {
 	isDIFMProduct,
 	isMonthlyProduct,
 	isTriennially,
+	isWpComPlan,
 	isYearly,
+	type PlanSlug,
 } from '@automattic/calypso-products';
 import colorStudio from '@automattic/color-studio';
 import { FormStatus, useFormStatus, Button } from '@automattic/composite-checkout';
@@ -25,9 +27,16 @@ import {
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { useStreamlinedPriceExperiment } from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
+import useEquivalentMonthlyTotals from 'calypso/my-sites/checkout/utils/use-equivalent-monthly-totals';
+import {
+	useStreamlinedPriceExperiment,
+	isStreamlinedPriceCheckoutTreatment,
+} from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
 import { useSelector } from 'calypso/state';
-import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
+import {
+	getIsOnboardingAffiliateFlow,
+	getIsOnboardingUnifiedFlow,
+} from 'calypso/state/signup/flow/selectors';
 import useCartKey from '../../use-cart-key';
 import { getAffiliateCouponLabel } from '../../utils';
 import { CheckIcon } from './check-icon';
@@ -256,6 +265,11 @@ function LineItemCostOverride( {
 			</div>
 		);
 	}
+
+	const shouldShowDiscount =
+		! isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) ||
+		isWpComPlan( product.product_slug );
+
 	return (
 		<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
 			<span className="cost-overrides-list-item__reason cost-overrides-list-item__reason--is-discount">
@@ -263,7 +277,7 @@ function LineItemCostOverride( {
 			</span>
 			<span className="cost-overrides-list-item__discount">
 				{ costOverride.discountAmount &&
-					! streamlinedPriceExperimentAssignment &&
+					shouldShowDiscount &&
 					formatCurrency( -costOverride.discountAmount, product.currency, {
 						isSmallestUnit: true,
 						signForPositive: true, // TODO clk numberFormatCurrency signForPositive only usage
@@ -386,7 +400,12 @@ const WPCheckoutCheckIcon = styled( CheckIcon )`
 
 function SingleProductAndCostOverridesList( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
-	const costOverridesList = filterCostOverridesForLineItem( product, translate );
+	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
+	const costOverridesList = filterCostOverridesForLineItem(
+		product,
+		translate,
+		isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment )
+	);
 	const label = getLabel( product );
 	const actualAmountDisplay = formatCurrency(
 		product.item_original_subtotal_integer,
@@ -396,17 +415,19 @@ function SingleProductAndCostOverridesList( { product }: { product: ResponseCart
 			stripZeros: true,
 		}
 	);
-	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
-	if ( streamlinedPriceExperimentAssignment ) {
+
+	const monthlyPrices = useEquivalentMonthlyTotals( [ product ] );
+	if ( isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) ) {
 		let streamlinedActualAmountDisplay;
 
-		// logic taken from packages/wpcom-checkout/src/checkout-line-items.tsx
-		const originalAmountInteger = product.item_original_subtotal_integer;
+		const originalAmountInteger =
+			monthlyPrices[ product.product_slug as PlanSlug ] || product.item_original_subtotal_integer;
 		const originalAmountDisplay = formatCurrency( originalAmountInteger, product.currency, {
 			isSmallestUnit: true,
 			stripZeros: true,
 		} );
-		const itemSubtotalInteger = product.item_subtotal_integer;
+		const itemSubtotalInteger =
+			product.item_subtotal_integer + ( product.coupon_savings_integer ?? 0 );
 		streamlinedActualAmountDisplay = formatCurrency( itemSubtotalInteger, product.currency, {
 			isSmallestUnit: true,
 			stripZeros: true,
@@ -415,7 +436,9 @@ function SingleProductAndCostOverridesList( { product }: { product: ResponseCart
 			itemSubtotalInteger < originalAmountInteger && originalAmountDisplay
 		);
 
-		if ( ! isDiscounted ) {
+		// For WPCOM plans always show the renewal amount for legal reasons.
+		// Introductory offer discount would be shown in LineItemCostOverrides.
+		if ( ! isDiscounted || isWpComPlan( product.product_slug ) ) {
 			streamlinedActualAmountDisplay = actualAmountDisplay;
 		}
 
@@ -455,6 +478,7 @@ export function CouponCostOverride( {
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 	const isOnboardingAffiliateFlow = useSelector( getIsOnboardingAffiliateFlow );
+	const isOnboardingUnifiedFlow = useSelector( getIsOnboardingUnifiedFlow );
 	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
 
 	if ( ! responseCart.coupon || ! responseCart.coupon_savings_total_integer ) {
@@ -466,11 +490,17 @@ export function CouponCostOverride( {
 		args: { couponCode: responseCart.coupon },
 	} );
 
-	const label = isOnboardingAffiliateFlow ? getAffiliateCouponLabel() : couponLabel;
-
+	const label =
+		isOnboardingAffiliateFlow || isOnboardingUnifiedFlow ? getAffiliateCouponLabel() : couponLabel;
 	return (
-		<CostOverridesListStyle isStreamlinedPrice={ streamlinedPriceExperimentAssignment !== null }>
-			{ streamlinedPriceExperimentAssignment && <WPCheckoutCheckIcon /> }
+		<CostOverridesListStyle
+			isStreamlinedPrice={ isStreamlinedPriceCheckoutTreatment(
+				streamlinedPriceExperimentAssignment
+			) }
+		>
+			{ isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) && (
+				<WPCheckoutCheckIcon />
+			) }
 			<div className="cost-overrides-list-item cost-overrides-list-item--coupon">
 				<span className="cost-overrides-list-item__reason cost-overrides-list-item__reason--is-discount">
 					{ label }

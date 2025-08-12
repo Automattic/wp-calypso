@@ -3,6 +3,10 @@ import { useResizeObserver } from '@wordpress/compose';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
+import {
+	getPerformanceStatus,
+	getPerformanceStatusText,
+} from 'calypso/dashboard/utils/site-performance';
 import './style.scss';
 
 type PerformanceScoreProps = {
@@ -20,20 +24,8 @@ export const PerformanceScore = ( props: PerformanceScoreProps ) => {
 	const isMobile = useMobileBreakpoint();
 
 	const { value, recommendationsQuantity, recommendationsRef } = props;
-	const getStatus = ( value: number ) => {
-		if ( value <= 49 ) {
-			return 'poor';
-		} else if ( value > 49 && value < 90 ) {
-			return 'neutral';
-		}
-		return 'good';
-	};
-	const status = getStatus( value );
-	const statusText = {
-		poor: translate( 'Poor' ),
-		neutral: translate( 'Needs improvement' ),
-		good: translate( 'Excellent' ),
-	}[ status ];
+	const status = getPerformanceStatus( value );
+	const statusText = getPerformanceStatusText( status );
 
 	useEffect( () => {
 		if ( ! entry ) {
@@ -98,12 +90,12 @@ export const PerformanceScore = ( props: PerformanceScoreProps ) => {
 			</div>
 			<div className="disclaimer">
 				{ translate(
-					'The performance score is a combined representation of your site‘s individual speed metrics. {{link}}See calculator ↗{{/link}}',
+					'The performance score is a combined representation of your site‘s individual speed metrics. {{link}}Learn more ↗{{/link}}',
 					{
 						components: {
 							link: (
 								<a
-									href="https://developer.chrome.com/docs/lighthouse/performance/performance-scoring"
+									href="https://developer.wordpress.com/docs/site-performance/speed-test/#performance-score"
 									target="_blank"
 									rel="noreferrer"
 								/>

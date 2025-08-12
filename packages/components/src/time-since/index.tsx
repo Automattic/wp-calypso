@@ -2,9 +2,24 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, useMemo, useEffect } from 'react';
 
 interface TimeSinceProps {
+	/**
+	 * An ISO 8601 date string or any string parseable by `new Date()`.
+	 */
 	date: string;
+	/**
+	 * Controls the formatting for older dates:
+	 * - 'll'   : Locale medium date (default, e.g., "Jun 12, 2024" or "12 Jun 2024" depending on locale)
+	 * - 'lll'  : Always "d MMM y" (e.g., "12 Jun 2024"), locale-independent
+	 * - 'llll' : Full date and time (e.g., "Wednesday, June 12, 2024 at 2:00:00 PM")
+	 */
 	dateFormat?: string;
+	/**
+	 * CSS class for the <time> element.
+	 */
 	className?: string;
+	/**
+	 * BCP 47 locale string (e.g., "en", "es-ES"). Defaults to the user's locale.
+	 */
 	locale?: string;
 }
 
@@ -76,20 +91,21 @@ function formatDate( date: Date, format: string, locale?: string ): string {
 		return '';
 	}
 
-	// Map moment-style formats to Intl options
 	const formatOptions: Intl.DateTimeFormatOptions = {
-		// Default to medium date format
 		dateStyle: 'medium',
 		timeStyle: 'short',
 	};
 
-	// Handle common moment formats
 	if ( format === 'll' ) {
-		// Medium date format without time
 		formatOptions.dateStyle = 'medium';
 		delete formatOptions.timeStyle;
+	} else if ( format === 'lll' ) {
+		formatOptions.dateStyle = undefined;
+		formatOptions.timeStyle = undefined;
+		formatOptions.day = 'numeric';
+		formatOptions.month = 'short';
+		formatOptions.year = 'numeric';
 	} else if ( format === 'llll' ) {
-		// Full date and time format
 		formatOptions.dateStyle = 'full';
 		formatOptions.timeStyle = 'medium';
 	}
@@ -97,6 +113,18 @@ function formatDate( date: Date, format: string, locale?: string ): string {
 	return new Intl.DateTimeFormat( locale, formatOptions ).format( date );
 }
 
+/**
+ * TimeSince component
+ *
+ * Displays a human-readable representation of the time elapsed since a given date.
+ * - For recent dates, shows relative time (e.g., "just now", "5m ago", "2d ago").
+ * - For older dates, shows a formatted date string.
+ *
+ * The full formatted date is also available as a tooltip (title attribute).
+ * @example
+ *   <TimeSince date={someISOString} />
+ *   <TimeSince date={someISOString} dateFormat="lll" />
+ */
 function TimeSince( { className, date, dateFormat = 'll' }: TimeSinceProps ) {
 	const translate = useTranslate();
 	const humanDate = useRelativeTime( date, dateFormat );

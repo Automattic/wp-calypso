@@ -1,10 +1,10 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Button, Card, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
+import { Card, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
 import { alert } from '@automattic/components/src/icons';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { suggestEmailCorrection } from '@automattic/onboarding';
-import { TextControl } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import cookie from 'cookie';
@@ -22,7 +22,6 @@ import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/components/notice';
 import { LastUsedSocialButton } from 'calypso/components/social-buttons';
-import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import {
 	getSignupUrl,
 	pathWithLeadingSlash,
@@ -30,9 +29,9 @@ import {
 	getLoginLinkPageUrl,
 } from 'calypso/lib/login';
 import {
-	isCrowdsignalOAuth2Client,
 	isGravatarFlowOAuth2Client,
 	isGravatarOAuth2Client,
+	isGravPoweredOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -67,8 +66,10 @@ import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import ErrorNotice from './error-notice';
+import OneTapAuthLoaderOverlay from './one-tap-auth-loader-overlay';
 import SocialLoginForm from './social';
 import { isA4AReferralClient } from './utils/is-a4a-referral-for-client';
+import { shouldUseMagicCode } from './utils/should-use-magic-code';
 
 import './login-form.scss';
 
@@ -99,13 +100,13 @@ export class LoginForm extends Component {
 		locale: PropTypes.string,
 		showSocialLoginFormOnly: PropTypes.bool,
 		currentQuery: PropTypes.object,
-		hideSignupLink: PropTypes.bool,
-		isSignupExistingAccount: PropTypes.bool,
 		sendMagicLoginLink: PropTypes.func,
 		isSendingEmail: PropTypes.bool,
 		cancelSocialAccountConnectLinking: PropTypes.func,
 		isJetpack: PropTypes.bool,
 		loginButtonText: PropTypes.string,
+		isGravatarFixedAccountLogin: PropTypes.bool.isRequired,
+		isGravPoweredClient: PropTypes.bool,
 	};
 
 	state = {
@@ -156,7 +157,6 @@ export class LoginForm extends Component {
 		if (
 			currentRoute &&
 			currentRoute.includes( '/log-in/jetpack' ) &&
-			config.isEnabled( 'jetpack/magic-link-signup' ) &&
 			requestError.code === 'unknown_user' &&
 			! this.props.isWooJPC
 		) {
@@ -231,11 +231,7 @@ export class LoginForm extends Component {
 	isFullView() {
 		const { accountType, hasAccountTypeLoaded, socialAccountIsLinking } = this.props;
 
-		return (
-			socialAccountIsLinking ||
-			( hasAccountTypeLoaded && isRegularAccount( accountType ) ) ||
-			this.props.isBlazePro
-		);
+		return socialAccountIsLinking || ( hasAccountTypeLoaded && isRegularAccount( accountType ) );
 	}
 
 	isPasswordView() {
@@ -246,10 +242,7 @@ export class LoginForm extends Component {
 
 	isUsernameOrEmailView() {
 		const { hasAccountTypeLoaded, socialAccountIsLinking, isSendingEmail } = this.props;
-		return (
-			isSendingEmail ||
-			( ! socialAccountIsLinking && ! hasAccountTypeLoaded && ! this.props.isBlazePro )
-		);
+		return isSendingEmail || ( ! socialAccountIsLinking && ! hasAccountTypeLoaded );
 	}
 
 	resetView = ( event ) => {
@@ -282,8 +275,7 @@ export class LoginForm extends Component {
 	onSubmitForm = ( event ) => {
 		event.preventDefault();
 
-		// Skip this step if we're in the Blaze Pro signup flows, and hasAccountTypeLoaded.
-		if ( ! this.props.hasAccountTypeLoaded && ! this.props.isBlazePro ) {
+		if ( ! this.props.hasAccountTypeLoaded ) {
 			// Google Chrome on iOS will autofill without sending events, leading the user
 			// to see a filled box but getting an error. We fetch the value directly from
 			// the DOM as a workaround.
@@ -337,6 +329,7 @@ export class LoginForm extends Component {
 				redirectTo: this.props.redirectTo,
 				requestLoginEmailFormFlow: true,
 				createAccount: true,
+				...( shouldUseMagicCode( { isJetpack: this.props.isJetpack } ) && { tokenType: 'code' } ),
 				flow: 'jetpack',
 			} );
 		}
@@ -349,23 +342,6 @@ export class LoginForm extends Component {
 				},
 				'/log-in/jetpack/link'
 			)
-		);
-	}
-
-	renderLoginFromSignupNotice() {
-		return (
-			<Notice status="is-transparent-info" showDismiss={ false }>
-				{ this.props.translate(
-					'This email address is already associated with an account. Please consider {{returnToSignup}}using another one{{/returnToSignup}} or log in.',
-					{
-						components: {
-							returnToSignup: (
-								<a href={ this.getSignupUrl() } onClick={ this.recordSignUpLinkClick } />
-							),
-						},
-					}
-				) }
-			</Notice>
 		);
 	}
 
@@ -395,22 +371,18 @@ export class LoginForm extends Component {
 	};
 
 	getLoginButtonText = () => {
-		const { translate, isWoo, isWooJPC, loginButtonText, isJetpack } = this.props;
+		const { translate, isWoo, loginButtonText, isJetpack } = this.props;
 
 		if ( loginButtonText ) {
 			return loginButtonText;
 		}
 
 		if ( this.isUsernameOrEmailView() ) {
-			if ( isJetpack ) {
+			if ( isJetpack && ! isWoo ) {
 				return translate( 'Continue with email' );
 			}
 
 			return translate( 'Continue' );
-		}
-
-		if ( isWoo && ! isWooJPC ) {
-			return translate( 'Get started' );
 		}
 
 		return translate( 'Log In' );
@@ -421,168 +393,48 @@ export class LoginForm extends Component {
 		return false;
 	};
 
-	renderWooCommerce( { showSocialLogin = true, socialToS } = {} ) {
-		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
-		const { requestError, socialAccountIsLinking: linkingSocialUser } = this.props;
-
-		return (
-			<form method="post">
-				<Card className="login__form">
-					<div className="login__form-userdata">
-						{ linkingSocialUser && (
-							<p>
-								{ this.props.translate(
-									'We found a WordPress.com account with the email address "%(email)s". ' +
-										'Log in to this account to connect it to your %(service)s profile, ' +
-										'or choose a different %(service)s profile.',
-									{
-										args: {
-											email: this.props.socialAccountLinkEmail,
-											service: capitalize( this.props.socialAccountLinkService ),
-										},
-									}
-								) }
-							</p>
-						) }
-
-						<FormLabel htmlFor="usernameOrEmail">
-							{ this.isPasswordView() ? (
-								<Button
-									borderless
-									className="login__form-change-username"
-									onClick={ this.resetView }
-								>
-									<Gridicon icon="arrow-left" size={ 18 } />
-
-									{ includes( this.state.usernameOrEmail, '@' )
-										? this.props.translate( 'Change Email Address' )
-										: this.props.translate( 'Change Username' ) }
-								</Button>
-							) : null }
-						</FormLabel>
-
-						<TextControl
-							autoCapitalize="off"
-							autoCorrect="off"
-							spellCheck="false"
-							label={ this.props.translate( 'Email Address or Username' ) }
-							disabled={ isFormDisabled || this.isPasswordView() }
-							id="usernameOrEmail"
-							name="usernameOrEmail"
-							value={ this.state.usernameOrEmail }
-							onChange={ ( value ) => {
-								this.props.formUpdate();
-								this.setState( {
-									usernameOrEmail: value,
-								} );
-							} }
-							__next40pxDefaultSize
-							__nextHasNoMarginBottom
-						/>
-
-						{ requestError && requestError.field === 'usernameOrEmail' && (
-							<FormInputValidation isError text={ requestError.message } />
-						) }
-
-						<div
-							className={ clsx( 'login__form-password', {
-								'is-hidden': this.isUsernameOrEmailView(),
-							} ) }
-						>
-							<TextControl
-								label={ this.props.translate( 'Password' ) }
-								disabled={ isFormDisabled }
-								id="password"
-								name="password"
-								type="password"
-								value={ this.state.password }
-								onChange={ ( value ) => {
-									this.props.formUpdate();
-									this.setState( {
-										password: value,
-									} );
-								} }
-								__next40pxDefaultSize
-								__nextHasNoMarginBottom
-							/>
-
-							{ requestError && requestError.field === 'password' && (
-								<FormInputValidation isError text={ requestError.message } />
-							) }
-						</div>
-					</div>
-
-					<div className="login__form-footer">
-						<p className="login__social-tos">{ socialToS }</p>
-						<div className="login__form-action">
-							<Button
-								primary
-								disabled={ isFormDisabled }
-								onClick={ this.handleWooCommerceSubmit }
-								type="submit"
-							>
-								{ this.getLoginButtonText() }
-							</Button>
-						</div>
-
-						{ config.isEnabled( 'signup/social' ) && showSocialLogin && (
-							<div className="login__form-social">
-								<div className="login__form-social-divider">
-									<span>{ this.props.translate( 'or' ) }</span>
-								</div>
-								<SocialLoginForm
-									handleLogin={ this.handleSocialLogin }
-									trackLoginAndRememberRedirect={ this.trackLoginAndRememberRedirect }
-									socialServiceResponse={ this.props.socialServiceResponse }
-								/>
-							</div>
-						) }
-					</div>
-				</Card>
-			</form>
-		);
-	}
-
 	renderChangeUsername() {
+		if ( this.props.isGravatarFixedAccountLogin ) {
+			return null;
+		}
+
 		return (
-			<button type="button" className="login__form-change-username" onClick={ this.resetView }>
+			<Button
+				type="button"
+				className="login__form-change-username"
+				onClick={ this.resetView }
+				variant="link"
+				size="compact"
+			>
 				<Gridicon icon="arrow-left" size={ 18 } />
 				{ includes( this.state.usernameOrEmail, '@' )
-					? this.props.translate( 'Change Email Address' )
-					: this.props.translate( 'Change Username' ) }
-			</button>
+					? this.props.translate( 'Change email address' )
+					: this.props.translate( 'Change username' ) }
+			</Button>
 		);
 	}
 
 	renderUsernameorEmailLabel() {
-		if ( this.props.isWoo ) {
-			return this.props.translate( 'Your email or username' );
-		}
-
-		if ( this.props.isBlazePro ) {
-			return this.props.translate( 'Your email address' );
-		}
-
-		if ( this.props.isWoo ) {
-			return this.props.translate( 'Your email address or username' );
-		}
-
 		if ( this.props.currentQuery?.username_only === 'true' ) {
 			return this.props.translate( 'Your username' );
 		}
 
-		return this.isPasswordView() ? (
-			this.renderChangeUsername()
-		) : (
+		if ( this.isPasswordView() ) {
+			return this.renderChangeUsername();
+		}
+
+		const showLabel = ! this.props.isJetpack || this.props.isWoo;
+
+		return (
 			// Since the input receives focus on page load, screen reader users don't have any context
 			// for what credentials to use. Unlike other users, they won't have seen the informative
 			// text above the form. We therefore need to clarity the must use WordPress.com credentials.
 			<>
 				<span className="screen-reader-text">
-					{ this.props.translate( 'WordPress.com Email Address or Username' ) }
+					{ this.props.translate( 'WordPress.com email address or username' ) }
 				</span>
-				{ ! this.props.isJetpack && (
-					<span aria-hidden="true">{ this.props.translate( 'Email Address or Username' ) }</span>
+				{ showLabel && (
+					<span aria-hidden="true">{ this.props.translate( 'Email address or username' ) }</span>
 				) }
 			</>
 		);
@@ -766,26 +618,23 @@ export class LoginForm extends Component {
 	};
 
 	renderLoginCard() {
-		const { lastUsedAuthenticationMethod } = this.state;
-		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
-		const isSubmitButtonDisabled = isFormDisabled;
-		let loginUrl;
-
 		const {
-			oauth2Client,
 			requestError,
 			socialAccountIsLinking: linkingSocialUser,
 			isWoo,
-			isBlazePro,
-			hideSignupLink,
-			isSignupExistingAccount,
 			isSendingEmail,
 			isSocialFirst,
-			isJetpack,
+			isGravPoweredClient,
+			isGravatarFixedAccountLogin,
 		} = this.props;
+		const { lastUsedAuthenticationMethod } = this.state;
 
+		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
+		const isEmailOrUsernameInputDisabled =
+			isFormDisabled || this.isPasswordView() || isGravatarFixedAccountLogin;
+		const isSubmitButtonDisabled = isFormDisabled;
+		let loginUrl;
 		const isPasswordHidden = this.isUsernameOrEmailView();
-		const isOauthLogin = !! oauth2Client;
 		const signupUrl = this.getSignupUrl();
 		const shouldRenderForgotPasswordLink = ! isPasswordHidden && isWoo;
 
@@ -837,12 +686,6 @@ export class LoginForm extends Component {
 
 		return (
 			<Card className="login__form">
-				{ isCrowdsignalOAuth2Client( oauth2Client ) && (
-					<p className="login__form-subheader">
-						{ this.props.translate( 'Connect with your WordPress.com account:' ) }
-					</p>
-				) }
-
 				{ showLastUsedAuthenticationMethod ? (
 					<>
 						<span className="last-used-authentication-method">
@@ -876,9 +719,9 @@ export class LoginForm extends Component {
 								</p>
 							) }
 
-							{ isSignupExistingAccount && this.renderLoginFromSignupNotice() }
-
-							<FormLabel htmlFor="usernameOrEmail">{ this.renderUsernameorEmailLabel() }</FormLabel>
+							<FormLabel htmlFor="usernameOrEmail" hasCoreStylesNoCaps>
+								{ this.renderUsernameorEmailLabel() }
+							</FormLabel>
 
 							<FormTextInput
 								autoCapitalize="off"
@@ -893,7 +736,8 @@ export class LoginForm extends Component {
 								name="usernameOrEmail"
 								ref={ this.saveUsernameOrEmailRef }
 								value={ this.state.usernameOrEmail }
-								disabled={ isFormDisabled || this.isPasswordView() }
+								disabled={ isEmailOrUsernameInputDisabled }
+								hasCoreStyles
 							/>
 
 							{ requestError && requestError.field === 'usernameOrEmail' && (
@@ -982,7 +826,9 @@ export class LoginForm extends Component {
 								} ) }
 								aria-hidden={ isPasswordHidden }
 							>
-								<FormLabel htmlFor="password">{ this.props.translate( 'Password' ) }</FormLabel>
+								<FormLabel htmlFor="password" hasCoreStylesNoCaps>
+									{ this.props.translate( 'Password' ) }
+								</FormLabel>
 
 								<FormPasswordInput
 									autoCapitalize="off"
@@ -997,6 +843,8 @@ export class LoginForm extends Component {
 									value={ this.state.password }
 									disabled={ isFormDisabled }
 									tabIndex={ isPasswordHidden ? -1 : undefined /* not tabbable when hidden */ }
+									hasCoreStyles
+									isHidden={ isPasswordHidden }
 								/>
 
 								{ requestError && requestError.field === 'password' && (
@@ -1005,9 +853,7 @@ export class LoginForm extends Component {
 							</div>
 						</div>
 
-						{ ! isBlazePro && ! isJetpack && (
-							<p className="login__form-terms">{ renderTerms() }</p>
-						) }
+						{ isGravPoweredClient && <p className="login__form-terms">{ renderTerms() }</p> }
 
 						{ shouldRenderForgotPasswordLink && this.renderLostPasswordLink() }
 
@@ -1019,47 +865,6 @@ export class LoginForm extends Component {
 								buttonText={ this.getLoginButtonText() }
 							/>
 						</div>
-
-						{ ! isBlazePro && isJetpack && (
-							<p className="login__form-jetpack-terms">
-								{ this.props.translate(
-									'By continuing you agree to our {{tosLink}}Terms of Service{{/tosLink}} and ' +
-										'to {{privacyLink}}sync your site’s data{{/privacyLink}} with us. We’ll check if that ' +
-										'email is linked to an existing WordPress.com account or create a new one instantly. ',
-									{
-										components: {
-											tosLink: (
-												<a
-													href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-													target="_blank"
-													rel="noopener noreferrer"
-												/>
-											),
-											privacyLink: (
-												<a
-													href={ localizeUrl( 'https://automattic.com/privacy/' ) }
-													target="_blank"
-													rel="noopener noreferrer"
-												/>
-											),
-										},
-									}
-								) }
-							</p>
-						) }
-
-						{ ! hideSignupLink && isOauthLogin && (
-							<div className={ clsx( 'login__form-signup-link' ) }>
-								{ this.props.translate(
-									'Not on WordPress.com? {{signupLink}}Create an Account{{/signupLink}}.',
-									{
-										components: {
-											signupLink: <a href={ signupUrl } />,
-										},
-									}
-								) }
-							</div>
-						) }
 					</>
 				) }
 			</Card>
@@ -1067,7 +872,14 @@ export class LoginForm extends Component {
 	}
 
 	renderLoginOptions() {
-		const { oauth2Client, currentQuery, isWoo, isWooJPC, isSocialFirst, isJetpack } = this.props;
+		const {
+			oauth2Client,
+			currentQuery,
+			isWooJPC,
+			isSocialFirst,
+			isJetpack,
+			isGravatarFixedAccountLogin,
+		} = this.props;
 
 		const { lastUsedAuthenticationMethod } = this.state;
 
@@ -1075,13 +887,6 @@ export class LoginForm extends Component {
 		const isFromAutomatticForAgenciesReferralClient = isA4AReferralClient(
 			currentQuery,
 			oauth2Client
-		);
-		const isFromGravatar3rdPartyApp =
-			isGravatarOAuth2Client( oauth2Client ) && currentQuery?.gravatar_from === '3rd-party';
-		const isFromGravatarQuickEditor =
-			isGravatarOAuth2Client( oauth2Client ) && currentQuery?.gravatar_from === 'quick-editor';
-		const isGravatarFlowWithEmail = !! (
-			isGravatarFlowOAuth2Client( oauth2Client ) && currentQuery?.email_address
 		);
 
 		const showLastUsedAuthenticationMethod =
@@ -1094,38 +899,7 @@ export class LoginForm extends Component {
 			config.isEnabled( 'signup/social' ) &&
 			! isFromAutomatticForAgenciesReferralClient &&
 			! isCoreProfilerLostPasswordFlow &&
-			! isFromGravatar3rdPartyApp &&
-			! isFromGravatarQuickEditor &&
-			! isGravatarFlowWithEmail;
-
-		if ( isJetpack ) {
-			return (
-				<div className="login__form-jetpack">
-					{ shouldShowSocialLoginForm && (
-						<SocialLoginForm
-							lastUsedAuthenticationMethod={
-								showLastUsedAuthenticationMethod ? this.state.lastUsedAuthenticationMethod : ''
-							}
-							handleLogin={ this.handleSocialLogin }
-							trackLoginAndRememberRedirect={ this.trackLoginAndRememberRedirect }
-							resetLastUsedAuthenticationMethod={ this.resetLastUsedAuthenticationMethod }
-							socialServiceResponse={ this.props.socialServiceResponse }
-							shouldRenderToS={ false }
-							isWoo={ isWoo }
-							isSocialFirst={
-								isSocialFirst || ( isJetpack && ! this.props.isFromAutomatticForAgenciesPlugin )
-							}
-							magicLoginLink={ null }
-							qrLoginLink={ this.getQrLoginLink() }
-						/>
-					) }
-
-					<FormDivider />
-
-					{ this.renderLoginCard() }
-				</div>
-			);
-		}
+			! isGravatarFixedAccountLogin;
 
 		return (
 			<>
@@ -1142,11 +916,10 @@ export class LoginForm extends Component {
 							trackLoginAndRememberRedirect={ this.trackLoginAndRememberRedirect }
 							resetLastUsedAuthenticationMethod={ this.resetLastUsedAuthenticationMethod }
 							socialServiceResponse={ this.props.socialServiceResponse }
-							shouldRenderToS={ false }
-							isWoo={ isWoo }
 							isSocialFirst={ isSocialFirst }
 							magicLoginLink={ ! isWooJPC ? this.getMagicLoginPageLink() : null }
 							qrLoginLink={ this.getQrLoginLink() }
+							isJetpack={ isJetpack }
 						/>
 					</Fragment>
 				) }
@@ -1156,40 +929,15 @@ export class LoginForm extends Component {
 
 	render() {
 		const {
-			accountType,
-			oauth2Client,
-			isJetpackWooDnaFlow,
 			currentQuery,
 			showSocialLoginFormOnly,
 			isWoo,
 			isBlazePro,
 			isSocialFirst,
+			isJetpack,
+			isOneTapAuth,
+			socialAccountIsLinking: linkingSocialUser,
 		} = this.props;
-
-		const socialToS = this.props.translate(
-			// To make any changes to this copy please speak to the legal team
-			'By continuing with any of the options below, ' +
-				'you agree to our {{tosLink}}Terms of Service{{/tosLink}} and' +
-				' have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
-			{
-				components: {
-					tosLink: (
-						<a
-							href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-							target="_blank"
-							rel="noopener noreferrer"
-						/>
-					),
-					privacyLink: (
-						<a
-							href={ localizeUrl( 'https://automattic.com/privacy/' ) }
-							target="_blank"
-							rel="noopener noreferrer"
-						/>
-					),
-				},
-			}
-		);
 
 		if ( showSocialLoginFormOnly ) {
 			return config.isEnabled( 'signup/social' ) ? (
@@ -1199,45 +947,35 @@ export class LoginForm extends Component {
 						handleLogin={ this.handleSocialLogin }
 						trackLoginAndRememberRedirect={ this.trackLoginAndRememberRedirect }
 						socialServiceResponse={ this.props.socialServiceResponse }
-						shouldRenderToS
+						isJetpack={ isJetpack }
 					/>
 				</Fragment>
 			) : null;
 		}
 
-		if ( isJetpackWooDnaFlow ) {
-			return this.renderWooCommerce( {
-				showSocialLogin: !! accountType, // Only show the social buttons after the user entered an email.
-				socialToS,
-			} );
-		}
-
 		return (
-			<form
-				className={ clsx( {
-					'is-social-first': isSocialFirst,
-					'is-woo-passwordless': isWoo,
-					'is-blaze-pro': isBlazePro,
-				} ) }
-				onSubmit={ this.onSubmitForm }
-				method="post"
-			>
-				{ isCrowdsignalOAuth2Client( oauth2Client ) && (
-					<p className="login__form-subheader">
-						{ this.props.translate( 'Connect with your WordPress.com account:' ) }
-					</p>
-				) }
+			<>
+				{ isOneTapAuth && ! linkingSocialUser && <OneTapAuthLoaderOverlay /> }
+				<form
+					className={ clsx( {
+						'is-social-first': isSocialFirst,
+						'is-woo-passwordless': isWoo,
+						'is-blaze-pro': isBlazePro,
+					} ) }
+					onSubmit={ this.onSubmitForm }
+					method="post"
+				>
+					{ this.renderLoginOptions() }
 
-				{ this.renderLoginOptions() }
-
-				{ this.showJetpackConnectSiteOnly() && (
-					<JetpackConnectSiteOnly
-						homeUrl={ currentQuery?.site }
-						redirectAfterAuth={ currentQuery?.redirect_after_auth }
-						source="login"
-					/>
-				) }
-			</form>
+					{ this.showJetpackConnectSiteOnly() && (
+						<JetpackConnectSiteOnly
+							homeUrl={ currentQuery?.site }
+							redirectAfterAuth={ currentQuery?.redirect_after_auth }
+							source="login"
+						/>
+					) }
+				</form>
+			</>
 		);
 	}
 }
@@ -1245,16 +983,25 @@ export class LoginForm extends Component {
 export default connect(
 	( state, props ) => {
 		const accountType = getAuthAccountTypeSelector( state );
+		const oauth2Client = getCurrentOAuth2Client( state );
+		const currentQuery = getCurrentQueryArguments( state );
+
+		const isFromGravatar3rdPartyApp =
+			isGravatarOAuth2Client( oauth2Client ) && currentQuery?.gravatar_from === '3rd-party';
+		const isFromGravatarQuickEditor =
+			isGravatarOAuth2Client( oauth2Client ) && currentQuery?.gravatar_from === 'quick-editor';
+		const isGravatarFlowWithEmail = !! (
+			isGravatarFlowOAuth2Client( oauth2Client ) && currentQuery?.email_address
+		);
 
 		return {
 			accountType,
 			currentRoute: getCurrentRoute( state ),
 			hasAccountTypeLoaded: accountType !== null,
 			isFormDisabled: isFormDisabledSelector( state ),
-			oauth2Client: getCurrentOAuth2Client( state ),
+			oauth2Client,
 			isFromAutomatticForAgenciesPlugin:
 				'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ),
-			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
 			isWooJPC: isWooJPCFlow( state ),
 			isWoo: getIsWoo( state ),
 			redirectTo: getRedirectToOriginal( state ),
@@ -1268,8 +1015,12 @@ export default connect(
 				getCurrentQueryArguments( state )?.email_address,
 			socialService: getInitialQueryArguments( state )?.service,
 			wccomFrom: getWccomFrom( state ),
-			currentQuery: getCurrentQueryArguments( state ),
+			currentQuery,
 			isBlazePro: getIsBlazePro( state ),
+			isOneTapAuth: !! get( getCurrentQueryArguments( state ), 'oneTapAuth' ),
+			isGravatarFixedAccountLogin:
+				isFromGravatar3rdPartyApp || isFromGravatarQuickEditor || isGravatarFlowWithEmail,
+			isGravPoweredClient: isGravPoweredOAuth2Client( oauth2Client ),
 		};
 	},
 	{

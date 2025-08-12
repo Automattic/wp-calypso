@@ -15,6 +15,6 @@ export const useAddNewSiteUrl = ( queryParameters: Record< string, Primitive > )
 			? config( 'jetpack_connect_url' )
 			: isHostingFlow
 			? '/setup/new-hosted-site'
-			: config( 'signup_url' )
+			: '/start'
 	);
 };

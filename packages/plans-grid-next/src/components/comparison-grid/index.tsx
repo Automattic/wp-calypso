@@ -5,29 +5,21 @@ import {
 	getPlans,
 } from '@automattic/calypso-products';
 import { Gridicon, JetpackLogo } from '@automattic/components';
-import { AddOns, Plans } from '@automattic/data-stores';
+import { AddOns } from '@automattic/data-stores';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRef, useMemo } from '@wordpress/element';
 import { Icon, chevronRightSmall } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import {
-	useState,
-	useCallback,
-	useEffect,
-	ChangeEvent,
-	Dispatch,
-	SetStateAction,
-	forwardRef,
-} from 'react';
+import { useState, useCallback, ChangeEvent, Dispatch, SetStateAction, forwardRef } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { plansGridMediumLarge } from '../../css-mixins';
 import PlansGridContextProvider, { usePlansGridContext } from '../../grid-context';
-import usePlanBillingPeriod from '../../hooks/data-store/use-plan-billing-period';
 import useGridSize from '../../hooks/use-grid-size';
 import useHighlightAdjacencyMatrix from '../../hooks/use-highlight-adjacency-matrix';
 import { useManageTooltipToggle } from '../../hooks/use-manage-tooltip-toggle';
+import { useVisibleGridPlans } from '../../hooks/use-visible-grid-plans';
 import filterUnusedFeaturesObject from '../../lib/filter-unused-features-object';
 import getPlanFeaturesObject from '../../lib/get-plan-features-object';
 import PlanTypeSelector from '../plan-type-selector';
@@ -97,11 +89,10 @@ const Title = styled.div< { isHiddenInMobile?: boolean } >`
 	` ) }
 `;
 
-const Grid = styled.div< { visiblePlans: number } >`
+const StickyGrid = styled( StickyContainer )< { visiblePlans: number } >`
 	display: grid;
 	margin: 0 auto;
 	background: #fff;
-	border: solid 1px #e0e0e0;
 	${ ( props ) =>
 		props.visiblePlans &&
 		css`
@@ -111,11 +102,21 @@ const Grid = styled.div< { visiblePlans: number } >`
 	${ plansGridMediumLarge( css`
 		border-radius: 5px;
 	` ) }
+`;
 
-	> .is-sticky-header-row {
-		border-bottom: solid 1px #e0e0e0;
-		background: #fff;
-	}
+const Grid = styled.div< { visiblePlans: number; as?: string } >`
+	display: ${ ( props ) => ( props.as === 'tbody' ? 'table-row-group' : 'grid' ) };
+	margin: 0 auto;
+	background: #fff;
+	${ ( props ) =>
+		props.visiblePlans &&
+		css`
+			max-width: ${ rowCellMaxWidth * props.visiblePlans + featureGroupRowTitleCellMaxWidth }px;
+		` }
+
+	${ plansGridMediumLarge( css`
+		border-radius: 5px;
+	` ) }
 `;
 
 const Row = styled.div< {
@@ -219,7 +220,7 @@ const Cell = styled.div< { textAlign?: 'start' | 'center' | 'end' } >`
 		border-right: none;
 		justify-content: center;
 
-		&:first-of-type {
+		&:first-of-type:not( .popular-plan-parent-class ) {
 			padding-inline-start: 0;
 		}
 		&:last-of-type {
@@ -233,7 +234,27 @@ const Cell = styled.div< { textAlign?: 'start' | 'center' | 'end' } >`
 	` ) }
 `;
 
-const RowTitleCell = styled.div< {
+const RowTitleCell = styled.td< {
+	isPlaceholderHeaderCell?: boolean;
+	isFeatureGroupRowTitleCell?: boolean;
+} >`
+	display: none;
+	font-size: 14px;
+	padding-right: 10px;
+	${ plansGridMediumLarge( css`
+		display: block;
+		flex: 1;
+		min-width: 290px;
+	` ) }
+	max-width: ${ ( props ) => {
+		if ( props.isPlaceholderHeaderCell || props.isFeatureGroupRowTitleCell ) {
+			return `${ featureGroupRowTitleCellMaxWidth }px`;
+		}
+		return `${ rowCellMaxWidth }px`;
+	} };
+`;
+
+const RowHeaderCell = styled.th< {
 	isPlaceholderHeaderCell?: boolean;
 	isFeatureGroupRowTitleCell?: boolean;
 } >`
@@ -389,7 +410,13 @@ const ComparisonGridHeaderCell = ( {
 	const showPlanSelect = ! allVisible && ! gridPlan.current;
 
 	return (
-		<Cell className={ headerClasses } textAlign="start">
+		<Cell
+			as="th"
+			className={ headerClasses }
+			textAlign="start"
+			{ ...{ scope: 'col' } }
+			aria-label={ gridPlan.planTitle as string }
+		>
 			<PopularBadge
 				isInSignup={ isInSignup }
 				planSlug={ planSlug }
@@ -484,7 +511,7 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 		const { coupon } = usePlansGridContext();
 
 		return (
-			<PlanRow isHiddenInMobile={ isHiddenInMobile } ref={ ref }>
+			<PlanRow as="tr" isHiddenInMobile={ isHiddenInMobile } ref={ ref }>
 				<RowTitleCell
 					key="feature-name"
 					className="plan-comparison-grid__header-cell is-placeholder-header-cell"
@@ -596,7 +623,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	);
 
 	return (
-		<Cell className={ cellClasses } textAlign="center">
+		<Cell as="td" className={ cellClasses } textAlign="center">
 			{ isStorageFeature ? (
 				<>
 					<span className="plan-comparison-grid__plan-title">{ translate( 'Storage' ) }</span>
@@ -664,9 +691,19 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 								</span>
 							) }
 							{ hasFeature && ! featureLabel && (
-								<Gridicon icon="checkmark" color="var(--studio-wordpress-blue-50)" />
+								<Gridicon
+									icon="checkmark"
+									color="var(--studio-wordpress-blue-50)"
+									aria-label={ translate( 'Feature available' ) }
+								/>
 							) }
-							{ ! hasFeature && ! featureLabel && <Gridicon icon="minus-small" color="#C3C4C7" /> }
+							{ ! hasFeature && ! featureLabel && (
+								<Gridicon
+									icon="minus-small"
+									color="#C3C4C7"
+									aria-label={ translate( 'Feature not available' ) }
+								/>
+							) }
 						</>
 					) }
 				</>
@@ -709,19 +746,24 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	const featureSlug = feature?.getSlug() ?? '';
 	const footnote = planFeatureFootnotes?.footnotesByFeature?.[ featureSlug ];
 	const tooltipId = `${ feature?.getSlug() }-comparison-grid`;
+	const title = feature?.getTitle?.();
+	const headerAriaLabel: string = typeof title === 'string' ? title : '';
 
 	const { enableFeatureTooltips } = usePlansGridContext();
 
 	return (
 		<Row
+			as="tr"
 			isHiddenInMobile={ isHiddenInMobile }
 			className={ rowClasses }
 			isHighlighted={ isHighlighted }
 		>
-			<RowTitleCell
+			<RowHeaderCell
 				key="feature-name"
 				className="is-feature-group-row-title-cell"
 				isFeatureGroupRowTitleCell
+				scope="row"
+				aria-label={ headerAriaLabel }
 			>
 				{ isStorageFeature ? (
 					<Plans2023Tooltip
@@ -771,7 +813,7 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 						) }
 					</>
 				) }
-			</RowTitleCell>
+			</RowHeaderCell>
 			{ visibleGridPlans.map( ( { planSlug } ) => (
 				<ComparisonGridFeatureGroupRowCell
 					key={ planSlug }
@@ -802,6 +844,7 @@ const FeatureGroup = ( {
 	featureGroupMap,
 	visibleGridPlans,
 	planFeatureFootnotes,
+	plansLength,
 }: {
 	featureGroup: FeatureGroup;
 	selectedFeature?: string;
@@ -816,6 +859,7 @@ const FeatureGroup = ( {
 		footnoteList: string[];
 		footnotesByFeature: Record< string, number >;
 	};
+	plansLength: number;
 } ) => {
 	const { allFeaturesList } = usePlansGridContext();
 	const [ firstSetOfFeatures ] = Object.keys( featureGroupMap );
@@ -872,12 +916,18 @@ const FeatureGroup = ( {
 	}
 
 	return (
-		<div key={ featureGroup.slug } className="plan-comparison-grid__feature-group">
+		<Grid
+			as="tbody"
+			visiblePlans={ plansLength }
+			key={ featureGroup.slug }
+			className="plan-comparison-grid__feature-group"
+		>
 			<TitleRow
+				as="tr"
 				className="plan-comparison-grid__feature-group-title-row"
 				onClick={ handleFeatureGroupToggle }
 			>
-				<Title isHiddenInMobile={ isHiddenInMobile }>
+				<Title as="td" isHiddenInMobile={ isHiddenInMobile }>
 					<Gridicon icon="chevron-up" size={ 12 } color="#1E1E1E" />
 					<span>{ featureGroup.getTitle() }</span>
 				</Title>
@@ -915,7 +965,7 @@ const FeatureGroup = ( {
 					onStorageAddOnClick={ onStorageAddOnClick }
 				/>
 			) : null }
-		</div>
+		</Grid>
 	);
 };
 
@@ -934,87 +984,15 @@ const ComparisonGrid = ( {
 	gridSize,
 	siteId,
 }: ComparisonGridProps ) => {
-	const { gridPlans, gridPlansIndex, featureGroupMap } = usePlansGridContext();
+	const { gridPlans, featureGroupMap } = usePlansGridContext();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
-	const [ visiblePlans, setVisiblePlans ] = useState< PlanSlug[] >( [] );
-	const currentPlanTerm = Plans.useCurrentPlanTerm( { siteId } );
-	const selectedPlanTerm = usePlanBillingPeriod( { intervalType } );
 
-	useEffect( () => {
-		let numPlansToDisplay = gridPlans.length;
-
-		switch ( gridSize ) {
-			case 'large':
-				numPlansToDisplay = 4;
-				break;
-			case 'medium':
-				numPlansToDisplay = 3;
-				break;
-			case 'smedium':
-			case 'small':
-				numPlansToDisplay = 2;
-				break;
-		}
-
-		let visiblePlanSlugs = gridPlans
-			.slice( 0, numPlansToDisplay )
-			.map( ( { planSlug } ) => planSlug );
-
-		const isCurrentPlanVisible =
-			!! currentSitePlanSlug && visiblePlanSlugs.includes( currentSitePlanSlug );
-
-		/**
-		 * Plans are sorted by least to most expensive unless:
-		 * - a current plan exists and
-		 * - the current plan's term matches the selected term and
-		 * - the current plan would not be displayed due to the number of plans that can be visible at once
-		 *
-		 * If those conditions are met:
-		 * - the current plan is placed at the start of the grid and
-		 * - the last plan is removed to maintain the expected number of visible plans
-		 */
-		if ( currentSitePlanSlug && ! isCurrentPlanVisible && currentPlanTerm === selectedPlanTerm ) {
-			visiblePlanSlugs = [ currentSitePlanSlug, ...visiblePlanSlugs ].slice( 0, numPlansToDisplay );
-		}
-
-		setVisiblePlans( visiblePlanSlugs );
-	}, [
+	const { visibleGridPlans, setVisibleGridPlans } = useVisibleGridPlans( {
 		gridSize,
-		gridPlansIndex,
 		currentSitePlanSlug,
-		gridPlans,
-		currentPlanTerm,
-		selectedPlanTerm,
+		siteId,
 		intervalType,
-	] );
-
-	const visibleGridPlans = useMemo(
-		() =>
-			visiblePlans.reduce( ( acc, planSlug ) => {
-				const gridPlan = gridPlans.find(
-					( gridPlan ) => getPlanClass( gridPlan.planSlug ) === getPlanClass( planSlug )
-				);
-
-				if ( gridPlan ) {
-					acc.push( gridPlan );
-				}
-
-				return acc;
-			}, [] as GridPlan[] ),
-		[ visiblePlans, gridPlans ]
-	);
-
-	const onPlanChange = useCallback(
-		( currentPlan: PlanSlug, event: ChangeEvent< HTMLSelectElement > ) => {
-			const newPlan = event.currentTarget.value;
-			const newVisiblePlans = visiblePlans.map( ( plan ) =>
-				plan === currentPlan ? ( newPlan as PlanSlug ) : plan
-			);
-
-			setVisiblePlans( newVisiblePlans );
-		},
-		[ visiblePlans ]
-	);
+	} );
 
 	const planFeatureFootnotes = useMemo( () => {
 		// This is the main list of all footnotes. It is displayed at the bottom of the comparison grid.
@@ -1049,6 +1027,20 @@ const ComparisonGrid = ( {
 		};
 	}, [ featureGroupMap ] );
 
+	const onPlanChange = useCallback(
+		( currentPlan: PlanSlug, event: ChangeEvent< HTMLSelectElement > ) => {
+			const newPlanSlug = event.currentTarget.value;
+			const newPlan = gridPlans.find( ( plan ) => plan.planSlug === newPlanSlug );
+
+			if ( newPlan ) {
+				setVisibleGridPlans( ( previousGridPlans ) =>
+					previousGridPlans.map( ( plan ) => ( plan.planSlug === currentPlan ? newPlan : plan ) )
+				);
+			}
+		},
+		[ gridPlans, setVisibleGridPlans ]
+	);
+
 	// 100px is the padding of the footer row
 	const [ bottomHeaderRef, isBottomHeaderInView ] = useInView( { rootMargin: '-100px' } );
 
@@ -1063,44 +1055,47 @@ const ComparisonGrid = ( {
 	} );
 
 	return (
-		<div className={ classes }>
-			<Grid visiblePlans={ visiblePlans.length }>
-				<StickyContainer
-					disabled={ isBottomHeaderInView }
-					stickyClass="is-sticky-header-row"
-					stickyOffset={ stickyRowOffset }
-					zIndex={ 1 }
-				>
-					{ ( isStuck: boolean ) => (
-						<ComparisonGridHeader
-							displayedGridPlans={ gridPlans }
-							visibleGridPlans={ visibleGridPlans }
-							isInSignup={ isInSignup }
-							onPlanChange={ onPlanChange }
-							currentSitePlanSlug={ currentSitePlanSlug }
-							planActionOverrides={ planActionOverrides }
-							selectedPlan={ selectedPlan }
-							showRefundPeriod={ showRefundPeriod }
-							isStuck={ isStuck }
-							planTypeSelectorProps={ planTypeSelectorProps }
-						/>
-					) }
-				</StickyContainer>
-				{ Object.values( featureGroupMap ).map( ( featureGroup: FeatureGroup ) => (
-					<FeatureGroup
-						key={ featureGroup.slug }
-						featureGroup={ featureGroup }
+		<table className={ classes }>
+			<StickyGrid
+				visiblePlans={ visibleGridPlans.length }
+				element="thead"
+				disabled={ isBottomHeaderInView }
+				stickyClass="is-sticky-header-row"
+				stickyOffset={ stickyRowOffset }
+				zIndex={ 1 }
+			>
+				{ ( isStuck: boolean ) => (
+					<ComparisonGridHeader
+						displayedGridPlans={ gridPlans }
 						visibleGridPlans={ visibleGridPlans }
-						featureGroupMap={ featureGroupMap }
-						selectedFeature={ selectedFeature }
-						intervalType={ intervalType }
-						activeTooltipId={ activeTooltipId }
-						setActiveTooltipId={ setActiveTooltipId }
-						showUpgradeableStorage={ showUpgradeableStorage }
-						onStorageAddOnClick={ onStorageAddOnClick }
-						planFeatureFootnotes={ planFeatureFootnotes }
+						isInSignup={ isInSignup }
+						onPlanChange={ onPlanChange }
+						currentSitePlanSlug={ currentSitePlanSlug }
+						planActionOverrides={ planActionOverrides }
+						selectedPlan={ selectedPlan }
+						showRefundPeriod={ showRefundPeriod }
+						isStuck={ isStuck }
+						planTypeSelectorProps={ planTypeSelectorProps }
 					/>
-				) ) }
+				) }
+			</StickyGrid>
+			{ Object.values( featureGroupMap ).map( ( featureGroup: FeatureGroup ) => (
+				<FeatureGroup
+					key={ featureGroup.slug }
+					featureGroup={ featureGroup }
+					visibleGridPlans={ visibleGridPlans }
+					featureGroupMap={ featureGroupMap }
+					selectedFeature={ selectedFeature }
+					intervalType={ intervalType }
+					activeTooltipId={ activeTooltipId }
+					setActiveTooltipId={ setActiveTooltipId }
+					showUpgradeableStorage={ showUpgradeableStorage }
+					onStorageAddOnClick={ onStorageAddOnClick }
+					planFeatureFootnotes={ planFeatureFootnotes }
+					plansLength={ visibleGridPlans.length }
+				/>
+			) ) }
+			<tbody>
 				<ComparisonGridHeader
 					displayedGridPlans={ gridPlans }
 					visibleGridPlans={ visibleGridPlans }
@@ -1116,20 +1111,22 @@ const ComparisonGrid = ( {
 					ref={ bottomHeaderRef }
 					planTypeSelectorProps={ planTypeSelectorProps }
 				/>
-			</Grid>
+			</tbody>
 
-			<div className="plan-comparison-grid__footer">
+			<tfoot className="plan-comparison-grid__footer">
 				{ planFeatureFootnotes?.footnoteList && (
-					<FeatureFootnotes>
-						<ol>
-							{ planFeatureFootnotes?.footnoteList?.map( ( footnote, index ) => {
-								return <li key={ `${ footnote }-${ index }` }>{ footnote }</li>;
-							} ) }
-						</ol>
+					<FeatureFootnotes as="tr">
+						<td>
+							<ol>
+								{ planFeatureFootnotes?.footnoteList?.map( ( footnote, index ) => {
+									return <li key={ `${ footnote }-${ index }` }>{ footnote }</li>;
+								} ) }
+							</ol>
+						</td>
 					</FeatureFootnotes>
 				) }
-			</div>
-		</div>
+			</tfoot>
+		</table>
 	);
 };
 

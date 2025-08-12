@@ -6,9 +6,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Button, Fill } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useCallback, useEffect, useState, useReducer } from '@wordpress/element';
+import { useCallback, useEffect, useState } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
-import { useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { useCanvasMode } from './hooks/use-canvas-mode';
 import { getEditorType } from './utils';
@@ -17,7 +16,6 @@ import './help-center.scss';
 const queryClient = new QueryClient();
 
 function HelpCenterContent() {
-	const [ , forceUpdate ] = useReducer( ( x ) => x + 1, 0 );
 	const isDesktop = useMediaQuery( '(min-width: 480px)' );
 	const [ showHelpIcon, setShowHelpIcon ] = useState( false );
 	const { setShowHelpCenter } = useDispatch( 'automattic/help-center' );
@@ -25,7 +23,6 @@ function HelpCenterContent() {
 	const show = useSelect( ( select ) => select( 'automattic/help-center' ).isHelpCenterShown() );
 
 	const canvasMode = useCanvasMode();
-	const previousCanvasMode = useRef( canvasMode );
 
 	const handleToggleHelpCenter = useCallback( () => {
 		recordTracksEvent( `calypso_inlinehelp_${ show ? 'close' : 'show' }`, {
@@ -44,20 +41,10 @@ function HelpCenterContent() {
 		return () => clearTimeout( timeout );
 	}, [] );
 
-	useEffect( () => {
-		// Close the Help Center when the canvas mode changes.
-		if ( previousCanvasMode.current !== canvasMode ) {
-			setShowHelpCenter( false );
-
-			// Force to re-render to ensure the sidebar is available.
-			if ( canvasMode === 'view' ) {
-				forceUpdate();
-			}
-			previousCanvasMode.current = canvasMode;
-		}
-	}, [ canvasMode, previousCanvasMode, setShowHelpCenter ] );
-
-	const closeCallback = useCallback( () => setShowHelpCenter( false ), [ setShowHelpCenter ] );
+	const closeCallback = useCallback(
+		() => setShowHelpCenter( false, undefined, undefined, true ),
+		[ setShowHelpCenter ]
+	);
 
 	const sidebarActionsContainer = document.querySelector( '.edit-site-site-hub__actions' );
 
@@ -84,7 +71,7 @@ function HelpCenterContent() {
 			{ isDesktop && showHelpIcon && <Fill name="PinnedItems/core">{ content }</Fill> }
 			<HelpCenter
 				locale={ helpCenterData.locale }
-				sectionName="gutenberg-editor"
+				sectionName={ helpCenterData.sectionName || 'gutenberg-editor' }
 				currentUser={ helpCenterData.currentUser }
 				site={ helpCenterData.site }
 				hasPurchases={ false }

@@ -37,10 +37,18 @@ const importer = ( url, prev, done ) => {
 	} );
 };
 
-sass.render( { file: args.in, importer, outputStyle: 'compressed' }, ( err, output ) => {
-	if ( err ) {
-		console.error( 'error', err );
-		return;
+sass.render(
+	{
+		file: args.in,
+		importer,
+		outputStyle: 'compressed',
+		includePaths: [ 'node_modules' ],
+	},
+	( err, output ) => {
+		if ( err ) {
+			console.error( 'error', err );
+			return;
+		}
+		fs.writeFileSync( args.out, output.css );
 	}
-	fs.writeFileSync( args.out, output.css );
-} );
+);

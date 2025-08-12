@@ -4,6 +4,7 @@ import { useLocale, getWpI18nLocaleSlug } from './locale-context';
 import {
 	localesWithBlog,
 	localesWithGoBlog,
+	localesWithWpcomDeveloperSiteFullySupported,
 	localesWithWpcomDeveloperSite,
 	localesWithPrivacyPolicy,
 	localesWithCookiePolicy,
@@ -136,7 +137,14 @@ export const urlLocalizationMapping: UrlLocalizationMapping = {
 	'en.support.wordpress.com': setLocalizedWpComPath( '/support', supportSiteLocales ),
 	'en.blog.wordpress.com': setLocalizedWpComPath( '/blog', localesWithBlog, /^\/$/ ),
 	'apps.wordpress.com': prefixLocalizedUrlPath( magnificentNonEnLocales ),
-	'developer.wordpress.com': prefixLocalizedUrlPath( localesWithWpcomDeveloperSite ),
+	'developer.wordpress.com': ( url: URL, localeSlug: Locale ): URL => {
+		// Only Studio URL should be localized in all the locales now.
+		const isStudio = [ '/studio/', '/studio' ].includes( url.pathname );
+		if ( isStudio ) {
+			return prefixLocalizedUrlPath( localesWithWpcomDeveloperSite )( url, localeSlug );
+		}
+		return prefixLocalizedUrlPath( localesWithWpcomDeveloperSiteFullySupported )( url, localeSlug );
+	},
 	'en.forums.wordpress.com': setLocalizedWpComPath( '/forums', forumLocales ),
 	'automattic.com/privacy/': prefixLocalizedUrlPath( localesWithPrivacyPolicy ),
 	'automattic.com/cookies/': prefixLocalizedUrlPath( localesWithCookiePolicy ),
@@ -293,11 +301,16 @@ export const withLocalizeUrl = createHigherOrderComponent(
 			OuterProps & { localizeUrl: ReturnType< typeof useLocalizeUrl > }
 		>
 	) => {
-		return ( props: OuterProps ) => {
+		const LocalizedUrlComponent = ( props: OuterProps ) => {
 			const localizeUrl = useLocalizeUrl();
 			const innerProps = { ...props, localizeUrl };
 			return <InnerComponent { ...innerProps } />;
 		};
+		// Set display name for debugging purposes
+		const componentName = InnerComponent.displayName || InnerComponent.name || 'Component';
+		LocalizedUrlComponent.displayName = `LocalizedUrl(${ componentName })`;
+
+		return LocalizedUrlComponent;
 	},
 	'withLocalizeUrl'
 );

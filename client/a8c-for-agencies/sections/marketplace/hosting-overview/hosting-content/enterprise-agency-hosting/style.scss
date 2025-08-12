@@ -66,3 +66,17 @@
 		justify-content: center;
 	}
 }
+
+.enterprise-agency-hosting__cta-button.components-button.has-icon.has-text {
+	justify-content: center;
+}
+
+.enterprise-agency-hosting__cta-buttons {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+
+	a {
+		text-decoration: none;
+	}
+}

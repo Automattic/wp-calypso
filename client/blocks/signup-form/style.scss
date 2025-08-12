@@ -1,6 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 @import "@automattic/onboarding/styles/mixins";
+@import "../../assets/stylesheets/shared/mixins/breakpoints";
 
 .signup-form-social-first {
 	display: grid;
@@ -20,7 +21,7 @@
 	}
 }
 
-.signup-form .signup-form__input.form-text-input {
+.signup-form .signup-form__input.form-text-input[type] {
 	margin-bottom: 20px;
 	transition: none;
 
@@ -58,6 +59,14 @@
 	padding: 16px;
 	box-sizing: border-box;
 
+	.is-unified-create-account & {
+		width: 100%;
+		// Below is the same as .card.logged-out-form
+		margin: 0 auto 16px;
+		// max-width: 360px;
+		padding: 16px;
+	}
+
 	p {
 		font-size: $font-body-small;
 		color: var(--color-text-inverted);
@@ -68,10 +77,6 @@
 			margin: 10px 0 0;
 		}
 	}
-}
-
-.auth-form__social-buttons .social-buttons__button {
-	border-radius: 4px;
 }
 
 .auth-form__social-buttons-tos a {
@@ -279,7 +284,6 @@ body.is-section-accept-invite {
 			}
 		}
 	}
-
 }
 
 .card.auth-form__social.is-signup {
@@ -356,31 +360,9 @@ body.is-section-accept-invite {
 			}
 		}
 	}
-
-	/**
-	* Jetpack Cloud
-	*/
-	@at-root .jetpack-cloud & {
-		max-width: 375px;
-		width: 100%;
-		padding: 16px;
-		margin-bottom: 0;
-
-		@include break-mobile {
-			padding: 24px;
-		}
-	}
-
-	/**
-	* Akismet Signup
-	*/
-	@at-root .is-akismet & {
-		.auth-form__social-buttons .auth-form__social-buttons-container .social-buttons__button {
-			--color-accent: var(--color-akismet);
-		}
-	}
 }
 
+// TODO clk remove this. it's handled by .is-unified-create-account
 .is-woo-passwordless .signup-form .auth-form__separator {
 	margin: 32px 0;
 }

@@ -1,5 +1,5 @@
 import { formatNumber } from '@automattic/number-formatters';
-import { StepContainer, Title, SubTitle, Step } from '@automattic/onboarding';
+import { Step } from '@automattic/onboarding';
 import { Icon, next, published, shield } from '@wordpress/icons';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { type FC, ReactElement, useEffect, useState, useCallback } from 'react';
@@ -9,10 +9,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { shouldUseStepContainerV2MigrationFlow } from '../../../helpers/should-use-step-container-v2';
-//TODO: Move it to a more generic folder
-import { useFlowState } from '../../state-manager/store';
 import { useSitePreviewMShotImageHandler } from '../site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler';
 import type { Step as StepType } from '../../types';
 import type { UrlData } from 'calypso/blocks/import/types';
@@ -76,18 +72,21 @@ export const Analyzer: FC< Props > = ( {
 		isFetched,
 	} = useAnalyzeUrlQuery( siteURL, siteURL !== '' );
 
+	const isScanning = isFetching || ( isFetched && ! hasError );
+
 	useEffect( () => {
 		if ( siteInfo ) {
 			onComplete( siteInfo );
 		}
 	}, [ onComplete, siteInfo ] );
 
-	if ( isFetching || ( isFetched && ! hasError ) ) {
-		onVisibilityChange?.( false );
+	useEffect( () => {
+		onVisibilityChange?.( ! isScanning );
+	}, [ isScanning, onVisibilityChange ] );
+
+	if ( isScanning ) {
 		return <ScanningStep />;
 	}
-
-	onVisibilityChange?.( true );
 
 	const hostingDetailItems = {
 		'blazing-fast-speed': {
@@ -153,7 +152,6 @@ const SiteMigrationIdentify: StepType< {
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
 	const { createScreenshots } = useSitePreviewMShotImageHandler();
-	const isUsingStepContainerV2 = shouldUseStepContainerV2MigrationFlow( flow );
 
 	const handleSubmit = useCallback(
 		async ( action: SiteMigrationIdentifyAction, data?: { platform: string; from: string } ) => {
@@ -170,27 +168,6 @@ const SiteMigrationIdentify: StepType< {
 	);
 
 	const urlQueryParams = useQuery();
-	const { get } = useFlowState();
-
-	const shouldShowBackButton = () => {
-		const ref = get( 'flow' )?.entryPoint;
-
-		const isBackButtonSupported = ref && [ 'goals', 'wp-admin-importers-list' ].includes( ref );
-		return isBackButtonSupported || urlQueryParams.has( 'back_to' );
-	};
-
-	const getBackButton = () => {
-		if ( ! shouldShowBackButton() ) {
-			return null;
-		}
-
-		const backToUrl = urlQueryParams.get( 'back_to' );
-		return backToUrl ? (
-			<Step.BackButton href={ backToUrl ?? '' } />
-		) : (
-			<Step.BackButton onClick={ navigation?.goBack } />
-		);
-	};
 
 	const [ isVisible, setIsVisible ] = useState( false );
 
@@ -208,57 +185,30 @@ const SiteMigrationIdentify: StepType< {
 		/>
 	);
 
-	if ( isUsingStepContainerV2 ) {
-		const backButton = getBackButton();
-		return (
-			<>
-				<DocumentHead title={ translate( 'Import your site content' ) } />
-				<Step.CenteredColumnLayout
-					className="step-container-v2--site-migration-identify"
-					columnWidth={ 4 }
-					topBar={ <Step.TopBar leftElement={ backButton } /> }
-					heading={
-						isVisible ? (
-							<Step.Heading
-								text={ translate( 'Let’s find your site' ) }
-								subText={ translate( 'Enter your current site address below to get started.' ) }
-							/>
-						) : undefined
-					}
-				>
-					{ stepContent }
-				</Step.CenteredColumnLayout>
-			</>
-		);
-	}
-
 	return (
 		<>
 			<DocumentHead title={ translate( 'Import your site content' ) } />
-			<StepContainer
-				stepName="site-migration-identify"
-				flowName="site-migration"
-				className="import__onboarding-page"
-				hideBack={ ! shouldShowBackButton() }
-				backUrl={ urlQueryParams.get( 'back_to' ) || undefined }
-				hideFormattedHeader
-				goBack={ navigation?.goBack }
-				isFullLayout
-				stepContent={
-					<div className="import__capture-wrapper">
-						{ isVisible && (
-							<div className="import__heading import__heading-center">
-								<Title>{ translate( 'Let’s find your site' ) }</Title>
-								<SubTitle>
-									{ translate( 'Enter your current site address below to get started.' ) }
-								</SubTitle>
-							</div>
-						) }
-						{ stepContent }
-					</div>
+			<Step.CenteredColumnLayout
+				className="step-container-v2--site-migration-identify"
+				columnWidth={ 4 }
+				topBar={
+					<Step.TopBar
+						leftElement={
+							navigation?.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : null
+						}
+					/>
 				}
-				recordTracksEvent={ recordTracksEvent }
-			/>
+				heading={
+					isVisible ? (
+						<Step.Heading
+							text={ translate( "Let's find your site" ) }
+							subText={ translate( 'Enter your current site address below to get started.' ) }
+						/>
+					) : undefined
+				}
+			>
+				{ stepContent }
+			</Step.CenteredColumnLayout>
 		</>
 	);
 };

@@ -3,6 +3,7 @@ import { trim } from 'lodash';
 import titlecase from 'to-title-case';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
+import { capitalPDangit } from 'calypso/lib/formatting';
 import {
 	trackPageLoad,
 	trackUpdatesLoaded,
@@ -26,7 +27,8 @@ export const tagListing = ( context, next ) => {
 	);
 	const state = context.store.getState();
 	const tag = getReaderTagBySlug( state, tagSlug );
-	const tagTitle = tag?.title || titlecase( trim( context.params.tag ) ).replace( /[-_]/g, ' ' );
+	const tagTitle =
+		tag?.title || capitalPDangit( titlecase( trim( context.params.tag ) ).replace( /[-_]/g, ' ' ) );
 
 	const encodedTag = encodeURIComponent( tagSlug ).toLowerCase();
 

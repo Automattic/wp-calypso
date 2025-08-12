@@ -3,6 +3,26 @@
 	margin-bottom: 16px;
 	z-index: z-index(".reader-feed-header", ".reader-feed-header__site");
 
+	h1 {
+		display: inline;
+	}
+
+	// If the site title test in the link is marked a different ltr/rtl format than the interface,
+	// ensure this parent site title class is set to that direction.
+	&:has( h1 a[direction="ltr"] ) {
+		.reader-feed-header__site-title {
+			/*!rtl:ignore*/
+			direction: ltr;
+		}
+	}
+
+	&:has( h1 a[direction="rtl"] ) {
+		.reader-feed-header__site-title {
+			/*!rtl:ignore*/
+			direction: rtl;
+		}
+	}
+
 	@include breakpoint-deprecated( "<660px" ) {
 		margin-bottom: 16px;
 	}
@@ -39,6 +59,12 @@
 	.site-icon.is-blank {
 		border-radius: 100%;
 	}
+}
+
+.reader-feed-header__follow-button-and-settings {
+	display: flex;
+	gap: 8px;
+	align-items: center;
 }
 
 .reader-feed-header .reader-feed-header__site-badge {
@@ -87,8 +113,12 @@
 	margin-bottom: 16px;
 }
 
-// Override follow button styles of subscribed state i.e. show icon with gray color instead of green.
 .reader-feed-header__follow-button {
+	display: flex;
+	gap: 8px;
+	flex-direction: column;
+
+	// Override follow button styles of subscribed state i.e. show icon with gray color instead of green.
 	.follow-button.is-following {
 		svg.reader-following-feed path {
 			fill: initial;

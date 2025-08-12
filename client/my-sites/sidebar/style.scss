@@ -527,12 +527,6 @@ $font-size: rem(14px);
 				background-color: var(--color-sidebar-submenu-background);
 				border-bottom-left-radius: 0;
 				border-bottom-right-radius: 0;
-
-				&:not(:hover) {
-					.sidebar_svg-a8c g {
-						fill: var(--color-sidebar-submenu-background);
-					}
-				}
 			}
 			.sidebar__expandable-content {
 				border-top-left-radius: 0;
@@ -915,58 +909,6 @@ $font-size: rem(14px);
 
 	.sidebar__sparkline {
 		margin-right: 8px;
-	}
-
-	// Reader specific styles
-	// client/reader/sidebar/style.scss
-	&.is-section-reader {
-		.sidebar__menu .components-button.has-icon {
-			padding: 0 0 0 6px;
-		}
-
-		.sidebar__menu .count {
-			background: transparent;
-			color: var(--color-sidebar-menu-text);
-			border-color: var(--color-sidebar-menu-text);
-		}
-
-		.selected .sidebar__menu-link {
-			.count {
-				color: var(--color-sidebar-submenu-selected-text);
-				border-color: var(--color-sidebar-submenu-selected-text);
-			}
-			.sidebar__menu-item-last-updated {
-				color: var(--studio-gray-50);
-			}
-		}
-
-		.sidebar__menu.sidebar__menu--selected {
-			.sidebar__heading {
-				background: var(--color-sidebar-submenu-background);
-				color: var(--color-sidebar-text);
-
-				&::after {
-					display: block;
-				}
-			}
-		}
-
-		.sidebar__menu--selected.is-togglable:not(.is-toggle-open):not(:hover) {
-			.sidebar__heading {
-				background: var(--color-sidebar-menu-selected-background);
-				color: var(--color-sidebar-menu-selected-text);
-			}
-			.sidebar__expandable-arrow {
-				fill: var(--color-sidebar-menu-selected-text);
-			}
-			.sidebar__menu-icon g {
-				stroke: var(--color-sidebar-menu-selected-text);
-			}
-			.sidebar_svg-a8c g {
-				stroke: var(--color-sidebar-menu-selected-text);
-				fill: var(--color-sidebar-menu-selected-background);
-			}
-		}
 	}
 }
 

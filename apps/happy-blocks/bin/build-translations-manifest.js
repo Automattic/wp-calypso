@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-/* eslint-disable import/no-nodejs-modules */
 const fs = require( 'fs' );
 const path = require( 'path' );
 const glob = require( 'glob' );

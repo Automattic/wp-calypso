@@ -23,10 +23,6 @@ export const getManagePluginsUrl = ( slug: string ) => {
 	return `/plugins/manage/${ slug }`;
 };
 
-export const getHostingConfigUrl = ( slug: string ) => {
-	return `/hosting-config/${ slug }`;
-};
-
 export const displaySiteUrl = ( siteUrl: string ) => {
 	return siteUrl.replace( 'https://', '' ).replace( 'http://', '' );
 };
@@ -65,50 +61,6 @@ export const isStagingSite = ( site: SiteExcerptNetworkData | undefined ) => {
 
 export const isMigrationTrialSite = ( site: SiteExcerptNetworkData ) => {
 	return site?.plan?.product_slug === PLAN_MIGRATION_TRIAL_MONTHLY;
-};
-
-export const isMigrationInProgress = ( site: SiteExcerptData ): boolean => {
-	const migrationStatus = site?.site_migration?.migration_status;
-	if ( ! migrationStatus ) {
-		return false;
-	}
-
-	return (
-		! migrationStatus.startsWith( 'migration-completed' ) &&
-		! migrationStatus.startsWith( 'migration-cancelled' )
-	);
-};
-
-export const getMigrationStatus = (
-	site: SiteExcerptData
-): 'pending' | 'started' | 'completed' | undefined => {
-	const migrationStatus = site?.site_migration?.migration_status;
-	if ( ! migrationStatus ) {
-		return undefined;
-	}
-
-	const status = migrationStatus.split( '-' )[ 1 ];
-
-	if ( ! [ 'pending', 'started', 'completed' ].includes( status ) ) {
-		return undefined;
-	}
-
-	return status as 'pending' | 'started' | 'completed';
-};
-
-export const getMigrationType = ( site: SiteExcerptData ): 'diy' | 'difm' | undefined => {
-	const migrationStatus = site?.site_migration?.migration_status;
-	if ( ! migrationStatus ) {
-		return undefined;
-	}
-
-	const type = migrationStatus.split( '-' )[ 2 ];
-
-	if ( ! [ 'difm', 'diy' ].includes( type ) ) {
-		return undefined;
-	}
-
-	return type as 'diy' | 'difm';
 };
 
 export const isHostingTrialSite = ( site: SiteExcerptNetworkData ) => {

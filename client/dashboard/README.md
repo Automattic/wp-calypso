@@ -51,6 +51,16 @@ The setup itself lacks centralised documentation, IMO, particularly around decry
 
 Why must Jest be passed an environment variable so that it tests on localhost and not wordpress.com? Right now we need to call `CALYPSO_BASE_URL=http://calypso.localhost:3000 yarn workspace wp-e2e-tests test -- test/e2e/specs/dashboard/`. Why is that not the default?
 
+### Sharing components with the hosting dashboard v1
+
+As we iterate on the new dashboard, we may want to share components with the existing hosting dashboard v1. The idea is to ship new screens and redesigns sooner in the existing dashboard, while we work on the new one. This is a temporary solution until we can fully migrate to the new dashboard.
+
+The new hosting dashboard has stricter guidelines (see above) and ESlint rules, for this reason, the shareable components are currently build within the new dashboard. This is not the ideal solution but a pragmatic one.
+
+Shared components: 
+
+ - `/client/dashboard/sites/add-new-site/` - Add new site dropdown/modal content.
+
 ### Next
 
 Consider a lighter, less abstracted way of writing tests, without page objects. I don't think the new dashboard justifies the added complexity.

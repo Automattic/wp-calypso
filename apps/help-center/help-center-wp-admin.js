@@ -10,13 +10,14 @@ const queryClient = new QueryClient();
 import './help-center.scss';
 
 function AdminHelpCenterContent() {
-	const { setShowHelpCenter } = useDataStoreDispatch( 'automattic/help-center' );
+	const { setShowHelpCenter, setShowSupportDoc } = useDataStoreDispatch( 'automattic/help-center' );
 	const { show, unreadCount } = useSelect( ( select ) => ( {
 		show: select( 'automattic/help-center' ).isHelpCenterShown(),
 		unreadCount: select( 'automattic/help-center' ).getUnreadCount(),
 	} ) );
 	const button = document.getElementById( 'wp-admin-bar-help-center' );
 	const masterbarNotificationsButton = document.getElementById( 'wp-admin-bar-notes' );
+	const supportLinks = document.querySelectorAll( '[data-target="wpcom-help-center"]' );
 
 	const closeHelpCenterWhenNotificationsPanelIsOpened = useCallback( () => {
 		const helpCenterContainerIsVisible = document.querySelector( '.help-center__container' );
@@ -26,7 +27,7 @@ function AdminHelpCenterContent() {
 		) {
 			setShowHelpCenter( false );
 		}
-	}, [ masterbarNotificationsButton.classList, setShowHelpCenter ] );
+	}, [ masterbarNotificationsButton?.classList, setShowHelpCenter ] );
 
 	useEffect( () => {
 		if ( masterbarNotificationsButton ) {
@@ -60,7 +61,10 @@ function AdminHelpCenterContent() {
 		}
 	}, [ unreadCount, button ] );
 
-	const closeCallback = useCallback( () => setShowHelpCenter( false ), [ setShowHelpCenter ] );
+	const closeCallback = useCallback(
+		() => setShowHelpCenter( false, undefined, undefined, true ),
+		[ setShowHelpCenter ]
+	);
 
 	const handleToggleHelpCenter = () => {
 		recordTracksEvent( `calypso_inlinehelp_${ show ? 'close' : 'show' }`, {
@@ -74,11 +78,34 @@ function AdminHelpCenterContent() {
 
 	button.onclick = handleToggleHelpCenter;
 
+	const openSupportLinkInHelpCenter = useCallback(
+		( event ) => {
+			if ( ! setShowSupportDoc ) {
+				return;
+			}
+			event.preventDefault();
+			setShowSupportDoc( event.target.href );
+		},
+		[ setShowSupportDoc ]
+	);
+
+	useEffect( () => {
+		supportLinks.forEach( ( link ) => {
+			link.addEventListener( 'click', openSupportLinkInHelpCenter );
+		} );
+
+		return () => {
+			supportLinks.forEach( ( link ) => {
+				link.removeEventListener( 'click', openSupportLinkInHelpCenter );
+			} );
+		};
+	}, [] );
+
 	return (
 		<QueryClientProvider client={ queryClient }>
 			<HelpCenter
 				locale={ helpCenterData.locale }
-				sectionName="wp-admin"
+				sectionName={ helpCenterData.sectionName || 'wp-admin' }
 				currentUser={ helpCenterData.currentUser }
 				site={ helpCenterData.site }
 				hasPurchases={ false }

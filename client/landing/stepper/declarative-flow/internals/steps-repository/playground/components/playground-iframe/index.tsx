@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { usePhpVersions } from 'calypso/data/php-versions/use-php-versions';
+import { getPHPVersions } from 'calypso/data/php-versions';
 import { initializeWordPressPlayground } from '../../lib/initialize-playground';
 import { PlaygroundError } from '../playground-error';
 import type { PlaygroundClient } from '@wp-playground/client';
@@ -15,7 +15,7 @@ export function PlaygroundIframe( {
 	setPlaygroundClient: ( client: PlaygroundClient ) => void;
 } ) {
 	const iframeRef = useRef< HTMLIFrameElement >( null );
-	const recommendedPHPVersion = usePhpVersions().recommendedValue;
+	const recommendedPHPVersion = getPHPVersions().recommendedValue;
 	const [ searchParams, setSearchParams ] = useSearchParams();
 	const [ playgroundError, setPlaygroundError ] = useState< string | null >( null );
 

@@ -33,7 +33,14 @@ export default function ConnectDomainStepAdvancedRecords( {
 	const aRecords = ipAddresses.map( ( ipAddress ) => {
 		return {
 			type: 'A',
-			name: domain,
+			name: '@',
+			value: ipAddress,
+		};
+	} );
+	const aRecordsSubdomains = ipAddresses.map( ( ipAddress ) => {
+		return {
+			type: 'A',
+			name: domain.replace( `.${ data.root_domain }`, '' ),
 			value: ipAddress,
 		};
 	} );
@@ -47,7 +54,7 @@ export default function ConnectDomainStepAdvancedRecords( {
 	const cnameRecordsSubdomains = [
 		{
 			type: 'CNAME',
-			name: 'www.' + domain,
+			name: 'www.' + domain.replace( `.${ data.root_domain }`, '' ),
 			value: domain,
 		},
 	];
@@ -123,7 +130,7 @@ export default function ConnectDomainStepAdvancedRecords( {
 						'Replace IP addresses (A records) of your subdomain to use the following values:'
 					) }
 				</p>
-				{ renderRecordsList( aRecords ) }
+				{ renderRecordsList( aRecordsSubdomains ) }
 				<p className={ className + '__text' }>
 					{ __(
 						"Next find the CNAME records on your subdomain's settings page and replace them with the following value:"

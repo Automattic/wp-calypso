@@ -10,6 +10,7 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+	page( '/signup/wc-asia', controller.signupWCAsiaContext, makeLayout, clientRender );
 	page( '/signup/finish', controller.finishSignUpContext, makeLayout, clientRender );
 	page( '/signup/oauth/token', controller.tokenRedirect, makeLayout, clientRender );
 }

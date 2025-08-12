@@ -1,7 +1,6 @@
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
-import { QueryClient } from '@tanstack/react-query';
+import { QueryClient, defaultShouldDehydrateQuery } from '@tanstack/react-query';
 import { persistQueryClient } from '@tanstack/react-query-persist-client';
-import { TWO_STEP_QUERY_KEY } from './auth';
 
 export const queryClient = new QueryClient( {
 	defaultOptions: {
@@ -9,24 +8,36 @@ export const queryClient = new QueryClient( {
 			staleTime: 0,
 			refetchOnWindowFocus: true,
 			refetchOnMount: true,
+			retry: ( failureCount: number, error: Error ) => {
+				if ( 'status' in error && typeof error.status === 'number' ) {
+					if ( error.status >= 400 && error.status < 500 ) {
+						return false;
+					}
+				}
+				return failureCount < 3;
+			},
 		},
 	},
 } );
 
-const persister = createSyncStoragePersister( { storage: window.localStorage } );
+const persister = createSyncStoragePersister( {
+	storage: typeof window !== 'undefined' ? window.localStorage : null,
+} );
+
 const maxAge = 1000 * 60 * 60 * 24; // 24 hours
 
 const [ , persistPromise ] = persistQueryClient( {
 	queryClient,
 	persister,
-	buster: '1', // Bump when query data shape changes.
+	buster: '3', // Bump when query data shape changes.
 	maxAge,
 	dehydrateOptions: {
-		shouldDehydrateQuery: ( { queryKey } ) => {
-			if ( TWO_STEP_QUERY_KEY === queryKey ) {
+		shouldRedactErrors: () => false,
+		shouldDehydrateQuery: ( query ) => {
+			if ( query.meta?.persist === false ) {
 				return false;
 			}
-			return true;
+			return defaultShouldDehydrateQuery( query );
 		},
 	},
 } );

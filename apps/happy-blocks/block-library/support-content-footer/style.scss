@@ -9,7 +9,7 @@ $system-font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans', 'Segoe UI',
 $recoleta-font-family: 'Recoleta', serif;
 
 .happy-blocks-new-support-content-footer {
-	padding: 64px 96px;
+	padding: 32px 0 64px 0;
 
 	@media ( max-width: $breakpoint-mobile ) {
 		padding: 32px 16px;
@@ -26,29 +26,39 @@ $recoleta-font-family: 'Recoleta', serif;
 	}
 
 	.support-content-resources {
-		display: flex;
-		gap: 18px;
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 24px;
 
 		@media ( max-width: $breakpoint-mobile ) {
+			display: flex;
 			flex-direction: column;
+			gap: 16px;
 		}
 
 		.support-content-resource {
-			background-color: var( --studio-blue-5, #f7f8fe );
+			background-color: #f7f8fe;
 			border-radius: 4px;
 			padding: 40px;
 			flex: 1;
 			display: flex;
 			flex-direction: column;
 			align-items: flex-start;
+			text-decoration: none;
 
 			@media ( max-width: $breakpoint-mobile ) {
 				padding: 24px;
 			}
+
+			&:hover {
+				.support-footer__card-title {
+					color: #3858e9;
+				}
+			}
 		}
 
 		.support-footer__icon-wrapper {
-			background-color: var( --studio-blue-50, #3858e9 );
+			background-color: #3858e9;
 			border-radius: 50%;
 			padding: 8px;
 			margin-bottom: 24px;
@@ -56,6 +66,7 @@ $recoleta-font-family: 'Recoleta', serif;
 		}
 
 		.support-footer__card-title {
+			color: var( --studio-black, #000 );
 			font-size: 1.25rem;
 			margin-top: 0;
 			margin-bottom: 8px;
@@ -70,6 +81,7 @@ $recoleta-font-family: 'Recoleta', serif;
 			color: var( --studio-gray-50, #646970 );
 			line-height: 24px;
 			margin: 0;
+			max-width: 365px;
 
 			@media ( max-width: $breakpoint-mobile ) {
 				font-size: 0.875rem;
@@ -151,62 +163,6 @@ $recoleta-font-family: 'Recoleta', serif;
 		}
 	}
 
-	.support-content-links-subscribe {
-		display: flex;
-		justify-content: space-between;
-		margin-top: 3rem;
-
-		p,
-		form {
-			margin-bottom: 10px;
-			margin-top: 0;
-		}
-
-		.support-content-subscribe-disclaimer {
-			color: var( --studio-gray-60 );
-			font-size: 0.75rem;
-			line-height: 20px;
-
-			a {
-				color: inherit;
-				font-size: inherit;
-				line-height: inherit;
-				text-decoration: underline;
-			}
-		}
-
-		.support-content-subscribe .subscribe-shortcode-wrapper {
-			display: flex;
-			justify-content: space-between;
-			flex-grow: 1;
-			border-radius: 4px;
-			border: 1px solid #dcdcde;
-			font-size: 1rem;
-			padding: 8px;
-			width: 100%;
-			min-height: 40px;
-			margin: 8px 0;
-			gap: 10px;
-
-			.wpcom-guides-learn-button {
-				cursor: pointer;
-
-				&.busy {
-					color: #7f8389;
-				}
-			}
-
-			@media screen and ( max-width: 782px ) {
-				flex-direction: column;
-				align-items: flex-start;
-
-				.wpcom-guides-learn-button {
-					margin-top: 8px;
-				}
-			}
-		}
-	}
-
 	@media ( max-width: $breakpoint-mobile ) {
 		padding: 12px 24px !important;
 
@@ -235,35 +191,6 @@ $recoleta-font-family: 'Recoleta', serif;
 				p {
 					margin-top: 4px;
 					margin-bottom: 16px;
-				}
-			}
-		}
-
-		.support-content-links {
-			a {
-				display: inline-block;
-			}
-
-			p {
-				margin-bottom: 16px !important;
-			}
-		}
-
-		.support-content-links-subscribe {
-			flex-direction: column;
-			padding-bottom: 36px;
-			margin-top: 48px;
-
-			.support-content-subscribe form {
-				.support-content-subscribe-email {
-					padding: 10px 16px 10px 16px;
-					font-size: 0.875rem;
-					line-height: 20px;
-
-					&::placeholder {
-						font-size: 0.875rem;
-						line-height: 20px;
-					}
 				}
 			}
 		}

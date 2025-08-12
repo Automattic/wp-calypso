@@ -35,7 +35,7 @@
 		"@automattic/help-center": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/zendesk-client": "workspace:^",
-		"@tanstack/react-query": "^5.15.5",
+		"@tanstack/react-query": "^5.83.0",
 		"@wordpress/components": "^29.9.0",
 		"@wordpress/compose": "^7.23.0",
 		"@wordpress/data": "^10.23.0",
@@ -49,11 +49,11 @@
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@automattic/wp-babel-makepot": "workspace:^",
-		"@wordpress/dependency-extraction-webpack-plugin": "^6.19.0",
-		"@wordpress/readable-js-assets-webpack-plugin": "^3.19.0",
+		"@wordpress/dependency-extraction-webpack-plugin": "^6.24.0",
+		"@wordpress/readable-js-assets-webpack-plugin": "^3.24.0",
 		"copy-webpack-plugin": "^10.2.4",
-		"typescript": "^5.8.2",
-		"webpack": "^5.97.1"
+		"typescript": "^5.8.3",
+		"webpack": "^5.99.8"
 	},
 	"peerDependencies": {
 		"@automattic/calypso-router": "workspace:^",

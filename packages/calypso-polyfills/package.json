@@ -23,7 +23,7 @@
 	},
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"dependencies": {
-		"core-js": "^3.6.3"
+		"core-js": "^3.42.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^"

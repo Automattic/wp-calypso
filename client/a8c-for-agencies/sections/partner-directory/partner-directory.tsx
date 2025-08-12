@@ -49,7 +49,7 @@ interface Section {
 
 export default function PartnerDirectory( { selectedSection }: Props ) {
 	const translate = useTranslate();
-	const title = translate( 'Partner Directory' );
+	const title = translate( 'Partner Directories' );
 
 	const agency = useSelector( getActiveAgency );
 	const hasAgency = useSelector( hasFetchedAgency );
@@ -66,7 +66,7 @@ export default function PartnerDirectory( { selectedSection }: Props ) {
 			content: <Dashboard />,
 			breadcrumbItems: [
 				{
-					label: translate( 'Partner Directory' ),
+					label: translate( 'Partner Directories' ),
 					href: A4A_PARTNER_DIRECTORY_LINK,
 				},
 			],

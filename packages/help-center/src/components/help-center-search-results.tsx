@@ -12,7 +12,7 @@ import {
 import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { speak } from '@wordpress/a11y';
 import { Button } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
 import {
@@ -35,7 +35,7 @@ import { HELP_CENTER_STORE } from '../stores';
 import HelpCenterRecentConversations from './help-center-recent-conversations';
 import PlaceholderLines from './placeholder-lines';
 import type { SearchResult } from '../types';
-
+import type { HelpCenterSelect } from '@automattic/data-stores';
 import './help-center-search-results.scss';
 
 const MAX_VISIBLE_RESULTS = 5;
@@ -202,6 +202,10 @@ function HelpSearchResults( {
 }: HelpSearchResultsProps ) {
 	const { hasPurchases, sectionName, site } = useHelpCenterContext();
 	const { setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
+	const contextTerm = useSelect(
+		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getContextTerm(),
+		[]
+	);
 
 	const adminResults = useAdminResults( searchQuery );
 
@@ -222,7 +226,7 @@ function HelpSearchResults( {
 	const { contextSearch } = useContextBasedSearchMapping( currentRoute );
 
 	const { data: searchData, isLoading: isSearching } = useHelpSearchQuery(
-		searchQuery || contextSearch, // If there's a query, we don't context search
+		searchQuery || contextTerm || contextSearch, // If there's a query, we don't context search
 		locale,
 		currentRoute
 	);
@@ -270,14 +274,29 @@ function HelpSearchResults( {
 		type: string
 	) => {
 		const { link, post_id, blog_id, source } = result;
-		// check and catch admin section links.
-		if ( type === SUPPORT_TYPE_ADMIN_SECTION && link ) {
-			// record track-event.
-			recordTracksEvent( 'calypso_inlinehelp_admin_section_visit', {
-				link: link,
-				search_term: searchQuery,
+
+		// Make the first recordTracksEvent call asynchronous
+		queueMicrotask( () => {
+			recordTracksEvent( 'calypso_help_center_search_traintracks_interact', {
+				action: 'click',
+				railcar: result.railcar.railcar,
+				href: result.link,
+				search_type: ! contextSearch && ! searchQuery ? 'tailored' : 'search',
 				location,
 				section: sectionName,
+			} );
+		} );
+
+		// check and catch admin section links.
+		if ( type === SUPPORT_TYPE_ADMIN_SECTION && link ) {
+			// Make the admin section recordTracksEvent call asynchronous
+			Promise.resolve().then( () => {
+				recordTracksEvent( 'calypso_inlinehelp_admin_section_visit', {
+					link: link,
+					search_term: searchQuery,
+					location,
+					section: sectionName,
+				} );
 			} );
 
 			event.preventDefault();
@@ -308,7 +327,10 @@ function HelpSearchResults( {
 				? 'calypso_inlinehelp_tailored_article_select'
 				: 'calypso_inlinehelp_article_select';
 
-		recordTracksEvent( eventName, eventData );
+		// Make the final recordTracksEvent call asynchronous
+		Promise.resolve().then( () => {
+			recordTracksEvent( eventName, eventData );
+		} );
 		onSelect( event, result );
 	};
 

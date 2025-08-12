@@ -18,7 +18,7 @@
 }
 
 .inline-help__results {
-	padding: 8px 0;
+	padding: 8px 0 16px 0;
 }
 
 .inline-help__results-list {
@@ -59,25 +59,12 @@
 	}
 
 	a {
-		text-decoration: underline;
-		font-weight: normal;
-		line-height: 1.4;
 		display: flex;
+		align-items: center;
+		gap: 8px;
 		padding: 8px 16px;
-
-		span {
-			flex-grow: 2;
-		}
-
-		.gridicon,
-		svg {
-			align-self: baseline;
-			color: var(--color-neutral-light);
-			flex-shrink: 0;
-			margin-right: 8px;
-			position: relative;
-			top: 2px;
-		}
+		padding-left: 0;
+		font-size: $font-body;
 
 		&:hover {
 			cursor: pointer;

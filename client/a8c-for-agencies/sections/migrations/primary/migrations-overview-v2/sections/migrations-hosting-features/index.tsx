@@ -53,7 +53,7 @@ export default function MigrationsHostingFeatures() {
 							translate( 'High-burst capacity' ),
 							translate( 'Automated datacenter failover' ),
 							translate( 'Extremely fast DNS with SSL' ),
-							translate( '10 PHP workers w/ auto-scaling' ),
+							translate( '5 PHP workers w/ auto-scaling' ),
 							translate( 'Uptime monitoring' ),
 						] }
 					/>

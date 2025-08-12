@@ -19,11 +19,7 @@ const CalypsoI18nProvider: FunctionComponent< { i18n?: I18N; children?: React.Re
 			setLocaleSlug( i18n.getLocaleSlug() );
 		};
 
-		i18n.on( 'change', onChange );
-
-		return () => {
-			i18n.off( 'change', onChange );
-		};
+		return i18n.subscribe( onChange );
 	}, [ i18n ] );
 
 	useEffect( () => {

@@ -24,7 +24,6 @@ class ListMissing extends Component {
 					action={ this.props.translate( 'Back to Followed Sites' ) }
 					actionURL="/reader"
 					actionCallback={ this.recordAction }
-					illustration=""
 				/>
 			</ReaderMain>
 		);

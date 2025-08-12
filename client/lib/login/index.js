@@ -9,10 +9,8 @@ import {
 	isGravatarOAuth2Client,
 	isGravPoweredOAuth2Client,
 	isJetpackCloudOAuth2Client,
-	isA4AOAuth2Client,
 	isWooOAuth2Client,
 	isIntenseDebateOAuth2Client,
-	isStudioAppOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 
@@ -46,24 +44,15 @@ export function pathWithLeadingSlash( path ) {
 		return '';
 	}
 
-	return path ? `/${ path.replace( /^\/+/, '' ) }` : '';
+	const cleanPath = path
+		.replace( /<\/?[^>]+(>|$)/g, '' )
+		.replace( /^[a-zA-Z][a-zA-Z\d+\-.]*:/, '' )
+		.replace( /\s/g, '' );
+	return cleanPath ? `/${ cleanPath.replace( /^\/+/, '' ) }` : '';
 }
 
 export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname ) {
-	const signupUrl = config( 'signup_url' );
-
 	const redirectTo = get( currentQuery, 'redirect_to', '' );
-	const signupFlow = get( currentQuery, 'signup_flow' );
-	const wccomFrom = get( currentQuery, 'wccom-from' );
-	const isFromMigrationPlugin = includes( redirectTo, 'wpcom-migration' );
-
-	/**
-	 *  Include redirects to public.api/connect/?action=verify&service={some service}
-	 *  If the signup is from the Highlander Comments flow, the signup page will be in a popup modal
-	 *  We need to redirect back to public.api/connect/ to do an external login and close modal
-	 *  Ref: PCYsg-Hfw-p2
-	 */
-	const isFromPublicAPIConnectFlow = includes( redirectTo, 'public.api/connect/?action=verify' );
 
 	if (
 		// Match locales like `/log-in/jetpack/es`
@@ -71,13 +60,13 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 	) {
 		// Basic validation that we're in a valid Jetpack Authorization flow
 		if (
-			includes( get( currentQuery, 'redirect_to' ), '/jetpack/connect/authorize' ) &&
-			includes( get( currentQuery, 'redirect_to' ), '_wp_nonce' )
+			includes( redirectTo, '/jetpack/connect/authorize' ) &&
+			includes( redirectTo, '_wp_nonce' )
 		) {
 			// If the current query has plugin_name param, but redirect_to doesn't, add it to the redirect_to
 			const pluginName = get( currentQuery, 'plugin_name' );
 			try {
-				const urlObj = new URL( currentQuery.redirect_to );
+				const urlObj = new URL( redirectTo );
 				if ( ! urlObj.searchParams.has( 'plugin_name' ) && pluginName ) {
 					urlObj.searchParams.set( 'plugin_name', pluginName );
 					return urlObj.toString();
@@ -91,7 +80,7 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 			 * this case, the redirect_to will handle signups as part of the flow. Use the
 			 * `redirect_to` parameter directly for signup.
 			 */
-			return currentQuery.redirect_to;
+			return redirectTo;
 		}
 		return '/jetpack/connect';
 	} else if ( '/jetpack-connect' === pathname ) {
@@ -104,7 +93,7 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 			oauth2_client_id: oauth2Client.id,
 			oauth2_redirect: redirectTo,
 		} );
-		return `${ signupUrl }/${ oauth2Flow }?${ oauth2Params.toString() }`;
+		return `/start/${ oauth2Flow }?${ oauth2Params.toString() }`;
 	}
 
 	if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
@@ -121,23 +110,12 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 		} );
 	}
 
-	if ( isStudioAppOAuth2Client( oauth2Client ) ) {
-		// Studio app signup via the magic login page
-		return login( {
-			locale,
-			twoFactorAuthType: 'link',
-			oauth2ClientId: oauth2Client.id,
-			redirectTo: redirectTo,
-		} );
-	}
-
 	if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
-		const oauth2Flow = 'crowdsignal';
 		const oauth2Params = new URLSearchParams( {
 			oauth2_client_id: oauth2Client.id,
 			oauth2_redirect: redirectTo,
 		} );
-		return `${ signupUrl }/${ oauth2Flow }?${ oauth2Params.toString() }`;
+		return `/start/crowdsignal?${ oauth2Params.toString() }`;
 	}
 
 	if ( oauth2Client && isWooOAuth2Client( oauth2Client ) ) {
@@ -145,10 +123,12 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 			oauth2_client_id: oauth2Client.id,
 			oauth2_redirect: redirectTo,
 		} );
+
+		const wccomFrom = get( currentQuery, 'wccom-from' );
 		if ( wccomFrom ) {
 			oauth2Params.set( 'wccom-from', wccomFrom );
 		}
-		return `${ signupUrl }/wpcc?${ oauth2Params.toString() }`;
+		return `/start/wpcc?${ oauth2Params.toString() }`;
 	}
 
 	if ( oauth2Client ) {
@@ -156,36 +136,32 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 			oauth2_client_id: oauth2Client.id,
 			oauth2_redirect: redirectTo,
 		} );
-		return `${ signupUrl }/wpcc?${ oauth2Params.toString() }`;
+		return `/start/wpcc?${ oauth2Params.toString() }`;
 	}
 
+	const signupFlow = get( currentQuery, 'signup_flow' );
 	if ( signupFlow ) {
 		if ( redirectTo ) {
 			const params = new URLSearchParams( {
 				redirect_to: redirectTo,
 			} );
-			return `${ signupUrl }/${ signupFlow }?${ params.toString() }`;
+			return `/start/${ signupFlow }?${ params.toString() }`;
 		}
-		return `${ signupUrl }/${ signupFlow }`;
+		return `/start/${ signupFlow }`;
 	}
 
-	if (
-		isFromMigrationPlugin ||
-		isFromPublicAPIConnectFlow ||
-		( includes( redirectTo, 'action=jetpack-sso' ) && includes( redirectTo, 'sso_nonce=' ) ) ||
-		redirectTo
-	) {
+	if ( redirectTo ) {
 		const params = new URLSearchParams( {
 			redirect_to: redirectTo,
 		} );
-		return `${ signupUrl }/account?${ params.toString() }`;
+		return `/start/account?${ params.toString() }`;
 	}
 
 	if ( ! isDefaultLocale( locale ) ) {
-		return addLocaleToPath( signupUrl, locale );
+		return addLocaleToPath( '/start', locale );
 	}
 
-	return signupUrl;
+	return '/start';
 }
 
 export const canDoMagicLogin = ( twoFactorAuthType, oauth2Client ) => {
@@ -195,11 +171,6 @@ export const canDoMagicLogin = ( twoFactorAuthType, oauth2Client ) => {
 
 	// jetpack cloud cannot have users being sent to WordPress.com
 	if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
-		return false;
-	}
-
-	// Automattic for Agencies cannot have users being sent to WordPress.com
-	if ( isA4AOAuth2Client( oauth2Client ) ) {
 		return false;
 	}
 
@@ -220,7 +191,7 @@ export const getLoginLinkPageUrl = ( {
 	const loginParameters = {
 		locale: locale,
 		twoFactorAuthType: 'link',
-		signupUrl: signupUrl,
+		signupUrl,
 		oauth2ClientId,
 		...additionalParams,
 	};

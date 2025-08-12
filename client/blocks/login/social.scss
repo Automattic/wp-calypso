@@ -35,15 +35,10 @@
 		}
 	}
 
-	/**
-	* Jetpack Login
-	*/
-	@at-root .is-jetpack-login & {
-		padding: 16px;
+	padding: 16px;
 
-		@include break-mobile {
-			padding: 24px 0;
-		}
+	@include break-mobile {
+		padding: 24px 0;
 	}
 }
 
@@ -105,29 +100,6 @@
 					margin-bottom: 40px;
 				}
 			}
-		}
-	}
-
-	/**
-	* Jetpack Cloud
-	*/
-	@at-root .jetpack-cloud & {
-		max-width: 375px;
-		width: 100%;
-		padding: 16px;
-		margin-bottom: 0;
-
-		@include break-mobile {
-			padding: 24px;
-		}
-	}
-
-	/**
-	* Akismet Login
-	*/
-	@at-root .is-akismet & {
-		.auth-form__social-buttons .auth-form__social-buttons-container .social-buttons__button {
-			--color-accent: var(--color-akismet);
 		}
 	}
 }

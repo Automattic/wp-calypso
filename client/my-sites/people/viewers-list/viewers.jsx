@@ -1,7 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { Card } from '@automattic/components';
-import { localize } from 'i18n-calypso';
+import { localize, fixMe } from 'i18n-calypso';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
@@ -83,7 +83,11 @@ class Viewers extends Component {
 		let viewers;
 		let emptyContentArgs = {
 			title: isJetpackSite
-				? this.props.translate( "Oops, Jetpack sites don't support viewers." )
+				? fixMe( {
+						text: "Jetpack sites don't support viewers.",
+						newCopy: this.props.translate( "Jetpack sites don't support viewers." ),
+						oldCopy: this.props.translate( "Oops, Jetpack sites don't support viewers." ),
+				  } )
 				: this.props.translate( "You don't have any viewers yet." ),
 		};
 

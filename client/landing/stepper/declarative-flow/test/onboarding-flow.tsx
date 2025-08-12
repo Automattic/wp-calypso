@@ -22,8 +22,8 @@ jest.mock( '../../hooks/use-marketplace-theme-products', () => ( {
 	} ),
 } ) );
 
-jest.mock( '../../hooks/use-mvp-onboarding-experiment', () => ( {
-	isMvpOnboardingExperiment: () => Promise.resolve( false ),
+jest.mock( '../../hooks/use-simplified-onboarding', () => ( {
+	isSimplifiedOnboarding: () => Promise.resolve( false ),
 } ) );
 
 describe( 'Onboarding Flow', () => {

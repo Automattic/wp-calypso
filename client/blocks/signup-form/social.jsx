@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
@@ -12,12 +13,20 @@ import {
 	GithubSocialButton,
 	UsernameOrEmailButton,
 } from 'calypso/components/social-buttons';
+import {
+	isA4AOAuth2Client,
+	isBlazeProOAuth2Client,
+	isCrowdsignalOAuth2Client,
+	isJetpackCloudOAuth2Client,
+	isStudioAppOAuth2Client,
+	isVIPOAuth2Client,
+} from 'calypso/lib/oauth2-clients';
 import { isWpccFlow } from 'calypso/signup/is-flow';
-import { recordTracksEvent as recordTracks } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import getIsAkismet from 'calypso/state/selectors/get-is-akismet';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 
 class SocialSignupForm extends Component {
@@ -38,7 +47,8 @@ class SocialSignupForm extends Component {
 	};
 
 	handleSignup = ( result ) => {
-		const { recordTracksEvent, isDevAccount, handleResponse } = this.props;
+		const { isDevAccount, handleResponse } = this.props;
+
 		recordTracksEvent( 'calypso_signup_social_button_success', {
 			social_account_type: result.service,
 		} );
@@ -53,9 +63,7 @@ class SocialSignupForm extends Component {
 
 	trackSignupAndRememberRedirect = ( event ) => {
 		const service = event.currentTarget.getAttribute( 'data-social-service' );
-
-		const { recordTracksEvent, oauth2Client, redirectToAfterLoginUrl, showErrorNotice, translate } =
-			this.props;
+		const { oauth2Client, redirectToAfterLoginUrl, showErrorNotice, translate } = this.props;
 
 		recordTracksEvent( 'calypso_signup_social_button_click', {
 			social_account_type: service,
@@ -95,8 +103,25 @@ class SocialSignupForm extends Component {
 			isSocialFirst,
 			flowName,
 			isWoo,
+			isA4A,
+			isBlazePro,
+			isAkismet,
+			isCrowdsignal,
+			isVIPClient,
+			isJetpackCloud,
+			isStudioApp,
 			setCurrentStep,
 		} = this.props;
+
+		const isUnifiedCreateAccount =
+			isWoo ||
+			isA4A ||
+			isCrowdsignal ||
+			isBlazePro ||
+			isAkismet ||
+			isVIPClient ||
+			isJetpackCloud ||
+			isStudioApp;
 
 		return (
 			<Card
@@ -131,9 +156,8 @@ class SocialSignupForm extends Component {
 							<UsernameOrEmailButton onClick={ () => setCurrentStep( 'email' ) } />
 						) }
 					</div>
-					{ ! isWoo && ! disableTosText && <SocialToS /> }
+					{ ! isUnifiedCreateAccount && ! disableTosText && <SocialToS /> }
 				</div>
-				{ isWoo && ! disableTosText && <SocialToS /> }
 			</Card>
 		);
 	}
@@ -144,13 +168,20 @@ export default connect(
 		const query = getCurrentQueryArguments( state );
 		const devAccountLandingPageRefs = [ 'hosting-lp', 'developer-lp' ];
 		const isDevAccount = devAccountLandingPageRefs.includes( query?.ref );
+		const oauth2Client = getCurrentOAuth2Client( state );
 
 		return {
-			recordTracksEvent: recordTracks,
 			currentRoute: getCurrentRoute( state ),
-			oauth2Client: getCurrentOAuth2Client( state ),
+			oauth2Client: oauth2Client,
 			isDevAccount: isDevAccount,
 			isWoo: getIsWoo( state ),
+			isA4A: isA4AOAuth2Client( oauth2Client ),
+			isBlazePro: isBlazeProOAuth2Client( oauth2Client ),
+			isCrowdsignal: isCrowdsignalOAuth2Client( oauth2Client ),
+			isAkismet: getIsAkismet( state ),
+			isVIPClient: isVIPOAuth2Client( oauth2Client ),
+			isJetpackCloud: isJetpackCloudOAuth2Client( oauth2Client ),
+			isStudioApp: isStudioAppOAuth2Client( oauth2Client ),
 		};
 	},
 	{ showErrorNotice: errorNotice }

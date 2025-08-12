@@ -4,8 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'calypso/state';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 
 /**
  * This callback is used to fire off a notice when the subscribers are added.
@@ -15,12 +14,11 @@ import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 export const useAddSubscribersCallback = ( siteId: number | null ) => {
 	const { completedJob } = useActiveJobRecognition( siteId ?? 0 );
 	const importError = useImportError();
-	const { isJetpackNonAtomic, selectedSiteSlug } = useSelector( ( state ) => {
-		return {
-			isJetpackNonAtomic: isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } ),
-			selectedSiteSlug: getSelectedSiteSlug( state ),
-		};
-	} );
+	const isJetpackNonAtomic = useSelector( ( state ) =>
+		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
+	);
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
+
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const queryClient = useQueryClient();
@@ -64,7 +62,7 @@ export const useAddSubscribersCallback = ( siteId: number | null ) => {
 
 					// Invalidate the subscribers queries to ensure that the new subscribers are fetched.
 					queryClient.invalidateQueries( { queryKey: [ 'subscribers', siteId ] } );
-					queryClient.invalidateQueries( { queryKey: [ 'subscribers', 'count', siteId ] } );
+					queryClient.invalidateQueries( { queryKey: [ 'subscribers', 'counts', siteId ] } );
 				}
 			} else {
 				dispatch(
@@ -98,7 +96,6 @@ export const useAddSubscribersCallback = ( siteId: number | null ) => {
 				notice = message as string;
 				if ( code === 'subscriber_import_limit_reached' && typeof message === 'string' ) {
 					noticeArgs.button = translate( 'Upgrade' );
-					const siteSlug = selectedSiteSlug || ''; // Use a default if siteSlug is not available
 					noticeArgs.href = isJetpackNonAtomic
 						? `https://cloud.jetpack.com/pricing/${ siteSlug }`
 						: `https://wordpress.com/plans/${ siteSlug }`;

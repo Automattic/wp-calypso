@@ -1,6 +1,7 @@
 import '@automattic/calypso-polyfills';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
+import { FunctionComponent } from 'react';
 import { createRoot } from 'react-dom/client';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import config from '../lib/config-api';
@@ -31,9 +32,9 @@ export function init() {
 		if ( ! statsWidgetEl ) {
 			return;
 		}
-		const root = createRoot( statsWidgetEl );
-		root.render(
-			<QueryClientProvider client={ queryClient }>
+		const App: FunctionComponent = () => {
+			const translate = useTranslate();
+			return (
 				<div id="stats-widget-content" className="stats-widget-content">
 					<MiniChart
 						siteId={ currentSiteId }
@@ -62,6 +63,12 @@ export function init() {
 						</div>
 					</div>
 				</div>
+			);
+		};
+		const root = createRoot( statsWidgetEl );
+		root.render(
+			<QueryClientProvider client={ queryClient }>
+				<App />
 			</QueryClientProvider>
 		);
 	} );

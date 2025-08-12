@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { Badge } from '@automattic/components';
 import {
 	category,
 	currencyDollar,
@@ -11,10 +12,12 @@ import {
 	people,
 	starEmpty,
 	plugins,
+	chartBar,
 } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { isPathAllowed } from 'calypso/a8c-for-agencies/lib/permission';
+import { A4A_REPORTS_LINK } from 'calypso/a8c-for-agencies/sections/reports/constants';
 import wooPaymentsIcon from 'calypso/assets/images/a8c-for-agencies/woopayments/woo-sidebar-icon.svg';
 import { isSectionNameEnabled } from 'calypso/sections-filter';
 import { useSelector } from 'calypso/state';
@@ -119,12 +122,13 @@ const useMainMenuItems = ( path: string ) => {
 			migrationMenuItem,
 			{
 				icon: <img src={ wooPaymentsIcon } alt="WooPayments" />,
-				path: '/',
+				path: A4A_WOOPAYMENTS_LINK,
 				link: A4A_WOOPAYMENTS_LINK,
 				title: translate( 'WooPayments' ),
 				trackEventProps: {
 					menu_item: 'Automattic for Agencies / WooPayments',
 				},
+				withChevron: true,
 			},
 			...( isSectionNameEnabled( 'a8c-for-agencies-plugins' )
 				? [
@@ -139,6 +143,21 @@ const useMainMenuItems = ( path: string ) => {
 						},
 				  ]
 				: [] ),
+			{
+				icon: chartBar,
+				path: A4A_REPORTS_LINK,
+				link: A4A_REPORTS_LINK,
+				title: (
+					<div className="sidebar-menu-item__title-with-badge">
+						<span>{ translate( 'Reports' ) }</span>
+						<Badge type="info">{ translate( 'Beta' ) }</Badge>
+					</div>
+				),
+				trackEventProps: {
+					menu_item: 'Automattic for Agencies / Reports',
+				},
+				withChevron: true,
+			},
 			...( config.isEnabled( 'a4a-partner-directory' ) ||
 			config.isEnabled( 'a8c-for-agencies-agency-tier' )
 				? [
@@ -146,10 +165,11 @@ const useMainMenuItems = ( path: string ) => {
 							icon: commentAuthorAvatar,
 							path: '/dashboard',
 							link: A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
-							title: translate( 'Partner Directory' ),
+							title: translate( 'Partner Directories' ),
 							trackEventProps: {
 								menu_item: 'Automattic for Agencies / Partner Directory',
 							},
+							withChevron: true,
 						},
 				  ]
 				: [] ),
@@ -185,7 +205,7 @@ const useMainMenuItems = ( path: string ) => {
 							icon: starEmpty,
 							path: '/',
 							link: A4A_AGENCY_TIER_LINK,
-							title: translate( 'Agency Tier' ),
+							title: translate( 'Agency Tiers' ),
 							trackEventProps: {
 								menu_item: 'Automattic for Agencies / Agency Tier',
 							},

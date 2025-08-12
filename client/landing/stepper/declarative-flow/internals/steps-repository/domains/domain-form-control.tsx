@@ -1,13 +1,19 @@
 import {
+	COPY_SITE_FLOW,
 	DOMAIN_UPSELL_FLOW,
 	HUNDRED_YEAR_DOMAIN_FLOW,
 	HUNDRED_YEAR_PLAN_FLOW,
 	isDomainUpsellFlow,
+	NEWSLETTER_FLOW,
+	READYMADE_TEMPLATE_FLOW,
+	REBLOGGING_FLOW,
+	START_WRITING_FLOW,
 } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { isEmpty } from 'lodash';
 import { useState } from 'react';
 import QueryProductsList from 'calypso/components/data/query-products-list';
+import RegisterDomainStepV2 from 'calypso/components/domain-search-v2/register-domain-step';
 import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
@@ -15,6 +21,7 @@ import SideExplainer from 'calypso/components/domains/side-explainer';
 import UseMyDomain from 'calypso/components/domains/use-my-domain';
 import { getDomainSuggestionSearch, getFixedDomainSearch } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import { useIsDomainSearchV2Enabled } from 'calypso/lib/domains/use-domain-search-v2';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import {
 	retrieveSignupDestination,
@@ -29,6 +36,7 @@ import { ONBOARD_STORE } from '../../../../stores';
 import type { DomainSuggestion, DomainForm, OnboardSelect } from '@automattic/data-stores';
 
 interface DomainFormControlProps {
+	onContinue: () => void;
 	analyticsSection: string;
 	flow: string | null;
 	onAddDomain: ( suggestion: DomainSuggestion, position: number ) => void;
@@ -42,6 +50,7 @@ interface DomainFormControlProps {
 }
 
 export function DomainFormControl( {
+	onContinue,
 	analyticsSection,
 	flow,
 	onAddDomain,
@@ -53,6 +62,8 @@ export function DomainFormControl( {
 	isCartPendingUpdate,
 	isCartPendingUpdateDomain,
 }: DomainFormControlProps ) {
+	const [ , isDomainSearchV2Enabled ] = useIsDomainSearchV2Enabled( flow ?? '' );
+
 	const selectedSite = useSelector( getSelectedSite );
 	const productsList = useSelector( getAvailableProductsList );
 
@@ -103,6 +114,20 @@ export function DomainFormControl( {
 	if ( flow === HUNDRED_YEAR_DOMAIN_FLOW ) {
 		includeWordPressDotCom = false;
 		shouldQuerySubdomains = false;
+	}
+
+	if ( isDomainSearchV2Enabled && flow === COPY_SITE_FLOW ) {
+		showSkipButton = true;
+	}
+
+	if (
+		isDomainSearchV2Enabled &&
+		[ NEWSLETTER_FLOW, READYMADE_TEMPLATE_FLOW, REBLOGGING_FLOW, START_WRITING_FLOW ].includes(
+			flow ?? ''
+		)
+	) {
+		includeWordPressDotCom = true;
+		showSkipButton = true;
 	}
 
 	const domainsWithPlansOnly = true;
@@ -203,9 +228,13 @@ export function DomainFormControl( {
 			showExampleSuggestions = true;
 		}
 
+		const RegisterDomainStepComponent = isDomainSearchV2Enabled
+			? RegisterDomainStepV2
+			: RegisterDomainStep;
+
 		return (
 			<CalypsoShoppingCartProvider>
-				<RegisterDomainStep
+				<RegisterDomainStepComponent
 					isCartPendingUpdate={ isCartPendingUpdate }
 					isCartPendingUpdateDomain={ isCartPendingUpdateDomain }
 					analyticsSection={ analyticsSection }
@@ -240,6 +269,12 @@ export function DomainFormControl( {
 						isDomainOnly: false,
 						flowName: flow || undefined,
 					} ) }
+					// RegisterDomainStepComponentV2 props below
+					onContinue={ onContinue }
+					shouldRenderUseYourDomain
+					showFreeDomainPromo={
+						! [ HUNDRED_YEAR_DOMAIN_FLOW, HUNDRED_YEAR_PLAN_FLOW ].includes( flow ?? '' )
+					}
 				/>
 			</CalypsoShoppingCartProvider>
 		);
@@ -253,7 +288,7 @@ export function DomainFormControl( {
 		content = renderDomainForm();
 	}
 
-	if ( isDomainUpsellFlow( flow ) && ! showUseYourDomain ) {
+	if ( isDomainUpsellFlow( flow ) && ! showUseYourDomain && ! isDomainSearchV2Enabled ) {
 		sideContent = getSideContent();
 	}
 

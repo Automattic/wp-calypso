@@ -36,7 +36,7 @@
 	}
 
 	.hosting-dashboard-layout__top-wrapper:not( .preview-hidden ) {
-		padding-block-start: 24px;
+		padding-block-start: 16px;
 	}
 
 	.plugin-manage-sites-pane {
@@ -389,6 +389,7 @@ body.is-section-plugins .hosting-dashboard-layout,
 				.plugin-icon {
 					max-width: 35px;
 					max-height: 35px;
+					margin: 0;
 				}
 
 				td:nth-child( 2 ) {

@@ -27,7 +27,7 @@ function MenuItem( {
 
 function Menu( { children }: { children: React.ReactNode } ) {
 	return (
-		<HStack className="dashboard-menu" spacing={ 2 } justify="flex-start">
+		<HStack className="dashboard-menu" spacing={ 0 } justify="flex-start">
 			{ children }
 		</HStack>
 	);

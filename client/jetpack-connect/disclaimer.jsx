@@ -11,6 +11,7 @@ class JetpackConnectDisclaimer extends PureComponent {
 		siteName: PropTypes.string.isRequired,
 		from: PropTypes.string,
 		isWooJPC: PropTypes.bool,
+		buttonText: PropTypes.string,
 	};
 
 	handleClickDisclaimer = () => {
@@ -24,6 +25,7 @@ class JetpackConnectDisclaimer extends PureComponent {
 			siteName,
 			from,
 			translate,
+			buttonText,
 		} = this.props;
 		let text;
 
@@ -78,8 +80,11 @@ class JetpackConnectDisclaimer extends PureComponent {
 			text =
 				from === 'my-jetpack'
 					? translate(
-							'By clicking {{strong}}Approve{{/strong}}, you agree to {{detailsLink}}sync your site‘s data{{/detailsLink}} with us.',
+							'By clicking {{strong}}%(buttonLabel)s{{/strong}}, you agree to {{detailsLink}}sync your site‘s data{{/detailsLink}} with us.',
 							{
+								args: {
+									buttonLabel: buttonText ? buttonText : translate( 'Approve' ),
+								},
 								components: {
 									strong: <strong />,
 									detailsLink,

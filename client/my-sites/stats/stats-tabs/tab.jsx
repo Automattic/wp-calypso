@@ -1,12 +1,12 @@
 import { LoadingPlaceholder } from '@automattic/components';
-import { TooltipContent } from '@automattic/components/src/highlight-cards/count-card';
-import { TrendComparison } from '@automattic/components/src/highlight-cards/count-comparison-card';
 import Popover from '@automattic/components/src/popover';
 import { formatNumberCompact, formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
+import TooltipContent from 'calypso/my-sites/stats/components/highlight-cards/tooltip-content';
+import TrendComparison from 'calypso/my-sites/stats/components/highlight-cards/trend-comparison';
 
 class StatsTabsTab extends Component {
 	static displayName = 'StatsTabsTab';
