@@ -254,39 +254,49 @@ export default function SyncModal( {
 		onClose();
 	}, [ dispatch, onClose, querySiteId ] );
 
-	const { pullFromStaging } = usePullFromStagingMutation( productionSiteId, stagingSiteId, {
-		onSuccess: ( _, options ) => {
-			dispatch(
-				recordTracksEvent( 'calypso_hosting_configuration_staging_site_pull_success', options )
-			);
-		},
-		onError: ( error, options ) => {
-			dispatch(
-				recordTracksEvent( 'calypso_hosting_configuration_staging_site_pull_failure', {
-					code: error.code,
-					...options,
-				} )
-			);
-			// setSyncError( error.code );
-		},
-	} );
+	const { pullFromStaging, isLoading: isPullLoading } = usePullFromStagingMutation(
+		productionSiteId,
+		stagingSiteId,
+		{
+			onSuccess: ( _, options ) => {
+				onSyncStart();
+				handleClose();
+				dispatch(
+					recordTracksEvent( 'calypso_hosting_configuration_staging_site_pull_success', options )
+				);
+			},
+			onError: ( error, options ) => {
+				dispatch(
+					recordTracksEvent( 'calypso_hosting_configuration_staging_site_pull_failure', {
+						code: error.code,
+						...options,
+					} )
+				);
+			},
+		}
+	);
 
-	const { pushToStaging } = usePushToStagingMutation( productionSiteId, stagingSiteId, {
-		onSuccess: ( _, options ) => {
-			dispatch(
-				recordTracksEvent( 'calypso_hosting_configuration_staging_site_push_success', options )
-			);
-		},
-		onError: ( error, options ) => {
-			dispatch(
-				recordTracksEvent( 'calypso_hosting_configuration_staging_site_push_failure', {
-					code: error.code,
-					...options,
-				} )
-			);
-			// setSyncError( error.code );
-		},
-	} );
+	const { pushToStaging, isLoading: isPushLoading } = usePushToStagingMutation(
+		productionSiteId,
+		stagingSiteId,
+		{
+			onSuccess: ( _, options ) => {
+				onSyncStart();
+				handleClose();
+				dispatch(
+					recordTracksEvent( 'calypso_hosting_configuration_staging_site_push_success', options )
+				);
+			},
+			onError: ( error, options ) => {
+				dispatch(
+					recordTracksEvent( 'calypso_hosting_configuration_staging_site_push_failure', {
+						code: error.code,
+						...options,
+					} )
+				);
+			},
+		}
+	);
 
 	const { backupAttempt: lastKnownBackupAttempt, isLoading: isLoadingBackupAttempt } =
 		useFirstMatchingBackupAttempt( querySiteId, {
@@ -318,8 +328,6 @@ export default function SyncModal( {
 			exclude_paths = '';
 		}
 
-		onSyncStart();
-
 		if (
 			( syncType === 'pull' && environment === 'production' ) ||
 			( syncType === 'push' && environment === 'staging' )
@@ -328,8 +336,6 @@ export default function SyncModal( {
 		} else {
 			pushToStaging( { types: 'paths', include_paths, exclude_paths } );
 		}
-
-		handleClose();
 	};
 
 	const updateFilesAndFoldersCheckState = useCallback(
@@ -380,7 +386,9 @@ export default function SyncModal( {
 		( showDomainConfirmation && domainConfirmation !== productionSiteSlug ) ||
 		( browserCheckList.totalItems === 0 &&
 			browserCheckList.includeList.length === 0 &&
-			lastKnownBackupAttempt );
+			lastKnownBackupAttempt ) ||
+		isPullLoading ||
+		isPushLoading;
 
 	return (
 		<Modal
@@ -571,7 +579,12 @@ export default function SyncModal( {
 							<Button variant="tertiary" onClick={ handleClose }>
 								{ __( 'Cancel' ) }
 							</Button>
-							<Button variant="primary" onClick={ handleConfirm } disabled={ isButtonDisabled }>
+							<Button
+								variant="primary"
+								onClick={ handleConfirm }
+								isBusy={ isPullLoading || isPushLoading }
+								disabled={ isButtonDisabled }
+							>
 								{ syncConfig.submit }
 							</Button>
 						</HStack>
