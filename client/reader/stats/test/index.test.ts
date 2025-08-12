@@ -678,5 +678,63 @@ describe( 'reader stats', () => {
 				expect( getLocation( '/discover/recommended' ) ).toBe( 'discover_recommended' );
 			} );
 		} );
+
+		describe( 'postlike urls', () => {
+			const scenarios = [
+				{
+					url: '/activities/likes',
+					expected: 'postlike',
+					description: 'postlike page',
+					searchParams: {},
+				},
+				{
+					url: '/activities/likes?sort=relevance',
+					expected: 'postlike',
+					description: 'postlike page with sort',
+					searchParams: { sort: 'relevance' },
+				},
+			] as const;
+
+			it.each( scenarios )(
+				'should return $expected for "$description" ($url with search params $searchParams)',
+				( scenario ) => {
+					expect( getLocation( addQueryArgs( scenario.url, scenario.searchParams ) ) ).toBe(
+						scenario.expected
+					);
+				}
+			);
+		} );
+
+		describe( 'topic page urls', () => {
+			const scenarios = [
+				{
+					url: '/tag/test',
+					expected: 'topic_page:date',
+					description: 'topic page with tag',
+					searchParams: {},
+				},
+				{
+					url: '/tag/test?sort=relevance',
+					expected: 'topic_page:relevance',
+					description: 'topic page with tag and sort',
+					searchParams: { sort: 'relevance' },
+				},
+				{
+					url: '/tag/test?sort=date',
+					expected: 'topic_page:date',
+					description: 'topic page with tag and sort',
+					searchParams: { sort: 'date' },
+				},
+			] as const;
+
+			it.each( scenarios )(
+				'should return $expected for "$description" ($url with search params $searchParams)',
+				( scenario ) => {
+					expect( getLocation( addQueryArgs( scenario.url, scenario.searchParams ) ) ).toBe(
+						scenario.expected
+					);
+				}
+			);
+		} );
 	} );
 } );

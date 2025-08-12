@@ -36,8 +36,9 @@ export function recordPermalinkClick( source, post, eventProperties = {} ) {
 	}
 }
 
-export function getLocation( path ) {
-	const searchParams = new URLSearchParams( path.slice( path.indexOf( '?' ) ) );
+export function getLocation( fullPath ) {
+	const [ path, queryString ] = fullPath.split( '?' );
+	const searchParams = new URLSearchParams( queryString );
 
 	if ( path === undefined || path === '' ) {
 		return 'unknown';
@@ -77,22 +78,31 @@ export function getLocation( path ) {
 	}
 
 	if ( path.startsWith( '/discover' ) ) {
-		const selectedTag = searchParams.get( 'selectedTag' );
 		if ( path.startsWith( '/discover/add-new' ) ) {
 			return 'discover_addnew';
-		} else if ( path.startsWith( '/discover/firstposts' ) ) {
+		}
+
+		if ( path.startsWith( '/discover/firstposts' ) ) {
 			return 'discover_firstposts';
-		} else if ( path.startsWith( '/discover/reddit' ) ) {
+		}
+		if ( path.startsWith( '/discover/reddit' ) ) {
 			return 'discover_reddit';
-		} else if ( path.startsWith( '/discover/latest' ) ) {
+		}
+		if ( path.startsWith( '/discover/latest' ) ) {
 			return 'discover_latest';
-		} else if ( path.startsWith( '/discover/tags' ) ) {
+		}
+
+		if ( path.startsWith( '/discover/tags' ) ) {
+			const selectedTag = searchParams.get( 'selectedTag' );
 			return `discover_tag:${ selectedTag }`;
-		} else if ( path.split( '?' )[ 0 ] === '/discover' ) {
+		}
+
+		if ( path.split( '?' )[ 0 ] === '/discover' ) {
 			return isEnabled( 'reader/discover/freshly-pressed' )
 				? 'freshly-pressed'
 				: 'discover_recommended';
 		}
+
 		if ( path.startsWith( '/discover/recommended' ) ) {
 			return 'discover_recommended';
 		}
