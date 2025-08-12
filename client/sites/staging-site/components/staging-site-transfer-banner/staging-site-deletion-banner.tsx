@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
 import {
 	__experimentalText as Text,
 	__experimentalHeading as Heading,
@@ -26,17 +26,16 @@ interface StagingSiteDeletionBannerProps {
 export function StagingSiteDeletionBanner( { siteId }: StagingSiteDeletionBannerProps ) {
 	const heading = __( 'Deleting staging site' );
 
-	const router = useRouter();
 	const queryClient = useQueryClient();
 	const { createSuccessNotice } = useDispatch( noticesStore );
 
 	// Fetch the current site data
-	const { data: site = {} } = useQuery( {
+	const { data: site } = useQuery( {
 		...siteByIdQuery( siteId ),
 		enabled: !! siteId,
 	} );
 
-	const productionSiteId = getProductionSiteId( site ) ?? 0;
+	const productionSiteId = Number( site ? getProductionSiteId( site ) : 0 );
 
 	// Poll for staging site status
 	const { data: hasStagingSite } = useQuery( {
@@ -53,28 +52,17 @@ export function StagingSiteDeletionBanner( { siteId }: StagingSiteDeletionBanner
 
 	// Redirect to the production site when the staging site is deleted
 	useEffect( () => {
-		if ( ! hasStagingSite && productionSite?.slug && site ) {
+		if ( hasStagingSite !== undefined && ! hasStagingSite && productionSite?.slug && site ) {
 			queryClient.removeQueries( isDeletingStagingSiteQuery( site.ID ) );
 
 			// Clear the staging site query to stop polling
 			queryClient.removeQueries( hasStagingSiteQuery( productionSiteId ) );
 
 			// Staging site has been deleted, redirect to production site
-			router.navigate( {
-				to: '/overview/$siteSlug',
-				params: { siteSlug: productionSite.slug },
-			} );
+			page( `/overview/${ productionSite.slug }` );
 			createSuccessNotice( __( 'Staging site deleted.' ), { type: 'snackbar' } );
 		}
-	}, [
-		hasStagingSite,
-		productionSite,
-		router,
-		queryClient,
-		productionSiteId,
-		createSuccessNotice,
-		site,
-	] );
+	}, [ hasStagingSite, productionSite, queryClient, productionSiteId, createSuccessNotice, site ] );
 
 	return (
 		<StagingSiteBannerWrapper>
