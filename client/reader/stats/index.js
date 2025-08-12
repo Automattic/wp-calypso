@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { localeRegexString } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import { pick } from 'lodash';
@@ -35,7 +36,7 @@ export function recordPermalinkClick( source, post, eventProperties = {} ) {
 	}
 }
 
-function getLocation( path ) {
+export function getLocation( path ) {
 	const searchParams = new URLSearchParams( path.slice( path.indexOf( '?' ) ) );
 
 	if ( path === undefined || path === '' ) {
@@ -88,6 +89,11 @@ function getLocation( path ) {
 		} else if ( path.startsWith( '/discover/tags' ) ) {
 			return `discover_tag:${ selectedTag }`;
 		} else if ( path.split( '?' )[ 0 ] === '/discover' ) {
+			return isEnabled( 'reader/discover/freshly-pressed' )
+				? 'freshly-pressed'
+				: 'discover_recommended';
+		}
+		if ( path.startsWith( '/discover/recommended' ) ) {
 			return 'discover_recommended';
 		}
 		// Ideally we should not get here, but its good to have a fallback if other tabs are

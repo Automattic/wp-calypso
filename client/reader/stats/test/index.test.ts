@@ -1,6 +1,9 @@
 /**
  * @jest-environment jsdom
  */
+import { isEnabled } from '@automattic/calypso-config';
+import { addQueryArgs } from '@wordpress/url';
+import { when } from 'jest-when';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { bumpStat, bumpStatWithPageView } from 'calypso/lib/analytics/mc';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -18,6 +21,7 @@ import {
 	pageViewForPost,
 	recordFollow,
 	recordUnfollow,
+	getLocation,
 } from '../index';
 
 // Mock dependencies
@@ -34,6 +38,10 @@ jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 } ) );
 jest.mock( '@automattic/i18n-utils', () => ( {
 	localeRegexString: 'en|es|fr|de|it|pt|ru|ja|ko|zh',
+	...jest.requireActual( '@automattic/i18n-utils' ),
+} ) );
+jest.mock( '@automattic/calypso-config', () => ( {
+	isEnabled: jest.fn(),
 } ) );
 
 describe( 'reader stats', () => {
@@ -549,6 +557,126 @@ describe( 'reader stats', () => {
 					source: 'following',
 				} )
 			);
+		} );
+	} );
+
+	describe( 'getLocation', () => {
+		describe( 'reader urls', () => {
+			const scenarios = [
+				{
+					url: '/reader',
+					expected: 'following',
+					description: 'reader page',
+				},
+				{
+					url: '/reader/recent/',
+					expected: 'following',
+					description: 'reader recent page',
+				},
+				{
+					url: '/reader/a8c',
+					expected: 'following_a8c',
+					description: 'reader a8c page',
+				},
+				{
+					url: '/reader/p2',
+					expected: 'following_p2',
+					description: 'reader p2 page',
+				},
+				{
+					url: '/reader/blogs/123',
+					expected: 'blog_page',
+					description: 'reader blog page',
+				},
+				{
+					url: '/reader/feeds/123',
+					expected: 'blog_page',
+					description: 'reader feed page',
+				},
+				{
+					url: '/reader/list/',
+					expected: 'list',
+					description: 'reader list page',
+				},
+			] as const;
+
+			scenarios.map( ( scenario ) => {
+				it( `should return ${ scenario.expected } for ${ scenario.description } (${ scenario.url })`, () => {
+					expect( getLocation( scenario.url ) ).toBe( scenario.expected );
+				} );
+			} );
+		} );
+
+		describe( 'discover urls', () => {
+			const scenarios = [
+				{
+					url: '/discover',
+					expected: 'discover_recommended',
+					description: 'discover recommended page',
+					searchParams: {},
+				},
+				{
+					url: '/discover/add-new',
+					expected: 'discover_addnew',
+					description: 'discover add new page',
+					searchParams: {},
+				},
+				{
+					url: '/discover/firstposts',
+					expected: 'discover_firstposts',
+					description: 'discover first posts page',
+					searchParams: {},
+				},
+				{
+					url: '/discover/reddit',
+					expected: 'discover_reddit',
+					description: 'discover reddit page',
+					searchParams: {},
+				},
+				{
+					url: '/discover/latest',
+					expected: 'discover_latest',
+					description: 'discover latest page',
+					searchParams: {},
+				},
+				{
+					url: '/discover/tags/test',
+					expected: 'discover_tag:test',
+					description: 'discover tags page with tag',
+					searchParams: { selectedTag: 'test' },
+				},
+				{
+					url: '/discover/tags/test?sort=relevance',
+					expected: 'discover_tag:test',
+					description: 'discover tags page with tag and sort',
+					searchParams: { selectedTag: 'test', sort: 'relevance' },
+				},
+			] as const;
+
+			it.each( scenarios )(
+				'should return $expected for "$description" ($url with search params $searchParams)',
+				( scenario ) => {
+					expect( getLocation( addQueryArgs( scenario.url, scenario.searchParams ) ) ).toBe(
+						scenario.expected
+					);
+				}
+			);
+
+			it( 'returns freshly-pressed when the feature flag is on and there is no subpath', () => {
+				when( isEnabled ).calledWith( 'reader/discover/freshly-pressed' ).mockReturnValue( true );
+
+				expect( getLocation( '/discover' ) ).toBe( 'freshly-pressed' );
+			} );
+
+			it( 'returns recommended when the feature flag is off and there is no subpath', () => {
+				when( isEnabled ).calledWith( 'reader/discover/freshly-pressed' ).mockReturnValue( false );
+
+				expect( getLocation( '/discover' ) ).toBe( 'discover_recommended' );
+			} );
+
+			it( 'supports the /discover/recommended subpath', () => {
+				expect( getLocation( '/discover/recommended' ) ).toBe( 'discover_recommended' );
+			} );
 		} );
 	} );
 } );
