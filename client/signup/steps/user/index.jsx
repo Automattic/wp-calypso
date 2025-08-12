@@ -25,6 +25,7 @@ import {
 	isGravatarOAuth2Client,
 	isJetpackCloudOAuth2Client,
 	isPartnerPortalOAuth2Client,
+	isVIPOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import LoginContextProvider, { useLoginContext } from 'calypso/login/login-context';
@@ -47,6 +48,7 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getIsAkismet from 'calypso/state/selectors/get-is-akismet';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getIsWCCOM from 'calypso/state/selectors/get-is-wccom';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
@@ -484,6 +486,9 @@ export class UserStep extends Component {
 			isBlazePro,
 			isWCCOM,
 			isCrowdsignal,
+			isAkismet,
+			isVIPClient,
+			isA4A,
 		} = this.props;
 
 		if ( userLoggedIn ) {
@@ -499,8 +504,21 @@ export class UserStep extends Component {
 
 		// TODO clk This will encompass all unified OAuth2 clients,
 		// similar to get-header-text in wp-login (potentially the two being merged too)
-		if ( oauth2Client && isCrowdsignal ) {
-			const clientName = oauth2Client.name;
+		if (
+			( oauth2Client && ( isCrowdsignal || isVIPClient || isA4A || isBlazePro ) ) ||
+			isAkismet
+		) {
+			let clientName = oauth2Client?.name;
+
+			if ( isAkismet ) {
+				clientName = 'Akismet';
+			} else if ( isA4A ) {
+				clientName = 'Automattic for Agencies';
+			} else if ( isBlazePro ) {
+				clientName = 'Blaze Pro';
+			} else if ( isVIPClient ) {
+				clientName = 'VIP';
+			}
 
 			return fixMe( {
 				text: 'Sign up for {{span}}%(client)s{{/span}} with WordPress.com',
@@ -510,14 +528,6 @@ export class UserStep extends Component {
 				} ),
 				oldCopy: translate( 'Create your account' ),
 			} );
-		}
-
-		if ( isA4AOAuth2Client( oauth2Client ) ) {
-			return translate( 'Sign up to Automattic for Agencies with WordPress.com' );
-		}
-
-		if ( isBlazeProOAuth2Client( oauth2Client ) ) {
-			return translate( 'Sign up to Blaze Pro with WordPress.com' );
 		}
 
 		if ( isWCCOM ) {
@@ -531,7 +541,6 @@ export class UserStep extends Component {
 				</span>
 			);
 		}
-
 		/**
 		 * END: Unified create account
 		 */
@@ -599,6 +608,8 @@ export class UserStep extends Component {
 			isA4A,
 			isBlazePro,
 			isCrowdsignal,
+			isAkismet,
+			isVIPClient,
 		} = this.props;
 		const isPasswordless =
 			isMobile() ||
@@ -606,8 +617,10 @@ export class UserStep extends Component {
 			isNewsletterFlow( this.props?.queryObject?.variationName ) ||
 			isWoo ||
 			isA4A ||
+			isCrowdsignal ||
 			isBlazePro ||
-			isCrowdsignal;
+			isAkismet ||
+			isVIPClient;
 		let socialService;
 		let socialServiceResponse;
 		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
@@ -728,12 +741,7 @@ export class UserStep extends Component {
 							isWooJPC: this.props.isWooJPC,
 						} ) }
 					>
-						<OneLoginLayout
-							isJetpack={ false }
-							isFromAkismet={ false }
-							isSectionSignup
-							loginUrl={ this.getLoginUrl() }
-						>
+						<OneLoginLayout isJetpack={ false } isSectionSignup loginUrl={ this.getLoginUrl() }>
 							{ this.renderSignupForm() }
 						</OneLoginLayout>
 					</LoginContextWrapper>
@@ -765,7 +773,10 @@ const ConnectedUser = connect(
 		const isA4A = isA4AOAuth2Client( oauth2Client );
 		const isBlazePro = getIsBlazePro( state );
 		const isCrowdsignal = isCrowdsignalOAuth2Client( oauth2Client );
-		const isUnifiedCreateAccount = isWoo || isA4A || isBlazePro || isCrowdsignal;
+		const isAkismet = getIsAkismet( state );
+		const isVIPClient = isVIPOAuth2Client( oauth2Client );
+		const isUnifiedCreateAccount =
+			isWoo || isA4A || isCrowdsignal || isBlazePro || isAkismet || isVIPClient;
 
 		return {
 			oauth2Client: oauth2Client,
@@ -781,6 +792,8 @@ const ConnectedUser = connect(
 			isUnifiedCreateAccount,
 			isA4A,
 			isCrowdsignal,
+			isAkismet,
+			isVIPClient,
 		};
 	},
 	{
