@@ -1,6 +1,6 @@
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { domainQuery } from '../queries/domain';
-import { domainDnsQuery } from '../queries/domain-dns';
+import { domainDnsQuery } from '../queries/domain-dns-records';
 import { domainForwardingQuery } from '../queries/domain-forwarding';
 import { domainsQuery } from '../queries/domains';
 import { queryClient } from '../query-client';

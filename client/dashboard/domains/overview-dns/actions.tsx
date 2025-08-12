@@ -2,7 +2,7 @@ import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { edit, trash } from '@wordpress/icons';
 import { useMemo } from 'react';
-import type { DnsRecord } from '../../data/domain-dns';
+import type { DnsRecord } from '../../data/domain-dns-records';
 import type { Action } from '@wordpress/dataviews';
 
 export function useDnsActions(): Action< DnsRecord >[] {

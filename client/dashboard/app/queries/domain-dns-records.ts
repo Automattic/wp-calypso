@@ -1,5 +1,5 @@
-import { mutationOptions } from '@tanstack/react-query';
-import { updateDomainDns, DnsRecord } from '../../data/domain-dns-records';
+import { mutationOptions, queryOptions } from '@tanstack/react-query';
+import { fetchDomainDns, updateDomainDns, DnsRecord } from '../../data/domain-dns-records';
 
 export const domainDnsMutation = ( domainName: string ) =>
 	mutationOptions( {
@@ -14,4 +14,10 @@ export const domainDnsMutation = ( domainName: string ) =>
 				params.recordsToRemove,
 				params.restoreDefaultARecords
 			),
+	} );
+
+export const domainDnsQuery = ( domainName: string ) =>
+	queryOptions( {
+		queryKey: [ 'domains', domainName, 'domain-dns' ],
+		queryFn: () => fetchDomainDns( domainName ),
 	} );

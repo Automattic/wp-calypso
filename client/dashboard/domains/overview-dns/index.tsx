@@ -1,10 +1,10 @@
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { __experimentalVStack as VStack, Button } from '@wordpress/components';
+import { __experimentalVStack as VStack, Button, FormFileUpload } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { domainQuery } from '../../app/queries/domain';
-import { domainDnsQuery } from '../../app/queries/domain-dns';
+import { domainDnsQuery } from '../../app/queries/domain-dns-records';
 import { domainRoute } from '../../app/routes/domain-routes';
 import DataViewsCard from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
@@ -16,7 +16,7 @@ import RestoreDefaultARecords from './restore-default-a-records';
 import RestoreDefaultCnameRecord from './restore-default-cname-record';
 import RestoreDefaultEmailRecords from './restore-default-email-records';
 import { hasDefaultARecords, hasDefaultCnameRecord, hasDefaultEmailRecords } from './utils';
-import type { DnsRecord } from '../../data/domain-dns';
+import type { DnsRecord } from '../../data/domain-dns-records';
 import type { ViewTable, ViewList, View } from '@wordpress/dataviews';
 
 function getDnsRecordId( record: DnsRecord ) {
@@ -90,6 +90,18 @@ export default function DomainDns() {
 						title={ __( 'DNS Records' ) }
 						actions={
 							<>
+								<FormFileUpload
+									__next40pxDefaultSize
+									onChange={ ( event ) => {
+										const file = event.currentTarget.files?.[ 0 ];
+										if ( ! file ) {
+											return;
+										}
+										// const formData = [ [ 'files[]', file, file.name ] ];
+									} }
+								>
+									<Button variant="secondary">{ __( 'Import BIND file' ) }</Button>
+								</FormFileUpload>
 								<Button variant="primary">{ __( 'Add DNS Record' ) }</Button>
 								<DnsActionsMenu
 									hasDefaultARecords={ hasDefaultARecordsValue }
@@ -132,17 +144,20 @@ export default function DomainDns() {
 			<RestoreDefaultARecords
 				onConfirm={ () => setIsRestoreDefaultARecordsDialogOpen( false ) }
 				onCancel={ () => setIsRestoreDefaultARecordsDialogOpen( false ) }
+				isBusy={ false }
 				isGravatarDomain={ domain?.is_gravatar_domain ?? false }
 				isOpen={ isRestoreDefaultARecordsDialogOpen }
 			/>
 			<RestoreDefaultCnameRecord
 				onConfirm={ () => setIsRestoreDefaultCnameRecordDialogOpen( false ) }
 				onCancel={ () => setIsRestoreDefaultCnameRecordDialogOpen( false ) }
+				isBusy={ false }
 				isOpen={ isRestoreDefaultCnameRecordDialogOpen }
 			/>
 			<RestoreDefaultEmailRecords
 				onConfirm={ () => setIsRestoreDefaultEmailRecordsDialogOpen( false ) }
 				onCancel={ () => setIsRestoreDefaultEmailRecordsDialogOpen( false ) }
+				isBusy={ false }
 				isOpen={ isRestoreDefaultEmailRecordsDialogOpen }
 			/>
 		</PageLayout>

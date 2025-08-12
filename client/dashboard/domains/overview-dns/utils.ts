@@ -1,4 +1,4 @@
-import { DnsRecord } from '../../data/domain-dns';
+import { DnsRecord } from '../../data/domain-dns-records';
 
 const domainConnect = {
 	DISCOVERY_TXT_RECORD_NAME: '_domainconnect',
