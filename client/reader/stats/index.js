@@ -13,7 +13,7 @@ export function recordAction( action ) {
 }
 
 export function recordGaEvent( action, label, value ) {
-	debug( 'reader ga event', ...arguments );
+	debug( 'reader ga event', action, label, value );
 	gaRecordEvent( 'Reader', action, label, value );
 }
 
@@ -41,60 +41,73 @@ function getLocation( path ) {
 	if ( path === undefined || path === '' ) {
 		return 'unknown';
 	}
-	if ( path === '/reader' || path.indexOf( '/reader/recent/' ) === 0 ) {
+
+	if ( path === '/reader' || path.startsWith( '/reader/recent/' ) ) {
 		return 'following';
 	}
-	if ( path.indexOf( '/reader/a8c' ) === 0 ) {
+
+	if ( path.startsWith( '/reader/a8c' ) ) {
 		return 'following_a8c';
 	}
-	if ( path.indexOf( '/reader/p2' ) === 0 ) {
+
+	if ( path.startsWith( '/reader/p2' ) ) {
 		return 'following_p2';
 	}
-	if ( path.indexOf( '/tag/' ) === 0 ) {
+
+	if ( path.startsWith( '/tag/' ) ) {
 		const sort = searchParams.get( 'sort' );
 		return `topic_page:${ sort === 'relevance' ? 'relevance' : 'date' }`;
 	}
+
 	if ( path.match( /^\/reader\/(blogs|feeds)\/([0-9]+)\/posts\/([0-9]+)$/i ) ) {
 		return 'single_post';
 	}
+
 	if ( path.match( /^\/reader\/(blogs|feeds)\/([0-9]+)$/i ) ) {
 		return 'blog_page';
 	}
-	if ( path.indexOf( '/reader/list/' ) === 0 ) {
+
+	if ( path.startsWith( '/reader/list/' ) ) {
 		return 'list';
 	}
-	if ( path.indexOf( '/activities/likes' ) === 0 ) {
+
+	if ( path.startsWith( '/activities/likes' ) ) {
 		return 'postlike';
 	}
-	if ( path.indexOf( '/discover' ) === 0 ) {
+
+	if ( path.startsWith( '/discover' ) ) {
 		const selectedTag = searchParams.get( 'selectedTag' );
-		if ( path.indexOf( '/discover/add-new' ) === 0 ) {
+		if ( path.startsWith( '/discover/add-new' ) ) {
 			return 'discover_addnew';
-		} else if ( path.indexOf( '/discover/firstposts' ) === 0 ) {
+		} else if ( path.startsWith( '/discover/firstposts' ) ) {
 			return 'discover_firstposts';
-		} else if ( path.indexOf( '/discover/reddit' ) === 0 ) {
+		} else if ( path.startsWith( '/discover/reddit' ) ) {
 			return 'discover_reddit';
-		} else if ( path.indexOf( '/discover/latest' ) === 0 ) {
+		} else if ( path.startsWith( '/discover/latest' ) ) {
 			return 'discover_latest';
-		} else if ( path.indexOf( '/discover/tags' ) === 0 ) {
+		} else if ( path.startsWith( '/discover/tags' ) ) {
 			return `discover_tag:${ selectedTag }`;
 		} else if ( path.split( '?' )[ 0 ] === '/discover' ) {
-			return `discover_recommended`;
+			return 'discover_recommended';
 		}
 		// Ideally we should not get here, but its good to have a fallback if other tabs are
 		// added and not handled.
 		return `discover_unknown`;
 	}
+
 	if ( path.match( new RegExp( `^(/${ localeRegexString })?/reader/search` ) ) ) {
 		return 'search';
 	}
-	if ( path.indexOf( '/reader/conversations/a8c' ) === 0 ) {
+
+	if ( path.startsWith( '/reader/conversations/a8c' ) ) {
 		return 'conversations_a8c';
 	}
-	if ( path.indexOf( '/reader/conversations' ) === 0 ) {
+
+	if ( path.startsWith( '/reader/conversations' ) ) {
 		return 'conversations';
 	}
-	if ( path.indexOf( '/home' ) === 0 ) {
+
+	if ( path.startsWith( '/home' ) ) {
 		return 'home';
 	}
 	return 'unknown';
