@@ -107,7 +107,7 @@ function DomainGlueRecords() {
 			size="small"
 			header={
 				<PageHeader
-					title={ __( 'Domain Forwarding' ) }
+					title={ __( 'Glue Records' ) }
 					actions={
 						<RouterLinkButton
 							to={ domainGlueRecordsAddRoute.fullPath }
@@ -115,7 +115,7 @@ function DomainGlueRecords() {
 							variant="primary"
 							__next40pxDefaultSize
 						>
-							{ __( 'Add Domain Forwarding' ) }
+							{ __( 'Add Glue Records' ) }
 						</RouterLinkButton>
 					}
 				/>
@@ -124,7 +124,7 @@ function DomainGlueRecords() {
 			<DataViewsCard>
 				{ glueRecordsData?.length === 0 && ! isLoading ? (
 					<div style={ { padding: '20px', textAlign: 'center' } }>
-						{ __( 'No forwarding rules found for this domain.' ) }
+						{ __( 'No glue records found for this domain.' ) }
 					</div>
 				) : (
 					<DataViews< DomainGlueRecord >
