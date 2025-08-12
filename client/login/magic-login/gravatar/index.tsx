@@ -1019,7 +1019,6 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 		return () => {
 			if ( resendEmailCountdownId.current ) {
 				clearInterval( resendEmailCountdownId.current );
-				resendEmailCountdownId.current = null;
 			}
 		};
 	}, [] );
