@@ -400,7 +400,7 @@ export default function SyncModal( {
 						text={
 							shouldDisableGranularSync
 								? __(
-										'Selecting individual items to sync will be enabled automatically once your first backup is complete. Wait a few minutes or run a full sync in the meantime..'
+										'Selecting individual items to sync will be enabled automatically once your first backup is complete. Wait a few minutes or run a full sync in the meantime.'
 								  )
 								: ''
 						}
