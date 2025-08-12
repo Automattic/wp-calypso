@@ -175,9 +175,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 			}
 		}
 
-		// If we are not showing the file card or it is directory with restricted children,
-		// let's toggle the checkbox
-		if ( ! showFileCard || shouldRestrictChildren( item ) ) {
+		if ( ! showFileCard ) {
 			onCheckboxChange();
 		}
 
@@ -202,7 +200,6 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 		setActiveNodePath,
 		onCheckboxChange,
 		showFileCard,
-		shouldRestrictChildren,
 	] );
 
 	const handleExpandButtonClick = useCallback( () => {
