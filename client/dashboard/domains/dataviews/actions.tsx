@@ -6,13 +6,15 @@ import {
 	domainMappingSetup,
 	domainUseMyDomain,
 } from '@automattic/domains-table/src/utils/paths';
-import { useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { sprintf, __ } from '@wordpress/i18n';
 import { payment, tool } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
+import { addQueryArgs } from '@wordpress/url';
 import { useMemo } from 'react';
+import { userPurchasesQuery } from '../../app/queries/me-purchases';
 import { siteSetPrimaryDomainMutation } from '../../app/queries/site-domains';
 import { DomainTypes, DomainTransferStatus } from '../../data/domains';
 import {
@@ -24,11 +26,14 @@ import {
 	getDomainSiteSlug,
 } from '../../utils/domain';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
+import { isAkismetProduct, isMarketplaceTemporarySitePurchase } from '../../utils/purchase';
+import { encodeProductForUrl } from '../../utils/wpcom-checkout';
 import type { DomainSummary, Site, User } from '../../data/types';
 import type { Action } from '@wordpress/dataviews';
 
 export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { data: purchases } = useQuery( userPurchasesQuery() );
 	const setPrimaryDomainMutation = useMutation( siteSetPrimaryDomainMutation() );
 	const context = site ? 'site' : 'domains';
 	const actions: Action< DomainSummary >[] = useMemo(
@@ -38,7 +43,31 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				isPrimary: true,
 				icon: <Icon icon={ payment } />,
 				label: __( 'Renew now' ),
-				callback: () => {},
+				callback: ( items: DomainSummary[] ) => {
+					const domain = items[ 0 ];
+					const siteSlug = getDomainSiteSlug( domain );
+					const purchase = purchases?.find( ( p ) => p.ID === domain.subscription_id );
+					if ( purchase ) {
+						const productSlug = [ purchase.product_slug, domain.domain ]
+							.map( ( productSlug ) => encodeProductForUrl( productSlug ) )
+							.join( ':' );
+						const backUrl = window.location.href.replace( window.location.origin, '' );
+						let serviceSlug = '';
+						if ( isAkismetProduct( purchase ) ) {
+							serviceSlug = 'akismet/';
+						} else if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
+							serviceSlug = 'marketplace/';
+						}
+
+						window.location.href = addQueryArgs(
+							`/checkout/${ serviceSlug }${ productSlug }/renew/${ purchase.ID }/${ siteSlug }`,
+							{
+								cancel_to: backUrl,
+								redirect_to: backUrl,
+							}
+						);
+					}
+				},
 				isEligible: ( item: DomainSummary ) => isDomainRenewable( item ),
 			},
 			{
@@ -199,7 +228,15 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				isEligible: () => false,
 			},
 		],
-		[ user, site, context, setPrimaryDomainMutation, createSuccessNotice, createErrorNotice ]
+		[
+			user,
+			site,
+			context,
+			purchases,
+			setPrimaryDomainMutation,
+			createSuccessNotice,
+			createErrorNotice,
+		]
 	);
 
 	return actions;
