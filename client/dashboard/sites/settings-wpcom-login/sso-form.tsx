@@ -5,6 +5,7 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
+	CheckboxControl,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
@@ -21,6 +22,7 @@ import {
 } from '../../app/queries/site-jetpack-settings';
 import { JetpackModules } from '../../data/constants';
 import type { Site } from '../../data/types';
+import type { Field } from '@wordpress/dataviews';
 
 export type WpcomLoginFormData = {
 	sso: boolean;
@@ -28,7 +30,7 @@ export type WpcomLoginFormData = {
 	jetpack_sso_require_two_step: boolean;
 };
 
-const fields = [
+const fields: Field< WpcomLoginFormData >[] = [
 	{
 		id: 'sso',
 		label: __( 'Allow users to log in to this site using WordPress.com accounts' ),
@@ -38,12 +40,38 @@ const fields = [
 	{
 		id: 'jetpack_sso_match_by_email',
 		label: __( 'Match accounts using email addresses' ),
-		Edit: 'checkbox',
+		Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
+			const { getValue, id, label } = field;
+			return (
+				<CheckboxControl
+					__nextHasNoMarginBottom
+					checked={ getValue( { item: data } ) || false }
+					disabled={ ! data.sso }
+					label={ hideLabelFromVision ? '' : label }
+					onChange={ () => {
+						onChange( { [ id ]: ! getValue( { item: data } ) } );
+					} }
+				/>
+			);
+		},
 	},
 	{
 		id: 'jetpack_sso_require_two_step',
 		label: __( 'Require two-step authentication' ),
-		Edit: 'checkbox',
+		Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
+			const { getValue, id, label } = field;
+			return (
+				<CheckboxControl
+					__nextHasNoMarginBottom
+					checked={ getValue( { item: data } ) || false }
+					disabled={ ! data.sso }
+					label={ hideLabelFromVision ? '' : label }
+					onChange={ () => {
+						onChange( { [ id ]: ! getValue( { item: data } ) } );
+					} }
+				/>
+			);
+		},
 	},
 ];
 
@@ -70,46 +98,54 @@ export default function SsoForm( { site }: { site: Site } ) {
 		jetpack_sso_require_two_step: currentRequireTwoStep,
 	} );
 
-	const handleSubmit = ( e: React.FormEvent ) => {
-		e.preventDefault();
-		jetpackModulesMutation.mutate(
-			{ module: 'sso', value: formData.sso },
-			{
-				onSuccess: () => {
-					createSuccessNotice(
-						formData.sso
-							? __( 'WordPress.com log in enabled.' )
-							: __( 'WordPress.com log in disabled.' ),
-						{ type: 'snackbar' }
-					);
-				},
-				onError: () => {
-					createErrorNotice(
-						formData.sso
-							? __( 'Failed to enable WordPress.com log in.' )
-							: __( 'Failed to disable WordPress.com log in.' ),
-						{ type: 'snackbar' }
-					);
-				},
-			}
-		);
-		jetpackSettingsMutation.mutate(
-			{
-				jetpack_sso_match_by_email: formData.jetpack_sso_match_by_email,
-				jetpack_sso_require_two_step: formData.jetpack_sso_require_two_step,
-			},
-			{
-				onSuccess: () => {
-					createSuccessNotice( __( 'Settings saved.' ), { type: 'snackbar' } );
-				},
-			}
-		);
-	};
-
-	const isDirty =
-		formData.sso !== currentSso ||
+	const isModuleDirty = formData.sso !== currentSso;
+	const areSettingsDirty =
 		formData.jetpack_sso_match_by_email !== currentMatchByEmail ||
 		formData.jetpack_sso_require_two_step !== currentRequireTwoStep;
+
+	const handleSubmit = ( e: React.FormEvent ) => {
+		e.preventDefault();
+
+		if ( isModuleDirty ) {
+			jetpackModulesMutation.mutate(
+				{ module: 'sso', value: formData.sso },
+				{
+					onSuccess: () => {
+						createSuccessNotice(
+							formData.sso
+								? __( 'WordPress.com log in enabled.' )
+								: __( 'WordPress.com log in disabled.' ),
+							{ type: 'snackbar' }
+						);
+					},
+					onError: () => {
+						createErrorNotice(
+							formData.sso
+								? __( 'Failed to enable WordPress.com log in.' )
+								: __( 'Failed to disable WordPress.com log in.' ),
+							{ type: 'snackbar' }
+						);
+					},
+				}
+			);
+		}
+
+		if ( areSettingsDirty ) {
+			jetpackSettingsMutation.mutate(
+				{
+					jetpack_sso_match_by_email: formData.jetpack_sso_match_by_email,
+					jetpack_sso_require_two_step: formData.jetpack_sso_require_two_step,
+				},
+				{
+					onSuccess: () => {
+						createSuccessNotice( __( 'Settings saved.' ), { type: 'snackbar' } );
+					},
+				}
+			);
+		}
+	};
+
+	const isDirty = isModuleDirty || areSettingsDirty;
 	const { isPending: isJetpackModulesPending } = jetpackModulesMutation;
 	const { isPending: isJetpackSettingsPending } = jetpackSettingsMutation;
 
