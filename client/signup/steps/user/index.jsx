@@ -12,7 +12,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import SignupForm from 'calypso/blocks/signup-form';
-import JetpackLogo from 'calypso/components/jetpack-logo';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
 import WPCloudLogo from 'calypso/components/wp-cloud-logo';
@@ -489,6 +488,7 @@ export class UserStep extends Component {
 			isAkismet,
 			isVIPClient,
 			isA4A,
+			isJetpackCloud,
 		} = this.props;
 
 		if ( userLoggedIn ) {
@@ -505,7 +505,8 @@ export class UserStep extends Component {
 		// TODO clk This will encompass all unified OAuth2 clients,
 		// similar to get-header-text in wp-login (potentially the two being merged too)
 		if (
-			( oauth2Client && ( isCrowdsignal || isVIPClient || isA4A || isBlazePro ) ) ||
+			( oauth2Client &&
+				( isCrowdsignal || isVIPClient || isA4A || isBlazePro || isJetpackCloud ) ) ||
 			isAkismet
 		) {
 			let clientName = oauth2Client?.name;
@@ -518,6 +519,8 @@ export class UserStep extends Component {
 				clientName = 'Blaze Pro';
 			} else if ( isVIPClient ) {
 				clientName = 'VIP';
+			} else if ( isJetpackCloud ) {
+				clientName = 'Jetpack Cloud';
 			}
 
 			return fixMe( {
@@ -544,15 +547,6 @@ export class UserStep extends Component {
 		/**
 		 * END: Unified create account
 		 */
-
-		if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
-			return (
-				<div className={ clsx( 'signup-form__wrapper' ) }>
-					<JetpackLogo full={ false } size={ 60 } />
-					<h3>{ translate( 'Sign up to Jetpack.com with a WordPress.com account.' ) }</h3>
-				</div>
-			);
-		}
 
 		if ( isPartnerPortalOAuth2Client( oauth2Client ) ) {
 			if ( document.location.search?.includes( 'wpcloud' ) ) {
@@ -610,6 +604,7 @@ export class UserStep extends Component {
 			isCrowdsignal,
 			isAkismet,
 			isVIPClient,
+			isJetpackCloud,
 		} = this.props;
 		const isPasswordless =
 			isMobile() ||
@@ -620,7 +615,8 @@ export class UserStep extends Component {
 			isCrowdsignal ||
 			isBlazePro ||
 			isAkismet ||
-			isVIPClient;
+			isVIPClient ||
+			isJetpackCloud;
 		let socialService;
 		let socialServiceResponse;
 		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
@@ -775,8 +771,9 @@ const ConnectedUser = connect(
 		const isCrowdsignal = isCrowdsignalOAuth2Client( oauth2Client );
 		const isAkismet = getIsAkismet( state );
 		const isVIPClient = isVIPOAuth2Client( oauth2Client );
+		const isJetpackCloud = isJetpackCloudOAuth2Client( oauth2Client );
 		const isUnifiedCreateAccount =
-			isWoo || isA4A || isCrowdsignal || isBlazePro || isAkismet || isVIPClient;
+			isWoo || isA4A || isCrowdsignal || isBlazePro || isAkismet || isVIPClient || isJetpackCloud;
 
 		return {
 			oauth2Client: oauth2Client,
@@ -794,6 +791,7 @@ const ConnectedUser = connect(
 			isCrowdsignal,
 			isAkismet,
 			isVIPClient,
+			isJetpackCloud,
 		};
 	},
 	{

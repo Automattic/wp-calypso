@@ -41,6 +41,7 @@ import {
 	isCrowdsignalOAuth2Client,
 	isGravatarOAuth2Client,
 	isVIPOAuth2Client,
+	isJetpackCloudOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
 import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
@@ -1043,7 +1044,8 @@ class SignupForm extends Component {
 			this.props.isCrowdsignal ||
 			this.props.isBlazePro ||
 			this.props.isAkismet ||
-			this.props.isVIPClient;
+			this.props.isVIPClient ||
+			this.props.isJetpackCloud;
 		const isGravatar = this.props.isGravatar;
 		const emailErrorMessage = this.getErrorMessagesWithLogin( 'email' );
 		const showSeparator =
@@ -1202,6 +1204,7 @@ export default connect(
 			isCrowdsignal: isCrowdsignalOAuth2Client( oauth2Client ),
 			isAkismet: getIsAkismet( state ),
 			isVIPClient: isVIPOAuth2Client( oauth2Client ),
+			isJetpackCloud: isJetpackCloudOAuth2Client( oauth2Client ),
 		};
 	},
 	{

@@ -15,7 +15,7 @@ import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
 import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import isJetpackCloudEnvironment from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import {
 	isWooOAuth2Client,
@@ -86,6 +86,7 @@ const LayoutLoggedOut = ( {
 	isA4A,
 	isCrowdsignal,
 	isVIPClient,
+	isJetpackCloud,
 } ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const currentRoute = useSelector( getCurrentRoute );
@@ -115,7 +116,7 @@ const LayoutLoggedOut = ( {
 	const isWpcomMagicLogin =
 		isMagicLogin &&
 		! hasGravPoweredClientClass &&
-		! isJetpackCloudOAuth2Client( oauth2Client ) &&
+		! isJetpackCloud &&
 		! isWooOAuth2Client( oauth2Client );
 
 	const loadHelpCenter =
@@ -127,7 +128,7 @@ const LayoutLoggedOut = ( {
 
 	const isUnifiedCreateAccount =
 		sectionName === 'signup' &&
-		( isWoo || isA4A || isCrowdsignal || isBlazePro || isAkismet || isVIPClient );
+		( isWoo || isA4A || isCrowdsignal || isBlazePro || isAkismet || isVIPClient || isJetpackCloud );
 
 	const classes = {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,
@@ -153,7 +154,7 @@ const LayoutLoggedOut = ( {
 		'is-woo-com-oauth': isWooOAuth2Client( oauth2Client ),
 		woo: isWoo,
 		'feature-flag-woocommerce-core-profiler-passwordless-auth': true,
-		'jetpack-cloud': isJetpackCloudOAuth2Client( oauth2Client ),
+		'jetpack-cloud': isJetpackCloud,
 		'is-unified-create-account': isUnifiedCreateAccount,
 	};
 
@@ -264,7 +265,7 @@ const LayoutLoggedOut = ( {
 					<div className="layout__header-section-content">{ renderHeaderSection() }</div>
 				) }
 			</div>
-			{ isJetpackCloud() && (
+			{ isJetpackCloudEnvironment() && (
 				<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />
 			) }
 			{ isA8CForAgencies() && (
@@ -396,6 +397,7 @@ export default withCurrentRoute(
 				isA4A: isA4AOAuth2Client( oauth2Client ),
 				isCrowdsignal: isCrowdsignalOAuth2Client( oauth2Client ),
 				isVIPClient: isVIPOAuth2Client( oauth2Client ),
+				isJetpackCloud: isJetpackCloudOAuth2Client( oauth2Client ),
 			};
 		},
 		{ clearLastActionRequiresLogin }
