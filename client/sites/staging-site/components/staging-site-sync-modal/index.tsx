@@ -399,7 +399,9 @@ export default function SyncModal( {
 					<Tooltip
 						text={
 							shouldDisableGranularSync
-								? __( 'Selective Sync will be enabled automatically once your backup is complete.' )
+								? __(
+										'Selecting individual items to sync will be enabled automatically once your first backup is complete. Wait a few minutes or run a full sync in the meantime..'
+								  )
 								: ''
 						}
 						placement="top-start"
