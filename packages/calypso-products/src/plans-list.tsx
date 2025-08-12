@@ -1028,7 +1028,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_SHIPPING_CARRIERS,
 			PREMIUM_DESIGN_FOR_STORES,
 		].filter( isValueTruthy ),
-	get2023PricingGridSignupWpcomFeatures: ( props?: { isSummerSpecial?: boolean } ) => {
+	get2023PricingGridSignupWpcomFeatures: () => {
 		return [
 			FEATURE_UNLIMITED_ENTITIES,
 			FEATURE_CUSTOM_DOMAIN,
@@ -1039,7 +1039,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_CONNECT_ANALYTICS,
 			FEATURE_UPLOAD_VIDEO,
 			FEATURE_STATS_ADVANCED_20250206,
-			props?.isSummerSpecial ? FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL : FEATURE_UPLOAD_PLUGINS,
+			FEATURE_UPLOAD_PLUGINS,
 			FEATURE_DEV_TOOLS,
 			FEATURE_WOOCOMMERCE_HOSTING,
 		];
@@ -1619,7 +1619,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_SITE_BACKUPS_AND_RESTORE,
 			FEATURE_SFTP_DATABASE,
 		].filter( isValueTruthy ),
-	get2023PricingGridSignupWpcomFeatures: ( props?: { isSummerSpecial?: boolean } ) => {
+	get2023PricingGridSignupWpcomFeatures: () => {
 		return [
 			...( isBigSkyOnboarding() ? [ FEATURE_BIG_SKY_WEBSITE_BUILDER ] : [] ),
 			FEATURE_UNLIMITED_ENTITIES,
@@ -1631,7 +1631,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_CONNECT_ANALYTICS,
 			FEATURE_UPLOAD_VIDEO,
 			FEATURE_STATS_ADVANCED_20250206,
-			props?.isSummerSpecial ? FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL : FEATURE_UPLOAD_PLUGINS,
+			FEATURE_UPLOAD_PLUGINS,
 			FEATURE_DEV_TOOLS,
 		];
 	},
