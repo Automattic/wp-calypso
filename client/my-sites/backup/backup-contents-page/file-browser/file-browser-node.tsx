@@ -357,7 +357,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 							showTooltip={ isLabelTruncated }
 							label={ item.name }
 							variant="tertiary"
-							tabIndex={ showSeparateExpandButton ? -1 : 0 }
+							tabIndex={ showSeparateExpandButton && ! showFileCard ? -1 : 0 }
 						>
 							<FileTypeIcon type={ item.type } /> { label }
 						</Button>
