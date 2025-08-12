@@ -117,13 +117,6 @@ export const itemLinkMatches = ( path, currentPath ) => {
 	}
 
 	if (
-		currentPath.startsWith( '/subscribers/jetpack-subscribers/' ) ||
-		path.startsWith( '/subscribers/jetpack-subscribers/' )
-	) {
-		return fragmentIsEqual( path, currentPath, 2 );
-	}
-
-	if (
 		currentPath.startsWith( '/marketing/traffic/' ) ||
 		path.startsWith( '/marketing/traffic/' )
 	) {
