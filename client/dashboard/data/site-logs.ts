@@ -69,6 +69,11 @@ export interface SiteLogsParams {
 	pageIndex?: number;
 }
 
+export interface SiteLogsData {
+	total_results: number;
+	logs: ( PHPLog | ServerLog )[];
+}
+
 export async function fetchSiteLogs( {
 	siteId,
 	logType,
@@ -78,7 +83,7 @@ export async function fetchSiteLogs( {
 	sortOrder,
 	pageSize,
 	pageIndex,
-}: SiteLogsParams ): Promise< SiteLogsAPIResponse > {
+}: SiteLogsParams ): Promise< SiteLogsData > {
 	const logTypeFragment = logType === LogType.PHP ? 'error-logs' : 'logs';
 	const path = `/sites/${ siteId }/hosting/${ logTypeFragment }`;
 
@@ -98,7 +103,7 @@ export async function fetchSiteLogs( {
 			delete ( queryParams as Record< string, unknown > )[ key ]
 	);
 
-	const logs = await wpcom.req.get(
+	const response = await wpcom.req.get(
 		{
 			path,
 			apiNamespace: 'wpcom/v2',
@@ -106,5 +111,26 @@ export async function fetchSiteLogs( {
 		{ ...queryParams }
 	);
 
-	return logs;
+	const { data } = response as SiteLogsAPIResponse;
+
+	const totalResults =
+		typeof data.total_results === 'number' ? data.total_results : data.total_results?.value ?? 0;
+
+	const logs = Array.isArray( data.logs ) ? data.logs : [];
+
+	if ( logType === LogType.PHP ) {
+		const normalized = ( logs as PHPLogFromEndpoint[] ).map(
+			( { atomic_site_id, ...logWithoutAtomicId } ) => ( {
+				...logWithoutAtomicId,
+				id: `${ logWithoutAtomicId.timestamp }|${ String( logWithoutAtomicId.line ) }`,
+			} )
+		);
+		return { total_results: totalResults, logs: normalized };
+	}
+
+	const normalized = ( logs as ServerLogFromEndpoint[] ).map( ( log ) => ( {
+		...log,
+		id: `${ String( log.timestamp ) }|${ log.status }`,
+	} ) );
+	return { total_results: totalResults, logs: normalized };
 }
