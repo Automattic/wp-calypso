@@ -9,7 +9,6 @@ import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { getCurrentQueryArguments } from 'calypso/state/selectors/get-current-query-arguments';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
-import getIsAkismet from 'calypso/state/selectors/get-is-akismet';
 import HeadingLogo from './heading-logo';
 import './one-login-layout.scss';
 
@@ -37,7 +36,6 @@ const OneLoginLayout = ( {
 	const currentQuery = useSelector( getCurrentQueryArguments );
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const isAkismet = useSelector( getIsAkismet );
 	const dispatch = useDispatch();
 	const { headingText, subHeadingText, subHeadingTextSecondary } = useLoginContext();
 
@@ -88,7 +86,7 @@ const OneLoginLayout = ( {
 		>
 			<div className="wp-login__one-login-layout-content-wrapper">
 				<div className="wp-login__one-login-layout-heading">
-					<HeadingLogo isAkismet={ isAkismet } isJetpack={ isJetpack } />
+					<HeadingLogo isJetpack={ isJetpack } />
 					<Step.Heading
 						text={ <div className="wp-login__one-login-layout-heading-text">{ headingText }</div> }
 					/>
