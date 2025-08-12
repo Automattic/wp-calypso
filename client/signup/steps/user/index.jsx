@@ -508,7 +508,17 @@ export class UserStep extends Component {
 			( oauth2Client && ( isCrowdsignal || isVIPClient || isA4A || isBlazePro ) ) ||
 			isAkismet
 		) {
-			const clientName = isAkismet ? 'Akismet' : oauth2Client.name;
+			let clientName = oauth2Client?.name;
+
+			if ( isAkismet ) {
+				clientName = 'Akismet';
+			} else if ( isA4A ) {
+				clientName = 'Automattic for Agencies';
+			} else if ( isBlazePro ) {
+				clientName = 'Blaze Pro';
+			} else if ( isVIPClient ) {
+				clientName = 'VIP';
+			}
 
 			return fixMe( {
 				text: 'Sign up for {{span}}%(client)s{{/span}} with WordPress.com',
@@ -531,10 +541,6 @@ export class UserStep extends Component {
 				</span>
 			);
 		}
-		/**
-		 * END: Unified create account
-		 */
-
 		/**
 		 * END: Unified create account
 		 */
