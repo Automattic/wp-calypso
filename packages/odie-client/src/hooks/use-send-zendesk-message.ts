@@ -18,7 +18,7 @@ export const useSendZendeskMessage = () => {
 		return getConversationIdFromInteraction( currentSupportInteraction );
 	}, [] );
 
-	const { setChatStatus, chat, sectionName } = useOdieAssistantContext();
+	const { setChatStatus, chat } = useOdieAssistantContext();
 	const newConversation = useCreateZendeskConversation();
 
 	const conversationId = currentConversationId || chat.conversationId;
@@ -27,7 +27,7 @@ export const useSendZendeskMessage = () => {
 
 		if ( ! conversationId ) {
 			// Start a new conversation if it doesn't exist
-			await newConversation( { createdFrom: 'send_zendesk_message', section: sectionName } );
+			await newConversation( { createdFrom: 'send_zendesk_message' } );
 			setChatStatus( 'loaded' );
 			return;
 		}

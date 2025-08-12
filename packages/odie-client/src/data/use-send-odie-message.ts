@@ -85,7 +85,7 @@ export const useSendOdieMessage = () => {
 		const { createdFrom, isFromError, trigger } = shouldCreateConversation;
 
 		if ( trigger ) {
-			newConversation( { createdFrom, isFromError, section: sectionName } );
+			newConversation( { createdFrom, isFromError } );
 			setShouldCreateConversation( { createdFrom: undefined, isFromError: false, trigger: false } );
 		}
 	}, [ newConversation, shouldCreateConversation, sectionName ] );
@@ -181,7 +181,6 @@ export const useSendOdieMessage = () => {
 					newConversation( {
 						createdFrom: 'empty_response_error',
 						isFromError: true,
-						section: sectionName,
 					} );
 				} else {
 					// User is not eligible for premium support - show error message with support buttons
@@ -236,7 +235,6 @@ export const useSendOdieMessage = () => {
 				newConversation( {
 					createdFrom: 'api_error',
 					isFromError: true,
-					section: sectionName,
 				} );
 			} else {
 				// User is not eligible for premium support - show error message with support buttons
