@@ -6,9 +6,7 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useEffect } from 'react';
 import { siteByIdQuery } from 'calypso/dashboard/app/queries/site';
 import {
@@ -16,6 +14,8 @@ import {
 	hasStagingSiteQuery,
 } from 'calypso/dashboard/app/queries/site-staging-sites';
 import { getProductionSiteId } from 'calypso/dashboard/utils/site-staging-site';
+import { useDispatch } from 'calypso/state';
+import { successNotice } from 'calypso/state/notices/actions';
 import deleteStagingSiteIllustration from './delete-staging-site-illustration.svg';
 import { StagingSiteBannerWrapper } from './staging-site-banner-wrapper';
 
@@ -27,7 +27,7 @@ export function StagingSiteDeletionBanner( { siteId }: StagingSiteDeletionBanner
 	const heading = __( 'Deleting staging site' );
 
 	const queryClient = useQueryClient();
-	const { createSuccessNotice } = useDispatch( noticesStore );
+	const dispatch = useDispatch();
 
 	// Fetch the current site data
 	const { data: site } = useQuery( {
@@ -60,9 +60,9 @@ export function StagingSiteDeletionBanner( { siteId }: StagingSiteDeletionBanner
 
 			// Staging site has been deleted, redirect to production site
 			page( `/overview/${ productionSite.slug }` );
-			createSuccessNotice( __( 'Staging site deleted.' ), { type: 'snackbar' } );
+			dispatch( successNotice( __( 'Staging site deleted.' ) ) );
 		}
-	}, [ hasStagingSite, productionSite, queryClient, productionSiteId, createSuccessNotice, site ] );
+	}, [ hasStagingSite, productionSite, queryClient, productionSiteId, dispatch, site ] );
 
 	return (
 		<StagingSiteBannerWrapper>
