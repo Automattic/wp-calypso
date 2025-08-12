@@ -203,6 +203,14 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 		shouldRestrictChildren,
 	] );
 
+	const handleExpandButtonClick = useCallback( () => {
+		if ( ! isOpen ) {
+			setFetchContentsOnMount( true );
+		}
+
+		setIsOpen( ! isOpen );
+	}, [ isOpen ] );
+
 	const filterItems = useCallback(
 		( item: FileBrowserItem ) => {
 			// No filter is needed
@@ -323,7 +331,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	const expandButton = () => {
 		return (
 			<Button
-				onClick={ () => setIsOpen( ! isOpen ) }
+				onClick={ handleExpandButtonClick }
 				icon={ isOpen ? chevronDown : expandIcon }
 				className="file-browser-node__separate-expand-button"
 				variant="tertiary"
