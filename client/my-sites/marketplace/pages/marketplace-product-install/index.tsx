@@ -206,7 +206,7 @@ const MarketplaceProductInstall = ( {
 		) {
 			const triggerInstallFlow = () => {
 				setInitializeInstallFlow( true );
-				waitFor( 1 ).then( () => setCurrentStep( 1 ) );
+				waitFor( 5 ).then( () => setCurrentStep( 1 ) );
 			};
 
 			if ( isJetpack || isAtomic ) {
@@ -295,7 +295,7 @@ const MarketplaceProductInstall = ( {
 				transferStates.COMPLETE === automatedTransferStatus &&
 				canManagePlugins )
 		) {
-			waitFor( 1 ).then( () => {
+			waitFor( 10 ).then( () => {
 				window.location.href = pluginsUrl as string;
 			} );
 		}
