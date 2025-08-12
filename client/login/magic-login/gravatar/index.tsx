@@ -1048,7 +1048,7 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 					locale,
 					lang_id: getLanguage( locale )?.value,
 					email: email,
-					redirect_to: currentQueryArguments?.email_address,
+					redirect_to: currentQueryArguments?.redirect_to,
 					flow: oauth2Client ? getGravatarOAuth2Flow( oauth2Client ) : undefined,
 					create_account: true,
 					tos: getToSAcceptancePayload(),
