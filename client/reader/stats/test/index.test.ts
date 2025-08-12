@@ -1,0 +1,554 @@
+/**
+ * @jest-environment jsdom
+ */
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { bumpStat, bumpStatWithPageView } from 'calypso/lib/analytics/mc';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import {
+	recordGaEvent,
+	recordPermalinkClick,
+	buildReaderTracksEventProps,
+	recordTrack,
+	recordTracksRailcar,
+	recordTracksRailcarRender,
+	recordTracksRailcarInteract,
+	recordTrackForPost,
+	getTracksPropertiesForPost,
+	recordTrackWithRailcar,
+	pageViewForPost,
+	recordFollow,
+	recordUnfollow,
+} from '../index';
+
+// Mock dependencies
+jest.mock( 'debug', () => () => jest.fn() );
+jest.mock( 'calypso/lib/analytics/ga', () => ( {
+	gaRecordEvent: jest.fn(),
+} ) );
+jest.mock( 'calypso/lib/analytics/mc', () => ( {
+	bumpStat: jest.fn(),
+	bumpStatWithPageView: jest.fn(),
+} ) );
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: jest.fn(),
+} ) );
+jest.mock( '@automattic/i18n-utils', () => ( {
+	localeRegexString: 'en|es|fr|de|it|pt|ru|ja|ko|zh',
+} ) );
+
+describe( 'reader stats', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		// Mock window.location
+		Object.defineProperty( window, 'location', {
+			value: {
+				pathname: '/reader',
+				search: '',
+			},
+			writable: true,
+		} );
+	} );
+
+	describe( 'recordGaEvent', () => {
+		it( 'should record a GA event with all parameters', () => {
+			recordGaEvent( 'test_action', 'test_label', '123' );
+
+			expect( gaRecordEvent ).toHaveBeenCalledWith( 'Reader', 'test_action', 'test_label', '123' );
+		} );
+
+		it( 'should record a GA event with minimal parameters', () => {
+			recordGaEvent( 'test_action' );
+
+			expect( gaRecordEvent ).toHaveBeenCalledWith( 'Reader', 'test_action', undefined, undefined );
+		} );
+	} );
+
+	describe( 'recordPermalinkClick', () => {
+		it( 'should record permalink click with post', () => {
+			const post = { ID: 123, site_ID: 456 };
+			const eventProperties = { extra: 'data' };
+
+			recordPermalinkClick( 'test_source', post, eventProperties );
+
+			expect( bumpStat ).toHaveBeenCalledWith( {
+				reader_actions: 'visited_post_permalink',
+				reader_permalink_source: 'test_source',
+			} );
+			expect( gaRecordEvent ).toHaveBeenCalledWith(
+				'Reader',
+				'Clicked Post Permalink',
+				'test_source',
+				undefined
+			);
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_reader_permalink_click',
+				expect.objectContaining( {
+					source: 'test_source',
+					extra: 'data',
+					blog_id: 456,
+					post_id: 123,
+				} )
+			);
+		} );
+
+		it( 'should record permalink click without post', () => {
+			const eventProperties = { extra: 'data' };
+
+			recordPermalinkClick( 'test_source', undefined, eventProperties );
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_reader_permalink_click',
+				expect.objectContaining( {
+					source: 'test_source',
+					extra: 'data',
+				} )
+			);
+		} );
+	} );
+
+	describe( 'buildReaderTracksEventProps', () => {
+		it( 'should build event properties with location', () => {
+			const result = buildReaderTracksEventProps( { custom: 'prop' } );
+
+			expect( result ).toEqual( {
+				ui_algo: 'following',
+				custom: 'prop',
+			} );
+		} );
+
+		it( 'should build event properties with pathname override', () => {
+			const result = buildReaderTracksEventProps( { custom: 'prop' }, '/discover' );
+
+			expect( result ).toEqual( {
+				ui_algo: 'discover_recommended',
+				custom: 'prop',
+			} );
+		} );
+
+		it( 'should build event properties with post', () => {
+			const post = { ID: 123, site_ID: 456, is_jetpack: true };
+			const result = buildReaderTracksEventProps( { custom: 'prop' }, undefined, post );
+
+			expect( result ).toEqual( {
+				ui_algo: 'following',
+				custom: 'prop',
+				blog_id: 456,
+				post_id: 123,
+				is_jetpack: true,
+			} );
+		} );
+	} );
+
+	describe( 'recordTrack', () => {
+		it( 'should record track event', () => {
+			recordTrack( 'test_event', { prop: 'value' } );
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'test_event',
+				expect.objectContaining( {
+					ui_algo: 'following',
+					prop: 'value',
+				} )
+			);
+		} );
+
+		it( 'should record track event with pathname override', () => {
+			recordTrack( 'test_event', { prop: 'value' }, { pathnameOverride: '/discover' } );
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'test_event',
+				expect.objectContaining( {
+					ui_algo: 'discover_recommended',
+					prop: 'value',
+				} )
+			);
+		} );
+	} );
+
+	describe( 'recordTracksRailcar', () => {
+		it( 'should record tracks railcar event', () => {
+			const railcar = {
+				railcar: 'test_railcar',
+				fetch_algo: 'test_algo',
+				fetch_lang: 'en',
+				fetch_position: 1,
+				rec_blog_id: '123',
+			};
+			const overrides = { override: 'value' };
+
+			recordTracksRailcar( 'test_action', 'calypso_reader_test_event', railcar, overrides );
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'test_action',
+				expect.objectContaining( {
+					action: 'test_event',
+					railcar: 'test_railcar',
+					override: 'value',
+				} )
+			);
+		} );
+
+		it( 'should record tracks railcar event without event name', () => {
+			const railcar = {
+				railcar: 'test_railcar',
+				fetch_algo: 'test_algo',
+				fetch_lang: 'en',
+				fetch_position: 1,
+				rec_blog_id: '123',
+			};
+
+			recordTracksRailcar( 'test_action', null, railcar );
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'test_action',
+				expect.objectContaining( {
+					railcar: 'test_railcar',
+				} )
+			);
+		} );
+	} );
+
+	describe( 'recordTracksRailcarRender', () => {
+		it( 'should record tracks railcar render event', () => {
+			const railcar = {
+				railcar: 'test_railcar',
+				fetch_algo: 'test_algo',
+				fetch_lang: 'en',
+				fetch_position: 1,
+				rec_blog_id: '123',
+			};
+			const overrides = { override: 'value' };
+
+			recordTracksRailcarRender( 'calypso_reader_test_event', railcar, overrides );
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_traintracks_render',
+				expect.objectContaining( {
+					action: 'test_event',
+					railcar: 'test_railcar',
+					override: 'value',
+				} )
+			);
+		} );
+	} );
+
+	describe( 'recordTracksRailcarInteract', () => {
+		it( 'should record tracks railcar interact event', () => {
+			const railcar = {
+				railcar: 'test_railcar',
+				fetch_algo: 'test_algo',
+				fetch_lang: 'en',
+				fetch_position: 1,
+				rec_blog_id: '123',
+			};
+			const overrides = { override: 'value' };
+
+			recordTracksRailcarInteract( 'calypso_reader_test_event', railcar, overrides );
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_traintracks_interact',
+				expect.objectContaining( {
+					action: 'test_event',
+					railcar: 'test_railcar',
+					override: 'value',
+				} )
+			);
+		} );
+	} );
+
+	describe( 'recordTrackForPost', () => {
+		it( 'should record track for post with railcar', () => {
+			const post = {
+				ID: 123,
+				site_ID: 456,
+				is_jetpack: true,
+				railcar: {
+					railcar: 'test_railcar',
+					fetch_algo: 'test_algo',
+					fetch_lang: 'en',
+					fetch_position: 1,
+					rec_blog_id: '123',
+				},
+			};
+			const additionalProps = { ui_position: 1, ui_algo: 'test' };
+
+			recordTrackForPost( 'calypso_reader_article_opened', post, additionalProps );
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_reader_article_opened',
+				expect.objectContaining( {
+					blog_id: 456,
+					post_id: 123,
+					is_jetpack: true,
+					ui_position: 1,
+					ui_algo: 'test',
+				} )
+			);
+		} );
+
+		it( 'should record track for post without railcar', () => {
+			const post = { ID: 123, site_ID: 456 };
+
+			recordTrackForPost( 'calypso_reader_article_opened', post );
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_reader_article_opened',
+				expect.objectContaining( {
+					blog_id: 456,
+					post_id: 123,
+				} )
+			);
+		} );
+	} );
+
+	describe( 'getTracksPropertiesForPost', () => {
+		it( 'should return properties for valid post', () => {
+			const post = {
+				ID: 123,
+				site_ID: 456,
+				feed_ID: 789,
+				feed_item_ID: 101,
+				is_jetpack: true,
+				is_external: false,
+			};
+
+			const result = getTracksPropertiesForPost( post );
+
+			expect( result ).toEqual( {
+				blog_id: 456,
+				post_id: 123,
+				feed_id: 789,
+				feed_item_id: 101,
+				is_jetpack: true,
+			} );
+		} );
+
+		it( 'should return properties for external post', () => {
+			const post = {
+				ID: 123,
+				site_ID: 456,
+				is_external: true,
+			};
+
+			const result = getTracksPropertiesForPost( post );
+
+			expect( result ).toEqual( {
+				blog_id: undefined,
+				post_id: undefined,
+				feed_id: undefined,
+				feed_item_id: undefined,
+				is_jetpack: undefined,
+			} );
+		} );
+
+		it( 'should return properties for post with zero IDs', () => {
+			const post = {
+				ID: 0,
+				site_ID: 0,
+				feed_ID: 0,
+				feed_item_ID: 0,
+			};
+
+			const result = getTracksPropertiesForPost( post );
+
+			expect( result ).toEqual( {
+				blog_id: undefined,
+				post_id: undefined,
+				feed_id: undefined,
+				feed_item_id: undefined,
+				is_jetpack: undefined,
+			} );
+		} );
+
+		it( 'should return properties for empty post', () => {
+			const result = getTracksPropertiesForPost( {} );
+
+			expect( result ).toEqual( {
+				blog_id: undefined,
+				post_id: undefined,
+				feed_id: undefined,
+				feed_item_id: undefined,
+				is_jetpack: undefined,
+			} );
+		} );
+	} );
+
+	describe( 'recordTrackWithRailcar', () => {
+		it( 'should record track with railcar', () => {
+			const railcar = {
+				railcar: 'test_railcar',
+				fetch_algo: 'test_algo',
+				fetch_lang: 'en',
+				fetch_position: 1,
+				rec_blog_id: '123',
+			};
+			const eventProperties = { ui_position: 1, ui_algo: 'test', other: 'prop' };
+
+			recordTrackWithRailcar( 'test_event', railcar, eventProperties );
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'test_event',
+				expect.objectContaining( {
+					ui_position: 1,
+					ui_algo: 'test',
+					other: 'prop',
+				} )
+			);
+		} );
+	} );
+
+	describe( 'pageViewForPost', () => {
+		it( 'should record page view for post', () => {
+			pageViewForPost( 123, 'https://example.com', 456, false );
+
+			expect( bumpStatWithPageView ).toHaveBeenCalledWith( {
+				ref: 'http://wordpress.com/',
+				reader: 1,
+				host: 'example.com',
+				blog: 123,
+				post: 456,
+			} );
+		} );
+
+		it( 'should record page view for private post', () => {
+			pageViewForPost( 123, 'https://example.com', 456, true );
+
+			expect( bumpStatWithPageView ).toHaveBeenCalledWith( {
+				ref: 'http://wordpress.com/',
+				reader: 1,
+				host: 'example.com',
+				blog: 123,
+				post: 456,
+				priv: 1,
+			} );
+		} );
+
+		it( 'should not record page view with missing blogId', () => {
+			pageViewForPost( 0, 'https://example.com', 456 );
+
+			expect( bumpStatWithPageView ).not.toHaveBeenCalled();
+		} );
+
+		it( 'should not record page view with missing blogUrl', () => {
+			pageViewForPost( 123, '', 456 );
+
+			expect( bumpStatWithPageView ).not.toHaveBeenCalled();
+		} );
+
+		it( 'should not record page view with missing postId', () => {
+			pageViewForPost( 123, 'https://example.com', 0 );
+
+			expect( bumpStatWithPageView ).not.toHaveBeenCalled();
+		} );
+	} );
+
+	describe( 'recordFollow', () => {
+		beforeEach( () => {
+			// Mock window.location for follow/unfollow tests
+			Object.defineProperty( window, 'location', {
+				value: {
+					pathname: '/reader',
+					search: '',
+				},
+				writable: true,
+			} );
+		} );
+
+		it( 'should record follow with railcar', () => {
+			const railcar = {
+				railcar: 'test_railcar',
+				fetch_algo: 'test_algo',
+				fetch_lang: 'en',
+				fetch_position: 1,
+				rec_blog_id: '123',
+			};
+			const additionalProps = { follow_source: 'test_source' };
+
+			recordFollow( 'https://example.com', railcar, additionalProps );
+
+			expect( bumpStat ).toHaveBeenCalledWith( 'reader_follows', 'test_source' );
+			expect( bumpStat ).toHaveBeenCalledWith( 'reader_actions', 'followed_blog' );
+			expect( gaRecordEvent ).toHaveBeenCalledWith(
+				'Reader',
+				'Clicked Follow Blog',
+				'test_source',
+				undefined
+			);
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_reader_site_followed',
+				expect.objectContaining( {
+					url: 'https://example.com',
+					source: 'test_source',
+				} )
+			);
+		} );
+
+		it( 'should record follow without railcar', () => {
+			recordFollow( 'https://example.com' );
+
+			expect( bumpStat ).toHaveBeenCalledWith( 'reader_follows', 'following' );
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_reader_site_followed',
+				expect.objectContaining( {
+					url: 'https://example.com',
+					source: 'following',
+				} )
+			);
+		} );
+	} );
+
+	describe( 'recordUnfollow', () => {
+		beforeEach( () => {
+			// Mock window.location for follow/unfollow tests
+			Object.defineProperty( window, 'location', {
+				value: {
+					pathname: '/reader',
+					search: '',
+				},
+				writable: true,
+			} );
+		} );
+
+		it( 'should record unfollow with railcar', () => {
+			const railcar = {
+				railcar: 'test_railcar',
+				fetch_algo: 'test_algo',
+				fetch_lang: 'en',
+				fetch_position: 1,
+				rec_blog_id: '123',
+			};
+			const additionalProps = { follow_source: 'test_source' };
+
+			recordUnfollow( 'https://example.com', railcar, additionalProps );
+
+			expect( bumpStat ).toHaveBeenCalledWith( 'reader_unfollows', 'test_source' );
+			expect( bumpStat ).toHaveBeenCalledWith( 'reader_actions', 'unfollowed_blog' );
+			expect( gaRecordEvent ).toHaveBeenCalledWith(
+				'Reader',
+				'Clicked Unfollow Blog',
+				'test_source',
+				undefined
+			);
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_reader_site_unfollowed',
+				expect.objectContaining( {
+					url: 'https://example.com',
+					source: 'test_source',
+				} )
+			);
+		} );
+
+		it( 'should record unfollow without railcar', () => {
+			recordUnfollow( 'https://example.com' );
+
+			expect( bumpStat ).toHaveBeenCalledWith( 'reader_unfollows', 'following' );
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_reader_site_unfollowed',
+				expect.objectContaining( {
+					url: 'https://example.com',
+					source: 'following',
+				} )
+			);
+		} );
+	} );
+} );
