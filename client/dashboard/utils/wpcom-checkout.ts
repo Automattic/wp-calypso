@@ -21,6 +21,5 @@ export function encodeProductForUrl( slug: string ): string {
 }
 
 export function decodeProductFromUrl( slug: string ): string {
-	// This should really use String.prototype.replaceAll but it's yet not fully supported
-	return slug.split( slashForDecoding ).join( '/' );
+	return slug.replaceAll( slashForDecoding, '/' );
 }
