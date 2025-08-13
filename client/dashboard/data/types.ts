@@ -5,6 +5,7 @@ export type * from './me';
 export type * from './me-preferences';
 export type * from './me-profile';
 export type * from './me-sites';
+export type * from './me-user-preferences';
 export type * from './me-ssh';
 export type * from './site';
 export type * from './site-activity-log';
