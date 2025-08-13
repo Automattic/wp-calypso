@@ -1,3 +1,4 @@
+import { formatCurrency } from '@automattic/number-formatters';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
@@ -9,7 +10,7 @@ import { domainRoute } from '../../app/router';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { formatDate } from '../../utils/datetime';
-import { getDomainRenewalUrl, isDomainRenewable } from '../../utils/domain';
+import { getDomainRenewalUrl } from '../../utils/domain';
 
 export default function DomainOverview() {
 	const locale = useLocale();
@@ -42,8 +43,7 @@ export default function DomainOverview() {
 						date: formatDate( new Date( domain.registration_date ), locale, { dateStyle: 'long' } ),
 					} ) }
 					actions={
-						isDomainRenewable( domain ) &&
-						purchase && (
+						purchase?.can_explicit_renew && (
 							<Button
 								variant="primary"
 								__next40pxDefaultSize
@@ -52,7 +52,10 @@ export default function DomainOverview() {
 								{
 									// translators: price is the price of the domain renewal.
 									sprintf( __( 'Renew now for %(price)s' ), {
-										price: purchase.price_text,
+										price: formatCurrency( purchase.price_integer, purchase.currency_code, {
+											isSmallestUnit: true,
+											stripZeros: true,
+										} ),
 									} )
 								}
 							</Button>
