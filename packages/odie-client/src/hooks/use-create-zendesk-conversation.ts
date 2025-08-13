@@ -10,13 +10,11 @@ import { useManageSupportInteraction } from '../data';
 export const useCreateZendeskConversation = (): ( ( {
 	avoidTransfer,
 	interactionId,
-	section,
 	createdFrom,
 	isFromError,
 }: {
 	avoidTransfer?: boolean;
 	interactionId?: string;
-	section?: string | null;
 	createdFrom?: string;
 	isFromError?: boolean;
 } ) => Promise< void > ) => {
@@ -28,6 +26,7 @@ export const useCreateZendeskConversation = (): ( ( {
 		setChat,
 		chat,
 		trackEvent,
+		sectionName,
 	} = useOdieAssistantContext();
 	const { currentSupportInteraction } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
@@ -43,13 +42,11 @@ export const useCreateZendeskConversation = (): ( ( {
 	const createConversation = async ( {
 		avoidTransfer = false,
 		interactionId = '',
-		section = '',
 		createdFrom = '',
 		isFromError = false,
 	}: {
 		avoidTransfer?: boolean;
 		interactionId?: string;
-		section?: string | null;
 		createdFrom?: string;
 		isFromError?: boolean;
 	} ) => {
@@ -78,9 +75,9 @@ export const useCreateZendeskConversation = (): ( ( {
 			messaging_initial_message: userFieldMessage || undefined,
 			messaging_site_id: selectedSiteId || null,
 			messaging_ai_chat_id: chatId || undefined,
-			messaging_url: selectedSiteURL || null,
+			messaging_url: selectedSiteURL || window.location.href,
 			messaging_flow: userFieldFlowName || null,
-			messaging_source: section,
+			messaging_source: sectionName,
 		} );
 		const conversation = await Smooch.createConversation( {
 			metadata: {

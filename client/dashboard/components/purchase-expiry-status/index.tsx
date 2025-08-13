@@ -3,6 +3,7 @@ import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useLocale } from '../../app/locale';
+import { Text } from '../../components/text';
 import { SubscriptionBillPeriod } from '../../data/constants';
 import {
 	formatDate,
@@ -25,7 +26,19 @@ import {
 } from '../../utils/purchase';
 import type { Purchase } from '../../data/purchase';
 
-export function PurchaseStatus( {
+// Renders a formatted purchase's expiry date in an inline-block span
+// so that the text won't wrap by default.
+function FormattedExpiryDate( { locale, purchase }: { locale: string; purchase: Purchase } ) {
+	return (
+		<span style={ { display: 'inline-block' } }>
+			{ formatDate( new Date( purchase.expiry_date ), locale, {
+				dateStyle: 'long',
+			} ) }
+		</span>
+	);
+}
+
+export function PurchaseExpiryStatus( {
 	purchase,
 	isDisconnectedSite,
 }: {
@@ -236,33 +249,38 @@ export function PurchaseStatus( {
 		}
 	}
 
-	if (
-		isExpiring( purchase ) &&
-		! isAkismetFreeProduct( purchase ) &&
-		isWithinNext( new Date( purchase.expiry_date ), 30, 'days' ) &&
-		! isRecentMonthlyPurchase( purchase )
-	) {
-		return (
-			<span>
-				{
-					// translators: timeUntilExpiry is a formatted expiration string like "in 30 days" and date is a formatted expiry date
-					sprintf( __( 'Expires %(timeUntilExpiry)s on %(date)s' ), {
-						timeUntilExpiry: getRelativeTimeString( new Date( purchase.expiry_date ) ),
-						date: formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } ),
-					} )
-				}
-			</span>
-		);
-	}
-
 	if ( isExpiring( purchase ) && ! isAkismetFreeProduct( purchase ) ) {
+		if (
+			isWithinNext( new Date( purchase.expiry_date ), 30, 'days' ) &&
+			! isRecentMonthlyPurchase( purchase )
+		) {
+			const intent = isWithinNext( new Date( purchase.expiry_date ), 7, 'days' )
+				? ( 'error' as const )
+				: ( 'warning' as const );
+
+			return (
+				<Text intent={ intent }>
+					{ createInterpolateElement(
+						sprintf(
+							// translators: timeUntilExpiry is a formatted expiration string like "in 30 days" and date is a formatted expiry date
+							__( 'Expires %(timeUntilExpiry)s on <date />' ),
+							{
+								timeUntilExpiry: getRelativeTimeString( new Date( purchase.expiry_date ) ),
+							}
+						),
+						{
+							date: <FormattedExpiryDate locale={ locale } purchase={ purchase } />,
+						}
+					) }
+				</Text>
+			);
+		}
+
 		return createInterpolateElement(
-			// translators: %s is a formatted expiry date
-			sprintf( __( 'Expires on <span>%s</span>' ), [
-				formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } ),
-			] ),
+			// translators: date is a formatted expiry date
+			__( 'Expires on <date />' ),
 			{
-				span: <span />,
+				date: <FormattedExpiryDate locale={ locale } purchase={ purchase } />,
 			}
 		);
 	}
@@ -281,7 +299,7 @@ export function PurchaseStatus( {
 			timeSinceExpiry: getRelativeTimeString( new Date( purchase.expiry_date ) ),
 		} );
 
-		return <span>{ isExpiredToday ? expiredTodayText : expiredFromNowText }</span>;
+		return <Text intent="error">{ isExpiredToday ? expiredTodayText : expiredFromNowText }</Text>;
 	}
 
 	if ( isIncludedWithPlan( purchase ) ) {
