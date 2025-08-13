@@ -1,7 +1,7 @@
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { fetchTwoStep } from '../../data/me';
 import { profileQuery } from '../queries/me-profile';
-import { userPurchasesQuery } from '../queries/me-purchases';
+import { userPurchasesQuery, purchaseQuery } from '../queries/me-purchases';
 import { sitesQuery } from '../queries/sites';
 import { queryClient } from '../query-client';
 import { rootRoute } from './root';
@@ -59,6 +59,20 @@ export const billingHistoryRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../me/billing-history' ).then( ( d ) =>
 		createLazyRoute( 'billing-history' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const purchaseSettingsRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	loader: async ( { params: { purchaseId } } ) => {
+		queryClient.ensureQueryData( purchaseQuery( parseInt( purchaseId ) ) );
+	},
+	path: 'billing/purchases/purchase/$purchaseId',
+} ).lazy( () =>
+	import( '../../me/billing-purchases/purchase-settings' ).then( ( d ) =>
+		createLazyRoute( 'purchases-purchase-settings' )( {
 			component: d.default,
 		} )
 	)
@@ -149,6 +163,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 		billingRoute,
 		billingHistoryRoute,
 		purchasesRoute,
+		purchaseSettingsRoute,
 		paymentMethodsRoute,
 		taxDetailsRoute,
 		securityRoute,
