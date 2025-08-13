@@ -12,7 +12,6 @@ import { useDispatch } from '@wordpress/data';
 import { sprintf, __ } from '@wordpress/i18n';
 import { payment, tool } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
-import { addQueryArgs } from '@wordpress/url';
 import { useMemo } from 'react';
 import { userPurchasesQuery } from '../../app/queries/me-purchases';
 import { siteSetPrimaryDomainMutation } from '../../app/queries/site-domains';
@@ -24,10 +23,9 @@ import {
 	isDomainInGracePeriod,
 	canSetAsPrimary,
 	getDomainSiteSlug,
+	getDomainRenewalUrl,
 } from '../../utils/domain';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
-import { isAkismetProduct, isMarketplaceTemporarySitePurchase } from '../../utils/purchase';
-import { encodeProductForUrl } from '../../utils/wpcom-checkout';
 import type { DomainSummary, Site, User } from '../../data/types';
 import type { Action } from '@wordpress/dataviews';
 
@@ -43,29 +41,11 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				isPrimary: true,
 				icon: <Icon icon={ payment } />,
 				label: __( 'Renew now' ),
-				callback: ( items: DomainSummary[] ) => {
-					const domain = items[ 0 ];
-					const siteSlug = getDomainSiteSlug( domain );
+				callback: ( [ domain ]: DomainSummary[] ) => {
 					const purchase = purchases?.find( ( p ) => p.ID === domain.subscription_id );
-					if ( purchase ) {
-						const productSlug = [ purchase.product_slug, domain.domain ]
-							.map( ( productSlug ) => encodeProductForUrl( productSlug ) )
-							.join( ':' );
-						const backUrl = window.location.href.replace( window.location.origin, '' );
-						let serviceSlug = '';
-						if ( isAkismetProduct( purchase ) ) {
-							serviceSlug = 'akismet/';
-						} else if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
-							serviceSlug = 'marketplace/';
-						}
 
-						window.location.href = addQueryArgs(
-							`/checkout/${ serviceSlug }${ productSlug }/renew/${ purchase.ID }/${ siteSlug }`,
-							{
-								cancel_to: backUrl,
-								redirect_to: backUrl,
-							}
-						);
+					if ( domain && purchase ) {
+						window.location.href = getDomainRenewalUrl( domain, purchase );
 					}
 				},
 				isEligible: ( item: DomainSummary ) => isDomainRenewable( item ),

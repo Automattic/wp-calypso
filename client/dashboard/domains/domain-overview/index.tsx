@@ -1,16 +1,22 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useLocale } from '../../app/locale';
 import { domainQuery } from '../../app/queries/domain';
+import { sitePurchaseQuery } from '../../app/queries/site-purchases';
 import { domainRoute } from '../../app/router';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { formatDate } from '../../utils/datetime';
+import { getDomainRenewalUrl, isDomainRenewable } from '../../utils/domain';
 
 export default function DomainOverview() {
 	const locale = useLocale();
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
+	const { data: purchase } = useQuery(
+		sitePurchaseQuery( domain.blog_id, parseInt( domain.subscription_id, 10 ) )
+	);
 
 	return (
 		<PageLayout
@@ -22,6 +28,23 @@ export default function DomainOverview() {
 					description={ sprintf( __( 'Registered on %(date)s' ), {
 						date: formatDate( new Date( domain.registration_date ), locale, { dateStyle: 'long' } ),
 					} ) }
+					actions={
+						isDomainRenewable( domain ) &&
+						purchase && (
+							<Button
+								variant="primary"
+								__next40pxDefaultSize
+								href={ getDomainRenewalUrl( domain, purchase ) }
+							>
+								{
+									// translators: price is the price of the domain renewal.
+									sprintf( __( 'Renew now for %(price)s' ), {
+										price: purchase.price_text,
+									} )
+								}
+							</Button>
+						)
+					}
 				/>
 			}
 		></PageLayout>
