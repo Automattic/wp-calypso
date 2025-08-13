@@ -13,16 +13,25 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
-import { MIN_NAME_SERVERS_LENGTH, WPCOM_DEFAULT_NAME_SERVERS } from './types';
+import {
+	MIN_NAME_SERVERS_LENGTH,
+	MAX_NAME_SERVERS_LENGTH,
+	WPCOM_DEFAULT_NAME_SERVERS,
+} from './types';
 import UpsellNudge from './upsell-nudge';
 import { areAllWpcomNameServers, validateHostname } from './utils';
 
+// Create a union type of numbers from 1 to MAX_NAME_SERVERS_LENGTH
+type Range< N extends number, T extends number[] = [] > = T[ 'length' ] extends N
+	? T[ number ]
+	: Range< N, [ ...T, T[ 'length' ] ] >;
+
+type NameServerKey = `nameServer${ Range< typeof MAX_NAME_SERVERS_LENGTH > }`;
+
 type FormData = {
 	useWpcomNameServers: boolean;
-	nameServer1: string;
-	nameServer2: string;
-	nameServer3: string;
-	nameServer4: string;
+} & {
+	[ K in NameServerKey ]: string;
 };
 
 interface Props {
@@ -43,20 +52,33 @@ export default function NameServersForm( {
 	onSubmit,
 }: Props ) {
 	const isWpcomNameservers = areAllWpcomNameServers( nameServers );
-	const [ formData, setFormData ] = useState< FormData >( {
-		useWpcomNameServers: isWpcomNameservers,
-		nameServer1: nameServers[ 0 ],
-		nameServer2: nameServers[ 1 ],
-		nameServer3: nameServers[ 2 ],
-		nameServer4: nameServers[ 3 ],
+	const [ formData, setFormData ] = useState< FormData >( () => {
+		// Start with a partial object
+		const initialData = {
+			useWpcomNameServers: isWpcomNameservers,
+		} as Partial< FormData >;
+
+		// Add all nameServer fields
+		for ( let i = 0; i < MAX_NAME_SERVERS_LENGTH; i++ ) {
+			const key = `nameServer${ i + 1 }` as NameServerKey;
+			initialData[ key ] = nameServers[ i ] || '';
+		}
+
+		// Assert the object is now complete
+		return initialData as FormData;
 	} );
 
 	const formObj = {
-		fields: [ 'useWpcomNameServers', 'nameServer1', 'nameServer2', 'nameServer3', 'nameServer4' ],
+		fields: [
+			'useWpcomNameServers',
+			...Array.from(
+				{ length: MAX_NAME_SERVERS_LENGTH },
+				( _, i ) => `nameServer${ i + 1 }` as NameServerKey
+			),
+		],
 	};
 
 	const createNameServerField = ( index: number ) => {
-		type NameServerKey = `nameServer${ 1 | 2 | 3 | 4 }`;
 		const baseField = {
 			id: `nameServer${ index }` as NameServerKey,
 			type: 'text' as const,
@@ -124,12 +146,13 @@ export default function NameServersForm( {
 							label={ __( 'Use WordPress.com name servers' ) }
 							checked={ data.useWpcomNameServers }
 							onChange={ ( value ) => {
-								const ns = {
-									nameServer1: value ? WPCOM_DEFAULT_NAME_SERVERS[ 0 ] : '',
-									nameServer2: value ? WPCOM_DEFAULT_NAME_SERVERS[ 1 ] : '',
-									nameServer3: value ? WPCOM_DEFAULT_NAME_SERVERS[ 2 ] : '',
-									nameServer4: value ? WPCOM_DEFAULT_NAME_SERVERS[ 3 ] : '',
-								};
+								// Create nameServer fields dynamically
+								const ns = Object.fromEntries(
+									Array.from( { length: MAX_NAME_SERVERS_LENGTH }, ( _, i ) => [
+										`nameServer${ i + 1 }` as NameServerKey,
+										value ? WPCOM_DEFAULT_NAME_SERVERS[ i ] || '' : '',
+									] )
+								);
 
 								onChange( {
 									useWpcomNameServers: value,
@@ -154,24 +177,21 @@ export default function NameServersForm( {
 				);
 			},
 		},
-		createNameServerField( 1 ),
-		createNameServerField( 2 ),
-		createNameServerField( 3 ),
-		createNameServerField( 4 ),
+		...Array.from( { length: MAX_NAME_SERVERS_LENGTH }, ( _, i ) =>
+			createNameServerField( i + 1 )
+		),
 	];
 
 	return (
 		<form
 			onSubmit={ ( e ) => {
 				e.preventDefault();
-				onSubmit(
-					[
-						formData.nameServer1,
-						formData.nameServer2,
-						formData.nameServer3,
-						formData.nameServer4,
-					].filter( Boolean )
-				);
+				// Get all nameServer values dynamically
+				const nameServerValues = Array.from(
+					{ length: MAX_NAME_SERVERS_LENGTH },
+					( _, i ) => formData[ `nameServer${ i + 1 }` as NameServerKey ]
+				).filter( Boolean );
+				onSubmit( nameServerValues );
 			} }
 		>
 			<VStack spacing={ 4 }>
@@ -188,7 +208,13 @@ export default function NameServersForm( {
 							} }
 						/>
 						<View>
-							<Button __next40pxDefaultSize variant="primary" type="submit" isBusy={ isBusy }>
+							<Button
+								__next40pxDefaultSize
+								variant="primary"
+								type="submit"
+								disabled={ isBusy }
+								isBusy={ isBusy }
+							>
 								{ __( 'Save' ) }
 							</Button>
 						</View>
