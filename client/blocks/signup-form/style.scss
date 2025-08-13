@@ -55,17 +55,11 @@
 
 .auth-form__social {
 	max-width: 400px;
-	margin: 0 auto;
-	padding: 16px;
 	box-sizing: border-box;
-
-	.is-unified-create-account & {
-		width: 100%;
-		// Below is the same as .card.logged-out-form
-		margin: 0 auto 16px;
-		// max-width: 360px;
-		padding: 16px;
-	}
+	width: 100%;
+	// Below is the same as .card.logged-out-form
+	margin: 0 auto 16px;
+	padding: 16px;
 
 	p {
 		font-size: $font-body-small;
@@ -360,11 +354,6 @@ body.is-section-accept-invite {
 			}
 		}
 	}
-}
-
-// TODO clk remove this. it's handled by .is-unified-create-account
-.is-woo-passwordless .signup-form .auth-form__separator {
-	margin: 32px 0;
 }
 
 .signup-form.is-horizontal .calypso-notice.signup-form__notice {
