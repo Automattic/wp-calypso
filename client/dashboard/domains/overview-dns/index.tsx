@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Button, FormFileUpload } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
@@ -11,7 +12,7 @@ import {
 	domainDnsQuery,
 	domainDnsEmailMutation,
 } from '../../app/queries/domain-dns-records';
-import { domainRoute } from '../../app/routes/domain-routes';
+import { domainDnsAddRoute, domainRoute } from '../../app/routes/domain-routes';
 import DataViewsCard from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -52,6 +53,7 @@ const DEFAULT_LAYOUTS = {
 
 export default function DomainDns() {
 	const { domainName } = domainRoute.useParams();
+	const router = useRouter();
 	const updateDnsMutation = useMutation( domainDnsMutation( domainName ) );
 	const restoreDefaultEmailRecordsMutation = useMutation( domainDnsEmailMutation( domainName ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
@@ -178,6 +180,7 @@ export default function DomainDns() {
 						title={ __( 'DNS Records' ) }
 						actions={
 							<>
+								{ /* TODO Implement bind file logic */ }
 								<FormFileUpload
 									__next40pxDefaultSize
 									onChange={ ( event ) => {
@@ -190,7 +193,17 @@ export default function DomainDns() {
 								>
 									{ /* <Button variant="secondary">{ __( 'Import BIND file' ) }</Button> */ }
 								</FormFileUpload>
-								<Button variant="primary">{ __( 'Add DNS Record' ) }</Button>
+								<Button
+									variant="primary"
+									onClick={ () => {
+										router.navigate( {
+											to: domainDnsAddRoute.fullPath,
+											params: { domainName },
+										} );
+									} }
+								>
+									{ __( 'Add DNS Record' ) }
+								</Button>
 								<DnsActionsMenu
 									hasDefaultARecords={ hasDefaultARecordsValue }
 									hasDefaultCnameRecord={ hasDefaultCnameRecordValue }
