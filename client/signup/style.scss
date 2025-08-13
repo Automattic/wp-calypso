@@ -32,7 +32,7 @@ body.is-section-signup {
 
 	.layout {
 
-		// this is awakward but we need to remove the padding from the layout__content
+		// this is awkward but we need to remove the padding from the layout__content
 		// to account for the unified top-bar used in Login and User Steps (Signup)
 		// while preserving the content padding for non-user steps
 		.layout__content {
