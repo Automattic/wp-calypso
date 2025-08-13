@@ -27,7 +27,7 @@ export function deleteDomainForwarding(
 	} );
 }
 
-export interface DomainForwardingFormData {
+export interface DomainForwardingSaveData {
 	domain_redirect_id?: number;
 	subdomain?: string;
 	forward_paths: boolean;
@@ -39,7 +39,7 @@ export interface DomainForwardingFormData {
 
 export function saveDomainForwarding(
 	domainName: string,
-	data: DomainForwardingFormData
+	data: DomainForwardingSaveData
 ): Promise< void > {
 	return wpcom.req.post( `/sites/all/domain/${ domainName }/redirects`, data );
 }

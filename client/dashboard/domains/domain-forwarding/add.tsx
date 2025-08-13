@@ -10,7 +10,7 @@ import PageLayout from '../../components/page-layout';
 import DomainForwardingForm from './form';
 import { parseTargetUrl } from './utils';
 import type { FormData } from './form';
-import type { DomainForwardingFormData } from '../../data/domain-forwarding';
+import type { DomainForwardingSaveData } from '../../data/domain-forwarding';
 
 export default function AddDomainForwarding() {
 	const router = useRouter();
@@ -21,7 +21,7 @@ export default function AddDomainForwarding() {
 	const handleSubmit = ( formData: FormData ) => {
 		const { target_host, target_path, is_secure } = parseTargetUrl( formData.targetUrl );
 
-		const submitData: DomainForwardingFormData = {
+		const submitData: DomainForwardingSaveData = {
 			subdomain:
 				formData.sourceType === 'subdomain' ? formData.subdomain.trim() || undefined : undefined,
 			target_host,
