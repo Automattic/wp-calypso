@@ -5,6 +5,11 @@ export interface Domain extends DomainSummary {
 	is_gravatar_domain: boolean;
 }
 
+export interface StatesListItem {
+	code: string;
+	name: string;
+}
+
 export function fetchDomain( domainName: string ): Promise< Domain > {
 	return wpcom.req.get( {
 		path: `/domain-details/${ domainName }`,
@@ -15,6 +20,13 @@ export function fetchDomain( domainName: string ): Promise< Domain > {
 export async function fetchCountryList(): Promise< CountryListItem[] > {
 	return await wpcom.req.get( {
 		path: '/domains/supported-countries',
+		apiVersion: '1.1',
+	} );
+}
+
+export async function fetchStatesList( countryCode: string ): Promise< StatesListItem[] > {
+	return await wpcom.req.get( {
+		path: `/domains/supported-states/${ countryCode }`,
 		apiVersion: '1.1',
 	} );
 }

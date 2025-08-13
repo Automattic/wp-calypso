@@ -31,6 +31,7 @@ interface ContactFormProps {
 	initialData?: DomainContactDetails;
 	onSubmit?: ( data: DomainContactDetails ) => void;
 	onCancel?: () => void;
+	onCountryChange?: ( countryCode: string ) => void;
 	errors?: Partial< Record< keyof DomainContactDetails, string > >;
 }
 
@@ -327,6 +328,11 @@ export default function ContactForm( {
 							form={ form }
 							onChange={ ( edits: Partial< DomainContactDetails > ) => {
 								setFormData( ( data ) => ( { ...data, ...edits } ) );
+
+								// If country changed, notify parent component
+								if ( 'countryCode' in edits && onCountryChange ) {
+									onCountryChange( edits.countryCode as string );
+								}
 							} }
 						/>
 						<Notice>

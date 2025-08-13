@@ -25,6 +25,10 @@ export default function DomainContactInfo() {
 		navigate( { to: '/domains/$domainName', params: { domainName } } );
 	};
 
+	const handleCountryChange = ( countryCode: string ) => {
+		setSelectedCountryCode( countryCode );
+	};
+
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Contact details' ) } /> }>
 			<div className="domain-contact-info">
@@ -47,8 +51,10 @@ export default function DomainContactInfo() {
 						} as DomainContactDetails
 					}
 					countryList={ countryList ?? [] }
+					statesList={ statesList ?? [] }
 					onSubmit={ handleSubmit }
 					onCancel={ handleCancel }
+					onCountryChange={ handleCountryChange }
 					errors={ {} }
 				/>
 			</div>
