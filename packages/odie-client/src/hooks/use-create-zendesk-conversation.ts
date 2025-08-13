@@ -83,7 +83,7 @@ export const useCreateZendeskConversation = (): ( ( {
 			status: 'transfer',
 		} ) );
 
-		trackEvent( 'create_submitting_zendesk_user_fields', {
+		trackEvent( 'submitting_zendesk_user_fields', {
 			messaging_initial_message: userFieldMessage || undefined,
 			messaging_site_id: selectedSiteId || null,
 			messaging_ai_chat_id: chatId || undefined,
@@ -100,6 +100,8 @@ export const useCreateZendeskConversation = (): ( ( {
 			messaging_flow: userFieldFlowName || null,
 			messaging_source: sectionName,
 		} );
+
+		trackEvent( 'submitted_zendesk_user_fields' );
 
 		const conversation = await Smooch.createConversation( {
 			metadata: {
