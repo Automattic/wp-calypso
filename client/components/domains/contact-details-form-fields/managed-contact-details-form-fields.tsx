@@ -364,7 +364,7 @@ export class ManagedContactDetailsFormFields extends Component<
 						description={
 							<Notice status="info" isDismissible={ false }>
 								{ translate(
-									'If provided, the organization name will be considered the legal domain owner and made public. You can hide it using {{a}}privacy protection{{/a}}.',
+									'By completing the organization field, you agree that the listed organization will be considered the legal domain owner and that this information will be publicly visible. You can choose to hide it using {{a}}privacy protection{{/a}}.',
 									{
 										components: {
 											a: (
