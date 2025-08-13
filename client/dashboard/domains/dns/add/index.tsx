@@ -19,6 +19,7 @@ import PageLayout from '../../../components/page-layout';
 import RequiredSelect from '../../../components/required-select';
 import { DNS_RECORD_CONFIGS } from './dns-record-configs';
 import type { DnsRecordTypeFormData, DnsRecordFormData } from './dns-record-configs';
+import type { DnsRecord } from '../../../data/domain-dns-records';
 
 const typeForm = {
 	type: 'regular' as const,
@@ -124,8 +125,8 @@ export default function DomainAddDNS() {
 
 		const formattedData = config.transformData( formData, domainName );
 
-		const recordsToAdd: DnsRecordFormData[] = [ formattedData ];
-		let recordsToRemove: DnsRecordFormData[] = [];
+		const recordsToAdd: DnsRecord[] = [ formattedData ];
+		let recordsToRemove: DnsRecord[] = [];
 		const successMessage = isEditMode
 			? __( 'DNS record updated successfully.' )
 			: __( 'DNS record added successfully.' );
@@ -133,7 +134,7 @@ export default function DomainAddDNS() {
 			? __( 'Failed to update DNS record.' )
 			: __( 'Failed to add DNS record.' );
 
-		if ( isEditMode ) {
+		if ( isEditMode && recordToEdit ) {
 			recordsToRemove = [ recordToEdit ];
 		}
 
