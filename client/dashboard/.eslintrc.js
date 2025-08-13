@@ -44,8 +44,10 @@ module.exports = {
 							'!@automattic/calypso-analytics',
 							'!@automattic/domains-table',
 							'!@automattic/domains-table/src/utils/*',
+							'!@automattic/help-center',
 							'!@automattic/number-formatters',
 							'!@automattic/ui',
+							'!@automattic/urls',
 							'!@automattic/viewport',
 							'!@automattic/languages',
 							// Please do not add exceptions unless agreed on

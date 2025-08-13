@@ -102,18 +102,4 @@
 			}
 		}
 	}
-
-	/**
-	* Jetpack Cloud
-	*/
-	@at-root .jetpack-cloud & {
-		max-width: 375px;
-		width: 100%;
-		padding: 16px;
-		margin-bottom: 0;
-
-		@include break-mobile {
-			padding: 24px;
-		}
-	}
 }

@@ -1,7 +1,5 @@
-import { isEnabled } from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { Suspense } from 'react';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import DiscoverAddNew from 'calypso/reader/discover/components/add-new';
 import DiscoverHeaderAndNavigation from 'calypso/reader/discover/components/header-and-navigation';
@@ -10,14 +8,12 @@ import Stream from 'calypso/reader/stream';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
-import { FreshlyPressedLazy } from './components/freshly-pressed/lazy';
 import {
 	getDiscoverStreamTags,
 	RECOMMENDED_TAB,
 	buildDiscoverStreamKey,
 	ADD_NEW_TAB,
 	REDDIT_TAB,
-	FRESHLY_PRESSED_TAB,
 	getDefaultTab,
 } from './helper';
 
@@ -39,9 +35,6 @@ const DiscoverStream = ( props ) => {
 	const TAB_COMPONENTS = {
 		[ ADD_NEW_TAB ]: DiscoverAddNew,
 		[ REDDIT_TAB ]: Reddit,
-		...( isEnabled( 'reader/discover/freshly-pressed' )
-			? { [ FRESHLY_PRESSED_TAB ]: FreshlyPressedLazy }
-			: {} ),
 	};
 
 	const ContentComponent = TAB_COMPONENTS[ selectedTab ];
@@ -50,9 +43,7 @@ const DiscoverStream = ( props ) => {
 			<ReaderMain className={ clsx( 'following main', props.className ) }>
 				<DiscoverHeaderAndNavigation { ...headerAndNavigationProps } />
 				<div className="reader__content">
-					<Suspense>
-						<ContentComponent />
-					</Suspense>
+					<ContentComponent />
 				</div>
 			</ReaderMain>
 		);
@@ -64,10 +55,11 @@ const DiscoverStream = ( props ) => {
 		isLoggedIn
 	);
 
+	const streamKey = buildDiscoverStreamKey( effectiveTabSelection, recommendedStreamTags );
 	return (
 		<Stream
 			{ ...props }
-			streamKey={ buildDiscoverStreamKey( effectiveTabSelection, recommendedStreamTags ) }
+			streamKey={ streamKey }
 			sidebarTabTitle={
 				selectedTab === RECOMMENDED_TAB ? translate( 'Sites' ) : translate( 'Related' )
 			}

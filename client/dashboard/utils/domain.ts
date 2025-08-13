@@ -1,9 +1,17 @@
-import { isAfter, subMinutes } from 'date-fns';
+import { isAfter, subMinutes, subDays } from 'date-fns';
 import { DotcomFeatures } from '../data/constants';
 import { DomainTypes } from '../data/domains';
 import { hasPlanFeature } from './site-features';
 import { userHasFlag } from './user';
-import type { Domain, Site, User } from '../data/types';
+import type { SiteDomain, DomainSummary, Site, User } from '../data/types';
+
+export function getDomainSiteSlug( domain: DomainSummary ) {
+	return domain.primary_domain ? domain.domain : domain.site_slug;
+}
+
+export function isRegisteredDomain( domain: DomainSummary ) {
+	return ! domain.wpcom_domain && domain.has_registration;
+}
 
 export function isRecentlyRegistered( registrationDate: string, numberOfMinutes = 30 ) {
 	return (
@@ -12,9 +20,9 @@ export function isRecentlyRegistered( registrationDate: string, numberOfMinutes 
 	);
 }
 
-export function isDomainRenewable( domain: Domain ) {
+export function isDomainRenewable( domain: DomainSummary ) {
 	// Only registered domains can be manually renewed
-	if ( domain.type !== DomainTypes.REGISTERED ) {
+	if ( ! isRegisteredDomain( domain ) ) {
 		return false;
 	}
 
@@ -29,17 +37,29 @@ export function isDomainRenewable( domain: Domain ) {
 	);
 }
 
+export function isDomainUpdatable( domain: DomainSummary ) {
+	return ! domain.pending_transfer && ! domain.expired;
+}
+
+export function isDomainInGracePeriod( domain: DomainSummary ) {
+	if ( ! domain.expiry ) {
+		return true;
+	}
+
+	return isAfter( new Date( domain.expiry ), subDays( new Date(), 18 ) );
+}
+
 const shouldUpgradeToMakeDomainPrimary = ( {
 	domain,
 	site,
 	user,
 }: {
-	domain: Domain;
+	domain: DomainSummary;
 	site: Site;
 	user: User;
 } ) => {
 	return (
-		( domain.type === DomainTypes.REGISTERED || domain.type === DomainTypes.MAPPED ) &&
+		( isRegisteredDomain( domain ) || domain.type === DomainTypes.MAPPED ) &&
 		! domain.current_user_can_create_site_from_domain_only &&
 		! domain.primary_domain &&
 		! domain.wpcom_domain &&
@@ -55,7 +75,7 @@ export function canSetAsPrimary( {
 	site,
 	user,
 }: {
-	domain: Domain;
+	domain: DomainSummary;
 	site: Site;
 	user: User;
 } ): boolean {
@@ -69,4 +89,14 @@ export function canSetAsPrimary( {
 			user,
 		} )
 	);
+}
+
+export function hasGSuiteWithUs( domain: SiteDomain ) {
+	const status = domain.google_apps_subscription?.status;
+	return status && ! [ 'no_subscription', 'other_provider' ].includes( status );
+}
+
+export function hasTitanMailWithUs( domain: SiteDomain ) {
+	const subscriptionStatus = domain.titan_mail_subscription?.status;
+	return subscriptionStatus === 'active' || subscriptionStatus === 'suspended';
 }

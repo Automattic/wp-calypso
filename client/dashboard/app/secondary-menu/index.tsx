@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
@@ -10,22 +11,29 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { help, bellUnread, bell, commentAuthorAvatar } from '@wordpress/icons';
+import { Suspense, lazy, useCallback } from 'react';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
-import { AsyncHelpCenterApp, useShowHelpCenter } from 'calypso/components/help-center'; // eslint-disable-line no-restricted-imports
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
 import { useAuth } from '../auth';
 import { useOpenCommandPalette } from '../command-palette/utils';
 import { useAppContext } from '../context';
+import { useHelpCenter } from '../help-center';
 
 import './style.scss';
 
+const AsyncHelpCenterApp = lazy( () => import( '../help-center/help-center-app' ) );
+
 function Help() {
 	const { user } = useAuth();
-	const { isLoading, isShown, setShowHelpCenter } = useShowHelpCenter();
+	const { isLoading, isShown, setShowHelpCenter } = useHelpCenter();
 
 	const handleToggleHelpCenter = () => {
 		setShowHelpCenter( ! isShown );
 	};
+
+	const handleCloseHelpCenterApp = useCallback( () => {
+		setShowHelpCenter( false, undefined, undefined, true );
+	}, [ setShowHelpCenter ] );
 
 	return (
 		<>
@@ -37,7 +45,17 @@ function Help() {
 				isBusy={ isLoading }
 				onClick={ handleToggleHelpCenter }
 			/>
-			{ isShown && <AsyncHelpCenterApp currentUser={ user } sectionName="dashboard" /> }
+			<Suspense fallback={ null }>
+				{ isShown && (
+					<AsyncHelpCenterApp
+						currentUser={ user }
+						handleClose={ handleCloseHelpCenterApp }
+						locale={ user.language }
+						onboardingUrl={ config( 'wpcom_signup_url' ) }
+						sectionName="dashboard"
+					/>
+				) }
+			</Suspense>
 		</>
 	);
 }

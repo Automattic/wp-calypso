@@ -1,4 +1,5 @@
 export type * from './agency';
+export type * from './domain';
 export type * from './domains';
 export type * from './emails';
 export type * from './me';
@@ -10,6 +11,7 @@ export type * from './me-ssh';
 export type * from './site';
 export type * from './site-activity-log';
 export type * from './site-atomic-transfers';
+export type * from './site-do-it-for-me';
 export type * from './site-domains';
 export type * from './site-hosting-edge-cache';
 export type * from './site-hosting-sftp';

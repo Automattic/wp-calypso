@@ -6,12 +6,10 @@
 	z-index: 1;
 
 	.components-button.dashboard-page-header__back-button {
-		padding-left: 0;
-		padding-right: 0;
+		padding-inline: 0;
 
 		svg {
-			margin-left: -4px;
-			margin-right: -4px;
+			margin-inline: -4px;
 		}
 	}
 

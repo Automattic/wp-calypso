@@ -11,8 +11,5 @@ import 'calypso/state/purchases/init';
  * @returns {boolean} True if the site has an active Jetpack purchase, false otherwise.
  */
 export const siteHasJetpackProductPurchase = ( state, siteId ) => {
-	return some(
-		getSitePurchases( state, siteId ),
-		( purchase ) => purchase.active && isJetpackProduct( purchase )
-	);
+	return some( getSitePurchases( state, siteId ), ( purchase ) => isJetpackProduct( purchase ) );
 };

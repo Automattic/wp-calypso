@@ -124,6 +124,13 @@ export const itemLinkMatches = ( path, currentPath ) => {
 	}
 
 	if (
+		currentPath.startsWith( '/marketing/traffic/' ) ||
+		path.startsWith( '/marketing/traffic/' )
+	) {
+		return fragmentIsEqual( path, currentPath, 2 );
+	}
+
+	if (
 		currentPath.startsWith( '/marketing/tools-marketing/' ) ||
 		path.startsWith( '/marketing/tools-marketing/' )
 	) {
