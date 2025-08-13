@@ -1,45 +1,18 @@
-@import "@wordpress/base-styles/variables";
-@import "@wordpress/base-styles/mixins";
 @import "variables";
 
-// Homepage conversations section
-.help-center-homepage-conversations {
-	margin: 0;
-	border-radius: 8px; /* stylelint-disable-line scales/radii */
+.help-center-support-chat__conversation-sub-information {
+	display: flex;
+	align-items: center;
+	gap: 4px;
 
-	&:hover {
-		box-shadow: rgba(0, 0, 0, 0.25) 0 0 0 1px;
+	.help-center-support-chat__conversation-information-name {
+		text-overflow: ellipsis;
+		overflow: hidden;
+		line-clamp: 1;
 	}
 
-	h3.help-center-search-results__title {
-		@include heading-small();
-		display: flex;
-		justify-content: space-between;
-		height: 20px;
-		text-transform: uppercase;
-		color: $gray-700;
-	}
-
-	.help-center-support-chat__open-conversation {
-		fill: $gray-700;
-	}
-
-	.help-center-support-chat__conversation-container {
-		border: none;
-		column-gap: 0;
-		padding: 0;
-
-		&:hover {
-			border: none;
-		}
-
-		.help-center-support-chat__conversation-information-message {
-			padding: 6px 0;
-		}
-	}
-
-	.components-card__body {
-		padding: 0;
+	.help-center-support-chat__conversation-information-time {
+		flex: 0 0 auto;
 	}
 }
 
@@ -67,21 +40,18 @@
 
 	&.is-unread-message {
 		background-color: #EBF2FC;
-
 		.help-center-support-chat__open-conversation {
 			fill: $help-center-blue;
 		}
 	}
 
 	&:not(.is-unread-message) {
-
-		&.is-closed,
-		&.is-solved {
+		&.is-closed, &.is-solved {
 			background-color: var(--studio-gray-0);
 		}
 	}
 
-	&>* {
+	& > * {
 		display: flex;
 	}
 
@@ -136,29 +106,6 @@
 			-webkit-line-clamp: 1;
 			-webkit-box-orient: vertical;
 		}
-
-		.help-center-support-chat__conversation-sub-information {
-			display: flex;
-			color: #787C82;
-			font-weight: 400;
-			font-size: 0.75rem;
-			line-height: 20px;
-			align-items: center;
-			gap: 4px;
-
-			.help-center-support-chat__conversation-information-name {
-				text-overflow: ellipsis;
-				display: -webkit-box;
-				overflow: hidden;
-				line-clamp: 1;
-				-webkit-line-clamp: 1;
-				-webkit-box-orient: vertical;
-			}
-
-			.help-center-support-chat__conversation-information-time {
-				flex: 0 0 auto;
-			}
-		}
 	}
 
 	.help-center-support-chat__open-conversation {
@@ -167,7 +114,6 @@
 		fill: #787C82;
 	}
 }
-
 .help-center-chat-history__no-results {
 	display: flex;
 	flex-direction: row;
