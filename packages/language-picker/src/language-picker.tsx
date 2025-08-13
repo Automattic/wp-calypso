@@ -5,8 +5,9 @@ import {
 	Button,
 	CustomSelectControl,
 	Flex as WpFlex,
-	FlexBlock,
 	FlexItem,
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useState } from 'react';
@@ -146,8 +147,8 @@ function LanguagePicker< TLanguage extends Language >( {
 	const searchPlaceholder = __( 'Search languages…' );
 
 	return (
-		<Flex className="language-picker-component" align="left" direction="column" expanded={ false }>
-			<FlexBlock className="language-picker-component__heading">
+		<VStack alignment="left" className="language-picker-component" spacing={ 0 }>
+			<VStack className="language-picker-component__heading">
 				<Flex justify="space-between" align="left">
 					<FlexItem className="language-picker-component__title wp-brand-font">
 						{ headingTitle || __( 'Select a language', __i18n_text_domain__ ) }
@@ -158,8 +159,8 @@ function LanguagePicker< TLanguage extends Language >( {
 						</FlexItem>
 					) }
 				</Flex>
-			</FlexBlock>
-			<FlexBlock className="language-picker-component__search">
+			</VStack>
+			<HStack className="language-picker-component__search" spacing={ 0 }>
 				<CustomSelectControl
 					label={ __( 'regions' ) }
 					hideLabelFromVision
@@ -189,8 +190,8 @@ function LanguagePicker< TLanguage extends Language >( {
 						onSearchClose={ handleSearchClose }
 					/>
 				</div>
-			</FlexBlock>
-			<FlexBlock className="language-picker-component__labels">
+			</HStack>
+			<HStack className="language-picker-component__labels" expanded={ false } spacing={ 0 }>
 				{ shouldDisplayRegions ? (
 					<>
 						<div className="language-picker-component__regions-label">{ __( 'regions' ) }</div>
@@ -201,14 +202,15 @@ function LanguagePicker< TLanguage extends Language >( {
 						{ __( 'Search results' ) }
 					</div>
 				) }
-			</FlexBlock>
-			<FlexBlock className="language-picker-component__content">
+			</HStack>
+
+			<HStack className="language-picker-component__content" alignment="top-left" spacing={ 0 }>
 				{ shouldDisplayRegions && (
-					<div className="language-picker-component__category-filters">
+					<VStack className="language-picker-component__category-filters">
 						{ renderCategoryButtons() }
-					</div>
+					</VStack>
 				) }
-				<div className="language-picker-component__language-buttons">
+				<HStack alignment="top-left" wrap spacing={ 0 } style={ { justifyContent: 'flex-start' } }>
 					{ languagesToRender.map( ( language ) => (
 						<Button
 							variant={ language.langSlug === selectedLanguage?.langSlug ? 'primary' : undefined }
@@ -220,9 +222,9 @@ function LanguagePicker< TLanguage extends Language >( {
 							<span lang={ language.langSlug }>{ language.name }</span>
 						</Button>
 					) ) }
-				</div>
-			</FlexBlock>
-		</Flex>
+				</HStack>
+			</HStack>
+		</VStack>
 	);
 }
 
