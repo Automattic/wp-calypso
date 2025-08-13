@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import SignupForm from 'calypso/blocks/signup-form';
+import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
 import WPCloudLogo from 'calypso/components/wp-cloud-logo';
 import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
@@ -579,8 +580,11 @@ export class UserStep extends Component {
 					shouldDisplayUserExistsError={ ! isWoo && ! isBlazeProOAuth2Client( oauth2Client ) }
 					isSocialFirst={ false }
 					labelText={ this.props.translate( 'Your email' ) }
-					disableTosText
+					disableTosText={ ! isGravatarOAuth2Client( oauth2Client ) }
 				/>
+				{ ! isGravatarOAuth2Client( oauth2Client ) && (
+					<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
+				) }
 				<div id="g-recaptcha"></div>
 			</>
 		);
