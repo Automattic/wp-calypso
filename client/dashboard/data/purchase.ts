@@ -1,3 +1,5 @@
+import { SubscriptionBillPeriod } from '../data/constants';
+
 export interface RefundOptions {
 	to_product_id: number;
 	refund_amount: number;
@@ -90,7 +92,14 @@ export interface Purchase {
 	ID: string;
 
 	amount: number;
+
+	/**
+	 * The ID number of a WordPress.com purchase whose renewal will renew this
+	 * purchase (eg: the plan or domain registration for a domain connection)
+	 * as a string.
+	 */
 	attached_to_purchase_id: string | null;
+
 	auto_renew_coupon_code: string | null;
 	auto_renew_coupon_discount_percentage: number | null;
 
@@ -99,9 +108,22 @@ export interface Purchase {
 	 * number of days in every billing period! It's just a numeric key that is
 	 * close to the average billing period for this billing plan. For example,
 	 * `31` means "monthly" although the expiry date may be fewer than 31 days
-	 * from the last renewal.
+	 * from the last renewal. `-1` means that it does not expire.
 	 */
-	bill_period_days: number;
+	bill_period_days:
+		| typeof SubscriptionBillPeriod.PLAN_ONE_TIME_PERIOD
+		| typeof SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD
+		| typeof SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD
+		| typeof SubscriptionBillPeriod.PLAN_BIENNIAL_PERIOD
+		| typeof SubscriptionBillPeriod.PLAN_TRIENNIAL_PERIOD
+		| typeof SubscriptionBillPeriod.PLAN_QUADRENNIAL_PERIOD
+		| typeof SubscriptionBillPeriod.PLAN_QUINQUENNIAL_PERIOD
+		| typeof SubscriptionBillPeriod.PLAN_SEXENNIAL_PERIOD
+		| typeof SubscriptionBillPeriod.PLAN_SEPTENNIAL_PERIOD
+		| typeof SubscriptionBillPeriod.PLAN_OCTENNIAL_PERIOD
+		| typeof SubscriptionBillPeriod.PLAN_NOVENNIAL_PERIOD
+		| typeof SubscriptionBillPeriod.PLAN_DECENNIAL_PERIOD
+		| typeof SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD;
 
 	bill_period_label: string;
 	most_recent_renew_date: string;
@@ -236,7 +258,15 @@ export interface Purchase {
 	 */
 	user_id: string;
 
-	auto_renew: '1' | '0' | null;
+	/**
+	 * True if auto-renew is enabled.
+	 *
+	 * IMPORTANT: Just because auto-renew is enabled does not mean that the
+	 * purchase will attempt to auto-renew. If a purchase does not have a
+	 * payment method attached, no auto-renew will be attempted.
+	 */
+	is_auto_renew_enabled: boolean;
+
 	payment_card_id: number | string | undefined;
 	payment_card_type: string | undefined;
 	payment_card_processor: string | undefined;

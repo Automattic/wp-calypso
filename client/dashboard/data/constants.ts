@@ -74,6 +74,7 @@ export enum HostingFeatures {
 }
 
 export const SubscriptionBillPeriod = {
+	PLAN_ONE_TIME_PERIOD: -1,
 	PLAN_MONTHLY_PERIOD: 31,
 	PLAN_ANNUAL_PERIOD: 365,
 	PLAN_BIENNIAL_PERIOD: 730,
