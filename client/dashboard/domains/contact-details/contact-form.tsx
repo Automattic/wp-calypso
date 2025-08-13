@@ -236,6 +236,36 @@ export default function ContactForm( {
 								setFormData( ( data ) => ( { ...data, ...edits } ) );
 							} }
 						/>
+						<Notice>
+							<VStack>
+								<Text as="p">
+									{ createInterpolateElement(
+										__(
+											'By clicking <strong>Save contact info</strong>, you agree to the applicable <agreementlink>Domain Registration Agreement</agreementlink> and confirm that the Transferee has agreed in writing to be bound by the same agreement. You authorize the respective registrar to act as your <agentlink>Designated Agent</agentlink>.'
+										),
+										{
+											strong: <strong />,
+											agreementlink: (
+												<a
+													// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
+													href="https://wordpress.com/automattic-domain-name-registration-agreement/"
+													target="_blank"
+													rel="noopener noreferrer"
+												/>
+											),
+											agentlink: (
+												<a
+													// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
+													href="https://wordpress.com/support/domains/update-contact-information/#designated-agent"
+													target="_blank"
+													rel="noopener noreferrer"
+												/>
+											),
+										}
+									) }
+								</Text>
+							</VStack>
+						</Notice>
 						<HStack justify="flex-start" spacing={ 2 }>
 							<Button
 								onClick={ () => handleSubmit( formData ) }
@@ -244,7 +274,7 @@ export default function ContactForm( {
 								isBusy={ isSubmitting }
 								disabled={ ! canSave || ! isDirty || isSubmitting }
 							>
-								{ __( 'Save' ) }
+								{ __( 'Save contact info' ) }
 							</Button>
 							<Button variant="secondary" onClick={ onCancel }>
 								{ __( 'Cancel' ) }
