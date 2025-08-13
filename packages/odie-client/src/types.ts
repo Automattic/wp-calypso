@@ -29,6 +29,7 @@ export type OdieAssistantContextInterface = {
 	setNotice: ( noticeId: string, content: string | ReactNode | null ) => void;
 	trackEvent: ( event: string, properties?: Record< string, unknown > ) => void;
 	version?: string | null;
+	sectionName: string;
 };
 
 export type OdieAssistantProviderProps = {
@@ -48,6 +49,7 @@ export type OdieAssistantProviderProps = {
 	children?: ReactNode;
 	setChatStatus?: ( status: ChatStatus ) => void;
 	setNotice?: ( noticeId: string, content: string | ReactNode | null ) => void;
+	sectionName: string;
 } & PropsWithChildren;
 
 export type CurrentUser = {
