@@ -133,7 +133,7 @@ export default function ItemView( {
 			<div className={ clsx( 'hosting-dashboard-item-view', className ) }>
 				{ renderHeader() }
 				{ isStagingSiteDeletionInProgress ? (
-					<StagingSiteDeletionBanner />
+					<StagingSiteDeletionBanner siteId={ itemData.blogId ?? 0 } />
 				) : (
 					<StagingSiteCreationBanner />
 				) }
