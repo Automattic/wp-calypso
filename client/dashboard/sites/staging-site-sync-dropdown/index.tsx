@@ -5,7 +5,9 @@ import { __ } from '@wordpress/i18n';
 import { chevronDown, cloudDownload, cloudUpload } from '@wordpress/icons';
 import { lazy, Suspense } from 'react';
 import { siteBySlugQuery } from '../../app/queries/site';
+import { siteLatestAtomicTransferQuery } from '../../app/queries/site-atomic-transfers';
 import { stagingSiteSyncStateQuery } from '../../app/queries/site-staging-sites';
+import { isAtomicTransferInProgress } from '../../utils/site-atomic-transfers';
 import {
 	getProductionSiteId,
 	getStagingSiteId,
@@ -42,6 +44,16 @@ export default function StagingSiteSyncDropdown( {
 	const productionSiteId = site ? getProductionSiteId( site ) : null;
 	const stagingSiteId = site ? getStagingSiteId( site ) : null;
 
+	// Check atomic transfer status for staging site
+	const { data: atomicTransfer } = useQuery( {
+		...siteLatestAtomicTransferQuery( stagingSiteId ?? 0 ),
+		enabled: !! stagingSiteId,
+	} );
+
+	const isStagingSiteReady = atomicTransfer
+		? ! isAtomicTransferInProgress( atomicTransfer.status )
+		: false;
+
 	const { data: stagingSiteSyncState, refetch: fetchStagingSiteSyncState } = useQuery( {
 		...stagingSiteSyncStateQuery( productionSiteId ?? 0 ),
 		enabled: !! productionSiteId,
@@ -74,7 +86,7 @@ export default function StagingSiteSyncDropdown( {
 
 	// The sync is not allowed if the staging site is in a transition or is deleting.
 	// We should consider this when we start to rewrite the StagingSiteSyncModal.
-	if ( ! productionSiteId || ! stagingSiteId ) {
+	if ( ! productionSiteId || ! stagingSiteId || ! isStagingSiteReady ) {
 		return null;
 	}
 
