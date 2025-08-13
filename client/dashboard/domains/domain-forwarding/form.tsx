@@ -26,7 +26,7 @@ interface FormData {
 
 interface DomainForwardingFormProps {
 	domainName: string;
-	initialData?: DomainForwarding;
+	initialData?: DomainForwarding | null;
 	onSubmit: ( data: FormData ) => void;
 	isSubmitting: boolean;
 	submitButtonText: string;
@@ -127,7 +127,9 @@ export default function DomainForwardingForm( {
 				isValid: {
 					custom: ( item ) => {
 						if ( ! isSubdomainValid( item.subdomain ) ) {
-							return 'Subdomain should be a valid domain label - up to 63 characters, starting with a letter or number, and containing only letters, numbers, and hyphens.';
+							return __(
+								'Subdomain should be a valid domain label - up to 63 characters, starting with a letter or number, and containing only letters, numbers, and hyphens.'
+							);
 						}
 						return null;
 					},
@@ -144,7 +146,7 @@ export default function DomainForwardingForm( {
 				isValid: {
 					custom: ( item ) => {
 						if ( ! isTargetUrlValid( item.targetUrl, domainName ) ) {
-							return 'Please enter a valid URL.';
+							return __( 'Please enter a valid URL.' );
 						}
 						return null;
 					},
