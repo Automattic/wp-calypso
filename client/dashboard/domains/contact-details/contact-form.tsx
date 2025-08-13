@@ -13,7 +13,7 @@ import {
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
 import { DataForm, Field, isItemValid } from '@wordpress/dataviews';
-import { createInterpolateElement } from '@wordpress/element';
+import { createInterpolateElement, useCallback } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { isEqual } from 'lodash';
 import { useEffect, useState } from 'react';
@@ -52,11 +52,6 @@ export default function ContactForm( {
 		value: country.code,
 	} ) );
 
-	const formattedStatesList = statesList?.map( ( state ) => ( {
-		label: state.name,
-		value: state.code,
-	} ) );
-
 	const isDirty = ! isEqual( formData, initialData );
 
 	const handleSubmit = ( data: DomainContactDetails ) => {
@@ -68,6 +63,47 @@ export default function ContactForm( {
 			setSelectedCountryCode( formData.countryCode as string );
 		}
 	}, [ formData.countryCode, setSelectedCountryCode ] );
+
+	// Memoize the custom Edit component for the state field to prevent focus loss
+	const StateFieldEdit = useCallback(
+		( { field, onChange, data, hideLabelFromVision }: any ) => {
+			const { id, getValue } = field;
+
+			if ( ! statesList || statesList?.length === 0 ) {
+				return (
+					<InputControl
+						__next40pxDefaultSize
+						label={ hideLabelFromVision ? '' : __( 'State' ) }
+						placeholder={ __( 'State' ) }
+						value={ getValue( { item: data } ) }
+						onChange={ ( value ) => onChange( { [ id ]: value } ) }
+					/>
+				);
+			}
+
+			// If the item data is not in the statesList, set the state to the first option
+			if ( ! statesList?.some( ( state ) => state.code === getValue( { item: data } ) ) ) {
+				onChange( { [ id ]: statesList[ 0 ]?.code } );
+			}
+
+			return (
+				<SelectControl
+					__next40pxDefaultSize
+					__nextHasNoMarginBottom
+					label={ hideLabelFromVision ? '' : __( 'State' ) }
+					value={ getValue( { item: data } ) }
+					options={
+						statesList.map( ( state ) => ( {
+							label: state.name,
+							value: state.code,
+						} ) ) ?? []
+					}
+					onChange={ ( value ) => onChange( { [ id ]: value } ) }
+				/>
+			);
+		},
+		[ statesList ]
+	);
 
 	const fields: Field< DomainContactDetails >[] = [
 		{
@@ -142,39 +178,7 @@ export default function ContactForm( {
 			label: __( 'State' ),
 			type: 'text',
 			getValue: ( { item }: { item: DomainContactDetails } ) => item.state ?? '',
-			Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
-				const { id, getValue } = field;
-
-				if ( ! formattedStatesList || formattedStatesList?.length === 0 ) {
-					return (
-						<InputControl
-							__next40pxDefaultSize
-							label={ hideLabelFromVision ? '' : __( 'State' ) }
-							placeholder={ __( 'State' ) }
-							value={ getValue( { item: data } ) }
-							onChange={ ( value ) => onChange( { [ id ]: value } ) }
-						/>
-					);
-				}
-
-				// If the item data is not in the formattedStatesList, set the state to the first option
-				if (
-					! formattedStatesList?.some( ( state ) => state.value === getValue( { item: data } ) )
-				) {
-					onChange( { [ id ]: formattedStatesList[ 0 ]?.value } );
-				}
-
-				return (
-					<SelectControl
-						__next40pxDefaultSize
-						__nextHasNoMarginBottom
-						label={ hideLabelFromVision ? '' : __( 'State' ) }
-						value={ getValue( { item: data } ) }
-						options={ formattedStatesList ?? [] }
-						onChange={ ( value ) => onChange( { [ id ]: value } ) }
-					/>
-				);
-			},
+			Edit: StateFieldEdit,
 		},
 		{
 			id: 'postalCode',
