@@ -2,7 +2,7 @@
 @import "@wordpress/base-styles/mixins";
 
 .dashboard-empty-state {
-	width: 480px;
+	max-width: 480px;
 	padding-block: $grid-unit-20;
 	box-sizing: border-box;
 
@@ -15,4 +15,10 @@
 	@include heading-x-large;
 	color: $gray-900;
 	margin: 0;
+}
+
+// Balanced wrapping works better for centered text
+// Extra specificity to override <Text> component styles
+.dashboard-empty-state .dashboard-empty-state__sub-heading {
+	text-wrap: balance;
 }

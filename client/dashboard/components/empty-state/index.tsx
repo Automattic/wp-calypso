@@ -15,18 +15,16 @@ interface EmptyStateProps {
 
 export function EmptyState( { buttons, heading, illustration, subHeading }: EmptyStateProps ) {
 	return (
-		<VStack spacing={ 8 } alignment="center" className="dashboard-empty-state">
-			<VStack spacing={ 3 } alignment="center">
-				{ illustration }
-				<VStack spacing={ 2 } alignment="center">
-					<div className="dashboard-empty-state__heading">{ heading }</div>
-					<Text variant="muted" align="center">
-						{ subHeading }
-					</Text>
-				</VStack>
+		<VStack spacing={ 6 } alignment="center" className="dashboard-empty-state">
+			{ illustration }
+			<VStack spacing={ 2 } alignment="center">
+				<div className="dashboard-empty-state__heading">{ heading }</div>
+				<Text variant="muted" align="center" className="dashboard-empty-state__sub-heading">
+					{ subHeading }
+				</Text>
 			</VStack>
 			{ buttons && (
-				<HStack spacing={ 4 } justify="center">
+				<HStack spacing={ 4 } justify="center" wrap>
 					{ buttons }
 				</HStack>
 			) }
