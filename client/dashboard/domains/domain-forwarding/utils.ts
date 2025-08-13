@@ -91,7 +91,7 @@ export function isSubdomainValid( value: string ): boolean {
 export function parseTargetUrl( targetUrl: string ) {
 	try {
 		// Add protocol if missing
-		const urlWithProtocol = targetUrl.match( /^https?:\/\// ) ? targetUrl : `http://${ targetUrl }`;
+		const urlWithProtocol = normalizeUrlWithDefaultProtocol( targetUrl );
 		const url = new URL( urlWithProtocol );
 
 		return {
