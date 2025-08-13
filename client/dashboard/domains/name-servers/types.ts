@@ -12,3 +12,10 @@ export interface NameServerField {
 	error: string;
 	touched: boolean;
 }
+
+// Create a union type of numbers from 1 to MAX_NAME_SERVERS_LENGTH
+export type Range< N extends number, T extends number[] = [] > = T[ 'length' ] extends N
+	? T[ number ]
+	: Range< N, [ ...T, T[ 'length' ] ] >;
+
+export type NameServerKey = `nameServer${ Range< typeof MAX_NAME_SERVERS_LENGTH > }`;

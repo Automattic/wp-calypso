@@ -17,16 +17,10 @@ import {
 	MIN_NAME_SERVERS_LENGTH,
 	MAX_NAME_SERVERS_LENGTH,
 	WPCOM_DEFAULT_NAME_SERVERS,
+	NameServerKey,
 } from './types';
 import UpsellNudge from './upsell-nudge';
 import { areAllWpcomNameServers, validateHostname } from './utils';
-
-// Create a union type of numbers from 1 to MAX_NAME_SERVERS_LENGTH
-type Range< N extends number, T extends number[] = [] > = T[ 'length' ] extends N
-	? T[ number ]
-	: Range< N, [ ...T, T[ 'length' ] ] >;
-
-type NameServerKey = `nameServer${ Range< typeof MAX_NAME_SERVERS_LENGTH > }`;
 
 type FormData = {
 	useWpcomNameServers: boolean;
