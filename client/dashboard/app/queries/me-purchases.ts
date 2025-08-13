@@ -1,5 +1,10 @@
-import { queryOptions } from '@tanstack/react-query';
-import { fetchUserPurchases, fetchUserTransferredPurchases } from '../../data/me-purchases';
+import { queryOptions, mutationOptions } from '@tanstack/react-query';
+import {
+	fetchUserPurchases,
+	fetchUserTransferredPurchases,
+	setPurchaseAutoRenew,
+} from '../../data/me-purchases';
+import { queryClient } from '../query-client';
 
 export const userPurchasesQuery = () =>
 	queryOptions( {
@@ -13,3 +18,18 @@ export function userTransferredPurchasesQuery() {
 		queryFn: () => fetchUserTransferredPurchases(),
 	} );
 }
+
+export const purchaseQuery = ( purchaseId: number ) =>
+	queryOptions( {
+		queryKey: [ 'me', 'purchases', purchaseId ],
+		queryFn: () => fetchUserPurchases(),
+		select: ( purchases ) => purchases.find( ( p ) => parseInt( p.ID ) === purchaseId ),
+	} );
+
+export const userPurchaseSetAutoRenewQuery = ( purchaseId: number ) =>
+	mutationOptions( {
+		mutationFn: ( autoRenew: boolean ) => setPurchaseAutoRenew( purchaseId, autoRenew ),
+		onSuccess: ( data ) => {
+			queryClient.setQueryData( purchaseQuery( purchaseId ).queryKey, [ data.upgrade ] );
+		},
+	} );
