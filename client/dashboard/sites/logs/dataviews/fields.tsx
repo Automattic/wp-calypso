@@ -318,5 +318,5 @@ export function useFields( { logType }: { logType: LogType } ): Field< PHPLog | 
 				getValue: ( { item } ) => ( item as ServerLog ).user_ip,
 			},
 		];
-	}, [ dateTimeLabel, gmtOffset, logType ] );
+	}, [ dateTimeLabel, gmtOffset, locale, logType ] );
 }
