@@ -1263,7 +1263,7 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 	}
 
 	const hasSubHeader =
-		( isGravatarFlowOAuth2Client( oauth2Client ) && ! isGravatarOwnedService ) ||
+		( isGravatarFlow && ! isGravatarOwnedService ) ||
 		isFromGravatar3rdPartyApp ||
 		isFromGravatarQuickEditor;
 
