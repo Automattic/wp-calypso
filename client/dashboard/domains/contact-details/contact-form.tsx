@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import {
 	ExternalLink,
 	__experimentalHStack as HStack,
@@ -7,50 +8,53 @@ import {
 	Card,
 	CardBody,
 	CheckboxControl,
+	SelectControl,
+	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
+	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
 import { DataForm, Field, isItemValid } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { isEqual } from 'lodash';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { countryListQuery, statesListQuery } from '../../app/queries/domain';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import type { DomainContactDetails } from './types';
-import type { CountryListItem, StatesListItem } from '../../data/domain';
 
 import './contact-form.scss';
 interface ContactFormProps {
 	initialData?: DomainContactDetails;
 	onSubmit?: ( data: DomainContactDetails ) => void;
 	onCancel?: () => void;
-	onCountryChange?: ( countryCode: string ) => void;
 	errors?: Partial< Record< keyof DomainContactDetails, string > >;
 	isSubmitting?: boolean;
-	countryList: CountryListItem[];
-	statesList: StatesListItem[];
 }
 
 export default function ContactForm( {
 	initialData,
 	onSubmit,
 	onCancel,
-	onCountryChange,
 	isSubmitting = false,
-	countryList,
-	statesList,
 }: ContactFormProps ) {
+	const { data: countryList } = useQuery( countryListQuery() );
+	const [ selectedCountryCode, setSelectedCountryCode ] = useState(
+		initialData?.countryCode ?? ''
+	);
+	const { data: statesList } = useQuery( statesListQuery( selectedCountryCode ) );
+
 	const [ formData, setFormData ] = useState< DomainContactDetails >(
 		initialData ?? { optOutTransferLock: false }
 	);
 
-	const formattedStatesList = statesList.map( ( state ) => ( {
-		label: state.name,
-		value: state.code,
-	} ) );
-
-	const formattedCountryList = countryList.map( ( country ) => ( {
+	const formattedCountryList = countryList?.map( ( country ) => ( {
 		label: country.name,
 		value: country.code,
+	} ) );
+
+	const formattedStatesList = statesList?.map( ( state ) => ( {
+		label: state.name,
+		value: state.code,
 	} ) );
 
 	const isDirty = ! isEqual( formData, initialData );
@@ -58,6 +62,12 @@ export default function ContactForm( {
 	const handleSubmit = ( data: DomainContactDetails ) => {
 		onSubmit?.( data );
 	};
+
+	useEffect( () => {
+		if ( formData.countryCode ) {
+			setSelectedCountryCode( formData.countryCode as string );
+		}
+	}, [ formData.countryCode, setSelectedCountryCode ] );
 
 	const fields: Field< DomainContactDetails >[] = [
 		{
@@ -130,10 +140,40 @@ export default function ContactForm( {
 		{
 			id: 'state',
 			label: __( 'State' ),
-			type: 'select',
-			elements: formattedStatesList,
-			isValid: {
-				required: true,
+			type: 'text',
+			getValue: ( { item }: { item: DomainContactDetails } ) => item.state ?? '',
+			Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
+				const { id, getValue } = field;
+
+				if ( ! formattedStatesList || formattedStatesList?.length === 0 ) {
+					return (
+						<InputControl
+							__next40pxDefaultSize
+							label={ hideLabelFromVision ? '' : __( 'State' ) }
+							placeholder={ __( 'State' ) }
+							value={ getValue( { item: data } ) }
+							onChange={ ( value ) => onChange( { [ id ]: value } ) }
+						/>
+					);
+				}
+
+				// If the item data is not in the formattedStatesList, set the state to the first option
+				if (
+					! formattedStatesList?.some( ( state ) => state.value === getValue( { item: data } ) )
+				) {
+					onChange( { [ id ]: formattedStatesList[ 0 ]?.value } );
+				}
+
+				return (
+					<SelectControl
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom
+						label={ hideLabelFromVision ? '' : __( 'State' ) }
+						value={ getValue( { item: data } ) }
+						options={ formattedStatesList ?? [] }
+						onChange={ ( value ) => onChange( { [ id ]: value } ) }
+					/>
+				);
 			},
 		},
 		{
@@ -244,11 +284,6 @@ export default function ContactForm( {
 							form={ form }
 							onChange={ ( edits: Partial< DomainContactDetails > ) => {
 								setFormData( ( data ) => ( { ...data, ...edits } ) );
-
-								// If country changed, notify parent component
-								if ( 'countryCode' in edits && onCountryChange ) {
-									onCountryChange( edits.countryCode as string );
-								}
 							} }
 						/>
 						<Notice>
