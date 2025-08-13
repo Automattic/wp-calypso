@@ -1,3 +1,4 @@
+import { isWpComPersonalPlan, isWpComPremiumPlan } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import titlecase from 'to-title-case';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
@@ -6,6 +7,7 @@ import { sectionify } from 'calypso/lib/route';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getSiteOption, getSiteUrl } from 'calypso/state/sites/selectors';
+import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export function redirectToJetpackNewsletterSettingsIfNeeded( context, next ) {
@@ -17,7 +19,14 @@ export function redirectToJetpackNewsletterSettingsIfNeeded( context, next ) {
 	const hasClassicAdminInterfaceStyle =
 		getSiteOption( state, siteId, 'wpcom_admin_interface' ) === 'wp-admin';
 
-	if ( hasClassicAdminInterfaceStyle && isAtomic ) {
+	// Check if site has Personal or Premium plan
+	const sitePlan = getSitePlan( state, siteId );
+	const isPersonalOrPremiumPlan =
+		sitePlan &&
+		( isWpComPersonalPlan( sitePlan.product_slug ) || isWpComPremiumPlan( sitePlan.product_slug ) );
+
+	// Only redirect if it's atomic with classic admin interface AND not Personal/Premium plan
+	if ( hasClassicAdminInterfaceStyle && isAtomic && ! isPersonalOrPremiumPlan ) {
 		navigate( `${ siteUrl }/wp-admin/admin.php?page=jetpack#/newsletter` );
 		return;
 	}

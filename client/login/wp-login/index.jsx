@@ -324,8 +324,7 @@ export class Login extends Component {
 	}
 
 	render() {
-		const { locale, translate, isGenericOauth, isGravPoweredClient, isJetpack, isFromAkismet } =
-			this.props;
+		const { locale, translate, isGenericOauth, isGravPoweredClient, isJetpack } = this.props;
 
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
 
@@ -364,11 +363,7 @@ export class Login extends Component {
 		return (
 			<>
 				{ ! isGravPoweredClient && (
-					<OneLoginLayout
-						isJetpack={ isJetpack }
-						isFromAkismet={ isFromAkismet }
-						signupUrl={ this.props.signupUrl }
-					>
+					<OneLoginLayout isJetpack={ isJetpack } signupUrl={ this.props.signupUrl }>
 						{ mainContent }
 					</OneLoginLayout>
 				) }

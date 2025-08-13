@@ -84,7 +84,7 @@ export const domainDnsAddRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'dns/add',
 } ).lazy( () =>
-	import( '../../sites/domains/placeholder' ).then( ( d ) =>
+	import( '../../domains/dns/add' ).then( ( d ) =>
 		createLazyRoute( 'domain-dns-add' )( {
 			component: d.default,
 		} )

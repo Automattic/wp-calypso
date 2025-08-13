@@ -22,23 +22,24 @@ import {
 } from 'calypso/lib/oauth2-clients';
 import { useSelector } from 'calypso/state';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
+import getIsAkismet from 'calypso/state/selectors/get-is-akismet';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 
 interface Props {
-	isFromAkismet?: boolean;
 	isJetpack?: boolean;
 }
 
-const HeadingLogo = ( { isFromAkismet, isJetpack }: Props ) => {
+const HeadingLogo = ( { isJetpack }: Props ) => {
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const isWoo = useSelector( getIsWoo );
+	const isAkismet = useSelector( getIsAkismet );
 
 	let logo = null;
 	if ( isStudioAppOAuth2Client( oauth2Client ) ) {
 		logo = <img src={ studioAppLogo } alt="Studio App Logo" />;
 	} else if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
 		logo = <img src={ crowdsignalLogo } alt="Crowdsignal Logo" />;
-	} else if ( isFromAkismet ) {
+	} else if ( isAkismet ) {
 		logo = <img src={ akismetLogo } alt="Akismet Logo" />;
 	} else if ( isWPJobManagerOAuth2Client( oauth2Client ) ) {
 		logo = <img src={ wpJobManagerLogo } alt="WP Job Manager Logo" />;

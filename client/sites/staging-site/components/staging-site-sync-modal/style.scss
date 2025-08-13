@@ -15,6 +15,24 @@
 		display: none;
 	}
 
+	.components-checkbox-control__input[type="checkbox"]:disabled:checked {
+		background: #f0f0f0;
+		border-color: #ddd;
+	}
+
+	.components-checkbox-control:has(input[disabled]:checked) {
+		.components-checkbox-control__checked {
+			fill: #a0a5aa;
+		}
+	}
+	
+	.components-select-control__input[disabled] {
+		color: #a0a5aa;
+		background-color: #f7f7f7;
+		border-color: #ddd;
+		opacity: 1;
+	}
+
 	&__back-button.components-button.is-link {
 		color: #000;
 		padding: 12px 0;
