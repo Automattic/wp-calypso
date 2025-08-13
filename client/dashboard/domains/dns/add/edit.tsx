@@ -19,18 +19,32 @@ import PageLayout from '../../../components/page-layout';
 import RequiredSelect from '../../../components/required-select';
 import { DNS_RECORD_CONFIGS } from './dns-record-configs';
 import type { DnsRecordTypeFormData, DnsRecordFormData } from './dns-record-configs';
-import type { DnsRecordType } from '../../../data/domain-dns-records';
 
 const typeForm = {
 	type: 'regular' as const,
 	fields: [ 'type' ],
 };
 
+const defaultFormData = {
+	type: 'A',
+	name: '',
+	data: '',
+	ttl: 3600,
+	flags: 0, // CAA
+	tag: 'issue', // CAA
+	aux: 10, // MX, SRV
+	service: 'sip', // SRV
+	protocol: '_tcp', // SRV
+	weight: 10, // SRV
+	target: '', // SRV
+	port: 5060, // SRV
+};
+
 export default function DomainAddDNS() {
 	const [ typeFormData, setTypeFormData ] = useState< DnsRecordTypeFormData >( {
 		type: 'A',
 	} );
-	const [ formData, setFormData ] = useState< DnsRecordFormData >();
+	const [ formData, setFormData ] = useState< DnsRecordFormData >( defaultFormData );
 
 	const config = DNS_RECORD_CONFIGS[ typeFormData.type ];
 
@@ -90,12 +104,14 @@ export default function DomainAddDNS() {
 			target: recordToEdit.target || '',
 			port: recordToEdit.port || 0,
 		};
+		setTypeFormData( { type: recordToEdit.type } );
 		setFormData( formData );
 	}, [ recordToEdit ] );
 
 	if ( ! recordToEdit ) {
 		createErrorNotice( __( 'Invalid DNS record to edit.' ) );
 		navigateToDNSOverviewPage();
+		return;
 	}
 
 	const handleSubmit = ( e: React.FormEvent ) => {
@@ -104,15 +120,15 @@ export default function DomainAddDNS() {
 		const formattedData = config.transformData( formData, domainName );
 
 		mutation.mutate(
-			{ recordsToAdd: [ formattedData ] },
+			{ recordsToAdd: [ formattedData ], recordsToRemove: [ recordToEdit ] },
 			{
 				onSuccess: () => {
-					createSuccessNotice( __( 'DNS record added successfully.' ), { type: 'snackbar' } );
+					createSuccessNotice( __( 'DNS record updated successfully.' ), { type: 'snackbar' } );
 					navigateToDNSOverviewPage();
 				},
 				onError: () => {
 					// TODO: Get DNS exception class and display correct error message
-					createErrorNotice( __( 'Failed to add DNS record.' ), {
+					createErrorNotice( __( 'Failed to update DNS record.' ), {
 						type: 'snackbar',
 					} );
 				},
@@ -126,7 +142,7 @@ export default function DomainAddDNS() {
 	};
 
 	return (
-		<PageLayout size="small" header={ <PageHeader title={ __( 'Add a new DNS record' ) } /> }>
+		<PageLayout size="small" header={ <PageHeader title={ __( 'Edit DNS record' ) } /> }>
 			<Card>
 				<CardBody>
 					<form onSubmit={ handleSubmit }>
@@ -151,7 +167,7 @@ export default function DomainAddDNS() {
 							/>
 							<HStack justify="flex-start">
 								<Button variant="primary" type="submit" isBusy={ isPending } disabled={ isPending }>
-									{ __( 'Add DNS record' ) }
+									{ __( 'Update DNS record' ) }
 								</Button>
 								<Button type="button" disabled={ isPending } onClick={ handleCancel }>
 									{ __( 'Cancel' ) }
