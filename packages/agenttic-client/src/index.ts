@@ -5,7 +5,6 @@
  */
 
 // PRIMARY PUBLIC API - React hooks for external consumers
-export { useAgent } from './react/useAgent';
 export { useClientContext } from './react/useClientContext';
 export { useClientTools } from './react/useClientTools';
 export { useAgentChat } from './react/useAgentChat';
@@ -61,14 +60,6 @@ export type {
 	ClientContext,
 	ContextProvider,
 } from './client/types/index';
-
-// React hook types
-export type {
-	UseAgentConfig,
-	AgentState,
-	UseAgentReturn,
-	ChatMessage,
-} from './react/useAgent';
 
 // useAgentChat types
 export type {

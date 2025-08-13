@@ -15,10 +15,10 @@ The React consumer now supports automatic conversation persistence across page n
 ### Basic Usage with Persistence
 
 ```typescript
-import { useAgent } from '@agenttic/client/react';
+import { useAgentChat } from '@automattic/agenttic-client';
 
 function ChatComponent() {
-  const { state, sendMessage, resetConversation } = useAgent({
+  const { state, sendMessage, resetConversation } = useAgentChat({
     agentId: 'your-agent-id',
     sessionId: 'user-session-123', // Optional: defaults to 'default-session'
     // ... other config
@@ -54,12 +54,12 @@ function ChatComponent() {
 
 ```typescript
 // Different sessions maintain separate conversation histories
-const userSession = useAgent( {
+const userSession = useAgentChat( {
 	agentId: 'agent-1',
 	sessionId: 'user-123',
 } );
 
-const adminSession = useAgent( {
+const adminSession = useAgentChat( {
 	agentId: 'agent-1',
 	sessionId: 'admin-456',
 } );
