@@ -1,3 +1,4 @@
+import { isMobile } from '@automattic/viewport';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Link, useRouter } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
@@ -24,7 +25,7 @@ import type { Action, Field, ViewTable, ViewList, View } from '@wordpress/datavi
 type GlueRecordsView = ViewTable | ViewList;
 
 const DEFAULT_VIEW: GlueRecordsView = {
-	type: 'table',
+	type: isMobile() ? 'list' : 'table',
 	search: '',
 	page: 1,
 	perPage: 20,
