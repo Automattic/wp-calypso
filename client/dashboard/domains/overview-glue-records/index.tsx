@@ -21,9 +21,9 @@ import RouterLinkButton from '../../components/router-link-button';
 import type { DomainGlueRecord } from '../../data/domain-glue-records';
 import type { Action, Field, ViewTable, ViewList, View } from '@wordpress/dataviews';
 
-type ForwardingView = ViewTable | ViewList;
+type GlueRecordsView = ViewTable | ViewList;
 
-const DEFAULT_VIEW: ForwardingView = {
+const DEFAULT_VIEW: GlueRecordsView = {
 	type: 'table',
 	search: '',
 	page: 1,
@@ -120,7 +120,7 @@ function DomainGlueRecords() {
 		[]
 	);
 
-	const [ view, setView ] = useState< ForwardingView >( DEFAULT_VIEW );
+	const [ view, setView ] = useState< GlueRecordsView >( DEFAULT_VIEW );
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
 		glueRecordsData ?? [],
@@ -156,7 +156,7 @@ function DomainGlueRecords() {
 					<DataViews< DomainGlueRecord >
 						data={ filteredData || [] }
 						fields={ fields }
-						onChangeView={ ( view: View ) => setView( view as ForwardingView ) }
+						onChangeView={ ( view: View ) => setView( view as GlueRecordsView ) }
 						view={ view }
 						actions={ actions }
 						search
