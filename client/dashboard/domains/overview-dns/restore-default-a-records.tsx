@@ -33,7 +33,9 @@ export default function RestoreDefaultARecords( {
 			<VStack spacing={ 6 }>
 				<Text>{ targetPlatformMessage }</Text>
 				<HStack justify="flex-end" spacing={ 2 }>
-					<Button onClick={ onCancel }>{ __( 'Cancel' ) }</Button>
+					<Button onClick={ onCancel } isBusy={ isBusy }>
+						{ __( 'Cancel' ) }
+					</Button>
 					<Button variant="primary" isBusy={ isBusy } onClick={ onConfirm }>
 						{ __( 'Restore' ) }
 					</Button>

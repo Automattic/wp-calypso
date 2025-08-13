@@ -1,14 +1,21 @@
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button, FormFileUpload } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { domainQuery } from '../../app/queries/domain';
-import { domainDnsQuery } from '../../app/queries/domain-dns-records';
+import {
+	domainDnsMutation,
+	domainDnsQuery,
+	domainDnsEmailMutation,
+} from '../../app/queries/domain-dns-records';
 import { domainRoute } from '../../app/routes/domain-routes';
 import DataViewsCard from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { DnsRecordType, type DnsRecord } from '../../data/domain-dns-records';
 import { useDnsActions } from './actions';
 import DnsActionsMenu from './dns-actions-menu';
 import { useDnsFields } from './fields';
@@ -16,7 +23,6 @@ import RestoreDefaultARecords from './restore-default-a-records';
 import RestoreDefaultCnameRecord from './restore-default-cname-record';
 import RestoreDefaultEmailRecords from './restore-default-email-records';
 import { hasDefaultARecords, hasDefaultCnameRecord, hasDefaultEmailRecords } from './utils';
-import type { DnsRecord } from '../../data/domain-dns-records';
 import type { ViewTable, ViewList, View } from '@wordpress/dataviews';
 
 function getDnsRecordId( record: DnsRecord ) {
@@ -46,6 +52,9 @@ const DEFAULT_LAYOUTS = {
 
 export default function DomainDns() {
 	const { domainName } = domainRoute.useParams();
+	const updateDnsMutation = useMutation( domainDnsMutation( domainName ) );
+	const restoreDefaultEmailRecordsMutation = useMutation( domainDnsEmailMutation( domainName ) );
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const { data: dnsData, isLoading } = useQuery( domainDnsQuery( domainName ) );
 	const [ isRestoreDefaultARecordsDialogOpen, setIsRestoreDefaultARecordsDialogOpen ] =
@@ -70,15 +79,94 @@ export default function DomainDns() {
 	);
 
 	const handleRestoreDefaultARecords = () => {
-		setIsRestoreDefaultARecordsDialogOpen( true );
+		const recordsToRemove = dnsData?.records?.filter(
+			( record ) =>
+				record.domain === record.name.replace( /\.$/, '' ) &&
+				( record.type === DnsRecordType.A || record.type === DnsRecordType.AAAA )
+		);
+
+		updateDnsMutation.mutate(
+			{
+				recordsToRemove,
+				restoreDefaultARecords: true,
+			},
+			{
+				onSuccess: () => {
+					createSuccessNotice( __( 'Default A records restored.' ), {
+						type: 'snackbar',
+					} );
+					setIsRestoreDefaultARecordsDialogOpen( false );
+				},
+				onError: () => {
+					createErrorNotice( __( 'Failed to restore the default A records.' ), {
+						type: 'snackbar',
+					} );
+					setIsRestoreDefaultARecordsDialogOpen( false );
+				},
+			}
+		);
 	};
 
 	const handleRestoreDefaultCnameRecord = () => {
-		setIsRestoreDefaultCnameRecordDialogOpen( true );
+		const recordsToRemove = dnsData?.records?.filter(
+			( record ) =>
+				record.domain !== record.name.replace( /\.$/, '' ) &&
+				DnsRecordType.CNAME === record.type &&
+				'www' === record.name
+		);
+		const recordsToAdd = [
+			{
+				type: DnsRecordType.CNAME,
+				data: `${ domainName }.`,
+				name: 'www',
+			},
+		];
+		updateDnsMutation.mutate(
+			{
+				recordsToRemove,
+				recordsToAdd,
+			},
+			{
+				onSuccess: () => {
+					createSuccessNotice( __( 'Default CNAME record restored.' ), {
+						type: 'snackbar',
+					} );
+					setIsRestoreDefaultCnameRecordDialogOpen( false );
+				},
+				onError: ( error ) => {
+					if ( error.message.match( /^CNAME www\..+ conflicts with .*$/ ) ) {
+						createErrorNotice(
+							__(
+								'Failed to restore the default CNAME record. Please remove any DNS records you added for the “www” subdomain before restoring the default CNAME record.'
+							),
+							{
+								type: 'snackbar',
+							}
+						);
+					} else {
+						createErrorNotice( __( 'Failed to restore the default CNAME record.' ), {
+							type: 'snackbar',
+						} );
+					}
+					setIsRestoreDefaultCnameRecordDialogOpen( false );
+				},
+			}
+		);
 	};
 
 	const handleRestoreDefaultEmailRecords = () => {
-		setIsRestoreDefaultEmailRecordsDialogOpen( true );
+		restoreDefaultEmailRecordsMutation.mutate( undefined, {
+			onSuccess: () => {
+				createSuccessNotice( __( 'The default email DNS records were successfully fixed!' ), {
+					type: 'snackbar',
+				} );
+			},
+			onError: () => {
+				createErrorNotice( __( 'There was a problem when restoring default email DNS records' ), {
+					type: 'snackbar',
+				} );
+			},
+		} );
 	};
 
 	return (
@@ -107,9 +195,13 @@ export default function DomainDns() {
 									hasDefaultARecords={ hasDefaultARecordsValue }
 									hasDefaultCnameRecord={ hasDefaultCnameRecordValue }
 									hasDefaultEmailRecords={ hasDefaultEmailRecordsValue }
-									onRestoreDefaultARecords={ handleRestoreDefaultARecords }
-									onRestoreDefaultCnameRecord={ handleRestoreDefaultCnameRecord }
-									onRestoreDefaultEmailRecords={ handleRestoreDefaultEmailRecords }
+									onRestoreDefaultARecords={ () => setIsRestoreDefaultARecordsDialogOpen( true ) }
+									onRestoreDefaultCnameRecord={ () =>
+										setIsRestoreDefaultCnameRecordDialogOpen( true )
+									}
+									onRestoreDefaultEmailRecords={ () =>
+										setIsRestoreDefaultEmailRecordsDialogOpen( true )
+									}
 								/>
 							</>
 						}
@@ -142,20 +234,20 @@ export default function DomainDns() {
 				) }
 			</DataViewsCard>
 			<RestoreDefaultARecords
-				onConfirm={ () => setIsRestoreDefaultARecordsDialogOpen( false ) }
+				onConfirm={ handleRestoreDefaultARecords }
 				onCancel={ () => setIsRestoreDefaultARecordsDialogOpen( false ) }
-				isBusy={ false }
+				isBusy={ updateDnsMutation.isPending }
 				isGravatarDomain={ domain?.is_gravatar_domain ?? false }
 				isOpen={ isRestoreDefaultARecordsDialogOpen }
 			/>
 			<RestoreDefaultCnameRecord
-				onConfirm={ () => setIsRestoreDefaultCnameRecordDialogOpen( false ) }
+				onConfirm={ handleRestoreDefaultCnameRecord }
 				onCancel={ () => setIsRestoreDefaultCnameRecordDialogOpen( false ) }
 				isBusy={ false }
 				isOpen={ isRestoreDefaultCnameRecordDialogOpen }
 			/>
 			<RestoreDefaultEmailRecords
-				onConfirm={ () => setIsRestoreDefaultEmailRecordsDialogOpen( false ) }
+				onConfirm={ handleRestoreDefaultEmailRecords }
 				onCancel={ () => setIsRestoreDefaultEmailRecordsDialogOpen( false ) }
 				isBusy={ false }
 				isOpen={ isRestoreDefaultEmailRecordsDialogOpen }

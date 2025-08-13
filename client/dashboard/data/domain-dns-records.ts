@@ -1,6 +1,16 @@
 import wpcom from 'calypso/lib/wp';
 
-export type DnsRecordType = 'A' | 'AAAA' | 'ALIAS' | 'CAA' | 'CNAME' | 'MX' | 'NS' | 'SRV' | 'TXT';
+export const DnsRecordType = {
+	A: 'A',
+	AAAA: 'AAAA',
+	ALIAS: 'ALIAS',
+	CAA: 'CAA',
+	CNAME: 'CNAME',
+	MX: 'MX',
+	NS: 'NS',
+	SRV: 'SRV',
+	TXT: 'TXT',
+} as const;
 
 export type DnsRecord = {
 	aux?: number;
@@ -16,7 +26,7 @@ export type DnsRecord = {
 	tag?: string;
 	target?: string;
 	ttl?: number;
-	type: DnsRecordType;
+	type: ( typeof DnsRecordType )[ keyof typeof DnsRecordType ];
 	value?: string;
 	weight?: number;
 };
@@ -47,6 +57,16 @@ export function updateDomainDns(
 				records_to_remove: recordsToRemove,
 				restore_default_a_records: restoreDefaultARecords,
 			} ),
+		},
+	} );
+}
+
+export function restoreDefaultEmailRecords( domainName: string ): Promise< void > {
+	return wpcom.req.post( {
+		path: '/domains/dns/email/set-default-records',
+		apiNamespace: 'wpcom/v2',
+		body: {
+			domain: domainName,
 		},
 	} );
 }
