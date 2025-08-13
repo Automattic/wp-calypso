@@ -20,8 +20,12 @@ export default function NameServers() {
 	const { mutate: updateNameServers, isPending: isUpdatingNameServers } = useMutation( {
 		...domainNameServersMutation( domainName ),
 		onError: ( e: Error ) => createErrorNotice( e.message, { type: 'snackbar' } ),
-		onSuccess: () =>
-			createSuccessNotice( __( 'Name servers updated successfully.' ), { type: 'snackbar' } ),
+		onSuccess: ( data, variables, context ) => {
+			// Call the original mutation's onSuccess handler
+			domainNameServersMutation( domainName )?.onSuccess?.( data, variables, context );
+			// Show success notice
+			createSuccessNotice( __( 'Name servers updated successfully.' ), { type: 'snackbar' } );
+		},
 	} );
 
 	return (

@@ -12,7 +12,8 @@ export const domainNameServersQuery = ( domainName: string ) =>
 export const domainNameServersMutation = ( domainName: string ) =>
 	mutationOptions( {
 		mutationFn: ( nameservers: string[] ) => updateDomainNameServers( domainName, nameservers ),
-		onSuccess: () => {
+		onSuccess: ( _, variables ) => {
+			queryClient.setQueryData( domainNameServersQuery( domainName ).queryKey, variables );
 			queryClient.invalidateQueries( domainNameServersQuery( domainName ) );
 		},
 	} );
