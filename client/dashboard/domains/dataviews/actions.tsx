@@ -41,12 +41,15 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				isPrimary: true,
 				icon: <Icon icon={ payment } />,
 				label: __( 'Renew now' ),
-				callback: ( [ domain ]: DomainSummary[] ) => {
+				callback: ( items: DomainSummary[] ) => {
+					const domain = items[ 0 ];
 					const purchase = purchases?.find( ( p ) => p.ID === domain.subscription_id );
 
-					if ( domain && purchase ) {
-						window.location.href = getDomainRenewalUrl( domain, purchase );
+					if ( ! purchase ) {
+						return;
 					}
+
+					window.location.href = getDomainRenewalUrl( domain, purchase );
 				},
 				isEligible: ( item: DomainSummary ) => isDomainRenewable( item ),
 			},
