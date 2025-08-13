@@ -108,12 +108,20 @@ export function Chat( {
 
 	// Check if should auto-collapse (no input and not focused)
 	const shouldAutoCollapse = useCallback( () => {
-		return (
-			! inputValue.trim() &&
-			input.textareaRef.current?.ownerDocument?.activeElement?.tagName !==
-				'TEXTAREA'
-		);
-	}, [ inputValue, input.textareaRef ] );
+		const activeElement = chatRef.current?.ownerDocument?.activeElement;
+
+		// If focus is within the chat area, don't auto-collapse
+		if ( activeElement && chatRef.current?.contains( activeElement ) ) {
+			return false;
+		}
+
+		// Don't auto-collapse if there's input text
+		if ( inputValue.trim() ) {
+			return false;
+		}
+
+		return true;
+	}, [ inputValue, input.textareaRef, chatRef ] );
 
 	const getHeightForState = ( state: string ) => {
 		if ( state === 'collapsed' ) {
