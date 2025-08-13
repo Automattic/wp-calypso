@@ -1,0 +1,466 @@
+import { formatCurrency } from '@automattic/number-formatters';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { useRouter, Link } from '@tanstack/react-router';
+import {
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+	__experimentalHStack as HStack,
+	__experimentalHeading as Heading,
+	DropdownMenu,
+	MenuGroup,
+	MenuItem,
+	Card,
+	CardBody,
+	Button,
+	Icon,
+	ToggleControl,
+	Notice,
+} from '@wordpress/components';
+import { DataForm } from '@wordpress/dataviews';
+import { __, isRTL, sprintf } from '@wordpress/i18n';
+import {
+	moreVertical,
+	chevronLeft,
+	chevronRight,
+	calendar,
+	currencyDollar,
+	siteLogo,
+	commentAuthorAvatar,
+} from '@wordpress/icons';
+import { useAuth } from '../../../app/auth';
+import { useLocale } from '../../../app/locale';
+import { purchaseQuery, userPurchaseSetAutoRenewQuery } from '../../../app/queries/me-purchases';
+import { siteBySlugQuery } from '../../../app/queries/site';
+import { purchaseSettingsRoute } from '../../../app/router/me';
+import { ActionList } from '../../../components/action-list';
+import { useFormattedTime } from '../../../components/formatted-time';
+import { PageHeader } from '../../../components/page-header';
+import PageLayout from '../../../components/page-layout';
+import { formatDate } from '../../../utils/datetime';
+import {
+	getBillPeriodLabel,
+	getTitleForDisplay,
+	getSubtitleForDisplay,
+	isExpiring,
+	isExpired,
+	isRenewing,
+	isIncludedWithPlan,
+	isOneTimePurchase,
+} from '../../../utils/purchase';
+import { getPurchaseUrlForId } from '../urls';
+import type { Purchase } from '../../../data/purchase';
+import type { Field } from '@wordpress/dataviews';
+import type { ReactNode, ReactElement } from 'react';
+
+import './style.scss';
+
+const BackButton = () => {
+	const router = useRouter();
+
+	return (
+		<Button
+			className="dashboard-page-header__back-button"
+			icon={ isRTL() ? chevronRight : chevronLeft }
+			onClick={ () => {
+				router.navigate( {
+					to: '/me/billing/purchases',
+				} );
+			} }
+		>
+			{ __( 'Purchases' ) }
+		</Button>
+	);
+};
+
+const PurchaseActionMenu = () => {
+	// FIXME: figure out what these actions should be
+	return (
+		<DropdownMenu icon={ moreVertical } label={ __( 'Quick actions' ) }>
+			{ () => (
+				<MenuGroup>
+					<MenuItem onClick={ () => ( {} ) }>Do something</MenuItem>
+				</MenuGroup>
+			) }
+		</DropdownMenu>
+	);
+};
+
+function PurchaseSettingsCardLinkWrapper( {
+	link,
+	children,
+}: {
+	link?: string;
+	children: ReactNode;
+} ) {
+	if ( link ) {
+		return (
+			<Link to={ link } className="purchase-settings-card__link">
+				{ children }
+			</Link>
+		);
+	}
+	return children;
+}
+
+function PurchaseSettingsActions( {
+	purchase,
+	isEligibleForUpgrade,
+}: {
+	purchase: Purchase;
+	isEligibleForUpgrade: boolean;
+} ) {
+	// FIXME: determine what actions to include
+	const canBeRemoved = ! isExpired( purchase ) && ! isIncludedWithPlan( purchase );
+	const canBeRenewed = purchase.can_explicit_renew;
+	const canCancel = purchase.is_cancelable;
+	return (
+		<VStack spacing={ 4 }>
+			<ActionList>
+				{ isEligibleForUpgrade && (
+					<ActionList.ActionItem
+						title={ __( 'Upgrade plan' ) }
+						description={ __( 'Find the best fit for your business.' ) }
+						actions={
+							<Button
+								variant="secondary"
+								size="compact"
+								onClick={ () => ( {
+									// FIXME
+								} ) }
+							>
+								{ __( 'Upgrade plan' ) }
+							</Button>
+						}
+					/>
+				) }
+				{ canBeRenewed && (
+					<ActionList.ActionItem
+						title={ __( 'Renew now' ) }
+						description={ __( 'Renew your subscription manually.' ) }
+						actions={
+							<Button
+								variant="secondary"
+								size="compact"
+								onClick={ () => ( {
+									// FIXME
+								} ) }
+							>
+								{ __( 'Renew' ) }
+							</Button>
+						}
+					/>
+				) }
+				{ canCancel && (
+					<ActionList.ActionItem
+						title={ __( 'Downgrade or cancel your subscription' ) }
+						description={ __( "We'll be sorry to see you go!" ) }
+						actions={
+							<Button
+								variant="secondary"
+								size="compact"
+								onClick={ () => ( {
+									// FIXME
+								} ) }
+							>
+								{ __( 'Downgrade or cancel' ) }
+							</Button>
+						}
+					/>
+				) }
+				{ ! canCancel && canBeRemoved && (
+					<ActionList.ActionItem
+						title={ __( 'Remove subscription' ) }
+						description={ __( 'Remove this product.' ) }
+						actions={
+							<Button
+								variant="secondary"
+								size="compact"
+								onClick={ () => ( {
+									// FIXME
+								} ) }
+							>
+								{ __( 'Remove subscription' ) }
+							</Button>
+						}
+					/>
+				) }
+			</ActionList>
+		</VStack>
+	);
+}
+
+function PurchaseSettingsCard( {
+	icon,
+	title,
+	heading,
+	description,
+	link,
+}: {
+	icon?: ReactElement;
+	title: ReactNode;
+	heading?: ReactNode;
+	description?: ReactNode;
+	link?: string;
+} ) {
+	return (
+		<PurchaseSettingsCardLinkWrapper link={ link }>
+			<Card className="purchase-settings-card">
+				<CardBody>
+					<VStack>
+						<HStack justify="space-between">
+							<HStack spacing={ 2 } justify="flex-start" alignment="center">
+								{ icon && <Icon className="dashboard-overview-card__icon" icon={ icon } /> }
+								<Text
+									className="dashboard-overview-card__title"
+									variant="muted"
+									lineHeight="16px"
+									size={ 11 }
+									weight={ 500 }
+									upperCase
+								>
+									{ title }
+								</Text>
+							</HStack>
+							{ link && (
+								<Icon className="dashboard-overview-card__link-icon" icon={ chevronRight } />
+							) }
+						</HStack>
+						<HStack spacing={ 2 } justify="flex-start" alignment="center">
+							<VStack>
+								{ heading && (
+									<Heading level={ 2 } size={ 20 } weight={ 500 }>
+										{ heading }
+									</Heading>
+								) }
+								{ description && (
+									<Text variant="muted" lineHeight="16px" size={ 12 }>
+										{ description }
+									</Text>
+								) }
+							</VStack>
+						</HStack>
+					</VStack>
+				</CardBody>
+			</Card>
+		</PurchaseSettingsCardLinkWrapper>
+	);
+}
+
+function getFields( { isMutationPending }: { isMutationPending?: boolean } ): Field< Purchase >[] {
+	return [
+		{
+			id: 'is_auto_renew_enabled',
+			label: __( 'Enable auto-renew' ),
+			Edit: ( { field, data: purchase, onChange } ) => {
+				const locale = useLocale();
+				const { getValue } = field;
+				const helpText = ( () => {
+					if (
+						purchase.is_auto_renew_enabled &&
+						Boolean( purchase.renew_date ) &&
+						isRenewing( purchase )
+					) {
+						// translators: date is a formatted date string
+						return sprintf( __( 'You will be billed on %(date)s' ), {
+							date: formatDate( new Date( purchase.renew_date ), locale, { dateStyle: 'long' } ),
+						} );
+					}
+					if ( isIncludedWithPlan( purchase ) && purchase.attached_to_purchase_id ) {
+						return (
+							<Link to={ getPurchaseUrlForId( purchase.attached_to_purchase_id ) }>
+								{ __( 'Renews with plan' ) }
+							</Link>
+						);
+					}
+					if ( purchase.is_auto_renew_enabled ) {
+						return __( 'Will not auto-renew because there is no payment method' );
+					}
+					return undefined;
+				} )();
+				return (
+					<ToggleControl
+						__nextHasNoMarginBottom
+						label={ field.label }
+						checked={ getValue( { item: purchase } ) }
+						disabled={
+							isMutationPending ||
+							isOneTimePurchase( purchase ) ||
+							isExpired( purchase ) ||
+							isIncludedWithPlan( purchase )
+						}
+						onChange={ ( value: boolean ) => onChange( { is_auto_renew_enabled: value } ) }
+						help={ helpText }
+					/>
+				);
+			},
+		},
+	];
+}
+
+const form = {
+	type: 'regular' as const,
+	labelPosition: 'top' as const,
+	fields: [
+		{
+			id: 'autoRenew',
+			label: __( 'Manage subscription' ),
+			children: [ 'is_auto_renew_enabled' ],
+		},
+	],
+};
+
+function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
+	const {
+		mutate: setAutoRenew,
+		error,
+		isPending: isMutationPending,
+	} = useMutation( userPurchaseSetAutoRenewQuery( parseInt( purchase.ID ) ) );
+	return (
+		<Card>
+			<CardBody>
+				<VStack spacing={ 4 } alignment="left">
+					<DataForm< Purchase >
+						data={ purchase }
+						fields={ getFields( { isMutationPending } ) }
+						form={ form }
+						onChange={ ( newData ) => {
+							if ( newData.is_auto_renew_enabled !== purchase.is_auto_renew_enabled ) {
+								setAutoRenew( newData.is_auto_renew_enabled );
+							}
+						} }
+					/>
+
+					{ error && (
+						<Notice status="error" isDismissible={ false }>
+							{ error.message }
+						</Notice>
+					) }
+				</VStack>
+			</CardBody>
+		</Card>
+	);
+}
+
+export default function PurchaseSettings() {
+	const { user } = useAuth();
+	const params = purchaseSettingsRoute.useParams();
+	const purchaseId = params.purchaseId;
+	const { data: purchase } = useQuery( {
+		...purchaseQuery( parseInt( purchaseId ) ),
+		enabled: Boolean( purchaseId ),
+	} );
+	const { data: site } = useQuery( {
+		...siteBySlugQuery( purchase?.site_slug ?? '' ),
+		enabled: Boolean( purchase?.site_slug ),
+	} );
+	const formattedExpiry = useFormattedTime( purchase?.expiry_date ?? '' );
+	const formattedRenewal = useFormattedTime( purchase?.renew_date ?? '' );
+	if ( ! purchase || ! site ) {
+		return null;
+	}
+	// FIXME: figure this out
+	const isEligibleForUpgrade =
+		! isExpired( purchase ) && ! isIncludedWithPlan( purchase ) && purchase.is_plan;
+
+	const subtitle = getSubtitleForDisplay( purchase );
+
+	return (
+		<PageLayout
+			size="small"
+			header={
+				<VStack>
+					<PageHeader
+						prefix={ <BackButton /> }
+						title={ getTitleForDisplay( purchase ) }
+						actions={
+							// FIXME: figure out where to go here
+							site?.options?.admin_url && (
+								<>
+									{ isEligibleForUpgrade && (
+										<Button __next40pxDefaultSize variant="primary" href="#">
+											{ __( 'Upgrade plan' ) }
+										</Button>
+									) }
+									<PurchaseActionMenu />
+								</>
+							)
+						}
+					/>
+					{ subtitle && <Text variant="muted">{ subtitle }</Text> }
+				</VStack>
+			}
+		>
+			<VStack spacing={ 6 }>
+				<HStack spacing={ 6 } justify="flex-start" alignment="center">
+					<PurchaseSettingsCard
+						icon={ calendar }
+						title={
+							purchase.renew_date && ! isExpiring( purchase ) ? __( 'Renews' ) : __( 'Expires' )
+						}
+						heading={ ( () => {
+							if ( isOneTimePurchase( purchase ) ) {
+								return __( 'Never expires' );
+							}
+							if ( purchase.renew_date && ! isExpiring( purchase ) ) {
+								return formattedRenewal;
+							}
+							return formattedExpiry;
+						} )() }
+						description={ ( () => {
+							if ( purchase.is_auto_renew_enabled && isRenewing( purchase ) ) {
+								return __( 'Auto-renew is enabled' );
+							}
+							if ( isIncludedWithPlan( purchase ) && purchase.attached_to_purchase_id ) {
+								return (
+									<Link to={ getPurchaseUrlForId( purchase.attached_to_purchase_id ) }>
+										{ __( 'Renews with plan' ) }
+									</Link>
+								);
+							}
+							if ( purchase.is_auto_renew_enabled ) {
+								return __( 'Will not auto-renew because there is no payment method' );
+							}
+							return __( 'Auto-renew is disabled' );
+						} )() }
+					/>
+					<PurchaseSettingsCard
+						icon={ currencyDollar }
+						title={ __( 'Renewal price' ) }
+						heading={ formatCurrency( purchase.price_integer, purchase.currency_code, {
+							isSmallestUnit: true,
+						} ) }
+						description={ getBillPeriodLabel( purchase ) + ' ' + __( 'Excludes taxes.' ) }
+					/>
+				</HStack>
+				<HStack spacing={ 6 } justify="flex-start" alignment="center">
+					<PurchaseSettingsCard
+						icon={ siteLogo }
+						title={ __( 'Site' ) }
+						heading={ site.name }
+						description={ purchase.site_slug }
+						link={ `/v2/sites/${ purchase.site_slug }` }
+					/>
+					<PurchaseSettingsCard
+						icon={ commentAuthorAvatar }
+						title={ __( 'Owner' ) }
+						heading={
+							String( user.ID ) === String( purchase.user_id )
+								? user.display_name
+								: __( 'Owned by a different user' )
+						}
+						description={
+							String( user.ID ) === String( purchase.user_id ) ? user.email : undefined
+						}
+					/>
+				</HStack>
+				<ManageSubscriptionCard purchase={ purchase } />
+				{ ! isExpired( purchase ) && (
+					<PurchaseSettingsActions
+						purchase={ purchase }
+						isEligibleForUpgrade={ isEligibleForUpgrade }
+					/>
+				) }
+			</VStack>
+		</PageLayout>
+	);
+}
