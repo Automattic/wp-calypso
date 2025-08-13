@@ -225,5 +225,3 @@ export default function DomainForwardingForm( {
 		</Card>
 	);
 }
-
-export type { FormData };
