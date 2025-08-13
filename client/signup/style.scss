@@ -261,7 +261,7 @@ body.is-section-signup .layout:not(.dops) {
 }
 
 body.is-section-stepper,
-body.is-section-signup .layout:not(.dops):not(.is-wccom-oauth-flow) {
+body.is-section-signup .layout:not(.dops):not(.is-wccom-oauth-flow):not(.is-unified-create-account) {
 	$gray-100: #101517;
 	$gray-60: #50575e;
 	$gray-50: #646970;

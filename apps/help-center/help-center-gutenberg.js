@@ -71,7 +71,7 @@ function HelpCenterContent() {
 			{ isDesktop && showHelpIcon && <Fill name="PinnedItems/core">{ content }</Fill> }
 			<HelpCenter
 				locale={ helpCenterData.locale }
-				sectionName="gutenberg-editor"
+				sectionName={ helpCenterData.sectionName || 'gutenberg-editor' }
 				currentUser={ helpCenterData.currentUser }
 				site={ helpCenterData.site }
 				hasPurchases={ false }

@@ -40,6 +40,9 @@ import {
 	isA4AOAuth2Client,
 	isCrowdsignalOAuth2Client,
 	isGravatarOAuth2Client,
+	isVIPOAuth2Client,
+	isJetpackCloudOAuth2Client,
+	isStudioAppOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
 import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
@@ -52,13 +55,13 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { createSocialUserFailed } from 'calypso/state/login/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getIsAkismet from 'calypso/state/selectors/get-is-akismet';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { resetSignup } from 'calypso/state/signup/actions';
 import { getSectionName } from 'calypso/state/ui/selectors';
-import CrowdsignalSignupForm from './crowdsignal';
 import PasswordlessSignupForm from './passwordless';
 import SignupFormSocialFirst from './signup-form-social-first';
 import SignupSubmitButton from './signup-submit-button';
@@ -955,20 +958,10 @@ class SignupForm extends Component {
 	}
 
 	footerLink() {
-		const { isWoo, isBlazePro } = this.props;
+		const { isWoo } = this.props;
 
 		if ( isWoo ) {
 			return null;
-		}
-
-		if ( isBlazePro ) {
-			return (
-				<p className="signup-form__login-link">
-					{ this.props.translate( 'Already have an account? {{link}}Log in here{{/link}}.', {
-						components: { link: <a href={ this.getLoginLink() } /> },
-					} ) }
-				</p>
-			);
 		}
 
 		return null;
@@ -1025,27 +1018,6 @@ class SignupForm extends Component {
 			);
 		}
 
-		if ( isCrowdsignalOAuth2Client( this.props.oauth2Client ) ) {
-			const socialProps = pick( this.props, [
-				'isSocialSignupEnabled',
-				'handleSocialResponse',
-				'socialServiceResponse',
-			] );
-
-			return (
-				<CrowdsignalSignupForm
-					disabled={ this.props.disabled }
-					formFields={ this.formFields() }
-					handleSubmit={ this.handleSubmit }
-					loginLink={ this.getLoginLink() }
-					oauth2Client={ this.props.oauth2Client }
-					recordBackLinkClick={ this.recordBackLinkClick }
-					submitting={ this.props.submitting }
-					{ ...socialProps }
-				/>
-			);
-		}
-
 		const logInUrl = this.getLoginLink();
 
 		// TODO clk Akismet
@@ -1067,7 +1039,15 @@ class SignupForm extends Component {
 			);
 		}
 
-		const isUnifiedCreateAccount = this.props.isWoo || this.props.isA4A;
+		const isUnifiedCreateAccount =
+			this.props.isWoo ||
+			this.props.isA4A ||
+			this.props.isCrowdsignal ||
+			this.props.isBlazePro ||
+			this.props.isAkismet ||
+			this.props.isVIPClient ||
+			this.props.isJetpackCloud ||
+			isStudioAppOAuth2Client( this.props.oauth2Client );
 		const isGravatar = this.props.isGravatar;
 		const emailErrorMessage = this.getErrorMessagesWithLogin( 'email' );
 		const showSeparator =
@@ -1223,6 +1203,10 @@ export default connect(
 			isGravatar: isGravatarOAuth2Client( oauth2Client ),
 			isBlazePro: getIsBlazePro( state ),
 			isA4A: isA4AOAuth2Client( oauth2Client ),
+			isCrowdsignal: isCrowdsignalOAuth2Client( oauth2Client ),
+			isAkismet: getIsAkismet( state ),
+			isVIPClient: isVIPOAuth2Client( oauth2Client ),
+			isJetpackCloud: isJetpackCloudOAuth2Client( oauth2Client ),
 		};
 	},
 	{

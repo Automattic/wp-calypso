@@ -274,14 +274,29 @@ function HelpSearchResults( {
 		type: string
 	) => {
 		const { link, post_id, blog_id, source } = result;
-		// check and catch admin section links.
-		if ( type === SUPPORT_TYPE_ADMIN_SECTION && link ) {
-			// record track-event.
-			recordTracksEvent( 'calypso_inlinehelp_admin_section_visit', {
-				link: link,
-				search_term: searchQuery,
+
+		// Make the first recordTracksEvent call asynchronous
+		queueMicrotask( () => {
+			recordTracksEvent( 'calypso_help_center_search_traintracks_interact', {
+				action: 'click',
+				railcar: result.railcar.railcar,
+				href: result.link,
+				search_type: ! contextSearch && ! searchQuery ? 'tailored' : 'search',
 				location,
 				section: sectionName,
+			} );
+		} );
+
+		// check and catch admin section links.
+		if ( type === SUPPORT_TYPE_ADMIN_SECTION && link ) {
+			// Make the admin section recordTracksEvent call asynchronous
+			Promise.resolve().then( () => {
+				recordTracksEvent( 'calypso_inlinehelp_admin_section_visit', {
+					link: link,
+					search_term: searchQuery,
+					location,
+					section: sectionName,
+				} );
 			} );
 
 			event.preventDefault();
@@ -312,7 +327,10 @@ function HelpSearchResults( {
 				? 'calypso_inlinehelp_tailored_article_select'
 				: 'calypso_inlinehelp_article_select';
 
-		recordTracksEvent( eventName, eventData );
+		// Make the final recordTracksEvent call asynchronous
+		Promise.resolve().then( () => {
+			recordTracksEvent( eventName, eventData );
+		} );
 		onSelect( event, result );
 	};
 

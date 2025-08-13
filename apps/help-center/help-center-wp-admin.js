@@ -105,7 +105,7 @@ function AdminHelpCenterContent() {
 		<QueryClientProvider client={ queryClient }>
 			<HelpCenter
 				locale={ helpCenterData.locale }
-				sectionName="wp-admin"
+				sectionName={ helpCenterData.sectionName || 'wp-admin' }
 				currentUser={ helpCenterData.currentUser }
 				site={ helpCenterData.site }
 				hasPurchases={ false }

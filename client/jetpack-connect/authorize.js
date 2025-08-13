@@ -798,7 +798,7 @@ export class JetpackAuthorize extends Component {
 		}
 
 		if ( this.isFromJetpackOnboarding() || this.isFromMyJetpack() ) {
-			return translate( 'Connect my site' );
+			return translate( 'Connect account' );
 		}
 
 		return translate( 'Approve' );
@@ -1309,7 +1309,7 @@ export class JetpackAuthorize extends Component {
 						/>
 						{ ( isFromJetpackOnboarding || isFromMyJetpack ) && (
 							<div className="jetpack-connect__authorize-form-header--left-aligned">
-								<h1>{ translate( "Now let's connect your site" ) }</h1>
+								<h1>{ translate( 'Now let’s connect your account' ) }</h1>
 								<p>
 									{ translate(
 										'Your site connects to Jetpack’s cloud to offload the heavy work, helping it run faster and deliver powerful features.'

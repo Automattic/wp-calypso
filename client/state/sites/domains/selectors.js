@@ -4,7 +4,7 @@ const EMPTY_SITE_DOMAINS = Object.freeze( [] );
 
 /**
  * Returns the list of site domains for the specified site identifier.
- * @param {Object} state - global state tree
+ * @param {import('calypso/types').AppState} state - global state tree
  * @param {number|undefined} siteId - identifier of the site
  * @returns {import('./types').ResponseDomain[]} the list of domains
  */

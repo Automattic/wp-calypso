@@ -61,6 +61,7 @@ describe( 'selectors', () => {
 							refund_integer: 9600,
 							total_refund_integer: 9600,
 							total_refund_currency: 'USD',
+							subscription_status: 'inactive',
 						},
 					],
 					error: null,
@@ -75,7 +76,6 @@ describe( 'selectors', () => {
 				id: 2,
 				productName: 'premium plan',
 				siteId: 1337,
-				active: false,
 				amount: NaN,
 				attachedToPurchaseId: NaN,
 				autoRenewCouponCode: undefined,
@@ -144,7 +144,7 @@ describe( 'selectors', () => {
 				saleAmount: undefined,
 				siteName: undefined,
 				subscribedDate: undefined,
-				subscriptionStatus: undefined,
+				subscriptionStatus: 'inactive',
 				tagLine: undefined,
 				taxAmount: undefined,
 				taxText: undefined,
@@ -233,18 +233,21 @@ describe( 'selectors', () => {
 							blog_id: '123',
 							is_domain_registration: 'true',
 							product_slug: 'dotlive_domain',
+							subsciption_status: 'active',
 						},
 						{
 							ID: '82867',
 							blog_id: '123',
 							product_slug: 'value_bundle',
 							included_domain: 'dev.live',
+							subsciption_status: 'active',
 						},
 						{
 							ID: '105103',
 							blog_id: '123',
 							meta: 'wordpress.com',
 							product_slug: 'domain_map',
+							subsciption_status: 'active',
 						},
 					],
 					error: null,
@@ -272,6 +275,7 @@ describe( 'selectors', () => {
 							blog_id: '123',
 							is_domain_registration: 'true',
 							product_slug: 'dotlive_domain',
+							subsciption_status: 'active',
 						},
 						{
 							ID: '82867',
@@ -279,12 +283,14 @@ describe( 'selectors', () => {
 							product_slug: 'value_bundle',
 							included_domain: 'dev.live',
 							included_domain_purchase_amount: 25,
+							subsciption_status: 'active',
 						},
 						{
 							ID: '105103',
 							blog_id: '123',
 							meta: 'wordpress.com',
 							product_slug: 'domain_map',
+							subsciption_status: 'active',
 						},
 					],
 					error: null,
@@ -311,12 +317,14 @@ describe( 'selectors', () => {
 							meta: 'dev.live',
 							blog_id: '123',
 							product_slug: 'domain_transfer',
+							subsciption_status: 'active',
 						},
 						{
 							ID: '82867',
 							blog_id: '123',
 							product_slug: 'value_bundle',
 							included_domain: 'dev.live',
+							subsciption_status: 'active',
 						},
 					],
 					error: null,
@@ -343,6 +351,7 @@ describe( 'selectors', () => {
 							meta: 'dev.live',
 							blog_id: '123',
 							product_slug: 'domain_transfer',
+							subsciption_status: 'active',
 						},
 						{
 							ID: '82867',
@@ -350,6 +359,7 @@ describe( 'selectors', () => {
 							product_slug: 'value_bundle',
 							included_domain: 'dev.live',
 							included_domain_purchase_amount: 25,
+							subsciption_status: 'active',
 						},
 					],
 					error: null,
@@ -371,8 +381,20 @@ describe( 'selectors', () => {
 	describe( 'isUserPaid', () => {
 		const targetUserId = 123;
 		const examplePurchases = Object.freeze( [
-			{ ID: 1, product_name: 'domain registration', blog_id: 1337, user_id: targetUserId },
-			{ ID: 2, product_name: 'premium plan', blog_id: 1337, user_id: targetUserId },
+			{
+				ID: 1,
+				product_name: 'domain registration',
+				blog_id: 1337,
+				user_id: targetUserId,
+				subsciption_status: 'active',
+			},
+			{
+				ID: 2,
+				product_name: 'premium plan',
+				blog_id: 1337,
+				user_id: targetUserId,
+				subsciption_status: 'active',
+			},
 		] );
 
 		test( 'should return false because there is no purchases', () => {
