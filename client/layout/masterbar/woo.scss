@@ -380,11 +380,6 @@ $breakpoint-mobile: 660px;
 		height: unset;
 		min-height: 238px;
 
-		~ .auth-form__separator {
-			margin: -10px auto;
-			max-width: 472px;
-		}
-
 		~ .card.auth-form__social.is-login {
 			max-width: 472px;
 		}
@@ -897,13 +892,17 @@ $breakpoint-mobile: 660px;
 			margin-top: unset;
 		}
 
+		.login__body--continue-as-user {
+			width: 540px;
+			margin: 0 auto;
+			padding: 0;
+			display: flex;
+			flex-direction: column;
+		}
+
 		.continue-as-user {
 			margin: 0;
 			max-width: initial;
-
-			~ .auth-form__separator {
-				margin: 32px auto;
-			}
 
 			.continue-as-user__user-info {
 				display: flex;
