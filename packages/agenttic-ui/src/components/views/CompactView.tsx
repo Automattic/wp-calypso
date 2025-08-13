@@ -12,6 +12,7 @@ interface CompactViewProps {
 	onBlur?: () => void;
 	onExpand?: () => void;
 	showExpandButton?: boolean;
+	focusOnMount?: boolean;
 }
 
 export function CompactView( {
@@ -25,6 +26,7 @@ export function CompactView( {
 	onBlur,
 	onExpand,
 	showExpandButton = true,
+	focusOnMount = false,
 }: CompactViewProps ) {
 	return (
 		<ChatInput
@@ -38,6 +40,7 @@ export function CompactView( {
 			onBlur={ onBlur }
 			onExpand={ onExpand }
 			showExpandButton={ showExpandButton }
+			focusOnMount={ focusOnMount }
 		/>
 	);
 }

@@ -1,4 +1,4 @@
-import React, { useId } from 'react';
+import React, { useEffect, useId } from 'react';
 import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
 import { ArrowUpIcon } from '../icons/ArrowUpIcon';
@@ -21,6 +21,7 @@ interface ChatInputProps {
 	fromCompact?: boolean;
 	onExpand?: () => void;
 	showExpandButton?: boolean;
+	focusOnMount?: boolean;
 }
 
 export function ChatInput( {
@@ -35,12 +36,19 @@ export function ChatInput( {
 	fromCompact = false,
 	onExpand,
 	showExpandButton = true,
+	focusOnMount = false,
 }: ChatInputProps ) {
 	const textareaId = useId();
 	const canSubmit = value.trim() || isProcessing;
 	const displayPlaceholder = placeholder.endsWith( '…' )
 		? placeholder
 		: `${ placeholder }…`;
+
+	useEffect( () => {
+		if ( focusOnMount && textareaRef.current ) {
+			textareaRef.current.focus();
+		}
+	}, [] ); // Empty dependency array - only run on mount
 
 	return (
 		<div data-slot="chat-input" className={ styles.container }>
