@@ -120,8 +120,6 @@ const LayoutLoggedOut = ( {
 			currentRoute?.startsWith( '/start/do-it-for-me/' ) ) &&
 		userAllowedToHelpCenter;
 
-	const isUnifiedCreateAccount = sectionName === 'signup' && ! isGravatar;
-
 	const classes = {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,
 		[ 'is-section-' + sectionName ]: sectionName,
@@ -147,7 +145,6 @@ const LayoutLoggedOut = ( {
 		woo: isWoo,
 		'feature-flag-woocommerce-core-profiler-passwordless-auth': true,
 		'jetpack-cloud': isJetpackCloud,
-		'is-unified-create-account': isUnifiedCreateAccount,
 	};
 
 	let masterbar = null;
