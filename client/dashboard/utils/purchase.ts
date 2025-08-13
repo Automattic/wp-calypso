@@ -124,10 +124,6 @@ export function creditCardHasAlreadyExpired( purchase: Purchase ): boolean {
 	return false;
 }
 
-export function isAutoRenewEnabled( purchase: Purchase ): boolean {
-	return parseInt( purchase.auto_renew ?? '' ) === 1;
-}
-
 export function isTransferredOwnership(
 	purchaseId: string | number,
 	transferredOwnershipPurchases: Purchase[]
