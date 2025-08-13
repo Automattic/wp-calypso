@@ -16,7 +16,6 @@ import { domainDnsAddRoute, domainRoute } from '../../app/routes/domain-routes';
 import DataViewsCard from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { DnsRecordType, type DnsRecord } from '../../data/domain-dns-records';
 import { useDnsActions } from './actions';
 import DnsActionsMenu from './dns-actions-menu';
 import { useDnsFields } from './fields';
@@ -24,6 +23,7 @@ import RestoreDefaultARecords from './restore-default-a-records';
 import RestoreDefaultCnameRecord from './restore-default-cname-record';
 import RestoreDefaultEmailRecords from './restore-default-email-records';
 import { hasDefaultARecords, hasDefaultCnameRecord, hasDefaultEmailRecords } from './utils';
+import type { DnsRecord } from '../../data/domain-dns-records';
 import type { ViewTable, ViewList, View } from '@wordpress/dataviews';
 
 function getDnsRecordId( record: DnsRecord ) {
@@ -84,7 +84,7 @@ export default function DomainDns() {
 		const recordsToRemove = dnsData?.records?.filter(
 			( record ) =>
 				record.domain === record.name.replace( /\.$/, '' ) &&
-				( record.type === DnsRecordType.A || record.type === DnsRecordType.AAAA )
+				[ 'A', 'AAAA' ].includes( record.type )
 		);
 
 		updateDnsMutation.mutate(
@@ -113,12 +113,12 @@ export default function DomainDns() {
 		const recordsToRemove = dnsData?.records?.filter(
 			( record ) =>
 				record.domain !== record.name.replace( /\.$/, '' ) &&
-				DnsRecordType.CNAME === record.type &&
+				'CNAME' === record.type &&
 				'www' === record.name
 		);
 		const recordsToAdd = [
 			{
-				type: DnsRecordType.CNAME,
+				type: 'CNAME',
 				data: `${ domainName }.`,
 				name: 'www',
 			},
@@ -126,7 +126,7 @@ export default function DomainDns() {
 		updateDnsMutation.mutate(
 			{
 				recordsToRemove,
-				recordsToAdd,
+				recordsToAdd: recordsToAdd as DnsRecord[],
 			},
 			{
 				onSuccess: () => {

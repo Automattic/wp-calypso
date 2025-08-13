@@ -1,16 +1,6 @@
 import wpcom from 'calypso/lib/wp';
 
-export const DnsRecordType = {
-	A: 'A',
-	AAAA: 'AAAA',
-	ALIAS: 'ALIAS',
-	CAA: 'CAA',
-	CNAME: 'CNAME',
-	MX: 'MX',
-	NS: 'NS',
-	SRV: 'SRV',
-	TXT: 'TXT',
-} as const;
+export type DnsRecordType = 'A' | 'AAAA' | 'ALIAS' | 'CAA' | 'CNAME' | 'MX' | 'NS' | 'SRV' | 'TXT';
 
 export type DnsRecord = {
 	aux?: number;
@@ -26,7 +16,7 @@ export type DnsRecord = {
 	tag?: string;
 	target?: string;
 	ttl?: number;
-	type: ( typeof DnsRecordType )[ keyof typeof DnsRecordType ];
+	type: DnsRecordType;
 	value?: string;
 	weight?: number;
 };

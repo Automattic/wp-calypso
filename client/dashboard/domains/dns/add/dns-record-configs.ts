@@ -1,5 +1,4 @@
 import { Field } from '@wordpress/dataviews';
-import { DnsRecord, DnsRecordType } from '../../../data/domain-dns-records';
 import { ARecordConfig } from './a-record';
 import { AAAARecordConfig } from './aaaa-record';
 import { AliasRecordConfig } from './alias-record';
@@ -9,9 +8,10 @@ import { MXRecordConfig } from './mx-record';
 import { NSRecordConfig } from './ns-record';
 import { SRVRecordConfig } from './srv-record';
 import { TXTRecordConfig } from './txt-record';
+import type { DnsRecord, DnsRecordType } from '../../../data/domain-dns-records';
 
 export type DnsRecordTypeFormData = {
-	type: ( typeof DnsRecordType )[ keyof typeof DnsRecordType ];
+	type: DnsRecordType;
 };
 
 export type DnsRecordFormData = {
@@ -39,10 +39,7 @@ export type DnsRecordConfig = {
 	transformData: ( data: DnsRecordFormData, domainName?: string ) => DnsRecord;
 };
 
-export const DNS_RECORD_CONFIGS: Record<
-	( typeof DnsRecordType )[ keyof typeof DnsRecordType ],
-	DnsRecordConfig
-> = {
+export const DNS_RECORD_CONFIGS: Record< DnsRecordType, DnsRecordConfig > = {
 	A: ARecordConfig,
 	AAAA: AAAARecordConfig,
 	ALIAS: AliasRecordConfig,
