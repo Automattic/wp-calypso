@@ -10,7 +10,7 @@ import {
 	RadioControl,
 } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
-import { useState, useMemo, useEffect } from '@wordpress/element';
+import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { isTargetUrlValid, isSubdomainValid } from './utils';
 import type { DomainForwarding } from '../../data/domain-forwarding';
@@ -39,27 +39,25 @@ export default function DomainForwardingForm( {
 	isSubmitting,
 	submitButtonText,
 }: DomainForwardingFormProps ) {
-	const [ formData, setFormData ] = useState< FormData >( {
-		sourceType: 'subdomain',
-		subdomain: '',
-		targetUrl: '',
-		redirectType: 'temporary',
-		pathForwarding: 'no',
-	} );
-
-	useEffect( () => {
+	const [ formData, setFormData ] = useState< FormData >( () => {
 		if ( ! initialData ) {
-			return;
+			return {
+				sourceType: 'subdomain',
+				subdomain: '',
+				targetUrl: '',
+				redirectType: 'temporary',
+				pathForwarding: 'no',
+			};
 		}
 		const protocol = initialData.is_secure ? 'https://' : 'http://';
-		setFormData( {
+		return {
 			sourceType: initialData.subdomain ? 'subdomain' : 'root',
 			subdomain: initialData.subdomain || '',
 			targetUrl: `${ protocol }${ initialData.target_host }${ initialData.target_path || '' }`,
 			redirectType: initialData.is_permanent ? 'permanent' : 'temporary',
 			pathForwarding: initialData.forward_paths ? 'yes' : 'no',
-		} );
-	}, [ initialData ] );
+		};
+	} );
 
 	const redirectTypeField = {
 		id: 'redirectType',
