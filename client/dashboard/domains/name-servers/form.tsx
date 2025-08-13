@@ -162,6 +162,7 @@ export default function NameServersForm( {
 									} );
 								} }
 							/>
+							{ showUpsellNudge && <UpsellNudge domainName={ domainName } /> }
 							{ ! data.useWpcomNameServers && (
 								<Text>
 									{ createInterpolateElement(
@@ -183,7 +184,7 @@ export default function NameServersForm( {
 				createNameServerField( i + 1 )
 			),
 		],
-		[ createNameServerField, isBusy ]
+		[ createNameServerField, isBusy, showUpsellNudge ]
 	);
 
 	const handleSubmit = useCallback(
@@ -203,7 +204,6 @@ export default function NameServersForm( {
 	return (
 		<form onSubmit={ handleSubmit }>
 			<VStack spacing={ 4 }>
-				{ showUpsellNudge && <UpsellNudge domainName={ domainName } /> }
 				{ queryError && <Notice variant="error">{ queryError }</Notice> }
 				{ ! queryError && (
 					<VStack spacing={ 4 }>
