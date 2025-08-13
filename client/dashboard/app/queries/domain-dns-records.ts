@@ -9,16 +9,16 @@ import { queryClient } from '../query-client';
 
 export const domainDnsMutation = ( domainName: string ) =>
 	mutationOptions( {
-		mutationFn: ( data: {
+		mutationFn: ( params: {
 			recordsToAdd?: DnsRecord[];
 			recordsToRemove?: DnsRecord[];
 			restoreDefaultARecords?: boolean;
 		} ) =>
 			updateDomainDns(
 				domainName,
-				data.recordsToAdd,
-				data.recordsToRemove,
-				data.restoreDefaultARecords
+				params.recordsToAdd,
+				params.recordsToRemove,
+				params.restoreDefaultARecords
 			),
 		onSuccess: () => {
 			queryClient.invalidateQueries( {
