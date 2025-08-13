@@ -47,6 +47,7 @@ module.exports = {
 							'!@automattic/number-formatters',
 							'!@automattic/ui',
 							'!@automattic/viewport',
+							'!@automattic/languages',
 							// Please do not add exceptions unless agreed on
 							// with the #architecture group.
 						],
