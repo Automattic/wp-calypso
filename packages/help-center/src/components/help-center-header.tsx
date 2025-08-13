@@ -2,13 +2,19 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useGetHistoryChats } from '@automattic/help-center/src/hooks/use-get-history-chats';
 import { EllipsisMenu } from '@automattic/odie-client';
-import { CardHeader, Button, Flex, ToggleControl } from '@wordpress/components';
+import {
+	CardHeader,
+	Button,
+	Flex,
+	ToggleControl,
+	__experimentalElevation as Elevation,
+	__experimentalHStack as HStack,
+} from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useMemo, useCallback, useEffect, useState } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
 import { _n } from '@wordpress/i18n';
 import {
-	closeSmall,
 	chevronUp,
 	lineSolid,
 	scheduled,
@@ -197,9 +203,19 @@ const useHeaderText = () => {
 
 const HeaderText = () => {
 	const headerText = useHeaderText();
+	const unreadCount = useSelect(
+		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getUnreadCount(),
+		[]
+	);
+
+	const formattedUnreadCount = unreadCount > 9 ? '9+' : unreadCount;
+
 	return (
 		<span id="header-text" role="presentation" className="help-center-header__text">
 			{ headerText }
+			{ unreadCount > 0 && (
+				<span className="help-center-header__unread-count">{ formattedUnreadCount }</span>
+			) }
 		</span>
 	);
 };
@@ -240,46 +256,7 @@ const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
 	);
 };
 
-const ContentMinimized = ( {
-	unreadCount = 0,
-	handleClick,
-	onMaximize,
-}: {
-	unreadCount: number;
-	handleClick?: ( event: React.SyntheticEvent ) => void;
-	onMaximize?: () => void;
-} ) => {
-	const { __ } = useI18n();
-	const headerText = useHeaderText();
-	const formattedUnreadCount = unreadCount > 9 ? '9+' : unreadCount;
-
-	return (
-		<>
-			<p
-				id="header-text"
-				className="help-center-header__text"
-				onClick={ handleClick }
-				onKeyUp={ handleClick }
-				role="presentation"
-			>
-				{ headerText }
-				{ unreadCount > 0 && (
-					<span className="help-center-header__unread-count">{ formattedUnreadCount }</span>
-				) }
-			</p>
-			<Button
-				className="help-center-header__maximize"
-				label={ __( 'Maximize Help Center', __i18n_text_domain__ ) }
-				icon={ chevronUp }
-				tooltipPosition="top left"
-				onClick={ onMaximize }
-				onTouchStart={ onMaximize }
-			/>
-		</>
-	);
-};
-
-const HelpCenterHeader = ( { isMinimized = false, onMinimize, onMaximize, onDismiss }: Header ) => {
+const HelpCenterHeader = ( { isMinimized = false, onMinimize, onMaximize }: Header ) => {
 	const { __ } = useI18n();
 	const location = useLocation();
 
@@ -302,25 +279,31 @@ const HelpCenterHeader = ( { isMinimized = false, onMinimize, onMaximize, onDism
 		}
 	);
 
+	if ( isMinimized ) {
+		return (
+			<button className={ classNames } onClick={ onMaximize }>
+				<Elevation elevation={ 14 } />
+				<HStack align="center" justify="space-between" gap={ 5 }>
+					<HStack justify="flex-start">
+						<HeaderText />
+					</HStack>
+					<Icon icon={ chevronUp } />
+				</HStack>
+			</button>
+		);
+	}
+
 	return (
 		<CardHeader className={ classNames }>
 			<Flex onClick={ handleClick }>
-				{ isMinimized ? (
-					<ContentMinimized
-						unreadCount={ unreadCount }
-						handleClick={ handleClick }
-						onMaximize={ onMaximize }
-					/>
-				) : (
-					<Content onMinimize={ onMinimize } />
-				) }
+				<Content onMinimize={ onMinimize } />
 				<Button
-					className="help-center-header__close"
-					label={ __( 'Close Help Center', __i18n_text_domain__ ) }
+					className="help-center-header__maximize"
+					label={ __( 'Maximize Help Center', __i18n_text_domain__ ) }
+					icon={ chevronUp }
 					tooltipPosition="top left"
-					icon={ closeSmall }
-					onClick={ onDismiss }
-					onTouchStart={ onDismiss }
+					onClick={ onMaximize }
+					onTouchStart={ onMaximize }
 				/>
 			</Flex>
 		</CardHeader>
