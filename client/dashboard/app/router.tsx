@@ -597,6 +597,17 @@ const profileRoute = createRoute( {
 	)
 );
 
+const preferencesRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'preferences',
+} ).lazy( () =>
+	import( '../me/preferences' ).then( ( d ) =>
+		createLazyRoute( 'preferences' )( {
+			component: d.default,
+		} )
+	)
+);
+
 const billingRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'billing',
@@ -765,6 +776,7 @@ const createRouteTree = ( config: AppConfig ) => {
 		children.push(
 			meRoute.addChildren( [
 				profileRoute,
+				preferencesRoute,
 				billingRoute,
 				billingHistoryRoute,
 				activeSubscriptionsRoute,
