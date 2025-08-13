@@ -385,6 +385,7 @@ export class ContactDetailsFormFields extends Component {
 						{
 							label: translate( 'Organization' ),
 							text: labelTexts.organization || translate( '+ Add organization name' ),
+							placeholder: translate( 'Organization (optional)' ),
 							description: (
 								<Notice status="info" isDismissible={ false }>
 									{ translate(

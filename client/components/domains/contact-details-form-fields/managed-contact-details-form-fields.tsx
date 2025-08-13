@@ -360,6 +360,7 @@ export class ManagedContactDetailsFormFields extends Component<
 						name="organization"
 						text={ translate( '+ Add organization name' ) }
 						toggled={ this.props.contactDetails.organization || isOrganizationFieldRequired }
+						placeholder={ translate( 'Organization (optional)' ) }
 						description={
 							<Notice status="info" isDismissible={ false }>
 								{ translate(
