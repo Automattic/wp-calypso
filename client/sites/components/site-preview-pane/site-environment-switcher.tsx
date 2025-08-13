@@ -1,5 +1,5 @@
 import { SiteExcerptData } from '@automattic/sites';
-import { DropdownMenu, Button } from '@wordpress/components';
+import { DropdownMenu, Button, MenuItem } from '@wordpress/components';
 import { chevronDownSmall } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
@@ -19,24 +19,60 @@ export default function SiteEnvironmentSwitcher( {
 }: SiteEnvironmentSwitcherProps ) {
 	const { __ } = useI18n();
 
-	if (
-		! site.is_wpcom_staging_site &&
-		! (
-			site.is_wpcom_atomic &&
+	// eslint-disable-next-line no-console
+	console.log( 'SiteEnvironmentSwitcher site properties', {
+		siteId: site.ID,
+		is_wpcom_staging_site: site.is_wpcom_staging_site,
+		is_wpcom_atomic: site.is_wpcom_atomic,
+		wpcom_staging_blog_ids: site.options?.wpcom_staging_blog_ids,
+		wpcom_production_blog_id: site.options?.wpcom_production_blog_id,
+	} );
+
+	// Show switcher if:
+	// 1. Site is a staging site, OR
+	// 2. Site is atomic with staging sites, OR
+	// 3. Site has a production blog ID (indicating it's a staging site that may not be fully flagged yet)
+	const hasEnvironmentSwitchingCapability =
+		site.is_wpcom_staging_site ||
+		( site.is_wpcom_atomic &&
 			site.options?.wpcom_staging_blog_ids &&
-			site.options?.wpcom_staging_blog_ids.length > 0
-		)
-	) {
+			site.options.wpcom_staging_blog_ids.length > 0 ) ||
+		( site.options?.wpcom_production_blog_id && site.options.wpcom_production_blog_id > 0 );
+
+	if ( ! hasEnvironmentSwitchingCapability ) {
+		// eslint-disable-next-line no-console
+		console.log( 'SiteEnvironmentSwitcher hidden: not a staging site and no linked staging site', {
+			siteId: site.ID,
+		} );
 		return;
 	}
 
-	const productionSiteId = site.is_wpcom_staging_site
-		? site.options?.wpcom_production_blog_id
-		: site.ID;
+	// Determine if this is actually a staging site - either flagged as staging OR has a production blog ID
+	const isActuallyStaging =
+		site.is_wpcom_staging_site ||
+		( site.options?.wpcom_production_blog_id && site.options.wpcom_production_blog_id > 0 );
 
-	const stagingSiteId = ! site.is_wpcom_staging_site
-		? site.options?.wpcom_staging_blog_ids?.[ 0 ]
-		: undefined;
+	const productionSiteId = isActuallyStaging ? site.options?.wpcom_production_blog_id : site.ID;
+
+	const stagingSiteId = ! isActuallyStaging ? site.options?.wpcom_staging_blog_ids?.[ 0 ] : site.ID; // If we're on staging, the current site IS the staging site
+
+	// eslint-disable-next-line no-console
+	console.log( 'Environment switcher IDs', {
+		siteId: site.ID,
+		isActuallyStaging,
+		productionSiteId,
+		stagingSiteId,
+	} );
+
+	// If we don't have valid site IDs for switching, don't show the switcher
+	if ( ! productionSiteId || productionSiteId === 0 ) {
+		// eslint-disable-next-line no-console
+		console.log( 'SiteEnvironmentSwitcher hidden: invalid production site ID', {
+			siteId: site.ID,
+			productionSiteId,
+		} );
+		return;
+	}
 
 	const setEnvironment = ( siteIdToChange: number | undefined ) => {
 		if ( siteIdToChange === site.ID ) {
@@ -51,27 +87,38 @@ export default function SiteEnvironmentSwitcher( {
 			icon={ chevronDownSmall }
 			label={ __( 'Select environment' ) }
 			toggleProps={ {
-				as: ( props ) => (
-					<ToggleComponent isStaging={ !! site.is_wpcom_staging_site } { ...props } />
-				),
+				as: ( props ) => <ToggleComponent isStaging={ isActuallyStaging } { ...props } />,
 			} }
 			popoverProps={ {
 				placement: 'bottom-start',
 				className: 'site-preview-pane__site-switcher-dropdown-menu',
 			} }
-			controls={ [
-				{
-					title: __( 'Production' ),
-					onClick: () => setEnvironment( productionSiteId ),
-					isActive: ! site.is_wpcom_staging_site,
-				},
-				{
-					title: __( 'Staging' ),
-					onClick: () => setEnvironment( stagingSiteId ),
-					isActive: site.is_wpcom_staging_site,
-				},
-			] }
-		/>
+		>
+			{ ( { onClose } ) => (
+				<>
+					<MenuItem
+						onClick={ () => {
+							setEnvironment( productionSiteId );
+							onClose();
+						} }
+						aria-pressed={ ! isActuallyStaging ? 'true' : 'false' }
+					>
+						{ __( 'Production' ) }
+					</MenuItem>
+					{ stagingSiteId && (
+						<MenuItem
+							onClick={ () => {
+								setEnvironment( stagingSiteId );
+								onClose();
+							} }
+							aria-pressed={ isActuallyStaging ? 'true' : 'false' }
+						>
+							{ __( 'Staging' ) }
+						</MenuItem>
+					) }
+				</>
+			) }
+		</DropdownMenu>
 	);
 }
 

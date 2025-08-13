@@ -9,7 +9,6 @@ import HostingFeaturesIcon from 'calypso/sites/hosting/components/hosting-featur
 import { useStagingSite } from 'calypso/sites/staging-site/hooks/use-staging-site';
 import SitesProductionBadge from 'calypso/sites-dashboard/components/sites-production-badge';
 import { useSelector } from 'calypso/state';
-import { canCurrentUserSwitchEnvironment } from 'calypso/state/sites/selectors/can-current-user-switch-environment';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
 import { getStagingSiteStatus } from 'calypso/state/staging-site/selectors';
 import { useBreadcrumbs } from '../../hooks/breadcrumbs/use-breadcrumbs';
@@ -193,9 +192,9 @@ const DotcomPreviewPane = ( {
 		stagingStatus === StagingSiteStatus.NONE ||
 		stagingStatus === StagingSiteStatus.UNSET;
 
-	const hasEnvironmentPermission = useSelector( ( state ) =>
-		canCurrentUserSwitchEnvironment( state, site )
-	);
+	// const hasEnvironmentPermission = useSelector( ( state ) =>
+	// 	canCurrentUserSwitchEnvironment( state, site )
+	// );
 
 	const { breadcrumbs, shouldShowBreadcrumbs } = useBreadcrumbs();
 	useSetTabBreadcrumb( {
@@ -230,7 +229,7 @@ const DotcomPreviewPane = ( {
 						return <SitesProductionBadge>{ __( 'Production' ) }</SitesProductionBadge>;
 					}
 
-					if ( hasEnvironmentPermission && isStagingStatusFinished ) {
+					if ( isStagingStatusFinished ) {
 						return <SiteEnvironmentSwitcher onChange={ changeSitePreviewPane } site={ site } />;
 					}
 				},
