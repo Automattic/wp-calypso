@@ -11,7 +11,7 @@ import { SRVRecordConfig } from './srv-record';
 import { TXTRecordConfig } from './txt-record';
 
 export type DnsRecordTypeFormData = {
-	type: DnsRecordType;
+	type: ( typeof DnsRecordType )[ keyof typeof DnsRecordType ];
 };
 
 export type DnsRecordFormData = {
@@ -39,7 +39,10 @@ export type DnsRecordConfig = {
 	transformData: ( data: DnsRecordFormData, domainName?: string ) => DnsRecord;
 };
 
-export const DNS_RECORD_CONFIGS: Record< DnsRecordType, DnsRecordConfig > = {
+export const DNS_RECORD_CONFIGS: Record<
+	( typeof DnsRecordType )[ keyof typeof DnsRecordType ],
+	DnsRecordConfig
+> = {
 	A: ARecordConfig,
 	AAAA: AAAARecordConfig,
 	ALIAS: AliasRecordConfig,
