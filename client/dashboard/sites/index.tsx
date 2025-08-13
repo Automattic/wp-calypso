@@ -11,12 +11,13 @@ import { userPreferenceQuery, userPreferenceMutation } from '../app/queries/me-p
 import { sitesQuery } from '../app/queries/sites';
 import { sitesRoute } from '../app/router';
 import DataViewsCard from '../components/dataviews-card';
-import { DataViewsEmptyState } from '../components/dataviews-empty-state';
+import { EmptyState } from '../components/empty-state';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import { getActions } from './actions';
 import AddNewSite from './add-new-site';
 import { getFields } from './fields';
+import noSitesIllustration from './no-sites-illustration.svg';
 import { SitesNotices } from './notices';
 import {
 	getView,
@@ -158,10 +159,12 @@ export default function Sites() {
 						paginationInfo={ paginationInfo }
 						perPageSizes={ DEFAULT_PER_PAGE_SIZES }
 						empty={
-							<DataViewsEmptyState
+							<EmptyState
 								heading={ emptyHeading }
 								subHeading={ emptySubHeading }
-								viewType={ view.type }
+								illustration={
+									<img src={ noSitesIllustration } alt="" width={ 408 } height={ 280 } />
+								}
 								buttons={
 									<>
 										{ view.search && (

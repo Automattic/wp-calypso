@@ -1,0 +1,18 @@
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
+
+.dashboard-empty-state {
+	width: 480px;
+	padding-block: $grid-unit-20;
+	box-sizing: border-box;
+
+	img {
+		width: 100%;
+	}
+}
+
+.dashboard-empty-state__heading {
+	@include heading-x-large;
+	color: $gray-900;
+	margin: 0;
+}
