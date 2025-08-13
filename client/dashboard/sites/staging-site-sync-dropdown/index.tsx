@@ -47,6 +47,9 @@ export default function StagingSiteSyncDropdown( {
 	// Check atomic transfer status for staging site
 	const { data: atomicTransfer } = useQuery( {
 		...siteLatestAtomicTransferQuery( stagingSiteId ?? 0 ),
+		refetchInterval: ( query ) => {
+			return isAtomicTransferInProgress( query.state.data?.status ?? 'pending' ) ? 3000 : false;
+		},
 		enabled: !! stagingSiteId,
 	} );
 
