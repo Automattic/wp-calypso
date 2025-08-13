@@ -62,8 +62,8 @@ export const domainOverviewRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: '/',
 } ).lazy( () =>
-	import( '../../sites/domains/placeholder' ).then( ( d ) =>
-		createLazyRoute( 'domain' )( {
+	import( '../../domains/domain-overview' ).then( ( d ) =>
+		createLazyRoute( 'domain-overview' )( {
 			component: d.default,
 		} )
 	)
