@@ -29,7 +29,6 @@ export function StagingSiteDeletionBanner( { siteId }: StagingSiteDeletionBanner
 	const queryClient = useQueryClient();
 	const dispatch = useDispatch();
 
-	// Fetch the current site data
 	const { data: site } = useQuery( {
 		...siteByIdQuery( siteId ),
 		enabled: !! siteId,
@@ -37,28 +36,20 @@ export function StagingSiteDeletionBanner( { siteId }: StagingSiteDeletionBanner
 
 	const productionSiteId = Number( site ? getProductionSiteId( site ) : 0 );
 
-	// Poll for staging site status
 	const { data: hasStagingSite } = useQuery( {
 		...hasStagingSiteQuery( productionSiteId ),
 		refetchInterval: 3000,
 		enabled: !! productionSiteId,
 	} );
-
-	// Fetch production site data for redirect
 	const { data: productionSite } = useQuery( {
 		...siteByIdQuery( productionSiteId ?? 0 ),
 		enabled: !! productionSiteId,
 	} );
 
-	// Redirect to the production site when the staging site is deleted
 	useEffect( () => {
 		if ( hasStagingSite !== undefined && ! hasStagingSite && productionSite?.slug && site ) {
 			queryClient.removeQueries( isDeletingStagingSiteQuery( site.ID ) );
-
-			// Clear the staging site query to stop polling
 			queryClient.removeQueries( hasStagingSiteQuery( productionSiteId ) );
-
-			// Staging site has been deleted, redirect to production site
 			page( `/overview/${ productionSite.slug }` );
 			dispatch( successNotice( __( 'Staging site deleted.' ) ) );
 		}
