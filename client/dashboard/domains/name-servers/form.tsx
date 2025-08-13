@@ -119,7 +119,7 @@ export default function NameServersForm( {
 			},
 		};
 
-		return formData.useWpcomNameServers
+		return formData.useWpcomNameServers || isBusy
 			? {
 					...baseField,
 					Edit: ( { field }: { field: Field< FormData > } ) => (
@@ -145,6 +145,7 @@ export default function NameServersForm( {
 						<ToggleControl
 							label={ __( 'Use WordPress.com name servers' ) }
 							checked={ data.useWpcomNameServers }
+							disabled={ isBusy }
 							onChange={ ( value ) => {
 								// Create nameServer fields dynamically
 								const ns = Object.fromEntries(
