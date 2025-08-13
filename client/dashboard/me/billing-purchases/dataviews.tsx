@@ -1,5 +1,5 @@
-import { formatNumber } from '@automattic/number-formatters';
 import { JETPACK_CONTACT_SUPPORT } from '@automattic/urls';
+import { Link, useNavigate } from '@tanstack/react-router';
 import { Popover, Icon } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
@@ -16,6 +16,7 @@ import {
 	isTransferredOwnership,
 	isAkismetTemporarySitePurchase,
 	isMarketplaceTemporarySitePurchase,
+	getTitleForDisplay,
 } from '../../utils/purchase';
 import { PurchasePaymentMethod } from './purchase-payment-method';
 import { PurchaseProduct } from './purchase-product';
@@ -48,49 +49,6 @@ export const purchasesDataView: View = {
 	sort: defaultSort,
 	layout: {},
 };
-
-function getDisplayName( purchase: Purchase ): string {
-	if (
-		purchase.is_jetpack_ai_product &&
-		purchase.renewal_price_tier_usage_quantity &&
-		purchase.price_tier_list?.length
-	) {
-		// translators: productName is the name of the product and quantity is a number
-		return sprintf( __( '%(productName)s (%(quantity)s requests per month)' ), {
-			productName: purchase.product_name,
-			quantity: formatNumber( purchase.renewal_price_tier_usage_quantity ),
-		} );
-	}
-
-	if (
-		purchase.is_jetpack_stats_product &&
-		! purchase.is_free_jetpack_stats_product &&
-		purchase.renewal_price_tier_usage_quantity &&
-		purchase.price_tier_list?.length
-	) {
-		// translators: productName is the name of the product and quantity is a number
-		return sprintf( __( '%(productName)s (%(quantity)s views per month)' ), {
-			productName: purchase.product_name,
-			quantity: formatNumber( purchase.renewal_price_tier_usage_quantity ),
-		} );
-	}
-
-	if (
-		'wordpress_com_1gb_space_addon_yearly' === purchase.product_slug &&
-		purchase.renewal_price_tier_usage_quantity
-	) {
-		// translators: productName is the name of the product and quantity is a number (GB stands for GigaBytes)
-		return sprintf( __( '%(productName)s %(quantity)s GB' ), {
-			productName: purchase.product_name,
-			quantity: purchase.renewal_price_tier_usage_quantity,
-		} );
-	}
-
-	if ( purchase.meta && ( purchase.is_domain_registration || purchase.is_domain ) ) {
-		return purchase.meta;
-	}
-	return purchase.product_name;
-}
 
 function getPurchaseUrl( purchase: Purchase ) {
 	const siteUrl = purchase.site_slug || purchase.domain;
@@ -275,9 +233,9 @@ export function getFields( {
 			render: ( { item }: { item: Purchase } ) => {
 				const site = sites.find( ( site ) => String( site.ID ) === item.blog_id );
 				return (
-					<a href={ getPurchaseUrl( item ) } title={ __( 'Manage purchase' ) }>
+					<Link to={ getPurchaseUrl( item ) } title={ __( 'Manage purchase' ) }>
 						<PurchaseItemSiteIcon purchase={ item } site={ site } />
-					</a>
+					</Link>
 				);
 			},
 		},
@@ -293,7 +251,7 @@ export function getFields( {
 				const site = sites.find( ( site ) => String( site.ID ) === item.blog_id );
 				// Render a bunch of things to make this easily searchable.
 				return (
-					getDisplayName( item ) +
+					getTitleForDisplay( item ) +
 					' ' +
 					item.blogname +
 					' ' +
@@ -307,11 +265,11 @@ export function getFields( {
 				return (
 					<div>
 						{ isTransferred ? (
-							getDisplayName( item ) + '&nbsp;'
+							getTitleForDisplay( item ) + '&nbsp;'
 						) : (
-							<a href={ getPurchaseUrl( item ) } title={ __( 'Manage purchase' ) }>
-								{ getDisplayName( item ) }
-							</a>
+							<Link to={ getPurchaseUrl( item ) } title={ __( 'Manage purchase' ) }>
+								{ getTitleForDisplay( item ) }
+							</Link>
 						) }
 						<OwnerInfo purchase={ item } isTransferredOwnership={ isTransferred } />
 					</div>
@@ -538,6 +496,7 @@ export function usePurchasesListActions( {
 }: {
 	transferredPurchases: Purchase[];
 } ) {
+	const navigate = useNavigate();
 	return useMemo(
 		() => [
 			{
@@ -553,10 +512,12 @@ export function usePurchasesListActions( {
 				},
 				callback: ( items: Purchase[] ) => {
 					const item = items[ 0 ];
-					window.location.href = getPurchaseUrl( item );
+					navigate( {
+						to: getPurchaseUrl( item ),
+					} );
 				},
 			},
 		],
-		[ transferredPurchases ]
+		[ transferredPurchases, navigate ]
 	);
 }

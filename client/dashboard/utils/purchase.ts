@@ -1,3 +1,5 @@
+import { formatNumber } from '@automattic/number-formatters';
+import { __, sprintf } from '@wordpress/i18n';
 import { SubscriptionBillPeriod, AkismetPlans } from '../data/constants';
 import { isWithinLast, isWithinNext, getDateFromCreditCardExpiry } from './datetime';
 import type { Purchase } from '../data/purchase';
@@ -149,4 +151,169 @@ export function isMarketplaceTemporarySitePurchase( purchase: Purchase ): boolea
 
 export function isJetpackTemporarySitePurchase( purchase: Purchase ): boolean {
 	return isTemporarySitePurchase( purchase ) && purchase.product_type === 'jetpack';
+}
+
+/**
+ * Return the bill period as a sentence case string. Note that Purchae includes
+ * this text already as `bill_period_label` but it is not sentence case and has
+ * no punctuation.
+ */
+export function getBillPeriodLabel( purchase: Purchase ): string {
+	switch ( purchase.bill_period_days ) {
+		case SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD:
+			return __( 'Per month.' );
+		case SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD:
+			return __( 'Per year.' );
+		case SubscriptionBillPeriod.PLAN_BIENNIAL_PERIOD:
+			return __( 'Every two years.' );
+		case SubscriptionBillPeriod.PLAN_TRIENNIAL_PERIOD:
+			return __( 'Every three years.' );
+		case SubscriptionBillPeriod.PLAN_QUADRENNIAL_PERIOD:
+			return __( 'Every four years.' );
+		case SubscriptionBillPeriod.PLAN_QUINQUENNIAL_PERIOD:
+			return __( 'Every five years.' );
+		case SubscriptionBillPeriod.PLAN_SEXENNIAL_PERIOD:
+			return __( 'Every six years.' );
+		case SubscriptionBillPeriod.PLAN_SEPTENNIAL_PERIOD:
+			return __( 'Every seven years.' );
+		case SubscriptionBillPeriod.PLAN_OCTENNIAL_PERIOD:
+			return __( 'Every eight years.' );
+		case SubscriptionBillPeriod.PLAN_NOVENNIAL_PERIOD:
+			return __( 'Every nine years.' );
+		case SubscriptionBillPeriod.PLAN_DECENNIAL_PERIOD:
+			return __( 'Every ten years.' );
+		case SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD:
+			return __( 'Every hundred years.' );
+		default:
+			return purchase.bill_period_label;
+	}
+}
+
+/**
+ * Return the title for a purchase for display.
+ *
+ * Usually this is just the `product_name`, but some products are displayed
+ * differently. For example, domains are displayed with the domain name as the
+ * title and the product name as the subtitle (see `getSubtitleForDisplay`).
+ */
+export function getTitleForDisplay( purchase: Purchase ): string {
+	if (
+		purchase.is_jetpack_ai_product &&
+		purchase.renewal_price_tier_usage_quantity &&
+		purchase.price_tier_list?.length
+	) {
+		// translators: productName is the name of the product and quantity is a number
+		return sprintf( __( '%(productName)s (%(quantity)s requests per month)' ), {
+			productName: purchase.product_name,
+			quantity: formatNumber( purchase.renewal_price_tier_usage_quantity ),
+		} );
+	}
+
+	if (
+		purchase.is_jetpack_stats_product &&
+		! purchase.is_free_jetpack_stats_product &&
+		purchase.renewal_price_tier_usage_quantity &&
+		purchase.price_tier_list?.length
+	) {
+		// translators: productName is the name of the product and quantity is a number
+		return sprintf( __( '%(productName)s (%(quantity)s views per month)' ), {
+			productName: purchase.product_name,
+			quantity: formatNumber( purchase.renewal_price_tier_usage_quantity ),
+		} );
+	}
+
+	if (
+		'wordpress_com_1gb_space_addon_yearly' === purchase.product_slug &&
+		purchase.renewal_price_tier_usage_quantity
+	) {
+		// translators: productName is the name of the product and quantity is a number (GB stands for GigaBytes)
+		return sprintf( __( '%(productName)s %(quantity)s GB' ), {
+			productName: purchase.product_name,
+			quantity: purchase.renewal_price_tier_usage_quantity,
+		} );
+	}
+
+	if ( purchase.meta && ( purchase.is_domain_registration || purchase.is_domain ) ) {
+		return purchase.meta;
+	}
+	return purchase.product_name;
+}
+
+/**
+ * Return a short description of a purchase, usually used as a subtitle for that
+ * purchase's product name (as defined by `getTitleForDisplay`).
+ *
+ * Notably, domains typically have their title as the domain name itself and
+ * the product type as the subtitle.
+ */
+export function getSubtitleForDisplay( purchase: Purchase ): string | null {
+	if ( 'theme' === purchase.product_type ) {
+		return __( 'Premium Theme' );
+	}
+
+	if ( 'concierge-session' === purchase.product_slug ) {
+		return __( 'One-on-one Support' );
+	}
+
+	if ( purchase.partner_name ) {
+		if ( purchase.partner_type && [ 'agency', 'a4a_agency' ].includes( purchase.partner_type ) ) {
+			return __( 'Agency Managed Plan' );
+		}
+
+		return __( 'Host Managed Plan' );
+	}
+
+	if ( purchase.is_plan ) {
+		return __( 'Site Plan' );
+	}
+
+	if ( purchase.is_domain_registration ) {
+		return purchase.product_name;
+	}
+
+	if ( purchase.product_slug === 'domain_map' ) {
+		return purchase.product_name;
+	}
+
+	if ( isTemporarySitePurchase( purchase ) && purchase.product_type === 'akismet' ) {
+		return null;
+	}
+
+	if ( isTemporarySitePurchase( purchase ) && purchase.product_type === 'saas_plugin' ) {
+		return null;
+	}
+
+	if ( isTemporarySitePurchase( purchase ) && isA4ATemporarySitePurchase( purchase ) ) {
+		return null;
+	}
+
+	if ( purchase.is_google_workspace_product && purchase.meta ) {
+		return sprintf(
+			// translators: The domain is the domain name of the site
+			__( 'Mailboxes and Productivity Tools at %(domain)s' ),
+			{
+				domain: purchase.meta,
+			}
+		);
+	}
+
+	if ( purchase.is_titan_mail_product && purchase.meta ) {
+		return sprintf(
+			// translators: The domain is the domain name of the site
+			__( 'Mailboxes at %(domain)s' ),
+			{
+				domain: purchase.meta,
+			}
+		);
+	}
+
+	if ( purchase.product_type === 'marketplace_plugin' || purchase.product_type === 'saas_plugin' ) {
+		return __( 'Plugin' );
+	}
+
+	if ( purchase.meta ) {
+		return purchase.meta;
+	}
+
+	return null;
 }
