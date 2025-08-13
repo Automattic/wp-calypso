@@ -125,7 +125,7 @@ export default function NameServersForm( {
 								__next40pxDefaultSize
 								disabled
 								label={ field.label }
-								value={ formData[ field.id as NameServerKey ] }
+								value={ formData[ field.id as NameServerKey ]?.toLowerCase() }
 							/>
 						),
 				  }
@@ -152,7 +152,7 @@ export default function NameServersForm( {
 									const ns = Object.fromEntries(
 										Array.from( { length: MAX_NAME_SERVERS_LENGTH }, ( _, i ) => [
 											`nameServer${ i + 1 }` as NameServerKey,
-											value ? WPCOM_DEFAULT_NAME_SERVERS[ i ]?.toUpperCase() : '',
+											value ? WPCOM_DEFAULT_NAME_SERVERS[ i ]?.toLowerCase() : '',
 										] )
 									);
 
