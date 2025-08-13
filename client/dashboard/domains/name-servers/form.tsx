@@ -10,7 +10,7 @@ import {
 import { Field, DataForm, NormalizedField } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { useState } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import {
@@ -62,133 +62,146 @@ export default function NameServersForm( {
 		return initialData as FormData;
 	} );
 
-	const formObj = {
-		fields: [
-			'useWpcomNameServers',
-			...Array.from(
-				{ length: MAX_NAME_SERVERS_LENGTH },
-				( _, i ) => `nameServer${ i + 1 }` as NameServerKey
-			),
-		],
-	};
+	const formObj = useMemo(
+		() => ( {
+			fields: [
+				'useWpcomNameServers',
+				...Array.from(
+					{ length: MAX_NAME_SERVERS_LENGTH },
+					( _, i ) => `nameServer${ i + 1 }` as NameServerKey
+				),
+			],
+		} ),
+		[]
+	);
 
-	const createNameServerField = ( index: number ) => {
-		const baseField = {
-			id: `nameServer${ index }` as NameServerKey,
-			type: 'text' as const,
-			label: sprintf(
-				// translators: %s is the name server number (1-4)
-				__( 'Custom name server %s' ),
-				index
-			),
-			placeholder: sprintf(
-				// translators: %s is the name server number (1-4)
-				__( 'ns%s.domain.com' ),
-				index
-			),
-			isValid: {
-				required: index <= MIN_NAME_SERVERS_LENGTH,
-				custom: ( formData: FormData, field: NormalizedField< FormData > ) => {
-					const value = formData[ field.id as NameServerKey ];
-					// Skip validation for empty optional fields
-					if ( ! value && ! field.isValid?.required ) {
-						return '';
+	const createNameServerField = useCallback(
+		( index: number ) => {
+			const baseField = {
+				id: `nameServer${ index }` as NameServerKey,
+				type: 'text' as const,
+				label: sprintf(
+					// translators: %s is the name server number (1-4)
+					__( 'Custom name server %s' ),
+					index
+				),
+				placeholder: sprintf(
+					// translators: %s is the name server number (1-4)
+					__( 'ns%s.domain.com' ),
+					index
+				),
+				isValid: {
+					required: index <= MIN_NAME_SERVERS_LENGTH,
+					custom: ( formData: FormData, field: NormalizedField< FormData > ) => {
+						const value = formData[ field.id as NameServerKey ];
+						// Skip validation for empty optional fields
+						if ( ! value && ! field.isValid?.required ) {
+							return '';
+						}
+						return validateHostname( value ) ? '' : __( 'Please enter a valid hostname' );
+					},
+				},
+				isVisible: ( item: FormData ) => {
+					// For WP.com nameservers, show field only if it has a value
+					if ( item.useWpcomNameServers ) {
+						return Boolean( item[ `nameServer${ index }` as NameServerKey ] );
 					}
-					return validateHostname( value ) ? '' : __( 'Please enter a valid hostname' );
+
+					// For custom nameservers, show fields 3 and 4 only if previous field has value
+					if ( index > MIN_NAME_SERVERS_LENGTH ) {
+						return Boolean( item[ `nameServer${ index - 1 }` as NameServerKey ] );
+					}
+
+					// Always show MIN_NAME_SERVERS_LENGTH fields
+					return true;
+				},
+			};
+
+			return formData.useWpcomNameServers || isBusy
+				? {
+						...baseField,
+						Edit: ( { field }: { field: Field< FormData > } ) => (
+							<InputControl
+								__next40pxDefaultSize
+								disabled
+								label={ field.label }
+								value={ formData[ field.id as NameServerKey ] }
+							/>
+						),
+				  }
+				: baseField;
+		},
+		[ formData, isBusy ]
+	);
+
+	const fields = useMemo(
+		(): Field< FormData >[] => [
+			{
+				id: 'useWpcomNameServers',
+				label: __( 'Use WordPress.com name servers' ),
+				type: 'boolean',
+				Edit: ( { onChange, data } ) => {
+					return (
+						<VStack spacing={ 4 }>
+							<ToggleControl
+								label={ __( 'Use WordPress.com name servers' ) }
+								checked={ data.useWpcomNameServers }
+								disabled={ isBusy }
+								onChange={ ( value ) => {
+									// Create nameServer fields dynamically
+									const ns = Object.fromEntries(
+										Array.from( { length: MAX_NAME_SERVERS_LENGTH }, ( _, i ) => [
+											`nameServer${ i + 1 }` as NameServerKey,
+											value ? WPCOM_DEFAULT_NAME_SERVERS[ i ]?.toUpperCase() : '',
+										] )
+									);
+
+									onChange( {
+										useWpcomNameServers: value,
+										...ns,
+									} );
+								} }
+							/>
+							{ ! data.useWpcomNameServers && (
+								<Text>
+									{ createInterpolateElement(
+										/* translators: <link> will be replaced with an anchor tag to open the support article in a new tab */
+										__( '<link>Look up</link> the name servers for popular hosts.' ),
+										{
+											link: (
+												<InlineSupportLink supportLink={ CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS } />
+											),
+										}
+									) }
+								</Text>
+							) }
+						</VStack>
+					);
 				},
 			},
-			isVisible: ( item: FormData ) => {
-				// For WP.com nameservers, show field only if it has a value
-				if ( item.useWpcomNameServers ) {
-					return Boolean( item[ `nameServer${ index }` as NameServerKey ] );
-				}
+			...Array.from( { length: MAX_NAME_SERVERS_LENGTH }, ( _, i ) =>
+				createNameServerField( i + 1 )
+			),
+		],
+		[ createNameServerField, isBusy ]
+	);
 
-				// For custom nameservers, show field 3 and 4 only if previous field has value
-				if ( index > 2 ) {
-					return Boolean( item[ `nameServer${ index - 1 }` as NameServerKey ] );
-				}
+	const handleSubmit = useCallback(
+		( e: React.FormEvent ) => {
+			e.preventDefault();
 
-				// Always show fields 1 and 2
-				return true;
-			},
-		};
-
-		return formData.useWpcomNameServers || isBusy
-			? {
-					...baseField,
-					Edit: ( { field }: { field: Field< FormData > } ) => (
-						<InputControl
-							__next40pxDefaultSize
-							disabled
-							label={ field.label }
-							value={ formData[ field.id as NameServerKey ] }
-						/>
-					),
-			  }
-			: baseField;
-	};
-
-	const fields: Field< FormData >[] = [
-		{
-			id: 'useWpcomNameServers',
-			label: __( 'Use WordPress.com name servers' ),
-			type: 'boolean',
-			Edit: ( { onChange, data } ) => {
-				return (
-					<VStack spacing={ 4 }>
-						<ToggleControl
-							label={ __( 'Use WordPress.com name servers' ) }
-							checked={ data.useWpcomNameServers }
-							disabled={ isBusy }
-							onChange={ ( value ) => {
-								// Create nameServer fields dynamically
-								const ns = Object.fromEntries(
-									Array.from( { length: MAX_NAME_SERVERS_LENGTH }, ( _, i ) => [
-										`nameServer${ i + 1 }` as NameServerKey,
-										value ? WPCOM_DEFAULT_NAME_SERVERS[ i ] || '' : '',
-									] )
-								);
-
-								onChange( {
-									useWpcomNameServers: value,
-									...ns,
-								} );
-							} }
-						/>
-						{ ! data.useWpcomNameServers && (
-							<Text>
-								{ createInterpolateElement(
-									/* translators: <link> will be replaced with an anchor tag to open the support article in a new tab */
-									__( '<link>Look up</link> the name servers for popular hosts.' ),
-									{
-										link: (
-											<InlineSupportLink supportLink={ CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS } />
-										),
-									}
-								) }
-							</Text>
-						) }
-					</VStack>
-				);
-			},
+			// Get all nameServer values dynamically
+			const nameServerValues = Array.from(
+				{ length: MAX_NAME_SERVERS_LENGTH },
+				( _, i ) => formData[ `nameServer${ i + 1 }` as NameServerKey ]
+			).filter( Boolean );
+			onSubmit( nameServerValues );
 		},
-		...Array.from( { length: MAX_NAME_SERVERS_LENGTH }, ( _, i ) =>
-			createNameServerField( i + 1 )
-		),
-	];
+		[ formData, onSubmit ]
+	);
 
 	return (
-		<form
-			onSubmit={ ( e ) => {
-				e.preventDefault();
-				// Get all nameServer values dynamically
-				const nameServerValues = Array.from(
-					{ length: MAX_NAME_SERVERS_LENGTH },
-					( _, i ) => formData[ `nameServer${ i + 1 }` as NameServerKey ]
-				).filter( Boolean );
-				onSubmit( nameServerValues );
-			} }
-		>
+		<form onSubmit={ handleSubmit }>
 			<VStack spacing={ 4 }>
 				{ showUpsellNudge && <UpsellNudge domainName={ domainName } /> }
 				{ queryError && <Notice variant="error">{ queryError }</Notice> }
