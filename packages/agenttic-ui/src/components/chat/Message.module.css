@@ -2,6 +2,7 @@
     display: flex;
     align-items: flex-start;
     padding: 0 var(--spacing-3);
+    color: var(--color-foreground);
 }
 
 .message.user .bubble {
@@ -33,6 +34,10 @@
 .message p {
     text-wrap-style: pretty;
     margin-bottom: var(--spacing-3);
+}
+
+.message a {
+    color: var(--color-primary);
 }
 
 .message p:last-child {

@@ -4,14 +4,13 @@
 
   --color-background: oklch(0.99 0 0);
   --color-foreground: oklch(0.241 0 0);
-  --color-accent: oklch(0.53 0.22 268.05);
-  --color-accent-foreground: oklch(1 0 0);
-  --color-ring: var(--color-accent);
+  --color-primary: oklch(0.53 0.22 268.05);
+  --color-primary-foreground: oklch(1 0 0);
+  --color-ring: var(--color-primary);
   --color-destructive: oklch(0.492 0.2095 28.09);
-  --color-muted: color-mix(in srgb, var(--color-foreground) 9%, var(--color-background));
+  --color-muted: color-mix(in srgb, var(--color-foreground) 10%, var(--color-background));
   --color-muted-foreground: color-mix(in srgb, var(--color-background) 40%, var(--color-foreground));
-  --color-input: color-mix(in srgb, var(--color-background) 98%, #fff);
-  
+
   /* === TYPOGRAPHY === */
 
   --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
@@ -36,6 +35,7 @@
   --spacing-8: calc(var(--spacing) * 8); /* 32px */
   --spacing-9: calc(var(--spacing) * 9); /* 36px */
   --spacing-10: calc(var(--spacing) * 10); /* 40px */
+  --spacing-20: calc(var(--spacing) * 20); /* 80px */
   
   /* === BORDER RADIUS === */
     

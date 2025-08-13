@@ -3,7 +3,7 @@
     flex-direction: column;
     flex: 1;
     padding-top: var(--spacing-2);
-    padding-bottom: var(--spacing-10);
+    padding-bottom: var(--spacing-20);
     gap: var(--spacing-8);
     overflow-y: auto;
     height: 100%;

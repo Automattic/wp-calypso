@@ -32,21 +32,30 @@
 /* VARIANTS */
 
 .primary {
-  background-color: var(--color-accent);
-  color: var(--color-accent-foreground);
+  background-color: var(--color-primary);
+  color: var(--color-primary-foreground);
 }
 
 .primary:hover:not(:disabled) {
-  background-color: color-mix(in srgb, var(--color-accent) 85%, #000);
+  background-color: color-mix(in srgb, var(--color-primary) 85%, #000);
 }
 
 .ghost {
   background-color: transparent;
   color: var(--color-foreground);
+
+  svg {
+    color: var(--color-muted-foreground);
+  }
 }
 
 .ghost:hover:not(:disabled) {
-  color: var(--color-accent);
+  background: transparent;
+  color: var(--color-primary);
+
+  svg {
+    color: var(--color-foreground);
+  }
 }
 
 .ghost:focus-visible {
@@ -60,7 +69,7 @@
 }
   
 .outline:hover:not(:disabled) {
-    color: var(--color-accent);
+    color: var(--color-primary);
 }
 
 .outline:focus-visible {
@@ -69,12 +78,12 @@
 
 .link {
     background-color: transparent;
-    color: var(--color-accent);
+    color: var(--color-primary);
     font-weight: var(--font-weight-medium);
 }
 
 .link:hover:not(:disabled) {
-    color: color-mix(in srgb, var(--color-accent) 85%, #000);
+    color: color-mix(in srgb, var(--color-primary) 85%, #000);
 }
 
 /* SIZES */

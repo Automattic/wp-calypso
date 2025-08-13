@@ -69,9 +69,9 @@
     width: var(--spacing-4);
     height: var(--spacing-4);
     background-color: var(--color-muted-foreground);
-    color: var(--color-input);
+    color: var(--color-background);
     border-radius: inherit;
-    box-shadow: 0 0 0 2.5px var(--color-input);
+    box-shadow: 0 0 0 2.5px var(--color-background);
     opacity: 0.8;
 }
 

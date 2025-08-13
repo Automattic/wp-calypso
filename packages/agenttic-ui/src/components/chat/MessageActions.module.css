@@ -8,11 +8,3 @@
 .container button[aria-hidden="true"] {
 	display: none;
 }
-
-.button {
-    color: var(--color-muted-foreground);
-}
-
-.button:hover:not(:disabled) {
-    color: var(--color-foreground);
-}

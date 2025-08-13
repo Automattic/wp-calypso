@@ -90,7 +90,7 @@ export function ChatInput( {
 			>
 				{ showExpandButton && onExpand && (
 					<Button
-						className={ `${ styles.button } ${ styles.expandButton }` }
+						className={ styles.button }
 						onClick={ onExpand }
 						variant="ghost"
 						icon={ <ChevronUpIcon /> }

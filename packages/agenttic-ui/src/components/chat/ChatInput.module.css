@@ -22,11 +22,3 @@
 .button {
     border-radius: var(--radius-full);
 }
-
-.expandButton {
-    color: var(--color-muted-foreground);
-}
-
-.expandButton:hover:not(:disabled) {
-    color: var(--color-foreground);
-}
