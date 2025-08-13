@@ -3,7 +3,6 @@ import { Card, ConfettiAnimation } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { ProgressBar, ExternalLink, Notice } from '@wordpress/components';
 import { useReducedMotion } from '@wordpress/compose';
-// removed createInterpolateElement in favor of fixMe + translate with components
 import { __, sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { fixMe, translate } from 'i18n-calypso';
