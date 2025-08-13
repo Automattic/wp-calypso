@@ -103,6 +103,9 @@ export function ChatInput( {
 					disabled={ ! canSubmit }
 					variant="primary"
 					icon={ isProcessing ? <StopIcon /> : <ArrowUpIcon /> }
+					aria-label={
+						isProcessing ? 'Stop processing' : 'Send message'
+					}
 				/>
 			</motion.div>
 		</div>

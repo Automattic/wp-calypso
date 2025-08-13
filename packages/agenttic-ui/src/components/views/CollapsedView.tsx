@@ -49,6 +49,7 @@ export function CollapsedView( {
 				variant="link"
 				className={ styles.button }
 				icon={ icon }
+				aria-label="Open chat"
 			/>
 		</motion.div>
 	);
