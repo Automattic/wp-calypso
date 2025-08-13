@@ -15,7 +15,7 @@ const meta: Meta< typeof NameServersForm > = {
 		( Story ) => (
 			<PageLayout size="small">
 				<Card>
-					<CardBody className="domains-management__name-servers">
+					<CardBody>
 						<Story />
 					</CardBody>
 				</Card>

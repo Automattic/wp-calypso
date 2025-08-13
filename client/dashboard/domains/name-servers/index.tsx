@@ -27,7 +27,7 @@ export default function NameServers() {
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Name Servers' ) } /> }>
 			<Card>
-				<CardBody className="domains-management__name-servers">
+				<CardBody>
 					<NameServersForm
 						domainName={ domainName }
 						queryError={ queryError?.message }
