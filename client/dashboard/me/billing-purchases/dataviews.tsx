@@ -20,6 +20,7 @@ import {
 } from '../../utils/purchase';
 import { PurchasePaymentMethod } from './purchase-payment-method';
 import { PurchaseProduct } from './purchase-product';
+import { getPurchaseUrl, getAddPaymentMethodUrlFor } from './urls';
 import type { StoredPaymentMethod } from '../../data/me-payment-methods';
 import type { Purchase } from '../../data/purchase';
 import type { Site } from '../../data/site';
@@ -49,20 +50,6 @@ export const purchasesDataView: View = {
 	sort: defaultSort,
 	layout: {},
 };
-
-function getPurchaseUrl( purchase: Purchase ) {
-	const subscriptionId = purchase.ID;
-	if ( ! subscriptionId ) {
-		// eslint-disable-next-line no-console
-		console.error( 'Cannot display manage purchase page for subscription without ID' );
-		throw new Error( 'Cannot display manage purchase page for subscription without ID' );
-	}
-	return `/v2/me/billing/purchases/purchase/${ subscriptionId }`;
-}
-
-function getAddPaymentMethodUrlFor( purchase: Purchase ): string {
-	return `/me/purchases/${ purchase.site_slug ?? 'unknown' }/${ purchase.ID }/payment-method/add`;
-}
 
 function InfoPopover( { children }: { children: ReactNode } ) {
 	const [ isTooltipVisible, setIsTooltipVisible ] = useState( false );
