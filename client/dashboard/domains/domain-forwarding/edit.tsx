@@ -12,7 +12,7 @@ import { domainRoute, domainForwardingsRoute } from '../../app/router';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import DomainForwardingForm from './form';
-import { parseTargetUrl } from './utils';
+import { formDataToSubmitData } from './utils';
 import type { FormData } from './form';
 import type { DomainForwardingSaveData } from '../../data/domain-forwarding';
 
@@ -36,18 +36,10 @@ export default function EditDomainForwarding() {
 			return;
 		}
 
-		const { target_host, target_path, is_secure } = parseTargetUrl( formData.targetUrl );
-
-		const submitData: DomainForwardingSaveData = {
-			domain_redirect_id: existingForwarding.domain_redirect_id,
-			subdomain:
-				formData.sourceType === 'subdomain' ? formData.subdomain.trim() || undefined : undefined,
-			target_host,
-			target_path,
-			is_secure,
-			is_permanent: formData.redirectType === 'permanent',
-			forward_paths: formData.pathForwarding === 'yes',
-		};
+		const submitData: DomainForwardingSaveData = formDataToSubmitData(
+			formData,
+			existingForwarding
+		);
 
 		saveMutation.mutate( submitData, {
 			onSuccess: () => {

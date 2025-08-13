@@ -1,5 +1,8 @@
 // Validation helpers for domain forwarding form
 
+import type { FormData } from './form';
+import type { DomainForwarding, DomainForwardingSaveData } from '../../../data/domain-forwarding';
+
 const SOFT_URL_REGEX =
 	/^(https?:)?(?:[a-zA-Z0-9-.]+\.)?[a-zA-Z]{0,}(?:\/[^\s]*){0,}(:[0-9/a-z-#]*)?$/i;
 const SUBDOMAIN_LABEL_REGEX = /^(?!-)[a-zA-Z0-9-]{0,62}[a-zA-Z0-9]$|^[a-zA-Z0-9]$/i;
@@ -104,4 +107,28 @@ export function parseTargetUrl( targetUrl: string ) {
 			is_secure: targetUrl.startsWith( 'https://' ),
 		};
 	}
+}
+
+export function formDataToSubmitData(
+	formData: FormData,
+	existingForwarding?: DomainForwarding
+): DomainForwardingSaveData {
+	const { target_host, target_path, is_secure } = parseTargetUrl( formData.targetUrl );
+
+	const submitData: DomainForwardingSaveData = {
+		subdomain:
+			formData.sourceType === 'subdomain' ? formData.subdomain.trim() || undefined : undefined,
+		target_host,
+		target_path,
+		is_secure,
+		is_permanent: formData.redirectType === 'permanent',
+		forward_paths: formData.pathForwarding === 'yes',
+	};
+
+	// Add domain_redirect_id for edit operations
+	if ( existingForwarding ) {
+		submitData.domain_redirect_id = existingForwarding.domain_redirect_id;
+	}
+
+	return submitData;
 }

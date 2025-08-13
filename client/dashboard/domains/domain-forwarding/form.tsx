@@ -16,7 +16,7 @@ import { isTargetUrlValid, isSubdomainValid } from './utils';
 import type { DomainForwarding } from '../../data/domain-forwarding';
 import type { Field } from '@wordpress/dataviews';
 
-interface FormData {
+export interface FormData {
 	sourceType: 'root' | 'subdomain';
 	subdomain: string;
 	targetUrl: string;
