@@ -6,12 +6,14 @@ import {
 	Button,
 	Card,
 	CardBody,
+	CheckboxControl,
 } from '@wordpress/components';
 import { DataForm, Field, isItemValid } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { isEqual } from 'lodash';
 import { useState } from 'react';
+import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import type { DomainContactDetails } from './types';
 import type { CountryListItem } from '../../data/domain';
@@ -34,7 +36,7 @@ export default function ContactForm( {
 	countryList,
 }: ContactFormProps ) {
 	const [ formData, setFormData ] = useState< DomainContactDetails >(
-		initialData ?? ( {} as DomainContactDetails )
+		initialData ?? { optOutTransferLock: false }
 	);
 
 	const formattedCountryList = countryList.map( ( country ) => ( {
@@ -51,7 +53,7 @@ export default function ContactForm( {
 	const fields: Field< DomainContactDetails >[] = [
 		{
 			id: 'firstName',
-			label: 'First Name',
+			label: __( 'First Name' ),
 			type: 'text',
 			isValid: {
 				required: true,
@@ -59,7 +61,7 @@ export default function ContactForm( {
 		},
 		{
 			id: 'lastName',
-			label: 'Last Name',
+			label: __( 'Last Name' ),
 			type: 'text',
 			isValid: {
 				required: true,
@@ -67,12 +69,12 @@ export default function ContactForm( {
 		},
 		{
 			id: 'organization',
-			label: 'Organization',
+			label: __( 'Organization' ),
 			type: 'text',
 		},
 		{
 			id: 'email',
-			label: 'Email',
+			label: __( 'Email' ),
 			type: 'email',
 			isValid: {
 				required: true,
@@ -80,7 +82,7 @@ export default function ContactForm( {
 		},
 		{
 			id: 'phone',
-			label: 'Phone',
+			label: __( 'Phone' ),
 			type: 'text',
 			isValid: {
 				required: true,
@@ -88,7 +90,7 @@ export default function ContactForm( {
 		},
 		{
 			id: 'countryCode',
-			label: 'Country',
+			label: __( 'Country' ),
 			type: 'select',
 			elements: formattedCountryList,
 			isValid: {
@@ -97,7 +99,7 @@ export default function ContactForm( {
 		},
 		{
 			id: 'address1',
-			label: 'Address Line 1',
+			label: __( 'Address' ),
 			type: 'text',
 			isValid: {
 				required: true,
@@ -105,12 +107,12 @@ export default function ContactForm( {
 		},
 		{
 			id: 'address2',
-			label: 'Address Line 2',
+			label: __( 'Address Line 2' ),
 			type: 'text',
 		},
 		{
 			id: 'city',
-			label: 'City',
+			label: __( 'City' ),
 			type: 'text',
 			isValid: {
 				required: true,
@@ -118,7 +120,7 @@ export default function ContactForm( {
 		},
 		{
 			id: 'state',
-			label: 'State',
+			label: __( 'State' ),
 			type: 'text',
 			isValid: {
 				required: true,
@@ -126,7 +128,7 @@ export default function ContactForm( {
 		},
 		{
 			id: 'postalCode',
-			label: 'Post Code',
+			label: __( 'Post Code' ),
 			type: 'text',
 			isValid: {
 				required: true,
@@ -134,8 +136,31 @@ export default function ContactForm( {
 		},
 		{
 			id: 'optOutTransferLock',
-			label: 'Opt Out Transfer Lock',
-			type: 'checkbox',
+			label: __( 'Opt-out of the 60-day transfer lock' ),
+			type: 'boolean',
+			Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
+				const { id, getValue } = field;
+				return (
+					<CheckboxControl
+						label={
+							hideLabelFromVision
+								? ''
+								: createInterpolateElement(
+										sprintf(
+											/* translators: %s: "what is this?" link */
+											__( 'Opt-out of the 60-day transfer lock <link>%s</link>' ),
+											__( 'what is this?' )
+										),
+										{
+											link: <InlineSupportLink supportContext="60-day-transfer-lock" />,
+										}
+								  )
+						}
+						checked={ getValue( { item: data } ) }
+						onChange={ () => onChange( { [ id ]: ! getValue( { item: data } ) } ) }
+					/>
+				);
+			},
 		},
 	];
 
