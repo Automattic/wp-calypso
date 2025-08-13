@@ -7,7 +7,7 @@ import { edit, trash } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo } from 'react';
 import { domainDnsMutation } from '../../app/queries/domain-dns-records';
-import { domainDnsRoute } from '../../app/router';
+import { domainDnsEditRoute } from '../../app/router';
 import { domainRoute } from '../../app/routes/domain-routes';
 import type { DnsRecord } from '../../data/domain-dns-records';
 import type { Action } from '@wordpress/dataviews';
@@ -54,8 +54,7 @@ export function useDnsActions(): Action< DnsRecord >[] {
 				callback: ( items: DnsRecord[] ) => {
 					const item = items[ 0 ];
 					router.navigate( {
-						to: domainDnsRoute.fullPath,
-						// TODO: Remove this once we have a proper edit page
+						to: domainDnsEditRoute.fullPath,
 						params: { domainName },
 						search: {
 							recordId: item.id,
@@ -74,5 +73,5 @@ export function useDnsActions(): Action< DnsRecord >[] {
 				callback: handleDelete,
 			},
 		];
-	}, [ deleteMutation ] );
+	}, [ deleteMutation, createSuccessNotice, createErrorNotice, router, domainName ] );
 }
