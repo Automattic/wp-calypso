@@ -6,6 +6,7 @@ import { useState, useMemo } from 'react';
 import { userPaymentMethodsQuery } from '../../app/queries/me-payment-methods';
 import { userPurchasesQuery, userTransferredPurchasesQuery } from '../../app/queries/me-purchases';
 import { sitesQuery } from '../../app/queries/sites';
+import DataViewsCard from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { isTransferredOwnership } from '../../utils/purchase';
@@ -69,17 +70,19 @@ export default function PurchasesList() {
 	return (
 		<PageLayout size="large" header={ <PageHeader title={ __( 'Active Upgrades' ) } /> }>
 			<div ref={ ref }>
-				<DataViews
-					isLoading={ isLoadingPurchases || isLoadingTransferredPurchases || isLoadingSites }
-					data={ filteredSubscriptions ?? [] }
-					fields={ purchasesDataFields }
-					view={ currentView }
-					onChangeView={ setView }
-					defaultLayouts={ { table: {} } }
-					actions={ actions }
-					getItemId={ getItemId }
-					paginationInfo={ paginationInfo }
-				/>
+				<DataViewsCard>
+					<DataViews
+						isLoading={ isLoadingPurchases || isLoadingTransferredPurchases || isLoadingSites }
+						data={ filteredSubscriptions ?? [] }
+						fields={ purchasesDataFields }
+						view={ currentView }
+						onChangeView={ setView }
+						defaultLayouts={ { table: {} } }
+						actions={ actions }
+						getItemId={ getItemId }
+						paginationInfo={ paginationInfo }
+					/>
+				</DataViewsCard>
 			</div>
 		</PageLayout>
 	);

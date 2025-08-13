@@ -72,6 +72,18 @@ describe( 'streams', () => {
 					},
 				},
 				{
+					stream: 'discover:freshly-pressed',
+					expected: {
+						method: 'GET',
+						path: '/freshly-pressed',
+						apiVersion: '1.2',
+						query: {
+							number: INITIAL_FETCH,
+							lang: 'en',
+						},
+					},
+				},
+				{
 					stream: 'discover:recommended',
 					expected: {
 						method: 'GET',

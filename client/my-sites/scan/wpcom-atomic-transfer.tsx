@@ -1,6 +1,8 @@
 import { WPCOM_FEATURES_SCAN } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
 import JetpackScanSVG from 'calypso/assets/images/illustrations/jetpack-scan.svg';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import wpcomAtomicTransfer from 'calypso/lib/jetpack/wpcom-atomic-transfer';
 import WPCOMScanUpsellPage from 'calypso/my-sites/scan/wpcom-upsell';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -8,6 +10,10 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export function wpcomJetpackScanAtomicTransfer(): ( context: any, next: () => void ) => void {
 	return ( context, next ) => {
+		if ( isJetpackCloud() || isA8CForAgencies() ) {
+			return next();
+		}
+
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );
 
