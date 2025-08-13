@@ -1,11 +1,11 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
-import { useRef } from '@wordpress/element';
+import { useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { get } from 'lodash';
-import { countryListQuery } from '../../app/queries/domain';
+import { countryListQuery, statesListQuery } from '../../app/queries/domain';
 import { domainWhoisQuery, updateDomainWhoisMutation } from '../../app/queries/domain-whois';
 import { domainRoute } from '../../app/routes/domain-routes';
 import { PageHeader } from '../../components/page-header';
@@ -23,7 +23,13 @@ export default function DomainContactInfo() {
 	const navigate = useNavigate();
 	const { data: whoisData } = useQuery( domainWhoisQuery( domainName ) );
 	const { data: countryList } = useQuery( countryListQuery() );
+
 	const registrantWhoisData = findRegistrantWhois( whoisData );
+	const initialCountryCode =
+		get( registrantWhoisData, 'country_code' ) || countryList?.[ 0 ]?.code || '';
+	const [ selectedCountryCode, setSelectedCountryCode ] = useState( initialCountryCode );
+
+	const { data: statesList } = useQuery( statesListQuery( selectedCountryCode ) );
 	const formDataRef = useRef< any >( null );
 
 	const updateMutation = useMutation( updateDomainWhoisMutation( domainName ) );
@@ -68,6 +74,10 @@ export default function DomainContactInfo() {
 		navigate( { to: '/domains/$domainName', params: { domainName } } );
 	};
 
+	const handleCountryChange = ( countryCode: string ) => {
+		setSelectedCountryCode( countryCode );
+	};
+
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Contact details' ) } /> }>
 			<div className="domain-contact-info">
@@ -90,8 +100,10 @@ export default function DomainContactInfo() {
 						} as DomainContactDetails
 					}
 					countryList={ countryList ?? [] }
+					statesList={ statesList ?? [] }
 					onSubmit={ handleSubmit }
 					onCancel={ handleCancel }
+					onCountryChange={ handleCountryChange }
 					errors={ {} }
 				/>
 			</div>

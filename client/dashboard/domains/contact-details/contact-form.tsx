@@ -16,28 +16,37 @@ import { useState } from 'react';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import type { DomainContactDetails } from './types';
-import type { CountryListItem } from '../../data/domain';
+import type { CountryListItem, StatesListItem } from '../../data/domain';
 
 import './contact-form.scss';
 interface ContactFormProps {
 	initialData?: DomainContactDetails;
 	onSubmit?: ( data: DomainContactDetails ) => void;
 	onCancel?: () => void;
+	onCountryChange?: ( countryCode: string ) => void;
 	errors?: Partial< Record< keyof DomainContactDetails, string > >;
 	isSubmitting?: boolean;
 	countryList: CountryListItem[];
+	statesList: StatesListItem[];
 }
 
 export default function ContactForm( {
 	initialData,
 	onSubmit,
 	onCancel,
+	onCountryChange,
 	isSubmitting = false,
 	countryList,
+	statesList,
 }: ContactFormProps ) {
 	const [ formData, setFormData ] = useState< DomainContactDetails >(
 		initialData ?? { optOutTransferLock: false }
 	);
+
+	const formattedStatesList = statesList.map( ( state ) => ( {
+		label: state.name,
+		value: state.code,
+	} ) );
 
 	const formattedCountryList = countryList.map( ( country ) => ( {
 		label: country.name,
@@ -121,7 +130,8 @@ export default function ContactForm( {
 		{
 			id: 'state',
 			label: __( 'State' ),
-			type: 'text',
+			type: 'select',
+			elements: formattedStatesList,
 			isValid: {
 				required: true,
 			},
@@ -234,6 +244,11 @@ export default function ContactForm( {
 							form={ form }
 							onChange={ ( edits: Partial< DomainContactDetails > ) => {
 								setFormData( ( data ) => ( { ...data, ...edits } ) );
+
+								// If country changed, notify parent component
+								if ( 'countryCode' in edits && onCountryChange ) {
+									onCountryChange( edits.countryCode as string );
+								}
 							} }
 						/>
 						<Notice>
