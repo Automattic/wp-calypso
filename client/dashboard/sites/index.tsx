@@ -107,11 +107,11 @@ export default function Sites() {
 
 	const hasFilterOrSearch = ( view.filters && view.filters.length > 0 ) || view.search;
 
-	const emptyHeading = hasFilterOrSearch ? __( 'No sites found' ) : __( 'No sites' );
+	const emptyTitle = hasFilterOrSearch ? __( 'No sites found' ) : __( 'No sites' );
 
-	let emptySubHeading = __( 'Get started by creating a new site.' );
+	let emptyDescription = __( 'Get started by creating a new site.' );
 	if ( view.search ) {
-		emptySubHeading = sprintf(
+		emptyDescription = sprintf(
 			// Translators: %s is the search term used when looking for sites by title or domain name.
 			__(
 				'Your search for “%s” did not match any sites. Try searching by the site title or domain name.'
@@ -119,7 +119,7 @@ export default function Sites() {
 			view.search
 		);
 	} else if ( hasFilterOrSearch ) {
-		emptySubHeading = __( 'Your search did not match any sites.' );
+		emptyDescription = __( 'Your search did not match any sites.' );
 	}
 
 	return (
@@ -160,12 +160,12 @@ export default function Sites() {
 						perPageSizes={ DEFAULT_PER_PAGE_SIZES }
 						empty={
 							<EmptyState
-								heading={ emptyHeading }
-								subHeading={ emptySubHeading }
+								title={ emptyTitle }
+								description={ emptyDescription }
 								illustration={
 									<img src={ noSitesIllustration } alt="" width={ 408 } height={ 280 } />
 								}
-								buttons={
+								actions={
 									<>
 										{ view.search && (
 											<Button

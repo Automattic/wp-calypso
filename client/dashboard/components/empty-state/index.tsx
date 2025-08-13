@@ -7,25 +7,25 @@ import { Text } from '../text';
 import type { ReactNode } from 'react';
 
 interface EmptyStateProps {
-	buttons?: ReactNode;
-	heading: string;
+	actions?: ReactNode;
+	description: string;
 	illustration?: ReactNode;
-	subHeading: string;
+	title: string;
 }
 
-export function EmptyState( { buttons, heading, illustration, subHeading }: EmptyStateProps ) {
+export function EmptyState( { actions, title, illustration, description }: EmptyStateProps ) {
 	return (
 		<VStack spacing={ 6 } alignment="center" className="dashboard-empty-state">
 			{ illustration }
 			<VStack spacing={ 2 } alignment="center">
-				<div className="dashboard-empty-state__heading">{ heading }</div>
+				<div className="dashboard-empty-state__heading">{ title }</div>
 				<Text variant="muted" align="center" className="dashboard-empty-state__sub-heading">
-					{ subHeading }
+					{ description }
 				</Text>
 			</VStack>
-			{ buttons && (
+			{ actions && (
 				<HStack spacing={ 4 } justify="center" wrap>
-					{ buttons }
+					{ actions }
 				</HStack>
 			) }
 		</VStack>
