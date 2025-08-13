@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button, Tooltip } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { backup } from '@wordpress/icons';
 import { useCallback, useEffect, useState } from 'react';
 import { siteBackupsQuery } from '../../app/queries/site-backups';
 import { enqueueSiteBackup, type BackupEntry } from '../../data/site-backup';
@@ -93,7 +92,6 @@ export function BackupNowButton( { site }: BackupNowButtonProps ) {
 	const button = (
 		<Button
 			variant="secondary"
-			icon={ backup }
 			onClick={ () => triggerBackup() }
 			disabled={ isBusy }
 			isBusy={ isBusy }
