@@ -26,15 +26,33 @@ const DnsActionsMenu = ( {
 			icon={ moreVertical }
 			label={ __( 'Restore default DNS records' ) }
 		>
-			{ () => (
+			{ ( { onClose } ) => (
 				<MenuGroup className="dashboard-domains-overview-dns-actions-menu__menu-group">
-					<MenuItem disabled={ hasDefaultARecords } onClick={ onRestoreDefaultARecords }>
+					<MenuItem
+						disabled={ hasDefaultARecords }
+						onClick={ () => {
+							onClose();
+							onRestoreDefaultARecords();
+						} }
+					>
 						{ __( 'Restore default A records ↗' ) }
 					</MenuItem>
-					<MenuItem disabled={ hasDefaultCnameRecord } onClick={ onRestoreDefaultCnameRecord }>
+					<MenuItem
+						disabled={ hasDefaultCnameRecord }
+						onClick={ () => {
+							onClose();
+							onRestoreDefaultCnameRecord();
+						} }
+					>
 						{ __( 'Restore default CNAME record ↗' ) }
 					</MenuItem>
-					<MenuItem disabled={ hasDefaultEmailRecords } onClick={ onRestoreDefaultEmailRecords }>
+					<MenuItem
+						disabled={ hasDefaultEmailRecords }
+						onClick={ () => {
+							onClose();
+							onRestoreDefaultEmailRecords();
+						} }
+					>
 						{ __( 'Restore default email records ↗' ) }
 					</MenuItem>
 				</MenuGroup>
