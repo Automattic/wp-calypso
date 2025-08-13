@@ -1,6 +1,7 @@
 import { Button, CheckboxControl, Icon } from '@wordpress/components';
 import { useCallback, useState, useEffect } from '@wordpress/element';
-import { chevronDown, chevronRight } from '@wordpress/icons';
+import { __, sprintf, isRTL } from '@wordpress/i18n';
+import { chevronDown, chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import { FunctionComponent } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -41,11 +42,14 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	const dispatch = useDispatch();
 	const isCurrentNodeClicked = activeNodePath === path;
 	const showFileCard = fileBrowserConfig?.showFileCard ?? true;
+	const showSeparateExpandButton = fileBrowserConfig?.showSeparateExpandButton ?? false;
 	const applyFiltering = !! fileBrowserConfig;
 	const [ fetchContentsOnMount, setFetchContentsOnMount ] = useState< boolean >( isRoot );
 	const [ isOpen, setIsOpen ] = useState< boolean >( isRoot );
 	const [ addedAnyChildren, setAddedAnyChildren ] = useState< boolean >( false );
 	const browserNodeItem = useSelector( ( state ) => getBackupBrowserNode( state, siteId, path ) );
+	const expandIcon = isRTL() ? chevronLeft : chevronRight;
+	const expandDirectoriesOnClick = fileBrowserConfig?.expandDirectoriesOnClick ?? true;
 
 	const {
 		isSuccess,
@@ -150,13 +154,13 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	}, [ isCurrentNodeClicked, isRoot ] );
 
 	// A simple toggle.  Mixed will go to unchecked.
-	const onCheckboxChange = () => {
+	const onCheckboxChange = useCallback( () => {
 		updateNodeCheckState(
 			siteId,
 			path,
 			browserNodeItem && browserNodeItem.checkState === 'unchecked' ? 'checked' : 'unchecked'
 		);
-	};
+	}, [ siteId, path, browserNodeItem, updateNodeCheckState ] );
 
 	const handleClick = useCallback( () => {
 		if ( ! isOpen ) {
@@ -171,6 +175,10 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 			}
 		}
 
+		if ( ! showFileCard ) {
+			onCheckboxChange();
+		}
+
 		// If the node doesn't have children, let's open the file info card
 		if ( ! item.hasChildren ) {
 			if ( ! isOpen ) {
@@ -180,8 +188,27 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 			}
 		}
 
+		if ( expandDirectoriesOnClick ) {
+			setIsOpen( ! isOpen );
+		}
+	}, [
+		dispatch,
+		expandDirectoriesOnClick,
+		isOpen,
+		item,
+		path,
+		setActiveNodePath,
+		onCheckboxChange,
+		showFileCard,
+	] );
+
+	const handleExpandButtonClick = useCallback( () => {
+		if ( ! isOpen ) {
+			setFetchContentsOnMount( true );
+		}
+
 		setIsOpen( ! isOpen );
-	}, [ dispatch, isOpen, item, path, setActiveNodePath ] );
+	}, [ isOpen ] );
 
 	const filterItems = useCallback(
 		( item: FileBrowserItem ) => {
@@ -286,16 +313,32 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 				checked={ browserNodeItem ? browserNodeItem.checkState === 'checked' : false }
 				indeterminate={ browserNodeItem && browserNodeItem.checkState === 'mixed' }
 				onChange={ onCheckboxChange }
+				// translators: %s is a file or directory name
+				aria-label={ sprintf( __( 'Select %s' ), item.name ) }
 			/>
 		);
 	};
 
-	const renderExpandIcon = () => {
+	const buttonExpandIcon = () => {
 		if ( ! item.hasChildren || shouldRestrictChildren( item ) ) {
 			return null;
 		}
 
-		return <Icon icon={ isOpen ? chevronDown : chevronRight } />;
+		return <Icon icon={ isOpen ? chevronDown : expandIcon } />;
+	};
+
+	const expandButton = () => {
+		return (
+			<Button
+				onClick={ handleExpandButtonClick }
+				icon={ isOpen ? chevronDown : expandIcon }
+				className="file-browser-node__separate-expand-button"
+				variant="tertiary"
+				// translators: %s is a directory name
+				aria-label={ sprintf( __( 'Expand contents of %s' ), item.name ) }
+				aria-expanded={ isOpen }
+			/>
+		);
 	};
 
 	const nodeItemClassName = clsx( 'file-browser-node__item', {
@@ -307,6 +350,9 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 		'is-root': isRoot,
 	} );
 
+	const renderSeparateExpandButton =
+		showSeparateExpandButton && item.hasChildren && ! shouldRestrictChildren( item );
+
 	return (
 		<div className={ nodeClassName }>
 			<div className={ nodeItemClassName }>
@@ -314,15 +360,17 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 					<>
 						{ renderCheckbox() }
 						<Button
-							icon={ renderExpandIcon }
-							className="file-browser-node__title has-icon"
+							icon={ renderSeparateExpandButton ? null : buttonExpandIcon }
+							className="file-browser-node__title has-text has-icon"
 							onClick={ handleClick }
 							showTooltip={ isLabelTruncated }
 							label={ item.name }
 							variant="tertiary"
+							tabIndex={ showSeparateExpandButton && ! showFileCard ? -1 : 0 }
 						>
 							<FileTypeIcon type={ item.type } /> { label }
 						</Button>
+						{ renderSeparateExpandButton && expandButton() }
 					</>
 				) }
 			</div>
