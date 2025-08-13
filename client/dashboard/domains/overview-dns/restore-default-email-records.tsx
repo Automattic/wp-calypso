@@ -29,13 +29,13 @@ export default function RestoreDefaultEmailRecords( {
 				<Text>
 					{ __( 'This will restore SPF, DKIM and DMARC records to their default configurations.' ) }
 				</Text>
+				<HStack justify="flex-end" spacing={ 2 }>
+					<Button onClick={ onCancel }>{ __( 'Cancel' ) }</Button>
+					<Button variant="primary" isBusy={ isBusy } onClick={ onConfirm }>
+						{ __( 'Restore' ) }
+					</Button>
+				</HStack>
 			</VStack>
-			<HStack justify="flex-end" spacing={ 2 }>
-				<Button onClick={ onCancel }>{ __( 'Cancel' ) }</Button>
-				<Button variant="primary" isBusy={ isBusy } onClick={ onConfirm }>
-					{ __( 'Restore' ) }
-				</Button>
-			</HStack>
 		</Modal>
 	);
 }

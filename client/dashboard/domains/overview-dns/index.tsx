@@ -97,12 +97,13 @@ export default function DomainDns() {
 					createSuccessNotice( __( 'Default A records restored.' ), {
 						type: 'snackbar',
 					} );
-					setIsRestoreDefaultARecordsDialogOpen( false );
 				},
 				onError: () => {
 					createErrorNotice( __( 'Failed to restore the default A records.' ), {
 						type: 'snackbar',
 					} );
+				},
+				onSettled: () => {
 					setIsRestoreDefaultARecordsDialogOpen( false );
 				},
 			}
@@ -133,7 +134,6 @@ export default function DomainDns() {
 					createSuccessNotice( __( 'Default CNAME record restored.' ), {
 						type: 'snackbar',
 					} );
-					setIsRestoreDefaultCnameRecordDialogOpen( false );
 				},
 				onError: ( error ) => {
 					if ( error.message.match( /^CNAME www\..+ conflicts with .*$/ ) ) {
@@ -150,6 +150,8 @@ export default function DomainDns() {
 							type: 'snackbar',
 						} );
 					}
+				},
+				onSettled: () => {
 					setIsRestoreDefaultCnameRecordDialogOpen( false );
 				},
 			}
@@ -167,6 +169,9 @@ export default function DomainDns() {
 				createErrorNotice( __( 'There was a problem when restoring default email DNS records' ), {
 					type: 'snackbar',
 				} );
+			},
+			onSettled: () => {
+				setIsRestoreDefaultEmailRecordsDialogOpen( false );
 			},
 		} );
 	};
@@ -256,13 +261,13 @@ export default function DomainDns() {
 			<RestoreDefaultCnameRecord
 				onConfirm={ handleRestoreDefaultCnameRecord }
 				onCancel={ () => setIsRestoreDefaultCnameRecordDialogOpen( false ) }
-				isBusy={ false }
+				isBusy={ updateDnsMutation.isPending }
 				isOpen={ isRestoreDefaultCnameRecordDialogOpen }
 			/>
 			<RestoreDefaultEmailRecords
 				onConfirm={ handleRestoreDefaultEmailRecords }
 				onCancel={ () => setIsRestoreDefaultEmailRecordsDialogOpen( false ) }
-				isBusy={ false }
+				isBusy={ updateDnsMutation.isPending }
 				isOpen={ isRestoreDefaultEmailRecordsDialogOpen }
 			/>
 		</PageLayout>
