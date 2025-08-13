@@ -51,19 +51,13 @@ export const purchasesDataView: View = {
 };
 
 function getPurchaseUrl( purchase: Purchase ) {
-	const siteUrl = purchase.site_slug || purchase.domain;
 	const subscriptionId = purchase.ID;
-	if ( ! siteUrl ) {
-		// eslint-disable-next-line no-console
-		console.error( 'Cannot display manage purchase page for subscription without site' );
-		throw new Error( 'Cannot display manage purchase page for subscription without site' );
-	}
 	if ( ! subscriptionId ) {
 		// eslint-disable-next-line no-console
 		console.error( 'Cannot display manage purchase page for subscription without ID' );
 		throw new Error( 'Cannot display manage purchase page for subscription without ID' );
 	}
-	return `/me/purchases/${ siteUrl }/${ subscriptionId }`;
+	return `/v2/me/billing/purchases/purchase/${ subscriptionId }`;
 }
 
 function getAddPaymentMethodUrlFor( purchase: Purchase ): string {
