@@ -2,30 +2,58 @@ import { useQuery } from '@tanstack/react-query';
 import { useResizeObserver } from '@wordpress/compose';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { userPaymentMethodsQuery } from '../../app/queries/me-payment-methods';
 import { userPurchasesQuery, userTransferredPurchasesQuery } from '../../app/queries/me-purchases';
 import { sitesQuery } from '../../app/queries/sites';
+import { purchasesRoute } from '../../app/router';
 import DataViewsCard from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { isTransferredOwnership } from '../../utils/purchase';
 import {
 	purchasesDataView,
 	adjustViewFieldsForWidth,
 	getFields,
 	getItemId,
-	getPurchaseUrl,
+	usePurchasesListActions,
 } from './dataviews';
-import type { Purchase } from '../../data/purchase';
+import type { Operator } from '@wordpress/dataviews';
 
 export default function PurchasesList() {
+	const { siteSlug }: { siteSlug?: string | undefined } = purchasesRoute.useSearch();
 	const { data: purchases, isLoading: isLoadingPurchases } = useQuery( userPurchasesQuery() );
 	const { data: transferredPurchases, isLoading: isLoadingTransferredPurchases } = useQuery(
 		userTransferredPurchasesQuery()
 	);
 	const { data: sites, isLoading: isLoadingSites } = useQuery( sitesQuery() );
 	const [ currentView, setView ] = useState( purchasesDataView );
+
+	// Allow setting the site filter by query string.
+	const idFromSiteSlug = siteSlug && sites?.find( ( site ) => site.slug === siteSlug )?.ID;
+	useEffect( () => {
+		if ( idFromSiteSlug ) {
+			// Remove the query string from the URL
+			const urlWithoutQuery =
+				window.location.origin + window.location.pathname + window.location.hash;
+			history.replaceState( {}, document.title, urlWithoutQuery );
+
+			// Update the view to filter based on the site.
+			setView( ( view ) => {
+				return {
+					...view,
+					filters: [
+						...( view.filters ?? [] ),
+						{
+							value: String( idFromSiteSlug ),
+							operator: 'isAny' as Operator,
+							field: 'site',
+						},
+					],
+				};
+			} );
+		}
+	}, [ idFromSiteSlug ] );
+
 	const ref = useResizeObserver( ( entries ) => {
 		const firstEntry = entries[ 0 ];
 		if ( firstEntry ) {
@@ -45,27 +73,9 @@ export default function PurchasesList() {
 		return filterSortAndPaginate( allSubscriptions, currentView, purchasesDataFields );
 	}, [ allSubscriptions, currentView, purchasesDataFields ] );
 
-	const actions = useMemo(
-		() => [
-			{
-				id: 'manage-purchase',
-				label: __( 'Manage purchase' ),
-				isEligible: ( item: Purchase ) => {
-					// Hide manage button for transferred ownership purchases
-					const hasTransferredOwnership = isTransferredOwnership(
-						item.ID,
-						transferredPurchases ?? []
-					);
-					return Boolean( item.domain && item.ID ) && ! hasTransferredOwnership;
-				},
-				callback: ( items: Purchase[] ) => {
-					const item = items[ 0 ];
-					window.location.href = getPurchaseUrl( item );
-				},
-			},
-		],
-		[ transferredPurchases ]
-	);
+	const actions = usePurchasesListActions( {
+		transferredPurchases: transferredPurchases ?? [],
+	} );
 
 	return (
 		<PageLayout size="large" header={ <PageHeader title={ __( 'Active Upgrades' ) } /> }>
