@@ -17,9 +17,9 @@ import { domainRoute } from '../../../app/routes/domain-routes';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import RequiredSelect from '../../../components/required-select';
+import { DnsRecordType } from '../../../data/domain-dns-records';
 import { DNS_RECORD_CONFIGS } from './dns-record-configs';
 import type { DnsRecordTypeFormData, DnsRecordFormData } from './dns-record-configs';
-import type { DnsRecordType } from '../../../data/domain-dns-records';
 
 const typeForm = {
 	type: 'regular' as const,
@@ -27,7 +27,7 @@ const typeForm = {
 };
 
 const defaultFormData = {
-	type: 'A' as DnsRecordType,
+	type: DnsRecordType.A,
 	name: '',
 	data: '',
 	ttl: 3600,
