@@ -11,7 +11,6 @@ import { domainRoute } from '../../app/router';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import NameServersForm from './form';
-import './styles.scss';
 
 export default function NameServers() {
 	const { domainName } = domainRoute.useParams();

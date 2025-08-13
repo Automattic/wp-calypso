@@ -3,7 +3,6 @@ import { Card, CardBody } from '@wordpress/components';
 import PageLayout from '../../components/page-layout';
 import NameServersForm from './form';
 import type { Meta, StoryObj } from '@storybook/react';
-import './styles.scss';
 
 const meta: Meta< typeof NameServersForm > = {
 	title: 'Domains/NameServersForm',
