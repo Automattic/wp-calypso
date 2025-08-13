@@ -1,6 +1,7 @@
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { domainQuery } from '../queries/domain';
 import { domainForwardingQuery } from '../queries/domain-forwarding';
+import { domainGlueRecordsQuery } from '../queries/domain-glue-records';
 import { domainsQuery } from '../queries/domains';
 import { queryClient } from '../query-client';
 import type { AnyRoute } from '@tanstack/react-router';
@@ -163,9 +164,33 @@ export const domainNameServersRoute = createRoute( {
 export const domainGlueRecordsRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'glue-records',
+	loader: ( { params: { domainName } } ) =>
+		queryClient.ensureQueryData( domainGlueRecordsQuery( domainName ) ),
+} ).lazy( () =>
+	import( '../../domains/overview-glue-records' ).then( ( d ) =>
+		createLazyRoute( 'domain-glue-records' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const domainGlueRecordsAddRoute = createRoute( {
+	getParentRoute: () => domainRoute,
+	path: 'glue-records/add',
 } ).lazy( () =>
 	import( '../../sites/domains/placeholder' ).then( ( d ) =>
-		createLazyRoute( 'domain-glue-records' )( {
+		createLazyRoute( 'domain-glue-records-add' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const domainGlueRecordsEditRoute = createRoute( {
+	getParentRoute: () => domainRoute,
+	path: 'glue-records/edit/$nameServer',
+} ).lazy( () =>
+	import( '../../sites/domains/placeholder' ).then( ( d ) =>
+		createLazyRoute( 'domain-glue-records-edit' )( {
 			component: d.default,
 		} )
 	)
@@ -205,6 +230,8 @@ export const domainChildRoutes: AnyRoute[] = [
 	domainContactInfoRoute,
 	domainNameServersRoute,
 	domainGlueRecordsRoute,
+	domainGlueRecordsAddRoute,
+	domainGlueRecordsEditRoute,
 	domainDnssecRoute,
 	domainTransferRoute,
 ];
