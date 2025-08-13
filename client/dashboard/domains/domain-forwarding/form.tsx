@@ -30,7 +30,6 @@ interface DomainForwardingFormProps {
 	onSubmit: ( data: FormData ) => void;
 	isSubmitting: boolean;
 	submitButtonText: string;
-	onCancel: () => void;
 }
 
 export default function DomainForwardingForm( {
@@ -39,7 +38,6 @@ export default function DomainForwardingForm( {
 	onSubmit,
 	isSubmitting,
 	submitButtonText,
-	onCancel,
 }: DomainForwardingFormProps ) {
 	const [ formData, setFormData ] = useState< FormData >( {
 		sourceType: 'subdomain',
@@ -152,19 +150,13 @@ export default function DomainForwardingForm( {
 					},
 				},
 			},
-			redirectTypeField,
-			pathForwardingField,
 		],
 		[ domainName ]
 	);
 
-	// Split fields into basic and advanced
-	const basicFieldIds = [ 'sourceType', 'subdomain', 'targetUrl' ];
-	const basicFields = fields.filter( ( field ) => basicFieldIds.includes( field.id ) );
-
 	const form = {
 		type: 'regular' as const,
-		fields: basicFieldIds,
+		fields: [ 'sourceType', 'subdomain', 'targetUrl' ],
 	};
 
 	const handleSubmit = ( e: React.FormEvent ) => {
@@ -179,7 +171,7 @@ export default function DomainForwardingForm( {
 					<VStack spacing={ 4 }>
 						<DataForm< FormData >
 							data={ formData }
-							fields={ basicFields }
+							fields={ fields }
 							form={ form }
 							onChange={ ( edits: Partial< FormData > ) => {
 								setFormData( ( data ) => ( { ...data, ...edits } ) );
@@ -189,7 +181,7 @@ export default function DomainForwardingForm( {
 						<Panel>
 							<PanelBody title={ __( 'Advanced settings' ) } initialOpen={ false }>
 								<PanelRow>
-									<VStack style={ { width: '100%' } } spacing={ 6 }>
+									<VStack spacing={ 6 }>
 										<RadioControl
 											label={ redirectTypeField.label }
 											selected={ formData.redirectType }
@@ -225,9 +217,6 @@ export default function DomainForwardingForm( {
 								disabled={ isSubmitting }
 							>
 								{ submitButtonText }
-							</Button>
-							<Button variant="tertiary" onClick={ onCancel }>
-								{ __( 'Cancel' ) }
 							</Button>
 						</HStack>
 					</VStack>

@@ -65,13 +65,6 @@ export default function EditDomainForwarding() {
 		} );
 	};
 
-	const handleCancel = () => {
-		router.navigate( {
-			to: domainForwardingsRoute.fullPath,
-			params: { domainName },
-		} );
-	};
-
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Edit Domain Forwarding' ) } /> }>
 			<DomainForwardingForm
@@ -80,7 +73,6 @@ export default function EditDomainForwarding() {
 				onSubmit={ handleSubmit }
 				isSubmitting={ saveMutation.isPending }
 				submitButtonText={ __( 'Update' ) }
-				onCancel={ handleCancel }
 			/>
 		</PageLayout>
 	);
