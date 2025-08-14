@@ -134,7 +134,7 @@ function DomainGlueRecords() {
 			size="small"
 			header={
 				<PageHeader
-					title={ __( 'Glue Records' ) }
+					title={ __( 'Glue records' ) }
 					actions={
 						<RouterLinkButton
 							to={ domainGlueRecordsAddRoute.fullPath }
@@ -142,7 +142,7 @@ function DomainGlueRecords() {
 							variant="primary"
 							__next40pxDefaultSize
 						>
-							{ __( 'Add Glue Records' ) }
+							{ __( 'Add glue record' ) }
 						</RouterLinkButton>
 					}
 				/>
