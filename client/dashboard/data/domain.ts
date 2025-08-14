@@ -11,3 +11,10 @@ export function fetchDomain( domainName: string ): Promise< Domain > {
 		apiVersion: '1.2',
 	} );
 }
+
+export async function fetchCountryList(): Promise< CountryListItem[] > {
+	return await wpcom.req.get( {
+		path: '/domains/supported-countries',
+		apiVersion: '1.1',
+	} );
+}

@@ -15,7 +15,6 @@ export default function DomainContactInfo() {
 	const { domainName } = domainRoute.useParams();
 	const navigate = useNavigate();
 	const { data: whoisData } = useQuery( domainWhoisQuery( domainName ) );
-
 	const registrantWhoisData = findRegistrantWhois( whoisData );
 
 	const handleSubmit = () => {
@@ -47,6 +46,7 @@ export default function DomainContactInfo() {
 							fax: registrantWhoisData?.fax ?? '',
 						} as DomainContactDetails
 					}
+					countryList={ countryList ?? [] }
 					onSubmit={ handleSubmit }
 					onCancel={ handleCancel }
 					errors={ {} }

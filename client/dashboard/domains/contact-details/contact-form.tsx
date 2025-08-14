@@ -24,6 +24,7 @@ import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { fetchDomainWhoisValidate } from '../../data/domain-whois';
 import type { DomainContactDetails } from './types';
+import type { CountryListItem } from '../../data/domain';
 
 import './contact-form.scss';
 interface ContactFormProps {
@@ -85,11 +86,6 @@ export default function ContactForm( {
 	const [ formData, setFormData ] = useState< DomainContactDetails >(
 		initialData ?? { optOutTransferLock: false }
 	);
-
-	const formattedCountryList = countryList?.map( ( country ) => ( {
-		label: country.name,
-		value: country.code,
-	} ) );
 
 	const isDirty = ! ( JSON.stringify( formData ) === JSON.stringify( initialData ) );
 	const isSubmitting = validateMutation.isPending || updateMutation.isPending;
@@ -187,7 +183,11 @@ export default function ContactForm( {
 			id: 'countryCode',
 			label: __( 'Country' ),
 			type: 'select',
-			elements: formattedCountryList,
+			elements:
+				countryList?.map( ( country ) => ( {
+					label: country.name,
+					value: country.code,
+				} ) ) ?? [],
 			isValid: {
 				required: true,
 			},
