@@ -1,9 +1,8 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useCallback, useEffect, useState } from 'react';
-import { siteBackupsQuery } from '../../app/queries/site-backups';
-import { enqueueSiteBackup } from '../../data/site-backup';
+import { siteBackupEnqueueMutation, siteBackupsQuery } from '../../app/queries/site-backups';
 import { type BackupEntry } from '../../data/site-backups';
 import type { Site } from '../../data/types';
 
@@ -15,7 +14,6 @@ type BackupState = 'default' | 'enqueued' | 'in_progress';
 
 export function BackupNowButton( { site }: BackupNowButtonProps ) {
 	const [ isEnqueued, setIsEnqueued ] = useState( false );
-	const queryClient = useQueryClient();
 
 	// Determine current state
 	const getBackupState = useCallback(
@@ -44,16 +42,9 @@ export function BackupNowButton( { site }: BackupNowButtonProps ) {
 	} );
 
 	const { mutate: triggerBackup, isPending } = useMutation( {
-		mutationFn: () => {
+		...siteBackupEnqueueMutation( site.ID ),
+		onMutate: () => {
 			setIsEnqueued( true );
-			return enqueueSiteBackup( site.ID );
-		},
-		onSuccess: () => {
-			// Refresh rewind backups to check for new backup status
-			queryClient.invalidateQueries( siteBackupsQuery( site.ID ) );
-		},
-		onError: () => {
-			// Lets decide later what to do here
 		},
 	} );
 
