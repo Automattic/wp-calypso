@@ -123,18 +123,30 @@ const EllipsisMenu = () => {
 			<>
 				<Menu.TriggerButton render={ <Button icon={ moreVertical } /> } />
 				<Menu.Popover>
-					<Menu.Item icon={ lineSolid } onClick={ () => setIsMinimized( true ) }>
+					<Menu.Item
+						prefix={ <Icon icon={ lineSolid } width={ 24 } height={ 24 } /> }
+						onClick={ () => setIsMinimized( true ) }
+					>
 						<Menu.ItemLabel>{ __( 'Minimize', __i18n_text_domain__ ) }</Menu.ItemLabel>
 					</Menu.Item>
 					<Menu.Separator />
-					<Menu.Item onClick={ clearChat } icon={ comment }>
+					<Menu.Item
+						onClick={ clearChat }
+						prefix={ <Icon icon={ comment } width={ 24 } height={ 24 } /> }
+					>
 						<Menu.ItemLabel>{ __( 'New chat', __i18n_text_domain__ ) }</Menu.ItemLabel>
 					</Menu.Item>
-					<Menu.Item onClick={ handleViewChats } icon={ backup }>
+					<Menu.Item
+						onClick={ handleViewChats }
+						prefix={ <Icon icon={ backup } width={ 24 } height={ 24 } /> }
+					>
 						<Menu.ItemLabel>{ __( 'Support history', __i18n_text_domain__ ) }</Menu.ItemLabel>
 					</Menu.Item>
 					<Menu.Separator />
-					<Menu.Item onClick={ toggleSoundNotifications } icon={ bell }>
+					<Menu.Item
+						onClick={ toggleSoundNotifications }
+						prefix={ <Icon icon={ bell } width={ 24 } height={ 24 } /> }
+					>
 						<Menu.ItemLabel>
 							{ areSoundNotificationsEnabled
 								? __( 'Turn off sound notifications', __i18n_text_domain__ )
