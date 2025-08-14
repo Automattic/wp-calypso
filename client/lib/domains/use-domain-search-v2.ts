@@ -1,18 +1,22 @@
 import config from '@automattic/calypso-config';
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useExperiment } from 'calypso/lib/explat';
+import { useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 const isDomainSearchV2Enabled = config.isEnabled( 'domains/ui-redesign' );
 
-const EXPERIMENT_NAME = 'calypso_signup_onboarding_domain_search_redesign_202508';
+const EXPERIMENT_NAME = 'calypso_signup_onboarding_domain_search_redesign_202508_v2';
 
 /**
  * This hook is used to determine if the domain search redesign is enabled for a given flow.
  * It should NOT be used within components, only at top level pages.
  */
 export const useIsDomainSearchV2Enabled = ( flowName: string ) => {
+	const isLoggedIn = useSelector( isUserLoggedIn );
+
 	const [ isLoading, experimentAssignment ] = useExperiment( EXPERIMENT_NAME, {
-		isEligible: flowName === ONBOARDING_FLOW,
+		isEligible: flowName === ONBOARDING_FLOW && isLoggedIn,
 	} );
 
 	if ( flowName === ONBOARDING_FLOW ) {
