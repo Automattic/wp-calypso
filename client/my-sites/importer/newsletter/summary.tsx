@@ -183,9 +183,9 @@ export default function Summary( {
 					<Notice status="warning" className="importer__notice" isDismissible={ false }>
 						<h2>{ __( 'Action required' ) }</h2>
 						{ fixMe( {
-							text: 'To prevent double-charging your subscribers, go to your {{substackPaymentsSettingsLink}}Substack Payments Settings{{/substackPaymentsSettingsLink}} and under "Pause subscription billing" click {{strong}}Pause{{/strong}}.',
+							text: 'To prevent double-charging your subscribers, go to your {{substackPaymentsSettingsLink}}Substack Payments Settings{{/substackPaymentsSettingsLink}} and under "Pause subscription billing," click {{strong}}Pause{{/strong}}.',
 							newCopy: translate(
-								'To prevent double-charging your subscribers, go to your {{substackPaymentsSettingsLink}}Substack Payments Settings{{/substackPaymentsSettingsLink}} and under "Pause subscription billing" click {{strong}}Pause{{/strong}}.',
+								'To prevent double-charging your subscribers, go to your {{substackPaymentsSettingsLink}}Substack Payments Settings{{/substackPaymentsSettingsLink}} and under "Pause subscription billing," click {{strong}}Pause{{/strong}}.',
 								{
 									components: {
 										strong: <strong />,
