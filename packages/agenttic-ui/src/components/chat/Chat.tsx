@@ -76,6 +76,13 @@ export function Chat( {
 
 	const timeoutRefs = useRef< Set< NodeJS.Timeout > >( new Set() );
 
+	// Clear all timeouts
+	const clearAllTimeouts = useCallback( () => {
+		timeoutRefs.current.forEach( ( timeoutId ) => {
+			clearTimeout( timeoutId );
+		} );
+		timeoutRefs.current.clear();
+	}, [] );
 	const input = useInput( {
 		value: inputValue,
 		setValue: setInputValue,
@@ -282,8 +289,10 @@ export function Chat( {
 		prevStateRef.current === 'compact' && chat.state === 'expanded';
 
 	useEffect( () => {
+		// Clear all timeouts when state changes (they're no longer valid)
+		clearAllTimeouts();
 		prevStateRef.current = chat.state;
-	}, [ chat.state ] );
+	}, [ chat.state, clearAllTimeouts ] );
 
 	// Handle window resize to maintain bottom positioning
 	useEffect( () => {
