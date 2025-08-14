@@ -85,7 +85,7 @@ function AdvancedChatComponent() {
     ],
     async (toolId, args) => {
       if (toolId === 'calculator') {
-        return { result: eval(args.expression) };
+        return { result: calc(args.expression)};
       }
     }
   );

@@ -637,7 +637,7 @@ async function* processAgentResponseStream(
  *   },
  *   async executeTool(toolId: string, args: any) {
  *     if (toolId === 'calculator') {
- *       return { result: eval(args.expression) };
+ *       return { result: calc(args.expression) };
  *     }
  *     throw new Error(`Unknown tool: ${toolId}`);
  *   }
