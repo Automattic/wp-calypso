@@ -5,13 +5,13 @@ import { GuidedTourStep } from 'calypso/components/guided-tour/step';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import { siteLatestAtomicTransferQuery } from 'calypso/dashboard/app/queries/site-atomic-transfers';
 import { isDeletingStagingSiteQuery } from 'calypso/dashboard/app/queries/site-staging-sites';
 import { queryClient } from 'calypso/dashboard/app/query-client';
+import { isAtomicTransferInProgress } from 'calypso/dashboard/utils/site-atomic-transfers';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { StagingSiteCreationBanner } from 'calypso/sites/staging-site/components/staging-site-transfer-banner/staging-site-creation-banner';
 import { StagingSiteDeletionBanner } from 'calypso/sites/staging-site/components/staging-site-transfer-banner/staging-site-deletion-banner';
-import { useSelector } from 'calypso/state';
-import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import ItemViewContent from './item-view-content';
 import ItemViewHeader from './item-view-header';
 import ItemViewBreadcrumbsHeader from './item-view-header/breadcrumbs';
@@ -64,11 +64,16 @@ export default function ItemView( {
 	// so it can't be used here to determine if the site is a staging site
 	const isStagingSite = itemData.subtitle?.toString().startsWith( 'staging-' );
 
-	const isAtomicSite = useSelector( ( state ) =>
-		isSiteWpcomAtomic( state, itemData.blogId ?? null )
-	);
+	const { data: atomicTransfer } = useQuery( {
+		...siteLatestAtomicTransferQuery( itemData.blogId ?? 0 ),
+		refetchInterval: ( query ) => {
+			return isAtomicTransferInProgress( query.state.data?.status ?? 'pending' ) ? 5000 : false;
+		},
+		enabled: !! itemData.blogId && isStagingSite,
+	} );
 
-	const isStagingSiteTransferInProgress = isStagingSite && ! isAtomicSite;
+	const isStagingSiteTransferInProgress =
+		isStagingSite && isAtomicTransferInProgress( atomicTransfer?.status ?? 'pending' );
 
 	// Ensure we have features
 	if ( ! features || ! features.length ) {
