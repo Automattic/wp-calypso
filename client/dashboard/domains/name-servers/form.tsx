@@ -55,7 +55,7 @@ export default function NameServersForm( {
 		// Add all nameServer fields
 		for ( let i = 0; i < MAX_NAME_SERVERS_LENGTH; i++ ) {
 			const key = `nameServer${ i + 1 }` as NameServerKey;
-			initialData[ key ] = nameServers[ i ] || '';
+			initialData[ key ] = nameServers[ i ]?.toLowerCase() || '';
 		}
 
 		// Assert the object is now complete
@@ -152,7 +152,7 @@ export default function NameServersForm( {
 									const ns = Object.fromEntries(
 										Array.from( { length: MAX_NAME_SERVERS_LENGTH }, ( _, i ) => [
 											`nameServer${ i + 1 }` as NameServerKey,
-											value ? WPCOM_DEFAULT_NAME_SERVERS[ i ]?.toLowerCase() : '',
+											value ? WPCOM_DEFAULT_NAME_SERVERS[ i ] : '',
 										] )
 									);
 
