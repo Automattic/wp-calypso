@@ -13,7 +13,7 @@ export const siteLastBackupQuery = ( siteId: number ) =>
 
 export const siteBackupsQuery = ( siteId: number ) =>
 	queryOptions( {
-		queryKey: [ 'site', siteId, 'rewind', 'backups' ],
+		queryKey: [ 'site', siteId, 'backups' ],
 		queryFn: () => fetchSiteBackups( siteId ),
 	} );
 
