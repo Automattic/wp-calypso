@@ -5,7 +5,9 @@ import { __ } from '@wordpress/i18n';
 import { chevronDown, cloudDownload, cloudUpload } from '@wordpress/icons';
 import { lazy, Suspense } from 'react';
 import { siteBySlugQuery, siteByIdQuery } from '../../app/queries/site';
+import { siteLatestAtomicTransferQuery } from '../../app/queries/site-atomic-transfers';
 import { stagingSiteSyncStateQuery } from '../../app/queries/site-staging-sites';
+import { isAtomicTransferInProgress } from '../../utils/site-atomic-transfers';
 import { hasManageOptions } from '../../utils/site-capabilities';
 import {
 	getProductionSiteId,
@@ -43,6 +45,14 @@ export default function StagingSiteSyncDropdown( {
 	const productionSiteId = site ? getProductionSiteId( site ) : null;
 	const stagingSiteId = site ? getStagingSiteId( site ) : null;
 
+	const { data: atomicTransfer } = useQuery( {
+		...siteLatestAtomicTransferQuery( stagingSiteId ?? 0 ),
+		refetchInterval: ( query ) => {
+			return isAtomicTransferInProgress( query.state.data?.status ?? 'pending' ) ? 5000 : false;
+		},
+		enabled: !! stagingSiteId,
+	} );
+
 	const { data: stagingSite } = useQuery( {
 		...siteByIdQuery( stagingSiteId ?? 0 ),
 		refetchInterval: ( query ) => {
@@ -51,7 +61,10 @@ export default function StagingSiteSyncDropdown( {
 		enabled: !! stagingSiteId,
 	} );
 
-	const isStagingSiteTransferInProgress = !! stagingSiteId && ! hasManageOptions( stagingSite );
+	const isStagingSiteReady =
+		!! stagingSiteId &&
+		! isAtomicTransferInProgress( atomicTransfer?.status ?? 'pending' ) &&
+		hasManageOptions( stagingSite );
 
 	const { data: stagingSiteSyncState, refetch: fetchStagingSiteSyncState } = useQuery( {
 		...stagingSiteSyncStateQuery( productionSiteId ?? 0 ),
@@ -85,7 +98,7 @@ export default function StagingSiteSyncDropdown( {
 
 	// The sync is not allowed if the staging site is in a transition or is deleting.
 	// We should consider this when we start to rewrite the StagingSiteSyncModal.
-	if ( ! productionSiteId || ! stagingSiteId || isStagingSiteTransferInProgress ) {
+	if ( ! productionSiteId || ! stagingSiteId || ! isStagingSiteReady ) {
 		return null;
 	}
 
