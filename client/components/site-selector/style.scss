@@ -85,18 +85,10 @@
 
 	.site__title {
 		color: var(--color-text);
-		
-		&::after {
-			display: none;
-		}
 	}
 
 	.site__domain {
 		color: var(--color-text-subtle);
-		
-		&::after {
-			display: none;
-		}
 	}
 }
 
