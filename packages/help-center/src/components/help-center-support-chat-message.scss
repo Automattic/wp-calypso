@@ -18,6 +18,22 @@
 	}
 }
 
+.help-center-support-chat__conversation-sub-information {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+
+	.help-center-support-chat__conversation-information-name {
+		text-overflow: ellipsis;
+		overflow: hidden;
+		line-clamp: 1;
+	}
+
+	.help-center-support-chat__conversation-information-time {
+		flex: 0 0 auto;
+	}
+}
+
 .help-center-support-chat__conversation-container {
 	display: flex;
 	flex-direction: row;
