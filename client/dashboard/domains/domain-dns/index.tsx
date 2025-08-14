@@ -207,6 +207,7 @@ export default function DomainDns() {
 											params: { domainName },
 										} );
 									} }
+									__next40pxDefaultSize
 								>
 									{ __( 'Add DNS Record' ) }
 								</Button>

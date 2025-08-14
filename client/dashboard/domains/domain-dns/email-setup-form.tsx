@@ -123,7 +123,13 @@ export default function EmailSetupForm( {
 						} }
 					/>
 					<HStack justify="flex-start">
-						<Button variant="primary" type="submit" isBusy={ isPending } disabled={ isPending }>
+						<Button
+							variant="primary"
+							type="submit"
+							isBusy={ isPending }
+							disabled={ isPending }
+							__next40pxDefaultSize
+						>
 							{
 								// translators: %(providerName)s will be replaced with the name of the service provider that this template is used for, for example Google Workspace or Office 365
 								sprintf( __( 'Set up %(provider)s' ), {
