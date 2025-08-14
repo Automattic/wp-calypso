@@ -43,9 +43,11 @@ export function BackupNowButton( { site }: BackupNowButtonProps ) {
 	} );
 
 	const { mutate: triggerBackup, isPending } = useMutation( {
-		mutationFn: () => enqueueSiteBackup( site.ID ),
-		onSuccess: () => {
+		mutationFn: () => {
 			setIsEnqueued( true );
+			return enqueueSiteBackup( site.ID );
+		},
+		onSuccess: () => {
 			// Refresh rewind backups to check for new backup status
 			queryClient.invalidateQueries( {
 				queryKey: [ 'site', site.ID, 'rewind', 'backups' ],
@@ -65,27 +67,20 @@ export function BackupNowButton( { site }: BackupNowButtonProps ) {
 		}
 	}, [ backupState, isEnqueued ] );
 
-	const getButtonContent = useCallback( ( state: BackupState ) => {
-		switch ( state ) {
-			case 'in_progress':
-				return __( 'Backup in progress' );
-			case 'enqueued':
-				return __( 'Backup queued' );
-			default:
-				return __( 'Back up now' );
-		}
-	}, [] );
-
-	const getTooltipText = useCallback( ( state: BackupState ) => {
-		switch ( state ) {
-			case 'in_progress':
-				return __( 'A backup is currently in progress.' );
-			case 'enqueued':
-				return __( 'A backup has been queued and will start shortly.' );
-			default:
-				return __( 'Create a backup of your site now.' );
-		}
-	}, [] );
+	const buttonContent = {
+		enqueued: {
+			label: __( 'Backup enqueued' ),
+			tooltip: __( 'A backup has been queued and will start shortly.' ),
+		},
+		in_progress: {
+			label: __( 'Backup in progress' ),
+			tooltip: __( 'A backup is currently in progress.' ),
+		},
+		default: {
+			label: __( 'Back up now' ),
+			tooltip: __( 'Create a backup of your site now.' ),
+		},
+	};
 
 	const isBusy = backupState !== 'default' || isPending;
 
@@ -96,9 +91,9 @@ export function BackupNowButton( { site }: BackupNowButtonProps ) {
 			disabled={ isBusy }
 			isBusy={ isBusy }
 		>
-			{ getButtonContent( backupState ) }
+			{ buttonContent[ backupState ].label }
 		</Button>
 	);
 
-	return <Tooltip text={ getTooltipText( backupState ) }>{ button }</Tooltip>;
+	return <Tooltip text={ buttonContent[ backupState ].tooltip }>{ button }</Tooltip>;
 }
