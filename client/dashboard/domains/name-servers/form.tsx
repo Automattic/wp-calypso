@@ -2,7 +2,6 @@ import { CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS } from '@automattic/urls';
 import {
 	Button,
 	__experimentalText as Text,
-	__experimentalView as View,
 	__experimentalVStack as VStack,
 	__experimentalInputControl as InputControl,
 	ToggleControl,
@@ -215,7 +214,7 @@ export default function NameServersForm( {
 								setFormData( ( data ) => ( { ...data, ...value } ) );
 							} }
 						/>
-						<View>
+						<div>
 							<Button
 								__next40pxDefaultSize
 								variant="primary"
@@ -225,7 +224,7 @@ export default function NameServersForm( {
 							>
 								{ __( 'Save' ) }
 							</Button>
-						</View>
+						</div>
 					</>
 				) }
 			</VStack>
