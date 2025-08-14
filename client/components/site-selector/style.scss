@@ -134,12 +134,8 @@
 	background: var(--color-sidebar-menu-hover-background);
 
 	.site__badge {
-		// Only apply hover styling to specific badge types that should change
-		// Exclude styled-component badges (staging, production, etc.) which handle their own hover states
-		&:not([class*="SitesLaunchStatusBadge"]):not([class*="SitesStagingBadge"]):not([class*="SitesProductionBadge"]) {
-			background: var(--color-sidebar-background);
-			color: var(--color-sidebar-text);
-		}
+		background: var(--color-sidebar-background);
+		color: var(--color-sidebar-text);
 
 		&.is-p2,
 		&.is-p2-workspace {
