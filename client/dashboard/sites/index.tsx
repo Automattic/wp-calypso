@@ -11,7 +11,7 @@ import { userPreferenceQuery, userPreferenceMutation } from '../app/queries/me-p
 import { sitesQuery } from '../app/queries/sites';
 import { sitesRoute } from '../app/router';
 import DataViewsCard from '../components/dataviews-card';
-import { EmptyState } from '../components/empty-state';
+import { DataViewsEmptyState } from '../components/dataviews-empty-state';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import { getActions } from './actions';
@@ -159,7 +159,7 @@ export default function Sites() {
 						paginationInfo={ paginationInfo }
 						perPageSizes={ DEFAULT_PER_PAGE_SIZES }
 						empty={
-							<EmptyState
+							<DataViewsEmptyState
 								title={ emptyTitle }
 								description={ emptyDescription }
 								illustration={
