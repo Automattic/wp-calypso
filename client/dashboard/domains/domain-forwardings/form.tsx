@@ -59,6 +59,10 @@ export default function DomainForwardingForm( {
 		};
 	} );
 
+	const hasNonDefaultAdvancedValues = Boolean(
+		initialData && ( initialData.is_permanent !== false || initialData.forward_paths !== false )
+	);
+
 	const isPermanentField = {
 		id: 'isPermanent',
 		label: __( 'HTTP Redirect Type' ),
@@ -179,7 +183,10 @@ export default function DomainForwardingForm( {
 						/>
 
 						<Panel>
-							<PanelBody title={ __( 'Advanced settings' ) } initialOpen={ false }>
+							<PanelBody
+								title={ __( 'Advanced settings' ) }
+								initialOpen={ hasNonDefaultAdvancedValues }
+							>
 								<PanelRow>
 									<VStack spacing={ 6 }>
 										<RadioControl
