@@ -276,9 +276,9 @@ function sanitizeView( view: SitesView ) {
 	let sanitized = view;
 
 	if ( sanitized.type === 'grid' && sanitized.layout?.previewSize ) {
-		// From PreviewSizePicker imageSizes in GB https://github.com/WordPress/gutenberg/blob/58a5abc7714bdff204d5f6bc350980f73686d54f/packages/dataviews/src/dataviews-layouts/grid/preview-size-picker.tsx#L14
-		const validSizes = [ 120, 170, 230, 290, 350, 430 ];
-		if ( ! validSizes.includes( sanitized.layout.previewSize ) ) {
+		// From PreviewSizePicker imageSizes in GB https://github.com/WordPress/gutenberg/blob/58a5abc7714bdff204d5f6bc350980f73686d54f/packages/dataviews/src/dataviews-layouts/grid/preview-size-picker.tsx#L14-L39
+		const smallestSize = 120;
+		if ( sanitized.layout.previewSize < smallestSize ) {
 			delete sanitized.layout.previewSize;
 		}
 	}
