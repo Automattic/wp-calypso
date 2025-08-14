@@ -3,7 +3,7 @@ import {
 	fetchDomainForwarding,
 	deleteDomainForwarding,
 	saveDomainForwarding,
-	type DomainForwardingFormData,
+	type DomainForwardingSaveData,
 } from '../../data/domain-forwarding';
 import { queryClient } from '../query-client';
 
@@ -23,7 +23,7 @@ export const domainForwardingDeleteMutation = ( domainName: string ) =>
 
 export const domainForwardingSaveMutation = ( domainName: string ) =>
 	mutationOptions( {
-		mutationFn: ( data: DomainForwardingFormData ) => saveDomainForwarding( domainName, data ),
+		mutationFn: ( data: DomainForwardingSaveData ) => saveDomainForwarding( domainName, data ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( domainForwardingQuery( domainName ) );
 		},
