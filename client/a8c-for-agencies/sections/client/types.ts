@@ -12,6 +12,10 @@ export interface ReferralProduct {
 		purchase_currency?: string;
 		billing_interval_unit?: string;
 		status: string;
+		subscribed_date?: string;
+		expiry?: string;
+		auto_renew: boolean;
+		renew_date?: string;
 	};
 	site_assigned: string;
 }
