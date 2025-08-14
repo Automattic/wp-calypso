@@ -20,8 +20,8 @@ export interface FormData {
 	sourceType: 'root' | 'subdomain';
 	subdomain: string;
 	targetUrl: string;
-	redirectType: 'temporary' | 'permanent';
-	pathForwarding: 'no' | 'yes';
+	isPermanent: boolean;
+	forwardPaths: boolean;
 }
 
 interface DomainForwardingFormProps {
@@ -45,8 +45,8 @@ export default function DomainForwardingForm( {
 				sourceType: 'subdomain',
 				subdomain: '',
 				targetUrl: '',
-				redirectType: 'temporary',
-				pathForwarding: 'no',
+				isPermanent: false,
+				forwardPaths: false,
 			};
 		}
 		const protocol = initialData.is_secure ? 'https://' : 'http://';
@@ -54,44 +54,44 @@ export default function DomainForwardingForm( {
 			sourceType: initialData.subdomain ? 'subdomain' : 'root',
 			subdomain: initialData.subdomain || '',
 			targetUrl: `${ protocol }${ initialData.target_host }${ initialData.target_path || '' }`,
-			redirectType: initialData.is_permanent ? 'permanent' : 'temporary',
-			pathForwarding: initialData.forward_paths ? 'yes' : 'no',
+			isPermanent: initialData.is_permanent,
+			forwardPaths: initialData.forward_paths,
 		};
 	} );
 
-	const redirectTypeField = {
-		id: 'redirectType',
+	const isPermanentField = {
+		id: 'isPermanent',
 		label: __( 'HTTP Redirect Type' ),
 		type: 'text' as const,
 		Edit: 'radio',
 		elements: [
 			{
 				label: __( 'Temporary redirect (307)' ),
-				value: 'temporary',
+				value: 'false',
 				description: __( 'Enables quick propagation of changes to your forwarding address.' ),
 			},
 			{
 				label: __( 'Permanent redirect (301)' ),
-				value: 'permanent',
+				value: 'true',
 				description: __(
 					'Enables browser caching of the forwarding address for quicker resolution. Note that changes might take longer to fully propagate.'
 				),
 			},
 		],
 	};
-	const pathForwardingField = {
-		id: 'pathForwarding',
+	const forwardPathsField = {
+		id: 'forwardPaths',
 		label: __( 'Path forwarding' ),
 		type: 'text' as const,
 		Edit: 'radio',
 		elements: [
 			{
 				label: __( 'Do not forward' ),
-				value: 'no',
+				value: 'false',
 			},
 			{
 				label: __( 'Forward path' ),
-				value: 'yes',
+				value: 'true',
 				description: __(
 					'Redirects the path after the domain name to the corresponding path at the new address.'
 				),
@@ -183,24 +183,24 @@ export default function DomainForwardingForm( {
 								<PanelRow>
 									<VStack spacing={ 6 }>
 										<RadioControl
-											label={ redirectTypeField.label }
-											selected={ formData.redirectType }
-											options={ redirectTypeField.elements }
+											label={ isPermanentField.label }
+											selected={ formData.isPermanent ? 'true' : 'false' }
+											options={ isPermanentField.elements }
 											onChange={ ( value: string ) => {
 												setFormData( ( data ) => ( {
 													...data,
-													redirectType: value as 'temporary' | 'permanent',
+													isPermanent: value === 'true',
 												} ) );
 											} }
 										/>
 										<RadioControl
-											label={ pathForwardingField.label }
-											selected={ formData.pathForwarding }
-											options={ pathForwardingField.elements }
+											label={ forwardPathsField.label }
+											selected={ formData.forwardPaths ? 'true' : 'false' }
+											options={ forwardPathsField.elements }
 											onChange={ ( value: string ) => {
 												setFormData( ( data ) => ( {
 													...data,
-													pathForwarding: value as 'no' | 'yes',
+													forwardPaths: value === 'true',
 												} ) );
 											} }
 										/>

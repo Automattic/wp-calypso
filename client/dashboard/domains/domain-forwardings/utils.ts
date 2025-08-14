@@ -121,8 +121,8 @@ export function formDataToSubmitData(
 		target_host,
 		target_path,
 		is_secure,
-		is_permanent: formData.redirectType === 'permanent',
-		forward_paths: formData.pathForwarding === 'yes',
+		is_permanent: formData.isPermanent,
+		forward_paths: formData.forwardPaths,
 	};
 
 	// Add domain_redirect_id for edit operations
