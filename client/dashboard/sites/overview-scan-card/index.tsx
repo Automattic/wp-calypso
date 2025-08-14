@@ -91,7 +91,7 @@ export default function ScanCard( { site }: { site: Site } ) {
 			tracksFeatureId={ CARD_PROPS.tracksId }
 			upsellHeading={ __( 'Scan for security threats' ) }
 			upsellDescription={ __( 'We guard your site. You run your business.' ) }
-			upsellExternalLink={ getScanURL( site ) }
+			upsellLink={ getScanURL( site ) }
 		>
 			<ScanCardContent site={ site } />
 		</HostingFeatureGatedWithOverviewCard>
