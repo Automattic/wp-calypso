@@ -1,4 +1,6 @@
 import { Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { isBefore, subDays } from 'date-fns';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { A4AConfirmationDialog } from 'calypso/a8c-for-agencies/components/a4a-confirmation-dialog';
@@ -53,10 +55,19 @@ export default function CancelSubscriptionAction( { subscription, onCancelSubscr
 		setIsVisible( false );
 	};
 
+	const storeSubscription = subscription.subscription;
+
 	const productName =
-		isBillingTypeBD && subscription.subscription?.product_name
-			? subscription.subscription.product_name
+		isBillingTypeBD && storeSubscription?.product_name
+			? storeSubscription.product_name
 			: products?.find( ( product ) => product.product_id === subscription.product_id )?.name ?? '';
+
+	const refundPeriodDays = storeSubscription?.billing_interval_unit === 'month' ? 7 : 14;
+	const isWithinRefundPeriod =
+		storeSubscription?.subscribed_date &&
+		isBefore( subDays( new Date(), refundPeriodDays ), storeSubscription?.subscribed_date );
+
+	const expiryDate = storeSubscription?.expiry ?? '';
 
 	return (
 		<>
@@ -77,19 +88,50 @@ export default function CancelSubscriptionAction( { subscription, onCancelSubscr
 					{ isFetchingProductInfo ? (
 						<TextPlaceholder />
 					) : (
-						translate(
-							'{{b}}%(productName)s{{/b}} will be canceled, and you will no longer have access to it. Are you sure you want to cancel?',
-							{
-								args: {
-									productName,
-								},
-								components: {
-									b: <b />,
-								},
-								comment:
-									'%(productName)s is the name of the product that the user is about to cancel.',
-							}
-						)
+						<>
+							<div>
+								{ isWithinRefundPeriod
+									? translate(
+											'{{b}}%(productName)s{{/b}} will be canceled and removed immediately. Since you are within the money-back period, you will be refunded.',
+											{
+												args: {
+													productName,
+												},
+												components: {
+													b: <b />,
+												},
+												comment:
+													'%(productName)s is the name of the product that the user is about to cancel.',
+											}
+									  )
+									: translate(
+											'{{b}}%(productName)s{{/b}} will be canceled, but it will remain active until %(expiryDate)s. After that, it will not renew',
+											{
+												args: {
+													productName,
+													expiryDate,
+												},
+												components: {
+													b: <b />,
+												},
+												comment:
+													'%(productName)s is the name of the product that the user is about to cancel.',
+											}
+									  ) }
+							</div>
+							<p>{ translate( 'Are you sure you want to cancel?' ) }</p>
+							<p>
+								<a
+									href={ localizeUrl(
+										'https://wordpress.com/support/manage-purchases/cancel-a-purchase/'
+									) }
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									{ translate( 'Learn more about how product cancellations work.' ) }
+								</a>
+							</p>
+						</>
 					) }
 				</A4AConfirmationDialog>
 			) }
