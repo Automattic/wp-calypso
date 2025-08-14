@@ -52,6 +52,7 @@
 		"@wordpress/components": "^29.9.0",
 		"@wordpress/react-i18n": "^4.23.0",
 		"clsx": "^2.1.1",
+		"date-fns": "^4.1.0",
 		"react-intersection-observer": "^9.4.3"
 	},
 	"devDependencies": {

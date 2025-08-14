@@ -1,4 +1,5 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
+import { useEffect, useMemo } from 'react';
 import { getFlowFromURL } from 'calypso/landing/stepper/utils/get-flow-from-url';
 import { getSessionId } from 'calypso/landing/stepper/utils/use-session-id';
 import type { FlowStateManifest } from './stepper-state-manifest';
@@ -21,6 +22,8 @@ const PERSISTENCE_CONFIG = {
 	networkMode: 'always',
 } as const;
 
+const DEFAULT_STATE: Partial< FlowStateManifest > = {};
+
 /**
  * Returns a setter and a getter for the flow state. This persists the state for 7 days. The persistence is based on the flow and the session ID.
  */
@@ -28,11 +31,12 @@ export function useFlowState() {
 	const queryClient = useQueryClient();
 	const flow = getFlowFromURL() || 'flow';
 	const session = getSessionId();
+	const queryKey = useMemo( () => [ PREFIX, flow, session, VERSION ] as const, [ flow, session ] );
+	const state = queryClient.getQueryData< FlowStateManifest >( queryKey ) ?? DEFAULT_STATE;
 
-	const { data: state } = useQuery< FlowStateManifest >( {
-		queryKey: [ PREFIX, flow, session, VERSION ],
-		...PERSISTENCE_CONFIG,
-	} );
+	useEffect( () => {
+		queryClient.setQueryDefaults( queryKey, PERSISTENCE_CONFIG );
+	}, [ queryClient, queryKey ] );
 
 	function get< T extends keyof FlowStateManifest >( key: T ) {
 		return state?.[ key ];

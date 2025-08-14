@@ -1,7 +1,18 @@
 import wpcom from 'calypso/lib/wp';
-import type { Domain } from './domains';
+import type { DomainSummary } from './domains';
 
-export type SiteDomain = Omit< Domain, 'domain_status' >;
+interface EmailSubscription {
+	status?: string;
+}
+
+export interface GoogleEmailSubscription extends EmailSubscription {}
+
+export interface TitanEmailSubscription extends EmailSubscription {}
+
+export type SiteDomain = Omit< DomainSummary, 'domain_status' > & {
+	google_apps_subscription?: GoogleEmailSubscription | null;
+	titan_mail_subscription?: TitanEmailSubscription | null;
+};
 
 export async function fetchSiteDomains( siteId: number ): Promise< SiteDomain[] > {
 	const { domains } = await wpcom.req.get( {
@@ -10,4 +21,8 @@ export async function fetchSiteDomains( siteId: number ): Promise< SiteDomain[] 
 	} );
 
 	return domains;
+}
+
+export async function setPrimaryDomain( siteId: number, domain: string ): Promise< SiteDomain > {
+	return wpcom.req.post( `/sites/${ siteId }/domains/primary`, { domain } );
 }

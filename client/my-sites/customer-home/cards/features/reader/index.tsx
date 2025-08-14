@@ -4,7 +4,7 @@ import iconReaderLightbulb from 'calypso/assets/images/customer-home/reader-ligh
 import withDimensions from 'calypso/lib/with-dimensions';
 import { trackScrollPage } from 'calypso/reader/controller-helper';
 import DiscoverNavigation from 'calypso/reader/discover/components/navigation';
-import { DEFAULT_TAB, buildDiscoverStreamKey } from 'calypso/reader/discover/helper';
+import { buildDiscoverStreamKey, getDefaultTab } from 'calypso/reader/discover/helper';
 import Stream from 'calypso/reader/stream';
 import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -15,7 +15,7 @@ const ReaderCard = () => {
 	const translate = useTranslate();
 
 	const queryParams = new URLSearchParams( window.location.search );
-	const selectedTab = queryParams.get( 'selectedTab' ) || DEFAULT_TAB;
+	const selectedTab = queryParams.get( 'selectedTab' ) || getDefaultTab();
 
 	const streamKey = buildDiscoverStreamKey( selectedTab, [ 'dailyprompt' ] );
 	const dispatch = useDispatch();

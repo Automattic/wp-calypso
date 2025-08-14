@@ -84,7 +84,7 @@ export function getHeaderText( {
 					text: 'Log in to {{span}}%(client)s{{/span}} with WordPress.com',
 					newCopy: translate( 'Log in to {{span}}%(client)s{{/span}} with WordPress.com', {
 						args: { client: clientName },
-						components: { span: <span className="wp-login__login-block-header-client-name" /> },
+						components: { span: <span className="wp-login__one-login-header-client-name" /> },
 					} ),
 					oldCopy: translate( 'Log in to WordPress.com' ),
 			  } ) as TranslateResult )

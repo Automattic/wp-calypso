@@ -12,6 +12,7 @@ import { wordpress } from '@wordpress/icons';
 import { siteByIdQuery } from '../../app/queries/site';
 import { siteCurrentPlanQuery } from '../../app/queries/site-plans';
 import { sitePurchaseQuery } from '../../app/queries/site-purchases';
+import { PurchaseExpiryStatus } from '../../components/purchase-expiry-status';
 import { DotcomPlans } from '../../data/constants';
 import {
 	getJetpackProductsForSite,
@@ -22,7 +23,8 @@ import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import OverviewCard from '../overview-card';
 import SiteBandwidthStat from './site-bandwidth-stat';
 import SiteStorageStat from './site-storage-stat';
-import type { Site, Purchase } from '../../data/types';
+import type { Purchase } from '../../data/purchase';
+import type { Site } from '../../data/types';
 import './style.scss';
 
 function getJetpackProductsDescription( products: typeof JETPACK_PRODUCTS ) {
@@ -165,7 +167,7 @@ function AgencyPlanCard( { site, isLoading }: { site: Site; isLoading: boolean }
 export default function PlanCard( { site }: { site: Site } ) {
 	const { data: plan, isLoading: isLoadingPlan } = useQuery( siteCurrentPlanQuery( site.ID ) );
 	const { data: purchase, isLoading: isLoadingPurchase } = useQuery( {
-		...sitePurchaseQuery( site.ID, plan?.id ?? '' ),
+		...sitePurchaseQuery( site.ID, parseInt( plan?.id ?? '' ) ),
 		enabled: !! plan?.id,
 	} );
 
@@ -207,16 +209,8 @@ function getCardDescription( site: Site, purchase?: Purchase ) {
 			: __( 'Upgrade to access more Jetpack tools.' );
 	}
 
-	if ( purchase?.expiry_message ) {
-		return purchase.expiry_message;
-	}
-
-	if ( purchase?.partner_name ) {
-		return sprintf(
-			/* translators: %s: the partner name, e.g.: "Jetpack" */
-			__( 'Managed by %s.' ),
-			purchase.partner_name
-		);
+	if ( purchase ) {
+		return <PurchaseExpiryStatus purchase={ purchase } />;
 	}
 
 	return undefined;

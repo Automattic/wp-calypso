@@ -32,6 +32,7 @@ class DomainSearchResults extends Component {
 		availableDomain: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		suggestions: PropTypes.array,
 		isLoadingSuggestions: PropTypes.bool.isRequired,
+		isLoadingSubdomainSuggestions: PropTypes.bool,
 		placeholderQuantity: PropTypes.number.isRequired,
 		buttonLabel: PropTypes.string,
 		mappingSuggestionLabel: PropTypes.string,
@@ -284,6 +285,7 @@ class DomainSearchResults extends Component {
 			domainSkipSuggestion = showSkipButton && (
 				<DomainSkipSuggestion
 					selectedSite={ selectedSite }
+					isLoadingSubdomainSuggestions={ this.props.isLoadingSubdomainSuggestions }
 					subdomainSuggestion={ subdomainSuggestion }
 					flowName={ this.props.flowName }
 					query={ this.props.lastDomainSearched }

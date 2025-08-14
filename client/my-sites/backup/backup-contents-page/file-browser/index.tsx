@@ -19,10 +19,12 @@ export interface FileBrowserConfig {
 	restrictedPaths?: string[];
 	restrictedTypes?: string[];
 	excludeTypes?: string[];
+	expandDirectoriesOnClick?: boolean;
 	alwaysInclude?: string[];
 	showHeaderButtons?: boolean;
 	showFileCard?: boolean;
 	showBackupTime?: boolean;
+	showSeparateExpandButton?: boolean;
 	siteId?: number;
 }
 
@@ -81,13 +83,13 @@ const FileBrowser: FunctionComponent< FileBrowserProps > = ( {
 						style={ { marginInlineStart: '14px', marginTop: '10px' } }
 					>
 						{ displayBackupDate
-							? createInterpolateElement( __( 'Listing files from the latest backup: <date />.' ), {
+							? createInterpolateElement( __( 'Content from the latest backup: <date />.' ), {
 									date: <span>{ displayBackupDate }</span>,
 							  } )
 							: __( 'There are no backups.' ) }{ ' ' }
 						<ExternalLink
 							href={ `/backup/${ effectiveSiteSlug }` }
-							children={ __( 'Create fresh backup now' ) }
+							children={ __( 'Create new backup' ) }
 						/>
 					</Text>
 				</HStack>

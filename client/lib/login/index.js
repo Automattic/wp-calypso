@@ -11,7 +11,6 @@ import {
 	isJetpackCloudOAuth2Client,
 	isWooOAuth2Client,
 	isIntenseDebateOAuth2Client,
-	isStudioAppOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 
@@ -108,16 +107,6 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 			redirectTo: redirectTo,
 			gravatarFrom: isGravatarOAuth2Client( oauth2Client ) && gravatarFrom,
 			gravatarFlow: isGravatarFlowOAuth2Client( oauth2Client ),
-		} );
-	}
-
-	if ( isStudioAppOAuth2Client( oauth2Client ) ) {
-		// Studio app signup via the magic login page
-		return login( {
-			locale,
-			twoFactorAuthType: 'link',
-			oauth2ClientId: oauth2Client.id,
-			redirectTo: redirectTo,
 		} );
 	}
 

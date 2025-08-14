@@ -28,7 +28,7 @@ function HelpCenterContent() {
 		recordTracksEvent( `calypso_inlinehelp_${ show ? 'close' : 'show' }`, {
 			force_site_id: true,
 			location: 'help-center',
-			section: 'gutenberg-editor',
+			section: helpCenterData.sectionName || 'gutenberg-editor',
 			editor_type: getEditorType(),
 			canvas_mode: canvasMode,
 		} );
@@ -71,7 +71,7 @@ function HelpCenterContent() {
 			{ isDesktop && showHelpIcon && <Fill name="PinnedItems/core">{ content }</Fill> }
 			<HelpCenter
 				locale={ helpCenterData.locale }
-				sectionName="gutenberg-editor"
+				sectionName={ helpCenterData.sectionName || 'gutenberg-editor' }
 				currentUser={ helpCenterData.currentUser }
 				site={ helpCenterData.site }
 				hasPurchases={ false }

@@ -2,7 +2,6 @@ import { Badge } from '@automattic/ui';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import {
-	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	ExternalLink,
@@ -19,6 +18,7 @@ import { sitePHPVersionQuery } from '../../app/queries/site-php-version';
 import { siteEngagementStatsQuery } from '../../app/queries/site-stats';
 import { siteUptimeQuery } from '../../app/queries/site-uptime';
 import ComponentViewTracker from '../../components/component-view-tracker';
+import { Text } from '../../components/text';
 import { TextBlur } from '../../components/text-blur';
 import TimeSince from '../../components/time-since';
 import { DotcomFeatures, HostingFeatures, JetpackModules } from '../../data/constants';
@@ -355,7 +355,7 @@ export function Status( { site }: { site: Site } ) {
 	const label = getSiteStatusLabel( site );
 
 	if ( status === 'deleted' ) {
-		return <Text isDestructive>{ label }</Text>;
+		return <Text intent="error">{ label }</Text>;
 	}
 
 	if ( status === 'difm_lite_in_progress' ) {
@@ -373,7 +373,7 @@ export function Status( { site }: { site: Site } ) {
 	if ( site.plan?.expired ) {
 		return (
 			<VStack spacing={ 1 }>
-				<Text isDestructive>{ __( 'Plan expired' ) }</Text>
+				<Text intent="error">{ __( 'Plan expired' ) }</Text>
 				<PlanRenewNag site={ site } source="status" />
 			</VStack>
 		);
@@ -425,7 +425,7 @@ export function Plan( { site }: { site: Site } ) {
 	if ( site.plan?.expired ) {
 		return (
 			<VStack spacing={ 1 }>
-				<Text isDestructive>
+				<Text intent="error">
 					{ sprintf(
 						/* translators: %s: plan name */
 						__( '%s-expired' ),

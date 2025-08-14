@@ -1,10 +1,12 @@
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { siteLaunchMutation, siteBySlugQuery } from '../../app/queries/site';
 import { siteSettingsMutation, siteSettingsQuery } from '../../app/queries/site-settings';
+import InlineSupportLink from '../../components/inline-support-link';
 import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';
 import AgencyDevelopmentSiteLaunchModal from './agency-development-site-launch-modal';
@@ -87,7 +89,12 @@ export default function SiteVisibilitySettings( { siteSlug }: { siteSlug: string
 			header={
 				<SettingsPageHeader
 					title={ __( 'Site visibility' ) }
-					description={ __( 'Control who can view your site.' ) }
+					description={ createInterpolateElement(
+						__( 'Control who can view your site. <link>Learn more</link>' ),
+						{
+							link: <InlineSupportLink supportContext="privacy" />,
+						}
+					) }
 				/>
 			}
 		>

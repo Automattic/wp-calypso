@@ -1,7 +1,4 @@
-import {
-	getAnyLanguageRouteParam,
-	removeLocaleFromPathLocaleInFront,
-} from '@automattic/i18n-utils';
+import { getAnyLanguageRouteParam } from '@automattic/i18n-utils';
 import AsyncLoad from 'calypso/components/async-load';
 import {
 	makeLayout,
@@ -24,7 +21,8 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import renderHeaderSection from '../lib/header-section';
 import { DiscoverDocumentHead } from './discover-document-head';
-import { getSelectedTabTitle, DEFAULT_TAB } from './helper';
+import { getSelectedTabTitle, getDefaultTab } from './helper';
+import { getPrivateRoutes, getDiscoverRoutes, getCurrentTab } from './routes';
 
 const ANALYTICS_PAGE_TITLE = 'Reader';
 
@@ -36,11 +34,13 @@ const discover = ( context, next ) => {
 	const state = context.store.getState();
 	const currentRoute = getCurrentRoute( state );
 	const currentQueryArgs = new URLSearchParams( getCurrentQueryArguments( state ) ).toString();
+	const selectedTab = getCurrentTab( context.path, getDefaultTab() );
+	const tabTitle = getSelectedTabTitle( selectedTab );
 
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 	recordTrack(
 		'calypso_reader_discover_viewed',
-		{},
+		{ content: selectedTab },
 		{ pathnameOverride: `${ currentRoute }?${ currentQueryArgs }` }
 	);
 
@@ -48,17 +48,6 @@ const discover = ( context, next ) => {
 		context.renderHeaderSection = renderHeaderSection;
 	}
 
-	// Handle both old query parameter-based routing and new path-based routing.
-	let selectedTab = DEFAULT_TAB;
-	// Extract the tab from the path for v2, ignoring query params.
-	const cleanPath = context.path.split( '?' )[ 0 ];
-	// Remove any locale prefix if it exists to get a clean path.
-	const pathWithoutLocale = removeLocaleFromPathLocaleInFront( cleanPath );
-	const pathParts = pathWithoutLocale.split( '/' );
-	// Now pathParts[2] will consistently be the tab.
-	selectedTab = pathParts[ 2 ] || DEFAULT_TAB;
-
-	const tabTitle = getSelectedTabTitle( selectedTab );
 	context.primary = (
 		<>
 			<DiscoverDocumentHead tabTitle={ tabTitle } />
@@ -101,28 +90,8 @@ export default function ( router ) {
 	];
 
 	// Must be logged in to access.
-	router(
-		[
-			'/discover/add-new',
-			'/discover/reddit',
-			`/${ anyLangParam }/discover/add-new`,
-			`/${ anyLangParam }/discover/reddit`,
-		],
-		redirectLoggedOutToSignup,
-		...commonMiddleware
-	);
+	router( getPrivateRoutes( anyLangParam ), redirectLoggedOutToSignup, ...commonMiddleware );
 
-	router(
-		[
-			'/discover',
-			'/discover/firstposts',
-			'/discover/tags',
-			'/discover/latest',
-			`/${ anyLangParam }/discover`,
-			`/${ anyLangParam }/discover/firstposts`,
-			`/${ anyLangParam }/discover/tags`,
-			`/${ anyLangParam }/discover/latest`,
-		],
-		...commonMiddleware
-	);
+	//
+	router( getDiscoverRoutes( anyLangParam ), ...commonMiddleware );
 }

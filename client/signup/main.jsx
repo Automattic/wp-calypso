@@ -46,6 +46,12 @@ import {
 	isWooOAuth2Client,
 	isGravatarOAuth2Client,
 	isPartnerPortalOAuth2Client,
+	isA4AOAuth2Client,
+	isBlazeProOAuth2Client,
+	isCrowdsignalOAuth2Client,
+	isVIPOAuth2Client,
+	isJetpackCloudOAuth2Client,
+	isStudioAppOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import SignupFlowController from 'calypso/lib/signup/flow-controller';
 import FlowProgressIndicator from 'calypso/signup/flow-progress-indicator';
@@ -60,6 +66,8 @@ import {
 } from 'calypso/state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import getIsAkismet from 'calypso/state/selectors/get-is-akismet';
+import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
@@ -764,7 +772,7 @@ class Signup extends Component {
 		);
 	}
 
-	renderCurrentStep() {
+	renderCurrentStep( isUnifiedCreateAccount ) {
 		const { stepName, flowName } = this.props;
 
 		const flow = flows.getFlow( flowName, this.props.isLoggedIn );
@@ -778,7 +786,8 @@ class Signup extends Component {
 			...flowStepProps,
 		};
 		const stepKey = this.state.shouldShowLoadingScreen ? 'processing' : stepName;
-		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;
+		const shouldRenderLocaleSuggestions =
+			0 === this.getPositionInFlow() && ! this.props.isLoggedIn && ! isUnifiedCreateAccount;
 
 		let propsForCurrentStep = propsFromConfig;
 		if ( this.props.isManageSiteFlow ) {
@@ -868,7 +877,19 @@ class Signup extends Component {
 			return this.props.siteId && waitToRenderReturnValue;
 		}
 
-		const showPageHeader = ! this.props.isGravatar;
+		const isUnifiedCreateAccount =
+			0 === this.getPositionInFlow() &&
+			! this.props.isLoggedIn &&
+			( this.props.isWoo ||
+				this.props.isA4A ||
+				this.props.isCrowdsignal ||
+				this.props.isBlazePro ||
+				this.props.isAkismet ||
+				this.props.isVIPClient ||
+				this.props.isJetpackCloud ||
+				isStudioAppOAuth2Client( this.props.oauth2Client ) );
+
+		const showPageHeader = ! this.props.isGravatar && ! isUnifiedCreateAccount;
 		const isGravatarDomain = isDomainForGravatarFlow( this.props.flowName );
 
 		return (
@@ -894,7 +915,7 @@ class Signup extends Component {
 							logoComponent={ isGravatarDomain ? <GravatarTextLogo /> : undefined }
 						/>
 					) }
-					<div className="signup__steps">{ this.renderCurrentStep() }</div>
+					<div className="signup__steps">{ this.renderCurrentStep( isUnifiedCreateAccount ) }</div>
 					{ this.state.bearerToken && (
 						<WpcomLoginForm
 							authorization={ 'Bearer ' + this.state.bearerToken }
@@ -942,6 +963,13 @@ export default connect(
 			isGravatar: isGravatarOAuth2Client( oauth2Client ),
 			wccomFrom: getWccomFrom( state ),
 			hostingFlow,
+			isWoo: getIsWoo( state ),
+			isA4A: isA4AOAuth2Client( oauth2Client ),
+			isBlazePro: isBlazeProOAuth2Client( oauth2Client ),
+			isCrowdsignal: isCrowdsignalOAuth2Client( oauth2Client ),
+			isAkismet: getIsAkismet( state ),
+			isVIPClient: isVIPOAuth2Client( oauth2Client ),
+			isJetpackCloud: isJetpackCloudOAuth2Client( oauth2Client ),
 		};
 	},
 	{

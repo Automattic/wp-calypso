@@ -17,6 +17,7 @@ import {
 	clearSignupCompleteSlug,
 	clearSignupCompleteFlowName,
 	clearSignupDestinationCookie,
+	clearSignupCompleteSiteID,
 } from 'calypso/signup/storageUtils';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
@@ -320,6 +321,7 @@ const onboarding: FlowV2< typeof initialize > = {
 				clearSignupDestinationCookie();
 				clearSignupCompleteFlowName();
 				clearSignupCompleteSlug();
+				clearSignupCompleteSiteID();
 			}
 		}, [ currentStepSlug, reduxDispatch, resetOnboardStore ] );
 
