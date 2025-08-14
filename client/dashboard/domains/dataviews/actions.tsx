@@ -210,6 +210,7 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				id: 'change-site-address',
 				label: __( 'Change site address' ),
 				supportsBulk: false,
+				callback: () => {},
 				isEligible: ( item: DomainSummary ) => {
 					return !! site && ! site?.is_wpcom_atomic && isFreeUrlDomainName( item.domain );
 				},
