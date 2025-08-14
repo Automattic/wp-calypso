@@ -1,12 +1,12 @@
-import { Card, CardBody, TabPanel } from '@wordpress/components';
+import { Card, CardBody, __experimentalVStack as VStack, TabPanel } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { SectionHeader } from '../../components/section-header';
 import { DnsTemplates } from '../../data/domain-dns-templates';
 import EmailSetupForm from './email-setup-form';
 
-import './email-setup.scss';
-
 export default function EmailSetup() {
+	const isMobile = useViewportMatch( 'small' );
 	const tabs = [
 		{
 			name: 'google-workspace',
@@ -19,7 +19,7 @@ export default function EmailSetup() {
 							'Paste the verification token provided by Google Workspace for the TXT record.'
 						) }
 						pattern={ /^google-site-verification=[A-Za-z0-9_-]{43}$/ }
-						placeholder="e.g., google-site-verification=..."
+						placeholder="google-site-verification=..."
 						provider={ DnsTemplates.G_SUITE.PROVIDER }
 						service={ DnsTemplates.G_SUITE.SERVICE }
 					/>
@@ -90,14 +90,20 @@ export default function EmailSetup() {
 	return (
 		<Card className="email-setup">
 			<CardBody>
-				<SectionHeader
-					title={ __( 'Email setup' ) }
-					description={ __( 'Set up an existing email service for this domain' ) }
-					level={ 3 }
-				/>
-				<TabPanel tabs={ tabs } className="email-setup__tabs">
-					{ ( tab ) => <div className="email-setup__tab-panel">{ tab.content }</div> }
-				</TabPanel>
+				<VStack spacing={ 5 }>
+					<SectionHeader
+						title={ __( 'Email setup' ) }
+						description={ __( 'Set up an existing email service for this domain' ) }
+						level={ 4 }
+					/>
+					<TabPanel
+						tabs={ tabs }
+						className="email-setup__tabs"
+						orientation={ isMobile ? 'horizontal' : 'vertical' }
+					>
+						{ ( tab ) => <div className="email-setup__tab-panel">{ tab.content }</div> }
+					</TabPanel>
+				</VStack>
 			</CardBody>
 		</Card>
 	);

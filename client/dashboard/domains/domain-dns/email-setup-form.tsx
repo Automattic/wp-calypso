@@ -12,8 +12,6 @@ import { useState } from 'react';
 import { domainDnsApplyTemplateMutation } from '../../app/queries/domain-dns-records';
 import { domainRoute } from '../../app/routes/domain-routes';
 
-import './email-setup-form.scss';
-
 export type EmailSetupFormData = {
 	record: string;
 };
@@ -100,7 +98,7 @@ export default function EmailSetupForm( {
 		{
 			id: 'record',
 			type: 'text',
-			label,
+			label: __( 'Verification token' ),
 			description,
 			placeholder,
 			isValid: {
@@ -113,9 +111,9 @@ export default function EmailSetupForm( {
 	];
 
 	return (
-		<div className="email-setup-form">
+		<div className="email-setup-form" style={ { marginTop: '28px' } }>
 			<form onSubmit={ handleSubmit }>
-				<VStack spacing={ 4 }>
+				<VStack spacing={ 5 }>
 					<DataForm< EmailSetupFormData >
 						data={ formData }
 						fields={ fields }
