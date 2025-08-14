@@ -41,16 +41,18 @@ export default function StagingSiteSyncDropdown( {
 
 	const productionSiteId = site ? getProductionSiteId( site ) : null;
 	const stagingSiteId = site ? getStagingSiteId( site ) : null;
+	const siteHasManageOptions = ( site: Site ) => site?.capabilities?.manage_options;
 
 	const { data: stagingSite } = useQuery( {
 		...siteByIdQuery( stagingSiteId ?? 0 ),
+		refetchInterval: ( query ) => {
+			return siteHasManageOptions( query.state.data ) ? false : 5000;
+		},
 		enabled: !! stagingSiteId,
 	} );
 
 	const isStagingSite = !! stagingSiteId;
-	const stagingSiteHasManageOptions = stagingSite?.capabilities?.manage_options;
-
-	const isStagingSiteTransferInProgress = isStagingSite && ! stagingSiteHasManageOptions;
+	const isStagingSiteTransferInProgress = isStagingSite && ! siteHasManageOptions( stagingSite );
 
 	const { data: stagingSiteSyncState, refetch: fetchStagingSiteSyncState } = useQuery( {
 		...stagingSiteSyncStateQuery( productionSiteId ?? 0 ),
