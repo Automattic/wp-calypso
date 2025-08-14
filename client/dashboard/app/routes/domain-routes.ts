@@ -1,5 +1,6 @@
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { domainQuery } from '../queries/domain';
+import { domainDnsQuery } from '../queries/domain-dns-records';
 import { domainForwardingQuery } from '../queries/domain-forwarding';
 import { domainGlueRecordsQuery } from '../queries/domain-glue-records';
 import { domainsQuery } from '../queries/domains';
@@ -73,8 +74,10 @@ export const domainOverviewRoute = createRoute( {
 export const domainDnsRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'dns',
+	loader: ( { params: { domainName } } ) =>
+		queryClient.ensureQueryData( domainDnsQuery( domainName ) ),
 } ).lazy( () =>
-	import( '../../sites/domains/placeholder' ).then( ( d ) =>
+	import( '../../domains/domain-dns' ).then( ( d ) =>
 		createLazyRoute( 'domain-dns' )( {
 			component: d.default,
 		} )
@@ -200,7 +203,7 @@ export const domainDnssecRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'dnssec',
 } ).lazy( () =>
-	import( '../../domains/overview-dnssec' ).then( ( d ) =>
+	import( '../../domains/domain-dnssec' ).then( ( d ) =>
 		createLazyRoute( 'domain-dnssec' )( {
 			component: d.default,
 		} )

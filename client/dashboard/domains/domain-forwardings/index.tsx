@@ -83,7 +83,7 @@ function DomainForwardings() {
 				},
 			},
 		],
-		[]
+		[ createErrorNotice, createSuccessNotice, deleteMutation, domainName, router ]
 	);
 
 	const fields: Field< DomainForwarding >[] = useMemo(
@@ -142,7 +142,7 @@ function DomainForwardings() {
 				},
 			},
 		],
-		[]
+		[ domainName ]
 	);
 
 	const [ view, setView ] = useState< ForwardingView >( DEFAULT_VIEW );
