@@ -5,8 +5,8 @@ import { sprintf } from '@wordpress/i18n';
 import { plus } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useMemo, useEffect } from 'react';
-import { siteLatestAtomicTransferQuery } from 'calypso/dashboard/app/queries/site-atomic-transfers';
-import { isAtomicTransferInProgress } from 'calypso/dashboard/utils/site-atomic-transfers';
+import { siteByIdQuery } from 'calypso/dashboard/app/queries/site';
+import { hasManageOptions } from 'calypso/dashboard/utils/site-capabilities';
 import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
 import { useAddStagingSiteMutation } from 'calypso/sites/staging-site/hooks/use-add-staging-site';
 import { useCheckStagingSiteStatus } from 'calypso/sites/staging-site/hooks/use-check-staging-site-status';
@@ -69,18 +69,15 @@ export default function HeaderStagingSiteButton( {
 	}, [ stagingSites ] );
 	const transferStatus = useCheckStagingSiteStatus( stagingSiteId );
 
-	// Check atomic transfer status for staging site
-	const { data: atomicTransfer } = useQuery( {
-		...siteLatestAtomicTransferQuery( stagingSiteId ?? 0 ),
+	const { data: stagingSite } = useQuery( {
+		...siteByIdQuery( stagingSiteId ?? 0 ),
 		refetchInterval: ( query ) => {
-			return isAtomicTransferInProgress( query.state.data?.status ?? 'pending' ) ? 3000 : false;
+			return hasManageOptions( query.state.data ) ? false : 5000;
 		},
 		enabled: !! stagingSiteId,
 	} );
 
-	const isStagingSiteReady = atomicTransfer
-		? ! isAtomicTransferInProgress( atomicTransfer.status )
-		: false;
+	const isStagingSiteReady = !! stagingSiteId && hasManageOptions( stagingSite );
 
 	useEffect( () => {
 		if ( isCreatingStagingSite && isStagingSiteReady ) {

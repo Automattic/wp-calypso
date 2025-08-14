@@ -1,7 +1,7 @@
 import type { Site } from '../data/types';
 
-export const hasManageOptions = ( site: Site ) => {
-	if ( ! site.capabilities ) {
+export const hasManageOptions = ( site: Site | undefined ) => {
+	if ( ! site?.capabilities ) {
 		return false;
 	}
 
