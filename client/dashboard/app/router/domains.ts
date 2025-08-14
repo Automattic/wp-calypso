@@ -190,7 +190,7 @@ export const domainGlueRecordsEditRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'glue-records/edit/$nameServer',
 } ).lazy( () =>
-	import( '../../sites/domains/placeholder' ).then( ( d ) =>
+	import( '../../domains/overview-glue-records/edit' ).then( ( d ) =>
 		createLazyRoute( 'domain-glue-records-edit' )( {
 			component: d.default,
 		} )

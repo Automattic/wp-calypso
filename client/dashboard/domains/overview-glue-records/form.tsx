@@ -22,6 +22,7 @@ interface DomainGlueRecordsFormProps {
 	initialData?: DomainGlueRecord | null;
 	onSubmit: ( data: FormData ) => void;
 	isSubmitting: boolean;
+	isEdit?: boolean;
 	submitButtonText: string;
 }
 
@@ -30,6 +31,7 @@ export default function DomainGlueRecordsForm( {
 	initialData,
 	onSubmit,
 	isSubmitting,
+	isEdit = false,
 	submitButtonText,
 }: DomainGlueRecordsFormProps ) {
 	const [ formData, setFormData ] = useState< FormData >( () => {
@@ -52,6 +54,7 @@ export default function DomainGlueRecordsForm( {
 				label: __( 'Name Server' ),
 				placeholder: 'ns1.' + domainName,
 				type: 'text' as const,
+				readOnly: isEdit,
 				isValid: {
 					custom: ( item ) => {
 						if ( ! isValidNameServer( item.nameServer ) ) {

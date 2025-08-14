@@ -24,7 +24,7 @@ export default function AddDomainGlueRecords() {
 
 		createMutation.mutate( glueRecord, {
 			onSuccess: () => {
-				createSuccessNotice( __( 'Domain glue record created successfully.' ), {
+				createSuccessNotice( __( 'Glue record created successfully.' ), {
 					type: 'snackbar',
 				} );
 				router.navigate( {
@@ -33,7 +33,7 @@ export default function AddDomainGlueRecords() {
 				} );
 			},
 			onError: () => {
-				createErrorNotice( __( 'Failed to create domain glue record.' ), { type: 'snackbar' } );
+				createErrorNotice( __( 'Failed to create glue record.' ), { type: 'snackbar' } );
 			},
 		} );
 	};
