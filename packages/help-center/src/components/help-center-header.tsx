@@ -4,6 +4,7 @@ import { useGetHistoryChats } from '@automattic/help-center/src/hooks/use-get-hi
 import {
 	CardHeader,
 	Button,
+	Spinner,
 	Flex,
 	__experimentalElevation as Elevation,
 	__experimentalHStack as HStack,
@@ -30,7 +31,6 @@ import clsx from 'clsx';
 import { useLocation, useSearchParams, useNavigate } from 'react-router-dom';
 import { usePostByUrl } from '../hooks';
 import { useResetSupportInteraction } from '../hooks/use-reset-support-interaction';
-import { DragIcon } from '../icons';
 import { HELP_CENTER_STORE } from '../stores';
 import { BackButton } from './back-button';
 import type { Header } from '../types';
@@ -89,7 +89,8 @@ const SupportModeTitle = () => {
 
 const EllipsisMenu = () => {
 	const { __ } = useI18n();
-	const resetSupportInteraction = useResetSupportInteraction();
+	const { resetSupportInteraction, isMutating: isResettingSupportInteraction } =
+		useResetSupportInteraction();
 	const navigate = useNavigate();
 	const { recentConversations } = useGetHistoryChats();
 	const { areSoundNotificationsEnabled } = useSelect( ( select ) => {
@@ -118,43 +119,43 @@ const EllipsisMenu = () => {
 		setAreSoundNotificationsEnabled( ! areSoundNotificationsEnabled );
 	};
 
-	return (
+	return isResettingSupportInteraction ? (
+		<Spinner width={ 24 } height={ 24 } />
+	) : (
 		<Menu>
-			<>
-				<Menu.TriggerButton render={ <Button icon={ moreVertical } /> } />
-				<Menu.Popover>
-					<Menu.Item
-						prefix={ <Icon icon={ lineSolid } width={ 24 } height={ 24 } /> }
-						onClick={ () => setIsMinimized( true ) }
-					>
-						<Menu.ItemLabel>{ __( 'Minimize', __i18n_text_domain__ ) }</Menu.ItemLabel>
-					</Menu.Item>
-					<Menu.Separator />
-					<Menu.Item
-						onClick={ clearChat }
-						prefix={ <Icon icon={ comment } width={ 24 } height={ 24 } /> }
-					>
-						<Menu.ItemLabel>{ __( 'New chat', __i18n_text_domain__ ) }</Menu.ItemLabel>
-					</Menu.Item>
-					<Menu.Item
-						onClick={ handleViewChats }
-						prefix={ <Icon icon={ backup } width={ 24 } height={ 24 } /> }
-					>
-						<Menu.ItemLabel>{ __( 'Support history', __i18n_text_domain__ ) }</Menu.ItemLabel>
-					</Menu.Item>
-					<Menu.Separator />
-					<Menu.Item
-						onClick={ toggleSoundNotifications }
-						prefix={ <Icon icon={ bell } width={ 24 } height={ 24 } /> }
-					>
-						<Menu.ItemLabel>
-							{ areSoundNotificationsEnabled
-								? __( 'Turn off sound notifications', __i18n_text_domain__ )
-								: __( 'Turn on sound notifications', __i18n_text_domain__ ) }
-						</Menu.ItemLabel>
-					</Menu.Item>
-				</Menu.Popover>
-			</>
+			<Menu.TriggerButton render={ <Button icon={ moreVertical } /> } />
+			<Menu.Popover>
+				<Menu.Item
+					prefix={ <Icon icon={ lineSolid } width={ 20 } height={ 20 } /> }
+					onClick={ () => setIsMinimized( true ) }
+				>
+					<Menu.ItemLabel>{ __( 'Minimize', __i18n_text_domain__ ) }</Menu.ItemLabel>
+				</Menu.Item>
+				<Menu.Separator />
+				<Menu.Item
+					onClick={ clearChat }
+					prefix={ <Icon icon={ comment } width={ 24 } height={ 24 } /> }
+				>
+					<Menu.ItemLabel>{ __( 'New chat', __i18n_text_domain__ ) }</Menu.ItemLabel>
+				</Menu.Item>
+				<Menu.Item
+					onClick={ handleViewChats }
+					prefix={ <Icon icon={ backup } width={ 24 } height={ 24 } /> }
+				>
+					<Menu.ItemLabel>{ __( 'Support history', __i18n_text_domain__ ) }</Menu.ItemLabel>
+				</Menu.Item>
+				<Menu.Separator />
+				<Menu.Item
+					onClick={ toggleSoundNotifications }
+					prefix={ <Icon icon={ bell } width={ 24 } height={ 24 } /> }
+				>
+					<Menu.ItemLabel>
+						{ areSoundNotificationsEnabled
+							? __( 'Turn off sound notifications', __i18n_text_domain__ )
+							: __( 'Turn on sound notifications', __i18n_text_domain__ ) }
+					</Menu.ItemLabel>
+				</Menu.Item>
+			</Menu.Popover>
 		</Menu>
 	);
 };
@@ -277,7 +278,7 @@ const HelpCenterHeader = ( { onDismiss }: Header ) => {
 	return (
 		<CardHeader className={ classNames }>
 			<Flex>
-				{ shouldShowBackButton ? <BackButton /> : <DragIcon /> }
+				{ shouldShowBackButton ? <BackButton /> : null }
 				<HeaderText />
 				<EllipsisMenu />
 				<Button

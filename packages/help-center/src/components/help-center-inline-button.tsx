@@ -25,7 +25,7 @@ const HelpCenterInlineButton: FC< HelpCenterInlineButtonProps > = ( {
 	children,
 	className,
 } ) => {
-	const resetSupportInteraction = useResetSupportInteraction();
+	const { resetSupportInteraction } = useResetSupportInteraction();
 	const { setShowHelpCenter, setNavigateToRoute, setNewMessagingChat } =
 		useDispatch( HELP_CENTER_STORE );
 	const isShowingHelpCenter = useSelect(

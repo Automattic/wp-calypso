@@ -9,12 +9,16 @@
 	&.is-desktop .help-center__container-header {
 		cursor: move;
 	}
+	
 
 	.components-card__header {
 		padding: 9px 16px;
 
 		&.is-minimized {
 			padding: 16px;
+		}
+		.components-spinner {
+			margin: 0 8px;
 		}
 	}
 
@@ -64,10 +68,6 @@
 			margin: 0 0 0 4px;
 			flex: 1;
 
-			svg:not(.help-center__drag-icon) {
-				cursor: pointer;
-			}
-
 			:focus {
 				outline: none;
 			}
@@ -82,19 +82,14 @@
 			.help-center-header__unread-count {
 				display: inline-block;
 				margin-left: 8px;
-				padding: 2px 8px;
+				box-sizing: border-box;
+				padding: 4px;
+				width: 24px;
+				height: 24px;
 				background: var(--studio-white);
-				border-radius: 45%;
+				border-radius: 50%;
 				font-size: $font-body-extra-small;
 				color: $help-center-blue;
-			}
-		}
-
-		.ellipsis-menu {
-			.ellipsis-menu__toggle {
-				width: 36px;
-				height: 36px;
-				padding: 6px;
 			}
 		}
 	}
