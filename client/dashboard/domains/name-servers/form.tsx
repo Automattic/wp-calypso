@@ -206,7 +206,7 @@ export default function NameServersForm( {
 			<VStack spacing={ 4 }>
 				{ queryError && <Notice variant="error">{ queryError }</Notice> }
 				{ ! queryError && (
-					<VStack spacing={ 4 }>
+					<>
 						<DataForm< FormData >
 							data={ formData }
 							fields={ fields }
@@ -226,7 +226,7 @@ export default function NameServersForm( {
 								{ __( 'Save' ) }
 							</Button>
 						</View>
-					</VStack>
+					</>
 				) }
 			</VStack>
 		</form>
