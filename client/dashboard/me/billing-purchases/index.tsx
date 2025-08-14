@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useResizeObserver } from '@wordpress/compose';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { userPaymentMethodsQuery } from '../../app/queries/me-payment-methods';
 import { userPurchasesQuery, userTransferredPurchasesQuery } from '../../app/queries/me-purchases';
 import { sitesQuery } from '../../app/queries/sites';
@@ -17,42 +17,101 @@ import {
 	getItemId,
 	usePurchasesListActions,
 } from './dataviews';
-import type { Operator } from '@wordpress/dataviews';
+import type { Site } from '../../data/site';
+import type { Operator, View } from '@wordpress/dataviews';
+
+function alterUrlForViewProp(
+	url: URL,
+	urlKey: string,
+	currentViewPropValue: string | number | string[] | number[] | undefined,
+	defaultValue?: string | number | undefined
+): void {
+	if ( currentViewPropValue && defaultValue && currentViewPropValue !== defaultValue ) {
+		url.searchParams.set( urlKey, String( currentViewPropValue ) );
+	} else if ( currentViewPropValue && ! defaultValue ) {
+		url.searchParams.set( urlKey, String( currentViewPropValue ) );
+	} else {
+		url.searchParams.delete( urlKey );
+	}
+}
+
+function persistViewToUrl( view: View, sites: Site[] ): void {
+	if ( typeof window === 'undefined' ) {
+		return;
+	}
+	// Only persist certain view settings to the URL. All view settings will be
+	// saved to localStorage and restored automatically. We only need to save
+	// ones to the URL that are likely to need direct links or bookmarks.
+	const url = new URL( window.location.href );
+	const siteId = view.filters?.find( ( filter ) => filter.field === 'site' )?.value;
+	const siteSlug = sites.find( ( site ) => String( site.ID ) === String( siteId ) )?.slug;
+	if ( ! siteSlug ) {
+		return;
+	}
+	alterUrlForViewProp( url, 'site', siteSlug );
+	window.history.pushState( undefined, '', url );
+}
+
+function persistViewChange( view: View, sites: Site[] ): void {
+	// FIXME: persist to localStorage also
+	persistViewToUrl( view, sites );
+}
+
+function updateViewFromSiteId( view: View, siteId: number ): View {
+	return {
+		...view,
+		filters: [
+			...( view.filters ?? [] ),
+			{
+				// Note: `value` must be a string to prevent the error:
+				// `filterInView?.value?.includes is not a function`
+				value: String( siteId ),
+				operator: 'isAny' as Operator,
+				field: 'site',
+			},
+		],
+	};
+}
+
+function useSetInitialViewFromUrl( {
+	sites,
+	siteSlug,
+	setView,
+}: {
+	sites: Array< Site > | undefined;
+	siteSlug: string | undefined;
+	setView: ( setter: View | ( ( view: View ) => View ) ) => void;
+} ): void {
+	const idFromSiteSlug = siteSlug
+		? sites?.find( ( site ) => site.slug === siteSlug )?.ID
+		: undefined;
+	const didUpdateViewFromUrl = useRef( false );
+	useEffect( () => {
+		if ( ! idFromSiteSlug ) {
+			return;
+		}
+		if ( didUpdateViewFromUrl.current ) {
+			return;
+		}
+		didUpdateViewFromUrl.current = true;
+		setView( ( view ) => updateViewFromSiteId( view, idFromSiteSlug ) );
+	}, [ idFromSiteSlug, setView ] );
+}
 
 export default function PurchasesList() {
-	const { site: siteSlug }: { site?: string | undefined } = purchasesRoute.useSearch();
+	const { site: siteSlug }: { site?: string } = purchasesRoute.useSearch();
 	const { data: purchases, isLoading: isLoadingPurchases } = useQuery( userPurchasesQuery() );
 	const { data: transferredPurchases, isLoading: isLoadingTransferredPurchases } = useQuery(
 		userTransferredPurchasesQuery()
 	);
 	const { data: sites, isLoading: isLoadingSites } = useQuery( sitesQuery() );
+
 	const [ currentView, setView ] = useState( purchasesDataView );
-
-	// Allow setting the site filter by query string.
-	const idFromSiteSlug = siteSlug && sites?.find( ( site ) => site.slug === siteSlug )?.ID;
-	useEffect( () => {
-		if ( idFromSiteSlug ) {
-			// Remove the query string from the URL
-			const urlWithoutQuery =
-				window.location.origin + window.location.pathname + window.location.hash;
-			history.replaceState( {}, document.title, urlWithoutQuery );
-
-			// Update the view to filter based on the site.
-			setView( ( view ) => {
-				return {
-					...view,
-					filters: [
-						...( view.filters ?? [] ),
-						{
-							value: String( idFromSiteSlug ),
-							operator: 'isAny' as Operator,
-							field: 'site',
-						},
-					],
-				};
-			} );
-		}
-	}, [ idFromSiteSlug ] );
+	useSetInitialViewFromUrl( {
+		sites,
+		siteSlug,
+		setView,
+	} );
 
 	const ref = useResizeObserver( ( entries ) => {
 		const firstEntry = entries[ 0 ];
@@ -65,6 +124,13 @@ export default function PurchasesList() {
 		sites: sites ?? [],
 		paymentMethods: paymentMethods ?? [],
 		transferredPurchases: transferredPurchases ?? [],
+		filterViewBySite: ( site: Site ) => {
+			setView( ( view ) => {
+				const newView = updateViewFromSiteId( view, site.ID );
+				persistViewChange( newView, sites ?? [] );
+				return newView;
+			} );
+		},
 	} );
 	const allSubscriptions = useMemo( () => {
 		return [ ...( purchases ?? [] ), ...( transferredPurchases ?? [] ) ];
@@ -77,6 +143,11 @@ export default function PurchasesList() {
 		transferredPurchases: transferredPurchases ?? [],
 	} );
 
+	const onChangeView = ( newView: View ) => {
+		persistViewChange( newView, sites ?? [] );
+		setView( newView );
+	};
+
 	return (
 		<PageLayout size="large" header={ <PageHeader title={ __( 'Active Upgrades' ) } /> }>
 			<div ref={ ref }>
@@ -86,7 +157,7 @@ export default function PurchasesList() {
 						data={ filteredSubscriptions ?? [] }
 						fields={ purchasesDataFields }
 						view={ currentView }
-						onChangeView={ setView }
+						onChangeView={ onChangeView }
 						defaultLayouts={ { table: {} } }
 						actions={ actions }
 						getItemId={ getItemId }

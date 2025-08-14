@@ -36,6 +36,7 @@ const defaultSort = {
 export const purchasesDataView: View = {
 	type: 'table',
 	page: 1,
+	search: '',
 	perPage: defaultPerPage,
 	titleField: 'product',
 	showTitle: true,
@@ -109,10 +110,6 @@ function getPurchaseUrl( purchase: Purchase ) {
 
 function getAddPaymentMethodUrlFor( purchase: Purchase ): string {
 	return `/me/purchases/${ purchase.site_slug ?? 'unknown' }/${ purchase.ID }/payment-method/add`;
-}
-
-function getUrlForSiteLevelView( site: Site ): string {
-	return `/v2/me/billing/purchases?siteSlug=${ site.slug }`;
 }
 
 function InfoPopover( { children }: { children: ReactNode } ) {
@@ -241,10 +238,12 @@ export function getFields( {
 	sites,
 	paymentMethods,
 	transferredPurchases,
+	filterViewBySite,
 }: {
 	sites: Site[];
 	paymentMethods: Array< StoredPaymentMethod >;
 	transferredPurchases: Array< Purchase >;
+	filterViewBySite: ( site: Site ) => void;
 } ): Fields< Purchase > {
 	const backupPaymentMethods = paymentMethods.filter(
 		( paymentMethod ) => paymentMethod.is_backup === true
@@ -335,11 +334,7 @@ export function getFields( {
 			render: ( { item }: { item: Purchase } ) => {
 				const site = sites.find( ( site ) => String( site.ID ) === item.blog_id );
 				return (
-					<PurchaseProduct
-						purchase={ item }
-						site={ site }
-						getUrlForSiteLevelView={ getUrlForSiteLevelView }
-					/>
+					<PurchaseProduct purchase={ item } site={ site } filterViewBySite={ filterViewBySite } />
 				);
 			},
 		},
