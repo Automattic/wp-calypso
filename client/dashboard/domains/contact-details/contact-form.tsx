@@ -24,7 +24,6 @@ import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { fetchDomainWhoisValidate } from '../../data/domain-whois';
 import type { DomainContactDetails } from './types';
-import type { CountryListItem } from '../../data/domain';
 
 import './contact-form.scss';
 interface ContactFormProps {
