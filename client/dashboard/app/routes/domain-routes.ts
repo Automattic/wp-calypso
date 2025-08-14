@@ -118,12 +118,12 @@ export const domainForwardingsRoute = createRoute( {
 
 export const domainForwardingAddRoute = createRoute( {
 	getParentRoute: () => domainRoute,
-	path: 'forwarding/add',
+	path: 'forwardings/add',
 	loader: ( { params: { domainName } } ) =>
 		queryClient.ensureQueryData( domainForwardingQuery( domainName ) ),
 } ).lazy( () =>
-	import( '../../domains/domain-forwarding/add' ).then( ( d ) =>
-		createLazyRoute( 'domain-forwarding-add' )( {
+	import( '../../domains/domain-forwardings/add' ).then( ( d ) =>
+		createLazyRoute( 'domain-forwardings-add' )( {
 			component: d.default,
 		} )
 	)
@@ -131,12 +131,12 @@ export const domainForwardingAddRoute = createRoute( {
 
 export const domainForwardingEditRoute = createRoute( {
 	getParentRoute: () => domainRoute,
-	path: 'forwarding/edit/$forwardingId',
+	path: 'forwardings/edit/$forwardingId',
 	loader: ( { params: { domainName } } ) =>
 		queryClient.ensureQueryData( domainForwardingQuery( domainName ) ),
 } ).lazy( () =>
-	import( '../../domains/domain-forwarding/edit' ).then( ( d ) =>
-		createLazyRoute( 'domain-forwarding-edit' )( {
+	import( '../../domains/domain-forwardings/edit' ).then( ( d ) =>
+		createLazyRoute( 'domain-forwardings-edit' )( {
 			component: d.default,
 		} )
 	)
