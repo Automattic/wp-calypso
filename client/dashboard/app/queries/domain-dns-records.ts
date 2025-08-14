@@ -22,14 +22,14 @@ export const domainDnsMutation = ( domainName: string ) =>
 			),
 		onSuccess: () => {
 			queryClient.invalidateQueries( {
-				queryKey: [ 'domains', domainName, 'domain-dns' ],
+				queryKey: [ 'domains', domainName, 'dns' ],
 			} );
 		},
 	} );
 
 export const domainDnsQuery = ( domainName: string ) =>
 	queryOptions( {
-		queryKey: [ 'domains', domainName, 'domain-dns' ],
+		queryKey: [ 'domains', domainName, 'dns' ],
 		queryFn: () => fetchDomainDns( domainName ),
 	} );
 
@@ -38,7 +38,7 @@ export const domainDnsEmailMutation = ( domainName: string ) =>
 		mutationFn: () => restoreDefaultEmailRecords( domainName ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( {
-				queryKey: [ 'domains', domainName, 'domain-dns' ],
+				queryKey: [ 'domains', domainName, 'dns' ],
 			} );
 		},
 	} );

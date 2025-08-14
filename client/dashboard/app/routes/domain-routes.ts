@@ -76,7 +76,7 @@ export const domainDnsRoute = createRoute( {
 	loader: ( { params: { domainName } } ) =>
 		queryClient.ensureQueryData( domainDnsQuery( domainName ) ),
 } ).lazy( () =>
-	import( '../../domains/overview-dns' ).then( ( d ) =>
+	import( '../../domains/domain-dns' ).then( ( d ) =>
 		createLazyRoute( 'domain-dns' )( {
 			component: d.default,
 		} )
@@ -178,7 +178,7 @@ export const domainDnssecRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'dnssec',
 } ).lazy( () =>
-	import( '../../domains/overview-dnssec' ).then( ( d ) =>
+	import( '../../domains/domain-dnssec' ).then( ( d ) =>
 		createLazyRoute( 'domain-dnssec' )( {
 			component: d.default,
 		} )

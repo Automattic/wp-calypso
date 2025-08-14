@@ -20,12 +20,7 @@ const DnsActionsMenu = ( {
 	onRestoreDefaultEmailRecords,
 }: DnsActionsMenuProps ) => {
 	return (
-		<DropdownMenu
-			id="dashboard-domains-overview-dns-actions-menu"
-			className="dashboard-domains-overview-dns-actions-menu"
-			icon={ moreVertical }
-			label={ __( 'Restore default DNS records' ) }
-		>
+		<DropdownMenu icon={ moreVertical } label={ __( 'Restore default DNS records' ) }>
 			{ ( { onClose } ) => (
 				<MenuGroup className="dashboard-domains-overview-dns-actions-menu__menu-group">
 					<MenuItem
