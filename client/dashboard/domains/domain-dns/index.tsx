@@ -18,6 +18,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { useDnsActions } from './actions';
 import DnsActionsMenu from './dns-actions-menu';
+import EmailSetup from './email-setup';
 import { useDnsFields } from './fields';
 import RestoreDefaultARecords from './restore-default-a-records';
 import RestoreDefaultCnameRecord from './restore-default-cname-record';
@@ -251,6 +252,7 @@ export default function DomainDns() {
 					</DataViews>
 				) }
 			</DataViewsCard>
+			<EmailSetup />
 			<RestoreDefaultARecords
 				onConfirm={ handleRestoreDefaultARecords }
 				onCancel={ () => setIsRestoreDefaultARecordsDialogOpen( false ) }

@@ -1,0 +1,16 @@
+.email-setup-form {
+	form {
+		width: 100%;
+	}
+
+	// Ensure proper spacing for the DataForm fields
+	.components-base-control {
+		margin-bottom: 1rem;
+	}
+
+	.components-base-control__help {
+		margin-top: 0.5rem;
+		font-size: 0.875rem;
+		color: #646970;
+	}
+} 
