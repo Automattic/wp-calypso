@@ -6,7 +6,7 @@ import {
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm, Field } from '@wordpress/dataviews';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { domainDnsApplyTemplateMutation } from '../../app/queries/domain-dns-records';
@@ -39,7 +39,6 @@ interface EmailSetupFormProps {
 	placeholder: string;
 	provider: string;
 	service: string;
-	submitLabel: string;
 }
 
 export default function EmailSetupForm( {
@@ -50,7 +49,6 @@ export default function EmailSetupForm( {
 	placeholder,
 	provider,
 	service,
-	submitLabel,
 }: EmailSetupFormProps ) {
 	const { domainName } = domainRoute.useParams();
 	const [ formData, setFormData ] = useState< EmailSetupFormData >( defaultFormData );
@@ -92,6 +90,7 @@ export default function EmailSetupForm( {
 				},
 				onSettled: () => {
 					setIsPending( false );
+					setFormData( defaultFormData );
 				},
 			}
 		);
@@ -127,7 +126,12 @@ export default function EmailSetupForm( {
 					/>
 					<HStack justify="flex-start">
 						<Button variant="primary" type="submit" isBusy={ isPending } disabled={ isPending }>
-							{ submitLabel }
+							{
+								// translators: %(providerName)s will be replaced with the name of the service provider that this template is used for, for example Google Workspace or Office 365
+								sprintf( __( 'Set up %(provider)s' ), {
+									provider: label,
+								} )
+							}
 						</Button>
 					</HStack>
 				</VStack>

@@ -55,4 +55,9 @@ export const domainDnsApplyTemplateMutation = ( domainName: string ) =>
 				mxdata?: string;
 			};
 		} ) => applyDnsTemplate( domainName, params.provider, params.service, params.variables ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( {
+				queryKey: [ 'domains', domainName, 'dns' ],
+			} );
+		},
 	} );

@@ -22,7 +22,6 @@ export default function EmailSetup() {
 						placeholder="e.g., google-site-verification=..."
 						provider={ DnsTemplates.G_SUITE.PROVIDER }
 						service={ DnsTemplates.G_SUITE.SERVICE }
-						submitLabel={ __( 'Setup' ) }
 					/>
 				</div>
 			),
@@ -41,7 +40,6 @@ export default function EmailSetup() {
 						placeholder="apple-domain=..."
 						provider={ DnsTemplates.ICLOUD_MAIL.PROVIDER }
 						service={ DnsTemplates.ICLOUD_MAIL.SERVICE }
-						submitLabel={ __( 'Setup' ) }
 					/>
 				</div>
 			),
@@ -65,7 +63,6 @@ export default function EmailSetup() {
 						placeholder="MS=ms..."
 						provider={ DnsTemplates.MICROSOFT_OFFICE365.PROVIDER }
 						service={ DnsTemplates.MICROSOFT_OFFICE365.SERVICE }
-						submitLabel={ __( 'Setup' ) }
 					/>
 				</div>
 			),
@@ -84,7 +81,6 @@ export default function EmailSetup() {
 						placeholder="zb..."
 						provider={ DnsTemplates.ZOHO_MAIL.PROVIDER }
 						service={ DnsTemplates.ZOHO_MAIL.SERVICE }
-						submitLabel={ __( 'Setup' ) }
 					/>
 				</div>
 			),

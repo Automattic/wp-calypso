@@ -248,6 +248,7 @@ export default function DomainDns() {
 					>
 						<>
 							<DataViews.Layout />
+							<DataViews.Pagination />
 						</>
 					</DataViews>
 				) }
