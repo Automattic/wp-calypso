@@ -2,7 +2,7 @@ import {
 	__experimentalInputControl as InputControl,
 	__experimentalInputControlSuffixWrapper as InputControlSuffixWrapper,
 } from '@wordpress/components';
-import React from 'react';
+import type React from 'react';
 
 export default function SuffixInputControl( {
 	suffix,

@@ -154,7 +154,7 @@ const NewSiteAddressForm = ( {
 						} }
 					/>
 					<HStack justify="flex-end">
-						<Button variant="tertiary" disabled={ false } onClick={ onCancel }>
+						<Button variant="tertiary" disabled={ mutation.isPending } onClick={ onCancel }>
 							{ __( 'Cancel' ) }
 						</Button>
 						<Button
