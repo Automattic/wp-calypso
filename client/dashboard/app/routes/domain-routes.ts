@@ -150,7 +150,7 @@ export const domainContactInfoRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'contact-info',
 } ).lazy( () =>
-	import( '../../domains/contact-details' ).then( ( d ) =>
+	import( '../../domains/domain-contact-details' ).then( ( d ) =>
 		createLazyRoute( 'domain-contact-info' )( {
 			component: d.default,
 		} )

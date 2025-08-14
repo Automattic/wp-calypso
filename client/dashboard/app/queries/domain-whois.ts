@@ -5,7 +5,7 @@ import {
 	updateDomainWhois,
 } from '../../data/domain-whois';
 import { queryClient } from '../query-client';
-import type { DomainContactDetails } from '../../domains/contact-details/types';
+import type { DomainContactDetails } from '../../domains/domain-contact-details/types';
 
 export const domainWhoisQuery = ( domainName: string ) =>
 	queryOptions( {
