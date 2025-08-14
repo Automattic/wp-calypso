@@ -40,6 +40,7 @@ export interface DomainSummary {
 	has_registration: boolean;
 	is_dnssec_enabled: boolean;
 	is_dnssec_supported: boolean;
+	is_domain_only_site: boolean;
 	is_eligible_for_inbound_transfer: boolean;
 	is_hundred_year_domain: boolean;
 	is_redeemable: boolean;

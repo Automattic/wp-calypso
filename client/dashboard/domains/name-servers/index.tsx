@@ -14,6 +14,7 @@ import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import NameServersForm from './form';
+import { useUpsellNudge } from './use-upsell-nudge';
 
 export default function NameServers() {
 	const { domainName } = domainRoute.useParams();
@@ -23,6 +24,7 @@ export default function NameServers() {
 		domainNameServersMutation( domainName )
 	);
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
+	const showUpsellNudge = useUpsellNudge( domain );
 
 	const errorMsg = useMemo( () => {
 		if ( ! domain?.can_manage_name_servers ) {
@@ -60,9 +62,11 @@ export default function NameServers() {
 					) : (
 						<NameServersForm
 							domainName={ domainName }
+							domainSiteSlug={ domain.site_slug }
 							isBusy={ isUpdatingNameServers }
 							nameServers={ nameServers ?? [] }
 							onSubmit={ onSubmit }
+							showUpsellNudge={ showUpsellNudge }
 						/>
 					) }
 				</CardBody>
