@@ -5,7 +5,7 @@ import {
 	Button,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { DataForm, Field } from '@wordpress/dataviews';
+import { DataForm, Field, isItemValid } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
@@ -110,6 +110,8 @@ export default function EmailSetupForm( {
 		},
 	];
 
+	const canSubmit = isItemValid( formData, fields, form );
+
 	return (
 		<div className="email-setup-form" style={ { marginTop: '28px' } }>
 			<form onSubmit={ handleSubmit }>
@@ -125,10 +127,10 @@ export default function EmailSetupForm( {
 					<HStack justify="flex-start">
 						<Button
 							variant="primary"
-							type="submit"
 							isBusy={ isPending }
-							disabled={ isPending }
+							disabled={ isPending || ! canSubmit }
 							__next40pxDefaultSize
+							accessibleWhenDisabled
 						>
 							{
 								// translators: %(providerName)s will be replaced with the name of the service provider that this template is used for, for example Google Workspace or Office 365
