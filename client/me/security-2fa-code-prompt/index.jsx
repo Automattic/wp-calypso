@@ -143,13 +143,13 @@ class Security2faCodePrompt extends Component {
 		switch ( this.props.action ) {
 			case 'disable-two-step':
 				return this.state.submittingCode
-					? this.props.translate( 'Disabling Two-Step…' )
-					: this.props.translate( 'Disable Two-Step' );
+					? this.props.translate( 'Disabling Two-Step Authentication…' )
+					: this.props.translate( 'Disable Two-Step Authentication' );
 
 			case 'enable-two-step':
 				return this.state.submittingCode
-					? this.props.translate( 'Enabling Two-Step…' )
-					: this.props.translate( 'Enable Two-Step' );
+					? this.props.translate( 'Enabling Two-Step Authentication…' )
+					: this.props.translate( 'Enable Two-Step Authentication' );
 
 			default:
 				return this.state.submittingCode
