@@ -39,22 +39,12 @@ function persistViewToUrl( view: View, sites: Site[] ): void {
 	if ( typeof window === 'undefined' ) {
 		return;
 	}
-	// Only persist certain view settings to the URL. All view settings will be
-	// saved to localStorage and restored automatically. We only need to save
-	// ones to the URL that are likely to need direct links or bookmarks.
+	// Only persist certain view settings to the URL for now.
 	const url = new URL( window.location.href );
 	const siteId = view.filters?.find( ( filter ) => filter.field === 'site' )?.value;
 	const siteSlug = sites.find( ( site ) => String( site.ID ) === String( siteId ) )?.slug;
-	if ( ! siteSlug ) {
-		return;
-	}
 	alterUrlForViewProp( url, 'site', siteSlug );
 	window.history.pushState( undefined, '', url );
-}
-
-function persistViewChange( view: View, sites: Site[] ): void {
-	// FIXME: persist to localStorage also
-	persistViewToUrl( view, sites );
 }
 
 function updateViewFromSiteId( view: View, siteId: number ): View {
@@ -127,7 +117,7 @@ export default function PurchasesList() {
 		filterViewBySite: ( site: Site ) => {
 			setView( ( view ) => {
 				const newView = updateViewFromSiteId( view, site.ID );
-				persistViewChange( newView, sites ?? [] );
+				persistViewToUrl( newView, sites ?? [] );
 				return newView;
 			} );
 		},
@@ -144,7 +134,7 @@ export default function PurchasesList() {
 	} );
 
 	const onChangeView = ( newView: View ) => {
-		persistViewChange( newView, sites ?? [] );
+		persistViewToUrl( newView, sites ?? [] );
 		setView( newView );
 	};
 
