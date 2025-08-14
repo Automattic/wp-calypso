@@ -10,39 +10,47 @@ interface ButtonProps extends React.ComponentProps< 'button' > {
 	asChild?: boolean;
 }
 
-function Button( {
-	className,
-	variant = 'primary',
-	size,
-	icon,
-	children,
-	asChild = false,
-	...props
-}: ButtonProps ) {
-	const Comp = asChild ? Slot : 'button';
+const Button = React.forwardRef< HTMLButtonElement, ButtonProps >(
+	function Button(
+		{
+			className,
+			variant = 'primary',
+			size,
+			icon,
+			children,
+			asChild = false,
+			...props
+		},
+		ref
+	) {
+		const Comp = asChild ? Slot : 'button';
 
-	const hasIcon = !! icon;
+		const hasIcon = !! icon;
 
-	// Auto-detect size: if icon only (no children), use 'icon' size unless explicitly overridden
-	const effectiveSize =
-		size || ( hasIcon && ! children ? 'icon' : undefined );
+		// Auto-detect size: if icon only (no children), use 'icon' size unless explicitly overridden
+		const effectiveSize =
+			size || ( hasIcon && ! children ? 'icon' : undefined );
 
-	return (
-		<Comp
-			data-slot="button"
-			className={ cn(
-				styles.button,
-				styles[ variant ],
-				effectiveSize && styles[ effectiveSize ],
-				hasIcon && children ? styles.withTextAndIcon : undefined,
-				className
-			) }
-			{ ...props }
-		>
-			{ icon }
-			{ children }
-		</Comp>
-	);
-}
+		return (
+			<Comp
+				ref={ ref }
+				data-slot="button"
+				className={ cn(
+					styles.button,
+					styles[ variant ],
+					effectiveSize && styles[ effectiveSize ],
+					hasIcon && children ? styles.withTextAndIcon : undefined,
+					className
+				) }
+				{ ...props }
+			>
+				{ icon }
+				{ children }
+			</Comp>
+		);
+	}
+);
+
+Button.displayName = 'Button';
 
 export { Button };

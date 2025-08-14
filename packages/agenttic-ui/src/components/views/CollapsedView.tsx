@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Button } from '../ui/button';
 import { BigSkyIcon } from '../icons/BigSkyIcon';
 import { motion } from 'framer-motion';
@@ -10,15 +10,29 @@ interface CollapsedViewProps {
 	icon?: React.ReactNode;
 	onClick: () => void;
 	onHover: () => void;
-	fromExpanded?: boolean;
+	focusOnMount?: boolean;
 }
 
 export function CollapsedView( {
 	icon = <BigSkyIcon className="size-6" />,
 	onClick,
 	onHover,
-	fromExpanded = false,
+	focusOnMount = false,
 }: CollapsedViewProps ) {
+	const buttonRef = useRef< HTMLButtonElement >( null );
+
+	// Set ref value on mount to prevent focus on mount from being triggered again
+	const focusOnMountRef = useRef( focusOnMount );
+
+	useEffect( () => {
+		if ( focusOnMountRef.current && buttonRef.current ) {
+			buttonRef.current.focus();
+		}
+
+		// Reset ref value to prevent focus on mount from being triggered again
+		focusOnMountRef.current = false;
+	}, [ focusOnMountRef, buttonRef ] );
+
 	return (
 		<motion.div
 			data-slot="collapsed-view"
@@ -45,6 +59,7 @@ export function CollapsedView( {
 			} }
 		>
 			<Button
+				ref={ buttonRef }
 				onClick={ onClick }
 				onMouseEnter={ onHover }
 				variant="link"

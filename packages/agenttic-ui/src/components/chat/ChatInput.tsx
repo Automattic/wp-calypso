@@ -1,4 +1,4 @@
-import React, { useEffect, useId } from 'react';
+import React, { useEffect, useId, useRef } from 'react';
 import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
 import { ArrowUpIcon } from '../icons/ArrowUpIcon';
@@ -45,11 +45,17 @@ export function ChatInput( {
 		? placeholder
 		: `${ placeholder }…`;
 
+	// Set ref value on mount to prevent focus on mount from being triggered again
+	const focusOnMountRef = useRef( focusOnMount );
+
 	useEffect( () => {
-		if ( focusOnMount && textareaRef.current ) {
+		if ( focusOnMountRef.current && textareaRef.current ) {
 			textareaRef.current.focus();
 		}
-	}, [] ); // Empty dependency array - only run on mount
+
+		// Reset ref value to prevent focus on mount from being triggered again
+		focusOnMountRef.current = false;
+	}, [ focusOnMountRef, textareaRef ] );
 
 	return (
 		<div data-slot="chat-input" className={ styles.container }>

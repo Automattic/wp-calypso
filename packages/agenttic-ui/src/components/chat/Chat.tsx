@@ -62,11 +62,20 @@ export function Chat( {
 }: ChatProps ) {
 	// Local input state for controlled component pattern
 	const [ inputValue, setInputValue ] = useState( '' );
-	// Track when chat should focus on mount (opened via click, not hover)
-	const focusOnMountRef = useRef( false );
 
 	const chat = useChat( floatingChatState );
+
+	// Track if user clicked to open (vs hovered)
+	const wasClickedToOpen = useRef( false );
+	const wasClickedToClose = useRef( false );
+	useEffect( () => {
+		// Reset flags when chat state changes.
+		wasClickedToOpen.current = false;
+		wasClickedToClose.current = false;
+	}, [ chat.state ] );
+
 	const timeoutRefs = useRef< Set< NodeJS.Timeout > >( new Set() );
+
 	const input = useInput( {
 		value: inputValue,
 		setValue: setInputValue,
@@ -95,15 +104,9 @@ export function Chat( {
 
 	// Handle opening the chat and call onOpen callback
 	const handleOpen = useCallback( () => {
-		focusOnMountRef.current = true;
+		wasClickedToOpen.current = true;
 		chat.open();
 		onOpen?.();
-		// Reset the focus on mount flag after a timeout so it doesn't trigger on hover
-		const timeoutId = setTimeout( () => {
-			focusOnMountRef.current = false;
-		}, 50 );
-		// Clean up timeout on unmount
-		timeoutRefs.current.add( timeoutId );
 	}, [ chat, onOpen ] );
 
 	// Check if should auto-collapse (no input and not focused)
@@ -121,7 +124,7 @@ export function Chat( {
 		}
 
 		return true;
-	}, [ inputValue, input.textareaRef, chatRef ] );
+	}, [ inputValue, chatRef ] );
 
 	const getHeightForState = ( state: string ) => {
 		if ( state === 'collapsed' ) {
@@ -181,9 +184,9 @@ export function Chat( {
 
 	// Handle close (go back to collapsed state)
 	const handleClose = useCallback( () => {
+		wasClickedToClose.current = true;
 		input.clear();
 		chat.close();
-
 		if ( onClose ) {
 			onClose();
 		}
@@ -275,8 +278,6 @@ export function Chat( {
 
 	// Track previous state for animation purposes
 	const prevStateRef = useRef( chat.state );
-	const fromExpanded =
-		prevStateRef.current === 'expanded' && chat.state === 'collapsed';
 	const fromCompact =
 		prevStateRef.current === 'compact' && chat.state === 'expanded';
 
@@ -421,7 +422,7 @@ export function Chat( {
 								icon={ triggerIcon }
 								onClick={ handleOpen }
 								onHover={ handleHover }
-								fromExpanded={ fromExpanded }
+								focusOnMount={ wasClickedToClose.current }
 							/>
 						) }
 						{ chat.state === 'compact' && (
@@ -438,7 +439,7 @@ export function Chat( {
 									onBlur={ handleAutoCollapse }
 									onExpand={ handleExpand }
 									showExpandButton={ ! input.value.trim() }
-									focusOnMount={ focusOnMountRef.current }
+									focusOnMount={ wasClickedToOpen.current }
 								/>
 							</div>
 						) }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import type { ComponentType } from 'react';
 import type { Message, NoticeConfig, Suggestion } from '../../types';
 import { ChatHeader } from '../chat/ChatHeader';
@@ -67,6 +67,18 @@ export function ConversationView( {
 	clearSuggestions,
 	messageRenderer,
 }: ConversationViewProps ) {
+	// Listen for escape key to close the chat
+	useEffect( () => {
+		const handleKeyDown = ( event: KeyboardEvent ) => {
+			if ( event.key === 'Escape' && onClose ) {
+				onClose();
+			}
+		};
+
+		document.addEventListener( 'keydown', handleKeyDown );
+		return () => document.removeEventListener( 'keydown', handleKeyDown );
+	}, [ onClose ] );
+
 	return (
 		<div
 			data-slot="conversation-view"
@@ -115,6 +127,7 @@ export function ConversationView( {
 						fromCompact={ fromCompact }
 						onExpand={ onExpand }
 						showExpandButton={ false }
+						focusOnMount={ true }
 					/>
 				</div>
 			</div>
