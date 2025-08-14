@@ -387,7 +387,7 @@ export class ContactDetailsFormFields extends Component {
 							text: labelTexts.organization || translate( '+ Add organization name' ),
 							placeholder: translate( 'Organization (optional)' ),
 							description: (
-								<Notice status="info" isDismissible={ false }>
+								<Notice status="warning" isDismissible={ false }>
 									{ translate(
 										'By completing the organization field, you agree that the listed organization will be considered the legal domain owner and that this information will be publicly visible. You can choose to hide it using {{a}}privacy protection{{/a}}.',
 										{
