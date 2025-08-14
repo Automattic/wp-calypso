@@ -7,20 +7,17 @@ import { useLocale } from '../../../app/locale';
 import { siteBySlugQuery } from '../../../app/queries/site';
 import { siteSettingsQuery } from '../../../app/queries/site-settings';
 import { siteRoute } from '../../../app/router';
+import { LogType } from '../../../data/site-logs';
 import { formatDateWithOffset, getUtcOffsetDisplay } from '../../../utils/datetime';
-import type { LogType, PHPLog, ServerLog } from '../../../data/site-logs';
+import type { PHPLog, ServerLog } from '../../../data/site-logs';
 import type { Field, Operator } from '@wordpress/dataviews';
 
 import './style.scss';
 
 const VALUES_CACHED = [ 'false', 'true' ] as const;
-
 const VALUES_RENDERER = [ 'php', 'static' ] as const;
-
 const VALUES_REQUEST_TYPE = [ 'GET', 'HEAD', 'POST', 'PUT', 'DELETE' ] as const;
-
 const VALUES_SEVERITY = [ 'User', 'Warning', 'Deprecated', 'Fatal error' ] as const;
-
 const VALUES_STATUS = [ '200', '301', '302', '400', '401', '403', '404', '429', '500' ] as const;
 
 const getLabelCached = ( cached: string ) => {
@@ -44,7 +41,8 @@ const getLabelRenderer = ( renderer: string ) => {
 	}
 };
 
-const toSeverityClass = ( s: PHPLog[ 'severity' ] ) => s.split( ' ' )[ 0 ].toLowerCase();
+const toSeverityClass = ( severity: PHPLog[ 'severity' ] ) =>
+	severity.split( ' ' )[ 0 ].toLowerCase();
 
 export function useFields( { logType }: { logType: LogType } ): Field< PHPLog | ServerLog >[] {
 	const { siteSlug } = siteRoute.useParams();
@@ -53,7 +51,7 @@ export function useFields( { logType }: { logType: LogType } ): Field< PHPLog | 
 
 	const { data: gmtOffset = 0 } = useQuery( {
 		...siteSettingsQuery( siteId ),
-		select: ( s ) => s?.gmt_offset ?? 0,
+		select: ( siteSettings ) => siteSettings?.gmt_offset ?? 0,
 	} );
 
 	const locale = useLocale();
@@ -65,7 +63,7 @@ export function useFields( { logType }: { logType: LogType } ): Field< PHPLog | 
 	);
 
 	return useMemo( () => {
-		if ( logType === 'php' ) {
+		if ( logType === LogType.PHP ) {
 			return [
 				{
 					id: 'timestamp',
