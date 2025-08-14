@@ -1,5 +1,10 @@
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
-import { deleteDomainGlueRecord, fetchDomainGlueRecords } from '../../data/domain-glue-records';
+import {
+	DomainGlueRecord,
+	createDomainGlueRecord,
+	deleteDomainGlueRecord,
+	fetchDomainGlueRecords,
+} from '../../data/domain-glue-records';
 import { queryClient } from '../query-client';
 
 export const domainGlueRecordsQuery = ( domainName: string ) =>
@@ -11,6 +16,14 @@ export const domainGlueRecordsQuery = ( domainName: string ) =>
 export const domainGlueRecordDeleteMutation = ( domainName: string ) =>
 	mutationOptions( {
 		mutationFn: ( nameServer: string ) => deleteDomainGlueRecord( domainName, nameServer ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( domainGlueRecordsQuery( domainName ) );
+		},
+	} );
+
+export const domainGlueRecordCreateMutation = ( domainName: string ) =>
+	mutationOptions( {
+		mutationFn: ( glueRecord: DomainGlueRecord ) => createDomainGlueRecord( glueRecord ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( domainGlueRecordsQuery( domainName ) );
 		},

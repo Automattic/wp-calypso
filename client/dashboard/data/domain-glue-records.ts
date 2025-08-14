@@ -24,3 +24,16 @@ export function deleteDomainGlueRecord( domainName: string, nameServer: string )
 		}
 	);
 }
+
+export function createDomainGlueRecord( glueRecord: DomainGlueRecord ): Promise< void > {
+	return wpcom.req.post(
+		{
+			path: '/domains/glue-records',
+			apiNamespace: 'wpcom/v2',
+		},
+		{
+			name_server: glueRecord.nameserver.toLowerCase(),
+			ip_addresses: glueRecord.ip_addresses,
+		}
+	);
+}
