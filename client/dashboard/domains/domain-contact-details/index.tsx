@@ -7,7 +7,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { findRegistrantWhois } from '../../utils/domain-whois';
 import ContactForm from './contact-form';
-import { DomainContactDetails } from './types';
+import type { DomainContactDetails } from '../../data/domain-whois';
 
 import './style.scss';
 

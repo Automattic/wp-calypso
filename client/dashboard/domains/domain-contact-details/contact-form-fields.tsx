@@ -8,7 +8,7 @@ import { Field } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import InlineSupportLink from '../../components/inline-support-link';
-import type { DomainContactDetails } from './types';
+import type { DomainContactDetails } from '../../data/domain-whois';
 
 export const StateFieldEdit = ( {
 	field,

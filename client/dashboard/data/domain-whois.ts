@@ -1,6 +1,48 @@
 import wpcom from 'calypso/lib/wp';
 import { camelToSnakeCase, mapRecordKeysRecursively } from '../utils/domain';
 
+export type DomainContactDetails = {
+	firstName?: string;
+	lastName?: string;
+	organization?: string;
+	email?: string;
+	phone?: string;
+	address1?: string;
+	address2?: string;
+	city?: string;
+	state?: string;
+	postalCode?: string;
+	countryCode?: string;
+	fax?: string;
+	vatId?: string;
+	optOutTransferLock: boolean;
+	extra?: DomainContactDetailsExtra;
+};
+
+export type DomainContactDetailsExtra = {
+	ca?: CaDomainContactExtraDetails | null;
+	uk?: UkDomainContactExtraDetails | null;
+	fr?: FrDomainContactExtraDetails | null;
+};
+
+export type CaDomainContactExtraDetails = {
+	lang?: string;
+	legalType?: string;
+	ciraAgreementAccepted?: boolean;
+};
+
+export type UkDomainContactExtraDetails = {
+	registrantType?: string;
+	registrationNumber?: string;
+	tradingName?: string;
+};
+
+export type FrDomainContactExtraDetails = {
+	registrantType?: string;
+	registrantVatId?: string;
+	trademarkNumber?: string;
+	sirenSiret?: string;
+};
 export interface WhoisDataEntry {
 	fname: string;
 	lname: string;
@@ -63,14 +105,14 @@ export function fetchDomainWhois( domainName: string ): Promise< WhoisData > {
 
 export function updateDomainWhois(
 	domainName: string,
-	whoisData: any,
+	domainContactDetails: DomainContactDetails,
 	transferLock: boolean
 ): Promise< WhoisData > {
 	return wpcom.req.post( {
 		path: `/domains/${ domainName }/whois`,
 		apiVersion: '1.1',
 		body: {
-			whois: whoisData,
+			whois: domainContactDetails,
 			transfer_lock: transferLock,
 		},
 	} );
@@ -78,14 +120,14 @@ export function updateDomainWhois(
 
 export function fetchDomainWhoisValidate(
 	domainName: string,
-	contactInformation: any
+	domainContactDetails: DomainContactDetails
 ): Promise< WhoisData > {
 	return wpcom.req.post( {
 		path: '/me/domain-contact-information/validate',
 		apiVersion: '1.1',
 		body: mapRecordKeysRecursively(
 			{
-				contactInformation: contactInformation,
+				contactInformation: domainContactDetails,
 				domainNames: [ domainName ],
 			},
 			camelToSnakeCase

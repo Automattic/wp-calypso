@@ -22,8 +22,7 @@ import { countryListQuery, statesListQuery } from '../../app/queries/domain-supp
 import { domainWhoisMutation } from '../../app/queries/domain-whois';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
-import { fetchDomainWhoisValidate } from '../../data/domain-whois';
-import type { DomainContactDetails } from './types';
+import { fetchDomainWhoisValidate, type DomainContactDetails } from '../../data/domain-whois';
 
 import './contact-form.scss';
 interface ContactFormProps {
@@ -31,7 +30,6 @@ interface ContactFormProps {
 	initialData?: DomainContactDetails;
 	onSubmit?: ( data: DomainContactDetails ) => void;
 	onCancel?: () => void;
-	onCountryChange?: ( countryCode: string ) => void;
 	errors?: Partial< Record< keyof DomainContactDetails, string > >;
 }
 
@@ -328,11 +326,6 @@ export default function ContactForm( {
 							form={ form }
 							onChange={ ( edits: Partial< DomainContactDetails > ) => {
 								setFormData( ( data ) => ( { ...data, ...edits } ) );
-
-								// If country changed, notify parent component
-								if ( 'countryCode' in edits && onCountryChange ) {
-									onCountryChange( edits.countryCode as string );
-								}
 							} }
 						/>
 						<Notice>

@@ -3,9 +3,9 @@ import {
 	fetchDomainWhois,
 	fetchDomainWhoisValidate,
 	updateDomainWhois,
+	type DomainContactDetails,
 } from '../../data/domain-whois';
 import { queryClient } from '../query-client';
-import type { DomainContactDetails } from '../../domains/domain-contact-details/types';
 
 export const domainWhoisQuery = ( domainName: string ) =>
 	queryOptions( {
@@ -13,10 +13,13 @@ export const domainWhoisQuery = ( domainName: string ) =>
 		queryFn: () => fetchDomainWhois( domainName ),
 	} );
 
-export const domainWhoisValidateQuery = ( domainName: string, contactInformation: any ) =>
+export const domainWhoisValidateQuery = (
+	domainName: string,
+	domainContactDetails: DomainContactDetails
+) =>
 	queryOptions( {
 		queryKey: [ 'domains', domainName, 'whois', 'validate' ],
-		queryFn: () => fetchDomainWhoisValidate( domainName, contactInformation ),
+		queryFn: () => fetchDomainWhoisValidate( domainName, domainContactDetails ),
 	} );
 
 export const domainWhoisMutation = ( domainName: string ) =>
