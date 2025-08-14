@@ -4,8 +4,10 @@ import {
 	__experimentalVStack as VStack,
 	Button,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { DataForm, Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { domainDnsApplyTemplateMutation } from '../../app/queries/domain-dns-records';
 import { domainRoute } from '../../app/routes/domain-routes';
@@ -28,6 +30,11 @@ const defaultFormData: EmailSetupFormData = {
 interface EmailSetupFormProps {
 	description: string;
 	label: string;
+	modifyVariables?: ( variables: { token: string; domain: string; mxdata?: string } ) => {
+		token: string;
+		domain: string;
+		mxdata?: string;
+	};
 	pattern: RegExp;
 	placeholder: string;
 	provider: string;
@@ -38,6 +45,7 @@ interface EmailSetupFormProps {
 export default function EmailSetupForm( {
 	description,
 	label,
+	modifyVariables,
 	pattern,
 	placeholder,
 	provider,
@@ -47,20 +55,46 @@ export default function EmailSetupForm( {
 	const { domainName } = domainRoute.useParams();
 	const [ formData, setFormData ] = useState< EmailSetupFormData >( defaultFormData );
 	const [ isPending, setIsPending ] = useState( false );
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const mutation = useMutation( domainDnsApplyTemplateMutation( domainName ) );
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
 		setIsPending( true );
-		mutation.mutate( {
-			provider,
-			service,
-			variables: {
-				token: formData.record,
-				domain: domainName,
+		let variables: {
+			token: string;
+			domain: string;
+			mxdata?: string;
+		} = {
+			token: formData.record,
+			domain: domainName,
+		};
+		if ( modifyVariables ) {
+			variables = modifyVariables( variables );
+		}
+		mutation.mutate(
+			{
+				provider,
+				service,
+				variables,
 			},
-		} );
+			{
+				onSuccess: () => {
+					createSuccessNotice( __( 'Email setup completed successfully.' ), {
+						type: 'snackbar',
+					} );
+				},
+				onError: () => {
+					createErrorNotice( __( 'Failed to complete email setup.' ), {
+						type: 'snackbar',
+					} );
+				},
+				onSettled: () => {
+					setIsPending( false );
+				},
+			}
+		);
 	};
 
 	const fields: Field< EmailSetupFormData >[] = [

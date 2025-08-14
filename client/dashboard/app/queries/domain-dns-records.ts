@@ -49,6 +49,10 @@ export const domainDnsApplyTemplateMutation = ( domainName: string ) =>
 		mutationFn: ( params: {
 			provider: string;
 			service: string;
-			variables: Record< string, string >;
+			variables: {
+				domain: string;
+				token: string;
+				mxdata?: string;
+			};
 		} ) => applyDnsTemplate( domainName, params.provider, params.service, params.variables ),
 	} );

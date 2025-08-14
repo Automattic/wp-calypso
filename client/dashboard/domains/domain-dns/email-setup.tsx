@@ -56,6 +56,11 @@ export default function EmailSetup() {
 							'Paste the verification token provided by Office 365 for the TXT record.'
 						) }
 						label="Office 365"
+						modifyVariables={ ( variables ) =>
+							Object.assign( {}, variables, {
+								mxdata: variables.domain.replaceAll( '.', '-' ) + '.mail.protection.outlook.com',
+							} )
+						}
 						pattern={ /^MS=ms\d{8}$/ }
 						placeholder="MS=ms..."
 						provider={ DnsTemplates.MICROSOFT_OFFICE365.PROVIDER }

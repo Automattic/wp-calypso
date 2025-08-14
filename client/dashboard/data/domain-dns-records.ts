@@ -65,7 +65,11 @@ export function applyDnsTemplate(
 	domainName: string,
 	provider: string,
 	service: string,
-	variables: Record< string, string >
+	variables: {
+		domain: string;
+		token: string;
+		mxdata?: string;
+	}
 ): Promise< DnsResponse > {
 	return wpcom.req.post( {
 		path: `/domains/${ domainName }/dns/providers/${ provider }/services/${ service }`,
