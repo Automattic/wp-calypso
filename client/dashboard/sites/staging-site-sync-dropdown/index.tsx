@@ -4,10 +4,8 @@ import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { chevronDown, cloudDownload, cloudUpload } from '@wordpress/icons';
 import { lazy, Suspense } from 'react';
-import { siteBySlugQuery } from '../../app/queries/site';
-import { siteLatestAtomicTransferQuery } from '../../app/queries/site-atomic-transfers';
+import { siteBySlugQuery, siteByIdQuery } from '../../app/queries/site';
 import { stagingSiteSyncStateQuery } from '../../app/queries/site-staging-sites';
-import { isAtomicTransferInProgress } from '../../utils/site-atomic-transfers';
 import {
 	getProductionSiteId,
 	getStagingSiteId,
@@ -44,18 +42,15 @@ export default function StagingSiteSyncDropdown( {
 	const productionSiteId = site ? getProductionSiteId( site ) : null;
 	const stagingSiteId = site ? getStagingSiteId( site ) : null;
 
-	// Check atomic transfer status for staging site
-	const { data: atomicTransfer } = useQuery( {
-		...siteLatestAtomicTransferQuery( stagingSiteId ?? 0 ),
-		refetchInterval: ( query ) => {
-			return isAtomicTransferInProgress( query.state.data?.status ?? 'pending' ) ? 3000 : false;
-		},
+	const { data: stagingSite } = useQuery( {
+		...siteByIdQuery( stagingSiteId ?? 0 ),
 		enabled: !! stagingSiteId,
 	} );
 
-	const isStagingSiteReady = atomicTransfer
-		? ! isAtomicTransferInProgress( atomicTransfer.status )
-		: false;
+	const isStagingSite = !! stagingSiteId;
+	const stagingSiteHasManageOptions = stagingSite?.capabilities?.manage_options;
+
+	const isStagingSiteTransferInProgress = isStagingSite && ! stagingSiteHasManageOptions;
 
 	const { data: stagingSiteSyncState, refetch: fetchStagingSiteSyncState } = useQuery( {
 		...stagingSiteSyncStateQuery( productionSiteId ?? 0 ),
@@ -89,7 +84,7 @@ export default function StagingSiteSyncDropdown( {
 
 	// The sync is not allowed if the staging site is in a transition or is deleting.
 	// We should consider this when we start to rewrite the StagingSiteSyncModal.
-	if ( ! productionSiteId || ! stagingSiteId || ! isStagingSiteReady ) {
+	if ( ! productionSiteId || ! stagingSiteId || isStagingSiteTransferInProgress ) {
 		return null;
 	}
 
