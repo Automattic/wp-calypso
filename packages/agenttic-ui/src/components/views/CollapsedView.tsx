@@ -4,6 +4,7 @@ import { BigSkyIcon } from '../icons/BigSkyIcon';
 import { motion } from 'framer-motion';
 import { morphSpring } from '../animations';
 import styles from './CollapsedView.module.css';
+import { __ } from '@wordpress/i18n';
 
 interface CollapsedViewProps {
 	icon?: React.ReactNode;
@@ -49,7 +50,7 @@ export function CollapsedView( {
 				variant="link"
 				className={ styles.button }
 				icon={ icon }
-				aria-label="Open chat"
+				aria-label={ __( 'Open chat', 'a8c-agenttic' ) }
 			/>
 		</motion.div>
 	);

@@ -8,6 +8,7 @@ import { fastSpring, fastSpringWithDelay } from '../animations';
 import { DEFAULT_PLACEHOLDER } from '../../types';
 import styles from './ChatInput.module.css';
 import { ChevronUpIcon } from '../icons/ChevronUpIcon';
+import { __ } from '@wordpress/i18n';
 
 interface ChatInputProps {
 	value: string;
@@ -94,7 +95,10 @@ export function ChatInput( {
 						onClick={ onExpand }
 						variant="ghost"
 						icon={ <ChevronUpIcon /> }
-						aria-label="Expand conversation"
+						aria-label={ __(
+							'Expand conversation',
+							'a8c-agenttic'
+						) }
 					/>
 				) }
 				<Button
@@ -104,7 +108,9 @@ export function ChatInput( {
 					variant="primary"
 					icon={ isProcessing ? <StopIcon /> : <ArrowUpIcon /> }
 					aria-label={
-						isProcessing ? 'Stop processing' : 'Send message'
+						isProcessing
+							? __( 'Stop processing', 'a8c-agenttic' )
+							: __( 'Send message', 'a8c-agenttic' )
 					}
 				/>
 			</motion.div>

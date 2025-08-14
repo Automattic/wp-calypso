@@ -5,6 +5,7 @@ import type { DataPointDate, SeriesData } from '@automattic/charts';
 import type { RenderTooltipParams } from '@visx/xychart/lib/components/Tooltip';
 import type { FC } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { __, sprintf } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -120,11 +121,15 @@ export const ChartBlock: FC< ChartBlockProps > = ( {
 				);
 
 				if ( diffInDays === 0 ) {
-					return 'Today';
+					return __( 'Today', 'a8c-agenttic' );
 				} else if ( diffInDays === 1 ) {
-					return 'Yesterday';
+					return __( 'Yesterday', 'a8c-agenttic' );
 				} else if ( diffInDays < 7 ) {
-					return `${ diffInDays } days ago`;
+					return sprintf(
+						/* translators: %d: number of days */
+						__( '%d days ago', 'a8c-agenttic' ),
+						diffInDays
+					);
 				}
 
 				return date.toLocaleDateString( 'en-US', {
@@ -194,7 +199,7 @@ export const ChartBlock: FC< ChartBlockProps > = ( {
 
 		if ( ! data || typeof data !== 'string' ) {
 			setError( {
-				message: 'Invalid chart data provided',
+				message: __( 'Invalid chart data provided', 'a8c-agenttic' ),
 				details: `Input data: ${ data }`,
 			} );
 			return;
@@ -205,15 +210,21 @@ export const ChartBlock: FC< ChartBlockProps > = ( {
 
 			if ( ! rawData.chartType ) {
 				setError( {
-					message: 'Chart data must include chartType',
-					details: `Available types: line, bar`,
+					message: __(
+						'Chart data must include chartType',
+						'a8c-agenttic'
+					),
+					details: __( 'Available types: line, bar', 'a8c-agenttic' ),
 				} );
 				return;
 			}
 
 			if ( ! rawData.data || ! Array.isArray( rawData.data ) ) {
 				setError( {
-					message: 'Chart data must include a data array',
+					message: __(
+						'Chart data must include a data array',
+						'a8c-agenttic'
+					),
 					details: `Input data: ${ data }`,
 				} );
 				return;
@@ -221,7 +232,10 @@ export const ChartBlock: FC< ChartBlockProps > = ( {
 
 			if ( rawData.data.length === 0 ) {
 				setError( {
-					message: 'No data points found for chart',
+					message: __(
+						'No data points found for chart',
+						'a8c-agenttic'
+					),
 					details: `Input data: ${ data }`,
 				} );
 				return;
@@ -269,7 +283,10 @@ export const ChartBlock: FC< ChartBlockProps > = ( {
 			setChartData( processedData );
 		} catch ( parseError ) {
 			setError( {
-				message: 'Failed to parse chart data as JSON',
+				message: __(
+					'Failed to parse chart data as JSON',
+					'a8c-agenttic'
+				),
 				details: `Input data: ${ data }`,
 			} );
 		}
@@ -316,7 +333,11 @@ export const ChartBlock: FC< ChartBlockProps > = ( {
 	}
 
 	if ( ! chartData ) {
-		return <ChartError message="No chart data available" />;
+		return (
+			<ChartError
+				message={ __( 'No chart data available', 'a8c-agenttic' ) }
+			/>
+		);
 	}
 
 	const hasMultipleSeries = chartData.data.length > 1;
@@ -353,7 +374,11 @@ export const ChartBlock: FC< ChartBlockProps > = ( {
 			default:
 				return (
 					<ChartError
-						message={ `Unsupported chart type: ${ chartData.chartType }` }
+						message={ sprintf(
+							/* translators: %s: chart type name */
+							__( 'Unsupported chart type: %s', 'a8c-agenttic' ),
+							chartData.chartType
+						) }
 					/>
 				);
 		}

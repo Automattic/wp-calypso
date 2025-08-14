@@ -27,7 +27,9 @@
 		"test": "vitest run",
 		"prepublishOnly": "pnpm run build",
 		"storybook": "storybook dev -p 6006",
-		"build-storybook": "storybook build -o storybook-static"
+		"build-storybook": "storybook build -o storybook-static",
+		"i18n:extract": "npx --no-install @wordpress/i18n-command make-pot src --output=languages/a8c-agenttic.pot --domain=a8c-agenttic",
+		"i18n:update": "npx --no-install @wordpress/i18n-command make-json languages --domain=a8c-agenttic"
 	},
 	"keywords": [
 		"agenttic",
@@ -78,6 +80,7 @@
 		"@visx/xychart": "^3.12.0",
 		"@wordpress/data": "^10.0.0",
 		"@wordpress/element": "^6.24.0",
+		"@wordpress/i18n": "^6.1.0",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"framer-motion": "^12.23.0",

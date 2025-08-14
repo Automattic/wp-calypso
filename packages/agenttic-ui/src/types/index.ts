@@ -1,5 +1,6 @@
 // UI package should not import agent communication types
 import type { ComponentType } from 'react';
+import { __ } from '@wordpress/i18n';
 
 // Define UI-specific types locally
 export interface Suggestion {
@@ -37,7 +38,7 @@ export interface MessageAction {
 // UI package only exports UI-specific types
 
 // Constants
-export const DEFAULT_PLACEHOLDER = 'Ask anything' as const;
+export const DEFAULT_PLACEHOLDER = __( 'Ask anything', 'a8c-agenttic' );
 
 // UI component props - no agent communication concerns
 export interface AgentUIProps {
