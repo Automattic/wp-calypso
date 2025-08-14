@@ -73,7 +73,7 @@ export const WithError: Story = {
 		nameServers: [],
 		isBusy: false,
 		showUpsellNudge: false,
-		queryError: 'An error occurred while fetching name servers.',
+		error: 'Name servers management is forbidden on mapped domains',
 		onSubmit: action( 'onSubmit' ),
 	},
 };

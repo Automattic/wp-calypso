@@ -32,7 +32,7 @@ interface Props {
 	showUpsellNudge?: boolean;
 	nameServers?: string[];
 	isBusy?: boolean;
-	queryError?: string;
+	error?: string;
 	onSubmit: ( nameServers: string[] ) => void;
 }
 
@@ -41,7 +41,7 @@ export default function NameServersForm( {
 	showUpsellNudge,
 	nameServers = [],
 	isBusy,
-	queryError,
+	error,
 	onSubmit,
 }: Props ) {
 	const isWpcomNameservers = areAllWpcomNameServers( nameServers );
@@ -203,8 +203,8 @@ export default function NameServersForm( {
 	return (
 		<form onSubmit={ handleSubmit }>
 			<VStack spacing={ 4 }>
-				{ queryError && <Notice variant="error">{ queryError }</Notice> }
-				{ ! queryError && (
+				{ error && <Notice variant="error">{ error }</Notice> }
+				{ ! error && (
 					<>
 						<DataForm< FormData >
 							data={ formData }

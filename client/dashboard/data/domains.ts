@@ -26,8 +26,10 @@ export interface DomainSummary {
 	blog_id: number;
 	blog_name: string;
 	can_manage_dns_records: boolean;
+	can_manage_name_servers: boolean;
 	can_update_contact_info: boolean;
 	can_set_as_primary: boolean;
+	cannot_manage_name_servers_reason: null | string;
 	current_user_can_create_site_from_domain_only: boolean;
 	current_user_can_manage: boolean;
 	current_user_is_owner: boolean | null;
