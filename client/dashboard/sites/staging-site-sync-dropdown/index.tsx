@@ -6,6 +6,7 @@ import { chevronDown, cloudDownload, cloudUpload } from '@wordpress/icons';
 import { lazy, Suspense } from 'react';
 import { siteBySlugQuery, siteByIdQuery } from '../../app/queries/site';
 import { stagingSiteSyncStateQuery } from '../../app/queries/site-staging-sites';
+import { hasManageOptions } from '../../utils/site-capabilities';
 import {
 	getProductionSiteId,
 	getStagingSiteId,
@@ -41,18 +42,16 @@ export default function StagingSiteSyncDropdown( {
 
 	const productionSiteId = site ? getProductionSiteId( site ) : null;
 	const stagingSiteId = site ? getStagingSiteId( site ) : null;
-	const siteHasManageOptions = ( site: Site ) => site?.capabilities?.manage_options;
 
 	const { data: stagingSite } = useQuery( {
 		...siteByIdQuery( stagingSiteId ?? 0 ),
 		refetchInterval: ( query ) => {
-			return siteHasManageOptions( query.state.data ) ? false : 5000;
+			return hasManageOptions( query.state.data ) ? false : 5000;
 		},
 		enabled: !! stagingSiteId,
 	} );
 
-	const isStagingSite = !! stagingSiteId;
-	const isStagingSiteTransferInProgress = isStagingSite && ! siteHasManageOptions( stagingSite );
+	const isStagingSiteTransferInProgress = !! stagingSiteId && ! hasManageOptions( stagingSite );
 
 	const { data: stagingSiteSyncState, refetch: fetchStagingSiteSyncState } = useQuery( {
 		...stagingSiteSyncStateQuery( productionSiteId ?? 0 ),
