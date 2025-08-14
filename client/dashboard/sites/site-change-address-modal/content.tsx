@@ -92,6 +92,10 @@ const NewSiteAddressForm = ( {
 		fields: [ 'subdomain' ],
 	};
 
+	const wpcomDomain = siteDomains?.find(
+		( domain ) => domain.wpcom_domain && ! domain.is_wpcom_staging_domain
+	);
+
 	const hasCustomDomain = !! siteDomains?.find( ( domain ) => ! domain.wpcom_domain );
 
 	const isDisabled = ! formData.subdomain || formData.subdomain === currentSubdomain;
@@ -140,7 +144,7 @@ const NewSiteAddressForm = ( {
 				{ sprintf(
 					/* translators: %s: site domain */
 					__( 'Once you change your site address, %s will no longer be available.' ),
-					site.slug
+					wpcomDomain?.domain
 				) }
 			</Text>
 			<form onSubmit={ handleSubmit }>
