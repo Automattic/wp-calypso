@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import {
 	ExternalLink,
 	__experimentalHStack as HStack,
@@ -12,35 +12,75 @@ import {
 	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { DataForm, Field, isItemValid } from '@wordpress/dataviews';
 import { createInterpolateElement, useCallback } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { useEffect, useState } from 'react';
+import { store as noticesStore } from '@wordpress/notices';
+import { useEffect, useRef, useState } from 'react';
 import { countryListQuery, statesListQuery } from '../../app/queries/domain-supported-contries';
+import { domainWhoisMutation } from '../../app/queries/domain-whois';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
+import { fetchDomainWhoisValidate } from '../../data/domain-whois';
 import type { DomainContactDetails } from './types';
 
 import './contact-form.scss';
 interface ContactFormProps {
+	domainName: string;
 	initialData?: DomainContactDetails;
 	onSubmit?: ( data: DomainContactDetails ) => void;
 	onCancel?: () => void;
 	errors?: Partial< Record< keyof DomainContactDetails, string > >;
-	isSubmitting?: boolean;
 }
 
 export default function ContactForm( {
+	domainName,
 	initialData,
 	onSubmit,
 	onCancel,
-	isSubmitting = false,
 }: ContactFormProps ) {
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: countryList } = useQuery( countryListQuery() );
 	const [ selectedCountryCode, setSelectedCountryCode ] = useState(
 		initialData?.countryCode ?? ''
 	);
 	const { data: statesList } = useQuery( statesListQuery( selectedCountryCode ) );
+
+	const formDataRef = useRef< any >( null );
+	const updateMutation = useMutation( domainWhoisMutation( domainName ) );
+
+	const validateMutation = useMutation( {
+		mutationFn: ( formData: any ) => {
+			formDataRef.current = formData;
+			return fetchDomainWhoisValidate( domainName, formData );
+		},
+		onSuccess: ( data: any ) => {
+			if ( data.success ) {
+				updateMutation.mutate(
+					{
+						formData: formDataRef.current,
+						transferLock: formDataRef.current.optOutTransferLock === false,
+					},
+					{
+						onSuccess: () => {
+							createSuccessNotice( __( 'Contact details saved.' ), { type: 'snackbar' } );
+							onSubmit?.( formDataRef.current );
+						},
+						onError: () => {
+							createErrorNotice( __( 'Failed to save contact details.' ), {
+								type: 'snackbar',
+							} );
+						},
+					}
+				);
+			} else {
+				createErrorNotice( data.messages_simple, {
+					type: 'snackbar',
+				} );
+			}
+		},
+	} );
 
 	const [ formData, setFormData ] = useState< DomainContactDetails >(
 		initialData ?? { optOutTransferLock: false }
@@ -52,9 +92,10 @@ export default function ContactForm( {
 	} ) );
 
 	const isDirty = ! ( JSON.stringify( formData ) === JSON.stringify( initialData ) );
+	const isSubmitting = validateMutation.isPending || updateMutation.isPending;
 
-	const handleSubmit = ( data: DomainContactDetails ) => {
-		onSubmit?.( data );
+	const handleSubmit = () => {
+		validateMutation.mutate( formData );
 	};
 
 	useEffect( () => {

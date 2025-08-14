@@ -1,14 +1,10 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { useDispatch } from '@wordpress/data';
-import { useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
-import { domainWhoisQuery, domainWhoisMutation } from '../../app/queries/domain-whois';
+import { domainWhoisQuery } from '../../app/queries/domain-whois';
 import { domainRoute } from '../../app/routes/domain-routes';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { fetchDomainWhoisValidate } from '../../data/domain-whois';
 import { findRegistrantWhois } from '../../utils/domain-whois';
 import ContactForm from './contact-form';
 import { DomainContactDetails } from './types';
@@ -17,48 +13,13 @@ import './style.scss';
 
 export default function DomainContactInfo() {
 	const { domainName } = domainRoute.useParams();
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const navigate = useNavigate();
 	const { data: whoisData } = useQuery( domainWhoisQuery( domainName ) );
 
 	const registrantWhoisData = findRegistrantWhois( whoisData );
-	const formDataRef = useRef< any >( null );
-	const updateMutation = useMutation( domainWhoisMutation( domainName ) );
 
-	const validateMutation = useMutation( {
-		mutationFn: ( formData: any ) => {
-			formDataRef.current = formData;
-			return fetchDomainWhoisValidate( domainName, formData );
-		},
-		onSuccess: ( data: any ) => {
-			if ( data.success ) {
-				updateMutation.mutate(
-					{
-						formData: formDataRef.current,
-						transferLock: formDataRef.current.optOutTransferLock === false,
-					},
-					{
-						onSuccess: () => {
-							createSuccessNotice( __( 'Contact details saved.' ), { type: 'snackbar' } );
-							navigate( { to: '/domains/$domainName', params: { domainName } } );
-						},
-						onError: () => {
-							createErrorNotice( __( 'Failed to save contact details.' ), {
-								type: 'snackbar',
-							} );
-						},
-					}
-				);
-			} else {
-				createErrorNotice( data.messages_simple, {
-					type: 'snackbar',
-				} );
-			}
-		},
-	} );
-
-	const handleSubmit = ( formData: any ) => {
-		validateMutation.mutate( formData );
+	const handleSubmit = () => {
+		navigate( { to: '/domains/$domainName', params: { domainName } } );
 	};
 
 	const handleCancel = () => {
@@ -69,7 +30,7 @@ export default function DomainContactInfo() {
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Contact details' ) } /> }>
 			<div className="domain-contact-info">
 				<ContactForm
-					isSubmitting={ validateMutation.isPending || updateMutation.isPending }
+					domainName={ domainName }
 					initialData={
 						{
 							firstName: registrantWhoisData?.fname ?? '',
