@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/agenttic-client",
-	"version": "1.0.0",
+	"version": "0.1.0",
 	"type": "module",
 	"description": "A TypeScript client library for A2A (Agent2Agent) protocol communication",
 	"main": "dist/index.js",
