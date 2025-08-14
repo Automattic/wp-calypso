@@ -17,17 +17,17 @@ export function BackupNowButton( { site }: BackupNowButtonProps ) {
 
 	// Determine current state
 	const getBackupState = useCallback(
-		( backups: BackupEntry[], enqueued: boolean ): BackupState => {
+		( backups: BackupEntry[] ): BackupState => {
 			const currentBackup = backups[ 0 ];
 			if ( currentBackup?.status === 'started' ) {
 				return 'in_progress';
 			}
-			if ( currentBackup?.status === 'queued' || enqueued ) {
+			if ( currentBackup?.status === 'queued' || isEnqueued ) {
 				return 'enqueued';
 			}
 			return 'default';
 		},
-		[]
+		[ isEnqueued ]
 	);
 
 	// Check for in-progress backup using rewind/backups endpoint
@@ -35,7 +35,7 @@ export function BackupNowButton( { site }: BackupNowButtonProps ) {
 		...siteBackupsQuery( site.ID ),
 		refetchInterval: ( query ) => {
 			const backups = query.state.data || [];
-			const backupState = getBackupState( backups, isEnqueued );
+			const backupState = getBackupState( backups );
 			// Poll when backup is enqueued or in progress
 			return backupState !== 'default' ? 2000 : false;
 		},
@@ -48,7 +48,7 @@ export function BackupNowButton( { site }: BackupNowButtonProps ) {
 		},
 	} );
 
-	const backupState = getBackupState( rewindBackups, isEnqueued );
+	const backupState = getBackupState( rewindBackups );
 
 	// Reset enqueued state when backup actually starts
 	useEffect( () => {
