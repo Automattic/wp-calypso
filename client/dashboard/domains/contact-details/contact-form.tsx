@@ -15,9 +15,8 @@ import {
 import { DataForm, Field, isItemValid } from '@wordpress/dataviews';
 import { createInterpolateElement, useCallback } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { isEqual } from 'lodash';
 import { useEffect, useState } from 'react';
-import { countryListQuery, statesListQuery } from '../../app/queries/domain';
+import { countryListQuery, statesListQuery } from '../../app/queries/domain-supported-contries';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import type { DomainContactDetails } from './types';
@@ -52,7 +51,7 @@ export default function ContactForm( {
 		value: country.code,
 	} ) );
 
-	const isDirty = ! isEqual( formData, initialData );
+	const isDirty = ! ( JSON.stringify( formData ) === JSON.stringify( initialData ) );
 
 	const handleSubmit = ( data: DomainContactDetails ) => {
 		onSubmit?.( data );

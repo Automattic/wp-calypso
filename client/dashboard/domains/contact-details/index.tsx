@@ -4,8 +4,7 @@ import { useDispatch } from '@wordpress/data';
 import { useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { get } from 'lodash';
-import { domainWhoisQuery, updateDomainWhoisMutation } from '../../app/queries/domain-whois';
+import { domainWhoisQuery, domainWhoisMutation } from '../../app/queries/domain-whois';
 import { domainRoute } from '../../app/routes/domain-routes';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -24,7 +23,7 @@ export default function DomainContactInfo() {
 
 	const registrantWhoisData = findRegistrantWhois( whoisData );
 	const formDataRef = useRef< any >( null );
-	const updateMutation = useMutation( updateDomainWhoisMutation( domainName ) );
+	const updateMutation = useMutation( domainWhoisMutation( domainName ) );
 
 	const validateMutation = useMutation( {
 		mutationFn: ( formData: any ) => {
@@ -73,18 +72,18 @@ export default function DomainContactInfo() {
 					isSubmitting={ validateMutation.isPending || updateMutation.isPending }
 					initialData={
 						{
-							firstName: get( registrantWhoisData, 'fname' ),
-							lastName: get( registrantWhoisData, 'lname' ),
-							organization: get( registrantWhoisData, 'org' ),
-							email: get( registrantWhoisData, 'email' ),
-							phone: get( registrantWhoisData, 'phone' ),
-							address1: get( registrantWhoisData, 'sa1' ),
-							address2: get( registrantWhoisData, 'sa2' ),
-							city: get( registrantWhoisData, 'city' ),
-							state: get( registrantWhoisData, 'state' ),
-							countryCode: get( registrantWhoisData, 'country_code' ),
-							postalCode: get( registrantWhoisData, 'pc' ),
-							fax: get( registrantWhoisData, 'fax' ),
+							firstName: registrantWhoisData?.fname ?? '',
+							lastName: registrantWhoisData?.lname ?? '',
+							organization: registrantWhoisData?.org ?? '',
+							email: registrantWhoisData?.email ?? '',
+							phone: registrantWhoisData?.phone ?? '',
+							address1: registrantWhoisData?.sa1 ?? '',
+							address2: registrantWhoisData?.sa2 ?? '',
+							city: registrantWhoisData?.city ?? '',
+							state: registrantWhoisData?.state ?? '',
+							countryCode: registrantWhoisData?.country_code ?? '',
+							postalCode: registrantWhoisData?.pc ?? '',
+							fax: registrantWhoisData?.fax ?? '',
 						} as DomainContactDetails
 					}
 					onSubmit={ handleSubmit }

@@ -19,7 +19,7 @@ export const domainWhoisValidateQuery = ( domainName: string, contactInformation
 		queryFn: () => fetchDomainWhoisValidate( domainName, contactInformation ),
 	} );
 
-export const updateDomainWhoisMutation = ( domainName: string ) =>
+export const domainWhoisMutation = ( domainName: string ) =>
 	mutationOptions( {
 		mutationFn: ( {
 			formData,
@@ -28,7 +28,5 @@ export const updateDomainWhoisMutation = ( domainName: string ) =>
 			formData: DomainContactDetails;
 			transferLock: boolean;
 		} ) => updateDomainWhois( domainName, formData, transferLock ),
-		onSuccess: () => {
-			queryClient.invalidateQueries( { queryKey: [ 'domains', domainName, 'whois' ] } );
-		},
+		onSuccess: () => queryClient.invalidateQueries( domainWhoisQuery( domainName ) ),
 	} );
