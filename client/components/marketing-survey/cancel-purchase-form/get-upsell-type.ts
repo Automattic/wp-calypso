@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import {
 	isWpComMonthlyPlan,
 	isWpComBusinessPlan,
-	isWpComPremiumPlan,
 	isWpComAnnualPlan,
 	isWpComBiennialPlan,
 	isWpComTriennialPlan,
@@ -51,10 +50,6 @@ export function getUpsellType( reason: string, opts: UpsellOptions ): UpsellType
 		case 'budgetConstraints':
 			if ( ! canDowngrade ) {
 				return '';
-			}
-
-			if ( isWpComPremiumPlan( productSlug ) && isWpComAnnualPlan( productSlug ) ) {
-				return 'downgrade-personal';
 			}
 
 			if (
