@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button, Tooltip } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useCallback, useEffect, useState } from 'react';
 import { siteBackupsQuery } from '../../app/queries/site-backups';
@@ -85,16 +85,18 @@ export function BackupNowButton( { site }: BackupNowButtonProps ) {
 
 	const isBusy = backupState !== 'default' || isPending;
 
-	const button = (
+	return (
 		<Button
 			variant="secondary"
 			onClick={ () => triggerBackup() }
 			disabled={ isBusy }
 			isBusy={ isBusy }
+			accessibleWhenDisabled
+			description={ buttonContent[ backupState ].tooltip }
+			label={ buttonContent[ backupState ].label }
+			showTooltip
 		>
 			{ buttonContent[ backupState ].label }
 		</Button>
 	);
-
-	return <Tooltip text={ buttonContent[ backupState ].tooltip }>{ button }</Tooltip>;
 }
