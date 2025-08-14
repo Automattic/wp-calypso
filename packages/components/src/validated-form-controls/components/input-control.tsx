@@ -1,4 +1,3 @@
-// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
 import { __experimentalInputControl as InputControl } from '@wordpress/components';
 import { useMergeRefs } from '@wordpress/compose';
 import React, { forwardRef, useRef } from 'react';

@@ -1,7 +1,5 @@
 import {
-	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
 	__experimentalInputControl as InputControl,
-	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
 	__experimentalInputControlSuffixWrapper as InputControlSuffixWrapper,
 	Button,
 } from '@wordpress/components';
