@@ -17,9 +17,9 @@ export default function NameServers() {
 	const { domainName } = domainRoute.useParams();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: nameServers, error: queryError } = useQuery( domainNameServersQuery( domainName ) );
-	const { mutate: updateNameServers, isPending: isUpdatingNameServers } = useMutation( {
-		...domainNameServersMutation( domainName ),
-	} );
+	const { mutate: updateNameServers, isPending: isUpdatingNameServers } = useMutation(
+		domainNameServersMutation( domainName )
+	);
 
 	const onSubmit = useCallback(
 		( ns: string[] ) => {
