@@ -10,13 +10,15 @@ interface HostingFeatureGatedWithOverviewCardProps
 	featureIcon: OverviewCardProps[ 'icon' ];
 	upsellHeading: OverviewCardProps[ 'heading' ];
 	upsellDescription: OverviewCardProps[ 'description' ];
-	upsellExternalLink: OverviewCardProps[ 'externalLink' ];
+	upsellLink?: OverviewCardProps[ 'link' ];
+	upsellExternalLink?: OverviewCardProps[ 'externalLink' ];
 }
 
 export default function HostingFeatureGatedWithOverviewCard( {
 	featureIcon,
 	upsellHeading,
 	upsellDescription,
+	upsellLink,
 	upsellExternalLink,
 	...props
 }: HostingFeatureGatedWithOverviewCardProps ) {
@@ -36,6 +38,7 @@ export default function HostingFeatureGatedWithOverviewCard( {
 				<OverviewCard
 					{ ...cardProps }
 					title={ __( 'Upgrade to unlock' ) }
+					link={ upsellLink }
 					externalLink={ upsellExternalLink }
 					tracksId={ tracksFeatureId }
 					onClick={ onClick }
