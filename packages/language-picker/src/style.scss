@@ -18,7 +18,7 @@
 	}
 
 	.components-custom-select-control {
-		width: 100%;
+		width: calc( 100% - 42px ); // less the width of the search icon + padding
 		height: 100%;
 
 		.components-custom-select-control__button {
@@ -43,7 +43,7 @@
 
 	.language-picker-component__search {
 		position: relative;
-		height: 34px;
+		height: 31px;
 		flex: 1 1 auto;
 		margin-bottom: 12px;
 
@@ -83,25 +83,44 @@
 			@include break-small() {
 				display: none;
 			}
-
-			.search-component__icon-navigation {
+			.search-component__icon-navigation-open {
 				background-color: transparent;
+				padding: 0 6px;
+			}
+			.search-component__icon-navigation-close {
+				padding: 0 12px;
+				margin-top: 0;
 			}
 
-			.search-component:not( .is-open ) {
+			&.is-search-open {
+				.search-component__input {
+					position: absolute;
+					top: 0;
+					left: 0;
+					width: calc( 100% - 42px );
+				}
+				.search-component__icon-navigation-open {
+					display: none;
+				}
+			}
+
+			&:not( .is-search-open ) {
+				.search-component__input {
+					display: none;
+				}
+				.search-component__icon-navigation-close {
+					display: none;
+				}
+			}
+
+			.search-component__mobile-open-icon {
 				width: 30px;
 				height: 30px;
-				top: 1px;
-				right: 26px;
+			}
 
-				.search-component__icon-navigation {
-					padding: 0;
-				}
-
-				.search-component__open-icon {
-					width: 30px;
-					height: 30px;
-				}
+			.search-component__mobile-close-icon {
+				width: 19px;
+				height: 19px;
 			}
 		}
 	}

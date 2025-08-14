@@ -1,19 +1,25 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-
-import Search from '@automattic/search';
 import {
 	Button,
 	CustomSelectControl,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
+	SearchControl,
+	Icon,
 } from '@wordpress/components';
+import { useInstanceId } from '@wordpress/compose';
+import { undo as closeIcon, search as searchIcon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useRef, useEffect } from 'react';
 import { getSearchedLanguages, LocalizedLanguageNames } from './search';
 import type { Language, LanguageGroup } from './Language';
-import type { ReactNode } from 'react';
+import type { ReactNode, MouseEvent, KeyboardEvent } from 'react';
 
 import './style.scss';
+
+type KeyboardOrMouseEvent =
+	| MouseEvent< HTMLButtonElement | HTMLInputElement >
+	| KeyboardEvent< HTMLButtonElement | HTMLInputElement >;
 
 type Props< TLanguage extends Language > = {
 	onSelectLanguage: ( language: TLanguage ) => void;
@@ -76,9 +82,11 @@ function LanguagePicker< TLanguage extends Language >( {
 	const [ filter, setFilter ] = useState(
 		findBestDefaultLanguageGroupId( selectedLanguage, languageGroups, languageGroups[ 0 ].id )
 	);
+	const instanceId = useInstanceId( LanguagePicker, 'search' );
 
 	const [ search, setSearch ] = useState( '' );
-
+	const [ isMobileSearchOpen, setIsMobileSearchOpen ] = useState( false );
+	const searchInput = useRef< HTMLInputElement >( null );
 	const getFilteredLanguages = () => {
 		switch ( filter ) {
 			case 'popular':
@@ -131,6 +139,31 @@ function LanguagePicker< TLanguage extends Language >( {
 
 	const searchPlaceholder = __( 'Search languages…' );
 
+	const openMobileSearch = ( event: KeyboardOrMouseEvent ) => {
+		event.preventDefault();
+
+		setIsMobileSearchOpen( true );
+		searchInput.current?.focus();
+	};
+	useEffect( () => {
+		if ( searchInput.current && isMobileSearchOpen ) {
+			searchInput.current.focus();
+		}
+		if ( ! isMobileSearchOpen ) {
+			searchInput.current?.blur();
+		}
+	}, [ isMobileSearchOpen ] );
+
+	const closeMobileSearch = ( event: KeyboardOrMouseEvent ) => {
+		if ( event.type === 'keydown' && 'key' in event && event.key !== 'Enter' ) {
+			return;
+		}
+		event.preventDefault();
+		// if clicked or pressed enter we reset the form
+		setSearch( '' );
+		setIsMobileSearchOpen( false );
+		handleSearchClose();
+	};
 	return (
 		<VStack alignment="left" className="language-picker-component">
 			<VStack className="language-picker-component__heading">
@@ -157,22 +190,51 @@ function LanguagePicker< TLanguage extends Language >( {
 						selectedItem: ( typeof selectControlOptions )[ number ];
 					} ) => selectedItem && setFilter( selectedItem.key ) }
 				/>
-				<div className="language-picker-component__search-mobile">
-					<Search
-						onSearch={ setSearch }
-						pinned
-						fitsContainer
+				<div
+					className={
+						'language-picker-component__search-mobile ' +
+						( isMobileSearchOpen ? ' is-search-open' : '' )
+					}
+				>
+					<SearchControl
+						__nextHasNoMarginBottom
+						onChange={ setSearch }
+						label={ __( 'regions' ) }
+						hideLabelFromVision
+						value={ search }
+						id={ 'search-component-' + instanceId }
+						className="search-component__input"
 						placeholder={ searchPlaceholder }
-						onSearchClose={ handleSearchClose }
+						ref={ searchInput }
+						size="compact"
 					/>
+					<Button
+						className="search-component__icon-navigation-open"
+						onClick={ openMobileSearch }
+						tabIndex={ isMobileSearchOpen ? 0 : -1 }
+						onKeyDown={ openMobileSearch }
+						aria-controls={ 'search-component-' + instanceId }
+						aria-label={ __( 'Open Search', __i18n_text_domain__ ) }
+					>
+						<Icon icon={ searchIcon } className="search-component__mobile-open-icon" size={ 30 } />
+					</Button>
+					<Button
+						className="search-component__icon-navigation-close"
+						onClick={ closeMobileSearch }
+						onKeyDown={ closeMobileSearch }
+						aria-controls={ 'search-component-' + instanceId }
+						aria-label={ __( 'Close Search', __i18n_text_domain__ ) }
+					>
+						<Icon icon={ closeIcon } className="search-component__mobile-close-icon" />
+					</Button>
 				</div>
 				<div className="language-picker-component__search-desktop">
-					<Search
-						openIconSide="right"
-						onSearch={ setSearch }
-						compact
+					<SearchControl
+						__nextHasNoMarginBottom
+						onChange={ setSearch }
+						label={ __( 'regions' ) }
+						hideLabelFromVision
 						placeholder={ searchPlaceholder }
-						onSearchClose={ handleSearchClose }
 					/>
 				</div>
 			</HStack>
