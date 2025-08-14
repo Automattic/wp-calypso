@@ -3,7 +3,8 @@ import { Button, Tooltip } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useCallback, useEffect, useState } from 'react';
 import { siteBackupsQuery } from '../../app/queries/site-backups';
-import { enqueueSiteBackup, type BackupEntry } from '../../data/site-backup';
+import { enqueueSiteBackup } from '../../data/site-backup';
+import { type BackupEntry } from '../../data/site-backups';
 import type { Site } from '../../data/types';
 
 interface BackupNowButtonProps {

@@ -1,6 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
 import { fetchSiteRewindableActivityLog } from '../../data/site-activity-log';
-import { fetchSiteBackups } from '../../data/site-backup';
+import { fetchSiteBackups } from '../../data/site-backups';
 
 export const siteLastBackupQuery = ( siteId: number ) =>
 	queryOptions( {
