@@ -1,6 +1,7 @@
 import { Card, CardBody, TabPanel } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { SectionHeader } from '../../components/section-header';
+import { DnsTemplates } from '../../data/domain-dns-templates';
 import EmailSetupForm from './email-setup-form';
 
 import './email-setup.scss';
@@ -14,12 +15,14 @@ export default function EmailSetup() {
 				<div className="email-setup__tab-content">
 					<EmailSetupForm
 						label="Google Workspace"
-						placeholder="e.g., google-site-verification=..."
 						description={ __(
 							'Paste the verification token provided by Google Workspace for the TXT record.'
 						) }
-						submitLabel={ __( 'Setup' ) }
 						pattern={ /^google-site-verification=[A-Za-z0-9_-]{43}$/ }
+						placeholder="e.g., google-site-verification=..."
+						provider={ DnsTemplates.G_SUITE.PROVIDER }
+						service={ DnsTemplates.G_SUITE.SERVICE }
+						submitLabel={ __( 'Setup' ) }
 					/>
 				</div>
 			),
@@ -30,13 +33,15 @@ export default function EmailSetup() {
 			content: (
 				<div className="email-setup__tab-content">
 					<EmailSetupForm
-						label="iCloud Mail"
-						placeholder="apple-domain=..."
 						description={ __(
 							'Paste the verification token provided by iCloud Mail for the TXT record.'
 						) }
-						submitLabel={ __( 'Setup' ) }
+						label="iCloud Mail"
 						pattern={ /^apple-domain=[A-Za-z0-9]{16}$/ }
+						placeholder="apple-domain=..."
+						provider={ DnsTemplates.ICLOUD_MAIL.PROVIDER }
+						service={ DnsTemplates.ICLOUD_MAIL.SERVICE }
+						submitLabel={ __( 'Setup' ) }
 					/>
 				</div>
 			),
@@ -47,13 +52,15 @@ export default function EmailSetup() {
 			content: (
 				<div className="email-setup__tab-content">
 					<EmailSetupForm
-						label="Office 365"
-						placeholder="MS=ms..."
 						description={ __(
 							'Paste the verification token provided by Office 365 for the TXT record.'
 						) }
-						submitLabel={ __( 'Setup' ) }
+						label="Office 365"
 						pattern={ /^MS=ms\d{8}$/ }
+						placeholder="MS=ms..."
+						provider={ DnsTemplates.MICROSOFT_OFFICE365.PROVIDER }
+						service={ DnsTemplates.MICROSOFT_OFFICE365.SERVICE }
+						submitLabel={ __( 'Setup' ) }
 					/>
 				</div>
 			),
@@ -64,13 +71,15 @@ export default function EmailSetup() {
 			content: (
 				<div className="email-setup__tab-content">
 					<EmailSetupForm
-						label="Zoho Mail"
-						placeholder="zb..."
 						description={ __(
 							'Paste the verification token provided by Zoho Mail for the TXT record.'
 						) }
-						submitLabel={ __( 'Setup' ) }
+						label="Zoho Mail"
 						pattern={ /^zb\w{1,100}$/ }
+						placeholder="zb..."
+						provider={ DnsTemplates.ZOHO_MAIL.PROVIDER }
+						service={ DnsTemplates.ZOHO_MAIL.SERVICE }
+						submitLabel={ __( 'Setup' ) }
 					/>
 				</div>
 			),

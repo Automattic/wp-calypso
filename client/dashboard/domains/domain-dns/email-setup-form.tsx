@@ -1,4 +1,4 @@
-// import { useMutation } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -7,8 +7,8 @@ import {
 import { DataForm, Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-// import { domainRoute } from '../../app/routes/domain-routes';
-// import { emailSetupMutation } from '../../data/domain-dns-records';
+import { domainDnsApplyTemplateMutation } from '../../app/queries/domain-dns-records';
+import { domainRoute } from '../../app/routes/domain-routes';
 
 import './email-setup-form.scss';
 
@@ -26,33 +26,41 @@ const defaultFormData: EmailSetupFormData = {
 };
 
 interface EmailSetupFormProps {
-	placeholder: string;
-	label: string;
 	description: string;
-	submitLabel: string;
+	label: string;
 	pattern: RegExp;
+	placeholder: string;
+	provider: string;
+	service: string;
+	submitLabel: string;
 }
 
 export default function EmailSetupForm( {
-	placeholder,
-	label,
 	description,
-	submitLabel,
+	label,
 	pattern,
+	placeholder,
+	provider,
+	service,
+	submitLabel,
 }: EmailSetupFormProps ) {
-	// const { domainName } = domainRoute.useParams();
+	const { domainName } = domainRoute.useParams();
 	const [ formData, setFormData ] = useState< EmailSetupFormData >( defaultFormData );
 	const [ isPending, setIsPending ] = useState( false );
 
-	// const mutation = useMutation( emailSetupMutation( domainName ) );
+	const mutation = useMutation( domainDnsApplyTemplateMutation( domainName ) );
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
 		setIsPending( true );
-		// mutation.mutate( {
-		// 	record: formData.record,
-		// } );
-		// TODO: Implement the form submission
+		mutation.mutate( {
+			provider,
+			service,
+			variables: {
+				token: formData.record,
+				domain: domainName,
+			},
+		} );
 	};
 
 	const fields: Field< EmailSetupFormData >[] = [

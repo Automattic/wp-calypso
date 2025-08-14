@@ -4,6 +4,7 @@ import {
 	updateDomainDns,
 	restoreDefaultEmailRecords,
 	DnsRecord,
+	applyDnsTemplate,
 } from '../../data/domain-dns-records';
 import { queryClient } from '../query-client';
 
@@ -41,4 +42,13 @@ export const domainDnsEmailMutation = ( domainName: string ) =>
 				queryKey: [ 'domains', domainName, 'dns' ],
 			} );
 		},
+	} );
+
+export const domainDnsApplyTemplateMutation = ( domainName: string ) =>
+	mutationOptions( {
+		mutationFn: ( params: {
+			provider: string;
+			service: string;
+			variables: Record< string, string >;
+		} ) => applyDnsTemplate( domainName, params.provider, params.service, params.variables ),
 	} );
