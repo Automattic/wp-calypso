@@ -121,6 +121,11 @@
 	}
 
 	.language-picker-component__labels {
+		display: none;
+		@include break-small() {
+			display: flex;
+		}
+		justify-content: flex-start;
 		font-family: $default-font;
 		margin: 6px 12px;
 		color: $gray-600;
