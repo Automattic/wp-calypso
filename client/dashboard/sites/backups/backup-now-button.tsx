@@ -50,9 +50,7 @@ export function BackupNowButton( { site }: BackupNowButtonProps ) {
 		},
 		onSuccess: () => {
 			// Refresh rewind backups to check for new backup status
-			queryClient.invalidateQueries( {
-				queryKey: [ 'site', site.ID, 'rewind', 'backups' ],
-			} );
+			queryClient.invalidateQueries( siteBackupsQuery( site.ID ) );
 		},
 		onError: () => {
 			// Lets decide later what to do here
