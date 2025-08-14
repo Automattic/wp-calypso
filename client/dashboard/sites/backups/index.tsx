@@ -17,7 +17,6 @@ import { HostingFeatures } from '../../data/constants';
 import { hasHostingFeature } from '../../utils/site-features';
 import { BackupNowButton } from './backup-now-button';
 import illustrationUrl from './backups-callout-illustration.svg';
-import { getActions } from './dataviews/actions';
 import { getFields } from './dataviews/fields';
 import type { ActivityLogEntry, Site } from '../../data/types';
 import type { View } from '@wordpress/dataviews';
@@ -61,8 +60,10 @@ export function SiteBackupsCallout( {
 
 function Backups( { site }: { site: Site } ) {
 	const [ view, setView ] = useState< View >( {
-		type: 'table',
-		fields: [ 'date', 'action', 'user' ],
+		type: 'list',
+		fields: [ 'date', 'content_text' ],
+		mediaField: 'icon',
+		titleField: 'title',
 		perPage: 10,
 	} );
 
@@ -71,7 +72,6 @@ function Backups( { site }: { site: Site } ) {
 	);
 
 	const fields = getFields();
-	const actions = getActions( site );
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( activityLog, view, fields );
 
 	return (
@@ -80,7 +80,6 @@ function Backups( { site }: { site: Site } ) {
 				getItemId={ ( item ) => item.activity_id }
 				data={ filteredData }
 				fields={ fields }
-				actions={ actions }
 				view={ view }
 				onChangeView={ setView }
 				isLoading={ isLoadingActivityLog }
