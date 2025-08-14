@@ -157,7 +157,7 @@ export const domainNameServersRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'name-servers',
 } ).lazy( () =>
-	import( '../../sites/domains/placeholder' ).then( ( d ) =>
+	import( '../../domains/name-servers' ).then( ( d ) =>
 		createLazyRoute( 'domain-name-servers' )( {
 			component: d.default,
 		} )
