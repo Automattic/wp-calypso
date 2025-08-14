@@ -1,3 +1,4 @@
+@import '@wordpress/base-styles/variables';
 @import "@automattic/typography/styles/variables";
 @import "variables";
 
@@ -9,11 +10,30 @@
 		cursor: move;
 	}
 
+	.components-card__header {
+		padding: 9px 16px;
+
+		&.is-minimized {
+			padding: 16px;
+		}
+	}
+
+	&.is-minimized {
+		.help-center__container-header {
+			.help-center-header__text {
+				flex: unset;
+			}
+		}
+	}
+
 	.help-center__container-header {
+		border: 1px solid $gray-100;
+
 		&.has-unread {
 			background: $help-center-blue;
 			color: var(--studio-white);
 			fill: var(--studio-white);
+			border: none;
 
 			button {
 				color: var(--studio-white);
@@ -36,15 +56,19 @@
 		}
 
 		.help-center-header__text {
+			display: flex;
+			align-items: center;
+			gap: 4px;
 			font-size: $root-font-size;
 			font-weight: 500;
 			margin: 0 0 0 4px;
+			flex: 1;
 
 			svg:not(.help-center__drag-icon) {
 				cursor: pointer;
 			}
 
-			:focus{
+			:focus {
 				outline: none;
 			}
 
@@ -89,6 +113,7 @@
 		svg {
 			fill: var(--wp-components-color-gray-600, #949494);
 		}
+
 		color: var(--wp-components-color-gray-600, #949494);
 	}
 
@@ -108,14 +133,15 @@
 			font-size: 0.875rem;
 		}
 
-		&:not( :disabled ) {
+		&:not( :disabled) {
+
 			&:hover,
 			&:focus {
 				background-color: $help-center-blue;
-				color: var( --studio-white );
+				color: var(--studio-white);
 
 				svg {
-					fill: var( --studio-white );
+					fill: var(--studio-white);
 				}
 			}
 
