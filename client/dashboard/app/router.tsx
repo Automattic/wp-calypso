@@ -677,6 +677,7 @@ const purchasesRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	loader: async () => {
 		queryClient.ensureQueryData( userPurchasesQuery() );
+		queryClient.ensureQueryData( sitesQuery() );
 	},
 	validateSearch: ( search ): { site: string | undefined } => {
 		return {
