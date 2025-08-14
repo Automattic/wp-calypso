@@ -678,9 +678,9 @@ const purchasesRoute = createRoute( {
 	loader: async () => {
 		queryClient.ensureQueryData( userPurchasesQuery() );
 	},
-	validateSearch: ( search ): { siteSlug: string | undefined } => {
+	validateSearch: ( search ): { site: string | undefined } => {
 		return {
-			siteSlug: typeof search.siteSlug === 'string' ? search.siteSlug : undefined,
+			site: typeof search.site === 'string' ? search.site : undefined,
 		};
 	},
 	path: 'billing/purchases',

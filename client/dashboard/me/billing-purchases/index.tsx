@@ -20,7 +20,7 @@ import {
 import type { Operator } from '@wordpress/dataviews';
 
 export default function PurchasesList() {
-	const { siteSlug }: { siteSlug?: string | undefined } = purchasesRoute.useSearch();
+	const { site: siteSlug }: { site?: string | undefined } = purchasesRoute.useSearch();
 	const { data: purchases, isLoading: isLoadingPurchases } = useQuery( userPurchasesQuery() );
 	const { data: transferredPurchases, isLoading: isLoadingTransferredPurchases } = useQuery(
 		userTransferredPurchasesQuery()
