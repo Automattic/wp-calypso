@@ -15,6 +15,7 @@ import PageLayout from '../../components/page-layout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { HostingFeatures } from '../../data/constants';
 import { hasHostingFeature } from '../../utils/site-features';
+import { BackupNowButton } from './backup-now-button';
 import illustrationUrl from './backups-callout-illustration.svg';
 import { getActions } from './dataviews/actions';
 import { getFields } from './dataviews/fields';
@@ -99,10 +100,19 @@ function SiteBackups() {
 		return;
 	}
 
+	const hasBackups = hasHostingFeature( site, HostingFeatures.BACKUPS );
+
 	return (
-		<PageLayout header={ <PageHeader title={ __( 'Backups' ) } /> }>
+		<PageLayout
+			header={
+				<PageHeader
+					title={ __( 'Backups' ) }
+					actions={ hasBackups && <BackupNowButton site={ site } /> }
+				/>
+			}
+		>
 			<CalloutOverlay
-				showCallout={ ! hasHostingFeature( site, HostingFeatures.BACKUPS ) }
+				showCallout={ ! hasBackups }
 				callout={ <SiteBackupsCallout siteSlug={ site.slug } /> }
 				main={ <Backups site={ site } /> }
 			/>
