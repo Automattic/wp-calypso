@@ -3,7 +3,7 @@ import { useNavigate, useRouter } from '@tanstack/react-router';
 import { Button, Modal } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
 import { isAutomatticianQuery } from '../app/queries/me-a8c';
@@ -78,31 +78,7 @@ export default function Sites() {
 	const fields = getFields( { isAutomattician, viewType: view.type } );
 	const actions = getActions( router );
 
-	// Sanitize view to prevent PreviewSizePicker crashes
-	const sanitizedView = useMemo( () => {
-		const sanitized = { ...view };
-
-		// If we have a grid layout with an invalid previewSize, reset it to a safe default
-		if ( sanitized.type === 'grid' && sanitized.layout?.previewSize ) {
-			const validSizes = [ 230, 290, 350, 430 ]; // From PreviewSizePicker imageSizes
-			if ( ! validSizes.includes( sanitized.layout.previewSize ) ) {
-				console.warn( 'Invalid previewSize detected and fixed:', {
-					invalid: sanitized.layout.previewSize,
-					fixed: 230,
-					validSizes,
-				} );
-				sanitized.layout = { ...sanitized.layout, previewSize: 230 };
-			}
-		}
-
-		return sanitized;
-	}, [ view ] );
-
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
-		sites ?? [],
-		sanitizedView,
-		fields
-	);
+	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites ?? [], view, fields );
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 
 	const handleViewChange = ( nextView: View ) => {
@@ -176,7 +152,7 @@ export default function Sites() {
 						data={ filteredData }
 						fields={ fields }
 						actions={ actions }
-						view={ sanitizedView }
+						view={ view }
 						isLoading={ isLoadingSites }
 						onChangeView={ handleViewChange }
 						defaultLayouts={ DEFAULT_LAYOUTS }
