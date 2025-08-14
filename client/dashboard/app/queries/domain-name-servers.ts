@@ -6,7 +6,6 @@ export const domainNameServersQuery = ( domainName: string ) =>
 	queryOptions( {
 		queryKey: [ 'domains', domainName, 'nameservers' ],
 		queryFn: () => fetchDomainNameServers( domainName ),
-		refetchOnWindowFocus: false,
 	} );
 
 export const domainNameServersMutation = ( domainName: string ) =>
