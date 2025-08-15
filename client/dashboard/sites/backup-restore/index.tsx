@@ -9,11 +9,11 @@ import {
 } from '@wordpress/components';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronLeft, chevronRight, rotateLeft } from '@wordpress/icons';
-import { siteBySlugQuery } from '../../../app/queries/site';
-import { siteBackupRestoreRoute, siteBackupsRoute } from '../../../app/router';
-import Notice from '../../../components/notice';
-import { PageHeader } from '../../../components/page-header';
-import PageLayout from '../../../components/page-layout';
+import { siteBySlugQuery } from '../../app/queries/site';
+import { siteBackupRestoreRoute, siteBackupsRoute } from '../../app/router';
+import Notice from '../../components/notice';
+import { PageHeader } from '../../components/page-header';
+import PageLayout from '../../components/page-layout';
 
 function SiteBackupRestore() {
 	const { siteSlug, rewindId } = siteBackupRestoreRoute.useParams();

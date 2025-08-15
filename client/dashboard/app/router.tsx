@@ -300,7 +300,7 @@ const siteBackupRestoreRoute = createRoute( {
 	getParentRoute: () => siteBackupsRoute,
 	path: '$rewindId/restore',
 } ).lazy( () =>
-	import( '../sites/backups/restore' ).then( ( d ) =>
+	import( '../sites/backup-restore' ).then( ( d ) =>
 		createLazyRoute( 'site-backups-restore' )( {
 			component: d.default,
 		} )
