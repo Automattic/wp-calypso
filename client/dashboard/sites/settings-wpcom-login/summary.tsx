@@ -25,10 +25,12 @@ export default function WpcomLoginSettingsSummary( {
 
 	const ssoEnabled = jetpackModules?.includes( JetpackModules.SSO ) ?? false;
 
-	const badges =
-		ssoEnabled || ! hasHostingFeature( site, HostingFeatures.SECURITY_SETTINGS )
+	let badges;
+	if ( hasHostingFeature( site, HostingFeatures.SECURITY_SETTINGS ) ) {
+		badges = ssoEnabled
 			? [ { text: __( 'Enabled' ), intent: 'success' as const } ]
 			: [ { text: __( 'Disabled' ) } ];
+	}
 
 	return (
 		<RouterLinkSummaryButton
