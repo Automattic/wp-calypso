@@ -113,16 +113,16 @@ export default function SsoForm( { site }: { site: Site } ) {
 					onSuccess: () => {
 						createSuccessNotice(
 							formData.sso
-								? __( 'WordPress.com log in enabled.' )
-								: __( 'WordPress.com log in disabled.' ),
+								? __( 'WordPress.com login enabled.' )
+								: __( 'WordPress.com login disabled.' ),
 							{ type: 'snackbar' }
 						);
 					},
 					onError: () => {
 						createErrorNotice(
 							formData.sso
-								? __( 'Failed to enable WordPress.com log in.' )
-								: __( 'Failed to disable WordPress.com log in.' ),
+								? __( 'Failed to enable WordPress.com login.' )
+								: __( 'Failed to disable WordPress.com login.' ),
 							{ type: 'snackbar' }
 						);
 					},

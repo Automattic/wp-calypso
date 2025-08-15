@@ -33,7 +33,7 @@ export default function WpcomLoginSettingsSummary( {
 	return (
 		<RouterLinkSummaryButton
 			to={ `/sites/${ site.slug }/settings/wpcom-login` }
-			title={ __( 'WordPress.com log in' ) }
+			title={ __( 'WordPress.com login' ) }
 			density={ density }
 			decoration={ <Icon icon={ key } /> }
 			badges={ badges }

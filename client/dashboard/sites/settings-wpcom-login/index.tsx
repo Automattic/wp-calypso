@@ -23,7 +23,7 @@ export default function WpcomLoginSettings( { siteSlug }: { siteSlug: string } )
 			size="small"
 			header={
 				<SettingsPageHeader
-					title={ __( 'WordPress.com log in' ) }
+					title={ __( 'WordPress.com login' ) }
 					description={ createInterpolateElement(
 						__(
 							'Allow registered users to log in to your site with their WordPress.com accounts. <link>Learn more</link>'
