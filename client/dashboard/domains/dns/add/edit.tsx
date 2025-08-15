@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
 	Card,
@@ -11,8 +11,8 @@ import { useDispatch } from '@wordpress/data';
 import { DataForm, Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useState } from 'react';
-import { domainDnsMutation } from '../../../app/queries/domain-dns-records';
+import { useEffect, useState } from 'react';
+import { domainDnsMutation, domainDnsQuery } from '../../../app/queries/domain-dns-records';
 import { domainRoute } from '../../../app/routes/domain-routes';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
@@ -41,7 +41,7 @@ const defaultFormData = {
 	port: 5060, // SRV
 };
 
-export default function DomainAddDNS() {
+export default function DomainEditDNS() {
 	const [ typeFormData, setTypeFormData ] = useState< DnsRecordTypeFormData >( {
 		type: 'A',
 	} );
@@ -72,8 +72,12 @@ export default function DomainAddDNS() {
 	const navigate = useNavigate();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { domainName } = domainRoute.useParams();
+	const { recordId } = domainRoute.useSearch();
 	const mutation = useMutation( domainDnsMutation( domainName ) );
 	const { isPending } = mutation;
+
+	const { data: dnsRecords } = useQuery( domainDnsQuery( domainName ) );
+	const recordToEdit = dnsRecords?.records.find( ( record ) => record.id === recordId );
 
 	const navigateToDNSOverviewPage = () => {
 		navigate( {
@@ -82,23 +86,54 @@ export default function DomainAddDNS() {
 		} );
 	};
 
+	// When editing a DNS record, check if the record exists and populate the form
+	useEffect( () => {
+		if ( ! recordToEdit ) {
+			return;
+		}
+
+		const formData = {
+			type: recordToEdit.type,
+			ttl: recordToEdit.ttl as number,
+			name: recordToEdit.name || '',
+			data: recordToEdit.data || '',
+			flags: recordToEdit.flags || 0,
+			tag: recordToEdit.tag || '',
+			aux: recordToEdit.aux || 0,
+			service: recordToEdit.service || '',
+			protocol: recordToEdit.protocol || '',
+			weight: recordToEdit.weight || 0,
+			target: recordToEdit.target || '',
+			port: recordToEdit.port || 0,
+		};
+		setTypeFormData( { type: recordToEdit.type } );
+		setFormData( formData );
+	}, [ recordToEdit ] );
+
+	if ( ! recordToEdit ) {
+		createErrorNotice( __( 'Invalid DNS record to edit.' ) );
+		navigateToDNSOverviewPage();
+		return;
+	}
+
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
 
 		const formattedData = config.transformData( formData, domainName );
 
 		const recordsToAdd: DnsRecord[] = [ formattedData ];
+		const recordsToRemove: DnsRecord[] = [ recordToEdit ];
 
 		mutation.mutate(
-			{ recordsToAdd },
+			{ recordsToAdd, recordsToRemove },
 			{
 				onSuccess: () => {
-					createSuccessNotice( __( 'DNS record added successfully.' ), { type: 'snackbar' } );
+					createSuccessNotice( __( 'DNS record updated successfully.' ), { type: 'snackbar' } );
 					navigateToDNSOverviewPage();
 				},
 				onError: () => {
 					// TODO: Get DNS exception class and display correct error message
-					createErrorNotice( __( 'Failed to add DNS record.' ), {
+					createErrorNotice( __( 'Failed to update DNS record.' ), {
 						type: 'snackbar',
 					} );
 				},
@@ -112,7 +147,7 @@ export default function DomainAddDNS() {
 	};
 
 	return (
-		<PageLayout size="small" header={ <PageHeader title={ __( 'Add a new DNS record' ) } /> }>
+		<PageLayout size="small" header={ <PageHeader title={ __( 'Edit DNS record' ) } /> }>
 			<Card>
 				<CardBody>
 					<form onSubmit={ handleSubmit }>
@@ -137,7 +172,7 @@ export default function DomainAddDNS() {
 							/>
 							<HStack justify="flex-start">
 								<Button variant="primary" type="submit" isBusy={ isPending } disabled={ isPending }>
-									{ __( 'Add DNS record' ) }
+									{ __( 'Update DNS record' ) }
 								</Button>
 								<Button type="button" disabled={ isPending } onClick={ handleCancel }>
 									{ __( 'Cancel' ) }
