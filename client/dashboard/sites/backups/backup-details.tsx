@@ -12,8 +12,8 @@ import { SectionHeader } from '../../components/section-header';
 import { gridiconToWordPressIcon } from '../../utils/gridicons';
 import type { ActivityLogEntry } from '../../data/types';
 
-export function BackupDetails( { selectedBackup }: { selectedBackup: ActivityLogEntry } ) {
-	const formattedTime = useFormattedTime( selectedBackup.published, {
+export function BackupDetails( { backup }: { backup: ActivityLogEntry } ) {
+	const formattedTime = useFormattedTime( backup.published, {
 		dateStyle: 'medium',
 		timeStyle: 'short',
 	} );
@@ -22,19 +22,19 @@ export function BackupDetails( { selectedBackup }: { selectedBackup: ActivityLog
 		<Card>
 			<CardHeader>
 				<SectionHeader
-					title={ selectedBackup.summary }
-					decoration={ <Icon icon={ gridiconToWordPressIcon( selectedBackup.gridicon ) } /> }
+					title={ backup.summary }
+					decoration={ <Icon icon={ gridiconToWordPressIcon( backup.gridicon ) } /> }
 				/>
 			</CardHeader>
 			<VStack className="dashboard-backups__details">
 				<Text size={ 14 } weight={ 500 }>
-					{ selectedBackup.content.text }
+					{ backup.content.text }
 				</Text>
 				<HStack alignment="left" spacing={ 4 }>
 					<Text variant="muted">{ formattedTime }</Text>
-					{ selectedBackup.actor?.name && (
+					{ backup.actor?.name && (
 						<Text variant="muted">
-							{ __( 'By' ) } { selectedBackup.actor.name }
+							{ __( 'By' ) } { backup.actor.name }
 						</Text>
 					) }
 				</HStack>
