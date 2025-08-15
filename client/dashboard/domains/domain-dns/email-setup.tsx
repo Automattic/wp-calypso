@@ -93,7 +93,7 @@ export default function EmailSetup() {
 						className="email-setup__tabs"
 						orientation={ isMobile ? 'horizontal' : 'vertical' }
 					>
-						{ ( tab ) => <div className="email-setup__tab-panel">{ tab.content }</div> }
+						{ ( tab ) => tab.content }
 					</TabPanel>
 				</VStack>
 			</CardBody>
