@@ -1,0 +1,16 @@
+.odie-connection-status--notice.components-notice {
+    &.is-success {
+        pointer-events: none;
+        user-select: none;
+        animation: hide-away 0.5s ease-in-out forwards;
+        animation-delay: 1s;
+    }
+
+    @keyframes hide-away {
+        100% {
+            opacity: 0;
+            height: 0;
+            transform: translateY(100%);
+        }
+    }
+}

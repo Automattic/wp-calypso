@@ -75,6 +75,7 @@ export const OdieSendMessageButton = () => {
 	const sendMessage = useSendChatMessage();
 	const isChatBusy = chat.status === 'loading' || chat.status === 'sending';
 	const isInitialLoading = chat.status === 'loading';
+	const isLiveChat = chat.provider?.startsWith( 'zendesk' );
 	const [ submitDisabled, setSubmitDisabled ] = useState( true );
 
 	// Focus input when chat is ready
@@ -91,10 +92,12 @@ export const OdieSendMessageButton = () => {
 		isUserEligibleForPaidSupport,
 		'messenger'
 	);
-	const { zendeskClientId } = useSelect( ( select ) => {
+	const { zendeskClientId, connectionStatus } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
+		const connectionStatus = helpCenterSelect.getZendeskConnectionStatus();
 		return {
 			zendeskClientId: helpCenterSelect.getZendeskClientId(),
+			connectionStatus,
 		};
 	}, [] );
 	const inferredClientId = chat.clientId ? chat.clientId : zendeskClientId;
@@ -244,7 +247,11 @@ export const OdieSendMessageButton = () => {
 						>
 							<ResizableTextarea
 								shouldDisableInputField={
-									isChatBusy || isAttachingFile || cantTransferToZendesk || isEmailFallback
+									isChatBusy ||
+									isAttachingFile ||
+									cantTransferToZendesk ||
+									isEmailFallback ||
+									( isLiveChat && connectionStatus !== 'connected' )
 								}
 								sendMessageHandler={ sendMessageHandler }
 								className="odie-send-message-input"
