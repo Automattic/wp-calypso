@@ -66,14 +66,3 @@ export const IsBusy: Story = {
 		onSubmit: action( 'onSubmit' ),
 	},
 };
-
-export const WithError: Story = {
-	args: {
-		domainName: 'example.com',
-		nameServers: [],
-		isBusy: false,
-		showUpsellNudge: false,
-		error: 'Name servers management is forbidden on mapped domains',
-		onSubmit: action( 'onSubmit' ),
-	},
-};
