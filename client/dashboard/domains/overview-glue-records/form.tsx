@@ -85,7 +85,7 @@ export default function DomainGlueRecordsForm( {
 			{
 				id: 'ipAddress',
 				label: __( 'IP Address' ),
-				placeholder: '123.45.67.89',
+				placeholder: '123.45.78.9',
 				type: 'text',
 				isValid: {
 					required: true,
