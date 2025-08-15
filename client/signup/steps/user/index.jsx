@@ -578,7 +578,7 @@ export class UserStep extends Component {
 					recaptchaClientId={ this.state.recaptchaClientId }
 					horizontal
 					shouldDisplayUserExistsError={ ! isWoo && ! isBlazeProOAuth2Client( oauth2Client ) }
-					isSocialFirst={ false }
+					isSocialFirst={ this.props.isSocialFirst }
 					labelText={ this.props.translate( 'Your email' ) }
 					disableTosText={ ! isGravatarOAuth2Client( oauth2Client ) }
 				/>
