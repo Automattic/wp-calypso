@@ -10,6 +10,7 @@ import {
 	domainNameServersMutation,
 } from '../../app/queries/domain-name-servers';
 import { domainRoute } from '../../app/router';
+import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import NameServersForm from './form';
@@ -54,13 +55,16 @@ export default function NameServers() {
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Name Servers' ) } /> }>
 			<Card>
 				<CardBody>
-					<NameServersForm
-						domainName={ domainName }
-						error={ errorMsg }
-						isBusy={ isUpdatingNameServers }
-						nameServers={ nameServers ?? [] }
-						onSubmit={ onSubmit }
-					/>
+					{ errorMsg ? (
+						<Notice variant="error">{ errorMsg }</Notice>
+					) : (
+						<NameServersForm
+							domainName={ domainName }
+							isBusy={ isUpdatingNameServers }
+							nameServers={ nameServers ?? [] }
+							onSubmit={ onSubmit }
+						/>
+					) }
 				</CardBody>
 			</Card>
 		</PageLayout>
