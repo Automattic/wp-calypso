@@ -18,6 +18,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { useDnsActions } from './actions';
 import DnsActionsMenu from './dns-actions-menu';
+import DnsImportDialog from './dns-import-dialog';
 import EmailSetup from './email-setup';
 import { useDnsFields } from './fields';
 import ImportBindFileButton from './import-bind-file-button';
@@ -67,6 +68,8 @@ export default function DomainDns() {
 		useState( false );
 	const [ isRestoreDefaultEmailRecordsDialogOpen, setIsRestoreDefaultEmailRecordsDialogOpen ] =
 		useState( false );
+	const [ isImportDialogOpen, setIsImportDialogOpen ] = useState( false );
+	const [ importedRecords, setImportedRecords ] = useState< DnsRecord[] >( [] );
 
 	const actions = useDnsActions();
 	const fields = useDnsFields( domainName );
@@ -190,8 +193,8 @@ export default function DomainDns() {
 								<ImportBindFileButton
 									domainName={ domainName }
 									onRecordsImported={ ( data ) => {
-										// TO DO: Store the data in the state
-										// Open the dialog to confirm the import
+										setImportedRecords( data );
+										setIsImportDialogOpen( true );
 									} }
 								/>
 								<Button
@@ -268,6 +271,19 @@ export default function DomainDns() {
 				onCancel={ () => setIsRestoreDefaultEmailRecordsDialogOpen( false ) }
 				isBusy={ updateDnsMutation.isPending }
 				isOpen={ isRestoreDefaultEmailRecordsDialogOpen }
+			/>
+			<DnsImportDialog
+				isOpen={ isImportDialogOpen }
+				records={ importedRecords }
+				onConfirm={ () => {
+					// TODO: Implement the actual import logic
+					setIsImportDialogOpen( false );
+					setImportedRecords( [] );
+				} }
+				onCancel={ () => {
+					setIsImportDialogOpen( false );
+					setImportedRecords( [] );
+				} }
 			/>
 		</PageLayout>
 	);
