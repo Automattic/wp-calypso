@@ -7,7 +7,6 @@ import { Domain } from '../../data/domain';
  */
 export const useUpsellNudge = ( domain: Domain ): boolean => {
 	if (
-		! domain ||
 		! domain.points_to_wpcom ||
 		domain.wpcom_domain ||
 		domain.primary_domain ||
