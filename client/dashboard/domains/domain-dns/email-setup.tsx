@@ -14,6 +14,7 @@ export default function EmailSetup() {
 			content: (
 				<EmailSetupForm
 					label="Google Workspace"
+					key="google-workspace"
 					description={ __(
 						'Paste the verification token provided by Google Workspace for the TXT record.'
 					) }
@@ -29,6 +30,7 @@ export default function EmailSetup() {
 			title: __( 'iCloud Mail' ),
 			content: (
 				<EmailSetupForm
+					key="icloud-mail"
 					description={ __(
 						'Paste the verification token provided by iCloud Mail for the TXT record.'
 					) }
@@ -45,6 +47,7 @@ export default function EmailSetup() {
 			title: __( 'Office 365' ),
 			content: (
 				<EmailSetupForm
+					key="office-365"
 					description={ __(
 						'Paste the verification token provided by Office 365 for the TXT record.'
 					) }
@@ -66,6 +69,7 @@ export default function EmailSetup() {
 			title: __( 'Zoho Mail' ),
 			content: (
 				<EmailSetupForm
+					key="zoho-mail"
 					description={ __(
 						'Paste the verification token provided by Zoho Mail for the TXT record.'
 					) }
