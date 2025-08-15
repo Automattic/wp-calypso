@@ -5,7 +5,6 @@
     justify-content: flex-end;
 }
 
-
 .container.withHeader {
     justify-content: space-between;
 }
@@ -22,7 +21,6 @@
     color: var(--color-foreground);
     position: relative;
     z-index: 10;
-    filter: brightness(1.1);
 }
 
 .inputContainerInner {

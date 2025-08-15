@@ -1,5 +1,6 @@
 import React from 'react';
 import type { AgentUIProps } from '../types';
+import { cn } from '../utils/classNames';
 import { Chat } from './chat/Chat';
 
 /**
@@ -99,6 +100,7 @@ export const AgentUI: React.FC< AgentUIProps > = ( {
 			suggestions={ suggestions }
 			clearSuggestions={ clearSuggestions }
 			messageRenderer={ messageRenderer }
+			className={ cn( 'agenttic', className ) }
 		/>
 	);
 };

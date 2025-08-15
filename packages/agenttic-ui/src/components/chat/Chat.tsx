@@ -59,6 +59,7 @@ export function Chat( {
 	suggestions,
 	clearSuggestions,
 	messageRenderer,
+	className,
 }: ChatProps ) {
 	// Local input state for controlled component pattern
 	const [ inputValue, setInputValue ] = useState( '' );
@@ -340,7 +341,7 @@ export function Chat( {
 		return (
 			<div
 				data-slot="chat-embedded"
-				className={ cn( styles.container, styles.embedded ) }
+				className={ cn( className, styles.container, styles.embedded ) }
 			>
 				<ConversationView
 					messages={ messages }
@@ -380,7 +381,7 @@ export function Chat( {
 			<motion.div
 				ref={ chatRef }
 				data-slot="chat-floating"
-				className={ cn( styles.container, styles.floating ) }
+				className={ cn( className, styles.container, styles.floating ) }
 				onMouseLeave={
 					chat.state === 'compact' ? handleAutoCollapse : undefined
 				}
