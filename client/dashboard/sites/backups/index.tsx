@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
 import { __experimentalText as Text } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
@@ -60,6 +61,7 @@ export function SiteBackupsCallout( {
 }
 
 function Backups( { site }: { site: Site } ) {
+	const router = useRouter();
 	const [ view, setView ] = useState< View >( {
 		type: 'table',
 		fields: [ 'date', 'action', 'user' ],
@@ -71,7 +73,7 @@ function Backups( { site }: { site: Site } ) {
 	);
 
 	const fields = getFields();
-	const actions = getActions( site );
+	const actions = getActions( site, router );
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( activityLog, view, fields );
 
 	return (
