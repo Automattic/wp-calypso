@@ -5,8 +5,8 @@ import {
 } from '@automattic/calypso-analytics';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { RouterProvider, type AnyRouter } from '@tanstack/react-router';
-import { useMemo, useEffect } from 'react';
+import { RouterProvider } from '@tanstack/react-router';
+import { useMemo, useEffect, useState } from 'react';
 import { AnalyticsProvider, type AnalyticsClient } from './analytics';
 import { getSuperProps } from './analytics/super-props';
 import { AuthProvider, useAuth } from './auth';
@@ -14,10 +14,19 @@ import { AppProvider, type AppConfig } from './context';
 import { I18nProvider } from './i18n';
 import { queryClient } from './query-client';
 import { getRouter } from './router';
+import type { AnyRouter, ParsedLocation } from '@tanstack/react-router';
 
 function RouterProviderWithAuth( { config, router }: { config: AppConfig; router: AnyRouter } ) {
 	const auth = useAuth();
-	return <RouterProvider router={ router } context={ { auth, config } } />;
+	const [ previousLocation, setPreviousLocation ] = useState< ParsedLocation | undefined >();
+
+	useEffect( () => {
+		return router.subscribe( 'onBeforeLoad', ( { fromLocation } ) => {
+			setPreviousLocation( fromLocation );
+		} );
+	}, [ router, setPreviousLocation ] );
+
+	return <RouterProvider router={ router } context={ { auth, config, previousLocation } } />;
 }
 
 function AnalyticsProviderWithClient( {

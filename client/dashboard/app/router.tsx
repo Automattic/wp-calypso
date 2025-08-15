@@ -1,7 +1,7 @@
 import {
 	Router,
 	createRoute,
-	createRootRoute,
+	createRootRouteWithContext,
 	redirect,
 	createLazyRoute,
 	lazyRouteComponent,
@@ -70,13 +70,16 @@ import {
 	domainTransferRoute,
 } from './routes/domain-routes';
 import type { AppConfig } from './context';
-import type { AnyRoute } from '@tanstack/react-router';
+import type { AnyRoute, ParsedLocation } from '@tanstack/react-router';
 
 interface RouteContext {
 	config?: AppConfig;
+	previousLocation?: ParsedLocation;
 }
 
-const rootRoute = createRootRoute( { component: Root } );
+const rootRoute = createRootRouteWithContext< RouteContext >()( {
+	component: Root,
+} );
 
 const indexRoute = createRoute( {
 	getParentRoute: () => rootRoute,

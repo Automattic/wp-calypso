@@ -10,18 +10,19 @@ export default function SettingsPageHeader( props: PageHeaderProps ) {
 	const { siteSlug } = siteRoute.useParams();
 	const router = useRouter();
 	const canGoBack = useCanGoBack();
+	const backUrl = `/sites/${ siteSlug }/settings`;
 
 	const backButton = (
 		<Button
 			className="dashboard-page-header__back-button"
 			icon={ isRTL() ? chevronRight : chevronLeft }
 			onClick={ () => {
-				canGoBack
-					? router.history.back()
-					: router.navigate( { to: `/sites/${ siteSlug }/settings` } );
+				canGoBack ? router.history.back() : router.navigate( { to: backUrl } );
 			} }
 		>
-			{ canGoBack ? __( 'Back' ) : __( 'Settings' ) }
+			{ canGoBack && ! router.options.context.previousLocation?.pathname.endsWith( backUrl )
+				? __( 'Back' )
+				: __( 'Settings' ) }
 		</Button>
 	);
 
