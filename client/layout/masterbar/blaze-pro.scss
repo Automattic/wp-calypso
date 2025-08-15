@@ -166,6 +166,16 @@ body.is-section-login {
 		}
 	}
 
+	&.is-section-signup .layout__content,
+	.layout__content {
+		padding-top: 85px;
+
+		@media (max-width: $break-mobile) {
+			padding-top: 50px;
+			padding-bottom: 80px;
+		}
+	}
+
 	&.is-section-signup::before,
 	&.is-section-signup .layout__primary::before {
 		display: none;

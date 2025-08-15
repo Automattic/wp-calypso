@@ -3,7 +3,8 @@
  */
 
 import { createElement } from 'react';
-import { renderWithProvider } from 'calypso/test-helpers/testing-library';
+import ReactDOM from 'react-dom';
+import TestUtils from 'react-dom/test-utils';
 import { UserStep as User } from '../';
 
 const noop = () => {};
@@ -29,90 +30,73 @@ jest.mock( 'calypso/signup/utils', () => ( {
 } ) );
 
 describe( '#signupStep User', () => {
-	const getSubHeaderEl = ( container ) =>
-		container.querySelector( '.wp-login__one-login-layout-heading-subtext' );
+	let testElement;
+	let rendered;
 
-	test( 'should show subheader TOS text when using unified login layout', () => {
-		const { container } = renderWithProvider(
-			createElement( User, {
-				subHeaderText: 'first subheader message',
-				flowName: 'userAsFirstStepInFlow',
-				saveSignupStep: noop,
-				translate,
-			} ),
-			{ initialPath: '/start/account' }
-		);
+	test( 'should show community subheader text if User step is first in the flow', () => {
+		testElement = createElement( User, {
+			subHeaderText: 'first subheader message',
+			flowName: 'userAsFirstStepInFlow',
+			saveSignupStep: noop,
+			translate,
+		} );
+		rendered = TestUtils.renderIntoDocument( testElement );
 
-		expect( getSubHeaderEl( container ) ).toHaveTextContent(
-			'Just a little reminder that by continuing with any of the options below'
-		);
+		expect( rendered.getSubHeaderText() ).toBe( 'Welcome to the WordPress.com community.' );
 	} );
 
-	test( 'should show subheader TOS text for non-first step as well', () => {
-		const { container } = renderWithProvider(
-			createElement( User, {
+	test( 'should show provided subheader text if User step is not first in the flow', () => {
+		testElement = createElement( User, {
+			subHeaderText: 'test subheader message',
+			flowName: 'someOtherFlow',
+			saveSignupStep: noop,
+			translate,
+		} );
+		rendered = TestUtils.renderIntoDocument( testElement );
+
+		expect( rendered.getSubHeaderText() ).toBe( 'test subheader message' );
+	} );
+
+	describe( '#updateSubHeaderText', () => {
+		let node;
+		let component;
+
+		beforeEach( () => {
+			node = document.createElement( 'div' );
+
+			const element = createElement( User, {
 				subHeaderText: 'test subheader message',
 				flowName: 'someOtherFlow',
 				saveSignupStep: noop,
 				translate,
-			} ),
-			{ initialPath: '/start/account' }
-		);
-
-		expect( getSubHeaderEl( container ) ).toHaveTextContent(
-			'Just a little reminder that by continuing with any of the options below'
-		);
-	} );
-
-	describe( '#updateSubHeaderText', () => {
-		test( 'should keep subheader TOS text when rerendering with user first in flow', () => {
-			const { container, rerender } = renderWithProvider(
-				createElement( User, {
-					subHeaderText: 'test subheader message',
-					flowName: 'someOtherFlow',
-					saveSignupStep: noop,
-					translate,
-				} ),
-				{ initialPath: '/start/account' }
-			);
-
-			rerender(
-				createElement( User, {
-					subHeaderText: 'My test message',
-					flowName: 'userAsFirstStepInFlow',
-					saveSignupStep: noop,
-					translate,
-				} )
-			);
-
-			expect( getSubHeaderEl( container ) ).toHaveTextContent(
-				'Just a little reminder that by continuing with any of the options below'
-			);
+			} );
+			component = ReactDOM.render( element, node );
 		} );
 
-		test( 'should keep subheader TOS text when rerendering with non-first step', () => {
-			const { container, rerender } = renderWithProvider(
-				createElement( User, {
-					subHeaderText: 'test subheader message',
-					flowName: 'someOtherFlow',
-					saveSignupStep: noop,
-					translate,
-				} ),
-				{ initialPath: '/start/account' }
-			);
+		test( 'should show community subheader text when new flow has user as first step', () => {
+			const testProps = {
+				subHeaderText: 'My test message',
+				flowName: 'userAsFirstStepInFlow',
+				saveSignupStep: noop,
+				translate,
+			};
 
-			rerender(
-				createElement( User, {
-					subHeaderText: 'My test message',
-					flowName: 'another test message test',
-					saveSignupStep: noop,
-					translate,
-				} )
-			);
+			ReactDOM.render( createElement( User, testProps ), node );
 
-			expect( getSubHeaderEl( container ) ).toHaveTextContent(
-				'Just a little reminder that by continuing with any of the options below'
-			);
+			expect( component.getSubHeaderText() ).toBe( 'Welcome to the WordPress.com community.' );
+		} );
+
+		test( "should show provided subheader text when new flow doesn't have user as first step", () => {
+			const testProps = {
+				subHeaderText: 'My test message',
+				flowName: 'another test message test',
+				saveSignupStep: noop,
+				translate,
+			};
+
+			ReactDOM.render( createElement( User, testProps ), node );
+
+			expect( component.getSubHeaderText() ).toBe( 'My test message' );
 		} );
 	} );
 } );

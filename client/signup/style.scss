@@ -30,17 +30,15 @@ body.is-section-signup {
 		}
 	}
 
-	.layout {
+	// Adjust the padding as we no longer
+	// show the masterbar.
+	.layout:not(.is-unified-create-account) .layout__content {
+		padding: 48px 0 0;
+	}
 
-		// this is awkward but we need to remove the padding from the layout__content
-		// to account for the unified top-bar used in Login and User Steps (Signup)
-		// while preserving the content padding for non-user steps
+	.layout.is-unified-create-account {
 		.layout__content {
 			padding: 0;
-
-			.signup__steps > .signup__step > .signup__step:not(.is-oauth2-user):not(.is-user-social) {
-				padding-top: 48px;
-			}
 		}
 
 		.locale-suggestions {
@@ -263,7 +261,7 @@ body.is-section-signup .layout:not(.dops) {
 }
 
 body.is-section-stepper,
-body.is-section-signup .layout:not(.dops):not(.is-wccom-oauth-flow) {
+body.is-section-signup .layout:not(.dops):not(.is-wccom-oauth-flow):not(.is-unified-create-account) {
 	$gray-100: #101517;
 	$gray-60: #50575e;
 	$gray-50: #646970;

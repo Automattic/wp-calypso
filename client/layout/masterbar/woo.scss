@@ -335,6 +335,14 @@ $breakpoint-mobile: 660px;
 		}
 	}
 
+
+	&:not(.is-section-login) {
+		.card { // TODO clk remove this. it's handled by .is-unified-create-account
+			box-shadow: none;
+			background-color: initial;
+		}
+	}
+
 	.step-wrapper,
 	.jetpack-connect__main-logo {
 		box-sizing: border-box;
@@ -379,6 +387,11 @@ $breakpoint-mobile: 660px;
 		margin: 54px auto 0;
 		height: unset;
 		min-height: 238px;
+
+		~ .auth-form__separator {
+			margin: -10px auto;
+			max-width: 472px;
+		}
 
 		~ .card.auth-form__social.is-login {
 			max-width: 472px;
@@ -453,6 +466,11 @@ $breakpoint-mobile: 660px;
 		margin-top: 8px;
 	}
 
+	.auth-form__separator::before,
+	.auth-form__separator::after {
+		border-block-start: $woo-form-divider-border; // TODO clk remove this. it's handled by .is-unified-create-account
+	}
+
 	.login__two-factor-footer {
 		display: flex;
 		flex-direction: column;
@@ -473,6 +491,32 @@ $breakpoint-mobile: 660px;
 
 		@media (max-width: $break-mobile) {
 			align-items: flex-start;
+		}
+	}
+
+	.signup-form {
+		.auth-form__separator { // TODO clk remove this. it's handled by .is-unified-create-account
+			width: 100%;
+			margin-left: 0;
+			margin-right: 0;
+
+			@media (min-width: 782px) {
+				width: 100%;
+			}
+
+			&::before,
+			&::after {
+				position: absolute;
+				border-inline-start: 0;
+				border-block-start: $woo-form-divider-border;
+				inset-block-start: 50%;
+				inset-inline-start: 0;
+				width: 42%;
+			}
+
+			&::after {
+				left: 58%;
+			}
 		}
 	}
 
@@ -892,6 +936,7 @@ $breakpoint-mobile: 660px;
 			margin-top: unset;
 		}
 
+		.signup-form, // TODO clk remove this. it's handled by .is-unified-create-account
 		.login__body--continue-as-user {
 			width: 540px;
 			margin: 0 auto;
@@ -900,9 +945,26 @@ $breakpoint-mobile: 660px;
 			flex-direction: column;
 		}
 
+		.signup-form { // TODO clk remove this. it's handled by .is-unified-create-account
+			input[type="email"].form-text-input {
+				margin-bottom: 0;
+			}
+		}
+
+		div.auth-form__separator { // TODO clk remove this. it's handled by .is-unified-create-account
+			&::before,
+			&::after {
+				border-block-start-color: #e0e0e1;
+			}
+		}
+
 		.continue-as-user {
 			margin: 0;
 			max-width: initial;
+
+			~ .auth-form__separator {
+				margin: 32px auto;
+			}
 
 			.continue-as-user__user-info {
 				display: flex;
