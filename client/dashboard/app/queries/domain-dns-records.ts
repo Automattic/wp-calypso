@@ -3,8 +3,9 @@ import {
 	fetchDomainDns,
 	updateDomainDns,
 	restoreDefaultEmailRecords,
-	DnsRecord,
+	type DnsRecord,
 	applyDnsTemplate,
+	type DnsTemplateVariables,
 } from '../../data/domain-dns-records';
 import { queryClient } from '../query-client';
 
@@ -49,11 +50,7 @@ export const domainDnsApplyTemplateMutation = ( domainName: string ) =>
 		mutationFn: ( params: {
 			provider: string;
 			service: string;
-			variables: {
-				domain: string;
-				token: string;
-				mxdata?: string;
-			};
+			variables: DnsTemplateVariables;
 		} ) => applyDnsTemplate( domainName, params.provider, params.service, params.variables ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( {

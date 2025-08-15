@@ -12,77 +12,69 @@ export default function EmailSetup() {
 			name: 'google-workspace',
 			title: __( 'Google Workspace' ),
 			content: (
-				<div className="email-setup__tab-content">
-					<EmailSetupForm
-						label="Google Workspace"
-						description={ __(
-							'Paste the verification token provided by Google Workspace for the TXT record.'
-						) }
-						pattern={ /^google-site-verification=[A-Za-z0-9_-]{43}$/ }
-						placeholder="google-site-verification=..."
-						provider={ DnsTemplates.G_SUITE.PROVIDER }
-						service={ DnsTemplates.G_SUITE.SERVICE }
-					/>
-				</div>
+				<EmailSetupForm
+					label="Google Workspace"
+					description={ __(
+						'Paste the verification token provided by Google Workspace for the TXT record.'
+					) }
+					pattern={ /^google-site-verification=[A-Za-z0-9_-]{43}$/ }
+					placeholder="google-site-verification=..."
+					provider={ DnsTemplates.G_SUITE.PROVIDER }
+					service={ DnsTemplates.G_SUITE.SERVICE }
+				/>
 			),
 		},
 		{
 			name: 'icloud-mail',
 			title: __( 'iCloud Mail' ),
 			content: (
-				<div className="email-setup__tab-content">
-					<EmailSetupForm
-						description={ __(
-							'Paste the verification token provided by iCloud Mail for the TXT record.'
-						) }
-						label="iCloud Mail"
-						pattern={ /^apple-domain=[A-Za-z0-9]{16}$/ }
-						placeholder="apple-domain=..."
-						provider={ DnsTemplates.ICLOUD_MAIL.PROVIDER }
-						service={ DnsTemplates.ICLOUD_MAIL.SERVICE }
-					/>
-				</div>
+				<EmailSetupForm
+					description={ __(
+						'Paste the verification token provided by iCloud Mail for the TXT record.'
+					) }
+					label="iCloud Mail"
+					pattern={ /^apple-domain=[A-Za-z0-9]{16}$/ }
+					placeholder="apple-domain=..."
+					provider={ DnsTemplates.ICLOUD_MAIL.PROVIDER }
+					service={ DnsTemplates.ICLOUD_MAIL.SERVICE }
+				/>
 			),
 		},
 		{
 			name: 'office-365',
 			title: __( 'Office 365' ),
 			content: (
-				<div className="email-setup__tab-content">
-					<EmailSetupForm
-						description={ __(
-							'Paste the verification token provided by Office 365 for the TXT record.'
-						) }
-						label="Office 365"
-						modifyVariables={ ( variables ) =>
-							Object.assign( {}, variables, {
-								mxdata: variables.domain.replaceAll( '.', '-' ) + '.mail.protection.outlook.com',
-							} )
-						}
-						pattern={ /^MS=ms\d{8}$/ }
-						placeholder="MS=ms..."
-						provider={ DnsTemplates.MICROSOFT_OFFICE365.PROVIDER }
-						service={ DnsTemplates.MICROSOFT_OFFICE365.SERVICE }
-					/>
-				</div>
+				<EmailSetupForm
+					description={ __(
+						'Paste the verification token provided by Office 365 for the TXT record.'
+					) }
+					label="Office 365"
+					transformVariables={ ( variables ) =>
+						Object.assign( {}, variables, {
+							mxdata: variables.domain.replaceAll( '.', '-' ) + '.mail.protection.outlook.com',
+						} )
+					}
+					pattern={ /^MS=ms\d{8}$/ }
+					placeholder="MS=ms..."
+					provider={ DnsTemplates.MICROSOFT_OFFICE365.PROVIDER }
+					service={ DnsTemplates.MICROSOFT_OFFICE365.SERVICE }
+				/>
 			),
 		},
 		{
 			name: 'zoho-mail',
 			title: __( 'Zoho Mail' ),
 			content: (
-				<div className="email-setup__tab-content">
-					<EmailSetupForm
-						description={ __(
-							'Paste the verification token provided by Zoho Mail for the TXT record.'
-						) }
-						label="Zoho Mail"
-						pattern={ /^zb\w{1,100}$/ }
-						placeholder="zb..."
-						provider={ DnsTemplates.ZOHO_MAIL.PROVIDER }
-						service={ DnsTemplates.ZOHO_MAIL.SERVICE }
-					/>
-				</div>
+				<EmailSetupForm
+					description={ __(
+						'Paste the verification token provided by Zoho Mail for the TXT record.'
+					) }
+					label="Zoho Mail"
+					pattern={ /^zb\w{1,100}$/ }
+					placeholder="zb..."
+					provider={ DnsTemplates.ZOHO_MAIL.PROVIDER }
+					service={ DnsTemplates.ZOHO_MAIL.SERVICE }
+				/>
 			),
 		},
 	];

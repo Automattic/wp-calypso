@@ -25,6 +25,12 @@ export type DnsResponse = {
 	records: DnsRecord[];
 };
 
+export type DnsTemplateVariables = {
+	domain: string;
+	token: string;
+	mxdata?: string;
+};
+
 export function fetchDomainDns( domainName: string ): Promise< DnsResponse > {
 	return wpcom.req.get( {
 		path: `/domains/${ domainName }/dns`,
@@ -65,11 +71,7 @@ export function applyDnsTemplate(
 	domainName: string,
 	provider: string,
 	service: string,
-	variables: {
-		domain: string;
-		token: string;
-		mxdata?: string;
-	}
+	variables: DnsTemplateVariables
 ): Promise< DnsResponse > {
 	return wpcom.req.post( {
 		path: `/domains/${ domainName }/dns/providers/${ provider }/services/${ service }`,

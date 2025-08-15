@@ -11,6 +11,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { domainDnsApplyTemplateMutation } from '../../app/queries/domain-dns-records';
 import { domainRoute } from '../../app/routes/domain-routes';
+import { type DnsTemplateVariables } from '../../data/domain-dns-records';
 
 export type EmailSetupFormData = {
 	record: string;
@@ -28,11 +29,7 @@ const defaultFormData: EmailSetupFormData = {
 interface EmailSetupFormProps {
 	description: string;
 	label: string;
-	modifyVariables?: ( variables: { token: string; domain: string; mxdata?: string } ) => {
-		token: string;
-		domain: string;
-		mxdata?: string;
-	};
+	transformVariables?: ( variables: DnsTemplateVariables ) => DnsTemplateVariables;
 	pattern: RegExp;
 	placeholder: string;
 	provider: string;
@@ -42,7 +39,7 @@ interface EmailSetupFormProps {
 export default function EmailSetupForm( {
 	description,
 	label,
-	modifyVariables,
+	transformVariables,
 	pattern,
 	placeholder,
 	provider,
@@ -50,24 +47,19 @@ export default function EmailSetupForm( {
 }: EmailSetupFormProps ) {
 	const { domainName } = domainRoute.useParams();
 	const [ formData, setFormData ] = useState< EmailSetupFormData >( defaultFormData );
-	const [ isPending, setIsPending ] = useState( false );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const mutation = useMutation( domainDnsApplyTemplateMutation( domainName ) );
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		setIsPending( true );
-		let variables: {
-			token: string;
-			domain: string;
-			mxdata?: string;
-		} = {
+
+		let variables: DnsTemplateVariables = {
 			token: formData.record,
 			domain: domainName,
 		};
-		if ( modifyVariables ) {
-			variables = modifyVariables( variables );
+		if ( transformVariables ) {
+			variables = transformVariables( variables );
 		}
 		mutation.mutate(
 			{
@@ -87,7 +79,6 @@ export default function EmailSetupForm( {
 					} );
 				},
 				onSettled: () => {
-					setIsPending( false );
 					setFormData( defaultFormData );
 				},
 			}
@@ -126,9 +117,10 @@ export default function EmailSetupForm( {
 					/>
 					<HStack justify="flex-start">
 						<Button
+							type="submit"
 							variant="primary"
-							isBusy={ isPending }
-							disabled={ isPending || ! canSubmit }
+							isBusy={ mutation.isPending }
+							disabled={ mutation.isPending || ! canSubmit }
 							__next40pxDefaultSize
 							accessibleWhenDisabled
 						>
