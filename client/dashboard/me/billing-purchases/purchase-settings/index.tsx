@@ -202,6 +202,9 @@ function PurchaseSettingsActions( {
 	const canBeRenewed = purchase.can_explicit_renew;
 	const canCancel = purchase.is_cancelable;
 	const { recordTracksEvent } = useAnalytics();
+	// FIXME: prevent renew if purchase.isLocked
+	// FIXME: prevent renew if not product owner
+	// FIXME: prevent rendering upgrade button if Jetpack temp site
 	return (
 		<VStack spacing={ 4 }>
 			<ActionList>
@@ -319,6 +322,7 @@ function PurchaseSettingsCard( {
 	description?: ReactNode;
 	link?: string;
 } ) {
+	// FIXME: Add "Please contact partnerName" for partner purchase
 	return (
 		<PurchaseSettingsCardLinkWrapper link={ link }>
 			<Card className="purchase-settings-card">
@@ -477,6 +481,18 @@ export default function PurchaseSettings() {
 	}
 	const upgradeUrl = getUpgradeUrl( purchase );
 	const subtitle = getSubtitleForDisplay( purchase );
+	// FIXME: prevent renewal for preventRenewal
+	// FIXME: prevent renewal for isPendingDomainRegistration
+	// FIXME: add edit payment method button
+	// FIXME: add Jetpack CRM downloads link
+	// FIXME: render reinstall button
+	// FIXME: render "100-Year Domain Registration" in place of getTitleForDisplay for 100 year domain
+	// FIXME: render "Domain transfers can take anywhere from five to seven days to complete."
+	// FIXME: render 'Domain Registration Agreement' and link
+	// FIXME: render DIFM content
+	// FIXME: render renderWordAdsEligibilityWarningDialog for refund/cancel
+	// FIXME: render renderNonPrimaryDomainWarningDialog for refund/cancel
+	// FIXME: render "X cheaper than monthly" upsell button
 
 	return (
 		<PageLayout
@@ -567,9 +583,7 @@ export default function PurchaseSettings() {
 					/>
 				</HStack>
 				<ManageSubscriptionCard purchase={ purchase } />
-				{ ! isExpired( purchase ) && (
-					<PurchaseSettingsActions purchase={ purchase } upgradeUrl={ upgradeUrl } />
-				) }
+				<PurchaseSettingsActions purchase={ purchase } upgradeUrl={ upgradeUrl } />
 			</VStack>
 		</PageLayout>
 	);
