@@ -52,7 +52,7 @@ export const DomainCartV2 = ( { showFreeDomainPromo = false, onSkip }: Props ) =
 		<>
 			<DomainsMiniCart
 				className="domains-search-v2__mini-cart"
-				isMiniCartOpen={ ! isFullCartOpen }
+				isMiniCartOpen={ ! isFullCartOpen && totalItems > 0 }
 				totalItems={ totalItems }
 				totalPrice={ totalPrice }
 				openFullCart={ openFullCart }
