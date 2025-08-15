@@ -79,7 +79,7 @@ export const domainDnsEditRoute = createRoute( {
 		return queryClient.ensureQueryData( domainDnsQuery( domainName ) );
 	},
 } ).lazy( () =>
-	import( '../../domains/dns/add/edit' ).then( ( d ) =>
+	import( '../../domains/dns/edit' ).then( ( d ) =>
 		createLazyRoute( 'domain-dns-edit' )( {
 			component: d.default,
 		} )

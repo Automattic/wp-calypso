@@ -8,10 +8,10 @@ import {
 import { DataForm, Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import RequiredSelect from '../../../components/required-select';
-import { DNS_RECORD_CONFIGS } from './dns-record-configs';
-import type { DnsRecordTypeFormData, DnsRecordFormData } from './dns-record-configs';
-import type { DnsRecord } from '../../../data/domain-dns-records';
+import RequiredSelect from '../../components/required-select';
+import { DNS_RECORD_CONFIGS } from './records/dns-record-configs';
+import type { DnsRecordTypeFormData, DnsRecordFormData } from './records/dns-record-configs';
+import type { DnsRecord } from '../../data/domain-dns-records';
 
 const typeForm = {
 	type: 'regular' as const,
@@ -57,7 +57,6 @@ export default function DNSRecordForm( {
 	const [ formData, setFormData ] = useState< DnsRecordFormData >( () => {
 		if ( recordToEdit ) {
 			return {
-				// type: recordToEdit.type,
 				ttl: recordToEdit.ttl as number,
 				name: recordToEdit.name || '',
 				data: recordToEdit.data || '',

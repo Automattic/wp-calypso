@@ -3,14 +3,14 @@ import { useNavigate } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { domainDnsMutation } from '../../../app/queries/domain-dns-records';
-import { domainRoute } from '../../../app/routes/domain-routes';
-import { PageHeader } from '../../../components/page-header';
-import PageLayout from '../../../components/page-layout';
-import { DNS_RECORD_CONFIGS } from './dns-record-configs';
+import { domainDnsMutation } from '../../app/queries/domain-dns-records';
+import { domainRoute } from '../../app/routes/domain-routes';
+import { PageHeader } from '../../components/page-header';
+import PageLayout from '../../components/page-layout';
+import { DNS_RECORD_CONFIGS } from './records/dns-record-configs';
 import DNSRecordForm from './form';
-import type { DnsRecordTypeFormData, DnsRecordFormData } from './dns-record-configs';
-import type { DnsRecord } from '../../../data/domain-dns-records';
+import type { DnsRecordTypeFormData, DnsRecordFormData } from './records/dns-record-configs';
+import type { DnsRecord } from '../../data/domain-dns-records';
 
 export default function DomainAddDNS() {
 	const navigate = useNavigate();
