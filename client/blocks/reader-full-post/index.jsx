@@ -76,7 +76,9 @@ import getCurrentStream from 'calypso/state/selectors/get-reader-current-stream'
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import { isA8cTeamMember } from 'calypso/state/teams/selectors';
 import { disableAppBanner, enableAppBanner } from 'calypso/state/ui/actions';
+import { FreshlyPressedRecommendationButton } from './freshly-pressed-button';
 import ReaderFullPostHeader from './header';
 import ReaderFullPostContentPlaceholder from './placeholders/content';
 import ScrollTracker from './scroll-tracker';
@@ -95,6 +97,7 @@ export class FullPostView extends Component {
 		hasOrganization: PropTypes.bool,
 		layout: PropTypes.oneOf( [ 'default', 'recent' ] ),
 		currentPath: PropTypes.string,
+		isAutomattician: PropTypes.bool,
 	};
 
 	hasScrolledToCommentAnchor = false;
@@ -659,7 +662,10 @@ export class FullPostView extends Component {
 		/*eslint-disable react/jsx-no-target-blank */
 		return (
 			// add extra div wrapper for consistent content frame layout/styling for reader.
-			<div>
+			<div style={ { position: 'relative' } }>
+				{ this.props.isAutomattician && (
+					<FreshlyPressedRecommendationButton blogId={ +post.site_ID } postId={ +post.ID } />
+				) }
 				<ReaderMain className={ clsx( classes ) } forwardRef={ this.readerMainWrapper }>
 					{ site && <QueryPostLikes siteId={ post.site_ID } postId={ post.ID } /> }
 					{ ! post || post._state === 'pending' ? (
@@ -897,6 +903,7 @@ export default connect(
 			currentPath,
 			referralStream: getPreviousPath( state ),
 			previousRoute: getPreviousRoute( state ),
+			isAutomattician: isA8cTeamMember( state ),
 		};
 
 		if ( ! isExternal && siteId ) {

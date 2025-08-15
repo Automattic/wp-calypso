@@ -1,0 +1,18 @@
+:root .freshly-pressed-button {
+	position: absolute;
+	top: 0;
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 1000;
+
+	&__icon {
+		margin-right: inherit;
+		stroke: #fff;
+		fill: transparent;
+	}
+	&--success.is-primary:not(:disabled) {
+		--wp-components-color-accent: var(--color-success-40);
+		color: #fff;
+		pointer-events: none;
+	}
+}
