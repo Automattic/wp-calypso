@@ -9,11 +9,16 @@ import {
 	WEBSITE_DESIGN_SERVICES,
 } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
+import { shouldRenderRewrittenDomainSearch } from 'calypso/lib/domains/should-render-rewritten-domain-search';
 
 const noop = () => {};
 
 const getUserSocialStepOrFallback = () =>
 	isEnabled( 'signup/social-first' ) ? 'user-social' : 'user';
+
+const getRewrittenDomainSearchOrFallback = ( fallback ) => {
+	return shouldRenderRewrittenDomainSearch() ? 'domain-search' : fallback;
+};
 
 export function generateFlows( {
 	getRedirectDestination = noop,
@@ -68,7 +73,12 @@ export function generateFlows( {
 		},
 		{
 			name: 'business',
-			steps: [ userSocialStep, 'domains', 'plans-business', 'storage-addon' ],
+			steps: [
+				userSocialStep,
+				getRewrittenDomainSearchOrFallback( 'domains' ),
+				'plans-business',
+				'storage-addon',
+			],
 			destination: getSignupDestination,
 			description: 'Create an account and a blog and then add the business plan to the users cart.',
 			lastModified: '2023-10-11',
@@ -79,7 +89,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'premium',
-			steps: [ userSocialStep, 'domains', 'plans-premium' ],
+			steps: [ userSocialStep, getRewrittenDomainSearchOrFallback( 'domains' ), 'plans-premium' ],
 			destination: getSignupDestination,
 			description: 'Create an account and a blog and then add the premium plan to the users cart.',
 			lastModified: '2023-10-11',
@@ -90,7 +100,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'personal',
-			steps: [ userSocialStep, 'domains', 'plans-personal' ],
+			steps: [ userSocialStep, getRewrittenDomainSearchOrFallback( 'domains' ), 'plans-personal' ],
 			destination: getSignupDestination,
 			description: 'Create an account and a blog and then add the personal plan to the users cart.',
 			lastModified: '2023-10-11',
@@ -101,7 +111,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'free',
-			steps: [ userSocialStep, 'domains' ],
+			steps: [ userSocialStep, getRewrittenDomainSearchOrFallback( 'domains' ) ],
 			destination: getSignupDestination,
 			description: 'Create an account and a blog and default to the free plan.',
 			lastModified: '2023-10-11',
@@ -110,7 +120,11 @@ export function generateFlows( {
 		},
 		{
 			name: 'with-theme',
-			steps: [ userSocialStep, 'domains-theme-preselected', 'plans-theme-preselected' ],
+			steps: [
+				userSocialStep,
+				getRewrittenDomainSearchOrFallback( 'domains-theme-preselected' ),
+				'plans-theme-preselected',
+			],
 			destination: getWithThemeDestination,
 			description: 'Preselect a theme to activate/buy from an external source',
 			lastModified: '2023-10-11',
@@ -121,7 +135,11 @@ export function generateFlows( {
 		},
 		{
 			name: 'with-plugin',
-			steps: [ userSocialStep, 'domains', 'plans-business-with-plugin' ],
+			steps: [
+				userSocialStep,
+				getRewrittenDomainSearchOrFallback( 'domains' ),
+				'plans-business-with-plugin',
+			],
 			destination: getWithPluginDestination,
 			description: 'Preselect a plugin to activate/buy, a Business plan is needed',
 			lastModified: '2023-10-11',
@@ -131,7 +149,7 @@ export function generateFlows( {
 		},
 		{
 			name: ONBOARDING_FLOW,
-			steps: [ userSocialStep, 'domains', 'plans' ],
+			steps: [ userSocialStep, getRewrittenDomainSearchOrFallback( 'domains' ), 'plans' ],
 			destination: getSignupDestination,
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
 			lastModified: '2023-10-11',
@@ -142,7 +160,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'plans-first',
-			steps: [ 'plans', 'domains', userSocialStep ],
+			steps: [ 'plans', getRewrittenDomainSearchOrFallback( 'domains' ), userSocialStep ],
 			destination: getSignupDestination,
 			description: 'Plans first signup flow',
 			lastModified: '2024-05-24',
@@ -153,7 +171,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'onboarding-pm',
-			steps: [ userSocialStep, 'domains', 'plans' ],
+			steps: [ userSocialStep, getRewrittenDomainSearchOrFallback( 'domains' ), 'plans' ],
 			destination: getSignupDestination,
 			description:
 				'Paid media version of the onboarding flow. Read more in https://wp.me/pau2Xa-4Kk.',
@@ -171,7 +189,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'import',
-			steps: [ userSocialStep, 'domains', 'plans-import' ],
+			steps: [ userSocialStep, getRewrittenDomainSearchOrFallback( 'domains' ), 'plans-import' ],
 			destination: ( dependencies ) => `/setup/site-migration?siteSlug=${ dependencies.siteSlug }`,
 			description: 'Beginning of the flow to import content',
 			lastModified: '2023-10-11',
@@ -183,7 +201,12 @@ export function generateFlows( {
 		},
 		{
 			name: 'onboarding-with-email',
-			steps: [ userSocialStep, 'mailbox-domain', 'mailbox', 'mailbox-plan' ],
+			steps: [
+				userSocialStep,
+				getRewrittenDomainSearchOrFallback( 'mailbox-domain' ),
+				'mailbox',
+				'mailbox-plan',
+			],
 			destination: getEmailSignupFlowDestination,
 			description:
 				'Copy of the onboarding flow that includes non-skippable domain and email steps; the flow is used by the Professional Email landing page',
@@ -193,7 +216,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'onboarding-registrationless',
-			steps: [ 'domains', 'plans-new', 'user-new' ],
+			steps: [ getRewrittenDomainSearchOrFallback( 'domains' ), 'plans-new', 'user-new' ],
 			destination: getSignupDestination,
 			description: 'Checkout without user account or site. Read more https://wp.me/pau2Xa-1hW',
 			lastModified: '2020-06-26',
@@ -235,7 +258,11 @@ export function generateFlows( {
 		},
 		{
 			name: 'ecommerce',
-			steps: [ userSocialStep, 'domains', 'plans-ecommerce-fulfilled' ],
+			steps: [
+				userSocialStep,
+				getRewrittenDomainSearchOrFallback( 'domains' ),
+				'plans-ecommerce-fulfilled',
+			],
 			destination: getSignupDestination,
 			description: 'Signup flow for creating an online store with an Atomic site',
 			lastModified: '2023-10-11',
@@ -246,7 +273,11 @@ export function generateFlows( {
 		},
 		{
 			name: 'ecommerce-monthly',
-			steps: [ userSocialStep, 'domains', 'plans-ecommerce-monthly' ],
+			steps: [
+				userSocialStep,
+				getRewrittenDomainSearchOrFallback( 'domains' ),
+				'plans-ecommerce-monthly',
+			],
 			destination: getSignupDestination,
 			description: 'Signup flow for creating an online store with an Atomic site',
 			lastModified: '2023-10-11',
@@ -267,7 +298,7 @@ export function generateFlows( {
 		{
 			name: 'domain',
 			steps: [
-				'domain-only',
+				getRewrittenDomainSearchOrFallback( 'domain-only' ),
 				'site-or-domain',
 				'site-picker',
 				'plans-site-selected',
@@ -282,7 +313,11 @@ export function generateFlows( {
 		},
 		{
 			name: DOMAIN_FOR_GRAVATAR_FLOW,
-			steps: [ 'domain-only', 'site-or-domain', 'site-picker' ],
+			steps: [
+				getRewrittenDomainSearchOrFallback( 'domain-only' ),
+				'site-or-domain',
+				'site-picker',
+			],
 			destination: getDomainSignupFlowDestination,
 			description: 'Checkout flow for domains on Gravatar',
 			disallowResume: true,
@@ -300,7 +335,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'launch-site',
-			steps: [ 'domains-launch', 'plans-launch', 'launch' ],
+			steps: [ getRewrittenDomainSearchOrFallback( 'domains-launch' ), 'plans-launch', 'launch' ],
 			destination: getLaunchDestination,
 			description: 'A flow to launch a private site.',
 			providesDependenciesInQuery: [ 'siteSlug' ],
@@ -330,7 +365,11 @@ export function generateFlows( {
 		},
 		{
 			name: 'business-monthly',
-			steps: [ userSocialStep, 'domains', 'plans-business-monthly' ],
+			steps: [
+				userSocialStep,
+				getRewrittenDomainSearchOrFallback( 'domains' ),
+				'plans-business-monthly',
+			],
 			destination: getSignupDestination,
 			description:
 				'Create an account and a blog and then add the business monthly plan to the users cart.',
@@ -342,7 +381,11 @@ export function generateFlows( {
 		},
 		{
 			name: 'premium-monthly',
-			steps: [ userSocialStep, 'domains', 'plans-premium-monthly' ],
+			steps: [
+				userSocialStep,
+				getRewrittenDomainSearchOrFallback( 'domains' ),
+				'plans-premium-monthly',
+			],
 			destination: getSignupDestination,
 			description:
 				'Create an account and a blog and then add the premium monthly plan to the users cart.',
@@ -354,7 +397,11 @@ export function generateFlows( {
 		},
 		{
 			name: 'personal-monthly',
-			steps: [ userSocialStep, 'domains', 'plans-personal-monthly' ],
+			steps: [
+				userSocialStep,
+				getRewrittenDomainSearchOrFallback( 'domains' ),
+				'plans-personal-monthly',
+			],
 			destination: getSignupDestination,
 			description:
 				'Create an account and a blog and then add the personal monthly plan to the users cart.',
@@ -486,7 +533,11 @@ export function generateFlows( {
 		},
 		{
 			name: 'business-2y',
-			steps: [ userSocialStep, 'domains', 'plans-business-2y' ],
+			steps: [
+				userSocialStep,
+				getRewrittenDomainSearchOrFallback( 'domains' ),
+				'plans-business-2y',
+			],
 			destination: getSignupDestination,
 			description:
 				'Create an account and a blog and then add the business 2y plan to the users cart.',
@@ -498,7 +549,11 @@ export function generateFlows( {
 		},
 		{
 			name: 'business-3y',
-			steps: [ userSocialStep, 'domains', 'plans-business-3y' ],
+			steps: [
+				userSocialStep,
+				getRewrittenDomainSearchOrFallback( 'domains' ),
+				'plans-business-3y',
+			],
 			destination: getSignupDestination,
 			description:
 				'Create an account and a blog and then add the business 3y plan to the users cart.',
@@ -508,10 +563,13 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
 		},
-
 		{
 			name: 'premium-2y',
-			steps: [ userSocialStep, 'domains', 'plans-premium-2y' ],
+			steps: [
+				userSocialStep,
+				getRewrittenDomainSearchOrFallback( 'domains' ),
+				'plans-premium-2y',
+			],
 			destination: getSignupDestination,
 			description:
 				'Create an account and a blog and then add the premium 2y plan to the users cart.',
@@ -523,7 +581,11 @@ export function generateFlows( {
 		},
 		{
 			name: 'premium-3y',
-			steps: [ userSocialStep, 'domains', 'plans-premium-3y' ],
+			steps: [
+				userSocialStep,
+				getRewrittenDomainSearchOrFallback( 'domains' ),
+				'plans-premium-3y',
+			],
 			destination: getSignupDestination,
 			description:
 				'Create an account and a blog and then add the premium 3y plan to the users cart.',
@@ -535,7 +597,11 @@ export function generateFlows( {
 		},
 		{
 			name: 'personal-2y',
-			steps: [ userSocialStep, 'domains', 'plans-personal-2y' ],
+			steps: [
+				userSocialStep,
+				getRewrittenDomainSearchOrFallback( 'domains' ),
+				'plans-personal-2y',
+			],
 			destination: getSignupDestination,
 			description:
 				'Create an account and a blog and then add the personal 2y plan to the users cart.',
@@ -547,7 +613,11 @@ export function generateFlows( {
 		},
 		{
 			name: 'personal-3y',
-			steps: [ userSocialStep, 'domains', 'plans-personal-3y' ],
+			steps: [
+				userSocialStep,
+				getRewrittenDomainSearchOrFallback( 'domains' ),
+				'plans-personal-3y',
+			],
 			destination: getSignupDestination,
 			description:
 				'Create an account and a blog and then add the personal 3y plan to the users cart.',
@@ -559,7 +629,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'onboarding-affiliate',
-			steps: [ userSocialStep, 'domains', 'plans-affiliate' ],
+			steps: [ userSocialStep, getRewrittenDomainSearchOrFallback( 'domains' ), 'plans-affiliate' ],
 			destination: getSignupDestination,
 			description: 'Affiliates flow',
 			lastModified: '2024-06-06',
