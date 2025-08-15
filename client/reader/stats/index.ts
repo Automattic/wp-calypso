@@ -1,10 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { localeRegexString } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import { pick } from 'lodash';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { bumpStat, bumpStatWithPageView } from 'calypso/lib/analytics/mc';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { type TrackPostData } from 'calypso/state/reader/analytics/types';
 
 const debug = debugFactory( 'calypso:reader:stats' );
 
@@ -20,7 +20,7 @@ export function recordGaEvent( action: string, label?: string, value?: string ) 
 
 export function recordPermalinkClick(
 	source: string,
-	post: Record< string, unknown >,
+	post: TrackPostData | undefined,
 	eventProperties: Record< string, unknown > = {}
 ) {
 	bumpStat( {
@@ -40,24 +40,60 @@ export function recordPermalinkClick(
 	}
 }
 
+const matches = ( pattern: RegExp ) => ( value: string ) => pattern.test( value );
+const startsWith = ( path: string | string[] ) => ( value: string ) =>
+	Array.isArray( path ) ? path.some( ( p ) => p.startsWith( value ) ) : path.startsWith( value );
+const exactMatch = ( path: string ) => ( value: string ) => path === value;
+const isEmpty = ( value: string | undefined ) => value === '' || value === undefined;
+
+const SearchRoute = matches( /^(\/[^/]+)?\/reader\/search/ );
+const SinglePostRoute = matches( /^\/reader\/(blogs|feeds)\/([0-9]+)\/posts\/([0-9]+)$/i );
+const BlogPageRoute = matches( /^\/reader\/(blogs|feeds)\/([0-9]+)$/i );
+
+type TrackingResolverFn = ( context: { path: string; searchParams: URLSearchParams } ) => string;
+type TrackingResolver = string | TrackingResolverFn;
+
+type RoutesMapping = {
+	route: ( path: string ) => boolean;
+	tracking: TrackingResolver;
+};
+
+const Routes: RoutesMapping[] = [
+	{ route: isEmpty, tracking: 'unknown' },
+	{ route: startsWith( [ '/reader', '/reader/recent/' ] ), tracking: 'following' },
+	{ route: startsWith( '/reader/a8c' ), tracking: 'following_a8c' },
+	{ route: startsWith( '/reader/p2' ), tracking: 'following_p2' },
+	{ route: startsWith( '/reader/list/' ), tracking: 'list' },
+	{ route: startsWith( '/activities/likes' ), tracking: 'postlike' },
+	{ route: startsWith( '/discover/add-new' ), tracking: 'discover_addnew' },
+	{ route: startsWith( '/discover/firstposts' ), tracking: 'discover_firstposts' },
+	{ route: startsWith( '/discover/reddit' ), tracking: 'discover_reddit' },
+	{ route: startsWith( '/discover/latest' ), tracking: 'discover_latest' },
+	{ route: startsWith( '/discover/recommended' ), tracking: 'discover_recommended' },
+	{ route: exactMatch( '/reader/conversations' ), tracking: 'conversations' },
+	{ route: exactMatch( '/reader/conversations/a8c' ), tracking: 'conversations_a8c' },
+	{ route: exactMatch( '/home' ), tracking: 'home' },
+	{ route: matches( /discover\/.*/ ), tracking: 'discover_unknown' },
+	{ route: SinglePostRoute, tracking: 'single_post' },
+	{ route: BlogPageRoute, tracking: 'blog_page' },
+	{ route: SearchRoute, tracking: 'search' },
+] as const;
+
+const findConfigByPath = ( path: string ) => {
+	const route = Routes.find( ( route ) => route.route( path ) );
+	if ( route ) {
+		return route.tracking;
+	}
+	return null;
+};
+
 export function getLocation( fullPath: string ) {
 	const [ path, queryString ] = fullPath.split( '?' );
 	const searchParams = new URLSearchParams( queryString );
+	const isFreshlyPressedEnabled = isEnabled( 'reader/discover/freshly-pressed' );
 
-	if ( path === undefined || path === '' ) {
-		return 'unknown';
-	}
-
-	if ( path === '/reader' || path.startsWith( '/reader/recent/' ) ) {
-		return 'following';
-	}
-
-	if ( path.startsWith( '/reader/a8c' ) ) {
-		return 'following_a8c';
-	}
-
-	if ( path.startsWith( '/reader/p2' ) ) {
-		return 'following_p2';
+	if ( path === '/discover' ) {
+		return isFreshlyPressedEnabled ? 'freshly-pressed' : 'discover_recommended';
 	}
 
 	if ( path.startsWith( '/tag/' ) ) {
@@ -65,74 +101,12 @@ export function getLocation( fullPath: string ) {
 		return `topic_page:${ sort === 'relevance' ? 'relevance' : 'date' }`;
 	}
 
-	if ( path.match( /^\/reader\/(blogs|feeds)\/([0-9]+)\/posts\/([0-9]+)$/i ) ) {
-		return 'single_post';
+	if ( path.startsWith( '/discover/tags' ) ) {
+		const selectedTag = searchParams.get( 'selectedTag' );
+		return `discover_tag:${ selectedTag }`;
 	}
-
-	if ( path.match( /^\/reader\/(blogs|feeds)\/([0-9]+)$/i ) ) {
-		return 'blog_page';
-	}
-
-	if ( path.startsWith( '/reader/list/' ) ) {
-		return 'list';
-	}
-
-	if ( path.startsWith( '/activities/likes' ) ) {
-		return 'postlike';
-	}
-
-	if ( path.startsWith( '/discover' ) ) {
-		if ( path === '/discover' ) {
-			return isEnabled( 'reader/discover/freshly-pressed' )
-				? 'freshly-pressed'
-				: 'discover_recommended';
-		}
-
-		if ( path.startsWith( '/discover/add-new' ) ) {
-			return 'discover_addnew';
-		}
-
-		if ( path.startsWith( '/discover/firstposts' ) ) {
-			return 'discover_firstposts';
-		}
-
-		if ( path.startsWith( '/discover/reddit' ) ) {
-			return 'discover_reddit';
-		}
-
-		if ( path.startsWith( '/discover/latest' ) ) {
-			return 'discover_latest';
-		}
-
-		if ( path.startsWith( '/discover/tags' ) ) {
-			const selectedTag = searchParams.get( 'selectedTag' );
-			return `discover_tag:${ selectedTag }`;
-		}
-
-		if ( path.startsWith( '/discover/recommended' ) ) {
-			return 'discover_recommended';
-		}
-		// Ideally we should not get here, but its good to have a fallback if other tabs are
-		// added and not handled.
-		return 'discover_unknown';
-	}
-
-	if ( path.match( new RegExp( `^(/${ localeRegexString })?/reader/search` ) ) ) {
-		return 'search';
-	}
-
-	if ( path.startsWith( '/reader/conversations/a8c' ) ) {
-		return 'conversations_a8c';
-	}
-
-	if ( path.startsWith( '/reader/conversations' ) ) {
-		return 'conversations';
-	}
-
-	if ( path.startsWith( '/home' ) ) {
-		return 'home';
-	}
-	return 'unknown';
+	const config = findConfigByPath( path );
+	return config || 'unknown';
 }
 
 /**
@@ -146,7 +120,7 @@ export function getLocation( fullPath: string ) {
 export function buildReaderTracksEventProps(
 	eventProperties: Record< string, unknown >,
 	pathnameOverride?: string,
-	post?: Record< string, unknown >
+	post?: TrackPostData | null
 ) {
 	const location = getLocation(
 		pathnameOverride || window.location.pathname + window.location.search
@@ -208,7 +182,12 @@ allowedTracksRailcarEventNames
 	.add( 'calypso_reader_recommended_post_dismissed' )
 	.add( 'calypso_reader_article_engaged_time' );
 
-export function recordTracksRailcar( action, eventName, railcar, overrides = {} ) {
+export function recordTracksRailcar(
+	action: string,
+	eventName?: string | null,
+	railcar?: Record< string, unknown > | null,
+	overrides = {}
+) {
 	// flatten the railcar down into the event props
 	recordTrack(
 		action,
@@ -238,7 +217,7 @@ export function recordTracksRailcarInteract(
 
 export function recordTrackForPost(
 	eventName: string,
-	post: Record< string, unknown > = {},
+	post: TrackPostData,
 	additionalProps: Record< string, unknown > = {},
 	options?: Record< string, unknown >
 ) {
@@ -256,20 +235,7 @@ export function recordTrackForPost(
 	}
 }
 
-interface TrackPost {
-	blog_id: number;
-	post_id: number;
-	feed_id: number;
-	feed_item_id: number;
-	is_jetpack: boolean;
-	is_external: boolean;
-	site_ID: number;
-	ID: number;
-	feed_ID: number;
-	feed_item_ID: number;
-}
-
-export function getTracksPropertiesForPost( post: TrackPost ) {
+export function getTracksPropertiesForPost( post: TrackPostData ) {
 	return {
 		blog_id: ! post.is_external && post.site_ID > 0 ? post.site_ID : undefined,
 		post_id: ! post.is_external && post.ID > 0 ? post.ID : undefined,
@@ -317,8 +283,9 @@ export function pageViewForPost(
 
 export function recordFollow(
 	url: string,
-	railcar: Record< string, unknown >,
-	additionalProps: Record< string, unknown > = {}
+	railcar?: Record< string, unknown > | undefined,
+	additionalProps: Record< string, unknown > = {},
+	pathnameOverride?: string
 ) {
 	const source =
 		( additionalProps.follow_source as string ) ??
@@ -326,11 +293,17 @@ export function recordFollow(
 	bumpStat( 'reader_follows', source );
 	recordAction( 'followed_blog' );
 	recordGaEvent( 'Clicked Follow Blog', source );
-	recordTrack( 'calypso_reader_site_followed', {
-		url,
-		source,
-		...additionalProps,
-	} );
+	recordTrack(
+		'calypso_reader_site_followed',
+		{
+			url,
+			source,
+			...additionalProps,
+		},
+		{
+			pathnameOverride,
+		}
+	);
 	if ( railcar ) {
 		recordTracksRailcarInteract( 'site_followed', railcar );
 	}
@@ -338,12 +311,13 @@ export function recordFollow(
 
 export function recordUnfollow(
 	url: string,
-	railcar: Record< string, unknown >,
-	additionalProps: Record< string, unknown > = {}
+	railcar?: Record< string, unknown >,
+	additionalProps: Record< string, unknown > = {},
+	pathnameOverride?: string
 ) {
 	const source =
 		( additionalProps.follow_source as string ) ??
-		getLocation( window.location.pathname + window.location.search );
+		getLocation( pathnameOverride || window.location.pathname + window.location.search );
 	bumpStat( 'reader_unfollows', source );
 	recordAction( 'unfollowed_blog' );
 	recordGaEvent( 'Clicked Unfollow Blog', source );

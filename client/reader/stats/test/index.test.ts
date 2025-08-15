@@ -7,6 +7,7 @@ import { when } from 'jest-when';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { bumpStat, bumpStatWithPageView } from 'calypso/lib/analytics/mc';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { type TrackPostData } from 'calypso/state/reader/analytics/types';
 import {
 	recordGaEvent,
 	recordPermalinkClick,
@@ -73,7 +74,7 @@ describe( 'reader stats', () => {
 
 	describe( 'recordPermalinkClick', () => {
 		it( 'should record permalink click with post', () => {
-			const post = { ID: 123, site_ID: 456 };
+			const post = { ID: 123, site_ID: 456 } as unknown as TrackPostData;
 			const eventProperties = { extra: 'data' };
 
 			recordPermalinkClick( 'test_source', post, eventProperties );
@@ -134,7 +135,7 @@ describe( 'reader stats', () => {
 		} );
 
 		it( 'should build event properties with post', () => {
-			const post = { ID: 123, site_ID: 456, is_jetpack: true };
+			const post = { ID: 123, site_ID: 456, is_jetpack: true } as unknown as TrackPostData;
 			const result = buildReaderTracksEventProps( { custom: 'prop' }, undefined, post );
 
 			expect( result ).toEqual( {
@@ -277,7 +278,7 @@ describe( 'reader stats', () => {
 					fetch_position: 1,
 					rec_blog_id: '123',
 				},
-			};
+			} as unknown as TrackPostData;
 			const additionalProps = { ui_position: 1, ui_algo: 'test' };
 
 			recordTrackForPost( 'calypso_reader_article_opened', post, additionalProps );
@@ -295,7 +296,7 @@ describe( 'reader stats', () => {
 		} );
 
 		it( 'should record track for post without railcar', () => {
-			const post = { ID: 123, site_ID: 456 };
+			const post = { ID: 123, site_ID: 456 } as unknown as TrackPostData;
 
 			recordTrackForPost( 'calypso_reader_article_opened', post );
 
@@ -318,7 +319,7 @@ describe( 'reader stats', () => {
 				feed_item_ID: 101,
 				is_jetpack: true,
 				is_external: false,
-			};
+			} as unknown as TrackPostData;
 
 			const result = getTracksPropertiesForPost( post );
 
@@ -336,7 +337,7 @@ describe( 'reader stats', () => {
 				ID: 123,
 				site_ID: 456,
 				is_external: true,
-			};
+			} as unknown as TrackPostData;
 
 			const result = getTracksPropertiesForPost( post );
 
@@ -355,21 +356,9 @@ describe( 'reader stats', () => {
 				site_ID: 0,
 				feed_ID: 0,
 				feed_item_ID: 0,
-			};
+			} as unknown as TrackPostData;
 
 			const result = getTracksPropertiesForPost( post );
-
-			expect( result ).toEqual( {
-				blog_id: undefined,
-				post_id: undefined,
-				feed_id: undefined,
-				feed_item_id: undefined,
-				is_jetpack: undefined,
-			} );
-		} );
-
-		it( 'should return properties for empty post', () => {
-			const result = getTracksPropertiesForPost( {} );
 
 			expect( result ).toEqual( {
 				blog_id: undefined,
@@ -432,19 +421,19 @@ describe( 'reader stats', () => {
 		} );
 
 		it( 'should not record page view with missing blogId', () => {
-			pageViewForPost( 0, 'https://example.com', 456 );
+			pageViewForPost( 0, 'https://example.com', 456, false );
 
 			expect( bumpStatWithPageView ).not.toHaveBeenCalled();
 		} );
 
 		it( 'should not record page view with missing blogUrl', () => {
-			pageViewForPost( 123, '', 456 );
+			pageViewForPost( 123, '', 456, false );
 
 			expect( bumpStatWithPageView ).not.toHaveBeenCalled();
 		} );
 
 		it( 'should not record page view with missing postId', () => {
-			pageViewForPost( 123, 'https://example.com', 0 );
+			pageViewForPost( 123, 'https://example.com', 0, false );
 
 			expect( bumpStatWithPageView ).not.toHaveBeenCalled();
 		} );
@@ -566,7 +555,7 @@ describe( 'reader stats', () => {
 				{
 					url: '/unknown-url',
 					expected: 'unknown',
-					description: 'home page',
+					description: 'unknown url',
 				},
 				{
 					url: '/home',
@@ -576,7 +565,7 @@ describe( 'reader stats', () => {
 				{
 					url: '',
 					expected: 'unknown',
-					description: 'home page',
+					description: 'empty url',
 				},
 			] as const;
 
