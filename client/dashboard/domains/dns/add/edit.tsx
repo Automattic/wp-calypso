@@ -62,9 +62,11 @@ export default function DomainEditDNS() {
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Edit DNS record' ) } /> }>
 			<DNSRecordForm
+				isBusy={ mutation.isPending }
 				submitButtonText={ __( 'Update DNS record' ) }
 				onSubmit={ handleSubmit }
 				recordToEdit={ recordToEdit }
+				navigateToDNSOverviewPage={ navigateToDNSOverviewPage }
 			/>
 		</PageLayout>
 	);

@@ -1,5 +1,3 @@
-import { useMutation } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
 import {
 	Card,
 	CardBody,
@@ -10,8 +8,6 @@ import {
 import { DataForm, Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import { domainDnsMutation } from '../../../app/queries/domain-dns-records';
-import { domainRoute } from '../../../app/routes/domain-routes';
 import RequiredSelect from '../../../components/required-select';
 import { DNS_RECORD_CONFIGS } from './dns-record-configs';
 import type { DnsRecordTypeFormData, DnsRecordFormData } from './dns-record-configs';
@@ -38,15 +34,19 @@ const defaultFormData = {
 };
 
 interface DNSRecordFormProps {
+	isBusy: boolean;
+	recordToEdit?: DnsRecord;
 	submitButtonText: string;
 	onSubmit: ( typeFormData: DnsRecordTypeFormData, formData: DnsRecordFormData ) => void;
-	recordToEdit?: DnsRecord;
+	navigateToDNSOverviewPage: () => void;
 }
 
 export default function DNSRecordForm( {
+	isBusy,
+	recordToEdit,
 	submitButtonText,
 	onSubmit,
-	recordToEdit,
+	navigateToDNSOverviewPage,
 }: DNSRecordFormProps ) {
 	const [ typeFormData, setTypeFormData ] = useState< DnsRecordTypeFormData >( () => {
 		if ( recordToEdit ) {
@@ -96,18 +96,6 @@ export default function DNSRecordForm( {
 		},
 	];
 
-	const navigate = useNavigate();
-	const { domainName } = domainRoute.useParams();
-	const mutation = useMutation( domainDnsMutation( domainName ) );
-	const { isPending } = mutation;
-
-	const navigateToDNSOverviewPage = () => {
-		navigate( {
-			to: '/domains/$domainName/dns',
-			params: { domainName },
-		} );
-	};
-
 	const handleCancel = ( e: React.MouseEvent< HTMLButtonElement > ) => {
 		e.preventDefault();
 		navigateToDNSOverviewPage();
@@ -142,10 +130,10 @@ export default function DNSRecordForm( {
 							} }
 						/>
 						<HStack justify="flex-start">
-							<Button variant="primary" type="submit" isBusy={ isPending } disabled={ isPending }>
+							<Button variant="primary" type="submit" isBusy={ isBusy } disabled={ isBusy }>
 								{ submitButtonText }
 							</Button>
-							<Button type="button" disabled={ isPending } onClick={ handleCancel }>
+							<Button type="button" disabled={ isBusy } onClick={ handleCancel }>
 								{ __( 'Cancel' ) }
 							</Button>
 						</HStack>
