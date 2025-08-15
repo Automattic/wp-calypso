@@ -81,17 +81,15 @@ export class UserSignupPage {
 	}
 
 	/**
-	 * Using the Social First signup, selects the Email option, then fill out required information
+	 * Using the unified signup form, fill out required information
 	 * and then submit the form to complete the signup.
 	 *
-	 * @see https://github.com/Automattic/wp-calypso/pull/82481
+	 * @see https://linear.app/a8c/issue/DOTCOM-13218/signup-update-and-unify-the-create-account-screens
 	 *
 	 * @param {string} email Email address of the new user.
 	 * @returns {NewUserResponse} Response from the REST API.
 	 */
-	async signupSocialFirstWithEmail( email: string ): Promise< NewUserResponse > {
-		await this.page.getByRole( 'button', { name: 'Continue with Email' } ).click();
-
+	async signupWithEmail( email: string ): Promise< NewUserResponse > {
 		await this.page.fill( selectors.emailInput, email );
 
 		const [ response ] = await Promise.all( [
@@ -104,6 +102,34 @@ export class UserSignupPage {
 		}
 
 		return await response.json();
+	}
+
+	/**
+	 * Using the Social First signup, selects the Email option, then fill out required information
+	 * and then submit the form to complete the signup.
+	 *
+	 * @see https://github.com/Automattic/wp-calypso/pull/82481
+	 *
+	 * @param {string} email Email address of the new user.
+	 * @returns {NewUserResponse} Response from the REST API.
+	 * @deprecated Use `signupWithEmail` instead.
+	 */
+	async signupSocialFirstWithEmail( email: string ): Promise< NewUserResponse > {
+		/**
+		 * In the current UI the email field is visible by default.
+		 * For backward compatibility, click the legacy "Continue with Email" button if present.
+		 */
+		const continueWithEmailButton = this.page.getByRole( 'button', {
+			name: 'Continue with Email',
+		} );
+		if (
+			( await continueWithEmailButton.count() ) > 0 &&
+			( await continueWithEmailButton.isVisible() )
+		) {
+			await continueWithEmailButton.click();
+		}
+
+		return this.signupWithEmail( email );
 	}
 
 	/**
