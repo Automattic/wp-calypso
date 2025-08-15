@@ -128,4 +128,55 @@ export const AkismetPlans = {
 	PRODUCT_AKISMET_ENTERPRISE_25K_BI_YEARLY: 'ak_ep25k_bi_yearly',
 } as const;
 
+export const JetpackPlans = {
+	PLAN_JETPACK_FREE: 'jetpack_free',
+	PLAN_JETPACK_PERSONAL: 'jetpack_personal',
+	PLAN_JETPACK_PERSONAL_MONTHLY: 'jetpack_personal_monthly',
+	PLAN_JETPACK_PREMIUM: 'jetpack_premium',
+	PLAN_JETPACK_PREMIUM_MONTHLY: 'jetpack_premium_monthly',
+	PLAN_JETPACK_BUSINESS: 'jetpack_business',
+	PLAN_JETPACK_BUSINESS_MONTHLY: 'jetpack_business_monthly',
+	PLAN_JETPACK_SECURITY_T1_YEARLY: 'jetpack_security_t1_yearly',
+	PLAN_JETPACK_SECURITY_T1_MONTHLY: 'jetpack_security_t1_monthly',
+	PLAN_JETPACK_SECURITY_T1_BI_YEARLY: 'jetpack_security_t1_bi_yearly',
+	PLAN_JETPACK_SECURITY_T2_YEARLY: 'jetpack_security_t2_yearly',
+	PLAN_JETPACK_SECURITY_T2_MONTHLY: 'jetpack_security_t2_monthly',
+	PLAN_JETPACK_COMPLETE_BI_YEARLY: 'jetpack_complete_bi_yearly',
+	PLAN_JETPACK_COMPLETE: 'jetpack_complete',
+	PLAN_JETPACK_COMPLETE_MONTHLY: 'jetpack_complete_monthly',
+	PLAN_JETPACK_STARTER_YEARLY: 'jetpack_starter_yearly',
+	PLAN_JETPACK_STARTER_MONTHLY: 'jetpack_starter_monthly',
+	PLAN_JETPACK_GOLDEN_TOKEN: 'jetpack_golden_token_lifetime',
+	PLAN_JETPACK_GROWTH_MONTHLY: 'jetpack_growth_monthly',
+	PLAN_JETPACK_GROWTH_YEARLY: 'jetpack_growth_yearly',
+	PLAN_JETPACK_GROWTH_BI_YEARLY: 'jetpack_growth_bi_yearly',
+} as const;
+
 export const WPCOM_DIFM_LITE = 'wp_difm_lite';
+
+export const AkismetUpgradesProductMap: Record< string, string > = {
+	[ AkismetPlans.PRODUCT_AKISMET_FREE ]: `/checkout/akismet/${ AkismetPlans.PRODUCT_AKISMET_PERSONAL_YEARLY }:-q-36`,
+	// This upgrade path should never be used in it's current form, PRODUCT_AKISMET_PERSONAL_MONTHLY is not a sellable product
+	[ AkismetPlans.PRODUCT_AKISMET_PERSONAL_MONTHLY ]: `/checkout/akismet/${ AkismetPlans.PRODUCT_AKISMET_PRO_500_MONTHLY }`,
+	[ AkismetPlans.PRODUCT_AKISMET_PERSONAL_YEARLY ]: `/checkout/akismet/${ AkismetPlans.PRODUCT_AKISMET_PRO_500_YEARLY }`,
+	[ AkismetPlans.PRODUCT_AKISMET_PRO_500_MONTHLY ]: `/checkout/akismet/${ AkismetPlans.PRODUCT_AKISMET_BUSINESS_5K_MONTHLY }`,
+	[ AkismetPlans.PRODUCT_AKISMET_PRO_500_YEARLY ]: `/checkout/akismet/${ AkismetPlans.PRODUCT_AKISMET_BUSINESS_5K_YEARLY }`,
+	[ AkismetPlans.PRODUCT_AKISMET_PRO_500_BI_YEARLY ]: `/checkout/akismet/${ AkismetPlans.PRODUCT_AKISMET_BUSINESS_5K_BI_YEARLY }`,
+	[ AkismetPlans.PRODUCT_AKISMET_BUSINESS_5K_MONTHLY ]: `/checkout/akismet/${ AkismetPlans.PRODUCT_AKISMET_ENTERPRISE_15K_MONTHLY }`,
+	[ AkismetPlans.PRODUCT_AKISMET_BUSINESS_5K_YEARLY ]: `/checkout/akismet/${ AkismetPlans.PRODUCT_AKISMET_ENTERPRISE_15K_YEARLY }`,
+	[ AkismetPlans.PRODUCT_AKISMET_BUSINESS_5K_BI_YEARLY ]: `/checkout/akismet/${ AkismetPlans.PRODUCT_AKISMET_ENTERPRISE_15K_BI_YEARLY }`,
+	[ AkismetPlans.PRODUCT_AKISMET_ENTERPRISE_15K_MONTHLY ]: `/checkout/akismet/${ AkismetPlans.PRODUCT_AKISMET_ENTERPRISE_25K_MONTHLY }`,
+	[ AkismetPlans.PRODUCT_AKISMET_ENTERPRISE_15K_YEARLY ]: `/checkout/akismet/${ AkismetPlans.PRODUCT_AKISMET_ENTERPRISE_25K_YEARLY }`,
+	[ AkismetPlans.PRODUCT_AKISMET_ENTERPRISE_15K_BI_YEARLY ]: `/checkout/akismet/${ AkismetPlans.PRODUCT_AKISMET_ENTERPRISE_25K_BI_YEARLY }`,
+	[ AkismetPlans.PRODUCT_AKISMET_ENTERPRISE_25K_MONTHLY ]: 'https://akismet.com/enterprise',
+	[ AkismetPlans.PRODUCT_AKISMET_ENTERPRISE_25K_YEARLY ]: 'https://akismet.com/enterprise',
+	[ AkismetPlans.PRODUCT_AKISMET_ENTERPRISE_25K_BI_YEARLY ]: 'https://akismet.com/enterprise',
+};
+
+export const ProductUpgradeMap: Record< string, string > = {
+	[ JetpackPlans.PLAN_JETPACK_STARTER_YEARLY ]: JetpackPlans.PLAN_JETPACK_SECURITY_T1_YEARLY,
+	[ JetpackPlans.PLAN_JETPACK_STARTER_MONTHLY ]: JetpackPlans.PLAN_JETPACK_SECURITY_T1_MONTHLY,
+	[ JetpackPlans.PLAN_JETPACK_GROWTH_BI_YEARLY ]: JetpackPlans.PLAN_JETPACK_COMPLETE_BI_YEARLY,
+	[ JetpackPlans.PLAN_JETPACK_GROWTH_YEARLY ]: JetpackPlans.PLAN_JETPACK_COMPLETE,
+	[ JetpackPlans.PLAN_JETPACK_GROWTH_MONTHLY ]: JetpackPlans.PLAN_JETPACK_COMPLETE_MONTHLY,
+};
