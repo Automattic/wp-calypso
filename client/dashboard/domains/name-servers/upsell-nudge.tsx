@@ -12,7 +12,7 @@ interface Props {
 	domainSiteSlug: string;
 }
 
-export default function UpsaleNudge( { domainName, domainSiteSlug }: Props ) {
+export default function UpsellNudge( { domainName, domainSiteSlug }: Props ) {
 	return (
 		<Callout
 			title={ sprintf(
