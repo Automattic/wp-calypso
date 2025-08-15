@@ -37,6 +37,7 @@ import { ActionList } from '../../../components/action-list';
 import { useFormattedTime } from '../../../components/formatted-time';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
+import { ProductUpgradeMap, AkismetUpgradesProductMap } from '../../../data/constants';
 import { formatDate } from '../../../utils/datetime';
 import {
 	getBillPeriodLabel,
@@ -81,6 +82,34 @@ function renewPurchase( purchase: Purchase ): void {
 	window.location.href = getRenewalUrlFromPurchase( purchase );
 }
 
+function getUpgradeUrl( purchase: Purchase ): string | undefined {
+	if ( isAkismetProduct( purchase ) ) {
+		// For the first Iteration of Calypso Akismet checkout we are only suggesting
+		// for immediate upgrades to the next plan. We will change this in the future
+		// with appropriate page.
+		const upgradeProductPath = AkismetUpgradesProductMap[ purchase.product_slug ];
+		if ( upgradeProductPath ) {
+			return upgradeProductPath;
+		}
+		return undefined;
+	}
+
+	const upgradeProductSlug = ProductUpgradeMap[ purchase.product_slug ];
+	if ( upgradeProductSlug ) {
+		return `/checkout/${ purchase.site_slug }/${ upgradeProductSlug }`;
+	}
+
+	if ( purchase.is_jetpack_backup_t1 ) {
+		return `/plans/storage/${ purchase.site_slug }`;
+	}
+
+	return `/plans/${ purchase.site_slug }`;
+}
+
+function upgradePurchase( upgradeUrl: string ): void {
+	window.location.href = upgradeUrl;
+}
+
 const BackButton = () => {
 	const router = useRouter();
 
@@ -100,13 +129,27 @@ const BackButton = () => {
 };
 
 function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
-	// FIXME: figure out what these actions should be
+	// FIXME: figure out what other actions to include here
 	const canBeRenewed = purchase.can_explicit_renew;
+	const upgradeUrl = getUpgradeUrl( purchase );
 	const { recordTracksEvent } = useAnalytics();
 	return (
 		<DropdownMenu icon={ moreVertical } label={ __( 'Quick actions' ) }>
 			{ () => (
 				<MenuGroup>
+					{ purchase.is_upgradable && upgradeUrl && (
+						<MenuItem
+							onClick={ () => {
+								recordTracksEvent( 'calypso_purchases_upgrade_plan', {
+									status: isExpired( purchase ) ? 'expired' : 'active',
+									plan: purchase.product_name,
+								} );
+								upgradePurchase( upgradeUrl );
+							} }
+						>
+							{ __( 'Upgrade' ) }
+						</MenuItem>
+					) }
 					{ canBeRenewed && (
 						<MenuItem
 							onClick={ () => {
@@ -144,12 +187,13 @@ function PurchaseSettingsCardLinkWrapper( {
 
 function PurchaseSettingsActions( {
 	purchase,
-	isEligibleForUpgrade,
+	upgradeUrl,
 }: {
 	purchase: Purchase;
-	isEligibleForUpgrade: boolean;
+	upgradeUrl: string | undefined;
 } ) {
-	// FIXME: determine what actions to include
+	// FIXME: include "Pick another plan"/"Pick another product" if purchase is expired
+	// FIXME: determine what other actions to include
 	const canBeRemoved = ! isExpired( purchase ) && ! isIncludedWithPlan( purchase );
 	const canBeRenewed = purchase.can_explicit_renew;
 	const canCancel = purchase.is_cancelable;
@@ -157,19 +201,23 @@ function PurchaseSettingsActions( {
 	return (
 		<VStack spacing={ 4 }>
 			<ActionList>
-				{ isEligibleForUpgrade && (
+				{ purchase.is_upgradable && upgradeUrl && (
 					<ActionList.ActionItem
-						title={ __( 'Upgrade plan' ) }
-						description={ __( 'Find the best fit for your business.' ) }
+						title={ __( 'Upgrade subscription' ) }
+						description={ __( 'Find the best fit for your needs.' ) }
 						actions={
 							<Button
 								variant="secondary"
 								size="compact"
-								onClick={ () => ( {
-									// FIXME
-								} ) }
+								onClick={ () => {
+									recordTracksEvent( 'calypso_purchases_upgrade_plan', {
+										status: isExpired( purchase ) ? 'expired' : 'active',
+										plan: purchase.product_name,
+									} );
+									upgradePurchase( upgradeUrl );
+								} }
 							>
-								{ __( 'Upgrade plan' ) }
+								{ __( 'Upgrade subscription' ) }
 							</Button>
 						}
 					/>
@@ -402,10 +450,7 @@ export default function PurchaseSettings() {
 	if ( ! purchase || ! site ) {
 		return null;
 	}
-	// FIXME: figure this out
-	const isEligibleForUpgrade =
-		! isExpired( purchase ) && ! isIncludedWithPlan( purchase ) && purchase.is_plan;
-
+	const upgradeUrl = getUpgradeUrl( purchase );
 	const subtitle = getSubtitleForDisplay( purchase );
 
 	return (
@@ -417,12 +462,11 @@ export default function PurchaseSettings() {
 						prefix={ <BackButton /> }
 						title={ getTitleForDisplay( purchase ) }
 						actions={
-							// FIXME: figure out where to go here
 							site?.options?.admin_url && (
 								<>
-									{ isEligibleForUpgrade && (
-										<Button __next40pxDefaultSize variant="primary" href="#">
-											{ __( 'Upgrade plan' ) }
+									{ purchase.is_upgradable && upgradeUrl && (
+										<Button __next40pxDefaultSize variant="primary" href={ upgradeUrl }>
+											{ __( 'Upgrade' ) }
 										</Button>
 									) }
 									<PurchaseActionMenu purchase={ purchase } />
@@ -499,10 +543,7 @@ export default function PurchaseSettings() {
 				</HStack>
 				<ManageSubscriptionCard purchase={ purchase } />
 				{ ! isExpired( purchase ) && (
-					<PurchaseSettingsActions
-						purchase={ purchase }
-						isEligibleForUpgrade={ isEligibleForUpgrade }
-					/>
+					<PurchaseSettingsActions purchase={ purchase } upgradeUrl={ upgradeUrl } />
 				) }
 			</VStack>
 		</PageLayout>
