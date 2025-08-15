@@ -165,7 +165,9 @@ export interface Purchase {
 	is_domain?: 'true';
 
 	is_domain_registration: boolean;
+	is_pending_registration: boolean;
 	is_free_jetpack_stats_product: boolean;
+	is_jetpack_backup_t1: boolean;
 	is_google_workspace_product: boolean;
 	is_hundred_year_domain: boolean;
 	is_iap_purchase: boolean;
@@ -272,4 +274,14 @@ export interface Purchase {
 	payment_card_processor: string | undefined;
 	payment_details: string | undefined;
 	payment_expiry: string | undefined;
+
+	/**
+	 * True if this subscription can be upgraded to a different one.
+	 *
+	 * If this is set, we will display an "Upgrade" link in some places. That
+	 * link will typically go to the plans page for the site or some other
+	 * location depending on the product. To cause these buttons to instead add
+	 * a product directly to the cart, also set `upgrade_product_slug`.
+	 */
+	is_upgradable: boolean;
 }
