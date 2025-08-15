@@ -11,11 +11,11 @@ import type { View } from '@wordpress/dataviews';
 export function BackupsList( {
 	site,
 	selectedBackup,
-	setSelectBackup,
+	setSelectedBackup,
 }: {
 	site: Site;
 	selectedBackup: ActivityLogEntry | null;
-	setSelectBackup: ( backup: ActivityLogEntry | null ) => void;
+	setSelectedBackup: ( backup: ActivityLogEntry | null ) => void;
 } ) {
 	const [ view, setView ] = useState< View >( {
 		type: 'list',
@@ -35,16 +35,16 @@ export function BackupsList( {
 	useEffect( () => {
 		if ( ! isLoadingActivityLog && activityLog.length > 0 && ! selectedBackup ) {
 			const firstBackup = activityLog[ 0 ];
-			setSelectBackup( firstBackup );
+			setSelectedBackup( firstBackup );
 		}
-	}, [ isLoadingActivityLog, activityLog, selectedBackup, setSelectBackup ] );
+	}, [ isLoadingActivityLog, activityLog, selectedBackup, setSelectedBackup ] );
 
 	const onChangeSelection = ( selection: string[] ) => {
 		const backup =
 			selection.length > 0
 				? activityLog.find( ( item ) => item.activity_id === selection[ 0 ] ) || null
 				: null;
-		setSelectBackup( backup );
+		setSelectedBackup( backup );
 	};
 
 	return (

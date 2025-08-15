@@ -64,7 +64,7 @@ function BackupsLayout( { site }: { site: Site } ) {
 			<BackupsList
 				site={ site }
 				selectedBackup={ selectedBackup }
-				setSelectBackup={ setSelectedBackup }
+				setSelectedBackup={ setSelectedBackup }
 			/>
 			{ selectedBackup && <BackupDetails selectedBackup={ selectedBackup } /> }
 		</Grid>
