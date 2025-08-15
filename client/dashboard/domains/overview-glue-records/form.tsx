@@ -59,7 +59,8 @@ export default function DomainGlueRecordsForm( {
 				type: 'text' as const,
 				Edit: ( { field, data, onChange } ) => {
 					const { id, getValue } = field;
-					const value = getValue( { item: data } ).replace( `.${ domainName }`, '' );
+					const suffix = `.${ domainName }`;
+					const value = getValue( { item: data } ).replace( suffix, '' );
 
 					return (
 						<ValidatedInputControl
@@ -67,7 +68,7 @@ export default function DomainGlueRecordsForm( {
 							placeholder={ field.placeholder }
 							value={ value }
 							onChange={ ( value ) => {
-								return onChange( { [ id ]: value + `.${ domainName }` } );
+								return onChange( { [ id ]: value + suffix } );
 							} }
 							customValidator={ ( value ) => {
 								if ( ! value || ! isValidNameServer( value ) ) {
@@ -75,7 +76,7 @@ export default function DomainGlueRecordsForm( {
 								}
 							} }
 							required
-							suffix={ <InputControlSuffixWrapper>.{ domainName }</InputControlSuffixWrapper> }
+							suffix={ <InputControlSuffixWrapper>{ suffix }</InputControlSuffixWrapper> }
 						/>
 					);
 				},
