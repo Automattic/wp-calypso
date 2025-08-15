@@ -3,6 +3,7 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Card,
+	CardBody,
 	CardHeader,
 	Icon,
 } from '@wordpress/components';
@@ -26,19 +27,21 @@ export function BackupDetails( { backup }: { backup: ActivityLogEntry } ) {
 					decoration={ <Icon icon={ gridiconToWordPressIcon( backup.gridicon ) } /> }
 				/>
 			</CardHeader>
-			<VStack className="dashboard-backups__details">
-				<Text size={ 14 } weight={ 500 }>
-					{ backup.content.text }
-				</Text>
-				<HStack alignment="left" spacing={ 4 }>
-					<Text variant="muted">{ formattedTime }</Text>
-					{ backup.actor?.name && (
-						<Text variant="muted">
-							{ __( 'By' ) } { backup.actor.name }
-						</Text>
-					) }
-				</HStack>
-			</VStack>
+			<CardBody>
+				<VStack>
+					<Text size={ 14 } weight={ 500 }>
+						{ backup.content.text }
+					</Text>
+					<HStack alignment="left" spacing={ 4 }>
+						<Text variant="muted">{ formattedTime }</Text>
+						{ backup.actor?.name && (
+							<Text variant="muted">
+								{ __( 'By' ) } { backup.actor.name }
+							</Text>
+						) }
+					</HStack>
+				</VStack>
+			</CardBody>
 		</Card>
 	);
 }
