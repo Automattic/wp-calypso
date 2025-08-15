@@ -562,16 +562,6 @@ $font-size: rem(14px);
 		}
 	}
 
-	//client/components/site-selector/style.scss
-	.site-selector .site.is-highlighted {
-		background-color: var(--color-sidebar-submenu-background);
-	}
-
-	.site-selector .site.is-highlighted .site__domain,
-	.site-selector .site.is-highlighted .site__title {
-		color: var(--color-sidebar-text);
-	}
-
 	// client/blocks/upsell-nudge/style.scss
 	&:not(.is-classic-bright):not(.is-contrast) {
 		.upsell-nudge.banner.card.is-compact {

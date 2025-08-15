@@ -1,6 +1,8 @@
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { domainQuery } from '../queries/domain';
+import { domainDnsQuery } from '../queries/domain-dns-records';
 import { domainForwardingQuery } from '../queries/domain-forwarding';
+import { domainGlueRecordsQuery } from '../queries/domain-glue-records';
 import { domainsQuery } from '../queries/domains';
 import { queryClient } from '../query-client';
 import type { AnyRoute } from '@tanstack/react-router';
@@ -61,8 +63,8 @@ export const domainOverviewRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: '/',
 } ).lazy( () =>
-	import( '../../sites/domains/placeholder' ).then( ( d ) =>
-		createLazyRoute( 'domain' )( {
+	import( '../../domains/domain-overview' ).then( ( d ) =>
+		createLazyRoute( 'domain-overview' )( {
 			component: d.default,
 		} )
 	)
@@ -72,8 +74,10 @@ export const domainOverviewRoute = createRoute( {
 export const domainDnsRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'dns',
+	loader: ( { params: { domainName } } ) =>
+		queryClient.ensureQueryData( domainDnsQuery( domainName ) ),
 } ).lazy( () =>
-	import( '../../sites/domains/placeholder' ).then( ( d ) =>
+	import( '../../domains/domain-dns' ).then( ( d ) =>
 		createLazyRoute( 'domain-dns' )( {
 			component: d.default,
 		} )
@@ -118,10 +122,12 @@ export const domainForwardingsRoute = createRoute( {
 
 export const domainForwardingAddRoute = createRoute( {
 	getParentRoute: () => domainRoute,
-	path: 'forwarding/add',
+	path: 'forwardings/add',
+	loader: ( { params: { domainName } } ) =>
+		queryClient.ensureQueryData( domainForwardingQuery( domainName ) ),
 } ).lazy( () =>
-	import( '../../sites/domains/placeholder' ).then( ( d ) =>
-		createLazyRoute( 'domain-forwarding-add' )( {
+	import( '../../domains/domain-forwardings/add' ).then( ( d ) =>
+		createLazyRoute( 'domain-forwardings-add' )( {
 			component: d.default,
 		} )
 	)
@@ -129,10 +135,12 @@ export const domainForwardingAddRoute = createRoute( {
 
 export const domainForwardingEditRoute = createRoute( {
 	getParentRoute: () => domainRoute,
-	path: 'forwarding/edit/$forwardingId',
+	path: 'forwardings/edit/$forwardingId',
+	loader: ( { params: { domainName } } ) =>
+		queryClient.ensureQueryData( domainForwardingQuery( domainName ) ),
 } ).lazy( () =>
-	import( '../../sites/domains/placeholder' ).then( ( d ) =>
-		createLazyRoute( 'domain-forwarding-edit' )( {
+	import( '../../domains/domain-forwardings/edit' ).then( ( d ) =>
+		createLazyRoute( 'domain-forwardings-edit' )( {
 			component: d.default,
 		} )
 	)
@@ -153,7 +161,7 @@ export const domainNameServersRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'name-servers',
 } ).lazy( () =>
-	import( '../../sites/domains/placeholder' ).then( ( d ) =>
+	import( '../../domains/name-servers' ).then( ( d ) =>
 		createLazyRoute( 'domain-name-servers' )( {
 			component: d.default,
 		} )
@@ -163,9 +171,33 @@ export const domainNameServersRoute = createRoute( {
 export const domainGlueRecordsRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'glue-records',
+	loader: ( { params: { domainName } } ) =>
+		queryClient.ensureQueryData( domainGlueRecordsQuery( domainName ) ),
+} ).lazy( () =>
+	import( '../../domains/overview-glue-records' ).then( ( d ) =>
+		createLazyRoute( 'domain-glue-records' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const domainGlueRecordsAddRoute = createRoute( {
+	getParentRoute: () => domainRoute,
+	path: 'glue-records/add',
 } ).lazy( () =>
 	import( '../../sites/domains/placeholder' ).then( ( d ) =>
-		createLazyRoute( 'domain-glue-records' )( {
+		createLazyRoute( 'domain-glue-records-add' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const domainGlueRecordsEditRoute = createRoute( {
+	getParentRoute: () => domainRoute,
+	path: 'glue-records/edit/$nameServer',
+} ).lazy( () =>
+	import( '../../sites/domains/placeholder' ).then( ( d ) =>
+		createLazyRoute( 'domain-glue-records-edit' )( {
 			component: d.default,
 		} )
 	)
@@ -175,7 +207,7 @@ export const domainDnssecRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'dnssec',
 } ).lazy( () =>
-	import( '../../domains/overview-dnssec' ).then( ( d ) =>
+	import( '../../domains/domain-dnssec' ).then( ( d ) =>
 		createLazyRoute( 'domain-dnssec' )( {
 			component: d.default,
 		} )
@@ -205,6 +237,8 @@ export const domainChildRoutes: AnyRoute[] = [
 	domainContactInfoRoute,
 	domainNameServersRoute,
 	domainGlueRecordsRoute,
+	domainGlueRecordsAddRoute,
+	domainGlueRecordsEditRoute,
 	domainDnssecRoute,
 	domainTransferRoute,
 ];

@@ -2,7 +2,13 @@
 	display: flex;
 	align-items: center;
 
-	.gravatar-login-logo__gravatar-logo {
-		margin-left: -8px;
+	.gravatar-login-logo__logo-img {
+		width: 32px;
+		height: 32px;
+		border-radius: 50%;
+
+		&.gravatar-login-logo__logo-img--with-co-brand {
+			margin-left: -8px;
+		}
 	}
 }

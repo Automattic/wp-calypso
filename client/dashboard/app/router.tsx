@@ -64,6 +64,8 @@ import {
 	domainContactInfoRoute,
 	domainNameServersRoute,
 	domainGlueRecordsRoute,
+	domainGlueRecordsAddRoute,
+	domainGlueRecordsEditRoute,
 	domainDnssecRoute,
 	domainTransferRoute,
 } from './routes/domain-routes';
@@ -924,6 +926,8 @@ export {
 	domainContactInfoRoute,
 	domainNameServersRoute,
 	domainGlueRecordsRoute,
+	domainGlueRecordsAddRoute,
+	domainGlueRecordsEditRoute,
 	domainDnssecRoute,
 	domainTransferRoute,
 	emailsRoute,

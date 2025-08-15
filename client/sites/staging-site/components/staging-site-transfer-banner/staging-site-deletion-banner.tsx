@@ -1,3 +1,5 @@
+import page from '@automattic/calypso-router';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
 	__experimentalText as Text,
 	__experimentalHeading as Heading,
@@ -5,11 +7,53 @@ import {
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { useEffect } from 'react';
+import { siteByIdQuery } from 'calypso/dashboard/app/queries/site';
+import {
+	isDeletingStagingSiteQuery,
+	hasStagingSiteQuery,
+} from 'calypso/dashboard/app/queries/site-staging-sites';
+import { getProductionSiteId } from 'calypso/dashboard/utils/site-staging-site';
+import { useDispatch } from 'calypso/state';
+import { successNotice } from 'calypso/state/notices/actions';
 import deleteStagingSiteIllustration from './delete-staging-site-illustration.svg';
 import { StagingSiteBannerWrapper } from './staging-site-banner-wrapper';
 
-export function StagingSiteDeletionBanner() {
+interface StagingSiteDeletionBannerProps {
+	siteId: number;
+}
+
+export function StagingSiteDeletionBanner( { siteId }: StagingSiteDeletionBannerProps ) {
 	const heading = __( 'Deleting staging site' );
+
+	const queryClient = useQueryClient();
+	const dispatch = useDispatch();
+
+	const { data: site } = useQuery( {
+		...siteByIdQuery( siteId ),
+		enabled: !! siteId,
+	} );
+
+	const productionSiteId = Number( site ? getProductionSiteId( site ) : 0 );
+
+	const { data: hasStagingSite } = useQuery( {
+		...hasStagingSiteQuery( productionSiteId ),
+		refetchInterval: 3000,
+		enabled: !! productionSiteId,
+	} );
+	const { data: productionSite } = useQuery( {
+		...siteByIdQuery( productionSiteId ?? 0 ),
+		enabled: !! productionSiteId,
+	} );
+
+	useEffect( () => {
+		if ( hasStagingSite !== undefined && ! hasStagingSite && productionSite?.slug && site ) {
+			queryClient.removeQueries( isDeletingStagingSiteQuery( site.ID ) );
+			queryClient.removeQueries( hasStagingSiteQuery( productionSiteId ) );
+			page( `/overview/${ productionSite.slug }` );
+			dispatch( successNotice( __( 'Staging site deleted.' ) ) );
+		}
+	}, [ hasStagingSite, productionSite, queryClient, productionSiteId, dispatch, site ] );
 
 	return (
 		<StagingSiteBannerWrapper>
