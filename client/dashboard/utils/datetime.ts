@@ -238,3 +238,51 @@ export function getUtcOffsetDisplay( offsetHours: number ): string {
 	const minutesPart = String( Math.round( ( abs - Math.floor( abs ) ) * 60 ) ).padStart( 2, '0' );
 	return `UTC${ sign }${ hoursPart }:${ minutesPart }`;
 }
+
+/**
+ * Convert a date to the start of the local day.
+ */
+function toStartOfDayLocal( date: Date ): Date {
+	return new Date( date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0 );
+}
+
+/**
+ * Convert a date to the end of the local day.
+ */
+function toEndOfDayLocal( date: Date ): Date {
+	return new Date( date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59, 999 );
+}
+
+/**
+ * Convert a local date range to inclusive epoch-second boundaries (UTC).
+ * Covers the full start and end calendar days.
+ */
+export function buildTimeRangeInSeconds(
+	start: Date,
+	end: Date,
+	offsetHours: number
+): { startSec: number; endSec: number } {
+	const startLocal = toStartOfDayLocal( start ).getTime();
+	const endLocal = toEndOfDayLocal( end ).getTime();
+	const shiftMs = offsetHours * 3_600_000;
+	return {
+		startSec: Math.floor( ( startLocal - shiftMs ) / 1000 ),
+		endSec: Math.floor( ( endLocal - shiftMs ) / 1000 ),
+	};
+}
+
+const toLocalNoon = ( d: Date ) =>
+	new Date( d.getFullYear(), d.getMonth(), d.getDate(), 12, 0, 0, 0 );
+
+export function formatRangeLabelSiteTimeZone(
+	start: Date,
+	end: Date,
+	gmtOffset: number,
+	locale: string
+) {
+	const s = toLocalNoon( start );
+	const e = toLocalNoon( end );
+	const left = formatDateWithOffset( s, gmtOffset, locale, { dateStyle: 'medium' } );
+	const right = formatDateWithOffset( e, gmtOffset, locale, { dateStyle: 'medium' } );
+	return `${ left } ${ __( 'to' ) } ${ right }`;
+}

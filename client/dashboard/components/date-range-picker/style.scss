@@ -1,0 +1,29 @@
+
+.logs-date-input__popover {
+	margin-bottom: 8px;
+	min-width: 480px;
+	padding: 12px;
+	width: max-content;
+}
+
+@media (max-width: 600px) {
+  .logs-date-input__popover {
+    min-width: unset;
+  }
+}
+
+.logs-date-input__field .components-input-control__input:hover {
+	cursor: pointer;
+}
+
+.logs-date-input__field .components-input-control__input {
+	font-weight: 600;
+}
+
+.logs-date-input__toggle:hover,
+.logs-date-input__toggle:focus-within,
+.logs-date-input__field .components-input-control__input:hover,
+.logs-date-input__field .components-input-control__input:focus {
+	fill: var(--wp-admin-theme-color);
+	color: var(--wp-admin-theme-color) !important;
+}

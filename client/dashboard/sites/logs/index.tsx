@@ -4,18 +4,21 @@ import { __experimentalText as Text, TabPanel } from '@wordpress/components';
 import { DataViews, ViewTable } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { siteBySlugQuery } from '../../app/queries/site';
 import { siteLogsQuery } from '../../app/queries/site-logs';
+import { siteSettingsQuery } from '../../app/queries/site-settings';
 import { siteRoute } from '../../app/router';
 import { Callout } from '../../components/callout';
 import { CalloutOverlay } from '../../components/callout-overlay';
 import DataViewsCard from '../../components/dataviews-card';
+import { DateRangePicker } from '../../components/date-range-picker';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { HostingFeatures } from '../../data/constants';
 import { LogType, PHPLog, ServerLog, SiteLogsParams } from '../../data/site-logs';
+import { buildTimeRangeInSeconds } from '../../utils/datetime';
 import { hasHostingFeature } from '../../utils/site-features';
 import { useFields } from './dataviews/fields';
 import { toFilterParams } from './dataviews/views';
@@ -71,6 +74,14 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
+	// @todo: We'll be able to remove the fallbacks once the temporary data (fields, views, actions) are removed and this component is cleaned up, as we'll return earlier if site doesn't exist.
+	const siteId = site?.ID ?? null;
+
+	const { data: gmtOffset } = useSuspenseQuery( {
+		...siteSettingsQuery( siteId ),
+		select: ( s ) => s?.gmt_offset ?? 0,
+	} );
+
 	// @todo, this will be replaced when importing the use-view data.
 	const view: ViewTable = useMemo( () => {
 		if ( logType === 'php' ) {
@@ -99,21 +110,22 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		};
 	}, [ logType ] );
 
-	// @todo, this will be replaced when importing / replacing moment usage and related functionality.
-	const [ startTime, endTime ] = useMemo( () => {
-		const now = Math.floor( Date.now() / 1000 );
-		return [ now - 1209600, now ];
-	}, [] );
+	const [ dateRange, setDateRange ] = useState< { start: Date; end: Date } >( () => ( {
+		start: new Date( Date.now() - 7 * 24 * 60 * 60 * 1000 ),
+		end: new Date(),
+	} ) );
+
+	const { startSec, endSec } = useMemo(
+		() => buildTimeRangeInSeconds( dateRange.start, dateRange.end, gmtOffset ),
+		[ dateRange.start, dateRange.end, gmtOffset ]
+	);
 
 	const filter = useMemo( () => toFilterParams( { view, logType } ), [ view, logType ] );
 
-	// @todo: We'll be able to remove the fallbacks once the temporary data (fields, views, actions) are removed and this component is cleaned up, as we'll return earlier if site doesn't exist.
-	const siteId = site?.ID ?? null;
-
 	const params: SiteLogsParams = {
 		logType,
-		start: startTime,
-		end: endTime,
+		start: startSec,
+		end: endSec,
 		filter,
 		sortOrder: view.sort?.direction,
 		pageSize: view.perPage,
@@ -141,7 +153,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		}
 	};
 
-	const fields = useFields( { logType } );
+	const fields = useFields( { logType, gmtOffset } );
 
 	// @todo, this will be replaced when importing the use-view data.
 	const actions = useMemo(
@@ -168,6 +180,13 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 
 	return (
 		<PageLayout header={ <PageHeader title={ __( 'Logs' ) } /> }>
+			<DateRangePicker
+				start={ dateRange.start }
+				end={ dateRange.end }
+				gmtOffset={ gmtOffset }
+				onChange={ ( next ) => setDateRange( next ) }
+			/>
+
 			<CalloutOverlay
 				showCallout={ ! hasHostingFeature( site, HostingFeatures.LOGS ) }
 				callout={ <SiteLogsCallout siteSlug={ site.slug } /> }

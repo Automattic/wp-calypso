@@ -1,15 +1,10 @@
 import { formatNumber } from '@automattic/number-formatters';
 import { Badge } from '@automattic/ui';
-import { useSuspenseQuery } from '@tanstack/react-query';
 import { useMemo } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useLocale } from '../../../app/locale';
-import { siteBySlugQuery } from '../../../app/queries/site';
-import { siteSettingsQuery } from '../../../app/queries/site-settings';
-import { siteRoute } from '../../../app/router';
-import { LogType } from '../../../data/site-logs';
+import { LogType, PHPLog, ServerLog } from '../../../data/site-logs';
 import { formatDateWithOffset, getUtcOffsetDisplay } from '../../../utils/datetime';
-import type { PHPLog, ServerLog } from '../../../data/site-logs';
 import type { Field, Operator } from '@wordpress/dataviews';
 
 import './style.scss';
@@ -44,16 +39,13 @@ const getLabelRenderer = ( renderer: string ) => {
 const toSeverityClass = ( severity: PHPLog[ 'severity' ] ) =>
 	severity.split( ' ' )[ 0 ].toLowerCase();
 
-export function useFields( { logType }: { logType: LogType } ): Field< PHPLog | ServerLog >[] {
-	const { siteSlug } = siteRoute.useParams();
-	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const siteId = site?.ID as number;
-
-	const { data: gmtOffset } = useSuspenseQuery( {
-		...siteSettingsQuery( siteId ),
-		select: ( s ) => s?.gmt_offset ?? 0,
-	} );
-
+export function useFields( {
+	logType,
+	gmtOffset,
+}: {
+	logType: LogType;
+	gmtOffset: number;
+} ): Field< PHPLog | ServerLog >[] {
 	const locale = useLocale();
 
 	const dateTimeLabel = sprintf(
