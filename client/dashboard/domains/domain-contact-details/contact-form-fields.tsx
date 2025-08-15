@@ -3,6 +3,8 @@ import {
 	SelectControl,
 	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
 	__experimentalInputControl as InputControl,
+	__experimentalHStack as HStack,
+	__experimentalText as Text,
 } from '@wordpress/components';
 import { Field } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
@@ -100,7 +102,7 @@ export const getContactFormFields = (
 		{
 			id: 'countryCode',
 			label: __( 'Country' ),
-			type: 'select',
+			type: 'text',
 			elements:
 				countryList?.map( ( country ) => ( {
 					label: country.name,
@@ -153,24 +155,27 @@ export const getContactFormFields = (
 			Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
 				const { id, getValue } = field;
 				return (
-					<CheckboxControl
-						label={
-							hideLabelFromVision
-								? ''
-								: createInterpolateElement(
-										sprintf(
-											/* translators: %s: "what is this?" link */
-											__( 'Opt-out of the 60-day transfer lock <link>%s</link>' ),
-											__( 'what is this?' )
-										),
-										{
-											link: <InlineSupportLink supportContext="60-day-transfer-lock" />,
-										}
-								  )
-						}
-						checked={ getValue( { item: data } ) }
-						onChange={ () => onChange( { [ id ]: ! getValue( { item: data } ) } ) }
-					/>
+					<HStack spacing={ 0 } alignment="start" justify="flex-start">
+						<CheckboxControl
+							label=""
+							checked={ getValue( { item: data } ) }
+							onChange={ () => onChange( { [ id ]: ! getValue( { item: data } ) } ) }
+						/>
+						{ ! hideLabelFromVision && (
+							<Text>
+								{ createInterpolateElement(
+									sprintf(
+										/* translators: %s: "what is this?" link */
+										__( 'Opt-out of the 60-day transfer lock <link>%s</link>' ),
+										__( 'what is this?' )
+									),
+									{
+										link: <InlineSupportLink supportContext="60-day-transfer-lock" />,
+									}
+								) }
+							</Text>
+						) }
+					</HStack>
 				);
 			},
 		},
