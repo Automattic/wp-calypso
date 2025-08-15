@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { __experimentalVStack as VStack, Button, FormFileUpload } from '@wordpress/components';
+import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
@@ -11,7 +11,6 @@ import {
 	domainDnsMutation,
 	domainDnsQuery,
 	domainDnsEmailMutation,
-	domainDnsImportBindMutation,
 } from '../../app/queries/domain-dns-records';
 import { domainDnsAddRoute, domainRoute } from '../../app/router/domains';
 import DataViewsCard from '../../components/dataviews-card';
@@ -21,6 +20,7 @@ import { useDnsActions } from './actions';
 import DnsActionsMenu from './dns-actions-menu';
 import EmailSetup from './email-setup';
 import { useDnsFields } from './fields';
+import ImportBindFileButton from './import-bind-file-button';
 import RestoreDefaultARecords from './restore-default-a-records';
 import RestoreDefaultCnameRecord from './restore-default-cname-record';
 import RestoreDefaultEmailRecords from './restore-default-email-records';
@@ -58,7 +58,6 @@ export default function DomainDns() {
 	const router = useRouter();
 	const updateDnsMutation = useMutation( domainDnsMutation( domainName ) );
 	const restoreDefaultEmailRecordsMutation = useMutation( domainDnsEmailMutation( domainName ) );
-	const importDnsBindMutation = useMutation( domainDnsImportBindMutation( domainName ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const { data: dnsData, isLoading } = useQuery( domainDnsQuery( domainName ) );
@@ -188,36 +187,13 @@ export default function DomainDns() {
 						title={ __( 'DNS Records' ) }
 						actions={
 							<>
-								<FormFileUpload
-									__next40pxDefaultSize
-									accept="text/plain"
-									multiple={ false }
-									onChange={ ( event ) => {
-										const file = event.currentTarget.files?.[ 0 ];
-										if ( ! file ) {
-											return;
-										}
-
-										const formData: [ string, File, string ][] = [ [ 'files[]', file, file.name ] ];
-										importDnsBindMutation.mutate( formData, {
-											onSuccess: () => {
-												createSuccessNotice( __( 'DNS records imported successfully.' ), {
-													type: 'snackbar',
-												} );
-											},
-											onError: () => {
-												createErrorNotice( __( 'Failed to import DNS records.' ), {
-													type: 'snackbar',
-												} );
-											},
-										} );
+								<ImportBindFileButton
+									domainName={ domainName }
+									onRecordsImported={ ( data ) => {
+										// TO DO: Store the data in the state
+										// Open the dialog to confirm the import
 									} }
-									render={ ( { openFileDialog } ) => (
-										<Button variant="secondary" onClick={ openFileDialog }>
-											{ __( 'Import BIND file' ) }
-										</Button>
-									) }
-								></FormFileUpload>
+								/>
 								<Button
 									variant="primary"
 									onClick={ () => {
