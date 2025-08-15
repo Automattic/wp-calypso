@@ -204,8 +204,7 @@ export function formatDateWithOffset(
 	input: Date | string | number,
 	offsetHours: number,
 	locale: string,
-	options: Intl.DateTimeFormatOptions = { dateStyle: 'long', timeStyle: 'short' },
-	timeZone?: string // e.g., 'Europe/London'
+	options: Intl.DateTimeFormatOptions = { dateStyle: 'long', timeStyle: 'short' }
 ) {
 	let sourceDate: Date;
 
@@ -220,9 +219,6 @@ export function formatDateWithOffset(
 	const sourceTimestampMs = sourceDate.getTime();
 	if ( Number.isNaN( sourceTimestampMs ) ) {
 		return '';
-	}
-	if ( timeZone ) {
-		return formatDate( sourceDate, locale, { ...options, timeZone } );
 	}
 
 	const adjusted = new Date( sourceTimestampMs + offsetHours * 3_600_000 );
