@@ -6,6 +6,7 @@ import {
 	type DnsRecord,
 	applyDnsTemplate,
 	type DnsTemplateVariables,
+	importDnsBind,
 } from '../../data/domain-dns-records';
 import { queryClient } from '../query-client';
 
@@ -54,6 +55,16 @@ export const domainDnsApplyTemplateMutation = ( domainName: string ) =>
 			service: string;
 			variables: DnsTemplateVariables;
 		} ) => applyDnsTemplate( domainName, provider, service, variables ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( {
+				queryKey: [ 'domains', domainName, 'dns' ],
+			} );
+		},
+	} );
+
+export const domainDnsImportBindMutation = ( domainName: string ) =>
+	mutationOptions( {
+		mutationFn: ( formData: [ string, File, string ][] ) => importDnsBind( domainName, formData ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( {
 				queryKey: [ 'domains', domainName, 'dns' ],

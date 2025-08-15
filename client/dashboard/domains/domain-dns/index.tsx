@@ -11,6 +11,7 @@ import {
 	domainDnsMutation,
 	domainDnsQuery,
 	domainDnsEmailMutation,
+	domainDnsImportBindMutation,
 } from '../../app/queries/domain-dns-records';
 import { domainDnsAddRoute, domainRoute } from '../../app/router/domains';
 import DataViewsCard from '../../components/dataviews-card';
@@ -57,6 +58,7 @@ export default function DomainDns() {
 	const router = useRouter();
 	const updateDnsMutation = useMutation( domainDnsMutation( domainName ) );
 	const restoreDefaultEmailRecordsMutation = useMutation( domainDnsEmailMutation( domainName ) );
+	const importDnsBindMutation = useMutation( domainDnsImportBindMutation( domainName ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const { data: dnsData, isLoading } = useQuery( domainDnsQuery( domainName ) );
@@ -186,19 +188,36 @@ export default function DomainDns() {
 						title={ __( 'DNS Records' ) }
 						actions={
 							<>
-								{ /* TODO Implement bind file logic */ }
 								<FormFileUpload
 									__next40pxDefaultSize
+									accept="text/plain"
+									multiple={ false }
 									onChange={ ( event ) => {
 										const file = event.currentTarget.files?.[ 0 ];
 										if ( ! file ) {
 											return;
 										}
-										// const formData = [ [ 'files[]', file, file.name ] ];
+
+										const formData: [ string, File, string ][] = [ [ 'files[]', file, file.name ] ];
+										importDnsBindMutation.mutate( formData, {
+											onSuccess: () => {
+												createSuccessNotice( __( 'DNS records imported successfully.' ), {
+													type: 'snackbar',
+												} );
+											},
+											onError: () => {
+												createErrorNotice( __( 'Failed to import DNS records.' ), {
+													type: 'snackbar',
+												} );
+											},
+										} );
 									} }
-								>
-									{ /* <Button variant="secondary">{ __( 'Import BIND file' ) }</Button> */ }
-								</FormFileUpload>
+									render={ ( { openFileDialog } ) => (
+										<Button variant="secondary" onClick={ openFileDialog }>
+											{ __( 'Import BIND file' ) }
+										</Button>
+									) }
+								></FormFileUpload>
 								<Button
 									variant="primary"
 									onClick={ () => {

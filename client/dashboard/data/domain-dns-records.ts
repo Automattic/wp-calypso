@@ -80,3 +80,14 @@ export function applyDnsTemplate(
 		},
 	} );
 }
+
+export function importDnsBind(
+	domain: string,
+	formData: [ string, File, string ][]
+): Promise< DnsRecord[] > {
+	return wpcom.req.post( {
+		path: `/domains/dns/import/bind/${ domain }`,
+		apiNamespace: 'wpcom/v2',
+		formData,
+	} );
+}
