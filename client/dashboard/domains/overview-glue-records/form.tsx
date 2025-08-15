@@ -1,8 +1,11 @@
+// eslint-disable-next-line no-restricted-imports
+import { ValidatedInputControl } from '@automattic/components/src/validated-form-controls/components/input-control';
 import {
 	Card,
 	CardBody,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
+	__experimentalInputControlSuffixWrapper as InputControlSuffixWrapper,
 	Button,
 } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
@@ -52,17 +55,31 @@ export default function DomainGlueRecordsForm( {
 			{
 				id: 'nameServer',
 				label: __( 'Name Server' ),
-				placeholder: 'ns1.' + domainName,
+				placeholder: 'ns1',
 				type: 'text' as const,
-				readOnly: isEdit,
-				isValid: {
-					custom: ( item ) => {
-						if ( ! isValidNameServer( item.nameServer ) ) {
-							return __( 'Please enter a valid name server.' );
-						}
-						return null;
-					},
+				Edit: ( { field, data, onChange } ) => {
+					const { id, getValue } = field;
+					const value = getValue( { item: data } ).replace( `.${ domainName }`, '' );
+
+					return (
+						<ValidatedInputControl
+							label={ field.label }
+							placeholder={ field.placeholder }
+							value={ value }
+							onChange={ ( value ) => {
+								return onChange( { [ id ]: value + `.${ domainName }` } );
+							} }
+							customValidator={ ( value ) => {
+								if ( ! value || ! isValidNameServer( value ) ) {
+									return __( 'Please enter a valid name server.' );
+								}
+							} }
+							required
+							suffix={ <InputControlSuffixWrapper>.{ domainName }</InputControlSuffixWrapper> }
+						/>
+					);
 				},
+				readOnly: isEdit,
 			},
 			{
 				id: 'ipAddress',
@@ -70,6 +87,7 @@ export default function DomainGlueRecordsForm( {
 				placeholder: '123.45.67.89',
 				type: 'text',
 				isValid: {
+					required: true,
 					custom: ( item ) => {
 						if ( ! isValidIpAddress( item.ipAddress ) ) {
 							return __( 'Please enter a valid IP address.' );
