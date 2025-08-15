@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet } from '@tanstack/react-router';
 import { __experimentalGrid as Grid, __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -59,12 +59,8 @@ export function SiteBackupsCallout( {
 
 export function BackupsListPage() {
 	const { siteSlug } = siteRoute.useParams();
-	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const [ selectedBackup, setSelectedBackup ] = useState< ActivityLogEntry | null >( null );
-
-	if ( ! site ) {
-		return;
-	}
 
 	const hasBackups = hasHostingFeature( site, HostingFeatures.BACKUPS );
 
@@ -91,11 +87,7 @@ export function BackupsListPage() {
 
 function SiteBackups() {
 	const { siteSlug } = siteRoute.useParams();
-	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
-
-	if ( ! site ) {
-		return;
-	}
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
 	const hasBackups = hasHostingFeature( site, HostingFeatures.BACKUPS );
 
