@@ -1,4 +1,4 @@
-import { DomainSuggestion } from '../domain-suggestion';
+import { DomainSuggestion } from '.';
 import type { Meta } from '@storybook/react';
 
 export const Default = () => {
