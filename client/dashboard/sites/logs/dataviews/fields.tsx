@@ -1,6 +1,6 @@
 import { formatNumber } from '@automattic/number-formatters';
 import { Badge } from '@automattic/ui';
-import { useSuspenseQuery, useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useMemo } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useLocale } from '../../../app/locale';
@@ -49,9 +49,9 @@ export function useFields( { logType }: { logType: LogType } ): Field< PHPLog | 
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const siteId = site?.ID as number;
 
-	const { data: gmtOffset = 0 } = useQuery( {
+	const { data: gmtOffset } = useSuspenseQuery( {
 		...siteSettingsQuery( siteId ),
-		select: ( siteSettings ) => siteSettings?.gmt_offset ?? 0,
+		select: ( s ) => s?.gmt_offset ?? 0,
 	} );
 
 	const locale = useLocale();

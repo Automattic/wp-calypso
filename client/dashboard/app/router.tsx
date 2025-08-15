@@ -244,6 +244,10 @@ const siteLogsIndexRoute = createRoute( {
 const siteLogsPhpRoute = createRoute( {
 	getParentRoute: () => siteLogsRoute,
 	path: 'php',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
+	},
 } ).lazy( () =>
 	import( '../sites/logs' ).then( ( d ) =>
 		createLazyRoute( 'site-logs-php' )( {
@@ -255,6 +259,10 @@ const siteLogsPhpRoute = createRoute( {
 const siteLogsServerRoute = createRoute( {
 	getParentRoute: () => siteLogsRoute,
 	path: 'server',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
+	},
 } ).lazy( () =>
 	import( '../sites/logs' ).then( ( d ) =>
 		createLazyRoute( 'site-logs-server' )( {
