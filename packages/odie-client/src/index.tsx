@@ -40,7 +40,6 @@ export const OdieAssistant: React.FC = () => {
 
 export default OdieAssistantProvider;
 export { useOdieAssistantContext } from './context';
-export { EllipsisMenu } from './components/ellipsis-menu';
 export type {
 	Conversations,
 	OdieConversation,

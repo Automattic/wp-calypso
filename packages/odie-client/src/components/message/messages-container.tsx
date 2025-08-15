@@ -44,7 +44,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	const { chat, botNameSlug, isChatLoaded, isUserEligibleForPaidSupport, forceEmailSupport } =
 		useOdieAssistantContext();
 	const createZendeskConversation = useCreateZendeskConversation();
-	const resetSupportInteraction = useResetSupportInteraction();
+	const { resetSupportInteraction } = useResetSupportInteraction();
 	const [ searchParams, setSearchParams ] = useSearchParams();
 	const isForwardingToZendesk =
 		searchParams.get( 'provider' ) === 'zendesk' && chat.provider !== 'zendesk';

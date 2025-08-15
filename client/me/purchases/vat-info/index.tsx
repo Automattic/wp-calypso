@@ -27,7 +27,7 @@ export default function VatInfoPage() {
 	const taxName = useTaxName(
 		vatDetails.country ?? vatDetails.country ?? geoData?.country_short ?? 'GB'
 	);
-	const resetSupportInteraction = useResetSupportInteraction();
+	const { resetSupportInteraction } = useResetSupportInteraction();
 
 	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
 
