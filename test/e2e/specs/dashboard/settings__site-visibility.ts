@@ -47,7 +47,7 @@ describe( 'Dashboard: Site Visibility Settings', function () {
 		await loginPage.visit();
 		await loginPage.clickCreateNewAccount();
 		const userSignupPage = new UserSignupPage( page );
-		newUserDetails = await userSignupPage.signupWithEmail( testUser.email );
+		newUserDetails = await userSignupPage.signupSocialFirstWithEmail( testUser.email );
 
 		restAPIClient = new RestAPIClient(
 			{ username: testUser.username, password: testUser.password },

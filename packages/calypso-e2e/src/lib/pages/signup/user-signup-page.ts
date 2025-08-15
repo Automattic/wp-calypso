@@ -113,7 +113,6 @@ export class UserSignupPage {
 	 *
 	 * @param {string} email Email address of the new user.
 	 * @returns {NewUserResponse} Response from the REST API.
-	 * @deprecated Use `signupWithEmail` instead.
 	 */
 	async signupSocialFirstWithEmail( email: string ): Promise< NewUserResponse > {
 		try {
