@@ -1,6 +1,5 @@
 import { Page, Locator, Frame } from 'playwright';
 import { getCalypsoURL } from '../../../data-helper';
-import envVariables from '../../../env-variables';
 import type { NewUserResponse } from '../../../types/rest-api-client.types';
 const selectors = {
 	// Fields
@@ -93,11 +92,7 @@ export class UserSignupPage {
 		await this.page.fill( selectors.emailInput, email );
 
 		// Click the button first, then wait for the response
-		await this.page
-			.getByRole( 'button', {
-				name: 'Continue',
-			} )
-			.click();
+		await this.page.click( selectors.submitButton );
 
 		const response = await this.page.waitForResponse( /.*new\?.*/ );
 
@@ -139,33 +134,10 @@ export class UserSignupPage {
 	 * https://wordpress.com/support/wpcc-faq/.
 	 *
 	 * @param {string} email Email address of the new user.
-	 * @param {string} password Password of the new user.
 	 * @returns {NewUserResponse} Response from the REST API.
 	 */
-	async signupWPCC( email: string, password: string ): Promise< NewUserResponse > {
-		// On mobile devices, the signup form is not shown by default.
-		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			await this.page.click( selectors.createWPCOMAccountButton );
-		}
-
-		await this.page.fill( selectors.firstNameInput, 'E2E' );
-		await this.page.fill( selectors.lastNameInput, 'Testing' );
-		await this.page.fill( selectors.emailInput, email );
-		await this.page.fill( selectors.passwordInput, password );
-
-		const [ , response ] = await Promise.all( [
-			this.page.waitForURL( /.*crowdsignal\.com\/start\?plan=free.*/ ),
-			this.page.waitForResponse( /.*new\?.*/ ),
-			this.page.click( selectors.submitButton ),
-		] );
-
-		if ( ! response ) {
-			throw new Error( 'Failed to create new user at CrowdSignal using WPCC.' );
-		}
-
-		const responseBody: NewUserResponse = await response.json();
-
-		return responseBody;
+	async signupWPCC( email: string ): Promise< NewUserResponse > {
+		return this.signupWithEmail( email );
 	}
 
 	/**
