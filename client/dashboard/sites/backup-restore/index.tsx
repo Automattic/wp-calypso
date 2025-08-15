@@ -1,4 +1,3 @@
-import { useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
 	Button,
@@ -9,7 +8,6 @@ import {
 } from '@wordpress/components';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronLeft, chevronRight, rotateLeft } from '@wordpress/icons';
-import { siteBySlugQuery } from '../../app/queries/site';
 import { siteBackupRestoreRoute, siteBackupsRoute } from '../../app/router';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
@@ -18,11 +16,6 @@ import PageLayout from '../../components/page-layout';
 function SiteBackupRestore() {
 	const { siteSlug, rewindId } = siteBackupRestoreRoute.useParams();
 	const router = useRouter();
-	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
-
-	if ( ! site ) {
-		return;
-	}
 
 	const backButton = (
 		<Button
