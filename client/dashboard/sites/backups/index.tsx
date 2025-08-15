@@ -66,7 +66,7 @@ function BackupsLayout( { site }: { site: Site } ) {
 				selectedBackup={ selectedBackup }
 				setSelectedBackup={ setSelectedBackup }
 			/>
-			{ selectedBackup && <BackupDetails backup={ selectedBackup } /> }
+			{ selectedBackup && <BackupDetails backup={ selectedBackup } site={ site } /> }
 		</Grid>
 	);
 }
