@@ -7,7 +7,7 @@ import {
 	CardHeader,
 	Icon,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useFormattedTime } from '../../components/formatted-time';
 import { SectionHeader } from '../../components/section-header';
 import { gridiconToWordPressIcon } from '../../utils/gridicons';
@@ -36,7 +36,10 @@ export function BackupDetails( { backup }: { backup: ActivityLogEntry } ) {
 						<Text variant="muted">{ formattedTime }</Text>
 						{ backup.actor?.name && (
 							<Text variant="muted">
-								{ __( 'By' ) } { backup.actor.name }
+								{
+									/* translators: %s is the name of the person/system who performed the backup */
+									sprintf( __( 'By %s' ), backup.actor.name )
+								}
 							</Text>
 						) }
 					</HStack>
