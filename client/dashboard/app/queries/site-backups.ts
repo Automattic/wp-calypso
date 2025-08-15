@@ -1,6 +1,8 @@
-import { queryOptions } from '@tanstack/react-query';
+import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { fetchSiteRewindableActivityLog } from '../../data/site-activity-log';
+import { enqueueSiteBackup } from '../../data/site-backup';
 import { fetchSiteBackups } from '../../data/site-backups';
+import { queryClient } from '../query-client';
 
 export const siteLastBackupQuery = ( siteId: number ) =>
 	queryOptions( {
@@ -11,6 +13,14 @@ export const siteLastBackupQuery = ( siteId: number ) =>
 
 export const siteBackupsQuery = ( siteId: number ) =>
 	queryOptions( {
-		queryKey: [ 'site', siteId, 'rewind', 'backups' ],
+		queryKey: [ 'site', siteId, 'backups' ],
 		queryFn: () => fetchSiteBackups( siteId ),
+	} );
+
+export const siteBackupEnqueueMutation = ( siteId: number ) =>
+	mutationOptions( {
+		mutationFn: () => enqueueSiteBackup( siteId ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( siteBackupsQuery( siteId ) );
+		},
 	} );

@@ -66,14 +66,3 @@ export const IsBusy: Story = {
 		onSubmit: action( 'onSubmit' ),
 	},
 };
-
-export const WithError: Story = {
-	args: {
-		domainName: 'example.com',
-		nameServers: [],
-		isBusy: false,
-		showUpsellNudge: false,
-		queryError: 'An error occurred while fetching name servers.',
-		onSubmit: action( 'onSubmit' ),
-	},
-};

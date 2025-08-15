@@ -196,3 +196,45 @@ export function getDateFromCreditCardExpiry( cardExpiryDate: string ): Date {
 	// and get the right result.
 	return new Date( fullYear, monthNumber, 0 );
 }
+
+/**
+ * Format a date with a given offset in hours.
+ */
+export function formatDateWithOffset(
+	input: Date | string | number,
+	offsetHours: number,
+	locale: string,
+	options: Intl.DateTimeFormatOptions = { dateStyle: 'long', timeStyle: 'short' }
+) {
+	let sourceDate: Date;
+
+	if ( typeof input === 'number' ) {
+		sourceDate = new Date( input * 1000 ); // epoch seconds
+	} else if ( typeof input === 'string' ) {
+		sourceDate = new Date( input ); // ISO string
+	} else {
+		sourceDate = input; // Date
+	}
+
+	const sourceTimestampMs = sourceDate.getTime();
+	if ( Number.isNaN( sourceTimestampMs ) ) {
+		return '';
+	}
+
+	const adjusted = new Date( sourceTimestampMs + offsetHours * 3_600_000 );
+	return formatDate( adjusted, locale, { ...options, timeZone: 'UTC' } );
+}
+
+/**
+ * Get a string representation of the UTC offset in the format "UTC±HH:MM".
+ */
+export function getUtcOffsetDisplay( offsetHours: number ): string {
+	if ( ! offsetHours ) {
+		return 'UTC';
+	}
+	const sign = offsetHours > 0 ? '+' : '';
+	const abs = Math.abs( offsetHours );
+	const hoursPart = String( Math.floor( abs ) ).padStart( 2, '0' );
+	const minutesPart = String( Math.round( ( abs - Math.floor( abs ) ) * 60 ) ).padStart( 2, '0' );
+	return `UTC${ sign }${ hoursPart }:${ minutesPart }`;
+}

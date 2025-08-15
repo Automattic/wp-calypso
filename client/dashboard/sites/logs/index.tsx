@@ -1,8 +1,7 @@
-import { Badge } from '@automattic/ui';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { __experimentalText as Text, TabPanel } from '@wordpress/components';
-import { DataViews, Operator, Field, ViewTable } from '@wordpress/dataviews';
+import { DataViews, ViewTable } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
 import { useMemo } from 'react';
@@ -18,6 +17,7 @@ import UpsellCTAButton from '../../components/upsell-cta-button';
 import { HostingFeatures } from '../../data/constants';
 import { LogType, PHPLog, ServerLog, SiteLogsParams } from '../../data/site-logs';
 import { hasHostingFeature } from '../../utils/site-features';
+import { useFields } from './dataviews/fields';
 import { toFilterParams } from './dataviews/views';
 import illustrationUrl from './logs-callout-illustration.svg';
 
@@ -141,91 +141,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		}
 	};
 
-	// @todo, this will be replaced when importing the use-field data.
-	const VALUES_REQUEST_TYPE = [ 'GET', 'HEAD', 'POST', 'PUT', 'DELETE' ];
-	const VALUES_SEVERITY = [ 'User', 'Warning', 'Deprecated', 'Fatal error' ];
-	const VALUES_STATUS = [ '200', '301', '302', '400', '401', '403', '404', '429', '500' ];
-	const fields = useMemo( () => {
-		if ( logType === LogType.PHP ) {
-			return [
-				{
-					id: 'timestamp',
-					type: 'date',
-					label: 'Date & time',
-					render: () => '2025-08-05T08:18:18.000Z',
-					enableHiding: false,
-				},
-				{
-					id: 'severity',
-					type: 'text',
-					label: 'Severity',
-					elements: VALUES_SEVERITY.map( ( severity ) => ( { value: severity, label: severity } ) ),
-					filterBy: {
-						operators: [ 'isAny' as Operator ],
-					},
-					render: ( { item }: { item: PHPLog } ) => {
-						const severity = item.severity;
-						// @todo, the Badge styling needs updating due to the new component.
-						return <Badge className={ `badge--${ severity }` }>{ severity }</Badge>;
-					},
-					enableSorting: false,
-				},
-				{
-					id: 'message',
-					type: 'text',
-					label: 'Message',
-					render: ( { item }: { item: PHPLog } ) => {
-						return <span className="site-logs-table__message">{ item.message }</span>;
-					},
-					enableSorting: false,
-				},
-			] as Field< PHPLog | ServerLog >[];
-		}
-
-		return [
-			{
-				id: 'date',
-				type: 'datetime',
-				label: 'Date & time',
-				render: () => '2025-08-05T08:18:18.000Z',
-				enableHiding: false,
-			},
-			{
-				id: 'request_type',
-				type: 'text',
-				label: 'Request type',
-				elements: VALUES_REQUEST_TYPE.map( ( type ) => ( { value: type, label: type } ) ),
-				filterBy: {
-					operators: [ 'isAny' as Operator ],
-				},
-				render: ( { item }: { item: ServerLog } ) => {
-					const requestType = item.request_type;
-					return <Badge className={ `badge--${ requestType }` }>{ requestType }</Badge>;
-				},
-				enableSorting: false,
-			},
-			{
-				id: 'status',
-				type: 'text',
-				label: 'Status',
-				elements: VALUES_STATUS.map( ( status ) => ( { value: status, label: status } ) ),
-				filterBy: {
-					operators: [ 'isAny' as Operator ],
-				},
-				enableSorting: false,
-			},
-			{
-				id: 'request_url',
-				type: 'text',
-				label: 'Request URL',
-				render: ( { item }: { item: ServerLog } ) => {
-					return <span className="site-logs-table__request-url">{ item.request_url }</span>;
-				},
-				enableSorting: false,
-			},
-		] as Field< PHPLog | ServerLog >[];
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ logType ] );
+	const fields = useFields( { logType } );
 
 	// @todo, this will be replaced when importing the use-view data.
 	const actions = useMemo(
