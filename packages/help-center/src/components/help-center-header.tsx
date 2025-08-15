@@ -1,32 +1,46 @@
 /* eslint-disable no-restricted-imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useGetHistoryChats } from '@automattic/help-center/src/hooks/use-get-history-chats';
-import { EllipsisMenu } from '@automattic/odie-client';
-import { CardHeader, Button, Flex, ToggleControl } from '@wordpress/components';
-import { useSelect, useDispatch } from '@wordpress/data';
-import { useMemo, useCallback, useEffect, useState } from '@wordpress/element';
-import { decodeEntities } from '@wordpress/html-entities';
-import { _n } from '@wordpress/i18n';
 import {
-	closeSmall,
-	chevronUp,
+	CardHeader,
+	Button,
+	Spinner,
+	Flex,
+	__experimentalElevation as Elevation,
+	__experimentalHStack as HStack,
+	privateApis as componentsPrivateApis,
+} from '@wordpress/components';
+import { useSelect, useDispatch } from '@wordpress/data';
+import { useMemo, useEffect, useState } from '@wordpress/element';
+import { decodeEntities } from '@wordpress/html-entities';
+import {
 	lineSolid,
-	scheduled,
+	moreVertical,
+	close,
+	chevronUp,
 	page,
 	Icon,
 	comment,
 	commentContent,
+	bell,
+	backup,
 } from '@wordpress/icons';
+import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useLocation, useSearchParams, useNavigate } from 'react-router-dom';
 import { usePostByUrl } from '../hooks';
 import { useResetSupportInteraction } from '../hooks/use-reset-support-interaction';
-import { DragIcon } from '../icons';
 import { HELP_CENTER_STORE } from '../stores';
 import { BackButton } from './back-button';
 import type { Header } from '../types';
 import type { HelpCenterSelect } from '@automattic/data-stores';
+export const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
+	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
+	'@wordpress/edit-site'
+);
+
+const { Menu } = unlock( componentsPrivateApis );
 
 import './help-center-header.scss';
 
@@ -73,9 +87,10 @@ const SupportModeTitle = () => {
 	}
 };
 
-const ChatEllipsisMenu = () => {
+const EllipsisMenu = () => {
 	const { __ } = useI18n();
-	const resetSupportInteraction = useResetSupportInteraction();
+	const { resetSupportInteraction, isMutating: isResettingSupportInteraction } =
+		useResetSupportInteraction();
 	const navigate = useNavigate();
 	const { recentConversations } = useGetHistoryChats();
 	const { areSoundNotificationsEnabled } = useSelect( ( select ) => {
@@ -84,18 +99,18 @@ const ChatEllipsisMenu = () => {
 			areSoundNotificationsEnabled: helpCenterSelect.getAreSoundNotificationsEnabled(),
 		};
 	}, [] );
-	const { setAreSoundNotificationsEnabled } = useDispatch( HELP_CENTER_STORE );
+	const { setAreSoundNotificationsEnabled, setIsMinimized } = useDispatch( HELP_CENTER_STORE );
 
 	const clearChat = async () => {
-		await resetSupportInteraction();
+		const newInteraction = await resetSupportInteraction();
 		recordTracksEvent( 'calypso_inlinehelp_clear_conversation' );
+		navigate( `/odie/?id=${ newInteraction.uuid }` );
 	};
 
 	const handleViewChats = () => {
 		recordTracksEvent( 'calypso_inlinehelp_view_open_chats_menu', {
 			total_number_of_conversations: recentConversations.length,
 		} );
-
 		navigate( '/chat-history' );
 	};
 
@@ -104,49 +119,44 @@ const ChatEllipsisMenu = () => {
 		setAreSoundNotificationsEnabled( ! areSoundNotificationsEnabled );
 	};
 
-	return (
-		<EllipsisMenu
-			popoverClassName="help-center help-center__container-header-menu conversation-menu__wrapper"
-			position="bottom"
-			trackEventProps={ { source: 'help_center' } }
-			ariaLabel={ __( 'Chat options', __i18n_text_domain__ ) }
-		>
-			<button tabIndex={ 0 } onClick={ clearChat }>
-				<Icon icon={ comment } />
-				<div>{ __( 'New chat', __i18n_text_domain__ ) }</div>
-			</button>
-			<button
-				tabIndex={ 0 }
-				onClick={ handleViewChats }
-				disabled={ recentConversations.length < 2 }
-			>
-				<Icon icon={ scheduled } />
-				<div>
-					{ _n(
-						'View recent chat',
-						'View recent chats',
-						recentConversations.length,
-						__i18n_text_domain__
-					) }
-				</div>
-			</button>
-			<button
-				tabIndex={ 0 }
-				onClick={ toggleSoundNotifications }
-				aria-pressed={ !! areSoundNotificationsEnabled }
-				aria-label={ __( 'Notification sound', __i18n_text_domain__ ) }
-			>
-				<ToggleControl
-					className="conversation-menu__notification-toggle"
-					label={ __( 'Notification sound', __i18n_text_domain__ ) }
-					checked={ areSoundNotificationsEnabled }
-					onChange={ ( newValue ) => {
-						setAreSoundNotificationsEnabled( newValue );
-					} }
-					__nextHasNoMarginBottom
-				/>
-			</button>
-		</EllipsisMenu>
+	return isResettingSupportInteraction ? (
+		<Spinner width={ 24 } height={ 24 } />
+	) : (
+		<Menu>
+			<Menu.TriggerButton render={ <Button icon={ moreVertical } /> } />
+			<Menu.Popover>
+				<Menu.Item
+					prefix={ <Icon icon={ lineSolid } width={ 20 } height={ 20 } /> }
+					onClick={ () => setIsMinimized( true ) }
+				>
+					<Menu.ItemLabel>{ __( 'Minimize', __i18n_text_domain__ ) }</Menu.ItemLabel>
+				</Menu.Item>
+				<Menu.Separator />
+				<Menu.Item
+					onClick={ clearChat }
+					prefix={ <Icon icon={ comment } width={ 24 } height={ 24 } /> }
+				>
+					<Menu.ItemLabel>{ __( 'New chat', __i18n_text_domain__ ) }</Menu.ItemLabel>
+				</Menu.Item>
+				<Menu.Item
+					onClick={ handleViewChats }
+					prefix={ <Icon icon={ backup } width={ 24 } height={ 24 } /> }
+				>
+					<Menu.ItemLabel>{ __( 'Support history', __i18n_text_domain__ ) }</Menu.ItemLabel>
+				</Menu.Item>
+				<Menu.Separator />
+				<Menu.Item
+					onClick={ toggleSoundNotifications }
+					prefix={ <Icon icon={ bell } width={ 24 } height={ 24 } /> }
+				>
+					<Menu.ItemLabel>
+						{ areSoundNotificationsEnabled
+							? __( 'Turn off sound notifications', __i18n_text_domain__ )
+							: __( 'Turn on sound notifications', __i18n_text_domain__ ) }
+					</Menu.ItemLabel>
+				</Menu.Item>
+			</Menu.Popover>
+		</Menu>
 	);
 };
 
@@ -197,102 +207,43 @@ const useHeaderText = () => {
 
 const HeaderText = () => {
 	const headerText = useHeaderText();
+	const { unreadCount, isMinimized } = useSelect( ( select ) => {
+		return {
+			unreadCount: ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getUnreadCount(),
+			isMinimized: ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getIsMinimized(),
+		};
+	}, [] );
+
+	const formattedUnreadCount = unreadCount > 9 ? '9+' : unreadCount;
+
 	return (
 		<span id="header-text" role="presentation" className="help-center-header__text">
 			{ headerText }
+			{ unreadCount > 0 && isMinimized && (
+				<span className="help-center-header__unread-count">{ formattedUnreadCount }</span>
+			) }
 		</span>
 	);
 };
 
-const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
-	const { __ } = useI18n();
-	const { pathname } = useLocation();
-
-	const { helpCenterOptions } = useSelect( ( select ) => {
-		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
-		return {
-			helpCenterOptions: store.getHelpCenterOptions(),
-		};
-	}, [] );
-
-	const isChat = pathname.startsWith( '/odie' );
-	const isHelpCenterHome = pathname === '/';
-	// Show the back button if it's not the help center home page and:
-	// - it's a chat and the hideBackButton option is not set
-	// - it's not a chat
-	const shouldShowBackButton =
-		! isHelpCenterHome && ( ( isChat && ! helpCenterOptions?.hideBackButton ) || ! isChat );
-
-	return (
-		<>
-			{ shouldShowBackButton ? <BackButton /> : <DragIcon /> }
-			<HeaderText />
-			{ isChat && <ChatEllipsisMenu /> }
-			<Button
-				className="help-center-header__minimize"
-				label={ __( 'Minimize Help Center', __i18n_text_domain__ ) }
-				icon={ lineSolid }
-				tooltipPosition="top left"
-				onClick={ () => onMinimize?.() }
-				onTouchStart={ () => onMinimize?.() }
-			/>
-		</>
-	);
-};
-
-const ContentMinimized = ( {
-	unreadCount = 0,
-	handleClick,
-	onMaximize,
-}: {
-	unreadCount: number;
-	handleClick?: ( event: React.SyntheticEvent ) => void;
-	onMaximize?: () => void;
-} ) => {
-	const { __ } = useI18n();
-	const headerText = useHeaderText();
-	const formattedUnreadCount = unreadCount > 9 ? '9+' : unreadCount;
-
-	return (
-		<>
-			<p
-				id="header-text"
-				className="help-center-header__text"
-				onClick={ handleClick }
-				onKeyUp={ handleClick }
-				role="presentation"
-			>
-				{ headerText }
-				{ unreadCount > 0 && (
-					<span className="help-center-header__unread-count">{ formattedUnreadCount }</span>
-				) }
-			</p>
-			<Button
-				className="help-center-header__maximize"
-				label={ __( 'Maximize Help Center', __i18n_text_domain__ ) }
-				icon={ chevronUp }
-				tooltipPosition="top left"
-				onClick={ onMaximize }
-				onTouchStart={ onMaximize }
-			/>
-		</>
-	);
-};
-
-const HelpCenterHeader = ( { isMinimized = false, onMinimize, onMaximize, onDismiss }: Header ) => {
+const HelpCenterHeader = ( { onDismiss }: Header ) => {
 	const { __ } = useI18n();
 	const location = useLocation();
+	const { setIsMinimized } = useDispatch( HELP_CENTER_STORE );
 
 	const unreadCount = useSelect(
 		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getUnreadCount(),
 		[]
 	);
 
-	const handleClick = useCallback( () => {
-		if ( isMinimized ) {
-			onMaximize?.();
-		}
-	}, [ onMaximize, isMinimized ] );
+	const { pathname } = useLocation();
+	const { helpCenterOptions, isMinimized } = useSelect( ( select ) => {
+		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+		return {
+			helpCenterOptions: store.getHelpCenterOptions(),
+			isMinimized: store.getIsMinimized(),
+		};
+	}, [] );
 
 	const classNames = clsx(
 		'help-center__container-header',
@@ -302,23 +253,39 @@ const HelpCenterHeader = ( { isMinimized = false, onMinimize, onMaximize, onDism
 		}
 	);
 
+	const isChat = pathname.startsWith( '/odie' );
+	const isHelpCenterHome = pathname === '/';
+	// Show the back button if it's not the help center home page and:
+	// - it's a chat and the hideBackButton option is not set
+	// - it's not a chat
+	const shouldShowBackButton =
+		! isHelpCenterHome && ( ( isChat && ! helpCenterOptions?.hideBackButton ) || ! isChat );
+
+	if ( isMinimized ) {
+		return (
+			<button className={ classNames } onClick={ () => setIsMinimized( false ) }>
+				<Elevation isInteractive value={ 10 } hover={ 15 } />
+				<HStack alignment="center" justify="space-between" spacing={ 5 }>
+					<HStack justify="flex-start">
+						<HeaderText />
+					</HStack>
+					<Icon icon={ chevronUp } />
+				</HStack>
+			</button>
+		);
+	}
+
 	return (
 		<CardHeader className={ classNames }>
-			<Flex onClick={ handleClick }>
-				{ isMinimized ? (
-					<ContentMinimized
-						unreadCount={ unreadCount }
-						handleClick={ handleClick }
-						onMaximize={ onMaximize }
-					/>
-				) : (
-					<Content onMinimize={ onMinimize } />
-				) }
+			<Flex>
+				{ shouldShowBackButton ? <BackButton /> : null }
+				<HeaderText />
+				<EllipsisMenu />
 				<Button
 					className="help-center-header__close"
 					label={ __( 'Close Help Center', __i18n_text_domain__ ) }
 					tooltipPosition="top left"
-					icon={ closeSmall }
+					icon={ close }
 					onClick={ onDismiss }
 					onTouchStart={ onDismiss }
 				/>
