@@ -27,6 +27,7 @@ import {
 	siteLogo,
 	commentAuthorAvatar,
 } from '@wordpress/icons';
+import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import { useLocale } from '../../../app/locale';
 import { purchaseQuery, userPurchaseSetAutoRenewQuery } from '../../../app/queries/me-purchases';
@@ -46,13 +47,39 @@ import {
 	isRenewing,
 	isIncludedWithPlan,
 	isOneTimePurchase,
+	isMarketplaceTemporarySitePurchase,
+	isAkismetProduct,
 } from '../../../utils/purchase';
+import { encodeProductForUrl } from '../../../utils/wpcom-checkout';
 import { getPurchaseUrlForId } from '../urls';
 import type { Purchase } from '../../../data/purchase';
 import type { Field } from '@wordpress/dataviews';
 import type { ReactNode, ReactElement } from 'react';
 
 import './style.scss';
+
+function getServicePathForCheckoutFromPurchase( purchase: Purchase ): string {
+	if ( isAkismetProduct( purchase ) ) {
+		return 'akismet/';
+	}
+	if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
+		return 'marketplace/';
+	}
+	return '';
+}
+
+function getRenewalUrlFromPurchase( purchase: Purchase ): string {
+	const productSlug = encodeProductForUrl( purchase.product_slug );
+	const productDomain = purchase.meta ? encodeProductForUrl( purchase.meta ) : undefined;
+	const checkoutProductSlug = productDomain ? `${ productSlug }:${ productDomain }` : productSlug;
+	const checkoutSiteSlug = purchase.site_slug || '';
+	const servicePath = getServicePathForCheckoutFromPurchase( purchase );
+	return `/checkout/${ servicePath }${ checkoutProductSlug }/renew/${ purchase.ID }/${ checkoutSiteSlug }`;
+}
+
+function renewPurchase( purchase: Purchase ): void {
+	window.location.href = getRenewalUrlFromPurchase( purchase );
+}
 
 const BackButton = () => {
 	const router = useRouter();
@@ -72,18 +99,31 @@ const BackButton = () => {
 	);
 };
 
-const PurchaseActionMenu = () => {
+function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 	// FIXME: figure out what these actions should be
+	const canBeRenewed = purchase.can_explicit_renew;
+	const { recordTracksEvent } = useAnalytics();
 	return (
 		<DropdownMenu icon={ moreVertical } label={ __( 'Quick actions' ) }>
 			{ () => (
 				<MenuGroup>
-					<MenuItem onClick={ () => ( {} ) }>Do something</MenuItem>
+					{ canBeRenewed && (
+						<MenuItem
+							onClick={ () => {
+								recordTracksEvent( 'calypso_purchases_renew_now_click', {
+									product_slug: purchase.product_slug,
+								} );
+								renewPurchase( purchase );
+							} }
+						>
+							{ __( 'Renew' ) }
+						</MenuItem>
+					) }
 				</MenuGroup>
 			) }
 		</DropdownMenu>
 	);
-};
+}
 
 function PurchaseSettingsCardLinkWrapper( {
 	link,
@@ -113,6 +153,7 @@ function PurchaseSettingsActions( {
 	const canBeRemoved = ! isExpired( purchase ) && ! isIncludedWithPlan( purchase );
 	const canBeRenewed = purchase.can_explicit_renew;
 	const canCancel = purchase.is_cancelable;
+	const { recordTracksEvent } = useAnalytics();
 	return (
 		<VStack spacing={ 4 }>
 			<ActionList>
@@ -141,9 +182,12 @@ function PurchaseSettingsActions( {
 							<Button
 								variant="secondary"
 								size="compact"
-								onClick={ () => ( {
-									// FIXME
-								} ) }
+								onClick={ () => {
+									recordTracksEvent( 'calypso_purchases_renew_now_click', {
+										product_slug: purchase.product_slug,
+									} );
+									renewPurchase( purchase );
+								} }
 							>
 								{ __( 'Renew' ) }
 							</Button>
@@ -381,7 +425,7 @@ export default function PurchaseSettings() {
 											{ __( 'Upgrade plan' ) }
 										</Button>
 									) }
-									<PurchaseActionMenu />
+									<PurchaseActionMenu purchase={ purchase } />
 								</>
 							)
 						}
