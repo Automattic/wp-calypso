@@ -106,6 +106,13 @@ function getUpgradeUrl( purchase: Purchase ): string | undefined {
 	return `/plans/${ purchase.site_slug }`;
 }
 
+function getExpiredNewPlanUrl( purchase: Purchase ): string {
+	if ( purchase.is_jetpack_backup_t1 ) {
+		return `/plans/storage/${ purchase.site_slug }`;
+	}
+	return `/plans/${ purchase.site_slug }`;
+}
+
 function upgradePurchase( upgradeUrl: string ): void {
 	window.location.href = upgradeUrl;
 }
@@ -129,7 +136,6 @@ const BackButton = () => {
 };
 
 function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
-	// FIXME: figure out what other actions to include here
 	const canBeRenewed = purchase.can_explicit_renew;
 	const upgradeUrl = getUpgradeUrl( purchase );
 	const { recordTracksEvent } = useAnalytics();
@@ -192,8 +198,6 @@ function PurchaseSettingsActions( {
 	purchase: Purchase;
 	upgradeUrl: string | undefined;
 } ) {
-	// FIXME: include "Pick another plan"/"Pick another product" if purchase is expired
-	// FIXME: determine what other actions to include
 	const canBeRemoved = ! isExpired( purchase ) && ! isIncludedWithPlan( purchase );
 	const canBeRenewed = purchase.can_explicit_renew;
 	const canCancel = purchase.is_cancelable;
@@ -218,6 +222,27 @@ function PurchaseSettingsActions( {
 								} }
 							>
 								{ __( 'Upgrade subscription' ) }
+							</Button>
+						}
+					/>
+				) }
+				{ isExpired( purchase ) && (
+					<ActionList.ActionItem
+						title={ purchase.is_plan ? __( 'Pick another plan' ) : __( 'Pick another product' ) }
+						description={ __( 'Find the best fit for your needs.' ) }
+						actions={
+							<Button
+								variant="secondary"
+								size="compact"
+								onClick={ () => {
+									recordTracksEvent( 'calypso_purchases_upgrade_plan', {
+										status: isExpired( purchase ) ? 'expired' : 'active',
+										plan: purchase.product_name,
+									} );
+									window.location.href = getExpiredNewPlanUrl( purchase );
+								} }
+							>
+								{ purchase.is_plan ? __( 'Pick another plan' ) : __( 'Pick another product' ) }
 							</Button>
 						}
 					/>
