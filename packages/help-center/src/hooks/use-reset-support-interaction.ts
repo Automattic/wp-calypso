@@ -11,21 +11,24 @@ export const useResetSupportInteraction = () => {
 			currentSupportInteraction: store.getCurrentSupportInteraction(),
 		};
 	}, [] );
-	const { startNewInteraction, resolveInteraction } = useManageSupportInteraction();
+	const { startNewInteraction, resolveInteraction, isMutating } = useManageSupportInteraction();
 	const queryClient = useQueryClient();
 
-	return async () => {
-		if ( currentSupportInteraction ) {
-			resolveInteraction( { interactionId: currentSupportInteraction.uuid } );
+	return {
+		isMutating,
+		resetSupportInteraction: async () => {
+			if ( currentSupportInteraction ) {
+				resolveInteraction( { interactionId: currentSupportInteraction.uuid } );
 
-			await queryClient.invalidateQueries( {
-				queryKey: [ 'support-interactions', 'get-interactions' ],
+				await queryClient.invalidateQueries( {
+					queryKey: [ 'support-interactions', 'get-interactions' ],
+				} );
+			}
+
+			return await startNewInteraction( {
+				event_source: 'help-center',
+				event_external_id: crypto.randomUUID(),
 			} );
-		}
-
-		return await startNewInteraction( {
-			event_source: 'help-center',
-			event_external_id: crypto.randomUUID(),
-		} );
+		},
 	};
 };

@@ -133,7 +133,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	/**
 	 * Reset the support interaction and clear the chat.
 	 */
-	const resetSupportInteraction = useResetSupportInteraction();
+	const { resetSupportInteraction } = useResetSupportInteraction();
 	const clearChat = useCallback( () => {
 		trackEvent( 'chat_cleared', {} );
 		setMainChatState( emptyChat );

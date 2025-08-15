@@ -1,6 +1,6 @@
-@import "@wordpress/base-styles/variables";
-@import "@automattic/typography/styles/variables";
-@import "components/variables";
+@import '@wordpress/base-styles/variables';
+@import '@automattic/typography/styles/variables';
+@import 'components/variables';
 
 /**
  * Help Center GENERAL Styles
@@ -9,7 +9,7 @@
  *
  * THIS FILE SHOULD NOT CONTAIN ANY COMPONENT SPECIFIC STYLES.
  */
-.help-center > div.help-center__container {
+.help-center>div.help-center__container {
 	background-color: #fff;
 	z-index: $help-center-z-index;
 	cursor: default;
@@ -21,16 +21,8 @@
 	 * Generic Stylings
 	 */
 	font-size: $font-body-small;
-	font-family:
-		-apple-system,
-		BlinkMacSystemFont,
-		"Segoe UI",
-		Roboto,
-		Oxygen-Sans,
-		Ubuntu,
-		Cantarell,
-		"Helvetica Neue",
-		sans-serif;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell,
+		'Helvetica Neue', sans-serif;
 	font-weight: inherit;
 	color: var(--studio-gray-100);
 
@@ -44,26 +36,29 @@
 		font-size: $font-body-small;
 	}
 
-	& > div {
+	&>div {
 		display: flex;
 		flex-direction: column;
 	}
 
-	button,
-	a {
-		&:focus {
-			box-shadow: none;
-			outline: var(--color-link, --studio-blue-30) solid 2px;
-		}
+	.help-center__container-content {
+		button,
+		a {
+			&:focus {
+				box-shadow: none;
+				outline: var(--color-link, --studio-blue-30) solid 2px;
+			}
 
-		&:hover {
-			color: var(--color-link-dark, --studio-blue-70);
-			border-color: inherit;
-		}
-		// Remove the default focus outline on the Recent Conversations nav tabs
-		&.section-nav-tab__link:focus {
-			box-shadow: none;
-			outline: none;
+			&:hover {
+				color: var(--color-link-dark, --studio-blue-70);
+				border-color: inherit;
+			}
+
+			// Remove the default focus outline on the Recent Conversations nav tabs
+			&.section-nav-tab__link:focus {
+				box-shadow: none;
+				outline: none;
+			}
 		}
 	}
 
@@ -73,6 +68,7 @@
 		color: var(--studio-gray-100);
 		margin: 32px 0 1em;
 	}
+
 
 	/**
 	 * Used on loading screens across Help Center
@@ -96,15 +92,13 @@
 
 	&.is-minimized {
 		.help-center__container-header {
+			padding: 8px 16px;
 			cursor: pointer;
+			height: $head-foot-height;
 		}
 
 		.help-center__container-content {
 			display: none;
-		}
-
-		.help-center-header__text {
-			cursor: pointer;
 		}
 	}
 
@@ -115,15 +109,22 @@
 		width: 410px;
 		height: 80vh;
 		max-height: 800px;
-		box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.12), 0 3px 1px 0 rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.04);
-		border-radius: 2px;
+		box-shadow:
+			0 3px 8px 0 rgba(0, 0, 0, 0.12),
+			0 3px 1px 0 rgba(0, 0, 0, 0.04),
+			0 0 0 1px rgba(0, 0, 0, 0.04);
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 16px;
+		overflow: hidden;
 
 		&.is-minimized {
-			min-height: $head-foot-height;
-			max-height: $head-foot-height;
+			height: $head-foot-height;
 			top: unset;
 			right: 50px;
 			bottom: calc(#{$header-height} + 16px);
+
+			border-bottom-left-radius: 0;
+			border-bottom-right-radius: 0;
 		}
 	}
 
@@ -192,13 +193,14 @@
  * Fixes broken popover component on frontend.
  */
 .popover.help-center {
-	z-index: $help-center-z-index +1;
+	z-index: $help-center-z-index + 1;
 
 	.popover__arrow {
 		z-index: 1;
 	}
 
 	.popover__menu {
+
 		// Odie Chat Menu
 		.help-center__container-header-menu-item {
 			display: flex;

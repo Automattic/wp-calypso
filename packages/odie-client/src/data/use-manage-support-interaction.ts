@@ -35,7 +35,7 @@ export const useManageSupportInteraction = () => {
 				setCurrentSupportInteraction( newSupportInteraction );
 			}
 		},
-	} ).mutateAsync;
+	} );
 
 	/**
 	 * Add an event to a support interaction.
@@ -85,7 +85,8 @@ export const useManageSupportInteraction = () => {
 	} ).mutate;
 
 	return {
-		startNewInteraction,
+		startNewInteraction: startNewInteraction.mutateAsync,
+		isMutating: startNewInteraction.isPending,
 		addEventToInteraction,
 		resolveInteraction,
 	};
