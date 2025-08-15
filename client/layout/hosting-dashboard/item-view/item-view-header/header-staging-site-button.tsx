@@ -90,7 +90,7 @@ export default function HeaderStagingSiteButton( {
 	const isStagingSiteReady =
 		!! stagingSiteId &&
 		! isAtomicTransferInProgress( atomicTransfer?.status ?? 'pending' ) &&
-		hasManageOptions( stagingSite );
+		stagingSite?.jetpack_connection;
 
 	useEffect( () => {
 		if ( isCreatingStagingSite && isStagingSiteReady ) {
