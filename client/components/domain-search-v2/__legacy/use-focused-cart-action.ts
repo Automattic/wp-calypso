@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { useDomainSearch } from '../components/domain-search';
+import { useDomainSearch } from './domain-search';
 
 /**
  * A hook that manages loading and error states for cart actions.

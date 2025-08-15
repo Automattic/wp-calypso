@@ -1,5 +1,3 @@
-import { buildDomainSearchCart } from '../../test-helpers/factories';
-import { DomainSearch } from '../domain-search';
 import { DomainSuggestion } from '../domain-suggestion';
 import type { Meta } from '@storybook/react';
 
@@ -14,19 +12,12 @@ export const Default = () => {
 				maxWidth: '1040px',
 			} }
 		>
-			<DomainSearch
-				onContinue={ () => {
-					alert( 'Continue' );
-				} }
-				cart={ buildDomainSearchCart() }
-			>
-				<DomainSuggestion.Unavailable
-					domain="example-unavailable"
-					tld="com"
-					reason="already-registered"
-					onTransferClick={ () => alert( 'Your wish is an order!' ) }
-				/>
-			</DomainSearch>
+			<DomainSuggestion.Unavailable
+				domain="example-unavailable"
+				tld="com"
+				reason="already-registered"
+				onTransferClick={ () => alert( 'Your wish is an order!' ) }
+			/>
 		</div>
 	);
 };

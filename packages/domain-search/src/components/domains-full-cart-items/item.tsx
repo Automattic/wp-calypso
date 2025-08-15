@@ -9,16 +9,22 @@ import {
 } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { useFocusedCartAction } from '../../hooks/use-focused-cart-action';
-import { useDomainSearch } from '../domain-search';
-import type { SelectedDomain } from '../domain-search/types';
+import type { DomainInCart } from './types';
 
-export const DomainsFullCartItem = ( { domain }: { domain: SelectedDomain } ) => {
+export const DomainsFullCartItem = ( {
+	domain,
+	isBusy,
+	onRemove,
+	errorMessage,
+	removeErrorMessage,
+}: {
+	domain: DomainInCart;
+	isBusy: boolean;
+	onRemove: () => void;
+	errorMessage: string | null;
+	removeErrorMessage: () => void;
+} ) => {
 	const { __ } = useI18n();
-	const { cart } = useDomainSearch();
-	const { isBusy, errorMessage, removeErrorMessage, callback } = useFocusedCartAction( () => {
-		cart.onRemoveItem( domain.uuid );
-	} );
 
 	return (
 		<Card>
@@ -37,11 +43,11 @@ export const DomainsFullCartItem = ( { domain }: { domain: SelectedDomain } ) =>
 								</Text>
 							</Text>
 							<Button
-								disabled={ cart.isBusy }
+								disabled={ isBusy }
 								isBusy={ isBusy }
 								variant="link"
 								className="domains-full-cart-items__remove"
-								onClick={ callback }
+								onClick={ onRemove }
 							>
 								{ __( 'Remove' ) }
 							</Button>

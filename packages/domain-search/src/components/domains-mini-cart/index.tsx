@@ -5,7 +5,6 @@ import {
 	Card,
 } from '@wordpress/components';
 import clsx from 'clsx';
-import { useDomainSearch } from '../domain-search';
 import { DomainsMiniCartActions } from './actions';
 import { DomainsMiniCartSummary } from './summary';
 
@@ -29,11 +28,23 @@ const animation = {
 	},
 };
 
-const DomainsMiniCart = ( { className }: { className?: string } ) => {
-	const { cart, isFullCartOpen } = useDomainSearch();
-
-	const isMiniCartOpen = cart.items.length > 0 && ! isFullCartOpen;
-
+export const DomainsMiniCart = ( {
+	className,
+	isMiniCartOpen,
+	totalItems,
+	totalPrice,
+	openFullCart,
+	onContinue,
+	isCartBusy,
+}: {
+	className?: string;
+	isMiniCartOpen: boolean;
+	totalItems: number;
+	totalPrice: string;
+	openFullCart: () => void;
+	onContinue: () => void;
+	isCartBusy: boolean;
+} ) => {
 	return (
 		<>
 			<div className="domains-mini-cart__cushion" />
@@ -47,8 +58,16 @@ const DomainsMiniCart = ( { className }: { className?: string } ) => {
 					<div className="domains-mini-cart">
 						<div className="domains-mini-cart__content">
 							<HStack spacing={ 2 }>
-								<DomainsMiniCartSummary />
-								<DomainsMiniCartActions />
+								<DomainsMiniCartSummary
+									totalItems={ totalItems }
+									totalPrice={ totalPrice }
+									openFullCart={ openFullCart }
+								/>
+								<DomainsMiniCartActions
+									openFullCart={ openFullCart }
+									onContinue={ onContinue }
+									isCartBusy={ isCartBusy }
+								/>
 							</HStack>
 						</div>
 					</div>
@@ -57,8 +76,3 @@ const DomainsMiniCart = ( { className }: { className?: string } ) => {
 		</>
 	);
 };
-
-DomainsMiniCart.Summary = DomainsMiniCartSummary;
-DomainsMiniCart.Actions = DomainsMiniCartActions;
-
-export { DomainsMiniCart };

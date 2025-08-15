@@ -1,9 +1,15 @@
 import { __experimentalHStack as HStack, Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { useDomainSearch } from '../domain-search';
 
-export const DomainsMiniCartActions = () => {
-	const { cart, onContinue, openFullCart } = useDomainSearch();
+export const DomainsMiniCartActions = ( {
+	openFullCart,
+	onContinue,
+	isCartBusy,
+}: {
+	openFullCart: () => void;
+	onContinue: () => void;
+	isCartBusy: boolean;
+} ) => {
 	const { __ } = useI18n();
 
 	return (
@@ -20,7 +26,7 @@ export const DomainsMiniCartActions = () => {
 				variant="primary"
 				onClick={ () => onContinue() }
 				__next40pxDefaultSize
-				disabled={ cart.isBusy }
+				disabled={ isCartBusy }
 			>
 				{ __( 'Continue' ) }
 			</Button>

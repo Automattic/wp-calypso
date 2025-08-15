@@ -2,7 +2,8 @@ import { Button } from '@wordpress/components';
 import { arrowRight } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useDomainSuggestionContainerContext } from '../../hooks/use-domain-suggestion-container';
-import { useDomainSearch } from '../domain-search';
+
+import './continue.scss';
 
 export const DomainSuggestionContinueCTA = ( {
 	disabled,
@@ -11,7 +12,6 @@ export const DomainSuggestionContinueCTA = ( {
 	disabled: boolean;
 	onClick: () => void;
 } ) => {
-	const { cart } = useDomainSearch();
 	const { __ } = useI18n();
 	const listContext = useDomainSuggestionContainerContext();
 
@@ -28,7 +28,7 @@ export const DomainSuggestionContinueCTA = ( {
 			className="domain-suggestion-cta domain-suggestion-cta--continue"
 			onClick={ onClick }
 			label={ __( 'Continue' ) }
-			disabled={ disabled || cart.isBusy }
+			disabled={ disabled }
 		>
 			{ listContext.isFeatured ? __( 'Continue' ) : undefined }
 		</Button>

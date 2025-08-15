@@ -3,6 +3,8 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useDomainSuggestionContainerContext } from '../../hooks/use-domain-suggestion-container';
 import { shoppingCartIcon } from './shopping-cart-icon';
 
+import './primary.scss';
+
 export const DomainSuggestionPrimaryCTA = ( {
 	onClick,
 	href,
@@ -14,8 +16,8 @@ export const DomainSuggestionPrimaryCTA = ( {
 }: {
 	onClick?: () => void;
 	href?: string;
-	disabled: boolean;
-	isBusy: boolean;
+	disabled?: boolean;
+	isBusy?: boolean;
 	label?: string;
 	icon?: React.ReactElement;
 	children?: React.ReactNode;

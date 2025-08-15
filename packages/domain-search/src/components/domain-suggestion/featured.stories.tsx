@@ -1,6 +1,5 @@
-import { buildDomainSearchCart } from '../../test-helpers/factories';
-import { DomainSearch } from '../domain-search';
 import { DomainSuggestionBadge } from '../domain-suggestion-badge';
+import { DomainSuggestionPrimaryCTA } from '../domain-suggestion-cta';
 import { DomainSuggestionPrice } from '../domain-suggestion-price';
 import { DomainSuggestion } from '.';
 import type { Meta } from '@storybook/react';
@@ -16,14 +15,7 @@ const StoryWrapper = ( { children }: { children: React.ReactNode } ) => {
 				maxWidth: '1040px',
 			} }
 		>
-			<DomainSearch
-				onContinue={ () => {
-					alert( 'Continue' );
-				} }
-				cart={ buildDomainSearchCart() }
-			>
-				{ children }
-			</DomainSearch>
+			{ children }
 		</div>
 	);
 };
@@ -38,10 +30,10 @@ export const Default = () => {
 						<DomainSuggestionBadge>Best alternative</DomainSuggestionBadge>
 					</>
 				}
-				uuid="123"
 				domain="example"
 				tld="com"
 				price={ <DomainSuggestionPrice salePrice="$97" price="$22" /> }
+				cta={ <DomainSuggestionPrimaryCTA>Add to Cart</DomainSuggestionPrimaryCTA> }
 			/>
 		</StoryWrapper>
 	);
@@ -60,12 +52,12 @@ export const Highlighted = () => {
 				badges={
 					<DomainSuggestionBadge variation="success">It's available!</DomainSuggestionBadge>
 				}
-				uuid="123"
 				domain="example"
 				tld="com"
 				isHighlighted
 				matchReasons={ [ 'Exact match', '.com is the most common extension' ] }
 				price={ <DomainSuggestionPrice salePrice="$97" price="$22" /> }
+				cta={ <DomainSuggestionPrimaryCTA>Add to Cart</DomainSuggestionPrimaryCTA> }
 			/>
 		</StoryWrapper>
 	);

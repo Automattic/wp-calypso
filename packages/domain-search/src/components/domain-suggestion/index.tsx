@@ -1,8 +1,6 @@
 import { __experimentalText as Text, __experimentalHStack as HStack } from '@wordpress/components';
 import { globe, Icon } from '@wordpress/icons';
-import { ComponentProps } from 'react';
 import { useDomainSuggestionContainerContext } from '../../hooks/use-domain-suggestion-container';
-import { DomainSuggestionCTA } from '../domain-suggestion-cta';
 import { DomainSuggestionPopover } from '../domain-suggestion-popover';
 import { DomainSuggestionsList } from '../domain-suggestions-list';
 import { Featured } from './featured';
@@ -13,26 +11,22 @@ import { Unavailable } from './unavailable';
 import './style.scss';
 
 type DomainSuggestionProps = {
-	uuid: string;
 	domain: string;
 	tld: string;
 	price: React.ReactNode;
 	badges?: React.ReactNode;
 	notice?: React.ReactNode;
-	cta?: React.ReactNode;
-} & Pick< ComponentProps< typeof DomainSuggestionCTA >, 'onClick' | 'disabled' >;
+	cta: React.ReactNode;
+};
 
 const ICON_SIZE = 24;
 
 const DomainSuggestionComponent = ( {
-	uuid,
 	domain,
 	tld,
 	price,
 	badges,
 	notice,
-	onClick,
-	disabled,
 	cta,
 }: DomainSuggestionProps ) => {
 	const listContext = useDomainSuggestionContainerContext();
@@ -89,13 +83,7 @@ const DomainSuggestionComponent = ( {
 			domainName
 		);
 
-	return (
-		<SuggestionSkeleton
-			domainName={ domainNameElement }
-			price={ price }
-			cta={ cta ?? <DomainSuggestionCTA onClick={ onClick } uuid={ uuid } disabled={ disabled } /> }
-		/>
-	);
+	return <SuggestionSkeleton domainName={ domainNameElement } price={ price } cta={ cta } />;
 };
 
 export const DomainSuggestion = ( props: DomainSuggestionProps ) => {

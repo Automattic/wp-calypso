@@ -4,6 +4,8 @@ import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useDomainSuggestionContainerContext } from '../../hooks/use-domain-suggestion-container';
 
+import './error.scss';
+
 export const DomainSuggestionErrorCTA = ( {
 	errorMessage,
 	callback,

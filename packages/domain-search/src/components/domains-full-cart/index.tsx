@@ -15,8 +15,6 @@ import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useRef } from 'react';
 import { useClickOutside } from '../../hooks/use-click-outside';
-import { useDomainSearch } from '../domain-search';
-import { DomainsFullCartItems } from '../domains-full-cart-items';
 import { DomainsFullCartSummary } from '../domains-full-cart-summary';
 
 import './style.scss';
@@ -41,14 +39,25 @@ const createSlideAnimation = ( axis: 'x' | 'y' ) => ( {
 	},
 } );
 
-const DomainsFullCart = ( {
+export const DomainsFullCart = ( {
 	className,
 	children,
+	isFullCartOpen,
+	closeFullCart,
+	onContinue,
+	isCartBusy,
+	totalItems,
+	totalPrice,
 }: {
 	className?: string;
 	children?: React.ReactNode;
+	isFullCartOpen: boolean;
+	closeFullCart: () => void;
+	onContinue: () => void;
+	isCartBusy: boolean;
+	totalItems: number;
+	totalPrice: string;
 } ) => {
-	const { cart, isFullCartOpen, closeFullCart, onContinue } = useDomainSearch();
 	const { __ } = useI18n();
 	const isMobile = useViewportMatch( 'small', '<' );
 
@@ -84,17 +93,17 @@ const DomainsFullCart = ( {
 					/>
 				</CardHeader>
 				<CardBody className="domains-full-cart__body" isScrollable>
-					{ children ?? <DomainsFullCartItems /> }
+					{ children }
 				</CardBody>
 				<CardFooter className="domains-full-cart__footer">
 					<VStack className="domains-full-cart__footer-content" spacing={ 4 }>
-						<DomainsFullCartSummary />
+						<DomainsFullCartSummary totalItems={ totalItems } totalPrice={ totalPrice } />
 						<Button
 							className="domains-full-cart__continue"
 							__next40pxDefaultSize
 							variant="primary"
 							onClick={ onContinue }
-							disabled={ cart.isBusy }
+							disabled={ isCartBusy }
 						>
 							{ __( 'Continue' ) }
 						</Button>
@@ -104,7 +113,3 @@ const DomainsFullCart = ( {
 		</AnimatedCard>
 	);
 };
-
-DomainsFullCart.Items = DomainsFullCartItems;
-
-export { DomainsFullCart };

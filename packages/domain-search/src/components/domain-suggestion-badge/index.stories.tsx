@@ -1,5 +1,3 @@
-import { buildDomainSearchCart } from '../../test-helpers/factories';
-import { DomainSearch } from '../domain-search';
 import { DomainSuggestionBadge } from '.';
 import type { Meta } from '@storybook/react';
 
@@ -14,14 +12,7 @@ const StoryWrapper = ( { children }: { children: React.ReactNode } ) => {
 				maxWidth: '1040px',
 			} }
 		>
-			<DomainSearch
-				onContinue={ () => {
-					alert( 'Continue' );
-				} }
-				cart={ buildDomainSearchCart() }
-			>
-				{ children }
-			</DomainSearch>
+			{ children }
 		</div>
 	);
 };

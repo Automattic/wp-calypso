@@ -1,33 +1,16 @@
-import { useState } from 'react';
-import { buildDomain, buildDomainSearchCart } from '../../test-helpers/factories';
-import { DomainSearch } from '../domain-search';
 import { DomainSuggestion } from '../domain-suggestion';
 import { DomainSuggestionBadge } from '../domain-suggestion-badge';
+import { DomainSuggestionPrimaryCTA } from '../domain-suggestion-cta';
 import { DomainSuggestionPrice } from '../domain-suggestion-price';
 import { DomainSuggestionsList } from '.';
 import type { Meta } from '@storybook/react';
 
 const SUGGESTIONS = [
-	buildDomain( { uuid: '1', domain: 'tha-lasso', tld: 'com', price: '$10' } ),
-	buildDomain( { uuid: '2', domain: 'the-lasso', tld: 'com', price: '$10', salePrice: '$20' } ),
+	{ uuid: '1', domain: 'tha-lasso', tld: 'com', price: '$10' },
+	{ uuid: '2', domain: 'the-lasso', tld: 'com', price: '$10', salePrice: '$20' },
 ];
 
 export const Default = () => {
-	const [ cartItems, setCartItems ] = useState< string[] >( [] );
-
-	const cart = buildDomainSearchCart( {
-		items: cartItems
-			.map( ( uuid ) => SUGGESTIONS.find( ( s ) => s.uuid === uuid ) )
-			.filter( ( domain ) => !! domain ),
-		onAddItem: ( uuid ) => {
-			setCartItems( [ ...cartItems, uuid ] );
-		},
-		onRemoveItem: ( item ) => {
-			setCartItems( cartItems.filter( ( i ) => i !== item ) );
-		},
-		hasItem: ( item ) => cartItems.some( ( i ) => i === item ),
-	} );
-
 	return (
 		<div
 			style={ {
@@ -38,42 +21,35 @@ export const Default = () => {
 				maxWidth: '1040px',
 			} }
 		>
-			<DomainSearch
-				onContinue={ () => {
-					alert( 'Continue' );
-				} }
-				cart={ cart }
-			>
-				<DomainSuggestionsList>
-					<DomainSuggestion.Unavailable
-						domain="example-unavailable"
-						tld="com"
-						reason="already-registered"
-						onTransferClick={ () => alert( 'Your wish is an order!' ) }
+			<DomainSuggestionsList>
+				<DomainSuggestion.Unavailable
+					domain="example-unavailable"
+					tld="com"
+					reason="already-registered"
+					onTransferClick={ () => alert( 'Your wish is an order!' ) }
+				/>
+				{ SUGGESTIONS.map( ( suggestion ) => (
+					<DomainSuggestion
+						key={ suggestion.uuid }
+						domain={ suggestion.domain }
+						tld={ suggestion.tld }
+						notice={ suggestion.domain === 'tha-lasso' ? 'hello' : undefined }
+						price={
+							<DomainSuggestionPrice
+								salePrice={ suggestion.salePrice }
+								price={ suggestion.price }
+							/>
+						}
+						badges={
+							<>
+								<DomainSuggestionBadge>Recommended</DomainSuggestionBadge>
+								<DomainSuggestionBadge variation="warning">Sale</DomainSuggestionBadge>
+							</>
+						}
+						cta={ <DomainSuggestionPrimaryCTA>Add to Cart</DomainSuggestionPrimaryCTA> }
 					/>
-					{ SUGGESTIONS.map( ( suggestion ) => (
-						<DomainSuggestion
-							key={ suggestion.uuid }
-							uuid={ suggestion.uuid }
-							domain={ suggestion.domain }
-							tld={ suggestion.tld }
-							notice={ suggestion.domain === 'tha-lasso' ? 'hello' : undefined }
-							price={
-								<DomainSuggestionPrice
-									salePrice={ suggestion.salePrice }
-									price={ suggestion.price }
-								/>
-							}
-							badges={
-								<>
-									<DomainSuggestionBadge>Recommended</DomainSuggestionBadge>
-									<DomainSuggestionBadge variation="warning">Sale</DomainSuggestionBadge>
-								</>
-							}
-						/>
-					) ) }
-				</DomainSuggestionsList>
-			</DomainSearch>
+				) ) }
+			</DomainSuggestionsList>
 		</div>
 	);
 };

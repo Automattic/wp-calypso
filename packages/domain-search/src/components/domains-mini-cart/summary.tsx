@@ -5,17 +5,23 @@ import {
 } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { useDomainSearch } from '../domain-search';
 
-export const DomainsMiniCartSummary = () => {
+export const DomainsMiniCartSummary = ( {
+	totalItems,
+	totalPrice,
+	openFullCart,
+}: {
+	totalItems: number;
+	totalPrice: string;
+	openFullCart: () => void;
+} ) => {
 	const { _n } = useI18n();
-	const { cart, openFullCart } = useDomainSearch();
 
 	const domainCount = sprintf(
 		// translators: %(domains)s is the number of domains selected.
-		_n( '%(domains)s domain', '%(domains)s domains', cart.items.length ),
+		_n( '%(domains)s domain', '%(domains)s domains', totalItems ),
 		{
-			domains: cart.items.length,
+			domains: totalItems,
 		}
 	);
 
@@ -24,11 +30,11 @@ export const DomainsMiniCartSummary = () => {
 		_n(
 			'%(domains)s domain selected. %(total)s total price. Click to view the cart',
 			'%(domains)s domains selected. %(total)s total price. Click to view the cart',
-			cart.items.length
+			totalItems
 		),
 		{
-			domains: cart.items.length,
-			total: cart.total,
+			domains: totalItems,
+			total: totalPrice,
 		}
 	);
 
@@ -36,7 +42,7 @@ export const DomainsMiniCartSummary = () => {
 		<Button onClick={ openFullCart } aria-label={ ariaLabel } className="domains-mini-cart-summary">
 			<VStack spacing={ 2 } alignment="left">
 				<Text size="footnote">{ domainCount }</Text>
-				<Text className="domains-mini-cart-summary__total">{ cart.total }</Text>
+				<Text className="domains-mini-cart-summary__total">{ totalPrice }</Text>
 			</VStack>
 		</Button>
 	);

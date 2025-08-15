@@ -5,8 +5,6 @@ import type { DomainSearchCart, DomainSearchContextType } from './types';
 import './style.scss';
 
 export const DomainSearchContext = createContext< DomainSearchContextType >( {
-	query: '',
-	setQuery: () => {},
 	onContinue: () => {},
 	cart: {
 		items: [],
@@ -24,23 +22,16 @@ export const DomainSearchContext = createContext< DomainSearchContextType >( {
 
 export const DomainSearch = ( {
 	children,
-	initialQuery,
 	onContinue,
 	cart,
 	className,
 }: {
 	children: React.ReactNode;
-	initialQuery?: string;
 	onContinue: () => void;
 	cart: DomainSearchCart;
 	className?: string;
 } ) => {
-	const [ query, setQuery ] = useState( initialQuery ?? '' );
 	const [ isFullCartOpen, setIsFullCartOpen ] = useState( false );
-
-	useLayoutEffect( () => {
-		setQuery( initialQuery ?? '' );
-	}, [ initialQuery ] );
 
 	const closeFullCart = useCallback( () => {
 		setIsFullCartOpen( false );
@@ -52,15 +43,13 @@ export const DomainSearch = ( {
 
 	const contextValue = useMemo(
 		() => ( {
-			query,
-			setQuery,
 			onContinue,
 			cart,
 			closeFullCart,
 			openFullCart,
 			isFullCartOpen,
 		} ),
-		[ query, setQuery, onContinue, cart, closeFullCart, openFullCart, isFullCartOpen ]
+		[ onContinue, cart, closeFullCart, openFullCart, isFullCartOpen ]
 	);
 
 	const cartItemsLength = cart.items.length;

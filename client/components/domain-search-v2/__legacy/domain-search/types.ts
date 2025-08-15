@@ -17,8 +17,6 @@ export interface DomainSearchCart {
 }
 
 export interface DomainSearchContextType {
-	query: string;
-	setQuery: ( query: string ) => void;
 	onContinue: () => void;
 	cart: DomainSearchCart;
 	isFullCartOpen: boolean;
