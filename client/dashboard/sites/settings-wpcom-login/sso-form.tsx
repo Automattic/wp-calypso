@@ -24,7 +24,7 @@ import { JetpackModules } from '../../data/constants';
 import type { Site } from '../../data/types';
 import type { Field } from '@wordpress/dataviews';
 
-export type WpcomLoginFormData = {
+type WpcomLoginFormData = {
 	sso: boolean;
 	jetpack_sso_match_by_email: boolean;
 	jetpack_sso_require_two_step: boolean;
