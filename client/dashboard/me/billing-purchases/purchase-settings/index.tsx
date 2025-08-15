@@ -200,6 +200,7 @@ function PurchaseSettingsActions( {
 } ) {
 	const canBeRemoved = ! isExpired( purchase ) && ! isIncludedWithPlan( purchase );
 	const canBeRenewed = purchase.can_explicit_renew;
+	// FIXME: handle all conditions in renderCancelPurchaseNavItem like canAutoRenewBeTurnedOff and hasAmountAvailableToRefund and isDomainTransfer and isHundredYearDomain
 	const canCancel = purchase.is_cancelable;
 	const { recordTracksEvent } = useAnalytics();
 	// FIXME: prevent renew if purchase.isLocked
