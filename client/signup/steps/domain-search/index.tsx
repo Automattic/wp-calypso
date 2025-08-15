@@ -14,7 +14,7 @@ export default function DomainSearchStep( props: StepProps ) {
 		<StepWrapper
 			headerText="Domain Search"
 			subHeaderText="Domain Search"
-			stepContent={ <div>DomainSearchStep</div> }
+			stepContent={ <div>TODO: Implement domain search</div> }
 			{ ...props }
 		/>
 	);

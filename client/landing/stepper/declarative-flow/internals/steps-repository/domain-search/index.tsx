@@ -5,7 +5,7 @@ import type { Step as StepType } from '../../types';
 
 const DomainSearchStep: StepType = function DomainSearchStep( { flow } ) {
 	const getContent = () => {
-		return <div>DomainSearchStep</div>;
+		return <div>TODO: Implement domain search</div>;
 	};
 
 	if ( shouldUseStepContainerV2( flow ) ) {
