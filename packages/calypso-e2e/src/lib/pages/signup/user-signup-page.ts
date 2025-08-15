@@ -90,11 +90,49 @@ export class UserSignupPage {
 	 * @returns {NewUserResponse} Response from the REST API.
 	 */
 	async signupWithEmail( email: string ): Promise< NewUserResponse > {
-		await this.page.fill( selectors.emailInput, email );
+		// Wait for the page to be fully loaded
+		await this.page.waitForLoadState( 'networkidle' );
 
+		// Try multiple selectors for the email input to be more robust
+		const emailSelectors = [
+			'input[name="email"]',
+			'input[type="email"]',
+			'#signup-email',
+			'.signup-form__passwordless-email',
+		];
+
+		let emailInput = null;
+		for ( const selector of emailSelectors ) {
+			try {
+				emailInput = this.page.locator( selector );
+				if ( ( await emailInput.count() ) > 0 ) {
+					break;
+				}
+			} catch ( e ) {
+				continue;
+			}
+		}
+
+		if ( ! emailInput || ( await emailInput.count() ) === 0 ) {
+			throw new Error( 'Email input field not found' );
+		}
+
+		// Wait for the email input to be visible and editable
+		await emailInput.waitFor( { state: 'visible', timeout: 10000 } );
+
+		// Fill the email field
+		await emailInput.fill( email );
+
+		// Look for the Continue button
+		const continueButton = this.page.getByRole( 'button', { name: 'Continue' } );
+
+		// Wait for the button to be visible
+		await continueButton.waitFor( { state: 'visible', timeout: 10000 } );
+
+		// Wait for the API response and click the button
 		const [ response ] = await Promise.all( [
 			this.page.waitForResponse( /.*new\?.*/ ),
-			this.page.getByRole( 'button', { name: 'Continue' } ).click(),
+			continueButton.click(),
 		] );
 
 		if ( ! response ) {
@@ -115,20 +153,26 @@ export class UserSignupPage {
 	 * @deprecated Use `signupWithEmail` instead.
 	 */
 	async signupSocialFirstWithEmail( email: string ): Promise< NewUserResponse > {
-		/**
-		 * In the current UI the email field is visible by default.
-		 * For backward compatibility, click the legacy "Continue with Email" button if present.
-		 */
+		// Wait for the page to be fully loaded
+		await this.page.waitForLoadState( 'networkidle' );
+
+		// First, click the "Continue with email" button to switch to the email step
 		const continueWithEmailButton = this.page.getByRole( 'button', {
 			name: 'Continue with Email',
 		} );
-		if (
-			( await continueWithEmailButton.count() ) > 0 &&
-			( await continueWithEmailButton.isVisible() )
-		) {
-			await continueWithEmailButton.click();
-		}
 
+		// Wait for the button to be visible and click it
+		await continueWithEmailButton.waitFor( { state: 'visible', timeout: 10000 } );
+
+		// Ensure the button is clickable
+		await continueWithEmailButton.waitFor( { state: 'attached', timeout: 5000 } );
+
+		await continueWithEmailButton.click();
+
+		// Wait a moment for the UI transition to complete
+		await this.page.waitForTimeout( 1000 );
+
+		// Now proceed with the email signup
 		return this.signupWithEmail( email );
 	}
 
