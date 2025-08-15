@@ -245,35 +245,39 @@ export const OdieSendMessageButton = () => {
 							} }
 							className="odie-send-message-input-container"
 						>
-							<ResizableTextarea
-								shouldDisableInputField={
-									isChatBusy ||
-									isAttachingFile ||
-									cantTransferToZendesk ||
-									isEmailFallback ||
-									( isLiveChat && connectionStatus !== 'connected' )
-								}
-								sendMessageHandler={ sendMessageHandler }
-								className="odie-send-message-input"
-								inputRef={ inputRef }
-								setSubmitDisabled={ setSubmitDisabled }
-								keyUpHandle={ handleOnKeyUp }
-								onPasteHandle={ onPaste }
-								placeholder={ textAreaPlaceholder }
-							/>
-							{ isChatBusy && <Spinner className="odie-send-message-input-spinner" /> }
+							<div className="odie-send-message-input-and-spinner">
+								<ResizableTextarea
+									shouldDisableInputField={
+										isChatBusy ||
+										isAttachingFile ||
+										cantTransferToZendesk ||
+										isEmailFallback ||
+										( isLiveChat && connectionStatus !== 'connected' )
+									}
+									sendMessageHandler={ sendMessageHandler }
+									className="odie-send-message-input"
+									inputRef={ inputRef }
+									setSubmitDisabled={ setSubmitDisabled }
+									keyUpHandle={ handleOnKeyUp }
+									onPasteHandle={ onPaste }
+									placeholder={ textAreaPlaceholder }
+								/>
+								{ isChatBusy && <Spinner className="odie-send-message-input-spinner" /> }
+							</div>
 							{ showAttachmentButton && (
 								<AttachmentButton
 									attachmentButtonRef={ attachmentButtonRef }
 									onFileUpload={ handleFileUpload }
 									isAttachingFile={ isAttachingFile }
-									isDisabled={ isEmailFallback }
+									isDisabled={
+										isEmailFallback || ( isLiveChat && connectionStatus !== 'connected' )
+									}
 								/>
 							) }
 							<button
 								type="submit"
 								className={ buttonClasses }
-								disabled={ submitDisabled }
+								disabled={ submitDisabled || ( isLiveChat && connectionStatus !== 'connected' ) }
 								aria-label={ __( 'Send message', __i18n_text_domain__ ) }
 							>
 								<SendMessageIcon />

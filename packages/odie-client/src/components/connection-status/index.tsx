@@ -2,26 +2,27 @@ import { HelpCenterSelect } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { Notice } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
-import './styles.scss';
+import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState } from 'react';
 
-const connectionStatusMap = {
-	disconnected: {
-		status: 'error',
-		message: 'We lost connection to chat support.',
-	},
-	reconnecting: {
-		status: 'warning',
-		message: 'Reconnecting to chat support...',
-	},
-	connected: {
-		status: 'success',
-		message: 'Connected!',
-	},
-} as const;
-
 export const ConnectionStatus = () => {
-	const [ expired, setExpired ] = useState( false );
+	const [ shouldWarn, setShouldWarn ] = useState( false );
+	const { __ } = useI18n();
+
+	const connectionStatusMap = {
+		disconnected: {
+			status: 'error',
+			message: __( 'Chat connection lost.', __i18n_text_domain__ ),
+		},
+		reconnecting: {
+			status: 'warning',
+			message: __( 'Reconnecting…', __i18n_text_domain__ ),
+		},
+		connected: {
+			status: 'success',
+			message: __( 'You’re back online with support.', __i18n_text_domain__ ),
+		},
+	} as const;
 
 	const connectionStatus = useSelect(
 		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getZendeskConnectionStatus(),
@@ -29,24 +30,21 @@ export const ConnectionStatus = () => {
 	);
 
 	useEffect( () => {
-		if ( connectionStatus === 'connected' ) {
-			setTimeout( () => {
-				setExpired( true );
-			}, 1500 );
-		} else {
-			setExpired( false );
+		if ( connectionStatus === 'disconnected' ) {
+			setShouldWarn( true );
 		}
 	}, [ connectionStatus ] );
 
-	if ( expired ) {
+	if ( ! shouldWarn ) {
 		return null;
 	}
 
 	return (
 		<Notice
-			isDismissible={ false }
+			isDismissible={ connectionStatus === 'connected' }
 			status={ connectionStatusMap[ connectionStatus ].status }
 			className="odie-connection-status--notice"
+			onDismiss={ () => setShouldWarn( false ) }
 		>
 			{ connectionStatusMap[ connectionStatus ].message }
 		</Notice>
