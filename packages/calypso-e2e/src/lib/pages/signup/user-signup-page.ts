@@ -95,7 +95,7 @@ export class UserSignupPage {
 		// Wait for the API response and click the button
 		const [ response ] = await Promise.all( [
 			this.page.waitForResponse( /.*new\?.*/ ),
-			this.page.getByRole( 'button', { name: 'Continue' } ).click(),
+			this.page.locator( 'button[name="Continue"].signup-form__submit' ).click(),
 		] );
 
 		if ( ! response ) {
