@@ -278,7 +278,13 @@ const siteLogsChildRoutes = [ siteLogsIndexRoute, siteLogsPhpRoute, siteLogsServ
 const siteBackupsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'backups',
-} );
+} ).lazy( () =>
+	import( '../sites/backups' ).then( ( d ) =>
+		createLazyRoute( 'site-backups' )( {
+			component: d.default,
+		} )
+	)
+);
 
 const siteBackupsIndexRoute = createRoute( {
 	getParentRoute: () => siteBackupsRoute,
@@ -291,7 +297,7 @@ const siteBackupsIndexRoute = createRoute( {
 } ).lazy( () =>
 	import( '../sites/backups' ).then( ( d ) =>
 		createLazyRoute( 'site-backups-index' )( {
-			component: d.default,
+			component: d.BackupsListPage,
 		} )
 	)
 );
@@ -301,7 +307,7 @@ const siteBackupRestoreRoute = createRoute( {
 	path: '$rewindId/restore',
 } ).lazy( () =>
 	import( '../sites/backup-restore' ).then( ( d ) =>
-		createLazyRoute( 'site-backups-restore' )( {
+		createLazyRoute( 'site-backup-restore' )( {
 			component: d.default,
 		} )
 	)

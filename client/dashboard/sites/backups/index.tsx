@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { __experimentalText as Text, __experimentalGrid as Grid } from '@wordpress/components';
+import { Outlet } from '@tanstack/react-router';
+import { __experimentalGrid as Grid, __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
 import { useState } from 'react';
@@ -17,7 +18,7 @@ import { BackupNowButton } from './backup-now-button';
 import illustrationUrl from './backups-callout-illustration.svg';
 import { BackupsList } from './backups-list';
 import './style.scss';
-import type { ActivityLogEntry, Site } from '../../data/types';
+import type { ActivityLogEntry } from '../../data/types';
 
 export function SiteBackupsCallout( {
 	siteSlug,
@@ -56,24 +57,10 @@ export function SiteBackupsCallout( {
 	);
 }
 
-function BackupsLayout( { site }: { site: Site } ) {
-	const [ selectedBackup, setSelectedBackup ] = useState< ActivityLogEntry | null >( null );
-
-	return (
-		<Grid columns={ 2 }>
-			<BackupsList
-				site={ site }
-				selectedBackup={ selectedBackup }
-				setSelectedBackup={ setSelectedBackup }
-			/>
-			{ selectedBackup && <BackupDetails backup={ selectedBackup } site={ site } /> }
-		</Grid>
-	);
-}
-
-function SiteBackups() {
+export function BackupsListPage() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
+	const [ selectedBackup, setSelectedBackup ] = useState< ActivityLogEntry | null >( null );
 
 	if ( ! site ) {
 		return;
@@ -90,12 +77,34 @@ function SiteBackups() {
 				/>
 			}
 		>
-			<CalloutOverlay
-				showCallout={ ! hasBackups }
-				callout={ <SiteBackupsCallout siteSlug={ site.slug } /> }
-				main={ <BackupsLayout site={ site } /> }
-			/>
+			<Grid columns={ 2 }>
+				<BackupsList
+					site={ site }
+					selectedBackup={ selectedBackup }
+					setSelectedBackup={ setSelectedBackup }
+				/>
+				{ selectedBackup && <BackupDetails backup={ selectedBackup } site={ site } /> }
+			</Grid>
 		</PageLayout>
+	);
+}
+
+function SiteBackups() {
+	const { siteSlug } = siteRoute.useParams();
+	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
+
+	if ( ! site ) {
+		return;
+	}
+
+	const hasBackups = hasHostingFeature( site, HostingFeatures.BACKUPS );
+
+	return (
+		<CalloutOverlay
+			showCallout={ ! hasBackups }
+			callout={ <SiteBackupsCallout siteSlug={ site.slug } /> }
+			main={ <Outlet /> }
+		/>
 	);
 }
 
