@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import useCountryList, { isVatSupported } from '../../hooks/use-country-list';
+import useCountryList, { isVatSupported } from '../../app/hooks/use-country-list';
 import type { CountryListItem } from '../../data/types';
 
 interface CountryCodeOption {

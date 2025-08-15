@@ -8,7 +8,7 @@ export type * from './emails';
 export type * from './me';
 export type * from './me-preferences';
 export type * from './me-profile';
-export type * from './me-billing-tax-details';
+export type * from './user-tax-details';
 export type * from './me-sites';
 export type * from './me-ssh';
 export type * from './site';

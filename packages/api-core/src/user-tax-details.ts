@@ -1,23 +1,57 @@
 import wpcom from 'calypso/lib/wp';
+import type { Field, NormalizedField } from '@wordpress/dataviews';
 
-export interface UserTaxDetails {
+export interface UserTaxFormData {
+	// was: VatFormData
 	country: string;
-	vat_id: string;
-	name: string;
+	id: string;
 	address: string;
+	name: string;
 }
 
-export async function fetchUserTaxDetails(): Promise< UserTaxDetails > {
+// export type UserTaxDetails { // was: VatDetails
+// 	country?: string;
+// 	id?: string;
+// 	address?: string;
+// 	name?: string;
+// 	isForBusiness?: boolean | null;
+// 	can_user_edit?: boolean | false;
+// };
+
+export type UserTaxField = Field< UserTaxFormData > & {
+	// was: VatField
+	isDisabled?: boolean;
+	isVatAlreadySet?: boolean;
+	canUserEdit?: boolean;
+	taxName?: string;
+};
+
+export type UserTaxNormalizedField = NormalizedField< UserTaxFormData > & {
+	// was: VatNormalizedField
+	isDisabled?: boolean;
+	isVatAlreadySet?: boolean;
+	canUserEdit?: boolean;
+	taxName?: string;
+};
+
+export interface UserTaxFormControlProps {
+	// was: VatFormControlProps
+	data: UserTaxFormData;
+	field: UserTaxNormalizedField;
+	onChange: ( edits: Partial< UserTaxFormData > ) => void;
+}
+
+export async function fetchUserTaxDetails(): Promise< UserTaxFormData > {
 	return await wpcom.req.get( '/me/vat-info' );
 }
 
 export async function updateUserTaxDetails(
-	data: Partial< UserTaxDetails >
-): Promise< Partial< UserTaxDetails > > {
-	const savableKeys = [ 'country', 'vat_id', 'name', 'address' ];
+	data: Partial< UserTaxFormData >
+): Promise< Partial< UserTaxFormData > > {
+	const savableKeys = [ 'country', 'id', 'name', 'address' ];
 	for ( const key in data ) {
 		if ( ! savableKeys.includes( key ) ) {
-			delete data[ key as keyof UserTaxDetails ];
+			delete data[ key as keyof UserTaxFormData ];
 		}
 	}
 	return await wpcom.req.post( '/me/vat-info', data );
