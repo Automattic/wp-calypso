@@ -54,11 +54,36 @@ const PreviewPaneHeaderButtons = ( { focusRef, itemData }: Props ) => {
 		queryClient
 	);
 
+	// Get the staging site to check its jetpack_connection
+	const stagingSiteId = isStagingSite
+		? itemData.blogId
+		: site?.options?.wpcom_staging_blog_ids?.[ 0 ];
+
+	const stagingSite = useSelector( ( state ) =>
+		stagingSiteId ? getSite( state, stagingSiteId ) : null
+	);
+
+	// Check if the staging site has Jetpack connection
+	const hasStagingSiteJetpackConnection = stagingSite?.jetpack_connection;
+
+	// Refetch staging site data periodically to check for Jetpack connection changes
+	useEffect( () => {
+		if ( stagingSiteId && ! hasStagingSiteJetpackConnection ) {
+			const interval = setInterval( () => {
+				// Trigger a refetch of the staging site data
+				dispatch( { type: 'SITE_REQUEST', siteId: stagingSiteId } );
+			}, 5000 ); // Check every 5 seconds
+
+			return () => clearInterval( interval );
+		}
+	}, [ stagingSiteId, hasStagingSiteJetpackConnection, dispatch ] );
+
 	const shouldShowSyncDropdown = Boolean(
 		stagingSitesRedesign &&
 			( isStagingSite || hasStagingSite ) &&
 			! isStagingSiteInTransition &&
-			! isStagingSiteDeletionInProgress
+			! isStagingSiteDeletionInProgress &&
+			hasStagingSiteJetpackConnection
 	);
 
 	const productionSiteId = isStagingSite

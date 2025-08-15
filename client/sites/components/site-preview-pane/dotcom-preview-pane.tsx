@@ -1,14 +1,16 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { isMigrationInProgress } from 'calypso/data/site-migration';
 import ItemView from 'calypso/layout/hosting-dashboard/item-view';
 import { useSetTabBreadcrumb } from 'calypso/sites/hooks/breadcrumbs/use-set-tab-breadcrumb';
 import HostingFeaturesIcon from 'calypso/sites/hosting/components/hosting-features-icon';
 import { useStagingSite } from 'calypso/sites/staging-site/hooks/use-staging-site';
 import SitesProductionBadge from 'calypso/sites-dashboard/components/sites-production-badge';
-import { useSelector } from 'calypso/state';
+import SitesStagingBadge from 'calypso/sites-dashboard/components/sites-staging-badge';
+import { useSelector, useDispatch } from 'calypso/state';
+import { getSite } from 'calypso/state/sites/selectors';
 import { canCurrentUserSwitchEnvironment } from 'calypso/state/sites/selectors/can-current-user-switch-environment';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
 import { getStagingSiteStatus } from 'calypso/state/staging-site/selectors';
@@ -58,6 +60,7 @@ const DotcomPreviewPane = ( {
 	changeSitePreviewPane,
 }: Props ) => {
 	const { __ } = useI18n();
+	const dispatch = useDispatch();
 
 	const isAtomicSite = !! site.is_wpcom_atomic || !! site.is_wpcom_staging_site;
 	const isSimpleSite = ! site.jetpack && ! site.is_wpcom_atomic;
@@ -210,6 +213,30 @@ const DotcomPreviewPane = ( {
 	const shouldShowProductionBadge =
 		isProduction && ( hasNoStagingSites || ! isStagingStatusFinished );
 
+	// Get the staging site to check its jetpack_connection
+	const stagingSiteId = site.is_wpcom_staging_site
+		? site.ID
+		: site.options?.wpcom_staging_blog_ids?.[ 0 ];
+
+	const stagingSite = useSelector( ( state ) =>
+		stagingSiteId ? getSite( state, stagingSiteId ) : null
+	);
+
+	// Check if the staging site has Jetpack connection
+	const hasStagingSiteJetpackConnection = stagingSite?.jetpack_connection;
+
+	// Refetch staging site data periodically to check for Jetpack connection changes
+	useEffect( () => {
+		if ( stagingSiteId && ! hasStagingSiteJetpackConnection ) {
+			const interval = setInterval( () => {
+				// Trigger a refetch of the staging site data
+				dispatch( { type: 'SITE_REQUEST', siteId: stagingSiteId } );
+			}, 5000 ); // Check every 5 seconds
+
+			return () => clearInterval( interval );
+		}
+	}, [ stagingSiteId, hasStagingSiteJetpackConnection, dispatch ] );
+
 	return (
 		<ItemView
 			itemData={ itemData }
@@ -230,8 +257,27 @@ const DotcomPreviewPane = ( {
 						return <SitesProductionBadge>{ __( 'Production' ) }</SitesProductionBadge>;
 					}
 
-					if ( hasEnvironmentPermission && isStagingStatusFinished ) {
+					// Show environment switcher if staging site has Jetpack connection
+					if (
+						hasEnvironmentPermission &&
+						isStagingStatusFinished &&
+						hasStagingSiteJetpackConnection
+					) {
 						return <SiteEnvironmentSwitcher onChange={ changeSitePreviewPane } site={ site } />;
+					}
+
+					// Show badge if staging site doesn't have Jetpack connection yet
+					if (
+						hasEnvironmentPermission &&
+						isStagingStatusFinished &&
+						! hasStagingSiteJetpackConnection
+					) {
+						if ( site.is_wpcom_staging_site ) {
+							return <SitesStagingBadge>{ __( 'Staging' ) }</SitesStagingBadge>;
+						}
+						if ( site.is_wpcom_atomic && ! site.is_wpcom_staging_site ) {
+							return <SitesProductionBadge>{ __( 'Production' ) }</SitesProductionBadge>;
+						}
 					}
 				},
 			} }
