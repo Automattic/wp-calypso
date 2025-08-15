@@ -704,7 +704,10 @@ class RegisterDomainStep extends Component {
 					{ showFreeDomainPromo && <FreeDomainForAYearPromo /> }
 					{ this.renderContent() }
 				</VStack>
-				<DomainCartV2 showFreeDomainPromo={ showFreeDomainPromo } onSkip={ this.props.onSkip } />
+				<DomainCartV2
+					showFreeDomainPromo={ showFreeDomainPromo }
+					onSkip={ this.props.showSkipButton ? this.props.onSkip : undefined }
+				/>
 			</DomainSearch>
 		);
 	}
