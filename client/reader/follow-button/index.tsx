@@ -26,6 +26,8 @@ export default function ReaderFollowButton( props: ReaderFollowButtonProps ): JS
 		props;
 
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	// We use the previous path to detect how the user arrived on the follow button.
+	// It is important to understand our post suggestions strategies.
 	const pathnameOverride = useSelector( getPreviousPath );
 
 	function recordFollowToggle( isFollowing: boolean ): void {
