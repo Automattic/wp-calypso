@@ -156,7 +156,7 @@ class Security2faDisable extends Component {
 						{ translate(
 							'To verify that you wish to disable two-step authentication, ' +
 								'enter the verification code from your device or a backup code, ' +
-								'and click "Disable Two-Step Authentication."'
+								'and click “Disable Two-Step Authentication.”'
 						) }
 					</p>
 					<Security2faCodePrompt
@@ -171,7 +171,7 @@ class Security2faDisable extends Component {
 
 		return (
 			<FormButton isPrimary={ false } scary onClick={ this.onRevealCodePrompt }>
-				{ translate( 'Disable Two-Step Authentication' ) }
+				{ translate( 'Disable two-step authentication' ) }
 			</FormButton>
 		);
 	}
