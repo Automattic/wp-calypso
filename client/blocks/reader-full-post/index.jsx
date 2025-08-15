@@ -1,4 +1,4 @@
-import config from '@automattic/calypso-config';
+import config, { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Gridicon, EmbedContainer, ExternalLink } from '@automattic/components';
 import clsx from 'clsx';
@@ -663,7 +663,7 @@ export class FullPostView extends Component {
 		return (
 			// add extra div wrapper for consistent content frame layout/styling for reader.
 			<div style={ { position: 'relative' } }>
-				{ this.props.isAutomattician && (
+				{ this.props.isAutomattician && isEnabled( 'reader/discover/freshly-pressed' ) && (
 					<FreshlyPressedRecommendationButton blogId={ +post.site_ID } postId={ +post.ID } />
 				) }
 				<ReaderMain className={ clsx( classes ) } forwardRef={ this.readerMainWrapper }>
