@@ -92,15 +92,14 @@ export class UserSignupPage {
 	async signupWithEmail( email: string ): Promise< NewUserResponse > {
 		await this.page.fill( selectors.emailInput, email );
 
-		// Wait for the API response and click the button
-		const [ response ] = await Promise.all( [
-			this.page.waitForResponse( /.*new\?.*/ ),
-			this.page
-				.getByRole( 'button', {
-					name: 'Continue',
-				} )
-				.click(),
-		] );
+		// Click the button first, then wait for the response
+		await this.page
+			.getByRole( 'button', {
+				name: 'Continue',
+			} )
+			.click();
+
+		const response = await this.page.waitForResponse( /.*new\?.*/ );
 
 		if ( ! response ) {
 			throw new Error( 'Failed to sign up as new user: no or unexpected API response.' );
