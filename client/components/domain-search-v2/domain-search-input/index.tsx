@@ -1,4 +1,4 @@
-import { DomainSearchControls, useTypedPlaceholder } from '@automattic/domain-search';
+import { DomainSearchControls, useTypedPlaceholder } from '@automattic/domains';
 import { useState, useEffect, useRef, useMemo } from '@wordpress/element';
 import { _x } from '@wordpress/i18n';
 import { debounce } from 'lodash';

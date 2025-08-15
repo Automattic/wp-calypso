@@ -3,7 +3,7 @@ import {
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_ECOMMERCE_MONTHLY,
 } from '@automattic/calypso-products';
-import { DomainSuggestionPrice } from '@automattic/domain-search';
+import { DomainSuggestionPrice } from '@automattic/domains';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';

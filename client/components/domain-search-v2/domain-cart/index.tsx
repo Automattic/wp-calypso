@@ -1,4 +1,4 @@
-import { DomainsMiniCart, DomainsFullCart } from '@automattic/domain-search';
+import { DomainsMiniCart, DomainsFullCart } from '@automattic/domains';
 import {
 	__experimentalVStack as VStack,
 	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis

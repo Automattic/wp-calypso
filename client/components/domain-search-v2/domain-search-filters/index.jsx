@@ -1,5 +1,5 @@
 import { Popover } from '@automattic/components';
-import { DomainSearchControls } from '@automattic/domain-search';
+import { DomainSearchControls } from '@automattic/domains';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { Button, CheckboxControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';

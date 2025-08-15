@@ -1,4 +1,4 @@
-import { DomainSuggestionsList, DomainSuggestion } from '@automattic/domain-search';
+import { DomainSuggestionsList, DomainSuggestion } from '@automattic/domains';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { get, times } from 'lodash';

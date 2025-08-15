@@ -8,7 +8,7 @@ import {
 	DomainSuggestionLoadMore,
 	DomainSuggestionFilterReset,
 	DomainSearchAlreadyOwnDomainCTA,
-} from '@automattic/domain-search';
+} from '@automattic/domains';
 import { formatCurrency } from '@automattic/number-formatters';
 import {
 	AI_SITE_BUILDER_FLOW,

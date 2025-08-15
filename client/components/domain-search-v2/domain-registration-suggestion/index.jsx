@@ -3,7 +3,7 @@ import {
 	DomainSuggestionBadge,
 	DomainSuggestionCTA,
 	DomainSuggestionPrice,
-} from '@automattic/domain-search';
+} from '@automattic/domains';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { HUNDRED_YEAR_DOMAIN_FLOW, isHundredYearPlanFlow } from '@automattic/onboarding';

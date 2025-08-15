@@ -1,4 +1,4 @@
-import { DomainSuggestion } from '@automattic/domain-search';
+import { DomainSuggestion } from '@automattic/domains';
 import { localize } from 'i18n-calypso';
 import { pick } from 'lodash';
 import PropTypes from 'prop-types';

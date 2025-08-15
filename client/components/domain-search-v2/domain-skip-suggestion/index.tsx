@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { DomainSuggestion } from '@automattic/data-stores';
-import { useDomainSearch } from '@automattic/domain-search';
+import { useDomainSearch } from '@automattic/domains';
 import {
 	Button,
 	__experimentalText as Text,

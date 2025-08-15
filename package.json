@@ -158,7 +158,7 @@
 		"@automattic/command-palette": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
-		"@automattic/domain-search": "workspace:^",
+		"@automattic/domains": "workspace:^",
 		"@automattic/help-center": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/languages": "workspace:^",

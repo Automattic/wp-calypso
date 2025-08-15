@@ -1146,32 +1146,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/domain-search@workspace:^, @automattic/domain-search@workspace:packages/domain-search":
-  version: 0.0.0-use.local
-  resolution: "@automattic/domain-search@workspace:packages/domain-search"
-  dependencies:
-    "@automattic/calypso-storybook": "workspace:^"
-    "@automattic/calypso-typescript-config": "workspace:^"
-    "@storybook/addon-a11y": "npm:^8.6.14"
-    "@testing-library/dom": "npm:^10.4.0"
-    "@testing-library/react": "npm:^16.3.0"
-    "@types/jest": "npm:^29.5.14"
-    "@wordpress/base-styles": "npm:^5.23.0"
-    "@wordpress/components": "npm:^29.9.0"
-    "@wordpress/icons": "npm:^10.23.0"
-    "@wordpress/react-i18n": "npm:^4.23.0"
-    clsx: "npm:^2.1.1"
-    copyfiles: "npm:^2.4.1"
-    react: "npm:^18.3.1"
-    react-dom: "npm:^18.3.1"
-    storybook: "npm:^8.6.14"
-    typescript: "npm:^5.8.3"
-  peerDependencies:
-    "@wordpress/i18n": ^5.23.0
-    react: ^18.3.1
-  languageName: unknown
-  linkType: soft
-
 "@automattic/domains-table@workspace:^, @automattic/domains-table@workspace:packages/domains-table":
   version: 0.0.0-use.local
   resolution: "@automattic/domains-table@workspace:packages/domains-table"
@@ -1208,6 +1182,32 @@ __metadata:
     "@wordpress/i18n": ^5.23.0
     react: ^18.3.1
     react-dom: ^18.3.1
+  languageName: unknown
+  linkType: soft
+
+"@automattic/domains@workspace:^, @automattic/domains@workspace:packages/domains":
+  version: 0.0.0-use.local
+  resolution: "@automattic/domains@workspace:packages/domains"
+  dependencies:
+    "@automattic/calypso-storybook": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@storybook/addon-a11y": "npm:^8.6.14"
+    "@testing-library/dom": "npm:^10.4.0"
+    "@testing-library/react": "npm:^16.3.0"
+    "@types/jest": "npm:^29.5.14"
+    "@wordpress/base-styles": "npm:^5.23.0"
+    "@wordpress/components": "npm:^29.9.0"
+    "@wordpress/icons": "npm:^10.23.0"
+    "@wordpress/react-i18n": "npm:^4.23.0"
+    clsx: "npm:^2.1.1"
+    copyfiles: "npm:^2.4.1"
+    react: "npm:^18.3.1"
+    react-dom: "npm:^18.3.1"
+    storybook: "npm:^8.6.14"
+    typescript: "npm:^5.8.3"
+  peerDependencies:
+    "@wordpress/i18n": ^5.23.0
+    react: ^18.3.1
   languageName: unknown
   linkType: soft
 
@@ -14928,7 +14928,7 @@ __metadata:
     "@automattic/design-picker": "workspace:^"
     "@automattic/design-preview": "workspace:^"
     "@automattic/domain-picker": "workspace:^"
-    "@automattic/domain-search": "workspace:^"
+    "@automattic/domains": "workspace:^"
     "@automattic/domains-table": "workspace:^"
     "@automattic/explat-client": "workspace:^"
     "@automattic/explat-client-react-helpers": "workspace:^"
@@ -37928,7 +37928,7 @@ __metadata:
     "@automattic/command-palette": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/data-stores": "workspace:^"
-    "@automattic/domain-search": "workspace:^"
+    "@automattic/domains": "workspace:^"
     "@automattic/eslint-plugin-json": "workspace:^"
     "@automattic/help-center": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"

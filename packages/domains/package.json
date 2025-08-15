@@ -1,7 +1,7 @@
 {
-	"name": "@automattic/domain-search",
+	"name": "@automattic/domains",
 	"version": "1.0.0",
-	"description": "Domain search components for WordPress.com.",
+	"description": "Domain registration components for the Automattic ecosystem.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
@@ -29,7 +29,7 @@
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
-		"directory": "packages/domain-search"
+		"directory": "packages/domains"
 	},
 	"publishConfig": {
 		"access": "public"

@@ -1,4 +1,4 @@
-import { DomainSuggestionBadge } from '@automattic/domain-search';
+import { DomainSuggestionBadge } from '@automattic/domains';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 

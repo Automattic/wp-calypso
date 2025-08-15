@@ -1,4 +1,4 @@
-import { useDomainSuggestionContainer } from '@automattic/domain-search';
+import { useDomainSuggestionContainer } from '@automattic/domains';
 import {
 	Card,
 	CardBody,
