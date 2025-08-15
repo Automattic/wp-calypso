@@ -193,6 +193,10 @@ export function getBillPeriodLabel( purchase: Purchase ): string {
  * title and the product name as the subtitle (see `getSubtitleForDisplay`).
  */
 export function getTitleForDisplay( purchase: Purchase ): string {
+	if ( purchase.is_hundred_year_domain ) {
+		return __( '100-Year Domain Registration' );
+	}
+
 	if (
 		purchase.is_jetpack_ai_product &&
 		purchase.renewal_price_tier_usage_quantity &&

@@ -481,12 +481,9 @@ export default function PurchaseSettings() {
 	}
 	const upgradeUrl = getUpgradeUrl( purchase );
 	const subtitle = getSubtitleForDisplay( purchase );
-	// FIXME: prevent renewal for preventRenewal
-	// FIXME: prevent renewal for isPendingDomainRegistration
 	// FIXME: add edit payment method button
 	// FIXME: add Jetpack CRM downloads link
 	// FIXME: render reinstall button
-	// FIXME: render "100-Year Domain Registration" in place of getTitleForDisplay for 100 year domain
 	// FIXME: render "Domain transfers can take anywhere from five to seven days to complete."
 	// FIXME: render 'Domain Registration Agreement' and link
 	// FIXME: render DIFM content
