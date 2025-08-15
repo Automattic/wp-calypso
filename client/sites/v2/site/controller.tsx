@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
 
-export function redirectToHostingDashboardBackportIfEnabled(
+export function redirectToHostingDashboardSiteOverviewBackportIfEnabled(
 	context: PageJSContext,
 	next: () => void
 ) {
@@ -11,4 +11,8 @@ export function redirectToHostingDashboardBackportIfEnabled(
 	}
 
 	next();
+}
+
+export function redirectToHostingDashboardSiteSettingsBackportIfEnabled( context: PageJSContext ) {
+	return page.redirect( `/sites/${ context.params.site }/settings` );
 }

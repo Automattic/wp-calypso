@@ -5,9 +5,10 @@ import type { User } from '../../data/types';
 
 export const AUTH_QUERY_KEY = [ 'auth', 'user' ];
 
-interface AuthContextType {
+export interface AuthContextType {
 	user: User;
 }
+
 export const AuthContext = createContext< AuthContextType | undefined >( undefined );
 
 /**

@@ -14,7 +14,7 @@ import {
 	useAreAdvancedHostingFeaturesSupported,
 	useAreHostingFeaturesSupported,
 } from '../hosting/features';
-import DashboardBackportSiteSettingsRenderer from '../v2/site-settings';
+import DashboardBackportSiteRenderer from '../v2/site';
 import DeleteSite from './administration/tools/delete-site';
 import ResetSite from './administration/tools/reset-site';
 import TransferSite from './administration/tools/transfer-site';
@@ -210,15 +210,16 @@ export function performanceSettings( context: PageJSContext, next: () => void ) 
  * Backport Hosting Dashboard Site Settings page to the current one.
  */
 export async function dashboardBackportSiteSettings( context: PageJSContext, next: () => void ) {
-	const { site: siteSlug, feature } = context.params;
+	const { site: siteSlug } = context.params;
 
 	// Route doesn't require a <PageViewTracker /> because the dashboard
 	// fires its own page view events.
 	context.primary = (
-		<DashboardBackportSiteSettingsRenderer
+		<DashboardBackportSiteRenderer
+			className="dashboard-backport-site-settings"
 			store={ context.store }
 			siteSlug={ siteSlug }
-			feature={ feature }
+			pathname={ context.pathname }
 		/>
 	);
 

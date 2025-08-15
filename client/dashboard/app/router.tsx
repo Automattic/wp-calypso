@@ -1,6 +1,6 @@
 import {
-	Router,
 	createRoute,
+	createRouter,
 	createRootRouteWithContext,
 	redirect,
 	createLazyRoute,
@@ -69,12 +69,17 @@ import {
 	domainDnssecRoute,
 	domainTransferRoute,
 } from './routes/domain-routes';
+import type { AuthContextType } from './auth';
 import type { AppConfig } from './context';
 import type { AnyRoute, ParsedLocation } from '@tanstack/react-router';
+import type { MutableRefObject } from 'react';
 
-interface RouteContext {
-	config?: AppConfig;
-	previousLocation?: ParsedLocation;
+export interface RouteContext {
+	auth?: AuthContextType;
+	config?: Partial< AppConfig >;
+	// In the backport, the component may render before `previousLocation` is updated by the `router.subscribe`.
+	// Using a React ref here ensures we always access the latest value.
+	previousLocationRef?: MutableRefObject< ParsedLocation | undefined >;
 }
 
 const rootRoute = createRootRouteWithContext< RouteContext >()( {
@@ -859,8 +864,13 @@ const createRouteTree = ( config: AppConfig ) => {
 
 export const getRouter = ( config: AppConfig ) => {
 	const routeTree = createRouteTree( config );
-	return new Router( {
+	return createRouter( {
 		routeTree,
+		context: {
+			auth: undefined,
+			config: undefined,
+			previousLocationRef: undefined,
+		},
 		basepath: config.basePath,
 		defaultErrorComponent: UnknownError,
 		defaultNotFoundComponent: NotFound,

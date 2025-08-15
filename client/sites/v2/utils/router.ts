@@ -5,10 +5,15 @@ import type { AnyRoute, AnyRouter } from '@tanstack/react-router';
 
 export function getRouterOptions() {
 	return {
+		context: {
+			auth: undefined,
+			config: undefined,
+			previousLocationRef: undefined,
+		},
 		defaultPreload: 'intent' as const,
 		defaultPreloadStaleTime: 0,
 		defaultNotFoundComponent: () => null,
-		defaultViewTransition: true,
+		defaultViewTransition: false,
 
 		// Use memory history to compartmentalize TanStack Router's history management.
 		// This way, we separate TanStack Router's history implementation from the browser history used by page.js.

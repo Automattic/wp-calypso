@@ -3,7 +3,7 @@ import { isMigrationInProgress } from 'calypso/data/site-migration';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { getRouteFromContext } from 'calypso/utils';
-import DashboardBackportSiteOverview from '../v2/site-overview';
+import DashboardBackportSiteRenderer from '../v2/site';
 import HostingOverview from './components/hosting-overview';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
 import type { SiteExcerptData } from '@automattic/sites';
@@ -37,7 +37,14 @@ export async function dashboardBackportSiteOverview( context: PageJSContext, nex
 
 	// Route doesn't require a <PageViewTracker /> because the dashboard
 	// fires its own page view events.
-	context.primary = <DashboardBackportSiteOverview siteSlug={ siteSlug } />;
+	context.primary = (
+		<DashboardBackportSiteRenderer
+			className="dashboard-backport-site-overview"
+			store={ context.store }
+			siteSlug={ siteSlug }
+			pathname={ context.pathname }
+		/>
+	);
 
 	next();
 }

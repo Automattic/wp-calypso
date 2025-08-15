@@ -16,7 +16,7 @@ import {
 	SETTINGS_SFTP_SSH,
 } from 'calypso/sites/components/site-preview-pane/constants';
 import { siteDashboard } from 'calypso/sites/controller';
-import { redirectToHostingDashboardBackportIfEnabled } from '../v2/site-settings/controller';
+import { redirectToHostingDashboardSiteSettingsBackportIfEnabled } from '../v2/site/controller';
 import {
 	redirectIfCantDeleteSite,
 	redirectIfCantStartSiteOwnerTransfer,
@@ -42,7 +42,7 @@ export default function () {
 		siteSelection,
 		navigation,
 		redirectIfCurrentUserCannot( 'manage_options' ),
-		redirectToHostingDashboardBackportIfEnabled,
+		redirectToHostingDashboardSiteSettingsBackportIfEnabled,
 		siteSettings,
 		siteDashboard( SETTINGS_SITE ),
 		makeLayout,
@@ -84,7 +84,7 @@ export default function () {
 	page(
 		'/sites/settings/server/:site',
 		siteSelection,
-		redirectToHostingDashboardBackportIfEnabled,
+		redirectToHostingDashboardSiteSettingsBackportIfEnabled,
 		redirectToSiteSettingsIfAdvancedHostingFeaturesNotSupported,
 		navigation,
 		serverSettings,
@@ -97,7 +97,7 @@ export default function () {
 	page(
 		'/sites/settings/sftp-ssh/:site',
 		siteSelection,
-		redirectToHostingDashboardBackportIfEnabled,
+		redirectToHostingDashboardSiteSettingsBackportIfEnabled,
 		redirectToSiteSettingsIfAdvancedHostingFeaturesNotSupported,
 		navigation,
 		sftpSshSettings,
@@ -110,7 +110,7 @@ export default function () {
 	page(
 		'/sites/settings/database/:site',
 		siteSelection,
-		redirectToHostingDashboardBackportIfEnabled,
+		redirectToHostingDashboardSiteSettingsBackportIfEnabled,
 		redirectToSiteSettingsIfAdvancedHostingFeaturesNotSupported,
 		navigation,
 		databaseSettings,
@@ -123,7 +123,7 @@ export default function () {
 	page(
 		'/sites/settings/performance/:site',
 		siteSelection,
-		redirectToHostingDashboardBackportIfEnabled,
+		redirectToHostingDashboardSiteSettingsBackportIfEnabled,
 		redirectToSiteSettingsIfHostingFeaturesNotSupported,
 		navigation,
 		performanceSettings,

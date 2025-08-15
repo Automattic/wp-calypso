@@ -1,7 +1,30 @@
 @import '@automattic/typography/styles/variables';
 @import 'calypso/dashboard/app-dotcom/style.scss';
 
-.dashboard-backport-site-settings-root {
+.dashboard-backport-site-overview {
+	.dashboard-page-layout {
+		align-self: center;
+		margin: 0;
+		padding: 0;
+		gap: 0;
+	}
+
+	.dashboard-page-header,
+	.dashboard-page-header + .site-overview-fields {
+		display: none;
+	}
+
+	// We manually compose the UI of the dataview without including the view actions, which results in extra padding and a border.
+	.components-card__header + .components-card__body:has( > .dataviews-wrapper ):not( :has( .dataviews__view-actions ) ) {
+		padding-top: 0;
+
+		.dataviews-view-list div[role="row"]:first-child {
+			border-top: none;
+		}
+	}
+}
+
+.dashboard-backport-site-settings {
 	.dashboard-page-layout {
 		align-self: center;
 		margin: 0;

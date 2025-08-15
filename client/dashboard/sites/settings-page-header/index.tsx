@@ -20,7 +20,8 @@ export default function SettingsPageHeader( props: PageHeaderProps ) {
 				canGoBack ? router.history.back() : router.navigate( { to: backUrl } );
 			} }
 		>
-			{ canGoBack && ! router.options.context.previousLocation?.pathname.endsWith( backUrl )
+			{ canGoBack &&
+			! router.options.context.previousLocationRef?.current?.pathname.endsWith( backUrl )
 				? __( 'Back' )
 				: __( 'Settings' ) }
 		</Button>

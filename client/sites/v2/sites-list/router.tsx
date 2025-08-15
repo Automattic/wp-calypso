@@ -1,8 +1,7 @@
 import { createLazyRoute, createRoute, createRouter } from '@tanstack/react-router';
 import * as appRouter from 'calypso/dashboard/app/router';
 import { rootRoute } from '../router';
-import siteOverviewRouter from '../site-overview/router';
-import siteSettingsRouter from '../site-settings/router';
+import siteRouter from '../site/router';
 import { getRouterOptions, createBrowserHistoryAndMemoryRouterSync } from '../utils/router';
 
 // Keep the loading state active to prevent displaying a white screen during the redirection.
@@ -31,7 +30,7 @@ const siteOverviewPreloadRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites/$siteSlug',
 	loader: async ( { params: { siteSlug } } ) => {
-		siteOverviewRouter.preloadRoute( {
+		siteRouter.preloadRoute( {
 			to: `/sites/${ siteSlug }`,
 		} );
 		await infiniteLoader();
@@ -42,7 +41,7 @@ const siteSettingsPreloadRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites/$siteSlug/settings',
 	loader: async ( { params: { siteSlug } } ) => {
-		siteSettingsRouter.preloadRoute( {
+		siteRouter.preloadRoute( {
 			to: `/sites/${ siteSlug }/settings`,
 		} );
 		await infiniteLoader();
@@ -53,7 +52,7 @@ const siteSettingsWithFeaturePreloadRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites/$siteSlug/settings/$feature',
 	loader: async ( { params: { siteSlug, feature } } ) => {
-		siteSettingsRouter.preloadRoute( {
+		siteRouter.preloadRoute( {
 			to: `/sites/${ siteSlug }/settings/${ feature }`,
 		} );
 		await infiniteLoader();

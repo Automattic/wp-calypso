@@ -1,7 +1,33 @@
-import { Router, createLazyRoute, createRoute } from '@tanstack/react-router';
+import { WIDE_BREAKPOINT } from '@automattic/viewport';
+import { useBreakpoint } from '@automattic/viewport-react';
+import { createLazyRoute, createRoute, createRouter } from '@tanstack/react-router';
 import * as appRouter from 'calypso/dashboard/app/router';
 import { rootRoute, dashboardSitesCompatibilityRoute, siteRoute } from '../router';
 import { getRouterOptions, createBrowserHistoryAndMemoryRouterSync } from '../utils/router';
+import type { WPBreakpoint } from '@wordpress/compose/build-types/hooks/use-viewport-match';
+
+const siteOverviewRoute = createRoute( {
+	...appRouter.siteOverviewRoute.options,
+	getParentRoute: () => siteRoute,
+} ).lazy( () =>
+	import( 'calypso/dashboard/sites/overview' ).then( ( d ) =>
+		createLazyRoute( 'overview' )( {
+			component: function SiteOverview() {
+				const isWide = useBreakpoint( WIDE_BREAKPOINT );
+				const breakpoints = isWide
+					? { large: 'wide' as WPBreakpoint, small: 'wide' as WPBreakpoint }
+					: { large: 'medium' as WPBreakpoint, small: 'medium' as WPBreakpoint };
+				return (
+					<d.default
+						siteSlug={ siteRoute.useParams().siteSlug }
+						hideSitePreview
+						breakpoints={ breakpoints }
+					/>
+				);
+			},
+		} )
+	)
+);
 
 const settingsRoute = createRoute( {
 	...appRouter.siteSettingsRoute.options,
@@ -171,6 +197,7 @@ const webApplicationFirewallRoute = createRoute( {
 const createRouteTree = () =>
 	rootRoute.addChildren( [
 		siteRoute.addChildren( [
+			siteOverviewRoute,
 			settingsRoute,
 			siteVisibilityRoute,
 			subscriptionGiftingRoute,
@@ -195,7 +222,7 @@ export const { syncBrowserHistoryToRouter, syncMemoryRouterToBrowserHistory } =
 
 export const getRouter = ( { basePath }: { basePath: string } ) => {
 	const routeTree = createRouteTree();
-	const router = new Router( {
+	const router = createRouter( {
 		...getRouterOptions(),
 		routeTree,
 		basepath: basePath,

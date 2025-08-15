@@ -1,6 +1,6 @@
 import { QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider } from '@tanstack/react-router';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { AnalyticsProvider, type AnalyticsClient } from 'calypso/dashboard/app/analytics';
 import { AuthProvider, useAuth } from 'calypso/dashboard/app/auth';
 import { queryClient } from 'calypso/dashboard/app/query-client';
@@ -9,9 +9,17 @@ import router, {
 	syncBrowserHistoryToRouter,
 	syncMemoryRouterToBrowserHistory,
 } from './router';
+import type { ParsedLocation } from '@tanstack/react-router';
 
 function RouterProviderWithAuth( { siteSlug }: { siteSlug?: string } ) {
 	const auth = useAuth();
+	const previousLocationRef = useRef< ParsedLocation | undefined >();
+
+	useEffect( () => {
+		return router.subscribe( 'onBeforeLoad', ( { fromLocation } ) => {
+			previousLocationRef.current = fromLocation;
+		} );
+	}, [] );
 
 	useEffect( () => {
 		syncBrowserHistoryToRouter( router );
@@ -31,7 +39,12 @@ function RouterProviderWithAuth( { siteSlug }: { siteSlug?: string } ) {
 		};
 	}, [] );
 
-	return <RouterProvider router={ router } context={ { auth, config: routerConfig } } />;
+	return (
+		<RouterProvider
+			router={ router }
+			context={ { auth, config: routerConfig, previousLocationRef } }
+		/>
+	);
 }
 
 function Layout( {
