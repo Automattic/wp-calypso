@@ -17,6 +17,7 @@ export function getFields(): Field< ActivityLogEntry >[] {
 	return [
 		{
 			id: 'icon',
+			label: __( 'Icon' ),
 			render: ( { item } ) => (
 				<Icon
 					icon={ gridiconToWordPressIcon( item.gridicon ) }
@@ -27,6 +28,7 @@ export function getFields(): Field< ActivityLogEntry >[] {
 		},
 		{
 			id: 'title',
+			label: __( 'Title' ),
 			getValue: ( { item } ) => {
 				const actor = item.actor?.name ? ` by ${ item.actor.name }` : '';
 				return item.summary + actor;
@@ -41,6 +43,7 @@ export function getFields(): Field< ActivityLogEntry >[] {
 		},
 		{
 			id: 'content_text',
+			label: __( 'Content' ),
 			getValue: ( { item } ) => item.content.text,
 			enableGlobalSearch: true,
 		},
