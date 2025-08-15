@@ -7,8 +7,8 @@ import { domainDnsMutation, domainDnsQuery } from '../../app/queries/domain-dns-
 import { domainRoute } from '../../app/routes/domain-routes';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { DNS_RECORD_CONFIGS } from './records/dns-record-configs';
 import DNSRecordForm from './form';
+import { DNS_RECORD_CONFIGS } from './records/dns-record-configs';
 import type { DnsRecordTypeFormData, DnsRecordFormData } from './records/dns-record-configs';
 import type { DnsRecord } from '../../data/domain-dns-records';
 
