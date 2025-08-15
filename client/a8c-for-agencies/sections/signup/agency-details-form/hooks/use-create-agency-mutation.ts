@@ -6,7 +6,7 @@ import { AgencyDetailsPayload } from '../types';
 
 function createAgency( details: AgencyDetailsPayload ): Promise< Agency > {
 	// For Agency signup tracking, we need to submit the hubspotutk cookie.
-	const hubspotutk = cookie.parse( document.cookie ).hubspotutk;
+	const hubspotutk = cookie.parse( document.cookie )?.hubspotutk;
 
 	return wpcom.req.post( {
 		apiNamespace: 'wpcom/v2',
