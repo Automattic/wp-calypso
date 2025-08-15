@@ -32,7 +32,7 @@ export const ConnectionStatus = () => {
 		if ( connectionStatus === 'connected' ) {
 			setTimeout( () => {
 				setExpired( true );
-			}, 2000 );
+			}, 1500 );
 		} else {
 			setExpired( false );
 		}
