@@ -41,9 +41,13 @@ export function recordPermalinkClick(
 }
 
 const matches = ( pattern: RegExp ) => ( value: string ) => pattern.test( value );
+
 const startsWith = ( path: string | string[] ) => ( value: string ) =>
-	Array.isArray( path ) ? path.some( ( p ) => p.startsWith( value ) ) : path.startsWith( value );
-const exactMatch = ( path: string ) => ( value: string ) => path === value;
+	Array.isArray( path ) ? path.some( ( p ) => value.startsWith( p ) ) : value.startsWith( path );
+
+const exactMatch = ( path: string | string[] ) => ( value: string ) =>
+	Array.isArray( path ) ? path.some( ( p ) => p === value ) : path === value;
+
 const isEmpty = ( value: string | undefined ) => value === '' || value === undefined;
 
 const SearchRoute = matches( /^(\/[^/]+)?\/reader\/search/ );
@@ -60,29 +64,67 @@ type RoutesMapping = {
 
 const Routes: RoutesMapping[] = [
 	{ route: isEmpty, tracking: 'unknown' },
-	{ route: startsWith( [ '/reader', '/reader/recent/' ] ), tracking: 'following' },
+
+	// Tags
+	{
+		route: startsWith( '/tag' ),
+		tracking: ( { searchParams } ) => {
+			const sort = searchParams.get( 'sort' );
+			return `topic_page:${ sort === 'relevance' ? 'relevance' : 'date' }`;
+		},
+	},
+
+	// Following
 	{ route: startsWith( '/reader/a8c' ), tracking: 'following_a8c' },
 	{ route: startsWith( '/reader/p2' ), tracking: 'following_p2' },
 	{ route: startsWith( '/reader/list/' ), tracking: 'list' },
+
+	// Likes
 	{ route: startsWith( '/activities/likes' ), tracking: 'postlike' },
+
+	{
+		route: exactMatch( '/discover' ),
+		tracking: () => {
+			const isFreshlyPressedEnabled = isEnabled( 'reader/discover/freshly-pressed' );
+			return isFreshlyPressedEnabled ? 'freshly-pressed' : 'discover_recommended';
+		},
+	},
+	// Discover
 	{ route: startsWith( '/discover/add-new' ), tracking: 'discover_addnew' },
 	{ route: startsWith( '/discover/firstposts' ), tracking: 'discover_firstposts' },
 	{ route: startsWith( '/discover/reddit' ), tracking: 'discover_reddit' },
 	{ route: startsWith( '/discover/latest' ), tracking: 'discover_latest' },
 	{ route: startsWith( '/discover/recommended' ), tracking: 'discover_recommended' },
+	{
+		route: startsWith( '/discover/tags' ),
+		tracking: ( { searchParams } ) => {
+			const selectedTag = searchParams.get( 'selectedTag' );
+			return `discover_tag:${ selectedTag }`;
+		},
+	},
+	{ route: matches( /discover\/.*/ ), tracking: 'discover_unknown' },
+
+	// Conversations
 	{ route: exactMatch( '/reader/conversations' ), tracking: 'conversations' },
 	{ route: exactMatch( '/reader/conversations/a8c' ), tracking: 'conversations_a8c' },
-	{ route: exactMatch( '/home' ), tracking: 'home' },
-	{ route: matches( /discover\/.*/ ), tracking: 'discover_unknown' },
+
 	{ route: SinglePostRoute, tracking: 'single_post' },
 	{ route: BlogPageRoute, tracking: 'blog_page' },
 	{ route: SearchRoute, tracking: 'search' },
+
+	{ route: exactMatch( '/home' ), tracking: 'home' },
+	{ route: exactMatch( '/reader' ), tracking: 'following' },
+
+	{ route: startsWith( '/reader/recent/' ), tracking: 'following' },
 ] as const;
 
-const findConfigByPath = ( path: string ) => {
-	const route = Routes.find( ( route ) => route.route( path ) );
-	if ( route ) {
-		return route.tracking;
+const findConfigByPath = ( path: string, searchParams: URLSearchParams ) => {
+	const config = Routes.find( ( route ) => route.route( path ) );
+	if ( config ) {
+		if ( typeof config.tracking === 'function' ) {
+			return config.tracking( { path, searchParams } );
+		}
+		return config.tracking;
 	}
 	return null;
 };
@@ -90,22 +132,8 @@ const findConfigByPath = ( path: string ) => {
 export function getLocation( fullPath: string ) {
 	const [ path, queryString ] = fullPath.split( '?' );
 	const searchParams = new URLSearchParams( queryString );
-	const isFreshlyPressedEnabled = isEnabled( 'reader/discover/freshly-pressed' );
 
-	if ( path === '/discover' ) {
-		return isFreshlyPressedEnabled ? 'freshly-pressed' : 'discover_recommended';
-	}
-
-	if ( path.startsWith( '/tag/' ) ) {
-		const sort = searchParams.get( 'sort' );
-		return `topic_page:${ sort === 'relevance' ? 'relevance' : 'date' }`;
-	}
-
-	if ( path.startsWith( '/discover/tags' ) ) {
-		const selectedTag = searchParams.get( 'selectedTag' );
-		return `discover_tag:${ selectedTag }`;
-	}
-	const config = findConfigByPath( path );
+	const config = findConfigByPath( path, searchParams );
 	return config || 'unknown';
 }
 

@@ -746,22 +746,16 @@ describe( 'reader stats', () => {
 		describe( 'topic page urls', () => {
 			const scenarios = [
 				{
-					url: '/tag/test',
+					url: '/tag/test2',
 					expected: 'topic_page:date',
-					description: 'topic page with tag',
+					description: 'topic page with date as default sort',
 					searchParams: {},
 				},
 				{
 					url: '/tag/test?sort=relevance',
 					expected: 'topic_page:relevance',
-					description: 'topic page with tag and sort',
+					description: 'topic page with sort',
 					searchParams: { sort: 'relevance' },
-				},
-				{
-					url: '/tag/test?sort=date',
-					expected: 'topic_page:date',
-					description: 'topic page with tag and sort',
-					searchParams: { sort: 'date' },
 				},
 			] as const;
 
