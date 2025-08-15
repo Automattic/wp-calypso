@@ -13,6 +13,7 @@ import { domainRoute } from '../../app/router/domains';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { getDomainSiteSlug } from '../../utils/domain';
 import NameServersForm from './form';
 import { shouldShowUpsellNudge } from './utils';
 
@@ -62,7 +63,7 @@ export default function NameServers() {
 					) : (
 						<NameServersForm
 							domainName={ domainName }
-							domainSiteSlug={ domain.site_slug }
+							domainSiteSlug={ getDomainSiteSlug( domain ) }
 							isBusy={ isUpdatingNameServers }
 							nameServers={ nameServers ?? [] }
 							onSubmit={ onSubmit }
