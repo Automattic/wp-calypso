@@ -1,6 +1,5 @@
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { isBefore, subDays } from 'date-fns';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { A4AConfirmationDialog } from 'calypso/a8c-for-agencies/components/a4a-confirmation-dialog';
@@ -57,17 +56,18 @@ export default function CancelSubscriptionAction( { subscription, onCancelSubscr
 
 	const storeSubscription = subscription.subscription;
 
+	if ( ! storeSubscription ) {
+		return null;
+	}
+
 	const productName =
-		isBillingTypeBD && storeSubscription?.product_name
+		isBillingTypeBD && storeSubscription.product_name
 			? storeSubscription.product_name
 			: products?.find( ( product ) => product.product_id === subscription.product_id )?.name ?? '';
 
-	const refundPeriodDays = storeSubscription?.billing_interval_unit === 'month' ? 7 : 14;
-	const isWithinRefundPeriod =
-		storeSubscription?.subscribed_date &&
-		isBefore( subDays( new Date(), refundPeriodDays ), storeSubscription?.subscribed_date );
+	const refundPeriodDays = storeSubscription.billing_interval_unit === 'month' ? 7 : 14;
 
-	const expiryDate = storeSubscription?.expiry ?? '';
+	const expiryDate = storeSubscription.expiry ?? '';
 
 	return (
 		<>
@@ -90,12 +90,13 @@ export default function CancelSubscriptionAction( { subscription, onCancelSubscr
 					) : (
 						<>
 							<div>
-								{ isWithinRefundPeriod
+								{ storeSubscription.is_refundable
 									? translate(
-											'{{b}}%(productName)s{{/b}} will be canceled and removed immediately. Since you are within the money-back period, you will be refunded.',
+											'{{b}}%(productName)s{{/b}} will be canceled and removed immediately. Since you are within the {{b}}%(refundPeriodDays)d money-back{{/b}} period, you will be refunded.',
 											{
 												args: {
 													productName,
+													refundPeriodDays,
 												},
 												components: {
 													b: <b />,
@@ -105,7 +106,7 @@ export default function CancelSubscriptionAction( { subscription, onCancelSubscr
 											}
 									  )
 									: translate(
-											'{{b}}%(productName)s{{/b}} will be canceled, but it will remain active until %(expiryDate)s. After that, it will not renew',
+											'{{b}}%(productName)s{{/b}} will be canceled, but it will remain active {{b}}until %(expiryDate)s{{/b}}. After that, it will not renew',
 											{
 												args: {
 													productName,
