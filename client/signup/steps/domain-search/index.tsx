@@ -1,3 +1,4 @@
+import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
 import StepWrapper from 'calypso/signup/step-wrapper';
 
 export type StepProps = {
@@ -10,11 +11,15 @@ export type StepProps = {
 };
 
 export default function DomainSearchStep( props: StepProps ) {
+	const getContent = () => {
+		return <WPCOMDomainSearch />;
+	};
+
 	return (
 		<StepWrapper
 			headerText="Domain Search"
 			subHeaderText="Domain Search"
-			stepContent={ <div>TODO: Implement domain search</div> }
+			stepContent={ getContent() }
 			{ ...props }
 		/>
 	);
