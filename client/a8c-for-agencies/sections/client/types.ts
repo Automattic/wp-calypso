@@ -16,6 +16,7 @@ export interface ReferralProduct {
 		expiry?: string;
 		auto_renew: boolean;
 		renew_date?: string;
+		is_refundable?: boolean;
 	};
 	site_assigned: string;
 }
