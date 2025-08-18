@@ -9,7 +9,7 @@ export const DomainSuggestionContinueCTA = ( {
 	disabled,
 	onClick,
 }: {
-	disabled: boolean;
+	disabled?: boolean;
 	onClick: () => void;
 } ) => {
 	const { __ } = useI18n();

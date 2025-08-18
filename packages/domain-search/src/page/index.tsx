@@ -23,6 +23,7 @@ export const DomainSearch = ( { initialQuery, cart }: DomainSearchProps ) => {
 
 	const contextValue = useMemo(
 		() => ( {
+			onContinue: () => {},
 			cart,
 			isFullCartOpen,
 			closeFullCart,

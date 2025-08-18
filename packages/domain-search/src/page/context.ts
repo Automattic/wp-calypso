@@ -2,6 +2,7 @@ import { createContext, useContext } from 'react';
 import type { DomainSearchCart } from './types';
 
 interface DomainSearchContextType {
+	onContinue: () => void;
 	cart: DomainSearchCart;
 	isFullCartOpen: boolean;
 	closeFullCart: () => void;
@@ -11,6 +12,7 @@ interface DomainSearchContextType {
 }
 
 const DEFAULT_VALUE: DomainSearchContextType = {
+	onContinue: () => {},
 	cart: {
 		items: [],
 		total: '',
