@@ -379,13 +379,13 @@ function HelpSearchResults( {
 			type: SUPPORT_TYPE_API_HELP,
 			title: searchQuery
 				? __( 'Search Results', __i18n_text_domain__ )
-				: __( 'Recommended Resources', __i18n_text_domain__ ),
+				: __( 'Recommended guides', __i18n_text_domain__ ),
 			results: searchResults,
 			condition: ! isSearching && searchResults.length > 0,
 		},
 		{
 			type: SUPPORT_TYPE_CONTEXTUAL_HELP,
-			title: ! searchQuery.length ? __( 'Recommended Resources', __i18n_text_domain__ ) : '',
+			title: ! searchQuery.length ? __( 'Recommended guides', __i18n_text_domain__ ) : '',
 			results: contextualResults.slice( 0, 6 ),
 			condition: ! isSearching && ! searchResults.length && contextualResults.length > 0,
 		},
