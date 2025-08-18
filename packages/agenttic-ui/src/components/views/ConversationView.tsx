@@ -45,6 +45,9 @@ interface ConversationViewProps extends InputHandlers {
 
 	// Markdown configuration
 	messageRenderer?: ComponentType< { children: string } >;
+
+	// Focus on mount
+	focusOnMount?: boolean;
 }
 
 export function ConversationView( {
@@ -66,6 +69,7 @@ export function ConversationView( {
 	suggestions,
 	clearSuggestions,
 	messageRenderer,
+	focusOnMount = false,
 }: ConversationViewProps ) {
 	// Listen for escape key to close the chat
 	useEffect( () => {
@@ -127,7 +131,7 @@ export function ConversationView( {
 						fromCompact={ fromCompact }
 						onExpand={ onExpand }
 						showExpandButton={ false }
-						focusOnMount={ true }
+						focusOnMount={ focusOnMount }
 					/>
 				</div>
 			</div>

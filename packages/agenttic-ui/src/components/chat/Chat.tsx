@@ -69,10 +69,12 @@ export function Chat( {
 	// Track if user clicked to open (vs hovered)
 	const wasClickedToOpen = useRef( false );
 	const wasClickedToClose = useRef( false );
+	const wasClickedToExpand = useRef( false );
 	useEffect( () => {
 		// Reset flags when chat state changes.
 		wasClickedToOpen.current = false;
 		wasClickedToClose.current = false;
+		wasClickedToExpand.current = false;
 	}, [ chat.state ] );
 
 	const timeoutRefs = useRef< Set< NodeJS.Timeout > >( new Set() );
@@ -186,6 +188,7 @@ export function Chat( {
 
 	// Handle expand (go to expanded state)
 	const handleExpand = useCallback( () => {
+		wasClickedToExpand.current = true;
 		onExpand?.();
 		chat.setState( 'expanded' );
 	}, [ onExpand, chat ] );
@@ -360,6 +363,7 @@ export function Chat( {
 					emptyView={ emptyView }
 					messageRenderer={ messageRenderer }
 					onExpand={ handleExpand }
+					focusOnMount={ wasClickedToExpand.current }
 				/>
 			</div>
 		);
@@ -474,6 +478,7 @@ export function Chat( {
 								emptyView={ emptyView }
 								messageRenderer={ messageRenderer }
 								onExpand={ handleExpand }
+								focusOnMount={ wasClickedToExpand.current }
 							/>
 						) }
 					</AnimatePresence>
