@@ -1,18 +1,35 @@
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { domainQuery } from '../../app/queries/domain';
+import { sitePurchaseQuery } from '../../app/queries/site-purchases';
+import { domainRoute } from '../../app/router';
 import { ActionList } from '../../components/action-list';
 import { SectionHeader } from '../../components/section-header';
+import { getDomainRenewalUrl } from '../../utils/domain';
 
 export default function Actions() {
+	const { domainName } = domainRoute.useParams();
+	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
+	const { data: purchase } = useQuery(
+		sitePurchaseQuery( domain.blog_id, parseInt( domain.subscription_id, 10 ) )
+	);
+
 	return (
 		<VStack spacing={ 4 }>
 			<SectionHeader level={ 3 } title={ __( 'Actions' ) } />
 			<ActionList>
-				<ActionList.ActionItem
-					title={ __( 'Renew' ) }
-					description={ __( 'Renew domain registration.' ) }
-					actions={ <Button variant="secondary">{ __( 'Renew' ) }</Button> }
-				/>
+				{ purchase?.is_renewable && (
+					<ActionList.ActionItem
+						title={ __( 'Renew' ) }
+						description={ __( 'Renew domain registration.' ) }
+						actions={
+							<Button variant="secondary" href={ getDomainRenewalUrl( domain, purchase ) }>
+								{ __( 'Renew' ) }
+							</Button>
+						}
+					/>
+				) }
 				<ActionList.ActionItem
 					title={ __( 'Transfer' ) }
 					description={ __( 'Transfer this domain to another site or WordPress.com user.' ) }
