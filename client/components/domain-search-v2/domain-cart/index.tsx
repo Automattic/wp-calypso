@@ -33,6 +33,7 @@ const Item = ( { domain }: Pick< ComponentProps< typeof DomainsFullCartItem >, '
 	return (
 		<DomainsFullCartItem
 			domain={ domain }
+			disabled={ isBusy }
 			isBusy={ isBusy }
 			onRemove={ callback }
 			errorMessage={ errorMessage }
