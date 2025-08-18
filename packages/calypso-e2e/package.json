@@ -2,7 +2,8 @@
 	"name": "@automattic/calypso-e2e",
 	"version": "0.1.1",
 	"description": "Tools for e2e tests.",
-	"main": "dist/esm/src/index.js",
+	"main": "dist/cjs/src/index.js",
+	"module": "dist/esm/src/index.js",
 	"types": "dist/types/src/index.d.ts",
 	"author": "Automattic Inc.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
@@ -42,7 +43,7 @@
 	},
 	"scripts": {
 		"clean": "yarn build --clean && rm -rf dist",
-		"build": "tsc --build ./tsconfig.json",
+		"build": "tsc --build ./tsconfig.json && tsc --build ./tsconfig.cjs.json",
 		"encrypt-secrets": "openssl enc -md sha1 -aes-256-cbc -pass env:E2E_SECRETS_KEY -out ./src/secrets/encrypted.enc -in ./src/secrets/decrypted-secrets.json",
 		"decrypt-secrets": "rm -f ./src/secrets/decrypted-secrets.json; openssl enc -md sha1 -aes-256-cbc -d -pass env:E2E_SECRETS_KEY -in ./src/secrets/encrypted.enc -out ./src/secrets/decrypted-secrets.json"
 	}

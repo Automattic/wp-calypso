@@ -7326,6 +7326,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@playwright/test@npm:1.48.2":
+  version: 1.48.2
+  resolution: "@playwright/test@npm:1.48.2"
+  dependencies:
+    playwright: "npm:1.48.2"
+  bin:
+    playwright: cli.js
+  checksum: 68bab3bee8d716111e9a166785e6c3c406b6a184fc46d03b5468fcbb92b6242e5628f6a75f9d286e2491ec0e9e59af67542a1f114b6659d790b5a1f41e4d305b
+  languageName: node
+  linkType: hard
+
 "@pmmmwh/react-refresh-webpack-plugin@npm:0.5.15":
   version: 0.5.15
   resolution: "@pmmmwh/react-refresh-webpack-plugin@npm:0.5.15"
@@ -38105,6 +38116,7 @@ __metadata:
     "@automattic/languages": "workspace:^"
     "@babel/core": "npm:^7.16.0"
     "@playwright/browser-chromium": "npm:1.48.2"
+    "@playwright/test": "npm:1.48.2"
     "@types/archiver": "npm:^5.3.1"
     archiver: "npm:^5.3.0"
     asana-phrase: "npm:^0.0.8"
