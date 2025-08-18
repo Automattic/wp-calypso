@@ -4,7 +4,9 @@ import { __ } from '@wordpress/i18n';
 import { domainQuery } from '../../app/queries/domain';
 import { sitePurchaseQuery } from '../../app/queries/site-purchases';
 import { domainRoute } from '../../app/router';
+import { domainTransferRoute } from '../../app/routes/domain-routes';
 import { ActionList } from '../../components/action-list';
+import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
 import { getDomainRenewalUrl } from '../../utils/domain';
 
@@ -33,7 +35,16 @@ export default function Actions() {
 				<ActionList.ActionItem
 					title={ __( 'Transfer' ) }
 					description={ __( 'Transfer this domain to another site or WordPress.com user.' ) }
-					actions={ <Button variant="secondary">{ __( 'Transfer' ) }</Button> }
+					actions={
+						<RouterLinkButton
+							size="compact"
+							variant="secondary"
+							to={ domainTransferRoute.fullPath }
+							params={ { domainName } }
+						>
+							{ __( 'Transfer' ) }
+						</RouterLinkButton>
+					}
 				/>
 				<ActionList.ActionItem
 					title={ __( 'Detach' ) }
