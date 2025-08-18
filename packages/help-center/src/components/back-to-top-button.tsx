@@ -37,6 +37,7 @@ export const BackToTopButton: FC = () => {
 				'is-visible': isButtonVisible,
 			} ) }
 			onClick={ scrollToTop }
+			variant="secondary"
 		>
 			<Icon icon={ arrowUp } size={ 16 } />
 			{ __( 'Back to top', __i18n_text_domain__ ) }
