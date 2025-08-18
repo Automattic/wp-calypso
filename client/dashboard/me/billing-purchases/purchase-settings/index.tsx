@@ -209,6 +209,48 @@ function PurchaseSettingsCardLinkWrapper( {
 	return children;
 }
 
+function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
+	if ( purchase.is_cancelable ) {
+		return (
+			<ActionList.ActionItem
+				title={ __( 'Downgrade or cancel your subscription' ) }
+				description={ __( "We'll be sorry to see you go!" ) }
+				actions={
+					<Button
+						variant="secondary"
+						size="compact"
+						onClick={ () => ( {
+							// FIXME: add cancel and downgrade action
+						} ) }
+					>
+						{ __( 'Downgrade or cancel' ) }
+					</Button>
+				}
+			/>
+		);
+	}
+	if ( purchase.is_removable ) {
+		return (
+			<ActionList.ActionItem
+				title={ __( 'Remove subscription' ) }
+				description={ __( "We'll be sorry to see you go!" ) }
+				actions={
+					<Button
+						variant="secondary"
+						size="compact"
+						onClick={ () => ( {
+							// FIXME: add remove action
+						} ) }
+					>
+						{ __( 'Remove subscription' ) }
+					</Button>
+				}
+			/>
+		);
+	}
+	return null;
+}
+
 function PurchaseSettingsActions( {
 	purchase,
 	upgradeUrl,
@@ -217,10 +259,8 @@ function PurchaseSettingsActions( {
 	upgradeUrl: string | undefined;
 } ) {
 	const { user } = useAuth();
-	const canBeRemoved = ! isExpired( purchase ) && ! isIncludedWithPlan( purchase );
 	const canBeRenewed =
 		purchase.can_explicit_renew && String( user.ID ) === String( purchase.user_id );
-	const canCancel = purchase.is_cancelable;
 	const { recordTracksEvent } = useAnalytics();
 	// FIXME: show re-enable button (see subsReEnableText)
 	return (
@@ -288,40 +328,7 @@ function PurchaseSettingsActions( {
 						}
 					/>
 				) }
-				{ canCancel && (
-					<ActionList.ActionItem
-						title={ __( 'Downgrade or cancel your subscription' ) }
-						description={ __( "We'll be sorry to see you go!" ) }
-						actions={
-							<Button
-								variant="secondary"
-								size="compact"
-								onClick={ () => ( {
-									// FIXME: add cancel and downgrade action
-								} ) }
-							>
-								{ __( 'Downgrade or cancel' ) }
-							</Button>
-						}
-					/>
-				) }
-				{ ! canCancel && canBeRemoved && (
-					<ActionList.ActionItem
-						title={ __( 'Remove subscription' ) }
-						description={ __( 'Remove this product.' ) }
-						actions={
-							<Button
-								variant="secondary"
-								size="compact"
-								onClick={ () => ( {
-									// FIXME: add remove action
-								} ) }
-							>
-								{ __( 'Remove subscription' ) }
-							</Button>
-						}
-					/>
-				) }
+				<CancelOrRemoveActionButton purchase={ purchase } />
 			</ActionList>
 		</VStack>
 	);
