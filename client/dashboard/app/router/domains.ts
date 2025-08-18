@@ -1,4 +1,4 @@
-import { createRoute, createLazyRoute } from '@tanstack/react-router';
+import { createRoute, createLazyRoute, redirect } from '@tanstack/react-router';
 import { domainQuery } from '../queries/domain';
 import { domainDnsQuery } from '../queries/domain-dns-records';
 import { domainForwardingQuery } from '../queries/domain-forwarding';
@@ -74,6 +74,14 @@ export const domainDnsAddRoute = createRoute( {
 export const domainDnsEditRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'dns/edit',
+	beforeLoad: async ( { params: { domainName }, search: { recordId } } ) => {
+		// If the provided recordId doesn't exist, redirect to the DNS overview page
+		const dnsRecords = await queryClient.ensureQueryData( domainDnsQuery( domainName ) );
+		const record = dnsRecords?.records.find( ( record ) => record.id === recordId );
+		if ( ! record ) {
+			throw redirect( { to: '/domains/$domainName/dns', params: { domainName } } );
+		}
+	},
 	loader: ( { params: { domainName } } ) => {
 		return queryClient.ensureQueryData( domainDnsQuery( domainName ) );
 	},

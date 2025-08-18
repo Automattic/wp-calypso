@@ -20,7 +20,7 @@ export default function DomainEditDNS() {
 	const mutation = useMutation( domainDnsMutation( domainName ) );
 
 	const { data: dnsRecords } = useSuspenseQuery( domainDnsQuery( domainName ) );
-	const recordToEdit = dnsRecords?.records.find( ( record ) => record.id === recordId );
+	const recordToEdit = dnsRecords.records.find( ( record ) => record.id === recordId );
 
 	const navigateToDNSOverviewPage = () => {
 		navigate( {
@@ -28,11 +28,6 @@ export default function DomainEditDNS() {
 			params: { domainName },
 		} );
 	};
-
-	if ( ! recordToEdit ) {
-		navigateToDNSOverviewPage();
-		return;
-	}
 
 	const handleSubmit = ( typeFormData: DnsRecordTypeFormData, formData: DnsRecordFormData ) => {
 		const config = DNS_RECORD_CONFIGS[ typeFormData.type ];
