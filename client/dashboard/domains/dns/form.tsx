@@ -57,7 +57,7 @@ export default function DNSRecordForm( {
 	const [ formData, setFormData ] = useState< DnsRecordFormData >( () => {
 		if ( recordToEdit ) {
 			return {
-				ttl: recordToEdit.ttl as number,
+				ttl: recordToEdit.ttl || 3600,
 				name: recordToEdit.name || '',
 				data: recordToEdit.data || '',
 				flags: recordToEdit.flags || 0,

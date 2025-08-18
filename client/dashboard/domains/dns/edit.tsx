@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
@@ -19,7 +19,7 @@ export default function DomainEditDNS() {
 	const { recordId } = domainRoute.useSearch();
 	const mutation = useMutation( domainDnsMutation( domainName ) );
 
-	const { data: dnsRecords } = useQuery( domainDnsQuery( domainName ) );
+	const { data: dnsRecords } = useSuspenseQuery( domainDnsQuery( domainName ) );
 	const recordToEdit = dnsRecords?.records.find( ( record ) => record.id === recordId );
 
 	const navigateToDNSOverviewPage = () => {
@@ -30,16 +30,15 @@ export default function DomainEditDNS() {
 	};
 
 	if ( ! recordToEdit ) {
-		createErrorNotice( __( 'Invalid DNS record to edit.' ) );
 		navigateToDNSOverviewPage();
 		return;
 	}
 
 	const handleSubmit = ( typeFormData: DnsRecordTypeFormData, formData: DnsRecordFormData ) => {
 		const config = DNS_RECORD_CONFIGS[ typeFormData.type ];
-		const formattedData = config.transformData( formData, domainName );
+		const recordToAdd = config.transformData( formData, domainName );
 
-		const recordsToAdd: DnsRecord[] = [ formattedData ];
+		const recordsToAdd: DnsRecord[] = [ recordToAdd ];
 		const recordsToRemove: DnsRecord[] = [ recordToEdit ];
 
 		mutation.mutate(

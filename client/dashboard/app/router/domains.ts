@@ -71,12 +71,17 @@ export const domainDnsAddRoute = createRoute( {
 	)
 );
 
-// This route will also use a `recordId` query parameter to determine which record to edit
 export const domainDnsEditRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'dns/edit',
 	loader: ( { params: { domainName } } ) => {
 		return queryClient.ensureQueryData( domainDnsQuery( domainName ) );
+	},
+	validateSearch: ( search ): { recordId: string | undefined } => {
+		// Ensure we have a recordId query parameter
+		return {
+			recordId: typeof search.recordId === 'string' ? search.recordId : undefined,
+		};
 	},
 } ).lazy( () =>
 	import( '../../domains/dns/edit' ).then( ( d ) =>
