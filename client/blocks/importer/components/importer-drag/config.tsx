@@ -12,6 +12,7 @@ export function getImportDragConfig( importer: Importer, supportLinkModal?: bool
 			importerName: convertPlatformName( importer ),
 		},
 		components: {
+			strong: <strong />,
 			supportLink: <SupportLink importer={ importer } supportLinkModal={ supportLinkModal } />,
 			supportLinkAlt: (
 				<SupportLink
@@ -44,6 +45,16 @@ export function getImportDragConfig( importer: Importer, supportLinkModal?: bool
 			uploadDescription: translate(
 				'A %(importerName)s export file is a ZIP file containing several HTML files with your stories. ' +
 					'{{supportLink/}}',
+				options
+			),
+		},
+		substack: {
+			description: translate(
+				'Import your posts, tags, images, and videos from your %(importerName)s export file',
+				options
+			),
+			uploadDescription: translate(
+				'Generate a ZIP file of all your Substack posts. On Substack, go to {{strong}}Settings > Import/Export{{/strong}}, click New export, and upload the downloaded ZIP file in the next step.',
 				options
 			),
 		},

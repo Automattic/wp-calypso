@@ -98,7 +98,14 @@ export function getFullImporterUrl(
 		return getWpOrgImporterUrl( targetSlug, platform );
 	}
 
-	const hasSiteSetupImporter = [ 'blogger', 'medium', 'squarespace', 'wix', 'wordpress' ];
+	const hasSiteSetupImporter = [
+		'blogger',
+		'medium',
+		'squarespace',
+		'wix',
+		'wordpress',
+		'substack',
+	];
 	if ( hasSiteSetupImporter.includes( platform ) ) {
 		let url = '/setup/site-setup/' + getWpComOnboardingUrl( targetSlug, platform, fromSite );
 

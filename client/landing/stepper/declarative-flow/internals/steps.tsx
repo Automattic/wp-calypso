@@ -147,6 +147,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/importer-wix' ),
 	},
 
+	IMPORTER_SUBSTACK: {
+		slug: 'importer-substack',
+		asyncComponent: () => import( './steps-repository/importer-substack' ),
+	},
+
 	IMPORTER_WORDPRESS: {
 		slug: 'importerWordpress',
 		asyncComponent: () => import( './steps-repository/importer-wordpress' ),
