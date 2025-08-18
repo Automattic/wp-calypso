@@ -156,7 +156,32 @@ export interface Purchase {
 	included_domain: string;
 	included_domain_purchase_amount: number;
 	introductory_offer: RawPurchaseIntroductoryOffer | null;
+
+	/**
+	 * True if the subscription can be cancelled by the user (removed and
+	 * possibly refunded). A subscription can be removable (see `is_removable`)
+	 * even if it cannot be cancelled.
+	 */
 	is_cancelable: boolean;
+
+	/**
+	 * True if the subscription can be removed by the user (directly removed,
+	 * without a refund). A subscription can still be cancelled (see
+	 * `is_cancelable`) or refunded (see `is_refundable`) even if it is not
+	 * removable.
+	 */
+	is_removable: boolean;
+
+	/**
+	 * True if this subscription has refundable receipts.
+	 *
+	 * If this is true, it means that it's possible the subscription could
+	 * be refunded. It does not mean there is money that would be refunded! For
+	 * that, check `total_refund_amount` instead. As an example, if a
+	 * subscription has already been refunded, `is_refundable` may be true,
+	 * but `total_refund_amount` will return a Store_Price of 0.
+	 */
+	is_refundable: boolean;
 
 	/**
 	 * If this is a domain product (eg: registration, mapping, or transfer), it
@@ -177,7 +202,6 @@ export interface Purchase {
 	is_locked: boolean;
 	is_plan: boolean;
 	is_rechargable: boolean;
-	is_refundable: boolean;
 	is_renewable: boolean;
 	is_renewal: boolean;
 	is_titan_mail_product: boolean;
