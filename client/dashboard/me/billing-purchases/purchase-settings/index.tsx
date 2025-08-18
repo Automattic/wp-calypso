@@ -41,6 +41,7 @@ import {
 	ProductUpgradeMap,
 	AkismetUpgradesProductMap,
 	DomainProductSlugs,
+	SubscriptionBillPeriod,
 } from '../../../data/constants';
 import { formatDate } from '../../../utils/datetime';
 import {
@@ -213,7 +214,6 @@ function PurchaseSettingsActions( {
 	const canCancel = purchase.is_cancelable;
 	const { recordTracksEvent } = useAnalytics();
 	// FIXME: show re-enable button (see subsReEnableText)
-	// FIXME: show "Paid until" for date for 100 year plan instead of expiry date title
 	// FIXME: prevent rendering upgrade button if Jetpack temp site
 	return (
 		<VStack spacing={ 4 }>
@@ -502,6 +502,17 @@ export default function PurchaseSettings() {
 	}
 	const upgradeUrl = getUpgradeUrl( purchase );
 	const subtitle = getSubtitleForDisplay( purchase );
+	const willRenew = Boolean( purchase.renew_date && ! isExpiring( purchase ) );
+	const expiryDateTitle = ( () => {
+		if ( purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD ) {
+			return __( 'Paid until' );
+		}
+		if ( willRenew ) {
+			return __( 'Renews' );
+		}
+		return __( 'Expires' );
+	} )();
+
 	// FIXME: add edit payment method button
 	// FIXME: add Jetpack CRM downloads link
 	// FIXME: render reinstall button
@@ -541,14 +552,12 @@ export default function PurchaseSettings() {
 				<HStack spacing={ 6 } justify="flex-start" alignment="center">
 					<PurchaseSettingsCard
 						icon={ calendar }
-						title={
-							purchase.renew_date && ! isExpiring( purchase ) ? __( 'Renews' ) : __( 'Expires' )
-						}
+						title={ expiryDateTitle }
 						heading={ ( () => {
 							if ( isOneTimePurchase( purchase ) ) {
 								return __( 'Never expires' );
 							}
-							if ( purchase.renew_date && ! isExpiring( purchase ) ) {
+							if ( willRenew ) {
 								return formattedRenewal;
 							}
 							return formattedExpiry;
