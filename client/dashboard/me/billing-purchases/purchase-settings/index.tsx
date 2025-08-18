@@ -129,6 +129,44 @@ function canPurchaseBeUpgraded( purchase: Purchase ): boolean {
 	);
 }
 
+function isAutoRenewToggleDisabled( purchase: Purchase, user: User ): boolean {
+	if ( purchase.is_iap_purchase ) {
+		return true;
+	}
+	if ( purchase.product_slug === DomainProductSlugs.TRANSFER_IN ) {
+		return true;
+	}
+	if ( String( user.ID ) !== String( purchase.user_id ) ) {
+		return true;
+	}
+	if ( isAkismetFreeProduct( purchase ) ) {
+		return true;
+	}
+	if ( isOneTimePurchase( purchase ) ) {
+		return true;
+	}
+	if ( isExpired( purchase ) && ! shouldAllowExpiredAutoRenewToggle( purchase ) ) {
+		return true;
+	}
+	if ( isIncludedWithPlan( purchase ) ) {
+		return true;
+	}
+	return false;
+}
+
+/**
+ * Sometimes the auto-renew toggle will read "Re-activate subscription" in
+ * which case we should allow toggling it even if the subscription has expired.
+ */
+function shouldAllowExpiredAutoRenewToggle( purchase: Purchase ): boolean {
+	return (
+		! purchase.is_auto_renew_enabled &&
+		( ! purchase.is_jetpack_legacy_plan || purchase.is_renewable ) &&
+		purchase.bill_period_days !== SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD &&
+		purchase.is_jetpack_plan_or_product
+	);
+}
+
 function upgradePurchase( upgradeUrl: string ): void {
 	window.location.href = upgradeUrl;
 }
@@ -343,7 +381,6 @@ function RenewActionButton( { purchase }: { purchase: Purchase } ) {
 }
 
 function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
-	// FIXME: show re-enable button (see subsReEnableText)
 	return (
 		<VStack spacing={ 4 }>
 			<ActionList>
@@ -454,18 +491,13 @@ function getFields( {
 				return (
 					<ToggleControl
 						__nextHasNoMarginBottom
-						label={ field.label }
-						checked={ getValue( { item: purchase } ) }
-						disabled={
-							isMutationPending ||
-							purchase.is_iap_purchase ||
-							purchase.product_slug === DomainProductSlugs.TRANSFER_IN ||
-							String( user.ID ) !== String( purchase.user_id ) ||
-							isAkismetFreeProduct( purchase ) ||
-							isOneTimePurchase( purchase ) ||
-							isExpired( purchase ) ||
-							isIncludedWithPlan( purchase )
+						label={
+							shouldAllowExpiredAutoRenewToggle( purchase )
+								? __( 'Re-activate subscription' )
+								: field.label
 						}
+						checked={ getValue( { item: purchase } ) }
+						disabled={ isMutationPending || isAutoRenewToggleDisabled( purchase, user ) }
 						onChange={ ( value: boolean ) => onChange( { is_auto_renew_enabled: value } ) }
 						help={ helpText }
 					/>
