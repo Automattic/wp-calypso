@@ -251,83 +251,105 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 	return null;
 }
 
-function PurchaseSettingsActions( {
-	purchase,
-	upgradeUrl,
-}: {
-	purchase: Purchase;
-	upgradeUrl: string | undefined;
-} ) {
+function UpgradeActionButton( { purchase }: { purchase: Purchase } ) {
+	const { recordTracksEvent } = useAnalytics();
+	if ( ! canPurchaseBeUpgraded( purchase ) ) {
+		return null;
+	}
+	const upgradeUrl = getUpgradeUrl( purchase );
+	if ( ! upgradeUrl ) {
+		return null;
+	}
+	return (
+		<ActionList.ActionItem
+			title={ __( 'Upgrade subscription' ) }
+			description={ __( 'Find the best fit for your needs.' ) }
+			actions={
+				<Button
+					variant="secondary"
+					size="compact"
+					onClick={ () => {
+						recordTracksEvent( 'calypso_purchases_upgrade_plan', {
+							status: isExpired( purchase ) ? 'expired' : 'active',
+							plan: purchase.product_name,
+						} );
+						upgradePurchase( upgradeUrl );
+					} }
+				>
+					{ __( 'Upgrade subscription' ) }
+				</Button>
+			}
+		/>
+	);
+}
+
+function ReSubscribeActionButton( { purchase }: { purchase: Purchase } ) {
+	const { recordTracksEvent } = useAnalytics();
+	if ( ! isExpired( purchase ) ) {
+		return null;
+	}
+	return (
+		<ActionList.ActionItem
+			title={ purchase.is_plan ? __( 'Pick another plan' ) : __( 'Pick another product' ) }
+			description={ __( 'Find the best fit for your needs.' ) }
+			actions={
+				<Button
+					variant="secondary"
+					size="compact"
+					onClick={ () => {
+						recordTracksEvent( 'calypso_purchases_upgrade_plan', {
+							status: isExpired( purchase ) ? 'expired' : 'active',
+							plan: purchase.product_name,
+						} );
+						window.location.href = getExpiredNewPlanUrl( purchase );
+					} }
+				>
+					{ purchase.is_plan ? __( 'Pick another plan' ) : __( 'Pick another product' ) }
+				</Button>
+			}
+		/>
+	);
+}
+
+function RenewActionButton( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
 	const canBeRenewed =
 		purchase.can_explicit_renew && String( user.ID ) === String( purchase.user_id );
 	const { recordTracksEvent } = useAnalytics();
+	if ( ! canBeRenewed ) {
+		return null;
+	}
+
+	return (
+		<ActionList.ActionItem
+			title={ __( 'Renew now' ) }
+			description={ __( 'Renew your subscription manually.' ) }
+			actions={
+				<Button
+					variant="secondary"
+					size="compact"
+					onClick={ () => {
+						recordTracksEvent( 'calypso_purchases_renew_now_click', {
+							product_slug: purchase.product_slug,
+						} );
+						renewPurchase( purchase );
+					} }
+				>
+					{ __( 'Renew' ) }
+				</Button>
+			}
+		/>
+	);
+}
+
+function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 	// FIXME: show re-enable button (see subsReEnableText)
 	return (
 		<VStack spacing={ 4 }>
 			<ActionList>
-				{ canPurchaseBeUpgraded( purchase ) && upgradeUrl && (
-					<ActionList.ActionItem
-						title={ __( 'Upgrade subscription' ) }
-						description={ __( 'Find the best fit for your needs.' ) }
-						actions={
-							<Button
-								variant="secondary"
-								size="compact"
-								onClick={ () => {
-									recordTracksEvent( 'calypso_purchases_upgrade_plan', {
-										status: isExpired( purchase ) ? 'expired' : 'active',
-										plan: purchase.product_name,
-									} );
-									upgradePurchase( upgradeUrl );
-								} }
-							>
-								{ __( 'Upgrade subscription' ) }
-							</Button>
-						}
-					/>
-				) }
-				{ isExpired( purchase ) && (
-					<ActionList.ActionItem
-						title={ purchase.is_plan ? __( 'Pick another plan' ) : __( 'Pick another product' ) }
-						description={ __( 'Find the best fit for your needs.' ) }
-						actions={
-							<Button
-								variant="secondary"
-								size="compact"
-								onClick={ () => {
-									recordTracksEvent( 'calypso_purchases_upgrade_plan', {
-										status: isExpired( purchase ) ? 'expired' : 'active',
-										plan: purchase.product_name,
-									} );
-									window.location.href = getExpiredNewPlanUrl( purchase );
-								} }
-							>
-								{ purchase.is_plan ? __( 'Pick another plan' ) : __( 'Pick another product' ) }
-							</Button>
-						}
-					/>
-				) }
-				{ canBeRenewed && (
-					<ActionList.ActionItem
-						title={ __( 'Renew now' ) }
-						description={ __( 'Renew your subscription manually.' ) }
-						actions={
-							<Button
-								variant="secondary"
-								size="compact"
-								onClick={ () => {
-									recordTracksEvent( 'calypso_purchases_renew_now_click', {
-										product_slug: purchase.product_slug,
-									} );
-									renewPurchase( purchase );
-								} }
-							>
-								{ __( 'Renew' ) }
-							</Button>
-						}
-					/>
-				) }
+				<UpgradeActionButton purchase={ purchase } />
+				<ReSubscribeActionButton purchase={ purchase } />
+				<RenewActionButton purchase={ purchase } />
 				<CancelOrRemoveActionButton purchase={ purchase } />
 			</ActionList>
 		</VStack>
@@ -625,7 +647,7 @@ export default function PurchaseSettings() {
 					/>
 				</HStack>
 				<ManageSubscriptionCard purchase={ purchase } />
-				<PurchaseSettingsActions purchase={ purchase } upgradeUrl={ upgradeUrl } />
+				<PurchaseSettingsActions purchase={ purchase } />
 			</VStack>
 		</PageLayout>
 	);
