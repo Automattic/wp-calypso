@@ -26,7 +26,7 @@ export default function useDataFormCountryCodes(): CountryCodeOption[] {
 	const countryCodes = useMemo( () => {
 		const vatCountries = getUniqueCountries( countries.filter( isVatSupported ) );
 		const codes = vatCountries.map( ( country ) =>
-			country.tax_country_codes.map( ( countryCode ) => {
+			country.tax_country_codes.map( ( countryCode: string ) => {
 				const countryName = countryCode === 'XI' ? translate( 'Northern Ireland' ) : country.name;
 				return {
 					label: `${ countryCode } - ${ countryName }`,

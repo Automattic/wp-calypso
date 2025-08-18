@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
-import type { CountryListItem, CountryListItemWithVat } from '../data/types';
+import type { CountryListItem, CountryListItemWithVat } from '../../data/types';
 
 const emptyList: CountryListItem[] = [];
 
