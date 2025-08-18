@@ -1,10 +1,10 @@
 import { createContext, useContext } from 'react';
 import { domainSuggestionsQuery } from '../queries/suggestions';
-import type { DomainSearchCart, DomainSearchEvents } from './types';
+import type { DomainSearchEvents, DomainSearchProps } from './types';
 
-interface DomainSearchContextType {
+interface DomainSearchContextType
+	extends Omit< DomainSearchProps, 'className' | 'initialQuery' | 'events' > {
 	events: DomainSearchEvents;
-	cart: DomainSearchCart;
 	queries: {
 		domainSuggestions: typeof domainSuggestionsQuery;
 	};

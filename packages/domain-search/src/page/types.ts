@@ -1,4 +1,5 @@
 import { DomainSuggestion } from '../queries/suggestions';
+import type { ComponentType } from 'react';
 
 export interface SelectedDomain {
 	uuid: string;
@@ -21,6 +22,10 @@ export interface DomainSearchEvents {
 }
 
 export interface DomainSearchProps {
+	slots?: {
+		BeforeResults?: ComponentType;
+		BeforeFullCartItems?: ComponentType;
+	};
 	cart: DomainSearchCart;
 	className?: string;
 	initialQuery?: string;

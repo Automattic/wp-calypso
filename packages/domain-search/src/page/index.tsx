@@ -11,7 +11,13 @@ import type { DomainSearchProps } from './types';
 
 import './style.scss';
 
-export const DomainSearch = ( { className, initialQuery, cart, events }: DomainSearchProps ) => {
+export const DomainSearch = ( {
+	className,
+	initialQuery,
+	cart,
+	events,
+	slots,
+}: DomainSearchProps ) => {
 	const [ isFullCartOpen, setIsFullCartOpen ] = useState( false );
 	const [ query, setQuery ] = useState( initialQuery ?? '' );
 
@@ -38,8 +44,9 @@ export const DomainSearch = ( { className, initialQuery, cart, events }: DomainS
 			openFullCart,
 			query,
 			setQuery,
+			slots,
 		} ),
-		[ isFullCartOpen, closeFullCart, openFullCart, query, setQuery, cart, events ]
+		[ isFullCartOpen, closeFullCart, openFullCart, query, setQuery, cart, events, slots ]
 	);
 
 	const cartItemsLength = cart.items.length;
@@ -54,9 +61,11 @@ export const DomainSearch = ( { className, initialQuery, cart, events }: DomainS
 		if ( ! query ) {
 			return <SearchForm />;
 		}
+
 		return (
 			<VStack spacing={ 8 }>
 				<SearchBar />
+				{ slots?.BeforeResults && <slots.BeforeResults /> }
 				<SearchResults />
 				<Cart />
 			</VStack>

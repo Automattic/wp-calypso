@@ -8,7 +8,7 @@ import {
 } from '../../ui';
 
 export const Cart = () => {
-	const { cart, isFullCartOpen, closeFullCart, events, openFullCart } = useDomainSearch();
+	const { cart, isFullCartOpen, closeFullCart, events, openFullCart, slots } = useDomainSearch();
 
 	const totalItems = cart.items.length;
 	const totalPrice = cart.total;
@@ -35,6 +35,7 @@ export const Cart = () => {
 				totalItems={ totalItems }
 				totalPrice={ totalPrice }
 			>
+				{ slots?.BeforeFullCartItems && <slots.BeforeFullCartItems /> }
 				<DomainsFullCartItems>
 					{ cart.items.map( ( item ) => (
 						<DomainsFullCartItem
