@@ -7,12 +7,12 @@ type OpeningCoordinates = {
 	transformOrigin: string;
 };
 
-const AESTHETIC_OFFSET = 20;
+const AESTHETIC_OFFSET = 28;
 const HELP_CENTER_WIDTH = 410;
 
-const getDefaultPosition = (): OpeningCoordinates => ( {
+const getDefaultPosition = ( isMinimized: boolean ): OpeningCoordinates => ( {
 	left: window?.innerWidth - HELP_CENTER_WIDTH - AESTHETIC_OFFSET,
-	bottom: 20,
+	bottom: isMinimized ? 0 : 20,
 	transformOrigin: 'center',
 } );
 
@@ -29,7 +29,7 @@ export function useOpeningCoordinates(
 ): OpeningCoordinates | undefined {
 	const isMobile = useMobileBreakpoint();
 	const [ position, setPosition ] = useState< OpeningCoordinates | undefined >(
-		isMobile ? undefined : getDefaultPosition()
+		isMobile ? undefined : getDefaultPosition( isMinimized )
 	);
 
 	useEffect( () => {
@@ -43,7 +43,7 @@ export function useOpeningCoordinates(
 		}
 
 		const updatePosition = () => {
-			const defaultPos = getDefaultPosition();
+			const defaultPos = getDefaultPosition( isMinimized );
 
 			if ( isMinimized ) {
 				setPosition( {

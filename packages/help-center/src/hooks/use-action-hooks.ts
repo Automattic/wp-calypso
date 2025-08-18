@@ -9,7 +9,7 @@ import { useResetSupportInteraction } from './use-reset-support-interaction';
 export const useActionHooks = () => {
 	const { setShowHelpCenter, setShowSupportDoc, setNavigateToRoute, setNewMessagingChat } =
 		useDispatch( 'automattic/help-center' );
-	const resetSupportInteraction = useResetSupportInteraction();
+	const { resetSupportInteraction } = useResetSupportInteraction();
 	const queryParams = new URLSearchParams( window.location.search );
 
 	const actionHooks = [

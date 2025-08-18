@@ -1,10 +1,25 @@
 @import "variables";
 
+.help-center-support-chat__conversation-sub-information {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+
+	.help-center-support-chat__conversation-information-name {
+		text-overflow: ellipsis;
+		overflow: hidden;
+		line-clamp: 1;
+	}
+
+	.help-center-support-chat__conversation-information-time {
+		flex: 0 0 auto;
+	}
+}
+
 .help-center-support-chat__conversation-container {
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
-
 	background-color: transparent;
 	padding: 16px;
 	gap: 6px;
@@ -90,29 +105,6 @@
 			line-clamp: 1;
 			-webkit-line-clamp: 1;
 			-webkit-box-orient: vertical;
-		}
-
-		.help-center-support-chat__conversation-sub-information {
-			display: flex;
-			color: #787C82;
-			font-weight: 400;
-			font-size: 0.75rem;
-			line-height: 20px;
-			align-items: center;
-			gap: 4px;
-
-			.help-center-support-chat__conversation-information-name {
-				text-overflow: ellipsis;
-				display: -webkit-box;
-				overflow: hidden;
-				line-clamp: 1;
-				-webkit-line-clamp: 1;
-				-webkit-box-orient: vertical;
-			}
-
-			.help-center-support-chat__conversation-information-time {
-				flex: 0 0 auto;
-			}
 		}
 	}
 

@@ -36,7 +36,7 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 } ) => {
 	const navigate = useNavigate();
 	const createZendeskConversation = useCreateZendeskConversation();
-	const resetSupportInteraction = useResetSupportInteraction();
+	const { resetSupportInteraction } = useResetSupportInteraction();
 	const location = useLocation();
 	const {
 		chat,
