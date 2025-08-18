@@ -19,7 +19,9 @@ export default function Actions() {
 	const { data: purchase } = useQuery(
 		sitePurchaseQuery( domain.blog_id, parseInt( domain.subscription_id, 10 ) )
 	);
-	const { mutate: disconnectDomain } = useMutation( disconnectDomainMutation( domainName ) );
+	const { mutate: disconnectDomain, isPending: isDisconnecting } = useMutation(
+		disconnectDomainMutation( domainName )
+	);
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const onDetachClick = useCallback(
@@ -74,7 +76,13 @@ export default function Actions() {
 					title={ __( 'Detach' ) }
 					description={ __( 'Detach this domain from the site.' ) }
 					actions={
-						<Button size="compact" variant="secondary" onClick={ onDetachClick }>
+						<Button
+							size="compact"
+							variant="secondary"
+							isBusy={ isDisconnecting }
+							disabled={ isDisconnecting }
+							onClick={ onDetachClick }
+						>
 							{ __( 'Detach' ) }
 						</Button>
 					}
