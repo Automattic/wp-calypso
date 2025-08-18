@@ -1,13 +1,10 @@
 import { Router, createRoute, redirect, createLazyRoute } from '@tanstack/react-router';
-import { fetchTwoStep } from '../../data/me';
 import NotFound from '../404';
 import UnknownError from '../500';
 import { emailsQuery } from '../queries/emails';
-import { profileQuery } from '../queries/me-profile';
-import { userPurchasesQuery } from '../queries/me-purchases';
-import { sitesQuery } from '../queries/sites';
 import { queryClient } from '../query-client';
 import { domainsRoute, domainRoute, domainChildRoutes } from './domains';
+import { meRoute, meChildRoutes } from './me';
 import { rootRoute } from './root';
 import {
 	sitesRoute,
@@ -78,137 +75,6 @@ const emailsRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../emails' ).then( ( d ) =>
 		createLazyRoute( 'emails' )( {
-			component: d.default,
-		} )
-	)
-);
-
-const meRoute = createRoute( {
-	getParentRoute: () => rootRoute,
-	path: 'me',
-	loader: () => queryClient.ensureQueryData( profileQuery() ),
-	beforeLoad: async ( { cause } ) => {
-		if ( cause !== 'enter' ) {
-			return;
-		}
-		const twoStep = await fetchTwoStep();
-		if ( twoStep.two_step_reauthorization_required ) {
-			const currentPath = window.location.pathname;
-			const loginUrl = `/me/reauth-required?redirect_to=${ encodeURIComponent( currentPath ) }`;
-			window.location.href = loginUrl;
-		}
-	},
-} ).lazy( () =>
-	import( '../../me' ).then( ( d ) =>
-		createLazyRoute( 'me' )( {
-			component: d.default,
-		} )
-	)
-);
-
-const profileRoute = createRoute( {
-	getParentRoute: () => meRoute,
-	path: 'profile',
-} ).lazy( () =>
-	import( '../../me/profile' ).then( ( d ) =>
-		createLazyRoute( 'profile' )( {
-			component: d.default,
-		} )
-	)
-);
-
-const billingRoute = createRoute( {
-	getParentRoute: () => meRoute,
-	path: 'billing',
-} ).lazy( () =>
-	import( '../../me/billing' ).then( ( d ) =>
-		createLazyRoute( 'billing' )( {
-			component: d.default,
-		} )
-	)
-);
-
-const billingHistoryRoute = createRoute( {
-	getParentRoute: () => meRoute,
-	path: 'billing/billing-history',
-} ).lazy( () =>
-	import( '../../me/billing-history' ).then( ( d ) =>
-		createLazyRoute( 'billing-history' )( {
-			component: d.default,
-		} )
-	)
-);
-
-const purchasesRoute = createRoute( {
-	getParentRoute: () => meRoute,
-	loader: async () => {
-		queryClient.ensureQueryData( userPurchasesQuery() );
-		queryClient.ensureQueryData( sitesQuery() );
-	},
-	validateSearch: ( search ): { site: string | undefined } => {
-		return {
-			site: typeof search.site === 'string' ? search.site : undefined,
-		};
-	},
-	path: 'billing/purchases',
-} ).lazy( () =>
-	import( '../../me/billing-purchases' ).then( ( d ) =>
-		createLazyRoute( 'purchases' )( {
-			component: d.default,
-		} )
-	)
-);
-
-const paymentMethodsRoute = createRoute( {
-	getParentRoute: () => meRoute,
-	path: 'billing/payment-methods',
-} ).lazy( () =>
-	import( '../../me/payment-methods' ).then( ( d ) =>
-		createLazyRoute( 'payment-methods' )( {
-			component: d.default,
-		} )
-	)
-);
-
-const taxDetailsRoute = createRoute( {
-	getParentRoute: () => meRoute,
-	path: 'billing/tax-details',
-} ).lazy( () =>
-	import( '../../me/tax-details' ).then( ( d ) =>
-		createLazyRoute( 'tax-details' )( {
-			component: d.default,
-		} )
-	)
-);
-
-const securityRoute = createRoute( {
-	getParentRoute: () => meRoute,
-	path: 'security',
-} ).lazy( () =>
-	import( '../../me/security' ).then( ( d ) =>
-		createLazyRoute( 'security' )( {
-			component: d.default,
-		} )
-	)
-);
-
-const privacyRoute = createRoute( {
-	getParentRoute: () => meRoute,
-	path: 'privacy',
-} ).lazy( () =>
-	import( '../../me/privacy' ).then( ( d ) =>
-		createLazyRoute( 'privacy' )( {
-			component: d.default,
-		} )
-	)
-);
-
-const notificationsRoute = createRoute( {
-	getParentRoute: () => meRoute,
-	path: 'notifications',
-} ).lazy( () =>
-	import( '../../me/notifications' ).then( ( d ) =>
-		createLazyRoute( 'notifications' )( {
 			component: d.default,
 		} )
 	)
@@ -290,19 +156,7 @@ const createRouteTree = ( config: AppConfig ) => {
 	}
 
 	if ( config.supports.me ) {
-		children.push(
-			meRoute.addChildren( [
-				profileRoute,
-				billingRoute,
-				billingHistoryRoute,
-				purchasesRoute,
-				paymentMethodsRoute,
-				taxDetailsRoute,
-				securityRoute,
-				privacyRoute,
-				notificationsRoute,
-			] )
-		);
+		children.push( meRoute.addChildren( meChildRoutes ) );
 	}
 
 	return rootRoute.addChildren( children );
@@ -357,14 +211,4 @@ export {
 	domainsRoute,
 	domainRoute,
 	emailsRoute,
-	meRoute,
-	profileRoute,
-	billingRoute,
-	billingHistoryRoute,
-	purchasesRoute,
-	paymentMethodsRoute,
-	taxDetailsRoute,
-	securityRoute,
-	privacyRoute,
-	notificationsRoute,
 };
