@@ -322,6 +322,7 @@ export class Notifications extends Component {
 						'wpnt-open': this.props.isShowing,
 						'wpnt-closed': ! this.props.isShowing,
 					} ) }
+					style={ this.props.style }
 				>
 					{ isDedicatedReaderPage && (
 						<Notifications3PCNotice className="reader-notifications__3pc-notice-internal" />

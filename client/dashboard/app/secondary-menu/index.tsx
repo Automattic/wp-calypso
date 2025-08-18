@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -11,13 +10,16 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { help, bellUnread, bell, commentAuthorAvatar } from '@wordpress/icons';
-import { Suspense, lazy, useCallback } from 'react';
+import { Suspense, lazy, useCallback, useState, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
+import { useAnalytics } from '../analytics';
 import { useAuth } from '../auth';
 import { useOpenCommandPalette } from '../command-palette/utils';
 import { useAppContext } from '../context';
 import { useHelpCenter } from '../help-center';
+import { useLocale } from '../locale';
 
 import './style.scss';
 
@@ -54,6 +56,77 @@ function Help() {
 						onboardingUrl={ config( 'wpcom_signup_url' ) }
 						sectionName="dashboard"
 					/>
+				) }
+			</Suspense>
+		</>
+	);
+}
+
+const AsyncNotificationsApp = lazy( () =>
+	import( 'calypso/notifications' ).then( ( { Notifications } ) => ( { default: Notifications } ) )
+);
+
+function Notifications() {
+	const [ isOpen, setIsOpen ] = useState( false );
+	const isOpenRef = useRef( isOpen );
+	const containerRef = useRef< HTMLDivElement >( null );
+	const locale = useLocale();
+	const { recordTracksEvent } = useAnalytics();
+	const hasUnreadNotifications = false;
+
+	const checkToggleNotes = useCallback(
+		( event: MouseEvent | null, forceToggle = false, forceOpen = false ) => {
+			const target = event ? event.target : false;
+
+			// Ignore clicks or other events which occur inside of the notification panel.
+			if ( target && containerRef.current?.contains( target as Node ) ) {
+				return;
+			}
+
+			// Prevent toggling closed if we are opting to open.
+			if ( forceOpen && isOpenRef.current ) {
+				return;
+			}
+
+			if ( isOpenRef.current || forceToggle === true || forceOpen === true ) {
+				setIsOpen( ( value ) => ! value );
+			}
+		},
+		[]
+	);
+
+	isOpenRef.current = isOpen;
+
+	return (
+		<>
+			<Button
+				className="dashboard-secondary-menu__item"
+				label={ __( 'Notifications' ) }
+				icon={ hasUnreadNotifications ? bellUnread : bell }
+				variant="tertiary"
+				onClick={ ( event: React.MouseEvent ) => {
+					event.stopPropagation();
+					setIsOpen( ( value ) => ! value );
+				} }
+			/>
+			<Suspense fallback={ null }>
+				{ createPortal(
+					<div ref={ containerRef }>
+						<AsyncNotificationsApp
+							isShowing={ isOpen }
+							currentLocaleSlug={ locale }
+							forceRefresh={ false }
+							selectedSiteId={ false }
+							currentRoute={ window.location.pathname }
+							style={ { top: '65px', background: '#fff', zIndex: 3 } }
+							checkToggle={ checkToggleNotes }
+							recordTracksEventAction={ recordTracksEvent }
+							setUnseenCount={ () => {} }
+							didForceRefresh={ () => {} }
+							requestAdminMenu={ () => {} }
+						/>
+					</div>,
+					document.body
 				) }
 			</Suspense>
 		</>
@@ -129,10 +202,7 @@ function UserProfile() {
 }
 
 function SecondaryMenu() {
-	const navigate = useNavigate();
 	const { supports } = useAppContext();
-	const hasUnreadNotifications = false;
-	const notificationsPath = '/me/notifications';
 
 	return (
 		<HStack spacing={ 2 } justify="flex-end">
@@ -146,19 +216,7 @@ function SecondaryMenu() {
 				/>
 			) }
 			{ supports.help && <Help /> }
-			{ supports.notifications && (
-				<Button
-					className="dashboard-secondary-menu__item"
-					label={ __( 'Notifications' ) }
-					icon={ hasUnreadNotifications ? bellUnread : bell }
-					variant="tertiary"
-					onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) => {
-						e.preventDefault();
-						navigate( { to: notificationsPath } );
-					} }
-					href={ notificationsPath }
-				/>
-			) }
+			{ supports.notifications && <Notifications /> }
 			<UserProfile />
 		</HStack>
 	);
