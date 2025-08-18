@@ -20,7 +20,8 @@ export default function DomainEditDNS() {
 	const mutation = useMutation( domainDnsMutation( domainName ) );
 
 	const { data: dnsRecords } = useSuspenseQuery( domainDnsQuery( domainName ) );
-	const recordToEdit = dnsRecords.records.find( ( record ) => record.id === recordId );
+	// This record's existence is checked in the `beforeLoad` function in the route
+	const recordToEdit = dnsRecords.records.find( ( record ) => record.id === recordId )!;
 
 	const navigateToDNSOverviewPage = () => {
 		navigate( {
