@@ -4,7 +4,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useWindowDimensions } from '@automattic/viewport';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import { Card } from '@wordpress/components';
+import { Card, __experimentalElevation as Elevation } from '@wordpress/components';
 import { useFocusReturn, useMergeRefs } from '@wordpress/compose';
 import { useSelect } from '@wordpress/data';
 import clsx from 'clsx';
@@ -117,6 +117,10 @@ const HelpCenterContainer: React.FC< Container > = ( {
 						<HelpCenterHeader onDismiss={ onDismiss } />
 						<HelpCenterContent currentRoute={ currentRoute } />
 						{ ! isMinimized && <HelpCenterFooter /> }
+						<Elevation
+							borderRadius={ isMinimized ? '16px 16px 0 0' : '16px' }
+							value={ 4 }
+						></Elevation>
 					</Card>
 				</OptionalDraggable>
 			</FeatureFlagProvider>
