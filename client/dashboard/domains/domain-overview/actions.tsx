@@ -12,6 +12,7 @@ import { ActionList } from '../../components/action-list';
 import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
 import { getDomainRenewalUrl } from '../../utils/domain';
+import { shouldShowDisconnectAction } from './actions.utils';
 
 export default function Actions() {
 	const { domainName } = domainRoute.useParams();
@@ -24,7 +25,7 @@ export default function Actions() {
 	);
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
-	const onDetachClick = useCallback(
+	const onDisconnectClick = useCallback(
 		() =>
 			disconnectDomain( undefined, {
 				onSuccess: () =>
@@ -72,21 +73,23 @@ export default function Actions() {
 						</RouterLinkButton>
 					}
 				/>
-				<ActionList.ActionItem
-					title={ __( 'Detach' ) }
-					description={ __( 'Detach this domain from the site.' ) }
-					actions={
-						<Button
-							size="compact"
-							variant="secondary"
-							isBusy={ isDisconnecting }
-							disabled={ isDisconnecting }
-							onClick={ onDetachClick }
-						>
-							{ __( 'Detach' ) }
-						</Button>
-					}
-				/>
+				{ shouldShowDisconnectAction( domain ) && (
+					<ActionList.ActionItem
+						title={ __( 'Detach' ) }
+						description={ __( 'Detach this domain from the site.' ) }
+						actions={
+							<Button
+								size="compact"
+								variant="secondary"
+								isBusy={ isDisconnecting }
+								disabled={ isDisconnecting }
+								onClick={ onDisconnectClick }
+							>
+								{ __( 'Detach' ) }
+							</Button>
+						}
+					/>
+				) }
 				<ActionList.ActionItem
 					title={ __( 'Delete' ) }
 					description={ __( 'Remove this domain permanently.' ) }
