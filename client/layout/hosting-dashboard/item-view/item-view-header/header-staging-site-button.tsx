@@ -1,13 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { useQueryClient, useQuery } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { plus } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useMemo, useEffect } from 'react';
-import { siteByIdQuery } from 'calypso/dashboard/app/queries/site';
-import { siteLatestAtomicTransferQuery } from 'calypso/dashboard/app/queries/site-atomic-transfers';
-import { isAtomicTransferInProgress } from 'calypso/dashboard/utils/site-atomic-transfers';
 import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
 import { useAddStagingSiteMutation } from 'calypso/sites/staging-site/hooks/use-add-staging-site';
 import { useCheckStagingSiteStatus } from 'calypso/sites/staging-site/hooks/use-check-staging-site-status';
@@ -70,34 +67,15 @@ export default function HeaderStagingSiteButton( {
 	}, [ stagingSites ] );
 	const transferStatus = useCheckStagingSiteStatus( stagingSiteId );
 
-	const { data: atomicTransfer } = useQuery( {
-		...siteLatestAtomicTransferQuery( stagingSiteId ?? 0 ),
-		refetchInterval: ( query ) => {
-			return isAtomicTransferInProgress( query.state.data?.status ?? 'pending' ) ? 5000 : false;
-		},
-		enabled: !! stagingSiteId,
-	} );
-
-	const { data: stagingSite } = useQuery( {
-		...siteByIdQuery( stagingSiteId ?? 0 ),
-		refetchInterval: 5000,
-		enabled: !! stagingSiteId,
-	} );
-
-	const isStagingSiteReady =
-		!! stagingSiteId &&
-		! isAtomicTransferInProgress( atomicTransfer?.status ?? 'pending' ) &&
-		stagingSite?.jetpack_connection;
-
 	useEffect( () => {
-		if ( isCreatingStagingSite && isStagingSiteReady ) {
+		if ( isCreatingStagingSite && transferStatus === transferStates.COMPLETE ) {
 			dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.COMPLETE ) );
 			queryClient.invalidateQueries( { queryKey: [ USE_SITE_EXCERPTS_QUERY_KEY ] } );
 			dispatch(
 				successNotice( __( 'Staging site added.' ), { id: stagingSiteAddSuccessNoticeId } )
 			);
 		}
-	}, [ __, dispatch, queryClient, siteId, isCreatingStagingSite, isStagingSiteReady ] );
+	}, [ __, dispatch, queryClient, siteId, isCreatingStagingSite, transferStatus ] );
 
 	const removeAllNotices = useCallback( () => {
 		dispatch( removeNotice( 'staging-site-add-success' ) );
