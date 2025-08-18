@@ -17,7 +17,7 @@ module.exports = {
 							// with the #architecture group.
 						],
 						message:
-							'Importing from calypso/ is not allowed for components shared with client/dashboard.',
+							'Importing from calypso/ is not allowed for this component. It is used by the client/dashboard and we should avoid importing legacy Calypso code into the dashboard.',
 					},
 					{
 						group: [
@@ -31,7 +31,7 @@ module.exports = {
 							// with the #architecture group.
 						],
 						message:
-							'Importing from @automattic/ is not allowed for components shared with client/dashboard.',
+							'Importing from @automattic/ is not allowed for this component. It is used by the client/dashboard and we should avoid importing legacy Calypso code into the dashboard.',
 					},
 				],
 			},

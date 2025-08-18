@@ -59,7 +59,7 @@ module.exports = {
 					{
 						name: '@automattic/components',
 						message:
-							'Do not import from the barrel file. Use specific imports like @automattic/components/src/summary-button instead.',
+							'Do not import from the barrel file. Use specific imports like @automattic/components/src/summary-button instead. This prevents the entire package being bundled into the dashboard.',
 					},
 				],
 			},
