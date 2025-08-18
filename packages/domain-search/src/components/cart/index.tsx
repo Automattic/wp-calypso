@@ -8,7 +8,7 @@ import {
 } from '../../ui';
 
 export const Cart = () => {
-	const { cart, isFullCartOpen, closeFullCart, onContinue, openFullCart } = useDomainSearch();
+	const { cart, isFullCartOpen, closeFullCart, events, openFullCart } = useDomainSearch();
 
 	const totalItems = cart.items.length;
 	const totalPrice = cart.total;
@@ -24,13 +24,13 @@ export const Cart = () => {
 				totalItems={ totalItems }
 				totalPrice={ totalPrice }
 				openFullCart={ openFullCart }
-				onContinue={ onContinue }
+				onContinue={ events.onContinue }
 				isCartBusy={ false }
 			/>
 			<DomainsFullCart
 				isFullCartOpen={ isFullCartOpen }
 				closeFullCart={ closeFullCart }
-				onContinue={ onContinue }
+				onContinue={ events.onContinue }
 				isCartBusy={ false }
 				totalItems={ totalItems }
 				totalPrice={ totalPrice }

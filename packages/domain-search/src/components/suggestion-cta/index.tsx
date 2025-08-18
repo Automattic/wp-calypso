@@ -12,7 +12,7 @@ export interface DomainSuggestionCTAProps {
 }
 
 export const DomainSuggestionCTA = ( { suggestion }: DomainSuggestionCTAProps ) => {
-	const { cart, onContinue } = useDomainSearch();
+	const { cart, events } = useDomainSearch();
 	const { mutate: addToCart, isPending } = useMutation( {
 		mutationFn: () => cart.onAddItem( suggestion ),
 	} );
@@ -20,7 +20,7 @@ export const DomainSuggestionCTA = ( { suggestion }: DomainSuggestionCTAProps ) 
 	const isDomainOnCart = cart.hasItem( suggestion.domain_name );
 
 	if ( isDomainOnCart ) {
-		return <DomainSuggestionContinueCTA onClick={ onContinue } />;
+		return <DomainSuggestionContinueCTA onClick={ events.onContinue } />;
 	}
 
 	const errorMessage = null;

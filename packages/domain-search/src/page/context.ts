@@ -1,8 +1,8 @@
 import { createContext, useContext } from 'react';
-import type { DomainSearchCart } from './types';
+import type { DomainSearchCart, DomainSearchEvents } from './types';
 
 interface DomainSearchContextType {
-	onContinue: () => void;
+	events: DomainSearchEvents;
 	cart: DomainSearchCart;
 	isFullCartOpen: boolean;
 	closeFullCart: () => void;
@@ -11,8 +11,12 @@ interface DomainSearchContextType {
 	setQuery: ( query: string ) => void;
 }
 
-const DEFAULT_VALUE: DomainSearchContextType = {
-	onContinue: () => {},
+const noop = () => {};
+
+export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
+	events: {
+		onContinue: noop,
+	},
 	cart: {
 		items: [],
 		total: '',
@@ -27,12 +31,13 @@ const DEFAULT_VALUE: DomainSearchContextType = {
 	setQuery: () => {},
 };
 
-export const DomainSearchContext = createContext< DomainSearchContextType >( DEFAULT_VALUE );
+export const DomainSearchContext =
+	createContext< DomainSearchContextType >( DEFAULT_CONTEXT_VALUE );
 
 export const useDomainSearch = () => {
 	const context = useContext( DomainSearchContext );
 
-	if ( context === DEFAULT_VALUE ) {
+	if ( context === DEFAULT_CONTEXT_VALUE ) {
 		throw new Error( 'useDomainSearch must be used within a DomainSearchContext' );
 	}
 

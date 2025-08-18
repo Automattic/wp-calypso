@@ -42,7 +42,8 @@ const wpcomCartToDomainSearchCart = ( domain: ResponseCartProduct ) => {
 const FLOW_NAME = 'domain-purchase';
 
 const DomainSearchWithCart = () => {
-	const { responseCart, addProductsToCart, removeProductFromCart } = useShoppingCart( 'no-site' );
+	const CART_KEY = 'no-site';
+	const { responseCart, addProductsToCart, removeProductFromCart } = useShoppingCart( CART_KEY );
 
 	const cart: ComponentProps< typeof DomainSearch >[ 'cart' ] = useMemo( () => {
 		const domainItems = responseCart.products.filter(
@@ -85,7 +86,15 @@ const DomainSearchWithCart = () => {
 		};
 	}, [ responseCart.products, responseCart.currency, addProductsToCart, removeProductFromCart ] );
 
-	return <DomainSearch className="dashboard-domain-search" cart={ cart } />;
+	const events = useMemo( () => {
+		return {
+			onContinue: () => {
+				window.location.href = `/checkout/${ CART_KEY }?signup=1&isDomainOnly=1`;
+			},
+		};
+	}, [] );
+
+	return <DomainSearch className="dashboard-domain-search" cart={ cart } events={ events } />;
 };
 
 export default function DomainPurchase() {

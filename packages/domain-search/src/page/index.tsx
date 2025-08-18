@@ -5,12 +5,12 @@ import { Cart } from '../components/cart';
 import { SearchBar } from '../components/search-bar';
 import { SearchForm } from '../components/search-form';
 import { SearchResults } from '../components/search-results';
-import { DomainSearchContext } from './context';
+import { DEFAULT_CONTEXT_VALUE, DomainSearchContext } from './context';
 import type { DomainSearchProps } from './types';
 
 import './style.scss';
 
-export const DomainSearch = ( { className, initialQuery, cart }: DomainSearchProps ) => {
+export const DomainSearch = ( { className, initialQuery, cart, events }: DomainSearchProps ) => {
 	const [ isFullCartOpen, setIsFullCartOpen ] = useState( false );
 	const [ query, setQuery ] = useState( initialQuery ?? '' );
 
@@ -24,7 +24,10 @@ export const DomainSearch = ( { className, initialQuery, cart }: DomainSearchPro
 
 	const contextValue = useMemo(
 		() => ( {
-			onContinue: () => {},
+			events: {
+				...DEFAULT_CONTEXT_VALUE.events,
+				...events,
+			},
 			cart,
 			isFullCartOpen,
 			closeFullCart,
@@ -32,7 +35,7 @@ export const DomainSearch = ( { className, initialQuery, cart }: DomainSearchPro
 			query,
 			setQuery,
 		} ),
-		[ isFullCartOpen, closeFullCart, openFullCart, query, setQuery, cart ]
+		[ isFullCartOpen, closeFullCart, openFullCart, query, setQuery, cart, events ]
 	);
 
 	const cartItemsLength = cart.items.length;

@@ -16,8 +16,13 @@ export interface DomainSearchCart {
 	hasItem: ( uuid: SelectedDomain[ 'uuid' ] ) => boolean;
 }
 
+export interface DomainSearchEvents {
+	onContinue: () => void;
+}
+
 export interface DomainSearchProps {
+	cart: DomainSearchCart;
 	className?: string;
 	initialQuery?: string;
-	cart: DomainSearchCart;
+	events?: Partial< DomainSearchEvents >;
 }
