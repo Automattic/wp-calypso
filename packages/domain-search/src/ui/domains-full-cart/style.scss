@@ -9,6 +9,7 @@
 	bottom: 0;
 	width: 100%;
 	height: 100%;
+	z-index: var( --domain-search-full-cart-z-index );
 
 	@include break-small {
 		left: initial;
