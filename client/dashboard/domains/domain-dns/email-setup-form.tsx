@@ -94,14 +94,17 @@ export default function EmailSetupForm( {
 			placeholder,
 			isValid: {
 				custom: ( item ) => {
-					return pattern.test( item.record ) ? null : __( 'Invalid verification record format' );
+					if ( ! item.record ) {
+						return null;
+					}
+					return pattern.test( item.record ) ? null : __( 'Invalid verification record format.' );
 				},
-				required: true,
+				required: false,
 			},
 		},
 	];
 
-	const canSubmit = isItemValid( formData, fields, form );
+	const canSubmit = formData.record && isItemValid( formData, fields, form );
 
 	return (
 		<div className="email-setup-form" style={ { marginTop: '28px' } }>

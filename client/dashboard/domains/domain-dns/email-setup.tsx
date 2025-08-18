@@ -19,7 +19,7 @@ export default function EmailSetup() {
 						'Paste the verification token provided by Google Workspace for the TXT record.'
 					) }
 					pattern={ /^google-site-verification=[A-Za-z0-9_-]{43}$/ }
-					placeholder="google-site-verification=..."
+					placeholder="google-site-verification=…"
 					provider={ DnsTemplates.G_SUITE.PROVIDER }
 					service={ DnsTemplates.G_SUITE.SERVICE }
 				/>
@@ -36,7 +36,7 @@ export default function EmailSetup() {
 					) }
 					label="iCloud Mail"
 					pattern={ /^apple-domain=[A-Za-z0-9]{16}$/ }
-					placeholder="apple-domain=..."
+					placeholder="apple-domain=…"
 					provider={ DnsTemplates.ICLOUD_MAIL.PROVIDER }
 					service={ DnsTemplates.ICLOUD_MAIL.SERVICE }
 				/>
@@ -58,7 +58,7 @@ export default function EmailSetup() {
 						} )
 					}
 					pattern={ /^MS=ms\d{8}$/ }
-					placeholder="MS=ms..."
+					placeholder="MS=ms…"
 					provider={ DnsTemplates.MICROSOFT_OFFICE365.PROVIDER }
 					service={ DnsTemplates.MICROSOFT_OFFICE365.SERVICE }
 				/>
@@ -75,7 +75,7 @@ export default function EmailSetup() {
 					) }
 					label="Zoho Mail"
 					pattern={ /^zb\w{1,100}$/ }
-					placeholder="zb..."
+					placeholder="zb…"
 					provider={ DnsTemplates.ZOHO_MAIL.PROVIDER }
 					service={ DnsTemplates.ZOHO_MAIL.SERVICE }
 				/>
@@ -89,7 +89,7 @@ export default function EmailSetup() {
 				<VStack spacing={ 5 }>
 					<SectionHeader
 						title={ __( 'Email setup' ) }
-						description={ __( 'Set up an existing email service for this domain' ) }
+						description={ __( 'Set up an existing email service for this domain.' ) }
 						level={ 4 }
 					/>
 					<TabPanel
