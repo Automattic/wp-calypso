@@ -31,7 +31,11 @@
 	}
 
 	.help-center__container-header {
-		border: 1px solid $gray-100;
+		border-bottom: 1px solid $gray-100;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 16px;
+		border-bottom-right-radius: 0;
+		border-bottom-left-radius: 0;
 
 		&.has-unread {
 			background: $help-center-blue;

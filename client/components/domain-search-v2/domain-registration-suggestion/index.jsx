@@ -1,8 +1,8 @@
 import {
 	DomainSuggestion,
 	DomainSuggestionBadge,
-	DomainSuggestionCTA,
 	DomainSuggestionPrice,
+	DomainSuggestionPrimaryCTA,
 } from '@automattic/domain-search';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
@@ -35,6 +35,7 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
+import { DomainSuggestionCTA } from '../__legacy/domain-suggestion-cta';
 import DomainProductPrice from '../domain-product-price';
 import PremiumBadge from './premium-badge';
 
@@ -414,17 +415,16 @@ class DomainRegistrationSuggestion extends Component {
 
 		let cta = null;
 		let price = null;
-		let onClick = null;
 
 		if ( premiumDomain?.is_price_limit_exceeded ) {
 			cta = (
-				<DomainSuggestionCTA.Primary
+				<DomainSuggestionPrimaryCTA
 					href="https://wordpress.com/help/contact"
 					label={ translate( 'Interested in this domain? Contact support' ) }
 					icon={ envelope }
 				>
 					{ translate( 'Contact support' ) }
-				</DomainSuggestionCTA.Primary>
+				</DomainSuggestionPrimaryCTA>
 			);
 
 			price = (
@@ -435,7 +435,6 @@ class DomainRegistrationSuggestion extends Component {
 				/>
 			);
 		} else {
-			onClick = this.onButtonClick;
 			price = ! isHundredYearPlanFlow( flowName ) && (
 				<DomainProductPrice
 					zeroCost={ zeroCost }
@@ -445,19 +444,18 @@ class DomainRegistrationSuggestion extends Component {
 					renewPrice={ renewCost }
 				/>
 			);
+			cta = <DomainSuggestionCTA uuid={ fullDomain } onClick={ this.onButtonClick } />;
 		}
 
 		return (
 			<SuggestionComponent
 				isSingleFeaturedSuggestion={ this.props.isSingleFeaturedSuggestion }
 				badges={ badges }
-				uuid={ fullDomain }
 				domain={ domainName }
 				isHighlighted={ isFeatured && this.isExactMatch() }
 				matchReasons={ matchReasons }
 				notice={ notice }
 				tld={ tld.join( '.' ) }
-				onClick={ onClick }
 				price={ price }
 				cta={ cta }
 			/>

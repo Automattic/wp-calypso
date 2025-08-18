@@ -8,6 +8,7 @@ const stepNameToModuleName = {
 	courses: 'courses',
 	'creds-confirm': 'creds-confirm',
 	'creds-permission': 'creds-permission',
+	'domain-search': 'domain-search',
 	domains: 'domains',
 	'domain-only': 'domains',
 	'domains-launch': 'domains',

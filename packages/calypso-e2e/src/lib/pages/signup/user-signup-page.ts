@@ -1,6 +1,5 @@
 import { Page, Locator, Frame } from 'playwright';
 import { getCalypsoURL } from '../../../data-helper';
-import envVariables from '../../../env-variables';
 import type { NewUserResponse } from '../../../types/rest-api-client.types';
 const selectors = {
 	// Fields
@@ -81,23 +80,21 @@ export class UserSignupPage {
 	}
 
 	/**
-	 * Using the Social First signup, selects the Email option, then fill out required information
+	 * Using the unified signup form, fill out required information
 	 * and then submit the form to complete the signup.
 	 *
-	 * @see https://github.com/Automattic/wp-calypso/pull/82481
+	 * @see https://linear.app/a8c/issue/DOTCOM-13218/signup-update-and-unify-the-create-account-screens
 	 *
 	 * @param {string} email Email address of the new user.
 	 * @returns {NewUserResponse} Response from the REST API.
 	 */
-	async signupSocialFirstWithEmail( email: string ): Promise< NewUserResponse > {
-		await this.page.getByRole( 'button', { name: 'Continue with Email' } ).click();
-
+	async signupWithEmail( email: string ): Promise< NewUserResponse > {
 		await this.page.fill( selectors.emailInput, email );
 
-		const [ response ] = await Promise.all( [
-			this.page.waitForResponse( /.*new\?.*/ ),
-			this.page.getByRole( 'button', { name: 'Continue' } ).click(),
-		] );
+		// Click the button first, then wait for the response
+		await this.page.click( selectors.submitButton );
+
+		const response = await this.page.waitForResponse( /.*new\?.*/ );
 
 		if ( ! response ) {
 			throw new Error( 'Failed to sign up as new user: no or unexpected API response.' );
@@ -107,39 +104,40 @@ export class UserSignupPage {
 	}
 
 	/**
+	 * Using the Social First signup, selects the Email option, then fill out required information
+	 * and then submit the form to complete the signup.
+	 *
+	 * @see https://github.com/Automattic/wp-calypso/pull/82481
+	 *
+	 * @param {string} email Email address of the new user.
+	 * @returns {NewUserResponse} Response from the REST API.
+	 */
+	async signupSocialFirstWithEmail( email: string ): Promise< NewUserResponse > {
+		try {
+			const continueWithEmailButton = this.page.getByRole( 'button', {
+				name: 'Continue with email',
+			} );
+
+			await continueWithEmailButton.click();
+
+			return this.signupWithEmail( email );
+		} catch ( error ) {
+			console.error( 'Failed to sign up as new user:', error );
+			return this.signupWithEmail( email );
+		}
+	}
+
+	/**
 	 * Signup form that is used by WordPress.com Connect (WPCC) endpoint.
 	 *
 	 * WPCC is a single sign-on service. For more information, please see
 	 * https://wordpress.com/support/wpcc-faq/.
 	 *
 	 * @param {string} email Email address of the new user.
-	 * @param {string} password Password of the new user.
 	 * @returns {NewUserResponse} Response from the REST API.
 	 */
-	async signupWPCC( email: string, password: string ): Promise< NewUserResponse > {
-		// On mobile devices, the signup form is not shown by default.
-		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			await this.page.click( selectors.createWPCOMAccountButton );
-		}
-
-		await this.page.fill( selectors.firstNameInput, 'E2E' );
-		await this.page.fill( selectors.lastNameInput, 'Testing' );
-		await this.page.fill( selectors.emailInput, email );
-		await this.page.fill( selectors.passwordInput, password );
-
-		const [ , response ] = await Promise.all( [
-			this.page.waitForURL( /.*crowdsignal\.com\/start\?plan=free.*/ ),
-			this.page.waitForResponse( /.*new\?.*/ ),
-			this.page.click( selectors.submitButton ),
-		] );
-
-		if ( ! response ) {
-			throw new Error( 'Failed to create new user at CrowdSignal using WPCC.' );
-		}
-
-		const responseBody: NewUserResponse = await response.json();
-
-		return responseBody;
+	async signupWPCC( email: string ): Promise< NewUserResponse > {
+		return this.signupWithEmail( email );
 	}
 
 	/**

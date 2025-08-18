@@ -6,7 +6,6 @@ import {
 	Button,
 	Spinner,
 	Flex,
-	__experimentalElevation as Elevation,
 	__experimentalHStack as HStack,
 	privateApis as componentsPrivateApis,
 } from '@wordpress/components';
@@ -264,7 +263,6 @@ const HelpCenterHeader = ( { onDismiss }: Header ) => {
 	if ( isMinimized ) {
 		return (
 			<button className={ classNames } onClick={ () => setIsMinimized( false ) }>
-				<Elevation isInteractive value={ 10 } hover={ 15 } />
 				<HStack alignment="center" justify="space-between" spacing={ 5 }>
 					<HStack justify="flex-start">
 						<HeaderText />

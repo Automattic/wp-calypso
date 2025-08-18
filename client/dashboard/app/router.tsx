@@ -685,26 +685,17 @@ const purchasesRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	loader: async () => {
 		queryClient.ensureQueryData( userPurchasesQuery() );
+		queryClient.ensureQueryData( sitesQuery() );
+	},
+	validateSearch: ( search ): { site: string | undefined } => {
+		return {
+			site: typeof search.site === 'string' ? search.site : undefined,
+		};
 	},
 	path: 'billing/purchases',
 } ).lazy( () =>
 	import( '../me/billing-purchases' ).then( ( d ) =>
 		createLazyRoute( 'purchases' )( {
-			component: d.default,
-		} )
-	)
-);
-
-const purchasesSiteRoute = createRoute( {
-	getParentRoute: () => meRoute,
-	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		queryClient.ensureQueryData( sitePurchasesQuery( site.ID ) );
-	},
-	path: 'billing/purchases/$siteSlug',
-} ).lazy( () =>
-	import( '../me/billing-purchases/site' ).then( ( d ) =>
-		createLazyRoute( 'purchases-site' )( {
 			component: d.default,
 		} )
 	)
@@ -849,7 +840,6 @@ const createRouteTree = ( config: AppConfig ) => {
 				billingRoute,
 				billingHistoryRoute,
 				purchasesRoute,
-				purchasesSiteRoute,
 				paymentMethodsRoute,
 				taxDetailsRoute,
 				securityRoute,
@@ -936,7 +926,6 @@ export {
 	billingRoute,
 	billingHistoryRoute,
 	purchasesRoute,
-	purchasesSiteRoute,
 	paymentMethodsRoute,
 	taxDetailsRoute,
 	securityRoute,
