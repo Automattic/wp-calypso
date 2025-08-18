@@ -16,7 +16,6 @@
 		"verbatimModuleSyntax": false,
 		"skipLibCheck": true,
 		"forceConsistentCasingInFileNames": true,
-		"composite": true,
 		"outDir": "dist",
 		"rootDir": "src",
 		"declaration": true,

@@ -1,6 +1,7 @@
 {
 	"extends": "../../tsconfig.json",
 	"compilerOptions": {
+		"noEmit": false,
 		"outDir": "dist",
 		"rootDir": "src",
 		"declaration": true,
@@ -8,14 +9,8 @@
 		"sourceMap": true,
 		"jsx": "react-jsx",
 		"lib": [ "DOM", "DOM.Iterable", "ES2022" ],
-		"composite": true,
 		"types": [ "vitest/globals" ]
 	},
 	"include": [ "src/**/*", "src/test/setup.ts" ],
-	"exclude": [ "node_modules", "dist" ],
-	"references": [
-		{
-			"path": "../agenttic-client"
-		}
-	]
+	"exclude": [ "node_modules", "dist" ]
 }

@@ -18,7 +18,7 @@
 		"README.md"
 	],
 	"scripts": {
-		"build": "pnpm run clean && vite build && tsc --emitDeclarationOnly",
+		"build": "pnpm run clean && vite build && tsc --project tsconfig.json --emitDeclarationOnly",
 		"dev": "vite",
 		"clean": "rm -rf dist",
 		"type-check": "tsc --noEmit",
