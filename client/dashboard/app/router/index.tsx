@@ -1,9 +1,8 @@
 import { Router, createRoute, redirect, createLazyRoute } from '@tanstack/react-router';
 import NotFound from '../404';
 import UnknownError from '../500';
-import { emailsQuery } from '../queries/emails';
-import { queryClient } from '../query-client';
 import { domainsRoute, domainRoute, domainChildRoutes } from './domains';
+import { emailsRoute } from './emails';
 import { meRoute, meChildRoutes } from './me';
 import { rootRoute } from './root';
 import {
@@ -63,18 +62,6 @@ const overviewRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../agency-overview' ).then( ( d ) =>
 		createLazyRoute( 'agency-overview' )( {
-			component: d.default,
-		} )
-	)
-);
-
-const emailsRoute = createRoute( {
-	getParentRoute: () => rootRoute,
-	path: 'emails',
-	loader: () => queryClient.ensureQueryData( emailsQuery() ),
-} ).lazy( () =>
-	import( '../../emails' ).then( ( d ) =>
-		createLazyRoute( 'emails' )( {
 			component: d.default,
 		} )
 	)
@@ -210,5 +197,4 @@ export {
 	siteSettingsWebApplicationFirewallRoute,
 	domainsRoute,
 	domainRoute,
-	emailsRoute,
 };
