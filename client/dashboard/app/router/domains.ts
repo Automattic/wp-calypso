@@ -6,7 +6,6 @@ import { domainGlueRecordsQuery } from '../queries/domain-glue-records';
 import { domainsQuery } from '../queries/domains';
 import { queryClient } from '../query-client';
 import { rootRoute } from './root';
-import type { AnyRoute } from '@tanstack/react-router';
 
 // Standalone domains route - requires rootRoute
 export const domainsRoute = createRoute( {
@@ -202,20 +201,24 @@ export const domainTransferRoute = createRoute( {
 	)
 );
 
-// Export all domain child routes for easy inclusion
-export const domainChildRoutes: AnyRoute[] = [
-	domainOverviewRoute,
-	domainDnsRoute,
-	domainDnsAddRoute,
-	domainDnsEditRoute,
-	domainForwardingsRoute,
-	domainForwardingAddRoute,
-	domainForwardingEditRoute,
-	domainContactInfoRoute,
-	domainNameServersRoute,
-	domainGlueRecordsRoute,
-	domainGlueRecordsAddRoute,
-	domainGlueRecordsEditRoute,
-	domainDnssecRoute,
-	domainTransferRoute,
-];
+export const createDomainsRoutes = () => {
+	return [
+		domainsRoute,
+		domainRoute.addChildren( [
+			domainOverviewRoute,
+			domainDnsRoute,
+			domainDnsAddRoute,
+			domainDnsEditRoute,
+			domainForwardingsRoute,
+			domainForwardingAddRoute,
+			domainForwardingEditRoute,
+			domainContactInfoRoute,
+			domainNameServersRoute,
+			domainGlueRecordsRoute,
+			domainGlueRecordsAddRoute,
+			domainGlueRecordsEditRoute,
+			domainDnssecRoute,
+			domainTransferRoute,
+		] ),
+	];
+};

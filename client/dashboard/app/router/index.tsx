@@ -1,7 +1,7 @@
 import { Router, createRoute, redirect, createLazyRoute } from '@tanstack/react-router';
 import NotFound from '../404';
 import UnknownError from '../500';
-import { domainsRoute, domainRoute, domainChildRoutes } from './domains';
+import { createDomainsRoutes } from './domains';
 import { emailsRoute } from './emails';
 import { meRoute, meChildRoutes } from './me';
 import { rootRoute } from './root';
@@ -47,8 +47,7 @@ const createRouteTree = ( config: AppConfig ) => {
 	}
 
 	if ( config.supports.domains ) {
-		children.push( domainsRoute );
-		children.push( domainRoute.addChildren( domainChildRoutes ) );
+		children.push( ...createDomainsRoutes() );
 	}
 
 	if ( config.supports.emails ) {
