@@ -248,6 +248,9 @@ function PurchaseSettingsCardLinkWrapper( {
 }
 
 function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
+	// FIXME: render renderWordAdsEligibilityWarningDialog for refund/cancel
+	// FIXME: render renderNonPrimaryDomainWarningDialog for refund/cancel
+	// FIXME: render "Domain transfers can take anywhere from five to seven days to complete." next to cancel button (see domainTransferDuration)
 	if ( purchase.is_cancelable ) {
 		return (
 			<ActionList.ActionItem
@@ -258,7 +261,7 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 						variant="secondary"
 						size="compact"
 						onClick={ () => ( {
-							// FIXME: add cancel and downgrade action
+							// FIXME: add refund, cancel, and downgrade action
 						} ) }
 					>
 						{ __( 'Downgrade or cancel' ) }
@@ -406,7 +409,6 @@ function PurchaseSettingsCard( {
 	description?: ReactNode;
 	link?: string;
 } ) {
-	// FIXME: Add "Please contact partnerName" for partner purchase
 	return (
 		<PurchaseSettingsCardLinkWrapper link={ link }>
 			<Card className="purchase-settings-card">
@@ -552,6 +554,44 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 	);
 }
 
+function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
+	if ( purchase.partner_name ) {
+		return (
+			<PurchaseSettingsCard
+				icon={ currencyDollar }
+				title={
+					// translators: partnerName is the name of a business partner through which this product was sold
+					sprintf( __( 'Please contact %(partnerName)s for details' ), {
+						partnerName: purchase.partner_name,
+					} )
+				}
+			/>
+		);
+	}
+	if ( isOneTimePurchase( purchase ) ) {
+		return (
+			<PurchaseSettingsCard
+				icon={ currencyDollar }
+				title={ __( 'Price' ) }
+				heading={ formatCurrency( purchase.regular_price_integer, purchase.currency_code, {
+					isSmallestUnit: true,
+				} ) }
+				description={ __( 'Excludes taxes.' ) }
+			/>
+		);
+	}
+	return (
+		<PurchaseSettingsCard
+			icon={ currencyDollar }
+			title={ __( 'Renewal price' ) }
+			heading={ formatCurrency( purchase.price_integer, purchase.currency_code, {
+				isSmallestUnit: true,
+			} ) }
+			description={ getBillPeriodLabel( purchase ) + ' ' + __( 'Excludes taxes.' ) }
+		/>
+	);
+}
+
 export default function PurchaseSettings() {
 	const { user } = useAuth();
 	const params = purchaseSettingsRoute.useParams();
@@ -583,14 +623,12 @@ export default function PurchaseSettings() {
 	} )();
 
 	// FIXME: add edit payment method button
-	// FIXME: add Jetpack CRM downloads link
-	// FIXME: render reinstall button
-	// FIXME: render "Domain transfers can take anywhere from five to seven days to complete."
-	// FIXME: render 'Domain Registration Agreement' and link
-	// FIXME: render DIFM content
-	// FIXME: render renderWordAdsEligibilityWarningDialog for refund/cancel
-	// FIXME: render renderNonPrimaryDomainWarningDialog for refund/cancel
-	// FIXME: render "X cheaper than monthly" upsell button
+	// FIXME: add Jetpack CRM downloads link (see renderCrmDownloadsNavItem)
+	// FIXME: render reinstall button (see renderReinstall)
+	// FIXME: render pluginList (see renderPluginLabel and getPluginsForSite)
+	// FIXME: render 'Domain Registration Agreement' and link (see domainRegistrationAgreementLinkText)
+	// FIXME: render DIFM content (BBEPurchaseDescription)
+	// FIXME: render ProductLink for plan features, domain management, email management, or theme details
 
 	return (
 		<PageLayout
@@ -648,14 +686,7 @@ export default function PurchaseSettings() {
 							return __( 'Auto-renew is disabled' );
 						} )() }
 					/>
-					<PurchaseSettingsCard
-						icon={ currencyDollar }
-						title={ __( 'Renewal price' ) }
-						heading={ formatCurrency( purchase.price_integer, purchase.currency_code, {
-							isSmallestUnit: true,
-						} ) }
-						description={ getBillPeriodLabel( purchase ) + ' ' + __( 'Excludes taxes.' ) }
-					/>
+					<PurchasePriceCard purchase={ purchase } />
 				</HStack>
 				<HStack spacing={ 6 } justify="flex-start" alignment="center">
 					<PurchaseSettingsCard
