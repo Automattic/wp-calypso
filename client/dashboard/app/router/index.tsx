@@ -1,9 +1,10 @@
-import { Router, createRoute, redirect, createLazyRoute } from '@tanstack/react-router';
+import { Router, createRoute, redirect } from '@tanstack/react-router';
 import NotFound from '../404';
 import UnknownError from '../500';
 import { createDomainsRoutes } from './domains';
 import { createEmailsRoutes } from './emails';
 import { createMeRoutes } from './me';
+import { createOverviewRoutes } from './overview';
 import { rootRoute } from './root';
 import { createSitesRoutes } from './sites';
 import type { AppConfig } from '../context';
@@ -22,24 +23,13 @@ const indexRoute = createRoute( {
 	},
 } );
 
-const overviewRoute = createRoute( {
-	getParentRoute: () => rootRoute,
-	path: 'overview',
-} ).lazy( () =>
-	import( '../../agency-overview' ).then( ( d ) =>
-		createLazyRoute( 'agency-overview' )( {
-			component: d.default,
-		} )
-	)
-);
-
 const createRouteTree = ( config: AppConfig ) => {
 	const children = [];
 
 	children.push( indexRoute );
 
 	if ( config.supports.overview ) {
-		children.push( overviewRoute );
+		children.push( ...createOverviewRoutes() );
 	}
 
 	if ( config.supports.sites ) {
