@@ -5,6 +5,7 @@ import { GuidedTourStep } from 'calypso/components/guided-tour/step';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import { siteByIdQuery } from 'calypso/dashboard/app/queries/site';
 import { siteLatestAtomicTransferQuery } from 'calypso/dashboard/app/queries/site-atomic-transfers';
 import { isDeletingStagingSiteQuery } from 'calypso/dashboard/app/queries/site-staging-sites';
 import { queryClient } from 'calypso/dashboard/app/query-client';
@@ -72,8 +73,18 @@ export default function ItemView( {
 		enabled: !! itemData.blogId && isStagingSite,
 	} );
 
+	const { data: stagingSite } = useQuery( {
+		...siteByIdQuery( itemData.blogId ?? 0 ),
+		refetchInterval: 5000,
+		enabled: !! itemData.blogId && isStagingSite,
+	} );
+
+	const hasStagingSiteJetpackConnection = isStagingSite ? stagingSite?.jetpack_connection : false;
+
 	const isStagingSiteTransferInProgress =
-		isStagingSite && isAtomicTransferInProgress( atomicTransfer?.status ?? 'pending' );
+		isStagingSite &&
+		isAtomicTransferInProgress( atomicTransfer?.status ?? 'pending' ) &&
+		! hasStagingSiteJetpackConnection;
 
 	// Ensure we have features
 	if ( ! features || ! features.length ) {
