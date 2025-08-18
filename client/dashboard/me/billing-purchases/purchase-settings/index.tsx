@@ -37,7 +37,11 @@ import { ActionList } from '../../../components/action-list';
 import { useFormattedTime } from '../../../components/formatted-time';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
-import { ProductUpgradeMap, AkismetUpgradesProductMap } from '../../../data/constants';
+import {
+	ProductUpgradeMap,
+	AkismetUpgradesProductMap,
+	DomainProductSlugs,
+} from '../../../data/constants';
 import { formatDate } from '../../../utils/datetime';
 import {
 	getBillPeriodLabel,
@@ -50,9 +54,11 @@ import {
 	isOneTimePurchase,
 	isMarketplaceTemporarySitePurchase,
 	isAkismetProduct,
+	isAkismetFreeProduct,
 } from '../../../utils/purchase';
 import { encodeProductForUrl } from '../../../utils/wpcom-checkout';
 import { getPurchaseUrlForId } from '../urls';
+import type { User } from '../../../data/me';
 import type { Purchase } from '../../../data/purchase';
 import type { Field } from '@wordpress/dataviews';
 import type { ReactNode, ReactElement } from 'react';
@@ -200,11 +206,11 @@ function PurchaseSettingsActions( {
 } ) {
 	const canBeRemoved = ! isExpired( purchase ) && ! isIncludedWithPlan( purchase );
 	const canBeRenewed = purchase.can_explicit_renew;
-	// FIXME: handle all conditions in renderCancelPurchaseNavItem like canAutoRenewBeTurnedOff and hasAmountAvailableToRefund and isDomainTransfer and isHundredYearDomain
 	const canCancel = purchase.is_cancelable;
 	const { recordTracksEvent } = useAnalytics();
-	// FIXME: prevent renew if purchase.isLocked
 	// FIXME: prevent renew if not product owner
+	// FIXME: show re-enable button (see subsReEnableText)
+	// FIXME: show "Paid until" for date for 100 year plan instead of expiry date title
 	// FIXME: prevent rendering upgrade button if Jetpack temp site
 	return (
 		<VStack spacing={ 4 }>
@@ -368,7 +374,13 @@ function PurchaseSettingsCard( {
 	);
 }
 
-function getFields( { isMutationPending }: { isMutationPending?: boolean } ): Field< Purchase >[] {
+function getFields( {
+	isMutationPending,
+	user,
+}: {
+	isMutationPending?: boolean;
+	user: User;
+} ): Field< Purchase >[] {
 	return [
 		{
 			id: 'is_auto_renew_enabled',
@@ -406,6 +418,10 @@ function getFields( { isMutationPending }: { isMutationPending?: boolean } ): Fi
 						checked={ getValue( { item: purchase } ) }
 						disabled={
 							isMutationPending ||
+							purchase.is_iap_purchase ||
+							purchase.product_slug === DomainProductSlugs.TRANSFER_IN ||
+							String( user.ID ) !== String( purchase.user_id ) ||
+							isAkismetFreeProduct( purchase ) ||
 							isOneTimePurchase( purchase ) ||
 							isExpired( purchase ) ||
 							isIncludedWithPlan( purchase )
@@ -437,13 +453,14 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 		error,
 		isPending: isMutationPending,
 	} = useMutation( userPurchaseSetAutoRenewQuery( parseInt( purchase.ID ) ) );
+	const { user } = useAuth();
 	return (
 		<Card>
 			<CardBody>
 				<VStack spacing={ 4 } alignment="left">
 					<DataForm< Purchase >
 						data={ purchase }
-						fields={ getFields( { isMutationPending } ) }
+						fields={ getFields( { isMutationPending, user } ) }
 						form={ form }
 						onChange={ ( newData ) => {
 							if ( newData.is_auto_renew_enabled !== purchase.is_auto_renew_enabled ) {
