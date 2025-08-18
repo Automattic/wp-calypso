@@ -4,11 +4,13 @@ import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useCallback } from 'react';
+import { useAuth } from '../../app/auth';
 import { domainQuery } from '../../app/queries/domain';
 import {
 	domainNameServersQuery,
 	domainNameServersMutation,
 } from '../../app/queries/domain-name-servers';
+import { siteByIdQuery } from '../../app/queries/site';
 import { domainRoute } from '../../app/router/domains';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
@@ -18,6 +20,7 @@ import NameServersForm from './form';
 import { shouldShowUpsellNudge } from './utils';
 
 export default function NameServers() {
+	const { user } = useAuth();
 	const { domainName } = domainRoute.useParams();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: nameServers, error: queryError } = useQuery( domainNameServersQuery( domainName ) );
@@ -25,7 +28,12 @@ export default function NameServers() {
 		domainNameServersMutation( domainName )
 	);
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
-	const showUpsellNudge = useMemo( () => shouldShowUpsellNudge( domain ), [ domain ] );
+	const { data: site } = useQuery( siteByIdQuery( domain.blog_id ) );
+
+	const showUpsellNudge = useMemo(
+		() => shouldShowUpsellNudge( user, domain, site ),
+		[ domain, site, user ]
+	);
 
 	const errorMsg = useMemo( () => {
 		if ( ! domain?.can_manage_name_servers ) {
