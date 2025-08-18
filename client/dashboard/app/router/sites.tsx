@@ -34,6 +34,8 @@ import { siteWordPressVersionQuery } from '../queries/site-wordpress-version';
 import { sitesQuery } from '../queries/sites';
 import { queryClient } from '../query-client';
 import { rootRoute } from './root';
+import type { AppConfig } from '../context';
+import type { AnyRoute } from '@tanstack/react-router';
 
 export const sitesRoute = createRoute( {
 	getParentRoute: () => rootRoute,
@@ -580,6 +582,75 @@ export const siteDifmLiteInProgressRoute = createRoute( {
 	)
 );
 
+export const siteLogsChildRoutes: AnyRoute[] = [
+	siteLogsIndexRoute,
+	siteLogsPhpRoute,
+	siteLogsServerRoute,
+];
+
+export const createSitesRoutes = ( config: AppConfig ) => {
+	if ( ! config.supports.sites ) {
+		return [];
+	}
+
+	const siteRoutes: AnyRoute[] = [
+		siteOverviewRoute,
+		siteSettingsRoute,
+		siteSettingsSiteVisibilityRoute,
+		siteSettingsSubscriptionGiftingRoute,
+		siteSettingsDatabaseRoute,
+		siteSettingsWordPressRoute,
+		siteSettingsPHPRoute,
+		siteSettingsAgencyRoute,
+		siteSettingsHundredYearPlanRoute,
+		siteSettingsPrimaryDataCenterRoute,
+		siteSettingsStaticFile404Route,
+		siteSettingsCachingRoute,
+		siteSettingsDefensiveModeRoute,
+		siteSettingsTransferSiteRoute,
+		siteSettingsSftpSshRoute,
+		siteSettingsWebApplicationFirewallRoute,
+		siteTrialEndedRoute,
+		siteDifmLiteInProgressRoute,
+	];
+
+	if ( config.supports.sites.deployments ) {
+		siteRoutes.push( siteDeploymentsRoute );
+	}
+
+	if ( config.supports.sites.performance ) {
+		siteRoutes.push( sitePerformanceRoute );
+	}
+
+	if ( config.supports.sites.monitoring ) {
+		siteRoutes.push( siteMonitoringRoute );
+	}
+
+	if ( config.supports.sites.logs ) {
+		siteRoutes.push(
+			siteLogsRoute.addChildren( [ siteLogsIndexRoute, siteLogsPhpRoute, siteLogsServerRoute ] )
+		);
+	}
+
+	if ( config.supports.sites.backups ) {
+		siteRoutes.push(
+			siteBackupsRoute.addChildren( [ siteBackupsIndexRoute, siteBackupRestoreRoute ] )
+		);
+	}
+
+	if ( config.supports.sites.domains ) {
+		siteRoutes.push( siteDomainsRoute );
+	}
+
+	if ( config.supports.sites.emails ) {
+		siteRoutes.push( siteEmailsRoute );
+	}
+
+	return [ sitesRoute, siteRoute.addChildren( siteRoutes ) ];
+};
+
+// Site routes which are still allowed to be accessed while a site gets the DIFM lite process.
+// Defined as a `function` so that routes defined earlier can reference routes defined later.
 function getDifmLiteAllowedRoutes() {
 	return [ siteDifmLiteInProgressRoute.id, siteDomainsRoute.id, siteEmailsRoute.id ];
 }
