@@ -64,7 +64,7 @@ export const domainDnsApplyTemplateMutation = ( domainName: string ) =>
 
 export const domainDnsImportBindMutation = ( domainName: string ) =>
 	mutationOptions( {
-		mutationFn: ( formData: [ string, File, string ][] ) => importDnsBind( domainName, formData ),
+		mutationFn: ( file: File ) => importDnsBind( domainName, file ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( {
 				queryKey: [ 'domains', domainName, 'dns' ],

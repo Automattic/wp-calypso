@@ -11,7 +11,7 @@ import {
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useState, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { domainDnsMutation } from '../../app/queries/domain-dns-records';
 import type { DnsRecord } from '../../data/domain-dns-records';
 
@@ -36,9 +36,11 @@ export default function DnsImportDialog( {
 	const updateDnsMutation = useMutation( domainDnsMutation( domainName ) );
 
 	// Initialize all records as selected when records change
-	useMemo( () => {
+	useEffect( () => {
 		if ( records.length > 0 ) {
-			const allRecordIds = new Set( records.map( ( record, index ) => `record-${ index }` ) );
+			const allRecordIds = new Set(
+				records.map( ( record, index ) => `${ record.type }-${ record.name }-${ index }` )
+			);
 			setSelectedRecords( allRecordIds );
 		}
 	}, [ records ] );
@@ -65,7 +67,9 @@ export default function DnsImportDialog( {
 			setSelectedRecords( new Set() );
 		} else {
 			// If not all are selected, select all
-			const allRecordIds = new Set( records.map( ( record, index ) => `record-${ index }` ) );
+			const allRecordIds = new Set(
+				records.map( ( record, index ) => `${ record.type }-${ record.name }-${ index }` )
+			);
 			setSelectedRecords( allRecordIds );
 		}
 	};
@@ -73,7 +77,7 @@ export default function DnsImportDialog( {
 	const handleConfirm = () => {
 		// Filter only selected records
 		const selectedRecordsData = records.filter( ( record, index ) =>
-			selectedRecords.has( `record-${ index }` )
+			selectedRecords.has( `${ record.type }-${ record.name }-${ index }` )
 		);
 
 		// Use domainDnsMutation to add the selected records
@@ -134,7 +138,7 @@ export default function DnsImportDialog( {
 	};
 
 	const renderRecordRow = ( record: DnsRecord, index: number ) => {
-		const recordId = `record-${ index }`;
+		const recordId = `${ record.type }-${ record.name }-${ index }`;
 		const isSelected = selectedRecords.has( recordId );
 
 		return (

@@ -24,8 +24,7 @@ export default function ImportBindFileButton( {
 			return;
 		}
 
-		const formData: [ string, File, string ][] = [ [ 'files[]', file, file.name ] ];
-		importDnsBindMutation.mutate( formData, {
+		importDnsBindMutation.mutate( file, {
 			onSuccess: ( data ) => {
 				onRecordsImported( data );
 			},

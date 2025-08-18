@@ -81,13 +81,10 @@ export function applyDnsTemplate(
 	} );
 }
 
-export function importDnsBind(
-	domain: string,
-	formData: [ string, File, string ][]
-): Promise< DnsRecord[] > {
+export function importDnsBind( domain: string, file: File ): Promise< DnsRecord[] > {
 	return wpcom.req.post( {
 		path: `/domains/dns/import/bind/${ domain }`,
 		apiNamespace: 'wpcom/v2',
-		formData,
+		formData: [ [ 'files[]', file, file.name ] ],
 	} );
 }
