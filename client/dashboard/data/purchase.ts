@@ -193,6 +193,7 @@ export interface Purchase {
 	is_pending_registration: boolean;
 	is_free_jetpack_stats_product: boolean;
 	is_jetpack_backup_t1: boolean;
+	is_jetpack_legacy_plan: boolean;
 	is_google_workspace_product: boolean;
 	is_hundred_year_domain: boolean;
 	is_iap_purchase: boolean;
