@@ -312,6 +312,10 @@ export function parseYmdLocal( value: string ): Date | null {
 		? date
 		: null;
 }
+
+/**
+ * Format a date range label.
+ */
 export function formatLabel(
 	start: Date,
 	end: Date,
