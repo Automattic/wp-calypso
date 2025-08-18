@@ -142,7 +142,9 @@ const BackButton = () => {
 };
 
 function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
-	const canBeRenewed = purchase.can_explicit_renew;
+	const { user } = useAuth();
+	const canBeRenewed =
+		purchase.can_explicit_renew && String( user.ID ) === String( purchase.user_id );
 	const upgradeUrl = getUpgradeUrl( purchase );
 	const { recordTracksEvent } = useAnalytics();
 	return (
@@ -204,11 +206,12 @@ function PurchaseSettingsActions( {
 	purchase: Purchase;
 	upgradeUrl: string | undefined;
 } ) {
+	const { user } = useAuth();
 	const canBeRemoved = ! isExpired( purchase ) && ! isIncludedWithPlan( purchase );
-	const canBeRenewed = purchase.can_explicit_renew;
+	const canBeRenewed =
+		purchase.can_explicit_renew && String( user.ID ) === String( purchase.user_id );
 	const canCancel = purchase.is_cancelable;
 	const { recordTracksEvent } = useAnalytics();
-	// FIXME: prevent renew if not product owner
 	// FIXME: show re-enable button (see subsReEnableText)
 	// FIXME: show "Paid until" for date for 100 year plan instead of expiry date title
 	// FIXME: prevent rendering upgrade button if Jetpack temp site
