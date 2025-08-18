@@ -1,29 +1,73 @@
+/* Container */
+.daterange-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
 
-.logs-date-input__popover {
-	margin-bottom: 8px;
-	min-width: 480px;
-	padding: 12px;
-	width: max-content;
+  > * { flex: 0 0 auto; }
 }
 
-@media (max-width: 600px) {
-  .logs-date-input__popover {
-    min-width: unset;
+/* Popover sizing */
+.daterange-popover .components-popover__content {
+  overflow: visible;
+  width: auto;
+  max-width: calc(100vw - 48px);
+}
+
+/* Header */
+.daterange-title {
+	margin-bottom: 8px;
+}
+
+/* Input trigger */
+.daterange-input__field .components-input-control__input {
+  font-weight: 600;
+
+  &:hover { cursor: pointer; }
+  &:hover,
+  &:focus {
+    fill: var(--wp-admin-theme-color);
+    color: var(--wp-admin-theme-color) !important;
   }
 }
 
-.logs-date-input__field .components-input-control__input:hover {
-	cursor: pointer;
+/* Also color the wrapper on hover/focus (keeps behavior) */
+.daterange-input__toggle {
+  &:hover,
+  &:focus-within {
+    fill: var(--wp-admin-theme-color);
+    color: var(--wp-admin-theme-color) !important;
+  }
 }
 
-.logs-date-input__field .components-input-control__input {
-	font-weight: 600;
+/* Body rows */
+.daterange-inputs {
+	margin-bottom: 12px;
 }
 
-.logs-date-input__toggle:hover,
-.logs-date-input__toggle:focus-within,
-.logs-date-input__field .components-input-control__input:hover,
-.logs-date-input__field .components-input-control__input:focus {
-	fill: var(--wp-admin-theme-color);
-	color: var(--wp-admin-theme-color) !important;
+/* Presets */
+.daterange-presets {
+	min-width: 180px;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .daterange-calendar {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+
+  /* Stack HStack items as full-width rows */
+  .daterange-presets .components-h-stack {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 4px;
+
+    > * {
+      flex: 0 0 100%;
+      width: 100%;
+    }
+  }
 }

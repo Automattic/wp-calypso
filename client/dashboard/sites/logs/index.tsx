@@ -77,10 +77,15 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	// @todo: We'll be able to remove the fallbacks once the temporary data (fields, views, actions) are removed and this component is cleaned up, as we'll return earlier if site doesn't exist.
 	const siteId = site?.ID ?? null;
 
-	const { data: gmtOffset } = useSuspenseQuery( {
+	const { data } = useSuspenseQuery( {
 		...siteSettingsQuery( siteId ),
-		select: ( s ) => s?.gmt_offset ?? 0,
+		select: ( s ) => ( {
+			gmtOffset: s?.gmt_offset ?? 0,
+			timezoneString: s?.timezone_string ?? '',
+		} ),
 	} );
+
+	const { gmtOffset, timezoneString } = data!;
 
 	// @todo, this will be replaced when importing the use-view data.
 	const view: ViewTable = useMemo( () => {
@@ -116,8 +121,8 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	} ) );
 
 	const { startSec, endSec } = useMemo(
-		() => buildTimeRangeInSeconds( dateRange.start, dateRange.end, gmtOffset ),
-		[ dateRange.start, dateRange.end, gmtOffset ]
+		() => buildTimeRangeInSeconds( dateRange.start, dateRange.end, timezoneString, gmtOffset ),
+		[ dateRange.start, dateRange.end, gmtOffset, timezoneString ]
 	);
 
 	const filter = useMemo( () => toFilterParams( { view, logType } ), [ view, logType ] );
@@ -153,7 +158,12 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		}
 	};
 
-	const fields = useFields( { logType, gmtOffset } );
+	//	const fields = useFields( { logType, timezoneString } );
+	const fields = useFields( {
+		logType,
+		timezoneString: timezoneString || undefined,
+		gmtOffset,
+	} );
 
 	// @todo, this will be replaced when importing the use-view data.
 	const actions = useMemo(
@@ -184,6 +194,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 				start={ dateRange.start }
 				end={ dateRange.end }
 				gmtOffset={ gmtOffset }
+				timezoneString={ timezoneString }
 				onChange={ ( next ) => setDateRange( next ) }
 			/>
 

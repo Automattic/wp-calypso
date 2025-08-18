@@ -1,5 +1,6 @@
 import { formatNumber } from '@automattic/number-formatters';
 import { Badge } from '@automattic/ui';
+import { dateI18n } from '@wordpress/date';
 import { useMemo } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useLocale } from '../../../app/locale';
@@ -8,6 +9,10 @@ import { formatDateWithOffset, getUtcOffsetDisplay } from '../../../utils/dateti
 import type { Field, Operator } from '@wordpress/dataviews';
 
 import './style.scss';
+
+type UseFieldsArgs =
+	| { logType: LogType; timezoneString: string; gmtOffset?: number }
+	| { logType: LogType; timezoneString?: undefined; gmtOffset: number };
 
 const VALUES_CACHED = [ 'false', 'true' ] as const;
 const VALUES_RENDERER = [ 'php', 'static' ] as const;
@@ -41,20 +46,35 @@ const toSeverityClass = ( severity: PHPLog[ 'severity' ] ) =>
 
 export function useFields( {
 	logType,
+	timezoneString,
 	gmtOffset,
-}: {
-	logType: LogType;
-	gmtOffset: number;
-} ): Field< PHPLog | ServerLog >[] {
+}: UseFieldsArgs ): Field< PHPLog | ServerLog >[] {
 	const locale = useLocale();
 
-	const dateTimeLabel = sprintf(
-		/* Translators: %s is the site's GMT offset */
-		__( 'Date & time (%s)' ),
-		getUtcOffsetDisplay( gmtOffset )
-	);
+	let dateTimeLabel = __( 'Date & time' );
+
+	if ( timezoneString ) {
+		/* Translators: %s is the site's timezone string */
+		dateTimeLabel = sprintf( __( 'Date & time (%s)' ), timezoneString );
+	} else if ( typeof gmtOffset === 'number' ) {
+		/* Translators: %s is the site's UTC offset */
+		dateTimeLabel = sprintf( __( 'Date & time (%s)' ), getUtcOffsetDisplay( gmtOffset ) );
+	}
 
 	return useMemo( () => {
+		const formatCell = ( value?: string | number ) => {
+			if ( ! value ) {
+				return '';
+			}
+			const date = typeof value === 'number' ? new Date( value * 1000 ) : new Date( value );
+			return timezoneString
+				? dateI18n( 'M j, Y \\a\\t g:i A', date, timezoneString )
+				: formatDateWithOffset( date, gmtOffset as number, locale, {
+						dateStyle: 'medium',
+						timeStyle: 'short',
+				  } );
+		};
+
 		if ( logType === LogType.PHP ) {
 			return [
 				{
@@ -64,13 +84,10 @@ export function useFields( {
 					enableHiding: false,
 					enableSorting: true,
 					getValue: ( { item } ) => ( item as PHPLog ).timestamp,
-					render: ( { field, item } ) => (
-						<span>
-							{ ( field.getValue( { item } ) as string )
-								? formatDateWithOffset( field.getValue( { item } ) as string, gmtOffset, locale )
-								: '' }
-						</span>
-					),
+					render: ( { field, item } ) => {
+						const value = field.getValue( { item } ) as string;
+						return <span>{ formatCell( value ) }</span>;
+					},
 				},
 				{
 					id: 'severity',
@@ -145,12 +162,11 @@ export function useFields( {
 				label: dateTimeLabel,
 				enableHiding: false,
 				enableSorting: true,
-				getValue: ( { item } ) => ( item as PHPLog ).timestamp,
-				render: ( { field, item } ) => (
-					<span>
-						{ formatDateWithOffset( field.getValue( { item } ) as string, gmtOffset, locale ) }
-					</span>
-				),
+				getValue: ( { item } ) => ( item as ServerLog ).date ?? ( item as ServerLog ).timestamp,
+				render: ( { field, item } ) => {
+					const value = field.getValue( { item } ) as string;
+					return <span>{ formatCell( value ) }</span>;
+				},
 			},
 			{
 				id: 'request_type',
@@ -308,5 +324,5 @@ export function useFields( {
 				getValue: ( { item } ) => ( item as ServerLog ).user_ip,
 			},
 		];
-	}, [ dateTimeLabel, gmtOffset, locale, logType ] );
+	}, [ dateTimeLabel, gmtOffset, locale, logType, timezoneString ] );
 }

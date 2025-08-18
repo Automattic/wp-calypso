@@ -1,4 +1,8 @@
+import { dateI18n } from '@wordpress/date';
 import { __, _n, sprintf } from '@wordpress/i18n';
+
+const HOUR_MS = 3_600_000;
+const YMD_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 
 export function formatDate(
 	date: Date,
@@ -198,7 +202,7 @@ export function getDateFromCreditCardExpiry( cardExpiryDate: string ): Date {
 }
 
 /**
- * Format a date with a given offset in hours.
+ * Format a date with a given offset in hours -- used as a fallback if the timezone is not available.
  */
 export function formatDateWithOffset(
 	input: Date | string | number,
@@ -221,7 +225,7 @@ export function formatDateWithOffset(
 		return '';
 	}
 
-	const adjusted = new Date( sourceTimestampMs + offsetHours * 3_600_000 );
+	const adjusted = new Date( sourceTimestampMs + offsetHours * HOUR_MS );
 	return formatDate( adjusted, locale, { ...options, timeZone: 'UTC' } );
 }
 
@@ -260,29 +264,92 @@ function toEndOfDayLocal( date: Date ): Date {
 export function buildTimeRangeInSeconds(
 	start: Date,
 	end: Date,
-	offsetHours: number
+	timezoneString?: string,
+	gmtOffset?: number
 ): { startSec: number; endSec: number } {
-	const startLocal = toStartOfDayLocal( start ).getTime();
-	const endLocal = toEndOfDayLocal( end ).getTime();
-	const shiftMs = offsetHours * 3_600_000;
-	return {
-		startSec: Math.floor( ( startLocal - shiftMs ) / 1000 ),
-		endSec: Math.floor( ( endLocal - shiftMs ) / 1000 ),
-	};
+	if ( timezoneString ) {
+		const startYmd = dateI18n( 'Y-m-d', start, timezoneString );
+		const endYmd = dateI18n( 'Y-m-d', end, timezoneString );
+		const startSec = +dateI18n( 'U', `${ startYmd } 00:00:00`, timezoneString );
+		const endSec = +dateI18n( 'U', `${ endYmd } 23:59:59`, timezoneString );
+		if ( Number.isFinite( startSec ) && Number.isFinite( endSec ) ) {
+			return { startSec, endSec };
+		}
+	}
+	if ( typeof gmtOffset === 'number' ) {
+		const startLocal = toStartOfDayLocal( start ).getTime();
+		const endLocal = toEndOfDayLocal( end ).getTime();
+		const shiftMs = gmtOffset * HOUR_MS;
+		return {
+			startSec: Math.floor( ( startLocal - shiftMs ) / 1000 ),
+			endSec: Math.floor( ( endLocal - shiftMs ) / 1000 ),
+		};
+	}
+	// last-resort fallback: browser local
+	const startSec = Math.floor(
+		new Date( start.getFullYear(), start.getMonth(), start.getDate(), 0, 0, 0, 0 ).getTime() / 1000
+	);
+	const endSec = Math.floor(
+		new Date( end.getFullYear(), end.getMonth(), end.getDate(), 23, 59, 59, 999 ).getTime() / 1000
+	);
+	return { startSec, endSec };
 }
 
-const toLocalNoon = ( d: Date ) =>
-	new Date( d.getFullYear(), d.getMonth(), d.getDate(), 12, 0, 0, 0 );
+/**
+ * Parse a date string in the format "YYYY-MM-DD" (local time).
+ */
+export function parseYmdLocal( value: string ): Date | null {
+	if ( ! YMD_REGEX.test( value ) ) {
+		return null;
+	}
+	const [ yearStr, monthStr, dayStr ] = value.split( '-' );
+	const year = +yearStr;
+	const month = +monthStr;
+	const day = +dayStr;
 
-export function formatRangeLabelSiteTimeZone(
+	const date = new Date( year, month - 1, day );
+	return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day
+		? date
+		: null;
+}
+export function formatLabel(
 	start: Date,
 	end: Date,
-	gmtOffset: number,
-	locale: string
+	locale: string,
+	timezoneString?: string,
+	gmtOffset?: number
 ) {
-	const s = toLocalNoon( start );
-	const e = toLocalNoon( end );
-	const left = formatDateWithOffset( s, gmtOffset, locale, { dateStyle: 'medium' } );
-	const right = formatDateWithOffset( e, gmtOffset, locale, { dateStyle: 'medium' } );
-	return `${ left } ${ __( 'to' ) } ${ right }`;
+	if ( timezoneString ) {
+		return `${ dateI18n( 'M j, Y', start, timezoneString ) } ${ __( 'to' ) } ${ dateI18n(
+			'M j, Y',
+			end,
+			timezoneString
+		) }`;
+	}
+	if ( typeof gmtOffset === 'number' ) {
+		const left = formatDateWithOffset( start, gmtOffset, locale, { dateStyle: 'medium' } );
+		const right = formatDateWithOffset( end, gmtOffset, locale, { dateStyle: 'medium' } );
+		return `${ left } ${ __( 'to' ) } ${ right }`;
+	}
+	return `${ dateI18n( 'M j, Y', start ) } ${ __( 'to' ) } ${ dateI18n( 'M j, Y', end ) }`;
+}
+
+/**
+ * Format a date as "YYYY-MM-DD" (local time).
+ */
+export function formatYmd( date: Date, timezoneString?: string, gmtOffset?: number ) {
+	if ( timezoneString ) {
+		return dateI18n( 'Y-m-d', date, timezoneString );
+	}
+	if ( typeof gmtOffset === 'number' ) {
+		// site-YYYY-MM-DD via offset (DST-safe enough for offset-only)
+		const noonUtc =
+			Date.UTC( date.getFullYear(), date.getMonth(), date.getDate(), 12 ) - gmtOffset * HOUR_MS;
+		const dt = new Date( noonUtc );
+		const year = dt.getUTCFullYear();
+		const month = String( dt.getUTCMonth() + 1 ).padStart( 2, '0' );
+		const day = String( dt.getUTCDate() ).padStart( 2, '0' );
+		return `${ year }-${ month }-${ day }`;
+	}
+	return dateI18n( 'Y-m-d', date );
 }
