@@ -44,7 +44,11 @@ export default function ImportBindFileButton( {
 			multiple={ false }
 			onChange={ handleFileChange }
 			render={ ( { openFileDialog } ) => (
-				<Button variant="secondary" onClick={ openFileDialog }>
+				<Button
+					variant="secondary"
+					onClick={ openFileDialog }
+					isBusy={ importDnsBindMutation.isPending }
+				>
 					{ __( 'Import BIND file' ) }
 				</Button>
 			) }

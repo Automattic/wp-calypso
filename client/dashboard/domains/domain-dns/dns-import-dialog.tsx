@@ -1,3 +1,4 @@
+import { useMutation } from '@tanstack/react-query';
 import {
 	Modal,
 	Button,
@@ -5,27 +6,34 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	CheckboxControl,
+	__experimentalDivider as Divider,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { useState, useMemo } from 'react';
+import { domainDnsMutation } from '../../app/queries/domain-dns-records';
 import type { DnsRecord } from '../../data/domain-dns-records';
 
 interface DnsImportDialogProps {
 	isOpen: boolean;
+	domainName: string;
 	records: DnsRecord[];
 	onConfirm: () => void;
 	onCancel: () => void;
-	isBusy?: boolean;
 }
 
 export default function DnsImportDialog( {
 	isOpen,
+	domainName,
 	records,
 	onConfirm,
 	onCancel,
-	isBusy = false,
 }: DnsImportDialogProps ) {
 	const [ selectedRecords, setSelectedRecords ] = useState< Set< string > >( new Set() );
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+
+	const updateDnsMutation = useMutation( domainDnsMutation( domainName ) );
 
 	// Initialize all records as selected when records change
 	useMemo( () => {
@@ -68,12 +76,26 @@ export default function DnsImportDialog( {
 			selectedRecords.has( `record-${ index }` )
 		);
 
-		// TODO: Process selectedRecordsData
-		// For now, just log to console as requested
-		// eslint-disable-next-line no-console
-		console.log( 'Selected DNS records:', selectedRecordsData );
-
-		onConfirm();
+		// Use domainDnsMutation to add the selected records
+		updateDnsMutation.mutate(
+			{
+				recordsToAdd: selectedRecordsData,
+			},
+			{
+				onSuccess: () => {
+					createSuccessNotice( __( 'DNS records imported successfully!' ), {
+						type: 'snackbar',
+					} );
+					onConfirm();
+				},
+				onError: () => {
+					createErrorNotice( __( 'Failed to import DNS records.' ), {
+						type: 'snackbar',
+					} );
+					onCancel();
+				},
+			}
+		);
 	};
 
 	const renderRecordAsString = ( record: DnsRecord ) => {
@@ -139,6 +161,7 @@ export default function DnsImportDialog( {
 				{ records.length > 0 ? (
 					<>
 						{ renderHeader() }
+						<Divider />
 						<div style={ { maxHeight: '300px', overflowY: 'auto' } }>
 							{ records.map( ( record, index ) => renderRecordRow( record, index ) ) }
 						</div>
@@ -148,14 +171,14 @@ export default function DnsImportDialog( {
 				) }
 
 				<HStack justify="flex-end" spacing={ 2 }>
-					<Button onClick={ onCancel } isBusy={ isBusy }>
+					<Button onClick={ onCancel } disabled={ updateDnsMutation.isPending }>
 						{ __( 'Cancel' ) }
 					</Button>
 					<Button
 						variant="primary"
-						isBusy={ isBusy }
+						isBusy={ updateDnsMutation.isPending }
 						onClick={ handleConfirm }
-						disabled={ numberOfSelectedRecords === 0 }
+						disabled={ numberOfSelectedRecords === 0 || updateDnsMutation.isPending }
 					>
 						{ __( 'Import Selected Records' ) }
 					</Button>

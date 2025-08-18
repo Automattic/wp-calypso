@@ -85,6 +85,11 @@ export default function DomainDns() {
 		fields
 	);
 
+	const closeImportDialog = () => {
+		setIsImportDialogOpen( false );
+		setImportedRecords( [] );
+	};
+
 	const handleRestoreDefaultARecords = () => {
 		const recordsToRemove = dnsData?.records?.filter(
 			( record ) =>
@@ -274,16 +279,10 @@ export default function DomainDns() {
 			/>
 			<DnsImportDialog
 				isOpen={ isImportDialogOpen }
+				domainName={ domainName }
 				records={ importedRecords }
-				onConfirm={ () => {
-					// TODO: Implement the actual import logic
-					setIsImportDialogOpen( false );
-					setImportedRecords( [] );
-				} }
-				onCancel={ () => {
-					setIsImportDialogOpen( false );
-					setImportedRecords( [] );
-				} }
+				onConfirm={ closeImportDialog }
+				onCancel={ closeImportDialog }
 			/>
 		</PageLayout>
 	);
