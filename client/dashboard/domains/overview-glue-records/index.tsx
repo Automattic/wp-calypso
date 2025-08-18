@@ -69,7 +69,7 @@ function DomainGlueRecords() {
 				label: __( 'Delete' ),
 				callback: ( items ) => {
 					const item = items[ 0 ];
-					deleteMutation.mutate( item.nameserver, {
+					deleteMutation.mutate( item, {
 						onSuccess: () => {
 							createSuccessNotice( __( 'Glue record was deleted successfully.' ), {
 								type: 'snackbar',

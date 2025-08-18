@@ -17,7 +17,11 @@ export const domainGlueRecordsQuery = ( domainName: string ) =>
 export const domainGlueRecordCreateMutation = ( domainName: string ) =>
 	mutationOptions( {
 		mutationFn: ( glueRecord: DomainGlueRecord ) => createDomainGlueRecord( glueRecord ),
-		onSuccess: () => {
+		onSuccess: ( newData: unknown, createdGlueRecord: DomainGlueRecord ) => {
+			queryClient.setQueryData(
+				domainGlueRecordsQuery( domainName ).queryKey,
+				( oldData: DomainGlueRecord[] = [] ) => oldData.concat( [ createdGlueRecord ] )
+			);
 			queryClient.invalidateQueries( domainGlueRecordsQuery( domainName ) );
 		},
 	} );
@@ -25,15 +29,32 @@ export const domainGlueRecordCreateMutation = ( domainName: string ) =>
 export const domainGlueRecordUpdateMutation = ( domainName: string ) =>
 	mutationOptions( {
 		mutationFn: ( glueRecord: DomainGlueRecord ) => updateDomainGlueRecord( glueRecord ),
-		onSuccess: () => {
+		onSuccess: ( newData: unknown, updatedGlueRecord: DomainGlueRecord ) => {
+			queryClient.setQueryData(
+				domainGlueRecordsQuery( domainName ).queryKey,
+				( oldData: DomainGlueRecord[] = [] ) => {
+					return oldData.map( ( glueRecord ) => {
+						if ( glueRecord.nameserver === updatedGlueRecord.nameserver ) {
+							return updatedGlueRecord;
+						}
+
+						return glueRecord;
+					} );
+				}
+			);
 			queryClient.invalidateQueries( domainGlueRecordsQuery( domainName ) );
 		},
 	} );
 
 export const domainGlueRecordDeleteMutation = ( domainName: string ) =>
 	mutationOptions( {
-		mutationFn: ( nameServer: string ) => deleteDomainGlueRecord( domainName, nameServer ),
-		onSuccess: () => {
+		mutationFn: ( glueRecord ) => deleteDomainGlueRecord( domainName, glueRecord ),
+		onSuccess: ( newData: unknown, deletedGlueRecord: DomainGlueRecord ): void => {
+			queryClient.setQueryData(
+				domainGlueRecordsQuery( domainName ).queryKey,
+				( oldData: DomainGlueRecord[] = [] ) =>
+					oldData.filter( ( glueRecord ) => glueRecord.nameserver !== deletedGlueRecord.nameserver )
+			);
 			queryClient.invalidateQueries( domainGlueRecordsQuery( domainName ) );
 		},
 	} );

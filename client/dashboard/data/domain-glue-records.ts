@@ -39,7 +39,10 @@ export function updateDomainGlueRecord( glueRecord: DomainGlueRecord ): Promise<
 	);
 }
 
-export function deleteDomainGlueRecord( domainName: string, nameServer: string ): Promise< void > {
+export function deleteDomainGlueRecord(
+	domainName: string,
+	glueRecord: DomainGlueRecord
+): Promise< void > {
 	return wpcom.req.post(
 		{
 			path: `/domains/glue-records/${ domainName }`,
@@ -47,7 +50,7 @@ export function deleteDomainGlueRecord( domainName: string, nameServer: string )
 			method: 'DELETE',
 		},
 		{
-			name_server: nameServer,
+			name_server: glueRecord.nameserver,
 		}
 	);
 }
