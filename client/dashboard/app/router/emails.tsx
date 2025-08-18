@@ -14,3 +14,7 @@ export const emailsRoute = createRoute( {
 		} )
 	)
 );
+
+export const createEmailsRoutes = () => {
+	return [ emailsRoute ];
+};

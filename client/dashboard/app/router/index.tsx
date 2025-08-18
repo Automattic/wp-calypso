@@ -2,7 +2,7 @@ import { Router, createRoute, redirect, createLazyRoute } from '@tanstack/react-
 import NotFound from '../404';
 import UnknownError from '../500';
 import { createDomainsRoutes } from './domains';
-import { emailsRoute } from './emails';
+import { createEmailsRoutes } from './emails';
 import { meRoute, meChildRoutes } from './me';
 import { rootRoute } from './root';
 import { createSitesRoutes } from './sites';
@@ -51,7 +51,7 @@ const createRouteTree = ( config: AppConfig ) => {
 	}
 
 	if ( config.supports.emails ) {
-		children.push( emailsRoute );
+		children.push( ...createEmailsRoutes() );
 	}
 
 	if ( config.supports.me ) {
