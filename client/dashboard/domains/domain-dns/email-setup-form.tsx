@@ -107,7 +107,7 @@ export default function EmailSetupForm( {
 	const canSubmit = formData.record && isItemValid( formData, fields, form );
 
 	return (
-		<div className="email-setup-form" style={ { marginTop: '28px' } }>
+		<div style={ { marginTop: '28px' } }>
 			<form onSubmit={ handleSubmit }>
 				<VStack spacing={ 5 }>
 					<DataForm< EmailSetupFormData >

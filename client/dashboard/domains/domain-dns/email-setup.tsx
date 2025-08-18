@@ -84,7 +84,7 @@ export default function EmailSetup() {
 	];
 
 	return (
-		<Card className="email-setup">
+		<Card>
 			<CardBody>
 				<VStack spacing={ 5 }>
 					<SectionHeader
@@ -92,11 +92,7 @@ export default function EmailSetup() {
 						description={ __( 'Set up an existing email service for this domain.' ) }
 						level={ 4 }
 					/>
-					<TabPanel
-						tabs={ tabs }
-						className="email-setup__tabs"
-						orientation={ isMobile ? 'horizontal' : 'vertical' }
-					>
+					<TabPanel tabs={ tabs } orientation={ isMobile ? 'horizontal' : 'vertical' }>
 						{ ( tab ) => tab.content }
 					</TabPanel>
 				</VStack>
