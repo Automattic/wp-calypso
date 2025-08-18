@@ -6,7 +6,7 @@ import {
 	__experimentalInputControl as InputControl,
 	ToggleControl,
 } from '@wordpress/components';
-import { Field, DataForm, NormalizedField } from '@wordpress/dataviews';
+import { Field, DataForm, NormalizedField, isItemValid } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState, useCallback, useMemo } from 'react';
@@ -94,9 +94,9 @@ export default function NameServersForm( {
 						const value = formData[ field.id as NameServerKey ];
 						// Skip validation for empty optional fields
 						if ( ! value && ! field.isValid?.required ) {
-							return '';
+							return null;
 						}
-						return validateHostname( value ) ? '' : __( 'Please enter a valid hostname' );
+						return validateHostname( value ) ? null : __( 'Please enter a valid hostname' );
 					},
 				},
 				isVisible: ( item: FormData ) => {
@@ -201,6 +201,8 @@ export default function NameServersForm( {
 		[ formData, onSubmit ]
 	);
 
+	const isFormValid = isItemValid( formData, fields, formObj );
+
 	return (
 		<form onSubmit={ handleSubmit }>
 			<VStack spacing={ 4 }>
@@ -217,7 +219,7 @@ export default function NameServersForm( {
 						__next40pxDefaultSize
 						variant="primary"
 						type="submit"
-						disabled={ isBusy }
+						disabled={ isBusy || ! isFormValid }
 						isBusy={ isBusy }
 					>
 						{ __( 'Save' ) }
