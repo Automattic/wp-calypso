@@ -20,14 +20,13 @@ export default function UsageInformationCard() {
 	const mutation = useMutation( profileMutation() );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
-	const handleChange = ( { enabled }: { enabled?: boolean } ) => {
-		const tracksOptOut = ! enabled;
+	const handleChange = ( { tracks_opt_out }: { tracks_opt_out?: boolean } ) => {
 		mutation.mutate(
-			{ tracks_opt_out: tracksOptOut },
+			{ tracks_opt_out },
 			{
 				onSuccess: () => {
 					createSuccessNotice(
-						tracksOptOut
+						tracks_opt_out
 							? __( 'Usage information sharing disabled.' )
 							: __( 'Usage information sharing enabled.' ),
 						{ type: 'snackbar' }
@@ -35,7 +34,7 @@ export default function UsageInformationCard() {
 				},
 				onError: () => {
 					createErrorNotice(
-						tracksOptOut
+						tracks_opt_out
 							? __( 'Failed to disable usage information sharing.' )
 							: __( 'Failed to enable usage information sharing.' ),
 						{ type: 'snackbar' }
@@ -45,9 +44,9 @@ export default function UsageInformationCard() {
 		);
 	};
 
-	const fields: Field< { enabled: boolean } >[] = [
+	const fields: Field< { tracks_opt_out: boolean } >[] = [
 		{
-			id: 'enabled',
+			id: 'tracks_opt_out',
 			label: __(
 				'Share information with our analytics tool about your use of services while logged in to your WordPress.com account.'
 			),
@@ -57,7 +56,7 @@ export default function UsageInformationCard() {
 					<ToggleControl
 						__nextHasNoMarginBottom
 						label={ hideLabelFromVision ? '' : label }
-						checked={ getValue( { item: data } ) }
+						checked={ ! getValue( { item: data } ) }
 						disabled={ mutation.isPending }
 						onChange={ () => onChange( { [ id ]: ! getValue( { item: data } ) } ) }
 					/>
@@ -68,10 +67,10 @@ export default function UsageInformationCard() {
 
 	const form = {
 		type: 'regular' as const,
-		fields: [ 'enabled' ],
+		fields: [ 'tracks_opt_out' ],
 	};
 
-	const data = { enabled: ! userProfile?.tracks_opt_out };
+	const data = { tracks_opt_out: userProfile?.tracks_opt_out ?? true };
 
 	return (
 		<Card>
@@ -120,7 +119,7 @@ export default function UsageInformationCard() {
 						}
 						level={ 3 }
 					/>
-					<DataForm< { enabled: boolean } >
+					<DataForm< { tracks_opt_out: boolean } >
 						data={ data }
 						fields={ fields }
 						form={ form }
