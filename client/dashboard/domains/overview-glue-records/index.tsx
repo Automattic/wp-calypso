@@ -1,5 +1,5 @@
 import { isMobile } from '@automattic/viewport';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
@@ -46,7 +46,9 @@ const DEFAULT_LAYOUTS = {
 function DomainGlueRecords() {
 	const navigate = useNavigate();
 	const { domainName } = domainRoute.useParams();
-	const { data: glueRecordsData, isLoading } = useQuery( domainGlueRecordsQuery( domainName ) );
+	const { data: glueRecordsData, isLoading } = useSuspenseQuery(
+		domainGlueRecordsQuery( domainName )
+	);
 	const deleteMutation = useMutation( domainGlueRecordDeleteMutation( domainName ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 

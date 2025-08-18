@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { notFound, useNavigate } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
 import { useMemo } from '@wordpress/element';
@@ -17,7 +17,7 @@ import type { FormData } from './form';
 export default function EditDomainGlueRecords() {
 	const navigate = useNavigate();
 	const { domainName, nameServer } = domainRoute.useParams();
-	const { data: glueRecordsData } = useQuery( domainGlueRecordsQuery( domainName ) );
+	const { data: glueRecordsData } = useSuspenseQuery( domainGlueRecordsQuery( domainName ) );
 	const updateMutation = useMutation( domainGlueRecordUpdateMutation( domainName ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
