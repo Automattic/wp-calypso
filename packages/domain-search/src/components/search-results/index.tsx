@@ -18,7 +18,7 @@ export const SearchResults = () => {
 						domain={ domain }
 						tld={ tlds.join( '.' ) }
 						price={ <DomainSuggestionPrice price={ suggestion.cost } /> }
-						cta={ <DomainSuggestionCTA domain={ suggestion.domain_name } /> }
+						cta={ <DomainSuggestionCTA suggestion={ suggestion } /> }
 					/>
 				);
 			} ) }

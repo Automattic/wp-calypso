@@ -1,3 +1,5 @@
+import { DomainSuggestion } from '../components/search-results/queries';
+
 export interface SelectedDomain {
 	uuid: string;
 	domain: string;
@@ -9,8 +11,8 @@ export interface SelectedDomain {
 export interface DomainSearchCart {
 	items: SelectedDomain[];
 	total: string;
-	onAddItem: ( item: SelectedDomain[ 'uuid' ] ) => Promise< void >;
-	onRemoveItem: ( item: SelectedDomain[ 'uuid' ] ) => Promise< void >;
+	onAddItem: ( item: DomainSuggestion ) => Promise< unknown >;
+	onRemoveItem: ( item: SelectedDomain[ 'uuid' ] ) => Promise< unknown >;
 	hasItem: ( uuid: SelectedDomain[ 'uuid' ] ) => boolean;
 }
 
