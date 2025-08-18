@@ -14,3 +14,9 @@ export function fetchDomain( domainName: string ): Promise< Domain > {
 		apiVersion: '1.2',
 	} );
 }
+
+export function disconnectDomain( domainName: string ): Promise< void > {
+	return wpcom.req.get( {
+		path: `/domains/${ domainName }/disconnect-domain-from-site`,
+	} );
+}

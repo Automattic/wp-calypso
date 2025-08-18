@@ -1,7 +1,10 @@
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Button, __experimentalVStack as VStack } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { domainQuery } from '../../app/queries/domain';
+import { store as noticesStore } from '@wordpress/notices';
+import { useCallback } from 'react';
+import { domainQuery, disconnectDomainMutation } from '../../app/queries/domain';
 import { sitePurchaseQuery } from '../../app/queries/site-purchases';
 import { domainRoute } from '../../app/router';
 import { domainTransferRoute } from '../../app/routes/domain-routes';
@@ -15,6 +18,23 @@ export default function Actions() {
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const { data: purchase } = useQuery(
 		sitePurchaseQuery( domain.blog_id, parseInt( domain.subscription_id, 10 ) )
+	);
+	const { mutate: disconnectDomain } = useMutation( disconnectDomainMutation( domainName ) );
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+
+	const onDetachClick = useCallback(
+		() =>
+			disconnectDomain( undefined, {
+				onSuccess: () =>
+					createSuccessNotice(
+						__( 'The domain will be detached from this site in a few minutes.' ),
+						{
+							type: 'snackbar',
+						}
+					),
+				onError: ( e: Error ) => createErrorNotice( e.message, { type: 'snackbar' } ),
+			} ),
+		[ disconnectDomain, createSuccessNotice, createErrorNotice ]
 	);
 
 	return (
@@ -54,7 +74,7 @@ export default function Actions() {
 					title={ __( 'Detach' ) }
 					description={ __( 'Detach this domain from the site.' ) }
 					actions={
-						<Button size="compact" variant="secondary">
+						<Button size="compact" variant="secondary" onClick={ onDetachClick }>
 							{ __( 'Detach' ) }
 						</Button>
 					}
