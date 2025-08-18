@@ -51,6 +51,18 @@ export const useCreateZendeskConversation = (): ( ( {
 		isFromError?: boolean;
 	} ) => {
 		const currentInteractionID = interactionId || currentSupportInteraction!.uuid;
+
+		trackEvent( 'create_zendesk_conversation', {
+			is_submitting_zendesk_user_fields: isSubmittingZendeskUserFields,
+			chat_conversation_id: chat.conversationId,
+			chat_status: chat.status,
+			chat_provider: chat.provider,
+			interaction_id: currentInteractionID,
+			created_from: createdFrom,
+			avoid_transfer: avoidTransfer,
+			is_from_error: isFromError,
+		} );
+
 		if (
 			isSubmittingZendeskUserFields ||
 			chat.conversationId ||
@@ -71,14 +83,33 @@ export const useCreateZendeskConversation = (): ( ( {
 			status: 'transfer',
 		} ) );
 
-		await submitUserFields( {
-			messaging_initial_message: userFieldMessage || undefined,
-			messaging_site_id: selectedSiteId || null,
-			messaging_ai_chat_id: chatId || undefined,
-			messaging_url: selectedSiteURL || window.location.href,
-			messaging_flow: userFieldFlowName || null,
-			messaging_source: sectionName,
-		} );
+		try {
+			trackEvent( 'submitting_zendesk_user_fields', {
+				messaging_initial_message: userFieldMessage || undefined,
+				messaging_site_id: selectedSiteId || null,
+				messaging_ai_chat_id: chatId || undefined,
+				messaging_url: selectedSiteURL || window.location.href,
+				messaging_flow: userFieldFlowName || null,
+				messaging_source: sectionName,
+			} );
+
+			await submitUserFields( {
+				messaging_initial_message: userFieldMessage || undefined,
+				messaging_site_id: selectedSiteId || null,
+				messaging_ai_chat_id: chatId || undefined,
+				messaging_url: selectedSiteURL || window.location.href,
+				messaging_flow: userFieldFlowName || null,
+				messaging_source: sectionName,
+			} );
+
+			trackEvent( 'submitted_zendesk_user_fields' );
+		} catch ( error ) {
+			trackEvent( 'error_submitting_zendesk_user_fields', {
+				error_message:
+					error instanceof Error ? error.message : error?.toString?.() ?? 'Unknown error',
+			} );
+		}
+
 		const conversation = await Smooch.createConversation( {
 			metadata: {
 				createdAt: Date.now(),

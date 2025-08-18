@@ -1,4 +1,5 @@
 import { useMyDomainInputMode } from '@automattic/domains-table/src/utils/constants';
+import { isFreeUrlDomainName } from '@automattic/domains-table/src/utils/is-free-url-domain-name';
 import {
 	domainManagementDNS,
 	domainManagementEditContactInfo,
@@ -12,7 +13,7 @@ import { useDispatch } from '@wordpress/data';
 import { sprintf, __ } from '@wordpress/i18n';
 import { payment, tool } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
-import { useMemo } from 'react';
+import { useMemo, Suspense, lazy } from 'react';
 import { userPurchasesQuery } from '../../app/queries/me-purchases';
 import { siteSetPrimaryDomainMutation } from '../../app/queries/site-domains';
 import { DomainTypes, DomainTransferStatus } from '../../data/domains';
@@ -28,6 +29,15 @@ import {
 import { isTransferrableToWpcom } from '../../utils/domain-types';
 import type { DomainSummary, Site, User } from '../../data/types';
 import type { Action } from '@wordpress/dataviews';
+
+const SiteChangeAddressContent = lazy(
+	() =>
+		import(
+			/* webpackChunkName: "async-load-site-change-address-content" */ '../../sites/site-change-address-modal/content'
+		)
+);
+
+const noop = () => {};
 
 export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
@@ -201,7 +211,19 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				label: __( 'Change site address' ),
 				supportsBulk: false,
 				callback: () => {},
-				isEligible: () => false,
+				isEligible: ( item: DomainSummary ) => {
+					return !! site && ! site?.is_wpcom_atomic && isFreeUrlDomainName( item.domain );
+				},
+				RenderModal: ( { items, closeModal = noop } ) =>
+					site ? (
+						<Suspense fallback={ null }>
+							<SiteChangeAddressContent
+								site={ site }
+								domain={ items[ 0 ] }
+								onClose={ closeModal }
+							/>
+						</Suspense>
+					) : null,
 			},
 			{
 				id: 'manage-auto-renew',

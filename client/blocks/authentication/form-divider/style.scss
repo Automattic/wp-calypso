@@ -72,10 +72,7 @@ $breakpoint-mobile: 660px;
 }
 
 // In this case we want the separator to be vertical
-.signup-form,
-.layout:not(.is-grav-powered-client) .is-social-first,
-.login form.is-woo-passwordless,
-.login form.is-blaze-pro {
+.layout:not(.is-grav-powered-client) .is-social-first {
 	.auth-form__separator {
 		@include horizontal-separator;
 		width: calc(100% - 32px);
@@ -88,6 +85,14 @@ $breakpoint-mobile: 660px;
 
 	.auth-form__separator.is-horizontal {
 		@include horizontal-separator;
+	}
+}
+
+.layout:not(.is-grav-powered-client).is-section-login {
+	.login__body--continue-as-user {
+		.auth-form__separator {
+			@include horizontal-separator;
+		}
 	}
 }
 

@@ -9,6 +9,7 @@ import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { shouldRenderRewrittenDomainSearch } from 'calypso/lib/domains/should-render-rewritten-domain-search';
 import { sectionify } from 'calypso/lib/route';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import MapDomain from 'calypso/my-sites/domains/map-domain';
@@ -32,6 +33,7 @@ import {
 } from 'calypso/state/ui/selectors';
 import RedirectComponent from './domain-redirect-to-site';
 import DomainSearch from './domain-search';
+import LegacyDomainSearch from './domain-search/legacy';
 import SiteRedirect from './domain-search/site-redirect';
 import EmailProvidersUpsell from './email-providers-upsell';
 
@@ -64,12 +66,14 @@ const domainSearch = ( context, next ) => {
 		window.scrollTo( 0, 0 );
 	}
 
-	context.primary = (
-		<Main wideLayout>
-			<PageViewTracker path="/domains/add/:site" title="Domain Search > Domain Registration" />
-			<DocumentHead title={ translate( 'Domain Search' ) } />
+	const getContent = () => {
+		if ( shouldRenderRewrittenDomainSearch() ) {
+			return <DomainSearch />;
+		}
+
+		return (
 			<CalypsoShoppingCartProvider>
-				<DomainSearch
+				<LegacyDomainSearch
 					basePath={ sectionify( context.path ) }
 					context={ context }
 					isAddNewDomainContext={ context.path.includes( 'domains/add' ) }
@@ -80,6 +84,14 @@ const domainSearch = ( context, next ) => {
 					}
 				/>
 			</CalypsoShoppingCartProvider>
+		);
+	};
+
+	context.primary = (
+		<Main wideLayout>
+			<PageViewTracker path="/domains/add/:site" title="Domain Search > Domain Registration" />
+			<DocumentHead title={ translate( 'Domain Search' ) } />
+			{ getContent() }
 		</Main>
 	);
 	next();

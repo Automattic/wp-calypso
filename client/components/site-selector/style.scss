@@ -51,6 +51,12 @@
 .site-selector .all-sites {
 	font-size: $font-body-small;
 
+	// Remove the global fade effect from layout.scss for all site-selector items
+	.site__title::after,
+	.site__domain::after {
+		display: none;
+	}
+
 	// Highlight selected site
 	&.is-selected {
 		background-color: var(--color-sidebar-menu-selected-background);
@@ -74,26 +80,35 @@
 	}
 }
 
+.site-selector .site.is-highlighted {
+	background-color: var(--color-print);
+
+	.site__title {
+		color: var(--color-text);
+	}
+
+	.site__domain {
+		color: var(--color-text-subtle);
+	}
+}
+
 .notouch .site-selector.is-hover-enabled .site:hover,
 .notouch .site-selector.is-hover-enabled .all-sites:hover .site-selector .site.is-highlighted,
 .site-selector .all-sites.is-highlighted {
-	background-color: var(--color-neutral-5);
+	background-color: var(--color-print);
 	cursor: pointer;
 
 	.site__badge {
-		background-color: var(--color-surface);
+		// Only apply hover styling to specific badge types that should change
+		// Exclude styled-component badges (staging, production, etc.) which handle their own hover states
+		&:not([class*="SitesLaunchStatusBadge"]):not([class*="SitesStagingBadge"]):not([class*="SitesProductionBadge"]) {
+			background-color: var(--color-surface);
+		}
 
 		&.is-p2,
 		&.is-p2-workspace {
 			background: var(--p2-color-link-dark);
 			color: var(--p2-color-white);
-		}
-	}
-
-	.site__title,
-	.site__domain {
-		&::after {
-			@include long-content-fade( $color: var( --color-neutral-5 ) );
 		}
 	}
 }
@@ -124,9 +139,6 @@
 	.site__title,
 	.site__domain {
 		color: var(--color-sidebar-menu-hover-text);
-		&::after {
-			@include long-content-fade( $color: var( --color-sidebar-menu-hover-background ) );
-		}
 	}
 
 	.site__title::before {

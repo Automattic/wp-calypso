@@ -25,6 +25,13 @@ export type DnsResponse = {
 	records: DnsRecord[];
 };
 
+export function fetchDomainDns( domainName: string ): Promise< DnsResponse > {
+	return wpcom.req.get( {
+		path: `/domains/${ domainName }/dns`,
+		apiVersion: '1.1',
+	} );
+}
+
 export function updateDomainDns(
 	domainName: string,
 	recordsToAdd?: DnsRecord[],
@@ -40,6 +47,16 @@ export function updateDomainDns(
 				records_to_remove: recordsToRemove,
 				restore_default_a_records: restoreDefaultARecords,
 			} ),
+		},
+	} );
+}
+
+export function restoreDefaultEmailRecords( domainName: string ): Promise< void > {
+	return wpcom.req.post( {
+		path: '/domains/dns/email/set-default-records',
+		apiNamespace: 'wpcom/v2',
+		body: {
+			domain: domainName,
 		},
 	} );
 }
