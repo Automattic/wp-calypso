@@ -137,14 +137,18 @@ export const notificationsRoute = createRoute( {
 	)
 );
 
-export const meChildRoutes = [
-	profileRoute,
-	billingRoute,
-	billingHistoryRoute,
-	purchasesRoute,
-	paymentMethodsRoute,
-	taxDetailsRoute,
-	securityRoute,
-	privacyRoute,
-	notificationsRoute,
-];
+export const createMeRoutes = () => {
+	return [
+		meRoute.addChildren( [
+			profileRoute,
+			billingRoute,
+			billingHistoryRoute,
+			purchasesRoute,
+			paymentMethodsRoute,
+			taxDetailsRoute,
+			securityRoute,
+			privacyRoute,
+			notificationsRoute,
+		] ),
+	];
+};

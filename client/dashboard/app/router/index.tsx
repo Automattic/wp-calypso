@@ -3,7 +3,7 @@ import NotFound from '../404';
 import UnknownError from '../500';
 import { createDomainsRoutes } from './domains';
 import { createEmailsRoutes } from './emails';
-import { meRoute, meChildRoutes } from './me';
+import { createMeRoutes } from './me';
 import { rootRoute } from './root';
 import { createSitesRoutes } from './sites';
 import type { AppConfig } from '../context';
@@ -55,7 +55,7 @@ const createRouteTree = ( config: AppConfig ) => {
 	}
 
 	if ( config.supports.me ) {
-		children.push( meRoute.addChildren( meChildRoutes ) );
+		children.push( ...createMeRoutes() );
 	}
 
 	return rootRoute.addChildren( children );
