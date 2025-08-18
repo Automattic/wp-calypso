@@ -1,4 +1,5 @@
 import { __experimentalVStack as VStack } from '@wordpress/components';
+import clsx from 'clsx';
 import { useCallback, useState, useMemo, useLayoutEffect } from 'react';
 import { Cart } from '../components/cart';
 import { SearchBar } from '../components/search-bar';
@@ -9,7 +10,7 @@ import type { DomainSearchProps } from './types';
 
 import './style.scss';
 
-export const DomainSearch = ( { initialQuery, cart }: DomainSearchProps ) => {
+export const DomainSearch = ( { className, initialQuery, cart }: DomainSearchProps ) => {
 	const [ isFullCartOpen, setIsFullCartOpen ] = useState( false );
 	const [ query, setQuery ] = useState( initialQuery ?? '' );
 
@@ -57,7 +58,7 @@ export const DomainSearch = ( { initialQuery, cart }: DomainSearchProps ) => {
 
 	return (
 		<DomainSearchContext.Provider value={ contextValue }>
-			<div className="domain-search">{ getContent() }</div>
+			<div className={ clsx( 'domain-search', className ) }>{ getContent() }</div>
 		</DomainSearchContext.Provider>
 	);
 };

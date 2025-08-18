@@ -17,6 +17,7 @@ export interface DomainSearchCart {
 }
 
 export interface DomainSearchProps {
+	className?: string;
 	initialQuery?: string;
 	cart: DomainSearchCart;
 }

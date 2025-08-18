@@ -11,6 +11,8 @@ import { domainRegistration, updatePrivacyForDomain } from '../../../lib/cart-va
 import { shoppingCartManagerClient } from '../../app/shopping-cart';
 import PageLayout from '../../components/page-layout';
 
+import './style.scss';
+
 const wpcomCartToDomainSearchCart = ( domain: ResponseCartProduct ) => {
 	const [ domainName, ...tld ] = domain.meta.split( '.' );
 
@@ -83,7 +85,7 @@ const DomainSearchWithCart = () => {
 		};
 	}, [ responseCart.products, responseCart.currency, addProductsToCart, removeProductFromCart ] );
 
-	return <DomainSearch cart={ cart } />;
+	return <DomainSearch className="dashboard-domain-search" cart={ cart } />;
 };
 
 export default function DomainPurchase() {
