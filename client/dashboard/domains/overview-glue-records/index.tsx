@@ -1,6 +1,6 @@
 import { isMobile } from '@automattic/viewport';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { Link, useRouter } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
@@ -44,8 +44,7 @@ const DEFAULT_LAYOUTS = {
 };
 
 function DomainGlueRecords() {
-	const router = useRouter();
-
+	const navigate = useNavigate();
 	const { domainName } = domainRoute.useParams();
 	const { data: glueRecordsData, isLoading } = useQuery( domainGlueRecordsQuery( domainName ) );
 	const deleteMutation = useMutation( domainGlueRecordDeleteMutation( domainName ) );
@@ -58,7 +57,7 @@ function DomainGlueRecords() {
 				label: __( 'Edit' ),
 				callback: ( items ) => {
 					const item = items[ 0 ];
-					router.navigate( {
+					navigate( {
 						to: domainGlueRecordsEditRoute.fullPath,
 						params: { domainName, nameServer: item?.nameserver },
 					} );

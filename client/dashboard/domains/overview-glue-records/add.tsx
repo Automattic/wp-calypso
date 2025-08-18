@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
@@ -11,7 +11,7 @@ import DomainGlueRecordsForm from './form';
 import type { FormData } from './form';
 
 export default function AddDomainGlueRecords() {
-	const router = useRouter();
+	const navigate = useNavigate();
 	const { domainName } = domainRoute.useParams();
 	const createMutation = useMutation( domainGlueRecordCreateMutation( domainName ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
@@ -27,7 +27,7 @@ export default function AddDomainGlueRecords() {
 				createSuccessNotice( __( 'Glue record created successfully.' ), {
 					type: 'snackbar',
 				} );
-				router.navigate( {
+				navigate( {
 					to: domainGlueRecordsRoute.fullPath,
 					params: { domainName },
 				} );

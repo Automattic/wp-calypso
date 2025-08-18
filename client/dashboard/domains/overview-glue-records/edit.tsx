@@ -1,5 +1,5 @@
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { notFound, useRouter } from '@tanstack/react-router';
+import { notFound, useNavigate } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -15,7 +15,7 @@ import DomainGlueRecordsForm from './form';
 import type { FormData } from './form';
 
 export default function EditDomainGlueRecords() {
-	const router = useRouter();
+	const navigate = useNavigate();
 	const { domainName, nameServer } = domainRoute.useParams();
 	const { data: glueRecordsData } = useQuery( domainGlueRecordsQuery( domainName ) );
 	const updateMutation = useMutation( domainGlueRecordUpdateMutation( domainName ) );
@@ -47,7 +47,7 @@ export default function EditDomainGlueRecords() {
 				createSuccessNotice( __( 'Glue record updated successfully.' ), {
 					type: 'snackbar',
 				} );
-				router.navigate( {
+				navigate( {
 					to: domainGlueRecordsRoute.fullPath,
 					params: { domainName },
 				} );
