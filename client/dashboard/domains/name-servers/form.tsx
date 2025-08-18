@@ -187,21 +187,36 @@ export default function NameServersForm( {
 		[ createNameServerField, isBusy, showUpsellNudge, domainName, domainSiteSlug ]
 	);
 
+	const getFormNameServersValue = useCallback( () => {
+		return Array.from(
+			{ length: MAX_NAME_SERVERS_LENGTH },
+			( _, i ) => formData[ `nameServer${ i + 1 }` as NameServerKey ]
+		).filter( Boolean );
+	}, [ formData ] );
+
 	const handleSubmit = useCallback(
 		( e: React.FormEvent ) => {
 			e.preventDefault();
-
-			// Get all nameServer values dynamically
-			const nameServerValues = Array.from(
-				{ length: MAX_NAME_SERVERS_LENGTH },
-				( _, i ) => formData[ `nameServer${ i + 1 }` as NameServerKey ]
-			).filter( Boolean );
-			onSubmit( nameServerValues );
+			onSubmit( getFormNameServersValue() );
 		},
-		[ formData, onSubmit ]
+		[ onSubmit, getFormNameServersValue ]
 	);
 
-	const isFormValid = isItemValid( formData, fields, formObj );
+	const isNameServersChanged = useCallback( () => {
+		const currentNameServers = getFormNameServersValue();
+		// Different lengths means there's definitely a change
+		if ( currentNameServers.length !== nameServers.length ) {
+			return true;
+		}
+		// Check if every nameserver matches in the same position
+		return currentNameServers.some(
+			( ns, index ) => ns.toLowerCase() !== ( nameServers[ index ] || '' ).toLowerCase()
+		);
+	}, [ getFormNameServersValue, nameServers ] );
+
+	const canSubmit = useMemo( () => {
+		return ! isBusy && isItemValid( formData, fields, formObj ) && isNameServersChanged();
+	}, [ isBusy, formData, fields, formObj, isNameServersChanged ] );
 
 	return (
 		<form onSubmit={ handleSubmit }>
@@ -219,7 +234,7 @@ export default function NameServersForm( {
 						__next40pxDefaultSize
 						variant="primary"
 						type="submit"
-						disabled={ isBusy || ! isFormValid }
+						disabled={ ! canSubmit }
 						isBusy={ isBusy }
 					>
 						{ __( 'Save' ) }
