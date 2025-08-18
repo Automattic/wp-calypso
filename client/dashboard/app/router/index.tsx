@@ -7,25 +7,7 @@ import { profileQuery } from '../queries/me-profile';
 import { userPurchasesQuery } from '../queries/me-purchases';
 import { sitesQuery } from '../queries/sites';
 import { queryClient } from '../query-client';
-import {
-	domainsRoute,
-	domainRoute,
-	domainChildRoutes,
-	domainOverviewRoute,
-	domainDnsRoute,
-	domainDnsAddRoute,
-	domainDnsEditRoute,
-	domainForwardingsRoute,
-	domainForwardingAddRoute,
-	domainForwardingEditRoute,
-	domainContactInfoRoute,
-	domainNameServersRoute,
-	domainGlueRecordsRoute,
-	domainGlueRecordsAddRoute,
-	domainGlueRecordsEditRoute,
-	domainDnssecRoute,
-	domainTransferRoute,
-} from './domain-routes';
+import { domainsRoute, domainRoute, domainChildRoutes } from './domains';
 import { rootRoute } from './root';
 import {
 	sitesRoute,
@@ -374,20 +356,6 @@ export {
 	siteSettingsWebApplicationFirewallRoute,
 	domainsRoute,
 	domainRoute,
-	domainOverviewRoute,
-	domainDnsRoute,
-	domainDnsAddRoute,
-	domainDnsEditRoute,
-	domainForwardingsRoute,
-	domainForwardingAddRoute,
-	domainForwardingEditRoute,
-	domainContactInfoRoute,
-	domainNameServersRoute,
-	domainGlueRecordsRoute,
-	domainGlueRecordsAddRoute,
-	domainGlueRecordsEditRoute,
-	domainDnssecRoute,
-	domainTransferRoute,
 	emailsRoute,
 	meRoute,
 	profileRoute,
