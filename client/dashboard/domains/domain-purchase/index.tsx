@@ -7,7 +7,7 @@ import {
 	useShoppingCart,
 } from '@automattic/shopping-cart';
 import { ComponentProps, useMemo } from 'react';
-import { domainRegistration, updatePrivacyForDomain } from '../../../lib/cart-values/cart-items';
+import { domainRegistration, updatePrivacyForDomain } from 'calypso/lib/cart-values/cart-items';
 import { shoppingCartManagerClient } from '../../app/shopping-cart';
 import PageLayout from '../../components/page-layout';
 
