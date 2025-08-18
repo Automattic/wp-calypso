@@ -1,6 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, CardFooter } from '@wordpress/components';
-import { useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
@@ -14,10 +13,8 @@ export const HelpCenterContactButton = () => {
 	const { sectionName } = useHelpCenterContext();
 	const redirectToWpcom = url === 'https://wordpress.com/help/contact';
 	const navigate = useNavigate();
-	const [ isCreatingChat, setIsCreatingChat ] = useState( false );
 
-	const handleClick = async () => {
-		setIsCreatingChat( true );
+	const handleClick = () => {
 		recordTracksEvent( 'calypso_inlinehelp_morehelp_click', {
 			force_site_id: true,
 			location: 'help-center',
@@ -25,7 +22,6 @@ export const HelpCenterContactButton = () => {
 			button_type: 'Still need help?',
 		} );
 
-		setIsCreatingChat( false );
 		const to = redirectToWpcom ? { pathname: url } : url;
 		navigate( to );
 	};
@@ -33,7 +29,6 @@ export const HelpCenterContactButton = () => {
 	return (
 		<Button
 			onClick={ handleClick }
-			disabled={ isCreatingChat }
 			variant="secondary"
 			className="button help-center-contact-page__button"
 			__next40pxDefaultSize
