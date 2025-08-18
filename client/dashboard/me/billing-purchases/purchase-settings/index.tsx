@@ -54,6 +54,7 @@ import {
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isMarketplaceTemporarySitePurchase,
+	isJetpackTemporarySitePurchase,
 	isAkismetProduct,
 	isAkismetFreeProduct,
 } from '../../../utils/purchase';
@@ -120,6 +121,14 @@ function getExpiredNewPlanUrl( purchase: Purchase ): string {
 	return `/plans/${ purchase.site_slug }`;
 }
 
+function canPurchaseBeUpgraded( purchase: Purchase ): boolean {
+	return Boolean(
+		purchase.is_upgradable &&
+			getUpgradeUrl( purchase ) &&
+			! isJetpackTemporarySitePurchase( purchase )
+	);
+}
+
 function upgradePurchase( upgradeUrl: string ): void {
 	window.location.href = upgradeUrl;
 }
@@ -152,7 +161,7 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 		<DropdownMenu icon={ moreVertical } label={ __( 'Quick actions' ) }>
 			{ () => (
 				<MenuGroup>
-					{ purchase.is_upgradable && upgradeUrl && (
+					{ canPurchaseBeUpgraded( purchase ) && upgradeUrl && (
 						<MenuItem
 							onClick={ () => {
 								recordTracksEvent( 'calypso_purchases_upgrade_plan', {
@@ -214,11 +223,10 @@ function PurchaseSettingsActions( {
 	const canCancel = purchase.is_cancelable;
 	const { recordTracksEvent } = useAnalytics();
 	// FIXME: show re-enable button (see subsReEnableText)
-	// FIXME: prevent rendering upgrade button if Jetpack temp site
 	return (
 		<VStack spacing={ 4 }>
 			<ActionList>
-				{ purchase.is_upgradable && upgradeUrl && (
+				{ canPurchaseBeUpgraded( purchase ) && upgradeUrl && (
 					<ActionList.ActionItem
 						title={ __( 'Upgrade subscription' ) }
 						description={ __( 'Find the best fit for your needs.' ) }
@@ -289,7 +297,7 @@ function PurchaseSettingsActions( {
 								variant="secondary"
 								size="compact"
 								onClick={ () => ( {
-									// FIXME
+									// FIXME: add cancel and downgrade action
 								} ) }
 							>
 								{ __( 'Downgrade or cancel' ) }
@@ -306,7 +314,7 @@ function PurchaseSettingsActions( {
 								variant="secondary"
 								size="compact"
 								onClick={ () => ( {
-									// FIXME
+									// FIXME: add remove action
 								} ) }
 							>
 								{ __( 'Remove subscription' ) }
@@ -534,7 +542,7 @@ export default function PurchaseSettings() {
 						actions={
 							site?.options?.admin_url && (
 								<>
-									{ purchase.is_upgradable && upgradeUrl && (
+									{ canPurchaseBeUpgraded( purchase ) && upgradeUrl && (
 										<Button __next40pxDefaultSize variant="primary" href={ upgradeUrl }>
 											{ __( 'Upgrade' ) }
 										</Button>
