@@ -1,9 +1,13 @@
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { Button, __experimentalVStack as VStack } from '@wordpress/components';
+import {
+	Button,
+	__experimentalVStack as VStack,
+	__experimentalConfirmDialog as ConfirmDialog,
+} from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { domainQuery, disconnectDomainMutation } from '../../app/queries/domain';
 import { sitePurchaseQuery } from '../../app/queries/site-purchases';
 import { domainRoute } from '../../app/router';
@@ -24,8 +28,9 @@ export default function Actions() {
 		disconnectDomainMutation( domainName )
 	);
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const [ isDisconnectDialogOpen, setIsDisconnectDialogOpen ] = useState( false );
 
-	const onDisconnectClick = useCallback(
+	const onDisconnectConfirm = useCallback(
 		() =>
 			disconnectDomain( undefined, {
 				onSuccess: () =>
@@ -85,7 +90,7 @@ export default function Actions() {
 								variant="secondary"
 								isBusy={ isDisconnecting }
 								disabled={ isDisconnecting }
-								onClick={ onDisconnectClick }
+								onClick={ () => setIsDisconnectDialogOpen( true ) }
 							>
 								{ __( 'Detach' ) }
 							</Button>
@@ -102,6 +107,16 @@ export default function Actions() {
 					}
 				/>
 			</ActionList>
+
+			{ isDisconnectDialogOpen && (
+				<ConfirmDialog
+					onConfirm={ onDisconnectConfirm }
+					onCancel={ () => setIsDisconnectDialogOpen( false ) }
+					confirmButtonText={ __( 'Detach' ) }
+				>
+					{ __( 'Are you sure you want to detach this domain?' ) }
+				</ConfirmDialog>
+			) }
 		</VStack>
 	);
 }
