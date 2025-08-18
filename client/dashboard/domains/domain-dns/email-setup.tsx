@@ -10,7 +10,7 @@ export default function EmailSetup() {
 	const tabs = [
 		{
 			name: 'google-workspace',
-			title: __( 'Google Workspace' ),
+			title: 'Google Workspace',
 			content: (
 				<EmailSetupForm
 					label="Google Workspace"
@@ -27,7 +27,7 @@ export default function EmailSetup() {
 		},
 		{
 			name: 'icloud-mail',
-			title: __( 'iCloud Mail' ),
+			title: 'iCloud Mail',
 			content: (
 				<EmailSetupForm
 					key="icloud-mail"
@@ -44,7 +44,7 @@ export default function EmailSetup() {
 		},
 		{
 			name: 'office-365',
-			title: __( 'Office 365' ),
+			title: 'Office 365',
 			content: (
 				<EmailSetupForm
 					key="office-365"
@@ -66,7 +66,7 @@ export default function EmailSetup() {
 		},
 		{
 			name: 'zoho-mail',
-			title: __( 'Zoho Mail' ),
+			title: 'Zoho Mail',
 			content: (
 				<EmailSetupForm
 					key="zoho-mail"
