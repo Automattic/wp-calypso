@@ -75,7 +75,7 @@ export default function HeaderStagingSiteButton( {
 				successNotice( __( 'Staging site added.' ), { id: stagingSiteAddSuccessNoticeId } )
 			);
 		}
-	}, [ __, dispatch, queryClient, siteId, isCreatingStagingSite, transferStatus ] );
+	}, [ __, dispatch, queryClient, siteId, transferStatus, isCreatingStagingSite ] );
 
 	const removeAllNotices = useCallback( () => {
 		dispatch( removeNotice( 'staging-site-add-success' ) );
