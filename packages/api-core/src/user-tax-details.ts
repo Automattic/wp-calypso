@@ -2,24 +2,22 @@ import wpcom from 'calypso/lib/wp';
 import type { Field, NormalizedField } from '@wordpress/dataviews';
 
 export interface UserTaxFormData {
-	// was: VatFormData
 	country: string;
 	id: string;
 	address: string;
 	name: string;
 }
 
-// export type UserTaxDetails { // was: VatDetails
-// 	country?: string;
-// 	id?: string;
-// 	address?: string;
-// 	name?: string;
-// 	isForBusiness?: boolean | null;
-// 	can_user_edit?: boolean | false;
-// };
+export interface UserTaxDetails {
+	country?: string | null;
+	id?: string | null;
+	address?: string | null;
+	name?: string | null;
+	isForBusiness?: boolean | null;
+	can_user_edit?: boolean | false;
+}
 
 export type UserTaxField = Field< UserTaxFormData > & {
-	// was: VatField
 	isDisabled?: boolean;
 	isVatAlreadySet?: boolean;
 	canUserEdit?: boolean;
@@ -27,7 +25,6 @@ export type UserTaxField = Field< UserTaxFormData > & {
 };
 
 export type UserTaxNormalizedField = NormalizedField< UserTaxFormData > & {
-	// was: VatNormalizedField
 	isDisabled?: boolean;
 	isVatAlreadySet?: boolean;
 	canUserEdit?: boolean;
@@ -35,7 +32,6 @@ export type UserTaxNormalizedField = NormalizedField< UserTaxFormData > & {
 };
 
 export interface UserTaxFormControlProps {
-	// was: VatFormControlProps
 	data: UserTaxFormData;
 	field: UserTaxNormalizedField;
 	onChange: ( edits: Partial< UserTaxFormData > ) => void;
