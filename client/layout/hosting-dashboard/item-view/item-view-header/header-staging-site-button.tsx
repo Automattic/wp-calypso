@@ -8,7 +8,6 @@ import { useCallback, useMemo, useEffect } from 'react';
 import { siteByIdQuery } from 'calypso/dashboard/app/queries/site';
 import { siteLatestAtomicTransferQuery } from 'calypso/dashboard/app/queries/site-atomic-transfers';
 import { isAtomicTransferInProgress } from 'calypso/dashboard/utils/site-atomic-transfers';
-import { hasManageOptions } from 'calypso/dashboard/utils/site-capabilities';
 import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
 import { useAddStagingSiteMutation } from 'calypso/sites/staging-site/hooks/use-add-staging-site';
 import { useCheckStagingSiteStatus } from 'calypso/sites/staging-site/hooks/use-check-staging-site-status';
@@ -81,9 +80,7 @@ export default function HeaderStagingSiteButton( {
 
 	const { data: stagingSite } = useQuery( {
 		...siteByIdQuery( stagingSiteId ?? 0 ),
-		refetchInterval: ( query ) => {
-			return hasManageOptions( query.state.data ) ? false : 5000;
-		},
+		refetchInterval: 5000,
 		enabled: !! stagingSiteId,
 	} );
 
