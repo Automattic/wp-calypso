@@ -5,6 +5,7 @@ import { Cart } from '../components/cart';
 import { SearchBar } from '../components/search-bar';
 import { SearchForm } from '../components/search-form';
 import { SearchResults } from '../components/search-results';
+import { domainSuggestionsQuery } from '../queries/suggestions';
 import { DEFAULT_CONTEXT_VALUE, DomainSearchContext } from './context';
 import type { DomainSearchProps } from './types';
 
@@ -27,6 +28,9 @@ export const DomainSearch = ( { className, initialQuery, cart, events }: DomainS
 			events: {
 				...DEFAULT_CONTEXT_VALUE.events,
 				...events,
+			},
+			queries: {
+				domainSuggestions: domainSuggestionsQuery,
 			},
 			cart,
 			isFullCartOpen,

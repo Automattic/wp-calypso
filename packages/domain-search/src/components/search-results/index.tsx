@@ -2,11 +2,10 @@ import { useQuery } from '@tanstack/react-query';
 import { useDomainSearch } from '../../page/context';
 import { DomainSuggestion, DomainSuggestionPrice, DomainSuggestionsList } from '../../ui';
 import { DomainSuggestionCTA } from '../suggestion-cta';
-import { domainSuggestionsQuery } from './queries';
 
 export const SearchResults = () => {
-	const { query } = useDomainSearch();
-	const { data: suggestions } = useQuery( domainSuggestionsQuery( { query } ) );
+	const { query, queries } = useDomainSearch();
+	const { data: suggestions } = useQuery( queries.domainSuggestions( { query } ) );
 
 	return (
 		<DomainSuggestionsList>

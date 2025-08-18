@@ -1,11 +1,11 @@
 import { useMutation } from '@tanstack/react-query';
 import { useDomainSearch } from '../../page/context';
+import { DomainSuggestion } from '../../queries/suggestions';
 import {
 	DomainSuggestionContinueCTA,
 	DomainSuggestionErrorCTA,
 	DomainSuggestionPrimaryCTA,
 } from '../../ui';
-import { DomainSuggestion } from '../search-results/queries';
 
 export interface DomainSuggestionCTAProps {
 	suggestion: DomainSuggestion;

@@ -1,9 +1,13 @@
 import { createContext, useContext } from 'react';
+import { domainSuggestionsQuery } from '../queries/suggestions';
 import type { DomainSearchCart, DomainSearchEvents } from './types';
 
 interface DomainSearchContextType {
 	events: DomainSearchEvents;
 	cart: DomainSearchCart;
+	queries: {
+		domainSuggestions: typeof domainSuggestionsQuery;
+	};
 	isFullCartOpen: boolean;
 	closeFullCart: () => void;
 	openFullCart: () => void;
@@ -16,6 +20,9 @@ const noop = () => {};
 export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 	events: {
 		onContinue: noop,
+	},
+	queries: {
+		domainSuggestions: domainSuggestionsQuery,
 	},
 	cart: {
 		items: [],
