@@ -12,13 +12,11 @@ import {
 } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useMemo, useEffect, useState } from '@wordpress/element';
-import { decodeEntities } from '@wordpress/html-entities';
 import {
 	lineSolid,
 	moreVertical,
 	close,
 	chevronUp,
-	page,
 	Icon,
 	comment,
 	commentContent,
@@ -28,8 +26,7 @@ import {
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { useLocation, useSearchParams, useNavigate } from 'react-router-dom';
-import { usePostByUrl } from '../hooks';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useResetSupportInteraction } from '../hooks/use-reset-support-interaction';
 import { HELP_CENTER_STORE } from '../stores';
 import { BackButton } from './back-button';
@@ -43,23 +40,6 @@ export const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 const { Menu } = unlock( componentsPrivateApis );
 
 import './help-center-header.scss';
-
-export function ArticleTitle() {
-	const { __ } = useI18n();
-	const [ searchParams ] = useSearchParams();
-	const postUrl = searchParams.get( 'link' ) || '';
-
-	const { data: post } = usePostByUrl( postUrl );
-
-	return (
-		<>
-			<Icon icon={ page } />
-			<span className="help-center-header__article-title">
-				{ ( post && decodeEntities( post?.title ) ) ?? __( 'Help Center', __i18n_text_domain__ ) }
-			</span>
-		</>
-	);
-}
 
 const SupportModeTitle = () => {
 	const { __ } = useI18n();
@@ -190,7 +170,7 @@ const useHeaderText = () => {
 				return <SupportModeTitle />;
 			case '/post':
 			case '/post/':
-				return <ArticleTitle />;
+				return __( 'Support guide', __i18n_text_domain__ );
 			case '/success':
 				return __( 'Message Submitted', __i18n_text_domain__ );
 			case '/odie':
