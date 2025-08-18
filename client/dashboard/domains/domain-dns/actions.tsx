@@ -8,7 +8,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useMemo } from 'react';
 import { domainDnsMutation } from '../../app/queries/domain-dns-records';
 import { domainDnsEditRoute } from '../../app/router';
-import { domainRoute } from '../../app/routes/domain-routes';
+import { domainRoute } from '../../app/router/domain-routes';
 import type { DnsRecord } from '../../data/domain-dns-records';
 import type { Action } from '@wordpress/dataviews';
 

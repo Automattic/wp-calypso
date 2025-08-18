@@ -11,7 +11,7 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { rotateLeft } from '@wordpress/icons';
-import { siteBackupRestoreRoute } from '../../app/router';
+import { siteBackupRestoreRoute } from '../../app/router/sites';
 import { useFormattedTime } from '../../components/formatted-time';
 import { SectionHeader } from '../../components/section-header';
 import { gridiconToWordPressIcon } from '../../utils/gridicons';

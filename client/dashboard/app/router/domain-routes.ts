@@ -5,19 +5,8 @@ import { domainForwardingQuery } from '../queries/domain-forwarding';
 import { domainGlueRecordsQuery } from '../queries/domain-glue-records';
 import { domainsQuery } from '../queries/domains';
 import { queryClient } from '../query-client';
+import { rootRoute } from './root';
 import type { AnyRoute } from '@tanstack/react-router';
-
-// This will be passed in from the main router to avoid circular imports
-let siteRoute: AnyRoute;
-let rootRoute: AnyRoute;
-
-export const setRootRoute = ( route: AnyRoute ) => {
-	rootRoute = route;
-};
-
-export const setSiteRoute = ( route: AnyRoute ) => {
-	siteRoute = route;
-};
 
 // Standalone domains route - requires rootRoute
 export const domainsRoute = createRoute( {
@@ -27,18 +16,6 @@ export const domainsRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../domains' ).then( ( d ) =>
 		createLazyRoute( 'domains' )( {
-			component: d.default,
-		} )
-	)
-);
-
-// Site domains route
-export const siteDomainsRoute = createRoute( {
-	getParentRoute: () => siteRoute,
-	path: 'domains',
-} ).lazy( () =>
-	import( '../../sites/domains' ).then( ( d ) =>
-		createLazyRoute( 'site-domains' )( {
 			component: d.default,
 		} )
 	)

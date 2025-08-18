@@ -8,7 +8,7 @@ import {
 } from '@wordpress/components';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronLeft, chevronRight, rotateLeft } from '@wordpress/icons';
-import { siteBackupRestoreRoute, siteBackupsRoute } from '../../app/router';
+import { siteBackupRestoreRoute, siteBackupsRoute } from '../../app/router/sites';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
