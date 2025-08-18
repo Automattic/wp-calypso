@@ -125,15 +125,13 @@ export default function DnsImportDialog( {
 		const headerLabel = `${ numberOfSelectedRecords !== 1 ? 's' : '' } selected`;
 
 		return (
-			<div style={ { marginBottom: '16px' } }>
-				<CheckboxControl
-					__nextHasNoMarginBottom
-					checked={ numberOfSelectedRecords === records.length }
-					indeterminate={ numberOfSelectedRecords > 0 && numberOfSelectedRecords < records.length }
-					onChange={ toggleAllRecords }
-					label={ `${ numberOfSelectedRecords } record${ headerLabel }` }
-				/>
-			</div>
+			<CheckboxControl
+				__nextHasNoMarginBottom
+				checked={ numberOfSelectedRecords === records.length }
+				indeterminate={ numberOfSelectedRecords > 0 && numberOfSelectedRecords < records.length }
+				onChange={ toggleAllRecords }
+				label={ `${ numberOfSelectedRecords } record${ headerLabel }` }
+			/>
 		);
 	};
 
@@ -163,13 +161,11 @@ export default function DnsImportDialog( {
 				</Text>
 
 				{ records.length > 0 ? (
-					<>
+					<VStack spacing={ 2 }>
 						{ renderHeader() }
 						<Divider />
-						<div style={ { maxHeight: '300px', overflowY: 'auto' } }>
-							{ records.map( ( record, index ) => renderRecordRow( record, index ) ) }
-						</div>
-					</>
+						{ records.map( ( record, index ) => renderRecordRow( record, index ) ) }
+					</VStack>
 				) : (
 					<Text>{ __( "We couldn't find valid DNS records to import." ) }</Text>
 				) }
