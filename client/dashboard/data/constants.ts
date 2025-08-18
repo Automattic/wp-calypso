@@ -180,3 +180,9 @@ export const ProductUpgradeMap: Record< string, string > = {
 	[ JetpackPlans.PLAN_JETPACK_GROWTH_YEARLY ]: JetpackPlans.PLAN_JETPACK_COMPLETE,
 	[ JetpackPlans.PLAN_JETPACK_GROWTH_MONTHLY ]: JetpackPlans.PLAN_JETPACK_COMPLETE_MONTHLY,
 };
+
+export const DomainProductSlugs = {
+	TRANSFER_IN: 'domain_transfer',
+	DOTCOM_DOMAIN_REGISTRATION: 'domain_reg',
+	DOMAIN_MOVE_INTERNAL: 'domain_move_internal',
+} as const;
