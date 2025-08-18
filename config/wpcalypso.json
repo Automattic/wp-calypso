@@ -46,6 +46,7 @@
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
 		"domains/ui-redesign": false,
+		"domain-search-rewrite": false,
 		"email-accounts/enabled": true,
 		"cookie-banner": true,
 		"google-my-business": true,

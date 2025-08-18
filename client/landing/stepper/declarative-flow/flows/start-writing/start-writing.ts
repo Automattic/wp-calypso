@@ -15,6 +15,7 @@ import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { getStepFromURL } from 'calypso/landing/stepper/utils/get-flow-from-url';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
+import { shouldRenderRewrittenDomainSearch } from 'calypso/lib/domains/should-render-rewritten-domain-search';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { shouldShowLaunchpadFirst } from 'calypso/state/selectors/should-show-launchpad-first';
@@ -36,7 +37,7 @@ const startWriting: Flow = {
 			STEPS.SITE_PICKER,
 			STEPS.SITE_CREATION_STEP,
 			STEPS.PROCESSING,
-			STEPS.DOMAINS,
+			shouldRenderRewrittenDomainSearch() ? STEPS.DOMAIN_SEARCH : STEPS.DOMAINS,
 			STEPS.USE_MY_DOMAIN,
 			STEPS.PLANS,
 			STEPS.SETUP_BLOG,

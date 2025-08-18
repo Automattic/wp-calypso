@@ -116,8 +116,7 @@ export function formDataToSubmitData(
 	const { target_host, target_path, is_secure } = parseTargetUrl( formData.targetUrl );
 
 	const submitData: DomainForwardingSaveData = {
-		subdomain:
-			formData.sourceType === 'subdomain' ? formData.subdomain.trim() || undefined : undefined,
+		subdomain: formData.sourceType === '' ? formData.subdomain.trim() || undefined : undefined,
 		target_host,
 		target_path,
 		is_secure,

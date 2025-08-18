@@ -12,13 +12,7 @@ const parameters = {
 	},
 	options: {
 		storySort: ( a, b ) => {
-			const sectionOrder = [
-				'Validated Form Controls',
-				'WP Overrides',
-				'Unpublished',
-				'Deprecated',
-				'Unaudited',
-			];
+			const sectionOrder = [ 'WP Overrides', 'Unpublished', 'Deprecated', 'Unaudited' ];
 			const aIndex = sectionOrder.findIndex( ( prefix ) => a.title.startsWith( prefix ) );
 			const bIndex = sectionOrder.findIndex( ( prefix ) => b.title.startsWith( prefix ) );
 
