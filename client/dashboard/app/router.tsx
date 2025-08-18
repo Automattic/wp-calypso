@@ -68,6 +68,7 @@ import {
 	domainGlueRecordsEditRoute,
 	domainDnssecRoute,
 	domainTransferRoute,
+	domainPurchaseRoute,
 } from './routes/domain-routes';
 import type { AppConfig } from './context';
 import type { AnyRoute } from '@tanstack/react-router';
@@ -826,6 +827,7 @@ const createRouteTree = ( config: AppConfig ) => {
 
 	if ( config.supports.domains ) {
 		children.push( domainsRoute );
+		children.push( domainPurchaseRoute );
 		children.push( domainRoute.addChildren( domainChildRoutes ) );
 	}
 

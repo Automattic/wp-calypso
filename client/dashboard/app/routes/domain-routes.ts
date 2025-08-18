@@ -32,6 +32,17 @@ export const domainsRoute = createRoute( {
 	)
 );
 
+export const domainPurchaseRoute = createRoute( {
+	getParentRoute: () => rootRoute,
+	path: 'domains/purchase',
+} ).lazy( () =>
+	import( '../../domains/domain-purchase' ).then( ( d ) =>
+		createLazyRoute( 'domain-purchase' )( {
+			component: d.default,
+		} )
+	)
+);
+
 // Site domains route
 export const siteDomainsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
