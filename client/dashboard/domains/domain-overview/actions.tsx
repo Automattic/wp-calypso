@@ -26,7 +26,11 @@ export default function Actions() {
 						title={ __( 'Renew' ) }
 						description={ __( 'Renew domain registration.' ) }
 						actions={
-							<Button variant="secondary" href={ getDomainRenewalUrl( domain, purchase ) }>
+							<Button
+								size="compact"
+								variant="secondary"
+								href={ getDomainRenewalUrl( domain, purchase ) }
+							>
 								{ __( 'Renew' ) }
 							</Button>
 						}
@@ -49,13 +53,17 @@ export default function Actions() {
 				<ActionList.ActionItem
 					title={ __( 'Detach' ) }
 					description={ __( 'Detach this domain from the site.' ) }
-					actions={ <Button variant="secondary">{ __( 'Detach' ) }</Button> }
+					actions={
+						<Button size="compact" variant="secondary">
+							{ __( 'Detach' ) }
+						</Button>
+					}
 				/>
 				<ActionList.ActionItem
 					title={ __( 'Delete' ) }
 					description={ __( 'Remove this domain permanently.' ) }
 					actions={
-						<Button variant="secondary" isDestructive>
+						<Button size="compact" variant="secondary" isDestructive>
 							{ __( 'Delete' ) }
 						</Button>
 					}
