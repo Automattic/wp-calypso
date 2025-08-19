@@ -101,18 +101,16 @@ function A4ACancelSubscriptionContent( { subscription }: { subscription: Subscri
 			: products?.find( ( product ) => product.product_id === subscription.product_id )?.name ?? '';
 
 	if ( storeSubscription ) {
-		const refundPeriodDays = storeSubscription.billing_interval_unit === 'month' ? 7 : 14;
 		const expiryDate = storeSubscription.expiry ?? '';
 		return (
 			<>
 				<div>
 					{ storeSubscription.is_refundable
 						? translate(
-								'{{b}}%(productName)s{{/b}} will be canceled and removed immediately. Since you are within the {{b}}%(refundPeriodDays)d money-back{{/b}} period, you will be refunded.',
+								'{{b}}%(productName)s{{/b}} will be canceled and removed immediately. Since you are within the money-back period, you will be refunded.',
 								{
 									args: {
 										productName,
-										refundPeriodDays,
 									},
 									components: {
 										b: <b />,
@@ -138,15 +136,19 @@ function A4ACancelSubscriptionContent( { subscription }: { subscription: Subscri
 				</div>
 				<p>{ translate( 'Are you sure you want to cancel?' ) }</p>
 				<p>
-					<a
-						href={ localizeUrl(
-							'https://wordpress.com/support/manage-purchases/cancel-a-purchase/'
-						) }
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						{ translate( 'Learn more about how product cancellations work.' ) }
-					</a>
+					{ translate( '{{link}}Learn more{{/link}} about how product cancellations work.', {
+						components: {
+							link: (
+								<a
+									href={ localizeUrl(
+										'https://wordpress.com/support/manage-purchases/cancel-a-purchase/'
+									) }
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
+						},
+					} ) }
 				</p>
 			</>
 		);
