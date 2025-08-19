@@ -98,7 +98,7 @@ export default function DomainGlueRecordsForm( {
 				},
 			},
 		],
-		[ domainName ]
+		[ domainName, isEdit ]
 	);
 
 	const form = {
