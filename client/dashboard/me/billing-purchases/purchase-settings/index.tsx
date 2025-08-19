@@ -57,7 +57,8 @@ import {
 	isAkismetProduct,
 } from '../../../utils/purchase';
 import { encodeProductForUrl } from '../../../utils/wpcom-checkout';
-import { getPurchaseUrlForId } from '../urls';
+import { PurchasePaymentMethod } from '../purchase-payment-method';
+import { getPurchaseUrlForId, getAddPaymentMethodUrlFor } from '../urls';
 import type { User } from '../../../data/me';
 import type { Purchase } from '../../../data/purchase';
 import type { Field } from '@wordpress/dataviews';
@@ -545,6 +546,11 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 							{ error.message }
 						</Notice>
 					) }
+
+					<PurchasePaymentMethod
+						purchase={ purchase }
+						getAddPaymentMethodUrlFor={ getAddPaymentMethodUrlFor }
+					/>
 				</VStack>
 			</CardBody>
 		</Card>
@@ -619,7 +625,6 @@ export default function PurchaseSettings() {
 		return __( 'Expires' );
 	} )();
 
-	// FIXME: add edit payment method button
 	// FIXME: add Jetpack CRM downloads link (see renderCrmDownloadsNavItem)
 	// FIXME: render reinstall button (see renderReinstall)
 	// FIXME: render pluginList (see renderPluginLabel and getPluginsForSite)
