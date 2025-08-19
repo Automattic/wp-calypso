@@ -77,8 +77,20 @@ const createNameServerField = ( index: number, formData: FormData, isBusy?: bool
 		: baseField;
 };
 
-export const getFormNameServers = ( { useWpcomNameServers, ...nameServers }: FormData ) =>
+const getFormNameServers = ( { useWpcomNameServers, ...nameServers }: FormData ) =>
 	Object.values( nameServers ).filter( Boolean );
+
+const isNameServersChanged = ( formData: FormData, nameServers: string[] ) => {
+	const currentNameServers = getFormNameServers( formData );
+	// Different lengths means there's definitely a change
+	if ( currentNameServers.length !== nameServers.length ) {
+		return true;
+	}
+	// Check if every nameserver matches in the same position
+	return currentNameServers.some(
+		( ns, index ) => ns.toLowerCase() !== ( nameServers[ index ] || '' ).toLowerCase()
+	);
+};
 
 interface Props {
 	domainName: string;
@@ -190,19 +202,10 @@ export default function NameServersForm( {
 		[ onSubmit, formData ]
 	);
 
-	const isNameServersChanged = useCallback( () => {
-		const currentNameServers = getFormNameServers( formData );
-		// Different lengths means there's definitely a change
-		if ( currentNameServers.length !== nameServers.length ) {
-			return true;
-		}
-		// Check if every nameserver matches in the same position
-		return currentNameServers.some(
-			( ns, index ) => ns.toLowerCase() !== ( nameServers[ index ] || '' ).toLowerCase()
-		);
-	}, [ nameServers, formData ] );
-
-	const canSubmit = ! isBusy && isItemValid( formData, fields, formObj ) && isNameServersChanged();
+	const canSubmit =
+		! isBusy &&
+		isItemValid( formData, fields, formObj ) &&
+		isNameServersChanged( formData, nameServers );
 
 	return (
 		<form onSubmit={ handleSubmit }>
