@@ -7,9 +7,9 @@
 
 	// Internal variables
 	--a8c-calendar-outline-focus: 1.5px solid #{theme.$components-color-accent};
-	--a8c-calendar-button-height: 2rem;
-	--a8c-calendar-button-width: 2rem;
-	--a8c-calendar-nav-height: 2rem;
+	--a8c-calendar-button-height: 32px;
+	--a8c-calendar-button-width: 32px;
+	--a8c-calendar-nav-height: 32px;
 
 	// TODO: themify / align to DS tokens
 	--a8c-calendar-range-middle-background-color: color-mix(in srgb, #{theme.$components-color-accent} 4%, transparent);
@@ -176,7 +176,7 @@
 	display: flex;
 	justify-content: center;
 	flex-wrap: wrap;
-	gap: 1rem;
+	gap: 16px;
 	max-width: fit-content;
 }
 
