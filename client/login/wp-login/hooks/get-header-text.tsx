@@ -118,7 +118,7 @@ export function getHeaderText( {
 	}
 
 	if ( action === 'lostpassword' ) {
-		headerText = translate( 'Forgot your password?' );
+		headerText = translate( 'Lost your password?' );
 	} else if ( currentQuery?.lostpassword_flow === 'true' ) {
 		headerText = translate( "You've got mail" );
 	} else if ( oauth2Client ) {

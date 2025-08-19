@@ -60,6 +60,13 @@ module.exports = {
 							'Lodash is not allowed in the dashboard folder. Use native JavaScript methods instead.',
 					},
 				],
+				paths: [
+					{
+						name: '@automattic/components',
+						message:
+							'Do not import from the barrel file. Use specific imports like @automattic/components/src/summary-button instead. This prevents the entire package being bundled into the dashboard.',
+					},
+				],
 			},
 		],
 	},

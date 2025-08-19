@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react';
 import { isSimplifiedOnboarding } from 'calypso/landing/stepper/hooks/use-simplified-onboarding';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { addSurvicate } from 'calypso/lib/analytics/survicate';
+import { shouldRenderRewrittenDomainSearch } from 'calypso/lib/domains/should-render-rewritten-domain-search';
 import { useIsDomainSearchV2Enabled } from 'calypso/lib/domains/use-domain-search-v2';
 import { pathToUrl } from 'calypso/lib/url';
 import {
@@ -55,7 +56,7 @@ const withLocale = ( url: string, locale: string ) => {
 
 function initialize() {
 	const steps = [
-		STEPS.UNIFIED_DOMAINS,
+		shouldRenderRewrittenDomainSearch() ? STEPS.DOMAIN_SEARCH : STEPS.UNIFIED_DOMAINS,
 		STEPS.USE_MY_DOMAIN,
 		STEPS.UNIFIED_PLANS,
 		STEPS.SITE_CREATION_STEP,
@@ -155,6 +156,10 @@ const onboarding: FlowV2< typeof initialize > = {
 			const { slug, providedDependencies } = submittedStep;
 			switch ( slug ) {
 				case 'domains':
+					if ( ! providedDependencies ) {
+						throw new Error( 'No provided dependencies found' );
+					}
+
 					setSiteUrl( providedDependencies.siteUrl as string );
 					setDomain( providedDependencies.suggestion as DomainSuggestion );
 					setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );

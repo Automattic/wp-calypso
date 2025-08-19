@@ -3,23 +3,23 @@ import {
 	fetchDomainDns,
 	updateDomainDns,
 	restoreDefaultEmailRecords,
-	DnsRecord,
+	type DnsRecord,
+	applyDnsTemplate,
+	type DnsTemplateVariables,
 } from '../../data/domain-dns-records';
 import { queryClient } from '../query-client';
 
 export const domainDnsMutation = ( domainName: string ) =>
 	mutationOptions( {
-		mutationFn: ( params: {
+		mutationFn: ( {
+			recordsToAdd,
+			recordsToRemove,
+			restoreDefaultARecords,
+		}: {
 			recordsToAdd?: DnsRecord[];
 			recordsToRemove?: DnsRecord[];
 			restoreDefaultARecords?: boolean;
-		} ) =>
-			updateDomainDns(
-				domainName,
-				params.recordsToAdd,
-				params.recordsToRemove,
-				params.restoreDefaultARecords
-			),
+		} ) => updateDomainDns( domainName, recordsToAdd, recordsToRemove, restoreDefaultARecords ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( {
 				queryKey: [ 'domains', domainName, 'dns' ],
@@ -36,6 +36,24 @@ export const domainDnsQuery = ( domainName: string ) =>
 export const domainDnsEmailMutation = ( domainName: string ) =>
 	mutationOptions( {
 		mutationFn: () => restoreDefaultEmailRecords( domainName ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( {
+				queryKey: [ 'domains', domainName, 'dns' ],
+			} );
+		},
+	} );
+
+export const domainDnsApplyTemplateMutation = ( domainName: string ) =>
+	mutationOptions( {
+		mutationFn: ( {
+			provider,
+			service,
+			variables,
+		}: {
+			provider: string;
+			service: string;
+			variables: DnsTemplateVariables;
+		} ) => applyDnsTemplate( domainName, provider, service, variables ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( {
 				queryKey: [ 'domains', domainName, 'dns' ],

@@ -17,7 +17,7 @@ import type { DomainForwarding } from '../../data/domain-forwarding';
 import type { Field } from '@wordpress/dataviews';
 
 export interface FormData {
-	sourceType: 'root' | 'subdomain';
+	sourceType: 'root' | '';
 	subdomain: string;
 	targetUrl: string;
 	isPermanent: boolean;
@@ -42,7 +42,7 @@ export default function DomainForwardingForm( {
 	const [ formData, setFormData ] = useState< FormData >( () => {
 		if ( ! initialData ) {
 			return {
-				sourceType: 'subdomain',
+				sourceType: '',
 				subdomain: '',
 				targetUrl: '',
 				isPermanent: false,
@@ -51,7 +51,7 @@ export default function DomainForwardingForm( {
 		}
 		const protocol = initialData.is_secure ? 'https://' : 'http://';
 		return {
-			sourceType: initialData.subdomain ? 'subdomain' : 'root',
+			sourceType: initialData.subdomain ? '' : 'root',
 			subdomain: initialData.subdomain || '',
 			targetUrl: `${ protocol }${ initialData.target_host }${ initialData.target_path || '' }`,
 			isPermanent: initialData.is_permanent,
@@ -113,7 +113,7 @@ export default function DomainForwardingForm( {
 				elements: [
 					{
 						label: `${ domainName } subdomain`,
-						value: 'subdomain',
+						value: '',
 					},
 					{
 						label: `${ domainName } root domain`,
@@ -137,7 +137,7 @@ export default function DomainForwardingForm( {
 					},
 				},
 				isVisible: ( item: FormData ) => {
-					return item.sourceType === 'subdomain';
+					return item.sourceType === '';
 				},
 			},
 			{
