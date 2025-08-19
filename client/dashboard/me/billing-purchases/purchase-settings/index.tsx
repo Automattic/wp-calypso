@@ -15,6 +15,7 @@ import {
 	Icon,
 	ToggleControl,
 	Notice,
+	ExternalLink,
 } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
 import { __, isRTL, sprintf } from '@wordpress/i18n';
@@ -674,6 +675,17 @@ function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
 	);
 }
 
+function DomainRegistrationAgreement( { purchase }: { purchase: Purchase } ) {
+	if ( ! purchase.domain_registration_agreement_url ) {
+		return null;
+	}
+	return (
+		<ExternalLink rel="noreferrer" href={ purchase.domain_registration_agreement_url }>
+			{ __( 'Domain Registration Agreement' ) }
+		</ExternalLink>
+	);
+}
+
 export default function PurchaseSettings() {
 	const { user } = useAuth();
 	const params = purchaseSettingsRoute.useParams();
@@ -705,7 +717,6 @@ export default function PurchaseSettings() {
 	} )();
 
 	// FIXME: render pluginList (see renderPluginLabel and getPluginsForSite)
-	// FIXME: render 'Domain Registration Agreement' and link (see domainRegistrationAgreementLinkText)
 	// FIXME: render DIFM content (BBEPurchaseDescription)
 	// FIXME: render ProductLink for plan features, domain management, email management, or theme details
 
@@ -731,6 +742,7 @@ export default function PurchaseSettings() {
 						}
 					/>
 					{ subtitle && <Text variant="muted">{ subtitle }</Text> }
+					<DomainRegistrationAgreement purchase={ purchase } />
 				</VStack>
 			}
 		>
