@@ -74,8 +74,9 @@ export const domainDnsAddRoute = createRoute( {
 export const domainDnsEditRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'dns/edit',
-	beforeLoad: async ( { params: { domainName }, search: { recordId } } ) => {
+	beforeLoad: async ( { params: { domainName }, search } ) => {
 		// If the provided recordId doesn't exist, redirect to the DNS overview page
+		const { recordId } = search as { recordId: string | undefined };
 		const dnsRecords = await queryClient.ensureQueryData( domainDnsQuery( domainName ) );
 		const record = dnsRecords?.records.find( ( record ) => record.id === recordId );
 		if ( ! record ) {
