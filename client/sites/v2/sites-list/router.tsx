@@ -1,5 +1,5 @@
 import { createLazyRoute, createRoute, createRouter } from '@tanstack/react-router';
-import * as appRouter from 'calypso/dashboard/app/router';
+import * as appRouterSites from 'calypso/dashboard/app/router/sites';
 import { rootRoute } from '../router';
 import siteOverviewRouter from '../site-overview/router';
 import siteSettingsRouter from '../site-settings/router';
@@ -9,7 +9,7 @@ import { getRouterOptions, createBrowserHistoryAndMemoryRouterSync } from '../ut
 const infiniteLoader = () => new Promise( () => {} );
 
 const sitesRoute = createRoute( {
-	...appRouter.sitesRoute.options,
+	...appRouterSites.sitesRoute.options,
 	getParentRoute: () => rootRoute,
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites' ).then( ( d ) =>

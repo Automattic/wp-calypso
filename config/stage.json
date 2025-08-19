@@ -50,7 +50,7 @@
 		"hosting/hosting-features-callout": true,
 		"hosting-server-settings-enhancements": true,
 		"summer-special-2025": true,
-		"hosting/staging-sites-redesign": false,
+		"hosting/staging-sites-redesign": true,
 		"i18n/empathy-mode": true,
 		"importer/site-backups": true,
 		"importer/unified": true,

@@ -28,6 +28,7 @@ type FormData = {
 
 interface Props {
 	domainName: string;
+	domainSiteSlug: string;
 	showUpsellNudge?: boolean;
 	nameServers?: string[];
 	isBusy?: boolean;
@@ -36,6 +37,7 @@ interface Props {
 
 export default function NameServersForm( {
 	domainName,
+	domainSiteSlug,
 	showUpsellNudge,
 	nameServers = [],
 	isBusy,
@@ -158,7 +160,9 @@ export default function NameServersForm( {
 									} );
 								} }
 							/>
-							{ showUpsellNudge && <UpsellNudge domainName={ domainName } /> }
+							{ showUpsellNudge && (
+								<UpsellNudge domainName={ domainName } domainSiteSlug={ domainSiteSlug } />
+							) }
 							{ ! data.useWpcomNameServers && (
 								<Text>
 									{ createInterpolateElement(
@@ -180,7 +184,7 @@ export default function NameServersForm( {
 				createNameServerField( i + 1 )
 			),
 		],
-		[ createNameServerField, isBusy, showUpsellNudge, domainName ]
+		[ createNameServerField, isBusy, showUpsellNudge, domainName, domainSiteSlug ]
 	);
 
 	const handleSubmit = useCallback(

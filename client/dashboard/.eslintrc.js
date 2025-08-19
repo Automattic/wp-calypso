@@ -55,6 +55,13 @@ module.exports = {
 						message: 'Importing from @automattic/ is not allowed in the dashboard folder.',
 					},
 				],
+				paths: [
+					{
+						name: '@automattic/components',
+						message:
+							'Do not import from the barrel file. Use specific imports like @automattic/components/src/summary-button instead. This prevents the entire package being bundled into the dashboard.',
+					},
+				],
 			},
 		],
 	},

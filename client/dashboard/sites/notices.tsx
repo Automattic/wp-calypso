@@ -2,7 +2,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { sitesRoute } from '../app/router';
+import { sitesRoute } from '../app/router/sites';
 import InlineSupportLink from '../components/inline-support-link';
 import Notice from '../components/notice';
 
