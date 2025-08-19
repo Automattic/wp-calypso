@@ -39,6 +39,8 @@ export default function useGetPayoutData() {
 			),
 			areNextAndCurrentPayoutDatesEqual:
 				nextPayoutDateRaw.getTime() === currentCyclePayoutDateRaw.getTime(),
+			isFullQuarter:
+				new Date().toLocaleDateString() === currentCycleWindow.finish.toLocaleDateString(),
 		};
 	}, [] );
 }

@@ -13,7 +13,7 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { domainDnsMutation } from '../../../app/queries/domain-dns-records';
-import { domainRoute } from '../../../app/routes/domain-routes';
+import { domainRoute } from '../../../app/router/domains';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import RequiredSelect from '../../../components/required-select';
