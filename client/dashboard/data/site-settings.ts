@@ -3,6 +3,7 @@ import wpcom from 'calypso/lib/wp';
 export interface SiteSettings {
 	blog_public?: number;
 	is_fully_managed_agency_site?: boolean;
+	gmt_offset?: number;
 	/**
 	 * @deprecated Use `wpcom_public_coming_soon` instead.
 	 */

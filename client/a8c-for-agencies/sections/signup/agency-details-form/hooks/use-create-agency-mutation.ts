@@ -1,9 +1,13 @@
 import { useMutation, UseMutationOptions, UseMutationResult } from '@tanstack/react-query';
+import cookie from 'cookie';
 import wpcom from 'calypso/lib/wp';
 import { APIError, Agency } from 'calypso/state/a8c-for-agencies/types';
 import { AgencyDetailsPayload } from '../types';
 
 function createAgency( details: AgencyDetailsPayload ): Promise< Agency > {
+	// For Agency signup tracking, we need to submit the hubspotutk cookie.
+	const hubspotutk = cookie.parse( document.cookie )?.hubspotutk;
+
 	return wpcom.req.post( {
 		apiNamespace: 'wpcom/v2',
 		path: '/agency',
@@ -28,6 +32,7 @@ function createAgency( details: AgencyDetailsPayload ): Promise< Agency > {
 			address_postal_code: details.postalCode,
 			phone_number: details.phone?.phoneNumber ? details.phone?.phoneNumberFull : '',
 			referral_status: details.referer,
+			hubspotutk,
 		},
 	} );
 }

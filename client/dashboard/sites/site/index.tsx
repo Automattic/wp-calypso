@@ -13,7 +13,7 @@ import { plus } from '@wordpress/icons';
 import { useState } from 'react';
 import { siteBySlugQuery } from '../../app/queries/site';
 import { sitesQuery } from '../../app/queries/sites';
-import { siteRoute } from '../../app/router';
+import { siteRoute } from '../../app/router/sites';
 import HeaderBar from '../../components/header-bar';
 import MenuDivider from '../../components/menu-divider';
 import Switcher from '../../components/switcher';

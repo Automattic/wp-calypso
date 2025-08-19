@@ -5,6 +5,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
+import { shouldRenderRewrittenDomainSearch } from 'calypso/lib/domains/should-render-rewritten-domain-search';
 import {
 	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
@@ -68,7 +69,7 @@ function useIsValidSite() {
 }
 
 const COPY_SITE_STEPS = [
-	STEPS.DOMAINS,
+	shouldRenderRewrittenDomainSearch() ? STEPS.DOMAIN_SEARCH : STEPS.DOMAINS,
 	STEPS.SITE_CREATION_STEP,
 	STEPS.PROCESSING,
 	STEPS.AUTOMATED_COPY_SITE,

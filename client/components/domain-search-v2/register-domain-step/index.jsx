@@ -2,7 +2,6 @@ import { isBlogger, isFreeWordPressComDomain } from '@automattic/calypso-product
 import page from '@automattic/calypso-router';
 import { ResponsiveToolbarGroup } from '@automattic/components';
 import {
-	DomainSearch,
 	DomainSearchControls,
 	DomainSearchNotice,
 	DomainSuggestionLoadMore,
@@ -88,6 +87,7 @@ import { shouldUseMultipleDomainsInCart } from 'calypso/signup/steps/domains/uti
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
+import { DomainSearch } from '../__legacy/domain-search';
 import { DomainCartV2 } from '../domain-cart';
 import DropdownFilters from '../domain-search-filters';
 import { DomainSearchInput } from '../domain-search-input';
@@ -704,7 +704,10 @@ class RegisterDomainStep extends Component {
 					{ showFreeDomainPromo && <FreeDomainForAYearPromo /> }
 					{ this.renderContent() }
 				</VStack>
-				<DomainCartV2 showFreeDomainPromo={ showFreeDomainPromo } onSkip={ this.props.onSkip } />
+				<DomainCartV2
+					showFreeDomainPromo={ showFreeDomainPromo }
+					onSkip={ this.props.showSkipButton ? this.props.onSkip : undefined }
+				/>
 			</DomainSearch>
 		);
 	}

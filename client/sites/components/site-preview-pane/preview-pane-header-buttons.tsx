@@ -7,6 +7,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useRef, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { GuidedTourStep } from 'calypso/components/guided-tour/step';
+import { siteByIdQuery } from 'calypso/dashboard/app/queries/site';
 import { isDeletingStagingSiteQuery } from 'calypso/dashboard/app/queries/site-staging-sites';
 import { queryClient } from 'calypso/dashboard/app/query-client';
 import SyncDropdown from 'calypso/dashboard/sites/staging-site-sync-dropdown';
@@ -54,11 +55,27 @@ const PreviewPaneHeaderButtons = ( { focusRef, itemData }: Props ) => {
 		queryClient
 	);
 
+	// Get the staging site to check its jetpack_connection
+	const stagingSiteId = isStagingSite
+		? itemData.blogId
+		: site?.options?.wpcom_staging_blog_ids?.[ 0 ];
+
+	const { data: stagingSite } = useQuery( {
+		...siteByIdQuery( stagingSiteId ?? 0 ),
+		enabled: !! stagingSiteId,
+		refetchInterval: ( query ) => {
+			return query.state.data?.jetpack_connection ? false : 5000;
+		},
+	} );
+
+	const hasStagingSiteJetpackConnection = stagingSite?.jetpack_connection;
+
 	const shouldShowSyncDropdown = Boolean(
 		stagingSitesRedesign &&
 			( isStagingSite || hasStagingSite ) &&
 			! isStagingSiteInTransition &&
-			! isStagingSiteDeletionInProgress
+			! isStagingSiteDeletionInProgress &&
+			hasStagingSiteJetpackConnection
 	);
 
 	const productionSiteId = isStagingSite

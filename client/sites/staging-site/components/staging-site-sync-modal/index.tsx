@@ -6,7 +6,6 @@ import {
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
 	__experimentalInputControl as InputControl,
 	CheckboxControl,
 	SelectControl,

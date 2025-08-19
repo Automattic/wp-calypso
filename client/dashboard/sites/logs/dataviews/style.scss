@@ -1,0 +1,49 @@
+/* Wrapping multi-line fields */
+.site-logs-wrap {
+	overflow: visible;
+	white-space: normal;
+	overflow-wrap: anywhere;
+}
+
+/* Truncate single-line message */
+.site-logs-ellipsis {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+/* Badges */
+.site-logs-tabs {
+
+	.badge--POST,
+	.badge--deprecated {
+		background-color: #BBE0FA;
+		color: #02395C;
+	}
+
+	.badge--GET {
+		background-color: #B8E6BF;
+		color: #00450C;
+	}
+
+	.badge--DELETE,
+	.badge--error,
+	.badge--fatal {
+		background-color: #FACFD2;
+		color: #691C1C;
+	}
+
+	.badge--fatal {
+		white-space: nowrap;
+	}
+
+	.badge--warning {
+		background-color: #FFF2D7;
+		color: #4F3500;
+	}
+
+	.badge--user {
+		background-color: #DCDCEE;
+		color: #2C3338;
+	}
+}

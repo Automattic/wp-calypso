@@ -41,6 +41,33 @@ export function generateSteps( {
 	submitWebsiteContent = noop,
 } = {} ) {
 	return {
+		'domain-search': {
+			stepName: 'domain-search',
+			apiRequestFunction: createSiteWithCart,
+			providesDependencies: [
+				'siteId',
+				'siteSlug',
+				'domainItem',
+				'themeItem',
+				'shouldHideFreePlan',
+				'isManageSiteFlow',
+				'signupDomainOrigin',
+				'siteUrl',
+				'lastDomainSearched',
+				'useThemeHeadstart',
+				'domainCart',
+			],
+			optionalDependencies: [
+				'shouldHideFreePlan',
+				'isManageSiteFlow',
+				'signupDomainOrigin',
+				'siteUrl',
+				'lastDomainSearched',
+				'useThemeHeadstart',
+			],
+			delayApiRequestUntilComplete: true,
+		},
+
 		'domains-launch': {
 			stepName: 'domains-launch',
 			apiRequestFunction: addDomainToCart,
