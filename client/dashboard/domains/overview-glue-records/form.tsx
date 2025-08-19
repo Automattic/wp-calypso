@@ -11,7 +11,7 @@ import {
 import { DataForm } from '@wordpress/dataviews';
 import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { isValidNameServer, isValidIpAddress } from './utils';
+import { isValidIpAddress, isValidNameServerSubdomain } from '../../utils/domain';
 import type { DomainGlueRecord } from '../../data/domain-glue-records';
 import type { Field } from '@wordpress/dataviews';
 
@@ -71,7 +71,7 @@ export default function DomainGlueRecordsForm( {
 								return onChange( { [ id ]: value + suffix } );
 							} }
 							customValidator={ ( value ) => {
-								if ( ! value || ! isValidNameServer( value ) ) {
+								if ( ! value || ! isValidNameServerSubdomain( value ) ) {
 									return __( 'Please enter a valid name server.' );
 								}
 							} }
