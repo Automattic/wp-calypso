@@ -341,17 +341,35 @@ Components automatically import their styles. For manual control:
 import '@automattic/agenttic-ui/index.css';
 ```
 
+### CSS Scoping
+
+All AgentUI styles are scoped to the `.agenttic` class to prevent conflicts with host applications. This ensures that the component styles don't interfere with your existing styles.
+
 ### Customization
 
-Components use CSS Modules with design tokens. Override styles using CSS custom properties:
+Override CSS custom properties to theme the entire chat or specific areas:
 
 ```css
-:root {
-  --agenttic-primary-color: #your-brand-color;
-  --agenttic-border-radius: 8px;
-  --agenttic-spacing-unit: 16px;
+/* Global theming */
+.agenttic {
+  --color-primary: #your-brand-color;
+  --color-background: #ffffff;
+  --color-foreground: #000000;
+  /* ...other custom properties as needed. */
+}
+
+/* Target specific UI areas, e.g. the chat footer as seen in Big Sky embedded site spec. */
+.agenttic [data-slot="chat-footer"] {
+  --color-background: oklch(1 0 0);
+  --color-foreground: oklch(0.241 0 0);
+  --color-primary: #your-brand-color;
+  --color-primary-foreground: oklch(1 0 0);
+  --color-muted: oklch(0.925 0 0);
+  --color-muted-foreground: oklch(0.6 0 0);
 }
 ```
+
+This approach allows granular theming of specific areas without affecting other parts of the application.
 
 ## Advanced Usage
 

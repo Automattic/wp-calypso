@@ -9,22 +9,3 @@
     justify-content: space-between;
 }
 
-.inputWrapper {
-    position: relative;
-}
-
-.inputContainer {
-    box-shadow: var(--shadow-sm);
-    padding: var(--spacing-2);
-    background-color: var(--color-background);
-    border-radius: calc( var(--radius-lg) + 1px); /* Accounts for the 1px shadow */
-    color: var(--color-foreground);
-    position: relative;
-    z-index: 10;
-}
-
-.inputContainerInner {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-2);
-}

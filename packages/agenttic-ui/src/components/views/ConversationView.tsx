@@ -2,10 +2,8 @@ import React, { useEffect } from 'react';
 import type { ComponentType } from 'react';
 import type { Message, NoticeConfig, Suggestion } from '../../types';
 import { ChatHeader } from '../chat/ChatHeader';
-import { ChatInput } from '../chat/ChatInput';
+import { ChatFooter } from '../chat/ChatFooter';
 import { Messages } from '../chat/Messages';
-import { Notice } from '../chat/Notice';
-import { Suggestions } from '../chat/Suggestions';
 import styles from './ConversationView.module.css';
 
 interface InputHandlers {
@@ -99,42 +97,21 @@ export function ConversationView( {
 				fromCompact={ fromCompact }
 				messageRenderer={ messageRenderer }
 			/>
-			<div
-				data-slot="input-container"
-				className={ styles.inputContainer }
-			>
-				<Suggestions
-					suggestions={ suggestions }
-					onSubmit={ ( value ) => {
-						onInputChange( value );
-						clearSuggestions?.();
-					} }
-				/>
-				<div className={ styles.inputContainerInner }>
-					{ notice && (
-						<Notice
-							icon={ notice.icon }
-							message={ notice.message }
-							action={ notice.action }
-							dismissible={ notice.dismissible }
-							onDismiss={ notice.onDismiss }
-						/>
-					) }
-					<ChatInput
-						value={ inputValue }
-						onChange={ onInputChange }
-						onSubmit={ onSubmit }
-						onKeyDown={ onKeyDown }
-						textareaRef={ textareaRef }
-						placeholder={ placeholder }
-						isProcessing={ isProcessing }
-						fromCompact={ fromCompact }
-						onExpand={ onExpand }
-						showExpandButton={ false }
-						focusOnMount={ focusOnMount }
-					/>
-				</div>
-			</div>
+			<ChatFooter
+				inputValue={ inputValue }
+				onInputChange={ onInputChange }
+				onSubmit={ onSubmit }
+				onKeyDown={ onKeyDown }
+				textareaRef={ textareaRef }
+				placeholder={ placeholder }
+				isProcessing={ isProcessing }
+				fromCompact={ fromCompact }
+				onExpand={ onExpand }
+				notice={ notice }
+				suggestions={ suggestions }
+				clearSuggestions={ clearSuggestions }
+				focusOnMount={ focusOnMount }
+			/>
 		</div>
 	);
 }

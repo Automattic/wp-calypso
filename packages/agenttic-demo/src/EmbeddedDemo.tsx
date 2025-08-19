@@ -155,14 +155,25 @@ const EmbeddedDemo: React.FC = () => {
 		<>
 			<style>
 				{ `
-                body {
-                    background-color: var(--color-background);
-                }
                 :root {
-                    --color-background: #030AB2;
-                    --color-foreground: #fff;
-                    --color-primary: #fff;
-                    --color-primary-foreground: var(--color-background)
+                    --color-brand: #030AB2;
+                }
+                body {
+                    background-color: var(--color-brand);
+                }
+                .agenttic {
+                    --color-background: var(--color-brand);
+                    --color-foreground: oklch(1 0 0);
+                    --color-primary: oklch(1 0 0);
+                    --color-primary-foreground: var(--color-background);
+                }
+                .agenttic [data-slot="chat-footer"] {
+                    --color-background: oklch(1 0 0);
+                    --color-foreground: oklch(0.241 0 0);
+                    --color-primary: var(--color-brand);
+                    --color-primary-foreground: oklch(1 0 0);
+                    --color-muted: oklch(0.925 0 0);
+                    --color-muted-foreground: oklch(0.6 0 0);
                 }
                 ` }
 			</style>
@@ -170,8 +181,8 @@ const EmbeddedDemo: React.FC = () => {
 				className="embedded-demo"
 				style={ {
 					height: '100vh',
-					padding: '1rem',
-					maxWidth: '700px',
+					padding: '1.5rem',
+					maxWidth: '660px',
 					margin: '0 auto',
 				} }
 			>
@@ -184,6 +195,9 @@ const EmbeddedDemo: React.FC = () => {
 					suggestions={ suggestions }
 					clearSuggestions={ clearSuggestions }
 					messageRenderer={ messageRenderer }
+					// notice={ {
+					// 	message: 'This is a notice',
+					// } }
 				/>
 			</div>
 		</>

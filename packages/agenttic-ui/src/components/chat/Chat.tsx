@@ -38,7 +38,7 @@ const DRAG_CONSTANTS = {
 	NON_DRAGGABLE_SELECTORS: [
 		'[data-slot="message"]',
 		'[data-slot="chat-input"]',
-		'[data-slot="input-container"]',
+		'[data-slot="chat-footer"]',
 	].join( ', ' ),
 } as const;
 

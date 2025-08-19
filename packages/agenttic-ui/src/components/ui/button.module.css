@@ -2,6 +2,7 @@
   align-items: center;
   border-radius: var(--radius-sm);
   border: 1px solid transparent;
+  color: var(--color-foreground);
   cursor: pointer;
   display: inline-flex;
   flex-shrink: 0;
@@ -10,7 +11,6 @@
   gap: calc(var(--spacing) * 0.5);
   justify-content: center;
   outline: none;
-  transition-duration: 100ms;
   transition: var(--transition-colors);
   letter-spacing: var(--text-base--tracking);
   white-space: nowrap;
@@ -70,10 +70,11 @@
   
 .outline:hover:not(:disabled) {
     color: var(--color-primary);
+    box-shadow: var(--shadow-outline-strong);
 }
 
 .outline:focus-visible {
-    outline-offset: 2.5px; /* Add +1px due to the --shadow-outline. */
+    outline-offset: 0;
 }
 
 .link {
@@ -96,6 +97,7 @@
 }
 
 .sm {
+    border-radius: var(--radius-xs);
     height: var(--spacing-6);
     width: var(--spacing-6);
     padding: 0;
