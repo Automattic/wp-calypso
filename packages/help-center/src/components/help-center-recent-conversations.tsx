@@ -1,6 +1,5 @@
 import { calculateUnread } from '@automattic/odie-client/src/data/use-get-unread-conversations';
 import { ZendeskConversation } from '@automattic/odie-client/src/types';
-import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
 import { useGetHistoryChats } from '../hooks';
 import { HelpCenterSupportChatMessage } from './help-center-support-chat-message';
@@ -10,7 +9,6 @@ import './help-center-recent-conversations.scss';
 
 const HelpCenterRecentConversations: React.FC = () => {
 	const { recentConversations } = useGetHistoryChats();
-	const { __ } = useI18n();
 
 	if ( ! recentConversations?.length ) {
 		return null;
@@ -31,19 +29,14 @@ const HelpCenterRecentConversations: React.FC = () => {
 	] );
 
 	return (
-		<div className="help-center-homepage-conversations">
-			<h3 className="help-center-search-results__title help-center__section-title">
-				{ __( 'Recent Conversation', __i18n_text_domain__ ) }
-			</h3>
-
-			<HelpCenterSupportChatMessage
-				numberOfUnreadMessages={ numberOfUnreadMessages }
-				sectionName="recent_conversations"
-				key={ recentConversation.id }
-				message={ lastMessage }
-				conversation={ recentConversation }
-			/>
-		</div>
+		<HelpCenterSupportChatMessage
+			numberOfUnreadMessages={ numberOfUnreadMessages }
+			sectionName="recent_conversations"
+			key={ recentConversation.id }
+			message={ lastMessage }
+			conversation={ recentConversation }
+			homePageVersion
+		/>
 	);
 };
 

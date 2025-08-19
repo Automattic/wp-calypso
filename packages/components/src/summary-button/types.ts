@@ -43,7 +43,7 @@ export interface SummaryButtonProps {
 	 * For now, this property is only rendered in `low` density variant.
 	 * We might revisit adding this in more variants in the future.
 	 */
-	description?: string;
+	description?: React.ReactNode;
 	/**
 	 * A brief, optional line of text used to highlight important information,
 	 * such as a warning or status.

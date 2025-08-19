@@ -4,9 +4,9 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useWindowDimensions } from '@automattic/viewport';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import { Card } from '@wordpress/components';
+import { Card, __experimentalElevation as Elevation } from '@wordpress/components';
 import { useFocusReturn, useMergeRefs } from '@wordpress/compose';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 import clsx from 'clsx';
 import { useRef, useEffect, useCallback, FC, useState } from 'react';
 import Draggable, { DraggableProps } from 'react-draggable';
@@ -67,7 +67,6 @@ const HelpCenterContainer: React.FC< Container > = ( {
 	const { sectionName } = useHelpCenterContext();
 
 	const nodeRef = useRef< HTMLDivElement >( null );
-	const { setIsMinimized } = useDispatch( HELP_CENTER_STORE );
 	const isMobile = useMobileBreakpoint();
 	const classNames = clsx( 'help-center__container', isMobile ? 'is-mobile' : 'is-desktop', {
 		'is-minimized': isMinimized,
@@ -115,14 +114,13 @@ const HelpCenterContainer: React.FC< Container > = ( {
 					bounds="body"
 				>
 					<Card className={ classNames } style={ { ...openingCoordinates } } ref={ cardMergeRefs }>
-						<HelpCenterHeader
-							isMinimized={ isMinimized }
-							onMinimize={ () => setIsMinimized( true ) }
-							onMaximize={ () => setIsMinimized( false ) }
-							onDismiss={ onDismiss }
-						/>
+						<HelpCenterHeader onDismiss={ onDismiss } />
 						<HelpCenterContent currentRoute={ currentRoute } />
 						{ ! isMinimized && <HelpCenterFooter /> }
+						<Elevation
+							borderRadius={ isMinimized ? '16px 16px 0 0' : '16px' }
+							value={ 4 }
+						></Elevation>
 					</Card>
 				</OptionalDraggable>
 			</FeatureFlagProvider>

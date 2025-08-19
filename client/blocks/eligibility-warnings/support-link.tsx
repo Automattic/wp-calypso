@@ -30,7 +30,7 @@ const SupportLink = ( {
 	}, [] );
 	const { setShowHelpCenter, setIsMinimized, setNavigateToRoute } =
 		useDataStoreDispatch( HELP_CENTER_STORE );
-	const resetSupportInteraction = useResetSupportInteraction();
+	const { resetSupportInteraction } = useResetSupportInteraction();
 
 	const clearChat = useCallback( async () => {
 		await resetSupportInteraction();
