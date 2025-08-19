@@ -4,7 +4,7 @@ import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { domainGlueRecordCreateMutation } from '../../app/queries/domain-glue-records';
-import { domainRoute, domainGlueRecordsRoute } from '../../app/router';
+import { domainRoute, domainGlueRecordsRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { DomainGlueRecord } from '../../data/domain-glue-records';
