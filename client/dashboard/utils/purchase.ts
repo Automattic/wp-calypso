@@ -141,6 +141,12 @@ export function isAkismetTemporarySitePurchase( purchase: Purchase ): boolean {
 	return isTemporarySitePurchase( purchase ) && purchase.product_type === 'akismet';
 }
 
+export function isMarketplacePlugin( purchase: Purchase ): boolean {
+	return (
+		purchase.product_type.startsWith( 'marketplace' ) || purchase.product_type === 'saas_plugin'
+	);
+}
+
 export function isMarketplaceTemporarySitePurchase( purchase: Purchase ): boolean {
 	return isTemporarySitePurchase( purchase ) && purchase.product_type === 'saas_plugin';
 }

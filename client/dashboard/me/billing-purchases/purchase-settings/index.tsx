@@ -32,6 +32,7 @@ import { useAuth } from '../../../app/auth';
 import { useLocale } from '../../../app/locale';
 import { purchaseQuery, userPurchaseSetAutoRenewQuery } from '../../../app/queries/me-purchases';
 import { siteBySlugQuery } from '../../../app/queries/site';
+import { reinstallMarketplacePluginsQuery } from '../../../app/queries/site-marketplace';
 import { purchaseSettingsRoute } from '../../../app/router/me';
 import { ActionList } from '../../../components/action-list';
 import { useFormattedTime } from '../../../components/formatted-time';
@@ -53,6 +54,7 @@ import {
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isMarketplaceTemporarySitePurchase,
+	isMarketplacePlugin,
 	isJetpackTemporarySitePurchase,
 	isAkismetProduct,
 	isJetpackCrmProduct,
@@ -414,10 +416,53 @@ function JetpackCRMDownloadsButton( { purchase }: { purchase: Purchase } ) {
 	);
 }
 
+function ReinstallButton( { purchase }: { purchase: Purchase } ) {
+	const {
+		mutate: reinstallPlugins,
+		error,
+		isPending: isMutationPending,
+	} = useMutation( reinstallMarketplacePluginsQuery( parseInt( purchase.blog_id ) ) );
+	if ( ! isMarketplacePlugin( purchase ) ) {
+		return null;
+	}
+	if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
+		return null;
+	}
+
+	return (
+		<ActionList.ActionItem
+			title={ __( 'Reinstall plugins' ) }
+			actions={
+				<>
+					<Button
+						variant="secondary"
+						size="compact"
+						disabled={ isMutationPending }
+						onClick={ () => {
+							reinstallPlugins();
+						} }
+					>
+						{ __( 'Reinstall plugins' ) }
+					</Button>
+					{
+						// FIXME: there's probably a better place for this error message
+						error && (
+							<Notice status="error" isDismissible={ false }>
+								{ error.message }
+							</Notice>
+						)
+					}
+				</>
+			}
+		/>
+	);
+}
+
 function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 	return (
 		<VStack spacing={ 4 }>
 			<ActionList>
+				<ReinstallButton purchase={ purchase } />
 				<JetpackCRMDownloadsButton purchase={ purchase } />
 				<UpgradeActionButton purchase={ purchase } />
 				<ReSubscribeActionButton purchase={ purchase } />
@@ -659,7 +704,6 @@ export default function PurchaseSettings() {
 		return __( 'Expires' );
 	} )();
 
-	// FIXME: render reinstall button (see renderReinstall)
 	// FIXME: render pluginList (see renderPluginLabel and getPluginsForSite)
 	// FIXME: render 'Domain Registration Agreement' and link (see domainRegistrationAgreementLinkText)
 	// FIXME: render DIFM content (BBEPurchaseDescription)
