@@ -10,6 +10,7 @@
 		border: 1px solid var(--studio-gray-5);
 		border-radius: 8px;
 		margin: 0 0 16px;
+		overflow: hidden;
 	}
 
 	.help-center-link__item {
@@ -22,6 +23,18 @@
 
 		.help-center-link__cell {
 			width: 100%;
+
+			&:hover {
+				a, button {
+					background: color-mix(in srgb, #fff 98%, var(--wp-admin-theme-color, $help-center-blue));
+					color: var(--wp-components-color-accent, var(--wp-admin-theme-color, $help-center-blue));
+					cursor: pointer;
+				}
+
+				svg {
+					fill: var(--wp-components-color-accent, var(--wp-admin-theme-color, $help-center-blue));
+				}
+			}
 
 			a {
 				padding-top: 16px;
@@ -55,12 +68,6 @@
 				span {
 					display: block;
 					flex-grow: 1;
-				}
-
-				&:hover {
-					color: var(--studio-gray-100);
-					cursor: pointer;
-					background: var(--color-neutral-0);
 				}
 
 				&:focus {
