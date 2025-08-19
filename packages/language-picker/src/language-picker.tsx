@@ -164,6 +164,15 @@ function LanguagePicker< TLanguage extends Language >( {
 		setIsMobileSearchOpen( false );
 		handleSearchClose();
 	};
+
+	const onSearchChange = ( search: string ) => {
+		setSearch( search );
+		// if the search is empty, run handleSearchClose to select the default language group
+		if ( search === '' ) {
+			handleSearchClose();
+		}
+	};
+
 	return (
 		<VStack alignment="left" className="language-picker-component">
 			<VStack className="language-picker-component__heading">
@@ -198,7 +207,7 @@ function LanguagePicker< TLanguage extends Language >( {
 				>
 					<SearchControl
 						__nextHasNoMarginBottom
-						onChange={ setSearch }
+						onChange={ onSearchChange }
 						label={ __( 'Search', __i18n_text_domain__ ) }
 						hideLabelFromVision
 						value={ search }
@@ -231,7 +240,7 @@ function LanguagePicker< TLanguage extends Language >( {
 				<div className="language-picker-component__search-desktop">
 					<SearchControl
 						__nextHasNoMarginBottom
-						onChange={ setSearch }
+						onChange={ onSearchChange }
 						label={ __( 'Search', __i18n_text_domain__ ) }
 						hideLabelFromVision
 						placeholder={ searchPlaceholder }
