@@ -168,7 +168,7 @@ export const domainGlueRecordsRoute = createRoute( {
 	loader: ( { params: { domainName } } ) =>
 		queryClient.ensureQueryData( domainGlueRecordsQuery( domainName ) ),
 } ).lazy( () =>
-	import( '../../domains/overview-glue-records' ).then( ( d ) =>
+	import( '../../domains/domain-glue-records' ).then( ( d ) =>
 		createLazyRoute( 'domain-glue-records' )( {
 			component: d.default,
 		} )
@@ -179,7 +179,7 @@ export const domainGlueRecordsAddRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'glue-records/add',
 } ).lazy( () =>
-	import( '../../domains/overview-glue-records/add' ).then( ( d ) =>
+	import( '../../domains/domain-glue-records/add' ).then( ( d ) =>
 		createLazyRoute( 'domain-glue-records-add' )( {
 			component: d.default,
 		} )
@@ -204,7 +204,7 @@ export const domainGlueRecordsEditRoute = createRoute( {
 	loader: ( { params: { domainName } } ) =>
 		queryClient.ensureQueryData( domainGlueRecordsQuery( domainName ) ),
 } ).lazy( () =>
-	import( '../../domains/overview-glue-records/edit' ).then( ( d ) =>
+	import( '../../domains/domain-glue-records/edit' ).then( ( d ) =>
 		createLazyRoute( 'domain-glue-records-edit' )( {
 			component: d.default,
 		} )
