@@ -1,4 +1,4 @@
-import { createRoute, createLazyRoute, redirect } from '@tanstack/react-router';
+import { createRoute, createLazyRoute, notFound, redirect } from '@tanstack/react-router';
 import { domainQuery } from '../queries/domain';
 import { domainDnsQuery } from '../queries/domain-dns-records';
 import { domainForwardingQuery } from '../queries/domain-forwarding';
@@ -189,6 +189,20 @@ export const domainGlueRecordsAddRoute = createRoute( {
 export const domainGlueRecordsEditRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'glue-records/edit/$nameServer',
+	beforeLoad: async ( { params: { domainName, nameServer } } ) => {
+		const glueRecordsData = await queryClient.ensureQueryData(
+			domainGlueRecordsQuery( domainName )
+		);
+		const glueRecord = glueRecordsData.find(
+			( glueRecord ) => glueRecord.nameserver === nameServer
+		);
+
+		if ( ! glueRecord ) {
+			throw notFound();
+		}
+	},
+	loader: ( { params: { domainName } } ) =>
+		queryClient.ensureQueryData( domainGlueRecordsQuery( domainName ) ),
 } ).lazy( () =>
 	import( '../../domains/overview-glue-records/edit' ).then( ( d ) =>
 		createLazyRoute( 'domain-glue-records-edit' )( {

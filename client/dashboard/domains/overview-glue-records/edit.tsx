@@ -1,7 +1,6 @@
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
-import { notFound, useNavigate } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
-import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import {
@@ -11,6 +10,7 @@ import {
 import { domainRoute, domainGlueRecordsRoute } from '../../app/router';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { DomainGlueRecord } from '../../data/domain-glue-records';
 import DomainGlueRecordsForm from './form';
 import type { FormData } from './form';
 
@@ -20,24 +20,12 @@ export default function EditDomainGlueRecords() {
 	const { data: glueRecordsData } = useSuspenseQuery( domainGlueRecordsQuery( domainName ) );
 	const updateMutation = useMutation( domainGlueRecordUpdateMutation( domainName ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-
-	const existingGlueRecord = useMemo( () => {
-		if ( ! glueRecordsData || ! nameServer ) {
-			throw notFound();
-		}
-		const existingGlueRecord = glueRecordsData.find( ( f ) => f.nameserver === nameServer );
-		if ( ! existingGlueRecord ) {
-			throw notFound();
-		}
-		return existingGlueRecord;
-	}, [ glueRecordsData, nameServer ] );
+	const glueRecord = glueRecordsData.find(
+		( glueRecord: DomainGlueRecord ) => glueRecord.nameserver === nameServer
+	);
 
 	const handleSubmit = ( formData: FormData ) => {
-		if ( ! existingGlueRecord ) {
-			return;
-		}
-
-		const updatedGlueRecord = {
+		const updatedGlueRecord: DomainGlueRecord = {
 			nameserver: formData.nameServer,
 			ip_addresses: [ formData.ipAddress ],
 		};
@@ -62,7 +50,7 @@ export default function EditDomainGlueRecords() {
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Edit glue record' ) } /> }>
 			<DomainGlueRecordsForm
 				domainName={ domainName }
-				initialData={ existingGlueRecord }
+				initialData={ glueRecord }
 				onSubmit={ handleSubmit }
 				isSubmitting={ updateMutation.isPending }
 				isEdit
