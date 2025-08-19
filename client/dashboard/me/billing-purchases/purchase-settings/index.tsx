@@ -40,7 +40,6 @@ import PageLayout from '../../../components/page-layout';
 import {
 	ProductUpgradeMap,
 	AkismetUpgradesProductMap,
-	DomainProductSlugs,
 	SubscriptionBillPeriod,
 } from '../../../data/constants';
 import { formatDate } from '../../../utils/datetime';
@@ -56,7 +55,6 @@ import {
 	isMarketplaceTemporarySitePurchase,
 	isJetpackTemporarySitePurchase,
 	isAkismetProduct,
-	isAkismetFreeProduct,
 } from '../../../utils/purchase';
 import { encodeProductForUrl } from '../../../utils/wpcom-checkout';
 import { getPurchaseUrlForId } from '../urls';
@@ -130,25 +128,17 @@ function canPurchaseBeUpgraded( purchase: Purchase ): boolean {
 }
 
 function isAutoRenewToggleDisabled( purchase: Purchase, user: User ): boolean {
-	if ( purchase.is_iap_purchase ) {
-		return true;
-	}
-	if ( purchase.product_slug === DomainProductSlugs.TRANSFER_IN ) {
-		return true;
-	}
 	if ( String( user.ID ) !== String( purchase.user_id ) ) {
 		return true;
 	}
-	if ( isAkismetFreeProduct( purchase ) ) {
+	if ( isExpired( purchase ) && shouldAllowExpiredAutoRenewToggle( purchase ) ) {
+		// Special case!
+		return false;
+	}
+	if ( purchase.is_auto_renew_enabled && ! purchase.can_disable_auto_renew ) {
 		return true;
 	}
-	if ( isOneTimePurchase( purchase ) ) {
-		return true;
-	}
-	if ( isExpired( purchase ) && ! shouldAllowExpiredAutoRenewToggle( purchase ) ) {
-		return true;
-	}
-	if ( isIncludedWithPlan( purchase ) ) {
+	if ( ! purchase.is_auto_renew_enabled && ! purchase.can_reenable_auto_renewal ) {
 		return true;
 	}
 	return false;
@@ -159,12 +149,19 @@ function isAutoRenewToggleDisabled( purchase: Purchase, user: User ): boolean {
  * which case we should allow toggling it even if the subscription has expired.
  */
 function shouldAllowExpiredAutoRenewToggle( purchase: Purchase ): boolean {
-	return (
-		! purchase.is_auto_renew_enabled &&
-		( ! purchase.is_jetpack_legacy_plan || purchase.is_renewable ) &&
-		purchase.bill_period_days !== SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD &&
-		purchase.is_jetpack_plan_or_product
-	);
+	if ( ! purchase.is_auto_renew_enabled ) {
+		return false;
+	}
+	if ( ! purchase.is_jetpack_plan_or_product ) {
+		return false;
+	}
+	if ( purchase.is_renewable ) {
+		return true;
+	}
+	if ( ! purchase.is_jetpack_plan_or_product ) {
+		return true;
+	}
+	return false;
 }
 
 function upgradePurchase( upgradeUrl: string ): void {
