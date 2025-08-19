@@ -1,4 +1,5 @@
 import { createRoute, createLazyRoute, redirect } from '@tanstack/react-router';
+import DomainsPurchase from '../../domains/purchase';
 import { domainQuery } from '../queries/domain';
 import { domainDnsQuery } from '../queries/domain-dns-records';
 import { domainForwardingQuery } from '../queries/domain-forwarding';
@@ -6,6 +7,12 @@ import { domainGlueRecordsQuery } from '../queries/domain-glue-records';
 import { domainsQuery } from '../queries/domains';
 import { queryClient } from '../query-client';
 import { rootRoute } from './root';
+
+export const domainsPurchaseRoute = createRoute( {
+	getParentRoute: () => rootRoute,
+	path: 'domains/purchase',
+	component: DomainsPurchase,
+} );
 
 // Standalone domains route - requires rootRoute
 export const domainsRoute = createRoute( {
@@ -222,6 +229,7 @@ export const domainTransferRoute = createRoute( {
 export const createDomainsRoutes = () => {
 	return [
 		domainsRoute,
+		domainsPurchaseRoute,
 		domainRoute.addChildren( [
 			domainOverviewRoute,
 			domainDnsRoute,
