@@ -86,7 +86,7 @@ export class HelpCenterComponent {
 	 */
 	async minimizePopover(): Promise< void > {
 		const menuButton = await this.popup.getByRole( 'button', {
-			name: 'Help CenterOptions',
+			name: 'Help Center Options',
 			exact: true,
 		} );
 
