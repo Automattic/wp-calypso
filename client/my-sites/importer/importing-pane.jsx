@@ -1,3 +1,4 @@
+import { formatNumber } from '@automattic/number-formatters';
 import { ProgressBar } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { omit } from 'lodash';
@@ -122,6 +123,21 @@ export class ImportingPane extends PureComponent {
 
 	getSuccessText = () => {
 		return this.props.translate( 'Success! Your content has been imported.' );
+	};
+
+	getImportMessage = ( numResources ) => {
+		if ( 0 === numResources ) {
+			return this.props.translate( 'Finishing up the import.' );
+		}
+
+		return this.props.translate(
+			'%(numResources)s post, page, or media file left to import',
+			'%(numResources)s posts, pages, and media files left to import',
+			{
+				count: numResources,
+				args: { numResources: formatNumber( numResources ) },
+			}
+		);
 	};
 
 	isError = () => {
