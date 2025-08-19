@@ -202,9 +202,7 @@ export default function NameServersForm( {
 		);
 	}, [ nameServers, formData ] );
 
-	const canSubmit = useMemo( () => {
-		return ! isBusy && isItemValid( formData, fields, formObj ) && isNameServersChanged();
-	}, [ isBusy, formData, fields, formObj, isNameServersChanged ] );
+	const canSubmit = ! isBusy && isItemValid( formData, fields, formObj ) && isNameServersChanged();
 
 	return (
 		<form onSubmit={ handleSubmit }>
