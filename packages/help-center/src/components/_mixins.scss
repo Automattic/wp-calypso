@@ -1,4 +1,5 @@
 @import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/variables";
 @import "variables";
 
 @mixin help-center-link {
@@ -41,13 +42,13 @@
 
 				> svg:first-child {
 					margin-right: 10px;
-					fill: var(--studio-gray-40);
+					fill: var($gray-700);
 					padding-left: 24px;
 					display: block;
 				}
 
 				> svg:last-child {
-					fill: var(--studio-gray-40);
+					fill: var($gray-700);
 					padding-right: 24px;
 				}
 
