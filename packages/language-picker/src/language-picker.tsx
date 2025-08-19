@@ -167,7 +167,7 @@ function LanguagePicker< TLanguage extends Language >( {
 	return (
 		<VStack alignment="left" className="language-picker-component">
 			<VStack className="language-picker-component__heading">
-				<VStack alignment="left" style={ { justifyContent: 'space-between' } }>
+				<VStack alignment="left" justify="space-between">
 					<VStack className="language-picker-component__title wp-brand-font">
 						{ headingTitle || __( 'Select a language', __i18n_text_domain__ ) }
 					</VStack>
