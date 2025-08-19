@@ -150,9 +150,8 @@ export default function UserTaxInfoPage() {
 											learnMoreLink: (
 												<InlineSupportLink
 													supportLink={ taxSupportPageURL }
-													showIcon={ false }
 													supportPostId={ 234670 } //This is what makes the document appear in a dialogue
-													linkTitle={ taxSupportPageLinkTitle }
+													title={ taxSupportPageLinkTitle }
 												/>
 											),
 										},
