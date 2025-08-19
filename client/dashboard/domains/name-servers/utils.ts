@@ -1,4 +1,4 @@
-import { type FormData, type NameServerKey, MAX_NAME_SERVERS_LENGTH } from './types';
+import { type FormData } from './types';
 import type { Domain } from '../../data/domain';
 import type { User } from '../../data/me';
 import type { Site } from '../../data/site';
@@ -22,12 +22,8 @@ export const areAllWpcomNameServers = ( nameservers?: string[] ) => {
 	} );
 };
 
-export const getFormNameServersValue = ( formData: FormData ) => {
-	return Array.from(
-		{ length: MAX_NAME_SERVERS_LENGTH },
-		( _, i ) => formData[ `nameServer${ i + 1 }` as NameServerKey ]
-	).filter( Boolean );
-};
+export const getFormNameServers = ( { useWpcomNameServers, ...nameServers }: FormData ) =>
+	Object.values( nameServers ).filter( Boolean );
 
 export const shouldShowUpsellNudge = ( user: User, domain: Domain, site?: Site ): boolean => {
 	if (

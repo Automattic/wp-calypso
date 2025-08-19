@@ -19,7 +19,7 @@ import {
 	NameServerKey,
 } from './types';
 import UpsellNudge from './upsell-nudge';
-import { areAllWpcomNameServers, validateHostname, getFormNameServersValue } from './utils';
+import { areAllWpcomNameServers, validateHostname, getFormNameServers } from './utils';
 
 interface Props {
 	domainName: string;
@@ -185,13 +185,13 @@ export default function NameServersForm( {
 	const handleSubmit = useCallback(
 		( e: React.FormEvent ) => {
 			e.preventDefault();
-			onSubmit( getFormNameServersValue( formData ) );
+			onSubmit( getFormNameServers( formData ) );
 		},
 		[ onSubmit, formData ]
 	);
 
 	const isNameServersChanged = useCallback( () => {
-		const currentNameServers = getFormNameServersValue( formData );
+		const currentNameServers = getFormNameServers( formData );
 		// Different lengths means there's definitely a change
 		if ( currentNameServers.length !== nameServers.length ) {
 			return true;
