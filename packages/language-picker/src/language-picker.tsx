@@ -199,7 +199,7 @@ function LanguagePicker< TLanguage extends Language >( {
 					<SearchControl
 						__nextHasNoMarginBottom
 						onChange={ setSearch }
-						label={ __( 'regions' ) }
+						label={ __( 'Search', __i18n_text_domain__ ) }
 						hideLabelFromVision
 						value={ search }
 						id={ 'search-component-' + instanceId }
@@ -232,7 +232,7 @@ function LanguagePicker< TLanguage extends Language >( {
 					<SearchControl
 						__nextHasNoMarginBottom
 						onChange={ setSearch }
-						label={ __( 'regions' ) }
+						label={ __( 'Search', __i18n_text_domain__ ) }
 						hideLabelFromVision
 						placeholder={ searchPlaceholder }
 					/>
