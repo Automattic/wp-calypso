@@ -56,9 +56,7 @@ export const domainDnsApplyTemplateMutation = ( domainName: string ) =>
 			variables: DnsTemplateVariables;
 		} ) => applyDnsTemplate( domainName, provider, service, variables ),
 		onSuccess: () => {
-			queryClient.invalidateQueries( {
-				queryKey: [ 'domains', domainName, 'dns' ],
-			} );
+			queryClient.invalidateQueries( domainDnsQuery( domainName ) );
 		},
 	} );
 
