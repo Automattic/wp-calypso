@@ -238,7 +238,7 @@ export function DateRangePicker( {
 										wrap={ false }
 									>
 										<TextControl
-											placeholder="YYYY-MM-DD"
+											type="date"
 											value={ fromStr }
 											onChange={ ( value ) => {
 												setFromStr( value ?? '' );
@@ -246,12 +246,11 @@ export function DateRangePicker( {
 											} }
 											__nextHasNoMarginBottom
 											__next40pxDefaultSize
-											inputMode="numeric"
 											autoComplete="off"
 											style={ { minWidth: 140, flex: '1 1 0' } }
 										/>
 										<TextControl
-											placeholder="YYYY-MM-DD"
+											type="date"
 											value={ toStr }
 											onChange={ ( value ) => {
 												setToStr( value ?? '' );
@@ -259,7 +258,6 @@ export function DateRangePicker( {
 											} }
 											__nextHasNoMarginBottom
 											__next40pxDefaultSize
-											inputMode="numeric"
 											autoComplete="off"
 											style={ { minWidth: 140, flex: '1 1 0' } }
 										/>
@@ -276,7 +274,7 @@ export function DateRangePicker( {
 									style={ { width: '100%' } }
 								>
 									<TextControl
-										placeholder="YYYY-MM-DD"
+										type="date"
 										value={ fromStr }
 										onChange={ ( value ) => {
 											setFromStr( value ?? '' );
@@ -284,12 +282,11 @@ export function DateRangePicker( {
 										} }
 										__nextHasNoMarginBottom
 										__next40pxDefaultSize
-										inputMode="numeric"
 										autoComplete="off"
 										style={ { minWidth: 220, flex: '0 0 auto' } }
 									/>
 									<TextControl
-										placeholder="YYYY-MM-DD"
+										type="date"
 										value={ toStr }
 										onChange={ ( value ) => {
 											setToStr( value ?? '' );
@@ -297,7 +294,6 @@ export function DateRangePicker( {
 										} }
 										__nextHasNoMarginBottom
 										__next40pxDefaultSize
-										inputMode="numeric"
 										autoComplete="off"
 										style={ { minWidth: 220, flex: '0 0 auto' } }
 									/>
