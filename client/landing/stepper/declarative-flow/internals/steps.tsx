@@ -148,7 +148,7 @@ export const STEPS = {
 	},
 
 	IMPORTER_SUBSTACK: {
-		slug: 'importer-substack',
+		slug: 'importerSubstack',
 		asyncComponent: () => import( './steps-repository/importer-substack' ),
 	},
 
