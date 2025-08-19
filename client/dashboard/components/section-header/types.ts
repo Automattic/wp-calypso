@@ -25,7 +25,7 @@ export interface SectionHeaderProps {
 	 * _Note: use `1` only for page headers._
 	 * @default 2
 	 */
-	level?: 1 | 2 | 3 | 4;
+	level?: 1 | 2 | 3;
 	/**
 	 * Unique identifier for the rendered heading element, useful for linking
 	 * or accessibility purposes.

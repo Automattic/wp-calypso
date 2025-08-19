@@ -36,10 +36,6 @@
 	.dashboard-section-header.is-level-3 & {
 		@include heading-large();
 	}
-
-	.dashboard-section-header.is-level-4 & {
-		@include heading-medium();
-	}
 }
 
 .dashboard-section-header__decoration {

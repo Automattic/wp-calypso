@@ -90,7 +90,7 @@ export default function EmailSetup() {
 					<SectionHeader
 						title={ __( 'Email setup' ) }
 						description={ __( 'Set up an existing email service for this domain.' ) }
-						level={ 4 }
+						level={ 3 }
 					/>
 					<TabPanel tabs={ tabs } orientation={ isMobile ? 'horizontal' : 'vertical' }>
 						{ ( tab ) => tab.content }
