@@ -3,6 +3,7 @@ import { domainQuery } from '../queries/domain';
 import { domainDnsQuery } from '../queries/domain-dns-records';
 import { domainForwardingQuery } from '../queries/domain-forwarding';
 import { domainGlueRecordsQuery } from '../queries/domain-glue-records';
+import { sslDetailsQuery } from '../queries/domain-ssl';
 import { domainsQuery } from '../queries/domains';
 import { queryClient } from '../query-client';
 import { rootRoute } from './root';
@@ -220,6 +221,20 @@ export const domainDnssecRoute = createRoute( {
 	)
 );
 
+export const domainSecurityRoute = createRoute( {
+	getParentRoute: () => domainRoute,
+	path: 'security',
+	loader: ( { params: { domainName } } ) => {
+		return queryClient.ensureQueryData( sslDetailsQuery( domainName ) );
+	},
+} ).lazy( () =>
+	import( '../../domains/domain-security' ).then( ( d ) =>
+		createLazyRoute( 'domain-security' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const domainTransferRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'transfer',
@@ -250,6 +265,7 @@ export const createDomainsRoutes = () => {
 			domainGlueRecordsEditRoute,
 			domainDnssecRoute,
 			domainTransferRoute,
+			domainSecurityRoute,
 		] ),
 	];
 };

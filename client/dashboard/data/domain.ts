@@ -7,6 +7,10 @@ export interface Domain extends DomainSummary {
 	move_to_new_site_pending: boolean;
 	can_manage_name_servers: boolean;
 	cannot_manage_name_servers_reason: null | string;
+	is_subdomain: boolean;
+	is_root_domain_registered_with_automattic: boolean;
+	subdomain_part: string;
+	name: string;
 }
 
 export function fetchDomain( domainName: string ): Promise< Domain > {
