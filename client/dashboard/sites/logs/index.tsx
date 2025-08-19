@@ -7,7 +7,7 @@ import { chartBar } from '@wordpress/icons';
 import { useMemo } from 'react';
 import { siteBySlugQuery } from '../../app/queries/site';
 import { siteLogsQuery } from '../../app/queries/site-logs';
-import { siteRoute } from '../../app/router';
+import { siteRoute } from '../../app/router/sites';
 import { Callout } from '../../components/callout';
 import { CalloutOverlay } from '../../components/callout-overlay';
 import DataViewsCard from '../../components/dataviews-card';

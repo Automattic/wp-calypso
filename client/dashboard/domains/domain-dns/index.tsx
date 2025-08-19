@@ -12,7 +12,7 @@ import {
 	domainDnsQuery,
 	domainDnsEmailMutation,
 } from '../../app/queries/domain-dns-records';
-import { domainDnsAddRoute, domainRoute } from '../../app/routes/domain-routes';
+import { domainDnsAddRoute, domainRoute } from '../../app/router/domains';
 import DataViewsCard from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
