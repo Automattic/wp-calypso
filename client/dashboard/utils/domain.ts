@@ -1,14 +1,14 @@
 import { addQueryArgs } from '@wordpress/url';
 import { isAfter, subMinutes, subDays } from 'date-fns';
 import { DotcomFeatures } from '../data/constants';
-import { whoisType } from '../data/domain-whois';
+import { WhoisType } from '../data/domain-whois';
 import { DomainTypes } from '../data/domains';
 import { isAkismetProduct, isMarketplaceTemporarySitePurchase } from './purchase';
 import { hasPlanFeature } from './site-features';
 import { userHasFlag } from './user';
 import { encodeProductForUrl } from './wpcom-checkout';
 import type { Purchase } from '../data/purchase';
-import type { SiteDomain, DomainSummary, Site, User, WhoisData } from '../data/types';
+import type { SiteDomain, DomainSummary, Site, User, WhoisDataEntry } from '../data/types';
 
 export function getDomainSiteSlug( domain: DomainSummary ) {
 	return domain.primary_domain ? domain.domain : domain.site_slug;
@@ -192,10 +192,10 @@ export function mapRecordKeysRecursively(
 	}, {} );
 }
 
-export function findRegistrantWhois( whoisContacts: WhoisData[] ) {
-	return whoisContacts.find( ( contact ) => contact.type === whoisType.REGISTRANT );
+export function findRegistrantWhois( whoisContacts: WhoisDataEntry[] | undefined ) {
+	return whoisContacts?.find( ( contact ) => contact.type === WhoisType.REGISTRANT );
 }
 
-export function findPrivacyServiceWhois( whoisContacts: WhoisData[] ) {
-	return whoisContacts.find( ( contact ) => contact.type === whoisType.PRIVACY_SERVICE );
+export function findPrivacyServiceWhois( whoisContacts: WhoisDataEntry[] | undefined ) {
+	return whoisContacts?.find( ( contact ) => contact.type === WhoisType.PRIVACY_SERVICE );
 }

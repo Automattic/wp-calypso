@@ -17,7 +17,11 @@ import { useMemo, useState } from 'react';
 import { countryListQuery, statesListQuery } from '../../app/queries/domain-supported-contries';
 import { domainWhoisMutation } from '../../app/queries/domain-whois';
 import Notice from '../../components/notice';
-import { validateDomainWhois, type DomainContactDetails } from '../../data/domain-whois';
+import {
+	validateDomainWhois,
+	type ContactValidationRequestContactInformation,
+	type DomainContactDetails,
+} from '../../data/domain-whois';
 import { getContactFormFields } from './contact-form-fields';
 
 interface ContactFormProps {
@@ -44,7 +48,7 @@ export default function ContactForm( {
 	const updateMutation = useMutation( domainWhoisMutation( domainName ) );
 
 	const validateMutation = useMutation( {
-		mutationFn: ( formData: DomainContactDetails ) => {
+		mutationFn: ( formData: ContactValidationRequestContactInformation ) => {
 			return validateDomainWhois( domainName, formData );
 		},
 		onSuccess: ( data ) => {
@@ -67,7 +71,7 @@ export default function ContactForm( {
 					}
 				);
 			} else {
-				createErrorNotice( data.messages_simple, {
+				createErrorNotice( data.messages_simple.join( ' ' ), {
 					type: 'snackbar',
 				} );
 			}

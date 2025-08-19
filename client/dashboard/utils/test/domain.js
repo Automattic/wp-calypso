@@ -1,15 +1,15 @@
-import { whoisType } from '../../data/domain-whois';
+import { WhoisType } from '../../data/domain-whois';
 import { findRegistrantWhois, findPrivacyServiceWhois } from '../domain';
 
 describe( 'utils', () => {
 	const whoisData = [
 		{
 			org: 'The best company',
-			type: whoisType.REGISTRANT,
+			type: WhoisType.REGISTRANT,
 		},
 		{
 			org: 'Privacy R US',
-			type: whoisType.PRIVACY_SERVICE,
+			type: WhoisType.PRIVACY_SERVICE,
 		},
 	];
 

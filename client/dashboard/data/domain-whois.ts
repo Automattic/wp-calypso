@@ -19,6 +19,95 @@ export type DomainContactDetails = {
 	extra?: DomainContactDetailsExtra;
 };
 
+export type DomainContactValidationRequestExtraFields = {
+	ca?: {
+		lang?: string;
+		legal_type?: string;
+		cira_agreement_accepted?: boolean;
+	};
+	uk?: {
+		registrant_type?: string;
+		registration_number?: string;
+		trading_name?: string;
+	};
+	fr?: {
+		registrant_type?: string;
+		registrant_vat_id?: string;
+		trademark_number?: string;
+		siren_siret?: string;
+	};
+	is_for_business?: boolean;
+};
+
+/**
+ * Request parameter expected by the domain contact validation endpoint.
+ * @see WPCOM_JSON_API_Domains_Validate_Contact_Information_Endpoint
+ */
+export type ContactValidationRequestContactInformation = {
+	address_1?: string;
+	address_2?: string;
+	city?: string;
+	country_code?: string;
+	email?: string;
+	extra?: DomainContactValidationRequestExtraFields;
+	fax?: string;
+	first_name?: string;
+	last_name?: string;
+	organization?: string;
+	phone?: string;
+	phone_number_country?: string;
+	postal_code?: string;
+	state?: string;
+	vat_id?: string;
+};
+
+export type ContactValidationResponseMessagesExtra = {
+	ca?: {
+		lang?: string[];
+		legal_type?: string[];
+		cira_agreement_accepted?: string[];
+	};
+	uk?: {
+		registrant_type?: string[];
+		registration_number?: string[];
+		trading_name?: string[];
+	};
+	fr?: {
+		registrant_type?: string[];
+		trademark_number?: string[];
+		siren_siret?: string[];
+	};
+	is_for_business?: boolean;
+};
+
+export type ContactValidationResponseMessages = {
+	first_name?: string[];
+	last_name?: string[];
+	organization?: string[];
+	email?: string[];
+	phone?: string[];
+	phone_number_country?: string[];
+	address_1?: string[];
+	address_2?: string[];
+	city?: string[];
+	state?: string[];
+	postal_code?: string[];
+	country_code?: string[];
+	fax?: string[];
+	vat_id?: string[];
+	extra?: ContactValidationResponseMessagesExtra;
+};
+
+export type RawContactValidationResponseMessages = Record< string, string[] >;
+
+export type DomainContactValidationResponse =
+	| { success: true }
+	| {
+			success: false;
+			messages: ContactValidationResponseMessages;
+			messages_simple: string[];
+	  };
+
 export type DomainContactDetailsExtra = {
 	ca?: CaDomainContactExtraDetails | null;
 	uk?: UkDomainContactExtraDetails | null;
@@ -46,6 +135,7 @@ export type FrDomainContactExtraDetails = {
 export interface WhoisDataEntry {
 	fname: string;
 	lname: string;
+	country_code: string;
 	org: string;
 	email: string;
 	sa1: string;
@@ -56,6 +146,8 @@ export interface WhoisDataEntry {
 	cc: string;
 	phone: string;
 	fax: string;
+	state: string;
+	type: WhoisType;
 }
 
 export interface WhoisEmailRecord {
@@ -91,12 +183,12 @@ export interface WhoisData {
 	sitename: string;
 }
 
-export const whoisType = {
-	REGISTRANT: 'registrant',
-	PRIVACY_SERVICE: 'privacy_service',
-};
+export enum WhoisType {
+	REGISTRANT = 'registrant',
+	PRIVACY_SERVICE = 'privacy_service',
+}
 
-export function fetchDomainWhois( domainName: string ): Promise< WhoisData > {
+export function fetchDomainWhois( domainName: string ): Promise< WhoisDataEntry[] > {
 	return wpcom.req.get( {
 		path: `/domains/${ domainName }/whois`,
 		apiVersion: '1.1',
@@ -107,7 +199,7 @@ export function updateDomainWhois(
 	domainName: string,
 	domainContactDetails: DomainContactDetails,
 	transferLock: boolean
-): Promise< WhoisData > {
+): Promise< DomainContactValidationResponse > {
 	return wpcom.req.post( {
 		path: `/domains/${ domainName }/whois`,
 		apiVersion: '1.1',
@@ -120,8 +212,8 @@ export function updateDomainWhois(
 
 export function validateDomainWhois(
 	domainName: string,
-	domainContactDetails: DomainContactDetails
-): Promise< WhoisData > {
+	domainContactDetails: ContactValidationRequestContactInformation
+): Promise< DomainContactValidationResponse > {
 	return wpcom.req.post( {
 		path: '/me/domain-contact-information/validate',
 		apiVersion: '1.1',

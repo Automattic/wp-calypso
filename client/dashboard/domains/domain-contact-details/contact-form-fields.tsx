@@ -13,24 +13,34 @@ import InlineSupportLink from '../../components/inline-support-link';
 import type { StatesListItem } from '../../data/domain-supported-countries';
 import type { DomainContactDetails } from '../../data/types';
 
-const createStateFieldEdit = ( statesList: StatesListItem | undefined ) => {
-	const StateFieldEditComponent = ( { field, onChange, data, hideLabelFromVision }: any ) => {
+const createStateFieldEdit = ( statesList: StatesListItem[] | undefined ) => {
+	const StateFieldEditComponent = ( {
+		field,
+		onChange,
+		data,
+		hideLabelFromVision,
+	}: {
+		field: Field< DomainContactDetails >;
+		onChange: ( value: Record< string, unknown > ) => void;
+		data: DomainContactDetails;
+		hideLabelFromVision: boolean;
+	} ) => {
 		const { id, getValue } = field;
 
-		if ( ! statesList || statesList?.length === 0 ) {
+		if ( ! statesList || statesList.length === 0 ) {
 			return (
 				<InputControl
 					__next40pxDefaultSize
 					label={ hideLabelFromVision ? '' : __( 'State' ) }
 					placeholder={ __( 'State' ) }
-					value={ getValue( { item: data } ) }
+					value={ getValue?.( { item: data } ) }
 					onChange={ ( value ) => onChange( { [ id ]: value } ) }
 				/>
 			);
 		}
 
 		// If the item data is not in the statesList, set the state to the first option
-		if ( ! statesList?.some( ( state ) => state.code === getValue( { item: data } ) ) ) {
+		if ( ! statesList?.some( ( state ) => state.code === getValue?.( { item: data } ) ) ) {
 			onChange( { [ id ]: statesList[ 0 ]?.code } );
 		}
 
@@ -39,7 +49,7 @@ const createStateFieldEdit = ( statesList: StatesListItem | undefined ) => {
 				__next40pxDefaultSize
 				__nextHasNoMarginBottom
 				label={ hideLabelFromVision ? '' : __( 'State' ) }
-				value={ getValue( { item: data } ) }
+				value={ getValue?.( { item: data } ) }
 				options={
 					statesList.map( ( state ) => ( {
 						label: state.name,
