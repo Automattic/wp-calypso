@@ -75,7 +75,9 @@ export default function ItemView( {
 
 	const { data: stagingSite } = useQuery( {
 		...siteByIdQuery( itemData.blogId ?? 0 ),
-		refetchInterval: 5000,
+		refetchInterval: ( query ) => {
+			return query.state.data?.jetpack_connection ? false : 5000;
+		},
 		enabled: !! itemData.blogId && isStagingSite,
 	} );
 
