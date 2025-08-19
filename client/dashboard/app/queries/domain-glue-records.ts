@@ -17,7 +17,7 @@ export const domainGlueRecordsQuery = ( domainName: string ) =>
 export const domainGlueRecordCreateMutation = ( domainName: string ) =>
 	mutationOptions( {
 		mutationFn: ( glueRecord: DomainGlueRecord ) => createDomainGlueRecord( glueRecord ),
-		onSuccess: ( newData: unknown, createdGlueRecord: DomainGlueRecord ) => {
+		onSuccess: ( newData, createdGlueRecord ) => {
 			queryClient.setQueryData(
 				domainGlueRecordsQuery( domainName ).queryKey,
 				( oldData: DomainGlueRecord[] = [] ) => oldData.concat( [ createdGlueRecord ] )
@@ -29,7 +29,7 @@ export const domainGlueRecordCreateMutation = ( domainName: string ) =>
 export const domainGlueRecordUpdateMutation = ( domainName: string ) =>
 	mutationOptions( {
 		mutationFn: ( glueRecord: DomainGlueRecord ) => updateDomainGlueRecord( glueRecord ),
-		onSuccess: ( newData: unknown, updatedGlueRecord: DomainGlueRecord ) => {
+		onSuccess: ( newData, updatedGlueRecord ) => {
 			queryClient.setQueryData(
 				domainGlueRecordsQuery( domainName ).queryKey,
 				( oldData: DomainGlueRecord[] = [] ) => {
@@ -48,8 +48,9 @@ export const domainGlueRecordUpdateMutation = ( domainName: string ) =>
 
 export const domainGlueRecordDeleteMutation = ( domainName: string ) =>
 	mutationOptions( {
-		mutationFn: ( glueRecord ) => deleteDomainGlueRecord( domainName, glueRecord ),
-		onSuccess: ( newData: unknown, deletedGlueRecord: DomainGlueRecord ): void => {
+		mutationFn: ( glueRecord: DomainGlueRecord ) =>
+			deleteDomainGlueRecord( domainName, glueRecord ),
+		onSuccess: ( newData, deletedGlueRecord ): void => {
 			queryClient.setQueryData(
 				domainGlueRecordsQuery( domainName ).queryKey,
 				( oldData: DomainGlueRecord[] = [] ) =>
