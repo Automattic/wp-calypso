@@ -25,11 +25,11 @@ export function PurchasePaymentMethod( {
 	}
 
 	if (
-		( purchase.is_auto_renew_enabled,
+		purchase.is_auto_renew_enabled &&
 		! isExpired( purchase ) &&
-			( ! purchase.payment_type || purchase.payment_type === 'credits' ) &&
-			! purchase.partner_name &&
-			! isAkismetFreeProduct( purchase ) ) &&
+		( ! purchase.payment_type || purchase.payment_type === 'credits' ) &&
+		! purchase.partner_name &&
+		! isAkismetFreeProduct( purchase ) &&
 		! isDisconnectedSite
 	) {
 		return (
