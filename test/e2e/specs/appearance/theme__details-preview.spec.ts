@@ -1,21 +1,15 @@
 import {
-	TestAccount,
-	getTestAccountByFeature,
-	envToFeatureKey,
-	envVariables,
 	SidebarComponent,
 	ThemesPage,
 	ThemesDetailPage,
 	PreviewComponent,
 	SiteSelectComponent,
 } from '@automattic/calypso-e2e';
-import { test } from '@playwright/test';
+import { test } from '../../lib/pwBase';
 
 test.describe( 'Themes', () => {
-	test( 'Preview', async ( { page } ) => {
-		const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
-		const testAccount = new TestAccount( accountName );
-		const testAccountSiteDomain = testAccount.getSiteURL( { protocol: false } );
+	test( 'Preview (Gutenberg Simple Account)', async ( { page, accountGutenbergSimple } ) => {
+		const testAccountSiteDomain = accountGutenbergSimple.getSiteURL( { protocol: false } );
 		let themesPage: ThemesPage;
 		let themesDetailPage: ThemesDetailPage;
 		let previewComponent: PreviewComponent;
@@ -23,7 +17,7 @@ test.describe( 'Themes', () => {
 		// This test will use partial matching names to cycle between available themes.
 		const themeName = 'Twenty Twen';
 
-		await testAccount.authenticate( page );
+		await accountGutenbergSimple.authenticate( page );
 
 		await test.step( 'Navigate to Appearance > Themes', async function () {
 			const sidebarComponent = new SidebarComponent( page );
