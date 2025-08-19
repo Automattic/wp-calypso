@@ -15,16 +15,11 @@ import {
 	MIN_NAME_SERVERS_LENGTH,
 	MAX_NAME_SERVERS_LENGTH,
 	WPCOM_DEFAULT_NAME_SERVERS,
+	FormData,
 	NameServerKey,
 } from './types';
 import UpsellNudge from './upsell-nudge';
-import { areAllWpcomNameServers, validateHostname } from './utils';
-
-type FormData = {
-	useWpcomNameServers: boolean;
-} & {
-	[ K in NameServerKey ]: string;
-};
+import { areAllWpcomNameServers, validateHostname, getFormNameServersValue } from './utils';
 
 interface Props {
 	domainName: string;
@@ -187,23 +182,16 @@ export default function NameServersForm( {
 		[ createNameServerField, isBusy, showUpsellNudge, domainName, domainSiteSlug ]
 	);
 
-	const getFormNameServersValue = useCallback( () => {
-		return Array.from(
-			{ length: MAX_NAME_SERVERS_LENGTH },
-			( _, i ) => formData[ `nameServer${ i + 1 }` as NameServerKey ]
-		).filter( Boolean );
-	}, [ formData ] );
-
 	const handleSubmit = useCallback(
 		( e: React.FormEvent ) => {
 			e.preventDefault();
-			onSubmit( getFormNameServersValue() );
+			onSubmit( getFormNameServersValue( formData ) );
 		},
-		[ onSubmit, getFormNameServersValue ]
+		[ onSubmit, formData ]
 	);
 
 	const isNameServersChanged = useCallback( () => {
-		const currentNameServers = getFormNameServersValue();
+		const currentNameServers = getFormNameServersValue( formData );
 		// Different lengths means there's definitely a change
 		if ( currentNameServers.length !== nameServers.length ) {
 			return true;
@@ -212,7 +200,7 @@ export default function NameServersForm( {
 		return currentNameServers.some(
 			( ns, index ) => ns.toLowerCase() !== ( nameServers[ index ] || '' ).toLowerCase()
 		);
-	}, [ getFormNameServersValue, nameServers ] );
+	}, [ nameServers, formData ] );
 
 	const canSubmit = useMemo( () => {
 		return ! isBusy && isItemValid( formData, fields, formObj ) && isNameServersChanged();

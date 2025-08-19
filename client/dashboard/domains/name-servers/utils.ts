@@ -1,3 +1,4 @@
+import { type FormData, type NameServerKey, MAX_NAME_SERVERS_LENGTH } from './types';
 import type { Domain } from '../../data/domain';
 import type { User } from '../../data/me';
 import type { Site } from '../../data/site';
@@ -19,6 +20,13 @@ export const areAllWpcomNameServers = ( nameservers?: string[] ) => {
 	return nameservers.every( ( nameserver: string ) => {
 		return ! nameserver || WPCOM_DEFAULT_NAMESERVERS_REGEX.test( nameserver );
 	} );
+};
+
+export const getFormNameServersValue = ( formData: FormData ) => {
+	return Array.from(
+		{ length: MAX_NAME_SERVERS_LENGTH },
+		( _, i ) => formData[ `nameServer${ i + 1 }` as NameServerKey ]
+	).filter( Boolean );
 };
 
 export const shouldShowUpsellNudge = ( user: User, domain: Domain, site?: Site ): boolean => {
