@@ -22,12 +22,10 @@ import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import TextareaAutosize from 'calypso/components/textarea-autosize';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { useSitelessDomainCheck } from 'calypso/lib/billing/use-siteless-domain-check';
 import { billingHistory, vatDetails as vatDetailsPath } from 'calypso/me/purchases/paths';
 import titles from 'calypso/me/purchases/titles';
-import {
-	isInternalA4AAgencyDomain,
-	isSitelessDomainForBillingAndReceipts,
-} from 'calypso/me/purchases/utils';
+import { isInternalA4AAgencyDomain } from 'calypso/me/purchases/utils';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
 import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list';
 import { useDispatch } from 'calypso/state';
@@ -551,12 +549,31 @@ function ReceiptItemTaxes( { transaction }: { transaction: BillingTransaction } 
 	);
 }
 
-function ReceiptLineItem( {
+function ReceiptLineItemWrapper( {
 	item,
 	transaction,
 }: {
 	item: BillingTransactionItem;
 	transaction: BillingTransaction;
+} ) {
+	const isSitelessDomain = useSitelessDomainCheck( item.site_id );
+	return (
+		<ReceiptLineItem
+			item={ item }
+			transaction={ transaction }
+			isSitelessDomain={ isSitelessDomain }
+		/>
+	);
+}
+
+function ReceiptLineItem( {
+	item,
+	transaction,
+	isSitelessDomain,
+}: {
+	item: BillingTransactionItem;
+	transaction: BillingTransaction;
+	isSitelessDomain: boolean;
 } ) {
 	const translate = useTranslate();
 	const termLabel = getTransactionTermLabel( item, translate );
@@ -569,7 +586,6 @@ function ReceiptLineItem( {
 		stripZeros: true,
 	} );
 
-	const isSitelessDomain = isSitelessDomainForBillingAndReceipts( item.domain );
 	const shouldShowDomain =
 		item.domain && ! isSitelessDomain && ! isInternalA4AAgencyDomain( item.domain );
 
@@ -629,7 +645,7 @@ function ReceiptLineItems( { transaction }: { transaction: BillingTransaction } 
 				</thead>
 				<tbody>
 					{ groupedTransactionItems.map( ( item ) => (
-						<ReceiptLineItem key={ item.id } transaction={ transaction } item={ item } />
+						<ReceiptLineItemWrapper key={ item.id } transaction={ transaction } item={ item } />
 					) ) }
 					<tr>
 						<td colSpan={ 2 }>

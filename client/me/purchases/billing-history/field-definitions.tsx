@@ -1,10 +1,8 @@
 import { type Fields, type Operator } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
+import { useSitelessDomainCheck } from 'calypso/lib/billing/use-siteless-domain-check';
 import { capitalPDangit } from 'calypso/lib/formatting';
-import {
-	isInternalA4AAgencyDomain,
-	isSitelessDomainForBillingAndReceipts,
-} from 'calypso/me/purchases/utils';
+import { isInternalA4AAgencyDomain } from 'calypso/me/purchases/utils';
 import {
 	getTransactionTermLabel,
 	groupDomainProducts,
@@ -19,16 +17,28 @@ import type {
 	BillingTransactionItem,
 } from 'calypso/state/billing-transactions/types';
 
+function ServiceNameWrapper( {
+	transaction,
+	translate,
+}: {
+	transaction: BillingTransactionItem;
+	translate: ReturnType< typeof useTranslate >;
+} ) {
+	// Check if the site is a siteless domain (Passport URL (siteless.marketplace.wp.com), A4A agency, and a4a purchases)
+	// These are internal/system domains that don't represent user sites
+	const isSitelessDomain = useSitelessDomainCheck( transaction.site_id );
+
+	return renderServiceNameDescription( transaction, translate, isSitelessDomain );
+}
+
 function renderServiceNameDescription(
 	transaction: BillingTransactionItem,
-	translate: ReturnType< typeof useTranslate >
+	translate: ReturnType< typeof useTranslate >,
+	isSitelessDomain: boolean
 ) {
 	const plan = capitalPDangit( transaction.variation );
 	const termLabel = getTransactionTermLabel( transaction, translate );
 
-	// Hide domains for siteless transactions (Passport URL (siteless.marketplace.wp.com), A4A agency, and a4a purchases)
-	// These are internal/system domains that don't represent user sites
-	const isSitelessDomain = isSitelessDomainForBillingAndReceipts( transaction.domain );
 	const shouldShowDomain =
 		transaction.domain && ! isSitelessDomain && ! isInternalA4AAgencyDomain( transaction.domain );
 	return (
@@ -60,7 +70,7 @@ function renderServiceName(
 		return transactionItem.product;
 	}
 
-	return renderServiceNameDescription( transactionItem, translate );
+	return <ServiceNameWrapper transaction={ transactionItem } translate={ translate } />;
 }
 
 function getUniqueMonths(
