@@ -277,13 +277,15 @@ export default function DomainDns() {
 				isBusy={ updateDnsMutation.isPending }
 				isOpen={ isRestoreDefaultEmailRecordsDialogOpen }
 			/>
-			<DnsImportDialog
-				isOpen={ isImportDialogOpen }
-				domainName={ domainName }
-				records={ importedRecords }
-				onConfirm={ closeImportDialog }
-				onCancel={ closeImportDialog }
-			/>
+			{ isImportDialogOpen && (
+				<DnsImportDialog
+					isOpen={ isImportDialogOpen }
+					domainName={ domainName }
+					records={ importedRecords }
+					onConfirm={ closeImportDialog }
+					onCancel={ closeImportDialog }
+				/>
+			) }
 		</PageLayout>
 	);
 }

@@ -167,7 +167,7 @@ export default function DnsImportDialog( {
 						{ records.map( ( record, index ) => renderRecordRow( record, index ) ) }
 					</VStack>
 				) : (
-					<Text>{ __( "We couldn't find valid DNS records to import." ) }</Text>
+					<Text>{ __( 'We couldn’t find valid DNS records to import.' ) }</Text>
 				) }
 
 				<HStack justify="flex-end" spacing={ 2 }>
