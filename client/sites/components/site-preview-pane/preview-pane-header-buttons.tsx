@@ -63,7 +63,9 @@ const PreviewPaneHeaderButtons = ( { focusRef, itemData }: Props ) => {
 	const { data: stagingSite } = useQuery( {
 		...siteByIdQuery( stagingSiteId ?? 0 ),
 		enabled: !! stagingSiteId,
-		refetchInterval: 5000,
+		refetchInterval: ( query ) => {
+			return query.state.data?.jetpack_connection ? false : 5000;
+		},
 	} );
 
 	const hasStagingSiteJetpackConnection = stagingSite?.jetpack_connection;
