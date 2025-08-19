@@ -118,7 +118,7 @@ export function updateDomainWhois(
 	} );
 }
 
-export function fetchDomainWhoisValidate(
+export function validateDomainWhois(
 	domainName: string,
 	domainContactDetails: DomainContactDetails
 ): Promise< WhoisData > {

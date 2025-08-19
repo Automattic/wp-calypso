@@ -5,7 +5,7 @@ import { domainWhoisQuery } from '../../app/queries/domain-whois';
 import { domainRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { findRegistrantWhois } from '../../utils/domain-whois';
+import { findRegistrantWhois } from '../../utils/domain';
 import ContactForm from './contact-form';
 import type { DomainContactDetails } from '../../data/types';
 

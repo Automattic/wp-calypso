@@ -1,5 +1,5 @@
 import { whoisType } from '../../data/domain-whois';
-import { findRegistrantWhois, findPrivacyServiceWhois } from '../domain-whois/utils';
+import { findRegistrantWhois, findPrivacyServiceWhois } from '../domain';
 
 describe( 'utils', () => {
 	const whoisData = [

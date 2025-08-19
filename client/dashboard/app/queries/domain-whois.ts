@@ -1,7 +1,7 @@
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import {
 	fetchDomainWhois,
-	fetchDomainWhoisValidate,
+	validateDomainWhois,
 	updateDomainWhois,
 	type DomainContactDetails,
 } from '../../data/domain-whois';
@@ -19,7 +19,7 @@ export const domainWhoisValidateQuery = (
 ) =>
 	queryOptions( {
 		queryKey: [ 'domains', domainName, 'whois', 'validate' ],
-		queryFn: () => fetchDomainWhoisValidate( domainName, domainContactDetails ),
+		queryFn: () => validateDomainWhois( domainName, domainContactDetails ),
 	} );
 
 export const domainWhoisMutation = ( domainName: string ) =>

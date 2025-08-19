@@ -13,11 +13,11 @@ import { DataForm, Field, isItemValid } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useEffect, useRef, useState, useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { countryListQuery, statesListQuery } from '../../app/queries/domain-supported-contries';
 import { domainWhoisMutation } from '../../app/queries/domain-whois';
 import Notice from '../../components/notice';
-import { fetchDomainWhoisValidate, type DomainContactDetails } from '../../data/domain-whois';
+import { validateDomainWhois, type DomainContactDetails } from '../../data/domain-whois';
 import { getContactFormFields } from './contact-form-fields';
 
 interface ContactFormProps {
@@ -36,30 +36,28 @@ export default function ContactForm( {
 }: ContactFormProps ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: countryList } = useQuery( countryListQuery() );
-	const [ selectedCountryCode, setSelectedCountryCode ] = useState(
-		initialData?.countryCode ?? ''
+	const [ formData, setFormData ] = useState< DomainContactDetails >(
+		initialData ?? { optOutTransferLock: false }
 	);
+	const selectedCountryCode = formData.countryCode ?? initialData?.countryCode ?? '';
 	const { data: statesList } = useQuery( statesListQuery( selectedCountryCode ) );
-
-	const formDataRef = useRef< any >( null );
 	const updateMutation = useMutation( domainWhoisMutation( domainName ) );
 
 	const validateMutation = useMutation( {
-		mutationFn: ( formData: any ) => {
-			formDataRef.current = formData;
-			return fetchDomainWhoisValidate( domainName, formData );
+		mutationFn: ( formData: DomainContactDetails ) => {
+			return validateDomainWhois( domainName, formData );
 		},
-		onSuccess: ( data: any ) => {
+		onSuccess: ( data ) => {
 			if ( data.success ) {
 				updateMutation.mutate(
 					{
-						formData: formDataRef.current,
-						transferLock: formDataRef.current.optOutTransferLock === false,
+						formData,
+						transferLock: formData.optOutTransferLock === false,
 					},
 					{
 						onSuccess: () => {
 							createSuccessNotice( __( 'Contact details saved.' ), { type: 'snackbar' } );
-							onSubmit?.( formDataRef.current );
+							onSubmit?.( formData );
 						},
 						onError: () => {
 							createErrorNotice( __( 'Failed to save contact details.' ), {
@@ -76,22 +74,13 @@ export default function ContactForm( {
 		},
 	} );
 
-	const [ formData, setFormData ] = useState< DomainContactDetails >(
-		initialData ?? { optOutTransferLock: false }
-	);
-
 	const isDirty = ! ( JSON.stringify( formData ) === JSON.stringify( initialData ) );
 	const isSubmitting = validateMutation.isPending || updateMutation.isPending;
 
-	const handleSubmit = () => {
+	const handleSubmit = ( e: React.FormEvent ) => {
+		e.preventDefault();
 		validateMutation.mutate( formData );
 	};
-
-	useEffect( () => {
-		if ( formData.countryCode ) {
-			setSelectedCountryCode( formData.countryCode as string );
-		}
-	}, [ formData.countryCode, setSelectedCountryCode ] );
 
 	const fields: Field< DomainContactDetails >[] = useMemo(
 		() => getContactFormFields( countryList ?? [], statesList ?? [] ),
@@ -200,20 +189,21 @@ export default function ContactForm( {
 								</Text>
 							</VStack>
 						</Notice>
-						<HStack justify="flex-start" spacing={ 2 }>
-							<Button
-								onClick={ () => handleSubmit( formData ) }
-								variant="primary"
-								type="submit"
-								isBusy={ isSubmitting }
-								disabled={ ! canSave || ! isDirty || isSubmitting }
-							>
-								{ __( 'Save contact info' ) }
-							</Button>
-							<Button variant="secondary" onClick={ onCancel }>
-								{ __( 'Cancel' ) }
-							</Button>
-						</HStack>
+						<form onSubmit={ handleSubmit }>
+							<HStack justify="flex-start" spacing={ 2 }>
+								<Button
+									variant="primary"
+									type="submit"
+									isBusy={ isSubmitting }
+									disabled={ ! canSave || ! isDirty || isSubmitting }
+								>
+									{ __( 'Save contact info' ) }
+								</Button>
+								<Button variant="secondary" onClick={ onCancel }>
+									{ __( 'Cancel' ) }
+								</Button>
+							</HStack>
+						</form>
 					</VStack>
 				</CardBody>
 			</Card>
