@@ -10,7 +10,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { domainDnsApplyTemplateMutation } from '../../app/queries/domain-dns-records';
-import { domainRoute } from '../../app/routes/domain-routes';
+import { domainRoute } from '../../app/router/domains';
 import { type DnsTemplateVariables } from '../../data/domain-dns-records';
 
 export type EmailSetupFormData = {
