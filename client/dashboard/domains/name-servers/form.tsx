@@ -19,7 +19,66 @@ import {
 	NameServerKey,
 } from './types';
 import UpsellNudge from './upsell-nudge';
-import { areAllWpcomNameServers, validateHostname, getFormNameServers } from './utils';
+import { areAllWpcomNameServers, validateHostname } from './utils';
+
+const createNameServerField = ( index: number, formData: FormData, isBusy?: boolean ) => {
+	const baseField = {
+		id: `nameServer${ index }` as NameServerKey,
+		type: 'text' as const,
+		label: sprintf(
+			// translators: %s is the name server number (1-4)
+			__( 'Custom name server %s' ),
+			index
+		),
+		placeholder: sprintf(
+			// translators: %s is the name server number (1-4)
+			__( 'ns%s.domain.com' ),
+			index
+		),
+		isValid: {
+			required: index <= MIN_NAME_SERVERS_LENGTH,
+			custom: ( formData: FormData, field: NormalizedField< FormData > ) => {
+				const value = formData[ field.id as NameServerKey ];
+				// Skip validation for empty optional fields
+				if ( ! value && ! field.isValid?.required ) {
+					return null;
+				}
+				return validateHostname( value ) ? null : __( 'Please enter a valid hostname' );
+			},
+		},
+		isVisible: ( item: FormData ) => {
+			// For WP.com nameservers, show field only if it has a value
+			if ( item.useWpcomNameServers ) {
+				return Boolean( item[ `nameServer${ index }` as NameServerKey ] );
+			}
+
+			// For custom nameservers, show fields 3 and 4 only if previous field has value
+			if ( index > MIN_NAME_SERVERS_LENGTH ) {
+				return Boolean( item[ `nameServer${ index - 1 }` as NameServerKey ] );
+			}
+
+			// Always show MIN_NAME_SERVERS_LENGTH fields
+			return true;
+		},
+	};
+
+	return formData.useWpcomNameServers || isBusy
+		? {
+				...baseField,
+				Edit: ( { field }: { field: Field< FormData > } ) => (
+					<InputControl
+						__next40pxDefaultSize
+						disabled
+						label={ field.label }
+						value={ formData[ field.id as NameServerKey ]?.toLowerCase() }
+					/>
+				),
+		  }
+		: baseField;
+};
+
+export const getFormNameServers = ( { useWpcomNameServers, ...nameServers }: FormData ) =>
+	Object.values( nameServers ).filter( Boolean );
 
 interface Props {
 	domainName: string;
@@ -66,65 +125,6 @@ export default function NameServersForm( {
 			],
 		} ),
 		[]
-	);
-
-	const createNameServerField = useCallback(
-		( index: number ) => {
-			const baseField = {
-				id: `nameServer${ index }` as NameServerKey,
-				type: 'text' as const,
-				label: sprintf(
-					// translators: %s is the name server number (1-4)
-					__( 'Custom name server %s' ),
-					index
-				),
-				placeholder: sprintf(
-					// translators: %s is the name server number (1-4)
-					__( 'ns%s.domain.com' ),
-					index
-				),
-				isValid: {
-					required: index <= MIN_NAME_SERVERS_LENGTH,
-					custom: ( formData: FormData, field: NormalizedField< FormData > ) => {
-						const value = formData[ field.id as NameServerKey ];
-						// Skip validation for empty optional fields
-						if ( ! value && ! field.isValid?.required ) {
-							return null;
-						}
-						return validateHostname( value ) ? null : __( 'Please enter a valid hostname' );
-					},
-				},
-				isVisible: ( item: FormData ) => {
-					// For WP.com nameservers, show field only if it has a value
-					if ( item.useWpcomNameServers ) {
-						return Boolean( item[ `nameServer${ index }` as NameServerKey ] );
-					}
-
-					// For custom nameservers, show fields 3 and 4 only if previous field has value
-					if ( index > MIN_NAME_SERVERS_LENGTH ) {
-						return Boolean( item[ `nameServer${ index - 1 }` as NameServerKey ] );
-					}
-
-					// Always show MIN_NAME_SERVERS_LENGTH fields
-					return true;
-				},
-			};
-
-			return formData.useWpcomNameServers || isBusy
-				? {
-						...baseField,
-						Edit: ( { field }: { field: Field< FormData > } ) => (
-							<InputControl
-								__next40pxDefaultSize
-								disabled
-								label={ field.label }
-								value={ formData[ field.id as NameServerKey ]?.toLowerCase() }
-							/>
-						),
-				  }
-				: baseField;
-		},
-		[ formData, isBusy ]
 	);
 
 	const fields = useMemo(
@@ -176,10 +176,10 @@ export default function NameServersForm( {
 				},
 			},
 			...Array.from( { length: MAX_NAME_SERVERS_LENGTH }, ( _, i ) =>
-				createNameServerField( i + 1 )
+				createNameServerField( i + 1, formData, isBusy )
 			),
 		],
-		[ createNameServerField, isBusy, showUpsellNudge, domainName, domainSiteSlug ]
+		[ formData, isBusy, showUpsellNudge, domainName, domainSiteSlug ]
 	);
 
 	const handleSubmit = useCallback(
