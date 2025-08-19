@@ -235,6 +235,7 @@ function LanguagePicker< TLanguage extends Language >( {
 						label={ __( 'Search', __i18n_text_domain__ ) }
 						hideLabelFromVision
 						placeholder={ searchPlaceholder }
+						value={ search }
 					/>
 				</div>
 			</HStack>
