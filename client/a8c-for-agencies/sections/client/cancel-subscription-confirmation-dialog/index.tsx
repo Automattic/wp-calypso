@@ -51,11 +51,21 @@ export default function CancelSubscriptionAction( { subscription, onCancelSubscr
 		setIsVisible( false );
 	};
 
+	// Check if auto-renew is enabled to determine if the cancel button should be shown
+	// If subscription.subscription is null, fallback to old behavior (show the button)
+	// If subscription.subscription exists but is_auto_renew_enabled is null/undefined, default to true (show the button)
+	// TODO: Later we might show added details and the ability to actually remove a cancelled subscription that has auto-renew disabled, like on the WPCOM side.
+	const isAutoRenewEnabled = subscription.subscription
+		? subscription.subscription.is_auto_renew_enabled ?? true
+		: true;
+
 	return (
 		<>
-			<Button compact onClick={ () => setIsVisible( true ) }>
-				{ translate( 'Cancel the subscription' ) }
-			</Button>
+			{ isAutoRenewEnabled && (
+				<Button compact onClick={ () => setIsVisible( true ) }>
+					{ translate( 'Cancel the subscription' ) }
+				</Button>
+			) }
 
 			{ isVisible && (
 				<A4AConfirmationDialog
