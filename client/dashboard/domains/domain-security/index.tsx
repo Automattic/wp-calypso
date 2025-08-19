@@ -56,7 +56,7 @@ export default function DomainSecurity() {
 		failureReasons: { error_type: string; message: string }[]
 	): ReactElement => {
 		return (
-			<ul>
+			<ul style={ { margin: 0 } }>
 				{ failureReasons.map( ( failureReason ) => {
 					const isDnssecErrorForManagedSubdomain =
 						failureReason.error_type === 'DNSSEC validation error' &&
@@ -96,71 +96,84 @@ export default function DomainSecurity() {
 	};
 
 	const renderSslStatusMessage = () => {
-		if ( sslDetails.certificate_provisioned ) {
-			return (
-				<Text>
-					{ __(
-						'We give you strong HTTPS encryption with your domain for free. This provides a trust indicator for your visitors and keeps their connection to your site secure.'
-					) }
-				</Text>
-			);
-		}
-		if ( sslDetails.is_newly_registered ) {
-			return (
-				<Text>
-					{ __(
-						'Your newly registered domain is almost ready! It can take up to 30 minutes for the domain to start resolving to your site so we can issue a certificate. Please check back soon.'
-					) }
-				</Text>
-			);
-		}
-		if ( sslDetails.is_expired ) {
-			return (
-				<Text>
-					{ __( 'Your domain has expired. Renew your domain to issue a new SSL certificate.' ) }
-				</Text>
-			);
-		}
-		if ( sslDetails.failure_reasons ) {
-			if ( sslDetails.failure_reasons.length > 0 ) {
-				return (
-					<>
-						<Text>
-							{ __(
-								'There are one or more problems with your DNS configuration that prevent an SSL certificate from being issued:'
-							) }
-						</Text>
-						{ renderFailureReasons( sslDetails.failure_reasons ) }
-						<Text>
-							{ __(
-								'Once you have fixed all the issues, you can request a new certificate by clicking the button below.'
-							) }
-						</Text>
-					</>
-				);
-			}
-			return (
-				<Text>
-					{ __(
-						'There was a problem issuing your SSL certificate. You can request a new certificate by clicking the button below.'
-					) }
-				</Text>
-			);
-		}
-		return (
-			<Text>
-				{ createInterpolateElement(
-					__(
-						'There is an issue with your certificate. Contact us to {{link}}learn more{{/link}}.'
-					),
-					{
-						link: <InlineSupportLink supportLink={ CONTACT } />,
-					}
-				) }
-			</Text>
-		);
+		type StatusConfig = {
+			message: string | ReactElement;
+			showFailureReasons?: boolean;
+			showProvisionInstructions?: boolean;
+		};
 
-		return null;
+		const statusConfig: Record< string, StatusConfig > = {
+			certificate_provisioned: {
+				message: createInterpolateElement(
+					__(
+						'We give you strong HTTPS encryption with your domain for free. This provides a trust indicator for your visitors and keeps their connection to your site secure. <link>Learn more</link>'
+					),
+					{ link: <InlineSupportLink supportContext="https-ssl" /> }
+				),
+			},
+			is_newly_registered: {
+				message: __(
+					'Your newly registered domain is almost ready! It can take up to 30 minutes for the domain to start resolving to your site so we can issue a certificate. Please check back soon.'
+				),
+			},
+			is_expired: {
+				message: __( 'Your domain has expired. Renew your domain to issue a new SSL certificate.' ),
+			},
+			has_failure_reasons: {
+				message: __(
+					'There are one or more problems with your DNS configuration that prevent an SSL certificate from being issued.'
+				),
+				showFailureReasons: true,
+				showProvisionInstructions: true,
+			},
+			general_failure: {
+				message: __(
+					'There was a problem issuing your SSL certificate. You can request a new certificate by clicking the button below.'
+				),
+			},
+			default: {
+				message: createInterpolateElement(
+					__( 'There is an issue with your certificate. Contact us to <link>learn more</link>.' ),
+					{
+						link: <a href={ CONTACT } target="_blank" rel="noopener noreferrer" />,
+					}
+				),
+			},
+		};
+
+		// Determine the current status
+		let currentStatus: keyof typeof statusConfig;
+
+		if ( sslDetails.certificate_provisioned ) {
+			currentStatus = 'certificate_provisioned';
+		} else if ( sslDetails.is_newly_registered ) {
+			currentStatus = 'is_newly_registered';
+		} else if ( sslDetails.is_expired ) {
+			currentStatus = 'is_expired';
+		} else if ( sslDetails.failure_reasons ) {
+			currentStatus =
+				sslDetails.failure_reasons.length > 0 ? 'has_failure_reasons' : 'general_failure';
+		} else {
+			currentStatus = 'default';
+		}
+
+		const config = statusConfig[ currentStatus ];
+
+		return (
+			<>
+				<Text>{ config.message }</Text>
+				{ config.showFailureReasons &&
+					sslDetails.failure_reasons &&
+					renderFailureReasons( sslDetails.failure_reasons ) }
+				{ config.showProvisionInstructions && (
+					<Text>
+						{ __(
+							'Once you have fixed all the issues, you can request a new certificate by clicking the button below.'
+						) }
+					</Text>
+				) }
+			</>
+		);
 	};
 
 	const renderBadge = () => {
@@ -190,13 +203,14 @@ export default function DomainSecurity() {
 							<HStack justify="flex-start">
 								{ shouldShowProvisionButton && (
 									<Button
+										__next40pxDefaultSize
 										variant="primary"
 										type="submit"
 										isBusy={ isPending }
 										disabled={ isPending }
 										onClick={ handleOnClick }
 									>
-										{ __( 'Provision SSL certificate' ) }
+										{ __( 'Provision certificate' ) }
 									</Button>
 								) }
 							</HStack>
