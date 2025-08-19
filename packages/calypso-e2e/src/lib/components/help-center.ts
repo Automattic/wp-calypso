@@ -91,7 +91,7 @@ export class HelpCenterComponent {
 		} );
 
 		await menuButton.click();
-		const minimizeButton = await this.popup.getByRole( 'menuitem', {
+		const minimizeButton = await this.page.getByRole( 'menuitem', {
 			name: 'Minimize',
 			exact: true,
 		} );
