@@ -122,7 +122,10 @@ const EllipsisMenu = () => {
 		<Spinner width={ 24 } height={ 24 } />
 	) : (
 		<Menu>
-			<Menu.TriggerButton render={ <Button icon={ moreVertical } /> } />
+			<Menu.TriggerButton
+				title={ __( 'Help Center Options', __i18n_text_domain__ ) }
+				render={ <Button icon={ moreVertical } /> }
+			/>
 			<Menu.Popover>
 				<Menu.Item
 					prefix={ <Icon icon={ lineSolid } width={ 20 } height={ 20 } /> }
