@@ -8,7 +8,7 @@ import {
 	__experimentalInputControlSuffixWrapper as InputControlSuffixWrapper,
 	Button,
 } from '@wordpress/components';
-import { DataForm } from '@wordpress/dataviews';
+import { DataForm, isItemValid } from '@wordpress/dataviews';
 import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { isValidIpAddress, isValidNameServerSubdomain } from '../../utils/domain';
@@ -106,6 +106,8 @@ export default function DomainGlueRecordsForm( {
 		fields: [ 'nameServer', 'ipAddress' ],
 	};
 
+	const canSubmit = ! isSubmitting && isItemValid( formData, fields, form );
+
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
 
@@ -136,7 +138,7 @@ export default function DomainGlueRecordsForm( {
 								variant="primary"
 								type="submit"
 								isBusy={ isSubmitting }
-								disabled={ isSubmitting }
+								disabled={ ! canSubmit }
 							>
 								{ submitButtonText }
 							</Button>
