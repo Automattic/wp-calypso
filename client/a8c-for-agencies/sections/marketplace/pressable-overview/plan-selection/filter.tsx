@@ -56,6 +56,8 @@ export default function PlanSelectionFilter( {
 
 	const isMobile = useMobileBreakpoint();
 
+	const isPremiumPlanTab = selectedTab === PLAN_CATEGORY_PREMIUM;
+
 	const lowPlanOptions = useMemo(
 		() =>
 			getSliderOptions(
@@ -75,8 +77,17 @@ export default function PlanSelectionFilter( {
 				areSignaturePlans ? PLAN_CATEGORY_SIGNATURE_HIGH : PLAN_CATEGORY_ENTERPRISE,
 				isMobile
 			),
+			...( isPremiumPlanTab
+				? []
+				: [
+						{
+							label: translate( 'More' ),
+							value: null,
+							category: null,
+						},
+				  ] ),
 		],
-		[ filterType, isMobile, plans, areSignaturePlans ]
+		[ filterType, isMobile, plans, isPremiumPlanTab, translate, areSignaturePlans ]
 	);
 
 	const onSelectOption = useCallback(
