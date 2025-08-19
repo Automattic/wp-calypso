@@ -124,6 +124,10 @@ export default function PressablePlanSection( {
 		}
 	}, [ existingPlan, isReferralMode ] );
 
+	useEffect( () => {
+		setSelectedTab( getSelectedTab( existingPressablePlan, areSignaturePlans ) );
+	}, [ areSignaturePlans, existingPressablePlan, setSelectedTab ] );
+
 	const onPlanAddToCart = useCallback( () => {
 		if ( selectedPlan ) {
 			dispatch(
