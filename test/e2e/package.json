@@ -20,10 +20,13 @@
 		"clean:output": "rm -rf ./allure-results && rm -rf ./results",
 		"build": "yarn workspace @automattic/jest-circus-allure-reporter build && yarn workspace @automattic/calypso-e2e build",
 		"test": "yarn jest",
-		"pwtest": "npx playwright test",
 		"test:mobile": "VIEWPORT_NAME=mobile yarn jest",
 		"debug": "PWDEBUG=1 DEBUG=pw:api yarn run test",
-		"debug:mobile": "PWDEBUG=1 DEBUG=pw:api yarn run test:mobile"
+		"debug:mobile": "PWDEBUG=1 DEBUG=pw:api yarn run test:mobile",
+		"playwright": "npx playwright test --project=chrome --project=pixel",
+		"playwright:mobile": "npx playwright test --project=pixel",
+		"playwright:desktop": "npx playwright test --project=chrome",
+		"playwright:all": "npx playwright test"
 	},
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",
