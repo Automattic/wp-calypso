@@ -2,8 +2,9 @@ import { createHigherOrderComponent } from '@wordpress/compose';
 import * as i18n from '@wordpress/i18n';
 import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import * as React from 'react';
-import { englishLocales } from './locales';
-import type { Locale } from './locales';
+
+type Locale = string;
+const englishLocales: Locale[] = [ 'en', 'en-gb' ];
 
 export const localeContext = createContext< string | null >( null );
 

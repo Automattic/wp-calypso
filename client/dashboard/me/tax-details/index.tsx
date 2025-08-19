@@ -1,16 +1,21 @@
-import { CompactCard, Card } from '@automattic/components';
 // import HelpCenter from '@automattic/help-center';
 import { useResetSupportInteraction } from '@automattic/help-center/src/hooks/use-reset-support-interaction';
+import {
+	Card,
+	CardBody,
+	__experimentalVStack as VStack,
+	__experimentalHStack as HStack,
+} from '@wordpress/components';
 import { useDispatch as useDataStoreDispatch, useDispatch } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useTaxName } from '../../app/hooks/use-country-list';
 import { useGeoLocationQuery } from '../../app/queries/geolocation';
-import CardHeading from './card-heading';
-import Column from './column';
+import { PageHeader } from '../../components/page-header';
+import PageLayout from '../../components/page-layout';
 import InlineSupportLink from './inline-support-link';
-import Layout from './layout';
 import { localizeUrl } from './localize-url';
 import useRecordUserTaxEvents from './use-record-user-tax-events';
 import useUserTaxDetails from './use-user-tax-details';
@@ -64,15 +69,17 @@ export default function UserTaxInfoPage() {
 	if ( fetchError ) {
 		return (
 			<div className="vat-info">
-				<CompactCard>
-					{
-						/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-						translate( 'An error occurred while fetching %s details.', {
-							textOnly: true,
-							args: [ taxName ?? translate( 'VAT', { textOnly: true } ) ],
-						} )
-					}
-				</CompactCard>
+				<Card>
+					<CardBody>
+						{
+							/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+							translate( 'An error occurred while fetching %s details.', {
+								textOnly: true,
+								args: [ taxName ?? translate( 'VAT', { textOnly: true } ) ],
+							} )
+						}
+					</CardBody>
+				</Card>
 			</div>
 		);
 	}
@@ -88,73 +95,77 @@ export default function UserTaxInfoPage() {
 	} );
 
 	return (
-		<Layout className="vat-info">
-			<Column type="main">
-				<CompactCard className="vat-info__form">
-					<UserTaxForm />
-				</CompactCard>
-			</Column>
-			<Column type="sidebar">
-				<Card className="vat-info__sidebar-card">
-					<CardHeading tagName="h1" size={ 16 } isBold className="vat-info__sidebar-title">
-						{ title }
-					</CardHeading>
-					<p className="vat-info__sidebar-paragraph">
-						{ translate(
-							/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST") or a generic fallback string of tax names */
-							'The %(taxName)s details saved on this page will be applied to all receipts in your account.',
-							{
-								args: { taxName: taxName ?? fallbackTaxName },
-							}
-						) }
-						<br />
-						<br />
-						{ translate(
-							/* translators: This is a list of tax-related reasons a customer might need to contact support */
-							'If you:' +
-								'{{ul}}' +
-								/* translators: %(taxName)s is the name of taxes in the country (eg: "VAT" or "GST") or a generic fallback string of tax names */
-								'{{li}}Need to update existing %(taxName)s details{{/li}}' +
-								'{{li}}Have been charged taxes as a business subject to reverse charges{{/li}}' +
-								'{{li}}Do not see your country listed in this form{{/li}}' +
-								'{{/ul}}' +
-								'{{contactSupportLink}}Contact our Happiness Engineers{{/contactSupportLink}}. Include your %(taxName)s number and country code when you contact us.',
-							{
-								args: { taxName: taxName ?? fallbackTaxName },
-								components: {
-									ul: <ul />,
-									li: <li />,
-									contactSupportLink: (
-										<a
-											href="/help"
-											title={ contactSupportLinkTitle }
-											onClick={ handleOpenCenterChat }
-										/>
-									),
-								},
-							}
-						) }
-						<br />
-						<br />
-						{ translate(
-							'For more information about taxes, {{learnMoreLink}}click here{{/learnMoreLink}}.',
-							{
-								components: {
-									learnMoreLink: (
-										<InlineSupportLink
-											supportLink={ taxSupportPageURL }
-											showText
-											showIcon={ false }
-											supportPostId={ 234670 } //This is what makes the document appear in a dialogue
-											linkTitle={ taxSupportPageLinkTitle }
-										/>
-									),
-								},
-							}
-						) }
-					</p>
-				</Card>
-			</Column>
-		</Layout>
+		<PageLayout size="small" header={ <PageHeader title={ __( 'Tax Details' ) } /> }>
+			<HStack spacing={ 6 } alignment="top">
+				<VStack className="user-tax-info__form">
+					<Card>
+						<CardBody>
+							<UserTaxForm />
+						</CardBody>
+					</Card>
+				</VStack>
+				<VStack>
+					<Card className="user-tax-info__sidebar">
+						<CardBody>
+							<h2>{ title }</h2>
+							<p className="vat-info__sidebar-paragraph">
+								{ translate(
+									/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST") or a generic fallback string of tax names */
+									'The %(taxName)s details saved on this page will be applied to all receipts in your account.',
+									{
+										args: { taxName: taxName ?? fallbackTaxName },
+									}
+								) }
+								<br />
+								<br />
+								{ translate(
+									/* translators: This is a list of tax-related reasons a customer might need to contact support */
+									'If you:' +
+										'{{ul}}' +
+										/* translators: %(taxName)s is the name of taxes in the country (eg: "VAT" or "GST") or a generic fallback string of tax names */
+										'{{li}}Need to update existing %(taxName)s details{{/li}}' +
+										'{{li}}Have been charged taxes as a business subject to reverse charges{{/li}}' +
+										'{{li}}Do not see your country listed in this form{{/li}}' +
+										'{{/ul}}' +
+										'{{contactSupportLink}}Contact our Happiness Engineers{{/contactSupportLink}}. Include your %(taxName)s number and country code when you contact us.',
+									{
+										args: { taxName: taxName ?? fallbackTaxName },
+										components: {
+											ul: <ul />,
+											li: <li />,
+											contactSupportLink: (
+												<a
+													href="/help"
+													title={ contactSupportLinkTitle }
+													onClick={ handleOpenCenterChat }
+												/>
+											),
+										},
+									}
+								) }
+								<br />
+								<br />
+								{ translate(
+									'For more information about taxes, {{learnMoreLink}}click here{{/learnMoreLink}}.',
+									{
+										components: {
+											learnMoreLink: (
+												<InlineSupportLink
+													supportLink={ taxSupportPageURL }
+													showText
+													showIcon={ false }
+													supportPostId={ 234670 } //This is what makes the document appear in a dialogue
+													linkTitle={ taxSupportPageLinkTitle }
+												/>
+											),
+										},
+									}
+								) }
+							</p>
+						</CardBody>
+					</Card>
+				</VStack>
+			</HStack>
+		</PageLayout>
 	);
 }

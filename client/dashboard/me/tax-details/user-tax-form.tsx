@@ -1,8 +1,6 @@
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import {
 	Button,
-	Card,
-	CardBody,
 	__experimentalHStack as HStack,
 	__experimentalInputControl as InputControl,
 	__experimentalInputControlPrefixWrapper as InputControlPrefixWrapper,
@@ -17,8 +15,6 @@ import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useTaxName } from '../../app/hooks/use-country-list';
 import { useGeoLocationQuery } from '../../app/queries/geolocation';
-import { PageHeader } from '../../components/page-header';
-import PageLayout from '../../components/page-layout';
 import useDataFormCountryCodes from './use-data-form-country-codes';
 import useDisplayUserTaxNotices from './use-display-user-tax-notices';
 import useRecordUserTaxEvents from './use-record-user-tax-events';
@@ -193,35 +189,29 @@ export default function UserTaxForm() {
 
 	return (
 		<form onSubmit={ onSubmit }>
-			<PageLayout size="small" header={ <PageHeader title={ __( 'Tax Details' ) } /> }>
-				<Card>
-					<CardBody>
-						<VStack spacing={ 4 }>
-							<DataForm
-								data={ formData }
-								fields={ fields }
-								form={ form }
-								onChange={ ( edits ) => {
-									setLocalData( ( current ) => ( { ...current, ...edits } ) );
-								} }
-							/>
+			<VStack spacing={ 4 }>
+				<DataForm
+					data={ formData }
+					fields={ fields }
+					form={ form }
+					onChange={ ( edits ) => {
+						setLocalData( ( current ) => ( { ...current, ...edits } ) );
+					} }
+				/>
 
-							<HStack justify="flex-start">
-								<Button
-									__next40pxDefaultSize
-									className="vat-info__submit-button"
-									disabled={ isDisabled }
-									isBusy={ isUpdating }
-									type="submit"
-									variant="primary"
-								>
-									{ __( 'Validate and save' ) }
-								</Button>
-							</HStack>
-						</VStack>
-					</CardBody>
-				</Card>
-			</PageLayout>
+				<HStack justify="flex-start">
+					<Button
+						__next40pxDefaultSize
+						className="vat-info__submit-button"
+						disabled={ isDisabled }
+						isBusy={ isUpdating }
+						type="submit"
+						variant="primary"
+					>
+						{ __( 'Validate and save' ) }
+					</Button>
+				</HStack>
+			</VStack>
 		</form>
 	);
 }
