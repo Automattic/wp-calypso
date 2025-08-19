@@ -40,6 +40,7 @@ body {
 		'Helvetica Neue', sans-serif;
 	background: var( --dashboard__background-color );
 	color: var( --dashboard__text-color );
+	font-size: $font-size-medium;
 	line-height: $font-line-height-small;
 
 	/* stylelint-disable-next-line unit-allowed-list */
@@ -52,8 +53,4 @@ body {
 
 a {
 	color: var( --wp-admin-theme-color );
-}
-
-#wpcom {
-	font-size: $font-size-medium;
 }

@@ -9,7 +9,7 @@ import {
 	domainNameServersQuery,
 	domainNameServersMutation,
 } from '../../app/queries/domain-name-servers';
-import { domainRoute } from '../../app/router';
+import { domainRoute } from '../../app/router/domains';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
