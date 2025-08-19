@@ -12,7 +12,6 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { DomainGlueRecord } from '../../data/domain-glue-records';
 import DomainGlueRecordsForm from './form';
-import type { FormData } from './form';
 
 export default function EditDomainGlueRecords() {
 	const navigate = useNavigate();
@@ -24,12 +23,7 @@ export default function EditDomainGlueRecords() {
 		( glueRecord: DomainGlueRecord ) => glueRecord.nameserver === nameServer
 	);
 
-	const handleSubmit = ( formData: FormData ) => {
-		const updatedGlueRecord: DomainGlueRecord = {
-			nameserver: formData.nameServer,
-			ip_addresses: [ formData.ipAddress ],
-		};
-
+	const handleSubmit = ( updatedGlueRecord: DomainGlueRecord ) => {
 		updateMutation.mutate( updatedGlueRecord, {
 			onSuccess: () => {
 				createSuccessNotice( __( 'Glue record updated successfully.' ), {

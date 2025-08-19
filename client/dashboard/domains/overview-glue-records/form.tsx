@@ -23,7 +23,7 @@ export interface FormData {
 interface DomainGlueRecordsFormProps {
 	domainName: string;
 	initialData?: DomainGlueRecord | null;
-	onSubmit: ( data: FormData ) => void;
+	onSubmit: ( data: DomainGlueRecord ) => void;
 	isSubmitting: boolean;
 	isEdit?: boolean;
 	submitButtonText: string;
@@ -108,7 +108,13 @@ export default function DomainGlueRecordsForm( {
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		onSubmit( formData );
+
+		const glueRecord = {
+			nameserver: formData.nameServer,
+			ip_addresses: [ formData.ipAddress ],
+		};
+
+		onSubmit( glueRecord );
 	};
 
 	return (

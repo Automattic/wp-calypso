@@ -7,8 +7,8 @@ import { domainGlueRecordCreateMutation } from '../../app/queries/domain-glue-re
 import { domainRoute, domainGlueRecordsRoute } from '../../app/router';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { DomainGlueRecord } from '../../data/domain-glue-records';
 import DomainGlueRecordsForm from './form';
-import type { FormData } from './form';
 
 export default function AddDomainGlueRecords() {
 	const navigate = useNavigate();
@@ -16,12 +16,7 @@ export default function AddDomainGlueRecords() {
 	const createMutation = useMutation( domainGlueRecordCreateMutation( domainName ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
-	const handleSubmit = ( formData: FormData ) => {
-		const glueRecord = {
-			nameserver: formData.nameServer,
-			ip_addresses: [ formData.ipAddress ],
-		};
-
+	const handleSubmit = ( glueRecord: DomainGlueRecord ) => {
 		createMutation.mutate( glueRecord, {
 			onSuccess: () => {
 				createSuccessNotice( __( 'Glue record created successfully.' ), {
