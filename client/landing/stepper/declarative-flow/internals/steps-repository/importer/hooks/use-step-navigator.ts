@@ -121,6 +121,12 @@ export function useStepNavigator(
 			url: `/domains/add/${ siteSlug }`,
 		} );
 	}
+	function goToSubscribersPage() {
+		navigation.submit?.( {
+			type: 'redirect',
+			url: `/subscribers/${ siteSlug }`,
+		} );
+	}
 
 	function goToVerifyEmailPage() {
 		navigation.submit?.( { action: 'verify-email' } );
@@ -143,6 +149,7 @@ export function useStepNavigator(
 		goToWpAdminImportPage,
 		goToWpAdminWordPressPluginPage,
 		goToAddDomainPage,
+		goToSubscribersPage,
 		goToSitePickerPage,
 		goToVerifyEmailPage,
 		navigate: ( path ) => navigator( path ),

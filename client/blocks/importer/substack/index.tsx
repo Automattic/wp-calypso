@@ -13,6 +13,7 @@ import { getImportDragConfig } from '../components/importer-drag/config';
 import ProgressScreen from '../components/progress-screen';
 import { Importer, ImporterBaseProps, ImportJob } from '../types';
 import { getImporterTypeForEngine } from '../util';
+import { Button } from '@wordpress/components';
 
 export const SubstackImporter: React.FunctionComponent< ImporterBaseProps > = ( props ) => {
 	const importer: Importer = 'substack';
@@ -28,6 +29,7 @@ export const SubstackImporter: React.FunctionComponent< ImporterBaseProps > = ( 
 		renderHeading,
 	} = props;
 
+	debugger;
 	/**
 	 * Effects
 	 */
@@ -76,13 +78,18 @@ export const SubstackImporter: React.FunctionComponent< ImporterBaseProps > = ( 
 						return;
 					} else if ( checkIsSuccess() ) {
 						return (
-							<CompleteScreen
-								siteId={ siteId }
-								siteSlug={ siteSlug }
-								job={ job as ImportJob }
-								resetImport={ resetImport }
-								onSiteViewClick={ onSiteViewClick }
-							/>
+							<>
+								<CompleteScreen
+									siteId={ siteId }
+									siteSlug={ siteSlug }
+									job={ job as ImportJob }
+									resetImport={ resetImport }
+									onSiteViewClick={ onSiteViewClick }
+								/>
+								<Button onClick={ () => stepNavigator?.goToSubscribersPage?.() }>
+									Go to subscribers page
+								</Button>
+							</>
 						);
 					} else if ( checkIsFailed() ) {
 						return <ErrorMessage onPrimaryBtnClick={ onTryAgainClick } />;

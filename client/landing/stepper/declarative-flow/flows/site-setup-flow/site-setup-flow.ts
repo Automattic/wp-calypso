@@ -72,6 +72,7 @@ const siteSetupFlow: Flow = {
 			STEPS.IMPORTER_WORDPRESS,
 			STEPS.LAUNCH_BIG_SKY,
 			STEPS.VERIFY_EMAIL,
+			STEPS.SUBSCRIBERS,
 			STEPS.TRIAL_ACKNOWLEDGE,
 			STEPS.PROCESSING,
 			STEPS.ERROR,
@@ -332,6 +333,10 @@ const siteSetupFlow: Flow = {
 							return navigate( intent );
 						}
 					}
+				}
+
+				case 'importerSubstack': {
+					return navigate( 'subscribers' );
 				}
 
 				case 'goals': {

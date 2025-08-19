@@ -23,6 +23,7 @@ export type StepNavigator = {
 	goToAddDomainPage?: () => void;
 	goToSitePickerPage?: () => void;
 	goToVerifyEmailPage?: () => void;
+	goToSubscribersPage?: () => void;
 };
 
 export interface ImportError {
