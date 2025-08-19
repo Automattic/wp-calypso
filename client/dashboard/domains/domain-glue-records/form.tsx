@@ -1,16 +1,16 @@
-// eslint-disable-next-line no-restricted-imports
-import { ValidatedInputControl } from '@automattic/components/src/validated-form-controls/components/input-control';
 import {
 	Card,
 	CardBody,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
+	__experimentalInputControl as InputControl,
 	__experimentalInputControlSuffixWrapper as InputControlSuffixWrapper,
 	Button,
 } from '@wordpress/components';
 import { DataForm, isItemValid } from '@wordpress/dataviews';
 import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Text } from '../../components/text';
 import { isValidIpAddress, isValidNameServerSubdomain } from '../../utils/domain';
 import type { DomainGlueRecord } from '../../data/domain-glue-records';
 import type { Field } from '@wordpress/dataviews';
@@ -63,22 +63,31 @@ export default function DomainGlueRecordsForm( {
 					const value = getValue( { item: data } ).replace( suffix, '' );
 
 					return (
-						<ValidatedInputControl
+						// TODO: Show the error via Data Form when the ValidatedInputControl component is ready.
+						<InputControl
+							__next40pxDefaultSize
 							label={ field.label }
 							placeholder={ field.placeholder }
 							value={ value }
 							onChange={ ( value ) => {
 								return onChange( { [ id ]: value + suffix } );
 							} }
-							customValidator={ ( value ) => {
-								if ( ! value || ! isValidNameServerSubdomain( value ) ) {
-									return __( 'Please enter a valid name server.' );
-								}
-							} }
-							required
-							suffix={ <InputControlSuffixWrapper>{ suffix }</InputControlSuffixWrapper> }
+							suffix={
+								<InputControlSuffixWrapper>
+									<Text variant="muted">{ suffix }</Text>
+								</InputControlSuffixWrapper>
+							}
 						/>
 					);
+				},
+				isValid: {
+					required: true,
+					custom: ( item ) => {
+						if ( ! isValidNameServerSubdomain( item.nameServer ) ) {
+							return __( 'Please enter a valid name server.' );
+						}
+						return null;
+					},
 				},
 				readOnly: isEdit,
 			},
