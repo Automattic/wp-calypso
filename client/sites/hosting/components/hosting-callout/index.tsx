@@ -15,12 +15,19 @@ export function HostingActivationCallout( {
 	siteId: number;
 	redirectUrl?: string;
 } ) {
-	const { data: siteTransferData } = useSiteTransferStatusQuery( siteId, {
-		refetchIntervalInBackground: true,
-	} );
+	const { data: siteTransferData, refetch: fetchSiteTransferStatus } = useSiteTransferStatusQuery(
+		siteId,
+		{
+			refetchIntervalInBackground: true,
+		}
+	);
 
 	const isActivating = siteTransferData?.isTransferring;
 	const isActivated = transferStates.COMPLETED;
+
+	useEffect( () => {
+		fetchSiteTransferStatus();
+	}, [ fetchSiteTransferStatus ] );
 
 	useEffect( () => {
 		if ( isActivated && redirectUrl ) {
