@@ -257,7 +257,7 @@ function LanguagePicker< TLanguage extends Language >( {
 						{ renderCategoryButtons() }
 					</VStack>
 				) }
-				<HStack alignment="top-left" wrap spacing={ 0 } style={ { justifyContent: 'flex-start' } }>
+				<HStack alignment="top-left" wrap spacing={ 0 } justify="flex-start">
 					{ languagesToRender.map( ( language ) => (
 						<Button
 							variant={ language.langSlug === selectedLanguage?.langSlug ? 'primary' : undefined }
