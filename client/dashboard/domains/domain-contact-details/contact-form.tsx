@@ -16,6 +16,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { countryListQuery, statesListQuery } from '../../app/queries/domain-supported-contries';
 import { domainWhoisMutation } from '../../app/queries/domain-whois';
+import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import {
 	validateDomainWhois,
@@ -173,21 +174,11 @@ export default function ContactForm( {
 										{
 											strong: <strong />,
 											agreementlink: (
-												<a
-													// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
-													href="https://wordpress.com/automattic-domain-name-registration-agreement/"
-													target="_blank"
-													rel="noopener noreferrer"
-												/>
+												<ExternalLink href="https://wordpress.com/automattic-domain-name-registration-agreement/">
+													{ __( 'Domain Registration Agreement' ) }
+												</ExternalLink>
 											),
-											agentlink: (
-												<a
-													// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
-													href="https://wordpress.com/support/domains/update-contact-information/#designated-agent"
-													target="_blank"
-													rel="noopener noreferrer"
-												/>
-											),
+											agentlink: <InlineSupportLink supportContext="domain-designated-agent" />,
 										}
 									) }
 								</Text>
