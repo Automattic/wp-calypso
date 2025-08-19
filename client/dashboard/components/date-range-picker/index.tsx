@@ -7,7 +7,6 @@ import {
 	Button,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { useMemo, useState, useEffect } from '@wordpress/element';
@@ -40,11 +39,6 @@ export function DateRangePicker( {
 		[ start, end, locale, timezoneString, gmtOffset ]
 	);
 
-	const inputWidthCh = useMemo(
-		() => `${ label.length + ( isSmall ? 5 : 1 ) }ch`,
-		[ isSmall, label.length ]
-	);
-
 	const [ fromDraft, setFromDraft ] = useState< Date | undefined >( () => start );
 	const [ toDraft, setToDraft ] = useState< Date | undefined >( () => end );
 	const [ fromStr, setFromStr ] = useState( () => formatYmd( start, timezoneString, gmtOffset ) );
@@ -68,23 +62,25 @@ export function DateRangePicker( {
 				renderToggle={ ( { onToggle, isOpen } ) => (
 					<Tooltip text={ __( 'Select a date range' ) } placement="top">
 						<div className="daterange-input__toggle">
-							<InputControl
-								value={ label }
-								onChange={ () => {} }
-								readOnly
-								suffix={ <Icon icon={ calendar } size={ 24 } style={ { marginRight: 8 } } /> }
+							<Button
+								type="button"
+								variant="secondary"
 								onClick={ onToggle }
-								onKeyDown={ ( e ) => {
-									if ( e.key === 'Enter' || e.key === ' ' ) {
-										e.preventDefault();
-										onToggle();
-									}
-								} }
-								__next40pxDefaultSize
-								style={ { width: inputWidthCh } }
-								className="daterange-input__field"
+								aria-haspopup="dialog"
 								aria-expanded={ isOpen }
-							/>
+								aria-label={ sprintf(
+									/* Translators: %s: date range label */
+									__( 'Date range: %s. Activate to open calendar.' ),
+									label
+								) }
+								className="daterange-input__field"
+								style={ { justifyContent: 'space-between' } }
+							>
+								<span aria-hidden="true" className="daterange-input__text">
+									{ label }
+								</span>
+								<Icon icon={ calendar } size={ 24 } style={ { marginRight: 8, paddingLeft: 4 } } />
+							</Button>
 						</div>
 					</Tooltip>
 				) }

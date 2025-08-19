@@ -20,27 +20,6 @@
 	margin-bottom: 8px;
 }
 
-/* Input trigger */
-.daterange-input__field .components-input-control__input {
-  font-weight: 600;
-
-  &:hover { cursor: pointer; }
-  &:hover,
-  &:focus {
-    fill: var(--wp-admin-theme-color);
-    color: var(--wp-admin-theme-color) !important;
-  }
-}
-
-/* Also color the wrapper on hover/focus (keeps behavior) */
-.daterange-input__toggle {
-  &:hover,
-  &:focus-within {
-    fill: var(--wp-admin-theme-color);
-    color: var(--wp-admin-theme-color) !important;
-  }
-}
-
 /* Body rows */
 .daterange-inputs {
 	margin-bottom: 12px;
