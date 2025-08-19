@@ -14,7 +14,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { domainQuery } from '../../app/queries/domain';
 import { domainDnssecMutation } from '../../app/queries/domain-dnssec';
-import { domainRoute } from '../../app/routes/domain-routes';
+import { domainRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 

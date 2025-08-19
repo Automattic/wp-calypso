@@ -11,7 +11,6 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState, useCallback, useMemo } from 'react';
 import InlineSupportLink from '../../components/inline-support-link';
-import Notice from '../../components/notice';
 import {
 	MIN_NAME_SERVERS_LENGTH,
 	MAX_NAME_SERVERS_LENGTH,
@@ -32,7 +31,6 @@ interface Props {
 	showUpsellNudge?: boolean;
 	nameServers?: string[];
 	isBusy?: boolean;
-	queryError?: string;
 	onSubmit: ( nameServers: string[] ) => void;
 }
 
@@ -41,7 +39,6 @@ export default function NameServersForm( {
 	showUpsellNudge,
 	nameServers = [],
 	isBusy,
-	queryError,
 	onSubmit,
 }: Props ) {
 	const isWpcomNameservers = areAllWpcomNameServers( nameServers );
@@ -203,30 +200,25 @@ export default function NameServersForm( {
 	return (
 		<form onSubmit={ handleSubmit }>
 			<VStack spacing={ 4 }>
-				{ queryError && <Notice variant="error">{ queryError }</Notice> }
-				{ ! queryError && (
-					<>
-						<DataForm< FormData >
-							data={ formData }
-							fields={ fields }
-							form={ formObj }
-							onChange={ ( value ) => {
-								setFormData( ( data ) => ( { ...data, ...value } ) );
-							} }
-						/>
-						<div>
-							<Button
-								__next40pxDefaultSize
-								variant="primary"
-								type="submit"
-								disabled={ isBusy }
-								isBusy={ isBusy }
-							>
-								{ __( 'Save' ) }
-							</Button>
-						</div>
-					</>
-				) }
+				<DataForm< FormData >
+					data={ formData }
+					fields={ fields }
+					form={ formObj }
+					onChange={ ( value ) => {
+						setFormData( ( data ) => ( { ...data, ...value } ) );
+					} }
+				/>
+				<div>
+					<Button
+						__next40pxDefaultSize
+						variant="primary"
+						type="submit"
+						disabled={ isBusy }
+						isBusy={ isBusy }
+					>
+						{ __( 'Save' ) }
+					</Button>
+				</div>
 			</VStack>
 		</form>
 	);

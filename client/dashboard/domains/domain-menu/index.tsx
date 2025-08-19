@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { useAppContext } from '../../app/context';
-import { emailsRoute } from '../../app/router';
+import { emailsRoute } from '../../app/router/emails';
 import ResponsiveMenu from '../../components/responsive-menu';
 
 const DomainMenu = ( { domainName }: { domainName: string } ) => {
