@@ -1,6 +1,4 @@
-import { ProgressBar, Spinner } from '@automattic/components';
-import { formatNumber } from '@automattic/number-formatters';
-import clsx from 'clsx';
+import { ProgressBar } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { omit } from 'lodash';
 import PropTypes from 'prop-types';
@@ -126,21 +124,6 @@ export class ImportingPane extends PureComponent {
 		return this.props.translate( 'Success! Your content has been imported.' );
 	};
 
-	getImportMessage = ( numResources ) => {
-		if ( 0 === numResources ) {
-			return this.props.translate( 'Finishing up the import.' );
-		}
-
-		return this.props.translate(
-			'%(numResources)s post, page, or media file left to import',
-			'%(numResources)s posts, pages, and media files left to import',
-			{
-				count: numResources,
-				args: { numResources: formatNumber( numResources ) },
-			}
-		);
-	};
-
 	isError = () => {
 		return this.isInState( appStates.IMPORT_FAILURE );
 	};
@@ -232,9 +215,6 @@ export class ImportingPane extends PureComponent {
 			site,
 		} = this.props;
 		const { customData } = importerStatus;
-		const progressClasses = clsx( 'importer__import-progress', {
-			'is-complete': this.isFinished(),
-		} );
 
 		let { percentComplete, statusMessage } = this.props.importerStatus;
 		const { progress } = this.props.importerStatus;
@@ -254,9 +234,7 @@ export class ImportingPane extends PureComponent {
 		}
 
 		if ( this.isImporting() && hasProgressInfo( progress ) ) {
-			const remainingResources = resourcesRemaining( progress );
 			percentComplete = calculateProgress( progress );
-			blockingMessage = this.getImportMessage( remainingResources );
 		}
 
 		return (
@@ -278,11 +256,15 @@ export class ImportingPane extends PureComponent {
 				) }
 				{ ( this.isImporting() || this.isProcessing() ) &&
 					( percentComplete >= 0 ? (
-						<ProgressBar className={ progressClasses } value={ percentComplete } />
+						<div className="importer__importing-pane-progress-container">
+							<ProgressBar
+								className="importer__importing-pane-progress"
+								value={ percentComplete }
+							/>
+						</div>
 					) : (
-						<div>
-							<Spinner className="importer__import-spinner" />
-							<br />
+						<div className="importer__importing-pane-progress-container">
+							<ProgressBar className="importer__importing-pane-progress" isPulsing />
 						</div>
 					) ) }
 				{ blockingMessage && (

@@ -1,7 +1,7 @@
-import { ProgressBar, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
+import { FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
+import { ProgressBar } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { truncate } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, PureComponent } from 'react';
 import { connect } from 'react-redux';
@@ -86,7 +86,7 @@ export class UploadingPane extends PureComponent {
 
 	getMessage = () => {
 		const { importerState, importerFileType } = this.props.importerStatus;
-		const { filename, percentComplete = 0 } = this.props;
+		const { percentComplete = 0 } = this.props;
 
 		switch ( importerState ) {
 			case appStates.READY_FOR_UPLOAD:
@@ -110,20 +110,11 @@ export class UploadingPane extends PureComponent {
 				const progressClasses = clsx( 'importer__upload-progress', {
 					'is-complete': uploadPercent > 95,
 				} );
-				const uploaderPrompt =
-					importerState === appStates.UPLOADING && uploadPercent < 99
-						? this.props.translate( 'Uploading %(filename)s\u2026', {
-								args: { filename: truncate( filename, { length: 40 } ) },
-						  } )
-						: this.props.translate( 'Processing uploaded file\u2026' );
 
 				return (
-					<div>
-						<p>{ uploaderPrompt }</p>
+					<div className="importer__upload-progress-container">
 						<ProgressBar
 							className={ progressClasses }
-							value={ uploadPercent }
-							total={ 100 }
 							isPulsing={ uploadPercent > 99 || importerState === appStates.UPLOAD_PROCESSING }
 						/>
 					</div>
@@ -262,39 +253,48 @@ export class UploadingPane extends PureComponent {
 			this.state.fileToBeUploaded &&
 			this.validateUrl( this.state.urlInput );
 
+		const isUploadInProgress = [ appStates.UPLOADING, appStates.UPLOAD_PROCESSING ].includes(
+			importerStatus.importerState
+		);
+
 		return (
 			<div>
-				{ this.props.description && (
+				{ this.props.description && ! isUploadInProgress && (
 					<p className="importer__uploading-pane-description">{ this.props.description }</p>
 				) }
-				<div
-					className="importer__uploading-pane"
-					role="button"
-					tabIndex={ 0 }
-					onClick={ isReadyForImport ? this.openFileSelector : null }
-					onKeyPress={ isReadyForImport ? this.handleKeyPress : null }
-				>
-					<div className={ importerStatusClasses }>
-						<Gridicon
-							size="48"
-							className="importer__upload-icon"
-							icon={
-								this.props.optionalUrl && this.state.fileToBeUploaded ? 'checkmark' : 'cloud-upload'
-							}
-						/>
-						{ this.getMessage() }
+				{ ! isUploadInProgress && (
+					<div
+						className="importer__uploading-pane"
+						role="button"
+						tabIndex={ 0 }
+						onClick={ isReadyForImport ? this.openFileSelector : null }
+						onKeyPress={ isReadyForImport ? this.handleKeyPress : null }
+					>
+						<div className={ importerStatusClasses }>
+							<Gridicon
+								size="48"
+								className="importer__upload-icon"
+								icon={
+									this.props.optionalUrl && this.state.fileToBeUploaded
+										? 'checkmark'
+										: 'cloud-upload'
+								}
+							/>
+							{ this.getMessage() }
+						</div>
+						{ isReadyForImport && (
+							<input
+								ref={ this.fileSelectorRef }
+								type="file"
+								name="exportFile"
+								onChange={ this.initiateFromForm }
+								accept={ acceptedFileTypes ? acceptedFileTypes.join( ',' ) : undefined }
+							/>
+						) }
+						<DropZone onFilesDrop={ isReadyForImport ? this.initiateFromDrop : noop } />
 					</div>
-					{ isReadyForImport && (
-						<input
-							ref={ this.fileSelectorRef }
-							type="file"
-							name="exportFile"
-							onChange={ this.initiateFromForm }
-							accept={ acceptedFileTypes ? acceptedFileTypes.join( ',' ) : undefined }
-						/>
-					) }
-					<DropZone onFilesDrop={ isReadyForImport ? this.initiateFromDrop : noop } />
-				</div>
+				) }
+				{ isUploadInProgress && this.getMessage() }
 				{ this.props.optionalUrl && ! fromSite && (
 					<div className="importer__uploading-pane-url-input">
 						<FormLabel>
