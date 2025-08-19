@@ -23,9 +23,6 @@ export default function CancelSubscriptionAction( { subscription, onCancelSubscr
 
 	const [ isVisible, setIsVisible ] = useState( false );
 
-	const { data: products, isFetching: isFetchingProductInfo } = useFetchClientProducts( false );
-	const isBillingTypeBD = useSelector( getUserBillingType ) === 'billingdragon';
-
 	const { mutate: cancelSubscription, isPending } = useCancelClientSubscription( {
 		onSuccess: () => {
 			dispatch(
@@ -54,21 +51,6 @@ export default function CancelSubscriptionAction( { subscription, onCancelSubscr
 		setIsVisible( false );
 	};
 
-	const storeSubscription = subscription.subscription;
-
-	if ( ! storeSubscription ) {
-		return null;
-	}
-
-	const productName =
-		isBillingTypeBD && storeSubscription.product_name
-			? storeSubscription.product_name
-			: products?.find( ( product ) => product.product_id === subscription.product_id )?.name ?? '';
-
-	const refundPeriodDays = storeSubscription.billing_interval_unit === 'month' ? 7 : 14;
-
-	const expiryDate = storeSubscription.expiry ?? '';
-
 	return (
 		<>
 			<Button compact onClick={ () => setIsVisible( true ) }>
@@ -85,57 +67,91 @@ export default function CancelSubscriptionAction( { subscription, onCancelSubscr
 					isLoading={ isPending }
 					isDestructive
 				>
-					{ isFetchingProductInfo ? (
-						<TextPlaceholder />
-					) : (
-						<>
-							<div>
-								{ storeSubscription.is_refundable
-									? translate(
-											'{{b}}%(productName)s{{/b}} will be canceled and removed immediately. Since you are within the {{b}}%(refundPeriodDays)d money-back{{/b}} period, you will be refunded.',
-											{
-												args: {
-													productName,
-													refundPeriodDays,
-												},
-												components: {
-													b: <b />,
-												},
-												comment:
-													'%(productName)s is the name of the product that the user is about to cancel.',
-											}
-									  )
-									: translate(
-											'{{b}}%(productName)s{{/b}} will be canceled, but it will remain active {{b}}until %(expiryDate)s{{/b}}. After that, it will not renew',
-											{
-												args: {
-													productName,
-													expiryDate,
-												},
-												components: {
-													b: <b />,
-												},
-												comment:
-													'%(productName)s is the name of the product that the user is about to cancel.',
-											}
-									  ) }
-							</div>
-							<p>{ translate( 'Are you sure you want to cancel?' ) }</p>
-							<p>
-								<a
-									href={ localizeUrl(
-										'https://wordpress.com/support/manage-purchases/cancel-a-purchase/'
-									) }
-									target="_blank"
-									rel="noopener noreferrer"
-								>
-									{ translate( 'Learn more about how product cancellations work.' ) }
-								</a>
-							</p>
-						</>
-					) }
+					<A4ACancelSubscriptionContent subscription={ subscription } />
 				</A4AConfirmationDialog>
 			) }
 		</>
+	);
+}
+
+function A4ACancelSubscriptionContent( { subscription }: { subscription: Subscription } ) {
+	const translate = useTranslate();
+	const { data: products, isFetching: isFetchingProductInfo } = useFetchClientProducts( false );
+	const isBillingTypeBD = useSelector( getUserBillingType ) === 'billingdragon';
+
+	if ( isFetchingProductInfo ) {
+		return <TextPlaceholder />;
+	}
+
+	const storeSubscription = subscription.subscription;
+
+	const productName =
+		isBillingTypeBD && storeSubscription?.product_name
+			? storeSubscription.product_name
+			: products?.find( ( product ) => product.product_id === subscription.product_id )?.name ?? '';
+
+	if ( storeSubscription ) {
+		const refundPeriodDays = storeSubscription.billing_interval_unit === 'month' ? 7 : 14;
+		const expiryDate = storeSubscription.expiry ?? '';
+		return (
+			<>
+				<div>
+					{ storeSubscription.is_refundable
+						? translate(
+								'{{b}}%(productName)s{{/b}} will be canceled and removed immediately. Since you are within the {{b}}%(refundPeriodDays)d money-back{{/b}} period, you will be refunded.',
+								{
+									args: {
+										productName,
+										refundPeriodDays,
+									},
+									components: {
+										b: <b />,
+									},
+									comment:
+										'%(productName)s is the name of the product that the user is about to cancel.',
+								}
+						  )
+						: translate(
+								'{{b}}%(productName)s{{/b}} will be canceled, but it will remain active {{b}}until %(expiryDate)s{{/b}}. After that, it will not renew',
+								{
+									args: {
+										productName,
+										expiryDate,
+									},
+									components: {
+										b: <b />,
+									},
+									comment:
+										'%(productName)s is the name of the product that the user is about to cancel.',
+								}
+						  ) }
+				</div>
+				<p>{ translate( 'Are you sure you want to cancel?' ) }</p>
+				<p>
+					<a
+						href={ localizeUrl(
+							'https://wordpress.com/support/manage-purchases/cancel-a-purchase/'
+						) }
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						{ translate( 'Learn more about how product cancellations work.' ) }
+					</a>
+				</p>
+			</>
+		);
+	}
+
+	return translate(
+		'{{b}}%(productName)s{{/b}} will be canceled, and you will no longer have access to it. Are you sure you want to cancel?',
+		{
+			args: {
+				productName,
+			},
+			components: {
+				b: <b />,
+			},
+			comment: '%(productName)s is the name of the product that the user is about to cancel.',
+		}
 	);
 }
