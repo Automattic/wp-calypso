@@ -317,3 +317,12 @@ export function getSubtitleForDisplay( purchase: Purchase ): string | null {
 
 	return null;
 }
+
+export function isJetpackCrmProduct( keyOrSlug: string ): boolean {
+	return (
+		keyOrSlug.startsWith( 'jetpack-complete' ) ||
+		keyOrSlug.startsWith( 'jetpack_complete' ) ||
+		keyOrSlug.startsWith( 'jetpack-crm' ) ||
+		keyOrSlug.startsWith( 'jetpack_crm' )
+	);
+}

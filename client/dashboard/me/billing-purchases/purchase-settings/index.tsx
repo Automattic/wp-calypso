@@ -55,6 +55,7 @@ import {
 	isMarketplaceTemporarySitePurchase,
 	isJetpackTemporarySitePurchase,
 	isAkismetProduct,
+	isJetpackCrmProduct,
 } from '../../../utils/purchase';
 import { encodeProductForUrl } from '../../../utils/wpcom-checkout';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
@@ -381,10 +382,43 @@ function RenewActionButton( { purchase }: { purchase: Purchase } ) {
 	);
 }
 
+function JetpackCRMDownloadsButton( { purchase }: { purchase: Purchase } ) {
+	const { recordTracksEvent } = useAnalytics();
+
+	// Only show for Jetpack CRM Products
+	if ( ! isJetpackCrmProduct( purchase.product_slug ) ) {
+		return null;
+	}
+
+	// We'll pass the purchase ID in the URL, and the CRM Downloads component will fetch the actual license key
+	const path = `/purchases/crm-downloads/${ purchase.ID }`;
+
+	return (
+		<ActionList.ActionItem
+			title={ __( 'CRM Downloads' ) }
+			actions={
+				<Button
+					variant="secondary"
+					size="compact"
+					onClick={ () => {
+						recordTracksEvent( 'calypso_purchases_crm_downloads_click', {
+							product_slug: purchase.product_slug,
+						} );
+						window.location.href = path;
+					} }
+				>
+					{ __( 'CRM Downloads' ) }
+				</Button>
+			}
+		/>
+	);
+}
+
 function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 	return (
 		<VStack spacing={ 4 }>
 			<ActionList>
+				<JetpackCRMDownloadsButton purchase={ purchase } />
 				<UpgradeActionButton purchase={ purchase } />
 				<ReSubscribeActionButton purchase={ purchase } />
 				<RenewActionButton purchase={ purchase } />
@@ -625,7 +659,6 @@ export default function PurchaseSettings() {
 		return __( 'Expires' );
 	} )();
 
-	// FIXME: add Jetpack CRM downloads link (see renderCrmDownloadsNavItem)
 	// FIXME: render reinstall button (see renderReinstall)
 	// FIXME: render pluginList (see renderPluginLabel and getPluginsForSite)
 	// FIXME: render 'Domain Registration Agreement' and link (see domainRegistrationAgreementLinkText)
