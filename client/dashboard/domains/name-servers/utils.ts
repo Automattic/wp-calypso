@@ -1,4 +1,3 @@
-import { type FormData } from './types';
 import type { Domain } from '../../data/domain';
 import type { User } from '../../data/me';
 import type { Site } from '../../data/site';
@@ -21,9 +20,6 @@ export const areAllWpcomNameServers = ( nameservers?: string[] ) => {
 		return ! nameserver || WPCOM_DEFAULT_NAMESERVERS_REGEX.test( nameserver );
 	} );
 };
-
-export const getFormNameServers = ( { useWpcomNameServers, ...nameServers }: FormData ) =>
-	Object.values( nameServers ).filter( Boolean );
 
 export const shouldShowUpsellNudge = ( user: User, domain: Domain, site?: Site ): boolean => {
 	if (
