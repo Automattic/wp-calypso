@@ -1,18 +1,16 @@
-import {
-	SidebarComponent,
-	ThemesPage,
-	ThemesDetailPage,
-	PreviewComponent,
-	SiteSelectComponent,
-} from '@automattic/calypso-e2e';
 import { test } from '../../lib/pwBase';
 
 test.describe( 'Themes', () => {
-	test( 'Preview (Gutenberg Simple Account)', async ( { page, accountGutenbergSimple } ) => {
+	test( 'Preview (Gutenberg Simple Account)', async ( {
+		page,
+		accountGutenbergSimple,
+		componentSidebar,
+		componentSiteSelect,
+		pageThemes,
+		pageThemeDetails,
+		componentPreview,
+	} ) => {
 		const testAccountSiteDomain = accountGutenbergSimple.getSiteURL( { protocol: false } );
-		let themesPage: ThemesPage;
-		let themesDetailPage: ThemesDetailPage;
-		let previewComponent: PreviewComponent;
 
 		// This test will use partial matching names to cycle between available themes.
 		const themeName = 'Twenty Twen';
@@ -20,37 +18,31 @@ test.describe( 'Themes', () => {
 		await accountGutenbergSimple.authenticate( page );
 
 		await test.step( 'Navigate to Appearance > Themes', async function () {
-			const sidebarComponent = new SidebarComponent( page );
-			await sidebarComponent.navigate( 'Appearance', 'Themes' );
+			await componentSidebar.navigate( 'Appearance', 'Themes' );
 		} );
 
 		await test.step( `Choose test site ${ testAccountSiteDomain } if Site Selector is shown`, async function () {
-			const siteSelectComponent = new SiteSelectComponent( page );
-
-			if ( await siteSelectComponent.isSiteSelectorVisible() ) {
-				await siteSelectComponent.selectSite( testAccountSiteDomain );
+			if ( await componentSiteSelect.isSiteSelectorVisible() ) {
+				await componentSiteSelect.selectSite( testAccountSiteDomain );
 			}
 		} );
 
 		await test.step( `Search for theme with keyword ${ themeName }`, async function () {
-			themesPage = new ThemesPage( page );
-			await themesPage.search( themeName );
+			await pageThemes.search( themeName );
 		} );
 
 		await test.step( `Select and view details of a theme starting with ${ themeName }`, async function () {
-			const selectedTheme = await themesPage.select( themeName );
-			await themesPage.hoverThenClick( selectedTheme );
+			const selectedTheme = await pageThemes.select( themeName );
+			await pageThemes.hoverThenClick( selectedTheme );
 		} );
 
 		await test.step( 'Preview theme', async function () {
-			themesDetailPage = new ThemesDetailPage( page );
-			await themesDetailPage.preview();
-			previewComponent = new PreviewComponent( page );
-			await previewComponent.previewReady();
+			await pageThemeDetails.preview();
+			await componentPreview.previewReady();
 		} );
 
 		await test.step( 'Close theme preview', async function () {
-			await previewComponent.closePreview();
+			await componentPreview.closePreview();
 		} );
 	} );
 } );
