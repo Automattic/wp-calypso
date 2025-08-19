@@ -70,7 +70,7 @@ function AdminHelpCenterContent() {
 		recordTracksEvent( `calypso_inlinehelp_${ show ? 'close' : 'show' }`, {
 			force_site_id: true,
 			location: 'help-center',
-			section: 'wp-admin',
+			section: helpCenterData.sectionName || 'wp-admin',
 		} );
 
 		setShowHelpCenter( ! show );

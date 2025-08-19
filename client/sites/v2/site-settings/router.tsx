@@ -1,10 +1,10 @@
 import { Router, createLazyRoute, createRoute } from '@tanstack/react-router';
-import * as appRouter from 'calypso/dashboard/app/router';
+import * as appRouterSites from 'calypso/dashboard/app/router/sites';
 import { rootRoute, dashboardSitesCompatibilityRoute, siteRoute } from '../router';
 import { getRouterOptions, createBrowserHistoryAndMemoryRouterSync } from '../utils/router';
 
 const settingsRoute = createRoute( {
-	...appRouter.siteSettingsRoute.options,
+	...appRouterSites.siteSettingsRoute.options,
 	getParentRoute: () => siteRoute,
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings' ).then( ( d ) =>
@@ -15,7 +15,7 @@ const settingsRoute = createRoute( {
 );
 
 const siteVisibilityRoute = createRoute( {
-	...appRouter.siteSettingsSiteVisibilityRoute.options,
+	...appRouterSites.siteSettingsSiteVisibilityRoute.options,
 	getParentRoute: () => siteRoute,
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-site-visibility' ).then( ( d ) =>
@@ -26,7 +26,7 @@ const siteVisibilityRoute = createRoute( {
 );
 
 const subscriptionGiftingRoute = createRoute( {
-	...appRouter.siteSettingsSubscriptionGiftingRoute.options,
+	...appRouterSites.siteSettingsSubscriptionGiftingRoute.options,
 	getParentRoute: () => siteRoute,
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-subscription-gifting' ).then( ( d ) =>
@@ -37,7 +37,7 @@ const subscriptionGiftingRoute = createRoute( {
 );
 
 const wordpressRoute = createRoute( {
-	...appRouter.siteSettingsWordPressRoute.options,
+	...appRouterSites.siteSettingsWordPressRoute.options,
 	getParentRoute: () => siteRoute,
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-wordpress' ).then( ( d ) =>
@@ -48,7 +48,7 @@ const wordpressRoute = createRoute( {
 );
 
 const phpRoute = createRoute( {
-	...appRouter.siteSettingsPHPRoute.options,
+	...appRouterSites.siteSettingsPHPRoute.options,
 	getParentRoute: () => siteRoute,
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-php' ).then( ( d ) =>
@@ -70,7 +70,7 @@ const databaseRoute = createRoute( {
 );
 
 const agencyRoute = createRoute( {
-	...appRouter.siteSettingsAgencyRoute.options,
+	...appRouterSites.siteSettingsAgencyRoute.options,
 	getParentRoute: () => siteRoute,
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-agency' ).then( ( d ) =>
@@ -81,7 +81,7 @@ const agencyRoute = createRoute( {
 );
 
 const hundredYearPlanRoute = createRoute( {
-	...appRouter.siteSettingsHundredYearPlanRoute.options,
+	...appRouterSites.siteSettingsHundredYearPlanRoute.options,
 	getParentRoute: () => siteRoute,
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-hundred-year-plan' ).then( ( d ) =>
@@ -92,7 +92,7 @@ const hundredYearPlanRoute = createRoute( {
 );
 
 const primaryDataCenterRoute = createRoute( {
-	...appRouter.siteSettingsPrimaryDataCenterRoute.options,
+	...appRouterSites.siteSettingsPrimaryDataCenterRoute.options,
 	getParentRoute: () => siteRoute,
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-primary-data-center' ).then( ( d ) =>
@@ -103,7 +103,7 @@ const primaryDataCenterRoute = createRoute( {
 );
 
 const staticFile404Route = createRoute( {
-	...appRouter.siteSettingsStaticFile404Route.options,
+	...appRouterSites.siteSettingsStaticFile404Route.options,
 	getParentRoute: () => siteRoute,
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-static-file-404' ).then( ( d ) =>
@@ -114,7 +114,7 @@ const staticFile404Route = createRoute( {
 );
 
 const cachingRoute = createRoute( {
-	...appRouter.siteSettingsCachingRoute.options,
+	...appRouterSites.siteSettingsCachingRoute.options,
 	getParentRoute: () => siteRoute,
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-caching' ).then( ( d ) =>
@@ -125,7 +125,7 @@ const cachingRoute = createRoute( {
 );
 
 const defensiveModeRoute = createRoute( {
-	...appRouter.siteSettingsDefensiveModeRoute.options,
+	...appRouterSites.siteSettingsDefensiveModeRoute.options,
 	getParentRoute: () => siteRoute,
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-defensive-mode' ).then( ( d ) =>
@@ -136,7 +136,7 @@ const defensiveModeRoute = createRoute( {
 );
 
 const sftpSshRoute = createRoute( {
-	...appRouter.siteSettingsSftpSshRoute.options,
+	...appRouterSites.siteSettingsSftpSshRoute.options,
 	getParentRoute: () => siteRoute,
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-sftp-ssh' ).then( ( d ) =>
@@ -158,7 +158,7 @@ const transferSiteRoute = createRoute( {
 );
 
 const webApplicationFirewallRoute = createRoute( {
-	...appRouter.siteSettingsWebApplicationFirewallRoute.options,
+	...appRouterSites.siteSettingsWebApplicationFirewallRoute.options,
 	getParentRoute: () => siteRoute,
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-web-application-firewall' ).then( ( d ) =>

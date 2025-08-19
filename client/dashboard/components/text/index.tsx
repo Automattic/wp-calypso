@@ -8,13 +8,16 @@ export interface TextProps extends React.ComponentProps< typeof WPText > {
 }
 
 function UnforwardedText(
-	{ intent, ...props }: TextProps,
+	{ intent, lineHeight, size, weight, ...props }: TextProps,
 	ref: React.ForwardedRef< HTMLElement >
 ) {
 	return (
 		<WPText
 			ref={ ref }
 			{ ...props }
+			lineHeight={ lineHeight || 'unset' }
+			size={ size || 'unset' }
+			weight={ weight || 'unset' }
 			className={ clsx( intent && `dashboard-text--${ intent }`, props.className ) }
 		/>
 	);

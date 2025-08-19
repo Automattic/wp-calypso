@@ -9,7 +9,11 @@ import {
 	domainForwardingDeleteMutation,
 	domainForwardingQuery,
 } from '../../app/queries/domain-forwarding';
-import { domainRoute, domainForwardingAddRoute, domainForwardingEditRoute } from '../../app/router';
+import {
+	domainRoute,
+	domainForwardingAddRoute,
+	domainForwardingEditRoute,
+} from '../../app/router/domains';
 import DataViewsCard from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -83,7 +87,7 @@ function DomainForwardings() {
 				},
 			},
 		],
-		[]
+		[ createErrorNotice, createSuccessNotice, deleteMutation, domainName, router ]
 	);
 
 	const fields: Field< DomainForwarding >[] = useMemo(
@@ -142,7 +146,7 @@ function DomainForwardings() {
 				},
 			},
 		],
-		[]
+		[ domainName ]
 	);
 
 	const [ view, setView ] = useState< ForwardingView >( DEFAULT_VIEW );

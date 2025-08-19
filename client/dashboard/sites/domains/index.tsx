@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useAuth } from '../../app/auth';
 import { siteBySlugQuery } from '../../app/queries/site';
 import { siteDomainsQuery } from '../../app/queries/site-domains';
-import { siteRoute } from '../../app/router';
+import { siteRoute } from '../../app/router/sites';
 import DataViewsCard from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';

@@ -58,7 +58,7 @@ export default function BackupCard( { site }: { site: Site } ) {
 			tracksFeatureId={ CARD_PROPS.tracksId }
 			upsellHeading={ __( 'Back up your site' ) }
 			upsellDescription={ __( 'Get back online quickly with one-click restores.' ) }
-			upsellExternalLink={ getBackupUrl( site ) }
+			upsellLink={ getBackupUrl( site ) }
 		>
 			<BackupCardContent site={ site } />
 		</HostingFeatureGatedWithOverviewCard>
