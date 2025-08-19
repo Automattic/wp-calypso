@@ -2,14 +2,12 @@ import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { domainWhoisQuery } from '../../app/queries/domain-whois';
-import { domainRoute } from '../../app/routes/domain-routes';
+import { domainRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { findRegistrantWhois } from '../../utils/domain-whois';
 import ContactForm from './contact-form';
-import type { DomainContactDetails } from '../../data/domain-whois';
-
-import './style.scss';
+import type { DomainContactDetails } from '../../data/types';
 
 export default function DomainContactInfo() {
 	const { domainName } = domainRoute.useParams();
@@ -27,30 +25,28 @@ export default function DomainContactInfo() {
 
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Contact details' ) } /> }>
-			<div className="domain-contact-info">
-				<ContactForm
-					domainName={ domainName }
-					initialData={
-						{
-							firstName: registrantWhoisData?.fname ?? '',
-							lastName: registrantWhoisData?.lname ?? '',
-							organization: registrantWhoisData?.org ?? '',
-							email: registrantWhoisData?.email ?? '',
-							phone: registrantWhoisData?.phone ?? '',
-							address1: registrantWhoisData?.sa1 ?? '',
-							address2: registrantWhoisData?.sa2 ?? '',
-							city: registrantWhoisData?.city ?? '',
-							state: registrantWhoisData?.state ?? '',
-							countryCode: registrantWhoisData?.country_code ?? '',
-							postalCode: registrantWhoisData?.pc ?? '',
-							fax: registrantWhoisData?.fax ?? '',
-						} as DomainContactDetails
-					}
-					onSubmit={ handleSubmit }
-					onCancel={ handleCancel }
-					errors={ {} }
-				/>
-			</div>
+			<ContactForm
+				domainName={ domainName }
+				initialData={
+					{
+						firstName: registrantWhoisData?.fname ?? '',
+						lastName: registrantWhoisData?.lname ?? '',
+						organization: registrantWhoisData?.org ?? '',
+						email: registrantWhoisData?.email ?? '',
+						phone: registrantWhoisData?.phone ?? '',
+						address1: registrantWhoisData?.sa1 ?? '',
+						address2: registrantWhoisData?.sa2 ?? '',
+						city: registrantWhoisData?.city ?? '',
+						state: registrantWhoisData?.state ?? '',
+						countryCode: registrantWhoisData?.country_code ?? '',
+						postalCode: registrantWhoisData?.pc ?? '',
+						fax: registrantWhoisData?.fax ?? '',
+					} as DomainContactDetails
+				}
+				onSubmit={ handleSubmit }
+				onCancel={ handleCancel }
+				errors={ {} }
+			/>
 		</PageLayout>
 	);
 }

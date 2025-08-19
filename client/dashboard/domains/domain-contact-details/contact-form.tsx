@@ -20,7 +20,6 @@ import Notice from '../../components/notice';
 import { fetchDomainWhoisValidate, type DomainContactDetails } from '../../data/domain-whois';
 import { getContactFormFields } from './contact-form-fields';
 
-import './contact-form.scss';
 interface ContactFormProps {
 	domainName: string;
 	initialData?: DomainContactDetails;

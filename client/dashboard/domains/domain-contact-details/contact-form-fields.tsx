@@ -10,11 +10,10 @@ import { Field } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import InlineSupportLink from '../../components/inline-support-link';
-import type { DomainContactDetails } from '../../data/domain-whois';
+import type { StatesListItem } from '../../data/domain-supported-countries';
+import type { DomainContactDetails } from '../../data/types';
 
-const createStateFieldEdit = (
-	statesList: Array< { name: string; code: string } > | undefined
-) => {
+const createStateFieldEdit = ( statesList: StatesListItem | undefined ) => {
 	const StateFieldEditComponent = ( { field, onChange, data, hideLabelFromVision }: any ) => {
 		const { id, getValue } = field;
 
