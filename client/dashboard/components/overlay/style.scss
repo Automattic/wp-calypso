@@ -1,0 +1,19 @@
+.dashboard-overlay {
+	position: fixed;
+	inset: 0;
+	z-index: 9999;
+	background-color: var( --dashboard__background-color );
+	display: flex;
+}
+
+.dashboard-overlay__actions {
+	position: fixed;
+	z-index: 1;
+	inset-block-start: $grid-unit-15;
+	inset-inline-end: $grid-unit-15;
+}
+
+.dashboard-overlay__content {
+	overflow: auto;
+	flex: 1;
+}
