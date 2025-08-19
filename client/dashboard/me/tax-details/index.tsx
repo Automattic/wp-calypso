@@ -1,4 +1,3 @@
-// import HelpCenter from '@automattic/help-center';
 import { useResetSupportInteraction } from '@automattic/help-center/src/hooks/use-reset-support-interaction';
 import {
 	Card,
@@ -22,7 +21,6 @@ import useUserTaxDetails from './use-user-tax-details';
 import UserTaxForm from './user-tax-form';
 import './style.scss';
 
-// const HELP_CENTER_STORE = HelpCenter.register();
 const HELP_CENTER_STORE = 'automattic/help-center';
 
 export default function UserTaxInfoPage() {
@@ -152,7 +150,6 @@ export default function UserTaxInfoPage() {
 											learnMoreLink: (
 												<InlineSupportLink
 													supportLink={ taxSupportPageURL }
-													showText
 													showIcon={ false }
 													supportPostId={ 234670 } //This is what makes the document appear in a dialogue
 													linkTitle={ taxSupportPageLinkTitle }

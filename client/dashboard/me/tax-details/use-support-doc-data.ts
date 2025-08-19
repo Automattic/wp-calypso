@@ -1,32 +1,7 @@
-import { dispatch } from '@wordpress/data';
 import { useEffect, useState } from 'react';
+import { useHelpCenter } from '../../app/help-center';
 import { localizeUrl } from './localize-url';
 import type { ContextLinks, SupportDocData } from '../../data/types';
-import type { HelpCenterDispatch } from '@automattic/data-stores';
-
-const HELP_CENTER_STORE = 'automattic/help-center';
-declare global {
-	interface Window {
-		wp: undefined | Record< string, any >;
-	}
-}
-
-const loadHelpCenterDispatch = async () => {
-	// Check if the help center store is already loaded in the window object.
-	if ( typeof window !== 'undefined' && window.wp?.data?.dispatch?.( HELP_CENTER_STORE ) ) {
-		return window.wp.data.dispatch( HELP_CENTER_STORE ) as HelpCenterDispatch[ 'dispatch' ];
-	}
-
-	// Load `@automattic/data-stores` asynchronously to avoid including it in the main bundle and reduce initial load size.
-	if ( ! dispatch( HELP_CENTER_STORE ) ) {
-		const { HelpCenter: HelpCenterStore } = await import(
-			/* webpackChunkName: "async-load-automattic-data-stores" */ '@automattic/data-stores'
-		);
-		HelpCenterStore.register();
-	}
-
-	return dispatch( HELP_CENTER_STORE ) as HelpCenterDispatch[ 'dispatch' ];
-};
 
 const useSupportDocData = ( {
 	supportPostId = 0,
@@ -45,6 +20,7 @@ const useSupportDocData = ( {
 		postId: supportPostId,
 		blogId: 0, // support.wordpress.com is the default blog used for support links
 	} );
+	const { setShowSupportDoc } = useHelpCenter();
 
 	// Lazy load the supportPostId and supportLink by supportContext if not provided.
 	const shouldLoadSupportDocData = supportContext && ! supportPostId && ! supportLink;
@@ -53,7 +29,6 @@ const useSupportDocData = ( {
 
 	const openSupportDoc = async () => {
 		// Load `@automattic/data-stores` asynchronously to avoid including it in the main bundle and reduce initial load size.
-		const { setShowSupportDoc } = await loadHelpCenterDispatch();
 		setShowSupportDoc( supportDocData.link, supportDocData.postId, supportDocData.blogId );
 	};
 

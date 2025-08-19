@@ -1,6 +1,7 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { useCallback, ComponentType } from 'react';
-import { useLocale, getWpI18nLocaleSlug } from './locale-context';
+import { useLocale } from '../../app/locale';
+import { getWpI18nLocaleSlug } from './locale-context';
 import {
 	localesWithBlog,
 	localesWithGoBlog,
