@@ -11,7 +11,7 @@ import GettingStartedVideo from '../components/getting-started-video';
 import ImporterDrag from '../components/importer-drag';
 import { getImportDragConfig } from '../components/importer-drag/config';
 import ProgressScreen from '../components/progress-screen';
-import { Importer, ImporterBaseProps, ImportJob, ImportJobParams } from '../types';
+import { Importer, ImporterBaseProps, ImportJob } from '../types';
 import { getImporterTypeForEngine } from '../util';
 
 export const SubstackImporter: React.FunctionComponent< ImporterBaseProps > = ( props ) => {
@@ -22,8 +22,6 @@ export const SubstackImporter: React.FunctionComponent< ImporterBaseProps > = ( 
 		siteId,
 		site,
 		siteSlug,
-		fromSite,
-		importSite,
 		startImport,
 		resetImport,
 		stepNavigator,
@@ -43,24 +41,6 @@ export const SubstackImporter: React.FunctionComponent< ImporterBaseProps > = ( 
 		if ( job === undefined ) {
 			startImport( siteId, getImporterTypeForEngine( importer ) );
 		}
-		// If the job is in a ready state, start the import process
-		else if ( job.importerState === appStates.READY_FOR_UPLOAD ) {
-			importSite( prepareImportParams() );
-		}
-	}
-
-	function prepareImportParams(): ImportJobParams {
-		const targetSiteUrl = fromSite.startsWith( 'http' ) ? fromSite : 'https://' + fromSite;
-
-		return {
-			engine: importer,
-			importerStatus: job as ImportJob,
-			params: { engine: importer },
-			site: { ID: siteId },
-			targetSiteUrl,
-			supportedContent: [],
-			unsupportedContent: [],
-		};
 	}
 
 	function onTryAgainClick() {

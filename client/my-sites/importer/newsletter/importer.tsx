@@ -22,7 +22,6 @@ import Subscribers from './subscribers';
 import Summary from './summary';
 import { EngineTypes } from './types';
 import { getStepsProgress, getImporterStatus } from './utils';
-import type { SiteDetails } from '@automattic/data-stores';
 
 import './importer.scss';
 
@@ -37,8 +36,6 @@ type NewsletterImporterProps = {
 	siteSlug: string;
 	engine: EngineTypes;
 	step?: StepId;
-	site?: SiteDetails;
-	stepUrlBase?: string;
 };
 
 function getTitle( engine: EngineTypes, urlData?: UrlData ) {
@@ -53,19 +50,20 @@ function getTitle( engine: EngineTypes, urlData?: UrlData ) {
 	return __( 'Import your newsletter' );
 }
 
-function updateSearchToContent( search: string ) {
-	return addQueryArgs( search, { step: 'content' } );
+function updatePathToContent( path: string ) {
+	if ( path.endsWith( '/content' ) ) {
+		return path;
+	}
+	return path + '/content';
 }
 
 export default function NewsletterImporter( {
 	siteSlug,
 	engine,
 	step = 'reset',
-	site = undefined,
-	stepUrlBase = '/import/newsletter',
 }: NewsletterImporterProps ) {
 	const fromSite = getQueryArg( window.location.href, 'from' ) as string;
-	const selectedSite = useSelector( getSelectedSite ) ?? site;
+	const selectedSite = useSelector( getSelectedSite ) ?? undefined;
 	const [ validFromSite, setValidFromSite ] = useState( false );
 	const [ autoFetchData, setAutoFetchData ] = useState( false );
 	const [ shouldResetImport, setShouldResetImport ] = useState( step === 'reset' );
@@ -150,7 +148,7 @@ export default function NewsletterImporter( {
 				window.history.replaceState(
 					null,
 					'',
-					window.location.pathname + updateSearchToContent( window.location.search )
+					updatePathToContent( window.location.pathname ) + window.location.search
 				);
 			}
 
@@ -173,10 +171,9 @@ export default function NewsletterImporter( {
 		fromSite,
 		paidNewsletterData
 	);
-
-	const stepUrl = `${ stepUrlBase }${ engine }/?siteSlug=${ siteSlug }&step=${ step }`;
+	const stepUrl = `/import/newsletter/${ engine }/${ siteSlug }/${ step }`;
 	const nextStepUrl = addQueryArgs(
-		`${ stepUrlBase }${ engine }/?siteSlug=${ siteSlug }&step=${ nextStepSlug }`,
+		`/import/newsletter/${ engine }/${ siteSlug }/${ nextStepSlug }`,
 		{
 			from: fromSite,
 		}
