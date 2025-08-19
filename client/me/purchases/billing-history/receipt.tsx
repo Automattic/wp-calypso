@@ -24,10 +24,7 @@ import TextareaAutosize from 'calypso/components/textarea-autosize';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { billingHistory, vatDetails as vatDetailsPath } from 'calypso/me/purchases/paths';
 import titles from 'calypso/me/purchases/titles';
-import {
-	isInternalA4AAgencyDomain,
-	isSitelessDomainForBillingAndReceipts,
-} from 'calypso/me/purchases/utils';
+import { isInternalA4AAgencyDomain } from 'calypso/me/purchases/utils';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
 import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list';
 import { useDispatch } from 'calypso/state';
@@ -569,9 +566,7 @@ function ReceiptLineItem( {
 		stripZeros: true,
 	} );
 
-	const isSitelessDomain = isSitelessDomainForBillingAndReceipts( item.domain );
-	const shouldShowDomain =
-		item.domain && ! isSitelessDomain && ! isInternalA4AAgencyDomain( item.domain );
+	const shouldShowDomain = item.domain && ! isInternalA4AAgencyDomain( item.domain );
 
 	return (
 		<>
