@@ -108,7 +108,7 @@ export function domainManagementRoot() {
 	return '/domains/manage';
 }
 
-export function isUnderDomainManagementAll( path: string ) {
+export function isUnderDomainManagementAll( path: string | undefined ) {
 	return path?.startsWith( domainManagementAllRoot() + '/' ) || path === domainManagementRoot();
 }
 
@@ -240,4 +240,16 @@ export function emailManagementEdit(
 		default:
 			return '/email/' + domainName + '/manage/' + siteSlug;
 	}
+}
+
+export function domainSiteContextRoot() {
+	return '/overview/site-domain';
+}
+
+export function domainManagementAllEmailRoot() {
+	return domainManagementAllRoot() + '/email';
+}
+
+export function isUnderDomainSiteContext( path: string | undefined ) {
+	return path?.startsWith( domainSiteContextRoot() + '/' );
 }

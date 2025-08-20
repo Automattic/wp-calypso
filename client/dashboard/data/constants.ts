@@ -154,6 +154,8 @@ export const JetpackPlans = {
 
 export const WPCOM_DIFM_LITE = 'wp_difm_lite';
 
+export const OFFSITE_REDIRECT = 'offsite_redirect';
+
 export const AkismetUpgradesProductMap: Record< string, string > = {
 	[ AkismetPlans.PRODUCT_AKISMET_FREE ]: `/checkout/akismet/${ AkismetPlans.PRODUCT_AKISMET_PERSONAL_YEARLY }:-q-36`,
 	// This upgrade path should never be used in it's current form, PRODUCT_AKISMET_PERSONAL_MONTHLY is not a sellable product

@@ -1,3 +1,4 @@
+import { domainManagementEdit } from '@automattic/domains-table/src/utils/paths';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useRouter, Link } from '@tanstack/react-router';
@@ -47,8 +48,10 @@ import {
 	SubscriptionBillPeriod,
 	DomainProductSlugs,
 	WPCOM_DIFM_LITE,
+	OFFSITE_REDIRECT,
 } from '../../../data/constants';
 import { formatDate } from '../../../utils/datetime';
+import { getEmailManagementPath } from '../../../utils/email-paths';
 import {
 	getBillPeriodLabel,
 	getTitleForDisplay,
@@ -196,6 +199,32 @@ const BackButton = () => {
 		</Button>
 	);
 };
+
+function ProductLink( { purchase }: { purchase: Purchase } ) {
+	if ( purchase.is_plan && purchase.site_slug ) {
+		const url = '/plans/my-plan/' + purchase.site_slug;
+		const text = __( 'Plan features' );
+		return <a href={ url }>{ text }</a>;
+	}
+
+	if (
+		( purchase.is_domain || purchase.product_slug === OFFSITE_REDIRECT ) &&
+		purchase.site_slug &&
+		purchase.meta
+	) {
+		const url = domainManagementEdit( purchase.site_slug, purchase.meta );
+		const text = __( 'Domain settings' );
+		return <a href={ url }>{ text }</a>;
+	}
+
+	if ( isGoogleWorkspace( purchase ) || isTitanMail( purchase ) ) {
+		const url = getEmailManagementPath( purchase.site_slug, purchase.meta );
+		const text = __( 'Email settings' );
+		return <a href={ url }>{ text }</a>;
+	}
+
+	return null;
+}
 
 function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
@@ -883,7 +912,6 @@ export default function PurchaseSettings() {
 	} )();
 
 	// FIXME: render pluginList (see renderPluginLabel and getPluginsForSite)
-	// FIXME: render ProductLink for plan features, domain management, email management, or theme details
 
 	return (
 		<PageLayout
@@ -907,6 +935,7 @@ export default function PurchaseSettings() {
 						}
 					/>
 					<PurchaseSubtitle purchase={ purchase } />
+					<ProductLink purchase={ purchase } />
 					<DomainRegistrationAgreement purchase={ purchase } />
 				</VStack>
 			}

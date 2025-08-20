@@ -345,3 +345,7 @@ export function isTitanMail( purchase: Purchase ): boolean {
 export function isGoogleWorkspace( purchase: Purchase ): boolean {
 	return ( Object.values( GoogleWorkspaceSlugs ) as string[] ).includes( purchase.product_slug );
 }
+
+export function isSiteRedirect( purchase: Purchase ): boolean {
+	return purchase.product_slug === 'offsite_redirect';
+}
