@@ -1,11 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
-import type { CountryListItem, CountryListItemWithVat } from '../../data/types';
+import type { CountryListItem } from '../../data/types';
 
 const emptyList: CountryListItem[] = [];
-
-export const isVatSupported = ( country: CountryListItem ): country is CountryListItemWithVat =>
-	country.vat_supported;
 
 const countryListQueryKey = [ 'checkout-country-list' ];
 

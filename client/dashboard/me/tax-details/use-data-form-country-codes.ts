@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import useCountryList, { isVatSupported } from '../../app/hooks/use-country-list';
-import type { CountryListItem } from '../../data/types';
+import useCountryList from '../../app/hooks/use-country-list';
+import type { CountryListItem, CountryListItemWithVat } from '../../data/types';
 
 interface CountryCodeOption {
 	label: string;
@@ -22,6 +22,8 @@ function getUniqueCountries< C extends CountryListItem >( countries: C[] ): C[] 
 export default function useDataFormCountryCodes(): CountryCodeOption[] {
 	const translate = useTranslate();
 	const countries = useCountryList();
+	const isVatSupported = ( country: CountryListItem ): country is CountryListItemWithVat =>
+		country.vat_supported;
 
 	const countryCodes = useMemo( () => {
 		const vatCountries = getUniqueCountries( countries.filter( isVatSupported ) );
