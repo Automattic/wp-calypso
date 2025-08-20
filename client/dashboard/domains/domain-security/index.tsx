@@ -34,6 +34,12 @@ export default function DomainSecurity() {
 
 	const showFailureReasons = !! sslDetails.failure_reasons && sslDetails.failure_reasons.length > 0;
 
+	const shouldShowProvisionButton =
+		! sslDetails.certificate_provisioned &&
+		! sslDetails.is_newly_registered &&
+		! sslDetails.is_expired &&
+		showFailureReasons;
+
 	const handleOnClick = ( e: React.FormEvent ) => {
 		e.preventDefault();
 		mutation.mutate( undefined, {
@@ -47,12 +53,6 @@ export default function DomainSecurity() {
 			},
 		} );
 	};
-
-	const shouldShowProvisionButton =
-		! sslDetails.certificate_provisioned &&
-		! sslDetails.is_newly_registered &&
-		! sslDetails.is_expired &&
-		sslDetails?.failure_reasons;
 
 	const renderFailureReasons = (
 		failureReasons: { error_type: string; message: string }[]
