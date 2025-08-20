@@ -809,16 +809,21 @@ function BBEPurchaseDescription( { purchase }: { purchase: Purchase } ) {
 	);
 }
 
-function PurchaseSubtitle( { purchase }: { purchase: Purchase } ) {
+function PurchaseSecondSubtitle( { purchase }: { purchase: Purchase } ) {
 	if ( purchase.is_domain ) {
 		if ( purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD ) {
-			return __(
-				'Your stories, achievements, and memories preserved for generations to come. One payment. One hundred years of legacy.'
+			return (
+				<Text variant="muted">
+					{ ' ' }
+					{ __(
+						'Your stories, achievements, and memories preserved for generations to come. One payment. One hundred years of legacy.'
+					) }
+				</Text>
 			);
 		}
 
 		return (
-			<span>
+			<Text variant="muted">
 				{ createInterpolateElement(
 					// translators: SiteUrl is the URL of the site and Domain is the domain name of the site.
 					__(
@@ -829,14 +834,18 @@ function PurchaseSubtitle( { purchase }: { purchase: Purchase } ) {
 						Domain: <strong>{ purchase.meta }</strong>,
 					}
 				) }
-			</span>
+			</Text>
 		);
 	}
 
 	if ( purchase.product_slug === DomainProductSlugs.TRANSFER_IN ) {
 		// FIXME: render domain transfer status (see resolveDomainStatus)
-		return __(
-			'Transfers an existing domain from another provider to WordPress.com, helping you manage your site and domain in one place.'
+		return (
+			<Text variant="muted">
+				{ __(
+					'Transfers an existing domain from another provider to WordPress.com, helping you manage your site and domain in one place.'
+				) }
+			</Text>
 		);
 	}
 
@@ -851,7 +860,7 @@ function PurchaseSubtitle( { purchase }: { purchase: Purchase } ) {
 
 		if ( purchase.renewal_price_tier_usage_quantity ) {
 			return (
-				<span>
+				<Text variant="muted">
 					{ description }{ ' ' }
 					{ sprintf(
 						// translators: numberOfMailboxes is a number and domain is a domain name
@@ -865,7 +874,7 @@ function PurchaseSubtitle( { purchase }: { purchase: Purchase } ) {
 							domain: purchase.meta,
 						}
 					) }
-				</span>
+				</Text>
 			);
 		}
 		return description;
@@ -874,7 +883,10 @@ function PurchaseSubtitle( { purchase }: { purchase: Purchase } ) {
 	if ( purchase.product_slug === WPCOM_DIFM_LITE ) {
 		return <BBEPurchaseDescription purchase={ purchase } />;
 	}
+	return null;
+}
 
+function PurchaseSubtitle( { purchase }: { purchase: Purchase } ) {
 	const subtitle = getSubtitleForDisplay( purchase );
 	if ( ! subtitle ) {
 		return null;
@@ -935,6 +947,7 @@ export default function PurchaseSettings() {
 						}
 					/>
 					<PurchaseSubtitle purchase={ purchase } />
+					<PurchaseSecondSubtitle purchase={ purchase } />
 					<ProductLink purchase={ purchase } />
 					<DomainRegistrationAgreement purchase={ purchase } />
 				</VStack>
