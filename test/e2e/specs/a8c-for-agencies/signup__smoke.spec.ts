@@ -1,10 +1,4 @@
-import {
-	TestAccount,
-	getTestAccountByFeature,
-	envToFeatureKey,
-	envVariables,
-} from '@automattic/calypso-e2e';
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../../lib/pw_base';
 
 const A4A_URL = 'https://agencies.automattic.com';
 
@@ -12,11 +6,11 @@ const A4A_URL = 'https://agencies.automattic.com';
  * Verify the A4A > Signup page loads
  */
 test.describe( 'A4A > Signup: Smoke Test @calypso-pr', () => {
-	test( 'Navigate to A4A > Signup', async ( { page } ) => {
-		const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
-		const testAccount = new TestAccount( accountName );
-
-		await testAccount.authenticate( page );
+	test( 'Navigate to A4A > Signup (Acccount given by environment)', async ( {
+		page,
+		accountGivenByEnvironment,
+	} ) => {
+		await accountGivenByEnvironment.authenticate( page );
 
 		await page.goto( `${ A4A_URL }/signup` );
 

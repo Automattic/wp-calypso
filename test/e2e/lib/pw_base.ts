@@ -10,7 +10,7 @@ import {
 	ThemesDetailPage,
 	ThemesPage,
 } from '@automattic/calypso-e2e';
-import { test as base } from '@playwright/test';
+import { test as base, expect } from '@playwright/test';
 
 export const test = base.extend< {
 	accountGutenbergSimple: TestAccount;
@@ -52,3 +52,5 @@ export const test = base.extend< {
 		await use( previewComponent );
 	},
 } );
+
+export { expect };
