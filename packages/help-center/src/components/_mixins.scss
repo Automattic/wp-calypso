@@ -17,8 +17,18 @@
 		line-height: 1.3;
 		border-bottom: 1px solid var(--studio-gray-5);
 
+		&:first-child {
+			a:focus {
+				border-radius: 8px 8px 0 0;
+			}
+		}
+
 		&:last-child {
 			border-bottom: 0;
+
+			a:focus {
+				border-radius: 0 0 8px 8px;
+			}
 		}
 
 		.help-center-link__cell {
@@ -73,7 +83,7 @@
 				&:focus {
 					color: var(--studio-gray-100);
 					outline: $help-center-blue solid 2px;
-					outline-offset: 2px;
+					outline-offset: -2px;
 				}
 			}
 		}
