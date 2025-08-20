@@ -19,7 +19,13 @@ import useDataFormCountryCodes from './use-data-form-country-codes';
 import useDisplayUserTaxNotices from './use-display-user-tax-notices';
 import useRecordUserTaxEvents from './use-record-user-tax-events';
 import useUserTaxDetails from './use-user-tax-details';
-import type { UserTaxField, UserTaxFormControlProps, UserTaxFormData } from '../../data/types';
+import type { UserTaxField, UserTaxFormData, UserTaxNormalizedField } from '../../data/types';
+
+export interface UserTaxFormControlProps {
+	data: UserTaxFormData;
+	field: UserTaxNormalizedField;
+	onChange: ( edits: Partial< UserTaxFormData > ) => void;
+}
 
 function VatSelectControl( { data, field, onChange }: UserTaxFormControlProps ) {
 	const { elements, getValue, id, label, isDisabled, isVatAlreadySet, canUserEdit } = field;

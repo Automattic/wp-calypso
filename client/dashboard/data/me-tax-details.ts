@@ -31,12 +31,6 @@ export type UserTaxNormalizedField = NormalizedField< UserTaxFormData > & {
 	taxName?: string;
 };
 
-export interface UserTaxFormControlProps {
-	data: UserTaxFormData;
-	field: UserTaxNormalizedField;
-	onChange: ( edits: Partial< UserTaxFormData > ) => void;
-}
-
 export async function fetchUserTaxDetails(): Promise< UserTaxFormData > {
 	return await wpcom.req.get( '/me/vat-info' );
 }
