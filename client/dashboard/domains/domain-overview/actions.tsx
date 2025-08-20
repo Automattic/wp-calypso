@@ -15,7 +15,11 @@ import { ActionList } from '../../components/action-list';
 import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
 import { getDomainRenewalUrl } from '../../utils/domain';
-import { shouldShowTransferAction, shouldShowDisconnectAction } from './actions.utils';
+import {
+	shouldShowTransferAction,
+	shouldShowDisconnectAction,
+	shouldShowDeleteAction,
+} from './actions.utils';
 
 export default function Actions() {
 	const { domainName } = domainRoute.useParams();
@@ -96,15 +100,17 @@ export default function Actions() {
 						}
 					/>
 				) }
-				<ActionList.ActionItem
-					title={ __( 'Delete' ) }
-					description={ __( 'Remove this domain permanently.' ) }
-					actions={
-						<Button size="compact" variant="secondary" isDestructive>
-							{ __( 'Delete' ) }
-						</Button>
-					}
-				/>
+				{ shouldShowDeleteAction( domain ) && purchase && (
+					<ActionList.ActionItem
+						title={ __( 'Delete' ) }
+						description={ __( 'Remove this domain permanently.' ) }
+						actions={
+							<Button size="compact" variant="secondary" isDestructive>
+								{ __( 'Delete' ) }
+							</Button>
+						}
+					/>
+				) }
 			</ActionList>
 
 			{ isDisconnectDialogOpen && (
