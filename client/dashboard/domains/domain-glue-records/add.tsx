@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
@@ -22,13 +23,27 @@ export default function AddDomainGlueRecords() {
 				createSuccessNotice( __( 'Glue record created successfully.' ), {
 					type: 'snackbar',
 				} );
+
+				recordTracksEvent( 'calypso_domain_glue_records_add_record', {
+					domain: domainName,
+					nameserver: glueRecord.nameserver,
+					address: glueRecord.ip_addresses[ 0 ],
+				} );
+
 				navigate( {
 					to: domainGlueRecordsRoute.fullPath,
 					params: { domainName },
 				} );
 			},
-			onError: () => {
+			onError: ( error ) => {
 				createErrorNotice( __( 'Failed to create glue record.' ), { type: 'snackbar' } );
+
+				recordTracksEvent( 'calypso_domain_glue_records_add_record_failure', {
+					domain: domainName,
+					nameserver: glueRecord.nameserver,
+					address: glueRecord.ip_addresses[ 0 ],
+					error_message: error.message,
+				} );
 			},
 		} );
 	};

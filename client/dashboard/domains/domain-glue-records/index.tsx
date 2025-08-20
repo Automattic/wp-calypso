@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isMobile } from '@automattic/viewport';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
@@ -75,10 +76,23 @@ function DomainGlueRecords() {
 							createSuccessNotice( __( 'Glue record was deleted successfully.' ), {
 								type: 'snackbar',
 							} );
+
+							recordTracksEvent( 'calypso_domain_glue_records_delete_record', {
+								domain: domainName,
+								nameserver: item.nameserver,
+								address: item.ip_addresses[ 0 ],
+							} );
 						},
-						onError: () => {
+						onError: ( error ) => {
 							createErrorNotice( __( 'Failed to delete glue record.' ), {
 								type: 'snackbar',
+							} );
+
+							recordTracksEvent( 'calypso_domain_glue_records_delete_record_failure', {
+								domain: domainName,
+								nameserver: item.nameserver,
+								address: item.ip_addresses[ 0 ],
+								error_message: error.message,
 							} );
 						},
 					} );
