@@ -4,6 +4,8 @@
 		scroll-behavior: smooth;
 		overflow-y: auto;
 		padding: 0;
+		// Room for the white-to-transparent gradient on the footer.
+		padding-bottom: 40px;
 
 		.help-center__container-content-wrapper {
 			height: auto;
