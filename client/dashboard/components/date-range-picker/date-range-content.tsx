@@ -1,4 +1,4 @@
-import { DateRangeCalendar } from '@automattic/ui';
+import { DateRangeCalendar, TZDate } from '@automattic/ui';
 import {
 	__experimentalText as Text,
 	Button,
@@ -95,6 +95,15 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 	const defaultMonth = isSmall ? today : new Date( today.getFullYear(), today.getMonth() - 1, 1 );
 	const endMonth = new Date( today.getFullYear(), today.getMonth(), 1 );
 
+	// Use TZDate for calendar selection when an IANA time zone is available
+	const selected =
+		timezoneString && ( fromDraft || toDraft )
+			? {
+					from: fromDraft ? new TZDate( +fromDraft, timezoneString ) : undefined,
+					to: toDraft ? new TZDate( +toDraft, timezoneString ) : undefined,
+			  }
+			: { from: fromDraft, to: toDraft };
+
 	return (
 		<div style={ { padding: 12 } }>
 			<Text as="div" weight={ 600 } align="center" size="smallTitle" style={ { marginBottom: 8 } }>
@@ -168,20 +177,28 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 
 				<div className="daterange-calendar">
 					<DateRangeCalendar
+						timeZone={ timezoneString }
 						numberOfMonths={ isSmall ? 1 : 2 }
 						defaultMonth={ defaultMonth }
 						endMonth={ endMonth }
 						disabled={ { after: today } }
 						excludeDisabled
-						selected={ { from: fromDraft, to: toDraft } }
+						selected={ selected }
 						onSelect={ ( range ) => {
+							const toNative = ( d?: Date ) => ( d ? new Date( d.getTime() ) : undefined );
 							if ( range?.from ) {
-								setFromDraft( range.from );
-								setFromStr( formatYmd( range.from, timezoneString, gmtOffset ) );
+								const from = toNative( range.from );
+								setFromDraft( from );
+								if ( from ) {
+									setFromStr( formatYmd( from, timezoneString, gmtOffset ) );
+								}
 							}
 							if ( range?.to ) {
-								setToDraft( range.to );
-								setToStr( formatYmd( range.to, timezoneString, gmtOffset ) );
+								const to = toNative( range.to );
+								setToDraft( to );
+								if ( to ) {
+									setToStr( formatYmd( to, timezoneString, gmtOffset ) );
+								}
 							}
 						} }
 					/>
