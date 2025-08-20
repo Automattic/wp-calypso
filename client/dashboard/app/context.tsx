@@ -10,6 +10,10 @@ export type SiteFeatureSupports = {
 	emails: boolean;
 };
 
+export type MeSupports = {
+	privacy: boolean;
+};
+
 export type AppConfig = {
 	basePath: string;
 	mainRoute: string;
@@ -23,7 +27,7 @@ export type AppConfig = {
 		reader: boolean;
 		help: boolean;
 		notifications: boolean;
-		me: boolean;
+		me: MeSupports | false;
 	};
 };
 

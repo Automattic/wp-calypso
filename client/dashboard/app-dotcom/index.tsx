@@ -22,6 +22,8 @@ boot( {
 		reader: true,
 		help: true,
 		notifications: true,
-		me: true,
+		me: {
+			privacy: true,
+		},
 	},
 } );
