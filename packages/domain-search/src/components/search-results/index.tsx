@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getFeaturedSuggestions } from '../../helpers/get-featured-suggestion';
+import { getFeaturedSuggestions } from '../../helpers/get-featured-suggestions';
 import { useDomainSearch } from '../../page/context';
 import { DomainSuggestionsList } from '../../ui';
 import { SearchResultsItem } from './item';
