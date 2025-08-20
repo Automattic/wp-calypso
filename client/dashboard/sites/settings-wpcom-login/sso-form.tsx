@@ -130,7 +130,8 @@ export default function SsoForm( { site }: { site: Site } ) {
 			);
 		}
 
-		if ( areSettingsDirty ) {
+		// Avoid showing a double notification if both module and settings have been changed.
+		if ( areSettingsDirty && ! isModuleDirty ) {
 			jetpackSettingsMutation.mutate(
 				{
 					jetpack_sso_match_by_email: formData.jetpack_sso_match_by_email,
@@ -139,6 +140,9 @@ export default function SsoForm( { site }: { site: Site } ) {
 				{
 					onSuccess: () => {
 						createSuccessNotice( __( 'Settings saved.' ), { type: 'snackbar' } );
+					},
+					onError: () => {
+						createErrorNotice( __( 'Failed to save settings.' ), { type: 'snackbar' } );
 					},
 				}
 			);
