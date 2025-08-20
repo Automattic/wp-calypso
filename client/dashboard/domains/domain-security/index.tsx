@@ -29,10 +29,9 @@ export default function DomainSecurity() {
 
 	const mutation = useMutation( provisionSslCertificateMutation( domainName ) );
 
-	const { message, failureReasons } = useSslStatusMessage( sslDetails );
+	const { message } = useSslStatusMessage( sslDetails );
 
 	const showFailureReasons = !! sslDetails.failure_reasons && sslDetails.failure_reasons.length > 0;
-	const showProvisionInstructions = showFailureReasons;
 
 	const handleOnClick = ( e: React.FormEvent ) => {
 		e.preventDefault();
@@ -122,8 +121,8 @@ export default function DomainSecurity() {
 						<VStack spacing={ 6 }>
 							{ renderBadge() }
 							<Text>{ message }</Text>
-							{ showFailureReasons && failureReasons && renderFailureReasons( failureReasons ) }
-							{ showProvisionInstructions && (
+							{ showFailureReasons && renderFailureReasons( sslDetails.failure_reasons ?? [] ) }
+							{ showFailureReasons && (
 								<Text>
 									{ __(
 										'Once you have fixed all the issues, you can request a new certificate by clicking the button below.'

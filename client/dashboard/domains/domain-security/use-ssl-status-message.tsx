@@ -37,12 +37,7 @@ export const useSslStatusMessage = ( sslDetails: SslDetails ) => {
 			);
 		}
 
-		if ( sslDetails.failure_reasons ) {
-			return __(
-				'There was a problem issuing your SSL certificate. You can request a new certificate by clicking the button below.'
-			);
-		}
-
+		// If we get here, there is an issue with the certificate that can be fixed by the user.
 		return createInterpolateElement(
 			__( 'There is an issue with your certificate. Contact us to <link>learn more</link>.' ),
 			{
@@ -53,6 +48,5 @@ export const useSslStatusMessage = ( sslDetails: SslDetails ) => {
 
 	return {
 		message: getSslStatusMessage(),
-		failureReasons: sslDetails.failure_reasons,
 	};
 };
