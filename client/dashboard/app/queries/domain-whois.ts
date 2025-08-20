@@ -4,7 +4,9 @@ import {
 	validateDomainWhois,
 	updateDomainWhois,
 	type DomainContactDetails,
+	type ContactValidationRequestContactInformation,
 } from '../../data/domain-whois';
+import { camelToSnakeCase, mapRecordKeysRecursively } from '../../utils/domain';
 import { queryClient } from '../query-client';
 
 export const domainWhoisQuery = ( domainName: string ) =>
@@ -18,18 +20,35 @@ export const domainWhoisValidateQuery = (
 	domainContactDetails: DomainContactDetails
 ) =>
 	queryOptions( {
-		queryKey: [ 'domains', domainName, 'whois', 'validate' ],
-		queryFn: () => validateDomainWhois( domainName, domainContactDetails ),
+		queryKey: [ 'domains', domainName, 'whois', 'validate', domainContactDetails ],
+		queryFn: () => {
+			const contactInformation = mapRecordKeysRecursively(
+				domainContactDetails,
+				camelToSnakeCase
+			) as ContactValidationRequestContactInformation;
+			return validateDomainWhois( domainName, contactInformation );
+		},
+	} );
+
+export const domainWhoisValidateMutation = ( domainName: string ) =>
+	mutationOptions( {
+		mutationFn: ( domainContactDetails: DomainContactDetails ) => {
+			const contactInformation = mapRecordKeysRecursively(
+				domainContactDetails,
+				camelToSnakeCase
+			) as ContactValidationRequestContactInformation;
+			return validateDomainWhois( domainName, contactInformation );
+		},
 	} );
 
 export const domainWhoisMutation = ( domainName: string ) =>
 	mutationOptions( {
 		mutationFn: ( {
-			formData,
+			domainContactDetails,
 			transferLock,
 		}: {
-			formData: DomainContactDetails;
+			domainContactDetails: DomainContactDetails;
 			transferLock: boolean;
-		} ) => updateDomainWhois( domainName, formData, transferLock ),
+		} ) => updateDomainWhois( domainName, domainContactDetails, transferLock ),
 		onSuccess: () => queryClient.invalidateQueries( domainWhoisQuery( domainName ) ),
 	} );

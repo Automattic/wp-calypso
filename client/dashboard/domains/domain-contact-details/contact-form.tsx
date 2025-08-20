@@ -15,14 +15,10 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { countryListQuery, statesListQuery } from '../../app/queries/domain-supported-contries';
-import { domainWhoisMutation } from '../../app/queries/domain-whois';
+import { domainWhoisMutation, domainWhoisValidateMutation } from '../../app/queries/domain-whois';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
-import {
-	validateDomainWhois,
-	type ContactValidationRequestContactInformation,
-	type DomainContactDetails,
-} from '../../data/domain-whois';
+import { type DomainContactDetails } from '../../data/domain-whois';
 import { getContactFormFields } from './contact-form-fields';
 
 interface ContactFormProps {
@@ -46,45 +42,46 @@ export default function ContactForm( {
 	);
 	const selectedCountryCode = formData.countryCode ?? initialData?.countryCode ?? '';
 	const { data: statesList } = useQuery( statesListQuery( selectedCountryCode ) );
+	const validateMutation = useMutation( domainWhoisValidateMutation( domainName ) );
 	const updateMutation = useMutation( domainWhoisMutation( domainName ) );
-
-	const validateMutation = useMutation( {
-		mutationFn: ( formData: ContactValidationRequestContactInformation ) => {
-			return validateDomainWhois( domainName, formData );
-		},
-		onSuccess: ( data ) => {
-			if ( data.success ) {
-				updateMutation.mutate(
-					{
-						formData,
-						transferLock: formData.optOutTransferLock === false,
-					},
-					{
-						onSuccess: () => {
-							createSuccessNotice( __( 'Contact details saved.' ), { type: 'snackbar' } );
-							onSubmit?.( formData );
-						},
-						onError: () => {
-							createErrorNotice( __( 'Failed to save contact details.' ), {
-								type: 'snackbar',
-							} );
-						},
-					}
-				);
-			} else {
-				createErrorNotice( data.messages_simple.join( ' ' ), {
-					type: 'snackbar',
-				} );
-			}
-		},
-	} );
 
 	const isDirty = ! ( JSON.stringify( formData ) === JSON.stringify( initialData ) );
 	const isSubmitting = validateMutation.isPending || updateMutation.isPending;
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		validateMutation.mutate( formData );
+		validateMutation.mutate( formData, {
+			onSuccess: ( data ) => {
+				if ( data.success ) {
+					updateMutation.mutate(
+						{
+							domainContactDetails: formData,
+							transferLock: formData.optOutTransferLock === false,
+						},
+						{
+							onSuccess: () => {
+								createSuccessNotice( __( 'Contact details saved.' ), { type: 'snackbar' } );
+								onSubmit?.( formData );
+							},
+							onError: ( error: Error ) => {
+								createErrorNotice( error.message, {
+									type: 'snackbar',
+								} );
+							},
+						}
+					);
+				} else {
+					createErrorNotice( data.messages_simple.join( ' ' ), {
+						type: 'snackbar',
+					} );
+				}
+			},
+			onError: ( error: Error ) => {
+				createErrorNotice( error.message, {
+					type: 'snackbar',
+				} );
+			},
+		} );
 	};
 
 	const fields: Field< DomainContactDetails >[] = useMemo(
