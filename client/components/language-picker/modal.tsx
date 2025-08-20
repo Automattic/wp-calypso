@@ -205,7 +205,6 @@ const LanguagePickerModal: React.FC< Props > = ( {
 				<div className="language-picker-modal__body">
 					<QueryLanguageNames />
 					<LanguagePicker
-						headingTitle
 						languages={ languages }
 						languageGroups={ createLanguageGroups( __ ) }
 						onSelectLanguage={ setSelectedLanguage }
