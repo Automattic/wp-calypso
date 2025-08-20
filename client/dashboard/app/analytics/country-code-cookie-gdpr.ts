@@ -1,6 +1,7 @@
 import cookie from 'cookie';
 import { useEffect, useState } from 'react';
-import { isRegionInCcpaZone } from './tracking-preferences';
+import { fetchGeo } from '../../data/geo';
+import { isRegionInCcpaZone } from './geo-privacy';
 
 let refreshRequest: Promise< void > | null = null;
 
@@ -16,7 +17,7 @@ export async function refreshCountryCodeCookieGdpr( signal?: AbortSignal ) {
 	}
 
 	if ( refreshRequest === null ) {
-		refreshRequest = requestGeoData( signal )
+		refreshRequest = fetchGeo( signal )
 			.then( ( { country_short, region } ) => {
 				setCookie( 'country_code', country_short );
 				// For some IP ranges we don't detect the region and the value returned by the `/geo` endpoint is `"-"`.
@@ -40,16 +41,6 @@ export async function refreshCountryCodeCookieGdpr( signal?: AbortSignal ) {
 	}
 
 	await refreshRequest;
-}
-
-async function requestGeoData( signal?: AbortSignal ) {
-	// cache buster
-	const v = new Date().getTime();
-	const res = await fetch( 'https://public-api.wordpress.com/geo/?v=' + v, { signal } );
-	if ( ! res.ok ) {
-		throw new Error( `The /geo endpoint returned an error: ${ res.status } ${ res.statusText }` );
-	}
-	return await res.json();
 }
 
 function setCookie( name: string, value: string ) {
