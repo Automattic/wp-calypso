@@ -1,10 +1,11 @@
 import page from '@automattic/calypso-router';
+import { useQuery } from '@tanstack/react-query';
 import { Button, __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
+import { siteLatestAtomicTransferQuery } from 'calypso/dashboard/app/queries/site-atomic-transfers';
 import { Callout } from 'calypso/dashboard/components/callout';
-import { useSiteTransferStatusQuery } from 'calypso/landing/stepper/hooks/use-site-transfer/query';
-import { transferStates } from 'calypso/state/atomic-transfer/constants';
+import { isAtomicTransferInProgress } from 'calypso/dashboard/utils/site-atomic-transfers';
 import HostingActivationButton from '../hosting-activation-button';
 import illustrationUrl from './hosting-callout-illustration.svg';
 
@@ -15,19 +16,23 @@ export function HostingActivationCallout( {
 	siteId: number;
 	redirectUrl?: string;
 } ) {
-	const { data: siteTransferData, refetch: fetchSiteTransferStatus } = useSiteTransferStatusQuery(
-		siteId,
-		{
-			refetchIntervalInBackground: true,
-		}
-	);
+	const { data: latestAtomicTransfer } = useQuery( {
+		...siteLatestAtomicTransferQuery( siteId ),
+		enabled: !! siteId,
+		refetchInterval: ( query ) => {
+			if ( ! query.state.data ) {
+				return 0;
+			}
 
-	const isActivating = siteTransferData?.isTransferring;
-	const isActivated = transferStates.COMPLETED;
+			return isAtomicTransferInProgress( query.state.data.status ) ? 5000 : false;
+		},
+		refetchIntervalInBackground: true,
+	} );
 
-	useEffect( () => {
-		fetchSiteTransferStatus();
-	}, [ fetchSiteTransferStatus ] );
+	const isActivating =
+		latestAtomicTransfer && isAtomicTransferInProgress( latestAtomicTransfer.status );
+
+	const isActivated = latestAtomicTransfer?.status === 'completed';
 
 	useEffect( () => {
 		if ( isActivated && redirectUrl ) {
