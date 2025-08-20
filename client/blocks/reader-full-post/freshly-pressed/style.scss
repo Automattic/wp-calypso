@@ -1,0 +1,127 @@
+
+@keyframes fade-in {
+	from {
+		opacity: 0;
+		transform: scale(0.7);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+
+:root .freshly-pressed-suggestion {
+	--color-background: var(--color-primary-dark);
+	--color-foreground: var(--color-primary-40);
+
+	position: absolute;
+	z-index: 998;
+	bottom: 50px;
+	right: 20px;
+	animation: fade-in 0.3s cubic-bezier(0.785, 0.135, 0.15, 0.86) both;
+	display: flex;
+	align-items: center;
+	gap: 4px;
+
+	@include break-mobile {
+		bottom: 50px;
+		right: 70px;
+	}
+
+	&--suggested, &--published {
+		--color-background: var(--color-success-40);
+		--color-foreground: var(--color-white);
+	}
+
+
+	&--eligible {
+		--color-background: var(--color-primary-dark);
+		--color-foreground: #fff;
+	}
+
+
+	&--not-eligible {
+		--color-background: var(--color-neutral-10);
+		--color-foreground: var(--color-neutral-70);
+	}
+
+
+	&--loading {
+		--color-background: var(--color-primary-dark);
+		--color-foreground: var(--color-primary-40);
+	}
+
+
+	&__state-button {
+		cursor: pointer;
+		transform: scale(1);
+		&:active {
+			filter: brightness(85%);
+		}
+	}
+
+
+	&__icon-wrapper-container {
+		display: flex;
+		gap: 4px;
+		align-items: center;
+		justify-content: center;
+		padding-top: 8px;
+		padding-bottom: 8px;
+		padding-right: 6px;
+
+		&:has(.freshly-pressed-suggestion__icon-wrapper:hover) {
+			.freshly-pressed-suggestion__status-text {
+				opacity: 1;
+				transform: translateX( 0 );
+			}
+		}
+	}
+
+	&__icon-wrapper:not(:has(button)),
+	&__state-button {
+		background-color: var(--color-background);
+		color: var(--color-foreground);
+		fill: var(--color-foreground);
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 10px;
+		transition: transform 0.3s cubic-bezier(0.785, 0.135, 0.15, 0.86);
+		z-index: 999;
+		&:hover {
+			transform: scale(1.3);
+		}
+		filter: drop-shadow( 0 0 2px #0000003b );
+	}
+
+	&__loading-spinner {
+		margin: 0;
+		width: 24px;
+		height: 24px;
+	}
+
+	&__status-text-container {
+		clip-path: rect(-1px calc(100%) calc(100% + 1px) -1px);
+		filter: drop-shadow(0 0 2px #0000003b);
+	}
+
+	&__status-text {
+		margin: 0;
+		padding: 8px;
+		border-radius: 4px;
+		background-color: #fff;
+		color: var(--color-background);
+		transform: translateX( 20% );
+		transition: transform 0.3s cubic-bezier(0.785, 0.135, 0.15, 0.86), opacity 0.3s cubic-bezier(0.785, 0.135, 0.15, 0.86);
+		opacity: 0;
+		padding-right: 36px;
+		outline: 1px solid var(--color-background);
+		align-items: flex-start;
+		position: relative;
+		right: -26px;
+		pointer-events: none;
+	}
+}

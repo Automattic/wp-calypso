@@ -78,7 +78,7 @@ import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { isA8cTeamMember } from 'calypso/state/teams/selectors';
 import { disableAppBanner, enableAppBanner } from 'calypso/state/ui/actions';
-import { FreshlyPressedRecommendationButton } from './freshly-pressed-button';
+import { FreshlyPressed } from './freshly-pressed';
 import ReaderFullPostHeader from './header';
 import ReaderFullPostContentPlaceholder from './placeholders/content';
 import ScrollTracker from './scroll-tracker';
@@ -663,9 +663,6 @@ export class FullPostView extends Component {
 		return (
 			// add extra div wrapper for consistent content frame layout/styling for reader.
 			<div style={ { position: 'relative' } }>
-				{ this.props.isAutomattician && isEnabled( 'reader/discover/freshly-pressed' ) && (
-					<FreshlyPressedRecommendationButton blogId={ +post.site_ID } postId={ +post.ID } />
-				) }
 				<ReaderMain className={ clsx( classes ) } forwardRef={ this.readerMainWrapper }>
 					{ site && <QueryPostLikes siteId={ post.site_ID } postId={ post.ID } /> }
 					{ ! post || post._state === 'pending' ? (
@@ -879,6 +876,9 @@ export class FullPostView extends Component {
 						/>
 					) }
 				</ReaderMain>
+				{ this.props.isAutomattician && isEnabled( 'reader/discover/freshly-pressed' ) && (
+					<FreshlyPressed blogId={ post.site_ID } postId={ post.ID } />
+				) }
 			</div>
 		);
 	}
