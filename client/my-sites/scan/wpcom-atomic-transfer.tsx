@@ -18,6 +18,7 @@ import isRequestingJetpackScan from 'calypso/state/selectors/is-requesting-jetpa
 import isRequestingSiteFeatures from 'calypso/state/selectors/is-requesting-site-features';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import type { AppState } from 'calypso/types';
 
 // Loading placeholder component
 const ScanLoadingPlaceholder = () => {
@@ -43,24 +44,24 @@ const ScanAtomicTransferWrapper = () => {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 
 	const featuresNotLoaded: boolean = useSelector(
-		( state ) =>
+		( state: AppState ) =>
 			null === getFeaturesBySiteId( state, siteId ) && ! isRequestingSiteFeatures( state, siteId )
 	);
 
 	const scanDataNotLoaded: boolean = useSelector(
-		( state ) =>
+		( state: AppState ) =>
 			! getSiteScanState( state, siteId ) &&
 			( isRequestingJetpackScan( state, siteId ) ||
 				getSiteScanRequestStatus( state, siteId ) === 'pending' )
 	);
 
 	// Check if site has scan feature - must be called unconditionally
-	const hasScanFeature = useSelector( ( state ) =>
+	const hasScanFeature = useSelector( ( state: AppState ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN )
 	);
 
 	// Get scan state to determine if activation is needed
-	const scanState = useSelector( ( state ) => getSiteScanState( state, siteId ) );
+	const scanState = useSelector( ( state: AppState ) => getSiteScanState( state, siteId ) );
 
 	// If features or scan data are not loaded yet, show loading state
 	if ( featuresNotLoaded || scanDataNotLoaded ) {
