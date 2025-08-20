@@ -169,7 +169,7 @@ const webApplicationFirewallRoute = createRoute( {
 );
 
 const wpcomLoginRoute = createRoute( {
-	...appRouter.siteSettingsWpcomLoginRoute.options,
+	...appRouterSites.siteSettingsWpcomLoginRoute.options,
 	getParentRoute: () => siteRoute,
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-wpcom-login' ).then( ( d ) =>
