@@ -14,7 +14,7 @@ import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useTaxName } from '../../app/hooks/use-country-list';
 import { useGeoLocationQuery } from '../../app/queries/geolocation';
-import useDataFormCountryCodes from './use-data-form-country-codes';
+import { getDataFormCountryCodes } from '../../utils/tax';
 import useDisplayUserTaxNotices from './use-display-user-tax-notices';
 import useRecordUserTaxEvents from './use-record-user-tax-events';
 import useUserTaxDetails from './use-user-tax-details';
@@ -118,7 +118,7 @@ export default function UserTaxForm() {
 		userTaxDetails,
 		updateError,
 	} = useUserTaxDetails();
-	const countryCodes = useDataFormCountryCodes();
+	const countryCodes = getDataFormCountryCodes();
 
 	const formData = useMemo( () => {
 		const serverData = {
