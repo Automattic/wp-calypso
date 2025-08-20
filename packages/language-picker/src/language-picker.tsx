@@ -5,21 +5,14 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	SearchControl,
-	Icon,
 } from '@wordpress/components';
-import { useInstanceId } from '@wordpress/compose';
-import { undo as closeIcon, search as searchIcon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useCallback, useState, useRef, useEffect } from 'react';
+import { useCallback, useState } from 'react';
 import { getSearchedLanguages, LocalizedLanguageNames } from './search';
 import type { Language, LanguageGroup } from './Language';
-import type { ReactNode, MouseEvent, KeyboardEvent } from 'react';
+import type { ReactNode } from 'react';
 
 import './style.scss';
-
-type KeyboardOrMouseEvent =
-	| MouseEvent< HTMLButtonElement | HTMLInputElement >
-	| KeyboardEvent< HTMLButtonElement | HTMLInputElement >;
 
 type Props< TLanguage extends Language > = {
 	onSelectLanguage: ( language: TLanguage ) => void;
@@ -82,11 +75,7 @@ function LanguagePicker< TLanguage extends Language >( {
 	const [ filter, setFilter ] = useState(
 		findBestDefaultLanguageGroupId( selectedLanguage, languageGroups, languageGroups[ 0 ].id )
 	);
-	const instanceId = useInstanceId( LanguagePicker, 'search' );
-
 	const [ search, setSearch ] = useState( '' );
-	const [ isMobileSearchOpen, setIsMobileSearchOpen ] = useState( false );
-	const searchInput = useRef< HTMLInputElement >( null );
 	const getFilteredLanguages = () => {
 		switch ( filter ) {
 			case 'popular':
@@ -139,32 +128,6 @@ function LanguagePicker< TLanguage extends Language >( {
 
 	const searchPlaceholder = __( 'Search languages…' );
 
-	const openMobileSearch = ( event: KeyboardOrMouseEvent ) => {
-		event.preventDefault();
-
-		setIsMobileSearchOpen( true );
-		searchInput.current?.focus();
-	};
-	useEffect( () => {
-		if ( searchInput.current && isMobileSearchOpen ) {
-			searchInput.current.focus();
-		}
-		if ( ! isMobileSearchOpen ) {
-			searchInput.current?.blur();
-		}
-	}, [ isMobileSearchOpen ] );
-
-	const closeMobileSearch = ( event: KeyboardOrMouseEvent ) => {
-		if ( event.type === 'keydown' && 'key' in event && event.key !== 'Enter' ) {
-			return;
-		}
-		event.preventDefault();
-		// if clicked or pressed enter we reset the form
-		setSearch( '' );
-		setIsMobileSearchOpen( false );
-		handleSearchClose();
-	};
-
 	const onSearchChange = ( search: string ) => {
 		setSearch( search );
 		// if the search is empty, run handleSearchClose to select the default language group
@@ -172,71 +135,51 @@ function LanguagePicker< TLanguage extends Language >( {
 			handleSearchClose();
 		}
 	};
+	const hasHeadings = headingTitle || headingButtons;
 
 	return (
 		<VStack alignment="left" className="language-picker-component">
-			<VStack className="language-picker-component__heading">
-				<VStack alignment="left" justify="space-between">
-					<VStack className="language-picker-component__title wp-brand-font">
-						{ headingTitle || __( 'Select a language', __i18n_text_domain__ ) }
+			{ hasHeadings && (
+				<VStack className="language-picker-component__heading">
+					<VStack alignment="left" justify="space-between">
+						{ headingTitle && (
+							<div className="language-picker-component__title wp-brand-font">
+								{ headingTitle || __( 'Select a language', __i18n_text_domain__ ) }
+							</div>
+						) }
+						{ headingButtons && (
+							<div className="language-picker-component__heading-buttons">{ headingButtons }</div>
+						) }
 					</VStack>
-					{ headingButtons && (
-						<VStack className="language-picker-component__heading-buttons">
-							{ headingButtons }
-						</VStack>
-					) }
 				</VStack>
-			</VStack>
-			<HStack className="language-picker-component__search" spacing={ 0 }>
-				<CustomSelectControl
-					label={ __( 'regions' ) }
-					hideLabelFromVision
-					value={ selectControlOptions.find( ( option ) => option.key === filter ) }
-					options={ selectControlOptions }
-					onChange={ ( {
-						selectedItem,
-					}: {
-						selectedItem: ( typeof selectControlOptions )[ number ];
-					} ) => selectedItem && setFilter( selectedItem.key ) }
-				/>
-				<div
-					className={
-						'language-picker-component__search-mobile ' +
-						( isMobileSearchOpen ? ' is-search-open' : '' )
-					}
-				>
+			) }
+			<VStack className="language-picker-component__search" spacing={ 5 }>
+				<div className="language-picker-component__search-mobile">
 					<SearchControl
 						__nextHasNoMarginBottom
 						onChange={ onSearchChange }
 						label={ __( 'Search', __i18n_text_domain__ ) }
 						hideLabelFromVision
 						value={ search }
-						id={ 'search-component-' + instanceId }
 						className="search-component__input"
 						placeholder={ searchPlaceholder }
-						ref={ searchInput }
 						size="compact"
 					/>
-					<Button
-						className="search-component__icon-navigation-open"
-						onClick={ openMobileSearch }
-						tabIndex={ isMobileSearchOpen ? 0 : -1 }
-						onKeyDown={ openMobileSearch }
-						aria-controls={ 'search-component-' + instanceId }
-						aria-label={ __( 'Open Search', __i18n_text_domain__ ) }
-					>
-						<Icon icon={ searchIcon } className="search-component__mobile-open-icon" size={ 30 } />
-					</Button>
-					<Button
-						className="search-component__icon-navigation-close"
-						onClick={ closeMobileSearch }
-						onKeyDown={ closeMobileSearch }
-						aria-controls={ 'search-component-' + instanceId }
-						aria-label={ __( 'Close Search', __i18n_text_domain__ ) }
-					>
-						<Icon icon={ closeIcon } className="search-component__mobile-close-icon" />
-					</Button>
 				</div>
+
+				<CustomSelectControl
+					label={ __( 'regions' ) }
+					hideLabelFromVision
+					value={ selectControlOptions.find( ( option ) => option.key === filter ) }
+					options={ selectControlOptions }
+					className={ shouldDisplayRegions ? '' : 'is-searching' }
+					onChange={ ( {
+						selectedItem,
+					}: {
+						selectedItem: ( typeof selectControlOptions )[ number ];
+					} ) => selectedItem && setFilter( selectedItem.key ) }
+				/>
+
 				<div className="language-picker-component__search-desktop">
 					<SearchControl
 						__nextHasNoMarginBottom
@@ -247,7 +190,7 @@ function LanguagePicker< TLanguage extends Language >( {
 						value={ search }
 					/>
 				</div>
-			</HStack>
+			</VStack>
 			<HStack className="language-picker-component__labels" expanded={ false } spacing={ 0 }>
 				{ shouldDisplayRegions ? (
 					<>

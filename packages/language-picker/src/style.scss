@@ -18,9 +18,27 @@
 	}
 
 	.components-custom-select-control {
-		width: calc( 100% - 42px ); // less the width of the search icon + padding
+		width: 100%; // less the width of the search icon + padding
 		height: 100%;
-
+		// respect accessibility preferences
+		@media ( prefers-reduced-motion: reduce ) {
+			transition-duration: 0ms !important;
+		}
+		&.is-searching {
+			max-height: 0;
+			opacity: 0;
+			//animate it to make it more pleasing and less disrupting when you see the UI change.
+			transition:
+				max-height 0.5s ease-in-out,
+				opacity 0.5s ease-in-out;
+		}
+		&:not( .is-searching ) {
+			opacity: 1;
+			max-height: 40px;
+			transition:
+				max-height 0.5s ease-in-out,
+				opacity 0.5s ease-in-out;
+		}
 		.components-custom-select-control__button {
 			// less the width of the search button plus the border
 			width: calc( 100% - 60px );
@@ -43,13 +61,9 @@
 
 	.language-picker-component__search {
 		position: relative;
-		height: 31px;
 		flex: 1 1 auto;
 		margin-bottom: 12px;
-
-		.search-component__input-fade {
-			min-width: 0;
-		}
+		width: 100%;
 
 		.search-component__input[type='search'] {
 			width: 100%;
@@ -58,15 +72,6 @@
 
 			@include break-small() {
 				padding-left: 12px;
-			}
-		}
-
-		.search-component.is-open {
-			border-radius: 2px;
-			box-shadow: 0 0 0 1px var( --color-primary );
-
-			.search-component__input {
-				border-radius: 2px;
 			}
 		}
 
@@ -82,46 +87,6 @@
 		&-mobile {
 			@include break-small() {
 				display: none;
-			}
-			.search-component__icon-navigation-open {
-				background-color: transparent;
-				padding: 0 6px;
-			}
-			.search-component__icon-navigation-close {
-				padding: 0 12px;
-				margin-top: 0;
-			}
-
-			&.is-search-open {
-				.search-component__input {
-					position: absolute;
-					top: 0;
-					left: 0;
-					width: calc( 100% - 42px );
-				}
-				.search-component__icon-navigation-open {
-					display: none;
-				}
-			}
-
-			&:not( .is-search-open ) {
-				.search-component__input {
-					display: none;
-				}
-				.search-component__icon-navigation-close {
-					display: none;
-				}
-			}
-
-			.search-component__mobile-open-icon {
-				width: 30px;
-				height: 30px;
-				color: var( --color-primary );
-			}
-
-			.search-component__mobile-close-icon {
-				width: 19px;
-				height: 19px;
 			}
 		}
 	}
