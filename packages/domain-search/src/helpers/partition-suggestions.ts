@@ -9,10 +9,11 @@ export interface FeaturedSuggestionWithReason {
 
 interface PartitionedSuggestions {
 	featuredSuggestions: FeaturedSuggestionWithReason[];
+	freeSuggestion?: string;
 	regularSuggestions: string[];
 }
 
-export const partitionFeaturedSuggestions = (
+export const partitionSuggestions = (
 	suggestions: DomainSuggestion[],
 	query: string
 ): PartitionedSuggestions => {
@@ -26,8 +27,9 @@ export const partitionFeaturedSuggestions = (
 					reason: 'exact-match',
 				},
 			],
+			freeSuggestion: suggestions.find( ( suggestion ) => suggestion.is_free )?.domain_name,
 			regularSuggestions: suggestions
-				.filter( ( suggestion ) => suggestion.domain_name !== query )
+				.filter( ( suggestion ) => suggestion.domain_name !== query && ! suggestion.is_free )
 				.map( ( suggestion ) => suggestion.domain_name ),
 		};
 	}
@@ -44,13 +46,17 @@ export const partitionFeaturedSuggestions = (
 					suggestion: suggestion.domain_name,
 					reason: 'best-alternative',
 				} );
+			} else if ( suggestion.is_free ) {
+				acc.freeSuggestion = suggestion.domain_name;
 			} else {
 				acc.regularSuggestions.push( suggestion.domain_name );
 			}
+
 			return acc;
 		},
 		{
 			featuredSuggestions: [],
+			freeSuggestion: undefined,
 			regularSuggestions: [],
 		}
 	);

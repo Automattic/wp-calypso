@@ -5,7 +5,8 @@ import { Cart } from '../components/cart';
 import { FeaturedSearchResults } from '../components/featured-search-results';
 import { SearchBar } from '../components/search-bar';
 import { SearchResults } from '../components/search-results';
-import { partitionFeaturedSuggestions } from '../helpers/partition-featured-suggestions';
+import { SkipSuggestion } from '../components/skip-suggestion';
+import { partitionSuggestions } from '../helpers/partition-suggestions';
 import { useDomainSearch } from './context';
 
 export const ResultsPage = () => {
@@ -29,8 +30,8 @@ export const ResultsPage = () => {
 		isLoadingQueryAvailability ||
 		domainAvailabilityQueries.some( ( query ) => query.isLoading );
 
-	const { featuredSuggestions, regularSuggestions } = useMemo( () => {
-		return partitionFeaturedSuggestions( suggestions ?? [], query );
+	const { featuredSuggestions, freeSuggestion, regularSuggestions } = useMemo( () => {
+		return partitionSuggestions( suggestions ?? [], query );
 	}, [ suggestions, query ] );
 
 	return (
@@ -42,6 +43,11 @@ export const ResultsPage = () => {
 					<FeaturedSearchResults.Placeholder />
 				) : (
 					<FeaturedSearchResults suggestions={ featuredSuggestions } />
+				) }
+				{ isLoading ? (
+					<SkipSuggestion.Placeholder />
+				) : (
+					<SkipSuggestion freeSuggestion={ freeSuggestion } />
 				) }
 				{ isLoading ? (
 					<SearchResults.Placeholder />

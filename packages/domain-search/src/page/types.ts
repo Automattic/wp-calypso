@@ -31,6 +31,7 @@ export interface DomainSearchProps {
 	className?: string;
 	initialQuery?: string;
 	events?: Partial< DomainSearchEvents >;
+	currentSiteUrl?: string;
 }
 
 export interface DomainSearchContextType

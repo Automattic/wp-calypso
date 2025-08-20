@@ -11,6 +11,7 @@ import './style.scss';
 
 export const DomainSearch = ( {
 	className,
+	currentSiteUrl,
 	initialQuery,
 	cart,
 	events,
@@ -44,8 +45,19 @@ export const DomainSearch = ( {
 			query,
 			setQuery,
 			slots,
+			currentSiteUrl,
 		} ),
-		[ isFullCartOpen, closeFullCart, openFullCart, query, setQuery, cart, events, slots ]
+		[
+			isFullCartOpen,
+			closeFullCart,
+			openFullCart,
+			query,
+			setQuery,
+			cart,
+			events,
+			slots,
+			currentSiteUrl,
+		]
 	);
 
 	const cartItemsLength = cart.items.length;

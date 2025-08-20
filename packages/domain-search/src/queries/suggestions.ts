@@ -3,6 +3,7 @@ export interface DomainSuggestion {
 	cost: string;
 	product_slug: string;
 	is_premium?: boolean;
+	is_free?: boolean;
 }
 
 const fetchDomainSuggestions = async (): Promise< DomainSuggestion[] > => {
@@ -35,6 +36,12 @@ const fetchDomainSuggestions = async (): Promise< DomainSuggestion[] > => {
 			domain_name: 'best-alternative-example.org',
 			cost: '$10',
 			product_slug: 'dotorg_domain',
+		},
+		{
+			domain_name: 'free.wordpress.com',
+			cost: 'Free',
+			product_slug: 'free_domain',
+			is_free: true,
 		},
 	];
 };

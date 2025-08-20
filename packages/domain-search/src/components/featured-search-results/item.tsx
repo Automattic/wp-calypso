@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
-import { type FeaturedSuggestionReason } from '../../helpers/partition-featured-suggestions';
+import { type FeaturedSuggestionReason } from '../../helpers/partition-suggestions';
 import { useSuggestion } from '../../hooks/use-suggestion';
 import { useDomainSuggestionBadges } from '../../hooks/use-suggestion-badges';
 import { useDomainSearch } from '../../page/context';

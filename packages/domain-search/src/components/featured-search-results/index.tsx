@@ -1,4 +1,4 @@
-import { FeaturedSuggestionWithReason } from '../../helpers/partition-featured-suggestions';
+import { FeaturedSuggestionWithReason } from '../../helpers/partition-suggestions';
 import { FeaturedDomainSuggestionsList } from '../../ui';
 import { FeaturedSearchResultsItem } from './item';
 import { FeaturedSearchResultsPlaceholder } from './placeholder';
