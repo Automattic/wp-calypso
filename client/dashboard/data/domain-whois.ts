@@ -1,5 +1,4 @@
 import wpcom from 'calypso/lib/wp';
-import { camelToSnakeCase, mapRecordKeysRecursively } from '../utils/domain';
 
 export type DomainContactDetails = {
 	firstName?: string;
@@ -217,12 +216,9 @@ export function validateDomainWhois(
 	return wpcom.req.post( {
 		path: '/me/domain-contact-information/validate',
 		apiVersion: '1.1',
-		body: mapRecordKeysRecursively(
-			{
-				contactInformation: domainContactDetails,
-				domainNames: [ domainName ],
-			},
-			camelToSnakeCase
-		),
+		body: {
+			contact_information: domainContactDetails,
+			domain_names: [ domainName ],
+		},
 	} );
 }

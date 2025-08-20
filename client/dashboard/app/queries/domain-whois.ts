@@ -15,21 +15,6 @@ export const domainWhoisQuery = ( domainName: string ) =>
 		queryFn: () => fetchDomainWhois( domainName ),
 	} );
 
-export const domainWhoisValidateQuery = (
-	domainName: string,
-	domainContactDetails: DomainContactDetails
-) =>
-	queryOptions( {
-		queryKey: [ 'domains', domainName, 'whois', 'validate', domainContactDetails ],
-		queryFn: () => {
-			const contactInformation = mapRecordKeysRecursively(
-				domainContactDetails,
-				camelToSnakeCase
-			) as ContactValidationRequestContactInformation;
-			return validateDomainWhois( domainName, contactInformation );
-		},
-	} );
-
 export const domainWhoisValidateMutation = ( domainName: string ) =>
 	mutationOptions( {
 		mutationFn: ( domainContactDetails: DomainContactDetails ) => {
