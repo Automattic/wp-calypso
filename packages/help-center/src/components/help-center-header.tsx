@@ -265,7 +265,11 @@ const HelpCenterHeader = ( { onDismiss }: Header ) => {
 
 	if ( isMinimized ) {
 		return (
-			<button className={ classNames } onClick={ () => setIsMinimized( false ) }>
+			<button
+				title={ __( 'Maximize Help Center', __i18n_text_domain__ ) }
+				className={ classNames }
+				onClick={ () => setIsMinimized( false ) }
+			>
 				<HStack alignment="center" justify="space-between" spacing={ 5 }>
 					<HStack justify="flex-start">
 						<HeaderText />
