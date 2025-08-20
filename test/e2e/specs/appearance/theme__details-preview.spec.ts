@@ -1,4 +1,4 @@
-import { test } from '../../lib/pwBase';
+import { test } from '../../lib/pw_base';
 
 test.describe( 'Themes', () => {
 	test( 'Preview (Gutenberg Simple Account)', async ( {
