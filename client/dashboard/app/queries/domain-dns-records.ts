@@ -6,8 +6,15 @@ import {
 	type DnsRecord,
 	applyDnsTemplate,
 	type DnsTemplateVariables,
+	importDnsBind,
 } from '../../data/domain-dns-records';
 import { queryClient } from '../query-client';
+
+export const domainDnsQuery = ( domainName: string ) =>
+	queryOptions( {
+		queryKey: [ 'domains', domainName, 'dns' ],
+		queryFn: () => fetchDomainDns( domainName ),
+	} );
 
 export const domainDnsMutation = ( domainName: string ) =>
 	mutationOptions( {
@@ -21,16 +28,8 @@ export const domainDnsMutation = ( domainName: string ) =>
 			restoreDefaultARecords?: boolean;
 		} ) => updateDomainDns( domainName, recordsToAdd, recordsToRemove, restoreDefaultARecords ),
 		onSuccess: () => {
-			queryClient.invalidateQueries( {
-				queryKey: [ 'domains', domainName, 'dns' ],
-			} );
+			queryClient.invalidateQueries( domainDnsQuery( domainName ) );
 		},
-	} );
-
-export const domainDnsQuery = ( domainName: string ) =>
-	queryOptions( {
-		queryKey: [ 'domains', domainName, 'dns' ],
-		queryFn: () => fetchDomainDns( domainName ),
 	} );
 
 export const domainDnsEmailMutation = ( domainName: string ) =>
@@ -55,8 +54,14 @@ export const domainDnsApplyTemplateMutation = ( domainName: string ) =>
 			variables: DnsTemplateVariables;
 		} ) => applyDnsTemplate( domainName, provider, service, variables ),
 		onSuccess: () => {
-			queryClient.invalidateQueries( {
-				queryKey: [ 'domains', domainName, 'dns' ],
-			} );
+			queryClient.invalidateQueries( domainDnsQuery( domainName ) );
+		},
+	} );
+
+export const domainDnsImportBindMutation = ( domainName: string ) =>
+	mutationOptions( {
+		mutationFn: ( file: File ) => importDnsBind( domainName, file ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( domainDnsQuery( domainName ) );
 		},
 	} );

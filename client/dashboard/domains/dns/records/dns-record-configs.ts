@@ -1,4 +1,3 @@
-import { Field } from '@wordpress/dataviews';
 import { ARecordConfig } from './a-record';
 import { AAAARecordConfig } from './aaaa-record';
 import { AliasRecordConfig } from './alias-record';
@@ -9,6 +8,7 @@ import { NSRecordConfig } from './ns-record';
 import { SRVRecordConfig } from './srv-record';
 import { TXTRecordConfig } from './txt-record';
 import type { DnsRecord, DnsRecordType } from '../../../data/domain-dns-records';
+import type { Field } from '@wordpress/dataviews';
 
 export type DnsRecordTypeFormData = {
 	type: DnsRecordType;
