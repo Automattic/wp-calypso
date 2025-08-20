@@ -85,7 +85,7 @@ function DomainGlueRecords() {
 				},
 			},
 		],
-		[]
+		[ createErrorNotice, createSuccessNotice, deleteMutation, domainName, navigate ]
 	);
 
 	const fields: Field< DomainGlueRecord >[] = useMemo(
@@ -119,7 +119,7 @@ function DomainGlueRecords() {
 				},
 			},
 		],
-		[]
+		[ domainName ]
 	);
 
 	const [ view, setView ] = useState< GlueRecordsView >( DEFAULT_VIEW );
