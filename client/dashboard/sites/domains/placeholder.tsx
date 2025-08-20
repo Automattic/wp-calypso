@@ -1,4 +1,4 @@
-import { domainRoute } from '../../app/router';
+import { domainRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 

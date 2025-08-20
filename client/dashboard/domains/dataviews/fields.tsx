@@ -5,7 +5,7 @@ import { dateI18n } from '@wordpress/date';
 import { sprintf, __ } from '@wordpress/i18n';
 import { caution, reusableBlock } from '@wordpress/icons';
 import { useMemo } from 'react';
-import { domainOverviewRoute } from '../../app/router';
+import { domainOverviewRoute } from '../../app/router/domains';
 import { Text } from '../../components/text';
 import { DomainTypes } from '../../data/domains';
 import { isRecentlyRegistered } from '../../utils/domain';

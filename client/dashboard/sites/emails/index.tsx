@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { siteBySlugQuery } from '../../app/queries/site';
-import { siteRoute } from '../../app/router';
+import { siteRoute } from '../../app/router/sites';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 

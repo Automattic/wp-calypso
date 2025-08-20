@@ -11,7 +11,7 @@ import {
 	useCanConnectToZendeskMessaging,
 } from '@automattic/zendesk-client';
 import { useQueryClient, QueryClient } from '@tanstack/react-query';
-import { useSelect, useDispatch as useDataStoreDispatch } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { useCallback, useEffect, useRef } from '@wordpress/element';
 import Smooch from 'smooch';
 import { useChatStatus } from '../hooks';
@@ -105,7 +105,8 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 	const { data: authData } = useAuthenticateZendeskMessaging( allowChat, 'messenger' );
 
 	const { isMessagingScriptLoaded } = useLoadZendeskMessaging( allowChat, allowChat );
-	const { setIsChatLoaded, setZendeskClientId } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setIsChatLoaded, setZendeskClientId, setZendeskConnectionStatus } =
+		useDispatch( HELP_CENTER_STORE );
 	const getUnreadNotifications = useGetUnreadConversations();
 
 	const getUnreadListener = useCallback(
@@ -122,6 +123,21 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 		},
 		[ isHelpCenterShown, areSoundNotificationsEnabled, getUnreadNotifications ]
 	);
+
+	const disconnectedListener = useCallback( () => {
+		setZendeskConnectionStatus( 'disconnected' );
+		recordTracksEvent( 'calypso_smooch_messenger_disconnected' );
+	}, [ setZendeskConnectionStatus ] );
+
+	const reconnectingListener = useCallback( () => {
+		setZendeskConnectionStatus( 'reconnecting' );
+		recordTracksEvent( 'calypso_smooch_messenger_reconnecting' );
+	}, [ setZendeskConnectionStatus ] );
+
+	const connectedListener = useCallback( () => {
+		setZendeskConnectionStatus( 'connected' );
+		recordTracksEvent( 'calypso_smooch_messenger_connected' );
+	}, [ setZendeskConnectionStatus ] );
 
 	const clientIdListener = useCallback(
 		( message: ZendeskMessage ) => {
@@ -186,12 +202,9 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 			setZendeskClientId( getClientId( allConversations ) );
 			Smooch.on( 'message:received', getUnreadListener );
 			Smooch.on( 'message:sent', clientIdListener );
-			Smooch.on( 'disconnected', () => {
-				recordTracksEvent( 'calypso_smooch_messenger_disconnected' );
-			} );
-			Smooch.on( 'reconnecting', () => {
-				recordTracksEvent( 'calypso_smooch_messenger_reconnecting' );
-			} );
+			Smooch.on( 'disconnected', disconnectedListener );
+			Smooch.on( 'reconnecting', reconnectingListener );
+			Smooch.on( 'connected', connectedListener );
 		}
 
 		return () => {
@@ -199,8 +212,28 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 			Smooch?.off?.( 'message:received', getUnreadListener );
 			// @ts-expect-error -- 'off' is not part of the def.
 			Smooch?.off?.( 'message:sent', clientIdListener );
+			// @ts-expect-error -- 'off' is not part of the def.
+			Smooch?.off?.( 'disconnected', disconnectedListener );
+			// @ts-expect-error -- 'off' is not part of the def.
+			Smooch?.off?.( 'reconnecting', reconnectingListener );
+			// @ts-expect-error -- 'off' is not part of the def.
+			Smooch?.off?.( 'connected', connectedListener );
+			// @ts-expect-error -- 'off' is not part of the def.
+			Smooch?.off?.( 'message:received', getUnreadListener );
+			// @ts-expect-error -- 'off' is not part of the def.
+			Smooch?.off?.( 'message:sent', clientIdListener );
 		};
-	}, [ getUnreadListener, isChatLoaded, getUnreadNotifications, setZendeskClientId ] );
+	}, [
+		getUnreadListener,
+		setZendeskConnectionStatus,
+		clientIdListener,
+		isChatLoaded,
+		getUnreadNotifications,
+		setZendeskClientId,
+		disconnectedListener,
+		reconnectingListener,
+		connectedListener,
+	] );
 
 	return <div ref={ smoochRef } style={ { display: 'none' } }></div>;
 };
