@@ -1,4 +1,5 @@
 import { Badge } from '@automattic/ui';
+import { CONTACT } from '@automattic/urls';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import {
@@ -17,10 +18,11 @@ import { ReactElement } from 'react';
 import { domainQuery } from '../../app/queries/domain';
 import { provisionSslCertificateMutation, sslDetailsQuery } from '../../app/queries/domain-ssl';
 import { domainRoute, domainSecurityRoute } from '../../app/router/domains';
+import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
-import { useSslStatusMessage } from './use-ssl-status-message';
+import type { SslDetails } from '../../data/domain-ssl';
 
 export default function DomainSecurity() {
 	const { domainName } = domainRoute.useParams();
@@ -30,7 +32,46 @@ export default function DomainSecurity() {
 
 	const mutation = useMutation( provisionSslCertificateMutation( domainName ) );
 
-	const { message } = useSslStatusMessage( sslDetails );
+	const getSslStatusMessage = ( sslDetails: SslDetails ) => {
+		const hasFailureReasons =
+			!! sslDetails.failure_reasons && sslDetails.failure_reasons.length > 0;
+
+		if ( sslDetails.certificate_provisioned ) {
+			return createInterpolateElement(
+				__(
+					/* translators: <link> will be replaced with an a support link */
+					'We give you strong HTTPS encryption with your domain for free. This provides a trust indicator for your visitors and keeps their connection to your site secure. <link>Learn more</link>'
+				),
+				{
+					link: <InlineSupportLink supportContext="https-ssl" />,
+				}
+			);
+		}
+
+		if ( sslDetails.is_newly_registered ) {
+			return __(
+				'Your newly registered domain is almost ready! It can take up to 30 minutes for the domain to start resolving to your site so we can issue a new SSL certificate. Please check back soon.'
+			);
+		}
+
+		if ( sslDetails.is_expired ) {
+			return __( 'Your domain has expired. Renew your domain to issue a new SSL certificate.' );
+		}
+
+		if ( hasFailureReasons ) {
+			return __(
+				'There are one or more problems with your DNS configuration that prevent an SSL certificate from being issued.'
+			);
+		}
+
+		// If we get here, there is an issue with the certificate that can be fixed by the user.
+		return createInterpolateElement(
+			__( 'There is an issue with your certificate. Contact us to <link>learn more</link>.' ),
+			{
+				link: <a href={ CONTACT } target="_blank" rel="noopener noreferrer" />,
+			}
+		);
+	};
 
 	const showFailureReasons = !! sslDetails.failure_reasons && sslDetails.failure_reasons.length > 0;
 
@@ -102,17 +143,9 @@ export default function DomainSecurity() {
 
 	const renderBadge = () => {
 		if ( sslDetails.certificate_provisioned ) {
-			return (
-				<Badge intent="success" style={ { width: 'fit-content' } }>
-					{ __( 'SSL active' ) }
-				</Badge>
-			);
+			return <Badge intent="success">{ __( 'SSL active' ) }</Badge>;
 		}
-		return (
-			<Badge intent="warning" style={ { width: 'fit-content' } }>
-				{ __( 'SSL pending' ) }
-			</Badge>
-		);
+		return <Badge intent="warning">{ __( 'SSL pending' ) }</Badge>;
 	};
 
 	return (
@@ -122,8 +155,8 @@ export default function DomainSecurity() {
 					<VStack spacing={ 2 }>
 						<SectionHeader title={ __( 'SSL certificate' ) } level={ 3 } />
 						<VStack spacing={ 6 }>
-							{ renderBadge() }
-							<Text>{ message }</Text>
+							<HStack justify="flex-start">{ renderBadge() }</HStack>
+							<Text>{ getSslStatusMessage( sslDetails ) }</Text>
 							{ showFailureReasons && renderFailureReasons( sslDetails.failure_reasons ?? [] ) }
 							{ showFailureReasons && (
 								<Text>
