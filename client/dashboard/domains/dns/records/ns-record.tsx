@@ -1,4 +1,5 @@
 import { __ } from '@wordpress/i18n';
+import { domainValidator, requiredHostnameValidator, ttlValidator } from './validators';
 import type { DnsRecordFormData, DnsRecordConfig } from './dns-record-configs';
 
 export const NSRecordConfig: DnsRecordConfig = {
@@ -9,9 +10,13 @@ export const NSRecordConfig: DnsRecordConfig = {
 		{
 			id: 'name',
 			type: 'text',
-			label: __( 'Name (optional)' ),
+			label: __( 'Name' ),
 			/* translators: This is a placeholder for a DNS NS record `name` property */
 			placeholder: __( 'Enter subdomain' ),
+			isValid: {
+				required: true,
+				custom: requiredHostnameValidator(),
+			},
 		},
 		{
 			id: 'data',
@@ -19,6 +24,10 @@ export const NSRecordConfig: DnsRecordConfig = {
 			label: __( 'Host' ),
 			/* translators: This is a placeholder for a DNS NS record `data` property */
 			placeholder: __( 'e.g. ns1.your-provider.com' ),
+			isValid: {
+				required: true,
+				custom: domainValidator( 'NS', __( 'Please enter a valid host.' ) ),
+			},
 		},
 		{
 			id: 'ttl',
@@ -26,6 +35,10 @@ export const NSRecordConfig: DnsRecordConfig = {
 			label: __( 'TTL (time to live)' ),
 			/* translators: This is a placeholder for a DNS NS record `ttl` property */
 			placeholder: __( 'e.g. 3600' ),
+			isValid: {
+				required: true,
+				custom: ttlValidator(),
+			},
 		},
 	],
 	form: {

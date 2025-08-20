@@ -1,4 +1,5 @@
 import { __ } from '@wordpress/i18n';
+import { ipv4Validator, optionalHostnameValidator, ttlValidator } from './validators';
 import type { DnsRecordFormData, DnsRecordConfig } from './dns-record-configs';
 
 export const ARecordConfig: DnsRecordConfig = {
@@ -9,17 +10,23 @@ export const ARecordConfig: DnsRecordConfig = {
 		{
 			id: 'name',
 			type: 'text',
-			label: __( 'Name (optional)' ),
+			label: __( 'Name' ),
 			/* translators: This is a placeholder for a DNS A record `name` property */
 			placeholder: __( 'Enter subdomain' ),
+			isValid: {
+				custom: optionalHostnameValidator(),
+			},
 		},
 		{
-			// TODO: Add validation for IPv4 address
 			id: 'data',
 			type: 'text',
 			label: __( 'Points to' ),
 			/* translators: This is a placeholder for a DNS A record `data` property */
 			placeholder: __( 'e.g. 123.45.67.89' ),
+			isValid: {
+				required: true,
+				custom: ipv4Validator(),
+			},
 		},
 		{
 			id: 'ttl',
@@ -27,6 +34,10 @@ export const ARecordConfig: DnsRecordConfig = {
 			label: __( 'TTL (time to live)' ),
 			/* translators: This is a placeholder for a DNS A record `ttl` property */
 			placeholder: __( 'e.g. 3600' ),
+			isValid: {
+				required: true,
+				custom: ttlValidator(),
+			},
 		},
 	],
 	form: {

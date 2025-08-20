@@ -1,4 +1,10 @@
 import { __ } from '@wordpress/i18n';
+import {
+	domainValidator,
+	numberRangeValidator,
+	optionalHostnameValidator,
+	ttlValidator,
+} from './validators';
 import type { DnsRecordFormData, DnsRecordConfig } from './dns-record-configs';
 
 export const MXRecordConfig: DnsRecordConfig = {
@@ -9,9 +15,12 @@ export const MXRecordConfig: DnsRecordConfig = {
 		{
 			id: 'name',
 			type: 'text',
-			label: __( 'Name (optional)' ),
+			label: __( 'Name' ),
 			/* translators: This is a placeholder for a DNS MX record `name` property */
 			placeholder: __( 'Enter subdomain' ),
+			isValid: {
+				custom: optionalHostnameValidator(),
+			},
 		},
 		{
 			id: 'data',
@@ -19,6 +28,10 @@ export const MXRecordConfig: DnsRecordConfig = {
 			label: __( 'Handled by' ),
 			/* translators: This is a placeholder for a DNS MX record `data` property */
 			placeholder: __( 'e.g. mail.your-provider.com' ),
+			isValid: {
+				required: true,
+				custom: domainValidator( 'MX', __( 'Please enter a valid mail server.' ) ),
+			},
 		},
 		{
 			id: 'aux',
@@ -26,6 +39,10 @@ export const MXRecordConfig: DnsRecordConfig = {
 			label: __( 'Priority' ),
 			/* translators: This is a placeholder for a DNS MX record `aux` property */
 			placeholder: __( 'e.g. 10' ),
+			isValid: {
+				required: true,
+				custom: numberRangeValidator( 0, 65535, __( 'Please enter a valid priority value.' ) ),
+			},
 		},
 		{
 			id: 'ttl',
@@ -33,6 +50,10 @@ export const MXRecordConfig: DnsRecordConfig = {
 			label: __( 'TTL (time to live)' ),
 			/* translators: This is a placeholder for a DNS MX record `ttl` property */
 			placeholder: __( 'e.g. 3600' ),
+			isValid: {
+				required: true,
+				custom: ttlValidator(),
+			},
 		},
 	],
 	form: {

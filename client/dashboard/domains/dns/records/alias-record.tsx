@@ -1,4 +1,5 @@
 import { __ } from '@wordpress/i18n';
+import { domainValidator, ttlValidator } from './validators';
 import type { DnsRecordFormData, DnsRecordConfig } from './dns-record-configs';
 
 export const AliasRecordConfig: DnsRecordConfig = {
@@ -12,6 +13,10 @@ export const AliasRecordConfig: DnsRecordConfig = {
 			label: __( 'Alias of (points to)' ),
 			/* translators: This is a placeholder for a DNS ALIAS record `data` property */
 			placeholder: __( 'e.g. example.com' ),
+			isValid: {
+				required: true,
+				custom: domainValidator( 'ALIAS', __( 'Please enter a valid target host.' ) ),
+			},
 		},
 		{
 			id: 'ttl',
@@ -19,6 +24,10 @@ export const AliasRecordConfig: DnsRecordConfig = {
 			label: __( 'TTL (time to live)' ),
 			/* translators: This is a placeholder for a DNS ALIAS record `ttl` property */
 			placeholder: __( 'e.g. 3600' ),
+			isValid: {
+				required: true,
+				custom: ttlValidator(),
+			},
 		},
 	],
 	form: {

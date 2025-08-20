@@ -1,5 +1,11 @@
 import { __ } from '@wordpress/i18n';
 import RequiredSelect from '../../../components/required-select';
+import {
+	numberRangeValidator,
+	optionalHostnameValidator,
+	requiredHostnameValidator,
+	ttlValidator,
+} from './validators';
 import type { DnsRecordFormData, DnsRecordConfig } from './dns-record-configs';
 
 export const CAARecordConfig: DnsRecordConfig = {
@@ -10,6 +16,9 @@ export const CAARecordConfig: DnsRecordConfig = {
 			label: __( 'Name (optional)' ),
 			/* translators: This is a placeholder for a DNS CAA record `name` property */
 			placeholder: __( 'Enter subdomain' ),
+			isValid: {
+				custom: optionalHostnameValidator(),
+			},
 		},
 		{
 			id: 'flags',
@@ -17,6 +26,10 @@ export const CAARecordConfig: DnsRecordConfig = {
 			label: __( 'Flag' ),
 			/* translators: This is a placeholder for a DNS CAA record `flags` property */
 			placeholder: __( 'e.g. 0' ),
+			isValid: {
+				required: true,
+				custom: numberRangeValidator( 0, 255, __( 'Please enter a valid flags value.' ) ),
+			},
 		},
 		{
 			id: 'tag',
@@ -28,6 +41,9 @@ export const CAARecordConfig: DnsRecordConfig = {
 				{ label: 'issueemail', value: 'issueemail' },
 				{ label: 'iodef', value: 'iodef' },
 			],
+			isValid: {
+				required: true,
+			},
 		},
 		{
 			id: 'data',
@@ -35,6 +51,10 @@ export const CAARecordConfig: DnsRecordConfig = {
 			label: __( 'Value' ),
 			/* translators: This is a placeholder for a DNS CAA record `data` property */
 			placeholder: __( 'e.g. "letsencrypt.org"' ),
+			isValid: {
+				required: true,
+				custom: requiredHostnameValidator( __( 'Please enter a valid value.' ) ),
+			},
 		},
 		{
 			id: 'ttl',
@@ -42,6 +62,10 @@ export const CAARecordConfig: DnsRecordConfig = {
 			label: __( 'TTL (time to live)' ),
 			/* translators: This is a placeholder for a DNS CAA record `ttl` property */
 			placeholder: __( 'e.g. 3600' ),
+			isValid: {
+				required: true,
+				custom: ttlValidator(),
+			},
 		},
 	],
 	form: {

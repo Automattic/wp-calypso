@@ -1,4 +1,5 @@
 import { __ } from '@wordpress/i18n';
+import { ipv6Validator, optionalHostnameValidator, ttlValidator } from './validators';
 import type { DnsRecordFormData, DnsRecordConfig } from './dns-record-configs';
 
 export const AAAARecordConfig: DnsRecordConfig = {
@@ -6,9 +7,12 @@ export const AAAARecordConfig: DnsRecordConfig = {
 		{
 			id: 'name',
 			type: 'text',
-			label: __( 'Name (optional)' ),
+			label: __( 'Name' ),
 			/* translators: This is a placeholder for a DNS AAAA record `name` property */
 			placeholder: __( 'Enter subdomain' ),
+			isValid: {
+				custom: optionalHostnameValidator(),
+			},
 		},
 		{
 			id: 'data',
@@ -16,6 +20,10 @@ export const AAAARecordConfig: DnsRecordConfig = {
 			label: __( 'Points to' ),
 			/* translators: This is a placeholder for a DNS AAAA record `data` property */
 			placeholder: __( 'e.g. 2001:500:84::b' ),
+			isValid: {
+				required: true,
+				custom: ipv6Validator(),
+			},
 		},
 		{
 			id: 'ttl',
@@ -23,6 +31,10 @@ export const AAAARecordConfig: DnsRecordConfig = {
 			label: __( 'TTL (time to live)' ),
 			/* translators: This is a placeholder for a DNS AAAA record `ttl` property */
 			placeholder: __( 'e.g. 3600' ),
+			isValid: {
+				required: true,
+				custom: ttlValidator(),
+			},
 		},
 	],
 	form: {

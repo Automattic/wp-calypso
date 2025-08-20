@@ -1,5 +1,11 @@
 import { __ } from '@wordpress/i18n';
 import RequiredSelect from '../../../components/required-select';
+import {
+	numberRangeValidator,
+	optionalHostnameValidator,
+	requiredHostnameValidator,
+	ttlValidator,
+} from './validators';
 import type { DnsRecordFormData, DnsRecordConfig } from './dns-record-configs';
 
 export const SRVRecordConfig: DnsRecordConfig = {
@@ -10,8 +16,11 @@ export const SRVRecordConfig: DnsRecordConfig = {
 		{
 			id: 'name',
 			type: 'text',
-			label: __( 'Name (optional)' ),
+			label: __( 'Name' ),
 			placeholder: __( 'Enter subdomain' ),
+			isValid: {
+				custom: optionalHostnameValidator(),
+			},
 		},
 		{
 			id: 'service',
@@ -19,6 +28,9 @@ export const SRVRecordConfig: DnsRecordConfig = {
 			label: __( 'Service' ),
 			/* translators: This is a placeholder for a DNS SRV record `service` property */
 			placeholder: __( 'e.g. sip' ),
+			isValid: {
+				required: true,
+			},
 		},
 		{
 			id: 'protocol',
@@ -29,6 +41,9 @@ export const SRVRecordConfig: DnsRecordConfig = {
 				{ label: '_udp', value: '_udp' },
 				{ label: '_tls', value: '_tls' },
 			],
+			isValid: {
+				required: true,
+			},
 		},
 		{
 			id: 'aux',
@@ -36,6 +51,10 @@ export const SRVRecordConfig: DnsRecordConfig = {
 			label: __( 'Priority' ),
 			/* translators: This is a placeholder for a DNS SRV record `priority` property */
 			placeholder: __( 'e.g. 10' ),
+			isValid: {
+				required: true,
+				custom: numberRangeValidator( 0, 65535, __( 'Please enter a valid priority value.' ) ),
+			},
 		},
 		{
 			id: 'weight',
@@ -43,6 +62,10 @@ export const SRVRecordConfig: DnsRecordConfig = {
 			label: __( 'Weight' ),
 			/* translators: This is a placeholder for a DNS SRV record `weight` property */
 			placeholder: __( 'e.g. 10' ),
+			isValid: {
+				required: true,
+				custom: numberRangeValidator( 0, 65535, __( 'Please enter a valid weight value.' ) ),
+			},
 		},
 		{
 			id: 'target',
@@ -50,6 +73,10 @@ export const SRVRecordConfig: DnsRecordConfig = {
 			label: __( 'Target host' ),
 			/* translators: This is a placeholder for a DNS SRV record `target` property */
 			placeholder: __( 'e.g. sip.your-provider.com' ),
+			isValid: {
+				required: true,
+				custom: requiredHostnameValidator( __( 'Please enter a valid target host.' ) ),
+			},
 		},
 		{
 			id: 'port',
@@ -57,6 +84,10 @@ export const SRVRecordConfig: DnsRecordConfig = {
 			label: __( 'Target port' ),
 			/* translators: This is a placeholder for a DNS SRV record `port` property */
 			placeholder: __( 'e.g. 5060' ),
+			isValid: {
+				required: true,
+				custom: numberRangeValidator( 0, 65535, __( 'Please enter a valid port value.' ) ),
+			},
 		},
 		{
 			id: 'ttl',
@@ -64,6 +95,10 @@ export const SRVRecordConfig: DnsRecordConfig = {
 			label: __( 'TTL (time to live)' ),
 			/* translators: This is a placeholder for a DNS SRV record `ttl` property */
 			placeholder: __( 'e.g. 3600' ),
+			isValid: {
+				required: true,
+				custom: ttlValidator(),
+			},
 		},
 	],
 	form: {
