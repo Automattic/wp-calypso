@@ -1,5 +1,4 @@
-import { Link } from '@tanstack/react-router';
-import { ExternalLink } from '@wordpress/components';
+import { ExternalLink, Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { isTemporarySitePurchase, isA4ATemporarySitePurchase } from '../../utils/purchase';
@@ -81,11 +80,11 @@ function purchaseType( purchase: Purchase ): string | null {
 export function PurchaseProduct( {
 	purchase,
 	site,
-	getUrlForSiteLevelView,
+	filterViewBySite,
 }: {
 	purchase: Purchase;
 	site?: Site;
-	getUrlForSiteLevelView: ( site: Site ) => string;
+	filterViewBySite: ( site: Site ) => void;
 } ) {
 	if ( isTemporarySitePurchase( purchase ) ) {
 		return null;
@@ -107,8 +106,9 @@ export function PurchaseProduct( {
 						),
 						{
 							siteName: (
-								<Link
-									to={ getUrlForSiteLevelView( site ) }
+								<Button
+									variant="link"
+									onClick={ () => filterViewBySite( site ) }
 									title={
 										// translators: the siteName is the name of the site
 										sprintf( __( 'View active upgrades for %(siteName)s' ), {
@@ -117,7 +117,7 @@ export function PurchaseProduct( {
 									}
 								>
 									{ site.name }
-								</Link>
+								</Button>
 							),
 							siteDomain: (
 								<ExternalLink
@@ -149,8 +149,9 @@ export function PurchaseProduct( {
 						} ),
 						{
 							siteDomain: (
-								<Link
-									to={ getUrlForSiteLevelView( site ) }
+								<Button
+									variant="link"
+									onClick={ () => filterViewBySite( site ) }
 									title={
 										// translators: the siteDomain is the domain of the site
 										sprintf( __( 'View active upgrades for %(siteDomain)s' ), {
@@ -159,7 +160,7 @@ export function PurchaseProduct( {
 									}
 								>
 									{ site.slug }
-								</Link>
+								</Button>
 							),
 						}
 					) }
@@ -175,8 +176,9 @@ export function PurchaseProduct( {
 						__( 'for <siteName /> (<siteDomain />)' ),
 						{
 							siteName: (
-								<Link
-									to={ getUrlForSiteLevelView( site ) }
+								<Button
+									variant="link"
+									onClick={ () => filterViewBySite( site ) }
 									title={
 										// translators: the siteName is the name of the site
 										sprintf( __( 'View active upgrades for %(siteName)s' ), {
@@ -185,7 +187,7 @@ export function PurchaseProduct( {
 									}
 								>
 									{ site.name }
-								</Link>
+								</Button>
 							),
 							siteDomain: (
 								<ExternalLink

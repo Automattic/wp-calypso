@@ -61,6 +61,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/domains' ),
 	},
 
+	DOMAIN_SEARCH: {
+		slug: 'domains',
+		asyncComponent: () => import( './steps-repository/domain-search' ),
+	},
+
 	ERROR: { slug: 'error', asyncComponent: () => import( './steps-repository/error-step' ) },
 
 	NEWSLETTER_SETUP: {

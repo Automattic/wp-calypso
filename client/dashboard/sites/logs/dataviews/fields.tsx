@@ -6,7 +6,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useLocale } from '../../../app/locale';
 import { siteBySlugQuery } from '../../../app/queries/site';
 import { siteSettingsQuery } from '../../../app/queries/site-settings';
-import { siteRoute } from '../../../app/router';
+import { siteRoute } from '../../../app/router/sites';
 import { LogType } from '../../../data/site-logs';
 import { formatDateWithOffset, getUtcOffsetDisplay } from '../../../utils/datetime';
 import type { PHPLog, ServerLog } from '../../../data/site-logs';

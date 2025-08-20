@@ -4,7 +4,7 @@ import { Popover, Icon } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { info } from '@wordpress/icons';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import akismetIcon from 'calypso/assets/images/icons/akismet-icon.svg';
 import jetpackIcon from 'calypso/assets/images/icons/jetpack-icon.svg';
 import passportIcon from 'calypso/assets/images/icons/passport-icon.svg';
@@ -36,6 +36,7 @@ const defaultSort = {
 export const purchasesDataView: View = {
 	type: 'table',
 	page: 1,
+	search: '',
 	perPage: defaultPerPage,
 	titleField: 'product',
 	showTitle: true,
@@ -91,7 +92,7 @@ function getDisplayName( purchase: Purchase ): string {
 	return purchase.product_name;
 }
 
-export function getPurchaseUrl( purchase: Purchase ) {
+function getPurchaseUrl( purchase: Purchase ) {
 	const siteUrl = purchase.site_slug || purchase.domain;
 	const subscriptionId = purchase.ID;
 	if ( ! siteUrl ) {
@@ -109,10 +110,6 @@ export function getPurchaseUrl( purchase: Purchase ) {
 
 function getAddPaymentMethodUrlFor( purchase: Purchase ): string {
 	return `/me/purchases/${ purchase.site_slug ?? 'unknown' }/${ purchase.ID }/payment-method/add`;
-}
-
-function getUrlForSiteLevelView( site: Site ): string {
-	return `/v2/me/billing/purchases/${ site.slug }`;
 }
 
 function InfoPopover( { children }: { children: ReactNode } ) {
@@ -241,10 +238,12 @@ export function getFields( {
 	sites,
 	paymentMethods,
 	transferredPurchases,
+	filterViewBySite,
 }: {
 	sites: Site[];
 	paymentMethods: Array< StoredPaymentMethod >;
 	transferredPurchases: Array< Purchase >;
+	filterViewBySite: ( site: Site ) => void;
 } ): Fields< Purchase > {
 	const backupPaymentMethods = paymentMethods.filter(
 		( paymentMethod ) => paymentMethod.is_backup === true
@@ -276,7 +275,7 @@ export function getFields( {
 			render: ( { item }: { item: Purchase } ) => {
 				const site = sites.find( ( site ) => String( site.ID ) === item.blog_id );
 				return (
-					<a title={ __( 'Manage purchase' ) } href={ getPurchaseUrl( item ) }>
+					<a href={ getPurchaseUrl( item ) } title={ __( 'Manage purchase' ) }>
 						<PurchaseItemSiteIcon purchase={ item } site={ site } />
 					</a>
 				);
@@ -310,7 +309,7 @@ export function getFields( {
 						{ isTransferred ? (
 							getDisplayName( item ) + '&nbsp;'
 						) : (
-							<a title={ __( 'Manage purchase' ) } href={ getPurchaseUrl( item ) }>
+							<a href={ getPurchaseUrl( item ) } title={ __( 'Manage purchase' ) }>
 								{ getDisplayName( item ) }
 							</a>
 						) }
@@ -335,11 +334,7 @@ export function getFields( {
 			render: ( { item }: { item: Purchase } ) => {
 				const site = sites.find( ( site ) => String( site.ID ) === item.blog_id );
 				return (
-					<PurchaseProduct
-						purchase={ item }
-						site={ site }
-						getUrlForSiteLevelView={ getUrlForSiteLevelView }
-					/>
+					<PurchaseProduct purchase={ item } site={ site } filterViewBySite={ filterViewBySite } />
 				);
 			},
 		},
@@ -536,4 +531,32 @@ export function adjustViewFieldsForWidth(
 		} );
 		return;
 	}
+}
+
+export function usePurchasesListActions( {
+	transferredPurchases,
+}: {
+	transferredPurchases: Purchase[];
+} ) {
+	return useMemo(
+		() => [
+			{
+				id: 'manage-purchase',
+				label: __( 'Manage purchase' ),
+				isEligible: ( item: Purchase ) => {
+					// Hide manage button for transferred ownership purchases
+					const hasTransferredOwnership = isTransferredOwnership(
+						item.ID,
+						transferredPurchases ?? []
+					);
+					return Boolean( item.domain && item.ID ) && ! hasTransferredOwnership;
+				},
+				callback: ( items: Purchase[] ) => {
+					const item = items[ 0 ];
+					window.location.href = getPurchaseUrl( item );
+				},
+			},
+		],
+		[ transferredPurchases ]
+	);
 }

@@ -1,5 +1,6 @@
 import { buildReaderTracksEventProps } from 'calypso/reader/stats';
 import { recordEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { type TrackPostData } from 'calypso/state/reader/analytics/types';
 
 export interface ReaderTrackEventProps {
 	[ key: string ]: string | number | undefined;
@@ -8,7 +9,7 @@ export interface ReaderTrackEventProps {
 
 export interface ReaderTrackEventOptions {
 	pathnameOverride?: string;
-	post: object | null;
+	post?: TrackPostData | null;
 }
 
 /**

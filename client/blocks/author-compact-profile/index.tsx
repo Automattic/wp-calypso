@@ -7,6 +7,7 @@ import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
 import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { getStreamUrl } from 'calypso/reader/route';
+import { TrackPostData } from 'calypso/state/reader/analytics/types';
 import AuthorCompactProfilePlaceholder from './placeholder';
 
 import './style.scss';
@@ -18,7 +19,7 @@ interface AuthorCompactProfileProps {
 	feedUrl?: string;
 	followCount?: number;
 	onFollowToggle?: ( isFollowing: boolean ) => void;
-	post?: object;
+	post?: TrackPostData;
 	siteIcon?: string;
 	siteId?: number;
 	siteName?: string;

@@ -1,6 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { DomainSuggestion } from '@automattic/data-stores';
-import { useDomainSearch } from '@automattic/domain-search';
 import {
 	Button,
 	__experimentalText as Text,
@@ -11,6 +10,7 @@ import { useTranslate } from 'i18n-calypso';
 import { Site } from 'calypso/dashboard/data/site';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { useDomainSearch } from '../__legacy/domain-search';
 import { DomainSkipSuggestionPlaceholder } from './index.placeholder';
 import { DomainSkipSkeleton } from './index.skeleton';
 

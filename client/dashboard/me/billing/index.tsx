@@ -6,7 +6,7 @@ import {
 	billingHistoryRoute,
 	paymentMethodsRoute,
 	taxDetailsRoute,
-} from '../../app/router';
+} from '../../app/router/me';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';

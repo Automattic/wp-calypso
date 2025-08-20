@@ -1,3 +1,7 @@
+// We are using these dates on multiple places in the codebase, like Referrals and WooPayments.
+// We also calculate the commissions in the backend for Referrals and WooPayments.
+// TODO: We should probably move this to an API endpoint so that we have a single source of truth.
+// Please ensure to update the dates in the backend as well if you change these dates.
 const PAYOUT_DATES = [
 	{ month: 3, day: 2, activityStart: { month: 10, day: 1 }, activityEnd: { month: 12, day: 31 } }, // March 2 (Q4 activity)
 	{ month: 6, day: 1, activityStart: { month: 1, day: 1 }, activityEnd: { month: 3, day: 31 } }, // June 1 (Q1 activity)

@@ -10,6 +10,7 @@ import { useAddBlogStickerMutation } from 'calypso/blocks/blog-stickers/use-add-
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
+import { shouldRenderRewrittenDomainSearch } from 'calypso/lib/domains/should-render-rewritten-domain-search';
 import { useDispatch } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
@@ -40,7 +41,7 @@ function initialize() {
 		STEPS.SITE_CREATION_STEP,
 		STEPS.PROCESSING,
 		STEPS.ERROR,
-		STEPS.UNIFIED_DOMAINS,
+		shouldRenderRewrittenDomainSearch() ? STEPS.DOMAIN_SEARCH : STEPS.UNIFIED_DOMAINS,
 		STEPS.UNIFIED_PLANS,
 		STEPS.SITE_LAUNCH,
 		STEPS.PROCESSING,
@@ -167,6 +168,10 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 					return;
 				}
 				case 'domains': {
+					if ( ! providedDependencies ) {
+						throw new Error( 'No provided dependencies found' );
+					}
+
 					if ( providedDependencies.domainItem && siteSlugFromSiteData ) {
 						addProductsToCart( siteSlugFromSiteData, AI_SITE_BUILDER_FLOW, [
 							providedDependencies.domainItem as MinimalRequestCartProduct,

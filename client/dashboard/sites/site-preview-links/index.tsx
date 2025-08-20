@@ -73,7 +73,7 @@ export default function SitePreviewLinks( { site, title, description }: SitePrev
 		const fields: Field< { enabled: boolean } >[] = [
 			{
 				id: 'enabled',
-				label: 'Enable share link',
+				label: __( 'Enable share link' ),
 				Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
 					const { id, label, getValue } = field;
 					return (

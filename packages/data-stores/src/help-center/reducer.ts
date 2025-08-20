@@ -14,6 +14,17 @@ const showHelpCenter: Reducer< boolean | undefined, HelpCenterAction > = ( state
 	return state;
 };
 
+const zendeskConnectionStatus: Reducer<
+	'disconnected' | 'reconnecting' | 'connected',
+	HelpCenterAction
+> = ( state = 'connected', action ) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_ZENDESK_CONNECTION_STATUS':
+			return action.connectionStatus;
+	}
+	return state;
+};
+
 const showMessagingLauncher: Reducer< boolean | undefined, HelpCenterAction > = (
 	state,
 	action
@@ -191,6 +202,7 @@ const reducer = combineReducers( {
 	showHelpCenter,
 	showMessagingLauncher,
 	showMessagingWidget,
+	zendeskConnectionStatus,
 	subject,
 	message,
 	userDeclaredSite,
