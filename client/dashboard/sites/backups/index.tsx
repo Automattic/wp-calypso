@@ -73,14 +73,16 @@ export function BackupsListPage() {
 				/>
 			}
 		>
-			<Grid columns={ 2 }>
-				<BackupsList
-					site={ site }
-					selectedBackup={ selectedBackup }
-					setSelectedBackup={ setSelectedBackup }
-				/>
-				{ selectedBackup && <BackupDetails backup={ selectedBackup } site={ site } /> }
-			</Grid>
+			{ hasBackups && (
+				<Grid columns={ 2 }>
+					<BackupsList
+						site={ site }
+						selectedBackup={ selectedBackup }
+						setSelectedBackup={ setSelectedBackup }
+					/>
+					{ selectedBackup && <BackupDetails backup={ selectedBackup } site={ site } /> }
+				</Grid>
+			) }
 		</PageLayout>
 	);
 }

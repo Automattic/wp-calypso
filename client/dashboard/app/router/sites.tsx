@@ -228,7 +228,9 @@ export const siteBackupsIndexRoute = createRoute( {
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		// Preload activity log backup-related entries.
-		queryClient.ensureQueryData( siteRewindableActivityLogEntriesQuery( site.ID ) );
+		if ( hasHostingFeature( site, HostingFeatures.BACKUPS ) ) {
+			queryClient.ensureQueryData( siteRewindableActivityLogEntriesQuery( site.ID ) );
+		}
 	},
 } ).lazy( () =>
 	import( '../../sites/backups' ).then( ( d ) =>
