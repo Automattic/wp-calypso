@@ -27,17 +27,15 @@
 		&.is-searching {
 			max-height: 0;
 			opacity: 0;
+			margin-top: -20px; // gap 8px + margin bottom 12px of the previous element.
 			//animate it to make it more pleasing and less disrupting when you see the UI change.
-			transition:
-				max-height 0.5s ease-in-out,
-				opacity 0.5s ease-in-out;
+			transition: all 0.5s ease-in-out;
 		}
 		&:not( .is-searching ) {
 			opacity: 1;
 			max-height: 40px;
-			transition:
-				max-height 0.5s ease-in-out,
-				opacity 0.5s ease-in-out;
+			margin-top: 0;
+			transition: all 0.5s ease-in-out;
 		}
 		.components-custom-select-control__button {
 			// less the width of the search button plus the border
