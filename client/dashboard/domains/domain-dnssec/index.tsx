@@ -5,53 +5,29 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
-	Button,
+	ToggleControl,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { DataForm, Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useState } from 'react';
 import { domainQuery } from '../../app/queries/domain';
 import { domainDnssecMutation } from '../../app/queries/domain-dnssec';
 import { domainRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-
-type DNSSECFormData = {
-	enabled: boolean;
-};
-
-const fields: Field< DNSSECFormData >[] = [
-	{
-		id: 'enabled',
-		label: __( 'Enable DNSSEC' ),
-		Edit: 'checkbox',
-	},
-];
-
-const form = {
-	layout: { type: 'regular' as const },
-	fields: [ 'enabled' ],
-};
+import { DNSSECRecordTextarea } from './dnssec-record-textarea';
 
 export default function DomainDNSSEC() {
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
-	const mutation = useMutation( domainDnssecMutation( domainName, domain.blog_id ) );
+	const mutation = useMutation( domainDnssecMutation( domainName ) );
 
-	const [ formData, setFormData ] = useState< DNSSECFormData >( {
-		enabled: domain.is_dnssec_enabled ?? false,
-	} );
-
-	const isDirty = formData.enabled !== domain.is_dnssec_enabled;
 	const { isPending } = mutation;
 
-	const handleSubmit = ( e: React.FormEvent ) => {
-		e.preventDefault();
-		mutation.mutate( formData.enabled, {
+	const handleToggleChange = ( enabled: boolean ) => {
+		mutation.mutate( enabled, {
 			onSuccess: () => {
 				createSuccessNotice( __( 'DNSSEC setting saved.' ), { type: 'snackbar' } );
 			},
@@ -70,28 +46,47 @@ export default function DomainDNSSEC() {
 					{ ! domain.is_dnssec_supported ? (
 						<Text>{ __( 'DNSSEC is not supported for this domain.' ) }</Text>
 					) : (
-						<form onSubmit={ handleSubmit }>
-							<VStack spacing={ 4 }>
-								<DataForm< DNSSECFormData >
-									data={ formData }
-									fields={ fields }
-									form={ form }
-									onChange={ ( edits: Partial< DNSSECFormData > ) => {
-										setFormData( ( data ) => ( { ...data, ...edits } ) );
-									} }
+						<VStack spacing={ 4 }>
+							<HStack
+								spacing={ 3 }
+								alignment="left"
+								style={ {
+									flexWrap: 'wrap',
+									gap: '8px',
+								} }
+							>
+								<ToggleControl
+									checked={ domain.is_dnssec_enabled ?? false }
+									onChange={ ( checked ) => handleToggleChange( checked ) }
+									disabled={ isPending }
+									label={
+										domain.is_dnssec_enabled ? __( 'Disable DNSSEC' ) : __( 'Enable DNSSEC' )
+									}
 								/>
-								<HStack justify="flex-start">
-									<Button
-										variant="primary"
-										type="submit"
-										isBusy={ isPending }
-										disabled={ isPending || ! isDirty }
-									>
-										{ __( 'Save' ) }
-									</Button>
-								</HStack>
-							</VStack>
-						</form>
+							</HStack>
+							{ domain.is_dnssec_enabled && (
+								<VStack spacing={ 3 }>
+									{ domain.dnssec_records?.dnskey?.map( ( dnskey, index ) => (
+										<DNSSECRecordTextarea
+											key={ `dnskey-${ index }` }
+											value={ dnskey }
+											label="DNSKEY Record"
+											recordType="dnskey"
+											index={ index }
+										/>
+									) ) }
+									{ domain.dnssec_records?.ds_data?.map( ( dsRecord, index ) => (
+										<DNSSECRecordTextarea
+											key={ `ds-${ index }` }
+											value={ dsRecord }
+											label="Delegation Signer (DS) record"
+											recordType="ds"
+											index={ index }
+										/>
+									) ) }
+								</VStack>
+							) }
+						</VStack>
 					) }
 				</CardBody>
 			</Card>
