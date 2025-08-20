@@ -6,7 +6,7 @@ import InlineSupportLink from '../../components/inline-support-link';
 import type { SslDetails } from '../../data/domain-ssl';
 
 export const useSslStatusMessage = ( sslDetails: SslDetails ) => {
-	const showFailureReasons = !! sslDetails.failure_reasons && sslDetails.failure_reasons.length > 0;
+	const hasFailureReasons = !! sslDetails.failure_reasons && sslDetails.failure_reasons.length > 0;
 
 	const getSslStatusMessage = (): ReactElement | string => {
 		if ( sslDetails.certificate_provisioned ) {
@@ -31,7 +31,7 @@ export const useSslStatusMessage = ( sslDetails: SslDetails ) => {
 			return __( 'Your domain has expired. Renew your domain to issue a new SSL certificate.' );
 		}
 
-		if ( showFailureReasons ) {
+		if ( hasFailureReasons ) {
 			return __(
 				'There are one or more problems with your DNS configuration that prevent an SSL certificate from being issued.'
 			);

@@ -1,5 +1,6 @@
 import { Badge } from '@automattic/ui';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import { Link } from '@tanstack/react-router';
 import {
 	Button,
 	Card,
@@ -15,7 +16,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { ReactElement } from 'react';
 import { domainQuery } from '../../app/queries/domain';
 import { provisionSslCertificateMutation, sslDetailsQuery } from '../../app/queries/domain-ssl';
-import { domainRoute } from '../../app/router/domains';
+import { domainRoute, domainSecurityRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
@@ -69,21 +70,19 @@ export default function DomainSecurity() {
 							{ isDnssecErrorForManagedSubdomain
 								? createInterpolateElement(
 										sprintf(
-											/* translators: %s is the root domain <a> will be replaced with an anchor tag to open the roor domain management page, <strong> will be replaced with a bolded text */
+											/* translators: %s is the root domain <link> will be replaced with a link to open the root domain security page, <strong> will be replaced with a bolded text */
 											__(
-												'This domain has DNSSEC validation errors. You may need to deactivate DNSSEC on the root domain <strong>%s</strong>, from <a>here</a>.'
+												'This domain has DNSSEC validation errors. You may need to deactivate DNSSEC on the root domain <strong>%s</strong>, from <link>here</link>.'
 											),
-											domain.name.replace( `${ domain.subdomain_part }.`, '' )
+											domainName.replace( `${ domain?.subdomain_part }.`, '' )
 										),
 										{
 											link: (
-												<a
-													href={ `/domains/${ domain.name.replace(
-														`${ domain.subdomain_part }.`,
-														''
-													) }` }
-													target="_blank"
-													rel="noreferrer"
+												<Link
+													to={ domainSecurityRoute.fullPath }
+													params={ {
+														domainName: domainName.replace( `${ domain?.subdomain_part }.`, '' ),
+													} }
 												/>
 											),
 											strong: <strong />,
