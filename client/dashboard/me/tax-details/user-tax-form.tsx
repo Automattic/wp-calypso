@@ -10,15 +10,19 @@ import {
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useTaxName } from '../../app/hooks/use-country-list';
 import { useGeoLocationQuery } from '../../app/queries/geolocation';
 import { getDataFormCountryCodes } from '../../utils/tax';
 import useDisplayUserTaxNotices from './use-display-user-tax-notices';
-import useRecordUserTaxEvents from './use-record-user-tax-events';
 import useUserTaxDetails from './use-user-tax-details';
-import type { UserTaxField, UserTaxFormData, UserTaxNormalizedField } from '../../data/types';
+import type {
+	UserTaxField,
+	UserTaxFormData,
+	UserTaxNormalizedField,
+	UpdateError,
+} from '../../data/types';
 
 export interface UserTaxFormControlProps {
 	data: UserTaxFormData;
@@ -71,7 +75,7 @@ function VatIdControl( { data, field, onChange }: UserTaxFormControlProps ) {
 						href={ CALYPSO_CONTACT }
 						rel="noreferrer"
 						onClick={ () => {
-							recordTracksEvent( 'calypso_vat_details_support_click' );
+							recordTracksEvent( 'calypso_dashboard_vat_details_support_click' );
 						} }
 					/>
 				),
@@ -106,6 +110,7 @@ function VatInputControl( { data, field, onChange }: UserTaxFormControlProps ) {
 }
 
 export default function UserTaxForm() {
+	const lastUpdateError = useRef< UpdateError >();
 	const { recordTracksEvent } = useAnalytics();
 
 	const [ localData, setLocalData ] = useState< Partial< UserTaxFormData > >( {} );
@@ -143,7 +148,16 @@ export default function UserTaxForm() {
 	const taxName = useTaxName( formData.country ?? geoData?.country_short ?? 'GB' );
 
 	useDisplayUserTaxNotices( { error: updateError, success: isUpdateSuccessful, taxName } );
-	useRecordUserTaxEvents( { updateError, isUpdateSuccessful } );
+	if ( updateError && lastUpdateError.current !== updateError ) {
+		recordTracksEvent( 'calypso_dashboard_vat_details_validation_failure', {
+			error: updateError.error,
+		} );
+		lastUpdateError.current = updateError;
+	}
+
+	if ( isUpdateSuccessful ) {
+		recordTracksEvent( 'calypso_dashboard_vat_details_validation_success' );
+	}
 
 	const isVatAlreadySet = !! userTaxDetails.id;
 	const isDisabled = isLoading || isUpdating;
@@ -191,7 +205,7 @@ export default function UserTaxForm() {
 
 	const onSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		recordTracksEvent( 'calypso_vat_details_update' );
+		recordTracksEvent( 'calypso_dashboard_vat_details_update' );
 		setUserTaxDetails( { ...userTaxDetails, ...localData } );
 	};
 

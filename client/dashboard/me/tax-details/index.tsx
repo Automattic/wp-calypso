@@ -7,7 +7,7 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
 import { useTaxName } from '../../app/hooks/use-country-list';
@@ -16,12 +16,13 @@ import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { localizeUrl } from './localize-url';
-import useRecordUserTaxEvents from './use-record-user-tax-events';
 import useUserTaxDetails from './use-user-tax-details';
 import UserTaxForm from './user-tax-form';
 import './style.scss';
+import type { FetchError } from './use-user-tax-details';
 
 export default function UserTaxInfoPage() {
+	const lastFetchError = useRef< FetchError >();
 	const { recordTracksEvent } = useAnalytics();
 	const { data: geoData } = useGeoLocationQuery();
 	const { fetchError, userTaxDetails } = useUserTaxDetails();
@@ -46,12 +47,19 @@ export default function UserTaxInfoPage() {
 			setNavigateToRoute( '/odie' );
 			setShowHelpCenter( true );
 			await resetSupportInteraction();
-			recordTracksEvent( 'calypso_vat_details_support_click' );
+			recordTracksEvent( 'calypso_dashboard_vat_details_support_click' );
 		},
 		[ recordTracksEvent, resetSupportInteraction, setNavigateToRoute, setShowHelpCenter ]
 	);
 
-	useRecordUserTaxEvents( { fetchError } );
+	if ( fetchError && lastFetchError.current !== fetchError ) {
+		recordTracksEvent( 'calypso_dashboard_vat_details_fetch_failure', {
+			error: fetchError.error,
+			message: fetchError.message,
+		} );
+		lastFetchError.current = fetchError;
+		return;
+	}
 
 	if ( fetchError ) {
 		return (
