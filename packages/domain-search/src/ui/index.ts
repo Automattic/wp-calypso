@@ -13,3 +13,4 @@ export * from './domain-suggestion-cta';
 export { DomainSuggestionLoadMore } from './domain-suggestion-load-more';
 export { DomainSuggestionFilterReset } from './domain-suggestion-filter-reset';
 export * as DomainSearchControls from './domain-search-controls';
+export { DomainSearchSkipSuggestion } from './domain-search-skip-suggestion';

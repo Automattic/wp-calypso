@@ -1,5 +1,5 @@
-import { useDomainSuggestionContainer } from '@automattic/domain-search';
 import { Card, CardBody } from '@wordpress/components';
+import { useDomainSuggestionContainer } from '../../hooks/use-domain-suggestion-container';
 
 interface Props {
 	title: React.ReactNode;
@@ -7,17 +7,17 @@ interface Props {
 	right?: React.ReactNode;
 }
 
-export const DomainSkipSkeleton = ( { title, subtitle, right }: Props ) => {
+export const DomainSearchSkipSuggestionSkeleton = ( { title, subtitle, right }: Props ) => {
 	const { containerRef, activeQuery } = useDomainSuggestionContainer();
 
 	return (
 		<Card
-			className="subdomain-skip-suggestion"
+			className="domain-search-skip-suggestion"
 			ref={ containerRef }
 			size={ activeQuery === 'large' ? 'medium' : 'small' }
 		>
 			<CardBody>
-				<div className="subdomain-skip-suggestion__content">
+				<div className="domain-search-skip-suggestion__content">
 					{ title }
 					{ subtitle }
 				</div>
