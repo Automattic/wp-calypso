@@ -1,9 +1,7 @@
-import clsx from 'clsx';
-
-export default function ReaderA8cIcon( { size = 20, viewBox = '0 0 20 20', className = '' } ) {
+export default function ReaderA8cIcon( { size = 20, viewBox = '0 0 20 20' } ) {
 	return (
 		<svg
-			className={ clsx( 'sidebar__menu-icon sidebar_svg-a8c', className ) }
+			className="sidebar__menu-icon sidebar_svg-a8c"
 			fill="none"
 			height={ size }
 			viewBox={ viewBox }
