@@ -1,6 +1,7 @@
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { Cart } from '../components/cart';
+import { FeaturedSearchResults } from '../components/featured-search-results';
 import { SearchBar } from '../components/search-bar';
 import { SearchResults } from '../components/search-results';
 import { useDomainSearch } from './context';
@@ -30,7 +31,10 @@ export const ResultsPage = () => {
 		<VStack spacing={ 8 }>
 			<SearchBar />
 			{ slots?.BeforeResults && <slots.BeforeResults /> }
-			{ isLoading ? <SearchResults.Placeholder /> : <SearchResults /> }
+			<VStack spacing={ 4 }>
+				{ isLoading ? <FeaturedSearchResults.Placeholder /> : <FeaturedSearchResults /> }
+				{ isLoading ? <SearchResults.Placeholder /> : <SearchResults /> }
+			</VStack>
 			<Cart />
 		</VStack>
 	);

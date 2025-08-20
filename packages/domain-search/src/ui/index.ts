@@ -5,6 +5,7 @@ export { DomainsFullCart } from './domains-full-cart';
 export { DomainsFullCartItems } from './domains-full-cart-items';
 export { DomainsFullCartItem } from './domains-full-cart-items/item';
 export { DomainSuggestionsList } from './domain-suggestions-list';
+export { FeaturedDomainSuggestionsList } from './featured-domain-suggestions-list';
 export { DomainSuggestion } from './domain-suggestion';
 export { DomainSuggestionBadge } from './domain-suggestion-badge';
 export { DomainSuggestionPrice } from './domain-suggestion-price';

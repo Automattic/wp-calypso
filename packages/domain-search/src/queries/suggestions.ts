@@ -16,7 +16,7 @@ const fetchDomainSuggestions = async (): Promise< DomainSuggestion[] > => {
 		},
 		{
 			domain_name: 'example.org',
-			cost: '$10',
+			cost: '$18',
 			product_slug: 'dotorg_domain',
 			is_premium: true,
 		},
@@ -25,6 +25,16 @@ const fetchDomainSuggestions = async (): Promise< DomainSuggestion[] > => {
 			cost: '$10',
 			product_slug: 'dotnet_domain',
 			is_premium: true,
+		},
+		{
+			domain_name: 'recommended-example.com',
+			cost: '$10',
+			product_slug: 'domain_reg',
+		},
+		{
+			domain_name: 'best-alternative-example.org',
+			cost: '$10',
+			product_slug: 'dotorg_domain',
 		},
 	];
 };

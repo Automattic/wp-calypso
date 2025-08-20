@@ -19,7 +19,7 @@ const fetchDomainAvailability = async ( domainName: string ): Promise< DomainAva
 			status: 'available',
 			mappable: 'mappable',
 			supports_privacy: true,
-			cost: '$18.00',
+			cost: '$18',
 			product_id: 6,
 			product_slug: 'domain_reg',
 		};
@@ -31,8 +31,8 @@ const fetchDomainAvailability = async ( domainName: string ): Promise< DomainAva
 			status: 'available',
 			mappable: 'mappable',
 			supports_privacy: true,
-			cost: '$18.00',
-			sale_cost: '$10.00',
+			cost: '$18',
+			sale_cost: '$10',
 			product_id: 6,
 			product_slug: 'domain_reg',
 		};
@@ -44,10 +44,34 @@ const fetchDomainAvailability = async ( domainName: string ): Promise< DomainAva
 			status: 'available',
 			mappable: 'mappable',
 			supports_privacy: true,
-			cost: '$18.00',
+			cost: '$18',
 			product_id: 6,
 			product_slug: 'domain_reg',
 			is_price_limit_exceeded: true,
+		};
+	}
+
+	if ( domainName === 'recommended-example.com' ) {
+		return {
+			domain_name: 'recommended-example.com',
+			status: 'available',
+			mappable: 'mappable',
+			supports_privacy: true,
+			cost: '$18',
+			product_id: 6,
+			product_slug: 'domain_reg',
+		};
+	}
+
+	if ( domainName === 'best-alternative-example.org' ) {
+		return {
+			domain_name: 'best-alternative-example.org',
+			status: 'available',
+			mappable: 'mappable',
+			supports_privacy: true,
+			cost: '$18',
+			product_id: 6,
+			product_slug: 'domain_reg',
 		};
 	}
 
