@@ -1,0 +1,20 @@
+.dashboard-full-screen-overlay {
+	position: fixed;
+	inset: 0;
+	z-index: 9999;
+	background-color: var( --dashboard__background-color );
+	display: flex;
+	flex-direction: column;
+	overflow: auto;
+}
+
+.dashboard-full-screen-overlay__actions {
+	position: sticky;
+	top: 0;
+	z-index: 1;
+	padding: $grid-unit-15;
+	width: 100%;
+	height: fit-content;
+	background-color: var( --dashboard-header__background-color );
+	backdrop-filter: blur( 4px );
+}

@@ -20,6 +20,18 @@ export const domainsRoute = createRoute( {
 	)
 );
 
+// Standalone domains purchase route - requires rootRoute
+export const domainsPurchaseRoute = createRoute( {
+	getParentRoute: () => rootRoute,
+	path: 'domains/purchase',
+} ).lazy( () =>
+	import( '../../domains/purchase' ).then( ( d ) =>
+		createLazyRoute( 'domains-purchase' )( {
+			component: d.default,
+		} )
+	)
+);
+
 // Domain management root route
 export const domainRoute = createRoute( {
 	getParentRoute: () => rootRoute,
@@ -222,6 +234,7 @@ export const domainTransferRoute = createRoute( {
 export const createDomainsRoutes = () => {
 	return [
 		domainsRoute,
+		domainsPurchaseRoute,
 		domainRoute.addChildren( [
 			domainOverviewRoute,
 			domainDnsRoute,

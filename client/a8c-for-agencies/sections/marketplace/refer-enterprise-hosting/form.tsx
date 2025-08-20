@@ -173,9 +173,9 @@ export default function ReferEnterpriseHostingForm() {
 		return (
 			<Form
 				className="refer-enterprise-hosting-form"
-				title={ translate( 'WordPress VIP referral sent' ) }
+				title={ translate( 'Thank you for your WordPress VIP referral' ) }
 				description={ translate(
-					"Your client referral to Enterprise VIP Hosting is appreciated. We'll take it from here and ensure you're updated on our progress."
+					"We value your partnership—thank you for helping us identify great opportunities! Once you submit your referral, our team will move quickly to review it and support you. We’ll keep you updated at each step, so you always know what's happening and can stay connected as the opportunity progresses."
 				) }
 			>
 				<div className="refer-enterprise-hosting-form__footer">
