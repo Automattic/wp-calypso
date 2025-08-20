@@ -1,10 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQueryClient, useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { plus } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useMemo, useEffect } from 'react';
+import { siteByIdQuery } from 'calypso/dashboard/app/queries/site';
 import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
 import { useAddStagingSiteMutation } from 'calypso/sites/staging-site/hooks/use-add-staging-site';
 import { useCheckStagingSiteStatus } from 'calypso/sites/staging-site/hooks/use-check-staging-site-status';
@@ -17,6 +18,7 @@ import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/a
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { useIsJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
+import { requestSite } from 'calypso/state/sites/actions';
 import { setStagingSiteStatus } from 'calypso/state/staging-site/actions';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
 import { getStagingSiteStatus } from 'calypso/state/staging-site/selectors/get-staging-site-status';
@@ -65,17 +67,31 @@ export default function HeaderStagingSiteButton( {
 	const stagingSiteId = useMemo( () => {
 		return stagingSites?.length ? stagingSites[ 0 ].id : null;
 	}, [ stagingSites ] );
+
 	const transferStatus = useCheckStagingSiteStatus( stagingSiteId );
 
+	const { data: stagingSite } = useQuery( {
+		...siteByIdQuery( stagingSiteId ?? 0 ),
+		refetchInterval: ( query ) => {
+			if ( ! query.state.data ) {
+				return 0;
+			}
+
+			return ! query.state.data.is_wpcom_atomic ? 1000 : false;
+		},
+		enabled: !! stagingSiteId && transferStatus === transferStates.COMPLETE,
+	} );
+
 	useEffect( () => {
-		if ( isCreatingStagingSite && transferStatus === transferStates.COMPLETE ) {
+		if ( isCreatingStagingSite && stagingSite?.is_wpcom_atomic ) {
 			dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.COMPLETE ) );
+			dispatch( requestSite( stagingSite.ID ) );
 			queryClient.invalidateQueries( { queryKey: [ USE_SITE_EXCERPTS_QUERY_KEY ] } );
 			dispatch(
 				successNotice( __( 'Staging site added.' ), { id: stagingSiteAddSuccessNoticeId } )
 			);
 		}
-	}, [ __, dispatch, queryClient, siteId, transferStatus, isCreatingStagingSite ] );
+	}, [ __, dispatch, queryClient, siteId, isCreatingStagingSite, stagingSite ] );
 
 	const removeAllNotices = useCallback( () => {
 		dispatch( removeNotice( 'staging-site-add-success' ) );

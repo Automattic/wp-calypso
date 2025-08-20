@@ -75,17 +75,18 @@ export default function ItemView( {
 	const { data: stagingSite } = useQuery( {
 		...siteByIdQuery( itemData.blogId ?? 0 ),
 		refetchInterval: ( query ) => {
-			return query.state.data?.jetpack_connection ? false : 5000;
+			return query.state.data?.jetpack_connection && query.state.data?.is_wpcom_atomic
+				? false
+				: 5000;
 		},
 		enabled: !! itemData.blogId && isStagingSite,
 	} );
 
-	const hasStagingSiteJetpackConnection = isStagingSite ? stagingSite?.jetpack_connection : false;
-
 	const isStagingSiteTransferInProgress =
 		isStagingSite &&
 		isAtomicTransferInProgress( atomicTransfer?.status ?? 'pending' ) &&
-		! hasStagingSiteJetpackConnection;
+		! stagingSite?.jetpack_connection &&
+		! stagingSite?.is_wpcom_atomic;
 
 	// Ensure we have features
 	if ( ! features || ! features.length ) {
