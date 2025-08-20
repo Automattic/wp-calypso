@@ -48,7 +48,7 @@ export default function StagingSiteDeleteModal( {
 				} );
 			},
 			onSuccess: () => {
-				navigate( { to: `/sites/${ productionSite?.slug }` } );
+				navigate( { to: `/sites/${ productionSite?.slug ?? productionSiteId }` } );
 				recordTracksEvent( 'calypso_hosting_configuration_staging_site_delete_success' );
 			},
 		} );

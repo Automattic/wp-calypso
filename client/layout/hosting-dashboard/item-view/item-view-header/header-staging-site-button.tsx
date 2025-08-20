@@ -6,6 +6,7 @@ import { plus } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useMemo, useEffect } from 'react';
 import { siteByIdQuery } from 'calypso/dashboard/app/queries/site';
+import { isAtomicTransferredSite } from 'calypso/dashboard/utils/site-atomic-transfers';
 import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
 import { useAddStagingSiteMutation } from 'calypso/sites/staging-site/hooks/use-add-staging-site';
 import { useCheckStagingSiteStatus } from 'calypso/sites/staging-site/hooks/use-check-staging-site-status';
@@ -46,11 +47,16 @@ export default function HeaderStagingSiteButton( {
 	const isPossibleJetpackConnectionProblem = useIsJetpackConnectionProblem( site?.ID );
 	const stagingSiteStatus =
 		useSelector( ( state ) => getStagingSiteStatus( state, siteId ) ) ?? StagingSiteStatus.UNSET;
+
 	const isCreatingStagingSite = [
 		StagingSiteStatus.INITIATE_TRANSFERRING,
 		StagingSiteStatus.TRANSFERRING,
 	].includes( stagingSiteStatus );
+
+	const isCreatedStagingSite = stagingSiteStatus === StagingSiteStatus.COMPLETE;
+
 	const isA4ADevSite = site?.is_a4a_dev_site || false;
+
 	const {
 		data: hasValidQuota,
 		isLoading: isLoadingQuotaValidation,
@@ -77,21 +83,32 @@ export default function HeaderStagingSiteButton( {
 				return 0;
 			}
 
-			return ! query.state.data.is_wpcom_atomic ? 1000 : false;
+			return ! isAtomicTransferredSite( query.state.data ) ? 2000 : false;
 		},
 		enabled: !! stagingSiteId && transferStatus === transferStates.COMPLETE,
 	} );
 
+	const isStagingSiteReady =
+		isCreatingStagingSite && stagingSite && isAtomicTransferredSite( stagingSite );
+
 	useEffect( () => {
-		if ( isCreatingStagingSite && stagingSite?.is_wpcom_atomic ) {
+		const handleStagingSiteReady = async () => {
+			if ( ! stagingSite ) {
+				return;
+			}
+
+			await dispatch( requestSite( stagingSite.ID ) );
 			dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.COMPLETE ) );
-			dispatch( requestSite( stagingSite.ID ) );
 			queryClient.invalidateQueries( { queryKey: [ USE_SITE_EXCERPTS_QUERY_KEY ] } );
 			dispatch(
 				successNotice( __( 'Staging site added.' ), { id: stagingSiteAddSuccessNoticeId } )
 			);
+		};
+
+		if ( isStagingSiteReady ) {
+			handleStagingSiteReady();
 		}
-	}, [ __, dispatch, queryClient, siteId, isCreatingStagingSite, stagingSite ] );
+	}, [ __, dispatch, queryClient, siteId, isStagingSiteReady, stagingSite ] );
 
 	const removeAllNotices = useCallback( () => {
 		dispatch( removeNotice( 'staging-site-add-success' ) );
@@ -134,7 +151,7 @@ export default function HeaderStagingSiteButton( {
 		isAtomic &&
 		! isStagingSite &&
 		! isLoadingStagingSites &&
-		( stagingSites.length === 0 || isCreatingStagingSite );
+		( stagingSites.length === 0 || ( isCreatingStagingSite && ! isCreatedStagingSite ) );
 
 	const onAddClick = useCallback( () => {
 		dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.INITIATE_TRANSFERRING ) );
@@ -148,7 +165,8 @@ export default function HeaderStagingSiteButton( {
 	}
 
 	const hasCompletedLoading = ! isLoadingQuotaValidation;
-	const isAddingStagingSite = isLoadingAddStagingSite || isCreatingStagingSite;
+	const isAddingStagingSite =
+		isLoadingAddStagingSite || ( isCreatingStagingSite && ! isCreatedStagingSite );
 
 	let disabledReason: string | undefined;
 	if ( ! hasCompletedLoading ) {

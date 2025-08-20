@@ -1,4 +1,4 @@
-import type { AtomicTransferStatus } from '../data/types';
+import type { AtomicTransferStatus, Site } from '../data/types';
 
 export function isAtomicTransferInProgress( status: AtomicTransferStatus ) {
 	const inProgressStatuses: AtomicTransferStatus[] = [
@@ -9,3 +9,7 @@ export function isAtomicTransferInProgress( status: AtomicTransferStatus ) {
 	];
 	return inProgressStatuses.includes( status );
 }
+
+export const isAtomicTransferredSite = ( site: Partial< Site > ) =>
+	// The capabilities are not immediately propagated to the atomic site
+	site.is_wpcom_atomic && site.capabilities?.manage_options;

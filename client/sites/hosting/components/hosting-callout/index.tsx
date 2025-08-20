@@ -7,7 +7,10 @@ import { useEffect } from 'react';
 import { siteByIdQuery } from 'calypso/dashboard/app/queries/site';
 import { siteLatestAtomicTransferQuery } from 'calypso/dashboard/app/queries/site-atomic-transfers';
 import { Callout } from 'calypso/dashboard/components/callout';
-import { isAtomicTransferInProgress } from 'calypso/dashboard/utils/site-atomic-transfers';
+import {
+	isAtomicTransferInProgress,
+	isAtomicTransferredSite,
+} from 'calypso/dashboard/utils/site-atomic-transfers';
 import { useDispatch } from 'calypso/state';
 import { requestSite } from 'calypso/state/sites/actions';
 import HostingActivationButton from '../hosting-activation-button';
@@ -41,15 +44,19 @@ export function HostingActivationCallout( {
 				return 0;
 			}
 
-			return ! query.state.data?.is_wpcom_atomic ? 1000 : false;
+			return ! isAtomicTransferredSite( query.state.data ) ? 2000 : false;
 		},
 		enabled: !! siteId && latestAtomicTransfer?.status === 'completed',
 	} );
 
 	const isActivating =
-		latestAtomicTransfer && isAtomicTransferInProgress( latestAtomicTransfer.status );
+		latestAtomicTransfer &&
+		( isAtomicTransferInProgress( latestAtomicTransfer.status ) ||
+			// Keep displaying “Activating…” until the page redirects.
+			latestAtomicTransfer?.status === 'completed' );
 
-	const isActivated = latestAtomicTransfer?.status === 'completed' && site?.is_wpcom_atomic;
+	const isActivated =
+		latestAtomicTransfer?.status === 'completed' && site && isAtomicTransferredSite( site );
 
 	useEffect( () => {
 		const handleActivated = async () => {
