@@ -144,14 +144,12 @@ export class HelpCenterComponent {
 	}
 
 	/**
-	 * Get the articles locator.
+	 * Get the article's locator.
 	 *
 	 * @returns {Locator} The articles locator.
 	 */
 	getArticles(): Locator {
-		return this.popup
-			.getByRole( 'list', { name: 'Recommended Resources' } )
-			.getByRole( 'listitem' );
+		return this.popup.getByRole( 'list', { name: 'Recommended guides' } ).getByRole( 'listitem' );
 	}
 
 	/**

@@ -33,7 +33,7 @@ export const HelpCenterMoreResources = () => {
 	return (
 		<div className="help-center-more-resources">
 			<h3 className="help-center__section-title">
-				{ __( 'More Resources', __i18n_text_domain__ ) }
+				{ __( 'More resources', __i18n_text_domain__ ) }
 			</h3>
 			<ul
 				className="help-center-more-resources__resources"
