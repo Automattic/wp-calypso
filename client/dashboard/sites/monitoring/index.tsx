@@ -1,7 +1,19 @@
 import { useQuery } from '@tanstack/react-query';
-import { __experimentalText as Text } from '@wordpress/components';
+import {
+	__experimentalDivider as Divider,
+	__experimentalGrid as Grid,
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	__experimentalText as Text,
+	__experimentalToggleGroupControl as ToggleGroupControl,
+	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
+	Button,
+} from '@wordpress/components';
+import { useState } from '@wordpress/element';
+import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
+import clsx from 'clsx';
 import { siteBySlugQuery } from '../../app/queries/site';
 import { siteRoute } from '../../app/router';
 import { Callout } from '../../components/callout';
@@ -12,6 +24,8 @@ import UpsellCTAButton from '../../components/upsell-cta-button';
 import { HostingFeatures } from '../../data/constants';
 import { hasHostingFeature } from '../../utils/site-features';
 import illustrationUrl from './monitoring-callout-illustration.svg';
+import './style.scss';
+import MonitoringPerformanceCard from 'calypso/dashboard/sites/monitoring-performance-card/monitoring-performance-card';
 
 export function SiteMonitoringCallout( {
 	siteSlug,
@@ -50,20 +64,90 @@ export function SiteMonitoringCallout( {
 	);
 }
 
+function SiteMonitoringBody( { site, timeRange }: { site: object; timeRange: string } ) {
+	const isSmallViewport = useViewportMatch( 'medium', '<' );
+
+	return (
+		<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
+			<MonitoringPerformanceCard site={ site } timeRange={ getDateRange( timeRange ) } />
+		</VStack>
+	);
+}
+
+const getDateRange = ( range: string ) => {
+	const now = new Date();
+	const hoursMap: Record< string, number > = {
+		'6-hours': 6,
+		'24-hours': 24,
+		'3-days': 72,
+		'7-days': 168,
+	};
+
+	const hours = hoursMap[ range ] || 24;
+	const start = new Date( now.getTime() - hours * 60 * 60 * 1000 );
+
+	const formatDate = ( date: Date ) => {
+		return date.toLocaleDateString( 'en-US', {
+			day: 'numeric',
+			month: 'long',
+			year: 'numeric',
+		} );
+	};
+
+	return `${ formatDate( start ) }–${ formatDate( now ) }`;
+};
+
 function SiteMonitoring() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
+
+	const isSmallViewport = useViewportMatch( 'medium', '<' );
 
 	if ( ! site ) {
 		return;
 	}
 
+	const [ timeRange, setTimeRange ] = useState( '24-hours' );
+
+	const handleTimeRangeChange = ( value: string ) => {
+		setTimeRange( value );
+	};
+
 	return (
-		<PageLayout header={ <PageHeader title={ __( 'Monitoring' ) } /> }>
+		<PageLayout
+			header={
+				<>
+					<HStack
+						justify="space-between"
+						alignment="stretch"
+						spacing={ isSmallViewport ? 5 : 10 }
+						className={ clsx( 'site-monitoring-header' ) }
+					>
+						<PageHeader title={ __( 'Monitoring' ) } />
+						<div>
+							<ToggleGroupControl
+								value={ timeRange }
+								isBlock
+								__nextHasNoMarginBottom
+								__next40pxDefaultSize
+								onChange={ handleTimeRangeChange }
+								className={ clsx( 'site-monitoring-header-range' ) }
+							>
+								<ToggleGroupControlOption value="6-hours" label={ __( '6 hours' ) } />
+								<ToggleGroupControlOption value="24-hours" label={ __( '24 hours' ) } />
+								<ToggleGroupControlOption value="3-days" label={ __( '3 days' ) } />
+								<ToggleGroupControlOption value="7-days" label={ __( '7 days' ) } />
+							</ToggleGroupControl>
+						</div>
+					</HStack>
+					<Text className={ clsx( 'site-monitoring-dates' ) }>{ getDateRange( timeRange ) }</Text>
+				</>
+			}
+		>
 			<CalloutOverlay
 				showCallout={ ! hasHostingFeature( site, HostingFeatures.MONITOR ) }
 				callout={ <SiteMonitoringCallout siteSlug={ site.slug } /> }
-				main={ null }
+				main={ <SiteMonitoringBody timeRange={ timeRange } site={ site } /> }
 			/>
 		</PageLayout>
 	);

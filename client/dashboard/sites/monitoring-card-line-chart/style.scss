@@ -1,0 +1,34 @@
+@import "uplot/dist/uPlot.min.css";
+
+.uplot {
+	.u-legend {
+		color: var(--studio-gray-100);
+
+		// Disable rendering first u-marker, which is for "Date" and is empty.
+		> .u-series:first-child > th > .u-marker {
+			display: none;
+		}
+
+		// Use increased specificity to override original uPlot styles.
+		> tr.u-series > th {
+			cursor: initial;
+
+			&::after {
+				vertical-align: baseline;
+			}
+			> .u-marker {
+				// Nudge marker down to align with text.
+				margin-top: -2px;
+				// Make the marker round.
+				border-radius: 100%;
+			}
+			> .u-label {
+				vertical-align: baseline;
+			}
+		}
+	}
+}
+
+.calypso-uplot-chart-container {
+	position: relative;
+}
