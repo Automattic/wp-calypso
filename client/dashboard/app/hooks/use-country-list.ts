@@ -1,17 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import wpcom from 'calypso/lib/wp';
+import { fetchCountryListForCheckout } from '../../data/countries';
 import type { CountryListItem } from '../../data/types';
 
 const emptyList: CountryListItem[] = [];
 
 const countryListQueryKey = [ 'checkout-country-list' ];
-
-async function fetchCountryListForCheckout(): Promise< CountryListItem[] > {
-	return await wpcom.req.get( {
-		path: '/me/transactions/supported-countries',
-		apiVersion: '1.1',
-	} );
-}
 
 export default function useCountryList(): CountryListItem[] {
 	const result = useQuery( {
