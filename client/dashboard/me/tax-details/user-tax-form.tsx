@@ -8,9 +8,8 @@ import {
 	SelectControl,
 } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
-import { useMemo } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
-import { useTranslate } from 'i18n-calypso';
+import { createInterpolateElement, useMemo } from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useTaxName } from '../../app/hooks/use-country-list';
@@ -48,7 +47,6 @@ function VatSelectControl( { data, field, onChange }: UserTaxFormControlProps ) 
 }
 
 function VatIdControl( { data, field, onChange }: UserTaxFormControlProps ) {
-	const translate = useTranslate();
 	const { recordTracksEvent } = useAnalytics();
 
 	const { getValue, id, isDisabled, isVatAlreadySet, canUserEdit, label, taxName } = field;
@@ -56,23 +54,27 @@ function VatIdControl( { data, field, onChange }: UserTaxFormControlProps ) {
 
 	const vatIdHelp =
 		! canUserEdit &&
-		translate(
-			/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-			'To change your %(taxName)s ID, {{contactSupportLink}}please contact support{{/contactSupportLink}}.',
+		createInterpolateElement(
+			sprintf(
+				/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+				__(
+					'To change your %(taxName)s ID, {{contactSupportLink}}please contact support{{/contactSupportLink}}.'
+				)
+					.replaceAll( '{{contactSupportLink}}', '<contactSupportLink>' )
+					.replaceAll( '{{/contactSupportLink}}', '</contactSupportLink>' ),
+				{ taxName: taxName ?? __( 'VAT' ) }
+			),
 			{
-				args: { taxName: taxName ?? translate( 'VAT', { textOnly: true } ) },
-				components: {
-					contactSupportLink: (
-						<a
-							target="_blank"
-							href={ CALYPSO_CONTACT }
-							rel="noreferrer"
-							onClick={ () => {
-								recordTracksEvent( 'calypso_vat_details_support_click' );
-							} }
-						/>
-					),
-				},
+				contactSupportLink: (
+					<a
+						target="_blank"
+						href={ CALYPSO_CONTACT }
+						rel="noreferrer"
+						onClick={ () => {
+							recordTracksEvent( 'calypso_vat_details_support_click' );
+						} }
+					/>
+				),
 			}
 		);
 

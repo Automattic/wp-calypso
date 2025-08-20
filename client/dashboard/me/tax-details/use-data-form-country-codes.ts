@@ -1,4 +1,4 @@
-import { useTranslate } from 'i18n-calypso';
+import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import useCountryList from '../../app/hooks/use-country-list';
 import type { CountryListItem, CountryListItemWithVat } from '../../data/types';
@@ -20,7 +20,6 @@ function getUniqueCountries< C extends CountryListItem >( countries: C[] ): C[] 
 }
 
 export default function useDataFormCountryCodes(): CountryCodeOption[] {
-	const translate = useTranslate();
 	const countries = useCountryList();
 	const isVatSupported = ( country: CountryListItem ): country is CountryListItemWithVat =>
 		country.vat_supported;
@@ -29,7 +28,7 @@ export default function useDataFormCountryCodes(): CountryCodeOption[] {
 		const vatCountries = getUniqueCountries( countries.filter( isVatSupported ) );
 		const codes = vatCountries.map( ( country ) =>
 			country.tax_country_codes.map( ( countryCode: string ) => {
-				const countryName = countryCode === 'XI' ? translate( 'Northern Ireland' ) : country.name;
+				const countryName = countryCode === 'XI' ? __( 'Northern Ireland' ) : country.name;
 				return {
 					label: `${ countryCode } - ${ countryName }`,
 					value: countryCode,
@@ -37,7 +36,7 @@ export default function useDataFormCountryCodes(): CountryCodeOption[] {
 			} )
 		);
 		return codes.flat();
-	}, [ countries, translate ] );
+	}, [ countries, __ ] );
 
 	return countryCodes;
 }

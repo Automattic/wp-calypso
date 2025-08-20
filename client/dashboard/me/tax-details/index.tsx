@@ -5,9 +5,8 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
-import { useTranslate } from 'i18n-calypso';
+import { createInterpolateElement } from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
 import { useCallback } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
@@ -24,7 +23,6 @@ import './style.scss';
 
 export default function UserTaxInfoPage() {
 	const { recordTracksEvent } = useAnalytics();
-	const translate = useTranslate();
 	const { data: geoData } = useGeoLocationQuery();
 	const { fetchError, userTaxDetails } = useUserTaxDetails();
 	const taxName = useTaxName(
@@ -34,15 +32,13 @@ export default function UserTaxInfoPage() {
 
 	const { setShowHelpCenter, setNavigateToRoute } = useHelpCenter();
 
-	const reduxDispatch = useDispatch();
-
 	/* This is a call to action for contacting support */
-	const contactSupportLinkTitle = translate( 'Contact Happiness Engineers' );
+	const contactSupportLinkTitle = __( 'Contact Happiness Engineers' );
 
 	const taxSupportPageURL = localizeUrl( 'https://wordpress.com/support/vat-gst-other-taxes/' );
 
 	/* This is the title of the support page from https://wordpress.com/support/vat-gst-other-taxes/ */
-	const taxSupportPageLinkTitle = translate( 'VAT, GST, and other taxes' );
+	const taxSupportPageLinkTitle = __( 'VAT, GST, and other taxes' );
 
 	const handleOpenCenterChat = useCallback(
 		async ( e: React.MouseEvent< HTMLAnchorElement > ) => {
@@ -52,13 +48,7 @@ export default function UserTaxInfoPage() {
 			await resetSupportInteraction();
 			recordTracksEvent( 'calypso_vat_details_support_click' );
 		},
-		[
-			reduxDispatch,
-			recordTracksEvent,
-			resetSupportInteraction,
-			setNavigateToRoute,
-			setShowHelpCenter,
-		]
+		[ recordTracksEvent, resetSupportInteraction, setNavigateToRoute, setShowHelpCenter ]
 	);
 
 	useRecordUserTaxEvents( { fetchError } );
@@ -68,13 +58,11 @@ export default function UserTaxInfoPage() {
 			<div>
 				<Card>
 					<CardBody>
-						{
+						{ sprintf(
 							/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-							translate( 'An error occurred while fetching %s details.', {
-								textOnly: true,
-								args: [ taxName ?? translate( 'VAT', { textOnly: true } ) ],
-							} )
-						}
+							__( 'An error occurred while fetching %s details.' ),
+							taxName ?? __( 'VAT' )
+						) }
 					</CardBody>
 				</Card>
 			</div>
@@ -83,13 +71,10 @@ export default function UserTaxInfoPage() {
 
 	const genericTaxName =
 		/* translators: This is a generic name for taxes to use when we do not know the user's country. */
-		translate( 'tax (VAT/GST/CT)' );
+		__( 'tax (VAT/GST/CT)' );
 	const fallbackTaxName = genericTaxName;
 	/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-	const title = translate( 'Add %s details', {
-		textOnly: true,
-		args: [ taxName ?? fallbackTaxName ],
-	} );
+	const title = sprintf( __( 'Add %s details' ), taxName ?? fallbackTaxName );
 
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Tax Details' ) } /> }>
@@ -106,54 +91,66 @@ export default function UserTaxInfoPage() {
 						<CardBody>
 							<h2>{ title }</h2>
 							<p>
-								{ translate(
+								{ sprintf(
 									/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST") or a generic fallback string of tax names */
-									'The %(taxName)s details saved on this page will be applied to all receipts in your account.',
+									__(
+										'The %(taxName)s details saved on this page will be applied to all receipts in your account.'
+									),
 									{
-										args: { taxName: taxName ?? fallbackTaxName },
+										taxName: taxName ?? fallbackTaxName,
 									}
 								) }
 								<br />
 								<br />
-								{ translate(
-									/* translators: This is a list of tax-related reasons a customer might need to contact support */
-									'If you:' +
-										'{{ul}}' +
-										/* translators: %(taxName)s is the name of taxes in the country (eg: "VAT" or "GST") or a generic fallback string of tax names */
-										'{{li}}Need to update existing %(taxName)s details{{/li}}' +
-										'{{li}}Have been charged taxes as a business subject to reverse charges{{/li}}' +
-										'{{li}}Do not see your country listed in this form{{/li}}' +
-										'{{/ul}}' +
-										'{{contactSupportLink}}Contact our Happiness Engineers{{/contactSupportLink}}. Include your %(taxName)s number and country code when you contact us.',
+								{ createInterpolateElement(
+									sprintf(
+										/* translators: This is a list of tax-related reasons a customer might need to contact support */
+										__(
+											'If you:' +
+												'{{ul}}' +
+												/* translators: %(taxName)s is the name of taxes in the country (eg: "VAT" or "GST") or a generic fallback string of tax names */
+												'{{li}}Need to update existing %(taxName)s details{{/li}}' +
+												'{{li}}Have been charged taxes as a business subject to reverse charges{{/li}}' +
+												'{{li}}Do not see your country listed in this form{{/li}}' +
+												'{{/ul}}' +
+												'{{contactSupportLink}}Contact our Happiness Engineers{{/contactSupportLink}}. Include your %(taxName)s number and country code when you contact us.'
+										)
+											.replaceAll( '{{ul}}', '<ul>' )
+											.replaceAll( '{{/ul}}', '</ul>' )
+											.replaceAll( '{{li}}', '<li>' )
+											.replaceAll( '{{/li}}', '</li>' )
+											.replaceAll( '{{contactSupportLink}}', '<contactSupportLink>' )
+											.replaceAll( '{{/contactSupportLink}}', '</contactSupportLink>' ),
+										{ taxName: taxName ?? fallbackTaxName }
+									),
 									{
-										args: { taxName: taxName ?? fallbackTaxName },
-										components: {
-											ul: <ul />,
-											li: <li />,
-											contactSupportLink: (
-												<a
-													href="/help"
-													title={ contactSupportLinkTitle }
-													onClick={ handleOpenCenterChat }
-												/>
-											),
-										},
+										ul: <ul />,
+										li: <li />,
+										contactSupportLink: (
+											<a
+												href="/help"
+												title={ contactSupportLinkTitle }
+												onClick={ handleOpenCenterChat }
+											/>
+										),
 									}
 								) }
 								<br />
 								<br />
-								{ translate(
-									'For more information about taxes, {{learnMoreLink}}click here{{/learnMoreLink}}.',
+								{ createInterpolateElement(
+									__(
+										'For more information about taxes, {{learnMoreLink}}click here{{/learnMoreLink}}.'
+									)
+										.replaceAll( '{{learnMoreLink}}', '<learnMoreLink>' )
+										.replaceAll( '{{/learnMoreLink}}', '</learnMoreLink>' ),
 									{
-										components: {
-											learnMoreLink: (
-												<InlineSupportLink
-													supportLink={ taxSupportPageURL }
-													supportPostId={ 234670 } //This is what makes the document appear in a dialogue
-													title={ taxSupportPageLinkTitle }
-												/>
-											),
-										},
+										learnMoreLink: (
+											<InlineSupportLink
+												supportLink={ taxSupportPageURL }
+												supportPostId={ 234670 } //This is what makes the document appear in a dialogue
+												title={ taxSupportPageLinkTitle }
+											/>
+										),
 									}
 								) }
 							</p>

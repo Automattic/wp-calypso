@@ -1,6 +1,6 @@
 import { useDispatch } from '@wordpress/data';
+import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import type { UpdateError } from './use-user-tax-details';
 
@@ -13,7 +13,6 @@ export default function useDisplayUserTaxNotices( {
 	success: boolean;
 	taxName: string | undefined;
 } ) {
-	const translate = useTranslate();
 	const { createSuccessNotice, createErrorNotice, removeNotice } = useDispatch( noticesStore );
 
 	useEffect( () => {
@@ -26,16 +25,25 @@ export default function useDisplayUserTaxNotices( {
 		if ( success ) {
 			removeNotice( 'vat_info_notice' );
 			createSuccessNotice(
-				/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-				translate( 'Your %s details have been updated!', {
-					textOnly: true,
-					args: [ taxName ?? translate( 'VAT', { textOnly: true } ) ],
-				} ),
+				sprintf(
+					/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+					__( 'Your %s details have been updated!' ),
+					taxName ?? __( 'VAT' )
+				),
 				{
 					id: 'vat_info_notice',
 				}
 			);
 			return;
 		}
-	}, [ createSuccessNotice, createErrorNotice, removeNotice, error, success, translate, taxName ] );
+	}, [
+		createSuccessNotice,
+		createErrorNotice,
+		removeNotice,
+		error,
+		success,
+		__,
+		sprintf,
+		taxName,
+	] );
 }
