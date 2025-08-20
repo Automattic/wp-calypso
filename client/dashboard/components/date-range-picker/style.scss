@@ -15,19 +15,10 @@
   max-width: calc(100vw - 48px);
 }
 
-/* Header */
-.daterange-title {
-	margin-bottom: 8px;
-}
 
-/* Body rows */
+ /* Body rows */
 .daterange-inputs {
 	margin-bottom: 12px;
-}
-
-/* Presets */
-.daterange-presets {
-	min-width: 180px;
 }
 
 /* Mobile */
@@ -36,17 +27,5 @@
     display: flex;
     justify-content: center;
     width: 100%;
-  }
-
-  /* Stack HStack items as full-width rows */
-  .daterange-presets .components-h-stack {
-    flex-direction: column;
-    flex-wrap: nowrap;
-    gap: 4px;
-
-    > * {
-      flex: 0 0 100%;
-      width: 100%;
-    }
   }
 }

@@ -18,7 +18,7 @@ import PageLayout from '../../components/page-layout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { HostingFeatures } from '../../data/constants';
 import { LogType, PHPLog, ServerLog, SiteLogsParams } from '../../data/site-logs';
-import { buildTimeRangeInSeconds } from '../../utils/datetime';
+import { buildTimeRangeInSeconds, parseYmdLocal, formatYmd } from '../../utils/datetime';
 import { hasHostingFeature } from '../../utils/site-features';
 import { useFields } from './dataviews/fields';
 import { toFilterParams } from './dataviews/views';
@@ -115,10 +115,13 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		};
 	}, [ logType ] );
 
-	const [ dateRange, setDateRange ] = useState< { start: Date; end: Date } >( () => ( {
-		start: new Date( Date.now() - 7 * 24 * 60 * 60 * 1000 ),
-		end: new Date(),
-	} ) );
+	const siteToday = parseYmdLocal( formatYmd( new Date(), timezoneString, gmtOffset ) )!;
+	const initial = {
+		start: new Date( siteToday.getFullYear(), siteToday.getMonth(), siteToday.getDate() - 6 ),
+		end: siteToday,
+	};
+
+	const [ dateRange, setDateRange ] = useState< { start: Date; end: Date } >( () => initial );
 
 	const { startSec, endSec } = useMemo(
 		() => buildTimeRangeInSeconds( dateRange.start, dateRange.end, timezoneString, gmtOffset ),
