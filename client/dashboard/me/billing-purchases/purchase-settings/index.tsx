@@ -36,9 +36,11 @@ import { useLocale } from '../../../app/locale';
 import { purchaseQuery, userPurchaseSetAutoRenewQuery } from '../../../app/queries/me-purchases';
 import { siteBySlugQuery } from '../../../app/queries/site';
 import { siteDifmWebsiteContentQuery } from '../../../app/queries/site-do-it-for-me';
+import { siteJetpackKeysQuery } from '../../../app/queries/site-jetpack-keys';
 import { reinstallMarketplacePluginsQuery } from '../../../app/queries/site-marketplace';
 import { purchaseSettingsRoute } from '../../../app/router/me';
 import { ActionList } from '../../../components/action-list';
+import ClipboardInputControl from '../../../components/clipboard-input-control';
 import { useFormattedTime } from '../../../components/formatted-time';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
@@ -721,6 +723,40 @@ function DomainRegistrationAgreement( { purchase }: { purchase: Purchase } ) {
 	);
 }
 
+function getPluginLabel( pluginSlug: string ) {
+	switch ( pluginSlug ) {
+		case 'vaultpress':
+			return __( 'Backups and security scanning API key' );
+		case 'akismet':
+			return __( 'Akismet Anti-spam API key' );
+		default:
+			return pluginSlug;
+	}
+}
+
+function PluginList( { purchase }: { purchase: Purchase } ) {
+	const { data: pluginList } = useQuery( siteJetpackKeysQuery( parseInt( purchase.blog_id ) ) );
+	if ( ! pluginList?.length ) {
+		return null;
+	}
+	return (
+		<div>
+			{ pluginList.map( ( plugin ) => {
+				return (
+					<div key={ plugin.slug }>
+						<ClipboardInputControl
+							label={ getPluginLabel( plugin.slug ) }
+							value={ plugin.key }
+							readOnly
+							__next40pxDefaultSize
+						/>
+					</div>
+				);
+			} ) }
+		</div>
+	);
+}
+
 function BBEPurchaseDescription( { purchase }: { purchase: Purchase } ) {
 	const { data: isSubmitted } = useQuery( {
 		...siteDifmWebsiteContentQuery( parseInt( purchase.blog_id ) ),
@@ -923,8 +959,6 @@ export default function PurchaseSettings() {
 		return __( 'Expires' );
 	} )();
 
-	// FIXME: render pluginList (see renderPluginLabel and getPluginsForSite)
-
 	return (
 		<PageLayout
 			size="small"
@@ -950,6 +984,7 @@ export default function PurchaseSettings() {
 					<PurchaseSecondSubtitle purchase={ purchase } />
 					<ProductLink purchase={ purchase } />
 					<DomainRegistrationAgreement purchase={ purchase } />
+					{ ! purchase.partner_name && <PluginList purchase={ purchase } /> }
 				</VStack>
 			}
 		>
