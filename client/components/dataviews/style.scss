@@ -146,7 +146,7 @@
 		position: sticky;
 		right: 0;
 		z-index: 1;
-		background: linear-gradient( 90deg, rgba( 255, 255, 255, 0 ) 0, rgb( 255, 255, 255 ) 25% );
+		background: var( --studio-white );
 		padding-left: 48px;
 	}
 }
