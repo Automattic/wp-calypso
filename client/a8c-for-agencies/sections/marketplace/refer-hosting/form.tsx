@@ -13,7 +13,9 @@ import FormTextarea from 'calypso/components/forms/form-textarea';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import useReferEnterpriseHostingForm from './hooks/use-refer-enterprise-hosting-form';
+import useReferHostingForm from './hooks/use-refer-hosting-form';
+import { getReferralFormData } from './lib/get-form-data';
+import { getReferralConfig } from './lib/get-referral-config';
 
 type FieldProps = {
 	label: string;
@@ -91,7 +93,7 @@ const RadioButtonField = ( {
 } ) => {
 	return (
 		<FormField label={ label } labelFor={ name } error={ error }>
-			<div className="refer-enterprise-hosting-form__radio-group">
+			<div className="refer-hosting-form__radio-group">
 				{ options.map( ( option ) => (
 					<FormRadio
 						key={ option.value }
@@ -108,9 +110,16 @@ const RadioButtonField = ( {
 	);
 };
 
-export default function ReferEnterpriseHostingForm() {
+export default function ReferHostingForm( {
+	config,
+}: {
+	config: ReturnType< typeof getReferralConfig >;
+} ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const { formTitle, description, ctaText, companyTitle, contactTitle, events, fields, api } =
+		config;
 
 	const { countryOptions } = useCountriesAndStates();
 
@@ -126,7 +135,8 @@ export default function ReferEnterpriseHostingForm() {
 		submit,
 		isPending,
 		validate,
-	} = useReferEnterpriseHostingForm();
+	} = useReferHostingForm( fields, api.endpoint );
+
 	const [ isSuccess, setIsSuccess ] = useState( false );
 
 	const handleInputChange = (
@@ -143,11 +153,9 @@ export default function ReferEnterpriseHostingForm() {
 		if ( error ) {
 			updateValidationError( error );
 		} else {
-			dispatch(
-				recordTracksEvent( 'calypso_a4a_marketplace_hosting_enterprise_refer_form_submit' )
-			);
-
-			submit( formData, {
+			dispatch( recordTracksEvent( events.formSubmit ) );
+			const udpdatedFormData = getReferralFormData( fields, formData );
+			submit( udpdatedFormData, {
 				onSuccess: () => {
 					dispatch( successNotice( translate( 'Your request has been submitted successfully.' ) ) );
 					setIsSuccess( true );
@@ -159,26 +167,25 @@ export default function ReferEnterpriseHostingForm() {
 				},
 			} );
 		}
-	}, [ validate, submit, updateValidationError, formData, dispatch, translate ] );
+	}, [
+		validate,
+		formData,
+		updateValidationError,
+		dispatch,
+		events.formSubmit,
+		fields,
+		submit,
+		translate,
+	] );
 
 	const handleBackToMarketplace = () => {
-		dispatch(
-			recordTracksEvent(
-				'calypso_a4a_marketplace_hosting_enterprise_refer_form_back_to_marketplace'
-			)
-		);
+		dispatch( recordTracksEvent( events.backToMarketplace as string ) );
 	};
 
 	if ( isSuccess ) {
 		return (
-			<Form
-				className="refer-enterprise-hosting-form"
-				title={ translate( 'Thank you for your WordPress VIP referral' ) }
-				description={ translate(
-					"We value your partnership—thank you for helping us identify great opportunities! Once you submit your referral, our team will move quickly to review it and support you. We’ll keep you updated at each step, so you always know what's happening and can stay connected as the opportunity progresses."
-				) }
-			>
-				<div className="refer-enterprise-hosting-form__footer">
+			<Form className="refer-hosting-form" title={ formTitle } description={ description }>
+				<div className="refer-hosting-form__footer">
 					<Button
 						variant="primary"
 						href={ A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK }
@@ -193,14 +200,14 @@ export default function ReferEnterpriseHostingForm() {
 
 	return (
 		<Form
-			className="refer-enterprise-hosting-form"
-			title={ translate( 'Submit WordPress VIP referral' ) }
+			className="refer-hosting-form"
+			title={ formTitle }
 			autocomplete="off"
 			description={ translate(
 				'Once submitted, our team will take it from there. We will keep you informed of our progress along the way. All fields are required unless marked as optional'
 			) }
 		>
-			<FormSection title={ translate( 'End user company information' ) }>
+			<FormSection title={ companyTitle }>
 				<TextField
 					label={ translate( 'Company name' ) }
 					name="companyName"
@@ -252,8 +259,8 @@ export default function ReferEnterpriseHostingForm() {
 				/>
 			</FormSection>
 
-			<FormSection title={ translate( 'End user contact information' ) }>
-				<div className="refer-enterprise-hosting-form__contact-name">
+			<FormSection title={ contactTitle }>
+				<div className="refer-hosting-form__contact-name">
 					<TextField
 						label={ translate( 'First name' ) }
 						name="firstName"
@@ -312,36 +319,40 @@ export default function ReferEnterpriseHostingForm() {
 					onChange={ ( value: string ) => handleInputChange( 'opportunityDescription', value ) }
 				/>
 
-				<SearchableDropdownField
-					label={ translate( 'Type of lead' ) }
-					name="leadType"
-					error={ validationError.leadType }
-					value={ formData.leadType }
-					onChange={ ( value: string ) => handleInputChange( 'leadType', value ) }
-					placeholder={ translate( 'Select lead type' ) }
-					options={ [
-						{ value: 'Media', label: translate( 'Media' ) },
-						{ value: 'Public Sector', label: translate( 'Public Sector' ) },
-						{ value: 'Other', label: translate( 'Other' ) },
-					] }
-				/>
+				{ fields.leadType?.enabled && (
+					<SearchableDropdownField
+						label={ translate( 'Type of lead' ) }
+						name="leadType"
+						error={ validationError.leadType }
+						value={ formData.leadType }
+						onChange={ ( value: string ) => handleInputChange( 'leadType', value ) }
+						placeholder={ translate( 'Select lead type' ) }
+						options={ [
+							{ value: 'Media', label: translate( 'Media' ) },
+							{ value: 'Public Sector', label: translate( 'Public Sector' ) },
+							{ value: 'Other', label: translate( 'Other' ) },
+						] }
+					/>
+				) }
 
-				<RadioButtonField
-					label={ translate( 'Is this an RFP?' ) }
-					name="isRfp"
-					error={ validationError.isRfp }
-					value={ formData.isRfp === true ? 'yes' : 'no' }
-					onChange={ ( value: string ) => handleInputChange( 'isRfp', value === 'yes' ) }
-					options={ [
-						{ value: 'yes', label: translate( 'Yes' ) },
-						{ value: 'no', label: translate( 'No' ) },
-					] }
-				/>
+				{ fields.rfp?.enabled && (
+					<RadioButtonField
+						label={ translate( 'Is this an RFP?' ) }
+						name="isRfp"
+						error={ validationError.isRfp }
+						value={ formData.isRfp === true ? 'yes' : 'no' }
+						onChange={ ( value: string ) => handleInputChange( 'isRfp', value === 'yes' ) }
+						options={ [
+							{ value: 'yes', label: translate( 'Yes' ) },
+							{ value: 'no', label: translate( 'No' ) },
+						] }
+					/>
+				) }
 			</FormSection>
 
-			<div className="refer-enterprise-hosting-form__footer">
+			<div className="refer-hosting-form__footer">
 				<Button variant="primary" onClick={ handleSubmit } isBusy={ isPending }>
-					{ translate( 'Submit VIP referral' ) }
+					{ ctaText }
 				</Button>
 			</div>
 		</Form>

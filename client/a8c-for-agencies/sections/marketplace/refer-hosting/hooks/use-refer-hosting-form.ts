@@ -2,10 +2,10 @@ import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
 import { CAPTURE_URL_RGX } from 'calypso/blocks/import/util';
-import { ReferEnterpriseHostingFormData } from '../types';
-import useReferEnterpriseHostingMutation from './use-refer-enterprise-hosting-mutation';
+import useReferHostingMutation from './use-refer-hosting-mutation';
+import type { ReferHostingFormData, FormFieldsConfig } from '../types';
 
-const DEFAULT_FORM_DATA: ReferEnterpriseHostingFormData = {
+const DEFAULT_FORM_DATA: ReferHostingFormData = {
 	companyName: '',
 	address: '',
 	country: '',
@@ -22,16 +22,19 @@ const DEFAULT_FORM_DATA: ReferEnterpriseHostingFormData = {
 	isRfp: false,
 };
 
-export default function useReferEnterpriseHostingForm() {
+export default function useReferHostingForm(
+	fieldsConfig: FormFieldsConfig = {},
+	apiEndpoint: string
+) {
 	const translate = useTranslate();
 
-	const [ formData, setFormData ] = useState< ReferEnterpriseHostingFormData >( {
+	const [ formData, setFormData ] = useState< ReferHostingFormData >( {
 		...DEFAULT_FORM_DATA,
 	} );
 
 	const [ validationError, setValidationError ] = useState< Record< string, string > >( {} );
 
-	const { mutate: submit, isPending } = useReferEnterpriseHostingMutation();
+	const { mutate: submit, isPending } = useReferHostingMutation( apiEndpoint );
 
 	const updateValidationError = useCallback(
 		( newState: Record< string, string > ) => {
@@ -47,7 +50,7 @@ export default function useReferEnterpriseHostingForm() {
 	}, [] );
 
 	const validate = useCallback(
-		( payload: Partial< ReferEnterpriseHostingFormData > ) => {
+		( payload: Partial< ReferHostingFormData > ) => {
 			const newValidationError: Record< string, string > = {};
 
 			if ( payload.companyName?.trim() === '' ) {
@@ -108,7 +111,7 @@ export default function useReferEnterpriseHostingForm() {
 				);
 			}
 
-			if ( payload.leadType?.trim() === '' ) {
+			if ( fieldsConfig.leadType?.enabled && payload.leadType?.trim() === '' ) {
 				newValidationError.leadType = translate( 'Please select a lead type' );
 			}
 
@@ -119,7 +122,7 @@ export default function useReferEnterpriseHostingForm() {
 
 			return null;
 		},
-		[ translate ]
+		[ translate, fieldsConfig ]
 	);
 
 	const updateFormData = useCallback(

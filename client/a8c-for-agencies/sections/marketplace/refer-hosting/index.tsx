@@ -12,20 +12,20 @@ import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 	LayoutHeaderBreadcrumb as Breadcrumb,
 } from 'calypso/layout/hosting-dashboard/header';
-import ReferEnterpriseHostingForm from './form';
+import ReferHostingForm from './form';
+import { getReferralConfig } from './lib/get-referral-config';
+import type { ReferHostingType } from './types';
 
 import './style.scss';
 
-export function ReferEnterpriseHosting() {
+function ReferHosting( { type }: { type: ReferHostingType } ) {
 	const translate = useTranslate();
 
+	const config = getReferralConfig( translate, type );
+
 	return (
-		<Layout
-			className="refer-enterprise-hosting"
-			title={ translate( 'Refer Enterprise Hosting' ) }
-			wide
-		>
-			<div className="refer-enterprise-hosting__top">
+		<Layout className="refer-hosting" title={ config.pageTitle } wide>
+			<div className="refer-hosting__top">
 				<LayoutTop>
 					<A4AAgencyApprovalNotice />
 					<LayoutHeader>
@@ -40,7 +40,7 @@ export function ReferEnterpriseHosting() {
 									href: A4A_MARKETPLACE_HOSTING_LINK,
 								},
 								{
-									label: translate( 'Refer Enterprise Hosting' ),
+									label: config.pageTitle,
 								},
 							] }
 							hideOnMobile
@@ -54,10 +54,10 @@ export function ReferEnterpriseHosting() {
 			</div>
 
 			<LayoutBody>
-				<ReferEnterpriseHostingForm />
+				<ReferHostingForm config={ config } />
 			</LayoutBody>
 		</Layout>
 	);
 }
 
-export default ReferEnterpriseHosting;
+export default ReferHosting;
