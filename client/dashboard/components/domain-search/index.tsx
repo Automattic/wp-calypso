@@ -1,30 +1,43 @@
 // eslint-disable-next-line no-restricted-imports
 import { DomainSearch } from '@automattic/domain-search';
+import { __ } from '@wordpress/i18n';
+import { PageHeader } from '../page-header';
+import PageLayout from '../page-layout';
+
+const staticCart = {
+	items: [
+		{
+			uuid: '1',
+			domain: 'example',
+			tld: 'com',
+			price: '$10',
+		},
+		{
+			uuid: '2',
+			domain: 'example',
+			tld: 'org',
+			price: '$10',
+		},
+	],
+	total: '$10',
+	onAddItem: () => Promise.resolve(),
+	onRemoveItem: () => Promise.resolve(),
+	hasItem: () => false,
+};
 
 function DashboardDomainSearch() {
 	return (
-		<DomainSearch
-			cart={ {
-				items: [
-					{
-						uuid: '1',
-						domain: 'example',
-						tld: 'com',
-						price: '$10',
-					},
-					{
-						uuid: '2',
-						domain: 'example',
-						tld: 'org',
-						price: '$10',
-					},
-				],
-				total: '$10',
-				onAddItem: () => Promise.resolve(),
-				onRemoveItem: () => Promise.resolve(),
-				hasItem: () => false,
-			} }
-		/>
+		<PageLayout
+			size="large"
+			header={
+				<PageHeader
+					title={ __( 'Claim your space on the web' ) }
+					description={ __( 'Make it yours with a .com, .blog or one of 350+ domain options.' ) }
+				/>
+			}
+		>
+			<DomainSearch cart={ staticCart } />
+		</PageLayout>
 	);
 }
 
