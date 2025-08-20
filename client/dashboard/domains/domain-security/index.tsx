@@ -74,14 +74,18 @@ export default function DomainSecurity() {
 											__(
 												'This domain has DNSSEC validation errors. You may need to deactivate DNSSEC on the root domain <strong>%s</strong>, from <link>here</link>.'
 											),
-											domainName.replace( `${ domain?.subdomain_part }.`, '' )
+											domain?.subdomain_part
+												? domainName.replace( `${ domain.subdomain_part }.`, '' )
+												: domainName
 										),
 										{
 											link: (
 												<Link
 													to={ domainSecurityRoute.fullPath }
 													params={ {
-														domainName: domainName.replace( `${ domain?.subdomain_part }.`, '' ),
+														domainName: domain?.subdomain_part
+															? domainName.replace( `${ domain.subdomain_part }.`, '' )
+															: domainName,
 													} }
 												/>
 											),
