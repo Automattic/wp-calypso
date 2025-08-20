@@ -4,6 +4,8 @@ import { __ } from '@wordpress/i18n';
 import { PageHeader } from '../page-header';
 import PageLayout from '../page-layout';
 
+import './style.scss';
+
 const staticCart = {
 	items: [
 		{
@@ -36,7 +38,7 @@ function DashboardDomainSearch() {
 				/>
 			}
 		>
-			<DomainSearch cart={ staticCart } />
+			<DomainSearch className="dashboard-domain-search" cart={ staticCart } />
 		</PageLayout>
 	);
 }

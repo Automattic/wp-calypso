@@ -1,0 +1,9 @@
+@layer module, consumer-styles;
+
+@layer consumer-styles {
+	.dashboard-domain-search {
+		--domain-search-mini-cart-inline-padding: var( --page-layout-inline-padding );
+		--domain-search-mini-cart-max-width: var( --page-layout-max-width );
+		--domain-search-full-cart-z-index: 3;
+	}
+}
