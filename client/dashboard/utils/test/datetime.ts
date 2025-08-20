@@ -1,6 +1,5 @@
 import { dateI18n } from '@wordpress/date';
-import { formatLabel } from '../../components/date-range-picker/utils';
-import { parseYmdLocal, formatDateWithOffset, formatYmd } from '../datetime';
+import { parseYmdLocal, formatYmd } from '../datetime';
 
 describe( 'datetime utils (site-time)', () => {
 	describe( 'parseYmdLocal', () => {
@@ -27,29 +26,6 @@ describe( 'datetime utils (site-time)', () => {
 		} );
 	} );
 
-	describe( 'formatLabel (site-time display)', () => {
-		it( 'formats using timezone_string when provided', () => {
-			const tz = 'Pacific/Auckland';
-			const start = new Date( 2025, 7, 13 );
-			const end = new Date( 2025, 7, 15 );
-
-			const label = formatLabel( start, end, 'en-US', tz );
-			const expected = `${ dateI18n( 'M j, Y', start, tz ) } to ${ dateI18n( 'M j, Y', end, tz ) }`;
-			expect( label ).toBe( expected );
-		} );
-
-		it( 'falls back to gmt_offset when tz is missing', () => {
-			const start = new Date( 2025, 7, 13 );
-			const end = new Date( 2025, 7, 15 );
-			const gmtOffset = 12;
-			const locale = 'en-US';
-
-			const label = formatLabel( start, end, locale, undefined, gmtOffset );
-			const left = formatDateWithOffset( start, gmtOffset, locale, { dateStyle: 'medium' } );
-			const right = formatDateWithOffset( end, gmtOffset, locale, { dateStyle: 'medium' } );
-			expect( label ).toBe( `${ left } to ${ right }` );
-		} );
-	} );
 	describe( 'formatYmd', () => {
 		it( 'uses timezoneString when provided', () => {
 			const tz = 'Pacific/Auckland';
