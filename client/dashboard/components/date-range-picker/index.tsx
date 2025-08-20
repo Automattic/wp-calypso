@@ -1,6 +1,6 @@
 import { Dropdown, Tooltip, Button } from '@wordpress/components';
 import { useMediaQuery, useInstanceId } from '@wordpress/compose';
-import { useMemo, useState, useEffect } from '@wordpress/element';
+import { useMemo, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, calendar } from '@wordpress/icons';
 import { useLocale } from '../../app/locale';
@@ -38,32 +38,16 @@ export function DateRangePicker( {
 		[ start, end, locale, timezoneString, gmtOffset ]
 	);
 
-	const [ fromDraft, setFromDraft ] = useState< Date | undefined >( () => start );
-	const [ toDraft, setToDraft ] = useState< Date | undefined >( () => end );
-	const [ fromStr, setFromStr ] = useState( () => formatYmd( start, timezoneString, gmtOffset ) );
-	const [ toStr, setToStr ] = useState( () => formatYmd( end, timezoneString, gmtOffset ) );
-	// Tracks the keyboard-focused preset in the listbox (roving focus), not the selected preset.
-	const [ compositeActiveId, setCompositeActiveId ] = useState< string | null >( null );
-
-	const siteToday = useMemo(
-		() => parseYmdLocal( formatYmd( new Date(), timezoneString, gmtOffset ) )!,
-		[ timezoneString, gmtOffset ]
+	// Reset internal draft state when key inputs change by remounting the inner component
+	const resetKey = useMemo(
+		() =>
+			`${ formatYmd( start, timezoneString, gmtOffset ) }|${ formatYmd(
+				end,
+				timezoneString,
+				gmtOffset
+			) }|${ timezoneString ?? '' }|${ gmtOffset ?? '' }`,
+		[ start, end, timezoneString, gmtOffset ]
 	);
-	const siteTodayStr = useMemo(
-		() => formatYmd( siteToday, timezoneString, gmtOffset ),
-		[ siteToday, timezoneString, gmtOffset ]
-	);
-
-	// Sync start/end into draft
-	useEffect( () => {
-		setFromDraft( start );
-		setFromStr( formatYmd( start, timezoneString, gmtOffset ) );
-	}, [ gmtOffset, start, timezoneString ] );
-
-	useEffect( () => {
-		setToDraft( end );
-		setToStr( formatYmd( end, timezoneString, gmtOffset ) );
-	}, [ gmtOffset, end, timezoneString ] );
 
 	return (
 		<div className="daterange-container">
@@ -95,29 +79,82 @@ export function DateRangePicker( {
 					</Tooltip>
 				) }
 				renderContent={ ( { onClose } ) => (
-					<DateRangeContent
+					<DateRangePickerInner
+						key={ resetKey }
 						isSmall={ isSmall }
-						fromDraft={ fromDraft }
-						toDraft={ toDraft }
-						fromStr={ fromStr }
-						toStr={ toStr }
-						setFromDraft={ setFromDraft }
-						setToDraft={ setToDraft }
-						setFromStr={ setFromStr }
-						setToStr={ setToStr }
+						start={ start }
+						end={ end }
 						timezoneString={ timezoneString }
 						gmtOffset={ gmtOffset }
 						onChange={ onChange }
 						onClose={ onClose }
-						compositeActiveId={ compositeActiveId }
-						setCompositeActiveId={ setCompositeActiveId }
-						siteToday={ siteToday }
-						siteTodayStr={ siteTodayStr }
 						mobileLabelId={ mobileLabelId }
 						desktopLabelId={ desktopLabelId }
 					/>
 				) }
 			/>
 		</div>
+	);
+}
+
+function DateRangePickerInner( {
+	isSmall,
+	start,
+	end,
+	timezoneString,
+	gmtOffset,
+	onChange,
+	onClose,
+	mobileLabelId,
+	desktopLabelId,
+}: {
+	isSmall: boolean;
+	start: Date;
+	end: Date;
+	timezoneString?: string;
+	gmtOffset?: number;
+	onChange: ( next: { start: Date; end: Date } ) => void;
+	onClose: () => void;
+	mobileLabelId: string;
+	desktopLabelId: string;
+} ) {
+	const [ fromDraft, setFromDraft ] = useState< Date | undefined >( () => start );
+	const [ toDraft, setToDraft ] = useState< Date | undefined >( () => end );
+	const [ fromStr, setFromStr ] = useState( () => formatYmd( start, timezoneString, gmtOffset ) );
+	const [ toStr, setToStr ] = useState( () => formatYmd( end, timezoneString, gmtOffset ) );
+	// Tracks the keyboard-focused preset in the listbox (roving focus), not the selected preset.
+	const [ compositeActiveId, setCompositeActiveId ] = useState< string | null >( null );
+
+	const siteToday = useMemo(
+		() => parseYmdLocal( formatYmd( new Date(), timezoneString, gmtOffset ) )!,
+		[ timezoneString, gmtOffset ]
+	);
+	const siteTodayStr = useMemo(
+		() => formatYmd( siteToday, timezoneString, gmtOffset ),
+		[ siteToday, timezoneString, gmtOffset ]
+	);
+
+	return (
+		<DateRangeContent
+			isSmall={ isSmall }
+			fromDraft={ fromDraft }
+			toDraft={ toDraft }
+			fromStr={ fromStr }
+			toStr={ toStr }
+			setFromDraft={ setFromDraft }
+			setToDraft={ setToDraft }
+			setFromStr={ setFromStr }
+			setToStr={ setToStr }
+			timezoneString={ timezoneString }
+			gmtOffset={ gmtOffset }
+			onChange={ onChange }
+			onClose={ onClose }
+			compositeActiveId={ compositeActiveId }
+			setCompositeActiveId={ setCompositeActiveId }
+			siteToday={ siteToday }
+			siteTodayStr={ siteTodayStr }
+			mobileLabelId={ mobileLabelId }
+			desktopLabelId={ desktopLabelId }
+		/>
 	);
 }
