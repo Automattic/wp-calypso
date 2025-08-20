@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { isRegionInCcpaZone } from '@automattic/calypso-analytics';
+import { isRegionInCcpaZone } from 'calypso/dashboard/app/analytics/geo-privacy';
 import { mayWeTrackUserGpcInCcpaRegion } from '../utils';
 
 // Return a predictable value for whether the user is in a CCPA region.

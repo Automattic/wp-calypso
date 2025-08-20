@@ -1,6 +1,9 @@
 import cookie from 'cookie';
-import isCountryInGdprZone from './is-country-in-gdpr-zone';
-import isRegionInCcpaZone from './is-region-in-ccpa-zone';
+// eslint-disable-next-line no-restricted-imports
+import {
+	isCountryInGdprZone,
+	isRegionInCcpaZone,
+} from 'calypso/dashboard/app/analytics/geo-privacy';
 
 export const TRACKING_PREFS_COOKIE_V1 = 'sensitive_pixel_option';
 export const TRACKING_PREFS_COOKIE_V2 = 'sensitive_pixel_options';
