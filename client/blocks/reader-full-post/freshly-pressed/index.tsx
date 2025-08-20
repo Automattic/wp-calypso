@@ -85,11 +85,6 @@ export const FreshlyPressed = ( { blogId, postId }: Props ) => {
 							{ translate( 'Recommend this post for Freshly Pressed (Automatticians only)' ) }
 						</p>
 					) }
-					{ status === 'loading' && (
-						<p className="freshly-pressed-suggestion__status-text">
-							{ translate( 'Checking freshly pressed eligibility' ) }
-						</p>
-					) }
 				</div>
 
 				<div className="freshly-pressed-suggestion__icon-wrapper">
