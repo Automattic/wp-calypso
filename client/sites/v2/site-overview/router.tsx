@@ -1,14 +1,14 @@
 import { WIDE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { createLazyRoute, createRoute, createRouter } from '@tanstack/react-router';
-import * as appRouter from 'calypso/dashboard/app/router';
+import * as appRouterSites from 'calypso/dashboard/app/router/sites';
 import { rootRoute, dashboardSitesCompatibilityRoute, siteRoute } from '../router';
 import siteSettingsRouter from '../site-settings/router';
 import { getRouterOptions, createBrowserHistoryAndMemoryRouterSync } from '../utils/router';
 import type { WPBreakpoint } from '@wordpress/compose/build-types/hooks/use-viewport-match';
 
 const siteOverviewRoute = createRoute( {
-	...appRouter.siteOverviewRoute.options,
+	...appRouterSites.siteOverviewRoute.options,
 	getParentRoute: () => siteRoute,
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/overview' ).then( ( d ) =>
