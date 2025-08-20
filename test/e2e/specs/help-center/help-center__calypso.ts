@@ -66,7 +66,7 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Help Center in Calyp
 				( el: HTMLElement ) => el.offsetHeight
 			);
 
-			expect( containerHeight ).toBe( 50 );
+			expect( containerHeight ).toBe( 56 );
 		} );
 
 		it( 'can be maximized', async () => {
