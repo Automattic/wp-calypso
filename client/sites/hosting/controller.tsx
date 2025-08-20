@@ -22,7 +22,7 @@ export function hostingFeatures( context: PageJSContext, next: () => void ) {
 		const shouldShowActivationCallout = ! site.is_wpcom_atomic && hasSftpFeature;
 
 		let redirectUrl = context.query.redirect_to;
-		if ( redirectUrl ) {
+		if ( ! redirectUrl ) {
 			redirectUrl = hasSftpFeature ? `/sites/${ site.slug }/settings` : `/overview/${ site.slug }`;
 		}
 
