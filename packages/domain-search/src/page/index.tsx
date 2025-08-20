@@ -1,11 +1,10 @@
-import { __experimentalVStack as VStack } from '@wordpress/components';
 import clsx from 'clsx';
 import { useCallback, useState, useMemo, useLayoutEffect } from 'react';
-import { Cart } from '../components/cart';
-import { SearchBar } from '../components/search-bar';
-import { SearchForm } from '../components/search-form';
-import { SearchResults } from '../components/search-results';
+import { domainAvailabilityQuery } from '../queries/availability';
+import { domainSuggestionsQuery } from '../queries/suggestions';
 import { DEFAULT_CONTEXT_VALUE, DomainSearchContext } from './context';
+import { EmptyPage } from './empty';
+import { ResultsPage } from './results';
 import type { DomainSearchProps } from './types';
 
 import './style.scss';
@@ -34,6 +33,10 @@ export const DomainSearch = ( {
 				...DEFAULT_CONTEXT_VALUE.events,
 				...events,
 			},
+			queries: {
+				domainSuggestions: domainSuggestionsQuery,
+				domainAvailability: domainAvailabilityQuery,
+			},
 			cart,
 			isFullCartOpen,
 			closeFullCart,
@@ -55,17 +58,10 @@ export const DomainSearch = ( {
 
 	const getContent = () => {
 		if ( ! query ) {
-			return <SearchForm />;
+			return <EmptyPage />;
 		}
 
-		return (
-			<VStack spacing={ 8 }>
-				<SearchBar />
-				{ slots?.BeforeResults && <slots.BeforeResults /> }
-				<SearchResults />
-				<Cart />
-			</VStack>
-		);
+		return <ResultsPage />;
 	};
 
 	return (

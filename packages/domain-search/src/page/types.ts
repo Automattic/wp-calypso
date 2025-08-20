@@ -1,4 +1,5 @@
-import { DomainSuggestion } from '../components/search-results/types';
+import { domainAvailabilityQuery } from '../queries/availability';
+import type { DomainSuggestion, domainSuggestionsQuery } from '../queries/suggestions';
 import type { ComponentType } from 'react';
 
 export interface SelectedDomain {
@@ -40,4 +41,8 @@ export interface DomainSearchContextType
 	openFullCart: () => void;
 	query: string;
 	setQuery: ( query: string ) => void;
+	queries: {
+		domainSuggestions: typeof domainSuggestionsQuery;
+		domainAvailability: typeof domainAvailabilityQuery;
+	};
 }

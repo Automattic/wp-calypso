@@ -4,17 +4,16 @@ import {
 	DomainSuggestionErrorCTA,
 	DomainSuggestionPrimaryCTA,
 } from '../../ui';
-import { type DomainSuggestion } from '../search-results/types';
 
 export interface DomainSuggestionCTAProps {
-	suggestion: DomainSuggestion;
+	domainName: string;
 }
 
-export const DomainSuggestionCTA = ( { suggestion }: DomainSuggestionCTAProps ) => {
+export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) => {
 	const { cart, events } = useDomainSearch();
 	const isCartBusy = false;
 
-	const isDomainOnCart = cart.hasItem( suggestion.domain_name );
+	const isDomainOnCart = cart.hasItem( domainName );
 
 	if ( isDomainOnCart ) {
 		return <DomainSuggestionContinueCTA disabled={ isCartBusy } onClick={ events.onContinue } />;
