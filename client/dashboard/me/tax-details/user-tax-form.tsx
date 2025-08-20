@@ -202,7 +202,6 @@ export default function UserTaxForm() {
 				<HStack justify="flex-start">
 					<Button
 						__next40pxDefaultSize
-						className="vat-info__submit-button"
 						disabled={ isDisabled }
 						isBusy={ isUpdating }
 						type="submit"

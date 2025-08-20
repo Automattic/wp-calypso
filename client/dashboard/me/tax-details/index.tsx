@@ -66,7 +66,7 @@ export default function UserTaxInfoPage() {
 
 	if ( fetchError ) {
 		return (
-			<div className="vat-info">
+			<div>
 				<Card>
 					<CardBody>
 						{
@@ -106,7 +106,7 @@ export default function UserTaxInfoPage() {
 					<Card className="user-tax-info__sidebar">
 						<CardBody>
 							<h2>{ title }</h2>
-							<p className="vat-info__sidebar-paragraph">
+							<p>
 								{ translate(
 									/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST") or a generic fallback string of tax names */
 									'The %(taxName)s details saved on this page will be applied to all receipts in your account.',
