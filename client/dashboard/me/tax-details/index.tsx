@@ -51,7 +51,7 @@ export default function UserTaxInfoPage() {
 			setNavigateToRoute( '/odie' );
 			setShowHelpCenter( true );
 			await resetSupportInteraction();
-			reduxDispatch( recordTracksEvent( 'calypso_vat_details_support_click' ) );
+			recordTracksEvent( 'calypso_vat_details_support_click' );
 		},
 		[
 			reduxDispatch,
