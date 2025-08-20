@@ -1,5 +1,6 @@
-import { domainManagementEdit } from '@automattic/domains-table/src/utils/paths';
+import { domainManagementEdit, domainUseMyDomain } from '@automattic/domains-table/src/utils/paths';
 import { formatCurrency } from '@automattic/number-formatters';
+import { INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS } from '@automattic/urls';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useRouter, Link } from '@tanstack/react-router';
 import {
@@ -33,6 +34,7 @@ import {
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import { useLocale } from '../../../app/locale';
+import { domainsQuery } from '../../../app/queries/domains';
 import { purchaseQuery, userPurchaseSetAutoRenewQuery } from '../../../app/queries/me-purchases';
 import { siteBySlugQuery } from '../../../app/queries/site';
 import { siteDifmWebsiteContentQuery } from '../../../app/queries/site-do-it-for-me';
@@ -49,9 +51,11 @@ import {
 	AkismetUpgradesProductMap,
 	SubscriptionBillPeriod,
 	DomainProductSlugs,
+	useMyDomainInputMode,
 	WPCOM_DIFM_LITE,
 	OFFSITE_REDIRECT,
 } from '../../../data/constants';
+import { DomainTransferStatus } from '../../../data/domains';
 import { formatDate } from '../../../utils/datetime';
 import { getEmailManagementPath } from '../../../utils/email-paths';
 import {
@@ -845,6 +849,158 @@ function BBEPurchaseDescription( { purchase }: { purchase: Purchase } ) {
 	);
 }
 
+function DomainTransferInfo( { purchase }: { purchase: Purchase } ) {
+	const locale = useLocale();
+	const domains = useQuery( domainsQuery() ).data;
+	if ( purchase.product_slug !== DomainProductSlugs.TRANSFER_IN ) {
+		return null;
+	}
+	const domain = domains?.find( ( domain ) => domain.domain === purchase.meta );
+	if ( ! domain ) {
+		return null;
+	}
+
+	let transferEndDate = null;
+	if ( domain.transfer_start_date ) {
+		transferEndDate = new Date( domain.transfer_start_date );
+		transferEndDate.setDate( transferEndDate.getDate() + 7 ); // Add 7 days.
+		transferEndDate = transferEndDate.toISOString();
+	}
+
+	if ( domain.last_transfer_error && purchase.site_slug ) {
+		return (
+			<Text>
+				{ createInterpolateElement(
+					__(
+						'There was an error when initiating your domain transfer. Please <a>see the details or retry</a>.'
+					),
+					{
+						a: <a href={ domainManagementEdit( purchase.site_slug, domain.domain, null ) } />,
+					}
+				) }
+			</Text>
+		);
+	}
+
+	if (
+		domain.transfer_status === DomainTransferStatus.PENDING_START &&
+		purchase.site_slug &&
+		purchase.meta
+	) {
+		return (
+			<Text>
+				{ createInterpolateElement(
+					__( 'You need to <a>start the domain transfer</a> for your domain.' ),
+					{
+						a: (
+							<a
+								href={ domainUseMyDomain(
+									purchase.site_slug,
+									purchase.meta,
+									useMyDomainInputMode.startPendingTransfer
+								) }
+							/>
+						),
+					}
+				) }
+			</Text>
+		);
+	}
+
+	if ( domain.transfer_status === DomainTransferStatus.CANCELLED ) {
+		return (
+			<Text>
+				{ createInterpolateElement( __( 'Transfer failed. Learn the possible <ReasonsWhy />.' ), {
+					LearnMore: (
+						<ExternalLink
+							href={ INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS }
+							rel="noopener noreferrer"
+						>
+							{ __( 'reasons why' ) }
+						</ExternalLink>
+					),
+				} ) }
+			</Text>
+		);
+	}
+
+	if ( domain.transfer_status === DomainTransferStatus.PENDING_REGISTRY && transferEndDate ) {
+		return (
+			<Text>
+				{ createInterpolateElement(
+					__(
+						'The transfer should complete by <TransferFinishDate />. We are waiting for authorization from your current domain provider to proceed. <LearnMore />'
+					),
+					{
+						TransferFinishDate: (
+							<strong>
+								{ formatDate( new Date( transferEndDate ), locale, { dateStyle: 'long' } ) }
+							</strong>
+						),
+						LearnMore: (
+							<ExternalLink
+								href={ INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS }
+								rel="noopener noreferrer"
+							>
+								{ __( 'Learn more' ) }
+							</ExternalLink>
+						),
+					}
+				) }
+			</Text>
+		);
+	}
+
+	if ( domain.transfer_status === DomainTransferStatus.PENDING_REGISTRY ) {
+		return (
+			<Text>
+				{ createInterpolateElement(
+					__(
+						'We are waiting for authorization from your current domain provider to proceed. <LearnMore />'
+					),
+					{
+						LearnMore: (
+							<ExternalLink
+								href={ INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS }
+								rel="noopener noreferrer"
+							>
+								{ __( 'Learn more' ) }
+							</ExternalLink>
+						),
+					}
+				) }
+			</Text>
+		);
+	}
+
+	if ( transferEndDate ) {
+		return (
+			<Text>
+				{ createInterpolateElement(
+					__( 'The transfer should complete by <TransferFinishDate />. <LearnMore />' ),
+					{
+						TransferFinishDate: (
+							<strong>
+								{ formatDate( new Date( transferEndDate ), locale, { dateStyle: 'long' } ) }
+							</strong>
+						),
+						LearnMore: (
+							<ExternalLink
+								href={ INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS }
+								rel="noopener noreferrer"
+							>
+								{ __( 'Learn more' ) }
+							</ExternalLink>
+						),
+					}
+				) }
+			</Text>
+		);
+	}
+
+	return null;
+}
+
 function PurchaseSecondSubtitle( { purchase }: { purchase: Purchase } ) {
 	if ( purchase.is_domain ) {
 		if ( purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD ) {
@@ -875,7 +1031,6 @@ function PurchaseSecondSubtitle( { purchase }: { purchase: Purchase } ) {
 	}
 
 	if ( purchase.product_slug === DomainProductSlugs.TRANSFER_IN ) {
-		// FIXME: render domain transfer status (see resolveDomainStatus)
 		return (
 			<Text variant="muted">
 				{ __(
@@ -982,6 +1137,10 @@ export default function PurchaseSettings() {
 					/>
 					<PurchaseSubtitle purchase={ purchase } />
 					<PurchaseSecondSubtitle purchase={ purchase } />
+
+					{ purchase.product_slug === DomainProductSlugs.TRANSFER_IN && (
+						<DomainTransferInfo purchase={ purchase } />
+					) }
 					<ProductLink purchase={ purchase } />
 					<DomainRegistrationAgreement purchase={ purchase } />
 					{ ! purchase.partner_name && <PluginList purchase={ purchase } /> }

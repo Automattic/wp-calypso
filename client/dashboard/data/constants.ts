@@ -201,3 +201,11 @@ export const GoogleWorkspaceSlugs = {
 	GSUITE_BUSINESS_SLUG: 'gapps_unlimited',
 	GSUITE_EXTRA_LICENSE_SLUG: 'gapps_extra_license',
 } as const;
+
+export const useMyDomainInputMode = {
+	domainInput: 'domain-input' as const,
+	transferOrConnect: 'transfer-or-connect' as const,
+	ownershipVerification: 'ownership-verification' as const,
+	transferDomain: 'transfer-domain' as const,
+	startPendingTransfer: 'start-pending-transfer' as const,
+} as const;

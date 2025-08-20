@@ -168,7 +168,11 @@ export function domainMappingSetup(
 	return path;
 }
 
-export function domainUseMyDomain( siteName: string, domain: string, initialMode: string ) {
+export function domainUseMyDomain(
+	siteName: string,
+	domain: string,
+	initialMode: string | undefined
+) {
 	const path = `/domains/add/use-my-domain/${ siteName }`;
 	const queryArgs = [];
 	if ( domain ) {
