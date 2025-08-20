@@ -29,8 +29,10 @@ export default function DomainSecurity() {
 
 	const mutation = useMutation( provisionSslCertificateMutation( domainName ) );
 
-	const { message, showFailureReasons, showProvisionInstructions, failureReasons } =
-		useSslStatusMessage( sslDetails );
+	const { message, failureReasons } = useSslStatusMessage( sslDetails );
+
+	const showFailureReasons = !! sslDetails.failure_reasons && sslDetails.failure_reasons.length > 0;
+	const showProvisionInstructions = showFailureReasons;
 
 	const handleOnClick = ( e: React.FormEvent ) => {
 		e.preventDefault();
@@ -128,8 +130,8 @@ export default function DomainSecurity() {
 									) }
 								</Text>
 							) }
-							<HStack justify="flex-start">
-								{ shouldShowProvisionButton && (
+							{ shouldShowProvisionButton && (
+								<HStack justify="flex-start">
 									<Button
 										__next40pxDefaultSize
 										variant="primary"
@@ -139,8 +141,8 @@ export default function DomainSecurity() {
 									>
 										{ __( 'Provision certificate' ) }
 									</Button>
-								) }
-							</HStack>
+								</HStack>
+							) }
 						</VStack>
 					</VStack>
 				</CardBody>
