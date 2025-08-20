@@ -1,15 +1,17 @@
 import { useCanGoBack, useRouter } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
-import { close } from '@wordpress/icons';
+import { chevronLeft } from '@wordpress/icons';
 import { createPortal } from 'react-dom';
 
 import './style.scss';
 
 function Overlay( {
 	children,
+	backLabel,
 	fallbackCloseRoute,
 }: {
 	children: React.ReactNode;
+	backLabel: string;
 	fallbackCloseRoute: string;
 } ) {
 	const canGoBack = useCanGoBack();
@@ -19,7 +21,7 @@ function Overlay( {
 		<div className="dashboard-overlay">
 			<div className="dashboard-overlay__actions">
 				<Button
-					icon={ close }
+					icon={ chevronLeft }
 					onClick={ () => {
 						if ( canGoBack ) {
 							router.history.back();
@@ -30,7 +32,9 @@ function Overlay( {
 							} );
 						}
 					} }
-				/>
+				>
+					{ backLabel }
+				</Button>
 			</div>
 			<div className="dashboard-overlay__content">{ children }</div>
 		</div>,
