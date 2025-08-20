@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom';
 
 import './style.scss';
 
-function Overlay( {
+function FullScreenOverlay( {
 	children,
 	backLabel,
 	fallbackCloseRoute,
@@ -18,8 +18,8 @@ function Overlay( {
 	const router = useRouter();
 
 	return createPortal(
-		<div className="dashboard-overlay">
-			<div className="dashboard-overlay__actions">
+		<div className="dashboard-full-screen-overlay">
+			<div className="dashboard-full-screen-overlay__actions">
 				<Button
 					icon={ chevronLeft }
 					onClick={ () => {
@@ -36,10 +36,10 @@ function Overlay( {
 					{ backLabel }
 				</Button>
 			</div>
-			<div className="dashboard-overlay__content">{ children }</div>
+			<div className="dashboard-full-screen-overlay__content">{ children }</div>
 		</div>,
 		document.body
 	);
 }
 
-export default Overlay;
+export default FullScreenOverlay;
