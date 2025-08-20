@@ -4,13 +4,14 @@ import { __experimentalText as Text, TabPanel } from '@wordpress/components';
 import { DataViews, ViewTable } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { siteBySlugQuery } from '../../app/queries/site';
 import { siteLogsQuery } from '../../app/queries/site-logs';
 import { siteRoute } from '../../app/router/sites';
 import { Callout } from '../../components/callout';
 import { CalloutOverlay } from '../../components/callout-overlay';
 import DataViewsCard from '../../components/dataviews-card';
+import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
@@ -19,6 +20,7 @@ import { LogType, PHPLog, ServerLog, SiteLogsParams } from '../../data/site-logs
 import { hasHostingFeature } from '../../utils/site-features';
 import { useFields } from './dataviews/fields';
 import { toFilterParams } from './dataviews/views';
+import { LogsDownloader } from './downloader';
 import illustrationUrl from './logs-callout-illustration.svg';
 
 export function SiteLogsCallout( {
@@ -162,12 +164,22 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		[ isFetching ]
 	);
 
+	const [ notice, setNotice ] = useState< {
+		variant: 'success' | 'error';
+		message: string;
+	} | null >( null );
+
 	if ( ! site ) {
 		return;
 	}
 
 	return (
 		<PageLayout header={ <PageHeader title={ __( 'Logs' ) } /> }>
+			{ notice && (
+				<div style={ { marginBottom: 12 } }>
+					<Notice variant={ notice.variant }>{ notice.message }</Notice>
+				</div>
+			) }
 			<CalloutOverlay
 				showCallout={ ! hasHostingFeature( site, HostingFeatures.LOGS ) }
 				callout={ <SiteLogsCallout siteSlug={ site.slug } /> }
@@ -195,6 +207,20 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 									search={ false }
 									defaultLayouts={ { table: {} } }
 									onChangeView={ () => {} }
+									header={
+										<>
+											<LogsDownloader
+												siteId={ siteId }
+												siteSlug={ site.slug }
+												logType={ logType }
+												startSec={ startTime }
+												endSec={ endTime }
+												filter={ filter }
+												onSuccess={ ( message ) => setNotice( { variant: 'success', message } ) }
+												onError={ ( message ) => setNotice( { variant: 'error', message } ) }
+											/>
+										</>
+									}
 								/>
 							</DataViewsCard>
 						) }
