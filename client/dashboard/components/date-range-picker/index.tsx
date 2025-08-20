@@ -4,8 +4,9 @@ import { useMemo, useState, useEffect } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, calendar } from '@wordpress/icons';
 import { useLocale } from '../../app/locale';
-import { parseYmdLocal, formatLabel, formatYmd } from '../../utils/datetime';
+import { parseYmdLocal, formatYmd } from '../../utils/datetime';
 import { DateRangeContent } from './date-range-content';
+import { formatLabel } from './utils';
 import './style.scss';
 
 type DateRangePickerProps = {

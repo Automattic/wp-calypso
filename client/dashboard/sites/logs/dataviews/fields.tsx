@@ -53,12 +53,13 @@ export function useFields( {
 
 	let dateTimeLabel = __( 'Date & time' );
 
+	/* translators: %s is the site's timezone (e.g., "Europe/London") or UTC offset (e.g., "UTC+02:00") */
+	const dateTimeWithTz = __( 'Date & time (%s)' );
+
 	if ( timezoneString ) {
-		/* Translators: %s is the site's timezone string */
-		dateTimeLabel = sprintf( __( 'Date & time (%s)' ), timezoneString );
+		dateTimeLabel = sprintf( dateTimeWithTz, timezoneString );
 	} else if ( typeof gmtOffset === 'number' ) {
-		/* Translators: %s is the site's UTC offset */
-		dateTimeLabel = sprintf( __( 'Date & time (%s)' ), getUtcOffsetDisplay( gmtOffset ) );
+		dateTimeLabel = sprintf( dateTimeWithTz, getUtcOffsetDisplay( gmtOffset ) );
 	}
 
 	return useMemo( () => {

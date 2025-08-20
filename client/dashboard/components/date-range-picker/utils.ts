@@ -1,4 +1,6 @@
-import { __ } from '@wordpress/i18n';
+import { dateI18n } from '@wordpress/date';
+import { __, sprintf } from '@wordpress/i18n';
+import { formatDateWithOffset } from '../../utils/datetime';
 
 // Normalize/comparison helpers
 const startOfDay = ( date?: Date ) =>
@@ -148,4 +150,38 @@ export function getActivePresetId( from?: Date, to?: Date, baseDate?: Date ): Pr
 		}
 	}
 	return undefined;
+}
+
+// UI-specific: Date range label for the picker
+export function formatLabel(
+	start: Date,
+	end: Date,
+	locale: string,
+	timezoneString?: string,
+	gmtOffset?: number
+) {
+	if ( timezoneString ) {
+		return sprintf(
+			/* translators: %1$s: start date, %2$s: end date */
+			__( '%1$s to %2$s' ),
+			dateI18n( 'M j, Y', start, timezoneString ),
+			dateI18n( 'M j, Y', end, timezoneString )
+		);
+	}
+	if ( typeof gmtOffset === 'number' ) {
+		const left = formatDateWithOffset( start, gmtOffset, locale, { dateStyle: 'medium' } );
+		const right = formatDateWithOffset( end, gmtOffset, locale, { dateStyle: 'medium' } );
+		return sprintf(
+			/* translators: %1$s: start date, %2$s: end date */
+			__( '%1$s to %2$s' ),
+			left,
+			right
+		);
+	}
+	return sprintf(
+		/* translators: %1$s: start date, %2$s: end date */
+		__( '%1$s to %2$s' ),
+		dateI18n( 'M j, Y', start ),
+		dateI18n( 'M j, Y', end )
+	);
 }

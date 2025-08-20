@@ -1,5 +1,6 @@
 import { dateI18n } from '@wordpress/date';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import { parse, isValid, format } from 'date-fns';
 
 const HOUR_MS = 3_600_000;
 const YMD_REGEX = /^\d{4}-\d{2}-\d{2}$/;
@@ -244,98 +245,18 @@ export function getUtcOffsetDisplay( offsetHours: number ): string {
 }
 
 /**
- * Convert a date to the start of the local day.
- */
-function toStartOfDayLocal( date: Date ): Date {
-	return new Date( date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0 );
-}
-
-/**
- * Convert a date to the end of the local day.
- */
-function toEndOfDayLocal( date: Date ): Date {
-	return new Date( date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59, 999 );
-}
-
-/**
- * Convert a local date range to inclusive epoch-second boundaries (UTC).
- * Covers the full start and end calendar days.
- */
-export function buildTimeRangeInSeconds(
-	start: Date,
-	end: Date,
-	timezoneString?: string,
-	gmtOffset?: number
-): { startSec: number; endSec: number } {
-	if ( timezoneString ) {
-		const startYmd = dateI18n( 'Y-m-d', start, timezoneString );
-		const endYmd = dateI18n( 'Y-m-d', end, timezoneString );
-		const startSec = +dateI18n( 'U', `${ startYmd } 00:00:00`, timezoneString );
-		const endSec = +dateI18n( 'U', `${ endYmd } 23:59:59`, timezoneString );
-		if ( Number.isFinite( startSec ) && Number.isFinite( endSec ) ) {
-			return { startSec, endSec };
-		}
-	}
-	if ( typeof gmtOffset === 'number' ) {
-		const startLocal = toStartOfDayLocal( start ).getTime();
-		const endLocal = toEndOfDayLocal( end ).getTime();
-		const shiftMs = gmtOffset * HOUR_MS;
-		return {
-			startSec: Math.floor( ( startLocal - shiftMs ) / 1000 ),
-			endSec: Math.floor( ( endLocal - shiftMs ) / 1000 ),
-		};
-	}
-	// last-resort fallback: browser local
-	const startSec = Math.floor(
-		new Date( start.getFullYear(), start.getMonth(), start.getDate(), 0, 0, 0, 0 ).getTime() / 1000
-	);
-	const endSec = Math.floor(
-		new Date( end.getFullYear(), end.getMonth(), end.getDate(), 23, 59, 59, 999 ).getTime() / 1000
-	);
-	return { startSec, endSec };
-}
-
-/**
  * Parse a date string in the format "YYYY-MM-DD" (local time).
  */
 export function parseYmdLocal( value: string ): Date | null {
 	if ( ! YMD_REGEX.test( value ) ) {
 		return null;
 	}
-	const [ yearStr, monthStr, dayStr ] = value.split( '-' );
-	const year = +yearStr;
-	const month = +monthStr;
-	const day = +dayStr;
-
-	const date = new Date( year, month - 1, day );
-	return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day
-		? date
-		: null;
-}
-
-/**
- * Format a date range label.
- */
-export function formatLabel(
-	start: Date,
-	end: Date,
-	locale: string,
-	timezoneString?: string,
-	gmtOffset?: number
-) {
-	if ( timezoneString ) {
-		return `${ dateI18n( 'M j, Y', start, timezoneString ) } ${ __( 'to' ) } ${ dateI18n(
-			'M j, Y',
-			end,
-			timezoneString
-		) }`;
+	const parsed = parse( value, 'yyyy-MM-dd', new Date() );
+	if ( ! isValid( parsed ) ) {
+		return null;
 	}
-	if ( typeof gmtOffset === 'number' ) {
-		const left = formatDateWithOffset( start, gmtOffset, locale, { dateStyle: 'medium' } );
-		const right = formatDateWithOffset( end, gmtOffset, locale, { dateStyle: 'medium' } );
-		return `${ left } ${ __( 'to' ) } ${ right }`;
-	}
-	return `${ dateI18n( 'M j, Y', start ) } ${ __( 'to' ) } ${ dateI18n( 'M j, Y', end ) }`;
+	// Ensure strict match (reject overflows like 2023-02-31 -> 2023-03-03)
+	return format( parsed, 'yyyy-MM-dd' ) === value ? parsed : null;
 }
 
 /**

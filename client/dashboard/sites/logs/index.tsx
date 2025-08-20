@@ -18,11 +18,12 @@ import PageLayout from '../../components/page-layout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { HostingFeatures } from '../../data/constants';
 import { LogType, PHPLog, ServerLog, SiteLogsParams } from '../../data/site-logs';
-import { buildTimeRangeInSeconds, parseYmdLocal, formatYmd } from '../../utils/datetime';
+import { parseYmdLocal, formatYmd } from '../../utils/datetime';
 import { hasHostingFeature } from '../../utils/site-features';
 import { useFields } from './dataviews/fields';
 import { toFilterParams } from './dataviews/views';
 import illustrationUrl from './logs-callout-illustration.svg';
+import { buildTimeRangeInSeconds } from './utils';
 
 export function SiteLogsCallout( {
 	siteSlug,
@@ -74,8 +75,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
-	// @todo: We'll be able to remove the fallbacks once the temporary data (fields, views, actions) are removed and this component is cleaned up, as we'll return earlier if site doesn't exist.
-	const siteId = site?.ID ?? null;
+	const siteId = site.ID;
 
 	const { data } = useSuspenseQuery( {
 		...siteSettingsQuery( siteId ),

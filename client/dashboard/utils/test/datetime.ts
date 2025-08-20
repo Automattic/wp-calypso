@@ -1,11 +1,6 @@
 import { dateI18n } from '@wordpress/date';
-import {
-	parseYmdLocal,
-	buildTimeRangeInSeconds,
-	formatLabel,
-	formatDateWithOffset,
-	formatYmd,
-} from '../datetime';
+import { formatLabel } from '../../components/date-range-picker/utils';
+import { parseYmdLocal, formatDateWithOffset, formatYmd } from '../datetime';
 
 describe( 'datetime utils (site-time)', () => {
 	describe( 'parseYmdLocal', () => {
@@ -29,24 +24,6 @@ describe( 'datetime utils (site-time)', () => {
 		it( 'accepts leap-day only when valid', () => {
 			expect( parseYmdLocal( '2024-02-29' ) ).not.toBeNull();
 			expect( parseYmdLocal( '2025-02-29' ) ).toBeNull();
-		} );
-	} );
-
-	describe( 'buildTimeRangeInSeconds (site-time via timezone_string)', () => {
-		it( 'builds inclusive day bounds in site TZ (tz string)', () => {
-			const tz = 'Pacific/Auckland';
-			const start = new Date( 2025, 7, 13 );
-			const end = new Date( 2025, 7, 15 );
-
-			const { startSec, endSec } = buildTimeRangeInSeconds( start, end, tz );
-
-			const startYmd = dateI18n( 'Y-m-d', start, tz );
-			const endYmd = dateI18n( 'Y-m-d', end, tz );
-			const expectedStart = Number( dateI18n( 'U', `${ startYmd } 00:00:00`, tz ) );
-			const expectedEnd = Number( dateI18n( 'U', `${ endYmd } 23:59:59`, tz ) );
-
-			expect( startSec ).toBe( expectedStart );
-			expect( endSec ).toBe( expectedEnd );
 		} );
 	} );
 
