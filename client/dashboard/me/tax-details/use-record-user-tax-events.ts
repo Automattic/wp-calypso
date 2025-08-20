@@ -1,4 +1,3 @@
-import { useDispatch } from '@wordpress/data';
 import { useEffect, useRef } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import type { UpdateError, FetchError } from './use-user-tax-details';
@@ -12,7 +11,6 @@ export default function useRecordUserTaxEvents( {
 	fetchError?: FetchError | null;
 	isUpdateSuccessful?: boolean;
 } ) {
-	const reduxDispatch = useDispatch();
 	const lastFetchError = useRef< FetchError >();
 	const lastUpdateError = useRef< UpdateError >();
 	const { recordTracksEvent } = useAnalytics();
@@ -37,5 +35,5 @@ export default function useRecordUserTaxEvents( {
 			recordTracksEvent( 'calypso_vat_details_validation_success' );
 			return;
 		}
-	}, [ recordTracksEvent, fetchError, updateError, isUpdateSuccessful, reduxDispatch ] );
+	}, [ recordTracksEvent, fetchError, updateError, isUpdateSuccessful ] );
 }
