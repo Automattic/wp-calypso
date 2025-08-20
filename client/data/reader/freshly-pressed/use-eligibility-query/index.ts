@@ -78,4 +78,6 @@ interface Params {
  * @param params - The parameters for the query
  * @returns The query options for the eligibility query
  */
-export const useEligibilityQuery = ( params: Params ) => useQuery( getQueryOptions( params ) );
+export const useEligibilityQuery = ( params: Params ) => {
+	return useQuery( getQueryOptions( params ) );
+};

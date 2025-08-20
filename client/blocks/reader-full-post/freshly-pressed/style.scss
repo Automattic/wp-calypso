@@ -24,7 +24,11 @@
 	align-items: center;
 	gap: 4px;
 
-	@include break-mobile {
+	@include break-small {
+		right: 0;
+	}
+
+	@include break-large {
 		bottom: 50px;
 		right: 70px;
 	}
