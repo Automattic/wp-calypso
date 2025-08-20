@@ -7,17 +7,6 @@ import { domainsQuery } from '../queries/domains';
 import { queryClient } from '../query-client';
 import { rootRoute } from './root';
 
-export const domainsPurchaseRoute = createRoute( {
-	getParentRoute: () => rootRoute,
-	path: 'domains/purchase',
-} ).lazy( () =>
-	import( '../../domains/purchase' ).then( ( d ) =>
-		createLazyRoute( 'domains-purchase' )( {
-			component: d.default,
-		} )
-	)
-);
-
 // Standalone domains route - requires rootRoute
 export const domainsRoute = createRoute( {
 	getParentRoute: () => rootRoute,
@@ -26,6 +15,18 @@ export const domainsRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../domains' ).then( ( d ) =>
 		createLazyRoute( 'domains' )( {
+			component: d.default,
+		} )
+	)
+);
+
+// Standalone domains purchase route - requires rootRoute
+export const domainsPurchaseRoute = createRoute( {
+	getParentRoute: () => rootRoute,
+	path: 'domains/purchase',
+} ).lazy( () =>
+	import( '../../domains/purchase' ).then( ( d ) =>
+		createLazyRoute( 'domains-purchase' )( {
 			component: d.default,
 		} )
 	)
