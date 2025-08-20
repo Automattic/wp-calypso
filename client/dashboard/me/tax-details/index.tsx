@@ -1,4 +1,5 @@
 import { useResetSupportInteraction } from '@automattic/help-center/src/hooks/use-reset-support-interaction';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Card,
 	CardBody,
@@ -11,7 +12,7 @@ import { useCallback, useRef } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
 import { useTaxName } from '../../app/hooks/use-country-list';
-import { useGeoLocationQuery } from '../../app/queries/geolocation';
+import { geoLocationQuery } from '../../app/queries/geolocation';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -24,7 +25,7 @@ import type { FetchError } from './use-user-tax-details';
 export default function UserTaxInfoPage() {
 	const lastFetchError = useRef< FetchError >();
 	const { recordTracksEvent } = useAnalytics();
-	const { data: geoData } = useGeoLocationQuery();
+	const { data: geoData } = useSuspenseQuery( geoLocationQuery() );
 	const { fetchError, userTaxDetails } = useUserTaxDetails();
 	const taxName = useTaxName(
 		userTaxDetails.country ?? userTaxDetails.country ?? geoData?.country_short ?? 'GB'
