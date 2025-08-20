@@ -5,11 +5,12 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
-import { useDispatch as useDataStoreDispatch, useDispatch } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { useHelpCenter } from '../../app/help-center';
 import { useTaxName } from '../../app/hooks/use-country-list';
 import { useGeoLocationQuery } from '../../app/queries/geolocation';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -21,8 +22,6 @@ import useUserTaxDetails from './use-user-tax-details';
 import UserTaxForm from './user-tax-form';
 import './style.scss';
 
-const HELP_CENTER_STORE = 'automattic/help-center';
-
 export default function UserTaxInfoPage() {
 	const { recordTracksEvent } = useAnalytics();
 	const translate = useTranslate();
@@ -33,7 +32,7 @@ export default function UserTaxInfoPage() {
 	);
 	const resetSupportInteraction = useResetSupportInteraction();
 
-	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setShowHelpCenter, setNavigateToRoute } = useHelpCenter();
 
 	const reduxDispatch = useDispatch();
 
