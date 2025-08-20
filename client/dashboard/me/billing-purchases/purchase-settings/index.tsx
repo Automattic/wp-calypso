@@ -18,7 +18,8 @@ import {
 	ExternalLink,
 } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
-import { __, isRTL, sprintf } from '@wordpress/i18n';
+import { createInterpolateElement } from '@wordpress/element';
+import { __, _n, isRTL, sprintf } from '@wordpress/i18n';
 import {
 	moreVertical,
 	chevronLeft,
@@ -33,6 +34,7 @@ import { useAuth } from '../../../app/auth';
 import { useLocale } from '../../../app/locale';
 import { purchaseQuery, userPurchaseSetAutoRenewQuery } from '../../../app/queries/me-purchases';
 import { siteBySlugQuery } from '../../../app/queries/site';
+import { siteDifmWebsiteContentQuery } from '../../../app/queries/site-do-it-for-me';
 import { reinstallMarketplacePluginsQuery } from '../../../app/queries/site-marketplace';
 import { purchaseSettingsRoute } from '../../../app/router/me';
 import { ActionList } from '../../../components/action-list';
@@ -43,6 +45,8 @@ import {
 	ProductUpgradeMap,
 	AkismetUpgradesProductMap,
 	SubscriptionBillPeriod,
+	DomainProductSlugs,
+	WPCOM_DIFM_LITE,
 } from '../../../data/constants';
 import { formatDate } from '../../../utils/datetime';
 import {
@@ -59,6 +63,8 @@ import {
 	isJetpackTemporarySitePurchase,
 	isAkismetProduct,
 	isJetpackCrmProduct,
+	isTitanMail,
+	isGoogleWorkspace,
 } from '../../../utils/purchase';
 import { encodeProductForUrl } from '../../../utils/wpcom-checkout';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
@@ -686,6 +692,167 @@ function DomainRegistrationAgreement( { purchase }: { purchase: Purchase } ) {
 	);
 }
 
+function BBEPurchaseDescription( { purchase }: { purchase: Purchase } ) {
+	const { data: isSubmitted } = useQuery( {
+		...siteDifmWebsiteContentQuery( parseInt( purchase.blog_id ) ),
+		select: ( data ) => data.is_website_content_submitted,
+	} );
+	if ( purchase.product_slug !== WPCOM_DIFM_LITE ) {
+		return null;
+	}
+	if ( ! purchase.site_slug ) {
+		return null;
+	}
+	if ( purchase.price_tier_list.length === 0 || ! purchase.renewal_price_tier_usage_quantity ) {
+		return null;
+	}
+
+	const [ tier0 ] = purchase.price_tier_list;
+	if ( ! tier0.maximum_units ) {
+		return null;
+	}
+	const extraPageCount = purchase.renewal_price_tier_usage_quantity - tier0.maximum_units;
+
+	const BBESupportLink = (
+		<a
+			href={ `mailto:services+express@wordpress.com?subject=${ encodeURIComponent(
+				`I have a question about my project: ${ purchase.site_slug }`
+			) }` }
+		>
+			{ __( 'Contact us' ) }
+		</a>
+	);
+
+	return (
+		<div>
+			<div>
+				{ tier0.maximum_units === 1
+					? __( 'A professionally built single page website in 4 business days or less.' )
+					: sprintf(
+							// translators: numberOfIncludedPages is a number of pages
+							__(
+								'A professionally built %(numberOfIncludedPages)s-page website in 4 business days or less.'
+							),
+							{
+								numberOfIncludedPages: tier0.maximum_units,
+							}
+					  ) }{ ' ' }
+				{ extraPageCount > 0 &&
+					sprintf(
+						// translators: numberofPages is a number of pages
+						_n(
+							'This purchase includes %(numberOfPages)d extra page.',
+							'This purchase includes %(numberOfPages)d extra pages.',
+							extraPageCount ?? 0
+						),
+						{
+							numberOfPages: extraPageCount,
+						}
+					) }
+			</div>
+			<div>
+				{ isSubmitted
+					? createInterpolateElement(
+							// translators: ContactUs is a link to send an email to support
+							__( '<ContactUs /> with any questions or inquiries about your project.' ),
+							{
+								ContactUs: BBESupportLink,
+							}
+					  )
+					: createInterpolateElement(
+							// translators: ContactUs is a link to send an email to support and SubmitContent is a link to the signup flow for site creation
+							__(
+								'<SubmitContent /> for your website build or <ContactUs /> with any questions about your project.'
+							),
+							{
+								SubmitContent: (
+									<a
+										href={ `/start/site-content-collection/website-content?siteSlug=${ purchase.site_slug }` }
+									>
+										{ __( 'Submit content' ) }
+									</a>
+								),
+								ContactUs: BBESupportLink,
+							}
+					  ) }
+			</div>
+		</div>
+	);
+}
+
+function PurchaseSubtitle( { purchase }: { purchase: Purchase } ) {
+	if ( purchase.is_domain ) {
+		if ( purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD ) {
+			return __(
+				'Your stories, achievements, and memories preserved for generations to come. One payment. One hundred years of legacy.'
+			);
+		}
+
+		return (
+			<span>
+				{ createInterpolateElement(
+					// translators: SiteUrl is the URL of the site and Domain is the domain name of the site.
+					__(
+						"When used with a paid plan, your custom domain can replace your site's free address, <SiteUrl />, with <Domain />, making it easier to remember and easier to share."
+					),
+					{
+						SiteUrl: <strong>{ purchase.domain }</strong>,
+						Domain: <strong>{ purchase.meta }</strong>,
+					}
+				) }
+			</span>
+		);
+	}
+
+	if ( purchase.product_slug === DomainProductSlugs.TRANSFER_IN ) {
+		// FIXME: render domain transfer status (see resolveDomainStatus)
+		return __(
+			'Transfers an existing domain from another provider to WordPress.com, helping you manage your site and domain in one place.'
+		);
+	}
+
+	if ( isGoogleWorkspace( purchase ) || isTitanMail( purchase ) ) {
+		const description = isTitanMail( purchase )
+			? __(
+					'Integrated email solution with powerful features. Manage your email and more on any device.'
+			  )
+			: __(
+					'Business email with Gmail. Includes other collaboration and productivity tools from Google.'
+			  );
+
+		if ( purchase.renewal_price_tier_usage_quantity ) {
+			return (
+				<span>
+					{ description }{ ' ' }
+					{ sprintf(
+						// translators: numberOfMailboxes is a number and domain is a domain name
+						_n(
+							'This purchase is for %(numberOfMailboxes)d mailbox for the domain %(domain)s.',
+							'This purchase is for %(numberOfMailboxes)d mailboxes for the domain %(domain)s.',
+							purchase.renewal_price_tier_usage_quantity
+						),
+						{
+							numberOfMailboxes: purchase.renewal_price_tier_usage_quantity,
+							domain: purchase.meta,
+						}
+					) }
+				</span>
+			);
+		}
+		return description;
+	}
+
+	if ( purchase.product_slug === WPCOM_DIFM_LITE ) {
+		return <BBEPurchaseDescription purchase={ purchase } />;
+	}
+
+	const subtitle = getSubtitleForDisplay( purchase );
+	if ( ! subtitle ) {
+		return null;
+	}
+	return <Text variant="muted">{ subtitle }</Text>;
+}
+
 export default function PurchaseSettings() {
 	const { user } = useAuth();
 	const params = purchaseSettingsRoute.useParams();
@@ -704,7 +871,6 @@ export default function PurchaseSettings() {
 		return null;
 	}
 	const upgradeUrl = getUpgradeUrl( purchase );
-	const subtitle = getSubtitleForDisplay( purchase );
 	const willRenew = Boolean( purchase.renew_date && ! isExpiring( purchase ) );
 	const expiryDateTitle = ( () => {
 		if ( purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD ) {
@@ -717,7 +883,6 @@ export default function PurchaseSettings() {
 	} )();
 
 	// FIXME: render pluginList (see renderPluginLabel and getPluginsForSite)
-	// FIXME: render DIFM content (BBEPurchaseDescription)
 	// FIXME: render ProductLink for plan features, domain management, email management, or theme details
 
 	return (
@@ -741,7 +906,7 @@ export default function PurchaseSettings() {
 							)
 						}
 					/>
-					{ subtitle && <Text variant="muted">{ subtitle }</Text> }
+					<PurchaseSubtitle purchase={ purchase } />
 					<DomainRegistrationAgreement purchase={ purchase } />
 				</VStack>
 			}

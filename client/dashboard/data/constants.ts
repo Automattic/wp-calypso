@@ -186,3 +186,16 @@ export const DomainProductSlugs = {
 	DOTCOM_DOMAIN_REGISTRATION: 'domain_reg',
 	DOMAIN_MOVE_INTERNAL: 'domain_move_internal',
 } as const;
+
+export const TitanMailSlugs = {
+	TITAN_MAIL_MONTHLY_SLUG: 'wp_titan_mail_monthly',
+	TITAN_MAIL_YEARLY_SLUG: 'wp_titan_mail_yearly',
+} as const;
+
+export const GoogleWorkspaceSlugs = {
+	GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY: 'wp_google_workspace_business_starter_monthly',
+	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY: 'wp_google_workspace_business_starter_yearly',
+	GSUITE_BASIC_SLUG: 'gapps',
+	GSUITE_BUSINESS_SLUG: 'gapps_unlimited',
+	GSUITE_EXTRA_LICENSE_SLUG: 'gapps_extra_license',
+} as const;

@@ -1,6 +1,11 @@
 import { formatNumber } from '@automattic/number-formatters';
 import { __, sprintf } from '@wordpress/i18n';
-import { SubscriptionBillPeriod, AkismetPlans } from '../data/constants';
+import {
+	SubscriptionBillPeriod,
+	AkismetPlans,
+	TitanMailSlugs,
+	GoogleWorkspaceSlugs,
+} from '../data/constants';
 import { isWithinLast, isWithinNext, getDateFromCreditCardExpiry } from './datetime';
 import type { Purchase } from '../data/purchase';
 
@@ -331,4 +336,12 @@ export function isJetpackCrmProduct( keyOrSlug: string ): boolean {
 		keyOrSlug.startsWith( 'jetpack-crm' ) ||
 		keyOrSlug.startsWith( 'jetpack_crm' )
 	);
+}
+
+export function isTitanMail( purchase: Purchase ): boolean {
+	return ( Object.values( TitanMailSlugs ) as string[] ).includes( purchase.product_slug );
+}
+
+export function isGoogleWorkspace( purchase: Purchase ): boolean {
+	return ( Object.values( GoogleWorkspaceSlugs ) as string[] ).includes( purchase.product_slug );
 }
