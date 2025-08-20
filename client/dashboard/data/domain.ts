@@ -10,7 +10,6 @@ export interface Domain extends DomainSummary {
 	is_subdomain: boolean;
 	is_root_domain_registered_with_automattic: boolean;
 	subdomain_part: string;
-	name: string;
 }
 
 export function fetchDomain( domainName: string ): Promise< Domain > {
