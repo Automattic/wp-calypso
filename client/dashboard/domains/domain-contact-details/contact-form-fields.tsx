@@ -7,7 +7,7 @@ import {
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { type DataFormControlProps, Field } from '@wordpress/dataviews';
-import { createInterpolateElement } from '@wordpress/element';
+import { createInterpolateElement, useEffect } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import InlineSupportLink from '../../components/inline-support-link';
 import type { StatesListItem } from '../../data/domain-supported-countries';
@@ -21,6 +21,16 @@ const createStateFieldEdit = ( statesList: StatesListItem[] | undefined ) => {
 		hideLabelFromVision,
 	}: DataFormControlProps< DomainContactDetails > ) => {
 		const { id, getValue } = field;
+		const currentValue = getValue?.( { item: data } );
+
+		// If the item data is not in the statesList, set the state to the first option
+		useEffect( () => {
+			if ( statesList && statesList.length > 0 ) {
+				if ( ! statesList.some( ( state ) => state.code === currentValue ) ) {
+					onChange( { [ id ]: statesList[ 0 ]?.code } );
+				}
+			}
+		}, [ currentValue, onChange, id ] );
 
 		if ( ! statesList || statesList.length === 0 ) {
 			return (
@@ -28,15 +38,10 @@ const createStateFieldEdit = ( statesList: StatesListItem[] | undefined ) => {
 					__next40pxDefaultSize
 					label={ hideLabelFromVision ? '' : __( 'State' ) }
 					placeholder={ __( 'State' ) }
-					value={ getValue?.( { item: data } ) }
+					value={ currentValue }
 					onChange={ ( value ) => onChange( { [ id ]: value } ) }
 				/>
 			);
-		}
-
-		// If the item data is not in the statesList, set the state to the first option
-		if ( ! statesList?.some( ( state ) => state.code === getValue?.( { item: data } ) ) ) {
-			onChange( { [ id ]: statesList[ 0 ]?.code } );
 		}
 
 		return (
@@ -44,7 +49,7 @@ const createStateFieldEdit = ( statesList: StatesListItem[] | undefined ) => {
 				__next40pxDefaultSize
 				__nextHasNoMarginBottom
 				label={ hideLabelFromVision ? '' : __( 'State' ) }
-				value={ getValue?.( { item: data } ) }
+				value={ currentValue }
 				options={
 					statesList.map( ( state ) => ( {
 						label: state.name,
