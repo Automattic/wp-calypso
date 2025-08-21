@@ -59,7 +59,7 @@ function SiteBackupRestoreProgress( {
 			<Spacer marginTop={ 12 }>
 				<Notice variant="info" title={ __( 'Check your email' ) }>
 					{ __(
-						"Don't want to wait? For your convenience, we'll email you when your site has been fully restored."
+						'Don’t want to wait? For your convenience, we’ll email you when your site has been fully restored.'
 					) }
 				</Notice>
 			</Spacer>
