@@ -45,3 +45,5 @@ export type FormFieldsConfig = {
 };
 
 export type ReferHostingType = 'enterprise' | 'premium';
+
+export type ReferralDestinationBU = 'VIP' | 'Pressable';

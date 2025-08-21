@@ -3,7 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
 import { CAPTURE_URL_RGX } from 'calypso/blocks/import/util';
 import useReferHostingMutation from './use-refer-hosting-mutation';
-import type { ReferHostingFormData, FormFieldsConfig } from '../types';
+import type { ReferHostingFormData, FormFieldsConfig, ReferralDestinationBU } from '../types';
 
 const DEFAULT_FORM_DATA: ReferHostingFormData = {
 	companyName: '',
@@ -24,7 +24,7 @@ const DEFAULT_FORM_DATA: ReferHostingFormData = {
 
 export default function useReferHostingForm(
 	fieldsConfig: FormFieldsConfig = {},
-	apiEndpoint: string
+	type: ReferralDestinationBU
 ) {
 	const translate = useTranslate();
 
@@ -34,7 +34,7 @@ export default function useReferHostingForm(
 
 	const [ validationError, setValidationError ] = useState< Record< string, string > >( {} );
 
-	const { mutate: submit, isPending } = useReferHostingMutation( apiEndpoint );
+	const { mutate: submit, isPending } = useReferHostingMutation( type );
 
 	const updateValidationError = useCallback(
 		( newState: Record< string, string > ) => {

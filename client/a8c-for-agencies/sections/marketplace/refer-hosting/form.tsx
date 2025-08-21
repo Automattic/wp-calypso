@@ -118,7 +118,7 @@ export default function ReferHostingForm( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { formTitle, successTitle, ctaText, companyTitle, contactTitle, events, fields, api } =
+	const { formTitle, successTitle, ctaText, companyTitle, contactTitle, events, fields, type } =
 		config;
 
 	const { countryOptions } = useCountriesAndStates();
@@ -135,7 +135,7 @@ export default function ReferHostingForm( {
 		submit,
 		isPending,
 		validate,
-	} = useReferHostingForm( fields, api.endpoint );
+	} = useReferHostingForm( fields, type );
 
 	const [ isSuccess, setIsSuccess ] = useState( false );
 

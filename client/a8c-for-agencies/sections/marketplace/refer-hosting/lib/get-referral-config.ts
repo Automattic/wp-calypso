@@ -1,4 +1,4 @@
-import type { ReferHostingType } from '../types';
+import type { ReferHostingType, ReferralDestinationBU } from '../types';
 
 export const getReferralConfig = (
 	translate: ( key: string, options?: unknown ) => string,
@@ -46,10 +46,8 @@ export const getReferralConfig = (
 			enabled: type === 'enterprise',
 		},
 	},
-	api: {
-		endpoint: {
-			enterprise: '/agency/vip/partner-opportunity',
-			premium: '/agency/pressable/premium-plan-referral',
-		}[ type ],
-	},
+	type: {
+		enterprise: 'VIP',
+		premium: 'Pressable',
+	}[ type ] as ReferralDestinationBU,
 } );
