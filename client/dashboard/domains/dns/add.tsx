@@ -51,6 +51,7 @@ export default function DomainAddDNS() {
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Add a new DNS record' ) } /> }>
 			<DNSRecordForm
+				domainName={ domainName }
 				isBusy={ mutation.isPending }
 				submitButtonText={ __( 'Add DNS record' ) }
 				onSubmit={ handleSubmit }

@@ -15,6 +15,8 @@ export type DnsRecordTypeFormData = {
 };
 
 export type DnsRecordFormData = {
+	type: DnsRecordType;
+	domain: string;
 	name: string;
 	data: string;
 	ttl: number;
