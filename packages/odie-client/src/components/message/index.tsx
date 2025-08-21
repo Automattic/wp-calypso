@@ -3,7 +3,6 @@
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import ReactDOM from 'react-dom';
-import { HumanAvatar, WapuuAvatar } from '../../assets';
 import { useOdieAssistantContext } from '../../context';
 import { MessageContent } from './message-content';
 import type { CurrentUser, Message } from '../../types';
@@ -23,16 +22,6 @@ export type MessageIndicators = {
 	isLastFeedbackMessage: boolean;
 	isLastErrorMessage: boolean;
 	isLastMessage: boolean;
-};
-
-const MessageAvatarHeader = ( { message }: { message: Message } ) => {
-	return message.role === 'bot' ? (
-		<WapuuAvatar />
-	) : (
-		message.role === 'business' && (
-			<HumanAvatar title={ __( 'User Avatar', __i18n_text_domain__ ) } />
-		)
-	);
 };
 
 const ChatMessage = ( {
@@ -61,13 +50,16 @@ const ChatMessage = ( {
 	}
 
 	const messageHeader = () => {
-		//feedback messages don't need header
-		if ( message.type !== 'form' ) {
-			return (
-				<div className={ `message-header ${ isBot ? 'bot' : 'business' }` }>
-					<MessageAvatarHeader message={ message } />
-				</div>
-			);
+		// Only business messages have a header.
+		if ( message.type !== 'form' && message.role === 'business' ) {
+			if ( message.role === 'business' ) {
+				return (
+					<div className={ `message-header ${ isBot ? 'bot' : 'business' }` }>
+						{ __( 'Happiness engineer', __i18n_text_domain__ ) }
+					</div>
+				);
+			}
+			return null;
 		}
 	};
 

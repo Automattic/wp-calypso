@@ -1,7 +1,6 @@
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { useResetSupportInteraction } from '@automattic/help-center/src/hooks/use-reset-support-interaction';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
-import { getShortDateString } from '@automattic/i18n-utils';
 import { Spinner } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import clx from 'classnames';
@@ -26,15 +25,17 @@ import useViewMostRecentOpenConversationNotice from '../notices/use-view-most-re
 import { JumpToRecent } from './jump-to-recent';
 import { ThinkingPlaceholder } from './thinking-placeholder';
 import ChatMessage from '.';
-import type { Chat, CurrentUser } from '../../types';
+import type { CurrentUser } from '../../types';
 
-const ChatDate = ( { chat }: { chat: Chat } ) => {
-	// chat.messages[ 1 ] contains the first user interaction, therefore the date, otherwise the current date.
-	const chatDate =
-		chat.messages.length > 1 ? chat.messages[ 1 ]?.created_at || Date.now() : Date.now();
-	const currentDate = getShortDateString( chatDate as number );
-	return <div className="odie-chat__date">{ currentDate }</div>;
-};
+// Keeping for now until Filippo decides to what to do with the date.
+// import { getShortDateString } from '@automattic/i18n-utils';
+// const ChatDate = ( { chat }: { chat: Chat } ) => {
+// 	// chat.messages[ 1 ] contains the first user interaction, therefore the date, otherwise the current date.
+// 	const chatDate =
+// 		chat.messages.length > 1 ? chat.messages[ 1 ]?.created_at || Date.now() : Date.now();
+// 	const currentDate = getShortDateString( chatDate as number );
+// 	return <div className="odie-chat__date">{ currentDate }</div>;
+// };
 
 interface ChatMessagesProps {
 	currentUser: CurrentUser;
@@ -175,7 +176,6 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 					</div>
 				) ) }
 			</div>
-			<ChatDate chat={ chat } />
 			<>
 				<div
 					className={ clx( 'chatbox-loading-chat__spinner', {

@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { isCSATMessage, zendeskMessageConverter } from '../../utils';
 import ChatWithSupportLabel from '../chat-with-support';
 import { FeedbackForm } from './feedback-form';
-import { IntroductionMessage } from './introduction-message';
+import { IntroductionMessage } from './introduction-message/introduction-message';
 import MarkdownOrChildren from './mardown-or-children';
 import { UserMessage } from './user-message';
 import type { ZendeskMessage, Message } from '../../types';
@@ -94,11 +94,13 @@ export const MessageContent = ( {
 
 			{ displayChatWithSupportLabel && (
 				<ChatWithSupportLabel
-					labelText={ __( 'Chat with support started', __i18n_text_domain__ ) }
+					labelText={ __( 'Chat with support team started', __i18n_text_domain__ ) }
 				/>
 			) }
 			{ displayChatWithSupportEndedLabel && (
-				<ChatWithSupportLabel labelText={ __( 'Chat with support ended', __i18n_text_domain__ ) } />
+				<ChatWithSupportLabel
+					labelText={ __( 'Chat with support team ended', __i18n_text_domain__ ) }
+				/>
 			) }
 		</>
 	);
