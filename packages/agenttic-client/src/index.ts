@@ -92,3 +92,6 @@ export type {
 // Message actions
 export { createFeedbackActions, useMessageActions } from './message-actions';
 export type { FeedbackActionsManager } from './message-actions';
+
+// Auth providers (optional utilities)
+export { jetpackAuthProvider } from './auth/jetpack';
