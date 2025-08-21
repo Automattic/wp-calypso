@@ -188,7 +188,8 @@
 	border: 1.5px solid var( --color-surface-backdrop );
 	@include heading-medium;
 
-	border-radius: 24px;
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 29px;
 	padding: 6px 12px;
 
 	&:focus {

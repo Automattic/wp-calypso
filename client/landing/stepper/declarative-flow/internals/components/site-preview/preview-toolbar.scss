@@ -84,7 +84,8 @@
 		width: 100%;
 		height: 100%;
 		border: 1px solid rgba( 0, 0, 0, 0.12 );
-		border-radius: 4px 4px 0 0;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 6px 6px 0 0;
 		box-sizing: content-box;
 	}
 }

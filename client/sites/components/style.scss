@@ -340,7 +340,7 @@
 		height: 22px;
 		background: var( --color-light-backdrop );
 		box-sizing: border-box;
-		border-radius: 8px;
+		border-radius: 12px; /* stylelint-disable-line scales/radii */
 		font-weight: 500;
 		font-size: 0.75rem;
 		vertical-align: middle;

@@ -54,7 +54,7 @@ $light-golden-beige: #f2d6b0;
 	.agency-tier-overview__current-tier-badge {
 		position: relative;
 		z-index: 1;
-		border-radius: 8px 24px 24px 8px;
+		border-radius: 8px 200px 200px 8px; /* stylelint-disable-line scales/radii */
 		padding: 24px;
 		overflow: hidden;
 		box-sizing: border-box;

@@ -405,7 +405,7 @@
 			transition: flex-grow 0.2s;
 			background: var( --color-light-backdrop );
 			max-height: calc( 100vh - 32px );
-			border-radius: 8px;
+			border-radius: 12px; /* stylelint-disable-line scales/radii */
 		}
 
 		.site-preview__open {

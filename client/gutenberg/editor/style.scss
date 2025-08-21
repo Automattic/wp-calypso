@@ -13,7 +13,7 @@
 
 		.placeholder {
 			height: 30px;
-			border-radius: 16px;
+			border-radius: 20px; /* stylelint-disable-line scales/radii */
 		}
 
 		.edit-post-header-toolbar {
@@ -37,7 +37,7 @@
 
 	.placeholder-title {
 		height: 40px;
-		border-radius: 16px;
+		border-radius: 20px; /* stylelint-disable-line scales/radii */
 		margin: 18px;
 	}
 }

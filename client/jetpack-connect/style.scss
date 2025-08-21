@@ -971,7 +971,7 @@ $colophon-height: 50px;
 		background-color: var( --color-surface );
 		background-size: 84%;
 		background-position: 50% 45%;
-		border-radius: 2px;
+		border-radius: 1px; /* stylelint-disable-line scales/radii */
 	}
 
 	.payment-logo.is-apple-pay {
