@@ -38,6 +38,7 @@ export interface DomainSummary {
 	expired: boolean;
 	expiry: string | false;
 	has_registration: boolean;
+	has_wpcom_nameservers: boolean;
 	is_dnssec_enabled: boolean;
 	is_dnssec_supported: boolean;
 	is_eligible_for_inbound_transfer: boolean;
