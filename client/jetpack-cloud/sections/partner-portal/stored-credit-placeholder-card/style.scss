@@ -4,15 +4,17 @@
 
 .store-credit-placeholder-card-content {
 	min-height: 220px;
-	border-radius: 16px;	margin-block-end: 16px;
+	border-radius: 16px;
+	margin-block-end: 16px;
 }
 
 .store-credit-placeholder-card-footer {
 	min-height: 44px;
-	border-radius: 8px;}
+	border-radius: 8px;
+}
 
 .store-credit-placeholder-card-content,
 .store-credit-placeholder-card-footer {
 	animation: loading-fade 1.6s ease-in-out infinite;
-	background: var(--color-neutral-10);
+	background: var( --color-neutral-10 );
 }

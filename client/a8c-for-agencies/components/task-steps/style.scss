@@ -1,6 +1,6 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
 
 .task-steps {
 	a {
@@ -39,7 +39,7 @@
 
 .task-steps__subheading {
 	@include body-large;
-	color: var(--color-accent-60);
+	color: var( --color-accent-60 );
 }
 
 .task-step {
@@ -56,7 +56,7 @@
 		flex: unset;
 	}
 
-	&.card.foldable-card.is-expanded  {
+	&.card.foldable-card.is-expanded {
 		margin: 0 0 16px 0;
 
 		.foldable-card__content {
@@ -84,7 +84,7 @@
 	}
 }
 
-.task-step__header{
+.task-step__header {
 	display: flex;
 	align-items: center;
 	gap: 24px;
@@ -117,13 +117,12 @@
 
 .task-step__count {
 	@extend .task-step__icon;
-	border: 1px solid var(--color-accent-5);
+	border: 1px solid var( --color-accent-5 );
 }
 
 .task-step__completed {
 	@extend .task-step__icon;
-	background-color: var(--color-primary);
-	border: 1px solid var(--color-primary);
-	fill: var(--color-text-white);
+	background-color: var( --color-primary );
+	border: 1px solid var( --color-primary );
+	fill: var( --color-text-white );
 }
-

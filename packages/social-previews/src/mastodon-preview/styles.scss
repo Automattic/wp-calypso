@@ -1,5 +1,5 @@
-@import "./variables";
-@import "../shared";
+@import './variables';
+@import '../shared';
 
 .mastodon-preview__section {
 	max-width: 100%;
@@ -42,10 +42,9 @@
 }
 
 .mastodon-preview__media {
-
 	margin-top: 8px;
 	min-height: 64px;
-		border-radius: 8px;
+	border-radius: 8px;
 
 	&.as-grid {
 		display: grid;
@@ -58,7 +57,7 @@
 	&-item {
 		display: flex;
 		border: 0;
-				border-radius: 8px;
+		border-radius: 8px;
 		overflow: hidden;
 
 		img,
@@ -67,5 +66,4 @@
 			object-fit: cover;
 		}
 	}
-
 }

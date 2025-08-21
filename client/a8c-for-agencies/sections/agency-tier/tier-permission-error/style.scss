@@ -1,6 +1,6 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
 
 .agency-tier-permission-error__layout {
 	.hosting-dashboard-layout__container {
@@ -18,7 +18,7 @@
 	display: flex;
 	flex-direction: column;
 	max-width: 750px;
-	background-color: var(--color-neutral-0);
+	background-color: var( --color-neutral-0 );
 	border-radius: 8px;
 	@include break-large {
 		flex-direction: row;
@@ -28,7 +28,6 @@
 	@include break-wide {
 		height: unset;
 	}
-
 
 	.agency-tier-permission-error__content-image {
 		display: none;
@@ -45,7 +44,8 @@
 		}
 
 		img {
-			border-radius: 8px 0 0 8px;		}
+			border-radius: 8px 0 0 8px;
+		}
 	}
 
 	.agency-tier-permission-error__content-text {
@@ -54,7 +54,7 @@
 		gap: 16px;
 		padding: 72px 32px 48px;
 		margin: 8px;
-		background-color: var(--color-text-white);
+		background-color: var( --color-text-white );
 		border-radius: 8px;
 		@include break-large {
 			margin-inline-start: 0;

@@ -300,7 +300,8 @@
 			transition: flex-grow 0.2s;
 			background: var( --color-light-backdrop );
 			max-height: calc( 100vh - 32px - var( --masterbar-height ) );
-			border-radius: 8px;			@media ( max-width: $break-small ) {
+			border-radius: 8px;
+			@media ( max-width: $break-small ) {
 				max-height: calc( 100vh - var( --masterbar-height ) );
 			}
 			.preview-pane__navigation {
@@ -380,7 +381,7 @@ body.is-section-plugins .hosting-dashboard-layout,
 	}
 	.dataviews-wrapper {
 		margin: auto;
-				border-radius: 8px;
+		border-radius: 8px;
 
 		.dataviews-view-table {
 			.dataviews-view-table__row {

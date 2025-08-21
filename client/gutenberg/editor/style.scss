@@ -1,10 +1,11 @@
-@import "@wordpress/edit-post/build-style/style.css";
+@import '@wordpress/edit-post/build-style/style.css';
 
 .editor__placeholder {
 	.placeholder {
 		@include placeholder();
 		height: 16px;
-		border-radius: 8px;	}
+		border-radius: 8px;
+	}
 
 	.edit-post-header {
 		display: flex;
@@ -12,7 +13,8 @@
 
 		.placeholder {
 			height: 30px;
-			border-radius: 16px;		}
+			border-radius: 16px;
+		}
 
 		.edit-post-header-toolbar {
 			flex-grow: 1;
@@ -35,6 +37,7 @@
 
 	.placeholder-title {
 		height: 40px;
-		border-radius: 16px;		margin: 18px;
+		border-radius: 16px;
+		margin: 18px;
 	}
 }
