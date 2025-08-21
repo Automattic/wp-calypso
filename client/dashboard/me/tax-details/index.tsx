@@ -11,11 +11,12 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useCallback, useRef } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
-import { useTaxName } from '../../app/hooks/use-country-list';
+import useCountryList from '../../app/hooks/use-country-list';
 import { geoLocationQuery } from '../../app/queries/geolocation';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { getTaxName } from '../../utils/tax';
 import { localizeUrl } from './localize-url';
 import useUserTaxDetails from './use-user-tax-details';
 import UserTaxForm from './user-tax-form';
@@ -23,11 +24,13 @@ import './style.scss';
 import type { FetchError } from './use-user-tax-details';
 
 export default function UserTaxInfoPage() {
+	const countryList = useCountryList();
 	const lastFetchError = useRef< FetchError >();
 	const { recordTracksEvent } = useAnalytics();
 	const { data: geoData } = useSuspenseQuery( geoLocationQuery() );
 	const { fetchError, userTaxDetails } = useUserTaxDetails();
-	const taxName = useTaxName(
+	const taxName = getTaxName(
+		countryList,
 		userTaxDetails.country ?? userTaxDetails.country ?? geoData?.country_short ?? 'GB'
 	);
 	const resetSupportInteraction = useResetSupportInteraction();

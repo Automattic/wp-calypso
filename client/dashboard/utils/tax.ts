@@ -1,6 +1,4 @@
 import { __ } from '@wordpress/i18n';
-import { useMemo } from 'react';
-import useCountryList from '../app/hooks/use-country-list';
 import type { CountryListItem, CountryListItemWithVat } from '../data/types';
 
 interface CountryCodeOption {
@@ -19,24 +17,27 @@ function getUniqueCountries< C extends CountryListItem >( countries: C[] ): C[] 
 	return unique;
 }
 
-export function getDataFormCountryCodes(): CountryCodeOption[] {
-	const countries = useCountryList();
+export function getDataFormCountryCodes( countries: CountryListItem[] ): CountryCodeOption[] {
 	const isVatSupported = ( country: CountryListItem ): country is CountryListItemWithVat =>
 		country.vat_supported;
 
-	const countryCodes = useMemo( () => {
-		const vatCountries = getUniqueCountries( countries.filter( isVatSupported ) );
-		const codes = vatCountries.map( ( country ) =>
-			country.tax_country_codes.map( ( countryCode: string ) => {
-				const countryName = countryCode === 'XI' ? __( 'Northern Ireland' ) : country.name;
-				return {
-					label: `${ countryCode } - ${ countryName }`,
-					value: countryCode,
-				};
-			} )
-		);
-		return codes.flat();
-	}, [ countries, __ ] );
+	const vatCountries = getUniqueCountries( countries.filter( isVatSupported ) );
+	const codes = vatCountries.map( ( country ) =>
+		country.tax_country_codes.map( ( countryCode: string ) => {
+			const countryName = countryCode === 'XI' ? __( 'Northern Ireland' ) : country.name;
+			return {
+				label: `${ countryCode } - ${ countryName }`,
+				value: countryCode,
+			};
+		} )
+	);
+	return codes.flat();
+}
 
-	return countryCodes;
+export function getTaxName(
+	countryList: CountryListItem[],
+	countryCode: string
+): undefined | string {
+	const country = countryList.find( ( country: CountryListItem ) => country.code === countryCode );
+	return country?.tax_name;
 }

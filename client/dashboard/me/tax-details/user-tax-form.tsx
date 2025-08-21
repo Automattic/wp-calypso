@@ -12,9 +12,9 @@ import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState, useRef } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import { useTaxName } from '../../app/hooks/use-country-list';
+import useCountryList from '../../app/hooks/use-country-list';
 import { geoLocationQuery } from '../../app/queries/geolocation';
-import { getDataFormCountryCodes } from '../../utils/tax';
+import { getTaxName, getDataFormCountryCodes } from '../../utils/tax';
 import useDisplayUserTaxNotices from './use-display-user-tax-notices';
 import useUserTaxDetails from './use-user-tax-details';
 import type {
@@ -123,7 +123,8 @@ export default function UserTaxForm() {
 		userTaxDetails,
 		updateError,
 	} = useUserTaxDetails();
-	const countryCodes = getDataFormCountryCodes();
+	const countryList = useCountryList();
+	const countryCodes = getDataFormCountryCodes( countryList );
 
 	const formData = useMemo( () => {
 		const serverData = {
@@ -145,7 +146,7 @@ export default function UserTaxForm() {
 	] );
 
 	const { data: geoData } = geoLocationQuery();
-	const taxName = useTaxName( formData.country ?? geoData?.country_short ?? 'GB' );
+	const taxName = getTaxName( countryList, formData.country ?? geoData?.country_short ?? 'GB' );
 
 	useDisplayUserTaxNotices( { error: updateError, success: isUpdateSuccessful, taxName } );
 	if ( updateError && lastUpdateError.current !== updateError ) {

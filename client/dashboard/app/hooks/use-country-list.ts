@@ -17,9 +17,3 @@ export default function useCountryList(): CountryListItem[] {
 	} );
 	return result.data ?? emptyList;
 }
-
-export function useTaxName( countryCode: string ): undefined | string {
-	const countryList = useCountryList();
-	const country = countryList.find( ( country ) => country.code === countryCode );
-	return country?.tax_name;
-}
