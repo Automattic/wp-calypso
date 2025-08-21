@@ -118,7 +118,7 @@ export default function ReferHostingForm( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { formTitle, description, ctaText, companyTitle, contactTitle, events, fields, api } =
+	const { formTitle, successTitle, ctaText, companyTitle, contactTitle, events, fields, api } =
 		config;
 
 	const { countryOptions } = useCountriesAndStates();
@@ -184,7 +184,13 @@ export default function ReferHostingForm( {
 
 	if ( isSuccess ) {
 		return (
-			<Form className="refer-hosting-form" title={ formTitle } description={ description }>
+			<Form
+				className="refer-hosting-form"
+				title={ successTitle }
+				description={ translate(
+					"We value your partnership—thank you for helping us identify great opportunities! Once you submit your referral, our team will move quickly to review it and support you. We'll keep you updated at each step, so you always know what's happening and can stay connected as the opportunity progresses."
+				) }
+			>
 				<div className="refer-hosting-form__footer">
 					<Button
 						variant="primary"

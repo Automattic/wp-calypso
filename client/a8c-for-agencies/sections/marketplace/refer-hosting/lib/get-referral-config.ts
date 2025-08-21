@@ -12,13 +12,9 @@ export const getReferralConfig = (
 		enterprise: translate( 'Submit WordPress VIP referral' ),
 		premium: translate( 'Refer your client to a Premium plan' ),
 	}[ type ],
-	description: {
-		enterprise: translate(
-			"Your client referral to Enterprise VIP Hosting is appreciated. We'll take it from here and ensure you're updated on our progress."
-		),
-		premium: translate(
-			"Your client referral to a Premium plan is appreciated. We'll take it from here and ensure you're updated on our progress."
-		),
+	successTitle: {
+		enterprise: translate( 'Thank you for your WordPress VIP referral' ),
+		premium: translate( 'Thank you for your Premium plan referral' ),
 	}[ type ],
 	ctaText: {
 		enterprise: translate( 'Submit VIP referral' ),
