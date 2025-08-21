@@ -1,6 +1,9 @@
 import { useEffect } from '@wordpress/element';
-import LoginContextProvider from 'calypso/login/login-context';
+import { useTranslate } from 'i18n-calypso';
+import { useLoginContext } from 'calypso/login/login-context';
 import OneLoginLayout from 'calypso/login/wp-login/components/one-login-layout';
+import { useSelector } from 'calypso/state';
+import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import useAuthorizeMeta from '../hooks/use-authorize-meta';
 
 function Authorize() {
@@ -9,13 +12,31 @@ function Authorize() {
 		string
 	>;
 	const { data: meta, isLoading, error } = useAuthorizeMeta( { params } );
+	const { setHeaders } = useLoginContext();
+	const translate = useTranslate();
+	const oauth2Client = useSelector( getCurrentOAuth2Client );
+
+	useEffect( () => {
+		if ( ! oauth2Client ) {
+			return;
+		}
+
+		setHeaders( {
+			heading: translate( 'Connect {{span}}%(client)s{{/span}}', {
+				args: { client: oauth2Client.name },
+				components: { span: <span className="wp-login__one-login-header-client-name" /> },
+			} ),
+			subHeading: null,
+			subHeadingSecondary: null,
+		} );
+	}, [ oauth2Client?.name ] );
 
 	useEffect( () => {
 		if ( ! meta ) {
 			return;
 		}
 		if ( ! meta.flags.user_logged_in && meta.links?.calypso_login_url ) {
-			window.location.replace( meta.links.calypso_login_url );
+			//window.location.replace( meta.links.calypso_login_url );
 		}
 	}, [ meta ] );
 
@@ -57,10 +78,6 @@ function Authorize() {
 	if ( meta ) {
 		content = (
 			<div className="oauth2-connect">
-				<div className="oauth2-connect__header">
-					{ meta.client.icon && <img src={ meta.client.icon } alt="" width={ 40 } height={ 40 } /> }
-					<h1>Authorize { meta.client.title }</h1>
-				</div>
 				{ meta.user && (
 					<div className="oauth2-connect__user">
 						<div>{ meta.user.display_name }</div>
@@ -84,11 +101,7 @@ function Authorize() {
 		);
 	}
 
-	return (
-		<LoginContextProvider>
-			<OneLoginLayout isJetpack={ false }>{ content }</OneLoginLayout>
-		</LoginContextProvider>
-	);
+	return <OneLoginLayout isJetpack={ false }>{ content }</OneLoginLayout>;
 }
 
 export default Authorize;
