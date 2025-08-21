@@ -13,23 +13,27 @@ import {
 import { test as base, expect } from '@playwright/test';
 
 export const test = base.extend< {
-	accountGutenbergSimple: TestAccount;
 	accountGivenByEnvironment: TestAccount;
+	accountGutenbergSimple: TestAccount;
+	componentPreview: PreviewComponent;
 	componentSidebar: SidebarComponent;
 	componentSiteSelect: SiteSelectComponent;
-	pageThemes: ThemesPage;
 	pageThemeDetails: ThemesDetailPage;
-	componentPreview: PreviewComponent;
+	pageThemes: ThemesPage;
 } >( {
+	accountGivenByEnvironment: async ( {}, use ) => {
+		const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
+		const testAccount = new TestAccount( accountName );
+		await use( testAccount );
+	},
 	accountGutenbergSimple: async ( {}, use ) => {
 		const accountName = 'gutenbergSimpleSiteUser';
 		const testAccount = new TestAccount( accountName );
 		await use( testAccount );
 	},
-	accountGivenByEnvironment: async ( {}, use ) => {
-		const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
-		const testAccount = new TestAccount( accountName );
-		await use( testAccount );
+	componentPreview: async ( { page }, use ) => {
+		const previewComponent = new PreviewComponent( page );
+		await use( previewComponent );
 	},
 	componentSidebar: async ( { page }, use ) => {
 		const sidebarComponent = new SidebarComponent( page );
@@ -39,17 +43,13 @@ export const test = base.extend< {
 		const siteSelectComponent = new SiteSelectComponent( page );
 		await use( siteSelectComponent );
 	},
-	pageThemes: async ( { page }, use ) => {
-		const themesPage = new ThemesPage( page );
-		await use( themesPage );
-	},
 	pageThemeDetails: async ( { page }, use ) => {
 		const themesDetailPage = new ThemesDetailPage( page );
 		await use( themesDetailPage );
 	},
-	componentPreview: async ( { page }, use ) => {
-		const previewComponent = new PreviewComponent( page );
-		await use( previewComponent );
+	pageThemes: async ( { page }, use ) => {
+		const themesPage = new ThemesPage( page );
+		await use( themesPage );
 	},
 } );
 
