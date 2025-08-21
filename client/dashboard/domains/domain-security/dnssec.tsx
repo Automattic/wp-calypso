@@ -62,8 +62,6 @@ export default function DnsSec( { domainName, domain }: DnsSecProps ) {
 										key={ `dnskey-${ index }` }
 										value={ dnskey }
 										label="DNSKEY Record"
-										recordType="dnskey"
-										index={ index }
 									/>
 								) ) }
 								{ domain.dnssec_records?.ds_data?.map( ( dsRecord, index ) => (
@@ -71,8 +69,6 @@ export default function DnsSec( { domainName, domain }: DnsSecProps ) {
 										key={ `ds-${ index }` }
 										value={ dsRecord }
 										label="Delegation Signer (DS) record"
-										recordType="ds"
-										index={ index }
 									/>
 								) ) }
 							</VStack>

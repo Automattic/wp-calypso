@@ -5,16 +5,9 @@ import './dnssec-record-textarea.scss';
 interface DnsSecRecordTextareaProps {
 	value: string;
 	label: string;
-	recordType: 'dnskey' | 'ds';
-	index: number;
 }
 
-export function DnsSecRecordTextarea( {
-	value,
-	label,
-	recordType,
-	index,
-}: DnsSecRecordTextareaProps ) {
+export function DnsSecRecordTextarea( { value, label }: DnsSecRecordTextareaProps ) {
 	const textareaRef = useRef< HTMLTextAreaElement >( null );
 
 	// Auto-resize textarea function
@@ -49,7 +42,6 @@ export function DnsSecRecordTextarea( {
 	return (
 		<TextareaControl
 			ref={ textareaRef }
-			key={ `${ recordType }-${ index }` }
 			value={ value }
 			onChange={ () => {} }
 			label={ label }
