@@ -255,11 +255,11 @@ const WooPaymentsOverview = () => {
 							<img src={ wooPaymentsLogo } alt="WooPayments" />
 							<div>
 								<div className="woopayments-overview__heading">
-									{ translate( 'Earn revenue share when clients use WooPayments' ) }
+									{ translate( "Transform Your Clients' Success Into Real Agency Revenue" ) }
 								</div>
 								<div className="woopayments-overview__description">
 									{ translate(
-										"Accept credit/debit cards and local payment options with no setup or monthly fees. Earn revenue share of 5 basis points on transactions from your clients' sites within Automattic for Agencies."
+										'As an Automattic for Agencies partner, every WooPayments transaction creates new earning potential for your business. Unlock exclusive, built-in commissions just for helping your clients grow—whether you’re onboarding new stores or deepening relationships with those you already support'
 									) }
 								</div>
 							</div>
@@ -272,74 +272,132 @@ const WooPaymentsOverview = () => {
 				</PageSectionColumns>
 
 				<PageSectionColumns
+					heading={ translate( 'How revenue share works' ) }
 					background={ {
-						isDarkBackground: true,
 						image: backgroundImage1,
-						color: '#720EEC',
+						color: '#F2EDFF',
+						size: 'auto',
 					} }
 				>
-					<PageSectionColumns.Column heading={ translate( 'How to earn revenue share' ) }>
+					<PageSectionColumns.Column>
 						<>
 							<div className="woopayments-overview__description">
-								<div>
-									{ translate(
-										'To qualify for revenue sharing, you must install and connect the Automattic for Agencies plugin and WooPayments extension on your client sites. We recommend using this marketplace to install WooPayments after adding the Automattic for Agencies plugin for easier license and client site management. {{a}}Learn more{{/a}} ↗',
-										{
-											components: {
-												a: (
-													<a
-														href="https://agencieshelp.automattic.com/knowledge-base/earn-revenue-share-when-clients-use-woopayments/"
-														target="_blank"
-														rel="noopener noreferrer"
-														onClick={ () => {
-															dispatch(
-																recordTracksEvent(
-																	'calypso_a4a_woopayments_learn_more_button_click'
-																)
-															);
-														} }
-													/>
-												),
-											},
-										}
-									) }
+								<div className="woopayments-overview__revenue-share-subheading">
+									{ translate( 'For new WooPayments clients you help launch' ) }
 								</div>
 								<div>
 									{ translate(
-										'You will receive a revenue share of 5 basis points on new Total Payments Volume (“TPV”) on client sites. {{a}}View full terms{{/a}} ↗',
-										{
-											components: {
-												a: (
-													<a
-														href="https://agencieshelp.automattic.com/knowledge-base/earn-revenue-share-when-clients-use-woopayments/"
-														target="_blank"
-														rel="noopener noreferrer"
-														onClick={ () => {
-															dispatch(
-																recordTracksEvent(
-																	'calypso_a4a_woopayments_view_terms_button_click'
-																)
-															);
-														} }
-													/>
-												),
-											},
-										}
+										'Earn a generous 5 basis points (bps) revenue share on all Total Payments Volume (TPV) processed on client sites you onboard after joining Automattic for Agencies.'
 									) }
 								</div>
 							</div>
-							<Button
-								__next40pxDefaultSize
-								href={ CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT }
-								className="woopayments-overview__button"
-								onClick={ () => {
-									dispatch(
-										recordTracksEvent( 'calypso_a4a_woopayments_contact_us_button_click' )
-									);
-								} }
-							>
-								{ translate( 'Have questions? Contact us' ) }
-							</Button>
+						</>
+					</PageSectionColumns.Column>
+					<PageSectionColumns.Column>
+						<>
+							<div className="woopayments-overview__description">
+								<div className="woopayments-overview__revenue-share-subheading">
+									{ translate( 'For existing WooPayments clients you already manage' ) }
+								</div>
+								<div>
+									{ translate(
+										'Bring your current WooPayments-enabled client stores into your Automattic for Agencies dashboard to unlock ongoing revenue share:'
+									) }
+								</div>
+								<div>
+									<ul>
+										<li>{ translate( '$1M+ in annual TPV: 3 bps revenue share' ) }</li>
+										<li>{ translate( '$500k-$1M in annual TPV: 2 bps revenue share' ) }</li>
+										<li>
+											{ translate(
+												'Connect eligible stores to A4A within 30 days of joining to participate in these tiers.'
+											) }
+										</li>
+									</ul>
+								</div>
+							</div>
+						</>
+					</PageSectionColumns.Column>
+					<PageSectionColumns.Column heading={ translate( 'Commissions at a glance' ) } fullWidth>
+						<>
+							<div className="woopayments-overview__description">
+								<table className="woopayments-overview__commissions-table">
+									<thead>
+										<tr>
+											<th>{ translate( 'Site Type' ) }</th>
+											<th>{ translate( 'TPV Processed' ) }</th>
+											<th>{ translate( 'Revenue Share (bps)' ) }</th>
+											<th>{ translate( 'Example Earnings*' ) }</th>
+											<th>{ translate( 'Requirements' ) }</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>{ translate( 'New Clients' ) }</td>
+											<td>{ translate( 'No minimum' ) }</td>
+											<td>{ translate( '5 bps' ) }</td>
+											<td>{ translate( '$500/year on $1M annual TPV' ) }</td>
+											<td>{ translate( 'Standard program terms' ) }</td>
+										</tr>
+										<tr>
+											<td>{ translate( 'Pre-existing Clients - Tier 1' ) }</td>
+											<td>{ translate( '$1M+/year' ) }</td>
+											<td>{ translate( '3 bps' ) }</td>
+											<td>{ translate( '$300/year on $1M annual TPV' ) }</td>
+											<td>{ translate( 'Register within 30 days of joining' ) }</td>
+										</tr>
+										<tr>
+											<td>{ translate( 'Pre-existing Clients - Tier 2' ) }</td>
+											<td>{ translate( '$500k-$999,999 TPV/year' ) }</td>
+											<td>{ translate( '2 bps' ) }</td>
+											<td>{ translate( '$100/year on $500k annual TPV' ) }</td>
+											<td>{ translate( 'Register within 30 days of joining' ) }</td>
+										</tr>
+									</tbody>
+								</table>
+								<div className="woopayments-overview__legend">
+									{ translate(
+										"*Example earnings are calculated annually based on the TPV and revenue share rate shown and are subject change based on your client's TPV."
+									) }
+								</div>
+								<div className="woopayments-overview__legend">
+									{ translate(
+										'{{b}}Legend:{{/b}} {{br/}}bps = basis points (1 bps = 0.01%) {{br/}}TPV = Total Payments Volume',
+										{
+											components: {
+												b: <b />,
+												br: <br />,
+											},
+										}
+									) }
+								</div>
+								<div>
+									{ translate(
+										"Every client you serve with WooPayments can help accelerate your agency's revenue. {{br/}}Simply connect the Automattic for Agencies plugin once WooPayments is active, and we'll take care of the rest.",
+										{
+											components: {
+												br: <br />,
+											},
+										}
+									) }
+								</div>
+								<div className="woopayments-overview__buttons-container">
+									<Button
+										__next40pxDefaultSize
+										href="https://automattic.com/for-agencies/program-incentives"
+										target="_blank"
+										rel="noopener noreferrer"
+										className="woopayments-overview__button"
+										onClick={ () => {
+											dispatch(
+												recordTracksEvent( 'calypso_a4a_woopayments_view_details_button_click' )
+											);
+										} }
+									>
+										{ translate( 'View details and start earning ↗' ) }
+									</Button>
+								</div>
+							</div>
 						</>
 					</PageSectionColumns.Column>
 				</PageSectionColumns>

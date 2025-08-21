@@ -2,7 +2,9 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
 
-$woocommerce-purple-50: #720EEC;
+$woocommerce-purple-0: #F2EDFF;
+$woocommerce-purple-5: #E1D7FF;
+$woocommerce-purple-40: #873EFF;
 
 .woopayments-overview {
 	.hosting-dashboard-layout__header-actions {
@@ -46,16 +48,23 @@ $woocommerce-purple-50: #720EEC;
 	}
 }
 
+.woopayments-overview__revenue-share-subheading {
+	font-weight: 600;
+}
+
+.woopayments-overview__legend {
+	@include body-small;
+}
+
 a.components-button.woopayments-overview__button {
 	&,
 	&:hover,
 	&:focus,
 	&:focus-visible {
-		color: $woocommerce-purple-50;
-		background-color: var(--color-surface);
-		border: none;
-		outline: none;
+		color: $woocommerce-purple-40;
+		border: 1px solid $woocommerce-purple-40;
 		box-shadow: none;
+		text-decoration: none;
 	}
 }
 
@@ -89,3 +98,38 @@ a.components-button.woopayments-overview__button {
 		}
 	}
 }
+
+.woopayments-overview__commissions-table {
+	@include body-small;
+	background-color: $white;
+	width: 100%;
+	border: 1px solid $woocommerce-purple-5;
+	border-radius: 4px;
+
+	th,
+	td {
+		padding: 10px 12px; border: 0;
+	}
+
+	tr > *:not( :last-child ) {
+		border-right: 1px solid $woocommerce-purple-0;
+	}
+
+	thead {
+		th {
+			border-bottom: 1px solid $woocommerce-purple-0;
+		}
+	}
+
+	tbody {
+		tr {
+			&:not(:last-child) {
+				> * {
+					border-bottom: 1px solid $woocommerce-purple-0;
+				}
+			}
+		}
+	}
+  }
+
+
