@@ -78,7 +78,7 @@ const fetchDomainAvailability = async ( domainName: string ): Promise< DomainAva
 	if ( domainName === 'example.app' ) {
 		return {
 			domain_name: 'example.app',
-			status: 'available',
+			status: 'unavailable',
 			mappable: 'mappable',
 			supports_privacy: true,
 			cost: '$18',
