@@ -12,6 +12,7 @@ import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import type { BlockedSite } from '../../data/me-blocked-sites';
+import type { Field } from '@wordpress/dataviews';
 
 const getHostname = ( url: string ) => {
 	try {
@@ -20,6 +21,24 @@ const getHostname = ( url: string ) => {
 		return url;
 	}
 };
+
+const fields: Field< BlockedSite >[] = [
+	{
+		id: 'name',
+		label: __( 'Site' ),
+		enableHiding: false,
+		getValue: ( { item } ) => item.name,
+	},
+	{
+		id: 'URL',
+		getValue: ( { item } ) => item.URL,
+		render: ( { item } ) => (
+			<ExternalLink className="dataviews-url-field" href={ item.URL }>
+				{ getHostname( item.URL ) }
+			</ExternalLink>
+		),
+	},
+];
 
 export default function BlockedSites() {
 	// TODO: Implement infinite scroll once DataViews is updated to support it.
@@ -55,23 +74,7 @@ export default function BlockedSites() {
 			<DataViewsCard>
 				<DataViews< BlockedSite >
 					data={ sites }
-					fields={ [
-						{
-							id: 'name',
-							label: __( 'Site' ),
-							enableHiding: false,
-							getValue: ( { item } ) => item.name,
-						},
-						{
-							id: 'URL',
-							getValue: ( { item } ) => item.URL,
-							render: ( { item } ) => (
-								<ExternalLink className="dataviews-url-field" href={ item.URL }>
-									{ getHostname( item.URL ) }
-								</ExternalLink>
-							),
-						},
-					] }
+					fields={ fields }
 					view={ {
 						type: sites.length > 0 ? 'table' : 'list',
 						descriptionField: 'URL',
@@ -83,6 +86,7 @@ export default function BlockedSites() {
 							label: __( 'Unblock' ),
 							icon: <Icon icon={ closeSmall } />,
 							isPrimary: true,
+							disabled: unblockSite.isPending,
 							callback: ( items: BlockedSite[] ) => {
 								const item = items[ 0 ];
 								unblockSite.mutate( item.ID, {
