@@ -4,7 +4,7 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { useMemo, useState } from '@wordpress/element';
+import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { download } from '@wordpress/icons';
 import { fetchSiteLogsBatch } from '../../data/site-logs';
@@ -109,8 +109,16 @@ export function LogsDownloader( {
 } ) {
 	const [ status, setStatus ] = useState< 'idle' | 'downloading' | 'complete' | 'error' >( 'idle' );
 
-	const disabled = useMemo( () => status === 'downloading', [ status ] );
+	const disabled = status === 'downloading';
 	const label = status === 'downloading' ? __( 'Downloading…' ) : __( 'Download logs' );
+	const [ isHovered, setIsHovered ] = useState( false );
+
+	let iconColor = 'inherit';
+	if ( status === 'downloading' ) {
+		iconColor = 'gray';
+	} else if ( isHovered ) {
+		iconColor = 'var(--color-link, var(--color-accent, #3858e9))';
+	}
 
 	return (
 		<VStack spacing={ 2 }>
@@ -121,7 +129,10 @@ export function LogsDownloader( {
 						aria-label={ label }
 						size="compact"
 						icon={ download }
+						style={ { color: iconColor } }
 						disabled={ disabled }
+						onMouseEnter={ () => setIsHovered( true ) }
+						onMouseLeave={ () => setIsHovered( false ) }
 						onClick={ async () => {
 							setStatus( 'downloading' );
 							const result = await downloadSiteLogs( {
