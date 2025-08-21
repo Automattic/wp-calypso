@@ -1,7 +1,7 @@
 import { test } from '../../lib/pw_base';
 
-test.describe( 'Themes', () => {
-	test( 'Preview (Gutenberg Simple Account)', async ( {
+test.describe( 'Theme Details Preview', () => {
+	test( 'As a gutenberg simple site user, I can preview a different theme on my site', async ( {
 		page,
 		accountGutenbergSimple,
 		componentSidebar,
@@ -15,35 +15,35 @@ test.describe( 'Themes', () => {
 		// This test will use partial matching names to cycle between available themes.
 		const themeName = 'Twenty Twen';
 
-		await test.step( `Authenticate as '${ accountGutenbergSimple.accountName }'`, async function () {
+		await test.step( `Given I am authenticated as '${ accountGutenbergSimple.accountName }'`, async function () {
 			await accountGutenbergSimple.authenticate( page );
 		} );
 
-		await test.step( 'Navigate to Appearance > Themes', async function () {
+		await test.step( 'When I navigate to Appearance > Themes', async function () {
 			await componentSidebar.navigate( 'Appearance', 'Themes' );
 		} );
 
-		await test.step( `Choose test site ${ testAccountSiteDomain } if Site Selector is shown`, async function () {
+		await test.step( `And I choose the test site ${ testAccountSiteDomain } if the site selector is shown`, async function () {
 			if ( await componentSiteSelect.isSiteSelectorVisible() ) {
 				await componentSiteSelect.selectSite( testAccountSiteDomain );
 			}
 		} );
 
-		await test.step( `Search for theme with keyword ${ themeName }`, async function () {
+		await test.step( `And I search for a theme with my keyword ${ themeName }`, async function () {
 			await pageThemes.search( themeName );
 		} );
 
-		await test.step( `Select and view details of a theme starting with ${ themeName }`, async function () {
+		await test.step( `And I select and view details of a theme starting with ${ themeName }`, async function () {
 			const selectedTheme = await pageThemes.select( themeName );
 			await pageThemes.hoverThenClick( selectedTheme );
 		} );
 
-		await test.step( 'Preview theme', async function () {
+		await test.step( 'Then I can preview the theme', async function () {
 			await pageThemeDetails.preview();
 			await componentPreview.previewReady();
 		} );
 
-		await test.step( 'Close theme preview', async function () {
+		await test.step( 'And I can close the theme preview', async function () {
 			await componentPreview.closePreview();
 		} );
 	} );
