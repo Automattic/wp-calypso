@@ -6,7 +6,7 @@ const A4A_URL = 'https://agencies.automattic.com';
  * Verify the A4A > Signup page loads
  */
 test.describe( 'Automattic For Agencies Sign Up Page', () => {
-	test( 'As an anauthenticated web agency owner I can enter my agency details and see these displayed', async ( {
+	test( 'As an anauthenticated web agency owner, I can enter my agency details and see these displayed', async ( {
 		page,
 	} ) => {
 		const firstName = 'John';
