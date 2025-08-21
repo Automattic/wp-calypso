@@ -22,6 +22,7 @@ export type DnsRecordFormData = {
 	ttl: number;
 	flags: number; // CAA
 	tag: string; // CAA
+	value: string; // CAA
 	aux: number; // MX, SRV
 	service: string; // SRV
 	protocol: string; // SRV

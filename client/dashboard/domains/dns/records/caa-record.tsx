@@ -49,14 +49,14 @@ export const CAARecordConfig: DnsRecordConfig = {
 			},
 		},
 		{
-			id: 'data',
+			id: 'value',
 			type: 'text',
 			label: __( 'Value' ),
-			/* translators: This is a placeholder for a DNS CAA record `data` property */
+			/* translators: This is a placeholder for a DNS CAA record `value` property */
 			placeholder: __( 'e.g. "letsencrypt.org"' ),
 			isValid: {
 				required: true,
-				/* translators: This is the error message when the `data` field of a DNS CAA record is invalid */
+				/* translators: This is the error message when the `value` field of a DNS CAA record is invalid */
 				custom: stringLengthValidator( __( 'Please enter a valid value.' ) ),
 			},
 		},
@@ -74,14 +74,14 @@ export const CAARecordConfig: DnsRecordConfig = {
 	],
 	form: {
 		layout: { type: 'regular' as const },
-		fields: [ 'name', 'flags', 'tag', 'data', 'ttl' ],
+		fields: [ 'name', 'flags', 'tag', 'value', 'ttl' ],
 	},
 	transformData: ( data: DnsRecordFormData, domainName: string, type: DnsRecordType ) => ( {
 		type: 'CAA',
 		name: getNormalizedName( data.name, type, domainName ),
 		flags: data.flags,
 		tag: data.tag,
-		value: data.data,
+		value: data.value,
 		ttl: data.ttl,
 	} ),
 };

@@ -43,6 +43,7 @@ export default function DNSRecordForm( {
 		ttl: 3600,
 		flags: 0, // CAA
 		tag: 'issue', // CAA
+		value: '', // CAA
 		aux: 10, // MX, SRV
 		service: 'sip', // SRV
 		protocol: '_tcp', // SRV
@@ -67,6 +68,7 @@ export default function DNSRecordForm( {
 				data: recordToEdit.data || '',
 				flags: recordToEdit.flags || 0,
 				tag: recordToEdit.tag || '',
+				value: recordToEdit.value || '',
 				aux: recordToEdit.aux || 0,
 				service: recordToEdit.service || '',
 				protocol: recordToEdit.protocol || '',
