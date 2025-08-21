@@ -27,7 +27,7 @@ export default function DomainAddDNS() {
 
 	const handleSubmit = ( typeFormData: DnsRecordTypeFormData, formData: DnsRecordFormData ) => {
 		const config = DNS_RECORD_CONFIGS[ typeFormData.type ];
-		const formattedData = config.transformData( formData, domainName );
+		const formattedData = config.transformData( formData, domainName, typeFormData.type );
 
 		const recordsToAdd: DnsRecord[] = [ formattedData ];
 

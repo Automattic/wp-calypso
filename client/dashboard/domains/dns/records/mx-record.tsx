@@ -1,4 +1,5 @@
 import { __ } from '@wordpress/i18n';
+import { getFieldWithDot, getNormalizedName } from '../utils';
 import {
 	domainValidator,
 	hostnameValidator,
@@ -6,6 +7,7 @@ import {
 	ttlValidator,
 } from './validators';
 import type { DnsRecordFormData, DnsRecordConfig } from './dns-record-configs';
+import type { DnsRecordType } from '../../../data/domain-dns-records';
 
 export const MXRecordConfig: DnsRecordConfig = {
 	description: __(
@@ -60,16 +62,11 @@ export const MXRecordConfig: DnsRecordConfig = {
 		layout: { type: 'regular' as const },
 		fields: [ 'name', 'data', 'aux', 'ttl' ],
 	},
-	transformData: ( data: DnsRecordFormData ) => {
-		// Remove trailing dot from the hostname
-		const hostName = data.data.endsWith( '.' ) ? data.data.slice( 0, -1 ) : data.data;
-
-		return {
-			type: 'MX',
-			name: data.name,
-			data: hostName + '.', // we're appending a dot to make the host name a FQDN
-			aux: data.aux,
-			ttl: data.ttl,
-		};
-	},
+	transformData: ( data: DnsRecordFormData, domainName: string, type: DnsRecordType ) => ( {
+		type: 'MX',
+		name: getNormalizedName( data.name, type, domainName ),
+		data: getFieldWithDot( data.data ),
+		aux: data.aux,
+		ttl: data.ttl,
+	} ),
 };

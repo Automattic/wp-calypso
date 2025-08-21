@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import RequiredSelect from '../../../components/required-select';
+import { getNormalizedName } from '../utils';
 import {
 	hostnameValidator,
 	numberRangeValidator,
@@ -7,6 +8,7 @@ import {
 	ttlValidator,
 } from './validators';
 import type { DnsRecordFormData, DnsRecordConfig } from './dns-record-configs';
+import type { DnsRecordType } from '../../../data/domain-dns-records';
 
 export const CAARecordConfig: DnsRecordConfig = {
 	fields: [
@@ -72,9 +74,9 @@ export const CAARecordConfig: DnsRecordConfig = {
 		layout: { type: 'regular' as const },
 		fields: [ 'name', 'flags', 'tag', 'data', 'ttl' ],
 	},
-	transformData: ( data: DnsRecordFormData ) => ( {
+	transformData: ( data: DnsRecordFormData, domainName: string, type: DnsRecordType ) => ( {
 		type: 'CAA',
-		name: data.name,
+		name: getNormalizedName( data.name, type, domainName ),
 		flags: data.flags,
 		tag: data.tag,
 		value: data.data,

@@ -1,6 +1,8 @@
 import { __ } from '@wordpress/i18n';
+import { getNormalizedName } from '../utils';
 import { hostnameValidator, ipv4Validator, ttlValidator } from './validators';
 import type { DnsRecordFormData, DnsRecordConfig } from './dns-record-configs';
+import type { DnsRecordType } from '../../../data/domain-dns-records';
 
 export const ARecordConfig: DnsRecordConfig = {
 	description: __(
@@ -44,9 +46,9 @@ export const ARecordConfig: DnsRecordConfig = {
 		layout: { type: 'regular' as const },
 		fields: [ 'name', 'data', 'ttl' ],
 	},
-	transformData: ( data: DnsRecordFormData ) => ( {
+	transformData: ( data: DnsRecordFormData, domainName: string, type: DnsRecordType ) => ( {
 		type: 'A',
-		name: data.name,
+		name: getNormalizedName( data.name, type, domainName ),
 		data: data.data,
 		ttl: data.ttl,
 	} ),

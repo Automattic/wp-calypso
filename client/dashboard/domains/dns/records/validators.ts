@@ -1,42 +1,8 @@
 import { NormalizedField } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
+import { isRootDomain, isRootDomainNameSupported } from '../utils';
 import type { DnsRecordFormData } from './dns-record-configs';
 import type { DnsRecordType } from '../../../data/domain-dns-records';
-
-/**
- * Check if the provided name is the root domain name
- *
- * @param name - The name to check
- * @param domainName - The domain name
- * @returns True if the name is the root domain name, false otherwise
- */
-const isRootDomain = ( name: string, domainName: string ): boolean => {
-	if ( name === '' ) {
-		return true;
-	}
-
-	const rootDomainVariations = [
-		'@',
-		domainName,
-		domainName + '.',
-		'@.' + domainName,
-		'@.' + domainName + '.',
-	];
-	return rootDomainVariations.includes( name );
-};
-
-/**
- * Check if the DNS record type supports a root domain `name` value
- *
- * @param type - The DNS record type
- * @returns True if the record type supports a root domain `name`, false otherwise
- */
-const isRootDomainNameSupported = ( type: DnsRecordType ): boolean => {
-	// TODO: Root NS records can be edited only for subdomains, but we don't have the domain object here.
-	// It's not reliable to determine whether a domain is a subdomain in the frontend, so we'll need
-	// to get this information from the backend.
-	return [ 'A', 'AAAA', 'ALIAS', 'CAA', 'MX', 'SRV', 'TXT' ].includes( type );
-};
 
 /**
  * Check if the provided `name` is a valid hostname according to the record type

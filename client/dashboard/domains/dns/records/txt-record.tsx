@@ -1,7 +1,9 @@
 import { TextareaControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { getNormalizedName } from '../utils';
 import { hostnameValidator, stringLengthValidator, ttlValidator } from './validators';
 import type { DnsRecordFormData, DnsRecordConfig } from './dns-record-configs';
+import type { DnsRecordType } from '../../../data/domain-dns-records';
 
 export const TXTRecordConfig: DnsRecordConfig = {
 	description: __(
@@ -58,9 +60,9 @@ export const TXTRecordConfig: DnsRecordConfig = {
 		layout: { type: 'regular' as const },
 		fields: [ 'name', 'data', 'ttl' ],
 	},
-	transformData: ( data: DnsRecordFormData ) => ( {
+	transformData: ( data: DnsRecordFormData, domainName: string, type: DnsRecordType ) => ( {
 		type: 'TXT',
-		name: data.name,
+		name: getNormalizedName( data.name, type, domainName ),
 		data: data.data,
 		ttl: data.ttl,
 	} ),

@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import RequiredSelect from '../../../components/required-select';
+import { getFieldWithDot, getNormalizedName } from '../utils';
 import {
 	domainValidator,
 	hostnameValidator,
@@ -8,6 +9,7 @@ import {
 	ttlValidator,
 } from './validators';
 import type { DnsRecordFormData, DnsRecordConfig } from './dns-record-configs';
+import type { DnsRecordType } from '../../../data/domain-dns-records';
 
 export const SRVRecordConfig: DnsRecordConfig = {
 	description: __(
@@ -107,20 +109,15 @@ export const SRVRecordConfig: DnsRecordConfig = {
 		layout: { type: 'regular' as const },
 		fields: [ 'name', 'service', 'protocol', 'aux', 'weight', 'target', 'port', 'ttl' ],
 	},
-	transformData: ( data: DnsRecordFormData ) => {
-		// Remove trailing dot from the hostname
-		const target = data.target.endsWith( '.' ) ? data.target.slice( 0, -1 ) : data.target;
-
-		return {
-			type: 'SRV',
-			name: data.name,
-			service: data.service,
-			aux: data.aux,
-			weight: data.weight,
-			target: target + '.', // we're appending a dot to make the host name a FQDN
-			port: data.port,
-			protocol: data.protocol,
-			ttl: data.ttl,
-		};
-	},
+	transformData: ( data: DnsRecordFormData, domainName: string, type: DnsRecordType ) => ( {
+		type: 'SRV',
+		name: getNormalizedName( data.name, type, domainName ),
+		service: data.service,
+		aux: data.aux,
+		weight: data.weight,
+		target: getFieldWithDot( data.target ),
+		port: data.port,
+		protocol: data.protocol,
+		ttl: data.ttl,
+	} ),
 };

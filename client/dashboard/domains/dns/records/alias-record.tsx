@@ -1,6 +1,8 @@
 import { __ } from '@wordpress/i18n';
+import { getFieldWithDot, getNormalizedName } from '../utils';
 import { domainValidator, ttlValidator } from './validators';
 import type { DnsRecordFormData, DnsRecordConfig } from './dns-record-configs';
+import type { DnsRecordType } from '../../../data/domain-dns-records';
 
 export const AliasRecordConfig: DnsRecordConfig = {
 	description: __(
@@ -34,15 +36,10 @@ export const AliasRecordConfig: DnsRecordConfig = {
 		layout: { type: 'regular' as const },
 		fields: [ 'data', 'ttl' ],
 	},
-	transformData: ( data: DnsRecordFormData, domainName?: string ) => {
-		// Remove trailing dot from the hostname
-		const hostName = data.data.endsWith( '.' ) ? data.data.slice( 0, -1 ) : data.data;
-
-		return {
-			type: 'ALIAS',
-			name: domainName + '.', // We limit ALIAS records to be set only at the root
-			data: hostName + '.', // we're appending a dot to make the host name a FQDN
-			ttl: data.ttl,
-		};
-	},
+	transformData: ( data: DnsRecordFormData, domainName: string, type: DnsRecordType ) => ( {
+		type: 'ALIAS',
+		name: getNormalizedName( data.name, type, domainName ),
+		data: getFieldWithDot( data.data ),
+		ttl: data.ttl,
+	} ),
 };
