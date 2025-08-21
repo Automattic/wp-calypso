@@ -19,6 +19,9 @@ import {
 	shouldShowTransferAction,
 	shouldShowDisconnectAction,
 	shouldShowDeleteAction,
+	getDeleteTitle,
+	getDeleteLabel,
+	getDeleteDescription,
 } from './actions.utils';
 
 export default function Actions() {
@@ -100,13 +103,13 @@ export default function Actions() {
 						}
 					/>
 				) }
-				{ shouldShowDeleteAction( domain ) && purchase && (
+				{ shouldShowDeleteAction( domain, purchase ) && (
 					<ActionList.ActionItem
-						title={ __( 'Delete' ) }
-						description={ __( 'Remove this domain permanently.' ) }
+						title={ getDeleteTitle( domain ) }
+						description={ getDeleteDescription( domain ) }
 						actions={
 							<Button size="compact" variant="secondary" isDestructive>
-								{ __( 'Delete' ) }
+								{ getDeleteLabel( domain ) }
 							</Button>
 						}
 					/>

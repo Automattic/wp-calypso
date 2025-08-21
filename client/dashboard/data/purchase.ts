@@ -190,6 +190,7 @@ export interface Purchase {
 	is_jetpack_stats_product: boolean;
 	is_locked: boolean;
 	is_plan: boolean;
+	is_removable: boolean;
 	is_rechargable: boolean;
 	is_renewable: boolean;
 	is_renewal: boolean;
