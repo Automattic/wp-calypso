@@ -12,7 +12,7 @@ import {
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { ReactElement } from 'react';
 import { domainQuery } from '../../app/queries/domain';
@@ -68,7 +68,7 @@ export default function DomainSecurity() {
 		return createInterpolateElement(
 			__( 'There is an issue with your certificate. Contact us to <link>learn more</link>.' ),
 			{
-				link: <a href={ CONTACT } target="_blank" rel="noopener noreferrer" />,
+				link: <InlineSupportLink supportLink={ CONTACT } />,
 			}
 		);
 	};
@@ -110,14 +110,9 @@ export default function DomainSecurity() {
 						<li key={ failureReason.error_type }>
 							{ isDnssecErrorForManagedSubdomain
 								? createInterpolateElement(
-										sprintf(
-											/* translators: %s is the root domain <link> will be replaced with a link to open the root domain security page, <strong> will be replaced with a bolded text */
-											__(
-												'This domain has DNSSEC validation errors. You may need to deactivate DNSSEC on the root domain <strong>%s</strong>, from <link>here</link>.'
-											),
-											domain?.subdomain_part
-												? domainName.replace( `${ domain.subdomain_part }.`, '' )
-												: domainName
+										/* translators: <domain> is the root domain <link> will be replaced with a link to open the root domain security page */
+										__(
+											'This domain has DNSSEC validation errors. You may need to deactivate DNSSEC on the root domain <domain/>, from <link>here</link>.'
 										),
 										{
 											link: (
@@ -130,7 +125,13 @@ export default function DomainSecurity() {
 													} }
 												/>
 											),
-											strong: <strong />,
+											domain: (
+												<strong>
+													{ domain?.subdomain_part
+														? domainName.replace( `${ domain.subdomain_part }.`, '' )
+														: domainName }
+												</strong>
+											),
 										}
 								  )
 								: failureReason.message }
