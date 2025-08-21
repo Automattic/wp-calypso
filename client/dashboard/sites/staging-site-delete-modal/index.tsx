@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useMutation } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -10,7 +11,9 @@ import {
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { siteByIdQuery } from '../../app/queries/site';
 import { stagingSiteDeleteMutation } from '../../app/queries/site-staging-sites';
+import { queryClient } from '../../app/query-client';
 import type { Site } from '../../data/types';
 
 export default function StagingSiteDeleteModal( {
@@ -20,7 +23,8 @@ export default function StagingSiteDeleteModal( {
 	site: Site;
 	onClose: () => void;
 } ) {
-	const { createErrorNotice } = useDispatch( noticesStore );
+	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
+	const router = useRouter();
 
 	const productionSiteId = site.options?.wpcom_production_blog_id;
 
@@ -41,7 +45,17 @@ export default function StagingSiteDeleteModal( {
 			},
 			onSuccess: () => {
 				recordTracksEvent( 'calypso_hosting_configuration_staging_site_delete_success' );
+				createSuccessNotice( __( 'Staging site deleted.' ), { type: 'snackbar' } );
 				onClose();
+				queryClient
+					.ensureQueryData( siteByIdQuery( productionSiteId ) )
+					.then( ( productionSite ) => {
+						if ( productionSite?.slug ) {
+							router.navigate( {
+								to: `/sites/${ productionSite.slug }`,
+							} );
+						}
+					} );
 			},
 		} );
 	};
