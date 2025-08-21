@@ -3,7 +3,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import Notice from '../../components/notice';
 
-const SiteBackupRestoreSuccess = ( { onRetry }: { onRetry: () => void } ) => {
+const SiteBackupRestoreError = ( { onRetry }: { onRetry: () => void } ) => {
 	return (
 		<HStack spacing={ 4 }>
 			<Notice variant="error" title={ __( 'Restore failed' ) }>
@@ -20,4 +20,4 @@ const SiteBackupRestoreSuccess = ( { onRetry }: { onRetry: () => void } ) => {
 	);
 };
 
-export default SiteBackupRestoreSuccess;
+export default SiteBackupRestoreError;
