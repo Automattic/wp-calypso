@@ -2,6 +2,8 @@ import { __ } from '@wordpress/i18n';
 import { Domain } from '../../data/domain';
 import { DomainTypes, DomainTransferStatus } from '../../data/domains';
 import { Purchase } from '../../data/purchase';
+import { Site } from '../../data/site';
+import { isAkismetProduct } from '../../utils/purchase';
 
 export const shouldShowTransferAction = ( domain: Domain ) => {
 	if (
@@ -30,7 +32,7 @@ export const shouldShowDisconnectAction = ( domain: Domain ) => {
 	return true;
 };
 
-export const shouldShowDeleteAction = ( domain: Domain, purchase?: Purchase ) => {
+export const shouldShowDeleteAction = ( domain: Domain, purchase?: Purchase, site?: Site ) => {
 	if (
 		! domain.current_user_is_owner ||
 		domain.pending_registration ||
@@ -38,7 +40,9 @@ export const shouldShowDeleteAction = ( domain: Domain, purchase?: Purchase ) =>
 		domain.transfer_status === DomainTransferStatus.PENDING_ASYNC ||
 		! purchase ||
 		! purchase.is_removable ||
-		( ! purchase.is_removable && ! purchase.is_cancelable )
+		( ! purchase.is_removable && ! purchase.is_cancelable ) ||
+		// If we have a disconnected site that is _not_ a Jetpack purchase _or_ an Akismet purchase, no removal allowed.
+		( ! site && ! purchase.is_jetpack_plan_or_product && ! isAkismetProduct( purchase ) )
 	) {
 		return false;
 	}

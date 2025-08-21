@@ -9,6 +9,7 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useCallback, useState } from 'react';
 import { domainQuery, disconnectDomainMutation } from '../../app/queries/domain';
+import { siteByIdQuery } from '../../app/queries/site';
 import { sitePurchaseQuery } from '../../app/queries/site-purchases';
 import { domainRoute, domainTransferRoute } from '../../app/router/domains';
 import { ActionList } from '../../components/action-list';
@@ -23,10 +24,12 @@ import {
 	getDeleteLabel,
 	getDeleteDescription,
 } from './actions.utils';
+import { useDeleteDomain } from './use-delete-domain';
 
 export default function Actions() {
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
+	const { data: site } = useQuery( siteByIdQuery( domain.blog_id ) );
 	const { data: purchase } = useQuery(
 		sitePurchaseQuery( domain.blog_id, parseInt( domain.subscription_id, 10 ) )
 	);
@@ -103,7 +106,7 @@ export default function Actions() {
 						}
 					/>
 				) }
-				{ shouldShowDeleteAction( domain, purchase ) && (
+				{ shouldShowDeleteAction( domain, purchase, site ) && (
 					<ActionList.ActionItem
 						title={ getDeleteTitle( domain ) }
 						description={ getDeleteDescription( domain ) }
