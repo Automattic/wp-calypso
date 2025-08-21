@@ -80,7 +80,7 @@
 .link {
     background-color: transparent;
     color: var(--color-primary);
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--font-weight-semibold);
 }
 
 .link:hover:not(:disabled) {

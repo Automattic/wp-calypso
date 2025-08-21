@@ -15,6 +15,7 @@
 
   --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --font-weight-medium: 450;
+  --font-weight-semibold: 500;
   --text-sm: 0.875rem;
   --text-sm--line-height: 1.65;
   --text-base: 0.9375rem;

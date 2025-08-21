@@ -43,8 +43,9 @@
 .message p:last-child {
     margin-bottom: 0;
 }
+
 .message strong {
-    font-weight: 550;
+    font-weight: var(--font-weight-semibold);
 }
 
 .message ol,
