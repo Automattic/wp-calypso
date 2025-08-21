@@ -26,7 +26,13 @@ function Authorize() {
 				args: { client: oauth2Client.name },
 				components: { span: <span className="wp-login__one-login-header-client-name" /> },
 			} ),
-			subHeading: null,
+			subHeading: translate(
+				'Give {{span}}%(client)s{{/span}} access to your WordPress.comaccount',
+				{
+					args: { client: oauth2Client.name },
+					components: { span: <span className="wp-login__one-login-header-client-name" /> },
+				}
+			),
 			subHeadingSecondary: null,
 		} );
 	}, [ oauth2Client?.name ] );
