@@ -165,7 +165,7 @@ const DotcomPreviewPane = ( {
 		site,
 		selectedSiteFeature,
 		selectedSiteFeaturePreview,
-		isEnabled,
+		isHostingFeaturesCalloutEnabled,
 	] );
 
 	const itemData: ItemData = {
