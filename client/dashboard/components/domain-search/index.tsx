@@ -1,36 +1,22 @@
 // eslint-disable-next-line no-restricted-imports
 import { DomainSearch } from '@automattic/domain-search';
 import { __ } from '@wordpress/i18n';
-import { type ComponentProps } from 'react';
+import { useWPCOMShoppingCartForDomainSearch } from '../../app/shopping-cart';
 import { PageHeader } from '../page-header';
 import PageLayout from '../page-layout';
 
 import './style.scss';
 
-const staticCart = {
-	items: [
-		{
-			uuid: '1',
-			domain: 'example',
-			tld: 'com',
-			price: '$10',
-		},
-		{
-			uuid: '2',
-			domain: 'example',
-			tld: 'org',
-			price: '$10',
-		},
-	],
-	total: '$10',
-	onAddItem: () => Promise.resolve(),
-	onRemoveItem: () => Promise.resolve(),
-	hasItem: () => false,
-};
+interface DashboardDomainSearchProps {
+	currentSiteId?: number;
+	currentSiteUrl?: string;
+}
 
-function DashboardDomainSearch( {
-	currentSiteUrl,
-}: Pick< ComponentProps< typeof DomainSearch >, 'currentSiteUrl' > ) {
+function DashboardDomainSearch( { currentSiteId, currentSiteUrl }: DashboardDomainSearchProps ) {
+	const cart = useWPCOMShoppingCartForDomainSearch( {
+		cartKey: currentSiteId ?? 'no-site',
+	} );
+
 	return (
 		<PageLayout
 			size="large"
@@ -42,8 +28,8 @@ function DashboardDomainSearch( {
 			}
 		>
 			<DomainSearch
+				cart={ cart }
 				className="dashboard-domain-search"
-				cart={ staticCart }
 				currentSiteUrl={ currentSiteUrl }
 			/>
 		</PageLayout>

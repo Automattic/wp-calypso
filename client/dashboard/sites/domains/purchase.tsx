@@ -27,7 +27,7 @@ export default function SiteDomainsPurchase() {
 				} ).href
 			}
 		>
-			<DomainSearch currentSiteUrl={ new URL( site.URL ).hostname } />
+			<DomainSearch currentSiteId={ site.ID } currentSiteUrl={ new URL( site.URL ).hostname } />
 		</FullScreenOverlay>
 	);
 }

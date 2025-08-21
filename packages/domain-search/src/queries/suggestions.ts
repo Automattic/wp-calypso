@@ -6,6 +6,7 @@ export interface DomainSuggestion {
 	product_slug: string;
 	is_premium?: boolean;
 	is_free?: boolean;
+	supports_privacy?: boolean;
 }
 
 const fetchDomainSuggestions = async (): Promise< DomainSuggestion[] > => {
