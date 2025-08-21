@@ -7,6 +7,7 @@ import { SearchBar } from '../components/search-bar';
 import { SearchNotice } from '../components/search-notice';
 import { SearchResults } from '../components/search-results';
 import { SkipSuggestion } from '../components/skip-suggestion';
+import { UnavailableSearchResult } from '../components/unavailable-search-result';
 import { partitionSuggestions } from '../helpers/partition-suggestions';
 import { useDomainSearch } from './context';
 
@@ -43,6 +44,7 @@ export const ResultsPage = () => {
 			</VStack>
 			{ slots?.BeforeResults && <slots.BeforeResults /> }
 			<VStack spacing={ 4 }>
+				{ ! isLoading && <UnavailableSearchResult /> }
 				{ isLoading ? (
 					<FeaturedSearchResults.Placeholder />
 				) : (

@@ -11,7 +11,7 @@ export interface DomainAvailability {
 }
 
 const fetchDomainAvailability = async ( domainName: string ): Promise< DomainAvailability > => {
-	await new Promise( ( resolve ) => setTimeout( resolve, Math.random() * 3_000 ) );
+	await new Promise( ( resolve ) => setTimeout( resolve, Math.random() * 1_000 ) );
 
 	if ( domainName === 'example.com' ) {
 		return {

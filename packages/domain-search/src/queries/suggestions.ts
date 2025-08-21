@@ -7,7 +7,7 @@ export interface DomainSuggestion {
 }
 
 const fetchDomainSuggestions = async (): Promise< DomainSuggestion[] > => {
-	await new Promise( ( resolve ) => setTimeout( resolve, Math.random() * 3_000 ) );
+	await new Promise( ( resolve ) => setTimeout( resolve, Math.random() * 1_000 ) );
 
 	return [
 		{
