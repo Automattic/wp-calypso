@@ -28,6 +28,7 @@ export const NSRecordConfig: DnsRecordConfig = {
 			placeholder: __( 'e.g. ns1.your-provider.com' ),
 			isValid: {
 				required: true,
+				/* translators: This is the error message when the `data` field of a DNS NS record is invalid */
 				custom: domainValidator( __( 'Please enter a valid host.' ) ),
 			},
 		},

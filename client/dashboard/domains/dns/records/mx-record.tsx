@@ -32,6 +32,7 @@ export const MXRecordConfig: DnsRecordConfig = {
 			placeholder: __( 'e.g. mail.your-provider.com' ),
 			isValid: {
 				required: true,
+				/* translators: This is the error message when the `data` field of a DNS MX record is invalid */
 				custom: domainValidator( __( 'Please enter a valid mail server.' ) ),
 			},
 		},
@@ -43,6 +44,7 @@ export const MXRecordConfig: DnsRecordConfig = {
 			placeholder: __( 'e.g. 10' ),
 			isValid: {
 				required: true,
+				/* translators: This is the error message when the `aux` field of a DNS MX record is invalid */
 				custom: numberRangeValidator( 0, 65535, __( 'Please enter a valid priority value.' ) ),
 			},
 		},

@@ -30,6 +30,7 @@ export const CAARecordConfig: DnsRecordConfig = {
 			placeholder: __( 'e.g. 0' ),
 			isValid: {
 				required: true,
+				/* translators: This is the error message when the `flags` field of a DNS CAA record is invalid */
 				custom: numberRangeValidator( 0, 255, __( 'Please enter a valid flags value.' ) ),
 			},
 		},
@@ -55,6 +56,7 @@ export const CAARecordConfig: DnsRecordConfig = {
 			placeholder: __( 'e.g. "letsencrypt.org"' ),
 			isValid: {
 				required: true,
+				/* translators: This is the error message when the `data` field of a DNS CAA record is invalid */
 				custom: stringLengthValidator( __( 'Please enter a valid value.' ) ),
 			},
 		},

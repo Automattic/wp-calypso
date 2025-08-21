@@ -17,6 +17,7 @@ export const AliasRecordConfig: DnsRecordConfig = {
 			placeholder: __( 'e.g. example.com' ),
 			isValid: {
 				required: true,
+				/* translators: This is the error message when the `data` field of a DNS ALIAS record is invalid */
 				custom: domainValidator( __( 'Please enter a valid target host.' ) ),
 			},
 		},

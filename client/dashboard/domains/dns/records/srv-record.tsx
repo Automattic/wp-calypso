@@ -57,6 +57,7 @@ export const SRVRecordConfig: DnsRecordConfig = {
 			placeholder: __( 'e.g. 10' ),
 			isValid: {
 				required: true,
+				/* translators: This is the error message when the `aux` field of a DNS SRV record is invalid */
 				custom: numberRangeValidator( 0, 65535, __( 'Please enter a valid priority value.' ) ),
 			},
 		},
@@ -68,6 +69,7 @@ export const SRVRecordConfig: DnsRecordConfig = {
 			placeholder: __( 'e.g. 10' ),
 			isValid: {
 				required: true,
+				/* translators: This is the error message when the `weight` field of a DNS SRV record is invalid */
 				custom: numberRangeValidator( 0, 65535, __( 'Please enter a valid weight value.' ) ),
 			},
 		},
@@ -79,6 +81,7 @@ export const SRVRecordConfig: DnsRecordConfig = {
 			placeholder: __( 'e.g. sip.your-provider.com' ),
 			isValid: {
 				required: true,
+				/* translators: This is the error message when the `target` field of a DNS SRV record is invalid */
 				custom: domainValidator( __( 'Please enter a valid target host.' ) ),
 			},
 		},
@@ -90,6 +93,7 @@ export const SRVRecordConfig: DnsRecordConfig = {
 			placeholder: __( 'e.g. 5060' ),
 			isValid: {
 				required: true,
+				/* translators: This is the error message when the `port` field of a DNS SRV record is invalid */
 				custom: numberRangeValidator( 0, 65535, __( 'Please enter a valid port value.' ) ),
 			},
 		},
