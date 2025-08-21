@@ -50,15 +50,17 @@ const PreviewPaneHeaderButtons = ( { focusRef, itemData }: Props ) => {
 		getIsStagingSiteInTransition( state, itemData.blogId ?? 0 )
 	);
 
-	const { data: isStagingSiteDeletionInProgress } = useQuery(
-		isDeletingStagingSiteQuery( itemData.blogId ?? 0 ),
-		queryClient
-	);
-
 	// Get the staging site to check its jetpack_connection
 	const stagingSiteId = isStagingSite
 		? itemData.blogId
 		: site?.options?.wpcom_staging_blog_ids?.[ 0 ];
+
+	// Check for staging site deletion - either on the staging site itself or on the production site
+	const siteToCheckForDeletion = isStagingSite ? itemData.blogId : stagingSiteId;
+	const { data: isStagingSiteDeletionInProgress } = useQuery(
+		isDeletingStagingSiteQuery( siteToCheckForDeletion ?? 0 ),
+		queryClient
+	);
 
 	const { data: stagingSite } = useQuery( {
 		...siteByIdQuery( stagingSiteId ?? 0 ),
