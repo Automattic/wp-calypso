@@ -53,11 +53,13 @@ const NotificationApp = ( {
 	customEnhancer,
 	actionHandlers = {},
 	wpcom,
+	onNavigate,
 }: {
 	locale?: string;
 	customEnhancer?: any;
 	actionHandlers?: any;
 	wpcom: any;
+	onNavigate: ( path: string ) => void;
 } ) => {
 	const [ isReady, setIsReady ] = useState( !! client );
 
@@ -115,7 +117,7 @@ const NotificationApp = ( {
 				<Navigator initialPath="/">
 					<Navigator.Screen path="/">
 						<Suspense fallback={ null }>
-							<NotePanel />
+							<NotePanel onNavigate={ onNavigate } />
 						</Suspense>
 					</Navigator.Screen>
 					<Navigator.Screen path="/notes/:noteId">
