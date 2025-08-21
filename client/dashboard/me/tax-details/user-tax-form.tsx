@@ -1,4 +1,5 @@
 import { CALYPSO_CONTACT } from '@automattic/urls';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Button,
 	__experimentalHStack as HStack,
@@ -13,7 +14,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useState, useRef } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import useCountryList from '../../app/hooks/use-country-list';
-import { fetchGeo } from '../../data/geo';
+import { geoLocationQuery } from '../../app/queries/geo';
 import { getTaxName, getDataFormCountryCodes } from '../../utils/tax';
 import useDisplayUserTaxNotices from './use-display-user-tax-notices';
 import useUserTaxDetails from './use-user-tax-details';
@@ -141,7 +142,7 @@ export default function UserTaxForm() {
 		userTaxDetails.name,
 	] );
 
-	const geoData = fetchGeo();
+	const { data: geoData } = useSuspenseQuery( geoLocationQuery() );
 	const taxName = getTaxName( countryList, formData.country ?? geoData?.country_short ?? 'GB' );
 
 	useDisplayUserTaxNotices( { error: updateError, success: isUpdateSuccessful, taxName } );
