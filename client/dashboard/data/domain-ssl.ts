@@ -30,11 +30,12 @@ export type SslDetailsResponse = {
 	status: string;
 };
 
-export function fetchSslDetails( domainName: string ): Promise< SslDetailsResponse > {
-	return wpcom.req.get( {
+export async function fetchSslDetails( domainName: string ): Promise< SslDetails > {
+	const response = await wpcom.req.get( {
 		path: `/domains/ssl/${ domainName }`,
 		apiNamespace: 'wpcom/v2',
 	} );
+	return response.data;
 }
 
 export function provisionSslCertificate( domainName: string ): Promise< void > {

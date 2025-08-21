@@ -6,7 +6,6 @@ export const sslDetailsQuery = ( domainName: string ) =>
 	queryOptions( {
 		queryKey: [ 'domains', domainName, 'ssl' ],
 		queryFn: () => fetchSslDetails( domainName ),
-		select: ( response ) => response.data,
 	} );
 
 export const provisionSslCertificateMutation = ( domainName: string ) =>
