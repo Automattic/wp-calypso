@@ -16,6 +16,16 @@ const fetchDomainSuggestions = async (): Promise< DomainSuggestion[] > => {
 			product_slug: 'domain_reg',
 		},
 		{
+			domain_name: 'example.app',
+			cost: '$10',
+			product_slug: 'dotapp_domain',
+		},
+		{
+			domain_name: 'example.gay',
+			cost: '$10',
+			product_slug: 'dotgay_domain',
+		},
+		{
 			domain_name: 'example.org',
 			cost: '$18',
 			product_slug: 'dotorg_domain',

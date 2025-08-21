@@ -75,6 +75,30 @@ const fetchDomainAvailability = async ( domainName: string ): Promise< DomainAva
 		};
 	}
 
+	if ( domainName === 'example.app' ) {
+		return {
+			domain_name: 'example.app',
+			status: 'available',
+			mappable: 'mappable',
+			supports_privacy: true,
+			cost: '$18',
+			product_id: 6,
+			product_slug: 'dotapp_domain',
+		};
+	}
+
+	if ( domainName === 'example.gay' ) {
+		return {
+			domain_name: 'example.gay',
+			status: 'available',
+			mappable: 'mappable',
+			supports_privacy: true,
+			cost: '$18',
+			product_id: 6,
+			product_slug: 'dotgay_domain',
+		};
+	}
+
 	throw new Error( `Domain ${ domainName } not found` );
 };
 

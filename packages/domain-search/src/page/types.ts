@@ -1,4 +1,5 @@
 import { domainAvailabilityQuery } from '../queries/availability';
+import { productsQuery } from '../queries/products';
 import type { DomainSuggestion, domainSuggestionsQuery } from '../queries/suggestions';
 import type { ComponentType } from 'react';
 
@@ -45,5 +46,6 @@ export interface DomainSearchContextType
 	queries: {
 		domainSuggestions: typeof domainSuggestionsQuery;
 		domainAvailability: typeof domainAvailabilityQuery;
+		products: typeof productsQuery;
 	};
 }
