@@ -110,6 +110,12 @@ export const getProcessedRecord = ( record: DnsRecord ): DnsRecord => {
 		record.data = record.data ? record.data.replace( /\.$/, '' ) : '';
 	}
 
+	// The `data` property for CAA records contains `flags`, `tag` and `value`,
+	// and we want to show only the `value` for the user
+	if ( record.type === 'CAA' ) {
+		record.data = record.value;
+	}
+
 	// Make sure we can handle protocols with and without a leading underscore
 	if ( record.type === 'SRV' && record.protocol !== undefined ) {
 		record.protocol = record.protocol.replace( /^_*/, '_' );
