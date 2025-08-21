@@ -25,11 +25,6 @@ export type SslDetails = {
 	failure_reasons?: SslFailureReason[];
 };
 
-export type SslDetailsResponse = {
-	data: SslDetails;
-	status: string;
-};
-
 export async function fetchSslDetails( domainName: string ): Promise< SslDetails > {
 	const response = await wpcom.req.get( {
 		path: `/domains/ssl/${ domainName }`,
