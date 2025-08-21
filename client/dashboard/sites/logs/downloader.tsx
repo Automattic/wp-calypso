@@ -157,19 +157,19 @@ export function LogsDownloader( {
 		setStatus( result.ok ? 'complete' : 'error' );
 		if ( result.ok ) {
 			onSuccess?.( result.message );
-			recordTracksEvent( 'calypso_atomic_logs_download_completed', {
+			recordTracksEvent( 'calypso_dashboard_site_logs_download_completed', {
 				download_filename: result.fileName,
 				total_log_records_downloaded: result.totalAvailable ?? result.downloadedCount ?? 0,
 				...tracksProps,
 			} );
 		} else {
 			onError?.( result.message );
-			recordTracksEvent( 'calypso_atomic_logs_download_error', {
+			recordTracksEvent( 'calypso_dashboard_site_logs_download_error', {
 				error_message: result.message,
 				...tracksProps,
 			} );
 		}
-		recordTracksEvent( 'calypso_atomic_logs_download_started', tracksProps );
+		recordTracksEvent( 'calypso_dashboard_site_logs_download_started', tracksProps );
 	};
 
 	let iconColor = 'inherit';
