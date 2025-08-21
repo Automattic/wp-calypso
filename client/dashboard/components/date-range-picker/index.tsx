@@ -125,13 +125,13 @@ function DateRangePickerInner( {
 	// Tracks the keyboard-focused preset in the listbox (roving focus), not the selected preset.
 	const [ compositeActiveId, setCompositeActiveId ] = useState< string | null >( null );
 
-	const siteToday = useMemo(
+	const today = useMemo(
 		() => parseYmdLocal( formatYmd( new Date(), timezoneString, gmtOffset ) )!,
 		[ timezoneString, gmtOffset ]
 	);
-	const siteTodayStr = useMemo(
-		() => formatYmd( siteToday, timezoneString, gmtOffset ),
-		[ siteToday, timezoneString, gmtOffset ]
+	const todayStr = useMemo(
+		() => formatYmd( today, timezoneString, gmtOffset ),
+		[ today, timezoneString, gmtOffset ]
 	);
 
 	return (
@@ -151,8 +151,8 @@ function DateRangePickerInner( {
 			onClose={ onClose }
 			compositeActiveId={ compositeActiveId }
 			setCompositeActiveId={ setCompositeActiveId }
-			today={ siteToday }
-			todayStr={ siteTodayStr }
+			today={ today }
+			todayStr={ todayStr }
 			mobileLabelId={ mobileLabelId }
 			desktopLabelId={ desktopLabelId }
 			disableFuture={ disableFuture }
