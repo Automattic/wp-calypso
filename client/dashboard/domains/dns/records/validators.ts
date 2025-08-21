@@ -1,6 +1,6 @@
 import { NormalizedField } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { isRootDomain, isRootDomainNameSupported } from '../utils';
+import { isRootDomainNameSupported } from '../utils';
 import type { DnsRecordFormData } from './dns-record-configs';
 import type { DnsRecordType } from '../../../data/domain-dns-records';
 
@@ -13,7 +13,7 @@ import type { DnsRecordType } from '../../../data/domain-dns-records';
  * @returns True if the name is valid, false otherwise
  */
 const isValidName = ( name: string, type: DnsRecordType, domainName: string ): boolean => {
-	if ( isRootDomain( name, domainName ) && isRootDomainNameSupported( type ) ) {
+	if ( isRootDomainNameSupported( name, type, domainName ) ) {
 		return true;
 	}
 
@@ -113,7 +113,9 @@ export const stringLengthValidator =
 	};
 
 /**
- * Checks if the provided `value` doesn't start with a space or a dot
+ * Checks if the provided `value` starts with a space or a dot
+ *
+ * This is used to validate the `service` field of an SRV record.
  */
 export const serviceValidator =
 	( errorMessage: string = __( 'Please enter a value.' ) ) =>
