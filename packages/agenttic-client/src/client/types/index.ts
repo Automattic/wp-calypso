@@ -26,6 +26,7 @@ export interface JsonRpcError {
 export type TaskState =
 	| 'submitted'
 	| 'working'
+	| 'running'
 	| 'input-required'
 	| 'completed'
 	| 'canceled'

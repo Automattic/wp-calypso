@@ -555,6 +555,249 @@ describe( 'Client', () => {
 		} );
 	} );
 
+	describe( 'Running state tool execution', () => {
+		it( 'should execute tools immediately in running state without blocking stream', async () => {
+			// Arrange: Create a mock tool provider that tracks execution
+			const executedTools: Array< {
+				toolId: string;
+				args: any;
+				messageId?: string;
+				toolCallId?: string;
+			} > = [];
+			const mockToolProvider: ToolProvider = {
+				async getAvailableTools() {
+					return [
+						{
+							id: 'set_processing_state',
+							name: 'Set Processing State',
+							description: 'Sets processing state',
+							input_schema: {
+								type: 'object',
+								properties: {
+									clientId: { type: 'string' },
+								},
+							},
+						},
+					];
+				},
+				async executeTool(
+					toolId: string,
+					args: any,
+					messageId?: string,
+					toolCallId?: string
+				) {
+					executedTools.push( {
+						toolId,
+						args,
+						messageId,
+						toolCallId,
+					} );
+					return { result: 'processing state set' };
+				},
+			};
+
+			// Mock SSE stream response with running state and tool calls
+			const createMockSSEStream = () => {
+				const encoder = new TextEncoder();
+				const stream = new ReadableStream( {
+					start( controller ) {
+						// Send running state with tool call
+						const runningEvent = `data: ${ JSON.stringify( {
+							jsonrpc: '2.0',
+							id: 'test-request-id',
+							result: {
+								type: 'TaskStatusUpdateEvent',
+								taskId: 'test-task-id',
+								status: {
+									state: 'running',
+									message: {
+										messageId: 'running-message-123',
+										role: 'agent',
+										kind: 'message',
+										parts: [
+											{
+												type: 'data',
+												data: {
+													toolCallId:
+														'call-running-123',
+													toolId: 'set_processing_state',
+													arguments: {
+														clientId: 'block-123',
+													},
+												},
+											},
+										],
+									},
+									final: false,
+								},
+							},
+						} ) }\n\n`;
+
+						// Send final completion
+						const completedEvent = `data: ${ JSON.stringify( {
+							jsonrpc: '2.0',
+							id: 'test-request-id-final',
+							result: {
+								type: 'TaskStatusUpdateEvent',
+								taskId: 'test-task-id',
+								status: {
+									state: 'completed',
+									message: {
+										role: 'agent',
+										kind: 'message',
+										parts: [
+											{
+												type: 'text',
+												text: 'Task completed successfully!',
+											},
+										],
+									},
+									final: true,
+								},
+							},
+						} ) }\n\n`;
+
+						controller.enqueue( encoder.encode( runningEvent ) );
+						setTimeout( () => {
+							controller.enqueue(
+								encoder.encode( completedEvent )
+							);
+							controller.close();
+						}, 10 );
+					},
+				} );
+				return stream;
+			};
+
+			// Mock the streaming response
+			mockFetch.mockResolvedValueOnce( {
+				ok: true,
+				status: 200,
+				headers: new Headers( {
+					'content-type': 'text/event-stream',
+				} ),
+				body: createMockSSEStream(),
+			} );
+
+			const client = createClient( {
+				agentId: 'test-agent',
+				toolProvider: mockToolProvider,
+			} );
+
+			// Act: Send a message and collect all updates
+			const userMessage = createTextMessage( 'Start processing' );
+			const updates = [];
+			for await ( const update of client.sendMessageStream( {
+				message: userMessage,
+			} ) ) {
+				updates.push( update );
+			}
+
+			// Assert: Tool should have been executed during running state
+			expect( executedTools ).toHaveLength( 1 );
+			expect( executedTools[ 0 ] ).toEqual( {
+				toolId: 'set_processing_state',
+				args: { clientId: 'block-123' },
+				messageId: 'running-message-123',
+				toolCallId: 'call-running-123',
+			} );
+
+			// Should yield both the running state and completion updates
+			expect( updates ).toHaveLength( 3 ); // Original running, tool execution marker, completion
+			expect( updates[ 0 ].status.state ).toBe( 'running' );
+			expect( updates[ 1 ].status.state ).toBe( 'running' ); // Tool execution marker
+			expect( updates[ 2 ].status.state ).toBe( 'completed' );
+			expect( updates[ 2 ].final ).toBe( true );
+		} );
+
+		it( 'should not execute tools in running state when no matching callbacks exist', async () => {
+			// Arrange: Create a tool provider that doesn't have the requested tool
+			const executedTools: Array< { toolId: string; args: any } > = [];
+			const mockToolProvider: ToolProvider = {
+				async getAvailableTools() {
+					return [
+						{
+							id: 'different_tool',
+							name: 'Different Tool',
+							description: 'A different tool',
+							input_schema: { type: 'object', properties: {} },
+						},
+					];
+				},
+				async executeTool( toolId: string, args: any ) {
+					executedTools.push( { toolId, args } );
+					return { result: 'executed' };
+				},
+			};
+
+			// Mock SSE stream with running state that calls a tool not available in provider
+			const createMockSSEStream = () => {
+				const encoder = new TextEncoder();
+				const stream = new ReadableStream( {
+					start( controller ) {
+						const runningEvent = `data: ${ JSON.stringify( {
+							jsonrpc: '2.0',
+							id: 'test-request-id',
+							result: {
+								type: 'TaskStatusUpdateEvent',
+								taskId: 'test-task-id',
+								status: {
+									state: 'running',
+									message: {
+										role: 'agent',
+										kind: 'message',
+										parts: [
+											{
+												type: 'data',
+												data: {
+													toolCallId: 'call-123',
+													toolId: 'unavailable_tool', // Tool not in provider
+													arguments: { data: 'test' },
+												},
+											},
+										],
+									},
+									final: true,
+								},
+							},
+						} ) }\n\n`;
+
+						controller.enqueue( encoder.encode( runningEvent ) );
+						setTimeout( () => controller.close(), 10 );
+					},
+				} );
+				return stream;
+			};
+
+			mockFetch.mockResolvedValueOnce( {
+				ok: true,
+				status: 200,
+				headers: new Headers( { 'content-type': 'text/event-stream' } ),
+				body: createMockSSEStream(),
+			} );
+
+			const client = createClient( {
+				agentId: 'test-agent',
+				toolProvider: mockToolProvider,
+			} );
+
+			// Act: Send a message
+			const userMessage = createTextMessage( 'Test message' );
+			const updates = [];
+			for await ( const update of client.sendMessageStream( {
+				message: userMessage,
+			} ) ) {
+				updates.push( update );
+			}
+
+			// Assert: No tools should have been executed since no matching callback exists
+			expect( executedTools ).toHaveLength( 0 );
+			// Should only have the original running state update
+			expect( updates ).toHaveLength( 1 );
+			expect( updates[ 0 ].status.state ).toBe( 'running' );
+		} );
+	} );
+
 	describe( 'SSE error handling', () => {
 		it( 'should throw error when SSE event contains error field', async () => {
 			const encoder = new TextEncoder();

@@ -33,6 +33,44 @@ import {
 const DEFAULT_TIMEOUT = 120000;
 
 /**
+ * Check if any tool calls in a message have matching callbacks
+ * @param toolProvider - The tool provider to check
+ * @param message      - The message containing tool calls
+ * @return Promise resolving to boolean indicating if any tools can be executed
+ */
+async function hasMatchingToolCallbacks(
+	toolProvider: any,
+	message: Message
+): Promise< boolean > {
+	if ( ! toolProvider || ! message || ! toolProvider.getAvailableTools ) {
+		return false;
+	}
+
+	const toolCalls = extractToolCallsFromMessage( message );
+	if ( toolCalls.length === 0 ) {
+		return false;
+	}
+
+	try {
+		const availableTools = await toolProvider.getAvailableTools();
+
+		// Check if any tool call has a matching callback
+		for ( const toolCall of toolCalls ) {
+			const hasCallback = availableTools.some(
+				( tool: any ) => tool.id === toolCall.data.toolId
+			);
+			if ( hasCallback ) {
+				return true;
+			}
+		}
+	} catch ( error ) {
+		return false;
+	}
+
+	return false;
+}
+
+/**
  * Execute a batch of tool calls and return their results.
  * @param toolCalls
  * @param toolProvider
@@ -296,6 +334,60 @@ async function* processAgentResponseStream(
 ): AsyncIterable< TaskUpdate > {
 	for await ( const update of stream ) {
 		yield update;
+
+		// Handle running state tool calls (async execution without blocking)
+		if (
+			update.status.state === 'running' &&
+			update.status.message &&
+			toolProvider &&
+			( await hasMatchingToolCallbacks(
+				toolProvider,
+				update.status.message
+			) )
+		) {
+			const toolCalls = extractToolCallsFromMessage(
+				update.status.message
+			);
+
+			// Execute tools async without blocking the stream
+			for ( const toolCall of toolCalls ) {
+				const { toolCallId, toolId, arguments: args } = toolCall.data;
+
+				// Execute tool async (fire and forget)
+				toolProvider
+					.executeTool(
+						toolId as string,
+						args,
+						update.status?.message?.messageId,
+						toolCallId as string
+					)
+					.catch( ( error: any ) => {
+						// Log error but don't block stream
+						console.error(
+							`Tool execution failed for ${ toolId }:`,
+							error
+						);
+					} );
+			}
+
+			// Yield running state update with tool results marker
+			yield {
+				id: update.id,
+				status: {
+					state: 'running',
+					message: {
+						role: 'agent' as const,
+						kind: 'message' as const,
+						parts: toolCalls,
+						messageId: generateMessageId(),
+					},
+				},
+				final: false,
+				text: '',
+			};
+		}
+
+		// Now handle input-required tool calls
 		if (
 			update.status.state === 'input-required' &&
 			update.status.message &&
