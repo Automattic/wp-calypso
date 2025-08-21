@@ -12,7 +12,6 @@ export type SiteFeatureSupports = {
 
 export type MeSupports = {
 	privacy: boolean;
-	blockedSites: boolean;
 };
 
 export type AppConfig = {
