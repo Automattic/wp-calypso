@@ -67,7 +67,7 @@ export const billingHistoryRoute = createRoute( {
 export const purchaseSettingsRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	loader: async ( { params: { purchaseId } } ) => {
-		queryClient.ensureQueryData( purchaseQuery( parseInt( purchaseId ) ) );
+		await queryClient.ensureQueryData( purchaseQuery( parseInt( purchaseId ) ) );
 	},
 	path: 'billing/purchases/purchase/$purchaseId',
 } ).lazy( () =>
@@ -81,8 +81,8 @@ export const purchaseSettingsRoute = createRoute( {
 export const purchasesRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	loader: async () => {
-		queryClient.ensureQueryData( userPurchasesQuery() );
-		queryClient.ensureQueryData( sitesQuery() );
+		await queryClient.ensureQueryData( userPurchasesQuery() );
+		await queryClient.ensureQueryData( sitesQuery() );
 	},
 	validateSearch: ( search ): { site: string | undefined } => {
 		return {
