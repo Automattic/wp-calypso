@@ -18,47 +18,50 @@
 	position: absolute;
 	z-index: 998;
 	bottom: 50px;
-	right: 20px;
+	right: -4px;
 	animation: fade-in 0.3s cubic-bezier(0.785, 0.135, 0.15, 0.86) both;
-	display: flex;
 	align-items: center;
 	gap: 4px;
+	display: none;
 
 	@include break-small {
-		right: 0;
+		display: flex;
 	}
 
 	@include break-large {
-		bottom: 50px;
-		right: 70px;
+		bottom: 44px;
+		right: 63px;
 	}
 
 	&--suggested, &--published {
 		--color-background: var(--color-success-40);
 		--color-foreground: var(--color-white);
+		--color-text: var(--color-success-dark);
 	}
 
 
 	&--eligible {
 		--color-background: var(--color-primary-dark);
 		--color-foreground: #fff;
+		--color-text: var(--color-primary-dark);
 	}
 
 
 	&--not-eligible {
 		--color-background: var(--color-neutral-10);
 		--color-foreground: var(--color-neutral-70);
+		--color-text: var(--color-neutral-100);
 	}
 
 
 	&--loading {
 		--color-background: var(--color-primary-dark);
 		--color-foreground: var(--color-primary-40);
+		--color-text: var(--color-primary-dark);
 	}
 
 
 	&__state-button {
-		cursor: pointer;
 		transform: scale(1);
 		&:active {
 			filter: brightness(85%);
@@ -79,12 +82,14 @@
 			.freshly-pressed-suggestion__status-text {
 				opacity: 1;
 				transform: translateX( 0 );
+
 			}
 		}
 	}
 
 	&__icon-wrapper:not(:has(button)),
 	&__state-button {
+		cursor: pointer;
 		background-color: var(--color-background);
 		color: var(--color-foreground);
 		fill: var(--color-foreground);
@@ -92,7 +97,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		padding: 10px;
+		padding: 8px;
 		transition: transform 0.3s cubic-bezier(0.785, 0.135, 0.15, 0.86);
 		z-index: 999;
 		&:hover {
@@ -108,7 +113,7 @@
 	}
 
 	&__status-text-container {
-		clip-path: rect(-1px calc(100%) calc(100% + 1px) -1px);
+		clip-path: rect(-5px calc(100% + 10px) calc(100% + 5px) 0);
 		filter: drop-shadow(0 0 2px #0000003b);
 	}
 
@@ -117,7 +122,7 @@
 		padding: 8px;
 		border-radius: 4px;
 		background-color: #fff;
-		color: var(--color-background);
+		color: var(--color-text);
 		transform: translateX( 20% );
 		transition: transform 0.3s cubic-bezier(0.785, 0.135, 0.15, 0.86), opacity 0.3s cubic-bezier(0.785, 0.135, 0.15, 0.86);
 		opacity: 0;
@@ -127,5 +132,7 @@
 		position: relative;
 		right: -26px;
 		pointer-events: none;
+		white-space: nowrap;
+		text-wrap: nowrap;
 	}
 }

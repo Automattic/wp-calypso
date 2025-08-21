@@ -2,7 +2,7 @@ import { Icon, Spinner } from '@wordpress/components';
 import { check, notAllowed, levelUp } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useEligibilityQuery } from 'calypso/data/reader/freshly-pressed/use-eligibility-query';
 import { useSuggestionMutation } from 'calypso/data/reader/freshly-pressed/use-suggestion-mutation';
 import './style.scss';
@@ -46,6 +46,41 @@ const IconStatus = ( { status, onClick }: IconStatusProps ) => {
 	}
 };
 
+const useHoverWithTimeout = () => {
+	const [ isHovered, setIsHovered ] = useState( false );
+	const timeoutRef = useRef< number | null >( null );
+	const clearTimeout = useCallback( () => {
+		if ( timeoutRef.current ) {
+			window.clearTimeout( timeoutRef.current );
+			timeoutRef.current = null;
+		}
+	}, [] );
+
+	const handleHover = useCallback( () => {
+		clearTimeout();
+		setIsHovered( true );
+	}, [ clearTimeout ] );
+
+	const handleMouseLeave = useCallback( () => {
+		clearTimeout();
+		timeoutRef.current = window.setTimeout( () => {
+			setIsHovered( false );
+		}, 300 );
+	}, [ clearTimeout ] );
+
+	useEffect( () => {
+		return () => {
+			clearTimeout();
+		};
+	}, [ clearTimeout ] );
+
+	return {
+		isHovered,
+		handleHover,
+		handleMouseLeave,
+	};
+};
+
 export const FreshlyPressed = ( { blogId, postId }: Props ) => {
 	const translate = useTranslate();
 	const { data, isLoading: isEligibilityLoading } = useEligibilityQuery( {
@@ -64,28 +99,32 @@ export const FreshlyPressed = ( { blogId, postId }: Props ) => {
 
 	const status = isEligibilityLoading || isUpdating || ! data?.status ? 'loading' : data?.status;
 	const isLoading = status === 'loading';
+	const { isHovered, handleHover, handleMouseLeave } = useHoverWithTimeout();
 
 	return (
 		<div
-			className={ clsx( 'freshly-pressed-suggestion', {
-				'freshly-pressed-suggestion--loading': isLoading,
-				'freshly-pressed-suggestion--suggested': status === 'suggested',
-				'freshly-pressed-suggestion--published': status === 'published',
-				'freshly-pressed-suggestion--not-eligible': status === 'not-eligible',
-				'freshly-pressed-suggestion--eligible': status === 'eligible',
-			} ) }
+			className={ clsx(
+				'freshly-pressed-suggestion',
+				`freshly-pressed-suggestion--${ status ?? 'loading' }`
+			) }
 		>
-			<div className="freshly-pressed-suggestion__icon-wrapper-container">
-				<div className="freshly-pressed-suggestion__status-text-container">
-					{ ! isLoading && status !== 'eligible' && (
-						<p className="freshly-pressed-suggestion__status-text">{ data?.details?.reason }</p>
-					) }
-					{ status === 'eligible' && (
-						<p className="freshly-pressed-suggestion__status-text">
-							{ translate( 'Recommend this post for Freshly Pressed (Automatticians only)' ) }
-						</p>
-					) }
-				</div>
+			<div
+				className="freshly-pressed-suggestion__icon-wrapper-container"
+				onMouseEnter={ handleHover }
+				onMouseLeave={ handleMouseLeave }
+			>
+				{ isHovered && (
+					<div className="freshly-pressed-suggestion__status-text-container">
+						{ ! isLoading && status !== 'eligible' && (
+							<p className="freshly-pressed-suggestion__status-text">{ data?.details?.reason }</p>
+						) }
+						{ status === 'eligible' && (
+							<p className="freshly-pressed-suggestion__status-text">
+								{ translate( 'Recommend this post for Freshly Pressed (Automatticians only)' ) }
+							</p>
+						) }
+					</div>
+				) }
 
 				<div className="freshly-pressed-suggestion__icon-wrapper">
 					<IconStatus
