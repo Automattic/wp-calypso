@@ -1,4 +1,4 @@
-import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import {
 	Card,
 	CardBody,
@@ -10,14 +10,16 @@ import {
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { domainQuery } from '../../app/queries/domain';
 import { domainDnssecMutation } from '../../app/queries/domain-dnssec';
-import { domainRoute } from '../../app/router/domains';
 import { DnsSecRecordTextarea } from './dnssec-record-textarea';
+import type { Domain } from '../../data/domain';
 
-export default function DnsSec() {
-	const { domainName } = domainRoute.useParams();
-	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
+interface DnsSecProps {
+	domainName: string;
+	domain: Domain;
+}
+
+export default function DnsSec( { domainName, domain }: DnsSecProps ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const mutation = useMutation( domainDnssecMutation( domainName ) );
@@ -44,15 +46,9 @@ export default function DnsSec() {
 					<Text>{ __( 'DNSSEC is not supported for this domain.' ) }</Text>
 				) : (
 					<VStack spacing={ 4 }>
-						<HStack
-							spacing={ 3 }
-							alignment="left"
-							style={ {
-								flexWrap: 'wrap',
-								gap: '8px',
-							} }
-						>
+						<HStack alignment="left">
 							<ToggleControl
+								__nextHasNoMarginBottom
 								checked={ domain.is_dnssec_enabled ?? false }
 								onChange={ ( checked ) => handleToggleChange( checked ) }
 								disabled={ isPending }
