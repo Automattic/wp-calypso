@@ -1,6 +1,7 @@
 // eslint-disable-next-line no-restricted-imports
 import { DomainSearch } from '@automattic/domain-search';
 import { __ } from '@wordpress/i18n';
+import { type ComponentProps } from 'react';
 import { PageHeader } from '../page-header';
 import PageLayout from '../page-layout';
 
@@ -27,7 +28,9 @@ const staticCart = {
 	hasItem: () => false,
 };
 
-function DashboardDomainSearch() {
+function DashboardDomainSearch( {
+	currentSiteUrl,
+}: Pick< ComponentProps< typeof DomainSearch >, 'currentSiteUrl' > ) {
 	return (
 		<PageLayout
 			size="large"
@@ -38,7 +41,11 @@ function DashboardDomainSearch() {
 				/>
 			}
 		>
-			<DomainSearch className="dashboard-domain-search" cart={ staticCart } />
+			<DomainSearch
+				className="dashboard-domain-search"
+				cart={ staticCart }
+				currentSiteUrl={ currentSiteUrl }
+			/>
 		</PageLayout>
 	);
 }

@@ -27,7 +27,7 @@ export default function SiteDomainsPurchase() {
 				} ).href
 			}
 		>
-			<DomainSearch />
+			<DomainSearch currentSiteUrl={ new URL( site.URL ).hostname } />
 		</FullScreenOverlay>
 	);
 }

@@ -20,6 +20,17 @@ const SkipSuggestion = ( { freeSuggestion }: { freeSuggestion?: string } ) => {
 		},
 	} );
 
+	if ( currentSiteUrl ) {
+		return (
+			<DomainSearchSkipSuggestion
+				existingSiteUrl={ currentSiteUrl }
+				onSkip={ events.onContinue }
+				disabled={ false }
+				isBusy={ false }
+			/>
+		);
+	}
+
 	if ( suggestion ) {
 		return (
 			<DomainSearchSkipSuggestion
@@ -29,17 +40,6 @@ const SkipSuggestion = ( { freeSuggestion }: { freeSuggestion?: string } ) => {
 				} }
 				disabled={ isAddingToCart }
 				isBusy={ isAddingToCart }
-			/>
-		);
-	}
-
-	if ( currentSiteUrl ) {
-		return (
-			<DomainSearchSkipSuggestion
-				existingSiteUrl={ currentSiteUrl }
-				onSkip={ events.onContinue }
-				disabled={ false }
-				isBusy={ false }
 			/>
 		);
 	}
