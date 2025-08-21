@@ -16,7 +16,6 @@ export const siteBackupRestoreProgressQuery = ( siteId: number, restoreId: numbe
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'backup', 'restore', restoreId, 'progress' ],
 		queryFn: () => fetchSiteBackupRestoreProgress( siteId, restoreId ),
-		enabled: !! restoreId,
 		refetchInterval: ( query ) => {
 			const { data } = query.state;
 
