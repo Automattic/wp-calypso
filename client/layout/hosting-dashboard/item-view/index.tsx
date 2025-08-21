@@ -8,6 +8,7 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import { siteByIdQuery } from 'calypso/dashboard/app/queries/site';
 import { siteLatestAtomicTransferQuery } from 'calypso/dashboard/app/queries/site-atomic-transfers';
 import { isDeletingStagingSiteQuery } from 'calypso/dashboard/app/queries/site-staging-sites';
+import { queryClient } from 'calypso/dashboard/app/query-client';
 import {
 	isAtomicTransferInProgress,
 	isAtomicTransferredSite,
@@ -62,10 +63,13 @@ export default function ItemView( {
 	// so it can't be used here to determine if the site is a staging site
 	const isStagingSite = itemData.subtitle?.toString().startsWith( 'staging-' );
 
-	const { data: isStagingSiteDeletionInProgress } = useQuery( {
-		...isDeletingStagingSiteQuery( itemData.blogId ?? 0 ),
-		enabled: !! itemData.blogId && isStagingSite,
-	} );
+	const { data: isStagingSiteDeletionInProgress } = useQuery(
+		{
+			...isDeletingStagingSiteQuery( itemData.blogId ?? 0 ),
+			enabled: !! itemData.blogId && isStagingSite,
+		},
+		queryClient
+	);
 
 	const { data: atomicTransfer } = useQuery( {
 		...siteLatestAtomicTransferQuery( itemData.blogId ?? 0 ),
