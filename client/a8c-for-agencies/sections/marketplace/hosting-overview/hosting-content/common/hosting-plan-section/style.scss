@@ -46,7 +46,7 @@
 }
 
 .hosting-plan-section__main {
-	border-radius: 8px; // stylelint-disable-line scales/radii
+	border-radius: 8px;
 	background-color: var(--color-primary-0);
 	padding: 24px;
 	max-width: 100%;
@@ -70,7 +70,7 @@
 }
 
 .hosting-plan-section__card {
-	border-radius: 8px; // stylelint-disable-line scales/radii
+	border-radius: 8px;
 	box-shadow: 0 3px 1px 0 #0000000A;
 	padding: 32px;
 	background-color: var(--color-surface);
@@ -85,7 +85,7 @@
 }
 
 .hosting-plan-section__aside {
-	border-radius: 8px; // stylelint-disable-line scales/radii
+	border-radius: 8px;
 	border: 1px solid var(--color-neutral-5);
 	padding: 24px;
 	display: flex;

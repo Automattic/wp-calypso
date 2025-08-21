@@ -31,8 +31,7 @@
 		justify-content: center;
 		gap: 48px;
 		padding: 24px 48px;
-		border-radius: 48px; /* stylelint-disable-line scales/radii */
-		background:
+		border-radius: 24px;		background:
 			linear-gradient(111deg, rgba(160, 221, 244, 0.1) -19.14%, rgba(0, 0, 0, 0) 54.32%, rgba(161, 218, 240, 0.1) 104.32%),
 			rgba(2, 156, 215, 0.04);
 		backdrop-filter: blur(10px);
@@ -48,14 +47,12 @@
 			right: 0;
 			top: 0;
 			border-top: 1px solid var(--color-primary-70);
-			border-radius: 99px; /* stylelint-disable-line scales/radii */
-		}
+			border-radius: 24px;		}
 	}
 
 	&__separator {
 		border: 2px solid var(--color-primary-70);
-		border-radius: 24px; /* stylelint-disable-line scales/radii */
-		padding: 8px 16px;
+		border-radius: 24px;		padding: 8px 16px;
 		@include heading-medium;
 		text-transform: uppercase;
 		background-color: var(--color-surface-backdrop);

@@ -3,8 +3,7 @@
 
 .jetpack-lightbox__modal {
 	padding: 0;
-	border-radius: 8px; /* stylelint-disable-line scales/radii */
-	width: 85%;
+	border-radius: 8px;	width: 85%;
 	height: auto;
 	background-color: var(--studio-white);
 	transition: all 0.25s ease;
@@ -64,8 +63,7 @@
 	width: 60%;
 	overflow-y: auto;
 	background-color: var(--studio-white);
-	border-radius: 8px 0 0 8px; /* stylelint-disable-line scales/radii */
-	max-height: 85vh;
+	border-radius: 8px 0 0 8px;	max-height: 85vh;
 
 	hr {
 		margin: 0.75rem 0;
@@ -76,8 +74,7 @@
 	padding: 40px;
 	width: 40%;
 	background-color: var(--studio-gray-0);
-	border-radius: 0 8px 8px 0; /* stylelint-disable-line scales/radii */
-	box-shadow: 0 4px 8px rgb(0 0 0 / 30%);
+	border-radius: 0 8px 8px 0;	box-shadow: 0 4px 8px rgb(0 0 0 / 30%);
 	overflow-y: auto;
 	max-height: 85vh;
 

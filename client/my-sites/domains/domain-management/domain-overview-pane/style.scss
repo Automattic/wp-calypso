@@ -197,8 +197,7 @@
 
 	.hosting-dashboard-item-view {
 		background: var(--color-light-backdrop);
-		border-radius: 8px; /* stylelint-disable-line scales/radii */
-		flex-grow: 1;
+		border-radius: 8px;		flex-grow: 1;
 		max-height: calc(100vh - 32px - var(--masterbar-height));
 		transition: flex-grow 0.2s;
 		width: auto;

@@ -6,8 +6,7 @@
 	margin-top: 1rem;
 
 	border: solid 1px #d9e1e8;
-	/* stylelint-disable-next-line scales/radii */
-	border-radius: 8px;
+		border-radius: 8px;
 	overflow: hidden;
 	color: $bluesky-body-text-color;
 }
@@ -24,10 +23,8 @@
 	flex: 1 1 0%;
 	padding: 8px 14px;
 	border-color: rgb(212, 219, 226);
-	/* stylelint-disable-next-line scales/radii */
-	border-bottom-right-radius: 8px;
-	/* stylelint-disable-next-line scales/radii */
-	border-bottom-left-radius: 8px;
+		border-bottom-right-radius: 8px;
+		border-bottom-left-radius: 8px;
 }
 
 .bluesky-preview__card-title {

@@ -73,8 +73,7 @@
 	height: 46px;
 	transform: translateY(-50%);
 	background-color: color-mix(in srgb, var(--color-neutral-70) 85%, transparent);
-	border-radius: 24px; /* stylelint-disable-line scales/radii */
-	color: var(--color-text-inverted);
+	border-radius: 24px;	color: var(--color-text-inverted);
 	cursor: pointer;
 
 	.gridicon {

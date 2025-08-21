@@ -20,8 +20,7 @@
 	&__container {
 
 		box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
-		/* stylelint-disable-next-line scales/radii */
-		border-radius: 8px;
+				border-radius: 8px;
 		overflow: hidden;
 
 		&.has-media {

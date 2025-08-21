@@ -296,8 +296,7 @@
 .is-section-login .app-promo.magic-link-app-promo {
 	margin-top: 3em;
 	box-shadow: 0 0 0 1px var(--color-border-subtle) inset;
-	border-radius: 16px; /* stylelint-disable-line scales/radii */
-	font-weight: 400;
+	border-radius: 16px;	font-weight: 400;
 	letter-spacing: -0.4px;
 
 	.app-promo__title {

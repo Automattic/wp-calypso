@@ -276,8 +276,7 @@
 	}
 
 	.avatar-user {
-		border-radius: 12px; /* stylelint-disable-line scales/radii */
-	}
+		border-radius: 8px;	}
 
 	.user-selectable & {
 		-webkit-user-select: text;
@@ -719,8 +718,7 @@ ul.module-content-list-legend {
 	> .stats-list__module-content-list-item-wrapper
 	.stats-list__module-content-list-item-label
 	.avatar-user {
-		border-radius: 16px; /* stylelint-disable-line scales/radii */
-	}
+		border-radius: 16px;	}
 }
 
 // Module Content List Item style: Link

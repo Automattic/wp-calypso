@@ -81,8 +81,7 @@ body.is-section-subscribers,
 				transition: width 0.15s ease-in-out;
 				width: 100%;
 				background: var( --color-surface );
-				/* stylelint-disable-next-line scales/radii */
-				border-radius: 8px;
+								border-radius: 8px;
 				overflow: hidden;
 				display: flex;
 				flex-direction: column;
@@ -164,8 +163,7 @@ body.is-section-subscribers,
 					display: block;
 					flex: 1 1 auto;
 					background: var( --color-surface );
-					/* stylelint-disable-next-line scales/radii */
-					border-radius: 8px;
+										border-radius: 8px;
 					padding: 24px;
 					overflow: auto;
 

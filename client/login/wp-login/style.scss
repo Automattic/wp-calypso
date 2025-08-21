@@ -341,7 +341,7 @@ $image-height: 47px;
 	}
 }
 
-/* stylelint-disable scales/font-weights, scales/radii */
+/* stylelint-disable scales/font-weights */
 .layout.is-section-login.is-grav-powered-client {
 	padding-bottom: $image-height;
 	min-height: calc(100% - #{$image-height});
@@ -673,7 +673,6 @@ $image-height: 47px;
 		}
 	}
 }
-/* stylelint-enable scales/font-weights, scales/radii */
 
 .wp-login__p2-logo {
 	position: absolute;

@@ -163,8 +163,7 @@
 	left: calc(50% - 8px);
 	width: 16px;
 	height: 16px;
-	border-radius: 8px; /* stylelint-disable-line scales/radii */
-	background: var(--color-neutral);
+	border-radius: 8px;	background: var(--color-neutral);
 
 	& + .calypso-notice__icon {
 		position: relative;

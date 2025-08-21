@@ -15,8 +15,7 @@
 		color: var(--studio-gray-100);
 		padding: 1rem;
 		background: #eaefef;
-		/* stylelint-disable-next-line scales/radii */
-		border-radius: 8px;
+				border-radius: 8px;
 
 		@media (max-width: $break-medium) {
 			margin-top: -1rem;

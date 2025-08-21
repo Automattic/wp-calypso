@@ -160,8 +160,7 @@ $heading-font-body-small: 15px;
 
 		.dialog.card {
 			max-width: 480px;
-			/* stylelint-disable-next-line scales/radii */
-			border-radius: 8px;
+						border-radius: 8px;
 
 			.dialog__action-buttons-close {
 				top: 20px;

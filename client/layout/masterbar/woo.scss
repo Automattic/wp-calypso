@@ -8,8 +8,7 @@ $breakpoint-mobile: 660px;
 
 @mixin button-primary {
 	background-color: var(--woo-purple-40);
-	border-radius: 8px; /* stylelint-disable-line scales/radii */
-
+	border-radius: 8px;
 	&:hover,
 	&:focus {
 		background-color: var(--woo-purple-60);
@@ -24,8 +23,7 @@ $breakpoint-mobile: 660px;
 @mixin button-secondary {
 	border: 2px solid var(--woo-purple-40);
 	background-color: transparent;
-	border-radius: 8px; /* stylelint-disable-line scales/radii */
-
+	border-radius: 8px;
 	&:hover,
 	&:focus {
 		background-color: var(--woo-purple-70);
@@ -40,8 +38,7 @@ $breakpoint-mobile: 660px;
 @mixin button-tertiary {
 	background-color: transparent;
 	color: var(--woo-purple-40);
-	border-radius: 8px; /* stylelint-disable-line scales/radii */
-
+	border-radius: 8px;
 	&:hover,
 	&:focus {
 		background-color: var(--woo-purple-0);
@@ -124,8 +121,7 @@ $breakpoint-mobile: 660px;
 	}
 
 	.button {
-		border-radius: 8px; /* stylelint-disable-line scales/radii */
-		border: 2px solid var(--woo-purple-60);
+		border-radius: 8px;		border: 2px solid var(--woo-purple-60);
 		text-decoration: none;
 		width: auto;
 		padding: 10px 24px;
@@ -156,7 +152,7 @@ $breakpoint-mobile: 660px;
 	}
 
 	.login__form-user-exists-notice.calypso-notice {
-		border-radius: 8px; // stylelint-disable-line scales/radii
+		border-radius: 8px;
 		overflow: auto;
 		padding: 16px 20px;
 		background-color: #f6f7f7;
@@ -910,7 +906,7 @@ $breakpoint-mobile: 660px;
 				justify-content: center;
 				align-items: center;
 				align-self: stretch;
-				border-radius: 8px; // stylelint-disable-line scales/radii
+				border-radius: 8px;
 				border: 1px solid #dcdcde;
 				width: 100%;
 				box-sizing: border-box;
@@ -1012,7 +1008,7 @@ $breakpoint-mobile: 660px;
 
 			.magic-login__emails-list {
 				li {
-					border-radius: 8px; // stylelint-disable-line scales/radii
+					border-radius: 8px;
 					border: 2px solid var(--studio-gray-10);
 				}
 

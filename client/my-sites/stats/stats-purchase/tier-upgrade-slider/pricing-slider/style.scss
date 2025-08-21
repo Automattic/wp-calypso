@@ -7,8 +7,7 @@ $thumb-horizontal-padding: 16px;
 
 @mixin adjust-track-rail-styles {
 	height: $track-height;
-	border-radius: 8px; /* stylelint-disable-line scales/radii */
-}
+	border-radius: 8px;}
 
 // CSS variables
 // Subset of https://github.com/Automattic/jetpack/blob/trunk/projects/js-packages/base-styles/root-variables.scss.

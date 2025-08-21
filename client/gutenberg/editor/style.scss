@@ -4,8 +4,7 @@
 	.placeholder {
 		@include placeholder();
 		height: 16px;
-		border-radius: 8px; /* stylelint-disable-line scales/radii */
-	}
+		border-radius: 8px;	}
 
 	.edit-post-header {
 		display: flex;
@@ -13,8 +12,7 @@
 
 		.placeholder {
 			height: 30px;
-			border-radius: 20px; /* stylelint-disable-line scales/radii */
-		}
+			border-radius: 16px;		}
 
 		.edit-post-header-toolbar {
 			flex-grow: 1;
@@ -37,7 +35,6 @@
 
 	.placeholder-title {
 		height: 40px;
-		border-radius: 20px; /* stylelint-disable-line scales/radii */
-		margin: 18px;
+		border-radius: 16px;		margin: 18px;
 	}
 }

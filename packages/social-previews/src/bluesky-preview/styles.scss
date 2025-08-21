@@ -37,8 +37,7 @@
 
 	margin-top: 8px;
 	min-height: 64px;
-	/* stylelint-disable-next-line scales/radii */
-	border-radius: 8px;
+		border-radius: 8px;
 
 	&.as-grid {
 		display: grid;
@@ -51,8 +50,7 @@
 	&-item {
 		display: flex;
 		border: 0;
-		/* stylelint-disable-next-line scales/radii */
-		border-radius: 8px;
+				border-radius: 8px;
 		overflow: hidden;
 
 		img,

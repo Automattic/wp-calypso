@@ -93,8 +93,7 @@ body.is-section-domains.is-bulk-all-domains-page {
 				display: flex;
 				width: 18px;
 				background: var(--studio-red-40);
-				border-radius: 16px; /* stylelint-disable-line scales/radii */
-				justify-content: center;
+				border-radius: 16px;				justify-content: center;
 				align-items: center;
 				color: #fff;
 				font-size: $font-body-extra-small;
@@ -156,8 +155,7 @@ body.is-section-domains.is-bulk-all-domains-page {
 	@include break-small {
 		.layout__primary > main.dataviews {
 			border: 1px solid $gray-200;
-			border-radius: 8px; /* stylelint-disable-line scales/radii */
-		}
+			border-radius: 8px;		}
 	}
 }
 

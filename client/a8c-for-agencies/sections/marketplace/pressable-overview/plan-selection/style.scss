@@ -149,7 +149,7 @@
 			flex-direction: column;
 			gap: 16px;
 			padding: 16px;
-			// stylelint-disable-next-line scales/radii
+
 			border-radius: 8px;
 			background-color: var(--color-neutral-0);
 
@@ -191,8 +191,7 @@
 	border: 1.5px solid var(--color-surface-backdrop);
 	@include heading-medium;
 
-	/* stylelint-disable-next-line scales/radii */
-	border-radius: 29px;
+		border-radius: 24px;
 	padding: 6px 12px;
 
 	&:focus {

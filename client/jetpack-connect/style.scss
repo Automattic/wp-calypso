@@ -458,8 +458,7 @@ $colophon-height: 50px;
 .example-components__browser-chrome {
 	padding: 8px;
 	background-color: var(--color-neutral-0);
-	border-radius: 8px 8px 0 0; /* stylelint-disable-line scales/radii */
-}
+	border-radius: 8px 8px 0 0;}
 
 .example-components__browser-chrome-dots {
 	line-height: 0;
@@ -963,8 +962,7 @@ $colophon-height: 50px;
 		background-color: var(--color-surface);
 		background-size: 84%;
 		background-position: 50% 45%;
-		border-radius: 1px; /* stylelint-disable-line scales/radii */
-	}
+		border-radius: 2px;	}
 
 	.payment-logo.is-apple-pay {
 		height: 22px;

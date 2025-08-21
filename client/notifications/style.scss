@@ -190,8 +190,7 @@ div.reader-notifications__panel {
 		&.wpnt-open {
 			position: absolute;
 			@media only screen and (min-width: $break-small) {
-				border-radius: 8px; /* stylelint-disable-line scales/radii */
-				width: 100%;
+				border-radius: 8px;				width: 100%;
 				.wpnc__single-view,
 				.wpnc__note-list {
 					width: 100%;

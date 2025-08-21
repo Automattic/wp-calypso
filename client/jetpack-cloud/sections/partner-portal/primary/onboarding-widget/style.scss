@@ -114,8 +114,7 @@
 .onboarding-widget__step-completed {
 	display: none;
 	background: var(--studio-jetpack-green-5);
-	/* stylelint-disable-next-line scales/radii */
-	border-radius: 16px;
+		border-radius: 16px;
 	height: 30px;
 	padding: 1px 16px;
 	font-weight: 600;

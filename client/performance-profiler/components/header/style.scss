@@ -135,8 +135,7 @@
 				color: #fff;
 				font-size: 1rem;
 				padding: 0;
-				border-radius: 6px 6px 0 0; /* stylelint-disable-line scales/radii */
-
+				border-radius: 4px 4px 0 0;
 				svg {
 					fill: #fff;
 				}
@@ -262,8 +261,7 @@
 #profiler-share-buttons-popover {
 	.popover__inner {
 		padding: 3px 10px 0;
-		/* stylelint-disable-next-line scales/radii */
-		border-radius: 8px;
+				border-radius: 8px;
 		border-width: 0;
 
 		button {

@@ -243,8 +243,7 @@
 			transition: flex-grow 0.2s;
 			background: var(--color-light-backdrop);
 			max-height: calc(100vh - 32px - var(--masterbar-height));
-			border-radius: 8px; /* stylelint-disable-line scales/radii */
-			@media (max-width: $break-small) {
+			border-radius: 8px;			@media (max-width: $break-small) {
 				max-height: calc(100vh - var(--masterbar-height));
 			}
 			.hosting-dashboard-item-view__navigation {
@@ -343,8 +342,7 @@
 		height: 22px;
 		background: var(--color-light-backdrop);
 		box-sizing: border-box;
-		border-radius: 12px; /* stylelint-disable-line scales/radii */
-		font-weight: 500;
+		border-radius: 8px;		font-weight: 500;
 		font-size: 0.75rem;
 		vertical-align: middle;
 		color: var(--color-accent-80);

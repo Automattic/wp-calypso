@@ -15,8 +15,7 @@
 	&__container {
 
 		box-shadow: rgba(0, 0, 0, 0.1) 0 0 8px;
-		/* stylelint-disable-next-line scales/radii */
-		border-radius: 8px;
+				border-radius: 8px;
 		overflow: hidden;
 		background-color: #fff;
 
@@ -102,8 +101,7 @@
 	}
 
 	&__card {
-		/* stylelint-disable-next-line scales/radii */
-		border-radius: 16px;
+				border-radius: 16px;
 		box-shadow: rgba(0, 0, 0, 0.08) 0 1px 4px 0, rgba(0, 0, 0, 0.2) 0 0 2px 0;
 		display: flex;
 		flex-direction: column;

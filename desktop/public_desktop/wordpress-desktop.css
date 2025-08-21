@@ -254,8 +254,7 @@ a:not([href*="//"]) {
 	max-width: 290px;
 	color: #fff;
 	background: #005083;
-	border-radius: 8px; /* stylelint-disable-line scales/radii */
-	padding: 10px 15px;
+	border-radius: 8px;	padding: 10px 15px;
 	position: absolute;
 	bottom: 20px;
 	left: 20px;
