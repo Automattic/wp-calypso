@@ -13,6 +13,7 @@ import { siteByIdQuery } from '../../app/queries/site';
 import { sitePurchaseQuery } from '../../app/queries/site-purchases';
 import { domainRoute, domainTransferRoute } from '../../app/router/domains';
 import { ActionList } from '../../components/action-list';
+import NonPrimaryDomainDialog from '../../components/purchase-dialogs/non-primary-domain-dialog';
 import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
 import { getDomainRenewalUrl } from '../../utils/domain';
@@ -38,6 +39,7 @@ export default function Actions() {
 	);
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const [ isDisconnectDialogOpen, setIsDisconnectDialogOpen ] = useState( false );
+	const [ isDeleteDialogOpen, setIsDeleteDialogOpen ] = useState( false );
 
 	const onDisconnectConfirm = useCallback(
 		() =>
@@ -111,7 +113,12 @@ export default function Actions() {
 						title={ getDeleteTitle( domain ) }
 						description={ getDeleteDescription( domain ) }
 						actions={
-							<Button size="compact" variant="secondary" isDestructive>
+							<Button
+								size="compact"
+								variant="secondary"
+								isDestructive
+								onClick={ () => setIsDeleteDialogOpen( true ) }
+							>
 								{ getDeleteLabel( domain ) }
 							</Button>
 						}
@@ -128,6 +135,16 @@ export default function Actions() {
 					{ __( 'Are you sure you want to detach this domain?' ) }
 				</ConfirmDialog>
 			) }
+
+			<NonPrimaryDomainDialog
+				planeName="Business"
+				oldDomainName="old-domain-name.blog"
+				newDomainName="new-domain-name.wordpress.com"
+				hasSetupAds
+				isOpen={ isDeleteDialogOpen }
+				onCancel={ () => setIsDeleteDialogOpen( false ) }
+				onConfirm={ () => setIsDeleteDialogOpen( false ) }
+			/>
 		</VStack>
 	);
 }
