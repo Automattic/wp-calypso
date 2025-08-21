@@ -18,6 +18,25 @@
 	text-transform: uppercase;
 }
 
+// Core CheckboxControl's :disabled styles are overridden by its :checked styles. This is our workaround.
+// @see http://github.com/WordPress/gutenberg/issues/59411
+.dataforms-layouts-regular__field .components-checkbox-control:has(input[type="checkbox"]:disabled) {
+	label {
+		cursor: default;
+	}
+
+	input[type="checkbox"] {
+		background: #f0f0f0;
+		border-color: #ddd;
+		cursor: default;
+		opacity: 1;
+	}
+
+	svg {
+		fill: var(--dashboard__text-color);
+	}
+}
+
 // We manually compose the UI of the dataview without including the view actions, which results in extra padding and a border.
 .components-card__header + .components-card__body:has( > .dataviews-wrapper ):not( :has( .dataviews__view-actions ) ) {
 	padding-top: 0;

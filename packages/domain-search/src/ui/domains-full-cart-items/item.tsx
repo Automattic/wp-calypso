@@ -13,12 +13,14 @@ import type { DomainInCart } from './types';
 
 export const DomainsFullCartItem = ( {
 	domain,
+	disabled,
 	isBusy,
 	onRemove,
 	errorMessage,
 	removeErrorMessage,
 }: {
 	domain: DomainInCart;
+	disabled: boolean;
 	isBusy: boolean;
 	onRemove: () => void;
 	errorMessage: string | null;
@@ -43,7 +45,7 @@ export const DomainsFullCartItem = ( {
 								</Text>
 							</Text>
 							<Button
-								disabled={ isBusy }
+								disabled={ disabled }
 								isBusy={ isBusy }
 								variant="link"
 								className="domains-full-cart-items__remove"

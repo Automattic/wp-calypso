@@ -1,0 +1,21 @@
+@import '@wordpress/base-styles/colors';
+
+@layer module, consumer-styles;
+
+@layer module {
+	.domain-search {
+		--domain-search-v2-background-color: #fcfcfc;
+		--domain-search-secondary-action-color: #{$gray-900};
+		--domain-search-secondary-action-box-shadow-color: #{$gray-400};
+		--domain-search-input-size: 56px;
+		--domain-search-input-border-radius: 4px;
+		--domain-search-promotional-price-color: #048015;
+		--domain-search-warning-badge-border-color: #f4df7b;
+		--domain-search-warning-badge-background-color: #f9edb4;
+		--domain-search-success-badge-border-color: #b8e5be;
+		--domain-search-success-badge-background-color: #d1eed5;
+		--domain-search-mini-cart-height: 80px;
+		--domain-search-mini-cart-inline-padding: 1rem;
+		--domain-search-mini-cart-max-width: 64rem;
+	}
+}

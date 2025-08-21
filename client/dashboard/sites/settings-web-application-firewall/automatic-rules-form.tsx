@@ -19,11 +19,11 @@ import { SectionHeader } from '../../components/section-header';
 import { HostingFeatures, JetpackModules } from '../../data/constants';
 import { hasHostingFeature, hasJetpackModule } from '../../utils/site-features';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
-import type { SiteSettings } from '../../data/site-settings';
+import type { JetpackSettings } from '../../data/site-jetpack-settings';
 import type { Site } from '../../data/types';
 import type { Field } from '@wordpress/dataviews';
 
-const fields: Field< SiteSettings >[] = [
+const fields: Field< JetpackSettings >[] = [
 	{
 		id: 'jetpack_waf_automatic_rules',
 		label: __( 'Enable automatic firewall protection' ),
@@ -53,7 +53,7 @@ export default function AutomaticRulesForm( { site }: { site: Site } ) {
 
 	const currentEnabled = jetpackSettings?.jetpack_waf_automatic_rules ?? false;
 
-	const [ formData, setFormData ] = useState< SiteSettings >( {
+	const [ formData, setFormData ] = useState< JetpackSettings >( {
 		jetpack_waf_automatic_rules: currentEnabled,
 	} );
 
@@ -101,11 +101,11 @@ export default function AutomaticRulesForm( { site }: { site: Site } ) {
 							) }
 							level={ 3 }
 						/>
-						<DataForm< SiteSettings >
+						<DataForm< JetpackSettings >
 							data={ formData }
 							fields={ fields }
 							form={ form }
-							onChange={ ( edits: Partial< SiteSettings > ) => {
+							onChange={ ( edits: Partial< JetpackSettings > ) => {
 								setFormData( ( data ) => ( { ...data, ...edits } ) );
 							} }
 						/>
