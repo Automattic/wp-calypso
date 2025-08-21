@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -10,9 +9,10 @@ import {
 	MenuItem,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { help, bellUnread, bell, commentAuthorAvatar } from '@wordpress/icons';
+import { help, commentAuthorAvatar } from '@wordpress/icons';
 import { Suspense, lazy, useCallback } from 'react';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
+import wpcom from 'calypso/lib/wp';
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
 import { useAuth } from '../auth';
 import { useOpenCommandPalette } from '../command-palette/utils';
@@ -22,6 +22,8 @@ import { useHelpCenter } from '../help-center';
 import './style.scss';
 
 const AsyncHelpCenterApp = lazy( () => import( '../help-center/help-center-app' ) );
+
+const AsyncNoteDropdown = lazy( () => import( '@automattic/notifications/src/dropdown' ) );
 
 function Help() {
 	const { user } = useAuth();
@@ -129,10 +131,7 @@ function UserProfile() {
 }
 
 function SecondaryMenu() {
-	const navigate = useNavigate();
 	const { supports } = useAppContext();
-	const hasUnreadNotifications = false;
-	const notificationsPath = '/me/notifications';
 
 	return (
 		<HStack spacing={ 2 } justify="flex-end">
@@ -147,17 +146,9 @@ function SecondaryMenu() {
 			) }
 			{ supports.help && <Help /> }
 			{ supports.notifications && (
-				<Button
-					className="dashboard-secondary-menu__item"
-					label={ __( 'Notifications' ) }
-					icon={ hasUnreadNotifications ? bellUnread : bell }
-					variant="tertiary"
-					onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) => {
-						e.preventDefault();
-						navigate( { to: notificationsPath } );
-					} }
-					href={ notificationsPath }
-				/>
+				<Suspense fallback={ null }>
+					<AsyncNoteDropdown className="dashboard-secondary-menu__item" wpcom={ wpcom } />
+				</Suspense>
 			) }
 			<UserProfile />
 		</HStack>

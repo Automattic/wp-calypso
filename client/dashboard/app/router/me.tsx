@@ -5,6 +5,8 @@ import { userPurchasesQuery } from '../queries/me-purchases';
 import { sitesQuery } from '../queries/sites';
 import { queryClient } from '../query-client';
 import { rootRoute } from './root';
+import type { AppConfig } from '../context';
+import type { AnyRoute } from '@tanstack/react-router';
 
 export const meRoute = createRoute( {
 	getParentRoute: () => rootRoute,
@@ -137,18 +139,25 @@ export const notificationsRoute = createRoute( {
 	)
 );
 
-export const createMeRoutes = () => {
-	return [
-		meRoute.addChildren( [
-			profileRoute,
-			billingRoute,
-			billingHistoryRoute,
-			purchasesRoute,
-			paymentMethodsRoute,
-			taxDetailsRoute,
-			securityRoute,
-			privacyRoute,
-			notificationsRoute,
-		] ),
+export const createMeRoutes = ( config: AppConfig ) => {
+	if ( ! config.supports.me ) {
+		return [];
+	}
+
+	const meRoutes: AnyRoute[] = [
+		profileRoute,
+		billingRoute,
+		billingHistoryRoute,
+		purchasesRoute,
+		paymentMethodsRoute,
+		taxDetailsRoute,
+		securityRoute,
+		notificationsRoute,
 	];
+
+	if ( config.supports.me.privacy ) {
+		meRoutes.push( privacyRoute );
+	}
+
+	return [ meRoute.addChildren( meRoutes ) ];
 };

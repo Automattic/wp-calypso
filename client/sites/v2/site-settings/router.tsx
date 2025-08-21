@@ -168,6 +168,17 @@ const webApplicationFirewallRoute = createRoute( {
 	)
 );
 
+const wpcomLoginRoute = createRoute( {
+	...appRouterSites.siteSettingsWpcomLoginRoute.options,
+	getParentRoute: () => siteRoute,
+} ).lazy( () =>
+	import( 'calypso/dashboard/sites/settings-wpcom-login' ).then( ( d ) =>
+		createLazyRoute( 'wpcom-login' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 const createRouteTree = () =>
 	rootRoute.addChildren( [
 		siteRoute.addChildren( [
@@ -186,6 +197,7 @@ const createRouteTree = () =>
 			transferSiteRoute,
 			sftpSshRoute,
 			webApplicationFirewallRoute,
+			wpcomLoginRoute,
 		] ),
 		dashboardSitesCompatibilityRoute,
 	] );

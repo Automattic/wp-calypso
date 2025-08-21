@@ -17,17 +17,17 @@ export const DomainSearchControlsInput = ( {
 	'aria-describedby': ariaDescribedBy,
 }: {
 	value: string;
-	label: string;
+	label?: string;
 	placeholder?: string;
 	onChange: ( value: string ) => void;
-	onReset: () => void;
-	autoFocus: boolean;
-	onBlur: ( event: React.FocusEvent< HTMLInputElement > ) => void;
-	onKeyDown: ( event: React.KeyboardEvent< HTMLInputElement > ) => void;
-	minLength: number;
-	maxLength: number;
-	dir: 'ltr' | 'rtl';
-	'aria-describedby': string;
+	onReset?: () => void;
+	autoFocus?: boolean;
+	onBlur?: ( event: React.FocusEvent< HTMLInputElement > ) => void;
+	onKeyDown?: ( event: React.KeyboardEvent< HTMLInputElement > ) => void;
+	minLength?: number;
+	maxLength?: number;
+	dir?: 'ltr' | 'rtl';
+	'aria-describedby'?: string;
 } ) => {
 	const { __ } = useI18n();
 
@@ -38,7 +38,7 @@ export const DomainSearchControlsInput = ( {
 			hideLabelFromVision
 			placeholder={ placeholder ?? __( 'Search…' ) }
 			value={ value }
-			label={ label }
+			label={ label ?? __( 'Search' ) }
 			onChange={ onChange }
 			onReset={ onReset }
 			// eslint-disable-next-line jsx-a11y/no-autofocus
