@@ -2,19 +2,19 @@ import { TextareaControl } from '@wordpress/components';
 import { useEffect, useRef } from '@wordpress/element';
 import './dnssec-record-textarea.scss';
 
-interface DNSSECRecordTextareaProps {
+interface DnsSecRecordTextareaProps {
 	value: string;
 	label: string;
 	recordType: 'dnskey' | 'ds';
 	index: number;
 }
 
-export function DNSSECRecordTextarea( {
+export function DnsSecRecordTextarea( {
 	value,
 	label,
 	recordType,
 	index,
-}: DNSSECRecordTextareaProps ) {
+}: DnsSecRecordTextareaProps ) {
 	const textareaRef = useRef< HTMLTextAreaElement >( null );
 
 	// Auto-resize textarea function

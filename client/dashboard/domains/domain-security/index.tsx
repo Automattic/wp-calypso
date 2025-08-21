@@ -22,6 +22,7 @@ import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
+import DnsSec from './dnssec';
 import type { SslDetails } from '../../data/domain-ssl';
 
 export default function DomainSecurity() {
@@ -183,6 +184,7 @@ export default function DomainSecurity() {
 					</VStack>
 				</CardBody>
 			</Card>
+			<DnsSec />
 		</PageLayout>
 	);
 }
