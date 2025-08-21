@@ -1,4 +1,5 @@
 import wpcom from 'calypso/lib/wp';
+import type { CountryListItemBase } from './domain-supported-countries';
 import type { Field, NormalizedField } from '@wordpress/dataviews';
 
 export interface UserTaxFormData {
@@ -47,20 +48,6 @@ export async function updateUserTaxDetails(
 	return await wpcom.req.post( '/me/vat-info', data );
 }
 
-export interface CountryListItemBase {
-	code: string;
-	name: string;
-	has_postal_codes?: boolean;
-	tax_needs_city?: boolean;
-	tax_needs_subdivision?: boolean;
-	tax_needs_organization?: boolean;
-	tax_needs_address?: boolean;
-
-	/**
-	 * The localized name of the tax (eg: "VAT", "GST", etc.).
-	 */
-	tax_name?: string;
-}
 export interface CountryListItemWithoutVat extends CountryListItemBase {
 	vat_supported: false;
 }

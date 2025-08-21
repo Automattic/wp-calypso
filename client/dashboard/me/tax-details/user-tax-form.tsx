@@ -13,16 +13,12 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useState, useRef } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import useCountryList from '../../app/hooks/use-country-list';
-import { geoLocationQuery } from '../../app/queries/geolocation';
+import { fetchGeo } from '../../data/geo';
 import { getTaxName, getDataFormCountryCodes } from '../../utils/tax';
 import useDisplayUserTaxNotices from './use-display-user-tax-notices';
 import useUserTaxDetails from './use-user-tax-details';
-import type {
-	UserTaxField,
-	UserTaxFormData,
-	UserTaxNormalizedField,
-	UpdateError,
-} from '../../data/types';
+import type { UpdateError } from './use-user-tax-details';
+import type { UserTaxField, UserTaxFormData, UserTaxNormalizedField } from '../../data/types';
 
 export interface UserTaxFormControlProps {
 	data: UserTaxFormData;
@@ -145,7 +141,7 @@ export default function UserTaxForm() {
 		userTaxDetails.name,
 	] );
 
-	const { data: geoData } = geoLocationQuery();
+	const geoData = fetchGeo();
 	const taxName = getTaxName( countryList, formData.country ?? geoData?.country_short ?? 'GB' );
 
 	useDisplayUserTaxNotices( { error: updateError, success: isUpdateSuccessful, taxName } );

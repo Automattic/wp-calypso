@@ -12,7 +12,7 @@ import { useCallback, useRef } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
 import useCountryList from '../../app/hooks/use-country-list';
-import { geoLocationQuery } from '../../app/queries/geolocation';
+import { geoLocationQuery } from '../../app/queries/geo';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
