@@ -5,7 +5,7 @@ import {
 	__experimentalSpacer as Spacer,
 	ProgressBar,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useEffect } from 'react';
 import { siteBackupRestoreProgressQuery } from '../../app/queries/site-backup-restore';
 import Notice from '../../components/notice';
@@ -52,7 +52,11 @@ function SiteBackupRestoreProgress( {
 					{ isRunning ? restoreProgress?.message : __( 'Initializing the restore process' ) }
 				</Text>
 				<Text size={ 13 } variant="muted">
-					{ restoreProgress?.percent }% completed
+					{ sprintf(
+						/* translators: %d is the restore completion percentage. */
+						__( '%d%% completed' ),
+						restoreProgress?.percent ?? 0
+					) }
 				</Text>
 				<ProgressBar value={ restoreProgress?.percent ?? 0 } />
 			</VStack>
