@@ -6,7 +6,6 @@ import { isMigrationInProgress } from 'calypso/data/site-migration';
 import ItemView from 'calypso/layout/hosting-dashboard/item-view';
 import { useSetTabBreadcrumb } from 'calypso/sites/hooks/breadcrumbs/use-set-tab-breadcrumb';
 import HostingFeaturesIcon from 'calypso/sites/hosting/components/hosting-features-icon';
-import { useStagingSite } from 'calypso/sites/staging-site/hooks/use-staging-site';
 import SitesProductionBadge from 'calypso/sites-dashboard/components/sites-production-badge';
 import { useSelector } from 'calypso/state';
 import { canCurrentUserSwitchEnvironment } from 'calypso/state/sites/selectors/can-current-user-switch-environment';
@@ -177,15 +176,6 @@ const DotcomPreviewPane = ( {
 		adminUrl: site.options?.admin_url || `${ site.URL }/wp-admin`,
 		withIcon: true,
 	};
-
-	const { data: stagingSites } = useStagingSite( site.ID, {
-		enabled: ! site.is_wpcom_staging_site && site.is_wpcom_atomic,
-	} );
-
-	if ( site.options && site.is_wpcom_atomic ) {
-		site.options.wpcom_staging_blog_ids =
-			stagingSites?.map( ( stagingSite ) => stagingSite.id ) ?? [];
-	}
 
 	const stagingStatus = useSelector( ( state ) => getStagingSiteStatus( state, site.ID ) );
 	const isStagingStatusFinished =
