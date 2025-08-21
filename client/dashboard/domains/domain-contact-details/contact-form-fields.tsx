@@ -6,7 +6,7 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
-import { Field } from '@wordpress/dataviews';
+import { type DataFormControlProps, Field } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -14,17 +14,12 @@ import type { StatesListItem } from '../../data/domain-supported-countries';
 import type { DomainContactDetails } from '../../data/types';
 
 const createStateFieldEdit = ( statesList: StatesListItem[] | undefined ) => {
-	const StateFieldEditComponent = ( {
+	const StateFieldEdit = ( {
 		field,
 		onChange,
 		data,
 		hideLabelFromVision,
-	}: {
-		field: Field< DomainContactDetails >;
-		onChange: ( value: Record< string, unknown > ) => void;
-		data: DomainContactDetails;
-		hideLabelFromVision: boolean;
-	} ) => {
+	}: DataFormControlProps< DomainContactDetails > ) => {
 		const { id, getValue } = field;
 
 		if ( ! statesList || statesList.length === 0 ) {
@@ -61,7 +56,7 @@ const createStateFieldEdit = ( statesList: StatesListItem[] | undefined ) => {
 		);
 	};
 
-	return StateFieldEditComponent;
+	return StateFieldEdit;
 };
 
 export const getContactFormFields = (
