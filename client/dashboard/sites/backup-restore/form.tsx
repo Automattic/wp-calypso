@@ -77,15 +77,7 @@ function SiteBackupRestoreForm( {
 	};
 
 	const handleFormChange = ( changes: Partial< RestoreConfig > ) => {
-		setFormData( ( prev ) => ( {
-			...prev,
-			...Object.fromEntries(
-				Object.entries( changes ).map( ( [ key, value ] ) => [
-					key,
-					value !== undefined ? Boolean( value ) : prev[ key as keyof RestoreConfig ],
-				] )
-			),
-		} ) );
+		setFormData( ( data ) => ( { ...data, ...changes } ) );
 	};
 
 	const handleRestore = () => {
