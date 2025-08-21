@@ -17,7 +17,6 @@ import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getTaxName } from '../../utils/tax';
-import { localizeUrl } from './localize-url';
 import useUserTaxDetails from './use-user-tax-details';
 import UserTaxForm from './user-tax-form';
 import './style.scss';
@@ -40,7 +39,8 @@ export default function UserTaxInfoPage() {
 	/* This is a call to action for contacting support */
 	const contactSupportLinkTitle = __( 'Contact Happiness Engineers' );
 
-	const taxSupportPageURL = localizeUrl( 'https://wordpress.com/support/vat-gst-other-taxes/' );
+	// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
+	const taxSupportPageURL = 'https://wordpress.com/support/vat-gst-other-taxes/'; // TODO: Replace with localized URL.
 
 	/* This is the title of the support page from https://wordpress.com/support/vat-gst-other-taxes/ */
 	const taxSupportPageLinkTitle = __( 'VAT, GST, and other taxes' );
