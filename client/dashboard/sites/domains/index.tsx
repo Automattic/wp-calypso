@@ -5,10 +5,11 @@ import { useState } from 'react';
 import { useAuth } from '../../app/auth';
 import { siteBySlugQuery } from '../../app/queries/site';
 import { siteDomainsQuery } from '../../app/queries/site-domains';
-import { siteRoute } from '../../app/router/sites';
+import { siteDomainsPurchaseRoute, siteRoute } from '../../app/router/sites';
 import DataViewsCard from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import RouterLinkButton from '../../components/router-link-button';
 import { useActions, useFields, DEFAULT_VIEW, DEFAULT_LAYOUTS } from '../../domains/dataviews';
 import type { SiteDomain } from '../../data/types';
 import type { DomainsView } from '../../domains/dataviews';
@@ -40,7 +41,22 @@ function SiteDomains() {
 	);
 
 	return (
-		<PageLayout header={ <PageHeader title={ __( 'Domains' ) } /> }>
+		<PageLayout
+			header={
+				<PageHeader
+					title={ __( 'Domains' ) }
+					actions={
+						<RouterLinkButton
+							to={ siteDomainsPurchaseRoute.fullPath }
+							params={ { siteSlug } }
+							variant="primary"
+						>
+							{ __( 'Add New Domain' ) }
+						</RouterLinkButton>
+					}
+				/>
+			}
+		>
 			<DataViewsCard>
 				<DataViews< SiteDomain >
 					data={ filteredData || [] }

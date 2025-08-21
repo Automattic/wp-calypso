@@ -1,4 +1,4 @@
-import { createRoute, createLazyRoute } from '@tanstack/react-router';
+import { createRoute, createLazyRoute, redirect } from '@tanstack/react-router';
 import { domainQuery } from '../queries/domain';
 import { domainDnsQuery } from '../queries/domain-dns-records';
 import { domainForwardingQuery } from '../queries/domain-forwarding';
@@ -15,6 +15,18 @@ export const domainsRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../domains' ).then( ( d ) =>
 		createLazyRoute( 'domains' )( {
+			component: d.default,
+		} )
+	)
+);
+
+// Standalone domains purchase route - requires rootRoute
+export const domainsPurchaseRoute = createRoute( {
+	getParentRoute: () => rootRoute,
+	path: 'domains/purchase',
+} ).lazy( () =>
+	import( '../../domains/purchase' ).then( ( d ) =>
+		createLazyRoute( 'domains-purchase' )( {
 			component: d.default,
 		} )
 	)
@@ -74,8 +86,26 @@ export const domainDnsAddRoute = createRoute( {
 export const domainDnsEditRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'dns/edit',
+	beforeLoad: async ( { params: { domainName }, search } ) => {
+		// If the provided recordId doesn't exist, redirect to the DNS overview page
+		const { recordId } = search as { recordId: string | undefined };
+		const dnsRecords = await queryClient.ensureQueryData( domainDnsQuery( domainName ) );
+		const record = dnsRecords?.records.find( ( record ) => record.id === recordId );
+		if ( ! record ) {
+			throw redirect( { to: '/domains/$domainName/dns', params: { domainName } } );
+		}
+	},
+	loader: ( { params: { domainName } } ) => {
+		return queryClient.ensureQueryData( domainDnsQuery( domainName ) );
+	},
+	validateSearch: ( search ): { recordId: string | undefined } => {
+		// Ensure we have a recordId query parameter
+		return {
+			recordId: typeof search.recordId === 'string' ? search.recordId : undefined,
+		};
+	},
 } ).lazy( () =>
-	import( '../../sites/domains/placeholder' ).then( ( d ) =>
+	import( '../../domains/dns/edit' ).then( ( d ) =>
 		createLazyRoute( 'domain-dns-edit' )( {
 			component: d.default,
 		} )
@@ -204,6 +234,7 @@ export const domainTransferRoute = createRoute( {
 export const createDomainsRoutes = () => {
 	return [
 		domainsRoute,
+		domainsPurchaseRoute,
 		domainRoute.addChildren( [
 			domainOverviewRoute,
 			domainDnsRoute,

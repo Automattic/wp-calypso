@@ -36,7 +36,7 @@
 		"cookie-banner": false,
 		"current-site/domain-warning": false,
 		"current-site/notice": true,
-		"dashboard/v2/backport/site-overview": false,
+		"dashboard/v2/backport/site-overview": true,
 		"dashboard/v2/backport/sites-list": true,
 		"dashboard/v2/security-settings": false,
 		"dev/preferences-helper": true,
