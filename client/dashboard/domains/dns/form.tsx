@@ -126,6 +126,9 @@ export default function DNSRecordForm( {
 							} }
 						/>
 						<DataForm< DnsRecordFormData >
+							// This key prop is used to force a form re-render when the record type is changed
+							// Othewise, the fields that have validation errors will not have validation reset
+							key={ typeFormData.type }
 							data={ formData }
 							fields={ config.fields }
 							form={ config.form }
