@@ -105,4 +105,6 @@ const fetchDomainAvailability = async ( domainName: string ): Promise< DomainAva
 export const domainAvailabilityQuery = ( domainName: string ) => ( {
 	queryKey: [ 'domain-availability', domainName ],
 	queryFn: () => fetchDomainAvailability( domainName ),
+	refetchOnWindowFocus: false,
+	refetchOnMount: false,
 } );

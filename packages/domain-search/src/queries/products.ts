@@ -19,4 +19,6 @@ const fetchProductsList = async (): Promise< Record< string, Product > > => {
 export const productsQuery = () => ( {
 	queryKey: [ 'products' ],
 	queryFn: () => fetchProductsList(),
+	refetchOnWindowFocus: false,
+	refetchOnMount: false,
 } );

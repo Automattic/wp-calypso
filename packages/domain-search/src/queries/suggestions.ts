@@ -59,4 +59,6 @@ const fetchDomainSuggestions = async (): Promise< DomainSuggestion[] > => {
 export const domainSuggestionsQuery = ( query: string ) => ( {
 	queryKey: [ 'domain-suggestions', query ],
 	queryFn: () => fetchDomainSuggestions(),
+	refetchOnWindowFocus: false,
+	refetchOnMount: false,
 } );
