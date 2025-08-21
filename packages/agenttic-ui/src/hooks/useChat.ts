@@ -2,9 +2,8 @@ import { useCallback, useEffect, useState } from 'react';
 import type { ChatState, UseChatReturn } from '../types';
 
 export function useChat( chatState?: ChatState ): UseChatReturn {
-	const [ state, setState ] = useState< ChatState >(
-		chatState || 'collapsed'
-	);
+	const initialState = chatState || 'collapsed';
+	const [ state, setState ] = useState< ChatState >( initialState );
 
 	useEffect( () => {
 		if ( chatState !== undefined ) {
@@ -12,15 +11,15 @@ export function useChat( chatState?: ChatState ): UseChatReturn {
 		}
 	}, [ chatState ] );
 
-	const isOpen = state !== 'collapsed';
+	const isOpen = state !== 'collapsed' && state !== 'compact';
 
 	const open = useCallback( () => {
-		setState( 'compact' );
+		setState( 'expanded' );
 	}, [] );
 
 	const close = useCallback( () => {
-		setState( 'collapsed' );
-	}, [] );
+		setState( initialState );
+	}, [ initialState ] );
 
 	const toggle = useCallback( () => {
 		setState( ( prev ) =>
@@ -30,6 +29,7 @@ export function useChat( chatState?: ChatState ): UseChatReturn {
 
 	return {
 		state,
+		initialState,
 		setState,
 		isOpen,
 		open,

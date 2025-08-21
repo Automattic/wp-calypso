@@ -86,6 +86,7 @@ export type ChatState = 'collapsed' | 'compact' | 'expanded';
 // Hook Types
 export interface UseChatReturn {
 	state: ChatState;
+	initialState: ChatState;
 	setState: ( state: ChatState ) => void;
 	isOpen: boolean;
 	open: () => void;

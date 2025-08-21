@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import EmbeddedDemo from './EmbeddedDemo';
 import FloatingDemo from './FloatingDemo';
+import FloatingCompactDemo from './FloatingCompactDemo';
 
 const App: React.FC = () => {
-	const [ currentDemo, setCurrentDemo ] = useState< 'embedded' | 'floating' >(
-		() => {
-			// Get saved demo from localStorage or default to 'embedded'
-			const saved = localStorage.getItem( 'selectedDemo' );
-			return ( saved === 'floating' ? 'floating' : 'embedded' ) as
-				| 'embedded'
-				| 'floating';
+	const [ currentDemo, setCurrentDemo ] = useState<
+		'embedded' | 'floating' | 'floating-compact'
+	>( () => {
+		// Get saved demo from localStorage or default to 'embedded'
+		const saved = localStorage.getItem( 'selectedDemo' );
+		if ( saved === 'floating' || saved === 'floating-compact' ) {
+			return saved as 'floating' | 'floating-compact';
 		}
-	);
+		return 'embedded';
+	} );
 
 	// Save to localStorage whenever demo changes
 	useEffect( () => {
@@ -59,8 +61,30 @@ const App: React.FC = () => {
 				>
 					Floating
 				</button>
+				<button
+					onClick={ () => setCurrentDemo( 'floating-compact' ) }
+					style={ {
+						padding: '8px 10px',
+						background:
+							currentDemo === 'floating-compact'
+								? '#000'
+								: 'white',
+						color:
+							currentDemo === 'floating-compact'
+								? 'white'
+								: '#000',
+						cursor: 'pointer',
+						fontSize: '12px',
+						fontFamily: 'monospace',
+						textTransform: 'uppercase',
+					} }
+				>
+					Compact
+				</button>
 			</div>
-			{ currentDemo === 'embedded' ? <EmbeddedDemo /> : <FloatingDemo /> }
+			{ currentDemo === 'embedded' && <EmbeddedDemo /> }
+			{ currentDemo === 'floating' && <FloatingDemo /> }
+			{ currentDemo === 'floating-compact' && <FloatingCompactDemo /> }
 		</>
 	);
 };

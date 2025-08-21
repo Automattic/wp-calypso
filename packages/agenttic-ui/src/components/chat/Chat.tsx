@@ -150,19 +150,27 @@ export function Chat( {
 	const handleHover = useCallback( () => {
 		if ( chat.state === 'collapsed' ) {
 			chat.setState( 'compact' );
-			const timeoutId = setTimeout( () => {
-				if ( chat.state === 'compact' && shouldAutoCollapse() ) {
-					chat.setState( 'collapsed' );
-				}
-				timeoutRefs.current.delete( timeoutId );
-			}, STYLE_CONSTANTS.AUTO_COLLAPSE_DELAY );
-			timeoutRefs.current.add( timeoutId );
+			// Only auto-collapse if initial state was collapsed
+			if ( chat.initialState === 'collapsed' ) {
+				const timeoutId = setTimeout( () => {
+					if ( chat.state === 'compact' && shouldAutoCollapse() ) {
+						chat.setState( 'collapsed' );
+					}
+					timeoutRefs.current.delete( timeoutId );
+				}, STYLE_CONSTANTS.AUTO_COLLAPSE_DELAY );
+				timeoutRefs.current.add( timeoutId );
+			}
 		}
 	}, [ chat, shouldAutoCollapse ] );
 
-	// Handle auto-collapse - return to collapsed if no input value and not focused
+	// Handle auto-collapse - return to initial state if no input value and not focused
 	const handleAutoCollapse = useCallback( () => {
-		if ( chat.state === 'compact' && shouldAutoCollapse() ) {
+		// Only auto-collapse if initial state was collapsed
+		if (
+			chat.initialState === 'collapsed' &&
+			chat.state === 'compact' &&
+			shouldAutoCollapse()
+		) {
 			const timeoutId = setTimeout( () => {
 				if ( chat.state === 'compact' && shouldAutoCollapse() ) {
 					chat.setState( 'collapsed' );
