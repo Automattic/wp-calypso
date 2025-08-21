@@ -53,7 +53,8 @@ export default function StagingSiteDeleteModal( {
 				onClose();
 				if ( productionSiteSlug ) {
 					router.navigate( {
-						to: `/sites/${ productionSiteSlug }`,
+						to: '/sites/$siteSlug',
+						params: { siteSlug: productionSiteSlug },
 					} );
 				}
 			},
