@@ -1,12 +1,10 @@
-import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { type FeaturedSuggestionReason } from '../../helpers/partition-suggestions';
-import { useSuggestion } from '../../hooks/use-suggestion';
 import { useDomainSuggestionBadges } from '../../hooks/use-suggestion-badges';
-import { useDomainSearch } from '../../page/context';
-import { DomainSuggestion, DomainSuggestionBadge, DomainSuggestionPrice } from '../../ui';
+import { DomainSuggestion, DomainSuggestionBadge } from '../../ui';
 import { DomainSuggestionCTA } from '../suggestion-cta';
+import { DomainSuggestionPrice } from '../suggestion-price';
 
 interface FeaturedSearchResultsItemProps {
 	reason: FeaturedSuggestionReason;
@@ -20,10 +18,7 @@ export const FeaturedSearchResultsItem = ( {
 	isSingleFeaturedSuggestion,
 }: FeaturedSearchResultsItemProps ) => {
 	const [ domain, ...tlds ] = domainName.split( '.' );
-	const { queries } = useDomainSearch();
 
-	const suggestion = useSuggestion( domainName );
-	const { data: availability } = useQuery( queries.domainAvailability( domainName ) );
 	const suggestionBadges = useDomainSuggestionBadges( domainName );
 
 	const badges = useMemo( () => {
@@ -59,9 +54,7 @@ export const FeaturedSearchResultsItem = ( {
 			badges={ badges.length > 0 ? badges : undefined }
 			domain={ domain }
 			tld={ tlds.join( '.' ) }
-			price={
-				<DomainSuggestionPrice salePrice={ availability?.sale_cost } price={ suggestion.cost } />
-			}
+			price={ <DomainSuggestionPrice domainName={ domainName } /> }
 			cta={ <DomainSuggestionCTA domainName={ domainName } /> }
 		/>
 	);

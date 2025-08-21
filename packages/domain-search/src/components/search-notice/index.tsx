@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { useDomainSearch } from '../../page/context';
-import { DomainSearchNotice } from '../../ui/domain-search-notice';
+import { DomainSearchNotice } from '../../ui';
 
 export const SearchNotice = () => {
 	const { query, queries } = useDomainSearch();

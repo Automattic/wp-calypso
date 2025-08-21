@@ -5,6 +5,7 @@ export interface DomainAvailability {
 	supports_privacy: boolean;
 	cost: string;
 	sale_cost?: string;
+	renew_cost?: string;
 	product_id: number;
 	product_slug: string;
 	is_price_limit_exceeded?: boolean;

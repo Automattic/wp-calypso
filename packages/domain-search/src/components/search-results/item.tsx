@@ -7,8 +7,9 @@ import { useMemo } from 'react';
 import { useSuggestion } from '../../hooks/use-suggestion';
 import { useDomainSuggestionBadges } from '../../hooks/use-suggestion-badges';
 import { useDomainSearch } from '../../page/context';
-import { DomainSuggestion, DomainSuggestionPrice } from '../../ui';
+import { DomainSuggestion } from '../../ui';
 import { DomainSuggestionCTA } from '../suggestion-cta';
+import { DomainSuggestionPrice } from '../suggestion-price';
 
 interface SearchResultsItemProps {
 	domainName: string;
@@ -16,16 +17,19 @@ interface SearchResultsItemProps {
 
 export const SearchResultsItem = ( { domainName }: SearchResultsItemProps ) => {
 	const [ domain, ...tlds ] = domainName.split( '.' );
-	const { queries } = useDomainSearch();
 
 	const suggestion = useSuggestion( domainName );
-	const { data: availability } = useQuery( queries.domainAvailability( domainName ) );
 	const suggestionBadges = useDomainSuggestionBadges( domainName );
+
+	const { queries } = useDomainSearch();
+	const { data: products } = useQuery( queries.products() );
 
 	const tld = tlds.join( '.' );
 
 	const notice = useMemo( () => {
-		if ( suggestion.is_hsts_required ) {
+		const isHstsRequired = products?.[ suggestion.product_slug ]?.is_hsts_required ?? false;
+
+		if ( isHstsRequired ) {
 			return createInterpolateElement(
 				sprintf(
 					/* translators: %s is the TLD of the domain */
@@ -43,14 +47,17 @@ export const SearchResultsItem = ( { domainName }: SearchResultsItemProps ) => {
 			);
 		}
 
-		if ( suggestion.is_dot_gay_notice_required ) {
+		const isDotGayNoticeRequired =
+			products?.[ suggestion.product_slug ]?.is_dot_gay_notice_required ?? false;
+
+		if ( isDotGayNoticeRequired ) {
 			return __(
 				'Any anti-LGBTQ content is prohibited and can result in registration termination. The registry will donate 20% of all registration revenue to LGBTQ non-profit organizations.'
 			);
 		}
 
 		return null;
-	}, [ suggestion.is_hsts_required, suggestion.is_dot_gay_notice_required, tld ] );
+	}, [ suggestion, products, tld ] );
 
 	return (
 		<DomainSuggestion
@@ -58,9 +65,7 @@ export const SearchResultsItem = ( { domainName }: SearchResultsItemProps ) => {
 			notice={ notice }
 			domain={ domain }
 			tld={ tld }
-			price={
-				<DomainSuggestionPrice salePrice={ availability?.sale_cost } price={ suggestion.cost } />
-			}
+			price={ <DomainSuggestionPrice domainName={ domainName } /> }
 			cta={ <DomainSuggestionCTA domainName={ domainName } /> }
 		/>
 	);
