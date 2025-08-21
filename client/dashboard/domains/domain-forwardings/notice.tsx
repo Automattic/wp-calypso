@@ -4,7 +4,8 @@ import { Notice } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { domainQuery } from '../../app/queries/domain';
-import { domainNameServersRoute, siteDomainsRoute } from '../../app/router';
+import { domainNameServersRoute } from '../../app/router/domains';
+import { siteDomainsRoute } from '../../app/router/sites';
 
 interface DomainForwardingNoticeProps {
 	domainName: string;

@@ -78,7 +78,7 @@ test( 'calls onSubmit with correct data when form is submitted', async () => {
 		expect( screen.getByText( 'Target URL' ) ).toBeInTheDocument();
 	} );
 
-	// Fill in the subdomain field (default sourceType is 'subdomain')
+	// Fill in the subdomain field (default sourceType is empty '' meaning subdomain)
 	const subdomainInput = screen.getByRole( 'textbox', { name: /subdomain/i } );
 	await user.type( subdomainInput, 'blog' );
 
@@ -92,7 +92,7 @@ test( 'calls onSubmit with correct data when form is submitted', async () => {
 
 	// Verify onSubmit was called with the correct data
 	expect( mockOnSubmit ).toHaveBeenCalledWith( {
-		sourceType: 'subdomain',
+		sourceType: '',
 		subdomain: 'blog',
 		targetUrl: 'https://newsite.com',
 		isPermanent: false,
@@ -249,7 +249,7 @@ test( 'allows target URL that redirects to same domain with path', async () => {
 	// Should submit successfully without validation error
 	await waitFor( () => {
 		expect( mockOnSubmit ).toHaveBeenCalledWith( {
-			sourceType: 'subdomain',
+			sourceType: '',
 			subdomain: 'blog',
 			targetUrl: 'https://example.com/blog',
 			isPermanent: false,
@@ -284,7 +284,7 @@ test( 'allows target URL without protocol (normalizes input)', async () => {
 	await waitFor( () => {
 		expect( mockOnSubmit ).toHaveBeenCalledWith(
 			expect.objectContaining( {
-				sourceType: 'subdomain',
+				sourceType: '',
 				subdomain: 'blog',
 				targetUrl: 'newsite.com', // Input as typed by user
 				isPermanent: false,

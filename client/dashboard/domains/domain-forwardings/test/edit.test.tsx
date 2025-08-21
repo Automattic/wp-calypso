@@ -134,7 +134,7 @@ test( 'calls onSubmit with updated data when form is submitted', async () => {
 
 	// Verify onSubmit was called with the updated data
 	expect( mockOnSubmit ).toHaveBeenCalledWith( {
-		sourceType: 'subdomain',
+		sourceType: '',
 		subdomain: 'news',
 		targetUrl: 'https://newsite.com',
 		isPermanent: false,
@@ -247,7 +247,7 @@ test( 'handles advanced settings correctly when updating', async () => {
 
 	// Verify onSubmit was called with the updated advanced settings
 	expect( mockOnSubmit ).toHaveBeenCalledWith( {
-		sourceType: 'subdomain',
+		sourceType: '',
 		subdomain: 'blog',
 		targetUrl: 'https://newsite.com',
 		isPermanent: true, // Updated value
