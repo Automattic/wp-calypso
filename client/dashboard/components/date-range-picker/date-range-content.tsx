@@ -14,6 +14,7 @@ import { computePresetRange, getActivePresetId, PresetId } from './utils';
 
 type DateRangeContentProps = {
 	isSmall: boolean;
+	showTwoMonths?: boolean;
 	fromDraft?: Date;
 	toDraft?: Date;
 	fromStr: string;
@@ -28,18 +29,17 @@ type DateRangeContentProps = {
 	onClose?: () => void;
 	compositeActiveId: string | null;
 	setCompositeActiveId: ( id: string | null ) => void;
-	siteToday: Date;
-	siteTodayStr: string;
+	today: Date;
+	todayStr: string;
 	mobileLabelId: string;
 	desktopLabelId: string;
+	disableFuture?: boolean;
 };
-
-const today = new Date();
-( today as Date ).setHours( 0, 0, 0, 0 );
 
 export function DateRangeContent( props: DateRangeContentProps ) {
 	const {
 		isSmall,
+		showTwoMonths = false,
 		fromDraft,
 		toDraft,
 		fromStr,
@@ -54,10 +54,11 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 		onClose,
 		compositeActiveId,
 		setCompositeActiveId,
-		siteToday,
-		siteTodayStr,
+		today,
+		todayStr,
 		mobileLabelId,
 		desktopLabelId,
+		disableFuture = true,
 	} = props;
 
 	const clear = () => {
@@ -78,7 +79,7 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 	};
 
 	const setPreset = ( id: PresetId ) => {
-		const range = computePresetRange( id, siteToday );
+		const range = computePresetRange( id, today );
 		if ( ! range ) {
 			return;
 		}
@@ -90,9 +91,11 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 		onClose?.();
 	};
 
-	const activePresetId = getActivePresetId( fromDraft, toDraft, siteToday );
+	const activePresetId = getActivePresetId( fromDraft, toDraft, today );
 
-	const defaultMonth = isSmall ? today : new Date( today.getFullYear(), today.getMonth() - 1, 1 );
+	const defaultMonth = showTwoMonths
+		? new Date( today.getFullYear(), today.getMonth() - 1, 1 )
+		: today;
 	const endMonth = new Date( today.getFullYear(), today.getMonth(), 1 );
 
 	// Use TZDate for calendar selection when an IANA time zone is available
@@ -105,19 +108,14 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 			: { from: fromDraft, to: toDraft };
 
 	return (
-		<div style={ { padding: 12 } }>
-			<Text as="div" weight={ 600 } align="center" size="smallTitle" style={ { marginBottom: 8 } }>
+		<VStack as="div" spacing={ 3 } style={ { padding: 12 } }>
+			<Text as="div" weight={ 600 } align="center" size="smallTitle">
 				{ __( 'Date Range' ) }
 			</Text>
 
 			{ isSmall ? (
-				<>
-					<VStack
-						as="div"
-						spacing={ 1 }
-						className="daterange-presets"
-						style={ { marginBottom: 16 } }
-					>
+				<VStack as="div" spacing={ 2 }>
+					<div className="daterange-presets">
 						<VisuallyHidden id={ mobileLabelId }>{ __( 'Date range presets' ) }</VisuallyHidden>
 						<PresetsListbox
 							labelId={ mobileLabelId }
@@ -126,18 +124,19 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 							compositeActiveId={ compositeActiveId }
 							setCompositeActiveId={ setCompositeActiveId }
 						/>
-					</VStack>
+					</div>
 
 					<DateInputs
 						fromStr={ fromStr }
 						toStr={ toStr }
 						onFromChange={ ( value ) => setFromStr( value ) }
 						onToChange={ ( value ) => setToStr( value ) }
-						todayStr={ siteTodayStr }
-						fromStyle={ { minWidth: 140, flex: '1 1 0' } }
-						toStyle={ { minWidth: 140, flex: '1 1 0' } }
+						todayStr={ todayStr }
+						stack
+						fromStyle={ { minWidth: 140 } }
+						toStyle={ { minWidth: 140 } }
 					/>
-				</>
+				</VStack>
 			) : (
 				<HStack
 					as="div"
@@ -152,7 +151,7 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 						toStr={ toStr }
 						onFromChange={ ( v ) => setFromStr( v ) }
 						onToChange={ ( v ) => setToStr( v ) }
-						todayStr={ siteTodayStr }
+						todayStr={ todayStr }
 						fromStyle={ { minWidth: 220, flex: '0 0 auto' } }
 						toStyle={ { minWidth: 220, flex: '0 0 auto' } }
 						justify="flex-end"
@@ -181,7 +180,7 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 						numberOfMonths={ isSmall ? 1 : 2 }
 						defaultMonth={ defaultMonth }
 						endMonth={ endMonth }
-						disabled={ { after: today } }
+						disabled={ disableFuture ? { after: today } : undefined }
 						excludeDisabled
 						selected={ selected }
 						onSelect={ ( range ) => {
@@ -205,7 +204,7 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 				</div>
 			</HStack>
 
-			<HStack as="div" spacing={ 2 } justify="flex-end" style={ { marginTop: 12 } }>
+			<HStack as="div" spacing={ 2 } justify="flex-end">
 				<Button variant="secondary" onClick={ clear }>
 					{ __( 'Clear' ) }
 				</Button>
@@ -213,6 +212,6 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 					{ __( 'Apply' ) }
 				</Button>
 			</HStack>
-		</div>
+		</VStack>
 	);
 }

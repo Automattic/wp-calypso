@@ -2,8 +2,7 @@ import { Dropdown, Tooltip, Button } from '@wordpress/components';
 import { useMediaQuery, useInstanceId } from '@wordpress/compose';
 import { useMemo, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { Icon, calendar } from '@wordpress/icons';
-import { useLocale } from '../../app/locale';
+import { calendar } from '@wordpress/icons';
 import { parseYmdLocal, formatYmd } from '../../utils/datetime';
 import { DateRangeContent } from './date-range-content';
 import { formatLabel } from './utils';
@@ -15,10 +14,9 @@ type DateRangePickerProps = {
 	onChange: ( next: { start: Date; end: Date } ) => void;
 	timezoneString?: string;
 	gmtOffset?: number;
+	locale: string;
+	disableFuture?: boolean;
 };
-
-const today = new Date();
-( today as Date ).setHours( 0, 0, 0, 0 );
 
 export function DateRangePicker( {
 	start,
@@ -26,28 +24,24 @@ export function DateRangePicker( {
 	onChange,
 	gmtOffset,
 	timezoneString,
+	locale,
+	disableFuture = true,
 }: DateRangePickerProps ) {
-	const locale = useLocale();
 	const isSmall = useMediaQuery( '(max-width: 600px)' );
+	// Use a wider breakpoint to decide when two calendars can fit comfortably
+	const showTwoMonths = useMediaQuery( '(min-width: 900px)' );
 	const instanceId = useInstanceId( DateRangePicker, 'daterange' );
 	const mobileLabelId = `presets-label-${ instanceId }-mobile`;
 	const desktopLabelId = `presets-label-${ instanceId }-desktop`;
 
-	const label = useMemo(
-		() => formatLabel( start, end, locale, timezoneString, gmtOffset ),
-		[ start, end, locale, timezoneString, gmtOffset ]
-	);
+	const label = formatLabel( start, end, locale, timezoneString, gmtOffset );
 
 	// Reset internal draft state when key inputs change by remounting the inner component
-	const resetKey = useMemo(
-		() =>
-			`${ formatYmd( start, timezoneString, gmtOffset ) }|${ formatYmd(
-				end,
-				timezoneString,
-				gmtOffset
-			) }|${ timezoneString ?? '' }|${ gmtOffset ?? '' }`,
-		[ start, end, timezoneString, gmtOffset ]
-	);
+	const resetKey = `${ formatYmd( start, timezoneString, gmtOffset ) }|${ formatYmd(
+		end,
+		timezoneString,
+		gmtOffset
+	) }|${ timezoneString ?? '' }|${ gmtOffset ?? '' }`;
 
 	return (
 		<div className="daterange-container">
@@ -68,12 +62,12 @@ export function DateRangePicker( {
 									label
 								) }
 								className="daterange-input__field"
-								style={ { justifyContent: 'space-between' } }
+								icon={ calendar }
+								iconPosition="right"
 							>
 								<span aria-hidden="true" className="daterange-input__text">
 									{ label }
 								</span>
-								<Icon icon={ calendar } size={ 24 } style={ { marginRight: 8, paddingLeft: 4 } } />
 							</Button>
 						</div>
 					</Tooltip>
@@ -82,6 +76,7 @@ export function DateRangePicker( {
 					<DateRangePickerInner
 						key={ resetKey }
 						isSmall={ isSmall }
+						showTwoMonths={ showTwoMonths }
 						start={ start }
 						end={ end }
 						timezoneString={ timezoneString }
@@ -90,6 +85,7 @@ export function DateRangePicker( {
 						onClose={ onClose }
 						mobileLabelId={ mobileLabelId }
 						desktopLabelId={ desktopLabelId }
+						disableFuture={ disableFuture }
 					/>
 				) }
 			/>
@@ -99,6 +95,7 @@ export function DateRangePicker( {
 
 function DateRangePickerInner( {
 	isSmall,
+	showTwoMonths,
 	start,
 	end,
 	timezoneString,
@@ -107,8 +104,10 @@ function DateRangePickerInner( {
 	onClose,
 	mobileLabelId,
 	desktopLabelId,
+	disableFuture,
 }: {
 	isSmall: boolean;
+	showTwoMonths: boolean;
 	start: Date;
 	end: Date;
 	timezoneString?: string;
@@ -117,6 +116,7 @@ function DateRangePickerInner( {
 	onClose: () => void;
 	mobileLabelId: string;
 	desktopLabelId: string;
+	disableFuture: boolean;
 } ) {
 	const [ fromDraft, setFromDraft ] = useState< Date | undefined >( () => start );
 	const [ toDraft, setToDraft ] = useState< Date | undefined >( () => end );
@@ -151,10 +151,12 @@ function DateRangePickerInner( {
 			onClose={ onClose }
 			compositeActiveId={ compositeActiveId }
 			setCompositeActiveId={ setCompositeActiveId }
-			siteToday={ siteToday }
-			siteTodayStr={ siteTodayStr }
+			today={ siteToday }
+			todayStr={ siteTodayStr }
 			mobileLabelId={ mobileLabelId }
 			desktopLabelId={ desktopLabelId }
+			disableFuture={ disableFuture }
+			showTwoMonths={ showTwoMonths }
 		/>
 	);
 }

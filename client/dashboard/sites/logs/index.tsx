@@ -5,6 +5,7 @@ import { DataViews, ViewTable } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
+import { useLocale } from '../../app/locale';
 import { siteBySlugQuery } from '../../app/queries/site';
 import { siteLogsQuery } from '../../app/queries/site-logs';
 import { siteSettingsQuery } from '../../app/queries/site-settings';
@@ -70,6 +71,7 @@ const LOG_TABS = [
 const EMPTY_ARRAY: ( ServerLog | PHPLog )[] = [];
 
 function SiteLogs( { logType }: { logType: LogType } ) {
+	const locale = useLocale();
 	const { siteSlug } = siteRoute.useParams();
 	const router = useRouter();
 
@@ -198,6 +200,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 				end={ dateRange.end }
 				gmtOffset={ gmtOffset }
 				timezoneString={ timezoneString }
+				locale={ locale }
 				onChange={ ( next ) => setDateRange( next ) }
 			/>
 

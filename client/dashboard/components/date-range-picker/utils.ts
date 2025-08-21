@@ -1,22 +1,15 @@
 import { dateI18n } from '@wordpress/date';
 import { __, sprintf } from '@wordpress/i18n';
+import {
+	startOfDay,
+	isSameDay,
+	addDays,
+	addYears,
+	startOfMonth,
+	startOfYear,
+	differenceInCalendarDays,
+} from 'date-fns';
 import { formatDateWithOffset } from '../../utils/datetime';
-
-// Normalize/comparison helpers
-const startOfDay = ( date?: Date ) =>
-	date ? new Date( date.getFullYear(), date.getMonth(), date.getDate() ) : undefined;
-const isSameDay = ( firstDay?: Date, secondDay?: Date ) =>
-	!! firstDay && !! secondDay && firstDay.getTime() === secondDay.getTime();
-const addDays = ( date: Date, number: number ) =>
-	new Date( date.getFullYear(), date.getMonth(), date.getDate() + number );
-const addYears = ( date: Date, number: number ) =>
-	new Date( date.getFullYear() + number, date.getMonth(), date.getDate() );
-const firstOfMonth = ( date: Date ) => new Date( date.getFullYear(), date.getMonth(), 1 );
-const jan1 = ( date: Date ) => new Date( date.getFullYear(), 0, 1 );
-const daysBetween = ( firstDay: Date, secondDay: Date ) =>
-	Math.round(
-		( startOfDay( secondDay )!.getTime() - startOfDay( firstDay )!.getTime() ) / 86400000
-	);
 
 // Range helpers (inclusive)
 const lastNDays = ( date: Date, number: number ) => ( {
@@ -100,7 +93,7 @@ export function getActivePresetId( from?: Date, to?: Date, baseDate?: Date ): Pr
 		newTo = tmp;
 	}
 
-	const todayStart = startOfDay( baseDate )!;
+	const todayStart = startOfDay( baseDate );
 	const yesterdayStart = addDays( todayStart, -1 );
 
 	if ( isSameDay( newFrom, todayStart ) && isSameDay( newTo, todayStart ) ) {
@@ -111,7 +104,7 @@ export function getActivePresetId( from?: Date, to?: Date, baseDate?: Date ): Pr
 	}
 
 	if ( isSameDay( newTo, todayStart ) ) {
-		const diff = daysBetween( newFrom!, todayStart ); // inclusive days = diff + 1
+		const diff = differenceInCalendarDays( todayStart, newFrom ); // inclusive days = diff + 1
 		if ( diff === 6 ) {
 			return 'last-7-days';
 		}
@@ -132,10 +125,10 @@ export function getActivePresetId( from?: Date, to?: Date, baseDate?: Date ): Pr
 		}
 	}
 
-	if ( isSameDay( newFrom, firstOfMonth( todayStart ) ) && isSameDay( newTo, todayStart ) ) {
+	if ( isSameDay( newFrom, startOfMonth( todayStart ) ) && isSameDay( newTo, todayStart ) ) {
 		return 'month-to-date';
 	}
-	if ( isSameDay( newFrom, jan1( todayStart ) ) && isSameDay( newTo, todayStart ) ) {
+	if ( isSameDay( newFrom, startOfYear( todayStart ) ) && isSameDay( newTo, todayStart ) ) {
 		return 'year-to-date';
 	}
 

@@ -1,5 +1,6 @@
 import {
 	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -12,6 +13,7 @@ type DateInputsProps = {
 	todayStr: string;
 	fromStyle?: React.CSSProperties;
 	toStyle?: React.CSSProperties;
+	stack?: boolean;
 	justify?:
 		| 'flex-start'
 		| 'flex-end'
@@ -30,9 +32,37 @@ export function DateInputs( {
 	todayStr,
 	fromStyle,
 	toStyle,
+	stack = false,
 	justify = 'flex-start',
 	containerStyle,
 }: DateInputsProps ) {
+	if ( stack ) {
+		return (
+			<VStack as="div" spacing={ 2 } className="daterange-inputs" style={ containerStyle }>
+				<InputControl
+					type="date"
+					label={ __( 'Start date' ) }
+					value={ fromStr }
+					onChange={ ( value?: string ) => onFromChange( value ?? '' ) }
+					autoComplete="off"
+					max={ toStr || todayStr }
+					style={ { width: '100%', ...( fromStyle || {} ) } }
+					__next40pxDefaultSize
+				/>
+				<InputControl
+					type="date"
+					label={ __( 'End date' ) }
+					value={ toStr }
+					onChange={ ( value?: string ) => onToChange( value ?? '' ) }
+					autoComplete="off"
+					min={ fromStr || undefined }
+					style={ { width: '100%', ...( toStyle || {} ) } }
+					__next40pxDefaultSize
+				/>
+			</VStack>
+		);
+	}
+
 	return (
 		<HStack
 			as="div"
