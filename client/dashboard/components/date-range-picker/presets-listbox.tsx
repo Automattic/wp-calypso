@@ -29,7 +29,7 @@ export function PresetsListbox( {
 	];
 
 	return (
-		<VStack justify="flex-start" alignment="stretch" spacing={ 1 }>
+		<VStack justify="flex-start" alignment="stretch" spacing={ 1 } className="daterange-presets">
 			<VisuallyHidden id={ labelId }>{ __( 'Date range presets' ) }</VisuallyHidden>
 			<Composite
 				aria-labelledby={ labelId }

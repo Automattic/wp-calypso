@@ -4,7 +4,6 @@ import {
 	Button,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	VisuallyHidden,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { formatYmd } from '../../utils/datetime';
@@ -115,16 +114,13 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 
 			{ isSmall ? (
 				<VStack as="div" spacing={ 2 }>
-					<div className="daterange-presets">
-						<VisuallyHidden id={ mobileLabelId }>{ __( 'Date range presets' ) }</VisuallyHidden>
-						<PresetsListbox
-							labelId={ mobileLabelId }
-							activePresetId={ activePresetId }
-							onSelect={ setPreset }
-							compositeActiveId={ compositeActiveId }
-							setCompositeActiveId={ setCompositeActiveId }
-						/>
-					</div>
+					<PresetsListbox
+						labelId={ mobileLabelId }
+						activePresetId={ activePresetId }
+						onSelect={ setPreset }
+						compositeActiveId={ compositeActiveId }
+						setCompositeActiveId={ setCompositeActiveId }
+					/>
 
 					<DateInputs
 						fromStr={ fromStr }
@@ -162,16 +158,13 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 
 			<HStack as="div" spacing={ 4 } justify="flex-start" className="daterange-body" wrap={ false }>
 				{ ! isSmall && (
-					<VStack as="div" spacing={ 2 } className="daterange-presets">
-						<VisuallyHidden id={ desktopLabelId }>{ __( 'Date range presets' ) }</VisuallyHidden>
-						<PresetsListbox
-							labelId={ desktopLabelId }
-							activePresetId={ activePresetId }
-							onSelect={ setPreset }
-							compositeActiveId={ compositeActiveId }
-							setCompositeActiveId={ setCompositeActiveId }
-						/>
-					</VStack>
+					<PresetsListbox
+						labelId={ desktopLabelId }
+						activePresetId={ activePresetId }
+						onSelect={ setPreset }
+						compositeActiveId={ compositeActiveId }
+						setCompositeActiveId={ setCompositeActiveId }
+					/>
 				) }
 
 				<div className="daterange-calendar">
