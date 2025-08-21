@@ -1,12 +1,19 @@
-import { flatMap, property } from 'lodash';
-
 const ANALYTICS_MULTI_TRACK = 'ANALYTICS_MULTI_TRACK';
 
-export function composeAnalytics( ...analytics: object[] ) {
+interface ComposedAnalyticsMeta {
+	analytics: object[];
+}
+
+interface ComposedAnalytics {
+	type: string;
+	meta: ComposedAnalyticsMeta;
+}
+
+export function composeAnalytics( ...analytics: ComposedAnalytics[] ) {
 	return {
 		type: ANALYTICS_MULTI_TRACK,
 		meta: {
-			analytics: flatMap( analytics, property( 'meta.analytics' ) ),
+			analytics: analytics.flatMap( ( o: ComposedAnalytics ) => o?.meta?.analytics ) as object[],
 		},
 	};
 }

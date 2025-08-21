@@ -36,14 +36,5 @@ export default function useDisplayUserTaxNotices( {
 			);
 			return;
 		}
-	}, [
-		createSuccessNotice,
-		createErrorNotice,
-		removeNotice,
-		error,
-		success,
-		__,
-		sprintf,
-		taxName,
-	] );
+	}, [ createSuccessNotice, createErrorNotice, removeNotice, error, success, taxName ] );
 }
