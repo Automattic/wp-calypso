@@ -1,3 +1,4 @@
+import { TZDate } from '@automattic/ui';
 import {
 	Button,
 	Tooltip,
@@ -7,6 +8,8 @@ import {
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { download } from '@wordpress/icons';
+import { format } from 'date-fns';
+import { useAnalytics } from '../../app/analytics';
 import { fetchSiteLogsBatch } from '../../data/site-logs';
 import type { LogType, FilterType } from '../../data/site-logs';
 
@@ -26,12 +29,20 @@ async function downloadSiteLogs( args: {
 	startSec: number;
 	endSec: number;
 	filter: FilterType;
-} ): Promise< { ok: boolean; message: string } > {
+} ): Promise< {
+	ok: boolean;
+	message: string;
+	fileName?: string;
+	totalAvailable?: number;
+	downloadedCount?: number;
+} > {
 	const { siteId, siteSlug, logType, startSec, endSec, filter } = args;
 
 	let scrollId: string | null = null;
 	const rows: string[] = [];
 	let isError = false;
+	let totalAvailable: number | null = null;
+	let downloadedCount = 0;
 
 	do {
 		try {
@@ -44,6 +55,9 @@ async function downloadSiteLogs( args: {
 				scrollId,
 			} );
 			const batch = batchResp.logs;
+			if ( totalAvailable === null ) {
+				totalAvailable = batchResp.total_results ?? 0;
+			}
 			scrollId = batchResp.scroll_id;
 			if ( rows.length === 0 ) {
 				if ( batch.length === 0 ) {
@@ -61,6 +75,7 @@ async function downloadSiteLogs( args: {
 					.map( ( [ , value ] ) => csvEscape( value ) );
 				rows.push( cleaned.join( ',' ) + '\n' );
 			}
+			downloadedCount += batch.length;
 			if ( rows.length > MAX_LOGS_DOWNLOAD ) {
 				scrollId = null;
 			}
@@ -79,13 +94,19 @@ async function downloadSiteLogs( args: {
 	const blob = new Blob( rows, { type: 'text/csv;charset=utf-8' } );
 	const url = window.URL.createObjectURL( blob );
 	const link = document.createElement( 'a' );
-	const filename = `${ siteSlug }-${ logType }-logs-${ startSec }-${ endSec }.csv`;
+	const fileName = `${ siteSlug }-${ logType }-logs-${ startSec }-${ endSec }.csv`;
 	link.href = url;
-	link.setAttribute( 'download', filename );
+	link.setAttribute( 'download', fileName );
 	link.click();
 	window.URL.revokeObjectURL( url );
 
-	return { ok: true, message: __( 'Logs downloaded.' ) };
+	return {
+		ok: true,
+		message: __( 'Logs downloaded.' ),
+		fileName,
+		totalAvailable: totalAvailable ?? 0,
+		downloadedCount,
+	};
 }
 
 export function LogsDownloader( {
@@ -107,11 +128,49 @@ export function LogsDownloader( {
 	onSuccess?: ( message: string ) => void;
 	onError?: ( message: string ) => void;
 } ) {
+	const { recordTracksEvent } = useAnalytics();
+
 	const [ status, setStatus ] = useState< 'idle' | 'downloading' | 'complete' | 'error' >( 'idle' );
 
 	const disabled = status === 'downloading';
 	const label = status === 'downloading' ? __( 'Downloading…' ) : __( 'Download logs' );
 	const [ isHovered, setIsHovered ] = useState( false );
+
+	const tracksProps = {
+		site_slug: siteSlug,
+		site_id: siteId,
+		start_time: format( new TZDate( startSec * 1000, 'UTC' ), 'yyyy/MM/dd' ),
+		end_time: format( new TZDate( endSec * 1000, 'UTC' ), 'yyyy/MM/dd' ),
+		log_type: logType,
+	};
+
+	const handleOnClick = async () => {
+		setStatus( 'downloading' );
+		const result = await downloadSiteLogs( {
+			siteId,
+			siteSlug,
+			logType,
+			startSec,
+			endSec,
+			filter,
+		} );
+		setStatus( result.ok ? 'complete' : 'error' );
+		if ( result.ok ) {
+			onSuccess?.( result.message );
+			recordTracksEvent( 'calypso_atomic_logs_download_completed', {
+				download_filename: result.fileName,
+				total_log_records_downloaded: result.totalAvailable ?? result.downloadedCount ?? 0,
+				...tracksProps,
+			} );
+		} else {
+			onError?.( result.message );
+			recordTracksEvent( 'calypso_atomic_logs_download_error', {
+				error_message: result.message,
+				...tracksProps,
+			} );
+		}
+		recordTracksEvent( 'calypso_atomic_logs_download_started', tracksProps );
+	};
 
 	let iconColor = 'inherit';
 	if ( status === 'downloading' ) {
@@ -133,23 +192,7 @@ export function LogsDownloader( {
 						disabled={ disabled }
 						onMouseEnter={ () => setIsHovered( true ) }
 						onMouseLeave={ () => setIsHovered( false ) }
-						onClick={ async () => {
-							setStatus( 'downloading' );
-							const result = await downloadSiteLogs( {
-								siteId,
-								siteSlug,
-								logType,
-								startSec,
-								endSec,
-								filter,
-							} );
-							setStatus( result.ok ? 'complete' : 'error' );
-							if ( result.ok ) {
-								onSuccess?.( result.message );
-							} else {
-								onError?.( result.message );
-							}
-						} }
+						onClick={ handleOnClick }
 					/>
 				</Tooltip>
 			</HStack>
