@@ -11,9 +11,8 @@ import {
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { siteByIdQuery } from '../../app/queries/site';
 import { stagingSiteDeleteMutation } from '../../app/queries/site-staging-sites';
-import { queryClient } from '../../app/query-client';
+import { siteRoute } from '../../app/router/sites';
 import type { Site } from '../../data/types';
 
 export default function StagingSiteDeleteModal( {
@@ -27,6 +26,7 @@ export default function StagingSiteDeleteModal( {
 	const router = useRouter();
 
 	const productionSiteId = site.options?.wpcom_production_blog_id;
+	const { siteSlug } = siteRoute.useParams();
 
 	const mutation = useMutation( stagingSiteDeleteMutation( site.ID, productionSiteId ?? 0 ) );
 
@@ -47,15 +47,9 @@ export default function StagingSiteDeleteModal( {
 				recordTracksEvent( 'calypso_hosting_configuration_staging_site_delete_success' );
 				createSuccessNotice( __( 'Staging site deleted.' ), { type: 'snackbar' } );
 				onClose();
-				queryClient
-					.ensureQueryData( siteByIdQuery( productionSiteId ) )
-					.then( ( productionSite ) => {
-						if ( productionSite?.slug ) {
-							router.navigate( {
-								to: `/sites/${ productionSite.slug }`,
-							} );
-						}
-					} );
+				router.navigate( {
+					to: `/sites/${ siteSlug }`,
+				} );
 			},
 		} );
 	};
