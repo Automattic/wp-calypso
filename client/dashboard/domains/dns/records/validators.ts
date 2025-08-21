@@ -3,68 +3,74 @@ import { __ } from '@wordpress/i18n';
 import type { DnsRecordFormData } from './dns-record-configs';
 import type { DnsRecordType } from '../../../data/domain-dns-records';
 
-const isValidHostname = ( value: string ): boolean => {
-	return /^([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)*[a-z0-9]([a-z0-9-]*[a-z0-9])?$/i.test( value );
+/**
+ * Check if the provided name is the root domain name
+ *
+ * @param name - The name to check
+ * @param domainName - The domain name
+ * @returns True if the name is the root domain name, false otherwise
+ */
+const isRootDomain = ( name: string, domainName: string ): boolean => {
+	if ( name === '' ) {
+		return true;
+	}
+
+	const rootDomainVariations = [
+		'@',
+		domainName,
+		domainName + '.',
+		'@.' + domainName,
+		'@.' + domainName + '.',
+	];
+	return rootDomainVariations.includes( name );
 };
 
-// const isRootDomain = ( name: string, domainName: string ): boolean => {
-// 	const rootDomainVariations = [
-// 		'@',
-// 		domainName,
-// 		domainName + '.',
-// 		'@.' + domainName,
-// 		'@.' + domainName + '.',
-// 	];
-// 	return ! name || rootDomainVariations.includes( name );
-// };
+/**
+ * Check if the DNS record type supports a root domain `name` value
+ *
+ * @param type - The DNS record type
+ * @returns True if the record type supports a root domain `name`, false otherwise
+ */
+const isRootDomainNameSupported = ( type: DnsRecordType ): boolean => {
+	// TODO: Root NS records can be edited only for subdomains, but we don't have the domain object here.
+	// It's not reliable to determine whether a domain is a subdomain in the frontend, so we'll need
+	// to get this information from the backend.
+	return [ 'A', 'AAAA', 'ALIAS', 'CAA', 'MX', 'SRV', 'TXT' ].includes( type );
+};
 
-// const canBeRootDomain = ( type: DnsRecordType, domain: string ): boolean => {
-// 	// Root NS records can be edited only for subdomains
-// 	if ( type === 'NS' && domain?.isSubdomain ) {
-// 		return true;
-// 	}
+/**
+ * Check if the provided `name` is a valid hostname according to the record type
+ *
+ * @param name - The name of the DNS record
+ * @param type - The type of the DNS record
+ * @param domainName - The domain name
+ * @returns True if the name is valid, false otherwise
+ */
+const isValidName = ( name: string, type: DnsRecordType, domainName: string ): boolean => {
+	if ( isRootDomain( name, domainName ) && isRootDomainNameSupported( type ) ) {
+		return true;
+	}
 
-// 	return [ 'A', 'AAAA', 'ALIAS', 'CAA', 'MX', 'SRV', 'TXT' ].includes( type );
-// };
+	switch ( type ) {
+		case 'A':
+		case 'AAAA':
+			return /^([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)*[a-z0-9]([a-z0-9-]*[a-z0-9])?$/i.test( name );
+		case 'CNAME':
+			return /^([a-z0-9-_]{1,63}\.)*([a-z0-9-_]{1,63})$/i.test( name ) || name === '*';
+		case 'TXT':
+			return /^(\*\.|)([a-z0-9-_]{1,63}\.)*([a-z0-9-_]{1,63})$/i.test( name );
+		default:
+			return /^([a-z0-9-_]{1,63}\.)*([a-z0-9-_]{1,63})$/i.test( name );
+	}
+};
 
-// const isValidName = (
-// 	name: string,
-// 	type: DnsRecordType,
-// 	domainName: string,
-// 	domain: string
-// ): boolean => {
-// 	if ( isRootDomain( name, domainName ) && canBeRootDomain( type, domain ) ) {
-// 		return true;
-// 	}
-
-// 	switch ( type ) {
-// 		case 'A':
-// 		case 'AAAA':
-// 			return /^([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)*[a-z0-9]([a-z0-9-]*[a-z0-9])?$/i.test( name );
-// 		case 'CNAME':
-// 			return /^([a-z0-9-_]{1,63}\.)*([a-z0-9-_]{1,63})$/i.test( name ) || name === '*';
-// 		case 'TXT':
-// 			return /^(\*\.|)([a-z0-9-_]{1,63}\.)*([a-z0-9-_]{1,63})$/i.test( name );
-// 		default:
-// 			return /^([a-z0-9-_]{1,63}\.)*([a-z0-9-_]{1,63})$/i.test( name );
-// 	}
-// };
-
-export const requiredHostnameValidator =
+export const hostnameValidator =
 	( errorMessage: string = __( 'Please enter a valid name.' ) ) =>
 	( formData: DnsRecordFormData, field: NormalizedField< DnsRecordFormData > ) => {
 		const value = formData[ field.id as keyof DnsRecordFormData ] as string;
-		return isValidHostname( value ) ? null : errorMessage;
-	};
-
-export const optionalHostnameValidator =
-	( errorMessage: string = __( 'Please enter a valid name.' ) ) =>
-	( formData: DnsRecordFormData, field: NormalizedField< DnsRecordFormData > ) => {
-		const value = formData[ field.id as keyof DnsRecordFormData ] as string;
-		if ( value === '' ) {
-			return null;
-		}
-		return isValidHostname( value ) ? null : errorMessage;
+		const type = formData.type;
+		const domain = formData.domain;
+		return isValidName( value, type, domain ) ? null : errorMessage;
 	};
 
 const isValidIPv4 = ( value: string ): boolean => {
@@ -111,9 +117,10 @@ const isValidDomain = ( value: string, recordType: DnsRecordType ): boolean => {
 };
 
 export const domainValidator =
-	( recordType: DnsRecordType, errorMessage: string = __( 'Please enter a valid domain.' ) ) =>
+	( errorMessage: string = __( 'Please enter a valid domain.' ) ) =>
 	( formData: DnsRecordFormData, field: NormalizedField< DnsRecordFormData > ) => {
 		const value = formData[ field.id as keyof DnsRecordFormData ] as string;
+		const recordType = formData.type;
 		return isValidDomain( value, recordType ) ? null : errorMessage;
 	};
 
@@ -124,5 +131,27 @@ export const numberRangeValidator =
 		return min <= value && value <= max ? null : errorMessage;
 	};
 
-export const ttlValidator = () =>
-	numberRangeValidator( 300, 86400, __( 'Please enter a TTL value between 300 and 86400.' ) );
+export const ttlValidator = () => {
+	return numberRangeValidator(
+		300,
+		86400,
+		__( 'Please enter a TTL value between 300 and 86400.' )
+	);
+};
+
+export const stringLengthValidator =
+	( errorMessage: string = __( 'Please enter a string between 0 and 2048 characters.' ) ) =>
+	( formData: DnsRecordFormData, field: NormalizedField< DnsRecordFormData > ) => {
+		const value = formData[ field.id as keyof DnsRecordFormData ] as string;
+		return 0 < value.length && value.length <= 2048 ? null : errorMessage;
+	};
+
+/**
+ * Checks if the provided `value` doesn't start with a space or a dot
+ */
+export const serviceValidator =
+	( errorMessage: string = __( 'Please enter a value.' ) ) =>
+	( formData: DnsRecordFormData, field: NormalizedField< DnsRecordFormData > ) => {
+		const value = formData[ field.id as keyof DnsRecordFormData ] as string;
+		return /^[^\s.]+$/.test( value ) ? null : errorMessage;
+	};

@@ -1,9 +1,9 @@
 import { __ } from '@wordpress/i18n';
 import RequiredSelect from '../../../components/required-select';
 import {
+	hostnameValidator,
 	numberRangeValidator,
-	optionalHostnameValidator,
-	requiredHostnameValidator,
+	stringLengthValidator,
 	ttlValidator,
 } from './validators';
 import type { DnsRecordFormData, DnsRecordConfig } from './dns-record-configs';
@@ -17,7 +17,7 @@ export const CAARecordConfig: DnsRecordConfig = {
 			/* translators: This is a placeholder for a DNS CAA record `name` property */
 			placeholder: __( 'Enter subdomain' ),
 			isValid: {
-				custom: optionalHostnameValidator(),
+				custom: hostnameValidator(),
 			},
 		},
 		{
@@ -53,7 +53,7 @@ export const CAARecordConfig: DnsRecordConfig = {
 			placeholder: __( 'e.g. "letsencrypt.org"' ),
 			isValid: {
 				required: true,
-				custom: requiredHostnameValidator( __( 'Please enter a valid value.' ) ),
+				custom: stringLengthValidator( __( 'Please enter a valid value.' ) ),
 			},
 		},
 		{

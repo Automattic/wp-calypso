@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { ipv4Validator, optionalHostnameValidator, ttlValidator } from './validators';
+import { hostnameValidator, ipv4Validator, ttlValidator } from './validators';
 import type { DnsRecordFormData, DnsRecordConfig } from './dns-record-configs';
 
 export const ARecordConfig: DnsRecordConfig = {
@@ -14,7 +14,7 @@ export const ARecordConfig: DnsRecordConfig = {
 			/* translators: This is a placeholder for a DNS A record `name` property */
 			placeholder: __( 'Enter subdomain' ),
 			isValid: {
-				custom: optionalHostnameValidator(),
+				custom: hostnameValidator(),
 			},
 		},
 		{

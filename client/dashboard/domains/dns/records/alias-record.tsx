@@ -15,7 +15,7 @@ export const AliasRecordConfig: DnsRecordConfig = {
 			placeholder: __( 'e.g. example.com' ),
 			isValid: {
 				required: true,
-				custom: domainValidator( 'ALIAS', __( 'Please enter a valid target host.' ) ),
+				custom: domainValidator( __( 'Please enter a valid target host.' ) ),
 			},
 		},
 		{

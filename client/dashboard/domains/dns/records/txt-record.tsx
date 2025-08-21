@@ -1,6 +1,6 @@
 import { TextareaControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { optionalHostnameValidator, ttlValidator } from './validators';
+import { hostnameValidator, stringLengthValidator, ttlValidator } from './validators';
 import type { DnsRecordFormData, DnsRecordConfig } from './dns-record-configs';
 
 export const TXTRecordConfig: DnsRecordConfig = {
@@ -15,7 +15,7 @@ export const TXTRecordConfig: DnsRecordConfig = {
 			/* translators: This is a placeholder for a DNS TXT record `name` property */
 			placeholder: __( 'Enter subdomain' ),
 			isValid: {
-				custom: optionalHostnameValidator(),
+				custom: hostnameValidator(),
 			},
 		},
 		{
@@ -39,6 +39,7 @@ export const TXTRecordConfig: DnsRecordConfig = {
 			},
 			isValid: {
 				required: true,
+				custom: stringLengthValidator(),
 			},
 		},
 		{

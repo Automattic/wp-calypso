@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { domainValidator, requiredHostnameValidator, ttlValidator } from './validators';
+import { domainValidator, hostnameValidator, ttlValidator } from './validators';
 import type { DnsRecordFormData, DnsRecordConfig } from './dns-record-configs';
 
 export const CNAMERecordConfig: DnsRecordConfig = {
@@ -15,7 +15,7 @@ export const CNAMERecordConfig: DnsRecordConfig = {
 			placeholder: __( 'Enter subdomain (required)' ),
 			isValid: {
 				required: true,
-				custom: requiredHostnameValidator(),
+				custom: hostnameValidator(),
 			},
 		},
 		{
@@ -26,7 +26,7 @@ export const CNAMERecordConfig: DnsRecordConfig = {
 			placeholder: __( 'e.g. example.com' ),
 			isValid: {
 				required: true,
-				custom: domainValidator( 'CNAME', __( 'Please enter a valid target host.' ) ),
+				custom: domainValidator( __( 'Please enter a valid target host.' ) ),
 			},
 		},
 		{

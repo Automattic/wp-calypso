@@ -1,8 +1,8 @@
 import { __ } from '@wordpress/i18n';
 import {
 	domainValidator,
+	hostnameValidator,
 	numberRangeValidator,
-	optionalHostnameValidator,
 	ttlValidator,
 } from './validators';
 import type { DnsRecordFormData, DnsRecordConfig } from './dns-record-configs';
@@ -19,7 +19,7 @@ export const MXRecordConfig: DnsRecordConfig = {
 			/* translators: This is a placeholder for a DNS MX record `name` property */
 			placeholder: __( 'Enter subdomain' ),
 			isValid: {
-				custom: optionalHostnameValidator(),
+				custom: hostnameValidator(),
 			},
 		},
 		{
@@ -30,7 +30,7 @@ export const MXRecordConfig: DnsRecordConfig = {
 			placeholder: __( 'e.g. mail.your-provider.com' ),
 			isValid: {
 				required: true,
-				custom: domainValidator( 'MX', __( 'Please enter a valid mail server.' ) ),
+				custom: domainValidator( __( 'Please enter a valid mail server.' ) ),
 			},
 		},
 		{

@@ -1,9 +1,10 @@
 import { __ } from '@wordpress/i18n';
 import RequiredSelect from '../../../components/required-select';
 import {
+	domainValidator,
+	hostnameValidator,
 	numberRangeValidator,
-	optionalHostnameValidator,
-	requiredHostnameValidator,
+	serviceValidator,
 	ttlValidator,
 } from './validators';
 import type { DnsRecordFormData, DnsRecordConfig } from './dns-record-configs';
@@ -19,7 +20,7 @@ export const SRVRecordConfig: DnsRecordConfig = {
 			label: __( 'Name' ),
 			placeholder: __( 'Enter subdomain' ),
 			isValid: {
-				custom: optionalHostnameValidator(),
+				custom: hostnameValidator(),
 			},
 		},
 		{
@@ -30,6 +31,7 @@ export const SRVRecordConfig: DnsRecordConfig = {
 			placeholder: __( 'e.g. sip' ),
 			isValid: {
 				required: true,
+				custom: serviceValidator(),
 			},
 		},
 		{
@@ -75,7 +77,7 @@ export const SRVRecordConfig: DnsRecordConfig = {
 			placeholder: __( 'e.g. sip.your-provider.com' ),
 			isValid: {
 				required: true,
-				custom: requiredHostnameValidator( __( 'Please enter a valid target host.' ) ),
+				custom: domainValidator( __( 'Please enter a valid target host.' ) ),
 			},
 		},
 		{
