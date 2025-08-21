@@ -157,7 +157,7 @@ export default function SftpCard( {
 						title={ __( 'SFTP' ) }
 						description={ createInterpolateElement(
 							__(
-								'Use the credentials below to access and edit your website files using an SFTP client. <link>Learn more</link>.'
+								'Use the credentials below to access and edit your website files using an SFTP client. <link>Learn more</link>'
 							),
 							{
 								link: <InlineSupportLink supportContext="hosting-sftp" />,

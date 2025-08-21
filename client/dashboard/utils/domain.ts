@@ -1,12 +1,40 @@
+import { addQueryArgs } from '@wordpress/url';
 import { isAfter, subMinutes, subDays } from 'date-fns';
 import { DotcomFeatures } from '../data/constants';
 import { DomainTypes } from '../data/domains';
+import { isAkismetProduct, isMarketplaceTemporarySitePurchase } from './purchase';
 import { hasPlanFeature } from './site-features';
 import { userHasFlag } from './user';
+import { encodeProductForUrl } from './wpcom-checkout';
+import type { Purchase } from '../data/purchase';
 import type { SiteDomain, DomainSummary, Site, User } from '../data/types';
 
 export function getDomainSiteSlug( domain: DomainSummary ) {
 	return domain.primary_domain ? domain.domain : domain.site_slug;
+}
+
+export function getDomainRenewalUrl( domain: DomainSummary, purchase: Purchase ) {
+	const siteSlug = getDomainSiteSlug( domain );
+
+	const productSlug = [ purchase.product_slug, domain.domain ]
+		.map( ( productSlug ) => encodeProductForUrl( productSlug ) )
+		.join( ':' );
+
+	const backUrl = window.location.href.replace( window.location.origin, '' );
+	let serviceSlug = '';
+	if ( isAkismetProduct( purchase ) ) {
+		serviceSlug = 'akismet/';
+	} else if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
+		serviceSlug = 'marketplace/';
+	}
+
+	return addQueryArgs(
+		`/checkout/${ serviceSlug }${ productSlug }/renew/${ purchase.ID }/${ siteSlug }`,
+		{
+			cancel_to: backUrl,
+			redirect_to: backUrl,
+		}
+	);
 }
 
 export function isRegisteredDomain( domain: DomainSummary ) {

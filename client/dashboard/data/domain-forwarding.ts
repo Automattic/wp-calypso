@@ -26,3 +26,20 @@ export function deleteDomainForwarding(
 		domain_redirect_id: forwardingId,
 	} );
 }
+
+export interface DomainForwardingSaveData {
+	domain_redirect_id?: number;
+	subdomain?: string;
+	forward_paths: boolean;
+	target_host: string;
+	target_path: string;
+	is_secure: boolean;
+	is_permanent: boolean;
+}
+
+export function saveDomainForwarding(
+	domainName: string,
+	data: DomainForwardingSaveData
+): Promise< void > {
+	return wpcom.req.post( `/sites/all/domain/${ domainName }/redirects`, data );
+}

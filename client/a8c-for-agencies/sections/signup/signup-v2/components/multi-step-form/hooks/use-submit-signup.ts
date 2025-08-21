@@ -1,5 +1,7 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { useCallback, useEffect } from 'react';
+import { ONBOARDING_TOUR_HASH } from 'calypso/a8c-for-agencies/components/hoc/with-onboarding-tour/hooks/use-onboarding-tour';
 import { A4A_OVERVIEW_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useCreateAgencyMutation from 'calypso/a8c-for-agencies/sections/signup/agency-details-form/hooks/use-create-agency-mutation';
 import { saveSignupDataToLocalStorage } from 'calypso/a8c-for-agencies/sections/signup/lib/signup-data-to-local-storage';
@@ -37,7 +39,11 @@ export default function useSubmitSignup() {
 
 	useEffect( () => {
 		if ( currentAgency ) {
-			page.redirect( A4A_OVERVIEW_LINK );
+			if ( isEnabled( 'a4a-unified-onboarding-tour' ) ) {
+				page.redirect( `${ A4A_OVERVIEW_LINK }${ ONBOARDING_TOUR_HASH }` );
+			} else {
+				page.redirect( A4A_OVERVIEW_LINK );
+			}
 		}
 	}, [ createAgency.isSuccess, currentAgency, dispatch ] );
 

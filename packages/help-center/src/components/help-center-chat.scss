@@ -18,13 +18,6 @@
 			max-width: 100%;
 		}
 
-		&.odie-chat-message-input-container__attachment-button-visible {
-			.odie-send-message-input-spinner {
-				/* stylelint-disable-next-line length-zero-no-unit */
-				margin: 0px 61px 0px 0px;
-			}
-		}
-
 		.odie-send-message-input {
 			&:disabled {
 				-webkit-text-fill-color: var(--color-neutral-20);
@@ -32,12 +25,6 @@
 				border-color: var(--color-neutral-0);
 				color: var(--color-neutral-20);
 			}
-		}
-
-		.odie-send-message-input-spinner {
-			top: 28px;
-			/* stylelint-disable-next-line length-zero-no-unit */
-			margin: 0px 11px 0px 0px;
 		}
 
 		.components-form-file-upload {

@@ -1,0 +1,24 @@
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
+
+.dashboard-dataviews-empty-state {
+	max-width: 480px;
+	padding-block: $grid-unit-20;
+	box-sizing: border-box;
+
+	img {
+		width: 100%;
+	}
+}
+
+.dashboard-dataviews-empty-state__heading {
+	@include heading-x-large;
+	color: $gray-900;
+	margin: 0;
+}
+
+// Balanced wrapping works better for centered text
+// Extra specificity to override <Text> component styles
+.dashboard-dataviews-empty-state .dashboard-dataviews-empty-state__sub-heading {
+	text-wrap: balance;
+}

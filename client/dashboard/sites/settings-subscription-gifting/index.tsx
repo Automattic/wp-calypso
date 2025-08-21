@@ -10,11 +10,13 @@ import {
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { siteBySlugQuery } from '../../app/queries/site';
 import { siteSettingsMutation, siteSettingsQuery } from '../../app/queries/site-settings';
+import InlineSupportLink from '../../components/inline-support-link';
 import PageLayout from '../../components/page-layout';
 import { DotcomFeatures } from '../../data/constants';
 import { hasPlanFeature } from '../../utils/site-features';
@@ -99,8 +101,13 @@ export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: s
 			header={
 				<SettingsPageHeader
 					title={ __( 'Accept a gift subscription' ) }
-					description={ __(
-						'Allow a site visitor to cover the full cost of your site’s WordPress.com plan.'
+					description={ createInterpolateElement(
+						__(
+							'Allow a site visitor to cover the full cost of your site’s WordPress.com plan. <link>Learn more</link>'
+						),
+						{
+							link: <InlineSupportLink supportContext="gift-a-subscription" />,
+						}
 					) }
 				/>
 			}

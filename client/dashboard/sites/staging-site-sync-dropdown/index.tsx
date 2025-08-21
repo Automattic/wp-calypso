@@ -1,4 +1,4 @@
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { Button, Dropdown, MenuGroup, MenuItem } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -36,12 +36,11 @@ export default function StagingSiteSyncDropdown( {
 }: StagingSiteSyncDropdownProps ) {
 	const [ isModalOpen, setIsModalOpen ] = useState< boolean >( false );
 	const [ syncDirection, setSyncDirection ] = useState< StagingSiteSyncDirection >( 'pull' );
-	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const environment = site.is_wpcom_staging_site ? 'staging' : 'production';
+	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
+	const environment = site?.is_wpcom_staging_site ? 'staging' : 'production';
 
-	const productionSiteId = getProductionSiteId( site );
-
-	const stagingSiteId = getStagingSiteId( site );
+	const productionSiteId = site ? getProductionSiteId( site ) : null;
+	const stagingSiteId = site ? getStagingSiteId( site ) : null;
 
 	const { data: stagingSiteSyncState, refetch: fetchStagingSiteSyncState } = useQuery( {
 		...stagingSiteSyncStateQuery( productionSiteId ?? 0 ),

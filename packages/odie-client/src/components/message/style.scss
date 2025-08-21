@@ -120,6 +120,10 @@ $blueberry-color: #3858e9;
 			word-break: break-word;
 			background-color: var( --studio-white );
 		}
+
+		span {
+			font-size: 0.875rem;
+		}
 	}
 
 	&.odie-chatbox-message-no-avatar {

@@ -3,9 +3,9 @@ import { Card, ConfettiAnimation } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { ProgressBar, ExternalLink, Notice } from '@wordpress/components';
 import { useReducedMotion } from '@wordpress/compose';
-import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import { fixMe, translate } from 'i18n-calypso';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import pauseSubstackBillingImg from 'calypso/assets/images/importer/pause-substack-billing.png';
 import { Steps, StepStatus } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
@@ -182,22 +182,41 @@ export default function Summary( {
 				{ showPauseSubstackBillingWarning && (
 					<Notice status="warning" className="importer__notice" isDismissible={ false }>
 						<h2>{ __( 'Action required' ) }</h2>
-						{ createInterpolateElement(
-							__(
-								'To prevent any charges from Substack, go to your <substackPaymentsSettingsLink>Substack Payments Settings</substackPaymentsSettingsLink>, select "Pause billing" and click "<strong>Pause indefinitely</strong>".'
+						{ fixMe( {
+							text: 'To prevent double-charging your subscribers, go to your {{substackPaymentsSettingsLink}}Substack Payments Settings{{/substackPaymentsSettingsLink}} and under "Pause subscription billing," click {{strong}}Pause{{/strong}}.',
+							newCopy: translate(
+								'To prevent double-charging your subscribers, go to your {{substackPaymentsSettingsLink}}Substack Payments Settings{{/substackPaymentsSettingsLink}} and under "Pause subscription billing," click {{strong}}Pause{{/strong}}.',
+								{
+									components: {
+										strong: <strong />,
+										substackPaymentsSettingsLink: (
+											// @ts-expect-error Used in translate components doesn't need children.
+											<ExternalLink
+												href={ `https://${ normalizeFromSite(
+													fromSite
+												) }/publish/settings?search=Pause%20subscription` }
+											/>
+										),
+									},
+								}
 							),
-							{
-								strong: <strong />,
-								substackPaymentsSettingsLink: (
-									// @ts-expect-error Used in createInterpolateElement doesn't need children.
-									<ExternalLink
-										href={ `https://${ normalizeFromSite(
-											fromSite
-										) }/publish/settings?search=Pause%20subscription` }
-									/>
-								),
-							}
-						) }
+							oldCopy: translate(
+								'To prevent any charges from Substack, go to your {{substackPaymentsSettingsLink}}Substack Payments Settings{{/substackPaymentsSettingsLink}}, select "Pause billing" and click "{{strong}}Pause indefinitely{{/strong}}".',
+								{
+									components: {
+										strong: <strong />,
+										substackPaymentsSettingsLink: (
+											// @ts-expect-error Used in translate components doesn't need children.
+											<ExternalLink
+												href={ `https://${ normalizeFromSite(
+													fromSite
+												) }/publish/settings?search=Pause%20subscription` }
+											/>
+										),
+									},
+								}
+							),
+						} ) }
 						<img
 							src={ pauseSubstackBillingImg }
 							alt={ __( 'Pause Substack billing' ) }

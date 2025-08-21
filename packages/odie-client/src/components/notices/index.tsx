@@ -1,6 +1,7 @@
 import './style.scss';
 import { Icon, close } from '@wordpress/icons';
 import { useOdieAssistantContext } from '../../context';
+import { ConnectionStatus } from '../connection-status';
 
 interface NoticeProps {
 	content?: string | React.ReactNode;
@@ -19,14 +20,11 @@ export const Notice: React.FC< NoticeProps > = ( { content, onClose } ) => {
 };
 
 export const Notices = () => {
-	const { notices, setNotice } = useOdieAssistantContext();
-
-	if ( Object.keys( notices ).length === 0 ) {
-		return null;
-	}
+	const { notices, setNotice, chat } = useOdieAssistantContext();
 
 	return (
 		<div className="odie-notices">
+			{ chat.provider?.startsWith( 'zendesk' ) && <ConnectionStatus /> }
 			{ Object.entries( notices ).map( ( [ noticeId, noticeContent ] ) => (
 				<Notice
 					key={ noticeId }

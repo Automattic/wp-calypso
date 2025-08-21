@@ -280,6 +280,7 @@ function HelpSearchResults( {
 			recordTracksEvent( 'calypso_help_center_search_traintracks_interact', {
 				action: 'click',
 				railcar: result.railcar.railcar,
+				session_id: result.railcar.session_id,
 				href: result.link,
 				search_type: ! contextSearch && ! searchQuery ? 'tailored' : 'search',
 				location,

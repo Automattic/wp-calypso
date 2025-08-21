@@ -14,6 +14,7 @@ import Draggable, { DraggableProps } from 'react-draggable';
  * Internal Dependencies
  */
 import { FeatureFlagProvider } from '../contexts/FeatureFlagContext';
+import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { HELP_CENTER_STORE } from '../stores';
 import { Container } from '../types';
 import HelpCenterContent from './help-center-content';
@@ -63,6 +64,8 @@ const HelpCenterContainer: React.FC< Container > = ( {
 		};
 	}, [] );
 
+	const { sectionName } = useHelpCenterContext();
+
 	const nodeRef = useRef< HTMLDivElement >( null );
 	const { setIsMinimized } = useDispatch( HELP_CENTER_STORE );
 	const isMobile = useMobileBreakpoint();
@@ -72,8 +75,10 @@ const HelpCenterContainer: React.FC< Container > = ( {
 
 	const onDismiss = useCallback( () => {
 		handleClose();
-		recordTracksEvent( 'calypso_inlinehelp_close' );
-	}, [ handleClose ] );
+		recordTracksEvent( 'calypso_inlinehelp_close', {
+			section: sectionName,
+		} );
+	}, [ handleClose, sectionName ] );
 
 	const focusReturnRef = useFocusReturn();
 

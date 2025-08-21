@@ -14,7 +14,6 @@ import './one-login-layout.scss';
 
 interface OneLoginLayoutProps {
 	isJetpack: boolean;
-	isFromAkismet: boolean;
 	children: React.ReactNode;
 	/**
 	 * `signupUrl` prop should merge with `getSignupLinkComponent` logic in `/client/block/login/index.js`, so we have a single source for this logic.
@@ -22,15 +21,16 @@ interface OneLoginLayoutProps {
 	signupUrl?: string;
 	isSectionSignup?: boolean;
 	loginUrl?: string;
+	isLostPasswordView?: boolean;
 }
 
 const OneLoginLayout = ( {
 	isJetpack,
-	isFromAkismet,
 	children,
 	signupUrl: signupUrlProp,
 	isSectionSignup,
 	loginUrl,
+	isLostPasswordView,
 }: OneLoginLayoutProps ) => {
 	const translate = useTranslate();
 	const locale = useSelector( getCurrentUserLocale );
@@ -55,6 +55,10 @@ const OneLoginLayout = ( {
 				dispatch( redirectToLogout( signupUrl ) );
 			}
 		};
+
+		if ( isLostPasswordView ) {
+			return null;
+		}
 
 		return (
 			<Step.LinkButton href={ signupUrl } key="sign-up-link" onClick={ handleClick } rel="external">
@@ -88,7 +92,7 @@ const OneLoginLayout = ( {
 		>
 			<div className="wp-login__one-login-layout-content-wrapper">
 				<div className="wp-login__one-login-layout-heading">
-					<HeadingLogo isFromAkismet={ isFromAkismet } isJetpack={ isJetpack } />
+					<HeadingLogo isJetpack={ isJetpack } />
 					<Step.Heading
 						text={ <div className="wp-login__one-login-layout-heading-text">{ headingText }</div> }
 					/>

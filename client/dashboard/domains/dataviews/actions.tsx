@@ -1,4 +1,5 @@
 import { useMyDomainInputMode } from '@automattic/domains-table/src/utils/constants';
+import { isFreeUrlDomainName } from '@automattic/domains-table/src/utils/is-free-url-domain-name';
 import {
 	domainManagementDNS,
 	domainManagementEditContactInfo,
@@ -6,13 +7,14 @@ import {
 	domainMappingSetup,
 	domainUseMyDomain,
 } from '@automattic/domains-table/src/utils/paths';
-import { useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { sprintf, __ } from '@wordpress/i18n';
 import { payment, tool } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
-import { useMemo } from 'react';
+import { useMemo, Suspense, lazy } from 'react';
+import { userPurchasesQuery } from '../../app/queries/me-purchases';
 import { siteSetPrimaryDomainMutation } from '../../app/queries/site-domains';
 import { DomainTypes, DomainTransferStatus } from '../../data/domains';
 import {
@@ -22,13 +24,24 @@ import {
 	isDomainInGracePeriod,
 	canSetAsPrimary,
 	getDomainSiteSlug,
+	getDomainRenewalUrl,
 } from '../../utils/domain';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
 import type { DomainSummary, Site, User } from '../../data/types';
 import type { Action } from '@wordpress/dataviews';
 
+const SiteChangeAddressContent = lazy(
+	() =>
+		import(
+			/* webpackChunkName: "async-load-site-change-address-content" */ '../../sites/site-change-address-modal/content'
+		)
+);
+
+const noop = () => {};
+
 export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { data: purchases } = useQuery( userPurchasesQuery() );
 	const setPrimaryDomainMutation = useMutation( siteSetPrimaryDomainMutation() );
 	const context = site ? 'site' : 'domains';
 	const actions: Action< DomainSummary >[] = useMemo(
@@ -38,7 +51,16 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				isPrimary: true,
 				icon: <Icon icon={ payment } />,
 				label: __( 'Renew now' ),
-				callback: () => {},
+				callback: ( items: DomainSummary[] ) => {
+					const domain = items[ 0 ];
+					const purchase = purchases?.find( ( p ) => p.ID === domain.subscription_id );
+
+					if ( ! purchase ) {
+						return;
+					}
+
+					window.location.href = getDomainRenewalUrl( domain, purchase );
+				},
 				isEligible: ( item: DomainSummary ) => isDomainRenewable( item ),
 			},
 			{
@@ -189,7 +211,19 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				label: __( 'Change site address' ),
 				supportsBulk: false,
 				callback: () => {},
-				isEligible: () => false,
+				isEligible: ( item: DomainSummary ) => {
+					return !! site && ! site?.is_wpcom_atomic && isFreeUrlDomainName( item.domain );
+				},
+				RenderModal: ( { items, closeModal = noop } ) =>
+					site ? (
+						<Suspense fallback={ null }>
+							<SiteChangeAddressContent
+								site={ site }
+								domain={ items[ 0 ] }
+								onClose={ closeModal }
+							/>
+						</Suspense>
+					) : null,
 			},
 			{
 				id: 'manage-auto-renew',
@@ -199,7 +233,15 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				isEligible: () => false,
 			},
 		],
-		[ user, site, context, setPrimaryDomainMutation, createSuccessNotice, createErrorNotice ]
+		[
+			user,
+			site,
+			context,
+			purchases,
+			setPrimaryDomainMutation,
+			createSuccessNotice,
+			createErrorNotice,
+		]
 	);
 
 	return actions;

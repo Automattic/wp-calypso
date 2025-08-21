@@ -7,6 +7,7 @@ import { useLaunchpadDecider } from 'calypso/landing/stepper/declarative-flow/in
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { getStepFromURL } from 'calypso/landing/stepper/utils/get-flow-from-url';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
+import { shouldRenderRewrittenDomainSearch } from 'calypso/lib/domains/should-render-rewritten-domain-search';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import {
 	clearSignupDestinationCookie,
@@ -32,7 +33,7 @@ const newsletter: Flow = {
 		return stepsWithRequiredLogin( [
 			STEPS.NEWSLETTER_SETUP,
 			STEPS.NEWSLETTER_GOALS,
-			STEPS.DOMAINS,
+			shouldRenderRewrittenDomainSearch() ? STEPS.DOMAIN_SEARCH : STEPS.DOMAINS,
 			STEPS.PLANS,
 			STEPS.PROCESSING,
 			STEPS.SUBSCRIBERS,

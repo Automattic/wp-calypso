@@ -30,7 +30,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
-import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import { startedInHostingFlow } from 'calypso/landing/stepper/utils/hosting-flow';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import {
@@ -46,9 +45,6 @@ import {
 	isWooOAuth2Client,
 	isGravatarOAuth2Client,
 	isPartnerPortalOAuth2Client,
-	isA4AOAuth2Client,
-	isBlazeProOAuth2Client,
-	isCrowdsignalOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import SignupFlowController from 'calypso/lib/signup/flow-controller';
 import FlowProgressIndicator from 'calypso/signup/flow-progress-indicator';
@@ -768,7 +764,7 @@ class Signup extends Component {
 		);
 	}
 
-	renderCurrentStep( isUnifiedCreateAccount ) {
+	renderCurrentStep() {
 		const { stepName, flowName } = this.props;
 
 		const flow = flows.getFlow( flowName, this.props.isLoggedIn );
@@ -782,8 +778,6 @@ class Signup extends Component {
 			...flowStepProps,
 		};
 		const stepKey = this.state.shouldShowLoadingScreen ? 'processing' : stepName;
-		const shouldRenderLocaleSuggestions =
-			0 === this.getPositionInFlow() && ! this.props.isLoggedIn && ! isUnifiedCreateAccount;
 
 		let propsForCurrentStep = propsFromConfig;
 		if ( this.props.isManageSiteFlow ) {
@@ -803,9 +797,6 @@ class Signup extends Component {
 		return (
 			<div className="signup__step" key={ stepKey }>
 				<div className={ `signup__step is-${ stepName }` }>
-					{ shouldRenderLocaleSuggestions && (
-						<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
-					) }
 					{ this.state.shouldShowLoadingScreen ? (
 						this.renderProcessingScreen()
 					) : (
@@ -872,13 +863,7 @@ class Signup extends Component {
 		if ( waitToRenderReturnValue && ! this.state.shouldShowLoadingScreen ) {
 			return this.props.siteId && waitToRenderReturnValue;
 		}
-
-		const isUnifiedCreateAccount =
-			0 === this.getPositionInFlow() &&
-			! this.props.isLoggedIn &&
-			( this.props.isWoo || this.props.isA4A || this.props.isBlazePro || this.props.isCrowdsignal );
-
-		const showPageHeader = ! this.props.isGravatar && ! isUnifiedCreateAccount;
+		const showPageHeader = ! ( 0 === this.getPositionInFlow() && ! this.props.isLoggedIn );
 		const isGravatarDomain = isDomainForGravatarFlow( this.props.flowName );
 
 		return (
@@ -904,7 +889,7 @@ class Signup extends Component {
 							logoComponent={ isGravatarDomain ? <GravatarTextLogo /> : undefined }
 						/>
 					) }
-					<div className="signup__steps">{ this.renderCurrentStep( isUnifiedCreateAccount ) }</div>
+					<div className="signup__steps">{ this.renderCurrentStep() }</div>
 					{ this.state.bearerToken && (
 						<WpcomLoginForm
 							authorization={ 'Bearer ' + this.state.bearerToken }
@@ -953,9 +938,6 @@ export default connect(
 			wccomFrom: getWccomFrom( state ),
 			hostingFlow,
 			isWoo: getIsWoo( state ),
-			isA4A: isA4AOAuth2Client( oauth2Client ),
-			isBlazePro: isBlazeProOAuth2Client( oauth2Client ),
-			isCrowdsignal: isCrowdsignalOAuth2Client( oauth2Client ),
 		};
 	},
 	{

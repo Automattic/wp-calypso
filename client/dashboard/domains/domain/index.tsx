@@ -5,7 +5,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { globe } from '@wordpress/icons';
 import { domainQuery } from '../../app/queries/domain';
 import { domainsQuery } from '../../app/queries/domains';
-import { domainRoute } from '../../app/router';
+import { domainRoute } from '../../app/router/domains';
 import HeaderBar from '../../components/header-bar';
 import MenuDivider from '../../components/menu-divider';
 import Switcher from '../../components/switcher';

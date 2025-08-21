@@ -13,17 +13,11 @@ import {
 	GithubSocialButton,
 	UsernameOrEmailButton,
 } from 'calypso/components/social-buttons';
-import {
-	isA4AOAuth2Client,
-	isBlazeProOAuth2Client,
-	isCrowdsignalOAuth2Client,
-} from 'calypso/lib/oauth2-clients';
 import { isWpccFlow } from 'calypso/signup/is-flow';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import getIsWoo from 'calypso/state/selectors/get-is-woo';
 
 class SocialSignupForm extends Component {
 	static propTypes = {
@@ -98,15 +92,8 @@ class SocialSignupForm extends Component {
 			disableTosText,
 			isSocialFirst,
 			flowName,
-			isWoo,
-			isA4A,
-			isBlazePro,
-			isCrowdsignal,
 			setCurrentStep,
 		} = this.props;
-
-		const isUnifiedCreateAccount = isWoo || isA4A || isBlazePro || isCrowdsignal;
-
 		return (
 			<Card
 				className={ clsx( 'auth-form__social', 'is-signup', {
@@ -140,7 +127,7 @@ class SocialSignupForm extends Component {
 							<UsernameOrEmailButton onClick={ () => setCurrentStep( 'email' ) } />
 						) }
 					</div>
-					{ ! isUnifiedCreateAccount && ! disableTosText && <SocialToS /> }
+					{ ! disableTosText && <SocialToS /> }
 				</div>
 			</Card>
 		);
@@ -158,10 +145,6 @@ export default connect(
 			currentRoute: getCurrentRoute( state ),
 			oauth2Client: oauth2Client,
 			isDevAccount: isDevAccount,
-			isWoo: getIsWoo( state ),
-			isA4A: isA4AOAuth2Client( oauth2Client ),
-			isBlazePro: isBlazeProOAuth2Client( oauth2Client ),
-			isCrowdsignal: isCrowdsignalOAuth2Client( oauth2Client ),
 		};
 	},
 	{ showErrorNotice: errorNotice }
