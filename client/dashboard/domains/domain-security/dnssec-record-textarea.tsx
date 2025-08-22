@@ -1,5 +1,5 @@
 import { TextareaControl } from '@wordpress/components';
-import { useEffect, useRef } from '@wordpress/element';
+import { useEffect, useRef, useState } from '@wordpress/element';
 import './dnssec-record-textarea.scss';
 
 interface DnsSecRecordTextareaProps {
@@ -9,26 +9,28 @@ interface DnsSecRecordTextareaProps {
 
 export function DnsSecRecordTextarea( { value, label }: DnsSecRecordTextareaProps ) {
 	const textareaRef = useRef< HTMLTextAreaElement >( null );
+	const [ textareaHeight, setTextareaHeight ] = useState< number >( 0 );
 
-	// Auto-resize textarea function
-	const autoResizeTextarea = ( textarea: HTMLTextAreaElement ) => {
-		textarea.style.height = 'auto';
-		textarea.style.height = textarea.scrollHeight + 'px';
+	// Calculate and set textarea height
+	const updateTextareaHeight = () => {
+		if ( textareaRef.current ) {
+			const textarea = textareaRef.current;
+			// Reset height to auto to get the correct scrollHeight
+			textarea.style.height = 'auto';
+			const newHeight = textarea.scrollHeight;
+			setTextareaHeight( newHeight );
+		}
 	};
 
-	// Auto-resize on mount and when value changes
+	// Update height on mount and when value changes
 	useEffect( () => {
-		if ( textareaRef.current ) {
-			autoResizeTextarea( textareaRef.current );
-		}
+		updateTextareaHeight();
 	}, [ value ] );
 
 	// Handle window resize to re-adjust textarea height
 	useEffect( () => {
 		const handleResize = () => {
-			if ( textareaRef.current ) {
-				autoResizeTextarea( textareaRef.current );
-			}
+			updateTextareaHeight();
 		};
 
 		window.addEventListener( 'resize', handleResize );
@@ -50,7 +52,8 @@ export function DnsSecRecordTextarea( { value, label }: DnsSecRecordTextareaProp
 			rows={ 1 }
 			__nextHasNoMarginBottom
 			className="dnssec-record-textarea"
-			onInput={ ( event ) => autoResizeTextarea( event.target as HTMLTextAreaElement ) }
+			style={ { '--textarea-height': `${ textareaHeight }px` } as React.CSSProperties }
+			onInput={ updateTextareaHeight }
 		/>
 	);
 }
