@@ -210,14 +210,29 @@ export default function UserTaxForm() {
 	const { data: geoData } = useSuspenseQuery( geoLocationQuery() );
 	const taxName = getTaxName( countryList, formData.country ?? geoData?.country_short ?? 'GB' );
 
+	if ( updateError && lastUpdateError.current !== updateError ) {
+		recordTracksEvent( 'calypso_dashboard_vat_details_validation_failure', {
+			error: updateError.error,
+		} );
+		lastUpdateError.current = updateError;
+	}
+
+	if ( isUpdateSuccessful ) {
+		recordTracksEvent( 'calypso_dashboard_vat_details_validation_success' );
+	}
+
+	if ( fetchError && lastFetchError.current !== fetchError ) {
+		recordTracksEvent( 'calypso_dashboard_vat_details_fetch_failure', {
+			error: fetchError.error,
+			message: fetchError.message,
+		} );
+		lastFetchError.current = fetchError;
+	}
+
 	useEffect( () => {
-		if ( updateError && lastUpdateError.current !== updateError ) {
+		if ( updateError ) {
 			removeNotice( 'vat_info_notice' );
 			createErrorNotice( updateError.message, { type: 'snackbar', id: 'vat_info_notice' } );
-			recordTracksEvent( 'calypso_dashboard_vat_details_validation_failure', {
-				error: updateError.error,
-			} );
-			lastUpdateError.current = updateError;
 		}
 
 		if ( isUpdateSuccessful ) {
@@ -232,16 +247,7 @@ export default function UserTaxForm() {
 					id: 'vat_info_notice',
 				}
 			);
-			recordTracksEvent( 'calypso_dashboard_vat_details_validation_success' );
 		}
-		if ( fetchError && lastFetchError.current !== fetchError ) {
-			recordTracksEvent( 'calypso_dashboard_vat_details_fetch_failure', {
-				error: fetchError.error,
-				message: fetchError.message,
-			} );
-			lastFetchError.current = fetchError;
-		}
-
 		if ( fetchError ) {
 			removeNotice( 'vat_info_notice' );
 			createErrorNotice(
@@ -258,11 +264,9 @@ export default function UserTaxForm() {
 		isUpdateSuccessful,
 		fetchError,
 		updateError,
-		lastUpdateError,
 		removeNotice,
 		createErrorNotice,
 		createSuccessNotice,
-		recordTracksEvent,
 	] );
 
 	const isVatAlreadySet = !! userTaxDetails.id;
