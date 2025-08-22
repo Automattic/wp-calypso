@@ -1,7 +1,11 @@
+import {
+	type DomainSuggestion,
+	type DomainSuggestionQuery,
+	fetchDomainSuggestions as fetchDomainSuggestionsApi,
+} from '@automattic/domain-search';
 import { translate } from 'i18n-calypso';
-import { stringify } from 'qs';
 import validator from 'validator';
-import { fetchAndParse, wpcomRequest } from '../wpcom-request-controls';
+import { awaitPromise, fetchAndParse } from '../wpcom-request-controls';
 import {
 	receiveCategories,
 	receiveDomainSuggestionsSuccess,
@@ -9,8 +13,6 @@ import {
 	fetchDomainSuggestions,
 	receiveDomainAvailability,
 } from './actions';
-import { getFormattedPrice } from './utils';
-import type { DomainSuggestion, DomainSuggestionQuery } from './types';
 
 function getAvailabilityURL( domainName: string ) {
 	return `https://public-api.wordpress.com/rest/v1.3/domains/${ encodeURIComponent(
@@ -59,11 +61,9 @@ export function* __internalGetDomainSuggestions( queryObject: DomainSuggestionQu
 	yield fetchDomainSuggestions();
 
 	try {
-		const suggestions: DomainSuggestion[] = yield wpcomRequest( {
-			apiVersion: '1.1',
-			path: '/domains/suggestions',
-			query: stringify( queryObject ),
-		} );
+		const suggestions: DomainSuggestion[] = yield awaitPromise(
+			fetchDomainSuggestionsApi( queryObject )
+		);
 
 		if ( ! Array.isArray( suggestions ) ) {
 			// Other internal server errors
@@ -77,30 +77,28 @@ export function* __internalGetDomainSuggestions( queryObject: DomainSuggestionQu
 		// TODO: query the availability endpoint to find the exact reason why it's unavailable
 		// all the possible responses can be found here https://github.com/Automattic/wp-calypso/blob/trunk/client/lib/domains/registration/availability-messages.js#L40-L390
 		if ( suggestionsLackThisFQDN( suggestions, queryObject.query ) ) {
-			const unavailableSuggestion: DomainSuggestion = {
+			const unavailableSuggestion: DomainSuggestion & {
+				unavailable: true;
+				raw_price: 0;
+				currency_code: string;
+			} = {
 				domain_name: queryObject.query,
 				unavailable: true,
 				cost: '',
 				raw_price: 0,
 				currency_code: '',
+				relevance: 0,
+				supports_privacy: false,
+				vendor: '',
+				match_reasons: [],
+				product_id: 0,
+				product_slug: '',
+				is_free: false,
 			};
 			suggestions.unshift( unavailableSuggestion );
 		}
 
-		const processedSuggestions = suggestions.map( ( suggestion: DomainSuggestion ) => {
-			if ( suggestion.unavailable ) {
-				return suggestion;
-			}
-			return {
-				...suggestion,
-				...( suggestion.raw_price &&
-					suggestion.currency_code && {
-						cost: getFormattedPrice( suggestion.raw_price, suggestion.currency_code ),
-					} ),
-			};
-		} );
-
-		return receiveDomainSuggestionsSuccess( queryObject, processedSuggestions );
+		return receiveDomainSuggestionsSuccess( queryObject, suggestions );
 	} catch ( e ) {
 		// e.g. no connection, or JSON parsing error
 		return receiveDomainSuggestionsError(

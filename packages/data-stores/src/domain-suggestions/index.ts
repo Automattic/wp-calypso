@@ -9,7 +9,6 @@ import * as selectors from './selectors';
 export * from './types';
 export * from './constants';
 export * from './queries';
-export { getFormattedPrice } from './utils';
 export type { State };
 
 export const store = createReduxStore( STORE_KEY, {

@@ -968,6 +968,7 @@ __metadata:
     "@automattic/calypso-products": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/design-picker": "workspace:^"
+    "@automattic/domain-search": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/js-utils": "workspace:^"
     "@automattic/load-script": "workspace:^"
@@ -1167,6 +1168,7 @@ __metadata:
     react-dom: "npm:^18.3.1"
     storybook: "npm:^8.6.14"
     typescript: "npm:^5.8.3"
+    wpcom-proxy-request: "workspace:^"
   peerDependencies:
     "@wordpress/i18n": ^5.23.0
     react: ^18.3.1

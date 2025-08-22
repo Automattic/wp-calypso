@@ -39,7 +39,14 @@ export const requestAllBlogsAccess = () =>
 
 export const wait = ( ms: number ) => ( { type: 'WAIT', ms } ) as const;
 
+export const awaitPromise = < T >( promise: Promise< T > ) =>
+	( {
+		type: 'AWAIT_PROMISE',
+		promise,
+	} ) as const;
+
 export const controls = {
+	AWAIT_PROMISE: < T >( { promise }: ReturnType< typeof awaitPromise< T > > ) => promise,
 	WPCOM_REQUEST: ( { request }: ReturnType< typeof wpcomRequest > ) => wpcomProxyRequest( request ),
 	FETCH_AND_PARSE: async ( { resource, options }: ReturnType< typeof fetchAndParse > ) => {
 		const response = await window.fetch( resource, options );

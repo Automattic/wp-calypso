@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { stringify } from 'qs';
 import wpcomProxyRequest from 'wpcom-proxy-request';
-import { getFormattedPrice, normalizeDomainSuggestionQuery } from './utils';
+import { normalizeDomainSuggestionQuery } from './utils';
 import type { DomainSuggestion, DomainSuggestionSelectorOptions } from './types';
 
 const STALE_TIME = 1000 * 60 * 5; // 5 minutes
@@ -29,20 +29,7 @@ export function useGetDomainSuggestions(
 				throw new Error( 'Invalid response from the server' );
 			}
 
-			const processedSuggestions = suggestions.map( ( suggestion: DomainSuggestion ) => {
-				if ( suggestion.unavailable ) {
-					return suggestion;
-				}
-				return {
-					...suggestion,
-					...( suggestion.raw_price &&
-						suggestion.currency_code && {
-							cost: getFormattedPrice( suggestion.raw_price, suggestion.currency_code ),
-						} ),
-				};
-			} );
-
-			return processedSuggestions;
+			return suggestions;
 		},
 		enabled: !! search,
 		staleTime: STALE_TIME,

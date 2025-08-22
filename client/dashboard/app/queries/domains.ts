@@ -1,6 +1,9 @@
 import { queryOptions } from '@tanstack/react-query';
-import { fetchDomains, fetchDomainSuggestions } from '../../data/domains';
-import type { DomainSuggestionQuery } from '../../data/types';
+import {
+	fetchDomains,
+	fetchDomainSuggestions,
+	type DomainSuggestionQuery,
+} from '../../data/domains';
 
 export const domainsQuery = () =>
 	queryOptions( {

@@ -1,24 +1,12 @@
-import { formatCurrency } from '@automattic/number-formatters';
 import deterministicStringify from 'fast-json-stable-stringify';
-import type { DomainSuggestionQuery, DomainSuggestionSelectorOptions } from './types';
+import type { DomainSuggestionSelectorOptions } from './types';
+import type { DomainSuggestionQuery } from '@automattic/domain-search';
 
 /**
  * Stable transform to an object key for storage and access.
  */
 export const stringifyDomainQueryObject: ( q: DomainSuggestionQuery ) => string =
 	deterministicStringify;
-
-/**
- * Formats the domain suggestion price according to 'format-currency' package rules
- * We use this for consistency in prices formats across plans and domains
- * @param price the domain suggestion raw price
- * @param currencyCode the currency code to be used when formatting price
- */
-export function getFormattedPrice( price: number, currencyCode: string ): string {
-	return formatCurrency( price, currencyCode, {
-		stripZeros: true,
-	} ) as string;
-}
 
 /**
  * Normalize domain query

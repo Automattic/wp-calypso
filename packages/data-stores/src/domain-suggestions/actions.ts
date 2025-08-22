@@ -1,9 +1,5 @@
-import type {
-	DomainSuggestion,
-	DomainSuggestionQuery,
-	DomainCategory,
-	DomainAvailability,
-} from './types';
+import type { DomainSuggestion, DomainCategory, DomainAvailability } from './types';
+import type { DomainSuggestionQuery } from '@automattic/domain-search';
 
 export const receiveCategories = ( categories: DomainCategory[] ) =>
 	( {

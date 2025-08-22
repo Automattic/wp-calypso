@@ -6,10 +6,9 @@ import type {
 	DomainAvailability,
 	DomainAvailabilities,
 	DomainCategory,
-	DomainSuggestion,
-	DomainSuggestionQuery,
 	DomainSuggestionSelectorOptions,
 } from './types';
+import type { DomainSuggestion, DomainSuggestionQuery } from '@automattic/domain-search';
 
 export const getCategories = ( state: State ): DomainCategory[] => {
 	// Sort domain categories by tier, then by title.

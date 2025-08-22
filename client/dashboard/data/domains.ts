@@ -1,5 +1,5 @@
 import wpcom from 'calypso/lib/wp';
-import type { DomainSuggestion, DomainSuggestionQuery } from '@automattic/data-stores'; // eslint-disable-line
+import type { DomainSuggestion, DomainSuggestionQuery } from '@automattic/domain-search'; // eslint-disable-line
 
 // Export types again to avoid other places to access `@automattic/data-stores`.
 export type { DomainSuggestion, DomainSuggestionQuery };
