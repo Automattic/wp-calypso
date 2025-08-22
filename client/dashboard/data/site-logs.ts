@@ -155,13 +155,14 @@ export async function fetchSiteLogsBatch(
 ): Promise< SiteLogsBatch > {
 	const { logType, start, end, filter, pageSize, scrollId } = args;
 	const path = `/sites/${ siteId }/hosting/${ logType === LogType.PHP ? 'error-logs' : 'logs' }`;
-	const queryParams: Record< string, unknown > = {
+	const queryParams = {
 		start,
 		end,
 		filter,
 		page_size: pageSize ?? 500,
 		scroll_id: scrollId ?? null,
 	};
+	// Remove undefined values from queryParams
 	Object.keys( queryParams ).forEach(
 		( key ) =>
 			( queryParams as Record< string, unknown > )[ key ] === undefined &&

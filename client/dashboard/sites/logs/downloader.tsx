@@ -15,6 +15,21 @@ import type { LogType, FilterType } from '../../data/site-logs';
 
 const MAX_LOGS_DOWNLOAD = 10_000;
 
+type DownloadLogsSuccess = {
+	ok: true;
+	message: string;
+	fileName: string;
+	totalAvailable: number;
+	downloadedCount: number;
+};
+
+type DownloadLogsError = {
+	ok: false;
+	message: string;
+};
+
+type DownloadLogsResult = DownloadLogsSuccess | DownloadLogsError;
+
 function csvEscape( value: unknown ): string {
 	const str = value == null ? '' : String( value );
 	const needsQuotes = /[",\n]/.test( str );
@@ -29,13 +44,7 @@ async function downloadSiteLogs( args: {
 	startSec: number;
 	endSec: number;
 	filter: FilterType;
-} ): Promise< {
-	ok: boolean;
-	message: string;
-	fileName?: string;
-	totalAvailable?: number;
-	downloadedCount?: number;
-} > {
+} ): Promise< DownloadLogsResult > {
 	const { siteId, siteSlug, logType, startSec, endSec, filter } = args;
 
 	let scrollId: string | null = null;
