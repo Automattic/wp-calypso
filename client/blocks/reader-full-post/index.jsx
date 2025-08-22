@@ -1,4 +1,4 @@
-import config, { isEnabled } from '@automattic/calypso-config';
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Gridicon, EmbedContainer, ExternalLink } from '@automattic/components';
 import clsx from 'clsx';
@@ -76,9 +76,7 @@ import getCurrentStream from 'calypso/state/selectors/get-reader-current-stream'
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import { isA8cTeamMember } from 'calypso/state/teams/selectors';
 import { disableAppBanner, enableAppBanner } from 'calypso/state/ui/actions';
-import { FreshlyPressed } from './freshly-pressed';
 import ReaderFullPostHeader from './header';
 import ReaderFullPostContentPlaceholder from './placeholders/content';
 import ScrollTracker from './scroll-tracker';
@@ -876,9 +874,6 @@ export class FullPostView extends Component {
 						/>
 					) }
 				</ReaderMain>
-				{ this.props.isAutomattician && isEnabled( 'reader/discover/freshly-pressed' ) && (
-					<FreshlyPressed blogId={ post.site_ID } postId={ post.ID } />
-				) }
 			</div>
 		);
 	}
@@ -903,7 +898,6 @@ export default connect(
 			currentPath,
 			referralStream: getPreviousPath( state ),
 			previousRoute: getPreviousRoute( state ),
-			isAutomattician: isA8cTeamMember( state ),
 		};
 
 		if ( ! isExternal && siteId ) {
