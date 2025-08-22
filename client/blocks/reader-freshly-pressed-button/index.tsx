@@ -16,7 +16,14 @@ interface Props {
 	isLoading?: boolean;
 }
 
-type Status = 'suggested' | 'published' | 'eligible' | 'not-eligible' | 'loading' | null;
+type Status =
+	| 'suggested'
+	| 'published'
+	| 'eligible'
+	| 'not-eligible'
+	| 'loading'
+	| null
+	| undefined;
 
 const getIcon = ( status: Status ) => {
 	if ( [ 'suggested', 'published' ].includes( status ?? '' ) ) {
@@ -70,7 +77,6 @@ export const ReaderFreshlyPressedButton = ( { blogId, postId }: Props ) => {
 	} );
 
 	const isEligible = eligibility?.status === 'eligible';
-
 	const isLoading = isEligibilityLoading || isSuggestionPending;
 	const statusIcon = getIcon( isLoading ? 'loading' : eligibility?.status );
 
