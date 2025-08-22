@@ -54,10 +54,12 @@ export function ChatFooter( {
 	);
 	return (
 		<div data-slot="chat-footer" className={ styles.container }>
-			<Suggestions
-				suggestions={ suggestions }
-				onSubmit={ handleSuggestionSubmit }
-			/>
+			{ ! inputValue && (
+				<Suggestions
+					suggestions={ suggestions }
+					onSubmit={ handleSuggestionSubmit }
+				/>
+			) }
 			{ notice && (
 				<Notice
 					icon={ notice.icon }
