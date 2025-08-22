@@ -134,7 +134,15 @@ class SelectIpsTag extends Component {
 	}
 
 	renderIpsTagSelect() {
-		const { redesign, saveStatus, selectedDomainName, translate } = this.props;
+		const { redesign, saveStatus, selectedDomainName, translate, isDomainLocked } = this.props;
+
+		if ( isDomainLocked ) {
+			return (
+				<div>
+					<p>{ translate( 'The IPS tag cannot be set while the domain is locked.' ) }</p>
+				</div>
+			);
+		}
 
 		return (
 			<div>
@@ -216,9 +224,9 @@ class SelectIpsTag extends Component {
 	}
 
 	render() {
-		const { translate, saveStatus, redesign, isDomainLocked } = this.props;
+		const { translate, saveStatus, redesign } = this.props;
 
-		const content = ! isDomainLocked && (
+		const content = (
 			<>
 				<p>
 					{ translate(
