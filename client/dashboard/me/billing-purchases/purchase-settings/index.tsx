@@ -1006,7 +1006,6 @@ function PurchaseSecondSubtitle( { purchase }: { purchase: Purchase } ) {
 		if ( purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD ) {
 			return (
 				<Text variant="muted">
-					{ ' ' }
 					{ __(
 						'Your stories, achievements, and memories preserved for generations to come. One payment. One hundred years of legacy.'
 					) }
