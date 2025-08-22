@@ -5,3 +5,7 @@
     transform: translate(-50%, -50%);
     fill: $gray-700;
 }
+
+.dashboard-backups__progress-bar{
+	--wp-components-color-foreground: var(--wp-admin-theme-color);
+}
