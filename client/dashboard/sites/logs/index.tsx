@@ -241,25 +241,23 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		}
 
 		// Detect filters/sort/perPage changes
+		const filtersSignature = ( filters: Filter[] | undefined ) =>
+			allowed
+				.slice()
+				.sort()
+				.map( ( field ) => {
+					const values =
+						( filters?.find( ( filter ) => filter.field === field )?.value as
+							| string[]
+							| undefined ) ?? [];
+					return `${ field }:${ values.slice().sort().join( ',' ) }`;
+				} )
+				.join( '|' );
+
 		const datasetChanged =
 			next.perPage !== view.perPage ||
 			next.sort?.direction !== view.sort?.direction ||
-			JSON.stringify(
-				sourceFilters
-					.filter( ( filter: Filter ) => allowed.includes( filter.field ) )
-					.map( ( filter: Filter ) => ( {
-						...filter,
-						value: [ ...( ( filter.value as string[] ) ?? [] ) ].sort(),
-					} ) )
-			) !==
-				JSON.stringify(
-					( view.filters ?? [] )
-						.filter( ( filter: Filter ) => allowed.includes( filter.field ) )
-						.map( ( filter: Filter ) => ( {
-							...filter,
-							value: [ ...( ( filter.value as string[] ) ?? [] ) ].sort(),
-						} ) )
-				);
+			filtersSignature( sourceFilters ) !== filtersSignature( view.filters );
 
 		// Sync allowed filters to URL using sourceFilters
 		const url = new URL( window.location.href );

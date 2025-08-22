@@ -25,7 +25,9 @@ export function getInitialFiltersFromSearch( logType: LogType, search: string ):
 			fatal_error: 'Fatal error',
 		};
 		return Array.from(
-			new Set( values.map( ( v ) => map[ v.trim().toLowerCase() ] ).filter( Boolean ) as string[] )
+			new Set(
+				values.map( ( value ) => map[ value.trim().toLowerCase() ] ).filter( Boolean ) as string[]
+			)
 		);
 	};
 
@@ -37,8 +39,7 @@ export function getInitialFiltersFromSearch( logType: LogType, search: string ):
 		}
 		let values = raw
 			.split( ',' )
-			.map( ( s ) => decode( s ) )
-			.map( ( s ) => s.trim() )
+			.map( ( rawToken ) => decode( rawToken ).trim() )
 			.filter( Boolean );
 		if ( field === 'severity' ) {
 			values = normalizeSeverity( values );
