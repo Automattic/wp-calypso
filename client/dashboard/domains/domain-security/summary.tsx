@@ -16,7 +16,7 @@ export default function NameServersSettingsSummary( { domain }: { domain: Domain
 	if ( domain.is_dnssec_enabled ) {
 		badges.push( { text: __( 'DNSSEC enabled' ), intent: 'success' as const } );
 	} else {
-		badges.push( { text: __( 'DNSSEC disabled' ), intent: 'info' as const } );
+		badges.push( { text: __( 'DNSSEC disabled' ), intent: undefined } );
 	}
 
 	return (

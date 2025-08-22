@@ -8,7 +8,7 @@ export default function DomainContactDetailsSettingsSummary( { domain }: { domai
 	if ( domain.private_domain ) {
 		badges.push( { text: __( 'Privacy protection on' ), intent: 'success' as const } );
 	} else {
-		badges.push( { text: __( 'Privacy protection off' ), intent: 'warning' as const } );
+		badges.push( { text: __( 'Privacy protection off' ), intent: undefined } );
 	}
 
 	return (
