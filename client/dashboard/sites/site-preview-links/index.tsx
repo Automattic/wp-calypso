@@ -62,7 +62,7 @@ export default function SitePreviewLinks( { site, title, description }: SitePrev
 	};
 
 	const handleCopy = () => {
-		createSuccessNotice( __( 'Copied the share link to clipboard.' ), {
+		createSuccessNotice( __( 'Copied the preview link to clipboard.' ), {
 			type: 'snackbar',
 		} );
 	};
@@ -73,7 +73,7 @@ export default function SitePreviewLinks( { site, title, description }: SitePrev
 		const fields: Field< { enabled: boolean } >[] = [
 			{
 				id: 'enabled',
-				label: __( 'Enable share link' ),
+				label: __( 'Enable preview link' ),
 				Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
 					const { id, label, getValue } = field;
 					return (
@@ -108,7 +108,7 @@ export default function SitePreviewLinks( { site, title, description }: SitePrev
 					{ links?.map( ( link ) => (
 						<SitePreviewLink
 							key={ link.code }
-							label={ __( 'share link' ) }
+							label={ __( 'Preview link' ) }
 							hideLabelFromVision
 							{ ...link }
 							siteUrl={ site.URL }
