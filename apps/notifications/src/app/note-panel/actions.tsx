@@ -1,10 +1,12 @@
 import { MenuGroup, MenuItem, DropdownMenu } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { moreVertical } from '@wordpress/icons';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import actions from '../../panel/state/actions';
 
-function NotePanelActions( { viewSettings }: { viewSettings: () => void } ) {
+export default function NotePanelActions() {
+	const dispatch = useDispatch();
+
 	return (
 		<DropdownMenu icon={ moreVertical } label={ __( 'Actions' ) }>
 			{ ( { onClose } ) => (
@@ -12,7 +14,7 @@ function NotePanelActions( { viewSettings }: { viewSettings: () => void } ) {
 					<MenuItem
 						onClick={ () => {
 							onClose();
-							viewSettings();
+							dispatch( actions.ui.viewSettings() );
 						} }
 					>
 						{ __( 'Settings' ) }
@@ -22,9 +24,3 @@ function NotePanelActions( { viewSettings }: { viewSettings: () => void } ) {
 		</DropdownMenu>
 	);
 }
-
-const mapDispatchToProps = {
-	viewSettings: actions.ui.viewSettings,
-};
-
-export default connect( null, mapDispatchToProps )( NotePanelActions );
