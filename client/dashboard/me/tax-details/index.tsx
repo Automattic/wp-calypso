@@ -94,7 +94,7 @@ export default function UserTaxInfoPage() {
 					</Card>
 				</VStack>
 				<VStack>
-					<Card className="user-tax-info__sidebar">
+					<Card>
 						<CardBody>
 							<h2>{ title }</h2>
 							<p>
