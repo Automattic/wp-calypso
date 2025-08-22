@@ -62,7 +62,7 @@ const ThreatDialog: React.FC< Props > = ( {
 			</Button>,
 		];
 
-		if ( isExtensionDeleteFixer ) {
+		if ( action === 'fix' && isExtensionDeleteFixer ) {
 			const shouldBeDisabled = confirmationInput !== slug;
 			buttons.push(
 				<Button
@@ -124,7 +124,7 @@ const ThreatDialog: React.FC< Props > = ( {
 			<h3 className="threat-dialog__threat-title">
 				<ThreatFixHeader threat={ threat } action={ action } />
 			</h3>
-			{ isExtensionDeleteFixer && (
+			{ action === 'fix' && isExtensionDeleteFixer && (
 				<>
 					{ threat.fixable.extensionStatus === 'active' ? (
 						<Notice variant="error">
