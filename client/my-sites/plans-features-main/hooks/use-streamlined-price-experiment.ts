@@ -14,7 +14,7 @@ function isEligibleForExperiment(): boolean {
 	const flowFromURL = getFlowFromURL(); // The flow for the Plans step
 	const flow = flowFromStorage || flowFromURL;
 	// Only onboarding flow is eligible for streamlined pricing. Akismet/Jetpack checkouts are excluded as well.
-	return flow === 'onboarding' && ! isAkismetCheckout() && ! isJetpackCheckout();
+	return flow !== 'onboarding-pm' && ! isAkismetCheckout() && ! isJetpackCheckout();
 }
 
 export function isStreamlinedPricePlansTreatment( variationName?: string | null ) {
