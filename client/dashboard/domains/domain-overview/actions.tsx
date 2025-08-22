@@ -137,10 +137,10 @@ export default function Actions() {
 			) }
 
 			<NonPrimaryDomainDialog
-				planeName="Business"
-				oldDomainName="old-domain-name.blog"
-				newDomainName="new-domain-name.wordpress.com"
-				hasSetupAds
+				oldDomainName={ domain.domain }
+				newDomainName={ site?.slug || '' }
+				planeName={ site?.plan?.product_name_short || '' }
+				hasSetupAds={ !! site?.options?.wordads }
 				isOpen={ isDeleteDialogOpen }
 				onCancel={ () => setIsDeleteDialogOpen( false ) }
 				onConfirm={ () => setIsDeleteDialogOpen( false ) }

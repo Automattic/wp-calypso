@@ -29,7 +29,7 @@ export default function NonPrimaryDomainDialog( {
 }: Props ) {
 	return (
 		<ConfirmDialog confirmButtonText={ __( 'Remove plan' ) } onConfirm={ onConfirm } { ...props }>
-			<VStack spacing={ 2 }>
+			<VStack spacing={ 4 } style={ { maxWidth: '400px' } }>
 				<Text as="p">
 					{ createInterpolateElement(
 						// translators: %(oldDomain)s and %(newDomain)s are placeholders for domain names
