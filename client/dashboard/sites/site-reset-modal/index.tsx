@@ -121,7 +121,7 @@ function SiteResetContent( {
 					<DataForm< SiteResetFormData >
 						data={ formData }
 						fields={ fields }
-						form={ { type: 'regular', fields } }
+						form={ { layout: { type: 'regular' }, fields } }
 						onChange={ ( edits: { domain?: string } ) => {
 							setFormData( ( data ) => ( {
 								...data,
