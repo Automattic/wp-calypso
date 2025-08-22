@@ -4,10 +4,14 @@ import { test, expect } from '../../lib/pw_base';
 test.describe( 'Authentication: Apple', () => {
 	test.describe.configure( { mode: 'serial' } ); // Since both tests use the same Apple ID, they shoudl not be run at the same time
 
-	test( 'As a WordPress.com user, I can use my Apple Id to authenticate ', async ( { page } ) => {
+	let code: string;
+
+	test( 'As a WordPress.com user, I can use my Apple Id to authenticate ', async ( {
+		page,
+		secrets,
+	} ) => {
 		let loginPage: LoginPage;
 		let appleLoginPage: AppleLoginPage;
-		const credentials = SecretsManager.secrets.testAccounts.appleLoginUser;
 		let timestamp: Date;
 
 		await test.step( 'Given I am on the login page', async function () {
@@ -22,12 +26,12 @@ test.describe( 'Authentication: Apple', () => {
 
 		await test.step( 'And I enter my Apple ID', async function () {
 			appleLoginPage = new AppleLoginPage( page );
-			await appleLoginPage.enterEmail( credentials.email as string );
+			await appleLoginPage.enterEmail( secrets.testAccounts.appleLoginUser.email as string );
 			await appleLoginPage.pressEnter();
 		} );
 
 		await test.step( 'And I enter my Apple password', async function () {
-			await appleLoginPage.enterPassword( credentials.password );
+			await appleLoginPage.enterPassword( secrets.testAccounts.appleLoginUser.password );
 			await appleLoginPage.pressEnter();
 			timestamp = new Date( Date.now() );
 		} );
@@ -45,7 +49,7 @@ test.describe( 'Authentication: Apple', () => {
 					body: 'Your Apple Account code is',
 				} );
 
-				const code = emailClient.get2FACodeFromMessage( message );
+				code = emailClient.get2FACodeFromMessage( message );
 
 				await appleLoginPage.enter2FACode( code );
 				await appleLoginPage.clickButtonWithExactText( 'Trust' );
@@ -62,13 +66,22 @@ test.describe( 'Authentication: Apple', () => {
 		} );
 	} );
 
-	test( 'As a WooCommerce user, I can use my Apple Id to authenticate ', async ( { page } ) => {
+	test( 'As a WooCommerce user, I can use my Apple Id to authenticate ', async ( {
+		page,
+		secrets,
+	} ) => {
 		let loginPage: LoginPage;
 		let appleLoginPage: AppleLoginPage;
-		const credentials = SecretsManager.secrets.testAccounts.appleLoginUser;
 		let timestamp: Date;
 
 		await test.step( 'Given I am on the login page', async function () {
+			loginPage = new LoginPage( page );
+			await loginPage.visit( {
+				path: SecretsManager.secrets.wooLoginPath,
+			} );
+		} );
+
+		await test.step( 'And I wait 30 seconds to avoid ', async function () {
 			loginPage = new LoginPage( page );
 			await loginPage.visit( {
 				path: SecretsManager.secrets.wooLoginPath,
@@ -82,12 +95,12 @@ test.describe( 'Authentication: Apple', () => {
 
 		await test.step( 'And I enter my Apple ID', async function () {
 			appleLoginPage = new AppleLoginPage( page );
-			await appleLoginPage.enterEmail( credentials.email as string );
+			await appleLoginPage.enterEmail( secrets.testAccounts.appleLoginUser.email as string );
 			await appleLoginPage.pressEnter();
 		} );
 
 		await test.step( 'And I enter my Apple password', async function () {
-			await appleLoginPage.enterPassword( credentials.password );
+			await appleLoginPage.enterPassword( secrets.testAccounts.appleLoginUser.password );
 			await appleLoginPage.pressEnter();
 			timestamp = new Date( Date.now() );
 		} );
@@ -97,15 +110,17 @@ test.describe( 'Authentication: Apple', () => {
 
 			// Handle potential 2FA challenge.
 			if ( url.includes( 'appleid.apple.com/auth/authorize' ) ) {
-				const emailClient = new EmailClient();
-				const message = await emailClient.getLastMatchingMessage( {
-					inboxId: SecretsManager.secrets.mailosaur.totpUserInboxId,
-					receivedAfter: timestamp,
-					subject: 'SMS',
-					body: 'Your Apple Account code is',
-				} );
+				if ( ! code ) {
+					const emailClient = new EmailClient();
+					const message = await emailClient.getLastMatchingMessage( {
+						inboxId: SecretsManager.secrets.mailosaur.totpUserInboxId,
+						receivedAfter: timestamp,
+						subject: 'SMS',
+						body: 'Your Apple Account code is',
+					} );
 
-				const code = emailClient.get2FACodeFromMessage( message );
+					code = emailClient.get2FACodeFromMessage( message );
+				}
 
 				await appleLoginPage.enter2FACode( code );
 				await appleLoginPage.clickButtonWithExactText( 'Trust' );

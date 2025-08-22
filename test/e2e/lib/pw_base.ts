@@ -4,6 +4,8 @@ import {
 	envVariables,
 	getTestAccountByFeature,
 	PreviewComponent,
+	Secrets,
+	SecretsManager,
 	SidebarComponent,
 	SiteSelectComponent,
 	TestAccount,
@@ -20,6 +22,7 @@ export const test = base.extend< {
 	componentSiteSelect: SiteSelectComponent;
 	pageThemeDetails: ThemesDetailPage;
 	pageThemes: ThemesPage;
+	secrets: Secrets;
 } >( {
 	accountGivenByEnvironment: async ( {}, use ) => {
 		const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
@@ -50,6 +53,10 @@ export const test = base.extend< {
 	pageThemes: async ( { page }, use ) => {
 		const themesPage = new ThemesPage( page );
 		await use( themesPage );
+	},
+	secrets: async ( {}, use ) => {
+		const secrets = SecretsManager.secrets;
+		await use( secrets );
 	},
 } );
 
