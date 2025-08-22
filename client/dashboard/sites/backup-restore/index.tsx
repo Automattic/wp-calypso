@@ -59,7 +59,6 @@ function SiteBackupRestore() {
 	const restorePointDate = useFormattedTime(
 		new Date( parseFloat( rewindId ) * 1000 ).toISOString(),
 		{
-			dateStyle: 'medium',
 			timeStyle: 'short',
 		}
 	);
