@@ -275,7 +275,7 @@ export default function SshCard( {
 	];
 
 	const form = {
-		type: 'regular' as const,
+		layout: { type: 'regular' as const },
 		fields: [ 'connection_command', 'ssh_key' ],
 	};
 

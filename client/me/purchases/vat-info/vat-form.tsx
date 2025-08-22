@@ -2,9 +2,7 @@ import { CALYPSO_CONTACT } from '@automattic/urls';
 import {
 	Button,
 	__experimentalHStack as HStack,
-	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
 	__experimentalInputControl as InputControl,
-	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
 	__experimentalInputControlPrefixWrapper as InputControlPrefixWrapper,
 	__experimentalVStack as VStack,
 	SelectControl,
@@ -169,7 +167,7 @@ export default function VatForm() {
 	];
 
 	const form = {
-		type: 'regular' as const,
+		layout: { type: 'regular' as const },
 		fields: [ 'country', 'id', 'name', 'address' ],
 	};
 

@@ -12,6 +12,7 @@ import { wordpress } from '@wordpress/icons';
 import { siteByIdQuery } from '../../app/queries/site';
 import { siteCurrentPlanQuery } from '../../app/queries/site-plans';
 import { sitePurchaseQuery } from '../../app/queries/site-purchases';
+import { PurchaseExpiryStatus } from '../../components/purchase-expiry-status';
 import { DotcomPlans } from '../../data/constants';
 import {
 	getJetpackProductsForSite,
@@ -208,16 +209,8 @@ function getCardDescription( site: Site, purchase?: Purchase ) {
 			: __( 'Upgrade to access more Jetpack tools.' );
 	}
 
-	if ( purchase?.expiry_message ) {
-		return purchase.expiry_message;
-	}
-
-	if ( purchase?.partner_name ) {
-		return sprintf(
-			/* translators: %s: the partner name, e.g.: "Jetpack" */
-			__( 'Managed by %s.' ),
-			purchase.partner_name
-		);
+	if ( purchase ) {
+		return <PurchaseExpiryStatus purchase={ purchase } />;
 	}
 
 	return undefined;

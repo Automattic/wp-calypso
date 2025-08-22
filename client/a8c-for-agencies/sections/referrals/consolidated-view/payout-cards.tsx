@@ -14,6 +14,7 @@ function PayoutAmount( {
 	isFetching,
 	footerText,
 	popoverTitle,
+	handleHalfQuarter,
 }: {
 	expectedCommission: number;
 	activityWindow: string;
@@ -21,6 +22,7 @@ function PayoutAmount( {
 	isFetching: boolean;
 	footerText: string;
 	popoverTitle: string;
+	handleHalfQuarter?: boolean;
 } ) {
 	const translate = useTranslate();
 
@@ -40,6 +42,18 @@ function PayoutAmount( {
 					<div className="payout-cards__description-item">
 						{ translate( 'Payout range:' ) }
 						<strong>{ activityWindow }</strong>
+						{ handleHalfQuarter && (
+							<div>
+								{ translate( '(Earnings shown up to %(today)s)', {
+									args: {
+										today: new Date().toLocaleString( 'default', {
+											month: 'short',
+											day: 'numeric',
+										} ),
+									},
+								} ) }
+							</div>
+						) }
 					</div>
 
 					<div className="payout-cards__description-item">
@@ -74,10 +88,12 @@ export default function PayoutCards( {
 	isFetching,
 	previousQuarterExpectedCommission,
 	currentQuarterExpectedCommission,
+	isWooPayments,
 }: {
 	isFetching: boolean;
 	previousQuarterExpectedCommission: number;
 	currentQuarterExpectedCommission: number;
+	isWooPayments?: boolean;
 } ) {
 	const translate = useTranslate();
 
@@ -87,10 +103,16 @@ export default function PayoutCards( {
 		currentCyclePayoutDate,
 		currentCycleActivityWindow,
 		areNextAndCurrentPayoutDatesEqual,
+		isFullQuarter,
 	} = useGetPayoutData();
 
 	const previousQuarterTitle = translate( 'Estimated earnings in previous quarter' );
-	const currentQuarterTitle = translate( 'Estimated earnings in current quarter' );
+
+	const handleHalfQuarter = isWooPayments && ! isFullQuarter;
+
+	const currentQuarterTitle = handleHalfQuarter
+		? translate( 'Estimated current quarter earnings to date' )
+		: translate( 'Estimated earnings in current quarter' );
 
 	return (
 		<>
@@ -111,6 +133,7 @@ export default function PayoutCards( {
 				isFetching={ isFetching }
 				footerText={ currentQuarterTitle }
 				popoverTitle={ currentQuarterTitle }
+				handleHalfQuarter={ handleHalfQuarter }
 			/>
 		</>
 	);

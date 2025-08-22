@@ -120,6 +120,14 @@ export const setZendeskClientId = ( zendeskClientId: string ) =>
 		zendeskClientId,
 	} ) as const;
 
+export const setZendeskConnectionStatus = (
+	connectionStatus: 'disconnected' | 'reconnecting' | 'connected'
+) =>
+	( {
+		type: 'HELP_CENTER_SET_ZENDESK_CONNECTION_STATUS',
+		connectionStatus,
+	} ) as const;
+
 export const setShowMessagingLauncher = ( show: boolean ) =>
 	( {
 		type: 'HELP_CENTER_SET_SHOW_MESSAGING_LAUNCHER',
@@ -288,6 +296,7 @@ export type HelpCenterAction =
 			| typeof setIsChatLoaded
 			| typeof setAreSoundNotificationsEnabled
 			| typeof setZendeskClientId
+			| typeof setZendeskConnectionStatus
 			| typeof setNavigateToRoute
 			| typeof setOdieInitialPromptText
 			| typeof setOdieBotNameSlug

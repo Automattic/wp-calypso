@@ -26,10 +26,6 @@ import {
 	isBlazeProOAuth2Client,
 	isAndroidOAuth2Client,
 	isIosOAuth2Client,
-	isA4AOAuth2Client,
-	isCrowdsignalOAuth2Client,
-	isVIPOAuth2Client,
-	isStudioAppOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
@@ -84,9 +80,6 @@ const LayoutLoggedOut = ( {
 	clearLastActionRequiresLogin,
 	userAllowedToHelpCenter,
 	colorScheme,
-	isA4A,
-	isCrowdsignal,
-	isVIPClient,
 	isJetpackCloud,
 } ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
@@ -127,17 +120,6 @@ const LayoutLoggedOut = ( {
 			currentRoute?.startsWith( '/start/do-it-for-me/' ) ) &&
 		userAllowedToHelpCenter;
 
-	const isUnifiedCreateAccount =
-		sectionName === 'signup' &&
-		( isWoo ||
-			isA4A ||
-			isCrowdsignal ||
-			isBlazePro ||
-			isAkismet ||
-			isVIPClient ||
-			isJetpackCloud ||
-			isStudioAppOAuth2Client( oauth2Client ) );
-
 	const classes = {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,
 		[ 'is-section-' + sectionName ]: sectionName,
@@ -163,7 +145,6 @@ const LayoutLoggedOut = ( {
 		woo: isWoo,
 		'feature-flag-woocommerce-core-profiler-passwordless-auth': true,
 		'jetpack-cloud': isJetpackCloud,
-		'is-unified-create-account': isUnifiedCreateAccount,
 	};
 
 	let masterbar = null;
@@ -402,9 +383,6 @@ export default withCurrentRoute(
 				userAllowedToHelpCenter: ! getIsOnboardingAffiliateFlow( state ),
 				twoFactorEnabled,
 				colorScheme,
-				isA4A: isA4AOAuth2Client( oauth2Client ),
-				isCrowdsignal: isCrowdsignalOAuth2Client( oauth2Client ),
-				isVIPClient: isVIPOAuth2Client( oauth2Client ),
 				isJetpackCloud: isJetpackCloudOAuth2Client( oauth2Client ),
 			};
 		},

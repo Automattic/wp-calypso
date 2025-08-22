@@ -3,6 +3,7 @@ import React from 'react';
 import { isAuthorNameBlocked } from 'calypso/reader/lib/author-name-blocklist';
 import * as stats from 'calypso/reader/stats';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
+import type { TrackPostData } from 'calypso/state/reader/analytics/types';
 
 import './style.scss';
 
@@ -11,7 +12,7 @@ interface ReaderAuthorLinkProps {
 	children?: React.ReactNode;
 	className?: string;
 	onClick?: () => void;
-	post?: object; // for stats only,
+	post?: TrackPostData; // for stats only,
 	siteUrl?: string; // used instead of author.URL if present
 }
 

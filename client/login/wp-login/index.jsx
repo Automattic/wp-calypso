@@ -208,6 +208,17 @@ export class Login extends Component {
 		);
 	}
 
+	getSupportLink() {
+		return (
+			<a
+				className="one-login__footer-link"
+				href="/support/category/manage-your-account/account-settings/"
+			>
+				{ this.props.translate( 'Support' ) }
+			</a>
+		);
+	}
+
 	renderContent( isSocialFirst ) {
 		const {
 			clientId,
@@ -258,6 +269,7 @@ export class Login extends Component {
 							isLoginView={ isLoginView }
 							lostPasswordLink={ this.getLostPasswordLink() }
 							loginLink={ this.getLoginLink() }
+							supportLink={ this.getSupportLink() }
 						/>
 					)
 				}
@@ -324,7 +336,15 @@ export class Login extends Component {
 	}
 
 	render() {
-		const { locale, translate, isGenericOauth, isGravPoweredClient, isJetpack } = this.props;
+		const {
+			locale,
+			translate,
+			isGenericOauth,
+			isGravPoweredClient,
+			isJetpack,
+			isFromAkismet,
+			action,
+		} = this.props;
 
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
 
@@ -360,10 +380,17 @@ export class Login extends Component {
 			</Main>
 		);
 
+		const isLostPasswordView = action === 'lostpassword' || action === 'jetpack/lostpassword';
+
 		return (
 			<>
 				{ ! isGravPoweredClient && (
-					<OneLoginLayout isJetpack={ isJetpack } signupUrl={ this.props.signupUrl }>
+					<OneLoginLayout
+						isJetpack={ isJetpack }
+						isFromAkismet={ isFromAkismet }
+						signupUrl={ this.props.signupUrl }
+						isLostPasswordView={ isLostPasswordView }
+					>
 						{ mainContent }
 					</OneLoginLayout>
 				) }

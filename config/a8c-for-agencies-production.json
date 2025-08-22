@@ -42,7 +42,7 @@
 		"a4a-client-checkout-v2": true,
 		"a4a-vip-partner-opportunity-referrals": true,
 		"jetpack/crm-downloads": true,
-		"upgrades/redirect-payments": false
+		"upgrades/redirect-payments": true
 	},
 	"enable_all_sections": false,
 	"sections": {

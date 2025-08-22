@@ -1,0 +1,35 @@
+<svg width="408" height="280" viewBox="0 0 408 280" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g opacity="0.4">
+<rect x="2" y="1" width="405" height="279" fill="url(#pattern0_6860_106459)"/>
+<rect x="2" y="1" width="405" height="279" fill="url(#paint0_radial_6860_106459)"/>
+</g>
+<rect x="196" y="49" width="16" height="186" fill="#FCFCFC"/>
+<path d="M69 48C93.5532 48 182.072 48 203.285 48.0001C205.834 48.0001 207.877 50.0664 207.877 52.6154L207.877 66.5569L207.877 232.385C207.877 234.934 209.943 237 212.492 237L328 237" stroke="black"/>
+<rect x="328" y="239" width="27" height="10" transform="rotate(180 328 239)" fill="url(#paint1_linear_6860_106459)"/>
+<rect x="69" y="43" width="27" height="10" fill="url(#paint2_linear_6860_106459)"/>
+<circle cx="175" cy="48" r="8" fill="#3858E9"/>
+<circle cx="270" cy="237" r="8" fill="#FF7247"/>
+<circle cx="113" cy="48" r="8" fill="#069E08"/>
+<rect x="112" y="79" width="189" height="126" rx="4" fill="#FCFCFC" stroke="#3858E9" stroke-width="1.5"/>
+<circle cx="126" cy="93" r="2.75" fill="#FCFCFC" stroke="#3858E9" stroke-width="1.5"/>
+<circle cx="138" cy="93" r="2.75" fill="#FCFCFC" stroke="#3858E9" stroke-width="1.5"/>
+<circle cx="150" cy="93" r="2.75" fill="#FCFCFC" stroke="#3858E9" stroke-width="1.5"/>
+<defs>
+<pattern id="pattern0_6860_106459" patternContentUnits="objectBoundingBox" width="0.154864" height="0.224803">
+<use xlink:href="#image0_6860_106459" transform="scale(0.00120988 0.00175627)"/>
+</pattern>
+<radialGradient id="paint0_radial_6860_106459" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(204.5 140.5) rotate(90) scale(139.5 202.5)">
+<stop stop-color="#FCFCFC" stop-opacity="0"/>
+<stop offset="1" stop-color="#FCFCFC"/>
+</radialGradient>
+<linearGradient id="paint1_linear_6860_106459" x1="328" y1="244" x2="355" y2="244" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FCFCFC"/>
+<stop offset="1" stop-color="#FCFCFC" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint2_linear_6860_106459" x1="69" y1="48" x2="96" y2="48" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FCFCFC"/>
+<stop offset="1" stop-color="#FCFCFC" stop-opacity="0"/>
+</linearGradient>
+<image id="image0_6860_106459" width="128" height="128" preserveAspectRatio="none" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAEbSURBVHgB7d0xqgJBFETRHldgIu5/eWLiDhSDATH31WCdAz/qZBou6BTCXyvofLk+33+r1BHuf1oAADDJW4C3AMIEUE4AAADMsgPYAQgTQDkBAAAwyw5gByBMAOUEAADALDtA/v7b/gCP+237PPh+MOf/ee41kBwfAd33BwBK+RLo9wCECaCcAAAAmGUHsAMQJoByAgAAYJYdwA5AmADKCQAAgFl2ADsAYQIoJwAAAGbZAewAhAmgnAAAAJhlB7ADECaAcgIAAGCWHcAOQJgAygkAAIBZdoD8/bf9AY76/+2d//bcayA5PgK67w8AlPIl0O8BCBNAOQEAADDLDmAHIEwA5QQAAMAsO4AdgDABlBMAAACz7AB2AFbWCzh24FOfquB3AAAAAElFTkSuQmCC"/>
+</defs>
+</svg>

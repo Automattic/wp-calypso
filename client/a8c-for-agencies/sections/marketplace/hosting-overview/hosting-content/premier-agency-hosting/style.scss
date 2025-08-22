@@ -1,17 +1,17 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
 
 .premier-agency-hosting ul.hosting-additional-features {
 	.gridicon {
-		fill: var(--color-jetpack);
+		fill: var( --color-jetpack );
 	}
 
 	a,
 	a:visited,
 	a:hover {
 		text-decoration: underline;
-		color: var(--color-text);
+		color: var( --color-text );
 	}
 }
 
@@ -19,7 +19,7 @@
 	.components-tab-panel__tabs {
 		justify-content: center;
 		flex-wrap: wrap;
-		border: 1px solid var(--color-neutral-5);
+		border: 1px solid var( --color-neutral-5 );
 		border-radius: 4px;
 		padding: 7px 0;
 		margin: 0 auto 32px;
@@ -34,15 +34,16 @@
 				color: inherit;
 			}
 
-			&:disabled, &[aria-disabled="true"] {
-				color: var(--color-neutral-20);
+			&:disabled,
+			&[aria-disabled='true'] {
+				color: var( --color-neutral-20 );
 			}
 
 			&.pressable-overview-plan-selection__plan-category-tab-is-active {
-				background-color: var(--color-primary-50);
-				border-color: var(--color-primary-50);
-				fill: var(--color-text-inverted);
-				color: var(--color-text-inverted);
+				background-color: var( --color-primary-50 );
+				border-color: var( --color-primary-50 );
+				fill: var( --color-text-inverted );
+				color: var( --color-text-inverted );
 			}
 		}
 	}
@@ -59,7 +60,6 @@
 	.pressable-overview-plan-selection__filter-label {
 		@include heading-medium;
 		margin: 0;
-
 	}
 
 	.pressable-overview-plan-selection__filter-radio-control {
@@ -76,9 +76,9 @@
 			flex-direction: column;
 			gap: 16px;
 			padding: 16px;
-			// stylelint-disable-next-line scales/radii
+
 			border-radius: 8px;
-			background-color: var(--color-neutral-0);
+			background-color: var( --color-neutral-0 );
 
 			@include break-large {
 				flex-direction: row;
@@ -86,12 +86,12 @@
 			}
 		}
 
-		.components-radio-control__input[type="radio"]:checked {
-			background-color: var(--color-primary-50);
+		.components-radio-control__input[type='radio']:checked {
+			background-color: var( --color-primary-50 );
 		}
 	}
 
-	@include breakpoint-deprecated( "<660px" ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		display: block;
 		margin: 0;
 		text-align: center;
@@ -116,5 +116,5 @@
 
 .pressable-plan-section__details-footnote {
 	@include body-small;
-	color: var(--color-neutral-80);
+	color: var( --color-neutral-80 );
 }

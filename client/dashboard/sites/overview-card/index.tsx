@@ -24,7 +24,7 @@ export interface OverviewCardProps {
 	icon?: ReactElement;
 	title: string;
 	heading?: ReactNode;
-	description?: string;
+	description?: ReactNode;
 	progress?: {
 		value: number;
 		max: number;

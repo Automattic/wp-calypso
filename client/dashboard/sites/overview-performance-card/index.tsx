@@ -19,7 +19,7 @@ const CARD_PROPS = {
 
 function getPerformanceUrl( site: Site, device?: string ) {
 	const url = window?.location?.pathname?.startsWith( '/v2' )
-		? `https://wordpress.com/sites/performance/${ site.slug }`
+		? `/sites/${ site.slug }/performance`
 		: `/sites/performance/${ site.slug }`;
 
 	return device && device !== 'mobile' ? addQueryArgs( url, { initialTab: device } ) : url;
@@ -159,7 +159,7 @@ export default function PerformanceCard( { site }: { site: Site } ) {
 			tracksFeatureId={ CARD_PROPS.tracksId }
 			upsellHeading={ __( 'Test site performance' ) }
 			upsellDescription={ __( 'Get detailed metrics and recommendations.' ) }
-			upsellExternalLink={ getPerformanceUrl( site ) }
+			upsellLink={ getPerformanceUrl( site ) }
 		>
 			<PerformanceCardContent site={ site } />
 		</HostingFeatureGatedWithOverviewCard>

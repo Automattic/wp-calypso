@@ -15,8 +15,9 @@ import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import getGravatarOAuth2Flow from 'calypso/lib/get-gravatar-oauth2-flow';
 import {
-	isGravatarFlowOAuth2Client,
 	isGravatarOAuth2Client,
+	isGravatarFlowOAuth2Client,
+	isGravatarOwnedOAuth2Client,
 	isWPJobManagerOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
@@ -59,8 +60,6 @@ import RequestLoginEmailForm from '../request-login-email-form';
 import './style.scss';
 
 const RESEND_EMAIL_COUNTDOWN_TIME = 90; // In seconds
-const GRAVATAR_FROM_3RD_PARTY = '3rd-party';
-const GRAVATAR_FROM_QUICK_EDITOR = 'quick-editor';
 
 const GravPoweredMagicLoginTos = () => {
 	const translate = useTranslate();
@@ -128,6 +127,7 @@ interface GravPoweredEmailFormProps {
 	currentQueryArguments: Record< string, string > | undefined;
 	isGravatar: boolean;
 	isGravatarFlow: boolean;
+	isGravatarOwnedService: boolean;
 	isWPJobManager: boolean;
 	isFromGravatar3rdPartyApp: boolean;
 	isFromGravatarQuickEditor: boolean;
@@ -152,6 +152,7 @@ const GravPoweredEmailForm = ( {
 	currentQueryArguments,
 	isGravatar,
 	isGravatarFlow,
+	isGravatarOwnedService,
 	isWPJobManager,
 	isFromGravatar3rdPartyApp,
 	isFromGravatarQuickEditor,
@@ -179,7 +180,7 @@ const GravPoweredEmailForm = ( {
 	headerText = isWPJobManager ? translate( 'Sign in with your email' ) : headerText;
 
 	let subHeader: TranslateResult = '';
-	if ( isGravatarFlow ) {
+	if ( isGravatarFlow && ! isGravatarOwnedService ) {
 		subHeader = translate( '%(clientTitle)s profiles are powered by Gravatar.', {
 			args: { clientTitle: oauth2Client?.title ?? '' },
 		} );
@@ -208,7 +209,7 @@ const GravPoweredEmailForm = ( {
 				<GravatarLoginLogo
 					iconUrl={ oauth2Client?.icon }
 					alt={ oauth2Client?.title ?? '' }
-					isCoBrand={ isGravatarFlow }
+					isCoBrand={ isGravatarFlow && ! isGravatarOwnedService }
 				/>
 				<RequestLoginEmailForm
 					flow={ oauth2Client ? getGravatarOAuth2Flow( oauth2Client ) : undefined }
@@ -400,6 +401,7 @@ interface GravPoweredSecondaryEmailOptionsProps {
 	oauth2Client: any;
 	oauth2ClientId: string | number | null;
 	isGravatarFlow: boolean;
+	isGravatarOwnedService: boolean;
 	usernameOrEmail: string;
 	maskedEmailAddress: string;
 	isNewAccount: boolean;
@@ -418,6 +420,7 @@ const GravPoweredSecondaryEmailOptions = ( {
 	oauth2Client,
 	oauth2ClientId,
 	isGravatarFlow,
+	isGravatarOwnedService,
 	usernameOrEmail,
 	maskedEmailAddress,
 	isNewAccount,
@@ -447,7 +450,7 @@ const GravPoweredSecondaryEmailOptions = ( {
 			<GravatarLoginLogo
 				iconUrl={ oauth2Client?.icon }
 				alt={ oauth2Client?.title ?? '' }
-				isCoBrand={ isGravatarFlow }
+				isCoBrand={ isGravatarFlow && ! isGravatarOwnedService }
 			/>
 			<h1 className="grav-powered-magic-login__header">{ translate( 'Important note' ) }</h1>
 			<p className="grav-powered-magic-login__sub-header">
@@ -556,6 +559,7 @@ interface GravPoweredEmailCodeVerificationProps {
 	oauth2Client: any;
 	oauth2ClientId: string | number | null;
 	isGravatarFlow: boolean;
+	isGravatarOwnedService: boolean;
 	isFromGravatar3rdPartyApp: boolean;
 	usernameOrEmail: string;
 	maskedEmailAddress: string;
@@ -578,6 +582,7 @@ const GravPoweredEmailCodeVerification = ( {
 	oauth2Client,
 	oauth2ClientId,
 	isGravatarFlow,
+	isGravatarOwnedService,
 	isFromGravatar3rdPartyApp,
 	usernameOrEmail,
 	maskedEmailAddress,
@@ -655,7 +660,7 @@ const GravPoweredEmailCodeVerification = ( {
 			<GravatarLoginLogo
 				iconUrl={ oauth2Client?.icon }
 				alt={ oauth2Client?.title ?? '' }
-				isCoBrand={ isGravatarFlow }
+				isCoBrand={ isGravatarFlow && ! isGravatarOwnedService }
 			/>
 			<h1 className="grav-powered-magic-login__header">{ translate( 'Check your email' ) }</h1>
 			<p className="grav-powered-magic-login__sub-header">
@@ -758,7 +763,6 @@ const GravPoweredEmailCodeVerification = ( {
 interface GravPoweredEmailLinkVerificationProps {
 	oauth2Client: any;
 	oauth2ClientId: string | number | null;
-	isGravatarFlow: boolean;
 	usernameOrEmail: string;
 	currentQueryArguments: Record< string, string > | undefined;
 	resendEmailCountdown: number;
@@ -770,7 +774,6 @@ interface GravPoweredEmailLinkVerificationProps {
 const GravPoweredEmailLinkVerification = ( {
 	oauth2Client,
 	oauth2ClientId,
-	isGravatarFlow,
 	usernameOrEmail,
 	currentQueryArguments,
 	resendEmailCountdown,
@@ -826,11 +829,7 @@ const GravPoweredEmailLinkVerification = ( {
 
 	return (
 		<div className="grav-powered-magic-login__content">
-			<GravatarLoginLogo
-				iconUrl={ oauth2Client?.icon }
-				alt={ oauth2Client?.title ?? '' }
-				isCoBrand={ isGravatarFlow }
-			/>
+			<GravatarLoginLogo iconUrl={ oauth2Client?.icon } alt={ oauth2Client?.title ?? '' } />
 			<h1 className="grav-powered-magic-login__header">{ translate( 'Check your email!' ) }</h1>
 			<p className="grav-powered-magic-login__sub-header">
 				{ emailAddress
@@ -889,22 +888,17 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 	const showCheckYourEmail = useSelector( getMagicLoginCurrentView ) === CHECK_YOUR_EMAIL_PAGE;
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const oauth2ClientId = useSelector( getCurrentOAuth2ClientId );
+	const isWPJobManager = isWPJobManagerOAuth2Client( oauth2Client );
 	const isGravatar = isGravatarOAuth2Client( oauth2Client );
+	const isGravatarOwnedService = isGravatarOwnedOAuth2Client( oauth2Client );
 	const isGravatarFlow = isGravatarFlowOAuth2Client( oauth2Client );
 	const isGravatarFlowWithEmail = !! ( isGravatarFlow && currentQueryArguments?.email_address );
-	const isWPJobManager = isWPJobManagerOAuth2Client( oauth2Client );
 	const isFromGravatar3rdPartyApp =
-		isGravatar && currentQueryArguments?.gravatar_from === GRAVATAR_FROM_3RD_PARTY;
+		isGravatar && currentQueryArguments?.gravatar_from === '3rd-party';
 	const isFromGravatarQuickEditor =
-		isGravatar && currentQueryArguments?.gravatar_from === GRAVATAR_FROM_QUICK_EDITOR;
+		isGravatar && currentQueryArguments?.gravatar_from === 'quick-editor';
 	const shouldShowSwitchEmail =
 		! isFromGravatar3rdPartyApp && ! isFromGravatarQuickEditor && ! isGravatarFlowWithEmail;
-
-	const hasSubHeader =
-		isGravatarFlowOAuth2Client( oauth2Client ) ||
-		( isGravatarOAuth2Client( oauth2Client ) &&
-			( currentQueryArguments?.gravatar_from === GRAVATAR_FROM_3RD_PARTY ||
-				currentQueryArguments?.gravatar_from === GRAVATAR_FROM_QUICK_EDITOR ) );
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_gravatar_powered_magic_login_email_form', {
@@ -1189,6 +1183,7 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 				oauth2Client={ oauth2Client }
 				oauth2ClientId={ oauth2ClientId }
 				isGravatarFlow={ isGravatarFlow }
+				isGravatarOwnedService={ isGravatarOwnedService }
 				usernameOrEmail={ usernameOrEmail }
 				maskedEmailAddress={ maskedEmailAddress }
 				isNewAccount={ isNewAccount }
@@ -1210,6 +1205,7 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 				oauth2Client={ oauth2Client }
 				oauth2ClientId={ oauth2ClientId }
 				isGravatarFlow={ isGravatarFlow }
+				isGravatarOwnedService={ isGravatarOwnedService }
 				isFromGravatar3rdPartyApp={ isFromGravatar3rdPartyApp }
 				usernameOrEmail={ usernameOrEmail }
 				maskedEmailAddress={ maskedEmailAddress }
@@ -1232,7 +1228,6 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 			<GravPoweredEmailLinkVerification
 				oauth2Client={ oauth2Client }
 				oauth2ClientId={ oauth2ClientId }
-				isGravatarFlow={ isGravatarFlow }
 				usernameOrEmail={ usernameOrEmail }
 				currentQueryArguments={ currentQueryArguments }
 				resendEmailCountdown={ resendEmailCountdown }
@@ -1251,6 +1246,7 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 				currentQueryArguments={ currentQueryArguments }
 				isGravatar={ isGravatar }
 				isGravatarFlow={ isGravatarFlow }
+				isGravatarOwnedService={ isGravatarOwnedService }
 				isWPJobManager={ isWPJobManager }
 				isFromGravatar3rdPartyApp={ isFromGravatar3rdPartyApp }
 				isFromGravatarQuickEditor={ isFromGravatarQuickEditor }
@@ -1265,6 +1261,11 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 			/>
 		);
 	}
+
+	const hasSubHeader =
+		( isGravatarFlow && ! isGravatarOwnedService ) ||
+		isFromGravatar3rdPartyApp ||
+		isFromGravatarQuickEditor;
 
 	return (
 		<Main

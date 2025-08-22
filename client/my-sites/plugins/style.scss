@@ -1,11 +1,10 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
-@import "./woocommerce-box";
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+@import './woocommerce-box';
 
 .is-section-plugins .main {
-
-	&.is-logged-out:not(.is-plugin-details) {
+	&.is-logged-out:not( .is-plugin-details ) {
 		.navigation-header {
 			visibility: hidden;
 			position: absolute;
@@ -19,7 +18,7 @@
 	}
 
 	.navigation-header {
-		@media (max-width: $break-small) {
+		@media ( max-width: $break-small ) {
 			padding-bottom: 16px;
 			margin-bottom: 0;
 		}
@@ -29,7 +28,7 @@
 		margin-top: 40px;
 		margin-bottom: 0;
 
-		@include breakpoint-deprecated( "<660px" ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			margin: 16px 0 0;
 		}
 	}
@@ -38,7 +37,7 @@
 		margin-top: 51px;
 		margin-bottom: -20px;
 
-		@include breakpoint-deprecated( "<660px" ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			margin-top: 86px;
 			margin-bottom: -50px;
 		}
@@ -52,13 +51,17 @@ body.is-section-plugins {
 		}
 
 		.layout__primary > * {
-			background-color: var(--color-surface);
-			border-radius: 8px; /* stylelint-disable-line scales/radii */
-			height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom));
+			background-color: var( --color-surface );
+			border-radius: 8px;
+			height: calc(
+				100vh - var( --masterbar-height ) - var( --content-padding-top ) - var(
+						--content-padding-bottom
+					)
+			);
 			max-width: none;
 			overflow-y: auto;
 
-			&:not(:has(.hosting-dashboard-layout-column__container)) {
+			&:not( :has( .hosting-dashboard-layout-column__container ) ) {
 				@include break-small {
 					border: 1px solid $gray-200;
 				}
@@ -71,16 +74,16 @@ body.is-section-plugins {
 		}
 	}
 
-	.is-logged-in main:not(.hosting-dashboard-layout):not(.hosting-dashboard-layout-column) {
-		&:not(.plugins-browser),
+	.is-logged-in main:not( .hosting-dashboard-layout ):not( .hosting-dashboard-layout-column ) {
+		&:not( .plugins-browser ),
 		&.plugins-browser .plugins-browser__content-wrapper {
 			padding-inline: 24px;
 
-			@media (max-width: $break-medium) {
+			@media ( max-width: $break-medium ) {
 				padding-inline: 2rem;
 			}
 
-			@media (max-width: $break-small) {
+			@media ( max-width: $break-small ) {
 				padding-inline: 16px;
 			}
 		}
@@ -134,7 +137,7 @@ body.is-section-plugins {
 			padding: 0.5rem 1.5rem;
 		}
 
-		@include breakpoint-deprecated( "<960px" ) {
+		@include breakpoint-deprecated( '<960px' ) {
 			display: none;
 		}
 	}
@@ -155,23 +158,25 @@ body.is-section-plugins {
 			p {
 				margin-bottom: 0;
 				font-size: 0.875rem;
-				color: var(--color-neutral-60);
+				color: var( --color-neutral-60 );
 			}
 		}
 	}
 
-	.hosting-dashboard-layout-column.scheduled-updates-edit .hosting-dashboard-layout-column__container,
-	.hosting-dashboard-layout-column.scheduled-updates-create .hosting-dashboard-layout-column__container {
+	.hosting-dashboard-layout-column.scheduled-updates-edit
+		.hosting-dashboard-layout-column__container,
+	.hosting-dashboard-layout-column.scheduled-updates-create
+		.hosting-dashboard-layout-column__container {
 		padding: 3rem;
 
-		@include breakpoint-deprecated( "<660px" ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			padding: 1rem;
 		}
 	}
 }
 
 body.is-section-plugins.theme-default.color-scheme {
-	--color-surface-backdrop: var(--studio-white);
+	--color-surface-backdrop: var( --studio-white );
 }
 
 .plugin__installed-on,
@@ -184,24 +189,24 @@ body.is-section-plugins.theme-default.color-scheme {
 }
 
 .plugins__main-header {
-	background: var(--color-surface);
+	background: var( --color-surface );
 	flex-direction: column;
 	display: flex;
 	margin: 9px 0;
 
-	@include breakpoint-deprecated( ">480px" ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		flex-direction: row;
 		margin: 17px 0;
 	}
 }
 
 .plugins__main-header .section-nav {
-	border: 1px solid color-mix(in srgb, var(--color-neutral-10) 50%, transparent);
+	border: 1px solid color-mix( in srgb, var( --color-neutral-10 ) 50%, transparent );
 	box-shadow: none;
 	flex: auto;
 	margin: 0;
 
-	@include breakpoint-deprecated( "<660px" ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		border-width: 1px 0;
 	}
 }
@@ -214,14 +219,13 @@ body.is-section-plugins.theme-default.color-scheme {
 	margin: 0;
 }
 
-
 .plugins__more-header {
 	font-size: $font-body-small;
 	line-height: 2;
 	margin: 40px 0 20px;
 	padding: 0 15px;
 
-	@include breakpoint-deprecated( ">660px" ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		padding: 0;
 	}
 }
@@ -230,24 +234,24 @@ $layout-padding-top: 54px;
 $calypso-header-height: 31px;
 .plugin-details__layout {
 	padding-top: $layout-padding-top;
-	&:not(.is-logged-in) {
-		padding-top: calc($layout-padding-top - $calypso-header-height);
+	&:not( .is-logged-in ) {
+		padding-top: calc( $layout-padding-top - $calypso-header-height );
 	}
 
 	@include display-grid;
-	grid-template-columns: minmax(380px, auto) minmax(auto, 395px);
+	grid-template-columns: minmax( 380px, auto ) minmax( auto, 395px );
 	grid-column-gap: 60px;
 	grid-template-areas:
-		"header actions"
-		"content actions";
+		'header actions'
+		'content actions';
 	grid-auto-rows: auto 1fr;
 
-	@include breakpoint-deprecated( "<960px" ) {
+	@include breakpoint-deprecated( '<960px' ) {
 		grid-template-areas:
-			"header"
-			"actions"
-			"content";
-		grid-template-columns: minmax(0, 1fr);
+			'header'
+			'actions'
+			'content';
+		grid-template-columns: minmax( 0, 1fr );
 		padding-top: 20px;
 	}
 
@@ -265,19 +269,19 @@ $calypso-header-height: 31px;
 		grid-area: actions;
 		height: fit-content;
 
-		@include breakpoint-deprecated( "<960px" ) {
+		@include breakpoint-deprecated( '<960px' ) {
 			margin-top: 40px;
 		}
 
 		.plugin-details__sidebar {
-			background-color: var(--studio-gray-0);
+			background-color: var( --studio-gray-0 );
 			padding: 40px;
 
-			@include breakpoint-deprecated( "<1280px" ) {
+			@include breakpoint-deprecated( '<1280px' ) {
 				padding: 30px;
 			}
 
-			@include breakpoint-deprecated( "<960px" ) {
+			@include breakpoint-deprecated( '<960px' ) {
 				padding: 40px;
 			}
 		}
@@ -289,14 +293,14 @@ $calypso-header-height: 31px;
 
 	.plugin-details__layout-col-left {
 		position: relative;
-		@include breakpoint-deprecated( ">1040px" ) {
+		@include breakpoint-deprecated( '>1040px' ) {
 			@include grid-column( 1, 2 );
 		}
 	}
 
 	.plugin-details__layout-col-right {
 		position: relative;
-		@include breakpoint-deprecated( ">1040px" ) {
+		@include breakpoint-deprecated( '>1040px' ) {
 			@include grid-column( 3, 1 );
 		}
 	}
@@ -307,7 +311,7 @@ $calypso-header-height: 31px;
 		display: flex;
 		font-size: $font-body-extra-small;
 
-		@include breakpoint-deprecated( "<1280px" ) {
+		@include breakpoint-deprecated( '<1280px' ) {
 			flex-direction: column;
 			gap: 10px;
 		}
@@ -322,7 +326,7 @@ $calypso-header-height: 31px;
 }
 
 .plugin-details__page {
-	@media screen and (max-width: 1040px) {
+	@media screen and ( max-width: 1040px ) {
 		padding: 16px;
 	}
 }
@@ -341,7 +345,7 @@ $calypso-header-height: 31px;
 	}
 
 	.section-nav-tabs__list {
-		box-shadow: inset 0 -1px 0 var(--studio-gray-5);
+		box-shadow: inset 0 -1px 0 var( --studio-gray-5 );
 	}
 
 	.section-nav-tab {
@@ -352,32 +356,32 @@ $calypso-header-height: 31px;
 		}
 
 		&.is-selected,
-		&:hover:not(.is-selected) {
+		&:hover:not( .is-selected ) {
 			border-bottom-color: transparent;
 		}
 
 		.section-nav-tab__link {
 			font-size: $font-body;
-			color: var(--studio-gray-60);
+			color: var( --studio-gray-60 );
 			padding: 8px 8px 12px;
 
 			&:hover {
 				background-color: transparent;
-				color: var(--studio-gray-100);
+				color: var( --studio-gray-100 );
 			}
 		}
 
 		&.is-selected .section-nav-tab__link {
 			border-bottom: none;
-			color: var(--studio-gray-100);
+			color: var( --studio-gray-100 );
 
 			&:hover {
-				color: var(--studio-gray-100);
+				color: var( --studio-gray-100 );
 			}
 
 			.section-nav-tab__text {
 				padding-bottom: 10px;
-				border-bottom: 1.5px solid var(--studio-gray-100);
+				border-bottom: 1.5px solid var( --studio-gray-100 );
 			}
 		}
 	}
@@ -386,12 +390,12 @@ $calypso-header-height: 31px;
 		margin-top: 100px;
 
 		.title {
-			color: var(--studio-gray-60);
+			color: var( --studio-gray-60 );
 			font-size: $font-body-extra-small;
 		}
 
 		.value {
-			color: var(--studio-gray-90);
+			color: var( --studio-gray-90 );
 			font-size: $font-body-small;
 			padding-bottom: 16px;
 
@@ -401,7 +405,7 @@ $calypso-header-height: 31px;
 		}
 	}
 
-	@media screen and (max-width: 1040px) {
+	@media screen and ( max-width: 1040px ) {
 		display: flex;
 		flex-direction: column;
 
@@ -415,11 +419,11 @@ $calypso-header-height: 31px;
 			padding: 0;
 			display: flex;
 			flex-direction: column;
-			border-bottom: 1px solid var(--studio-gray-5);
+			border-bottom: 1px solid var( --studio-gray-5 );
 		}
 	}
 
-	@media screen and (min-width: 481px) {
+	@media screen and ( min-width: 481px ) {
 		.section-nav-tab:first-child .section-nav-tab__link {
 			padding-left: 0;
 		}
@@ -431,15 +435,15 @@ $calypso-header-height: 31px;
 }
 
 .plugin-details__sites-list-background {
-	background-color: var(--studio-gray-0);
+	background-color: var( --studio-gray-0 );
 	padding-top: 20px;
 	padding-bottom: 60px;
 	position: relative;
-	transform: translateX(-50%);
+	transform: translateX( -50% );
 	left: 50%;
-	width: calc(100vw - var(--sidebar-width-max) + 1px);
+	width: calc( 100vw - var( --sidebar-width-max ) + 1px );
 
-	@media screen and (max-width: 782px) {
+	@media screen and ( max-width: 782px ) {
 		width: 100vw;
 	}
 }
@@ -448,15 +452,15 @@ $calypso-header-height: 31px;
 	max-width: 1040px;
 	margin: auto;
 
-	@media screen and (max-width: 1400px) {
+	@media screen and ( max-width: 1400px ) {
 		padding: 0 40px;
 	}
 
-	@media screen and (max-width: 1040px) {
+	@media screen and ( max-width: 1040px ) {
 		padding: 0 48px;
 	}
 
-	@media screen and (max-width: 660px) {
+	@media screen and ( max-width: 660px ) {
 		padding: 0 24px;
 	}
 }
@@ -470,10 +474,9 @@ body.is-section-plugins .is-logged-in .navigation-header {
 }
 
 body.is-section-plugins #primary {
-
 	.search-box-header::before {
 		box-sizing: border-box;
-		content: "";
+		content: '';
 		background-color: #fdfdfd;
 		position: absolute;
 		height: 100%;
@@ -489,12 +492,12 @@ body.is-section-plugins #primary {
 
 	.categories__menu {
 		.components-button {
-			&:not(.is-pressed):not(.is-selected) {
-				color: var(--studio-blue-90);
+			&:not( .is-pressed ):not( .is-selected ) {
+				color: var( --studio-blue-90 );
 			}
 			&.is-pressed {
 				&::before {
-					background: var(--studio-blue-90);
+					background: var( --studio-blue-90 );
 					border-radius: 4px;
 				}
 			}
@@ -503,14 +506,14 @@ body.is-section-plugins #primary {
 }
 
 .plugins__page-title {
-	color: var(--studio-gray-80);
+	color: var( --studio-gray-80 );
 	font-weight: 400;
 	font-size: 2.25rem;
 	line-height: 40px;
 }
 .plugins__page-subtitle {
 	font-size: 0.875rem;
-	color: var(--studio-gray-60);
+	color: var( --studio-gray-60 );
 	margin-bottom: 8px;
 }
 .plugins__page-title-container {
@@ -519,7 +522,7 @@ body.is-section-plugins #primary {
 	flex-direction: row;
 	.plugins__header-left-content {
 		display: none;
-		@include breakpoint-deprecated( ">660px" ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			display: block;
 			width: 100%;
 		}
@@ -533,17 +536,17 @@ body.is-section-plugins #primary {
 		.button {
 			height: 40px;
 			display: inline-flex;
-			&:not(:last-child) {
+			&:not( :last-child ) {
 				margin-inline-end: 8px;
 			}
 			.plugins__button-icon {
 				margin-inline-end: 5px;
 			}
 			// Move button to next line if there are 3 buttons on devices <425px
-			&:nth-child(3) {
+			&:nth-child( 3 ) {
 				margin-block-start: 12px;
 				display: block;
-				@media (min-width: 425px) {
+				@media ( min-width: 425px ) {
 					display: initial;
 					margin-block-start: initial;
 				}
@@ -559,13 +562,13 @@ body.is-section-plugins #primary {
 .plugins__main-updated {
 	.plugins__main-header .section-nav {
 		border-width: 1px;
-		@include breakpoint-deprecated( ">660px" ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			border-width: 0;
 		}
 	}
 	.plugins__main-header {
 		margin: 9px 0;
-		@include breakpoint-deprecated( ">660px" ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			margin: 0;
 		}
 	}
@@ -573,7 +576,7 @@ body.is-section-plugins #primary {
 .plugins__top-container {
 	padding: 0 16px;
 
-	@media (min-width: $break-small) {
+	@media ( min-width: $break-small ) {
 		padding: 0;
 	}
 }
@@ -592,7 +595,7 @@ body.is-section-plugins #primary {
 		padding: 4px 0 0;
 
 		@include break-large() {
-		  padding: 6px 0 0;
+			padding: 6px 0 0;
 		}
 	}
 }
@@ -609,18 +612,18 @@ body.is-section-plugins #primary {
 	margin: 0;
 	padding: 0;
 	flex: 1 1 100%;
-	@media (min-width: $break-small) {
+	@media ( min-width: $break-small ) {
 		padding: 16px 0;
-		background: rgba(255, 255, 255, 0.5);
+		background: rgba( 255, 255, 255, 0.5 );
 		margin-bottom: -32px;
 	}
 }
 
 .plugins__search {
 	height: 52px;
-	box-shadow: 0 0 0 1px var(--color-neutral-5);
+	box-shadow: 0 0 0 1px var( --color-neutral-5 );
 	margin-block-end: 8px;
-	@include breakpoint-deprecated( ">660px" ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		margin-block-end: 0;
 	}
 	.search.is-open {
@@ -632,25 +635,25 @@ body.is-section-plugins #primary {
 .plugin-details__reviews {
 	margin-bottom: 40px;
 
-	@media screen and (max-width: 1040px) {
+	@media screen and ( max-width: 1040px ) {
 		padding: 16px;
 	}
 }
 
 .plugin__header {
 	border-bottom: none !important;
-	background-color: var(--color-surface-backdrop) !important;
+	background-color: var( --color-surface-backdrop ) !important;
 
-	@include breakpoint-deprecated( ">660px" ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		inset-inline-start: 10px !important;
 	}
 
-	@media (min-width: 782px) {
-		inset-inline-start: calc(var(--sidebar-width-min) + 10px) !important;
+	@media ( min-width: 782px ) {
+		inset-inline-start: calc( var( --sidebar-width-min ) + 10px ) !important;
 	}
 
 	@include break-large {
-		inset-inline-start: calc(var(--sidebar-width-min) + 20px) !important;
+		inset-inline-start: calc( var( --sidebar-width-min ) + 20px ) !important;
 	}
 
 	@include break-xlarge {
@@ -662,13 +665,14 @@ body.is-section-plugins #primary {
 }
 
 .banner.card.plugin-details__reviews-banner {
-
 	&:hover {
 		cursor: pointer;
-		box-shadow: 0 0 1px var(--color-neutral), 0 2px 4px var(--color-neutral-10);
+		box-shadow:
+			0 0 1px var( --color-neutral ),
+			0 2px 4px var( --color-neutral-10 );
 	}
 
 	~ .plugin-details__page .plugin-details__layout {
-		padding-top: calc($layout-padding-top - 40px);
+		padding-top: calc( $layout-padding-top - 40px );
 	}
 }

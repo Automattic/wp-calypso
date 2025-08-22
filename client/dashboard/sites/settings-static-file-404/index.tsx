@@ -51,9 +51,8 @@ const fields: Field< { setting: string } >[] = [
 ];
 
 const form = {
-	type: 'regular' as const,
+	layout: { type: 'regular' as const, labelPosition: 'none' as const },
 	fields: [ 'setting' ],
-	labelPosition: 'none' as const,
 };
 
 export default function SiteStaticFile404Settings( { siteSlug }: { siteSlug: string } ) {

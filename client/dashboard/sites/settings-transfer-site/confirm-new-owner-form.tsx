@@ -29,7 +29,7 @@ const fields: Field< ConfirmNewOwnerFormData >[] = [
 ];
 
 const form = {
-	type: 'regular' as const,
+	layout: { type: 'regular' as const },
 	fields: [ 'email' ],
 };
 

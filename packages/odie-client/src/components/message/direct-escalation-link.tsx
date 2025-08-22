@@ -31,6 +31,7 @@ export const DirectEscalationLink = ( { messageId }: { messageId: number | undef
 			chat_provider: chat?.provider,
 			conversation_id: chat?.conversationId,
 			has_zendesk_conversation_already_started: hasZendeskConversationAlreadyStarted,
+			force_email_support: forceEmailSupport,
 		} );
 
 		if ( hasZendeskConversationAlreadyStarted ) {
