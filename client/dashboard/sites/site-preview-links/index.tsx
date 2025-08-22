@@ -28,12 +28,17 @@ interface SitePreviewLinkProps {
 }
 
 export default function SitePreviewLinks( { site, title, description }: SitePreviewLinkProps ) {
-	const { data: links = [] } = useQuery( sitePreviewLinksQuery( site.ID ) );
+	const linksPermitted = hasPlanFeature( site, DotcomFeatures.SITE_PREVIEW_LINKS );
+
+	const { data: links = [] } = useQuery( {
+		...sitePreviewLinksQuery( site.ID ),
+		enabled: linksPermitted,
+	} );
 	const createMutation = useMutation( sitePreviewLinkCreateMutation( site.ID ) );
 	const deleteMutation = useMutation( sitePreviewLinkDeleteMutation( site.ID ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
-	if ( ! hasPlanFeature( site, DotcomFeatures.SITE_PREVIEW_LINKS ) ) {
+	if ( ! linksPermitted ) {
 		return null;
 	}
 
@@ -48,7 +53,7 @@ export default function SitePreviewLinks( { site, title, description }: SitePrev
 				},
 			} );
 		} else {
-			links?.forEach( ( { code } ) => {
+			links.forEach( ( { code } ) => {
 				deleteMutation.mutate( code, {
 					onSuccess: () => {
 						createSuccessNotice( __( 'Preview link disabled.' ), { type: 'snackbar' } );
@@ -105,7 +110,7 @@ export default function SitePreviewLinks( { site, title, description }: SitePrev
 						form={ form }
 						onChange={ handleChange }
 					/>
-					{ links?.map( ( link ) => (
+					{ links.map( ( link ) => (
 						<SitePreviewLink
 							key={ link.code }
 							label={ __( 'Preview link' ) }
