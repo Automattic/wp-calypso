@@ -19,8 +19,8 @@ export default function DomainOverviewSettings() {
 		<VStack spacing={ 3 }>
 			<SectionHeader title={ __( 'Settings' ) } level={ 3 } />
 			<SummaryButtonList>
-				<DnsSettingsSummary domain={ domain } />
 				<NameServersSettingsSummary domain={ domain } />
+				<DnsSettingsSummary domain={ domain } />
 				<DomainForwardingsSettingsSummary domain={ domain } />
 				<DomainContactDetailsSettingsSummary domain={ domain } />
 				<DomainSecuritySettingsSummary domain={ domain } />
