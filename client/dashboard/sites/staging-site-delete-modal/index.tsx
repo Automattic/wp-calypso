@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -23,7 +23,7 @@ export default function StagingSiteDeleteModal( {
 	onClose: () => void;
 } ) {
 	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
-	const router = useRouter();
+	const navigate = useNavigate();
 
 	const productionSiteId = site.options?.wpcom_production_blog_id;
 	const { data: productionSite } = useQuery( {
@@ -52,7 +52,7 @@ export default function StagingSiteDeleteModal( {
 				createSuccessNotice( __( 'Staging site deleted.' ), { type: 'snackbar' } );
 				onClose();
 				if ( productionSiteSlug ) {
-					router.navigate( {
+					navigate( {
 						to: '/sites/$siteSlug',
 						params: { siteSlug: productionSiteSlug },
 					} );
