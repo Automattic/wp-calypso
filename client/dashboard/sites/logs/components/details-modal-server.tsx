@@ -10,13 +10,15 @@ import './style.scss';
 export default function DetailsModalServer( {
 	item,
 	gmtOffset,
+	timezoneString,
 }: {
 	item: ServerLog;
 	gmtOffset: number;
+	timezoneString?: string;
 } ) {
 	const locale = useLocale();
 	const offsetDisplay = getUtcOffsetDisplay( gmtOffset );
-	const formatted = formatLogDateTimeForDisplay( item.date, gmtOffset, locale );
+	const formatted = formatLogDateTimeForDisplay( item.date, gmtOffset, locale, timezoneString );
 	return (
 		<VStack className="site-logs-details-modal" spacing={ 3 }>
 			<div className="site-logs-details-modal__row">

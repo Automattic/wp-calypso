@@ -39,14 +39,35 @@ export function buildTimeRangeInSeconds(
 	return { startSec, endSec };
 }
 
+/**
+ * Convert a PHP log severity string to lowercase (to be used in a CSS class name).
+ */
 export const toSeverityClass = ( severity: PHPLog[ 'severity' ] ) =>
 	severity.split( ' ' )[ 0 ].toLowerCase();
 
+/**
+ * Format a log date/time string for display.
+ */
 export function formatLogDateTimeForDisplay(
 	input: string | number,
 	gmtOffset: number,
-	locale: string
+	locale: string,
+	timezoneString?: string
 ): string {
+	if ( timezoneString ) {
+		let date: Date;
+		if ( typeof input === 'number' ) {
+			date = new Date( input * 1000 );
+		} else {
+			date = new Date( input );
+		}
+		return new Intl.DateTimeFormat( locale, {
+			dateStyle: 'long',
+			timeStyle: 'short',
+			timeZone: timezoneString,
+		} ).format( date );
+	}
+
 	return formatDateWithOffset( input, gmtOffset, locale, {
 		dateStyle: 'long',
 		timeStyle: 'short',

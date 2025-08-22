@@ -14,12 +14,14 @@ export interface UseLogActionsOptions {
 	logType: LogType;
 	isLoading: boolean;
 	gmtOffset: number;
+	timezoneString?: string;
 }
 
 export function useActions( {
 	logType,
 	isLoading,
 	gmtOffset,
+	timezoneString,
 }: UseLogActionsOptions ): Action< LogItem >[] {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
@@ -35,9 +37,17 @@ export function useActions( {
 			RenderModal: ( { items } ) => {
 				const item = items[ 0 ];
 				return logType === LogType.PHP ? (
-					<DetailsModalPHP item={ item as PHPLog } gmtOffset={ gmtOffset } />
+					<DetailsModalPHP
+						item={ item as PHPLog }
+						gmtOffset={ gmtOffset }
+						timezoneString={ timezoneString }
+					/>
 				) : (
-					<DetailsModalServer item={ item as ServerLog } gmtOffset={ gmtOffset } />
+					<DetailsModalServer
+						item={ item as ServerLog }
+						gmtOffset={ gmtOffset }
+						timezoneString={ timezoneString }
+					/>
 				);
 			},
 		};
@@ -77,5 +87,5 @@ export function useActions( {
 			},
 		};
 		return [ commonDetailsAction, copyUrlAction ];
-	}, [ logType, isLoading, gmtOffset, createSuccessNotice, createErrorNotice ] );
+	}, [ logType, isLoading, gmtOffset, timezoneString, createSuccessNotice, createErrorNotice ] );
 }

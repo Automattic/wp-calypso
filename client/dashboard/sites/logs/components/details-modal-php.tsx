@@ -14,13 +14,20 @@ import './style.scss';
 export default function DetailsModalPHP( {
 	item,
 	gmtOffset,
+	timezoneString,
 }: {
 	item: PHPLog;
 	gmtOffset: number;
+	timezoneString?: string;
 } ) {
 	const locale = useLocale();
 	const offsetDisplay = getUtcOffsetDisplay( gmtOffset );
-	const formatted = formatLogDateTimeForDisplay( item.timestamp, gmtOffset, locale );
+	const formatted = formatLogDateTimeForDisplay(
+		item.timestamp,
+		gmtOffset,
+		locale,
+		timezoneString
+	);
 	return (
 		<VStack className="site-logs-details-modal" spacing={ 3 }>
 			<div className="site-logs-details-modal__row">
