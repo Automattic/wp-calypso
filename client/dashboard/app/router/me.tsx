@@ -81,8 +81,10 @@ export const purchaseSettingsRoute = createRoute( {
 export const purchasesRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	loader: async () => {
-		await queryClient.ensureQueryData( userPurchasesQuery() );
-		await queryClient.ensureQueryData( sitesQuery() );
+		await Promise.all( [
+			queryClient.ensureQueryData( userPurchasesQuery() ),
+			queryClient.ensureQueryData( sitesQuery() ),
+		] );
 	},
 	validateSearch: ( search ): { site: string | undefined } => {
 		return {
