@@ -95,7 +95,7 @@ function SiteBackupRestore() {
 	return (
 		<PageLayout
 			size="small"
-			header={ <PageHeader prefix={ backButton } title={ __( 'Restore your site' ) } /> }
+			header={ <PageHeader prefix={ backButton } title={ __( 'Site restore' ) } /> }
 		>
 			<Card>
 				<CardHeader>
