@@ -58,7 +58,10 @@ function SiteBackupRestoreProgress( {
 						restoreProgress?.percent ?? 0
 					) }
 				</Text>
-				<ProgressBar value={ restoreProgress?.percent ?? 0 } />
+				<ProgressBar
+					className="dashboard-backups__progress-bar"
+					value={ restoreProgress?.percent ?? 0 }
+				/>
 			</VStack>
 			<Spacer marginTop={ 12 }>
 				<Notice variant="info" title={ __( 'Check your email' ) }>
