@@ -9,7 +9,7 @@ export interface DomainSuggestion {
 	supports_privacy?: boolean;
 }
 
-const fetchDomainSuggestions = async (): Promise< DomainSuggestion[] > => {
+export const fetchDomainSuggestions = async (): Promise< DomainSuggestion[] > => {
 	await new Promise( ( resolve ) => setTimeout( resolve, Math.random() * 1_000 ) );
 
 	return [
@@ -58,10 +58,3 @@ const fetchDomainSuggestions = async (): Promise< DomainSuggestion[] > => {
 		},
 	];
 };
-
-export const domainSuggestionsQuery = ( query: string ) => ( {
-	queryKey: [ 'domain-suggestions', query ],
-	queryFn: () => fetchDomainSuggestions(),
-	refetchOnWindowFocus: false,
-	refetchOnMount: false,
-} );

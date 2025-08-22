@@ -1,9 +1,9 @@
 import { QueryClientProvider } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useCallback, useState, useMemo, useLayoutEffect } from 'react';
-import { domainAvailabilityQuery } from '../queries/availability';
-import { productsQuery } from '../queries/products';
-import { domainSuggestionsQuery } from '../queries/suggestions';
+import { domainAvailabilityQuery } from '../api/availability/queries';
+import { productsQuery } from '../api/products/queries';
+import { domainSuggestionsQuery } from '../api/suggestions/queries';
 import { DEFAULT_CONTEXT_VALUE, DomainSearchContext } from './context';
 import { EmptyPage } from './empty';
 import { fallbackQueryClient } from './fallback-query-client';

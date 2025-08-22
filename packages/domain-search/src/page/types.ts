@@ -1,6 +1,7 @@
-import { domainAvailabilityQuery } from '../queries/availability';
-import { productsQuery } from '../queries/products';
-import type { DomainSuggestion, domainSuggestionsQuery } from '../queries/suggestions';
+import { domainAvailabilityQuery } from '../api/availability/queries';
+import { productsQuery } from '../api/products/queries';
+import { domainSuggestionsQuery } from '../api/suggestions/queries';
+import type { DomainSuggestion } from '../api/suggestions/data';
 import type { QueryClient } from '@tanstack/react-query';
 import type { ComponentType } from 'react';
 

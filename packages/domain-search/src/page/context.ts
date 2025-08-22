@@ -1,7 +1,7 @@
 import { createContext, useContext } from 'react';
-import { domainAvailabilityQuery } from '../queries/availability';
-import { productsQuery } from '../queries/products';
-import { domainSuggestionsQuery } from '../queries/suggestions';
+import { domainAvailabilityQuery } from '../api/availability/queries';
+import { productsQuery } from '../api/products/queries';
+import { domainSuggestionsQuery } from '../api/suggestions/queries';
 import { type DomainSearchContextType } from './types';
 
 const noop = () => {};

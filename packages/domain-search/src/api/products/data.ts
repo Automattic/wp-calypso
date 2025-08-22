@@ -3,7 +3,7 @@ export interface Product {
 	is_dot_gay_notice_required?: boolean;
 }
 
-const fetchProductsList = async (): Promise< Record< string, Product > > => {
+export const fetchProductsList = async (): Promise< Record< string, Product > > => {
 	await new Promise( ( resolve ) => setTimeout( resolve, Math.random() * 1_000 ) );
 
 	return {
@@ -15,10 +15,3 @@ const fetchProductsList = async (): Promise< Record< string, Product > > => {
 		},
 	};
 };
-
-export const productsQuery = () => ( {
-	queryKey: [ 'products' ],
-	queryFn: () => fetchProductsList(),
-	refetchOnWindowFocus: false,
-	refetchOnMount: false,
-} );

@@ -11,7 +11,9 @@ export interface DomainAvailability {
 	is_price_limit_exceeded?: boolean;
 }
 
-const fetchDomainAvailability = async ( domainName: string ): Promise< DomainAvailability > => {
+export const fetchDomainAvailability = async (
+	domainName: string
+): Promise< DomainAvailability > => {
 	await new Promise( ( resolve ) => setTimeout( resolve, Math.random() * 1_000 ) );
 
 	if ( domainName === 'example.com' ) {
@@ -102,10 +104,3 @@ const fetchDomainAvailability = async ( domainName: string ): Promise< DomainAva
 
 	throw new Error( `Domain ${ domainName } not found` );
 };
-
-export const domainAvailabilityQuery = ( domainName: string ) => ( {
-	queryKey: [ 'domain-availability', domainName ],
-	queryFn: () => fetchDomainAvailability( domainName ),
-	refetchOnWindowFocus: false,
-	refetchOnMount: false,
-} );
