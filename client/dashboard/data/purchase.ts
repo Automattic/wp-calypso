@@ -257,7 +257,7 @@ export interface Purchase {
 	refund_integer: number;
 	refund_text: string;
 	refund_currency_symbol: string;
-	refund_options: RefundOptions | null;
+	refund_options: RefundOptions[] | null;
 	refund_period_in_days: number;
 	regular_price_text: string;
 	regular_price_integer: number;
