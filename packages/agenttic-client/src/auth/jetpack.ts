@@ -37,54 +37,42 @@ interface TokenData {
 	expire: number;
 }
 
-interface ApiError {
+export interface JetpackApiError {
 	code?: string;
 	status?: number;
 	message?: string;
 }
 
 /**
- * Check if this is a WordPress.com simple site
+ * Error handler function type for Jetpack authentication errors
  */
-function isSimpleSite(): boolean {
-	return Boolean( window.Jetpack_Editor_Initial_State?.wpcomBlogId );
-}
+export type JetpackErrorHandler = ( error: JetpackApiError ) => string;
 
 /**
- * Get user-friendly error message for Jetpack authentication failures
- * TODO: Add i18n support for error messages when internationalization is added to Agenttic
- * @param error
+ * Check if this is a simple site (WordPress.com)
  */
-function getJetpackErrorMessage( error: ApiError ): string {
-	if ( error?.code === 'rest_invalid_nonce' ) {
-		return 'Your session expired. Please refresh the page and try again or check your Jetpack connection.';
+function isSimpleSite(): boolean {
+	// If we have JP_CONNECTION_INITIAL_STATE, it's a Jetpack site (not simple)
+	const hasJetpackConnection = Boolean( window.JP_CONNECTION_INITIAL_STATE );
+	if ( hasJetpackConnection ) {
+		return false;
 	}
 
-	if ( error?.code === 'rest_forbidden' || error?.status === 403 ) {
-		return "You don't have permission to access Jetpack AI features. Please check your user permissions.";
-	}
-
-	if ( error?.code === 'rest_no_route' || error?.status === 404 ) {
-		return 'Unable to connect to Jetpack. Please ensure the Jetpack plugin is active and up to date.';
-	}
-
-	if (
-		error?.message?.includes( 'network' ) ||
-		error?.message?.includes( 'Network' ) ||
-		error?.message?.includes( 'fetch' )
-	) {
-		return 'Network connection issue. Please check your internet connection and try again.';
-	}
-
-	return 'Unable to authenticate with Jetpack. Please try again or contact support if the problem persists.';
+	// Otherwise check for wpcomBlogId - simple sites have this without JP_CONNECTION_INITIAL_STATE
+	const isSimple = Boolean(
+		window.Jetpack_Editor_Initial_State?.wpcomBlogId
+	);
+	return isSimple;
 }
 
 /**
  * Request a JWT token from Jetpack for API authentication
+ * @param errorHandler   - Function to handle and format error messages
  * @param useCachedToken - Whether to use cached token if available and valid
  * @return Token data with JWT token and blog ID, or null on failure
  */
 export async function requestJetpackToken(
+	errorHandler: JetpackErrorHandler,
 	useCachedToken = true
 ): Promise< TokenData | null > {
 	const token = localStorage.getItem( JWT_TOKEN_ID );
@@ -137,7 +125,7 @@ export async function requestJetpackToken(
 		}
 	} catch ( error ) {
 		console.log( 'Failed to fetch Jetpack token:', error );
-		throw new Error( getJetpackErrorMessage( error as ApiError ) );
+		throw new Error( errorHandler( error as JetpackApiError ) );
 	}
 
 	if ( ! data?.token ) {
@@ -164,40 +152,51 @@ export async function requestJetpackToken(
 }
 
 /**
- * Jetpack authentication provider for use with Agenttic client.
+ * Create a Jetpack authentication provider for use with Agenttic client.
  *
- * This provider handles authentication for WordPress sites with Jetpack,
- * automatically managing token caching and refresh.
+ * This factory function creates an authentication provider that handles
+ * authentication for WordPress sites with Jetpack, automatically managing
+ * token caching and refresh.
  *
  * @example
  * ```typescript
- * import { jetpackAuthProvider } from '@automattic/agenttic-client';
+ * import { createJetpackAuthProvider } from '@automattic/agenttic-client';
  * import { useAgent } from '@automattic/agenttic-client';
+ *
+ * const errorHandler = (error) => {
+ *   if (error.code === 'rest_forbidden') {
+ *     return 'Permission denied';
+ *   }
+ *   return 'Authentication failed';
+ * };
  *
  * const { state, sendMessage } = useAgent({
  *   agentId: 'my-agent',
- *   authProvider: jetpackAuthProvider,
+ *   authProvider: createJetpackAuthProvider(errorHandler),
  * });
  * ```
  *
+ * @param errorHandler - Function to handle and format error messages
  * @return Authentication provider function that returns headers with JWT token
  */
-export const jetpackAuthProvider: AuthProvider = async (): Promise<
-	Record< string, string >
-> => {
-	const headers: Record< string, string > = {};
+export const createJetpackAuthProvider = (
+	errorHandler: JetpackErrorHandler
+): AuthProvider => {
+	return async (): Promise< Record< string, string > > => {
+		const headers: Record< string, string > = {};
 
-	try {
-		const tokenData = await requestJetpackToken();
+		try {
+			const tokenData = await requestJetpackToken( errorHandler );
 
-		if ( tokenData?.token ) {
-			headers.Authorization = `${ tokenData.token }`;
+			if ( tokenData?.token ) {
+				headers.Authorization = `${ tokenData.token }`;
+			}
+		} catch ( error ) {
+			console.error( 'Failed to get Jetpack token for auth:', error );
+			// Rethrow auth errors so they can be handled properly by the client
+			throw error;
 		}
-	} catch ( error ) {
-		console.error( 'Failed to get Jetpack token for auth:', error );
-		// Rethrow auth errors so they can be handled properly by the client
-		throw error;
-	}
 
-	return headers;
+		return headers;
+	};
 };

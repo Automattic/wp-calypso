@@ -1,6 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
-	jetpackAuthProvider,
+	createJetpackAuthProvider,
+	type JetpackApiError,
+	type JetpackErrorHandler,
 	JWT_TOKEN_ID,
 	requestJetpackToken,
 } from './jetpack';
@@ -54,6 +56,32 @@ describe( 'Jetpack Auth Provider', () => {
 		localStorageMock.clear();
 	} );
 
+	const mockErrorHandler: JetpackErrorHandler = (
+		error: JetpackApiError
+	) => {
+		if ( error?.code === 'rest_invalid_nonce' ) {
+			return 'Your session expired. Please refresh the page and try again or check your Jetpack connection.';
+		}
+
+		if ( error?.code === 'rest_forbidden' || error?.status === 403 ) {
+			return "You don't have permission to access Jetpack AI features. Please check your user permissions.";
+		}
+
+		if ( error?.code === 'rest_no_route' || error?.status === 404 ) {
+			return 'Unable to connect to Jetpack. Please ensure the Jetpack plugin is active and up to date.';
+		}
+
+		if (
+			error?.message?.includes( 'network' ) ||
+			error?.message?.includes( 'Network' ) ||
+			error?.message?.includes( 'fetch' )
+		) {
+			return 'Network connection issue. Please check your internet connection and try again.';
+		}
+
+		return 'Unable to authenticate with Jetpack. Please try again or contact support if the problem persists.';
+	};
+
 	describe( 'requestJetpackToken', () => {
 		it( 'should fetch a new token for Jetpack-connected sites', async () => {
 			( window as any ).JP_CONNECTION_INITIAL_STATE = {
@@ -69,7 +97,7 @@ describe( 'Jetpack Auth Provider', () => {
 
 			mockedApiFetch.mockResolvedValueOnce( mockToken );
 
-			const result = await requestJetpackToken();
+			const result = await requestJetpackToken( mockErrorHandler );
 
 			expect( result ).toBeTruthy();
 			expect( result?.token ).toBe( 'jwt-token-123' );
@@ -101,7 +129,7 @@ describe( 'Jetpack Auth Provider', () => {
 
 			mockedApiFetch.mockResolvedValueOnce( mockToken );
 
-			const result = await requestJetpackToken();
+			const result = await requestJetpackToken( mockErrorHandler );
 
 			expect( result ).toBeTruthy();
 			expect( result?.token ).toBe( 'wpcom-token-456' );
@@ -127,7 +155,7 @@ describe( 'Jetpack Auth Provider', () => {
 				JSON.stringify( cachedToken )
 			);
 
-			const result = await requestJetpackToken();
+			const result = await requestJetpackToken( mockErrorHandler );
 
 			expect( result ).toEqual( cachedToken );
 			expect( mockedApiFetch ).not.toHaveBeenCalled();
@@ -159,7 +187,7 @@ describe( 'Jetpack Auth Provider', () => {
 
 			mockedApiFetch.mockResolvedValueOnce( newToken );
 
-			const result = await requestJetpackToken();
+			const result = await requestJetpackToken( mockErrorHandler );
 
 			expect( result?.token ).toBe( 'new-token' );
 			expect( mockedApiFetch ).toHaveBeenCalled();
@@ -182,7 +210,7 @@ describe( 'Jetpack Auth Provider', () => {
 
 			mockedApiFetch.mockResolvedValueOnce( newToken );
 
-			const result = await requestJetpackToken();
+			const result = await requestJetpackToken( mockErrorHandler );
 
 			expect( result?.token ).toBe( 'new-token' );
 			expect( mockedApiFetch ).toHaveBeenCalled();
@@ -194,9 +222,9 @@ describe( 'Jetpack Auth Provider', () => {
 			// Mock apiFetch to return empty data (no token)
 			mockedApiFetch.mockResolvedValueOnce( { token: '', blog_id: '' } );
 
-			await expect( requestJetpackToken() ).rejects.toThrow(
-				'Authentication failed'
-			);
+			await expect(
+				requestJetpackToken( mockErrorHandler )
+			).rejects.toThrow( 'Authentication failed' );
 		} );
 
 		it( 'should throw error when API returns no token', async () => {
@@ -208,9 +236,9 @@ describe( 'Jetpack Auth Provider', () => {
 
 			mockedApiFetch.mockResolvedValueOnce( { token: '', blog_id: '' } );
 
-			await expect( requestJetpackToken() ).rejects.toThrow(
-				'Authentication failed'
-			);
+			await expect(
+				requestJetpackToken( mockErrorHandler )
+			).rejects.toThrow( 'Authentication failed' );
 		} );
 
 		it( 'should handle API errors with appropriate messages', async () => {
@@ -226,7 +254,9 @@ describe( 'Jetpack Auth Provider', () => {
 
 			mockedApiFetch.mockRejectedValueOnce( error );
 
-			await expect( requestJetpackToken() ).rejects.toThrow(
+			await expect(
+				requestJetpackToken( mockErrorHandler )
+			).rejects.toThrow(
 				"You don't have permission to access Jetpack AI features"
 			);
 		} );
@@ -241,9 +271,9 @@ describe( 'Jetpack Auth Provider', () => {
 			const error = new Error( 'Network request failed' );
 			mockedApiFetch.mockRejectedValueOnce( error );
 
-			await expect( requestJetpackToken() ).rejects.toThrow(
-				'Network connection issue'
-			);
+			await expect(
+				requestJetpackToken( mockErrorHandler )
+			).rejects.toThrow( 'Network connection issue' );
 		} );
 
 		it( 'should cache the new token after successful fetch', async () => {
@@ -291,7 +321,7 @@ describe( 'Jetpack Auth Provider', () => {
 
 			mockedApiFetch.mockResolvedValueOnce( mockToken );
 
-			const result = await requestJetpackToken();
+			const result = await requestJetpackToken( mockErrorHandler );
 
 			expect( result?.token ).toBe( 'jwt-token-no-cache' );
 
@@ -324,14 +354,14 @@ describe( 'Jetpack Auth Provider', () => {
 
 			mockedApiFetch.mockResolvedValueOnce( newToken );
 
-			const result = await requestJetpackToken( false );
+			const result = await requestJetpackToken( mockErrorHandler, false );
 
 			expect( result?.token ).toBe( 'fresh-token' );
 			expect( mockedApiFetch ).toHaveBeenCalled();
 		} );
 	} );
 
-	describe( 'jetpackAuthProvider', () => {
+	describe( 'createJetpackAuthProvider', () => {
 		it( 'should return headers with Authorization token', async () => {
 			( window as any ).JP_CONNECTION_INITIAL_STATE = {
 				apiNonce: 'test-nonce',
@@ -346,6 +376,8 @@ describe( 'Jetpack Auth Provider', () => {
 
 			mockedApiFetch.mockResolvedValueOnce( mockToken );
 
+			const jetpackAuthProvider =
+				createJetpackAuthProvider( mockErrorHandler );
 			const headers = await jetpackAuthProvider();
 
 			expect( headers ).toEqual( {
@@ -356,6 +388,8 @@ describe( 'Jetpack Auth Provider', () => {
 		it( 'should throw error when token request fails', async () => {
 			// No window globals set - will cause requestJetpackToken to fail
 
+			const jetpackAuthProvider =
+				createJetpackAuthProvider( mockErrorHandler );
 			await expect( jetpackAuthProvider() ).rejects.toThrow();
 		} );
 
@@ -371,6 +405,8 @@ describe( 'Jetpack Auth Provider', () => {
 				JSON.stringify( cachedToken )
 			);
 
+			const jetpackAuthProvider =
+				createJetpackAuthProvider( mockErrorHandler );
 			const headers = await jetpackAuthProvider();
 
 			expect( headers ).toEqual( {
@@ -379,6 +415,47 @@ describe( 'Jetpack Auth Provider', () => {
 
 			// Should not call API when cached token is valid
 			expect( mockedApiFetch ).not.toHaveBeenCalled();
+		} );
+
+		it( 'should use custom error handler when provided', async () => {
+			const customErrorHandler: JetpackErrorHandler = ( error ) => {
+				return `Custom error: ${ error.code || 'unknown' }`;
+			};
+
+			// No window globals set - will cause requestJetpackToken to fail
+			mockedApiFetch.mockResolvedValueOnce( { token: '', blog_id: '' } );
+
+			const jetpackAuthProvider =
+				createJetpackAuthProvider( customErrorHandler );
+			await expect( jetpackAuthProvider() ).rejects.toThrow(
+				'Authentication failed'
+			);
+		} );
+
+		it( 'should use custom error handler for API errors', async () => {
+			const customErrorHandler: JetpackErrorHandler = ( error ) => {
+				if ( error.code === 'custom_error' ) {
+					return 'This is a custom error message';
+				}
+				return 'Default custom message';
+			};
+
+			( window as any ).JP_CONNECTION_INITIAL_STATE = {
+				apiNonce: 'test-nonce',
+				siteSuffix: 'test-site',
+				connectionStatus: { isActive: true },
+			};
+
+			const error = new Error( 'API Error' );
+			( error as any ).code = 'custom_error';
+
+			mockedApiFetch.mockRejectedValueOnce( error );
+
+			const jetpackAuthProvider =
+				createJetpackAuthProvider( customErrorHandler );
+			await expect( jetpackAuthProvider() ).rejects.toThrow(
+				'This is a custom error message'
+			);
 		} );
 	} );
 } );
