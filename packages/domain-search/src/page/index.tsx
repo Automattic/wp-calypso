@@ -1,3 +1,4 @@
+import { QueryClientProvider } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useCallback, useState, useMemo, useLayoutEffect } from 'react';
 import { domainAvailabilityQuery } from '../queries/availability';
@@ -5,6 +6,7 @@ import { productsQuery } from '../queries/products';
 import { domainSuggestionsQuery } from '../queries/suggestions';
 import { DEFAULT_CONTEXT_VALUE, DomainSearchContext } from './context';
 import { EmptyPage } from './empty';
+import { fallbackQueryClient } from './fallback-query-client';
 import { ResultsPage } from './results';
 import type { DomainSearchProps } from './types';
 
@@ -17,6 +19,7 @@ export const DomainSearch = ( {
 	cart,
 	events,
 	slots,
+	queryClient = fallbackQueryClient,
 }: DomainSearchProps ) => {
 	const [ isFullCartOpen, setIsFullCartOpen ] = useState( false );
 	const [ query, setQuery ] = useState( initialQuery ?? '' );
@@ -79,8 +82,10 @@ export const DomainSearch = ( {
 	};
 
 	return (
-		<DomainSearchContext.Provider value={ contextValue }>
-			<div className={ clsx( 'domain-search', className ) }>{ getContent() }</div>
-		</DomainSearchContext.Provider>
+		<QueryClientProvider client={ queryClient }>
+			<DomainSearchContext.Provider value={ contextValue }>
+				<div className={ clsx( 'domain-search', className ) }>{ getContent() }</div>
+			</DomainSearchContext.Provider>
+		</QueryClientProvider>
 	);
 };

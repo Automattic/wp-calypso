@@ -1,6 +1,7 @@
 import { domainAvailabilityQuery } from '../queries/availability';
 import { productsQuery } from '../queries/products';
 import type { DomainSuggestion, domainSuggestionsQuery } from '../queries/suggestions';
+import type { QueryClient } from '@tanstack/react-query';
 import type { ComponentType } from 'react';
 
 export interface SelectedDomain {
@@ -15,8 +16,8 @@ export interface DomainSearchCart {
 	items: SelectedDomain[];
 	total: string;
 	onAddItem: ( item: DomainSuggestion ) => Promise< unknown >;
-	onRemoveItem: ( item: SelectedDomain[ 'uuid' ] ) => Promise< unknown >;
-	hasItem: ( domain: SelectedDomain[ 'domain' ] ) => boolean;
+	onRemoveItem: ( uuid: string ) => Promise< unknown >;
+	hasItem: ( domainName: string ) => boolean;
 }
 
 export interface DomainSearchEvents {
@@ -33,10 +34,11 @@ export interface DomainSearchProps {
 	initialQuery?: string;
 	events?: Partial< DomainSearchEvents >;
 	currentSiteUrl?: string;
+	queryClient?: QueryClient;
 }
 
 export interface DomainSearchContextType
-	extends Omit< DomainSearchProps, 'className' | 'initialQuery' | 'events' > {
+	extends Omit< DomainSearchProps, 'className' | 'initialQuery' | 'events' | 'queryClient' > {
 	events: DomainSearchEvents;
 	isFullCartOpen: boolean;
 	closeFullCart: () => void;

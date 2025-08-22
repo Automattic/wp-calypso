@@ -1,6 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
+import { useIsMutating, useMutation, useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { envelope } from '@wordpress/icons';
+import { useIsCurrentMutation } from '../../hooks/use-is-current-mutation';
+import { useSuggestion } from '../../hooks/use-suggestion';
 import { useDomainSearch } from '../../page/context';
 import {
 	DomainSuggestionContinueCTA,
@@ -14,6 +16,21 @@ export interface DomainSuggestionCTAProps {
 
 export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) => {
 	const { cart, events, queries } = useDomainSearch();
+
+	const suggestion = useSuggestion( domainName );
+
+	const {
+		mutate: addToCart,
+		isPending,
+		error,
+		submittedAt,
+	} = useMutation( {
+		mutationFn: () => cart.onAddItem( suggestion ),
+	} );
+
+	const isMutating = !! useIsMutating();
+	const isCurrentMutation = useIsCurrentMutation( submittedAt );
+
 	const { data: availability } = useQuery( queries.domainAvailability( domainName ) );
 
 	if ( availability?.is_price_limit_exceeded ) {
@@ -28,25 +45,23 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 		);
 	}
 
-	const isCartBusy = false;
-
 	const isDomainOnCart = cart.hasItem( domainName );
 
 	if ( isDomainOnCart ) {
-		return <DomainSuggestionContinueCTA disabled={ isCartBusy } onClick={ events.onContinue } />;
+		return <DomainSuggestionContinueCTA disabled={ isMutating } onClick={ events.onContinue } />;
 	}
 
-	const errorMessage = null;
+	const errorMessage = isCurrentMutation ? error?.message : null;
 
 	if ( errorMessage ) {
-		return <DomainSuggestionErrorCTA errorMessage={ errorMessage } callback={ () => {} } />;
+		return <DomainSuggestionErrorCTA errorMessage={ errorMessage } callback={ addToCart } />;
 	}
 
 	return (
 		<DomainSuggestionPrimaryCTA
-			disabled={ isCartBusy }
-			onClick={ () => {} }
-			isBusy={ isCartBusy }
+			disabled={ isMutating }
+			isBusy={ isPending }
+			onClick={ addToCart }
 		/>
 	);
 };
