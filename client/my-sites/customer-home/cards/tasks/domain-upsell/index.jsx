@@ -5,7 +5,7 @@ import {
 	domainProductSlugs,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { useDomainSuggestions } from '@automattic/domain-picker';
+import { useDomainSuggestionsQuery } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useMemo } from '@wordpress/element';
@@ -75,6 +75,7 @@ export default function DomainUpsell() {
 const domainSuggestionOptions = {
 	vendor: 'domain-upsell',
 	include_wordpressdotcom: false,
+	quantity: 3,
 };
 
 export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, siteSlug } ) {
@@ -82,10 +83,15 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 
 	const locale = useLocale();
 
+	const memoizedDomainSuggestionOptions = useMemo(
+		() => ( { ...domainSuggestionOptions, locale } ),
+		[ locale ]
+	);
+
 	// Note: domainSuggestionOptions must be equal by reference upon each render
 	// to avoid a render loop, since it's used to memoize a selector.
 	const { allDomainSuggestions } =
-		useDomainSuggestions( searchTerm, 3, undefined, locale, domainSuggestionOptions ) || {};
+		useDomainSuggestionsQuery( searchTerm, memoizedDomainSuggestionOptions ) || {};
 
 	const cartKey = useCartKey();
 	const shoppingCartManager = useShoppingCart( cartKey );

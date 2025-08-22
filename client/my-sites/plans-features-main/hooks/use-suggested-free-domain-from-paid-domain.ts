@@ -1,12 +1,12 @@
 import configApi from '@automattic/calypso-config';
-import { DomainSuggestions } from '@automattic/data-stores';
+import { type DomainSuggestion, useWordPressSubdomainQuery } from '@automattic/data-stores';
 import { useMemo } from '@wordpress/element';
 import { useEffect } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
 import type { DataResponse } from '@automattic/plans-grid-next';
 
 export function useGetFreeSubdomainSuggestion( query: string | null ): {
-	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestions.DomainSuggestion >;
+	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestion >;
 	invalidateDomainSuggestionCache: () => void;
 } {
 	const {
@@ -14,7 +14,7 @@ export function useGetFreeSubdomainSuggestion( query: string | null ): {
 		isInitialLoading: isLoading,
 		isError,
 		invalidateCache: invalidateDomainSuggestionCache,
-	} = DomainSuggestions.useGetWordPressSubdomain( query );
+	} = useWordPressSubdomainQuery( query );
 
 	const result = ( ! isError && wordPressSubdomainSuggestions?.[ 0 ] ) || undefined;
 

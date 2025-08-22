@@ -8,6 +8,7 @@ export interface DomainAvailability {
 	renew_cost?: string;
 	product_id: number;
 	product_slug: string;
+	is_premium?: boolean;
 	is_price_limit_exceeded?: boolean;
 }
 

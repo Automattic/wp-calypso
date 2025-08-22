@@ -1,5 +1,5 @@
 import {
-	DomainSuggestion,
+	DomainSuggestionItem,
 	DomainSuggestionBadge,
 	DomainSuggestionPrice,
 	DomainSuggestionPrimaryCTA,
@@ -407,7 +407,7 @@ class DomainRegistrationSuggestion extends Component {
 		const badges = this.renderBadges();
 		const notice = this.renderNotice();
 
-		const SuggestionComponent = isFeatured ? DomainSuggestion.Featured : DomainSuggestion;
+		const SuggestionComponent = isFeatured ? DomainSuggestionItem.Featured : DomainSuggestionItem;
 
 		const matchReasons = this.renderMatchReasons();
 

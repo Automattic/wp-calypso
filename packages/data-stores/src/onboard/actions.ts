@@ -6,7 +6,7 @@ import { Visibility, GlobalStyles } from '../site/types';
 import { SiteGoal, STORE_KEY } from './constants';
 import { ProfilerData, ReadymadeTemplate } from './types';
 import type { DomainTransferData, State } from '.';
-import type { DomainSuggestion } from '../domain-suggestions';
+import type { DomainSuggestion } from '../queries/use-domain-suggestions-query';
 import type { FeatureId } from '../shared-types';
 // somewhat hacky, but resolves the circular dependency issue
 import type { Design, StyleVariation } from '@automattic/design-picker/src/types';

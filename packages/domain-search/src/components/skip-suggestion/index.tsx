@@ -12,10 +12,17 @@ const SkipSuggestion = ( { freeSuggestion }: { freeSuggestion?: string } ) => {
 
 	const { mutate: addToCart, isPending: isAddingToCart } = useMutation( {
 		mutationFn: ( suggestion: string ) => {
+			// TODO: Union type for free subdomain suggestion
 			return cart.onAddItem( {
 				domain_name: suggestion,
 				cost: 'Free',
 				product_slug: 'free_domain',
+				currency_code: 'USD',
+				relevance: 0,
+				supports_privacy: false,
+				vendor: 'dot',
+				match_reasons: [],
+				product_id: 0,
 			} );
 		},
 	} );

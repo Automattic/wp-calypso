@@ -8,7 +8,7 @@ import type {
 	DomainTransferAuthCodes,
 	ReadymadeTemplate,
 } from './types';
-import type { DomainSuggestion } from '../domain-suggestions';
+import type { DomainSuggestion } from '../queries/use-domain-suggestions-query';
 import type { FeatureId } from '../shared-types';
 import type { GlobalStyles } from '../site';
 // somewhat hacky, but resolves the circular dependency issue

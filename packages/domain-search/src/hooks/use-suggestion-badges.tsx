@@ -22,7 +22,7 @@ export const useDomainSuggestionBadges = ( domainName: string ) => {
 			);
 		}
 
-		if ( suggestion.is_premium ) {
+		if ( availability?.is_premium ) {
 			if ( availability?.is_price_limit_exceeded ) {
 				computedBadges.push(
 					<DomainSuggestionBadge

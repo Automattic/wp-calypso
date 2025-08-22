@@ -11,7 +11,7 @@ export const DomainSuggestionPrice = ( { domainName }: DomainSuggestionPriceProp
 	const suggestion = useSuggestion( domainName );
 	const { data: availability } = useQuery( queries.domainAvailability( domainName ) );
 
-	const priceSource = suggestion.is_premium && availability ? availability : suggestion;
+	const priceSource = availability?.is_premium ? availability : suggestion;
 
 	return (
 		<DomainSuggestionPriceComponent

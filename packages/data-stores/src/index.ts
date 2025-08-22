@@ -1,5 +1,4 @@
 import * as AddOns from './add-ons';
-import * as DomainSuggestions from './domain-suggestions';
 import * as HelpCenter from './help-center';
 import * as Onboard from './onboard';
 import * as Plans from './plans';
@@ -19,7 +18,6 @@ export * from './starter-designs-queries';
 export * from './site/types';
 export * from './templates';
 export * from './onboard/types';
-export * from './domain-suggestions/types';
 export * from './plans/types';
 export * from './theme';
 export * from './user/types';
@@ -28,6 +26,8 @@ export * from './queries/use-launchpad';
 export * from './queries/use-all-domains-query';
 export * from './queries/use-site-domains-query';
 export * from './queries/use-site-query';
+export * from './queries/use-domain-suggestions-query';
+export * from './queries/use-wordpress-subdomain-query';
 export * from './mutations/use-domains-bulk-actions-mutation';
 export * from './queries/use-bulk-domain-update-status-query';
 export * from './site-reset';
@@ -38,7 +38,6 @@ const { SubscriptionManager } = Reader;
 export {
 	AddOns,
 	User,
-	DomainSuggestions,
 	HelpCenter,
 	Site,
 	Plans,

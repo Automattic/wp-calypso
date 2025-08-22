@@ -1,5 +1,5 @@
 import { GlobalStyles } from '../site';
-import type { DomainSuggestion } from '../domain-suggestions';
+import type { DomainSuggestion } from '../queries/use-domain-suggestions-query';
 
 export type DomainForm = {
 	lastQuery?: string;
