@@ -76,7 +76,7 @@ export default function BlockedSites() {
 					data={ sites }
 					fields={ fields }
 					view={ {
-						type: sites.length > 0 ? 'table' : 'list',
+						type: 'table',
 						descriptionField: 'URL',
 						titleField: 'name',
 					} }

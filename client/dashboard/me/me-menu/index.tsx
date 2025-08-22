@@ -22,7 +22,7 @@ const MeMenu = () => {
 				<ResponsiveMenu.Item to="/me/notifications">{ __( 'Notifications' ) }</ResponsiveMenu.Item>
 			) }
 			{ supports.reader && (
-				<ResponsiveMenu.Item to="/me/blocked-sites">{ __( 'Blocked Sites' ) }</ResponsiveMenu.Item>
+				<ResponsiveMenu.Item to="/me/blocked-sites">{ __( 'Blocked sites' ) }</ResponsiveMenu.Item>
 			) }
 		</ResponsiveMenu>
 	);
