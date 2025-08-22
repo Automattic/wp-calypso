@@ -37,12 +37,12 @@
 		z-index: 100001;
 		margin: 0;
 
-		.layout__secondary:not(:empty) ~ .layout__primary & {
+		.layout:not(.has-no-sidebar) .layout__secondary:not(:empty) ~ .layout__primary & {
 			left: var( --sidebar-width-max );
 		}
 
 		@media ( max-width: 781px ) {
-			.layout.focus-content .layout__secondary:not(:empty) ~ .layout__primary & {
+			.layout.focus-content:not(.has-no-sidebar) .layout__secondary:not(:empty) ~ .layout__primary & {
 				left: 0;
 			}
 		}
