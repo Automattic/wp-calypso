@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Spinner } from '@wordpress/components';
 import { check, levelUp, notAllowed, Icon } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -81,8 +82,12 @@ export const ReaderFreshlyPressedButton = ( { blogId, postId }: Props ) => {
 	const statusIcon = getIcon( isLoading ? 'loading' : eligibility?.status );
 
 	const handleClick = useCallback( () => {
+		recordTracksEvent( 'calypso_reader_freshly_pressed_suggest_post', {
+			blog_id: blogId,
+			post_id: postId,
+		} );
 		suggestPost();
-	}, [ suggestPost ] );
+	}, [ blogId, postId, suggestPost ] );
 
 	useEffect( () => {
 		if ( suggestionError ) {
