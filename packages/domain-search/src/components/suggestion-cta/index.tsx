@@ -26,6 +26,8 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 		submittedAt,
 	} = useMutation( {
 		mutationFn: () => cart.onAddItem( suggestion ),
+		networkMode: 'always',
+		retry: false,
 	} );
 
 	const isMutating = !! useIsMutating();
@@ -51,7 +53,7 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 		return <DomainSuggestionContinueCTA disabled={ isMutating } onClick={ events.onContinue } />;
 	}
 
-	const errorMessage = isCurrentMutation ? error?.message : null;
+	const errorMessage = isCurrentMutation && error?.message;
 
 	if ( errorMessage ) {
 		return <DomainSuggestionErrorCTA errorMessage={ errorMessage } callback={ addToCart } />;
