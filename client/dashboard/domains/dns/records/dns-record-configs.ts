@@ -32,7 +32,7 @@ export type DnsRecordConfig = {
 	description?: string;
 	fields: Field< DnsRecordFormData >[];
 	form: {
-		type: 'regular';
+		layout: { type: 'regular' };
 		fields: string[];
 	};
 	// Function to transform the form data into the format expected by the DNS endpoint

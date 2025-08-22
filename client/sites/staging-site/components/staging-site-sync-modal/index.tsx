@@ -371,8 +371,8 @@ export default function SyncModal( {
 		setIsFileBrowserVisible( isExpanded );
 
 		if ( ! isExpanded ) {
-			// When collapsing, select all files
-			updateFilesAndFoldersCheckState( 'checked' );
+			// When switching to "All files and folders", reset individual selections
+			updateFilesAndFoldersCheckState( 'unchecked' );
 		}
 	};
 

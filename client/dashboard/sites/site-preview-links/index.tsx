@@ -90,7 +90,7 @@ export default function SitePreviewLinks( { site, title, description }: SitePrev
 		];
 
 		const form = {
-			type: 'regular' as const,
+			layout: { type: 'regular' as const },
 			fields: [ 'enabled' ],
 		};
 

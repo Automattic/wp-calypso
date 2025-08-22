@@ -1,10 +1,7 @@
 import { type Fields, type Operator } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { capitalPDangit } from 'calypso/lib/formatting';
-import {
-	isInternalA4AAgencyDomain,
-	isSitelessDomainForBillingAndReceipts,
-} from 'calypso/me/purchases/utils';
+import { isInternalA4AAgencyDomain } from 'calypso/me/purchases/utils';
 import {
 	getTransactionTermLabel,
 	groupDomainProducts,
@@ -26,11 +23,7 @@ function renderServiceNameDescription(
 	const plan = capitalPDangit( transaction.variation );
 	const termLabel = getTransactionTermLabel( transaction, translate );
 
-	// Hide domains for siteless transactions (Passport URL (siteless.marketplace.wp.com), A4A agency, and a4a purchases)
-	// These are internal/system domains that don't represent user sites
-	const isSitelessDomain = isSitelessDomainForBillingAndReceipts( transaction.domain );
-	const shouldShowDomain =
-		transaction.domain && ! isSitelessDomain && ! isInternalA4AAgencyDomain( transaction.domain );
+	const shouldShowDomain = transaction.domain && ! isInternalA4AAgencyDomain( transaction.domain );
 	return (
 		<div>
 			<strong>{ plan }</strong>

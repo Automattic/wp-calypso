@@ -10,8 +10,8 @@ import {
 	Icon,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { rotateLeft } from '@wordpress/icons';
-import { siteBackupRestoreRoute } from '../../app/router/sites';
+import { rotateLeft, download } from '@wordpress/icons';
+import { siteBackupRestoreRoute, siteBackupDownloadRoute } from '../../app/router/sites';
 import { useFormattedTime } from '../../components/formatted-time';
 import { SectionHeader } from '../../components/section-header';
 import { gridiconToWordPressIcon } from '../../utils/gridicons';
@@ -31,6 +31,13 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 		} );
 	};
 
+	const handleDownloadClick = () => {
+		router.navigate( {
+			to: siteBackupDownloadRoute.fullPath,
+			params: { siteSlug: site.slug, rewindId: backup.rewind_id },
+		} );
+	};
+
 	return (
 		<Card>
 			<CardHeader style={ { flexDirection: 'column', alignItems: 'stretch' } }>
@@ -39,14 +46,24 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 					decoration={ <Icon icon={ gridiconToWordPressIcon( backup.gridicon ) } /> }
 					actions={
 						backup.rewind_id && (
-							<Button
-								variant="primary"
-								size="compact"
-								icon={ rotateLeft }
-								onClick={ handleRestoreClick }
-							>
-								{ __( 'Restore to this point' ) }
-							</Button>
+							<HStack spacing={ 2 }>
+								<Button
+									variant="secondary"
+									size="compact"
+									icon={ download }
+									onClick={ handleDownloadClick }
+								>
+									{ __( 'Download backup' ) }
+								</Button>
+								<Button
+									variant="primary"
+									size="compact"
+									icon={ rotateLeft }
+									onClick={ handleRestoreClick }
+								>
+									{ __( 'Restore to this point' ) }
+								</Button>
+							</HStack>
 						)
 					}
 				/>

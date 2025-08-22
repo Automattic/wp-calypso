@@ -54,7 +54,7 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 	];
 
 	const form = {
-		type: 'regular' as const,
+		layout: { type: 'regular' as const },
 		fields: [ 'version' ],
 	};
 

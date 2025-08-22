@@ -1,6 +1,7 @@
 export type * from './agency';
 export type * from './domain';
 export type * from './domains';
+export type * from './domain-whois';
 export type * from './domain-dns-records';
 export type * from './domain-dnssec';
 export type * from './emails';
