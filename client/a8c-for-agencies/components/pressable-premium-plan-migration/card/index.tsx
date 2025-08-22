@@ -85,15 +85,13 @@ export default function PressablePremiumPlanMigrationCard() {
 				</div>
 
 				<div className="pressable-premium-plan-migration-card__buttons">
-					<div className="pressable-premium-plan-migration-card__primary-button">
-						<Button
-							className="is-light"
-							href={ A4A_MARKETPLACE_HOSTING_REFER_PRESSABLE_PREMIUM_PLAN_LINK }
-							onClick={ handleReferClient }
-						>
-							{ translate( 'Refer client now' ) }
-						</Button>
-					</div>
+					<Button
+						className="is-light"
+						href={ A4A_MARKETPLACE_HOSTING_REFER_PRESSABLE_PREMIUM_PLAN_LINK }
+						onClick={ handleReferClient }
+					>
+						{ translate( 'Refer client now' ) }
+					</Button>
 					<Button className="is-light" variant="secondary" onClick={ handleChatToUs }>
 						{ translate( 'Chat to us about this offer' ) }
 					</Button>
