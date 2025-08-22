@@ -1,5 +1,5 @@
 import { CALYPSO_CONTACT } from '@automattic/urls';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
 	Button,
 	__experimentalHStack as HStack,
@@ -11,20 +11,81 @@ import {
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import useCountryList from '../../app/hooks/use-country-list';
 import { geoLocationQuery } from '../../app/queries/geo';
-import { getTaxName, getDataFormCountryCodes } from '../../utils/tax';
+import { userTaxDetailsMutation, userTaxDetailsQuery } from '../../app/queries/me-tax-details';
+import { getTaxName, getDataFormCountryCodes, stripCountryCodeFromVatId } from '../../utils/tax';
 import useDisplayUserTaxNotices from './use-display-user-tax-notices';
-import useUserTaxDetails from './use-user-tax-details';
-import type { UpdateError } from './use-user-tax-details';
-import type { UserTaxField, UserTaxFormData, UserTaxNormalizedField } from '../../data/types';
+import type {
+	UserTaxField,
+	UserTaxFormData,
+	UserTaxNormalizedField,
+	UserTaxDetails,
+	SetUserTaxDetails,
+} from '../../data/types';
 
 export interface UserTaxFormControlProps {
 	data: UserTaxFormData;
 	field: UserTaxNormalizedField;
 	onChange: ( edits: Partial< UserTaxFormData > ) => void;
+}
+
+export interface UpdateError {
+	message: string;
+	error: string;
+}
+export interface FetchError {
+	message: string;
+	error: string;
+}
+
+export interface UserTaxDetailsManager {
+	userTaxDetails: UserTaxDetails;
+	isLoading: boolean;
+	isUpdating: boolean;
+	isUpdateSuccessful: boolean;
+	fetchError: FetchError | null;
+	updateError: UpdateError | null;
+	setUserTaxDetails: SetUserTaxDetails;
+}
+
+const emptyUserTaxDetails = {};
+
+export function useUserTaxDetails(): UserTaxDetailsManager {
+	const query = useQuery< UserTaxDetails, FetchError >( userTaxDetailsQuery() );
+	const mutation = useMutation< UserTaxDetails, UpdateError, UserTaxDetails >(
+		userTaxDetailsMutation()
+	);
+	const formatUserTaxDetails = useCallback( ( data: UserTaxDetails ) => {
+		const { country, id } = data;
+
+		if ( !! id && id?.length > 1 ) {
+			return { ...data, id: stripCountryCodeFromVatId( id, country ) };
+		}
+
+		return data;
+	}, [] );
+	const setDetails = useCallback(
+		( userTaxDetails: UserTaxDetails ) => {
+			return mutation.mutateAsync( formatUserTaxDetails( userTaxDetails ) );
+		},
+		[ mutation, formatUserTaxDetails ]
+	);
+
+	return useMemo(
+		() => ( {
+			userTaxDetails: query.data ?? emptyUserTaxDetails,
+			isLoading: query.isLoading,
+			isUpdating: mutation.isPending,
+			isUpdateSuccessful: mutation.isSuccess,
+			fetchError: query.error as FetchError,
+			updateError: mutation.error,
+			setUserTaxDetails: setDetails,
+		} ),
+		[ query, setDetails, mutation ]
+	);
 }
 
 function VatSelectControl( { data, field, onChange }: UserTaxFormControlProps ) {

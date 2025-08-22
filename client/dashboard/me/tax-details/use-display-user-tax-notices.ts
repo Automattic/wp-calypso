@@ -2,7 +2,7 @@ import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect } from 'react';
-import type { UpdateError } from './use-user-tax-details';
+import type { UpdateError } from './user-tax-form';
 
 export default function useDisplayUserTaxNotices( {
 	error,

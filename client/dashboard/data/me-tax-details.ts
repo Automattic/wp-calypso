@@ -10,10 +10,10 @@ export interface UserTaxFormData {
 }
 
 export interface UserTaxDetails {
-	country?: string | null;
-	id?: string | null;
-	address?: string | null;
-	name?: string | null;
+	country?: string | undefined;
+	id?: string | undefined;
+	address?: string | undefined;
+	name?: string | undefined;
 	isForBusiness?: boolean | null;
 	can_user_edit?: boolean | false;
 }
@@ -32,8 +32,19 @@ export type UserTaxNormalizedField = NormalizedField< UserTaxFormData > & {
 	taxName?: string;
 };
 
+export type SetUserTaxDetails = ( userTaxDetails: UserTaxDetails ) => Promise< UserTaxDetails >;
+
 export async function fetchUserTaxDetails(): Promise< UserTaxFormData > {
 	return await wpcom.req.get( '/me/vat-info' );
+}
+
+export async function setUserTaxDetails(
+	userTaxDetails: UserTaxDetails
+): Promise< UserTaxDetails > {
+	return await wpcom.req.post( {
+		path: '/me/vat-info',
+		body: userTaxDetails,
+	} );
 }
 
 export async function updateUserTaxDetails(

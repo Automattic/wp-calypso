@@ -6,8 +6,10 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { useCallback, useRef } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
@@ -17,17 +19,18 @@ import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getTaxName } from '../../utils/tax';
-import useUserTaxDetails from './use-user-tax-details';
-import UserTaxForm from './user-tax-form';
+import UserTaxForm, { useUserTaxDetails } from './user-tax-form';
+import type { FetchError } from './user-tax-form';
 import './style.scss';
-import type { FetchError } from './use-user-tax-details';
 
 export default function UserTaxInfoPage() {
 	const countryList = useCountryList();
 	const lastFetchError = useRef< FetchError >();
 	const { recordTracksEvent } = useAnalytics();
 	const { data: geoData } = useSuspenseQuery( geoLocationQuery() );
-	const { fetchError, userTaxDetails } = useUserTaxDetails();
+	const { createErrorNotice, removeNotice } = useDispatch( noticesStore );
+
+	const { userTaxDetails, fetchError } = useUserTaxDetails();
 	const taxName = getTaxName(
 		countryList,
 		userTaxDetails.country ?? userTaxDetails.country ?? geoData?.country_short ?? 'GB'
@@ -62,23 +65,15 @@ export default function UserTaxInfoPage() {
 			message: fetchError.message,
 		} );
 		lastFetchError.current = fetchError;
-		return;
 	}
 
 	if ( fetchError ) {
-		return (
-			<div>
-				<Card>
-					<CardBody>
-						{ sprintf(
-							/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-							__( 'An error occurred while fetching %s details.' ),
-							taxName ?? __( 'VAT' )
-						) }
-					</CardBody>
-				</Card>
-			</div>
-		);
+		removeNotice( 'vat_info_notice' );
+		/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+		createErrorNotice( __( 'An error occurred while fetching %s details.' ), {
+			type: 'snackbar',
+			id: 'vat_info_notice',
+		} );
 	}
 
 	const genericTaxName =
@@ -112,43 +107,41 @@ export default function UserTaxInfoPage() {
 										taxName: taxName ?? fallbackTaxName,
 									}
 								) }
-								<br />
-								<br />
-								{ createInterpolateElement(
-									sprintf(
-										/* translators: This is a list of tax-related reasons a customer might need to contact support */
-										__(
-											'If you:' +
-												'{{ul}}' +
-												/* translators: %(taxName)s is the name of taxes in the country (eg: "VAT" or "GST") or a generic fallback string of tax names */
-												'{{li}}Need to update existing %(taxName)s details{{/li}}' +
-												'{{li}}Have been charged taxes as a business subject to reverse charges{{/li}}' +
-												'{{li}}Do not see your country listed in this form{{/li}}' +
-												'{{/ul}}' +
-												'{{contactSupportLink}}Contact our Happiness Engineers{{/contactSupportLink}}. Include your %(taxName)s number and country code when you contact us.'
-										)
-											.replaceAll( '{{ul}}', '<ul>' )
-											.replaceAll( '{{/ul}}', '</ul>' )
-											.replaceAll( '{{li}}', '<li>' )
-											.replaceAll( '{{/li}}', '</li>' )
-											.replaceAll( '{{contactSupportLink}}', '<contactSupportLink>' )
-											.replaceAll( '{{/contactSupportLink}}', '</contactSupportLink>' ),
-										{ taxName: taxName ?? fallbackTaxName }
+							</p>
+							{ createInterpolateElement(
+								sprintf(
+									/* translators: This is a list of tax-related reasons a customer might need to contact support */
+									__(
+										'If you:' +
+											'{{ul}}' +
+											/* translators: %(taxName)s is the name of taxes in the country (eg: "VAT" or "GST") or a generic fallback string of tax names */
+											'{{li}}Need to update existing %(taxName)s details{{/li}}' +
+											'{{li}}Have been charged taxes as a business subject to reverse charges{{/li}}' +
+											'{{li}}Do not see your country listed in this form{{/li}}' +
+											'{{/ul}}' +
+											'{{contactSupportLink}}Contact our Happiness Engineers{{/contactSupportLink}}. Include your %(taxName)s number and country code when you contact us.'
+									)
+										.replaceAll( '{{ul}}', '<ul>' )
+										.replaceAll( '{{/ul}}', '</ul>' )
+										.replaceAll( '{{li}}', '<li>' )
+										.replaceAll( '{{/li}}', '</li>' )
+										.replaceAll( '{{contactSupportLink}}', '<contactSupportLink>' )
+										.replaceAll( '{{/contactSupportLink}}', '</contactSupportLink>' ),
+									{ taxName: taxName ?? fallbackTaxName }
+								),
+								{
+									ul: <ul />,
+									li: <li />,
+									contactSupportLink: (
+										<a
+											href="/help"
+											title={ contactSupportLinkTitle }
+											onClick={ handleOpenCenterChat }
+										/>
 									),
-									{
-										ul: <ul />,
-										li: <li />,
-										contactSupportLink: (
-											<a
-												href="/help"
-												title={ contactSupportLinkTitle }
-												onClick={ handleOpenCenterChat }
-											/>
-										),
-									}
-								) }
-								<br />
-								<br />
+								}
+							) }
+							<p>
 								{ createInterpolateElement(
 									__(
 										'For more information about taxes, {{learnMoreLink}}click here{{/learnMoreLink}}.'
