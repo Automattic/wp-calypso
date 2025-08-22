@@ -87,18 +87,17 @@ export interface RawPurchasePriceTierEntry extends PriceTierEntry {
  */
 export interface Purchase {
 	/**
-	 * The WordPress.com subscription ID number as a string.
+	 * The WordPress.com subscription ID number.
 	 */
-	ID: string;
+	ID: number;
 
 	amount: number;
 
 	/**
 	 * The ID number of a WordPress.com purchase whose renewal will renew this
-	 * purchase (eg: the plan or domain registration for a domain connection)
-	 * as a string.
+	 * purchase (eg: the plan or domain registration for a domain connection).
 	 */
-	attached_to_purchase_id: string | null;
+	attached_to_purchase_id: number | null;
 
 	auto_renew_coupon_code: string | null;
 	auto_renew_coupon_discount_percentage: number | null;
@@ -184,10 +183,9 @@ export interface Purchase {
 	is_refundable: boolean;
 
 	/**
-	 * If this is a domain product (eg: registration, mapping, or transfer), it
-	 * will be the string 'true'.
+	 * True if this is a domain product (eg: registration, mapping, or transfer).
 	 */
-	is_domain?: 'true';
+	is_domain: boolean;
 
 	is_domain_registration: boolean;
 	is_pending_registration: boolean;
@@ -214,9 +212,9 @@ export interface Purchase {
 	meta: string | undefined;
 
 	/**
-	 * The Ownership number as a string.
+	 * The Ownership number.
 	 */
-	ownership_id: string;
+	ownership_id: number;
 
 	partner_name: string | undefined;
 	partner_slug: string | undefined;
@@ -242,9 +240,9 @@ export interface Purchase {
 	pending_transfer: boolean;
 
 	/**
-	 * The WordPress.com Store product_id number as a string.
+	 * The WordPress.com Store product_id.
 	 */
-	product_id: string;
+	product_id: number;
 
 	product_name: string;
 	product_slug: string;
@@ -269,9 +267,9 @@ export interface Purchase {
 	sale_amount_integer?: number;
 
 	/**
-	 * The WordPress.com site ID number, as a string. Eg: '12345'.
+	 * The WordPress.com site ID number.
 	 */
-	blog_id: string;
+	blog_id: number;
 
 	blogname: string;
 	site_slug?: string;
@@ -281,9 +279,9 @@ export interface Purchase {
 	renewal_price_tier_usage_quantity: number | undefined | null;
 
 	/**
-	 * The WordPress.com user ID number as a string. Eg: '12345'.
+	 * The WordPress.com user ID number.
 	 */
-	user_id: string;
+	user_id: number;
 
 	/**
 	 * True if auto-renew is enabled.
