@@ -249,8 +249,8 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 												siteId={ siteId }
 												siteSlug={ site.slug }
 												logType={ logType }
-												startSec={ startTime }
-												endSec={ endTime }
+												startSec={ startSec }
+												endSec={ endSec }
 												filter={ filter }
 												onSuccess={ ( message ) => setNotice( { variant: 'success', message } ) }
 												onError={ ( message ) => setNotice( { variant: 'error', message } ) }
