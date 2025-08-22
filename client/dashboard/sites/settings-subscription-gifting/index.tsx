@@ -45,7 +45,7 @@ const fields: Field< SiteSettings >[] = [
 ];
 
 const form = {
-	type: 'regular' as const,
+	layout: { type: 'regular' as const },
 	fields: [ { id: 'wpcom_gifting_subscription' } as SimpleFormField ],
 };
 

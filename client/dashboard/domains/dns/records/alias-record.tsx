@@ -22,7 +22,7 @@ export const AliasRecordConfig: DnsRecordConfig = {
 		},
 	],
 	form: {
-		type: 'regular',
+		layout: { type: 'regular' as const },
 		fields: [ 'data', 'ttl' ],
 	},
 	transformData: ( data: DnsRecordFormData, domainName?: string ) => {

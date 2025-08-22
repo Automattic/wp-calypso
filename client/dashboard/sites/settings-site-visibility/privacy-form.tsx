@@ -60,7 +60,7 @@ const visibilityFields: Field< PrivacyFormData >[] = [
 
 const visibilityForm = {
 	layout: {
-		type: 'regular',
+		type: 'regular' as const,
 	},
 	fields: [ { id: 'visibility', layout: { type: 'regular', labelPosition: 'none' } } ],
 } satisfies Form;
@@ -115,7 +115,7 @@ const robotFields: Field< PrivacyFormData & { isPrimaryDomainStaging: boolean } 
 ];
 
 const robotForm = {
-	layout: { type: 'regular' },
+	layout: { type: 'regular' as const },
 	fields: [ 'discourageSearchEngines', 'preventThirdPartySharing' ],
 } satisfies Form;
 

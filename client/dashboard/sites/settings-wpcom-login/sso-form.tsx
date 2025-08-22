@@ -76,7 +76,7 @@ const fields: Field< WpcomLoginFormData >[] = [
 ];
 
 const form = {
-	type: 'regular' as const,
+	layout: { type: 'regular' as const },
 	fields: [ 'sso', 'jetpack_sso_match_by_email', 'jetpack_sso_require_two_step' ],
 };
 
