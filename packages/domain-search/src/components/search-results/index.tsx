@@ -1,37 +1,17 @@
-import { DomainSuggestion, DomainSuggestionPrice, DomainSuggestionsList } from '../../ui';
-import { DomainSuggestionCTA } from '../suggestion-cta';
-import { type DomainSuggestion as DomainSuggestionType } from './types';
+import { DomainSuggestionsList } from '../../ui';
+import { SearchResultsItem } from './item';
+import { SearchResultsPlaceholder } from './placeholder';
 
-export const SearchResults = () => {
-	const suggestions: DomainSuggestionType[] = [
-		{
-			domain_name: 'example.com',
-			cost: '$10',
-			product_slug: 'example',
-			supports_privacy: true,
-		},
-		{
-			domain_name: 'example.org',
-			cost: '$10',
-			product_slug: 'example',
-			supports_privacy: true,
-		},
-	];
-
+const SearchResults = ( { suggestions }: { suggestions: string[] } ) => {
 	return (
 		<DomainSuggestionsList>
-			{ suggestions?.map( ( suggestion ) => {
-				const [ domain, ...tlds ] = suggestion.domain_name.split( '.' );
-				return (
-					<DomainSuggestion
-						key={ suggestion.domain_name }
-						domain={ domain }
-						tld={ tlds.join( '.' ) }
-						price={ <DomainSuggestionPrice price={ suggestion.cost } /> }
-						cta={ <DomainSuggestionCTA suggestion={ suggestion } /> }
-					/>
-				);
-			} ) }
+			{ suggestions?.map( ( suggestion ) => (
+				<SearchResultsItem key={ suggestion } domainName={ suggestion } />
+			) ) }
 		</DomainSuggestionsList>
 	);
 };
+
+SearchResults.Placeholder = SearchResultsPlaceholder;
+
+export { SearchResults };

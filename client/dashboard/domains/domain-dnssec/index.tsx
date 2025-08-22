@@ -31,7 +31,7 @@ const fields: Field< DNSSECFormData >[] = [
 ];
 
 const form = {
-	type: 'regular' as const,
+	layout: { type: 'regular' as const },
 	fields: [ 'enabled' ],
 };
 

@@ -544,6 +544,11 @@ const siteSetupFlow: Flow = {
 					if ( backToFlow ) {
 						return navigate( addQueryArgs( { origin, siteSlug, backToFlow }, 'importList' ) );
 					}
+
+					if ( entryPoint === 'wp-admin-importers-list-direct-importer' ) {
+						return window.location.assign( `${ adminUrl }import.php` );
+					}
+
 					return navigate( addQueryArgs( { origin, siteSlug }, 'importList' ) );
 
 				case 'importerWordpress':

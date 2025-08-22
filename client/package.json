@@ -100,7 +100,7 @@
 		"@wordpress/components": "^29.9.0",
 		"@wordpress/compose": "^7.23.0",
 		"@wordpress/data": "^10.23.0",
-		"@wordpress/dataviews": "^5.0.1-next.719a03cbe.0",
+		"@wordpress/dataviews": "^7.0.0",
 		"@wordpress/date": "^5.23.0",
 		"@wordpress/dom": "^4.23.0",
 		"@wordpress/edit-post": "^8.23.0",

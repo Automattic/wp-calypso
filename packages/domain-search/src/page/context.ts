@@ -1,4 +1,7 @@
 import { createContext, useContext } from 'react';
+import { domainAvailabilityQuery } from '../queries/availability';
+import { productsQuery } from '../queries/products';
+import { domainSuggestionsQuery } from '../queries/suggestions';
 import { type DomainSearchContextType } from './types';
 
 const noop = () => {};
@@ -6,6 +9,11 @@ const noop = () => {};
 export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 	events: {
 		onContinue: noop,
+	},
+	queries: {
+		domainSuggestions: domainSuggestionsQuery,
+		domainAvailability: domainAvailabilityQuery,
+		products: productsQuery,
 	},
 	cart: {
 		items: [],

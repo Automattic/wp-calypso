@@ -55,7 +55,7 @@ const fields: Field< JetpackSettings >[] = [
 ];
 
 const form = {
-	type: 'regular' as const,
+	layout: { type: 'regular' as const },
 	fields: [ 'jetpack_waf_ip_block_list_enabled', 'jetpack_waf_ip_block_list' ],
 };
 

@@ -53,20 +53,6 @@ export function getTemporarySiteType( purchase: Purchase ): string | null {
 	return isTemporarySitePurchase( purchase ) ? productType : null;
 }
 
-/**
- * Checks if a domain string is a siteless domain for billing/receipts
- * Matches: siteless.marketplace.wp.com, siteless.agencies.automattic.com, siteless.a4a.com
- * (with or without paths)
- */
-export function isSitelessDomainForBillingAndReceipts(
-	domain: string | undefined | null
-): boolean {
-	if ( ! domain ) {
-		return false;
-	}
-	return /^siteless\.(marketplace\.wp|agencies\.automattic|a4a)\.com/.test( domain );
-}
-
 export function isAkismetTemporarySitePurchase( purchase: Purchase ): boolean {
 	const { productType } = purchase;
 	return isTemporarySitePurchase( purchase ) && productType === 'akismet';

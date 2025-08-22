@@ -1,5 +1,5 @@
-import { isRegionInCcpaZone } from '@automattic/calypso-analytics';
 import cookie from 'cookie';
+import { isRegionInCcpaZone } from 'calypso/dashboard/app/analytics/geo-privacy';
 
 /**
  * The Global Privacy Control (GPC) flag is a browser setting that allows users to signal their privacy preference to websites.

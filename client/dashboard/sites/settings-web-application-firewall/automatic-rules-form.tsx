@@ -32,7 +32,7 @@ const fields: Field< JetpackSettings >[] = [
 ];
 
 const form = {
-	type: 'regular' as const,
+	layout: { type: 'regular' as const },
 	fields: [ 'jetpack_waf_automatic_rules' ],
 };
 

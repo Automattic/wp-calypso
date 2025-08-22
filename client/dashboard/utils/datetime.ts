@@ -1,4 +1,9 @@
+import { dateI18n } from '@wordpress/date';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import { parse, isValid, format } from 'date-fns';
+
+const HOUR_MS = 3_600_000;
+const YMD_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 
 export function formatDate(
 	date: Date,
@@ -198,7 +203,7 @@ export function getDateFromCreditCardExpiry( cardExpiryDate: string ): Date {
 }
 
 /**
- * Format a date with a given offset in hours.
+ * Format a date with a given offset in hours -- used as a fallback if the timezone is not available.
  */
 export function formatDateWithOffset(
 	input: Date | string | number,
@@ -221,7 +226,7 @@ export function formatDateWithOffset(
 		return '';
 	}
 
-	const adjusted = new Date( sourceTimestampMs + offsetHours * 3_600_000 );
+	const adjusted = new Date( sourceTimestampMs + offsetHours * HOUR_MS );
 	return formatDate( adjusted, locale, { ...options, timeZone: 'UTC' } );
 }
 
@@ -237,4 +242,39 @@ export function getUtcOffsetDisplay( offsetHours: number ): string {
 	const hoursPart = String( Math.floor( abs ) ).padStart( 2, '0' );
 	const minutesPart = String( Math.round( ( abs - Math.floor( abs ) ) * 60 ) ).padStart( 2, '0' );
 	return `UTC${ sign }${ hoursPart }:${ minutesPart }`;
+}
+
+/**
+ * Parse a date string in the format "YYYY-MM-DD" (local time).
+ */
+export function parseYmdLocal( value: string ): Date | null {
+	if ( ! YMD_REGEX.test( value ) ) {
+		return null;
+	}
+	const parsed = parse( value, 'yyyy-MM-dd', new Date() );
+	if ( ! isValid( parsed ) ) {
+		return null;
+	}
+	// Ensure strict match (reject overflows like 2023-02-31 -> 2023-03-03)
+	return format( parsed, 'yyyy-MM-dd' ) === value ? parsed : null;
+}
+
+/**
+ * Format a date as "YYYY-MM-DD" (local time).
+ */
+export function formatYmd( date: Date, timezoneString?: string, gmtOffset?: number ) {
+	if ( timezoneString ) {
+		return dateI18n( 'Y-m-d', date, timezoneString );
+	}
+	if ( typeof gmtOffset === 'number' ) {
+		// site-YYYY-MM-DD via offset (DST-safe enough for offset-only)
+		const noonUtc =
+			Date.UTC( date.getFullYear(), date.getMonth(), date.getDate(), 12 ) - gmtOffset * HOUR_MS;
+		const dt = new Date( noonUtc );
+		const year = dt.getUTCFullYear();
+		const month = String( dt.getUTCMonth() + 1 ).padStart( 2, '0' );
+		const day = String( dt.getUTCDate() ).padStart( 2, '0' );
+		return `${ year }-${ month }-${ day }`;
+	}
+	return dateI18n( 'Y-m-d', date );
 }

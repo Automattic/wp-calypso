@@ -1,21 +1,25 @@
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import { QueryClientProvider } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useCallback, useState, useMemo, useLayoutEffect } from 'react';
-import { Cart } from '../components/cart';
-import { SearchBar } from '../components/search-bar';
-import { SearchForm } from '../components/search-form';
-import { SearchResults } from '../components/search-results';
+import { domainAvailabilityQuery } from '../queries/availability';
+import { productsQuery } from '../queries/products';
+import { domainSuggestionsQuery } from '../queries/suggestions';
 import { DEFAULT_CONTEXT_VALUE, DomainSearchContext } from './context';
+import { EmptyPage } from './empty';
+import { fallbackQueryClient } from './fallback-query-client';
+import { ResultsPage } from './results';
 import type { DomainSearchProps } from './types';
 
 import './style.scss';
 
 export const DomainSearch = ( {
 	className,
+	currentSiteUrl,
 	initialQuery,
 	cart,
 	events,
 	slots,
+	queryClient = fallbackQueryClient,
 }: DomainSearchProps ) => {
 	const [ isFullCartOpen, setIsFullCartOpen ] = useState( false );
 	const [ query, setQuery ] = useState( initialQuery ?? '' );
@@ -34,6 +38,11 @@ export const DomainSearch = ( {
 				...DEFAULT_CONTEXT_VALUE.events,
 				...events,
 			},
+			queries: {
+				domainSuggestions: domainSuggestionsQuery,
+				domainAvailability: domainAvailabilityQuery,
+				products: productsQuery,
+			},
 			cart,
 			isFullCartOpen,
 			closeFullCart,
@@ -41,8 +50,19 @@ export const DomainSearch = ( {
 			query,
 			setQuery,
 			slots,
+			currentSiteUrl,
 		} ),
-		[ isFullCartOpen, closeFullCart, openFullCart, query, setQuery, cart, events, slots ]
+		[
+			isFullCartOpen,
+			closeFullCart,
+			openFullCart,
+			query,
+			setQuery,
+			cart,
+			events,
+			slots,
+			currentSiteUrl,
+		]
 	);
 
 	const cartItemsLength = cart.items.length;
@@ -55,22 +75,17 @@ export const DomainSearch = ( {
 
 	const getContent = () => {
 		if ( ! query ) {
-			return <SearchForm />;
+			return <EmptyPage />;
 		}
 
-		return (
-			<VStack spacing={ 8 }>
-				<SearchBar />
-				{ slots?.BeforeResults && <slots.BeforeResults /> }
-				<SearchResults />
-				<Cart />
-			</VStack>
-		);
+		return <ResultsPage />;
 	};
 
 	return (
-		<DomainSearchContext.Provider value={ contextValue }>
-			<div className={ clsx( 'domain-search', className ) }>{ getContent() }</div>
-		</DomainSearchContext.Provider>
+		<QueryClientProvider client={ queryClient }>
+			<DomainSearchContext.Provider value={ contextValue }>
+				<div className={ clsx( 'domain-search', className ) }>{ getContent() }</div>
+			</DomainSearchContext.Provider>
+		</QueryClientProvider>
 	);
 };

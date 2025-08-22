@@ -67,7 +67,7 @@ export const SRVRecordConfig: DnsRecordConfig = {
 		},
 	],
 	form: {
-		type: 'regular',
+		layout: { type: 'regular' as const },
 		fields: [ 'name', 'service', 'protocol', 'aux', 'weight', 'target', 'port', 'ttl' ],
 	},
 	transformData: ( data: DnsRecordFormData ) => {

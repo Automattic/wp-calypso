@@ -66,7 +66,7 @@ export default function UsageInformationCard() {
 	];
 
 	const form = {
-		type: 'regular' as const,
+		layout: { type: 'regular' as const },
 		fields: [ 'tracks_opt_out' ],
 	};
 

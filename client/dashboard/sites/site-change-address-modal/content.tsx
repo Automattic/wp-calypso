@@ -88,7 +88,7 @@ const NewSiteAddressForm = ( {
 	];
 
 	const form = {
-		type: 'regular' as const,
+		layout: { type: 'regular' as const },
 		fields: [ 'subdomain' ],
 	};
 
@@ -211,7 +211,7 @@ const ConfirmNewSiteAddressForm = ( {
 	];
 
 	const form = {
-		type: 'regular' as const,
+		layout: { type: 'regular' as const },
 		fields: [ 'accept_undone' ],
 	};
 

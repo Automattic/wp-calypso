@@ -54,6 +54,11 @@ module.exports = {
 						],
 						message: 'Importing from @automattic/ is not allowed in the dashboard folder.',
 					},
+					{
+						group: [ 'lodash' ],
+						message:
+							'Lodash is not allowed in the dashboard folder. Use native JavaScript methods instead.',
+					},
 				],
 				paths: [
 					{

@@ -128,7 +128,7 @@ export default function SftpCard( {
 	];
 
 	const form = {
-		type: 'regular' as const,
+		layout: { type: 'regular' as const },
 		fields: [ 'url', 'port', 'username', 'password' ],
 	};
 

@@ -157,7 +157,7 @@ export default function Sites() {
 						onChangeView={ handleViewChange }
 						defaultLayouts={ DEFAULT_LAYOUTS }
 						paginationInfo={ paginationInfo }
-						perPageSizes={ DEFAULT_PER_PAGE_SIZES }
+						config={ { perPageSizes: DEFAULT_PER_PAGE_SIZES } }
 						empty={
 							<DataViewsEmptyState
 								title={ emptyTitle }

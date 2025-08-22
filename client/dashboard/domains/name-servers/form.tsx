@@ -126,8 +126,9 @@ export default function NameServersForm( {
 		return initialData as FormData;
 	} );
 
-	const formObj = useMemo(
+	const form = useMemo(
 		() => ( {
+			layout: { type: 'regular' as const },
 			fields: [
 				'useWpcomNameServers',
 				...Array.from(
@@ -204,7 +205,7 @@ export default function NameServersForm( {
 
 	const canSubmit =
 		! isBusy &&
-		isItemValid( formData, fields, formObj ) &&
+		isItemValid( formData, fields, form ) &&
 		isNameServersChanged( formData, nameServers );
 
 	return (
@@ -213,7 +214,7 @@ export default function NameServersForm( {
 				<DataForm< FormData >
 					data={ formData }
 					fields={ fields }
-					form={ formObj }
+					form={ form }
 					onChange={ ( value ) => {
 						setFormData( ( data ) => ( { ...data, ...value } ) );
 					} }
