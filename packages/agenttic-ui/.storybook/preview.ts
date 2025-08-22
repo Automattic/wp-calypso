@@ -1,4 +1,5 @@
 import type { Preview } from '@storybook/react';
+import React from 'react';
 import '../src/styles/tokens.css';
 import '../src/styles/global.css';
 import '../../agenttic-client/src/markdown-extensions/charts/charts.css';
@@ -37,6 +38,9 @@ const preview: Preview = {
       },
     },
   },
+  decorators: [
+    (Story: any) => React.createElement('div', { className: 'agenttic' }, React.createElement(Story)),
+  ],
 };
 
 export default preview;

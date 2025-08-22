@@ -1,6 +1,6 @@
 import type { BaseIconProps } from './types';
 
-export function StopIcon( { className, size = 24 }: BaseIconProps ) {
+export function CheckIcon( { className, size = 24 }: BaseIconProps ) {
 	return (
 		<svg
 			width={ size }
@@ -9,13 +9,10 @@ export function StopIcon( { className, size = 24 }: BaseIconProps ) {
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
 			className={ className }
+			aria-hidden="true"
 		>
-			<rect
-				x="7"
-				y="7"
-				width="10"
-				height="10"
-				rx="2"
+			<path
+				d="M16.5 7L10.2 15.5L6.9 13L6 14.2L10.5 17.6L17.7 7.9L16.5 7Z"
 				fill="currentColor"
 			/>
 		</svg>

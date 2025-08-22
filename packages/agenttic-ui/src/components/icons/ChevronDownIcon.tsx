@@ -1,12 +1,6 @@
-interface ChevronDownIconProps {
-	className?: string;
-	size?: number;
-}
+import type { BaseIconProps } from './types';
 
-export function ChevronDownIcon( {
-	className,
-	size = 24,
-}: ChevronDownIconProps ) {
+export function ChevronDownIcon( { className, size = 24 }: BaseIconProps ) {
 	return (
 		<svg
 			className={ className }

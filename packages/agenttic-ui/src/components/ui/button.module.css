@@ -103,6 +103,11 @@
     padding: 0;
 }
 
+.sm svg {
+    height: var(--spacing-6);
+    width: var(--spacing-6);
+}
+
 /* ICONS */
 
 .withTextAndIcon {
@@ -112,6 +117,4 @@
 .button svg {
     flex-shrink: 0;
     pointer-events: none;
-    height: var(--spacing-6);
-    width: var(--spacing-6);
-  }
+}

@@ -1,12 +1,6 @@
-interface ThumbsDownIconProps {
-	className?: string;
-	size?: number;
-}
+import type { BaseIconProps } from './types';
 
-export function ThumbsDownIcon( {
-	className,
-	size = 24,
-}: ThumbsDownIconProps ) {
+export function ThumbsDownIcon( { className, size = 24 }: BaseIconProps ) {
 	return (
 		<svg
 			width={ size }

@@ -1,9 +1,6 @@
-interface XIconProps {
-	className?: string;
-	size?: number;
-}
+import type { BaseIconProps } from './types';
 
-export function XIcon( { className, size = 24 }: XIconProps ) {
+export function XIcon( { className, size = 24 }: BaseIconProps ) {
 	return (
 		<svg
 			className={ className }

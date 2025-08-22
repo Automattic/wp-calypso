@@ -14,7 +14,7 @@ interface CollapsedViewProps {
 }
 
 export function CollapsedView( {
-	icon = <BigSkyIcon className="size-6" />,
+	icon = <BigSkyIcon size={ 36 } />,
 	onClick,
 	onHover,
 	focusOnMount = false,

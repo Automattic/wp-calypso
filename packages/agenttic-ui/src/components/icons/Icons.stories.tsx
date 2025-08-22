@@ -1,7 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { ArrowUpIcon } from './ArrowUpIcon';
 import { BigSkyIcon } from './BigSkyIcon';
+import { CheckIcon } from './CheckIcon';
+import { ChevronDownIcon } from './ChevronDownIcon';
+import { ChevronUpIcon } from './ChevronUpIcon';
 import { CopyIcon } from './CopyIcon';
+import { ImageIcon } from './ImageIcon';
+import { LayoutIcon } from './LayoutIcon';
+import { PageIcon } from './PageIcon';
 import { StopIcon } from './StopIcon';
 import { StylesIcon } from './StylesIcon';
 import { ThumbsDownIcon } from './ThumbsDownIcon';
@@ -26,7 +32,7 @@ const meta = {
 	tags: [ 'autodocs' ],
 	argTypes: {
 		size: {
-			control: { type: 'range', min: 16, max: 64, step: 4 },
+			control: { type: 'range', min: 24, max: 64, step: 4 },
 			defaultValue: 24,
 		},
 		className: {
@@ -56,6 +62,69 @@ export const BigSky: Story = {
 	},
 };
 
+export const Check: Story = {
+	render: ( args ) => (
+		<CheckIcon size={ args.size } className={ args.className } />
+	),
+	args: {
+		size: 24,
+	},
+};
+
+export const ChevronDown: Story = {
+	render: ( args ) => (
+		<ChevronDownIcon size={ args.size } className={ args.className } />
+	),
+	args: {
+		size: 24,
+	},
+};
+
+export const ChevronUp: Story = {
+	render: ( args ) => (
+		<ChevronUpIcon size={ args.size } className={ args.className } />
+	),
+	args: {
+		size: 24,
+	},
+};
+
+export const Copy: Story = {
+	render: ( args ) => (
+		<CopyIcon size={ args.size } className={ args.className } />
+	),
+	args: {
+		size: 24,
+	},
+};
+
+export const Image: Story = {
+	render: ( args ) => (
+		<ImageIcon size={ args.size } className={ args.className } />
+	),
+	args: {
+		size: 24,
+	},
+};
+
+export const Layout: Story = {
+	render: ( args ) => (
+		<LayoutIcon size={ args.size } className={ args.className } />
+	),
+	args: {
+		size: 24,
+	},
+};
+
+export const Page: Story = {
+	render: ( args ) => (
+		<PageIcon size={ args.size } className={ args.className } />
+	),
+	args: {
+		size: 24,
+	},
+};
+
 export const Stop: Story = {
 	render: ( args ) => (
 		<StopIcon size={ args.size } className={ args.className } />
@@ -74,18 +143,9 @@ export const Styles: Story = {
 	},
 };
 
-export const X: Story = {
+export const ThumbsDown: Story = {
 	render: ( args ) => (
-		<XIcon size={ args.size } className={ args.className } />
-	),
-	args: {
-		size: 24,
-	},
-};
-
-export const Copy: Story = {
-	render: ( args ) => (
-		<CopyIcon size={ args.size } className={ args.className } />
+		<ThumbsDownIcon size={ args.size } className={ args.className } />
 	),
 	args: {
 		size: 24,
@@ -101,154 +161,11 @@ export const ThumbsUp: Story = {
 	},
 };
 
-export const ThumbsDown: Story = {
+export const X: Story = {
 	render: ( args ) => (
-		<ThumbsDownIcon size={ args.size } className={ args.className } />
+		<XIcon size={ args.size } className={ args.className } />
 	),
 	args: {
 		size: 24,
 	},
-};
-
-// Gallery showing all icons
-export const Gallery: Story = {
-	render: ( args ) => (
-		<div
-			style={ {
-				display: 'grid',
-				gridTemplateColumns: 'repeat(3, 1fr)',
-				gap: '1.5rem',
-			} }
-		>
-			<div
-				style={ {
-					display: 'flex',
-					flexDirection: 'column',
-					alignItems: 'center',
-					gap: '0.5rem',
-				} }
-			>
-				<ArrowUpIcon size={ args.size } className={ args.className } />
-				<span style={ { fontSize: '0.875rem', color: '#4B5563' } }>
-					ArrowUp
-				</span>
-			</div>
-			<div
-				style={ {
-					display: 'flex',
-					flexDirection: 'column',
-					alignItems: 'center',
-					gap: '0.5rem',
-				} }
-			>
-				<BigSkyIcon size={ args.size } className={ args.className } />
-				<span style={ { fontSize: '0.875rem', color: '#4B5563' } }>
-					BigSky
-				</span>
-			</div>
-			<div
-				style={ {
-					display: 'flex',
-					flexDirection: 'column',
-					alignItems: 'center',
-					gap: '0.5rem',
-				} }
-			>
-				<StopIcon size={ args.size } className={ args.className } />
-				<span style={ { fontSize: '0.875rem', color: '#4B5563' } }>
-					Stop
-				</span>
-			</div>
-			<div
-				style={ {
-					display: 'flex',
-					flexDirection: 'column',
-					alignItems: 'center',
-					gap: '0.5rem',
-				} }
-			>
-				<StylesIcon size={ args.size } className={ args.className } />
-				<span style={ { fontSize: '0.875rem', color: '#4B5563' } }>
-					Styles
-				</span>
-			</div>
-			<div
-				style={ {
-					display: 'flex',
-					flexDirection: 'column',
-					alignItems: 'center',
-					gap: '0.5rem',
-				} }
-			>
-				<XIcon size={ args.size } className={ args.className } />
-				<span style={ { fontSize: '0.875rem', color: '#4B5563' } }>
-					X
-				</span>
-			</div>
-			<div
-				style={ {
-					display: 'flex',
-					flexDirection: 'column',
-					alignItems: 'center',
-					gap: '0.5rem',
-				} }
-			>
-				<CopyIcon size={ args.size } className={ args.className } />
-				<span style={ { fontSize: '0.875rem', color: '#4B5563' } }>
-					Copy
-				</span>
-			</div>
-			<div
-				style={ {
-					display: 'flex',
-					flexDirection: 'column',
-					alignItems: 'center',
-					gap: '0.5rem',
-				} }
-			>
-				<ThumbsUpIcon size={ args.size } className={ args.className } />
-				<span style={ { fontSize: '0.875rem', color: '#4B5563' } }>
-					ThumbsUp
-				</span>
-			</div>
-			<div
-				style={ {
-					display: 'flex',
-					flexDirection: 'column',
-					alignItems: 'center',
-					gap: '0.5rem',
-				} }
-			>
-				<ThumbsDownIcon
-					size={ args.size }
-					className={ args.className }
-				/>
-				<span style={ { fontSize: '0.875rem', color: '#4B5563' } }>
-					ThumbsDown
-				</span>
-			</div>
-		</div>
-	),
-	args: {
-		size: 32,
-	},
-};
-
-// Different sizes example
-export const Sizes: Story = {
-	render: () => (
-		<div
-			style={ {
-				display: 'flex',
-				alignItems: 'center',
-				gap: '1rem',
-			} }
-		>
-			<ArrowUpIcon size={ 16 } />
-			<ArrowUpIcon size={ 24 } />
-			<ArrowUpIcon size={ 32 } />
-			<ArrowUpIcon size={ 48 } />
-			<ArrowUpIcon size={ 64 } />
-		</div>
-	),
 };

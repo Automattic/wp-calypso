@@ -1,9 +1,6 @@
-interface CopyIconProps {
-	className?: string;
-	size?: number;
-}
+import type { BaseIconProps } from './types';
 
-export function CopyIcon( { className, size = 24 }: CopyIconProps ) {
+export function CopyIcon( { className, size = 24 }: BaseIconProps ) {
 	return (
 		<svg
 			width={ size }
