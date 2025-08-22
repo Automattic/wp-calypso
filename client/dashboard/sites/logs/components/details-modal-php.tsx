@@ -1,0 +1,68 @@
+import { Badge } from '@automattic/ui';
+import {
+	__experimentalVStack as VStack,
+	__experimentalHStack as HStack,
+	__experimentalText as Text,
+} from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
+import { useLocale } from '../../../app/locale';
+import { getUtcOffsetDisplay } from '../../../utils/datetime';
+import { formatLogDateTimeForDisplay, toSeverityClass } from '../utils';
+import type { PHPLog } from '../../../data/site-logs';
+import './style.scss';
+
+export default function DetailsModalPHP( {
+	item,
+	gmtOffset,
+}: {
+	item: PHPLog;
+	gmtOffset: number;
+} ) {
+	const locale = useLocale();
+	const offsetDisplay = getUtcOffsetDisplay( gmtOffset );
+	const formatted = formatLogDateTimeForDisplay( item.timestamp, gmtOffset, locale );
+	return (
+		<VStack className="site-logs-details-modal" spacing={ 3 }>
+			<div className="site-logs-details-modal__row">
+				<Text className="site-logs-details-modal__field-title">
+					{ __( 'Date & Time' ) } { `(${ offsetDisplay })` }
+				</Text>
+				<Text className="site-logs-details-modal__field-value">{ formatted }</Text>
+			</div>
+
+			<div className="site-logs-details-modal__row">
+				<Text className="site-logs-details-modal__field-title">{ __( 'Group' ) }</Text>
+				<Text className="site-logs-details-modal__field-value">{ item.kind }</Text>
+			</div>
+
+			<div className="site-logs-details-modal__row">
+				<Text className="site-logs-details-modal__field-title">{ __( 'Source' ) }</Text>
+				<Text className="site-logs-details-modal__field-value">{ item.name }</Text>
+			</div>
+
+			<div className="site-logs-details-modal__row">
+				<Text className="site-logs-details-modal__field-title">{ __( 'Severity' ) }</Text>
+				<HStack className="site-logs-details-modal__field-value">
+					<Badge intent="default" className={ `badge--${ toSeverityClass( item.severity ) }` }>
+						{ item.severity }
+					</Badge>
+				</HStack>
+			</div>
+
+			<div className="site-logs-details-modal__row">
+				<Text className="site-logs-details-modal__field-title">{ __( 'File' ) }</Text>
+				<Text className="site-logs-details-modal__field-value">{ item.file }</Text>
+			</div>
+
+			<div className="site-logs-details-modal__row">
+				<Text className="site-logs-details-modal__field-title">{ __( 'Line' ) }</Text>
+				<Text className="site-logs-details-modal__field-value">{ String( item.line ) }</Text>
+			</div>
+
+			<div className="site-logs-details-modal__row">
+				<Text className="site-logs-details-modal__field-title">{ __( 'Message' ) }</Text>
+				<Text className="site-logs-details-modal__field-value">{ item.message }</Text>
+			</div>
+		</VStack>
+	);
+}

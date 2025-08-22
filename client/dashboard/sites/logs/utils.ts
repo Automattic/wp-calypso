@@ -1,5 +1,7 @@
 import { dateI18n } from '@wordpress/date';
 import { startOfDay, endOfDay } from 'date-fns';
+import { formatDateWithOffset } from '../../utils/datetime';
+import type { PHPLog } from '../../data/site-logs';
 
 const HOUR_MS = 3_600_000;
 
@@ -35,4 +37,18 @@ export function buildTimeRangeInSeconds(
 	const startSec = Math.floor( startOfDay( start ).getTime() / 1000 );
 	const endSec = Math.floor( endOfDay( end ).getTime() / 1000 );
 	return { startSec, endSec };
+}
+
+export const toSeverityClass = ( severity: PHPLog[ 'severity' ] ) =>
+	severity.split( ' ' )[ 0 ].toLowerCase();
+
+export function formatLogDateTimeForDisplay(
+	input: string | number,
+	gmtOffset: number,
+	locale: string
+): string {
+	return formatDateWithOffset( input, gmtOffset, locale, {
+		dateStyle: 'long',
+		timeStyle: 'short',
+	} );
 }

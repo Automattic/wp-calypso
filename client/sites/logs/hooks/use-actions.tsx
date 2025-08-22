@@ -6,7 +6,7 @@ import { useDispatch } from 'calypso/state';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import DetailsModalPHP from '../components/details-modal-php';
 import DetailsModalServer from '../components/details-modal-server';
-
+// previous actions
 const useActions = ( { logType, isLoading }: { logType: LogType; isLoading: boolean } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
