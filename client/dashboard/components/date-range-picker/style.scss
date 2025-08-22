@@ -1,0 +1,47 @@
+/* Container */
+.daterange-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+
+  > * { flex: 0 0 auto; }
+}
+
+/* Popover sizing */
+.daterange-popover .components-popover__content {
+  overflow: visible;
+  width: auto;
+  max-width: calc(100vw - 48px);
+}
+
+
+ /* Body rows */
+.daterange-inputs {
+	margin-bottom: 12px;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .daterange-calendar {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+}
+
+/* Desktop presets column: ensure a reasonable width to avoid awkward wrapping */
+@media (min-width: 601px) {
+  .daterange-presets {
+    min-width: 240px;
+  }
+}
+
+/* Preset list items: keep buttons full-width and avoid awkward line wrapping */
+.preset-listbox__item .components-button {
+  width: 100%;
+  justify-content: flex-start;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

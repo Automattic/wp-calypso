@@ -1,7 +1,7 @@
 @import '@automattic/typography/styles/variables';
 @import '@automattic/components/src/styles/typography';
-@import "@wordpress/base-styles/variables";
-@import "@wordpress/base-styles/mixins";
+@import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/mixins';
 
 $blueberry-color: #3858e9;
 
@@ -39,7 +39,7 @@ $blueberry-color: #3858e9;
 			align-items: center;
 			justify-content: start;
 			background-color: var( --studio-gray-0 );
-			/* stylelint-disable-next-line scales/radii */
+
 			border-radius: 8px 8px 8px 0;
 			font-size: 0.875rem;
 			margin-bottom: 0;
@@ -137,7 +137,7 @@ $blueberry-color: #3858e9;
 			background-color: var( --studio-gray-0 );
 			flex: 1;
 			padding: 16px;
-			/* stylelint-disable-next-line scales/radii */
+
 			border-radius: 8px 8px 8px 0;
 			max-width: 256px;
 
@@ -265,7 +265,7 @@ $blueberry-color: #3858e9;
 		}
 
 		.odie-chatbox-message__content {
-			flex-basis: calc(100% - 78px);
+			flex-basis: calc( 100% - 78px );
 		}
 
 		.odie-conversation__feedback {
@@ -288,7 +288,7 @@ $blueberry-color: #3858e9;
 				gap: 8px;
 
 				button {
-					border: solid 0.5px var(--studio-gray-5);
+					border: solid 0.5px var( --studio-gray-5 );
 					padding: 6px;
 				}
 			}
@@ -302,17 +302,16 @@ $blueberry-color: #3858e9;
 			padding: 8px 0;
 
 			> div {
-				border-radius: 8px 8px 0 8px; /* stylelint-disable-line scales/radii */
-				background: var(--studio-wordpress-blue, #3858e9);
+				border-radius: 8px 8px 0 8px;
+				background: var( --studio-wordpress-blue, #3858e9 );
 				width: 80%;
 				padding: 16px;
 				max-width: 256px;
 				box-sizing: border-box;
-				color: var(--studio-white);
+				color: var( --studio-white );
 				font-size: 0.875rem;
 			}
 		}
-
 
 		.odie-conversation-feedback__message {
 			padding: 12px 44px;
@@ -335,12 +334,12 @@ $blueberry-color: #3858e9;
 
 			button.is-primary {
 				margin-top: 10px;
-    			margin-right: 8px;
-				background: var(--studio-wordpress-blue, #3858e9);
+				margin-right: 8px;
+				background: var( --studio-wordpress-blue, #3858e9 );
 			}
 
 			button.is-tertiary {
-				color: var(--studio-wordpress-blue, #3858e9);
+				color: var( --studio-wordpress-blue, #3858e9 );
 			}
 		}
 	}
@@ -391,7 +390,6 @@ $blueberry-color: #3858e9;
 }
 
 .odie-chatbox-message.odie-chatbox-message-user {
-	/* stylelint-disable-next-line scales/radii */
 	border-radius: 8px 8px 0 8px;
 	background-color: $blueberry-color;
 	width: 80%;
@@ -424,7 +422,7 @@ $blueberry-color: #3858e9;
 .odie-chatbox-message.odie-chatbox-message-business {
 	.odie-chatbox-message__content {
 		background-color: #f7f8fe;
-		/* stylelint-disable-next-line scales/radii */
+
 		border-radius: 8px 8px 8px 0;
 		padding: 16px;
 	}
@@ -438,7 +436,6 @@ $blueberry-color: #3858e9;
 }
 
 .odie-chatbox-message.odie-chatbox-message-bot.odie-chatbox-message-message {
-	/* stylelint-disable-next-line scales/radii */
 	border-radius: 8px 8px 8px 0;
 	background-color: var( --studio-white );
 	flex-wrap: wrap;
@@ -459,7 +456,7 @@ $blueberry-color: #3858e9;
 	justify-content: center;
 	background-color: var( --studio-gray-0 );
 	width: 80%;
-	/* stylelint-disable-next-line scales/radii */
+
 	border-radius: 8px 8px 8px 0;
 	max-width: 256px;
 	padding: 16px;
@@ -605,7 +602,7 @@ $feedback-button-size: 28px;
 		gap: 8px;
 
 		.odie-feedback-component-button {
-			border: solid 0.5px var(--studio-gray-5);
+			border: solid 0.5px var( --studio-gray-5 );
 			padding: 6px;
 
 			&:focus {
@@ -901,7 +898,10 @@ $custom-border-corner-size: 16px;
 
 .chatbox-loading-chat__spinner {
 	position: absolute;
-	top: 0; left: 0; right: 0; bottom: 0;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
 	display: flex;
 	align-items: center;
 	justify-content: center;

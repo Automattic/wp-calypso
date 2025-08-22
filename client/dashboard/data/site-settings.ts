@@ -4,6 +4,7 @@ export interface SiteSettings {
 	blog_public?: number;
 	is_fully_managed_agency_site?: boolean;
 	gmt_offset?: number;
+	timezone_string?: string;
 	/**
 	 * @deprecated Use `wpcom_public_coming_soon` instead.
 	 */

@@ -1,89 +1,86 @@
 @import url( https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap );
-@import "@wordpress/base-styles/colors";
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-@import "@automattic/typography/styles/woo-commerce";
+@import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@automattic/typography/styles/woo-commerce';
 
 $breakpoint-mobile: 660px;
 
 @mixin button-primary {
-	background-color: var(--woo-purple-40);
-	border-radius: 8px; /* stylelint-disable-line scales/radii */
-
+	background-color: var( --woo-purple-40 );
+	border-radius: 8px;
 	&:hover,
 	&:focus {
-		background-color: var(--woo-purple-60);
+		background-color: var( --woo-purple-60 );
 	}
 
 	&:disabled {
-		background-color: var(--studio-gray-5);
-		color: var(--studio-gray-50);
+		background-color: var( --studio-gray-5 );
+		color: var( --studio-gray-50 );
 	}
 }
 
 @mixin button-secondary {
-	border: 2px solid var(--woo-purple-40);
+	border: 2px solid var( --woo-purple-40 );
 	background-color: transparent;
-	border-radius: 8px; /* stylelint-disable-line scales/radii */
-
+	border-radius: 8px;
 	&:hover,
 	&:focus {
-		background-color: var(--woo-purple-70);
+		background-color: var( --woo-purple-70 );
 	}
 
 	&:disabled {
-		background-color: var(--studio-gray-5);
-		color: var(--studio-gray-50);
+		background-color: var( --studio-gray-5 );
+		color: var( --studio-gray-50 );
 	}
 }
 
 @mixin button-tertiary {
 	background-color: transparent;
-	color: var(--woo-purple-40);
-	border-radius: 8px; /* stylelint-disable-line scales/radii */
-
+	color: var( --woo-purple-40 );
+	border-radius: 8px;
 	&:hover,
 	&:focus {
-		background-color: var(--woo-purple-0);
-		color: var(--woo-purple-60);
+		background-color: var( --woo-purple-0 );
+		color: var( --woo-purple-60 );
 	}
 
 	&:disabled {
 		background-color: transparent;
-		color: var(--studio-gray-50);
+		color: var( --studio-gray-50 );
 	}
 }
 
 @mixin button-size-small {
 	padding: 5.5px 16px;
 	font-weight: 500;
-	font-size: rem(14px);
+	font-size: rem( 14px );
 	line-height: 21px;
 }
 
 @mixin button-size-base {
 	padding: 12px 24px;
 	font-weight: 500;
-	font-size: rem(16px);
+	font-size: rem( 16px );
 	line-height: 24px;
 }
 
 @mixin button-size-large {
 	padding: 14.5px 24px;
 	font-weight: 500;
-	font-size: rem(18px);
+	font-size: rem( 18px );
 	line-height: 27px;
 }
 
 @mixin link-woo {
-	color: var(--woo-purple-40);
+	color: var( --woo-purple-40 );
 	text-decoration: underline;
 	text-underline-offset: 4px;
 	font-weight: 400;
 
 	&:hover,
 	&:focus {
-		color: var(--woo-purple-60);
+		color: var( --woo-purple-60 );
 	}
 }
 
@@ -99,22 +96,34 @@ $breakpoint-mobile: 660px;
 	$woo-font-size-small: $font-body-extra-small;
 	$woo-font-size-base: $font-body-small;
 	$woo-font-size-input: $font-body-small;
-	$woo-inter-font:  "Inter", -apple-system, system-ui, sans-serif;
+	$woo-inter-font:
+		'Inter',
+		-apple-system,
+		system-ui,
+		sans-serif;
 	$woo-radius-input: 4px;
 	$woo-form-whitespace: 60px;
 	$woo-form-whitespace-660: 20px;
 	$woo-form-divider-border: 1px solid #e6e6e6;
 	$gray-60: #50575e;
 	$gray-50: #646970;
-	$woo-sfpro-display-font:  "SF Pro Display", -apple-system, system-ui, sans-serif;
-	$woo-sfpro-text-font:  "SF Pro Text", -apple-system, system-ui, sans-serif;
+	$woo-sfpro-display-font:
+		'SF Pro Display',
+		-apple-system,
+		system-ui,
+		sans-serif;
+	$woo-sfpro-text-font:
+		'SF Pro Text',
+		-apple-system,
+		system-ui,
+		sans-serif;
 
 	input.form-text-input,
 	textarea.form-text-input {
 		&:focus,
 		&:hover {
-			border-color: var(--woo-purple-50);
-			box-shadow: 0 0 0 2px var(--woo-purple-50);
+			border-color: var( --woo-purple-50 );
+			box-shadow: 0 0 0 2px var( --woo-purple-50 );
 		}
 	}
 
@@ -124,8 +133,8 @@ $breakpoint-mobile: 660px;
 	}
 
 	.button {
-		border-radius: 8px; /* stylelint-disable-line scales/radii */
-		border: 2px solid var(--woo-purple-60);
+		border-radius: 8px;
+		border: 2px solid var( --woo-purple-60 );
 		text-decoration: none;
 		width: auto;
 		padding: 10px 24px;
@@ -134,8 +143,8 @@ $breakpoint-mobile: 660px;
 
 	.button.is-primary,
 	.login .button.is-primary,
-	.magic-login .magic-login__form-action .button.is-primary:not([disabled]) {
-		background-color: var(--woo-purple-60);
+	.magic-login .magic-login__form-action .button.is-primary:not( [disabled] ) {
+		background-color: var( --woo-purple-60 );
 		border: none;
 		color: #fff;
 		width: 100%;
@@ -145,18 +154,18 @@ $breakpoint-mobile: 660px;
 		}
 
 		&:hover {
-			background-color: var(--woo-purple-40);
+			background-color: var( --woo-purple-40 );
 			color: #fff;
 		}
 
 		&:disabled {
-			background-color: var(--studio-gray-0);
-			color: var(--studio-gray-20);
+			background-color: var( --studio-gray-0 );
+			color: var( --studio-gray-20 );
 		}
 	}
 
 	.login__form-user-exists-notice.calypso-notice {
-		border-radius: 8px; // stylelint-disable-line scales/radii
+		border-radius: 8px;
 		overflow: auto;
 		padding: 16px 20px;
 		background-color: #f6f7f7;
@@ -183,17 +192,16 @@ $breakpoint-mobile: 660px;
 
 		.calypso-notice__text {
 			color: #2c3338;
-			font-size: rem(14px);
+			font-size: rem( 14px );
 			font-style: normal;
 			font-weight: 400;
 			line-height: 20px; /* 142.857% */
 			letter-spacing: -0.24px;
 
-
 			a,
 			a:visited {
-				color: var(--woo-purple-60);
-				font-size: rem(14px);
+				color: var( --woo-purple-60 );
+				font-size: rem( 14px );
 				font-style: normal;
 				font-weight: 500;
 				line-height: 20px;
@@ -202,7 +210,7 @@ $breakpoint-mobile: 660px;
 			}
 
 			a:hover {
-				color: var(--woo-purple-40);
+				color: var( --woo-purple-40 );
 			}
 		}
 	}
@@ -215,7 +223,7 @@ $breakpoint-mobile: 660px;
 
 		.progress-bar__progress {
 			border-radius: 0;
-			background-color: var(--color-primary);
+			background-color: var( --color-primary );
 		}
 	}
 
@@ -242,7 +250,7 @@ $breakpoint-mobile: 660px;
 				margin-top: -10px;
 				font-weight: 500;
 
-				@media (max-width: $break-mobile) {
+				@media ( max-width: $break-mobile ) {
 					display: none;
 				}
 			}
@@ -254,7 +262,7 @@ $breakpoint-mobile: 660px;
 	}
 
 	.masterbar__woo-nav-item button.masterbar__login-back-link {
-		color: var(--studio-gray-100);
+		color: var( --studio-gray-100 );
 		display: flex;
 		font-weight: 500;
 		padding: 0;
@@ -274,13 +282,13 @@ $breakpoint-mobile: 660px;
 		background-color: #fff;
 		z-index: 999;
 
-		@media (max-width: $break-mobile) {
+		@media ( max-width: $break-mobile ) {
 			display: flex;
 			padding-inline: 24px;
 		}
 
 		.masterbar__login-back-link {
-			@media (max-width: $break-mobile) {
+			@media ( max-width: $break-mobile ) {
 				display: block;
 			}
 		}
@@ -288,7 +296,7 @@ $breakpoint-mobile: 660px;
 
 	&.is-section-signup .layout__content,
 	.layout__content {
-		@media (max-width: $break-mobile) {
+		@media ( max-width: $break-mobile ) {
 			padding-top: 50px;
 			padding-bottom: 80px;
 		}
@@ -315,7 +323,6 @@ $breakpoint-mobile: 660px;
 		text-align: left;
 	}
 
-
 	.jetpack-connect__logged-in-form .formatted-header,
 	.jetpack-connect__authorize-form .formatted-header,
 	.signup-form__woo-wrapper {
@@ -329,7 +336,7 @@ $breakpoint-mobile: 660px;
 			font-size: 2.75rem;
 			line-height: 52px;
 
-			@media (max-width: $break-mobile) {
+			@media ( max-width: $break-mobile ) {
 				text-align: left;
 			}
 		}
@@ -341,7 +348,7 @@ $breakpoint-mobile: 660px;
 		padding: 60px 0 0;
 		width: 100%;
 
-		@media (max-width: $break-mobile) {
+		@media ( max-width: $break-mobile ) {
 			padding-top: 30px;
 		}
 	}
@@ -368,7 +375,7 @@ $breakpoint-mobile: 660px;
 	.login__two-factor-footer {
 		padding-left: $woo-form-whitespace;
 		padding-right: $woo-form-whitespace;
-		@media (max-width: $break-mobile) {
+		@media ( max-width: $break-mobile ) {
 			padding-left: $woo-form-whitespace-660;
 			padding-right: $woo-form-whitespace-660;
 		}
@@ -389,8 +396,8 @@ $breakpoint-mobile: 660px;
 			display: grid;
 			grid-template-columns: 56px 1fr;
 			grid-template-areas:
-				"gravatar username"
-				"gravatar email";
+				'gravatar username'
+				'gravatar email';
 			flex-direction: row;
 			justify-items: flex-start;
 			align-items: center;
@@ -410,7 +417,7 @@ $breakpoint-mobile: 660px;
 				font-size: 1rem;
 				font-weight: 600;
 				line-height: 24px;
-				color: var(--color-text);
+				color: var( --color-text );
 				grid-area: username;
 				margin-top: 0;
 			}
@@ -428,7 +435,6 @@ $breakpoint-mobile: 660px;
 				white-space: nowrap;
 				text-align: left;
 			}
-
 		}
 
 		.continue-as-user__user-info {
@@ -467,11 +473,11 @@ $breakpoint-mobile: 660px;
 		}
 
 		a {
-			color: var(--woo-purple-70);
+			color: var( --woo-purple-70 );
 			text-decoration: none;
 		}
 
-		@media (max-width: $break-mobile) {
+		@media ( max-width: $break-mobile ) {
 			align-items: flex-start;
 		}
 	}
@@ -518,7 +524,7 @@ $breakpoint-mobile: 660px;
 		margin: 0 0 8px;
 		padding: 0;
 
-		@media (max-width: $break-mobile) {
+		@media ( max-width: $break-mobile ) {
 			padding-left: $woo-form-whitespace-660;
 			padding-right: $woo-form-whitespace-660;
 		}
@@ -541,13 +547,13 @@ $breakpoint-mobile: 660px;
 	}
 
 	.signup-form__woo-wrapper .gridicon {
-		color: var(--color-primary);
+		color: var( --color-primary );
 	}
 
 	&.is-woocommerce-core-profiler-flow {
 		.wp-login__container,
 		.step-wrapper {
-			@media (max-width: $break-mobile) {
+			@media ( max-width: $break-mobile ) {
 				padding-top: 40px;
 			}
 		}
@@ -580,13 +586,13 @@ $breakpoint-mobile: 660px;
 			line-height: 32px;
 			font-weight: 500;
 
-			@media (max-width: $break-mobile) {
-				font-size: rem(28px);
+			@media ( max-width: $break-mobile ) {
+				font-size: rem( 28px );
 			}
 		}
 
 		form.two-factor-authentication__verification-code-form-wrapper {
-			@media (max-width: $break-mobile) {
+			@media ( max-width: $break-mobile ) {
 				margin: 0;
 				max-width: 660px;
 			}
@@ -595,7 +601,7 @@ $breakpoint-mobile: 660px;
 		.formatted-header__subtitle {
 			color: $gray-700;
 
-			@media (max-width: $break-mobile) {
+			@media ( max-width: $break-mobile ) {
 				width: auto;
 			}
 		}
@@ -606,7 +612,7 @@ $breakpoint-mobile: 660px;
 			height: 48px;
 			padding: 10px 16px;
 			font-weight: 500;
-			background-color: var(--color-primary);
+			background-color: var( --color-primary );
 		}
 
 		.two-factor-authentication__actions.card button.button {
@@ -615,8 +621,8 @@ $breakpoint-mobile: 660px;
 			padding: 10px 16px;
 			font-weight: 500;
 			background-color: transparent;
-			color: var(--wp-admin-theme-color);
-			border: 1px solid var(--wp-admin-theme-color);
+			color: var( --wp-admin-theme-color );
+			border: 1px solid var( --wp-admin-theme-color );
 			width: 100%;
 		}
 
@@ -641,7 +647,7 @@ $breakpoint-mobile: 660px;
 			fieldset.form-fieldset label.form-label {
 				font-weight: 500;
 				text-transform: uppercase;
-				font-size: rem(11px);
+				font-size: rem( 11px );
 				color: $gray-900;
 			}
 		}
@@ -651,13 +657,13 @@ $breakpoint-mobile: 660px;
 			p {
 				margin-bottom: 0;
 				color: $woo-label-color;
-				font-size: rem(14px);
+				font-size: rem( 14px );
 				line-height: 24px;
 				letter-spacing: -0.1px;
 
 				a {
-					color: var(--wp-admin-theme-color);
-					font-size: rem(14px);
+					color: var( --wp-admin-theme-color );
+					font-size: rem( 14px );
 					line-height: 24px;
 					letter-spacing: -0.1px;
 				}
@@ -668,7 +674,7 @@ $breakpoint-mobile: 660px;
 			text-align: center;
 			line-height: 16px;
 
-			@media (max-width: $break-mobile) {
+			@media ( max-width: $break-mobile ) {
 				text-align: start;
 			}
 
@@ -678,14 +684,14 @@ $breakpoint-mobile: 660px;
 		}
 
 		.jetpack-connect__logged-in-content {
-			@media (max-width: $break-mobile) {
+			@media ( max-width: $break-mobile ) {
 				padding-left: $woo-form-whitespace-660;
 				padding-right: $woo-form-whitespace-660;
 			}
 		}
 
 		.jetpack-connect__features_wrapper {
-			@media (max-width: $break-mobile) {
+			@media ( max-width: $break-mobile ) {
 				display: none !important;
 			}
 		}
@@ -701,7 +707,7 @@ $breakpoint-mobile: 660px;
 		.signup-form .auth-form__social {
 			button.social-buttons__button.button {
 				width: 100%;
-				border: 1px solid var(--studio-gray-50, #646970);
+				border: 1px solid var( --studio-gray-50, #646970 );
 				border-radius: 2px;
 				border-color: #ccc;
 				padding: 4px 16px;
@@ -745,7 +751,7 @@ $breakpoint-mobile: 660px;
 
 		.jetpack-connect__authorize-form .jetpack-connect__logged-in-content {
 			.jetpack-connect__logged-in-bottom {
-				@media (max-width: $break-mobile) {
+				@media ( max-width: $break-mobile ) {
 					position: initial;
 					max-width: 100%;
 					padding-right: 0;
@@ -778,9 +784,11 @@ $breakpoint-mobile: 660px;
 		h1,
 		.signup-form__woo-wrapper,
 		.wp-login__one-login-layout-heading-text {
-			color: var(--studio-gray-100);
-			font-family: var(--woo-font-family-header);
-			font-feature-settings: "ss01" on, "salt" on;
+			color: var( --studio-gray-100 );
+			font-family: var( --woo-font-family-header );
+			font-feature-settings:
+				'ss01' on,
+				'salt' on;
 			text-align: center;
 			font-weight: 700;
 
@@ -791,8 +799,8 @@ $breakpoint-mobile: 660px;
 		}
 
 		h1,
-		h3:not(.wp-login__one-login-layout-heading-subtext) {
-			color: var(--studio-gray-100);
+		h3:not( .wp-login__one-login-layout-heading-subtext ) {
+			color: var( --studio-gray-100 );
 			text-align: center;
 			font-size: 2.25rem;
 			font-weight: 700;
@@ -805,7 +813,7 @@ $breakpoint-mobile: 660px;
 		input:-webkit-autofill:hover,
 		input:-webkit-autofill:focus,
 		input:-webkit-autofill:active,
-		input[data-com-onepassword-filled="light"] {
+		input[data-com-onepassword-filled='light'] {
 			-webkit-background-clip: text;
 			-webkit-box-shadow: 0 0 0 1000px #fff inset;
 			transition: background-color 5000s ease-in-out 0s;
@@ -824,8 +832,8 @@ $breakpoint-mobile: 660px;
 
 		.button.is-primary,
 		.login .button.is-primary,
-		.magic-login .magic-login__form-action .button.is-primary:not([disabled]) {
-			background-color: var(--woo-purple-50);
+		.magic-login .magic-login__form-action .button.is-primary:not( [disabled] ) {
+			background-color: var( --woo-purple-50 );
 			font-family: $woo-inter-font;
 			font-size: 1rem;
 			font-style: normal;
@@ -837,20 +845,20 @@ $breakpoint-mobile: 660px;
 			}
 
 			&:hover {
-				background-color: var(--woo-purple-70);
+				background-color: var( --woo-purple-70 );
 				color: #fff;
 			}
 
 			&:disabled {
-				background-color: var(--studio-gray-0);
-				color: var(--studio-gray-20);
+				background-color: var( --studio-gray-0 );
+				color: var( --studio-gray-20 );
 			}
 		}
 
 		.formatted-header__title {
 			margin-bottom: 12px;
 
-			@media (max-width: $break-mobile) {
+			@media ( max-width: $break-mobile ) {
 				padding: 0;
 				max-width: $max-width;
 				margin: 0 auto 16px;
@@ -863,23 +871,23 @@ $breakpoint-mobile: 660px;
 			font-weight: 400;
 			line-height: 27px;
 			letter-spacing: -0.025px;
-			color: var(--studio-gray-60);
+			color: var( --studio-gray-60 );
 			text-align: center;
 
 			a {
-				color: var(--woo-purple-50);
-				font-size: rem(18px);
+				color: var( --woo-purple-50 );
+				font-size: rem( 18px );
 				font-style: normal;
 				font-weight: 500;
 				line-height: 27px;
 				letter-spacing: -0.025px;
 
 				&:hover {
-					color: var(--woo-purple-40);
+					color: var( --woo-purple-40 );
 				}
 			}
 
-			@media (max-width: $break-mobile) {
+			@media ( max-width: $break-mobile ) {
 				padding: 0;
 				max-width: $max-width;
 				margin: 0 auto;
@@ -910,7 +918,7 @@ $breakpoint-mobile: 660px;
 				justify-content: center;
 				align-items: center;
 				align-self: stretch;
-				border-radius: 8px; // stylelint-disable-line scales/radii
+				border-radius: 8px;
 				border: 1px solid #dcdcde;
 				width: 100%;
 				box-sizing: border-box;
@@ -943,7 +951,6 @@ $breakpoint-mobile: 660px;
 			.continue-as-user__username {
 				font-style: normal;
 				margin-top: 8px;
-
 			}
 
 			.continue-as-user__email {
@@ -975,10 +982,9 @@ $breakpoint-mobile: 660px;
 		}
 
 		.magic-login {
-
 			h1.magic-login__form-header {
-				font-family: var(--woo-font-family-header);
-				color: var(--studio-gray-100);
+				font-family: var( --woo-font-family-header );
+				color: var( --studio-gray-100 );
 				text-align: center;
 				font-size: 2.25rem;
 				font-weight: 700;
@@ -986,7 +992,7 @@ $breakpoint-mobile: 660px;
 				letter-spacing: -0.72px;
 				margin: 0;
 
-				@media (max-width: $break-mobile) {
+				@media ( max-width: $break-mobile ) {
 					text-align: center;
 					max-width: $max-width;
 					margin: 0 auto;
@@ -995,9 +1001,9 @@ $breakpoint-mobile: 660px;
 
 			.magic-login__form p.magic-login__form-sub-header,
 			.magic-login__form-text {
-				color: var(--studio-gray-60);
+				color: var( --studio-gray-60 );
 				text-align: center;
-				font-size: rem(18px);
+				font-size: rem( 18px );
 				font-style: normal;
 				font-weight: 400;
 				line-height: 27px;
@@ -1012,12 +1018,12 @@ $breakpoint-mobile: 660px;
 
 			.magic-login__emails-list {
 				li {
-					border-radius: 8px; // stylelint-disable-line scales/radii
-					border: 2px solid var(--studio-gray-10);
+					border-radius: 8px;
+					border: 2px solid var( --studio-gray-10 );
 				}
 
 				a {
-					color: var(--studio-gray-100);
+					color: var( --studio-gray-100 );
 					text-decoration: none;
 					font-size: 1rem;
 					font-style: normal;
@@ -1049,11 +1055,11 @@ $breakpoint-mobile: 660px;
 				}
 
 				.verification-code-form__help-text {
-					@media screen and (max-width: 660px) {
+					@media screen and ( max-width: 660px ) {
 						max-width: 450px;
 					}
 
-					@media (max-width: $break-mobile) {
+					@media ( max-width: $break-mobile ) {
 						max-width: $max-width;
 					}
 				}
@@ -1069,12 +1075,12 @@ $breakpoint-mobile: 660px;
 						margin-bottom: 12px;
 					}
 
-					@media screen and (max-width: 660px) {
+					@media screen and ( max-width: 660px ) {
 						text-align: center;
 						max-width: 450px;
 					}
 
-					@media (max-width: $break-mobile) {
+					@media ( max-width: $break-mobile ) {
 						text-align: left;
 						max-width: $max-width;
 					}
@@ -1103,7 +1109,7 @@ $breakpoint-mobile: 660px;
 					min-height: 48px;
 					font-style: normal;
 					font-weight: 500;
-					color: var(--studio-gray-100);
+					color: var( --studio-gray-100 );
 					margin: 0 auto;
 					max-width: $max-width !important;
 				}
@@ -1116,7 +1122,7 @@ $breakpoint-mobile: 660px;
 				text-align: center;
 			}
 
-			@media (max-width: $break-mobile) {
+			@media ( max-width: $break-mobile ) {
 				align-items: center;
 			}
 		}
@@ -1128,13 +1134,13 @@ $breakpoint-mobile: 660px;
 			max-width: 327px;
 			margin: auto;
 			h1.magic-login__form-header {
-				font-size: rem(32px);
+				font-size: rem( 32px );
 				margin-bottom: 15px;
 			}
 
 			p.email-sent {
 				text-align: center;
-				font-size: rem(16px);
+				font-size: rem( 16px );
 				color: #757575;
 				font-style: normal;
 				font-weight: 400;
@@ -1143,13 +1149,13 @@ $breakpoint-mobile: 660px;
 
 			p.email-resend {
 				text-align: center;
-				font-size: rem(13px);
+				font-size: rem( 13px );
 				color: #757575;
 				font-style: normal;
 				font-weight: 400;
 				line-height: 20px; /* 153.846% */
 				button {
-					color: var(--wp-admin-theme-color);
+					color: var( --wp-admin-theme-color );
 					cursor: pointer;
 					&:disabled {
 						opacity: 0.5; // Reduce intensity
@@ -1173,7 +1179,6 @@ $breakpoint-mobile: 660px;
 				margin: 48px 0 48px 0;
 			}
 		}
-
 	}
 
 	// Core Profiler + Passwordless
@@ -1185,7 +1190,7 @@ $breakpoint-mobile: 660px;
 		}
 
 		.login__form-forgot-password {
-			font-size: rem(12px);
+			font-size: rem( 12px );
 			text-underline-offset: 2px;
 			margin-bottom: 24px;
 		}
@@ -1195,16 +1200,16 @@ $breakpoint-mobile: 660px;
 		}
 
 		button.button.is-primary {
-			background-color: var(--color-primary);
+			background-color: var( --color-primary );
 			font-family: inherit;
 			border-radius: 2px;
-			&:hover:not(:disabled) {
-				background-color: var(--color-primary);
+			&:hover:not( :disabled ) {
+				background-color: var( --color-primary );
 			}
 
 			&:disabled {
-				background-color: var(--studio-gray-0);
-				color: var(--studio-gray-20);
+				background-color: var( --studio-gray-0 );
+				color: var( --studio-gray-20 );
 			}
 		}
 
@@ -1214,7 +1219,7 @@ $breakpoint-mobile: 660px;
 		}
 
 		.jetpack-connect__main-logo {
-			@media (max-width: $break-mobile) {
+			@media ( max-width: $break-mobile ) {
 				padding-top: 0;
 			}
 		}
@@ -1229,17 +1234,17 @@ $breakpoint-mobile: 660px;
 			a {
 				font-weight: inherit;
 				font-size: inherit;
-				color: var(--wp-admin-theme-color);
+				color: var( --wp-admin-theme-color );
 				line-height: inherit;
 				text-decoration: none;
 				text-underline-offset: 0;
 
 				&:hover {
-					color: var(--wp-admin-theme-color);
+					color: var( --wp-admin-theme-color );
 				}
 			}
 
-			@media (max-width: $break-mobile) {
+			@media ( max-width: $break-mobile ) {
 				width: 250px;
 				padding-left: $woo-form-whitespace-660;
 				padding-right: $woo-form-whitespace-660;
@@ -1266,16 +1271,16 @@ $breakpoint-mobile: 660px;
 
 		.two-factor-authentication__verification-code-form-wrapper {
 			button.is-primary {
-				font-size: rem(14px);
+				font-size: rem( 14px );
 			}
 
 			.two-factor-authentication__actions.card {
 				padding: 36px 0 40px;
 				button {
-					color: var(--wp-admin-theme-color);
+					color: var( --wp-admin-theme-color );
 				}
 
-				@media screen and (max-width: $break-mobile) {
+				@media screen and ( max-width: $break-mobile ) {
 					margin-bottom: 40px;
 				}
 			}
@@ -1294,7 +1299,7 @@ $breakpoint-mobile: 660px;
 		.auth-form__social-buttons-tos {
 			color: #757575;
 			a {
-				color: var(--wp-admin-theme-color);
+				color: var( --wp-admin-theme-color );
 				font-family: inherit;
 				line-height: 18px;
 				text-underline-offset: 2px;
@@ -1305,8 +1310,8 @@ $breakpoint-mobile: 660px;
 			.auth-form__social {
 				.auth-form__social-buttons .social-buttons__button.button {
 					border-radius: 2px;
-					border: 1px solid var(--Gray-Gray-20, #a7aaad) !important;
-					background: var(--black-white-white, #fff);
+					border: 1px solid var( --Gray-Gray-20, #a7aaad ) !important;
+					background: var( --black-white-white, #fff );
 					span {
 						font-size: 0.875rem;
 						letter-spacing: 0.32px;
@@ -1321,31 +1326,31 @@ $breakpoint-mobile: 660px;
 		.login__form-action,
 		.logged-out-form {
 			button.is-primary {
-				font-size: rem(14px);
+				font-size: rem( 14px );
 			}
 		}
 
 		.wp-login__container {
-			@media screen and (max-width: $break-mobile) {
+			@media screen and ( max-width: $break-mobile ) {
 				padding-top: 24px;
 			}
 		}
 
 		.magic-login__main-content-woo-core-profiler {
 			h1 {
-				@media screen and (max-width: $break-mobile) {
+				@media screen and ( max-width: $break-mobile ) {
 					font-weight: 500;
 				}
 			}
 			.magic-login__emails-list {
 				ul li a p {
-					font-size: rem(14px);
+					font-size: rem( 14px );
 				}
 			}
 		}
 
 		.login__two-factor-footer {
-			@media screen and (max-width: $break-mobile) {
+			@media screen and ( max-width: $break-mobile ) {
 				max-width: 327px;
 				padding-left: 0;
 				padding-right: 0;
@@ -1358,11 +1363,11 @@ $breakpoint-mobile: 660px;
 
 .woo,
 .layout.is-woocommerce-core-profiler-flow {
-	--woo-purple-0: #F2EDFF;
-	--woo-purple-40: #873EFF;
-	--woo-purple-50: #720EEC;
-	--woo-purple-60: #6108CE;
-	--woo-purple-70: #5007AA;
+	--woo-purple-0: #f2edff;
+	--woo-purple-40: #873eff;
+	--woo-purple-50: #720eec;
+	--woo-purple-60: #6108ce;
+	--woo-purple-70: #5007aa;
 	--woo-font-family-header: proxima-vara, 'Proxima Fallback', sans-serif;
 
 	* {
@@ -1374,7 +1379,7 @@ $breakpoint-mobile: 660px;
 	h1,
 	h2,
 	h3 {
-		font-feature-settings: "ss04";
+		font-feature-settings: 'ss04';
 	}
 
 	.masterbar__woo {
@@ -1388,7 +1393,7 @@ $breakpoint-mobile: 660px;
 
 	.button.is-primary,
 	.login .button.is-primary,
-	.magic-login .magic-login__form-action .button.is-primary:not([disabled]) {
+	.magic-login .magic-login__form-action .button.is-primary:not( [disabled] ) {
 		@include button-primary;
 	}
 
@@ -1398,7 +1403,7 @@ $breakpoint-mobile: 660px;
 	}
 
 	.auth-form__social-buttons-tos {
-		color: var(--studio-gray-50) !important;
+		color: var( --studio-gray-50 ) !important;
 
 		a {
 			text-underline-offset: 2px;
@@ -1419,9 +1424,9 @@ $breakpoint-mobile: 660px;
 
 	// Woo DNA Flow
 	.jetpack-connect__main {
-		--studio-woocommerce-purple: var(--woo-purple-40);
-		--studio-woocommerce-purple-60: var(--woo-purple-40);
-		--color-accent: var(--woo-purple-40);
+		--studio-woocommerce-purple: var( --woo-purple-40 );
+		--studio-woocommerce-purple-60: var( --woo-purple-40 );
+		--color-accent: var( --woo-purple-40 );
 
 		.login__social-tos a {
 			@include link-woo;

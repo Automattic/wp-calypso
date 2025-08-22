@@ -1,7 +1,7 @@
 import { formatCurrency } from '@automattic/number-formatters';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { A4A_MARKETPLACE_HOSTING_REFER_ENTERPRISE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { A4A_MARKETPLACE_HOSTING_REFER_PRESSABLE_PREMIUM_PLAN_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
 import PressableLogo from 'calypso/assets/images/a8c-for-agencies/pressable-logo.svg';
 import { useDispatch } from 'calypso/state';
@@ -47,7 +47,7 @@ export default function PremiumPlanSection( {
 					<div className="premium-plan-section__cta-buttons">
 						<Button
 							className="premium-plan-section__cta-button"
-							href={ A4A_MARKETPLACE_HOSTING_REFER_ENTERPRISE_LINK }
+							href={ A4A_MARKETPLACE_HOSTING_REFER_PRESSABLE_PREMIUM_PLAN_LINK }
 							onClick={ onReferNowClick }
 							variant="primary"
 							__next40pxDefaultSize

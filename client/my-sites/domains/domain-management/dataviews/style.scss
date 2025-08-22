@@ -1,13 +1,17 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
-@import "@wordpress/dataviews/build-style/style.css";
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+@import '@wordpress/dataviews/build-style/style.css';
 
 body.is-section-domains.is-bulk-all-domains-page {
 	main.dataviews {
-		background: var(--color-surface);
+		background: var( --color-surface );
 		max-width: none;
-		height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom));
+		height: calc(
+			100vh - var( --masterbar-height ) - var( --content-padding-top ) - var(
+					--content-padding-bottom
+				)
+		);
 		display: flex;
 		flex-direction: column;
 		flex-wrap: nowrap;
@@ -72,13 +76,13 @@ body.is-section-domains.is-bulk-all-domains-page {
 
 				a:hover {
 					text-decoration: underline;
-					color: var(--color-link);
+					color: var( --color-link );
 				}
 			}
 
 			.domains-dataviews__domain-failed-label {
-				color: var(--studio-red-80);
-				background: var(--studio-red-5);
+				color: var( --studio-red-80 );
+				background: var( --studio-red-5 );
 				font-size: 0.75rem;
 				border-radius: 2px;
 				padding: 2px 8px;
@@ -92,8 +96,8 @@ body.is-section-domains.is-bulk-all-domains-page {
 			.list-status-cell__bubble {
 				display: flex;
 				width: 18px;
-				background: var(--studio-red-40);
-				border-radius: 16px; /* stylelint-disable-line scales/radii */
+				background: var( --studio-red-40 );
+				border-radius: 16px;
 				justify-content: center;
 				align-items: center;
 				color: #fff;
@@ -107,16 +111,15 @@ body.is-section-domains.is-bulk-all-domains-page {
 				gap: 2px;
 				display: flex;
 
-
 				&__active {
-					fill: var(--studio-green-50);
-					color: var(--studio-green-50);
+					fill: var( --studio-green-50 );
+					color: var( --studio-green-50 );
 				}
 
 				&__pending,
 				&__disabled {
-					fill: var(--studio-orange-50);
-					color: var(--studio-orange-50);
+					fill: var( --studio-orange-50 );
+					color: var( --studio-orange-50 );
 				}
 			}
 
@@ -137,17 +140,17 @@ body.is-section-domains.is-bulk-all-domains-page {
 
 				&__status-success,
 				&__status-premium {
-					color: var(--studio-green-50);
+					color: var( --studio-green-50 );
 				}
 
 				&__status-verifying,
 				&__status-warning {
-					color: var(--studio-orange-50);
+					color: var( --studio-orange-50 );
 				}
 
 				&__status-alert,
 				&__status-error {
-					color: var(--studio-red-50);
+					color: var( --studio-red-50 );
 				}
 			}
 		}
@@ -156,8 +159,7 @@ body.is-section-domains.is-bulk-all-domains-page {
 	@include break-small {
 		.layout__primary > main.dataviews {
 			border: 1px solid $gray-200;
-			border-radius: 8px; /* stylelint-disable-line scales/radii */
+			border-radius: 8px;
 		}
 	}
 }
-

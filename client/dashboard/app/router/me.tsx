@@ -5,6 +5,8 @@ import { userPurchasesQuery } from '../queries/me-purchases';
 import { sitesQuery } from '../queries/sites';
 import { queryClient } from '../query-client';
 import { rootRoute } from './root';
+import type { AppConfig } from '../context';
+import type { AnyRoute } from '@tanstack/react-router';
 
 export const meRoute = createRoute( {
 	getParentRoute: () => rootRoute,
@@ -137,18 +139,40 @@ export const notificationsRoute = createRoute( {
 	)
 );
 
-export const createMeRoutes = () => {
-	return [
-		meRoute.addChildren( [
-			profileRoute,
-			billingRoute,
-			billingHistoryRoute,
-			purchasesRoute,
-			paymentMethodsRoute,
-			taxDetailsRoute,
-			securityRoute,
-			privacyRoute,
-			notificationsRoute,
-		] ),
+export const blockedSitesRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'blocked-sites',
+} ).lazy( () =>
+	import( '../../me/blocked-sites' ).then( ( d ) =>
+		createLazyRoute( 'blocked-sites' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const createMeRoutes = ( config: AppConfig ) => {
+	if ( ! config.supports.me ) {
+		return [];
+	}
+
+	const meRoutes: AnyRoute[] = [
+		profileRoute,
+		billingRoute,
+		billingHistoryRoute,
+		purchasesRoute,
+		paymentMethodsRoute,
+		taxDetailsRoute,
+		securityRoute,
+		notificationsRoute,
 	];
+
+	if ( config.supports.me.privacy ) {
+		meRoutes.push( privacyRoute );
+	}
+
+	if ( config.supports.reader ) {
+		meRoutes.push( blockedSitesRoute );
+	}
+
+	return [ meRoute.addChildren( meRoutes ) ];
 };

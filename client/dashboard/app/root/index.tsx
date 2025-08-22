@@ -32,7 +32,7 @@ function Root() {
 		<div className="dashboard-root__layout">
 			{ ( isFetching > 0 || isNavigating ) && <LoadingLine /> }
 			{ isInitialLoad && <LoadingLogo className="wpcom-site__logo" /> }
-			<Header />
+			{ ! isInitialLoad && <Header /> }
 			<main>
 				<CatchNotFound fallback={ NotFound }>
 					<Outlet />

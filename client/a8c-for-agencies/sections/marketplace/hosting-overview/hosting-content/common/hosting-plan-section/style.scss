@@ -1,6 +1,6 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
 
 .hosting-plan-section {
 	padding-block: 32px;
@@ -46,8 +46,8 @@
 }
 
 .hosting-plan-section__main {
-	border-radius: 8px; // stylelint-disable-line scales/radii
-	background-color: var(--color-primary-0);
+	border-radius: 8px;
+	background-color: var( --color-primary-0 );
 	padding: 24px;
 	max-width: 100%;
 	overflow: hidden;
@@ -70,23 +70,23 @@
 }
 
 .hosting-plan-section__card {
-	border-radius: 8px; // stylelint-disable-line scales/radii
-	box-shadow: 0 3px 1px 0 #0000000A;
+	border-radius: 8px;
+	box-shadow: 0 3px 1px 0 #0000000a;
 	padding: 32px;
-	background-color: var(--color-surface);
+	background-color: var( --color-surface );
 	max-width: 100%;
 	overflow: hidden;
 }
 
 .hosting-plan-section__details {
 	@include break-wide {
-	margin-inline-start: 32px;
+		margin-inline-start: 32px;
 	}
 }
 
 .hosting-plan-section__aside {
-	border-radius: 8px; // stylelint-disable-line scales/radii
-	border: 1px solid var(--color-neutral-5);
+	border-radius: 8px;
+	border: 1px solid var( --color-neutral-5 );
 	padding: 24px;
 	display: flex;
 	flex-direction: column;
@@ -121,7 +121,7 @@
 .hosting-plan-section__details-subheading {
 	@include body-medium;
 	margin-block-start: 8px;
-	color: var(--color-neutral-60);
+	color: var( --color-neutral-60 );
 }
 
 .hosting-plan-section__aside-footer {
