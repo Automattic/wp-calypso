@@ -1,6 +1,5 @@
 import {
 	NEWSLETTER_FLOW,
-	DOMAIN_FOR_GRAVATAR_FLOW,
 	isDomainForGravatarFlow,
 	isHundredYearPlanFlow,
 	isHundredYearDomainFlow,
@@ -18,7 +17,7 @@ interface DomainSuggestionsVendorOptions {
 	isSignup?: boolean;
 	isDomainOnly?: boolean;
 	isPremium?: boolean;
-	flowName?: typeof NEWSLETTER_FLOW | typeof DOMAIN_FOR_GRAVATAR_FLOW | 'domains/add';
+	flowName?: string;
 }
 type DomainSuggestionsVendor =
 	| 'variation2_front'
@@ -29,9 +28,10 @@ type DomainSuggestionsVendor =
 	| 'gravatar'
 	| '100-year-domains';
 
-export function getDomainSuggestionsVendor(
-	options: DomainSuggestionsVendorOptions = {}
-): DomainSuggestionsVendor {
+export function getDomainSuggestionsVendor( {
+	isPremium = true,
+	...options
+}: DomainSuggestionsVendorOptions = {} ): DomainSuggestionsVendor {
 	if ( isDomainForGravatarFlow( options.flowName ) ) {
 		return 'gravatar';
 	}
@@ -47,7 +47,7 @@ export function getDomainSuggestionsVendor(
 	if ( options.isSignup && ! options.isDomainOnly ) {
 		return 'variation4_front';
 	}
-	if ( options.isPremium ) {
+	if ( isPremium ) {
 		return 'variation8_front';
 	}
 	return 'variation2_front';

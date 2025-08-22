@@ -60,6 +60,7 @@ import {
 } from 'calypso/components/domains/register-domain-step/utility';
 import { DropdownFilters, FilterResetNotice } from 'calypso/components/domains/search-filters';
 import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-notice';
+import { getDomainSuggestionsVendor } from 'calypso/components/domains/wpcom-domain-search/get-suggestions-vendor';
 import EmptyContent from 'calypso/components/empty-content';
 import Notice from 'calypso/components/notice';
 import { hasDomainInCart } from 'calypso/lib/cart-values/cart-items';
@@ -71,7 +72,6 @@ import {
 } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
-import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import wpcom from 'calypso/lib/wp';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { domainUseMyDomain } from 'calypso/my-sites/domains/paths';
@@ -169,7 +169,7 @@ class RegisterDomainStep extends Component {
 		onMappingError: noop,
 		onDomainsAvailabilityChange: noop,
 		onSave: noop,
-		vendor: getSuggestionsVendor(),
+		vendor: getDomainSuggestionsVendor(),
 		showExampleSuggestions: false,
 		onSkip: noop,
 		showSkipButton: false,

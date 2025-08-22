@@ -34,6 +34,7 @@ import RegisterDomainStep from 'calypso/components/domains/register-domain-step'
 import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
 import SideExplainer from 'calypso/components/domains/side-explainer';
 import UseMyDomain from 'calypso/components/domains/use-my-domain';
+import { getDomainSuggestionsVendor } from 'calypso/components/domains/wpcom-domain-search/get-suggestions-vendor';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Notice from 'calypso/components/notice';
 import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
@@ -60,7 +61,6 @@ import {
 	getDomainSuggestionSearch,
 	getFixedDomainSearch,
 } from 'calypso/lib/domains';
-import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { useIsDomainSearchV2Enabled } from 'calypso/lib/domains/use-domain-search-v2';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
@@ -1227,7 +1227,7 @@ class RenderDomainsStepComponent extends Component {
 				showExampleSuggestions={ showExampleSuggestions }
 				suggestion={ initialQuery }
 				designType={ this.getDesignType() }
-				vendor={ getSuggestionsVendor( {
+				vendor={ getDomainSuggestionsVendor( {
 					isSignup: true,
 					isDomainOnly: this.props.isDomainOnly,
 					flowName: this.props.flowName,

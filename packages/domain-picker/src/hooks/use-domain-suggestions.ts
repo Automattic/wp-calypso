@@ -54,7 +54,6 @@ export function useDomainSuggestions(
 				include_dotblogsubdomain: false,
 				quantity: quantity + 1, // increment the count to add the free domain
 				locale,
-				category_slug: domainCategory,
 				...extraOptions,
 			} );
 
