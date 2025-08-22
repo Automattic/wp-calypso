@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
 	Notice,
@@ -23,7 +24,6 @@ import PageLayout from '../../components/page-layout';
 import { availableLanguages } from '../../data/languages';
 import { UserSettingsPreferences } from '../../data/me-user-preferences';
 import type { Field } from '@wordpress/dataviews';
-import './style.scss';
 
 const languageForm = {
 	type: 'regular' as const,
@@ -32,11 +32,10 @@ const languageForm = {
 		{
 			id: 'interfaceLanguage',
 			label: __( 'Language' ),
-			children: [ 'language', 'enable_translator' ],
+			children: [ 'language', 'enable_translator', 'i18n_empathy_mode' ],
 		},
 	],
 };
-
 export default function Preferences() {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: serverData } = useQuery( userPreferencesQuery() );
@@ -48,6 +47,7 @@ export default function Preferences() {
 		() => ( serverData ? { ...serverData, ...savingData, ...localData } : undefined ),
 		[ serverData, savingData, localData ]
 	);
+	const shouldShowEmpathyMode = config.isEnabled( 'i18n/empathy-mode' );
 	const mutation = useMutation( userPreferencesMutation() );
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
@@ -156,9 +156,17 @@ export default function Preferences() {
 			),
 			type: 'boolean',
 		},
-		// TODO we might also need to add the empathy mode and the incomplete locale control https://github.com/Automattic/wp-calypso/blob/fbeb9c37266e2bfac7af881b1672a9f6d72a0670/client/components/language-picker/modal.tsx#L118
 	];
 
+	if ( shouldShowEmpathyMode ) {
+		languageFields.push( {
+			Edit: 'checkbox',
+			id: 'i18n_empathy_mode',
+			label: 'Empathy mode (a8c-only)',
+			description: 'Pretend to use that language but display English where a translated exists', // TODO field should be disabled in case we're using default language https://github.com/Automattic/wp-calypso/blob/559b5e82dc96bd668fd6e5ef558d588d09eeb80f/client/components/language-picker/modal.tsx#L159
+			type: 'boolean',
+		} );
+	}
 	return (
 		<>
 			<form onSubmit={ handleSubmit }>
