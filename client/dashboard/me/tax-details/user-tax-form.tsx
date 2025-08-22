@@ -8,16 +8,17 @@ import {
 	__experimentalVStack as VStack,
 	SelectControl,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { useState, useRef, useCallback } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import useCountryList from '../../app/hooks/use-country-list';
 import { geoLocationQuery } from '../../app/queries/geo';
 import { userTaxDetailsMutation, userTaxDetailsQuery } from '../../app/queries/me-tax-details';
 import { getTaxName, getDataFormCountryCodes, stripCountryCodeFromVatId } from '../../utils/tax';
-import useDisplayUserTaxNotices from './use-display-user-tax-notices';
 import type {
 	UserTaxField,
 	UserTaxFormData,
@@ -168,6 +169,8 @@ function VatInputControl( { data, field, onChange }: UserTaxFormControlProps ) {
 }
 
 export default function UserTaxForm() {
+	const lastFetchError = useRef< FetchError >();
+	const { createSuccessNotice, createErrorNotice, removeNotice } = useDispatch( noticesStore );
 	const lastUpdateError = useRef< UpdateError >();
 	const { recordTracksEvent } = useAnalytics();
 
@@ -179,6 +182,7 @@ export default function UserTaxForm() {
 		isUpdating,
 		setUserTaxDetails,
 		userTaxDetails,
+		fetchError,
 		updateError,
 	} = useUserTaxDetails();
 	const countryList = useCountryList();
@@ -206,8 +210,9 @@ export default function UserTaxForm() {
 	const { data: geoData } = useSuspenseQuery( geoLocationQuery() );
 	const taxName = getTaxName( countryList, formData.country ?? geoData?.country_short ?? 'GB' );
 
-	useDisplayUserTaxNotices( { error: updateError, success: isUpdateSuccessful, taxName } );
 	if ( updateError && lastUpdateError.current !== updateError ) {
+		removeNotice( 'vat_info_notice' );
+		createErrorNotice( updateError.message, { type: 'snackbar', id: 'vat_info_notice' } );
 		recordTracksEvent( 'calypso_dashboard_vat_details_validation_failure', {
 			error: updateError.error,
 		} );
@@ -215,7 +220,37 @@ export default function UserTaxForm() {
 	}
 
 	if ( isUpdateSuccessful ) {
+		removeNotice( 'vat_info_notice' );
+		createSuccessNotice(
+			sprintf(
+				/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+				__( 'Your %s details have been updated!' ),
+				taxName ?? __( 'VAT' )
+			),
+			{
+				id: 'vat_info_notice',
+			}
+		);
 		recordTracksEvent( 'calypso_dashboard_vat_details_validation_success' );
+	}
+	if ( fetchError && lastFetchError.current !== fetchError ) {
+		recordTracksEvent( 'calypso_dashboard_vat_details_fetch_failure', {
+			error: fetchError.error,
+			message: fetchError.message,
+		} );
+		lastFetchError.current = fetchError;
+	}
+
+	if ( fetchError ) {
+		removeNotice( 'vat_info_notice' );
+		createErrorNotice(
+			/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+			sprintf( __( 'An error occurred while fetching %s details.' ), taxName ?? __( 'VAT' ) ),
+			{
+				type: 'snackbar',
+				id: 'vat_info_notice',
+			}
+		);
 	}
 
 	const isVatAlreadySet = !! userTaxDetails.id;

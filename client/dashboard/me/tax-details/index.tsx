@@ -6,11 +6,9 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
-import { useCallback, useRef } from 'react';
+import { useCallback } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
 import useCountryList from '../../app/hooks/use-country-list';
@@ -20,17 +18,14 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getTaxName } from '../../utils/tax';
 import UserTaxForm, { useUserTaxDetails } from './user-tax-form';
-import type { FetchError } from './user-tax-form';
 import './style.scss';
 
 export default function UserTaxInfoPage() {
 	const countryList = useCountryList();
-	const lastFetchError = useRef< FetchError >();
 	const { recordTracksEvent } = useAnalytics();
 	const { data: geoData } = useSuspenseQuery( geoLocationQuery() );
-	const { createErrorNotice, removeNotice } = useDispatch( noticesStore );
 
-	const { userTaxDetails, fetchError } = useUserTaxDetails();
+	const { userTaxDetails } = useUserTaxDetails();
 	const taxName = getTaxName(
 		countryList,
 		userTaxDetails.country ?? userTaxDetails.country ?? geoData?.country_short ?? 'GB'
@@ -58,23 +53,6 @@ export default function UserTaxInfoPage() {
 		},
 		[ recordTracksEvent, resetSupportInteraction, setNavigateToRoute, setShowHelpCenter ]
 	);
-
-	if ( fetchError && lastFetchError.current !== fetchError ) {
-		recordTracksEvent( 'calypso_dashboard_vat_details_fetch_failure', {
-			error: fetchError.error,
-			message: fetchError.message,
-		} );
-		lastFetchError.current = fetchError;
-	}
-
-	if ( fetchError ) {
-		removeNotice( 'vat_info_notice' );
-		/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-		createErrorNotice( __( 'An error occurred while fetching %s details.' ), {
-			type: 'snackbar',
-			id: 'vat_info_notice',
-		} );
-	}
 
 	const genericTaxName =
 		/* translators: This is a generic name for taxes to use when we do not know the user's country. */
