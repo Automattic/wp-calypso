@@ -15,7 +15,8 @@ $tab-background-selected: var(--color-surface);
 	gap: 39px;
 	transition: height .25s ease-out;
 
-	.a4a-migration-offer-v3 {
+	.a4a-migration-offer-v3,
+	.pressable-premium-plan-migration {
 		display: none;
 
 		@include break-large {
@@ -38,7 +39,8 @@ $tab-background-selected: var(--color-surface);
 		@include break-large {
 			height: 380px;
 
-			&:has(.a4a-migration-offer-v3.is-expanded) {
+			&:has(.a4a-migration-offer-v3.is-expanded),
+			&:has(.pressable-premium-plan-migration.is-expanded) {
 				height: 636px;
 			}
 		}
@@ -46,7 +48,8 @@ $tab-background-selected: var(--color-surface);
 		@include break-wide {
 			height: 340px;
 
-			&:has(.a4a-migration-offer-v3.is-expanded) {
+			&:has(.a4a-migration-offer-v3.is-expanded),
+			&:has(.pressable-premium-plan-migration.is-expanded) {
 				height: 485px;
 			}
 		}
