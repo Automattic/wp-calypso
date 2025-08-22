@@ -8,7 +8,6 @@ import {
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
 import { siteBackupsRoute } from '../../app/router/sites';
-import { getSiteDisplayUrl } from '../../utils/site-url';
 import type { Site } from '../../data/types';
 
 const SiteBackupRestoreSuccess = ( {
@@ -19,7 +18,6 @@ const SiteBackupRestoreSuccess = ( {
 	site: Site;
 } ) => {
 	const router = useRouter();
-
 	return (
 		<HStack spacing={ 4 }>
 			<HStack justify="flex-start">
@@ -41,7 +39,7 @@ const SiteBackupRestoreSuccess = ( {
 				/>
 				<Button
 					variant="primary"
-					href={ getSiteDisplayUrl( site ) }
+					href={ site.URL }
 					target="_blank"
 					text={ __( 'View website ↗' ) }
 				/>
