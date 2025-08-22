@@ -162,7 +162,7 @@ export default function RemoveDomainDialog( {
 					) }
 					{ step === 3 && (
 						<Button
-							isDestructive
+							isDestructive={ domainConfirmed }
 							variant="primary"
 							disabled={ ! domainConfirmed }
 							onClick={ onConfirm }
