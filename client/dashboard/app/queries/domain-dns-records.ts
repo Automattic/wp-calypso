@@ -3,34 +3,33 @@ import {
 	fetchDomainDns,
 	updateDomainDns,
 	restoreDefaultEmailRecords,
-	DnsRecord,
+	type DnsRecord,
+	applyDnsTemplate,
+	type DnsTemplateVariables,
+	importDnsBind,
 } from '../../data/domain-dns-records';
 import { queryClient } from '../query-client';
-
-export const domainDnsMutation = ( domainName: string ) =>
-	mutationOptions( {
-		mutationFn: ( params: {
-			recordsToAdd?: DnsRecord[];
-			recordsToRemove?: DnsRecord[];
-			restoreDefaultARecords?: boolean;
-		} ) =>
-			updateDomainDns(
-				domainName,
-				params.recordsToAdd,
-				params.recordsToRemove,
-				params.restoreDefaultARecords
-			),
-		onSuccess: () => {
-			queryClient.invalidateQueries( {
-				queryKey: [ 'domains', domainName, 'dns' ],
-			} );
-		},
-	} );
 
 export const domainDnsQuery = ( domainName: string ) =>
 	queryOptions( {
 		queryKey: [ 'domains', domainName, 'dns' ],
 		queryFn: () => fetchDomainDns( domainName ),
+	} );
+
+export const domainDnsMutation = ( domainName: string ) =>
+	mutationOptions( {
+		mutationFn: ( {
+			recordsToAdd,
+			recordsToRemove,
+			restoreDefaultARecords,
+		}: {
+			recordsToAdd?: DnsRecord[];
+			recordsToRemove?: DnsRecord[];
+			restoreDefaultARecords?: boolean;
+		} ) => updateDomainDns( domainName, recordsToAdd, recordsToRemove, restoreDefaultARecords ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( domainDnsQuery( domainName ) );
+		},
 	} );
 
 export const domainDnsEmailMutation = ( domainName: string ) =>
@@ -40,5 +39,29 @@ export const domainDnsEmailMutation = ( domainName: string ) =>
 			queryClient.invalidateQueries( {
 				queryKey: [ 'domains', domainName, 'dns' ],
 			} );
+		},
+	} );
+
+export const domainDnsApplyTemplateMutation = ( domainName: string ) =>
+	mutationOptions( {
+		mutationFn: ( {
+			provider,
+			service,
+			variables,
+		}: {
+			provider: string;
+			service: string;
+			variables: DnsTemplateVariables;
+		} ) => applyDnsTemplate( domainName, provider, service, variables ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( domainDnsQuery( domainName ) );
+		},
+	} );
+
+export const domainDnsImportBindMutation = ( domainName: string ) =>
+	mutationOptions( {
+		mutationFn: ( file: File ) => importDnsBind( domainName, file ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( domainDnsQuery( domainName ) );
 		},
 	} );

@@ -35,6 +35,28 @@ jest.mock( '@tanstack/react-query', () => ( {
 	} ),
 } ) );
 
+jest.mock( '@automattic/calypso-config', () =>
+	Object.assign(
+		jest.fn().mockImplementation( ( key ) => {
+			if ( key === 'i18n_default_locale_slug' ) {
+				return 'en';
+			}
+			if ( key === 'site_filter' ) {
+				return [];
+			}
+			return undefined;
+		} ),
+		{
+			isEnabled: jest.fn().mockImplementation( ( feature ) => {
+				if ( feature === 'hosting/staging-sites-redesign' ) {
+					return false;
+				}
+				return false;
+			} ),
+		}
+	)
+);
+
 jest.mock( 'calypso/state/analytics/actions', () => ( {
 	__esModule: true,
 	...jest.requireActual( 'calypso/state/analytics/actions' ),

@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect } from 'react';
+import { useBackupState } from '../../app/hooks/site-backup-state';
 import { siteRewindableActivityLogEntriesQuery } from '../../app/queries/site-activity-log';
 import DataViewsCard from '../../components/dataviews-card';
 import { getFields } from './dataviews/fields';
@@ -25,9 +26,12 @@ export function BackupsList( {
 		perPage: 10,
 	} );
 
-	const { data: activityLog = [], isLoading: isLoadingActivityLog } = useQuery(
-		siteRewindableActivityLogEntriesQuery( site.ID )
-	);
+	const { hasRecentlyCompleted } = useBackupState( site.ID );
+
+	const { data: activityLog = [], isLoading: isLoadingActivityLog } = useQuery( {
+		...siteRewindableActivityLogEntriesQuery( site.ID ),
+		refetchInterval: hasRecentlyCompleted ? 3000 : false,
+	} );
 
 	const fields = getFields();
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( activityLog, view, fields );

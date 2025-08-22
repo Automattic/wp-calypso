@@ -42,3 +42,22 @@
 		text-transform: uppercase;
 	}
 }
+
+// Core CheckboxControl's :disabled styles are overridden by its :checked styles. This is our workaround.
+// @see http://github.com/WordPress/gutenberg/issues/59411
+.dataforms-layouts-regular__field .components-checkbox-control:has(input[type="checkbox"]:disabled) {
+	label {
+		cursor: default;
+	}
+
+	input[type="checkbox"] {
+		background: #f0f0f0;
+		border-color: #ddd;
+		cursor: default;
+		opacity: 1;
+	}
+
+	svg {
+		fill: var(--dashboard__text-color);
+	}
+}

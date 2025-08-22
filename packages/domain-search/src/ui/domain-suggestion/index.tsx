@@ -41,6 +41,7 @@ const DomainSuggestionComponent = ( {
 		<Text
 			size={ activeQuery === 'large' ? 18 : 16 }
 			className="domain-suggestions-list-item__domain-name-container"
+			lineHeight="inherit"
 		>
 			<span
 				aria-label={ `${ domain }.${ tld }` }

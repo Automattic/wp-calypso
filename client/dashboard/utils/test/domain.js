@@ -1,0 +1,33 @@
+import { WhoisType } from '../../data/domain-whois';
+import { findRegistrantWhois, findPrivacyServiceWhois } from '../domain';
+
+describe( 'utils', () => {
+	const whoisData = [
+		{
+			org: 'The best company',
+			type: WhoisType.REGISTRANT,
+		},
+		{
+			org: 'Privacy R US',
+			type: WhoisType.PRIVACY_SERVICE,
+		},
+	];
+
+	describe( 'findRegistrantWhois', () => {
+		test( 'should return undefined when not registrant object found', () => {
+			expect( findRegistrantWhois( [] ) ).toBeUndefined();
+		} );
+		test( 'should return registrant object from Whois data', () => {
+			expect( findRegistrantWhois( whoisData ) ).toEqual( whoisData[ 0 ] );
+		} );
+	} );
+
+	describe( 'findPrivacyServiceWhois', () => {
+		test( 'should return undefined when not registrant object found', () => {
+			expect( findPrivacyServiceWhois( [] ) ).toBeUndefined();
+		} );
+		test( 'should return privacy service object from Whois data', () => {
+			expect( findPrivacyServiceWhois( whoisData ) ).toEqual( whoisData[ 1 ] );
+		} );
+	} );
+} );

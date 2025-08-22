@@ -13,7 +13,11 @@ interface OneLoginFooterProps {
 	/**
 	 * when `isLoginView` is false, this is the "back to login" link
 	 */
-	loginLink?: string;
+	loginLink?: JSX.Element;
+	/**
+	 * when `isLoginView` is false, this is the "support" link
+	 */
+	supportLink?: JSX.Element;
 	/**
 	 * when true, this is the footer for the main login screen
 	 */
@@ -24,8 +28,16 @@ const recordBackToWpcomLinkClick = () => {
 	recordTracksEvent( 'calypso_login_back_to_wpcom_link_click' );
 };
 
-const OneLoginFooter = ( { lostPasswordLink, loginLink, isLoginView }: OneLoginFooterProps ) => {
-	const oauth2Client = useSelector( getCurrentOAuth2Client );
+const OneLoginFooter = ( {
+	lostPasswordLink,
+	loginLink,
+	isLoginView,
+	supportLink,
+}: OneLoginFooterProps ) => {
+	const oauth2Client = useSelector( getCurrentOAuth2Client ) as {
+		name: string;
+		image: string;
+	} | null;
 	const isVIPClient = isVIPOAuth2Client( oauth2Client );
 
 	if ( isLoginView ) {
@@ -47,7 +59,12 @@ const OneLoginFooter = ( { lostPasswordLink, loginLink, isLoginView }: OneLoginF
 		);
 	}
 
-	return <div className="one-login__footer">{ loginLink }</div>;
+	return (
+		<div className="one-login__footer">
+			{ loginLink }
+			{ supportLink }
+		</div>
+	);
 };
 
 export default OneLoginFooter;

@@ -1,6 +1,7 @@
 import wpcom from 'calypso/lib/wp';
 
 export interface UserProfile {
+	advertising_targeting_opt_out: boolean;
 	avatar_URL: string;
 	description: string;
 	display_name: string;
@@ -19,6 +20,7 @@ export async function updateProfile(
 	data: Partial< UserProfile >
 ): Promise< Partial< UserProfile > > {
 	const saveableKeys = [
+		'advertising_targeting_opt_out',
 		'display_name',
 		'description',
 		'is_dev_account',

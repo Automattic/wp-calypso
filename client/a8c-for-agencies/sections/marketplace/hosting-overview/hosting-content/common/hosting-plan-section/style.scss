@@ -118,6 +118,12 @@
 	}
 }
 
+.hosting-plan-section__details-subheading {
+	@include body-medium;
+	margin-block-start: 8px;
+	color: var(--color-neutral-60);
+}
+
 .hosting-plan-section__aside-footer {
 	> * {
 		width: 100%;

@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { RadioControl, TabPanel } from '@wordpress/components';
 import clsx from 'clsx';
@@ -12,10 +13,10 @@ import {
 	FILTER_TYPE_VISITS,
 	PLAN_CATEGORY_STANDARD,
 	PLAN_CATEGORY_ENTERPRISE,
-	PLAN_CATEGORY_HIGH_RESOURCE,
 	FILTER_TYPE_STORAGE,
 	PLAN_CATEGORY_SIGNATURE,
 	PLAN_CATEGORY_SIGNATURE_HIGH,
+	PLAN_CATEGORY_PREMIUM,
 } from '../constants';
 import getPressablePlan, { PressablePlan } from '../lib/get-pressable-plan';
 import getSliderOptions from '../lib/get-slider-options';
@@ -32,8 +33,9 @@ type Props = {
 	onSelectPlan: ( plan: APIProductFamilyProduct | null ) => void;
 	// Whether the existing plan is still being loaded
 	isLoading?: boolean;
-	showHighResourceTab?: boolean;
 	areSignaturePlans?: boolean;
+	selectedTab: string;
+	setSelectedTab: ( tab: string ) => void;
 };
 
 export default function PlanSelectionFilter( {
@@ -42,19 +44,19 @@ export default function PlanSelectionFilter( {
 	onSelectPlan,
 	pressablePlan,
 	isLoading,
-	showHighResourceTab = false,
 	areSignaturePlans: areSignaturePlans = false,
+	selectedTab,
+	setSelectedTab,
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const [ filterType, setFilterType ] = useState< FilterType >( FILTER_TYPE_INSTALL );
-	const [ selectedTab, setSelectedTab ] = useState(
-		areSignaturePlans ? PLAN_CATEGORY_SIGNATURE : PLAN_CATEGORY_STANDARD
-	);
 	const [ disableStandardTab, setDisableStandardTab ] = useState( false );
 
 	const isMobile = useMobileBreakpoint();
+
+	const isPremiumPlanTab = selectedTab === PLAN_CATEGORY_PREMIUM;
 
 	const lowPlanOptions = useMemo(
 		() =>
@@ -75,7 +77,7 @@ export default function PlanSelectionFilter( {
 				areSignaturePlans ? PLAN_CATEGORY_SIGNATURE_HIGH : PLAN_CATEGORY_ENTERPRISE,
 				isMobile
 			),
-			...( showHighResourceTab
+			...( isPremiumPlanTab
 				? []
 				: [
 						{
@@ -85,7 +87,7 @@ export default function PlanSelectionFilter( {
 						},
 				  ] ),
 		],
-		[ filterType, isMobile, plans, showHighResourceTab, translate, areSignaturePlans ]
+		[ filterType, isMobile, plans, isPremiumPlanTab, translate, areSignaturePlans ]
 	);
 
 	const onSelectOption = useCallback(
@@ -159,28 +161,11 @@ export default function PlanSelectionFilter( {
 	);
 
 	useEffect( () => {
-		// If there's no existing plan, set the default tab based on areSignaturePlans
+		// Ensure standard tab is not disabled if no existing plan
 		if ( ! pressablePlan ) {
-			setSelectedTab( areSignaturePlans ? PLAN_CATEGORY_SIGNATURE : PLAN_CATEGORY_STANDARD );
-			setDisableStandardTab( false ); // Ensure standard tab is not disabled if no existing plan
+			setDisableStandardTab( false );
 			return;
 		}
-
-		// If there is an existing plan, map its category to the appropriate tab
-		let tabCategory = pressablePlan.category;
-		if ( areSignaturePlans ) {
-			if ( pressablePlan.category === PLAN_CATEGORY_STANDARD ) {
-				tabCategory = PLAN_CATEGORY_SIGNATURE;
-			} else if ( pressablePlan.category === PLAN_CATEGORY_ENTERPRISE ) {
-				tabCategory = PLAN_CATEGORY_SIGNATURE_HIGH;
-			}
-		} else if ( pressablePlan.category === PLAN_CATEGORY_SIGNATURE ) {
-			// If not using signature plans, map signature categories back to standard/enterprise
-			tabCategory = PLAN_CATEGORY_STANDARD;
-		} else if ( pressablePlan.category === PLAN_CATEGORY_SIGNATURE_HIGH ) {
-			tabCategory = PLAN_CATEGORY_ENTERPRISE;
-		}
-		setSelectedTab( tabCategory );
 
 		// Disable the standard tab if the existing plan is the highest standard plan or higher
 		const isStandardCategory =
@@ -196,11 +181,44 @@ export default function PlanSelectionFilter( {
 		}
 	}, [ pressablePlan, lowPlanOptions, areSignaturePlans ] );
 
-	useEffect( () => {
-		if ( selectedTab === PLAN_CATEGORY_HIGH_RESOURCE ) {
-			onSelectPlan( null );
-		}
-	}, [ onSelectPlan, selectedTab ] );
+	const isPressablePremiumPlanEnabled = isEnabled( 'pressable-premium-plan' );
+
+	const tabs = useMemo(
+		() => [
+			...( areSignaturePlans
+				? [
+						{
+							name: PLAN_CATEGORY_SIGNATURE,
+							title: translate( 'Signature Plans 1-10' ),
+							disabled: disableStandardTab,
+						},
+						{
+							name: PLAN_CATEGORY_SIGNATURE_HIGH,
+							title: translate( 'Signature Plans 11-17' ),
+						},
+				  ]
+				: [
+						{
+							name: PLAN_CATEGORY_STANDARD,
+							title: translate( 'Signature Plans' ),
+							disabled: disableStandardTab,
+						},
+						{
+							name: PLAN_CATEGORY_ENTERPRISE,
+							title: translate( 'Enterprise Plans' ),
+						},
+				  ] ),
+			...( isPressablePremiumPlanEnabled
+				? [
+						{
+							name: PLAN_CATEGORY_PREMIUM,
+							title: translate( 'Premium Plans' ),
+						},
+				  ]
+				: [] ),
+		],
+		[ areSignaturePlans, disableStandardTab, isPressablePremiumPlanEnabled, translate ]
+	);
 
 	if ( isLoading ) {
 		return (
@@ -241,47 +259,7 @@ export default function PlanSelectionFilter( {
 				activeClass="pressable-overview-plan-selection__plan-category-tab-is-active"
 				onSelect={ setSelectedTab }
 				initialTabName={ selectedTab }
-				tabs={
-					areSignaturePlans
-						? [
-								{
-									name: PLAN_CATEGORY_SIGNATURE,
-									title: translate( 'Signature Plans 1–10' ),
-									disabled: disableStandardTab,
-								},
-								{
-									name: PLAN_CATEGORY_SIGNATURE_HIGH,
-									title: translate( 'Signature Plans 11–17' ),
-								},
-								...( showHighResourceTab
-									? [
-											{
-												name: PLAN_CATEGORY_HIGH_RESOURCE,
-												title: translate( 'High Resource Plans' ),
-											},
-									  ]
-									: [] ),
-						  ]
-						: [
-								{
-									name: PLAN_CATEGORY_STANDARD,
-									title: translate( 'Signature Plans' ),
-									disabled: disableStandardTab,
-								},
-								{
-									name: PLAN_CATEGORY_ENTERPRISE,
-									title: translate( 'Enterprise Plans' ),
-								},
-								...( showHighResourceTab
-									? [
-											{
-												name: PLAN_CATEGORY_HIGH_RESOURCE,
-												title: translate( 'High Resource Plans' ),
-											},
-									  ]
-									: [] ),
-						  ]
-				}
+				tabs={ tabs }
 			>
 				{ ( tab ) => {
 					switch ( tab.name ) {

@@ -20,6 +20,7 @@ import StaticFile404SettingsSummary from '../settings-static-file-404/summary';
 import SubscriptionGiftingSettingsSummary from '../settings-subscription-gifting/summary';
 import WebApplicationFirewallSettingsSummary from '../settings-web-application-firewall/summary';
 import WordPressSettingsSummary from '../settings-wordpress/summary';
+import WpcomLoginSettingsSummary from '../settings-wpcom-login/summary';
 import DangerZone from './danger-zone';
 import SiteActions from './site-actions';
 
@@ -54,6 +55,7 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 				<SectionHeader title={ __( 'Security' ) } level={ 3 } />
 				<SummaryButtonList>
 					<WebApplicationFirewallSettingsSummary site={ site } />
+					<WpcomLoginSettingsSummary site={ site } />
 					<DefensiveModeSettingsSummary site={ site } />
 				</SummaryButtonList>
 			</VStack>

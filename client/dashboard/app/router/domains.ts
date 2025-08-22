@@ -1,8 +1,9 @@
-import { createRoute, createLazyRoute } from '@tanstack/react-router';
+import { createRoute, createLazyRoute, redirect } from '@tanstack/react-router';
 import { domainQuery } from '../queries/domain';
 import { domainDnsQuery } from '../queries/domain-dns-records';
 import { domainForwardingQuery } from '../queries/domain-forwarding';
 import { domainGlueRecordsQuery } from '../queries/domain-glue-records';
+import { sslDetailsQuery } from '../queries/domain-ssl';
 import { domainsQuery } from '../queries/domains';
 import { queryClient } from '../query-client';
 import { rootRoute } from './root';
@@ -15,6 +16,18 @@ export const domainsRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../domains' ).then( ( d ) =>
 		createLazyRoute( 'domains' )( {
+			component: d.default,
+		} )
+	)
+);
+
+// Standalone domains purchase route - requires rootRoute
+export const domainsPurchaseRoute = createRoute( {
+	getParentRoute: () => rootRoute,
+	path: 'domains/purchase',
+} ).lazy( () =>
+	import( '../../domains/purchase' ).then( ( d ) =>
+		createLazyRoute( 'domains-purchase' )( {
 			component: d.default,
 		} )
 	)
@@ -74,8 +87,26 @@ export const domainDnsAddRoute = createRoute( {
 export const domainDnsEditRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'dns/edit',
+	beforeLoad: async ( { params: { domainName }, search } ) => {
+		// If the provided recordId doesn't exist, redirect to the DNS overview page
+		const { recordId } = search as { recordId: string | undefined };
+		const dnsRecords = await queryClient.ensureQueryData( domainDnsQuery( domainName ) );
+		const record = dnsRecords?.records.find( ( record ) => record.id === recordId );
+		if ( ! record ) {
+			throw redirect( { to: '/domains/$domainName/dns', params: { domainName } } );
+		}
+	},
+	loader: ( { params: { domainName } } ) => {
+		return queryClient.ensureQueryData( domainDnsQuery( domainName ) );
+	},
+	validateSearch: ( search ): { recordId: string | undefined } => {
+		// Ensure we have a recordId query parameter
+		return {
+			recordId: typeof search.recordId === 'string' ? search.recordId : undefined,
+		};
+	},
 } ).lazy( () =>
-	import( '../../sites/domains/placeholder' ).then( ( d ) =>
+	import( '../../domains/dns/edit' ).then( ( d ) =>
 		createLazyRoute( 'domain-dns-edit' )( {
 			component: d.default,
 		} )
@@ -126,7 +157,7 @@ export const domainContactInfoRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'contact-info',
 } ).lazy( () =>
-	import( '../../sites/domains/placeholder' ).then( ( d ) =>
+	import( '../../domains/domain-contact-details' ).then( ( d ) =>
 		createLazyRoute( 'domain-contact-info' )( {
 			component: d.default,
 		} )
@@ -190,6 +221,20 @@ export const domainDnssecRoute = createRoute( {
 	)
 );
 
+export const domainSecurityRoute = createRoute( {
+	getParentRoute: () => domainRoute,
+	path: 'security',
+	loader: ( { params: { domainName } } ) => {
+		return queryClient.ensureQueryData( sslDetailsQuery( domainName ) );
+	},
+} ).lazy( () =>
+	import( '../../domains/domain-security' ).then( ( d ) =>
+		createLazyRoute( 'domain-security' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const domainTransferRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'transfer',
@@ -204,6 +249,7 @@ export const domainTransferRoute = createRoute( {
 export const createDomainsRoutes = () => {
 	return [
 		domainsRoute,
+		domainsPurchaseRoute,
 		domainRoute.addChildren( [
 			domainOverviewRoute,
 			domainDnsRoute,
@@ -219,6 +265,7 @@ export const createDomainsRoutes = () => {
 			domainGlueRecordsEditRoute,
 			domainDnssecRoute,
 			domainTransferRoute,
+			domainSecurityRoute,
 		] ),
 	];
 };

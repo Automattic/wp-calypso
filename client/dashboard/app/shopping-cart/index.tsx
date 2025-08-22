@@ -5,3 +5,5 @@ export const shoppingCartManagerClient = createShoppingCartManagerClient( {
 	getCart: wpcomGetCart,
 	setCart: wpcomSetCart,
 } );
+
+export { useWPCOMShoppingCartForDomainSearch } from './use-wpcom-shopping-cart-for-domain-search';
