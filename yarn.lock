@@ -1663,6 +1663,7 @@ __metadata:
     "@automattic/wp-babel-makepot": "workspace:^"
     "@wordpress/components": "npm:^29.9.0"
     "@wordpress/data": "npm:^10.23.0"
+    "@wordpress/dataviews": "npm:^7.0.0"
     "@wordpress/i18n": "npm:^5.23.0"
     autoprefixer: "npm:^10.4.21"
     calypso: "workspace:^"

@@ -21,7 +21,7 @@ export function getFields(): Field< any >[] {
 			id: 'icon',
 			label: __( 'Icon' ),
 			render: ( { item } ) => (
-				<div className="wpnc__note-icon" style={ { position: 'relative' } }>
+				<div className="wpnc__note-icon" style={ { position: 'relative', height: '100%' } }>
 					<ImagePreloader
 						src={ item.icon }
 						key={ `image-preloader-${ item.icon }` }
@@ -34,9 +34,9 @@ export function getFields(): Field< any >[] {
 						className="wpnc__gridicon"
 						style={ {
 							position: 'absolute',
-							bottom: 0,
+							bottom: '-5px',
 							right: 0,
-							border: '1.5px solid #fff',
+							border: '1px solid #fff',
 							background: '#ddd',
 						} }
 					>

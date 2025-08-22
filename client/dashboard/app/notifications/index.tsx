@@ -1,6 +1,5 @@
 import { useNavigate } from '@tanstack/react-router';
 import { Button, Dropdown } from '@wordpress/components';
-import '@wordpress/components/build-style/style.css';
 import { __ } from '@wordpress/i18n';
 import { bellUnread, bell } from '@wordpress/icons';
 import { Suspense, lazy } from 'react';
@@ -41,7 +40,7 @@ export default function Notifications( { className }: { className: string } ) {
 				/>
 			) }
 			renderContent={ ( { onClose } ) => (
-				<div style={ { width: '480px', margin: '-8px' } }>
+				<div style={ { width: '480px', height: '100vh', maxHeight: 'inherit', margin: '-8px' } }>
 					<Suspense fallback={ null }>
 						<AsyncNotificationApp actionHandlers={ actionHandlers( onClose ) } wpcom={ wpcom } />
 					</Suspense>
