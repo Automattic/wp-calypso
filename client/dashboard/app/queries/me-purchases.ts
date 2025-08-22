@@ -1,9 +1,6 @@
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
-import {
-	fetchUserPurchases,
-	fetchUserTransferredPurchases,
-	setPurchaseAutoRenew,
-} from '../../data/me-purchases';
+import { fetchUserPurchases, fetchUserTransferredPurchases } from '../../data/me-purchases';
+import { setPurchaseAutoRenew } from '../../data/upgrades';
 import { queryClient } from '../query-client';
 
 export const userPurchasesQuery = () =>

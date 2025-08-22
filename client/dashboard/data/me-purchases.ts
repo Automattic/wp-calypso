@@ -14,14 +14,3 @@ export async function fetchUserTransferredPurchases(): Promise< Purchase[] > {
 		apiVersion: '1.1',
 	} );
 }
-
-export async function setPurchaseAutoRenew(
-	purchaseId: number,
-	autoRenew: boolean
-): Promise< { success: boolean; upgrade: Purchase } > {
-	const action = autoRenew ? 'enable-auto-renew' : 'disable-auto-renew';
-	return wpcom.req.post( {
-		path: `/upgrades/${ purchaseId }/${ action }`,
-		apiVersion: '1.1',
-	} );
-}
