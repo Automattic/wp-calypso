@@ -27,7 +27,8 @@ const ThreatDialog: React.FC< Props > = ( {
 	const isExtensionDeleteFixer =
 		threat.signature === 'Vulnerable.WP.Extension' &&
 		threat.fixable &&
-		threat.fixable.fixer === 'delete';
+		threat.fixable.fixer === 'delete' &&
+		action === 'fix';
 	const [ confirmationInput, setConfirmationInput ] = React.useState( '' );
 	// So we don't share the input value between different threats
 	React.useEffect( () => {
@@ -62,7 +63,7 @@ const ThreatDialog: React.FC< Props > = ( {
 			</Button>,
 		];
 
-		if ( action === 'fix' && isExtensionDeleteFixer ) {
+		if ( isExtensionDeleteFixer ) {
 			const shouldBeDisabled = confirmationInput !== slug;
 			buttons.push(
 				<Button
@@ -124,7 +125,7 @@ const ThreatDialog: React.FC< Props > = ( {
 			<h3 className="threat-dialog__threat-title">
 				<ThreatFixHeader threat={ threat } action={ action } />
 			</h3>
-			{ action === 'fix' && isExtensionDeleteFixer && (
+			{ isExtensionDeleteFixer && (
 				<>
 					{ threat.fixable.extensionStatus === 'active' ? (
 						<Notice variant="error">
