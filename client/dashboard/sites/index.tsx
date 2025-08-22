@@ -71,7 +71,11 @@ export default function Sites() {
 		viewSearchParams,
 	} );
 
-	const { data: sites, isLoading: isLoadingSites } = useQuery( {
+	const {
+		data: sites,
+		isLoading: isLoadingSites,
+		isPlaceholderData,
+	} = useQuery( {
 		...sitesQuery( getFetchSitesOptions( view, isRestoringAccount ) ),
 		placeholderData: keepPreviousData,
 	} );
@@ -154,7 +158,7 @@ export default function Sites() {
 						fields={ fields }
 						actions={ actions }
 						view={ view }
-						isLoading={ isLoadingSites }
+						isLoading={ isLoadingSites || ( isPlaceholderData && filteredData.length === 0 ) }
 						onChangeView={ handleViewChange }
 						defaultLayouts={ DEFAULT_LAYOUTS }
 						paginationInfo={ paginationInfo }
