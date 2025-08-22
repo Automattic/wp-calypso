@@ -548,7 +548,7 @@ const Settings = ( {
 		const { privateDomain, isHundredYearDomain } = domain;
 		const titleLabel = translate( 'Contact information', { textOnly: true } );
 		const privacyProtectionLabel = privateDomain
-			? translate( 'Privacy protection on', { textOnly: true } )
+			? translate( 'Privacy protection onaaaa', { textOnly: true } )
 			: translate( 'Privacy protection off', { textOnly: true } );
 
 		if ( ! domain.currentUserCanManage ) {

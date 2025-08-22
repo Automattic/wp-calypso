@@ -9,6 +9,8 @@ export interface Domain extends DomainSummary {
 	is_root_domain_registered_with_automattic: boolean;
 	is_subdomain: boolean;
 	move_to_new_site_pending: boolean;
+	private_domain: boolean;
+	ssl_status: 'active' | 'inactive' | 'newly_registered' | 'pending';
 	subdomain_part: string;
 }
 

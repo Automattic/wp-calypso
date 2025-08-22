@@ -15,6 +15,7 @@ export default function NameServersSettingsSummary( { domain }: { domain: Domain
 			to={ `/domains/${ domain.domain }/name-servers` }
 			title={ __( 'Name servers' ) }
 			badges={ badges }
+			density={ 'medium' as const }
 		/>
 	);
 }
