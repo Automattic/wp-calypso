@@ -50,13 +50,8 @@ export async function setUserTaxDetails(
 export async function updateUserTaxDetails(
 	data: Partial< UserTaxFormData >
 ): Promise< Partial< UserTaxFormData > > {
-	const savableKeys = [ 'country', 'id', 'name', 'address' ];
-	for ( const key in data ) {
-		if ( ! savableKeys.includes( key ) ) {
-			delete data[ key as keyof UserTaxFormData ];
-		}
-	}
-	return await wpcom.req.post( '/me/vat-info', data );
+	const { country, id, name, address } = data;
+	return await wpcom.req.post( '/me/vat-info', { country, id, name, address } );
 }
 
 export interface CountryListItemWithoutVat extends CountryListItemBase {
