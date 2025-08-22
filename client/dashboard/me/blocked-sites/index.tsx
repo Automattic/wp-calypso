@@ -53,7 +53,7 @@ export default function BlockedSites() {
 			size="small"
 			header={
 				<PageHeader
-					title={ __( 'Blocked Sites' ) }
+					title={ __( 'Blocked sites' ) }
 					description={ createInterpolateElement(
 						__(
 							'Blocked sites will not appear in your Reader and will not be recommended to you. <link>Learn more</link>'
