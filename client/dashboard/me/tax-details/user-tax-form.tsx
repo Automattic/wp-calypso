@@ -13,9 +13,9 @@ import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import useCountryList from '../../app/hooks/use-country-list';
+import { countryListQuery } from '../../app/queries/countries';
 import { geoLocationQuery } from '../../app/queries/geo';
 import { userTaxDetailsMutation, userTaxDetailsQuery } from '../../app/queries/me-tax-details';
 import { getTaxName, getDataFormCountryCodes, stripCountryCodeFromVatId } from '../../utils/tax';
@@ -185,7 +185,7 @@ export default function UserTaxForm() {
 		fetchError,
 		updateError,
 	} = useUserTaxDetails();
-	const countryList = useCountryList();
+	const { data: countryList } = useSuspenseQuery( countryListQuery() );
 	const countryCodes = getDataFormCountryCodes( countryList );
 
 	const formData = useMemo( () => {
@@ -210,48 +210,60 @@ export default function UserTaxForm() {
 	const { data: geoData } = useSuspenseQuery( geoLocationQuery() );
 	const taxName = getTaxName( countryList, formData.country ?? geoData?.country_short ?? 'GB' );
 
-	if ( updateError && lastUpdateError.current !== updateError ) {
-		removeNotice( 'vat_info_notice' );
-		createErrorNotice( updateError.message, { type: 'snackbar', id: 'vat_info_notice' } );
-		recordTracksEvent( 'calypso_dashboard_vat_details_validation_failure', {
-			error: updateError.error,
-		} );
-		lastUpdateError.current = updateError;
-	}
+	useEffect( () => {
+		if ( updateError && lastUpdateError.current !== updateError ) {
+			removeNotice( 'vat_info_notice' );
+			createErrorNotice( updateError.message, { type: 'snackbar', id: 'vat_info_notice' } );
+			recordTracksEvent( 'calypso_dashboard_vat_details_validation_failure', {
+				error: updateError.error,
+			} );
+			lastUpdateError.current = updateError;
+		}
 
-	if ( isUpdateSuccessful ) {
-		removeNotice( 'vat_info_notice' );
-		createSuccessNotice(
-			sprintf(
+		if ( isUpdateSuccessful ) {
+			removeNotice( 'vat_info_notice' );
+			createSuccessNotice(
+				sprintf(
+					/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+					__( 'Your %s details have been updated!' ),
+					taxName ?? __( 'VAT' )
+				),
+				{
+					id: 'vat_info_notice',
+				}
+			);
+			recordTracksEvent( 'calypso_dashboard_vat_details_validation_success' );
+		}
+		if ( fetchError && lastFetchError.current !== fetchError ) {
+			recordTracksEvent( 'calypso_dashboard_vat_details_fetch_failure', {
+				error: fetchError.error,
+				message: fetchError.message,
+			} );
+			lastFetchError.current = fetchError;
+		}
+
+		if ( fetchError ) {
+			removeNotice( 'vat_info_notice' );
+			createErrorNotice(
 				/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-				__( 'Your %s details have been updated!' ),
-				taxName ?? __( 'VAT' )
-			),
-			{
-				id: 'vat_info_notice',
-			}
-		);
-		recordTracksEvent( 'calypso_dashboard_vat_details_validation_success' );
-	}
-	if ( fetchError && lastFetchError.current !== fetchError ) {
-		recordTracksEvent( 'calypso_dashboard_vat_details_fetch_failure', {
-			error: fetchError.error,
-			message: fetchError.message,
-		} );
-		lastFetchError.current = fetchError;
-	}
-
-	if ( fetchError ) {
-		removeNotice( 'vat_info_notice' );
-		createErrorNotice(
-			/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-			sprintf( __( 'An error occurred while fetching %s details.' ), taxName ?? __( 'VAT' ) ),
-			{
-				type: 'snackbar',
-				id: 'vat_info_notice',
-			}
-		);
-	}
+				sprintf( __( 'An error occurred while fetching %s details.' ), taxName ?? __( 'VAT' ) ),
+				{
+					type: 'snackbar',
+					id: 'vat_info_notice',
+				}
+			);
+		}
+	}, [
+		taxName,
+		isUpdateSuccessful,
+		fetchError,
+		updateError,
+		lastUpdateError,
+		removeNotice,
+		createErrorNotice,
+		createSuccessNotice,
+		recordTracksEvent,
+	] );
 
 	const isVatAlreadySet = !! userTaxDetails.id;
 	const isDisabled = isLoading || isUpdating;

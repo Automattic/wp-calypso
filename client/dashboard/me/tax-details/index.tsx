@@ -11,7 +11,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useCallback } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
-import useCountryList from '../../app/hooks/use-country-list';
+import { countryListQuery } from '../../app/queries/countries';
 import { geoLocationQuery } from '../../app/queries/geo';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
@@ -21,7 +21,7 @@ import UserTaxForm, { useUserTaxDetails } from './user-tax-form';
 import './style.scss';
 
 export default function UserTaxInfoPage() {
-	const countryList = useCountryList();
+	const { data: countryList } = useSuspenseQuery( countryListQuery() );
 	const { recordTracksEvent } = useAnalytics();
 	const { data: geoData } = useSuspenseQuery( geoLocationQuery() );
 
