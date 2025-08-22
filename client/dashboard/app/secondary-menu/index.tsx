@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -13,18 +12,16 @@ import { __ } from '@wordpress/i18n';
 import { help, commentAuthorAvatar } from '@wordpress/icons';
 import { Suspense, lazy, useCallback } from 'react';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
-import wpcom from 'calypso/lib/wp';
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
 import { useAuth } from '../auth';
 import { useOpenCommandPalette } from '../command-palette/utils';
 import { useAppContext } from '../context';
 import { useHelpCenter } from '../help-center';
+import Notifications from '../notifications';
 
 import './style.scss';
 
 const AsyncHelpCenterApp = lazy( () => import( '../help-center/help-center-app' ) );
-
-const AsyncNoteDropdown = lazy( () => import( '@automattic/notifications/src/dropdown' ) );
 
 function Help() {
 	const { user } = useAuth();
@@ -133,7 +130,6 @@ function UserProfile() {
 
 function SecondaryMenu() {
 	const { supports } = useAppContext();
-	const navigate = useNavigate();
 
 	return (
 		<HStack spacing={ 2 } justify="flex-end">
@@ -147,15 +143,7 @@ function SecondaryMenu() {
 				/>
 			) }
 			{ supports.help && <Help /> }
-			{ supports.notifications && (
-				<Suspense fallback={ null }>
-					<AsyncNoteDropdown
-						className="dashboard-secondary-menu__item"
-						wpcom={ wpcom }
-						onNavigate={ ( path ) => navigate( { to: path } ) }
-					/>
-				</Suspense>
-			) }
+			{ supports.notifications && <Notifications className="dashboard-secondary-menu__item" /> }
 			<UserProfile />
 		</HStack>
 	);

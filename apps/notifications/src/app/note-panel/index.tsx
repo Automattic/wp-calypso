@@ -18,7 +18,7 @@ const NOTIFICATION_TABS = [
 	{ name: 'alerts', title: __( 'Alerts' ) },
 ];
 
-const NotePanel = ( { onNavigate }: { onNavigate: ( path: string ) => void } ) => {
+const NotePanel = () => {
 	return (
 		<>
 			<CardHeader
@@ -32,7 +32,7 @@ const NotePanel = ( { onNavigate }: { onNavigate: ( path: string ) => void } ) =
 							{ __( 'Notifications' ) }
 						</Heading>
 						<div style={ { marginInlineStart: 'auto' } }>
-							<NotePanelActions onNavigate={ onNavigate } />
+							<NotePanelActions />
 						</div>
 					</HStack>
 					<TabPanel activeClass="is-active" tabs={ NOTIFICATION_TABS } initialTabName="all">

@@ -6,12 +6,12 @@ import NotificationApp from '../app';
 
 const NoteDropdown = ( {
 	className,
+	actionHandlers,
 	wpcom,
-	onNavigate,
 }: {
 	className?: string;
+	actionHandlers: ( onClose: () => void ) => any;
 	wpcom: any;
-	onNavigate: ( path: string ) => void;
 } ) => {
 	const hasUnreadNotifications = false;
 
@@ -31,17 +31,11 @@ const NoteDropdown = ( {
 					icon={ hasUnreadNotifications ? bellUnread : bell }
 				/>
 			) }
-			renderContent={ ( { onClose } ) => {
-				const handleNavigate = ( path: string ) => {
-					onNavigate( path );
-					onClose();
-				};
-				return (
-					<div style={ { width: '480px', margin: '-8px' } }>
-						<NotificationApp wpcom={ wpcom } onNavigate={ handleNavigate } />
-					</div>
-				);
-			} }
+			renderContent={ ( { onClose } ) => (
+				<div style={ { width: '480px', margin: '-8px' } }>
+					<NotificationApp actionHandlers={ actionHandlers( onClose ) } wpcom={ wpcom } />
+				</div>
+			) }
 		/>
 	);
 };
