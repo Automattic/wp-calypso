@@ -1,7 +1,7 @@
 import { BlockWidgetEditorComponent, envVariables, RestAPIClient } from '@automattic/calypso-e2e';
 import { test } from '../../lib/pw_base';
 
-test.describe( 'Theme Widgets (Legacy)', () => {
+test.describe( 'Appearance: Theme Widgets (Legacy)', () => {
 	test( 'As a non-atomic site user, I can use widgets on my site', async ( {
 		page,
 		accountGivenByEnvironment,
