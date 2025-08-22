@@ -1,4 +1,3 @@
-import { AppleLoginPage, EmailClient, LoginPage, SecretsManager } from '@automattic/calypso-e2e';
 import { test, expect } from '../../lib/pw_base';
 
 test.describe( 'Authentication: Apple', () => {
@@ -7,32 +6,31 @@ test.describe( 'Authentication: Apple', () => {
 	let code: string;
 
 	test( 'As a WordPress.com user, I can use my Apple Id to authenticate ', async ( {
+		clientEmail,
 		page,
+		pageAppleLogin,
+		pageLogin,
 		secrets,
 	} ) => {
-		let loginPage: LoginPage;
-		let appleLoginPage: AppleLoginPage;
 		let timestamp: Date;
 
 		await test.step( 'Given I am on the login page', async function () {
-			loginPage = new LoginPage( page );
-			await loginPage.visit();
+			await pageLogin.visit();
 		} );
 
 		await test.step( 'When I click on Login with Apple button', async function () {
-			await loginPage.clickLoginWithApple();
+			await pageLogin.clickLoginWithApple();
 			await page.waitForURL( /.*appleid\.apple\.com\/auth.*/ );
 		} );
 
 		await test.step( 'And I enter my Apple ID', async function () {
-			appleLoginPage = new AppleLoginPage( page );
-			await appleLoginPage.enterEmail( secrets.testAccounts.appleLoginUser.email as string );
-			await appleLoginPage.pressEnter();
+			await pageAppleLogin.enterEmail( secrets.testAccounts.appleLoginUser.email as string );
+			await pageAppleLogin.pressEnter();
 		} );
 
 		await test.step( 'And I enter my Apple password', async function () {
-			await appleLoginPage.enterPassword( secrets.testAccounts.appleLoginUser.password );
-			await appleLoginPage.pressEnter();
+			await pageAppleLogin.enterPassword( secrets.testAccounts.appleLoginUser.password );
+			await pageAppleLogin.pressEnter();
 			timestamp = new Date( Date.now() );
 		} );
 
@@ -41,23 +39,22 @@ test.describe( 'Authentication: Apple', () => {
 
 			// Handle potential 2FA challenge.
 			if ( url.includes( 'appleid.apple.com/auth/authorize' ) ) {
-				const emailClient = new EmailClient();
-				const message = await emailClient.getLastMatchingMessage( {
-					inboxId: SecretsManager.secrets.mailosaur.totpUserInboxId,
+				const message = await clientEmail.getLastMatchingMessage( {
+					inboxId: secrets.mailosaur.totpUserInboxId,
 					receivedAfter: timestamp,
 					subject: 'SMS',
 					body: 'Your Apple Account code is',
 				} );
 
-				code = emailClient.get2FACodeFromMessage( message );
+				code = clientEmail.get2FACodeFromMessage( message );
 
-				await appleLoginPage.enter2FACode( code );
-				await appleLoginPage.clickButtonWithExactText( 'Trust' );
+				await pageAppleLogin.enter2FACode( code );
+				await pageAppleLogin.clickButtonWithExactText( 'Trust' );
 			}
 		} );
 
 		await test.step( 'And I confirm login with Apple ID', async function () {
-			await appleLoginPage.clickButtonContainingText( 'Continue' );
+			await pageAppleLogin.clickButtonContainingText( 'Continue' );
 			await page.waitForURL( /.*\/home\/.*/ );
 		} );
 
@@ -67,41 +64,33 @@ test.describe( 'Authentication: Apple', () => {
 	} );
 
 	test( 'As a WooCommerce user, I can use my Apple Id to authenticate ', async ( {
+		clientEmail,
 		page,
+		pageAppleLogin,
+		pageLogin,
 		secrets,
 	} ) => {
-		let loginPage: LoginPage;
-		let appleLoginPage: AppleLoginPage;
 		let timestamp: Date;
 
 		await test.step( 'Given I am on the login page', async function () {
-			loginPage = new LoginPage( page );
-			await loginPage.visit( {
-				path: SecretsManager.secrets.wooLoginPath,
-			} );
-		} );
-
-		await test.step( 'And I wait 30 seconds to avoid ', async function () {
-			loginPage = new LoginPage( page );
-			await loginPage.visit( {
-				path: SecretsManager.secrets.wooLoginPath,
+			await pageLogin.visit( {
+				path: secrets.wooLoginPath,
 			} );
 		} );
 
 		await test.step( 'When I click on Login with Apple button', async function () {
-			await loginPage.clickLoginWithApple();
+			await pageLogin.clickLoginWithApple();
 			await page.waitForURL( /.*appleid\.apple\.com\/auth.*/ );
 		} );
 
 		await test.step( 'And I enter my Apple ID', async function () {
-			appleLoginPage = new AppleLoginPage( page );
-			await appleLoginPage.enterEmail( secrets.testAccounts.appleLoginUser.email as string );
-			await appleLoginPage.pressEnter();
+			await pageAppleLogin.enterEmail( secrets.testAccounts.appleLoginUser.email as string );
+			await pageAppleLogin.pressEnter();
 		} );
 
 		await test.step( 'And I enter my Apple password', async function () {
-			await appleLoginPage.enterPassword( secrets.testAccounts.appleLoginUser.password );
-			await appleLoginPage.pressEnter();
+			await pageAppleLogin.enterPassword( secrets.testAccounts.appleLoginUser.password );
+			await pageAppleLogin.pressEnter();
 			timestamp = new Date( Date.now() );
 		} );
 
@@ -111,24 +100,23 @@ test.describe( 'Authentication: Apple', () => {
 			// Handle potential 2FA challenge.
 			if ( url.includes( 'appleid.apple.com/auth/authorize' ) ) {
 				if ( ! code ) {
-					const emailClient = new EmailClient();
-					const message = await emailClient.getLastMatchingMessage( {
-						inboxId: SecretsManager.secrets.mailosaur.totpUserInboxId,
+					const message = await clientEmail.getLastMatchingMessage( {
+						inboxId: secrets.mailosaur.totpUserInboxId,
 						receivedAfter: timestamp,
 						subject: 'SMS',
 						body: 'Your Apple Account code is',
 					} );
 
-					code = emailClient.get2FACodeFromMessage( message );
+					code = clientEmail.get2FACodeFromMessage( message );
 				}
 
-				await appleLoginPage.enter2FACode( code );
-				await appleLoginPage.clickButtonWithExactText( 'Trust' );
+				await pageAppleLogin.enter2FACode( code );
+				await pageAppleLogin.clickButtonWithExactText( 'Trust' );
 			}
 		} );
 
 		await test.step( 'And I confirm login with Apple ID', async function () {
-			await appleLoginPage.clickButtonContainingText( 'Continue' );
+			await pageAppleLogin.clickButtonContainingText( 'Continue' );
 		} );
 
 		await test.step( 'And I athorize WPCOM to sign into WooCommerce', async function () {

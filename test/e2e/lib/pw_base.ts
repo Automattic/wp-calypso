@@ -1,8 +1,11 @@
 /* eslint-disable no-empty-pattern */
 import {
+	AppleLoginPage,
+	EmailClient,
 	envToFeatureKey,
 	envVariables,
 	getTestAccountByFeature,
+	LoginPage,
 	PreviewComponent,
 	Secrets,
 	SecretsManager,
@@ -17,9 +20,12 @@ import { test as base, expect } from '@playwright/test';
 export const test = base.extend< {
 	accountGivenByEnvironment: TestAccount;
 	accountGutenbergSimple: TestAccount;
+	clientEmail: EmailClient;
 	componentPreview: PreviewComponent;
 	componentSidebar: SidebarComponent;
 	componentSiteSelect: SiteSelectComponent;
+	pageAppleLogin: AppleLoginPage;
+	pageLogin: LoginPage;
 	pageThemeDetails: ThemesDetailPage;
 	pageThemes: ThemesPage;
 	secrets: Secrets;
@@ -34,6 +40,10 @@ export const test = base.extend< {
 		const testAccount = new TestAccount( accountName );
 		await use( testAccount );
 	},
+	clientEmail: async ( {}, use ) => {
+		const emailClient = new EmailClient();
+		await use( emailClient );
+	},
 	componentPreview: async ( { page }, use ) => {
 		const previewComponent = new PreviewComponent( page );
 		await use( previewComponent );
@@ -45,6 +55,14 @@ export const test = base.extend< {
 	componentSiteSelect: async ( { page }, use ) => {
 		const siteSelectComponent = new SiteSelectComponent( page );
 		await use( siteSelectComponent );
+	},
+	pageAppleLogin: async ( { page }, use ) => {
+		const appleLoginPage = new AppleLoginPage( page );
+		await use( appleLoginPage );
+	},
+	pageLogin: async ( { page }, use ) => {
+		const loginPage = new LoginPage( page );
+		await use( loginPage );
 	},
 	pageThemeDetails: async ( { page }, use ) => {
 		const themesDetailPage = new ThemesDetailPage( page );
