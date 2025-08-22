@@ -45,7 +45,7 @@ const fields: Field< StartSiteTransferFormData >[] = [
 ];
 
 const form = {
-	type: 'regular' as const,
+	layout: { type: 'regular' as const },
 	fields: [ 'accept_authorization', 'accept_transfer', 'accept_undone' ],
 };
 

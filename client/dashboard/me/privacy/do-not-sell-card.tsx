@@ -66,7 +66,7 @@ export default function DoNotSellCard() {
 	];
 
 	const form = {
-		type: 'regular' as const,
+		layout: { type: 'regular' as const },
 		fields: [ 'advertising_targeting_opt_out' ],
 	};
 

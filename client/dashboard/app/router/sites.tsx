@@ -251,12 +251,34 @@ export const siteBackupRestoreRoute = createRoute( {
 	)
 );
 
+export const siteBackupDownloadRoute = createRoute( {
+	getParentRoute: () => siteBackupsRoute,
+	path: '$rewindId/download',
+} ).lazy( () =>
+	import( '../../sites/backup-download' ).then( ( d ) =>
+		createLazyRoute( 'site-backup-download' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const siteDomainsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'domains',
 } ).lazy( () =>
 	import( '../../sites/domains' ).then( ( d ) =>
 		createLazyRoute( 'site-domains' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const siteDomainsPurchaseRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'domains/purchase',
+} ).lazy( () =>
+	import( '../../sites/domains/purchase' ).then( ( d ) =>
+		createLazyRoute( 'site-domains-purchase' )( {
 			component: d.default,
 		} )
 	)
@@ -657,12 +679,16 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 
 	if ( config.supports.sites.backups ) {
 		siteRoutes.push(
-			siteBackupsRoute.addChildren( [ siteBackupsIndexRoute, siteBackupRestoreRoute ] )
+			siteBackupsRoute.addChildren( [
+				siteBackupsIndexRoute,
+				siteBackupRestoreRoute,
+				siteBackupDownloadRoute,
+			] )
 		);
 	}
 
 	if ( config.supports.sites.domains ) {
-		siteRoutes.push( siteDomainsRoute );
+		siteRoutes.push( siteDomainsRoute, siteDomainsPurchaseRoute );
 	}
 
 	if ( config.supports.sites.emails ) {

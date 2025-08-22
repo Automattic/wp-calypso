@@ -59,8 +59,10 @@ const visibilityFields: Field< PrivacyFormData >[] = [
 ];
 
 const visibilityForm = {
-	type: 'regular',
-	fields: [ { id: 'visibility', labelPosition: 'none' } ],
+	layout: {
+		type: 'regular' as const,
+	},
+	fields: [ { id: 'visibility', layout: { type: 'regular', labelPosition: 'none' } } ],
 } satisfies Form;
 
 // This form also has access to `isPrimaryDomainStaging` which isn't a persisted setting, but is data
@@ -113,7 +115,7 @@ const robotFields: Field< PrivacyFormData & { isPrimaryDomainStaging: boolean } 
 ];
 
 const robotForm = {
-	type: 'regular',
+	layout: { type: 'regular' as const },
 	fields: [ 'discourageSearchEngines', 'preventThirdPartySharing' ],
 } satisfies Form;
 

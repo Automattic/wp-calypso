@@ -45,7 +45,7 @@ const createRouteTree = ( config: AppConfig ) => {
 	}
 
 	if ( config.supports.me ) {
-		children.push( ...createMeRoutes() );
+		children.push( ...createMeRoutes( config ) );
 	}
 
 	return rootRoute.addChildren( children );

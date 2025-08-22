@@ -149,9 +149,11 @@ const StagingSiteManagementMoveInfo: FunctionComponent = () => {
 	const isCurrentSiteStaging = currentSite?.is_wpcom_staging_site;
 	const targetSite = isCurrentSiteStaging ? currentSite : stagingSite;
 
-	const settingsLink = targetSite?.URL
-		? `/sites/${ urlToSlug( targetSite.URL ) }/settings`
-		: undefined;
+	// capabilities are not immediately propagated to the Atomic site...
+	const settingsLink =
+		targetSite?.is_wpcom_atomic && targetSite?.capabilities?.manage_options && targetSite?.URL
+			? `/sites/${ urlToSlug( targetSite.URL ) }/settings`
+			: undefined;
 
 	const infoCardItems = getInfoCardItems( settingsLink );
 

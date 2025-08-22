@@ -9,7 +9,10 @@ import { siteByIdQuery } from 'calypso/dashboard/app/queries/site';
 import { siteLatestAtomicTransferQuery } from 'calypso/dashboard/app/queries/site-atomic-transfers';
 import { isDeletingStagingSiteQuery } from 'calypso/dashboard/app/queries/site-staging-sites';
 import { queryClient } from 'calypso/dashboard/app/query-client';
-import { isAtomicTransferInProgress } from 'calypso/dashboard/utils/site-atomic-transfers';
+import {
+	isAtomicTransferInProgress,
+	isAtomicTransferredSite,
+} from 'calypso/dashboard/utils/site-atomic-transfers';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { StagingSiteCreationBanner } from 'calypso/sites/staging-site/components/staging-site-transfer-banner/staging-site-creation-banner';
 import { StagingSiteDeletionBanner } from 'calypso/sites/staging-site/components/staging-site-transfer-banner/staging-site-deletion-banner';
@@ -56,14 +59,17 @@ export default function ItemView( {
 }: ItemViewProps ) {
 	const [ navRef, setNavRef ] = useState< HTMLElement | null >( null );
 
-	const { data: isStagingSiteDeletionInProgress } = useQuery(
-		isDeletingStagingSiteQuery( itemData.blogId ?? 0 ),
-		queryClient
-	);
-
 	// The is_wpcom_staging_site flag isn't site while the site is being transferred
 	// so it can't be used here to determine if the site is a staging site
 	const isStagingSite = itemData.subtitle?.toString().startsWith( 'staging-' );
+
+	const { data: isStagingSiteDeletionInProgress } = useQuery(
+		{
+			...isDeletingStagingSiteQuery( itemData.blogId ?? 0 ),
+			enabled: !! itemData.blogId && isStagingSite,
+		},
+		queryClient
+	);
 
 	const { data: atomicTransfer } = useQuery( {
 		...siteLatestAtomicTransferQuery( itemData.blogId ?? 0 ),
@@ -76,17 +82,27 @@ export default function ItemView( {
 	const { data: stagingSite } = useQuery( {
 		...siteByIdQuery( itemData.blogId ?? 0 ),
 		refetchInterval: ( query ) => {
-			return query.state.data?.jetpack_connection ? false : 5000;
+			if ( ! isStagingSite ) {
+				return false;
+			}
+
+			if ( ! query.state.data ) {
+				return 0;
+			}
+
+			return query.state.data.jetpack_connection && isAtomicTransferredSite( query.state.data )
+				? false
+				: 5000;
 		},
 		enabled: !! itemData.blogId && isStagingSite,
 	} );
 
-	const hasStagingSiteJetpackConnection = isStagingSite ? stagingSite?.jetpack_connection : false;
-
 	const isStagingSiteTransferInProgress =
 		isStagingSite &&
+		stagingSite &&
 		isAtomicTransferInProgress( atomicTransfer?.status ?? 'pending' ) &&
-		! hasStagingSiteJetpackConnection;
+		! stagingSite?.jetpack_connection &&
+		! isAtomicTransferredSite( stagingSite );
 
 	// Ensure we have features
 	if ( ! features || ! features.length ) {

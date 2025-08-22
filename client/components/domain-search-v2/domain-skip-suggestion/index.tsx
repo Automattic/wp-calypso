@@ -1,20 +1,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { DomainSuggestion } from '@automattic/data-stores';
-import {
-	Button,
-	__experimentalText as Text,
-	__experimentalHeading as Heading,
-} from '@wordpress/components';
+import { DomainSearchSkipSuggestion } from '@automattic/domain-search';
 import { useEffect, useCallback } from '@wordpress/element';
-import { useTranslate } from 'i18n-calypso';
 import { Site } from 'calypso/dashboard/data/site';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { useDomainSearch } from '../__legacy/domain-search';
-import { DomainSkipSuggestionPlaceholder } from './index.placeholder';
-import { DomainSkipSkeleton } from './index.skeleton';
-
-import './style.scss';
 
 type BaseProps = {
 	flowName?: string;
@@ -43,21 +34,18 @@ const DomainSkipSuggestion = ( {
 	query,
 	onSkip,
 }: Props ) => {
-	const translate = useTranslate();
 	const currentUser = useSelector( getCurrentUser );
 	const { cart } = useDomainSearch();
 
-	const hasExistingSite = !! selectedSite;
-	const hasSubdomainSuggestion = !! subdomainSuggestion;
-	const domain = hasExistingSite ? selectedSite?.slug : subdomainSuggestion?.domain_name;
-	const [ subdomain, ...tlds ] = domain?.split( '.' ) ?? [];
+	const existingSiteUrl = selectedSite?.slug;
+	const freeSuggestion = subdomainSuggestion?.domain_name;
 
 	useEffect( () => {
 		if ( isLoadingSubdomainSuggestions ) {
 			return;
 		}
 
-		if ( ! hasExistingSite && ! hasSubdomainSuggestion ) {
+		if ( ! existingSiteUrl && ! freeSuggestion ) {
 			recordTracksEvent( 'calypso_domain_search_skip_no_site_and_suggestion', {
 				query,
 				user_id: currentUser?.ID,
@@ -65,8 +53,8 @@ const DomainSkipSuggestion = ( {
 			} );
 		}
 	}, [
-		hasExistingSite,
-		hasSubdomainSuggestion,
+		existingSiteUrl,
+		freeSuggestion,
 		query,
 		currentUser?.ID,
 		flowName,
@@ -74,72 +62,24 @@ const DomainSkipSuggestion = ( {
 	] );
 
 	const onSkipClick = useCallback( () => {
-		if ( selectedSite ) {
+		if ( existingSiteUrl ) {
 			// Skip it when we have a selected site
 			onSkip();
-		} else if ( subdomainSuggestion?.domain_name ) {
+		} else if ( freeSuggestion ) {
 			// Add the subdomain suggestion to the cart and move to the next step
-			cart.onAddItem( subdomainSuggestion.domain_name );
+			cart.onAddItem( freeSuggestion );
 		}
-	}, [ selectedSite, cart, subdomainSuggestion?.domain_name, onSkip ] );
-
-	const translateArgs = {
-		args: {
-			subdomain: subdomain,
-			domainName: tlds.join( '.' ),
-		},
-		components: {
-			domain: <span style={ { wordBreak: 'break-word', hyphens: 'none' } } />,
-			strong: <strong style={ { whiteSpace: 'nowrap' } } />,
-		},
-	};
-
-	let title;
-	let subtitle;
-	let ctaLabel;
-	if ( hasExistingSite ) {
-		title = translate( 'Current address' );
-		subtitle = translate(
-			'Keep {{domain}}%(subdomain)s{{strong}}.%(domainName)s{{/strong}}{{/domain}} as your site address',
-			translateArgs
-		);
-		ctaLabel = translate( 'Skip purchase' );
-	} else if ( subdomain ) {
-		title = translate( 'WordPress.com subdomain' );
-		subtitle = translate(
-			'{{domain}}%(subdomain)s{{strong}}.%(domainName)s{{/strong}}{{/domain}} is included',
-			translateArgs
-		);
-		ctaLabel = translate( 'Skip purchase' );
-	}
-
-	if ( ! hasExistingSite && ! hasSubdomainSuggestion ) {
-		return null;
-	}
+	}, [ existingSiteUrl, cart, freeSuggestion, onSkip ] );
 
 	return (
-		<DomainSkipSkeleton
-			title={
-				<Heading level="4" weight="normal">
-					{ title }
-				</Heading>
-			}
-			subtitle={ <Text>{ subtitle }</Text> }
-			right={
-				<Button
-					className="subdomain-skip-suggestion__btn"
-					variant="secondary"
-					onClick={ onSkipClick }
-					disabled={ cart.isBusy }
-					__next40pxDefaultSize
-				>
-					{ ctaLabel }
-				</Button>
-			}
+		<DomainSearchSkipSuggestion
+			freeSuggestion={ freeSuggestion }
+			existingSiteUrl={ existingSiteUrl }
+			onSkip={ onSkipClick }
+			disabled={ cart.isBusy }
+			isBusy={ cart.isBusy }
 		/>
 	);
 };
-
-DomainSkipSuggestion.Placeholder = DomainSkipSuggestionPlaceholder;
 
 export default DomainSkipSuggestion;

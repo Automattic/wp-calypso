@@ -14,7 +14,7 @@ import type { DnsRecordTypeFormData, DnsRecordFormData } from './records/dns-rec
 import type { DnsRecord } from '../../data/domain-dns-records';
 
 const typeForm = {
-	type: 'regular' as const,
+	layout: { type: 'regular' as const },
 	fields: [ 'type' ],
 };
 

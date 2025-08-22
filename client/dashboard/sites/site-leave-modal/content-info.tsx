@@ -165,7 +165,7 @@ function ContentLeaveSite( { site, onClose }: ContentInfoProps ) {
 							Edit: 'checkbox',
 						},
 					] }
-					form={ { type: 'regular' as const, fields: [ 'confirmed' ] } }
+					form={ { layout: { type: 'regular' as const }, fields: [ 'confirmed' ] } }
 					onChange={ ( edits: Partial< SiteLeaveFormData > ) => {
 						setFormData( ( data ) => ( { ...data, ...edits } ) );
 					} }

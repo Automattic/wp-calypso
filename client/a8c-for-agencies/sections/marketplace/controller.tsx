@@ -14,9 +14,10 @@ import { MARKETPLACE_TYPE_REFERRAL } from './hoc/with-marketplace-type';
 import HostingOverview from './hosting-overview';
 import { getValidHostingSection } from './lib/hosting';
 import { getValidBrand } from './lib/product-brand';
+import { PLAN_CATEGORY_ENTERPRISE, PLAN_CATEGORY_PREMIUM } from './pressable-overview/constants';
 import DownloadProducts from './primary/download-products';
 import ProductsOverview from './products-overview';
-import ReferEnterpriseHosting from './refer-enterprise-hosting';
+import ReferHosting from './refer-hosting';
 
 export const marketplaceContext: Callback = ( context ) => {
 	const { purchase_type } = context.query;
@@ -85,7 +86,18 @@ export const marketplaceReferEnterpriseHostingContext: Callback = ( context, nex
 				title="Marketplace > Hosting > Refer Enterprise Hosting"
 				path={ context.path }
 			/>
-			<ReferEnterpriseHosting />
+			<ReferHosting type={ PLAN_CATEGORY_ENTERPRISE } />
+		</>
+	);
+	next();
+};
+
+export const marketplaceReferPremiumPlanContext: Callback = ( context, next ) => {
+	context.secondary = <MarketplaceSidebar path={ context.path } />;
+	context.primary = (
+		<>
+			<PageViewTracker title="Marketplace > Hosting > Refer Premium Plan" path={ context.path } />
+			<ReferHosting type={ PLAN_CATEGORY_PREMIUM } />
 		</>
 	);
 	next();

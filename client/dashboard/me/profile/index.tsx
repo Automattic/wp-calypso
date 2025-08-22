@@ -100,8 +100,7 @@ const fields: Field< UserProfile >[] = [
 ];
 
 const form = {
-	type: 'regular' as const,
-	labelPosition: 'top' as const,
+	layout: { type: 'regular' as const, labelPosition: 'top' as const },
 	fields: [
 		{
 			id: 'personalInfo',
