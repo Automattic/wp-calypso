@@ -8,12 +8,13 @@ import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useCallback, useState } from 'react';
+import { useAuth } from '../../app/auth';
 import { domainQuery, disconnectDomainMutation } from '../../app/queries/domain';
 import { siteByIdQuery } from '../../app/queries/site';
 import { sitePurchaseQuery } from '../../app/queries/site-purchases';
 import { domainRoute, domainTransferRoute } from '../../app/router/domains';
 import { ActionList } from '../../components/action-list';
-import NonPrimaryDomainDialog from '../../components/purchase-dialogs/non-primary-domain-dialog';
+import RemoveDomainDialog from '../../components/purchase-dialogs/remove-domain-dialog';
 import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
 import { getDomainRenewalUrl } from '../../utils/domain';
@@ -25,9 +26,9 @@ import {
 	getDeleteLabel,
 	getDeleteDescription,
 } from './actions.utils';
-import { useDeleteDomain } from './use-delete-domain';
 
 export default function Actions() {
+	const { user } = useAuth();
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const { data: site } = useQuery( siteByIdQuery( domain.blog_id ) );
@@ -136,14 +137,13 @@ export default function Actions() {
 				</ConfirmDialog>
 			) }
 
-			<NonPrimaryDomainDialog
-				oldDomainName={ domain.domain }
-				newDomainName={ site?.slug || '' }
-				planeName={ site?.plan?.product_name_short || '' }
-				hasSetupAds={ !! site?.options?.wordads }
+			<RemoveDomainDialog
+				user={ user }
+				domain={ domain }
 				isOpen={ isDeleteDialogOpen }
+				closeDialog={ () => setIsDeleteDialogOpen( false ) }
+				removeDomain={ () => setIsDeleteDialogOpen( false ) }
 				onCancel={ () => setIsDeleteDialogOpen( false ) }
-				onConfirm={ () => setIsDeleteDialogOpen( false ) }
 			/>
 		</VStack>
 	);

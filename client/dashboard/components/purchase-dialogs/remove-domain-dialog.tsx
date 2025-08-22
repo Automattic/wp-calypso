@@ -10,6 +10,7 @@ import { useState, useCallback } from 'react';
 import { domainTransferRoute } from '../../app/router/domains';
 import RouterLinkButton from '../../components/router-link-button';
 import { Domain } from '../../data/domain';
+import { User } from '../../data/user';
 
 const textHeadingProps = {
 	as: 'h2' as const,
@@ -18,6 +19,7 @@ const textHeadingProps = {
 } as const;
 
 interface RemoveDomainDialogProps {
+	user: User;
 	domain: Domain;
 	closeDialog: () => void;
 	removeDomain: () => void;
@@ -29,12 +31,30 @@ type ConfirmDialogProps = Omit<
 >;
 type Props = RemoveDomainDialogProps & ConfirmDialogProps;
 
-export default function RemoveDomainDialog( { domain, closeDialog, ...props }: Props ) {
+export default function RemoveDomainDialog( {
+	user,
+	domain,
+	removeDomain,
+	closeDialog,
+	...props
+}: Props ) {
 	const [ step, setStep ] = useState( 1 );
+	const isEmailBasedOnDomain = user.email.endsWith( domain.domain );
 
 	const onConfirm = useCallback( () => {
-		setStep( step + 1 );
-	}, [ step ] );
+		switch ( step ) {
+			case 1:
+				setStep( isEmailBasedOnDomain ? 2 : 3 );
+				break;
+			case 2:
+				setStep( 3 );
+				break;
+			case 3:
+				removeDomain();
+				closeDialog();
+				break;
+		}
+	}, [ step, isEmailBasedOnDomain, removeDomain, closeDialog ] );
 
 	const onCancel = useCallback( () => {
 		setStep( 1 );
