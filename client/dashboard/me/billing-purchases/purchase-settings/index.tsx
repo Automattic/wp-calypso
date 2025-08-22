@@ -74,8 +74,8 @@ import {
 	isJetpackCrmProduct,
 	isTitanMail,
 	isGoogleWorkspace,
+	getRenewalUrlFromPurchase,
 } from '../../../utils/purchase';
-import { encodeProductForUrl } from '../../../utils/wpcom-checkout';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
 import { getPurchaseUrlForId, getAddPaymentMethodUrlFor } from '../urls';
 import type { User } from '../../../data/me';
@@ -84,25 +84,6 @@ import type { Field } from '@wordpress/dataviews';
 import type { ReactNode, ReactElement } from 'react';
 
 import './style.scss';
-
-function getServicePathForCheckoutFromPurchase( purchase: Purchase ): string {
-	if ( isAkismetProduct( purchase ) ) {
-		return 'akismet/';
-	}
-	if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
-		return 'marketplace/';
-	}
-	return '';
-}
-
-function getRenewalUrlFromPurchase( purchase: Purchase ): string {
-	const productSlug = encodeProductForUrl( purchase.product_slug );
-	const productDomain = purchase.meta ? encodeProductForUrl( purchase.meta ) : undefined;
-	const checkoutProductSlug = productDomain ? `${ productSlug }:${ productDomain }` : productSlug;
-	const checkoutSiteSlug = purchase.site_slug || '';
-	const servicePath = getServicePathForCheckoutFromPurchase( purchase );
-	return `/checkout/${ servicePath }${ checkoutProductSlug }/renew/${ purchase.ID }/${ checkoutSiteSlug }`;
-}
 
 function renewPurchase( purchase: Purchase ): void {
 	window.location.href = getRenewalUrlFromPurchase( purchase );

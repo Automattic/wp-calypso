@@ -7,6 +7,7 @@ import {
 	GoogleWorkspaceSlugs,
 } from '../data/constants';
 import { isWithinLast, isWithinNext, getDateFromCreditCardExpiry } from './datetime';
+import { encodeProductForUrl } from './wpcom-checkout';
 import type { Purchase } from '../data/purchase';
 
 export function isTemporarySitePurchase( purchase: Purchase ): boolean {
@@ -348,4 +349,26 @@ export function isGoogleWorkspace( purchase: Purchase ): boolean {
 
 export function isSiteRedirect( purchase: Purchase ): boolean {
 	return purchase.product_slug === 'offsite_redirect';
+}
+
+function getServicePathForCheckoutFromPurchase( purchase: Purchase ): string {
+	if ( isAkismetProduct( purchase ) ) {
+		return 'akismet/';
+	}
+	if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
+		return 'marketplace/';
+	}
+	return '';
+}
+
+export function getRenewalUrlFromPurchase(
+	purchase: Purchase,
+	checkoutSiteSlugForUrl?: string
+): string {
+	const productSlug = encodeProductForUrl( purchase.product_slug );
+	const productDomain = purchase.meta ? encodeProductForUrl( purchase.meta ) : undefined;
+	const checkoutProductSlug = productDomain ? `${ productSlug }:${ productDomain }` : productSlug;
+	const checkoutSiteSlug = checkoutSiteSlugForUrl || purchase.site_slug || '';
+	const servicePath = getServicePathForCheckoutFromPurchase( purchase );
+	return `/checkout/${ servicePath }${ checkoutProductSlug }/renew/${ purchase.ID }/${ checkoutSiteSlug }`;
 }
