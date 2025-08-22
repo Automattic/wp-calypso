@@ -1,6 +1,6 @@
 import {
 	DomainSuggestionsList,
-	DomainSuggestion,
+	DomainSuggestionItem,
 	DomainSearchSkipSuggestion,
 } from '@automattic/domain-search';
 import { __experimentalVStack as VStack } from '@wordpress/components';
@@ -176,12 +176,12 @@ class DomainSearchResults extends Component {
 
 			if ( this.props.offerUnavailableOption || this.props.showAlreadyOwnADomain ) {
 				if ( this.props.siteDesignType !== DESIGN_TYPE_STORE && lastDomainIsTransferrable ) {
-					return <DomainSuggestion.Unavailable { ...unavailableDomainProps } />;
+					return <DomainSuggestionItem.Unavailable { ...unavailableDomainProps } />;
 				} else if ( lastDomainStatus !== MAPPED ) {
-					return <DomainSuggestion.Unavailable { ...unavailableDomainProps } />;
+					return <DomainSuggestionItem.Unavailable { ...unavailableDomainProps } />;
 				}
 			} else {
-				return <DomainSuggestion.Unavailable { ...unavailableDomainProps } />;
+				return <DomainSuggestionItem.Unavailable { ...unavailableDomainProps } />;
 			}
 		}
 
@@ -199,7 +199,7 @@ class DomainSearchResults extends Component {
 
 	renderPlaceholders() {
 		return times( this.props.placeholderQuantity, function ( n ) {
-			return <DomainSuggestion.Placeholder key={ `placeholder-${ n }` } />;
+			return <DomainSuggestionItem.Placeholder key={ `placeholder-${ n }` } />;
 		} );
 	}
 
@@ -252,7 +252,7 @@ class DomainSearchResults extends Component {
 
 			suggestionElements = regularSuggestions.map( ( suggestion, i ) => {
 				if ( suggestion.is_placeholder ) {
-					return <DomainSuggestion.Placeholder key={ `placeholder-${ i }` } />;
+					return <DomainSuggestionItem.Placeholder key={ `placeholder-${ i }` } />;
 				}
 
 				return (

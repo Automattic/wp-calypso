@@ -87,7 +87,7 @@ const DomainSuggestionComponent = ( {
 	return <SuggestionSkeleton domainName={ domainNameElement } price={ price } cta={ cta } />;
 };
 
-export const DomainSuggestion = ( props: DomainSuggestionProps ) => {
+export const DomainSuggestionItem = ( props: DomainSuggestionProps ) => {
 	const listContext = useDomainSuggestionContainerContext();
 
 	if ( ! listContext ) {
@@ -101,6 +101,6 @@ export const DomainSuggestion = ( props: DomainSuggestionProps ) => {
 	return <DomainSuggestionComponent { ...props } />;
 };
 
-DomainSuggestion.Unavailable = Unavailable;
-DomainSuggestion.Featured = Featured;
-DomainSuggestion.Placeholder = SuggestionPlaceholder;
+DomainSuggestionItem.Unavailable = Unavailable;
+DomainSuggestionItem.Featured = Featured;
+DomainSuggestionItem.Placeholder = SuggestionPlaceholder;

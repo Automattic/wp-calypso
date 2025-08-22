@@ -1,7 +1,7 @@
 import { DomainSuggestionBadge } from '../domain-suggestion-badge';
 import { DomainSuggestionPrimaryCTA } from '../domain-suggestion-cta';
 import { DomainSuggestionPrice } from '../domain-suggestion-price';
-import { DomainSuggestion } from '.';
+import { DomainSuggestionItem } from '.';
 import type { Meta } from '@storybook/react';
 
 const StoryWrapper = ( { children }: { children: React.ReactNode } ) => {
@@ -23,7 +23,7 @@ const StoryWrapper = ( { children }: { children: React.ReactNode } ) => {
 export const Default = () => {
 	return (
 		<StoryWrapper>
-			<DomainSuggestion.Featured
+			<DomainSuggestionItem.Featured
 				badges={
 					<>
 						<DomainSuggestionBadge>Recommended</DomainSuggestionBadge>
@@ -48,7 +48,7 @@ export default meta;
 export const Highlighted = () => {
 	return (
 		<StoryWrapper>
-			<DomainSuggestion.Featured
+			<DomainSuggestionItem.Featured
 				badges={
 					<DomainSuggestionBadge variation="success">It's available!</DomainSuggestionBadge>
 				}
@@ -66,7 +66,7 @@ export const Highlighted = () => {
 export const Placeholder = () => {
 	return (
 		<StoryWrapper>
-			<DomainSuggestion.Featured.Placeholder />
+			<DomainSuggestionItem.Featured.Placeholder />
 		</StoryWrapper>
 	);
 };

@@ -1,4 +1,4 @@
-import { DomainSuggestion } from '.';
+import { DomainSuggestionItem } from '.';
 import type { Meta } from '@storybook/react';
 
 export const Default = () => {
@@ -12,7 +12,7 @@ export const Default = () => {
 				maxWidth: '1040px',
 			} }
 		>
-			<DomainSuggestion.Unavailable
+			<DomainSuggestionItem.Unavailable
 				domain="example-unavailable"
 				tld="com"
 				reason="already-registered"

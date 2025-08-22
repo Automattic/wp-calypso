@@ -7,7 +7,7 @@ import { useMemo } from 'react';
 import { useSuggestion } from '../../hooks/use-suggestion';
 import { useDomainSuggestionBadges } from '../../hooks/use-suggestion-badges';
 import { useDomainSearch } from '../../page/context';
-import { DomainSuggestion } from '../../ui';
+import { DomainSuggestionItem } from '../../ui';
 import { DomainSuggestionCTA } from '../suggestion-cta';
 import { DomainSuggestionPrice } from '../suggestion-price';
 
@@ -60,7 +60,7 @@ export const SearchResultsItem = ( { domainName }: SearchResultsItemProps ) => {
 	}, [ suggestion, products, tld ] );
 
 	return (
-		<DomainSuggestion
+		<DomainSuggestionItem
 			badges={ suggestionBadges.length > 0 ? suggestionBadges : undefined }
 			notice={ notice }
 			domain={ domain }

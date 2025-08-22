@@ -1,5 +1,7 @@
-import { DomainSuggestion } from '../../ui';
+import { DomainSuggestionItem } from '../../ui';
 
 export const UnavailableSearchResult = () => {
-	return <DomainSuggestion.Unavailable domain="example" tld="app" reason="already-registered" />;
+	return (
+		<DomainSuggestionItem.Unavailable domain="example" tld="app" reason="already-registered" />
+	);
 };

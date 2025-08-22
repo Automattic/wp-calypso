@@ -2,7 +2,7 @@ import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { type FeaturedSuggestionReason } from '../../helpers/partition-suggestions';
 import { useDomainSuggestionBadges } from '../../hooks/use-suggestion-badges';
-import { DomainSuggestion, DomainSuggestionBadge } from '../../ui';
+import { DomainSuggestionItem, DomainSuggestionBadge } from '../../ui';
 import { DomainSuggestionCTA } from '../suggestion-cta';
 import { DomainSuggestionPrice } from '../suggestion-price';
 
@@ -48,7 +48,7 @@ export const FeaturedSearchResultsItem = ( {
 	}, [ reason, suggestionBadges ] );
 
 	return (
-		<DomainSuggestion.Featured
+		<DomainSuggestionItem.Featured
 			isHighlighted={ reason === 'exact-match' }
 			isSingleFeaturedSuggestion={ isSingleFeaturedSuggestion }
 			badges={ badges.length > 0 ? badges : undefined }

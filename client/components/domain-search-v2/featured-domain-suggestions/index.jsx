@@ -1,4 +1,4 @@
-import { DomainSuggestion } from '@automattic/domain-search';
+import { DomainSuggestionItem } from '@automattic/domain-search';
 import { localize } from 'i18n-calypso';
 import { pick } from 'lodash';
 import PropTypes from 'prop-types';
@@ -96,8 +96,8 @@ export class FeaturedDomainSuggestions extends Component {
 		return (
 			<div className="featured-domain-suggestions-v2">
 				<div className="featured-domain-suggestions-v2__content">
-					<DomainSuggestion.Featured.Placeholder />
-					<DomainSuggestion.Featured.Placeholder />
+					<DomainSuggestionItem.Featured.Placeholder />
+					<DomainSuggestionItem.Featured.Placeholder />
 				</div>
 			</div>
 		);

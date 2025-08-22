@@ -1,10 +1,10 @@
-import { DomainSuggestion, FeaturedDomainSuggestionsList } from '../../ui';
+import { DomainSuggestionItem, FeaturedDomainSuggestionsList } from '../../ui';
 
 export const FeaturedSearchResultsPlaceholder = () => {
 	return (
 		<FeaturedDomainSuggestionsList>
-			<DomainSuggestion.Featured.Placeholder />
-			<DomainSuggestion.Featured.Placeholder />
+			<DomainSuggestionItem.Featured.Placeholder />
+			<DomainSuggestionItem.Featured.Placeholder />
 		</FeaturedDomainSuggestionsList>
 	);
 };

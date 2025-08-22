@@ -1,6 +1,6 @@
-import { DomainSuggestion } from '../domain-suggestion';
 import { DomainSuggestionBadge } from '../domain-suggestion-badge';
 import { DomainSuggestionPrimaryCTA } from '../domain-suggestion-cta';
+import { DomainSuggestionItem } from '../domain-suggestion-item';
 import { DomainSuggestionPrice } from '../domain-suggestion-price';
 import { DomainSuggestionsList } from '.';
 import type { Meta } from '@storybook/react';
@@ -22,14 +22,14 @@ export const Default = () => {
 			} }
 		>
 			<DomainSuggestionsList>
-				<DomainSuggestion.Unavailable
+				<DomainSuggestionItem.Unavailable
 					domain="example-unavailable"
 					tld="com"
 					reason="already-registered"
 					onTransferClick={ () => alert( 'Your wish is an order!' ) }
 				/>
 				{ SUGGESTIONS.map( ( suggestion ) => (
-					<DomainSuggestion
+					<DomainSuggestionItem
 						key={ suggestion.uuid }
 						domain={ suggestion.domain }
 						tld={ suggestion.tld }
