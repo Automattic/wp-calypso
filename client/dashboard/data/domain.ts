@@ -4,6 +4,9 @@ import type { DomainSummary } from './domains';
 export interface Domain extends DomainSummary {
 	can_manage_name_servers: boolean;
 	cannot_manage_name_servers_reason: null | string;
+	has_wpcom_nameservers: boolean;
+	is_dnssec_enabled: boolean;
+	is_dnssec_supported: boolean;
 	is_domain_only_site: boolean;
 	is_gravatar_domain: boolean;
 	is_root_domain_registered_with_automattic: boolean;
