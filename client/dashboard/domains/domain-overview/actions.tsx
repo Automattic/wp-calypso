@@ -143,7 +143,6 @@ export default function Actions() {
 				isOpen={ isDeleteDialogOpen }
 				closeDialog={ () => setIsDeleteDialogOpen( false ) }
 				removeDomain={ () => setIsDeleteDialogOpen( false ) }
-				onCancel={ () => setIsDeleteDialogOpen( false ) }
 			/>
 		</VStack>
 	);

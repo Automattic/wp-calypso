@@ -1,7 +1,9 @@
 import {
+	Modal,
+	Button,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
-	__experimentalConfirmDialog as ConfirmDialog,
+	__experimentalHStack as HStack,
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
@@ -10,36 +12,40 @@ import { useState, useCallback } from 'react';
 import { domainTransferRoute } from '../../app/router/domains';
 import RouterLinkButton from '../../components/router-link-button';
 import { Domain } from '../../data/domain';
-import { User } from '../../data/user';
+import type { User } from '../../data/types';
 
-const textHeadingProps = {
-	as: 'h2' as const,
-	size: '20',
-	weight: 500,
-} as const;
-
-interface RemoveDomainDialogProps {
+interface Props {
 	user: User;
 	domain: Domain;
+	isOpen: boolean;
 	closeDialog: () => void;
 	removeDomain: () => void;
 }
 
-type ConfirmDialogProps = Omit<
-	React.ComponentProps< typeof ConfirmDialog >,
-	'children' | 'onConfirm'
->;
-type Props = RemoveDomainDialogProps & ConfirmDialogProps;
-
 export default function RemoveDomainDialog( {
 	user,
 	domain,
+	isOpen,
 	removeDomain,
 	closeDialog,
 	...props
 }: Props ) {
 	const [ step, setStep ] = useState( 1 );
+	const [ domainConfirmed, setDomainConfirmed ] = useState( false );
 	const isEmailBasedOnDomain = user.email.endsWith( domain.domain );
+
+	const getTitle = useCallback( () => {
+		switch ( step ) {
+			case 1:
+				return __( 'Delete domain' );
+			case 2:
+				return __( 'Update your WordPress.com email address' );
+			case 3:
+				return __( 'Confirm your decision' );
+			default:
+				return __( 'Delete domain' );
+		}
+	}, [ step ] );
 
 	const onConfirm = useCallback( () => {
 		switch ( step ) {
@@ -51,6 +57,7 @@ export default function RemoveDomainDialog( {
 				break;
 			case 3:
 				removeDomain();
+				setStep( 1 );
 				closeDialog();
 				break;
 		}
@@ -61,18 +68,15 @@ export default function RemoveDomainDialog( {
 		closeDialog();
 	}, [ closeDialog ] );
 
+	if ( ! isOpen ) {
+		return null;
+	}
+
 	return (
-		<ConfirmDialog
-			{ ...props }
-			confirmButtonText={ step === 3 ? __( 'Delete' ) : __( 'Continue' ) }
-			onConfirm={ onConfirm }
-			onCancel={ onCancel }
-			isDismissible={ false }
-		>
+		<Modal { ...props } title={ getTitle() } onRequestClose={ onCancel }>
 			<VStack spacing={ 4 } style={ { maxWidth: '450px' } }>
 				{ step === 1 && (
 					<>
-						<Text { ...textHeadingProps }>{ __( 'Delete domain' ) }</Text>
 						<Text as="p">
 							{ __(
 								'Deleting a domain will make all services connected to it unreachable, including your email and website. It will also make the domain available for someone else to register.'
@@ -109,7 +113,6 @@ export default function RemoveDomainDialog( {
 				) }
 				{ step === 2 && (
 					<>
-						<Text { ...textHeadingProps }>{ __( 'Update your WordPress.com email address' ) }</Text>
 						<Text as="p">
 							{ __(
 								'You are deleting a domain name used in the email address we have on file for you. You must update your contact information.'
@@ -129,7 +132,6 @@ export default function RemoveDomainDialog( {
 				) }
 				{ step === 3 && (
 					<>
-						<Text { ...textHeadingProps }>{ __( 'Confirm your decision' ) }</Text>
 						<Text as="p">
 							{ createInterpolateElement(
 								__(
@@ -144,12 +146,32 @@ export default function RemoveDomainDialog( {
 							<InputControl
 								__next40pxDefaultSize
 								label={ __( 'Type your domain name to proceed' ) }
-								onChange={ () => {} }
+								onChange={ ( val ) => setDomainConfirmed( val === domain.domain ) }
 							/>
 						</div>
 					</>
 				) }
+				<HStack justify="flex-end" spacing={ 2 }>
+					<Button variant="tertiary" onClick={ onCancel }>
+						{ __( 'Cancel' ) }
+					</Button>
+					{ step === 1 && (
+						<Button variant="primary" onClick={ onConfirm }>
+							{ __( 'Continue' ) }
+						</Button>
+					) }
+					{ step === 3 && (
+						<Button
+							isDestructive
+							variant="primary"
+							disabled={ ! domainConfirmed }
+							onClick={ onConfirm }
+						>
+							{ __( 'Delete' ) }
+						</Button>
+					) }
+				</HStack>
 			</VStack>
-		</ConfirmDialog>
+		</Modal>
 	);
 }
