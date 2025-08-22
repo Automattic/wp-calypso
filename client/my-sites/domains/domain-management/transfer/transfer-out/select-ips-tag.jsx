@@ -9,6 +9,7 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import SearchCard from 'calypso/components/search-card';
 import { saveDomainIpsTag } from 'calypso/state/domains/transfer/actions';
+import { getDomainWapiInfoByDomainName } from 'calypso/state/domains/transfer/selectors';
 import getGainingRegistrar from 'calypso/state/selectors/get-gaining-registrar';
 import getIpsTagSaveStatus from 'calypso/state/selectors/get-ips-tag-save-status';
 
@@ -215,9 +216,9 @@ class SelectIpsTag extends Component {
 	}
 
 	render() {
-		const { translate, saveStatus, redesign } = this.props;
+		const { translate, saveStatus, redesign, isDomainLocked } = this.props;
 
-		const content = (
+		const content = ! isDomainLocked && (
 			<>
 				<p>
 					{ translate(
@@ -244,9 +245,13 @@ class SelectIpsTag extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => ( {
-		gainingRegistrar: getGainingRegistrar( state, ownProps.selectedDomainName ),
-		saveStatus: getIpsTagSaveStatus( state, ownProps.selectedDomainName ),
-	} ),
+	( state, ownProps ) => {
+		const domainInfo = getDomainWapiInfoByDomainName( state, ownProps.selectedDomainName );
+		return {
+			isDomainLocked: domainInfo.data?.locked,
+			gainingRegistrar: getGainingRegistrar( state, ownProps.selectedDomainName ),
+			saveStatus: getIpsTagSaveStatus( state, ownProps.selectedDomainName ),
+		};
+	},
 	{ saveDomainIpsTag }
 )( localize( SelectIpsTag ) );
