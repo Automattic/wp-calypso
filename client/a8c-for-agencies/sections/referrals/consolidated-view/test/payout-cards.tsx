@@ -31,6 +31,7 @@ describe( 'PayoutCards', () => {
 		currentCyclePayoutDate: '2 Mar',
 		currentCycleActivityWindow: '1 Jan - 31 Mar',
 		areNextAndCurrentPayoutDatesEqual: false,
+		isFullQuarter: true,
 	};
 
 	beforeEach( () => {
@@ -135,5 +136,55 @@ describe( 'PayoutCards', () => {
 		expect( values[ 1 ] ).toHaveTextContent( '$300.50' );
 		expect( footerTexts[ 0 ] ).toHaveTextContent( 'Estimated earnings in previous quarter' );
 		expect( footerTexts[ 1 ] ).toHaveTextContent( 'Estimated earnings in current quarter' );
+	} );
+
+	it( 'should render the correct payout cards when the current quarter is not a full quarter and isWooPayments is false', () => {
+		mockUseGetPayoutData.mockReturnValue( {
+			...mockPayoutData,
+			isFullQuarter: false,
+		} );
+
+		render(
+			<PayoutCards
+				isWooPayments={ false }
+				isFetching={ false }
+				previousQuarterExpectedCommission={ 150.25 }
+				currentQuarterExpectedCommission={ 300.75 }
+			/>
+		);
+
+		const cards = screen.getAllByTestId( 'consolidated-stats-card' );
+		expect( cards ).toHaveLength( 2 );
+
+		// Should show both cards and the current quarter card should have the correct footer text
+		expect( screen.getByText( '$150.25' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Estimated earnings in previous quarter' ) ).toBeInTheDocument();
+		expect( screen.getByText( '$300.75' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Estimated earnings in current quarter' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should render the correct payout cards when the current quarter is not a full quarter and isWooPayments is true', () => {
+		mockUseGetPayoutData.mockReturnValue( {
+			...mockPayoutData,
+			isFullQuarter: false,
+		} );
+
+		render(
+			<PayoutCards
+				isWooPayments
+				isFetching={ false }
+				previousQuarterExpectedCommission={ 150.25 }
+				currentQuarterExpectedCommission={ 300.75 }
+			/>
+		);
+
+		const cards = screen.getAllByTestId( 'consolidated-stats-card' );
+		expect( cards ).toHaveLength( 2 );
+
+		// Should show both cards and the current quarter card should have the correct footer text
+		expect( screen.getByText( '$150.25' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Estimated earnings in previous quarter' ) ).toBeInTheDocument();
+		expect( screen.getByText( '$300.75' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Estimated current quarter earnings to date' ) ).toBeInTheDocument();
 	} );
 } );

@@ -1,15 +1,14 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
 
 @mixin loading-effect {
 	animation: loading-fade 1.6s ease-in-out infinite;
-	background: var(--color-sidebar-menu-selected-background);
+	background: var( --color-sidebar-menu-selected-background );
 }
 
 .checkout .hosting-dashboard-layout__body,
 .checkout .hosting-dashboard-layout__body-wrapper {
-	/* stylelint-disable-next-line scales/radii */
 	border-radius: 8px;
 }
 
@@ -22,7 +21,13 @@
 	flex-grow: 1;
 
 	@include break-large {
-		background: linear-gradient(to right, var(--color-surface) 0%, var(--color-surface) 70%, var(--color-neutral-0) 70%, var(--color-neutral-0) 100%);
+		background: linear-gradient(
+			to right,
+			var( --color-surface ) 0%,
+			var( --color-surface ) 70%,
+			var( --color-neutral-0 ) 70%,
+			var( --color-neutral-0 ) 100%
+		);
 	}
 }
 
@@ -32,7 +37,7 @@
 
 .checkout__client-referral-form-footer-error {
 	margin-block-start: 0.25rem;
-	color: var(--color-scary-40);
+	color: var( --color-scary-40 );
 	font-style: italic;
 	@include body-medium;
 
@@ -65,7 +70,7 @@
 	margin-block-start: 32px;
 	@include heading-x-large;
 
-	@include breakpoint-deprecated( ">960px" ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		margin-block-start: 0;
 	}
 }
@@ -82,7 +87,7 @@
 	@include break-large {
 		max-width: 443px;
 		padding: 128px 48px 48px;
-		background: var(--color-neutral-0);
+		background: var( --color-neutral-0 );
 	}
 
 	&.checkout__aside--referral,
@@ -109,12 +114,12 @@
 }
 
 .checkout__summary-pricing {
-	background-color: var(--color-surface);
-	border-radius: 8px; /* stylelint-disable-line scales/radii */
-	border: 1px solid var(--color-link);
+	background-color: var( --color-surface );
+	border-radius: 8px;
+	border: 1px solid var( --color-link );
 	padding: 1rem;
 
-	@media only screen and (min-width: 782px) {
+	@media only screen and ( min-width: 782px ) {
 		margin-block-start: 32px;
 	}
 
@@ -124,11 +129,11 @@
 
 	.checkout__summary-pricing-discounted {
 		@include heading-large;
-		color: var(--color-neutral-80);
+		color: var( --color-neutral-80 );
 
 		@include break-xlarge {
 			@include heading-x-large;
-			color: var(--color-black);
+			color: var( --color-black );
 		}
 	}
 
@@ -140,7 +145,7 @@
 
 	.checkout__summary-pricing-interval {
 		@include body-small;
-		color: var(--color-neutral-60);
+		color: var( --color-neutral-60 );
 		line-height: 2;
 	}
 }
@@ -156,15 +161,14 @@
 	@include heading-medium;
 }
 
-
 .checkout__summary-notice {
 	@include body-small;
 	margin-block-end: 16px;
-	color: var(--color-neutral-50);
+	color: var( --color-neutral-50 );
 
 	a {
 		text-decoration: underline;
-		color: var(--color-text-black);
+		color: var( --color-text-black );
 	}
 
 	&.margin-top {
@@ -174,13 +178,13 @@
 	h3 {
 		margin-block: 24px;
 		@include heading-large;
-		color: var(--color-neutral-70);
+		color: var( --color-neutral-70 );
 	}
 }
 
 .checkout__summary-notice-item {
 	@include body-small;
-	color: var(--color-neutral-50);
+	color: var( --color-neutral-50 );
 	margin-block-end: 0.5rem;
 }
 
@@ -201,7 +205,7 @@
 	}
 
 	> .button.is-link {
-		color: var(--color-black);
+		color: var( --color-black );
 		text-decoration: underline;
 	}
 }
@@ -215,10 +219,10 @@
 		box-sizing: border-box;
 		width: 48px;
 		height: 48px;
-		background: linear-gradient(159.87deg, #f6f6f4 7.24%, #f7f4ea 64.73%, #ddedd5 116.53%);
+		background: linear-gradient( 159.87deg, #f6f6f4 7.24%, #f7f4ea 64.73%, #ddedd5 116.53% );
 		border-radius: 4px;
 
-		@media only screen and (min-width: 821px) {
+		@media only screen and ( min-width: 821px ) {
 			display: flex;
 			align-items: center;
 			justify-content: center;
@@ -229,7 +233,6 @@
 		width: 22px;
 		height: auto;
 	}
-
 
 	.product-info__text-content {
 		width: 100%;
@@ -246,28 +249,27 @@
 
 		a {
 			text-decoration: underline;
-			color: var(--color-text);
+			color: var( --color-text );
 		}
 	}
 
 	.product-info__count {
-		background-color: var(--color-neutral-0);
+		background-color: var( --color-neutral-0 );
 		padding: 5px 15px;
 		border-radius: 4px;
 		font-weight: 500;
-
 	}
 
 	.product-info__description {
 		@include body-large;
 		margin-block: 4px 0;
-		color: var(--color-neutral-70);
+		color: var( --color-neutral-70 );
 	}
 
 	.product-info__site-url {
 		@include body-medium;
 		margin-block: 4px 0;
-		color: var(--color-neutral-40);
+		color: var( --color-neutral-40 );
 	}
 }
 
@@ -276,16 +278,16 @@
 
 	width: 100%;
 	height: 48px;
-	background-color: var(--color-neutral-0);
+	background-color: var( --color-neutral-0 );
 	border-radius: 4px;
 }
 
 .checkout__client-referral-form {
 	padding-block-start: 48px;
 
-	input[type="text"].form-text-input:disabled,
+	input[type='text'].form-text-input:disabled,
 	.form-textarea:disabled {
-		border-color: var(--color-neutral-10);
+		border-color: var( --color-neutral-10 );
 	}
 }
 
@@ -295,17 +297,16 @@
 	justify-content: space-between;
 	padding-block-end: 0;
 
-	@include breakpoint-deprecated( ">960px" ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		width: 400px;
 	}
-
 
 	.checkout__aside-actions {
 		margin-block-start: 16px;
 	}
 	.checkout__summary-client-payment-notice {
 		margin-block-start: 48px;
-		color: var(--color-neutral-70);
+		color: var( --color-neutral-70 );
 		@include heading-large;
 	}
 
@@ -313,7 +314,6 @@
 		margin-block-start: 48px;
 
 		div {
-
 			margin-block-start: 8px;
 		}
 	}
@@ -322,13 +322,13 @@
 		margin-block-start: 32px;
 		padding-block-end: 16px;
 
-		@include breakpoint-deprecated( ">960px" ) {
+		@include breakpoint-deprecated( '>960px' ) {
 			margin-block-start: auto;
 		}
 
 		.checkout__aside-powered-by {
 			div {
-				color: var(--color-neutral-70);
+				color: var( --color-neutral-70 );
 				@include body-small;
 			}
 
@@ -358,7 +358,7 @@
 
 		.a4a-popover__title {
 			@include heading-medium;
-			color: var(--studio-gray-80);
+			color: var( --studio-gray-80 );
 		}
 
 		.checkout__button-popover-description {
@@ -369,7 +369,7 @@
 
 .checkout__verify-account-tooltip {
 	a {
-		color: var(--color-text-inverted);
+		color: var( --color-text-inverted );
 		text-decoration: underline;
 	}
 }

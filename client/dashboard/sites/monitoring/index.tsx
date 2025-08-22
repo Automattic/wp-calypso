@@ -15,7 +15,7 @@ import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
 import clsx from 'clsx';
 import { siteBySlugQuery } from '../../app/queries/site';
-import { siteRoute } from '../../app/router';
+import { siteRoute } from '../../app/router/sites';
 import { Callout } from '../../components/callout';
 import { CalloutOverlay } from '../../components/callout-overlay';
 import { PageHeader } from '../../components/page-header';

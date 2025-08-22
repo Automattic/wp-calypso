@@ -14,7 +14,7 @@ import {
 	domainRoute,
 	domainGlueRecordsAddRoute,
 	domainGlueRecordsEditRoute,
-} from '../../app/router';
+} from '../../app/router/domains';
 import DataViewsCard from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';

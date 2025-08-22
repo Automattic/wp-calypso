@@ -21,8 +21,8 @@ export const useGetCombinedChat = (
 	canConnectToZendesk: boolean,
 	isLoadingCanConnectToZendesk: boolean
 ) => {
-	const { currentSupportInteraction, conversationId, odieId, isChatLoaded } = useSelect(
-		( select ) => {
+	const { currentSupportInteraction, conversationId, odieId, isChatLoaded, connectionStatus } =
+		useSelect( ( select ) => {
 			const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 			const currentSupportInteraction = store.getCurrentSupportInteraction();
 
@@ -34,16 +34,29 @@ export const useGetCombinedChat = (
 				conversationId,
 				odieId,
 				isChatLoaded: store.getIsChatLoaded(),
+				connectionStatus: store.getZendeskConnectionStatus(),
 			};
-		},
-		[]
-	);
+		}, [] );
 	const previousUuidRef = useRef< string | undefined >();
 	const [ mainChatState, setMainChatState ] = useState< Chat >( emptyChat );
+	const [ refreshingAfterReconnect, setRefreshingAfterReconnect ] = useState( false );
 	const chatStatus = mainChatState?.status;
 	const getZendeskConversation = useGetZendeskConversation();
 	const { data: odieChat, isFetching: isOdieChatLoading } = useOdieChat( Number( odieId ) );
 	const { startNewInteraction } = useManageSupportInteraction();
+
+	useEffect( () => {
+		if ( connectionStatus === 'connected' ) {
+			setTimeout( () => {
+				setRefreshingAfterReconnect( true );
+				setMainChatState( ( chat ) => ( {
+					...chat,
+					status: 'loading',
+				} ) );
+				// Give a buffer for ZD to warm up before re-fetching the lost messages.
+			}, 2000 );
+		}
+	}, [ connectionStatus, setRefreshingAfterReconnect ] );
 
 	useEffect( () => {
 		const interactionHasChanged = previousUuidRef.current !== currentSupportInteraction?.uuid;
@@ -85,7 +98,7 @@ export const useGetCombinedChat = (
 			return;
 		}
 
-		if ( isChatLoaded ) {
+		if ( isChatLoaded || refreshingAfterReconnect ) {
 			try {
 				getZendeskConversation( {
 					chatId: odieChat?.odieId,
@@ -117,11 +130,14 @@ export const useGetCombinedChat = (
 					event_source: 'help-center',
 					event_external_id: crypto.randomUUID(),
 				} );
+			} finally {
+				setRefreshingAfterReconnect( false );
 			}
 		}
 	}, [
 		isOdieChatLoading,
 		chatStatus,
+		refreshingAfterReconnect,
 		isChatLoaded,
 		odieChat,
 		conversationId,

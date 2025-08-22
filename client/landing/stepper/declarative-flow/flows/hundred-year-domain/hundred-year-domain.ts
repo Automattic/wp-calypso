@@ -4,6 +4,7 @@ import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
+import { shouldRenderRewrittenDomainSearch } from 'calypso/lib/domains/should-render-rewritten-domain-search';
 import {
 	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
@@ -15,7 +16,10 @@ import { STEPS } from '../../internals/steps';
 import type { ProvidedDependencies, Flow } from '../../internals/types';
 import './style.scss';
 
-const steps = [ STEPS.DOMAINS, ...stepsWithRequiredLogin( [ STEPS.PROCESSING ] ) ];
+const steps = [
+	shouldRenderRewrittenDomainSearch() ? STEPS.DOMAIN_SEARCH : STEPS.DOMAINS,
+	...stepsWithRequiredLogin( [ STEPS.PROCESSING ] ),
+];
 
 const HundredYearDomainFlow: Flow = {
 	name: HUNDRED_YEAR_DOMAIN_FLOW,

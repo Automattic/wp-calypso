@@ -23,6 +23,7 @@ export default function StagingSiteDeleteModal( {
 	const { createErrorNotice } = useDispatch( noticesStore );
 
 	const productionSiteId = site.options?.wpcom_production_blog_id;
+
 	const mutation = useMutation( stagingSiteDeleteMutation( site.ID, productionSiteId ?? 0 ) );
 
 	if ( ! productionSiteId ) {
@@ -40,6 +41,7 @@ export default function StagingSiteDeleteModal( {
 			},
 			onSuccess: () => {
 				recordTracksEvent( 'calypso_hosting_configuration_staging_site_delete_success' );
+				onClose();
 			},
 		} );
 	};
