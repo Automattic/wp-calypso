@@ -1,9 +1,20 @@
 import { LogType } from '../../../data/site-logs';
 import type { Filter } from '@wordpress/dataviews';
 
+type SimpleFilter = {
+	field: string;
+	operator: 'isAny';
+	value: string[];
+};
+
+export function getAllowedFields( logType: LogType ): ReadonlyArray< string > {
+	return logType === LogType.PHP
+		? [ 'severity' ]
+		: [ 'cached', 'renderer', 'request_type', 'status' ];
+}
+
 export function getInitialFiltersFromSearch( logType: LogType, search: string ): Filter[] {
-	const allowed =
-		logType === LogType.PHP ? [ 'severity' ] : [ 'cached', 'renderer', 'request_type', 'status' ];
+	const allowed = getAllowedFields( logType );
 	const params = new URLSearchParams( search );
 
 	const decode = ( value: string ): string => {
@@ -45,7 +56,7 @@ export function getInitialFiltersFromSearch( logType: LogType, search: string ):
 			values = normalizeSeverity( values );
 		}
 		if ( values.length ) {
-			out.push( { field, operator: 'isAny', value: values } as unknown as Filter );
+			out.push( { field, operator: 'isAny', value: values } satisfies SimpleFilter );
 		}
 	}
 	return out;

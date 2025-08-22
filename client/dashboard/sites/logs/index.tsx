@@ -24,7 +24,7 @@ import { LogType, PHPLog, ServerLog, SiteLogsParams } from '../../data/site-logs
 import { parseYmdLocal, formatYmd } from '../../utils/datetime';
 import { hasHostingFeature } from '../../utils/site-features';
 import { useFields } from './dataviews/fields';
-import { getInitialFiltersFromSearch } from './dataviews/filters';
+import { getInitialFiltersFromSearch, getAllowedFields } from './dataviews/filters';
 import { useView, toFilterParams } from './dataviews/views';
 import illustrationUrl from './logs-callout-illustration.svg';
 import { buildTimeRangeInSeconds, getInitialDateRangeFromSearch } from './utils';
@@ -72,6 +72,21 @@ const LOG_TABS = [
 	{ name: 'php', title: __( 'PHP error' ) },
 	{ name: 'server', title: __( 'Web server' ) },
 ];
+
+function filtersSignature(
+	filters: Filter[] | undefined,
+	allowed: ReadonlyArray< string >
+): string {
+	return allowed
+		.slice()
+		.sort()
+		.map( ( field ) => {
+			const raw = filters?.find( ( filter ) => filter.field === field )?.value;
+			const values = Array.isArray( raw ) ? ( raw as string[] ).slice().sort() : [];
+			return `${ field }:${ values.slice().sort().join( ',' ) }`;
+		} )
+		.join( '|' );
+}
 
 function SiteLogs( { logType }: { logType: LogType } ) {
 	const locale = useLocale();
@@ -128,31 +143,32 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	};
 
 	// This keeps a per-page cursor cache - page 1 has no cursor.
-	const cursorsRef = useRef< Map< number, string | undefined > >( new Map( [ [ 1, undefined ] ] ) );
+	const cursorsRef = useRef< Map< number, string > >( new Map() );
 
 	// For the current page, use its cursor (or null/undefined on page 1).
-	const scrollId = cursorsRef.current.get( view.page ?? 1 );
+	const scrollId = cursorsRef.current.get( view.page ?? 1 ) ?? null;
 
-	const { data: siteLogs, isFetching } = useQuery(
-		siteLogsQuery( siteId!, params, scrollId ?? null )
-	);
+	const { data: siteLogs, isFetching } = useQuery( siteLogsQuery( siteId!, params, scrollId ) );
 
 	useEffect( () => {
 		if ( ! siteLogs ) {
 			return;
 		}
 		const nextPage = ( view.page ?? 1 ) + 1;
-		cursorsRef.current.set(
-			nextPage,
-			( siteLogs as { scroll_id?: string | null } ).scroll_id ?? undefined
-		);
+		const id = siteLogs.scroll_id;
+
+		if ( id ) {
+			cursorsRef.current.set( nextPage, id );
+		} else {
+			cursorsRef.current.delete( nextPage );
+		}
 	}, [ siteLogs, view.page ] );
 
 	const handleDateRangeChange = ( next: { start: Date; end: Date } ) => {
 		setDateRange( next );
 
 		// Reset pagination + cursors
-		cursorsRef.current = new Map( [ [ 1, undefined ] ] );
+		cursorsRef.current.clear();
 		setView( ( value ) => ( { ...value, page: 1 } ) );
 
 		// Sync from/to to the URL as UNIX seconds
@@ -210,8 +226,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	} );
 
 	const onChangeView = ( next: View ) => {
-		const allowed =
-			logType === LogType.PHP ? [ 'severity' ] : [ 'cached', 'renderer', 'request_type', 'status' ];
+		const allowed = getAllowedFields( logType );
 
 		const sourceFilters = ( next.filters ?? view.filters ?? [] ) as Filter[];
 
@@ -241,23 +256,10 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		}
 
 		// Detect filters/sort/perPage changes
-		const filtersSignature = ( filters: Filter[] | undefined ) =>
-			allowed
-				.slice()
-				.sort()
-				.map( ( field ) => {
-					const values =
-						( filters?.find( ( filter ) => filter.field === field )?.value as
-							| string[]
-							| undefined ) ?? [];
-					return `${ field }:${ values.slice().sort().join( ',' ) }`;
-				} )
-				.join( '|' );
-
 		const datasetChanged =
 			next.perPage !== view.perPage ||
 			next.sort?.direction !== view.sort?.direction ||
-			filtersSignature( sourceFilters ) !== filtersSignature( view.filters );
+			filtersSignature( sourceFilters, allowed ) !== filtersSignature( view.filters, allowed );
 
 		// Sync allowed filters to URL using sourceFilters
 		const url = new URL( window.location.href );
@@ -277,7 +279,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 
 		// Apply view with only allowed filters; reset page/cursors if dataset changed
 		if ( datasetChanged ) {
-			cursorsRef.current = new Map( [ [ 1, undefined ] ] );
+			cursorsRef.current.clear();
 			setView( {
 				...next,
 				page: 1,
