@@ -9,13 +9,13 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
 import SVGIcon from '../../components/svg-icon';
 import { Text } from '../../components/text';
-import { isMobile as getIsMobile } from '../../utils/user-agent';
-import Apple from './apple-logo.svg';
 import AppsCard from './apps-card';
-import WordPressDesktopAppLogo from './desktop-app-logo.svg';
-import Linux from './linux-logo.svg';
-import WordPressStudioLogo from './studio-app-logo.svg';
-import Windows from './windows-logo.svg';
+import Apple from './images/apple-logo.svg';
+import WordPressDesktopAppLogo from './images/desktop-app-logo.svg';
+import Linux from './images/linux-logo.svg';
+import WordPressStudioLogo from './images/studio-app-logo.svg';
+import Windows from './images/windows-logo.svg';
+import { isMobile as getIsMobile } from './utils';
 
 enum PlatformType {
 	MacIntel = 'MacIntel',
@@ -201,26 +201,28 @@ export default function AppsDesktopCard( { appSlug }: { appSlug: keyof typeof De
 	const renderDesktopContent = () => {
 		return (
 			<VStack spacing={ 4 }>
-				<HStack spacing={ 2 } justify="flex-start">
-					{ Object.entries( app.platforms )
-						.filter( ( [ , config ] ) => config.group === platformConfig?.group )
-						.map( ( [ key, config ], index ) => (
-							<Button
-								__next40pxDefaultSize
-								key={ key }
-								href={ config.link }
-								icon={ <SVGIcon icon={ config.icon } name={ config.iconName } /> }
-								variant={ index === 0 ? 'primary' : 'secondary' }
-								onClick={ () => recordTracksEvent( config.eventName ) }
-							>
-								{ sprintf(
-									// translators: %s is the platform name
-									__( 'Download for %s' ),
-									config.name
-								) }
-							</Button>
-						) ) }
-				</HStack>
+				{ platformConfig && (
+					<HStack spacing={ 2 } justify="flex-start">
+						{ Object.entries( app.platforms )
+							.filter( ( [ , config ] ) => config.group === platformConfig?.group )
+							.map( ( [ key, config ], index ) => (
+								<Button
+									__next40pxDefaultSize
+									key={ key }
+									href={ config.link }
+									icon={ <SVGIcon icon={ config.icon } name={ config.iconName } /> }
+									variant={ index === 0 ? 'primary' : 'secondary' }
+									onClick={ () => recordTracksEvent( config.eventName ) }
+								>
+									{ sprintf(
+										// translators: %s is the platform name
+										__( 'Download for %s' ),
+										config.name
+									) }
+								</Button>
+							) ) }
+					</HStack>
+				) }
 				<HStack spacing={ 2 } justify="flex-start">
 					<Text as="p" variant="muted" lineHeight="20px">
 						{ ! platformConfig ? __( 'Available for:' ) : __( 'Also available for:' ) }

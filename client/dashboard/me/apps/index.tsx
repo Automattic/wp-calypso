@@ -4,7 +4,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import AppsCard from './apps-card';
 import AppsDesktopCard from './apps-desktop-card';
-import JetpackAppLogo from './jetpack-app-logo.svg';
+import JetpackAppLogo from './images/jetpack-app-logo.svg';
 
 function JetpackAppCard() {
 	return (
