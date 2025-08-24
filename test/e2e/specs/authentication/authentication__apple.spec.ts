@@ -11,7 +11,8 @@ test.describe( 'Authentication: Apple', () => {
 		pageAppleLogin,
 		pageLogin,
 		secrets,
-	} ) => {
+	}, workerInfo ) => {
+		test.skip( workerInfo.project.name !== 'chrome', 'We only run Apple Authentication in Chrome' );
 		let timestamp: Date;
 
 		await test.step( 'Given I am on the login page', async function () {
@@ -69,7 +70,9 @@ test.describe( 'Authentication: Apple', () => {
 		pageAppleLogin,
 		pageLogin,
 		secrets,
-	} ) => {
+	}, workerInfo ) => {
+		test.skip( workerInfo.project.name !== 'chrome', 'We only run Apple Authentication in Chrome' );
+
 		let timestamp: Date;
 
 		await test.step( 'Given I am on the login page', async function () {
