@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import languages, { Language, SubLanguage } from '@automattic/languages';
 import { hasTranslation } from '@wordpress/i18n';
-import { map, pickBy, includes } from 'lodash';
+import { pickBy, includes } from 'lodash';
 import { getWpI18nLocaleSlug } from './locale-context';
 
 /**
@@ -84,10 +84,10 @@ export function translationExists( phrase: string ) {
 
 /**
  * Return a list of all supported language slugs
- * @returns {Array} A list of all supported language slugs
+ * @returns A list of all supported language slugs
  */
-export function getLanguageSlugs() {
-	return map( languages, 'langSlug' );
+export function getLanguageSlugs(): string[] {
+	return languages.map( ( language ) => language.langSlug );
 }
 
 /**
