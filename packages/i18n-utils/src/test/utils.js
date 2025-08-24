@@ -3,6 +3,7 @@ import {
 	getNumericFirstDayOfWeek,
 	removeLocaleFromPathLocaleInFront,
 	addLocaleToPathLocaleInFront,
+	getLanguage,
 } from '../';
 
 jest.mock( '@automattic/calypso-config', () => ( key ) => {
@@ -46,5 +47,56 @@ describe( '#addLocaleToPathLocaleInFront', () => {
 		expect( addLocaleToPathLocaleInFront( '/themes?thing=stuff', 'en' ) ).toBe(
 			'/themes?thing=stuff'
 		);
+	} );
+} );
+
+describe( '#getLanguage', () => {
+	test( 'should return undefined for undefined input', () => {
+		expect( getLanguage( undefined ) ).toBeUndefined();
+	} );
+
+	test( 'should return undefined for invalid locale format', () => {
+		expect( getLanguage( '123' ) ).toBeUndefined();
+		expect( getLanguage( 'invalid-locale' ) ).toBeUndefined();
+		expect( getLanguage( 'a' ) ).toBeUndefined();
+	} );
+
+	test( 'should handle locale mapping (no -> nb)', () => {
+		const result = getLanguage( 'no' );
+		expect( result ).toBeDefined();
+		expect( result?.langSlug ).toBe( 'nb' );
+	} );
+
+	test( 'should return exact match for valid locale', () => {
+		const result = getLanguage( 'en' );
+		expect( result ).toBeDefined();
+		expect( result?.langSlug ).toBe( 'en' );
+	} );
+
+	test( 'should return exact match for locale with region code', () => {
+		const result = getLanguage( 'pt-br' );
+		expect( result ).toBeDefined();
+		expect( result?.langSlug ).toBe( 'pt-br' );
+	} );
+
+	test( 'should fallback to parent slug when exact match not found', () => {
+		const result = getLanguage( 'en-nz' );
+		expect( result?.langSlug ).toBe( 'en' );
+	} );
+
+	test( 'should handle locale with underscore separator', () => {
+		const result = getLanguage( 'en_nz' );
+		expect( result?.langSlug ).toBe( 'en' );
+	} );
+
+	test( 'should return undefined when neither exact match nor parent slug exists', () => {
+		const result = getLanguage( 'xx-yy' );
+		expect( result ).toBeUndefined();
+	} );
+
+	test( 'should handle case sensitivity', () => {
+		const result = getLanguage( 'EN' );
+		// Should be undefined since locale matching is case-sensitive
+		expect( result ).toBeUndefined();
 	} );
 } );

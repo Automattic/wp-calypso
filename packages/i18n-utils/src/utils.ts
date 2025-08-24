@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import languages, { Language, SubLanguage } from '@automattic/languages';
 import { hasTranslation } from '@wordpress/i18n';
-import { find, map, pickBy, includes } from 'lodash';
+import { map, pickBy, includes } from 'lodash';
 import { getWpI18nLocaleSlug } from './locale-context';
 
 /**
@@ -132,9 +132,14 @@ export function getLanguage( langSlug: string | undefined ): Language | undefine
 	langSlug = getMappedLanguageSlug( langSlug );
 	if ( langSlug && localeOnlyRegex.test( langSlug ) ) {
 		// Find for the langSlug first. If we can't find it, split it and find its parent slug.
+		const foundBySlug = languages.find( ( language ) => language.langSlug === langSlug );
+		if ( foundBySlug ) {
+			return foundBySlug;
+		}
+
 		// Please see the comment above `localeOnlyRegex` to see why we can split by - or _ and find the parent slug.
-		return ( find( languages, { langSlug } ) ||
-			find( languages, { langSlug: langSlug.split( /[-_]/ )[ 0 ] } ) ) as Language | undefined;
+		const parentSlug = langSlug.split( /[-_]/ )[ 0 ];
+		return languages.find( ( language ) => language.langSlug === parentSlug );
 	}
 
 	return undefined;
