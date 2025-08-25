@@ -59,6 +59,37 @@ $blueberry-color: #3858e9;
 	word-break: break-word;
 	column-gap: 0;
 
+	&.odie-chatbox-message-user {
+		border-radius: 24px 24px 8px 24px;
+		background-color: $gray-200;
+		width: max-content;
+		margin-right: 16px;
+		padding: 10px 16px;
+		max-width: calc( 100% - 32px );
+		align-self: flex-end;
+
+		p {
+			color: $gray-900;
+			padding: 0;
+			span {
+				background-color: transparent;
+				a {
+					color: var( --studio-white );
+					&:hover {
+						color: var( --studio-blue-40 );
+					}
+				}
+			}
+		}
+
+		blockquote {
+			background-color: transparent;
+			border-left: 2px solid var( --color-neutral-0 );
+			margin: 8px 0 16px;
+			padding: 8px 16px;
+		}
+	}
+
 	ol,
 	ul {
 		margin: 0;
@@ -291,7 +322,6 @@ $blueberry-color: #3858e9;
 		}
 
 		.odie-conversation-feedback__message {
-
 			h3 {
 				font-weight: 500;
 				line-height: 24px;
@@ -389,12 +419,6 @@ $blueberry-color: #3858e9;
 			margin: auto;
 			font-size: $font-body;
 			padding-top: 0;
-		}
-
-		.odie-chatbox-message-sources-container-fullscreen {
-			max-width: 800px;
-			max-height: 80vh;
-			overflow-y: auto;
 		}
 
 		.odie-foldable-card.odie-sources-foldable-card {

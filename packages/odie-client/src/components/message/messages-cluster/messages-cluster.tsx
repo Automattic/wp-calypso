@@ -3,6 +3,8 @@ import cx from 'clsx';
 import ChatMessage from '..';
 import { useOdieAssistantContext } from '../../../context';
 import { isCSATMessage } from '../../../utils';
+import { isAttachment, isTransitionToSupportMessage } from '../../../utils/csat';
+import ChatWithSupportLabel from '../../chat-with-support';
 import type { Message, MessageRole } from '../../../types';
 import './style.scss';
 
@@ -14,6 +16,8 @@ import './style.scss';
 function getPresentedRole( message: Message ) {
 	if ( isCSATMessage( message ) ) {
 		return 'csat';
+	} else if ( isAttachment( message ) ) {
+		return 'attachment';
 	}
 	return message.role;
 }
@@ -27,12 +31,11 @@ function clusterMessagesBySender( messages: Message[] ) {
 	if ( ! messages.length ) {
 		return [];
 	}
-
 	let id = 1;
 
 	let currentGroup: {
 		id: number;
-		role: MessageRole | 'csat';
+		role: MessageRole | 'csat' | 'attachment';
 		messages: Message[];
 	} = {
 		id: id++,
@@ -63,6 +66,9 @@ export function MessagesClusterizer( { messages }: { messages: Message[] } ) {
 	const { currentUser } = useOdieAssistantContext();
 
 	return groups.map( ( group ) => {
+		const startingHumanSupport = group.messages.some( isTransitionToSupportMessage );
+		const endingHumanSupport = group.messages.some( isCSATMessage );
+
 		const messageHeader = () => {
 			// Only business messages have a header.
 			if ( group.role === 'business' ) {
@@ -76,15 +82,31 @@ export function MessagesClusterizer( { messages }: { messages: Message[] } ) {
 		};
 
 		return (
-			<div
-				key={ group.id }
-				className={ cx( 'odie-chatbox-messages-cluster', `role-${ group.role }` ) }
-			>
-				{ messageHeader() }
-				{ group.messages.map( ( message ) => (
-					<ChatMessage key={ message.message_id } message={ message } currentUser={ currentUser } />
-				) ) }
-			</div>
+			<>
+				{ endingHumanSupport && (
+					<ChatWithSupportLabel
+						labelText={ __( 'Chat with support team ended', __i18n_text_domain__ ) }
+					/>
+				) }
+				<div
+					key={ group.id }
+					className={ cx( 'odie-chatbox-messages-cluster', `role-${ group.role }` ) }
+				>
+					{ messageHeader() }
+					{ group.messages.map( ( message ) => (
+						<ChatMessage
+							key={ message.message_id }
+							message={ message }
+							currentUser={ currentUser }
+						/>
+					) ) }
+				</div>
+				{ startingHumanSupport && (
+					<ChatWithSupportLabel
+						labelText={ __( 'Chat with support team started', __i18n_text_domain__ ) }
+					/>
+				) }
+			</>
 		);
 	} );
 }
