@@ -38,8 +38,6 @@ export default function StagingSiteDeleteModal( {
 		return null;
 	}
 
-	const isV2 = window?.location?.pathname?.startsWith( '/v2' );
-
 	const handleDelete = () => {
 		recordTracksEvent( 'calypso_hosting_configuration_staging_site_delete_click' );
 		mutation.mutate( undefined, {
@@ -51,7 +49,7 @@ export default function StagingSiteDeleteModal( {
 			},
 			onSuccess: () => {
 				recordTracksEvent( 'calypso_hosting_configuration_staging_site_delete_success' );
-				if ( isV2 ) {
+				if ( window?.location?.pathname?.startsWith( '/v2' ) ) {
 					createSuccessNotice( __( 'Staging site deleted.' ), { type: 'snackbar' } );
 					onClose();
 					if ( productionSiteSlug ) {
