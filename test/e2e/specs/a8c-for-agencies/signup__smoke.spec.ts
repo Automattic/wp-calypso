@@ -6,7 +6,7 @@ const A4A_URL = 'https://agencies.automattic.com';
  * Verify the A4A > Signup page loads
  */
 test.describe( 'Automattic For Agencies: Sign Up Page', () => {
-	test( 'As an anauthenticated web agency owner, I can enter my agency details and see these displayed', async ( {
+	test( 'As an unauthenticated web agency owner, I can enter my agency details and see these displayed', async ( {
 		page,
 	} ) => {
 		const firstName = 'John';
@@ -34,7 +34,7 @@ test.describe( 'Automattic For Agencies: Sign Up Page', () => {
 			await page.getByPlaceholder( 'Business URL' ).fill( businessURL );
 		} );
 
-		await test.step( 'Then the form values display what I have enteredL', async () => {
+		await test.step( 'Then the form values display what I have entered', async () => {
 			expect( await page.getByPlaceholder( 'Your first name' ).inputValue() ).toBe( firstName );
 			expect( await page.getByPlaceholder( 'Your last name' ).inputValue() ).toBe( lastName );
 			expect( await page.getByPlaceholder( 'Business URL' ).inputValue() ).toBe( businessURL );
