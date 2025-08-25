@@ -273,9 +273,9 @@ export default function DomainDns() {
 	};
 
 	const renderExternalNameserversNotice = () => {
-		// if ( hasWpcomNameservers() || ! nameservers || ! nameservers.length ) {
-		// 	return null;
-		// }
+		if ( hasWpcomNameservers() || ! nameservers || ! nameservers.length ) {
+			return null;
+		}
 
 		// TODO: Add a link to the name servers page or connection setup, once we have the pages
 		return (
