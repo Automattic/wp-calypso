@@ -197,7 +197,7 @@ export default function DomainDns() {
 			return null;
 		}
 
-		if ( domain?.is_gravatar_domain ) {
+		if ( domain.is_gravatar_domain ) {
 			return (
 				<Notice variant="warning" title={ __( 'Your domain is not using default A records' ) }>
 					{ createInterpolateElement(
@@ -363,7 +363,7 @@ export default function DomainDns() {
 				onConfirm={ handleRestoreDefaultARecords }
 				onCancel={ () => setIsRestoreDefaultARecordsDialogOpen( false ) }
 				isBusy={ updateDnsMutation.isPending }
-				isGravatarDomain={ domain?.is_gravatar_domain ?? false }
+				isGravatarDomain={ domain.is_gravatar_domain ?? false }
 				isOpen={ isRestoreDefaultARecordsDialogOpen }
 			/>
 			<RestoreDefaultCnameRecord
