@@ -14,6 +14,8 @@ import {
 	TestAccount,
 	ThemesDetailPage,
 	ThemesPage,
+	BlockWidgetEditorComponent,
+	RestAPIClient,
 } from '@automattic/calypso-e2e';
 import { test as base, expect } from '@playwright/test';
 
@@ -21,9 +23,12 @@ export const test = base.extend< {
 	accountGivenByEnvironment: TestAccount;
 	accountGutenbergSimple: TestAccount;
 	clientEmail: EmailClient;
+	clientRestAPI: RestAPIClient;
+	componentBlockWidgetEditor: BlockWidgetEditorComponent;
 	componentPreview: PreviewComponent;
 	componentSidebar: SidebarComponent;
 	componentSiteSelect: SiteSelectComponent;
+	environment: typeof envVariables;
 	pageAppleLogin: AppleLoginPage;
 	pageLogin: LoginPage;
 	pageThemeDetails: ThemesDetailPage;
@@ -44,6 +49,14 @@ export const test = base.extend< {
 		const emailClient = new EmailClient();
 		await use( emailClient );
 	},
+	clientRestAPI: async ( { accountGivenByEnvironment }, use ) => {
+		const restAPIClient = new RestAPIClient( accountGivenByEnvironment.credentials );
+		await use( restAPIClient );
+	},
+	componentBlockWidgetEditor: async ( { page }, use ) => {
+		const blockWidgetEditorComponent = new BlockWidgetEditorComponent( page );
+		await use( blockWidgetEditorComponent );
+	},
 	componentPreview: async ( { page }, use ) => {
 		const previewComponent = new PreviewComponent( page );
 		await use( previewComponent );
@@ -55,6 +68,9 @@ export const test = base.extend< {
 	componentSiteSelect: async ( { page }, use ) => {
 		const siteSelectComponent = new SiteSelectComponent( page );
 		await use( siteSelectComponent );
+	},
+	environment: async ( {}, use ) => {
+		await use( envVariables );
 	},
 	pageAppleLogin: async ( { page }, use ) => {
 		const appleLoginPage = new AppleLoginPage( page );

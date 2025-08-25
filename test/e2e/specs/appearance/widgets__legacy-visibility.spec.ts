@@ -1,13 +1,15 @@
-import { BlockWidgetEditorComponent, envVariables, RestAPIClient } from '@automattic/calypso-e2e';
 import { test } from '../../lib/pw_base';
 
 test.describe( 'Appearance: Theme Widgets (Legacy)', () => {
 	test( 'As a non-atomic site user, I can use widgets on my site', async ( {
 		page,
 		accountGivenByEnvironment,
+		clientRestAPI,
+		componentBlockWidgetEditor,
+		environment,
 	} ) => {
 		test.skip(
-			envVariables.TEST_ON_ATOMIC,
+			environment.TEST_ON_ATOMIC,
 			'Skipping for Atomic sites as the themes do not support widgets'
 		);
 
@@ -16,8 +18,7 @@ test.describe( 'Appearance: Theme Widgets (Legacy)', () => {
 		} );
 
 		await test.step( 'And I have cleared all widgets on my site', async function () {
-			const restAPIClient = new RestAPIClient( accountGivenByEnvironment.credentials );
-			await restAPIClient.deleteAllWidgets(
+			await clientRestAPI.deleteAllWidgets(
 				accountGivenByEnvironment.credentials.testSites?.primary.id as number
 			);
 		} );
@@ -30,8 +31,7 @@ test.describe( 'Appearance: Theme Widgets (Legacy)', () => {
 		} );
 
 		await test.step( 'And I dismiss the Welcome modals', async function () {
-			const blockWidgetEditorComponent = new BlockWidgetEditorComponent( page );
-			await blockWidgetEditorComponent.dismissModals();
+			await componentBlockWidgetEditor.dismissModals();
 		} );
 
 		await test.step( 'And I insert a Legacy Widget', async function () {
