@@ -1,10 +1,12 @@
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { fetchTwoStep } from '../../data/me';
 import { profileQuery } from '../queries/me-profile';
-import { userPurchasesQuery } from '../queries/me-purchases';
+import { userPurchasesQuery, purchaseQuery } from '../queries/me-purchases';
 import { sitesQuery } from '../queries/sites';
 import { queryClient } from '../query-client';
 import { rootRoute } from './root';
+import type { AppConfig } from '../context';
+import type { AnyRoute } from '@tanstack/react-router';
 
 export const meRoute = createRoute( {
 	getParentRoute: () => rootRoute,
@@ -62,11 +64,27 @@ export const billingHistoryRoute = createRoute( {
 	)
 );
 
+export const purchaseSettingsRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	loader: async ( { params: { purchaseId } } ) => {
+		await queryClient.ensureQueryData( purchaseQuery( parseInt( purchaseId ) ) );
+	},
+	path: 'billing/purchases/purchase/$purchaseId',
+} ).lazy( () =>
+	import( '../../me/billing-purchases/purchase-settings' ).then( ( d ) =>
+		createLazyRoute( 'purchases-purchase-settings' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const purchasesRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	loader: async () => {
-		queryClient.ensureQueryData( userPurchasesQuery() );
-		queryClient.ensureQueryData( sitesQuery() );
+		await Promise.all( [
+			queryClient.ensureQueryData( userPurchasesQuery() ),
+			queryClient.ensureQueryData( sitesQuery() ),
+		] );
 	},
 	validateSearch: ( search ): { site: string | undefined } => {
 		return {
@@ -137,18 +155,41 @@ export const notificationsRoute = createRoute( {
 	)
 );
 
-export const createMeRoutes = () => {
-	return [
-		meRoute.addChildren( [
-			profileRoute,
-			billingRoute,
-			billingHistoryRoute,
-			purchasesRoute,
-			paymentMethodsRoute,
-			taxDetailsRoute,
-			securityRoute,
-			privacyRoute,
-			notificationsRoute,
-		] ),
+export const blockedSitesRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'blocked-sites',
+} ).lazy( () =>
+	import( '../../me/blocked-sites' ).then( ( d ) =>
+		createLazyRoute( 'blocked-sites' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const createMeRoutes = ( config: AppConfig ) => {
+	if ( ! config.supports.me ) {
+		return [];
+	}
+
+	const meRoutes: AnyRoute[] = [
+		profileRoute,
+		billingRoute,
+		billingHistoryRoute,
+		purchasesRoute,
+		purchaseSettingsRoute,
+		paymentMethodsRoute,
+		taxDetailsRoute,
+		securityRoute,
+		notificationsRoute,
 	];
+
+	if ( config.supports.me.privacy ) {
+		meRoutes.push( privacyRoute );
+	}
+
+	if ( config.supports.reader ) {
+		meRoutes.push( blockedSitesRoute );
+	}
+
+	return [ meRoute.addChildren( meRoutes ) ];
 };

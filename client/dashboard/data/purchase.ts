@@ -1,3 +1,5 @@
+import { SubscriptionBillPeriod } from '../data/constants';
+
 export interface RefundOptions {
 	to_product_id: number;
 	refund_amount: number;
@@ -90,7 +92,14 @@ export interface Purchase {
 	ID: string;
 
 	amount: number;
+
+	/**
+	 * The ID number of a WordPress.com purchase whose renewal will renew this
+	 * purchase (eg: the plan or domain registration for a domain connection)
+	 * as a string.
+	 */
 	attached_to_purchase_id: string | null;
+
 	auto_renew_coupon_code: string | null;
 	auto_renew_coupon_discount_percentage: number | null;
 
@@ -99,9 +108,22 @@ export interface Purchase {
 	 * number of days in every billing period! It's just a numeric key that is
 	 * close to the average billing period for this billing plan. For example,
 	 * `31` means "monthly" although the expiry date may be fewer than 31 days
-	 * from the last renewal.
+	 * from the last renewal. `-1` means that it does not expire.
 	 */
-	bill_period_days: number;
+	bill_period_days:
+		| typeof SubscriptionBillPeriod.PLAN_ONE_TIME_PERIOD
+		| typeof SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD
+		| typeof SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD
+		| typeof SubscriptionBillPeriod.PLAN_BIENNIAL_PERIOD
+		| typeof SubscriptionBillPeriod.PLAN_TRIENNIAL_PERIOD
+		| typeof SubscriptionBillPeriod.PLAN_QUADRENNIAL_PERIOD
+		| typeof SubscriptionBillPeriod.PLAN_QUINQUENNIAL_PERIOD
+		| typeof SubscriptionBillPeriod.PLAN_SEXENNIAL_PERIOD
+		| typeof SubscriptionBillPeriod.PLAN_SEPTENNIAL_PERIOD
+		| typeof SubscriptionBillPeriod.PLAN_OCTENNIAL_PERIOD
+		| typeof SubscriptionBillPeriod.PLAN_NOVENNIAL_PERIOD
+		| typeof SubscriptionBillPeriod.PLAN_DECENNIAL_PERIOD
+		| typeof SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD;
 
 	bill_period_label: string;
 	most_recent_renew_date: string;
@@ -134,7 +156,32 @@ export interface Purchase {
 	included_domain: string;
 	included_domain_purchase_amount: number;
 	introductory_offer: RawPurchaseIntroductoryOffer | null;
+
+	/**
+	 * True if the subscription can be cancelled by the user (removed and
+	 * possibly refunded). A subscription can be removable (see `is_removable`)
+	 * even if it cannot be cancelled.
+	 */
 	is_cancelable: boolean;
+
+	/**
+	 * True if the subscription can be removed by the user (directly removed,
+	 * without a refund). A subscription can still be cancelled (see
+	 * `is_cancelable`) or refunded (see `is_refundable`) even if it is not
+	 * removable.
+	 */
+	is_removable: boolean;
+
+	/**
+	 * True if this subscription has refundable receipts.
+	 *
+	 * If this is true, it means that it's possible the subscription could
+	 * be refunded. It does not mean there is money that would be refunded! For
+	 * that, check `total_refund_amount` instead. As an example, if a
+	 * subscription has already been refunded, `is_refundable` may be true,
+	 * but `total_refund_amount` will return a Store_Price of 0.
+	 */
+	is_refundable: boolean;
 
 	/**
 	 * If this is a domain product (eg: registration, mapping, or transfer), it
@@ -143,7 +190,10 @@ export interface Purchase {
 	is_domain?: 'true';
 
 	is_domain_registration: boolean;
+	is_pending_registration: boolean;
 	is_free_jetpack_stats_product: boolean;
+	is_jetpack_backup_t1: boolean;
+	is_jetpack_legacy_plan: boolean;
 	is_google_workspace_product: boolean;
 	is_hundred_year_domain: boolean;
 	is_iap_purchase: boolean;
@@ -153,7 +203,6 @@ export interface Purchase {
 	is_locked: boolean;
 	is_plan: boolean;
 	is_rechargable: boolean;
-	is_refundable: boolean;
 	is_renewable: boolean;
 	is_renewal: boolean;
 	is_titan_mail_product: boolean;
@@ -236,10 +285,28 @@ export interface Purchase {
 	 */
 	user_id: string;
 
-	auto_renew: '1' | '0' | null;
+	/**
+	 * True if auto-renew is enabled.
+	 *
+	 * IMPORTANT: Just because auto-renew is enabled does not mean that the
+	 * purchase will attempt to auto-renew. If a purchase does not have a
+	 * payment method attached, no auto-renew will be attempted.
+	 */
+	is_auto_renew_enabled: boolean;
+
 	payment_card_id: number | string | undefined;
 	payment_card_type: string | undefined;
 	payment_card_processor: string | undefined;
 	payment_details: string | undefined;
 	payment_expiry: string | undefined;
+
+	/**
+	 * True if this subscription can be upgraded to a different one.
+	 *
+	 * If this is set, we will display an "Upgrade" link in some places. That
+	 * link will typically go to the plans page for the site or some other
+	 * location depending on the product. To cause these buttons to instead add
+	 * a product directly to the cart, also set `upgrade_product_slug`.
+	 */
+	is_upgradable: boolean;
 }

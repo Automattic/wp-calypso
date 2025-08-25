@@ -1,3 +1,4 @@
+import { isPremiumPlan, isPersonalPlan } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { Icon, close } from '@wordpress/icons';
@@ -12,7 +13,7 @@ import './style.scss';
 
 const SUMMER_SPECIAL_BANNER_PREFERENCE = 'dismissible-card-plugins-offer-2025';
 
-export default function SummerSpecialBanner( { isFixed = false } ) {
+export default function SummerSpecialBanner( { visiblePlans = [], isFixed = false } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -20,6 +21,11 @@ export default function SummerSpecialBanner( { isFixed = false } ) {
 		const preference = getPreference( state, SUMMER_SPECIAL_BANNER_PREFERENCE );
 		return !! preference;
 	} );
+	// Check if Premium or Personal plans are visible for the banner
+	const hasTargetPlan = visiblePlans?.some(
+		( { planSlug, isVisible } ) =>
+			isVisible && ( isPremiumPlan( planSlug ) || isPersonalPlan( planSlug ) )
+	);
 
 	const dismiss = useCallback(
 		( event ) => {
@@ -31,7 +37,7 @@ export default function SummerSpecialBanner( { isFixed = false } ) {
 	);
 
 	// Don't show if already dismissed or no target plan in grid
-	if ( isDismissed ) {
+	if ( isDismissed || ! hasTargetPlan ) {
 		return null;
 	}
 

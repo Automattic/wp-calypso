@@ -1,33 +1,35 @@
 // eslint-disable-next-line no-restricted-imports
 import { DomainSearch } from '@automattic/domain-search';
+// eslint-disable-next-line no-restricted-imports
+import { ShoppingCartProvider } from '@automattic/shopping-cart';
 import { __ } from '@wordpress/i18n';
+import { ComponentProps } from 'react';
+import {
+	shoppingCartManagerClient,
+	useWPCOMShoppingCartForDomainSearch,
+} from '../../app/shopping-cart';
 import { PageHeader } from '../page-header';
 import PageLayout from '../page-layout';
 
 import './style.scss';
 
-const staticCart = {
-	items: [
-		{
-			uuid: '1',
-			domain: 'example',
-			tld: 'com',
-			price: '$10',
-		},
-		{
-			uuid: '2',
-			domain: 'example',
-			tld: 'org',
-			price: '$10',
-		},
-	],
-	total: '$10',
-	onAddItem: () => Promise.resolve(),
-	onRemoveItem: () => Promise.resolve(),
-	hasItem: () => false,
-};
+interface DashboardDomainSearchProps {
+	currentSiteId?: number;
+	currentSiteUrl?: string;
+}
 
-function DashboardDomainSearch() {
+function DomainSearchWithCart( {
+	currentSiteId,
+	...props
+}: Omit< ComponentProps< typeof DomainSearch >, 'cart' > & { currentSiteId?: number } ) {
+	const cart = useWPCOMShoppingCartForDomainSearch( {
+		cartKey: currentSiteId ?? 'no-site',
+	} );
+
+	return <DomainSearch className="dashboard-domain-search" { ...props } cart={ cart } />;
+}
+
+function DashboardDomainSearch( props: DashboardDomainSearchProps ) {
 	return (
 		<PageLayout
 			size="large"
@@ -38,7 +40,9 @@ function DashboardDomainSearch() {
 				/>
 			}
 		>
-			<DomainSearch className="dashboard-domain-search" cart={ staticCart } />
+			<ShoppingCartProvider managerClient={ shoppingCartManagerClient }>
+				<DomainSearchWithCart { ...props } />
+			</ShoppingCartProvider>
 		</PageLayout>
 	);
 }

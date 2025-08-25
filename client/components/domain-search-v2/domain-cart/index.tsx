@@ -36,7 +36,7 @@ const Item = ( { domain }: Pick< ComponentProps< typeof DomainsFullCartItem >, '
 			disabled={ isBusy }
 			isBusy={ isBusy }
 			onRemove={ callback }
-			errorMessage={ errorMessage }
+			errorMessage={ errorMessage ?? undefined }
 			removeErrorMessage={ removeErrorMessage }
 		/>
 	);

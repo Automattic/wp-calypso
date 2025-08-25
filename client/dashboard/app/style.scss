@@ -5,45 +5,13 @@
 // I'm tempted to even just replace all this with a display:none on the logo
 @import './loading-screen';
 
+// Core component overrides.
+@import './dataforms-overrides.scss';
+@import './dataviews-overrides.scss';
+
 // Hacks that shouldn't be necessary.
 .environment-badge {
 	display: none;
-}
-
-// BaseControl currently has an override for the label to accommodate the use case where the label is shown next to the control.
-// In site settings forms, the label is above the control for regular fields so we need to override this override for UI consistency.
-.dataforms-layouts-regular__field .components-base-control__label {
-	font-size: 11px;
-	font-weight: 500;
-	text-transform: uppercase;
-}
-
-// Core CheckboxControl's :disabled styles are overridden by its :checked styles. This is our workaround.
-// @see http://github.com/WordPress/gutenberg/issues/59411
-.dataforms-layouts-regular__field .components-checkbox-control:has(input[type="checkbox"]:disabled) {
-	label {
-		cursor: default;
-	}
-
-	input[type="checkbox"] {
-		background: #f0f0f0;
-		border-color: #ddd;
-		cursor: default;
-		opacity: 1;
-	}
-
-	svg {
-		fill: var(--dashboard__text-color);
-	}
-}
-
-// We manually compose the UI of the dataview without including the view actions, which results in extra padding and a border.
-.components-card__header + .components-card__body:has( > .dataviews-wrapper ):not( :has( .dataviews__view-actions ) ) {
-	padding-top: 0;
-
-	.dataviews-view-list div[role="row"]:first-child {
-		border-top: none;
-	}
 }
 
 // Global Styles

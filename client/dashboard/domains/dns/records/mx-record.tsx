@@ -36,7 +36,7 @@ export const MXRecordConfig: DnsRecordConfig = {
 		},
 	],
 	form: {
-		type: 'regular',
+		layout: { type: 'regular' as const },
 		fields: [ 'name', 'data', 'aux', 'ttl' ],
 	},
 	transformData: ( data: DnsRecordFormData ) => {

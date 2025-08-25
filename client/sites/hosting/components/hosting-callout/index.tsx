@@ -1,10 +1,18 @@
 import page from '@automattic/calypso-router';
+import { useQuery } from '@tanstack/react-query';
 import { Button, __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
+import { siteByIdQuery } from 'calypso/dashboard/app/queries/site';
+import { siteLatestAtomicTransferQuery } from 'calypso/dashboard/app/queries/site-atomic-transfers';
 import { Callout } from 'calypso/dashboard/components/callout';
-import { useSiteTransferStatusQuery } from 'calypso/landing/stepper/hooks/use-site-transfer/query';
-import { transferStates } from 'calypso/state/atomic-transfer/constants';
+import {
+	isAtomicTransferInProgress,
+	isAtomicTransferredSite,
+} from 'calypso/dashboard/utils/site-atomic-transfers';
+import { useDispatch } from 'calypso/state';
+import { requestSite } from 'calypso/state/sites/actions';
 import HostingActivationButton from '../hosting-activation-button';
 import illustrationUrl from './hosting-callout-illustration.svg';
 
@@ -15,18 +23,59 @@ export function HostingActivationCallout( {
 	siteId: number;
 	redirectUrl?: string;
 } ) {
-	const { data: siteTransferData } = useSiteTransferStatusQuery( siteId, {
+	const dispatch = useDispatch();
+	const { data: latestAtomicTransfer } = useQuery( {
+		...siteLatestAtomicTransferQuery( siteId ),
+		enabled: !! siteId,
+		refetchInterval: ( query ) => {
+			if ( ! query.state.data ) {
+				return 0;
+			}
+
+			return isAtomicTransferInProgress( query.state.data.status ) ? 5000 : false;
+		},
 		refetchIntervalInBackground: true,
 	} );
 
-	const isActivating = siteTransferData?.isTransferring;
-	const isActivated = transferStates.COMPLETED;
+	const { data: site } = useQuery( {
+		...siteByIdQuery( siteId ),
+		refetchInterval: ( query ) => {
+			if ( ! query.state.data ) {
+				return 0;
+			}
+
+			return ! isAtomicTransferredSite( query.state.data ) ? 2000 : false;
+		},
+		enabled: !! siteId && latestAtomicTransfer?.status === 'completed',
+	} );
+
+	const isActivating =
+		latestAtomicTransfer &&
+		( isAtomicTransferInProgress( latestAtomicTransfer.status ) ||
+			// Keep displaying “Activating…” until the page redirects.
+			latestAtomicTransfer?.status === 'completed' );
+
+	const isActivated =
+		latestAtomicTransfer?.status === 'completed' && site && isAtomicTransferredSite( site );
 
 	useEffect( () => {
-		if ( isActivated && redirectUrl ) {
-			page.replace( redirectUrl );
+		const handleActivated = async () => {
+			await dispatch( requestSite( siteId ) );
+			if ( redirectUrl ) {
+				page.replace( redirectUrl );
+			} else {
+				page.show(
+					addQueryArgs( window.location.href.replace( window.location.origin, '' ), {
+						activated: true,
+					} )
+				);
+			}
+		};
+
+		if ( isActivated ) {
+			handleActivated();
 		}
-	}, [ isActivated, redirectUrl ] );
+	}, [ isActivated, siteId, redirectUrl, dispatch ] );
 
 	return (
 		<Callout

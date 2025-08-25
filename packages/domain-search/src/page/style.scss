@@ -4,6 +4,10 @@
 
 @layer module {
 	.domain-search {
+		// Used by the loading placeholder component
+		--color-neutral-0: #f6f7f7;
+		--color-neutral-10: #c3c4c7;
+
 		--domain-search-v2-background-color: #fcfcfc;
 		--domain-search-secondary-action-color: #{$gray-900};
 		--domain-search-secondary-action-box-shadow-color: #{$gray-400};

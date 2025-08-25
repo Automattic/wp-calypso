@@ -24,7 +24,6 @@ export const SearchForm = () => {
 
 	return (
 		<form onSubmit={ handleSubmit }>
-			{ ' ' }
 			<HStack alignment="flex-start" spacing={ 4 }>
 				<DomainSearchControls.Input
 					value={ localQuery }
