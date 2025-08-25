@@ -193,46 +193,47 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 
 	return (
 		<PageLayout header={ <PageHeader title={ __( 'Logs' ) } /> }>
-			<DateRangePicker
-				start={ dateRange.start }
-				end={ dateRange.end }
-				gmtOffset={ gmtOffset }
-				timezoneString={ timezoneString }
-				locale={ locale }
-				onChange={ ( next ) => setDateRange( next ) }
-			/>
-
 			<CalloutOverlay
 				showCallout={ ! hasHostingFeature( site, HostingFeatures.LOGS ) }
 				callout={ <SiteLogsCallout siteSlug={ site.slug } /> }
 				main={
-					<TabPanel
-						className="site-logs-tabs"
-						activeClass="is-active"
-						tabs={ LOG_TABS }
-						onSelect={ ( tabName ) => {
-							if ( tabName === LogType.PHP || tabName === LogType.SERVER ) {
-								handleTabChange( tabName );
-							}
-						} }
-						initialTabName={ logType }
-					>
-						{ () => (
-							<DataViewsCard>
-								<DataViews< PHPLog | ServerLog >
-									data={ logs ?? [] }
-									isLoading={ isFetching }
-									paginationInfo={ paginationInfo }
-									fields={ fields ?? [] }
-									view={ view }
-									actions={ actions }
-									search={ false }
-									defaultLayouts={ { table: {} } }
-									onChangeView={ () => {} }
-								/>
-							</DataViewsCard>
-						) }
-					</TabPanel>
+					<>
+						<DateRangePicker
+							start={ dateRange.start }
+							end={ dateRange.end }
+							gmtOffset={ gmtOffset }
+							timezoneString={ timezoneString }
+							locale={ locale }
+							onChange={ ( next ) => setDateRange( next ) }
+						/>
+						<TabPanel
+							className="site-logs-tabs"
+							activeClass="is-active"
+							tabs={ LOG_TABS }
+							onSelect={ ( tabName ) => {
+								if ( tabName === LogType.PHP || tabName === LogType.SERVER ) {
+									handleTabChange( tabName );
+								}
+							} }
+							initialTabName={ logType }
+						>
+							{ () => (
+								<DataViewsCard>
+									<DataViews< PHPLog | ServerLog >
+										data={ logs ?? [] }
+										isLoading={ isFetching }
+										paginationInfo={ paginationInfo }
+										fields={ fields ?? [] }
+										view={ view }
+										actions={ actions }
+										search={ false }
+										defaultLayouts={ { table: {} } }
+										onChangeView={ () => {} }
+									/>
+								</DataViewsCard>
+							) }
+						</TabPanel>
+					</>
 				}
 			/>
 		</PageLayout>
