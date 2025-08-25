@@ -4,6 +4,7 @@ import {
 	removeLocaleFromPathLocaleInFront,
 	addLocaleToPathLocaleInFront,
 	getLanguage,
+	filterLanguageRevisions,
 } from '../';
 
 jest.mock( '@automattic/calypso-config', () => ( key ) => {
@@ -98,5 +99,58 @@ describe( '#getLanguage', () => {
 		const result = getLanguage( 'EN' );
 		// Should be undefined since locale matching is case-sensitive
 		expect( result ).toBeUndefined();
+	} );
+} );
+
+describe( '#filterLanguageRevisions', () => {
+	test( 'should return empty object for empty input', () => {
+		const result = filterLanguageRevisions( {} );
+		expect( result ).toEqual( {} );
+	} );
+
+	test( 'should filter out non-numeric revision values', () => {
+		const input = {
+			en: 123,
+			fr: 'invalid',
+			de: null,
+			es: undefined,
+			pt: 456,
+		};
+		const result = filterLanguageRevisions( input );
+		expect( result ).toEqual( {
+			en: 123,
+			pt: 456,
+		} );
+	} );
+
+	test( 'should filter out unsupported language slugs', () => {
+		const input = {
+			en: 123,
+			'invalid-lang': 456,
+			fr: 789,
+			'another-invalid': 999,
+		};
+		const result = filterLanguageRevisions( input );
+		// Only keep entries with valid language slugs and numeric revisions
+		expect( result.en ).toBe( 123 );
+		expect( result.fr ).toBe( 789 );
+		expect( result[ 'invalid-lang' ] ).toBeUndefined();
+		expect( result[ 'another-invalid' ] ).toBeUndefined();
+	} );
+
+	test( 'should preserve all valid entries', () => {
+		const input = {
+			en: 123,
+			fr: 456,
+			de: 789,
+			es: 999,
+		};
+		const result = filterLanguageRevisions( input );
+		// All should be preserved if they're valid language slugs
+		expect( Object.keys( result ).length ).toBeGreaterThan( 0 );
+		Object.entries( result ).forEach( ( [ slug, revision ] ) => {
+			expect( typeof revision ).toBe( 'number' );
+			expect( input[ slug ] ).toBe( revision );
+		} );
 	} );
 } );

@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import languages, { Language, SubLanguage } from '@automattic/languages';
 import { hasTranslation } from '@wordpress/i18n';
-import { pickBy, includes } from 'lodash';
+import { includes } from 'lodash';
 import { getWpI18nLocaleSlug } from './locale-context';
 
 /**
@@ -194,24 +194,26 @@ export function removeLocaleFromPath( path: string ): string {
 /**
  * Filter out unexpected values from the given language revisions object.
  * @param {Object} languageRevisions A candidate language revisions object for filtering.
- * @returns {Object} A valid language revisions object derived from the given one.
+ * @returns valid language revisions object derived from the given one.
  */
 export function filterLanguageRevisions( languageRevisions: Record< string, string > ) {
 	const langSlugs = getLanguageSlugs();
 
 	// Since there is no strong guarantee that the passed-in revisions map will have the identical set of languages as we define in calypso,
 	// simply filtering against what we have here should be sufficient.
-	return pickBy( languageRevisions, ( revision, slug ) => {
-		if ( typeof revision !== 'number' ) {
-			return false;
-		}
+	return Object.fromEntries(
+		Object.entries( languageRevisions ).filter( ( [ slug, revision ] ) => {
+			if ( typeof revision !== 'number' ) {
+				return false;
+			}
 
-		if ( ! includes( langSlugs, slug ) ) {
-			return false;
-		}
+			if ( ! includes( langSlugs, slug ) ) {
+				return false;
+			}
 
-		return true;
-	} );
+			return true;
+		} )
+	);
 }
 
 /**
