@@ -39,6 +39,7 @@ function UnforwardedSummaryButton(
 		onClick,
 		disabled,
 		density = 'low',
+		textAlign,
 		...props
 	}: SummaryButtonProps,
 	ref: React.ForwardedRef< HTMLAnchorElement | HTMLButtonElement >
@@ -65,7 +66,12 @@ function UnforwardedSummaryButton(
 									{ strapline }
 								</Text>
 							) }
-							<Text className="summary-button-title">{ title }</Text>
+							<Text
+								className="summary-button-title"
+								style={ textAlign ? { textAlign } : undefined }
+							>
+								{ title }
+							</Text>
 							{ description && hasLowDensity && (
 								<Text variant="muted" className="summary-button-description">
 									{ description }

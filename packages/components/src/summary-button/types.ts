@@ -77,4 +77,8 @@ export interface SummaryButtonProps {
 	 * Optional class name to be applied to the component.
 	 */
 	className?: string;
+	/**
+	 * Text alignment for the title element.
+	 */
+	textAlign?: 'left' | 'center' | 'right';
 }

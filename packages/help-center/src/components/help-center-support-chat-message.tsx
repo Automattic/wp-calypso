@@ -142,6 +142,7 @@ export const HelpCenterSupportChatMessage = ( {
 			<SummaryButton
 				strapline={ __( 'Recent Conversation', __i18n_text_domain__ ) }
 				title={ messageText || altText || '' }
+				textAlign="left"
 				description={
 					<div className="help-center-support-chat__conversation-sub-information">
 						<span className="help-center-support-chat__conversation-information-name">
