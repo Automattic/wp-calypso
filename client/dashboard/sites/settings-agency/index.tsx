@@ -52,7 +52,7 @@ const fields: Field< SiteSettings >[] = [
 ];
 
 const form = {
-	type: 'regular' as const,
+	layout: { type: 'regular' as const },
 	fields: [ { id: 'is_fully_managed_agency_site' } as SimpleFormField ],
 };
 

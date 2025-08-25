@@ -1,8 +1,9 @@
-import { createRoute, createLazyRoute, redirect } from '@tanstack/react-router';
+import { createRoute, createLazyRoute, notFound, redirect } from '@tanstack/react-router';
 import { domainQuery } from '../queries/domain';
 import { domainDnsQuery } from '../queries/domain-dns-records';
 import { domainForwardingQuery } from '../queries/domain-forwarding';
 import { domainGlueRecordsQuery } from '../queries/domain-glue-records';
+import { sslDetailsQuery } from '../queries/domain-ssl';
 import { domainsQuery } from '../queries/domains';
 import { queryClient } from '../query-client';
 import { rootRoute } from './root';
@@ -156,7 +157,7 @@ export const domainContactInfoRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'contact-info',
 } ).lazy( () =>
-	import( '../../sites/domains/placeholder' ).then( ( d ) =>
+	import( '../../domains/domain-contact-details' ).then( ( d ) =>
 		createLazyRoute( 'domain-contact-info' )( {
 			component: d.default,
 		} )
@@ -180,7 +181,7 @@ export const domainGlueRecordsRoute = createRoute( {
 	loader: ( { params: { domainName } } ) =>
 		queryClient.ensureQueryData( domainGlueRecordsQuery( domainName ) ),
 } ).lazy( () =>
-	import( '../../domains/overview-glue-records' ).then( ( d ) =>
+	import( '../../domains/domain-glue-records' ).then( ( d ) =>
 		createLazyRoute( 'domain-glue-records' )( {
 			component: d.default,
 		} )
@@ -191,7 +192,7 @@ export const domainGlueRecordsAddRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'glue-records/add',
 } ).lazy( () =>
-	import( '../../sites/domains/placeholder' ).then( ( d ) =>
+	import( '../../domains/domain-glue-records/add' ).then( ( d ) =>
 		createLazyRoute( 'domain-glue-records-add' )( {
 			component: d.default,
 		} )
@@ -201,8 +202,22 @@ export const domainGlueRecordsAddRoute = createRoute( {
 export const domainGlueRecordsEditRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'glue-records/edit/$nameServer',
+	beforeLoad: async ( { params: { domainName, nameServer } } ) => {
+		const glueRecordsData = await queryClient.ensureQueryData(
+			domainGlueRecordsQuery( domainName )
+		);
+		const glueRecord = glueRecordsData.find(
+			( glueRecord ) => glueRecord.nameserver === nameServer
+		);
+
+		if ( ! glueRecord ) {
+			throw notFound();
+		}
+	},
+	loader: ( { params: { domainName } } ) =>
+		queryClient.ensureQueryData( domainGlueRecordsQuery( domainName ) ),
 } ).lazy( () =>
-	import( '../../sites/domains/placeholder' ).then( ( d ) =>
+	import( '../../domains/domain-glue-records/edit' ).then( ( d ) =>
 		createLazyRoute( 'domain-glue-records-edit' )( {
 			component: d.default,
 		} )
@@ -215,6 +230,20 @@ export const domainDnssecRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../domains/domain-dnssec' ).then( ( d ) =>
 		createLazyRoute( 'domain-dnssec' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const domainSecurityRoute = createRoute( {
+	getParentRoute: () => domainRoute,
+	path: 'security',
+	loader: ( { params: { domainName } } ) => {
+		return queryClient.ensureQueryData( sslDetailsQuery( domainName ) );
+	},
+} ).lazy( () =>
+	import( '../../domains/domain-security' ).then( ( d ) =>
+		createLazyRoute( 'domain-security' )( {
 			component: d.default,
 		} )
 	)
@@ -250,6 +279,7 @@ export const createDomainsRoutes = () => {
 			domainGlueRecordsEditRoute,
 			domainDnssecRoute,
 			domainTransferRoute,
+			domainSecurityRoute,
 		] ),
 	];
 };

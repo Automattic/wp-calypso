@@ -57,6 +57,8 @@ export interface DomainSummary {
 	transfer_status: ( typeof DomainTransferStatus )[ keyof typeof DomainTransferStatus ] | null;
 	type: ( typeof DomainTypes )[ keyof typeof DomainTypes ];
 	wpcom_domain: boolean;
+	last_transfer_error?: string;
+	transfer_start_date?: string;
 }
 
 export async function fetchDomains(): Promise< DomainSummary[] > {

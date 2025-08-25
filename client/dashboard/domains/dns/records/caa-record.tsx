@@ -45,7 +45,7 @@ export const CAARecordConfig: DnsRecordConfig = {
 		},
 	],
 	form: {
-		type: 'regular',
+		layout: { type: 'regular' as const },
 		fields: [ 'name', 'flags', 'tag', 'data', 'ttl' ],
 	},
 	transformData: ( data: DnsRecordFormData ) => ( {

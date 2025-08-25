@@ -4,6 +4,7 @@ import {
 	tryToGuessPostalCodeFormat,
 	getCountryPostalCodeSupport,
 } from '@automattic/wpcom-checkout';
+import { Notice } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get, kebabCase, pick, includes, isEqual, isEmpty, camelCase } from 'lodash';
@@ -15,6 +16,7 @@ import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormPhoneMediaInput from 'calypso/components/forms/form-phone-media-input';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { countries } from 'calypso/components/phone-input/data';
 import { toIcannFormat } from 'calypso/components/phone-input/phone-number';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -383,6 +385,24 @@ export class ContactDetailsFormFields extends Component {
 						{
 							label: translate( 'Organization' ),
 							text: labelTexts.organization || translate( '+ Add organization name' ),
+							placeholder: translate( 'Organization (optional)' ),
+							description: (
+								<Notice status="warning" isDismissible={ false }>
+									{ translate(
+										'By completing the organization field, you agree that the listed organization will be considered the legal domain owner and that this information will be publicly visible. You can choose to hide it using {{a}}privacy protection{{/a}}.',
+										{
+											components: {
+												a: (
+													<InlineSupportLink
+														supportContext="domain-registrations-and-privacy"
+														showIcon={ false }
+													/>
+												),
+											},
+										}
+									) }
+								</Notice>
+							),
 						},
 						{
 							needsChildRef: true,

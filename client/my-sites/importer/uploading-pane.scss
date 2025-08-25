@@ -71,22 +71,15 @@
 	}
 }
 
+.importer__upload-progress-container{
+	padding: 3em 0;
+}
+
 .importer__upload-progress {
-	&.progress-bar {
-		width: 80%;
+	width: 100% !important;
+	background: var(--color-neutral-5);
 
-		&.is-pulsing {
-			.progress-bar__progress {
-				background-image: linear-gradient(-45deg, var(--color-accent) 28%, var(--color-accent-light) 28%, var(--color-accent-light) 72%, var(--color-accent) 72%);
-			}
-		}
-	}
-
-	.progress-bar__progress {
-		background-color: var(--color-accent);
-	}
-
-	&.is-complete .progress-bar__progress {
-		background-color: var(--color-success);
+	> div {
+		background: var(--color-accent);
 	}
 }

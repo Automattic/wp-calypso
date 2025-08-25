@@ -23,7 +23,7 @@ export const DomainsFullCartItem = ( {
 	disabled: boolean;
 	isBusy: boolean;
 	onRemove: () => void;
-	errorMessage: string | null;
+	errorMessage?: string;
 	removeErrorMessage: () => void;
 } ) => {
 	const { __ } = useI18n();
