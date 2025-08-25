@@ -296,6 +296,36 @@ class DomainRegistrationSuggestion extends Component {
 		);
 	}
 
+	getPolicyNoticeMessage( notice ) {
+		const { translate } = this.props;
+
+		if ( notice.type === 'hsts' ) {
+			return translate(
+				'%(message)s When you host this domain at WordPress.com an SSL ' +
+					'certificate is included. {{a}}Learn more{{/a}}.',
+				{
+					args: {
+						message: notice.message,
+					},
+					components: {
+						a: (
+							<a
+								href={ localizeUrl( HTTPS_SSL ) }
+								target="_blank"
+								rel="noopener noreferrer"
+								onClick={ ( event ) => {
+									event.stopPropagation();
+								} }
+							/>
+						),
+					},
+				}
+			);
+		}
+
+		return notice.message;
+	}
+
 	renderNotice() {
 		const { showHstsNotice, showDotGayNotice } = this.props;
 		return (
@@ -310,7 +340,12 @@ class DomainRegistrationSuggestion extends Component {
 
 	renderBadges() {
 		const {
-			suggestion: { isRecommended, isBestAlternative, is_premium: isPremium },
+			suggestion: {
+				isRecommended,
+				isBestAlternative,
+				is_premium: isPremium,
+				policy_notices: policyNotices,
+			},
 			translate,
 			isFeatured,
 			productSaleCost,
@@ -337,6 +372,19 @@ class DomainRegistrationSuggestion extends Component {
 					{ translate( 'Best alternative' ) }
 				</DomainSuggestionBadge>
 			);
+		}
+
+		if ( policyNotices ) {
+			policyNotices.forEach( ( notice ) => {
+				badges.push(
+					<DomainSuggestionBadge
+						key={ notice.type }
+						popover={ this.getPolicyNoticeMessage( notice ) }
+					>
+						{ notice.label }
+					</DomainSuggestionBadge>
+				);
+			} );
 		}
 
 		const skipSaleBadge = isHundredYearPlanFlow( flowName );
