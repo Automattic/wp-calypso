@@ -3,6 +3,7 @@ import { useRouter } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
@@ -14,6 +15,7 @@ import {
 } from '../../app/queries/domain-dns-records';
 import { domainDnsAddRoute, domainRoute } from '../../app/router/domains';
 import DataViewsCard from '../../components/dataviews-card';
+import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { useDnsActions } from './actions';
@@ -228,6 +230,12 @@ export default function DomainDns() {
 								/>
 							</>
 						}
+						description={ createInterpolateElement(
+							__( 'DNS records change how your domain works. <link>Learn more</link>' ),
+							{
+								link: <InlineSupportLink supportContext="manage-your-dns-records" />,
+							}
+						) }
 					/>
 				</VStack>
 			}
