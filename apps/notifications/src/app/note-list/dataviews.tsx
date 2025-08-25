@@ -1,8 +1,8 @@
 import { __ } from '@wordpress/i18n';
 import { html } from '../../panel/indices-to-html';
-import Gridicon from '../../panel/templates/gridicons';
-import ImagePreloader from '../../panel/templates/image-loader';
 import noticon2gridicon from '../../panel/utils/noticon2gridicon';
+import Gridicon from '../templates/gridicons';
+import ImagePreloader from '../templates/image-loader';
 import type { Field } from '@wordpress/dataviews';
 
 const DAY_MILLISECONDS = 24 * 60 * 60 * 1000;

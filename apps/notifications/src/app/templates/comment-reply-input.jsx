@@ -1,17 +1,17 @@
-import { localize } from 'i18n-calypso';
+import { __experimentalVStack as VStack, Button, TextareaControl } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
-import repliesCache from '../comment-replies-cache';
-import { modifierKeyIsActive } from '../helpers/input';
-import { bumpStat } from '../rest-client/bump-stat';
-import { wpcom } from '../rest-client/wpcom';
-import actions from '../state/actions';
-import getKeyboardShortcutsEnabled from '../state/selectors/get-keyboard-shortcuts-enabled';
-import Suggestions from '../suggestions';
-import { formatString, validURL } from './functions';
-import Spinner from './spinner';
+import repliesCache from '../../panel/comment-replies-cache';
+import { modifierKeyIsActive } from '../../panel/helpers/input';
+import { bumpStat } from '../../panel/rest-client/bump-stat';
+import { wpcom } from '../../panel/rest-client/wpcom';
+import actions from '../../panel/state/actions';
+import getKeyboardShortcutsEnabled from '../../panel/state/selectors/get-keyboard-shortcuts-enabled';
+import Suggestions from '../../panel/suggestions';
+import { formatString, validURL } from '../../panel/templates/functions';
 const debug = require( 'debug' )( 'notifications:reply' );
-const { recordTracksEvent } = require( '../helpers/stats' );
+const { recordTracksEvent } = require( '../../panel/helpers/stats' );
 
 function stopEvent( event ) {
 	event.stopPropagation();
@@ -88,13 +88,13 @@ class CommentReplyInput extends Component {
 		}
 	};
 
-	handleChange = ( event ) => {
+	handleChange = ( value ) => {
 		const textarea = this.replyInput.current;
 
 		this.props.disableKeyboardShortcuts();
 
 		this.setState( {
-			value: event.target.value,
+			value,
 			rowCount: Math.min(
 				4,
 				Math.ceil( ( textarea.scrollHeight * this.state.rowCount ) / textarea.clientHeight )
@@ -103,7 +103,7 @@ class CommentReplyInput extends Component {
 
 		// persist the comment reply on local storage
 		if ( this.savedReplyKey ) {
-			repliesCache.setItem( this.savedReplyKey, [ event.target.value, Date.now() ] );
+			repliesCache.setItem( this.savedReplyKey, [ value, Date.now() ] );
 		}
 	};
 
@@ -139,8 +139,8 @@ class CommentReplyInput extends Component {
 		let wpObject;
 		let submitComment;
 		let statusMessage;
-		const successMessage = this.props.translate( 'Reply posted!' );
-		const linkMessage = this.props.translate( 'View your comment.' );
+		const successMessage = __( 'Reply posted!' );
+		const linkMessage = __( 'View your comment.' );
 
 		if ( event ) {
 			event.preventDefault();
@@ -179,10 +179,8 @@ class CommentReplyInput extends Component {
 
 		submitComment.call( wpObject, this.state.value, ( error, data ) => {
 			if ( error ) {
-				const errorMessageDuplicateComment = this.props.translate(
-					"Duplicate comment; you've already said that!"
-				);
-				const errorMessage = this.props.translate( 'Reply Failed: Please, try again.' );
+				const errorMessageDuplicateComment = __( "Duplicate comment; you've already said that!" );
+				const errorMessage = __( 'Reply Failed: Please, try again.' );
 
 				// Handle known exceptions
 				if ( 'CommentDuplicateError' === error.name ) {
@@ -286,55 +284,40 @@ class CommentReplyInput extends Component {
 	};
 
 	render() {
-		const value = this.state.value;
-		let submitLink = '';
-		const sendText = this.props.translate( 'Send', { context: 'verb: imperative' } );
-
-		if ( this.state.isSubmitting ) {
-			submitLink = <Spinner className="wpnc__spinner" />;
-		} else if ( value.length ) {
-			const submitLinkTitle = this.props.translate( 'Submit reply', {
-				context: 'verb: imperative',
-			} );
-			submitLink = (
-				<button
-					title={ submitLinkTitle }
-					className="active"
-					onClick={ this.handleSubmit }
-					onKeyDown={ this.handleSendEnter }
-				>
-					{ sendText }
-				</button>
-			);
-		} else {
-			const submitLinkTitle = this.props.translate( 'Write your response in order to submit' );
-			submitLink = (
-				<button title={ submitLinkTitle } className="inactive">
-					{ sendText }
-				</button>
-			);
-		}
-
+		const { note, defaultValue } = this.props;
+		const { rowCount, value, isSubmitting } = this.state;
 		return (
-			<div className="wpnc__reply-box">
-				<textarea
+			<VStack>
+				<TextareaControl
 					className="form-textarea"
 					ref={ this.replyInput }
-					rows={ this.state.rowCount }
+					rows={ rowCount }
 					value={ value }
-					placeholder={ this.props.defaultValue }
+					placeholder={ defaultValue }
+					style={ { width: '100%' } }
 					onClick={ this.handleClick }
 					onFocus={ this.handleFocus }
 					onBlur={ this.handleBlur }
 					onChange={ this.handleChange }
 				/>
-				{ submitLink }
+				<Button
+					variant="primary"
+					title={
+						value.length ? __( 'Submit reply' ) : __( 'Write your response in order to submit' )
+					}
+					style={ { alignSelf: 'flex-start' } }
+					isBusy={ isSubmitting }
+					disabled={ ! value.length }
+				>
+					{ __( 'Send' ) }
+				</Button>
+				{ /* TODO: Update suggessions */ }
 				<Suggestions
-					site={ this.props.note.meta.ids.site }
+					site={ note.meta.ids.site }
 					onInsertSuggestion={ this.insertSuggestion }
 					getContextEl={ () => this.replyInput.current }
 				/>
-			</div>
+			</VStack>
 		);
 	}
 }
@@ -351,4 +334,4 @@ const mapDispatchToProps = {
 	disableKeyboardShortcuts: actions.ui.disableKeyboardShortcuts,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentReplyInput ) );
+export default connect( mapStateToProps, mapDispatchToProps )( CommentReplyInput );

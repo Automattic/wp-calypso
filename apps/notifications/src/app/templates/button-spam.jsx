@@ -1,31 +1,31 @@
-import { localize } from 'i18n-calypso';
+import { __ } from '@wordpress/i18n';
+import { removeBug } from '@wordpress/icons';
 import PropTypes from 'prop-types';
 import { useContext } from 'react';
 import { connect } from 'react-redux';
-import { RestClientContext } from '../Notifications';
-import { keys } from '../helpers/input';
-import { spamNote } from '../state/notes/thunks';
+import { keys } from '../../panel/helpers/input';
+import { spamNote } from '../../panel/state/notes/thunks';
+import { RestClientContext } from '../context';
 import ActionButton from './action-button';
 
 // eslint-disable-next-line no-shadow
-const SpamButton = ( { note, translate, spamNote } ) => {
+const SpamButton = ( { note, spamNote } ) => {
 	const restClient = useContext( RestClientContext );
 
 	return (
 		<ActionButton
-			icon="spam"
+			icon={ removeBug }
 			isActive={ false }
 			hotkey={ keys.KEY_S }
 			onToggle={ () => spamNote( note, restClient ) }
-			text={ translate( 'Spam', { context: 'verb: Mark as Spam' } ) }
-			title={ translate( 'Mark comment as spam', { context: 'verb: imperative' } ) }
+			text={ __( 'Spam' ) }
+			title={ __( 'Mark comment as spam' ) }
 		/>
 	);
 };
 
 SpamButton.propTypes = {
 	note: PropTypes.object.isRequired,
-	translate: PropTypes.func.isRequired,
 };
 
-export default connect( null, { spamNote } )( localize( SpamButton ) );
+export default connect( null, { spamNote } )( SpamButton );

@@ -1,11 +1,13 @@
-/* eslint-disable wpcalypso/jsx-classname-namespace */
-
-import { localize } from 'i18n-calypso';
+import {
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
+import { sprintf, __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getActions, getReferenceId } from '../helpers/notes';
-import getIsNoteApproved from '../state/selectors/get-is-note-approved';
-import getIsNoteLiked from '../state/selectors/get-is-note-liked';
+import { getActions, getReferenceId } from '../../panel/helpers/notes';
+import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved';
+import getIsNoteLiked from '../../panel/state/selectors/get-is-note-liked';
 import AnswerPromptButton from './button-answer-prompt';
 import ApproveButton from './button-approve';
 import EditButton from './button-edit';
@@ -16,7 +18,7 @@ import ReplyInput from './comment-reply-input';
 
 const getType = ( note ) => ( null === getReferenceId( note, 'comment' ) ? 'post' : 'comment' );
 
-const getInitialReplyValue = ( note, translate ) => {
+const getInitialReplyValue = ( note ) => {
 	let ranges;
 	let username;
 
@@ -31,41 +33,41 @@ const getInitialReplyValue = ( note, translate ) => {
 	}
 
 	if ( username ) {
-		return translate( 'Reply to %(username)s…', {
-			args: { username },
-		} );
+		return sprintf(
+			/* translators: username is the name of user to reply */
+			__( 'Reply to %(username)s…' ),
+			{ username }
+		);
 	}
 
-	return getType( note ) === 'post'
-		? translate( 'Reply to post…' )
-		: translate( 'Reply to comment…' );
+	return getType( note ) === 'post' ? __( 'Reply to post…' ) : __( 'Reply to comment…' );
 };
 
-const ActionsPane = ( { global, isApproved, isLiked, note, translate } ) => {
+const ActionsPane = ( { global, isApproved, isLiked, note } ) => {
 	const actions = getActions( note );
 	const hasAction = ( types ) =>
 		[].concat( types ).some( ( type ) => actions.hasOwnProperty( type ) );
 
 	return (
-		<div className="wpnc__note-actions">
-			<div className="wpnc__note-actions__buttons">
+		<VStack spacing={ 4 } style={ { width: '100%' } }>
+			<HStack spacing={ 2 }>
 				{ hasAction( 'approve-comment' ) && <ApproveButton { ...{ note, isApproved } } /> }
 				{ hasAction( 'spam-comment' ) && <SpamButton note={ note } /> }
 				{ hasAction( 'trash-comment' ) && <TrashButton note={ note } /> }
 				{ hasAction( [ 'like-post', 'like-comment' ] ) && <LikeButton { ...{ note, isLiked } } /> }
 				{ hasAction( 'edit-comment' ) && <EditButton note={ note } /> }
 				{ hasAction( 'answer-prompt' ) && <AnswerPromptButton note={ note } /> }
-			</div>
+			</HStack>
 			{ !! actions[ 'replyto-comment' ] && (
 				<ReplyInput
 					{ ...{
 						note,
-						defaultValue: getInitialReplyValue( note, translate ),
+						defaultValue: getInitialReplyValue( note ),
 						global,
 					} }
 				/>
 			) }
-		</div>
+		</VStack>
 	);
 };
 
@@ -74,7 +76,6 @@ ActionsPane.propTypes = {
 	isApproved: PropTypes.bool.isRequired,
 	isLiked: PropTypes.bool.isRequired,
 	note: PropTypes.object.isRequired,
-	translate: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ( state, { note } ) => ( {
@@ -82,4 +83,4 @@ const mapStateToProps = ( state, { note } ) => ( {
 	isLiked: getIsNoteLiked( state, note ),
 } );
 
-export default connect( mapStateToProps )( localize( ActionsPane ) );
+export default connect( mapStateToProps )( ActionsPane );

@@ -1,34 +1,35 @@
-import { localize } from 'i18n-calypso';
+import { __ } from '@wordpress/i18n';
+import { thumbsUp } from '@wordpress/icons';
 import PropTypes from 'prop-types';
 import { useContext } from 'react';
 import { connect } from 'react-redux';
-import { RestClientContext } from '../Notifications';
-import { keys } from '../helpers/input';
-import { getReferenceId } from '../helpers/notes';
-import { setLikeStatus } from '../state/notes/thunks/index';
+import { keys } from '../../panel/helpers/input';
+import { getReferenceId } from '../../panel/helpers/notes';
+import { setLikeStatus } from '../../panel/state/notes/thunks/index';
+import { RestClientContext } from '../context';
 import ActionButton from './action-button';
 
 // eslint-disable-next-line no-shadow
-const LikeButton = ( { commentId, isLiked, note, translate, setLikeStatus } ) => {
+const LikeButton = ( { commentId, isLiked, note, setLikeStatus } ) => {
 	const restClient = useContext( RestClientContext );
 
 	let title;
 
 	if ( isLiked ) {
 		if ( commentId ) {
-			title = translate( 'Remove like from comment' );
+			title = __( 'Remove like from comment' );
 		} else {
-			title = translate( 'Remove like from post' );
+			title = __( 'Remove like from post' );
 		}
 	} else if ( commentId ) {
-		title = translate( 'Like comment', { context: 'verb: imperative' } );
+		title = __( 'Like comment' );
 	} else {
-		title = translate( 'Like post', { context: 'verb: imperative' } );
+		title = __( 'Like post' );
 	}
 
 	return (
 		<ActionButton
-			icon="star"
+			icon={ thumbsUp }
 			isActive={ isLiked }
 			hotkey={ keys.KEY_L }
 			onToggle={ () =>
@@ -41,11 +42,7 @@ const LikeButton = ( { commentId, isLiked, note, translate, setLikeStatus } ) =>
 					restClient
 				)
 			}
-			text={
-				isLiked
-					? translate( 'Liked', { context: 'verb: past-tense' } )
-					: translate( 'Like', { context: 'verb: imperative' } )
-			}
+			text={ isLiked ? __( 'Liked' ) : __( 'Like' ) }
 			title={ title }
 		/>
 	);
@@ -55,7 +52,6 @@ LikeButton.propTypes = {
 	commentId: PropTypes.number,
 	isLiked: PropTypes.bool.isRequired,
 	note: PropTypes.object.isRequired,
-	translate: PropTypes.func.isRequired,
 };
 
-export default connect( null, { setLikeStatus } )( localize( LikeButton ) );
+export default connect( null, { setLikeStatus } )( LikeButton );

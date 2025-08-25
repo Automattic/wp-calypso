@@ -1,19 +1,20 @@
-import { localize } from 'i18n-calypso';
+import { __ } from '@wordpress/i18n';
+import { check } from '@wordpress/icons';
 import PropTypes from 'prop-types';
 import { useContext } from 'react';
 import { connect } from 'react-redux';
-import { RestClientContext } from '../Notifications';
-import { keys } from '../helpers/input';
-import { getReferenceId } from '../helpers/notes';
-import { setApproveStatus as setApproveStatusAction } from '../state/notes/thunks';
+import { keys } from '../../panel/helpers/input';
+import { getReferenceId } from '../../panel/helpers/notes';
+import { setApproveStatus as setApproveStatusAction } from '../../panel/state/notes/thunks';
+import { RestClientContext } from '../context';
 import ActionButton from './action-button';
 
-const ApproveButton = ( { isApproved, note, translate, setApproveStatus } ) => {
+const ApproveButton = ( { isApproved, note, setApproveStatus } ) => {
 	const restClient = useContext( RestClientContext );
 
 	return (
 		<ActionButton
-			icon="checkmark"
+			icon={ check }
 			isActive={ isApproved }
 			hotkey={ keys.KEY_A }
 			onToggle={ () =>
@@ -26,16 +27,8 @@ const ApproveButton = ( { isApproved, note, translate, setApproveStatus } ) => {
 					restClient
 				)
 			}
-			text={
-				isApproved
-					? translate( 'Approved', { context: 'verb: past-tense' } )
-					: translate( 'Approve', { context: 'verb: imperative' } )
-			}
-			title={
-				isApproved
-					? translate( 'Unapprove comment', { context: 'verb: imperative' } )
-					: translate( 'Approve comment', { context: 'verb: imperative' } )
-			}
+			text={ isApproved ? __( 'Approved' ) : __( 'Approve' ) }
+			title={ isApproved ? __( 'Unapprove comment' ) : __( 'Approve comment' ) }
 		/>
 	);
 };
@@ -43,9 +36,6 @@ const ApproveButton = ( { isApproved, note, translate, setApproveStatus } ) => {
 ApproveButton.propTypes = {
 	isApproved: PropTypes.bool.isRequired,
 	note: PropTypes.object.isRequired,
-	translate: PropTypes.func.isRequired,
 };
 
-export default connect( null, { setApproveStatus: setApproveStatusAction } )(
-	localize( ApproveButton )
-);
+export default connect( null, { setApproveStatus: setApproveStatusAction } )( ApproveButton );

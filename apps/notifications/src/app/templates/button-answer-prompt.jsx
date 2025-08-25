@@ -1,13 +1,14 @@
-import { localize } from 'i18n-calypso';
+import { __ } from '@wordpress/i18n';
+import { pin } from '@wordpress/icons';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { keys } from '../helpers/input';
-import { getNewPostLink } from '../helpers/notes';
-import { answerPrompt } from '../state/ui/actions';
+import { keys } from '../../panel/helpers/input';
+import { getNewPostLink } from '../../panel/helpers/notes';
+import { answerPrompt } from '../../panel/state/ui/actions';
 import ActionButton from './action-button';
 
 // eslint-disable-next-line no-shadow
-const AnswerPromptButton = ( { answerPrompt, note, translate } ) => {
+const AnswerPromptButton = ( { answerPrompt, note } ) => {
 	const { site: siteId } = note?.meta?.ids ?? {};
 	// Notifications are hosted on widgets.wp.com on WordPress.com
 	const host =
@@ -15,14 +16,12 @@ const AnswerPromptButton = ( { answerPrompt, note, translate } ) => {
 	const newPostLink = document.location.protocol + '//' + host + getNewPostLink( note );
 	return (
 		<ActionButton
-			{ ...{
-				icon: 'pinned',
-				isActive: false,
-				hotkey: keys.KEY_E,
-				onToggle: () => answerPrompt( siteId, newPostLink ),
-				text: translate( 'Post Answer', { context: 'verb: imperative' } ),
-				title: translate( 'Post Answer', { context: 'verb: imperative' } ),
-			} }
+			icon={ pin }
+			isActive={ false }
+			hotkey={ keys.KEY_E }
+			onToggle={ () => answerPrompt( siteId, newPostLink ) }
+			text={ __( 'Post Answer' ) }
+			title={ __( 'Post Answer' ) }
 		/>
 	);
 };
@@ -30,7 +29,6 @@ const AnswerPromptButton = ( { answerPrompt, note, translate } ) => {
 AnswerPromptButton.propTypes = {
 	answerPrompt: PropTypes.func.isRequired,
 	note: PropTypes.object.isRequired,
-	translate: PropTypes.func.isRequired,
 };
 
-export default connect( null, { answerPrompt } )( localize( AnswerPromptButton ) );
+export default connect( null, { answerPrompt } )( AnswerPromptButton );

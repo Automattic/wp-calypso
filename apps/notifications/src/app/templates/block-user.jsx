@@ -8,9 +8,9 @@ import {
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import getIsNoteApproved from '../state/selectors/get-is-note-approved';
+import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved';
+import { linkProps } from '../../panel/templates/functions';
 import FollowLink from './follow-link';
-import { linkProps } from './functions';
 
 const aSecond = 1000;
 const aMinute = aSecond * 60;

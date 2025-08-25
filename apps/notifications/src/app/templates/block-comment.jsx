@@ -1,6 +1,6 @@
 import clsx from 'clsx';
-import { html } from '../indices-to-html';
-import { p } from './functions';
+import { html } from '../../panel/indices-to-html';
+import { p } from '../../panel/templates/functions';
 
 export const CommentBlock = ( { block, meta } ) => (
 	<div

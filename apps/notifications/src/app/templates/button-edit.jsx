@@ -1,24 +1,23 @@
-import { localize } from 'i18n-calypso';
+import { __ } from '@wordpress/i18n';
+import { edit } from '@wordpress/icons';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { keys } from '../helpers/input';
-import { getEditCommentLink } from '../helpers/notes';
-import { editComment } from '../state/ui/actions';
+import { keys } from '../../panel/helpers/input';
+import { getEditCommentLink } from '../../panel/helpers/notes';
+import { editComment } from '../../panel/state/ui/actions';
 import ActionButton from './action-button';
 
 // eslint-disable-next-line no-shadow
-const EditButton = ( { editComment, note, translate } ) => {
+const EditButton = ( { editComment, note } ) => {
 	const { site: siteId, post: postId, comment: commentId } = note?.meta?.ids ?? {};
 	return (
 		<ActionButton
-			{ ...{
-				icon: 'pencil',
-				isActive: false,
-				hotkey: keys.KEY_E,
-				onToggle: () => editComment( siteId, postId, commentId, getEditCommentLink( note ) ),
-				text: translate( 'Edit', { context: 'verb: imperative' } ),
-				title: translate( 'Edit comment', { context: 'verb: imperative' } ),
-			} }
+			icon={ edit }
+			isActive={ false }
+			hotkey={ keys.KEY_E }
+			onToggle={ () => editComment( siteId, postId, commentId, getEditCommentLink( note ) ) }
+			text={ __( 'Edit' ) }
+			title={ __( 'Edit comment' ) }
 		/>
 	);
 };
@@ -26,7 +25,6 @@ const EditButton = ( { editComment, note, translate } ) => {
 EditButton.propTypes = {
 	editComment: PropTypes.func.isRequired,
 	note: PropTypes.object.isRequired,
-	translate: PropTypes.func.isRequired,
 };
 
-export default connect( null, { editComment } )( localize( EditButton ) );
+export default connect( null, { editComment } )( EditButton );

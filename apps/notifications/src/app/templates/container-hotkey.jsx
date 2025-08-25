@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { modifierKeyIsActive } from '../helpers/input';
-import getKeyboardShortcutsEnabled from '../state/selectors/get-keyboard-shortcuts-enabled';
+import { modifierKeyIsActive } from '../../panel/helpers/input';
+import getKeyboardShortcutsEnabled from '../../panel/state/selectors/get-keyboard-shortcuts-enabled';
 
 const dispatch = ( event, action ) => {
 	event.preventDefault();

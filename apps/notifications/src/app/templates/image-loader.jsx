@@ -62,7 +62,13 @@ export class ImageLoader extends Component {
 			<div className="image-preloader">
 				{ status === LoadStatus.LOADING && placeholder }
 				{ /* eslint-disable-next-line jsx-a11y/alt-text */ }
-				{ status === LoadStatus.LOADED && <img src={ src } /> }
+				{ status === LoadStatus.LOADED && (
+					<img
+						src={ src }
+						alt=""
+						style={ { width: '100%', height: '100%', objectFit: 'cover ' } }
+					/>
+				) }
 				{ status === LoadStatus.FAILED && children }
 			</div>
 		);

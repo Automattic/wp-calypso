@@ -1,9 +1,9 @@
-import { useTranslate } from 'i18n-calypso';
+import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import useSafe from '../helpers/use-safe';
-import { bumpStat } from '../rest-client/bump-stat';
-import { wpcom } from '../rest-client/wpcom';
+import useSafe from '../../panel/helpers/use-safe';
+import { bumpStat } from '../../panel/rest-client/bump-stat';
+import { wpcom } from '../../panel/rest-client/wpcom';
 import Gridicon from './gridicons';
 
 const followStatTypes = {
@@ -15,8 +15,6 @@ const followStatTypes = {
 };
 
 export const FollowLink = ( { site, noteType, isFollowing: initialIsFollowing } ) => {
-	const translate = useTranslate();
-
 	const [ isRequestRunning, setIsRequestRunning ] = useState( false );
 	const [ isFollowing, setIsFollowing ] = useState( initialIsFollowing );
 
@@ -57,9 +55,7 @@ export const FollowLink = ( { site, noteType, isFollowing: initialIsFollowing } 
 	}
 
 	const icon = isFollowing ? 'reader-following' : 'reader-follow';
-	const linkText = isFollowing
-		? translate( 'Subscribed', { context: 'you are subscribing' } )
-		: translate( 'Subscribe', { context: 'verb: imperative' } );
+	const linkText = isFollowing ? __( 'Subscribed' ) : __( 'Subscribe' );
 
 	return (
 		<button className="follow-link" onClick={ toggleFollowStatus }>
