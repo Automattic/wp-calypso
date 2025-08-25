@@ -16,11 +16,11 @@
 			"import": "./dist/esm/*.js",
 			"require": "./dist/cjs/*.js"
 		},
-		"./domains/*": {
-			"calypso:src": "./src/domains/*.ts",
-			"types": "./dist/types/domains/*.d.ts",
-			"import": "./dist/esm/domains/*.js",
-			"require": "./dist/cjs/domains/*.js"
+		"./domain-suggestions/*": {
+			"calypso:src": "./src/domain-suggestions/*.ts",
+			"types": "./dist/types/domain-suggestions/*.d.ts",
+			"import": "./dist/esm/domain-suggestions/*.js",
+			"require": "./dist/cjs/domain-suggestions/*.js"
 		}
 	},
 	"sideEffects": false,

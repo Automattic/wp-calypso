@@ -1,4 +1,4 @@
-import { fetchDomainSuggestions } from '@automattic/data/domains/query-functions';
+import { fetchDomainSuggestions } from '@automattic/data/domain-suggestions/query-functions';
 
 export const domainSuggestionsQuery = ( query: string ) => ( {
 	queryKey: [ 'domain-suggestions', query ],
