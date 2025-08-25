@@ -1,4 +1,3 @@
-import { dateI18n } from '@wordpress/date';
 import { __, sprintf } from '@wordpress/i18n';
 import {
 	startOfDay,
@@ -9,7 +8,7 @@ import {
 	startOfYear,
 	differenceInCalendarDays,
 } from 'date-fns';
-import { formatDateWithOffset } from '../../utils/datetime';
+import { formatDate, formatYmd, parseYmdLocal } from '../../utils/datetime';
 
 // Range helpers (inclusive)
 const lastNDays = ( date: Date, number: number ) => ( {
@@ -153,28 +152,18 @@ export function formatLabel(
 	timezoneString?: string,
 	gmtOffset?: number
 ) {
-	if ( timezoneString ) {
-		return sprintf(
-			/* translators: %1$s: start date, %2$s: end date */
-			__( '%1$s to %2$s' ),
-			dateI18n( 'M j, Y', start, timezoneString ),
-			dateI18n( 'M j, Y', end, timezoneString )
-		);
-	}
-	if ( typeof gmtOffset === 'number' ) {
-		const left = formatDateWithOffset( start, gmtOffset, locale, { dateStyle: 'medium' } );
-		const right = formatDateWithOffset( end, gmtOffset, locale, { dateStyle: 'medium' } );
-		return sprintf(
-			/* translators: %1$s: start date, %2$s: end date */
-			__( '%1$s to %2$s' ),
-			left,
-			right
-		);
-	}
+	// Normalize to site calendar days first, then format visually for the locale.
+	// This avoids off-by-one issues when the Date carries a different local timezone
+	// than the site's timezone.
+	const startYmd = formatYmd( start, timezoneString, gmtOffset );
+	const endYmd = formatYmd( end, timezoneString, gmtOffset );
+	const startForDisplay = parseYmdLocal( startYmd )!;
+	const endForDisplay = parseYmdLocal( endYmd )!;
+
 	return sprintf(
 		/* translators: %1$s: start date, %2$s: end date */
 		__( '%1$s to %2$s' ),
-		dateI18n( 'M j, Y', start ),
-		dateI18n( 'M j, Y', end )
+		formatDate( startForDisplay, locale, { dateStyle: 'medium' } ),
+		formatDate( endForDisplay, locale, { dateStyle: 'medium' } )
 	);
 }

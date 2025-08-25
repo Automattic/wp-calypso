@@ -82,8 +82,8 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	const { data } = useSuspenseQuery( {
 		...siteSettingsQuery( siteId ),
 		select: ( s ) => ( {
-			gmtOffset: s?.gmt_offset ?? 0,
-			timezoneString: s?.timezone_string ?? '',
+			gmtOffset: typeof s?.gmt_offset === 'number' ? s.gmt_offset : 0,
+			timezoneString: s?.timezone_string || undefined,
 		} ),
 	} );
 
@@ -164,11 +164,9 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	};
 
 	//	const fields = useFields( { logType, timezoneString } );
-	const fields = useFields( {
-		logType,
-		timezoneString: timezoneString || undefined,
-		gmtOffset,
-	} );
+	const fields = useFields(
+		timezoneString ? { logType, timezoneString, gmtOffset } : { logType, gmtOffset }
+	);
 
 	// @todo, this will be replaced when importing the use-view data.
 	const actions = useMemo(
