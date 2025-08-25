@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
 import {
 	Button,
 	__experimentalVStack as VStack,
@@ -29,6 +30,7 @@ import {
 } from './actions.utils';
 
 export default function Actions() {
+	const router = useRouter();
 	const { user } = useAuth();
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
@@ -62,14 +64,16 @@ export default function Actions() {
 	const onDeleteConfirm = useCallback(
 		() =>
 			purchase &&
-			deleteDomain( purchase.ID, {
-				onSuccess: () =>
-					createSuccessNotice( __( 'The domain will be deleted in a few minutes.' ), {
+			deleteDomain( `${ purchase.ID }`, {
+				onSuccess: () => {
+					createSuccessNotice( __( 'The domain deletion has been completed.' ), {
 						type: 'snackbar',
-					} ),
+					} );
+					router.navigate( { to: '/domains' } );
+				},
 				onError: ( e: Error ) => createErrorNotice( e.message, { type: 'snackbar' } ),
 			} ),
-		[ purchase, deleteDomain, createSuccessNotice, createErrorNotice ]
+		[ purchase, deleteDomain, createSuccessNotice, createErrorNotice, router ]
 	);
 
 	return (
