@@ -4,6 +4,7 @@ import {
 	Button,
 	ExternalLink,
 } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
@@ -15,7 +16,6 @@ import WordPressDesktopAppLogo from './images/desktop-app-logo.svg';
 import Linux from './images/linux-logo.svg';
 import WordPressStudioLogo from './images/studio-app-logo.svg';
 import Windows from './images/windows-logo.svg';
-import { isMobile as getIsMobile } from './utils';
 
 enum PlatformType {
 	MacIntel = 'MacIntel',
@@ -180,29 +180,27 @@ const getCurrentPlatform = (): PlatformType => {
 
 export default function AppsDesktopCard( { appSlug }: { appSlug: keyof typeof DesktopApps } ) {
 	const { recordTracksEvent } = useAnalytics();
+	const isDesktop = useViewportMatch( 'medium' );
+	const Wrapper = isDesktop ? HStack : VStack;
 	const app = DesktopApps[ appSlug ];
 
 	if ( ! app ) {
 		return null;
 	}
 
-	const isMobile = getIsMobile();
 	const platform = getCurrentPlatform();
 	const platformConfig = app.platforms[ platform ];
 
-	const renderMobileContent = () => {
-		return (
-			<Text as="p" variant="muted" lineHeight="20px">
-				{ app.link }
-			</Text>
-		);
-	};
-
-	const renderDesktopContent = () => {
-		return (
+	return (
+		<AppsCard
+			logo={ app.logo }
+			logoAlt={ app.logoAlt }
+			title={ app.title }
+			description={ app.description }
+		>
 			<VStack spacing={ 4 }>
 				{ platformConfig && (
-					<HStack spacing={ 2 } justify="flex-start">
+					<Wrapper spacing={ 2 } justify="flex-start" alignment="flex-start">
 						{ Object.entries( app.platforms )
 							.filter( ( [ , config ] ) => config.group === platformConfig?.group )
 							.map( ( [ key, config ], index ) => (
@@ -221,9 +219,9 @@ export default function AppsDesktopCard( { appSlug }: { appSlug: keyof typeof De
 									) }
 								</Button>
 							) ) }
-					</HStack>
+					</Wrapper>
 				) }
-				<HStack spacing={ 2 } justify="flex-start">
+				<Wrapper spacing={ 2 } justify="flex-start">
 					<Text as="p" variant="muted" lineHeight="20px">
 						{ ! platformConfig ? __( 'Available for:' ) : __( 'Also available for:' ) }
 					</Text>
@@ -246,19 +244,8 @@ export default function AppsDesktopCard( { appSlug }: { appSlug: keyof typeof De
 								{ config.name }
 							</Button>
 						) ) }
-				</HStack>
+				</Wrapper>
 			</VStack>
-		);
-	};
-
-	return (
-		<AppsCard
-			logo={ app.logo }
-			logoAlt={ app.logoAlt }
-			title={ app.title }
-			description={ app.description }
-		>
-			{ isMobile ? renderMobileContent() : renderDesktopContent() }
 		</AppsCard>
 	);
 }

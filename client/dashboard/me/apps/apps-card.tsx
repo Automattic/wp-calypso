@@ -1,5 +1,6 @@
 import { __experimentalVStack as VStack, Card, CardBody } from '@wordpress/components';
 import { Text } from '../../components/text';
+import type { CSSProperties } from 'react';
 
 type AppsCardProps = {
 	logo: string;
@@ -20,7 +21,12 @@ export default function AppsCard( { logo, logoAlt, title, description, children 
 							<Text as="h2" size="15px" weight={ 500 } lineHeight="20px">
 								{ title }
 							</Text>
-							<Text as="p" variant="muted" lineHeight="20px">
+							<Text
+								as="p"
+								variant="muted"
+								lineHeight="20px"
+								style={ { textWrap: 'balance' } as CSSProperties }
+							>
 								{ description }
 							</Text>
 						</VStack>
