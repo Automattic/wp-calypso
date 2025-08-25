@@ -58,10 +58,10 @@ export function PurchasePaymentMethod( {
 				: purchase.payment_card_type || purchase.payment_card_processor || '';
 
 			return (
-				<>
+				<div>
 					<PaymentMethodImage paymentMethodType={ paymentMethodType } />{ ' ' }
 					{ purchase.payment_details }
-				</>
+				</div>
 			);
 		}
 

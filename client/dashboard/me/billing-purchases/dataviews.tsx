@@ -27,6 +27,8 @@ import type { Site } from '../../data/site';
 import type { SortDirection, View, Fields } from '@wordpress/dataviews';
 import type { ReactNode } from 'react';
 
+import './style.scss';
+
 const purchasesWideFields = [ 'status', 'payment-method' ];
 const purchasesDesktopFields = [ 'status' ];
 const purchasesMobileFields: string[] = [];
