@@ -33,6 +33,7 @@
 		"@automattic/components": "workspace:^",
 		"@automattic/composite-checkout": "workspace:^",
 		"@automattic/create-calypso-config": "workspace:^",
+		"@automattic/data": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
 		"@automattic/design-picker": "workspace:^",
 		"@automattic/design-preview": "workspace:^",
