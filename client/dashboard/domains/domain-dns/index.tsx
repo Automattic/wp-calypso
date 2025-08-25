@@ -212,7 +212,7 @@ export default function DomainDns() {
 				<Notice variant="warning" title={ __( 'Your domain is not using default A records' ) }>
 					{ createInterpolateElement(
 						__(
-							'Your domain is not using default A records. This means it may not be pointing to your Gravatar profile correctly. To restore default A records, click on the three dots menu and select "Restore default A records". <defaultRecordsLink>Learn more</defaultRecordsLink>'
+							'Your domain is not using default A records. This means it may not be pointing to your Gravatar profile correctly. To restore default A records, click on the three dots menu and select “Restore default A records”. <defaultRecordsLink>Learn more</defaultRecordsLink>'
 						),
 						{
 							defaultRecordsLink: <InlineSupportLink supportContext="dns_default_records" />,
@@ -225,7 +225,7 @@ export default function DomainDns() {
 			<Notice variant="warning" title={ __( 'Your domain is not using default A records' ) }>
 				{ createInterpolateElement(
 					__(
-						'Your domain is not using default A records. This means it may not be pointing to your WordPress.com site correctly. To restore default A records, click on the three dots menu and select "Restore default A records". <defaultRecordsLink>Learn more</defaultRecordsLink>.'
+						'Your domain is not using default A records. This means it may not be pointing to your WordPress.com site correctly. To restore default A records, click on the three dots menu and select “Restore default A records”. <defaultRecordsLink>Learn more</defaultRecordsLink>.'
 					),
 					{
 						defaultRecordsLink: <InlineSupportLink supportContext="dns_default_records" />,
@@ -244,7 +244,7 @@ export default function DomainDns() {
 			<Notice title={ __( 'Default CNAME record restored.' ) }>
 				{ createInterpolateElement(
 					__(
-						'Your domain is not using the default WWW CNAME record. This means your WordPress.com site may not be reached correctly using the www prefix. To restore the default WWW CNAME record, click on the three dots menu and select "Restore default CNAME record". <defaultRecordsLink>Learn more</defaultRecordsLink>.'
+						'Your domain is not using the default WWW CNAME record. This means your WordPress.com site may not be reached correctly using the www prefix. To restore the default WWW CNAME record, click on the three dots menu and select “Restore default CNAME record”. <defaultRecordsLink>Learn more</defaultRecordsLink>.'
 					),
 					{
 						defaultRecordsLink: <InlineSupportLink supportContext="dns_default_records" />,
