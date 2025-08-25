@@ -91,7 +91,7 @@ export interface Purchase {
 	 */
 	refundInteger: number;
 
-	refundOptions: RefundOptions | null;
+	refundOptions: RefundOptions[] | null;
 	refundPeriodInDays: number;
 
 	/**
