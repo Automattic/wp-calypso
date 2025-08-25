@@ -262,7 +262,7 @@ class DomainRegistrationSuggestion extends Component {
 
 		if ( notice.type === 'hsts' ) {
 			return translate(
-				'%(message)s When you host this domain at WordPress.com an SSL ' +
+				'%(message)s When you host this domain at WordPress.com, an SSL ' +
 					'certificate is included. {{a}}Learn more{{/a}}.',
 				{
 					args: {
