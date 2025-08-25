@@ -10,7 +10,6 @@ import type { AppConfig } from './context';
 function boot( config: AppConfig ) {
 	if ( ! isEnabled( 'dashboard/v2' ) ) {
 		throw new Error( 'Dashboard v2 is not enabled' );
-		return;
 	}
 	const rootElement = document.getElementById( 'wpcom' );
 	if ( rootElement === null ) {
