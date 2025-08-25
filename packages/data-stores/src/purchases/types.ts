@@ -235,7 +235,7 @@ export interface RawPurchase {
 	is_woo_express_trial: boolean;
 	is_jetpack_plan_or_product: boolean;
 	meta: string | undefined;
-	ownership_id: number | undefined;
+	ownership_id: number | string | undefined;
 	partner_name: string | undefined;
 	partner_slug: string | undefined;
 	partner_type: string | undefined;
