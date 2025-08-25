@@ -69,7 +69,7 @@ test( 'shows warning notice when domain uses external name servers', () => {
 	expect( screen.getAllByText( /update your name servers now/i ).length ).toBeGreaterThan( 0 );
 
 	// Should be a warning notice
-	expect( document.querySelector( '.components-notice' ) ).toHaveClass( 'is-warning' );
+	expect( document.querySelector( '.dashboard-notice' ) ).toHaveClass( 'is-warning' );
 } );
 
 test( 'shows info notice when domain is primary domain on non-domain-only site', () => {
@@ -94,7 +94,7 @@ test( 'shows info notice when domain is primary domain on non-domain-only site',
 	expect( screen.getAllByText( /set a new primary site address/i ).length ).toBeGreaterThan( 0 );
 
 	// Should be an info notice
-	expect( document.querySelector( '.components-notice' ) ).toHaveClass( 'is-info' );
+	expect( document.querySelector( '.dashboard-notice' ) ).toHaveClass( 'is-info' );
 } );
 
 test( 'shows no notice when domain uses WordPress.com nameservers and is not primary', () => {
@@ -116,5 +116,5 @@ test( 'shows no notice when domain uses WordPress.com nameservers and is not pri
 	expect( container.firstChild ).toBeNull();
 
 	// Should not have any notice elements
-	expect( document.querySelector( '.components-notice' ) ).not.toBeInTheDocument();
+	expect( document.querySelector( '.dashboard-notice' ) ).not.toBeInTheDocument();
 } );
