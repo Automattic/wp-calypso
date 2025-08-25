@@ -3,6 +3,7 @@
 	"compilerOptions": {
 		"rootDir": ".",
 		"noEmit": true,
+		"moduleResolution": "bundler",
 		"types": [
 			"node",
 			"@types/gtag.js",
