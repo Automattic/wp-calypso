@@ -23,11 +23,7 @@ export default function NameServers() {
 	const { user } = useAuth();
 	const { domainName } = domainRoute.useParams();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const {
-		data: nameServers,
-		error: queryError,
-		isLoading: isNameServersLoading,
-	} = useQuery( domainNameServersQuery( domainName ) );
+	const { data: nameServers, error: queryError } = useQuery( domainNameServersQuery( domainName ) );
 	const { mutate: updateNameServers, isPending: isUpdatingNameServers } = useMutation(
 		domainNameServersMutation( domainName )
 	);
@@ -77,7 +73,6 @@ export default function NameServers() {
 							domainName={ domainName }
 							domainSiteSlug={ getDomainSiteSlug( domain ) }
 							isBusy={ isUpdatingNameServers }
-							isLoading={ isNameServersLoading }
 							nameServers={ nameServers ?? [] }
 							onSubmit={ onSubmit }
 							showUpsellNudge={ showUpsellNudge }
