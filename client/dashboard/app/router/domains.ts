@@ -3,6 +3,7 @@ import { domainQuery } from '../queries/domain';
 import { domainDnsQuery } from '../queries/domain-dns-records';
 import { domainForwardingQuery } from '../queries/domain-forwarding';
 import { domainGlueRecordsQuery } from '../queries/domain-glue-records';
+import { domainNameServersQuery } from '../queries/domain-name-servers';
 import { sslDetailsQuery } from '../queries/domain-ssl';
 import { domainsQuery } from '../queries/domains';
 import { queryClient } from '../query-client';
@@ -167,6 +168,8 @@ export const domainContactInfoRoute = createRoute( {
 export const domainNameServersRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'name-servers',
+	loader: ( { params: { domainName } } ) =>
+		queryClient.ensureQueryData( domainNameServersQuery( domainName ) ),
 } ).lazy( () =>
 	import( '../../domains/name-servers' ).then( ( d ) =>
 		createLazyRoute( 'domain-name-servers' )( {
