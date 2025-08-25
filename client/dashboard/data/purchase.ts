@@ -346,7 +346,8 @@ export function normalizePurchase( rawPurchase: RawPurchase ): Purchase {
 }
 
 export function removePurchase( purchaseId: string ) {
-	return wpcom.req.delete( {
+	return wpcom.req.post( {
 		path: `/purchases/${ purchaseId }/delete`,
+		apiNamespace: 'wpcom/v2',
 	} );
 }
