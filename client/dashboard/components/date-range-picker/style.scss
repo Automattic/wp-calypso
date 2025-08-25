@@ -30,6 +30,13 @@
   }
 }
 
+/* Medium screens: presets and calendar should be centered with no awkward right margin */
+@media (min-width: 601px) and (max-width: 899px) {
+  .daterange-body {
+    margin: 0 auto;
+  }
+}
+
 /* Desktop presets column: ensure a reasonable width to avoid awkward wrapping */
 @media (min-width: 601px) {
   .daterange-presets {
@@ -44,4 +51,12 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* Hide native date picker icons inside our date inputs (visual only) */
+.daterange-inputs input[type="date"]::-webkit-calendar-picker-indicator {
+  display: none;
+}
+.daterange-inputs input[type="date"]::-webkit-clear-button {
+  display: none;
 }
