@@ -354,15 +354,8 @@ export class Login extends Component {
 	}
 
 	render() {
-		const {
-			locale,
-			translate,
-			isGenericOauth,
-			isGravPoweredClient,
-			isJetpack,
-			isFromAkismet,
-			action,
-		} = this.props;
+		const { locale, translate, isGenericOauth, isGravPoweredClient, isJetpack, action } =
+			this.props;
 
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
 
