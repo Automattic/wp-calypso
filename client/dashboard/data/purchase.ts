@@ -88,16 +88,24 @@ export interface RawPurchasePriceTierEntry extends PriceTierEntry {
 export interface Purchase {
 	/**
 	 * The WordPress.com subscription ID number.
+	 *
+	 * NOTE: this is currently a numeric string but we are trying to transition
+	 * it to a number. By typing it as both, we force consumers to be able to
+	 * handle both situations which should make the transition easier.
 	 */
-	ID: number;
+	ID: number | string;
 
 	amount: number;
 
 	/**
 	 * The ID number of a WordPress.com purchase whose renewal will renew this
 	 * purchase (eg: the plan or domain registration for a domain connection).
+	 *
+	 * NOTE: this is currently a numeric string but we are trying to transition
+	 * it to a number. By typing it as both, we force consumers to be able to
+	 * handle both situations which should make the transition easier.
 	 */
-	attached_to_purchase_id: number | null;
+	attached_to_purchase_id: number | string | null;
 
 	auto_renew_coupon_code: string | null;
 	auto_renew_coupon_discount_percentage: number | null;
@@ -184,10 +192,24 @@ export interface Purchase {
 
 	/**
 	 * True if this is a domain product (eg: registration, mapping, or transfer).
+	 *
+	 * NOTE: this is currently the string "true" if true and undefined if
+	 * false, but we are transitioning to a boolean. By typing it as both, we
+	 * force consumers to be able to handle both situations which should make
+	 * the transition easier.
 	 */
-	is_domain: boolean;
+	is_domain: boolean | 'true' | undefined;
 
-	is_domain_registration: boolean;
+	/**
+	 * True if this is a domain registration product.
+	 *
+	 * NOTE: this is currently the string "true" if true and undefined if
+	 * false, but we are transitioning to a boolean. By typing it as both, we
+	 * force consumers to be able to handle both situations which should make
+	 * the transition easier.
+	 */
+	is_domain_registration: boolean | 'true' | undefined;
+
 	is_pending_registration: boolean;
 	is_free_jetpack_stats_product: boolean;
 	is_jetpack_backup_t1: boolean;
@@ -213,8 +235,12 @@ export interface Purchase {
 
 	/**
 	 * The Ownership number.
+	 *
+	 * NOTE: this is currently a numeric string but we are trying to transition
+	 * it to a number. By typing it as both, we force consumers to be able to
+	 * handle both situations which should make the transition easier.
 	 */
-	ownership_id: number;
+	ownership_id: number | string;
 
 	partner_name: string | undefined;
 	partner_slug: string | undefined;
@@ -241,8 +267,12 @@ export interface Purchase {
 
 	/**
 	 * The WordPress.com Store product_id.
+	 *
+	 * NOTE: this is currently a numeric string but we are trying to transition
+	 * it to a number. By typing it as both, we force consumers to be able to
+	 * handle both situations which should make the transition easier.
 	 */
-	product_id: number;
+	product_id: number | string;
 
 	product_name: string;
 	product_slug: string;
@@ -268,8 +298,12 @@ export interface Purchase {
 
 	/**
 	 * The WordPress.com site ID number.
+	 *
+	 * NOTE: this is currently a numeric string but we are trying to transition
+	 * it to a number. By typing it as both, we force consumers to be able to
+	 * handle both situations which should make the transition easier.
 	 */
-	blog_id: number;
+	blog_id: number | string;
 
 	blogname: string;
 	site_slug?: string;
@@ -280,8 +314,12 @@ export interface Purchase {
 
 	/**
 	 * The WordPress.com user ID number.
+	 *
+	 * NOTE: this is currently a numeric string but we are trying to transition
+	 * it to a number. By typing it as both, we force consumers to be able to
+	 * handle both situations which should make the transition easier.
 	 */
-	user_id: number;
+	user_id: number | string;
 
 	/**
 	 * True if auto-renew is enabled.
