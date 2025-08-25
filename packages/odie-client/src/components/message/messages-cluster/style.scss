@@ -1,0 +1,57 @@
+.odie-chatbox-messages-cluster {
+	width: 100%;
+    padding: 0;
+
+	&.role-bot {
+		padding: 0 16px;
+		box-sizing: border-box;
+	}
+	
+	&.role-business {
+		flex-direction: column;
+		align-self: flex-start;
+		width: unset;
+		margin-left: 16px;
+		border-radius: 24px 24px 24px 8px;
+		padding: 12px 16px;
+		border: 1px solid $gray-200;
+		max-width: calc( 100% - 32px );
+
+        .message-header {
+            font-weight: $font-weight-medium;
+            margin-right: 16px;
+        }
+	}
+
+	&.role-user {
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 24px 24px 9px 24px;
+		background-color: $gray-200;
+		width: max-content;
+		margin-right: 16px;
+		padding: 10px 16px;
+		max-width: calc( 100% - 32px );
+        align-self: flex-end;
+
+		p {
+			color: $gray-900;
+			padding: 0;
+			span {
+				background-color: transparent;
+				a {
+					color: var( --studio-white );
+					&:hover {
+						color: var( --studio-blue-40 );
+					}
+				}
+			}
+		}
+
+		blockquote {
+			background-color: transparent;
+			border-left: 2px solid var( --color-neutral-0 );
+			margin: 8px 0 16px;
+			padding: 8px 16px;
+		}
+	}
+}
