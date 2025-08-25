@@ -11,12 +11,13 @@ import {
 	getStagingSiteId,
 	isStagingSiteSyncing,
 } from '../../utils/site-staging-site';
+import StagingSiteSyncModal from '../staging-site-sync-modal';
 import type { StagingSiteSyncDirection } from '../../data/types';
 
 // TODO: We need to rewrite the modal, as it’s not compatible with v2.
 // Both the Modal and especially the FileBrowser rely heavily on Redux state
 // which makes integration problematic in the current setup.
-const StagingSiteSyncModal = lazy(
+const StagingSiteSyncModalV1 = lazy(
 	() =>
 		import(
 			/* webpackChunkName: "async-load-staging-site-sync-modal" */ 'calypso/sites/staging-site/components/staging-site-sync-modal'
@@ -78,6 +79,34 @@ export default function StagingSiteSyncDropdown( {
 		return null;
 	}
 
+	const renderModal = () => {
+		if ( window?.location?.pathname?.startsWith( '/v2' ) ) {
+			return (
+				<StagingSiteSyncModal
+					onClose={ handleCloseModal }
+					syncType={ syncDirection }
+					environment={ environment }
+					productionSiteId={ productionSiteId }
+					stagingSiteId={ stagingSiteId }
+					onSyncStart={ handleSyncStart }
+				/>
+			);
+		}
+
+		return (
+			<Suspense fallback={ null }>
+				<StagingSiteSyncModalV1
+					onClose={ handleCloseModal }
+					syncType={ syncDirection }
+					environment={ environment }
+					productionSiteId={ productionSiteId }
+					stagingSiteId={ stagingSiteId }
+					onSyncStart={ handleSyncStart }
+				/>
+			</Suspense>
+		);
+	};
+
 	return (
 		<>
 			<Dropdown
@@ -122,18 +151,7 @@ export default function StagingSiteSyncDropdown( {
 					</div>
 				) }
 			/>
-			{ isModalOpen && (
-				<Suspense fallback={ null }>
-					<StagingSiteSyncModal
-						onClose={ handleCloseModal }
-						syncType={ syncDirection }
-						environment={ environment }
-						productionSiteId={ productionSiteId }
-						stagingSiteId={ stagingSiteId }
-						onSyncStart={ handleSyncStart }
-					/>
-				</Suspense>
-			) }
+			{ isModalOpen && renderModal() }
 		</>
 	);
 }
