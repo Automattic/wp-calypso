@@ -147,8 +147,8 @@ export default function Actions() {
 			<ConfirmDialog
 				isOpen={ isDisconnectDialogOpen }
 				confirmButtonText={ __( 'Detach' ) }
-				onConfirm={ onDisconnectConfirm }
 				onCancel={ () => setIsDisconnectDialogOpen( false ) }
+				onConfirm={ onDisconnectConfirm }
 			>
 				{ __( 'Are you sure you want to detach this domain?' ) }
 			</ConfirmDialog>
