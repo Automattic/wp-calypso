@@ -10,6 +10,7 @@ export interface User {
 	language: string;
 	locale_variant: string;
 	email: string;
+	has_unseen_notes: boolean;
 	site_count: number;
 	meta: {
 		data: {
