@@ -68,7 +68,7 @@ function UnforwardedSummaryButton(
 							) }
 							<Text
 								className="summary-button-title"
-								style={ textAlign ? { textAlign } : undefined }
+								style={ { textAlign } }
 							>
 								{ title }
 							</Text>
