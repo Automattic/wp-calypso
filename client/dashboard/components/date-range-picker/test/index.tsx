@@ -47,10 +47,11 @@ describe( 'DateRangePicker (new)', () => {
 	test( 'open → select two days → Apply updates label', async () => {
 		render( <TestDateRangePicker /> );
 
+		// Open picker
 		await userEvent.click( screen.getByRole( 'button', { name: /Date range:/i } ) );
 
 		// Scope to the popover
-		const popover = document.querySelector( '.daterange-popover' )!;
+		const popover = document.querySelector( '.daterange-popover' ) as HTMLElement;
 		const pop = within( popover );
 
 		// Scope to August grid to avoid multiple matches
@@ -77,7 +78,7 @@ describe( 'DateRangePicker (new)', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: /Date range:/i } ) );
 
 		// Scope to the popover
-		const popover = document.querySelector( '.daterange-popover' )!;
+		const popover = document.querySelector( '.daterange-popover' ) as HTMLElement;
 		const pop = within( popover );
 
 		// Inputs start with the current selection
@@ -110,7 +111,7 @@ describe( 'DateRangePicker (new)', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: /Date range:/i } ) );
 
 		// Scope to popover
-		const popover = document.querySelector( '.daterange-popover' )!;
+		const popover = document.querySelector( '.daterange-popover' ) as HTMLElement;
 		const pop = within( popover );
 
 		// August grid
