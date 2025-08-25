@@ -20,7 +20,7 @@ import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { WPCOM_DEFAULT_NAMESERVERS_REGEX } from '../name-servers/utils';
+import { areAllWpcomNameServers } from '../name-servers/utils';
 import { useDnsActions } from './actions';
 import DnsActionsMenu from './dns-actions-menu';
 import DnsImportDialog from './dns-import-dialog';
@@ -192,18 +192,8 @@ export default function DomainDns() {
 		} );
 	};
 
-	const hasWpcomNameservers = () => {
-		if ( ! nameservers || nameservers.length === 0 ) {
-			return false;
-		}
-
-		return nameservers.every( ( nameserver ) => {
-			return WPCOM_DEFAULT_NAMESERVERS_REGEX.test( nameserver );
-		} );
-	};
-
 	const renderDefaultARecordsNotice = () => {
-		if ( ! hasWpcomNameservers() || hasDefaultARecordsValue ) {
+		if ( ! areAllWpcomNameServers( nameservers ) || hasDefaultARecordsValue ) {
 			return null;
 		}
 
@@ -236,7 +226,7 @@ export default function DomainDns() {
 	};
 
 	const renderDefaultCnameRecordNotice = () => {
-		if ( ! hasWpcomNameservers() || hasDefaultCnameRecordValue ) {
+		if ( ! areAllWpcomNameServers( nameservers ) || hasDefaultCnameRecordValue ) {
 			return null;
 		}
 
@@ -273,7 +263,7 @@ export default function DomainDns() {
 	};
 
 	const renderExternalNameserversNotice = () => {
-		if ( hasWpcomNameservers() || ! nameservers || ! nameservers.length ) {
+		if ( areAllWpcomNameServers( nameservers ) || ! nameservers || ! nameservers.length ) {
 			return null;
 		}
 
