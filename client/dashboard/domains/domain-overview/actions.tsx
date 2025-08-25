@@ -14,7 +14,7 @@ import { domainQuery, disconnectDomainMutation } from '../../app/queries/domain'
 import { removePurchaseMutation } from '../../app/queries/purchase';
 import { siteByIdQuery } from '../../app/queries/site';
 import { sitePurchaseQuery } from '../../app/queries/site-purchases';
-import { domainRoute, domainTransferRoute } from '../../app/router/domains';
+import { domainRoute, domainsRoute, domainTransferRoute } from '../../app/router/domains';
 import { ActionList } from '../../components/action-list';
 import RemoveDomainDialog from '../../components/purchase-dialogs/remove-domain-dialog';
 import RouterLinkButton from '../../components/router-link-button';
@@ -69,7 +69,7 @@ export default function Actions() {
 					createSuccessNotice( __( 'The domain deletion has been completed.' ), {
 						type: 'snackbar',
 					} );
-					router.navigate( { to: '/domains' } );
+					router.navigate( { to: domainsRoute.fullPath } );
 				},
 				onError: ( e: Error ) => createErrorNotice( e.message, { type: 'snackbar' } ),
 			} ),
