@@ -133,6 +133,72 @@ export const securityRoute = createRoute( {
 	)
 );
 
+export const securityPasswordRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'security/password',
+} ).lazy( () =>
+	import( '../../me/security-password' ).then( ( d ) =>
+		createLazyRoute( 'security-password' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const securityAccountRecoveryRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'security/account-recovery',
+} ).lazy( () =>
+	import( '../../me/security-account-recovery' ).then( ( d ) =>
+		createLazyRoute( 'security-account-recovery' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const securityTwoStepAuthRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'security/two-step-auth',
+} ).lazy( () =>
+	import( '../../me/security-two-step-auth' ).then( ( d ) =>
+		createLazyRoute( 'security-two-step-auth' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const securitySshKeyRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'security/ssh-key',
+} ).lazy( () =>
+	import( '../../me/security-ssh-key' ).then( ( d ) =>
+		createLazyRoute( 'security-ssh-key' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const securityConnectedAppsRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'security/connected-apps',
+} ).lazy( () =>
+	import( '../../me/security-connected-apps' ).then( ( d ) =>
+		createLazyRoute( 'security-connected-apps' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const securitySocialLoginsRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'security/social-logins',
+} ).lazy( () =>
+	import( '../../me/security-social-logins' ).then( ( d ) =>
+		createLazyRoute( 'security-social-logins' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const privacyRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'privacy',
@@ -180,6 +246,12 @@ export const createMeRoutes = ( config: AppConfig ) => {
 		paymentMethodsRoute,
 		taxDetailsRoute,
 		securityRoute,
+		securityPasswordRoute,
+		securityAccountRecoveryRoute,
+		securityTwoStepAuthRoute,
+		securitySshKeyRoute,
+		securityConnectedAppsRoute,
+		securitySocialLoginsRoute,
 		notificationsRoute,
 	];
 
