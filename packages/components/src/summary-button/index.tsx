@@ -67,8 +67,10 @@ function UnforwardedSummaryButton(
 								</Text>
 							) }
 							<Text
-								className="summary-button-title"
-								style={ { textAlign } }
+								className={ clsx(
+									'summary-button-title',
+									textAlign && `has-text-align-${ textAlign }`
+								) }
 							>
 								{ title }
 							</Text>
