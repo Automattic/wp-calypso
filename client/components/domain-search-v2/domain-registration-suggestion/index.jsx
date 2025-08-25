@@ -24,12 +24,7 @@ import {
 	isPaidDomain,
 	DOMAIN_PRICE_RULE,
 } from 'calypso/lib/cart-values/cart-items';
-import {
-	getDomainPrice,
-	getDomainSalePrice,
-	isHstsRequired,
-	isDotGayNoticeRequired,
-} from 'calypso/lib/domains';
+import { getDomainPrice, getDomainSalePrice } from 'calypso/lib/domains';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -500,8 +495,6 @@ const mapStateToProps = ( state, props ) => {
 
 	return {
 		zeroCost: formatCurrency( 0, currentUserCurrencyCode, { stripZeros: true } ),
-		showHstsNotice: isHstsRequired( productSlug, productsList ),
-		showDotGayNotice: isDotGayNoticeRequired( productSlug, productsList ),
 		productCost,
 		renewCost,
 		productSaleCost,
