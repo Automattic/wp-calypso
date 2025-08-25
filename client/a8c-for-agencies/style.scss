@@ -218,6 +218,20 @@
 		}
 	}
 
+	.components-button.is-light {
+		background-color: var(--color-text-white);
+		color: inherit;
+
+		&:focus {
+			box-shadow: 0 0 0 2px var(--color-primary-light);
+		}
+
+		&.is-secondary, &.is-link {
+			color: var(--color-text-white);
+			background-color: transparent;
+		}
+	}
+
 	.split-button .button {
 		@include heading-medium;
 		height: 40px;

@@ -4,33 +4,16 @@
 
 $pressable-card-background: #050C29;
 
-.theme-a8c-for-agencies {
-	.components-card.pressable-premium-plan-migration-card {
-		background: url( calypso/assets/images/a8c-for-agencies/pressable-premium-migration-bg.svg ) no-repeat bottom right;
-		background-color: $pressable-card-background;
-		color: var(--color-text-white);
-		padding: 24px;
-		margin-block-end: 16px;
+.components-card.pressable-premium-plan-migration-card {
+	background: url( calypso/assets/images/a8c-for-agencies/pressable-premium-migration-bg.svg ) no-repeat bottom right;
+	background-color: $pressable-card-background;
+	color: var(--color-text-white);
+	padding: 24px;
+	margin-block-end: 16px;
+}
 
-		// TODO: We should refactor the theme-a8c-for-agencies to support this.
-		.components-button {
-			&,
-			&:hover, &:focus {
-				color: var(--color-text-white);
-				background-color: transparent;
-			}
-			&.is-primary, &.is-primary:hover, &.is-primary:focus {
-				background-color: var(--color-text-white);
-				color: $pressable-card-background;
-			}
-			svg {
-				fill: var(--color-text-white);
-			}
-			&:focus, &.is-primary:focus {
-				box-shadow: 0 0 0 2px var(--color-primary-light);
-			}
-		}
-	}
+.pressable-premium-plan-migration-card__primary-button {
+	color: $pressable-card-background;
 }
 
 .pressable-premium-plan-migration-card__content {
@@ -58,4 +41,8 @@ $pressable-card-background: #050C29;
 
 .pressable-premium-plan-migration-card__description {
 	@include body-large;
+}
+
+.is-light svg {
+	fill: var(--color-text-white);
 }
