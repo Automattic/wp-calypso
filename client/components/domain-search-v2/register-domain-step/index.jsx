@@ -1,7 +1,7 @@
 import { isBlogger, isFreeWordPressComDomain } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { ResponsiveToolbarGroup } from '@automattic/components';
-import { fetchDomainSuggestions } from '@automattic/data/domains/query-functions';
+import { fetchDomainSuggestions } from '@automattic/data/src/domains/query-functions';
 import {
 	DomainSearchControls,
 	DomainSearchNotice,

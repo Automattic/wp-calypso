@@ -1,6 +1,6 @@
-import { fetchDomainSuggestions } from '@automattic/data/domains/query-functions'; // eslint-disable-line no-restricted-imports
+import { fetchDomainSuggestions } from '@automattic/data/src/domains/query-functions'; // eslint-disable-line no-restricted-imports
 import wpcom from 'calypso/lib/wp'; // eslint-disable-line no-restricted-imports
-import type { DomainSuggestion, DomainSuggestionQuery } from '@automattic/data/domains/types'; // eslint-disable-line no-restricted-imports
+import type { DomainSuggestion, DomainSuggestionQuery } from '@automattic/data/src/domains/types'; // eslint-disable-line no-restricted-imports
 
 export { DomainSuggestion, DomainSuggestionQuery, fetchDomainSuggestions };
 
