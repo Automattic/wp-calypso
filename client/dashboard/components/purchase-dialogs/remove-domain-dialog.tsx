@@ -19,14 +19,14 @@ interface Props {
 	domain: Domain;
 	isOpen: boolean;
 	closeDialog: () => void;
-	removeDomain: () => void;
+	onConfirm: () => void;
 }
 
 export default function RemoveDomainDialog( {
 	user,
 	domain,
 	isOpen,
-	removeDomain,
+	onConfirm,
 	closeDialog,
 	...props
 }: Props ) {
@@ -47,7 +47,7 @@ export default function RemoveDomainDialog( {
 		}
 	}, [ step ] );
 
-	const onConfirm = useCallback( () => {
+	const onConfirmStep = useCallback( () => {
 		switch ( step ) {
 			case 1:
 				setStep( isEmailBasedOnDomain ? 2 : 3 );
@@ -56,12 +56,12 @@ export default function RemoveDomainDialog( {
 				setStep( 3 );
 				break;
 			case 3:
-				removeDomain();
 				setStep( 1 );
+				onConfirm();
 				closeDialog();
 				break;
 		}
-	}, [ step, isEmailBasedOnDomain, removeDomain, closeDialog ] );
+	}, [ step, isEmailBasedOnDomain, closeDialog, onConfirm ] );
 
 	const onCancel = useCallback( () => {
 		setStep( 1 );
@@ -156,7 +156,7 @@ export default function RemoveDomainDialog( {
 						{ __( 'Cancel' ) }
 					</Button>
 					{ step === 1 && (
-						<Button variant="primary" onClick={ onConfirm }>
+						<Button variant="primary" onClick={ onConfirmStep }>
 							{ __( 'Continue' ) }
 						</Button>
 					) }
@@ -165,7 +165,7 @@ export default function RemoveDomainDialog( {
 							isDestructive={ domainConfirmed }
 							variant="primary"
 							disabled={ ! domainConfirmed }
-							onClick={ onConfirm }
+							onClick={ onConfirmStep }
 						>
 							{ __( 'Delete' ) }
 						</Button>
