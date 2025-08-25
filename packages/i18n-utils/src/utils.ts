@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import languages, { Language, SubLanguage } from '@automattic/languages';
 import { hasTranslation } from '@wordpress/i18n';
-import { includes } from 'lodash';
 import { getWpI18nLocaleSlug } from './locale-context';
 
 /**
@@ -207,7 +206,7 @@ export function filterLanguageRevisions( languageRevisions: Record< string, stri
 				return false;
 			}
 
-			if ( ! includes( langSlugs, slug ) ) {
+			if ( ! langSlugs.includes( slug ) ) {
 				return false;
 			}
 
