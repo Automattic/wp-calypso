@@ -1,10 +1,14 @@
 .gravatar-hovercard {
 	// Ensure our styles take precedence over the default styles
-	background: var(--studio-white);
+	background: var( --studio-white );
 	border-radius: 4px;
 
 	.gravatar-hovercard__inner {
-		box-shadow: 0 6px 10px 0 rgba(42, 57, 75, 0.07), 0 1.809px 24.118px 0 rgba(42, 57, 75, 0.05), 0 0.751px 10.017px 0 rgba(42, 57, 75, 0.04), 0 0.272px 3.623px 0 rgba(42, 57, 75, 0.02);
+		box-shadow:
+			0 6px 10px 0 rgba( 42, 57, 75, 0.07 ),
+			0 1.809px 24.118px 0 rgba( 42, 57, 75, 0.05 ),
+			0 0.751px 10.017px 0 rgba( 42, 57, 75, 0.04 ),
+			0 0.272px 3.623px 0 rgba( 42, 57, 75, 0.02 );
 		.gravatar-hovercard__header {
 			.gravatar-hovercard__name {
 				color: var( --color-text );
@@ -17,7 +21,6 @@
 		.gravatar-hovercard__primary-blog-card {
 			background: var( --color-main-background );
 			border: 1px solid var( --color-border-subtle );
-			/* stylelint-disable-next-line scales/radii */
 			border-radius: 8px;
 			padding: 12px;
 			margin-top: 12px;
@@ -46,7 +49,8 @@
 			}
 
 			.gravatar-hovercard__primary-blog-card-site-info {
-				align-items: flex-start;				display: flex;
+				align-items: flex-start;
+				display: flex;
 				flex-direction: column;
 				flex-grow: 1;
 				gap: 2px;
@@ -128,7 +132,7 @@
 			}
 
 			.gravatar-hovercard__recommended-blogs-view-all {
-				color: var(--color-accent);
+				color: var( --color-accent );
 			}
 
 			.gravatar-hovercard__recommended-blog-item {
@@ -143,7 +147,7 @@
 				max-height: unset;
 				.site-icon {
 					border-radius: 50%;
-					border: 1px solid var(--color-border-subtle);
+					border: 1px solid var( --color-border-subtle );
 					height: 30px;
 					width: 30px;
 

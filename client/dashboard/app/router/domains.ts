@@ -3,6 +3,7 @@ import { domainQuery } from '../queries/domain';
 import { domainDnsQuery } from '../queries/domain-dns-records';
 import { domainForwardingQuery } from '../queries/domain-forwarding';
 import { domainGlueRecordsQuery } from '../queries/domain-glue-records';
+import { sslDetailsQuery } from '../queries/domain-ssl';
 import { domainsQuery } from '../queries/domains';
 import { queryClient } from '../query-client';
 import { rootRoute } from './root';
@@ -15,6 +16,18 @@ export const domainsRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../domains' ).then( ( d ) =>
 		createLazyRoute( 'domains' )( {
+			component: d.default,
+		} )
+	)
+);
+
+// Standalone domains purchase route - requires rootRoute
+export const domainsPurchaseRoute = createRoute( {
+	getParentRoute: () => rootRoute,
+	path: 'domains/purchase',
+} ).lazy( () =>
+	import( '../../domains/purchase' ).then( ( d ) =>
+		createLazyRoute( 'domains-purchase' )( {
 			component: d.default,
 		} )
 	)
@@ -144,7 +157,7 @@ export const domainContactInfoRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'contact-info',
 } ).lazy( () =>
-	import( '../../sites/domains/placeholder' ).then( ( d ) =>
+	import( '../../domains/domain-contact-details' ).then( ( d ) =>
 		createLazyRoute( 'domain-contact-info' )( {
 			component: d.default,
 		} )
@@ -208,6 +221,20 @@ export const domainDnssecRoute = createRoute( {
 	)
 );
 
+export const domainSecurityRoute = createRoute( {
+	getParentRoute: () => domainRoute,
+	path: 'security',
+	loader: ( { params: { domainName } } ) => {
+		return queryClient.ensureQueryData( sslDetailsQuery( domainName ) );
+	},
+} ).lazy( () =>
+	import( '../../domains/domain-security' ).then( ( d ) =>
+		createLazyRoute( 'domain-security' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const domainTransferRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'transfer',
@@ -222,6 +249,7 @@ export const domainTransferRoute = createRoute( {
 export const createDomainsRoutes = () => {
 	return [
 		domainsRoute,
+		domainsPurchaseRoute,
 		domainRoute.addChildren( [
 			domainOverviewRoute,
 			domainDnsRoute,
@@ -237,6 +265,7 @@ export const createDomainsRoutes = () => {
 			domainGlueRecordsEditRoute,
 			domainDnssecRoute,
 			domainTransferRoute,
+			domainSecurityRoute,
 		] ),
 	];
 };

@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { __experimentalVStack as VStack, Button, FormFileUpload } from '@wordpress/components';
+import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
@@ -18,8 +18,10 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { useDnsActions } from './actions';
 import DnsActionsMenu from './dns-actions-menu';
+import DnsImportDialog from './dns-import-dialog';
 import EmailSetup from './email-setup';
 import { useDnsFields } from './fields';
+import ImportBindFileButton from './import-bind-file-button';
 import RestoreDefaultARecords from './restore-default-a-records';
 import RestoreDefaultCnameRecord from './restore-default-cname-record';
 import RestoreDefaultEmailRecords from './restore-default-email-records';
@@ -66,6 +68,8 @@ export default function DomainDns() {
 		useState( false );
 	const [ isRestoreDefaultEmailRecordsDialogOpen, setIsRestoreDefaultEmailRecordsDialogOpen ] =
 		useState( false );
+	const [ isImportDialogOpen, setIsImportDialogOpen ] = useState( false );
+	const [ importedRecords, setImportedRecords ] = useState< DnsRecord[] >( [] );
 
 	const actions = useDnsActions();
 	const fields = useDnsFields( domainName );
@@ -80,6 +84,11 @@ export default function DomainDns() {
 		view,
 		fields
 	);
+
+	const closeImportDialog = () => {
+		setIsImportDialogOpen( false );
+		setImportedRecords( [] );
+	};
 
 	const handleRestoreDefaultARecords = () => {
 		const recordsToRemove = dnsData?.records?.filter(
@@ -186,19 +195,13 @@ export default function DomainDns() {
 						title={ __( 'DNS Records' ) }
 						actions={
 							<>
-								{ /* TODO Implement bind file logic */ }
-								<FormFileUpload
-									__next40pxDefaultSize
-									onChange={ ( event ) => {
-										const file = event.currentTarget.files?.[ 0 ];
-										if ( ! file ) {
-											return;
-										}
-										// const formData = [ [ 'files[]', file, file.name ] ];
+								<ImportBindFileButton
+									domainName={ domainName }
+									onRecordsImported={ ( data ) => {
+										setImportedRecords( data );
+										setIsImportDialogOpen( true );
 									} }
-								>
-									{ /* <Button variant="secondary">{ __( 'Import BIND file' ) }</Button> */ }
-								</FormFileUpload>
+								/>
 								<Button
 									variant="primary"
 									onClick={ () => {
@@ -274,6 +277,15 @@ export default function DomainDns() {
 				isBusy={ updateDnsMutation.isPending }
 				isOpen={ isRestoreDefaultEmailRecordsDialogOpen }
 			/>
+			{ isImportDialogOpen && (
+				<DnsImportDialog
+					isOpen={ isImportDialogOpen }
+					domainName={ domainName }
+					records={ importedRecords }
+					onConfirm={ closeImportDialog }
+					onCancel={ closeImportDialog }
+				/>
+			) }
 		</PageLayout>
 	);
 }

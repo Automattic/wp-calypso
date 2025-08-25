@@ -165,7 +165,7 @@ const DotcomPreviewPane = ( {
 		site,
 		selectedSiteFeature,
 		selectedSiteFeaturePreview,
-		isEnabled,
+		isHostingFeaturesCalloutEnabled,
 	] );
 
 	const itemData: ItemData = {
@@ -182,10 +182,21 @@ const DotcomPreviewPane = ( {
 		enabled: ! site.is_wpcom_staging_site && site.is_wpcom_atomic,
 	} );
 
-	if ( site.options && site.is_wpcom_atomic ) {
-		site.options.wpcom_staging_blog_ids =
-			stagingSites?.map( ( stagingSite ) => stagingSite.id ) ?? [];
-	}
+	const siteWithStagingIds = useMemo( () => {
+		if ( ! site.options || ! site.is_wpcom_atomic ) {
+			return site;
+		}
+
+		const stagingBlogIds = stagingSites?.map( ( stagingSite ) => stagingSite.id ) ?? [];
+
+		return {
+			...site,
+			options: {
+				...site.options,
+				wpcom_staging_blog_ids: stagingBlogIds,
+			},
+		};
+	}, [ site, stagingSites ] );
 
 	const stagingStatus = useSelector( ( state ) => getStagingSiteStatus( state, site.ID ) );
 	const isStagingStatusFinished =
@@ -204,8 +215,9 @@ const DotcomPreviewPane = ( {
 		selectedFeatureId: selectedSiteFeature,
 	} );
 
-	const isProduction = site.is_wpcom_atomic && ! site.is_wpcom_staging_site;
-	const hasNoStagingSites = ! site.options?.wpcom_staging_blog_ids?.length;
+	const isProduction =
+		siteWithStagingIds.is_wpcom_atomic && ! siteWithStagingIds.is_wpcom_staging_site;
+	const hasNoStagingSites = ! siteWithStagingIds.options?.wpcom_staging_blog_ids?.length;
 
 	const shouldShowProductionBadge =
 		isProduction && ( hasNoStagingSites || ! isStagingStatusFinished );
@@ -215,7 +227,9 @@ const DotcomPreviewPane = ( {
 			itemData={ itemData }
 			closeItemView={ closeSitePreviewPane }
 			features={ features }
-			className={ site.is_wpcom_staging_site && ! stagingSitesRedesign ? 'is-staging-site' : '' }
+			className={
+				siteWithStagingIds.is_wpcom_staging_site && ! stagingSitesRedesign ? 'is-staging-site' : ''
+			}
 			enforceTabsView
 			itemViewHeaderExtraProps={ {
 				externalIconSize: 16,
@@ -231,7 +245,12 @@ const DotcomPreviewPane = ( {
 					}
 
 					if ( hasEnvironmentPermission && isStagingStatusFinished ) {
-						return <SiteEnvironmentSwitcher onChange={ changeSitePreviewPane } site={ site } />;
+						return (
+							<SiteEnvironmentSwitcher
+								onChange={ changeSitePreviewPane }
+								site={ siteWithStagingIds }
+							/>
+						);
 					}
 				},
 			} }

@@ -1,81 +1,9 @@
 import { ExternalLink, Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { isTemporarySitePurchase, isA4ATemporarySitePurchase } from '../../utils/purchase';
+import { isTemporarySitePurchase, getSubtitleForDisplay } from '../../utils/purchase';
 import type { Purchase } from '../../data/purchase';
 import type { Site } from '../../data/site';
-
-function purchaseType( purchase: Purchase ): string | null {
-	if ( 'theme' === purchase.product_type ) {
-		return __( 'Premium Theme' );
-	}
-
-	if ( 'concierge-session' === purchase.product_slug ) {
-		return __( 'One-on-one Support' );
-	}
-
-	if ( purchase.partner_name ) {
-		if ( purchase.partner_type && [ 'agency', 'a4a_agency' ].includes( purchase.partner_type ) ) {
-			return __( 'Agency Managed Plan' );
-		}
-
-		return __( 'Host Managed Plan' );
-	}
-
-	if ( purchase.is_plan ) {
-		return __( 'Site Plan' );
-	}
-
-	if ( purchase.is_domain_registration ) {
-		return purchase.product_name;
-	}
-
-	if ( purchase.product_slug === 'domain_map' ) {
-		return purchase.product_name;
-	}
-
-	if ( isTemporarySitePurchase( purchase ) && purchase.product_type === 'akismet' ) {
-		return null;
-	}
-
-	if ( isTemporarySitePurchase( purchase ) && purchase.product_type === 'saas_plugin' ) {
-		return null;
-	}
-
-	if ( isTemporarySitePurchase( purchase ) && isA4ATemporarySitePurchase( purchase ) ) {
-		return null;
-	}
-
-	if ( purchase.is_google_workspace_product && purchase.meta ) {
-		return sprintf(
-			// translators: The domain is the domain name of the site
-			__( 'Mailboxes and Productivity Tools at %(domain)s' ),
-			{
-				domain: purchase.meta,
-			}
-		);
-	}
-
-	if ( purchase.is_titan_mail_product && purchase.meta ) {
-		return sprintf(
-			// translators: The domain is the domain name of the site
-			__( 'Mailboxes at %(domain)s' ),
-			{
-				domain: purchase.meta,
-			}
-		);
-	}
-
-	if ( purchase.product_type === 'marketplace_plugin' || purchase.product_type === 'saas_plugin' ) {
-		return __( 'Plugin' );
-	}
-
-	if ( purchase.meta ) {
-		return purchase.meta;
-	}
-
-	return null;
-}
 
 export function PurchaseProduct( {
 	purchase,
@@ -90,7 +18,7 @@ export function PurchaseProduct( {
 		return null;
 	}
 
-	const productType = purchaseType( purchase );
+	const productType = getSubtitleForDisplay( purchase );
 
 	if ( site ) {
 		if ( productType && site.name && site.slug ) {

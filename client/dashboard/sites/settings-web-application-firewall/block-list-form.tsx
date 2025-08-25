@@ -20,11 +20,11 @@ import { SectionHeader } from '../../components/section-header';
 import { JetpackModules } from '../../data/constants';
 import { hasJetpackModule } from '../../utils/site-features';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
-import type { SiteSettings } from '../../data/site-settings';
+import type { JetpackSettings } from '../../data/site-jetpack-settings';
 import type { Site } from '../../data/types';
 import type { Field } from '@wordpress/dataviews';
 
-const fields: Field< SiteSettings >[] = [
+const fields: Field< JetpackSettings >[] = [
 	{
 		id: 'jetpack_waf_ip_block_list_enabled',
 		label: __( 'Enable blocking specific IP addresses' ),
@@ -55,7 +55,7 @@ const fields: Field< SiteSettings >[] = [
 ];
 
 const form = {
-	type: 'regular' as const,
+	layout: { type: 'regular' as const },
 	fields: [ 'jetpack_waf_ip_block_list_enabled', 'jetpack_waf_ip_block_list' ],
 };
 
@@ -73,7 +73,7 @@ export default function BlockListForm( { site }: { site: Site } ) {
 	const currentEnabled = jetpackSettings?.jetpack_waf_ip_block_list_enabled ?? false;
 	const currentList = jetpackSettings?.jetpack_waf_ip_block_list ?? '';
 
-	const [ formData, setFormData ] = useState< SiteSettings >( {
+	const [ formData, setFormData ] = useState< JetpackSettings >( {
 		jetpack_waf_ip_block_list_enabled: currentEnabled,
 		jetpack_waf_ip_block_list: currentList,
 	} );
@@ -114,11 +114,11 @@ export default function BlockListForm( { site }: { site: Site } ) {
 							) }
 							level={ 3 }
 						/>
-						<DataForm< SiteSettings >
+						<DataForm< JetpackSettings >
 							data={ formData }
 							fields={ fields }
 							form={ form }
-							onChange={ ( edits: Partial< SiteSettings > ) => {
+							onChange={ ( edits: Partial< JetpackSettings > ) => {
 								setFormData( ( data ) => ( { ...data, ...edits } ) );
 							} }
 						/>

@@ -43,7 +43,7 @@ export const TXTRecordConfig: DnsRecordConfig = {
 		},
 	],
 	form: {
-		type: 'regular',
+		layout: { type: 'regular' as const },
 		fields: [ 'name', 'data', 'ttl' ],
 	},
 	transformData: ( data: DnsRecordFormData ) => ( {
