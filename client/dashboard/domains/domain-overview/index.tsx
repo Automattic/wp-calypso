@@ -12,6 +12,7 @@ import PageLayout from '../../components/page-layout';
 import { formatDate } from '../../utils/datetime';
 import { getDomainRenewalUrl } from '../../utils/domain';
 import Actions from './actions';
+import FeaturedCards from './featured-cards';
 import DomainOverviewSettings from './settings';
 
 export default function DomainOverview() {
@@ -66,6 +67,7 @@ export default function DomainOverview() {
 				/>
 			}
 		>
+			<FeaturedCards />
 			<DomainOverviewSettings />
 			<Actions />
 		</PageLayout>
