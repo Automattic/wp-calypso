@@ -30,7 +30,7 @@ export const DomainForwardingNotice = ( {
 			<Notice variant="warning">
 				{ createInterpolateElement(
 					__(
-						"Your domain is using external name servers so the Domain Forwarding records you're editing won't be in effect until you switch to use WordPress.com name servers. <link>Update your name servers now</link>."
+						'Your domain is using external name servers so the Domain Forwarding records you’re editing won’t be in effect until you switch to use WordPress.com name servers. <link>Update your name servers now</link>.'
 					),
 					{
 						link: <Link to={ domainNameServersRoute.fullPath } params={ { domainName } } />,
@@ -43,7 +43,7 @@ export const DomainForwardingNotice = ( {
 			<Notice variant="info">
 				{ createInterpolateElement(
 					__(
-						"This domain is your site's main address. You can forward subdomains or <link>set a new primary site address</link> to forward the root domain."
+						'This domain is your site’s main address. You can forward subdomains or <link>set a new primary site address</link> to forward the root domain.'
 					),
 					{
 						link: <Link to={ siteDomainsRoute.fullPath } params={ { siteSlug } } />,
