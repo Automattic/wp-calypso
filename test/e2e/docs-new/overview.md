@@ -1,8 +1,3 @@
-<div style="width: 45%; float:left"></div>
-<div style="width: 5%; float:left" align="center"><a href="./../README.md">Back to Top</a></div>
-
-<br><br>
-
 # Overview
 
 <!-- TOC -->
@@ -34,3 +29,7 @@ Each spec is converted by:
 - Updating feature, test, and step names to follow the new style guide.
 - Converting existing helpers and data libraries into Playwright fixtures.
 - (Planned) Running the new tests side-by-side with existing tests in TeamCity to compare pass rates and execution times.
+
+## New Style Guide
+
+See the [New Style Guide](./new_style_guide.md) for more information.
