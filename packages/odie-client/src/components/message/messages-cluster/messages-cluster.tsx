@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import cx from 'clsx';
+import { Fragment } from 'react';
 import ChatMessage from '..';
 import { useOdieAssistantContext } from '../../../context';
 import { isCSATMessage } from '../../../utils';
@@ -82,7 +83,7 @@ export function MessagesClusterizer( { messages }: { messages: Message[] } ) {
 		};
 
 		return (
-			<>
+			<Fragment key={ group.id }>
 				{ endingHumanSupport && (
 					<ChatWithSupportLabel
 						labelText={ __( 'Chat with support team ended', __i18n_text_domain__ ) }
@@ -106,7 +107,7 @@ export function MessagesClusterizer( { messages }: { messages: Message[] } ) {
 						labelText={ __( 'Chat with support team started', __i18n_text_domain__ ) }
 					/>
 				) }
-			</>
+			</Fragment>
 		);
 	} );
 }
