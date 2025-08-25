@@ -30,6 +30,7 @@ export default function RemoveDomainDialog( {
 	...props
 }: Props ) {
 	const [ step, setStep ] = useState( 1 );
+	const [ confirmInputValue, setConfirmInputValue ] = useState( '' );
 	const [ domainConfirmed, setDomainConfirmed ] = useState( false );
 	const isEmailBasedOnDomain = user.email.endsWith( domain.domain );
 
@@ -64,6 +65,8 @@ export default function RemoveDomainDialog( {
 
 	const onCancel = useCallback( () => {
 		setStep( 1 );
+		setConfirmInputValue( '' );
+		setDomainConfirmed( false );
 		closeDialog();
 	}, [ closeDialog ] );
 
@@ -143,9 +146,13 @@ export default function RemoveDomainDialog( {
 						</Text>
 						<div>
 							<InputControl
+								value={ confirmInputValue }
 								__next40pxDefaultSize
 								label={ __( 'Type your domain name to proceed' ) }
-								onChange={ ( val ) => setDomainConfirmed( val === domain.domain ) }
+								onChange={ ( val ) => {
+									setConfirmInputValue( val || '' );
+									setDomainConfirmed( val === domain.domain );
+								} }
 							/>
 						</div>
 					</>
