@@ -64,7 +64,7 @@ export default function Actions() {
 	const onDeleteConfirm = useCallback(
 		() =>
 			purchase &&
-			deleteDomain( `${ purchase.ID }`, {
+			deleteDomain( purchase.ID, {
 				onSuccess: () => {
 					createSuccessNotice( __( 'The domain deletion has been completed.' ), {
 						type: 'snackbar',
