@@ -198,6 +198,7 @@ export interface RawPurchase {
 	attached_to_purchase_id: number | string;
 	auto_renew_coupon_code: string | null;
 	auto_renew_coupon_discount_percentage: number | null;
+	is_auto_renew_enabled: boolean;
 	bill_period_days: number | string;
 	bill_period_label: string;
 	most_recent_renew_date: string;
@@ -284,7 +285,6 @@ export interface RawPurchase {
 	tax_text: string | undefined;
 	renewal_price_tier_usage_quantity: number | undefined | null;
 	user_id: number | string;
-	auto_renew: '1' | '0' | null;
 	payment_card_id: number | string | undefined;
 	payment_card_type: string | undefined;
 	payment_card_processor: string | undefined;
