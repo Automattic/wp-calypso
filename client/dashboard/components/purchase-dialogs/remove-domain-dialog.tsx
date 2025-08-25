@@ -14,6 +14,8 @@ import RouterLinkButton from '../../components/router-link-button';
 import { Domain } from '../../data/domain';
 import type { User } from '../../data/types';
 
+type Step = 'intro' | 'warning' | 'confirm';
+
 interface Props {
 	user: User;
 	domain: Domain;
@@ -30,19 +32,18 @@ export default function RemoveDomainDialog( {
 	closeDialog,
 	...props
 }: Props ) {
-	const [ step, setStep ] = useState( 1 );
+	const [ step, setStep ] = useState< Step >( 'intro' );
 	const [ confirmInputValue, setConfirmInputValue ] = useState( '' );
 	const [ domainConfirmed, setDomainConfirmed ] = useState( false );
 	const isEmailBasedOnDomain = user.email.endsWith( domain.domain );
 
 	const getTitle = useCallback( () => {
 		switch ( step ) {
-			case 1:
-				return __( 'Delete domain' );
-			case 2:
+			case 'warning':
 				return __( 'Update your WordPress.com email address' );
-			case 3:
+			case 'confirm':
 				return __( 'Confirm your decision' );
+			case 'intro':
 			default:
 				return __( 'Delete domain' );
 		}
@@ -50,14 +51,14 @@ export default function RemoveDomainDialog( {
 
 	const onConfirmStep = useCallback( () => {
 		switch ( step ) {
-			case 1:
-				setStep( isEmailBasedOnDomain ? 2 : 3 );
+			case 'intro':
+				setStep( isEmailBasedOnDomain ? 'warning' : 'confirm' );
 				break;
-			case 2:
-				setStep( 3 );
+			case 'warning':
+				setStep( 'confirm' );
 				break;
-			case 3:
-				setStep( 1 );
+			case 'confirm':
+				setStep( 'intro' );
 				onConfirm();
 				closeDialog();
 				break;
@@ -65,7 +66,7 @@ export default function RemoveDomainDialog( {
 	}, [ step, isEmailBasedOnDomain, closeDialog, onConfirm ] );
 
 	const onCancel = useCallback( () => {
-		setStep( 1 );
+		setStep( 'intro' );
 		setConfirmInputValue( '' );
 		setDomainConfirmed( false );
 		closeDialog();
@@ -78,7 +79,7 @@ export default function RemoveDomainDialog( {
 	return (
 		<Modal { ...props } title={ getTitle() } onRequestClose={ onCancel }>
 			<VStack spacing={ 4 } style={ { maxWidth: '450px' } }>
-				{ step === 1 && (
+				{ step === 'intro' && (
 					<>
 						<Text as="p">
 							{ __(
@@ -114,7 +115,7 @@ export default function RemoveDomainDialog( {
 						<Text as="p">{ __( 'Do you still want to continue with deleting your domain?' ) }</Text>
 					</>
 				) }
-				{ step === 2 && (
+				{ step === 'warning' && (
 					<>
 						<Text as="p">
 							{ __(
@@ -133,7 +134,7 @@ export default function RemoveDomainDialog( {
 						</Text>
 					</>
 				) }
-				{ step === 3 && (
+				{ step === 'confirm' && (
 					<>
 						<Text as="p">
 							{ createInterpolateElement(
@@ -162,12 +163,12 @@ export default function RemoveDomainDialog( {
 					<Button variant="tertiary" onClick={ onCancel }>
 						{ __( 'Cancel' ) }
 					</Button>
-					{ step === 1 && (
+					{ step === 'intro' && (
 						<Button variant="primary" onClick={ onConfirmStep }>
 							{ __( 'Continue' ) }
 						</Button>
 					) }
-					{ step === 3 && (
+					{ step === 'confirm' && (
 						<Button
 							isDestructive={ domainConfirmed }
 							variant="primary"
