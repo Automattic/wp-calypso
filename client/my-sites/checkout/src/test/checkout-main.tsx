@@ -86,7 +86,9 @@ describe( 'CheckoutMain', () => {
 				.map( ( element ) => element.closest( '.checkout-line-item' ) )
 				.filter( ( container ): container is Element => container !== null )
 				.forEach( ( container ) => {
-					expect( container ).toHaveTextContent( 'R$144' );
+					const priceEl = container.querySelector( '.checkout-line-item__price' );
+					expect( priceEl ).toHaveTextContent( 'R$12' );
+					expect( priceEl ).toHaveTextContent( '/month' );
 				} );
 		} );
 	} );
@@ -111,7 +113,9 @@ describe( 'CheckoutMain', () => {
 				.map( ( element ) => element.closest( '.checkout-line-item' ) )
 				.filter( ( container ): container is Element => container !== null )
 				.forEach( ( container ) => {
-					expect( container ).toHaveTextContent( 'R$144' );
+					const priceEl = container.querySelector( '.checkout-line-item__price' );
+					expect( priceEl ).toHaveTextContent( 'R$12' );
+					expect( priceEl ).toHaveTextContent( '/month' );
 				} );
 		} );
 	} );
@@ -339,7 +343,9 @@ describe( 'CheckoutMain', () => {
 				.map( ( element ) => element.closest( '.checkout-line-item' ) )
 				.filter( ( container ): container is Element => container !== null )
 				.forEach( ( container ) => {
-					expect( container ).toHaveTextContent( 'R$144' );
+					const priceEl = container.querySelector( '.checkout-line-item__price' );
+					expect( priceEl ).toHaveTextContent( 'R$12' );
+					expect( priceEl ).toHaveTextContent( '/month' );
 				} );
 		} );
 	} );
@@ -490,7 +496,9 @@ describe( 'CheckoutMain', () => {
 				.map( ( element ) => element.closest( '.checkout-line-item' ) )
 				.filter( ( container ): container is Element => container !== null )
 				.forEach( ( container ) => {
-					expect( container ).toHaveTextContent( 'R$144' );
+					const priceEl = container.querySelector( '.checkout-line-item__price' );
+					expect( priceEl ).toHaveTextContent( 'R$12' );
+					expect( priceEl ).toHaveTextContent( '/month' );
 				} );
 			screen
 				.getAllByText( 'Support Session' )
@@ -535,7 +543,9 @@ describe( 'CheckoutMain', () => {
 				.map( ( element ) => element.closest( '.checkout-line-item' ) )
 				.filter( ( container ): container is Element => container !== null )
 				.forEach( ( container ) => {
-					expect( container ).toHaveTextContent( 'R$144' );
+					const priceEl = container.querySelector( '.checkout-line-item__price' );
+					expect( priceEl ).toHaveTextContent( 'R$12' );
+					expect( priceEl ).toHaveTextContent( '/month' );
 				} );
 			screen
 				.getAllByText( 'Premium Theme: Ovation' )
@@ -629,7 +639,9 @@ describe( 'CheckoutMain', () => {
 				.map( ( element ) => element.closest( '.checkout-line-item' ) )
 				.filter( ( container ): container is Element => container !== null )
 				.forEach( ( container ) => {
-					expect( container ).toHaveTextContent( 'R$144' );
+					const priceEl = container.querySelector( '.checkout-line-item__price' );
+					expect( priceEl ).toHaveTextContent( 'R$12' );
+					expect( priceEl ).toHaveTextContent( '/month' );
 				} );
 			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 1 );
 			screen
@@ -659,7 +671,9 @@ describe( 'CheckoutMain', () => {
 				.map( ( element ) => element.closest( '.checkout-line-item' ) )
 				.filter( ( container ): container is Element => container !== null )
 				.forEach( ( container ) => {
-					expect( container ).toHaveTextContent( 'R$144' );
+					const priceEl = container.querySelector( '.checkout-line-item__price' );
+					expect( priceEl ).toHaveTextContent( 'R$12' );
+					expect( priceEl ).toHaveTextContent( '/month' );
 				} );
 		} );
 	} );
@@ -677,7 +691,7 @@ describe( 'CheckoutMain', () => {
 		);
 		await waitFor( async () => {
 			expect( screen.getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 1 );
-			expect( screen.getAllByText( 'foo.cash' ) ).toHaveLength( 3 );
+			expect( screen.getAllByText( 'foo.cash' ) ).toHaveLength( 2 );
 		} );
 	} );
 
@@ -694,7 +708,7 @@ describe( 'CheckoutMain', () => {
 		);
 		await waitFor( async () => {
 			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 1 );
-			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 3 );
+			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 2 );
 		} );
 	} );
 
@@ -715,7 +729,7 @@ describe( 'CheckoutMain', () => {
 		await waitFor( () => {
 			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 1 );
 			expect( screen.getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 1 );
-			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 6 );
+			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 4 );
 		} );
 	} );
 
@@ -815,7 +829,9 @@ describe( 'CheckoutMain', () => {
 				.map( ( element ) => element.closest( '.checkout-line-item' ) )
 				.filter( ( container ): container is Element => container !== null )
 				.forEach( ( container ) => {
-					expect( container ).toHaveTextContent( 'R$144' );
+					const priceEl = container.querySelector( '.checkout-line-item__price' );
+					expect( priceEl ).toHaveTextContent( 'R$12' );
+					expect( priceEl ).toHaveTextContent( '/month' );
 				} );
 			screen
 				.getAllByText( 'Coupon: MYCOUPONCODE' )
