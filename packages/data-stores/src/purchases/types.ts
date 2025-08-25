@@ -194,7 +194,6 @@ export interface RawPurchasePriceTierEntry extends PriceTierEntry {
 
 export interface RawPurchase {
 	ID: number | string;
-	active: boolean;
 	amount: number | string;
 	attached_to_purchase_id: number | string;
 	auto_renew_coupon_code: string | null;
