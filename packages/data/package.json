@@ -10,12 +10,6 @@
 	"types": "dist/types/index.d.ts",
 	"calypso:src": "src/index.ts",
 	"exports": {
-		".": {
-			"calypso:src": "./src/index.ts",
-			"types": "./dist/types/index.d.ts",
-			"import": "./dist/esm/index.js",
-			"require": "./dist/cjs/index.js"
-		},
 		"./domains/*": {
 			"calypso:src": "./src/domains/*.ts",
 			"types": "./dist/types/domains/*.d.ts",

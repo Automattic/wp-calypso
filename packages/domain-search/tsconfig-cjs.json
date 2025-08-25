@@ -1,7 +1,7 @@
 {
 	"extends": "./tsconfig-build",
 	"compilerOptions": {
-		"module": "preserve",
+		"module": "commonjs",
 		"outDir": "dist/cjs"
 	}
 }
