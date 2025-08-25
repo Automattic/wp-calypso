@@ -12,6 +12,7 @@ const SkipSuggestion = ( { freeSuggestion }: { freeSuggestion?: string } ) => {
 
 	const { mutate: addToCart, isPending: isAddingToCart } = useMutation( {
 		mutationFn: ( suggestion: string ) => {
+			// @ts-expect-error - Free domains have a different shape and will be addressed in a future PR.
 			return cart.onAddItem( {
 				domain_name: suggestion,
 				cost: 'Free',

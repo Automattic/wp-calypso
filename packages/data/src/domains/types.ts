@@ -151,4 +151,14 @@ export interface DomainSuggestion {
 	 * The domain vendor
 	 */
 	vendor: string;
+
+	/**
+	 * Whether the domain is free.
+	 */
+	is_free?: true;
+
+	/**
+	 * Whether the domain is premium
+	 */
+	is_premium?: true;
 }
