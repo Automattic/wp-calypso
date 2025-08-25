@@ -1,19 +1,20 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { Notice } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { domainQuery } from '../../app/queries/domain';
 import { domainNameServersRoute } from '../../app/router/domains';
 import { siteDomainsRoute } from '../../app/router/sites';
+import { Domain } from '../../data/domain';
 
 interface DomainForwardingNoticeProps {
 	domainName: string;
+	domainData: Domain;
 }
 
-export const DomainForwardingNotice = ( { domainName }: DomainForwardingNoticeProps ) => {
-	const { data: domainData } = useSuspenseQuery( domainQuery( domainName ) );
-
+export const DomainForwardingNotice = ( {
+	domainName,
+	domainData,
+}: DomainForwardingNoticeProps ) => {
 	const usesDefaultNameservers = domainData?.has_wpcom_nameservers;
 	const isPrimaryDomain = domainData?.primary_domain;
 	const isDomainOnly = domainData?.is_domain_only_site;
