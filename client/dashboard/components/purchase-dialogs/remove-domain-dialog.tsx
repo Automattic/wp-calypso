@@ -9,7 +9,6 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState, useCallback } from 'react';
-import { domainTransferRoute } from '../../app/router/domains';
 import RouterLinkButton from '../../components/router-link-button';
 import { Domain } from '../../data/domain';
 import type { User } from '../../data/types';
@@ -99,7 +98,7 @@ export default function RemoveDomainDialog( {
 									transferLink: (
 										<RouterLinkButton
 											variant="link"
-											to={ domainTransferRoute.fullPath }
+											to="/domains/$domainName/transfer"
 											params={ { domainName: domain.domain } }
 										>
 											{ __( 'Transfer' ) }
