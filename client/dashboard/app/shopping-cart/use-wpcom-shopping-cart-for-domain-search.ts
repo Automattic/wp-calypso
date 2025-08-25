@@ -62,7 +62,7 @@ export const useWPCOMShoppingCartForDomainSearch = ( {
 			onAddItem: ( { domain_name, product_slug, supports_privacy } ) => {
 				return addProductsToCart( [
 					{
-						product_slug: product_slug!,
+						product_slug,
 						meta: domain_name,
 						extra: {
 							...( supports_privacy && {

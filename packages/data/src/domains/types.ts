@@ -63,26 +63,12 @@ export interface DomainSuggestionQuery {
 	category_slug?: string;
 }
 
-export type DomainName = string;
-
 export interface DomainSuggestion {
-	/**
-	 * The domain name
-	 * @example "example.com"
-	 */
-	domain_name: DomainName;
-
 	/**
 	 * Rendered formatted cost
 	 * @example "Free" or "€15.00"
 	 */
 	cost: string;
-
-	/**
-	 * Raw price
-	 * @example 40
-	 */
-	raw_price: number;
 
 	/**
 	 * Currency code
@@ -91,58 +77,78 @@ export interface DomainSuggestion {
 	currency_code: string;
 
 	/**
-	 * Relevance as a percent: 0 <= relevance <= 1
-	 * @example 0.9
+	 * The domain name
+	 * @example "example.com"
 	 */
-	relevance?: number;
-
-	/**
-	 * Whether the domain supports privacy
-	 */
-	supports_privacy?: boolean;
-
-	/**
-	 * The domain vendor
-	 */
-	vendor?: string;
+	domain_name: string;
 
 	/**
 	 * Reasons for suggestion the domain
 	 * @example [ "exact-match" ]
 	 */
-	match_reasons?: readonly string[];
+	match_reasons: string[];
+
+	/**
+	 * Maximum number of years the domain can be registered for
+	 * @example 10
+	 */
+	max_reg_years: number;
+
+	/**
+	 * Whether the domain supports multi-year registration
+	 * @example true
+	 */
+	multi_year_reg_allowed: boolean;
 
 	/**
 	 * The product ID
+	 * @example 123
 	 */
-	product_id?: number;
+	product_id: number;
 
 	/**
 	 * The product slug
+	 * @example "dotblog_domain"
 	 */
-	product_slug?: string;
+	product_slug: string;
 
 	/**
-	 * Whether the domain is free
+	 * Raw price
+	 * @example 40
 	 */
-	is_free?: boolean;
+	raw_price: number;
 
 	/**
-	 * Whether the domain requires HSTS
+	 * Relevance as a percent: 0 <= relevance <= 1
+	 * @example 0.9
 	 */
-	hsts_required?: boolean;
+	relevance: number;
 
 	/**
-	 * Whether the domain requires to show the notice for .gay tld
+	 * Renewal cost
+	 * @example "€15.00"
 	 */
-	is_dot_gay_notice_required?: boolean;
+	renew_cost?: string;
 
 	/**
-	 * Whether the domain is unavailable
+	 * Renewal raw price
+	 * @example 150
 	 */
-	unavailable: boolean;
+	renew_raw_price?: number;
 
-	isRecommended?: boolean;
-	isBestAlternative?: boolean;
-	is_premium?: boolean;
+	/**
+	 * Sale cost
+	 * @example 10.9
+	 */
+	sale_cost?: number;
+
+	/**
+	 * Whether the domain supports privacy
+	 */
+	supports_privacy: boolean;
+
+	/**
+	 * The domain vendor
+	 */
+	vendor: string;
 }
