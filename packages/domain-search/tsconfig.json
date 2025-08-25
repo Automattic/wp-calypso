@@ -8,5 +8,5 @@
 		"moduleResolution": "bundler"
 	},
 	"include": [ "src" ],
-	"references": [ { "path": "../components" } ]
+	"references": [ { "path": "../components" }, { "path": "../data" } ]
 }
