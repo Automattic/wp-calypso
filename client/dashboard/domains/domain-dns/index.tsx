@@ -225,7 +225,7 @@ export default function DomainDns() {
 			<Notice variant="warning" title={ __( 'Your domain is not using default A records' ) }>
 				{ createInterpolateElement(
 					__(
-						'This means it may not be pointing to your WordPress.com site correctly. To restore default A records, click on the three dots menu and select “Restore default A records”. <defaultRecordsLink>Learn more</defaultRecordsLink>.'
+						'This means it may not be pointing to your WordPress.com site correctly. To restore default A records, click on the three dots menu and select “Restore default A records”. <defaultRecordsLink>Learn more</defaultRecordsLink>'
 					),
 					{
 						defaultRecordsLink: <InlineSupportLink supportContext="dns_default_records" />,
@@ -247,7 +247,7 @@ export default function DomainDns() {
 			>
 				{ createInterpolateElement(
 					__(
-						'This means your WordPress.com site may not be reached correctly using the www prefix. To restore the default WWW CNAME record, click on the three dots menu and select “Restore default CNAME record”. <defaultRecordsLink>Learn more</defaultRecordsLink>.'
+						'This means your WordPress.com site may not be reached correctly using the www prefix. To restore the default WWW CNAME record, click on the three dots menu and select “Restore default CNAME record”. <defaultRecordsLink>Learn more</defaultRecordsLink>'
 					),
 					{
 						defaultRecordsLink: <InlineSupportLink supportContext="dns_default_records" />,
@@ -273,9 +273,9 @@ export default function DomainDns() {
 	};
 
 	const renderExternalNameserversNotice = () => {
-		if ( hasWpcomNameservers() || ! nameservers || ! nameservers.length ) {
-			return null;
-		}
+		// if ( hasWpcomNameservers() || ! nameservers || ! nameservers.length ) {
+		// 	return null;
+		// }
 
 		// TODO: Add a link to the name servers page or connection setup, once we have the pages
 		return (
