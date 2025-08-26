@@ -8,7 +8,6 @@ import * as selectors from './selectors';
 
 export * from './types';
 export * from './constants';
-export * from './queries';
 export { getFormattedPrice } from './utils';
 export type { State };
 

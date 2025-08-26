@@ -162,3 +162,9 @@ export interface DomainSuggestion {
 	 */
 	is_premium?: true;
 }
+
+export interface FreeDomainSuggestion {
+	cost: 'Free';
+	domain_name: string;
+	is_free: true;
+}

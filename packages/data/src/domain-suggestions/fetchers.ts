@@ -1,5 +1,5 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { DomainSuggestion, DomainSuggestionQuery } from './types';
+import type { DomainSuggestion, DomainSuggestionQuery, FreeDomainSuggestion } from './types';
 
 export async function fetchDomainSuggestions(
 	search: string,
@@ -26,4 +26,27 @@ export async function fetchDomainSuggestions(
 	);
 
 	return suggestions;
+}
+
+export async function fetchFreeDomainSuggestion( search: string ): Promise< FreeDomainSuggestion > {
+	const [ suggestion ] = await wpcom.req.get(
+		{
+			apiVersion: '1.1',
+			path: '/domains/suggestions',
+		},
+		{
+			quantity: 1,
+			include_wordpressdotcom: true,
+			include_dotblogsubdomain: false,
+			only_wordpressdotcom: false,
+			vendor: 'dot',
+			query: search.trim().toLocaleLowerCase(),
+		}
+	);
+
+	if ( ! suggestion ) {
+		throw new Error( `No free domain suggestion found for query ${ search }` );
+	}
+
+	return suggestion;
 }
