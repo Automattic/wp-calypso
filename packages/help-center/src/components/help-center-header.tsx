@@ -266,7 +266,7 @@ const HelpCenterHeader = ( { onDismiss }: Header ) => {
 	if ( isMinimized ) {
 		return (
 			<button
-				title={ __( 'Maximize Help Center', __i18n_text_domain__ ) }
+				name={ __( 'Maximize Help Center', __i18n_text_domain__ ) }
 				className={ classNames }
 				onClick={ () => setIsMinimized( false ) }
 			>
