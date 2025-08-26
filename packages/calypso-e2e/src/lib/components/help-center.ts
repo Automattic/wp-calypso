@@ -105,7 +105,7 @@ export class HelpCenterComponent {
 	 * @returns {Promise<void>}
 	 */
 	async maximizePopover(): Promise< void > {
-		const maximizeButton = await this.popup.getByRole( 'button', {
+		const maximizeButton = await this.page.getByRole( 'button', {
 			name: 'Maximize Help Center',
 			exact: true,
 		} );
