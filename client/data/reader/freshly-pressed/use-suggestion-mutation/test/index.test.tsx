@@ -31,7 +31,7 @@ describe( 'useSuggestionMutation', () => {
 		const blogId = 123;
 		const postId = 456;
 		nock( 'https://public-api.wordpress.com' )
-			.post( `/wpcom/v2/freshly-pressed/suggest/${ blogId }/${ postId }` )
+			.post( `/wpcom/v2/freshly-pressed/suggest/${ blogId }/${ postId }`, { source: 'reader' } )
 			.reply( 200, {
 				body: true,
 				status: 200,
@@ -54,7 +54,7 @@ describe( 'useSuggestionMutation', () => {
 		const blogId = 34234234;
 		const postId = 123;
 		nock( 'https://public-api.wordpress.com' )
-			.post( `/wpcom/v2/freshly-pressed/suggest/${ blogId }/${ postId }` )
+			.post( `/wpcom/v2/freshly-pressed/suggest/${ blogId }/${ postId }`, { source: 'reader' } )
 			.reply( 400, {
 				body: false,
 				status: 400,
@@ -77,7 +77,7 @@ describe( 'useSuggestionMutation', () => {
 		const blogId = 34234234;
 		const postId = 123;
 		nock( 'https://public-api.wordpress.com' )
-			.post( `/wpcom/v2/freshly-pressed/suggest/${ blogId }/${ postId }` )
+			.post( `/wpcom/v2/freshly-pressed/suggest/${ blogId }/${ postId }`, { source: 'reader' } )
 			.reply( 200, {
 				body: true,
 				status: 200,
@@ -108,7 +108,7 @@ describe( 'useSuggestionMutation', () => {
 		} );
 
 		nock( 'https://public-api.wordpress.com' )
-			.post( `/wpcom/v2/freshly-pressed/suggest/${ blogId }/${ postId }` )
+			.post( `/wpcom/v2/freshly-pressed/suggest/${ blogId }/${ postId }`, { source: 'reader' } )
 			.reply( 200, {
 				body: true,
 				status: 200,

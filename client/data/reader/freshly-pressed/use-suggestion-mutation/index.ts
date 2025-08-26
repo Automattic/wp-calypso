@@ -10,6 +10,9 @@ const request = async ( blogId: number, postId: number ): Promise< ApiResponse >
 	return ( await wpcom.req.post( {
 		path: `/freshly-pressed/suggest/${ blogId }/${ postId }`,
 		apiNamespace: 'wpcom/v2',
+		body: {
+			source: 'reader',
+		},
 	} ) ) as unknown as ApiResponse;
 };
 
