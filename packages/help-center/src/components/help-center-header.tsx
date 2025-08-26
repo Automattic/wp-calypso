@@ -269,6 +269,7 @@ const HelpCenterHeader = ( { onDismiss }: Header ) => {
 				name={ __( 'Maximize Help Center', __i18n_text_domain__ ) }
 				className={ classNames }
 				onClick={ () => setIsMinimized( false ) }
+				aria-label={ __( 'Maximize Help Center', __i18n_text_domain__ ) }
 			>
 				<HStack alignment="center" justify="space-between" spacing={ 5 }>
 					<HStack justify="flex-start">
