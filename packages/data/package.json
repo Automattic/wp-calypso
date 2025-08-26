@@ -23,9 +23,6 @@
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
 		"directory": "packages/data"
 	},
-	"publishConfig": {
-		"access": "public"
-	},
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"files": [
 		"dist",
