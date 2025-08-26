@@ -12,7 +12,7 @@ interface Props {
 export default function FeaturedCardSite( { domain, site }: Props ) {
 	return (
 		<OverviewCard
-			title={ __( 'Site' ).toUpperCase() }
+			title={ __( 'Site' ) }
 			heading={ site.name }
 			link={ site.URL }
 			icon={ <SiteIcon site={ site } /> }
