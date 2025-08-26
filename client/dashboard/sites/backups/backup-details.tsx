@@ -11,14 +11,17 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { rotateLeft, download } from '@wordpress/icons';
+import { useBackupState } from '../../app/hooks/site-backup-state';
 import { siteBackupRestoreRoute, siteBackupDownloadRoute } from '../../app/router/sites';
 import { useFormattedTime } from '../../components/formatted-time';
 import { SectionHeader } from '../../components/section-header';
 import { gridiconToWordPressIcon } from '../../utils/gridicons';
+import SiteBackupProgress from './backup-progress';
 import type { ActivityLogEntry, Site } from '../../data/types';
 
 export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; site: Site } ) {
 	const router = useRouter();
+	const { backupState } = useBackupState( site.ID );
 	const formattedTime = useFormattedTime( backup.published, {
 		dateStyle: 'medium',
 		timeStyle: 'short',
@@ -37,6 +40,17 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 			params: { siteSlug: site.slug, rewindId: backup.rewind_id },
 		} );
 	};
+
+	// Show backup progress when backup is active
+	if ( backupState !== 'default' ) {
+		return (
+			<Card>
+				<CardBody>
+					<SiteBackupProgress site={ site } />
+				</CardBody>
+			</Card>
+		);
+	}
 
 	return (
 		<Card>
