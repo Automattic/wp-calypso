@@ -10,17 +10,11 @@
 	"types": "dist/types/index.d.ts",
 	"calypso:src": "src/index.ts",
 	"exports": {
-		"./src/*": {
-			"calypso:src": "./src/*.ts",
-			"types": "./dist/types/*.d.ts",
-			"import": "./dist/esm/*.js",
-			"require": "./dist/cjs/*.js"
-		},
-		"./domain-suggestions/*": {
-			"calypso:src": "./src/domain-suggestions/*.ts",
-			"types": "./dist/types/domain-suggestions/*.d.ts",
-			"import": "./dist/esm/domain-suggestions/*.js",
-			"require": "./dist/cjs/domain-suggestions/*.js"
+		".": {
+			"calypso:src": "./src/index.ts",
+			"types": "./dist/types/index.d.ts",
+			"import": "./dist/esm/index.js",
+			"require": "./dist/cjs/index.js"
 		}
 	},
 	"sideEffects": false,
