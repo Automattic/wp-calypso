@@ -1,6 +1,15 @@
 import { LogType } from '../../../data/site-logs';
 import type { Filter } from '@wordpress/dataviews';
 
+const SEVERITY_LABELS: Readonly< Record< string, string > > = {
+	user: 'User',
+	warning: 'Warning',
+	deprecated: 'Deprecated',
+	fatal: 'Fatal error',
+	'fatal error': 'Fatal error',
+	fatal_error: 'Fatal error',
+};
+
 type SimpleFilter = {
 	field: string;
 	operator: 'isAny';
@@ -26,21 +35,14 @@ export function getInitialFiltersFromSearch( logType: LogType, search: string ):
 		}
 	};
 
-	const normalizeSeverity = ( values: string[] ): string[] => {
-		const map: Record< string, string > = {
-			user: 'User',
-			warning: 'Warning',
-			deprecated: 'Deprecated',
-			fatal: 'Fatal error',
-			'fatal error': 'Fatal error',
-			fatal_error: 'Fatal error',
-		};
-		return Array.from(
+	const normalizeSeverity = ( values: string[] ): string[] =>
+		Array.from(
 			new Set(
-				values.map( ( value ) => map[ value.trim().toLowerCase() ] ).filter( Boolean ) as string[]
+				values
+					.map( ( v ) => SEVERITY_LABELS[ v.trim().toLowerCase() ] )
+					.filter( Boolean ) as string[]
 			)
 		);
-	};
 
 	const out: Filter[] = [];
 	for ( const field of allowed ) {

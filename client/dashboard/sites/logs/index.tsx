@@ -150,7 +150,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	// For the current page, use its cursor (or null/undefined on page 1).
 	const scrollId = cursorsRef.current.get( view.page ?? 1 ) ?? null;
 
-	const { data: siteLogs, isFetching } = useQuery( siteLogsQuery( siteId!, params, scrollId ) );
+	const { data: siteLogs, isFetching } = useQuery( siteLogsQuery( siteId, params, scrollId ) );
 
 	useEffect( () => {
 		if ( ! siteLogs ) {
