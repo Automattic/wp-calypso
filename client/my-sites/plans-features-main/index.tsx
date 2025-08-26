@@ -471,9 +471,11 @@ const PlansFeaturesMain = ( {
 	);
 
 	// In some cases, the free plan is not an option at all. Make sure not to offer it in the subheader.
-	const offeringFreePlan = gridPlansForFeaturesGridRaw?.some(
-		( { planSlug } ) => planSlug === PLAN_FREE
-	);
+	// For website builder and wordpress hosting intents, we always want to offer the free plan even if it's not in the grid
+	const offeringFreePlan =
+		intent === 'plans-website-builder' ||
+		intent === 'plans-wordpress-hosting' ||
+		gridPlansForFeaturesGridRaw?.some( ( { planSlug } ) => planSlug === PLAN_FREE );
 
 	const [ isStreamlinedPriceExperimentLoading, streamlinedPriceExperimentAssignment ] =
 		useStreamlinedPriceExperiment( flowName );
