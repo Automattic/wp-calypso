@@ -10,6 +10,16 @@ import styles from './ChatInput.module.css';
 import { ChevronUpIcon } from '../icons/ChevronUpIcon';
 import { __ } from '@wordpress/i18n';
 
+interface ActionButton {
+	id: string;
+	icon: React.ReactNode;
+	onClick: () => void;
+	variant?: 'primary' | 'ghost' | 'outline' | 'link' | 'icon';
+	disabled?: boolean;
+	'aria-label': string;
+	className?: string;
+}
+
 interface ChatInputProps {
 	value: string;
 	onChange: ( value: string ) => void;
@@ -23,6 +33,8 @@ interface ChatInputProps {
 	onExpand?: () => void;
 	showExpandButton?: boolean;
 	focusOnMount?: boolean;
+	customActions?: ActionButton[];
+	actionOrder?: 'before-submit' | 'after-submit';
 }
 
 export function ChatInput( {
@@ -38,6 +50,8 @@ export function ChatInput( {
 	onExpand,
 	showExpandButton = true,
 	focusOnMount = false,
+	customActions = [],
+	actionOrder = 'before-submit',
 }: ChatInputProps ) {
 	const textareaId = useId();
 	const canSubmit = value.trim() || isProcessing;
@@ -56,6 +70,49 @@ export function ChatInput( {
 		// Reset ref value to prevent focus on mount from being triggered again
 		focusOnMountRef.current = false;
 	}, [ focusOnMountRef, textareaRef ] );
+
+	const renderCustomActions = () => {
+		return customActions.map( ( action ) => (
+			<Button
+				key={ action.id }
+				className={ action.className || styles.button }
+				onClick={ action.onClick }
+				disabled={ action.disabled }
+				variant={ action.variant || 'ghost' }
+				icon={ action.icon }
+				aria-label={ action[ 'aria-label' ] }
+			/>
+		) );
+	};
+
+	const renderExpandButton = () => {
+		return showExpandButton && onExpand ? (
+			<Button
+				className={ styles.button }
+				onClick={ onExpand }
+				variant="ghost"
+				icon={ <ChevronUpIcon /> }
+				aria-label={ __( 'Expand conversation', 'a8c-agenttic' ) }
+			/>
+		) : null;
+	};
+
+	const renderSubmitButton = () => {
+		return (
+			<Button
+				className={ styles.button }
+				onClick={ onSubmit }
+				disabled={ ! canSubmit }
+				variant="primary"
+				icon={ isProcessing ? <StopIcon /> : <ArrowUpIcon /> }
+				aria-label={
+					isProcessing
+						? __( 'Stop processing', 'a8c-agenttic' )
+						: __( 'Send message', 'a8c-agenttic' )
+				}
+			/>
+		);
+	};
 
 	return (
 		<div data-slot="chat-input" className={ styles.container }>
@@ -95,31 +152,13 @@ export function ChatInput( {
 					transition: value.trim() ? { duration: 0 } : fastSpring,
 				} }
 			>
-				{ showExpandButton && onExpand && (
-					<Button
-						className={ styles.button }
-						onClick={ onExpand }
-						variant="ghost"
-						icon={ <ChevronUpIcon /> }
-						aria-label={ __(
-							'Expand conversation',
-							'a8c-agenttic'
-						) }
-					/>
-				) }
-				<Button
-					className={ styles.button }
-					onClick={ onSubmit }
-					disabled={ ! canSubmit }
-					variant="primary"
-					icon={ isProcessing ? <StopIcon /> : <ArrowUpIcon /> }
-					aria-label={
-						isProcessing
-							? __( 'Stop processing', 'a8c-agenttic' )
-							: __( 'Send message', 'a8c-agenttic' )
-					}
-				/>
+				{ renderExpandButton() }
+				{ actionOrder === 'before-submit' && renderCustomActions() }
+				{ renderSubmitButton() }
+				{ actionOrder === 'after-submit' && renderCustomActions() }
 			</motion.div>
 		</div>
 	);
 }
+
+export type { ActionButton };

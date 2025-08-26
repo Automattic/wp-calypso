@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChatInput } from '../chat/ChatInput';
+import { type ActionButton, ChatInput } from '../chat/ChatInput';
 
 interface CompactViewProps {
 	value: string;
@@ -13,6 +13,8 @@ interface CompactViewProps {
 	onExpand?: () => void;
 	showExpandButton?: boolean;
 	focusOnMount?: boolean;
+	customActions?: ActionButton[];
+	actionOrder?: 'before-submit' | 'after-submit';
 }
 
 export function CompactView( {
@@ -27,6 +29,8 @@ export function CompactView( {
 	onExpand,
 	showExpandButton = true,
 	focusOnMount = false,
+	customActions,
+	actionOrder,
 }: CompactViewProps ) {
 	return (
 		<ChatInput
@@ -41,6 +45,8 @@ export function CompactView( {
 			onExpand={ onExpand }
 			showExpandButton={ showExpandButton }
 			focusOnMount={ focusOnMount }
+			customActions={ customActions }
+			actionOrder={ actionOrder }
 		/>
 	);
 }

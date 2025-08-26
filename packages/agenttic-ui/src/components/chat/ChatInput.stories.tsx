@@ -1,6 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { ChatInput } from './ChatInput';
+import { type ActionButton, ChatInput } from './ChatInput';
 import React, { useRef } from 'react';
+import { CopyIcon } from '../icons/CopyIcon';
+import { ImageIcon } from '../icons/ImageIcon';
+import { PageIcon } from '../icons/PageIcon';
+import { StylesIcon } from '../icons/StylesIcon';
+import { CheckIcon } from '../icons/CheckIcon';
 
 const meta = {
 	title: 'Chat/ChatInput',
@@ -55,5 +60,98 @@ export const Processing: Story = {
 		onKeyDown: () => {},
 		textareaRef: { current: null },
 		isProcessing: true,
+	},
+};
+
+export const WithExpandButton: Story = {
+	render: () => (
+		<ChatInputWrapper
+			showExpandButton={ true }
+			onExpand={ () => console.log( 'Expand clicked!' ) }
+		/>
+	),
+	args: {
+		value: '',
+		onChange: () => {},
+		onSubmit: () => {},
+		onKeyDown: () => {},
+		textareaRef: { current: null },
+		isProcessing: false,
+	},
+};
+
+const customActions: ActionButton[] = [
+	{
+		id: 'attach-file',
+		icon: <PageIcon />,
+		onClick: () => console.log( 'Attach file clicked!' ),
+		variant: 'ghost',
+		'aria-label': 'Attach file',
+	},
+	{
+		id: 'add-image',
+		icon: <ImageIcon />,
+		onClick: () => console.log( 'Add image clicked!' ),
+		variant: 'icon',
+		'aria-label': 'Add image',
+	},
+	{
+		id: 'copy-text',
+		icon: <CopyIcon />,
+		onClick: () => console.log( 'Copy text clicked!' ),
+		variant: 'link',
+		'aria-label': 'Copy text',
+	},
+	{
+		id: 'style-text',
+		icon: <StylesIcon />,
+		onClick: () => console.log( 'Style text clicked!' ),
+		variant: 'icon',
+		'aria-label': 'Style text',
+	},
+	{
+		id: 'check-icon',
+		icon: <CheckIcon />,
+		onClick: () => console.log( 'Check icon clicked!' ),
+		variant: 'primary',
+		'aria-label': 'Check icon',
+	},
+];
+
+export const WithCustomActions: Story = {
+	render: () => {
+		return (
+			<ChatInputWrapper
+				customActions={ customActions }
+				actionOrder="before-submit"
+			/>
+		);
+	},
+	args: {
+		value: '',
+		onChange: () => {},
+		onSubmit: () => {},
+		onKeyDown: () => {},
+		textareaRef: { current: null },
+		isProcessing: false,
+	},
+};
+
+export const WithCustomActionsAfterSubmit: Story = {
+	render: () => {
+		return (
+			<ChatInputWrapper
+				customActions={ customActions }
+				actionOrder="after-submit"
+			/>
+		);
+	},
+	args: {
+		value: '',
+		onChange: () => {},
+		onSubmit: () => {},
+		onKeyDown: () => {},
+		textareaRef: { current: null },
+		isProcessing: false,
 	},
 };

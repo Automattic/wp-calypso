@@ -5,7 +5,7 @@ export { Chat } from './Chat';
 export { Message as ChatMessage } from './Message';
 export { Messages } from './Messages';
 export { ThinkingMessage } from './ThinkingMessage';
-export { ChatInput } from './ChatInput';
+export { ChatInput, type ActionButton } from './ChatInput';
 
 // View components
 export { CollapsedView } from '../views/CollapsedView';

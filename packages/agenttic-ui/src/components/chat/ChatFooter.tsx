@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import type { NoticeConfig, Suggestion } from '../../types';
-import { ChatInput } from './ChatInput';
+import { type ActionButton, ChatInput } from './ChatInput';
 import { Notice } from './Notice';
 import { Suggestions } from './Suggestions';
 import styles from './ChatFooter.module.css';
@@ -28,6 +28,10 @@ interface ChatFooterProps {
 
 	// Focus on mount
 	focusOnMount?: boolean;
+
+	// Custom actions
+	customActions?: ActionButton[];
+	actionOrder?: 'before-submit' | 'after-submit';
 }
 
 export function ChatFooter( {
@@ -44,6 +48,8 @@ export function ChatFooter( {
 	suggestions,
 	clearSuggestions,
 	focusOnMount,
+	customActions,
+	actionOrder,
 }: ChatFooterProps ) {
 	const handleSuggestionSubmit = useCallback(
 		( value: string ) => {
@@ -81,6 +87,8 @@ export function ChatFooter( {
 				onExpand={ onExpand }
 				showExpandButton={ false }
 				focusOnMount={ focusOnMount }
+				customActions={ customActions }
+				actionOrder={ actionOrder }
 			/>
 		</div>
 	);
