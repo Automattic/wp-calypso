@@ -55,6 +55,8 @@ export function PaymentMethodImage( { paymentMethodType }: { paymentMethodType: 
 			className="payment-method-image"
 			alt={ paymentMethodType }
 			src={ getPaymentMethodImageURL( paymentMethodType ) }
+			width={ 30 }
+			height={ 19 }
 		/>
 	);
 }
