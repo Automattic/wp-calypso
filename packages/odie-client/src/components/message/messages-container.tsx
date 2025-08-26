@@ -1,7 +1,6 @@
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { useResetSupportInteraction } from '@automattic/help-center/src/hooks/use-reset-support-interaction';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
-import { getShortDateString } from '@automattic/i18n-utils';
 import { Spinner } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import clx from 'classnames';
@@ -16,26 +15,13 @@ import {
 	useUpdateDocumentTitle,
 } from '../../hooks';
 import { useHelpCenterChatScroll } from '../../hooks/use-help-center-chat-scroll';
-import {
-	interactionHasZendeskEvent,
-	interactionHasEnded,
-	hasCSATMessage,
-	hasSubmittedCSATRating,
-} from '../../utils';
+import { interactionHasZendeskEvent, interactionHasEnded } from '../../utils';
 import useViewMostRecentOpenConversationNotice from '../notices/use-view-most-recent-conversation-notice';
 import { JumpToRecent } from './jump-to-recent';
+import { MessagesClusterizer } from './messages-cluster/messages-cluster';
 import { ThinkingPlaceholder } from './thinking-placeholder';
 import ChatMessage from '.';
-import type { Chat, CurrentUser } from '../../types';
-
-const ChatDate = ( { chat }: { chat: Chat } ) => {
-	// chat.messages[ 1 ] contains the first user interaction, therefore the date, otherwise the current date.
-	const chatDate =
-		chat.messages.length > 1 ? chat.messages[ 1 ]?.created_at || Date.now() : Date.now();
-	const currentDate = getShortDateString( chatDate as number );
-	return <div className="odie-chat__date">{ currentDate }</div>;
-};
-
+import type { CurrentUser } from '../../types';
 interface ChatMessagesProps {
 	currentUser: CurrentUser;
 }
@@ -60,14 +46,13 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		chatMessagesLoaded && chat?.provider === 'odie' && ! forceEmailSupport
 	);
 
-	const { alreadyHasActiveZendeskChat, chatHasEnded } = useSelect( ( select ) => {
+	const { alreadyHasActiveZendeskChat } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		const currentInteraction = helpCenterSelect.getCurrentSupportInteraction();
 		return {
 			alreadyHasActiveZendeskChat:
 				interactionHasZendeskEvent( currentInteraction ) &&
 				! interactionHasEnded( currentInteraction ),
-			chatHasEnded: interactionHasEnded( currentInteraction ),
 		};
 	}, [] );
 
@@ -96,7 +81,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 			searchParams.delete( 'provider' );
 			setChatMessagesLoaded( true );
 		}
-	}, [ isForwardingToZendesk, isUserEligibleForPaidSupport, setChatMessagesLoaded ] );
+	}, [ isForwardingToZendesk, isUserEligibleForPaidSupport, setChatMessagesLoaded, searchParams ] );
 
 	useEffect( () => {
 		if ( isForwardingToZendesk || hasForwardedToZendesk ) {
@@ -147,15 +132,11 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		resetSupportInteraction,
 		createZendeskConversation,
 		alreadyHasActiveZendeskChat,
+		forceEmailSupport,
+		searchParams,
+		setSearchParams,
 	] );
 
-	// Used to apply the correct styling on messages
-	const isNextMessageFromSameSender = ( currentMessage: string, nextMessage: string ) => {
-		return currentMessage === nextMessage;
-	};
-
-	const chatHasCSATMessage = hasCSATMessage( chat );
-	const displayCSAT = chatHasCSATMessage && ! hasSubmittedCSATRating( chat );
 	return (
 		<div
 			className={ clx( 'chatbox-messages', {
@@ -175,7 +156,6 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 					</div>
 				) ) }
 			</div>
-			<ChatDate chat={ chat } />
 			<>
 				<div
 					className={ clx( 'chatbox-loading-chat__spinner', {
@@ -189,36 +169,10 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 						message={ getOdieInitialMessage( botNameSlug ) }
 						key={ 0 }
 						currentUser={ currentUser }
-						isNextMessageFromSameSender={ false }
 						displayChatWithSupportLabel={ false }
 					/>
 				) }
-				{ chat.messages.map( ( message, index ) => {
-					const nextMessage = chat.messages[ index + 1 ];
-					const displayChatWithSupportLabel =
-						! nextMessage?.context?.flags?.show_contact_support_msg &&
-						message.context?.flags?.show_contact_support_msg &&
-						! chatHasEnded &&
-						! message.context?.flags?.is_error_message;
-
-					const displayChatWithSupportEndedLabel =
-						! chatHasCSATMessage && ! nextMessage && chatHasEnded;
-
-					return (
-						<ChatMessage
-							message={ message }
-							key={ index }
-							currentUser={ currentUser }
-							isNextMessageFromSameSender={ isNextMessageFromSameSender(
-								message.role,
-								chat.messages[ index + 1 ]?.role
-							) }
-							displayChatWithSupportLabel={ displayChatWithSupportLabel }
-							displayChatWithSupportEndedLabel={ displayChatWithSupportEndedLabel }
-							displayCSAT={ displayCSAT }
-						/>
-					);
-				} ) }
+				<MessagesClusterizer messages={ chat.messages } />
 				<JumpToRecent containerReference={ messagesContainerRef } />
 
 				{ chat.provider === 'odie' && chat.status === 'sending' && (
