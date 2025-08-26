@@ -38,26 +38,30 @@ const OneLoginFooter = ( {
 	if ( isLoginView ) {
 		return (
 			<div className="one-login__footer">
-				{ lostPasswordLink }
-				{ oauth2Client && (
-					<LoggedOutFormBackLink
-						classes={ {
-							'logged-out-form__link-item': false,
-							'logged-out-form__back-link': false,
-							'one-login__footer-link': true,
-						} }
-						oauth2Client={ oauth2Client }
-						recordClick={ recordBackToWpcomLinkClick }
-					/>
-				) }
+				<div className="one-login__footer-links-wrapper">{ lostPasswordLink }</div>
+				<div className="one-login__footer-links-wrapper">
+					{ oauth2Client && (
+						<LoggedOutFormBackLink
+							classes={ {
+								'logged-out-form__link-item': false,
+								'logged-out-form__back-link': false,
+								'one-login__footer-link': true,
+							} }
+							oauth2Client={ oauth2Client }
+							recordClick={ recordBackToWpcomLinkClick }
+						/>
+					) }
+				</div>
 			</div>
 		);
 	}
 
 	return (
 		<div className="one-login__footer">
-			{ loginLink }
-			{ supportLink }
+			<div className="one-login__footer-links-wrapper">
+				{ loginLink }
+				{ supportLink }
+			</div>
 		</div>
 	);
 };
