@@ -2,6 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useMemo } from 'react';
+import { isAtomicTransferredSite } from 'calypso/dashboard/utils/site-atomic-transfers';
 import { isMigrationInProgress } from 'calypso/data/site-migration';
 import ItemView from 'calypso/layout/hosting-dashboard/item-view';
 import { useSetTabBreadcrumb } from 'calypso/sites/hooks/breadcrumbs/use-set-tab-breadcrumb';
@@ -205,8 +206,16 @@ const DotcomPreviewPane = ( {
 		stagingStatus === StagingSiteStatus.UNSET;
 
 	const hasEnvironmentPermission = useSelector( ( state ) =>
-		canCurrentUserSwitchEnvironment( state, site )
+		canCurrentUserSwitchEnvironment( state, siteWithStagingIds )
 	);
+
+	// Check if site supports environment switching (atomic readiness check)
+	const supportsEnvironmentSwitching =
+		siteWithStagingIds.is_wpcom_staging_site ||
+		isAtomicTransferredSite( {
+			is_wpcom_atomic: siteWithStagingIds.is_wpcom_atomic,
+			capabilities: siteWithStagingIds.capabilities,
+		} );
 
 	const { breadcrumbs, shouldShowBreadcrumbs } = useBreadcrumbs();
 	useSetTabBreadcrumb( {
@@ -244,7 +253,11 @@ const DotcomPreviewPane = ( {
 						return <SitesProductionBadge>{ __( 'Production' ) }</SitesProductionBadge>;
 					}
 
-					if ( hasEnvironmentPermission && isStagingStatusFinished ) {
+					if (
+						supportsEnvironmentSwitching &&
+						hasEnvironmentPermission &&
+						isStagingStatusFinished
+					) {
 						return (
 							<SiteEnvironmentSwitcher
 								onChange={ changeSitePreviewPane }

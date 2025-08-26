@@ -158,7 +158,14 @@ class CancelPurchaseButton extends Component<
 			return this.handleCancelPurchaseClick;
 		} )();
 
+		const needsDomainOptionsStep =
+			this.props.includedDomainPurchase &&
+			! willShowDomainOptionsRadioButtons( this.props.includedDomainPurchase, this.props.purchase );
 		const text = ( () => {
+			if ( includedDomainPurchase && needsDomainOptionsStep ) {
+				return translate( 'Continue with cancellation' );
+			}
+
 			if ( hasAmountAvailableToRefund( purchase ) ) {
 				if ( isDomainRegistration( purchase ) ) {
 					return translate( 'Cancel domain and refund' );

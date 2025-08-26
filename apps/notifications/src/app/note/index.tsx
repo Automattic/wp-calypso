@@ -90,7 +90,7 @@ const Note = () => {
 					</Navigator.BackButton>
 				</HStack>
 			</CardHeader>
-			<VStack>
+			<VStack justify="flex-start">
 				{ note && (
 					<div className="wpnc__main">
 						<div
@@ -99,8 +99,6 @@ const Note = () => {
 								position: 'relative',
 								left: 0,
 								right: 0,
-								overflow: 'auto',
-								minHeight: '50vh',
 								zIndex: 1,
 							} }
 						>

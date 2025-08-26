@@ -1,6 +1,6 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
 
 $color-pink: #f4b1ff;
 $dark-blue: #022836;
@@ -41,9 +41,9 @@ $light-golden-beige: #f2d6b0;
 
 		@include break-xlarge {
 			min-height: 220px;
-			background-color: var(--color-neutral-0);
-			border-radius: 8px; /* stylelint-disable-line scales/radii */
-			border: 1px solid var(--color-gray-5);
+			background-color: var( --color-neutral-0 );
+			border-radius: 8px;
+			border: 1px solid var( --color-gray-5 );
 		}
 
 		@include break-wide {
@@ -67,14 +67,14 @@ $light-golden-beige: #f2d6b0;
 		}
 
 		&::before {
-			content: "";
+			content: '';
 			display: inline-block;
 			position: absolute;
 			right: -25%;
 			top: 15px;
 			width: 100%;
 			height: 100%;
-			transform: scale(0.8);
+			transform: scale( 0.8 );
 
 			@include break-large {
 				transform: unset;
@@ -138,7 +138,8 @@ $light-golden-beige: #f2d6b0;
 			}
 
 			&::before {
-				background: url(calypso/assets/images/a8c-for-agencies/agency-tier/no-tier-logo.svg) no-repeat center/contain;
+				background: url( calypso/assets/images/a8c-for-agencies/agency-tier/no-tier-logo.svg )
+					no-repeat center/contain;
 				right: -20%;
 				top: 15px;
 
@@ -150,7 +151,8 @@ $light-golden-beige: #f2d6b0;
 
 		&.emerging-partner {
 			&::before {
-				background: url(calypso/assets/images/a8c-for-agencies/agency-tier/emerging-partner-logo.svg) no-repeat center/contain;
+				background: url( calypso/assets/images/a8c-for-agencies/agency-tier/emerging-partner-logo.svg )
+					no-repeat center/contain;
 			}
 		}
 
@@ -158,7 +160,8 @@ $light-golden-beige: #f2d6b0;
 			background-color: $dark-blue;
 
 			&::before {
-				background: url(calypso/assets/images/a8c-for-agencies/agency-tier/agency-partner-logo.svg) no-repeat center/contain;
+				background: url( calypso/assets/images/a8c-for-agencies/agency-tier/agency-partner-logo.svg )
+					no-repeat center/contain;
 				right: -70px;
 				top: 15px;
 
@@ -173,7 +176,8 @@ $light-golden-beige: #f2d6b0;
 			background-color: $dark-green;
 
 			&::before {
-				background: url(calypso/assets/images/a8c-for-agencies/agency-tier/pro-agency-partner-logo.svg) no-repeat center/contain;
+				background: url( calypso/assets/images/a8c-for-agencies/agency-tier/pro-agency-partner-logo.svg )
+					no-repeat center/contain;
 			}
 		}
 
@@ -181,12 +185,13 @@ $light-golden-beige: #f2d6b0;
 			background: $dark-golden-beige;
 
 			&::before {
-				background: url(calypso/assets/images/a8c-for-agencies/agency-tier/premier-partner-logo.svg) no-repeat center/contain;
+				background: url( calypso/assets/images/a8c-for-agencies/agency-tier/premier-partner-logo.svg )
+					no-repeat center/contain;
 			}
 
 			.agency-tier-overview__current-agency-tier-label,
 			.agency-tier-overview__current-agency-tier-title {
-				color: var(--color-text-black);
+				color: var( --color-text-black );
 			}
 		}
 
@@ -194,7 +199,7 @@ $light-golden-beige: #f2d6b0;
 		&.pro-agency-partner {
 			.agency-tier-overview__current-agency-tier-label,
 			.agency-tier-overview__current-agency-tier-title {
-				color: var(--color-text-white);
+				color: var( --color-text-white );
 			}
 		}
 	}
@@ -219,7 +224,7 @@ $light-golden-beige: #f2d6b0;
 			@include body-large;
 			padding: 0;
 			text-decoration: underline;
-			color: var(--color-text-black);
+			color: var( --color-text-black );
 		}
 	}
 }
@@ -256,18 +261,18 @@ $light-golden-beige: #f2d6b0;
 	}
 
 	@include break-large {
-		grid-template-columns: repeat(2, 1fr);
+		grid-template-columns: repeat( 2, 1fr );
 	}
 
 	@include break-wide {
-		grid-template-columns: repeat(3, 1fr);
+		grid-template-columns: repeat( 3, 1fr );
 	}
 }
 
 .card.agency-tier-overview__benefit-card {
 	margin-inline: 0;
 	padding: 24px;
-	border-radius: 8px; /* stylelint-disable-line scales/radii */
+	border-radius: 8px;
 }
 
 .agency-tier-overview__benefit-card-icons {
@@ -299,7 +304,7 @@ $light-golden-beige: #f2d6b0;
 	display: grid;
 	gap: 8px;
 	margin: 0 0 0 0.8rem;
-	list-style-image: url(calypso/assets/images/a8c-for-agencies/agency-tier/list-icon.svg);
+	list-style-image: url( calypso/assets/images/a8c-for-agencies/agency-tier/list-icon.svg );
 
 	li {
 		@include body-small;
@@ -332,12 +337,12 @@ $light-golden-beige: #f2d6b0;
 			display: inline-flex;
 
 			img {
-				transform: scale(1.5);
+				transform: scale( 1.5 );
 			}
 
 			.agency-tier-overview__benefit-card-item-icon-check {
 				position: absolute;
-				background: var(--color-text-white);
+				background: var( --color-text-white );
 				border-radius: 50%;
 				width: 23px;
 				height: 23px;
@@ -357,7 +362,7 @@ $light-golden-beige: #f2d6b0;
 					align-items: center;
 
 					svg {
-						transform: scale(1.7);
+						transform: scale( 1.7 );
 					}
 				}
 
@@ -375,7 +380,7 @@ $light-golden-beige: #f2d6b0;
 						background: $dark-blue;
 					}
 					svg {
-						fill: var(--color-text-white);
+						fill: var( --color-text-white );
 						stroke: $light-blue;
 					}
 				}
@@ -385,17 +390,17 @@ $light-golden-beige: #f2d6b0;
 						background: $dark-green;
 					}
 					svg {
-						fill: var(--color-text-white);
+						fill: var( --color-text-white );
 						stroke: $light-green;
 					}
 				}
 
 				&.premier-partner {
 					span {
-						background: $dark-golden-beige
+						background: $dark-golden-beige;
 					}
 					svg {
-						fill: var(--color-text-white);
+						fill: var( --color-text-white );
 						stroke: $light-golden-beige;
 					}
 				}

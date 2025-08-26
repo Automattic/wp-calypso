@@ -38,8 +38,6 @@ export interface DomainSummary {
 	expired: boolean;
 	expiry: string | false;
 	has_registration: boolean;
-	is_dnssec_enabled: boolean;
-	is_dnssec_supported: boolean;
 	is_eligible_for_inbound_transfer: boolean;
 	is_hundred_year_domain: boolean;
 	is_redeemable: boolean;
@@ -57,6 +55,8 @@ export interface DomainSummary {
 	transfer_status: ( typeof DomainTransferStatus )[ keyof typeof DomainTransferStatus ] | null;
 	type: ( typeof DomainTypes )[ keyof typeof DomainTypes ];
 	wpcom_domain: boolean;
+	last_transfer_error?: string;
+	transfer_start_date?: string;
 }
 
 export async function fetchDomains(): Promise< DomainSummary[] > {

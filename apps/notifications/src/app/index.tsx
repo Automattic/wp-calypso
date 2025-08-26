@@ -1,5 +1,5 @@
 import { Navigator } from '@wordpress/components';
-import { createContext, useEffect, useState, Suspense, lazy } from 'react';
+import { useEffect, useState, Suspense, lazy } from 'react';
 import { Provider } from 'react-redux';
 import repliesCache from '../panel/comment-replies-cache';
 import RestClient from '../panel/rest-client';
@@ -8,6 +8,7 @@ import { init as initStore } from '../panel/state';
 import { SET_IS_SHOWING } from '../panel/state/action-types';
 import { addListeners, removeListeners } from '../panel/state/create-listener-middleware';
 import getIsPanelOpen from '../panel/state/selectors/get-is-panel-open';
+import { RestClientContext } from './context';
 
 let client: any;
 
@@ -19,8 +20,6 @@ repliesCache.cleanup();
  * Force a manual refresh of the notes data
  */
 export const refreshNotes = () => client && client.refreshNotes.call( client );
-
-export const RestClientContext = createContext( client );
 
 const defaultHandlers = {
 	APP_REFRESH_NOTES: [
@@ -112,13 +111,19 @@ const NotificationApp = ( {
 	return (
 		<Provider store={ store }>
 			<RestClientContext.Provider value={ client }>
-				<Navigator initialPath="/">
-					<Navigator.Screen path="/">
+				<Navigator initialPath="/" style={ { maxHeight: 'inherit', height: '100%' } }>
+					<Navigator.Screen
+						path="/"
+						style={ { display: 'flex', flexDirection: 'column', height: '100%' } }
+					>
 						<Suspense fallback={ null }>
 							<NotePanel />
 						</Suspense>
 					</Navigator.Screen>
-					<Navigator.Screen path="/notes/:noteId">
+					<Navigator.Screen
+						path="/notes/:noteId"
+						style={ { display: 'flex', flexDirection: 'column', height: '100%' } }
+					>
 						<Suspense fallback={ null }>
 							<Note />
 						</Suspense>

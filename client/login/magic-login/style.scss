@@ -1,10 +1,10 @@
-@import "@automattic/onboarding/styles/mixins";
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-@import "@automattic/calypso-color-schemes";
-@import "@automattic/typography/styles/variables";
+@import '@automattic/onboarding/styles/mixins';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@automattic/calypso-color-schemes';
+@import '@automattic/typography/styles/variables';
 
-@media (max-height: 450px) {
+@media ( max-height: 450px ) {
 	.magic-login__handle-link,
 	.magic-login__check-email,
 	.magic-login__link-expired {
@@ -21,13 +21,24 @@
 	}
 }
 
-.layout.is-jetpack-login:not(.woo) {
-	&, .empty-content__title {
-		font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+.layout.is-jetpack-login:not( .woo ) {
+	&,
+	.empty-content__title {
+		font-family:
+			'SF Pro Text',
+			-apple-system,
+			BlinkMacSystemFont,
+			'Segoe UI',
+			Roboto,
+			Oxygen-Sans,
+			Ubuntu,
+			Cantarell,
+			'Helvetica Neue',
+			sans-serif;
 	}
 
 	.empty-content__title {
-		color: var(--studio-black);
+		color: var( --studio-black );
 		font-size: 2rem;
 		font-weight: 500;
 		line-height: 40px;
@@ -35,13 +46,22 @@
 	}
 
 	.magic-login {
-
 		.magic-login__form-form {
 			box-shadow: none;
 		}
 
 		.magic-login__form-header {
-			font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+			font-family:
+				'SF Pro Text',
+				-apple-system,
+				BlinkMacSystemFont,
+				'Segoe UI',
+				Roboto,
+				Oxygen-Sans,
+				Ubuntu,
+				Cantarell,
+				'Helvetica Neue',
+				sans-serif;
 		}
 
 		.magic-login__successfully-jetpack {
@@ -49,11 +69,11 @@
 		}
 
 		&__loading-spinner--jetpack {
-			color: var(--studio-jetpack-green-40, #069e08 );
+			color: var( --studio-jetpack-green-40, #069e08 );
 			height: 48px;
 			left: 50%;
 			margin-top: 40px;
-			transform: translateX(-50%);
+			transform: translateX( -50% );
 			width: 48px;
 		}
 	}
@@ -65,12 +85,12 @@
 	}
 
 	.empty-content__action.is-primary {
-		background-color: var(--studio-jetpack-green-60);
-		border-color: var(--studio-jetpack-green-60);
+		background-color: var( --studio-jetpack-green-60 );
+		border-color: var( --studio-jetpack-green-60 );
 	}
 }
 .magic-login__successfully-jetpack-actions {
-	color: var(--studio-jetpack-grey-50, #646970 );
+	color: var( --studio-jetpack-grey-50, #646970 );
 	font-size: 14px;
 	font-weight: 400;
 	line-height: 20px;
@@ -83,15 +103,15 @@
 
 	.magic-login__resend-button {
 		font-size: 100%;
-		color: var(--studio-jetpack-green-60, #007117 );
+		color: var( --studio-jetpack-green-60, #007117 );
 
 		&:hover {
-			color: var(--studio-jetpack-green-60, #007117 );
+			color: var( --studio-jetpack-green-60, #007117 );
 		}
 	}
 
 	.magic-login__log-in-link {
-		color: var(--studio-jetpack-green-60, #007117 );
+		color: var( --studio-jetpack-green-60, #007117 );
 	}
 
 	> p {
@@ -134,7 +154,7 @@
 		font-size: $font-body;
 		margin-bottom: 2.8rem;
 		font-weight: 400;
-		color: var(--studio-gray-100)
+		color: var( --studio-gray-100 );
 	}
 	.empty-content__action {
 		width: 100%;
@@ -147,16 +167,16 @@
 	}
 }
 
-.layout:not(.is-grav-powered-client) .magic-login__handle-link,
-.layout:not(.is-grav-powered-client) .magic-login__link-expired {
+.layout:not( .is-grav-powered-client ) .magic-login__handle-link,
+.layout:not( .is-grav-powered-client ) .magic-login__link-expired {
 	.empty-content__title {
 		font-family: $brand-serif;
-		font-size: rem(42px);
+		font-size: rem( 42px );
 		line-height: 1.2;
 		margin-bottom: 15px;
 	}
 
-	.button.is-primary:not([disabled]) {
+	.button.is-primary:not( [disabled] ) {
 		background-color: #007cba;
 		border-color: #007cba;
 	}
@@ -191,7 +211,7 @@
 
 	.logged-out-form {
 		border-radius: 0;
-		box-shadow: 0 0 0 1px var(--color-border-subtle);
+		box-shadow: 0 0 0 1px var( --color-border-subtle );
 		margin: 0 auto;
 		max-width: 400px;
 
@@ -223,7 +243,7 @@
 
 	a {
 		border-bottom: 1px solid #c8d7e1;
-		color: var(--studio-gray-90);
+		color: var( --studio-gray-90 );
 		display: block;
 		font-size: $font-body-small;
 		font-weight: 600;
@@ -231,14 +251,14 @@
 		text-decoration: underline;
 
 		&:hover {
-			color: var(--color-primary);
+			color: var( --color-primary );
 		}
 		&:last-of-type {
 			border-bottom: none;
 		}
 
 		body.is-section-signup & {
-			color: var(--color-text-inverted);
+			color: var( --color-text-inverted );
 		}
 	}
 	.gridicon {
@@ -267,7 +287,7 @@
 	height: 240px;
 }
 
-.magic-login:not(.is-grav-powered-client) {
+.magic-login:not( .is-grav-powered-client ) {
 	.magic-login__form-header {
 		@include onboarding-heading-text-mobile;
 
@@ -278,7 +298,7 @@
 
 	.logged-out-form {
 		.form-label {
-			color: var(--studio-gray-60);
+			color: var( --studio-gray-60 );
 		}
 	}
 
@@ -287,16 +307,16 @@
 		box-shadow: none;
 	}
 
-	.magic-login__form-action .button.is-primary:not([disabled]) {
+	.magic-login__form-action .button.is-primary:not( [disabled] ) {
 		background-color: #3858e9;
 		border-color: #3858e9;
-		color: var(--studio-white);
+		color: var( --studio-white );
 	}
 }
 .is-section-login .app-promo.magic-link-app-promo {
 	margin-top: 3em;
-	box-shadow: 0 0 0 1px var(--color-border-subtle) inset;
-	border-radius: 16px; /* stylelint-disable-line scales/radii */
+	box-shadow: 0 0 0 1px var( --color-border-subtle ) inset;
+	border-radius: 16px;
 	font-weight: 400;
 	letter-spacing: -0.4px;
 
@@ -369,7 +389,7 @@
 		height: 64px;
 		text-align: center;
 		padding: 0;
-		border: 1px solid var(--color-neutral-5, #dcdcdc);
+		border: 1px solid var( --color-neutral-5, #dcdcdc );
 		border-radius: 4px;
 		@include heading-2x-large;
 
@@ -382,11 +402,10 @@
 		}
 
 		&:focus {
-			border: 2px solid var(--studio-jetpack-green-50, #008710);
+			border: 2px solid var( --studio-jetpack-green-50, #008710 );
 			box-shadow: none;
 		}
 	}
-
 }
 
 .magic-login__verify-code-form--error {
@@ -394,14 +413,18 @@
 		margin-bottom: 12px;
 
 		.form-text-input.magic-login__verify-code-character-field {
-			border-color: var(--magic-login-error-color);
-			background-color: color-mix(in srgb, var(--magic-login-error-color) 5%, var(--studio-white, #fff) 95%);
+			border-color: var( --magic-login-error-color );
+			background-color: color-mix(
+				in srgb,
+				var( --magic-login-error-color ) 5%,
+				var( --studio-white, #fff ) 95%
+			);
 		}
 	}
 
 	.magic-login__verify-code-error-message {
 		@include body-large;
-		color: var(--magic-login-error-color);
+		color: var( --magic-login-error-color );
 		margin-bottom: 32px;
 	}
 }
