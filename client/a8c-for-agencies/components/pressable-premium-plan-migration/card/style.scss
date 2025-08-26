@@ -37,10 +37,15 @@ $pressable-card-background: #050C29;
 	justify-content: space-between;
 	align-items: center;
 	margin-block-end: 16px;
+
+	svg {
+		fill: var(--color-text-white);
+	}
 }
 
 .pressable-premium-plan-migration-card__description {
 	@include body-large;
+	text-wrap: balance;
 }
 
 .is-light svg {
