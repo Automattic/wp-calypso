@@ -444,7 +444,7 @@ function ReinstallButton( { purchase }: { purchase: Purchase } ) {
 		mutate: reinstallPlugins,
 		error,
 		isPending: isMutationPending,
-	} = useMutation( reinstallMarketplacePluginsQuery( parseInt( purchase.blog_id ) ) );
+	} = useMutation( reinstallMarketplacePluginsQuery( purchase.blog_id ) );
 	if ( ! isMarketplacePlugin( purchase ) ) {
 		return null;
 	}
@@ -626,7 +626,7 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 		mutate: setAutoRenew,
 		error,
 		isPending: isMutationPending,
-	} = useMutation( userPurchaseSetAutoRenewQuery( parseInt( purchase.ID ) ) );
+	} = useMutation( userPurchaseSetAutoRenewQuery( purchase.ID ) );
 	const { user } = useAuth();
 	return (
 		<Card>
@@ -720,7 +720,7 @@ function getPluginLabel( pluginSlug: string ) {
 }
 
 function PluginList( { purchase }: { purchase: Purchase } ) {
-	const { data: pluginList } = useQuery( siteJetpackKeysQuery( parseInt( purchase.blog_id ) ) );
+	const { data: pluginList } = useQuery( siteJetpackKeysQuery( purchase.blog_id ) );
 	if ( ! pluginList?.length ) {
 		return null;
 	}
@@ -744,7 +744,7 @@ function PluginList( { purchase }: { purchase: Purchase } ) {
 
 function BBEPurchaseDescription( { purchase }: { purchase: Purchase } ) {
 	const { data: isSubmitted } = useQuery( {
-		...siteDifmWebsiteContentQuery( parseInt( purchase.blog_id ) ),
+		...siteDifmWebsiteContentQuery( purchase.blog_id ),
 		select: ( data ) => data.is_website_content_submitted,
 	} );
 	if ( purchase.product_slug !== WPCOM_DIFM_LITE ) {
