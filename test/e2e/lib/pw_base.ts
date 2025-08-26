@@ -3,6 +3,7 @@ import {
 	AppleLoginPage,
 	BlockWidgetEditorComponent,
 	DataHelper,
+	EditorPage,
 	EmailClient,
 	envToFeatureKey,
 	envVariables,
@@ -23,6 +24,7 @@ import { test as base, expect } from '@playwright/test';
 export const test = base.extend< {
 	accountGivenByEnvironment: TestAccount;
 	accountGutenbergSimple: TestAccount;
+	accounti18n: TestAccount;
 	clientEmail: EmailClient;
 	clientRestAPI: RestAPIClient;
 	componentBlockWidgetEditor: BlockWidgetEditorComponent;
@@ -32,6 +34,7 @@ export const test = base.extend< {
 	environment: typeof envVariables;
 	helperData: typeof DataHelper;
 	pageAppleLogin: AppleLoginPage;
+	pageEditor: EditorPage;
 	pageLogin: LoginPage;
 	pageThemeDetails: ThemesDetailPage;
 	pageThemes: ThemesPage;
@@ -44,6 +47,11 @@ export const test = base.extend< {
 	},
 	accountGutenbergSimple: async ( {}, use ) => {
 		const accountName = 'gutenbergSimpleSiteUser';
+		const testAccount = new TestAccount( accountName );
+		await use( testAccount );
+	},
+	accounti18n: async ( {}, use ) => {
+		const accountName = 'i18nUser';
 		const testAccount = new TestAccount( accountName );
 		await use( testAccount );
 	},
@@ -80,6 +88,10 @@ export const test = base.extend< {
 	pageAppleLogin: async ( { page }, use ) => {
 		const appleLoginPage = new AppleLoginPage( page );
 		await use( appleLoginPage );
+	},
+	pageEditor: async ( { page }, use ) => {
+		const editorPage = new EditorPage( page );
+		await use( editorPage );
 	},
 	pageLogin: async ( { page }, use ) => {
 		const loginPage = new LoginPage( page );

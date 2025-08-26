@@ -1,23 +1,23 @@
 import { test, expect } from '../../lib/pw_base';
 
 const locales = [
+	'ar',
+	'de',
 	'en',
 	'es',
-	'pt-br',
-	'de',
 	'fr',
 	'he',
-	'ja',
-	'it',
-	'nl',
-	'ru',
-	'tr',
 	'id',
+	'it',
+	'ja',
+	'ko',
+	'nl',
+	'pt-br',
+	'ru',
+	'sv',
+	'tr',
 	'zh-cn',
 	'zh-tw',
-	'ko',
-	'ar',
-	'sv',
 ];
 
 locales.forEach( ( locale ) => {
