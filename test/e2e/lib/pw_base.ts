@@ -1,12 +1,15 @@
 /* eslint-disable no-empty-pattern */
 import {
 	AppleLoginPage,
+	BlockWidgetEditorComponent,
+	DataHelper,
 	EmailClient,
 	envToFeatureKey,
 	envVariables,
 	getTestAccountByFeature,
 	LoginPage,
 	PreviewComponent,
+	RestAPIClient,
 	Secrets,
 	SecretsManager,
 	SidebarComponent,
@@ -14,8 +17,6 @@ import {
 	TestAccount,
 	ThemesDetailPage,
 	ThemesPage,
-	BlockWidgetEditorComponent,
-	RestAPIClient,
 } from '@automattic/calypso-e2e';
 import { test as base, expect } from '@playwright/test';
 
@@ -29,6 +30,7 @@ export const test = base.extend< {
 	componentSidebar: SidebarComponent;
 	componentSiteSelect: SiteSelectComponent;
 	environment: typeof envVariables;
+	helperData: typeof DataHelper;
 	pageAppleLogin: AppleLoginPage;
 	pageLogin: LoginPage;
 	pageThemeDetails: ThemesDetailPage;
@@ -71,6 +73,9 @@ export const test = base.extend< {
 	},
 	environment: async ( {}, use ) => {
 		await use( envVariables );
+	},
+	helperData: async ( {}, use ) => {
+		await use( DataHelper );
 	},
 	pageAppleLogin: async ( { page }, use ) => {
 		const appleLoginPage = new AppleLoginPage( page );
