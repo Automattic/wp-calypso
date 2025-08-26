@@ -14,8 +14,17 @@ export interface SiteSettings {
 	wpcom_performance_report_url?: string;
 	wpcom_legacy_contact?: string;
 	wpcom_locked_mode?: boolean;
-	mcp_settings?: {
-		mcp_enabled: boolean;
-		mcp_abilities: Record< string, boolean >;
-	};
+	mcp_settings?: string; // JSON string instead of object
+}
+
+export interface SiteMcpSettings {
+	mcp_enabled: boolean;
+	mcp_abilities: Record<
+		string,
+		{
+			label: string;
+			description: string;
+			enabled: boolean;
+		}
+	>;
 }

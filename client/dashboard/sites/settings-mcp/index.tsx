@@ -12,71 +12,127 @@ import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { isAutomatticianQuery } from '../../app/queries/me-a8c';
 import { siteBySlugQuery } from '../../app/queries/site';
 import { siteSettingsQuery, siteSettingsMutation } from '../../app/queries/site-settings';
+import { queryClient } from '../../app/query-client';
 import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';
-
-// Mock data for MCP abilities - in a real implementation, this would come from the API
-const MCP_ABILITIES = [
-	{
-		id: 'wpcom-mcp/site-posts-search',
-		label: __( 'Site Posts Search' ),
-		description: __( 'Allow AI assistants to search through your site posts.' ),
-	},
-	{
-		id: 'wpcom-mcp/site-pages-search',
-		label: __( 'Site Pages Search' ),
-		description: __( 'Allow AI assistants to search through your site pages.' ),
-	},
-	{
-		id: 'wpcom-mcp/site-comments-search',
-		label: __( 'Site Comments Search' ),
-		description: __( 'Allow AI assistants to search through your site comments.' ),
-	},
-	{
-		id: 'wpcom-mcp/site-media-search',
-		label: __( 'Site Media Search' ),
-		description: __( 'Allow AI assistants to search through your site media.' ),
-	},
-];
+import type { SiteMcpSettings } from '../../data/site-settings';
 
 export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const { data: siteSettings } = useQuery( siteSettingsQuery( site.ID ) );
+	const { data: siteSettings, isLoading } = useQuery( siteSettingsQuery( site.ID ) );
+	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
 	const mutation = useMutation( siteSettingsMutation( site.ID ) );
 
-	const [ formData, setFormData ] = useState( {
-		mcp_enabled: siteSettings?.mcp_settings?.mcp_enabled ?? true,
-		mcp_abilities: siteSettings?.mcp_settings?.mcp_abilities ?? {},
+	// Gate access to Automatticians only
+	if ( ! isAutomattician ) {
+		throw notFound();
+	}
+
+	// Parse mcp_settings from JSON string
+	const parseMcpSettings = ( mcpSettingsString?: string ): SiteMcpSettings => {
+		if ( ! mcpSettingsString ) {
+			return {
+				mcp_enabled: true,
+				mcp_abilities: {},
+			};
+		}
+
+		try {
+			return JSON.parse( mcpSettingsString );
+		} catch ( error ) {
+			return {
+				mcp_enabled: true,
+				mcp_abilities: {},
+			};
+		}
+	};
+
+	const parsedMcpSettings = parseMcpSettings( siteSettings?.mcp_settings );
+
+	const [ formData, setFormData ] = useState< SiteMcpSettings >( {
+		mcp_enabled: parsedMcpSettings.mcp_enabled,
+		mcp_abilities: parsedMcpSettings.mcp_abilities,
 	} );
 
+	// Update form data when siteSettings changes
+	useEffect( () => {
+		if ( siteSettings?.mcp_settings ) {
+			const parsed = parseMcpSettings( siteSettings.mcp_settings );
+			setFormData( {
+				mcp_enabled: parsed.mcp_enabled,
+				mcp_abilities: parsed.mcp_abilities,
+			} );
+		}
+	}, [ siteSettings?.mcp_settings ] );
+
 	const renderContent = () => {
-		const isDirty =
-			formData.mcp_enabled !== siteSettings?.mcp_settings?.mcp_enabled ||
-			JSON.stringify( formData.mcp_abilities ) !==
-				JSON.stringify( siteSettings?.mcp_settings?.mcp_abilities );
+		// Show loading state while data is being fetched
+		if ( isLoading ) {
+			return (
+				<Card>
+					<CardBody>
+						<p>{ __( 'Loading MCP settings…' ) }</p>
+					</CardBody>
+				</Card>
+			);
+		}
 
 		const handleSubmit = ( e: React.FormEvent ) => {
 			e.preventDefault();
-			mutation.mutate(
-				{
-					mcp_settings: {
-						mcp_enabled: formData.mcp_enabled,
-						mcp_abilities: formData.mcp_abilities,
-					},
+
+			// Build the complete mcp_abilities object with all required properties
+			const mcp_abilities: Record<
+				string,
+				{ label: string; description: string; enabled: boolean }
+			> = {};
+
+			// Get the base abilities from site settings
+			const baseAbilities = parsedMcpSettings.mcp_abilities || {};
+
+			// Merge with form data to get current enabled state
+			Object.entries( baseAbilities ).forEach( ( [ abilityId, ability ] ) => {
+				mcp_abilities[ abilityId ] = {
+					label: ability.label,
+					description: ability.description,
+					enabled: formData.mcp_abilities?.[ abilityId ]?.enabled ?? ability.enabled,
+				};
+			} );
+
+			// Create the complete MCP settings object
+			const mcpSettingsObject = {
+				mcp_enabled: formData.mcp_enabled,
+				mcp_abilities,
+			};
+
+			// Convert to JSON string
+			const mcpSettingsJson = JSON.stringify( mcpSettingsObject );
+
+			const mutationData = {
+				mcp_settings: mcpSettingsJson,
+			};
+
+			mutation.mutate( mutationData, {
+				onSuccess: () => {
+					// Manually update the cache with our sent data to ensure it's preserved
+					queryClient.setQueryData(
+						siteSettingsQuery( site.ID ).queryKey,
+						( oldData ) =>
+							oldData && {
+								...oldData,
+								...mutationData, // Use our sent data instead of response data
+							}
+					);
+					createSuccessNotice( __( 'MCP settings saved.' ), { type: 'snackbar' } );
 				},
-				{
-					onSuccess: () => {
-						createSuccessNotice( __( 'MCP settings saved.' ), { type: 'snackbar' } );
-					},
-					onError: () => {
-						createErrorNotice( __( 'Failed to save MCP settings.' ), { type: 'snackbar' } );
-					},
-				}
-			);
+				onError: () => {
+					createErrorNotice( __( 'Failed to save MCP settings.' ), { type: 'snackbar' } );
+				},
+			} );
 		};
 
 		const handleMcpEnabledChange = ( enabled: boolean ) => {
@@ -93,16 +149,30 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 				...prev,
 				mcp_abilities: {
 					...prev.mcp_abilities,
-					[ abilityId ]: enabled,
+					[ abilityId ]: {
+						...prev.mcp_abilities[ abilityId ],
+						enabled,
+					},
 				},
 			} ) );
 		};
 
+		// Get abilities from the site settings data, but use form data for current state
+		const availableAbilities = Object.entries( parsedMcpSettings.mcp_abilities || {} );
+		const abilities = availableAbilities.map( ( [ abilityId, ability ] ) => [
+			abilityId,
+			{
+				...ability,
+				enabled: formData.mcp_abilities?.[ abilityId ]?.enabled ?? ability.enabled,
+			},
+		] );
+
 		return (
-			<Card>
-				<CardBody>
-					<form onSubmit={ handleSubmit }>
-						<VStack spacing={ 4 }>
+			<form onSubmit={ handleSubmit }>
+				<VStack spacing={ 6 }>
+					{ /* Main MCP toggle in its own card */ }
+					<Card>
+						<CardBody>
 							<CheckboxControl
 								__nextHasNoMarginBottom
 								label={ __( 'Enable Model Context Protocol (MCP)' ) }
@@ -112,36 +182,54 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 								checked={ formData.mcp_enabled }
 								onChange={ handleMcpEnabledChange }
 							/>
+						</CardBody>
+					</Card>
 
-							{ formData.mcp_enabled && (
-								<VStack spacing={ 3 }>
-									{ MCP_ABILITIES.map( ( ability ) => (
-										<CheckboxControl
-											key={ ability.id }
-											__nextHasNoMarginBottom
-											label={ ability.label }
-											help={ ability.description }
-											checked={ formData.mcp_abilities[ ability.id ] || false }
-											onChange={ ( checked ) => handleAbilityChange( ability.id, checked ) }
-										/>
-									) ) }
+					{ /* Abilities settings in a separate card */ }
+					{ formData.mcp_enabled && (
+						<Card>
+							<CardBody>
+								<VStack spacing={ 4 }>
+									<h3 style={ { margin: 0, fontSize: '16px', fontWeight: 600 } }>
+										{ __( 'MCP Abilities' ) }
+									</h3>
+
+									{ abilities.length > 0 ? (
+										<VStack spacing={ 3 }>
+											{ abilities.map( ( [ abilityId, ability ] ) => (
+												<CheckboxControl
+													key={ abilityId }
+													__nextHasNoMarginBottom
+													label={ ability.label }
+													help={ ability.description }
+													checked={ ability.enabled }
+													onChange={ ( checked ) => handleAbilityChange( abilityId, checked ) }
+												/>
+											) ) }
+										</VStack>
+									) : (
+										<p style={ { color: '#646970', fontSize: '14px', margin: 0 } }>
+											{ __( 'No MCP abilities are currently available for this site.' ) }
+										</p>
+									) }
 								</VStack>
-							) }
+							</CardBody>
+						</Card>
+					) }
 
-							<HStack justify="flex-start">
-								<Button
-									variant="primary"
-									type="submit"
-									isBusy={ mutation.isPending }
-									disabled={ mutation.isPending || ! isDirty }
-								>
-									{ __( 'Save' ) }
-								</Button>
-							</HStack>
-						</VStack>
-					</form>
-				</CardBody>
-			</Card>
+					{ /* Save button */ }
+					<HStack justify="flex-start">
+						<Button
+							variant="primary"
+							type="submit"
+							isBusy={ mutation.isPending }
+							disabled={ mutation.isPending }
+						>
+							{ __( 'Save' ) }
+						</Button>
+					</HStack>
+				</VStack>
+			</form>
 		);
 	};
 

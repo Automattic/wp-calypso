@@ -36,7 +36,6 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 					<SiteVisibilitySettingsSummary site={ site } />
 					<SubscriptionGiftingSettingsSummary site={ site } settings={ settings } />
 					<AgencySettingsSummary site={ site } />
-					<McpSettingsSummary site={ site } />
 					<HundredYearPlanSettingsSummary site={ site } settings={ settings } />
 				</SummaryButtonList>
 			</VStack>
@@ -50,6 +49,7 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 					<PrimaryDataCenterSettingsSummary site={ site } />
 					<StaticFile404SettingsSummary site={ site } />
 					<CachingSettingsSummary site={ site } />
+					<McpSettingsSummary site={ site } />
 				</SummaryButtonList>
 			</VStack>
 			<VStack spacing={ 3 }>
