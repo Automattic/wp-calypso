@@ -5,6 +5,10 @@ import type { UserPreferences } from '../../data/me-preferences';
 
 const defaultValues: Required< UserPreferences > = {
 	'sites-view': {},
+	'login-preferences': {
+		defaultLandingPage: 'primary-site-dashboard',
+		primarySiteId: undefined
+	},
 };
 
 // Returns all user preferences, without applying any defaults.
