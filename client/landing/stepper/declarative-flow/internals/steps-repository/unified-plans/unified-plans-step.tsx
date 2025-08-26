@@ -27,6 +27,7 @@ import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { buildUpgradeFunction } from 'calypso/lib/signup/step-actions';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
+import IntentToggle from 'calypso/my-sites/plans-features-main/components/intent-toggle';
 import { useFCCARestrictions } from 'calypso/my-sites/plans-features-main/hooks/use-fcca-restrictions';
 import {
 	useStreamlinedPriceExperiment,
@@ -122,6 +123,7 @@ export interface UnifiedPlansStepProps {
 
 	shouldHideNavButtons?: boolean;
 	intent?: PlansIntent;
+	onIntentChange?: ( intent: PlansIntent ) => void;
 	isLaunchPage?: boolean;
 	intervalType?: string;
 	fallbackSubHeaderText?: string;
@@ -221,6 +223,7 @@ function UnifiedPlansStep( {
 	progress,
 	queryParams: queryParamsFromProps,
 	shouldHideNavButtons,
+	onIntentChange,
 }: UnifiedPlansStepProps ) {
 	const [ isDesktop, setIsDesktop ] = useState< boolean | undefined >( isDesktopViewport() );
 	const dispatch = reduxUseDispatch();
@@ -487,6 +490,14 @@ function UnifiedPlansStep( {
 						{ step?.errors?.message }
 					</Notice>
 				</div>
+			) }
+			{ config.isEnabled( 'plans-visual-split' ) && (
+				<IntentToggle
+					currentIntent={ intent }
+					onIntentChange={ ( newIntent ) => {
+						onIntentChange?.( newIntent );
+					} }
+				/>
 			) }
 			<PlansFeaturesMain
 				paidDomainName={ paidDomainName }

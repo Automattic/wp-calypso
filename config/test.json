@@ -85,6 +85,7 @@
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,
 		"plans/self-service-downgrade": false,
+		"plans-visual-split": false,
 		"post-list/qr-code-link": false,
 		"press-this": true,
 		"publicize-preview": true,

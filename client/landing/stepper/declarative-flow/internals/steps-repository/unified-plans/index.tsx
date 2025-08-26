@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { OnboardSelect } from '@automattic/data-stores';
 import {
 	AI_SITE_BUILDER_FLOW,
@@ -61,6 +62,10 @@ function getPlansIntent( flowName: string | null ): PlansIntent | null {
 		case ONBOARDING_FLOW:
 			if ( search.has( 'playground' ) ) {
 				return playgroundPlansIntent( search.get( 'playground' )! );
+			}
+			// Check if plans-visual-split feature flag is enabled
+			if ( config.isEnabled( 'plans-visual-split' ) ) {
+				return 'plans-wordpress-hosting';
 			}
 			break;
 		case ONBOARDING_UNIFIED_FLOW:
@@ -133,7 +138,12 @@ const PlansStepAdaptor: StepType< {
 
 	useQueryTheme( 'wpcom', selectedDesign?.slug );
 
-	const plansIntent = getPlansIntent( props.flow );
+	const defaultPlansIntent = getPlansIntent( props.flow );
+	const [ plansIntent, setPlansIntent ] = useState< PlansIntent | null >( defaultPlansIntent );
+
+	const handleIntentChange = ( newIntent: PlansIntent ) => {
+		setPlansIntent( newIntent );
+	};
 
 	/**
 	 * The plans step has a quirk where it calls `submitSignupStep` then synchronously calls `goToNextStep` after it.
@@ -182,6 +192,7 @@ const PlansStepAdaptor: StepType< {
 			stepName="plans"
 			flowName={ props.flow }
 			intent={ plansIntent ?? undefined }
+			onIntentChange={ handleIntentChange }
 			onPlanIntervalUpdate={ onPlanIntervalUpdate }
 			intervalType={ planInterval }
 			wrapperProps={ {

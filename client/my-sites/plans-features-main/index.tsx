@@ -329,12 +329,15 @@ const PlansFeaturesMain = ( {
 		// - at which point, we'll inject the upsell plan to the tailored plans mix instead
 		if ( defaultWpcomPlansIntent !== intent && forceDefaultPlans ) {
 			setIntent( defaultWpcomPlansIntent );
-		} else if ( ! intent ) {
-			setIntent(
-				planFromUpsells
-					? defaultWpcomPlansIntent
-					: intentFromProps || intentFromSiteMeta.intent || defaultWpcomPlansIntent
-			);
+		} else {
+			const resolvedIntent = planFromUpsells
+				? defaultWpcomPlansIntent
+				: intentFromProps || intentFromSiteMeta.intent || defaultWpcomPlansIntent;
+
+			// Always update intent when intentFromProps changes or when intent is not set
+			if ( ! intent || intentFromProps !== intent ) {
+				setIntent( resolvedIntent );
+			}
 		}
 	}, [
 		intent,
