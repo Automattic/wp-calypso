@@ -3,16 +3,19 @@ import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 
-export function useStreamlinedPriceExperiment(): [ boolean, string | null ] {
-	const variationName = isEligibleForExperiment() ? 'plans_1Y_checkout_radio' : null;
+export function useStreamlinedPriceExperiment(
+	flowName?: string | null
+): [ boolean, string | null ] {
+	const variationName = isEligibleForExperiment( flowName ) ? 'plans_1Y_checkout_radio' : null;
 
 	return [ false, variationName ];
 }
 
-function isEligibleForExperiment(): boolean {
+function isEligibleForExperiment( flowName?: string | null ): boolean {
 	const flowFromStorage = getSignupCompleteFlowName(); // The flow for the Checkout page
 	const flowFromURL = getFlowFromURL(); // The flow for the Plans step
-	const flow = flowFromStorage || flowFromURL;
+	const flow = flowName || flowFromStorage || flowFromURL;
+
 	// Only onboarding flow is eligible for streamlined pricing. Akismet/Jetpack checkouts are excluded as well.
 	return flow !== 'onboarding-pm' && ! isAkismetCheckout() && ! isJetpackCheckout();
 }
