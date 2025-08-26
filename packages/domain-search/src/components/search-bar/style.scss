@@ -1,0 +1,26 @@
+@import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/mixins';
+
+.domain-search-controls__filters-popover {
+	width: 20em;
+	padding: 8px;
+	// background-color: red;
+}
+
+.domain-search-controls__filters-popover-available-tlds-container {
+	margin-top: -17px;
+	max-height: 18.5em;
+	overflow-y: scroll;
+	border: 1px solid var( --color-neutral-10 );
+	border-radius: 2px;
+}
+
+.domain-search-controls__filters-popover-available-tld {
+	cursor: pointer;
+	padding: 4px 16px;
+	color: #333;
+
+	&:hover {
+		background-color: yellow;
+	}
+}
