@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { RefObject, useCallback, useEffect, useState } from 'react';
 import { useOdieAssistantContext } from '../../context';
 
-const SCROLL_THRESHOLD = 200;
+const SCROLL_THRESHOLD = 100;
 
 export const JumpToRecent = ( {
 	containerReference,
@@ -12,20 +12,35 @@ export const JumpToRecent = ( {
 	containerReference: RefObject< HTMLDivElement >;
 } ) => {
 	const { trackEvent, isMinimized, chat } = useOdieAssistantContext();
-	const scrollParent = containerReference.current?.closest< HTMLDivElement >(
-		'.help-center__container-content'
+	const scrollParent = containerReference.current;
+
+	const [ needsScrolling, setNeedsScrolling ] = useState(
+		Boolean(
+			scrollParent &&
+				scrollParent.scrollTop + scrollParent.offsetHeight <
+					scrollParent.scrollHeight - SCROLL_THRESHOLD
+		)
 	);
-	const [ needsScrolling, setNeedsScrolling ] = useState( false );
 
 	useEffect( () => {
-		scrollParent?.addEventListener( 'scroll', ( event: Event ) => {
-			const target: HTMLDivElement = event.currentTarget as HTMLDivElement;
-			if ( target ) {
+		function handleScroll( event: Event ) {
+			if ( event.target !== scrollParent ) {
+				return;
+			}
+
+			if ( scrollParent ) {
 				setNeedsScrolling(
-					target.scrollTop + target.offsetHeight < target.scrollHeight - SCROLL_THRESHOLD
+					scrollParent.scrollTop + scrollParent.offsetHeight <
+						scrollParent.scrollHeight - SCROLL_THRESHOLD
 				);
 			}
-		} );
+		}
+
+		window.addEventListener( 'scroll', handleScroll, true );
+
+		return () => {
+			window.removeEventListener( 'scroll', handleScroll );
+		};
 	}, [ scrollParent ] );
 
 	const jumpToRecent = useCallback( () => {
