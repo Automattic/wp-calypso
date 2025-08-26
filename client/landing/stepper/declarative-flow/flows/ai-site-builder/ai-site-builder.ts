@@ -37,15 +37,18 @@ const deletePage = async ( siteId: string | number, pageId: number ): Promise< b
 
 function initialize() {
 	// stepsWithRequiredLogin will take care of redirecting to the login step if the user is not logged in.
-	return stepsWithRequiredLogin( [
-		STEPS.SITE_CREATION_STEP,
-		STEPS.PROCESSING,
-		STEPS.ERROR,
-		shouldRenderRewrittenDomainSearch() ? STEPS.DOMAIN_SEARCH : STEPS.UNIFIED_DOMAINS,
-		STEPS.UNIFIED_PLANS,
-		STEPS.SITE_LAUNCH,
-		STEPS.PROCESSING,
-	] as const );
+	return [
+		STEPS.LEARNING_STEP,
+		...stepsWithRequiredLogin( [
+			STEPS.SITE_CREATION_STEP,
+			STEPS.PROCESSING,
+			STEPS.ERROR,
+			shouldRenderRewrittenDomainSearch() ? STEPS.DOMAIN_SEARCH : STEPS.UNIFIED_DOMAINS,
+			STEPS.UNIFIED_PLANS,
+			STEPS.SITE_LAUNCH,
+			STEPS.PROCESSING,
+		] ),
+	];
 }
 
 const aiSiteBuilder: FlowV2< typeof initialize > = {
@@ -82,6 +85,9 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 		const submit: SubmitHandler< typeof initialize > = async function ( submittedStep ) {
 			const { slug, providedDependencies } = submittedStep;
 			switch ( slug ) {
+				case 'learning-step': {
+					return navigate( 'create-site' );
+				}
 				// The create-site step will start creating a site and will add the promise of that operation to pendingAction field in the store.
 				case 'create-site': {
 					// Go to the processing step and pass `true` to remove it from history. So clicking back will not go back to the create-site step.

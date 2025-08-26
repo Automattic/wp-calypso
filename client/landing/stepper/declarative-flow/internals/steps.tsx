@@ -167,6 +167,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/launch-big-sky' ),
 	},
 
+	LEARNING_STEP: {
+		slug: 'learning-step',
+		asyncComponent: () => import( './steps-repository/learning-step' ),
+	},
+
 	LAUNCHPAD: { slug: 'launchpad', asyncComponent: () => import( './steps-repository/launchpad' ) },
 
 	OPTIONS: {
