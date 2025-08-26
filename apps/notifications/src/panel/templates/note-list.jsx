@@ -364,9 +364,9 @@ export class NoteList extends Component {
 		} else if ( ! this.props.initialLoad && emptyNoteList && filter.emptyMessage ) {
 			notes = (
 				<EmptyMessage
-					emptyMessage={ filter.emptyMessage( translate ) }
+					emptyMessage={ filter.emptyMessage }
 					height={ this.props.height }
-					linkMessage={ filter.emptyLinkMessage( translate ) }
+					linkMessage={ filter.emptyLinkMessage }
 					link={ filter.emptyLink }
 					name={ filter.name }
 					showing={ this.props.isPanelOpen }

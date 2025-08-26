@@ -9,16 +9,18 @@ import {
 import '@wordpress/components/build-style/style.css';
 import { __ } from '@wordpress/i18n';
 import { bell } from '@wordpress/icons';
+import { useState } from 'react';
+import Filters from '../../panel/templates/filters';
 import NoteList from '../note-list';
 import NotePanelActions from './actions';
 
-const NOTIFICATION_TABS = [
-	{ name: 'all', title: __( 'All' ) },
-	{ name: 'unread', title: __( 'Unread' ) },
-	{ name: 'alerts', title: __( 'Alerts' ) },
-];
+const NOTIFICATION_TABS = Object.values( Filters ).map( ( { name, label } ) => ( {
+	name,
+	title: label,
+} ) );
 
 const NotePanel = () => {
+	const [ activeTab, setActiveTab ] = useState< keyof typeof Filters >( 'all' );
 	return (
 		<>
 			<CardHeader
@@ -35,12 +37,19 @@ const NotePanel = () => {
 							<NotePanelActions />
 						</div>
 					</HStack>
-					<TabPanel activeClass="is-active" tabs={ NOTIFICATION_TABS } initialTabName="all">
+					<TabPanel
+						activeClass="is-active"
+						tabs={ NOTIFICATION_TABS }
+						initialTabName={ activeTab }
+						onSelect={ ( tabName ) => {
+							setActiveTab( tabName as keyof typeof Filters );
+						} }
+					>
 						{ () => null /* Placeholder div since content is rendered elsewhere */ }
 					</TabPanel>
 				</VStack>
 			</CardHeader>
-			<NoteList />
+			<NoteList filterName={ activeTab } />
 		</>
 	);
 };

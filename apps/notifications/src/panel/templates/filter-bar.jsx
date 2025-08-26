@@ -97,9 +97,7 @@ export class FilterBar extends Component {
 					__next40pxDefaultSize
 				>
 					{ filterItems.map( ( { label, name } ) => {
-						return (
-							<ToggleGroupControlOption key={ name } label={ label( translate ) } value={ name } />
-						);
+						return <ToggleGroupControlOption key={ name } label={ label } value={ name } />;
 					} ) }
 				</ToggleGroupControl>
 			</div>
