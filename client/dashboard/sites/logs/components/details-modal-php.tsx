@@ -32,7 +32,11 @@ export default function DetailsModalPHP( {
 		<VStack className="site-logs-details-modal" spacing={ 3 }>
 			<div className="site-logs-details-modal__row">
 				<Text className="site-logs-details-modal__field-title">
-					{ __( 'Date & Time' ) } { `(${ offsetDisplay })` }
+					{ sprintf(
+						/* Translators: %s: UTC offset */
+						__( 'Date & Time (%s)' ),
+						offsetDisplay
+					) }
 				</Text>
 				<Text className="site-logs-details-modal__field-value">{ formatted }</Text>
 			</div>
