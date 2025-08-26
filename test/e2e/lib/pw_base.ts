@@ -50,9 +50,13 @@ export const test = base.extend< {
 		const testAccount = new TestAccount( accountName );
 		await use( testAccount );
 	},
-	accounti18n: async ( {}, use ) => {
+	accounti18n: async ( { page }, use ) => {
 		const accountName = 'i18nUser';
 		const testAccount = new TestAccount( accountName );
+		if ( ! ( await testAccount.hasFreshAuthCookies() ) ) {
+			await testAccount.logInViaLoginPage( page );
+			await testAccount.saveAuthCookies( page.context() );
+		}
 		await use( testAccount );
 	},
 	clientEmail: async ( {}, use ) => {
