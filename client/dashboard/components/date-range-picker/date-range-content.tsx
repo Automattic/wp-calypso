@@ -169,7 +169,7 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 
 				<div className="daterange-calendar">
 					<DateRangeCalendar
-						timeZone={ timezoneString }
+						timeZone={ timezoneString || undefined }
 						numberOfMonths={ isSmall ? 1 : 2 }
 						defaultMonth={ defaultMonth }
 						endMonth={ endMonth }
