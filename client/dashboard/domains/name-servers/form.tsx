@@ -1,6 +1,7 @@
 import { CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS } from '@automattic/urls';
 import {
 	Button,
+	Spinner,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	__experimentalInputControl as InputControl,
@@ -98,6 +99,7 @@ interface Props {
 	showUpsellNudge?: boolean;
 	nameServers?: string[];
 	isBusy?: boolean;
+	isLoading?: boolean;
 	onSubmit: ( nameServers: string[] ) => void;
 }
 
@@ -107,6 +109,7 @@ export default function NameServersForm( {
 	showUpsellNudge,
 	nameServers = [],
 	isBusy,
+	isLoading,
 	onSubmit,
 }: Props ) {
 	const isWpcomNameservers = areAllWpcomNameServers( nameServers );
@@ -207,6 +210,14 @@ export default function NameServersForm( {
 		! isBusy &&
 		isItemValid( formData, fields, form ) &&
 		isNameServersChanged( formData, nameServers );
+
+	if ( isLoading ) {
+		return (
+			<VStack alignment="center">
+				<Spinner />
+			</VStack>
+		);
+	}
 
 	return (
 		<form onSubmit={ handleSubmit }>
