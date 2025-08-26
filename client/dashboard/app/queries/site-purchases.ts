@@ -15,7 +15,7 @@ export const siteHasCancelablePurchasesQuery = ( siteId: number, userId: number 
 
 					return purchase.is_cancelable;
 				} )
-				.filter( ( purchase ) => String( purchase.user_id ) === String( userId ) );
+				.filter( ( purchase ) => purchase.user_id === String( userId ) );
 
 			return cancelables.length > 0;
 		},
@@ -25,7 +25,7 @@ export const sitePurchaseQuery = ( siteId: number, purchaseId: number ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'purchases', purchaseId ],
 		queryFn: () => fetchSitePurchases( siteId ),
-		select: ( purchases ) => purchases.find( ( p ) => String( p.ID ) === String( purchaseId ) ),
+		select: ( purchases ) => purchases.find( ( p ) => parseInt( p.ID ) === purchaseId ),
 	} );
 
 export const sitePurchasesQuery = ( siteId: number ) =>

@@ -148,7 +148,7 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 				: null;
 		const refundAmount = matchingRefundOption?.refund_amount ?? 0;
 
-		return parseFloat( String( refundAmount ) ).toFixed( precision );
+		return parseFloat( refundAmount ).toFixed( precision );
 	}, [ purchase, targetPlan ] );
 
 	if (

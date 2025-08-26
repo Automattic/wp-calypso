@@ -20,7 +20,7 @@ export const purchaseQuery = ( purchaseId: number ) =>
 	queryOptions( {
 		queryKey: [ 'me', 'purchases', purchaseId ],
 		queryFn: () => fetchUserPurchases(),
-		select: ( purchases ) => purchases.find( ( p ) => String( p.ID ) === String( purchaseId ) ),
+		select: ( purchases ) => purchases.find( ( p ) => parseInt( p.ID ) === purchaseId ),
 	} );
 
 export const userPurchaseSetAutoRenewQuery = ( purchaseId: number ) =>

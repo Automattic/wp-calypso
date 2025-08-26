@@ -212,7 +212,7 @@ export function getFields( {
 			},
 			// Render the site icon
 			render: ( { item }: { item: Purchase } ) => {
-				const site = sites.find( ( site ) => String( site.ID ) === String( item.blog_id ) );
+				const site = sites.find( ( site ) => String( site.ID ) === item.blog_id );
 				return (
 					<Link to={ getPurchaseUrl( item ) } title={ __( 'Manage purchase' ) }>
 						<PurchaseItemSiteIcon purchase={ item } site={ site } />
@@ -229,7 +229,7 @@ export function getFields( {
 			enableHiding: false,
 			filterBy: false,
 			getValue: ( { item }: { item: Purchase } ) => {
-				const site = sites.find( ( site ) => String( site.ID ) === String( item.blog_id ) );
+				const site = sites.find( ( site ) => String( site.ID ) === item.blog_id );
 				// Render a bunch of things to make this easily searchable.
 				return (
 					getTitleForDisplay( item ) +
@@ -267,11 +267,11 @@ export function getFields( {
 			filterBy: false,
 			getValue: ( { item }: { item: Purchase } ) => {
 				// Render a bunch of things to make this easily searchable.
-				const site = sites.find( ( site ) => String( site.ID ) === String( item.blog_id ) );
+				const site = sites.find( ( site ) => String( site.ID ) === item.blog_id );
 				return item.blogname + ' ' + ( item.site_slug || item.domain ) + ' ' + ( site?.URL ?? '' );
 			},
 			render: ( { item }: { item: Purchase } ) => {
-				const site = sites.find( ( site ) => String( site.ID ) === String( item.blog_id ) );
+				const site = sites.find( ( site ) => String( site.ID ) === item.blog_id );
 				return (
 					<PurchaseProduct purchase={ item } site={ site } filterViewBySite={ filterViewBySite } />
 				);
@@ -376,7 +376,7 @@ export function getFields( {
 				return item.expiry_date + ' ' + item.expiry_status;
 			},
 			render: ( { item }: { item: Purchase } ) => {
-				const site = sites.find( ( site ) => String( site.ID ) === String( item.blog_id ) );
+				const site = sites.find( ( site ) => String( site.ID ) === item.blog_id );
 				return (
 					<div>
 						<PurchaseExpiryStatus purchase={ item } isDisconnectedSite={ ! site } />
@@ -410,7 +410,7 @@ export function getFields( {
 					);
 					isBackupMethodAvailable = backupPaymentMethodsWithoutCurrentPurchase.length >= 1;
 				}
-				const site = sites.find( ( site ) => String( site.ID ) === String( item.blog_id ) );
+				const site = sites.find( ( site ) => String( site.ID ) === item.blog_id );
 				return (
 					<div>
 						<PurchasePaymentMethod
