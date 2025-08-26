@@ -1,18 +1,18 @@
 import { formatNumber } from '@automattic/number-formatters';
 import { Badge } from '@automattic/ui';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { dateI18n } from '@wordpress/date';
 import { useMemo } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useLocale } from '../../../app/locale';
-import { siteBySlugQuery } from '../../../app/queries/site';
-import { siteSettingsQuery } from '../../../app/queries/site-settings';
-import { siteRoute } from '../../../app/router/sites';
-import { LogType } from '../../../data/site-logs';
+import { LogType, PHPLog, ServerLog } from '../../../data/site-logs';
 import { formatDateWithOffset, getUtcOffsetDisplay } from '../../../utils/datetime';
-import type { PHPLog, ServerLog } from '../../../data/site-logs';
 import type { Field, Operator } from '@wordpress/dataviews';
 
 import './style.scss';
+
+type UseFieldsArgs =
+	| { logType: LogType; timezoneString: string; gmtOffset?: number }
+	| { logType: LogType; timezoneString?: undefined; gmtOffset: number };
 
 const VALUES_CACHED = [ 'false', 'true' ] as const;
 const VALUES_RENDERER = [ 'php', 'static' ] as const;
@@ -44,25 +44,38 @@ const getLabelRenderer = ( renderer: string ) => {
 const toSeverityClass = ( severity: PHPLog[ 'severity' ] ) =>
 	severity.split( ' ' )[ 0 ].toLowerCase();
 
-export function useFields( { logType }: { logType: LogType } ): Field< PHPLog | ServerLog >[] {
-	const { siteSlug } = siteRoute.useParams();
-	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const siteId = site?.ID as number;
-
-	const { data: gmtOffset } = useSuspenseQuery( {
-		...siteSettingsQuery( siteId ),
-		select: ( s ) => s?.gmt_offset ?? 0,
-	} );
-
+export function useFields( {
+	logType,
+	timezoneString,
+	gmtOffset,
+}: UseFieldsArgs ): Field< PHPLog | ServerLog >[] {
 	const locale = useLocale();
 
-	const dateTimeLabel = sprintf(
-		/* Translators: %s is the site's GMT offset */
-		__( 'Date & time (%s)' ),
-		getUtcOffsetDisplay( gmtOffset )
-	);
+	let dateTimeLabel = __( 'Date & time' );
+
+	/* translators: %s is the site's timezone (e.g., "Europe/London") or UTC offset (e.g., "UTC+02:00") */
+	const dateTimeWithTz = __( 'Date & time (%s)' );
+
+	if ( timezoneString ) {
+		dateTimeLabel = sprintf( dateTimeWithTz, timezoneString );
+	} else if ( typeof gmtOffset === 'number' ) {
+		dateTimeLabel = sprintf( dateTimeWithTz, getUtcOffsetDisplay( gmtOffset ) );
+	}
 
 	return useMemo( () => {
+		const formatCell = ( value?: string | number ) => {
+			if ( ! value ) {
+				return '';
+			}
+			const date = typeof value === 'number' ? new Date( value * 1000 ) : new Date( value );
+			return timezoneString
+				? dateI18n( 'M j, Y \\a\\t g:i A', date, timezoneString )
+				: formatDateWithOffset( date, gmtOffset as number, locale, {
+						dateStyle: 'medium',
+						timeStyle: 'short',
+				  } );
+		};
+
 		if ( logType === LogType.PHP ) {
 			return [
 				{
@@ -72,13 +85,10 @@ export function useFields( { logType }: { logType: LogType } ): Field< PHPLog | 
 					enableHiding: false,
 					enableSorting: true,
 					getValue: ( { item } ) => ( item as PHPLog ).timestamp,
-					render: ( { field, item } ) => (
-						<span>
-							{ ( field.getValue( { item } ) as string )
-								? formatDateWithOffset( field.getValue( { item } ) as string, gmtOffset, locale )
-								: '' }
-						</span>
-					),
+					render: ( { field, item } ) => {
+						const value = field.getValue( { item } ) as string;
+						return <span>{ formatCell( value ) }</span>;
+					},
 				},
 				{
 					id: 'severity',
@@ -153,12 +163,11 @@ export function useFields( { logType }: { logType: LogType } ): Field< PHPLog | 
 				label: dateTimeLabel,
 				enableHiding: false,
 				enableSorting: true,
-				getValue: ( { item } ) => ( item as PHPLog ).timestamp,
-				render: ( { field, item } ) => (
-					<span>
-						{ formatDateWithOffset( field.getValue( { item } ) as string, gmtOffset, locale ) }
-					</span>
-				),
+				getValue: ( { item } ) => ( item as ServerLog ).date ?? ( item as ServerLog ).timestamp,
+				render: ( { field, item } ) => {
+					const value = field.getValue( { item } ) as string;
+					return <span>{ formatCell( value ) }</span>;
+				},
 			},
 			{
 				id: 'request_type',
@@ -316,5 +325,5 @@ export function useFields( { logType }: { logType: LogType } ): Field< PHPLog | 
 				getValue: ( { item } ) => ( item as ServerLog ).user_ip,
 			},
 		];
-	}, [ dateTimeLabel, gmtOffset, locale, logType ] );
+	}, [ dateTimeLabel, gmtOffset, locale, logType, timezoneString ] );
 }

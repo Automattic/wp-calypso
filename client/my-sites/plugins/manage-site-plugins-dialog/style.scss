@@ -1,8 +1,7 @@
-
 .manage-site-plugins-dialog__container {
 	width: 900px;
 
-	@media screen and (max-width: 1040px) {
+	@media screen and ( max-width: 1040px ) {
 		width: auto;
 	}
 
@@ -13,24 +12,23 @@
 	.manage-site-plugins-dialog__finish-button {
 		float: right;
 
-		@media screen and (max-width: 1040px) {
+		@media screen and ( max-width: 1040px ) {
 			margin-top: 16px;
 		}
 	}
 
 	.plugin-details-v2__title {
-		color: var(--studio-gray-100);
+		color: var( --studio-gray-100 );
 		font-size: $font-title-small;
 		padding: 16px 48px;
 	}
 
 	.dataviews-wrapper {
-		/* stylelint-disable-next-line scales/radii */
 		border-radius: 8px;
 	}
 }
 
 .popover,
 .global-notices {
-	z-index: z-index("root", ".popover.ellipsis-menu__menu") !important;
+	z-index: z-index( 'root', '.popover.ellipsis-menu__menu' ) !important;
 }

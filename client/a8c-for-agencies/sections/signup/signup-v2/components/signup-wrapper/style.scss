@@ -1,11 +1,11 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
 
 .signup-wrapper {
 	display: flex;
-	background-color: var(--color-surface);
-	border-radius: 16px; //stylelint-disable-line scales/radii
+	background-color: var( --color-surface );
+	border-radius: 16px;
 
 	@include break-small {
 		padding: 16px;
@@ -16,14 +16,14 @@
 	.signup-wrapper__left {
 		display: none;
 		position: relative;
-		background-color: var(--color-neutral-0);
-		background-image: url(calypso/assets/images/a8c-for-agencies/signup-sidebar-bg-light.svg);
+		background-color: var( --color-neutral-0 );
+		background-image: url( calypso/assets/images/a8c-for-agencies/signup-sidebar-bg-light.svg );
 		background-repeat: no-repeat;
 		background-position: 50% 50px;
 		background-size: 80% auto;
 		padding: 32px;
 		width: 320px;
-		border-radius: 16px; //stylelint-disable-line scales/radii
+		border-radius: 16px;
 		margin-right: 32px;
 		align-items: flex-start;
 		max-width: 30%;
@@ -42,16 +42,16 @@
 	.signup-wrapper__sidebar-image {
 		position: relative;
 		left: 50%;
-		transform: translateX(-50%);
+		transform: translateX( -50% );
 		top: -3rem;
 		max-width: 100%;
 		height: auto;
 
 		rect {
-			fill: var(--color-neutral-0);
+			fill: var( --color-neutral-0 );
 		}
 
-		@media (prefers-color-scheme: dark) {
+		@media ( prefers-color-scheme: dark ) {
 			circle {
 				stroke: #022836;
 			}
@@ -61,23 +61,23 @@
 	.signup-wrapper__testimonial-wrapper {
 		margin: -32px;
 		padding: 32px;
-		background-color: var(--color-neutral-0);
-		border-radius: 16px; //stylelint-disable-line scales/radii
+		background-color: var( --color-neutral-0 );
+		border-radius: 16px;
 	}
 
 	.signup-wrapper__testimonial {
-		color: var(--color-text);
+		color: var( --color-text );
 		padding: 24px;
-		background: var(--color-surface);
-		border-radius: 16px; //stylelint-disable-line scales/radii
-		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+		background: var( --color-surface );
+		border-radius: 16px;
+		box-shadow: 0 2px 4px rgba( 0, 0, 0, 0.05 );
 		position: relative;
 		top: -1rem;
 
 		.signup-wrapper__testimonial-text {
 			@include body-large;
 			margin-bottom: 24px;
-			color: var(--color-text);
+			color: var( --color-text );
 		}
 
 		.signup-wrapper__testimonial-author {
@@ -101,12 +101,12 @@
 
 		.signup-wrapper__testimonial-name {
 			@include heading-large;
-			color: var(--color-text);
+			color: var( --color-text );
 		}
 
 		.signup-wrapper__testimonial-title {
 			@include heading-large;
-			color: var(--color-text);
+			color: var( --color-text );
 		}
 	}
 
@@ -127,11 +127,11 @@
 		}
 
 		&::-webkit-scrollbar-thumb {
-			background-color: var(--color-neutral-10);
+			background-color: var( --color-neutral-10 );
 			border-radius: 4px;
 
 			&:hover {
-			background-color: var(--color-neutral-20);
+				background-color: var( --color-neutral-20 );
 			}
 		}
 
@@ -144,22 +144,22 @@
 		}
 	}
 
-	@media (prefers-color-scheme: dark) {
-		background-color: #021B24;
+	@media ( prefers-color-scheme: dark ) {
+		background-color: #021b24;
 
 		.signup-wrapper__left {
-			background-image: url(calypso/assets/images/a8c-for-agencies/signup-sidebar-bg-dark.svg);
+			background-image: url( calypso/assets/images/a8c-for-agencies/signup-sidebar-bg-dark.svg );
 			background-color: #022836;
 		}
 
 		.signup-wrapper__logo {
-			fill: var(--color-surface);
+			fill: var( --color-surface );
 		}
 
 		.signup-wrapper__sidebar-image {
 			rect {
 				fill: #022836;
-				}
+			}
 		}
 
 		.signup-wrapper__testimonial-wrapper {
@@ -167,42 +167,42 @@
 		}
 
 		.signup-wrapper__testimonial {
-			color: var(--color-surface);
-			background: #02506E;
-			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-			backdrop-filter: blur(8px);
+			color: var( --color-surface );
+			background: #02506e;
+			box-shadow: 0 4px 12px rgba( 0, 0, 0, 0.3 );
+			backdrop-filter: blur( 8px );
 
 			.signup-wrapper__testimonial-text {
-				color: var(--color-neutral-0);
+				color: var( --color-neutral-0 );
 			}
 
 			.signup-wrapper__testimonial-avatar {
-				background: var(--color-neutral-50);
+				background: var( --color-neutral-50 );
 			}
 
 			.signup-wrapper__testimonial-name {
-				color: var(--color-surface);
+				color: var( --color-surface );
 			}
 
 			.signup-wrapper__testimonial-title {
-				color: var(--color-surface);
+				color: var( --color-surface );
 			}
 
 			.signup-wrapper__testimonial-url {
-				color: var(--color-surface);
+				color: var( --color-surface );
 
 				&:visited {
-					color: var(--color-surface);
+					color: var( --color-surface );
 				}
 			}
 		}
 
 		.signup-wrapper__right {
 			&::-webkit-scrollbar-thumb {
-				background-color: rgba(255, 255, 255, 0.2);
+				background-color: rgba( 255, 255, 255, 0.2 );
 
 				&:hover {
-					background-color: rgba(255, 255, 255, 0.3);
+					background-color: rgba( 255, 255, 255, 0.3 );
 				}
 			}
 		}

@@ -1,4 +1,8 @@
-import { DomainSuggestionsList, DomainSuggestion } from '@automattic/domain-search';
+import {
+	DomainSuggestionsList,
+	DomainSuggestion,
+	DomainSearchSkipSuggestion,
+} from '@automattic/domain-search';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { get, times } from 'lodash';
@@ -294,7 +298,7 @@ class DomainSearchResults extends Component {
 			);
 		} else {
 			featuredSuggestionElement = <FeaturedDomainSuggestions showPlaceholders />;
-			domainSkipSuggestion = <DomainSkipSuggestion.Placeholder />;
+			domainSkipSuggestion = <DomainSearchSkipSuggestion.Placeholder />;
 			suggestionElements = this.renderPlaceholders();
 		}
 

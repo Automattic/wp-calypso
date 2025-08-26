@@ -473,7 +473,7 @@ const PlansFeaturesMain = ( {
 	);
 
 	const [ isStreamlinedPriceExperimentLoading, streamlinedPriceExperimentAssignment ] =
-		useStreamlinedPriceExperiment();
+		useStreamlinedPriceExperiment( flowName );
 
 	const showStreamlinedPriceExperiment =
 		isInSignup && isStreamlinedPricePlansTreatment( streamlinedPriceExperimentAssignment );

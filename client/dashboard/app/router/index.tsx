@@ -45,7 +45,7 @@ const createRouteTree = ( config: AppConfig ) => {
 	}
 
 	if ( config.supports.me ) {
-		children.push( ...createMeRoutes() );
+		children.push( ...createMeRoutes( config ) );
 	}
 
 	return rootRoute.addChildren( children );
@@ -65,5 +65,6 @@ export const getRouter = ( config: AppConfig ) => {
 		// "default", we can still customize it in CSS and add more transition
 		// areas.
 		defaultViewTransition: true,
+		scrollRestoration: true,
 	} );
 };

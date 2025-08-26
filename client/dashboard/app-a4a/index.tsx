@@ -23,6 +23,9 @@ boot( {
 		reader: false,
 		help: true,
 		notifications: false,
-		me: true,
+		me: {
+			privacy: false,
+			apps: false,
+		},
 	},
 } );

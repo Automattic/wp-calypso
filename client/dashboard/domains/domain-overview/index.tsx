@@ -11,6 +11,8 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { formatDate } from '../../utils/datetime';
 import { getDomainRenewalUrl } from '../../utils/domain';
+import Actions from './actions';
+import DomainOverviewSettings from './settings';
 
 export default function DomainOverview() {
 	const locale = useLocale();
@@ -63,6 +65,9 @@ export default function DomainOverview() {
 					}
 				/>
 			}
-		></PageLayout>
+		>
+			<DomainOverviewSettings />
+			<Actions />
+		</PageLayout>
 	);
 }
