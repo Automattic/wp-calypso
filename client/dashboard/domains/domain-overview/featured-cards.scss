@@ -1,0 +1,10 @@
+@import '@wordpress/base-styles/colors';
+
+.featured-card {
+	--featured-text-color: #{$gray-700};
+
+	&__title.components-text,
+	&__body.components-text {
+		color: var(--featured-text-color);
+	}
+}

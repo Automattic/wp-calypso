@@ -4,6 +4,8 @@ import { domainQuery } from '../../app/queries/domain';
 import { domainRoute } from '../../app/router/domains';
 import FeaturedCardRenew from './featured-card-renew';
 
+import './featured-cards.scss';
+
 export default function FeaturedCards() {
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
