@@ -267,7 +267,7 @@ export function DomainFormControl( {
 					vendor={ getSuggestionsVendor( {
 						isSignup: true,
 						isDomainOnly: false,
-						flowName: flow || undefined,
+						flowName: flow,
 					} ) }
 					// RegisterDomainStepComponentV2 props below
 					onContinue={ onContinue }
