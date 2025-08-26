@@ -41,18 +41,6 @@
 
 	.summary-button-title {
 		@include body-large;
-
-		&.has-text-align-left {
-			text-align: start;
-		}
-
-		&.has-text-align-center {
-			text-align: center;
-		}
-
-		&.has-text-align-right {
-			text-align: end;
-		}
 	}
 
 	.summary-button-strapline {
