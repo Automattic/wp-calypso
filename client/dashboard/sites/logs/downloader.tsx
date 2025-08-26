@@ -141,10 +141,6 @@ export function LogsDownloader( {
 
 	const [ status, setStatus ] = useState< 'idle' | 'downloading' | 'complete' | 'error' >( 'idle' );
 
-	const disabled = status === 'downloading';
-	const label = status === 'downloading' ? __( 'Downloading…' ) : __( 'Download logs' );
-	const [ isHovered, setIsHovered ] = useState( false );
-
 	const tracksProps = {
 		site_slug: siteSlug,
 		site_id: siteId,
@@ -181,26 +177,18 @@ export function LogsDownloader( {
 		recordTracksEvent( 'calypso_dashboard_site_logs_download_started', tracksProps );
 	};
 
-	let iconColor = 'inherit';
-	if ( status === 'downloading' ) {
-		iconColor = 'gray';
-	} else if ( isHovered ) {
-		iconColor = 'var(--color-link, var(--color-accent, #3858e9))';
-	}
+	const disabled = status === 'downloading';
+	const label = disabled ? __( 'Downloading…' ) : __( 'Download logs' );
 
 	return (
 		<VStack spacing={ 2 }>
 			<HStack spacing={ 2 }>
 				<Tooltip text={ label }>
 					<Button
-						variant="tertiary"
 						aria-label={ label }
 						size="compact"
 						icon={ download }
-						style={ { color: iconColor } }
 						disabled={ disabled }
-						onMouseEnter={ () => setIsHovered( true ) }
-						onMouseLeave={ () => setIsHovered( false ) }
 						onClick={ handleOnClick }
 					/>
 				</Tooltip>
