@@ -20,7 +20,6 @@ export interface Domain extends DomainSummary {
 	ssl_status: 'active' | 'inactive' | 'newly_registered' | 'pending';
 	subdomain_part: string;
 	auto_renewal_date: string;
-	auto_renewing: 0 | 1;
 	renewable_until: string;
 }
 
