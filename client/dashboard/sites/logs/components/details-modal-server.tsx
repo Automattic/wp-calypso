@@ -1,6 +1,6 @@
 import { Badge } from '@automattic/ui';
 import { __experimentalVStack as VStack, __experimentalText as Text } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useLocale } from '../../../app/locale';
 import { getUtcOffsetDisplay } from '../../../utils/datetime';
 import { formatLogDateTimeForDisplay } from '../utils';

@@ -4,7 +4,7 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useLocale } from '../../../app/locale';
 import { getUtcOffsetDisplay } from '../../../utils/datetime';
 import { formatLogDateTimeForDisplay, toSeverityClass } from '../utils';
