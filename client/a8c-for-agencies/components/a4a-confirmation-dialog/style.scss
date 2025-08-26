@@ -9,10 +9,10 @@
 
 	& .dialog__content {
 		h1.a4a-confirmation-dialog__heading {
-			font-size: rem(24px);
+			@include heading-x-large;
 		}
 		p, div {
-			font-size: rem(14px);
+			@include body-large;
 		}
 	}
 
