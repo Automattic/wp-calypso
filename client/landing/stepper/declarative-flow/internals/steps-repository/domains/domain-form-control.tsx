@@ -38,7 +38,7 @@ import type { DomainSuggestion, DomainForm, OnboardSelect } from '@automattic/da
 interface DomainFormControlProps {
 	onContinue: () => void;
 	analyticsSection: string;
-	flow: string | null;
+	flow: string;
 	onAddDomain: ( suggestion: DomainSuggestion, position: number ) => void;
 	onAddMapping: ( domain: string ) => void;
 	onAddTransfer: ( { domain, authCode }: { domain: string; authCode: string } ) => void;
