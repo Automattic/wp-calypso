@@ -7,9 +7,13 @@ export { AgentUI } from './components/AgentUI';
 // Individual UI components for advanced composition
 export { Chat } from './components/chat/Chat';
 export { ChatInput } from './components/chat/ChatInput';
+export { ThinkingMessage } from './components/chat/ThinkingMessage';
 export { Messages } from './components/chat/Messages';
+export { MessageActions } from './components/chat/MessageActions';
+export { Notice } from './components/chat/Notice';
 export { Message } from './components/chat/Message';
 export { Suggestions } from './components/chat/Suggestions';
+export * as animations from './components/animations';
 
 export { ThumbsUpIcon } from './components/icons/ThumbsUpIcon';
 export { ThumbsDownIcon } from './components/icons/ThumbsDownIcon';
