@@ -9,6 +9,12 @@
 		img {
 			display: block;
 		}
+
+		.odie-chatbox-message-user {
+			max-width: 100%;
+			border-radius: 0;
+			padding: 0;
+		}
 	}
 
 	&.role-bot {
