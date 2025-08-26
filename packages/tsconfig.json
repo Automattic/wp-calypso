@@ -25,7 +25,6 @@
 		{ "path": "./data-stores" },
 		{ "path": "./design-picker" },
 		{ "path": "./design-preview" },
-		{ "path": "./domain-picker" },
 		{ "path": "./domain-search" },
 		{ "path": "./domains-table" },
 		{ "path": "./explat-client" },
