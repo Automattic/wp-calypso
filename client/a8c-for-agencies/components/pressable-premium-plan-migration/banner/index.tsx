@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { formatCurrency } from '@automattic/number-formatters';
 import { Button } from '@wordpress/components';
 import { Icon, chevronDown } from '@wordpress/icons';
@@ -13,6 +12,7 @@ import {
 import MigrationIncentiveIcon from 'calypso/assets/images/a8c-for-agencies/migration-incentive-icon.svg';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { useShowMigrationIncentive } from '../hook/use-show-migration-incentive';
 
 import './style.scss';
 
@@ -24,13 +24,13 @@ export default function PressablePremiumPlanMigrationBanner( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const isFeatureEnabled = isEnabled( 'pressable-premium-plan' );
-
 	const [ isExpanded, setIsExpanded ] = useState( true );
 
 	const onToggleView = useCallback( () => {
 		setIsExpanded( ( isExpanded ) => ! isExpanded );
 	}, [] );
+
+	const showMigrationIncentive = useShowMigrationIncentive();
 
 	const handleReferClient = useCallback( () => {
 		dispatch(
@@ -77,7 +77,7 @@ export default function PressablePremiumPlanMigrationBanner( {
 		</span>
 	);
 
-	if ( ! isFeatureEnabled ) {
+	if ( ! showMigrationIncentive ) {
 		return null;
 	}
 

@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { formatCurrency } from '@automattic/number-formatters';
 import { Card, Button } from '@wordpress/components';
 import { close } from '@wordpress/icons';
@@ -12,6 +11,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
+import { useShowMigrationIncentive } from '../hook/use-show-migration-incentive';
 
 import './style.scss';
 
@@ -23,7 +23,7 @@ export default function PressablePremiumPlanMigrationCard() {
 
 	const isDismissed = useSelector( ( state ) => getPreference( state, DISMISSED_PREFERENCE ) );
 
-	const isFeatureEnabled = isEnabled( 'pressable-premium-plan' );
+	const showMigrationIncentive = useShowMigrationIncentive();
 
 	const onDismiss = useCallback( () => {
 		dispatch(
@@ -47,7 +47,7 @@ export default function PressablePremiumPlanMigrationCard() {
 		// TODO: Add chat to us logic
 	}, [ dispatch ] );
 
-	if ( isDismissed || ! isFeatureEnabled ) {
+	if ( isDismissed || ! showMigrationIncentive ) {
 		return null;
 	}
 
