@@ -38,7 +38,7 @@ export default function HeaderStagingSiteButton( {
 	siteId,
 	isAtomic,
 	isStagingSite,
-	hideEnvDataInHeader = false,
+	hideEnvDataInHeader,
 }: HeaderStagingSiteButtonProps ) {
 	const dispatch = useDispatch();
 	const { __ } = useI18n();
@@ -148,6 +148,7 @@ export default function HeaderStagingSiteButton( {
 	);
 
 	const showAddStagingButton =
+		! hideEnvDataInHeader &&
 		isAtomic &&
 		! isStagingSite &&
 		! isLoadingStagingSites &&

@@ -1,7 +1,9 @@
 import { dateI18n } from '@wordpress/date';
-import { startOfDay, endOfDay } from 'date-fns';
+import { startOfDay, endOfDay, fromUnixTime, isValid as isValidDate } from 'date-fns';
 import { formatDateWithOffset } from '../../utils/datetime';
 import type { PHPLog } from '../../data/site-logs';
+
+type DateRange = { start: Date; end: Date };
 
 const HOUR_MS = 3_600_000;
 
@@ -72,4 +74,24 @@ export function formatLogDateTimeForDisplay(
 		dateStyle: 'long',
 		timeStyle: 'short',
 	} );
+}
+
+/**
+ * Get the initial date range from the URL search parameters.
+ */
+export function getInitialDateRangeFromSearch( search: string ): DateRange | null {
+	const params = new URLSearchParams( search );
+	const valueAsNumber = ( value?: string | null ) => ( value ? Number( value ) : NaN );
+	const toDate = ( dateString?: string | null ) => {
+		const num = valueAsNumber( dateString );
+		if ( ! Number.isFinite( num ) ) {
+			return undefined;
+		}
+		const date = fromUnixTime( num );
+		return isValidDate( date ) ? date : undefined;
+	};
+
+	const start = toDate( params.get( 'from' ) );
+	const end = toDate( params.get( 'to' ) );
+	return start && end && start <= end ? { start, end } : null;
 }

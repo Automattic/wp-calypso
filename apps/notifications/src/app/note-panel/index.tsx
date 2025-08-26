@@ -40,9 +40,7 @@ const NotePanel = () => {
 					</TabPanel>
 				</VStack>
 			</CardHeader>
-			<div style={ { overflow: 'auto' } }>
-				<NoteList />
-			</div>
+			<NoteList />
 		</>
 	);
 };

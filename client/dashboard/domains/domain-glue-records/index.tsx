@@ -1,6 +1,6 @@
 import { isMobile } from '@automattic/viewport';
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { Link, useRouter } from '@tanstack/react-router';
+import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
+import { Link, useNavigate } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
@@ -44,10 +44,11 @@ const DEFAULT_LAYOUTS = {
 };
 
 function DomainGlueRecords() {
-	const router = useRouter();
-
+	const navigate = useNavigate();
 	const { domainName } = domainRoute.useParams();
-	const { data: glueRecordsData, isLoading } = useQuery( domainGlueRecordsQuery( domainName ) );
+	const { data: glueRecordsData, isLoading } = useSuspenseQuery(
+		domainGlueRecordsQuery( domainName )
+	);
 	const deleteMutation = useMutation( domainGlueRecordDeleteMutation( domainName ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
@@ -58,7 +59,7 @@ function DomainGlueRecords() {
 				label: __( 'Edit' ),
 				callback: ( items ) => {
 					const item = items[ 0 ];
-					router.navigate( {
+					navigate( {
 						to: domainGlueRecordsEditRoute.fullPath,
 						params: { domainName, nameServer: item?.nameserver },
 					} );
@@ -69,7 +70,7 @@ function DomainGlueRecords() {
 				label: __( 'Delete' ),
 				callback: ( items ) => {
 					const item = items[ 0 ];
-					deleteMutation.mutate( item.nameserver, {
+					deleteMutation.mutate( item, {
 						onSuccess: () => {
 							createSuccessNotice( __( 'Glue record was deleted successfully.' ), {
 								type: 'snackbar',
@@ -84,7 +85,7 @@ function DomainGlueRecords() {
 				},
 			},
 		],
-		[]
+		[ createErrorNotice, createSuccessNotice, deleteMutation, domainName, navigate ]
 	);
 
 	const fields: Field< DomainGlueRecord >[] = useMemo(
@@ -118,7 +119,7 @@ function DomainGlueRecords() {
 				},
 			},
 		],
-		[]
+		[ domainName ]
 	);
 
 	const [ view, setView ] = useState< GlueRecordsView >( DEFAULT_VIEW );
@@ -134,7 +135,7 @@ function DomainGlueRecords() {
 			size="small"
 			header={
 				<PageHeader
-					title={ __( 'Glue Records' ) }
+					title={ __( 'Glue records' ) }
 					actions={
 						<RouterLinkButton
 							to={ domainGlueRecordsAddRoute.fullPath }
@@ -142,7 +143,7 @@ function DomainGlueRecords() {
 							variant="primary"
 							__next40pxDefaultSize
 						>
-							{ __( 'Add Glue Records' ) }
+							{ __( 'Add glue record' ) }
 						</RouterLinkButton>
 					}
 				/>

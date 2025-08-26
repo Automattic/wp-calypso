@@ -3,6 +3,7 @@ import { useRouter } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
@@ -12,10 +13,14 @@ import {
 	domainDnsQuery,
 	domainDnsEmailMutation,
 } from '../../app/queries/domain-dns-records';
+import { domainNameServersQuery } from '../../app/queries/domain-name-servers';
 import { domainDnsAddRoute, domainRoute } from '../../app/router/domains';
 import DataViewsCard from '../../components/dataviews-card';
+import InlineSupportLink from '../../components/inline-support-link';
+import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { areAllWpcomNameServers } from '../name-servers/utils';
 import { useDnsActions } from './actions';
 import DnsActionsMenu from './dns-actions-menu';
 import DnsImportDialog from './dns-import-dialog';
@@ -61,6 +66,7 @@ export default function DomainDns() {
 	const restoreDefaultEmailRecordsMutation = useMutation( domainDnsEmailMutation( domainName ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
+	const { data: nameservers } = useSuspenseQuery( domainNameServersQuery( domainName ) );
 	const { data: dnsData, isLoading } = useQuery( domainDnsQuery( domainName ) );
 	const [ isRestoreDefaultARecordsDialogOpen, setIsRestoreDefaultARecordsDialogOpen ] =
 		useState( false );
@@ -186,6 +192,91 @@ export default function DomainDns() {
 		} );
 	};
 
+	const renderDefaultARecordsNotice = () => {
+		if ( ! areAllWpcomNameServers( nameservers ) || hasDefaultARecordsValue ) {
+			return null;
+		}
+
+		if ( domain.is_gravatar_domain ) {
+			return (
+				<Notice variant="warning" title={ __( 'Your domain is not using default A records' ) }>
+					{ createInterpolateElement(
+						__(
+							'This means it may not be pointing to your Gravatar profile correctly. To restore default A records, click on the three dots menu and select “Restore default A records”. <defaultRecordsLink>Learn more</defaultRecordsLink>'
+						),
+						{
+							defaultRecordsLink: <InlineSupportLink supportContext="dns_default_records" />,
+						}
+					) }
+				</Notice>
+			);
+		}
+		return (
+			<Notice variant="warning" title={ __( 'Your domain is not using default A records' ) }>
+				{ createInterpolateElement(
+					__(
+						'This means it may not be pointing to your WordPress.com site correctly. To restore default A records, click on the three dots menu and select “Restore default A records”. <defaultRecordsLink>Learn more</defaultRecordsLink>'
+					),
+					{
+						defaultRecordsLink: <InlineSupportLink supportContext="dns_default_records" />,
+					}
+				) }
+			</Notice>
+		);
+	};
+
+	const renderDefaultCnameRecordNotice = () => {
+		if ( ! areAllWpcomNameServers( nameservers ) || hasDefaultCnameRecordValue ) {
+			return null;
+		}
+
+		return (
+			<Notice
+				variant="warning"
+				title={ __( 'Your domain is not using the default WWW CNAME record' ) }
+			>
+				{ createInterpolateElement(
+					__(
+						'This means your WordPress.com site may not be reached correctly using the www prefix. To restore the default WWW CNAME record, click on the three dots menu and select “Restore default CNAME record”. <defaultRecordsLink>Learn more</defaultRecordsLink>'
+					),
+					{
+						defaultRecordsLink: <InlineSupportLink supportContext="dns_default_records" />,
+					}
+				) }
+			</Notice>
+		);
+	};
+
+	const renderDnsRecordsExplanationNotice = () => {
+		return (
+			<Notice title={ __( 'What are DNS records used for?' ) }>
+				{ createInterpolateElement(
+					__(
+						'Custom DNS records allow you to connect your domain to third-party services that are not hosted on WordPress.com, such as an email provider. <link>Learn more</link>'
+					),
+					{
+						link: <InlineSupportLink supportContext="manage-your-dns-records" />,
+					}
+				) }
+			</Notice>
+		);
+	};
+
+	const renderExternalNameserversNotice = () => {
+		if ( areAllWpcomNameServers( nameservers ) || ! nameservers || ! nameservers.length ) {
+			return null;
+		}
+
+		// TODO: Add a link to the name servers page or connection setup, once we have the pages
+		return (
+			<Notice variant="warning" title={ __( 'Your domain is using external name servers' ) }>
+				{ __(
+					'This means the DNS records you are editing will not be in effect until you switch to use WordPress.com name servers.'
+				) }
+			</Notice>
+		);
+	};
+
 	return (
 		<PageLayout
 			size="small"
@@ -228,10 +319,20 @@ export default function DomainDns() {
 								/>
 							</>
 						}
+						description={ createInterpolateElement(
+							__( 'DNS records change how your domain works. <link>Learn more</link>' ),
+							{
+								link: <InlineSupportLink supportContext="manage-your-dns-records" />,
+							}
+						) }
 					/>
 				</VStack>
 			}
 		>
+			{ renderDnsRecordsExplanationNotice() }
+			{ renderExternalNameserversNotice() }
+			{ renderDefaultARecordsNotice() }
+			{ renderDefaultCnameRecordNotice() }
 			<DataViewsCard>
 				{ dnsData?.records?.length === 0 && ! isLoading ? (
 					<div style={ { padding: '20px', textAlign: 'center' } }>
@@ -262,7 +363,7 @@ export default function DomainDns() {
 				onConfirm={ handleRestoreDefaultARecords }
 				onCancel={ () => setIsRestoreDefaultARecordsDialogOpen( false ) }
 				isBusy={ updateDnsMutation.isPending }
-				isGravatarDomain={ domain?.is_gravatar_domain ?? false }
+				isGravatarDomain={ domain.is_gravatar_domain ?? false }
 				isOpen={ isRestoreDefaultARecordsDialogOpen }
 			/>
 			<RestoreDefaultCnameRecord

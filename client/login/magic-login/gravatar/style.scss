@@ -1,8 +1,8 @@
-@import "@automattic/onboarding/styles/mixins";
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-@import "@automattic/calypso-color-schemes";
-@import "@automattic/typography/styles/variables";
+@import '@automattic/onboarding/styles/mixins';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@automattic/calypso-color-schemes';
+@import '@automattic/typography/styles/variables';
 
 .grav-powered-magic-login__form-header {
 	font-size: $font-title-small;
@@ -11,7 +11,7 @@
 	text-align: center;
 
 	body.is-section-signup & {
-		color: var(--color-text-inverted);
+		color: var( --color-text-inverted );
 	}
 }
 
@@ -37,13 +37,19 @@
 			color: #2404eb;
 		}
 
-		.magic-login__form-action button[type="submit"].components-button.is-primary {
+		.magic-login__form-action button[type='submit'].components-button.is-primary {
 			min-height: unset;
 			margin-top: 0;
 			border-radius: 2px;
 
 			&.is-busy {
-				background-image: linear-gradient(-45deg, #2404eb 33%, darken(#2404eb, 10%) 33%, darken(#2404eb, 10%) 70%, #2404eb 70%);
+				background-image: linear-gradient(
+					-45deg,
+					#2404eb 33%,
+					darken( #2404eb, 10% ) 33%,
+					darken( #2404eb, 10% ) 70%,
+					#2404eb 70%
+				);
 			}
 
 			&,
@@ -51,9 +57,9 @@
 				background-color: #2404eb;
 			}
 
-			&:hover:not(&:disabled),
+			&:hover:not( &:disabled ),
 			&:focus {
-				background-color: darken(#2404eb, 10%);
+				background-color: darken( #2404eb, 10% );
 			}
 		}
 
@@ -112,15 +118,21 @@
 		}
 	}
 
-	button[type="submit"].form-button.is-primary,
-	.magic-login__form-action button[type="submit"].components-button.is-primary {
+	button[type='submit'].form-button.is-primary,
+	.magic-login__form-action button[type='submit'].components-button.is-primary {
 		width: 100%;
 		min-height: 50px;
 		margin-top: 24px;
 		border-radius: 4px;
 
 		&.is-busy {
-			background-image: linear-gradient(-50deg, #1d4fc4 33%, darken(#1d4fc4, 10%) 33%, darken(#1d4fc4, 10%) 70%, #1d4fc4 70%);
+			background-image: linear-gradient(
+				-50deg,
+				#1d4fc4 33%,
+				darken( #1d4fc4, 10% ) 33%,
+				darken( #1d4fc4, 10% ) 70%,
+				#1d4fc4 70%
+			);
 		}
 
 		&:disabled {
@@ -132,15 +144,24 @@
 
 	.grav-powered-magic-login__content,
 	.grav-powered-magic-login__gravatar-info,
-	input[type="text"].form-text-input,
+	input[type='text'].form-text-input,
 	button {
-		font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+		font-family:
+			'SF Pro Text',
+			-apple-system,
+			BlinkMacSystemFont,
+			'Segoe UI',
+			Roboto,
+			Oxygen-Sans,
+			Ubuntu,
+			Cantarell,
+			'Helvetica Neue',
+			sans-serif;
 	}
 
 	.grav-powered-magic-login__content {
 		background-color: #fff;
 		color: #101517;
-		/* stylelint-disable-next-line scales/radii */
 		border-radius: 8px;
 		padding: 20px;
 
@@ -160,7 +181,17 @@
 
 	.grav-powered-magic-login__header,
 	.grav-powered-magic-login__form-header {
-		font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+		font-family:
+			'SF Pro Display',
+			-apple-system,
+			BlinkMacSystemFont,
+			'Segoe UI',
+			Roboto,
+			Oxygen-Sans,
+			Ubuntu,
+			Cantarell,
+			'Helvetica Neue',
+			sans-serif;
 		font-size: 32px;
 		font-weight: 900;
 		line-height: 1.2;
@@ -214,10 +245,10 @@
 	// Hide the label, but keep it for accessibility
 	.form-label {
 		position: absolute;
-		clip: rect(0 0 0 0);
+		clip: rect( 0 0 0 0 );
 	}
 
-	input[type="text"].form-text-input {
+	input[type='text'].form-text-input {
 		padding: 14px 16px;
 		border-color: #9ea4a8;
 		line-height: 1.5;
@@ -229,7 +260,7 @@
 
 	.grav-powered-magic-login__tos {
 		margin-bottom: 24px;
-		color: rgba(#00101c, 0.6);
+		color: rgba( #00101c, 0.6 );
 	}
 
 	.magic-login__form-action {
@@ -285,11 +316,11 @@
 		cursor: pointer;
 
 		&::before {
-			content: "";
+			content: '';
 			display: inline-block;
 			min-width: 19px;
 			min-height: 20px;
-			background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjEiIHZpZXdCb3g9IjAgMCAyMCAyMSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iMC41IiB5PSIxIiB3aWR0aD0iMTkiIGhlaWdodD0iMTkiIHJ4PSI5LjUiIGZpbGw9IndoaXRlIi8+CjxyZWN0IHg9IjAuNSIgeT0iMSIgd2lkdGg9IjE5IiBoZWlnaHQ9IjE5IiByeD0iOS41IiBzdHJva2U9IiM5NDk0OTQiLz4KPC9zdmc+Cg==);
+			background-image: url( data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjEiIHZpZXdCb3g9IjAgMCAyMCAyMSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iMC41IiB5PSIxIiB3aWR0aD0iMTkiIGhlaWdodD0iMTkiIHJ4PSI5LjUiIGZpbGw9IndoaXRlIi8+CjxyZWN0IHg9IjAuNSIgeT0iMSIgd2lkdGg9IjE5IiBoZWlnaHQ9IjE5IiByeD0iOS41IiBzdHJva2U9IiM5NDk0OTQiLz4KPC9zdmc+Cg== );
 			background-size: cover;
 		}
 
@@ -301,7 +332,7 @@
 			background: #f0f0f0;
 
 			&::before {
-				background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjEiIHZpZXdCb3g9IjAgMCAyMCAyMSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeT0iMC41IiB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHJ4PSIxMCIgZmlsbD0iIzM4NThFOSIvPgo8cmVjdCB4PSI2IiB5PSI2LjUiIHdpZHRoPSI4IiBoZWlnaHQ9IjgiIHJ4PSI0IiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K);
+				background-image: url( data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjEiIHZpZXdCb3g9IjAgMCAyMCAyMSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeT0iMC41IiB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHJ4PSIxMCIgZmlsbD0iIzM4NThFOSIvPgo8cmVjdCB4PSI2IiB5PSI2LjUiIHdpZHRoPSI4IiBoZWlnaHQ9IjgiIHJ4PSI0IiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K );
 			}
 		}
 	}
@@ -322,10 +353,10 @@
 			text-align: left;
 			cursor: pointer;
 			text-decoration: underline;
-			
+
 			&:disabled {
-			  opacity: 0.3;
-			  cursor: not-allowed;
+				opacity: 0.3;
+				cursor: not-allowed;
 			}
 		}
 	}
@@ -343,7 +374,7 @@
 		display: flex;
 		align-items: center;
 		font-size: 14px;
-		color: rgba(#00101c, 0.8);
+		color: rgba( #00101c, 0.8 );
 		margin-bottom: 20px;
 
 		img {
@@ -361,7 +392,7 @@
 
 	.gridicons-checkmark {
 		margin-right: 8px;
-		transform: translateY(4px);
+		transform: translateY( 4px );
 	}
 
 	@include break-small {
@@ -442,7 +473,17 @@
 
 	.button.is-primary {
 		height: 42px;
-		font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+		font-family:
+			'SF Pro Text',
+			-apple-system,
+			BlinkMacSystemFont,
+			'Segoe UI',
+			Roboto,
+			Oxygen-Sans,
+			Ubuntu,
+			Cantarell,
+			'Helvetica Neue',
+			sans-serif;
 		background-color: #1d4fc4;
 		font-size: 16px;
 		font-weight: 600;

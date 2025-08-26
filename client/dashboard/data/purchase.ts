@@ -1,3 +1,5 @@
+import { SubscriptionBillPeriod } from '../data/constants';
+
 export interface RefundOptions {
 	to_product_id: number;
 	refund_amount: number;
@@ -22,10 +24,8 @@ export interface PriceTierEntry {
 	maximum_units?: null | number;
 	minimum_price: number;
 	minimum_price_display: string;
-	minimum_price_monthly_display?: string | null;
 	maximum_price: number;
 	maximum_price_display?: string | null;
-	maximum_price_monthly_display?: string | null;
 
 	/**
 	 * If set, is used to transform the usage/quantity of units used to derive the number of units
@@ -63,18 +63,6 @@ export interface PurchasePriceTier {
 	maximumPriceDisplay?: string | null;
 }
 
-export interface RawPurchasePriceTierEntry extends PriceTierEntry {
-	/**
-	 * The formatted minimum price for the tier.
-	 */
-	minimum_price_monthly_display: string;
-
-	/**
-	 * The formatted maxiumum price for the tier, if any.
-	 */
-	maximum_price_monthly_display: string | null;
-}
-
 /**
  * A subscription or one-time purchase.
  *
@@ -85,12 +73,18 @@ export interface RawPurchasePriceTierEntry extends PriceTierEntry {
  */
 export interface Purchase {
 	/**
-	 * The WordPress.com subscription ID number as a string.
+	 * The WordPress.com subscription ID number.
 	 */
-	ID: string;
+	ID: number;
 
 	amount: number;
-	attached_to_purchase_id: string | null;
+
+	/**
+	 * The ID number of a WordPress.com purchase whose renewal will renew this
+	 * purchase (eg: the plan or domain registration for a domain connection).
+	 */
+	attached_to_purchase_id: number | null;
+
 	auto_renew_coupon_code: string | null;
 	auto_renew_coupon_discount_percentage: number | null;
 
@@ -99,9 +93,22 @@ export interface Purchase {
 	 * number of days in every billing period! It's just a numeric key that is
 	 * close to the average billing period for this billing plan. For example,
 	 * `31` means "monthly" although the expiry date may be fewer than 31 days
-	 * from the last renewal.
+	 * from the last renewal. `-1` means that it does not expire.
 	 */
-	bill_period_days: number;
+	bill_period_days:
+		| typeof SubscriptionBillPeriod.PLAN_ONE_TIME_PERIOD
+		| typeof SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD
+		| typeof SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD
+		| typeof SubscriptionBillPeriod.PLAN_BIENNIAL_PERIOD
+		| typeof SubscriptionBillPeriod.PLAN_TRIENNIAL_PERIOD
+		| typeof SubscriptionBillPeriod.PLAN_QUADRENNIAL_PERIOD
+		| typeof SubscriptionBillPeriod.PLAN_QUINQUENNIAL_PERIOD
+		| typeof SubscriptionBillPeriod.PLAN_SEXENNIAL_PERIOD
+		| typeof SubscriptionBillPeriod.PLAN_SEPTENNIAL_PERIOD
+		| typeof SubscriptionBillPeriod.PLAN_OCTENNIAL_PERIOD
+		| typeof SubscriptionBillPeriod.PLAN_NOVENNIAL_PERIOD
+		| typeof SubscriptionBillPeriod.PLAN_DECENNIAL_PERIOD
+		| typeof SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD;
 
 	bill_period_label: string;
 	most_recent_renew_date: string;
@@ -112,7 +119,7 @@ export interface Purchase {
 	cost_to_unbundle: undefined | number | string;
 	cost_to_unbundle_display: undefined | string;
 	price_text: string;
-	price_tier_list: Array< RawPurchasePriceTierEntry >;
+	price_tier_list: Array< PriceTierEntry >;
 	currency_code: string;
 	currency_symbol: string;
 	description: string;
@@ -134,16 +141,47 @@ export interface Purchase {
 	included_domain: string;
 	included_domain_purchase_amount: number;
 	introductory_offer: RawPurchaseIntroductoryOffer | null;
+
+	/**
+	 * True if the subscription can be cancelled by the user (removed and
+	 * possibly refunded). A subscription can be removable (see `is_removable`)
+	 * even if it cannot be cancelled.
+	 */
 	is_cancelable: boolean;
 
 	/**
-	 * If this is a domain product (eg: registration, mapping, or transfer), it
-	 * will be the string 'true'.
+	 * True if the subscription can be removed by the user (directly removed,
+	 * without a refund). A subscription can still be cancelled (see
+	 * `is_cancelable`) or refunded (see `is_refundable`) even if it is not
+	 * removable.
 	 */
-	is_domain?: 'true';
+	is_removable: boolean;
 
+	/**
+	 * True if this subscription has refundable receipts.
+	 *
+	 * If this is true, it means that it's possible the subscription could
+	 * be refunded. It does not mean there is money that would be refunded! For
+	 * that, check `total_refund_amount` instead. As an example, if a
+	 * subscription has already been refunded, `is_refundable` may be true,
+	 * but `total_refund_amount` will return a Store_Price of 0.
+	 */
+	is_refundable: boolean;
+
+	/**
+	 * True if this is a domain product (eg: registration, mapping, or transfer).
+	 */
+	is_domain: boolean;
+
+	/**
+	 * True if this is a domain registration product.
+	 */
 	is_domain_registration: boolean;
+
+	is_pending_registration: boolean;
 	is_free_jetpack_stats_product: boolean;
+	is_jetpack_backup_t1: boolean;
+	is_jetpack_legacy_plan: boolean;
 	is_google_workspace_product: boolean;
 	is_hundred_year_domain: boolean;
 	is_iap_purchase: boolean;
@@ -153,7 +191,6 @@ export interface Purchase {
 	is_locked: boolean;
 	is_plan: boolean;
 	is_rechargable: boolean;
-	is_refundable: boolean;
 	is_renewable: boolean;
 	is_renewal: boolean;
 	is_titan_mail_product: boolean;
@@ -165,9 +202,9 @@ export interface Purchase {
 	meta: string | undefined;
 
 	/**
-	 * The Ownership number as a string.
+	 * The Ownership number.
 	 */
-	ownership_id: string;
+	ownership_id: number;
 
 	partner_name: string | undefined;
 	partner_slug: string | undefined;
@@ -193,9 +230,9 @@ export interface Purchase {
 	pending_transfer: boolean;
 
 	/**
-	 * The WordPress.com Store product_id number as a string.
+	 * The WordPress.com Store product_id.
 	 */
-	product_id: string;
+	product_id: number;
 
 	product_name: string;
 	product_slug: string;
@@ -210,7 +247,7 @@ export interface Purchase {
 	refund_integer: number;
 	refund_text: string;
 	refund_currency_symbol: string;
-	refund_options: RefundOptions | null;
+	refund_options: RefundOptions[] | null;
 	refund_period_in_days: number;
 	regular_price_text: string;
 	regular_price_integer: number;
@@ -220,9 +257,9 @@ export interface Purchase {
 	sale_amount_integer?: number;
 
 	/**
-	 * The WordPress.com site ID number, as a string. Eg: '12345'.
+	 * The WordPress.com site ID number.
 	 */
-	blog_id: string;
+	blog_id: number;
 
 	blogname: string;
 	site_slug?: string;
@@ -232,14 +269,76 @@ export interface Purchase {
 	renewal_price_tier_usage_quantity: number | undefined | null;
 
 	/**
-	 * The WordPress.com user ID number as a string. Eg: '12345'.
+	 * The WordPress.com user ID number.
 	 */
-	user_id: string;
+	user_id: number;
 
-	auto_renew: '1' | '0' | null;
+	/**
+	 * True if auto-renew is enabled.
+	 *
+	 * IMPORTANT: Just because auto-renew is enabled does not mean that the
+	 * purchase will attempt to auto-renew. If a purchase does not have a
+	 * payment method attached, no auto-renew will be attempted.
+	 */
+	is_auto_renew_enabled: boolean;
+
 	payment_card_id: number | string | undefined;
 	payment_card_type: string | undefined;
 	payment_card_processor: string | undefined;
 	payment_details: string | undefined;
 	payment_expiry: string | undefined;
+
+	/**
+	 * True if this subscription can be upgraded to a different one.
+	 *
+	 * If this is set, we will display an "Upgrade" link in some places. That
+	 * link will typically go to the plans page for the site or some other
+	 * location depending on the product. To cause these buttons to instead add
+	 * a product directly to the cart, also set `upgrade_product_slug`.
+	 */
+	is_upgradable: boolean;
+}
+
+type RawPurchase = Purchase & {
+	/**
+	 * NOTE: this is currently a numeric string but we are trying to transition
+	 * it to a number. By typing it as both, we force consumers to be able to
+	 * handle both situations which should make the transition easier.
+	 */
+	ID: number | string;
+	attached_to_purchase_id: number | string | null;
+	ownership_id: number | string;
+	product_id: number | string;
+	blog_id: number | string;
+	user_id: number | string;
+	/**
+	 * NOTE: this is currently the string "true" if true and undefined if
+	 * false, but we are transitioning to a boolean. By typing it as both, we
+	 * force consumers to be able to handle both situations which should make
+	 * the transition easier.
+	 */
+	is_domain: boolean | 'true' | undefined;
+	is_domain_registration: boolean | 'true' | undefined;
+};
+
+/**
+ * Some data from the purchases endpoints are currently numeric strings but we
+ * are trying to transition them to numbers. Also some domain properties are
+ * intended to be booleans but are actually the string "true". This function
+ * provides a way to migrate safely.
+ */
+export function normalizePurchase( rawPurchase: RawPurchase ): Purchase {
+	return {
+		...rawPurchase,
+		ID: parseInt( String( rawPurchase.ID ), 10 ),
+		attached_to_purchase_id: rawPurchase.attached_to_purchase_id
+			? parseInt( String( rawPurchase.attached_to_purchase_id ), 10 )
+			: null,
+		ownership_id: parseInt( String( rawPurchase.ownership_id ), 10 ),
+		product_id: parseInt( String( rawPurchase.product_id ), 10 ),
+		blog_id: parseInt( String( rawPurchase.blog_id ), 10 ),
+		user_id: parseInt( String( rawPurchase.user_id ), 10 ),
+		is_domain: Boolean( rawPurchase.is_domain ),
+		is_domain_registration: Boolean( rawPurchase.is_domain_registration ),
+	};
 }

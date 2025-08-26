@@ -22,7 +22,11 @@
 		"test": "yarn jest",
 		"test:mobile": "VIEWPORT_NAME=mobile yarn jest",
 		"debug": "PWDEBUG=1 DEBUG=pw:api yarn run test",
-		"debug:mobile": "PWDEBUG=1 DEBUG=pw:api yarn run test:mobile"
+		"debug:mobile": "PWDEBUG=1 DEBUG=pw:api yarn run test:mobile",
+		"playwright": "npx playwright test --project=chrome --project=pixel",
+		"playwright:mobile": "npx playwright test --project=pixel",
+		"playwright:desktop": "npx playwright test --project=chrome",
+		"playwright:all": "npx playwright test"
 	},
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",
@@ -37,6 +41,7 @@
 		"@automattic/jest-circus-allure-reporter": "workspace:^",
 		"@automattic/languages": "workspace:^",
 		"@playwright/browser-chromium": "1.48.2",
+		"@playwright/test": "1.48.2",
 		"@types/archiver": "^5.3.1",
 		"archiver": "^5.3.0",
 		"asana-phrase": "^0.0.8",

@@ -300,7 +300,7 @@
 			transition: flex-grow 0.2s;
 			background: var( --color-light-backdrop );
 			max-height: calc( 100vh - 32px - var( --masterbar-height ) );
-			border-radius: 8px; /* stylelint-disable-line scales/radii */
+			border-radius: 8px;
 			@media ( max-width: $break-small ) {
 				max-height: calc( 100vh - var( --masterbar-height ) );
 			}
@@ -381,7 +381,6 @@ body.is-section-plugins .hosting-dashboard-layout,
 	}
 	.dataviews-wrapper {
 		margin: auto;
-		/* stylelint-disable-next-line scales/radii */
 		border-radius: 8px;
 
 		.dataviews-view-table {
