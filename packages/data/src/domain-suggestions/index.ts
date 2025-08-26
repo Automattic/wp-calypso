@@ -1,2 +1,2 @@
-export * from './query-functions';
+export * from './fetchers';
 export type * from './types';
