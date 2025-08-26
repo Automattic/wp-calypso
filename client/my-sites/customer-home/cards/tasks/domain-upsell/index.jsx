@@ -157,7 +157,7 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 		'{{strong}}%(domainSuggestion)s{{/strong}} is a perfect site address. It’s available, easy to find, share, and follow. Get it now and claim a corner of the web.',
 		{
 			components: {
-				strong: <strong />,
+				strong: <strong data-testid="domain-upsell-domain-name" />,
 			},
 			args: {
 				domainSuggestion: domainSuggestionName,
@@ -172,7 +172,7 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 					"{{strong}}%(domainSuggestion)s{{/strong}} is included free for one year with any paid plan. Claim it and start building a site that's easy to find, share and follow.",
 					{
 						components: {
-							strong: <strong />,
+							strong: <strong data-testid="domain-upsell-domain-name" />,
 						},
 						args: {
 							domainSuggestion: domainSuggestionName,

@@ -184,7 +184,7 @@ export function RenderDomainUpsell( {
 	const getCardSubtitle = () => {
 		const translateProps = {
 			components: {
-				strong: <strong />,
+				strong: <strong data-testid="domain-upsell-domain-name" />,
 			},
 			args: {
 				domainSuggestion: domainSuggestionName,
