@@ -8,12 +8,16 @@ $tab-background-selected: var(--color-surface);
 .hosting-hero-section {
 	max-width: 1500px;
 	margin-inline: auto;
-	padding: 24px 32px 0;
+	padding: 24px 16px 0;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
 	gap: 39px;
 	transition: height .25s ease-out;
+
+	@include break-medium {
+		padding-inline: 32px;
+	}
 
 	.a4a-migration-offer-v3,
 	.pressable-premium-plan-migration {

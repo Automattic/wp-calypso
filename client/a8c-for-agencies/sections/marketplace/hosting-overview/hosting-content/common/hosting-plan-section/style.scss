@@ -48,7 +48,7 @@
 .hosting-plan-section__main {
 	border-radius: 8px;
 	background-color: var( --color-primary-0 );
-	padding: 24px;
+	padding: 8px;
 	max-width: 100%;
 	overflow: hidden;
 
@@ -72,10 +72,14 @@
 .hosting-plan-section__card {
 	border-radius: 8px;
 	box-shadow: 0 3px 1px 0 #0000000a;
-	padding: 32px;
+	padding: 16px;
 	background-color: var( --color-surface );
 	max-width: 100%;
 	overflow: hidden;
+
+	@include break-medium {
+		padding: 32px;
+	}
 }
 
 .hosting-plan-section__details {
