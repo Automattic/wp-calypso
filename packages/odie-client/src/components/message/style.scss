@@ -28,10 +28,6 @@ $blueberry-color: #3858e9;
 	.odie-chatbox-dislike-feedback-message {
 		flex: 1;
 
-		.message-header {
-			width: auto;
-		}
-
 		p {
 			width: 80%;
 			display: flex;
@@ -39,7 +35,6 @@ $blueberry-color: #3858e9;
 			align-items: center;
 			justify-content: start;
 			background-color: var( --studio-gray-0 );
-
 			border-radius: 8px 8px 8px 0;
 			font-size: 0.875rem;
 			margin-bottom: 0;
@@ -53,23 +48,53 @@ $blueberry-color: #3858e9;
 .odie-chatbox-message {
 	display: flex;
 	word-wrap: break-word;
-	font-size: $font-body;
-	line-height: 1.4;
-	color: #000;
+	color: $gray-900;
+	font-size: $font-size-large;
+	line-height: 1.6;
 	flex-direction: row;
-	padding: 0 16px;
 	gap: 8px;
 	width: 100%;
 	box-sizing: border-box;
 	text-wrap: pretty;
 	word-break: break-word;
+	column-gap: 0;
+
+	&.odie-chatbox-message-user {
+		border-radius: 24px 24px 8px 24px;
+		background-color: $gray-200;
+		width: max-content;
+		margin-right: 16px;
+		padding: 10px 16px;
+		max-width: calc( 100% - 32px );
+		align-self: flex-end;
+
+		p {
+			color: $gray-900;
+			padding: 0;
+			span {
+				background-color: transparent;
+				a {
+					color: var( --studio-white );
+					&:hover {
+						color: var( --studio-blue-40 );
+					}
+				}
+			}
+		}
+
+		blockquote {
+			background-color: transparent;
+			border-left: 2px solid var( --color-neutral-0 );
+			margin: 8px 0 16px;
+			padding: 8px 16px;
+		}
+	}
 
 	ol,
 	ul {
 		margin: 0;
 		padding-left: 20px;
 		padding-right: 20px;
-		font-size: 0.875rem;
 		font-style: normal;
 
 		li {
@@ -91,6 +116,11 @@ $blueberry-color: #3858e9;
 	}
 
 	.odie-chatbox-message__content {
+		p {
+			margin-bottom: 0;
+			margin-top: 0;
+		}
+
 		h1 {
 			@include heading-2x-large();
 		}
@@ -122,30 +152,14 @@ $blueberry-color: #3858e9;
 		}
 
 		span {
-			font-size: 0.875rem;
-		}
-	}
-
-	&.odie-chatbox-message-no-avatar {
-		.odie-chatbox-message__content {
-			margin-left: 46px;
+			font-size: $font-size-large;
 		}
 	}
 
 	&.odie-chatbox-message-bot {
 		.odie-chatbox-message__content {
-			background-color: var( --studio-gray-0 );
 			flex: 1;
-			padding: 16px;
-
-			border-radius: 8px 8px 8px 0;
-			max-width: 256px;
-
-			p {
-				font-size: 0.875rem;
-				margin-bottom: 0;
-				margin-top: 0;
-			}
+			max-width: calc( 100% - 32px );
 
 			> *:not( :first-child ) {
 				padding-top: 8px;
@@ -169,8 +183,6 @@ $blueberry-color: #3858e9;
 
 	.chat-feedback-wrapper {
 		width: 100%;
-		margin-left: 46px;
-		margin-right: 44px;
 
 		.card.odie-foldable-card.odie-sources-foldable-card {
 			margin-top: 4px;
@@ -251,10 +263,8 @@ $blueberry-color: #3858e9;
 		flex-wrap: wrap;
 		gap: 8px;
 		flex-direction: row;
+		padding: 0 16px;
 
-		.odie-introduction-message-content__conversation_feedback {
-			flex: 2;
-		}
 		.message-feedback-submit {
 			margin-left: 46px;
 			align-items: start;
@@ -270,7 +280,6 @@ $blueberry-color: #3858e9;
 
 		.odie-conversation__feedback {
 			width: 100%;
-			margin-left: 46px;
 			display: flex;
 			align-items: center;
 
@@ -287,9 +296,9 @@ $blueberry-color: #3858e9;
 				display: flex;
 				gap: 8px;
 
-				button {
-					border: solid 0.5px var( --studio-gray-5 );
-					padding: 6px;
+				&-button {
+					padding: 0;
+					color: $gray-700;
 				}
 			}
 		}
@@ -302,20 +311,17 @@ $blueberry-color: #3858e9;
 			padding: 8px 0;
 
 			> div {
-				border-radius: 8px 8px 0 8px;
-				background: var( --studio-wordpress-blue, #3858e9 );
-				width: 80%;
-				padding: 16px;
-				max-width: 256px;
-				box-sizing: border-box;
-				color: var( --studio-white );
-				font-size: 0.875rem;
+				border-radius: 24px 24px 8px 24px;
+				background-color: $gray-200;
+				width: max-content;
+				margin-right: 16px;
+				padding: 10px 16px;
+				max-width: calc( 100% - 32px );
+				align-self: flex-end;
 			}
 		}
 
 		.odie-conversation-feedback__message {
-			padding: 12px 44px;
-
 			h3 {
 				font-weight: 500;
 				line-height: 24px;
@@ -385,120 +391,8 @@ $blueberry-color: #3858e9;
 	padding-bottom: 0;
 }
 
-.odie-chatbox-message.odie-chatbox-message-user > :last-child {
-	margin-bottom: 0;
-}
-
-.odie-chatbox-message.odie-chatbox-message-user {
-	border-radius: 8px 8px 0 8px;
-	background-color: $blueberry-color;
-	width: 80%;
-	margin-right: 16px;
-	padding: 16px;
-	max-width: 256px;
-
-	p {
-		color: var( --studio-white );
-		padding: 0;
-		span {
-			background-color: transparent;
-			a {
-				color: var( --studio-white );
-				&:hover {
-					color: var( --studio-blue-40 );
-				}
-			}
-		}
-	}
-
-	blockquote {
-		background-color: transparent;
-		border-left: 2px solid var( --color-neutral-0 );
-		margin: 8px 0 16px;
-		padding: 8px 16px;
-	}
-}
-
-.odie-chatbox-message.odie-chatbox-message-business {
-	.odie-chatbox-message__content {
-		background-color: #f7f8fe;
-
-		border-radius: 8px 8px 8px 0;
-		padding: 16px;
-	}
-
-	blockquote {
-		background-color: transparent;
-		border-left: 2px solid var( --studio-gray-10 );
-		margin: 8px 0 16px;
-		padding: 8px 16px;
-	}
-}
-
 .odie-chatbox-message.odie-chatbox-message-bot.odie-chatbox-message-message {
-	border-radius: 8px 8px 8px 0;
-	background-color: var( --studio-white );
 	flex-wrap: wrap;
-}
-
-.odie-chatbox-message p {
-	font-size: 0.875rem;
-	padding-bottom: 16px;
-	padding-top: 16px;
-	margin-bottom: 0;
-	margin-top: 0;
-	line-height: 20px;
-}
-
-.odie-introduction-message-content {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background-color: var( --studio-gray-0 );
-	width: 80%;
-
-	border-radius: 8px 8px 8px 0;
-	max-width: 256px;
-	padding: 16px;
-
-	p {
-		color: var( --studio-gray-80 );
-		line-height: 20px;
-	}
-
-	&.odie-introduction-message-content__conversation_feedback {
-		flex-direction: column;
-		align-items: baseline;
-		padding: 0;
-	}
-}
-
-.message-header {
-	display: flex;
-	align-items: end;
-
-	.user {
-		justify-content: flex-start;
-	}
-
-	.bot {
-		justify-content: space-between;
-	}
-
-	svg {
-		width: 38px;
-		height: 38px;
-	}
-}
-
-.message-header-name {
-	flex: 1;
-	text-align: left;
-}
-
-.message-header-buttons {
-	flex: 1;
-	text-align: end;
 }
 
 .odie-fullscreen {
@@ -525,20 +419,6 @@ $blueberry-color: #3858e9;
 			margin: auto;
 			font-size: $font-body;
 			padding-top: 0;
-
-			.message-header {
-				padding-top: 16px;
-				position: sticky;
-				top: 0;
-				background-color: #fff;
-				z-index: 1;
-			}
-		}
-
-		.odie-chatbox-message-sources-container-fullscreen {
-			max-width: 800px;
-			max-height: 80vh;
-			overflow-y: auto;
 		}
 
 		.odie-foldable-card.odie-sources-foldable-card {
@@ -834,8 +714,6 @@ $custom-border-corner-size: 16px;
 }
 
 .odie-chatbox-message-sources-container {
-	padding-bottom: 28px;
-
 	.foldable-card {
 		margin: 0 !important;
 		width: 100% !important;
@@ -853,10 +731,6 @@ $custom-border-corner-size: 16px;
 		.foldable-card {
 			box-shadow: 0 -1px 0 rgba( 0, 0, 0, 0.1 );
 		}
-	}
-
-	&.next-chat-message-same-sender {
-		padding-bottom: 8px;
 	}
 }
 

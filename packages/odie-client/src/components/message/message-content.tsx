@@ -1,9 +1,8 @@
-import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { isCSATMessage, zendeskMessageConverter } from '../../utils';
-import ChatWithSupportLabel from '../chat-with-support';
+import { useOdieAssistantContext } from '../../context';
+import { hasSubmittedCSATRating, isCSATMessage, zendeskMessageConverter } from '../../utils';
 import { FeedbackForm } from './feedback-form';
-import { IntroductionMessage } from './introduction-message';
+import { IntroductionMessage } from './introduction-message/introduction-message';
 import MarkdownOrChildren from './mardown-or-children';
 import { UserMessage } from './user-message';
 import type { ZendeskMessage, Message } from '../../types';
@@ -11,21 +10,10 @@ import type { ZendeskMessage, Message } from '../../types';
 export const MessageContent = ( {
 	isDisliked = false,
 	message,
-	messageHeader,
-	isNextMessageFromSameSender,
-	displayChatWithSupportLabel,
-	displayChatWithSupportEndedLabel,
-	displayCSAT,
 }: {
 	message: Message;
-	messageHeader: React.ReactNode;
 	isDisliked?: boolean;
-	isNextMessageFromSameSender?: boolean;
-	displayChatWithSupportLabel?: boolean;
-	displayChatWithSupportEndedLabel?: boolean;
-	displayCSAT?: boolean;
 } ) => {
-	const { __ } = useI18n();
 	const isFeedbackMessage = isCSATMessage( message );
 	const messageClasses = clsx(
 		'odie-chatbox-message',
@@ -33,13 +21,11 @@ export const MessageContent = ( {
 		`odie-chatbox-message-${ message.type ?? 'message' }`,
 		{
 			'odie-chatbox-message-conversation-feedback': isFeedbackMessage,
-			'odie-chatbox-message-no-avatar': message?.context?.flags?.show_ai_avatar === false,
 		}
 	);
+	const { chat } = useOdieAssistantContext();
 
-	const containerClasses = clsx( 'odie-chatbox-message-sources-container', {
-		'next-chat-message-same-sender': isNextMessageFromSameSender,
-	} );
+	const displayCSAT = ! hasSubmittedCSATRating( chat );
 
 	const isMessageWithEscalationOption =
 		message.role === 'bot' &&
@@ -67,39 +53,20 @@ export const MessageContent = ( {
 	const markdownMessageContent = shouldParseMessage() ? parseTextMessage( message ) : message;
 
 	return (
-		<>
-			{ isFeedbackMessage && (
-				<ChatWithSupportLabel labelText={ __( 'Chat with support ended', __i18n_text_domain__ ) } />
-			) }
-			<div className={ containerClasses } data-is-message="true">
-				<div className={ messageClasses }>
-					{ message?.context?.flags?.show_ai_avatar !== false && messageHeader }
-					{ message.type === 'error' && <MarkdownOrChildren messageContent={ message.content } /> }
-					{ ( [ 'message', 'image', 'image-placeholder', 'file', 'text' ].includes(
-						message.type
-					) ||
-						! message.type ) && (
-						<UserMessage
-							message={ markdownMessageContent }
-							isDisliked={ isDisliked }
-							isMessageWithEscalationOption={ isMessageWithEscalationOption }
-						/>
-					) }
-					{ message.type === 'introduction' && <IntroductionMessage content={ message.content } /> }
-					{ displayCSAT && isFeedbackMessage && message.feedbackOptions && (
-						<FeedbackForm chatFeedbackOptions={ message?.feedbackOptions } />
-					) }
-				</div>
-			</div>
-
-			{ displayChatWithSupportLabel && (
-				<ChatWithSupportLabel
-					labelText={ __( 'Chat with support started', __i18n_text_domain__ ) }
+		<div className={ messageClasses }>
+			{ message.type === 'error' && <MarkdownOrChildren messageContent={ message.content } /> }
+			{ ( [ 'message', 'image', 'image-placeholder', 'file', 'text' ].includes( message.type ) ||
+				! message.type ) && (
+				<UserMessage
+					message={ markdownMessageContent }
+					isDisliked={ isDisliked }
+					isMessageWithEscalationOption={ isMessageWithEscalationOption }
 				/>
 			) }
-			{ displayChatWithSupportEndedLabel && (
-				<ChatWithSupportLabel labelText={ __( 'Chat with support ended', __i18n_text_domain__ ) } />
+			{ message.type === 'introduction' && <IntroductionMessage content={ message.content } /> }
+			{ displayCSAT && isFeedbackMessage && message.feedbackOptions && (
+				<FeedbackForm chatFeedbackOptions={ message?.feedbackOptions } />
 			) }
-		</>
+		</div>
 	);
 };
