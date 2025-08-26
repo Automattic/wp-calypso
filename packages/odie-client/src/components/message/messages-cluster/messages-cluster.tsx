@@ -4,7 +4,7 @@ import { Fragment } from 'react';
 import ChatMessage from '..';
 import { useOdieAssistantContext } from '../../../context';
 import { isCSATMessage } from '../../../utils';
-import { isAttachment, isTransitionToSupportMessage } from '../../../utils/csat';
+import { hasFeedbackForm, isAttachment, isTransitionToSupportMessage } from '../../../utils/csat';
 import ChatWithSupportLabel from '../../chat-with-support';
 import type { Message, MessageRole } from '../../../types';
 import './style.scss';
@@ -19,6 +19,8 @@ function getPresentedRole( message: Message ) {
 		return 'csat';
 	} else if ( isAttachment( message ) ) {
 		return 'attachment';
+	} else if ( hasFeedbackForm( message ) ) {
+		return 'feedback';
 	}
 	return message.role;
 }
@@ -36,7 +38,7 @@ function clusterMessagesBySender( messages: Message[] ) {
 
 	let currentGroup: {
 		id: number;
-		role: MessageRole | 'csat' | 'attachment';
+		role: MessageRole | 'csat' | 'attachment' | 'feedback';
 		messages: Message[];
 	} = {
 		id: id++,
