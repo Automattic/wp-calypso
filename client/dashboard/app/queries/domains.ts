@@ -1,4 +1,4 @@
-import { fetchDomainSuggestions } from '@automattic/data/src/domain-suggestions/query-functions';
+import { fetchDomainSuggestions } from '@automattic/data';
 import { queryOptions } from '@tanstack/react-query';
 import { fetchDomains } from '../../data/domains';
 

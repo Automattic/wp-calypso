@@ -4,8 +4,7 @@
 		"declarationDir": "dist/types",
 		"outDir": "dist/esm",
 		"rootDir": "src",
-		"types": [ "jest", "@testing-library/jest-dom" ],
-		"moduleResolution": "bundler"
+		"types": [ "jest", "@testing-library/jest-dom" ]
 	},
 	"include": [ "src" ],
 	"references": [ { "path": "../components" }, { "path": "../data" } ]
