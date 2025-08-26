@@ -28,16 +28,22 @@ export default function IntentToggle( { currentIntent, onIntentChange }: IntentT
 	};
 
 	return (
-		<ToggleGroupControl
-			value={ currentValue }
-			onChange={ handleToggle as ( value: string | number | undefined ) => void }
-			isBlock
-		>
-			<ToggleGroupControlOption value="website-builder" label={ translate( 'Website Builder' ) } />
-			<ToggleGroupControlOption
-				value="wordpress-hosting"
-				label={ translate( 'WordPress Hosting' ) }
-			/>
-		</ToggleGroupControl>
+		<div className="intent-toggle">
+			<ToggleGroupControl
+				label={ translate( 'Plan type selector' ) }
+				hideLabelFromVision
+				value={ currentValue }
+				onChange={ handleToggle as ( value: string | number | undefined ) => void }
+			>
+				<ToggleGroupControlOption
+					value="website-builder"
+					label={ translate( 'Website Builder' ) }
+				/>
+				<ToggleGroupControlOption
+					value="wordpress-hosting"
+					label={ translate( 'WordPress Hosting' ) }
+				/>
+			</ToggleGroupControl>
+		</div>
 	);
 }
