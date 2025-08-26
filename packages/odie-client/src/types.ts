@@ -149,6 +149,7 @@ export type MessageType =
 	| 'help-link'
 	| 'file'
 	| 'image'
+	| 'image-placeholder'
 	| 'introduction'
 	| 'form'
 	| 'formResponse';

@@ -14,16 +14,6 @@ $footer-height: 73px;
 	padding: 0;
 	padding-bottom: $footer-height;
 
-	&::after {
-		content: "";
-		height: $footer-height;
-		bottom: $footer-height;
-		background: linear-gradient(to bottom, transparent, #fff);
-		position: fixed;
-		width: 100%;
-		pointer-events: none;
-	}
-
 	.chatbox {
 		padding-bottom: $footer-height / 2; // give room to the blending white gradient.
 	}
