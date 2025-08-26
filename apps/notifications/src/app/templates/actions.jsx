@@ -43,7 +43,7 @@ const getInitialReplyValue = ( note ) => {
 	return getType( note ) === 'post' ? __( 'Reply to post…' ) : __( 'Reply to comment…' );
 };
 
-const ActionsPane = ( { global, isApproved, isLiked, note } ) => {
+const ActionsPane = ( { isApproved, isLiked, note } ) => {
 	const actions = getActions( note );
 	const hasAction = ( types ) =>
 		[].concat( types ).some( ( type ) => actions.hasOwnProperty( type ) );
@@ -59,20 +59,13 @@ const ActionsPane = ( { global, isApproved, isLiked, note } ) => {
 				{ hasAction( 'answer-prompt' ) && <AnswerPromptButton note={ note } /> }
 			</HStack>
 			{ !! actions[ 'replyto-comment' ] && (
-				<ReplyInput
-					{ ...{
-						note,
-						defaultValue: getInitialReplyValue( note ),
-						global,
-					} }
-				/>
+				<ReplyInput note={ note } defaultValue={ getInitialReplyValue( note ) } />
 			) }
 		</VStack>
 	);
 };
 
 ActionsPane.propTypes = {
-	global: PropTypes.object.isRequired,
 	isApproved: PropTypes.bool.isRequired,
 	isLiked: PropTypes.bool.isRequired,
 	note: PropTypes.object.isRequired,

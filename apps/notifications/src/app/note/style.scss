@@ -139,3 +139,11 @@
 		}
 	}
 }
+
+.comment-reply-input__textarea {
+	flex: 1;
+
+	> .components-base-control__field {
+		margin-bottom: 0;
+	}
+}

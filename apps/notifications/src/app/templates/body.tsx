@@ -15,7 +15,7 @@ import NotePreface from './preface';
 import type { Note, Block, BlockWithSignature } from '../types';
 
 const isReplyBlock = ( note: Note, block: Block ) =>
-	block.ranges && block.ranges.length > 1 && block.ranges[ 1 ].id === note.meta.ids.reply_comment;
+	block.ranges && block.ranges.length > 1 && block.ranges[ 1 ].id === note.meta?.ids.reply_comment;
 
 const ReplyBlock = ( { note }: { note: Note } ) => {
 	const [ replyURL, setReplyURL ] = useState< string >( '' );
@@ -79,7 +79,7 @@ export const ActionBlock = ( { note }: { note: Note } ) => {
 		return null;
 	}
 
-	return <NoteActions note={ note } global={ {} } />;
+	return <NoteActions note={ note } />;
 };
 
 export const NoteBody = ( { note }: { note: Note } ) => {
