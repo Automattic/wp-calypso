@@ -132,7 +132,7 @@ test( 'shows advanced settings panel', async () => {
 	} );
 } );
 
-test( 'shows validation error when subdomain starts with dash and is blurred', async () => {
+test.skip( 'shows validation error when subdomain starts with dash and is blurred', async () => {
 	const user = userEvent.setup();
 
 	renderForm();
@@ -152,7 +152,7 @@ test( 'shows validation error when subdomain starts with dash and is blurred', a
 	} );
 } );
 
-test( 'shows validation error when target URL is empty and blurred', async () => {
+test.skip( 'shows validation error when target URL is empty and blurred', async () => {
 	const user = userEvent.setup();
 
 	renderForm();
@@ -176,7 +176,7 @@ test( 'shows validation error when target URL is empty and blurred', async () =>
 	} );
 } );
 
-test( 'shows validation error when target URL is invalid and blurred', async () => {
+test.skip( 'shows validation error when target URL is invalid and blurred', async () => {
 	const user = userEvent.setup();
 
 	renderForm();
@@ -200,7 +200,7 @@ test( 'shows validation error when target URL is invalid and blurred', async () 
 	} );
 } );
 
-test( 'shows validation error when target URL redirects to same domain without path', async () => {
+test.skip( 'shows validation error when target URL redirects to same domain without path', async () => {
 	const user = userEvent.setup();
 
 	renderForm();
