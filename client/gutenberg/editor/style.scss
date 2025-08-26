@@ -1,10 +1,10 @@
-@import "@wordpress/edit-post/build-style/style.css";
+@import '@wordpress/edit-post/build-style/style.css';
 
 .editor__placeholder {
 	.placeholder {
 		@include placeholder();
 		height: 16px;
-		border-radius: 8px; /* stylelint-disable-line scales/radii */
+		border-radius: 8px;
 	}
 
 	.edit-post-header {

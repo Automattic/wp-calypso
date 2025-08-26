@@ -25,6 +25,7 @@ boot( {
 		notifications: false,
 		me: {
 			privacy: false,
+			apps: false,
 		},
 	},
 } );

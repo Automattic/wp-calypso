@@ -21,6 +21,12 @@ const MeMenu = () => {
 			{ supports.notifications && (
 				<ResponsiveMenu.Item to="/me/notifications">{ __( 'Notifications' ) }</ResponsiveMenu.Item>
 			) }
+			{ supports.reader && (
+				<ResponsiveMenu.Item to="/me/blocked-sites">{ __( 'Blocked sites' ) }</ResponsiveMenu.Item>
+			) }
+			{ hasAppSupport( supports, 'apps' ) && (
+				<ResponsiveMenu.Item to="/me/apps">{ __( 'Apps' ) }</ResponsiveMenu.Item>
+			) }
 		</ResponsiveMenu>
 	);
 };

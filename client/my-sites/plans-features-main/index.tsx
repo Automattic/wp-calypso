@@ -478,20 +478,12 @@ const PlansFeaturesMain = ( {
 	const showStreamlinedPriceExperiment =
 		isInSignup && isStreamlinedPricePlansTreatment( streamlinedPriceExperimentAssignment );
 
-	let hidePlanSelector = true;
-	let enableTermSavingsPriceDisplay = true;
+	let hidePlanSelector = false;
+	const enableTermSavingsPriceDisplay = true;
 	// In the "purchase a plan and free domain" flow we do not want to show
 	// monthly plans because monthly plans do not come with a free domain.
-	// We are also hiding the plan interval selector and showing terms savings prices
-	// for the compatible streamlined price experiment variations.
-	if (
-		redirectToAddDomainFlow === undefined &&
-		! hidePlanTypeSelector &&
-		! isStreamlinedPriceExperimentLoading &&
-		! showStreamlinedPriceExperiment
-	) {
-		hidePlanSelector = false;
-		enableTermSavingsPriceDisplay = false;
+	if ( redirectToAddDomainFlow !== undefined || hidePlanTypeSelector ) {
+		hidePlanSelector = true;
 	}
 
 	let _customerType = chooseDefaultCustomerType( {

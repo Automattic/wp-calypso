@@ -34,8 +34,6 @@ import SitePreview from '../site-preview';
 import { JetpackLogo } from './jetpack-logo';
 import type { AtomicTransferStatus, Site } from '../../data/types';
 
-import './style.scss';
-
 function IneligibleIndicator() {
 	return <Text color="#CCCCCC">-</Text>;
 }

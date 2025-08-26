@@ -1,7 +1,7 @@
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { fetchTwoStep } from '../../data/me';
 import { profileQuery } from '../queries/me-profile';
-import { userPurchasesQuery } from '../queries/me-purchases';
+import { userPurchasesQuery, purchaseQuery } from '../queries/me-purchases';
 import { sitesQuery } from '../queries/sites';
 import { queryClient } from '../query-client';
 import { rootRoute } from './root';
@@ -64,11 +64,27 @@ export const billingHistoryRoute = createRoute( {
 	)
 );
 
+export const purchaseSettingsRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	loader: async ( { params: { purchaseId } } ) => {
+		await queryClient.ensureQueryData( purchaseQuery( parseInt( purchaseId ) ) );
+	},
+	path: 'billing/purchases/purchase/$purchaseId',
+} ).lazy( () =>
+	import( '../../me/billing-purchases/purchase-settings' ).then( ( d ) =>
+		createLazyRoute( 'purchases-purchase-settings' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const purchasesRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	loader: async () => {
-		queryClient.ensureQueryData( userPurchasesQuery() );
-		queryClient.ensureQueryData( sitesQuery() );
+		await Promise.all( [
+			queryClient.ensureQueryData( userPurchasesQuery() ),
+			queryClient.ensureQueryData( sitesQuery() ),
+		] );
 	},
 	validateSearch: ( search ): { site: string | undefined } => {
 		return {
@@ -117,6 +133,72 @@ export const securityRoute = createRoute( {
 	)
 );
 
+export const securityPasswordRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'security/password',
+} ).lazy( () =>
+	import( '../../me/security-password' ).then( ( d ) =>
+		createLazyRoute( 'security-password' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const securityAccountRecoveryRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'security/account-recovery',
+} ).lazy( () =>
+	import( '../../me/security-account-recovery' ).then( ( d ) =>
+		createLazyRoute( 'security-account-recovery' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const securityTwoStepAuthRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'security/two-step-auth',
+} ).lazy( () =>
+	import( '../../me/security-two-step-auth' ).then( ( d ) =>
+		createLazyRoute( 'security-two-step-auth' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const securitySshKeyRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'security/ssh-key',
+} ).lazy( () =>
+	import( '../../me/security-ssh-key' ).then( ( d ) =>
+		createLazyRoute( 'security-ssh-key' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const securityConnectedAppsRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'security/connected-apps',
+} ).lazy( () =>
+	import( '../../me/security-connected-apps' ).then( ( d ) =>
+		createLazyRoute( 'security-connected-apps' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const securitySocialLoginsRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'security/social-logins',
+} ).lazy( () =>
+	import( '../../me/security-social-logins' ).then( ( d ) =>
+		createLazyRoute( 'security-social-logins' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const privacyRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'privacy',
@@ -139,6 +221,28 @@ export const notificationsRoute = createRoute( {
 	)
 );
 
+export const blockedSitesRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'blocked-sites',
+} ).lazy( () =>
+	import( '../../me/blocked-sites' ).then( ( d ) =>
+		createLazyRoute( 'blocked-sites' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const appsRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'apps',
+} ).lazy( () =>
+	import( '../../me/apps' ).then( ( d ) =>
+		createLazyRoute( 'apps' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const createMeRoutes = ( config: AppConfig ) => {
 	if ( ! config.supports.me ) {
 		return [];
@@ -149,14 +253,29 @@ export const createMeRoutes = ( config: AppConfig ) => {
 		billingRoute,
 		billingHistoryRoute,
 		purchasesRoute,
+		purchaseSettingsRoute,
 		paymentMethodsRoute,
 		taxDetailsRoute,
 		securityRoute,
+		securityPasswordRoute,
+		securityAccountRecoveryRoute,
+		securityTwoStepAuthRoute,
+		securitySshKeyRoute,
+		securityConnectedAppsRoute,
+		securitySocialLoginsRoute,
 		notificationsRoute,
 	];
 
 	if ( config.supports.me.privacy ) {
 		meRoutes.push( privacyRoute );
+	}
+
+	if ( config.supports.reader ) {
+		meRoutes.push( blockedSitesRoute );
+	}
+
+	if ( config.supports.me.apps ) {
+		meRoutes.push( appsRoute );
 	}
 
 	return [ meRoute.addChildren( meRoutes ) ];

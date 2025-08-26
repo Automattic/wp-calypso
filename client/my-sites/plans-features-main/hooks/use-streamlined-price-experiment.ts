@@ -1,17 +1,12 @@
 import { getFlowFromURL } from 'calypso/landing/stepper/utils/get-flow-from-url';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
-import { useExperiment, loadExperimentAssignment } from 'calypso/lib/explat';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 
-const STREAMLINED_PRICE_EXPERIMENT_NAME = 'calypso_streamlined_plans_checkout';
-
 export function useStreamlinedPriceExperiment(): [ boolean, string | null ] {
-	const [ isLoadingExperiment, assignment ] = useExperiment( STREAMLINED_PRICE_EXPERIMENT_NAME, {
-		isEligible: isEligibleForExperiment(),
-	} );
+	const variationName = isEligibleForExperiment() ? 'plans_1Y_checkout_radio' : null;
 
-	return [ isLoadingExperiment, assignment?.variationName ?? null ];
+	return [ false, variationName ];
 }
 
 function isEligibleForExperiment(): boolean {
@@ -19,12 +14,7 @@ function isEligibleForExperiment(): boolean {
 	const flowFromURL = getFlowFromURL(); // The flow for the Plans step
 	const flow = flowFromStorage || flowFromURL;
 	// Only onboarding flow is eligible for streamlined pricing. Akismet/Jetpack checkouts are excluded as well.
-	return flow === 'onboarding' && ! isAkismetCheckout() && ! isJetpackCheckout();
-}
-
-export async function isStreamlinedPriceExperiment() {
-	const assignment = await loadExperimentAssignment( STREAMLINED_PRICE_EXPERIMENT_NAME );
-	return assignment?.variationName !== null;
+	return flow !== 'onboarding-pm' && ! isAkismetCheckout() && ! isJetpackCheckout();
 }
 
 export function isStreamlinedPricePlansTreatment( variationName?: string | null ) {

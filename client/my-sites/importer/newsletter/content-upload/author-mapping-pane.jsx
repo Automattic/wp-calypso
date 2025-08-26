@@ -30,7 +30,14 @@ class AuthorMappingPane extends PureComponent {
 			percentComplete: PropTypes.number,
 			statusMessage: PropTypes.string,
 			customData: PropTypes.shape( {
-				unsupportedFileTypes: PropTypes.objectOf( PropTypes.number ),
+				unsupportedFileTypes: PropTypes.oneOfType( [
+					PropTypes.objectOf( PropTypes.number ),
+					PropTypes.arrayOf( null ), // If there are no unsupported file types we get an empty array
+				] ),
+				postErrors: PropTypes.oneOfType( [
+					PropTypes.objectOf( PropTypes.array ),
+					PropTypes.arrayOf( null ), // If there are no errors we get an empty array
+				] ),
 				postsNumber: PropTypes.number,
 				pagesNumber: PropTypes.number,
 				attachmentsNumber: PropTypes.number,

@@ -12,6 +12,7 @@ export type SiteFeatureSupports = {
 
 export type MeSupports = {
 	privacy: boolean;
+	apps: boolean;
 };
 
 export type AppConfig = {
