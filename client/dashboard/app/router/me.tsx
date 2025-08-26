@@ -107,7 +107,7 @@ export const paymentMethodsRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'billing/payment-methods',
 } ).lazy( () =>
-	import( '../../me/payment-methods' ).then( ( d ) =>
+	import( '../../me/billing-payment-methods' ).then( ( d ) =>
 		createLazyRoute( 'payment-methods' )( {
 			component: d.default,
 		} )
