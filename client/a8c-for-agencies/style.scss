@@ -220,7 +220,7 @@
 
 	.components-button.is-light {
 		background-color: var(--color-text-white);
-		color: inherit;
+		color: initial;
 
 		&:focus {
 			box-shadow: 0 0 0 2px var(--color-primary-light);
@@ -229,6 +229,18 @@
 		&.is-secondary, &.is-link {
 			color: var(--color-text-white);
 			background-color: transparent;
+		}
+
+		svg {
+			fill: var(--color-text-white);
+		}
+
+		&.is-busy {
+			color: var(--color-text);
+
+			svg {
+				fill: var(--color-text);
+			}
 		}
 	}
 

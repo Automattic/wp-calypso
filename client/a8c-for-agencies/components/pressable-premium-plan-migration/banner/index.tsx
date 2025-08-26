@@ -1,10 +1,11 @@
 import { formatCurrency } from '@automattic/number-formatters';
 import { Button } from '@wordpress/components';
-import { Icon, chevronDown } from '@wordpress/icons';
+import { Icon, chevronDown, external } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { A4A_MARKETPLACE_HOSTING_REFER_PRESSABLE_PREMIUM_PLAN_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import useScheduleCall from 'calypso/a8c-for-agencies/hooks/use-schedule-call';
 import {
 	PRESSABLE_PREMIUM_PLAN_COMMISSION_PERCENTAGE,
 	PRESSABLE_PREMIUM_PLAN_COMMISSION_AMOUNT,
@@ -32,6 +33,8 @@ export default function PressablePremiumPlanMigrationBanner( {
 
 	const showMigrationIncentive = useShowMigrationIncentive();
 
+	const { scheduleCall, isLoading } = useScheduleCall();
+
 	const handleReferClient = useCallback( () => {
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_marketplace_hosting_premium_refer_form_back_to_marketplace' )
@@ -42,8 +45,8 @@ export default function PressablePremiumPlanMigrationBanner( {
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_marketplace_hosting_premium_refer_form_back_to_marketplace' )
 		);
-		// TODO: Add chat to us logic
-	}, [ dispatch ] );
+		scheduleCall();
+	}, [ dispatch, scheduleCall ] );
 
 	const buttons = (
 		<>
@@ -54,7 +57,16 @@ export default function PressablePremiumPlanMigrationBanner( {
 			>
 				{ translate( 'Refer client now' ) }
 			</Button>
-			<Button variant="secondary" onClick={ handleChatToUs }>
+			<Button
+				className="pressable-premium-plan-migration__chat-to-us-button"
+				variant="secondary"
+				icon={ external }
+				iconPosition="right"
+				iconSize={ 16 }
+				onClick={ handleChatToUs }
+				isBusy={ isLoading }
+				disabled={ isLoading }
+			>
 				{ translate( 'Chat to us about this offer' ) }
 			</Button>
 		</>

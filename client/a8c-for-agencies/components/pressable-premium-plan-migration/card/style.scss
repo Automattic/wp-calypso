@@ -14,6 +14,8 @@ $pressable-card-background: #050C29;
 
 .pressable-premium-plan-migration-card__primary-button {
 	color: $pressable-card-background;
+	flex: 1;
+	min-width: 200px;
 }
 
 .pressable-premium-plan-migration-card__content {
@@ -25,10 +27,11 @@ $pressable-card-background: #050C29;
 .pressable-premium-plan-migration-card__buttons {
 	display: flex;
 	gap: 12px;
-	flex-direction: column;
+	flex-direction: row;
+	flex-wrap: wrap;
 
-	@include break-medium {
-		flex-direction: row;
+	svg {
+		min-width: 16px;
 	}
 }
 
@@ -48,6 +51,8 @@ $pressable-card-background: #050C29;
 	text-wrap: balance;
 }
 
-.is-light svg {
-	fill: var(--color-text-white);
+.pressable-premium-plan-migration-card__chat-to-us-button.components-button.has-icon.has-text {
+	justify-content: center;
+	flex: 1;
+	min-width: 200px;
 }
