@@ -135,3 +135,47 @@ export async function fetchSiteLogs(
 	} ) );
 	return { total_results: totalResults, logs: normalized };
 }
+
+export interface SiteLogsBatch {
+	logs: ( PHPLogFromEndpoint | ServerLogFromEndpoint )[];
+	scroll_id: string | null;
+	total_results: number;
+}
+
+export async function fetchSiteLogsBatch(
+	siteId: number,
+	args: {
+		logType: LogType;
+		start: number;
+		end: number;
+		filter: FilterType;
+		pageSize?: number;
+		scrollId?: string | null;
+	}
+): Promise< SiteLogsBatch > {
+	const { logType, start, end, filter, pageSize, scrollId } = args;
+	const path = `/sites/${ siteId }/hosting/${ logType === LogType.PHP ? 'error-logs' : 'logs' }`;
+	const queryParams = {
+		start,
+		end,
+		filter,
+		page_size: pageSize ?? 500,
+		scroll_id: scrollId ?? null,
+	};
+	// Remove undefined values from queryParams
+	Object.keys( queryParams ).forEach(
+		( key ) =>
+			( queryParams as Record< string, unknown > )[ key ] === undefined &&
+			delete ( queryParams as Record< string, unknown > )[ key ]
+	);
+	const response = await wpcom.req.get( { path, apiNamespace: 'wpcom/v2' }, queryParams );
+	const { data } = response as SiteLogsAPIResponse;
+	const totalResults =
+		typeof data.total_results === 'number' ? data.total_results : data.total_results?.value ?? 0;
+	const scroll = ( data as Partial< { scroll_id: string | null } > ).scroll_id ?? null;
+	return {
+		logs: Array.isArray( data.logs ) ? data.logs : [],
+		scroll_id: scroll,
+		total_results: totalResults,
+	};
+}

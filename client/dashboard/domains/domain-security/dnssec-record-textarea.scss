@@ -1,0 +1,8 @@
+.dnssec-record-textarea {
+	textarea {
+		resize: none;
+		overflow: hidden;
+		background-color: $gray-100;
+		height: var( --textarea-height, auto ) !important;
+	}
+}
