@@ -11,8 +11,9 @@
 
 	&--is-status-eligible &__button {
 		--color-foreground: var(--color-primary-dark);
-		cursor: pointer;
 	}
+
+
 
 
 	&__button {
@@ -26,6 +27,7 @@
 		fill: var(--color-foreground);
 		justify-content: center;
 		align-items: center;
+		cursor: pointer;
 		font-size: 13px;
 
 
@@ -58,6 +60,17 @@
 		padding: 2px;
 		width: 16px;
 		height: 16px;
+	}
+
+	&--is-status-not-eligible {
+
+		button {
+			--color-foreground: var(--studio-gray-20);
+			cursor: not-allowed;
+			&:hover {
+				--color-foreground: var(--studio-gray-30);
+			}
+		}
 	}
 
 }
