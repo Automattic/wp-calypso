@@ -23,6 +23,11 @@ export const SearchBar = () => {
 		exactSldMatchesOnly: false,
 		tlds: [],
 	} );
+	// This is the filter that the user is currently selecting. It is only applied when the popover is closed
+	const [ temporaryFilter, setTemporaryFilter ] = useState( {
+		exactSldMatchesOnly: false,
+		tlds: [],
+	} );
 	// TODO: Hardcoded for testing, should get those from the https://public-api.wordpress.com/rest/v1.1/domains/suggestions/tlds endpoint
 	const availableTlds = [ 'com', 'net', 'org', 'blog', 'dev', 'io', 'co', 'co.uk', 'com.br', 'de' ];
 
@@ -35,11 +40,15 @@ export const SearchBar = () => {
 	}, [ localQuery, setQuery ] );
 
 	const getFiltercounts = useCallback( () => {
-		return ( filter.tlds?.length || 0 ) + ( filter.exactSldMatchesOnly ? 1 : 0 );
+		return filter.tlds.length + ( filter.exactSldMatchesOnly ? 1 : 0 );
 	}, [ filter ] );
 
 	const resetFilter = useCallback( () => {
 		setFilter( {
+			tlds: [],
+			exactSldMatchesOnly: false,
+		} );
+		setTemporaryFilter( {
 			tlds: [],
 			exactSldMatchesOnly: false,
 		} );
@@ -51,9 +60,9 @@ export const SearchBar = () => {
 				className="domain-search-controls__filters-popover-available-tld"
 				key={ tld }
 				onClick={ () => {
-					setFilter( {
-						tlds: [ ...filter.tlds, tld ],
-						exactSldMatchesOnly: filter.exactSldMatchesOnly,
+					setTemporaryFilter( {
+						tlds: [ ...temporaryFilter.tlds, tld ],
+						exactSldMatchesOnly: temporaryFilter.exactSldMatchesOnly,
 					} );
 				} }
 			>
@@ -67,7 +76,7 @@ export const SearchBar = () => {
 		return (
 			<div className="domain-search-controls__filters-popover-available-tlds-container">
 				{ availableTlds
-					.filter( ( tld ) => ! filter.tlds.includes( tld ) )
+					.filter( ( tld ) => ! temporaryFilter.tlds.includes( tld ) )
 					.map( ( tld ) => renderAvailableTld( tld ) ) }
 			</div>
 		);
@@ -84,27 +93,30 @@ export const SearchBar = () => {
 						// Only add TLD to current selection if it exists
 						return availableTlds.includes( value );
 					} }
-					value={ filter.tlds }
+					value={ temporaryFilter.tlds }
 					suggestions={ availableTlds }
 					onChange={ ( values ) => {
-						setFilter( { tlds: values, exactSldMatchesOnly: filter.exactSldMatchesOnly } );
+						setTemporaryFilter( {
+							tlds: values,
+							exactSldMatchesOnly: temporaryFilter.exactSldMatchesOnly,
+						} );
 					} }
 					placeholder={ __( 'Search for an ending' ) }
 				/>
 				{ renderAvailableTlds() }
 				<CheckboxControl
 					label={ __( 'Show exact matches only' ) }
-					checked={ filter.exactSldMatchesOnly }
+					checked={ temporaryFilter.exactSldMatchesOnly }
 					onChange={ ( value ) => {
-						setFilter( { tlds: filter.tlds, exactSldMatchesOnly: value } );
+						setTemporaryFilter( { tlds: temporaryFilter.tlds, exactSldMatchesOnly: value } );
 					} }
 				/>
 				<HStack spacing={ 4 } className="domain-search-controls__filters-popover-buttons">
 					<Button
 						variant="secondary"
 						onClick={ () => {
-							resetFilter();
 							onClose();
+							resetFilter();
 						} }
 					>
 						{ __( 'Clear' ) }
@@ -148,10 +160,8 @@ export const SearchBar = () => {
 				renderContent={ ( { onClose } ) => {
 					return renderPopover( onClose );
 				} }
-				onToggle={ ( isOpen ) => {
-					if ( isOpen === false ) {
-						// TODO: Query domain suggestions using the selected filters
-					}
+				onClose={ () => {
+					setFilter( temporaryFilter );
 				} }
 			/>
 		</HStack>
