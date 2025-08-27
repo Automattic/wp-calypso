@@ -8,11 +8,8 @@ export default function Preferences() {
 		<PageLayout size="small">
 			<PageHeader
 				title={ __( 'Preferences' ) }
-				description={ __( 'Manage your account preferences and settings.' ) }
 			/>
-			<div className="preferences-sections">
 				<PreferencesLogin/>
-			</div>
 		</PageLayout>
 	);
 }
