@@ -19,6 +19,7 @@ export const DomainSearch = ( {
 	events,
 	slots,
 	queryClient = fallbackQueryClient,
+	config,
 }: DomainSearchProps ) => {
 	const [ isFullCartOpen, setIsFullCartOpen ] = useState( false );
 	const [ query, setQuery ] = useState( initialQuery ?? '' );
@@ -31,6 +32,8 @@ export const DomainSearch = ( {
 		setIsFullCartOpen( true );
 	}, [] );
 
+	const vendor = config?.vendor ?? 'variation2_front';
+
 	const contextValue: typeof DEFAULT_CONTEXT_VALUE = useMemo(
 		() => ( {
 			events: {
@@ -38,7 +41,11 @@ export const DomainSearch = ( {
 				...events,
 			},
 			queries: {
-				domainSuggestions: domainSuggestionsQuery,
+				domainSuggestions: ( query ) =>
+					domainSuggestionsQuery( query, {
+						quantity: 30,
+						vendor,
+					} ),
 				freeSuggestion: freeSuggestionQuery,
 				domainAvailability: domainAvailabilityQuery,
 			},
@@ -61,6 +68,7 @@ export const DomainSearch = ( {
 			events,
 			slots,
 			currentSiteUrl,
+			vendor,
 		]
 	);
 

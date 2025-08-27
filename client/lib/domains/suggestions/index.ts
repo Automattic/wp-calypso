@@ -4,6 +4,7 @@ import {
 	isHundredYearDomainFlow,
 	isNewsletterFlow,
 } from '@automattic/onboarding';
+import type { DomainSuggestionQueryVendor } from '@automattic/data';
 
 interface DomainSuggestionsVendorOptions {
 	isSignup?: boolean;
@@ -11,15 +12,6 @@ interface DomainSuggestionsVendorOptions {
 	isPremium?: boolean;
 	flowName?: string;
 }
-
-type DomainSuggestionsVendor =
-	| 'variation2_front'
-	| 'variation4_front'
-	| 'variation8_front'
-	| 'newsletter'
-	| 'ecommerce'
-	| 'gravatar'
-	| '100-year-domains';
 
 /**
  * Get the suggestions vendor
@@ -35,7 +27,7 @@ export const getSuggestionsVendor = ( {
 	flowName,
 	isSignup,
 	isDomainOnly,
-}: DomainSuggestionsVendorOptions = {} ): DomainSuggestionsVendor => {
+}: DomainSuggestionsVendorOptions = {} ): DomainSuggestionQueryVendor => {
 	if ( isDomainForGravatarFlow( flowName ) ) {
 		return 'gravatar';
 	}

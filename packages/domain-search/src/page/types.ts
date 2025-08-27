@@ -1,6 +1,10 @@
 import { domainAvailabilityQuery } from '../queries/availability';
 import { domainSuggestionsQuery, freeSuggestionQuery } from '../queries/suggestions';
-import type { DomainSuggestion, FreeDomainSuggestion } from '@automattic/data';
+import type {
+	DomainSuggestion,
+	DomainSuggestionQueryVendor,
+	FreeDomainSuggestion,
+} from '@automattic/data';
 import type { QueryClient } from '@tanstack/react-query';
 import type { ComponentType } from 'react';
 
@@ -25,6 +29,10 @@ export interface DomainSearchEvents {
 	onSkip: ( suggestion?: FreeDomainSuggestion ) => void;
 }
 
+export interface DomainSearchConfig {
+	vendor?: DomainSuggestionQueryVendor;
+}
+
 export interface DomainSearchProps {
 	slots?: {
 		BeforeResults?: ComponentType;
@@ -36,6 +44,7 @@ export interface DomainSearchProps {
 	events?: Partial< DomainSearchEvents >;
 	currentSiteUrl?: string;
 	queryClient?: QueryClient;
+	config?: DomainSearchConfig;
 }
 
 export interface DomainSearchContextType

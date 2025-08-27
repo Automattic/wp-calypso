@@ -1,3 +1,13 @@
+export type DomainSuggestionQueryVendor =
+	| 'variation2_front'
+	| 'variation4_front'
+	| 'variation8_front'
+	| 'newsletter'
+	| 'ecommerce'
+	| 'gravatar'
+	| '100-year-domains'
+	| 'domain-upsell';
+
 export interface DomainSuggestionQuery {
 	/**
 	 * True to include .blog subdomain suggestions
@@ -45,7 +55,7 @@ export interface DomainSuggestionQuery {
 	/**
 	 * Vendor
 	 */
-	vendor: string;
+	vendor: DomainSuggestionQueryVendor;
 
 	/**
 	 * The vertical id or slug

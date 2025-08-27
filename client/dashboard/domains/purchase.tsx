@@ -9,7 +9,7 @@ export default function DomainsPurchase() {
 			backLabel={ __( 'Back to domains' ) }
 			fallbackCloseRoute={ domainsRoute.fullPath }
 		>
-			<DomainSearch />
+			<DomainSearch config={ { vendor: 'variation8_front' } } />
 		</FullScreenOverlay>
 	);
 }
