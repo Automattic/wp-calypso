@@ -1,67 +1,60 @@
+/**
+ * End-to-end Playwright test suite for verifying internationalization (i18n) of the editor interface.
+ *
+ * This suite iterates over a set of locales and their expected "Add title" translations, and for each:
+ * - Authenticates as a test account (using/saving cookies for efficiency).
+ * - Updates the account's locale setting using the REST API.
+ * - Visits the editor page.
+ * - Asserts that the editor's title input displays the correct localized placeholder.
+ *
+ * Tests are run serially to avoid conflicts from changing the shared account's locale.
+ * Tests are restricted to run only in the Chrome browser.
+ *
+ * @file I18N: Editor E2E tests for localized editor content.
+ * @tag @i18n
+ * @see Translation
+ */
 import { RestAPIClient } from '@automattic/calypso-e2e';
 import { test, expect } from '../../lib/pw_base';
+import { Translation } from '../../lib/types_shared';
 
-type LanguageSlug =
-	| 'ar'
-	| 'de'
-	| 'en'
-	| 'es'
-	| 'fr'
-	| 'he'
-	| 'id'
-	| 'it'
-	| 'ja'
-	| 'ko'
-	| 'nl'
-	| 'pt-br'
-	| 'ru'
-	| 'sv'
-	| 'tr'
-	| 'zh-cn'
-	| 'zh-tw';
-
-interface Translation {
-	language: LanguageSlug;
-	addTitle: string;
-}
-
-const locales: Array< Translation > = [
-	{ language: 'ar', addTitle: 'أضف عنوانًا' },
-	{ language: 'de', addTitle: 'Titel hier eingeben' },
-	{ language: 'en', addTitle: 'Add title' },
-	{ language: 'es', addTitle: 'Añadir título' },
-	{ language: 'fr', addTitle: 'Ajout de titre' },
-	{ language: 'he', addTitle: 'הוספת כותרת' },
-	{ language: 'id', addTitle: 'Tambahkan judul' },
-	{ language: 'it', addTitle: 'Aggiungi un titolo' },
-	{ language: 'ja', addTitle: 'タイトルを追加' },
-	{ language: 'ko', addTitle: '제목 추가' },
-	{ language: 'nl', addTitle: 'Titel toevoegen' },
-	{ language: 'pt-br', addTitle: 'Adicionar título' },
-	{ language: 'ru', addTitle: 'Добавить заголовок' },
-	{ language: 'sv', addTitle: 'Lägg till rubrik' },
-	{ language: 'tr', addTitle: 'Başlık ekle' },
-	{ language: 'zh-cn', addTitle: '添加标题' },
-	{ language: 'zh-tw', addTitle: '新增標題' },
+const translationsToTest: Array< Translation > = [
+	{ locale: 'ar', addTitle: 'أضف عنوانًا' },
+	{ locale: 'de', addTitle: 'Titel hier eingeben' },
+	{ locale: 'en', addTitle: 'Add title' },
+	{ locale: 'es', addTitle: 'Añadir título' },
+	{ locale: 'fr', addTitle: 'Ajout de titre' },
+	{ locale: 'he', addTitle: 'הוספת כותרת' },
+	{ locale: 'id', addTitle: 'Tambahkan judul' },
+	{ locale: 'it', addTitle: 'Aggiungi un titolo' },
+	{ locale: 'ja', addTitle: 'タイトルを追加' },
+	{ locale: 'ko', addTitle: '제목 추가' },
+	{ locale: 'nl', addTitle: 'Titel toevoegen' },
+	{ locale: 'pt-br', addTitle: 'Adicionar título' },
+	{ locale: 'ru', addTitle: 'Добавить заголовок' },
+	{ locale: 'sv', addTitle: 'Lägg till rubrik' },
+	{ locale: 'tr', addTitle: 'Başlık ekle' },
+	{ locale: 'zh-cn', addTitle: '添加标题' },
+	{ locale: 'zh-tw', addTitle: '新增標題' },
 ];
 
 test.describe( 'I18N: Editor', { tag: '@i18n' }, () => {
 	test.describe.configure( { mode: 'serial' } ); // Since all tests use the same account which changes its locale, they should not be run in parallel
-	for ( const locale of locales ) {
-		test( `As an i18n visitor using '${ locale.language }' as my locale I can see localised editor content`, async ( {
+	for ( const translation of translationsToTest ) {
+		test( `As an i18n visitor using '${ translation.locale }' as my locale I can see localised editor content`, async ( {
 			page,
 			accounti18n,
 			pageEditor,
 		}, workerInfo ) => {
-			test.skip( workerInfo.project.name !== 'chrome', 'We only run i18n editor tests in Chrome' );
+			test.skip( workerInfo.project.name !== 'chrome', 'The i18n editor tests only run in Chrome' );
 
 			await test.step( `Given I am authenticated as '${ accounti18n.accountName }'`, async function () {
 				await accounti18n.authenticate( page );
 			} );
 
-			await test.step( `And I update my locale settings to ${ locale.language }`, async function () {
+			await test.step( `And I update my locale settings to ${ translation.locale }`, async function () {
 				const clientRestAPI = new RestAPIClient( accounti18n.credentials );
-				await clientRestAPI.setMySettings( { language: locale.language } );
+				await clientRestAPI.setMySettings( { language: translation.locale } );
 				await page.reload();
 			} );
 
@@ -72,7 +65,7 @@ test.describe( 'I18N: Editor', { tag: '@i18n' }, () => {
 			await test.step( 'Then I can see the following see the correct translations', async function () {
 				await expect
 					.soft( page.locator( 'h1.editor-post-title' ) )
-					.toHaveAttribute( 'aria-label', locale.addTitle );
+					.toHaveAttribute( 'aria-label', translation.addTitle );
 			} );
 		} );
 	}
