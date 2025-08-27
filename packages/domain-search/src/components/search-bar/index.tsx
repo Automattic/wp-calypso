@@ -62,6 +62,7 @@ export const SearchBar = () => {
 				resetFilter={ resetFilter }
 				setFilter={ setFilter }
 				setTemporaryFilter={ setTemporaryFilter }
+				showTldFilter
 				temporaryFilter={ temporaryFilter }
 			/>
 		</HStack>
