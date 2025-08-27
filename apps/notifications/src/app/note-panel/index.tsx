@@ -14,13 +14,15 @@ import { getFilters } from '../../panel/templates/filters';
 import NoteList from '../note-list';
 import NotePanelActions from './actions';
 
+type ActiveTab = keyof ReturnType< typeof getFilters >;
+
 const NOTIFICATION_TABS = Object.values( getFilters() ).map( ( { name, label } ) => ( {
 	name,
 	title: label,
 } ) );
 
 const NotePanel = () => {
-	const [ activeTab, setActiveTab ] = useState< keyof ReturnType< typeof getFilters > >( 'all' );
+	const [ activeTab, setActiveTab ] = useState< ActiveTab >( 'all' );
 	return (
 		<>
 			<CardHeader
@@ -42,7 +44,7 @@ const NotePanel = () => {
 						tabs={ NOTIFICATION_TABS }
 						initialTabName={ activeTab }
 						onSelect={ ( tabName ) => {
-							setActiveTab( tabName as keyof typeof Filters );
+							setActiveTab( tabName as ActiveTab );
 						} }
 					>
 						{ () => null /* Placeholder div since content is rendered elsewhere */ }
