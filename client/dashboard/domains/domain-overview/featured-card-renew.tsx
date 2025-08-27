@@ -25,6 +25,7 @@ export default function FeaturedCardRenew( { domain }: Props ) {
 			title={ __( 'Renews' ) }
 			heading={ formattedDate }
 			icon={ <Icon icon={ calendar } /> }
+			link={ `/me/billing/purchases/purchase/${ domain.subscription_id }` }
 			description={
 				domain.auto_renewing ? __( 'Auto-renew is enabled.' ) : __( 'Auto-renew is disabled.' )
 			}
