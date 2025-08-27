@@ -33,42 +33,40 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 		throw notFound();
 	}
 
-	// Parse mcp_settings from JSON string
-	const parseMcpSettings = ( mcpSettingsString?: string ): SiteMcpSettings => {
-		if ( ! mcpSettingsString ) {
-			return {
-				mcp_enabled: true,
-				mcp_abilities: {},
-			};
-		}
-
-		try {
-			return JSON.parse( mcpSettingsString );
-		} catch ( error ) {
-			return {
-				mcp_enabled: true,
-				mcp_abilities: {},
-			};
-		}
-	};
-
-	const parsedMcpSettings = parseMcpSettings( siteSettings?.mcp_settings );
+	// Get abilities from the site settings data
+	const availableAbilities = Object.entries( siteSettings?.mcp_settings?.mcp_abilities || {} );
+	const hasAbilities = availableAbilities.length > 0;
 
 	const [ formData, setFormData ] = useState< SiteMcpSettings >( {
-		mcp_enabled: parsedMcpSettings.mcp_enabled,
-		mcp_abilities: parsedMcpSettings.mcp_abilities,
+		mcp_enabled: hasAbilities ? siteSettings?.mcp_settings?.mcp_enabled ?? true : false,
+		mcp_abilities: siteSettings?.mcp_settings?.mcp_abilities ?? {},
 	} );
 
 	// Update form data when siteSettings changes
 	useEffect( () => {
 		if ( siteSettings?.mcp_settings ) {
-			const parsed = parseMcpSettings( siteSettings.mcp_settings );
+			const newHasAbilities =
+				Object.keys( siteSettings.mcp_settings.mcp_abilities || {} ).length > 0;
 			setFormData( {
-				mcp_enabled: parsed.mcp_enabled,
-				mcp_abilities: parsed.mcp_abilities,
+				mcp_enabled: newHasAbilities ? siteSettings.mcp_settings.mcp_enabled : false,
+				mcp_abilities: siteSettings.mcp_settings.mcp_abilities,
 			} );
 		}
 	}, [ siteSettings?.mcp_settings ] );
+
+	// Auto-disable MCP if no abilities are selected
+	useEffect( () => {
+		const enabledAbilitiesCount = Object.values( formData.mcp_abilities ).filter(
+			( ability ) => ability.enabled
+		).length;
+
+		if ( formData.mcp_enabled && enabledAbilitiesCount === 0 ) {
+			setFormData( ( prev ) => ( {
+				...prev,
+				mcp_enabled: false,
+			} ) );
+		}
+	}, [ formData.mcp_abilities, formData.mcp_enabled ] );
 
 	const renderContent = () => {
 		// Show loading state while data is being fetched
@@ -92,7 +90,7 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 			> = {};
 
 			// Get the base abilities from site settings
-			const baseAbilities = parsedMcpSettings.mcp_abilities || {};
+			const baseAbilities = siteSettings?.mcp_settings?.mcp_abilities || {};
 
 			// Merge with form data to get current enabled state
 			Object.entries( baseAbilities ).forEach( ( [ abilityId, ability ] ) => {
@@ -104,16 +102,11 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 			} );
 
 			// Create the complete MCP settings object
-			const mcpSettingsObject = {
-				mcp_enabled: formData.mcp_enabled,
-				mcp_abilities,
-			};
-
-			// Convert to JSON string
-			const mcpSettingsJson = JSON.stringify( mcpSettingsObject );
-
 			const mutationData = {
-				mcp_settings: mcpSettingsJson,
+				mcp_settings: {
+					mcp_enabled: formData.mcp_enabled,
+					mcp_abilities,
+				},
 			};
 
 			mutation.mutate( mutationData, {
@@ -136,12 +129,34 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 		};
 
 		const handleMcpEnabledChange = ( enabled: boolean ) => {
-			setFormData( ( prev ) => ( {
-				...prev,
-				mcp_enabled: enabled,
-				// If disabling MCP, disable all abilities
-				mcp_abilities: enabled ? prev.mcp_abilities : {},
-			} ) );
+			setFormData( ( prev ) => {
+				if ( enabled ) {
+					// When enabling MCP, auto-enable all available abilities
+					const autoEnabledAbilities: Record<
+						string,
+						{ label: string; description: string; enabled: boolean }
+					> = {};
+					Object.entries( siteSettings?.mcp_settings?.mcp_abilities || {} ).forEach(
+						( [ abilityId, ability ] ) => {
+							autoEnabledAbilities[ abilityId ] = {
+								...ability,
+								enabled: true, // Auto-enable all abilities
+							};
+						}
+					);
+					return {
+						...prev,
+						mcp_enabled: enabled,
+						mcp_abilities: autoEnabledAbilities,
+					};
+				}
+				// When disabling MCP, disable all abilities
+				return {
+					...prev,
+					mcp_enabled: enabled,
+					mcp_abilities: {},
+				};
+			} );
 		};
 
 		const handleAbilityChange = ( abilityId: string, enabled: boolean ) => {
@@ -158,35 +173,38 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 		};
 
 		// Get abilities from the site settings data, but use form data for current state
-		const availableAbilities = Object.entries( parsedMcpSettings.mcp_abilities || {} );
 		const abilities = availableAbilities.map( ( [ abilityId, ability ] ) => [
 			abilityId,
 			{
 				...ability,
-				enabled: formData.mcp_abilities?.[ abilityId ]?.enabled ?? ability.enabled,
+				enabled: formData.mcp_enabled
+					? formData.mcp_abilities?.[ abilityId ]?.enabled ?? ability.enabled
+					: false,
 			},
 		] );
 
 		return (
 			<form onSubmit={ handleSubmit }>
 				<VStack spacing={ 6 }>
-					{ /* Main MCP toggle in its own card */ }
-					<Card>
-						<CardBody>
-							<CheckboxControl
-								__nextHasNoMarginBottom
-								label={ __( 'Enable Model Context Protocol (MCP)' ) }
-								help={ __(
-									'Allow AI assistants to access your site data through the Model Context Protocol.'
-								) }
-								checked={ formData.mcp_enabled }
-								onChange={ handleMcpEnabledChange }
-							/>
-						</CardBody>
-					</Card>
+					{ /* Main MCP toggle in its own card - only show if abilities are available */ }
+					{ hasAbilities && (
+						<Card>
+							<CardBody>
+								<CheckboxControl
+									__nextHasNoMarginBottom
+									label={ __( 'Enable Model Context Protocol (MCP)' ) }
+									help={ __(
+										'Allow AI assistants to access your site data through the Model Context Protocol.'
+									) }
+									checked={ formData.mcp_enabled }
+									onChange={ handleMcpEnabledChange }
+								/>
+							</CardBody>
+						</Card>
+					) }
 
-					{ /* Abilities settings in a separate card */ }
-					{ formData.mcp_enabled && (
+					{ /* Abilities settings in a separate card - always show if abilities exist */ }
+					{ hasAbilities && (
 						<Card>
 							<CardBody>
 								<VStack spacing={ 4 }>
@@ -194,25 +212,37 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 										{ __( 'MCP Abilities' ) }
 									</h3>
 
-									{ abilities.length > 0 ? (
-										<VStack spacing={ 3 }>
-											{ abilities.map( ( [ abilityId, ability ] ) => (
-												<CheckboxControl
-													key={ abilityId }
-													__nextHasNoMarginBottom
-													label={ ability.label }
-													help={ ability.description }
-													checked={ ability.enabled }
-													onChange={ ( checked ) => handleAbilityChange( abilityId, checked ) }
-												/>
-											) ) }
-										</VStack>
-									) : (
+									{ ! formData.mcp_enabled && (
 										<p style={ { color: '#646970', fontSize: '14px', margin: 0 } }>
-											{ __( 'No MCP abilities are currently available for this site.' ) }
+											{ __( 'Enable MCP above to configure these abilities.' ) }
 										</p>
 									) }
+
+									<VStack spacing={ 3 }>
+										{ abilities.map( ( [ abilityId, ability ] ) => (
+											<CheckboxControl
+												key={ abilityId }
+												__nextHasNoMarginBottom
+												label={ ability.label }
+												help={ ability.description }
+												checked={ ability.enabled }
+												onChange={ ( checked ) => handleAbilityChange( abilityId, checked ) }
+												disabled={ ! formData.mcp_enabled }
+											/>
+										) ) }
+									</VStack>
 								</VStack>
+							</CardBody>
+						</Card>
+					) }
+
+					{ /* Show message when no abilities are available */ }
+					{ ! hasAbilities && (
+						<Card>
+							<CardBody>
+								<p style={ { color: '#646970', fontSize: '14px', margin: 0 } }>
+									{ __( 'No MCP abilities are currently available for this site.' ) }
+								</p>
 							</CardBody>
 						</Card>
 					) }

@@ -17,32 +17,17 @@ export default function McpSettingsSummary( { site, density }: { site: Site; den
 		return null;
 	}
 
-	// Parse mcp_settings from JSON string
-	const parseMcpSettings = ( mcpSettingsString?: string ) => {
-		if ( ! mcpSettingsString ) {
-			return null;
-		}
-
-		try {
-			return JSON.parse( mcpSettingsString );
-		} catch ( error ) {
-			return null;
-		}
-	};
-
-	const parsedMcpSettings = parseMcpSettings( siteSettings?.mcp_settings );
-
 	let badgeText: string;
 	let badgeIntent: 'success' | 'info' | undefined;
 
-	if ( ! parsedMcpSettings ) {
+	if ( ! siteSettings?.mcp_settings ) {
 		badgeText = __( 'Not configured' );
 	} else {
-		const enabledAbilities = Object.entries( parsedMcpSettings.mcp_abilities || {} )
+		const enabledAbilities = Object.entries( siteSettings.mcp_settings.mcp_abilities || {} )
 			.filter( ( [ , ability ] ) => ability.enabled )
 			.map( ( [ abilityId ] ) => abilityId );
 
-		if ( ! parsedMcpSettings.mcp_enabled ) {
+		if ( ! siteSettings.mcp_settings.mcp_enabled ) {
 			badgeText = __( 'MCP disabled' );
 		} else if ( enabledAbilities.length === 0 ) {
 			badgeText = __( 'No abilities enabled' );

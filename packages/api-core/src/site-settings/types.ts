@@ -14,7 +14,7 @@ export interface SiteSettings {
 	wpcom_performance_report_url?: string;
 	wpcom_legacy_contact?: string;
 	wpcom_locked_mode?: boolean;
-	mcp_settings?: string; // JSON string instead of object
+	mcp_settings?: SiteMcpSettings; // Object instead of JSON string
 }
 
 export interface SiteMcpSettings {
