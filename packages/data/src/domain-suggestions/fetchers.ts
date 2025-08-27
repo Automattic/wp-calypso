@@ -13,17 +13,12 @@ export async function fetchDomainSuggestions(
 		vendor: 'variation2_front',
 	};
 
-	const suggestions: DomainSuggestion[] = await wpcom.req.get(
-		{
-			apiVersion: '1.1',
-			path: '/domains/suggestions',
-		},
-		{
-			...defaultDomainSuggestionQuery,
-			...domainSuggestionQuery,
-			query: search.trim().toLocaleLowerCase(),
-		}
-	);
+	const suggestions: DomainSuggestion[] = await wpcom.req.get( '/domains/suggestions', {
+		...defaultDomainSuggestionQuery,
+		...domainSuggestionQuery,
+		query: search.trim().toLocaleLowerCase(),
+		apiVersion: '1.1',
+	} );
 
 	return suggestions;
 }
