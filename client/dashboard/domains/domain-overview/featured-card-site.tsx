@@ -13,8 +13,8 @@ export default function FeaturedCardSite( { domain, site }: Props ) {
 	return (
 		<OverviewCard
 			title={ __( 'Site' ) }
-			heading={ site.name }
-			link={ site.URL }
+			heading={ <span style={ { wordBreak: 'break-all' } }>{ site.name }</span> }
+			externalLink={ site.URL }
 			icon={ <SiteIcon site={ site } /> }
 			description={ domain.domain }
 		/>
