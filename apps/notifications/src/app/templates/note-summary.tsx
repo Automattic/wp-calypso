@@ -5,7 +5,7 @@ import {
 import { html } from '../../panel/indices-to-html';
 import noticon2gridicon from '../../panel/utils/noticon2gridicon';
 import Gridicon from './gridicons';
-import ImagePreloader from './image-loader';
+import NoteIcon from './note-icon';
 import type { Note } from '../types';
 
 const NoteSummary = ( { note }: { note: Note } ) => {
@@ -13,14 +13,7 @@ const NoteSummary = ( { note }: { note: Note } ) => {
 		<HStack justify="flex-start" spacing={ 4 }>
 			<div style={ { position: 'relative', flexShrink: 0 } }>
 				<div style={ { width: '32px', height: '32px', borderRadius: '50%', overflow: 'hidden' } }>
-					<ImagePreloader
-						src={ note.icon }
-						key={ `image-preloader-${ note.icon }` }
-						placeholder={
-							// eslint-disable-next-line jsx-a11y/alt-text
-							<img src="https://www.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=128" />
-						}
-					/>
+					<NoteIcon icon={ note.icon } size={ 32 } />
 				</div>
 				<span
 					className="wpnc__gridicon"
