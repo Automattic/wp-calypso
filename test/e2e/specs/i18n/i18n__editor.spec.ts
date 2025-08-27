@@ -63,9 +63,8 @@ test.describe( 'I18N: Editor', { tag: '@i18n' }, () => {
 			} );
 
 			await test.step( 'Then I can see the following see the correct translations', async function () {
-				await expect
-					.soft( page.locator( 'h1.editor-post-title' ) )
-					.toHaveAttribute( 'aria-label', translation.addTitle );
+				await expect( page.getByRole( 'heading', { level: 1, name: translation.addTitle } ) )
+					.toBeVisible()
 			} );
 		} );
 	}
