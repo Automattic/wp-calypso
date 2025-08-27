@@ -11,8 +11,7 @@ const Subheader = styled.p< {
 	isUsingStepContainerV2?: boolean;
 	isDeemphasizedFreePlan?: boolean;
 } >`
-	margin: -32px 0 40px 0;
-	margin: ${ ( props ) => ( props.isDeemphasizedFreePlan ? '-45px 0 40px 0' : '-32px 0 40px 0' ) };
+	margin: ${ ( props ) => ( props.isDeemphasizedFreePlan ? '-45px 0 26px 0' : '-32px 0 40px 0' ) };
 	color: var( --studio-gray-60 );
 	font-family: ${ ( props ) =>
 		props.isDeemphasizedFreePlan ? "'SF Pro Text', sans-serif" : 'inherit' };
