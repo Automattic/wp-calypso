@@ -14,8 +14,8 @@ interface Props {
 	freeSuggestion?: string;
 	existingSiteUrl?: string;
 	onSkip: () => void;
-	disabled: boolean;
-	isBusy: boolean;
+	disabled?: boolean;
+	isBusy?: boolean;
 }
 
 const DomainSearchSkipSuggestion = ( {

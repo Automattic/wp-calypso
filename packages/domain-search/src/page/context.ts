@@ -8,6 +8,7 @@ const noop = () => {};
 export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 	events: {
 		onContinue: noop,
+		onSkip: noop,
 	},
 	queries: {
 		domainSuggestions: ( query: string ) => domainSuggestionsQuery( query ),

@@ -1,6 +1,6 @@
 import { domainAvailabilityQuery } from '../queries/availability';
 import { domainSuggestionsQuery, freeSuggestionQuery } from '../queries/suggestions';
-import type { DomainSuggestion } from '@automattic/data';
+import type { DomainSuggestion, FreeDomainSuggestion } from '@automattic/data';
 import type { QueryClient } from '@tanstack/react-query';
 import type { ComponentType } from 'react';
 
@@ -22,6 +22,7 @@ export interface DomainSearchCart {
 
 export interface DomainSearchEvents {
 	onContinue: () => void;
+	onSkip: ( suggestion?: FreeDomainSuggestion ) => void;
 }
 
 export interface DomainSearchProps {
