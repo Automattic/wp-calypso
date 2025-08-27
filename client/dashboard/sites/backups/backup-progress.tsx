@@ -8,38 +8,27 @@ import {
 	Card,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { useEffect } from 'react';
 import { siteBackupsQuery } from '../../app/queries/site-backups';
+import { useFormattedTime } from '../../components/formatted-time';
 import Notice from '../../components/notice';
 import backupProgressIllustration from './backups-progress-illustration.svg';
 import type { Site } from '../../data/types';
 
-function SiteBackupProgress( {
-	site,
-	onBackupComplete,
-	onBackupError,
-}: {
-	site: Site;
-	onBackupComplete?: () => void;
-	onBackupError?: () => void;
-} ) {
+function SiteBackupProgress( { site }: { site: Site } ) {
 	const { data: backups = [] } = useQuery( {
 		...siteBackupsQuery( site.ID ),
 		refetchInterval: 2000,
 	} );
 
 	const currentBackup = backups[ 0 ];
+
+	const backupDate = useFormattedTime( currentBackup.started, {
+		timeStyle: 'short',
+	} );
+
 	const isRunning = currentBackup?.status === 'started';
 	const isQueued = currentBackup?.status === 'queued';
 	const progress = currentBackup ? parseInt( currentBackup.percent, 10 ) : 0;
-
-	useEffect( () => {
-		if ( currentBackup?.status === 'finished' ) {
-			onBackupComplete?.();
-		} else if ( currentBackup?.status === 'error' ) {
-			onBackupError?.();
-		}
-	}, [ currentBackup?.status, onBackupComplete, onBackupError ] );
 
 	const getMessage = () => {
 		if ( isQueued ) {
@@ -55,9 +44,16 @@ function SiteBackupProgress( {
 		<>
 			<Card>
 				<CardBody>
-					<VStack spacing={ 4 } alignment="center">
+					<VStack spacing={ 2 } alignment="center">
 						<img src={ backupProgressIllustration } alt="" width={ 408 } height={ 280 } />
 						<Text size={ 20 }>{ getMessage() }</Text>
+						<Text size={ 13 } variant="muted">
+							{ sprintf(
+								/* translators: %s is the date the backup was initiated. */
+								__( 'We’re making a backup of your site from %s' ),
+								backupDate
+							) }
+						</Text>
 						<Text size={ 13 } variant="muted">
 							{ sprintf(
 								/* translators: %d is the backup completion percentage. */
