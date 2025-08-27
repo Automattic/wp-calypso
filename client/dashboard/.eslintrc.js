@@ -49,6 +49,7 @@ module.exports = {
 							'!@automattic/domains-table/src/utils/*',
 							'!@automattic/generate-password',
 							'!@automattic/help-center',
+							'!@automattic/i18n-utils',
 							'!@automattic/number-formatters',
 							'!@automattic/ui',
 							'!@automattic/urls',
