@@ -11,6 +11,7 @@ type Props = {
 	resetFilter: () => void;
 	setFilter: ( filter: FilterState ) => void;
 	setTemporaryFilter: ( filter: FilterState ) => void;
+	showTldFilter: boolean;
 	temporaryFilter: FilterState;
 };
 
@@ -21,6 +22,7 @@ export const Filter = ( {
 	resetFilter,
 	setFilter,
 	setTemporaryFilter,
+	showTldFilter,
 	temporaryFilter,
 }: Props ) => {
 	const getFiltercounts = useCallback( () => {
@@ -102,6 +104,7 @@ export const Filter = ( {
 						onClose={ onClose }
 						recommendedTlds={ getRecommendedTlds() }
 						setExactSldMatchesOnlyInFilter={ setExactSldMatchesOnlyInFilter }
+						showTldFilter={ showTldFilter }
 						temporaryFilter={ temporaryFilter }
 						validateTld={ validateTld }
 					/>
