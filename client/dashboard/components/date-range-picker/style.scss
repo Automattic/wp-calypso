@@ -1,18 +1,18 @@
 /* Container */
 .daterange-container {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  width: 100%;
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	width: 100%;
 
-  > * { flex: 0 0 auto; }
+	> * { flex: 0 0 auto; }
 }
 
 /* Popover sizing */
 .daterange-popover .components-popover__content {
-  overflow: visible;
-  width: auto;
-  max-width: calc(100vw - 48px);
+	overflow: visible;
+	width: auto;
+	max-width: calc(100vw - 48px);
 }
 
 
@@ -23,25 +23,40 @@
 
 /* Mobile */
 @media (max-width: 600px) {
-  .daterange-calendar {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-  }
+	.daterange-calendar {
+		display: flex;
+		justify-content: center;
+		width: 100%;
+	}
+}
+
+/* Medium screens: presets and calendar should be centered with no awkward right margin */
+@media (min-width: 601px) and (max-width: 899px) {
+	.daterange-body {
+		justify-content: space-between !important;
+	}
 }
 
 /* Desktop presets column: ensure a reasonable width to avoid awkward wrapping */
 @media (min-width: 601px) {
-  .daterange-presets {
-    min-width: 240px;
-  }
+	.daterange-presets {
+		min-width: 240px;
+	}
 }
 
 /* Preset list items: keep buttons full-width and avoid awkward line wrapping */
 .preset-listbox__item .components-button {
-  width: 100%;
-  justify-content: flex-start;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+	width: 100%;
+	justify-content: flex-start;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* Hide native date picker icons inside our date inputs (visual only) */
+.daterange-inputs input[type="date"]::-webkit-calendar-picker-indicator {
+	display: none;
+}
+.daterange-inputs input[type="date"]::-webkit-clear-button {
+	display: none;
 }

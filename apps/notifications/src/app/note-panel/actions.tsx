@@ -20,6 +20,9 @@ export default function NotePanelActions() {
 					dispatch( actions.ui.closeShortcutsPopover() );
 				}
 			} }
+			popoverProps={ {
+				focusOnMount: true,
+			} }
 		>
 			{ ( { onClose } ) =>
 				isShortcutsPopoverOpen ? (

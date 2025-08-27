@@ -12,29 +12,37 @@ import { partitionSuggestions } from '../helpers/partition-suggestions';
 import { useDomainSearch } from './context';
 
 export const ResultsPage = () => {
-	const { slots, query, queries } = useDomainSearch();
+	const { slots, query, queries, config } = useDomainSearch();
 
-	const { data: suggestions, isLoading: isLoadingSuggestions } = useQuery(
+	const { data: suggestions = [], isLoading: isLoadingSuggestions } = useQuery(
 		queries.domainSuggestions( query )
 	);
 
-	const { isLoading: isLoadingQueryAvailability } = useQuery( queries.domainAvailability( query ) );
+	const { isLoading: isLoadingFreeSuggestion } = useQuery( queries.freeSuggestion( query ) );
 
-	const domainAvailabilityQueries = useQueries( {
-		queries:
-			suggestions?.map( ( suggestion ) => ( {
-				...queries.domainAvailability( suggestion.domain_name ),
-			} ) ) ?? [],
+	const { isLoading: isLoadingQueryAvailability } = useQuery( {
+		...queries.domainAvailability( query ),
+		enabled: true,
 	} );
 
-	const isLoading =
-		isLoadingSuggestions ||
-		isLoadingQueryAvailability ||
-		domainAvailabilityQueries.some( ( query ) => query.isLoading );
+	useQueries( {
+		queries: suggestions
+			.filter( ( suggestion ) => suggestion.is_premium )
+			.map( ( suggestion ) => ( {
+				...queries.domainAvailability( suggestion.domain_name ),
+				enabled: true,
+			} ) ),
+	} );
 
-	const { featuredSuggestions, freeSuggestion, regularSuggestions } = useMemo( () => {
-		return partitionSuggestions( suggestions ?? [], query );
-	}, [ suggestions, query ] );
+	const isLoading = isLoadingSuggestions || isLoadingFreeSuggestion || isLoadingQueryAvailability;
+
+	const { featuredSuggestions, regularSuggestions } = useMemo( () => {
+		return partitionSuggestions( {
+			suggestions,
+			query,
+			deemphasiseTlds: config.deemphasizedTlds,
+		} );
+	}, [ suggestions, query, config.deemphasizedTlds ] );
 
 	return (
 		<VStack spacing={ 8 }>
@@ -50,10 +58,8 @@ export const ResultsPage = () => {
 				) : (
 					<FeaturedSearchResults suggestions={ featuredSuggestions } />
 				) }
-				{ isLoading ? (
-					<SkipSuggestion.Placeholder />
-				) : (
-					<SkipSuggestion freeSuggestion={ freeSuggestion } />
+				{ config.skippable && (
+					<> { isLoading ? <SkipSuggestion.Placeholder /> : <SkipSuggestion /> } </>
 				) }
 				{ isLoading ? (
 					<SearchResults.Placeholder />

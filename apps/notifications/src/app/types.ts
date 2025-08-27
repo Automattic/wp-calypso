@@ -1,10 +1,84 @@
 type Range = {
 	type: string;
 	indices: [ number, number ];
-	id: number | string;
-	parent: number | string | null;
+	id: string | number;
+	parent: string | number | null;
 	url?: string;
 	site_id?: number;
+	post_id?: number;
+	class?: string;
+	style?: string;
+	context?: string;
+};
+
+type Media = {
+	type: 'image' | 'badge';
+	indices: [ number, number ];
+	url: string;
+	id?: string | number;
+	parent?: string | number | null;
+	height?: string | number;
+	width?: string | number;
+};
+
+type Subject = {
+	text: string;
+	ranges?: Range[];
+	media?: Media[];
+};
+
+type PostActions = { 'replyto-comment'?: boolean; 'like-post'?: boolean };
+
+type CommentActions = {
+	'spam-comment'?: boolean;
+	'trash-comment'?: boolean;
+	'approve-comment'?: boolean;
+	'edit-comment'?: boolean;
+	'replyto-comment'?: boolean;
+	'like-comment'?: boolean;
+};
+
+type UserActions = { follow?: boolean };
+
+type Actions = PostActions | CommentActions | UserActions;
+
+export type Block = {
+	text: string;
+	ranges?: Range[];
+	media?: Media[];
+	actions?: Actions;
+	meta?: {
+		ids?: {
+			site?: number;
+			post?: number;
+			comment?: number;
+			reply_comment?: number;
+			user?: number;
+		};
+		links?: {
+			site?: string;
+			post?: string;
+			comment?: string;
+			reply_comment?: string;
+			user?: string;
+		};
+		titles?: {
+			home?: string;
+			tagline?: string;
+		};
+		is_mobile_button?: boolean;
+	};
+	type?: 'post' | 'comment' | 'user';
+	nest_level?: number;
+	edit_comment_link?: string;
+};
+
+export type BlockWithSignature = {
+	block: Block;
+	signature: {
+		type: 'text' | 'reply' | 'prompt' | 'comment' | 'post' | 'user';
+		id: number | null;
+	};
 };
 
 export type Note = {
@@ -12,35 +86,30 @@ export type Note = {
 	type: string;
 	read: number;
 	noticon: string;
-	timestamp: string; // ISO datetime string
+	timestamp: string;
 	icon: string;
 	url: string;
-	subject: Array< {
-		text: string;
-		ranges?: Range[];
-	} >;
-	body: Array< {
-		text: string;
-		media?: Array< {
-			type: string;
-			indices: [ number, number ];
-			url: string;
-		} >;
-		ranges?: Range[];
-		meta?: {
-			is_mobile_button?: boolean;
-		};
-	} >;
 	meta: {
 		ids: {
-			site: number;
+			site?: number;
+			post?: number;
+			comment?: number;
+			reply_comment?: number;
+			user?: number;
 		};
 		links: {
-			site: string;
+			site?: string;
+			post?: string;
+			comment?: string;
+			reply_comment?: string;
+			user?: string;
 		};
 	};
 	title: string;
 	note_hash: number;
+	subject: Subject[];
+	header?: Subject[]; // present in some note types
+	body: Block[];
 };
 
 type Inbox = {

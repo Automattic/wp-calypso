@@ -1,8 +1,9 @@
 import { __ } from '@wordpress/i18n';
 import { html } from '../../panel/indices-to-html';
-import Gridicon from '../../panel/templates/gridicons';
-import ImagePreloader from '../../panel/templates/image-loader';
 import noticon2gridicon from '../../panel/utils/noticon2gridicon';
+import Gridicon from '../templates/gridicons';
+import NoteIcon from '../templates/note-icon';
+import type { Note } from '../types';
 import type { Field } from '@wordpress/dataviews';
 
 const DAY_MILLISECONDS = 24 * 60 * 60 * 1000;
@@ -15,21 +16,14 @@ const groupTitles = [
 	__( 'Older than a month' ),
 ];
 
-export function getFields(): Field< any >[] {
+export function getFields(): Field< Note >[] {
 	return [
 		{
 			id: 'icon',
 			label: __( 'Icon' ),
 			render: ( { item } ) => (
 				<div className="wpnc__note-icon" style={ { position: 'relative', height: '100%' } }>
-					<ImagePreloader
-						src={ item.icon }
-						key={ `image-preloader-${ item.icon }` }
-						placeholder={
-							// eslint-disable-next-line jsx-a11y/alt-text
-							<img src="https://www.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=128" />
-						}
-					/>
+					<NoteIcon icon={ item.icon } size={ 52 } />
 					<span
 						className="wpnc__gridicon"
 						style={ {

@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
-import { DomainSuggestion, NewSiteSuccessResponse, Site } from '@automattic/data-stores';
+import { NewSiteSuccessResponse, Site } from '@automattic/data-stores';
 import { SiteGoal } from '@automattic/data-stores/src/onboard';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
@@ -14,6 +14,7 @@ import {
 	isAnyHostingFlow,
 } from '../';
 import cartManagerClient from './create-cart-manager-client';
+import type { DomainSuggestion } from '@automattic/data';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 const debug = debugFactory( 'calypso:signup:step-actions' );
