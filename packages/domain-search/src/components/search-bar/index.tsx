@@ -4,10 +4,11 @@ import { useCallback, useEffect, useState } from 'react';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchControls } from '../../ui';
 import { Filter } from './filter';
+import { FilterState } from './types';
 
 const DELAY_TIMEOUT = 300;
 
-const emptyFilter = {
+const emptyFilter: FilterState = {
 	exactSldMatchesOnly: false,
 	tlds: [],
 };
