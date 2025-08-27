@@ -64,6 +64,32 @@
 		font-style: italic;
 	}
 
+	.wpnc__image {
+		display: block;
+		margin: auto;
+		max-width: 100%;
+		height: auto;
+	}
+
+	.wpnc__badge {
+		display: block;
+		margin: 0 auto;
+		padding: 36px 16px 16px;
+	}
+
+	// Links
+	a,
+	a:visited {
+		color: var(--wp-admin-theme-color);
+		text-decoration: none;
+	}
+
+	a:hover,
+	a:focus,
+	a:active {
+		color: var(--wp-admin-theme-color);
+	}
+
 	h1,
 	h2,
 	h3,
@@ -73,20 +99,27 @@
 		font-weight: bold;
 	}
 
+	img {
+		height: auto;
+		max-width: 128px;
+	}
+
 	.wpnc__note {
 		blockquote {
 			padding: 0 24px 0 32px;
 			margin: 16px 0 32px;
-			border-left: 3px solid var(--color-neutral-0);
-			color: var(--color-neutral-50);
+			border-left: 3px solid #f6f7f7;
+			color: #646970;
 			font-weight: 400;
 			background: transparent;
 		}
+
 		ul,
 		ol {
 			margin-left: 1.5em;
 			list-style-position: inside;
 		}
+
 		ul {
 			list-style-type: disc;
 			ul {
@@ -96,9 +129,11 @@
 				}
 			}
 		}
+
 		ol {
 			list-style-type: decimal;
 		}
+
 		li {
 			margin: auto;
 		}

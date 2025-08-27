@@ -9,6 +9,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import DNSRecordForm from './form';
 import { DNS_RECORD_CONFIGS } from './records/dns-record-configs';
+import { getProcessedRecord } from './utils';
 import type { DnsRecordTypeFormData, DnsRecordFormData } from './records/dns-record-configs';
 import type { DnsRecord } from '../../data/domain-dns-records';
 
@@ -20,8 +21,10 @@ export default function DomainEditDNS() {
 	const mutation = useMutation( domainDnsMutation( domainName ) );
 
 	const { data: dnsRecords } = useSuspenseQuery( domainDnsQuery( domainName ) );
-	// This record's existence is checked in the `beforeLoad` function in the route
-	const recordToEdit = dnsRecords.records.find( ( record ) => record.id === recordId )!;
+	const recordToEdit = getProcessedRecord(
+		// This record's existence is checked in the `beforeLoad` function in the route
+		dnsRecords.records.find( ( record ) => record.id === recordId )!
+	);
 
 	const navigateToDNSOverviewPage = () => {
 		navigate( {
@@ -32,7 +35,7 @@ export default function DomainEditDNS() {
 
 	const handleSubmit = ( typeFormData: DnsRecordTypeFormData, formData: DnsRecordFormData ) => {
 		const config = DNS_RECORD_CONFIGS[ typeFormData.type ];
-		const recordToAdd = config.transformData( formData, domainName );
+		const recordToAdd = config.transformData( formData, domainName, typeFormData.type );
 
 		const recordsToAdd: DnsRecord[] = [ recordToAdd ];
 		const recordsToRemove: DnsRecord[] = [ recordToEdit ];
@@ -57,6 +60,7 @@ export default function DomainEditDNS() {
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Edit DNS record' ) } /> }>
 			<DNSRecordForm
+				domainName={ domainName }
 				isBusy={ mutation.isPending }
 				submitButtonText={ __( 'Update DNS record' ) }
 				onSubmit={ handleSubmit }

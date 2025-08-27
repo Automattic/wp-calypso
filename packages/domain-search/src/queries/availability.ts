@@ -4,7 +4,8 @@ export interface DomainAvailability {
 	mappable: string;
 	supports_privacy: boolean;
 	cost: string;
-	sale_cost?: string;
+	currency_code: string;
+	sale_cost?: number;
 	renew_cost?: string;
 	product_id: number;
 	product_slug: string;
@@ -21,6 +22,7 @@ const fetchDomainAvailability = async ( domainName: string ): Promise< DomainAva
 			mappable: 'mappable',
 			supports_privacy: true,
 			cost: '$18',
+			currency_code: 'USD',
 			product_id: 6,
 			product_slug: 'domain_reg',
 		};
@@ -33,7 +35,8 @@ const fetchDomainAvailability = async ( domainName: string ): Promise< DomainAva
 			mappable: 'mappable',
 			supports_privacy: true,
 			cost: '$18',
-			sale_cost: '$10',
+			sale_cost: 10,
+			currency_code: 'USD',
 			product_id: 6,
 			product_slug: 'domain_reg',
 		};
@@ -46,6 +49,7 @@ const fetchDomainAvailability = async ( domainName: string ): Promise< DomainAva
 			mappable: 'mappable',
 			supports_privacy: true,
 			cost: '$18',
+			currency_code: 'USD',
 			product_id: 6,
 			product_slug: 'domain_reg',
 			is_price_limit_exceeded: true,
@@ -59,6 +63,7 @@ const fetchDomainAvailability = async ( domainName: string ): Promise< DomainAva
 			mappable: 'mappable',
 			supports_privacy: true,
 			cost: '$18',
+			currency_code: 'USD',
 			product_id: 6,
 			product_slug: 'domain_reg',
 		};
@@ -71,6 +76,7 @@ const fetchDomainAvailability = async ( domainName: string ): Promise< DomainAva
 			mappable: 'mappable',
 			supports_privacy: true,
 			cost: '$18',
+			currency_code: 'USD',
 			product_id: 6,
 			product_slug: 'domain_reg',
 		};
@@ -83,6 +89,7 @@ const fetchDomainAvailability = async ( domainName: string ): Promise< DomainAva
 			mappable: 'mappable',
 			supports_privacy: true,
 			cost: '$18',
+			currency_code: 'USD',
 			product_id: 6,
 			product_slug: 'dotapp_domain',
 		};
@@ -95,6 +102,7 @@ const fetchDomainAvailability = async ( domainName: string ): Promise< DomainAva
 			mappable: 'mappable',
 			supports_privacy: true,
 			cost: '$18',
+			currency_code: 'USD',
 			product_id: 6,
 			product_slug: 'dotgay_domain',
 		};

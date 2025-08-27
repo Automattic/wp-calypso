@@ -1,4 +1,4 @@
-import { DomainSuggestion } from '../queries/suggestions';
+import type { DomainSuggestion } from '@automattic/data';
 
 export type FeaturedSuggestionReason = 'exact-match' | 'recommended' | 'best-alternative';
 
