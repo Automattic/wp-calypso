@@ -27,6 +27,25 @@ function stopEvent( event: KeyboardEvent | FormEvent ) {
 	event.preventDefault();
 }
 
+function getRowCount( textareaElement: HTMLTextAreaElement | null ) {
+	if ( ! textareaElement ) {
+		return 1;
+	}
+
+	// Reset to minimum rows first
+	textareaElement.rows = 1;
+
+	// Calculate the required rows
+	const style = window.getComputedStyle( textareaElement );
+	const lineHeight = ! isNaN( parseInt( style.lineHeight ) ) ? parseInt( style.lineHeight ) : 20;
+	const rows = Math.min( Math.floor( textareaElement.scrollHeight / lineHeight ), 4 );
+
+	// Set to latest rows
+	textareaElement.rows = Math.max( rows, 1 );
+
+	return textareaElement.rows;
+}
+
 // TODO:
 // 1. Handle the response of the reply
 // 2. Route back to list after successful comment post (should we?)
@@ -197,7 +216,7 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 					<TextareaControl
 						className="comment-reply-input__textarea"
 						ref={ replyInputRef }
-						rows={ 1 }
+						rows={ getRowCount( replyInputRef.current ) }
 						value={ value }
 						placeholder={ defaultValue }
 						onFocus={ handleFocus }
