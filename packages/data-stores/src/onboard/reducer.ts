@@ -8,9 +8,9 @@ import type {
 	DomainTransferAuthCodes,
 	ReadymadeTemplate,
 } from './types';
-import type { DomainSuggestion } from '../domain-suggestions';
 import type { FeatureId } from '../shared-types';
 import type { GlobalStyles } from '../site';
+import type { DomainSuggestion } from '@automattic/data';
 // somewhat hacky, but resolves the circular dependency issue
 import type { Design, StyleVariation } from '@automattic/design-picker/src/types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';

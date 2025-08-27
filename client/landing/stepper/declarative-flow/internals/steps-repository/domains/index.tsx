@@ -38,7 +38,7 @@ import { ONBOARD_STORE } from '../../../../stores';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import { DomainFormControl } from './domain-form-control';
 import type { Step } from '../../types';
-import type { DomainSuggestion } from '@automattic/data-stores';
+import type { DomainSuggestion } from '@automattic/data';
 import './style.scss';
 
 const DomainsStep: Step< {
@@ -89,9 +89,11 @@ const DomainsStep: Step< {
 			section,
 			type: domainType,
 		};
+		// @ts-expect-error - isRecommended is injected by register-domain-step/utility.js
 		if ( suggestion.isRecommended ) {
 			tracksObjects.label = 'recommended';
 		}
+		// @ts-expect-error - isRecommended is injected by register-domain-step/utility.js
 		if ( suggestion.isBestAlternative ) {
 			tracksObjects.label = 'best-alternative';
 		}
