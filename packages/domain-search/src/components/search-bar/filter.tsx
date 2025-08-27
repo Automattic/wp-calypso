@@ -61,6 +61,17 @@ export const Filter = ( {
 		setTldsInFilter( tlds );
 	};
 
+	const getRecommendedTlds = useCallback( () => {
+		return availableTlds.slice( 0, 5 ).filter( ( tld ) => ! temporaryFilter.tlds.includes( tld ) );
+	}, [ availableTlds, temporaryFilter.tlds ] );
+
+	const getExploreMoreTlds = useCallback( () => {
+		return availableTlds
+			.slice( 5 )
+			.sort()
+			.filter( ( tld ) => ! temporaryFilter.tlds.includes( tld ) );
+	}, [ availableTlds, temporaryFilter.tlds ] );
+
 	return (
 		<Dropdown
 			showArrow={ false }
@@ -74,17 +85,19 @@ export const Filter = ( {
 				return (
 					<DomainSearchControls.FilterPopover
 						addTldToFilter={ addTldToFilter }
-						setExactSldMatchesOnlyInFilter={ setExactSldMatchesOnlyInFilter }
-						temporaryFilter={ temporaryFilter }
 						availableTlds={ availableTlds }
-						onClose={ onClose }
-						resetFilter={ resetFilter }
+						exploreMoreTlds={ getExploreMoreTlds() }
+						handleTldsChange={ handleTldsChange }
 						onClear={ () => {
 							onClose();
 							resetFilter();
 						} }
+						onClose={ onClose }
+						recommendedTlds={ getRecommendedTlds() }
+						resetFilter={ resetFilter }
+						setExactSldMatchesOnlyInFilter={ setExactSldMatchesOnlyInFilter }
+						temporaryFilter={ temporaryFilter }
 						validateTld={ validateTld }
-						handleTldsChange={ handleTldsChange }
 					/>
 				);
 			} }
