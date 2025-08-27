@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -23,6 +24,11 @@ jest.mock( 'calypso/data/reader/freshly-pressed/use-suggestion-mutation', () => 
 		useSuggestionMutation: jest.fn().mockReturnValue( { mutate: jest.fn() } ),
 	};
 } );
+jest.mock( '@automattic/viewport-react', () => {
+	return {
+		useMobileBreakpoint: jest.fn().mockReturnValue( false ),
+	};
+} );
 
 jest.mock( 'calypso/state/notices/actions', () => {
 	return {
@@ -40,6 +46,7 @@ jest.mock( 'calypso/state', () => {
 describe( 'ReaderFreshlyPressedButton', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		jest.mocked( useMobileBreakpoint ).mockReturnValue( false );
 	} );
 
 	const Wrapper = ( { children }: { children: React.ReactNode } ) => {
@@ -47,12 +54,16 @@ describe( 'ReaderFreshlyPressedButton', () => {
 		return <QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>;
 	};
 
-	const getButton = () => screen.getByRole( 'button', { name: 'Freshly Press' } );
+	it( 'shows the loading state', () => {
+		jest.mocked( useEligibilityQuery ).mockReturnValue( {
+			data: undefined,
+			isLoading: true,
+		} as unknown as ReturnType< typeof useEligibilityQuery > );
 
-	it( 'renders the button', () => {
 		render( <ReaderFreshlyPressedButton blogId={ 1 } postId={ 1 } />, { wrapper: Wrapper } );
 
-		expect( getButton() ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Loading...' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button' ) ).toBeDisabled();
 	} );
 
 	describe( 'when the post is not eligible', () => {
@@ -72,22 +83,32 @@ describe( 'ReaderFreshlyPressedButton', () => {
 		it( 'disables the button', () => {
 			render( <ReaderFreshlyPressedButton blogId={ 1 } postId={ 1 } />, { wrapper: Wrapper } );
 
-			expect( getButton() ).toBeDisabled();
+			expect(
+				screen.getByRole( 'button', { name: 'Suggest for Freshly Pressed' } )
+			).toBeDisabled();
 		} );
 
 		it( 'shows the reason why the post is not eligible', () => {
 			render( <ReaderFreshlyPressedButton blogId={ 1 } postId={ 1 } />, { wrapper: Wrapper } );
 
-			expect( getButton() ).toHaveAttribute(
+			expect( screen.getByRole( 'button' ) ).toHaveAttribute(
 				'data-tooltip',
 				'This post is not eligible for Freshly Pressed'
 			);
+		} );
+
+		it( 'shows a short version on mobile', () => {
+			jest.mocked( useMobileBreakpoint ).mockReturnValue( true );
+			render( <ReaderFreshlyPressedButton blogId={ 1 } postId={ 1 } />, { wrapper: Wrapper } );
+
+			expect( screen.getByRole( 'button', { name: 'Suggest' } ) ).toBeVisible();
 		} );
 	} );
 
 	describe( 'when the post is eligible', () => {
 		beforeEach( () => {
-			return jest.mocked( useEligibilityQuery ).mockReturnValue( {
+			jest.clearAllMocks();
+			jest.mocked( useEligibilityQuery ).mockReturnValue( {
 				data: { eligible: true, details: null, status: 'eligible' },
 			} as unknown as ReturnType< typeof useEligibilityQuery > );
 		} );
@@ -95,7 +116,7 @@ describe( 'ReaderFreshlyPressedButton', () => {
 		it( 'enables the button', () => {
 			render( <ReaderFreshlyPressedButton blogId={ 1 } postId={ 1 } />, { wrapper: Wrapper } );
 
-			expect( getButton() ).toBeEnabled();
+			expect( screen.getByRole( 'button', { name: 'Suggest for Freshly Pressed' } ) ).toBeEnabled();
 		} );
 
 		it( 'sends a suggestion', async () => {
@@ -111,7 +132,9 @@ describe( 'ReaderFreshlyPressedButton', () => {
 				wrapper: Wrapper,
 			} );
 
-			await userEvent.click( getButton() );
+			await userEvent.click(
+				screen.getByRole( 'button', { name: 'Suggest for Freshly Pressed' } )
+			);
 
 			expect( mutate ).toHaveBeenCalled();
 		} );
@@ -119,7 +142,11 @@ describe( 'ReaderFreshlyPressedButton', () => {
 
 	describe( 'when the post is being suggested', () => {
 		beforeEach( () => {
-			return jest.mocked( useSuggestionMutation ).mockReturnValue( {
+			jest.mocked( useEligibilityQuery ).mockReturnValue( {
+				data: { eligible: true, details: null, status: 'eligible' },
+			} as unknown as ReturnType< typeof useEligibilityQuery > );
+
+			jest.mocked( useSuggestionMutation ).mockReturnValue( {
 				mutate: jest.fn(),
 				isPending: true,
 			} as unknown as ReturnType< typeof useSuggestionMutation > );
@@ -128,13 +155,26 @@ describe( 'ReaderFreshlyPressedButton', () => {
 		it( 'disables the button', () => {
 			render( <ReaderFreshlyPressedButton blogId={ 1 } postId={ 1 } />, { wrapper: Wrapper } );
 
-			expect( getButton() ).toBeDisabled();
+			expect(
+				screen.getByRole( 'button', { name: 'Suggest for Freshly Pressed' } )
+			).toBeDisabled();
+		} );
+
+		it( 'shows a short version on mobile', () => {
+			jest.mocked( useMobileBreakpoint ).mockReturnValue( true );
+			render( <ReaderFreshlyPressedButton blogId={ 1 } postId={ 1 } />, { wrapper: Wrapper } );
+
+			expect( screen.getByRole( 'button', { name: 'Suggest' } ) ).toBeVisible();
 		} );
 	} );
 
 	describe( 'when the post is suggested with success', () => {
 		beforeEach( () => {
-			return jest.mocked( useSuggestionMutation ).mockReturnValue( {
+			jest.mocked( useEligibilityQuery ).mockReturnValue( {
+				data: { eligible: true, details: null, status: 'suggested' },
+			} as unknown as ReturnType< typeof useEligibilityQuery > );
+
+			jest.mocked( useSuggestionMutation ).mockReturnValue( {
 				mutate: jest.fn(),
 				isPending: false,
 				isSuccess: true,
@@ -144,12 +184,23 @@ describe( 'ReaderFreshlyPressedButton', () => {
 		it( 'shows the success state', () => {
 			render( <ReaderFreshlyPressedButton blogId={ 1 } postId={ 1 } />, { wrapper: Wrapper } );
 
-			expect( getButton() ).toBeVisible();
+			expect(
+				screen.getByRole( 'button', { name: 'Post suggested for Freshly Pressed' } )
+			).toBeVisible();
 		} );
+
 		it( 'disables the button', () => {
 			render( <ReaderFreshlyPressedButton blogId={ 1 } postId={ 1 } />, { wrapper: Wrapper } );
 
-			expect( getButton() ).toBeDisabled();
+			expect(
+				screen.getByRole( 'button', { name: 'Post suggested for Freshly Pressed' } )
+			).toBeDisabled();
+		} );
+
+		it( 'shows a short version on mobile', () => {
+			jest.mocked( useMobileBreakpoint ).mockReturnValue( true );
+			render( <ReaderFreshlyPressedButton blogId={ 1 } postId={ 1 } />, { wrapper: Wrapper } );
+			expect( screen.getByRole( 'button', { name: 'Suggested' } ) ).toBeVisible();
 		} );
 	} );
 

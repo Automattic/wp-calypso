@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Spinner } from '@wordpress/components';
-import { check, levelUp, notAllowed, Icon } from '@wordpress/icons';
+import { check, levelUp, Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
@@ -31,15 +32,7 @@ const getIcon = ( status: Status ) => {
 		return check;
 	}
 
-	if ( status === 'not-eligible' ) {
-		return notAllowed;
-	}
-
-	if ( status === 'eligible' ) {
-		return levelUp;
-	}
-
-	return null;
+	return levelUp;
 };
 
 export const ReaderFreshlyPressedButton = ( { blogId, postId }: Props ) => {
@@ -51,19 +44,29 @@ export const ReaderFreshlyPressedButton = ( { blogId, postId }: Props ) => {
 		postId: postId,
 	} );
 
-	const getLabel = () => {
-		if ( eligibility?.status === 'suggested' ) {
-			return eligibility?.details?.reason;
-		}
-		if ( eligibility?.status === 'published' ) {
-			return translate( 'Post already published' );
-		}
-		if ( eligibility?.status === 'eligible' ) {
-			return translate( 'Suggest this post for Freshly Pressed' );
-		}
+	const isMobile = useMobileBreakpoint();
 
-		if ( eligibility?.status === 'not-eligible' ) {
-			return eligibility?.details?.reason;
+	const getLabel = () => {
+		switch ( eligibility?.status ) {
+			case 'published':
+			case 'suggested':
+				return {
+					label: isMobile
+						? translate( 'Suggested' )
+						: translate( 'Post suggested for Freshly Pressed' ),
+					tooltip: eligibility?.details?.reason,
+				};
+			case 'eligible':
+			case 'not-eligible':
+				return {
+					label: isMobile ? translate( 'Suggest' ) : translate( 'Suggest for Freshly Pressed' ),
+					tooltip: eligibility?.details?.reason,
+				};
+			default:
+				return {
+					label: translate( 'Loading…' ),
+					tooltip: null,
+				};
 		}
 	};
 
@@ -100,7 +103,8 @@ export const ReaderFreshlyPressedButton = ( { blogId, postId }: Props ) => {
 			dispatch( successNotice( translate( 'Post suggested for Freshly Pressed' ) ) );
 		}
 	}, [ isSuggestionSuccess, dispatch, translate ] );
-	const label = getLabel();
+
+	const config = getLabel();
 
 	return (
 		<div
@@ -108,18 +112,18 @@ export const ReaderFreshlyPressedButton = ( { blogId, postId }: Props ) => {
 				'freshly-pressed',
 				`freshly-pressed--is-status-${ eligibility?.status ?? 'loading' }`
 			) }
-			aria-label={ label }
+			aria-label={ config?.label }
 			aria-busy={ isLoading }
 		>
 			<button
-				data-tooltip={ label }
+				data-tooltip={ config?.tooltip }
 				onClick={ handleClick }
 				disabled={ ! isEligible || isLoading || isSuggestionSuccess }
 				className="freshly-pressed__button"
 			>
 				{ statusIcon && <Icon size={ 20 } icon={ statusIcon } /> }
 				{ isLoading && <Spinner className="freshly-pressed__spinner" /> }
-				{ translate( 'Freshly Press' ) }
+				{ config?.label }
 			</button>
 		</div>
 	);
