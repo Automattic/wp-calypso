@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import {
 	Button,
@@ -192,15 +193,41 @@ export default function StagingSiteSyncModal( {
 		) {
 			pullMutation.mutate( options, {
 				onSuccess: () => {
+					recordTracksEvent( 'calypso_hosting_configuration_staging_site_pull_success', {
+						types: options.types,
+						include_paths: options.include_paths,
+						exclude_paths: options.exclude_paths,
+					} );
 					onSyncStart();
 					handleClose();
+				},
+				onError: ( error: Error ) => {
+					recordTracksEvent( 'calypso_hosting_configuration_staging_site_pull_failure', {
+						message: error.message,
+						types: options.types,
+						include_paths: options.include_paths,
+						exclude_paths: options.exclude_paths,
+					} );
 				},
 			} );
 		} else {
 			pushMutation.mutate( options, {
 				onSuccess: () => {
+					recordTracksEvent( 'calypso_hosting_configuration_staging_site_push_success', {
+						types: options.types,
+						include_paths: options.include_paths,
+						exclude_paths: options.exclude_paths,
+					} );
 					onSyncStart();
 					handleClose();
+				},
+				onError: ( error: Error ) => {
+					recordTracksEvent( 'calypso_hosting_configuration_staging_site_push_failure', {
+						message: error.message,
+						types: options.types,
+						include_paths: options.include_paths,
+						exclude_paths: options.exclude_paths,
+					} );
 				},
 			} );
 		}
