@@ -5,21 +5,21 @@ import { DomainSearchControls } from '../../ui';
 import { FilterState } from './types';
 
 interface FilterProps {
-	filter: FilterState;
-	temporaryFilter: FilterState;
-	setTemporaryFilter: ( filter: FilterState ) => void;
 	availableTlds: string[];
+	filter: FilterState;
 	resetFilter: () => void;
 	setFilter: ( filter: FilterState ) => void;
+	setTemporaryFilter: ( filter: FilterState ) => void;
+	temporaryFilter: FilterState;
 }
 
 export const Filter = ( {
-	filter,
-	temporaryFilter,
-	setTemporaryFilter,
 	availableTlds,
+	filter,
 	resetFilter,
 	setFilter,
+	setTemporaryFilter,
+	temporaryFilter,
 }: FilterProps ) => {
 	const getFiltercounts = useCallback( () => {
 		return filter.tlds.length + ( filter.exactSldMatchesOnly ? 1 : 0 );
