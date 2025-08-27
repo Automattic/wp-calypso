@@ -9,8 +9,8 @@ const getAccountTypeLabel = ( accountType: EmailProvider ) => {
 	switch ( accountType ) {
 		case 'google_workspace':
 			return __( 'Google Workspace' );
-		case 'forwarding':
-			return __( 'Forwarding' );
+		case 'email_forwarding':
+			return __( 'Email Forwarding' );
 		case 'titan':
 		default:
 			return __( 'Professional Email' );

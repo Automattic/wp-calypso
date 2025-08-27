@@ -1,5 +1,5 @@
 import wpcom from 'calypso/lib/wp';
-export type EmailProvider = 'titan' | 'google_workspace' | 'forwarding';
+export type EmailProvider = 'titan' | 'google_workspace' | 'email_forwarding';
 
 export interface Mailbox {
 	account_type: EmailProvider;
@@ -71,7 +71,7 @@ export const EMAIL_DATA: Email[] = [
 		id: '4',
 		emailAddress: 'contact@creative-portfolio.design',
 		type: 'forwarding',
-		provider: 'forwarding',
+		provider: 'email_forwarding',
 		providerDisplayName: 'Email Forwarding',
 		domainName: 'creative-portfolio.design',
 		siteId: '3',
@@ -84,7 +84,7 @@ export const EMAIL_DATA: Email[] = [
 		id: '5',
 		emailAddress: 'jobs@mybusiness.store',
 		type: 'forwarding',
-		provider: 'forwarding',
+		provider: 'email_forwarding',
 		providerDisplayName: 'Email Forwarding',
 		domainName: 'mybusiness.store',
 		siteId: '2',
@@ -97,7 +97,7 @@ export const EMAIL_DATA: Email[] = [
 		id: '6',
 		emailAddress: 'newsletter@myblog.com',
 		type: 'forwarding',
-		provider: 'forwarding',
+		provider: 'email_forwarding',
 		providerDisplayName: 'Email Forwarding',
 		domainName: 'myblog.com',
 		siteId: '1',
