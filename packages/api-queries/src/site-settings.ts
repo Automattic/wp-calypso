@@ -10,19 +10,18 @@ export const siteSettingsQuery = ( siteId: number ) =>
 		queryFn: () => fetchSiteSettings( siteId ),
 	} );
 
-export const siteSettingsMutation = (
-	siteId: number
-): MutationOptions< Partial< SiteSettings >, Error, Partial< SiteSettings > > => ( {
-	mutationFn: ( data: Partial< SiteSettings > ) => updateSiteSettings( siteId, data ),
-	onSuccess: ( newData: Partial< SiteSettings > ) => {
-		queryClient.setQueryData(
-			siteSettingsQuery( siteId ).queryKey,
-			( oldData: SiteSettings | undefined ) =>
-				oldData && {
-					...oldData,
-					...newData,
-				}
-		);
-		queryClient.invalidateQueries( siteQueryFilter( siteId ) );
-	},
-} );
+export const siteSettingsMutation = ( siteId: number ) =>
+	mutationOptions( {
+		mutationFn: ( data: Partial< SiteSettings > ) => updateSiteSettings( siteId, data ),
+		onSuccess: ( newData ) => {
+			queryClient.setQueryData(
+				siteSettingsQuery( siteId ).queryKey,
+				( oldData ) =>
+					oldData && {
+						...oldData,
+						...newData,
+					}
+			);
+			queryClient.invalidateQueries( siteQueryFilter( siteId ) );
+		},
+	} );
