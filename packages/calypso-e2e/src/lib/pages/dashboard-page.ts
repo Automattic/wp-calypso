@@ -6,6 +6,7 @@ import { Page } from 'playwright';
  * Internal dependencies
  */
 import { getCalypsoURL } from '../../data-helper';
+import envVariables from '../../env-variables';
 
 /**
  * Dashboard page class for the new v2 dashboard.
@@ -81,7 +82,25 @@ export class DashboardPage {
 	 */
 	async visitPath( subpath: string ): Promise< void > {
 		const path = subpath.startsWith( '/' ) ? subpath : `/${ subpath }`;
-		await this.page.goto( getCalypsoURL( `v2${ path }` ) );
+		// v2 path is not accessible on production environment
+		const url =
+			envVariables.CALYPSO_BASE_URL === 'https://wordpress.com'
+				? getCalypsoURL( path )
+				: getCalypsoURL( `v2${ path }` );
+		await this.page.goto( url );
+	}
+
+	/**
+	 * Sets the site visibility by selecting the appropriate radio button and saving.
+	 *
+	 * @param visibility - The desired site visibility (currently unused).
+	 * @returns Promise that resolves when the visibility is set.
+	 */
+	async setSiteVisibility( visibility: 'Public' | 'Private' | 'Coming soon' ): Promise< void > {
+		await this.page.getByRole( 'radio', { name: visibility } ).click();
+		await this.page.waitForSelector( 'button[type="submit"]:not([disabled])' );
+		await this.page.getByRole( 'button', { name: 'Save' } ).click();
+		await this.page.waitForSelector( 'button:not(.is-busy)[type="submit"][disabled]' );
 	}
 
 	/**
