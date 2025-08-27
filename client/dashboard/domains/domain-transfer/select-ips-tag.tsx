@@ -13,7 +13,6 @@ import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { ipsTagListQuery, ipsTagMutation } from '../../app/queries/domain-transfer';
 import Notice from '../../components/notice';
-import type { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
 
 interface SelectIpsTagProps {
 	domain: string;
@@ -23,7 +22,7 @@ interface SelectIpsTagProps {
 export default function SelectIpsTag( { domain, isDomainLocked }: SelectIpsTagProps ) {
 	const { data: ipsTagList } = useSuspenseQuery( ipsTagListQuery() );
 	const saveIpsTagMutation = useMutation( ipsTagMutation( domain ) );
-	const [ ipsTag, setIpsTag ] = useState< string | TokenItem | null >( null );
+	const [ ipsTag, setIpsTag ] = useState< string | null >( null );
 	const [ isDialogOpen, setIsDialogOpen ] = useState( false );
 	const [ saveStatus, setSaveStatus ] = useState< 'success' | 'error' | '' >( '' );
 
@@ -34,7 +33,10 @@ export default function SelectIpsTag( { domain, isDomainLocked }: SelectIpsTagPr
 	}
 
 	const onConfirm = () => {
-		saveIpsTagMutation.mutate( ipsTag as string, {
+		if ( ipsTag === null ) {
+			return;
+		}
+		saveIpsTagMutation.mutate( ipsTag, {
 			onSuccess: () => {
 				setSaveStatus( 'success' );
 			},
@@ -81,7 +83,12 @@ export default function SelectIpsTag( { domain, isDomainLocked }: SelectIpsTagPr
 						>
 							{ __( 'Cancel' ) }
 						</Button>
-						<Button variant="primary" isBusy={ saveIpsTagMutation.isPending } onClick={ onConfirm }>
+						<Button
+							variant="primary"
+							isBusy={ saveIpsTagMutation.isPending }
+							onClick={ onConfirm }
+							disabled={ saveIpsTagMutation.isPending }
+						>
 							{ __( 'Submit' ) }
 						</Button>
 					</HStack>
@@ -99,7 +106,7 @@ export default function SelectIpsTag( { domain, isDomainLocked }: SelectIpsTagPr
 					label="IPS tag"
 					placeholder={ __( 'Start typing an IPS tag…' ) }
 					onChange={ ( tokens ) => {
-						setIpsTag( tokens[ tokens.length - 1 ] );
+						setIpsTag( tokens.length > 0 ? ( tokens[ tokens.length - 1 ] as string ) : null );
 					} }
 					displayTransform={ ( item: string ) =>
 						`${ item } (${ ipsTagList.find( ( tag ) => tag.tag === item )?.registrarName })`

@@ -28,6 +28,7 @@ import { formatDate } from '../../utils/datetime';
 import SelectIpsTag from './select-ips-tag';
 
 const RESTRICTED_TRANSFER_TLDS = [ 'uk', 'fr', 'ca', 'de', 'jp' ];
+const TRANSFER_LOCK_GRACE_PERIOD_MS = 60 * 24 * 60 * 60 * 1000; // 60 days
 
 export function getTopLevelOfTld( domainName: string ): string {
 	return domainName.substring( domainName.lastIndexOf( '.' ) + 1 );
@@ -95,7 +96,7 @@ export default function DomainTransfer() {
 				/>
 			);
 		} else if (
-			RESTRICTED_TRANSFER_TLDS.includes( getTopLevelOfTld( domain.domain ) ) &&
+			! RESTRICTED_TRANSFER_TLDS.includes( getTopLevelOfTld( domain.domain ) ) &&
 			domain.can_transfer_to_other_site
 		) {
 			actions.push(
@@ -146,7 +147,7 @@ export default function DomainTransfer() {
 		const registrationDate = new Date( domain.registration_date );
 		const today = new Date();
 		const registrationDatePlus60Days = new Date(
-			registrationDate.getTime() + 60 * 24 * 60 * 60 * 1000
+			registrationDate.getTime() + TRANSFER_LOCK_GRACE_PERIOD_MS
 		);
 
 		let message: string | React.ReactElement = __( 'This domain cannot be locked.' );
@@ -235,8 +236,15 @@ export default function DomainTransfer() {
 		);
 	};
 
+	const renderTransferMethod = () => {
+		if ( getTopLevelOfTld( domain.domain ) === 'uk' ) {
+			return <SelectIpsTag domain={ domainName } isDomainLocked={ domain.is_locked } />;
+		}
+
+		return domain.auth_code_required ? renderAuthCodeButton() : null;
+	};
+
 	const renderExternalTransferOptions = () => {
-		const topLevelOfTld = getTopLevelOfTld( domain.domain );
 		return (
 			<Card>
 				<CardBody>
@@ -252,11 +260,7 @@ export default function DomainTransfer() {
 						<VStack spacing={ 6 }>
 							{ renderTransferMessage() }
 							{ renderTransferLock() }
-							{ topLevelOfTld !== 'uk' ? (
-								domain.auth_code_required && renderAuthCodeButton()
-							) : (
-								<SelectIpsTag domain={ domainName } isDomainLocked={ domain.is_locked } />
-							) }
+							{ renderTransferMethod() }
 						</VStack>
 					</VStack>
 				</CardBody>
