@@ -9,7 +9,7 @@ import {
 import '@wordpress/components/build-style/style.css';
 import { __ } from '@wordpress/i18n';
 import { bell } from '@wordpress/icons';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { getFilters } from '../../panel/templates/filters';
 import NoteList from '../note-list';
 import NotePanelActions from './actions';
@@ -23,8 +23,16 @@ const NOTIFICATION_TABS = Object.values( getFilters() ).map( ( { name, label } )
 
 const NotePanel = () => {
 	const [ activeTab, setActiveTab ] = useState< ActiveTab >( 'all' );
+
+	// Ensure the component is focused on mount
+	// to avoid parent's <Popover>'s focus trap from moving.
+	const focusRef = useRef< HTMLDivElement >( null );
+	useEffect( () => {
+		focusRef.current?.focus();
+	}, [] );
+
 	return (
-		<>
+		<div ref={ focusRef } tabIndex={ -1 }>
 			<CardHeader
 				size="small"
 				style={ { flexDirection: 'column', alignItems: 'stretch', paddingBottom: 0 } }
@@ -52,7 +60,7 @@ const NotePanel = () => {
 				</VStack>
 			</CardHeader>
 			<NoteList filterName={ activeTab } />
-		</>
+		</div>
 	);
 };
 
