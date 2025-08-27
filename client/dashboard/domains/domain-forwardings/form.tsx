@@ -160,7 +160,7 @@ export default function DomainForwardingForm( {
 				},
 			},
 		],
-		[ domainName ]
+		[ domainName, forceSubdomain ]
 	);
 
 	const form = {
