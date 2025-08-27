@@ -19,7 +19,19 @@ import {
 	ThemesDetailPage,
 	ThemesPage,
 } from '@automattic/calypso-e2e';
-import { test as base, expect } from '@playwright/test';
+import { test as base, expect, Page } from '@playwright/test';
+
+async function getAccount(
+	page: Page,
+	accountName: ConstructorParameters< typeof TestAccount >[ 0 ]
+): Promise< TestAccount > {
+	const testAccount = new TestAccount( accountName );
+	if ( ! ( await testAccount.hasFreshAuthCookies() ) ) {
+		await testAccount.logInViaLoginPage( page );
+		await testAccount.saveAuthCookies( page.context() );
+	}
+	return testAccount;
+}
 
 export const test = base.extend< {
 	accountGivenByEnvironment: TestAccount;
@@ -40,23 +52,17 @@ export const test = base.extend< {
 	pageThemes: ThemesPage;
 	secrets: Secrets;
 } >( {
-	accountGivenByEnvironment: async ( {}, use ) => {
+	accountGivenByEnvironment: async ( { page }, use ) => {
 		const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
-		const testAccount = new TestAccount( accountName );
+		const testAccount = await getAccount( page, accountName );
 		await use( testAccount );
 	},
-	accountGutenbergSimple: async ( {}, use ) => {
-		const accountName = 'gutenbergSimpleSiteUser';
-		const testAccount = new TestAccount( accountName );
+	accountGutenbergSimple: async ( { page }, use ) => {
+		const testAccount = await getAccount( page, 'gutenbergSimpleSiteUser' );
 		await use( testAccount );
 	},
 	accounti18n: async ( { page }, use ) => {
-		const accountName = 'i18nUser';
-		const testAccount = new TestAccount( accountName );
-		if ( ! ( await testAccount.hasFreshAuthCookies() ) ) {
-			await testAccount.logInViaLoginPage( page );
-			await testAccount.saveAuthCookies( page.context() );
-		}
+		const testAccount = await getAccount( page, 'i18nUser' );
 		await use( testAccount );
 	},
 	clientEmail: async ( {}, use ) => {
