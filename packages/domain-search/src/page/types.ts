@@ -1,5 +1,5 @@
 import { domainAvailabilityQuery } from '../queries/availability';
-import { domainSuggestionsQuery } from '../queries/suggestions';
+import { domainSuggestionsQuery, freeSuggestionQuery } from '../queries/suggestions';
 import type { DomainSuggestion } from '@automattic/data';
 import type { QueryClient } from '@tanstack/react-query';
 import type { ComponentType } from 'react';
@@ -48,5 +48,6 @@ export interface DomainSearchContextType
 	queries: {
 		domainSuggestions: ( query: string ) => ReturnType< typeof domainSuggestionsQuery >;
 		domainAvailability: ( domainName: string ) => ReturnType< typeof domainAvailabilityQuery >;
+		freeSuggestion: ( query: string ) => ReturnType< typeof freeSuggestionQuery >;
 	};
 }

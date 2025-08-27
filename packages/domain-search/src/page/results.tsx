@@ -18,6 +18,8 @@ export const ResultsPage = () => {
 		queries.domainSuggestions( query )
 	);
 
+	const { isLoading: isLoadingFreeSuggestion } = useQuery( queries.freeSuggestion( query ) );
+
 	const { isLoading: isLoadingQueryAvailability } = useQuery( {
 		...queries.domainAvailability( query ),
 		enabled: true,
@@ -32,9 +34,9 @@ export const ResultsPage = () => {
 			} ) ),
 	} );
 
-	const isLoading = isLoadingSuggestions || isLoadingQueryAvailability;
+	const isLoading = isLoadingSuggestions || isLoadingFreeSuggestion || isLoadingQueryAvailability;
 
-	const { featuredSuggestions, freeSuggestion, regularSuggestions } = useMemo( () => {
+	const { featuredSuggestions, regularSuggestions } = useMemo( () => {
 		return partitionSuggestions( suggestions, query );
 	}, [ suggestions, query ] );
 
@@ -52,11 +54,7 @@ export const ResultsPage = () => {
 				) : (
 					<FeaturedSearchResults suggestions={ featuredSuggestions } />
 				) }
-				{ isLoading ? (
-					<SkipSuggestion.Placeholder />
-				) : (
-					<SkipSuggestion freeSuggestion={ freeSuggestion } />
-				) }
+				{ isLoading ? <SkipSuggestion.Placeholder /> : <SkipSuggestion /> }
 				{ isLoading ? (
 					<SearchResults.Placeholder />
 				) : (

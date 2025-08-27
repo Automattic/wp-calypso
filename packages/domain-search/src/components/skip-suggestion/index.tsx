@@ -2,13 +2,10 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchSkipSuggestion } from '../../ui';
 
-const SkipSuggestion = ( { freeSuggestion }: { freeSuggestion?: string } ) => {
+const SkipSuggestion = () => {
 	const { cart, queries, query, currentSiteUrl, events } = useDomainSearch();
 
-	const { data: suggestion } = useQuery( {
-		...queries.domainSuggestions( query ),
-		select: ( data ) => data.find( ( suggestion ) => suggestion.domain_name === freeSuggestion ),
-	} );
+	const { data: suggestion } = useQuery( queries.freeSuggestion( query ) );
 
 	const { mutate: addToCart, isPending: isAddingToCart } = useMutation( {
 		mutationFn: ( suggestion: string ) => {
