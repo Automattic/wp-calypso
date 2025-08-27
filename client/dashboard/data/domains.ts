@@ -1,10 +1,11 @@
 import wpcom from 'calypso/lib/wp';
 
 export const DomainTypes = {
-	MAPPED: 'mapping',
-	SITE_REDIRECT: 'redirect',
-	WPCOM: 'wpcom',
-	TRANSFER: 'transfer',
+	DEFAULT: 'default_address',
+	DOMAIN_CONNECTION: 'domain_connection',
+	DOMAIN_REGISTRATION: 'domain_registration',
+	DOMAIN_TRANSFER: 'domain_transfer',
+	SITE_REDIRECT: 'site_redirect',
 } as const;
 
 export const DomainTransferStatus = {
