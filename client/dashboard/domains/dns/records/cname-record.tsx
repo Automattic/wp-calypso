@@ -1,5 +1,8 @@
 import { __ } from '@wordpress/i18n';
+import { getFieldWithDot, getNormalizedName } from '../utils';
+import { domainValidator, hostnameValidator, ttlValidator } from './validators';
 import type { DnsRecordFormData, DnsRecordConfig } from './dns-record-configs';
+import type { DnsRecordType } from '../../../data/domain-dns-records';
 
 export const CNAMERecordConfig: DnsRecordConfig = {
 	description: __(
@@ -12,6 +15,10 @@ export const CNAMERecordConfig: DnsRecordConfig = {
 			label: __( 'Name (host)' ),
 			/* translators: This is a placeholder for a DNS CNAME record `name` property */
 			placeholder: __( 'Enter subdomain (required)' ),
+			isValid: {
+				required: true,
+				custom: hostnameValidator(),
+			},
 		},
 		{
 			id: 'data',
@@ -19,6 +26,11 @@ export const CNAMERecordConfig: DnsRecordConfig = {
 			label: __( 'Alias of (points to)' ),
 			/* translators: This is a placeholder for a DNS CNAME record `data` property */
 			placeholder: __( 'e.g. example.com' ),
+			isValid: {
+				required: true,
+				/* translators: This is the error message when the `data` field of a DNS CNAME record is invalid */
+				custom: domainValidator( __( 'Please enter a valid target host.' ) ),
+			},
 		},
 		{
 			id: 'ttl',
@@ -26,21 +38,20 @@ export const CNAMERecordConfig: DnsRecordConfig = {
 			label: __( 'TTL (time to live)' ),
 			/* translators: This is a placeholder for a DNS CNAME record `ttl` property */
 			placeholder: __( 'e.g. 3600' ),
+			isValid: {
+				required: true,
+				custom: ttlValidator(),
+			},
 		},
 	],
 	form: {
 		layout: { type: 'regular' as const },
 		fields: [ 'name', 'data', 'ttl' ],
 	},
-	transformData: ( data: DnsRecordFormData ) => {
-		// Remove trailing dot from the hostname
-		const hostName = data.data.endsWith( '.' ) ? data.data.slice( 0, -1 ) : data.data;
-
-		return {
-			type: 'CNAME',
-			name: data.name,
-			data: hostName + '.', // we're appending a dot to make the host name a FQDN
-			ttl: data.ttl,
-		};
-	},
+	transformData: ( data: DnsRecordFormData, domainName: string, type: DnsRecordType ) => ( {
+		type: 'CNAME',
+		name: getNormalizedName( data.name, type, domainName ),
+		data: getFieldWithDot( data.data ),
+		ttl: data.ttl,
+	} ),
 };

@@ -1007,6 +1007,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/data@workspace:^, @automattic/data@workspace:packages/data":
+  version: 0.0.0-use.local
+  resolution: "@automattic/data@workspace:packages/data"
+  dependencies:
+    "@automattic/calypso-typescript-config": "workspace:^"
+    tslib: "npm:^2.8.1"
+    typescript: "npm:^5.8.3"
+  languageName: unknown
+  linkType: soft
+
 "@automattic/design-picker@workspace:^, @automattic/design-picker@workspace:packages/design-picker":
   version: 0.0.0-use.local
   resolution: "@automattic/design-picker@workspace:packages/design-picker"
@@ -1152,6 +1162,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/data": "workspace:^"
     "@storybook/addon-a11y": "npm:^8.6.14"
     "@tanstack/react-query": "npm:^5.83.0"
     "@testing-library/dom": "npm:^10.4.0"
@@ -14937,6 +14948,7 @@ __metadata:
     "@automattic/components": "workspace:^"
     "@automattic/composite-checkout": "workspace:^"
     "@automattic/create-calypso-config": "workspace:^"
+    "@automattic/data": "workspace:^"
     "@automattic/data-stores": "workspace:^"
     "@automattic/design-picker": "workspace:^"
     "@automattic/design-preview": "workspace:^"

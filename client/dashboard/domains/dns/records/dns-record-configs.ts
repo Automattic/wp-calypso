@@ -15,11 +15,14 @@ export type DnsRecordTypeFormData = {
 };
 
 export type DnsRecordFormData = {
+	type: DnsRecordType;
+	domain: string;
 	name: string;
 	data: string;
 	ttl: number;
 	flags: number; // CAA
 	tag: string; // CAA
+	value: string; // CAA
 	aux: number; // MX, SRV
 	service: string; // SRV
 	protocol: string; // SRV
@@ -36,7 +39,7 @@ export type DnsRecordConfig = {
 		fields: string[];
 	};
 	// Function to transform the form data into the format expected by the DNS endpoint
-	transformData: ( data: DnsRecordFormData, domainName?: string ) => DnsRecord;
+	transformData: ( data: DnsRecordFormData, domainName: string, type: DnsRecordType ) => DnsRecord;
 };
 
 export const DNS_RECORD_CONFIGS: Record< DnsRecordType, DnsRecordConfig > = {

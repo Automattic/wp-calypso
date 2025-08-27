@@ -224,17 +224,6 @@ export const domainGlueRecordsEditRoute = createRoute( {
 	)
 );
 
-export const domainDnssecRoute = createRoute( {
-	getParentRoute: () => domainRoute,
-	path: 'dnssec',
-} ).lazy( () =>
-	import( '../../domains/domain-dnssec' ).then( ( d ) =>
-		createLazyRoute( 'domain-dnssec' )( {
-			component: d.default,
-		} )
-	)
-);
-
 export const domainSecurityRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'security',
@@ -277,7 +266,6 @@ export const createDomainsRoutes = () => {
 			domainGlueRecordsRoute,
 			domainGlueRecordsAddRoute,
 			domainGlueRecordsEditRoute,
-			domainDnssecRoute,
 			domainTransferRoute,
 			domainSecurityRoute,
 		] ),

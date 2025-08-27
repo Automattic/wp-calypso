@@ -2,6 +2,13 @@
     display: flex;
     align-self: center;
     gap: 1em;
+    flex-direction: column;
+
+    .one-login__footer-links-wrapper {
+        display: flex;
+        align-self: center;
+        gap: 1em;
+    }
 
     .one-login__footer-link {
         color: var(--studio-gray-90, #1d2327);
