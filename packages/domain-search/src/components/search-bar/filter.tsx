@@ -99,7 +99,6 @@ export const Filter = ( {
 						} }
 						onClose={ onClose }
 						recommendedTlds={ getRecommendedTlds() }
-						resetFilter={ resetFilter }
 						setExactSldMatchesOnlyInFilter={ setExactSldMatchesOnlyInFilter }
 						temporaryFilter={ temporaryFilter }
 						validateTld={ validateTld }
