@@ -55,7 +55,6 @@ test.describe( 'I18N: Editor', { tag: '@i18n' }, () => {
 			await test.step( `And I update my locale settings to ${ translation.locale }`, async function () {
 				const clientRestAPI = new RestAPIClient( accounti18n.credentials );
 				await clientRestAPI.setMySettings( { language: translation.locale } );
-				await page.reload();
 			} );
 
 			await test.step( 'When I visit the editor page', async function () {
@@ -63,8 +62,7 @@ test.describe( 'I18N: Editor', { tag: '@i18n' }, () => {
 			} );
 
 			await test.step( 'Then I can see the following see the correct translations', async function () {
-				await expect( page.getByRole( 'heading', { level: 1, name: translation.addTitle } ) )
-					.toBeVisible()
+				await expect( page.getByRole( 'textbox' ) ).toHaveAccessibleName( translation.addTitle );
 			} );
 		} );
 	}
