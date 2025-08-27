@@ -8,7 +8,7 @@ import {
 	domainForwardingQuery,
 	domainForwardingSaveMutation,
 } from '../../app/queries/domain-forwarding';
-import { domainRoute, domainForwardingsRoute } from '../../app/router';
+import { domainRoute, domainForwardingsRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import DomainForwardingForm from './form';

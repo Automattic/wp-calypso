@@ -6,7 +6,6 @@ import {
 	Button,
 	Spinner,
 	Flex,
-	__experimentalElevation as Elevation,
 	__experimentalHStack as HStack,
 	privateApis as componentsPrivateApis,
 } from '@wordpress/components';
@@ -103,7 +102,10 @@ const EllipsisMenu = () => {
 		<Spinner width={ 24 } height={ 24 } />
 	) : (
 		<Menu>
-			<Menu.TriggerButton render={ <Button icon={ moreVertical } /> } />
+			<Menu.TriggerButton
+				title={ __( 'Help Center Options', __i18n_text_domain__ ) }
+				render={ <Button icon={ moreVertical } /> }
+			/>
 			<Menu.Popover>
 				<Menu.Item
 					prefix={ <Icon icon={ lineSolid } width={ 20 } height={ 20 } /> }
@@ -243,8 +245,12 @@ const HelpCenterHeader = ( { onDismiss }: Header ) => {
 
 	if ( isMinimized ) {
 		return (
-			<button className={ classNames } onClick={ () => setIsMinimized( false ) }>
-				<Elevation isInteractive value={ 10 } hover={ 15 } />
+			<button
+				name={ __( 'Maximize Help Center', __i18n_text_domain__ ) }
+				className={ classNames }
+				onClick={ () => setIsMinimized( false ) }
+				aria-label={ __( 'Maximize Help Center', __i18n_text_domain__ ) }
+			>
 				<HStack alignment="center" justify="space-between" spacing={ 5 }>
 					<HStack justify="flex-start">
 						<HeaderText />

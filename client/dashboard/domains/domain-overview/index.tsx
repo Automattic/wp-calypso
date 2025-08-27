@@ -6,11 +6,12 @@ import { useMemo } from 'react';
 import { useLocale } from '../../app/locale';
 import { domainQuery } from '../../app/queries/domain';
 import { sitePurchaseQuery } from '../../app/queries/site-purchases';
-import { domainRoute } from '../../app/router';
+import { domainRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { formatDate } from '../../utils/datetime';
 import { getDomainRenewalUrl } from '../../utils/domain';
+import Actions from './actions';
 
 export default function DomainOverview() {
 	const locale = useLocale();
@@ -63,6 +64,8 @@ export default function DomainOverview() {
 					}
 				/>
 			}
-		></PageLayout>
+		>
+			<Actions />
+		</PageLayout>
 	);
 }

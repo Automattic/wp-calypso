@@ -7,18 +7,13 @@
 	@include help-center-link;
 
 	.help-center-search-results-dev__resource {
-		margin-right: 15px;
+		margin-right: 13px;
 		display: block;
-		background: var(--studio-gray-0);
 		fill: var(--studio-blue-50);
-		padding: 8px;
+		padding-left: 19px;
 		text-transform: uppercase;
 		font-weight: 500;
 		font-size: 0.75rem;
-	}
-
-	li:last-child {
-		margin-bottom: 14px;
 	}
 
 	.help-center-search-results__title {

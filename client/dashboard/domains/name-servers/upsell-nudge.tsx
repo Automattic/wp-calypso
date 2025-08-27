@@ -9,15 +9,16 @@ import illustrationUrl from './upsell-nudge-illustration.svg';
 
 interface Props {
 	domainName: string;
+	domainSiteSlug: string;
 }
 
-export default function UpsaleNudge( { domainName }: Props ) {
+export default function UpsellNudge( { domainName, domainSiteSlug }: Props ) {
 	return (
 		<Callout
 			title={ sprintf(
 				/* translators: %s is the domain name */
 				__( 'This domain is being forwarded to %s' ),
-				domainName
+				domainSiteSlug
 			) }
 			image={ illustrationUrl }
 			variant="highlight"
@@ -40,7 +41,7 @@ export default function UpsaleNudge( { domainName }: Props ) {
 					text={ __( 'Upgrade plan' ) }
 					tracksId="nameservers"
 					variant="primary"
-					href={ `/checkout/${ domainName }/business` }
+					href={ `/checkout/${ domainSiteSlug }/business` }
 				/>
 			}
 		/>

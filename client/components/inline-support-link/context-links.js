@@ -604,6 +604,10 @@ const contextLinks = {
 		post_id: 122861,
 		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
 	},
+	'security-wpcom-login': {
+		link: 'https://wordpress.com/support/wordpress-com-secure-sign-on-sso/',
+		post_id: 175831,
+	},
 };
 
 export default contextLinks;

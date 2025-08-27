@@ -19,10 +19,10 @@ export default function Snackbars() {
 	const snackbarNotices = notices
 		.filter( ( { type } ) => type === 'snackbar' )
 		.map( ( { status, ...notice } ) => ( {
-			...notice,
 			icon: statusIcon[ status ] && (
 				<Icon icon={ statusIcon[ status ] } style={ { fill: 'currentcolor' } } />
 			),
+			...notice,
 		} ) )
 		.slice( MAX_VISIBLE_NOTICES );
 

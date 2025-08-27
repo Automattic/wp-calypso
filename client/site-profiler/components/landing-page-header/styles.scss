@@ -1,11 +1,10 @@
-@import "@wordpress/base-styles/breakpoints";
+@import '@wordpress/base-styles/breakpoints';
 
 @mixin input-style {
 	background: #fff;
 	box-sizing: border-box;
 	box-shadow: 0 5px 10px 0 #0000000d;
 	border: 1px solid transparent;
-	/* stylelint-disable-next-line */
 	border-radius: 8px;
 	padding: 0.625rem 1.5rem;
 }
@@ -14,7 +13,7 @@
 	p + .landing-page-header--form {
 		margin-top: 2.5rem;
 
-		@media (max-width: $break-small) {
+		@media ( max-width: $break-small ) {
 			margin-top: 2.25rem;
 		}
 	}
@@ -26,7 +25,7 @@
 .landing-page-header--form-container {
 	display: flex;
 
-	@media (min-width: $break-small + 1px) {
+	@media ( min-width: $break-small + 1px ) {
 		@include input-style;
 		gap: 1rem;
 
@@ -41,7 +40,7 @@
 		}
 	}
 
-	@media (max-width: $break-small) {
+	@media ( max-width: $break-small ) {
 		flex-direction: column;
 		justify-content: space-between;
 		gap: 1.5rem;
@@ -56,21 +55,21 @@
 		width: 100%;
 		border: none;
 		padding: 0;
-		font-family: "SF Pro Text", $sans;
+		font-family: 'SF Pro Text', $sans;
 		font-size: 2.75rem;
 		/* stylelint-disable-next-line */
 		line-height: 155%;
-		color: var(--studio-gray-100);
+		color: var( --studio-gray-100 );
 
 		&::placeholder {
-			color: var(--studio-gray-40);
+			color: var( --studio-gray-40 );
 		}
 
 		&:focus {
 			outline: none;
 		}
 
-		@media (max-width: $break-small) {
+		@media ( max-width: $break-small ) {
 			@include input-style;
 			font-size: 1.5rem;
 			line-height: 2;
@@ -80,20 +79,19 @@
 
 .landing-page-header--form {
 	&.is-error {
-		@media (min-width: $break-small + 1px) {
+		@media ( min-width: $break-small + 1px ) {
 			.landing-page-header--form-container {
-				border: 1px solid var(--studio-red-50);
+				border: 1px solid var( --studio-red-50 );
 			}
 		}
 
-		@media (max-width: $break-small) {
+		@media ( max-width: $break-small ) {
 			input {
-				border: 1px solid var(--studio-red-50);
+				border: 1px solid var( --studio-red-50 );
 			}
 		}
 	}
 }
-
 
 .landing-page-header--msg {
 	margin-top: 1rem;
@@ -112,13 +110,13 @@
 	}
 
 	.error {
-		color: var(--studio-red-50) !important;
+		color: var( --studio-red-50 ) !important;
 
 		svg {
 			top: 4px;
 			position: relative;
-			fill: var(--studio-red-50);
-			transform: rotate(180deg);
+			fill: var( --studio-red-50 );
+			transform: rotate( 180deg );
 		}
 	}
 }

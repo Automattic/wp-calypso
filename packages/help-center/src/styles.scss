@@ -44,16 +44,6 @@
 	.help-center__container-content {
 		button,
 		a {
-			&:focus {
-				box-shadow: none;
-				outline: var(--color-link, --studio-blue-30) solid 2px;
-			}
-
-			&:hover {
-				color: var(--color-link-dark, --studio-blue-70);
-				border-color: inherit;
-			}
-
 			// Remove the default focus outline on the Recent Conversations nav tabs
 			&.section-nav-tab__link:focus {
 				box-shadow: none;
@@ -109,13 +99,7 @@
 		width: 410px;
 		height: 80vh;
 		max-height: 800px;
-		box-shadow:
-			0 3px 8px 0 rgba(0, 0, 0, 0.12),
-			0 3px 1px 0 rgba(0, 0, 0, 0.04),
-			0 0 0 1px rgba(0, 0, 0, 0.04);
-		/* stylelint-disable-next-line scales/radii */
 		border-radius: 16px;
-		overflow: hidden;
 
 		&.is-minimized {
 			height: $head-foot-height;
@@ -140,10 +124,6 @@
 		max-height: calc(100% - 45px);
 		height: calc(100% - var(--masterbar-height, 0));
 		animation: 0.25s ease-out 0s 1 normal none running fadeIn;
-
-		.help-center__container-footer {
-			margin-bottom: 0;
-		}
 
 		&.is-minimized {
 			min-height: $head-foot-height;
