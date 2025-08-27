@@ -6,13 +6,14 @@ import UplotReact from 'uplot-react';
 import useResize from 'calypso/components/chart-uplot/hooks/use-resize';
 
 import './style.scss';
+import clsx from 'clsx';
 
 const DEFAULT_DIMENSIONS = {
 	height: 300,
 	width: 1224,
 };
 
-interface UplotChartProps {
+interface MonitoringLineChartProps {
 	title?: string;
 	subtitle: string;
 	tooltip?: string | React.ReactNode;
@@ -113,7 +114,7 @@ export const MonitoringLineChart = ( {
 	series,
 	timeRange,
 	isLoading = false,
-}: UplotChartProps ) => {
+}: MonitoringLineChartProps ) => {
 	const uplot = useRef< uPlot | null >( null );
 	const uplotContainer = useRef< HTMLDivElement | null >( null );
 	const [ chartDimensions, setChartDimensions ] = useState( DEFAULT_DIMENSIONS );
@@ -235,19 +236,21 @@ export const MonitoringLineChart = ( {
 		}
 	}, [ chartDimensions, data ] );
 
-	const classes = [ 'site-monitoring-line-chart', 'site-monitoring__chart' ];
+	const classes = [ 'monitoring-line-chart' ];
 	if ( className ) {
 		classes.push( className );
 	}
 
 	return (
-		<div ref={ uplotContainer }>
-			{ isLoading && <Spinner /> }
-			<UplotReact
-				data={ data }
-				onCreate={ ( chart ) => ( uplot.current = chart ) }
-				options={ options }
-			/>
+		<div className={ clsx( classes ) }>
+			<div ref={ uplotContainer }>
+				{ isLoading && <Spinner /> }
+				<UplotReact
+					data={ data }
+					onCreate={ ( chart ) => ( uplot.current = chart ) }
+					options={ options }
+				/>
+			</div>
 		</div>
 	);
 };

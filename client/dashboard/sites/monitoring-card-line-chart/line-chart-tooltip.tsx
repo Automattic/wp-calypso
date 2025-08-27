@@ -1,8 +1,16 @@
 import styled from '@emotion/styled';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
-import { HTTPCodeSerie } from '../site-monitoring';
 import { UplotTooltipProps } from './uplot-tooltip-plugin';
+
+export interface HTTPCodeSerie {
+	statusCode: number;
+	fill: string;
+	label: string;
+	stroke: string;
+	showInLegend?: boolean;
+	showInTooltip?: boolean;
+}
 
 const PopoverStyled = styled.div( {
 	transform: 'translate(-50%, -100% )',

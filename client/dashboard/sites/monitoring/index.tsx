@@ -1,13 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import {
-	__experimentalDivider as Divider,
-	__experimentalGrid as Grid,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
-	Button,
 } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { useViewportMatch } from '@wordpress/compose';
@@ -69,19 +66,20 @@ function SiteMonitoringBody( { site, timeRange }: { site: object; timeRange: str
 
 	return (
 		<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
-			<MonitoringPerformanceCard site={ site } timeRange={ getDateRange( timeRange ) } />
+			<MonitoringPerformanceCard site={ site } timeRange={ hoursMap[ timeRange ] } />
 		</VStack>
 	);
 }
 
+const hoursMap: Record< string, number > = {
+	'6-hours': 6,
+	'24-hours': 24,
+	'3-days': 72,
+	'7-days': 168,
+};
+
 const getDateRange = ( range: string ) => {
 	const now = new Date();
-	const hoursMap: Record< string, number > = {
-		'6-hours': 6,
-		'24-hours': 24,
-		'3-days': 72,
-		'7-days': 168,
-	};
 
 	const hours = hoursMap[ range ] || 24;
 	const start = new Date( now.getTime() - hours * 60 * 60 * 1000 );

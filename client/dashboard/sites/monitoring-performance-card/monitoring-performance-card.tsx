@@ -3,20 +3,23 @@ import { __ } from '@wordpress/i18n';
 import type { Site } from 'calypso/dashboard/data/site';
 import MonitoringCard from 'calypso/dashboard/sites/monitoring-card';
 import { MonitoringLineChart } from 'calypso/dashboard/sites/monitoring-card-line-chart';
-import { timeHighlightPlugin } from 'calypso/sites/monitoring/components/site-monitoring-line-chart/time-highlight-plugin';
-import { tooltipsPlugin } from 'calypso/sites/monitoring/components/site-monitoring-line-chart/uplot-tooltip-plugin';
-import { FirstChartTooltip } from 'calypso/sites/monitoring/components/site-monitoring-line-chart/line-chart-tooltip';
+import { timeHighlightPlugin } from 'calypso/dashboard/sites/monitoring-card-line-chart/time-highlight-plugin';
+import { tooltipsPlugin } from 'calypso/dashboard/sites/monitoring-card-line-chart/uplot-tooltip-plugin';
+import { FirstChartTooltip } from 'calypso/dashboard/sites/monitoring-card-line-chart/line-chart-tooltip';
 import {
 	MetricsType,
 	PeriodData,
 	useSiteMetricsQuery,
 } from 'calypso/sites/monitoring/hooks/use-metrics-query';
 
-function convertTimeRangeToUnix( timeRange: string ) {
-	const [ startStr, endStr ] = timeRange.split( '–' );
+type TimeRange = {
+	start: number;
+	end: number;
+};
 
-	const start = Math.floor( new Date( startStr.trim() ).getTime() / 1000 );
-	const end = Math.floor( new Date( endStr.trim() ).getTime() / 1000 );
+function convertTimeRangeToUnix( timeRange: number ) {
+	const start = Math.floor( new Date().getTime() / 1000 ) - timeRange * 3600;
+	const end = Math.floor( new Date().getTime() / 1000 );
 
 	return { start, end };
 }
@@ -36,7 +39,7 @@ function colorToAlpha( color: keyof typeof colorStudio.colors, alpha: number ) {
 	return `rgba(${ r }, ${ g }, ${ b }, ${ alpha })`;
 }
 
-export function useSiteMetricsData( siteId: number, timeRange: object, metric?: MetricsType ) {
+export function useSiteMetricsData( siteId: number, timeRange: TimeRange, metric?: MetricsType ) {
 	// Use the custom hook for time range selection
 	const { start, end } = timeRange;
 
@@ -108,7 +111,7 @@ export default function MonitoringPerformanceCard( {
 	timeRange,
 }: {
 	site: Site;
-	timeRange: string;
+	timeRange: number;
 } ) {
 	const { formattedData, isLoading: isLoadingLineChart } = useSiteMetricsData(
 		site.ID,
