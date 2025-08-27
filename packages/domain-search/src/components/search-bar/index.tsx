@@ -15,19 +15,18 @@ import './style.scss';
 
 const DELAY_TIMEOUT = 300;
 
+const emptyFilter = {
+	exactSldMatchesOnly: false,
+	tlds: [],
+};
+
 export const SearchBar = () => {
 	const { __ } = useI18n();
 	const { query, setQuery } = useDomainSearch();
 	const [ localQuery, setLocalQuery ] = useState( query );
-	const [ filter, setFilter ] = useState( {
-		exactSldMatchesOnly: false,
-		tlds: [],
-	} );
+	const [ filter, setFilter ] = useState( emptyFilter );
 	// This is the filter that the user is currently selecting. It is only applied when the popover is closed
-	const [ temporaryFilter, setTemporaryFilter ] = useState( {
-		exactSldMatchesOnly: false,
-		tlds: [],
-	} );
+	const [ temporaryFilter, setTemporaryFilter ] = useState( emptyFilter );
 	// TODO: Hardcoded for testing, should get those from the https://public-api.wordpress.com/rest/v1.1/domains/suggestions/tlds endpoint
 	const availableTlds = [ 'com', 'net', 'org', 'blog', 'dev', 'io', 'co', 'co.uk', 'com.br', 'de' ];
 
@@ -44,14 +43,8 @@ export const SearchBar = () => {
 	}, [ filter ] );
 
 	const resetFilter = useCallback( () => {
-		setFilter( {
-			tlds: [],
-			exactSldMatchesOnly: false,
-		} );
-		setTemporaryFilter( {
-			tlds: [],
-			exactSldMatchesOnly: false,
-		} );
+		setFilter( emptyFilter );
+		setTemporaryFilter( emptyFilter );
 	}, [] );
 
 	const renderAvailableTld = ( tld: string ) => {
