@@ -101,7 +101,7 @@ export default function DomainTransfer() {
 		) {
 			actions.push(
 				<ActionList.ActionItem
-					key="transfer-to-any-use"
+					key="transfer-to-any-user"
 					title={ __( 'To another WordPress.com user' ) }
 					description={ __( 'Transfer this domain to another WordPress.com user' ) }
 					actions={
