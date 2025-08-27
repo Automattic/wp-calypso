@@ -168,6 +168,7 @@ import {
 	FEATURE_MANAGED_HOSTING,
 	FEATURE_THE_READER,
 	WPCOM_FEATURES_NO_ADVERTS,
+	WPCOM_FEATURES_BACKUPS_RESTORE,
 	FEATURE_BEAUTIFUL_THEMES,
 	FEATURE_PAGES,
 	FEATURE_USERS,
@@ -1385,6 +1386,15 @@ const FEATURES_LIST: FeatureList = {
 		getDescription: () =>
 			i18n.translate(
 				'Revert back to a point-in-time in your site’s history, with a single click.'
+			),
+	},
+
+	[ WPCOM_FEATURES_BACKUPS_RESTORE ]: {
+		getSlug: () => WPCOM_FEATURES_BACKUPS_RESTORE,
+		getTitle: () => i18n.translate( 'Real time full-site backup/restore' ),
+		getDescription: () =>
+			i18n.translate(
+				'Comprehensive real-time backups of your entire site with instant one-click restore capabilities.'
 			),
 	},
 

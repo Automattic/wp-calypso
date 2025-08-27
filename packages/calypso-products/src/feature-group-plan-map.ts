@@ -161,6 +161,7 @@ import {
 	FEATURE_ECOMMERCE_MARKETING,
 	FEATURE_SHIPPING_CARRIERS,
 	FEATURE_GOOGLE_ANALYTICS,
+	WPCOM_FEATURES_BACKUPS_RESTORE,
 } from './constants';
 import { FeatureGroupMap } from './types';
 
@@ -495,9 +496,8 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 		getTitle: () => i18n.translate( 'Managed WordPress Hosting' ),
 		getFeatures: () => [
 			FEATURE_FREE_SSL_CERTIFICATE,
-			FEATURE_GLOBAL_EDGE_CACHING,
-			FEATURE_REALTIME_BACKUPS_JP,
-			FEATURE_ONE_CLICK_RESTORE_V2,
+			FEATURE_CDN,
+			WPCOM_FEATURES_BACKUPS_RESTORE,
 			FEATURE_EASY_SITE_MIGRATION,
 			FEATURE_WAF_V2,
 			FEATURE_SECURITY_DDOS,
