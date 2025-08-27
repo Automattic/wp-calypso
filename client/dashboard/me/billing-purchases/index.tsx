@@ -7,7 +7,7 @@ import { userPaymentMethodsQuery } from '../../app/queries/me-payment-methods';
 import { userPurchasesQuery, userTransferredPurchasesQuery } from '../../app/queries/me-purchases';
 import { sitesQuery } from '../../app/queries/sites';
 import { purchasesRoute } from '../../app/router/me';
-import DataViewsCard from '../../components/dataviews-card';
+import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import {

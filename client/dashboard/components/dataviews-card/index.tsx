@@ -13,4 +13,3 @@ function UnforwardedDataViewsCard(
 }
 
 export const DataViewsCard = forwardRef( UnforwardedDataViewsCard );
-export default DataViewsCard;
