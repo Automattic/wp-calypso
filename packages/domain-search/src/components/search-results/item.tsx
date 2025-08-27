@@ -1,11 +1,10 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { HTTPS_SSL } from '@automattic/urls';
-import { useQuery } from '@tanstack/react-query';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useMemo } from 'react';
+import { useSuggestion } from '../../hooks/use-suggestion';
 import { useDomainSuggestionBadges } from '../../hooks/use-suggestion-badges';
-import { useDomainSearch } from '../../page/context';
 import { DomainSuggestion } from '../../ui';
 import { DomainSuggestionCTA } from '../suggestion-cta';
 import { DomainSuggestionPrice } from '../suggestion-price';
@@ -19,13 +18,12 @@ export const SearchResultsItem = ( { domainName }: SearchResultsItemProps ) => {
 
 	const suggestionBadges = useDomainSuggestionBadges( domainName );
 
-	const { queries } = useDomainSearch();
-	const { data: availability } = useQuery( queries.domainAvailability( domainName ) );
+	const suggestion = useSuggestion( domainName );
 
 	const tld = tlds.join( '.' );
 
 	const notice = useMemo( () => {
-		if ( availability?.hsts_required ) {
+		if ( suggestion.hsts_required ) {
 			return createInterpolateElement(
 				sprintf(
 					/* translators: %s is the TLD of the domain */
@@ -43,14 +41,14 @@ export const SearchResultsItem = ( { domainName }: SearchResultsItemProps ) => {
 			);
 		}
 
-		if ( availability?.dot_gay_notice_required ) {
+		if ( suggestion.dot_gay_notice_required ) {
 			return __(
 				'Any anti-LGBTQ content is prohibited and can result in registration termination. The registry will donate 20% of all registration revenue to LGBTQ non-profit organizations.'
 			);
 		}
 
 		return null;
-	}, [ availability, tld ] );
+	}, [ suggestion, tld ] );
 
 	return (
 		<DomainSuggestion

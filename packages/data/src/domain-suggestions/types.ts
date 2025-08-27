@@ -161,6 +161,16 @@ export interface DomainSuggestion {
 	 * Whether the domain is premium
 	 */
 	is_premium?: true;
+
+	/**
+	 * Whether the client should show the SSL certificate notice
+	 */
+	hsts_required?: true;
+
+	/**
+	 * Whether the client should show the dot gay notice
+	 */
+	dot_gay_notice_required?: true;
 }
 
 export interface FreeDomainSuggestion {

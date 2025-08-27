@@ -14,28 +14,28 @@ import { useDomainSearch } from './context';
 export const ResultsPage = () => {
 	const { slots, query, queries } = useDomainSearch();
 
-	const { data: suggestions, isLoading: isLoadingSuggestions } = useQuery(
+	const { data: suggestions = [], isLoading: isLoadingSuggestions } = useQuery(
 		queries.domainSuggestions( query )
 	);
 
-	const { isLoading: isLoadingQueryAvailability } = useQuery( queries.domainAvailability( query ) );
-
-	const domainAvailabilityQueries = useQueries( {
-		queries:
-			suggestions
-				?.filter( ( suggestion ) => suggestion.is_premium )
-				.map( ( suggestion ) => ( {
-					...queries.domainAvailability( suggestion.domain_name ),
-				} ) ) ?? [],
+	const { isLoading: isLoadingQueryAvailability } = useQuery( {
+		...queries.domainAvailability( query ),
+		enabled: true,
 	} );
 
-	const isLoading =
-		isLoadingSuggestions ||
-		isLoadingQueryAvailability ||
-		domainAvailabilityQueries.some( ( query ) => query.isLoading );
+	useQueries( {
+		queries: suggestions
+			.filter( ( suggestion ) => suggestion.is_premium )
+			.map( ( suggestion ) => ( {
+				...queries.domainAvailability( suggestion.domain_name ),
+				enabled: true,
+			} ) ),
+	} );
+
+	const isLoading = isLoadingSuggestions || isLoadingQueryAvailability;
 
 	const { featuredSuggestions, freeSuggestion, regularSuggestions } = useMemo( () => {
-		return partitionSuggestions( suggestions ?? [], query );
+		return partitionSuggestions( suggestions, query );
 	}, [ suggestions, query ] );
 
 	return (

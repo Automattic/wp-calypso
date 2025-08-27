@@ -10,8 +10,8 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		onContinue: noop,
 	},
 	queries: {
-		domainSuggestions: domainSuggestionsQuery,
-		domainAvailability: domainAvailabilityQuery,
+		domainSuggestions: ( query: string ) => domainSuggestionsQuery( query ),
+		domainAvailability: ( domainName: string ) => domainAvailabilityQuery( domainName ),
 	},
 	cart: {
 		items: [],
