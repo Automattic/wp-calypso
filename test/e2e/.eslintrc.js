@@ -27,6 +27,12 @@ module.exports = {
 				'lint-no-multiple-toplevel-headings': 'off',
 			},
 		},
+		{
+			files: [ 'lib/**/*' ],
+			rules: {
+				'jsdoc/check-tag-names': [ 'error', { definedTags: [ 'fixture', 'remarks' ] } ],
+			},
+		},
 	],
 	rules: {
 		...nodeConfig.rules,

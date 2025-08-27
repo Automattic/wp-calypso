@@ -1,3 +1,44 @@
+/**
+ * Playwright test fixture extension for Calypso E2E tests.
+ *
+ * This module extends the base Playwright test with custom fixtures and helpers
+ * for Calypso E2E testing, including test accounts, page objects, API clients,
+ * and environment variables.
+ *
+ * @remarks
+ * - Provides fixtures for various test accounts, page objects, and utility classes.
+ * - Ensures test accounts have fresh authentication cookies before use.
+ * - Integrates Calypso-specific components and helpers for streamlined test authoring.
+ *
+ * @fixture accountGivenByEnvironment - A `TestAccount` determined by the current environment.
+ * @fixture accountGutenbergSimple - A `TestAccount` for the Gutenberg Simple Site User.
+ * @fixture accounti18n - A `TestAccount` for the i18n User.
+ * @fixture clientEmail - An `EmailClient` instance for email-related test actions.
+ * @fixture clientRestAPI - A `RestAPIClient` instance authenticated with the environment account.
+ * @fixture componentBlockWidgetEditor - A `BlockWidgetEditorComponent` instance.
+ * @fixture componentPreview - A `PreviewComponent` instance.
+ * @fixture componentSidebar - A `SidebarComponent` instance.
+ * @fixture componentSiteSelect - A `SiteSelectComponent` instance.
+ * @fixture environment - The current environment variables.
+ * @fixture helperData - The `DataHelper` utility.
+ * @fixture pageAppleLogin - An `AppleLoginPage` instance.
+ * @fixture pageEditor - An `EditorPage` instance.
+ * @fixture pageLogin - A `LoginPage` instance.
+ * @fixture pageThemeDetails - A `ThemesDetailPage` instance.
+ * @fixture pageThemes - A `ThemesPage` instance.
+ * @fixture secrets - The loaded secrets from `SecretsManager`.
+ *
+ * @example
+ * ```typescript
+ * test('should login and load editor', async ({ pageLogin, pageEditor }) => {
+ *   await pageLogin.login('user', 'pass');
+ *   await pageEditor.open();
+ *   // ...test logic...
+ * });
+ * ```
+ *
+ * @see https://playwright.dev/docs/test-fixtures
+ */
 /* eslint-disable no-empty-pattern */
 import {
 	AppleLoginPage,
@@ -16,20 +57,11 @@ import {
 	SidebarComponent,
 	SiteSelectComponent,
 	TestAccount,
-	TestAccountName,
 	ThemesDetailPage,
 	ThemesPage,
 } from '@automattic/calypso-e2e';
-import { test as base, expect, Page } from '@playwright/test';
-
-async function getAccount( page: Page, accountName: TestAccountName ): Promise< TestAccount > {
-	const testAccount = new TestAccount( accountName );
-	if ( ! ( await testAccount.hasFreshAuthCookies() ) ) {
-		await testAccount.logInViaLoginPage( page );
-		await testAccount.saveAuthCookies( page.context() );
-	}
-	return testAccount;
-}
+import { test as base, expect } from '@playwright/test';
+import { getAccount } from './get_account';
 
 export const test = base.extend< {
 	accountGivenByEnvironment: TestAccount;
