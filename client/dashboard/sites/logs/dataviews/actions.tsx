@@ -62,7 +62,7 @@ export function useActions( {
 					const message = ( items[ 0 ] as PHPLog ).message;
 					try {
 						await navigator.clipboard.writeText( message );
-						createSuccessNotice( __( 'Copied message' ), { type: 'snackbar' } );
+						createSuccessNotice( __( 'Copied message.' ), { type: 'snackbar' } );
 					} catch ( e ) {
 						createErrorNotice( __( 'Message could not be copied' ), { type: 'snackbar' } );
 					}
