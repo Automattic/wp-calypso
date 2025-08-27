@@ -19,15 +19,11 @@ import { getDomainSiteSlug } from '../../utils/domain';
 import NameServersForm from './form';
 import { shouldShowUpsellNudge } from './utils';
 
-export default function NameServers() {
+export default function NameServers( { error: queryError }: { error?: Error } ) {
 	const { user } = useAuth();
 	const { domainName } = domainRoute.useParams();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const {
-		data: nameServers,
-		error: queryError,
-		isLoading: isNameServersLoading,
-	} = useQuery( domainNameServersQuery( domainName ) );
+	const { data: nameServers } = useSuspenseQuery( domainNameServersQuery( domainName ) );
 	const { mutate: updateNameServers, isPending: isUpdatingNameServers } = useMutation(
 		domainNameServersMutation( domainName )
 	);
@@ -38,19 +34,6 @@ export default function NameServers() {
 		() => shouldShowUpsellNudge( user, domain, site ),
 		[ domain, site, user ]
 	);
-
-	const errorMsg = useMemo( () => {
-		if ( ! domain?.can_manage_name_servers ) {
-			return (
-				domain?.cannot_manage_name_servers_reason ||
-				__( 'You do not have permission to manage name servers.' )
-			);
-		}
-
-		if ( queryError ) {
-			return queryError.message;
-		}
-	}, [ domain, queryError ] );
 
 	const onSubmit = useCallback(
 		( ns: string[] ) => {
@@ -70,14 +53,13 @@ export default function NameServers() {
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Name Servers' ) } /> }>
 			<Card>
 				<CardBody>
-					{ errorMsg ? (
-						<Notice variant="error">{ errorMsg }</Notice>
+					{ queryError?.message ? (
+						<Notice variant="error">{ queryError.message }</Notice>
 					) : (
 						<NameServersForm
 							domainName={ domainName }
 							domainSiteSlug={ getDomainSiteSlug( domain ) }
 							isBusy={ isUpdatingNameServers }
-							isLoading={ isNameServersLoading }
 							nameServers={ nameServers ?? [] }
 							onSubmit={ onSubmit }
 							showUpsellNudge={ showUpsellNudge }

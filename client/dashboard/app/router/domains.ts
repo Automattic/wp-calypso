@@ -1,8 +1,15 @@
-import { createRoute, createLazyRoute, notFound, redirect } from '@tanstack/react-router';
+import {
+	createRoute,
+	createLazyRoute,
+	notFound,
+	redirect,
+	lazyRouteComponent,
+} from '@tanstack/react-router';
 import { domainQuery } from '../queries/domain';
 import { domainDnsQuery } from '../queries/domain-dns-records';
 import { domainForwardingQuery } from '../queries/domain-forwarding';
 import { domainGlueRecordsQuery } from '../queries/domain-glue-records';
+import { domainNameServersQuery } from '../queries/domain-name-servers';
 import { sslDetailsQuery } from '../queries/domain-ssl';
 import { domainsQuery } from '../queries/domains';
 import { queryClient } from '../query-client';
@@ -37,8 +44,14 @@ export const domainsPurchaseRoute = createRoute( {
 export const domainRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'domains/$domainName',
-	loader: ( { params: { domainName } } ) => {
-		return queryClient.ensureQueryData( domainQuery( domainName ) );
+	loader: async ( { params: { domainName } } ) => {
+		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
+		if ( ! domain.can_manage_name_servers ) {
+			throw new Error(
+				domain.cannot_manage_name_servers_reason ||
+					'You do not have permission to manage name servers.'
+			);
+		}
 	},
 } ).lazy( () =>
 	import( '../../domains/domain' ).then( ( d ) =>
@@ -167,13 +180,11 @@ export const domainContactInfoRoute = createRoute( {
 export const domainNameServersRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'name-servers',
-} ).lazy( () =>
-	import( '../../domains/name-servers' ).then( ( d ) =>
-		createLazyRoute( 'domain-name-servers' )( {
-			component: d.default,
-		} )
-	)
-);
+	loader: ( { params: { domainName } } ) =>
+		queryClient.ensureQueryData( domainNameServersQuery( domainName ) ),
+	component: lazyRouteComponent( () => import( '../../domains/name-servers' ) ),
+	errorComponent: lazyRouteComponent( () => import( '../../domains/name-servers' ) ),
+} );
 
 export const domainGlueRecordsRoute = createRoute( {
 	getParentRoute: () => domainRoute,
