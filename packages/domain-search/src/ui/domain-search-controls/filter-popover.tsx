@@ -8,6 +8,7 @@ import {
 import { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
 import { useI18n } from '@wordpress/react-i18n';
 import { FilterState } from '../../components/search-bar/types';
+import { FilterPopoverTld } from './filter-popover-tld';
 
 import './filter-popover.scss';
 
@@ -34,34 +35,15 @@ export const DomainSearchControlsFilterPopover = ( {
 }: Props ) => {
 	const { __ } = useI18n();
 
-	const renderAvailableTld = ( tld: string ) => {
-		return (
-			<div
-				className="domain-search-controls__filters-popover-available-tld"
-				key={ tld }
-				onClick={ () => {
-					addTldToFilter( tld );
-				} }
-				onKeyDown={ ( event ) => {
-					if ( event.key === 'Enter' ) {
-						addTldToFilter( tld );
-					}
-				} }
-				role="button"
-				tabIndex={ 0 }
-			>
-				{ tld }
-			</div>
-		);
-	};
-
 	// Show list of available TLDs that weren't selected
 	const renderAvailableTldsList = () => {
 		return (
 			<div className="domain-search-controls__filters-popover-available-tlds-container">
 				{ availableTlds
 					.filter( ( tld ) => ! temporaryFilter.tlds.includes( tld ) )
-					.map( ( tld ) => renderAvailableTld( tld ) ) }
+					.map( ( tld ) => (
+						<FilterPopoverTld key={ tld } tld={ tld } addTldToFilter={ addTldToFilter } />
+					) ) }
 			</div>
 		);
 	};
