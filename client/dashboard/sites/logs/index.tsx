@@ -1,10 +1,10 @@
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { __experimentalText as Text, TabPanel } from '@wordpress/components';
+import { __experimentalText as Text, TabPanel, ToggleControl } from '@wordpress/components';
 import { DataViews, View, Filter } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
-import { getUnixTime } from 'date-fns';
+import { getUnixTime, subDays, isSameSecond } from 'date-fns';
 import { useMemo, useState, useRef, useEffect } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useLocale } from '../../app/locale';
@@ -112,6 +112,8 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 
 	const { gmtOffset, timezoneString } = data!;
 
+	const [ autoRefresh, setAutoRefresh ] = useState( false );
+
 	const [ view, setView ] = useView( {
 		logType,
 		initialFilters: getInitialFiltersFromSearch( logType, search ),
@@ -128,6 +130,39 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	const [ dateRange, setDateRange ] = useState< { start: Date; end: Date } >(
 		() => initialFromUrl ?? initial
 	);
+
+	const lastUrlRangeRef = useRef< { from: number; to: number } | null >( null );
+
+	useEffect( () => {
+		if ( ! autoRefresh ) {
+			return;
+		}
+		const tick = () => {
+			const end = new Date();
+			const start = subDays( end, 7 );
+
+			setDateRange( ( prev ) =>
+				isSameSecond( prev.start, start ) && isSameSecond( prev.end, end ) ? prev : { start, end }
+			);
+			const from = getUnixTime( start );
+			const to = getUnixTime( end );
+
+			const last = lastUrlRangeRef.current;
+			// Only sync URL when from/to change to avoid unnecessary history updates.
+			if ( ! last || last.from !== from || last.to !== to ) {
+				const url = new URL( window.location.href );
+				url.searchParams.set( 'from', String( from ) );
+				url.searchParams.set( 'to', String( to ) );
+				window.history.replaceState( null, '', url.pathname + url.search );
+				lastUrlRangeRef.current = { from, to };
+			}
+		};
+
+		// Run immediately, then every 10s
+		tick();
+		const intervalId = setInterval( tick, 10 * 1000 );
+		return () => clearInterval( intervalId );
+	}, [ autoRefresh ] );
 
 	const { startSec, endSec } = useMemo(
 		() => buildTimeRangeInSeconds( dateRange.start, dateRange.end, timezoneString, gmtOffset ),
@@ -168,6 +203,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	}, [ siteLogs, view.page ] );
 
 	const handleDateRangeChange = ( next: { start: Date; end: Date } ) => {
+		setAutoRefresh( false );
 		setDateRange( next );
 
 		// Reset pagination + cursors
@@ -226,6 +262,11 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	);
 
 	const onChangeView = ( next: View ) => {
+		// Disable auto-refresh when the user changes the page
+		if ( autoRefresh && ( next.page ?? 1 ) !== ( view.page ?? 1 ) ) {
+			setAutoRefresh( false );
+		}
+
 		const allowed = getAllowedFields( logType );
 
 		const sourceFilters = ( next.filters ?? view.filters ?? [] ) as Filter[];
@@ -293,6 +334,11 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		}
 	};
 
+	const handleAutoRefreshClick = ( isChecked: boolean ) => {
+		setAutoRefresh( isChecked );
+		recordTracksEvent( 'calypso_dashboard_site_logs_auto_refresh', { enabled: isChecked } );
+	};
+
 	const actions = useActions( { logType, isLoading: isFetching, gmtOffset, timezoneString } );
 
 	const [ notice, setNotice ] = useState< {
@@ -358,6 +404,12 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 													filter={ filter }
 													onSuccess={ ( message ) => setNotice( { variant: 'success', message } ) }
 													onError={ ( message ) => setNotice( { variant: 'error', message } ) }
+												/>
+												<ToggleControl
+													__nextHasNoMarginBottom
+													label={ __( 'Auto-refresh' ) }
+													checked={ autoRefresh }
+													onChange={ handleAutoRefreshClick }
 												/>
 											</>
 										}
