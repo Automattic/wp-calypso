@@ -1,9 +1,9 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { useAnalytics } from '../../app/analytics';
 import {
 	domainGlueRecordsQuery,
 	domainGlueRecordUpdateMutation,
@@ -20,6 +20,7 @@ export default function EditDomainGlueRecords() {
 	const { data: glueRecordsData } = useSuspenseQuery( domainGlueRecordsQuery( domainName ) );
 	const updateMutation = useMutation( domainGlueRecordUpdateMutation( domainName ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { recordTracksEvent } = useAnalytics();
 	const glueRecord = glueRecordsData.find(
 		( glueRecord: DomainGlueRecord ) => glueRecord.nameserver === nameServer
 	);

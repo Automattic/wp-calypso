@@ -1,9 +1,9 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { useAnalytics } from '../../app/analytics';
 import { domainGlueRecordCreateMutation } from '../../app/queries/domain-glue-records';
 import { domainRoute, domainGlueRecordsRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
@@ -16,6 +16,7 @@ export default function AddDomainGlueRecords() {
 	const { domainName } = domainRoute.useParams();
 	const createMutation = useMutation( domainGlueRecordCreateMutation( domainName ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { recordTracksEvent } = useAnalytics();
 
 	const handleSubmit = ( glueRecord: DomainGlueRecord ) => {
 		createMutation.mutate( glueRecord, {

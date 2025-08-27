@@ -1,4 +1,3 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isMobile } from '@automattic/viewport';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
@@ -7,6 +6,7 @@ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState, useMemo } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import {
 	domainGlueRecordDeleteMutation,
 	domainGlueRecordsQuery,
@@ -52,6 +52,7 @@ function DomainGlueRecords() {
 	);
 	const deleteMutation = useMutation( domainGlueRecordDeleteMutation( domainName ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { recordTracksEvent } = useAnalytics();
 
 	const actions: Action< DomainGlueRecord >[] = useMemo(
 		() => [
@@ -99,7 +100,14 @@ function DomainGlueRecords() {
 				},
 			},
 		],
-		[ createErrorNotice, createSuccessNotice, deleteMutation, domainName, navigate ]
+		[
+			createErrorNotice,
+			createSuccessNotice,
+			deleteMutation,
+			domainName,
+			navigate,
+			recordTracksEvent,
+		]
 	);
 
 	const fields: Field< DomainGlueRecord >[] = useMemo(
