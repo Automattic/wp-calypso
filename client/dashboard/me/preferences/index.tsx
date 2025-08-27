@@ -5,7 +5,7 @@ import PreferencesLogin from 'calypso/dashboard/me/preferences-login';
 
 export default function Preferences() {
 	return (
-		<PageLayout>
+		<PageLayout size="small">
 			<PageHeader
 				title={ __( 'Preferences' ) }
 				description={ __( 'Manage your account preferences and settings.' ) }
