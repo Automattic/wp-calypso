@@ -1,2 +1,2 @@
 export * from './fetchers';
-export type * from './types';
+export * from './types';
