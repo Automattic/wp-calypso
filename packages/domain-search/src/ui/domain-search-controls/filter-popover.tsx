@@ -40,6 +40,7 @@ export const DomainSearchControlsFilterPopover = ( {
 }: Props ) => {
 	const { __ } = useI18n();
 
+	// Generate list of available TLDs with labels separating the recommended and explore more sections
 	const generateAvailableTldsList = () => {
 		const list = [];
 
