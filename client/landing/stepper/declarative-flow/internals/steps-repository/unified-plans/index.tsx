@@ -65,7 +65,7 @@ function getPlansIntent( flowName: string | null ): PlansIntent | null {
 			}
 			// Check if plans-visual-split feature flag is enabled
 			if ( config.isEnabled( 'plans-visual-split' ) ) {
-				return 'plans-wordpress-hosting';
+				return 'plans-website-builder';
 			}
 			break;
 		case ONBOARDING_UNIFIED_FLOW:
