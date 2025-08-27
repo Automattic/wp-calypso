@@ -64,7 +64,7 @@ export function useActions( {
 						await navigator.clipboard.writeText( message );
 						createSuccessNotice( __( 'Copied message.' ), { type: 'snackbar' } );
 					} catch ( e ) {
-						createErrorNotice( __( 'Message could not be copied' ), { type: 'snackbar' } );
+						createErrorNotice( __( 'Message could not be copied.' ), { type: 'snackbar' } );
 					}
 				},
 			};
