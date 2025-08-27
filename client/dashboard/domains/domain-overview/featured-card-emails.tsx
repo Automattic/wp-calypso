@@ -1,6 +1,7 @@
 import { Icon } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { envelope } from '@wordpress/icons';
+import { emailsRoute } from '../../app/router/emails';
 import { Domain } from '../../data/domain';
 import OverviewCard from '../../sites/overview-card';
 import type { Mailbox, EmailProvider } from '../../data/emails';
@@ -48,6 +49,7 @@ export default function FeaturedCardEmails( { domain, mailboxes }: Props ) {
 					{ `${ mailboxes[ 0 ].mailbox }@${ domain.domain }` }
 				</span>
 			}
+			link={ emailsRoute.fullPath }
 			icon={ <Icon icon={ envelope } /> }
 			description={ description }
 		/>
