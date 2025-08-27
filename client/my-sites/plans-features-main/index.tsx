@@ -16,6 +16,7 @@ import {
 	getPlanFeaturesGroupedForComparisonGrid,
 	getWooExpressFeaturesGroupedForFeaturesGrid,
 	getSimplifiedPlanFeaturesGroupedForFeaturesGrid,
+	getWordPressHostingFeaturesGroupedForFeaturesGrid,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
@@ -715,6 +716,8 @@ const PlansFeaturesMain = ( {
 	let featureGroupMapForFeaturesGrid;
 	if ( hasWooExpressFeatures ) {
 		featureGroupMapForFeaturesGrid = getWooExpressFeaturesGroupedForFeaturesGrid();
+	} else if ( intent === 'plans-wordpress-hosting' ) {
+		featureGroupMapForFeaturesGrid = getWordPressHostingFeaturesGroupedForFeaturesGrid();
 	} else if ( showSimplifiedFeatures ) {
 		featureGroupMapForFeaturesGrid = getSimplifiedPlanFeaturesGroupedForFeaturesGrid( {
 			isSummerSpecial,
