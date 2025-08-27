@@ -4,6 +4,8 @@ import {
 	__experimentalText as Text,
 	__experimentalSpacer as Spacer,
 	ProgressBar,
+	CardBody,
+	Card,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useEffect } from 'react';
@@ -51,25 +53,29 @@ function SiteBackupProgress( {
 
 	return (
 		<>
-			<VStack spacing={ 4 } alignment="center">
-				<img src={ backupProgressIllustration } alt="" width={ 408 } height={ 280 } />
-				<Text size={ 20 }>{ getMessage() }</Text>
-				<Text size={ 13 } variant="muted">
-					{ sprintf(
-						/* translators: %d is the backup completion percentage. */
-						__( '%d%% completed' ),
-						progress
-					) }
-				</Text>
-				<ProgressBar className="dashboard-backups__progress-bar" value={ progress } />
-			</VStack>
-			<Spacer marginTop={ 12 }>
-				<Notice variant="info" title={ __( 'Did you know?' ) }>
-					{ __(
-						'We store your site backups securely in the cloud, with multiple copies saved across our global server network, so you will never lose your content.'
-					) }
-				</Notice>
-			</Spacer>
+			<Card>
+				<CardBody>
+					<VStack spacing={ 4 } alignment="center">
+						<img src={ backupProgressIllustration } alt="" width={ 408 } height={ 280 } />
+						<Text size={ 20 }>{ getMessage() }</Text>
+						<Text size={ 13 } variant="muted">
+							{ sprintf(
+								/* translators: %d is the backup completion percentage. */
+								__( '%d%% completed' ),
+								progress
+							) }
+						</Text>
+						<ProgressBar className="dashboard-backups__progress-bar" value={ progress } />
+					</VStack>
+					<Spacer marginTop={ 12 }>
+						<Notice variant="info" title={ __( 'Did you know?' ) }>
+							{ __(
+								'We store your site backups securely in the cloud, with multiple copies saved across our global server network, so you will never lose your content.'
+							) }
+						</Notice>
+					</Spacer>
+				</CardBody>
+			</Card>
 		</>
 	);
 }

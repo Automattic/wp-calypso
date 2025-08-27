@@ -4,6 +4,7 @@ import { __experimentalGrid as Grid, __experimentalText as Text } from '@wordpre
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
 import { useState } from 'react';
+import { useBackupState } from '../../app/hooks/site-backup-state';
 import { siteBySlugQuery } from '../../app/queries/site';
 import { siteRoute } from '../../app/router/sites';
 import { Callout } from '../../components/callout';
@@ -15,6 +16,7 @@ import { HostingFeatures } from '../../data/constants';
 import { hasHostingFeature } from '../../utils/site-features';
 import { BackupDetails } from './backup-details';
 import { BackupNowButton } from './backup-now-button';
+import BackupProgress from './backup-progress';
 import illustrationUrl from './backups-callout-illustration.svg';
 import { BackupsList } from './backups-list';
 import './style.scss';
@@ -63,6 +65,8 @@ export function BackupsListPage() {
 	const [ selectedBackup, setSelectedBackup ] = useState< ActivityLogEntry | null >( null );
 
 	const hasBackups = hasHostingFeature( site, HostingFeatures.BACKUPS );
+	const { backupState } = useBackupState( site.ID );
+	const isRunningBackup = backupState !== 'default';
 
 	return (
 		<PageLayout
@@ -80,7 +84,8 @@ export function BackupsListPage() {
 						selectedBackup={ selectedBackup }
 						setSelectedBackup={ setSelectedBackup }
 					/>
-					{ selectedBackup && <BackupDetails backup={ selectedBackup } site={ site } /> }
+					{ selectedBackup ? <BackupDetails backup={ selectedBackup } site={ site } /> : null }
+					{ ! selectedBackup && isRunningBackup ? <BackupProgress site={ site } /> : null }
 				</Grid>
 			) }
 		</PageLayout>
