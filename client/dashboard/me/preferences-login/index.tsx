@@ -64,8 +64,7 @@ export default function PreferencesLogin() {
 	}, [ primarySiteId, sites ] );
 
 	// Update preferences mutation
-	const updatePreferences = useMutation( userPreferenceMutation(
-		'login-preferences' ) );
+	const updatePreferences = useMutation( userPreferenceMutation( 'login-preferences' ) );
 
 	// Check if form has been modified
 	const isDirty = Boolean(
