@@ -2,7 +2,7 @@ import { __ } from '@wordpress/i18n';
 import { store } from '../state';
 import getNoteIsRead from '../state/selectors/get-is-note-read';
 
-const Filters = {
+export const getFilters = () => ( {
 	all: {
 		name: 'all',
 		index: 0,
@@ -52,6 +52,4 @@ const Filters = {
 		emptyLink: 'https://wordpress.com/activities/likes/',
 		filter: ( { type } ) => 'comment_like' === type || 'like' === type,
 	},
-};
-
-export default Filters;
+} );

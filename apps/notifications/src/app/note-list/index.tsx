@@ -9,15 +9,15 @@ import { useState, useContext, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import getAllNotes from '../../panel/state/selectors/get-all-notes';
 import getIsLoading from '../../panel/state/selectors/get-is-loading';
-import Filters from '../../panel/templates/filters';
+import { getFilters } from '../../panel/templates/filters';
 import { RestClientContext } from '../context';
 import { getFields } from './dataviews';
 import type { Note } from '../types';
 import type { View } from '@wordpress/dataviews';
 
-const NoteList = ( { filterName }: { filterName: keyof typeof Filters } ) => {
+const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFilters > } ) => {
 	const { goTo } = useNavigator();
-	const filter = Filters[ filterName ];
+	const filter = getFilters()[ filterName ];
 	const notes = useSelector( ( state ) =>
 		( ( getAllNotes( state ) || [] ) as Note[] ).filter( ( note ) => filter.filter( note ) )
 	);

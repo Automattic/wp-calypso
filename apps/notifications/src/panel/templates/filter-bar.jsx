@@ -6,7 +6,7 @@ import { localize } from 'i18n-calypso';
 import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import getFilterName from '../state/selectors/get-filter-name';
-import Filters from './filters';
+import { getFilters } from './filters';
 
 export class FilterBar extends Component {
 	filterListRef = createRef();
@@ -37,7 +37,7 @@ export class FilterBar extends Component {
 	}
 
 	setFilterItems = () => {
-		this.filterItems = Object.values( Filters ).sort( ( a, b ) => a.index - b.index );
+		this.filterItems = Object.values( getFilters() ).sort( ( a, b ) => a.index - b.index );
 	};
 
 	getFilterItems = () => {

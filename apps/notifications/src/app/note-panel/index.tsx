@@ -10,17 +10,17 @@ import '@wordpress/components/build-style/style.css';
 import { __ } from '@wordpress/i18n';
 import { bell } from '@wordpress/icons';
 import { useState } from 'react';
-import Filters from '../../panel/templates/filters';
+import { getFilters } from '../../panel/templates/filters';
 import NoteList from '../note-list';
 import NotePanelActions from './actions';
 
-const NOTIFICATION_TABS = Object.values( Filters ).map( ( { name, label } ) => ( {
+const NOTIFICATION_TABS = Object.values( getFilters() ).map( ( { name, label } ) => ( {
 	name,
 	title: label,
 } ) );
 
 const NotePanel = () => {
-	const [ activeTab, setActiveTab ] = useState< keyof typeof Filters >( 'all' );
+	const [ activeTab, setActiveTab ] = useState< keyof ReturnType< typeof getFilters > >( 'all' );
 	return (
 		<>
 			<CardHeader
