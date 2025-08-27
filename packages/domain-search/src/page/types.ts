@@ -31,6 +31,7 @@ export interface DomainSearchEvents {
 export interface DomainSearchConfig {
 	vendor: DomainSuggestionQueryVendor;
 	skippable: boolean;
+	deemphasizedTlds: string[];
 }
 
 export interface DomainSearchProps {

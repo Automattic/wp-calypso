@@ -30,6 +30,7 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 	config: {
 		vendor: 'variation2_front',
 		skippable: false,
+		deemphasizedTlds: [],
 	},
 };
 

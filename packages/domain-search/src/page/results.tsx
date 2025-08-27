@@ -37,8 +37,12 @@ export const ResultsPage = () => {
 	const isLoading = isLoadingSuggestions || isLoadingFreeSuggestion || isLoadingQueryAvailability;
 
 	const { featuredSuggestions, regularSuggestions } = useMemo( () => {
-		return partitionSuggestions( suggestions, query );
-	}, [ suggestions, query ] );
+		return partitionSuggestions( {
+			suggestions,
+			query,
+			deemphasiseTlds: config.deemphasizedTlds,
+		} );
+	}, [ suggestions, query, config.deemphasizedTlds ] );
 
 	return (
 		<VStack spacing={ 8 }>
