@@ -1,5 +1,5 @@
 import { Icon } from '@wordpress/components';
-import { __, _n, sprintf } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { envelope } from '@wordpress/icons';
 import { Domain } from '../../data/domain';
 import OverviewCard from '../../sites/overview-card';
@@ -17,6 +17,16 @@ const getAccountTypeLabel = ( accountType: EmailProvider ) => {
 	}
 };
 
+const getAdditionlMailboxesLabel = ( count: number ) => {
+	return count === 1
+		? __( '+ one more mailbox' )
+		: sprintf(
+				// translators: %d is the number of additional mailboxes.
+				__( '+ %d more mailboxes' ),
+				count
+		  );
+};
+
 interface Props {
 	domain: Domain;
 	mailboxes: Mailbox[];
@@ -27,12 +37,7 @@ export default function FeaturedCardEmails( { domain, mailboxes }: Props ) {
 
 	const description =
 		additionalMailboxes > 0
-			? // eslint-disable-next-line @wordpress/valid-sprintf
-			  sprintf(
-					// translators: %d is the number of additional mailboxes.
-					_n( '+ one more mailbox', '+ %d more mailboxes', additionalMailboxes ),
-					additionalMailboxes
-			  )
+			? getAdditionlMailboxesLabel( additionalMailboxes )
 			: getAccountTypeLabel( mailboxes[ 0 ].account_type );
 
 	return (
