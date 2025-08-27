@@ -181,7 +181,7 @@ export const domainNameServersRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'name-servers',
 	loader: ( { params: { domainName } } ) =>
-		queryClient.ensureQueryData( domainNameServersQuery( domainName ) ),
+		queryClient.ensureQueryData( domainNameServersQuery( domainName + 'asdf' ) ),
 	component: lazyRouteComponent( () => import( '../../domains/name-servers' ) ),
 	errorComponent: lazyRouteComponent( () => import( '../../domains/name-servers' ) ),
 } );
