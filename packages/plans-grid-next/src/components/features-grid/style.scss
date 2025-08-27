@@ -319,6 +319,11 @@
 .plans-grid-next-features-grid__feature-group-title {
 	font-weight: 600;
 	color: var(--studio-gray-80);
+
+	&.is-wordpress-hosting {
+		padding-top: 12px;
+		font-size: 12px;
+	}
 }
 
 .plans-grid-next-features-grid__feature-group-row {

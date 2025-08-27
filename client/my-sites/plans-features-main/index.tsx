@@ -896,7 +896,9 @@ const PlansFeaturesMain = ( {
 										enableStorageAsBadge={ ! showSimplifiedFeatures }
 										enableReducedFeatureGroupSpacing={ showSimplifiedFeatures }
 										enableLogosOnlyForEnterprisePlan={ showSimplifiedFeatures }
-										hideFeatureGroupTitles={ showSimplifiedFeatures }
+										hideFeatureGroupTitles={
+											showSimplifiedFeatures && intent !== 'plans-wordpress-hosting'
+										}
 										enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
 										showStreamlinedBillingDescription={ showStreamlinedPriceExperiment }
 									/>

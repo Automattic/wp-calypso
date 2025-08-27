@@ -55,7 +55,7 @@ const PlanFeaturesList = ( {
 }: PlanFeaturesListProps ) => {
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const translate = useTranslate();
-	const { featureGroupMap, hideFeatureGroupTitles } = usePlansGridContext();
+	const { featureGroupMap, hideFeatureGroupTitles, intent } = usePlansGridContext();
 	const featureGroup = featureGroupSlug && featureGroupMap[ featureGroupSlug ];
 
 	/**
@@ -90,7 +90,11 @@ const PlanFeaturesList = ( {
 					>
 						{ ! hideFeatureGroupTitles && (
 							<PlanFeaturesItem>
-								<h2 className="plans-grid-next-features-grid__feature-group-title">
+								<h2
+									className={ `plans-grid-next-features-grid__feature-group-title${
+										intent === 'plans-wordpress-hosting' ? ' is-wordpress-hosting' : ''
+									}` }
+								>
 									{ featureGroup?.getTitle() }
 								</h2>
 							</PlanFeaturesItem>
@@ -136,7 +140,11 @@ const PlanFeaturesList = ( {
 				>
 					{ ! hideFeatureGroupTitles && featureGroup?.getTitle() && (
 						<PlanFeaturesItem>
-							<h2 className="plans-grid-next-features-grid__feature-group-title">
+							<h2
+								className={ `plans-grid-next-features-grid__feature-group-title${
+									intent === 'plans-wordpress-hosting' ? ' is-wordpress-hosting' : ''
+								}` }
+							>
 								{ featureGroup.getTitle() }
 							</h2>
 						</PlanFeaturesItem>
