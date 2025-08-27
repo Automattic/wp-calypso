@@ -50,7 +50,7 @@ export default function SelectIpsTag( { domain, isDomainLocked }: SelectIpsTagPr
 	};
 
 	const renderDialog = () => {
-		const registrarName = ipsTagList.find( ( item ) => item.tag === ipsTag )?.registrarName;
+		const registrar = ipsTagList.find( ( item ) => item.tag === ipsTag );
 		return (
 			<Modal
 				title={ __( 'Transfer Confirmation' ) }
@@ -66,8 +66,8 @@ export default function SelectIpsTag( { domain, isDomainLocked }: SelectIpsTagPr
 						) }
 					</Text>
 					<Text>
-						<strong>{ registrarName }</strong>
-						{ registrarName && <> ({ registrarName })</> }
+						<strong>{ registrar?.tag }</strong>
+						{ registrar?.registrarName && <> ({ registrar?.registrarName })</> }
 					</Text>
 					<Text>
 						{ __(
