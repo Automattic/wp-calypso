@@ -6,6 +6,7 @@ export { AgentUI } from './components/AgentUI';
 
 // Individual UI components for advanced composition
 export { Chat } from './components/chat/Chat';
+export { ChatFooter } from './components/chat/ChatFooter';
 export { ChatInput } from './components/chat/ChatInput';
 export { ThinkingMessage } from './components/chat/ThinkingMessage';
 export { Messages } from './components/chat/Messages';
