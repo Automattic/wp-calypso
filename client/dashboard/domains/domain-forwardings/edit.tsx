@@ -68,7 +68,7 @@ export default function EditDomainForwarding() {
 	};
 
 	return (
-		<PageLayout size="small" header={ <PageHeader title={ __( 'Edit Domain Forwarding' ) } /> }>
+		<PageLayout size="small" header={ <PageHeader title={ __( 'Edit domain forwarding' ) } /> }>
 			<DomainForwardingNotice domainName={ domainName } domainData={ domainData } />
 			<DomainForwardingForm
 				domainName={ domainName }

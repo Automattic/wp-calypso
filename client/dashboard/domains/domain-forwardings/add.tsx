@@ -42,7 +42,7 @@ export default function AddDomainForwarding() {
 	};
 
 	return (
-		<PageLayout size="small" header={ <PageHeader title={ __( 'Add Domain Forwarding' ) } /> }>
+		<PageLayout size="small" header={ <PageHeader title={ __( 'Add domain forwarding' ) } /> }>
 			<DomainForwardingNotice domainName={ domainName } domainData={ domainData } />
 			<DomainForwardingForm
 				domainName={ domainName }

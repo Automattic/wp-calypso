@@ -162,7 +162,7 @@ function DomainForwardings() {
 			size="small"
 			header={
 				<PageHeader
-					title={ __( 'Domain Forwarding' ) }
+					title={ __( 'Domain forwarding' ) }
 					actions={
 						<RouterLinkButton
 							to={ domainForwardingAddRoute.fullPath }

@@ -139,7 +139,7 @@ export default function PurchasesList() {
 	};
 
 	return (
-		<PageLayout size="large" header={ <PageHeader title={ __( 'Active Upgrades' ) } /> }>
+		<PageLayout size="large" header={ <PageHeader title={ __( 'Active upgrades' ) } /> }>
 			<div ref={ ref }>
 				<DataViewsCard>
 					<DataViews

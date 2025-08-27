@@ -114,6 +114,7 @@ export default function StagingSiteSyncDropdown( {
 				popoverProps={ { placement: 'bottom-end' } }
 				renderToggle={ ( { isOpen, onToggle } ) => (
 					<Button
+						__next40pxDefaultSize
 						icon={ chevronDown }
 						iconPosition="right"
 						variant="secondary"
