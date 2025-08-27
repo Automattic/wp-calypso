@@ -14,7 +14,7 @@
 
 	// Responsive: full width on smaller screens
 	@media ( max-width: $break-small ) {
-		width: 100%;
-		margin: 0 16px; // Add some side margins on mobile
+		width: calc(100% - 32px); // 100% minus 16px on each side
+		margin: 0 auto 16px auto; // Center with bottom margin
 	}
 }
