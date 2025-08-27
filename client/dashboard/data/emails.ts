@@ -148,9 +148,11 @@ export async function fetchEmail( id: string ): Promise< Email | undefined > {
 	return Promise.resolve( findEmailById( id ) );
 }
 
-export function fetchMailboxes( siteId: number ): Promise< { mailboxes: Mailbox[] } > {
-	return wpcom.req.get( {
-		path: `/sites/${ siteId }/emails/mailboxes`,
-		apiNamespace: 'wpcom/v2',
-	} );
+export function fetchMailboxes( siteId: number ): Promise< Mailbox[] > {
+	return wpcom.req
+		.get( {
+			path: `/sites/${ siteId }/emails/mailboxes`,
+			apiNamespace: 'wpcom/v2',
+		} )
+		.then( ( data: { mailboxes: Mailbox[] } ) => data.mailboxes );
 }

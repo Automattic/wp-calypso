@@ -11,5 +11,4 @@ export const mailboxesQuery = ( siteId: number ) =>
 	queryOptions( {
 		queryKey: [ 'mailboxes', siteId ],
 		queryFn: () => fetchMailboxes( siteId ),
-		select: ( data ) => data.mailboxes,
 	} );
