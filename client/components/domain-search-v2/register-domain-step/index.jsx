@@ -9,6 +9,7 @@ import {
 	DomainSuggestionFilterReset,
 	DomainSearchAlreadyOwnDomainCTA,
 	getTld,
+	Filter,
 } from '@automattic/domain-search';
 import { formatCurrency } from '@automattic/number-formatters';
 import {
@@ -90,7 +91,6 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 import { DomainSearch } from '../__legacy/domain-search';
 import { DomainCartV2 } from '../domain-cart';
-import DropdownFilters from '../domain-search-filters';
 import { DomainSearchInput } from '../domain-search-input';
 import DomainSearchResults from '../domain-search-results';
 import { FreeDomainForAYearPromo } from '../free-domain-for-a-year-promo';
@@ -713,6 +713,24 @@ class RegisterDomainStep extends Component {
 		);
 	}
 
+	areArraysDifferent( a, b ) {
+		if ( ! a || ! b ) {
+			return a !== b;
+		}
+		if ( a.length !== b.length ) {
+			return true;
+		}
+		const set = new Set( a );
+		return b.some( ( item ) => ! set.has( item ) );
+	}
+
+	didFilterChange() {
+		return (
+			this.areArraysDifferent( this.state.lastFilters.tlds, this.state.filters.tlds ) ||
+			this.state.lastFilters.exactSldMatchesOnly !== this.state.filters.exactSldMatchesOnly
+		);
+	}
+
 	renderSearchFilters() {
 		const isRenderingInitialSuggestions =
 			! Array.isArray( this.state.searchResults ) &&
@@ -728,19 +746,25 @@ class RegisterDomainStep extends Component {
 			return null;
 		}
 
+		if ( ! showFilters ) {
+			return null;
+		}
+
 		return (
-			showFilters && (
-				<DropdownFilters
-					availableTlds={ this.state.availableTlds }
-					filters={ this.state.filters }
-					lastFilters={ this.state.lastFilters }
-					onChange={ this.onFiltersChange }
-					onReset={ this.onFiltersReset }
-					onSubmit={ this.onFiltersSubmit }
-					showPlaceholder={ this.state.loadingResults || ! this.getSuggestionsFromProps() }
-					showTldFilter={ showTldFilter }
-				/>
-			)
+			<Filter
+				availableTlds={ this.state.availableTlds }
+				filter={ this.state.lastFilters }
+				onSubmit={ () => {
+					if ( this.didFilterChange() ) {
+						this.onFiltersSubmit();
+					}
+				} }
+				resetFilter={ this.onFiltersReset }
+				setFilter={ this.onFiltersChange }
+				setTemporaryFilter={ this.onFiltersChange }
+				showTldFilter={ showTldFilter }
+				temporaryFilter={ this.state.filters }
+			/>
 		);
 	}
 
