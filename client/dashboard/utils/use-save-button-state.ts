@@ -1,5 +1,5 @@
-import { useMemo } from '@wordpress/element';
 import { Button } from '@wordpress/components';
+import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import React from 'react';
 
@@ -9,9 +9,15 @@ export interface UseSaveButtonStateProps {
 	isDirty: boolean;
 }
 
-type SaveButtonProps = Required<Pick<React.ComponentPropsWithoutRef<typeof Button>, 'label' | 'isBusy' | 'disabled'>>;
+type SaveButtonProps = Required<
+	Pick< React.ComponentPropsWithoutRef< typeof Button >, 'label' | 'isBusy' | 'disabled' >
+>;
 
-export function useSaveButtonState( { isSaving, isSuccess, isDirty }: UseSaveButtonStateProps ): SaveButtonProps {
+export function useSaveButtonState( {
+	isSaving,
+	isSuccess,
+	isDirty,
+}: UseSaveButtonStateProps ): SaveButtonProps {
 	return useMemo( () => {
 		let saveButtonLabel = __( 'Save' ) as string;
 

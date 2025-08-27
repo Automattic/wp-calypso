@@ -11,9 +11,9 @@ export type SitesViewPreferences = Partial< Omit< SitesView, 'type' | 'layout' >
 };
 
 export type LoginPreferences = {
-		primarySiteId?: string;
-		defaultLandingPage?: LandingPage;
-}
+	primarySiteId?: string;
+	defaultLandingPage?: LandingPage;
+};
 
 export type LandingPage = 'primary-site-dashboard' | 'sites' | 'reader';
 

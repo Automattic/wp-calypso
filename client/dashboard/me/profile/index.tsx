@@ -126,10 +126,6 @@ export default function Profile() {
 	);
 	const mutation = useMutation( profileMutation() );
 
-	if ( ! data ) {
-		return;
-	}
-
 	const isSaving = mutation.isPending;
 	const isDirty =
 		!! localData &&
@@ -143,6 +139,10 @@ export default function Profile() {
 		isSuccess: mutation.isSuccess,
 		isDirty,
 	} );
+
+	if ( ! data ) {
+		return;
+	}
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();

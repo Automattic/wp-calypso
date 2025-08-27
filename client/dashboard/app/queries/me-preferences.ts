@@ -7,7 +7,7 @@ const defaultValues: Required< UserPreferences > = {
 	'sites-view': {},
 	'login-preferences': {
 		defaultLandingPage: 'primary-site-dashboard',
-		primarySiteId: undefined
+		primarySiteId: undefined,
 	},
 };
 
