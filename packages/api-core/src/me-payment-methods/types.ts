@@ -38,10 +38,6 @@ export interface StoredPaymentMethodPayPal extends StoredPaymentMethodBase {
 	payment_partner: 'paypal_express' | 'paypal_ppcp';
 }
 
-export interface StoredPaymentMethodRazorpay extends StoredPaymentMethodBase {
-	payment_partner: 'razorpay';
-}
-
 export interface StoredPaymentMethodCard extends StoredPaymentMethodBase {
 	card_type: string;
 	card_iin: string;
