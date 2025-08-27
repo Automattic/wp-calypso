@@ -9,7 +9,6 @@ export type IpsTag = {
 export async function updateDomainLock( domain: string, enabled: boolean ): Promise< void > {
 	return wpcom.req.post( {
 		path: `/domains/${ domain }/transfer`,
-		apiVersion: '1.1',
 		body: {
 			domainStatus: JSON.stringify( {
 				command: enabled ? 'lock' : 'unlock',
@@ -21,7 +20,6 @@ export async function updateDomainLock( domain: string, enabled: boolean ): Prom
 export async function requestTransferCode( domain: string ): Promise< void > {
 	return wpcom.req.post( {
 		path: `/domains/${ domain }/transfer`,
-		apiVersion: '1.1',
 		body: {
 			domainStatus: JSON.stringify( {
 				command: 'only-send-code',
@@ -33,8 +31,6 @@ export async function requestTransferCode( domain: string ): Promise< void > {
 export async function saveIpsTag( domain: string, ipsTag: string ): Promise< void > {
 	return wpcom.req.post( {
 		path: `/domains/${ domain }/transfer`,
-		apiVersion: '1',
-		method: 'POST',
 		body: {
 			domainStatus: JSON.stringify( {
 				command: 'set-ips-tag',

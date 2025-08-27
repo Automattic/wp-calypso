@@ -25,7 +25,7 @@ import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
 import { DomainSubtype } from '../../data/domains';
 import { formatDate } from '../../utils/datetime';
-import SelectIpsTag from './selec-ips-tag';
+import SelectIpsTag from './select-ips-tag';
 
 export function getTopLevelOfTld( domainName: string ): string {
 	return domainName.substring( domainName.lastIndexOf( '.' ) + 1 );
@@ -283,6 +283,8 @@ export default function DomainOverview() {
 		! ( domain.pending_registration || domain.pending_registration_at_registry ) &&
 		! domain.aftermarket_auction &&
 		domain.current_user_is_owner;
+
+	// TO DO: render notices if the domain is not transferable
 
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Transfer' ) } /> }>
