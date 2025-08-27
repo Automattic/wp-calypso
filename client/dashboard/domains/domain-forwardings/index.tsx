@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { Link, useRouter } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
@@ -50,7 +50,7 @@ function DomainForwardings() {
 	const router = useRouter();
 
 	const { domainName } = domainRoute.useParams();
-	const { data: forwardingData, isLoading } = useQuery( domainForwardingQuery( domainName ) );
+	const { data: forwardingData } = useSuspenseQuery( domainForwardingQuery( domainName ) );
 	const deleteMutation = useMutation( domainForwardingDeleteMutation( domainName ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
@@ -177,24 +177,18 @@ function DomainForwardings() {
 			}
 		>
 			<DataViewsCard>
-				{ forwardingData?.length === 0 && ! isLoading ? (
-					<div style={ { padding: '20px', textAlign: 'center' } }>
-						{ __( 'No forwarding rules found for this domain.' ) }
-					</div>
-				) : (
-					<DataViews< DomainForwarding >
-						data={ filteredData || [] }
-						fields={ fields }
-						onChangeView={ ( view: View ) => setView( view as ForwardingView ) }
-						view={ view }
-						actions={ actions }
-						search
-						paginationInfo={ paginationInfo }
-						getItemId={ getForwardingId }
-						isLoading={ isLoading }
-						defaultLayouts={ DEFAULT_LAYOUTS }
-					/>
-				) }
+				<DataViews< DomainForwarding >
+					data={ filteredData || [] }
+					fields={ fields }
+					onChangeView={ ( view: View ) => setView( view as ForwardingView ) }
+					view={ view }
+					actions={ actions }
+					search
+					paginationInfo={ paginationInfo }
+					getItemId={ getForwardingId }
+					defaultLayouts={ DEFAULT_LAYOUTS }
+					empty={ __( 'No forwarding rules found for this domain.' ) }
+				/>
 			</DataViewsCard>
 		</PageLayout>
 	);

@@ -60,6 +60,22 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 		disableFuture = true,
 	} = props;
 
+	// Avoid passing invalid or empty time zones to Intl consumers
+	const isValidIanaTimeZone = ( timeZone?: string ): timeZone is string => {
+		if ( ! timeZone ) {
+			return false;
+		}
+		try {
+			// Will throw for invalid IANA identifiers (including empty strings)
+			Intl.DateTimeFormat( 'en-US', { timeZone: timeZone } );
+			return true;
+		} catch ( _e ) {
+			return false;
+		}
+	};
+
+	const timeZoneForCalendar = isValidIanaTimeZone( timezoneString ) ? timezoneString : undefined;
+
 	const clear = () => {
 		setFromDraft( undefined );
 		setToDraft( undefined );
@@ -97,14 +113,14 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 		: today;
 	const endMonth = new Date( today.getFullYear(), today.getMonth(), 1 );
 
-	// Use TZDate for calendar selection when an IANA time zone is available
+	// Use TZDate for calendar selection when a valid IANA time zone is available
 	const selected =
-		timezoneString && ( fromDraft || toDraft )
+		timeZoneForCalendar && ( fromDraft || toDraft )
 			? {
-					from: fromDraft ? new TZDate( +fromDraft, timezoneString ) : undefined,
-					to: toDraft ? new TZDate( +toDraft, timezoneString ) : undefined,
+					from: fromDraft ? new TZDate( +fromDraft, timeZoneForCalendar ) : undefined,
+					to: toDraft ? new TZDate( +toDraft, timeZoneForCalendar ) : undefined,
 			  }
-			: { from: fromDraft, to: toDraft };
+			: { from: fromDraft ?? undefined, to: toDraft ?? undefined };
 
 	return (
 		<VStack as="div" spacing={ 3 } style={ { padding: 12 } }>
@@ -169,7 +185,7 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 
 				<div className="daterange-calendar">
 					<DateRangeCalendar
-						timeZone={ timezoneString }
+						timeZone={ timeZoneForCalendar }
 						numberOfMonths={ isSmall ? 1 : 2 }
 						defaultMonth={ defaultMonth }
 						endMonth={ endMonth }

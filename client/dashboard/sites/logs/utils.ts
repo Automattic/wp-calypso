@@ -1,5 +1,7 @@
 import { dateI18n } from '@wordpress/date';
-import { startOfDay, endOfDay } from 'date-fns';
+import { startOfDay, endOfDay, fromUnixTime, isValid as isValidDate } from 'date-fns';
+
+type DateRange = { start: Date; end: Date };
 
 const HOUR_MS = 3_600_000;
 
@@ -35,4 +37,21 @@ export function buildTimeRangeInSeconds(
 	const startSec = Math.floor( startOfDay( start ).getTime() / 1000 );
 	const endSec = Math.floor( endOfDay( end ).getTime() / 1000 );
 	return { startSec, endSec };
+}
+
+export function getInitialDateRangeFromSearch( search: string ): DateRange | null {
+	const params = new URLSearchParams( search );
+	const valueAsNumber = ( value?: string | null ) => ( value ? Number( value ) : NaN );
+	const toDate = ( dateString?: string | null ) => {
+		const num = valueAsNumber( dateString );
+		if ( ! Number.isFinite( num ) ) {
+			return undefined;
+		}
+		const date = fromUnixTime( num );
+		return isValidDate( date ) ? date : undefined;
+	};
+
+	const start = toDate( params.get( 'from' ) );
+	const end = toDate( params.get( 'to' ) );
+	return start && end && start <= end ? { start, end } : null;
 }

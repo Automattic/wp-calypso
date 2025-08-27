@@ -3,7 +3,7 @@ import { store } from '../state';
 import actions from '../state/actions';
 import getFilterName from '../state/selectors/get-filter-name';
 import noteHasFilteredRead from '../state/selectors/note-has-filtered-read';
-import Filters from './filters';
+import { getFilters } from './filters';
 
 function FilterBarController( refreshFunction ) {
 	if ( ! ( this instanceof FilterBarController ) ) {
@@ -14,7 +14,7 @@ function FilterBarController( refreshFunction ) {
 }
 
 FilterBarController.prototype.selectFilter = function ( filterName ) {
-	if ( Object.keys( Filters ).indexOf( filterName ) === -1 ) {
+	if ( Object.keys( getFilters() ).indexOf( filterName ) === -1 ) {
 		return;
 	}
 
@@ -30,7 +30,7 @@ FilterBarController.prototype.selectFilter = function ( filterName ) {
 FilterBarController.prototype.getFilteredNotes = function ( notes ) {
 	const state = store.getState();
 	const filterName = getFilterName( state );
-	const activeTab = Filters[ filterName ];
+	const activeTab = getFilters()[ filterName ];
 	if ( ! notes || ! activeTab ) {
 		return [];
 	}

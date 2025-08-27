@@ -339,7 +339,13 @@ const TransferPage = ( props: TransferPageProps ) => {
 	};
 
 	const renderUkTransferOptions = () => {
-		return <SelectIpsTag selectedDomainName={ selectedDomainName } redesign />;
+		return (
+			<>
+				<p>{ renderTransferMessage() }</p>
+				{ renderTransferLock() }
+				<SelectIpsTag selectedDomainName={ selectedDomainName } redesign />
+			</>
+		);
 	};
 
 	const renderCommonTldTransferOptions = () => {
