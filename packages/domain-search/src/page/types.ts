@@ -5,7 +5,6 @@ import type {
 	DomainSuggestionQueryVendor,
 	FreeDomainSuggestion,
 } from '@automattic/data';
-import type { QueryClient } from '@tanstack/react-query';
 import type { ComponentType } from 'react';
 
 export interface SelectedDomain {
@@ -44,7 +43,6 @@ export interface DomainSearchProps {
 	initialQuery?: string;
 	events?: Partial< DomainSearchEvents >;
 	currentSiteUrl?: string;
-	queryClient?: QueryClient;
 	config?: Partial< DomainSearchConfig >;
 }
 
