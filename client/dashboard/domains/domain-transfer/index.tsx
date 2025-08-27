@@ -121,7 +121,7 @@ export default function DomainOverview() {
 			actions.push(
 				<ActionList.ActionItem
 					key="transfer-to-another-site"
-					title={ __( 'To another WordPress.com siter' ) }
+					title={ __( 'To another WordPress.com site' ) }
 					description={ description }
 					actions={
 						<RouterLinkButton
@@ -248,7 +248,7 @@ export default function DomainOverview() {
 			<VStack spacing={ 6 }>
 				{ renderTransferMessage() }
 				{ renderTransferLock() }
-				<SelectIpsTag isDomainLocked={ domain.is_locked } />
+				<SelectIpsTag domain={ domainName } isDomainLocked={ domain.is_locked } />
 			</VStack>
 		);
 	};
