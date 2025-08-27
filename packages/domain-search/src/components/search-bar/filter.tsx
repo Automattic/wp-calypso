@@ -1,26 +1,28 @@
 import { Dropdown } from '@wordpress/components';
-import { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
 import { useCallback } from 'react';
 import { DomainSearchControls } from '../../ui';
 import { FilterState } from './types';
+import type { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
 
-interface FilterProps {
+type Props = {
 	availableTlds: string[];
 	filter: FilterState;
+	onSubmit?: () => void;
 	resetFilter: () => void;
 	setFilter: ( filter: FilterState ) => void;
 	setTemporaryFilter: ( filter: FilterState ) => void;
 	temporaryFilter: FilterState;
-}
+};
 
 export const Filter = ( {
 	availableTlds,
 	filter,
+	onSubmit,
 	resetFilter,
 	setFilter,
 	setTemporaryFilter,
 	temporaryFilter,
-}: FilterProps ) => {
+}: Props ) => {
 	const getFiltercounts = useCallback( () => {
 		return filter.tlds.length + ( filter.exactSldMatchesOnly ? 1 : 0 );
 	}, [ filter ] );
@@ -107,6 +109,7 @@ export const Filter = ( {
 			} }
 			onClose={ () => {
 				setFilter( temporaryFilter );
+				onSubmit?.();
 			} }
 		/>
 	);
