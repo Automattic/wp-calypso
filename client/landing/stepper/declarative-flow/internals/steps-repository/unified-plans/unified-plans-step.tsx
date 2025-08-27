@@ -374,6 +374,15 @@ function UnifiedPlansStep( {
 			return translate( 'The right plan for the right project' );
 		}
 
+		// Dynamic header text when feature flag is enabled
+		if ( config.isEnabled( 'plans-visual-split' ) ) {
+			if ( intent === 'plans-wordpress-hosting' ) {
+				return translate( 'WordPress hosting plans' );
+			} else if ( intent === 'plans-website-builder' ) {
+				return translate( 'Website builder plans' );
+			}
+		}
+
 		return translate( 'There’s a plan for you' );
 	};
 
@@ -493,14 +502,6 @@ function UnifiedPlansStep( {
 					</Notice>
 				</div>
 			) }
-			{ config.isEnabled( 'plans-visual-split' ) && (
-				<IntentToggle
-					currentIntent={ intent }
-					onIntentChange={ ( newIntent ) => {
-						onIntentChange?.( newIntent );
-					} }
-				/>
-			) }
 			<PlansFeaturesMain
 				paidDomainName={ paidDomainName }
 				freeSubdomain={ freeWPComSubdomain }
@@ -564,7 +565,19 @@ function UnifiedPlansStep( {
 							}
 						/>
 					}
-					heading={ <Step.Heading text={ getHeaderText() } subText={ fallbackSubHeaderText } /> }
+					heading={
+						<>
+							{ config.isEnabled( 'plans-visual-split' ) && (
+								<IntentToggle
+									currentIntent={ intent }
+									onIntentChange={ ( newIntent ) => {
+										onIntentChange?.( newIntent );
+									} }
+								/>
+							) }
+							<Step.Heading text={ getHeaderText() } subText={ fallbackSubHeaderText } />
+						</>
+					}
 				>
 					{ stepContent }
 				</Step.WideLayout>
