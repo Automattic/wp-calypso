@@ -2,7 +2,6 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useCallback, useState, useMemo, useLayoutEffect } from 'react';
 import { domainAvailabilityQuery } from '../queries/availability';
-import { productsQuery } from '../queries/products';
 import { domainSuggestionsQuery } from '../queries/suggestions';
 import { DEFAULT_CONTEXT_VALUE, DomainSearchContext } from './context';
 import { EmptyPage } from './empty';
@@ -41,7 +40,6 @@ export const DomainSearch = ( {
 			queries: {
 				domainSuggestions: domainSuggestionsQuery,
 				domainAvailability: domainAvailabilityQuery,
-				products: productsQuery,
 			},
 			cart,
 			isFullCartOpen,

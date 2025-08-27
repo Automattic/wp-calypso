@@ -1,5 +1,4 @@
-import { domainAvailabilityQuery } from '../queries/availability';
-import { productsQuery } from '../queries/products';
+import type { domainAvailabilityQuery } from '../queries/availability';
 import type { domainSuggestionsQuery } from '../queries/suggestions';
 import type { DomainSuggestion } from '@automattic/data';
 import type { QueryClient } from '@tanstack/react-query';
@@ -49,6 +48,5 @@ export interface DomainSearchContextType
 	queries: {
 		domainSuggestions: typeof domainSuggestionsQuery;
 		domainAvailability: typeof domainAvailabilityQuery;
-		products: typeof productsQuery;
 	};
 }

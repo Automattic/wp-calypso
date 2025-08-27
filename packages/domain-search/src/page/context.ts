@@ -1,6 +1,5 @@
 import { createContext, useContext } from 'react';
 import { domainAvailabilityQuery } from '../queries/availability';
-import { productsQuery } from '../queries/products';
 import { domainSuggestionsQuery } from '../queries/suggestions';
 import { type DomainSearchContextType } from './types';
 
@@ -13,7 +12,6 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 	queries: {
 		domainSuggestions: domainSuggestionsQuery,
 		domainAvailability: domainAvailabilityQuery,
-		products: productsQuery,
 	},
 	cart: {
 		items: [],

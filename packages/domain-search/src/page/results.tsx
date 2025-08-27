@@ -22,9 +22,11 @@ export const ResultsPage = () => {
 
 	const domainAvailabilityQueries = useQueries( {
 		queries:
-			suggestions?.map( ( suggestion ) => ( {
-				...queries.domainAvailability( suggestion.domain_name ),
-			} ) ) ?? [],
+			suggestions
+				?.filter( ( suggestion ) => suggestion.is_premium )
+				.map( ( suggestion ) => ( {
+					...queries.domainAvailability( suggestion.domain_name ),
+				} ) ) ?? [],
 	} );
 
 	const isLoading =
