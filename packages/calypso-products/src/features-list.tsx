@@ -177,6 +177,8 @@ import {
 	FEATURE_SECURITY_BRUTE_FORCE,
 	FEATURE_SMART_REDIRECTS,
 	FEATURE_ALWAYS_ONLINE,
+	FEATURE_ALWAYS_ON_UPTIME,
+	FEATURE_LOCAL_DEVELOPMENT_ENVIRONMENT,
 	FEATURE_FAST_DNS,
 	FEATURE_STYLE_CUSTOMIZATION,
 	FEATURE_DESIGN_TOOLS,
@@ -1865,6 +1867,22 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_ALWAYS_ONLINE,
 		getTitle: () => i18n.translate( 'Online forever' ),
 		getDescription: () => i18n.translate( 'Build and count on a site designed to last forever.' ),
+	},
+
+	[ FEATURE_ALWAYS_ON_UPTIME ]: {
+		getSlug: () => FEATURE_ALWAYS_ON_UPTIME,
+		getTitle: () => i18n.translate( '99.999% uptime' ),
+		getDescription: () =>
+			i18n.translate( 'Exceptional reliability with industry-leading uptime guarantee.' ),
+	},
+
+	[ FEATURE_LOCAL_DEVELOPMENT_ENVIRONMENT ]: {
+		getSlug: () => FEATURE_LOCAL_DEVELOPMENT_ENVIRONMENT,
+		getTitle: () => i18n.translate( 'Local development environment' ),
+		getDescription: () =>
+			i18n.translate(
+				'Develop and test your site locally with full development tools and workflows.'
+			),
 	},
 	[ FEATURE_FAST_DNS ]: {
 		getSlug: () => FEATURE_FAST_DNS,
