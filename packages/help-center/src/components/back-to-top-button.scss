@@ -3,7 +3,7 @@ $animation-timing: 300ms;
 .help-center__container {
 	.back-to-top-button__help-center {
 		position: sticky;
-		bottom: 0;
+		bottom: -35px;
 		left: 0;
 		z-index: 2;
 		margin: 0 auto;
