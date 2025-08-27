@@ -3,6 +3,7 @@ import {
 	Card,
 	CardBody,
 	__experimentalVStack as VStack,
+	__experimentalHStack as HStack,
 	Button,
 	RadioControl,
 	CustomSelectControl,
@@ -16,6 +17,7 @@ import { userPreferenceQuery, userPreferenceMutation } from '../../app/queries/m
 import { sitesQuery } from '../../app/queries/sites';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSiteDisplayUrl } from '../../utils/site-url';
+import { useSaveButtonState } from '../../utils/use-save-button-state';
 import type { LandingPage } from '../../data/me-preferences';
 import type { Site } from '../../data/types';
 
@@ -62,7 +64,22 @@ export default function PreferencesLogin() {
 	}, [ primarySiteId, sites ] );
 
 	// Update preferences mutation
-	const updatePreferences = useMutation( userPreferenceMutation( 'login-preferences' ) );
+	const updatePreferences = useMutation( userPreferenceMutation(
+		'login-preferences' ) );
+
+	// Check if form has been modified
+	const isDirty = Boolean(
+		loginPrefs &&
+			( loginPrefs.primarySiteId !== primarySiteId ||
+				loginPrefs.defaultLandingPage !== landingPage )
+	);
+
+	// Save button state
+	const saveButtonState = useSaveButtonState( {
+		isSaving: updatePreferences.isPending,
+		isSuccess: updatePreferences.isSuccess,
+		isDirty,
+	} );
 
 	// Prepare site options for CustomSelectControl
 	const siteOptions: SiteOption[] = sites.map( ( site: Site ) => ( {
@@ -86,7 +103,7 @@ export default function PreferencesLogin() {
 	};
 
 	return (
-		<Card className="preferences-login">
+		<Card className="preferences-login-card">
 			<CardBody>
 				<VStack spacing={ 5 }>
 					<Text as="h3" weight={ 500 }>
@@ -94,7 +111,7 @@ export default function PreferencesLogin() {
 					</Text>
 
 					{ sites.length > 0 && (
-						<div>
+						<VStack>
 							<CustomSelectControl
 								label={ __( 'PRIMARY SITE' ) }
 								options={ siteOptions }
@@ -108,10 +125,10 @@ export default function PreferencesLogin() {
 							<Text variant="muted" style={ { fontSize: '13px', marginTop: '4px' } }>
 								{ __( "Choose the default site dashboard you'll see at login." ) }
 							</Text>
-						</div>
+						</VStack>
 					) }
 
-					<div>
+					<VStack>
 						<RadioControl
 							label={ __( 'DEFAULT LANDING PAGE' ) }
 							selected={ landingPage }
@@ -129,16 +146,19 @@ export default function PreferencesLogin() {
 						<Text variant="muted" style={ { fontSize: '13px', marginTop: '4px' } }>
 							{ __( "Select what you'll see by default when visiting WordPress.com." ) }
 						</Text>
-					</div>
+					</VStack>
 
-					<Button
-						variant="primary"
-						onClick={ handleSave }
-						isBusy={ updatePreferences.isPending }
-						disabled={ updatePreferences.isPending }
-					>
-						{ __( 'Save' ) }
-					</Button>
+					<HStack>
+						<Button
+							__next40pxDefaultSize
+							variant="primary"
+							onClick={ handleSave }
+							isBusy={ saveButtonState.isBusy }
+							disabled={ saveButtonState.disabled }
+						>
+							{ saveButtonState.label }
+						</Button>
+					</HStack>
 				</VStack>
 			</CardBody>
 		</Card>
