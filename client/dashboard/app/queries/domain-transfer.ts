@@ -1,5 +1,5 @@
 import { mutationOptions } from '@tanstack/react-query';
-import { updateDomainLock } from '../../data/domain-transfer';
+import { requestTransferCode, updateDomainLock } from '../../data/domain-transfer';
 import { queryClient } from '../query-client';
 import { domainQuery } from './domain';
 
@@ -9,4 +9,9 @@ export const domainLockMutation = ( domain: string ) =>
 		onSuccess: () => {
 			queryClient.invalidateQueries( domainQuery( domain ) );
 		},
+	} );
+
+export const domainTransferCodeMutation = ( domain: string ) =>
+	mutationOptions( {
+		mutationFn: () => requestTransferCode( domain ),
 	} );
