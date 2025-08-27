@@ -1,6 +1,5 @@
 import { MenuItem } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useRef, useEffect } from 'react';
 
 import './style.scss';
 
@@ -22,15 +21,8 @@ function Shortcut( { letter, title }: { letter: string; title: string } ) {
 }
 
 export default function NoteShortcuts() {
-	// Ensure the component has a focused wrapper container
-	// so that event handlers work when it is rendered inside a <Popover>.
-	const focusRef = useRef< HTMLDivElement >( null );
-	useEffect( () => {
-		focusRef.current?.focus();
-	}, [] );
-
 	return (
-		<div tabIndex={ -1 } ref={ focusRef } className="wpnc__keyboard-shortcuts-popover">
+		<div className="wpnc__keyboard-shortcuts-popover">
 			<Shortcut letter="n" title={ __( 'Toggle panel' ) } />
 			<Shortcut letter="↓" title={ __( 'Next' ) } />
 			<Shortcut letter="↑" title={ __( 'Previous' ) } />

@@ -35,6 +35,7 @@ export default function Notifications( { className }: { className: string } ) {
 			popoverProps={ {
 				placement: 'bottom-end',
 				offset: 8,
+				focusOnMount: true,
 			} }
 			renderToggle={ ( { isOpen, onToggle } ) => (
 				<Button
