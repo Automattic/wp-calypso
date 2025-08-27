@@ -18,7 +18,7 @@ const Subheader = styled.p< {
 	font-size: ${ ( props ) => ( props.isDeemphasizedFreePlan ? '16px' : '1rem' ) };
 	text-align: ${ ( props ) => ( props.isUsingStepContainerV2 ? 'left' : 'center' ) };
 	button.is-borderless {
-		font-weight: 500;
+		font-weight: ${ ( props ) => ( props.isDeemphasizedFreePlan ? 'normal' : '500' ) };
 		color: var( --studio-gray-90 );
 		text-decoration: underline;
 		font-size: 16px;

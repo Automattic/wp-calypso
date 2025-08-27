@@ -377,9 +377,9 @@ function UnifiedPlansStep( {
 		// Dynamic header text when feature flag is enabled
 		if ( config.isEnabled( 'plans-visual-split' ) ) {
 			if ( intent === 'plans-wordpress-hosting' ) {
-				return translate( 'WordPress hosting plans' );
+				return translate( 'Managed hosting without limits' );
 			} else if ( intent === 'plans-website-builder' ) {
-				return translate( 'Website builder plans' );
+				return translate( 'Create a beautiful WordPress website' );
 			}
 		}
 
@@ -390,6 +390,16 @@ function UnifiedPlansStep( {
 		if ( isNewHostedSiteCreationFlow( flowName ) ) {
 			return translate(
 				'Get the advanced features you need without ever thinking about overages.'
+			);
+		}
+
+		if ( intent === 'plans-wordpress-hosting' ) {
+			return translate(
+				'All the security, flexibility, and control you need — without the overhead.'
+			);
+		} else if ( intent === 'plans-website-builder' ) {
+			return translate(
+				'Everything you need to go from idea to one-of-a-kind site, blog, or newsletter.'
 			);
 		}
 
