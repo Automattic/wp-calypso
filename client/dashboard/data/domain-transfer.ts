@@ -41,7 +41,13 @@ export async function saveIpsTag( domain: string, ipsTag: string ): Promise< voi
 }
 
 export async function getIpsTagList(): Promise< IpsTag[] > {
-	return fetch( 'https://widgets.wp.com/domains/ips-tag-list.min.json' ).then( ( res ) =>
-		res.json()
-	);
+	try {
+		const response = await fetch( 'https://widgets.wp.com/domains/ips-tag-list.min.json' );
+		if ( ! response.ok ) {
+			throw new Error( `HTTP error! status: ${ response.status }` );
+		}
+		return await response.json();
+	} catch ( error ) {
+		throw new Error( 'Failed to fetch IPS tag list' );
+	}
 }

@@ -27,11 +27,13 @@ import { DomainSubtype } from '../../data/domains';
 import { formatDate } from '../../utils/datetime';
 import SelectIpsTag from './select-ips-tag';
 
+const RESTRICTED_TRANSFER_TLDS = [ 'uk', 'fr', 'ca', 'de', 'jp' ];
+
 export function getTopLevelOfTld( domainName: string ): string {
 	return domainName.substring( domainName.lastIndexOf( '.' ) + 1 );
 }
 
-export default function DomainOverview() {
+export default function DomainTransfer() {
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const locale = useLocale();
@@ -93,7 +95,7 @@ export default function DomainOverview() {
 				/>
 			);
 		} else if (
-			! [ 'uk', 'fr', 'ca', 'de', 'jp' ].includes( getTopLevelOfTld( domain.domain ) ) &&
+			RESTRICTED_TRANSFER_TLDS.includes( getTopLevelOfTld( domain.domain ) ) &&
 			domain.can_transfer_to_other_site
 		) {
 			actions.push(
@@ -233,29 +235,8 @@ export default function DomainOverview() {
 		);
 	};
 
-	const renderCommonTldTransferOptions = () => {
-		return (
-			<VStack spacing={ 6 }>
-				{ renderTransferMessage() }
-				{ renderTransferLock() }
-				{ domain.auth_code_required && renderAuthCodeButton() }
-			</VStack>
-		);
-	};
-
-	const renderUkTransferOptions = () => {
-		return (
-			<VStack spacing={ 6 }>
-				{ renderTransferMessage() }
-				{ renderTransferLock() }
-				<SelectIpsTag domain={ domainName } isDomainLocked={ domain.is_locked } />
-			</VStack>
-		);
-	};
-
 	const renderExternalTransferOptions = () => {
 		const topLevelOfTld = getTopLevelOfTld( domain.domain );
-
 		return (
 			<Card>
 				<CardBody>
@@ -268,9 +249,15 @@ export default function DomainOverview() {
 								) }
 							</Text>
 						) }
-						{ topLevelOfTld !== 'uk'
-							? renderCommonTldTransferOptions()
-							: renderUkTransferOptions() }
+						<VStack spacing={ 6 }>
+							{ renderTransferMessage() }
+							{ renderTransferLock() }
+							{ topLevelOfTld !== 'uk' ? (
+								domain.auth_code_required && renderAuthCodeButton()
+							) : (
+								<SelectIpsTag domain={ domainName } isDomainLocked={ domain.is_locked } />
+							) }
+						</VStack>
 					</VStack>
 				</CardBody>
 			</Card>
