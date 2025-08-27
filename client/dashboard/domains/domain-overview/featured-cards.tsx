@@ -1,4 +1,4 @@
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalGrid as Grid } from '@wordpress/components';
 import { domainQuery } from '../../app/queries/domain';
 import { siteByIdQuery } from '../../app/queries/site';
@@ -9,7 +9,7 @@ import FeaturedCardSite from './featured-card-site';
 export default function FeaturedCards() {
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
-	const { data: site } = useQuery( siteByIdQuery( domain.blog_id ) );
+	const { data: site } = useSuspenseQuery( siteByIdQuery( domain.blog_id ) );
 
 	return (
 		<Grid columns={ 2 }>
