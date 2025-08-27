@@ -7,12 +7,28 @@ import {
 } from '../../data/domain-transfer';
 import { queryClient } from '../query-client';
 import { domainQuery } from './domain';
+import type { Domain } from '../../data/domain';
 
 export const domainLockMutation = ( domain: string ) =>
 	mutationOptions( {
 		mutationFn: ( enabled: boolean ) => updateDomainLock( domain, enabled ),
-		onSuccess: () => {
+		onMutate: ( enabled: boolean ) => {
+			const oldDomain = queryClient.getQueryData( domainQuery( domain ).queryKey );
+			queryClient.setQueryData( domainQuery( domain ).queryKey, {
+				...oldDomain,
+				is_locked: enabled,
+			} as Domain );
+			return { enabled };
+		},
+		onSettled: () => {
 			queryClient.invalidateQueries( domainQuery( domain ) );
+		},
+		onError: ( error, enabled ) => {
+			const oldDomain = queryClient.getQueryData( domainQuery( domain ).queryKey );
+			queryClient.setQueryData( domainQuery( domain ).queryKey, {
+				...oldDomain,
+				is_locked: ! enabled,
+			} as Domain );
 		},
 	} );
 
