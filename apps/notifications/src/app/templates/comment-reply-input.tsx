@@ -41,10 +41,11 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 	const savedReplyKey = `reply_${ note.id }`;
 	const savedReply = repliesCache.getItem( savedReplyKey );
 	const [ value, setValue ] = useState( savedReply ? savedReply[ 0 ] : '' );
-	const [ hasClicked, setHasClicked ] = useState( false );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
-	const [ rowCount, setRowCount ] = useState( 1 );
+	const isSubmittingRef = useRef( false );
 	const retryCountRef = useRef( 0 );
+
+	isSubmittingRef.current = isSubmitting;
 
 	const handleSubmit = useCallback(
 		( event?: FormEvent ) => {
@@ -53,6 +54,10 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 			}
 
 			if ( ! replyInputRef.current || ! replyInputRef.current.value ) {
+				return;
+			}
+
+			if ( isSubmittingRef.current ) {
 				return;
 			}
 
@@ -101,41 +106,21 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 
 				setValue( '' );
 				setIsSubmitting( false );
-				setHasClicked( false );
-				setRowCount( 1 );
 				retryCountRef.current = 0;
 
 				// remove the comment reply from local storage
 				repliesCache.removeItem( savedReplyKey );
 			} );
 		},
-		[ restClient, note, savedReplyKey, dispatch ]
+		[ restClient, note, savedReplyKey, isSubmittingRef, dispatch ]
 	);
 
 	const handleChange = ( value: string ) => {
-		const textarea = replyInputRef.current;
-		if ( ! textarea ) {
-			return;
-		}
-
-		dispatch( actions.ui.disableKeyboardShortcuts() );
-
 		setValue( value );
-		setRowCount( ( current ) =>
-			Math.min( 4, Math.ceil( ( textarea.scrollHeight * current ) / textarea?.clientHeight ) )
-		);
 
 		// persist the comment reply on local storage
 		if ( savedReplyKey ) {
 			repliesCache.setItem( savedReplyKey, [ value, Date.now() ] );
-		}
-	};
-
-	const handleClick = () => {
-		dispatch( actions.ui.disableKeyboardShortcuts() );
-
-		if ( ! hasClicked ) {
-			setHasClicked( true );
 		}
 	};
 
@@ -150,8 +135,6 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 		// The regex strips whitespace
 		if ( '' === value.replace( /^\s+|\s+$/g, '' ) ) {
 			setValue( '' );
-			setHasClicked( false );
-			setRowCount( 1 );
 		}
 	};
 
@@ -175,13 +158,6 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 	};
 
 	useEffect( () => {
-		dispatch( actions.ui.disableKeyboardShortcuts() );
-		return () => {
-			dispatch( actions.ui.enableKeyboardShortcuts() );
-		};
-	}, [ dispatch ] );
-
-	useEffect( () => {
 		const handleKeyDown = ( event: KeyboardEvent ) => {
 			if ( ! keyboardShortcutsAreEnabled ) {
 				return;
@@ -191,7 +167,7 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 				return;
 			}
 
-			if ( 82 === event.keyCode ) {
+			if ( 'r' === event.key.toLowerCase() ) {
 				/* 'r' key */
 				replyInputRef.current?.focus();
 				stopEvent( event );
@@ -199,14 +175,7 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 		};
 
 		const handleCtrlEnter = ( event: KeyboardEvent ) => {
-			if ( isSubmitting ) {
-				return;
-			}
-
-			if (
-				( event.ctrlKey || event.metaKey ) &&
-				( 10 === event.keyCode || 13 === event.keyCode )
-			) {
+			if ( ( event.ctrlKey || event.metaKey ) && 'Enter' === event.key ) {
 				stopEvent( event );
 				handleSubmit();
 			}
@@ -219,24 +188,24 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 			window.removeEventListener( 'keydown', handleKeyDown, false );
 			window.removeEventListener( 'keydown', handleCtrlEnter, false );
 		};
-	}, [ keyboardShortcutsAreEnabled, isSubmitting, handleSubmit ] );
+	}, [ keyboardShortcutsAreEnabled, handleSubmit ] );
 
 	return (
 		<VStack>
 			<form onSubmit={ handleSubmit }>
-				<HStack spacing={ 4 }>
+				<HStack spacing={ 4 } alignment="flex-start">
 					<TextareaControl
 						className="comment-reply-input__textarea"
 						ref={ replyInputRef }
-						rows={ rowCount }
+						rows={ 1 }
 						value={ value }
 						placeholder={ defaultValue }
-						onClick={ handleClick }
 						onFocus={ handleFocus }
 						onBlur={ handleBlur }
 						onChange={ handleChange }
 					/>
 					<Button
+						type="submit"
 						variant="primary"
 						title={
 							value.length ? __( 'Submit reply' ) : __( 'Write your response in order to submit' )
