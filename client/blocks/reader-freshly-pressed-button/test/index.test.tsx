@@ -62,7 +62,7 @@ describe( 'ReaderFreshlyPressedButton', () => {
 
 		render( <ReaderFreshlyPressedButton blogId={ 1 } postId={ 1 } />, { wrapper: Wrapper } );
 
-		expect( screen.getByRole( 'button', { name: 'Loading...' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Loading…' } ) ).toBeVisible();
 		expect( screen.getByRole( 'button' ) ).toBeDisabled();
 	} );
 
