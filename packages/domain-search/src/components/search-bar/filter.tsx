@@ -24,6 +24,43 @@ export const Filter = ( {
 		return filter.tlds.length + ( filter.exactSldMatchesOnly ? 1 : 0 );
 	}, [ filter ] );
 
+	const setTldsInFilter = useCallback(
+		( tlds: string[] ) => {
+			setTemporaryFilter( {
+				...temporaryFilter,
+				tlds,
+			} );
+		},
+		[ setTemporaryFilter, temporaryFilter ]
+	);
+
+	const addTldToFilter = ( tld: string ) => {
+		setTemporaryFilter( {
+			...temporaryFilter,
+			tlds: [ ...temporaryFilter.tlds, tld ],
+		} );
+	};
+
+	const setExactSldMatchesOnlyInFilter = useCallback(
+		( exactSldMatchesOnly: boolean ) => {
+			setTemporaryFilter( {
+				...temporaryFilter,
+				exactSldMatchesOnly,
+			} );
+		},
+		[ setTemporaryFilter, temporaryFilter ]
+	);
+
+	// Only add TLD to current selection if it exists in the available TLDs list
+	const validateTld = ( tld: string ) => {
+		return availableTlds.includes( tld );
+	};
+
+	const handleTldsChange = ( tokens: ( string | TokenItem )[] ) => {
+		const tlds = tokens.map( ( token ) => ( typeof token === 'string' ? token : token.value ) );
+		setTldsInFilter( tlds );
+	};
+
 	return (
 		<Dropdown
 			showArrow={ false }
@@ -36,11 +73,18 @@ export const Filter = ( {
 			renderContent={ ( { onClose } ) => {
 				return (
 					<DomainSearchControls.FilterPopover
+						addTldToFilter={ addTldToFilter }
+						setExactSldMatchesOnlyInFilter={ setExactSldMatchesOnlyInFilter }
 						temporaryFilter={ temporaryFilter }
-						setTemporaryFilter={ setTemporaryFilter }
 						availableTlds={ availableTlds }
 						onClose={ onClose }
 						resetFilter={ resetFilter }
+						onClear={ () => {
+							onClose();
+							resetFilter();
+						} }
+						validateTld={ validateTld }
+						handleTldsChange={ handleTldsChange }
 					/>
 				);
 			} }
