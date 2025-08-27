@@ -56,7 +56,7 @@ export default function DomainOverview() {
 
 	const renderTransferInfo = () => {
 		return (
-			<Notice title={ __( 'What are DNS records used for?' ) }>
+			<Notice title={ __( 'How do transfers work?' ) }>
 				{ createInterpolateElement(
 					__(
 						'Transferring a domain within WordPress.com is immediate. However, transferring a domain to another provider can take 5–7 days during which no changes to the domain can be made. Read <link>Transfer a domain to another registrar</link> before starting a transfer.'
@@ -176,7 +176,7 @@ export default function DomainOverview() {
 			);
 		}
 
-		return <Text>{ message }</Text>;
+		return <Text variant="muted">{ message }</Text>;
 	};
 
 	const renderTransferLock = () => {
