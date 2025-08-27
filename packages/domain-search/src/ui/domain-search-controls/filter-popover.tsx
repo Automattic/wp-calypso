@@ -83,6 +83,7 @@ export const DomainSearchControlsFilterPopover = ( {
 				__nextHasNoMarginBottom
 				__experimentalShowHowTo={ false }
 				__experimentalValidateInput={ validateTld }
+				label=""
 				value={ temporaryFilter.tlds }
 				suggestions={ availableTlds }
 				onChange={ handleTldsChange }
