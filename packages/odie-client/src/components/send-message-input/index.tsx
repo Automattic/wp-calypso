@@ -248,11 +248,7 @@ export const OdieSendMessageButton = () => {
 							<div className="odie-send-message-input-and-spinner">
 								<ResizableTextarea
 									shouldDisableInputField={
-										isChatBusy ||
-										isAttachingFile ||
-										cantTransferToZendesk ||
-										isEmailFallback ||
-										( isLiveChat && connectionStatus !== 'connected' )
+										isChatBusy || isAttachingFile || cantTransferToZendesk || isEmailFallback
 									}
 									sendMessageHandler={ sendMessageHandler }
 									className="odie-send-message-input"
@@ -269,9 +265,7 @@ export const OdieSendMessageButton = () => {
 									attachmentButtonRef={ attachmentButtonRef }
 									onFileUpload={ handleFileUpload }
 									isAttachingFile={ isAttachingFile }
-									isDisabled={
-										isEmailFallback || ( isLiveChat && connectionStatus !== 'connected' )
-									}
+									isDisabled={ isEmailFallback }
 								/>
 							) }
 							<button

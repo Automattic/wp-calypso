@@ -9,6 +9,7 @@ export const getUserDeclaredSiteUrl = ( state: State ) => state.userDeclaredSite
 export const getUserDeclaredSite = ( state: State ) => state.userDeclaredSite;
 export const getUnreadCount = ( state: State ) => state.unreadCount;
 export const getZendeskConnectionStatus = ( state: State ) => state.zendeskConnectionStatus;
+export const getOfflineQueue = ( state: State ) => state.offlineQueue;
 export const getIsMinimized = ( state: State ) => state.isMinimized;
 export const getIsChatLoaded = ( state: State ) => state.isChatLoaded;
 export const getAreSoundNotificationsEnabled = ( state: State ) =>

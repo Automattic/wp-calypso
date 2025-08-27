@@ -2,14 +2,21 @@ import { combineReducers } from '@wordpress/data';
 import { SiteDetails } from '../site';
 import type { HelpCenterAction } from './actions';
 import type { HelpCenterOptions } from './types';
-import type { SupportInteraction } from '@automattic/odie-client/src/types';
+import type { SupportInteraction, Message } from '@automattic/odie-client/src/types';
 import type { Location } from 'history';
 import type { Reducer } from 'redux';
-
 const showHelpCenter: Reducer< boolean | undefined, HelpCenterAction > = ( state, action ) => {
 	switch ( action.type ) {
 		case 'HELP_CENTER_SET_SHOW':
 			return action.show;
+	}
+	return state;
+};
+
+const offlineQueue: Reducer< Message[], HelpCenterAction > = ( state = [], action ) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_OFFLINE_QUEUE':
+			return action.offlineQueue;
 	}
 	return state;
 };
@@ -202,6 +209,7 @@ const reducer = combineReducers( {
 	showHelpCenter,
 	showMessagingLauncher,
 	showMessagingWidget,
+	offlineQueue,
 	zendeskConnectionStatus,
 	subject,
 	message,

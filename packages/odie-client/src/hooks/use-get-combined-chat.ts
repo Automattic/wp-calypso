@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
-import { useSelect } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useState, useEffect, useRef } from '@wordpress/element';
 import { getOdieTransferMessage } from '../constants';
 import { emptyChat } from '../context';
@@ -12,6 +12,7 @@ import {
 	getIsRequestingHumanSupport,
 } from '../utils';
 import type { Chat, Message } from '../types';
+import { useSendZendeskMessage } from './use-send-zendesk-message';
 
 /**
  * This combines the ODIE chat with the ZENDESK conversation.
@@ -21,48 +22,62 @@ export const useGetCombinedChat = (
 	canConnectToZendesk: boolean,
 	isLoadingCanConnectToZendesk: boolean
 ) => {
-	const { currentSupportInteraction, conversationId, odieId, isChatLoaded, connectionStatus } =
-		useSelect( ( select ) => {
-			const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
-			const currentSupportInteraction = store.getCurrentSupportInteraction();
+	const {
+		currentSupportInteraction,
+		conversationId,
+		odieId,
+		isChatLoaded,
+		connectionStatus,
+		offlineQueue,
+	} = useSelect( ( select ) => {
+		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+		const currentSupportInteraction = store.getCurrentSupportInteraction();
+		const offlineQueue = store.getOfflineQueue();
 
-			const odieId = getOdieIdFromInteraction( currentSupportInteraction );
-			const conversationId = getConversationIdFromInteraction( currentSupportInteraction );
+		const odieId = getOdieIdFromInteraction( currentSupportInteraction );
+		const conversationId = getConversationIdFromInteraction( currentSupportInteraction );
 
-			return {
-				currentSupportInteraction,
-				conversationId,
-				odieId,
-				isChatLoaded: store.getIsChatLoaded(),
-				connectionStatus: store.getZendeskConnectionStatus(),
-			};
-		}, [] );
+		return {
+			currentSupportInteraction,
+			conversationId,
+			odieId,
+			offlineQueue,
+			isChatLoaded: store.getIsChatLoaded(),
+			connectionStatus: store.getZendeskConnectionStatus(),
+		};
+	}, [] );
 	const previousUuidRef = useRef< string | undefined >();
 	const [ mainChatState, setMainChatState ] = useState< Chat >( emptyChat );
-	const [ refreshingAfterReconnect, setRefreshingAfterReconnect ] = useState( false );
+	const { setOfflineQueue } = useDispatch( HELP_CENTER_STORE );
 	const chatStatus = mainChatState?.status;
 	const getZendeskConversation = useGetZendeskConversation();
-	const { data: odieChat, isFetching: isOdieChatLoading } = useOdieChat( Number( odieId ) );
+	const sendZendeskMessage = useSendZendeskMessage();
+	const { data: odieChat, status: odieChatStatus } = useOdieChat( Number( odieId ) );
 	const { startNewInteraction } = useManageSupportInteraction();
 
 	useEffect( () => {
 		if ( connectionStatus === 'connected' ) {
+			if ( offlineQueue.length > 0 ) {
+				offlineQueue.forEach( ( message ) => sendZendeskMessage( message, false ) );
+				setOfflineQueue( [] );
+			}
 			setTimeout( () => {
-				setRefreshingAfterReconnect( true );
 				setMainChatState( ( chat ) => ( {
 					...chat,
 					status: 'loading',
 				} ) );
+				// Reset the previous uuid to refetch the messages that were lost while offline.
+				previousUuidRef.current = '';
 				// Give a buffer for ZD to warm up before re-fetching the lost messages.
 			}, 2000 );
 		}
-	}, [ connectionStatus, setRefreshingAfterReconnect ] );
+	}, [ connectionStatus, offlineQueue, setOfflineQueue ] );
 
 	useEffect( () => {
 		const interactionHasChanged = previousUuidRef.current !== currentSupportInteraction?.uuid;
 		if (
 			! currentSupportInteraction?.uuid ||
-			isOdieChatLoading ||
+			odieChatStatus !== 'success' ||
 			isLoadingCanConnectToZendesk ||
 			( chatStatus !== 'loading' && ! interactionHasChanged )
 		) {
@@ -98,7 +113,7 @@ export const useGetCombinedChat = (
 			return;
 		}
 
-		if ( isChatLoaded || refreshingAfterReconnect ) {
+		if ( isChatLoaded ) {
 			try {
 				getZendeskConversation( {
 					chatId: odieChat?.odieId,
@@ -130,14 +145,11 @@ export const useGetCombinedChat = (
 					event_source: 'help-center',
 					event_external_id: crypto.randomUUID(),
 				} );
-			} finally {
-				setRefreshingAfterReconnect( false );
 			}
 		}
 	}, [
-		isOdieChatLoading,
+		odieChatStatus,
 		chatStatus,
-		refreshingAfterReconnect,
 		isChatLoaded,
 		odieChat,
 		conversationId,

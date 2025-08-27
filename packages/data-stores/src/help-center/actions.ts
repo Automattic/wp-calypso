@@ -12,7 +12,7 @@ import type {
 	HelpCenterSelect,
 	HelpCenterShowOptions,
 } from './types';
-import type { SupportInteraction } from '@automattic/odie-client/src/types';
+import type { Message, SupportInteraction } from '@automattic/odie-client/src/types';
 import type { Location } from 'history';
 
 /**
@@ -101,6 +101,12 @@ export const setIsMinimized = function* ( minimized: boolean ) {
 		minimized,
 	} as const;
 };
+
+export const setOfflineQueue = ( offlineQueue: Message[] ) =>
+	( {
+		type: 'HELP_CENTER_SET_OFFLINE_QUEUE',
+		offlineQueue,
+	} ) as const;
 
 export const setIsChatLoaded = ( isChatLoaded: boolean ) =>
 	( {
@@ -297,6 +303,7 @@ export type HelpCenterAction =
 			| typeof setAreSoundNotificationsEnabled
 			| typeof setZendeskClientId
 			| typeof setZendeskConnectionStatus
+			| typeof setOfflineQueue
 			| typeof setNavigateToRoute
 			| typeof setOdieInitialPromptText
 			| typeof setOdieBotNameSlug
