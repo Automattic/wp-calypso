@@ -82,7 +82,7 @@ export function useActions( {
 					await navigator.clipboard.writeText( url );
 					createSuccessNotice( __( 'Copied request URL' ), { type: 'snackbar' } );
 				} catch ( e ) {
-					createErrorNotice( __( 'Request URL could not be copied' ), { type: 'snackbar' } );
+					createErrorNotice( __( 'Request URL could not be copied.' ), { type: 'snackbar' } );
 				}
 			},
 		};
