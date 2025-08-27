@@ -11,9 +11,12 @@ const Subheader = styled.p< {
 	isUsingStepContainerV2?: boolean;
 	isDeemphasizedFreePlan?: boolean;
 } >`
-	margin: ${ ( props ) => ( props.isDeemphasizedFreePlan ? '20px 0 40px 0' : '-32px 0 40px 0' ) };
+	margin: -32px 0 40px 0;
+	margin: ${ ( props ) => ( props.isDeemphasizedFreePlan ? '-45px 0 40px 0' : '-32px 0 40px 0' ) };
 	color: var( --studio-gray-60 );
-	font-size: 1rem;
+	font-family: ${ ( props ) =>
+		props.isDeemphasizedFreePlan ? "'SF Pro Text', sans-serif" : 'inherit' };
+	font-size: ${ ( props ) => ( props.isDeemphasizedFreePlan ? '16px' : '1rem' ) };
 	text-align: ${ ( props ) => ( props.isUsingStepContainerV2 ? 'left' : 'center' ) };
 	button.is-borderless {
 		font-weight: 500;
