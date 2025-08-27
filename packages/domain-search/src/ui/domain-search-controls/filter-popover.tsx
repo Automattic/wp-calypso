@@ -5,11 +5,11 @@ import {
 	CheckboxControl,
 	FormTokenField,
 } from '@wordpress/components';
-import { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
 import { useI18n } from '@wordpress/react-i18n';
 import { FilterState } from '../../components/search-bar/types';
 import { FilterPopoverLabel } from './filter-popover-label';
 import { FilterPopoverTld } from './filter-popover-tld';
+import type { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
 
 import './filter-popover.scss';
 
