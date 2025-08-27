@@ -116,10 +116,12 @@ export const ReaderFreshlyPressedButton = ( { blogId, postId }: Props ) => {
 			aria-busy={ isLoading }
 		>
 			<button
-				data-tooltip={ config?.tooltip }
+				{ ...( config?.tooltip && { 'data-tooltip': config.tooltip } ) }
 				onClick={ handleClick }
 				disabled={ ! isEligible || isLoading || isSuggestionSuccess }
-				className="freshly-pressed__button"
+				className={ clsx( 'freshly-pressed__button', {
+					'freshly-pressed__button--has-tooltip': config?.tooltip,
+				} ) }
 			>
 				{ statusIcon && <Icon size={ 20 } icon={ statusIcon } /> }
 				{ isLoading && <Spinner className="freshly-pressed__spinner" /> }

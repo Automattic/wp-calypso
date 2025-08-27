@@ -31,8 +31,10 @@
 		font-size: 13px;
 
 
-		@include tooltip-base;
-		@include tooltip-top;
+		&--has-tooltip {
+			@include tooltip-base;
+			@include tooltip-top;
+		}
 
 		@include break-medium {
 			// min-width: unset;
