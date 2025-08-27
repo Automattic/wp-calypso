@@ -67,8 +67,6 @@ object WPComTests : Project({
 	buildType(jetpackAtomicBuildSmokeE2eBuildType("desktop", "f39587ab-f526-42aa-a88b-814702135af3"));
 
 	buildType(I18NTests);
-	// Standalone Playwright-focused I18N build (doesn't extend E2EBuildType)
-	buildType(I18NTestsPlaywrightTest);
 	buildType(P2E2ETests)
 })
 
@@ -417,112 +415,6 @@ private object I18NTests : E2EBuildType(
 		}
 	}
 )
-
-// Standalone Playwright BuildType for I18N tests.
-// This does not extend E2EBuildType so that it's editable without causing issues
-val I18NTestsPlaywrightTest = BuildType({
-	id( "WPComTests_i18n_playwright" )
-	uuid = "d3d4c9f1-0000-4000-8000-000000000001"
-	name = "I18N Playwright Tests"
-	description = "Standalone Playwright-run build for I18N tests"
-
-	artifactRules = """
-		logs => logs.tgz
-		results.xml => results.xml
-		test-results => test-results.tgz
-		playwright-report => playwright-report.tgz
-	""".trimIndent()
-
-	vcs {
-		root(Settings.WpCalypso)
-		cleanCheckout = true
-	}
-
-	params {
-		param("env.NODE_CONFIG_ENV", "test")
-		param("env.PLAYWRIGHT_BROWSERS_PATH", "0")
-		param("env.HEADLESS", "true")
-		param("env.LOCALE", "en")
-		param("env.DEBUG", "")
-		text(
-			name = "env.CALYPSO_BASE_URL",
-			value = "https://wordpress.com",
-			label = "Test URL",
-			description = "URL to test against",
-			allowEmpty = false
-		)
-	}
-
-	steps {
-		// IMPORTANT! This step MUST match what the docker image does. If trunk
-		// is merged when building the docker image, it must also be merged
-		// to run the tests, or they may not be compatible. See the "mergeTrunk"
-		// step in BuildDockerImage in WebApp.kt.
-		mergeTrunk( skipIfConflict = true )
-
-		bashNodeScript {
-			name = "Prepare environment"
-			scriptContent = """
-				# Install deps
-				yarn workspaces focus wp-e2e-tests @automattic/calypso-e2e
-
-				# Decrypt secrets
-				# Must do before build so the secrets are in the dist output
-				E2E_SECRETS_KEY="%E2E_SECRETS_ENCRYPTION_KEY_CURRENT%" yarn workspace @automattic/calypso-e2e decrypt-secrets
-
-				# Build packages
-				yarn workspace @automattic/calypso-e2e build
-			""".trimIndent()
-			dockerImage = "%docker_image_e2e%"
-		}
-
-		bashNodeScript {
-			name = "Run tests"
-			scriptContent = """
-				# Configure bash shell.
-				shopt -s globstar
-				set -x
-
-				# Enter testing directory.
-				cd test/e2e
-
-				# Run suite.
-				xvfb-run yarn playwright:i18n
-			"""
-			dockerImage = "%docker_image_e2e%"
-			dockerRunParameters = "-u %env.UID% --shm-size=4g"
-		}
-
-		bashNodeScript {
-			name = "Collect results"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				set -x
-
-				mkdir -p logs
-				find test/e2e/results -name '*.log' -print0 | xargs -r -0 mv -t logs
-			""".trimIndent()
-			dockerImage = "%docker_image_e2e%"
-		}
-	}
-	
-	triggers {
-		schedule {
-			schedulingPolicy = daily {
-				hour = 4
-			}
-			branchFilter = """
-				+:trunk
-			""".trimIndent()
-			triggerBuild = always()
-			withPendingChangesOnly = false
-		}
-	}
-
-	failureConditions {
-		executionTimeoutMin = 20
-	}
-})
 
 object P2E2ETests : E2EBuildType(
 	buildId = "WPComTests_p2",
