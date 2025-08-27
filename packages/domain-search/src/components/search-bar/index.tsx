@@ -1,8 +1,9 @@
-import { Dropdown, __experimentalHStack as HStack } from '@wordpress/components';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useEffect, useState } from 'react';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchControls } from '../../ui';
+import { Filter } from './filter';
 
 const DELAY_TIMEOUT = 300;
 
@@ -29,10 +30,6 @@ export const SearchBar = () => {
 		return () => clearTimeout( timeout );
 	}, [ localQuery, setQuery ] );
 
-	const getFiltercounts = useCallback( () => {
-		return filter.tlds.length + ( filter.exactSldMatchesOnly ? 1 : 0 );
-	}, [ filter ] );
-
 	const resetFilter = useCallback( () => {
 		setFilter( emptyFilter );
 		setTemporaryFilter( emptyFilter );
@@ -58,28 +55,13 @@ export const SearchBar = () => {
 				onBlur={ () => {} }
 				onKeyDown={ () => {} }
 			/>
-			<Dropdown
-				showArrow={ false }
-				popoverProps={ { placement: 'bottom-end', offset: 10, noArrow: false } }
-				renderToggle={ ( { onToggle } ) => {
-					return (
-						<DomainSearchControls.FilterButton count={ getFiltercounts() } onClick={ onToggle } />
-					);
-				} }
-				renderContent={ ( { onClose } ) => {
-					return (
-						<DomainSearchControls.FilterPopover
-							temporaryFilter={ temporaryFilter }
-							setTemporaryFilter={ setTemporaryFilter }
-							availableTlds={ availableTlds }
-							onClose={ onClose }
-							resetFilter={ resetFilter }
-						/>
-					);
-				} }
-				onClose={ () => {
-					setFilter( temporaryFilter );
-				} }
+			<Filter
+				availableTlds={ availableTlds }
+				filter={ filter }
+				resetFilter={ resetFilter }
+				setFilter={ setFilter }
+				setTemporaryFilter={ setTemporaryFilter }
+				temporaryFilter={ temporaryFilter }
 			/>
 		</HStack>
 	);
