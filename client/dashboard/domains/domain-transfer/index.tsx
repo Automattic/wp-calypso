@@ -1,15 +1,19 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
 	Card,
 	CardBody,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
+	ToggleControl,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { useLocale } from '../../app/locale';
 import { domainQuery } from '../../app/queries/domain';
+import { domainLockMutation } from '../../app/queries/domain-transfer';
 import { domainRoute } from '../../app/router/domains';
 import { ActionList } from '../../components/action-list';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -29,6 +33,22 @@ export default function DomainOverview() {
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const locale = useLocale();
+	const mutation = useMutation( domainLockMutation( domainName ) );
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const isPending = mutation.isPending;
+
+	const handleToggleChange = ( enabled: boolean ) => {
+		mutation.mutate( enabled, {
+			onSuccess: () => {
+				createSuccessNotice( __( 'Transfer lock setting saved.' ), { type: 'snackbar' } );
+			},
+			onError: () => {
+				createErrorNotice( __( 'Failed to save transfer lock settings.' ), {
+					type: 'snackbar',
+				} );
+			},
+		} );
+	};
 
 	const renderTransferInfo = () => {
 		return (
@@ -156,15 +176,28 @@ export default function DomainOverview() {
 	};
 
 	const renderTransferLock = () => {
-		return <HStack>Transfer Lock placeholder</HStack>;
+		const disabled = Boolean(
+			! domain?.domain_locking_available || domain?.transfer_away_eligible_at || isPending
+		);
+		return (
+			<HStack alignment="left">
+				<ToggleControl
+					__nextHasNoMarginBottom
+					checked={ domain.is_locked ?? false }
+					onChange={ ( checked ) => handleToggleChange( checked ) }
+					disabled={ disabled }
+					label={ domain.is_locked ? __( 'Transfer lock on' ) : __( 'Transfer lock off' ) }
+				/>
+			</HStack>
+		);
 	};
 
 	const renderCommonTldTransferOptions = () => {
 		return (
-			<>
+			<VStack spacing={ 2 }>
 				{ renderTransferMessage() }
 				{ renderTransferLock() }
-			</>
+			</VStack>
 		);
 	};
 
