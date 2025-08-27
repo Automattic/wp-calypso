@@ -32,21 +32,28 @@ export const DomainSearch = ( {
 		setIsFullCartOpen( true );
 	}, [] );
 
-	const vendor = config?.vendor ?? 'variation2_front';
+	const contextValue: typeof DEFAULT_CONTEXT_VALUE = useMemo( () => {
+		const normalizedConfig = {
+			...DEFAULT_CONTEXT_VALUE.config,
+			...config,
+		};
 
-	const contextValue: typeof DEFAULT_CONTEXT_VALUE = useMemo(
-		() => ( {
+		return {
 			events: {
 				...DEFAULT_CONTEXT_VALUE.events,
 				...events,
 			},
+			config: normalizedConfig,
 			queries: {
 				domainSuggestions: ( query ) =>
 					domainSuggestionsQuery( query, {
 						quantity: 30,
-						vendor,
+						vendor: normalizedConfig.vendor,
 					} ),
-				freeSuggestion: freeSuggestionQuery,
+				freeSuggestion: ( query ) => ( {
+					...freeSuggestionQuery( query ),
+					enabled: normalizedConfig.skippable,
+				} ),
 				domainAvailability: domainAvailabilityQuery,
 			},
 			cart,
@@ -57,20 +64,19 @@ export const DomainSearch = ( {
 			setQuery,
 			slots,
 			currentSiteUrl,
-		} ),
-		[
-			isFullCartOpen,
-			closeFullCart,
-			openFullCart,
-			query,
-			setQuery,
-			cart,
-			events,
-			slots,
-			currentSiteUrl,
-			vendor,
-		]
-	);
+		};
+	}, [
+		isFullCartOpen,
+		closeFullCart,
+		openFullCart,
+		query,
+		setQuery,
+		cart,
+		events,
+		slots,
+		currentSiteUrl,
+		config,
+	] );
 
 	const cartItemsLength = cart.items.length;
 

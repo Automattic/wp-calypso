@@ -27,6 +27,10 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 	openFullCart: () => {},
 	query: '',
 	setQuery: () => {},
+	config: {
+		vendor: 'variation2_front',
+		skippable: false,
+	},
 };
 
 export const DomainSearchContext =

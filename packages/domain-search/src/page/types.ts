@@ -30,7 +30,8 @@ export interface DomainSearchEvents {
 }
 
 export interface DomainSearchConfig {
-	vendor?: DomainSuggestionQueryVendor;
+	vendor: DomainSuggestionQueryVendor;
+	skippable: boolean;
 }
 
 export interface DomainSearchProps {
@@ -44,11 +45,14 @@ export interface DomainSearchProps {
 	events?: Partial< DomainSearchEvents >;
 	currentSiteUrl?: string;
 	queryClient?: QueryClient;
-	config?: DomainSearchConfig;
+	config?: Partial< DomainSearchConfig >;
 }
 
 export interface DomainSearchContextType
-	extends Omit< DomainSearchProps, 'className' | 'initialQuery' | 'events' | 'queryClient' > {
+	extends Omit<
+		DomainSearchProps,
+		'className' | 'initialQuery' | 'events' | 'queryClient' | 'config'
+	> {
 	events: DomainSearchEvents;
 	isFullCartOpen: boolean;
 	closeFullCart: () => void;
@@ -60,4 +64,5 @@ export interface DomainSearchContextType
 		domainAvailability: ( domainName: string ) => ReturnType< typeof domainAvailabilityQuery >;
 		freeSuggestion: ( query: string ) => ReturnType< typeof freeSuggestionQuery >;
 	};
+	config: DomainSearchConfig;
 }

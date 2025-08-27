@@ -12,7 +12,7 @@ import { partitionSuggestions } from '../helpers/partition-suggestions';
 import { useDomainSearch } from './context';
 
 export const ResultsPage = () => {
-	const { slots, query, queries } = useDomainSearch();
+	const { slots, query, queries, config } = useDomainSearch();
 
 	const { data: suggestions = [], isLoading: isLoadingSuggestions } = useQuery(
 		queries.domainSuggestions( query )
@@ -54,7 +54,9 @@ export const ResultsPage = () => {
 				) : (
 					<FeaturedSearchResults suggestions={ featuredSuggestions } />
 				) }
-				{ isLoading ? <SkipSuggestion.Placeholder /> : <SkipSuggestion /> }
+				{ config.skippable && (
+					<> { isLoading ? <SkipSuggestion.Placeholder /> : <SkipSuggestion /> } </>
+				) }
 				{ isLoading ? (
 					<SearchResults.Placeholder />
 				) : (
