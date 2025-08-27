@@ -1,8 +1,9 @@
 @import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/variables";
 
 .intent-toggle {
 	width: 432px;
-	margin: 0 auto; // Center the toggle
+	margin: 0 auto calc(#{$grid-unit-40} - 3px) auto; // 32px - 3px = 29px bottom to account for header padding
 
 	.components-toggle-group-control {
 		width: 100%;
