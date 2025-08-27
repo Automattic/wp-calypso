@@ -210,7 +210,7 @@ export default function StagingSiteSyncModal( {
 			<VStack spacing={ 5 }>
 				<Text>
 					{ createInterpolateElement( syncConfig[ environment ].description, {
-						a: <ExternalLink href={ `/backup/${ targetSiteSlug }` } children={ null } />,
+						a: <ExternalLink href={ `/activity-log/${ targetSiteSlug }` } children={ null } />,
 					} ) }
 				</Text>
 				<HStack spacing={ 4 } alignment="left">
