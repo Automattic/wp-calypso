@@ -1,4 +1,5 @@
 import { Dropdown } from '@wordpress/components';
+import { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
 import { useCallback } from 'react';
 import { DomainSearchControls } from '../../ui';
 import { FilterState } from './types';
@@ -35,6 +36,10 @@ export const Filter = ( {
 	);
 
 	const addTldToFilter = ( tld: string ) => {
+		if ( tld.startsWith( '.' ) ) {
+			tld = tld.slice( 1 );
+		}
+
 		setTemporaryFilter( {
 			...temporaryFilter,
 			tlds: [ ...temporaryFilter.tlds, tld ],
