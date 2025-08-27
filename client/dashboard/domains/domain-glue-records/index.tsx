@@ -1,6 +1,7 @@
 import { isMobile } from '@automattic/viewport';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
+import { __experimentalConfirmDialog as ConfirmDialog } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
@@ -51,6 +52,37 @@ function DomainGlueRecords() {
 	);
 	const deleteMutation = useMutation( domainGlueRecordDeleteMutation( domainName ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const [ isDeleteDialogOpen, setIsDeleteDialogOpen ] = useState( false );
+	const [ selectedGlueRecord, setSelectedGlueRecord ] = useState< DomainGlueRecord | undefined >();
+
+	const openDeleteDialog = ( glueRecord: DomainGlueRecord ) => {
+		setIsDeleteDialogOpen( true );
+		setSelectedGlueRecord( glueRecord );
+	};
+
+	const closeDeleteDialog = () => {
+		setIsDeleteDialogOpen( false );
+		setSelectedGlueRecord( undefined );
+	};
+
+	const onDeleteDialogConfirm = () => {
+		if ( selectedGlueRecord ) {
+			deleteMutation.mutate( selectedGlueRecord, {
+				onSuccess: () => {
+					createSuccessNotice( __( 'Glue record was deleted successfully.' ), {
+						type: 'snackbar',
+					} );
+				},
+				onError: () => {
+					createErrorNotice( __( 'Failed to delete glue record.' ), {
+						type: 'snackbar',
+					} );
+				},
+			} );
+		}
+
+		closeDeleteDialog();
+	};
 
 	const actions: Action< DomainGlueRecord >[] = useMemo(
 		() => [
@@ -70,22 +102,12 @@ function DomainGlueRecords() {
 				label: __( 'Delete' ),
 				callback: ( items ) => {
 					const item = items[ 0 ];
-					deleteMutation.mutate( item, {
-						onSuccess: () => {
-							createSuccessNotice( __( 'Glue record was deleted successfully.' ), {
-								type: 'snackbar',
-							} );
-						},
-						onError: () => {
-							createErrorNotice( __( 'Failed to delete glue record.' ), {
-								type: 'snackbar',
-							} );
-						},
-					} );
+
+					openDeleteDialog( item );
 				},
 			},
 		],
-		[ createErrorNotice, createSuccessNotice, deleteMutation, domainName, navigate ]
+		[ domainName, navigate ]
 	);
 
 	const fields: Field< DomainGlueRecord >[] = useMemo(
@@ -169,6 +191,15 @@ function DomainGlueRecords() {
 					/>
 				) }
 			</DataViewsCard>
+
+			<ConfirmDialog
+				isOpen={ isDeleteDialogOpen }
+				onConfirm={ onDeleteDialogConfirm }
+				onCancel={ closeDeleteDialog }
+				confirmButtonText={ __( 'Delete' ) }
+			>
+				{ __( 'Are you sure you want to delete this record?' ) }
+			</ConfirmDialog>
 		</PageLayout>
 	);
 }
