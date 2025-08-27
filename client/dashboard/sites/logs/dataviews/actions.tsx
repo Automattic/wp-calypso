@@ -80,7 +80,7 @@ export function useActions( {
 				const url = ( items[ 0 ] as ServerLog ).request_url;
 				try {
 					await navigator.clipboard.writeText( url );
-					createSuccessNotice( __( 'Copied request URL' ), { type: 'snackbar' } );
+					createSuccessNotice( __( 'Copied request URL.' ), { type: 'snackbar' } );
 				} catch ( e ) {
 					createErrorNotice( __( 'Request URL could not be copied.' ), { type: 'snackbar' } );
 				}
