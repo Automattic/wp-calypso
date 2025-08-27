@@ -283,7 +283,7 @@ export default function DomainDns() {
 			header={
 				<VStack>
 					<PageHeader
-						title={ __( 'DNS Records' ) }
+						title={ __( 'DNS records' ) }
 						actions={
 							<>
 								<ImportBindFileButton

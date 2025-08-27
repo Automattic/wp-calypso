@@ -1,6 +1,7 @@
 import { isBlogger, isFreeWordPressComDomain } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { ResponsiveToolbarGroup } from '@automattic/components';
+import { fetchDomainSuggestions } from '@automattic/data';
 import {
 	DomainSearchControls,
 	DomainSearchNotice,
@@ -1394,7 +1395,6 @@ class RegisterDomainStep extends Component {
 		const suggestionQuantity = SUGGESTION_QUANTITY - this.getFreeSubdomainSuggestionsQuantity();
 
 		const query = {
-			query: domain,
 			quantity: suggestionQuantity,
 			include_wordpressdotcom: false,
 			include_dotblogsubdomain: false,
@@ -1410,8 +1410,7 @@ class RegisterDomainStep extends Component {
 
 		debug( 'Fetching domains suggestions with the following query', query );
 
-		return domains
-			.suggestions( query )
+		return fetchDomainSuggestions( domain, query )
 			.then( ( domainSuggestions ) => {
 				this.props.onDomainsAvailabilityChange( true );
 				const timeDiff = Date.now() - timestamp;

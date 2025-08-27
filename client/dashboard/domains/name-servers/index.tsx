@@ -63,7 +63,7 @@ export default function NameServers() {
 	);
 
 	return (
-		<PageLayout size="small" header={ <PageHeader title={ __( 'Name Servers' ) } /> }>
+		<PageLayout size="small" header={ <PageHeader title={ __( 'Name servers' ) } /> }>
 			<Card>
 				<CardBody>
 					{ errorMsg ? (

@@ -108,7 +108,9 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 							let promptParam = '';
 
 							const source = queryParams.get( 'source' );
+							const specId = queryParams.get( 'spec_id' );
 							let sourceParam = '';
+							let specIdParam = '';
 
 							addBlogSticker( siteId, 'big-sky-free-trial' );
 
@@ -155,8 +157,12 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 							if ( source ) {
 								sourceParam = `&source=${ encodeURIComponent( source ) }`;
 							}
+							if ( specId ) {
+								specIdParam = `&spec_id=${ encodeURIComponent( specId ) }`;
+							}
+
 							window.location.replace(
-								`${ siteURL }/wp-admin/site-editor.php?canvas=edit&referrer=${ AI_SITE_BUILDER_FLOW }${ promptParam }${ sourceParam }`
+								`${ siteURL }/wp-admin/site-editor.php?canvas=edit&referrer=${ AI_SITE_BUILDER_FLOW }${ promptParam }${ sourceParam }${ specIdParam }`
 							);
 						} else if ( providedDependencies.isLaunched ) {
 							const site = await resolveSelect( SITE_STORE ).getSite(

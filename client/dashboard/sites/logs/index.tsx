@@ -105,8 +105,8 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	const { data } = useSuspenseQuery( {
 		...siteSettingsQuery( siteId ),
 		select: ( s ) => ( {
-			gmtOffset: s?.gmt_offset ?? 0,
-			timezoneString: s?.timezone_string ?? '',
+			gmtOffset: typeof s?.gmt_offset === 'number' ? s.gmt_offset : 0,
+			timezoneString: s?.timezone_string || undefined,
 		} ),
 	} );
 
@@ -221,12 +221,9 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		}
 	};
 
-	//	const fields = useFields( { logType, timezoneString } );
-	const fields = useFields( {
-		logType,
-		timezoneString: timezoneString || undefined,
-		gmtOffset,
-	} );
+	const fields = useFields(
+		timezoneString ? { logType, timezoneString, gmtOffset } : { logType, gmtOffset }
+	);
 
 	const onChangeView = ( next: View ) => {
 		const allowed = getAllowedFields( logType );
@@ -314,60 +311,61 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 					<Notice variant={ notice.variant }>{ notice.message }</Notice>
 				</div>
 			) }
-			<DateRangePicker
-				start={ dateRange.start }
-				end={ dateRange.end }
-				gmtOffset={ gmtOffset }
-				timezoneString={ timezoneString }
-				locale={ locale }
-				onChange={ handleDateRangeChange }
-			/>
-
 			<CalloutOverlay
 				showCallout={ ! hasHostingFeature( site, HostingFeatures.LOGS ) }
 				callout={ <SiteLogsCallout siteSlug={ site.slug } /> }
 				main={
-					<TabPanel
-						className="site-logs-tabs"
-						activeClass="is-active"
-						tabs={ LOG_TABS }
-						onSelect={ ( tabName ) => {
-							if ( tabName === LogType.PHP || tabName === LogType.SERVER ) {
-								handleTabChange( tabName );
-							}
-						} }
-						initialTabName={ logType }
-					>
-						{ () => (
-							<DataViewsCard>
-								<DataViews< PHPLog | ServerLog >
-									data={ logs ?? [] }
-									isLoading={ isFetching }
-									paginationInfo={ paginationInfo }
-									fields={ fields ?? [] }
-									view={ view }
-									actions={ actions }
-									search={ false }
-									defaultLayouts={ { table: {} } }
-									onChangeView={ onChangeView }
-									header={
-										<>
-											<LogsDownloader
-												siteId={ siteId }
-												siteSlug={ site.slug }
-												logType={ logType }
-												startSec={ startSec }
-												endSec={ endSec }
-												filter={ filter }
-												onSuccess={ ( message ) => setNotice( { variant: 'success', message } ) }
-												onError={ ( message ) => setNotice( { variant: 'error', message } ) }
-											/>
-										</>
-									}
-								/>
-							</DataViewsCard>
-						) }
-					</TabPanel>
+					<>
+						<DateRangePicker
+							start={ dateRange.start }
+							end={ dateRange.end }
+							gmtOffset={ gmtOffset }
+							timezoneString={ timezoneString }
+							locale={ locale }
+							onChange={ handleDateRangeChange }
+						/>
+						<TabPanel
+							className="site-logs-tabs"
+							activeClass="is-active"
+							tabs={ LOG_TABS }
+							onSelect={ ( tabName ) => {
+								if ( tabName === LogType.PHP || tabName === LogType.SERVER ) {
+									handleTabChange( tabName );
+								}
+							} }
+							initialTabName={ logType }
+						>
+							{ () => (
+								<DataViewsCard>
+									<DataViews< PHPLog | ServerLog >
+										data={ logs ?? [] }
+										isLoading={ isFetching }
+										paginationInfo={ paginationInfo }
+										fields={ fields ?? [] }
+										view={ view }
+										actions={ actions }
+										search={ false }
+										defaultLayouts={ { table: {} } }
+										onChangeView={ onChangeView }
+										header={
+											<>
+												<LogsDownloader
+													siteId={ siteId }
+													siteSlug={ site.slug }
+													logType={ logType }
+													startSec={ startSec }
+													endSec={ endSec }
+													filter={ filter }
+													onSuccess={ ( message ) => setNotice( { variant: 'success', message } ) }
+													onError={ ( message ) => setNotice( { variant: 'error', message } ) }
+												/>
+											</>
+										}
+									/>
+								</DataViewsCard>
+							) }
+						</TabPanel>
+					</>
 				}
 			/>
 		</PageLayout>

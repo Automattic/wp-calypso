@@ -1,3 +1,4 @@
+import { formatCurrency } from '@automattic/number-formatters';
 import { useQuery } from '@tanstack/react-query';
 import { useSuggestion } from '../../hooks/use-suggestion';
 import { useDomainSearch } from '../../page/context';
@@ -13,9 +14,18 @@ export const DomainSuggestionPrice = ( { domainName }: DomainSuggestionPriceProp
 
 	const priceSource = suggestion.is_premium && availability ? availability : suggestion;
 
+	// The availability endpoint returns a number, but the suggestion endpoint returns a string.
+	// We need to format the number to a string in this case.
+	const saleCost =
+		typeof priceSource.sale_cost === 'number'
+			? formatCurrency( priceSource.sale_cost, priceSource.currency_code, {
+					stripZeros: true,
+			  } )
+			: priceSource.sale_cost;
+
 	return (
 		<DomainSuggestionPriceComponent
-			salePrice={ priceSource.sale_cost }
+			salePrice={ saleCost }
 			price={ priceSource.cost }
 			renewPrice={ priceSource.renew_cost }
 		/>
