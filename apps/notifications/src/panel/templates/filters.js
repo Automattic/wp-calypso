@@ -44,9 +44,7 @@ export const getFilters = () => ( {
 	likes: {
 		name: 'likes',
 		index: 4,
-		label: __( 'Likes', {
-			comment: 'Notifications filter: notifications about users liking your posts or comments',
-		} ),
+		label: __( 'Likes' ),
 		emptyMessage: __( 'No new likes to show yet.' ),
 		emptyLinkMessage: __( 'Get noticed: comment on posts you‘ve read.' ),
 		emptyLink: 'https://wordpress.com/activities/likes/',
