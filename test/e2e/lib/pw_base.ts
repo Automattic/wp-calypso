@@ -16,15 +16,13 @@ import {
 	SidebarComponent,
 	SiteSelectComponent,
 	TestAccount,
+	TestAccountName,
 	ThemesDetailPage,
 	ThemesPage,
 } from '@automattic/calypso-e2e';
 import { test as base, expect, Page } from '@playwright/test';
 
-async function getAccount(
-	page: Page,
-	accountName: ConstructorParameters< typeof TestAccount >[ 0 ]
-): Promise< TestAccount > {
+async function getAccount( page: Page, accountName: TestAccountName ): Promise< TestAccount > {
 	const testAccount = new TestAccount( accountName );
 	if ( ! ( await testAccount.hasFreshAuthCookies() ) ) {
 		await testAccount.logInViaLoginPage( page );
