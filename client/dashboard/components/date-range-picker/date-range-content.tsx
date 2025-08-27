@@ -117,8 +117,8 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 	const selected =
 		timeZoneForCalendar && ( fromDraft || toDraft )
 			? {
-					from: fromDraft != null ? new TZDate( +fromDraft, timeZoneForCalendar ) : undefined,
-					to: toDraft != null ? new TZDate( +toDraft, timeZoneForCalendar ) : undefined,
+					from: fromDraft ? new TZDate( +fromDraft, timeZoneForCalendar ) : undefined,
+					to: toDraft ? new TZDate( +toDraft, timeZoneForCalendar ) : undefined,
 			  }
 			: { from: fromDraft ?? undefined, to: toDraft ?? undefined };
 
