@@ -25,6 +25,7 @@ import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
 import { DomainSubtype } from '../../data/domains';
 import { formatDate } from '../../utils/datetime';
+import SelectIpsTag from './selec-ips-tag';
 
 export function getTopLevelOfTld( domainName: string ): string {
 	return domainName.substring( domainName.lastIndexOf( '.' ) + 1 );
@@ -200,9 +201,15 @@ export default function DomainOverview() {
 	const onRequestTransferCode = () => {
 		requestTransferCodeMutation.mutate( undefined, {
 			onSuccess: () => {
-				createSuccessNotice( __( 'Transfer code sent.' ), { type: 'snackbar' } );
+				createSuccessNotice(
+					__(
+						'We have sent the transfer authorization code to the domain registrant’s email address. If you don’t receive the email shortly, please check your spam folder.'
+					),
+					{ type: 'snackbar' }
+				);
 			},
 			onError: () => {
+				// Todo: improve error message
 				createErrorNotice( __( 'Failed to send transfer code.' ), {
 					type: 'snackbar',
 				} );
@@ -231,13 +238,19 @@ export default function DomainOverview() {
 			<VStack spacing={ 6 }>
 				{ renderTransferMessage() }
 				{ renderTransferLock() }
-				{ renderAuthCodeButton() }
+				{ domain.auth_code_required && renderAuthCodeButton() }
 			</VStack>
 		);
 	};
 
 	const renderUkTransferOptions = () => {
-		return <div>UK transfer options</div>;
+		return (
+			<VStack spacing={ 6 }>
+				{ renderTransferMessage() }
+				{ renderTransferLock() }
+				<SelectIpsTag isDomainLocked={ domain.is_locked } />
+			</VStack>
+		);
 	};
 
 	const renderExternalTransferOptions = () => {

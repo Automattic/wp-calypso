@@ -23,3 +23,15 @@ export async function requestTransferCode( domain: string ): Promise< void > {
 		},
 	} );
 }
+
+export type IpsTag = {
+	tag: string;
+	description: string;
+	registrarName: string;
+};
+
+export async function getIpsTagList(): Promise< IpsTag[] > {
+	return fetch( 'https://widgets.wp.com/domains/ips-tag-list.min.json' ).then( ( res ) =>
+		res.json()
+	);
+}

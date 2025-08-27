@@ -2,6 +2,7 @@ import wpcom from 'calypso/lib/wp';
 import type { DomainSummary } from './domains';
 
 export interface Domain extends DomainSummary {
+	auth_code_required: boolean;
 	auto_renewal_date: string;
 	can_manage_name_servers: boolean;
 	can_transfer_to_any_user: boolean;
