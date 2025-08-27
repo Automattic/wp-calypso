@@ -1,10 +1,12 @@
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { __experimentalText as Text, TabPanel } from '@wordpress/components';
-import { DataViews, ViewTable } from '@wordpress/dataviews';
+import { DataViews, View, Filter } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
-import { useMemo, useState } from 'react';
+import { getUnixTime } from 'date-fns';
+import { useMemo, useState, useRef, useEffect } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { useLocale } from '../../app/locale';
 import { siteBySlugQuery } from '../../app/queries/site';
 import { siteLogsQuery } from '../../app/queries/site-logs';
@@ -14,6 +16,7 @@ import { Callout } from '../../components/callout';
 import { CalloutOverlay } from '../../components/callout-overlay';
 import DataViewsCard from '../../components/dataviews-card';
 import { DateRangePicker } from '../../components/date-range-picker';
+import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
@@ -21,10 +24,15 @@ import { HostingFeatures } from '../../data/constants';
 import { LogType, PHPLog, ServerLog, SiteLogsParams } from '../../data/site-logs';
 import { parseYmdLocal, formatYmd } from '../../utils/datetime';
 import { hasHostingFeature } from '../../utils/site-features';
+import { useActions } from './dataviews/actions';
 import { useFields } from './dataviews/fields';
-import { toFilterParams } from './dataviews/views';
+import { getInitialFiltersFromSearch, getAllowedFields } from './dataviews/filters';
+import { useView, toFilterParams } from './dataviews/views';
+import { LogsDownloader } from './downloader';
 import illustrationUrl from './logs-callout-illustration.svg';
-import { buildTimeRangeInSeconds } from './utils';
+import { buildTimeRangeInSeconds, getInitialDateRangeFromSearch } from './utils';
+
+import './style.scss';
 
 export function SiteLogsCallout( {
 	siteSlug,
@@ -68,12 +76,27 @@ const LOG_TABS = [
 	{ name: 'server', title: __( 'Web server' ) },
 ];
 
-const EMPTY_ARRAY: ( ServerLog | PHPLog )[] = [];
+function filtersSignature(
+	filters: Filter[] | undefined,
+	allowed: ReadonlyArray< string >
+): string {
+	return allowed
+		.slice()
+		.sort()
+		.map( ( field ) => {
+			const raw = filters?.find( ( filter ) => filter.field === field )?.value;
+			const values = Array.isArray( raw ) ? ( raw as string[] ).slice().sort() : [];
+			return `${ field }:${ values.slice().sort().join( ',' ) }`;
+		} )
+		.join( '|' );
+}
 
 function SiteLogs( { logType }: { logType: LogType } ) {
 	const locale = useLocale();
 	const { siteSlug } = siteRoute.useParams();
 	const router = useRouter();
+	const { recordTracksEvent } = useAnalytics();
+	const search = router.state.location.search;
 
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
@@ -82,40 +105,17 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	const { data } = useSuspenseQuery( {
 		...siteSettingsQuery( siteId ),
 		select: ( s ) => ( {
-			gmtOffset: s?.gmt_offset ?? 0,
-			timezoneString: s?.timezone_string ?? '',
+			gmtOffset: typeof s?.gmt_offset === 'number' ? s.gmt_offset : 0,
+			timezoneString: s?.timezone_string || undefined,
 		} ),
 	} );
 
 	const { gmtOffset, timezoneString } = data!;
 
-	// @todo, this will be replaced when importing the use-view data.
-	const view: ViewTable = useMemo( () => {
-		if ( logType === 'php' ) {
-			return {
-				type: 'table',
-				page: 1,
-				perPage: 50,
-				fields: [ 'severity', 'name', 'message' ],
-				titleField: 'timestamp',
-				sort: {
-					field: 'timestamp',
-					direction: 'desc',
-				},
-			};
-		}
-		return {
-			type: 'table',
-			page: 1,
-			perPage: 50,
-			fields: [ 'request_type', 'status', 'request_url' ],
-			titleField: 'date',
-			sort: {
-				field: 'date',
-				direction: 'desc',
-			},
-		};
-	}, [ logType ] );
+	const [ view, setView ] = useView( {
+		logType,
+		initialFilters: getInitialFiltersFromSearch( logType, search ),
+	} );
 
 	const siteToday = parseYmdLocal( formatYmd( new Date(), timezoneString, gmtOffset ) )!;
 	const initial = {
@@ -123,7 +123,11 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		end: siteToday,
 	};
 
-	const [ dateRange, setDateRange ] = useState< { start: Date; end: Date } >( () => initial );
+	const initialFromUrl = getInitialDateRangeFromSearch( search );
+
+	const [ dateRange, setDateRange ] = useState< { start: Date; end: Date } >(
+		() => initialFromUrl ?? initial
+	);
 
 	const { startSec, endSec } = useMemo(
 		() => buildTimeRangeInSeconds( dateRange.start, dateRange.end, timezoneString, gmtOffset ),
@@ -139,13 +143,67 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		filter,
 		sortOrder: view.sort?.direction,
 		pageSize: view.perPage,
-		pageIndex: view.page,
 	};
 
-	const { data: siteLogs, isFetching } = useQuery( {
-		...siteLogsQuery( siteId, params, { keepPreviousData: true } ),
-	} );
-	const logs = Array.isArray( siteLogs?.logs ) ? siteLogs.logs : EMPTY_ARRAY;
+	// This keeps a per-page cursor cache - page 1 has no cursor.
+	const cursorsRef = useRef< Map< number, string > >( new Map() );
+
+	// For the current page, use its cursor (or null/undefined on page 1).
+	const scrollId = cursorsRef.current.get( view.page ?? 1 ) ?? null;
+
+	const { data: siteLogs, isFetching } = useQuery( siteLogsQuery( siteId, params, scrollId ) );
+
+	useEffect( () => {
+		if ( ! siteLogs ) {
+			return;
+		}
+		const nextPage = ( view.page ?? 1 ) + 1;
+		const id = siteLogs.scroll_id;
+
+		if ( id ) {
+			cursorsRef.current.set( nextPage, id );
+		} else {
+			cursorsRef.current.delete( nextPage );
+		}
+	}, [ siteLogs, view.page ] );
+
+	const handleDateRangeChange = ( next: { start: Date; end: Date } ) => {
+		setDateRange( next );
+
+		// Reset pagination + cursors
+		cursorsRef.current.clear();
+		setView( ( value ) => ( { ...value, page: 1 } ) );
+
+		// Sync from/to to the URL as UNIX seconds
+		const url = new URL( window.location.href );
+		url.searchParams.set( 'from', String( getUnixTime( next.start ) ) );
+		url.searchParams.set( 'to', String( getUnixTime( next.end ) ) );
+		window.history.replaceState( null, '', url.pathname + url.search );
+	};
+
+	const logs = useMemo( () => {
+		const suffix = scrollId ? scrollId.slice( 0, 8 ) : `p${ view.page }`;
+		const items = ( siteLogs?.logs ?? [] ) as Array< PHPLog | ServerLog >;
+
+		return items.map( ( log: PHPLog | ServerLog, item: number ) => {
+			if ( logType === LogType.PHP ) {
+				const php = log as PHPLog;
+				return {
+					...php,
+					id: `${ php.timestamp }|${ php.file }|${ String( php.line ) }|${ suffix }|${ String(
+						item
+					) }`,
+				};
+			}
+			const server = log as ServerLog;
+			return {
+				...server,
+				id: `${ String( server.timestamp ) }|${ server.request_type }|${ server.status }|${
+					server.request_url
+				}|${ server.user_ip }|${ suffix }|${ String( item ) }`,
+			};
+		} );
+	}, [ scrollId, view.page, siteLogs?.logs, logType ] );
 
 	const paginationInfo = {
 		totalItems: siteLogs?.total_results || 0,
@@ -163,31 +221,84 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		}
 	};
 
-	//	const fields = useFields( { logType, timezoneString } );
-	const fields = useFields( {
-		logType,
-		timezoneString: timezoneString || undefined,
-		gmtOffset,
-	} );
-
-	// @todo, this will be replaced when importing the use-view data.
-	const actions = useMemo(
-		() => [
-			{
-				id: 'copy-msg',
-				label: 'Copy message',
-				disabled: isFetching,
-				supportsBulk: false,
-				callback: async ( items: ( PHPLog | ServerLog )[] ) => {
-					const message = ( items[ 0 ] as PHPLog ).message;
-					// Removing any actual message confirmation functionality for now, with dummy data
-					// eslint-disable-next-line no-console
-					console.log( 'Copied message:', message );
-				},
-			},
-		],
-		[ isFetching ]
+	const fields = useFields(
+		timezoneString ? { logType, timezoneString, gmtOffset } : { logType, gmtOffset }
 	);
+
+	const onChangeView = ( next: View ) => {
+		const allowed = getAllowedFields( logType );
+
+		const sourceFilters = ( next.filters ?? view.filters ?? [] ) as Filter[];
+
+		// Track severity changes
+		if ( logType === LogType.PHP ) {
+			const oldSeverity =
+				( view.filters ?? [] )
+					.find( ( filter ) => filter.field === 'severity' )
+					?.value?.slice()
+					.sort()
+					.toString() || '';
+			const newSeverity =
+				sourceFilters
+					.find( ( filter ) => filter.field === 'severity' )
+					?.value?.slice()
+					.sort()
+					.toString() || '';
+			if ( newSeverity !== oldSeverity ) {
+				recordTracksEvent( 'calypso_dashboard_site_logs_severity_filter', {
+					severity: newSeverity,
+					severity_user: newSeverity.includes( 'User' ),
+					severity_warning: newSeverity.includes( 'Warning' ),
+					severity_deprecated: newSeverity.includes( 'Deprecated' ),
+					severity_fatal: newSeverity.includes( 'Fatal' ),
+				} );
+			}
+		}
+
+		// Detect filters/sort/perPage changes
+		const datasetChanged =
+			next.perPage !== view.perPage ||
+			next.sort?.direction !== view.sort?.direction ||
+			filtersSignature( sourceFilters, allowed ) !== filtersSignature( view.filters, allowed );
+
+		// Sync allowed filters to URL using sourceFilters
+		const url = new URL( window.location.href );
+		const isEmpty = ( value?: string[] ) => ! value || value.length === 0;
+		allowed.forEach( ( field ) => {
+			const value =
+				( sourceFilters.find( ( filter ) => filter.field === field )?.value as
+					| string[]
+					| undefined ) || [];
+			if ( isEmpty( value ) ) {
+				url.searchParams.delete( field );
+			} else {
+				url.searchParams.set( field, value.slice().sort().toString() );
+			}
+		} );
+		window.history.replaceState( null, '', url.pathname + url.search );
+
+		// Apply view with only allowed filters; reset page/cursors if dataset changed
+		if ( datasetChanged ) {
+			cursorsRef.current.clear();
+			setView( {
+				...next,
+				page: 1,
+				filters: sourceFilters.filter( ( filter: Filter ) => allowed.includes( filter.field ) ),
+			} );
+		} else {
+			setView( {
+				...next,
+				filters: sourceFilters.filter( ( filter: Filter ) => allowed.includes( filter.field ) ),
+			} );
+		}
+	};
+
+	const actions = useActions( { logType, isLoading: isFetching, gmtOffset, timezoneString } );
+
+	const [ notice, setNotice ] = useState< {
+		variant: 'success' | 'error';
+		message: string;
+	} | null >( null );
 
 	if ( ! site ) {
 		return;
@@ -195,46 +306,66 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 
 	return (
 		<PageLayout header={ <PageHeader title={ __( 'Logs' ) } /> }>
-			<DateRangePicker
-				start={ dateRange.start }
-				end={ dateRange.end }
-				gmtOffset={ gmtOffset }
-				timezoneString={ timezoneString }
-				locale={ locale }
-				onChange={ ( next ) => setDateRange( next ) }
-			/>
-
+			{ notice && (
+				<div style={ { marginBottom: 12 } }>
+					<Notice variant={ notice.variant }>{ notice.message }</Notice>
+				</div>
+			) }
 			<CalloutOverlay
 				showCallout={ ! hasHostingFeature( site, HostingFeatures.LOGS ) }
 				callout={ <SiteLogsCallout siteSlug={ site.slug } /> }
 				main={
-					<TabPanel
-						className="site-logs-tabs"
-						activeClass="is-active"
-						tabs={ LOG_TABS }
-						onSelect={ ( tabName ) => {
-							if ( tabName === LogType.PHP || tabName === LogType.SERVER ) {
-								handleTabChange( tabName );
-							}
-						} }
-						initialTabName={ logType }
-					>
-						{ () => (
-							<DataViewsCard>
-								<DataViews< PHPLog | ServerLog >
-									data={ logs ?? [] }
-									isLoading={ isFetching }
-									paginationInfo={ paginationInfo }
-									fields={ fields ?? [] }
-									view={ view }
-									actions={ actions }
-									search={ false }
-									defaultLayouts={ { table: {} } }
-									onChangeView={ () => {} }
-								/>
-							</DataViewsCard>
-						) }
-					</TabPanel>
+					<>
+						<DateRangePicker
+							start={ dateRange.start }
+							end={ dateRange.end }
+							gmtOffset={ gmtOffset }
+							timezoneString={ timezoneString }
+							locale={ locale }
+							onChange={ handleDateRangeChange }
+						/>
+						<TabPanel
+							className="site-logs-tabs"
+							activeClass="is-active"
+							tabs={ LOG_TABS }
+							onSelect={ ( tabName ) => {
+								if ( tabName === LogType.PHP || tabName === LogType.SERVER ) {
+									handleTabChange( tabName );
+								}
+							} }
+							initialTabName={ logType }
+						>
+							{ () => (
+								<DataViewsCard>
+									<DataViews< PHPLog | ServerLog >
+										data={ logs ?? [] }
+										isLoading={ isFetching }
+										paginationInfo={ paginationInfo }
+										fields={ fields ?? [] }
+										view={ view }
+										actions={ actions }
+										search={ false }
+										defaultLayouts={ { table: {} } }
+										onChangeView={ onChangeView }
+										header={
+											<>
+												<LogsDownloader
+													siteId={ siteId }
+													siteSlug={ site.slug }
+													logType={ logType }
+													startSec={ startSec }
+													endSec={ endSec }
+													filter={ filter }
+													onSuccess={ ( message ) => setNotice( { variant: 'success', message } ) }
+													onError={ ( message ) => setNotice( { variant: 'error', message } ) }
+												/>
+											</>
+										}
+									/>
+								</DataViewsCard>
+							) }
+						</TabPanel>
+					</>
 				}
 			/>
 		</PageLayout>

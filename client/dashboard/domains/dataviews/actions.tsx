@@ -53,7 +53,9 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				label: __( 'Renew now' ),
 				callback: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
-					const purchase = purchases?.find( ( p ) => p.ID === domain.subscription_id );
+					const purchase = purchases?.find(
+						( p ) => p.ID === parseInt( domain.subscription_id, 10 )
+					);
 
 					if ( ! purchase ) {
 						return;

@@ -1,3 +1,4 @@
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { isExpired, isRenewing, isAkismetFreeProduct } from '../../utils/purchase';
 import { PaymentMethodImage } from './payment-method-image';
@@ -58,10 +59,10 @@ export function PurchasePaymentMethod( {
 				: purchase.payment_card_type || purchase.payment_card_processor || '';
 
 			return (
-				<>
-					<PaymentMethodImage paymentMethodType={ paymentMethodType } />{ ' ' }
-					{ purchase.payment_details }
-				</>
+				<HStack justify="flex-start">
+					<PaymentMethodImage paymentMethodType={ paymentMethodType } />
+					<span>{ purchase.payment_details }</span>
+				</HStack>
 			);
 		}
 

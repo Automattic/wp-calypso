@@ -7,5 +7,5 @@
 		"types": [ "jest", "@testing-library/jest-dom" ]
 	},
 	"include": [ "src" ],
-	"references": [ { "path": "../components" } ]
+	"references": [ { "path": "../components" }, { "path": "../data" } ]
 }

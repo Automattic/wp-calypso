@@ -967,6 +967,7 @@ __metadata:
     "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-products": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/data": "workspace:^"
     "@automattic/design-picker": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/js-utils": "workspace:^"
@@ -1004,6 +1005,16 @@ __metadata:
     "@wordpress/data": ^10.23.0
     react: ^18.3.1
     react-dom: ^18.3.1
+  languageName: unknown
+  linkType: soft
+
+"@automattic/data@workspace:^, @automattic/data@workspace:packages/data":
+  version: 0.0.0-use.local
+  resolution: "@automattic/data@workspace:packages/data"
+  dependencies:
+    "@automattic/calypso-typescript-config": "workspace:^"
+    tslib: "npm:^2.8.1"
+    typescript: "npm:^5.8.3"
   languageName: unknown
   linkType: soft
 
@@ -1111,47 +1122,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/domain-picker@workspace:^, @automattic/domain-picker@workspace:packages/domain-picker":
-  version: 0.0.0-use.local
-  resolution: "@automattic/domain-picker@workspace:packages/domain-picker"
-  dependencies:
-    "@automattic/calypso-analytics": "workspace:^"
-    "@automattic/calypso-color-schemes": "workspace:^"
-    "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/data-stores": "workspace:^"
-    "@automattic/i18n-utils": "workspace:^"
-    "@automattic/onboarding": "workspace:^"
-    "@automattic/typography": "workspace:^"
-    "@testing-library/dom": "npm:^10.4.0"
-    "@testing-library/jest-dom": "npm:^6.6.3"
-    "@testing-library/react": "npm:^16.3.0"
-    "@wordpress/base-styles": "npm:^5.23.0"
-    "@wordpress/components": "npm:^29.9.0"
-    "@wordpress/compose": "npm:^7.23.0"
-    "@wordpress/icons": "npm:^10.23.0"
-    "@wordpress/react-i18n": "npm:^4.23.0"
-    clsx: "npm:^2.1.1"
-    lodash: "npm:^4.17.21"
-    react: "npm:^18.3.1"
-    react-dom: "npm:^18.3.1"
-    tslib: "npm:^2.8.1"
-    typescript: "npm:^5.8.3"
-    use-debounce: "npm:^3.1.0"
-  peerDependencies:
-    "@wordpress/data": ^10.23.0
-    "@wordpress/element": ^6.23.0
-    "@wordpress/i18n": ^5.23.0
-    react: ^18.3.1
-    redux: ^5.0.1
-  languageName: unknown
-  linkType: soft
-
 "@automattic/domain-search@workspace:^, @automattic/domain-search@workspace:packages/domain-search":
   version: 0.0.0-use.local
   resolution: "@automattic/domain-search@workspace:packages/domain-search"
   dependencies:
     "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/data": "workspace:^"
     "@storybook/addon-a11y": "npm:^8.6.14"
     "@tanstack/react-query": "npm:^5.83.0"
     "@testing-library/dom": "npm:^10.4.0"
@@ -1663,7 +1640,10 @@ __metadata:
     "@automattic/wp-babel-makepot": "workspace:^"
     "@wordpress/components": "npm:^29.9.0"
     "@wordpress/data": "npm:^10.23.0"
+    "@wordpress/dataviews": "npm:^7.0.0"
+    "@wordpress/element": "npm:^6.23.0"
     "@wordpress/i18n": "npm:^5.23.0"
+    "@wordpress/icons": "npm:^10.23.0"
     autoprefixer: "npm:^10.4.21"
     calypso: "workspace:^"
     clsx: "npm:^2.1.1"
@@ -7324,6 +7304,17 @@ __metadata:
   dependencies:
     playwright-core: "npm:1.48.2"
   checksum: a6df172b1d74918b11399398a8f444f10df5431818eadb25fd248c6cda708bac121d487e18f8541f9a0c43c6a427c223c0a2b62cf954c2dbce6c343ca2949555
+  languageName: node
+  linkType: hard
+
+"@playwright/test@npm:1.48.2":
+  version: 1.48.2
+  resolution: "@playwright/test@npm:1.48.2"
+  dependencies:
+    playwright: "npm:1.48.2"
+  bin:
+    playwright: cli.js
+  checksum: 68bab3bee8d716111e9a166785e6c3c406b6a184fc46d03b5468fcbb92b6242e5628f6a75f9d286e2491ec0e9e59af67542a1f114b6659d790b5a1f41e4d305b
   languageName: node
   linkType: hard
 
@@ -14925,10 +14916,10 @@ __metadata:
     "@automattic/components": "workspace:^"
     "@automattic/composite-checkout": "workspace:^"
     "@automattic/create-calypso-config": "workspace:^"
+    "@automattic/data": "workspace:^"
     "@automattic/data-stores": "workspace:^"
     "@automattic/design-picker": "workspace:^"
     "@automattic/design-preview": "workspace:^"
-    "@automattic/domain-picker": "workspace:^"
     "@automattic/domain-search": "workspace:^"
     "@automattic/domains-table": "workspace:^"
     "@automattic/explat-client": "workspace:^"
@@ -38106,6 +38097,7 @@ __metadata:
     "@automattic/languages": "workspace:^"
     "@babel/core": "npm:^7.16.0"
     "@playwright/browser-chromium": "npm:1.48.2"
+    "@playwright/test": "npm:1.48.2"
     "@types/archiver": "npm:^5.3.1"
     archiver: "npm:^5.3.0"
     asana-phrase: "npm:^0.0.8"

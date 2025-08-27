@@ -756,8 +756,8 @@ $with-sidebar-min-page-width: 1114px;
 			}
 
 			pre {
-				background: var(--color-neutral-0);
-				border: 1px solid var(--color-neutral-10);
+				background: var(--color-neutral-0, #f6f7f7);
+				border: 1px solid var(--color-neutral-10, #c3c4c7);
 				border-radius: 3px;
 				padding: 4px;
 				white-space: normal;
@@ -771,9 +771,9 @@ $with-sidebar-min-page-width: 1114px;
 			code {
 				font-family: $code;
 				font-size: 90%;
-				color: var(--color-neutral-50);
-				background: var(--color-neutral-0);
-				border: 1px solid var(--color-neutral-10);
+				color: var(--color-neutral-50, #646970);
+				background: var(--color-neutral-0, #f6f7f7);
+				border: 1px solid var(--color-neutral-10, #c3c4c7);
 				border-radius: 3px;
 				padding: 0 2px;
 			}
@@ -857,7 +857,7 @@ $with-sidebar-min-page-width: 1114px;
 	.wpnc__new_post .wpnc__body .wpnc__body-content,
 	.wpnc__automattcher .wpnc__body .wpnc__body-content,
 	.wpnc__blogging_prompts_note .wpnc__body .wpnc__body-content {
-		border-bottom: 1px solid var(--color-neutral-5);
+		border-bottom: 1px solid var(--color-neutral-5, #dcdcde);
 		padding-top: $wpnc__padding-small;
 	}
 
@@ -895,7 +895,7 @@ $with-sidebar-min-page-width: 1114px;
 	}
 
 	.wpnc__comment .wpnc__body .wpnc__body-content {
-		box-shadow: inset 4px 0 0 var(--color-neutral-0);
+		box-shadow: inset 4px 0 0 var(--color-neutral-0, #f6f7f7);
 		margin: 0 0 0 $wpnc__padding-medium;
 	}
 

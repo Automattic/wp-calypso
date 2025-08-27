@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -10,7 +11,8 @@ import LikeButton from 'calypso/reader/like-button';
 import { shouldShowLikes } from 'calypso/reader/like-helper';
 import { useSelector } from 'calypso/state';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
-
+import { isA8cTeamMember } from 'calypso/state/teams/selectors';
+import { ReaderFreshlyPressedButton } from '../reader-freshly-pressed-button';
 import './style.scss';
 
 const ReaderPostActions = ( {
@@ -23,13 +25,14 @@ const ReaderPostActions = ( {
 } ) => {
 	const translate = useTranslate();
 	const hasSites = !! useSelector( getPrimarySiteId );
-
 	const showShare = shouldShowShare( post );
 	const showReblog = shouldShowReblog( post, hasSites );
 	const showComments = shouldShowComments( post );
 	const showLikes = shouldShowLikes( post );
-
 	const listClassnames = clsx( 'reader-post-actions', className );
+	const isAutomattician = useSelector( isA8cTeamMember );
+	const shouldShowFreshlyPressed =
+		fullPost && isEnabled( 'reader/discover/freshly-pressed' ) && isAutomattician;
 
 	return (
 		<ul className={ listClassnames }>
@@ -44,6 +47,7 @@ const ReaderPostActions = ( {
 					/>
 				</li>
 			) }
+
 			{ showReblog && (
 				<li className="reader-post-actions__item">
 					<ShareButton
@@ -88,6 +92,11 @@ const ReaderPostActions = ( {
 						likeSource="reader"
 						defaultLabel={ translate( 'Like' ) }
 					/>
+				</li>
+			) }
+			{ shouldShowFreshlyPressed && (
+				<li className="reader-post-actions__item">
+					<ReaderFreshlyPressedButton blogId={ post.site_ID } postId={ post.ID } />
 				</li>
 			) }
 		</ul>

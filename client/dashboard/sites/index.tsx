@@ -1,4 +1,4 @@
-import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery, useMutation, keepPreviousData } from '@tanstack/react-query';
 import { useNavigate, useRouter } from '@tanstack/react-router';
 import { Button, Modal } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
@@ -71,9 +71,14 @@ export default function Sites() {
 		viewSearchParams,
 	} );
 
-	const { data: sites, isLoading: isLoadingSites } = useQuery(
-		sitesQuery( getFetchSitesOptions( view, isRestoringAccount ) )
-	);
+	const {
+		data: sites,
+		isLoading: isLoadingSites,
+		isPlaceholderData,
+	} = useQuery( {
+		...sitesQuery( getFetchSitesOptions( view, isRestoringAccount ) ),
+		placeholderData: keepPreviousData,
+	} );
 
 	const fields = getFields( { isAutomattician, viewType: view.type } );
 	const actions = getActions( router );
@@ -153,7 +158,7 @@ export default function Sites() {
 						fields={ fields }
 						actions={ actions }
 						view={ view }
-						isLoading={ isLoadingSites }
+						isLoading={ isLoadingSites || ( isPlaceholderData && filteredData.length === 0 ) }
 						onChangeView={ handleViewChange }
 						defaultLayouts={ DEFAULT_LAYOUTS }
 						paginationInfo={ paginationInfo }

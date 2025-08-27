@@ -5,6 +5,7 @@ interface SiteLogsAPIResponse {
 	data: {
 		total_results: number | { value: number; relation: string };
 		logs: ( PHPLogFromEndpoint | ServerLogFromEndpoint )[];
+		scroll_id: string | null;
 	};
 }
 
@@ -69,17 +70,18 @@ export interface SiteLogsParams {
 	filter: FilterType;
 	sortOrder?: 'asc' | 'desc';
 	pageSize?: number;
-	pageIndex?: number;
 }
 
 export interface SiteLogsData {
 	total_results: number;
 	logs: ( PHPLog | ServerLog )[];
+	scroll_id: string | null;
 }
 
 export async function fetchSiteLogs(
 	siteId: number,
-	{ logType, start, end, filter, sortOrder, pageSize, pageIndex }: SiteLogsParams
+	{ logType, start, end, filter, sortOrder, pageSize }: SiteLogsParams,
+	scrollId?: string
 ): Promise< SiteLogsData > {
 	const logTypeFragment = logType === LogType.PHP ? 'error-logs' : 'logs';
 	const path = `/sites/${ siteId }/hosting/${ logTypeFragment }`;
@@ -90,7 +92,7 @@ export async function fetchSiteLogs(
 		filter,
 		sort_order: sortOrder,
 		page_size: pageSize,
-		page_index: pageIndex,
+		scroll_id: scrollId,
 	};
 
 	// Remove undefined values from queryParams
@@ -115,23 +117,53 @@ export async function fetchSiteLogs(
 
 	const logs = Array.isArray( data.logs ) ? data.logs : [];
 
-	if ( logType === LogType.PHP ) {
-		const normalized = ( logs as PHPLogFromEndpoint[] ).map(
-			( { atomic_site_id, ...logWithoutAtomicId }, index ) => ( {
-				...logWithoutAtomicId,
-				id: `${ logWithoutAtomicId.timestamp }|${ logWithoutAtomicId.file }|${ String(
-					logWithoutAtomicId.line
-				) }|${ String( pageIndex ?? 0 ) }|${ String( index ) }`,
-			} )
-		);
-		return { total_results: totalResults, logs: normalized };
-	}
+	return {
+		total_results: totalResults,
+		logs: logs as ( PHPLog | ServerLog )[],
+		scroll_id: data.scroll_id,
+	};
+}
 
-	const normalized = ( logs as ServerLogFromEndpoint[] ).map( ( log, index ) => ( {
-		...log,
-		id: `${ String( log.timestamp ) }|${ log.request_type }|${ log.status }|${ log.request_url }|${
-			log.user_ip
-		}|${ String( pageIndex ?? 0 ) }|${ String( index ) }`,
-	} ) );
-	return { total_results: totalResults, logs: normalized };
+export interface SiteLogsBatch {
+	logs: ( PHPLogFromEndpoint | ServerLogFromEndpoint )[];
+	scroll_id: string | null;
+	total_results: number;
+}
+
+export async function fetchSiteLogsBatch(
+	siteId: number,
+	args: {
+		logType: LogType;
+		start: number;
+		end: number;
+		filter: FilterType;
+		pageSize?: number;
+		scrollId?: string | null;
+	}
+): Promise< SiteLogsBatch > {
+	const { logType, start, end, filter, pageSize, scrollId } = args;
+	const path = `/sites/${ siteId }/hosting/${ logType === LogType.PHP ? 'error-logs' : 'logs' }`;
+	const queryParams = {
+		start,
+		end,
+		filter,
+		page_size: pageSize ?? 500,
+		scroll_id: scrollId ?? null,
+	};
+	// Remove undefined values from queryParams
+	Object.keys( queryParams ).forEach(
+		( key ) =>
+			( queryParams as Record< string, unknown > )[ key ] === undefined &&
+			delete ( queryParams as Record< string, unknown > )[ key ]
+	);
+	const response = await wpcom.req.get( { path, apiNamespace: 'wpcom/v2' }, queryParams );
+	const { data } = response as SiteLogsAPIResponse;
+	const totalResults =
+		typeof data.total_results === 'number' ? data.total_results : data.total_results?.value ?? 0;
+	const scroll = ( data as Partial< { scroll_id: string | null } > ).scroll_id ?? null;
+	return {
+		logs: Array.isArray( data.logs ) ? data.logs : [],
+		scroll_id: scroll,
+		total_results: totalResults,
+	};
 }

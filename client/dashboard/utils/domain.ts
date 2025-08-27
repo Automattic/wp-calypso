@@ -62,6 +62,28 @@ export function isDomainInGracePeriod( domain: DomainSummary ) {
 	return isAfter( new Date( domain.expiry ), subDays( new Date(), 18 ) );
 }
 
+export function isValidIpAddress( ipAddress: string ): boolean {
+	if ( ! ipAddress || ! ipAddress.match( /^(\d{1,3}\.){3}\d{1,3}$/ ) ) {
+		return false;
+	}
+
+	return true;
+}
+
+export function isValidNameServerSubdomain( nameServerSubdomain: string ): boolean {
+	if (
+		! nameServerSubdomain ||
+		nameServerSubdomain.length > 50 || // The subdomain part of name servers in Key-Systems cannot be longer than 50 characters
+		! nameServerSubdomain.match(
+			/^([A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)(\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*$/
+		)
+	) {
+		return false;
+	}
+
+	return true;
+}
+
 const shouldUpgradeToMakeDomainPrimary = ( {
 	domain,
 	site,
