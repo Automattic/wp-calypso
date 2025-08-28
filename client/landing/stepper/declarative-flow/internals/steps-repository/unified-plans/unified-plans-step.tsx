@@ -24,6 +24,7 @@ import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
+import { useIsVisualSplitEnabled } from 'calypso/lib/domains/use-visual-split-experiment';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { buildUpgradeFunction } from 'calypso/lib/signup/step-actions';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
@@ -234,6 +235,8 @@ function UnifiedPlansStep( {
 	const [ isStreamlinedPriceExperimentLoading, streamlinedPriceExperimentAssignment ] =
 		useStreamlinedPriceExperiment( flowName );
 
+	const [ , visualSplitVariation ] = useIsVisualSplitEnabled( flowName );
+
 	useSiteGlobalStylesOnPersonal();
 
 	const customerType =
@@ -374,15 +377,11 @@ function UnifiedPlansStep( {
 			return translate( 'The right plan for the right project' );
 		}
 
-		// Dynamic header text when feature flag is enabled
-		if ( config.isEnabled( 'plans-visual-split' ) ) {
-			if ( intent === 'plans-wordpress-hosting' ) {
-				return translate( 'Managed hosting without limits' );
-			} else if ( intent === 'plans-website-builder' ) {
-				return translate( 'Create a beautiful WordPress website' );
-			}
+		if ( intent === 'plans-wordpress-hosting' ) {
+			return translate( 'Managed hosting without limits' );
+		} else if ( intent === 'plans-website-builder' ) {
+			return translate( 'Create a beautiful WordPress website' );
 		}
-
 		return translate( 'There’s a plan for you' );
 	};
 
@@ -598,7 +597,7 @@ function UnifiedPlansStep( {
 					}
 					heading={
 						<>
-							{ config.isEnabled( 'plans-visual-split' ) && (
+							{ visualSplitVariation === 'default_websitebuilder' && (
 								<IntentToggle
 									currentIntent={ intent }
 									onIntentChange={ ( newIntent ) => {

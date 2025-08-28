@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { OnboardSelect } from '@automattic/data-stores';
 import {
 	AI_SITE_BUILDER_FLOW,
@@ -12,13 +11,14 @@ import {
 	useStepPersistedState,
 } from '@automattic/onboarding';
 import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
 import Loading from 'calypso/components/loading';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { useIsVisualSplitEnabled } from 'calypso/lib/domains/use-visual-split-experiment';
 import { getHidePlanPropsBasedOnThemeType } from 'calypso/my-sites/plans-features-main/components/utils/utils';
 import { getSignupCompleteSiteID, getSignupCompleteSlug } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
@@ -62,10 +62,6 @@ function getPlansIntent( flowName: string | null ): PlansIntent | null {
 		case ONBOARDING_FLOW:
 			if ( search.has( 'playground' ) ) {
 				return playgroundPlansIntent( search.get( 'playground' )! );
-			}
-			// Check if plans-visual-split feature flag is enabled
-			if ( config.isEnabled( 'plans-visual-split' ) ) {
-				return 'plans-website-builder';
 			}
 			break;
 		case ONBOARDING_UNIFIED_FLOW:
@@ -138,8 +134,20 @@ const PlansStepAdaptor: StepType< {
 
 	useQueryTheme( 'wpcom', selectedDesign?.slug );
 
+	const [ isVisualSplitLoading, visualSplitVariation ] = useIsVisualSplitEnabled( props.flow );
 	const defaultPlansIntent = getPlansIntent( props.flow );
 	const [ plansIntent, setPlansIntent ] = useState< PlansIntent | null >( defaultPlansIntent );
+
+	// Update plansIntent when the experiment loads
+	useEffect( () => {
+		if ( ! isVisualSplitLoading && props.flow === ONBOARDING_FLOW ) {
+			const newIntent =
+				visualSplitVariation === 'default_websitebuilder'
+					? ( 'plans-website-builder' as PlansIntent )
+					: defaultPlansIntent;
+			setPlansIntent( newIntent );
+		}
+	}, [ isVisualSplitLoading, visualSplitVariation, props.flow, defaultPlansIntent ] );
 
 	const handleIntentChange = ( newIntent: PlansIntent ) => {
 		setPlansIntent( newIntent );

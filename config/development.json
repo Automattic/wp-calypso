@@ -147,7 +147,6 @@
 		"plans/self-service-downgrade": false,
 		"plans/updated-storage-labels": true,
 		"plans/upgradeable-storage": true,
-		"plans-visual-split": true,
 		"playground": true,
 		"post-editor/checkout-overlay": true,
 		"post-list/qr-code-link": true,
