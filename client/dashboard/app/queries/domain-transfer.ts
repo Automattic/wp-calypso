@@ -18,12 +18,12 @@ export const domainLockMutation = ( domain: string ) =>
 				...oldDomain,
 				is_locked: enabled,
 			} as Domain );
-			return { enabled };
+			return enabled;
 		},
 		onSettled: () => {
 			queryClient.invalidateQueries( domainQuery( domain ) );
 		},
-		onError: ( error, enabled ) => {
+		onError: ( _, enabled ) => {
 			const oldDomain = queryClient.getQueryData( domainQuery( domain ).queryKey );
 			queryClient.setQueryData( domainQuery( domain ).queryKey, {
 				...oldDomain,
