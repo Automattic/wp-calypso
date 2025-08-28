@@ -63,7 +63,7 @@ export default function SummerSpecialBanner( { visiblePlans = [], isFixed = fals
 											date: new Intl.DateTimeFormat( translate.localeSlug || 'en-US', {
 												month: 'long',
 												day: 'numeric',
-											} ).format( new Date( '2025-08-25' ) ),
+											} ).format( new Date( '2025-08-31' ) ),
 										},
 									}
 								),
@@ -75,7 +75,7 @@ export default function SummerSpecialBanner( { visiblePlans = [], isFixed = fals
 											date: new Intl.DateTimeFormat( translate.localeSlug || 'en-US', {
 												month: 'long',
 												day: 'numeric',
-											} ).format( new Date( '2025-08-25' ) ),
+											} ).format( new Date( '2025-08-31' ) ),
 										},
 									}
 								),

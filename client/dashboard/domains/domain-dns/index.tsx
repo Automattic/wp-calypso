@@ -15,7 +15,7 @@ import {
 } from '../../app/queries/domain-dns-records';
 import { domainNameServersQuery } from '../../app/queries/domain-name-servers';
 import { domainDnsAddRoute, domainRoute } from '../../app/router/domains';
-import DataViewsCard from '../../components/dataviews-card';
+import { DataViewsCard } from '../../components/dataviews-card';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';

@@ -1,4 +1,5 @@
 import { __ } from '@wordpress/i18n';
+import { isSupportSession } from '../../app/auth/support-session';
 import { useAppContext } from '../../app/context';
 import ResponsiveMenu from '../../components/responsive-menu';
 import { hasSiteTrialEnded } from '../../utils/site-trial';
@@ -23,7 +24,7 @@ const SiteMenu = ( { site }: { site: Site } ) => {
 		);
 	}
 
-	if ( site.options?.is_difm_lite_in_progress ) {
+	if ( site.options?.is_difm_lite_in_progress && ! isSupportSession() ) {
 		return (
 			<ResponsiveMenu label={ __( 'Site Menu' ) }>
 				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/site-building-in-progress` }>

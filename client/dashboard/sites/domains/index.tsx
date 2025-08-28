@@ -6,7 +6,7 @@ import { useAuth } from '../../app/auth';
 import { siteBySlugQuery } from '../../app/queries/site';
 import { siteDomainsQuery } from '../../app/queries/site-domains';
 import { siteDomainsPurchaseRoute, siteRoute } from '../../app/router/sites';
-import DataViewsCard from '../../components/dataviews-card';
+import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
