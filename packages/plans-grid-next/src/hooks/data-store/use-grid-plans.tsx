@@ -218,7 +218,7 @@ export const usePlanTypesWithIntent = ( {
 			planTypes = [ TYPE_BUSINESS, TYPE_ECOMMERCE, TYPE_ENTERPRISE_GRID_WPCOM ];
 			break;
 		case 'plans-website-builder':
-			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
+			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
 			break;
 		default:
 			planTypes = availablePlanTypes;

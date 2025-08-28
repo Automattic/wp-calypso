@@ -499,8 +499,6 @@ function UnifiedPlansStep( {
 
 	const deemphasizeFreePlan =
 		( ONBOARDING_FLOW === flowName && ( paidDomainName != null || isPaidTheme ) ) ||
-		intent === 'plans-website-builder' ||
-		intent === 'plans-wordpress-hosting' ||
 		deemphasizeFreePlanFromProps;
 
 	const stepContent = (
