@@ -11,7 +11,7 @@ import { DropZone } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useCallback, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { plus } from '@wordpress/icons';
+import { image } from '@wordpress/icons';
 import { getOdieWrongFileTypeMessage } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
 import { useSendChatMessage } from '../../hooks';
@@ -19,8 +19,6 @@ import { Message } from '../../types';
 import { zendeskMessageConverter } from '../../utils';
 import { Notices } from '../notices';
 import useMessageSizeErrorNotice from '../notices/use-message-size-error-notice';
-
-import './style.scss';
 
 const getFileType = ( file: File ) => {
 	if ( file.type.startsWith( 'image/' ) ) {
@@ -234,14 +232,12 @@ export const OdieSendMessageButton = () => {
 		[ sendMessageHandler, handleFileUpload ]
 	);
 
-	// Prepare custom actions for attachment button
 	const customActions = showAttachmentButton
 		? [
 				{
 					id: 'attachment',
-					icon: plus,
+					icon: image,
 					onClick: () => {
-						// Trigger file input click
 						const input = document.createElement( 'input' );
 						input.type = 'file';
 						input.accept = 'image/*';
