@@ -9,23 +9,23 @@
 	.components-form-token-field__token-text {
 		background: var( --domain-search-v2-background-color );
 		border-radius: 2px 0 0 2px;
-		border-right: none;
 		border: 1px solid var( --domain-search-border-color );
+		border-right: none;
 	}
 
 	.components-form-token-field__remove-token {
 		background: var( --domain-search-v2-background-color );
-		border-left: none;
 		border-radius: 0 2px 2px 0;
 		border: 1px solid var( --domain-search-border-color );
+		border-left: none;
 		cursor: pointer;
 	}
 }
 
 .domain-search-controls__filters-popover-available-tlds-container {
 	border-radius: var( --domain-search-input-border-radius );
-	border-top: none;
 	border: 1px solid var( --domain-search-border-color );
+	border-top: none;
 	margin-top: -16px;
 	max-height: 18.5em;
 	overflow-y: scroll;
