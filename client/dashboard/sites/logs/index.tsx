@@ -1,7 +1,7 @@
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { __experimentalText as Text, TabPanel, ToggleControl } from '@wordpress/components';
-import { DataViews, View, Filter } from '@wordpress/dataviews';
+import { DataViews, View, Filter, Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
 import { getUnixTime, subDays, isSameSecond } from 'date-fns';
@@ -31,6 +31,7 @@ import { useView, toFilterParams } from './dataviews/views';
 import { LogsDownloader } from './downloader';
 import illustrationUrl from './logs-callout-illustration.svg';
 import { buildTimeRangeInSeconds, getInitialDateRangeFromSearch } from './utils';
+import type { Action } from '@wordpress/dataviews';
 
 import './style.scss';
 
@@ -219,24 +220,22 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 
 	const logs = useMemo( () => {
 		const suffix = scrollId ? scrollId.slice( 0, 8 ) : `p${ view.page }`;
-		const items = ( siteLogs?.logs ?? [] ) as Array< PHPLog | ServerLog >;
+		const items = siteLogs?.logs ?? [];
 
-		return items.map( ( log: PHPLog | ServerLog, item: number ) => {
+		return items.map( ( log, index ) => {
 			if ( logType === LogType.PHP ) {
-				const php = log as PHPLog;
 				return {
-					...php,
-					id: `${ php.timestamp }|${ php.file }|${ String( php.line ) }|${ suffix }|${ String(
-						item
+					...log,
+					id: `${ log.timestamp }|${ log.file }|${ String( log.line ) }|${ suffix }|${ String(
+						index
 					) }`,
 				};
 			}
-			const server = log as ServerLog;
 			return {
-				...server,
-				id: `${ String( server.timestamp ) }|${ server.request_type }|${ server.status }|${
-					server.request_url
-				}|${ server.user_ip }|${ suffix }|${ String( item ) }`,
+				...log,
+				id: `${ String( log.timestamp ) }|${ log.request_type }|${ log.status }|${
+					log.request_url
+				}|${ log.user_ip }|${ suffix }|${ String( index ) }`,
 			};
 		} );
 	}, [ scrollId, view.page, siteLogs?.logs, logType ] );
@@ -346,6 +345,28 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		message: string;
 	} | null >( null );
 
+	// Simple header const to eliminate duplication
+	const LogsHeader = (
+		<>
+			<LogsDownloader
+				siteId={ siteId }
+				siteSlug={ site.slug }
+				logType={ logType }
+				startSec={ startSec }
+				endSec={ endSec }
+				filter={ filter }
+				onSuccess={ ( message ) => setNotice( { variant: 'success', message } ) }
+				onError={ ( message ) => setNotice( { variant: 'error', message } ) }
+			/>
+			<ToggleControl
+				__nextHasNoMarginBottom
+				label={ __( 'Auto-refresh' ) }
+				checked={ autoRefresh }
+				onChange={ handleAutoRefreshClick }
+			/>
+		</>
+	);
+
 	if ( ! site ) {
 		return;
 	}
@@ -383,37 +404,33 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 						>
 							{ () => (
 								<DataViewsCard>
-									<DataViews< PHPLog | ServerLog >
-										data={ logs ?? [] }
-										isLoading={ isFetching }
-										paginationInfo={ paginationInfo }
-										fields={ fields ?? [] }
-										view={ view }
-										actions={ actions }
-										search={ false }
-										defaultLayouts={ { table: {} } }
-										onChangeView={ onChangeView }
-										header={
-											<>
-												<LogsDownloader
-													siteId={ siteId }
-													siteSlug={ site.slug }
-													logType={ logType }
-													startSec={ startSec }
-													endSec={ endSec }
-													filter={ filter }
-													onSuccess={ ( message ) => setNotice( { variant: 'success', message } ) }
-													onError={ ( message ) => setNotice( { variant: 'error', message } ) }
-												/>
-												<ToggleControl
-													__nextHasNoMarginBottom
-													label={ __( 'Auto-refresh' ) }
-													checked={ autoRefresh }
-													onChange={ handleAutoRefreshClick }
-												/>
-											</>
-										}
-									/>
+									{ logType === LogType.PHP ? (
+										<DataViews< PHPLog >
+											data={ logs as PHPLog[] }
+											isLoading={ isFetching }
+											paginationInfo={ paginationInfo }
+											fields={ fields as Field< PHPLog >[] }
+											view={ view }
+											actions={ actions as Action< PHPLog >[] }
+											search={ false }
+											defaultLayouts={ { table: {} } }
+											onChangeView={ onChangeView }
+											header={ LogsHeader }
+										/>
+									) : (
+										<DataViews< ServerLog >
+											data={ logs as ServerLog[] }
+											isLoading={ isFetching }
+											paginationInfo={ paginationInfo }
+											fields={ fields as Field< ServerLog >[] }
+											view={ view }
+											actions={ actions as Action< ServerLog >[] }
+											search={ false }
+											defaultLayouts={ { table: {} } }
+											onChangeView={ onChangeView }
+											header={ LogsHeader }
+										/>
+									) }
 								</DataViewsCard>
 							) }
 						</TabPanel>
