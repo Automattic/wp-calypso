@@ -5,7 +5,7 @@ type Props = {
 
 export const FilterPopoverTld = ( { tld, addTldToFilter }: Props ) => {
 	return (
-		<div
+		<button
 			className="domain-search-controls__filters-popover-available-tld"
 			key={ tld }
 			onClick={ () => {
@@ -16,10 +16,9 @@ export const FilterPopoverTld = ( { tld, addTldToFilter }: Props ) => {
 					addTldToFilter( tld );
 				}
 			} }
-			role="button"
 			tabIndex={ 0 }
 		>
 			{ tld }
-		</div>
+		</button>
 	);
 };
