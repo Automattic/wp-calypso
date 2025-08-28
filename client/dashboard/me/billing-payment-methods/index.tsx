@@ -6,6 +6,7 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { useResizeObserver } from '@wordpress/compose';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { info, warning } from '@wordpress/icons';
@@ -18,15 +19,15 @@ import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
+import { adjustDataViewFieldsForWidth } from '../../utils/dataviews-width';
 import { formatCreditCardExpiry } from '../../utils/datetime';
 import { PaymentMethodImage } from '../billing-purchases/payment-method-image';
 import type { StoredPaymentMethod, StoredPaymentMethodCard } from '../../data/me-payment-methods';
 import type { View, Fields, SortDirection, Action } from '@wordpress/dataviews';
 
 const paymentMethodWideFields = [ 'expiry', 'billing-address', 'backup', 'tax-info' ];
-// FIXME: alter fields based on width
-// const paymentMethodDesktopFields = [ 'billing-address' ];
-// const paymentMethodMobileFields: string[] = [];
+const paymentMethodDesktopFields = [ 'expiry', 'billing-address' ];
+const paymentMethodMobileFields: string[] = [];
 const defaultPerPage = 10;
 const defaultSort = {
 	field: 'type',
@@ -64,6 +65,18 @@ function isCreditCard( item: StoredPaymentMethod ): item is StoredPaymentMethodC
 
 export default function PaymentMethods() {
 	const [ currentView, setView ] = useState( paymentMethodsDataView );
+	const ref = useResizeObserver( ( entries ) => {
+		const firstEntry = entries[ 0 ];
+		if ( firstEntry ) {
+			adjustDataViewFieldsForWidth( {
+				width: firstEntry.contentRect.width,
+				setView,
+				wideFields: paymentMethodWideFields,
+				desktopFields: paymentMethodDesktopFields,
+				mobileFields: paymentMethodMobileFields,
+			} );
+		}
+	} );
 	const {
 		data: paymentMethods = [],
 		isLoading: isLoadingPaymentMethods,
@@ -137,7 +150,7 @@ export default function PaymentMethods() {
 
 	return (
 		<PageLayout size="large" header={ <PageHeader title={ __( 'Payment methods' ) } /> }>
-			<div>
+			<div ref={ ref }>
 				<DataViewsCard>
 					<DataViews
 						isLoading={ isLoadingPaymentMethods }
