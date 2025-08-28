@@ -10,6 +10,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState, useCallback } from 'react';
 import { domainTransferRoute } from '../../app/router/domains';
+import { profileRoute } from '../../app/router/me';
 import RouterLinkButton from '../../components/router-link-button';
 import { Domain } from '../../data/domain';
 import type { User } from '../../data/types';
@@ -128,7 +129,7 @@ export default function RemoveDomainDialog( {
 									'You must visit your <a>Account Settings</a> to update your email address before proceeding.'
 								),
 								{
-									a: <a href="/me/account" />,
+									a: <RouterLinkButton variant="link" to={ profileRoute.fullPath } />,
 								}
 							) }
 						</Text>
