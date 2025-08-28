@@ -369,10 +369,6 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		</>
 	);
 
-	if ( ! site ) {
-		return;
-	}
-
 	return (
 		<PageLayout header={ <PageHeader title={ __( 'Logs' ) } /> }>
 			{ notice && (
