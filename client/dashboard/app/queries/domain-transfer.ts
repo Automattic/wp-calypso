@@ -12,23 +12,13 @@ import type { Domain } from '../../data/domain';
 export const domainLockMutation = ( domain: string ) =>
 	mutationOptions( {
 		mutationFn: ( enabled: boolean ) => updateDomainLock( domain, enabled ),
-		onMutate: ( enabled: boolean ) => {
+		onSuccess: ( _, enabled ) => {
 			const oldDomain = queryClient.getQueryData( domainQuery( domain ).queryKey );
 			queryClient.setQueryData( domainQuery( domain ).queryKey, {
 				...oldDomain,
 				is_locked: enabled,
 			} as Domain );
-			return enabled;
-		},
-		onSettled: () => {
 			queryClient.invalidateQueries( domainQuery( domain ) );
-		},
-		onError: ( _, enabled ) => {
-			const oldDomain = queryClient.getQueryData( domainQuery( domain ).queryKey );
-			queryClient.setQueryData( domainQuery( domain ).queryKey, {
-				...oldDomain,
-				is_locked: ! enabled,
-			} as Domain );
 		},
 	} );
 
