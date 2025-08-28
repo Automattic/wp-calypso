@@ -1,16 +1,10 @@
 import { isMobile } from '@automattic/viewport';
-import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
-import { __experimentalConfirmDialog as ConfirmDialog } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState, useMemo } from 'react';
-import {
-	domainGlueRecordDeleteMutation,
-	domainGlueRecordsQuery,
-} from '../../app/queries/domain-glue-records';
+import { domainGlueRecordsQuery } from '../../app/queries/domain-glue-records';
 import {
 	domainRoute,
 	domainGlueRecordsAddRoute,
@@ -20,6 +14,7 @@ import DataViewsCard from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
+import DomainGlueRecordDeleteModal from './delete-modal';
 import type { DomainGlueRecord } from '../../data/domain-glue-records';
 import type { Action, Field, ViewTable, ViewList, View } from '@wordpress/dataviews';
 
@@ -50,39 +45,6 @@ function DomainGlueRecords() {
 	const { data: glueRecordsData, isLoading } = useSuspenseQuery(
 		domainGlueRecordsQuery( domainName )
 	);
-	const deleteMutation = useMutation( domainGlueRecordDeleteMutation( domainName ) );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const [ isDeleteDialogOpen, setIsDeleteDialogOpen ] = useState( false );
-	const [ selectedGlueRecord, setSelectedGlueRecord ] = useState< DomainGlueRecord | undefined >();
-
-	const openDeleteDialog = ( glueRecord: DomainGlueRecord ) => {
-		setIsDeleteDialogOpen( true );
-		setSelectedGlueRecord( glueRecord );
-	};
-
-	const closeDeleteDialog = () => {
-		setIsDeleteDialogOpen( false );
-		setSelectedGlueRecord( undefined );
-	};
-
-	const onDeleteDialogConfirm = () => {
-		if ( selectedGlueRecord ) {
-			deleteMutation.mutate( selectedGlueRecord, {
-				onSuccess: () => {
-					createSuccessNotice( __( 'Glue record was deleted successfully.' ), {
-						type: 'snackbar',
-					} );
-				},
-				onError: () => {
-					createErrorNotice( __( 'Failed to delete glue record.' ), {
-						type: 'snackbar',
-					} );
-				},
-			} );
-		}
-
-		closeDeleteDialog();
-	};
 
 	const actions: Action< DomainGlueRecord >[] = useMemo(
 		() => [
@@ -100,11 +62,7 @@ function DomainGlueRecords() {
 			{
 				id: 'delete',
 				label: __( 'Delete' ),
-				callback: ( items ) => {
-					const item = items[ 0 ];
-
-					openDeleteDialog( item );
-				},
+				RenderModal: ( props ) => <DomainGlueRecordDeleteModal { ...props } />,
 			},
 		],
 		[ domainName, navigate ]
@@ -191,15 +149,6 @@ function DomainGlueRecords() {
 					/>
 				) }
 			</DataViewsCard>
-
-			<ConfirmDialog
-				isOpen={ isDeleteDialogOpen }
-				onConfirm={ onDeleteDialogConfirm }
-				onCancel={ closeDeleteDialog }
-				confirmButtonText={ __( 'Delete' ) }
-			>
-				{ __( 'Are you sure you want to delete this record?' ) }
-			</ConfirmDialog>
 		</PageLayout>
 	);
 }
