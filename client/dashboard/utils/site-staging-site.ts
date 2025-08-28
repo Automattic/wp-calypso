@@ -13,6 +13,6 @@ export const hasStagingSite = ( site: Site ) => !! getStagingSiteId( site );
 export const isStagingSiteSyncing = ( stagingSiteSyncState?: StagingSiteSyncState ) => {
 	return (
 		stagingSiteSyncState &&
-		! [ 'completed', 'allow_retry', 'failed' ].includes( stagingSiteSyncState.status )
+		[ 'pending', 'backing_up', 'restoring' ].includes( stagingSiteSyncState.status )
 	);
 };

@@ -4,7 +4,7 @@ import PageLayout from '../../components/page-layout';
 
 export default function PaymentMethods() {
 	return (
-		<PageLayout size="small" header={ <PageHeader title={ __( 'Payment Methods' ) } /> }>
+		<PageLayout size="small" header={ <PageHeader title={ __( 'Payment methods' ) } /> }>
 			<div>Payment methods content will go here</div>
 		</PageLayout>
 	);

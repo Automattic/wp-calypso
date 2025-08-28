@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { getTld } from '@automattic/domain-search';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { MAP_EXISTING_DOMAIN, INCOMING_DOMAIN_TRANSFER } from '@automattic/urls';
@@ -12,7 +13,7 @@ import DomainRegistrationSuggestion from 'calypso/components/domains/domain-regi
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/components/notice';
 import { getDomainPriceRule } from 'calypso/lib/cart-values/cart-items';
-import { getFixedDomainSearch, getTld, checkDomainAvailability } from 'calypso/lib/domains';
+import { getFixedDomainSearch, checkDomainAvailability } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';

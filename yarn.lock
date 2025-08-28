@@ -967,6 +967,7 @@ __metadata:
     "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-products": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/data": "workspace:^"
     "@automattic/design-picker": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/js-utils": "workspace:^"
@@ -1118,41 +1119,6 @@ __metadata:
   dependenciesMeta:
     sass-embedded:
       optional: true
-  languageName: unknown
-  linkType: soft
-
-"@automattic/domain-picker@workspace:^, @automattic/domain-picker@workspace:packages/domain-picker":
-  version: 0.0.0-use.local
-  resolution: "@automattic/domain-picker@workspace:packages/domain-picker"
-  dependencies:
-    "@automattic/calypso-analytics": "workspace:^"
-    "@automattic/calypso-color-schemes": "workspace:^"
-    "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/data-stores": "workspace:^"
-    "@automattic/i18n-utils": "workspace:^"
-    "@automattic/onboarding": "workspace:^"
-    "@automattic/typography": "workspace:^"
-    "@testing-library/dom": "npm:^10.4.0"
-    "@testing-library/jest-dom": "npm:^6.6.3"
-    "@testing-library/react": "npm:^16.3.0"
-    "@wordpress/base-styles": "npm:^5.23.0"
-    "@wordpress/components": "npm:^29.9.0"
-    "@wordpress/compose": "npm:^7.23.0"
-    "@wordpress/icons": "npm:^10.23.0"
-    "@wordpress/react-i18n": "npm:^4.23.0"
-    clsx: "npm:^2.1.1"
-    lodash: "npm:^4.17.21"
-    react: "npm:^18.3.1"
-    react-dom: "npm:^18.3.1"
-    tslib: "npm:^2.8.1"
-    typescript: "npm:^5.8.3"
-    use-debounce: "npm:^3.1.0"
-  peerDependencies:
-    "@wordpress/data": ^10.23.0
-    "@wordpress/element": ^6.23.0
-    "@wordpress/i18n": ^5.23.0
-    react: ^18.3.1
-    redux: ^5.0.1
   languageName: unknown
   linkType: soft
 
@@ -1376,6 +1342,8 @@ __metadata:
     "@wordpress/compose": "npm:^7.23.0"
     "@wordpress/data": "npm:^10.23.0"
     "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.24.0"
+    "@wordpress/dom-ready": "npm:^4.29.0"
+    "@wordpress/i18n": "npm:^5.23.0"
     "@wordpress/plugins": "npm:^7.23.0"
     "@wordpress/private-apis": "npm:^1.23.0"
     "@wordpress/readable-js-assets-webpack-plugin": "npm:^3.24.0"
@@ -1675,7 +1643,9 @@ __metadata:
     "@wordpress/components": "npm:^29.9.0"
     "@wordpress/data": "npm:^10.23.0"
     "@wordpress/dataviews": "npm:^7.0.0"
+    "@wordpress/element": "npm:^6.23.0"
     "@wordpress/i18n": "npm:^5.23.0"
+    "@wordpress/icons": "npm:^10.23.0"
     autoprefixer: "npm:^10.4.21"
     calypso: "workspace:^"
     clsx: "npm:^2.1.1"
@@ -14952,7 +14922,6 @@ __metadata:
     "@automattic/data-stores": "workspace:^"
     "@automattic/design-picker": "workspace:^"
     "@automattic/design-preview": "workspace:^"
-    "@automattic/domain-picker": "workspace:^"
     "@automattic/domain-search": "workspace:^"
     "@automattic/domains-table": "workspace:^"
     "@automattic/explat-client": "workspace:^"

@@ -1,11 +1,18 @@
 import { __experimentalHStack as HStack } from '@wordpress/components';
+import clsx from 'clsx';
+import { isSupportUserSession } from '../../app/auth/support-session';
 import './style.scss';
 
 function Header( { as = 'div', children }: { as?: 'div' | 'header'; children?: React.ReactNode } ) {
 	return (
 		<HStack
 			as={ as }
-			className="dashboard-header-bar"
+			className={ clsx( 'dashboard-header-bar', {
+				// Only customize header for support "user" sessions because
+				// "next" sessions already have a floating toolbar which acts
+				// as visual indicator.
+				'is-support-user-session': isSupportUserSession(),
+			} ) }
 			alignment="left"
 			spacing={ 2 }
 			justify="flex-start"

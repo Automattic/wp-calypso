@@ -1,10 +1,10 @@
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { __experimentalText as Text, TabPanel } from '@wordpress/components';
+import { __experimentalText as Text, TabPanel, ToggleControl } from '@wordpress/components';
 import { DataViews, View, Filter } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
-import { getUnixTime } from 'date-fns';
+import { getUnixTime, subDays, isSameSecond } from 'date-fns';
 import { useMemo, useState, useRef, useEffect } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useLocale } from '../../app/locale';
@@ -14,7 +14,7 @@ import { siteSettingsQuery } from '../../app/queries/site-settings';
 import { siteRoute } from '../../app/router/sites';
 import { Callout } from '../../components/callout';
 import { CalloutOverlay } from '../../components/callout-overlay';
-import DataViewsCard from '../../components/dataviews-card';
+import { DataViewsCard } from '../../components/dataviews-card';
 import { DateRangePicker } from '../../components/date-range-picker';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
@@ -24,6 +24,7 @@ import { HostingFeatures } from '../../data/constants';
 import { LogType, PHPLog, ServerLog, SiteLogsParams } from '../../data/site-logs';
 import { parseYmdLocal, formatYmd } from '../../utils/datetime';
 import { hasHostingFeature } from '../../utils/site-features';
+import { useActions } from './dataviews/actions';
 import { useFields } from './dataviews/fields';
 import { getInitialFiltersFromSearch, getAllowedFields } from './dataviews/filters';
 import { useView, toFilterParams } from './dataviews/views';
@@ -104,12 +105,14 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	const { data } = useSuspenseQuery( {
 		...siteSettingsQuery( siteId ),
 		select: ( s ) => ( {
-			gmtOffset: s?.gmt_offset ?? 0,
-			timezoneString: s?.timezone_string ?? '',
+			gmtOffset: typeof s?.gmt_offset === 'number' ? s.gmt_offset : 0,
+			timezoneString: s?.timezone_string || undefined,
 		} ),
 	} );
 
 	const { gmtOffset, timezoneString } = data!;
+
+	const [ autoRefresh, setAutoRefresh ] = useState( false );
 
 	const [ view, setView ] = useView( {
 		logType,
@@ -127,6 +130,39 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	const [ dateRange, setDateRange ] = useState< { start: Date; end: Date } >(
 		() => initialFromUrl ?? initial
 	);
+
+	const lastUrlRangeRef = useRef< { from: number; to: number } | null >( null );
+
+	useEffect( () => {
+		if ( ! autoRefresh ) {
+			return;
+		}
+		const tick = () => {
+			const end = new Date();
+			const start = subDays( end, 7 );
+
+			setDateRange( ( prev ) =>
+				isSameSecond( prev.start, start ) && isSameSecond( prev.end, end ) ? prev : { start, end }
+			);
+			const from = getUnixTime( start );
+			const to = getUnixTime( end );
+
+			const last = lastUrlRangeRef.current;
+			// Only sync URL when from/to change to avoid unnecessary history updates.
+			if ( ! last || last.from !== from || last.to !== to ) {
+				const url = new URL( window.location.href );
+				url.searchParams.set( 'from', String( from ) );
+				url.searchParams.set( 'to', String( to ) );
+				window.history.replaceState( null, '', url.pathname + url.search );
+				lastUrlRangeRef.current = { from, to };
+			}
+		};
+
+		// Run immediately, then every 10s
+		tick();
+		const intervalId = setInterval( tick, 10 * 1000 );
+		return () => clearInterval( intervalId );
+	}, [ autoRefresh ] );
 
 	const { startSec, endSec } = useMemo(
 		() => buildTimeRangeInSeconds( dateRange.start, dateRange.end, timezoneString, gmtOffset ),
@@ -167,6 +203,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	}, [ siteLogs, view.page ] );
 
 	const handleDateRangeChange = ( next: { start: Date; end: Date } ) => {
+		setAutoRefresh( false );
 		setDateRange( next );
 
 		// Reset pagination + cursors
@@ -220,14 +257,16 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		}
 	};
 
-	//	const fields = useFields( { logType, timezoneString } );
-	const fields = useFields( {
-		logType,
-		timezoneString: timezoneString || undefined,
-		gmtOffset,
-	} );
+	const fields = useFields(
+		timezoneString ? { logType, timezoneString, gmtOffset } : { logType, gmtOffset }
+	);
 
 	const onChangeView = ( next: View ) => {
+		// Disable auto-refresh when the user changes the page
+		if ( autoRefresh && ( next.page ?? 1 ) !== ( view.page ?? 1 ) ) {
+			setAutoRefresh( false );
+		}
+
 		const allowed = getAllowedFields( logType );
 
 		const sourceFilters = ( next.filters ?? view.filters ?? [] ) as Filter[];
@@ -295,24 +334,12 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		}
 	};
 
-	// @todo, this will be replaced when importing the use-action data.
-	const actions = useMemo(
-		() => [
-			{
-				id: 'copy-msg',
-				label: 'Copy message',
-				disabled: isFetching,
-				supportsBulk: false,
-				callback: async ( items: ( PHPLog | ServerLog )[] ) => {
-					const message = ( items[ 0 ] as PHPLog ).message;
-					// Removing any actual message confirmation functionality for now, with dummy data
-					// eslint-disable-next-line no-console
-					console.log( 'Copied message:', message );
-				},
-			},
-		],
-		[ isFetching ]
-	);
+	const handleAutoRefreshClick = ( isChecked: boolean ) => {
+		setAutoRefresh( isChecked );
+		recordTracksEvent( 'calypso_dashboard_site_logs_auto_refresh', { enabled: isChecked } );
+	};
+
+	const actions = useActions( { logType, isLoading: isFetching, gmtOffset, timezoneString } );
 
 	const [ notice, setNotice ] = useState< {
 		variant: 'success' | 'error';
@@ -330,60 +357,67 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 					<Notice variant={ notice.variant }>{ notice.message }</Notice>
 				</div>
 			) }
-			<DateRangePicker
-				start={ dateRange.start }
-				end={ dateRange.end }
-				gmtOffset={ gmtOffset }
-				timezoneString={ timezoneString }
-				locale={ locale }
-				onChange={ handleDateRangeChange }
-			/>
-
 			<CalloutOverlay
 				showCallout={ ! hasHostingFeature( site, HostingFeatures.LOGS ) }
 				callout={ <SiteLogsCallout siteSlug={ site.slug } /> }
 				main={
-					<TabPanel
-						className="site-logs-tabs"
-						activeClass="is-active"
-						tabs={ LOG_TABS }
-						onSelect={ ( tabName ) => {
-							if ( tabName === LogType.PHP || tabName === LogType.SERVER ) {
-								handleTabChange( tabName );
-							}
-						} }
-						initialTabName={ logType }
-					>
-						{ () => (
-							<DataViewsCard>
-								<DataViews< PHPLog | ServerLog >
-									data={ logs ?? [] }
-									isLoading={ isFetching }
-									paginationInfo={ paginationInfo }
-									fields={ fields ?? [] }
-									view={ view }
-									actions={ actions }
-									search={ false }
-									defaultLayouts={ { table: {} } }
-									onChangeView={ onChangeView }
-									header={
-										<>
-											<LogsDownloader
-												siteId={ siteId }
-												siteSlug={ site.slug }
-												logType={ logType }
-												startSec={ startSec }
-												endSec={ endSec }
-												filter={ filter }
-												onSuccess={ ( message ) => setNotice( { variant: 'success', message } ) }
-												onError={ ( message ) => setNotice( { variant: 'error', message } ) }
-											/>
-										</>
-									}
-								/>
-							</DataViewsCard>
-						) }
-					</TabPanel>
+					<>
+						<DateRangePicker
+							start={ dateRange.start }
+							end={ dateRange.end }
+							gmtOffset={ gmtOffset }
+							timezoneString={ timezoneString }
+							locale={ locale }
+							onChange={ handleDateRangeChange }
+						/>
+						<TabPanel
+							className="site-logs-tabs"
+							activeClass="is-active"
+							tabs={ LOG_TABS }
+							onSelect={ ( tabName ) => {
+								if ( tabName === LogType.PHP || tabName === LogType.SERVER ) {
+									handleTabChange( tabName );
+								}
+							} }
+							initialTabName={ logType }
+						>
+							{ () => (
+								<DataViewsCard>
+									<DataViews< PHPLog | ServerLog >
+										data={ logs ?? [] }
+										isLoading={ isFetching }
+										paginationInfo={ paginationInfo }
+										fields={ fields ?? [] }
+										view={ view }
+										actions={ actions }
+										search={ false }
+										defaultLayouts={ { table: {} } }
+										onChangeView={ onChangeView }
+										header={
+											<>
+												<LogsDownloader
+													siteId={ siteId }
+													siteSlug={ site.slug }
+													logType={ logType }
+													startSec={ startSec }
+													endSec={ endSec }
+													filter={ filter }
+													onSuccess={ ( message ) => setNotice( { variant: 'success', message } ) }
+													onError={ ( message ) => setNotice( { variant: 'error', message } ) }
+												/>
+												<ToggleControl
+													__nextHasNoMarginBottom
+													label={ __( 'Auto-refresh' ) }
+													checked={ autoRefresh }
+													onChange={ handleAutoRefreshClick }
+												/>
+											</>
+										}
+									/>
+								</DataViewsCard>
+							) }
+						</TabPanel>
+					</>
 				}
 			/>
 		</PageLayout>

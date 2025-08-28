@@ -1,5 +1,7 @@
 import { dateI18n } from '@wordpress/date';
 import { startOfDay, endOfDay, fromUnixTime, isValid as isValidDate } from 'date-fns';
+import { formatDateWithOffset } from '../../utils/datetime';
+import type { PHPLog } from '../../data/site-logs';
 
 type DateRange = { start: Date; end: Date };
 
@@ -39,6 +41,40 @@ export function buildTimeRangeInSeconds(
 	return { startSec, endSec };
 }
 
+/**
+ * Convert a PHP log severity string to lowercase (to be used in a CSS class name).
+ */
+export const toSeverityClass = ( severity: PHPLog[ 'severity' ] ) =>
+	severity.split( ' ' )[ 0 ].toLowerCase();
+
+/**
+ * Format a log date/time string for display.
+ */
+export function formatLogDateTimeForDisplay(
+	dateTime: string,
+	gmtOffset: number,
+	locale: string,
+	timezoneString?: string
+): string {
+	if ( timezoneString ) {
+		const date = new Date( dateTime );
+
+		return new Intl.DateTimeFormat( locale, {
+			dateStyle: 'long',
+			timeStyle: 'short',
+			timeZone: timezoneString,
+		} ).format( date );
+	}
+
+	return formatDateWithOffset( dateTime, gmtOffset, locale, {
+		dateStyle: 'long',
+		timeStyle: 'short',
+	} );
+}
+
+/**
+ * Get the initial date range from the URL search parameters.
+ */
 export function getInitialDateRangeFromSearch( search: string ): DateRange | null {
 	const params = new URLSearchParams( search );
 	const valueAsNumber = ( value?: string | null ) => ( value ? Number( value ) : NaN );

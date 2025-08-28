@@ -6,8 +6,8 @@ import { Visibility, GlobalStyles } from '../site/types';
 import { SiteGoal, STORE_KEY } from './constants';
 import { ProfilerData, ReadymadeTemplate } from './types';
 import type { DomainTransferData, State } from '.';
-import type { DomainSuggestion } from '../domain-suggestions';
 import type { FeatureId } from '../shared-types';
+import type { DomainSuggestion } from '@automattic/data';
 // somewhat hacky, but resolves the circular dependency issue
 import type { Design, StyleVariation } from '@automattic/design-picker/src/types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';

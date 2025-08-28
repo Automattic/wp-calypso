@@ -22,8 +22,8 @@ function Shortcut( { letter, title }: { letter: string; title: string } ) {
 }
 
 export default function NoteShortcuts() {
-	// Ensure the component has a focused wrapper container
-	// so that event handlers work when it is rendered inside a <Popover>.
+	// Ensure the component is focused on mount
+	// to avoid parent's <Popover>'s focus trap from moving.
 	const focusRef = useRef< HTMLDivElement >( null );
 	useEffect( () => {
 		focusRef.current?.focus();

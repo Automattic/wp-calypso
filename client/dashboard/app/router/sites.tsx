@@ -4,6 +4,7 @@ import { LogType } from '../../data/site-logs';
 import { canViewHundredYearPlanSettings, canViewWordPressSettings } from '../../sites/features';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import { hasSiteTrialEnded } from '../../utils/site-trial';
+import { isSupportSession } from '../auth/support-session';
 import { isAutomatticianQuery } from '../queries/me-a8c';
 import { rawUserPreferencesQuery } from '../queries/me-preferences';
 import { siteByIdQuery, siteBySlugQuery } from '../queries/site';
@@ -89,6 +90,7 @@ export const siteRoute = createRoute( {
 		const difmAllowedRoutes = getDifmLiteAllowedRoutes();
 		if (
 			site.options?.is_difm_lite_in_progress &&
+			! isSupportSession() &&
 			! matches.some( ( match ) => difmAllowedRoutes.includes( match.routeId ) )
 		) {
 			throw redirect( { to: difmUrl } );

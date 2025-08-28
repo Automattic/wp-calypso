@@ -35,7 +35,7 @@ export const ONBOARDING_UNIFIED_FLOW = 'onboarding-unified';
 export const AI_SITE_BUILDER_FLOW = 'ai-site-builder';
 export const PLAYGROUND_FLOW = 'playground';
 
-export const isNewsletterFlow = ( flowName: string | null ) => {
+export const isNewsletterFlow = ( flowName: string | null | undefined ) => {
 	return Boolean( flowName && NEWSLETTER_FLOW === flowName );
 };
 
