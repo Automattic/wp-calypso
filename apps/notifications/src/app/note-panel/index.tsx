@@ -9,18 +9,30 @@ import {
 import '@wordpress/components/build-style/style.css';
 import { __ } from '@wordpress/i18n';
 import { bell } from '@wordpress/icons';
+import { useEffect, useRef, useState } from 'react';
+import { getFilters } from '../../panel/templates/filters';
 import NoteList from '../note-list';
 import NotePanelActions from './actions';
 
-const NOTIFICATION_TABS = [
-	{ name: 'all', title: __( 'All' ) },
-	{ name: 'unread', title: __( 'Unread' ) },
-	{ name: 'alerts', title: __( 'Alerts' ) },
-];
+type ActiveTab = keyof ReturnType< typeof getFilters >;
+
+const NOTIFICATION_TABS = Object.values( getFilters() ).map( ( { name, label } ) => ( {
+	name,
+	title: label,
+} ) );
 
 const NotePanel = () => {
+	const [ activeTab, setActiveTab ] = useState< ActiveTab >( 'all' );
+
+	// Ensure the component is focused on mount
+	// to avoid parent's <Popover>'s focus trap from moving.
+	const focusRef = useRef< HTMLDivElement >( null );
+	useEffect( () => {
+		focusRef.current?.focus();
+	}, [] );
+
 	return (
-		<>
+		<div ref={ focusRef } tabIndex={ -1 }>
 			<CardHeader
 				size="small"
 				style={ { flexDirection: 'column', alignItems: 'stretch', paddingBottom: 0 } }
@@ -35,15 +47,20 @@ const NotePanel = () => {
 							<NotePanelActions />
 						</div>
 					</HStack>
-					<TabPanel activeClass="is-active" tabs={ NOTIFICATION_TABS } initialTabName="all">
+					<TabPanel
+						activeClass="is-active"
+						tabs={ NOTIFICATION_TABS }
+						initialTabName={ activeTab }
+						onSelect={ ( tabName ) => {
+							setActiveTab( tabName as ActiveTab );
+						} }
+					>
 						{ () => null /* Placeholder div since content is rendered elsewhere */ }
 					</TabPanel>
 				</VStack>
 			</CardHeader>
-			<div style={ { overflow: 'auto' } }>
-				<NoteList />
-			</div>
-		</>
+			<NoteList filterName={ activeTab } />
+		</div>
 	);
 };
 

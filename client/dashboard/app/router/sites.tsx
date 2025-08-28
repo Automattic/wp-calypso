@@ -1,9 +1,10 @@
 import { createRoute, redirect, createLazyRoute, lazyRouteComponent } from '@tanstack/react-router';
-import { HostingFeatures } from '../../data/constants';
+import { HostingFeatures, DotcomFeatures } from '../../data/constants';
 import { LogType } from '../../data/site-logs';
 import { canViewHundredYearPlanSettings, canViewWordPressSettings } from '../../sites/features';
-import { hasHostingFeature } from '../../utils/site-features';
+import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import { hasSiteTrialEnded } from '../../utils/site-trial';
+import { isSupportSession } from '../auth/support-session';
 import { isAutomatticianQuery } from '../queries/me-a8c';
 import { rawUserPreferencesQuery } from '../queries/me-preferences';
 import { siteByIdQuery, siteBySlugQuery } from '../queries/site';
@@ -89,6 +90,7 @@ export const siteRoute = createRoute( {
 		const difmAllowedRoutes = getDifmLiteAllowedRoutes();
 		if (
 			site.options?.is_difm_lite_in_progress &&
+			! isSupportSession() &&
 			! matches.some( ( match ) => difmAllowedRoutes.includes( match.routeId ) )
 		) {
 			throw redirect( { to: difmUrl } );
@@ -326,9 +328,12 @@ export const siteSettingsSiteVisibilityRoute = createRoute( {
 	path: 'settings/site-visibility',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		Promise.all( [
+		await Promise.all( [
 			queryClient.ensureQueryData( siteSettingsQuery( site.ID ) ),
 			queryClient.ensureQueryData( siteDomainsQuery( site.ID ) ),
+			site.is_coming_soon &&
+				hasPlanFeature( site, DotcomFeatures.SITE_PREVIEW_LINKS ) &&
+				queryClient.ensureQueryData( sitePreviewLinksQuery( site.ID ) ),
 		] );
 	},
 } ).lazy( () =>

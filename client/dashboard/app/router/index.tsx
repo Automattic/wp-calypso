@@ -65,5 +65,6 @@ export const getRouter = ( config: AppConfig ) => {
 		// "default", we can still customize it in CSS and add more transition
 		// areas.
 		defaultViewTransition: true,
+		scrollRestoration: true,
 	} );
 };

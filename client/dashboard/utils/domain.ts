@@ -3,10 +3,9 @@ import { isAfter, subMinutes, subDays } from 'date-fns';
 import { DotcomFeatures } from '../data/constants';
 import { WhoisType } from '../data/domain-whois';
 import { DomainTypes } from '../data/domains';
-import { isAkismetProduct, isMarketplaceTemporarySitePurchase } from './purchase';
+import { getRenewalUrlFromPurchase } from './purchase';
 import { hasPlanFeature } from './site-features';
 import { userHasFlag } from './user';
-import { encodeProductForUrl } from './wpcom-checkout';
 import type { Purchase } from '../data/purchase';
 import type { SiteDomain, DomainSummary, Site, User, WhoisDataEntry } from '../data/types';
 
@@ -16,26 +15,11 @@ export function getDomainSiteSlug( domain: DomainSummary ) {
 
 export function getDomainRenewalUrl( domain: DomainSummary, purchase: Purchase ) {
 	const siteSlug = getDomainSiteSlug( domain );
-
-	const productSlug = [ purchase.product_slug, domain.domain ]
-		.map( ( productSlug ) => encodeProductForUrl( productSlug ) )
-		.join( ':' );
-
 	const backUrl = window.location.href.replace( window.location.origin, '' );
-	let serviceSlug = '';
-	if ( isAkismetProduct( purchase ) ) {
-		serviceSlug = 'akismet/';
-	} else if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
-		serviceSlug = 'marketplace/';
-	}
-
-	return addQueryArgs(
-		`/checkout/${ serviceSlug }${ productSlug }/renew/${ purchase.ID }/${ siteSlug }`,
-		{
-			cancel_to: backUrl,
-			redirect_to: backUrl,
-		}
-	);
+	return addQueryArgs( getRenewalUrlFromPurchase( purchase, siteSlug ), {
+		cancel_to: backUrl,
+		redirect_to: backUrl,
+	} );
 }
 
 export function isRegisteredDomain( domain: DomainSummary ) {
@@ -76,6 +60,28 @@ export function isDomainInGracePeriod( domain: DomainSummary ) {
 	}
 
 	return isAfter( new Date( domain.expiry ), subDays( new Date(), 18 ) );
+}
+
+export function isValidIpAddress( ipAddress: string ): boolean {
+	if ( ! ipAddress || ! ipAddress.match( /^(\d{1,3}\.){3}\d{1,3}$/ ) ) {
+		return false;
+	}
+
+	return true;
+}
+
+export function isValidNameServerSubdomain( nameServerSubdomain: string ): boolean {
+	if (
+		! nameServerSubdomain ||
+		nameServerSubdomain.length > 50 || // The subdomain part of name servers in Key-Systems cannot be longer than 50 characters
+		! nameServerSubdomain.match(
+			/^([A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)(\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*$/
+		)
+	) {
+		return false;
+	}
+
+	return true;
 }
 
 const shouldUpgradeToMakeDomainPrimary = ( {

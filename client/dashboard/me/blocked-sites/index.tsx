@@ -1,18 +1,31 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useInfiniteQuery } from '@tanstack/react-query';
 import { ExternalLink, Icon } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { DataViews } from '@wordpress/dataviews';
+import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { closeSmall } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
-import { blockedSitesQuery, unblockSiteMutation } from '../../app/queries/me-blocked-sites';
-import DataViewsCard from '../../components/dataviews-card';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { blockedSitesInfiniteQuery, unblockSiteMutation } from '../../app/queries/me-blocked-sites';
+import { DataViewsCard } from '../../components/dataviews-card';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import type { BlockedSite } from '../../data/me-blocked-sites';
-import type { Field } from '@wordpress/dataviews';
+import type { Field, View } from '@wordpress/dataviews';
+
+const DEFAULT_PAGE = 1;
+const DEFAULT_PER_PAGE = 20;
+
+const DEFAULT_VIEW: View = {
+	type: 'table',
+	descriptionField: 'URL',
+	titleField: 'name',
+	page: DEFAULT_PAGE,
+	perPage: DEFAULT_PER_PAGE,
+	infiniteScrollEnabled: true,
+};
 
 const getHostname = ( url: string ) => {
 	try {
@@ -41,12 +54,73 @@ const fields: Field< BlockedSite >[] = [
 ];
 
 export default function BlockedSites() {
-	// TODO: Implement infinite scroll once DataViews is updated to support it.
-	const { data: { sites, page } = { sites: [], page: 1 }, isLoading } = useQuery(
-		blockedSitesQuery()
-	);
+	const rafIdRef = useRef< number | null >( null );
+	const ref = useRef< HTMLDivElement >( null );
+	const dataviewsRef = useRef< HTMLDivElement | null >( null );
 	const unblockSite = useMutation( unblockSiteMutation() );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+
+	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
+	const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery(
+		blockedSitesInfiniteQuery( DEFAULT_PER_PAGE )
+	);
+
+	const sites = ( data?.pages || [] ).flat();
+	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites, view, fields );
+
+	const infiniteScrollHandler = useCallback( () => {
+		if ( hasNextPage && ! isFetchingNextPage ) {
+			fetchNextPage();
+		}
+	}, [ hasNextPage, isFetchingNextPage, fetchNextPage ] );
+
+	const handleResize = useCallback( () => {
+		if ( ! dataviewsRef.current ) {
+			return;
+		}
+
+		if ( rafIdRef.current ) {
+			cancelAnimationFrame( rafIdRef.current );
+		}
+
+		rafIdRef.current = requestAnimationFrame( () => {
+			if ( ! dataviewsRef.current ) {
+				return;
+			}
+
+			const { top } = dataviewsRef.current.getBoundingClientRect();
+			const maxHeight = window.innerHeight - top - 32 - 1;
+			dataviewsRef.current.style.maxHeight = `${ maxHeight }px`;
+		} );
+	}, [] );
+
+	useEffect( () => {
+		setView( ( currentView ) => ( { ...currentView, perPage: sites.length } ) );
+	}, [ sites.length ] );
+
+	useLayoutEffect( () => {
+		if ( ! ref.current ) {
+			return;
+		}
+
+		dataviewsRef.current = ref.current.querySelector< HTMLDivElement >( '.dataviews-wrapper' );
+		if ( ! dataviewsRef.current ) {
+			return;
+		}
+
+		handleResize();
+		window.addEventListener( 'resize', handleResize );
+		window.addEventListener( 'orientationchange', handleResize );
+
+		return () => {
+			window.removeEventListener( 'resize', handleResize );
+			window.removeEventListener( 'orientationchange', handleResize );
+
+			if ( rafIdRef.current ) {
+				cancelAnimationFrame( rafIdRef.current );
+			}
+		};
+	}, [ handleResize ] );
 
 	return (
 		<PageLayout
@@ -71,15 +145,11 @@ export default function BlockedSites() {
 				/>
 			}
 		>
-			<DataViewsCard>
+			<DataViewsCard ref={ ref }>
 				<DataViews< BlockedSite >
-					data={ sites }
+					data={ filteredData }
 					fields={ fields }
-					view={ {
-						type: 'table',
-						descriptionField: 'URL',
-						titleField: 'name',
-					} }
+					view={ view }
 					actions={ [
 						{
 							id: 'unblock',
@@ -120,10 +190,13 @@ export default function BlockedSites() {
 					] }
 					getItemId={ ( item ) => item.ID.toString() }
 					defaultLayouts={ { table: {} } }
-					paginationInfo={ { totalItems: sites.length, totalPages: page } }
+					paginationInfo={ {
+						...paginationInfo,
+						infiniteScrollHandler,
+					} }
 					empty={ __( 'You haven’t blocked any sites yet.' ) }
 					isLoading={ isLoading }
-					onChangeView={ () => {} }
+					onChangeView={ setView }
 				>
 					<>
 						<DataViews.Layout />

@@ -1,10 +1,6 @@
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import {
-	isAutoRenewEnabled,
-	isExpired,
-	isRenewing,
-	isAkismetFreeProduct,
-} from '../../utils/purchase';
+import { isExpired, isRenewing, isAkismetFreeProduct } from '../../utils/purchase';
 import { PaymentMethodImage } from './payment-method-image';
 import type { Purchase } from '../../data/purchase';
 
@@ -30,11 +26,11 @@ export function PurchasePaymentMethod( {
 	}
 
 	if (
-		( isAutoRenewEnabled( purchase ),
+		purchase.is_auto_renew_enabled &&
 		! isExpired( purchase ) &&
-			( ! purchase.payment_type || purchase.payment_type === 'credits' ) &&
-			! purchase.partner_name &&
-			! isAkismetFreeProduct( purchase ) ) &&
+		( ! purchase.payment_type || purchase.payment_type === 'credits' ) &&
+		! purchase.partner_name &&
+		! isAkismetFreeProduct( purchase ) &&
 		! isDisconnectedSite
 	) {
 		return (
@@ -47,7 +43,7 @@ export function PurchasePaymentMethod( {
 	if (
 		! isAkismetFreeProduct( purchase ) &&
 		! purchase.is_rechargable &&
-		isAutoRenewEnabled( purchase )
+		purchase.is_auto_renew_enabled
 	) {
 		return (
 			<div>
@@ -63,10 +59,10 @@ export function PurchasePaymentMethod( {
 				: purchase.payment_card_type || purchase.payment_card_processor || '';
 
 			return (
-				<>
-					<PaymentMethodImage paymentMethodType={ paymentMethodType } />{ ' ' }
-					{ purchase.payment_details }
-				</>
+				<HStack justify="flex-start">
+					<PaymentMethodImage paymentMethodType={ paymentMethodType } />
+					<span>{ purchase.payment_details }</span>
+				</HStack>
 			);
 		}
 

@@ -5,7 +5,7 @@ import { siteBySlugQuery } from '../../app/queries/site';
 import { siteRoute } from '../../app/router/sites';
 import { Callout } from '../../components/callout';
 import { CalloutOverlay } from '../../components/callout-overlay';
-import DataViewsCard from '../../components/dataviews-card';
+import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import UpsellCTAButton from '../../components/upsell-cta-button';

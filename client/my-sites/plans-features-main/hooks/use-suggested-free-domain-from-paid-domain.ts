@@ -1,22 +1,30 @@
 import configApi from '@automattic/calypso-config';
-import { DomainSuggestions } from '@automattic/data-stores';
+import { type FreeDomainSuggestion, fetchFreeDomainSuggestion } from '@automattic/data';
+import { DataResponse } from '@automattic/plans-grid-next';
+import { useQuery } from '@tanstack/react-query';
 import { useMemo } from '@wordpress/element';
 import { useEffect } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
-import type { DataResponse } from '@automattic/plans-grid-next';
+
+const STALE_TIME = 1000 * 60 * 5; // 5 minutes
 
 export function useGetFreeSubdomainSuggestion( query: string | null ): {
-	wpcomFreeDomainSuggestion: DataResponse< DomainSuggestions.DomainSuggestion >;
+	wpcomFreeDomainSuggestion: DataResponse< FreeDomainSuggestion >;
 	invalidateDomainSuggestionCache: () => void;
 } {
 	const {
-		data: wordPressSubdomainSuggestions,
-		isInitialLoading: isLoading,
+		data: wordPressSubdomainSuggestion,
+		isLoading,
 		isError,
-		invalidateCache: invalidateDomainSuggestionCache,
-	} = DomainSuggestions.useGetWordPressSubdomain( query );
+		refetch: invalidateDomainSuggestionCache,
+	} = useQuery( {
+		queryKey: [ 'free-domain-suggestion', query ],
+		queryFn: () => fetchFreeDomainSuggestion( query ?? '' ),
+		enabled: !! query,
+		staleTime: STALE_TIME,
+	} );
 
-	const result = ( ! isError && wordPressSubdomainSuggestions?.[ 0 ] ) || undefined;
+	const result = ( ! isError && wordPressSubdomainSuggestion ) || undefined;
 
 	useEffect( () => {
 		if ( query && ! isLoading && ! result ) {

@@ -12,7 +12,11 @@ const getCurrentIntlCollator = ( state ) => {
 	const sortLocales = [ 'en' ];
 
 	if ( currentLocaleSlug ) {
-		sortLocales.unshift( currentLocaleSlug );
+		/*
+		 * Locale slugs could contain underscores, but Intl.Collator expects them to use dashes
+		 * @see https://developer.mozilla.org/en-US/docs/Glossary/BCP_47_language_tag
+		 */
+		sortLocales.unshift( currentLocaleSlug.replace( '_', '-' ) );
 	}
 
 	return new Intl.Collator( sortLocales );

@@ -1,6 +1,9 @@
 import { TextareaControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { getNormalizedName } from '../utils';
+import { hostnameValidator, stringLengthValidator, ttlValidator } from './validators';
 import type { DnsRecordFormData, DnsRecordConfig } from './dns-record-configs';
+import type { DnsRecordType } from '../../../data/domain-dns-records';
 
 export const TXTRecordConfig: DnsRecordConfig = {
 	description: __(
@@ -10,9 +13,12 @@ export const TXTRecordConfig: DnsRecordConfig = {
 		{
 			id: 'name',
 			type: 'text',
-			label: __( 'Name (optional)' ),
+			label: __( 'Name' ),
 			/* translators: This is a placeholder for a DNS TXT record `name` property */
 			placeholder: __( 'Enter subdomain' ),
+			isValid: {
+				custom: hostnameValidator(),
+			},
 		},
 		{
 			id: 'data',
@@ -33,6 +39,10 @@ export const TXTRecordConfig: DnsRecordConfig = {
 					/>
 				);
 			},
+			isValid: {
+				required: true,
+				custom: stringLengthValidator(),
+			},
 		},
 		{
 			id: 'ttl',
@@ -40,15 +50,19 @@ export const TXTRecordConfig: DnsRecordConfig = {
 			label: __( 'TTL (time to live)' ),
 			/* translators: This is a placeholder for a DNS TXT record `ttl` property */
 			placeholder: __( 'e.g. 3600' ),
+			isValid: {
+				required: true,
+				custom: ttlValidator(),
+			},
 		},
 	],
 	form: {
 		layout: { type: 'regular' as const },
 		fields: [ 'name', 'data', 'ttl' ],
 	},
-	transformData: ( data: DnsRecordFormData ) => ( {
+	transformData: ( data: DnsRecordFormData, domainName: string, type: DnsRecordType ) => ( {
 		type: 'TXT',
-		name: data.name,
+		name: getNormalizedName( data.name, type, domainName ),
 		data: data.data,
 		ttl: data.ttl,
 	} ),

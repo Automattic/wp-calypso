@@ -229,7 +229,7 @@ function UnifiedPlansStep( {
 		getCurrentUserSiteCount( state ) ? '/sites/' : null
 	);
 	const [ isStreamlinedPriceExperimentLoading, streamlinedPriceExperimentAssignment ] =
-		useStreamlinedPriceExperiment();
+		useStreamlinedPriceExperiment( flowName );
 
 	useSiteGlobalStylesOnPersonal();
 

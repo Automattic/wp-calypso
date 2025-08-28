@@ -37,11 +37,12 @@ export function DateRangePicker( {
 	const label = formatLabel( start, end, locale, timezoneString, gmtOffset );
 
 	// Reset internal draft state when key inputs change by remounting the inner component
-	const resetKey = `${ formatYmd( start, timezoneString, gmtOffset ) }|${ formatYmd(
-		end,
-		timezoneString,
-		gmtOffset
-	) }|${ timezoneString ?? '' }|${ gmtOffset ?? '' }`;
+	const resetKey = [
+		formatYmd( start, timezoneString, gmtOffset ),
+		formatYmd( end, timezoneString, gmtOffset ),
+		timezoneString ?? '',
+		gmtOffset ?? '',
+	].join( '|' );
 
 	return (
 		<div className="daterange-container">
@@ -125,10 +126,14 @@ function DateRangePickerInner( {
 	// Tracks the keyboard-focused preset in the listbox (roving focus), not the selected preset.
 	const [ compositeActiveId, setCompositeActiveId ] = useState< string | null >( null );
 
-	const today = useMemo(
-		() => parseYmdLocal( formatYmd( new Date(), timezoneString, gmtOffset ) )!,
-		[ timezoneString, gmtOffset ]
-	);
+	const today = useMemo( () => {
+		const parsed = parseYmdLocal( formatYmd( new Date(), timezoneString, gmtOffset ) );
+		// Fallback to local midnight if parsing ever fails
+		return (
+			parsed ?? new Date( new Date().getFullYear(), new Date().getMonth(), new Date().getDate() )
+		);
+	}, [ timezoneString, gmtOffset ] );
+
 	const todayStr = useMemo(
 		() => formatYmd( today, timezoneString, gmtOffset ),
 		[ today, timezoneString, gmtOffset ]

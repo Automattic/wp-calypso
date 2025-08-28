@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { useMobileBreakpoint, useDesktopBreakpoint } from '@automattic/viewport-react';
 import { RadioControl, TabPanel } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -55,6 +55,7 @@ export default function PlanSelectionFilter( {
 	const [ disableStandardTab, setDisableStandardTab ] = useState( false );
 
 	const isMobile = useMobileBreakpoint();
+	const isDesktop = useDesktopBreakpoint();
 
 	const isPremiumPlanTab = selectedTab === PLAN_CATEGORY_PREMIUM;
 
@@ -189,35 +190,39 @@ export default function PlanSelectionFilter( {
 				? [
 						{
 							name: PLAN_CATEGORY_SIGNATURE,
-							title: translate( 'Signature Plans 1-10' ),
+							title: isDesktop
+								? translate( 'Signature Plans 1-10' )
+								: translate( 'Signature 1-10' ),
 							disabled: disableStandardTab,
 						},
 						{
 							name: PLAN_CATEGORY_SIGNATURE_HIGH,
-							title: translate( 'Signature Plans 11-17' ),
+							title: isDesktop
+								? translate( 'Signature Plans 11-17' )
+								: translate( 'Signature 11-17' ),
 						},
 				  ]
 				: [
 						{
 							name: PLAN_CATEGORY_STANDARD,
-							title: translate( 'Signature Plans' ),
+							title: isDesktop ? translate( 'Signature Plans' ) : translate( 'Signature' ),
 							disabled: disableStandardTab,
 						},
 						{
 							name: PLAN_CATEGORY_ENTERPRISE,
-							title: translate( 'Enterprise Plans' ),
+							title: isDesktop ? translate( 'Enterprise Plans' ) : translate( 'Enterprise' ),
 						},
 				  ] ),
 			...( isPressablePremiumPlanEnabled
 				? [
 						{
 							name: PLAN_CATEGORY_PREMIUM,
-							title: translate( 'Premium Plans' ),
+							title: isDesktop ? translate( 'Premium Plans' ) : translate( 'Premium' ),
 						},
 				  ]
 				: [] ),
 		],
-		[ areSignaturePlans, disableStandardTab, isPressablePremiumPlanEnabled, translate ]
+		[ areSignaturePlans, disableStandardTab, isPressablePremiumPlanEnabled, translate, isDesktop ]
 	);
 
 	if ( isLoading ) {

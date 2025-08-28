@@ -11,29 +11,15 @@ import { useState } from 'react';
 import RequiredSelect from '../../components/required-select';
 import { DNS_RECORD_CONFIGS } from './records/dns-record-configs';
 import type { DnsRecordTypeFormData, DnsRecordFormData } from './records/dns-record-configs';
-import type { DnsRecord } from '../../data/domain-dns-records';
+import type { DnsRecord, DnsRecordType } from '../../data/domain-dns-records';
 
 const typeForm = {
 	layout: { type: 'regular' as const },
 	fields: [ 'type' ],
 };
 
-const defaultFormData = {
-	type: 'A',
-	name: '',
-	data: '',
-	ttl: 3600,
-	flags: 0, // CAA
-	tag: 'issue', // CAA
-	aux: 10, // MX, SRV
-	service: 'sip', // SRV
-	protocol: '_tcp', // SRV
-	weight: 10, // SRV
-	target: '', // SRV
-	port: 5060, // SRV
-};
-
 interface DNSRecordFormProps {
+	domainName: string;
 	isBusy: boolean;
 	recordToEdit?: DnsRecord;
 	submitButtonText: string;
@@ -42,12 +28,30 @@ interface DNSRecordFormProps {
 }
 
 export default function DNSRecordForm( {
+	domainName,
 	isBusy,
 	recordToEdit,
 	submitButtonText,
 	onSubmit,
 	navigateToDNSOverviewPage,
 }: DNSRecordFormProps ) {
+	const defaultFormData = {
+		type: 'A' as DnsRecordType,
+		domain: domainName,
+		name: '',
+		data: '',
+		ttl: 3600,
+		flags: 0, // CAA
+		tag: 'issue', // CAA
+		value: '', // CAA
+		aux: 10, // MX, SRV
+		service: 'sip', // SRV
+		protocol: '_tcp', // SRV
+		weight: 10, // SRV
+		target: '', // SRV
+		port: 5060, // SRV
+	};
+
 	const [ typeFormData, setTypeFormData ] = useState< DnsRecordTypeFormData >( () => {
 		if ( recordToEdit ) {
 			return { type: recordToEdit.type };
@@ -57,11 +61,14 @@ export default function DNSRecordForm( {
 	const [ formData, setFormData ] = useState< DnsRecordFormData >( () => {
 		if ( recordToEdit ) {
 			return {
+				type: recordToEdit.type || ( 'A' as DnsRecordType ),
+				domain: domainName,
 				ttl: recordToEdit.ttl || 3600,
 				name: recordToEdit.name || '',
 				data: recordToEdit.data || '',
 				flags: recordToEdit.flags || 0,
 				tag: recordToEdit.tag || '',
+				value: recordToEdit.value || '',
 				aux: recordToEdit.aux || 0,
 				service: recordToEdit.service || '',
 				protocol: recordToEdit.protocol || '',
@@ -121,6 +128,9 @@ export default function DNSRecordForm( {
 							} }
 						/>
 						<DataForm< DnsRecordFormData >
+							// This key prop is used to force a form re-render when the record type is changed
+							// Othewise, the fields that have validation errors will not have validation reset
+							key={ typeFormData.type }
 							data={ formData }
 							fields={ config.fields }
 							form={ config.form }

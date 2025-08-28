@@ -2,9 +2,10 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { getPlan, isFreePlanProduct, getIntervalTypeForTerm } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Card, Gridicon, Spinner } from '@automattic/components';
-import { useDomainSuggestions } from '@automattic/domain-picker';
+import { fetchDomainSuggestions } from '@automattic/data';
 import { useLocale } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import { useQuery } from '@tanstack/react-query';
 import { useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -85,11 +86,6 @@ export default function DomainUpsell() {
 	);
 }
 
-const domainSuggestionOptions = {
-	vendor: 'domain-upsell',
-	include_wordpressdotcom: false,
-};
-
 export function RenderDomainUpsell( {
 	isFreePlan,
 	isMonthlyPlan,
@@ -102,10 +98,17 @@ export function RenderDomainUpsell( {
 	const dispatch = useDispatch();
 	const locale = useLocale();
 
-	// Note: domainSuggestionOptions must be equal by reference upon each render
-	// to avoid a render loop, since it's used to memoize a selector.
-	const { allDomainSuggestions } =
-		useDomainSuggestions( searchTerm, 3, undefined, locale, domainSuggestionOptions ) || {};
+	const options = {
+		include_wordpressdotcom: false,
+		quantity: 3,
+		locale,
+		vendor: 'domain-upsell',
+	};
+
+	const { data: allDomainSuggestions } = useQuery( {
+		queryKey: [ 'domains-suggestions', searchTerm, options ],
+		queryFn: () => fetchDomainSuggestions( searchTerm, options ),
+	} );
 
 	const cartKey = useCartKey();
 	const shoppingCartManager = useShoppingCart( cartKey );

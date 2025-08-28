@@ -89,6 +89,7 @@ export function useFields( {
 						const value = field.getValue( { item } ) as string;
 						return <span>{ formatCell( value ) }</span>;
 					},
+					filterBy: { operators: [] as Operator[] },
 				},
 				{
 					id: 'severity',
@@ -105,6 +106,7 @@ export function useFields( {
 							{ field.getValue( { item } ) }
 						</Badge>
 					),
+					filterBy: { operators: [ 'isAny' as Operator ] },
 				},
 				{
 					id: 'message',
@@ -115,6 +117,7 @@ export function useFields( {
 					render: ( { field, item } ) => (
 						<span className="site-logs-ellipsis">{ String( field.getValue( { item } ) ) }</span>
 					),
+					filterBy: { operators: [] as Operator[] },
 				},
 				{
 					id: 'kind',
@@ -122,6 +125,7 @@ export function useFields( {
 					label: __( 'Group' ),
 					enableSorting: false,
 					getValue: ( { item } ) => ( item as PHPLog ).kind,
+					filterBy: { operators: [] as Operator[] },
 				},
 				{
 					id: 'name',
@@ -133,6 +137,7 @@ export function useFields( {
 					render: ( { field, item } ) => (
 						<span className="site-logs-wrap">{ String( field.getValue( { item } ) ) }</span>
 					),
+					filterBy: { operators: [] as Operator[] },
 				},
 				{
 					id: 'file',
@@ -143,6 +148,7 @@ export function useFields( {
 					render: ( { field, item } ) => (
 						<span className="site-logs-wrap">{ String( field.getValue( { item } ) ) }</span>
 					),
+					filterBy: { operators: [] as Operator[] },
 				},
 				{
 					id: 'line',
@@ -151,6 +157,7 @@ export function useFields( {
 					enableSorting: false,
 					getValue: ( { item } ) => ( item as PHPLog ).line,
 					render: ( { field, item } ) => formatNumber( field.getValue( { item } ) as number ),
+					filterBy: { operators: [] as Operator[] },
 				},
 			];
 		}
@@ -168,6 +175,7 @@ export function useFields( {
 					const value = field.getValue( { item } ) as string;
 					return <span>{ formatCell( value ) }</span>;
 				},
+				filterBy: { operators: [] as Operator[] },
 			},
 			{
 				id: 'request_type',
@@ -181,6 +189,7 @@ export function useFields( {
 						{ field.getValue( { item } ) }
 					</Badge>
 				),
+				filterBy: { operators: [ 'isAny' as Operator ] },
 			},
 			{
 				id: 'status',
@@ -189,6 +198,7 @@ export function useFields( {
 				enableSorting: false,
 				elements: VALUES_STATUS.map( ( status ) => ( { value: status, label: status } ) ),
 				getValue: ( { item } ) => ( item as ServerLog ).status,
+				filterBy: { operators: [ 'isAny' as Operator ] },
 			},
 			{
 				id: 'request_url',
@@ -199,6 +209,7 @@ export function useFields( {
 				render: ( { field, item } ) => (
 					<span className="site-logs-wrap">{ String( field.getValue( { item } ) ) }</span>
 				),
+				filterBy: { operators: [] as Operator[] },
 			},
 			{
 				id: 'body_bytes_sent',
@@ -209,6 +220,7 @@ export function useFields( {
 				render: ( { field, item } ) => (
 					<span>{ formatNumber( field.getValue( { item } ) as number ) }</span>
 				),
+				filterBy: { operators: [] as Operator[] },
 			},
 			{
 				id: 'cached',
@@ -220,10 +232,10 @@ export function useFields( {
 					value: cachedValue,
 					label: getLabelCached( cachedValue ),
 				} ) ),
-				filterBy: { operators: [ 'isAny' as Operator ] },
 				render: ( { field, item } ) => (
 					<span>{ getLabelCached( field.getValue( { item } ) as string ) }</span>
 				),
+				filterBy: { operators: [ 'isAny' as Operator ] },
 			},
 			{
 				id: 'http_host',
@@ -231,6 +243,7 @@ export function useFields( {
 				label: __( 'HTTP Host' ),
 				enableSorting: false,
 				getValue: ( { item } ) => ( item as ServerLog ).http_host,
+				filterBy: { operators: [] as Operator[] },
 			},
 			{
 				id: 'http_referer',
@@ -241,6 +254,7 @@ export function useFields( {
 				render: ( { field, item } ) => (
 					<span className="site-logs-wrap">{ String( field.getValue( { item } ) ) }</span>
 				),
+				filterBy: { operators: [] as Operator[] },
 			},
 			{
 				id: 'http2',
@@ -248,6 +262,7 @@ export function useFields( {
 				label: __( 'HTTP/2' ),
 				enableSorting: false,
 				getValue: ( { item } ) => ( item as ServerLog ).http2,
+				filterBy: { operators: [] as Operator[] },
 			},
 			{
 				id: 'http_user_agent',
@@ -255,6 +270,7 @@ export function useFields( {
 				label: __( 'User Agent' ),
 				enableSorting: false,
 				getValue: ( { item } ) => ( item as ServerLog ).http_user_agent,
+				filterBy: { operators: [] as Operator[] },
 			},
 			{
 				id: 'http_version',
@@ -262,6 +278,7 @@ export function useFields( {
 				label: __( 'HTTP Version' ),
 				enableSorting: false,
 				getValue: ( { item } ) => ( item as ServerLog ).http_version,
+				filterBy: { operators: [] as Operator[] },
 			},
 			{
 				id: 'http_x_forwarded_for',
@@ -269,6 +286,7 @@ export function useFields( {
 				label: __( 'X-Forwarded-For' ),
 				enableSorting: false,
 				getValue: ( { item } ) => ( item as ServerLog ).http_x_forwarded_for,
+				filterBy: { operators: [] as Operator[] },
 			},
 			{
 				id: 'renderer',
@@ -288,6 +306,7 @@ export function useFields( {
 				label: __( 'Request Completion' ),
 				enableSorting: false,
 				getValue: ( { item } ) => ( item as ServerLog ).request_completion,
+				filterBy: { operators: [] as Operator[] },
 			},
 			{
 				id: 'request_time',
@@ -295,6 +314,7 @@ export function useFields( {
 				label: __( 'Request Time' ),
 				enableSorting: false,
 				getValue: ( { item } ) => ( item as ServerLog ).request_time,
+				filterBy: { operators: [] as Operator[] },
 			},
 			{
 				id: 'scheme',
@@ -302,6 +322,7 @@ export function useFields( {
 				label: __( 'Scheme' ),
 				enableSorting: false,
 				getValue: ( { item } ) => ( item as ServerLog ).scheme,
+				filterBy: { operators: [] as Operator[] },
 			},
 			{
 				id: 'timestamp',
@@ -309,6 +330,7 @@ export function useFields( {
 				label: __( 'Timestamp' ),
 				enableSorting: false,
 				getValue: ( { item } ) => ( item as ServerLog ).timestamp,
+				filterBy: { operators: [] as Operator[] },
 			},
 			{
 				id: 'type',
@@ -316,6 +338,7 @@ export function useFields( {
 				label: __( 'Type' ),
 				enableSorting: false,
 				getValue: ( { item } ) => ( item as ServerLog ).type,
+				filterBy: { operators: [] as Operator[] },
 			},
 			{
 				id: 'user_ip',
@@ -323,6 +346,7 @@ export function useFields( {
 				label: __( 'User IP' ),
 				enableSorting: false,
 				getValue: ( { item } ) => ( item as ServerLog ).user_ip,
+				filterBy: { operators: [] as Operator[] },
 			},
 		];
 	}, [ dateTimeLabel, gmtOffset, locale, logType, timezoneString ] );
