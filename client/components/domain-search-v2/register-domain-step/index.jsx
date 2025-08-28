@@ -9,7 +9,6 @@ import {
 	DomainSuggestionFilterReset,
 	DomainSearchAlreadyOwnDomainCTA,
 	getTld,
-	Filter,
 } from '@automattic/domain-search';
 import { formatCurrency } from '@automattic/number-formatters';
 import {
@@ -23,6 +22,7 @@ import {
 import { withShoppingCart } from '@automattic/shopping-cart';
 import {
 	Button,
+	Dropdown,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -731,6 +731,51 @@ class RegisterDomainStep extends Component {
 		);
 	}
 
+	getFiltercounts() {
+		return (
+			this.state.lastFilters.tlds.length + ( this.state.lastFilters.exactSldMatchesOnly ? 1 : 0 )
+		);
+	}
+
+	getRecommendedTlds() {
+		return this.state.availableTlds
+			.slice( 0, 5 )
+			.filter( ( tld ) => ! this.state.filters.tlds?.includes( tld ) );
+	}
+
+	getExploreMoreTlds() {
+		return this.state.availableTlds
+			.slice( 5 )
+			.sort()
+			.filter( ( tld ) => ! this.state.filters.tlds?.includes( tld ) );
+	}
+
+	setExactSldMatchesOnlyInFilter( exactSldMatchesOnly ) {
+		this.onFiltersChange( {
+			exactSldMatchesOnly,
+		} );
+	}
+
+	// Only add TLD to current selection if it exists in the available TLDs list
+	validateTld( tld ) {
+		return this.state.availableTlds.includes( tld );
+	}
+
+	handleTldsChange( tokens ) {
+		const tlds = tokens.map( ( token ) => ( typeof token === 'string' ? token : token.value ) );
+		this.onFiltersChange( { tlds } );
+	}
+
+	addTldToFilter( tld ) {
+		if ( tld.startsWith( '.' ) ) {
+			tld = tld.slice( 1 );
+		}
+
+		this.onFiltersChange( {
+			tlds: [ ...this.state.filters.tlds, tld ],
+		} );
+	}
+
 	renderSearchFilters() {
 		const isRenderingInitialSuggestions =
 			! Array.isArray( this.state.searchResults ) &&
@@ -751,19 +796,45 @@ class RegisterDomainStep extends Component {
 		}
 
 		return (
-			<Filter
-				availableTlds={ this.state.availableTlds }
-				filter={ this.state.lastFilters }
-				onSubmit={ () => {
+			<Dropdown
+				showArrow={ false }
+				popoverProps={ { placement: 'bottom-end', offset: 10, noArrow: false } }
+				renderToggle={ ( { onToggle } ) => {
+					return (
+						<DomainSearchControls.FilterButton
+							count={ this.getFiltercounts() }
+							onClick={ onToggle }
+						/>
+					);
+				} }
+				renderContent={ ( { onClose } ) => {
+					return (
+						<DomainSearchControls.FilterPopover
+							addTldToFilter={ ( tld ) => this.addTldToFilter( tld ) }
+							availableTlds={ this.state.availableTlds }
+							exploreMoreTlds={ this.getExploreMoreTlds() }
+							handleTldsChange={ ( tlds ) => this.handleTldsChange( tlds ) }
+							onClear={ () => {
+								onClose();
+								this.onFiltersReset();
+							} }
+							onClose={ onClose }
+							recommendedTlds={ this.getRecommendedTlds() }
+							setExactSldMatchesOnlyInFilter={ ( value ) =>
+								this.setExactSldMatchesOnlyInFilter( value )
+							}
+							showTldFilter={ showTldFilter }
+							temporaryFilter={ this.state.filters }
+							validateTld={ ( tld ) => this.validateTld( tld ) }
+						/>
+					);
+				} }
+				onClose={ () => {
+					this.onFiltersChange( this.state.filters );
 					if ( this.didFilterChange() ) {
 						this.onFiltersSubmit();
 					}
 				} }
-				resetFilter={ this.onFiltersReset }
-				setFilter={ this.onFiltersChange }
-				setTemporaryFilter={ this.onFiltersChange }
-				showTldFilter={ showTldFilter }
-				temporaryFilter={ this.state.filters }
 			/>
 		);
 	}
