@@ -34,7 +34,7 @@ const getDescription = ( mailboxes: Mailbox[] ) => {
 	const additionalMailboxes = mailboxes.length - 1;
 
 	if ( mailboxes.length === 0 ) {
-		return __( 'Add proffesional email' );
+		return __( 'Add professional email' );
 	}
 
 	return additionalMailboxes > 0
