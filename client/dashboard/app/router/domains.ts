@@ -75,8 +75,10 @@ export const domainOverviewRoute = createRoute( {
 	path: '/',
 	loader: async ( { params: { domainName } } ) => {
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
-		const site = await queryClient.ensureQueryData( siteByIdQuery( domain.blog_id ) );
-		const mailboxes = await queryClient.ensureQueryData( mailboxesQuery( domain.blog_id ) );
+		const [ site, mailboxes ] = await Promise.all( [
+			queryClient.ensureQueryData( siteByIdQuery( domain.blog_id ) ),
+			queryClient.ensureQueryData( mailboxesQuery( domain.blog_id ) ),
+		] );
 
 		return { domain, site, mailboxes };
 	},
