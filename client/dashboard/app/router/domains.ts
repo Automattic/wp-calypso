@@ -14,6 +14,7 @@ import { domainNameServersQuery } from '../queries/domain-name-servers';
 import { sslDetailsQuery } from '../queries/domain-ssl';
 import { domainsQuery } from '../queries/domains';
 import { mailboxesQuery } from '../queries/emails';
+import { siteByIdQuery } from '../queries/site';
 import { queryClient } from '../query-client';
 import { rootRoute } from './root';
 
@@ -74,9 +75,10 @@ export const domainOverviewRoute = createRoute( {
 	path: '/',
 	loader: async ( { params: { domainName } } ) => {
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
+		const site = await queryClient.ensureQueryData( siteByIdQuery( domain.blog_id ) );
 		const mailboxes = await queryClient.ensureQueryData( mailboxesQuery( domain.blog_id ) );
 
-		return { domain, mailboxes };
+		return { domain, site, mailboxes };
 	},
 } ).lazy( () =>
 	import( '../../domains/domain-overview' ).then( ( d ) =>
