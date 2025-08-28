@@ -3,6 +3,7 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import {
 	Icon,
 	ToggleControl,
+	Button,
 	__experimentalConfirmDialog as ConfirmDialog,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -153,8 +154,23 @@ export default function PaymentMethods() {
 		},
 	];
 
+	// FIXME: allow adding a payment method
+	const addPaymentMethodUrl = '/me/purchases/add-payment-method';
+
 	return (
-		<PageLayout size="large" header={ <PageHeader title={ __( 'Payment methods' ) } /> }>
+		<PageLayout
+			size="large"
+			header={
+				<PageHeader
+					title={ __( 'Payment methods' ) }
+					actions={
+						<Button __next40pxDefaultSize variant="primary" href={ addPaymentMethodUrl }>
+							{ __( 'Add payment method' ) }
+						</Button>
+					}
+				/>
+			}
+		>
 			<div ref={ ref }>
 				<DataViewsCard>
 					<DataViews
