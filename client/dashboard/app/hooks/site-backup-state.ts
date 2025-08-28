@@ -1,67 +1,93 @@
 import { useQuery } from '@tanstack/react-query';
-import { useCallback, useEffect, useState } from 'react';
-import { type BackupEntry } from '../../data/site-backups';
-import { siteBackupsQuery } from '../queries/site-backups';
+import { useRef } from 'react';
+import { siteBackupsQuery } from '../../app/queries/site-backups';
+import {
+	BackupEntry,
+	BackupEntryStatuses,
+	BackupEntryErrorStatuses,
+} from '../../data/site-backups';
 
-export type BackupState = 'default' | 'enqueued' | 'in_progress';
+export type BackupStateType = 'idle' | 'running' | 'success' | 'error';
 
-interface BackupStateResult {
-	backupState: BackupState;
-	isBackupActive: boolean;
+export interface BackupState {
+	// Current status of the tracked backup
+	status: BackupStateType;
+
+	// The specific backup being tracked (if any)
+	backup: BackupEntry | null;
+
+	// Whether the backup has recently completed successfully
 	hasRecentlyCompleted: boolean;
 }
 
-export function useBackupState( siteId: number, isEnqueued = false ): BackupStateResult {
-	const [ hasRecentlyCompleted, setHasRecentlyCompleted ] = useState( false );
-	const [ previousBackupState, setPreviousBackupState ] = useState< BackupState >( 'default' );
+/**
+ * Tracks a specific backup through its lifecycle from start to completion/error.
+ *
+ * - When a backup starts (or is already in progress), we track it by its `period`
+ * - We follow that specific backup until it succeeds or fails
+ * - Components are responsible for their own polling needs
+ */
+export function useBackupState( siteId: number ): BackupState {
+	const trackedBackupRef = useRef< BackupEntry[ 'period' ] | null >( null );
 
-	// Determine current backup state from backup entries
-	const getBackupState = useCallback(
-		( backups: BackupEntry[] ): BackupState => {
-			const currentBackup = backups[ 0 ];
-			if ( currentBackup?.status === 'started' ) {
-				return 'in_progress';
+	// Get current backup status and decide what to track
+	const getBackupState = ( backups: BackupEntry[] ): BackupState => {
+		const latestBackup = backups[ 0 ];
+
+		// If we have a tracked backup, check its current status
+		if ( trackedBackupRef.current ) {
+			const tracked = backups.find( ( b ) => b.period === trackedBackupRef.current );
+
+			if ( tracked ) {
+				if ( tracked.status === BackupEntryStatuses.STARTED ) {
+					return {
+						status: 'running',
+						backup: tracked,
+						hasRecentlyCompleted: false,
+					};
+				}
+
+				if ( tracked.status === BackupEntryStatuses.FINISHED ) {
+					return {
+						status: 'success',
+						backup: tracked,
+						hasRecentlyCompleted: true,
+					};
+				}
+
+				if ( Object.values( BackupEntryErrorStatuses ).includes( tracked.status ) ) {
+					return {
+						status: 'error',
+						backup: tracked,
+						hasRecentlyCompleted: false,
+					};
+				}
 			}
-			if ( currentBackup?.status === 'queued' || isEnqueued ) {
-				return 'enqueued';
-			}
-			return 'default';
-		},
-		[ isEnqueued ]
-	);
-
-	// Query backup status with polling during active operations
-	const { data: rewindBackups = [] } = useQuery( {
-		...siteBackupsQuery( siteId ),
-		refetchInterval: ( query ) => {
-			const backups = query.state.data || [];
-			const backupState = getBackupState( backups );
-			// Poll when backup is enqueued or in progress
-			return backupState !== 'default' ? 2000 : false;
-		},
-	} );
-
-	const backupState = getBackupState( rewindBackups );
-	const isBackupActive = backupState !== 'default';
-
-	// Track when backup transitions from in_progress to default (completion)
-	useEffect( () => {
-		if ( previousBackupState === 'in_progress' && backupState === 'default' ) {
-			setHasRecentlyCompleted( true );
-
-			// Stop tracking completion after timeout
-			const timeoutId = setTimeout( () => {
-				setHasRecentlyCompleted( false );
-			}, 30000 );
-
-			return () => clearTimeout( timeoutId );
 		}
-		setPreviousBackupState( backupState );
-	}, [ backupState, previousBackupState ] );
 
-	return {
-		backupState,
-		isBackupActive,
-		hasRecentlyCompleted,
+		// Check if there's a backup currently in progress (and start tracking it)
+		if ( latestBackup?.status === BackupEntryStatuses.STARTED ) {
+			// Start tracking this backup if we're not already tracking one
+			if ( ! trackedBackupRef.current || trackedBackupRef.current !== latestBackup.period ) {
+				trackedBackupRef.current = latestBackup.period;
+			}
+
+			return {
+				status: 'running',
+				backup: latestBackup,
+				hasRecentlyCompleted: false,
+			};
+		}
+
+		// No active or tracked backup
+		return {
+			status: 'idle',
+			backup: null,
+			hasRecentlyCompleted: false,
+		};
 	};
+
+	const { data: backups = [] } = useQuery( siteBackupsQuery( siteId ) );
+
+	return getBackupState( backups );
 }
