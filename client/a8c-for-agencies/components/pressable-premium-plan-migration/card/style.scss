@@ -1,0 +1,53 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+$pressable-card-background: #050C29;
+
+.components-card.pressable-premium-plan-migration-card {
+	background: url( calypso/assets/images/a8c-for-agencies/pressable-premium-migration-bg.svg ) no-repeat bottom right;
+	background-color: $pressable-card-background;
+	color: var(--color-text-white);
+	padding: 24px;
+	margin-block-end: 16px;
+}
+
+.pressable-premium-plan-migration-card__primary-button {
+	color: $pressable-card-background;
+}
+
+.pressable-premium-plan-migration-card__content {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.pressable-premium-plan-migration-card__buttons {
+	display: flex;
+	gap: 12px;
+	flex-direction: column;
+
+	@include break-medium {
+		flex-direction: row;
+	}
+}
+
+.pressable-premium-plan-migration-card__top {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-block-end: 16px;
+
+	svg {
+		fill: var(--color-text-white);
+	}
+}
+
+.pressable-premium-plan-migration-card__description {
+	@include body-large;
+	text-wrap: balance;
+}
+
+.is-light svg {
+	fill: var(--color-text-white);
+}

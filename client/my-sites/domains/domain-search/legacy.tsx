@@ -67,7 +67,8 @@ import {
 } from 'calypso/state/ui/selectors';
 import { recordUseYourDomainButtonClick } from '../../../components/domains/register-domain-step/analytics';
 import type { Context } from '@automattic/calypso-router';
-import type { DomainSuggestion, SiteDetails } from '@automattic/data-stores';
+import type { DomainSuggestion } from '@automattic/data';
+import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
 import 'calypso/my-sites/domains/style.scss';

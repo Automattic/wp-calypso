@@ -1,3 +1,13 @@
+export type DomainSuggestionQueryVendor =
+	| 'variation2_front'
+	| 'variation4_front'
+	| 'variation8_front'
+	| 'newsletter'
+	| 'ecommerce'
+	| 'gravatar'
+	| '100-year-domains'
+	| 'domain-upsell';
+
 export interface DomainSuggestionQuery {
 	/**
 	 * True to include .blog subdomain suggestions
@@ -45,7 +55,7 @@ export interface DomainSuggestionQuery {
 	/**
 	 * Vendor
 	 */
-	vendor: string;
+	vendor: DomainSuggestionQueryVendor;
 
 	/**
 	 * The vertical id or slug
@@ -161,6 +171,16 @@ export interface DomainSuggestion {
 	 * Whether the domain is premium
 	 */
 	is_premium?: true;
+
+	/**
+	 * Whether the client should show the SSL certificate notice
+	 */
+	hsts_required?: true;
+
+	/**
+	 * Whether the client should show the dot gay notice
+	 */
+	dot_gay_notice_required?: true;
 }
 
 export interface FreeDomainSuggestion {

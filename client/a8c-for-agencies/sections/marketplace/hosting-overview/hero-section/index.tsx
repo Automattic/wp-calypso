@@ -2,6 +2,7 @@ import { useBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { forwardRef, useMemo } from 'react';
+import PressablePremiumPlanMigrationBanner from 'calypso/a8c-for-agencies/components/pressable-premium-plan-migration/banner';
 import NavItem from 'calypso/components/section-nav/item';
 import { preventWidows } from 'calypso/lib/formatting';
 import { SectionProps } from '..';
@@ -85,6 +86,7 @@ export function HeroSection(
 						)
 					) }
 				</div>
+				<PressablePremiumPlanMigrationBanner />
 			</div>
 
 			<ul className="hosting-hero-section__tabs">{ navItems }</ul>

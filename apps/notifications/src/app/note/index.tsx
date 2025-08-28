@@ -12,6 +12,7 @@ import {
 import { isRTL } from '@wordpress/i18n';
 import { chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
+import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { getActions } from '../../panel/helpers/notes';
 import getAllNotes from '../../panel/state/selectors/get-all-notes';
@@ -75,12 +76,19 @@ const Note = () => {
 	const isApproved = useSelector( ( state ) => note && getIsNoteApproved( state, note ) );
 	const isRead = useSelector( ( state ) => note && getIsNoteRead( state, note ) );
 
+	// Ensure the component is focused on mount
+	// to avoid parent's <Popover>'s focus trap from moving.
+	const focusRef = useRef< HTMLDivElement >( null );
+	useEffect( () => {
+		focusRef.current?.focus();
+	}, [] );
+
 	if ( ! note ) {
 		return null;
 	}
 
 	return (
-		<>
+		<div ref={ focusRef } tabIndex={ -1 }>
 			<CardHeader size="small">
 				<HStack>
 					<Navigator.BackButton
@@ -108,7 +116,7 @@ const Note = () => {
 			<CardFooter size="small">
 				<ActionBlock note={ note } />
 			</CardFooter>
-		</>
+		</div>
 	);
 };
 

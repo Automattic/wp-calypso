@@ -33,7 +33,8 @@ import { getAvailableProductsList } from 'calypso/state/products-list/selectors'
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useQuery } from '../../../../hooks/use-query';
 import { ONBOARD_STORE } from '../../../../stores';
-import type { DomainSuggestion, DomainForm, OnboardSelect } from '@automattic/data-stores';
+import type { DomainSuggestion } from '@automattic/data';
+import type { DomainForm, OnboardSelect } from '@automattic/data-stores';
 
 interface DomainFormControlProps {
 	onContinue: () => void;

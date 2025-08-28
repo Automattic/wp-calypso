@@ -825,7 +825,7 @@ const FEATURES_LIST: FeatureList = {
 								month: 'long',
 								day: 'numeric',
 								year: 'numeric',
-							} ).format( new Date( '2025-08-25' ) ),
+							} ).format( new Date( '2025-08-31' ) ),
 						},
 					}
 				),
@@ -838,7 +838,7 @@ const FEATURES_LIST: FeatureList = {
 								month: 'long',
 								day: 'numeric',
 								year: 'numeric',
-							} ).format( new Date( '2025-08-25' ) ),
+							} ).format( new Date( '2025-08-31' ) ),
 						},
 					}
 				),

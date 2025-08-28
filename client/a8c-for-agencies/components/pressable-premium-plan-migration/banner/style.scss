@@ -1,0 +1,168 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+// Copied most styles from A4A Migration Offer V2 and cleaned up.
+.pressable-premium-plan-migration {
+	display: flex;
+	flex-direction: row;
+	gap: 16px;
+	border-radius: 4px;
+	border: 1px solid var(--color-neutral-5);
+	background-color: var(--color-text-white);
+	transition: padding 0.15s linear;
+	padding: 16px;
+
+	@include break-medium {
+		padding: 20px 32px;
+		&.is-expanded {
+			padding: 20px 32px 24px;
+		}
+	}
+}
+
+.pressable-premium-plan-migration__main {
+	flex-grow: 1;
+}
+
+.pressable-premium-plan-migration__icon {
+	display: none;
+	min-width: 48px;
+	height: 48px;
+
+	@include break-large {
+		display: block;
+	}
+}
+
+.pressable-premium-plan-migration__title {
+	@include heading-large;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	min-height: 40px;
+
+	@include break-medium {
+		@include heading-x-large;
+	}
+}
+
+.pressable-premium-plan-migration__body {
+	display: flex;
+	gap: 16px;
+	align-content: center;
+	flex-direction: column;
+	margin-block-start: 16px;
+
+	@include break-xlarge {
+		gap: 40px;
+		flex-direction: row;
+	}
+}
+
+.pressable-premium-plan-migration__description {
+	@include body-medium;
+	margin: 0;
+	max-width: 800px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+
+	@include break-medium {
+		@include body-large;
+	}
+}
+
+.pressable-premium-plan-migration__button-container {
+	display: flex;
+	gap: 10px;
+	flex-direction: column;
+
+	@include break-medium {
+		flex-direction: row;
+	}
+
+	@include break-xlarge {
+		flex-direction: column;
+		margin-inline: auto 48px;
+		justify-content: center;
+	}
+}
+
+.pressable-premium-plan-migration__collapsable-buttons-container {
+	display: flex;
+	gap: 16px;
+	margin-block-start: 24px;
+	align-items: center;
+	position: relative;
+
+	span {
+		@include body-medium;
+	}
+
+	@include break-medium {
+		@include body-large;
+		margin-block-end: 32px;
+
+		span {
+			position: absolute;
+			inset-block-start: 48px;
+		}
+	}
+
+	@include break-xlarge {
+		margin-block-end: 0;
+		span {
+			position: static;
+		}
+	}
+}
+
+.is-link.pressable-premium-plan-migration__terms-link {
+	color: var(--color-text);
+}
+
+.icon-button {
+	&:hover,
+	&:focus,
+	&:focus-visible {
+		background-color: transparent;
+
+		&:not(:focus-visible) {
+			border: none;
+			box-shadow: none;
+		}
+	}
+
+	svg {
+		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s ease-in;
+	}
+}
+
+.theme-a8c-for-agencies .components-button {
+	&.pressable-premium-plan-migration__view-toggle {
+		display: none;
+		@extend .icon-button;
+
+		@include break-medium {
+			display: block;
+		}
+	}
+
+	&.pressable-premium-plan-migration__view-toggle-mobile {
+		display: block;
+		@extend .icon-button;
+
+		@include break-medium {
+			display: none;
+		}
+	}
+}
+
+.pressable-premium-plan-migration.is-expanded .components-button {
+	&.pressable-premium-plan-migration__view-toggle svg,
+	&.pressable-premium-plan-migration__view-toggle-mobile svg {
+		transform: rotate(180deg);
+	}
+}

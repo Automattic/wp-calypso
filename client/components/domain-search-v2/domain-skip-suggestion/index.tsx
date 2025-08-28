@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { DomainSuggestion } from '@automattic/data-stores';
+import { type DomainSuggestion } from '@automattic/data';
 import { DomainSearchSkipSuggestion } from '@automattic/domain-search';
 import { useEffect, useCallback } from '@wordpress/element';
 import { Site } from 'calypso/dashboard/data/site';

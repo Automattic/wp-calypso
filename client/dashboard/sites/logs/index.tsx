@@ -14,7 +14,7 @@ import { siteSettingsQuery } from '../../app/queries/site-settings';
 import { siteRoute } from '../../app/router/sites';
 import { Callout } from '../../components/callout';
 import { CalloutOverlay } from '../../components/callout-overlay';
-import DataViewsCard from '../../components/dataviews-card';
+import { DataViewsCard } from '../../components/dataviews-card';
 import { DateRangePicker } from '../../components/date-range-picker';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';

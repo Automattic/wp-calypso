@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useAuth } from '../app/auth';
 import { domainsQuery } from '../app/queries/domains';
 import { domainsPurchaseRoute } from '../app/router/domains';
-import DataViewsCard from '../components/dataviews-card';
+import { DataViewsCard } from '../components/dataviews-card';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import RouterLinkButton from '../components/router-link-button';

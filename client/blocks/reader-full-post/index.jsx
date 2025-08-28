@@ -95,6 +95,7 @@ export class FullPostView extends Component {
 		hasOrganization: PropTypes.bool,
 		layout: PropTypes.oneOf( [ 'default', 'recent' ] ),
 		currentPath: PropTypes.string,
+		isAutomattician: PropTypes.bool,
 	};
 
 	hasScrolledToCommentAnchor = false;
@@ -659,7 +660,7 @@ export class FullPostView extends Component {
 		/*eslint-disable react/jsx-no-target-blank */
 		return (
 			// add extra div wrapper for consistent content frame layout/styling for reader.
-			<div>
+			<div style={ { position: 'relative' } }>
 				<ReaderMain className={ clsx( classes ) } forwardRef={ this.readerMainWrapper }>
 					{ site && <QueryPostLikes siteId={ post.site_ID } postId={ post.ID } /> }
 					{ ! post || post._state === 'pending' ? (
