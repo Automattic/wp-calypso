@@ -1,10 +1,7 @@
-import { parseDomainAgainstTldList } from '../';
+import { parseDomainAgainstTldList } from '..';
 
 describe( 'parseDomainAgainstTldList', () => {
-	const tldList = {
-		'co.in': 1,
-		'co.uk': 1,
-	};
+	const tldList = [ 'co.in', 'co.uk' ];
 
 	test( 'should return an empty string if domain fragment is missing', () => {
 		expect( parseDomainAgainstTldList( '', tldList ) ).toEqual( '' );
