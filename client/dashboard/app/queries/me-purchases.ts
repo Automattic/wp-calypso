@@ -1,6 +1,6 @@
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { fetchUserPurchases, fetchUserTransferredPurchases } from '../../data/me-purchases';
-import { setPurchaseAutoRenew, fetchUserPurchase } from '../../data/upgrades';
+import { setPurchaseAutoRenew, fetchPurchase } from '../../data/upgrades';
 import { queryClient } from '../query-client';
 
 export const userPurchasesQuery = () =>
@@ -19,7 +19,7 @@ export function userTransferredPurchasesQuery() {
 export const purchaseQuery = ( purchaseId: number ) =>
 	queryOptions( {
 		queryKey: [ 'me', 'purchases', purchaseId ],
-		queryFn: () => fetchUserPurchase( purchaseId ),
+		queryFn: () => fetchPurchase( purchaseId ),
 	} );
 
 export const userPurchaseSetAutoRenewQuery = ( purchaseId: number ) =>
