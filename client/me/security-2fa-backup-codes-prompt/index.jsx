@@ -126,7 +126,7 @@ class Security2faBackupCodesPrompt extends Component {
 			<form className="security-2fa-backup-codes-prompt" onSubmit={ this.onVerify }>
 				<FormFieldset>
 					<FormLabel htmlFor="backup-code-entry">
-						{ this.props.translate( 'Type a Backup Code to Verify' ) }
+						{ this.props.translate( 'Type a backup code to verify' ) }
 					</FormLabel>
 
 					<FormVerificationCodeInput

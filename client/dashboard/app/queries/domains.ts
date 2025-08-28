@@ -1,15 +1,18 @@
-import { fetchDomains, fetchDomainSuggestions } from '../../data/domains';
-import type { DomainSuggestionQuery } from '../../data/types';
+import { fetchDomainSuggestions, type DomainSuggestionQuery } from '@automattic/data';
+import { queryOptions } from '@tanstack/react-query';
+import { fetchDomains } from '../../data/domains';
 
-export const domainsQuery = () => ( {
-	queryKey: [ 'domains' ],
-	queryFn: fetchDomains,
-} );
+export const domainsQuery = () =>
+	queryOptions( {
+		queryKey: [ 'domains' ],
+		queryFn: fetchDomains,
+	} );
 
 export const domainSuggestionsQuery = (
 	search: string,
-	domainSuggestionQuery?: Partial< DomainSuggestionQuery >
-) => ( {
-	queryKey: [ 'domain-suggestions', search, domainSuggestionQuery ],
-	queryFn: () => fetchDomainSuggestions( search, domainSuggestionQuery ),
-} );
+	query: Partial< DomainSuggestionQuery > = {}
+) =>
+	queryOptions( {
+		queryKey: [ 'domain-suggestions', search, query ],
+		queryFn: () => fetchDomainSuggestions( search, query ),
+	} );

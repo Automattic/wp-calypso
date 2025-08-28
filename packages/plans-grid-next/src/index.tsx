@@ -13,6 +13,7 @@ import usePlanBillingPeriod from './hooks/data-store/use-plan-billing-period';
 import usePlanFeaturesForGridPlans from './hooks/data-store/use-plan-features-for-grid-plans';
 import usePlansFromTypes from './hooks/data-store/use-plans-from-types';
 import useRestructuredPlanFeaturesForComparisonGrid from './hooks/data-store/use-restructured-plan-features-for-comparison-grid';
+import { useSummerSpecialStatus } from './hooks/data-store/use-summer-special-status';
 import { useManageTooltipToggle } from './hooks/use-manage-tooltip-toggle';
 
 /**
@@ -40,6 +41,7 @@ export {
 	usePlansFromTypes,
 	usePlanTypesWithIntent,
 	useRestructuredPlanFeaturesForComparisonGrid,
+	useSummerSpecialStatus,
 };
 
 /**

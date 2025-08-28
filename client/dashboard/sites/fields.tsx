@@ -1,6 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import TimeSince from '../components/time-since';
 import { getSiteDisplayName } from '../utils/site-name';
+import { getSitePlanDisplayName } from '../utils/site-plan';
 import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../utils/site-provider';
 import { STATUS_LABELS, getSiteStatus } from '../utils/site-status';
 import { getSiteDisplayUrl } from '../utils/site-url';
@@ -56,7 +57,7 @@ export const DEFAULT_FIELDS: Field< Site >[] = [
 	{
 		id: 'plan',
 		label: __( 'Plan' ),
-		getValue: ( { item } ) => item.plan?.product_name_short ?? '',
+		getValue: ( { item } ) => getSitePlanDisplayName( item ) ?? '',
 		render: ( { item } ) => <Plan site={ item } />,
 	},
 	{

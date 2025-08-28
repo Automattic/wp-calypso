@@ -1,0 +1,38 @@
+{
+	"extends": ["../../.stylelintrc"],
+	"rules": {
+		"property-disallowed-list": [
+			[
+				"margin-left",
+				"margin-right",
+				"padding-left",
+				"padding-right",
+				"border-left",
+				"border-right",
+				"border-left-width",
+				"border-right-width",
+				"border-left-style",
+				"border-right-style",
+				"border-left-color",
+				"border-right-color",
+				"left",
+				"right"
+			],
+			{
+				"message": "Use logical CSS properties for better RTL support e.g. `margin-inline-start/end` instead of `margin-left/right`.",
+				"severity": "warning"
+			}
+		],
+		"declaration-property-value-disallowed-list": [
+			{
+				"text-align": ["left", "right"],
+				"float": ["left", "right"],
+				"clear": ["left", "right"]
+			},
+			{
+				"message": "Use logical values for better RTL support e.g. `text-align: start/end` and `float: inline-start/inline-end`.",
+				"severity": "warning"
+			}
+		]
+	}
+}

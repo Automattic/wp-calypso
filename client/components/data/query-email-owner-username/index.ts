@@ -26,9 +26,7 @@ export function useEmailOwnerUserName(
 
 	const emailSubscription = purchases.find(
 		( purchase ) =>
-			( isTitanMail( purchase ) || isGoogleWorkspace( purchase ) ) &&
-			purchase.meta === domainName &&
-			purchase.active
+			( isTitanMail( purchase ) || isGoogleWorkspace( purchase ) ) && purchase.meta === domainName
 	);
 
 	const { data, isLoading } = useUsersQuery(

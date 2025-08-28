@@ -28,8 +28,9 @@ import { ActionList } from '../../components/action-list';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
-import { hasPlanFeature } from '../../utils/site-features';
-import { HostingFeatures, canViewCachingSettings } from '../features';
+import { HostingFeatures } from '../../data/constants';
+import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
+import { getSitePlanDisplayName } from '../../utils/site-plan';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SettingsPageHeader from '../settings-page-header';
 import { isEdgeCacheAvailable as getIsEdgeCacheAvailable } from './utils';
@@ -48,13 +49,13 @@ const fields: Field< CachingFormData >[] = [
 ];
 
 const form = {
-	type: 'regular' as const,
+	layout: { type: 'regular' as const },
 	fields: [ 'active' ],
 };
 
 export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const canView = canViewCachingSettings( site );
+	const canView = hasHostingFeature( site, HostingFeatures.CACHING );
 
 	const { data: isEdgeCacheActive } = useQuery( {
 		...siteEdgeCacheStatusQuery( site.ID ),
@@ -311,7 +312,7 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 					__(
 						'Caching is managed for you on the %s plan. The cache is cleared automatically as you make changes to your site. <link>Learn more</link>'
 					),
-					site?.plan?.product_name_short
+					getSitePlanDisplayName( site )
 				),
 				{
 					link: <InlineSupportLink supportContext="hosting-edge-cache" />,

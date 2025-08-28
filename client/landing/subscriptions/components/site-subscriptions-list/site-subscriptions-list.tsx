@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { SubscriptionManager } from '@automattic/data-stores';
 import { Spinner, __experimentalHStack as HStack, Icon, Tooltip } from '@wordpress/components';
 import { info } from '@wordpress/icons';
@@ -31,14 +30,13 @@ const SiteSubscriptionsList: React.FC< SiteSubscriptionsListProps > = ( {
 	const { subscriptions, totalCount } = data;
 
 	const isCompactLayout = layout === 'compact';
-	const isRecommendedBlogsEnabled = config.isEnabled( 'reader/recommended-blogs-list' );
 
 	// Fetch recommended blogs data once for all subscription rows
 	useEffect( () => {
-		if ( currentUserName && isRecommendedBlogsEnabled ) {
+		if ( currentUserName ) {
 			dispatch( requestRecommendedBlogsListItems( currentUserName ) );
 		}
-	}, [ currentUserName, dispatch, isRecommendedBlogsEnabled ] );
+	}, [ currentUserName, dispatch ] );
 
 	if ( error ) {
 		return (
@@ -110,7 +108,7 @@ const SiteSubscriptionsList: React.FC< SiteSubscriptionsListProps > = ( {
 				<span className="email-frequency-cell" role="columnheader">
 					{ translate( 'Email frequency' ) }
 				</span>
-				{ isRecommendedBlogsEnabled && isLoggedIn && ! isCompactLayout && (
+				{ isLoggedIn && ! isCompactLayout && (
 					<span className="recommend-cell" role="columnheader">
 						{ translate( 'Recommend' ) }
 						<Tooltip

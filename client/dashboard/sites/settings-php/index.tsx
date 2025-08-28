@@ -16,8 +16,9 @@ import { siteBySlugQuery } from '../../app/queries/site';
 import { sitePHPVersionQuery, sitePHPVersionMutation } from '../../app/queries/site-php-version';
 import PageLayout from '../../components/page-layout';
 import RequiredSelect from '../../components/required-select';
-import { hasPlanFeature } from '../../utils/site-features';
-import { HostingFeatures, canViewPHPSettings } from '../features';
+import { HostingFeatures } from '../../data/constants';
+import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
+import { getSitePlanDisplayName } from '../../utils/site-plan';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SettingsPageHeader from '../settings-page-header';
 import type { Field } from '@wordpress/dataviews';
@@ -26,7 +27,7 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: currentVersion } = useQuery( {
 		...sitePHPVersionQuery( site.ID ),
-		enabled: canViewPHPSettings( site ),
+		enabled: hasHostingFeature( site, HostingFeatures.PHP ),
 	} );
 	const mutation = useMutation( sitePHPVersionMutation( site.ID ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
@@ -53,7 +54,7 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 	];
 
 	const form = {
-		type: 'regular' as const,
+		layout: { type: 'regular' as const },
 		fields: [ 'version' ],
 	};
 
@@ -79,7 +80,7 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 		: sprintf(
 				/* translators: %s: plan name. Eg. 'Personal' */
 				__( 'Sites on the %s plan run on our recommended PHP version.' ),
-				site?.plan?.product_name_short
+				getSitePlanDisplayName( site )
 		  );
 
 	return (

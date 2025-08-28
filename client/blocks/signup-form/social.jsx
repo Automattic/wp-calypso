@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
@@ -13,12 +14,10 @@ import {
 	UsernameOrEmailButton,
 } from 'calypso/components/social-buttons';
 import { isWpccFlow } from 'calypso/signup/is-flow';
-import { recordTracksEvent as recordTracks } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import getIsWoo from 'calypso/state/selectors/get-is-woo';
 
 class SocialSignupForm extends Component {
 	static propTypes = {
@@ -38,7 +37,8 @@ class SocialSignupForm extends Component {
 	};
 
 	handleSignup = ( result ) => {
-		const { recordTracksEvent, isDevAccount, handleResponse } = this.props;
+		const { isDevAccount, handleResponse } = this.props;
+
 		recordTracksEvent( 'calypso_signup_social_button_success', {
 			social_account_type: result.service,
 		} );
@@ -53,9 +53,7 @@ class SocialSignupForm extends Component {
 
 	trackSignupAndRememberRedirect = ( event ) => {
 		const service = event.currentTarget.getAttribute( 'data-social-service' );
-
-		const { recordTracksEvent, oauth2Client, redirectToAfterLoginUrl, showErrorNotice, translate } =
-			this.props;
+		const { oauth2Client, redirectToAfterLoginUrl, showErrorNotice, translate } = this.props;
 
 		recordTracksEvent( 'calypso_signup_social_button_click', {
 			social_account_type: service,
@@ -94,10 +92,8 @@ class SocialSignupForm extends Component {
 			disableTosText,
 			isSocialFirst,
 			flowName,
-			isWoo,
 			setCurrentStep,
 		} = this.props;
-
 		return (
 			<Card
 				className={ clsx( 'auth-form__social', 'is-signup', {
@@ -131,9 +127,8 @@ class SocialSignupForm extends Component {
 							<UsernameOrEmailButton onClick={ () => setCurrentStep( 'email' ) } />
 						) }
 					</div>
-					{ ! isWoo && ! disableTosText && <SocialToS /> }
+					{ ! disableTosText && <SocialToS /> }
 				</div>
-				{ isWoo && ! disableTosText && <SocialToS /> }
 			</Card>
 		);
 	}
@@ -144,13 +139,12 @@ export default connect(
 		const query = getCurrentQueryArguments( state );
 		const devAccountLandingPageRefs = [ 'hosting-lp', 'developer-lp' ];
 		const isDevAccount = devAccountLandingPageRefs.includes( query?.ref );
+		const oauth2Client = getCurrentOAuth2Client( state );
 
 		return {
-			recordTracksEvent: recordTracks,
 			currentRoute: getCurrentRoute( state ),
-			oauth2Client: getCurrentOAuth2Client( state ),
+			oauth2Client: oauth2Client,
 			isDevAccount: isDevAccount,
-			isWoo: getIsWoo( state ),
 		};
 	},
 	{ showErrorNotice: errorNotice }

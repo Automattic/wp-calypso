@@ -1,3 +1,4 @@
+import { WPCOM_FEATURES_BACKUPS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { CompactCard, Dialog } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -14,6 +15,7 @@ import {
 import WarningList from 'calypso/blocks/eligibility-warnings/warning-list';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryAutomatedTransferEligibility from 'calypso/components/data/query-atat-eligibility';
+import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
 import Main from 'calypso/components/main';
@@ -24,6 +26,7 @@ import SpinnerButton from 'calypso/components/spinner-button';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
+import WPCOMUpsellPage from 'calypso/my-sites/backup/wpcom-upsell';
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
@@ -34,6 +37,9 @@ import {
 	EligibilityData,
 } from 'calypso/state/automated-transfer/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
+import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
+import isRequestingSiteFeatures from 'calypso/state/selectors/is-requesting-site-features';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -169,6 +175,17 @@ export default function WPCOMBusinessAT( {
 
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 
+	// Check if features are loaded
+	const featuresNotLoaded = useSelector(
+		( state ) =>
+			null === getFeaturesBySiteId( state, siteId ) && ! isRequestingSiteFeatures( state, siteId )
+	);
+
+	// Check if the site has the backup feature
+	const hasBackupFeature = useSelector( ( state ) =>
+		siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS )
+	);
+
 	useEffect( () => {
 		// Check if a reverted site still has the COMPLETE status
 		if ( automatedTransferStatus === COMPLETE ) {
@@ -214,6 +231,31 @@ export default function WPCOMBusinessAT( {
 			setShowDialog( true );
 		}
 	};
+
+	// If features are not loaded yet, show loading state
+	if ( featuresNotLoaded ) {
+		return (
+			<Main className="wpcom-business-at">
+				<QuerySiteFeatures siteIds={ [ siteId ] } />
+				<DocumentHead title={ content.documentHeadTitle } />
+				<FormattedHeader
+					id="wpcom-business-at-header"
+					className="wpcom-business-at__header"
+					headerText={ content.header }
+					align="left"
+					brandFont
+				/>
+				<div className="wpcom-business-at__loading">
+					<p>{ translate( 'Loading…' ) }</p>
+				</div>
+			</Main>
+		);
+	}
+
+	// If the site doesn't have the backup feature, show the upsell instead
+	if ( ! hasBackupFeature ) {
+		return <WPCOMUpsellPage />;
+	}
 
 	return (
 		<Main className="wpcom-business-at">

@@ -3,6 +3,10 @@ import { useResizeObserver } from '@wordpress/compose';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
+import {
+	getPerformanceStatus,
+	getPerformanceStatusText,
+} from 'calypso/dashboard/utils/site-performance';
 import './style.scss';
 
 type PerformanceScoreProps = {
@@ -20,20 +24,8 @@ export const PerformanceScore = ( props: PerformanceScoreProps ) => {
 	const isMobile = useMobileBreakpoint();
 
 	const { value, recommendationsQuantity, recommendationsRef } = props;
-	const getStatus = ( value: number ) => {
-		if ( value <= 49 ) {
-			return 'poor';
-		} else if ( value > 49 && value < 90 ) {
-			return 'neutral';
-		}
-		return 'good';
-	};
-	const status = getStatus( value );
-	const statusText = {
-		poor: translate( 'Poor' ),
-		neutral: translate( 'Needs improvement' ),
-		good: translate( 'Excellent' ),
-	}[ status ];
+	const status = getPerformanceStatus( value );
+	const statusText = getPerformanceStatusText( status );
 
 	useEffect( () => {
 		if ( ! entry ) {

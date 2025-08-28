@@ -85,6 +85,16 @@ export const PureUniversalNavbarFooter = ( {
 									</a>
 								</li>
 								<li>
+									<a href={ localizeUrl( 'https://wordpress.com/for-agencies/' ) } target="_self">
+										{ __( 'WordPress for Agencies', __i18n_text_domain__ ) }
+									</a>
+								</li>
+								<li>
+									<a href={ localizeUrl( 'https://wordpress.com/affiliates/' ) } target="_self">
+										{ __( 'Become an Affiliate', __i18n_text_domain__ ) }
+									</a>
+								</li>
+								<li>
 									<a href={ localizeUrl( 'https://wordpress.com/domains/' ) } target="_self">
 										{ __( 'Domain Names', __i18n_text_domain__ ) }
 									</a>
@@ -120,19 +130,26 @@ export const PureUniversalNavbarFooter = ( {
 								</li>
 								<li>
 									<a
-										href={ localizeUrl(
-											'https://wordpress.com/website-design-service/?ref=footer_pricing'
-										) }
-										title="WordPress Website Building Service"
+										href={ localizeUrl( 'https://wordpress.com/website-design-service/' ) }
 										target="_self"
 									>
 										{ __( 'Website Design Services', __i18n_text_domain__ ) }
 									</a>
 								</li>
 								<li>
+									<a
+										href={ localizeUrl( 'https://developer.wordpress.com/studio/' ) }
+										target="_self"
+									>
+										<span className="lp-link-chevron-external">
+											{ __( 'WordPress Studio', __i18n_text_domain__ ) }
+										</span>
+									</a>
+								</li>
+								<li>
 									<a href="https://wpvip.com/" data-is_external="1" target="_self">
 										<span className="lp-link-chevron-external">
-											{ __( 'Enterprise', __i18n_text_domain__ ) }
+											{ __( 'WordPress Enterprise', __i18n_text_domain__ ) }
 										</span>
 									</a>
 								</li>
@@ -142,11 +159,7 @@ export const PureUniversalNavbarFooter = ( {
 							<h3>{ __( 'Features', __i18n_text_domain__ ) }</h3>
 							<ul>
 								<li>
-									<a
-										href={ localizeUrl( 'https://wordpress.com/features/' ) }
-										title="WordPress.com Features"
-										target="_self"
-									>
+									<a href={ localizeUrl( 'https://wordpress.com/features/' ) } target="_self">
 										{ __( 'Overview', __i18n_text_domain__ ) }
 									</a>
 								</li>
@@ -160,7 +173,7 @@ export const PureUniversalNavbarFooter = ( {
 								</li>
 								<li>
 									<a
-										href={ localizeUrl( 'https://wordpress.com/plugins/', locale, isLoggedIn ) }
+										href={ localizeUrl( 'https://wordpress.com/plugins', locale, isLoggedIn ) }
 										target="_self"
 									>
 										{ __( 'WordPress Plugins', __i18n_text_domain__ ) }
@@ -168,7 +181,7 @@ export const PureUniversalNavbarFooter = ( {
 								</li>
 								<li>
 									<a
-										href={ localizeUrl( 'https://wordpress.com/patterns/', locale, isLoggedIn ) }
+										href={ localizeUrl( 'https://wordpress.com/patterns', locale, isLoggedIn ) }
 										target="_self"
 									>
 										{ __( 'WordPress Patterns', __i18n_text_domain__ ) }
@@ -384,11 +397,11 @@ export const PureUniversalNavbarFooter = ( {
 							<h2 className="lp-hidden">{ __( 'Social Media', __i18n_text_domain__ ) }</h2>
 							<ul className="lp-footer-social-icons">
 								<li>
-									<a href="https://twitter.com/wordpressdotcom" title="WordPress.com on Twitter">
+									<a href="https://x.com/wordpressdotcom" title="WordPress.com on X (Twitter)">
 										<span className="lp-hidden">
-											{ __( 'WordPress.com on Twitter', __i18n_text_domain__ ) }
+											{ __( 'WordPress.com on X (Twitter)', __i18n_text_domain__ ) }
 										</span>
-										<SocialLogo size={ 24 } icon="twitter-alt" className="lp-icon" />
+										<SocialLogo size={ 24 } icon="x" className="lp-icon" />
 									</a>
 								</li>
 								<li>

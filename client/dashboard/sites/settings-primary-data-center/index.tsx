@@ -9,7 +9,8 @@ import { siteBySlugQuery } from '../../app/queries/site';
 import { sitePrimaryDataCenterQuery } from '../../app/queries/site-primary-data-center';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
-import { canViewPrimaryDataCenterSettings } from '../features';
+import { HostingFeatures } from '../../data/constants';
+import { hasHostingFeature } from '../../utils/site-features';
 import SettingsPageHeader from '../settings-page-header';
 
 export default function PrimaryDataCenterSettings( { siteSlug }: { siteSlug: string } ) {
@@ -17,7 +18,7 @@ export default function PrimaryDataCenterSettings( { siteSlug }: { siteSlug: str
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: primaryDataCenter } = useQuery( {
 		...sitePrimaryDataCenterQuery( site.ID ),
-		enabled: canViewPrimaryDataCenterSettings( site ),
+		enabled: hasHostingFeature( site, HostingFeatures.PRIMARY_DATA_CENTER ),
 	} );
 
 	const dataCenterOptions = getDataCenterOptions();

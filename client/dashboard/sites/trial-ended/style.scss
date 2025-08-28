@@ -1,0 +1,36 @@
+@import "@wordpress/base-styles/variables";
+
+.site-trial-ended__title {
+	font-family: Recoleta, sans-serif;
+	font-size: $font-size-2x-large;
+	font-weight: $font-weight-regular;
+	line-height: $font-line-height-2x-large;
+	color: $gray-900;
+	margin: 0;
+}
+
+.site-trial-ended__price {
+	&.plan-price {
+		line-height: unset;
+	}
+
+	.plan-price__currency-symbol {
+		color: $gray-700;
+		font-size: $font-size-medium;
+		font-weight: $font-weight-regular;
+		line-height: $font-line-height-small;
+	}
+
+	.plan-price__integer {
+		font-family: Recoleta, sans-serif;
+		font-size: $font-size-2x-large;
+		font-weight: $font-weight-regular;
+		line-height: $font-line-height-x-large;
+	}
+}
+
+.site-trial-ended__price-description {
+	max-width: 150px;
+	text-align: end;
+	text-wrap: pretty;
+}

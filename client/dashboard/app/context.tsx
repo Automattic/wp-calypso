@@ -1,5 +1,20 @@
 import { createContext, useContext } from 'react';
 
+export type SiteFeatureSupports = {
+	deployments: boolean;
+	performance: boolean;
+	monitoring: boolean;
+	logs: boolean;
+	backups: boolean;
+	domains: boolean;
+	emails: boolean;
+};
+
+export type MeSupports = {
+	privacy: boolean;
+	apps: boolean;
+};
+
 export type AppConfig = {
 	basePath: string;
 	mainRoute: string;
@@ -7,13 +22,13 @@ export type AppConfig = {
 	LoadingLogo?: React.FC;
 	supports: {
 		overview: boolean;
-		sites: boolean;
+		sites: SiteFeatureSupports | false;
 		domains: boolean;
 		emails: boolean;
 		reader: boolean;
 		help: boolean;
 		notifications: boolean;
-		me: boolean;
+		me: MeSupports | false;
 	};
 };
 

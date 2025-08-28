@@ -1,4 +1,7 @@
+import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'calypso/state';
+import { getUserBillingType } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import {
 	SubscriptionAction,
 	SubscriptionPrice,
@@ -24,9 +27,21 @@ const SubscriptionItem = ( {
 	onCancelSubscription,
 }: SubscriptionItemProps ) => {
 	const translate = useTranslate();
+	const isBillingTypeBD = useSelector( getUserBillingType ) === 'billingdragon';
 
 	const product = products?.find( ( product ) => product.product_id === subscription.product_id );
 	const isPressable = product?.slug.startsWith( 'pressable' );
+
+	let name = product?.name;
+	let amount = product?.amount;
+	let currency = 'USD';
+	let interval = 'month';
+	if ( isBillingTypeBD ) {
+		name = subscription.subscription?.product_name || '';
+		amount = subscription.subscription?.purchase_price || '';
+		currency = subscription.subscription?.purchase_currency || '';
+		interval = subscription.subscription?.billing_interval_unit || '';
+	}
 
 	return (
 		<div className="subscriptions-mobile">
@@ -37,7 +52,7 @@ const SubscriptionItem = ( {
 				<p className="subscriptions-mobile__product-name">
 					<SubscriptionPurchase
 						isFetching={ isFetching }
-						name={ product?.name }
+						name={ name }
 						isPressable={ isPressable }
 					/>
 				</p>
@@ -45,7 +60,16 @@ const SubscriptionItem = ( {
 			<div className="subscriptions-mobile__content">
 				<h3>{ translate( 'PRICE' ).toUpperCase() }</h3>
 				<p>
-					<SubscriptionPrice isFetching={ isFetching } amount={ product?.amount } />
+					{ isBillingTypeBD && subscription.status === 'error' ? (
+						<Gridicon icon="minus" />
+					) : (
+						<SubscriptionPrice
+							isFetching={ isFetching }
+							amount={ amount }
+							currency={ currency }
+							interval={ interval }
+						/>
+					) }
 				</p>
 			</div>
 			<div className="subscriptions-mobile__content">

@@ -13,6 +13,7 @@ import {
 	recordStepNavigation,
 	type RecordStepNavigationParams,
 } from '../../analytics/record-step-navigation';
+import { canUseAutomaticGoBack } from './can-use-automatic-go-back';
 import type { Flow, FlowV2, Navigate, ProvidedDependencies, StepperStep } from '../../types';
 
 interface Params {
@@ -24,9 +25,9 @@ interface Params {
 
 export const useStepNavigationWithTracking = ( {
 	flow,
-	stepSlugs,
 	currentStepRoute,
 	navigate,
+	stepSlugs,
 }: Params ) => {
 	// We don't know the type of the return value of useStepNavigation, because we don't know which flow is this.
 	// So we cast it to any.
@@ -52,13 +53,13 @@ export const useStepNavigationWithTracking = ( {
 	 * to flash briefly while navigating.
 	 */
 	const canUserGoBack =
-		stepData?.previousStep &&
-		currentStepRoute !== stepSlugs[ 0 ] &&
-		history.length > 1 &&
-		stepData.previousStep !== currentStepRoute;
+		( stepData?.previousStep &&
+			currentStepRoute !== stepSlugs[ 0 ] &&
+			history.length > 1 &&
+			stepData.previousStep !== currentStepRoute ) ||
+		canUseAutomaticGoBack();
 
 	const tracksEventPropsFromFlow = flow.useTracksEventProps?.();
-
 	const handleRecordStepNavigation = useCallback(
 		( {
 			event,

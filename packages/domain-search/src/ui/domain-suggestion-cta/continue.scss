@@ -1,0 +1,6 @@
+.domain-suggestion-cta--continue {
+	&:disabled {
+		background: var( --wp-components-color-foreground, #1e1e1e ) !important;
+		color: rgba( 255, 255, 255, 0.3 ) !important;
+	}
+}

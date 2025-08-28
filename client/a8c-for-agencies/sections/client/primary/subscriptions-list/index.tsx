@@ -1,3 +1,4 @@
+import { Gridicon } from '@automattic/components';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import clsx from 'clsx';
@@ -12,6 +13,8 @@ import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar
 import useFetchClientProducts from 'calypso/a8c-for-agencies/data/client/use-fetch-client-products';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, { LayoutHeaderTitle as Title } from 'calypso/layout/hosting-dashboard/header';
+import { useSelector } from 'calypso/state';
+import { getUserBillingType } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import useFetchClientSubscriptions from '../../hooks/use-fetch-client-subscriptions';
 import {
 	SubscriptionAction,
@@ -36,6 +39,7 @@ export default function SubscriptionsList() {
 
 	const { data, isFetching, refetch } = useFetchClientSubscriptions();
 	const { data: products, isFetching: isFetchingProducts } = useFetchClientProducts();
+	const isBillingTypeBD = useSelector( getUserBillingType ) === 'billingdragon';
 
 	const title = translate( 'Your subscriptions' );
 
@@ -52,10 +56,14 @@ export default function SubscriptionsList() {
 				render: ( { item }: { item: Subscription } ): ReactNode => {
 					const product = products?.find( ( product ) => product.product_id === item.product_id );
 					const isPressable = product?.slug.startsWith( 'pressable' );
+					const name =
+						isBillingTypeBD && item.subscription?.product_name
+							? item.subscription.product_name
+							: product?.name;
 					return (
 						<SubscriptionPurchase
 							isFetching={ isFetchingProducts }
-							name={ product?.name }
+							name={ name }
 							isPressable={ isPressable }
 						/>
 					);
@@ -68,8 +76,28 @@ export default function SubscriptionsList() {
 				label: translate( 'Price' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item }: { item: Subscription } ): ReactNode => {
-					const product = products?.find( ( product ) => product.product_id === item.product_id );
-					return <SubscriptionPrice isFetching={ isFetchingProducts } amount={ product?.amount } />;
+					if ( isBillingTypeBD && item.status === 'error' ) {
+						return <Gridicon icon="minus" />;
+					}
+					let amount = '';
+					let currency = 'USD';
+					let interval = 'month';
+					if ( isBillingTypeBD ) {
+						amount = item.subscription?.purchase_price || '';
+						currency = item.subscription?.purchase_currency || '';
+						interval = item.subscription?.billing_interval_unit || '';
+					} else {
+						const product = products?.find( ( product ) => product.product_id === item.product_id );
+						amount = product?.amount || '';
+					}
+					return (
+						<SubscriptionPrice
+							isFetching={ isFetchingProducts }
+							amount={ amount }
+							currency={ currency }
+							interval={ interval }
+						/>
+					);
 				},
 				enableHiding: false,
 				enableSorting: false,
@@ -100,7 +128,7 @@ export default function SubscriptionsList() {
 				enableSorting: false,
 			},
 		],
-		[ isFetchingProducts, onCancelSubscription, products, translate ]
+		[ isBillingTypeBD, isFetchingProducts, onCancelSubscription, products, translate ]
 	);
 	const { data: items, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( data ?? [], dataViewsState, fields );

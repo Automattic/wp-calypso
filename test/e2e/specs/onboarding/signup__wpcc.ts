@@ -39,7 +39,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com WPCC' ), function 
 
 		it( 'Create a new WordPress.com account', async function () {
 			const userSignupPage = new UserSignupPage( page );
-			newUserDetails = await userSignupPage.signupWPCC( testUser.email, testUser.password );
+			newUserDetails = await userSignupPage.signupWPCC( testUser.email );
 		} );
 
 		it( 'User lands in CrowdSignal dashboard', async function () {

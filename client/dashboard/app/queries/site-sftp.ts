@@ -1,16 +1,22 @@
+import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { fetchSftpUsers, createSftpUser, resetSftpPassword } from '../../data/site-hosting-sftp';
 import { queryClient } from '../query-client';
 import type { SftpUser } from '../../data/site-hosting-sftp';
 
-export const siteSftpUsersQuery = ( siteId: number ) => ( {
-	queryKey: [ 'site', siteId, 'sftp-users' ],
-	queryFn: () => fetchSftpUsers( siteId ),
-	meta: {
-		persist: false,
-	},
-} );
+export const siteSftpUsersQuery = ( siteId: number ) =>
+	queryOptions( {
+		queryKey: [ 'site', siteId, 'sftp-users' ],
+		queryFn: () => fetchSftpUsers( siteId ),
+		meta: {
+			persist: false,
+		},
+	} );
 
-const updateCurrentSftpUsers = ( currentSftpUsers: SftpUser[], sftpUser: SftpUser ) => {
+const updateCurrentSftpUsers = ( currentSftpUsers: SftpUser[] | undefined, sftpUser: SftpUser ) => {
+	if ( ! currentSftpUsers ) {
+		return [ sftpUser ];
+	}
+
 	const index = currentSftpUsers.findIndex(
 		( currentSftpUser ) => currentSftpUser.username === sftpUser.username
 	);
@@ -21,24 +27,22 @@ const updateCurrentSftpUsers = ( currentSftpUsers: SftpUser[], sftpUser: SftpUse
 	return [ ...currentSftpUsers, sftpUser ];
 };
 
-export const siteSftpUsersCreateMutation = ( siteId: number ) => ( {
-	mutationFn: () => createSftpUser( siteId ),
-	onSuccess: ( createdSftpUser: SftpUser ) => {
-		queryClient.setQueryData(
-			siteSftpUsersQuery( siteId ).queryKey,
-			( currentSftpUsers: SftpUser[] ) =>
+export const siteSftpUsersCreateMutation = ( siteId: number ) =>
+	mutationOptions( {
+		mutationFn: () => createSftpUser( siteId ),
+		onSuccess: ( createdSftpUser ) => {
+			queryClient.setQueryData( siteSftpUsersQuery( siteId ).queryKey, ( currentSftpUsers ) =>
 				updateCurrentSftpUsers( currentSftpUsers, createdSftpUser )
-		);
-	},
-} );
+			);
+		},
+	} );
 
-export const siteSftpUsersResetPasswordMutation = ( siteId: number ) => ( {
-	mutationFn: ( sshUsername: string ) => resetSftpPassword( siteId, sshUsername ),
-	onSuccess: ( updatedSftpUser: SftpUser ) => {
-		queryClient.setQueryData(
-			siteSftpUsersQuery( siteId ).queryKey,
-			( currentSftpUsers: SftpUser[] ) =>
+export const siteSftpUsersResetPasswordMutation = ( siteId: number ) =>
+	mutationOptions( {
+		mutationFn: ( sshUsername: string ) => resetSftpPassword( siteId, sshUsername ),
+		onSuccess: ( updatedSftpUser ) => {
+			queryClient.setQueryData( siteSftpUsersQuery( siteId ).queryKey, ( currentSftpUsers ) =>
 				updateCurrentSftpUsers( currentSftpUsers, updatedSftpUser )
-		);
-	},
-} );
+			);
+		},
+	} );

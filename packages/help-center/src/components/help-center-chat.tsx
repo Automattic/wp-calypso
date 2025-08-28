@@ -22,6 +22,7 @@ export function HelpCenterChat( {
 } ): JSX.Element {
 	const navigate = useNavigate();
 	const shouldUseWapuu = useShouldUseWapuu();
+	const { sectionName } = useHelpCenterContext();
 	// Before issuing a redirect, make sure the status is loaded.
 	const preventOdieAccess = ! shouldUseWapuu && ! isUserEligibleForPaidSupport && ! isLoadingStatus;
 	const { currentUser, site } = useHelpCenterContext();
@@ -55,6 +56,7 @@ export function HelpCenterChat( {
 			userFieldFlowName={ userFieldFlowName ?? params.get( 'userFieldFlowName' ) }
 			isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
 			forceEmailSupport={ Boolean( forceEmailSupport ) }
+			sectionName={ sectionName }
 		>
 			<div className="help-center__container-chat">
 				<OdieAssistant />

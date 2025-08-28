@@ -6,7 +6,7 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 type Props = {
-	type: 'campaigns' | 'posts';
+	type: 'campaigns' | 'posts' | 'payments';
 };
 
 export default function EmptyPromotionList( props: Props ) {
@@ -42,6 +42,9 @@ export default function EmptyPromotionList( props: Props ) {
 		subtitle = translate(
 			'You have not published any posts, pages or products yet. Make sure your content is published and come back to promote it.'
 		);
+	} else if ( type === 'payments' ) {
+		title = translate( 'We couldn’t find any payments.' );
+		subtitle = translate( 'You haven’t made any payments yet. Once you do, they’ll show up here.' );
 	}
 
 	return (

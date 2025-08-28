@@ -5,7 +5,8 @@ import { cloud } from '@wordpress/icons';
 import { getDataCenterOptions } from 'calypso/data/data-center';
 import { sitePrimaryDataCenterQuery } from '../../app/queries/site-primary-data-center';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import { canViewPrimaryDataCenterSettings } from '../features';
+import { HostingFeatures } from '../../data/constants';
+import { hasHostingFeature } from '../../utils/site-features';
 import type { Site } from '../../data/types';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
@@ -18,7 +19,7 @@ export default function SettingsPrimaryDataCenterSummary( {
 } ) {
 	const { data: primaryDataCenter } = useQuery( {
 		...sitePrimaryDataCenterQuery( site.ID ),
-		enabled: canViewPrimaryDataCenterSettings( site ),
+		enabled: hasHostingFeature( site, HostingFeatures.PRIMARY_DATA_CENTER ),
 	} );
 
 	const dataCenterOptions = getDataCenterOptions();

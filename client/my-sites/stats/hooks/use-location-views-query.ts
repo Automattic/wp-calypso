@@ -25,12 +25,12 @@ type CustomQueryOptions< TData = unknown, TError = Error > = Pick<
 	'enabled'
 >;
 
-const useLocationViewsQuery = < T = StatsLocationViewsData >(
+const useLocationViewsQuery = (
 	siteId: number,
 	geoMode: 'country' | 'region' | 'city',
 	query: QueryStatsParams,
 	countryFilter: string | null,
-	options?: CustomQueryOptions< T, Error >
+	options?: CustomQueryOptions< StatsLocationViewsData, Error >
 ) => {
 	const finalQuery = {
 		...query,

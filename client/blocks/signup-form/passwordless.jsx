@@ -115,7 +115,7 @@ class PasswordlessSignupForm extends Component {
 				locale: getLocaleSlug(),
 				client_id: config( 'wpcom_signup_id' ),
 				client_secret: config( 'wpcom_signup_key' ),
-				...( flowName === 'wpcc' && {
+				...( ( flowName === 'wpcc' || flowName === 'crowdsignal' ) && {
 					oauth2_client_id,
 					oauth2_redirect: oauth2_redirect && `0@${ oauth2_redirect }`,
 				} ),
@@ -198,7 +198,7 @@ class PasswordlessSignupForm extends Component {
 			marketing_price_group,
 			bearer_token: response.bearer_token,
 			is_new_account: true,
-			...( flowName === 'wpcc'
+			...( [ 'wpcc', 'crowdsignal' ].includes( flowName )
 				? { oauth2_client_id, oauth2_redirect }
 				: { redirect: redirect_to } ),
 		} );

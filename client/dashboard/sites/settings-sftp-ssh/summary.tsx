@@ -5,7 +5,8 @@ import { file } from '@wordpress/icons';
 import { siteSftpUsersQuery } from '../../app/queries/site-sftp';
 import { siteSshAccessStatusQuery } from '../../app/queries/site-ssh';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import { canViewSftpSettings, canViewSshSettings } from '../features';
+import { HostingFeatures } from '../../data/constants';
+import { hasHostingFeature } from '../../utils/site-features';
 import type { Site } from '../../data/types';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
@@ -16,14 +17,17 @@ export default function SftpSshSettingsSummary( {
 	site: Site;
 	density?: Density;
 } ) {
+	const hasSftpFeature = hasHostingFeature( site, HostingFeatures.SFTP );
+	const hasSshFeature = hasHostingFeature( site, HostingFeatures.SSH );
+
 	const { data: sftpUsers } = useQuery( {
 		...siteSftpUsersQuery( site.ID ),
-		enabled: canViewSftpSettings( site ),
+		enabled: hasSftpFeature,
 	} );
 
 	const { data: sshAccessStatus } = useQuery( {
 		...siteSshAccessStatusQuery( site.ID ),
-		enabled: canViewSshSettings( site ),
+		enabled: hasSshFeature,
 	} );
 
 	const sftpEnabled = sftpUsers && sftpUsers.length > 0;
@@ -31,11 +35,11 @@ export default function SftpSshSettingsSummary( {
 	const sshEnabled = sshAccessStatus?.setting === 'ssh';
 
 	const badges = [
-		canViewSftpSettings( site ) && {
+		hasSftpFeature && {
 			text: sftpEnabled ? __( 'SFTP enabled' ) : __( 'SFTP disabled' ),
 			intent: sftpEnabled ? ( 'success' as const ) : undefined,
 		},
-		canViewSshSettings( site ) && {
+		hasSshFeature && {
 			text: sshEnabled ? __( 'SSH enabled' ) : __( 'SSH disabled' ),
 			intent: sshEnabled ? ( 'success' as const ) : undefined,
 		},

@@ -38,7 +38,7 @@ const ServerCredentialsForm = ( {
 	return (
 		<div className="server-credentials-form">
 			<FormFieldset>
-				<FormLabel htmlFor="protocol-type">{ translate( 'Credential Type' ) }</FormLabel>
+				<FormLabel htmlFor="protocol-type">{ translate( 'Credential type' ) }</FormLabel>
 				<FormSelect
 					name="protocol"
 					id="protocol-type"
@@ -54,7 +54,7 @@ const ServerCredentialsForm = ( {
 			<div className="server-credentials-form__row">
 				<FormFieldset className="server-credentials-form__server-address">
 					<FormLabel htmlFor="host-address">
-						{ labels.host || translate( 'Server Address' ) }
+						{ labels.host || translate( 'Server address' ) }
 					</FormLabel>
 					<FormTextInput
 						name="host"
@@ -69,7 +69,7 @@ const ServerCredentialsForm = ( {
 				</FormFieldset>
 
 				<FormFieldset className="server-credentials-form__port-number">
-					<FormLabel htmlFor="server-port">{ labels.port || translate( 'Port Number' ) }</FormLabel>
+					<FormLabel htmlFor="server-port">{ labels.port || translate( 'Port number' ) }</FormLabel>
 					<FormTextInput
 						name="port"
 						id="server-port"
@@ -138,7 +138,7 @@ const ServerCredentialsForm = ( {
 			</FormFieldset>
 
 			<FormFieldset className="server-credentials-form__kpri">
-				<FormLabel htmlFor="private-key">{ labels.kpri || translate( 'Private Key' ) }</FormLabel>
+				<FormLabel htmlFor="private-key">{ labels.kpri || translate( 'Private key' ) }</FormLabel>
 				<FormTextArea
 					name="kpri"
 					id="private-key"

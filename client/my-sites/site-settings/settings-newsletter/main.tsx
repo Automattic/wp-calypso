@@ -1,6 +1,6 @@
 import { Card, FormLabel } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import SubscriptionsModuleBanner from 'calypso/blocks/subscriptions-module-banner';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
@@ -42,7 +42,7 @@ export type SubscriptionOptions = {
 type Fields = {
 	subscription_options?: SubscriptionOptions;
 	wpcom_featured_image_in_email?: boolean;
-	wpcom_newsletter_categories?: number[];
+	wpcom_newsletter_categories?: number[] | Record< string, { term_id: number } >;
 	wpcom_newsletter_categories_enabled?: boolean;
 	wpcom_subscription_emails_use_excerpt?: boolean;
 	newsletter_has_active_plan?: boolean;
@@ -59,6 +59,38 @@ type Fields = {
 	jetpack_author_in_email?: boolean;
 	jetpack_post_date_in_email?: boolean;
 	date_format?: string;
+};
+
+/**
+ * Atomic and Simple site are getting/saving two different types. This equalizes them to make sure we are all on the same page.
+ * @param categoryValue The result from wpcom_newsletter_categories option
+ * @returns an array of category ID's
+ */
+const getNewsletterCategories = (
+	categoryValue:
+		| number[]
+		| Array< { term_id: unknown } >
+		| Record< string, { term_id: unknown } >
+		| undefined
+): number[] => {
+	if ( ! categoryValue ) {
+		return [];
+	}
+
+	// If already a clean array of numbers, return as-is
+	if (
+		Array.isArray( categoryValue ) &&
+		categoryValue.every( ( item ) => typeof item === 'number' )
+	) {
+		return categoryValue;
+	}
+
+	// Convert object to array if needed, then extract numeric term_ids
+	const items = Array.isArray( categoryValue ) ? categoryValue : Object.values( categoryValue );
+
+	return items
+		.map( ( item ) => ( typeof item === 'number' ? item : item?.term_id ) )
+		.filter( ( id ): id is number => typeof id === 'number' );
 };
 
 const getFormSettings = ( settings?: Fields ) => {
@@ -91,7 +123,7 @@ const getFormSettings = ( settings?: Fields ) => {
 	return {
 		...( subscription_options && { subscription_options } ),
 		wpcom_featured_image_in_email: !! wpcom_featured_image_in_email,
-		wpcom_newsletter_categories: wpcom_newsletter_categories || [],
+		wpcom_newsletter_categories: getNewsletterCategories( wpcom_newsletter_categories ),
 		wpcom_newsletter_categories_enabled: !! wpcom_newsletter_categories_enabled,
 		wpcom_subscription_emails_use_excerpt: !! wpcom_subscription_emails_use_excerpt,
 		newsletter_has_active_plan,
@@ -182,6 +214,16 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 	const isPrivate = useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
 
 	const disabled = isSubscriptionModuleInactive || isRequestingSettings || isSavingSettings;
+
+	const newsletterCategoryIds = useMemo( () => {
+		const categories = fields.wpcom_newsletter_categories;
+		// Ensure we always return a number array
+		if ( Array.isArray( categories ) ) {
+			return categories;
+		}
+		return defaultNewsletterCategoryIds;
+	}, [ fields.wpcom_newsletter_categories ] );
+
 	const savedSubscriptionOptions = settings?.subscription_options;
 
 	// Update subscription_options form fields when savedSubscriptionOptions changes.
@@ -330,7 +372,7 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 			/>
 			<NewsletterCategoriesSection
 				disabled={ disabled }
-				newsletterCategoryIds={ fields.wpcom_newsletter_categories || defaultNewsletterCategoryIds }
+				newsletterCategoryIds={ newsletterCategoryIds }
 				newsletterCategoriesEnabled={ fields.wpcom_newsletter_categories_enabled }
 				handleToggle={ handleToggle }
 				updateFields={ updateFields }

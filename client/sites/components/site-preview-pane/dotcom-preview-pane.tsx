@@ -1,7 +1,8 @@
-import config from '@automattic/calypso-config';
+import { isEnabled } from '@automattic/calypso-config';
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useMemo } from 'react';
+import { isAtomicTransferredSite } from 'calypso/dashboard/utils/site-atomic-transfers';
 import { isMigrationInProgress } from 'calypso/data/site-migration';
 import ItemView from 'calypso/layout/hosting-dashboard/item-view';
 import { useSetTabBreadcrumb } from 'calypso/sites/hooks/breadcrumbs/use-set-tab-breadcrumb';
@@ -63,10 +64,12 @@ const DotcomPreviewPane = ( {
 	const isSimpleSite = ! site.jetpack && ! site.is_wpcom_atomic;
 	const isPlanExpired = !! site.plan?.expired;
 	const isInProgress = isMigrationInProgress( site );
-	const stagingSitesRedesign = config.isEnabled( 'hosting/staging-sites-redesign' );
+	const stagingSitesRedesign = isEnabled( 'hosting/staging-sites-redesign' );
+	const isHostingFeaturesCalloutEnabled = isEnabled( 'hosting/hosting-features-callout' );
 
 	const features: FeaturePreviewInterface[] = useMemo( () => {
 		const isActiveAtomicSite = isAtomicSite && ! isPlanExpired;
+		const isHostingFeaturesEnabled = isActiveAtomicSite || isHostingFeaturesCalloutEnabled;
 		const siteFeatures = [
 			{
 				label: __( 'Overview' ),
@@ -80,31 +83,32 @@ const DotcomPreviewPane = ( {
 						<HostingFeaturesIcon />
 					</span>
 				),
-				enabled: isSimpleSite || isPlanExpired,
+				enabled: ( isSimpleSite || isPlanExpired ) && ! isHostingFeaturesCalloutEnabled,
 				featureIds: [ HOSTING_FEATURES ],
 			},
 			{
 				label: __( 'Deployments' ),
-				enabled: isActiveAtomicSite,
+				enabled: isHostingFeaturesEnabled,
 				featureIds: [ DEPLOYMENTS ],
 			},
 			{
 				label: __( 'Monitoring' ),
-				enabled: isActiveAtomicSite,
+				enabled: isHostingFeaturesEnabled,
 				featureIds: [ MONITORING ],
 			},
 			{
 				label: __( 'Performance' ),
-				enabled: isActiveAtomicSite,
+				enabled: isHostingFeaturesEnabled,
 				featureIds: [ PERFORMANCE ],
 			},
 			{
 				label: __( 'Logs' ),
-				enabled: isActiveAtomicSite,
+				enabled: isHostingFeaturesEnabled,
 				featureIds: [ LOGS_PHP, LOGS_WEB ],
 			},
 			{
 				label: __( 'Staging Site' ),
+				// We don't have the callout for the staging site tab since we'll retire the tab.
 				enabled: isActiveAtomicSite,
 				featureIds: [ STAGING_SITE ],
 			},
@@ -162,6 +166,7 @@ const DotcomPreviewPane = ( {
 		site,
 		selectedSiteFeature,
 		selectedSiteFeaturePreview,
+		isHostingFeaturesCalloutEnabled,
 	] );
 
 	const itemData: ItemData = {
@@ -178,10 +183,21 @@ const DotcomPreviewPane = ( {
 		enabled: ! site.is_wpcom_staging_site && site.is_wpcom_atomic,
 	} );
 
-	if ( site.options && site.is_wpcom_atomic ) {
-		site.options.wpcom_staging_blog_ids =
-			stagingSites?.map( ( stagingSite ) => stagingSite.id ) ?? [];
-	}
+	const siteWithStagingIds = useMemo( () => {
+		if ( ! site.options || ! site.is_wpcom_atomic ) {
+			return site;
+		}
+
+		const stagingBlogIds = stagingSites?.map( ( stagingSite ) => stagingSite.id ) ?? [];
+
+		return {
+			...site,
+			options: {
+				...site.options,
+				wpcom_staging_blog_ids: stagingBlogIds,
+			},
+		};
+	}, [ site, stagingSites ] );
 
 	const stagingStatus = useSelector( ( state ) => getStagingSiteStatus( state, site.ID ) );
 	const isStagingStatusFinished =
@@ -190,8 +206,16 @@ const DotcomPreviewPane = ( {
 		stagingStatus === StagingSiteStatus.UNSET;
 
 	const hasEnvironmentPermission = useSelector( ( state ) =>
-		canCurrentUserSwitchEnvironment( state, site )
+		canCurrentUserSwitchEnvironment( state, siteWithStagingIds )
 	);
+
+	// Check if site supports environment switching (atomic readiness check)
+	const supportsEnvironmentSwitching =
+		siteWithStagingIds.is_wpcom_staging_site ||
+		isAtomicTransferredSite( {
+			is_wpcom_atomic: siteWithStagingIds.is_wpcom_atomic,
+			capabilities: siteWithStagingIds.capabilities,
+		} );
 
 	const { breadcrumbs, shouldShowBreadcrumbs } = useBreadcrumbs();
 	useSetTabBreadcrumb( {
@@ -200,8 +224,9 @@ const DotcomPreviewPane = ( {
 		selectedFeatureId: selectedSiteFeature,
 	} );
 
-	const isProduction = site.is_wpcom_atomic && ! site.is_wpcom_staging_site;
-	const hasNoStagingSites = ! site.options?.wpcom_staging_blog_ids?.length;
+	const isProduction =
+		siteWithStagingIds.is_wpcom_atomic && ! siteWithStagingIds.is_wpcom_staging_site;
+	const hasNoStagingSites = ! siteWithStagingIds.options?.wpcom_staging_blog_ids?.length;
 
 	const shouldShowProductionBadge =
 		isProduction && ( hasNoStagingSites || ! isStagingStatusFinished );
@@ -211,7 +236,9 @@ const DotcomPreviewPane = ( {
 			itemData={ itemData }
 			closeItemView={ closeSitePreviewPane }
 			features={ features }
-			className={ site.is_wpcom_staging_site && ! stagingSitesRedesign ? 'is-staging-site' : '' }
+			className={
+				siteWithStagingIds.is_wpcom_staging_site && ! stagingSitesRedesign ? 'is-staging-site' : ''
+			}
 			enforceTabsView
 			itemViewHeaderExtraProps={ {
 				externalIconSize: 16,
@@ -226,8 +253,17 @@ const DotcomPreviewPane = ( {
 						return <SitesProductionBadge>{ __( 'Production' ) }</SitesProductionBadge>;
 					}
 
-					if ( hasEnvironmentPermission && isStagingStatusFinished ) {
-						return <SiteEnvironmentSwitcher onChange={ changeSitePreviewPane } site={ site } />;
+					if (
+						supportsEnvironmentSwitching &&
+						hasEnvironmentPermission &&
+						isStagingStatusFinished
+					) {
+						return (
+							<SiteEnvironmentSwitcher
+								onChange={ changeSitePreviewPane }
+								site={ siteWithStagingIds }
+							/>
+						);
 					}
 				},
 			} }

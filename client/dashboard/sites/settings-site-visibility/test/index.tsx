@@ -1,29 +1,17 @@
 /**
  * @jest-environment jsdom
  */
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { RouterProvider, createRouter, createRootRoute } from '@tanstack/react-router';
-import { render as testingLibraryRender, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { render } from '../../../test-utils';
 import SiteVisibilitySettings from '../index';
-
-function render( ui: React.ReactElement ) {
-	const queryClient = new QueryClient();
-	const router = createRouter( {
-		routeTree: createRootRoute( { component: () => ui } ),
-	} );
-	return testingLibraryRender(
-		<QueryClientProvider client={ queryClient }>
-			<RouterProvider router={ router } context={ { config: { basePath: '/' } } } />
-		</QueryClientProvider>
-	);
-}
 
 interface TestSiteOptions {
 	blog_public: 0 | 1 | -1;
 	wpcom_public_coming_soon: 0 | 1;
 	wpcom_data_sharing_opt_out: boolean;
+	is_wpcom_staging_site?: boolean;
 	domains?: string[];
 	primary_domain?: string;
 }
@@ -38,6 +26,7 @@ function mockTestSite( options: TestSiteOptions ) {
 		blog_public,
 		wpcom_public_coming_soon,
 		wpcom_data_sharing_opt_out,
+		is_wpcom_staging_site,
 		domains = [ siteSlug ],
 		primary_domain = options.domains?.[ 0 ] || siteSlug,
 	} = options;
@@ -56,6 +45,7 @@ function mockTestSite( options: TestSiteOptions ) {
 		ID: siteId,
 		slug: primary_domain,
 		launch_status: 'launched',
+		is_wpcom_staging_site,
 	};
 
 	const settings = {
@@ -446,6 +436,32 @@ describe( '<SiteVisibilitySettings>', () => {
 				'href',
 				expect.stringMatching( /^\/domains\/manage\/[^/]+.wpcomstaging.com/ )
 			);
+		} );
+
+		test( 'staging site warning shows no domain management buttons', async () => {
+			mockTestSite( {
+				blog_public: 1,
+				wpcom_public_coming_soon: 0,
+				wpcom_data_sharing_opt_out: false,
+				is_wpcom_staging_site: true,
+				domains: [ 'staging-site.wpcomstaging.com' ],
+				primary_domain: 'staging-site.wpcomstaging.com',
+			} );
+
+			render( <SiteVisibilitySettings siteSlug="staging-site.wpcomstaging.com" /> );
+
+			await waitFor( () => {
+				expect( screen.getByRole( 'radio', { name: 'Public' } ) ).toBeChecked();
+				expect(
+					screen.getByText( /Staging sites are intended for testing purposes/ )
+				).toBeInTheDocument();
+			} );
+
+			const domainButton = screen.queryByRole( 'link', {
+				name: /domain/,
+			} );
+
+			expect( domainButton ).not.toBeInTheDocument();
 		} );
 
 		test( 'checkboxes disabled for wpcomstaging sites', async () => {

@@ -183,6 +183,7 @@ class Document extends Component {
 										app={ app }
 										sectionName={ sectionName }
 										isWCCOM={ isWCCOM }
+										isOneTapAuth={ !! query?.oneTapAuth }
 										showStepContainerV2Loader={ showStepContainerV2Loader }
 									/>
 								</div>
@@ -289,12 +290,21 @@ class Document extends Component {
 		);
 	}
 }
-function LoadingPlaceholder( { app, sectionName, isWCCOM, showStepContainerV2Loader } ) {
+function LoadingPlaceholder( {
+	app,
+	sectionName,
+	isWCCOM,
+	isOneTapAuth,
+	showStepContainerV2Loader,
+} ) {
 	const shouldNotShowLoadingLogo =
-		sectionName === 'checkout' || sectionName === 'stepper' || sectionName === 'signup';
+		sectionName === 'checkout' ||
+		sectionName === 'stepper' ||
+		sectionName === 'signup' ||
+		isOneTapAuth;
 
 	if ( shouldNotShowLoadingLogo ) {
-		return showStepContainerV2Loader ? (
+		return showStepContainerV2Loader || isOneTapAuth ? (
 			<Step.Loading />
 		) : (
 			<Loading className="wpcom-loading__boot" />

@@ -6,6 +6,7 @@ import {
 	CardBody,
 	Icon,
 } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import { info, published, error, closeSmall } from '@wordpress/icons';
 import clsx from 'clsx';
 import { forwardRef } from 'react';
@@ -70,6 +71,7 @@ function UnforwardedNotice(
 					</VStack>
 					{ !! onClose && (
 						<Button
+							aria-label={ __( 'Dismiss' ) }
 							className="dashboard-notice__close-button"
 							icon={ closeSmall }
 							onClick={ onClose }

@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import {
 	PLAN_JETPACK_BUSINESS,
@@ -33,6 +34,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { startAuthorizeStep } from 'calypso/state/jetpack-connect/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors';
 import { hideMasterbar, showMasterbar } from 'calypso/state/ui/actions';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -399,6 +401,29 @@ export function signupForm( context, next ) {
 	if ( retrieveMobileRedirect() && ! isLoggedIn ) {
 		// Force login for mobile app flow. App will intercept this request and prompt native login.
 		return window.location.replace( login( { redirectTo: context.path } ) );
+	}
+
+	// For WooJPC and WooDNA flows, redirect signup to Start/account and return here afterwards.
+	const isWooFlow = isWooJPCFlow( context.store.getState() );
+
+	if ( isWooFlow ) {
+		// Track the redirect to Start/account instead of rendering the inline signup form.
+		recordTracksEvent( 'calypso_jpc_signup_redirect_to_start', {
+			from,
+			site: Number( context.query?.client_id ),
+		} );
+
+		const authorizeUrlWithApproval = addQueryArgs( { auth_approved: true }, context.path );
+		const { woodna_service_name, woodna_help_url, plugin_name } = context.query || {};
+		const urlQueryArgs = {
+			redirect_to: authorizeUrlWithApproval,
+			from,
+			...( woodna_service_name ? { woodna_service_name } : {} ),
+			...( woodna_help_url ? { woodna_help_url } : {} ),
+			...( plugin_name ? { plugin_name } : {} ),
+		};
+
+		return page( addQueryArgs( urlQueryArgs, '/start/account' ) );
 	}
 
 	const transformedQuery = parseAuthorizationQuery( query );

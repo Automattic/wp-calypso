@@ -9,12 +9,23 @@ boot( {
 	Logo,
 	supports: {
 		overview: true,
-		sites: true,
+		sites: {
+			deployments: false,
+			performance: true,
+			monitoring: true,
+			logs: true,
+			backups: true,
+			domains: false,
+			emails: false,
+		},
 		domains: false,
 		emails: false,
 		reader: false,
 		help: true,
 		notifications: false,
-		me: true,
+		me: {
+			privacy: false,
+			apps: false,
+		},
 	},
 } );

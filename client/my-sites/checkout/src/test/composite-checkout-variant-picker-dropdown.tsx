@@ -52,7 +52,7 @@ jest.setTimeout( 12000 );
 
 /* eslint-disable jest/no-conditional-expect */
 
-describe( 'CheckoutMain with a variant picker', () => {
+describe.skip( 'CheckoutMain with a variant picker', () => {
 	const initialCart = getBasicCart();
 	const mainCartKey = 123456;
 

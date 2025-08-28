@@ -6,7 +6,14 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import { addQueryArgs } from 'calypso/lib/url';
 import DiscoverNavigation from 'calypso/reader/discover/components/navigation';
 import DiscoverTagsNavigation from 'calypso/reader/discover/components/tags-navigation';
-import { getSelectedTabTitle, FIRST_POSTS_TAB, ADD_NEW_TAB, REDDIT_TAB } from '../../helper';
+import {
+	getSelectedTabTitle,
+	FIRST_POSTS_TAB,
+	ADD_NEW_TAB,
+	REDDIT_TAB,
+	RECOMMENDED_TAB,
+	FRESHLY_PRESSED_TAB,
+} from '../../helper';
 
 export interface DiscoverHeaderAndNavigationProps {
 	selectedTab: string;
@@ -41,11 +48,15 @@ export default function DiscoverHeaderAndNavigation(
 		case REDDIT_TAB:
 			subHeaderText = translate( 'Follow your favorite subreddits inside the Reader.' );
 			break;
-		default:
+		case RECOMMENDED_TAB:
 			subHeaderText = translate( 'Explore %s blogs that inspire, educate, and entertain.', {
 				args: [ tabTitle ],
 				comment: '%s is the type of blog being explored e.g. food, art, technology etc.',
 			} );
+			break;
+		case FRESHLY_PRESSED_TAB:
+			subHeaderText = translate( "Our team's favorite blog posts." );
+			break;
 	}
 
 	return (

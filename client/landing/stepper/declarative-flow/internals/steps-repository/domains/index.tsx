@@ -21,7 +21,7 @@ import {
 	domainMapping,
 	domainTransfer,
 } from 'calypso/lib/cart-values/cart-items';
-import { useDomainSearchV2 } from 'calypso/lib/domains/use-domain-search-v2';
+import { useIsDomainSearchV2Enabled } from 'calypso/lib/domains/use-domain-search-v2';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
 import {
 	composeAnalytics,
@@ -38,7 +38,7 @@ import { ONBOARD_STORE } from '../../../../stores';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import { DomainFormControl } from './domain-form-control';
 import type { Step } from '../../types';
-import type { DomainSuggestion } from '@automattic/data-stores';
+import type { DomainSuggestion } from '@automattic/data';
 import './style.scss';
 
 const DomainsStep: Step< {
@@ -54,6 +54,7 @@ const DomainsStep: Step< {
 		  }
 		| undefined;
 } > = function DomainsStep( { navigation, flow } ) {
+	const [ , shouldUseDomainSearchV2 ] = useIsDomainSearchV2Enabled( flow );
 	const { setHideFreePlan, setDomainCartItem, setDomain } = useDispatch( ONBOARD_STORE );
 	const { __ } = useI18n();
 
@@ -88,9 +89,11 @@ const DomainsStep: Step< {
 			section,
 			type: domainType,
 		};
+		// @ts-expect-error - isRecommended is injected by register-domain-step/utility.js
 		if ( suggestion.isRecommended ) {
 			tracksObjects.label = 'recommended';
 		}
+		// @ts-expect-error - isRecommended is injected by register-domain-step/utility.js
 		if ( suggestion.isBestAlternative ) {
 			tracksObjects.label = 'best-alternative';
 		}
@@ -130,6 +133,7 @@ const DomainsStep: Step< {
 			const domainCartItem = domainRegistration( {
 				domain: suggestion.domain_name,
 				productSlug: suggestion.product_slug || '',
+				extra: { flow_name: flow },
 			} );
 			dispatch( submitDomainStepSelection( suggestion, getAnalyticsSection() ) );
 
@@ -194,18 +198,18 @@ const DomainsStep: Step< {
 				);
 			case COPY_SITE_FLOW:
 				return __( 'Make your copied site unique with a custom domain all of its own.' );
-			case DOMAIN_UPSELL_FLOW:
-				return __( 'Enter some descriptive keywords to get started.' );
 			case HUNDRED_YEAR_PLAN_FLOW:
 			case HUNDRED_YEAR_DOMAIN_FLOW:
 				return __( 'Secure your 100-Year domain and start building your legacy.' );
 			default:
-				return createInterpolateElement(
-					__(
-						'Help your site stand out with a custom domain. Not sure yet? <span>Decide later</span>.'
-					),
-					decideLaterComponent
-				);
+				return shouldUseDomainSearchV2
+					? __( 'Make it yours with a .com, .blog, or one of 350+ domain options.' )
+					: createInterpolateElement(
+							__(
+								'Help your site stand out with a custom domain. Not sure yet? <span>Decide later</span>.'
+							),
+							decideLaterComponent
+					  );
 		}
 	};
 
@@ -220,6 +224,10 @@ const DomainsStep: Step< {
 
 		if ( [ HUNDRED_YEAR_PLAN_FLOW, HUNDRED_YEAR_DOMAIN_FLOW ].includes( flow ) ) {
 			return __( 'Find the perfect domain' );
+		}
+
+		if ( shouldUseDomainSearchV2 ) {
+			return __( 'Claim your space on the web' );
 		}
 
 		return __( 'Choose a domain' );
@@ -361,7 +369,7 @@ const DomainsStep: Step< {
 };
 
 const StyleWrappedDomainsStep: typeof DomainsStep = ( props ) => {
-	const [ isLoading, shouldUseDomainSearchV2 ] = useDomainSearchV2( props.flow );
+	const [ isLoading, shouldUseDomainSearchV2 ] = useIsDomainSearchV2Enabled( props.flow );
 
 	if ( isLoading ) {
 		// TODO: Add a loading state to indicate that the experiment is loading.

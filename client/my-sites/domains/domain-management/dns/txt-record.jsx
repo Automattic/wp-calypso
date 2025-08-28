@@ -53,7 +53,7 @@ class TxtRecord extends Component {
 						value={ fieldValues.name }
 						suffix={ '.' + selectedDomainName }
 					/>
-					{ ! isNameValid && <FormInputValidation text={ translate( 'Invalid Name' ) } isError /> }
+					{ ! isNameValid && <FormInputValidation text={ translate( 'Invalid name' ) } isError /> }
 				</FormFieldset>
 
 				<FormFieldset>
@@ -67,7 +67,7 @@ class TxtRecord extends Component {
 						} ) }
 					/>
 					{ hasNonAsciiData && (
-						<FormInputValidation text={ translate( 'TXT Record has non-ASCII data' ) } isWarning />
+						<FormInputValidation text={ translate( 'TXT record has non-ASCII data' ) } isWarning />
 					) }
 					{ ! isDataValid && validationError && (
 						<FormInputValidation text={ validationError } isError />

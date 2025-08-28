@@ -9,7 +9,9 @@ const selectors = {
 	closeBlockInserterButton:
 		'button[aria-label="Close Block Inserter"], button[aria-label="Close block inserter"]',
 	blockSearchInput: `${ sidebarParentSelector } input[type="search"]`,
-	patternResultItem: ( name: string ) => `${ sidebarParentSelector } div[aria-label="${ name }"]`,
+	patternExactResultItem: ( name: string ) =>
+		`${ sidebarParentSelector } div[aria-label="${ name }"]`,
+	patternResultItem: ( name: string ) => `${ sidebarParentSelector } div[aria-label*="${ name }"]`,
 };
 
 /**
@@ -59,27 +61,34 @@ export class EditorSidebarBlockInserterComponent {
 	}
 
 	/**
-	 * Selects the maching result from the block inserter.
+	 * Selects the matching result from the block inserter.
 	 *
 	 * By default, this method considers only the Block-type results
 	 * (including Resuable blocks).
 	 * In order to select from Pattern-type results, set the `type`
 	 * optional flag in the parameter to `'pattern'`.
 	 *
-	 * Where mulltiple matches exist (eg. due to partial matching), the first result will be chosen.
+	 * Where multiple matches exist (eg. due to partial matching), the first result will be chosen.
 	 */
 	async selectBlockInserterResult(
 		name: string,
 		{
 			type = 'block',
 			blockFallBackName = '',
-		}: { type?: 'block' | 'pattern'; blockFallBackName?: string } = {}
+			exactMatch = true,
+		}: { type?: 'block' | 'pattern'; blockFallBackName?: string; exactMatch?: boolean } = {}
 	): Promise< Locator > {
 		const editorParent = await this.editor.parent();
 		let locator;
 
 		if ( type === 'pattern' ) {
-			locator = editorParent.locator( selectors.patternResultItem( name ) ).first();
+			locator = editorParent
+				.locator(
+					exactMatch
+						? selectors.patternExactResultItem( name )
+						: selectors.patternResultItem( name )
+				)
+				.first();
 		} else {
 			const optionName = blockFallBackName
 				? new RegExp( `(${ name }|${ blockFallBackName })` )

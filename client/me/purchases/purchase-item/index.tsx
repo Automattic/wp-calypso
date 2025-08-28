@@ -310,13 +310,11 @@ export function PurchaseItemStatus( {
 	purchase,
 	translate,
 	moment,
-	isJetpack,
 	isDisconnectedSite,
 }: {
 	purchase: Purchases.Purchase;
 	translate: LocalizeProps[ 'translate' ];
 	moment: ReturnType< typeof useLocalizedMoment >;
-	isJetpack?: boolean;
 	isDisconnectedSite?: boolean;
 } ) {
 	const expiry = moment( purchase.expiryDate );
@@ -380,7 +378,7 @@ export function PurchaseItemStatus( {
 			);
 		}
 
-		if ( isJetpack ) {
+		if ( purchase.isJetpackPlanOrProduct ) {
 			return (
 				<span className="purchase-item__is-error">
 					{ translate( 'Disconnected from WordPress.com' ) }
@@ -756,7 +754,6 @@ class PurchaseItem extends Component<
 			iconUrl,
 			isBackupMethodAvailable,
 			moment,
-			isJetpack,
 			isDisconnectedSite,
 			transferredOwnershipPurchases = [],
 		} = this.props;
@@ -802,7 +799,6 @@ class PurchaseItem extends Component<
 						purchase={ purchase }
 						translate={ translate }
 						moment={ moment }
-						isJetpack={ isJetpack }
 						isDisconnectedSite={ isDisconnectedSite }
 					/>
 				</div>
@@ -836,7 +832,6 @@ class PurchaseItem extends Component<
 			getManagePurchaseUrlFor,
 			purchase,
 			slug,
-			isJetpack,
 			transferredOwnershipPurchases = [],
 		} = this.props;
 
@@ -856,7 +851,11 @@ class PurchaseItem extends Component<
 			// A "disconnected" Jetpack site's purchases may be managed.
 			// A "disconnected" WordPress.com site may *NOT* be managed (the user has been removed), unless it is a
 			// WPCOM generated temporary site, which is created during the siteless checkout flow. (currently Jetpack & Akismet can have siteless purchases).
-			if ( ! isDisconnectedSite || isJetpack || isTemporarySitePurchase( purchase ) ) {
+			if (
+				! isDisconnectedSite ||
+				purchase.isJetpackPlanOrProduct ||
+				isTemporarySitePurchase( purchase )
+			) {
 				onClick = () => {
 					window.scrollTo( 0, 0 );
 				};

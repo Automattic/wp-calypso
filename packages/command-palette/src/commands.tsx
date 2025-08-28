@@ -676,12 +676,7 @@ export function useCommands() {
 						__i18n_text_domain__
 					),
 				].join( KEYWORD_SEPARATOR ),
-				callback: ( params ) =>
-					commandNavigation(
-						siteUsesWpAdminInterface( params.site )
-							? '/wp-admin/admin.php?page=stats'
-							: '/stats/:site'
-					)( params ),
+				callback: commandNavigation( '/wp-admin/admin.php?page=stats' ),
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to open Jetpack Stats', __i18n_text_domain__ ),
 				icon: statsIcon,

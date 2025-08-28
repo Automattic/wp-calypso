@@ -159,7 +159,7 @@ export class RewindCredentialsForm extends Component {
 					</div>
 				) }
 				<FormFieldset>
-					<FormLabel htmlFor="protocol-type">{ translate( 'Credential Type' ) }</FormLabel>
+					<FormLabel htmlFor="protocol-type">{ translate( 'Credential type' ) }</FormLabel>
 					<FormSelect
 						name="protocol"
 						id="protocol-type"
@@ -175,7 +175,7 @@ export class RewindCredentialsForm extends Component {
 				<div className="rewind-credentials-form__row">
 					<FormFieldset className="rewind-credentials-form__server-address">
 						<FormLabel htmlFor="host-address">
-							{ labels.host || translate( 'Server Address' ) }
+							{ labels.host || translate( 'Server address' ) }
 						</FormLabel>
 						<FormTextInput
 							name="host"
@@ -191,7 +191,7 @@ export class RewindCredentialsForm extends Component {
 
 					<FormFieldset className="rewind-credentials-form__port-number">
 						<FormLabel htmlFor="server-port">
-							{ labels.port || translate( 'Port Number' ) }
+							{ labels.port || translate( 'Port number' ) }
 						</FormLabel>
 						<FormTextInput
 							name="port"

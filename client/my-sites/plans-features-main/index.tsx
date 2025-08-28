@@ -29,6 +29,7 @@ import {
 	useGridPlansForComparisonGrid,
 	useGridPlanForSpotlight,
 	usePlanBillingPeriod,
+	useSummerSpecialStatus,
 } from '@automattic/plans-grid-next';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import styled from '@emotion/styled';
@@ -46,6 +47,7 @@ import clsx from 'clsx';
 import { localize, useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import { useSelector } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
@@ -426,6 +428,7 @@ const PlansFeaturesMain = ( {
 		useFreeTrialPlanSlugs,
 		isDomainOnlySite,
 		reflectStorageSelectionInPlanPrices: true,
+		isInSignup,
 	} );
 
 	// we need only the visible ones for features grid (these should extend into plans-ui data store selectors)
@@ -470,24 +473,21 @@ const PlansFeaturesMain = ( {
 	);
 
 	const [ isStreamlinedPriceExperimentLoading, streamlinedPriceExperimentAssignment ] =
-		useStreamlinedPriceExperiment();
+		useStreamlinedPriceExperiment( flowName );
 
 	const showStreamlinedPriceExperiment =
 		isInSignup && isStreamlinedPricePlansTreatment( streamlinedPriceExperimentAssignment );
 
-	let hidePlanSelector = true;
+	let hidePlanSelector = false;
 	let enableTermSavingsPriceDisplay = true;
 	// In the "purchase a plan and free domain" flow we do not want to show
 	// monthly plans because monthly plans do not come with a free domain.
 	// We are also hiding the plan interval selector and showing terms savings prices
 	// for the compatible streamlined price experiment variations.
-	if (
-		redirectToAddDomainFlow === undefined &&
-		! hidePlanTypeSelector &&
-		! isStreamlinedPriceExperimentLoading &&
-		! showStreamlinedPriceExperiment
-	) {
-		hidePlanSelector = false;
+	if ( redirectToAddDomainFlow !== undefined || hidePlanTypeSelector ) {
+		hidePlanSelector = true;
+	}
+	if ( ! isStreamlinedPriceExperimentLoading && ! showStreamlinedPriceExperiment ) {
 		enableTermSavingsPriceDisplay = false;
 	}
 
@@ -699,6 +699,9 @@ const PlansFeaturesMain = ( {
 		);
 	}, [ gridPlansForComparisonGrid ] );
 
+	// Get summer special status
+	const isSummerSpecial = useSummerSpecialStatus( { isInSignup, siteId } );
+
 	// If we have a Woo Express plan, use the Woo Express feature groups, otherwise use the regular feature groups.
 	const featureGroupMapForComparisonGrid = hasWooExpressFeatures
 		? getWooExpressFeaturesGroupedForComparisonGrid()
@@ -708,9 +711,13 @@ const PlansFeaturesMain = ( {
 	if ( hasWooExpressFeatures ) {
 		featureGroupMapForFeaturesGrid = getWooExpressFeaturesGroupedForFeaturesGrid();
 	} else if ( showSimplifiedFeatures ) {
-		featureGroupMapForFeaturesGrid = getSimplifiedPlanFeaturesGroupedForFeaturesGrid();
+		featureGroupMapForFeaturesGrid = getSimplifiedPlanFeaturesGroupedForFeaturesGrid( {
+			isSummerSpecial,
+		} );
 	} else {
-		featureGroupMapForFeaturesGrid = getPlanFeaturesGroupedForFeaturesGrid();
+		featureGroupMapForFeaturesGrid = getPlanFeaturesGroupedForFeaturesGrid( {
+			isSummerSpecial,
+		} );
 	}
 
 	const getComparisonGridToggleLabel = () => {
@@ -964,6 +971,14 @@ const PlansFeaturesMain = ( {
 					</>
 				) }
 			</div>
+			{ config.isEnabled( 'summer-special-2025' ) && (
+				<AsyncLoad
+					require="calypso/blocks/summer-special-banner"
+					placeholder={ null }
+					visiblePlans={ gridPlansForFeaturesGrid }
+					isFixed
+				/>
+			) }
 			{ isPlansGridReady && renderSiblingWhenLoaded?.() }
 		</>
 	);

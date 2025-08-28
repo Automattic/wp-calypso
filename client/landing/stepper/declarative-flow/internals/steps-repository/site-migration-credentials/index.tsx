@@ -149,7 +149,9 @@ const SiteMigrationCredentials: StepType< {
 				columnWidth={ 5 }
 				topBar={
 					<Step.TopBar
-						leftElement={ <Step.BackButton onClick={ navigation.goBack } /> }
+						leftElement={
+							navigation?.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : null
+						}
 						rightElement={ skipButton }
 					/>
 				}

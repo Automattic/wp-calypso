@@ -36,6 +36,7 @@ module.exports = {
 							'@automattic/components/*',
 							'!@automattic/components/src',
 							'@automattic/components/src/*',
+							'!@automattic/data',
 							'!@automattic/components/src/circular-progress-bar',
 							'!@automattic/components/src/summary-button',
 							'!@automattic/components/src/breadcrumbs',
@@ -44,13 +45,39 @@ module.exports = {
 							'!@automattic/calypso-analytics',
 							'!@automattic/domains-table',
 							'!@automattic/domains-table/src/utils/*',
+							'!@automattic/help-center',
 							'!@automattic/number-formatters',
 							'!@automattic/ui',
+							'!@automattic/urls',
 							'!@automattic/viewport',
 							// Please do not add exceptions unless agreed on
 							// with the #architecture group.
 						],
 						message: 'Importing from @automattic/ is not allowed in the dashboard folder.',
+					},
+					{
+						group: [ 'lodash' ],
+						message:
+							'Lodash is not allowed in the dashboard folder. Use native JavaScript methods instead.',
+					},
+				],
+				paths: [
+					{
+						name: '@automattic/components',
+						message:
+							'Do not import from the barrel file. Use specific imports like @automattic/components/src/summary-button instead. This prevents the entire package being bundled into the dashboard.',
+					},
+					{
+						name: 'i18n-calypso',
+						message: 'Please use the @wordpress/i18n package instead of the i18n-calypso package.',
+					},
+					{
+						name: 'lodash',
+						message: 'Please use native JavaScript instead of lodash.',
+					},
+					{
+						name: 'moment',
+						message: 'Please use date-fns instead of moment.',
 					},
 				],
 			},

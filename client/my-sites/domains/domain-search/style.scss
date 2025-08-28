@@ -2,6 +2,15 @@
 // domain search
 
 .domain-search-legacy--my-sites {
+	&:not(.is-domain-plan-package-flow) .site-domains-add-page {
+		.domains__domain-cart-foldable-card {
+			@include break-medium {
+				width: calc( 100% - var( --sidebar-width-min ) );
+				left: var( --sidebar-width-min );
+			}
+		}
+	}
+
 	.site-domains-add-page {
 		.already-own-a-domain {
 			display: none;
@@ -195,11 +204,6 @@
 			z-index: 99;
 			padding-bottom: 0 !important;
 			box-shadow: 0 -3px 10px 0 rgba( 0, 0, 0, 0.12 );
-
-			@include break-medium {
-				width: calc( 100% - var( --sidebar-width-min ) );
-				left: var( --sidebar-width-min );
-			}
 
 			.foldable-card__main {
 				max-width: 100%;

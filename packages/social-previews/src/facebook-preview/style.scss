@@ -1,9 +1,9 @@
-@import "./variables";
-@import "../shared";
+@import './variables';
+@import '../shared';
 
 .facebook-preview__post {
 	overflow-y: hidden;
-	max-width: clamp(#{$facebook-preview-min-width}, 100%, #{$facebook-preview-max-width});
+	max-width: clamp( #{$facebook-preview-min-width}, 100%, #{$facebook-preview-max-width} );
 	margin-inline: auto;
 
 	display: flex;
@@ -186,14 +186,13 @@
 	border-radius: 50%;
 
 	i {
-		filter: invert(8%);
+		filter: invert( 8% );
 	}
 }
 
 .facebook-preview__window {
 	margin: 0 0.75rem;
 
-	/* stylelint-disable-next-line scales/radii */
 	border-radius: 16px;
 	border: $facebook-preview-body-border;
 

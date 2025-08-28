@@ -197,7 +197,7 @@ const streamApis = {
 	recent: {
 		path: () => '/read/streams/following',
 		dateProperty: 'date',
-		apiNamespace: 'wpcom/v2',
+		apiNamespace: () => 'wpcom/v2',
 		query: ( extras, { streamKey } ) => {
 			const feedId = streamKeySuffix( streamKey );
 			const queryParams = { ...extras };
@@ -220,6 +220,7 @@ const streamApis = {
 		path: ( { streamKey } ) => `/read/feed/${ streamKeySuffix( streamKey ) }/posts`,
 		dateProperty: 'date',
 	},
+
 	discover: {
 		path: ( { streamKey } ) => {
 			if ( streamKeySuffix( streamKey ).includes( 'recommended' ) ) {
@@ -228,12 +229,18 @@ const streamApis = {
 				return '/read/tags/posts';
 			} else if ( streamKeySuffix( streamKey ).includes( 'firstposts' ) ) {
 				return '/read/streams/first-posts';
+			} else if ( streamKeySuffix( streamKey ).includes( 'freshly-pressed' ) ) {
+				return '/freshly-pressed';
 			}
+
 			return `/read/streams/discover?tags=${ streamKeySuffix( streamKey ) }`;
 		},
 		dateProperty: 'date',
-		query: ( extras, { streamKey } ) =>
-			getQueryString( {
+		query: ( extras, { streamKey } ) => {
+			if ( streamKeySuffix( streamKey ).includes( 'freshly-pressed' ) ) {
+				return { ...extras };
+			}
+			return getQueryString( {
 				...extras,
 				// Do not supply an empty fallback as null is good info for getDiscoverStreamTags
 				tags: getTagsFromStreamKey( streamKey ),
@@ -242,8 +249,10 @@ const streamApis = {
 				age_based_decay: 0.5,
 				// Default order is by date (latest) unless we're on the recommended tab which shows popular instead.
 				orderBy: streamKeySuffix( streamKey ).includes( 'recommended' ) ? 'popular' : 'date',
-			} ),
-		apiNamespace: 'wpcom/v2',
+			} );
+		},
+		apiNamespace: ( { streamKey } ) =>
+			streamKeySuffix( streamKey ).includes( 'freshly-pressed' ) ? null : 'wpcom/v2',
 	},
 	site: {
 		path: ( { streamKey } ) => `/read/sites/${ streamKeySuffix( streamKey ) }/posts`,
@@ -315,12 +324,12 @@ const streamApis = {
 	},
 	tag: {
 		path: ( { streamKey } ) => `/read/tags/${ streamKeySuffix( streamKey ) }/posts`,
-		apiNamespace: 'wpcom/v2',
+		apiNamespace: () => 'wpcom/v2',
 		dateProperty: 'date',
 	},
 	tag_popular: {
 		path: ( { streamKey } ) => `/read/streams/tag/${ streamKeySuffix( streamKey ) }`,
-		apiNamespace: 'wpcom/v2',
+		apiNamespace: () => 'wpcom/v2',
 		query: ( extras, { streamKey } ) =>
 			getQueryString( {
 				...extras,
@@ -396,7 +405,7 @@ export function requestPage( action ) {
 		method: 'GET',
 		path: path( { ...action.payload } ),
 		apiVersion,
-		apiNamespace: api.apiNamespace ?? null,
+		apiNamespace: api.apiNamespace?.( action.payload ) ?? null,
 		query: isPoll
 			? pollQuery( [], commonQueryParams )
 			: query( { ...commonQueryParams, ...pageHandle, number, lang, page }, action.payload ),

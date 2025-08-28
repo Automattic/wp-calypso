@@ -13,8 +13,8 @@ import {
 	UserSignupPage,
 	NewUserResponse,
 } from '@automattic/calypso-e2e';
-import { Page, Browser } from 'playwright';
 import { apiCloseAccount } from '../shared';
+import type { Page, Browser, BrowserContext } from 'playwright';
 
 declare const browser: Browser;
 
@@ -30,6 +30,7 @@ describe( 'Dashboard: Site Visibility Settings', function () {
 	let dashboardPage: DashboardPage;
 	let restAPIClient: RestAPIClient;
 	let site: NewSiteResponse;
+	let incognitoContext: BrowserContext;
 
 	const testUser = DataHelper.getNewTestUser( {
 		usernamePrefix: 'sitevisibility',
@@ -38,6 +39,7 @@ describe( 'Dashboard: Site Visibility Settings', function () {
 	const siteName = DataHelper.getBlogName();
 
 	beforeAll( async function () {
+		incognitoContext = await browser.newContext();
 		page = await browser.newPage();
 
 		// Using a newly created user avoid having too many sites.
@@ -66,6 +68,10 @@ describe( 'Dashboard: Site Visibility Settings', function () {
 	} );
 
 	afterAll( async function () {
+		if ( incognitoContext ) {
+			await incognitoContext.close();
+		}
+
 		if ( ! newUserDetails ) {
 			return;
 		}
@@ -87,7 +93,7 @@ describe( 'Dashboard: Site Visibility Settings', function () {
 		await saveChanges( page );
 
 		// Open the site in a new incognito browser context to verify it's private
-		const incognitoPage = await browser.newPage();
+		const incognitoPage = await incognitoContext.newPage();
 		await incognitoPage.goto( site.blog_details.url );
 		const pageContent = await incognitoPage.content();
 		expect( pageContent ).toContain( 'Private Site' );
@@ -99,7 +105,7 @@ describe( 'Dashboard: Site Visibility Settings', function () {
 		await saveChanges( page );
 
 		// Open the site in a new incognito browser context to verify it's coming soon
-		const incognitoPage = await browser.newPage();
+		const incognitoPage = await incognitoContext.newPage();
 		await incognitoPage.goto( site.blog_details.url );
 		const pageContent = await incognitoPage.content();
 		expect( pageContent ).toContain( 'coming soon' );
@@ -111,7 +117,7 @@ describe( 'Dashboard: Site Visibility Settings', function () {
 		await saveChanges( page );
 
 		// Open the site in a new incognito browser context to verify it's public
-		const incognitoPage = await browser.newPage();
+		const incognitoPage = await incognitoContext.newPage();
 		await incognitoPage.goto( site.blog_details.url );
 		const pageContent = await incognitoPage.content();
 		expect( pageContent ).not.toContain( 'Private Site' );

@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { external, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useRef, useState } from 'react';
@@ -31,15 +30,11 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 			path: `${ userProfileUrlWithUsername }/lists`,
 			selected: view === 'lists',
 		},
-		...( isEnabled( 'reader/recommended-blogs-list' )
-			? [
-					{
-						label: translate( 'Recommended Blogs' ),
-						path: `${ userProfileUrlWithUsername }/recommended-blogs`,
-						selected: view === 'recommended-blogs',
-					},
-			  ]
-			: [] ),
+		{
+			label: translate( 'Recommended Blogs' ),
+			path: `${ userProfileUrlWithUsername }/recommended-blogs`,
+			selected: view === 'recommended-blogs',
+		},
 	];
 
 	const selectedTab = navigationItems.find( ( item ) => item.selected )?.label || '';

@@ -75,7 +75,7 @@ export const useCommandsCalypso = (): Command[] => {
 				null,
 				{
 					button: translate( 'Manage Hosting Configuration' ),
-					onClick: () => navigate( `/hosting-config/${ siteSlug }#sftp-credentials` ),
+					onClick: () => navigate( `/sites/${ siteSlug }/settings/sftp-ssh` ),
 				}
 			);
 			return;
@@ -107,7 +107,7 @@ export const useCommandsCalypso = (): Command[] => {
 				null,
 				{
 					button: translate( 'Manage Hosting Configuration' ),
-					onClick: () => navigate( `/hosting-config/${ siteSlug }#sftp-credentials` ),
+					onClick: () => navigate( `/sites/${ siteSlug }/settings/sftp-ssh` ),
 				}
 			);
 			return;

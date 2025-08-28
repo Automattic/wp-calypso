@@ -7,57 +7,84 @@ import {
 	__experimentalDivider as Divider,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
-	__experimentalText as Text,
 	__experimentalHeading as Heading,
 	Icon,
-	ProgressBar,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useAnalytics } from '../../app/analytics';
 import ComponentViewTracker from '../../components/component-view-tracker';
+import { Text } from '../../components/text';
+import { TextSkeleton } from '../../components/text-skeleton';
 import type { ComponentProps, ReactElement, ReactNode } from 'react';
 import './style.scss';
 
 export interface OverviewCardProps {
-	title: string;
-	description?: string;
-	link?: string;
-	externalLink?: string;
-	heading?: ReactNode;
 	icon?: ReactElement;
+	title: string;
+	heading?: ReactNode;
+	description?: ReactNode;
 	progress?: {
 		value: number;
 		max: number;
 		label: string;
 		variant?: ComponentProps< typeof CircularProgressBar >[ 'variant' ];
 	};
+	intent?: 'upsell' | 'success' | 'warning' | 'error';
+	disabled?: boolean;
+	isLoading?: boolean;
+	link?: string;
+	externalLink?: string;
 	tracksId?: string;
-	variant?: 'upsell' | 'disabled' | 'loading' | 'success' | 'error';
 	bottom?: ReactNode;
 	onClick?: () => void;
 }
 
 export default function OverviewCard( {
-	description,
-	externalLink,
-	heading,
 	icon,
-	link,
-	progress,
 	title,
+	heading,
+	description,
+	progress,
+	intent,
+	disabled,
+	isLoading,
+	link,
+	externalLink,
 	tracksId,
-	variant,
 	bottom,
 	onClick,
 }: OverviewCardProps ) {
 	const { recordTracksEvent } = useAnalytics();
-	const isDisabled = variant === 'disabled';
+
+	const renderHeading = () => {
+		if ( isLoading ) {
+			return <TextSkeleton length={ 10 } />;
+		}
+		if ( heading ) {
+			return heading;
+		}
+		return <>&nbsp;</>;
+	};
+
+	const renderDescription = () => {
+		if ( isLoading ) {
+			return <TextSkeleton length={ 20 } />;
+		}
+		if ( description ) {
+			return description;
+		}
+		return <>&nbsp;</>;
+	};
 
 	const topContent = (
-		<HStack justify="space-between" className="dashboard-overview-card__content">
-			<VStack spacing={ 4 } style={ { flexGrow: 1, flexShrink: 0 } }>
+		<HStack
+			className="dashboard-overview-card__content"
+			justify="space-between"
+			alignment="flex-start"
+		>
+			<VStack spacing={ 4 } style={ { flexGrow: 1 } }>
 				<HStack justify="space-between">
 					<HStack spacing={ 2 } alignment="center" expanded={ false }>
 						{ icon && <Icon className="dashboard-overview-card__icon" icon={ icon } /> }
@@ -75,7 +102,7 @@ export default function OverviewCard( {
 					{ link && ! progress && (
 						<Icon className="dashboard-overview-card__link-icon" icon={ chevronRight } />
 					) }
-					{ externalLink && (
+					{ externalLink && ! progress && (
 						<span
 							className="dashboard-overview-card__link-icon components-external-link__icon"
 							aria-label={
@@ -92,24 +119,21 @@ export default function OverviewCard( {
 						<Heading
 							level={ 2 }
 							size={ 20 }
-							variant={ isDisabled ? 'muted' : undefined }
+							variant={ disabled ? 'muted' : undefined }
 							weight={ 500 }
 						>
-							{ heading }
+							{ renderHeading() }
 						</Heading>
-						{ description && (
-							<Text
-								className="dashboard-overview-card__description"
-								variant="muted"
-								lineHeight="16px"
-								size={ 12 }
-							>
-								{ description }
-							</Text>
-						) }
+						<Text
+							intent={ intent === 'warning' || intent === 'error' ? intent : undefined }
+							variant={ intent === 'warning' || intent === 'error' ? undefined : 'muted' }
+							lineHeight="16px"
+							size={ 12 }
+						>
+							{ renderDescription() }
+						</Text>
 					</VStack>
 				</HStack>
-				{ variant === 'loading' && <OverviewCardProgressBar /> }
 			</VStack>
 			{ progress && (
 				<CircularProgressBar
@@ -133,7 +157,7 @@ export default function OverviewCard( {
 		onClick?.();
 
 		if ( tracksId ) {
-			if ( variant === 'upsell' ) {
+			if ( intent === 'upsell' ) {
 				recordTracksEvent( 'calypso_dashboard_upsell_click', {
 					feature: tracksId,
 					type: 'card',
@@ -141,7 +165,7 @@ export default function OverviewCard( {
 			} else {
 				recordTracksEvent( 'calypso_dashboard_overview_card_click', {
 					type: tracksId,
-					variant,
+					intent,
 				} );
 			}
 		}
@@ -187,16 +211,14 @@ export default function OverviewCard( {
 	return (
 		<Card
 			className={ clsx( 'dashboard-overview-card', {
-				[ `dashboard-overview-card--${ variant }` ]: variant,
+				[ `dashboard-overview-card--${ intent }` ]: intent,
+				'dashboard-overview-card--disabled': isLoading || disabled,
 				'dashboard-overview-card--has-bottom': bottom,
 			} ) }
-			style={ {
-				opacity: isDisabled ? 0.5 : 1,
-			} }
 		>
 			<CardBody>
 				{ tracksId &&
-					( variant === 'upsell' ? (
+					( intent === 'upsell' ? (
 						<ComponentViewTracker
 							eventName="calypso_dashboard_upsell_impression"
 							properties={ { feature: tracksId, type: 'card' } }
@@ -204,14 +226,19 @@ export default function OverviewCard( {
 					) : (
 						<ComponentViewTracker
 							eventName="calypso_dashboard_overview_card_impression"
-							properties={ { feature: tracksId, variant } }
+							properties={ { feature: tracksId, intent } }
 						/>
 					) ) }
 				{ renderContent() }
 				{ bottom && (
 					<>
 						<Divider style={ { color: 'var(--dashboard-header__divider-color)' } } />
-						<VStack spacing={ 2 } className="dashboard-overview-card__content">
+						<VStack
+							className="dashboard-overview-card__content"
+							spacing={ 2 }
+							justify="flex-start"
+							style={ { flexGrow: 1 } }
+						>
 							{ bottom }
 						</VStack>
 					</>
@@ -219,8 +246,4 @@ export default function OverviewCard( {
 			</CardBody>
 		</Card>
 	);
-}
-
-export function OverviewCardProgressBar( { value }: { value?: number } ) {
-	return <ProgressBar className="dashboard-overview-card__progress-bar" value={ value } />;
 }

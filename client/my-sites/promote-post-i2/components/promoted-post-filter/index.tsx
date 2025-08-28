@@ -25,9 +25,10 @@ export default function PromotePostTabBar( { tabs, selectedTab }: Props ) {
 			inline: 'center',
 		} );
 	};
+	const selectedLabel = tabs.find( ( tab ) => tab.id === selectedTab )?.name;
 
 	return (
-		<SectionNav>
+		<SectionNav selectedText={ selectedLabel }>
 			<NavTabs>
 				{ tabs
 					.filter( ( { enabled = true } ) => enabled )

@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalDivider as Divider,
@@ -11,24 +12,28 @@ import { __ } from '@wordpress/i18n';
 import { chartBar, wordpress } from '@wordpress/icons';
 import clsx from 'clsx';
 import { siteBySlugQuery } from '../../app/queries/site';
-import { siteRoute } from '../../app/router';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getSiteDisplayName } from '../../utils/site-name';
+import { isSelfHostedJetpackConnected } from '../../utils/site-types';
+import AgencySiteShareCard from '../overview-agency-site-share-card';
+import BackupCard from '../overview-backup-card';
 import OverviewCard from '../overview-card';
-import OverviewCardUpsellDIFM from '../overview-card-upsell-difm';
-import AgencySiteShareCard from './agency-site-share-card';
-import BackupCard from './backup-card';
-import DomainsCard from './domains-card';
-import LatestActivitiesCard from './latest-activities-card';
-import ScanCard from './scan-card';
-import SiteOverviewFields from './site-overview-fields';
-import SitePreviewCard from './site-preview-card';
-import UptimeCard from './uptime-card';
-import VisibilityCard from './visibility-card';
+import DIFMUpsellCard from '../overview-difm-upsell-card';
+import DomainsCard from '../overview-domains-card';
+import LatestActivityCard from '../overview-latest-activity-card';
+import MigrateSiteCard from '../overview-migrate-site-card';
+import PerformanceCard from '../overview-performance-card';
+import PlanCard from '../overview-plan-card';
+import ScanCard from '../overview-scan-card';
+import SiteActionMenu from '../overview-site-action-menu';
+import SiteOverviewFields from '../overview-site-fields';
+import SitePreviewCard from '../overview-site-preview-card';
+import VisibilityCard from '../overview-visibility-card';
+import StagingSiteSyncDropdown from '../staging-site-sync-dropdown';
+import { StorageWarningBanner } from './storage-warning-banner';
+import type { WPBreakpoint } from '@wordpress/compose/build-types/hooks/use-viewport-match';
 import './style.scss';
-
-type Breakpoint = Parameters< typeof useViewportMatch >[ 0 ];
 
 const SPACING = {
 	DEFAULT: 6,
@@ -65,13 +70,14 @@ function getGridLayout( {
 }
 
 function SiteOverview( {
+	siteSlug,
 	hideSitePreview = false,
 	breakpoints,
 }: {
-	hideSitePreview: boolean;
-	breakpoints?: { large: Breakpoint; small: Breakpoint };
+	siteSlug: string;
+	hideSitePreview?: boolean;
+	breakpoints?: { large: WPBreakpoint; small: WPBreakpoint };
 } ) {
-	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const isLargeViewport = useViewportMatch( breakpoints?.large ?? 'xlarge' );
 	const isSmallViewport = useViewportMatch( breakpoints?.small ?? 'medium', '<' );
@@ -91,14 +97,20 @@ function SiteOverview( {
 						title={ getSiteDisplayName( site ) }
 						actions={
 							site.options?.admin_url && (
-								<Button
-									__next40pxDefaultSize
-									variant="primary"
-									href={ site.options.admin_url }
-									icon={ wordpress }
-								>
-									{ __( 'WP Admin' ) }
-								</Button>
+								<>
+									{ isEnabled( 'hosting/staging-sites-redesign' ) && (
+										<StagingSiteSyncDropdown siteSlug={ siteSlug } />
+									) }
+									<Button
+										__next40pxDefaultSize
+										variant="primary"
+										href={ site.options.admin_url }
+										icon={ wordpress }
+									>
+										{ __( 'WP Admin' ) }
+									</Button>
+									<SiteActionMenu site={ site } />
+								</>
 							)
 						}
 					/>
@@ -107,32 +119,37 @@ function SiteOverview( {
 			}
 		>
 			<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
+				<StorageWarningBanner site={ site } />
 				<Grid { ...gridLayout } gap={ spacing }>
 					{ showSitePreview && <SitePreviewCard site={ site } /> }
-					<VStack className="site-overview-cards" spacing={ spacing }>
+					<Grid columns={ 1 } rows={ 2 } gap={ spacing }>
 						<VisibilityCard site={ site } />
 						<BackupCard site={ site } />
-					</VStack>
-					<VStack className="site-overview-cards" spacing={ spacing }>
-						{ site.is_a4a_dev_site ? (
-							<AgencySiteShareCard site={ site } />
-						) : (
-							<OverviewCard
-								title={ __( 'Performance' ) }
-								icon={ chartBar }
-								heading="TBA"
-								description="TBA"
-							/>
-						) }
+					</Grid>
+					<Grid columns={ 1 } rows={ 2 } gap={ spacing }>
+						{ ( () => {
+							if ( site.is_a4a_dev_site ) {
+								return <AgencySiteShareCard site={ site } />;
+							}
+							if ( isSelfHostedJetpackConnected( site ) ) {
+								return (
+									<OverviewCard
+										title="TBA"
+										icon={ chartBar }
+										heading="TBA"
+										description="TBA"
+										disabled
+									/>
+								);
+							}
+							if ( site.plan?.is_free && ! site.is_wpcom_staging_site ) {
+								return <MigrateSiteCard site={ site } />;
+							}
+							return <PerformanceCard site={ site } />;
+						} )() }
 						<ScanCard site={ site } />
-					</VStack>
-					<OverviewCard
-						title={ __( 'Plan' ) }
-						icon={ wordpress }
-						heading="TBA"
-						description="TBA"
-						bottom={ <div /> }
-					/>
+					</Grid>
+					<PlanCard site={ site } />
 				</Grid>
 				<Divider
 					orientation="horizontal"
@@ -145,11 +162,10 @@ function SiteOverview( {
 					spacing={ spacing }
 					alignment="flex-start"
 				>
-					<LatestActivitiesCard />
+					<LatestActivityCard site={ site } isCompact={ isSmallViewport } />
 					<VStack spacing={ spacing } justify="start">
 						<DomainsCard site={ site } isCompact={ isSmallViewport } />
-						<OverviewCardUpsellDIFM site={ site } />
-						<UptimeCard site={ site } />
+						<DIFMUpsellCard site={ site } />
 					</VStack>
 				</HStack>
 			</VStack>

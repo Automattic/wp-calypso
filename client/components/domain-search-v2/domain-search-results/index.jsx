@@ -1,10 +1,8 @@
 import {
-	DomainSuggestionPrice,
 	DomainSuggestionsList,
 	DomainSuggestion,
-	DomainSuggestionBadge,
+	DomainSearchSkipSuggestion,
 } from '@automattic/domain-search';
-import { formatCurrency } from '@automattic/number-formatters';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { get, times } from 'lodash';
@@ -19,7 +17,6 @@ import { DESIGN_TYPE_STORE } from 'calypso/signup/constants';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import DomainRegistrationSuggestion from '../domain-registration-suggestion';
-import PremiumBadge from '../domain-registration-suggestion/premium-badge';
 import DomainSkipSuggestion from '../domain-skip-suggestion';
 import FeaturedDomainSuggestions from '../featured-domain-suggestions';
 
@@ -39,12 +36,12 @@ class DomainSearchResults extends Component {
 		availableDomain: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		suggestions: PropTypes.array,
 		isLoadingSuggestions: PropTypes.bool.isRequired,
+		isLoadingSubdomainSuggestions: PropTypes.bool,
 		placeholderQuantity: PropTypes.number.isRequired,
 		buttonLabel: PropTypes.string,
 		mappingSuggestionLabel: PropTypes.string,
 		offerUnavailableOption: PropTypes.bool,
 		showAlreadyOwnADomain: PropTypes.bool,
-		onClickResult: PropTypes.func.isRequired,
 		onAddMapping: PropTypes.func,
 		onAddTransfer: PropTypes.func,
 		onClickMapping: PropTypes.func,
@@ -60,6 +57,7 @@ class DomainSearchResults extends Component {
 		domainAndPlanUpsellFlow: PropTypes.bool,
 		useProvidedProductsList: PropTypes.bool,
 		wpcomSubdomainSelected: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		flowName: PropTypes.string,
 	};
 
 	renderDomainAvailability() {
@@ -70,7 +68,6 @@ class DomainSearchResults extends Component {
 			lastDomainSearched,
 			lastDomainTld,
 			selectedSite,
-			translate,
 			isDomainOnly,
 		} = this.props;
 		const suggestions = this.props.suggestions || [];
@@ -83,68 +80,9 @@ class DomainSearchResults extends Component {
 			TLD_NOT_SUPPORTED_AND_DOMAIN_NOT_AVAILABLE,
 			TLD_NOT_SUPPORTED_TEMPORARILY,
 			TRANSFERRABLE,
+			TRANSFERRABLE_PREMIUM,
 			UNKNOWN,
 		} = domainAvailability;
-
-		const premiumDomain = this.props.premiumDomains[ lastDomainSearched ];
-
-		if ( premiumDomain?.is_price_limit_exceeded ) {
-			const [ domainName, ...tld ] = lastDomainSearched.split( '.' );
-
-			const currentUserCurrencyCode =
-				premiumDomain.currency_code || this.props.currentUserCurrencyCode;
-
-			let productSaleCost;
-
-			const badges = [];
-
-			if ( premiumDomain.sale_cost ) {
-				productSaleCost = formatCurrency( premiumDomain.sale_cost, currentUserCurrencyCode, {
-					stripZeros: this.props.showStrikedOutPrice,
-				} );
-
-				const saleBadgeText = translate( 'Sale', {
-					comment: 'Shown next to a domain that has a special discounted sale price',
-				} );
-				badges.push(
-					<DomainSuggestionBadge key="sale" variation="warning">
-						{ saleBadgeText }
-					</DomainSuggestionBadge>
-				);
-			}
-
-			const cost = productSaleCost ?? premiumDomain.cost;
-
-			badges.push( <PremiumBadge key="premium" restrictedPremium /> );
-
-			return (
-				<DomainSuggestion
-					badges={ badges }
-					domain={ domainName }
-					tld={ tld.join( '.' ) }
-					disabled
-					price={
-						<DomainSuggestionPrice
-							originalPrice={
-								premiumDomain.renew_cost === cost ? undefined : premiumDomain.renew_cost
-							}
-							price={ cost }
-							subText={ translate( 'Interested in this domain? {{a}}Contact support{{/a}}', {
-								components: {
-									a: (
-										<a
-											href="https://wordpress.com/help/contact"
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
-								},
-							} ) }
-						/>
-					}
-				/>
-			);
-		}
 
 		const domain = get( availableDomain, 'domain_name', lastDomainSearched );
 
@@ -153,6 +91,7 @@ class DomainSearchResults extends Component {
 			suggestions.length !== 0 &&
 			[
 				TRANSFERRABLE,
+				TRANSFERRABLE_PREMIUM,
 				MAPPABLE,
 				MAPPED,
 				RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE,
@@ -265,7 +204,8 @@ class DomainSearchResults extends Component {
 	}
 
 	renderDomainSuggestions() {
-		const { isDomainOnly, suggestions, showStrikedOutPrice, showSkipButton } = this.props;
+		const { isDomainOnly, suggestions, showStrikedOutPrice, showSkipButton, selectedSite } =
+			this.props;
 		let featuredSuggestionElement;
 		let suggestionElements;
 		let domainSkipSuggestion;
@@ -281,9 +221,7 @@ class DomainSearchResults extends Component {
 					! suggestion.isSubDomainSuggestion
 			);
 			const featuredSuggestions = suggestions.filter(
-				( suggestion ) =>
-					( suggestion.isRecommended || suggestion.isBestAlternative ) &&
-					! this.props.premiumDomains[ suggestion.domain_name ]?.is_price_limit_exceeded
+				( suggestion ) => suggestion.isRecommended || suggestion.isBestAlternative
 			);
 
 			featuredSuggestionElement = featuredSuggestions.length > 0 && (
@@ -296,7 +234,6 @@ class DomainSearchResults extends Component {
 					isSignupStep={ this.props.isSignupStep }
 					showStrikedOutPrice={ showStrikedOutPrice }
 					key="featured"
-					onButtonClick={ this.props.onClickResult }
 					premiumDomains={ this.props.premiumDomains }
 					featuredSuggestions={ featuredSuggestions }
 					query={ this.props.lastDomainSearched }
@@ -336,7 +273,6 @@ class DomainSearchResults extends Component {
 						uiPosition={ i + 2 }
 						fetchAlgo={ suggestion.fetch_algo ? suggestion.fetch_algo : this.props.fetchAlgo }
 						query={ this.props.lastDomainSearched }
-						onButtonClick={ this.props.onClickResult }
 						premiumDomain={ this.props.premiumDomains[ suggestion.domain_name ] }
 						pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 						unavailableDomains={ this.props.unavailableDomains }
@@ -350,15 +286,19 @@ class DomainSearchResults extends Component {
 				);
 			} );
 
-			domainSkipSuggestion = showSkipButton && subdomainSuggestion && (
+			domainSkipSuggestion = showSkipButton && (
 				<DomainSkipSuggestion
-					domain={ subdomainSuggestion.domain_name }
+					selectedSite={ selectedSite }
+					isLoadingSubdomainSuggestions={ this.props.isLoadingSubdomainSuggestions }
+					subdomainSuggestion={ subdomainSuggestion }
+					flowName={ this.props.flowName }
+					query={ this.props.lastDomainSearched }
 					onSkip={ this.props.onSkip }
 				/>
 			);
 		} else {
 			featuredSuggestionElement = <FeaturedDomainSuggestions showPlaceholders />;
-			domainSkipSuggestion = <DomainSkipSuggestion.Placeholder />;
+			domainSkipSuggestion = <DomainSearchSkipSuggestion.Placeholder />;
 			suggestionElements = this.renderPlaceholders();
 		}
 
@@ -366,7 +306,9 @@ class DomainSearchResults extends Component {
 			<>
 				{ featuredSuggestionElement }
 				{ domainSkipSuggestion }
-				<DomainSuggestionsList>{ suggestionElements }</DomainSuggestionsList>
+				{ suggestionElements?.length > 0 && (
+					<DomainSuggestionsList>{ suggestionElements }</DomainSuggestionsList>
+				) }
 			</>
 		);
 	}

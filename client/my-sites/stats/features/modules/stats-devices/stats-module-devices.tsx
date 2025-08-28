@@ -14,10 +14,10 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
 import useModuleDevicesQuery, { StatsDevicesData } from '../../../hooks/use-modeule-devices-query';
+import useStatsStrings from '../../../hooks/use-stats-strings';
 import { QueryStatsParams } from '../../../hooks/utils';
 import StatsListCard from '../../../stats-list/stats-list-card';
 import StatsModulePlaceholder from '../../../stats-module/placeholder';
-import statsStrings from '../../../stats-strings';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import type { StatsPeriodType } from '../types';
 
@@ -98,7 +98,7 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 	isLoading,
 	query,
 } ) => {
-	const { devices: devicesStrings } = statsStrings();
+	const { devices: devicesStrings } = useStatsStrings();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const translate = useTranslate();
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );

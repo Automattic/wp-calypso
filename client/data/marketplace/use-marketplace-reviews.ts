@@ -5,6 +5,7 @@ import {
 	useMutation,
 	useQueryClient,
 	useInfiniteQuery,
+	UseInfiniteQueryOptions,
 } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { BASE_STALE_TIME } from 'calypso/state/constants';
@@ -108,6 +109,11 @@ type MarketplaceReviewsQueryResponse = {
 
 type MarketplaceReviewsQueryOptions = Pick<
 	UseQueryOptions< MarketplaceReviewsQueryResponse >,
+	'enabled' | 'staleTime' | 'refetchOnMount'
+>;
+
+type MarketplaceReviewsInfiniteQueryOptions = Pick<
+	UseInfiniteQueryOptions< MarketplaceReviewsQueryResponse >,
 	'enabled' | 'staleTime' | 'refetchOnMount'
 >;
 
@@ -272,7 +278,7 @@ export const useMarketplaceReviewsQuery = (
 
 export const useInfiniteMarketplaceReviewsQuery = (
 	{ productType, slug, page, perPage, author, author_exclude }: MarketplaceReviewsQueryProps,
-	{ enabled = true, staleTime = BASE_STALE_TIME }: MarketplaceReviewsQueryOptions = {}
+	{ enabled = true, staleTime = BASE_STALE_TIME }: MarketplaceReviewsInfiniteQueryOptions = {}
 ) => {
 	const queryKey: QueryKey = [
 		queryKeyBase,

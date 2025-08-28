@@ -34,6 +34,7 @@ import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import { isFetchingAdminColor } from 'calypso/state/admin-color/selectors';
+import { loadTrackingTool } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSidebarType, SidebarType } from 'calypso/state/global-sidebar/selectors';
 import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tours/contexts';
@@ -152,6 +153,9 @@ class Layout extends Component {
 		} );
 
 		refreshColorScheme( undefined, this.props.colorScheme );
+
+		// Load Survicate survey on all pages
+		this.props.dispatch( loadTrackingTool( 'Survicate' ) );
 	}
 
 	componentDidUpdate( prevProps ) {

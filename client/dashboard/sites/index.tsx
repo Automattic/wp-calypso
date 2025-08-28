@@ -1,21 +1,23 @@
-import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery, useMutation, keepPreviousData } from '@tanstack/react-query';
 import { useNavigate, useRouter } from '@tanstack/react-router';
 import { Button, Modal } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
 import { isAutomatticianQuery } from '../app/queries/me-a8c';
 import { userPreferenceQuery, userPreferenceMutation } from '../app/queries/me-preferences';
 import { sitesQuery } from '../app/queries/sites';
-import { sitesRoute } from '../app/router';
-import DataViewsCard from '../components/dataviews-card';
+import { sitesRoute } from '../app/router/sites';
+import { DataViewsCard } from '../components/dataviews-card';
+import { DataViewsEmptyState } from '../components/dataviews-empty-state';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import { getActions } from './actions';
 import AddNewSite from './add-new-site';
 import { getFields } from './fields';
+import noSitesIllustration from './no-sites-illustration.svg';
 import { SitesNotices } from './notices';
 import {
 	getView,
@@ -69,9 +71,14 @@ export default function Sites() {
 		viewSearchParams,
 	} );
 
-	const { data: sites, isLoading: isLoadingSites } = useQuery(
-		sitesQuery( getFetchSitesOptions( view, isRestoringAccount ) )
-	);
+	const {
+		data: sites,
+		isLoading: isLoadingSites,
+		isPlaceholderData,
+	} = useQuery( {
+		...sitesQuery( getFetchSitesOptions( view, isRestoringAccount ) ),
+		placeholderData: keepPreviousData,
+	} );
 
 	const fields = getFields( { isAutomattician, viewType: view.type } );
 	const actions = getActions( router );
@@ -103,10 +110,27 @@ export default function Sites() {
 		updateViewPreferences( updatedViewPreferences );
 	};
 
+	const hasFilterOrSearch = ( view.filters && view.filters.length > 0 ) || view.search;
+
+	const emptyTitle = hasFilterOrSearch ? __( 'No sites found' ) : __( 'No sites' );
+
+	let emptyDescription = __( 'Get started by creating a new site.' );
+	if ( view.search ) {
+		emptyDescription = sprintf(
+			// Translators: %s is the search term used when looking for sites by title or domain name.
+			__(
+				'Your search for “%s” did not match any sites. Try searching by the site title or domain name.'
+			),
+			view.search
+		);
+	} else if ( hasFilterOrSearch ) {
+		emptyDescription = __( 'Your search did not match any sites.' );
+	}
+
 	return (
 		<>
 			{ isModalOpen && (
-				<Modal title={ __( 'Add New Site' ) } onRequestClose={ () => setIsModalOpen( false ) }>
+				<Modal title={ __( 'Add new site' ) } onRequestClose={ () => setIsModalOpen( false ) }>
 					<AddNewSite context="sites-dashboard" />
 				</Modal>
 			) }
@@ -120,7 +144,7 @@ export default function Sites() {
 								onClick={ () => setIsModalOpen( true ) }
 								__next40pxDefaultSize
 							>
-								{ __( 'Add New Site' ) }
+								{ __( 'Add new site' ) }
 							</Button>
 						}
 					/>
@@ -134,11 +158,49 @@ export default function Sites() {
 						fields={ fields }
 						actions={ actions }
 						view={ view }
-						isLoading={ isLoadingSites }
+						isLoading={ isLoadingSites || ( isPlaceholderData && filteredData.length === 0 ) }
 						onChangeView={ handleViewChange }
 						defaultLayouts={ DEFAULT_LAYOUTS }
 						paginationInfo={ paginationInfo }
-						perPageSizes={ DEFAULT_PER_PAGE_SIZES }
+						config={ { perPageSizes: DEFAULT_PER_PAGE_SIZES } }
+						empty={
+							<DataViewsEmptyState
+								title={ emptyTitle }
+								description={ emptyDescription }
+								illustration={
+									<img src={ noSitesIllustration } alt="" width={ 408 } height={ 280 } />
+								}
+								actions={
+									<>
+										{ view.search && (
+											<Button
+												__next40pxDefaultSize
+												variant="secondary"
+												onClick={ () => {
+													navigate( {
+														search: {
+															...currentSearchParams,
+															view: Object.fromEntries(
+																Object.entries( view ).filter( ( [ key ] ) => key !== 'search' )
+															),
+														},
+													} );
+												} }
+											>
+												{ __( 'Clear search' ) }
+											</Button>
+										) }
+										<Button
+											__next40pxDefaultSize
+											variant="primary"
+											onClick={ () => setIsModalOpen( true ) }
+										>
+											{ __( 'Add new site' ) }
+										</Button>
+									</>
+								}
+							/>
+						}
 					/>
 				</DataViewsCard>
 			</PageLayout>

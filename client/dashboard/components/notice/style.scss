@@ -41,7 +41,7 @@
 	}
 
 	&.is-warning {
-		background-color: color-mix(in srgb, $alert-yellow 4%, transparent);
+		background-color: color-mix(in srgb, var(--dashboard__background-color-warning) 4%, transparent);
 
 		.dashboard-notice__icon {
 			fill: #a77f30;
@@ -49,7 +49,7 @@
 	}
 
 	&.is-success {
-		background-color: color-mix(in srgb, $alert-green 4%, transparent);
+		background-color: color-mix(in srgb, var(--dashboard__background-color-success) 4%, transparent);
 
 		.dashboard-notice__icon {
 			fill: #2c723e;
@@ -57,7 +57,7 @@
 	}
 
 	&.is-error {
-		background-color: color-mix(in srgb, $alert-red 4%, transparent);
+		background-color: color-mix(in srgb, var(--dashboard__background-color-error) 4%, transparent);
 
 		.dashboard-notice__icon {
 			fill: #8c0b0b;

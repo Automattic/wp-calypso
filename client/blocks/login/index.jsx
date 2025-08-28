@@ -564,7 +564,6 @@ class Login extends Component {
 			socialConnect,
 			twoStepNonce,
 			twoFactorAuthType,
-			twoFactorEnabled,
 		} = this.props;
 
 		return (
@@ -589,7 +588,6 @@ class Login extends Component {
 						socialConnect={ socialConnect }
 						twoStepNonce={ twoStepNonce }
 						twoFactorAuthType={ twoFactorAuthType }
-						twoFactorEnabled={ twoFactorEnabled }
 					/>
 				) }
 

@@ -23,6 +23,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 	showLegacyStorageFeature,
 	selectedFeature,
 	isInSignup,
+	isSummerSpecial,
 }: {
 	gridPlans: Omit< GridPlan, 'features' >[];
 	allFeaturesList: FeatureList;
@@ -31,6 +32,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 	selectedFeature?: string | null;
 	showLegacyStorageFeature?: boolean;
 	isInSignup?: boolean;
+	isSummerSpecial?: boolean;
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
 /**
@@ -46,6 +48,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 	selectedFeature,
 	showLegacyStorageFeature,
 	isInSignup,
+	isSummerSpecial,
 } ) => {
 	const highlightedFeatures = useHighlightedFeatures( { intent: intent ?? null, isInSignup } );
 	return useMemo( () => {
@@ -66,7 +69,9 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 				} else if ( 'plans-p2' === intent ) {
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
-						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ?? []
+						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( {
+							isSummerSpecial,
+						} ) ?? []
 					);
 				} else if ( 'plans-blog-onboarding' === intent ) {
 					wpcomFeatures = getPlanFeaturesObject(
@@ -81,7 +86,9 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 				} else if ( 'plans-woocommerce' === intent ) {
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
-						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ?? []
+						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( {
+							isSummerSpecial,
+						} ) ?? []
 					);
 
 					jetpackFeatures = getPlanFeaturesObject(
@@ -106,7 +113,9 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 				} else {
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
-						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ?? []
+						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.( {
+							isSummerSpecial,
+						} ) ?? []
 					);
 
 					jetpackFeatures = getPlanFeaturesObject(
@@ -213,6 +222,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 		showLegacyStorageFeature,
 		allFeaturesList,
 		hasRedeemedDomainCredit,
+		isSummerSpecial,
 	] );
 };
 

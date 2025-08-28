@@ -12,6 +12,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { find } from 'lodash';
 import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import googleIllustration from 'calypso/assets/images/illustrations/google-analytics-logo.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
@@ -26,6 +27,7 @@ import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-t
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestSiteSettings } from 'calypso/state/site-settings/actions';
+import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import FormAnalyticsStores from '../form-analytics-stores';
 
 import './style.scss';
@@ -66,6 +68,12 @@ const GoogleAnalyticsJetpackForm = ( {
 	const wooCommerceActive = wooCommercePlugin ? wooCommercePlugin.sites[ siteId ].active : false;
 	const dispatch = useDispatch();
 	const trackTracksEvent = ( name, props ) => dispatch( recordTracksEvent( name, props ) );
+
+	const statsUrl = useSelector( ( state ) =>
+		site.options?.is_wpcom_atomic
+			? getSiteAdminUrl( state, siteId, 'admin.php?page=stats' )
+			: '/stats/' + site.domain
+	);
 
 	useEffect( () => {
 		// Show the form if GA module is active, or it's been removed but GA is activated via the Legacy Plugin.
@@ -214,7 +222,7 @@ const GoogleAnalyticsJetpackForm = ( {
 										'normally show slightly different totals for your visits, views, etc.',
 									{
 										components: {
-											a: <a href={ '/stats/' + site.domain } />,
+											a: <a href={ statsUrl } />,
 										},
 									}
 								) }

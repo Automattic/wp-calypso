@@ -3,6 +3,8 @@ import wpcom from 'calypso/lib/wp';
 export interface SiteSettings {
 	blog_public?: number;
 	is_fully_managed_agency_site?: boolean;
+	gmt_offset?: number;
+	timezone_string?: string;
 	/**
 	 * @deprecated Use `wpcom_public_coming_soon` instead.
 	 */
@@ -24,7 +26,10 @@ export async function fetchSiteSettings( siteId: number ): Promise< SiteSettings
 	return settings;
 }
 
-export async function updateSiteSettings( siteId: number, data: Partial< SiteSettings > ) {
+export async function updateSiteSettings(
+	siteId: number,
+	data: Partial< SiteSettings >
+): Promise< Partial< SiteSettings > > {
 	const { updated } = await wpcom.req.post(
 		{
 			path: `/sites/${ siteId }/settings`,

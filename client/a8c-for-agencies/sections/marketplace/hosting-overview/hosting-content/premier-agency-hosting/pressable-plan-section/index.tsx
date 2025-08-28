@@ -8,6 +8,8 @@ import {
 	PLAN_CATEGORY_SIGNATURE,
 	PLAN_CATEGORY_SIGNATURE_HIGH,
 	PLAN_CATEGORY_STANDARD,
+	PLAN_CATEGORY_PREMIUM,
+	PLAN_CATEGORY_ENTERPRISE,
 } from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/constants';
 import getPressablePlan, {
 	PressablePlan,
@@ -18,6 +20,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import HostingPlanSection from '../../common/hosting-plan-section';
 import CustomPlanCardContent from './custom-plan-card-content';
+import PremiumPlanSection from './premium-plan-section';
 import RegularPlanCardContent from './regular-plan-card-content';
 
 import './style.scss';
@@ -31,6 +34,32 @@ type Props = {
 	isFetching?: boolean;
 };
 
+const getSelectedTab = (
+	existingPressablePlan: PressablePlan | null,
+	areSignaturePlans: boolean
+) => {
+	if ( ! existingPressablePlan ) {
+		return areSignaturePlans ? PLAN_CATEGORY_SIGNATURE : PLAN_CATEGORY_STANDARD;
+	}
+
+	// If there is an existing plan, map its category to the appropriate tab
+	let tabCategory = existingPressablePlan.category;
+	if ( areSignaturePlans ) {
+		if ( existingPressablePlan.category === PLAN_CATEGORY_STANDARD ) {
+			tabCategory = PLAN_CATEGORY_SIGNATURE;
+		} else if ( existingPressablePlan.category === PLAN_CATEGORY_ENTERPRISE ) {
+			tabCategory = PLAN_CATEGORY_SIGNATURE_HIGH;
+		}
+	} else if ( existingPressablePlan.category === PLAN_CATEGORY_SIGNATURE ) {
+		// If not using signature plans, map signature categories back to standard/enterprise
+		tabCategory = PLAN_CATEGORY_STANDARD;
+	} else if ( existingPressablePlan.category === PLAN_CATEGORY_SIGNATURE_HIGH ) {
+		tabCategory = PLAN_CATEGORY_ENTERPRISE;
+	}
+
+	return tabCategory;
+};
+
 export default function PressablePlanSection( {
 	onSelect,
 	isReferralMode,
@@ -41,6 +70,20 @@ export default function PressablePlanSection( {
 }: Props ) {
 	const translate = useTranslate();
 
+	const areSignaturePlans = useMemo( () => {
+		return (
+			isReferralMode ||
+			! existingPlanInfo ||
+			existingPlanInfo?.category === PLAN_CATEGORY_SIGNATURE ||
+			existingPlanInfo?.category === PLAN_CATEGORY_SIGNATURE_HIGH
+		);
+	}, [ existingPlanInfo, isReferralMode ] );
+
+	const existingPressablePlan = isReferralMode ? null : existingPlanInfo;
+
+	const [ selectedTab, setSelectedTab ] = useState(
+		getSelectedTab( existingPressablePlan, areSignaturePlans )
+	);
 	const [ selectedPlan, setSelectedPlan ] = useState< APIProductFamilyProduct | null >( null );
 
 	const dispatch = useDispatch();
@@ -51,15 +94,6 @@ export default function PressablePlanSection( {
 	} );
 
 	const selectedPlanInfo = selectedPlan ? getPressablePlan( selectedPlan.slug ) : null;
-
-	const areSignaturePlans = useMemo( () => {
-		return (
-			isReferralMode ||
-			! existingPlanInfo ||
-			existingPlanInfo?.category === PLAN_CATEGORY_SIGNATURE ||
-			existingPlanInfo?.category === PLAN_CATEGORY_SIGNATURE_HIGH
-		);
-	}, [ existingPlanInfo, isReferralMode ] );
 
 	const filteredPressablePlans = useMemo( () => {
 		if ( ! pressablePlans ) {
@@ -90,6 +124,10 @@ export default function PressablePlanSection( {
 		}
 	}, [ existingPlan, isReferralMode ] );
 
+	useEffect( () => {
+		setSelectedTab( getSelectedTab( existingPressablePlan, areSignaturePlans ) );
+	}, [ areSignaturePlans, existingPressablePlan, setSelectedTab ] );
+
 	const onPlanAddToCart = useCallback( () => {
 		if ( selectedPlan ) {
 			dispatch(
@@ -112,9 +150,11 @@ export default function PressablePlanSection( {
 					selectedPlan={ selectedPlan }
 					plans={ filteredPressablePlans }
 					onSelectPlan={ setSelectedPlan }
-					pressablePlan={ isReferralMode ? null : existingPlanInfo }
+					pressablePlan={ existingPressablePlan }
 					isLoading={ ! isFetching }
 					areSignaturePlans={ areSignaturePlans }
+					selectedTab={ selectedTab }
+					setSelectedTab={ setSelectedTab }
 				/>
 			</HostingPlanSection.Banner>
 		);
@@ -122,10 +162,10 @@ export default function PressablePlanSection( {
 		pressableOwnership,
 		selectedPlan,
 		filteredPressablePlans,
-		isReferralMode,
-		existingPlanInfo,
+		existingPressablePlan,
 		isFetching,
 		areSignaturePlans,
+		selectedTab,
 	] );
 
 	const heading = useMemo( () => {
@@ -152,6 +192,11 @@ export default function PressablePlanSection( {
 	const PRESSABLE_CONTACT_LINK = 'https://pressable.com/request-demo';
 
 	const isCustomPlan = ! selectedPlan;
+
+	// Show premium plan section if the selected tab is premium
+	if ( selectedTab === PLAN_CATEGORY_PREMIUM ) {
+		return <PremiumPlanSection heading={ heading } banner={ banner } />;
+	}
 
 	return (
 		<HostingPlanSection className="pressable-plan-section" heading={ heading }>

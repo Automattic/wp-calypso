@@ -32,7 +32,6 @@ export class FeaturedDomainSuggestions extends Component {
 			'isDomainOnly',
 			'domainsWithPlansOnly',
 			'showStrikedOutPrice',
-			'onButtonClick',
 			'query',
 			'selectedSite',
 			'pendingCheckSuggestion',
@@ -62,6 +61,10 @@ export class FeaturedDomainSuggestions extends Component {
 			return this.renderPlaceholders();
 		}
 
+		const featuredSuggestionsWithoutExactMatch = featuredSuggestions.filter(
+			( suggestion ) => suggestion.domain_name !== this.props.query
+		);
+
 		return (
 			<div className="featured-domain-suggestions-v2">
 				<div className="featured-domain-suggestions-v2__content">
@@ -70,6 +73,7 @@ export class FeaturedDomainSuggestions extends Component {
 							<DomainRegistrationSuggestion
 								suggestion={ suggestion }
 								isFeatured
+								isSingleFeaturedSuggestion={ featuredSuggestionsWithoutExactMatch.length === 1 }
 								railcarId={ this.props.railcarId + '-' + index }
 								isSignupStep={ this.props.isSignupStep }
 								uiPosition={ index }

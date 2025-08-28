@@ -43,7 +43,7 @@ export function FreePlanPaidDomainDialog( {
 			</Heading>
 			<SubHeading id="plan-upsell-modal-description">
 				{ translate(
-					'Your custom domain can only be used as the primary domain with a paid plan and is free for the first year with an annual paid plan. For more details, please read {{a}}our support document{{/a}}.',
+					'Your custom domain can only be used as the primary domain with a paid plan and is free for the first year with an annual or multi-year plan. For more details, please read {{a}}our support document{{/a}}.',
 					{
 						components: {
 							a: (

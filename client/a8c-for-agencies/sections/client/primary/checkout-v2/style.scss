@@ -7,4 +7,22 @@
 
 .client-checkout-v2 {
 	min-height: 100vh;
+
+	.checkout-sidebar-content {
+		margin-top: 0;
+	}
+}
+.client-checkout-v2__top-bar {
+	position: absolute;
+	width: 100%;
+	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+	padding: 24px 16px 16px;
+	z-index: 1000;
+
+	@media (max-width: $break-large) {
+		position: relative;
+		justify-content: center;
+	}
 }

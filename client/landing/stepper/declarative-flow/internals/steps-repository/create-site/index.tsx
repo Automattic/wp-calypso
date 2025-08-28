@@ -139,7 +139,6 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		wasSignupCheckoutPageUnloaded() && signupDestinationCookieExists && isReEnteringFlow
 	);
 	const urlQueryParams = useQuery();
-	const skipMigration = urlQueryParams.get( 'skipMigration' ) || '';
 	const platform = urlQueryParams.get( 'platform' ) || '';
 	const useThemeHeadstart =
 		! isStartWritingFlow( flow ) &&
@@ -217,7 +216,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		}
 
 		if ( domainCartItems?.length && site?.siteSlug ) {
-			await addProductsToCart( site.siteSlug, flow, productCartItems );
+			await addProductsToCart( site.siteSlug, flow, domainCartItems );
 		}
 
 		return {
@@ -225,7 +224,6 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			siteSlug: site?.siteSlug,
 			goToCheckout: shouldGoToCheckout,
 			siteCreated: true,
-			skipMigration,
 			platform,
 		};
 	}

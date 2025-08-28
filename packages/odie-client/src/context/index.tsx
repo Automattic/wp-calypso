@@ -52,6 +52,7 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 	forceEmailSupport: false,
 	setNotice: noop,
 	notices: {},
+	sectionName: '',
 } );
 
 // Custom hook to access the OdieAssistantContext
@@ -76,6 +77,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	currentUser,
 	forceEmailSupport = false,
 	children,
+	sectionName,
 } ) => {
 	const { botNameSlug, isMinimized, isChatLoaded } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
@@ -210,6 +212,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 		<OdieAssistantContext.Provider
 			value={ {
 				addMessage,
+				sectionName,
 				botName,
 				botNameSlug,
 				chat: mainChatState,

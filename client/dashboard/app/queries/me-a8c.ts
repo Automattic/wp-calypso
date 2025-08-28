@@ -1,8 +1,9 @@
-import { fetchReaderTeams, ReaderTeam } from '../../data/reader-teams';
+import { queryOptions } from '@tanstack/react-query';
+import { fetchReaderTeams } from '../../data/reader-teams';
 
-export const isAutomatticianQuery = () => ( {
-	queryKey: [ 'me', 'is-automattician' ],
-	queryFn: fetchReaderTeams,
-	select: ( data: { number: number; teams: ReaderTeam[] } ): boolean =>
-		data.teams.some( ( team: ReaderTeam ) => team.slug === 'a8c' ),
-} );
+export const isAutomatticianQuery = () =>
+	queryOptions( {
+		queryKey: [ 'me', 'is-automattician' ],
+		queryFn: fetchReaderTeams,
+		select: ( data ) => data.teams.some( ( team ) => team.slug === 'a8c' ),
+	} );

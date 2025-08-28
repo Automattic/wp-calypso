@@ -1,5 +1,4 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
 import Gravatar from 'calypso/components/gravatar';
 import Favicon from 'calypso/reader/components/favicon';
 import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
@@ -7,10 +6,11 @@ import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-f
 import FollowButton from 'calypso/reader/follow-button';
 import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import './style.scss';
 
-const SuggestedFollowItem = ( { site, followSource } ) => {
+export const SuggestedFollowItem = ( { site, followSource } ) => {
 	const dispatch = useDispatch();
 
 	const onSiteClick = ( selectedSite ) => {

@@ -1,3 +1,4 @@
+import { PLAN_BUSINESS, WPCOM_FEATURES_SCAN, getPlan } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -16,6 +17,9 @@ import { preventWidows } from 'calypso/lib/formatting';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './style.scss';
 
@@ -78,11 +82,60 @@ const ScanUpsellBody = () => {
 	const translate = useTranslate();
 	const postCheckoutUrl = window.location.pathname + window.location.search;
 
+	// Check if site is simple or atomic and doesn't have scan feature
+	const isSimple = useSelector( ( state ) => isSimpleSite( state, siteId ) );
+	const isAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId ) );
+	const hasScanFeature = useSelector( ( state ) =>
+		siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN )
+	);
+
+	// Show Business plan upsell for simple/atomic sites without scan feature
+	const shouldShowBusinessUpsell = ( isSimple || isAtomic ) && ! hasScanFeature;
+
 	const nonAdminNoticeText = translate(
 		'Only site administrators can upgrade to access security scanning.'
 	);
 	const buttonText = translate( 'Get Jetpack Scan' );
 
+	// If site is simple/atomic and doesn't have scan feature, show Business plan upsell
+	if ( shouldShowBusinessUpsell ) {
+		return (
+			<PromoCard
+				title={ translate( 'We guard your site. You run your business.' ) }
+				image={ { path: JetpackScanSVG } }
+				isPrimary
+			>
+				<p>
+					{ translate(
+						'Scan gives you automated scanning and one-click fixes to keep your site ahead of security threats.'
+					) }
+				</p>
+
+				{ ! isAdmin && (
+					<Notice status="is-warning" text={ nonAdminNoticeText } showDismiss={ false } />
+				) }
+
+				{ isAdmin && (
+					<PromoCardCTA
+						cta={ {
+							text: translate( 'Upgrade to %(planName)s Plan', {
+								args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+							} ),
+							action: {
+								url: addQueryArgs( `/checkout/${ siteSlug }/business`, {
+									redirect_to: postCheckoutUrl,
+								} ),
+								onClick: onUpgradeClick,
+								selfTarget: true,
+							},
+						} }
+					/>
+				) }
+			</PromoCard>
+		);
+	}
+
+	// Default scan upsell for other cases
 	return (
 		<PromoCard
 			title={ translate( 'We guard your site. You run your business.' ) }

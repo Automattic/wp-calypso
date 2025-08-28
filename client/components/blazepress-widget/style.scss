@@ -1,9 +1,9 @@
-@import "@automattic/typography/styles/variables";
-@import "@automattic/onboarding/styles/mixins";
+@import '@automattic/typography/styles/variables';
+@import '@automattic/onboarding/styles/mixins';
 
 $headerHeight: 72px;
 $headerHeightI2: 80px;
-$heading-font-family: "SF Pro Display", $sans;
+$heading-font-family: 'SF Pro Display', $sans;
 $heading-font-body-small: 15px;
 
 .blazepress-widget {
@@ -17,14 +17,14 @@ $heading-font-body-small: 15px;
 		display: flex;
 		justify-content: space-between;
 		min-height: $headerHeight;
-		padding: 0 rem(24px);
+		padding: 0 rem( 24px );
 		position: fixed;
-		width: calc(100% - 3rem);
-		background: var(--studio-white);
+		width: calc( 100% - 3rem );
+		background: var( --studio-white );
 		z-index: 1000;
 
 		@include break-large {
-			box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1);
+			box-shadow: 0 1px 1px 0 rgba( 0, 0, 0, 0.1 );
 		}
 
 		h2 {
@@ -39,8 +39,8 @@ $heading-font-body-small: 15px;
 		.blaze-logo {
 			width: 1.5rem;
 			height: 1.5rem;
-			fill: var(--color-text);
-			margin: 0 rem(10px) 0 0;
+			fill: var( --color-text );
+			margin: 0 rem( 10px ) 0 0;
 		}
 
 		.blazepress-widget__cancel {
@@ -55,7 +55,7 @@ $heading-font-body-small: 15px;
 	.blazepress-widget__content {
 		display: flex;
 		flex-direction: column;
-		height: calc(100% - #{$headerHeight});
+		height: calc( 100% - #{$headerHeight} );
 		margin-top: 72px;
 	}
 	.blazepress-widget__content.loading {
@@ -102,7 +102,7 @@ $heading-font-body-small: 15px;
 	&.blazepress-i2 {
 		.blazepress-widget__header-bar {
 			justify-content: flex-start;
-			width: calc(100% - 40px);
+			width: calc( 100% - 40px );
 			min-height: 32px;
 			height: auto;
 			padding: 24px 20px;
@@ -146,7 +146,7 @@ $heading-font-body-small: 15px;
 			}
 		}
 		.blazepress-widget__content {
-			height: calc(100% - #{$headerHeightI2});
+			height: calc( 100% - #{$headerHeightI2} );
 			margin-top: $headerHeightI2;
 		}
 	}
@@ -156,11 +156,10 @@ $heading-font-body-small: 15px;
 	}
 
 	&.dialog__backdrop {
-		background-color: color-mix(in srgb, var(--color-neutral-100) 60%, transparent);
+		background-color: color-mix( in srgb, var( --color-neutral-100 ) 60%, transparent );
 
 		.dialog.card {
 			max-width: 480px;
-			/* stylelint-disable-next-line scales/radii */
 			border-radius: 8px;
 
 			.dialog__action-buttons-close {

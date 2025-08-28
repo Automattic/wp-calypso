@@ -4,6 +4,7 @@ import { createElement } from 'react';
 import SharingConnections from 'calypso/sites/marketing/connections/connections';
 import SharingButtons from 'calypso/sites/marketing/sharing/buttons';
 import MarketingTools from 'calypso/sites/marketing/tools';
+import JetpackTraffic from 'calypso/sites/marketing/traffic/jetpack-traffic';
 import Traffic from 'calypso/sites/marketing/traffic/traffic';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
@@ -12,9 +13,11 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import { setExpandedService } from 'calypso/state/sharing/actions';
 import { requestSite } from 'calypso/state/sites/actions';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Sharing from './main';
+import SettingsSharing from './settings-sharing';
+import ToolsMarketing from './tools-marketing';
 
 export const redirectConnections = ( context ) => {
 	const serviceParam = context.params.service ? `?service=${ context.params.service }` : '';
@@ -107,13 +110,27 @@ export const sharingButtons = ( context, next ) => {
 		);
 	}
 
-	context.contentComponent = createElement( SharingButtons );
+	const isJetpack = isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } );
+
+	context.contentComponent = createElement( isJetpack ? SharingButtons : SettingsSharing );
 
 	next();
 };
 
 export const traffic = ( context, next ) => {
-	context.contentComponent = createElement( Traffic );
+	context.primary = createElement( Traffic );
+
+	next();
+};
+
+export const jetpackTraffic = ( context, next ) => {
+	context.contentComponent = createElement( JetpackTraffic );
+
+	next();
+};
+
+export const toolsMarketing = ( context, next ) => {
+	context.primary = createElement( ToolsMarketing );
 
 	next();
 };

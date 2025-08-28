@@ -106,7 +106,7 @@ export default function useSiteActions( {
 			},
 			{
 				name: translate( 'Hosting configuration' ),
-				href: `https://wordpress.com/hosting-config/${ blog_id }`,
+				href: `https://wordpress.com/sites/${ blog_id }/settings`,
 				onClick: () => handleClickMenuItem( 'hosting_configuration' ),
 				isExternalLink: true,
 				isEnabled: isWPCOMSite && ! isUrlOnly,
@@ -315,7 +315,7 @@ export function useSiteActionsDataViews( {
 					return canHaveActions( item ) && isAtomicSite( item ) && ! isUrlOnly( item );
 				},
 				callback( items: SiteData[] ) {
-					window.open( `https://wordpress.com/hosting-config/${ getBlogId( items[ 0 ] ) }` );
+					window.open( `https://wordpress.com/sites/${ getBlogId( items[ 0 ] ) }/settings` );
 					dispatch(
 						recordTracksEvent( getActionEventName( 'hosting_configuration', isLargeScreen ) )
 					);

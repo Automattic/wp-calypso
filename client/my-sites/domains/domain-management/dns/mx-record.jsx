@@ -39,7 +39,7 @@ class MxRecord extends Component {
 						value={ fieldValues.name }
 						suffix={ '.' + selectedDomainName }
 					/>
-					{ ! isNameValid && <FormInputValidation text={ translate( 'Invalid Name' ) } isError /> }
+					{ ! isNameValid && <FormInputValidation text={ translate( 'Invalid name' ) } isError /> }
 				</FormFieldset>
 
 				<FormFieldset>
@@ -54,7 +54,7 @@ class MxRecord extends Component {
 						} ) }
 					/>
 					{ ! isDataValid && (
-						<FormInputValidation text={ translate( 'Invalid Mail Server' ) } isError />
+						<FormInputValidation text={ translate( 'Invalid mail server' ) } isError />
 					) }
 					<FormSettingExplanation>
 						{ translate(
@@ -82,7 +82,7 @@ class MxRecord extends Component {
 						value={ fieldValues.aux }
 					/>
 					{ ! isAuxValid && (
-						<FormInputValidation text={ translate( 'Invalid Priority' ) } isError />
+						<FormInputValidation text={ translate( 'Invalid priority' ) } isError />
 					) }
 				</FormFieldset>
 

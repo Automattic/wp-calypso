@@ -16,7 +16,6 @@ import {
 	MeSidebarComponent,
 	cancelSubscriptionFlow,
 	cancelAtomicPurchaseFlow,
-	WPAdminSidebarComponent,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiCloseAccount } from '../shared';
@@ -91,18 +90,13 @@ describe(
 			} );
 		} );
 
-		describe( 'View server settings', function () {
-			it( 'See WP Admin', async function () {
+		describe( 'View WP Admin', function () {
+			it( 'WP Admin', async function () {
 				await page.waitForURL( /wp-admin/, {
 					timeout: 180 * 1000,
 				} );
 
 				siteSlug = new URL( page.url() ).hostname;
-			} );
-
-			it( 'Navigate to Hosting > Site Settings', async function () {
-				const wpAdminSidebarComponent = new WPAdminSidebarComponent( page );
-				await wpAdminSidebarComponent.navigate( 'Hosting', 'Site Settings' );
 			} );
 		} );
 

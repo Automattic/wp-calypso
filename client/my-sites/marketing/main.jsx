@@ -13,6 +13,7 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { useSelector } from 'calypso/state';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
@@ -80,10 +81,7 @@ export const Sharing = ( {
 	if ( showTraffic ) {
 		filters.push( {
 			id: 'traffic',
-			route: isJetpackClassic
-				? siteAdminUrl + 'admin.php?page=jetpack#/traffic'
-				: '/marketing/traffic' + pathSuffix,
-			isExternalLink: isJetpackClassic,
+			route: '/marketing/jetpack-traffic' + pathSuffix,
 			title: translate( 'Traffic' ),
 			description: translate(
 				'Manage settings and tools related to the traffic your website receives. {{learnMoreLink/}}',
@@ -202,12 +200,14 @@ export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const isJetpack = isJetpackSite( state, siteId );
 	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
+	const userId = getCurrentUserId( state );
 
 	return {
 		isP2Hub: isSiteP2Hub( state, siteId ),
 		showButtons: siteId && canManageOptions,
 		showConnections: !! siteId,
-		showTraffic: canManageOptions && !! siteId,
+		// Temporary "Marketing > Traffic" menu for existing users that shows a callout informing that the screen has moved to "Jetpack (> Settings) > Traffic".
+		showTraffic: canManageOptions && !! siteId && userId < 269750000,
 		isVip: isVipSite( state, siteId ),
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),

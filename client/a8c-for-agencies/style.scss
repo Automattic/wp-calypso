@@ -79,6 +79,7 @@
 	// Brand colors
 	--color-klaviyo: #b84f0a;
 	--color-woo: var(--studio-woocommerce-purple-60);
+	--color-vip: #9E6C29;
 
 	// A4A Brand Colors
 	--a4a-brand-blue-80: #12304a;
@@ -214,6 +215,32 @@
 		&:focus-visible {
 			background-color: var(--color-accent-100);
 			color: var(--color-surface);
+		}
+	}
+
+	.components-button.is-light {
+		background-color: var(--color-text-white);
+		color: initial;
+
+		&:focus {
+			box-shadow: 0 0 0 2px var(--color-primary-light);
+		}
+
+		&.is-secondary, &.is-link {
+			color: var(--color-text-white);
+			background-color: transparent;
+		}
+
+		svg {
+			fill: var(--color-text-white);
+		}
+
+		&.is-busy {
+			color: var(--color-text);
+
+			svg {
+				fill: var(--color-text);
+			}
 		}
 	}
 

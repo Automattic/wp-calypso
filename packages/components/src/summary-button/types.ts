@@ -73,4 +73,8 @@ export interface SummaryButtonProps {
 	 * @default false
 	 */
 	disabled?: boolean;
+	/**
+	 * Optional class name to be applied to the component.
+	 */
+	className?: string;
 }

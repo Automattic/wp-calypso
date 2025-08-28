@@ -127,7 +127,7 @@ export function generateAdminSections(
 		},
 		{
 			title: __( "View my site's latest stats" ),
-			link: `/stats/day/${ siteSlug }`,
+			link: `https://${ siteSlug }/wp-admin/admin.php?page=stats`,
 			synonyms: [ 'analytics' ],
 			icon: 'stats-alt',
 		},

@@ -17,6 +17,7 @@ interface GoToCheckoutProps {
 	extraProducts?: string[];
 	forceRedirection?: boolean;
 	extraQueryParams?: Record< string, string >;
+	historyBack?: boolean;
 }
 
 export const goToCheckout = ( {
@@ -27,6 +28,7 @@ export const goToCheckout = ( {
 	plan,
 	cancelDestination,
 	extraProducts = [],
+	historyBack = false,
 	extraQueryParams: extraParams = {},
 }: GoToCheckoutProps ) => {
 	const relativeCurrentPath = window.location.href.replace( window.location.origin, '' );
@@ -34,6 +36,7 @@ export const goToCheckout = ( {
 		redirect_to: destination,
 		cancel_to: cancelDestination || relativeCurrentPath,
 		signup: '1',
+		...( historyBack && { history_back: '1' } ),
 		...extraParams,
 	};
 
@@ -49,8 +52,7 @@ export const goToCheckout = ( {
 	// If the flag forceRedirection is true, we also go to the checkout page via redirection.
 	// The theme upsell link does not work with siteId and requires a siteSlug.
 	// See https://github.com/Automattic/wp-calypso/pull/64899
-	window.location.href = addQueryArgs(
-		`/checkout/${ encodeURIComponent( siteSlug ) }${ productSlugs }`,
-		params
+	window.location.replace(
+		addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }${ productSlugs }`, params )
 	);
 };

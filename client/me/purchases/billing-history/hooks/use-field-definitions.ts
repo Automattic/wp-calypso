@@ -10,7 +10,6 @@ export function useFieldDefinitions(
 	const translate = useTranslate();
 
 	return useMemo( () => {
-		const fieldDefinitions = getFieldDefinitions( transactions, translate, getReceiptUrlFor );
-		return Object.values( fieldDefinitions );
+		return getFieldDefinitions( transactions, translate, getReceiptUrlFor );
 	}, [ transactions, translate, getReceiptUrlFor ] );
 }

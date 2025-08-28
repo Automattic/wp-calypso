@@ -32,9 +32,9 @@ export default function ContentSummary( { status, stepContent }: ContentSummaryP
 
 	if ( status === 'done' ) {
 		const progress = stepContent.progress;
-		const posts = progress.post.completed;
-		const pages = progress.page.completed;
-		const attachments = progress.attachment.completed;
+		const posts = progress?.post?.completed || 0;
+		const pages = progress?.page?.completed || 0;
+		const attachments = progress?.attachment?.completed || 0;
 
 		return (
 			<div className="summary__content-stats">

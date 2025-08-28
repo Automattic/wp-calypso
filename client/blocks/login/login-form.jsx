@@ -371,22 +371,18 @@ export class LoginForm extends Component {
 	};
 
 	getLoginButtonText = () => {
-		const { translate, isWoo, isWooJPC, loginButtonText, isJetpack } = this.props;
+		const { translate, isWoo, loginButtonText, isJetpack } = this.props;
 
 		if ( loginButtonText ) {
 			return loginButtonText;
 		}
 
 		if ( this.isUsernameOrEmailView() ) {
-			if ( isJetpack ) {
+			if ( isJetpack && ! isWoo ) {
 				return translate( 'Continue with email' );
 			}
 
 			return translate( 'Continue' );
-		}
-
-		if ( isWoo && ! isWooJPC ) {
-			return translate( 'Get started' );
 		}
 
 		return translate( 'Log In' );
@@ -419,29 +415,25 @@ export class LoginForm extends Component {
 	}
 
 	renderUsernameorEmailLabel() {
-		if ( this.props.isWoo ) {
-			return this.props.translate( 'Your email or username' );
-		}
-
-		if ( this.props.isWoo ) {
-			return this.props.translate( 'Your email address or username' );
-		}
-
 		if ( this.props.currentQuery?.username_only === 'true' ) {
 			return this.props.translate( 'Your username' );
 		}
 
-		return this.isPasswordView() ? (
-			this.renderChangeUsername()
-		) : (
+		if ( this.isPasswordView() ) {
+			return this.renderChangeUsername();
+		}
+
+		const showLabel = ! this.props.isJetpack || this.props.isWoo;
+
+		return (
 			// Since the input receives focus on page load, screen reader users don't have any context
 			// for what credentials to use. Unlike other users, they won't have seen the informative
 			// text above the form. We therefore need to clarity the must use WordPress.com credentials.
 			<>
 				<span className="screen-reader-text">
-					{ this.props.translate( 'WordPress.com Email address or username' ) }
+					{ this.props.translate( 'WordPress.com email address or username' ) }
 				</span>
-				{ ! this.props.isJetpack && (
+				{ showLabel && (
 					<span aria-hidden="true">{ this.props.translate( 'Email address or username' ) }</span>
 				) }
 			</>

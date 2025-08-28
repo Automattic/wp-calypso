@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import { UseQueryResult } from '@tanstack/react-query';
 import { Icon, people, currencyDollar } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -163,15 +162,11 @@ export default function SubscribersChartSection( {
 	const {
 		isLoading,
 		isError,
-		data,
+		data: dataRaw,
 		// error,
 		status,
-	} = useSubscribersQuery(
-		siteId,
-		period,
-		quantity,
-		queryDate
-	) as UseQueryResult< SubscribersDataResult >;
+	} = useSubscribersQuery( siteId, period, quantity, queryDate );
+	const data = dataRaw as SubscribersDataResult | undefined;
 
 	const handleDateChange = useCallback(
 		( newDate: Date ) => setQueryDate( new Date( newDate.getTime() ) ), // unless new Date is created, the component won't rerender

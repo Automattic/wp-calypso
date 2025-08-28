@@ -10,13 +10,16 @@ import {
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { siteBySlugQuery } from '../../app/queries/site';
 import { siteSettingsMutation, siteSettingsQuery } from '../../app/queries/site-settings';
+import InlineSupportLink from '../../components/inline-support-link';
 import PageLayout from '../../components/page-layout';
-import { canViewSubscriptionGiftingSettings } from '../features';
+import { DotcomFeatures } from '../../data/constants';
+import { hasPlanFeature } from '../../utils/site-features';
 import SettingsPageHeader from '../settings-page-header';
 import type { SiteSettings } from '../../data/types';
 import type { Field, SimpleFormField } from '@wordpress/dataviews';
@@ -42,7 +45,7 @@ const fields: Field< SiteSettings >[] = [
 ];
 
 const form = {
-	type: 'regular' as const,
+	layout: { type: 'regular' as const },
 	fields: [ { id: 'wpcom_gifting_subscription' } as SimpleFormField ],
 };
 
@@ -60,7 +63,7 @@ export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: s
 		return null;
 	}
 
-	if ( ! canViewSubscriptionGiftingSettings( site ) ) {
+	if ( ! hasPlanFeature( site, DotcomFeatures.SUBSCRIPTION_GIFTING ) ) {
 		throw notFound();
 	}
 
@@ -98,8 +101,13 @@ export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: s
 			header={
 				<SettingsPageHeader
 					title={ __( 'Accept a gift subscription' ) }
-					description={ __(
-						'Allow a site visitor to cover the full cost of your site’s WordPress.com plan.'
+					description={ createInterpolateElement(
+						__(
+							'Allow a site visitor to cover the full cost of your site’s WordPress.com plan. <link>Learn more</link>'
+						),
+						{
+							link: <InlineSupportLink supportContext="gift-a-subscription" />,
+						}
 					) }
 				/>
 			}

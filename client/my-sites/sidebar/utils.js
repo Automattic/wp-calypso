@@ -110,15 +110,15 @@ export const itemLinkMatches = ( path, currentPath ) => {
 	}
 
 	if (
-		currentPath.startsWith( '/earn/jetpack-monetize/' ) ||
-		path.startsWith( '/earn/jetpack-monetize/' )
+		currentPath.startsWith( '/marketing/traffic/' ) ||
+		path.startsWith( '/marketing/traffic/' )
 	) {
 		return fragmentIsEqual( path, currentPath, 2 );
 	}
 
 	if (
-		currentPath.startsWith( '/subscribers/jetpack-subscribers/' ) ||
-		path.startsWith( '/subscribers/jetpack-subscribers/' )
+		currentPath.startsWith( '/marketing/tools-marketing/' ) ||
+		path.startsWith( '/marketing/tools-marketing/' )
 	) {
 		return fragmentIsEqual( path, currentPath, 2 );
 	}

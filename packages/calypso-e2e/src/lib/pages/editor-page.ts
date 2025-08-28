@@ -412,20 +412,27 @@ export class EditorPage {
 	 *
 	 * The name is expected to be formatted in the same manner as it
 	 * appears on the label when visible in the block inserter panel.
+	 * When exactMatch is false, it will select the first pattern that
+	 * contains the given name in its aria-label.
 	 *
 	 * Example:
 	 * 		- Two images side by side
 	 *
 	 * @param {string} patternName Name of the pattern to insert.
+	 * @param {boolean} exactMatch Whether to use exact matching for pattern names.
 	 */
-	async addPatternFromSidebar( patternName: string ): Promise< Locator > {
+	async addPatternFromSidebar(
+		patternName: string,
+		exactMatch: boolean = true
+	): Promise< Locator > {
 		if ( ! ( envVariables.TEST_ON_ATOMIC && envVariables.VIEWPORT_NAME === 'mobile' ) ) {
 			await this.editorGutenbergComponent.resetSelectedBlock();
 		}
 		await this.editorToolbarComponent.openBlockInserter();
 		return await this.addPatternFromInserter(
 			patternName,
-			this.editorSidebarBlockInserterComponent
+			this.editorSidebarBlockInserterComponent,
+			exactMatch
 		);
 	}
 
@@ -459,17 +466,29 @@ export class EditorPage {
 	 *
 	 * @param {string} patternName Name of the pattern.
 	 * @param {BlockInserter} inserter Block inserter component.
+	 * @param {boolean} exactMatch Whether to use exact matching for pattern names.
 	 */
 	private async addPatternFromInserter(
 		patternName: string,
-		inserter: BlockInserter
+		inserter: BlockInserter,
+		exactMatch = true
 	): Promise< Locator > {
 		const editorParent = await this.editor.parent();
 
 		await inserter.searchBlockInserter( patternName );
-		const locator = await inserter.selectBlockInserterResult( patternName, { type: 'pattern' } );
+		const locator = await inserter.selectBlockInserterResult( patternName, {
+			type: 'pattern',
+			exactMatch,
+		} );
+
+		// For partial matches, get the actual pattern name from the selected element.
+		let actualPatternName = patternName;
+		if ( ! exactMatch ) {
+			actualPatternName = ( await locator.getAttribute( 'aria-label' ) ) ?? '';
+		}
+
 		const insertConfirmationToastLocator = editorParent.locator(
-			`.components-snackbar__content:text('Block pattern "${ patternName }" inserted.')`
+			`.components-snackbar__content:text('Block pattern "${ actualPatternName }" inserted.')`
 		);
 		await insertConfirmationToastLocator.waitFor();
 		return locator;

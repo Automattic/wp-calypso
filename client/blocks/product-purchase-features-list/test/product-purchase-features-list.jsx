@@ -338,3 +338,53 @@ describe( '<HappinessSupportCard isEligibleForLiveChat', () => {
 		expect( screen.getByRole( 'button', { name: /ask a question/i } ) ).toBeVisible();
 	} );
 } );
+
+describe( 'ProductPurchaseFeaturesList summer special tests', () => {
+	const props = {
+		plan: PLAN_PERSONAL,
+		isPlaceholder: false,
+		selectedSite: {
+			plan: { product_slug: PLAN_PERSONAL },
+		},
+	};
+
+	test( 'should render UploadPlugins for Personal plan when summer special is enabled', () => {
+		const { container } = render( <ProductPurchaseFeaturesList { ...props } isSummerSpecial /> );
+		expect( container.firstChild ).not.toBeEmptyDOMElement();
+		// The UploadPlugins component should be rendered somewhere in the DOM
+		expect( container.innerHTML ).toContain( 'Add a Plugin' );
+		expect( container.innerHTML ).toContain( 'Upload a plugin now' );
+	} );
+
+	test( 'should not render UploadPlugins for Personal plan when summer special is disabled', () => {
+		const { container } = render(
+			<ProductPurchaseFeaturesList { ...props } isSummerSpecial={ false } />
+		);
+		expect( container.firstChild ).not.toBeEmptyDOMElement();
+		// The UploadPlugins component should not be rendered
+		expect( container.innerHTML ).not.toContain( 'Add a Plugin' );
+		expect( container.innerHTML ).not.toContain( 'Upload a plugin now' );
+	} );
+
+	test( 'should render UploadPlugins for Premium plan when summer special is enabled', () => {
+		const premiumProps = { ...props, plan: PLAN_PREMIUM };
+		const { container } = render(
+			<ProductPurchaseFeaturesList { ...premiumProps } isSummerSpecial />
+		);
+		expect( container.firstChild ).not.toBeEmptyDOMElement();
+		// The UploadPlugins component should be rendered somewhere in the DOM
+		expect( container.innerHTML ).toContain( 'Add a Plugin' );
+		expect( container.innerHTML ).toContain( 'Upload a plugin now' );
+	} );
+
+	test( 'should not render UploadPlugins for Premium plan when summer special is disabled', () => {
+		const premiumProps = { ...props, plan: PLAN_PREMIUM };
+		const { container } = render(
+			<ProductPurchaseFeaturesList { ...premiumProps } isSummerSpecial={ false } />
+		);
+		expect( container.firstChild ).not.toBeEmptyDOMElement();
+		// The UploadPlugins component should not be rendered
+		expect( container.innerHTML ).not.toContain( 'Add a Plugin' );
+		expect( container.innerHTML ).not.toContain( 'Upload a plugin now' );
+	} );
+} );

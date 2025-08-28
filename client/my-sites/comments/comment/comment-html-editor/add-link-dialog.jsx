@@ -102,7 +102,7 @@ export class AddLinkDialog extends Component {
 					<FormTextInput name="link_url" onChange={ this.setLinkUrl } value={ linkUrl } />
 				</FormFieldset>
 				<FormFieldset>
-					<FormLabel htmlFor="link_text">{ translate( 'Link Text' ) }</FormLabel>
+					<FormLabel htmlFor="link_text">{ translate( 'Link text' ) }</FormLabel>
 					<FormTextInput name="link_text" onChange={ this.setLinkText } value={ linkText } />
 				</FormFieldset>
 				<FormFieldset>

@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { __ } from '@wordpress/i18n';
 import { useSelector } from 'react-redux';
@@ -213,10 +212,6 @@ export function performanceSettings( context: PageJSContext, next: () => void ) 
 export async function dashboardBackportSiteSettings( context: PageJSContext, next: () => void ) {
 	const { site: siteSlug, feature } = context.params;
 
-	if ( ! isEnabled( 'dashboard/v2/backport/site-settings' ) ) {
-		return page.redirect( `/sites/settings/site/${ siteSlug }` );
-	}
-
 	// Route doesn't require a <PageViewTracker /> because the dashboard
 	// fires its own page view events.
 	context.primary = (
@@ -228,4 +223,12 @@ export async function dashboardBackportSiteSettings( context: PageJSContext, nex
 	);
 
 	next();
+}
+
+export function redirectToSiteSettingsNewUrl( context: PageJSContext ) {
+	const { site, feature } = context.params;
+	if ( feature ) {
+		return page.redirect( `/sites/${ site }/settings/${ feature }` );
+	}
+	return page.redirect( `/sites/${ site }/settings` );
 }

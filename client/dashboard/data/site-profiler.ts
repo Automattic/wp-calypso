@@ -5,7 +5,9 @@ export interface BasicMetricsData {
 }
 
 export interface PerformanceReport {
+	audits: Record< string, unknown >;
 	overall_score: number;
+	timestamp: string;
 }
 
 export interface UrlPerformanceInsights {

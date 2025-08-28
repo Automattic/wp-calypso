@@ -142,7 +142,7 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 	];
 
 	const form = {
-		type: 'regular' as const,
+		layout: { type: 'regular' as const },
 		fields: [ 'domain' ],
 	};
 

@@ -949,6 +949,7 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	jetpackPurchaseToken?: string;
 	auth_code?: string;
 	privacy_available?: boolean;
+	privacy?: boolean;
 	selected_page_titles?: string[];
 	site_title?: string;
 	signup_flow?: string;
@@ -957,6 +958,11 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	headstart_theme?: string;
 	feature_slug?: string;
 	is_hundred_year_domain?: boolean;
+
+	/**
+	 * Tracks the flow from which a domain registration originated.
+	 */
+	flow_name?: string;
 
 	/**
 	 * A way to signal intent to the back end when included as an extra with

@@ -33,7 +33,10 @@ import {
 	isStreamlinedPriceCheckoutTreatment,
 } from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
 import { useSelector } from 'calypso/state';
-import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
+import {
+	getIsOnboardingAffiliateFlow,
+	getIsOnboardingUnifiedFlow,
+} from 'calypso/state/signup/flow/selectors';
 import useCartKey from '../../use-cart-key';
 import { getAffiliateCouponLabel } from '../../utils';
 import { CheckIcon } from './check-icon';
@@ -475,6 +478,7 @@ export function CouponCostOverride( {
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 	const isOnboardingAffiliateFlow = useSelector( getIsOnboardingAffiliateFlow );
+	const isOnboardingUnifiedFlow = useSelector( getIsOnboardingUnifiedFlow );
 	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
 
 	if ( ! responseCart.coupon || ! responseCart.coupon_savings_total_integer ) {
@@ -486,8 +490,8 @@ export function CouponCostOverride( {
 		args: { couponCode: responseCart.coupon },
 	} );
 
-	const label = isOnboardingAffiliateFlow ? getAffiliateCouponLabel() : couponLabel;
-
+	const label =
+		isOnboardingAffiliateFlow || isOnboardingUnifiedFlow ? getAffiliateCouponLabel() : couponLabel;
 	return (
 		<CostOverridesListStyle
 			isStreamlinedPrice={ isStreamlinedPriceCheckoutTreatment(

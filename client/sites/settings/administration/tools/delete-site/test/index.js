@@ -104,7 +104,7 @@ describe( 'index', () => {
 		storeData.purchases.data = [
 			{
 				blog_id: 1,
-				active: true,
+				subscription_status: 'active',
 				is_refundable: true,
 			},
 		];

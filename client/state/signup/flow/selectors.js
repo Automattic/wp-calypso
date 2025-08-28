@@ -17,6 +17,23 @@ export function getExcludedSteps( state ) {
 	return get( state, 'signup.flow.excludedSteps', [] );
 }
 
+export const getIsOnboardingUnifiedFlow = ( state, source = undefined ) => {
+	const currentRoute = getCurrentRoute( state );
+	const queryArgs = getCurrentQueryArguments( state );
+
+	if ( currentRoute ) {
+		const flowFromURL = getFlowFromURL( currentRoute );
+		const isOnboardingUnifiedFlow = flowFromURL === ONBOARDING_UNIFIED_FLOW;
+		if ( isOnboardingUnifiedFlow && source ) {
+			return queryArgs?.source === source;
+		}
+
+		return isOnboardingUnifiedFlow;
+	}
+
+	return false;
+};
+
 export const getIsOnboardingAffiliateFlow = ( state ) => {
 	const currentFlowName = getCurrentFlowName( state );
 
@@ -28,15 +45,7 @@ export const getIsOnboardingAffiliateFlow = ( state ) => {
 	// Check if it's the new onboarding-unified flow with source=affiliate
 	// Use Redux state instead of direct window access
 	if ( currentFlowName === '' ) {
-		const currentRoute = getCurrentRoute( state );
-		const queryArgs = getCurrentQueryArguments( state );
-
-		if ( currentRoute ) {
-			const flowFromURL = getFlowFromURL( currentRoute );
-			if ( flowFromURL === ONBOARDING_UNIFIED_FLOW ) {
-				return queryArgs?.source === 'affiliate';
-			}
-		}
+		return getIsOnboardingUnifiedFlow( state, 'affiliate' );
 	}
 
 	return false;

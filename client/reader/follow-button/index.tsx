@@ -8,6 +8,7 @@ import {
 	recordUnfollow as recordUnfollowTracks,
 } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 
 interface ReaderFollowButtonProps {
 	hasButtonStyle?: boolean;
@@ -17,19 +18,24 @@ interface ReaderFollowButtonProps {
 	railcar?: Railcar;
 	followSource?: string;
 	siteUrl: string;
+	className?: string;
 }
 
 export default function ReaderFollowButton( props: ReaderFollowButtonProps ): JSX.Element {
-	const { onFollowToggle, railcar, followSource, hasButtonStyle, siteUrl, iconSize } = props;
+	const { onFollowToggle, railcar, followSource, hasButtonStyle, siteUrl, iconSize, className } =
+		props;
 
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	// We use the previous path to detect how the user arrived on the follow button.
+	// It is important to understand our post suggestions strategies.
+	const pathnameOverride = useSelector( getPreviousPath );
 
 	function recordFollowToggle( isFollowing: boolean ): void {
 		if ( isLoggedIn ) {
 			if ( isFollowing ) {
-				recordFollowTracks( siteUrl, railcar, { follow_source: followSource } );
+				recordFollowTracks( siteUrl, railcar, { follow_source: followSource }, pathnameOverride );
 			} else {
-				recordUnfollowTracks( siteUrl, railcar, { follow_source: followSource } );
+				recordUnfollowTracks( siteUrl, railcar, { follow_source: followSource }, pathnameOverride );
 			}
 		}
 
@@ -44,6 +50,7 @@ export default function ReaderFollowButton( props: ReaderFollowButtonProps ): JS
 	return (
 		<FollowButtonContainer
 			{ ...props }
+			className={ className }
 			onFollowToggle={ recordFollowToggle }
 			followIcon={ followIcon }
 			followingIcon={ followingIcon }

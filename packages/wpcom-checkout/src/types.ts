@@ -458,6 +458,7 @@ export interface VatDetails {
 	name?: string | null;
 	address?: string | null;
 	isForBusiness?: boolean | null;
+	can_user_edit?: boolean | false;
 }
 
 /*
@@ -664,3 +665,13 @@ export type SitelessCheckoutType =
 	| 'a4a'
 	| 'unified'
 	| undefined;
+
+/**
+ * Copied these types from Redux to avoid needing to import the whole package.
+ */
+type ReduxAction< T extends string = string > = {
+	type: T;
+};
+export interface AnyAction extends ReduxAction {
+	[ extraProps: string ]: any;
+}

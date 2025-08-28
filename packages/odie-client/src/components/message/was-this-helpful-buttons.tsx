@@ -1,3 +1,4 @@
+import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { ODIE_THUMBS_DOWN_RATING_VALUE, ODIE_THUMBS_UP_RATING_VALUE } from '../../constants';
@@ -91,7 +92,7 @@ const WasThisHelpfulButtons = ( {
 				) }
 			</div>
 			<div className="odie-feedback-component-button-container">
-				<button
+				<Button
 					className={ buttonLikedClasses }
 					onClick={ () => handleIsHelpful( true ) }
 					disabled={ notLiked }
@@ -99,8 +100,8 @@ const WasThisHelpfulButtons = ( {
 					aria-label={ __( 'Yes, this was helpful', __i18n_text_domain__ ) }
 				>
 					<ThumbsUpIcon className={ thumbsUpClasses } />
-				</button>
-				<button
+				</Button>
+				<Button
 					className={ buttonDislikedClasses }
 					onClick={ () => handleIsHelpful( false ) }
 					disabled={ liked }
@@ -108,7 +109,7 @@ const WasThisHelpfulButtons = ( {
 					aria-label={ __( 'No, this was not helpful', __i18n_text_domain__ ) }
 				>
 					<ThumbsDownIcon className={ thumbsDownClasses } />
-				</button>
+				</Button>
 			</div>
 		</div>
 	);

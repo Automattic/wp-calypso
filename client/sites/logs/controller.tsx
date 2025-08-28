@@ -1,5 +1,7 @@
+import { SiteLogsCallout } from 'calypso/dashboard/sites/logs';
 import { LogType } from 'calypso/data/hosting/use-site-logs-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { hostingFeaturesCallout } from 'calypso/sites/hosting/controller';
 import { SiteLogsDataViews } from './components/site-logs';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
 
@@ -24,3 +26,5 @@ export function webServerLogs( context: PageJSContext, next: () => void ) {
 
 	next();
 }
+
+export const siteLogsCallout = hostingFeaturesCallout( SiteLogsCallout );

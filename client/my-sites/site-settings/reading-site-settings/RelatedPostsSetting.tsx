@@ -29,7 +29,7 @@ export const RelatedPostsSetting = ( {
 	return (
 		<>
 			<FormLabel id="related-posts-settings" className="increase-margin-bottom-fix">
-				{ translate( 'Related Posts' ) }
+				{ translate( 'Related posts' ) }
 			</FormLabel>
 			<RelatedPostsFormFieldset
 				fields={ fields }

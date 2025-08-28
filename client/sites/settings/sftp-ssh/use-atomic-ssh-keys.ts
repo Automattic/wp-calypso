@@ -12,11 +12,11 @@ export interface AtomicKey {
 
 export const useAtomicSshKeys = (
 	siteId: number,
-	options: Omit< UseQueryOptions, 'queryKey' >
+	options: Omit< UseQueryOptions< { ssh_keys: AtomicKey[] } >, 'queryKey' >
 ) => {
-	return useQuery< { ssh_keys: Array< AtomicKey > }, unknown, Array< AtomicKey > >( {
+	return useQuery( {
 		queryKey: [ USE_ATOMIC_SSH_KEYS_QUERY_KEY, siteId ],
-		queryFn: () =>
+		queryFn: (): Promise< { ssh_keys: AtomicKey[] } > =>
 			wp.req.get( {
 				path: `/sites/${ siteId }/hosting/ssh-keys`,
 				apiNamespace: 'wpcom/v2',

@@ -33,10 +33,6 @@ jest.mock( 'calypso/components/section-nav/item', () => ( { children, path, sele
 	</a>
 ) );
 
-jest.mock( '@automattic/calypso-config', () => ( {
-	isEnabled: jest.fn(),
-} ) );
-
 describe( 'UserProfileHeader', () => {
 	const defaultUser: UserData = {
 		ID: 123,
@@ -47,11 +43,8 @@ describe( 'UserProfileHeader', () => {
 		bio: undefined,
 	};
 
-	const mockIsEnabled = jest.requireMock( '@automattic/calypso-config' ).isEnabled;
-
 	beforeEach( () => {
 		jest.clearAllMocks();
-		mockIsEnabled.mockReturnValue( false );
 	} );
 
 	test( 'should render the avatar with correct user information', () => {
@@ -78,7 +71,7 @@ describe( 'UserProfileHeader', () => {
 		expect( displayNameEl ).toBeInTheDocument();
 	} );
 
-	test( 'should render navigation tabs with Posts and Lists options', () => {
+	test( 'should render navigation tabs with Posts, Lists, and Recommended Blogs options', () => {
 		render( <UserProfileHeader user={ defaultUser } /> );
 
 		// Check if navigation section is rendered
@@ -87,22 +80,9 @@ describe( 'UserProfileHeader', () => {
 
 		// Check for navigation items
 		const navItems = screen.getAllByTestId( 'nav-item' );
-		expect( navItems.length ).toBe( 2 ); // Posts and Lists
+		expect( navItems.length ).toBe( 3 ); // Posts, Lists, and Recommended Blogs
 
-		// Check nav item content - should have Posts and Lists
-		const navTexts = navItems.map( ( item ) => item.textContent );
-		expect( navTexts ).toContain( 'Posts' );
-		expect( navTexts ).toContain( 'Lists' );
-		// Should NOT have Recommended Blogs
-		expect( navTexts ).not.toContain( 'Recommended Blogs' );
-	} );
-
-	test( 'should render navigation tabs with Recommended Blogs when enabled', () => {
-		mockIsEnabled.mockReturnValue( true );
-		render( <UserProfileHeader user={ defaultUser } view="recommended-blogs" /> );
-
-		const navItems = screen.getAllByTestId( 'nav-item' );
-		expect( navItems.length ).toBe( 3 ); // Posts, Lists, Recommended Blogs
+		// Check nav item content - should have Posts, Lists, and Recommended Blogs
 		const navTexts = navItems.map( ( item ) => item.textContent );
 		expect( navTexts ).toContain( 'Posts' );
 		expect( navTexts ).toContain( 'Lists' );

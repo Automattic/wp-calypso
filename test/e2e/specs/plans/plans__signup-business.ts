@@ -6,7 +6,6 @@ import {
 	DataHelper,
 	BrowserManager,
 	SignupPickPlanPage,
-	StartSiteFlow,
 	SidebarComponent,
 	RestAPIClient,
 	CartCheckoutPage,
@@ -71,12 +70,6 @@ describe(
 
 			it( 'Make purchase', async function () {
 				await cartCheckoutPage.purchase( { timeout: 75 * 1000 } );
-			} );
-
-			it( 'Skip Onboarding', async function () {
-				await page.waitForURL( /setup\/site-setup\/goals/ );
-				const startSiteFlow = new StartSiteFlow( page );
-				await startSiteFlow.clickButton( 'Skip to dashboard' );
 			} );
 
 			it( 'See Home', async function () {

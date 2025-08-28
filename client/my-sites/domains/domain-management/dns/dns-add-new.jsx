@@ -337,7 +337,7 @@ class DnsAddNew extends React.Component {
 		return (
 			<form className="dns__form">
 				<FormFieldset>
-					<FormLabel>{ translate( 'Type', { context: 'DNS Record' } ) }</FormLabel>
+					<FormLabel>{ translate( 'Type', { context: 'DNS record' } ) }</FormLabel>
 					<FormSelect
 						className="dns__add-new-select-type"
 						onChange={ this.changeType }

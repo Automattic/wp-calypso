@@ -599,6 +599,15 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/domains/update-contact-information/#60-day-transfer-lock',
 		post_id: 3441,
 	},
+	'security-web-application-firewall': {
+		link: 'https://developer.wordpress.com/docs/guides/security/#5-firewall-protection',
+		post_id: 122861,
+		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
+	},
+	'security-wpcom-login': {
+		link: 'https://wordpress.com/support/wordpress-com-secure-sign-on-sso/',
+		post_id: 175831,
+	},
 };
 
 export default contextLinks;

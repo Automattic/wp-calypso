@@ -31,7 +31,8 @@ const siteId = 1;
 const siteFragment = 'bored-sheep.jurassic.ninja';
 const siteUrl = `https://${ siteFragment }`;
 const adminUrl = `${ siteUrl }/wp-admin/`;
-const jetpackAdminUrl = `${ adminUrl }admin.php?page=jetpack#/recommendations`;
+const jetpackAdminUrl = `${ adminUrl }admin.php?page=my-jetpack`;
+const dashboardAdminUrl = `${ adminUrl }admin.php?page=jetpack`;
 
 describe( 'useJetpackFreeButtonProps', () => {
 	beforeEach( () => {
@@ -65,7 +66,7 @@ describe( 'useJetpackFreeButtonProps', () => {
 		expect( result.current.href ).toEqual( adminUrl );
 	} );
 
-	it( 'should link to the Jetpack section in the site admin, when site in state', () => {
+	it( 'should link to Dashboard in the site admin, when site in state without version info', () => {
 		getSelectedSite.mockReturnValue( {
 			options: { admin_url: adminUrl },
 			jetpack: true,
@@ -73,7 +74,7 @@ describe( 'useJetpackFreeButtonProps', () => {
 
 		const { result } = renderHook( () => useJetpackFreeButtonProps() );
 
-		expect( result.current.href ).toEqual( jetpackAdminUrl );
+		expect( result.current.href ).toEqual( dashboardAdminUrl );
 	} );
 
 	it( 'should link to the connect page if the site is not a Jetpack site', () => {
@@ -87,15 +88,15 @@ describe( 'useJetpackFreeButtonProps', () => {
 		expect( result.current.href ).toEqual( JPC_PATH_BASE );
 	} );
 
-	it( 'should link to the Jetpack section in the site admin, when site in context', () => {
+	it( 'should link to Dashboard in the site admin, when site in context without version info', () => {
 		const { result } = renderHook( () =>
 			useJetpackFreeButtonProps( undefined, { site: siteFragment } )
 		);
 
-		expect( result.current.href ).toEqual( jetpackAdminUrl );
+		expect( result.current.href ).toEqual( dashboardAdminUrl );
 	} );
 
-	it( 'should link to the Jetpack section in the site admin, when subsite in context', () => {
+	it( 'should link to Dashboard in the site admin, when subsite in context without version info', () => {
 		const subSiteFragment = `${ siteFragment }::second::third`;
 		const subSiteUrl = `${ siteUrl }/second/third`;
 
@@ -103,18 +104,18 @@ describe( 'useJetpackFreeButtonProps', () => {
 			useJetpackFreeButtonProps( undefined, { site: subSiteFragment } )
 		);
 
-		expect( result.current.href ).toEqual( jetpackAdminUrl.replace( siteUrl, subSiteUrl ) );
+		expect( result.current.href ).toEqual( dashboardAdminUrl.replace( siteUrl, subSiteUrl ) );
 	} );
 
-	it( 'should link to the "admin_url" query arg value, when "admin_url" query arg is present', () => {
+	it( 'should link to Dashboard using the "admin_url" query arg value, when "admin_url" query arg is present without version info', () => {
 		const wpAdminQueryArg = `http://non-https-site.com/wp-admin/`;
-		const jetpackAdminUrlFromQueryArg = `${ wpAdminQueryArg }admin.php?page=jetpack#/recommendations`;
+		const dashboardAdminUrlFromQueryArg = `${ wpAdminQueryArg }admin.php?page=jetpack`;
 
 		const { result } = renderHook( () =>
 			useJetpackFreeButtonProps( undefined, { admin_url: wpAdminQueryArg } )
 		);
 
-		expect( result.current.href ).toEqual( jetpackAdminUrlFromQueryArg );
+		expect( result.current.href ).toEqual( dashboardAdminUrlFromQueryArg );
 	} );
 
 	it( 'should link to the connect page, if site in context is invalid', () => {
@@ -151,5 +152,64 @@ describe( 'useJetpackFreeButtonProps', () => {
 		result.current.onClick();
 
 		expect( storePlan ).toHaveBeenCalledWith( PLAN_JETPACK_FREE );
+	} );
+
+	it( 'should link to Dashboard for multisite installations', () => {
+		getSelectedSite.mockReturnValue( {
+			options: { admin_url: adminUrl, jetpack_version: '14.8' },
+			jetpack: true,
+			is_multisite: true,
+		} );
+
+		const { result } = renderHook( () => useJetpackFreeButtonProps() );
+
+		expect( result.current.href ).toEqual( dashboardAdminUrl );
+	} );
+
+	it( 'should link to Dashboard for older Jetpack versions', () => {
+		getSelectedSite.mockReturnValue( {
+			options: { admin_url: adminUrl, jetpack_version: '14.8' },
+			jetpack: true,
+		} );
+
+		const { result } = renderHook( () => useJetpackFreeButtonProps() );
+
+		expect( result.current.href ).toEqual( dashboardAdminUrl );
+	} );
+
+	it( 'should link to My Jetpack for single site with Jetpack 14.9+', () => {
+		getSelectedSite.mockReturnValue( {
+			options: { admin_url: adminUrl, jetpack_version: '14.9-a.3' },
+			jetpack: true,
+			is_multisite: false,
+		} );
+
+		const { result } = renderHook( () => useJetpackFreeButtonProps() );
+
+		expect( result.current.href ).toEqual( jetpackAdminUrl );
+	} );
+
+	it( 'should link to Dashboard when redirect_to contains page=jetpack', () => {
+		getSelectedSite.mockReturnValue( {
+			options: { admin_url: adminUrl, jetpack_version: '14.9' },
+			jetpack: true,
+		} );
+
+		const { result } = renderHook( () =>
+			useJetpackFreeButtonProps( undefined, {
+				redirect_to: 'https://example.com/wp-admin/admin.php?page=jetpack',
+			} )
+		);
+
+		expect( result.current.href ).toEqual( dashboardAdminUrl );
+	} );
+
+	it( 'should link to Dashboard for multisite in URL query parameter', () => {
+		const { result } = renderHook( () =>
+			useJetpackFreeButtonProps( undefined, { site: siteFragment } )
+		);
+
+		// Without version info, it should default to Dashboard
+		expect( result.current.href ).toEqual( dashboardAdminUrl );
 	} );
 } );

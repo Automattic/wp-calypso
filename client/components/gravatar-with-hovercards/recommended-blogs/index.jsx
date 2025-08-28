@@ -1,27 +1,16 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import { shuffle } from 'lodash';
-import { useEffect } from 'react';
-import { useSelector, useDispatch } from 'calypso/state';
-import { requestUserRecommendedBlogs } from 'calypso/state/reader/lists/actions';
-import { getUserRecommendedBlogs } from 'calypso/state/reader/lists/selectors';
-import RecommendedBlogItem from './item';
+import { useFeedRecommendationsQuery } from 'calypso/data/reader/use-feed-recommendations-query';
+import { RecommendedFeed } from 'calypso/reader/recommended-feed';
 
 function RecommendedBlogs( { userLogin, closeCard } ) {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
-	const recommendedBlogs = useSelector( ( state ) => getUserRecommendedBlogs( state, userLogin ) );
+	const { data: recommendedBlogs } = useFeedRecommendationsQuery( userLogin, {
+		enabled: !! userLogin,
+	} );
 	const recommendedBlogsPath = `/reader/users/${ userLogin }/recommended-blogs`;
-
-	const shouldShowRecommendedBlogs =
-		isEnabled( 'reader/recommended-blogs-list' ) && recommendedBlogs?.length && userLogin;
-
-	useEffect( () => {
-		if ( ! recommendedBlogs && userLogin ) {
-			dispatch( requestUserRecommendedBlogs( userLogin ) );
-		}
-	}, [ userLogin, recommendedBlogs, dispatch ] );
+	const shouldShowRecommendedBlogs = recommendedBlogs?.length && userLogin;
 
 	const handleViewAllClick = ( e ) => {
 		e.preventDefault();
@@ -51,13 +40,15 @@ function RecommendedBlogs( { userLogin, closeCard } ) {
 				{ shuffle( recommendedBlogs )
 					.slice( 0, 3 )
 					.map( ( blog ) => (
-						<RecommendedBlogItem
-							key={ blog.ID }
-							blog={ blog }
-							classPrefix="gravatar-hovercard"
-							compact
-							onLinkClick={ closeCard }
-						/>
+						<li key={ blog.ID }>
+							<RecommendedFeed
+								key={ blog.ID }
+								blog={ blog }
+								classPrefix="gravatar-hovercard"
+								compact
+								onLinkClick={ closeCard }
+							/>
+						</li>
 					) ) }
 			</ul>
 		</div>

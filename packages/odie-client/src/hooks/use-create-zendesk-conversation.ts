@@ -3,58 +3,18 @@ import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useUpdateZendeskUserFields } from '@automattic/zendesk-client';
 import { useSelect } from '@wordpress/data';
 import Smooch from 'smooch';
-import { logToLogstash } from 'calypso/lib/logstash'; // eslint-disable-line no-restricted-imports -- this import is safe, not introudcing any circular deps; also, it should be removed shortly after investigating the chats with missing zd ids issue
 import { getOdieOnErrorTransferMessage, getOdieTransferMessage } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useManageSupportInteraction } from '../data';
 
-declare const process: {
-	env: {
-		NODE_ENV: unknown;
-	};
-};
-
-const logMessageData = ( {
-	createdFrom,
-	selectedSiteId,
-	selectedSiteURL,
-	userFieldFlowName,
-	section,
-}: {
-	createdFrom: string;
-	selectedSiteId?: number | null;
-	selectedSiteURL?: string | null;
-	userFieldFlowName?: string | null;
-	section: string | null;
-} ) => {
-	const stackTrace = Error().stack;
-
-	process.env.NODE_ENV === 'production' &&
-		logToLogstash( {
-			feature: 'calypso_client',
-			message: 'No chat ID on Zendesk chat',
-			extra: {
-				createdFrom,
-				selectedSiteId,
-				selectedSiteURL,
-				userFieldFlowName,
-				section,
-				stackTrace,
-			},
-			tags: [ 'no-chat-id-on-zd-chat' ],
-		} );
-};
-
 export const useCreateZendeskConversation = (): ( ( {
 	avoidTransfer,
 	interactionId,
-	section,
 	createdFrom,
 	isFromError,
 }: {
 	avoidTransfer?: boolean;
 	interactionId?: string;
-	section?: string | null;
 	createdFrom?: string;
 	isFromError?: boolean;
 } ) => Promise< void > ) => {
@@ -66,6 +26,7 @@ export const useCreateZendeskConversation = (): ( ( {
 		setChat,
 		chat,
 		trackEvent,
+		sectionName,
 	} = useOdieAssistantContext();
 	const { currentSupportInteraction } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
@@ -81,17 +42,27 @@ export const useCreateZendeskConversation = (): ( ( {
 	const createConversation = async ( {
 		avoidTransfer = false,
 		interactionId = '',
-		section = '',
 		createdFrom = '',
 		isFromError = false,
 	}: {
 		avoidTransfer?: boolean;
 		interactionId?: string;
-		section?: string | null;
 		createdFrom?: string;
 		isFromError?: boolean;
 	} ) => {
 		const currentInteractionID = interactionId || currentSupportInteraction!.uuid;
+
+		trackEvent( 'create_zendesk_conversation', {
+			is_submitting_zendesk_user_fields: isSubmittingZendeskUserFields,
+			chat_conversation_id: chat.conversationId,
+			chat_status: chat.status,
+			chat_provider: chat.provider,
+			interaction_id: currentInteractionID,
+			created_from: createdFrom,
+			avoid_transfer: avoidTransfer,
+			is_from_error: isFromError,
+		} );
+
 		if (
 			isSubmittingZendeskUserFields ||
 			chat.conversationId ||
@@ -112,25 +83,33 @@ export const useCreateZendeskConversation = (): ( ( {
 			status: 'transfer',
 		} ) );
 
-		// `direct_url` sends users directly to ZD, so there'll be no AI chat
-		if ( ! chatId && createdFrom !== 'direct_url' ) {
-			logMessageData( {
-				createdFrom,
-				selectedSiteId,
-				selectedSiteURL,
-				userFieldFlowName,
-				section,
+		try {
+			trackEvent( 'submitting_zendesk_user_fields', {
+				messaging_initial_message: userFieldMessage || undefined,
+				messaging_site_id: selectedSiteId || null,
+				messaging_ai_chat_id: chatId || undefined,
+				messaging_url: selectedSiteURL || window.location.href,
+				messaging_flow: userFieldFlowName || null,
+				messaging_source: sectionName,
+			} );
+
+			await submitUserFields( {
+				messaging_initial_message: userFieldMessage || undefined,
+				messaging_site_id: selectedSiteId || null,
+				messaging_ai_chat_id: chatId || undefined,
+				messaging_url: selectedSiteURL || window.location.href,
+				messaging_flow: userFieldFlowName || null,
+				messaging_source: sectionName,
+			} );
+
+			trackEvent( 'submitted_zendesk_user_fields' );
+		} catch ( error ) {
+			trackEvent( 'error_submitting_zendesk_user_fields', {
+				error_message:
+					error instanceof Error ? error.message : error?.toString?.() ?? 'Unknown error',
 			} );
 		}
 
-		await submitUserFields( {
-			messaging_initial_message: userFieldMessage || undefined,
-			messaging_site_id: selectedSiteId || null,
-			messaging_ai_chat_id: chatId || undefined,
-			messaging_url: selectedSiteURL || null,
-			messaging_flow: userFieldFlowName || null,
-			messaging_source: section,
-		} );
 		const conversation = await Smooch.createConversation( {
 			metadata: {
 				createdAt: Date.now(),

@@ -75,6 +75,7 @@ export const OdieSendMessageButton = () => {
 	const sendMessage = useSendChatMessage();
 	const isChatBusy = chat.status === 'loading' || chat.status === 'sending';
 	const isInitialLoading = chat.status === 'loading';
+	const isLiveChat = chat.provider?.startsWith( 'zendesk' );
 	const [ submitDisabled, setSubmitDisabled ] = useState( true );
 
 	// Focus input when chat is ready
@@ -91,10 +92,12 @@ export const OdieSendMessageButton = () => {
 		isUserEligibleForPaidSupport,
 		'messenger'
 	);
-	const { zendeskClientId } = useSelect( ( select ) => {
+	const { zendeskClientId, connectionStatus } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
+		const connectionStatus = helpCenterSelect.getZendeskConnectionStatus();
 		return {
 			zendeskClientId: helpCenterSelect.getZendeskClientId(),
+			connectionStatus,
 		};
 	}, [] );
 	const inferredClientId = chat.clientId ? chat.clientId : zendeskClientId;
@@ -242,31 +245,39 @@ export const OdieSendMessageButton = () => {
 							} }
 							className="odie-send-message-input-container"
 						>
-							<ResizableTextarea
-								shouldDisableInputField={
-									isChatBusy || isAttachingFile || cantTransferToZendesk || isEmailFallback
-								}
-								sendMessageHandler={ sendMessageHandler }
-								className="odie-send-message-input"
-								inputRef={ inputRef }
-								setSubmitDisabled={ setSubmitDisabled }
-								keyUpHandle={ handleOnKeyUp }
-								onPasteHandle={ onPaste }
-								placeholder={ textAreaPlaceholder }
-							/>
-							{ isChatBusy && <Spinner className="odie-send-message-input-spinner" /> }
+							<div className="odie-send-message-input-and-spinner">
+								<ResizableTextarea
+									shouldDisableInputField={
+										isChatBusy ||
+										isAttachingFile ||
+										cantTransferToZendesk ||
+										isEmailFallback ||
+										( isLiveChat && connectionStatus !== 'connected' )
+									}
+									sendMessageHandler={ sendMessageHandler }
+									className="odie-send-message-input"
+									inputRef={ inputRef }
+									setSubmitDisabled={ setSubmitDisabled }
+									keyUpHandle={ handleOnKeyUp }
+									onPasteHandle={ onPaste }
+									placeholder={ textAreaPlaceholder }
+								/>
+								{ isChatBusy && <Spinner className="odie-send-message-input-spinner" /> }
+							</div>
 							{ showAttachmentButton && (
 								<AttachmentButton
 									attachmentButtonRef={ attachmentButtonRef }
 									onFileUpload={ handleFileUpload }
 									isAttachingFile={ isAttachingFile }
-									isDisabled={ isEmailFallback }
+									isDisabled={
+										isEmailFallback || ( isLiveChat && connectionStatus !== 'connected' )
+									}
 								/>
 							) }
 							<button
 								type="submit"
 								className={ buttonClasses }
-								disabled={ submitDisabled }
+								disabled={ submitDisabled || ( isLiveChat && connectionStatus !== 'connected' ) }
 								aria-label={ __( 'Send message', __i18n_text_domain__ ) }
 							>
 								<SendMessageIcon />

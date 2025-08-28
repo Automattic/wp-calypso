@@ -1,6 +1,6 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
 
 .wpcom-plan-section .a4a-slider {
 	position: relative;
@@ -30,7 +30,7 @@
 .wpcom-plan-selector__price-actual-value,
 .wpcom-plan-selector__price-original-value {
 	@include heading-large;
-	color: var(--color-text);
+	color: var( --color-text );
 }
 
 .wpcom-plan-selector__price-original-value {
@@ -41,7 +41,7 @@
 
 .wpcom-plan-selector__price-discount {
 	@include body-medium;
-	color: var(--color-success);
+	color: var( --color-success );
 	text-wrap: nowrap;
 }
 
@@ -61,10 +61,9 @@
 	@include heading-medium;
 
 	display: inline-block;
-	border: 1px solid var(--color-neutral-5);
-	background-color: var(--color-neutral-0);
+	border: 1px solid var( --color-neutral-5 );
+	background-color: var( --color-neutral-0 );
 	padding: 4px 16px;
-	/* stylelint-disable-next-line scales/radii */
 	border-radius: 16px;
 	margin-block-end: 8px;
 }
@@ -98,7 +97,6 @@
 	flex-direction: column;
 	align-items: stretch;
 }
-
 
 .wpcom-plan-selector__details.is-placeholder {
 	display: flex;

@@ -43,7 +43,7 @@ export function useCanConnectToZendeskMessaging( enabled = true ) {
 			status_text: query.error?.message,
 			failure_count: query.failureCount,
 		} );
-	}, [ query.data, query.error, query.status, query.failureReason, query.failureCount ] );
+	}, [ query.data, query.error?.message, query.status, query.failureCount ] );
 
 	return query;
 }

@@ -8,6 +8,8 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import Notice from 'calypso/components/notice';
+import { preventWidows } from 'calypso/lib/formatting/prevent-widows';
+import { isGravPoweredOAuth2Client } from 'calypso/lib/oauth2-clients';
 import wpcom from 'calypso/lib/wp';
 import { LoginContext } from 'calypso/login/login-context';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -19,6 +21,7 @@ import {
 	getRedirectToOriginal,
 	getLastCheckedUsernameOrEmail,
 } from 'calypso/state/login/selectors';
+import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
@@ -48,10 +51,8 @@ class RequestLoginEmailForm extends Component {
 		hideMagicLoginRequestNotice: PropTypes.func.isRequired,
 
 		tosComponent: PropTypes.node,
-		hideHeaderText: PropTypes.bool,
 		headerText: PropTypes.string,
 		subHeaderText: PropTypes.string,
-		hideSubHeaderText: PropTypes.bool,
 		customFormLabel: PropTypes.string,
 		inputPlaceholder: PropTypes.string,
 		submitButtonLabel: PropTypes.string,
@@ -65,6 +66,7 @@ class RequestLoginEmailForm extends Component {
 		isEmailInputError: PropTypes.bool,
 		isSubmitButtonDisabled: PropTypes.bool,
 		isSubmitButtonBusy: PropTypes.bool,
+		isGravPoweredClient: PropTypes.bool.isRequired,
 	};
 
 	// @ts-ignore
@@ -77,6 +79,36 @@ class RequestLoginEmailForm extends Component {
 
 	usernameOrEmailRef = createRef();
 
+	setRequestLoginHeaders() {
+		this.context?.setHeaders( {
+			heading: this.props.headerText || this.props.translate( 'Email me a login link' ),
+			subHeading: this.getSubHeaderText(),
+		} );
+	}
+
+	/**
+	 * Unreachable by Gravatar flow
+	 */
+	setCheckYourEmailHeaders() {
+		const usernameOrEmail = this.getUsernameOrEmailFromState();
+		const emailAddress = usernameOrEmail.indexOf( '@' ) > 0 ? usernameOrEmail : null;
+
+		this.context?.setHeaders( {
+			heading: this.props.translate( 'Check your email' ),
+			subHeading: preventWidows(
+				emailAddress
+					? this.props.translate(
+							"We've sent a login link to {{strong}}%(emailAddress)s{{/strong}}",
+							{
+								args: { emailAddress },
+								components: { strong: <strong /> },
+							}
+					  )
+					: this.props.translate( 'We just emailed you a link.' )
+			),
+		} );
+	}
+
 	componentDidMount() {
 		const blogId = this.props.blogId;
 		if ( blogId ) {
@@ -85,10 +117,17 @@ class RequestLoginEmailForm extends Component {
 				.then( ( result ) => this.setState( { site: result } ) );
 		}
 
-		this.context?.setHeaders( {
-			heading: this.props.translate( 'Email me a login link' ),
-			subHeading: this.getSubHeaderText(),
-		} );
+		if ( this.props.showCheckYourEmail ) {
+			/**
+			 * Unreachable by Gravatar flow
+			 */
+			this.setCheckYourEmailHeaders();
+		} else {
+			/**
+			 * Reachable by Gravatar flow
+			 */
+			this.setRequestLoginHeaders();
+		}
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -97,10 +136,11 @@ class RequestLoginEmailForm extends Component {
 		}
 
 		if ( this.state.site?.name && prevProps.site?.name !== this.state.site?.name ) {
-			this.context?.setHeaders( {
-				heading: this.context?.heading,
-				subHeading: this.getSubHeaderText(),
-			} );
+			this.setRequestLoginHeaders();
+		}
+
+		if ( ! prevProps.showCheckYourEmail && this.props.showCheckYourEmail ) {
+			this.setCheckYourEmailHeaders();
 		}
 	}
 
@@ -168,6 +208,20 @@ class RequestLoginEmailForm extends Component {
 		return translate( 'We’ll send you an email with a link that will log you in right away.' );
 	}
 
+	getGravatarHeader() {
+		const { headerText } = this.props;
+		return headerText ? (
+			<h1 className="grav-powered-magic-login__form-header">{ headerText }</h1>
+		) : null;
+	}
+
+	getGravatarSubHeader() {
+		const { subHeaderText } = this.props;
+		return subHeaderText ? (
+			<p className="grav-powered-magic-login__form-sub-header">{ subHeaderText }</p>
+		) : null;
+	}
+
 	render() {
 		const {
 			currentUser,
@@ -178,9 +232,7 @@ class RequestLoginEmailForm extends Component {
 			showCheckYourEmail,
 			translate,
 			tosComponent,
-			headerText,
-			hideHeaderText,
-			hideSubHeaderText,
+			isGravPoweredClient,
 			inputPlaceholder,
 			submitButtonLabel,
 			customFormLabel,
@@ -227,7 +279,7 @@ class RequestLoginEmailForm extends Component {
 
 		const formLabel = customFormLabel
 			? this.props.translate( 'Email address or username' )
-			: this.props.translate( 'Email Address or Username' );
+			: this.props.translate( 'Email address or username' );
 
 		const onSubmit = onSubmitEmail
 			? ( e ) => onSubmitEmail( this.getUsernameOrEmailFromState(), e )
@@ -245,11 +297,7 @@ class RequestLoginEmailForm extends Component {
 						/>
 					</div>
 				) }
-				{ ! hideHeaderText && (
-					<h1 className="magic-login__form-header">
-						{ headerText || translate( 'Email me a login link' ) }
-					</h1>
-				) }
+				{ isGravPoweredClient && this.getGravatarHeader() }
 				<LoggedOutForm className="magic-login__form-form" onSubmit={ onSubmit }>
 					{ currentUser && currentUser.username && (
 						<Notice
@@ -264,9 +312,7 @@ class RequestLoginEmailForm extends Component {
 							} ) }
 						></Notice>
 					) }
-					{ ! hideSubHeaderText && (
-						<p className="magic-login__form-sub-header">{ this.getSubHeaderText() }</p>
-					) }
+					{ isGravPoweredClient && this.getGravatarSubHeader() }
 					<FormLabel htmlFor="usernameOrEmail">{ formLabel }</FormLabel>
 					<FormFieldset className="magic-login__email-fields">
 						<FormTextInput
@@ -320,6 +366,8 @@ class RequestLoginEmailForm extends Component {
 }
 
 const mapState = ( state ) => {
+	const oauth2Client = getCurrentOAuth2Client( state );
+
 	return {
 		locale: getCurrentLocaleSlug( state ),
 		currentUser: getCurrentUser( state ),
@@ -333,6 +381,7 @@ const mapState = ( state ) => {
 			getLastCheckedUsernameOrEmail( state ) ||
 			getCurrentQueryArguments( state ).email_address ||
 			getInitialQueryArguments( state ).email_address,
+		isGravPoweredClient: isGravPoweredOAuth2Client( oauth2Client ),
 	};
 };
 

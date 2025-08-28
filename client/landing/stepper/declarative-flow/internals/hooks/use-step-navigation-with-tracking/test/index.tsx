@@ -3,6 +3,7 @@
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { renderHook, act } from '@testing-library/react';
+import { useStepNavigationWithTracking } from '../';
 import {
 	STEPPER_TRACKS_EVENT_STEP_NAV_EXIT_FLOW,
 	STEPPER_TRACKS_EVENT_STEP_NAV_GO_BACK,
@@ -11,7 +12,7 @@ import {
 	STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
 } from '../../../../../constants';
 import { recordStepNavigation } from '../../../analytics/record-step-navigation';
-import { useStepNavigationWithTracking } from '../index';
+import { canUseAutomaticGoBack } from '../can-use-automatic-go-back';
 
 const EMPTY_GOALS = [];
 
@@ -28,6 +29,10 @@ jest.mock( '../../../analytics/record-step-navigation', () => ( {
 	recordStepNavigation: jest.fn(),
 } ) );
 
+jest.mock( '../can-use-automatic-go-back', () => ( {
+	canUseAutomaticGoBack: jest.fn( () => true ),
+} ) );
+
 const stepNavControls = {
 	submit: jest.fn(),
 	exitFlow: jest.fn(),
@@ -36,7 +41,12 @@ const stepNavControls = {
 	goToStep: jest.fn(),
 };
 
-const mockParams = {
+const stepNavControlsWithoutGoBack = {
+	...stepNavControls,
+	goBack: undefined,
+};
+
+const BaseFlow = {
 	flow: {
 		name: 'mock-flow',
 		isSignupFlow: false,
@@ -45,6 +55,14 @@ const mockParams = {
 	},
 	currentStepRoute: 'mock-step',
 	navigate: () => {},
+};
+
+const FlowWithoutGoBack = {
+	...BaseFlow,
+	flow: {
+		...BaseFlow.flow,
+		useStepNavigation: () => stepNavControlsWithoutGoBack,
+	},
 };
 
 const getDefaultProps = ( { flow, currentStepRoute } ) => ( {
@@ -62,32 +80,53 @@ describe( 'useStepNavigationWithTracking', () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'returns callbacks for all known navigation controls', () => {
-		const { result } = renderHook( () => useStepNavigationWithTracking( mockParams ) );
+	beforeAll( () => {
+		Object.defineProperty( window, 'history', {
+			value: { back: jest.fn() },
+		} );
+	} );
 
-		expect( result.current ).toHaveProperty( 'submit' );
-		expect( result.current ).toHaveProperty( 'exitFlow' );
-		expect( result.current ).toHaveProperty( 'goBack' );
-		expect( result.current ).toHaveProperty( 'goNext' );
-		expect( result.current ).toHaveProperty( 'goToStep' );
+	it( 'returns callbacks for all known navigation controls', () => {
+		const { result } = renderHook( () => useStepNavigationWithTracking( BaseFlow ) );
+
+		expect( result.current.submit ).toBeDefined();
+		expect( result.current.exitFlow ).toBeDefined();
+		expect( result.current.goBack ).toBeDefined();
+		expect( result.current.goNext ).toBeDefined();
+		expect( result.current.goToStep ).toBeDefined();
+	} );
+
+	it( 'doesnt return goBack when the flow does not define a goBack handler and canUseAutomaticGoBack is false', () => {
+		( canUseAutomaticGoBack as jest.Mock ).mockReturnValue( false );
+		const { result } = renderHook( () => useStepNavigationWithTracking( FlowWithoutGoBack ) );
+
+		expect( result.current.goBack ).toBeUndefined();
+	} );
+
+	it( 'calls history.back when goBack is called and canUseAutomaticGoBack is true', () => {
+		( canUseAutomaticGoBack as jest.Mock ).mockReturnValue( true );
+		const { result } = renderHook( () => useStepNavigationWithTracking( FlowWithoutGoBack ) );
+		result.current.goBack?.();
+
+		expect( history.back ).toHaveBeenCalled();
 	} );
 
 	it( 'ensures reference equality given same input', () => {
 		const { result, rerender } = renderHook(
 			( params ) => useStepNavigationWithTracking( params ),
 			{
-				initialProps: mockParams,
+				initialProps: BaseFlow,
 			}
 		);
 
 		const previous = result.current;
 
-		rerender( mockParams );
+		rerender( BaseFlow );
 		expect( result.current ).toBe( previous );
 	} );
 
 	it( 'calls the wrapped submit control with correct parameters and records the respective event', () => {
-		const { result } = renderHook( () => useStepNavigationWithTracking( mockParams ) );
+		const { result } = renderHook( () => useStepNavigationWithTracking( BaseFlow ) );
 		const providedDependencies = { foo: 'foo' };
 		act( () => {
 			result.current.submit?.( providedDependencies );
@@ -95,14 +134,14 @@ describe( 'useStepNavigationWithTracking', () => {
 
 		expect( stepNavControls.submit ).toHaveBeenCalledWith( providedDependencies );
 		expect( recordStepNavigation ).toHaveBeenCalledWith( {
-			...getDefaultProps( mockParams ),
+			...getDefaultProps( BaseFlow ),
 			event: STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
 			providedDependencies,
 		} );
 	} );
 
 	it( 'calls the wrapped goBack control with correct parameters and records the respective event', () => {
-		const { result } = renderHook( () => useStepNavigationWithTracking( mockParams ) );
+		const { result } = renderHook( () => useStepNavigationWithTracking( BaseFlow ) );
 
 		act( () => {
 			result.current.goBack?.();
@@ -110,13 +149,13 @@ describe( 'useStepNavigationWithTracking', () => {
 
 		expect( stepNavControls.goBack ).toHaveBeenCalled();
 		expect( recordStepNavigation ).toHaveBeenCalledWith( {
-			...getDefaultProps( mockParams ),
+			...getDefaultProps( BaseFlow ),
 			event: STEPPER_TRACKS_EVENT_STEP_NAV_GO_BACK,
 		} );
 	} );
 
 	it( 'calls the wrapped goNext control with correct parameters and records the respective event', () => {
-		const { result } = renderHook( () => useStepNavigationWithTracking( mockParams ) );
+		const { result } = renderHook( () => useStepNavigationWithTracking( BaseFlow ) );
 
 		act( () => {
 			result.current.goNext?.();
@@ -124,13 +163,13 @@ describe( 'useStepNavigationWithTracking', () => {
 
 		expect( stepNavControls.goNext ).toHaveBeenCalled();
 		expect( recordStepNavigation ).toHaveBeenCalledWith( {
-			...getDefaultProps( mockParams ),
+			...getDefaultProps( BaseFlow ),
 			event: STEPPER_TRACKS_EVENT_STEP_NAV_GO_NEXT,
 		} );
 	} );
 
 	it( 'calls the wrapped exitFlow control with correct parameters and records the respective event', () => {
-		const { result } = renderHook( () => useStepNavigationWithTracking( mockParams ) );
+		const { result } = renderHook( () => useStepNavigationWithTracking( BaseFlow ) );
 
 		act( () => {
 			result.current.exitFlow?.( 'to' );
@@ -138,14 +177,14 @@ describe( 'useStepNavigationWithTracking', () => {
 
 		expect( stepNavControls.exitFlow ).toHaveBeenCalledWith( 'to' );
 		expect( recordStepNavigation ).toHaveBeenCalledWith( {
-			...getDefaultProps( mockParams ),
+			...getDefaultProps( BaseFlow ),
 			event: STEPPER_TRACKS_EVENT_STEP_NAV_EXIT_FLOW,
 			additionalProps: { to: 'to' },
 		} );
 	} );
 
 	it( 'calls the wrapped goToStep control with correct parameters and records the respective event', () => {
-		const { result } = renderHook( () => useStepNavigationWithTracking( mockParams ) );
+		const { result } = renderHook( () => useStepNavigationWithTracking( BaseFlow ) );
 
 		act( () => {
 			result.current.goToStep?.( 'to' );
@@ -153,7 +192,7 @@ describe( 'useStepNavigationWithTracking', () => {
 
 		expect( stepNavControls.goToStep ).toHaveBeenCalledWith( 'to' );
 		expect( recordStepNavigation ).toHaveBeenCalledWith( {
-			...getDefaultProps( mockParams ),
+			...getDefaultProps( BaseFlow ),
 			event: STEPPER_TRACKS_EVENT_STEP_NAV_GO_TO,
 			additionalProps: { to: 'to' },
 		} );

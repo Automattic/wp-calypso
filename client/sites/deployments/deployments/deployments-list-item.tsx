@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { Button } from '@automattic/components';
+import { Button, Dialog } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
 import { Spinner } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
@@ -7,7 +7,7 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { useDispatch, useSelector } from '../../../state';
 import { manageDeploymentPage, viewDeploymentLogs } from '../routes';
 import { formatDate } from '../utils/dates';
@@ -31,6 +31,7 @@ interface DeploymentsListItemProps {
 
 export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) => {
 	const siteSlug = useSelector( getSelectedSiteSlug );
+	const site = useSelector( getSelectedSite );
 	const dispatch = useDispatch();
 	const locale = useLocale();
 	const { __ } = useI18n();
@@ -114,6 +115,27 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 
 	const [ isDisconnectRepositoryDialogVisible, setDisconnectRepositoryDialogVisibility ] =
 		useState( false );
+	const [ isProductionDeploymentModalVisible, setProductionDeploymentModalVisibility ] =
+		useState( false );
+
+	const isProductionSite = ! site?.is_wpcom_staging_site;
+
+	const handleManualDeployment = () => {
+		if ( isProductionSite ) {
+			setProductionDeploymentModalVisibility( true );
+		} else {
+			triggerManualDeployment();
+		}
+	};
+
+	const handleConfirmProductionDeployment = () => {
+		setProductionDeploymentModalVisibility( false );
+		triggerManualDeployment();
+	};
+
+	const handleCancelProductionDeployment = () => {
+		setProductionDeploymentModalVisibility( false );
+	};
 
 	return (
 		<>
@@ -138,7 +160,7 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 						<DeploymentsListItemActions
 							siteSlug={ siteSlug! }
 							deployment={ deployment }
-							onManualDeployment={ triggerManualDeployment }
+							onManualDeployment={ handleManualDeployment }
 							onDisconnectRepository={ () => setDisconnectRepositoryDialogVisibility( true ) }
 						/>
 					) }
@@ -149,6 +171,29 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 				isVisible={ isDisconnectRepositoryDialogVisible }
 				onClose={ () => setDisconnectRepositoryDialogVisibility( false ) }
 			/>
+			<Dialog
+				isVisible={ isProductionDeploymentModalVisible }
+				showCloseIcon
+				buttons={ [
+					<Button key="cancel" onClick={ handleCancelProductionDeployment }>
+						{ __( 'Cancel' ) }
+					</Button>,
+					<Button key="deploy" primary onClick={ handleConfirmProductionDeployment }>
+						{ __( 'Deploy to production' ) }
+					</Button>,
+				] }
+				onClose={ handleCancelProductionDeployment }
+			>
+				<div className="github-deployments-production-deployment-dialog">
+					<h1>{ __( 'Deploy to production' ) }</h1>
+					<p>
+						{ __(
+							'You are about to deploy changes to your production site. This will replace contents of your live site with the selected repository.'
+						) }
+					</p>
+					<p>{ __( 'Are you sure you want to continue?' ) }</p>
+				</div>
+			</Dialog>
 		</>
 	);
 };

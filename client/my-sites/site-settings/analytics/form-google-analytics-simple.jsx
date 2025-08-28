@@ -12,12 +12,14 @@ import {
 } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import googleIllustration from 'calypso/assets/images/illustrations/google-analytics-logo.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
+import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 
 import './style.scss';
 
@@ -38,12 +40,17 @@ const GoogleAnalyticsSimpleForm = ( {
 	setDisplayForm,
 	showUpgradeNudge,
 	site,
+	siteId,
 	translate,
 } ) => {
 	const nudgeTitle = translate(
 		'Connect your site to Google Analytics in seconds with the %(premiumPlanName)s plan',
 		{ args: { premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() } }
 	);
+	const statsUrl = useSelector( ( state ) =>
+		getSiteAdminUrl( state, siteId, 'admin.php?page=stats' )
+	);
+
 	useEffect( () => {
 		if ( fields?.wga?.code ) {
 			setDisplayForm( true );
@@ -138,7 +145,7 @@ const GoogleAnalyticsSimpleForm = ( {
 										'normally show slightly different totals for your visits, views, etc.',
 									{
 										components: {
-											a: <a href={ '/stats/' + site.domain } />,
+											a: <a href={ statsUrl } />,
 										},
 									}
 								) }

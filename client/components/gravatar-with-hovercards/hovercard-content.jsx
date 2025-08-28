@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -62,9 +61,7 @@ function HovercardContent( props ) {
 						</div>
 
 						<div className="gravatar-hovercard__footer">
-							{ isEnabled( 'reader/recommended-blogs-list' ) && (
-								<RecommendedBlogs userLogin={ userLogin } closeCard={ closeCard } />
-							) }
+							<RecommendedBlogs userLogin={ userLogin } closeCard={ closeCard } />
 						</div>
 					</>
 				) }

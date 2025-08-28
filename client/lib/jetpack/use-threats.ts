@@ -12,7 +12,21 @@ import getSiteScanUpdatingThreats from 'calypso/state/selectors/get-site-scan-up
 
 export const useThreats = ( siteId: number ) => {
 	const [ selectedThreat, setSelectedThreat ] = useState< Threat >();
-	const updatingThreats = useSelector( ( state ) => getSiteScanUpdatingThreats( state, siteId ) );
+	const updatingThreats = useSelector(
+		( state ) => {
+			return getSiteScanUpdatingThreats( state, siteId );
+		},
+		( a, b ) => {
+			// Compare arrays by reference first, then by contents
+			if ( a === b ) {
+				return true;
+			}
+			if ( ! a || ! b || a.length !== b.length ) {
+				return false;
+			}
+			return a.every( ( val, idx ) => val === b[ idx ] );
+		}
+	);
 	const dispatch = useDispatch();
 
 	const updateThreat = useCallback(

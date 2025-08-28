@@ -47,16 +47,27 @@
 	}
 }
 
-.profile__gravatar-profile-description {
+.profile__gravatar-profile-disclosure {
 	display: flex;
 	flex-direction: column-reverse;
+	justify-content: space-between;
+	margin-bottom: 1.5em;
 	font-size: $font-body-small;
 	line-height: 20px;
 	word-break: break-word;
+	gap: 5px;
 
-	@include breakpoint-deprecated(">960px") {
+	.profile__gravatar-profile-title {
+		font-weight: 600;
+	}
+
+	.profile__gravatar-profile-description {
+		margin: 5px 0 0;
+	}
+
+	@include breakpoint-deprecated( '>960px' ) {
 		flex-direction: row;
-		gap: 50px;
+		gap: 2em;
 	}
 }
 

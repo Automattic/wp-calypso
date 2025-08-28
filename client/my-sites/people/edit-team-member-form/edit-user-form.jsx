@@ -235,7 +235,7 @@ class EditUserForm extends Component {
 				returnField = (
 					<FormFieldset key={ fieldKeys.firstName }>
 						<FormLabel htmlFor={ fieldKeys.firstName }>
-							{ this.props.translate( 'First Name', {
+							{ this.props.translate( 'First name', {
 								context: 'Text that is displayed in a label of a form.',
 							} ) }
 						</FormLabel>
@@ -254,7 +254,7 @@ class EditUserForm extends Component {
 				returnField = (
 					<FormFieldset key={ fieldKeys.lastName }>
 						<FormLabel htmlFor={ fieldKeys.lastName }>
-							{ this.props.translate( 'Last Name', {
+							{ this.props.translate( 'Last name', {
 								context: 'Text that is displayed in a label of a form.',
 							} ) }
 						</FormLabel>
@@ -273,7 +273,7 @@ class EditUserForm extends Component {
 				returnField = (
 					<FormFieldset key={ fieldKeys.name }>
 						<FormLabel htmlFor={ fieldKeys.name }>
-							{ this.props.translate( 'Public Display Name', {
+							{ this.props.translate( 'Public display name', {
 								context: 'Text that is displayed in a label of a form.',
 							} ) }
 						</FormLabel>
@@ -345,6 +345,7 @@ class EditUserForm extends Component {
 }
 
 const withExternalContributors = createHigherOrderComponent(
+	// eslint-disable-next-line react/display-name
 	( Wrapped ) => ( props ) => {
 		const { siteId, user } = props;
 		const {

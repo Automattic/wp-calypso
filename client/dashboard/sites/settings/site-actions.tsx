@@ -7,7 +7,9 @@ import { addQueryArgs } from '@wordpress/url';
 import { sitePlanSoftwareRestoreMutation } from '../../app/queries/site-plans';
 import { ActionList } from '../../components/action-list';
 import { SectionHeader } from '../../components/section-header';
-import { canViewSiteActions, canRestorePlanSoftware, canDuplicateSite } from '../features';
+import { DotcomFeatures } from '../../data/constants';
+import { hasPlanFeature } from '../../utils/site-features';
+import { canViewSiteActions } from '../features';
 import type { Site } from '../../data/types';
 
 const RestorePlanSoftware = ( { site }: { site: Site } ) => {
@@ -76,10 +78,10 @@ export default function SiteActions( { site }: { site: Site } ) {
 	}
 
 	const actions = [
-		canRestorePlanSoftware( site ) && (
-			<RestorePlanSoftware key="restore-plan-software" site={ site } />
+		site.is_wpcom_atomic && <RestorePlanSoftware key="restore-plan-software" site={ site } />,
+		hasPlanFeature( site, DotcomFeatures.COPY_SITE ) && (
+			<DuplicateSite key="duplicate-site" site={ site } />
 		),
-		canDuplicateSite( site ) && <DuplicateSite key="duplicate-site" site={ site } />,
 	].filter( Boolean );
 
 	if ( ! actions.length ) {

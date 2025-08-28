@@ -30,3 +30,4 @@ $components-color-gray-800: var(--wp-components-color-gray-800, colors.$gray-800
 
 // Semantic aliases (prefer these over raw gray values when applicable).
 $components-color-border: #{ $components-color-gray-600 };
+$components-color-disabled: #{ $components-color-gray-600 };

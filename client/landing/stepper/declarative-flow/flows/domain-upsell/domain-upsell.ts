@@ -2,6 +2,7 @@ import { OnboardSelect, updateLaunchpadSettings, useLaunchpad } from '@automatti
 import { addPlanToCart, addProductsToCart, DOMAIN_UPSELL_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
+import { shouldRenderRewrittenDomainSearch } from 'calypso/lib/domains/should-render-rewritten-domain-search';
 import { useQuery } from '../../../hooks/use-query';
 import { useSiteIdParam } from '../../../hooks/use-site-id-param';
 import { useSiteSlug } from '../../../hooks/use-site-slug';
@@ -10,7 +11,10 @@ import { STEPS } from '../../internals/steps';
 import { ProvidedDependencies } from '../../internals/types';
 import type { Flow } from '../../internals/types';
 
-const DOMAIN_UPSELL_STEPS = [ STEPS.DOMAINS, STEPS.PLANS ];
+const DOMAIN_UPSELL_STEPS = [
+	shouldRenderRewrittenDomainSearch() ? STEPS.DOMAIN_SEARCH : STEPS.DOMAINS,
+	STEPS.PLANS,
+];
 
 const domainUpsell: Flow = {
 	name: DOMAIN_UPSELL_FLOW,

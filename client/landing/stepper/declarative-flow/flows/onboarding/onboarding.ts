@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { DomainSuggestion, OnboardActions, OnboardSelect } from '@automattic/data-stores';
+import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import { ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -7,6 +7,9 @@ import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordp
 import { useState, useEffect } from 'react';
 import { isSimplifiedOnboarding } from 'calypso/landing/stepper/hooks/use-simplified-onboarding';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
+import { addSurvicate } from 'calypso/lib/analytics/survicate';
+import { shouldRenderRewrittenDomainSearch } from 'calypso/lib/domains/should-render-rewritten-domain-search';
+import { useIsDomainSearchV2Enabled } from 'calypso/lib/domains/use-domain-search-v2';
 import { pathToUrl } from 'calypso/lib/url';
 import {
 	persistSignupDestination,
@@ -15,6 +18,7 @@ import {
 	clearSignupCompleteSlug,
 	clearSignupCompleteFlowName,
 	clearSignupDestinationCookie,
+	clearSignupCompleteSiteID,
 } from 'calypso/signup/storageUtils';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
@@ -27,7 +31,13 @@ import { recordStepNavigation } from '../../internals/analytics/record-step-navi
 import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-plan-notification';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
-import type { FlowV2, ProvidedDependencies, SubmitHandler } from '../../internals/types';
+import {
+	AssertConditionState,
+	type FlowV2,
+	type ProvidedDependencies,
+	type SubmitHandler,
+} from '../../internals/types';
+import type { DomainSuggestion } from '@automattic/data';
 
 const clearUseMyDomainsQueryParams = ( currentStepSlug: string | undefined ) => {
 	const isDomainsStep = currentStepSlug === 'domains';
@@ -47,7 +57,7 @@ const withLocale = ( url: string, locale: string ) => {
 
 function initialize() {
 	const steps = [
-		STEPS.UNIFIED_DOMAINS,
+		shouldRenderRewrittenDomainSearch() ? STEPS.DOMAIN_SEARCH : STEPS.UNIFIED_DOMAINS,
 		STEPS.USE_MY_DOMAIN,
 		STEPS.UNIFIED_PLANS,
 		STEPS.SITE_CREATION_STEP,
@@ -147,6 +157,10 @@ const onboarding: FlowV2< typeof initialize > = {
 			const { slug, providedDependencies } = submittedStep;
 			switch ( slug ) {
 				case 'domains':
+					if ( ! providedDependencies ) {
+						throw new Error( 'No provided dependencies found' );
+					}
+
 					setSiteUrl( providedDependencies.siteUrl as string );
 					setDomain( providedDependencies.suggestion as DomainSuggestion );
 					setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
@@ -289,6 +303,13 @@ const onboarding: FlowV2< typeof initialize > = {
 
 		return { submit };
 	},
+	useAssertConditions() {
+		const [ isLoading ] = useIsDomainSearchV2Enabled( this.name );
+
+		return {
+			state: isLoading ? AssertConditionState.CHECKING : AssertConditionState.SUCCESS,
+		};
+	},
 	useSideEffect( currentStepSlug ) {
 		const reduxDispatch = useReduxDispatch();
 		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
@@ -306,8 +327,14 @@ const onboarding: FlowV2< typeof initialize > = {
 				clearSignupDestinationCookie();
 				clearSignupCompleteFlowName();
 				clearSignupCompleteSlug();
+				clearSignupCompleteSiteID();
 			}
 		}, [ currentStepSlug, reduxDispatch, resetOnboardStore ] );
+
+		// Load Survicate
+		useEffect( () => {
+			addSurvicate();
+		}, [] );
 	},
 };
 

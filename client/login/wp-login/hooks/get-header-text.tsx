@@ -17,7 +17,6 @@ interface Props {
 	linkingSocialService: string;
 	action: string;
 	oauth2Client: ReturnType< typeof getOAuth2Client >;
-	twoFactorEnabled: boolean;
 	currentQuery: ReturnType< typeof getCurrentQueryArguments >;
 	translate: ( arg0: string, arg1?: object ) => TranslateResult;
 	isJetpack?: boolean;
@@ -48,7 +47,6 @@ export function getHeaderText( {
 	isFromAkismet,
 	isFromAutomatticForAgenciesPlugin,
 	isGravPoweredClient,
-	twoFactorEnabled,
 	currentQuery,
 	translate,
 	twoStepNonce,
@@ -67,10 +65,18 @@ export function getHeaderText( {
 			clientName = 'Jetpack Cloud';
 		} else if ( isJetpack ) {
 			clientName = 'Jetpack';
-		} else if ( isWCCOM || isWooJPC ) {
+		} else if ( isWCCOM ) {
 			clientName = 'Woo';
 		} else if ( isVIPOAuth2Client( oauth2Client ) ) {
 			clientName = 'VIP';
+		}
+
+		/**
+		 * Override WooJPC. It's technically a Jetpack client, but we want to show "Woo" instead of "Jetpack".
+		 * This condition overrides the clientName set in the above if/elseif statement.
+		 */
+		if ( isWooJPC ) {
+			clientName = 'Woo';
 		}
 
 		headerText = clientName
@@ -78,7 +84,7 @@ export function getHeaderText( {
 					text: 'Log in to {{span}}%(client)s{{/span}} with WordPress.com',
 					newCopy: translate( 'Log in to {{span}}%(client)s{{/span}} with WordPress.com', {
 						args: { client: clientName },
-						components: { span: <span className="wp-login__login-block-header-client-name" /> },
+						components: { span: <span className="wp-login__one-login-header-client-name" /> },
 					} ),
 					oldCopy: translate( 'Log in to WordPress.com' ),
 			  } ) as TranslateResult )
@@ -112,7 +118,7 @@ export function getHeaderText( {
 	}
 
 	if ( action === 'lostpassword' ) {
-		headerText = translate( 'Forgot your password?' );
+		headerText = translate( 'Lost your password?' );
 	} else if ( currentQuery?.lostpassword_flow === 'true' ) {
 		headerText = translate( "You've got mail" );
 	} else if ( oauth2Client ) {
@@ -130,12 +136,6 @@ export function getHeaderText( {
 			headerText = translate( 'Login to %(clientTitle)s', {
 				args: { clientTitle: oauth2Client.title },
 			} );
-		}
-	} else if ( isWooJPC ) {
-		if ( twoFactorEnabled ) {
-			headerText = translate( 'Authenticate your login' );
-		} else {
-			headerText = translate( 'Log in to your account' );
 		}
 	}
 

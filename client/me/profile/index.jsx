@@ -172,26 +172,28 @@ class Profile extends Component {
 							} ) }
 						</p>
 
-						<p className="profile__gravatar-profile-description">
-							<span>
-								{ this.props.translate(
-									'Your WordPress.com profile is linked to Gravatar, making your Gravatar public by default. It may appear on sites using Gravatar when logged in with {{strong}}%(email)s{{/strong}}.' +
-										' Any changes you make here will be synced to your {{a}}Gravatar profile{{/a}}.',
-									{
-										components: {
-											strong: <strong />,
-											a: <ExternalLink href="https://gravatar.com/profile" />,
-										},
-										args: {
-											email: this.props.getSetting( 'user_email' ),
-										},
-									}
-								) }
-							</span>
-							<span>
+						<div className="profile__gravatar-profile-disclosure">
+							<div>
+								<h4 className="profile__gravatar-profile-title">
+									{ this.props.translate( 'Your WordPress.com profile is powered by Gravatar.' ) }
+								</h4>
+								<p className="profile__gravatar-profile-description">
+									{ this.props.translate(
+										'Updating your avatar, name, and about info here will also update it across all sites that use Gravatar profiles. {{a}}What is Gravatar?{{/a}}',
+										{
+											components: {
+												a: (
+													<ExternalLink href="https://support.gravatar.com/basic/what-is-gravatar/" />
+												),
+											},
+										}
+									) }
+								</p>
+							</div>
+							<div>
 								<WPAndGravatarLogo />
-							</span>
-						</p>
+							</div>
+						</div>
 
 						<p className="profile__submit-button-wrapper">
 							<FormButton

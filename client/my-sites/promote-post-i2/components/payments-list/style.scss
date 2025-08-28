@@ -1,0 +1,99 @@
+.payment-receipt-container {
+	padding: 0 24px 24px;
+	max-width: 1040px;
+	margin: 0 auto;
+
+	&__header {
+		margin-bottom: 24px;
+	}
+
+	&__back-button {
+		color: var( --color-accent );
+		background: none;
+		cursor: pointer;
+		font-size: 14px;
+		text-decoration: none;
+	}
+}
+
+.promote-post-i2 {
+	.payments-list__loading {
+		text-align: center;
+		.components-spinner {
+			margin: 0 auto 12px;
+		}
+		p {
+			margin: 0;
+			color: var(--color-neutral-50);
+		}
+	}
+
+	.payments-list__info {
+		margin-bottom: 24px;
+		font-size: 14px;
+		line-height: 1.5;
+		color: var(--color-neutral-50);
+	}
+
+	.promote-post-i2__table.payments-list__table {
+
+		tbody {
+			td.payment-item__status {
+				// Align vertical align of a payment status badge.
+				.badge {
+					height: 20px;
+					padding: 0 10px;
+				}
+			}
+		}
+
+		td.payment-item__actions {
+			text-align: right;
+
+			.payment-item__pay-action a,
+			button.payment-item__view-receipt-action {
+				background-color: var(--color-surface);
+				box-shadow: none;
+				color: var(--color-accent);
+				align-items: center;
+				cursor: pointer;
+				display: inline-flex;
+				font-family: inherit;
+				line-height: 1.43;
+				font-size: 14px;
+				margin: 0;
+				text-decoration: underline;
+				padding: 8px;
+			}
+		}
+		@media (max-width: $break-medium) {
+			thead {
+				th.payment-item__payment-id,
+				th.payment-item__date,
+				th.payment-item__subtotal,
+				th.payment-item__credits {
+					display: none;
+				}
+
+				th.payment-item__status{
+					width: 45%;
+				}
+
+				th.payment-item__total{
+					width: 30%;
+				}
+				th.payment-item__actions{
+					width: 25%;
+				}
+			}
+			tbody {
+				td.payment-item__payment-id,
+				td.payment-item__date,
+				td.payment-item__subtotal,
+				td.payment-item__credits {
+					display: none;
+				}
+			}
+		}
+	}
+}

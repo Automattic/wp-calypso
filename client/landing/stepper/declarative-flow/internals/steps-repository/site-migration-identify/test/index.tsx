@@ -4,8 +4,6 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
-import React from 'react';
-import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import SiteMigrationIdentify from '..';
 import { UrlData } from '../../../../../../../blocks/import/types';
@@ -179,12 +177,7 @@ describe( 'SiteMigrationIdentify', () => {
 		).toBeVisible();
 	} );
 
-	it( 'shows the back link when the entrypoint is "goals"', () => {
-		jest.mocked( useFlowState ).mockReturnValue( {
-			get: jest.fn().mockReturnValue( { entryPoint: 'goals' } ),
-			set: jest.fn(),
-			sessionId: null,
-		} );
+	it( 'shows the back link when the "ref" param is set', () => {
 		render(
 			{
 				navigation: {
@@ -198,49 +191,11 @@ describe( 'SiteMigrationIdentify', () => {
 		expect( screen.getByRole( 'button', { name: /Back/ } ) ).toBeVisible();
 	} );
 
-	it( 'shows the back button when the "back_to" param is defined', () => {
-		render(
-			{
-				navigation: {
-					goBack: jest.fn(),
-					submit: jest.fn(),
-				},
-			},
-			{ initialEntry: '/some-path?back_to=https://example.com' }
-		);
-
-		expect( screen.getByRole( 'link', { name: /Back/ } ) ).toBeVisible();
-	} );
-
-	it( 'shows the back button when the entrypoint is "wp-admin-importers-list"', () => {
-		jest.mocked( useFlowState ).mockReturnValue( {
-			get: jest.fn().mockReturnValue( { entryPoint: 'wp-admin-importers-list' } ),
-			set: jest.fn(),
-			sessionId: null,
-		} );
-		render(
-			{
-				navigation: {
-					goBack: jest.fn(),
-					submit: jest.fn(),
-				},
-			},
-			{ initialEntry: '/some-path?ref=wp-admin-importers-list' }
-		);
-
-		expect( screen.getByRole( 'button', { name: /Back/ } ) ).toBeVisible();
-	} );
-
 	it( 'hides the back button and link by default', async () => {
-		jest.mocked( useFlowState ).mockReturnValue( {
-			get: jest.fn().mockReturnValue( {} ),
-			set: jest.fn(),
-			sessionId: null,
-		} );
 		render(
 			{
 				navigation: {
-					goBack: jest.fn(),
+					goBack: undefined,
 					submit: jest.fn(),
 				},
 			},

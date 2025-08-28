@@ -2,7 +2,6 @@ import { Badge } from '@automattic/ui';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import {
-	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	ExternalLink,
@@ -19,26 +18,21 @@ import { sitePHPVersionQuery } from '../../app/queries/site-php-version';
 import { siteEngagementStatsQuery } from '../../app/queries/site-stats';
 import { siteUptimeQuery } from '../../app/queries/site-uptime';
 import ComponentViewTracker from '../../components/component-view-tracker';
+import { Text } from '../../components/text';
 import { TextBlur } from '../../components/text-blur';
 import TimeSince from '../../components/time-since';
-import { DotcomFeatures, JetpackModules } from '../../data/constants';
+import { DotcomFeatures, HostingFeatures, JetpackModules } from '../../data/constants';
 import { isAtomicTransferInProgress } from '../../utils/site-atomic-transfers';
-import {
-	hasAtomicFeature,
-	hasHostingFeature,
-	hasJetpackModule,
-	hasPlanFeature,
-} from '../../utils/site-features';
+import { hasHostingFeature, hasJetpackModule, hasPlanFeature } from '../../utils/site-features';
+import { getSitePlanDisplayName } from '../../utils/site-plan';
 import { getSiteStatus, getSiteStatusLabel } from '../../utils/site-status';
 import { isSelfHostedJetpackConnected, isP2 } from '../../utils/site-types';
-import { HostingFeatures, canManageSite } from '../features';
+import { canManageSite } from '../features';
 import { isSitePlanTrial } from '../plans';
 import SiteIcon from '../site-icon';
 import SitePreview from '../site-preview';
 import { JetpackLogo } from './jetpack-logo';
 import type { AtomicTransferStatus, Site } from '../../data/types';
-
-import './style.scss';
 
 function IneligibleIndicator() {
 	return <Text color="#CCCCCC">-</Text>;
@@ -208,7 +202,7 @@ export function LastBackup( { site }: { site: Site } ) {
 			return <IneligibleIndicator />;
 		}
 
-		return <TimeSince timestamp={ lastBackup.last_updated } isUtc />;
+		return <TimeSince timestamp={ lastBackup.published } />;
 	};
 
 	return <span ref={ ref }>{ renderContent() }</span>;
@@ -239,7 +233,7 @@ export function Uptime( { site }: { site: Site } ) {
 }
 
 export function PHPVersion( { site }: { site: Site } ) {
-	const isEligible = hasAtomicFeature( site, HostingFeatures.PHP );
+	const isEligible = hasHostingFeature( site, HostingFeatures.PHP );
 	const { ref, inView } = useInView( {
 		triggerOnce: true,
 		fallbackInView: true,
@@ -270,7 +264,7 @@ export function MediaStorage( { site }: { site: Site } ) {
 
 	const value = mediaStorage ? (
 		`${
-			Math.round( ( mediaStorage.storageUsedBytes / mediaStorage.maxStorageBytes ) * 1000 ) / 10
+			Math.round( ( mediaStorage.storage_used_bytes / mediaStorage.max_storage_bytes ) * 1000 ) / 10
 		}%`
 	) : (
 		<IneligibleIndicator />
@@ -359,7 +353,7 @@ export function Status( { site }: { site: Site } ) {
 	const label = getSiteStatusLabel( site );
 
 	if ( status === 'deleted' ) {
-		return <Text isDestructive>{ label }</Text>;
+		return <Text intent="error">{ label }</Text>;
 	}
 
 	if ( status === 'difm_lite_in_progress' ) {
@@ -377,7 +371,7 @@ export function Status( { site }: { site: Site } ) {
 	if ( site.plan?.expired ) {
 		return (
 			<VStack spacing={ 1 }>
-				<Text isDestructive>{ __( 'Plan expired' ) }</Text>
+				<Text intent="error">{ __( 'Plan expired' ) }</Text>
 				<PlanRenewNag site={ site } source="status" />
 			</VStack>
 		);
@@ -412,10 +406,7 @@ export function Status( { site }: { site: Site } ) {
 }
 
 export function Plan( { site }: { site: Site } ) {
-	if ( site.is_wpcom_staging_site ) {
-		// translator: this is the label of a staging site.
-		return __( 'Staging' );
-	}
+	const planName = getSitePlanDisplayName( site );
 
 	if ( isSelfHostedJetpackConnected( site ) ) {
 		if ( ! site.jetpack ) {
@@ -424,7 +415,7 @@ export function Plan( { site }: { site: Site } ) {
 		return (
 			<HStack spacing={ 1 } expanded={ false } justify="flex-start">
 				<JetpackLogo size={ 16 } />
-				<span>{ site.plan?.product_name_short }</span>
+				<span>{ planName }</span>
 			</HStack>
 		);
 	}
@@ -432,11 +423,11 @@ export function Plan( { site }: { site: Site } ) {
 	if ( site.plan?.expired ) {
 		return (
 			<VStack spacing={ 1 }>
-				<Text isDestructive>
+				<Text intent="error">
 					{ sprintf(
 						/* translators: %s: plan name */
 						__( '%s-expired' ),
-						site.plan?.product_name_short
+						planName
 					) }
 				</Text>
 				<PlanRenewNag site={ site } source="plan" />
@@ -444,5 +435,5 @@ export function Plan( { site }: { site: Site } ) {
 		);
 	}
 
-	return site.plan?.product_name_short;
+	return planName;
 }

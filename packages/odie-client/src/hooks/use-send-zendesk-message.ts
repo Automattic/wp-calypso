@@ -34,7 +34,7 @@ export const useSendZendeskMessage = () => {
 
 		const messageToSend = {
 			type: 'text',
-			text: message.content,
+			text: message.content as string,
 			...( message.payload && { payload: message.payload } ),
 			...( message.metadata && { metadata: message.metadata } ),
 		};

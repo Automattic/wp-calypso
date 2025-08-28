@@ -15,13 +15,13 @@ import {
 	NewUserResponse,
 	MyProfilePage,
 	MeSidebarComponent,
-	cancelPurchaseFlow,
 	NoticeComponent,
 	PurchasesPage,
 	envVariables,
 	LoggedOutHomePage,
 	LoggedOutThemesPage,
 	ThemesDetailPage,
+	cancelAtomicPurchaseFlow,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiCloseAccount } from '../shared';
@@ -144,7 +144,7 @@ describe( 'Lifecyle: Logged Out Home Page, signup, onboard, launch and cancel su
 			await meSidebarComponent.navigate( 'Purchases' );
 		} );
 
-		it( 'View details of purchased plan', async function () {
+		it( 'View details of purchased plan and cancel plan renewal', async function () {
 			purchasesPage = new PurchasesPage( page );
 
 			await purchasesPage.clickOnPurchase(
@@ -155,7 +155,7 @@ describe( 'Lifecyle: Logged Out Home Page, signup, onboard, launch and cancel su
 		} );
 
 		it( 'Cancel plan renewal', async function () {
-			await cancelPurchaseFlow( page, {
+			await cancelAtomicPurchaseFlow( page, {
 				reason: 'Another reason…',
 				customReasonText: 'E2E TEST CANCELLATION',
 			} );

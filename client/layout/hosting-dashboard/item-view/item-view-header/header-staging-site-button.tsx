@@ -1,21 +1,31 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQueryClient, useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { plus } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useCallback } from 'react';
+import { useCallback, useMemo, useEffect } from 'react';
+import { siteByIdQuery } from 'calypso/dashboard/app/queries/site';
+import { isAtomicTransferredSite } from 'calypso/dashboard/utils/site-atomic-transfers';
+import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
 import { useAddStagingSiteMutation } from 'calypso/sites/staging-site/hooks/use-add-staging-site';
+import { useCheckStagingSiteStatus } from 'calypso/sites/staging-site/hooks/use-check-staging-site-status';
 import { USE_STAGING_SITE_LOCK_QUERY_KEY } from 'calypso/sites/staging-site/hooks/use-get-lock-query';
 import { useHasValidQuotaQuery } from 'calypso/sites/staging-site/hooks/use-has-valid-quota';
 import { useStagingSite } from 'calypso/sites/staging-site/hooks/use-staging-site';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
-import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
+import { transferStates } from 'calypso/state/automated-transfer/constants';
+import { useIsJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
+import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
+import { requestSite } from 'calypso/state/sites/actions';
 import { setStagingSiteStatus } from 'calypso/state/staging-site/actions';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
+import { getStagingSiteStatus } from 'calypso/state/staging-site/selectors/get-staging-site-status';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+
+const stagingSiteAddSuccessNoticeId = 'staging-site-add-success';
 
 interface HeaderStagingSiteButtonProps {
 	siteId: number;
@@ -28,13 +38,25 @@ export default function HeaderStagingSiteButton( {
 	siteId,
 	isAtomic,
 	isStagingSite,
-	hideEnvDataInHeader = false,
+	hideEnvDataInHeader,
 }: HeaderStagingSiteButtonProps ) {
 	const dispatch = useDispatch();
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const site = useSelector( getSelectedSite );
+	const isPossibleJetpackConnectionProblem = useIsJetpackConnectionProblem( site?.ID );
+	const stagingSiteStatus =
+		useSelector( ( state ) => getStagingSiteStatus( state, siteId ) ) ?? StagingSiteStatus.UNSET;
+
+	const isCreatingStagingSite = [
+		StagingSiteStatus.INITIATE_TRANSFERRING,
+		StagingSiteStatus.TRANSFERRING,
+	].includes( stagingSiteStatus );
+
+	const isCreatedStagingSite = stagingSiteStatus === StagingSiteStatus.COMPLETE;
+
 	const isA4ADevSite = site?.is_a4a_dev_site || false;
+
 	const {
 		data: hasValidQuota,
 		isLoading: isLoadingQuotaValidation,
@@ -44,9 +66,49 @@ export default function HeaderStagingSiteButton( {
 	// Notice IDs for staging site operations
 	const stagingSiteAddFailureNoticeId = 'staging-site-add-failure';
 
-	const { data: stagingSites = [] } = useStagingSite( siteId, {
+	const { data: stagingSites = [], isLoading: isLoadingStagingSites } = useStagingSite( siteId, {
 		enabled: ! hideEnvDataInHeader && isAtomic,
 	} );
+
+	const stagingSiteId = useMemo( () => {
+		return stagingSites?.length ? stagingSites[ 0 ].id : null;
+	}, [ stagingSites ] );
+
+	const transferStatus = useCheckStagingSiteStatus( stagingSiteId );
+
+	const { data: stagingSite } = useQuery( {
+		...siteByIdQuery( stagingSiteId ?? 0 ),
+		refetchInterval: ( query ) => {
+			if ( ! query.state.data ) {
+				return 0;
+			}
+
+			return ! isAtomicTransferredSite( query.state.data ) ? 2000 : false;
+		},
+		enabled: !! stagingSiteId && transferStatus === transferStates.COMPLETE,
+	} );
+
+	const isStagingSiteReady =
+		isCreatingStagingSite && stagingSite && isAtomicTransferredSite( stagingSite );
+
+	useEffect( () => {
+		const handleStagingSiteReady = async () => {
+			if ( ! stagingSite ) {
+				return;
+			}
+
+			await dispatch( requestSite( stagingSite.ID ) );
+			dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.COMPLETE ) );
+			queryClient.invalidateQueries( { queryKey: [ USE_SITE_EXCERPTS_QUERY_KEY ] } );
+			dispatch(
+				successNotice( __( 'Staging site added.' ), { id: stagingSiteAddSuccessNoticeId } )
+			);
+		};
+
+		if ( isStagingSiteReady ) {
+			handleStagingSiteReady();
+		}
+	}, [ __, dispatch, queryClient, siteId, isStagingSiteReady, stagingSite ] );
 
 	const removeAllNotices = useCallback( () => {
 		dispatch( removeNotice( 'staging-site-add-success' ) );
@@ -86,7 +148,11 @@ export default function HeaderStagingSiteButton( {
 	);
 
 	const showAddStagingButton =
-		stagingSites.length === 0 && isAtomic && ! isStagingSite && ! isLoadingAddStagingSite;
+		! hideEnvDataInHeader &&
+		isAtomic &&
+		! isStagingSite &&
+		! isLoadingStagingSites &&
+		( stagingSites.length === 0 || ( isCreatingStagingSite && ! isCreatedStagingSite ) );
 
 	const onAddClick = useCallback( () => {
 		dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.INITIATE_TRANSFERRING ) );
@@ -100,6 +166,8 @@ export default function HeaderStagingSiteButton( {
 	}
 
 	const hasCompletedLoading = ! isLoadingQuotaValidation;
+	const isAddingStagingSite =
+		isLoadingAddStagingSite || ( isCreatingStagingSite && ! isCreatedStagingSite );
 
 	let disabledReason: string | undefined;
 	if ( ! hasCompletedLoading ) {
@@ -114,6 +182,12 @@ export default function HeaderStagingSiteButton( {
 		disabledReason = __(
 			'Your available storage space is lower than 50%, which is insufficient for creating a staging site.'
 		);
+	} else if ( isPossibleJetpackConnectionProblem ) {
+		disabledReason = __(
+			'You cannot create a staging site because your site has a Jetpack connection issue. Reload the page or contact support if it persists.'
+		);
+	} else if ( transferStatus === transferStates.RELOCATING_REVERT ) {
+		disabledReason = __( 'We are deleting your staging site.' );
 	}
 
 	return (
@@ -121,15 +195,15 @@ export default function HeaderStagingSiteButton( {
 			variant="link"
 			onClick={ onAddClick }
 			className="hosting-dashboard-item-view__header-add-staging"
-			icon={ plus }
+			icon={ isAddingStagingSite ? null : plus }
 			iconPosition="right"
 			accessibleWhenDisabled
 			showTooltip
-			disabled={ !! disabledReason }
+			disabled={ !! disabledReason || isAddingStagingSite }
 			label={ disabledReason }
 			tooltipPosition="top"
 		>
-			{ __( 'Add staging site' ) }
+			{ isAddingStagingSite ? __( 'Adding staging site…' ) : __( 'Add staging site' ) }
 		</Button>
 	);
 }

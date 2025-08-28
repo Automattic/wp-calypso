@@ -2,6 +2,7 @@ import { Gridicon, Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import FollowButton from 'calypso/blocks/follow-button/button';
+import AutoDirection from 'calypso/components/auto-direction';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { isExternal } from 'calypso/lib/url';
 import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
@@ -18,34 +19,48 @@ const ListStreamHeader = ( {
 	onFollowToggle,
 	translate,
 } ) => {
+	const formattedTitle = (
+		<AutoDirection>
+			<div>{ title }</div>
+		</AutoDirection>
+	);
+
+	const formattedDescription = (
+		<AutoDirection>
+			<div>{ description }</div>
+		</AutoDirection>
+	);
+
 	return (
-		<NavigationHeader title={ title } subtitle={ description }>
-			{ ! isPublic && (
-				<div className="list-stream__header-title-privacy">
-					<Gridicon icon="lock" size={ 24 } title={ translate( 'Private list' ) } />
-				</div>
-			) }
+		<AutoDirection>
+			<NavigationHeader title={ formattedTitle } subtitle={ formattedDescription }>
+				{ ! isPublic && (
+					<div className="list-stream__header-title-privacy">
+						<Gridicon icon="lock" size={ 24 } title={ translate( 'Private list' ) } />
+					</div>
+				) }
 
-			{ showFollow && (
-				<div className="list-stream__header-follow">
-					<FollowButton
-						iconSize={ 24 }
-						following={ following }
-						onFollowToggle={ onFollowToggle }
-						followIcon={ ReaderFollowFeedIcon( { iconSize: 24 } ) }
-						followingIcon={ ReaderFollowingFeedIcon( { iconSize: 24 } ) }
-					/>
-				</div>
-			) }
+				{ showFollow && (
+					<div className="list-stream__header-follow">
+						<FollowButton
+							iconSize={ 24 }
+							following={ following }
+							onFollowToggle={ onFollowToggle }
+							followIcon={ ReaderFollowFeedIcon( { iconSize: 24 } ) }
+							followingIcon={ ReaderFollowingFeedIcon( { iconSize: 24 } ) }
+						/>
+					</div>
+				) }
 
-			{ showEdit && editUrl && (
-				<div className="list-stream__header-edit">
-					<Button rel={ isExternal( editUrl ) ? 'external' : '' } href={ editUrl }>
-						{ translate( 'Edit' ) }
-					</Button>
-				</div>
-			) }
-		</NavigationHeader>
+				{ showEdit && editUrl && (
+					<div className="list-stream__header-edit">
+						<Button rel={ isExternal( editUrl ) ? 'external' : '' } href={ editUrl }>
+							{ translate( 'Edit' ) }
+						</Button>
+					</div>
+				) }
+			</NavigationHeader>
+		</AutoDirection>
 	);
 };
 

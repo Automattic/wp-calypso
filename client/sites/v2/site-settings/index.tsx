@@ -9,7 +9,8 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getSiteSettings } from 'calypso/state/site-settings/selectors';
 import { getSite } from 'calypso/state/sites/selectors';
 import { useAnalyticsClient } from '../hooks/use-analytics-client';
-import Layout, { router } from './layout';
+import Layout from './layout';
+import router from './router';
 import type { Store } from 'redux';
 import './style.scss';
 
@@ -54,7 +55,7 @@ export default function DashboardBackportSiteSettingsRenderer( {
 		Promise.all( [
 			persistPromise,
 			router.preloadRoute( {
-				to: `/${ siteSlug }`,
+				to: `/sites/${ siteSlug }/settings`,
 			} ),
 		] ).then( () => {
 			rootInstanceRef.current?.render(
@@ -75,7 +76,9 @@ export default function DashboardBackportSiteSettingsRenderer( {
 		}
 
 		if ( site ) {
-			queryClient.setQueryData( siteBySlugQuery( site.slug ).queryKey, site );
+			// The site type used by the hosting dashboard is slightly different, but _mostly_ compatible,
+			// so this is safe to copy in to the cache.
+			queryClient.setQueryData( siteBySlugQuery( site.slug ).queryKey, site as any ); // eslint-disable-line @typescript-eslint/no-explicit-any
 		}
 
 		if ( site && siteSettings ) {

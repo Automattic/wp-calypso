@@ -96,6 +96,10 @@ export function getImporterStatus( steps?: Steps ): StepStatus {
 		return 'skipped';
 	}
 
+	if ( content === 'skipped' && subscribers === 'pending' ) {
+		return 'importing';
+	}
+
 	if ( content === 'importing' || subscribers === 'importing' ) {
 		return 'importing';
 	}

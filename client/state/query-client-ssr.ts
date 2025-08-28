@@ -1,6 +1,6 @@
 import { QueryClient, QueryCache, dehydrate, QueryOptions, QueryKey } from '@tanstack/react-query';
 import { MAX_AGE, BASE_STALE_TIME } from 'calypso/state/constants';
-import type { Query, QueryState } from '@tanstack/react-query';
+import type { Query, QueryState, WithRequired } from '@tanstack/react-query';
 
 const fetchedQueryHashes = new WeakMap< QueryClient, Set< string > >();
 
@@ -20,7 +20,7 @@ function hasQueryHash( client: QueryClient, queryHash: string ) {
 class QueryCacheSSR extends QueryCache {
 	build< TQueryFnData, TError, TData, TQueryKey extends QueryKey >(
 		client: QueryClient,
-		options: QueryOptions< TQueryFnData, TError, TData, TQueryKey >,
+		options: WithRequired< QueryOptions< TQueryFnData, TError, TData, TQueryKey >, 'queryKey' >,
 		state?: QueryState< TData, TError >
 	): Query< TQueryFnData, TError, TData, TQueryKey > {
 		const query = super.build( client, options, state );

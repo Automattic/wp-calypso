@@ -61,13 +61,16 @@ function AdminHelpCenterContent() {
 		}
 	}, [ unreadCount, button ] );
 
-	const closeCallback = useCallback( () => setShowHelpCenter( false ), [ setShowHelpCenter ] );
+	const closeCallback = useCallback(
+		() => setShowHelpCenter( false, undefined, undefined, true ),
+		[ setShowHelpCenter ]
+	);
 
 	const handleToggleHelpCenter = () => {
 		recordTracksEvent( `calypso_inlinehelp_${ show ? 'close' : 'show' }`, {
 			force_site_id: true,
 			location: 'help-center',
-			section: 'wp-admin',
+			section: helpCenterData.sectionName || 'wp-admin',
 		} );
 
 		setShowHelpCenter( ! show );
@@ -102,7 +105,7 @@ function AdminHelpCenterContent() {
 		<QueryClientProvider client={ queryClient }>
 			<HelpCenter
 				locale={ helpCenterData.locale }
-				sectionName="wp-admin"
+				sectionName={ helpCenterData.sectionName || 'wp-admin' }
 				currentUser={ helpCenterData.currentUser }
 				site={ helpCenterData.site }
 				hasPurchases={ false }

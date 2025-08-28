@@ -41,10 +41,10 @@ import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { withEnhancers } from 'calypso/state/utils';
 import { LoginContext } from '../login-context';
+import OneLoginFooter from './components/one-login-footer';
 import OneLoginLayout from './components/one-login-layout';
 import GravPoweredLoginBlockFooter from './gravatar/grav-powered-login-block-footer';
 import getHeadingSubText from './hooks/get-heading-subtext';
-import LoginBlockFooter from './login-block-footer';
 
 import './style.scss';
 
@@ -107,7 +107,6 @@ export class Login extends Component {
 			'isFromAkismet',
 			'isFromAutomatticForAgenciesPlugin',
 			'isGravPoweredClient',
-			'twoFactorEnabled',
 			'currentQuery',
 			'translate',
 		];
@@ -161,7 +160,7 @@ export class Login extends Component {
 
 		return (
 			<a
-				className="login__lost-password-link"
+				className="one-login__footer-link"
 				href="/"
 				onClick={ ( event ) => {
 					event.preventDefault();
@@ -188,7 +187,7 @@ export class Login extends Component {
 	getLoginLink() {
 		return (
 			<a
-				className="wp-login__login-block-footer-back-link"
+				className="one-login__footer-link"
 				href="/"
 				onClick={ ( event ) => {
 					event.preventDefault();
@@ -205,6 +204,17 @@ export class Login extends Component {
 			>
 				<Gridicon icon="arrow-left" size={ 18 } />
 				{ this.props.translate( 'Back to Login' ) }
+			</a>
+		);
+	}
+
+	getSupportLink() {
+		return (
+			<a
+				className="one-login__footer-link"
+				href="/support/category/manage-your-account/account-settings/"
+			>
+				{ this.props.translate( 'Support' ) }
 			</a>
 		);
 	}
@@ -255,10 +265,11 @@ export class Login extends Component {
 					isGravPoweredLoginPage ? (
 						<GravPoweredLoginBlockFooter />
 					) : (
-						<LoginBlockFooter
+						<OneLoginFooter
 							isLoginView={ isLoginView }
 							lostPasswordLink={ this.getLostPasswordLink() }
 							loginLink={ this.getLoginLink() }
+							supportLink={ this.getSupportLink() }
 						/>
 					)
 				}
@@ -284,7 +295,6 @@ export class Login extends Component {
 			isFromAkismet,
 			isFromAutomatticForAgenciesPlugin,
 			isGravPoweredClient,
-			twoFactorEnabled,
 			currentQuery,
 			translate,
 		} = this.props;
@@ -306,7 +316,6 @@ export class Login extends Component {
 			isFromAkismet,
 			isFromAutomatticForAgenciesPlugin,
 			isGravPoweredClient,
-			twoFactorEnabled,
 			currentQuery,
 			translate,
 		} );
@@ -327,8 +336,15 @@ export class Login extends Component {
 	}
 
 	render() {
-		const { locale, translate, isGenericOauth, isGravPoweredClient, isJetpack, isFromAkismet } =
-			this.props;
+		const {
+			locale,
+			translate,
+			isGenericOauth,
+			isGravPoweredClient,
+			isJetpack,
+			isFromAkismet,
+			action,
+		} = this.props;
 
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
 
@@ -364,6 +380,8 @@ export class Login extends Component {
 			</Main>
 		);
 
+		const isLostPasswordView = action === 'lostpassword' || action === 'jetpack/lostpassword';
+
 		return (
 			<>
 				{ ! isGravPoweredClient && (
@@ -371,6 +389,7 @@ export class Login extends Component {
 						isJetpack={ isJetpack }
 						isFromAkismet={ isFromAkismet }
 						signupUrl={ this.props.signupUrl }
+						isLostPasswordView={ isLostPasswordView }
 					>
 						{ mainContent }
 					</OneLoginLayout>

@@ -1,22 +1,26 @@
 import { useQuery } from '@tanstack/react-query';
-import { Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
+import { useAuth } from '../app/auth';
 import { domainsQuery } from '../app/queries/domains';
-import DataViewsCard from '../components/dataviews-card';
+import { domainsPurchaseRoute } from '../app/router/domains';
+import { DataViewsCard } from '../components/dataviews-card';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
-import { actions, useFields, DEFAULT_VIEW, DEFAULT_LAYOUTS } from './dataviews';
+import RouterLinkButton from '../components/router-link-button';
+import { useActions, useFields, DEFAULT_VIEW, DEFAULT_LAYOUTS } from './dataviews';
 import type { DomainsView } from './dataviews';
-import type { Domain } from '../data/types';
+import type { DomainSummary } from '../data/types';
 
-export function getDomainId( domain: Domain ): string {
+export function getDomainId( domain: DomainSummary ): string {
 	return `${ domain.domain }-${ domain.blog_id }`;
 }
 
 function Domains() {
+	const { user } = useAuth();
 	const fields = useFields();
+	const actions = useActions( { user } );
 	const [ view, setView ] = useState< DomainsView >( () => ( {
 		...DEFAULT_VIEW,
 		type: 'table',
@@ -35,15 +39,19 @@ function Domains() {
 				<PageHeader
 					title={ __( 'Domains' ) }
 					actions={
-						<Button variant="primary" __next40pxDefaultSize>
+						<RouterLinkButton
+							variant="primary"
+							__next40pxDefaultSize
+							to={ domainsPurchaseRoute.fullPath }
+						>
 							{ __( 'Add New Domain' ) }
-						</Button>
+						</RouterLinkButton>
 					}
 				/>
 			}
 		>
 			<DataViewsCard>
-				<DataViews< Domain >
+				<DataViews< DomainSummary >
 					data={ filteredData || [] }
 					fields={ fields }
 					onChangeView={ ( nextView ) => setView( () => nextView as DomainsView ) }

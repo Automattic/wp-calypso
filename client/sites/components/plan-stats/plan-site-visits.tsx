@@ -11,12 +11,7 @@ import { activateModule } from 'calypso/state/jetpack/modules/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
 import { requestSite } from 'calypso/state/sites/actions';
-import {
-	getSiteAdminUrl,
-	getSiteSlug,
-	isAdminInterfaceWPAdmin,
-	isJetpackModuleActive,
-} from 'calypso/state/sites/selectors';
+import { getSiteAdminUrl, isJetpackModuleActive } from 'calypso/state/sites/selectors';
 
 interface PlanSiteVisitsProps {
 	siteId: number;
@@ -31,7 +26,6 @@ type VisitResponse = number | 'loading' | 'disabled' | 'error';
 export function PlanSiteVisits( { siteId }: PlanSiteVisitsProps ) {
 	const dispatch = useDispatch();
 	const [ visitsResponse, setVisitsResponse ] = useState< VisitResponse >( 'loading' );
-	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const canViewStat = useSelector( ( state ) => canCurrentUser( state, siteId, 'publish_posts' ) );
 
 	const translate = useTranslate();
@@ -86,11 +80,7 @@ export function PlanSiteVisits( { siteId }: PlanSiteVisitsProps ) {
 		fetchVisits();
 	}, [ fetchVisits, hasModuleActive ] );
 
-	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
-
-	const adminInterfaceIsWPAdmin = useSelector( ( state ) =>
-		isAdminInterfaceWPAdmin( state, siteId )
-	);
+	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) ) as string;
 
 	if ( ! canViewStat ) {
 		return null;
@@ -182,10 +172,9 @@ export function PlanSiteVisits( { siteId }: PlanSiteVisitsProps ) {
 			);
 		}
 
-		const statsPageUrl =
-			adminInterfaceIsWPAdmin && siteAdminUrl
-				? `${ untrailingslashit( siteAdminUrl ) }/admin.php?page=stats#!/stats/month/${ siteId }`
-				: `/stats/month/${ siteSlug }`;
+		const statsPageUrl = `${ untrailingslashit(
+			siteAdminUrl
+		) }/admin.php?page=stats#!/stats/month/${ siteId }`;
 
 		return (
 			<a

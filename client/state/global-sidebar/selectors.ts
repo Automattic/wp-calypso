@@ -88,6 +88,9 @@ function getSiteDashboardRoutes( state: AppState ) {
 
 		// Bulk Plugins management
 		'/plugins/manage/sites',
+
+		// Dashboard v2
+		'/sites/',
 	];
 }
 

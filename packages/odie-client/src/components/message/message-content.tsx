@@ -2,9 +2,9 @@ import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { isCSATMessage, zendeskMessageConverter } from '../../utils';
 import ChatWithSupportLabel from '../chat-with-support';
-import ErrorMessage from './error-message';
 import { FeedbackForm } from './feedback-form';
 import { IntroductionMessage } from './introduction-message';
+import MarkdownOrChildren from './mardown-or-children';
 import { UserMessage } from './user-message';
 import type { ZendeskMessage, Message } from '../../types';
 
@@ -74,7 +74,7 @@ export const MessageContent = ( {
 			<div className={ containerClasses } data-is-message="true">
 				<div className={ messageClasses }>
 					{ message?.context?.flags?.show_ai_avatar !== false && messageHeader }
-					{ message.type === 'error' && <ErrorMessage message={ message } /> }
+					{ message.type === 'error' && <MarkdownOrChildren messageContent={ message.content } /> }
 					{ ( [ 'message', 'image', 'image-placeholder', 'file', 'text' ].includes(
 						message.type
 					) ||

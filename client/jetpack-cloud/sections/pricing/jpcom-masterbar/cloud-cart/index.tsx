@@ -1,11 +1,12 @@
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import MasterbarCartWrapper from 'calypso/layout/masterbar/masterbar-cart/masterbar-cart-wrapper';
+import { shouldUseDashboardPage } from 'calypso/lib/jetpack/jetpack-version-utils';
 import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import { useShoppingCartTracker } from 'calypso/my-sites/plans/jetpack-plans/product-store/hooks/use-shopping-cart-tracker';
 import { useSelector } from 'calypso/state';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CloudCartIcon from './cloud-cart-icon';
 import EmptyCart from './empty-cart';
 
@@ -13,6 +14,7 @@ const CloudCart = ( { cartStyle }: { cartStyle?: React.CSSProperties } ) => {
 	const translate = useTranslate();
 	const shoppingCartTracker = useShoppingCartTracker();
 	const siteId = useSelector( getSelectedSiteId );
+	const site = useSelector( getSelectedSite );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const { responseCart } = useShoppingCart( siteId ?? undefined );
 
@@ -26,10 +28,15 @@ const CloudCart = ( { cartStyle }: { cartStyle?: React.CSSProperties } ) => {
 		shoppingCartTracker( 'calypso_jetpack_shopping_cart_checkout_from_cart', {
 			addProducts: true,
 		} );
+		const useDashboard = shouldUseDashboardPage(
+			site?.is_multisite,
+			site?.options?.jetpack_version
+		);
+		const pageParam = useDashboard ? 'page=jetpack' : 'page=my-jetpack';
 		const buildUrlParams =
 			responseCart.products.length > 1
 				? {
-						redirect_to: `https://${ siteSlug }/wp-admin/admin.php?page=jetpack#/recommendations/site-type`,
+						redirect_to: `https://${ siteSlug }/wp-admin/admin.php?${ pageParam }`,
 				  }
 				: undefined;
 

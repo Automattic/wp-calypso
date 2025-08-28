@@ -10,12 +10,12 @@ export interface StagingSite {
 	user_has_permission: boolean;
 }
 
-type StagingSiteOptions = Pick< UseQueryOptions, 'enabled' >;
+type StagingSiteOptions = Pick< UseQueryOptions< StagingSite[] >, 'enabled' >;
 
 export const useStagingSite = ( siteId: number, options?: StagingSiteOptions ) => {
-	return useQuery< Array< StagingSite >, unknown, Array< StagingSite > >( {
+	return useQuery( {
 		queryKey: [ USE_STAGING_SITE_QUERY_KEY, siteId ],
-		queryFn: () =>
+		queryFn: (): Promise< StagingSite[] > =>
 			wp.req.get( {
 				path: `/sites/${ siteId }/staging-site`,
 				apiNamespace: 'wpcom/v2',

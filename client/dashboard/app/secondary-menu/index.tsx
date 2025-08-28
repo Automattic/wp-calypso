@@ -1,4 +1,4 @@
-import { useNavigate } from '@tanstack/react-router';
+import config from '@automattic/calypso-config';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -9,23 +9,31 @@ import {
 	MenuItem,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { help, bellUnread, bell, commentAuthorAvatar } from '@wordpress/icons';
+import { help, commentAuthorAvatar } from '@wordpress/icons';
+import { Suspense, lazy, useCallback } from 'react';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
-import { AsyncHelpCenterApp, useShowHelpCenter } from 'calypso/components/help-center'; // eslint-disable-line no-restricted-imports
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
 import { useAuth } from '../auth';
 import { useOpenCommandPalette } from '../command-palette/utils';
 import { useAppContext } from '../context';
+import { useHelpCenter } from '../help-center';
+import Notifications from '../notifications';
 
 import './style.scss';
 
+const AsyncHelpCenterApp = lazy( () => import( '../help-center/help-center-app' ) );
+
 function Help() {
 	const { user } = useAuth();
-	const { isLoading, isShown, setShowHelpCenter } = useShowHelpCenter();
+	const { isLoading, isShown, setShowHelpCenter } = useHelpCenter();
 
 	const handleToggleHelpCenter = () => {
 		setShowHelpCenter( ! isShown );
 	};
+
+	const handleCloseHelpCenterApp = useCallback( () => {
+		setShowHelpCenter( false, undefined, undefined, true );
+	}, [ setShowHelpCenter ] );
 
 	return (
 		<>
@@ -37,7 +45,17 @@ function Help() {
 				isBusy={ isLoading }
 				onClick={ handleToggleHelpCenter }
 			/>
-			{ isShown && <AsyncHelpCenterApp currentUser={ user } sectionName="dashboard" /> }
+			<Suspense fallback={ null }>
+				{ isShown && (
+					<AsyncHelpCenterApp
+						currentUser={ user }
+						handleClose={ handleCloseHelpCenterApp }
+						locale={ user.language }
+						onboardingUrl={ config( 'wpcom_signup_url' ) }
+						sectionName="dashboard"
+					/>
+				) }
+			</Suspense>
 		</>
 	);
 }
@@ -74,7 +92,7 @@ function UserProfile() {
 				/>
 			) }
 			renderContent={ ( { onClose } ) => (
-				<VStack>
+				<VStack spacing={ 0 }>
 					<VStack style={ { padding: '16px', borderBottom: '1px solid #ccc' } } spacing={ 1 }>
 						<Text>{ user.display_name }</Text>
 						<Text variant="muted">@{ user.username }</Text>
@@ -97,9 +115,8 @@ function UserProfile() {
 							} }
 							shortcut="⌘K"
 						>
-							{ __( 'Command Palette' ) }
+							{ __( 'Command palette' ) }
 						</MenuItem>
-						<MenuItem onClick={ () => {} }>{ __( 'Theme' ) }</MenuItem>
 					</MenuGroup>
 					<MenuGroup>
 						<MenuItem onClick={ () => {} }>{ __( 'Log out' ) }</MenuItem>
@@ -111,10 +128,7 @@ function UserProfile() {
 }
 
 function SecondaryMenu() {
-	const navigate = useNavigate();
 	const { supports } = useAppContext();
-	const hasUnreadNotifications = false;
-	const notificationsPath = '/me/notifications';
 
 	return (
 		<HStack spacing={ 2 } justify="flex-end">
@@ -128,19 +142,7 @@ function SecondaryMenu() {
 				/>
 			) }
 			{ supports.help && <Help /> }
-			{ supports.notifications && (
-				<Button
-					className="dashboard-secondary-menu__item"
-					label={ __( 'Notifications' ) }
-					icon={ hasUnreadNotifications ? bellUnread : bell }
-					variant="tertiary"
-					onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) => {
-						e.preventDefault();
-						navigate( { to: notificationsPath } );
-					} }
-					href={ notificationsPath }
-				/>
-			) }
+			{ supports.notifications && <Notifications className="dashboard-secondary-menu__item" /> }
 			<UserProfile />
 		</HStack>
 	);

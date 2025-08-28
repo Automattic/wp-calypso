@@ -11,6 +11,7 @@ import type { UserFields } from './types';
 
 export function useUpdateZendeskUserFields() {
 	return useMutation( {
+		throwOnError: true,
 		mutationFn: ( userFields: UserFields ) => {
 			return canAccessWpcomApis()
 				? wpcomRequest( {

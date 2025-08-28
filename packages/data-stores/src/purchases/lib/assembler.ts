@@ -4,7 +4,6 @@ import type { PurchasePriceTier, Purchase, RawPurchase, RawPurchaseCreditCard } 
 export function createPurchaseObject( purchase: RawPurchase | RawPurchaseCreditCard ): Purchase {
 	const object: Purchase = {
 		id: Number( purchase.ID ),
-		active: Boolean( purchase.active ),
 		amount: Number( purchase.amount ),
 		attachedToPurchaseId: Number( purchase.attached_to_purchase_id ),
 		autoRenewCouponCode: purchase.auto_renew_coupon_code,
@@ -122,7 +121,8 @@ export function createPurchaseObject( purchase: RawPurchase | RawPurchaseCreditC
 		taxText: purchase.tax_text,
 		purchaseRenewalQuantity: purchase.renewal_price_tier_usage_quantity || null,
 		userId: Number( purchase.user_id ),
-		isAutoRenewEnabled: parseInt( purchase.auto_renew ?? '' ) === 1,
+		isAutoRenewEnabled: purchase.is_auto_renew_enabled,
+		isJetpackPlanOrProduct: purchase.is_jetpack_plan_or_product,
 	};
 
 	if ( purchase.purchaser_id ) {

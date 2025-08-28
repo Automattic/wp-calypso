@@ -10,17 +10,18 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 import {
 	getDiscoverStreamTags,
-	DEFAULT_TAB,
+	RECOMMENDED_TAB,
 	buildDiscoverStreamKey,
 	ADD_NEW_TAB,
 	REDDIT_TAB,
+	getDefaultTab,
 } from './helper';
 
 const DiscoverStream = ( props ) => {
 	const translate = useTranslate();
 	const followedTags = useSelector( getReaderFollowedTags );
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const selectedTab = props.selectedTab || DEFAULT_TAB;
+	const selectedTab = props.selectedTab || getDefaultTab();
 	const selectedTag = props.query?.selectedTag ?? 'dailyprompt';
 
 	const effectiveTabSelection = 'tags' === selectedTab ? selectedTag : selectedTab;
@@ -30,6 +31,7 @@ const DiscoverStream = ( props ) => {
 		effectiveTabSelection: effectiveTabSelection,
 		selectedTag: selectedTag,
 	};
+
 	const TAB_COMPONENTS = {
 		[ ADD_NEW_TAB ]: DiscoverAddNew,
 		[ REDDIT_TAB ]: Reddit,
@@ -53,12 +55,13 @@ const DiscoverStream = ( props ) => {
 		isLoggedIn
 	);
 
+	const streamKey = buildDiscoverStreamKey( effectiveTabSelection, recommendedStreamTags );
 	return (
 		<Stream
 			{ ...props }
-			streamKey={ buildDiscoverStreamKey( effectiveTabSelection, recommendedStreamTags ) }
+			streamKey={ streamKey }
 			sidebarTabTitle={
-				selectedTab === DEFAULT_TAB ? translate( 'Sites' ) : translate( 'Related' )
+				selectedTab === RECOMMENDED_TAB ? translate( 'Sites' ) : translate( 'Related' )
 			}
 			selectedStreamName={ selectedTab }
 			useCompactCards

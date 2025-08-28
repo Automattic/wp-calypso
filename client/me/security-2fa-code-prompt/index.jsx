@@ -188,7 +188,7 @@ class Security2faCodePrompt extends Component {
 			<form className="security-2fa-code-prompt" onSubmit={ this.onSubmit }>
 				<FormFieldset>
 					<FormLabel htmlFor="verification-code">
-						{ this.props.translate( 'Verification Code' ) }
+						{ this.props.translate( 'Verification code' ) }
 					</FormLabel>
 
 					<FormVerificationCodeInput

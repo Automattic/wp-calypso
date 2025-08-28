@@ -104,7 +104,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 		data: locationsViewsData,
 		isLoading: isRequestingData,
 		isError,
-	} = useLocationViewsQuery< StatsLocationViewsData >( siteId, geoMode, query, countryFilter, {
+	} = useLocationViewsQuery( siteId, geoMode, query, countryFilter, {
 		enabled: ! shouldGate && supportsLocationsStatsFeature,
 	} );
 
@@ -137,10 +137,15 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 
 	// Only fetch separate countries list if we're not already in country tab
 	// This is to avoid fetching the same data twice.
-	const { data: countriesList, isLoading: isRequestingCountriesList } =
-		useLocationViewsQuery< StatsLocationViewsData >( siteId, 'country', query, null, {
+	const { data: countriesList, isLoading: isRequestingCountriesList } = useLocationViewsQuery(
+		siteId,
+		'country',
+		query,
+		null,
+		{
 			enabled: ! shouldGate && supportsLocationsStatsFeature && geoMode !== 'country',
-		} );
+		}
+	);
 
 	const normalizedCountriesList = useMemo( () => {
 		if ( isRequestingCountriesList || ! countriesList ) {

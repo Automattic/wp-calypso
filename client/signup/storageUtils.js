@@ -41,6 +41,8 @@ export const setSignupCompleteSlug = ( value ) =>
 	);
 export const clearSignupCompleteSlug = () =>
 	ignoreFatalsForStorage( () => sessionStorage?.removeItem( 'wpcom_signup_complete_site_slug' ) );
+export const clearSignupCompleteSiteID = () =>
+	ignoreFatalsForStorage( () => sessionStorage?.removeItem( 'wpcom_signup_complete_site_id' ) );
 export const getSignupCompleteSiteID = () =>
 	ignoreFatalsForStorage( () => sessionStorage?.getItem( 'wpcom_signup_complete_site_id' ) );
 export const setSignupCompleteSiteID = ( value ) =>

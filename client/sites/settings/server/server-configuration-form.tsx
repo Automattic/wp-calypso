@@ -228,7 +228,7 @@ export default function ServerConfigurationForm( { disabled }: ServerConfigurati
 
 		return (
 			<FormFieldset>
-				<FormLabel>{ translate( 'Primary Data Center' ) }</FormLabel>
+				<FormLabel>{ translate( 'Primary data center' ) }</FormLabel>
 				<FormTextInput
 					className="web-server-settings-card__data-center-input"
 					value={ displayValue }

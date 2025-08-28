@@ -30,6 +30,7 @@ function adaptFeed( feed ) {
 		name: feed.name && decodeEntities( feed.name ),
 		URL: safeLink( feed.URL ),
 		feed_URL: safeLink( feed.feed_URL ),
+		blog_owner: feed.blog_owner,
 		is_following: feed.is_following,
 		subscribers_count: feed.subscribers_count,
 		description: feed.description && decodeEntities( stripHTML( feed.description ) ),

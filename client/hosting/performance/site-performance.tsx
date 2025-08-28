@@ -348,8 +348,9 @@ const SitePerformanceContent = () => {
 };
 
 export const SitePerformance = () => {
+	const queryParams = useSelector( getCurrentQueryArguments );
 	return (
-		<DeviceTabProvider>
+		<DeviceTabProvider initialTab={ queryParams?.initialTab as TabType }>
 			<SitePerformanceContent />
 		</DeviceTabProvider>
 	);

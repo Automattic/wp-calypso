@@ -68,6 +68,8 @@ async function main() {
 	if ( redirectPathIfNecessary( pathname, search ) ) {
 		return null;
 	}
+	// Sympathy mode clears cache randomly, Stepper uses the cache to persist state (not really a cache).
+	config.enable( 'no-force-sympathy' );
 
 	const flowName = getFlowFromURL();
 	const flowLoader = availableFlows[ flowName ];

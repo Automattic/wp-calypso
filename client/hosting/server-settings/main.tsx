@@ -302,7 +302,7 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 					icon="globe"
 				>
 					<TrackComponentView eventName="calypso_hosting_configuration_activate_impression" />
-					<NoticeAction onClick={ clickActivate } href={ `/hosting-config/activate/${ siteSlug }` }>
+					<NoticeAction onClick={ clickActivate } href={ `/hosting-features/${ siteSlug }` }>
 						{ translate( 'Activate' ) }
 					</NoticeAction>
 				</Notice>

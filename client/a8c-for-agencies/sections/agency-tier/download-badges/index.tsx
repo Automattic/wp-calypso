@@ -18,7 +18,7 @@ export default function DownloadBadges() {
 
 	const agency = useSelector( getActiveAgency );
 
-	const partnerDirectorties = agency?.partner_directory?.directories ?? [];
+	const partnerDirectories = agency?.partner_directory?.directories ?? [];
 
 	const currentAgencyTier = agency?.tier?.id;
 
@@ -34,7 +34,7 @@ export default function DownloadBadges() {
 		dispatch( recordTracksEvent( 'calypso_a8c_agency_tier_badges_download_modal_open' ) );
 	};
 
-	if ( ! partnerDirectorties.length || ! currentAgencyTier ) {
+	if ( ! partnerDirectories.length || ! currentAgencyTier ) {
 		return null;
 	}
 
@@ -71,7 +71,7 @@ export default function DownloadBadges() {
 						</div>
 
 						<div className="agency-tier-download-badges-modal__list">
-							{ partnerDirectorties.map( ( directory ) => (
+							{ partnerDirectories.map( ( directory ) => (
 								<DownloadLink
 									key={ directory }
 									product={ directory }
