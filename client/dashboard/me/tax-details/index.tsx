@@ -7,8 +7,15 @@ import './style.scss';
 
 export default function UserTaxInfoPage() {
 	return (
-		<PageLayout size="small" header={ <PageHeader title={ __( 'Tax Details' ) } /> }>
-			<p>{ __( 'Configure tax details (VAT/GST/CT) to be included on all receipts.' ) }</p>
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					title={ __( 'Tax Details' ) }
+					description={ __( 'Configure tax details (VAT/GST/CT) to be included on all receipts.' ) }
+				/>
+			}
+		>
 			<VStack className="user-tax-info__form">
 				<Card>
 					<CardBody>
