@@ -1,0 +1,27 @@
+.mcp {
+	&__ability-item {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		padding: 16px 0;
+		border-bottom: 1px solid #dcdcde;
+
+		&:last-child {
+			border-bottom: none;
+		}
+	}
+
+	&__ability-description {
+		margin: 0;
+		color: #646970;
+		font-size: 14px;
+		line-height: 1.4;
+		padding-left: 48px; // Align with the toggle label
+	}
+
+	&__settings {
+		.components-toggle-control {
+			margin-bottom: 0;
+		}
+	}
+}

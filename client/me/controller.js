@@ -2,6 +2,7 @@ import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import { createElement } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import AppsComponent from 'calypso/me/get-apps';
 import McpComponent from 'calypso/me/mcp/main';
 import SidebarComponent from 'calypso/me/sidebar';
@@ -61,6 +62,7 @@ export function mcp( context, next ) {
 	context.primary = (
 		<>
 			<McpTitle />
+			<QueryUserSettings />
 			<McpComponent path={ context.path } />
 		</>
 	);
