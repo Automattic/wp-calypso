@@ -1,5 +1,6 @@
 @import '@automattic/typography/styles/variables';
 @import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
 @import 'calypso/assets/stylesheets/shared/mixins/breakpoints';
 
 /**
@@ -33,7 +34,9 @@
 			}
 
 			h1.help-center-article-content__header-title {
-				@include heading-x-large;
+				font-size: 1.75rem;
+				font-weight: 600;
+				line-height: 1.2;
 			}
 		}
 
@@ -83,7 +86,8 @@
 					margin-bottom: 0;
 
 					a {
-						font-size: $font-body-small;
+						font-size: $font-size-large;
+						line-height: 1.6;
 						text-decoration: none;
 					}
 
@@ -94,7 +98,8 @@
 			}
 
 			p {
-				font-size: $font-body-small;
+				font-size: $font-size-large;
+				line-height: 1.6;
 				color: var( --color-neutral-80 );
 			}
 
@@ -249,6 +254,8 @@
 
 			.wp-block-heading {
 				scroll-margin-top: 15px;
+				line-height: 1.4;
+				margin: 1.5rem 0 0.25rem;
 			}
 
 			h1 {
@@ -279,7 +286,7 @@
 
 			p,
 			> div {
-				margin: 0 0 24px;
+				margin: 0 0 1em;
 
 				&:last-child {
 					margin-bottom: 0;
