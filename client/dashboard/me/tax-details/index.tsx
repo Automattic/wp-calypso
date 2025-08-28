@@ -13,19 +13,24 @@ import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
 import { countryListQuery } from '../../app/queries/countries';
 import { geoLocationQuery } from '../../app/queries/geo';
+import { userTaxDetailsQuery } from '../../app/queries/me-tax-details';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getTaxName } from '../../utils/tax';
-import UserTaxForm, { useUserTaxDetails } from './user-tax-form';
+import UserTaxForm from './user-tax-form';
+import type { FetchError } from './user-tax-form';
 import './style.scss';
+import type { UserTaxDetails } from '../../data/types';
 
 export default function UserTaxInfoPage() {
 	const { data: countryList } = useSuspenseQuery( countryListQuery() );
 	const { recordTracksEvent } = useAnalytics();
 	const { data: geoData } = useSuspenseQuery( geoLocationQuery() );
 
-	const { userTaxDetails } = useUserTaxDetails();
+	const { data: userTaxDetails } = useSuspenseQuery< UserTaxDetails, FetchError >(
+		userTaxDetailsQuery()
+	);
 	const taxName = getTaxName(
 		countryList,
 		userTaxDetails.country ?? userTaxDetails.country ?? geoData?.country_short ?? 'GB'

@@ -1,5 +1,5 @@
 import { CALYPSO_CONTACT } from '@automattic/urls';
-import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
+import { useSuspenseQuery, useMutation, mutationOptions } from '@tanstack/react-query';
 import {
 	Button,
 	__experimentalHStack as HStack,
@@ -13,19 +13,15 @@ import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { countryListQuery } from '../../app/queries/countries';
 import { geoLocationQuery } from '../../app/queries/geo';
-import { userTaxDetailsMutation, userTaxDetailsQuery } from '../../app/queries/me-tax-details';
+import { userTaxDetailsQuery } from '../../app/queries/me-tax-details';
+import { queryClient } from '../../app/query-client';
+import { updateUserTaxDetails, UserTaxDetails } from '../../data/me-tax-details';
 import { getTaxName, getDataFormCountryCodes, stripCountryCodeFromVatId } from '../../utils/tax';
-import type {
-	UserTaxField,
-	UserTaxFormData,
-	UserTaxNormalizedField,
-	UserTaxDetails,
-	SetUserTaxDetails,
-} from '../../data/types';
+import type { UserTaxField, UserTaxFormData, UserTaxNormalizedField } from '../../data/types';
 
 export interface UserTaxFormControlProps {
 	data: UserTaxFormData;
@@ -41,7 +37,6 @@ export interface FetchError {
 	message: string;
 	error: string;
 }
-
 export interface UserTaxDetailsManager {
 	userTaxDetails: UserTaxDetails;
 	isLoading: boolean;
@@ -49,45 +44,10 @@ export interface UserTaxDetailsManager {
 	isUpdateSuccessful: boolean;
 	fetchError: FetchError | null;
 	updateError: UpdateError | null;
-	setUserTaxDetails: SetUserTaxDetails;
+	setUserTaxDetails: ( userTaxDetails: UserTaxDetails ) => Promise< UserTaxDetails >;
 }
 
 const emptyUserTaxDetails = {};
-
-export function useUserTaxDetails(): UserTaxDetailsManager {
-	const query = useQuery< UserTaxDetails, FetchError >( userTaxDetailsQuery() );
-	const mutation = useMutation< UserTaxDetails, UpdateError, UserTaxDetails >(
-		userTaxDetailsMutation()
-	);
-	const formatUserTaxDetails = useCallback( ( data: UserTaxDetails ) => {
-		const { country, id } = data;
-
-		if ( !! id && id?.length > 1 ) {
-			return { ...data, id: stripCountryCodeFromVatId( id, country ) };
-		}
-
-		return data;
-	}, [] );
-	const setDetails = useCallback(
-		( userTaxDetails: UserTaxDetails ) => {
-			return mutation.mutateAsync( formatUserTaxDetails( userTaxDetails ) );
-		},
-		[ mutation, formatUserTaxDetails ]
-	);
-
-	return useMemo(
-		() => ( {
-			userTaxDetails: query.data ?? emptyUserTaxDetails,
-			isLoading: query.isLoading,
-			isUpdating: mutation.isPending,
-			isUpdateSuccessful: mutation.isSuccess,
-			fetchError: query.error as FetchError,
-			updateError: mutation.error,
-			setUserTaxDetails: setDetails,
-		} ),
-		[ query, setDetails, mutation ]
-	);
-}
 
 function VatSelectControl( { data, field, onChange }: UserTaxFormControlProps ) {
 	const { elements, getValue, id, label, isDisabled, isVatAlreadySet, canUserEdit } = field;
@@ -169,25 +129,13 @@ function VatInputControl( { data, field, onChange }: UserTaxFormControlProps ) {
 }
 
 export default function UserTaxForm() {
-	const lastFetchError = useRef< FetchError >();
-	const { createSuccessNotice, createErrorNotice, removeNotice } = useDispatch( noticesStore );
-	const lastUpdateError = useRef< UpdateError >();
-	const { recordTracksEvent } = useAnalytics();
-
-	const [ localData, setLocalData ] = useState< Partial< UserTaxFormData > >( {} );
-
-	const {
-		isLoading,
-		isUpdateSuccessful,
-		isUpdating,
-		setUserTaxDetails,
-		userTaxDetails,
-		fetchError,
-		updateError,
-	} = useUserTaxDetails();
 	const { data: countryList } = useSuspenseQuery( countryListQuery() );
 	const countryCodes = getDataFormCountryCodes( countryList );
 
+	const [ localData, setLocalData ] = useState< Partial< UserTaxFormData > >( {} );
+	const query = useSuspenseQuery< UserTaxDetails, FetchError >( userTaxDetailsQuery() );
+	const userTaxDetails: UserTaxDetails = query.data ?? emptyUserTaxDetails;
+	const { data: geoData } = useSuspenseQuery( geoLocationQuery() );
 	const formData = useMemo( () => {
 		const serverData = {
 			country: userTaxDetails.country ?? '',
@@ -201,14 +149,89 @@ export default function UserTaxForm() {
 		};
 	}, [
 		localData,
-		userTaxDetails.address,
-		userTaxDetails.country,
-		userTaxDetails.id,
-		userTaxDetails.name,
+		userTaxDetails?.address,
+		userTaxDetails?.country,
+		userTaxDetails?.id,
+		userTaxDetails?.name,
 	] );
-
-	const { data: geoData } = useSuspenseQuery( geoLocationQuery() );
 	const taxName = getTaxName( countryList, formData.country ?? geoData?.country_short ?? 'GB' );
+	const { createSuccessNotice, createErrorNotice, removeNotice } = useDispatch( noticesStore );
+	const userTaxDetailsMutation = () => {
+		return mutationOptions< UserTaxDetails, UpdateError, UserTaxDetails >( {
+			mutationFn: updateUserTaxDetails,
+			onSuccess: ( newData: UserTaxDetails ) => {
+				queryClient.setQueryData(
+					userTaxDetailsQuery().queryKey,
+					( oldData ) => oldData && { ...oldData, ...newData }
+				);
+				removeNotice( 'vat_info_notice' );
+				createSuccessNotice(
+					sprintf(
+						/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+						__( 'Your %s details have been updated!' ),
+						taxName ?? __( 'VAT' )
+					),
+					{
+						id: 'vat_info_notice',
+						type: 'snackbar',
+					}
+				);
+			},
+			onError: ( error: Error | UpdateError | FetchError ) => {
+				removeNotice( 'vat_info_notice' );
+				if ( error?.message?.length > 0 ) {
+					createErrorNotice( error.message, { type: 'snackbar', id: 'vat_info_notice' } );
+					return;
+				}
+				createErrorNotice(
+					sprintf(
+						/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+						__( 'An error occurred while fetching %s details.' ),
+						taxName ?? __( 'VAT' )
+					),
+					{
+						type: 'snackbar',
+						id: 'vat_info_notice',
+					}
+				);
+			},
+		} );
+	};
+
+	const mutation = useMutation< UserTaxDetails, UpdateError, UserTaxDetails >(
+		userTaxDetailsMutation()
+	);
+	const formatUserTaxDetails = useCallback( ( data: UserTaxDetails ) => {
+		const { country, id } = data;
+
+		if ( !! id && id?.length > 1 ) {
+			return { ...data, id: stripCountryCodeFromVatId( id, country ) };
+		}
+
+		return data;
+	}, [] );
+	const setDetails = useCallback(
+		( userTaxDetails: UserTaxDetails ) => {
+			return mutation.mutate( formatUserTaxDetails( userTaxDetails ) );
+		},
+		[ mutation, formatUserTaxDetails ]
+	);
+	const { isLoading, isUpdating, isUpdateSuccessful, updateError, fetchError, setUserTaxDetails } =
+		useMemo(
+			() => ( {
+				isLoading: query.isLoading,
+				isUpdating: mutation.isPending,
+				isUpdateSuccessful: mutation.isSuccess,
+				fetchError: query.error as FetchError,
+				updateError: mutation.error,
+				setUserTaxDetails: setDetails,
+			} ),
+			[ query, setDetails, mutation ]
+		);
+
+	const lastFetchError = useRef< FetchError >();
+	const lastUpdateError = useRef< UpdateError >();
+	const { recordTracksEvent } = useAnalytics();
 
 	if ( updateError && lastUpdateError.current !== updateError ) {
 		recordTracksEvent( 'calypso_dashboard_vat_details_validation_failure', {
@@ -228,46 +251,6 @@ export default function UserTaxForm() {
 		} );
 		lastFetchError.current = fetchError;
 	}
-
-	useEffect( () => {
-		if ( updateError ) {
-			removeNotice( 'vat_info_notice' );
-			createErrorNotice( updateError.message, { type: 'snackbar', id: 'vat_info_notice' } );
-		}
-
-		if ( isUpdateSuccessful ) {
-			removeNotice( 'vat_info_notice' );
-			createSuccessNotice(
-				sprintf(
-					/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-					__( 'Your %s details have been updated!' ),
-					taxName ?? __( 'VAT' )
-				),
-				{
-					id: 'vat_info_notice',
-				}
-			);
-		}
-		if ( fetchError ) {
-			removeNotice( 'vat_info_notice' );
-			createErrorNotice(
-				/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-				sprintf( __( 'An error occurred while fetching %s details.' ), taxName ?? __( 'VAT' ) ),
-				{
-					type: 'snackbar',
-					id: 'vat_info_notice',
-				}
-			);
-		}
-	}, [
-		taxName,
-		isUpdateSuccessful,
-		fetchError,
-		updateError,
-		removeNotice,
-		createErrorNotice,
-		createSuccessNotice,
-	] );
 
 	const isVatAlreadySet = !! userTaxDetails.id;
 	const isDisabled = isLoading || isUpdating;
