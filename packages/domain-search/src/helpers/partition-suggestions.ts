@@ -31,9 +31,7 @@ export const partitionSuggestions = ( {
 					reason: 'exact-match',
 				},
 			],
-			regularSuggestions: suggestions
-				.filter( ( suggestion ) => suggestion !== query )
-				.map( ( suggestion ) => suggestion ),
+			regularSuggestions: suggestions.filter( ( suggestion ) => suggestion !== query ),
 		};
 	}
 
