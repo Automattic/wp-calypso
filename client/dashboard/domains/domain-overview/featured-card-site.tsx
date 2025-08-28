@@ -1,15 +1,21 @@
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
+import { siteByIdQuery } from '../../app/queries/site';
 import { Domain } from '../../data/domain';
-import { Site } from '../../data/site';
 import OverviewCard from '../../sites/overview-card';
 import SiteIcon from '../../sites/site-icon';
 
 interface Props {
 	domain: Domain;
-	site: Site;
 }
 
-export default function FeaturedCardSite( { domain, site }: Props ) {
+export default function FeaturedCardSite( { domain }: Props ) {
+	const { data: site } = useSuspenseQuery( siteByIdQuery( domain.blog_id ) );
+
+	if ( ! site ) {
+		return null;
+	}
+
 	return (
 		<OverviewCard
 			title={ __( 'Site' ) }
