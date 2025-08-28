@@ -597,7 +597,8 @@ function UnifiedPlansStep( {
 					}
 					heading={
 						<>
-							{ visualSplitVariation === 'default_websitebuilder' && (
+							{ ( visualSplitVariation === 'default_websitebuilder' ||
+								visualSplitVariation === 'default_hosting' ) && (
 								<IntentToggle
 									currentIntent={ intent }
 									onIntentChange={ ( newIntent ) => {
