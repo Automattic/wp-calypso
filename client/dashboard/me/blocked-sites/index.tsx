@@ -54,7 +54,9 @@ const fields: Field< BlockedSite >[] = [
 ];
 
 export default function BlockedSites() {
+	const rafIdRef = useRef< number | null >( null );
 	const ref = useRef< HTMLDivElement >( null );
+	const dataviewsRef = useRef< HTMLDivElement | null >( null );
 	const unblockSite = useMutation( unblockSiteMutation() );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
@@ -72,6 +74,26 @@ export default function BlockedSites() {
 		}
 	}, [ hasNextPage, isFetchingNextPage, fetchNextPage ] );
 
+	const handleResize = useCallback( () => {
+		if ( ! dataviewsRef.current ) {
+			return;
+		}
+
+		if ( rafIdRef.current ) {
+			cancelAnimationFrame( rafIdRef.current );
+		}
+
+		rafIdRef.current = requestAnimationFrame( () => {
+			if ( ! dataviewsRef.current ) {
+				return;
+			}
+
+			const { top } = dataviewsRef.current.getBoundingClientRect();
+			const maxHeight = window.innerHeight - top - 32 - 1;
+			dataviewsRef.current.style.maxHeight = `${ maxHeight }px`;
+		} );
+	}, [] );
+
 	useEffect( () => {
 		setView( ( currentView ) => ( { ...currentView, perPage: sites.length } ) );
 	}, [ sites.length ] );
@@ -81,16 +103,10 @@ export default function BlockedSites() {
 			return;
 		}
 
-		const dataviewsRef = ref.current.querySelector< HTMLDivElement >( '.dataviews-wrapper' );
-		if ( ! dataviewsRef ) {
+		dataviewsRef.current = ref.current.querySelector< HTMLDivElement >( '.dataviews-wrapper' );
+		if ( ! dataviewsRef.current ) {
 			return;
 		}
-
-		const handleResize = () => {
-			const { top } = dataviewsRef.getBoundingClientRect();
-			const maxHeight = window.innerHeight - top - 32 - 1;
-			dataviewsRef.style.maxHeight = `${ maxHeight }px`;
-		};
 
 		handleResize();
 		window.addEventListener( 'resize', handleResize );
@@ -99,8 +115,12 @@ export default function BlockedSites() {
 		return () => {
 			window.removeEventListener( 'resize', handleResize );
 			window.removeEventListener( 'orientationchange', handleResize );
+
+			if ( rafIdRef.current ) {
+				cancelAnimationFrame( rafIdRef.current );
+			}
 		};
-	}, [] );
+	}, [ handleResize ] );
 
 	return (
 		<PageLayout
