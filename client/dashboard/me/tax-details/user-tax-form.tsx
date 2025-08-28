@@ -1,3 +1,4 @@
+import { useResetSupportInteraction } from '@automattic/help-center/src/hooks/use-reset-support-interaction';
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useSuspenseQuery, useMutation, mutationOptions } from '@tanstack/react-query';
 import {
@@ -15,13 +16,16 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState, useRef, useCallback } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { useHelpCenter } from '../../app/help-center';
 import { countryListQuery } from '../../app/queries/countries';
 import { geoLocationQuery } from '../../app/queries/geo';
 import { userTaxDetailsQuery } from '../../app/queries/me-tax-details';
 import { queryClient } from '../../app/query-client';
+import InlineSupportLink from '../../components/inline-support-link';
 import { updateUserTaxDetails, UserTaxDetails } from '../../data/me-tax-details';
 import { getTaxName, getDataFormCountryCodes, stripCountryCodeFromVatId } from '../../utils/tax';
 import type { UserTaxField, UserTaxFormData, UserTaxNormalizedField } from '../../data/types';
+import './style.scss';
 
 export interface UserTaxFormControlProps {
 	data: UserTaxFormData;
@@ -302,6 +306,35 @@ export default function UserTaxForm() {
 		setUserTaxDetails( { ...userTaxDetails, ...localData } );
 	};
 
+	const resetSupportInteraction = useResetSupportInteraction();
+
+	const { setShowHelpCenter, setNavigateToRoute } = useHelpCenter();
+
+	/* This is a call to action for contacting support */
+	const contactSupportLinkTitle = __( 'Contact Happiness Engineers' );
+
+	// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
+	const taxSupportPageURL = 'https://wordpress.com/support/vat-gst-other-taxes/'; // TODO: Replace with localized URL.
+
+	/* This is the title of the support page from https://wordpress.com/support/vat-gst-other-taxes/ */
+	const taxSupportPageLinkTitle = __( 'VAT, GST, and other taxes' );
+
+	const handleOpenCenterChat = useCallback(
+		async ( e: React.MouseEvent< HTMLAnchorElement > ) => {
+			e.preventDefault();
+			setNavigateToRoute( '/odie' );
+			setShowHelpCenter( true );
+			await resetSupportInteraction();
+			recordTracksEvent( 'calypso_dashboard_vat_details_support_click' );
+		},
+		[ recordTracksEvent, resetSupportInteraction, setNavigateToRoute, setShowHelpCenter ]
+	);
+
+	const genericTaxName =
+		/* translators: This is a generic name for taxes to use when we do not know the user's country. */
+		__( 'tax (VAT/GST/CT)' );
+	const fallbackTaxName = genericTaxName;
+
 	return (
 		<form onSubmit={ onSubmit }>
 			<VStack spacing={ 4 }>
@@ -314,6 +347,45 @@ export default function UserTaxForm() {
 					} }
 				/>
 
+				<p>
+					{ createInterpolateElement(
+						sprintf(
+							/* translators: This is a list of tax-related reasons a customer might need to contact support, %(taxName)s is the name of taxes in the country (eg: "VAT" or "GST") or a generic fallback string of tax names */
+							__(
+								'If you need to update existing %(taxName)s details, have been charged taxes as a business subject to reverse charges, or do not see your country listed in this form {{contactSupportLink}}contact our Happiness Engineers{{/contactSupportLink}}. Include your %(taxName)s number and country code when you contact us.'
+							)
+								.replaceAll( '{{contactSupportLink}}', '<contactSupportLink>' )
+								.replaceAll( '{{/contactSupportLink}}', '</contactSupportLink>' ),
+							{ taxName: taxName ?? fallbackTaxName }
+						),
+						{
+							contactSupportLink: (
+								<a
+									href="/help"
+									title={ contactSupportLinkTitle }
+									onClick={ handleOpenCenterChat }
+								/>
+							),
+						}
+					) }
+				</p>
+				<p>
+					{ createInterpolateElement(
+						__( 'For more information about taxes, {{learnMoreLink}}click here{{/learnMoreLink}}.' )
+							.replaceAll( '{{learnMoreLink}}', '<learnMoreLink>' )
+							.replaceAll( '{{/learnMoreLink}}', '</learnMoreLink>' ),
+						{
+							learnMoreLink: (
+								<InlineSupportLink
+									supportLink={ taxSupportPageURL }
+									supportPostId={ 234670 } //This is what makes the document appear in a dialogue
+									title={ taxSupportPageLinkTitle }
+								/>
+							),
+						}
+					) }
+				</p>
+
 				<HStack justify="flex-start">
 					<Button
 						__next40pxDefaultSize
@@ -322,7 +394,7 @@ export default function UserTaxForm() {
 						type="submit"
 						variant="primary"
 					>
-						{ __( 'Validate and save' ) }
+						{ __( 'Save' ) }
 					</Button>
 				</HStack>
 			</VStack>
