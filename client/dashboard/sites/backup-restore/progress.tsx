@@ -10,6 +10,7 @@ import { useEffect } from 'react';
 import { siteBackupRestoreProgressQuery } from '../../app/queries/site-backup-restore';
 import Notice from '../../components/notice';
 import noSitesIllustration from '../no-sites-illustration.svg';
+import type { RestoreProgress } from '../../data/site-backup-restore';
 import type { Site } from '../../data/types';
 
 function SiteBackupRestoreProgress( {
@@ -26,6 +27,17 @@ function SiteBackupRestoreProgress( {
 	const { data: restoreProgress } = useQuery( {
 		...siteBackupRestoreProgressQuery( site.ID, restoreId ),
 		enabled: !! restoreId,
+		refetchInterval: ( query: { state: { data?: RestoreProgress } } ) => {
+			const { data } = query.state;
+
+			// Poll every 1.5 seconds if restore is in progress
+			if ( data?.status === 'queued' || data?.status === 'running' ) {
+				return 1500;
+			}
+
+			// Stop polling if finished or failed
+			return false;
+		},
 	} );
 
 	useEffect( () => {
