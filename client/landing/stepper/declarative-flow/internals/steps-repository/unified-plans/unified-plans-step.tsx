@@ -386,23 +386,17 @@ function UnifiedPlansStep( {
 		return translate( 'There’s a plan for you' );
 	};
 
+	let paidDomainName = domainItem?.meta;
+
+	if ( ! paidDomainName && isDomainOnlySite && selectedSite?.URL ) {
+		paidDomainName = getDomainFromUrl( selectedSite.URL );
+	}
+
+	const deemphasizeFreePlan =
+		( ONBOARDING_FLOW === flowName && ( paidDomainName != null || isPaidTheme ) ) ||
+		deemphasizeFreePlanFromProps;
+
 	const getSubheaderText = () => {
-		if ( isNewHostedSiteCreationFlow( flowName ) ) {
-			return translate(
-				'Get the advanced features you need without ever thinking about overages.'
-			);
-		}
-
-		if ( intent === 'plans-wordpress-hosting' ) {
-			return translate(
-				'All the security, flexibility, and control you need — without the overhead.'
-			);
-		} else if ( intent === 'plans-website-builder' ) {
-			return translate(
-				'Everything you need to go from idea to one-of-a-kind site, blog, or newsletter.'
-			);
-		}
-
 		const freePlanButton = (
 			<Button
 				onClick={ () =>
@@ -421,6 +415,36 @@ function UnifiedPlansStep( {
 				borderless
 			/>
 		);
+
+		if ( isNewHostedSiteCreationFlow( flowName ) ) {
+			return translate(
+				'Get the advanced features you need without ever thinking about overages.'
+			);
+		}
+
+		if ( intent === 'plans-wordpress-hosting' ) {
+			if ( ! deemphasizeFreePlan ) {
+				return translate(
+					'All the security, flexibility, and control you need — without the overhead.'
+				);
+			}
+			return translate(
+				'All the security, flexibility, and control you need — without the overhead. Or {{link}}start with our free plan{{/link}}.',
+				{ components: { link: freePlanButton } }
+			);
+		}
+
+		if ( intent === 'plans-website-builder' ) {
+			if ( ! deemphasizeFreePlan ) {
+				return translate(
+					'Everything you need to go from idea to one-of-a-kind site, blog, or newsletter.'
+				);
+			}
+			return translate(
+				'Everything you need to go from idea to one-of-a-kind site, blog, or newsletter. Or {{link}}start with our free plan{{/link}}.',
+				{ components: { link: freePlanButton } }
+			);
+		}
 
 		if ( useEmailOnboardingSubheader ) {
 			return translate(
@@ -486,20 +510,10 @@ function UnifiedPlansStep( {
 
 	const intervalTypeValue = intervalType || getIntervalType( path, defaultIntervalType );
 
-	let paidDomainName = domainItem?.meta;
-
-	if ( ! paidDomainName && isDomainOnlySite && selectedSite?.URL ) {
-		paidDomainName = getDomainFromUrl( selectedSite.URL );
-	}
-
 	let freeWPComSubdomain: string | undefined;
 	if ( typeof siteUrl === 'string' && siteUrl.includes( '.wordpress.com' ) ) {
 		freeWPComSubdomain = siteUrl;
 	}
-
-	const deemphasizeFreePlan =
-		( ONBOARDING_FLOW === flowName && ( paidDomainName != null || isPaidTheme ) ) ||
-		deemphasizeFreePlanFromProps;
 
 	const stepContent = (
 		<div>
