@@ -23,4 +23,6 @@ export default function () {
 	page( '/me/find-friends', controller.profileRedirect, makeLayout, clientRender );
 
 	page( '/me/get-apps', controller.sidebar, controller.apps, makeLayout, clientRender );
+
+	page( '/me/mcp', controller.sidebar, controller.mcp, makeLayout, clientRender );
 }

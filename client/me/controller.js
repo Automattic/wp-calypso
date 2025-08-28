@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { createElement } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import AppsComponent from 'calypso/me/get-apps';
+import McpComponent from 'calypso/me/mcp/main';
 import SidebarComponent from 'calypso/me/sidebar';
 
 export function sidebar( context, next ) {
@@ -48,4 +49,20 @@ export function apps( context, next ) {
 
 export function profileRedirect() {
 	page.redirect( '/me' );
+}
+
+export function mcp( context, next ) {
+	const McpTitle = () => {
+		const translate = useTranslate();
+
+		return <DocumentHead title={ translate( 'MCP Access', { textOnly: true } ) } />;
+	};
+
+	context.primary = (
+		<>
+			<McpTitle />
+			<McpComponent path={ context.path } />
+		</>
+	);
+	next();
 }

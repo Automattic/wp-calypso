@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { useQuery } from '@tanstack/react-query';
 import {
 	bell,
 	category,
@@ -11,11 +12,13 @@ import {
 	notAllowed,
 	payment,
 	seen,
+	external,
 } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { withCurrentRoute } from 'calypso/components/route';
+import { isAutomatticianQuery } from 'calypso/dashboard/app/queries/me-a8c';
 import GlobalSidebar, { GLOBAL_SIDEBAR_EVENTS } from 'calypso/layout/global-sidebar';
 import Sidebar from 'calypso/layout/sidebar';
 import CollapseSidebar from 'calypso/layout/sidebar/collapse-sidebar';
@@ -182,6 +185,17 @@ class MeSidebar extends Component {
 						preloadSectionName="developer"
 					/>
 
+					{ this.props.isAutomattician && (
+						<SidebarItem
+							selected={ itemLinkMatches( '/mcp', path ) }
+							link="/me/mcp"
+							label={ translate( 'MCP Access' ) }
+							icon={ external }
+							onNavigate={ this.onNavigate }
+							preloadSectionName="mcp"
+						/>
+					) }
+
 					<SidebarItem
 						link="/sites"
 						label={ translate( 'Manage Blogs' ) }
@@ -238,7 +252,7 @@ class MeSidebar extends Component {
 	}
 }
 
-export default withCurrentRoute(
+const ConnectedMeSidebar = withCurrentRoute(
 	connect(
 		( state, { currentSection } ) => {
 			const siteId = getSelectedSiteId( state );
@@ -261,3 +275,11 @@ export default withCurrentRoute(
 		}
 	)( localize( MeSidebar ) )
 );
+
+// Wrapper component to add React Query support
+function MeSidebarWithQuery( props ) {
+	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
+	return <ConnectedMeSidebar { ...props } isAutomattician={ isAutomattician } />;
+}
+
+export default MeSidebarWithQuery;
