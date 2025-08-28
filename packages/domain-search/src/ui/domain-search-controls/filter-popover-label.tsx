@@ -4,13 +4,12 @@ type Props = {
 
 export const FilterPopoverLabel = ( { text }: Props ) => {
 	return (
-		<div
+		<span
 			className="domain-search-controls__filters-popover-list-label"
 			key={ text }
-			onKeyDown={ () => {} }
 			role="presentation"
 		>
 			{ text }
-		</div>
+		</span>
 	);
 };

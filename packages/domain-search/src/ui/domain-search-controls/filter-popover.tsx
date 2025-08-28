@@ -6,7 +6,7 @@ import {
 	FormTokenField,
 } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { FilterState } from '../../components/search-bar/types';
+import { FilterState } from '../../page/types';
 import { FilterPopoverLabel } from './filter-popover-label';
 import { FilterPopoverTld } from './filter-popover-tld';
 import type { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
