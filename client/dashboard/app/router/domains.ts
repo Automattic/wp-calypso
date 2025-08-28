@@ -13,6 +13,8 @@ import { domainGlueRecordsQuery } from '../queries/domain-glue-records';
 import { domainNameServersQuery } from '../queries/domain-name-servers';
 import { sslDetailsQuery } from '../queries/domain-ssl';
 import { domainsQuery } from '../queries/domains';
+import { mailboxesQuery } from '../queries/emails';
+import { siteByIdQuery } from '../queries/site';
 import { queryClient } from '../query-client';
 import { rootRoute } from './root';
 
@@ -71,6 +73,15 @@ export const domainRoute = createRoute( {
 export const domainOverviewRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: '/',
+	loader: async ( { params: { domainName } } ) => {
+		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
+		const [ site, mailboxes ] = await Promise.all( [
+			queryClient.ensureQueryData( siteByIdQuery( domain.blog_id ) ),
+			queryClient.ensureQueryData( mailboxesQuery( domain.blog_id ) ),
+		] );
+
+		return { domain, site, mailboxes };
+	},
 } ).lazy( () =>
 	import( '../../domains/domain-overview' ).then( ( d ) =>
 		createLazyRoute( 'domain-overview' )( {
