@@ -7,6 +7,7 @@ import {
 import { queryClient } from '../query-client';
 import { siteQueryFilter } from './site';
 import { sitesQuery } from './sites';
+import type { JetpackModule } from '../../data/site-jetpack-modules';
 
 export const siteJetpackModulesQuery = ( siteId: number ) =>
 	queryOptions( {
@@ -14,7 +15,7 @@ export const siteJetpackModulesQuery = ( siteId: number ) =>
 		queryFn: () => fetchJetpackModules( siteId ),
 	} );
 
-export const siteJetpackModuleMutation = ( siteId: number ) =>
+export const siteJetpackModulesMutation = ( siteId: number ) =>
 	mutationOptions( {
 		mutationFn: ( variables: { module: string; value: boolean } ) => {
 			const { module, value } = variables;
@@ -23,12 +24,18 @@ export const siteJetpackModuleMutation = ( siteId: number ) =>
 				: deactivateJetpackModule( siteId, module );
 		},
 		onSuccess: ( newData: unknown, variables: { module: string; value: boolean } ) => {
-			queryClient.setQueryData( siteJetpackModulesQuery( siteId ).queryKey, ( oldData = [] ) => {
-				if ( variables.value ) {
-					return [ ...oldData, variables.module ];
+			queryClient.setQueryData(
+				siteJetpackModulesQuery( siteId ).queryKey,
+				( oldData: Record< string, JetpackModule > = {} ) => {
+					return {
+						...oldData,
+						[ variables.module ]: {
+							...oldData[ variables.module ],
+							activated: variables.value,
+						},
+					};
 				}
-				return oldData.filter( ( module ) => module !== variables.module );
-			} );
+			);
 			queryClient.invalidateQueries( { queryKey: siteJetpackModulesQuery( siteId ).queryKey } );
 			queryClient.invalidateQueries( siteQueryFilter( siteId ) );
 			queryClient.invalidateQueries( { queryKey: sitesQuery().queryKey } );
