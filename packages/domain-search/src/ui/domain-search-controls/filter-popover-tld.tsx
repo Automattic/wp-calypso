@@ -11,12 +11,6 @@ export const FilterPopoverTld = ( { tld, addTldToFilter }: Props ) => {
 			onClick={ () => {
 				addTldToFilter( tld );
 			} }
-			onKeyDown={ ( event ) => {
-				if ( event.key === 'Enter' ) {
-					addTldToFilter( tld );
-				}
-			} }
-			tabIndex={ 0 }
 		>
 			{ tld }
 		</button>
