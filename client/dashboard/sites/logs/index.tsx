@@ -1,6 +1,13 @@
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { __experimentalText as Text, TabPanel, ToggleControl } from '@wordpress/components';
+import {
+	__experimentalText as Text,
+	TabPanel,
+	ToggleControl,
+	Card,
+	CardHeader,
+	CardBody,
+} from '@wordpress/components';
 import { DataViews, View, Filter, Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
@@ -14,7 +21,6 @@ import { siteSettingsQuery } from '../../app/queries/site-settings';
 import { siteRoute } from '../../app/router/sites';
 import { Callout } from '../../components/callout';
 import { CalloutOverlay } from '../../components/callout-overlay';
-import { DataViewsCard } from '../../components/dataviews-card';
 import { DateRangePicker } from '../../components/date-range-picker';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
@@ -73,7 +79,7 @@ export function SiteLogsCallout( {
 }
 
 const LOG_TABS = [
-	{ name: 'php', title: __( 'PHP error' ) },
+	{ name: 'php', title: __( 'PHP errors' ) },
 	{ name: 'server', title: __( 'Web server' ) },
 ];
 
@@ -389,49 +395,52 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 							locale={ locale }
 							onChange={ handleDateRangeChange }
 						/>
-						<TabPanel
-							className="site-logs-tabs"
-							activeClass="is-active"
-							tabs={ LOG_TABS }
-							onSelect={ ( tabName ) => {
-								if ( tabName === LogType.PHP || tabName === LogType.SERVER ) {
-									handleTabChange( tabName );
-								}
-							} }
-							initialTabName={ logType }
-						>
-							{ () => (
-								<DataViewsCard>
-									{ logType === LogType.PHP ? (
-										<DataViews< PHPLog >
-											data={ logs as PHPLog[] }
-											isLoading={ isFetching }
-											paginationInfo={ paginationInfo }
-											fields={ fields as Field< PHPLog >[] }
-											view={ view }
-											actions={ actions as Action< PHPLog >[] }
-											search={ false }
-											defaultLayouts={ { table: {} } }
-											onChangeView={ onChangeView }
-											header={ LogsHeader }
-										/>
-									) : (
-										<DataViews< ServerLog >
-											data={ logs as ServerLog[] }
-											isLoading={ isFetching }
-											paginationInfo={ paginationInfo }
-											fields={ fields as Field< ServerLog >[] }
-											view={ view }
-											actions={ actions as Action< ServerLog >[] }
-											search={ false }
-											defaultLayouts={ { table: {} } }
-											onChangeView={ onChangeView }
-											header={ LogsHeader }
-										/>
-									) }
-								</DataViewsCard>
-							) }
-						</TabPanel>
+						<Card className="site-logs-card">
+							<CardHeader>
+								<TabPanel
+									className="site-logs-tabs"
+									activeClass="is-active"
+									tabs={ LOG_TABS }
+									onSelect={ ( tabName ) => {
+										if ( tabName === LogType.PHP || tabName === LogType.SERVER ) {
+											handleTabChange( tabName );
+										}
+									} }
+									initialTabName={ logType }
+								>
+									{ () => null }
+								</TabPanel>
+							</CardHeader>
+							<CardBody>
+								{ logType === LogType.PHP ? (
+									<DataViews< PHPLog >
+										data={ logs as PHPLog[] }
+										isLoading={ isFetching }
+										paginationInfo={ paginationInfo }
+										fields={ fields as Field< PHPLog >[] }
+										view={ view }
+										actions={ actions as Action< PHPLog >[] }
+										search={ false }
+										defaultLayouts={ { table: {} } }
+										onChangeView={ onChangeView }
+										header={ LogsHeader }
+									/>
+								) : (
+									<DataViews< ServerLog >
+										data={ logs as ServerLog[] }
+										isLoading={ isFetching }
+										paginationInfo={ paginationInfo }
+										fields={ fields as Field< ServerLog >[] }
+										view={ view }
+										actions={ actions as Action< ServerLog >[] }
+										search={ false }
+										defaultLayouts={ { table: {} } }
+										onChangeView={ onChangeView }
+										header={ LogsHeader }
+									/>
+								) }
+							</CardBody>
+						</Card>
 					</>
 				}
 			/>

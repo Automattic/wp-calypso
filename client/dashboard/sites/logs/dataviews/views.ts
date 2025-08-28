@@ -4,10 +4,10 @@ import type { View } from '@wordpress/dataviews';
 
 const getSortField = ( logType: LogType ) => ( logType === LogType.PHP ? 'timestamp' : 'date' );
 
+const getTitleField = ( logType: LogType ) => ( logType === LogType.PHP ? 'severity' : 'status' );
+
 const getVisibleFields = ( logType: LogType ) =>
-	logType === LogType.PHP
-		? [ 'severity', 'name', 'message' ]
-		: [ 'request_type', 'status', 'request_url' ];
+	logType === LogType.PHP ? [ 'timestamp', 'message' ] : [ 'date', 'request_type', 'request_url' ];
 
 // Convert current view filters to API filter params
 const getFilterParamsFromView = ( view: View, fieldNames: string[] ): FilterType => {
@@ -56,18 +56,18 @@ export function useView( {
 			direction: 'desc',
 		},
 		filters: initialFilters ?? [],
-		titleField: getSortField( logType ),
+		titleField: getTitleField( logType ),
+		primaryField: 'severity',
 		fields: getVisibleFields( logType ),
 		layout: {
 			styles: {
 				// PHP errors
-				timestamp: { maxWidth: '150px' },
-				severity: { maxWidth: '150px' },
+				timestamp: { maxWidth: '175px', minWidth: '140px' },
 				name: { maxWidth: '200px', minWidth: '75px' },
 				message: { maxWidth: '30vw' },
 				file: { minWidth: '300px' },
 				// Server errors
-				date: { maxWidth: '150px' },
+				date: { maxWidth: '175px', minWidth: '140px' },
 				request_url: { minWidth: '300px' },
 				http_referer: { minWidth: '300px' },
 			},
