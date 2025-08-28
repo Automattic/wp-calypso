@@ -8,7 +8,6 @@ import ItemView from 'calypso/layout/hosting-dashboard/item-view';
 import { useSetTabBreadcrumb } from 'calypso/sites/hooks/breadcrumbs/use-set-tab-breadcrumb';
 import HostingFeaturesIcon from 'calypso/sites/hosting/components/hosting-features-icon';
 import { useStagingSite } from 'calypso/sites/staging-site/hooks/use-staging-site';
-import SitesProductionBadge from 'calypso/sites-dashboard/components/sites-production-badge';
 import { useSelector } from 'calypso/state';
 import { canCurrentUserSwitchEnvironment } from 'calypso/state/sites/selectors/can-current-user-switch-environment';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
@@ -246,7 +245,13 @@ const DotcomPreviewPane = ( {
 					}
 
 					if ( shouldShowProductionBadge ) {
-						return <SitesProductionBadge>{ __( 'Production' ) }</SitesProductionBadge>;
+						return (
+							<SiteEnvironmentSwitcher
+								onChange={ changeSitePreviewPane }
+								site={ siteWithStagingIds }
+								showAddStagingSiteButton
+							/>
+						);
 					}
 
 					if (
