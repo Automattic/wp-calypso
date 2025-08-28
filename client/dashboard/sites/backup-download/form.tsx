@@ -1,5 +1,9 @@
 import { useMutation } from '@tanstack/react-query';
-import { Button, __experimentalHStack as HStack } from '@wordpress/components';
+import {
+	Button,
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
@@ -98,30 +102,37 @@ function SiteBackupDownloadForm( {
 		);
 	};
 
+	const handleSubmit = ( e: React.FormEvent ) => {
+		e.preventDefault();
+		handleDownload();
+	};
+
 	const isFormValid = Object.values( formData ).some( ( value ) => value );
 
 	return (
-		<>
-			<p>{ __( 'Choose the items you wish to include in the download:' ) }</p>
-			<DataForm< DownloadConfig >
-				data={ formData }
-				fields={ fields }
-				form={ form }
-				onChange={ handleFormChange }
-			/>
+		<form onSubmit={ handleSubmit }>
+			<VStack spacing={ 4 }>
+				<p>{ __( 'Choose the items you wish to include in the download:' ) }</p>
+				<DataForm< DownloadConfig >
+					data={ formData }
+					fields={ fields }
+					form={ form }
+					onChange={ handleFormChange }
+				/>
 
-			<HStack justify="flex-start">
-				<Button
-					variant="primary"
-					icon={ download }
-					onClick={ handleDownload }
-					isBusy={ isDownloadMutationPending }
-					disabled={ ! isFormValid || isDownloadMutationPending }
-				>
-					{ __( 'Generate download' ) }
-				</Button>
-			</HStack>
-		</>
+				<HStack justify="flex-start">
+					<Button
+						variant="primary"
+						icon={ download }
+						type="submit"
+						isBusy={ isDownloadMutationPending }
+						disabled={ ! isFormValid || isDownloadMutationPending }
+					>
+						{ __( 'Generate download' ) }
+					</Button>
+				</HStack>
+			</VStack>
+		</form>
 	);
 }
 
