@@ -1,3 +1,4 @@
+import { PRIVACY_PROTECTION } from '@automattic/urls';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { unseen } from '@wordpress/icons';
@@ -9,12 +10,18 @@ interface Props {
 }
 
 export default function FeaturedCardPrivacy( { domain }: Props ) {
+	const privacyWarning = __(
+		'Privacy protection is not available due to the registry’s policies.'
+	);
+	const privacyProtectionNote = domain.private_domain ? __( 'Enabled' ) : __( 'Disabled' );
+
 	return (
 		<OverviewCard
 			title={ __( 'Privacy' ) }
 			heading={ __( 'WHOIS Privacy' ) }
 			icon={ <Icon icon={ unseen } /> }
-			description={ domain.privacy_available ? __( 'Enabled' ) : __( 'Disabled' ) }
+			externalLink={ ! domain.privacy_available ? PRIVACY_PROTECTION : undefined }
+			description={ ! domain.private_domain ? privacyWarning : privacyProtectionNote }
 		/>
 	);
 }
