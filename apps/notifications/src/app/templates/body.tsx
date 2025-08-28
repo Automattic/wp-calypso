@@ -103,16 +103,7 @@ export const NoteBody = ( { note }: { note: Note } ) => {
 
 			switch ( block.signature.type ) {
 				case 'user':
-					return (
-						<User
-							key={ key }
-							block={ block.block }
-							noteType={ note.type }
-							note={ note }
-							timestamp={ note.timestamp }
-							url={ note.url }
-						/>
-					);
+					return <User key={ key } block={ block.block } note={ note } />;
 				case 'comment':
 					return <Comment key={ key } block={ block.block } meta={ note.meta } />;
 				case 'post':
@@ -131,7 +122,7 @@ export const NoteBody = ( { note }: { note: Note } ) => {
 	return (
 		<VStack className="wpnc__body">
 			{ preface }
-			<div className="wpnc__body-content" style={ { margin: '0' } }>
+			<div className="wpnc__body-content" style={ { padding: 0, margin: 0 } }>
 				{ body }
 			</div>
 			<ReplyBlock note={ note } />

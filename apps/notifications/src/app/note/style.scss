@@ -1,3 +1,4 @@
+@import "@wordpress/base-styles/colors";
 @import "@wordpress/base-styles/variables";
 
 .wpnc__main {
@@ -148,6 +149,13 @@
 	}
 }
 
+.wpnc__subject {
+	.wpnc__user,
+	.wpnc__post {
+		font-weight: 500;
+	}
+}
+
 .wpnc__text-summary {
 	.components-external-link {
 		color: inherit;
@@ -155,5 +163,42 @@
 
 	.components-external-link__contents {
 		text-decoration: none;
+	}
+}
+
+.wpnc__user {
+	.wpnc__note & {
+		padding: 0;
+	}
+
+	.wpnc__user-title {
+		font-weight: 500;
+	}
+}
+
+/**
+ * Comment
+ */
+.wpnc__note.wpnc__comment {
+	.wpnc__user {
+		padding: 16px;
+	}
+}
+
+/**
+ * Likes
+ */
+.wpnc__note.wpnc__like {
+	.wpnc__user {
+		padding-bottom: 16px;
+		border-bottom: 1px solid $gray-300;
+
+		&:not(:first-child) {
+			padding-top: 16px;
+		}
+	}
+
+	.wpnc__paragraph {
+		padding: 16px 0 0;
 	}
 }

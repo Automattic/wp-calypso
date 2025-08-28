@@ -1,12 +1,12 @@
+import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import PropTypes from 'prop-types';
+import { plus, published } from '@wordpress/icons';
 import { useState } from 'react';
 import useSafe from '../../panel/helpers/use-safe';
 import { bumpStat } from '../../panel/rest-client/bump-stat';
 import { wpcom } from '../../panel/rest-client/wpcom';
-import Gridicon from './gridicons';
 
-const followStatTypes = {
+export const followStatTypes = {
 	comment: 'note_commented_post',
 	comment_like: 'note_liked_comment',
 	like: 'note_liked_post',
@@ -14,7 +14,15 @@ const followStatTypes = {
 	reblog: 'note_reblog_post',
 };
 
-export const FollowLink = ( { site, noteType, isFollowing: initialIsFollowing } ) => {
+export const FollowLink = ( {
+	site,
+	noteType,
+	isFollowing: initialIsFollowing,
+}: {
+	site: number;
+	noteType: keyof typeof followStatTypes;
+	isFollowing: boolean;
+} ) => {
 	const [ isRequestRunning, setIsRequestRunning ] = useState( false );
 	const [ isFollowing, setIsFollowing ] = useState( initialIsFollowing );
 
@@ -33,7 +41,7 @@ export const FollowLink = ( { site, noteType, isFollowing: initialIsFollowing } 
 		const previousState = isFollowing;
 		setIsFollowing( ! isFollowing );
 
-		const updateState = ( error, data ) => {
+		const updateState = ( error: Error | null, data: { is_following: boolean } ) => {
 			safeSetIsRequestRunning( false );
 			if ( error ) {
 				safeSetIsFollowing( previousState );
@@ -48,26 +56,25 @@ export const FollowLink = ( { site, noteType, isFollowing: initialIsFollowing } 
 		} else {
 			follower.add( updateState );
 
-			const stats = { 'notes-click-action': 'follow' };
-			stats.follow_source = followStatTypes[ noteType ];
-			bumpStat( stats );
+			bumpStat( {
+				'notes-click-action': 'follow',
+				follow_source: followStatTypes[ noteType ],
+			} );
 		}
 	}
 
-	const icon = isFollowing ? 'reader-following' : 'reader-follow';
-	const linkText = isFollowing ? __( 'Subscribed' ) : __( 'Subscribe' );
-
 	return (
-		<button className="follow-link" onClick={ toggleFollowStatus }>
-			<Gridicon icon={ icon } size={ 18 } />
-			{ linkText }
-		</button>
+		<Button
+			variant="tertiary"
+			size="small"
+			icon={ isFollowing ? published : plus }
+			iconSize={ 16 }
+			style={ { padding: 0 } }
+			onClick={ toggleFollowStatus }
+		>
+			{ isFollowing ? __( 'Subscribed' ) : __( 'Subscribe' ) }
+		</Button>
 	);
-};
-
-FollowLink.propTypes = {
-	site: PropTypes.number,
-	isFollowing: PropTypes.bool,
 };
 
 export default FollowLink;
