@@ -41,6 +41,11 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		skippable: false,
 		deemphasizedTlds: [],
 	},
+	filter: {
+		exactSldMatchesOnly: false,
+		tlds: [],
+	},
+	setFilter: () => {},
 };
 
 export const DomainSearchContext =

@@ -57,6 +57,11 @@ export interface DomainSearchProps {
 	config?: Partial< DomainSearchConfig >;
 }
 
+export interface FilterState {
+	exactSldMatchesOnly: boolean;
+	tlds: string[];
+}
+
 export interface DomainSearchContextType
 	extends Omit<
 		DomainSearchProps,
@@ -68,6 +73,8 @@ export interface DomainSearchContextType
 	openFullCart: () => void;
 	query: string;
 	setQuery: ( query: string ) => void;
+	filter: FilterState;
+	setFilter: ( filter: FilterState ) => void;
 	queries: {
 		domainSuggestions: ( query: string ) => ReturnType< typeof domainSuggestionsQuery >;
 		domainAvailability: ( domainName: string ) => ReturnType< typeof domainAvailabilityQuery >;
