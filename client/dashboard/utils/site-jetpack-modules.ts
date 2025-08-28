@@ -17,3 +17,21 @@ export function isJetpackModuleActivated(
 	const module = modules[ moduleName ];
 	return !! ( module && module.activated );
 }
+
+/**
+ * Checks if a Jetpack module requires a connection
+ * @param modules - Record of Jetpack modules from the API
+ * @param moduleName - Name of the module to check
+ * @returns true if the module exists and requires connection, false otherwise
+ */
+export function jetpackModuleRequiresConnection(
+	modules: Record< string, JetpackModule > | undefined,
+	moduleName: string
+): boolean {
+	if ( ! modules || ! moduleName ) {
+		return false;
+	}
+
+	const module = modules[ moduleName ];
+	return !! ( module && module.requires_connection );
+}
