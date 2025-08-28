@@ -1,30 +1,35 @@
 import { Dropdown } from '@wordpress/components';
-import { useCallback } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import { useDomainSearch } from '../../page/context';
 import { DomainSearchControls } from '../../ui';
 import { FilterState } from './types';
 import type { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
 
-type Props = {
-	availableTlds: string[];
-	filter: FilterState;
-	onSubmit?: () => void;
-	resetFilter: () => void;
-	setFilter: ( filter: FilterState ) => void;
-	setTemporaryFilter: ( filter: FilterState ) => void;
-	showTldFilter: boolean;
-	temporaryFilter: FilterState;
+const emptyFilter: FilterState = {
+	exactSldMatchesOnly: false,
+	tlds: [],
 };
 
-export const Filter = ( {
-	availableTlds,
-	filter,
-	onSubmit,
-	resetFilter,
-	setFilter,
-	setTemporaryFilter,
-	showTldFilter,
-	temporaryFilter,
-}: Props ) => {
+type Props = {
+	onSubmit?: () => void;
+	showTldFilter: boolean;
+};
+
+export const Filter = ( { onSubmit, showTldFilter }: Props ) => {
+	const { filter, setFilter } = useDomainSearch();
+	// This is the filter that the user is currently selecting. It is only applied when the popover is closed
+	const [ temporaryFilter, setTemporaryFilter ] = useState( emptyFilter );
+	// TODO: Hardcoded for testing, should get those from the https://public-api.wordpress.com/rest/v1.1/domains/suggestions/tlds endpoint
+	const availableTlds = useMemo(
+		() => [ 'com', 'net', 'org', 'blog', 'dev', 'io', 'co', 'co.uk', 'com.br', 'de' ],
+		[]
+	);
+
+	const resetFilter = useCallback( () => {
+		setFilter( emptyFilter );
+		setTemporaryFilter( emptyFilter );
+	}, [ setFilter ] );
+
 	const getFiltercounts = useCallback( () => {
 		return filter.tlds.length + ( filter.exactSldMatchesOnly ? 1 : 0 );
 	}, [ filter ] );
