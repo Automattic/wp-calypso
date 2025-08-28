@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { PRESSABLE_PREMIUM_PLAN_MIGRATION_INCENTIVE_END_DATE } from '../lib/constants';
 
 export function useShowMigrationIncentive() {
 	const isFeatureEnabled = isEnabled( 'pressable-premium-plan' );
@@ -13,5 +14,8 @@ export function useShowMigrationIncentive() {
 	// This is to handle old signups without the number_sites field.
 	const showMigrationIncentive = numberSites === '51-100' || numberSites === '';
 
-	return isFeatureEnabled && showMigrationIncentive;
+	// We only show the incentive if the current date is before the migration incentive end date.
+	const isIncentiveActive = PRESSABLE_PREMIUM_PLAN_MIGRATION_INCENTIVE_END_DATE > new Date();
+
+	return isFeatureEnabled && showMigrationIncentive && isIncentiveActive;
 }
