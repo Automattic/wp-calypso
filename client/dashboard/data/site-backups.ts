@@ -24,7 +24,7 @@ export interface BackupEntry {
 	status: BackupEntryStatus;
 	period: string;
 	percent: string;
-	discarded: string;
+	discarded?: string;
 	is_backup: string;
 	is_scan: string;
 }
