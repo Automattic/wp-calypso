@@ -78,7 +78,7 @@ export const DomainSearchControlsFilterPopover = ( {
 		);
 	};
 
-	// The popover needs to have the "domain-search" class because it is generated outside the `DomainSearch` component
+	// The popover needs to have the "domain-search" class because it is generated outside of the `DomainSearch` component
 	return (
 		<VStack className="domain-search domain-search-controls__filters-popover" spacing={ 4 }>
 			{ showTldFilter && (
