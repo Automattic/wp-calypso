@@ -39,7 +39,7 @@ export default function PressablePremiumPlanMigrationBanner( {
 
 	const handleReferClient = useCallback( () => {
 		dispatch(
-			recordTracksEvent( 'calypso_a4a_marketplace_hosting_premium_refer_form_back_to_marketplace', {
+			recordTracksEvent( 'calypso_a4a_pressable_premium_plan_migration_banner_refer_client', {
 				source,
 			} )
 		);
@@ -47,7 +47,7 @@ export default function PressablePremiumPlanMigrationBanner( {
 
 	const handleChatToUs = useCallback( () => {
 		dispatch(
-			recordTracksEvent( 'calypso_a4a_marketplace_hosting_premium_refer_form_back_to_marketplace', {
+			recordTracksEvent( 'calypso_a4a_pressable_premium_plan_migration_banner_chat_to_us', {
 				source,
 			} )
 		);
