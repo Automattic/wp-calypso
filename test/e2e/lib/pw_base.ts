@@ -5,28 +5,9 @@
  * for Calypso E2E testing, including test accounts, page objects, API clients,
  * and environment variables.
  *
- * @remarks
  * - Provides fixtures for various test accounts, page objects, and utility classes.
  * - Ensures test accounts have fresh authentication cookies before use.
  * - Integrates Calypso-specific components and helpers for streamlined test authoring.
- *
- * @fixture accountGivenByEnvironment - A `TestAccount` determined by the current environment.
- * @fixture accountGutenbergSimple - A `TestAccount` for the Gutenberg Simple Site User.
- * @fixture accounti18n - A `TestAccount` for the i18n User.
- * @fixture clientEmail - An `EmailClient` instance for email-related test actions.
- * @fixture clientRestAPI - A `RestAPIClient` instance authenticated with the environment account.
- * @fixture componentBlockWidgetEditor - A `BlockWidgetEditorComponent` instance.
- * @fixture componentPreview - A `PreviewComponent` instance.
- * @fixture componentSidebar - A `SidebarComponent` instance.
- * @fixture componentSiteSelect - A `SiteSelectComponent` instance.
- * @fixture environment - The current environment variables.
- * @fixture helperData - The `DataHelper` utility.
- * @fixture pageAppleLogin - An `AppleLoginPage` instance.
- * @fixture pageEditor - An `EditorPage` instance.
- * @fixture pageLogin - A `LoginPage` instance.
- * @fixture pageThemeDetails - A `ThemesDetailPage` instance.
- * @fixture pageThemes - A `ThemesPage` instance.
- * @fixture secrets - The loaded secrets from `SecretsManager`.
  *
  * @example
  * ```typescript
@@ -82,6 +63,7 @@ export const test = base.extend< {
 	pageThemes: ThemesPage;
 	secrets: Secrets;
 } >( {
+	// * @fixture accountGivenByEnvironment - A `TestAccount` determined by the current environment.
 	accountGivenByEnvironment: async ( { page }, use ) => {
 		const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
 		const testAccount = await getAccount( page, accountName );
