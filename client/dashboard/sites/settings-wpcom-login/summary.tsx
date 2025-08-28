@@ -7,8 +7,16 @@ import { __ } from '@wordpress/i18n';
 import { key } from '@wordpress/icons';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { hasHostingFeature } from '../../utils/site-features';
+<<<<<<< HEAD
 import { isJetpackModuleActivated } from '../../utils/site-jetpack-modules';
 import type { Site } from '@automattic/api-core';
+=======
+import {
+	jetpackModuleRequiresConnection,
+	isJetpackModuleActivated,
+} from '../../utils/site-jetpack-modules';
+import type { Site } from '../../data/types';
+>>>>>>> afd2f5313a5 (Disable the SSO setting if the site is not connected, showing an info notice)
 import type { Density } from '@automattic/components/src/summary-button/types';
 
 export default function WpcomLoginSettingsSummary( {
@@ -24,10 +32,15 @@ export default function WpcomLoginSettingsSummary( {
 		return null;
 	}
 
+	const ssoAvailable =
+		jetpackModuleRequiresConnection( jetpackModules, JetpackModules.SSO ) &&
+		site.jetpack_connection;
 	const ssoEnabled = isJetpackModuleActivated( jetpackModules, JetpackModules.SSO );
 
 	let badges;
-	if ( hasHostingFeature( site, HostingFeatures.SECURITY_SETTINGS ) ) {
+	if ( ! ssoAvailable ) {
+		badges = [ { text: __( 'Unavailable' ) } ];
+	} else if ( hasHostingFeature( site, HostingFeatures.SECURITY_SETTINGS ) ) {
 		badges = ssoEnabled
 			? [ { text: __( 'Enabled' ), intent: 'success' as const } ]
 			: [ { text: __( 'Disabled' ) } ];
