@@ -3,6 +3,7 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import {
 	Icon,
 	ToggleControl,
+	__experimentalConfirmDialog as ConfirmDialog,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
@@ -64,6 +65,9 @@ function isCreditCard( item: StoredPaymentMethod ): item is StoredPaymentMethodC
 }
 
 export default function PaymentMethods() {
+	const [ removeDialogPaymentMethod, setRemoveDialogPaymentMethod ] = useState<
+		StoredPaymentMethod | undefined
+	>();
 	const [ currentView, setView ] = useState( paymentMethodsDataView );
 	const ref = useResizeObserver( ( entries ) => {
 		const firstEntry = entries[ 0 ];
@@ -142,8 +146,9 @@ export default function PaymentMethods() {
 		{
 			id: 'remove',
 			label: __( 'Remove payment method' ),
-			callback: () => {
-				// FIXME: remove payment method
+			callback: ( items ) => {
+				const item = items[ 0 ];
+				setRemoveDialogPaymentMethod( item );
 			},
 		},
 	];
@@ -164,6 +169,34 @@ export default function PaymentMethods() {
 						actions={ actions }
 					/>
 				</DataViewsCard>
+				<ConfirmDialog
+					isOpen={ Boolean( removeDialogPaymentMethod ) }
+					confirmButtonText={ __( 'Remove payment method' ) }
+					size="large"
+					onConfirm={ () => {
+						// FIXME: remove payment method
+					} }
+					onCancel={ () => setRemoveDialogPaymentMethod( undefined ) }
+				>
+					<VStack>
+						<Text>
+							{
+								// FIXME: also list affected purchases like PaymentMethodDeleteDialog
+								__(
+									'The following payment method will be removed from your account and from all the associated subscriptions.'
+								)
+							}
+						</Text>
+						{ removeDialogPaymentMethod && (
+							<Text>
+								<VStack>
+									<PaymentMethodTitle paymentMethod={ removeDialogPaymentMethod } />
+									<PaymentMethodDetails paymentMethod={ removeDialogPaymentMethod } />
+								</VStack>
+							</Text>
+						) }
+					</VStack>
+				</ConfirmDialog>
 			</div>
 		</PageLayout>
 	);
