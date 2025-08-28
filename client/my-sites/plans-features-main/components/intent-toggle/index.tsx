@@ -34,6 +34,8 @@ export default function IntentToggle( { currentIntent, onIntentChange }: IntentT
 				hideLabelFromVision
 				value={ currentValue }
 				onChange={ handleToggle as ( value: string | number | undefined ) => void }
+				__next40pxDefaultSize
+				__nextHasNoMarginBottom
 			>
 				<ToggleGroupControlOption
 					value="website-builder"

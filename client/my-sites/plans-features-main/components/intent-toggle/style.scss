@@ -3,12 +3,12 @@
 
 .intent-toggle {
 	width: 432px;
-	margin: 0 auto calc(#{$grid-unit-40} - 3px) auto; // 32px - 3px = 29px bottom to account for header padding
+	margin: 9px auto calc(#{$grid-unit-40} + 2px) auto;
 
 	.components-toggle-group-control {
 		width: 100%;
 		border-radius: 2px;
-		border: 1px solid var( --studio-gray-30 );
+		border: 1px solid #949494;
 		background: var( --studio-white);
 	}
 
