@@ -2,7 +2,6 @@ import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import {
 	fetchSiteBackupDownloadProgress,
 	initiateSiteBackupDownload,
-	type DownloadProgress,
 	type DownloadConfig,
 } from '../../data/site-backup-download';
 import { queryClient } from '../query-client';
@@ -17,17 +16,6 @@ export const siteBackupDownloadProgressQuery = ( siteId: number, downloadId: num
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'backup', 'download', downloadId, 'progress' ],
 		queryFn: () => fetchSiteBackupDownloadProgress( siteId, downloadId ),
-		refetchInterval: ( query: { state: { data?: DownloadProgress } } ) => {
-			const { data } = query.state;
-
-			// Poll every 1.5 seconds if download is in progress
-			if ( ! data?.url ) {
-				return 1500;
-			}
-
-			// Stop polling if finished or failed
-			return false;
-		},
 	} );
 
 /**

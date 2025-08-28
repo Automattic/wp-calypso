@@ -26,6 +26,17 @@ function SiteBackupDownloadProgress( {
 	const { data: downloadProgress } = useQuery( {
 		...siteBackupDownloadProgressQuery( site.ID, downloadId ),
 		enabled: !! downloadId,
+		refetchInterval: ( query ) => {
+			const { data } = query.state;
+
+			// Poll every 1.5 seconds if download is in progress
+			if ( ! data?.url ) {
+				return 1500;
+			}
+
+			// Stop polling if finished or failed
+			return false;
+		},
 	} );
 
 	useEffect( () => {
