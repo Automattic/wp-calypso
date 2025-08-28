@@ -1,7 +1,7 @@
-import { DomainAvailabilityStatus } from '@automattic/data';
-import { useQueries, useQuery } from '@tanstack/react-query';
+import { type DomainAvailability, DomainAvailabilityStatus } from '@automattic/data';
+import { useQueries, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { Cart } from '../components/cart';
 import { FeaturedSearchResults } from '../components/featured-search-results';
 import { SearchBar } from '../components/search-bar';
@@ -34,32 +34,41 @@ export const ResultsPage = () => {
 		[ suggestions ]
 	);
 
-	const premiumDomainAvailabilityQueries = useQueries( {
+	const unavailablePremiumDomainsCombinator = useCallback(
+		( results: UseQueryResult< DomainAvailability, Error >[] ) => {
+			return {
+				isLoadingUnavailablePremiumDomains: results.some( ( result ) => result.isLoading ),
+				unavailablePremiumDomains: premiumSuggestions.filter( ( _, index ) => {
+					const availabilityQuery = results[ index ];
+
+					if ( availabilityQuery?.error || ! availabilityQuery?.data ) {
+						return true;
+					}
+
+					const { status, is_supported_premium_domain } = availabilityQuery.data;
+
+					return (
+						DomainAvailabilityStatus.AVAILABLE_PREMIUM !== status || ! is_supported_premium_domain
+					);
+				} ),
+			};
+		},
+		[ premiumSuggestions ]
+	);
+
+	const { isLoadingUnavailablePremiumDomains, unavailablePremiumDomains } = useQueries( {
 		queries: premiumSuggestions.map( ( suggestion ) => ( {
 			...queries.domainAvailability( suggestion ),
 			enabled: true,
 		} ) ),
+		combine: unavailablePremiumDomainsCombinator,
 	} );
 
 	const isLoading =
 		isLoadingSuggestions ||
 		isLoadingFreeSuggestion ||
 		isLoadingQueryAvailability ||
-		premiumDomainAvailabilityQueries.some( ( query ) => query.isLoading );
-
-	const unavailablePremiumDomains = useMemo( () => {
-		return premiumSuggestions.filter( ( _, index ) => {
-			const availabilityQuery = premiumDomainAvailabilityQueries[ index ];
-
-			if ( availabilityQuery?.error || ! availabilityQuery?.data ) {
-				return true;
-			}
-
-			const { status, is_supported_premium_domain } = availabilityQuery.data;
-
-			return DomainAvailabilityStatus.AVAILABLE_PREMIUM !== status || ! is_supported_premium_domain;
-		} );
-	}, [ premiumDomainAvailabilityQueries, premiumSuggestions ] );
+		isLoadingUnavailablePremiumDomains;
 
 	const { featuredSuggestions, regularSuggestions } = useMemo( () => {
 		return partitionSuggestions( {
