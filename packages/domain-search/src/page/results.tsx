@@ -1,3 +1,4 @@
+import { DomainAvailabilityStatus } from '@automattic/data';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useMemo } from 'react';
@@ -25,24 +26,50 @@ export const ResultsPage = () => {
 		enabled: true,
 	} );
 
-	useQueries( {
-		queries: suggestions
-			.filter( ( suggestion ) => suggestion.is_premium )
-			.map( ( suggestion ) => ( {
-				...queries.domainAvailability( suggestion.domain_name ),
-				enabled: true,
-			} ) ),
+	const premiumSuggestions = useMemo(
+		() =>
+			suggestions
+				.filter( ( suggestion ) => suggestion.is_premium )
+				.map( ( suggestion ) => suggestion.domain_name ),
+		[ suggestions ]
+	);
+
+	const premiumDomainAvailabilityQueries = useQueries( {
+		queries: premiumSuggestions.map( ( suggestion ) => ( {
+			...queries.domainAvailability( suggestion ),
+			enabled: true,
+		} ) ),
 	} );
 
-	const isLoading = isLoadingSuggestions || isLoadingFreeSuggestion || isLoadingQueryAvailability;
+	const isLoading =
+		isLoadingSuggestions ||
+		isLoadingFreeSuggestion ||
+		isLoadingQueryAvailability ||
+		premiumDomainAvailabilityQueries.some( ( query ) => query.isLoading );
+
+	const unavailablePremiumDomains = useMemo( () => {
+		return premiumSuggestions.filter( ( _, index ) => {
+			const availabilityQuery = premiumDomainAvailabilityQueries[ index ];
+
+			if ( availabilityQuery?.error || ! availabilityQuery?.data ) {
+				return true;
+			}
+
+			const { status, is_supported_premium_domain } = availabilityQuery.data;
+
+			return DomainAvailabilityStatus.AVAILABLE_PREMIUM !== status || ! is_supported_premium_domain;
+		} );
+	}, [ premiumDomainAvailabilityQueries, premiumSuggestions ] );
 
 	const { featuredSuggestions, regularSuggestions } = useMemo( () => {
 		return partitionSuggestions( {
-			suggestions,
+			suggestions: suggestions
+				.map( ( suggestion ) => suggestion.domain_name )
+				.filter( ( suggestion ) => ! unavailablePremiumDomains.includes( suggestion ) ),
 			query,
 			deemphasiseTlds: config.deemphasizedTlds,
 		} );
-	}, [ suggestions, query, config.deemphasizedTlds ] );
+	}, [ suggestions, query, config.deemphasizedTlds, unavailablePremiumDomains ] );
 
 	return (
 		<VStack spacing={ 8 }>
