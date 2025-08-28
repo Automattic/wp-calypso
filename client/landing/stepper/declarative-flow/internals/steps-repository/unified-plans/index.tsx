@@ -141,11 +141,13 @@ const PlansStepAdaptor: StepType< {
 	// Update plansIntent when the experiment loads
 	useEffect( () => {
 		if ( ! isVisualSplitLoading && props.flow === ONBOARDING_FLOW ) {
-			const newIntent =
-				visualSplitVariation === 'default_websitebuilder'
-					? ( 'plans-website-builder' as PlansIntent )
-					: defaultPlansIntent;
-			setPlansIntent( newIntent );
+			if ( visualSplitVariation === 'default_websitebuilder' ) {
+				setPlansIntent( 'plans-website-builder' );
+			} else if ( visualSplitVariation === 'default_hosting' ) {
+				setPlansIntent( 'plans-wordpress-hosting' );
+			} else {
+				setPlansIntent( defaultPlansIntent );
+			}
 		}
 	}, [ isVisualSplitLoading, visualSplitVariation, props.flow, defaultPlansIntent ] );
 
