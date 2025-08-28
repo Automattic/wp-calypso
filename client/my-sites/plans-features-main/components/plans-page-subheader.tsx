@@ -7,18 +7,12 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
 import { SelectedFeatureData } from '../hooks/use-selected-feature';
 
-const Subheader = styled.p< {
-	isUsingStepContainerV2?: boolean;
-	isDeemphasizedFreePlan?: boolean;
-} >`
-	margin: ${ ( props ) => ( props.isDeemphasizedFreePlan ? '-45px 0 26px 0' : '-32px 0 40px 0' ) };
+const Subheader = styled.p< { isUsingStepContainerV2?: boolean } >`
+	margin: -32px 0 40px 0;
 	color: var( --studio-gray-60 );
-	font-family: ${ ( props ) =>
-		props.isDeemphasizedFreePlan ? "'SF Pro Text', sans-serif" : 'inherit' };
-	font-size: ${ ( props ) => ( props.isDeemphasizedFreePlan ? '16px' : '1rem' ) };
 	text-align: ${ ( props ) => ( props.isUsingStepContainerV2 ? 'left' : 'center' ) };
 	button.is-borderless {
-		font-weight: ${ ( props ) => ( props.isDeemphasizedFreePlan ? 'normal' : '500' ) };
+		font-weight: 500;
 		color: var( --studio-gray-90 );
 		text-decoration: underline;
 		font-size: 16px;
@@ -158,7 +152,7 @@ const PlansPageSubheader = ( {
 	const renderSubheader = () => {
 		if ( deemphasizeFreePlan && offeringFreePlan ) {
 			return (
-				<Subheader isUsingStepContainerV2={ isUsingStepContainerV2 } isDeemphasizedFreePlan>
+				<Subheader isUsingStepContainerV2={ isUsingStepContainerV2 }>
 					{ translate(
 						'Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.',
 						{
