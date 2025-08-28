@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalDivider as Divider,
@@ -98,9 +97,7 @@ function SiteOverview( {
 						actions={
 							site.options?.admin_url && (
 								<>
-									{ isEnabled( 'hosting/staging-sites-redesign' ) && (
-										<StagingSiteSyncDropdown siteSlug={ siteSlug } />
-									) }
+									<StagingSiteSyncDropdown siteSlug={ siteSlug } />
 									<Button
 										__next40pxDefaultSize
 										variant="primary"

@@ -64,7 +64,6 @@ const DotcomPreviewPane = ( {
 	const isSimpleSite = ! site.jetpack && ! site.is_wpcom_atomic;
 	const isPlanExpired = !! site.plan?.expired;
 	const isInProgress = isMigrationInProgress( site );
-	const stagingSitesRedesign = isEnabled( 'hosting/staging-sites-redesign' );
 	const isHostingFeaturesCalloutEnabled = isEnabled( 'hosting/hosting-features-callout' );
 
 	const features: FeaturePreviewInterface[] = useMemo( () => {
@@ -236,9 +235,6 @@ const DotcomPreviewPane = ( {
 			itemData={ itemData }
 			closeItemView={ closeSitePreviewPane }
 			features={ features }
-			className={
-				siteWithStagingIds.is_wpcom_staging_site && ! stagingSitesRedesign ? 'is-staging-site' : ''
-			}
 			enforceTabsView
 			itemViewHeaderExtraProps={ {
 				externalIconSize: 16,
@@ -249,7 +245,7 @@ const DotcomPreviewPane = ( {
 						return <SiteStatus site={ site } />;
 					}
 
-					if ( stagingSitesRedesign && shouldShowProductionBadge ) {
+					if ( shouldShowProductionBadge ) {
 						return <SitesProductionBadge>{ __( 'Production' ) }</SitesProductionBadge>;
 					}
 

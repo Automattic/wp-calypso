@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
@@ -160,8 +159,8 @@ export default function HeaderStagingSiteButton( {
 		addStagingSite( { name: '' } );
 	}, [ dispatch, siteId, addStagingSite ] );
 
-	// Don't render if feature flag is disabled or conditions aren't met
-	if ( ! isEnabled( 'hosting/staging-sites-redesign' ) || ! showAddStagingButton ) {
+	// Don't render if conditions aren't met
+	if ( ! showAddStagingButton ) {
 		return null;
 	}
 

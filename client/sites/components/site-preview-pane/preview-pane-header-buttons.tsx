@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
 import { useMergeRefs } from '@wordpress/compose';
@@ -36,8 +35,6 @@ const PreviewPaneHeaderButtons = ( { focusRef, itemData }: Props ) => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const previousSyncInProgress = useRef< boolean >( false );
-
-	const stagingSitesRedesign = config.isEnabled( 'hosting/staging-sites-redesign' );
 
 	const site = useSelector( ( state ) => getSite( state, itemData.blogId ) );
 
@@ -97,8 +94,7 @@ const PreviewPaneHeaderButtons = ( { focusRef, itemData }: Props ) => {
 		: false;
 
 	const shouldShowSyncDropdown = Boolean(
-		stagingSitesRedesign &&
-			supportsStaging &&
+		supportsStaging &&
 			! isStagingSiteInTransition &&
 			! isStagingSiteDeletionInProgress &&
 			hasStagingSiteJetpackConnection
