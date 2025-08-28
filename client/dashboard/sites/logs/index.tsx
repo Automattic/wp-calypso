@@ -224,18 +224,20 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 
 		return items.map( ( log, index ) => {
 			if ( logType === LogType.PHP ) {
+				const php = log as PHPLog;
 				return {
-					...log,
-					id: `${ log.timestamp }|${ log.file }|${ String( log.line ) }|${ suffix }|${ String(
+					...php,
+					id: `${ php.timestamp }|${ php.file }|${ String( php.line ) }|${ suffix }|${ String(
 						index
 					) }`,
 				};
 			}
+			const server = log as ServerLog;
 			return {
-				...log,
-				id: `${ String( log.timestamp ) }|${ log.request_type }|${ log.status }|${
-					log.request_url
-				}|${ log.user_ip }|${ suffix }|${ String( index ) }`,
+				...server,
+				id: `${ String( server.timestamp ) }|${ server.request_type }|${ server.status }|${
+					server.request_url
+				}|${ server.user_ip }|${ suffix }|${ String( index ) }`,
 			};
 		} );
 	}, [ scrollId, view.page, siteLogs?.logs, logType ] );
