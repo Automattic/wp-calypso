@@ -1,22 +1,3 @@
-/**
- * End-to-end tests for verifying internationalization (i18n) redirects for unauthenticated visitors.
- *
- * This test suite iterates over a list of supported locales and performs the following checks for each locale:
- *
- * 1. **Homepage Redirect**: Ensures that visiting the homepage as an unauthenticated user with a specific browser locale
- *    results in a redirect to the correct localized homepage URL.
- *
- * 2. **Plans to Pricing Page Redirect**: Ensures that visiting the plans page in a specific locale redirects
- *    to the correct localized pricing page URL.
- *
- * @file
- * - Uses Playwright's test runner and custom helper utilities.
- * - Tests are tagged with `@i18n` for filtering.
- * - The default locale ('en') does not use a locale path prefix.
- *
- * @see ../../lib/pw_base
- * @see ../../lib/types_shared
- */
 import { test, expect } from '../../lib/pw-base';
 import { locale } from '../../lib/types-shared';
 

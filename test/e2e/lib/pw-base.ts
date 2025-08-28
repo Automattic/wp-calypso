@@ -63,7 +63,6 @@ export const test = base.extend< {
 	pageThemes: ThemesPage;
 	secrets: Secrets;
 } >( {
-	// * @fixture accountGivenByEnvironment - A `TestAccount` determined by the current environment.
 	accountGivenByEnvironment: async ( { page }, use ) => {
 		const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
 		const testAccount = await getAccount( page, accountName );

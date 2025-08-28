@@ -10,7 +10,7 @@ module.exports = {
 			files: [ 'specs/**/*' ],
 			rules: {
 				// We use jest-runner-groups to run spec suites, and these involve a custom doc header tag.
-				'jsdoc/check-tag-names': [ 'error', { definedTags: [ 'group', 'browser', 'tag' ] } ],
+				'jsdoc/check-tag-names': [ 'error', { definedTags: [ 'group', 'browser' ] } ],
 				'jest/no-standalone-expect': [ 'error', { additionalTestBlockFunctions: [ 'skipItIf' ] } ],
 			},
 		},
@@ -25,12 +25,6 @@ module.exports = {
 			files: [ 'docs/tests_local.md' ],
 			rules: {
 				'lint-no-multiple-toplevel-headings': 'off',
-			},
-		},
-		{
-			files: [ 'lib/**/*' ],
-			rules: {
-				'jsdoc/check-tag-names': [ 'error', { definedTags: [ 'fixture', 'remarks' ] } ],
 			},
 		},
 	],
