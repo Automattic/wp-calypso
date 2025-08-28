@@ -1,4 +1,4 @@
-import { __experimentalVStack as VStack, ExternalLink } from '@wordpress/components';
+import { __experimentalVStack as VStack, CardFooter, ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect, useMemo } from 'react';
@@ -79,7 +79,11 @@ export const ActionBlock = ( { note }: { note: Note } ) => {
 		return null;
 	}
 
-	return <NoteActions note={ note } />;
+	return (
+		<CardFooter size="small">
+			<NoteActions note={ note } />
+		</CardFooter>
+	);
 };
 
 export const NoteBody = ( { note }: { note: Note } ) => {

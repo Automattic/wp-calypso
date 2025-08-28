@@ -5,7 +5,6 @@ import {
 	__experimentalHeading as Heading,
 	CardHeader,
 	CardBody,
-	CardFooter,
 	Navigator,
 	useNavigator,
 } from '@wordpress/components';
@@ -20,7 +19,6 @@ import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved'
 import getIsNoteRead from '../../panel/state/selectors/get-is-note-read';
 import { NoteBody, ActionBlock } from '../templates/body';
 import NoteSummary from '../templates/note-summary';
-import '../../panel/boot/stylesheets/style.scss';
 import './style.scss';
 import type { Note as NoteObject, Block } from '../types';
 
@@ -105,17 +103,12 @@ const Note = () => {
 				<VStack justify="flex-start" spacing={ 4 }>
 					<NoteSummary note={ note } />
 					<Divider style={ { color: '#ddd' } } />
-					{ /* Add `wpnc__main` here to keep the same classes structure as v1. We'll iterate styles later. */ }
-					<div className="wpnc__main">
-						<div className={ getClasses( { note, isApproved, isRead } ) }>
-							<NoteBody note={ note } />
-						</div>
+					<div className={ getClasses( { note, isApproved, isRead } ) }>
+						<NoteBody note={ note } />
 					</div>
 				</VStack>
 			</CardBody>
-			<CardFooter size="small">
-				<ActionBlock note={ note } />
-			</CardFooter>
+			<ActionBlock note={ note } />
 		</div>
 	);
 };
