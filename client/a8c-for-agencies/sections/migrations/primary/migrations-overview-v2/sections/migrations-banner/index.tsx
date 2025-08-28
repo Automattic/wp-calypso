@@ -20,7 +20,7 @@ export default function MigrationsBanner() {
 			) }
 			background={ BackgroundType5 }
 		>
-			<PressablePremiumPlanMigrationBanner isCollapsable={ false } />
+			<PressablePremiumPlanMigrationBanner isCollapsable={ false } source="migrations-overview" />
 			<div />
 		</PageSection>
 	);

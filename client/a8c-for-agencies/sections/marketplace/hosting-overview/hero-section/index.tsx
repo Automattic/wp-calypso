@@ -86,7 +86,7 @@ export function HeroSection(
 						)
 					) }
 				</div>
-				<PressablePremiumPlanMigrationBanner />
+				<PressablePremiumPlanMigrationBanner source="hosting-overview" />
 			</div>
 
 			<ul className="hosting-hero-section__tabs">{ navItems }</ul>
