@@ -140,7 +140,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		}
 		const tick = () => {
 			const end = new Date();
-			const start = subDays( end, 7 );
+			const start = subDays( end, 6 );
 
 			setDateRange( ( prev ) =>
 				isSameSecond( prev.start, start ) && isSameSecond( prev.end, end ) ? prev : { start, end }
