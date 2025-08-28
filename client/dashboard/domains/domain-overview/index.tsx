@@ -1,5 +1,5 @@
 import { formatCurrency } from '@automattic/number-formatters';
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useMemo } from 'react';
@@ -19,7 +19,7 @@ export default function DomainOverview() {
 	const locale = useLocale();
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
-	const { data: purchase } = useQuery(
+	const { data: purchase } = useSuspenseQuery(
 		sitePurchaseQuery( domain.blog_id, parseInt( domain.subscription_id, 10 ) )
 	);
 

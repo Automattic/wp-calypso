@@ -4,6 +4,7 @@ import { domainQuery } from '../../app/queries/domain';
 import { domainRoute } from '../../app/router/domains';
 import FeaturedCardPrivacy from './featured-card-privacy';
 import FeaturedCardRenew from './featured-card-renew';
+import FeaturedCardSite from './featured-card-site';
 
 export default function FeaturedCards() {
 	const { domainName } = domainRoute.useParams();
@@ -12,7 +13,8 @@ export default function FeaturedCards() {
 	return (
 		<Grid columns={ 2 }>
 			<FeaturedCardRenew domain={ domain } />
-			<FeaturedCardPrivacy domain={ domain } />
+			<FeaturedCardSite domain={ domain } />
+      <FeaturedCardPrivacy domain={ domain } />
 		</Grid>
 	);
 }
