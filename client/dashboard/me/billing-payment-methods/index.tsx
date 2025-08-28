@@ -8,7 +8,7 @@ import {
 } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
-import { info } from '@wordpress/icons';
+import { info, warning } from '@wordpress/icons';
 import { useState, useMemo } from 'react';
 import {
 	userPaymentMethodsQuery,
@@ -305,7 +305,10 @@ function getFields( {
 						) }
 					</Text>
 				) : (
-					''
+					<HStack justify="flex-start">
+						<Icon icon={ warning } size={ 16 } style={ { fill: 'currentColor' } } />
+						<Text intent="warning">{ __( 'Missing information' ) }</Text>
+					</HStack>
 				);
 			},
 		},
