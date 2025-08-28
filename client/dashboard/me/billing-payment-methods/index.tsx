@@ -1,5 +1,5 @@
 import { localizeUrl } from '@automattic/i18n-utils';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import {
 	Icon,
 	ToggleControl,
@@ -10,7 +10,10 @@ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { info } from '@wordpress/icons';
 import { useState, useMemo } from 'react';
-import { userPaymentMethodsQuery } from '../../app/queries/me-payment-methods';
+import {
+	userPaymentMethodsQuery,
+	userPaymentMethodSetBackupQuery,
+} from '../../app/queries/me-payment-methods';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -18,7 +21,7 @@ import { Text } from '../../components/text';
 import { formatCreditCardExpiry } from '../../utils/datetime';
 import { PaymentMethodImage } from '../billing-purchases/payment-method-image';
 import type { StoredPaymentMethod, StoredPaymentMethodCard } from '../../data/me-payment-methods';
-import type { View, Fields, SortDirection } from '@wordpress/dataviews';
+import type { View, Fields, SortDirection, Action } from '@wordpress/dataviews';
 
 const paymentMethodWideFields = [ 'expiry', 'billing-address', 'backup', 'tax-info' ];
 // FIXME: alter fields based on width
@@ -61,34 +64,59 @@ function isCreditCard( item: StoredPaymentMethod ): item is StoredPaymentMethodC
 
 export default function PaymentMethods() {
 	const [ currentView, setView ] = useState( paymentMethodsDataView );
-	const { data: paymentMethods = [], isLoading: isLoadingPaymentMethods } = useQuery(
+	const {
+		data: paymentMethods = [],
+		isLoading: isLoadingPaymentMethods,
+		isRefetching: isUpdatingPaymentMethods,
+	} = useQuery(
 		userPaymentMethodsQuery( {
 			expired: true,
 		} )
 	);
-	const paymentMethodFields = getFields();
+	const { mutate: setPaymentMethodBackup, isPending: isSettingPaymentMethodBackup } = useMutation(
+		userPaymentMethodSetBackupQuery()
+	);
+	const paymentMethodFields = getFields( {
+		isUpdatingPaymentMethods,
+		isSettingPaymentMethodBackup,
+		setPaymentMethodBackup,
+	} );
 	const { data: filteredPaymentMethods, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( paymentMethods, currentView, paymentMethodFields );
 	}, [ paymentMethods, currentView, paymentMethodFields ] );
-	const actions = [
+	const actions: Action< StoredPaymentMethod >[] = [
 		{
 			id: 'enable-backup',
 			label: __( 'Use as backup payment method' ),
 			isEligible: ( item: StoredPaymentMethod ) => {
+				if ( isSettingPaymentMethodBackup ) {
+					return false;
+				}
 				return isCreditCard( item ) && ! item.is_backup;
 			},
-			callback: () => {
-				// FIXME: toggle backup
+			callback: ( items ) => {
+				const item = items[ 0 ];
+				setPaymentMethodBackup( {
+					...item,
+					is_backup: true,
+				} );
 			},
 		},
 		{
 			id: 'disable-backup',
 			label: __( 'Stop using as backup payment method' ),
 			isEligible: ( item: StoredPaymentMethod ) => {
+				if ( isSettingPaymentMethodBackup ) {
+					return false;
+				}
 				return item.is_backup;
 			},
-			callback: () => {
-				// FIXME: toggle backup
+			callback: ( items ) => {
+				const item = items[ 0 ];
+				setPaymentMethodBackup( {
+					...item,
+					is_backup: false,
+				} );
 			},
 		},
 		{
@@ -128,7 +156,17 @@ export default function PaymentMethods() {
 	);
 }
 
-function getFields(): Fields< StoredPaymentMethod > {
+function getFields( {
+	isUpdatingPaymentMethods,
+	isSettingPaymentMethodBackup,
+	setPaymentMethodBackup,
+}: {
+	isUpdatingPaymentMethods: boolean;
+	isSettingPaymentMethodBackup: boolean;
+	setPaymentMethodBackup: (
+		paymentMethod: Pick< StoredPaymentMethod, 'stored_details_id' | 'is_backup' >
+	) => void;
+} ): Fields< StoredPaymentMethod > {
 	return [
 		{
 			id: 'type',
@@ -225,9 +263,14 @@ function getFields(): Fields< StoredPaymentMethod > {
 						__nextHasNoMarginBottom
 						label=""
 						checked={ item.is_backup }
-						disabled={ ! ( 'card_type' in item && item.card_type ) }
+						disabled={
+							! isCreditCard( item ) || isSettingPaymentMethodBackup || isUpdatingPaymentMethods
+						}
 						onChange={ () => {
-							// FIXME: allow toggling backup
+							setPaymentMethodBackup( {
+								...item,
+								is_backup: ! item.is_backup,
+							} );
 						} }
 					/>
 				);

@@ -1,5 +1,6 @@
-import { fetchUserPaymentMethods } from '@automattic/api-core';
-import { queryOptions } from '@tanstack/react-query';
+import { fetchUserPaymentMethods, setPaymentMethodBackup  } from '@automattic/api-core';
+import { queryOptions, mutationOptions } from '@tanstack/react-query';
+import { queryClient } from '../query-client';
 import type { PaymentMethodRequestType } from '@automattic/api-core';
 
 export const userPaymentMethodsQuery = ( {
@@ -35,4 +36,15 @@ export const userPaymentMethodsQuery = ( {
 			Array.isArray( data ) && isForBusiness
 				? data.filter( ( method ) => method?.tax_location?.is_for_business === isForBusiness )
 				: data,
+	} );
+
+export const userPaymentMethodSetBackupQuery = () =>
+	mutationOptions( {
+		mutationFn: ( data: { stored_details_id: string; is_backup: boolean } ) =>
+			setPaymentMethodBackup( data.stored_details_id, data.is_backup ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( {
+				queryKey: [ 'me', 'payment-methods' ],
+			} );
+		},
 	} );

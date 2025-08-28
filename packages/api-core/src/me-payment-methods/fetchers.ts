@@ -11,3 +11,13 @@ export async function fetchUserPaymentMethods(
 		apiVersion: '1.2',
 	} );
 }
+
+export async function setPaymentMethodBackup(
+	paymentMethodId: string,
+	useAsBackup: boolean
+): Promise< void > {
+	return await wpcom.req.post( {
+		path: `/me/payment-methods/${ paymentMethodId }/is-backup`,
+		body: { is_backup: useAsBackup },
+	} );
+}
