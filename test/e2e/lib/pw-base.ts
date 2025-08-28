@@ -42,7 +42,7 @@ import {
 	ThemesPage,
 } from '@automattic/calypso-e2e';
 import { test as base, expect } from '@playwright/test';
-import { getAccount } from './get_account';
+import { getAccount } from './get-account';
 
 export const test = base.extend< {
 	accountGivenByEnvironment: TestAccount;

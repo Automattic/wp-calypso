@@ -17,8 +17,8 @@
  * @see ../../lib/pw_base
  * @see ../../lib/types_shared
  */
-import { test, expect } from '../../lib/pw_base';
-import { locale } from '../../lib/types_shared';
+import { test, expect } from '../../lib/pw-base';
+import { locale } from '../../lib/types-shared';
 
 const localesToTest: Array< locale > = [
 	'ar',

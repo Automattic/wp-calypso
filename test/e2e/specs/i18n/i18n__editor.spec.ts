@@ -15,8 +15,8 @@
  * @see Translation
  */
 import { RestAPIClient } from '@automattic/calypso-e2e';
-import { test, expect } from '../../lib/pw_base';
-import { Translation } from '../../lib/types_shared';
+import { test, expect } from '../../lib/pw-base';
+import { Translation } from '../../lib/types-shared';
 
 const translationsToTest: Array< Translation > = [
 	{ locale: 'ar', addTitle: 'أضف عنوانًا' },
