@@ -517,7 +517,12 @@ function UnifiedPlansStep( {
 	}
 
 	const stepContent = (
-		<div>
+		<div
+			className={ clsx( {
+				'step-container-v2__visual-split':
+					intent === 'plans-wordpress-hosting' || intent === 'plans-website-builder',
+			} ) }
+		>
 			{ 'invalid' === step?.status && (
 				<div>
 					<Notice status="is-error" showDismiss={ false }>
