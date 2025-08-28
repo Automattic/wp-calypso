@@ -28,7 +28,6 @@ import PageLayout from '../../components/page-layout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { HostingFeatures } from '../../data/constants';
 import { LogType, PHPLog, ServerLog, SiteLogsParams } from '../../data/site-logs';
-import { parseYmdLocal, formatYmd } from '../../utils/datetime';
 import { hasHostingFeature } from '../../utils/site-features';
 import { useActions } from './dataviews/actions';
 import { useFields } from './dataviews/fields';
@@ -36,7 +35,11 @@ import { getInitialFiltersFromSearch, getAllowedFields } from './dataviews/filte
 import { useView, toFilterParams } from './dataviews/views';
 import { LogsDownloader } from './downloader';
 import illustrationUrl from './logs-callout-illustration.svg';
-import { buildTimeRangeInSeconds, getInitialDateRangeFromSearch } from './utils';
+import {
+	buildTimeRangeInSeconds,
+	getInitialDateRangeFromSearch,
+	getDefaultDateRange,
+} from './utils';
 import type { Action } from '@wordpress/dataviews';
 
 import './style.scss';
@@ -126,11 +129,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		initialFilters: getInitialFiltersFromSearch( logType, search ),
 	} );
 
-	const siteToday = parseYmdLocal( formatYmd( new Date(), timezoneString, gmtOffset ) )!;
-	const initial = {
-		start: new Date( siteToday.getFullYear(), siteToday.getMonth(), siteToday.getDate() - 6 ),
-		end: siteToday,
-	};
+	const initial = getDefaultDateRange( timezoneString, gmtOffset );
 
 	const initialFromUrl = getInitialDateRangeFromSearch( search );
 
