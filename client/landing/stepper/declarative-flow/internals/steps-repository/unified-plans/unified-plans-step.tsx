@@ -413,6 +413,7 @@ function UnifiedPlansStep( {
 					} )
 				}
 				borderless
+				className="plans-features-main__free-plan-cta"
 			/>
 		);
 

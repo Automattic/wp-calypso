@@ -46,9 +46,11 @@
 	margin-top: 25px;
 }
 
-.plans.plans-step .formatted-header__subtitle .button.is-borderless {
-	padding: 0;
+.plans.plans-step .formatted-header__subtitle .button.is-borderless,
+.step-container-v2__content-row .step-container-v2__heading .plans-features-main__free-plan-cta {
 	color: inherit;
+	padding: 0;
+	margin: 0;
 	font-size: inherit;
 	font-weight: inherit;
 	line-height: inherit;
