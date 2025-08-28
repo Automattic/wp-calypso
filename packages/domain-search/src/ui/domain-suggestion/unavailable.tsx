@@ -14,13 +14,13 @@ import { DomainSuggestionsList } from '../domain-suggestions-list';
 
 import './unavailable.scss';
 
-export type UnavailabilityReason =
+type UnavailabilityReason =
 	| 'tld-not-supported'
 	| 'tld-not-supported-temporarily'
 	| 'already-registered';
 
 export interface UnavailableProps {
-	domain: string;
+	domain?: string;
 	tld: string;
 	reason: UnavailabilityReason;
 	onTransferClick?(): void;
