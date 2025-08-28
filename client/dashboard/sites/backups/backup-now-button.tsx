@@ -1,9 +1,9 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import { useBackupState } from '../../app/hooks/site-backup-state';
-import { siteBackupEnqueueMutation } from '../../app/queries/site-backups';
+import { siteBackupEnqueueMutation, siteBackupsQuery } from '../../app/queries/site-backups';
 import type { Site } from '../../data/types';
 
 interface BackupNowButtonProps {
@@ -12,9 +12,10 @@ interface BackupNowButtonProps {
 
 export function BackupNowButton( { site }: BackupNowButtonProps ) {
 	const [ isEnqueued, setIsEnqueued ] = useState( false );
+	const { status } = useBackupState( site.ID );
+	const isRunning = status === 'running';
 
-	const { backupState, isBackupActive } = useBackupState( site.ID, isEnqueued );
-
+	// Enqueue a new backup
 	const { mutate: triggerBackup, isPending } = useMutation( {
 		...siteBackupEnqueueMutation( site.ID ),
 		onMutate: () => {
@@ -22,29 +23,50 @@ export function BackupNowButton( { site }: BackupNowButtonProps ) {
 		},
 	} );
 
+	// Lets fetch backups if we just enqueued a backup or if there's a backup running
+	useQuery( {
+		...siteBackupsQuery( site.ID ),
+		refetchInterval: isRunning || isEnqueued ? 2000 : false,
+	} );
+
 	// Reset enqueued state when backup actually starts
 	useEffect( () => {
-		if ( backupState === 'in_progress' && isEnqueued ) {
+		if ( isRunning && isEnqueued ) {
 			setIsEnqueued( false );
 		}
-	}, [ backupState, isEnqueued ] );
+	}, [ status, isEnqueued, isRunning ] );
 
-	const buttonContent = {
-		enqueued: {
-			label: __( 'Backup enqueued' ),
-			tooltip: __( 'A backup has been queued and will start shortly.' ),
-		},
-		in_progress: {
-			label: __( 'Backup in progress' ),
-			tooltip: __( 'A backup is currently in progress.' ),
-		},
-		default: {
+	// Generate button content based on backup status
+	const getButtonContent = () => {
+		// Show enqueued state only for this button when it triggered the backup
+		if ( isEnqueued ) {
+			return {
+				label: __( 'Backup enqueued' ),
+				tooltip: __( 'A backup has been queued and will start shortly.' ),
+			};
+		}
+
+		if ( status === 'running' ) {
+			return {
+				label: __( 'Backup in progress' ),
+				tooltip: __( 'A backup is currently in progress.' ),
+			};
+		}
+
+		if ( status === 'error' ) {
+			return {
+				label: __( 'Backup failed' ),
+				tooltip: __( 'The last backup attempt failed. Click to try again.' ),
+			};
+		}
+
+		return {
 			label: __( 'Back up now' ),
 			tooltip: __( 'Create a backup of your site now.' ),
-		},
+		};
 	};
 
-	const isBusy = isBackupActive || isPending;
+	const isBusy = isRunning || isPending || isEnqueued;
 
 	return (
 		<Button
@@ -53,11 +75,11 @@ export function BackupNowButton( { site }: BackupNowButtonProps ) {
 			disabled={ isBusy }
 			isBusy={ isBusy }
 			accessibleWhenDisabled
-			description={ buttonContent[ backupState ].tooltip }
-			label={ buttonContent[ backupState ].label }
+			description={ getButtonContent().tooltip }
+			label={ getButtonContent().label }
 			showTooltip
 		>
-			{ buttonContent[ backupState ].label }
+			{ getButtonContent().label }
 		</Button>
 	);
 }
