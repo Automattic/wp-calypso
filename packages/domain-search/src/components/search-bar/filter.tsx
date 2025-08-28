@@ -1,7 +1,6 @@
 import { Dropdown } from '@wordpress/components';
 import { useCallback, useMemo, useState } from 'react';
 import { useDomainSearch } from '../../page/context';
-// Is it ok to import a type from the `page` folder?
 import { FilterState } from '../../page/types';
 import { DomainSearchControls } from '../../ui';
 import type { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
