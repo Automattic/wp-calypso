@@ -1,19 +1,3 @@
-/**
- * End-to-end Playwright test suite for verifying internationalization (i18n) of the editor interface.
- *
- * This suite iterates over a set of locales and their expected "Add title" translations, and for each:
- * - Authenticates as a test account (using/saving cookies for efficiency).
- * - Updates the account's locale setting using the REST API.
- * - Visits the editor page.
- * - Asserts that the editor's title input displays the correct localized placeholder.
- *
- * Tests are run serially to avoid conflicts from changing the shared account's locale.
- * Tests are restricted to run only in the Chrome browser.
- *
- * @file I18N: Editor E2E tests for localized editor content.
- * @tag @i18n
- * @see Translation
- */
 import { RestAPIClient } from '@automattic/calypso-e2e';
 import { test, expect } from '../../lib/pw-base';
 import { Translation } from '../../lib/types-shared';
