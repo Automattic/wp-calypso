@@ -17,29 +17,4 @@ $footer-height: 73px;
 	.chatbox {
 		padding-bottom: $footer-height / 2; // give room to the blending white gradient.
 	}
-
-	.odie-chat-message-input-container {
-		@media screen and (max-width: 660px) {
-			max-width: 100%;
-		}
-
-		.odie-send-message-input {
-			&:disabled {
-				-webkit-text-fill-color: var(--color-neutral-20);
-				background: var(--color-neutral-0);
-				border-color: var(--color-neutral-0);
-				color: var(--color-neutral-20);
-			}
-		}
-
-		.components-form-file-upload {
-			button {
-				padding: 7px;
-				&:focus {
-					outline: 2px solid $help-center-blue;
-					outline-offset: 1px;
-				}
-			}
-		}
-	}
 }

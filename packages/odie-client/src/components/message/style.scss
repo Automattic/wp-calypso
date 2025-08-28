@@ -589,16 +589,6 @@ $custom-border-corner-size: 16px;
 	}
 }
 
-.odie-send-message-input-container {
-	textarea.odie-send-message-input {
-		&:focus {
-			box-shadow: 0 0 0 2px $blueberry-color;
-			outline: none;
-			border-color: transparent;
-		}
-	}
-}
-
 .odie-chatbox-message-avatar-wapuu-liked {
 	-webkit-animation: wapuu-joy-animation 1300ms both;
 	animation: wapuu-joy-animation 1300ms both;
