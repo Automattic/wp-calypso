@@ -1,5 +1,9 @@
 import { useMutation } from '@tanstack/react-query';
-import { Button, __experimentalHStack as HStack } from '@wordpress/components';
+import {
+	Button,
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
@@ -99,6 +103,11 @@ function SiteBackupRestoreForm( {
 		);
 	};
 
+	const handleSubmit = ( e: React.FormEvent ) => {
+		e.preventDefault();
+		handleRestore();
+	};
+
 	const restoreWarning = formData.sqls
 		? __(
 				'This action will replace all settings, posts, pages and other site content with the information from the selected restore point.'
@@ -110,31 +119,33 @@ function SiteBackupRestoreForm( {
 	const isFormValid = Object.values( formData ).some( ( value ) => value );
 
 	return (
-		<>
-			<p>{ __( 'Choose the items you wish to restore:' ) }</p>
-			<DataForm< RestoreConfig >
-				data={ formData }
-				fields={ fields }
-				form={ form }
-				onChange={ handleFormChange }
-			/>
+		<form onSubmit={ handleSubmit }>
+			<VStack spacing={ 4 }>
+				<p>{ __( 'Choose the items you wish to restore:' ) }</p>
+				<DataForm< RestoreConfig >
+					data={ formData }
+					fields={ fields }
+					form={ form }
+					onChange={ handleFormChange }
+				/>
 
-			<Notice variant="info" title={ __( 'Important' ) }>
-				{ restoreWarning }
-			</Notice>
+				<Notice variant="info" title={ __( 'Important' ) }>
+					{ restoreWarning }
+				</Notice>
 
-			<HStack justify="flex-start">
-				<Button
-					variant="primary"
-					icon={ rotateLeft }
-					onClick={ handleRestore }
-					isBusy={ isRestoreMutationPending }
-					disabled={ ! isFormValid || isRestoreMutationPending }
-				>
-					{ __( 'Restore now' ) }
-				</Button>
-			</HStack>
-		</>
+				<HStack justify="flex-start">
+					<Button
+						variant="primary"
+						icon={ rotateLeft }
+						type="submit"
+						isBusy={ isRestoreMutationPending }
+						disabled={ ! isFormValid || isRestoreMutationPending }
+					>
+						{ __( 'Restore now' ) }
+					</Button>
+				</HStack>
+			</VStack>
+		</form>
 	);
 }
 
