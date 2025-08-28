@@ -32,7 +32,7 @@ export default function EditDomainGlueRecords() {
 					type: 'snackbar',
 				} );
 
-				recordTracksEvent( 'calypso_domain_glue_records_update_record', {
+				recordTracksEvent( 'calypso_dashboard_domain_glue_records_update_record', {
 					domain: domainName,
 					nameserver: updatedGlueRecord.nameserver,
 					address: updatedGlueRecord.ip_addresses[ 0 ],
@@ -46,7 +46,7 @@ export default function EditDomainGlueRecords() {
 			onError: ( error ) => {
 				createErrorNotice( __( 'Failed to update glue record.' ), { type: 'snackbar' } );
 
-				recordTracksEvent( 'calypso_domain_glue_records_update_record_failure', {
+				recordTracksEvent( 'calypso_dashboard_domain_glue_records_update_record_failure', {
 					domain: domainName,
 					nameserver: updatedGlueRecord.nameserver,
 					address: updatedGlueRecord.ip_addresses[ 0 ],

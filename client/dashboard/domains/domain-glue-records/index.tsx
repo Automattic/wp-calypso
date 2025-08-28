@@ -78,7 +78,7 @@ function DomainGlueRecords() {
 								type: 'snackbar',
 							} );
 
-							recordTracksEvent( 'calypso_domain_glue_records_delete_record', {
+							recordTracksEvent( 'calypso_dashboard_domain_glue_records_delete_record', {
 								domain: domainName,
 								nameserver: item.nameserver,
 								address: item.ip_addresses[ 0 ],
@@ -89,7 +89,7 @@ function DomainGlueRecords() {
 								type: 'snackbar',
 							} );
 
-							recordTracksEvent( 'calypso_domain_glue_records_delete_record_failure', {
+							recordTracksEvent( 'calypso_dashboard_domain_glue_records_delete_record_failure', {
 								domain: domainName,
 								nameserver: item.nameserver,
 								address: item.ip_addresses[ 0 ],

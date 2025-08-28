@@ -25,7 +25,7 @@ export default function AddDomainGlueRecords() {
 					type: 'snackbar',
 				} );
 
-				recordTracksEvent( 'calypso_domain_glue_records_add_record', {
+				recordTracksEvent( 'calypso_dashboard_domain_glue_records_add_record', {
 					domain: domainName,
 					nameserver: glueRecord.nameserver,
 					address: glueRecord.ip_addresses[ 0 ],
@@ -39,7 +39,7 @@ export default function AddDomainGlueRecords() {
 			onError: ( error ) => {
 				createErrorNotice( __( 'Failed to create glue record.' ), { type: 'snackbar' } );
 
-				recordTracksEvent( 'calypso_domain_glue_records_add_record_failure', {
+				recordTracksEvent( 'calypso_dashboard_domain_glue_records_add_record_failure', {
 					domain: domainName,
 					nameserver: glueRecord.nameserver,
 					address: glueRecord.ip_addresses[ 0 ],
