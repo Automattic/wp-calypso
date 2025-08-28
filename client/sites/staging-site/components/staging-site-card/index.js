@@ -34,7 +34,6 @@ import { useGetLockQuery, USE_STAGING_SITE_LOCK_QUERY_KEY } from '../../hooks/us
 import { useHasValidQuotaQuery } from '../../hooks/use-has-valid-quota';
 import { useStagingSite } from '../../hooks/use-staging-site';
 import { usePullFromStagingMutation, usePushToStagingMutation } from '../../hooks/use-staging-sync';
-import { CardContentWrapper } from './card-content/card-content-wrapper';
 import { ManageStagingSiteCardContent } from './card-content/manage-staging-site-card-content';
 import { NewStagingSiteCardContent } from './card-content/new-staging-site-card-content';
 import { StagingSiteLoadingBarCardContent } from './card-content/staging-site-loading-bar-card-content';
@@ -513,12 +512,12 @@ export const StagingSiteCard = ( {
 	}, [ dispatch, isJetpack, siteId ] );
 
 	return (
-		<CardContentWrapper>
+		<>
 			{ isJetpack && isPossibleJetpackConnectionProblem && (
 				<JetpackConnectionHealthBanner siteId={ siteId } />
 			) }
 			{ stagingSiteCardContent }
-		</CardContentWrapper>
+		</>
 	);
 };
 
