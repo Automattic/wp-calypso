@@ -1,9 +1,11 @@
 import { siteBySlugQuery, stagingSiteSyncStateQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
-import { useState } from '@wordpress/element';
+import { Button, Dropdown, MenuGroup, MenuItem } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
+import { useState, useEffect, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { chevronDown, cloudDownload, cloudUpload } from '@wordpress/icons';
+import { store as noticesStore } from '@wordpress/notices';
 import { lazy, Suspense } from 'react';
 import {
 	getProductionSiteId,
@@ -52,6 +54,34 @@ export default function StagingSiteSyncDropdown( {
 	} );
 
 	const isSyncing = isStagingSiteSyncing( stagingSiteSyncState );
+	const wasSyncingRef = useRef( false );
+
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+
+	useEffect( () => {
+		if ( ! window?.location?.pathname?.startsWith( '/v2' ) ) {
+			return;
+		}
+
+		if ( wasSyncingRef.current && ! isSyncing ) {
+			if ( stagingSiteSyncState?.status === 'completed' ) {
+				createSuccessNotice( __( 'Synchronization completed successfully.' ), {
+					type: 'snackbar',
+					explicitDismiss: true,
+				} );
+			} else if (
+				stagingSiteSyncState?.status === 'failed' ||
+				stagingSiteSyncState?.status === 'allow_retry'
+			) {
+				createErrorNotice( __( 'Synchronization failed. Please try again.' ), {
+					type: 'snackbar',
+					explicitDismiss: true,
+				} );
+			}
+		}
+
+		wasSyncingRef.current = !! isSyncing;
+	}, [ isSyncing, stagingSiteSyncState, createSuccessNotice, createErrorNotice ] );
 
 	const pullLabel =
 		environment === 'staging' ? __( 'Pull from Production' ) : __( 'Pull from Staging' );
