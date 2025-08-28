@@ -46,7 +46,7 @@ const DomainGlueRecordDeleteModal = ( {
 
 	return (
 		<VStack spacing={ 6 }>
-			<Text>{ __( 'Are you sure you want to delete this record?' ) }</Text>
+			<Text>{ __( 'Are you sure you want to delete this glue record?' ) }</Text>
 			<HStack justify="flex-end" spacing={ 2 }>
 				<Button onClick={ closeModal } disabled={ isSubmitting }>
 					{ __( 'Cancel' ) }
