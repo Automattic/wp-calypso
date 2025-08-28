@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Button, Fill } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { useDispatch, useSelect, dispatch, select } from '@wordpress/data';
+import domReady from '@wordpress/dom-ready';
 import { useCallback, useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
@@ -85,33 +86,35 @@ function HelpCenterContent() {
 }
 
 if ( helpCenterData.isNextAdmin ) {
-	dispatch( 'next-admin' ).unregisterSiteHubHelpMenuItem( 'wp-logo-external' );
-	dispatch( 'next-admin' ).registerSiteHubHelpMenuItem( 'wp-logo' );
-	dispatch( 'next-admin' ).registerSiteHubHelpMenuItem( 'help-center', {
-		label: __( 'Help Center', __i18n_text_domain__ ),
-		parent: 'wp-logo',
-		callback: () => {
-			const state = select( 'automattic/help-center' ).isHelpCenterShown();
-			dispatch( 'automattic/help-center' ).setShowHelpCenter( ! state );
-		},
+	domReady( () => {
+		dispatch( 'next-admin' ).unregisterSiteHubHelpMenuItem( 'wp-logo-external' );
+		dispatch( 'next-admin' ).registerSiteHubHelpMenuItem( 'wp-logo' );
+		dispatch( 'next-admin' ).registerSiteHubHelpMenuItem( 'help-center', {
+			label: __( 'Help Center', __i18n_text_domain__ ),
+			parent: 'wp-logo',
+			callback: () => {
+				const state = select( 'automattic/help-center' ).isHelpCenterShown();
+				dispatch( 'automattic/help-center' ).setShowHelpCenter( ! state );
+			},
+		} );
+		const container = document.createElement( 'div' );
+		container.id = 'jetpack-help-center';
+		document.body.appendChild( container );
+		createRoot( container ).render(
+			<QueryClientProvider client={ queryClient }>
+				<HelpCenter
+					locale={ helpCenterData.locale }
+					sectionName={ helpCenterData.sectionName || 'gutenberg-editor' }
+					currentUser={ helpCenterData.currentUser }
+					site={ helpCenterData.site }
+					hasPurchases={ false }
+					onboardingUrl="https://wordpress.com/start"
+					handleClose={ () => dispatch( 'automattic/help-center' ).setShowHelpCenter( false ) }
+				/>
+			</QueryClientProvider>,
+			document.getElementById( 'jetpack-help-center' )
+		);
 	} );
-	const container = document.createElement( 'div' );
-	container.id = 'jetpack-help-center';
-	document.body.appendChild( container );
-	createRoot( container ).render(
-		<QueryClientProvider client={ queryClient }>
-			<HelpCenter
-				locale={ helpCenterData.locale }
-				sectionName={ helpCenterData.sectionName || 'gutenberg-editor' }
-				currentUser={ helpCenterData.currentUser }
-				site={ helpCenterData.site }
-				hasPurchases={ false }
-				onboardingUrl="https://wordpress.com/start"
-				handleClose={ () => dispatch( 'automattic/help-center' ).setShowHelpCenter( false ) }
-			/>
-		</QueryClientProvider>,
-		document.getElementById( 'jetpack-help-center' )
-	);
 } else {
 	registerPlugin( 'jetpack-help-center', {
 		render: () => {
