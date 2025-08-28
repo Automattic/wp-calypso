@@ -187,6 +187,12 @@ export interface PlansFeaturesMainProps {
 	deemphasizeFreePlan?: boolean;
 
 	selectedThemeType?: string;
+
+	/**
+	 * Controls whether to hide the PlansPageSubheader component.
+	 * This is useful when the parent component wants to provide its own subheader text.
+	 */
+	hidePlansPageSubheader?: boolean;
 }
 
 const PlansFeaturesMain = ( {
@@ -232,6 +238,7 @@ const PlansFeaturesMain = ( {
 	coupon,
 	onPlanIntervalUpdate,
 	selectedThemeType,
+	hidePlansPageSubheader,
 }: PlansFeaturesMainProps ) => {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	// TODO: Remove temporary eslint disable
@@ -831,15 +838,17 @@ const PlansFeaturesMain = ( {
 							} ) }
 					/>
 				) }
-				<PlansPageSubheader
-					siteSlug={ siteSlug }
-					isDisplayingPlansNeededForFeature={ isDisplayingPlansNeededForFeature }
-					selectedFeature={ selectedFeatureData }
-					offeringFreePlan={ offeringFreePlan }
-					flowName={ flowName }
-					deemphasizeFreePlan={ deemphasizeFreePlan }
-					onFreePlanCTAClick={ onFreePlanCTAClick }
-				/>
+				{ ! hidePlansPageSubheader && (
+					<PlansPageSubheader
+						siteSlug={ siteSlug }
+						isDisplayingPlansNeededForFeature={ isDisplayingPlansNeededForFeature }
+						selectedFeature={ selectedFeatureData }
+						offeringFreePlan={ offeringFreePlan }
+						flowName={ flowName }
+						deemphasizeFreePlan={ deemphasizeFreePlan }
+						onFreePlanCTAClick={ onFreePlanCTAClick }
+					/>
+				) }
 				{ ! isPlansGridReady && <Spinner size={ 30 } /> }
 				{ isPlansGridReady && (
 					<>
