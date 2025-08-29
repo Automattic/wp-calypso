@@ -1,0 +1,11 @@
+@import '@wordpress/base-styles/colors';
+
+.dashboard-domain-connect-switch-setup-info-link {
+	color: $gray-700;
+	.dashboard-domain-connect-switch-setup-info-link__icon {
+		fill: $gray-700;
+	}
+	button.is-link {
+		text-decoration: none;
+	}
+}
