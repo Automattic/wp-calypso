@@ -69,6 +69,7 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 				rel="noreferrer"
 				style={ {
 					display: 'flex',
+					flexShrink: 0,
 					border: '1px solid rgba(0, 0, 0, 0.1)',
 					borderRadius: '50%',
 					overflow: 'hidden',
@@ -89,12 +90,19 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 				</a>
 				<HStack className="wpnc__user-description" spacing={ 1 }>
 					{ note.type === 'comment' && (
-						<a href={ note.url } target="_blank" rel="noreferrer">
+						<a href={ note.url } target="_blank" rel="noreferrer" style={ { flexShrink: 0 } }>
 							<Text variant="muted">{ formatDate( note.timestamp, locale ) }</Text>
 						</a>
 					) }
 					{ note.type === 'comment' && homeTitle && <span>•</span> }
-					{ homeTitle && <ExternalLink href={ homeLink }>{ homeTitle }</ExternalLink> }
+					{ homeTitle && (
+						<ExternalLink
+							href={ homeLink }
+							style={ { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }
+						>
+							{ homeTitle }
+						</ExternalLink>
+					) }
 				</HStack>
 				{ note.type !== 'comment' &&
 					!! block.meta?.ids?.site &&
