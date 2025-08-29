@@ -219,6 +219,7 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 						rows={ getRowCount( replyInputRef.current ) }
 						value={ value }
 						placeholder={ defaultValue }
+						__nextHasNoMarginBottom
 						onFocus={ handleFocus }
 						onBlur={ handleBlur }
 						onChange={ handleChange }
