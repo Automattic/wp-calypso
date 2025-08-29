@@ -1,11 +1,16 @@
 import colorStudio from '@automattic/color-studio';
 import { __ } from '@wordpress/i18n';
+import { translate } from 'i18n-calypso';
 import type { Site } from 'calypso/dashboard/data/site';
 import MonitoringCard from 'calypso/dashboard/sites/monitoring-card';
 import { MonitoringLineChart } from 'calypso/dashboard/sites/monitoring-card-line-chart';
 import { timeHighlightPlugin } from 'calypso/dashboard/sites/monitoring-card-line-chart/time-highlight-plugin';
-import { tooltipsPlugin } from 'calypso/dashboard/sites/monitoring-card-line-chart/uplot-tooltip-plugin';
-import { FirstChartTooltip } from 'calypso/dashboard/sites/monitoring-card-line-chart/line-chart-tooltip';
+import {
+	roundToTwoDecimals,
+	seriesInfo,
+	tooltipsPlugin,
+} from 'calypso/dashboard/sites/monitoring-card-line-chart/uplot-tooltip-plugin';
+import { FirstChartTooltipWithSeriesHandler } from 'calypso/dashboard/sites/monitoring-card-line-chart/line-chart-tooltip';
 import {
 	MetricsType,
 	PeriodData,
@@ -22,21 +27,6 @@ function convertTimeRangeToUnix( timeRange: number ) {
 	const end = Math.floor( new Date().getTime() / 1000 );
 
 	return { start, end };
-}
-
-function colorToAlpha( color: keyof typeof colorStudio.colors, alpha: number ) {
-	if ( alpha < 0 || alpha >= 1 ) {
-		return colorStudio.colors[ color ];
-	}
-
-	const hex = colorStudio.colors[ color ];
-
-	const bigint = parseInt( hex.slice( 1 ), 16 );
-	const r = ( bigint >> 16 ) & 255;
-	const g = ( bigint >> 8 ) & 255;
-	const b = bigint & 255;
-
-	return `rgba(${ r }, ${ g }, ${ b }, ${ alpha })`;
 }
 
 export function useSiteMetricsData( siteId: number, timeRange: TimeRange, metric?: MetricsType ) {
@@ -118,6 +108,29 @@ export default function MonitoringPerformanceCard( {
 		convertTimeRangeToUnix( timeRange )
 	);
 
+	const tooltipSeriesCallback = ( i: number, value: number ): seriesInfo | null => {
+		const labelData: object = {
+			1: {
+				color: colorStudio.colors[ 'Blue 50' ],
+				label: translate( 'Requests per minute' ),
+			},
+			2: {
+				color: '#5BA300',
+				label: translate( 'Average response time (ms)' ),
+			},
+		};
+
+		if ( labelData.hasOwnProperty( i ) ) {
+			return {
+				color: labelData[ i ].color,
+				label: labelData[ i ].label,
+				value: roundToTwoDecimals( value ),
+			};
+		}
+
+		return null;
+	};
+
 	return (
 		<MonitoringCard
 			title={ __( 'Server performance' ) }
@@ -131,16 +144,16 @@ export default function MonitoringPerformanceCard( {
 					data={ formattedData as uPlot.AlignedData }
 					series={ [
 						{
-							fill: colorToAlpha( 'WordPress Blue 50', 0.1 ),
+							fill: colorStudio.colors[ 'Blue 50' ],
 							label: __( 'Requests per minute' ),
-							stroke: colorStudio.colors[ 'WordPress Blue 50' ],
+							stroke: colorStudio.colors[ 'Blue 50' ],
 							showInLegend: true,
 							showInTooltip: true,
 						},
 						{
-							fill: colorToAlpha( 'Yellow 30', 0.2 ),
+							fill: '#5BA300',
 							label: __( 'Average response time (ms)' ),
-							stroke: colorStudio.colors[ 'Yellow 30' ],
+							stroke: '#5BA300',
 							scale: 'average-response-time',
 							unit: 'ms',
 							showInLegend: true,
@@ -151,7 +164,7 @@ export default function MonitoringPerformanceCard( {
 					options={ {
 						plugins: [
 							timeHighlightPlugin( 'auto' ),
-							tooltipsPlugin( FirstChartTooltip, {
+							tooltipsPlugin( FirstChartTooltipWithSeriesHandler( tooltipSeriesCallback ), {
 								position: 'followCursor',
 							} ),
 						],

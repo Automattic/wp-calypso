@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
-import { UplotTooltipProps } from './uplot-tooltip-plugin';
+import { UplotTooltipProps, seriesInfo, roundToTwoDecimals } from './uplot-tooltip-plugin';
 
 export interface HTTPCodeSerie {
 	statusCode: number;
@@ -48,19 +48,9 @@ const Footer = styled.div( {
 	},
 } );
 
-interface seriesInfo {
-	color: string;
-	label: string;
-	value: string | number;
-}
-
 interface LineChartTooltipProps {
 	tooltipSeries: seriesInfo[];
 	footer?: React.ReactNode;
-}
-
-function rountToTwoDecimals( value: number ) {
-	return Math.round( value * 100 ) / 100;
 }
 
 export function LineChartTooltip( { tooltipSeries, footer }: LineChartTooltipProps ) {
@@ -79,26 +69,22 @@ export function LineChartTooltip( { tooltipSeries, footer }: LineChartTooltipPro
 	);
 }
 
-export function FirstChartTooltip( { data, idx, ...rest }: UplotTooltipProps ) {
-	const dateString = moment( data[ 0 ][ idx ] * 1000 ).format( 'HH:mm DD MMMM' );
-	return (
-		<LineChartTooltip
-			{ ...rest }
-			tooltipSeries={ [
-				{
-					color: 'var(--studio-blue-50)',
-					label: translate( 'Requests per minute' ),
-					value: rountToTwoDecimals( data[ 1 ][ idx ] ),
-				},
-				{
-					color: 'rgba(222, 177, 0, 1)',
-					label: translate( 'Average response time' ),
-					value: `${ rountToTwoDecimals( data[ 2 ][ idx ] ) }ms`,
-				},
-			] }
-			footer={ dateString }
-		/>
-	);
+export function FirstChartTooltipWithSeriesHandler(
+	seriesHandler: ( i: number, value: number ) => seriesInfo | null
+) {
+	return ( { data, idx, ...rest }: UplotTooltipProps ) => {
+		const dateString = moment( data[ 0 ][ idx ] * 1000 ).format( 'HH:mm DD MMMM' );
+
+		const series: seriesInfo[] = [];
+		for ( let i in data ) {
+			let val = seriesHandler( parseInt( i ), data[ i ][ idx ] );
+			if ( val !== null ) {
+				series.push( val );
+			}
+		}
+
+		return <LineChartTooltip { ...rest } tooltipSeries={ series } footer={ dateString } />;
+	};
 }
 
 interface HttpChartTooltipProps extends UplotTooltipProps {
@@ -108,8 +94,8 @@ interface HttpChartTooltipProps extends UplotTooltipProps {
 export function HttpChartTooltip( { data, idx, series = [], ...rest }: HttpChartTooltipProps ) {
 	const [ timestamps, ...requests ] = data;
 	const dateString = moment( timestamps[ idx ] * 1000 ).format( 'HH:mm DD MMMM' );
-	const totalRequests = rountToTwoDecimals(
-		requests.reduce( ( acc, serie ) => acc + rountToTwoDecimals( serie[ idx ] ), 0 )
+	const totalRequests = roundToTwoDecimals(
+		requests.reduce( ( acc, serie ) => acc + roundToTwoDecimals( serie[ idx ] ), 0 )
 	);
 	/* translators: the totalRequests is a number of requests */
 	const totalRequestsString = translate( '%(totalRequests)s requests', {
@@ -121,7 +107,7 @@ export function HttpChartTooltip( { data, idx, series = [], ...rest }: HttpChart
 		.map( ( serie, serieI ) => ( {
 			color: serie.stroke,
 			label: serie.label,
-			value: rountToTwoDecimals( data[ serieI + 1 ][ idx ] ),
+			value: roundToTwoDecimals( data[ serieI + 1 ][ idx ] ),
 			showInTooltip: serie.showInTooltip,
 		} ) )
 		.filter( ( serie ) => {

@@ -1,34 +1,93 @@
 @import "uplot/dist/uPlot.min.css";
+@import '@wordpress/base-styles/variables';
 
 .monitoring-line-chart {
 	.uplot {
+		display: flex;
+		flex-direction: column;
+
 		.u-legend {
+			order: -1;
+			text-align: left;
+			margin-left: 0;
 			color: var(--studio-gray-100);
 
-			// Disable rendering first u-marker, which is for "Date" and is empty.
-			> .u-series:first-child > th > .u-marker {
-				display: none;
-			}
+			tr.u-series {
+				& > th {
+					cursor: initial;
 
-			// Use increased specificity to override original uPlot styles.
-			> tr.u-series > th {
-				cursor: initial;
+					.u-marker {
+						margin-top: -2px;
+						margin-right: 8px;
+					}
 
-				&::after {
-					vertical-align: baseline;
+					&::after {
+						vertical-align: baseline;
+					}
+
+					> .u-label {
+						vertical-align: baseline;
+					}
 				}
 
-				> .u-marker {
-					// Nudge marker down to align with text.
-					margin-top: -2px;
-					// Make the marker round.
-					border-radius: 100%;
+				&:nth-child( 2 ) {
+					& > th > .u-marker {
+						border-radius: 0;
+						transform: rotate(45deg);
+						height: 12px;
+						width: 12px;
+					}
 				}
 
-				> .u-label {
-					vertical-align: baseline;
+				&:nth-child( 3 ) {
+					& > th > .u-marker {
+						border-radius: 100%;
+					}
+				}
+
+				&:nth-child( 4 ) {
+					& > th > .u-marker {
+						width: 0;
+						height: 0;
+						border-left-width: 0.6em !important;
+						border-left-color: transparent !important;
+						border-right-width: 0.6em !important;
+						border-right-color: transparent !important;
+						border-bottom-width: 1em !important;
+						border-top-width: 0 !important;
+					}
+				}
+
+				&:nth-child( 5 ) {
+					& > th > .u-marker {
+						width: 0;
+						height: 0;
+						border-left-width: 0.6em !important;
+						border-left-color: transparent !important;
+						border-right-width: 0.6em !important;
+						border-right-color: transparent !important;
+						border-top-width: 1em !important;
+						border-bottom-width: 0 !important;
+					}
 				}
 			}
 		}
+
+		.u-over {
+			.uplot-tooltip .popover {
+				display: flex;
+				padding: var(--Scales-grid-unit-20, 16px);
+				align-items: flex-start;
+				gap: 10px;
+				align-self: stretch;
+
+				border-radius: var(--radius-m, 4px);
+				border: 1px solid var(--Scales-Grays-gray-300, #DDD);
+				background: var(--scales-black-white-white, #FFF);
+
+				box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.05), 0 4px 5px 0 rgba(0, 0, 0, 0.04), 0 4px 5px 0 rgba(0, 0, 0, 0.03), 0 16px 16px 0 rgba(0, 0, 0, 0.02);
+			}
+		}
 	}
+
 }

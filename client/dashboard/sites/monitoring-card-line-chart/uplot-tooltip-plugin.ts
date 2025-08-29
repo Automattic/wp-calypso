@@ -1,9 +1,19 @@
 import { createRoot, Root } from 'react-dom/client';
 import uPlot from 'uplot';
 
+export interface seriesInfo {
+	color: string;
+	label: string;
+	value: string | number;
+}
+
 export interface UplotTooltipProps {
 	data: number[][];
 	idx: number;
+}
+
+export function roundToTwoDecimals( value: number ) {
+	return Math.round( value * 100 ) / 100;
 }
 
 const TOOLTIP_POSITIONS = {
