@@ -731,12 +731,6 @@ class RegisterDomainStep extends Component {
 		);
 	}
 
-	getFiltercounts() {
-		return (
-			this.state.lastFilters.tlds.length + ( this.state.lastFilters.exactSldMatchesOnly ? 1 : 0 )
-		);
-	}
-
 	renderSearchFilters() {
 		const isRenderingInitialSuggestions =
 			! Array.isArray( this.state.searchResults ) &&
@@ -758,10 +752,7 @@ class RegisterDomainStep extends Component {
 				popoverProps={ { placement: 'bottom-end', offset: 10, noArrow: false } }
 				renderToggle={ ( { onToggle } ) => {
 					return (
-						<DomainSearchControls.FilterButton
-							count={ this.getFiltercounts() }
-							onClick={ onToggle }
-						/>
+						<DomainSearchControls.FilterButton filter={ this.state.filters } onClick={ onToggle } />
 					);
 				} }
 				renderContent={ ( { onClose } ) => {
