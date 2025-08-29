@@ -8,13 +8,16 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
+import { useDispatch } from '@wordpress/data';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { info, warning } from '@wordpress/icons';
+import { store as noticesStore } from '@wordpress/notices';
 import { useState, useMemo } from 'react';
 import {
 	userPaymentMethodsQuery,
 	userPaymentMethodSetBackupQuery,
+	userPaymentMethodDeleteQuery,
 } from '../../app/queries/me-payment-methods';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
@@ -83,8 +86,12 @@ export default function PaymentMethods() {
 			expired: true,
 		} )
 	);
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { mutate: setPaymentMethodBackup, isPending: isSettingPaymentMethodBackup } = useMutation(
 		userPaymentMethodSetBackupQuery()
+	);
+	const { mutate: deletePaymentMethod, isPending: isDeletingPaymentMethod } = useMutation(
+		userPaymentMethodDeleteQuery()
 	);
 	const paymentMethodFields = getFields( {
 		isUpdatingPaymentMethods,
@@ -139,6 +146,9 @@ export default function PaymentMethods() {
 		{
 			id: 'remove',
 			label: __( 'Remove payment method' ),
+			isEligible: () => {
+				return ! isDeletingPaymentMethod;
+			},
 			callback: ( items ) => {
 				const item = items[ 0 ];
 				setRemoveDialogPaymentMethod( item );
@@ -177,12 +187,22 @@ export default function PaymentMethods() {
 						actions={ actions }
 					/>
 				</DataViewsCard>
-				{ removeDialogPaymentMethod && (
+				{ ! isDeletingPaymentMethod && removeDialogPaymentMethod && (
 					<PaymentMethodDeleteDialog
 						isVisible={ Boolean( removeDialogPaymentMethod ) }
 						paymentMethod={ removeDialogPaymentMethod }
 						onConfirm={ () => {
-							// FIXME: remove payment method
+							deletePaymentMethod( removeDialogPaymentMethod.stored_details_id, {
+								onSuccess: () => {
+									createSuccessNotice( __( 'Payment method deleted.' ), { type: 'snackbar' } );
+								},
+								onError: () => {
+									createErrorNotice( __( 'Failed to delete payment method.' ), {
+										type: 'snackbar',
+									} );
+								},
+							} );
+							setRemoveDialogPaymentMethod( undefined );
 						} }
 						onCancel={ () => setRemoveDialogPaymentMethod( undefined ) }
 					/>

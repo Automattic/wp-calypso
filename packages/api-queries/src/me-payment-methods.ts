@@ -1,4 +1,8 @@
-import { fetchUserPaymentMethods, setPaymentMethodBackup  } from '@automattic/api-core';
+import {
+	fetchUserPaymentMethods,
+	setPaymentMethodBackup,
+	requestPaymentMethodDeletion
+} from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from '../query-client';
 import type { PaymentMethodRequestType } from '@automattic/api-core';
@@ -42,6 +46,16 @@ export const userPaymentMethodSetBackupQuery = () =>
 	mutationOptions( {
 		mutationFn: ( data: { stored_details_id: string; is_backup: boolean } ) =>
 			setPaymentMethodBackup( data.stored_details_id, data.is_backup ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( {
+				queryKey: [ 'me', 'payment-methods' ],
+			} );
+		},
+	} );
+
+export const userPaymentMethodDeleteQuery = () =>
+	mutationOptions( {
+		mutationFn: ( paymentMethodId: string ) => requestPaymentMethodDeletion( paymentMethodId ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( {
 				queryKey: [ 'me', 'payment-methods' ],

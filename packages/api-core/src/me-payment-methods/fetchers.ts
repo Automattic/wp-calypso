@@ -21,3 +21,7 @@ export async function setPaymentMethodBackup(
 		body: { is_backup: useAsBackup },
 	} );
 }
+
+export async function requestPaymentMethodDeletion( paymentMethodId: string ) {
+	return await wpcom.req.post( { path: `/me/stored-cards/${ paymentMethodId }/delete` } );
+}
