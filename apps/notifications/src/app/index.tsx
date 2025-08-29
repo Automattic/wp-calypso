@@ -1,5 +1,5 @@
 import { Navigator } from '@wordpress/components';
-import { useEffect, useState, Suspense, lazy } from 'react';
+import { useEffect, useState } from 'react';
 import { Provider } from 'react-redux';
 import repliesCache from '../panel/comment-replies-cache';
 import RestClient from '../panel/rest-client';
@@ -9,6 +9,8 @@ import { SET_IS_SHOWING } from '../panel/state/action-types';
 import { addListeners, removeListeners } from '../panel/state/create-listener-middleware';
 import getIsPanelOpen from '../panel/state/selectors/get-is-panel-open';
 import { AppProvider } from './context';
+import Note from './note';
+import NotePanel from './note-panel';
 
 let client: any;
 
@@ -42,10 +44,6 @@ const defaultHandlers = {
 		},
 	],
 };
-
-const NotePanel = lazy( () => import( './note-panel' ) );
-
-const Note = lazy( () => import( './note' ) );
 
 const NotificationApp = ( {
 	locale = 'en',
@@ -116,17 +114,13 @@ const NotificationApp = ( {
 						path="/:filterName"
 						style={ { display: 'flex', flexDirection: 'column', height: '100%' } }
 					>
-						<Suspense fallback={ null }>
-							<NotePanel />
-						</Suspense>
+						<NotePanel />
 					</Navigator.Screen>
 					<Navigator.Screen
 						path="/:filterName/notes/:noteId"
 						style={ { display: 'flex', flexDirection: 'column', height: '100%' } }
 					>
-						<Suspense fallback={ null }>
-							<Note />
-						</Suspense>
+						<Note />
 					</Navigator.Screen>
 				</Navigator>
 			</AppProvider>
