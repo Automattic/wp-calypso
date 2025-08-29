@@ -2,8 +2,8 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalGrid as Grid } from '@wordpress/components';
 import { domainQuery } from '../../app/queries/domain';
 import { domainRoute } from '../../app/router/domains';
-import FeaturedCardPrivacy from './featured-card-privacy';
 import FeaturedCardEmails from './featured-card-emails';
+import FeaturedCardPrivacy from './featured-card-privacy';
 import FeaturedCardRenew from './featured-card-renew';
 import FeaturedCardSite from './featured-card-site';
 
@@ -16,7 +16,7 @@ export default function FeaturedCards() {
 			<FeaturedCardRenew domain={ domain } />
 			<FeaturedCardSite domain={ domain } />
 			<FeaturedCardEmails domain={ domain } />
-      <FeaturedCardPrivacy domain={ domain } />
+			<FeaturedCardPrivacy domain={ domain } />
 		</Grid>
 	);
 }
