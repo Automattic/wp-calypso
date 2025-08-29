@@ -53,13 +53,6 @@ export function BackupNowButton( { site }: BackupNowButtonProps ) {
 			};
 		}
 
-		if ( status === 'error' ) {
-			return {
-				label: __( 'Backup failed' ),
-				tooltip: __( 'The last backup attempt failed. Click to try again.' ),
-			};
-		}
-
 		return {
 			label: __( 'Back up now' ),
 			tooltip: __( 'Create a backup of your site now.' ),
