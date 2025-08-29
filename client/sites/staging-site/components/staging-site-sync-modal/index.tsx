@@ -539,8 +539,7 @@ export default function SyncModal( {
 									borderBottom: '1px solid var(--wp-components-color-gray-300, #ddd)',
 									padding: '16px 0',
 									marginTop: '8px',
-									marginBottom:
-										shouldDisableGranularSync || sqlNode?.checkState === 'checked' ? '0px' : '24px',
+									marginBottom: '24px',
 								} }
 							>
 								{ isLoadingBackupAttempt ? (
