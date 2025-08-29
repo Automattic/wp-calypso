@@ -115,7 +115,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	const { data } = useSuspenseQuery( {
 		...siteSettingsQuery( siteId ),
 		select: ( s ) => ( {
-			gmtOffset: typeof s?.gmt_offset === 'number' ? s.gmt_offset : 0,
+			gmtOffset: s?.gmt_offset ? Number( s.gmt_offset ) : 0,
 			timezoneString: s?.timezone_string || undefined,
 		} ),
 	} );
@@ -129,7 +129,10 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		initialFilters: getInitialFiltersFromSearch( logType, search ),
 	} );
 
-	const initial = getDefaultDateRange( timezoneString, gmtOffset );
+	const initial = useMemo(
+		() => getDefaultDateRange( timezoneString, gmtOffset ),
+		[ timezoneString, gmtOffset ]
+	);
 
 	const initialFromUrl = getInitialDateRangeFromSearch( search );
 
@@ -144,8 +147,44 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 			return;
 		}
 		const tick = () => {
-			const end = new Date();
-			const start = subDays( end, 6 );
+			// Use site timezone for auto-refresh date range (consistent with default range)
+			let end: Date;
+			let start: Date;
+
+			if ( timezoneString ) {
+				// Use site timezone if available
+				const now = new Date();
+				// Get the current time in the site's timezone
+				const siteTime = new Intl.DateTimeFormat( 'en-US', {
+					timeZone: timezoneString,
+					year: 'numeric',
+					month: 'numeric',
+					day: 'numeric',
+				} ).formatToParts( now );
+
+				const year = parseInt( siteTime.find( ( p ) => p.type === 'year' )?.value || '0' );
+				const month = parseInt( siteTime.find( ( p ) => p.type === 'month' )?.value || '0' ) - 1; // Month is 0-indexed
+				const day = parseInt( siteTime.find( ( p ) => p.type === 'day' )?.value || '0' );
+
+				end = new Date( year, month, day );
+				start = subDays( end, 6 );
+			} else if ( typeof gmtOffset === 'number' ) {
+				// Use GMT offset if no timezone string
+				const now = new Date();
+				// Calculate site timezone date using UTC offset
+				const utcTime = now.getTime();
+				const siteTime = utcTime + gmtOffset * 60 * 60 * 1000;
+				const siteDate = new Date( siteTime );
+
+				end = new Date(
+					Date.UTC( siteDate.getUTCFullYear(), siteDate.getUTCMonth(), siteDate.getUTCDate() )
+				);
+				start = subDays( end, 6 );
+			} else {
+				// Fallback to local timezone
+				end = new Date();
+				start = subDays( end, 6 );
+			}
 
 			setDateRange( ( prev ) =>
 				isSameSecond( prev.start, start ) && isSameSecond( prev.end, end ) ? prev : { start, end }
@@ -168,11 +207,11 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		tick();
 		const intervalId = setInterval( tick, 10 * 1000 );
 		return () => clearInterval( intervalId );
-	}, [ autoRefresh ] );
+	}, [ autoRefresh, timezoneString, gmtOffset ] );
 
 	const { startSec, endSec } = useMemo(
 		() => buildTimeRangeInSeconds( dateRange.start, dateRange.end, timezoneString, gmtOffset ),
-		[ dateRange.start, dateRange.end, gmtOffset, timezoneString ]
+		[ dateRange.start, dateRange.end, timezoneString, gmtOffset ]
 	);
 
 	const filter = useMemo( () => toFilterParams( { view, logType } ), [ view, logType ] );
@@ -389,8 +428,8 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 						<DateRangePicker
 							start={ dateRange.start }
 							end={ dateRange.end }
-							gmtOffset={ gmtOffset }
 							timezoneString={ timezoneString }
+							gmtOffset={ gmtOffset }
 							locale={ locale }
 							onChange={ handleDateRangeChange }
 						/>

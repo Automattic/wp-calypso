@@ -1,26 +1,63 @@
-import { dateI18n } from '@wordpress/date';
-import { startOfDay, endOfDay, fromUnixTime, isValid as isValidDate } from 'date-fns';
-import { formatDateWithOffset, parseYmdLocal, formatYmd } from '../../utils/datetime';
+import { fromUnixTime, isValid as isValidDate, startOfDay, endOfDay } from 'date-fns';
+import { formatDateWithOffset } from '../../utils/datetime';
 import type { PHPLog } from '../../data/site-logs';
 
 type DateRange = { start: Date; end: Date };
 
-const HOUR_MS = 3_600_000;
-
 /**
  * Get the default date range for the logs.
+ * Uses site timezone for data fetching while keeping UTC display.
  */
 export function getDefaultDateRange( timezoneString?: string, gmtOffset?: number ) {
-	const siteToday = parseYmdLocal( formatYmd( new Date(), timezoneString, gmtOffset ) )!;
+	let today: Date;
+
+	if ( timezoneString ) {
+		// Use site timezone if available
+		const now = new Date();
+		// Get the current time in the site's timezone
+		const siteTime = new Intl.DateTimeFormat( 'en-US', {
+			timeZone: timezoneString,
+			year: 'numeric',
+			month: 'numeric',
+			day: 'numeric',
+		} ).formatToParts( now );
+
+		const year = parseInt( siteTime.find( ( p ) => p.type === 'year' )?.value || '0' );
+		const month = parseInt( siteTime.find( ( p ) => p.type === 'month' )?.value || '0' ) - 1; // Month is 0-indexed
+		const day = parseInt( siteTime.find( ( p ) => p.type === 'day' )?.value || '0' );
+
+		today = new Date( year, month, day );
+	} else if ( typeof gmtOffset === 'number' ) {
+		// Use GMT offset if no timezone string
+		const now = new Date();
+		// Calculate site timezone date using UTC offset
+		const utcTime = now.getTime();
+		const siteTime = utcTime + gmtOffset * 60 * 60 * 1000;
+		const siteDate = new Date( siteTime );
+
+		today = new Date(
+			Date.UTC( siteDate.getUTCFullYear(), siteDate.getUTCMonth(), siteDate.getUTCDate() )
+		);
+	} else {
+		// Fallback to UTC (default behavior)
+		const utcNow = new Date();
+		today = new Date(
+			Date.UTC( utcNow.getUTCFullYear(), utcNow.getUTCMonth(), utcNow.getUTCDate() )
+		);
+	}
+
+	// Calculate start date (6 days ago from site's today)
+	const start = new Date( today );
+	start.setDate( start.getDate() - 6 );
+
 	return {
-		start: new Date( siteToday.getFullYear(), siteToday.getMonth(), siteToday.getDate() - 6 ),
-		end: siteToday,
+		start,
+		end: today,
 	};
 }
 
 /**
- * Convert a local date range to inclusive epoch-second boundaries (UTC).
- * Covers the full start and end calendar days.
+ * Convert a date range to Unix epoch seconds for API requests.
  */
 export function buildTimeRangeInSeconds(
 	start: Date,
@@ -29,26 +66,37 @@ export function buildTimeRangeInSeconds(
 	gmtOffset?: number
 ): { startSec: number; endSec: number } {
 	if ( timezoneString ) {
-		const startYmd = dateI18n( 'Y-m-d', start, timezoneString );
-		const endYmd = dateI18n( 'Y-m-d', end, timezoneString );
-		const startSec = +dateI18n( 'U', `${ startYmd } 00:00:00`, timezoneString );
-		const endSec = +dateI18n( 'U', `${ endYmd } 23:59:59`, timezoneString );
-		if ( Number.isFinite( startSec ) && Number.isFinite( endSec ) ) {
-			return { startSec, endSec };
-		}
+		// For now, fall back to GMT offset approach for timezone strings
+		const startDate = startOfDay( start );
+		const endDate = startOfDay( end );
+
+		const startSec = Math.floor( startDate.getTime() / 1000 );
+		const endSec = Math.floor( endOfDay( endDate ).getTime() / 1000 );
+
+		return { startSec, endSec };
+	} else if ( typeof gmtOffset === 'number' ) {
+		// Use GMT offset if no timezone string
+		const startDate = startOfDay( start );
+		const endDate = startOfDay( end );
+
+		// Apply GMT offset to get site timezone boundaries
+		const offsetMs = gmtOffset * 60 * 60 * 1000;
+		const startInSiteTz = new Date( startDate.getTime() - offsetMs );
+		const endInSiteTz = new Date( endDate.getTime() - offsetMs );
+
+		const startSec = Math.floor( startInSiteTz.getTime() / 1000 );
+		const endSec = Math.floor( endOfDay( endInSiteTz ).getTime() / 1000 );
+
+		return { startSec, endSec };
 	}
-	if ( typeof gmtOffset === 'number' ) {
-		const startLocal = startOfDay( start ).getTime();
-		const endLocal = endOfDay( end ).getTime();
-		const shiftMs = gmtOffset * HOUR_MS;
-		return {
-			startSec: Math.floor( ( startLocal - shiftMs ) / 1000 ),
-			endSec: Math.floor( ( endLocal - shiftMs ) / 1000 ),
-		};
-	}
-	// last-resort fallback: browser local
-	const startSec = Math.floor( startOfDay( start ).getTime() / 1000 );
-	const endSec = Math.floor( endOfDay( end ).getTime() / 1000 );
+
+	// Fallback to UTC methods for consistency
+	const startUTC = startOfDay( start );
+	const endUTC = endOfDay( end );
+
+	const startSec = Math.floor( startUTC.getTime() / 1000 );
+	const endSec = Math.floor( endUTC.getTime() / 1000 );
+
 	return { startSec, endSec };
 }
 

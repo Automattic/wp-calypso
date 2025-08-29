@@ -1,34 +1,42 @@
 import { __, sprintf } from '@wordpress/i18n';
 import {
 	startOfDay,
-	isSameDay,
+	addHours,
 	addDays,
 	addYears,
 	startOfMonth,
 	startOfYear,
 	differenceInCalendarDays,
+	isSameDay,
+	subDays,
 } from 'date-fns';
-import { formatDate, formatYmd, parseYmdLocal } from '../../utils/datetime';
+import { formatDate } from '../../utils/datetime';
 
 // Range helpers (inclusive)
 const lastNDays = ( date: Date, number: number ) => ( {
-	from: new Date( date.getFullYear(), date.getMonth(), date.getDate() - ( number - 1 ) ),
+	from: new Date(
+		Date.UTC( date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate() - ( number - 1 ) )
+	),
 	to: date,
 } );
 const monthToDate = ( date: Date ) => ( {
-	from: new Date( date.getFullYear(), date.getMonth(), 1 ),
+	from: new Date( Date.UTC( date.getUTCFullYear(), date.getUTCMonth(), 1 ) ),
 	to: date,
 } );
 const yearToDate = ( date: Date ) => ( {
-	from: new Date( date.getFullYear(), 0, 1 ),
+	from: new Date( Date.UTC( date.getUTCFullYear(), 0, 1 ) ),
 	to: date,
 } );
 const lastTwelveMonths = ( date: Date ) => ( {
-	from: new Date( date.getFullYear() - 1, date.getMonth(), date.getDate() + 1 ),
+	from: new Date(
+		Date.UTC( date.getUTCFullYear() - 1, date.getUTCMonth(), date.getUTCDate() + 1 )
+	),
 	to: date,
 } );
 const lastThreeYears = ( date: Date ) => ( {
-	from: new Date( date.getFullYear() - 3, date.getMonth(), date.getDate() + 1 ),
+	from: new Date(
+		Date.UTC( date.getUTCFullYear() - 3, date.getUTCMonth(), date.getUTCDate() + 1 )
+	),
 	to: date,
 } );
 
@@ -55,13 +63,20 @@ export const presetDefs = [
 ] as const satisfies ReadonlyArray< { id: Exclude< PresetId, 'custom' >; label: string } >;
 
 export function computePresetRange( preset: PresetId, baseDate: Date ) {
+	const addDaysUtc = ( daysOffset: number = 0 ) => {
+		return addDays( baseDate, daysOffset );
+	};
 	switch ( preset ) {
 		case 'today':
+			// Return the same date for both start and end
+			// The actual time boundaries will be set in buildTimeRangeInSeconds
 			return { from: baseDate, to: baseDate };
 		case 'yesterday':
+			// Return the same date for both start and end
+			// The actual time boundaries will be set in buildTimeRangeInSeconds
 			return {
-				from: new Date( baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate() - 1 ),
-				to: new Date( baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate() - 1 ),
+				from: addDaysUtc( -1 ),
+				to: addDaysUtc( -1 ),
 			};
 		case 'last-7-days':
 			return lastNDays( baseDate, 7 );
@@ -80,30 +95,73 @@ export function computePresetRange( preset: PresetId, baseDate: Date ) {
 	}
 }
 
-export function getActivePresetId( from?: Date, to?: Date, baseDate?: Date ): PresetId | undefined {
+export function getActivePresetId(
+	from?: Date,
+	to?: Date,
+	baseDate?: Date,
+	timezoneString?: string,
+	gmtOffset?: number
+): PresetId | undefined {
 	if ( ! from || ! to || ! baseDate ) {
 		return;
 	}
+
+	// Normalize dates to start of day for comparison
 	let newFrom = startOfDay( from );
 	let newTo = startOfDay( to );
-	if ( newFrom!.getTime() > newTo!.getTime() ) {
+
+	if ( newFrom.getTime() > newTo.getTime() ) {
 		const tmp = newFrom;
 		newFrom = newTo;
 		newTo = tmp;
 	}
 
-	const todayStart = startOfDay( baseDate );
-	const yesterdayStart = addDays( todayStart, -1 );
+	// Calculate site timezone dates for comparison
+	let today: Date;
+	let yesterday: Date;
 
-	if ( isSameDay( newFrom, todayStart ) && isSameDay( newTo, todayStart ) ) {
+	if ( timezoneString ) {
+		// Use site timezone if available
+		const now = new Date();
+		const siteTime = new Intl.DateTimeFormat( 'en-US', {
+			timeZone: timezoneString,
+			year: 'numeric',
+			month: 'numeric',
+			day: 'numeric',
+		} ).formatToParts( now );
+
+		const year = parseInt( siteTime.find( ( p ) => p.type === 'year' )?.value || '0' );
+		const month = parseInt( siteTime.find( ( p ) => p.type === 'month' )?.value || '0' ) - 1;
+		const day = parseInt( siteTime.find( ( p ) => p.type === 'day' )?.value || '0' );
+
+		today = startOfDay( new Date( year, month, day ) );
+		yesterday = subDays( today, 1 );
+	} else if ( typeof gmtOffset === 'number' ) {
+		// Use GMT offset if no timezone string
+		const now = new Date();
+		const utcTime = now.getTime();
+		const siteTime = utcTime + gmtOffset * 60 * 60 * 1000;
+		const siteDate = new Date( siteTime );
+
+		today = startOfDay( siteDate );
+		yesterday = subDays( today, 1 );
+	} else {
+		// Fallback to UTC
+		today = startOfDay( baseDate );
+		yesterday = subDays( baseDate, 1 );
+	}
+
+	if ( isSameDay( newFrom, today ) && isSameDay( newTo, today ) ) {
 		return 'today';
 	}
-	if ( isSameDay( newFrom, yesterdayStart ) && isSameDay( newTo, yesterdayStart ) ) {
+	if ( isSameDay( newFrom, yesterday ) && isSameDay( newTo, yesterday ) ) {
 		return 'yesterday';
 	}
 
-	if ( isSameDay( newTo, todayStart ) ) {
-		const diff = differenceInCalendarDays( todayStart, newFrom ); // inclusive days = diff + 1
+	if ( isSameDay( newTo, today ) ) {
+		const diff = differenceInCalendarDays( today, newFrom );
+		// differenceInCalendarDays returns the number of calendar days between dates
+		// For inclusive ranges, we need to check if the difference matches our expected ranges
 		if ( diff === 6 ) {
 			return 'last-7-days';
 		}
@@ -111,28 +169,29 @@ export function getActivePresetId( from?: Date, to?: Date, baseDate?: Date ): Pr
 			return 'last-30-days';
 		}
 		if (
-			isSameDay( newFrom, addYears( todayStart, -1 ) ) ||
-			isSameDay( newFrom, addDays( addYears( todayStart, -1 ), 1 ) )
+			isSameDay( newFrom, addYears( today, -1 ) ) ||
+			isSameDay( newFrom, addDays( addYears( today, -1 ), 1 ) )
 		) {
 			return 'last-12-months';
 		}
 		if (
-			isSameDay( newFrom, addYears( todayStart, -3 ) ) ||
-			isSameDay( newFrom, addDays( addYears( todayStart, -3 ), 1 ) )
+			isSameDay( newFrom, addYears( today, -3 ) ) ||
+			isSameDay( newFrom, addDays( addYears( today, -3 ), 1 ) )
 		) {
 			return 'last-3-years';
 		}
 	}
 
-	if ( isSameDay( newFrom, startOfMonth( todayStart ) ) && isSameDay( newTo, todayStart ) ) {
+	if ( isSameDay( newFrom, startOfMonth( today ) ) && isSameDay( newTo, today ) ) {
 		return 'month-to-date';
 	}
-	if ( isSameDay( newFrom, startOfYear( todayStart ) ) && isSameDay( newTo, todayStart ) ) {
+	if ( isSameDay( newFrom, startOfYear( today ) ) && isSameDay( newTo, today ) ) {
 		return 'year-to-date';
 	}
 
+	// Test against computed preset ranges
 	for ( const preset of presetDefs ) {
-		const range = computePresetRange( preset.id as PresetId, todayStart );
+		const range = computePresetRange( preset.id as PresetId, today );
 		if (
 			range &&
 			isSameDay( newFrom, startOfDay( range.from ) ) &&
@@ -145,25 +204,39 @@ export function getActivePresetId( from?: Date, to?: Date, baseDate?: Date ): Pr
 }
 
 // UI-specific: Date range label for the picker
-export function formatLabel(
-	start: Date,
-	end: Date,
-	locale: string,
-	timezoneString?: string,
-	gmtOffset?: number
-) {
+export function formatLabel( start: Date, end: Date, locale: string ) {
 	// Normalize to site calendar days first, then format visually for the locale.
 	// This avoids off-by-one issues when the Date carries a different local timezone
 	// than the site's timezone.
-	const startYmd = formatYmd( start, timezoneString, gmtOffset );
-	const endYmd = formatYmd( end, timezoneString, gmtOffset );
-	const startForDisplay = parseYmdLocal( startYmd )!;
-	const endForDisplay = parseYmdLocal( endYmd )!;
-
 	return sprintf(
 		/* translators: %1$s: start date, %2$s: end date */
 		__( '%1$s to %2$s' ),
-		formatDate( startForDisplay, locale, { dateStyle: 'medium' } ),
-		formatDate( endForDisplay, locale, { dateStyle: 'medium' } )
+		formatDate( start, locale, { dateStyle: 'medium' } ),
+		formatDate( end, locale, { dateStyle: 'medium' } )
 	);
+}
+
+// Calculate timezone-aware today for preset detection
+export function getTimezoneAwareDate(
+	baseDate: Date,
+	timezoneString?: string,
+	gmtOffset?: number
+): Date {
+	if ( timezoneString ) {
+		const siteTime = new Intl.DateTimeFormat( 'en-US', {
+			timeZone: timezoneString,
+			year: 'numeric',
+			month: 'numeric',
+			day: 'numeric',
+		} ).formatToParts( baseDate );
+
+		const year = parseInt( siteTime.find( ( p ) => p.type === 'year' )?.value || '0' );
+		const month = parseInt( siteTime.find( ( p ) => p.type === 'month' )?.value || '0' ) - 1;
+		const day = parseInt( siteTime.find( ( p ) => p.type === 'day' )?.value || '0' );
+
+		return startOfDay( new Date( year, month, day ) );
+	} else if ( typeof gmtOffset === 'number' ) {
+		return startOfDay( addHours( baseDate, gmtOffset ) );
+	}
+	return startOfDay( baseDate );
 }

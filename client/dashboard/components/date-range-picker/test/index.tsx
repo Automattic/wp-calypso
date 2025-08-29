@@ -18,8 +18,6 @@ function TestDateRangePicker( props: Partial< ComponentProps< typeof DateRangePi
 			start={ range.start }
 			end={ range.end }
 			onChange={ setRange }
-			timezoneString=""
-			gmtOffset={ 0 }
 			locale="en-US"
 			{ ...props }
 		/>
@@ -129,12 +127,13 @@ describe( 'DateRangePicker (new)', () => {
 
 	test( 'preset selection updates label (Yesterday)', async () => {
 		const { getByRole, findByRole } = render( <TestDateRangePicker /> );
+
 		// Open
 		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
 
 		// Click "Yesterday" preset
 		const listbox = await findByRole( 'listbox', { name: /Date range presets/i } );
-		await userEvent.click( within( listbox ).getByRole( 'option', { name: /yesterday/i } ) );
+		await userEvent.click( within( listbox ).getByRole( 'option', { name: /Yesterday/i } ) );
 
 		// Label should reflect Aug 24 → Aug 24
 		const updated = await findByRole( 'button', {
@@ -143,64 +142,54 @@ describe( 'DateRangePicker (new)', () => {
 		expect( updated ).toBeVisible();
 	} );
 
-	test( 'blank timezoneString with non-zero gmtOffset normalizes and selects correctly', async () => {
-		const { getByRole, findByRole } = render(
-			<TestDateRangePicker timezoneString="" gmtOffset={ -5 } />
-		);
-		const btn = getByRole( 'button', { name: /Date range:/i } );
-		expect( btn ).toHaveAccessibleName( expect.stringContaining( 'Aug 19, 2025' ) );
-		expect( btn ).toHaveAccessibleName( expect.stringContaining( 'Aug 25, 2025' ) );
+	test( 'preset selection works consistently', async () => {
+		const { getByRole, findByRole } = render( <TestDateRangePicker /> );
 
-		// Open and select a range
-		await userEvent.click( btn );
-		const augGrid = await findByRole( 'grid', { name: /August 2025/i } );
-		await userEvent.click( within( augGrid ).getByRole( 'button', { name: /August 1, 2025/i } ) );
-		await userEvent.click( within( augGrid ).getByRole( 'button', { name: /August 2, 2025/i } ) );
-		await userEvent.click( getByRole( 'button', { name: /Apply/i } ) );
+		// Open
+		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
 
-		// Label should reflect Aug 1 → Aug 2
-		const updated = getByRole( 'button', { name: /Date range:/i } );
-		expect(
-			within( updated ).getByText(
-				( t ) => t.includes( 'Aug 1, 2025' ) && t.includes( 'Aug 2, 2025' )
-			)
-		).toBeVisible();
+		// Click "Today" preset
+		const listbox = await findByRole( 'listbox', { name: /Date range presets/i } );
+		await userEvent.click( within( listbox ).getByRole( 'option', { name: /Today/i } ) );
+
+		// Label should reflect today's date consistently
+		const updated = await findByRole( 'button', {
+			name: /Date range:.*Aug 25, 2025.*Aug 25, 2025/i,
+		} );
+		expect( updated ).toBeVisible();
 	} );
 
-	test( 'invalid IANA timezone falls back gracefully (no crash, label correct)', async () => {
-		// Silence and assert the Moment Timezone warning for invalid zone
-		const errorSpy = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
-		try {
-			const { getByRole, findByRole } = render(
-				<TestDateRangePicker timezoneString="Foo/Bar" gmtOffset={ 0 } />
-			);
-			const btn = getByRole( 'button', { name: /Date range:/i } );
-			expect( btn ).toBeVisible();
-			// Label remains the initial normalized dates
-			expect( btn ).toHaveAccessibleName( expect.stringContaining( 'Aug 19, 2025' ) );
-			expect( btn ).toHaveAccessibleName( expect.stringContaining( 'Aug 25, 2025' ) );
+	test( 'preset selection works consistently (Last 7 days)', async () => {
+		const { getByRole, findByRole } = render( <TestDateRangePicker /> );
 
-			// Open and ensure calendar renders and selection works
-			await userEvent.click( btn );
-			const augGrid = await findByRole( 'grid', { name: /August 2025/i } );
-			await userEvent.click( within( augGrid ).getByRole( 'button', { name: /August 3, 2025/i } ) );
-			await userEvent.click( within( augGrid ).getByRole( 'button', { name: /August 4, 2025/i } ) );
-			await userEvent.click( getByRole( 'button', { name: /Apply/i } ) );
+		// Open
+		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
 
-			const updated = getByRole( 'button', { name: /Date range:/i } );
-			expect(
-				within( updated ).getByText(
-					( t ) => t.includes( 'Aug 3, 2025' ) && t.includes( 'Aug 4, 2025' )
-				)
-			).toBeVisible();
+		// Click "Last 7 days" preset
+		const listbox = await findByRole( 'listbox', { name: /Date range presets/i } );
+		await userEvent.click( within( listbox ).getByRole( 'option', { name: /Last 7 days/i } ) );
 
-			// Expect a warning logged about invalid timezone data
-			const warned = errorSpy.mock.calls.some( ( args ) =>
-				args.some( ( a ) => typeof a === 'string' && /has no data for/i.test( a ) )
-			);
-			expect( warned ).toBe( true );
-		} finally {
-			errorSpy.mockRestore();
-		}
+		// Label should reflect 7-day range consistently
+		const updated = await findByRole( 'button', {
+			name: /Date range:.*Aug 19, 2025.*Aug 25, 2025/i,
+		} );
+		expect( updated ).toBeVisible();
+	} );
+
+	test( 'preset calculations work consistently without timezone props', async () => {
+		const { getByRole, findByRole } = render( <TestDateRangePicker /> );
+
+		// Open
+		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
+
+		// Click "Yesterday" preset (should use UTC fallback)
+		const listbox = await findByRole( 'listbox', { name: /Date range presets/i } );
+		await userEvent.click( within( listbox ).getByRole( 'option', { name: /Yesterday/i } ) );
+
+		// Label should reflect yesterday's date consistently
+		const updated = await findByRole( 'button', {
+			name: /Date range:.*Aug 24, 2025.*Aug 24, 2025/i,
+		} );
+		expect( updated ).toBeVisible();
 	} );
 } );

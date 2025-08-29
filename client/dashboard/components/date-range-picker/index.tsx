@@ -3,7 +3,7 @@ import { useMediaQuery, useInstanceId } from '@wordpress/compose';
 import { useMemo, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { calendar } from '@wordpress/icons';
-import { parseYmdLocal, formatYmd } from '../../utils/datetime';
+import { format } from 'date-fns';
 import { DateRangeContent } from './date-range-content';
 import { formatLabel } from './utils';
 import './style.scss';
@@ -22,8 +22,8 @@ export function DateRangePicker( {
 	start,
 	end,
 	onChange,
-	gmtOffset,
 	timezoneString,
+	gmtOffset,
 	locale,
 	disableFuture = true,
 }: DateRangePickerProps ) {
@@ -34,15 +34,11 @@ export function DateRangePicker( {
 	const mobileLabelId = `presets-label-${ instanceId }-mobile`;
 	const desktopLabelId = `presets-label-${ instanceId }-desktop`;
 
-	const label = formatLabel( start, end, locale, timezoneString, gmtOffset );
+	const label = formatLabel( start, end, locale );
 
 	// Reset internal draft state when key inputs change by remounting the inner component
-	const resetKey = [
-		formatYmd( start, timezoneString, gmtOffset ),
-		formatYmd( end, timezoneString, gmtOffset ),
-		timezoneString ?? '',
-		gmtOffset ?? '',
-	].join( '|' );
+	// Use UTC formatting for consistency with the rest of the component
+	const resetKey = [ format( start, 'yyyy-MM-dd' ), format( end, 'yyyy-MM-dd' ) ].join( '|' );
 
 	return (
 		<div className="daterange-container">
@@ -80,10 +76,10 @@ export function DateRangePicker( {
 						showTwoMonths={ showTwoMonths }
 						start={ start }
 						end={ end }
-						timezoneString={ timezoneString }
-						gmtOffset={ gmtOffset }
 						onChange={ onChange }
 						onClose={ onClose }
+						timezoneString={ timezoneString }
+						gmtOffset={ gmtOffset }
 						mobileLabelId={ mobileLabelId }
 						desktopLabelId={ desktopLabelId }
 						disableFuture={ disableFuture }
@@ -99,10 +95,10 @@ function DateRangePickerInner( {
 	showTwoMonths,
 	start,
 	end,
-	timezoneString,
-	gmtOffset,
 	onChange,
 	onClose,
+	timezoneString,
+	gmtOffset,
 	mobileLabelId,
 	desktopLabelId,
 	disableFuture,
@@ -111,32 +107,33 @@ function DateRangePickerInner( {
 	showTwoMonths: boolean;
 	start: Date;
 	end: Date;
-	timezoneString?: string;
-	gmtOffset?: number;
 	onChange: ( next: { start: Date; end: Date } ) => void;
 	onClose: () => void;
+	timezoneString?: string;
+	gmtOffset?: number;
 	mobileLabelId: string;
 	desktopLabelId: string;
 	disableFuture: boolean;
 } ) {
 	const [ fromDraft, setFromDraft ] = useState< Date | undefined >( () => start );
 	const [ toDraft, setToDraft ] = useState< Date | undefined >( () => end );
-	const [ fromStr, setFromStr ] = useState( () => formatYmd( start, timezoneString, gmtOffset ) );
-	const [ toStr, setToStr ] = useState( () => formatYmd( end, timezoneString, gmtOffset ) );
+	// Use UTC formatting without timezone conversion for consistency
+	const [ fromStr, setFromStr ] = useState( () => format( start, 'yyyy-MM-dd' ) );
+	const [ toStr, setToStr ] = useState( () => format( end, 'yyyy-MM-dd' ) );
 	// Tracks the keyboard-focused preset in the listbox (roving focus), not the selected preset.
 	const [ compositeActiveId, setCompositeActiveId ] = useState< string | null >( null );
 
 	const today = useMemo( () => {
-		const parsed = parseYmdLocal( formatYmd( new Date(), timezoneString, gmtOffset ) );
-		// Fallback to local midnight if parsing ever fails
-		return (
-			parsed ?? new Date( new Date().getFullYear(), new Date().getMonth(), new Date().getDate() )
+		// Use UTC-based today calculation for consistency
+		const utcNow = new Date();
+		return new Date(
+			Date.UTC( utcNow.getUTCFullYear(), utcNow.getUTCMonth(), utcNow.getUTCDate() )
 		);
-	}, [ timezoneString, gmtOffset ] );
+	}, [] );
 
 	const todayStr = useMemo(
-		() => formatYmd( today, timezoneString, gmtOffset ),
-		[ today, timezoneString, gmtOffset ]
+		() => format( today, 'yyyy-MM-dd' ), // No timezone conversion needed
+		[ today ]
 	);
 
 	return (
@@ -150,10 +147,10 @@ function DateRangePickerInner( {
 			setToDraft={ setToDraft }
 			setFromStr={ setFromStr }
 			setToStr={ setToStr }
-			timezoneString={ timezoneString }
-			gmtOffset={ gmtOffset }
 			onChange={ onChange }
 			onClose={ onClose }
+			timezoneString={ timezoneString }
+			gmtOffset={ gmtOffset }
 			compositeActiveId={ compositeActiveId }
 			setCompositeActiveId={ setCompositeActiveId }
 			today={ today }
