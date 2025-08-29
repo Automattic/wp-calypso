@@ -14,7 +14,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { seen, unseen } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { profileMutation } from '../../app/queries/me-profile';
 import PageLayout from '../../components/page-layout';
 import SecurityPageHeader from '../security-page-header';
@@ -35,6 +35,17 @@ export default function SecurityPassword() {
 		password: '',
 	} );
 
+	useEffect( () => {
+		const params = new URLSearchParams( window.location.search );
+		if ( params.get( 'updated' ) === 'password' ) {
+			createSuccessNotice( __( 'Your password was saved successfully.' ), {
+				type: 'snackbar',
+			} );
+
+			window.history.replaceState( {}, '', window.location.pathname );
+		}
+	}, [ createSuccessNotice ] );
+
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
 		mutation.mutate(
@@ -44,6 +55,9 @@ export default function SecurityPassword() {
 					createSuccessNotice( __( 'Your password was saved successfully.' ), {
 						type: 'snackbar',
 					} );
+
+					// Since changing a user's password invalidates the session, we reload.
+					window.location.replace( '?updated=password' );
 				},
 				onError: ( error: Error ) => {
 					createErrorNotice( error.message || __( 'Failed to save password.' ), {
