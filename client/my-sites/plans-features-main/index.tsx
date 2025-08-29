@@ -478,11 +478,12 @@ const PlansFeaturesMain = ( {
 		[ gridPlansForFeaturesGridRaw, deemphasizeFreePlan ]
 	);
 
+	const isVisualSplitEnabled =
+		intent === 'plans-website-builder' || intent === 'plans-wordpress-hosting';
 	// In some cases, the free plan is not an option at all. Make sure not to offer it in the subheader.
 	// For website builder and wordpress hosting intents, we always want to offer the free plan even if it's not in the grid
 	const offeringFreePlan =
-		intent === 'plans-website-builder' ||
-		intent === 'plans-wordpress-hosting' ||
+		isVisualSplitEnabled ||
 		gridPlansForFeaturesGridRaw?.some( ( { planSlug } ) => planSlug === PLAN_FREE );
 
 	const [ isStreamlinedPriceExperimentLoading, streamlinedPriceExperimentAssignment ] =
@@ -497,7 +498,7 @@ const PlansFeaturesMain = ( {
 	// monthly plans because monthly plans do not come with a free domain.
 	// We are also hiding the plan interval selector and showing terms savings prices
 	// for the compatible streamlined price experiment variations.
-	if ( redirectToAddDomainFlow !== undefined || hidePlanTypeSelector ) {
+	if ( redirectToAddDomainFlow !== undefined || hidePlanTypeSelector || isVisualSplitEnabled ) {
 		hidePlanSelector = true;
 	}
 	if ( ! isStreamlinedPriceExperimentLoading && ! showStreamlinedPriceExperiment ) {
