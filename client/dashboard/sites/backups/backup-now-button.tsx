@@ -2,6 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { useBackupState } from '../../app/hooks/site-backup-state';
 import { siteBackupEnqueueMutation } from '../../app/queries/site-backups';
 import type { Site } from '@automattic/api-core';
@@ -11,6 +12,8 @@ interface BackupNowButtonProps {
 }
 
 export function BackupNowButton( { site }: BackupNowButtonProps ) {
+	const { recordTracksEvent } = useAnalytics();
+
 	const [ isEnqueued, setIsEnqueued ] = useState( false );
 
 	const { backupState, isBackupActive } = useBackupState( site.ID, isEnqueued );
@@ -28,6 +31,11 @@ export function BackupNowButton( { site }: BackupNowButtonProps ) {
 			setIsEnqueued( false );
 		}
 	}, [ backupState, isEnqueued ] );
+
+	const handleClick = () => {
+		recordTracksEvent( 'calypso_dashboard_backups_backup_now' );
+		triggerBackup();
+	};
 
 	const buttonContent = {
 		enqueued: {
@@ -49,7 +57,7 @@ export function BackupNowButton( { site }: BackupNowButtonProps ) {
 	return (
 		<Button
 			variant="secondary"
-			onClick={ () => triggerBackup() }
+			onClick={ handleClick }
 			disabled={ isBusy }
 			isBusy={ isBusy }
 			accessibleWhenDisabled
