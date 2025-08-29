@@ -66,6 +66,6 @@ export const domainTransferRequestDeleteMutation = ( domain: string, siteSlug: s
 		onSuccess: () => {
 			// Manually update the cache before invalidating the query
 			queryClient.setQueryData( domainTransferRequestQuery( domain, siteSlug ).queryKey, null );
-			queryClient.removeQueries( domainTransferRequestQuery( domain, siteSlug ) );
+			queryClient.invalidateQueries( domainTransferRequestQuery( domain, siteSlug ) );
 		},
 	} );
