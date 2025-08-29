@@ -3,7 +3,7 @@ import { Domain } from '../../data/domain';
 import { DomainTypes, DomainTransferStatus } from '../../data/domains';
 import { Purchase } from '../../data/purchase';
 import { Site } from '../../data/site';
-import { isRemovable, isAkismetProduct } from '../../utils/purchase';
+import { isAkismetProduct } from '../../utils/purchase';
 
 export const shouldShowTransferAction = ( domain: Domain ) => {
 	if (
@@ -44,7 +44,7 @@ export const shouldShowDeleteAction = ( domain: Domain, purchase?: Purchase, sit
 
 	if (
 		! purchase ||
-		! isRemovable( purchase ) ||
+		! purchase.is_removable ||
 		// If we have a disconnected site that is _not_ a Jetpack purchase _or_ an Akismet purchase, no removal allowed.
 		( ! site && ! purchase.is_jetpack_plan_or_product && ! isAkismetProduct( purchase ) )
 	) {
