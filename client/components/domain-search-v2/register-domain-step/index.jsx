@@ -783,10 +783,6 @@ class RegisterDomainStep extends Component {
 			! this.props.showExampleSuggestions;
 		const showFilters = ! isRenderingInitialSuggestions || this.props.isOnboarding;
 
-		const showTldFilter =
-			( Array.isArray( this.state.availableTlds ) && this.state.availableTlds.length > 0 ) ||
-			this.state.loadingResults;
-
 		if ( [ HUNDRED_YEAR_PLAN_FLOW, HUNDRED_YEAR_DOMAIN_FLOW ].includes( this.props.flowName ) ) {
 			return null;
 		}
@@ -823,7 +819,6 @@ class RegisterDomainStep extends Component {
 							setExactSldMatchesOnlyInFilter={ ( value ) =>
 								this.setExactSldMatchesOnlyInFilter( value )
 							}
-							showTldFilter={ showTldFilter }
 							temporaryFilter={ this.state.filters }
 							validateTld={ ( tld ) => this.validateTld( tld ) }
 						/>

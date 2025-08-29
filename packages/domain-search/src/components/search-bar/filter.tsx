@@ -12,10 +12,9 @@ const emptyFilter: FilterState = {
 
 type Props = {
 	onSubmit?: () => void;
-	showTldFilter: boolean;
 };
 
-export const Filter = ( { onSubmit, showTldFilter }: Props ) => {
+export const Filter = ( { onSubmit }: Props ) => {
 	const { filter, setFilter } = useDomainSearch();
 	// This is the filter that the user is currently selecting. It is only applied when the popover is closed
 	const [ temporaryFilter, setTemporaryFilter ] = useState( emptyFilter );
@@ -109,7 +108,6 @@ export const Filter = ( { onSubmit, showTldFilter }: Props ) => {
 						onClose={ onClose }
 						recommendedTlds={ getRecommendedTlds() }
 						setExactSldMatchesOnlyInFilter={ setExactSldMatchesOnlyInFilter }
-						showTldFilter={ showTldFilter }
 						temporaryFilter={ temporaryFilter }
 						validateTld={ validateTld }
 					/>
