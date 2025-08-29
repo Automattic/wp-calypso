@@ -68,7 +68,6 @@ function Site() {
 						<Modal
 							title={ __( 'Add new site' ) }
 							onRequestClose={ () => setIsAddSiteModalOpen( false ) }
-							className="dashboard-site-switcher__modal"
 						>
 							<AddNewSite context="sites-dashboard" />
 						</Modal>
