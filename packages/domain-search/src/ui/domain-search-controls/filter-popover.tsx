@@ -13,7 +13,6 @@ import { useCallback } from 'react';
 import { FilterState } from '../../page/types';
 import { FilterPopoverLabel } from './filter-popover-label';
 import { FilterPopoverTld } from './filter-popover-tld';
-import type { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
 
 import './filter-popover.scss';
 
@@ -122,17 +121,6 @@ export const DomainSearchControlsFilterPopover = ( {
 		[ setTemporaryFilter, temporaryFilter ]
 	);
 
-	const handleTldsChange = useCallback(
-		( tokens: ( string | TokenItem )[] ) => {
-			const tlds = tokens.map( ( token ) => ( typeof token === 'string' ? token : token.value ) );
-			setTemporaryFilter( {
-				...temporaryFilter,
-				tlds,
-			} );
-		},
-		[ setTemporaryFilter, temporaryFilter ]
-	);
-
 	// The popover needs to have the "domain-search" class because it is generated outside of the `DomainSearch` component
 	return (
 		<Card
@@ -150,7 +138,15 @@ export const DomainSearchControlsFilterPopover = ( {
 						label=""
 						value={ temporaryFilter.tlds }
 						suggestions={ availableTlds }
-						onChange={ handleTldsChange }
+						onChange={ ( tokens ) => {
+							const tlds = tokens.map( ( token ) =>
+								typeof token === 'string' ? token : token.value
+							);
+							setTemporaryFilter( {
+								...temporaryFilter,
+								tlds,
+							} );
+						} }
 						placeholder={ __( 'Search for an ending' ) }
 					/>
 					{ renderAvailableTldsList() }
