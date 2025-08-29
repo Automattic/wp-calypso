@@ -4,9 +4,9 @@
 	"description": "Automated end to end acceptance tests for the Calypso project.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
+	"type": "module",
 	"author": "Automattic Inc.",
 	"private": true,
-	"type": "module",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
