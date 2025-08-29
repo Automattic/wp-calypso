@@ -905,22 +905,22 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): E2EBuildTy
 	)
 }
 
-fun playwrightTestPR( targetDevice: String, buildUuid: String  ): BuildType {
-	return BuildType(
-		id = "calypso_WebApp_Calypso_E2E_Playwright_Test_$targetDevice",
-		uuid = buildUuid,
-		name = "E2E Tests ($targetDevice)",
-		description = "Runs Calypso e2e tests on $targetDevice size using Playwright Test runner",
+fun playwrightTestPR( targetDevice: String, buildUuid: String ): BuildType {
+	return BuildType {
+		id("calypso_WebApp_Calypso_E2E_Playwright_Test_$targetDevice")
+		uuid = buildUuid
+		name = "E2E Tests ($targetDevice) (PWTest)"
+		description = "Runs Calypso e2e tests on $targetDevice size using Playwright Test runner"
 
 		steps {
-			bashNodeScript {
+			script {
 				name = "Test step"
 				scriptContent = """
-					echo "@todo: run the tests"
+					echo "hello, it works"
 				"""
 			}
 		}
-	)
+	}
 }
 
 object PreReleaseE2ETests : BuildType({
