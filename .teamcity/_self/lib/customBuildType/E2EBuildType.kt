@@ -59,7 +59,8 @@ open class E2EBuildType(
 	var buildTriggers: Triggers.() -> Unit = {},
 	var buildDependencies: Dependencies.() -> Unit = {},
 	var addWpcomVcsRoot: Boolean = false,
-	var buildSteps: BuildSteps.() -> Unit = {}
+	var buildSteps: BuildSteps.() -> Unit = {},
+	var isPlaywrightTest: Boolean = false
 
 ): BuildType() {
 	init {
@@ -152,13 +153,13 @@ open class E2EBuildType(
 					set +o errexit
 
 					# Run suite.
-					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --workerIdleMemoryLimit=1GB --group=$testGroup
+					${if (isPlaywrightTest) "yarn run test:playwright" else "xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --workerIdleMemoryLimit=1GB --group=$testGroup"}
 
 					# Restore exit on error.
 					set -o errexit
 
 					# Retry failed tests only.
-					RETRY_COUNT=1 xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --workerIdleMemoryLimit=1GB --group=$testGroup --onlyFailures
+					${if (isPlaywrightTest) "yarn run test:playwright --retry-failed" else "RETRY_COUNT=1 xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --workerIdleMemoryLimit=1GB --group=$testGroup --onlyFailures"}
 				"""
 				dockerImage = "%docker_image_e2e%"
 				dockerRunParameters = "-u %env.UID% --shm-size=4g"

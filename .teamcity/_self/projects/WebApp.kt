@@ -903,6 +903,60 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): E2EBuildTy
 	)
 }
 
+fun playwrightTestPR( targetDevice: String, buildUuid: String ): E2EBuildType {
+	return E2EBuildType(
+		isPlaywrightTest = true,
+		buildId = "calypso_WebApp_Calypso_E2E_Playwright_Test_$targetDevice",
+		buildUuid = buildUuid,
+		buildName = "E2E Tests ($targetDevice) (PWTest)",
+		buildDescription = "Runs Calypso e2e tests on $targetDevice size",
+		getCalypsoLiveURL = """
+			chmod +x ./bin/get-calypso-live-url.sh
+			CALYPSO_LIVE_URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
+			if [[ ${'$'}? -ne 0 ]]; then
+				// Command failed. CALYPSO_LIVE_URL contains stderr
+				echo ${'$'}CALYPSO_LIVE_URL
+				exit 1
+			fi
+		""".trimIndent(),
+		testGroup = "calypso-pr",
+		buildParams = {
+			param("env.AUTHENTICATE_ACCOUNTS", "simpleSitePersonalPlanUser,gutenbergSimpleSiteUser,defaultUser")
+			param("env.LIVEBRANCHES", "true")
+			param("env.VIEWPORT_NAME", "$targetDevice")
+		},
+		buildFeatures = {
+			pullRequests {
+				vcsRootExtId = "${Settings.WpCalypso.id}"
+				provider = github {
+					authType = token {
+						token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+					}
+					filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
+				}
+			}
+		},
+		enableCommitStatusPublisher = true,
+		buildTriggers = {
+			vcs {
+				branchFilter = """
+					+:*
+					-:pull*
+					-:trunk
+				""".trimIndent()
+				triggerRules = """
+					-:**.md
+				""".trimIndent()
+			}
+		},
+		buildDependencies = {
+			snapshot(BuildDockerImage) {
+				onDependencyFailure = FailureAction.FAIL_TO_START
+			}
+		}
+	)
+}
+
 object PreReleaseE2ETests : BuildType({
 	id("calypso_WebApp_Calypso_E2E_Pre_Release")
 	uuid = "9c2f634f-6582-4245-bb77-fb97d9f16533"
