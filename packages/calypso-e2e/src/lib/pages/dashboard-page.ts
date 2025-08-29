@@ -85,6 +85,19 @@ export class DashboardPage {
 	}
 
 	/**
+	 * Sets the site visibility by selecting the appropriate radio button and saving.
+	 *
+	 * @param visibility - The desired site visibility.
+	 * @returns Promise that resolves when the visibility is set.
+	 */
+	async setSiteVisibility( visibility: 'Public' | 'Private' | 'Coming soon' ): Promise< void > {
+		await this.page.getByRole( 'radio', { name: visibility } ).click();
+		await this.page.waitForSelector( 'button[type="submit"]:not([disabled])' );
+		await this.page.getByRole( 'button', { name: 'Save' } ).click();
+		await this.page.waitForSelector( 'button:not(.is-busy)[type="submit"][disabled]' );
+	}
+
+	/**
 	 * Checks if the current page is a 404 error page.
 	 *
 	 * @returns Promise that resolves to true if the page is a 404 error page.
