@@ -1,34 +1,24 @@
 import { Card } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
 import { ToggleControl, __experimentalVStack as VStack } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch as useReduxDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
-import SectionHeader from 'calypso/components/section-header';
 import { isAutomatticianQuery } from 'calypso/dashboard/app/queries/me-a8c';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
-import { setUserSetting, saveUserSettings } from 'calypso/state/user-settings/actions';
+import { saveUserSettings } from 'calypso/state/user-settings/actions';
 import { isUpdatingUserSettings } from 'calypso/state/user-settings/selectors';
 import './style.scss';
 
-function McpComponent( {
-	path,
-	userSettings,
-	isUpdating,
-	setUserSetting: setUserSettingProp,
-	saveUserSettings: saveUserSettingsProp,
-} ) {
+function McpComponent( { path, userSettings, isUpdating } ) {
 	const translate = useTranslate();
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const reduxDispatch = useReduxDispatch();
 	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
 
 	// Get abilities from user settings
@@ -39,6 +29,10 @@ function McpComponent( {
 	const [ formData, setFormData ] = useState( {
 		mcp_abilities: mcpAbilities,
 	} );
+
+	// Calculate if any abilities are enabled (for master toggle and individual toggle disabled state)
+	const anyAbilitiesEnabled =
+		hasAbilities && Object.values( formData.mcp_abilities ).some( ( ability ) => ability.enabled );
 
 	// Update form data when userSettings changes
 	useEffect( () => {
@@ -56,21 +50,17 @@ function McpComponent( {
 	const handleSubmit = ( e ) => {
 		e.preventDefault();
 
-		// Update each ability setting
+		// Use settingsOverride to bypass the unsaved settings mechanism
+		// Convert the abilities object to a simple key-value array with enabled status
+		const abilitiesArray = {};
 		Object.entries( formData.mcp_abilities ).forEach( ( [ abilityId, ability ] ) => {
-			setUserSettingProp( `mcp_abilities.${ abilityId }`, ability );
+			abilitiesArray[ abilityId ] = ability.enabled ? 1 : 0;
 		} );
 
-		// Save the settings
-		saveUserSettingsProp(
-			Object.keys( formData.mcp_abilities ).map( ( abilityId ) => `mcp_abilities.${ abilityId }` )
-		)
-			.then( () => {
-				createSuccessNotice( __( 'MCP abilities saved.' ), { type: 'snackbar' } );
-			} )
-			.catch( () => {
-				createErrorNotice( __( 'Failed to save MCP abilities.' ), { type: 'snackbar' } );
-			} );
+		const settingsData = { mcp_abilities: abilitiesArray };
+
+		// Save directly using settingsOverride
+		reduxDispatch( saveUserSettings( settingsData ) );
 	};
 
 	const handleAbilityChange = ( abilityId, enabled ) => {
@@ -86,6 +76,19 @@ function McpComponent( {
 		} ) );
 	};
 
+	const handleMasterToggle = ( enabled ) => {
+		setFormData( ( prev ) => ( {
+			...prev,
+			mcp_abilities: Object.keys( prev.mcp_abilities ).reduce( ( acc, abilityId ) => {
+				acc[ abilityId ] = {
+					...prev.mcp_abilities[ abilityId ],
+					enabled,
+				};
+				return acc;
+			}, {} ),
+		} ) );
+	};
+
 	const renderContent = () => {
 		// Get abilities from user settings, but use form data for current state
 		const abilities = availableAbilities.map( ( [ abilityId, ability ] ) => [
@@ -96,41 +99,76 @@ function McpComponent( {
 			},
 		] );
 
+		// Group abilities by category
+		const groupedAbilities = abilities.reduce( ( groups, [ abilityId, ability ] ) => {
+			const category = ability.category || 'Other';
+			if ( ! groups[ category ] ) {
+				groups[ category ] = [];
+			}
+			groups[ category ].push( [ abilityId, ability ] );
+			return groups;
+		}, {} );
+
+		// Format ability name for display
+		const formatAbilityName = ( abilityId ) => {
+			// Remove 'wpcom-mcp/' prefix and convert to title case
+			const name = abilityId.replace( 'wpcom-mcp/', '' );
+			return name
+				.split( '-' )
+				.map( ( word ) => word.charAt( 0 ).toUpperCase() + word.slice( 1 ) )
+				.join( ' ' );
+		};
+
 		return (
 			<>
-				<SectionHeader label={ translate( 'MCP Abilities' ) } />
 				<Card className="mcp__settings">
 					<form onSubmit={ handleSubmit }>
 						<FormFieldset>
 							<p>
 								{ translate(
-									'Configure which MCP (Model Context Protocol) abilities are available for your sites. ' +
-										'MCP allows AI assistants to access your site data through a secure protocol.'
+									'MCP (Model Context Protocol) enables AI assistants to securely access and interact with your WordPress.com data. ' +
+										'These settings control which specific capabilities are available to AI tools that use MCP.'
 								) }
 							</p>
-							<p>
-								{ translate(
-									'You can enable or disable MCP for individual sites in the site settings, ' +
-										'but these global settings control which abilities are available to configure.'
-								) }
-							</p>
-							<hr />
 							{ hasAbilities ? (
-								<VStack spacing={ 4 }>
-									{ abilities.map( ( [ abilityId, ability ] ) => (
-										<div key={ abilityId } className="mcp__ability-item">
-											<ToggleControl
-												checked={ ability.enabled }
-												onChange={ ( checked ) => handleAbilityChange( abilityId, checked ) }
-												label={ ability.label }
-											/>
-											<p className="mcp__ability-description">{ ability.description }</p>
-										</div>
-									) ) }
-								</VStack>
+								<>
+									<div className="mcp__master-toggle">
+										<ToggleControl
+											checked={ anyAbilitiesEnabled }
+											onChange={ handleMasterToggle }
+											label={ translate( 'Allow MCP access' ) }
+										/>
+									</div>
+									<hr />
+									<VStack spacing={ 6 }>
+										<h1 className="mcp__category-header">{ translate( 'MCP Abilities' ) }</h1>
+										{ Object.entries( groupedAbilities ).map(
+											( [ category, categoryAbilities ] ) => (
+												<div key={ category } className="mcp__category">
+													<h3 className="mcp__category-title">{ category }</h3>
+													<VStack spacing={ 4 }>
+														{ categoryAbilities.map( ( [ abilityId, ability ] ) => (
+															<div key={ abilityId } className="mcp__ability-item">
+																<ToggleControl
+																	checked={ ability.enabled }
+																	onChange={ ( checked ) =>
+																		handleAbilityChange( abilityId, checked )
+																	}
+																	label={ formatAbilityName( abilityId ) }
+																	disabled={ ! anyAbilitiesEnabled }
+																/>
+																<p className="mcp__ability-description">{ ability.description }</p>
+															</div>
+														) ) }
+													</VStack>
+												</div>
+											)
+										) }
+									</VStack>
+								</>
 							) : (
 								<p style={ { color: '#646970', fontSize: '14px', margin: 0 } }>
-									{ __( 'No MCP abilities are currently available.' ) }
+									{ translate( 'No MCP abilities are currently available.' ) }
 								</p>
 							) }
 						</FormFieldset>
@@ -148,23 +186,9 @@ function McpComponent( {
 
 	return (
 		<Main wideLayout className="mcp">
-			<PageViewTracker path={ path } title="MCP Access" />
-			<DocumentHead title={ translate( 'MCP Access' ) } />
-			<NavigationHeader navigationItems={ [] } title={ translate( 'MCP Access' ) } />
-
-			<Card className="mcp__info">
-				<p>
-					{ translate(
-						'You have access to MCP (Model Context Protocol) features. You can configure MCP abilities here and enable them for individual sites in the site settings.'
-					) }
-				</p>
-				<p>
-					{ translate(
-						'MCP allows AI assistants to access your site data through a secure protocol. You can enable or disable MCP for individual sites and configure which abilities are available.'
-					) }
-				</p>
-			</Card>
-
+			<PageViewTracker path={ path } title="MCP Client Access" />
+			<DocumentHead title={ translate( 'MCP Client Access' ) } />
+			<NavigationHeader navigationItems={ [] } title={ translate( 'MCP Client Access' ) } />
 			{ renderContent() }
 		</Main>
 	);
@@ -175,8 +199,5 @@ export default connect(
 		userSettings: getUserSettings( state ),
 		isUpdating: isUpdatingUserSettings( state ),
 	} ),
-	{
-		setUserSetting,
-		saveUserSettings,
-	}
+	{}
 )( McpComponent );

@@ -1,4 +1,30 @@
 .mcp {
+	&__category {
+		margin-bottom: 24px;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	&__category-header {
+		margin: 0 0 16px 0;
+		font-size: 24px;
+		font-weight: 700;
+		color: #1d2327;
+		padding-bottom: 8px;
+	}
+
+	&__category-title {
+		margin: 0 0 16px 0;
+		font-size: 16px;
+		font-weight: 600;
+		color: #1d2327;
+		padding-bottom: 8px;
+		border-bottom: 1px solid #dcdcde;
+		text-transform: capitalize;
+	}
+
 	&__ability-item {
 		display: flex;
 		flex-direction: column;
@@ -16,12 +42,31 @@
 		color: #646970;
 		font-size: 14px;
 		line-height: 1.4;
-		padding-left: 48px; // Align with the toggle label
+		padding-left: 40px;
+	}
+
+	&__master-toggle {
+		margin-bottom: 24px;
+
+		.components-toggle-control {
+			margin-bottom: 8px;
+			font-weight: 600;
+			font-size: 16px;
+		}
+	}
+
+	&__master-toggle-description {
+		margin: 0;
+		color: #646970;
+		font-size: 14px;
+		line-height: 1.4;
+		padding-left: 40px;
 	}
 
 	&__settings {
 		.components-toggle-control {
 			margin-bottom: 0;
+			font-weight: 600;
 		}
 	}
 }
