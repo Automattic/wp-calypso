@@ -1,28 +1,30 @@
 @import './tokens.css';
 
 @layer base {
-	*, ::before, ::after, ::backdrop, ::file-selector-button {
-		box-sizing: border-box;
-		margin: 0;
-		padding: 0;
-		border: 0 solid;
-	}
+	.agenttic {
+		*, ::before, ::after, ::backdrop, ::file-selector-button {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+			border: 0 solid;
+		}
 
-	* {
-		outline-color: var(--color-ring);
-	}
+		* {
+			outline-color: var(--color-ring);
+		}
 
-	button, input, select, optgroup, textarea, ::file-selector-button {
-		font: inherit;
-		font-feature-settings: inherit;
-		font-variation-settings: inherit;
-		letter-spacing: inherit;
-		background-color: transparent;
-		opacity: 1;
-	}
+		button, input, select, optgroup, textarea, ::file-selector-button {
+			font: inherit;
+			font-feature-settings: inherit;
+			font-variation-settings: inherit;
+			letter-spacing: inherit;
+			background-color: transparent;
+			opacity: 1;
+		}
 
-	input, select, optgroup, textarea, ::file-selector-button {
-		color: inherit;
-		border-radius: 0;
+		input, select, optgroup, textarea, ::file-selector-button {
+			color: inherit;
+			border-radius: 0;
+		}
 	}
 }
