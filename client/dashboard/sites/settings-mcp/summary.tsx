@@ -20,17 +20,17 @@ export default function McpSettingsSummary( { site, density }: { site: Site; den
 	let badgeText: string;
 	let badgeIntent: 'success' | 'info' | undefined;
 
-	if ( ! siteSettings?.mcp_settings ) {
+	if ( ! siteSettings?.mcp_abilities ) {
 		badgeText = __( 'Not configured' );
 	} else {
-		const enabledAbilities = Object.entries( siteSettings.mcp_settings.mcp_abilities || {} )
+		const enabledAbilities = Object.entries( siteSettings.mcp_abilities )
 			.filter( ( [ , ability ] ) => ability.enabled )
 			.map( ( [ abilityId ] ) => abilityId );
 
-		if ( ! siteSettings.mcp_settings.mcp_enabled ) {
+		const isMcpEnabled = enabledAbilities.length > 0;
+
+		if ( ! isMcpEnabled ) {
 			badgeText = __( 'MCP disabled' );
-		} else if ( enabledAbilities.length === 0 ) {
-			badgeText = __( 'No abilities enabled' );
 		} else {
 			// translators: %d is the number of abilities enabled
 			badgeText = __( '%d abilities enabled', 'number of abilities' ).replace(

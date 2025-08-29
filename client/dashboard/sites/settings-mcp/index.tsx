@@ -1,11 +1,10 @@
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
 	Card,
 	CardBody,
-	CheckboxControl,
+	ToggleControl,
 	ExternalLink,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -19,7 +18,8 @@ import { siteSettingsQuery, siteSettingsMutation } from '../../app/queries/site-
 import { queryClient } from '../../app/query-client';
 import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';
-import type { SiteMcpSettings } from '../../data/site-settings';
+import type { SiteMcpAbilities } from '../../data/site-settings';
+import './style.scss';
 
 export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
@@ -28,45 +28,49 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
 	const mutation = useMutation( siteSettingsMutation( site.ID ) );
 
-	// Gate access to Automatticians only
-	if ( ! isAutomattician ) {
-		throw notFound();
-	}
-
 	// Get abilities from the site settings data
-	const availableAbilities = Object.entries( siteSettings?.mcp_settings?.mcp_abilities || {} );
+	const availableAbilities = Object.entries( siteSettings?.mcp_abilities || {} );
 	const hasAbilities = availableAbilities.length > 0;
 
-	const [ formData, setFormData ] = useState< SiteMcpSettings >( {
-		mcp_enabled: hasAbilities ? siteSettings?.mcp_settings?.mcp_enabled ?? true : false,
-		mcp_abilities: siteSettings?.mcp_settings?.mcp_abilities ?? {},
-	} );
+	const [ formData, setFormData ] = useState< SiteMcpAbilities >(
+		siteSettings?.mcp_abilities ?? {}
+	);
+
+	// Calculate if any abilities are enabled in form data (for master toggle state)
+	const anyAbilitiesEnabled =
+		hasAbilities && Object.values( formData ).some( ( ability ) => ability.enabled );
 
 	// Update form data when siteSettings changes
 	useEffect( () => {
-		if ( siteSettings?.mcp_settings ) {
-			const newHasAbilities =
-				Object.keys( siteSettings.mcp_settings.mcp_abilities || {} ).length > 0;
-			setFormData( {
-				mcp_enabled: newHasAbilities ? siteSettings.mcp_settings.mcp_enabled : false,
-				mcp_abilities: siteSettings.mcp_settings.mcp_abilities,
-			} );
+		if ( siteSettings?.mcp_abilities ) {
+			setFormData( siteSettings.mcp_abilities );
 		}
-	}, [ siteSettings?.mcp_settings ] );
+	}, [ siteSettings?.mcp_abilities ] );
 
-	// Auto-disable MCP if no abilities are selected
+	// Auto-disable master toggle if all abilities are disabled
 	useEffect( () => {
-		const enabledAbilitiesCount = Object.values( formData.mcp_abilities ).filter(
+		const enabledAbilitiesCount = Object.values( formData ).filter(
 			( ability ) => ability.enabled
 		).length;
 
-		if ( formData.mcp_enabled && enabledAbilitiesCount === 0 ) {
-			setFormData( ( prev ) => ( {
-				...prev,
-				mcp_enabled: false,
-			} ) );
+		// If we have abilities but none are enabled, and the master toggle is on,
+		// we need to turn off all abilities (which will turn off the master toggle)
+		if ( hasAbilities && enabledAbilitiesCount === 0 && anyAbilitiesEnabled ) {
+			const disabledAbilities: Record< string, any > = {};
+			Object.entries( siteSettings?.mcp_abilities || {} ).forEach( ( [ abilityId, ability ] ) => {
+				disabledAbilities[ abilityId ] = {
+					...ability,
+					enabled: false,
+				};
+			} );
+			setFormData( disabledAbilities );
 		}
-	}, [ formData.mcp_abilities, formData.mcp_enabled ] );
+	}, [ formData, hasAbilities, anyAbilitiesEnabled, siteSettings?.mcp_abilities ] );
+
+	// Gate access to Automatticians only
+	if ( ! isAutomattician ) {
+		return null;
+	}
 
 	const renderContent = () => {
 		// Show loading state while data is being fetched
@@ -83,60 +87,42 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 		const handleSubmit = ( e: React.FormEvent ) => {
 			e.preventDefault();
 
-			// Build the complete mcp_abilities object with all required properties
-			const mcp_abilities: Record<
-				string,
-				{ label: string; description: string; enabled: boolean }
-			> = {};
-
-			// Get the base abilities from site settings
-			const baseAbilities = siteSettings?.mcp_settings?.mcp_abilities || {};
-
-			// Merge with form data to get current enabled state
-			Object.entries( baseAbilities ).forEach( ( [ abilityId, ability ] ) => {
-				mcp_abilities[ abilityId ] = {
-					label: ability.label,
-					description: ability.description,
-					enabled: formData.mcp_abilities?.[ abilityId ]?.enabled ?? ability.enabled,
-				};
+			// Convert the abilities object to a simple key-value array with enabled status
+			const abilitiesArray = {};
+			Object.entries( formData ).forEach( ( [ abilityId, ability ] ) => {
+				abilitiesArray[ abilityId ] = ability.enabled ? 1 : 0;
 			} );
 
-			// Create the complete MCP settings object
+			// Create the mutation data with just the mcp_abilities
 			const mutationData = {
-				mcp_settings: {
-					mcp_enabled: formData.mcp_enabled,
-					mcp_abilities,
-				},
+				mcp_abilities: abilitiesArray,
 			};
 
 			mutation.mutate( mutationData, {
 				onSuccess: () => {
-					// Manually update the cache with our sent data to ensure it's preserved
+					// Manually update the cache with the full ability objects
 					queryClient.setQueryData(
 						siteSettingsQuery( site.ID ).queryKey,
 						( oldData ) =>
 							oldData && {
 								...oldData,
-								...mutationData, // Use our sent data instead of response data
+								mcp_abilities: formData, // Use our form data (full objects) instead of simplified data
 							}
 					);
-					createSuccessNotice( __( 'MCP settings saved.' ), { type: 'snackbar' } );
+					createSuccessNotice( __( 'MCP abilities saved.' ), { type: 'snackbar' } );
 				},
 				onError: () => {
-					createErrorNotice( __( 'Failed to save MCP settings.' ), { type: 'snackbar' } );
+					createErrorNotice( __( 'Failed to save MCP abilities.' ), { type: 'snackbar' } );
 				},
 			} );
 		};
 
-		const handleMcpEnabledChange = ( enabled: boolean ) => {
-			setFormData( ( prev ) => {
+		const handleMasterToggle = ( enabled: boolean ) => {
+			setFormData( () => {
 				if ( enabled ) {
 					// When enabling MCP, auto-enable all available abilities
-					const autoEnabledAbilities: Record<
-						string,
-						{ label: string; description: string; enabled: boolean }
-					> = {};
-					Object.entries( siteSettings?.mcp_settings?.mcp_abilities || {} ).forEach(
+					const autoEnabledAbilities: Record< string, any > = {};
+					Object.entries( siteSettings?.mcp_abilities || {} ).forEach(
 						( [ abilityId, ability ] ) => {
 							autoEnabledAbilities[ abilityId ] = {
 								...ability,
@@ -144,30 +130,26 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 							};
 						}
 					);
-					return {
-						...prev,
-						mcp_enabled: enabled,
-						mcp_abilities: autoEnabledAbilities,
-					};
+					return autoEnabledAbilities;
 				}
 				// When disabling MCP, disable all abilities
-				return {
-					...prev,
-					mcp_enabled: enabled,
-					mcp_abilities: {},
-				};
+				const disabledAbilities: Record< string, any > = {};
+				Object.entries( siteSettings?.mcp_abilities || {} ).forEach( ( [ abilityId, ability ] ) => {
+					disabledAbilities[ abilityId ] = {
+						...ability,
+						enabled: false,
+					};
+				} );
+				return disabledAbilities;
 			} );
 		};
 
 		const handleAbilityChange = ( abilityId: string, enabled: boolean ) => {
 			setFormData( ( prev ) => ( {
 				...prev,
-				mcp_abilities: {
-					...prev.mcp_abilities,
-					[ abilityId ]: {
-						...prev.mcp_abilities[ abilityId ],
-						enabled,
-					},
+				[ abilityId ]: {
+					...prev[ abilityId ],
+					enabled,
 				},
 			} ) );
 		};
@@ -177,88 +159,117 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 			abilityId,
 			{
 				...ability,
-				enabled: formData.mcp_enabled
-					? formData.mcp_abilities?.[ abilityId ]?.enabled ?? ability.enabled
-					: false,
+				enabled: formData[ abilityId ]?.enabled ?? ability.enabled,
 			},
 		] );
 
+		// Group abilities by type first, then by category
+		const groupedByType = abilities.reduce( ( typeGroups, [ abilityId, ability ] ) => {
+			const type = ability.type || 'other';
+			const category = ability.category || 'Other';
+
+			if ( ! typeGroups[ type ] ) {
+				typeGroups[ type ] = {};
+			}
+			if ( ! typeGroups[ type ][ category ] ) {
+				typeGroups[ type ][ category ] = [];
+			}
+			typeGroups[ type ][ category ].push( [ abilityId, ability ] );
+			return typeGroups;
+		}, {} );
+
+		// Type descriptions
+		const typeDescriptions = {
+			tool: __(
+				'Tools allow AI assistants to perform actions on your behalf, such as creating posts or managing site settings.'
+			),
+			resource: __(
+				'Resources provide AI assistants with read-only access to your data, such as site statistics or user information.'
+			),
+			prompt: __(
+				'Prompts help AI assistants understand context and provide better responses to your queries.'
+			),
+			other: __( "Other abilities that don't fit into the main categories." ),
+		};
+
+		// Format ability name for display
+		const formatAbilityName = ( abilityId: string ) => {
+			// Remove 'wpcom-mcp/' prefix and convert to title case
+			const name = abilityId.replace( 'wpcom-mcp/', '' );
+			return name
+				.split( '-' )
+				.map( ( word ) => word.charAt( 0 ).toUpperCase() + word.slice( 1 ) )
+				.join( ' ' );
+		};
+
 		return (
 			<form onSubmit={ handleSubmit }>
-				<VStack spacing={ 6 }>
-					{ /* Main MCP toggle in its own card - only show if abilities are available */ }
-					{ hasAbilities && (
-						<Card>
-							<CardBody>
-								<CheckboxControl
-									__nextHasNoMarginBottom
-									label={ __( 'Enable Model Context Protocol (MCP)' ) }
-									help={ __(
-										'Allow AI assistants to access your site data through the Model Context Protocol.'
-									) }
-									checked={ formData.mcp_enabled }
-									onChange={ handleMcpEnabledChange }
-								/>
-							</CardBody>
-						</Card>
-					) }
-
-					{ /* Abilities settings in a separate card - always show if abilities exist */ }
-					{ hasAbilities && (
-						<Card>
-							<CardBody>
-								<VStack spacing={ 4 }>
-									<h3 style={ { margin: 0, fontSize: '16px', fontWeight: 600 } }>
-										{ __( 'MCP Abilities' ) }
-									</h3>
-
-									{ ! formData.mcp_enabled && (
-										<p style={ { color: '#646970', fontSize: '14px', margin: 0 } }>
-											{ __( 'Enable MCP above to configure these abilities.' ) }
-										</p>
-									) }
-
-									<VStack spacing={ 3 }>
-										{ abilities.map( ( [ abilityId, ability ] ) => (
-											<CheckboxControl
-												key={ abilityId }
-												__nextHasNoMarginBottom
-												label={ ability.label }
-												help={ ability.description }
-												checked={ ability.enabled }
-												onChange={ ( checked ) => handleAbilityChange( abilityId, checked ) }
-												disabled={ ! formData.mcp_enabled }
-											/>
-										) ) }
-									</VStack>
+				<Card className="mcp__settings">
+					<CardBody>
+						{ hasAbilities ? (
+							<>
+								<div className="mcp__master-toggle">
+									<ToggleControl
+										checked={ anyAbilitiesEnabled }
+										onChange={ handleMasterToggle }
+										label={ __( 'Allow MCP access' ) }
+									/>
+								</div>
+								<VStack spacing={ 8 }>
+									{ Object.entries( groupedByType ).map( ( [ type, typeCategories ] ) => (
+										<div key={ type } className="mcp__type-section">
+											<h2 className="mcp__type-title">
+												{ type.charAt( 0 ).toUpperCase() + type.slice( 1 ) }s
+											</h2>
+											<p className="mcp__type-description">{ typeDescriptions[ type ] }</p>
+											<VStack spacing={ 6 }>
+												{ Object.entries( typeCategories ).map(
+													( [ category, categoryAbilities ] ) => (
+														<div key={ category } className="mcp__category">
+															<h3 className="mcp__category-title">{ category }</h3>
+															<VStack spacing={ 4 }>
+																{ categoryAbilities.map( ( [ abilityId, ability ] ) => (
+																	<div key={ abilityId } className="mcp__ability-item">
+																		<ToggleControl
+																			checked={ ability.enabled }
+																			onChange={ ( checked ) =>
+																				handleAbilityChange( abilityId, checked )
+																			}
+																			label={ formatAbilityName( abilityId ) }
+																			disabled={ ! anyAbilitiesEnabled }
+																		/>
+																		<p className="mcp__ability-description">
+																			{ ability.description }
+																		</p>
+																	</div>
+																) ) }
+															</VStack>
+														</div>
+													)
+												) }
+											</VStack>
+										</div>
+									) ) }
 								</VStack>
-							</CardBody>
-						</Card>
-					) }
+							</>
+						) : (
+							<p style={ { color: '#646970', fontSize: '14px', margin: 0 } }>
+								{ __( 'No MCP abilities are currently available.' ) }
+							</p>
+						) }
 
-					{ /* Show message when no abilities are available */ }
-					{ ! hasAbilities && (
-						<Card>
-							<CardBody>
-								<p style={ { color: '#646970', fontSize: '14px', margin: 0 } }>
-									{ __( 'No MCP abilities are currently available for this site.' ) }
-								</p>
-							</CardBody>
-						</Card>
-					) }
-
-					{ /* Save button */ }
-					<HStack justify="flex-start">
-						<Button
-							variant="primary"
-							type="submit"
-							isBusy={ mutation.isPending }
-							disabled={ mutation.isPending }
-						>
-							{ __( 'Save' ) }
-						</Button>
-					</HStack>
-				</VStack>
+						{ hasAbilities && (
+							<Button
+								variant="primary"
+								type="submit"
+								isBusy={ mutation.isPending }
+								disabled={ mutation.isPending }
+							>
+								{ mutation.isPending ? __( 'Saving…' ) : __( 'Save MCP abilities' ) }
+							</Button>
+						) }
+					</CardBody>
+				</Card>
 			</form>
 		);
 	};

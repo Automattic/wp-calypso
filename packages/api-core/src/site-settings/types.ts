@@ -14,17 +14,38 @@ export interface SiteSettings {
 	wpcom_performance_report_url?: string;
 	wpcom_legacy_contact?: string;
 	wpcom_locked_mode?: boolean;
-	mcp_settings?: SiteMcpSettings; // Object instead of JSON string
+	mcp_abilities?: SiteMcpAbilities;
 }
 
-export interface SiteMcpSettings {
-	mcp_enabled: boolean;
-	mcp_abilities: Record<
-		string,
+export type SiteMcpAbilities = Record<
+	string,
+	{
+		name: string;
+		description: string;
+		category: string;
+		type: string;
+		enabled: boolean;
+	}
+>;
+
+export async function fetchSiteSettings( siteId: number ): Promise< SiteSettings > {
+	const { settings } = await wpcom.req.get( {
+		path: `/sites/${ siteId }/settings`,
+		apiVersion: '1.4',
+	} );
+	return settings;
+}
+
+export async function updateSiteSettings(
+	siteId: number,
+	data: Partial< SiteSettings >
+): Promise< Partial< SiteSettings > > {
+	const { updated } = await wpcom.req.post(
 		{
-			label: string;
-			description: string;
-			enabled: boolean;
-		}
-	>;
+			path: `/sites/${ siteId }/settings`,
+			apiVersion: '1.4',
+		},
+		data
+	);
+	return updated;
 }
