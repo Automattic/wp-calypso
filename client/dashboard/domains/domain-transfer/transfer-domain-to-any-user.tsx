@@ -9,6 +9,7 @@ import {
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm, isItemValid } from '@wordpress/dataviews';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
@@ -36,7 +37,7 @@ export type TransferFormData = {
 const fields: Field< TransferFormData >[] = [
 	{
 		id: 'email',
-		label: __( 'Email' ),
+		label: __( 'Enter domain recipient’s email for transfer' ),
 		type: 'email' as const,
 		isValid: {
 			required: true,
@@ -113,12 +114,12 @@ export default function TransferDomainToAnyUser() {
 			<VStack spacing={ 8 }>
 				<VStack spacing={ 2 }>
 					<Text as="p">
-						{ sprintf(
-							/* Translators: %s: domainName is the domain name */
+						{ createInterpolateElement(
+							/* Translators: %s: domain is the domain name */
 							__(
-								'You can transfer %(domainName)s to any WordPress.com user. If the user does not have a WordPress.com account, they will be prompted to create one.'
+								'You can transfer <domain/> to any WordPress.com user. If the user does not have a WordPress.com account, they will be prompted to create one.'
 							),
-							{ domainName }
+							{ domain: <strong>{ domainName }</strong> }
 						) }
 					</Text>
 					<Text as="p">
@@ -172,13 +173,16 @@ export default function TransferDomainToAnyUser() {
 
 		return (
 			<VStack spacing={ 8 }>
+				<Text as="p">
+					{ createInterpolateElement(
+						/* Translators: <domain/> is the domain name wrapped in a <strong> tag */
+						__(
+							'There’s a pending transfer request for <domain/>. If you wish to cancel the transfer, click the button below.'
+						),
+						{ domain: <strong>{ domainName }</strong> }
+					) }
+				</Text>
 				<VStack spacing={ 4 }>
-					<VStack>
-						<Text size={ 14 } weight={ 500 }>
-							{ __( 'Status' ) }
-						</Text>
-						<Text>Pending</Text>
-					</VStack>
 					<VStack>
 						<Text size={ 14 } weight={ 500 }>
 							{ __( 'Transfer recipient' ) }
