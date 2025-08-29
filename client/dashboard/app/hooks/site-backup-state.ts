@@ -25,7 +25,6 @@ export interface BackupState {
  *
  * - When a backup starts (or is already in progress), we track it by its `period`
  * - We follow that specific backup until it succeeds or fails
- * - Components are responsible for their own polling needs
  */
 export function useBackupState( siteId: number ): BackupState {
 	const trackedBackupRef = useRef< BackupEntry[ 'period' ] | null >( null );
