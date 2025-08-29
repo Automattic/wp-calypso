@@ -1,4 +1,30 @@
 .mcp {
+	&__type-section {
+		margin-bottom: 32px;
+		padding: 24px;
+		background: var(--color-neutral-0);
+		border-radius: 8px;
+		border: 1px solid var(--color-neutral-10);
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	&__type-title {
+		margin: 0 0 8px 0;
+		font-size: 18px;
+		font-weight: 600;
+		color: var(--color-neutral-70);
+	}
+
+	&__type-description {
+		margin: 0 0 20px 0;
+		color: var(--color-neutral-50);
+		font-size: 14px;
+		line-height: 1.5;
+	}
+
 	&__category {
 		margin-bottom: 24px;
 
@@ -7,21 +33,13 @@
 		}
 	}
 
-	&__category-header {
-		margin: 0 0 16px 0;
-		font-size: 24px;
-		font-weight: 700;
-		color: #1d2327;
-		padding-bottom: 8px;
-	}
-
 	&__category-title {
 		margin: 0 0 16px 0;
 		font-size: 16px;
 		font-weight: 600;
-		color: #1d2327;
+		color: var(--color-neutral-70);
 		padding-bottom: 8px;
-		border-bottom: 1px solid #dcdcde;
+		border-bottom: 1px solid var(--color-neutral-10);
 		text-transform: capitalize;
 	}
 
@@ -30,7 +48,7 @@
 		flex-direction: column;
 		gap: 8px;
 		padding: 16px 0;
-		border-bottom: 1px solid #dcdcde;
+		border-bottom: 1px solid var(--color-neutral-10);
 
 		&:last-child {
 			border-bottom: none;
@@ -39,7 +57,7 @@
 
 	&__ability-description {
 		margin: 0;
-		color: #646970;
+		color: var(--color-neutral-50);
 		font-size: 14px;
 		line-height: 1.4;
 		padding-left: 40px;
@@ -57,7 +75,7 @@
 
 	&__master-toggle-description {
 		margin: 0;
-		color: #646970;
+		color: var(--color-neutral-50);
 		font-size: 14px;
 		line-height: 1.4;
 		padding-left: 40px;

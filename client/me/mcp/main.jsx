@@ -112,15 +112,34 @@ function McpComponent( { path, userSettings, isUpdating } ) {
 			},
 		] );
 
-		// Group abilities by category
-		const groupedAbilities = abilities.reduce( ( groups, [ abilityId, ability ] ) => {
+		// Group abilities by type first, then by category
+		const groupedByType = abilities.reduce( ( typeGroups, [ abilityId, ability ] ) => {
+			const type = ability.type || 'other';
 			const category = ability.category || 'Other';
-			if ( ! groups[ category ] ) {
-				groups[ category ] = [];
+
+			if ( ! typeGroups[ type ] ) {
+				typeGroups[ type ] = {};
 			}
-			groups[ category ].push( [ abilityId, ability ] );
-			return groups;
+			if ( ! typeGroups[ type ][ category ] ) {
+				typeGroups[ type ][ category ] = [];
+			}
+			typeGroups[ type ][ category ].push( [ abilityId, ability ] );
+			return typeGroups;
 		}, {} );
+
+		// Type descriptions
+		const typeDescriptions = {
+			tool: translate(
+				'Tools allow AI assistants to perform actions on your behalf, such as creating posts or managing site settings.'
+			),
+			resource: translate(
+				'Resources provide AI assistants with read-only access to your data, such as site statistics or user information.'
+			),
+			prompt: translate(
+				'Prompts help AI assistants understand context and provide better responses to your queries.'
+			),
+			other: translate( "Other abilities that don't fit into the main categories." ),
+		};
 
 		// Format ability name for display
 		const formatAbilityName = ( abilityId ) => {
@@ -153,30 +172,41 @@ function McpComponent( { path, userSettings, isUpdating } ) {
 										/>
 									</div>
 									<hr />
-									<VStack spacing={ 6 }>
-										<h1 className="mcp__category-header">{ translate( 'MCP Abilities' ) }</h1>
-										{ Object.entries( groupedAbilities ).map(
-											( [ category, categoryAbilities ] ) => (
-												<div key={ category } className="mcp__category">
-													<h3 className="mcp__category-title">{ category }</h3>
-													<VStack spacing={ 4 }>
-														{ categoryAbilities.map( ( [ abilityId, ability ] ) => (
-															<div key={ abilityId } className="mcp__ability-item">
-																<ToggleControl
-																	checked={ ability.enabled }
-																	onChange={ ( checked ) =>
-																		handleAbilityChange( abilityId, checked )
-																	}
-																	label={ formatAbilityName( abilityId ) }
-																	disabled={ ! anyAbilitiesEnabled }
-																/>
-																<p className="mcp__ability-description">{ ability.description }</p>
+									<VStack spacing={ 8 }>
+										{ Object.entries( groupedByType ).map( ( [ type, typeCategories ] ) => (
+											<div key={ type } className="mcp__type-section">
+												<h2 className="mcp__type-title">
+													{ type.charAt( 0 ).toUpperCase() + type.slice( 1 ) }s
+												</h2>
+												<p className="mcp__type-description">{ typeDescriptions[ type ] }</p>
+												<VStack spacing={ 6 }>
+													{ Object.entries( typeCategories ).map(
+														( [ category, categoryAbilities ] ) => (
+															<div key={ category } className="mcp__category">
+																<h3 className="mcp__category-title">{ category }</h3>
+																<VStack spacing={ 4 }>
+																	{ categoryAbilities.map( ( [ abilityId, ability ] ) => (
+																		<div key={ abilityId } className="mcp__ability-item">
+																			<ToggleControl
+																				checked={ ability.enabled }
+																				onChange={ ( checked ) =>
+																					handleAbilityChange( abilityId, checked )
+																				}
+																				label={ formatAbilityName( abilityId ) }
+																				disabled={ ! anyAbilitiesEnabled }
+																			/>
+																			<p className="mcp__ability-description">
+																				{ ability.description }
+																			</p>
+																		</div>
+																	) ) }
+																</VStack>
 															</div>
-														) ) }
-													</VStack>
-												</div>
-											)
-										) }
+														)
+													) }
+												</VStack>
+											</div>
+										) ) }
 									</VStack>
 								</>
 							) : (
