@@ -45,6 +45,21 @@ function getFields( {
 			label: __( 'State' ),
 			Edit: 'text',
 		},
+		{
+			id: 'city',
+			label: __( 'City' ),
+			Edit: 'text',
+		},
+		{
+			id: 'organization',
+			label: __( 'Organization' ),
+			Edit: 'text',
+		},
+		{
+			id: 'address',
+			label: __( 'Address' ),
+			Edit: 'text',
+		},
 	];
 }
 
@@ -66,7 +81,16 @@ function calculateTaxLocationFields( {
 	if ( selectedCountryItem?.tax_needs_subdivision ) {
 		fields.push( 'subdivision_code' );
 	}
-	// FIXME: add other fields
+	if ( selectedCountryItem?.tax_needs_city ) {
+		fields.push( 'city' );
+	}
+	if ( selectedCountryItem?.tax_needs_organization ) {
+		fields.push( 'organization' );
+	}
+	if ( selectedCountryItem?.tax_needs_address ) {
+		fields.push( 'address' );
+	}
+	// FIXME: add is_for_business if elligible (two US states)
 	return fields;
 }
 
