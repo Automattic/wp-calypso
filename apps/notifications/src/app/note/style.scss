@@ -188,7 +188,8 @@
 /**
  * Likes
  */
-.wpnc__note.wpnc__like {
+.wpnc__note.wpnc__like,
+.wpnc__note.wpnc__comment_like {
 	.wpnc__user {
 		padding-bottom: 16px;
 		border-bottom: 1px solid $gray-300;
