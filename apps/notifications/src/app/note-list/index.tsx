@@ -14,6 +14,7 @@ import { useAppContext } from '../context';
 import { getFields } from './dataviews';
 import type { Note } from '../types';
 import type { View } from '@wordpress/dataviews';
+import './style.scss';
 
 const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFilters > } ) => {
 	const { goTo } = useNavigator();

@@ -126,9 +126,7 @@ export const NoteBody = ( { note }: { note: Note } ) => {
 	return (
 		<VStack className="wpnc__body">
 			{ preface }
-			<div className="wpnc__body-content" style={ { padding: 0, margin: 0 } }>
-				{ body }
-			</div>
+			<div className="wpnc__body-content">{ body }</div>
 			<ReplyBlock note={ note } />
 		</VStack>
 	);
