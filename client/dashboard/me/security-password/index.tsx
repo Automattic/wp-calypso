@@ -20,6 +20,8 @@ import PageLayout from '../../components/page-layout';
 import SecurityPageHeader from '../security-page-header';
 import type { Field } from '@wordpress/dataviews';
 
+import './style.scss';
+
 type SecurityPasswordFormData = {
 	password: string;
 };
@@ -114,7 +116,7 @@ export default function SecurityPassword() {
 				/>
 			}
 		>
-			<Card>
+			<Card className="security-password-card">
 				<CardBody>
 					<form onSubmit={ handleSubmit }>
 						<VStack spacing={ 4 }>

@@ -41,8 +41,3 @@ body {
 a {
 	color: var( --wp-admin-theme-color );
 }
-
-// Hide the password reveal button in Edge.
-::-ms-reveal {
-	display: none;
-}
