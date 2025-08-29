@@ -34,6 +34,19 @@ function McpComponent( { path, userSettings, isUpdating } ) {
 	const anyAbilitiesEnabled =
 		hasAbilities && Object.values( formData.mcp_abilities ).some( ( ability ) => ability.enabled );
 
+	// Check if form data has changed from original user settings
+	const hasUnsavedChanges = ( () => {
+		if ( ! userSettings?.mcp_abilities || ! formData.mcp_abilities ) {
+			return false;
+		}
+
+		return Object.keys( userSettings.mcp_abilities ).some( ( abilityId ) => {
+			const originalEnabled = userSettings.mcp_abilities[ abilityId ]?.enabled;
+			const currentEnabled = formData.mcp_abilities[ abilityId ]?.enabled;
+			return originalEnabled !== currentEnabled;
+		} );
+	} )();
+
 	// Update form data when userSettings changes
 	useEffect( () => {
 		if ( userSettings?.mcp_abilities ) {
@@ -174,7 +187,10 @@ function McpComponent( { path, userSettings, isUpdating } ) {
 						</FormFieldset>
 
 						{ hasAbilities && (
-							<FormButton isSubmitting={ isUpdating } disabled={ isUpdating }>
+							<FormButton
+								isSubmitting={ isUpdating }
+								disabled={ isUpdating || ! hasUnsavedChanges }
+							>
 								{ isUpdating ? translate( 'Saving…' ) : translate( 'Save MCP abilities' ) }
 							</FormButton>
 						) }
