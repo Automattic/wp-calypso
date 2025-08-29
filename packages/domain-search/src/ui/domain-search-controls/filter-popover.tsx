@@ -94,7 +94,7 @@ export const DomainSearchControlsFilterPopover = ( {
 	const renderAvailableTldsList = () => {
 		return (
 			<Card className="domain-search-controls__filters-popover-available-tlds-container">
-				<Scrollable scrollDirection="y" style={ { maxHeight: '18.5em' } }>
+				<Scrollable scrollDirection="y" style={ { maxHeight: '18.5rem' } }>
 					{ generateAvailableTldsList().map( ( tld ) => {
 						return tld.isLabel ? (
 							<FilterPopoverLabel key={ tld.text } text={ tld.text } />
