@@ -25,8 +25,9 @@ const NoteSummaryIcon = ( { note }: { note: Note } ) => {
 	const content = (
 		<div
 			style={ {
-				width: '40px',
-				height: '40px',
+				display: 'flex',
+				alignItems: 'center',
+				justifyContent: 'center',
 				border: '1px solid rgba(0, 0, 0, 0.1)',
 				borderRadius: '50%',
 				overflow: 'hidden',
