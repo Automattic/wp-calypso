@@ -10,6 +10,10 @@
 	}
 }
 
+.domain-search-controls__filters-popover-available-tlds-container {
+	border-radius: 2px;
+}
+
 .domain-search-controls__filters-popover-available-tld {
 	cursor: pointer;
 	font-size: $font-body-small;
