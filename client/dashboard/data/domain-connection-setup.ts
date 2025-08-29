@@ -23,9 +23,12 @@ export interface DomainMappingStatus {
 
 export function fetchDomainSetupInfo(
 	domainName: string,
-	siteId: number
+	siteId: number,
+	redirectURL: string
 ): Promise< DomainSetupInfo > {
-	return wpcom.req.get( `/domains/${ domainName }/mapping-setup-info/${ siteId }` );
+	return wpcom.req.get( `/domains/${ domainName }/mapping-setup-info/${ siteId }`, {
+		redirect_uri: redirectURL,
+	} );
 }
 
 export function updateConnectionModeAndGetMappingStatus(

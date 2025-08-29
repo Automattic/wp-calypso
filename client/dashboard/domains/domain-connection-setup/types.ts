@@ -81,12 +81,3 @@ export interface DNSRecord {
 	name: string;
 	value: string;
 }
-
-export interface ConnectDomainStepProps {
-	domain: string;
-	initialStep?: StepSlug;
-	showErrors?: boolean;
-	isFirstVisit?: boolean;
-	queryError?: string;
-	queryErrorDescription?: string;
-}

@@ -5,10 +5,10 @@ import {
 import { queryClient } from '@automattic/api-queries';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 
-export const domainSetupInfoQuery = ( domainName: string, siteId: number ) =>
+export const domainSetupInfoQuery = ( domainName: string, siteId: number, redirectURL?: string ) =>
 	queryOptions( {
 		queryKey: [ 'domain-setup-info', domainName, siteId ],
-		queryFn: () => fetchDomainSetupInfo( domainName, siteId ),
+		queryFn: () => fetchDomainSetupInfo( domainName, siteId, redirectURL || '' ),
 		enabled: !! siteId && !! domainName,
 	} );
 

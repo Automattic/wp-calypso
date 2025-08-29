@@ -1,5 +1,5 @@
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { useParams, useSearch } from '@tanstack/react-router';
+import { useParams, useSearch, useRouter } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -13,6 +13,7 @@ import {
 	updateConnectionModeMutation,
 } from '../../app/queries/domain-connection-setup';
 import { siteBySlugQuery } from '../../app/queries/site';
+import { siteDomainConnectRoute } from '../../app/router/sites';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import SwitchSetupInfoLink from './components/switch-setup-info-link';
@@ -24,27 +25,22 @@ import {
 } from './step-definitions';
 import { isMappingVerificationSuccess } from './utils';
 import type { StepSlug } from './constants';
-import type {
-	ConnectDomainStepProps,
-	VerificationStatus,
-	DomainSetupInfo,
-	StepsDefinition,
-} from './types';
+import type { VerificationStatus, DomainSetupInfo, StepsDefinition } from './types';
 import type { DomainMappingSetupInfo } from '../../data/domain-connection-setup';
 
-interface ConnectDomainProps extends ConnectDomainStepProps {}
-
-export default function ConnectDomain( {
-	domain,
-	initialStep,
-	showErrors = false,
-	// isFirstVisit = true, // TODO: used to show different breadcrumbs but we don't have breadcrumbs in the HD for now
-	queryError,
-	queryErrorDescription,
-}: ConnectDomainProps ) {
+export default function ConnectDomain() {
 	const params = useParams( { from: '/sites/$siteSlug/domain-connection-setup' } );
 	const search = useSearch( { from: '/sites/$siteSlug/domain-connection-setup' } );
-	const domainName = domain || search.domainName;
+
+	const domainName = search.domainName;
+	const initialStep = search.step;
+	const showErrors = search[ 'show-errors' ] === 'true' || search[ 'show-errors' ] === '1';
+
+	const queryError = search?.error;
+	const queryErrorDescription = search?.error_description;
+
+	// TODO: used to show different breadcrumbs but we don't have breadcrumbs in the HD for now
+	// const isFirstVisit = search?.firstVisit === 'true' || search?.firstVisit === '1';
 	const { data: site } = useQuery( siteBySlugQuery( params.siteSlug ) );
 
 	const stepsDefinition: StepsDefinition = isSubdomain( domainName )
@@ -79,8 +75,23 @@ export default function ConnectDomain( {
 	const prevPageSlug = currentStep.prev;
 	// const isTwoColumnLayout = ! currentStep.singleColumnLayout; // TODO: we do show transfer recommendation in the sidebar in some cases
 
+	const router = useRouter();
+	// TODO: We need to figure out how to build this URL so that it's not hardcoded to v2
+	const redirectURL =
+		'https://wordpress.com/v2' +
+		router.buildLocation( {
+			to: siteDomainConnectRoute.fullPath,
+			params: {
+				siteSlug: site?.slug,
+			},
+			search: {
+				domainName: domainName,
+				step: stepSlug.DC_RETURN,
+			},
+		} ).href;
+
 	const { data: setupInfo, isLoading: loadingDomainSetupInfo } = useQuery(
-		domainSetupInfoQuery( domainName, site?.ID || 0 )
+		domainSetupInfoQuery( domainName, site?.ID || 0, redirectURL )
 	) as { data: DomainMappingSetupInfo | undefined; isLoading: boolean };
 
 	const getConnectedSlug = ( domain: string, mode: string ) => {
