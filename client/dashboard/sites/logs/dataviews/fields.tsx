@@ -1,6 +1,6 @@
 import { formatNumber } from '@automattic/number-formatters';
 import { Badge } from '@automattic/ui';
-import { useMediaQuery } from '@wordpress/compose';
+import { useViewportMatch } from '@wordpress/compose';
 import { dateI18n } from '@wordpress/date';
 import { useMemo } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
@@ -54,14 +54,12 @@ export function useFields( {
 
 	let dateTimeLabel = __( 'Date & time' );
 
-	const isLargeScreen = useMediaQuery( '(min-width: 1400px)' );
+	const isLargeScreen = useViewportMatch( 'huge', '>=' );
 
 	/* translators: %s is the site's timezone (e.g., "Europe/London") or UTC offset (e.g., "UTC+02:00") */
 	const dateTimeWithTz = __( 'Date & time (%s)' );
-	if ( timezoneString ) {
-		if ( isLargeScreen ) {
-			dateTimeLabel = sprintf( dateTimeWithTz, timezoneString );
-		}
+	if ( timezoneString && isLargeScreen ) {
+		dateTimeLabel = sprintf( dateTimeWithTz, timezoneString );
 	} else if ( typeof gmtOffset === 'number' ) {
 		dateTimeLabel = sprintf( dateTimeWithTz, getUtcOffsetDisplay( gmtOffset ) );
 	}

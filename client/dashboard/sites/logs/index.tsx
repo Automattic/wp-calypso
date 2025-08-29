@@ -395,7 +395,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 							onChange={ handleDateRangeChange }
 						/>
 						<Card className="site-logs-card">
-							<CardHeader>
+							<CardHeader style={ { paddingBottom: '0' } }>
 								<TabPanel
 									className="site-logs-tabs"
 									activeClass="is-active"

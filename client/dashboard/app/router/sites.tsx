@@ -2,7 +2,6 @@ import { createRoute, redirect, createLazyRoute, lazyRouteComponent } from '@tan
 import { HostingFeatures, DotcomFeatures } from '../../data/constants';
 import { LogType } from '../../data/site-logs';
 import { canViewHundredYearPlanSettings, canViewWordPressSettings } from '../../sites/features';
-import { getDefaultDateRange } from '../../sites/logs/utils';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import { hasSiteTrialEnded } from '../../utils/site-trial';
 import { isSupportSession } from '../auth/support-session';
@@ -21,7 +20,6 @@ import { siteDifmWebsiteContentQuery } from '../queries/site-do-it-for-me';
 import { siteDomainsQuery } from '../queries/site-domains';
 import { siteJetpackModulesQuery } from '../queries/site-jetpack-module';
 import { siteJetpackSettingsQuery } from '../queries/site-jetpack-settings';
-import { siteLogsQuery } from '../queries/site-logs';
 import { siteMediaStorageQuery } from '../queries/site-media-storage';
 import { sitePHPVersionQuery } from '../queries/site-php-version';
 import { siteCurrentPlanQuery } from '../queries/site-plans';
@@ -188,7 +186,10 @@ export const siteLogsIndexRoute = createRoute( {
 export const siteLogsPhpRoute = createRoute( {
 	getParentRoute: () => siteLogsRoute,
 	path: 'php',
-	loader: ( { params: { siteSlug } } ) => preloadLogsData( siteSlug, LogType.PHP ),
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
+	},
 } ).lazy( () =>
 	import( '../../sites/logs' ).then( ( d ) =>
 		createLazyRoute( 'site-logs-php' )( {
@@ -200,7 +201,10 @@ export const siteLogsPhpRoute = createRoute( {
 export const siteLogsServerRoute = createRoute( {
 	getParentRoute: () => siteLogsRoute,
 	path: 'server',
-	loader: ( { params: { siteSlug } } ) => preloadLogsData( siteSlug, LogType.SERVER ),
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
+	},
 } ).lazy( () =>
 	import( '../../sites/logs' ).then( ( d ) =>
 		createLazyRoute( 'site-logs-server' )( {
@@ -703,30 +707,4 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 // Defined as a `function` so that routes defined earlier can reference routes defined later.
 function getDifmLiteAllowedRoutes() {
 	return [ siteDifmLiteInProgressRoute.id, siteDomainsRoute.id, siteEmailsRoute.id ];
-}
-
-// Preload logs data for a specific site and log type
-async function preloadLogsData( siteSlug: string, logType: LogType ) {
-	const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-
-	const siteSettings = await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
-
-	const initial = getDefaultDateRange( siteSettings?.timezone_string, siteSettings?.gmt_offset );
-
-	await Promise.all( [
-		queryClient.ensureQueryData(
-			siteLogsQuery(
-				site.ID,
-				{
-					logType,
-					start: Math.floor( initial.start.getTime() / 1000 ),
-					end: Math.floor( initial.end.getTime() / 1000 ),
-					filter: {},
-					sortOrder: 'desc',
-					pageSize: 50,
-				},
-				null
-			)
-		),
-	] );
 }
