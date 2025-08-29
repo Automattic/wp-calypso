@@ -16,13 +16,7 @@
 
 .domain-search-controls__filters-popover-available-tld {
 	cursor: pointer;
-	font-size: $font-body-small;
-	line-height: 1.5;
 	padding: 6px 16px;
-	text-align: left;
-	width: 100%;
-	border: none;
-	background: var( --background-color );
 
 	&:hover {
 		background: var( --wp-admin-theme-color );

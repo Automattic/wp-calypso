@@ -1,3 +1,5 @@
+import { __experimentalText as Text } from '@wordpress/components';
+
 type Props = {
 	tld: string;
 	addTldToFilter: ( tld: string ) => void;
@@ -5,14 +7,18 @@ type Props = {
 
 export const FilterPopoverTld = ( { tld, addTldToFilter }: Props ) => {
 	return (
-		<button
+		<Text
 			className="domain-search-controls__filters-popover-available-tld"
+			isBlock
 			key={ tld }
+			role="button"
+			size="small"
+			lineHeight="1.5"
 			onClick={ () => {
 				addTldToFilter( tld );
 			} }
 		>
 			{ tld }
-		</button>
+		</Text>
 	);
 };
