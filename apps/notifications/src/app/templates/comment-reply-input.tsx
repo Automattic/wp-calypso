@@ -6,7 +6,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import debugModule from 'debug';
-import { useRef, useState, useEffect, useContext, useCallback } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import repliesCache from '../../panel/comment-replies-cache';
 import { modifierKeyIsActive } from '../../panel/helpers/input';
@@ -16,7 +16,7 @@ import { wpcom } from '../../panel/rest-client/wpcom';
 import actions from '../../panel/state/actions';
 import getKeyboardShortcutsEnabled from '../../panel/state/selectors/get-keyboard-shortcuts-enabled';
 import Suggestions from '../../panel/suggestions';
-import { RestClientContext } from '../context';
+import { useAppContext } from '../context';
 import type { Note } from '../types';
 import type { FormEvent } from 'react';
 
@@ -51,7 +51,7 @@ function getRowCount( textareaElement: HTMLTextAreaElement | null ) {
 // 2. Route back to list after successful comment post (should we?)
 const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: string } ) => {
 	const dispatch = useDispatch();
-	const restClient = useContext( RestClientContext );
+	const { client } = useAppContext();
 	const keyboardShortcutsAreEnabled = useSelector( ( state ) =>
 		getKeyboardShortcutsEnabled( state )
 	);
@@ -116,7 +116,7 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 				if ( note.meta.ids.comment ) {
 					// pre-emptively approve the comment if it wasn't already
 					dispatch( actions.notes.approveNote( note.id, true ) );
-					restClient?.getNote( note.id );
+					client?.getNote( note.id );
 				}
 
 				// remove focus from textarea so we can resume using keyboard
@@ -131,7 +131,7 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 				repliesCache.removeItem( savedReplyKey );
 			} );
 		},
-		[ restClient, note, savedReplyKey, isSubmittingRef, dispatch ]
+		[ client, note, savedReplyKey, isSubmittingRef, dispatch ]
 	);
 
 	const handleChange = ( value: string ) => {

@@ -8,7 +8,7 @@ import { init as initStore } from '../panel/state';
 import { SET_IS_SHOWING } from '../panel/state/action-types';
 import { addListeners, removeListeners } from '../panel/state/create-listener-middleware';
 import getIsPanelOpen from '../panel/state/selectors/get-is-panel-open';
-import { RestClientContext } from './context';
+import { AppProvider } from './context';
 
 let client: any;
 
@@ -110,7 +110,7 @@ const NotificationApp = ( {
 
 	return (
 		<Provider store={ store }>
-			<RestClientContext.Provider value={ client }>
+			<AppProvider client={ client } locale={ locale }>
 				<Navigator initialPath="/" style={ { maxHeight: 'inherit', height: '100%' } }>
 					<Navigator.Screen
 						path="/"
@@ -129,7 +129,7 @@ const NotificationApp = ( {
 						</Suspense>
 					</Navigator.Screen>
 				</Navigator>
-			</RestClientContext.Provider>
+			</AppProvider>
 		</Provider>
 	);
 };
