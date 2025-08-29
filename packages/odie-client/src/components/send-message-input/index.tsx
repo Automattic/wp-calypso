@@ -3,43 +3,15 @@ import '@automattic/agenttic-ui/index.css';
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { EmailFallbackNotice } from '@automattic/help-center/src/components/notices';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
-import {
-	useAttachFileToConversation,
-	useAuthenticateZendeskMessaging,
-} from '@automattic/zendesk-client';
-import { DropZone } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useCallback, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { image } from '@wordpress/icons';
-import { getOdieWrongFileTypeMessage } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
 import { useSendChatMessage } from '../../hooks';
 import { Message } from '../../types';
-import { zendeskMessageConverter } from '../../utils';
 import { Notices } from '../notices';
 import useMessageSizeErrorNotice from '../notices/use-message-size-error-notice';
-
-const getFileType = ( file: File ) => {
-	if ( file.type.startsWith( 'image/' ) ) {
-		return 'image-placeholder';
-	}
-
-	return 'text';
-};
-
-const getPlaceholderAttachmentMessage = ( file: File ) => {
-	return zendeskMessageConverter( {
-		role: 'user',
-		type: getFileType( file ),
-		displayName: '',
-		text: '',
-		id: String( new Date().getTime() ),
-		received: new Date().getTime(),
-		source: { type: 'web', id: '', integrationId: '' },
-		mediaUrl: URL.createObjectURL( file ),
-	} );
-};
+import { useAttachmentHandler } from './use-attachment-handler';
 
 const getTextAreaPlaceholder = (
 	shouldDisableInputField: boolean,
@@ -56,14 +28,7 @@ const getTextAreaPlaceholder = (
 export const OdieSendMessageButton = () => {
 	const divContainerRef = useRef< HTMLDivElement >( null );
 	const textareaRef = useRef< HTMLTextAreaElement >( null );
-	const {
-		trackEvent,
-		chat,
-		addMessage,
-		isUserEligibleForPaidSupport,
-		canConnectToZendesk,
-		forceEmailSupport,
-	} = useOdieAssistantContext();
+	const { trackEvent, chat, canConnectToZendesk, forceEmailSupport } = useOdieAssistantContext();
 	const cantTransferToZendesk =
 		( chat.messages?.[ chat.messages.length - 1 ]?.context?.flags?.forward_to_human_support &&
 			! canConnectToZendesk ) ??
@@ -76,59 +41,24 @@ export const OdieSendMessageButton = () => {
 	const { isMessageLengthValid, setMessageLengthErrorNotice, clearMessageLengthErrorNotice } =
 		useMessageSizeErrorNotice();
 
-	const { data: authData } = useAuthenticateZendeskMessaging(
-		isUserEligibleForPaidSupport,
-		'messenger'
-	);
-	const { zendeskClientId, connectionStatus } = useSelect( ( select ) => {
+	const { connectionStatus } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
-		const connectionStatus = helpCenterSelect.getZendeskConnectionStatus();
 		return {
-			zendeskClientId: helpCenterSelect.getZendeskClientId(),
-			connectionStatus,
+			connectionStatus: helpCenterSelect.getZendeskConnectionStatus(),
 		};
 	}, [] );
-	const inferredClientId = chat.clientId ? chat.clientId : zendeskClientId;
 
-	const { isPending: isAttachingFile, mutateAsync: attachFileToConversation } =
-		useAttachFileToConversation();
+	const {
+		handleImagePaste,
+		attachmentAction,
+		isAttachingFile,
+		showAttachmentButton,
+		AttachmentDropZone,
+	} = useAttachmentHandler();
 
 	const textAreaPlaceholder = getTextAreaPlaceholder( isChatBusy, cantTransferToZendesk );
 
-	const handleFileUpload = useCallback(
-		async ( file: File ) => {
-			if ( file.type.startsWith( 'image/' ) ) {
-				if ( authData && chat.conversationId && inferredClientId && file ) {
-					attachFileToConversation( {
-						authData,
-						file,
-						conversationId: chat.conversationId,
-						clientId: inferredClientId,
-					} ).then( () => {
-						addMessage( getPlaceholderAttachmentMessage( file ) );
-						trackEvent( 'send_message_attachment', { type: file.type } );
-					} );
-				}
-			} else {
-				addMessage( getOdieWrongFileTypeMessage() );
-			}
-		},
-		[
-			authData,
-			chat.conversationId,
-			inferredClientId,
-			attachFileToConversation,
-			addMessage,
-			trackEvent,
-		]
-	);
-
-	const onFilesDrop = ( files: File[] ) => {
-		const file = files?.[ 0 ];
-		if ( file ) {
-			handleFileUpload( file );
-		}
-	};
+	const customActions = showAttachmentButton ? [ attachmentAction ] : undefined;
 
 	const sendMessageHandler = useCallback( async () => {
 		const message = inputValue.trim();
@@ -179,13 +109,12 @@ export const OdieSendMessageButton = () => {
 		inputValue,
 		isChatBusy,
 		chat?.provider,
-		trackEvent,
 		sendMessage,
 		isMessageLengthValid,
 		setMessageLengthErrorNotice,
+		trackEvent,
 	] );
 
-	const showAttachmentButton = chat.conversationId && inferredClientId;
 	const isEmailFallback = chat?.provider === 'zendesk' && forceEmailSupport;
 
 	const handleInputChange = useCallback(
@@ -205,59 +134,11 @@ export const OdieSendMessageButton = () => {
 				e.preventDefault();
 				sendMessageHandler();
 			}
-			// Handle paste events for images
-			if ( e.key === 'v' && ( e.ctrlKey || e.metaKey ) ) {
-				setTimeout( () => {
-					navigator.clipboard
-						.read()
-						.then( ( items ) => {
-							for ( const item of items ) {
-								for ( const type of item.types ) {
-									if ( type.startsWith( 'image/' ) ) {
-										item.getType( type ).then( ( blob ) => {
-											const file = new File( [ blob ], 'pasted-image.png', { type } );
-											handleFileUpload( file );
-										} );
-										break;
-									}
-								}
-							}
-						} )
-						.catch( () => {
-							// Clipboard API not supported
-						} );
-				}, 0 );
-			}
+			handleImagePaste( e );
 		},
-		[ sendMessageHandler, handleFileUpload ]
+		[ sendMessageHandler, handleImagePaste ]
 	);
 
-	const customActions = showAttachmentButton
-		? [
-				{
-					id: 'attachment',
-					icon: image,
-					onClick: () => {
-						const input = document.createElement( 'input' );
-						input.type = 'file';
-						input.accept = 'image/*';
-						input.onchange = ( e ) => {
-							const file = ( e.target as HTMLInputElement ).files?.[ 0 ];
-							if ( file ) {
-								handleFileUpload( file );
-							}
-						};
-						input.click();
-					},
-					variant: 'ghost' as const,
-					disabled:
-						isAttachingFile ||
-						isEmailFallback ||
-						( isLiveChat && connectionStatus !== 'connected' ),
-					'aria-label': __( 'Attach file', __i18n_text_domain__ ),
-				},
-		  ]
-		: undefined;
 	return (
 		<>
 			<div className="odie-chat-message-input-container agenttic" ref={ divContainerRef }>
@@ -284,12 +165,7 @@ export const OdieSendMessageButton = () => {
 					/>
 				) }
 			</div>
-			{ showAttachmentButton && (
-				<DropZone
-					onFilesDrop={ onFilesDrop }
-					label={ __( 'Share this image with our Happiness Engineers', __i18n_text_domain__ ) }
-				/>
-			) }
+			<AttachmentDropZone />
 		</>
 	);
 };
