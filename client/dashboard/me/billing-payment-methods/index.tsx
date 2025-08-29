@@ -4,7 +4,6 @@ import {
 	Icon,
 	ToggleControl,
 	Button,
-	__experimentalConfirmDialog as ConfirmDialog,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
@@ -23,8 +22,11 @@ import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
 import { adjustDataViewFieldsForWidth } from '../../utils/dataviews-width';
 import { formatCreditCardExpiry } from '../../utils/datetime';
+import { isCreditCard } from '../../utils/payment-method';
 import { PaymentMethodImage } from '../billing-purchases/payment-method-image';
-import type { StoredPaymentMethod, StoredPaymentMethodCard } from '../../data/me-payment-methods';
+import { PaymentMethodDeleteDialog } from './payment-method-delete-dialog';
+import { PaymentMethodDetails } from './payment-method-details';
+import type { StoredPaymentMethod } from '../../data/me-payment-methods';
 import type { View, Fields, SortDirection, Action } from '@wordpress/dataviews';
 
 const paymentMethodWideFields = [ 'expiry', 'billing-address', 'backup', 'tax-info' ];
@@ -53,16 +55,6 @@ const paymentMethodsDataView: View = {
 
 function getItemId( item: StoredPaymentMethod ): string {
 	return item.stored_details_id;
-}
-
-function isCreditCard( item: StoredPaymentMethod ): item is StoredPaymentMethodCard {
-	if ( ! ( 'card_type' in item ) ) {
-		return false;
-	}
-	if ( ! item.card_type ) {
-		return false;
-	}
-	return true;
 }
 
 export default function PaymentMethods() {
@@ -185,34 +177,16 @@ export default function PaymentMethods() {
 						actions={ actions }
 					/>
 				</DataViewsCard>
-				<ConfirmDialog
-					isOpen={ Boolean( removeDialogPaymentMethod ) }
-					confirmButtonText={ __( 'Remove payment method' ) }
-					size="large"
-					onConfirm={ () => {
-						// FIXME: remove payment method
-					} }
-					onCancel={ () => setRemoveDialogPaymentMethod( undefined ) }
-				>
-					<VStack>
-						<Text>
-							{
-								// FIXME: also list affected purchases like PaymentMethodDeleteDialog
-								__(
-									'The following payment method will be removed from your account and from all the associated subscriptions.'
-								)
-							}
-						</Text>
-						{ removeDialogPaymentMethod && (
-							<Text>
-								<VStack>
-									<PaymentMethodTitle paymentMethod={ removeDialogPaymentMethod } />
-									<PaymentMethodDetails paymentMethod={ removeDialogPaymentMethod } />
-								</VStack>
-							</Text>
-						) }
-					</VStack>
-				</ConfirmDialog>
+				{ removeDialogPaymentMethod && (
+					<PaymentMethodDeleteDialog
+						isVisible={ Boolean( removeDialogPaymentMethod ) }
+						paymentMethod={ removeDialogPaymentMethod }
+						onConfirm={ () => {
+							// FIXME: remove payment method
+						} }
+						onCancel={ () => setRemoveDialogPaymentMethod( undefined ) }
+					/>
+				) }
 			</div>
 		</PageLayout>
 	);
@@ -389,36 +363,6 @@ function PaymentMethodTitle( { paymentMethod }: { paymentMethod: StoredPaymentMe
 	return <Text>{ paymentMethod.name }</Text>;
 }
 
-function PaymentMethodDetails( { paymentMethod }: { paymentMethod: StoredPaymentMethod } ) {
-	if ( 'card_type' in paymentMethod && paymentMethod.card_type ) {
-		return (
-			<HStack justify="flex-start">
-				<CardName cardType={ paymentMethod.card_type } />
-				<Text>****{ paymentMethod.card_last_4 }</Text>
-			</HStack>
-		);
-	}
-
-	if ( paymentMethod.payment_partner.startsWith( 'paypal' ) ) {
-		return (
-			<HStack>
-				<Text>{ paymentMethod.email }</Text>
-			</HStack>
-		);
-	}
-
-	if ( paymentMethod.payment_partner === 'razorpay' && 'razorpay_vpa' in paymentMethod ) {
-		return (
-			<HStack>
-				<Text>{ __( 'Unified Payments Interface (UPI)' ) }</Text>
-				<Text>{ paymentMethod.razorpay_vpa }</Text>
-			</HStack>
-		);
-	}
-
-	return null;
-}
-
 function PaymentMethodExpiry( { paymentMethod }: { paymentMethod: StoredPaymentMethod } ) {
 	if ( 'card_type' in paymentMethod && paymentMethod.card_type ) {
 		return (
@@ -441,31 +385,6 @@ function PaymentMethodExpiry( { paymentMethod }: { paymentMethod: StoredPaymentM
 	}
 
 	return null;
-}
-
-function CardName( { cardType }: { cardType: string } ) {
-	switch ( cardType ) {
-		case 'american express':
-		case 'amex':
-			return __( 'American Express' );
-		case 'cartes_bancaires':
-			return __( 'Cartes Bancaires' );
-		case 'diners':
-			return __( 'Diners Club' );
-		case 'discover':
-			// translators: This is the name of the credit card provider: Discover
-			return __( 'Discover' );
-		case 'jcb':
-			return __( 'JCB' );
-		case 'mastercard':
-			return __( 'Mastercard' );
-		case 'unionpay':
-			return __( 'UnionPay' );
-		case 'visa':
-			return __( 'VISA' );
-		default:
-			return cardType;
-	}
 }
 
 function joinNonEmptyValues( joinString: string, ...values: ( string | undefined )[] ) {
