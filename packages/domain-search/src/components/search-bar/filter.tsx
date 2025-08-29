@@ -3,10 +3,9 @@ import { useCallback, useMemo, useState } from 'react';
 import { useDomainSearch } from '../../page/context';
 import { FilterState } from '../../page/types';
 import { DomainSearchControls } from '../../ui';
-import type { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
 
 const emptyFilter: FilterState = {
-	exactMatchesOnly: false,
+	exactSldMatchesOnly: false,
 	tlds: [],
 };
 
@@ -30,44 +29,8 @@ export const Filter = ( { onSubmit }: Props ) => {
 	}, [ setFilter ] );
 
 	const getFiltercounts = useCallback( () => {
-		return filter.tlds.length + ( filter.exactMatchesOnly ? 1 : 0 );
+		return filter.tlds.length + ( filter.exactSldMatchesOnly ? 1 : 0 );
 	}, [ filter ] );
-
-	const setTldsInFilter = useCallback(
-		( tlds: string[] ) => {
-			setTemporaryFilter( {
-				...temporaryFilter,
-				tlds,
-			} );
-		},
-		[ setTemporaryFilter, temporaryFilter ]
-	);
-
-	const addTldToFilter = ( tld: string ) => {
-		if ( tld.startsWith( '.' ) ) {
-			tld = tld.slice( 1 );
-		}
-
-		setTemporaryFilter( {
-			...temporaryFilter,
-			tlds: [ ...temporaryFilter.tlds, tld ],
-		} );
-	};
-
-	const setExactMatchesOnlyInFilter = useCallback(
-		( exactMatchesOnly: boolean ) => {
-			setTemporaryFilter( {
-				...temporaryFilter,
-				exactMatchesOnly,
-			} );
-		},
-		[ setTemporaryFilter, temporaryFilter ]
-	);
-
-	const handleTldsChange = ( tokens: ( string | TokenItem )[] ) => {
-		const tlds = tokens.map( ( token ) => ( typeof token === 'string' ? token : token.value ) );
-		setTldsInFilter( tlds );
-	};
 
 	return (
 		<Dropdown
@@ -81,15 +44,13 @@ export const Filter = ( { onSubmit }: Props ) => {
 			renderContent={ ( { onClose } ) => {
 				return (
 					<DomainSearchControls.FilterPopover
-						addTldToFilter={ addTldToFilter }
 						availableTlds={ availableTlds }
-						handleTldsChange={ handleTldsChange }
 						onClear={ () => {
 							onClose();
 							resetFilter();
 						} }
 						onClose={ onClose }
-						setExactMatchesOnlyInFilter={ setExactMatchesOnlyInFilter }
+						setTemporaryFilter={ setTemporaryFilter }
 						temporaryFilter={ temporaryFilter }
 					/>
 				);
