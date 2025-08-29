@@ -19,12 +19,20 @@ export default function Switcher< T >( {
 } > ) {
 	return (
 		<Dropdown
-			renderToggle={ ( { onToggle } ) => (
+			renderToggle={ ( { onToggle, isOpen } ) => (
 				<Button
 					className="dashboard-menu__item active"
 					icon={ chevronDownSmall }
 					iconPosition="right"
 					onClick={ () => onToggle() }
+					onKeyDown={ ( event: React.KeyboardEvent ) => {
+						if ( ! isOpen && event.code === 'ArrowDown' ) {
+							event.preventDefault();
+							onToggle();
+						}
+					} }
+					aria-haspopup="true"
+					aria-expanded={ isOpen }
 				>
 					<div style={ { display: 'flex', gap: '8px', alignItems: 'center' } }>
 						{ renderItemIcon( { item: value, context: 'dropdown', size: 16 } ) }
