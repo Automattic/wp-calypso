@@ -752,7 +752,7 @@ class RegisterDomainStep extends Component {
 		return (
 			<Dropdown
 				showArrow={ false }
-				popoverProps={ { placement: 'bottom-end', offset: 10, noArrow: false } }
+				popoverProps={ { placement: 'bottom-end', offset: 10, noArrow: false, inline: true } }
 				renderToggle={ ( { onToggle } ) => {
 					return <DomainSearchControls.FilterButton count={ filterCount } onClick={ onToggle } />;
 				} }
