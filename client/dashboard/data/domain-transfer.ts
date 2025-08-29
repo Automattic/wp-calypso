@@ -40,7 +40,7 @@ export async function saveIpsTag( domain: string, ipsTag: string ): Promise< voi
 	} );
 }
 
-export async function getIpsTagList(): Promise< IpsTag[] > {
+export async function fetchIpsTagList(): Promise< IpsTag[] > {
 	try {
 		const response = await fetch( 'https://widgets.wp.com/domains/ips-tag-list.min.json' );
 		if ( ! response.ok ) {

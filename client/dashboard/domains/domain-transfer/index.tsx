@@ -47,7 +47,10 @@ export default function DomainTransfer() {
 	const handleToggleChange = ( enabled: boolean ) => {
 		updateDomainLockMutation.mutate( enabled, {
 			onSuccess: () => {
-				createSuccessNotice( __( 'Transfer lock setting saved.' ), { type: 'snackbar' } );
+				createSuccessNotice(
+					enabled ? __( 'Transfer lock enabled.' ) : __( 'Transfer lock disabled.' ),
+					{ type: 'snackbar' }
+				);
 			},
 			onError: () => {
 				createErrorNotice( __( 'Failed to save transfer lock settings.' ), {
@@ -119,8 +122,8 @@ export default function DomainTransfer() {
 		if ( domain.can_transfer_to_other_site ) {
 			const description =
 				domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION
-					? __( 'Transfer this domain connection to any site you are an administrator on' )
-					: __( 'Transfer this domain to any site you are an administrator on' );
+					? __( 'Transfer this domain connection to any site you are an administrator on.' )
+					: __( 'Transfer this domain to any site you are an administrator on.' );
 			actions.push(
 				<ActionList.ActionItem
 					key="transfer-to-another-site"

@@ -86,6 +86,7 @@ export default function SelectIpsTag( { domain, isDomainLocked }: SelectIpsTagPr
 						<Button
 							variant="primary"
 							isBusy={ saveIpsTagMutation.isPending }
+							isDestructive
 							onClick={ onConfirm }
 							disabled={ saveIpsTagMutation.isPending }
 						>

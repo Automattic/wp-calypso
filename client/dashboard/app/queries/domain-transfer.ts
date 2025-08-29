@@ -1,6 +1,6 @@
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import {
-	getIpsTagList,
+	fetchIpsTagList,
 	requestTransferCode,
 	saveIpsTag,
 	updateDomainLock,
@@ -30,7 +30,7 @@ export const domainTransferCodeMutation = ( domain: string ) =>
 export const ipsTagListQuery = () =>
 	queryOptions( {
 		queryKey: [ 'ips-tag-list' ],
-		queryFn: () => getIpsTagList(),
+		queryFn: () => fetchIpsTagList(),
 	} );
 
 export const ipsTagMutation = ( domain: string ) =>
