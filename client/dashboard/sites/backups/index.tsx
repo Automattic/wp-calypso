@@ -14,6 +14,7 @@ import UpsellCTAButton from '../../components/upsell-cta-button';
 import { HostingFeatures } from '../../data/constants';
 import { hasHostingFeature } from '../../utils/site-features';
 import { BackupDetails } from './backup-details';
+import { BackupNotices } from './backup-notices';
 import { BackupNowButton } from './backup-now-button';
 import illustrationUrl from './backups-callout-illustration.svg';
 import { BackupsList } from './backups-list';
@@ -72,6 +73,7 @@ export function BackupsListPage() {
 					actions={ hasBackups && <BackupNowButton site={ site } /> }
 				/>
 			}
+			notices={ <BackupNotices site={ site } /> }
 		>
 			{ hasBackups && (
 				<Grid columns={ 2 }>
