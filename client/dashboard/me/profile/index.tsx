@@ -21,7 +21,6 @@ import { profileQuery, profileMutation } from '../../app/queries/me-profile';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { useSaveButtonState } from '../../utils/use-save-button-state';
 import EditGravatar from '../edit-gravatar';
 import type { UserProfile } from '../../data/types';
 import type { Field } from '@wordpress/dataviews';
@@ -126,6 +125,10 @@ export default function Profile() {
 	);
 	const mutation = useMutation( profileMutation() );
 
+	if ( ! data ) {
+		return;
+	}
+
 	const isSaving = mutation.isPending;
 	const isDirty =
 		!! localData &&
@@ -133,15 +136,12 @@ export default function Profile() {
 		Object.entries( localData ).some( ( [ key, value ] ) => {
 			return serverData[ key as keyof UserProfile ] !== value;
 		} );
+	let saveButtonLabel = __( 'Save' );
 
-	const saveButtonState = useSaveButtonState( {
-		isSaving,
-		isSuccess: mutation.isSuccess,
-		isDirty,
-	} );
-
-	if ( ! data ) {
-		return;
+	if ( isSaving ) {
+		saveButtonLabel = __( 'Saving…' );
+	} else if ( mutation.isSuccess && ! isDirty ) {
+		saveButtonLabel = __( 'Saved!' );
 	}
 
 	const handleSubmit = ( e: React.FormEvent ) => {
@@ -221,10 +221,10 @@ export default function Profile() {
 								<Button
 									variant="primary"
 									type="submit"
-									isBusy={ saveButtonState.isBusy }
-									disabled={ saveButtonState.disabled }
+									isBusy={ isSaving }
+									disabled={ isSaving || ! isDirty }
 								>
-									{ saveButtonState.label }
+									{ saveButtonLabel }
 								</Button>
 							</VStack>
 						</CardBody>

@@ -16,7 +16,6 @@ import { store as noticesStore } from '@wordpress/notices';
 import { userPreferenceQuery, userPreferenceMutation } from '../../app/queries/me-preferences';
 import { sitesQuery } from '../../app/queries/sites';
 import { getSiteDisplayName } from '../../utils/site-name';
-import { useSaveButtonState } from '../../utils/use-save-button-state';
 import type { LandingPage } from '../../data/me-preferences';
 import type { Site } from '../../data/types';
 
@@ -72,12 +71,7 @@ export default function PreferencesLogin() {
 				loginPrefs.defaultLandingPage !== formData.defaultLandingPage )
 	);
 
-	// Save button state
-	const saveButtonState = useSaveButtonState( {
-		isSaving: updatePreferences.isPending,
-		isSuccess: updatePreferences.isSuccess,
-		isDirty,
-	} );
+	const isBusy = updatePreferences.isPending;
 
 	// Prepare site options for DataForm
 	const siteOptions: SiteOption[] = sites.map( ( site: Site ) => ( {
@@ -184,10 +178,10 @@ export default function PreferencesLogin() {
 								__next40pxDefaultSize
 								variant="primary"
 								type="submit"
-								isBusy={ saveButtonState.isBusy }
-								disabled={ saveButtonState.disabled }
+								isBusy={ isBusy }
+								disabled={ isBusy || ! isDirty }
 							>
-								{ saveButtonState.label }
+								{ __( 'Save' ) }
 							</Button>
 						</HStack>
 					</VStack>
