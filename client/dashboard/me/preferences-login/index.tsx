@@ -5,27 +5,27 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 	Button,
-	RadioControl,
-	CustomSelectControl,
 	__experimentalText as Text,
+	CustomSelectControl,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
+import { DataForm, Field, Option } from '@wordpress/dataviews';
 import { useState, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { userPreferenceQuery, userPreferenceMutation } from '../../app/queries/me-preferences';
 import { sitesQuery } from '../../app/queries/sites';
 import { getSiteDisplayName } from '../../utils/site-name';
-import { getSiteDisplayUrl } from '../../utils/site-url';
 import { useSaveButtonState } from '../../utils/use-save-button-state';
 import type { LandingPage } from '../../data/me-preferences';
 import type { Site } from '../../data/types';
 
-interface SiteOption {
-	key: string;
-	name: string;
-	__experimentalHint: string;
+interface LoginPreferencesFormData {
+	primarySiteId?: string;
+	defaultLandingPage: LandingPage;
 }
+
+type SiteOption = Option< string >;
 
 export default function PreferencesLogin() {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
@@ -38,30 +38,29 @@ export default function PreferencesLogin() {
 		sitesQuery( { site_visibility: 'visible', include_a8c_owned: false } )
 	);
 
-	// Initialize local state from server data
-	const [ primarySiteId, setPrimarySiteId ] = useState< string | undefined >(
-		loginPrefs?.primarySiteId
-	);
-	const [ landingPage, setLandingPage ] = useState< LandingPage >(
-		loginPrefs?.defaultLandingPage || 'primary-site-dashboard'
-	);
+	// Initialize form data from server data
+	const [ formData, setFormData ] = useState< LoginPreferencesFormData >( () => ( {
+		primarySiteId: loginPrefs?.primarySiteId,
+		defaultLandingPage: loginPrefs?.defaultLandingPage || 'primary-site-dashboard',
+	} ) );
 
-	// Update local state when server data changes
+	// Update form data when server data changes
 	useEffect( () => {
-		if ( loginPrefs?.primarySiteId ) {
-			setPrimarySiteId( loginPrefs.primarySiteId );
-		}
-		if ( loginPrefs?.defaultLandingPage ) {
-			setLandingPage( loginPrefs.defaultLandingPage );
-		}
+		setFormData( {
+			primarySiteId: loginPrefs?.primarySiteId,
+			defaultLandingPage: loginPrefs?.defaultLandingPage || 'primary-site-dashboard',
+		} );
 	}, [ loginPrefs ] );
 
 	// Set default primary site if none selected and sites are available
 	useEffect( () => {
-		if ( ! primarySiteId && sites.length > 0 ) {
-			setPrimarySiteId( sites[ 0 ].ID.toString() );
+		if ( ! formData.primarySiteId && sites.length > 0 ) {
+			setFormData( ( prev ) => ( {
+				...prev,
+				primarySiteId: sites[ 0 ].ID.toString(),
+			} ) );
 		}
-	}, [ primarySiteId, sites ] );
+	}, [ formData.primarySiteId, sites ] );
 
 	// Update preferences mutation
 	const updatePreferences = useMutation( userPreferenceMutation( 'login-preferences' ) );
@@ -69,8 +68,8 @@ export default function PreferencesLogin() {
 	// Check if form has been modified
 	const isDirty = Boolean(
 		loginPrefs &&
-			( loginPrefs.primarySiteId !== primarySiteId ||
-				loginPrefs.defaultLandingPage !== landingPage )
+			( loginPrefs.primarySiteId !== formData.primarySiteId ||
+				loginPrefs.defaultLandingPage !== formData.defaultLandingPage )
 	);
 
 	// Save button state
@@ -80,85 +79,119 @@ export default function PreferencesLogin() {
 		isDirty,
 	} );
 
-	// Prepare site options for CustomSelectControl
+	// Prepare site options for DataForm
 	const siteOptions: SiteOption[] = sites.map( ( site: Site ) => ( {
-		key: site.ID.toString(),
-		name: getSiteDisplayName( site ),
-		__experimentalHint: getSiteDisplayUrl( site ),
+		value: site.ID.toString(),
+		label: getSiteDisplayName( site ),
 	} ) );
 
-	const handleSave = async () => {
+	// Define form fields
+	const fields: Field< LoginPreferencesFormData >[] = [
+		{
+			id: 'primarySiteId',
+			label: __( 'PRIMARY SITE' ),
+			description: __( 'Choose the default site dashboard you’ll see at login.' ),
+			isVisible: () => sites.length > 0,
+			elements: siteOptions,
+			Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
+				const { id, getValue, elements } = field;
+				const value = getValue( { item: data } );
+				const typedElements = elements as SiteOption[];
+				const customSelectOptions =
+					typedElements?.map( ( option ) => ( {
+						key: option.value,
+						name: option.label,
+						hint: option.label,
+					} ) ) || [];
+				return (
+					<VStack>
+						<CustomSelectControl
+							label={ hideLabelFromVision ? '' : field.label }
+							options={ customSelectOptions }
+							value={ customSelectOptions.find( ( option ) => option.key === value ) }
+							onChange={ ( { selectedItem } ) => {
+								if ( selectedItem?.key ) {
+									onChange( { [ id ]: selectedItem.key } );
+								}
+							} }
+						/>
+						<Text variant="muted" as="p">
+							{ field.description }
+						</Text>
+					</VStack>
+				);
+			},
+		},
+		{
+			id: 'defaultLandingPage',
+			label: __( 'DEFAULT LANDING PAGE' ),
+			Edit: 'radio',
+			elements: [
+				{ label: __( 'Primary site dashboard' ), value: 'primary-site-dashboard' },
+				{ label: __( 'Sites' ), value: 'sites' },
+				{ label: __( 'Reader' ), value: 'reader' },
+			],
+		},
+	];
+
+	// Define form layout
+	const form = {
+		layout: { type: 'regular' as const },
+		fields: [ 'primarySiteId', 'defaultLandingPage' ],
+	};
+
+	const handleSubmit = async ( e: React.FormEvent ) => {
+		e.preventDefault();
 		try {
 			await updatePreferences.mutateAsync( {
 				...loginPrefs,
-				primarySiteId,
-				defaultLandingPage: landingPage,
+				primarySiteId: formData.primarySiteId,
+				defaultLandingPage: formData.defaultLandingPage,
 			} );
 
-			createSuccessNotice( __( 'Login preferences saved successfully.' ) );
+			createSuccessNotice( __( 'Login preferences saved successfully.' ), { type: 'snackbar' } );
 		} catch ( error ) {
-			createErrorNotice( __( 'Failed to save login preferences. Please try again.' ) );
+			createErrorNotice( __( 'Failed to save login preferences. Please try again.' ), {
+				type: 'snackbar',
+			} );
 		}
 	};
 
 	return (
 		<Card className="preferences-login-card">
 			<CardBody>
-				<VStack spacing={ 5 }>
-					<Text as="h3" weight={ 500 }>
-						{ __( 'Login preferences' ) }
-					</Text>
-
-					{ sites.length > 0 && (
-						<VStack>
-							<CustomSelectControl
-								label={ __( 'PRIMARY SITE' ) }
-								options={ siteOptions }
-								value={ siteOptions.find( ( option ) => option.key === primarySiteId ) }
-								onChange={ ( { selectedItem } ) => {
-									if ( selectedItem?.key ) {
-										setPrimarySiteId( selectedItem.key );
-									}
-								} }
-							/>
-							<Text variant="muted" style={ { fontSize: '13px', marginTop: '4px' } }>
-								{ __( "Choose the default site dashboard you'll see at login." ) }
-							</Text>
-						</VStack>
-					) }
-
+				<form onSubmit={ handleSubmit }>
 					<VStack>
-						<RadioControl
-							label={ __( 'DEFAULT LANDING PAGE' ) }
-							selected={ landingPage }
-							options={
-								[
-									{ label: __( 'Primary site dashboard' ), value: 'primary-site-dashboard' },
-									{ label: __( 'Sites' ), value: 'sites' },
-									{ label: __( 'Reader' ), value: 'reader' },
-								] satisfies { label: string; value: LandingPage }[]
-							}
-							onChange={ ( value: string ) => {
-								setLandingPage( value as LandingPage );
+						<Text as="h3" weight={ 500 }>
+							{ __( 'Login preferences' ) }
+						</Text>
+
+						<DataForm< LoginPreferencesFormData >
+							data={ formData }
+							fields={ fields }
+							form={ form }
+							onChange={ ( edits: Partial< LoginPreferencesFormData > ) => {
+								setFormData( ( data ) => ( { ...data, ...edits } ) );
 							} }
 						/>
-						<Text variant="muted" style={ { fontSize: '13px', marginTop: '4px' } }>
-							{ __( "Select what you'll see by default when visiting WordPress.com." ) }
-						</Text>
-					</VStack>
 
-					<HStack>
-						<Button
-							__next40pxDefaultSize
-							variant="primary"
-							onClick={ handleSave }
-							isBusy={ saveButtonState.isBusy }
-							disabled={ saveButtonState.disabled }
-						>
-							{ saveButtonState.label }
-						</Button>
-					</HStack>
-				</VStack>
+						<Text variant="muted" as="p">
+							{ __( 'Select what you’ll see by default when visiting WordPress.com.' ) }
+						</Text>
+
+						<HStack>
+							<Button
+								__next40pxDefaultSize
+								variant="primary"
+								type="submit"
+								isBusy={ saveButtonState.isBusy }
+								disabled={ saveButtonState.disabled }
+							>
+								{ saveButtonState.label }
+							</Button>
+						</HStack>
+					</VStack>
+				</form>
 			</CardBody>
 		</Card>
 	);
