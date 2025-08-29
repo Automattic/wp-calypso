@@ -80,8 +80,8 @@ export default function DomainTransfer() {
 		if ( ! domain.is_domain_only_site && domain.can_transfer_to_any_user ) {
 			const description =
 				domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION
-					? __( 'Transfer this domain connection to any administrator on this site' )
-					: __( 'Transfer this domain to any administrator on this site' );
+					? __( 'Transfer this domain connection to any administrator on this site.' )
+					: __( 'Transfer this domain to any administrator on this site.' );
 			actions.push(
 				<ActionList.ActionItem
 					key="transfer-to-another-user"
