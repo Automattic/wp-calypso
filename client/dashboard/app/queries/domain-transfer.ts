@@ -51,6 +51,7 @@ export const domainTransferRequestUpdateMutation = ( domain: string, siteSlug: s
 	mutationOptions( {
 		mutationFn: ( email: string ) => domainTransferRequestUpdate( domain, siteSlug, email ),
 		onSuccess: () => {
+			// Manually update the cache before invalidating the query.
 			queryClient.invalidateQueries( domainTransferRequestQuery( domain, siteSlug ) );
 		},
 	} );
