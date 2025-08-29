@@ -161,6 +161,58 @@ export function isJetpackTemporarySitePurchase( purchase: Purchase ): boolean {
 	return isTemporarySitePurchase( purchase ) && purchase.product_type === 'jetpack';
 }
 
+export function isJetpackSearchFreeProduct( purchase: Purchase ): boolean {
+	return purchase.product_slug === 'jetpack_search_free';
+}
+
+export function isConciergeSessionProduct( purchase: Purchase ): boolean {
+	return purchase.product_slug === 'concierge-session';
+}
+
+export function isRefundableWithAmount( purchase: Purchase ): boolean {
+	return purchase.is_refundable && purchase.refund_amount > 0;
+}
+
+export function isDomainMapping( purchase: Purchase ): boolean {
+	return purchase.product_type === 'domain_mapping';
+}
+
+export function isDomainTransfer( purchase: Purchase ): boolean {
+	return purchase.product_slug === 'domain_transfer';
+}
+
+export function isDomainRegistration( purchase: Purchase ): boolean {
+	return purchase.product_slug === 'domain_registration';
+}
+
+export function isRemovable( purchase: Purchase ): boolean {
+	if ( isRefundableWithAmount( purchase ) ) {
+		return false;
+	}
+
+	if ( isIncludedWithPlan( purchase ) ) {
+		if ( isDomainMapping( purchase ) ) {
+			return true;
+		}
+		return false;
+	}
+
+	if ( isConciergeSessionProduct( purchase ) ) {
+		return false;
+	}
+
+	if ( isJetpackSearchFreeProduct( purchase ) ) {
+		return true;
+	}
+
+	return (
+		isExpiring( purchase ) ||
+		isExpired( purchase ) ||
+		( isDomainTransfer( purchase ) && purchase.is_cancelable ) ||
+		( isDomainRegistration( purchase ) && isRenewing( purchase ) )
+	);
+}
+
 /**
  * Return the bill period as a sentence case string. Note that Purchae includes
  * this text already as `bill_period_label` but it is not sentence case and has
