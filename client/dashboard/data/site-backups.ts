@@ -17,6 +17,7 @@ export const BackupEntryStatuses = {
 } as const;
 
 export type BackupEntryStatus = ( typeof BackupEntryStatuses )[ keyof typeof BackupEntryStatuses ];
+
 export interface BackupEntry {
 	id: string;
 	started: string;
