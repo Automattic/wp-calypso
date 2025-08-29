@@ -7,12 +7,12 @@ type Props = {
 export const FilterPopoverLabel = ( { text }: Props ) => {
 	return (
 		<Text
-			key={ text }
-			size="small"
-			isBlock
-			weight="bold"
 			className="domain-search-controls__filters-popover-list-label"
+			isBlock
+			key={ text }
 			role="presentation"
+			size="small"
+			weight="bold"
 		>
 			{ text }
 		</Text>
