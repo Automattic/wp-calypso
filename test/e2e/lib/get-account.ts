@@ -7,9 +7,9 @@ import { Page } from 'playwright';
  * If the account does not have fresh authentication cookies, this function will log in via the login page
  * and save the new authentication cookies to the browser context.
  *
- * @param page - The Playwright `Page` instance to use for authentication actions.
- * @param accountName - The name of the test account to retrieve.
- * @returns A promise that resolves to a `TestAccount` instance with valid authentication cookies.
+ * @param {Page} page - The Playwright `Page` instance to use for authentication actions.
+ * @param {TestAccountName} accountName - The name of the test account to retrieve.
+ * @returns {Promise< TestAccount >} A promise that resolves to a `TestAccount` instance with valid authentication cookies.
  */
 export async function getAccount(
 	page: Page,
