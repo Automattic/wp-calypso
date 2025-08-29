@@ -1,0 +1,64 @@
+import { mutationOptions, queryOptions } from '@tanstack/react-query';
+import {
+	fetchIpsTagList,
+	requestTransferCode,
+	saveIpsTag,
+	updateDomainLock,
+	getDomainTransferRequest,
+	domainTransferRequestUpdate,
+	domainTransferRequestDelete,
+} from '../../data/domain-transfer';
+import { queryClient } from '../query-client';
+import { domainQuery } from './domain';
+import type { Domain } from '../../data/domain';
+
+export const domainLockMutation = ( domain: string ) =>
+	mutationOptions( {
+		mutationFn: ( enabled: boolean ) => updateDomainLock( domain, enabled ),
+		onSuccess: ( _, enabled ) => {
+			const oldDomain = queryClient.getQueryData( domainQuery( domain ).queryKey );
+			queryClient.setQueryData( domainQuery( domain ).queryKey, {
+				...oldDomain,
+				is_locked: enabled,
+			} as Domain );
+			queryClient.invalidateQueries( domainQuery( domain ) );
+		},
+	} );
+
+export const domainTransferCodeMutation = ( domain: string ) =>
+	mutationOptions( {
+		mutationFn: () => requestTransferCode( domain ),
+	} );
+
+export const ipsTagListQuery = () =>
+	queryOptions( {
+		queryKey: [ 'ips-tag-list' ],
+		queryFn: () => fetchIpsTagList(),
+	} );
+
+export const ipsTagMutation = ( domain: string ) =>
+	mutationOptions( {
+		mutationFn: ( ipsTag: string ) => saveIpsTag( domain, ipsTag ),
+	} );
+
+export const domainTransferRequestQuery = ( domain: string, siteSlug: string ) =>
+	queryOptions( {
+		queryKey: [ 'domain-transfer-request', domain, siteSlug ],
+		queryFn: () => getDomainTransferRequest( domain, siteSlug ),
+	} );
+
+export const domainTransferRequestUpdateMutation = ( domain: string, siteSlug: string ) =>
+	mutationOptions( {
+		mutationFn: ( email: string ) => domainTransferRequestUpdate( domain, siteSlug, email ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( domainTransferRequestQuery( domain, siteSlug ) );
+		},
+	} );
+
+export const domainTransferRequestDeleteMutation = ( domain: string, siteSlug: string ) =>
+	mutationOptions( {
+		mutationFn: () => domainTransferRequestDelete( domain, siteSlug ),
+		onSuccess: () => {
+			queryClient.removeQueries( domainTransferRequestQuery( domain, siteSlug ) );
+		},
+	} );
