@@ -36,7 +36,7 @@ export const Filter = ( { onSubmit }: Props ) => {
 	return (
 		<Dropdown
 			showArrow={ false }
-			popoverProps={ { placement: 'bottom-end', offset: 10, noArrow: false } }
+			popoverProps={ { placement: 'bottom-end', offset: 10, noArrow: false, inline: true } }
 			renderToggle={ ( { onToggle } ) => {
 				return (
 					<DomainSearchControls.FilterButton count={ getFilterCount() } onClick={ onToggle } />

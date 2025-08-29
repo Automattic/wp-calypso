@@ -124,13 +124,8 @@ export const DomainSearchControlsFilterPopover = ( {
 		[ setTemporaryFilter, temporaryFilter ]
 	);
 
-	// The popover needs to have the "domain-search" class because it is generated outside of the `DomainSearch` component
 	return (
-		<Card
-			isBorderless
-			size="small"
-			className="domain-search domain-search-controls__filters-popover"
-		>
+		<Card isBorderless size="small" className="domain-search-controls__filters-popover">
 			<CardBody>
 				<VStack spacing={ 4 }>
 					<FormTokenField
