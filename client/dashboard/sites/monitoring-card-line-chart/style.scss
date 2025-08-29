@@ -8,8 +8,8 @@
 
 		.u-legend {
 			order: -1;
-			text-align: left;
-			margin-left: 0;
+			text-align: start;
+			margin-inline-start: 0;
 			color: var(--studio-gray-100);
 
 			tr.u-series {
@@ -18,16 +18,20 @@
 
 					.u-marker {
 						margin-top: -2px;
-						margin-right: 8px;
+						margin-inline-end: 8px;
 					}
 
 					&::after {
-						vertical-align: baseline;
+						display: none;
 					}
 
 					> .u-label {
 						vertical-align: baseline;
 					}
+				}
+
+				.u-value {
+					display: none;
 				}
 
 				&:nth-child( 2 ) {
@@ -49,12 +53,12 @@
 					& > th > .u-marker {
 						width: 0;
 						height: 0;
-						border-left-width: 0.6em !important;
-						border-left-color: transparent !important;
-						border-right-width: 0.6em !important;
-						border-right-color: transparent !important;
-						border-bottom-width: 1em !important;
-						border-top-width: 0 !important;
+						border-inline-start-width: 0.6em !important;
+						border-inline-start-color: transparent !important;
+						border-inline-end-width: 0.6em !important;
+						border-inline-end-color: transparent !important;
+						border-block-end-width: 1em !important;
+						border-block-start-width: 0 !important;
 					}
 				}
 
@@ -62,12 +66,12 @@
 					& > th > .u-marker {
 						width: 0;
 						height: 0;
-						border-left-width: 0.6em !important;
-						border-left-color: transparent !important;
-						border-right-width: 0.6em !important;
-						border-right-color: transparent !important;
-						border-top-width: 1em !important;
-						border-bottom-width: 0 !important;
+						border-inline-start-width: 0.6em !important;
+						border-inline-start-color: transparent !important;
+						border-inline-end-width: 0.6em !important;
+						border-inline-end-color: transparent !important;
+						border-block-start-width: 1em !important;
+						border-block-end-width: 0 !important;
 					}
 				}
 			}
