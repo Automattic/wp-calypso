@@ -6,6 +6,7 @@ import {
 	FormTokenField,
 } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
+import { useCallback } from 'react';
 import { FilterState } from '../../page/types';
 import { FilterPopoverLabel } from './filter-popover-label';
 import { FilterPopoverTld } from './filter-popover-tld';
@@ -16,33 +17,49 @@ import './filter-popover.scss';
 type Props = {
 	addTldToFilter: ( tld: string ) => void;
 	availableTlds: string[];
-	exploreMoreTlds: string[];
 	handleTldsChange: ( tokens: ( string | TokenItem )[] ) => void;
 	onClear: () => void;
 	onClose: () => void;
-	recommendedTlds: string[];
 	setExactMatchesOnlyInFilter: ( exactMatchesOnly: boolean ) => void;
 	temporaryFilter: FilterState;
-	validateTld: ( tld: string ) => boolean;
 };
 
 export const DomainSearchControlsFilterPopover = ( {
 	addTldToFilter,
 	availableTlds,
-	exploreMoreTlds,
 	handleTldsChange,
 	onClear,
 	onClose,
-	recommendedTlds,
 	setExactMatchesOnlyInFilter,
 	temporaryFilter,
-	validateTld,
 }: Props ) => {
 	const { __ } = useI18n();
+
+	const getRecommendedTlds = useCallback( () => {
+		return availableTlds.slice( 0, 5 ).filter( ( tld ) => ! temporaryFilter.tlds.includes( tld ) );
+	}, [ availableTlds, temporaryFilter.tlds ] );
+
+	const getExploreMoreTlds = useCallback( () => {
+		return availableTlds
+			.slice( 5 )
+			.sort()
+			.filter( ( tld ) => ! temporaryFilter.tlds.includes( tld ) );
+	}, [ availableTlds, temporaryFilter.tlds ] );
+
+	// Only add TLD to current selection if it exists in the available TLDs list
+	const validateTld = useCallback(
+		( tld: string ) => {
+			return availableTlds.includes( tld );
+		},
+		[ availableTlds ]
+	);
 
 	// Generate list of available TLDs with labels separating the recommended and explore more sections
 	const generateAvailableTldsList = () => {
 		const list = [];
+
+		const recommendedTlds = getRecommendedTlds();
+		const exploreMoreTlds = getExploreMoreTlds();
 
 		if ( recommendedTlds.length > 0 ) {
 			list.push( { text: __( 'Recommended endings' ), isLabel: true } );
