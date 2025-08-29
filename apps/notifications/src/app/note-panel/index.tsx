@@ -5,16 +5,16 @@ import {
 	CardHeader,
 	Icon,
 	TabPanel,
+	useNavigator,
 } from '@wordpress/components';
 import '@wordpress/components/build-style/style.css';
 import { __ } from '@wordpress/i18n';
 import { bell } from '@wordpress/icons';
-import { useEffect, useRef, useState } from 'react';
 import { getFilters } from '../../panel/templates/filters';
 import NoteList from '../note-list';
 import NotePanelActions from './actions';
 
-type ActiveTab = keyof ReturnType< typeof getFilters >;
+type FilterName = keyof ReturnType< typeof getFilters >;
 
 const NOTIFICATION_TABS = Object.values( getFilters() ).map( ( { name, label } ) => ( {
 	name,
@@ -22,17 +22,11 @@ const NOTIFICATION_TABS = Object.values( getFilters() ).map( ( { name, label } )
 } ) );
 
 const NotePanel = () => {
-	const [ activeTab, setActiveTab ] = useState< ActiveTab >( 'all' );
-
-	// Ensure the component is focused on mount
-	// to avoid parent's <Popover>'s focus trap from moving.
-	const focusRef = useRef< HTMLDivElement >( null );
-	useEffect( () => {
-		focusRef.current?.focus();
-	}, [] );
+	const { params, goTo } = useNavigator();
+	const { filterName = 'all' } = params;
 
 	return (
-		<div ref={ focusRef } tabIndex={ -1 }>
+		<>
 			<CardHeader
 				size="small"
 				style={ { flexDirection: 'column', alignItems: 'stretch', paddingBottom: 0 } }
@@ -50,17 +44,17 @@ const NotePanel = () => {
 					<TabPanel
 						activeClass="is-active"
 						tabs={ NOTIFICATION_TABS }
-						initialTabName={ activeTab }
+						initialTabName={ filterName as string }
 						onSelect={ ( tabName ) => {
-							setActiveTab( tabName as ActiveTab );
+							goTo( `/${ tabName }`, { replace: true } );
 						} }
 					>
 						{ () => null /* Placeholder div since content is rendered elsewhere */ }
 					</TabPanel>
 				</VStack>
 			</CardHeader>
-			<NoteList filterName={ activeTab } />
-		</div>
+			<NoteList filterName={ filterName as FilterName } />
+		</>
 	);
 };
 

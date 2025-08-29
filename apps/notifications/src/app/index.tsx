@@ -111,9 +111,9 @@ const NotificationApp = ( {
 	return (
 		<Provider store={ store }>
 			<AppProvider client={ client } locale={ locale }>
-				<Navigator initialPath="/" style={ { maxHeight: 'inherit', height: '100%' } }>
+				<Navigator initialPath="/all" style={ { maxHeight: 'inherit', height: '100%' } }>
 					<Navigator.Screen
-						path="/"
+						path="/:filterName"
 						style={ { display: 'flex', flexDirection: 'column', height: '100%' } }
 					>
 						<Suspense fallback={ null }>
@@ -121,7 +121,7 @@ const NotificationApp = ( {
 						</Suspense>
 					</Navigator.Screen>
 					<Navigator.Screen
-						path="/notes/:noteId"
+						path="/:filterName/notes/:noteId"
 						style={ { display: 'flex', flexDirection: 'column', height: '100%' } }
 					>
 						<Suspense fallback={ null }>
