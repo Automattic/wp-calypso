@@ -77,8 +77,10 @@ export default function ConnectDomain() {
 
 	const router = useRouter();
 	// TODO: We need to figure out how to build this URL so that it's not hardcoded to v2
+	// TODO: for testing purposes, we're using calypso.localhost:3000
+	// FIX: Make sure this is wpcom before deploying
 	const redirectURL =
-		'https://wordpress.com/v2' +
+		'http://calypso.localhost:3000' +
 		router.buildLocation( {
 			to: siteDomainConnectRoute.fullPath,
 			params: {
