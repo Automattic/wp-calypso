@@ -14,6 +14,7 @@ import { domainQuery } from '../../app/queries/domain';
 import { domainTransferRequestQuery } from '../../app/queries/domain-transfer';
 import { siteByIdQuery } from '../../app/queries/site';
 import { domainRoute } from '../../app/router/domains';
+import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
@@ -63,6 +64,16 @@ export default function TransferDomainToAnyUser() {
 		console.log( 'Transfer domain to email:', formData.email );
 	};
 
+	const renderTransferNotice = () => {
+		return (
+			<Notice variant="info">
+				{ __(
+					'Transferring a domain to another user will give all the rights of this domain to that user. You will no longer be able to manage the domain.'
+				) }
+			</Notice>
+		);
+	};
+
 	const renderEmailForm = () => {
 		return (
 			<form onSubmit={ handleSubmit }>
@@ -75,8 +86,14 @@ export default function TransferDomainToAnyUser() {
 							setFormData( ( data ) => ( { ...data, ...edits } ) );
 						} }
 					/>
+					{ renderTransferNotice() }
 					<HStack justify="flex-start">
-						<Button variant="primary" type="submit" disabled={ isSaveDisabled }>
+						<Button
+							__next40pxDefaultSize
+							variant="primary"
+							type="submit"
+							disabled={ isSaveDisabled }
+						>
 							{ __( 'Transfer Domain' ) }
 						</Button>
 					</HStack>
@@ -93,31 +110,38 @@ export default function TransferDomainToAnyUser() {
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Transfer to another user' ) } /> }>
 			<Card>
 				<CardBody>
-					<VStack spacing={ 2 }>
-						<SectionHeader title={ __( 'Confirm new owner' ) } level={ 3 } />
-						<Text as="p">
-							{ sprintf(
-								/* Translators: %s: domainName is the domain name */
-								__(
-									'You can transfer %(domainName)s to any WordPress.com user. If the user does not have a WordPress.com account, they will be prompted to create one.'
-								),
-								{ domainName }
-							) }
-						</Text>
-						{ hasEmailWithUs && (
+					<VStack spacing={ 10 }>
+						<VStack spacing={ 3 }>
+							<SectionHeader title={ __( 'Confirm new owner' ) } level={ 3 } />
 							<Text as="p">
 								{ sprintf(
 									/* Translators: %s: domainName is the domain name */
 									__(
-										'The email subscription for %(domainName)s will be transferred along with the domain.'
+										'You can transfer %(domainName)s to any WordPress.com user. If the user does not have a WordPress.com account, they will be prompted to create one.'
 									),
 									{ domainName }
 								) }
 							</Text>
-						) }
+							<Text as="p">
+								{ __(
+									'The recipient will need to provide updated contact information and accept the request before the domain transfer can be completed.'
+								) }
+							</Text>
+							{ hasEmailWithUs && (
+								<Text as="p">
+									{ sprintf(
+										/* Translators: %s: domainName is the domain name */
+										__(
+											'The email subscription for %(domainName)s will be transferred along with the domain.'
+										),
+										{ domainName }
+									) }
+								</Text>
+							) }
+						</VStack>
+						{ ! transferEmail && renderEmailForm() }
+						{ transferEmail && renderDeleteForm() }
 					</VStack>
-					{ transferEmail && renderEmailForm() }
-					{ ! transferEmail && renderDeleteForm() }
 				</CardBody>
 			</Card>
 		</PageLayout>
