@@ -1,4 +1,4 @@
-import { fromUnixTime, isValid as isValidDate, startOfDay, endOfDay } from 'date-fns';
+import { fromUnixTime, isValid as isValidDate, startOfDay, endOfDay, subDays } from 'date-fns';
 import { formatDateWithOffset } from '../../utils/datetime';
 import type { PHPLog } from '../../data/site-logs';
 
@@ -14,7 +14,6 @@ export function getDefaultDateRange( timezoneString?: string, gmtOffset?: number
 	if ( timezoneString ) {
 		// Use site timezone if available
 		const now = new Date();
-		// Get the current time in the site's timezone
 		const siteTime = new Intl.DateTimeFormat( 'en-US', {
 			timeZone: timezoneString,
 			year: 'numeric',
@@ -23,14 +22,13 @@ export function getDefaultDateRange( timezoneString?: string, gmtOffset?: number
 		} ).formatToParts( now );
 
 		const year = parseInt( siteTime.find( ( p ) => p.type === 'year' )?.value || '0' );
-		const month = parseInt( siteTime.find( ( p ) => p.type === 'month' )?.value || '0' ) - 1; // Month is 0-indexed
+		const month = parseInt( siteTime.find( ( p ) => p.type === 'month' )?.value || '0' ) - 1;
 		const day = parseInt( siteTime.find( ( p ) => p.type === 'day' )?.value || '0' );
 
 		today = new Date( year, month, day );
 	} else if ( typeof gmtOffset === 'number' ) {
 		// Use GMT offset if no timezone string
 		const now = new Date();
-		// Calculate site timezone date using UTC offset
 		const utcTime = now.getTime();
 		const siteTime = utcTime + gmtOffset * 60 * 60 * 1000;
 		const siteDate = new Date( siteTime );
@@ -47,8 +45,7 @@ export function getDefaultDateRange( timezoneString?: string, gmtOffset?: number
 	}
 
 	// Calculate start date (6 days ago from site's today)
-	const start = new Date( today );
-	start.setDate( start.getDate() - 6 );
+	const start = subDays( today, 6 );
 
 	return {
 		start,

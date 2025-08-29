@@ -11,7 +11,7 @@ import {
 import { DataViews, View, Filter, Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
-import { getUnixTime, subDays, isSameSecond } from 'date-fns';
+import { getUnixTime } from 'date-fns';
 import { useMemo, useState, useRef, useEffect } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useLocale } from '../../app/locale';
@@ -22,6 +22,7 @@ import { siteRoute } from '../../app/router/sites';
 import { Callout } from '../../components/callout';
 import { CalloutOverlay } from '../../components/callout-overlay';
 import { DateRangePicker } from '../../components/date-range-picker';
+import { getActivePresetId } from '../../components/date-range-picker/utils';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -140,75 +141,6 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		() => initialFromUrl ?? initial
 	);
 
-	const lastUrlRangeRef = useRef< { from: number; to: number } | null >( null );
-
-	useEffect( () => {
-		if ( ! autoRefresh ) {
-			return;
-		}
-		const tick = () => {
-			// Use site timezone for auto-refresh date range (consistent with default range)
-			let end: Date;
-			let start: Date;
-
-			if ( timezoneString ) {
-				// Use site timezone if available
-				const now = new Date();
-				// Get the current time in the site's timezone
-				const siteTime = new Intl.DateTimeFormat( 'en-US', {
-					timeZone: timezoneString,
-					year: 'numeric',
-					month: 'numeric',
-					day: 'numeric',
-				} ).formatToParts( now );
-
-				const year = parseInt( siteTime.find( ( p ) => p.type === 'year' )?.value || '0' );
-				const month = parseInt( siteTime.find( ( p ) => p.type === 'month' )?.value || '0' ) - 1; // Month is 0-indexed
-				const day = parseInt( siteTime.find( ( p ) => p.type === 'day' )?.value || '0' );
-
-				end = new Date( year, month, day );
-				start = subDays( end, 6 );
-			} else if ( typeof gmtOffset === 'number' ) {
-				// Use GMT offset if no timezone string
-				const now = new Date();
-				// Calculate site timezone date using UTC offset
-				const utcTime = now.getTime();
-				const siteTime = utcTime + gmtOffset * 60 * 60 * 1000;
-				const siteDate = new Date( siteTime );
-
-				end = new Date(
-					Date.UTC( siteDate.getUTCFullYear(), siteDate.getUTCMonth(), siteDate.getUTCDate() )
-				);
-				start = subDays( end, 6 );
-			} else {
-				// Fallback to local timezone
-				end = new Date();
-				start = subDays( end, 6 );
-			}
-
-			setDateRange( ( prev ) =>
-				isSameSecond( prev.start, start ) && isSameSecond( prev.end, end ) ? prev : { start, end }
-			);
-			const from = getUnixTime( start );
-			const to = getUnixTime( end );
-
-			const last = lastUrlRangeRef.current;
-			// Only sync URL when from/to change to avoid unnecessary history updates.
-			if ( ! last || last.from !== from || last.to !== to ) {
-				const url = new URL( window.location.href );
-				url.searchParams.set( 'from', String( from ) );
-				url.searchParams.set( 'to', String( to ) );
-				window.history.replaceState( null, '', url.pathname + url.search );
-				lastUrlRangeRef.current = { from, to };
-			}
-		};
-
-		// Run immediately, then every 10s
-		tick();
-		const intervalId = setInterval( tick, 10 * 1000 );
-		return () => clearInterval( intervalId );
-	}, [ autoRefresh, timezoneString, gmtOffset ] );
-
 	const { startSec, endSec } = useMemo(
 		() => buildTimeRangeInSeconds( dateRange.start, dateRange.end, timezoneString, gmtOffset ),
 		[ dateRange.start, dateRange.end, timezoneString, gmtOffset ]
@@ -231,7 +163,34 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	// For the current page, use its cursor (or null/undefined on page 1).
 	const scrollId = cursorsRef.current.get( view.page ?? 1 ) ?? null;
 
-	const { data: siteLogs, isFetching } = useQuery( siteLogsQuery( siteId, params, scrollId ) );
+	const {
+		data: siteLogs,
+		isFetching,
+		refetch,
+	} = useQuery( siteLogsQuery( siteId, params, scrollId ) );
+
+	useEffect( () => {
+		if ( ! autoRefresh ) {
+			return;
+		}
+
+		// Auto-refresh only works with the default "Last 7 days" preset
+		const activePreset = getActivePresetId(
+			dateRange.start,
+			dateRange.end,
+			new Date(),
+			timezoneString,
+			gmtOffset
+		);
+		if ( activePreset !== 'last-7-days' ) {
+			return;
+		}
+
+		// Simple auto-refresh: just refetch the logs every 10 seconds
+		const intervalId = setInterval( () => refetch(), 10 * 1000 );
+
+		return () => clearInterval( intervalId );
+	}, [ autoRefresh, refetch, dateRange.start, dateRange.end, timezoneString, gmtOffset ] );
 
 	useEffect( () => {
 		if ( ! siteLogs ) {
