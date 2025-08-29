@@ -83,7 +83,7 @@ export default function SecurityPassword() {
 							suffix={
 								<InputControlSuffixWrapper>
 									<Button
-										icon={ isPasswordVisible ? seen : unseen }
+										icon={ isPasswordVisible ? unseen : seen }
 										onClick={ () => {
 											setIsPasswordVisible( ! isPasswordVisible );
 										} }
@@ -123,11 +123,7 @@ export default function SecurityPassword() {
 								fields={ fields }
 								form={ { layout: { type: 'regular' as const }, fields } }
 								onChange={ ( edits: Partial< SecurityPasswordFormData > ) => {
-									setFormData( ( data ) => ( {
-										...data,
-										...edits,
-										password: edits.password?.trim() ?? data.password,
-									} ) );
+									setFormData( ( data ) => ( { ...data, ...edits } ) );
 								} }
 							/>
 							<HStack spacing={ 3 } justify="flex-start">
