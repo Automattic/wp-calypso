@@ -22,8 +22,8 @@ object WebApp : Project({
 	buildType(BuildDockerImage)
 	buildType(playwrightPrBuildType("desktop", "23cc069f-59e5-4a63-a131-539fb55264e7"))
 	buildType(playwrightPrBuildType("mobile", "90fbd6b7-fddb-4668-9ed0-b32598143616"))
-	buildType(playwrightTestPR("desktop", "ba5c9d85-8dea-46c6-ac3d-de8300f7eb2e"))
-	buildType(playwrightTestPR("mobile", "4d86011f-88fb-46f6-8512-155d3bb5bda4"))
+	buildType(playwrightTestPR("desktop", "074d8ae0-0859-4b4d-bf66-709f24ae5406"))
+	buildType(playwrightTestPR("mobile", "a768e2d7-aaf7-47c2-b9ef-396c467c5311"))
 	buildType(PreReleaseE2ETests)
 	buildType(e2ePreReleaseBuildType("desktop", "532ee9d0-4671-4c53-a7aa-bb3c5de95c0a"))
 	buildType(e2ePreReleaseBuildType("mobile", "2d7f6910-92cf-44b4-a719-e4b2029ea36c"))
@@ -857,7 +857,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): E2EBuildTy
 		buildId = "calypso_WebApp_Calypso_E2E_Playwright_$targetDevice",
 		buildUuid = buildUuid,
 		buildName = "E2E Tests ($targetDevice)",
-		buildDescription = "Runs Calypso e2e tests on $targetDevice size",
+		buildDescription = "Runs Calypso e2e tests on $targetDevice size using Jest runner",
 		getCalypsoLiveURL = """
 			chmod +x ./bin/get-calypso-live-url.sh
 			CALYPSO_LIVE_URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
@@ -905,55 +905,19 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): E2EBuildTy
 	)
 }
 
-fun playwrightTestPR( targetDevice: String, buildUuid: String ): E2EBuildType {
-	return E2EBuildType(
-		isPlaywrightTest = true,
+fun playwrightTestPR( targetDevice: String, buildUuid: String  ): BuildType {
+	return BuildType(
 		buildId = "calypso_WebApp_Calypso_E2E_Playwright_Test_$targetDevice",
 		buildUuid = buildUuid,
-		buildName = "E2E Tests ($targetDevice) (PWTest)",
-		buildDescription = "Runs Calypso e2e tests on $targetDevice size",
-		getCalypsoLiveURL = """
-			chmod +x ./bin/get-calypso-live-url.sh
-			CALYPSO_LIVE_URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
-			if [[ ${'$'}? -ne 0 ]]; then
-				// Command failed. CALYPSO_LIVE_URL contains stderr
-				echo ${'$'}CALYPSO_LIVE_URL
-				exit 1
-			fi
-		""".trimIndent(),
-		testGroup = "calypso-pr",
-		buildParams = {
-			param("env.AUTHENTICATE_ACCOUNTS", "simpleSitePersonalPlanUser,gutenbergSimpleSiteUser,defaultUser")
-			param("env.LIVEBRANCHES", "true")
-			param("env.VIEWPORT_NAME", "$targetDevice")
-		},
-		buildFeatures = {
-			pullRequests {
-				vcsRootExtId = "${Settings.WpCalypso.id}"
-				provider = github {
-					authType = token {
-						token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-					}
-					filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
-				}
-			}
-		},
-		enableCommitStatusPublisher = true,
-		buildTriggers = {
-			vcs {
-				branchFilter = """
-					+:*
-					-:pull*
-					-:trunk
-				""".trimIndent()
-				triggerRules = """
-					-:**.md
-				""".trimIndent()
-			}
-		},
-		buildDependencies = {
-			snapshot(BuildDockerImage) {
-				onDependencyFailure = FailureAction.FAIL_TO_START
+		buildName = "E2E Tests ($targetDevice)",
+		buildDescription = "Runs Calypso e2e tests on $targetDevice size using Playwright Test runner",
+
+		steps {
+			bashNodeScript {
+				name = "Test step"
+				scriptContent = """
+					echo "@todo: run the tests"
+				"""
 			}
 		}
 	)
