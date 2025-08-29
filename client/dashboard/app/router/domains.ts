@@ -292,6 +292,17 @@ export const domainTransferRoute = createRoute( {
 	)
 );
 
+export const domainTransferToAnyUserRoute = createRoute( {
+	getParentRoute: () => domainRoute,
+	path: 'transfer/any-user',
+} ).lazy( () =>
+	import( '../../domains/domain-transfer/transfer-domain-to-any-user' ).then( ( d ) =>
+		createLazyRoute( 'domain-transfer-to-any-user' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const createDomainsRoutes = () => {
 	return [
 		domainsRoute,
@@ -310,6 +321,7 @@ export const createDomainsRoutes = () => {
 			domainGlueRecordsAddRoute,
 			domainGlueRecordsEditRoute,
 			domainTransferRoute,
+			domainTransferToAnyUserRoute,
 			domainSecurityRoute,
 		] ),
 	];
