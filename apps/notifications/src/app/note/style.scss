@@ -147,3 +147,13 @@
 		margin-bottom: 0;
 	}
 }
+
+.wpnc__text-summary {
+	.components-external-link {
+		color: inherit;
+	}
+
+	.components-external-link__contents {
+		text-decoration: none;
+	}
+}

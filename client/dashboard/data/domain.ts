@@ -17,6 +17,7 @@ export interface Domain extends DomainSummary {
 	is_subdomain: boolean;
 	move_to_new_site_pending: boolean;
 	private_domain: boolean;
+	privacy_available: boolean;
 	ssl_status: 'active' | 'inactive' | 'newly_registered' | 'pending';
 	subdomain_part: string;
 	auto_renewal_date: string;
