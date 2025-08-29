@@ -49,24 +49,23 @@ test.describe( 'I18N: Editor', { tag: '@i18n' }, () => {
 			 * Instead, we verify that the placeholder text is translated to something other than the English default.
 			 * This approach ensures that translations are present without being brittle to exact wording changes.
 			 */
-			await test.step( 'Then laguages other than English show non-English translations', async function () {
+			await test.step( 'Then languages other than English show non-English translations', async () => {
 				const englishText = 'Add title';
-				const accessibleName = await page
-					.locator( 'h1.wp-block-post-title' )
-					.getAttribute( 'aria-label' );
-				const placeholderText = await page
-					.locator( 'h1.wp-block-post-title span' )
+				const titleLocator = page.locator( 'h1.wp-block-post-title' );
+				const accessibleName = await titleLocator.getAttribute( 'aria-label' );
+				const placeholderText = await titleLocator
+					.locator( 'span' )
 					.getAttribute( 'data-rich-text-placeholder' );
+
 				if ( locale === 'en' ) {
 					expect.soft( accessibleName ).toBe( englishText );
 					expect.soft( placeholderText ).toBe( englishText );
 				} else {
-					expect.soft( accessibleName ).not.toBe( englishText );
-					expect.soft( accessibleName ).not.toBeNull();
-					expect.soft( accessibleName ).not.toBeUndefined();
-					expect.soft( placeholderText ).not.toBe( englishText );
-					expect.soft( placeholderText ).not.toBeNull();
-					expect.soft( placeholderText ).not.toBeUndefined();
+					for ( const value of [ accessibleName, placeholderText ] ) {
+						expect.soft( value ).not.toBe( englishText );
+						expect.soft( value ).not.toBeNull();
+						expect.soft( value ).not.toBeUndefined();
+					}
 				}
 			} );
 		} );
