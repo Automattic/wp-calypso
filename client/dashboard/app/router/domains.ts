@@ -1,10 +1,20 @@
-import { createRoute, createLazyRoute, notFound, redirect } from '@tanstack/react-router';
+import {
+	createRoute,
+	createLazyRoute,
+	notFound,
+	redirect,
+	lazyRouteComponent,
+} from '@tanstack/react-router';
+import { __ } from '@wordpress/i18n';
 import { domainQuery } from '../queries/domain';
 import { domainDnsQuery } from '../queries/domain-dns-records';
 import { domainForwardingQuery } from '../queries/domain-forwarding';
 import { domainGlueRecordsQuery } from '../queries/domain-glue-records';
+import { domainNameServersQuery } from '../queries/domain-name-servers';
 import { sslDetailsQuery } from '../queries/domain-ssl';
 import { domainsQuery } from '../queries/domains';
+import { mailboxesQuery } from '../queries/emails';
+import { siteByIdQuery } from '../queries/site';
 import { queryClient } from '../query-client';
 import { rootRoute } from './root';
 
@@ -37,8 +47,20 @@ export const domainsPurchaseRoute = createRoute( {
 export const domainRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'domains/$domainName',
-	loader: ( { params: { domainName } } ) => {
-		return queryClient.ensureQueryData( domainQuery( domainName ) );
+	loader: async ( { params: { domainName }, location } ) => {
+		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
+		const isNameServersSubRoute = location.pathname.includes( '/name-servers' );
+
+		// If navigating to name-servers sub-route and user doesn't have permission,
+		// throw error and handle it with the global error boundary
+		if ( isNameServersSubRoute && ! domain.can_manage_name_servers ) {
+			throw new Error(
+				domain.cannot_manage_name_servers_reason ||
+					__( 'You do not have permission to manage name servers.' )
+			);
+		}
+
+		return domain;
 	},
 } ).lazy( () =>
 	import( '../../domains/domain' ).then( ( d ) =>
@@ -51,6 +73,15 @@ export const domainRoute = createRoute( {
 export const domainOverviewRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: '/',
+	loader: async ( { params: { domainName } } ) => {
+		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
+		const [ site, mailboxes ] = await Promise.all( [
+			queryClient.ensureQueryData( siteByIdQuery( domain.blog_id ) ),
+			queryClient.ensureQueryData( mailboxesQuery( domain.blog_id ) ),
+		] );
+
+		return { domain, site, mailboxes };
+	},
 } ).lazy( () =>
 	import( '../../domains/domain-overview' ).then( ( d ) =>
 		createLazyRoute( 'domain-overview' )( {
@@ -117,8 +148,12 @@ export const domainDnsEditRoute = createRoute( {
 export const domainForwardingsRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'forwardings',
-	loader: ( { params: { domainName } } ) =>
-		queryClient.ensureQueryData( domainForwardingQuery( domainName ) ),
+	loader: async ( { params: { domainName } } ) => {
+		await Promise.all( [
+			queryClient.ensureQueryData( domainQuery( domainName ) ),
+			queryClient.ensureQueryData( domainForwardingQuery( domainName ) ),
+		] );
+	},
 } ).lazy( () =>
 	import( '../../domains/domain-forwardings' ).then( ( d ) =>
 		createLazyRoute( 'domain-forwardings' )( {
@@ -130,8 +165,12 @@ export const domainForwardingsRoute = createRoute( {
 export const domainForwardingAddRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'forwardings/add',
-	loader: ( { params: { domainName } } ) =>
-		queryClient.ensureQueryData( domainForwardingQuery( domainName ) ),
+	loader: async ( { params: { domainName } } ) => {
+		await Promise.all( [
+			queryClient.ensureQueryData( domainQuery( domainName ) ),
+			queryClient.ensureQueryData( domainForwardingQuery( domainName ) ),
+		] );
+	},
 } ).lazy( () =>
 	import( '../../domains/domain-forwardings/add' ).then( ( d ) =>
 		createLazyRoute( 'domain-forwardings-add' )( {
@@ -143,8 +182,12 @@ export const domainForwardingAddRoute = createRoute( {
 export const domainForwardingEditRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'forwardings/edit/$forwardingId',
-	loader: ( { params: { domainName } } ) =>
-		queryClient.ensureQueryData( domainForwardingQuery( domainName ) ),
+	loader: async ( { params: { domainName } } ) => {
+		await Promise.all( [
+			queryClient.ensureQueryData( domainQuery( domainName ) ),
+			queryClient.ensureQueryData( domainForwardingQuery( domainName ) ),
+		] );
+	},
 } ).lazy( () =>
 	import( '../../domains/domain-forwardings/edit' ).then( ( d ) =>
 		createLazyRoute( 'domain-forwardings-edit' )( {
@@ -167,13 +210,11 @@ export const domainContactInfoRoute = createRoute( {
 export const domainNameServersRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'name-servers',
-} ).lazy( () =>
-	import( '../../domains/name-servers' ).then( ( d ) =>
-		createLazyRoute( 'domain-name-servers' )( {
-			component: d.default,
-		} )
-	)
-);
+	loader: ( { params: { domainName } } ) =>
+		queryClient.ensureQueryData( domainNameServersQuery( domainName ) ),
+	component: lazyRouteComponent( () => import( '../../domains/name-servers' ) ),
+	errorComponent: lazyRouteComponent( () => import( '../../domains/name-servers/error' ) ),
+} );
 
 export const domainGlueRecordsRoute = createRoute( {
 	getParentRoute: () => domainRoute,
@@ -224,17 +265,6 @@ export const domainGlueRecordsEditRoute = createRoute( {
 	)
 );
 
-export const domainDnssecRoute = createRoute( {
-	getParentRoute: () => domainRoute,
-	path: 'dnssec',
-} ).lazy( () =>
-	import( '../../domains/domain-dnssec' ).then( ( d ) =>
-		createLazyRoute( 'domain-dnssec' )( {
-			component: d.default,
-		} )
-	)
-);
-
 export const domainSecurityRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'security',
@@ -277,7 +307,6 @@ export const createDomainsRoutes = () => {
 			domainGlueRecordsRoute,
 			domainGlueRecordsAddRoute,
 			domainGlueRecordsEditRoute,
-			domainDnssecRoute,
 			domainTransferRoute,
 			domainSecurityRoute,
 		] ),

@@ -91,7 +91,7 @@ export interface Purchase {
 	 */
 	refundInteger: number;
 
-	refundOptions: RefundOptions | null;
+	refundOptions: RefundOptions[] | null;
 	refundPeriodInDays: number;
 
 	/**
@@ -194,11 +194,11 @@ export interface RawPurchasePriceTierEntry extends PriceTierEntry {
 
 export interface RawPurchase {
 	ID: number | string;
-	active: boolean;
 	amount: number | string;
 	attached_to_purchase_id: number | string;
 	auto_renew_coupon_code: string | null;
 	auto_renew_coupon_discount_percentage: number | null;
+	is_auto_renew_enabled: boolean;
 	bill_period_days: number | string;
 	bill_period_label: string;
 	most_recent_renew_date: string;
@@ -235,7 +235,7 @@ export interface RawPurchase {
 	is_woo_express_trial: boolean;
 	is_jetpack_plan_or_product: boolean;
 	meta: string | undefined;
-	ownership_id: number | undefined;
+	ownership_id: number | string | undefined;
 	partner_name: string | undefined;
 	partner_slug: string | undefined;
 	partner_type: string | undefined;
@@ -268,7 +268,7 @@ export interface RawPurchase {
 	refund_integer: number;
 	refund_text: string;
 	refund_currency_symbol: string;
-	refund_options: RefundOptions | null;
+	refund_options: RefundOptions[] | null;
 	refund_period_in_days: number;
 	regular_price_text: string;
 	regular_price_integer: number;
@@ -285,7 +285,6 @@ export interface RawPurchase {
 	tax_text: string | undefined;
 	renewal_price_tier_usage_quantity: number | undefined | null;
 	user_id: number | string;
-	auto_renew: '1' | '0' | null;
 	payment_card_id: number | string | undefined;
 	payment_card_type: string | undefined;
 	payment_card_processor: string | undefined;

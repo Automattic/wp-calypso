@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { DomainSuggestion, OnboardActions, OnboardSelect } from '@automattic/data-stores';
+import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import { ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -37,6 +37,7 @@ import {
 	type ProvidedDependencies,
 	type SubmitHandler,
 } from '../../internals/types';
+import type { DomainSuggestion } from '@automattic/data';
 
 const clearUseMyDomainsQueryParams = ( currentStepSlug: string | undefined ) => {
 	const isDomainsStep = currentStepSlug === 'domains';

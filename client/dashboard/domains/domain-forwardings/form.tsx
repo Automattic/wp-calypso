@@ -30,6 +30,7 @@ interface DomainForwardingFormProps {
 	onSubmit: ( data: FormData ) => void;
 	isSubmitting: boolean;
 	submitButtonText: string;
+	forceSubdomain: boolean;
 }
 
 export default function DomainForwardingForm( {
@@ -38,6 +39,7 @@ export default function DomainForwardingForm( {
 	onSubmit,
 	isSubmitting,
 	submitButtonText,
+	forceSubdomain,
 }: DomainForwardingFormProps ) {
 	const [ formData, setFormData ] = useState< FormData >( () => {
 		if ( ! initialData ) {
@@ -120,6 +122,9 @@ export default function DomainForwardingForm( {
 						value: 'root',
 					},
 				],
+				isVisible: () => {
+					return ! forceSubdomain;
+				},
 			},
 			{
 				id: 'subdomain',
@@ -155,7 +160,7 @@ export default function DomainForwardingForm( {
 				},
 			},
 		],
-		[ domainName ]
+		[ domainName, forceSubdomain ]
 	);
 
 	const form = {

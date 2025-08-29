@@ -1,6 +1,7 @@
 import { isBlogger, isFreeWordPressComDomain } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, CompactCard, ResponsiveToolbarGroup } from '@automattic/components';
+import { getTld } from '@automattic/domain-search';
 import {
 	AI_SITE_BUILDER_FLOW,
 	HUNDRED_YEAR_DOMAIN_FLOW,
@@ -67,7 +68,6 @@ import {
 	checkDomainAvailability,
 	getAvailableTlds,
 	getDomainSuggestionSearch,
-	getTld,
 } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';

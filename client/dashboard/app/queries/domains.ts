@@ -1,6 +1,6 @@
+import { fetchDomainSuggestions, type DomainSuggestionQuery } from '@automattic/data';
 import { queryOptions } from '@tanstack/react-query';
-import { fetchDomains, fetchDomainSuggestions } from '../../data/domains';
-import type { DomainSuggestionQuery } from '../../data/types';
+import { fetchDomains } from '../../data/domains';
 
 export const domainsQuery = () =>
 	queryOptions( {
@@ -10,9 +10,9 @@ export const domainsQuery = () =>
 
 export const domainSuggestionsQuery = (
 	search: string,
-	domainSuggestionQuery?: Partial< DomainSuggestionQuery >
+	query: Partial< DomainSuggestionQuery > = {}
 ) =>
 	queryOptions( {
-		queryKey: [ 'domain-suggestions', search, domainSuggestionQuery ],
-		queryFn: () => fetchDomainSuggestions( search, domainSuggestionQuery ),
+		queryKey: [ 'domain-suggestions', search, query ],
+		queryFn: () => fetchDomainSuggestions( search, query ),
 	} );

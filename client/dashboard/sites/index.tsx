@@ -10,7 +10,7 @@ import { isAutomatticianQuery } from '../app/queries/me-a8c';
 import { userPreferenceQuery, userPreferenceMutation } from '../app/queries/me-preferences';
 import { sitesQuery } from '../app/queries/sites';
 import { sitesRoute } from '../app/router/sites';
-import DataViewsCard from '../components/dataviews-card';
+import { DataViewsCard } from '../components/dataviews-card';
 import { DataViewsEmptyState } from '../components/dataviews-empty-state';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
