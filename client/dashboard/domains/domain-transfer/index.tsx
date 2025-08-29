@@ -25,27 +25,26 @@ import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
 import { DomainSubtype } from '../../data/domains';
 import { formatDate } from '../../utils/datetime';
+import { getTopLevelOfTld } from '../../utils/domain';
 import SelectIpsTag from './select-ips-tag';
 
 const RESTRICTED_TRANSFER_TLDS = [ 'uk', 'fr', 'ca', 'de', 'jp' ];
 const TRANSFER_LOCK_GRACE_PERIOD_MS = 60 * 24 * 60 * 60 * 1000; // 60 days
 
-export function getTopLevelOfTld( domainName: string ): string {
-	return domainName.substring( domainName.lastIndexOf( '.' ) + 1 );
-}
-
 export default function DomainTransfer() {
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const locale = useLocale();
-	const updateDomainLockMutation = useMutation( domainLockMutation( domainName ) );
-	const requestTransferCodeMutation = useMutation( domainTransferCodeMutation( domainName ) );
+	const { mutate: updateDomainLock, isPending: isUpdatingDomainLock } = useMutation(
+		domainLockMutation( domainName )
+	);
+	const { mutate: requestTransferCode, isPending: isRequestingTransferCode } = useMutation(
+		domainTransferCodeMutation( domainName )
+	);
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const isUpdatingDomainLock = updateDomainLockMutation.isPending;
-	const isRequestingTransferCode = requestTransferCodeMutation.isPending;
 
 	const handleToggleChange = ( enabled: boolean ) => {
-		updateDomainLockMutation.mutate( enabled, {
+		updateDomainLock( enabled, {
 			onSuccess: () => {
 				createSuccessNotice(
 					enabled ? __( 'Transfer lock enabled.' ) : __( 'Transfer lock disabled.' ),
@@ -187,10 +186,9 @@ export default function DomainTransfer() {
 
 	const renderTransferLock = () => {
 		const disabled = Boolean(
-			! domain?.domain_locking_available ||
-				domain?.transfer_away_eligible_at ||
-				isUpdatingDomainLock
+			! domain.domain_locking_available || domain.transfer_away_eligible_at || isUpdatingDomainLock
 		);
+
 		return (
 			<HStack alignment="left">
 				<ToggleControl
@@ -205,7 +203,7 @@ export default function DomainTransfer() {
 	};
 
 	const onRequestTransferCode = () => {
-		requestTransferCodeMutation.mutate( undefined, {
+		requestTransferCode( undefined, {
 			onSuccess: () => {
 				createSuccessNotice(
 					__(
