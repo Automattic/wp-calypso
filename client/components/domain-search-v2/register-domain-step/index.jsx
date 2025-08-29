@@ -746,14 +746,15 @@ class RegisterDomainStep extends Component {
 			return null;
 		}
 
+		const filterCount =
+			this.state.lastFilters.tlds.length + ( this.state.lastFilters.exactSldMatchesOnly ? 1 : 0 );
+
 		return (
 			<Dropdown
 				showArrow={ false }
 				popoverProps={ { placement: 'bottom-end', offset: 10, noArrow: false } }
 				renderToggle={ ( { onToggle } ) => {
-					return (
-						<DomainSearchControls.FilterButton filter={ this.state.filters } onClick={ onToggle } />
-					);
+					return <DomainSearchControls.FilterButton count={ filterCount } onClick={ onToggle } />;
 				} }
 				renderContent={ ( { onClose } ) => {
 					return (

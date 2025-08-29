@@ -28,12 +28,19 @@ export const Filter = ( { onSubmit }: Props ) => {
 		setTemporaryFilter( emptyFilter );
 	}, [ setFilter ] );
 
+	const getFilterCount = useCallback(
+		() => filter.tlds.length + ( filter.exactSldMatchesOnly ? 1 : 0 ),
+		[ filter ]
+	);
+
 	return (
 		<Dropdown
 			showArrow={ false }
 			popoverProps={ { placement: 'bottom-end', offset: 10, noArrow: false } }
 			renderToggle={ ( { onToggle } ) => {
-				return <DomainSearchControls.FilterButton filter={ filter } onClick={ onToggle } />;
+				return (
+					<DomainSearchControls.FilterButton count={ getFilterCount() } onClick={ onToggle } />
+				);
 			} }
 			renderContent={ ( { onClose } ) => {
 				return (
