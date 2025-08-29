@@ -33,6 +33,14 @@ export const DomainSearchControlsFilterPopover = ( {
 }: Props ) => {
 	const { __ } = useI18n();
 
+	// Only add TLD to current selection if it exists in the available TLDs list
+	const validateTld = useCallback(
+		( tld: string ) => {
+			return availableTlds.includes( tld );
+		},
+		[ availableTlds ]
+	);
+
 	const getRecommendedTlds = useCallback( () => {
 		return availableTlds.slice( 0, 5 ).filter( ( tld ) => ! temporaryFilter.tlds.includes( tld ) );
 	}, [ availableTlds, temporaryFilter.tlds ] );
@@ -43,14 +51,6 @@ export const DomainSearchControlsFilterPopover = ( {
 			.sort()
 			.filter( ( tld ) => ! temporaryFilter.tlds.includes( tld ) );
 	}, [ availableTlds, temporaryFilter.tlds ] );
-
-	// Only add TLD to current selection if it exists in the available TLDs list
-	const validateTld = useCallback(
-		( tld: string ) => {
-			return availableTlds.includes( tld );
-		},
-		[ availableTlds ]
-	);
 
 	// Generate list of available TLDs with labels separating the recommended and explore more sections
 	const generateAvailableTldsList = () => {
