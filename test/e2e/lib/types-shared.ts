@@ -18,6 +18,9 @@
  * - 'tr': Turkish
  * - 'zh-cn': Chinese (Simplified)
  * - 'zh-tw': Chinese (Traditional)
+ *
+ * TODO: We should ideally use `packages/i18n-utils/src/locales.ts#L110` instead of duplicating this list.
+ * Need to resolve esm / cjs interop first.
  */
 export type locale =
 	| 'ar'
