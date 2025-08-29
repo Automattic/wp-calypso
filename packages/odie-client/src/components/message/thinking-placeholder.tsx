@@ -1,5 +1,9 @@
 import { ThinkingMessage } from '@automattic/agenttic-ui';
 
 export const ThinkingPlaceholder = () => {
-	return <ThinkingMessage />;
+	return (
+		<div className="agenttic">
+			<ThinkingMessage />
+		</div>
+	);
 };
