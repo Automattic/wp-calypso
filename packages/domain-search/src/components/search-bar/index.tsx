@@ -40,7 +40,7 @@ export const SearchBar = () => {
 				onBlur={ () => {} }
 				onKeyDown={ () => {} }
 			/>
-			<Filter showTldFilter />
+			<Filter />
 		</HStack>
 	);
 };

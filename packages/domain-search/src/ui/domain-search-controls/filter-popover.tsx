@@ -22,7 +22,6 @@ type Props = {
 	onClose: () => void;
 	recommendedTlds: string[];
 	setExactSldMatchesOnlyInFilter: ( exactSldMatchesOnly: boolean ) => void;
-	showTldFilter: boolean;
 	temporaryFilter: FilterState;
 	validateTld: ( tld: string ) => boolean;
 };
@@ -36,7 +35,6 @@ export const DomainSearchControlsFilterPopover = ( {
 	onClose,
 	recommendedTlds,
 	setExactSldMatchesOnlyInFilter,
-	showTldFilter,
 	temporaryFilter,
 	validateTld,
 }: Props ) => {
@@ -81,22 +79,19 @@ export const DomainSearchControlsFilterPopover = ( {
 	// The popover needs to have the "domain-search" class because it is generated outside of the `DomainSearch` component
 	return (
 		<VStack className="domain-search domain-search-controls__filters-popover" spacing={ 4 }>
-			{ showTldFilter && (
-				<>
-					<FormTokenField
-						__next40pxDefaultSize
-						__nextHasNoMarginBottom
-						__experimentalShowHowTo={ false }
-						__experimentalValidateInput={ validateTld }
-						label=""
-						value={ temporaryFilter.tlds }
-						suggestions={ availableTlds }
-						onChange={ handleTldsChange }
-						placeholder={ __( 'Search for an ending' ) }
-					/>
-					{ renderAvailableTldsList() }
-				</>
-			) }
+			<FormTokenField
+				__next40pxDefaultSize
+				__nextHasNoMarginBottom
+				__experimentalShowHowTo={ false }
+				__experimentalValidateInput={ validateTld }
+				label=""
+				value={ temporaryFilter.tlds }
+				suggestions={ availableTlds }
+				onChange={ handleTldsChange }
+				placeholder={ __( 'Search for an ending' ) }
+			/>
+			{ renderAvailableTldsList() }
+
 			<CheckboxControl
 				label={ __( 'Show exact matches only' ) }
 				checked={ temporaryFilter.exactSldMatchesOnly }
