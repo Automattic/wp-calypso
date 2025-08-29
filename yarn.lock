@@ -1455,7 +1455,6 @@ __metadata:
   dependencies:
     "@automattic/calypso-color-schemes": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/charts": "npm:>=0.14.0 <1.0.0"
     "@automattic/components": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/odie-client": "workspace:^"
@@ -1814,7 +1813,6 @@ __metadata:
   dependencies:
     "@automattic/agenttic-ui": "npm:^0.1.9"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/charts": "npm:>=0.14.0 <1.0.0"
     "@automattic/components": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/zendesk-client": "workspace:^"
@@ -15153,7 +15151,6 @@ __metadata:
   resolution: "calypso@workspace:client"
   dependencies:
     "@automattic/accessible-focus": "workspace:^"
-    "@automattic/agenttic-ui": "npm:^0.1.9"
     "@automattic/block-renderer": "workspace:^"
     "@automattic/browser-data-collector": "workspace:^"
     "@automattic/calypso-analytics": "workspace:^"

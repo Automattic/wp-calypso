@@ -42,7 +42,6 @@
 	},
 	"dependencies": {
 		"@automattic/agenttic-ui": "^0.1.9",
-		"@automattic/charts": ">=0.14.0 <1.0.0",
 		"@automattic/components": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/zendesk-client": "workspace:^",

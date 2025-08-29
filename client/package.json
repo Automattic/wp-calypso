@@ -13,7 +13,6 @@
 	"main": "server/index.js",
 	"dependencies": {
 		"@automattic/accessible-focus": "workspace:^",
-		"@automattic/agenttic-ui": "^0.1.9",
 		"@automattic/block-renderer": "workspace:^",
 		"@automattic/browser-data-collector": "workspace:^",
 		"@automattic/calypso-analytics": "workspace:^",
