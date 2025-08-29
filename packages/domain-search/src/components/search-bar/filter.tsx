@@ -64,26 +64,10 @@ export const Filter = ( { onSubmit }: Props ) => {
 		[ setTemporaryFilter, temporaryFilter ]
 	);
 
-	// Only add TLD to current selection if it exists in the available TLDs list
-	const validateTld = ( tld: string ) => {
-		return availableTlds.includes( tld );
-	};
-
 	const handleTldsChange = ( tokens: ( string | TokenItem )[] ) => {
 		const tlds = tokens.map( ( token ) => ( typeof token === 'string' ? token : token.value ) );
 		setTldsInFilter( tlds );
 	};
-
-	const getRecommendedTlds = useCallback( () => {
-		return availableTlds.slice( 0, 5 ).filter( ( tld ) => ! temporaryFilter.tlds.includes( tld ) );
-	}, [ availableTlds, temporaryFilter.tlds ] );
-
-	const getExploreMoreTlds = useCallback( () => {
-		return availableTlds
-			.slice( 5 )
-			.sort()
-			.filter( ( tld ) => ! temporaryFilter.tlds.includes( tld ) );
-	}, [ availableTlds, temporaryFilter.tlds ] );
 
 	return (
 		<Dropdown
@@ -99,17 +83,14 @@ export const Filter = ( { onSubmit }: Props ) => {
 					<DomainSearchControls.FilterPopover
 						addTldToFilter={ addTldToFilter }
 						availableTlds={ availableTlds }
-						exploreMoreTlds={ getExploreMoreTlds() }
 						handleTldsChange={ handleTldsChange }
 						onClear={ () => {
 							onClose();
 							resetFilter();
 						} }
 						onClose={ onClose }
-						recommendedTlds={ getRecommendedTlds() }
 						setExactMatchesOnlyInFilter={ setExactMatchesOnlyInFilter }
 						temporaryFilter={ temporaryFilter }
-						validateTld={ validateTld }
 					/>
 				);
 			} }
