@@ -1,7 +1,7 @@
 import { test, expect } from '../../lib/pw-base';
 
 test.describe( 'Dashboard: Site Visibility Settings', { tag: '@dashboard' }, () => {
-	test( 'As a new simple site user, I can set my site visbility to Private', async ( {
+	test( 'As a new simple site user, I can set my site visibility to Private', async ( {
 		helperData,
 		page,
 		pageDashboard,
@@ -28,7 +28,7 @@ test.describe( 'Dashboard: Site Visibility Settings', { tag: '@dashboard' }, () 
 		} );
 	} );
 
-	test( 'As a new simple site user, I can set my site visbility to Coming Soon', async ( {
+	test( 'As a new simple site user, I can set my site visibility to Coming Soon', async ( {
 		helperData,
 		page,
 		pageDashboard,
@@ -55,7 +55,7 @@ test.describe( 'Dashboard: Site Visibility Settings', { tag: '@dashboard' }, () 
 		} );
 	} );
 
-	test( 'As a new simple site user, I can set my site visbility to Public and discourage search engines', async ( {
+	test( 'As a new simple site user, I can set my site visibility to Public and discourage search engines', async ( {
 		helperData,
 		page,
 		pageDashboard,
