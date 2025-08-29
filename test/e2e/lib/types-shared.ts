@@ -37,14 +37,3 @@ export type locale =
 	| 'tr'
 	| 'zh-cn'
 	| 'zh-tw';
-
-/**
- * Represents a translation object for a specific language.
- *
- * @property {locale} locale - The locale code corresponding to the translation.
- * @property {string} addTitle - The translated string for the "add title" label.
- */
-export interface Translation {
-	locale: locale;
-	addTitle: string;
-}

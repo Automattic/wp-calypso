@@ -150,8 +150,8 @@ export function getCalypsoURL(
  * // For French locale
  * const localePath = 'fr/'; // when locale === 'fr'
  *
- * @param locale - The locale code (e.g., 'en', 'fr', 'es').
- * @returns The locale path segment to be used in URLs.
+ * @param {string} locale - The locale code (e.g., 'en', 'fr', 'es').
+ * @returns {string} The locale path segment to be used in URLs.
  */
 export function getLocalePath( locale: string ): string {
 	return locale === 'en' ? '' : `${ locale }/`;
