@@ -5,7 +5,7 @@ import { useAuth } from '../../app/auth';
 import { ActionList } from '../../components/action-list';
 import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
-import { canTransferSite, canLeaveSite, canResetSite, canDeleteSite } from '../features';
+import { canTransferSite, canLeaveSite, canResetSite } from '../features';
 import SiteDeleteModal from '../site-delete-modal';
 import SiteLeaveModal from '../site-leave-modal';
 import SiteResetModal from '../site-reset-modal';
@@ -112,7 +112,7 @@ export default function DangerZone( { site }: { site: Site } ) {
 		canTransferSite( site, user ) && <SiteTransferAction key="transfer-site" site={ site } />,
 		canLeaveSite( site ) && <SiteLeaveAction key="leave-site" site={ site } />,
 		canResetSite( site ) && <SiteResetAction key="reset-site" site={ site } />,
-		canDeleteSite( site ) && <SiteDeleteAction key="delete-site" site={ site } />,
+		<SiteDeleteAction key="delete-site" site={ site } />,
 	].filter( Boolean );
 
 	if ( ! actions.length ) {

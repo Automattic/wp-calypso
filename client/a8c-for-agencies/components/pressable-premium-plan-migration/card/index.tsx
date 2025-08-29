@@ -1,9 +1,10 @@
 import { formatCurrency } from '@automattic/number-formatters';
 import { Card, Button } from '@wordpress/components';
-import { close } from '@wordpress/icons';
+import { close, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { A4A_MARKETPLACE_HOSTING_REFER_PRESSABLE_PREMIUM_PLAN_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import useScheduleCall from 'calypso/a8c-for-agencies/hooks/use-schedule-call';
 import { PRESSABLE_PREMIUM_PLAN_COMMISSION_AMOUNT } from 'calypso/a8c-for-agencies/sections/marketplace/lib/constants';
 import PressableWooMigrationIcon from 'calypso/assets/images/a8c-for-agencies/pressable-woo-migration-icon.svg';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -12,6 +13,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { useShowMigrationIncentive } from '../hook/use-show-migration-incentive';
+import { migrationIncentiveEndDateString } from '../lib/constants';
 
 import './style.scss';
 
@@ -24,6 +26,8 @@ export default function PressablePremiumPlanMigrationCard() {
 	const isDismissed = useSelector( ( state ) => getPreference( state, DISMISSED_PREFERENCE ) );
 
 	const showMigrationIncentive = useShowMigrationIncentive();
+
+	const { scheduleCall, isLoading } = useScheduleCall();
 
 	const onDismiss = useCallback( () => {
 		dispatch(
@@ -44,8 +48,8 @@ export default function PressablePremiumPlanMigrationCard() {
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_overview_pressable_premium_plan_migration_card_chat_click' )
 		);
-		// TODO: Add chat to us logic
-	}, [ dispatch ] );
+		scheduleCall();
+	}, [ dispatch, scheduleCall ] );
 
 	if ( isDismissed || ! showMigrationIncentive ) {
 		return null;
@@ -85,22 +89,32 @@ export default function PressablePremiumPlanMigrationCard() {
 				</div>
 
 				<div className="pressable-premium-plan-migration-card__buttons">
-					<div className="pressable-premium-plan-migration-card__primary-button">
-						<Button
-							className="is-light"
-							href={ A4A_MARKETPLACE_HOSTING_REFER_PRESSABLE_PREMIUM_PLAN_LINK }
-							onClick={ handleReferClient }
-						>
-							{ translate( 'Refer client now' ) }
-						</Button>
-					</div>
-					<Button className="is-light" variant="secondary" onClick={ handleChatToUs }>
+					<Button
+						className="is-light pressable-premium-plan-migration-card__primary-button"
+						href={ A4A_MARKETPLACE_HOSTING_REFER_PRESSABLE_PREMIUM_PLAN_LINK }
+						onClick={ handleReferClient }
+					>
+						{ translate( 'Refer client now' ) }
+					</Button>
+					<Button
+						className="is-light pressable-premium-plan-migration-card__chat-to-us-button"
+						variant="secondary"
+						icon={ external }
+						iconPosition="right"
+						iconSize={ 16 }
+						onClick={ handleChatToUs }
+						isBusy={ isLoading }
+						disabled={ isLoading }
+					>
 						{ translate( 'Chat to us about this offer' ) }
 					</Button>
 				</div>
 
 				<div className="pressable-premium-plan-migration-card__description">
-					{ translate( 'Offer ends September 30, 2025. {{a}}Terms{{/a}} ↗', {
+					{ translate( 'Offer ends %(endDate)s. {{a}}Terms{{/a}} ↗', {
+						args: {
+							endDate: migrationIncentiveEndDateString,
+						},
 						components: {
 							a: (
 								<Button

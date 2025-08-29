@@ -14,10 +14,15 @@ import { DomainSuggestionsList } from '../domain-suggestions-list';
 
 import './unavailable.scss';
 
+type UnavailabilityReason =
+	| 'tld-not-supported'
+	| 'tld-not-supported-temporarily'
+	| 'already-registered';
+
 export interface UnavailableProps {
 	domain?: string;
 	tld: string;
-	reason: 'tld-not-supported' | 'tld-not-supported-temporarily' | 'already-registered';
+	reason: UnavailabilityReason;
 	onTransferClick?(): void;
 	transferLink?: string;
 }

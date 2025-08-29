@@ -2,6 +2,8 @@ import {
 	DomainSuggestionsList,
 	DomainSuggestion,
 	DomainSearchSkipSuggestion,
+	getRootDomain,
+	isSubdomain,
 } from '@automattic/domain-search';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
@@ -10,9 +12,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { isDomainMappingFree, isNextDomainFree } from 'calypso/lib/cart-values/cart-items';
-import { isSubdomain } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
-import { getRootDomain } from 'calypso/lib/domains/utils';
 import { DESIGN_TYPE_STORE } from 'calypso/signup/constants';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';

@@ -1,4 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import {
 	Button,
 	ExternalLink,
@@ -13,6 +14,10 @@ import { createInterpolateElement, useState, useCallback } from '@wordpress/elem
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronRight, chevronLeft } from '@wordpress/icons';
 import { siteByIdQuery } from '../../app/queries/site';
+import {
+	pushToStagingMutation,
+	pullFromStagingMutation,
+} from '../../app/queries/site-staging-sync';
 import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
 import SiteEnvironmentBadge, { EnvironmentType } from '../../components/site-environment-badge';
@@ -140,6 +145,7 @@ export default function StagingSiteSyncModal( {
 	environment,
 	productionSiteId,
 	stagingSiteId,
+	onSyncStart,
 }: StagingSiteSyncModalProps ) {
 	const syncConfig = getSyncConfig( syncType );
 	const [ domainConfirmation, setDomainConfirmation ] = useState( '' );
@@ -167,28 +173,63 @@ export default function StagingSiteSyncModal( {
 	const targetSiteTitle =
 		targetEnvironment === 'production' ? productionSiteTitle : stagingSiteTitle;
 
-	// TODO: Uncomment once we need it.
+	// TODO: Uncomment once we need it for granular sync.
 	// const querySiteId = sourceEnvironment === 'staging' ? stagingSiteId : productionSiteId;
+
+	const pullMutation = useMutation( pullFromStagingMutation( productionSiteId, stagingSiteId ) );
+	const pushMutation = useMutation( pushToStagingMutation( productionSiteId, stagingSiteId ) );
 
 	const handleClose = useCallback( () => {
 		onClose();
 	}, [ onClose ] );
 
 	const handleConfirm = () => {
-		// Sync everything
-		// TODO: Uncomment once pullFromStaging and pushToStaging are available
-		// const include_paths = '';
-		// const exclude_paths = '';
+		// TODO: Sync everything for now. Later we will add granular sync.
+		const options = { types: 'paths', include_paths: '', exclude_paths: '' };
 
 		if (
 			( syncType === 'pull' && environment === 'production' ) ||
 			( syncType === 'push' && environment === 'staging' )
 		) {
-			// TODO: Replace with the correct pullFromStaging (once it is moved to V2)
-			// pullFromStaging( { types: 'paths', include_paths, exclude_paths } );
+			pullMutation.mutate( options, {
+				onSuccess: () => {
+					recordTracksEvent( 'calypso_hosting_configuration_staging_site_pull_success', {
+						types: options.types,
+						include_paths: options.include_paths,
+						exclude_paths: options.exclude_paths,
+					} );
+					onSyncStart();
+					handleClose();
+				},
+				onError: ( error: Error ) => {
+					recordTracksEvent( 'calypso_hosting_configuration_staging_site_pull_failure', {
+						message: error.message,
+						types: options.types,
+						include_paths: options.include_paths,
+						exclude_paths: options.exclude_paths,
+					} );
+				},
+			} );
 		} else {
-			// TODO: Replace with the correct pushToStaging (once it is moved to V2)
-			// pushToStaging( { types: 'paths', include_paths, exclude_paths } );
+			pushMutation.mutate( options, {
+				onSuccess: () => {
+					recordTracksEvent( 'calypso_hosting_configuration_staging_site_push_success', {
+						types: options.types,
+						include_paths: options.include_paths,
+						exclude_paths: options.exclude_paths,
+					} );
+					onSyncStart();
+					handleClose();
+				},
+				onError: ( error: Error ) => {
+					recordTracksEvent( 'calypso_hosting_configuration_staging_site_push_failure', {
+						message: error.message,
+						types: options.types,
+						include_paths: options.include_paths,
+						exclude_paths: options.exclude_paths,
+					} );
+				},
+			} );
 		}
 	};
 
@@ -263,7 +304,12 @@ export default function StagingSiteSyncModal( {
 							<Button variant="tertiary" onClick={ handleClose }>
 								{ __( 'Cancel' ) }
 							</Button>
-							<Button variant="primary" onClick={ handleConfirm } disabled={ isSubmitDisabled }>
+							<Button
+								variant="primary"
+								onClick={ handleConfirm }
+								disabled={ isSubmitDisabled || pullMutation.isPending || pushMutation.isPending }
+								isBusy={ pullMutation.isPending || pushMutation.isPending }
+							>
 								{ syncConfig.submit }
 							</Button>
 						</HStack>

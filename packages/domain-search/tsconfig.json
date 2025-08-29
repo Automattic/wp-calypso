@@ -4,8 +4,9 @@
 		"declarationDir": "dist/types",
 		"outDir": "dist/esm",
 		"rootDir": "src",
-		"types": [ "jest", "@testing-library/jest-dom" ]
+		"types": [ "jest", "@testing-library/jest-dom" ],
+		"resolveJsonModule": true
 	},
-	"include": [ "src" ],
+	"include": [ "src", "src/**/*.json" ],
 	"references": [ { "path": "../components" }, { "path": "../data" } ]
 }

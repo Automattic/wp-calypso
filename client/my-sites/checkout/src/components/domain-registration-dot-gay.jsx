@@ -1,8 +1,9 @@
+import { getTld } from '@automattic/domain-search';
 import { localize } from 'i18n-calypso';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { getDomainRegistrations, getDomainTransfers } from 'calypso/lib/cart-values/cart-items';
-import { getTld, isDotGayNoticeRequired } from 'calypso/lib/domains';
+import { isDotGayNoticeRequired } from 'calypso/lib/domains';
 import CheckoutTermsItem from 'calypso/my-sites/checkout/src/components/checkout-terms-item';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 

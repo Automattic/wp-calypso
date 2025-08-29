@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { isSubdomain } from '@automattic/domain-search';
 import { englishLocales } from '@automattic/i18n-utils';
 import { Icon, info } from '@wordpress/icons';
 import i18n, { getLocaleSlug, localize } from 'i18n-calypso';
@@ -11,7 +12,6 @@ import { modeType, stepSlug } from 'calypso/components/domains/connect-domain-st
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
-import { isSubdomain } from 'calypso/lib/domains';
 import { type as domainTypes } from 'calypso/lib/domains/constants';
 import InfoNotice from 'calypso/my-sites/domains/domain-management/components/domain/info-notice';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
