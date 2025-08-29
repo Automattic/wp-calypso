@@ -42,6 +42,7 @@
 	},
 	"dependencies": {
 		"@automattic/agenttic-ui": "^0.1.7",
+		"@automattic/charts": ">=0.14.0 <1.0.0",
 		"@automattic/components": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/zendesk-client": "workspace:^",
@@ -61,9 +62,6 @@
 		"react-redux": "^9.2.0",
 		"smooch": "5.6.0",
 		"wpcom-proxy-request": "^7.0.5"
-	},
-	"peerDependencies": {
-		"@automattic/charts": ">=0.14.0 <1.0.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
