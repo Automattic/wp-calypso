@@ -1,13 +1,13 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { Button } from '@automattic/components';
+import { isSubdomain } from '@automattic/domain-search';
 import { useTranslate } from 'i18n-calypso';
 import {
 	domainMappingInstructionsMode,
 	subdomainMappingInstructionsMode,
 } from 'calypso/components/domains/connect-domain-step/constants';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { isSubdomain } from 'calypso/lib/domains';
 import { type as domainTypes } from 'calypso/lib/domains/constants';
 import { domainMappingSetup } from 'calypso/my-sites/domains/paths';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';

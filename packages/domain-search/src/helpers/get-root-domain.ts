@@ -1,4 +1,4 @@
-import { getTld } from 'calypso/lib/domains';
+import { getTld } from './get-tld';
 
 export function getRootDomain( domainName: string ): string {
 	if ( ! domainName ) {

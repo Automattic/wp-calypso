@@ -1,5 +1,3 @@
-import type { DomainSuggestion } from '@automattic/data';
-
 export type FeaturedSuggestionReason = 'exact-match' | 'recommended' | 'best-alternative';
 
 export interface FeaturedSuggestionWithReason {
@@ -13,7 +11,7 @@ interface PartitionedSuggestions {
 }
 
 interface PartitionSuggestionsParams {
-	suggestions: DomainSuggestion[];
+	suggestions: string[];
 	query: string;
 	deemphasiseTlds: string[];
 }
@@ -23,19 +21,17 @@ export const partitionSuggestions = ( {
 	query,
 	deemphasiseTlds,
 }: PartitionSuggestionsParams ): PartitionedSuggestions => {
-	const exactMatch = suggestions.find( ( suggestion ) => suggestion.domain_name === query );
+	const exactMatch = suggestions.find( ( suggestion ) => suggestion === query );
 
 	if ( exactMatch ) {
 		return {
 			featuredSuggestions: [
 				{
-					suggestion: exactMatch.domain_name,
+					suggestion: exactMatch,
 					reason: 'exact-match',
 				},
 			],
-			regularSuggestions: suggestions
-				.filter( ( suggestion ) => suggestion.domain_name !== query )
-				.map( ( suggestion ) => suggestion.domain_name ),
+			regularSuggestions: suggestions.filter( ( suggestion ) => suggestion !== query ),
 		};
 	}
 
@@ -43,14 +39,14 @@ export const partitionSuggestions = ( {
 	const regularSuggestions: string[] = [];
 
 	for ( const suggestion of suggestions ) {
-		if ( deemphasiseTlds.some( ( tld ) => suggestion.domain_name.endsWith( `.${ tld }` ) ) ) {
-			regularSuggestions.push( suggestion.domain_name );
+		if ( deemphasiseTlds.some( ( tld ) => suggestion.endsWith( `.${ tld }` ) ) ) {
+			regularSuggestions.push( suggestion );
 			continue;
 		}
 
 		if ( ! featuredSuggestions.find( ( { reason } ) => reason === 'recommended' ) ) {
 			featuredSuggestions.push( {
-				suggestion: suggestion.domain_name,
+				suggestion: suggestion,
 				reason: 'recommended',
 			} );
 			continue;
@@ -58,13 +54,13 @@ export const partitionSuggestions = ( {
 
 		if ( ! featuredSuggestions.find( ( { reason } ) => reason === 'best-alternative' ) ) {
 			featuredSuggestions.push( {
-				suggestion: suggestion.domain_name,
+				suggestion: suggestion,
 				reason: 'best-alternative',
 			} );
 			continue;
 		}
 
-		regularSuggestions.push( suggestion.domain_name );
+		regularSuggestions.push( suggestion );
 	}
 
 	return {

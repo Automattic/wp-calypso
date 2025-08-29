@@ -1,4 +1,12 @@
-export type EmailProvider = 'titan' | 'google-workspace' | 'forwarding';
+import wpcom from 'calypso/lib/wp';
+export type EmailProvider = 'titan' | 'google_workspace' | 'email_forwarding';
+
+export interface Mailbox {
+	account_type: EmailProvider;
+	domain: string;
+	last_access_time: string | null;
+	mailbox: string;
+}
 
 export interface Email {
 	id: string;
@@ -49,7 +57,7 @@ export const EMAIL_DATA: Email[] = [
 		id: '3',
 		emailAddress: 'billing@mybusiness.store',
 		type: 'mailbox',
-		provider: 'google-workspace',
+		provider: 'google_workspace',
 		providerDisplayName: 'Google Workspace',
 		domainName: 'mybusiness.store',
 		siteId: '2',
@@ -63,7 +71,7 @@ export const EMAIL_DATA: Email[] = [
 		id: '4',
 		emailAddress: 'contact@creative-portfolio.design',
 		type: 'forwarding',
-		provider: 'forwarding',
+		provider: 'email_forwarding',
 		providerDisplayName: 'Email Forwarding',
 		domainName: 'creative-portfolio.design',
 		siteId: '3',
@@ -76,7 +84,7 @@ export const EMAIL_DATA: Email[] = [
 		id: '5',
 		emailAddress: 'jobs@mybusiness.store',
 		type: 'forwarding',
-		provider: 'forwarding',
+		provider: 'email_forwarding',
 		providerDisplayName: 'Email Forwarding',
 		domainName: 'mybusiness.store',
 		siteId: '2',
@@ -89,7 +97,7 @@ export const EMAIL_DATA: Email[] = [
 		id: '6',
 		emailAddress: 'newsletter@myblog.com',
 		type: 'forwarding',
-		provider: 'forwarding',
+		provider: 'email_forwarding',
 		providerDisplayName: 'Email Forwarding',
 		domainName: 'myblog.com',
 		siteId: '1',
@@ -102,7 +110,7 @@ export const EMAIL_DATA: Email[] = [
 		id: '7',
 		emailAddress: 'admin@mybusiness.store',
 		type: 'mailbox',
-		provider: 'google-workspace',
+		provider: 'google_workspace',
 		providerDisplayName: 'Google Workspace',
 		domainName: 'mybusiness.store',
 		siteId: '2',
@@ -138,4 +146,13 @@ export function findEmailById( id: string ): Email | undefined {
 
 export async function fetchEmail( id: string ): Promise< Email | undefined > {
 	return Promise.resolve( findEmailById( id ) );
+}
+
+export function fetchMailboxes( siteId: number ): Promise< Mailbox[] > {
+	return wpcom.req
+		.get( {
+			path: `/sites/${ siteId }/emails/mailboxes`,
+			apiNamespace: 'wpcom/v2',
+		} )
+		.then( ( data: { mailboxes: Mailbox[] } ) => data.mailboxes );
 }

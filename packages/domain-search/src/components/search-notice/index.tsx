@@ -1,3 +1,4 @@
+import { DomainAvailabilityStatus } from '@automattic/data';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { useDomainSearch } from '../../page/context';
@@ -7,7 +8,7 @@ export const SearchNotice = () => {
 	const { query, queries } = useDomainSearch();
 	const { data: availability } = useQuery( queries.domainAvailability( query ) );
 
-	if ( availability?.status !== 'unavailable' ) {
+	if ( availability?.status === DomainAvailabilityStatus.AVAILABLE ) {
 		return null;
 	}
 

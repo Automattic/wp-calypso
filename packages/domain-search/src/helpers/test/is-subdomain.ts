@@ -1,4 +1,4 @@
-import { isSubdomain } from 'calypso/lib/domains';
+import { isSubdomain } from '../';
 
 describe( 'isSubdomain', () => {
 	test( "should return false if there's no domain", () => {
