@@ -1,8 +1,8 @@
 import { Dropdown } from '@wordpress/components';
 import { useCallback, useMemo, useState } from 'react';
 import { useDomainSearch } from '../../page/context';
-import { FilterState } from '../../page/types';
 import { DomainSearchControls } from '../../ui';
+import { FilterState } from './types';
 
 const emptyFilter: FilterState = {
 	exactSldMatchesOnly: false,
