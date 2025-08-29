@@ -85,6 +85,18 @@ export class DashboardPage {
 	}
 
 	/**
+	 * Sets the "Discourage search engines from indexing this site" option.
+	 *
+	 * @returns Promise that resolves when this option is set
+	 */
+	async setDiscourageSearchEngines(): Promise< void > {
+		await this.page
+			.getByRole( 'checkbox', { name: 'Discourage search engines from indexing this site' } )
+			.click();
+		await this.saveChanges();
+	}
+
+	/**
 	 * Sets the site visibility by selecting the appropriate radio button and saving.
 	 *
 	 * @param visibility - The desired site visibility.
@@ -92,6 +104,14 @@ export class DashboardPage {
 	 */
 	async setSiteVisibility( visibility: 'Public' | 'Private' | 'Coming soon' ): Promise< void > {
 		await this.page.getByRole( 'radio', { name: visibility } ).click();
+		await this.saveChanges();
+	}
+
+	/**
+	 * Saves changes on the settings page by clicking the Save button and waiting for the request to finish.
+	 * 	@returns Promise that resolves when the save action is complete.
+	 */
+	private async saveChanges(): Promise< void > {
 		await this.page.waitForSelector( 'button[type="submit"]:not([disabled])' );
 		await this.page.getByRole( 'button', { name: 'Save' } ).click();
 		await this.page.waitForSelector( 'button:not(.is-busy)[type="submit"][disabled]' );

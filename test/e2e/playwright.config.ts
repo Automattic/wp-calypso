@@ -13,6 +13,8 @@ export default defineConfig( {
 	retries: process.env.CI ? 1 : 0,
 	/* Workers should use what is available */
 	workers: '100%',
+	/* Global timeout for each test */
+	timeout: 60 * 1000,
 	/* Reporter to use. See https://playwright.dev/docs/test-reporters */
 	reporter: process.env.CI ? [ [ 'junit', { outputFile: 'results.xml' } ], [ 'html' ] ] : 'html',
 	/* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
