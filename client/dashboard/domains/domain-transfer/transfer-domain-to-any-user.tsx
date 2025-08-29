@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Card,
 	CardBody,
@@ -7,17 +7,25 @@ import {
 	__experimentalVStack as VStack,
 	Button,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { DataForm, isItemValid } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import { useLocale } from '../../app/locale';
 import { domainQuery } from '../../app/queries/domain';
-import { domainTransferRequestQuery } from '../../app/queries/domain-transfer';
+import {
+	domainTransferRequestQuery,
+	domainTransferRequestUpdateMutation,
+	domainTransferRequestDeleteMutation,
+} from '../../app/queries/domain-transfer';
 import { siteByIdQuery } from '../../app/queries/site';
 import { domainRoute } from '../../app/router/domains';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
+import { formatDate } from '../../utils/datetime';
 import { hasGSuiteWithUs, hasTitanMailWithUs } from '../../utils/domain';
 import type { Field } from '@wordpress/dataviews';
 
@@ -48,7 +56,14 @@ export default function TransferDomainToAnyUser() {
 	const { data: domainTransferRequest } = useSuspenseQuery(
 		domainTransferRequestQuery( domainName, site.slug )
 	);
+	const { mutate: deleteDomainTransferRequest, isPending: isDeletingDomainTransferRequest } =
+		useMutation( domainTransferRequestDeleteMutation( domainName, site.slug ) );
+	const { mutate: updateDomainTransferRequest, isPending: isUpdatingDomainTransferRequest } =
+		useMutation( domainTransferRequestUpdateMutation( domainName, site.slug ) );
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const locale = useLocale();
 	const transferEmail = domainTransferRequest?.email;
+	const requestedAt = domainTransferRequest?.requested_at;
 
 	const [ formData, setFormData ] = useState( {
 		email: '',
@@ -60,8 +75,27 @@ export default function TransferDomainToAnyUser() {
 
 	const handleSubmit = ( event: React.FormEvent ) => {
 		event.preventDefault();
-		// eslint-disable-next-line no-console
-		console.log( 'Transfer domain to email:', formData.email );
+		updateDomainTransferRequest( formData.email, {
+			onSuccess: () => {
+				createSuccessNotice(
+					__( 'A domain transfer request has been emailed to the recipient’s address.' )
+				);
+			},
+			onError: () => {
+				createErrorNotice( __( 'An error occurred while initiating the domain transfer.' ) );
+			},
+		} );
+	};
+
+	const handleCancelTransfer = () => {
+		deleteDomainTransferRequest( undefined, {
+			onSuccess: () => {
+				createSuccessNotice( __( 'Your domain transfer has been cancelled.' ) );
+			},
+			onError: () => {
+				createErrorNotice( __( 'The domain transfer cannot be cancelled at this time.' ) );
+			},
+		} );
 	};
 
 	const renderTransferNotice = () => {
@@ -74,73 +108,115 @@ export default function TransferDomainToAnyUser() {
 		);
 	};
 
-	const renderEmailForm = () => {
+	const renderTransferForm = () => {
 		return (
-			<form onSubmit={ handleSubmit }>
-				<VStack spacing={ 4 }>
-					<DataForm< TransferFormData >
-						data={ formData }
-						fields={ fields }
-						form={ form }
-						onChange={ ( edits: Partial< TransferFormData > ) => {
-							setFormData( ( data ) => ( { ...data, ...edits } ) );
-						} }
-					/>
-					{ renderTransferNotice() }
-					<HStack justify="flex-start">
-						<Button
-							__next40pxDefaultSize
-							variant="primary"
-							type="submit"
-							disabled={ isSaveDisabled }
-						>
-							{ __( 'Transfer Domain' ) }
-						</Button>
-					</HStack>
+			<VStack spacing={ 8 }>
+				<VStack spacing={ 2 }>
+					<Text as="p">
+						{ sprintf(
+							/* Translators: %s: domainName is the domain name */
+							__(
+								'You can transfer %(domainName)s to any WordPress.com user. If the user does not have a WordPress.com account, they will be prompted to create one.'
+							),
+							{ domainName }
+						) }
+					</Text>
+					<Text as="p">
+						{ __(
+							'The recipient will need to provide updated contact information and accept the request before the domain transfer can be completed.'
+						) }
+					</Text>
+					{ hasEmailWithUs && (
+						<Text as="p">
+							{ sprintf(
+								/* Translators: %s: domainName is the domain name */
+								__(
+									'The email subscription for %(domainName)s will be transferred along with the domain.'
+								),
+								{ domainName }
+							) }
+						</Text>
+					) }
 				</VStack>
-			</form>
+				<form onSubmit={ handleSubmit }>
+					<VStack spacing={ 4 }>
+						<DataForm< TransferFormData >
+							data={ formData }
+							fields={ fields }
+							form={ form }
+							onChange={ ( edits: Partial< TransferFormData > ) => {
+								setFormData( ( data ) => ( { ...data, ...edits } ) );
+							} }
+						/>
+						{ renderTransferNotice() }
+						<HStack justify="flex-start">
+							<Button
+								__next40pxDefaultSize
+								variant="primary"
+								type="submit"
+								isBusy={ isUpdatingDomainTransferRequest }
+								disabled={ isSaveDisabled || isUpdatingDomainTransferRequest }
+							>
+								{ __( 'Transfer Domain' ) }
+							</Button>
+						</HStack>
+					</VStack>
+				</form>
+			</VStack>
 		);
 	};
 
-	const renderDeleteForm = () => {
-		return <>Placeholder</>;
+	const renderCancelTransfer = () => {
+		const expiresAt = new Date( requestedAt || '' );
+		expiresAt.setHours( expiresAt.getHours() + 24 );
+
+		return (
+			<VStack spacing={ 8 }>
+				<VStack spacing={ 4 }>
+					<VStack>
+						<Text size={ 14 } weight={ 500 }>
+							{ __( 'Status' ) }
+						</Text>
+						<Text>Pending</Text>
+					</VStack>
+					<VStack>
+						<Text size={ 14 } weight={ 500 }>
+							{ __( 'Transfer recipient' ) }
+						</Text>
+						<Text>{ transferEmail }</Text>
+					</VStack>
+					<VStack>
+						<Text size={ 14 } weight={ 500 }>
+							{ __( 'Valid until' ) }
+						</Text>
+						<Text>{ formatDate( expiresAt, locale ) }</Text>
+					</VStack>
+				</VStack>
+				<HStack justify="flex-start">
+					<Button
+						__next40pxDefaultSize
+						variant="primary"
+						isBusy={ isDeletingDomainTransferRequest }
+						disabled={ isDeletingDomainTransferRequest }
+						onClick={ handleCancelTransfer }
+					>
+						{ __( 'Cancel Transfer' ) }
+					</Button>
+				</HStack>
+			</VStack>
+		);
 	};
 
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Transfer to another user' ) } /> }>
 			<Card>
 				<CardBody>
-					<VStack spacing={ 10 }>
-						<VStack spacing={ 3 }>
-							<SectionHeader title={ __( 'Confirm new owner' ) } level={ 3 } />
-							<Text as="p">
-								{ sprintf(
-									/* Translators: %s: domainName is the domain name */
-									__(
-										'You can transfer %(domainName)s to any WordPress.com user. If the user does not have a WordPress.com account, they will be prompted to create one.'
-									),
-									{ domainName }
-								) }
-							</Text>
-							<Text as="p">
-								{ __(
-									'The recipient will need to provide updated contact information and accept the request before the domain transfer can be completed.'
-								) }
-							</Text>
-							{ hasEmailWithUs && (
-								<Text as="p">
-									{ sprintf(
-										/* Translators: %s: domainName is the domain name */
-										__(
-											'The email subscription for %(domainName)s will be transferred along with the domain.'
-										),
-										{ domainName }
-									) }
-								</Text>
-							) }
-						</VStack>
-						{ ! transferEmail && renderEmailForm() }
-						{ transferEmail && renderDeleteForm() }
+					<VStack spacing={ 3 }>
+						<SectionHeader
+							title={ transferEmail ? __( 'Domain transfer pending' ) : __( 'Confirm new owner' ) }
+						/>
+						{ ! transferEmail && renderTransferForm() }
+						{ transferEmail && renderCancelTransfer() }
 					</VStack>
 				</CardBody>
 			</Card>

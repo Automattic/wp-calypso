@@ -50,8 +50,12 @@ export const domainTransferRequestQuery = ( domain: string, siteSlug: string ) =
 export const domainTransferRequestUpdateMutation = ( domain: string, siteSlug: string ) =>
 	mutationOptions( {
 		mutationFn: ( email: string ) => domainTransferRequestUpdate( domain, siteSlug, email ),
-		onSuccess: () => {
-			// Manually update the cache before invalidating the query.
+		onSuccess: ( _, email ) => {
+			// Manually update the cache before invalidating the query
+			queryClient.setQueryData( domainTransferRequestQuery( domain, siteSlug ).queryKey, {
+				email,
+				requested_at: new Date().toISOString(),
+			} );
 			queryClient.invalidateQueries( domainTransferRequestQuery( domain, siteSlug ) );
 		},
 	} );
@@ -60,6 +64,8 @@ export const domainTransferRequestDeleteMutation = ( domain: string, siteSlug: s
 	mutationOptions( {
 		mutationFn: () => domainTransferRequestDelete( domain, siteSlug ),
 		onSuccess: () => {
+			// Manually update the cache before invalidating the query
+			queryClient.setQueryData( domainTransferRequestQuery( domain, siteSlug ).queryKey, null );
 			queryClient.removeQueries( domainTransferRequestQuery( domain, siteSlug ) );
 		},
 	} );
