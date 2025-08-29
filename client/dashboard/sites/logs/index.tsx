@@ -124,6 +124,9 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	const { gmtOffset, timezoneString } = data!;
 
 	const [ autoRefresh, setAutoRefresh ] = useState( false );
+	const [ autoRefreshDisabledReason, setAutoRefreshDisabledReason ] = useState< string | null >(
+		null
+	);
 
 	const [ view, setView ] = useView( {
 		logType,
@@ -183,14 +186,28 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 			gmtOffset
 		);
 		if ( activePreset !== 'last-7-days' ) {
+			// Auto-disable auto-refresh when not using the default preset
+			setAutoRefresh( false );
+			setAutoRefreshDisabledReason( __( 'Auto-refresh only works with "Last 7 days" preset' ) );
 			return;
 		}
+
+		// Clear any previous disabled reason when auto-refresh is working
+		setAutoRefreshDisabledReason( null );
 
 		// Simple auto-refresh: just refetch the logs every 10 seconds
 		const intervalId = setInterval( () => refetch(), 10 * 1000 );
 
 		return () => clearInterval( intervalId );
-	}, [ autoRefresh, refetch, dateRange.start, dateRange.end, timezoneString, gmtOffset ] );
+	}, [
+		autoRefresh,
+		refetch,
+		dateRange.start,
+		dateRange.end,
+		timezoneString,
+		gmtOffset,
+		setAutoRefresh,
+	] );
 
 	useEffect( () => {
 		if ( ! siteLogs ) {
@@ -208,6 +225,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 
 	const handleDateRangeChange = ( next: { start: Date; end: Date } ) => {
 		setAutoRefresh( false );
+		setAutoRefreshDisabledReason( null );
 		setDateRange( next );
 
 		// Reset pagination + cursors
@@ -340,6 +358,9 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 
 	const handleAutoRefreshClick = ( isChecked: boolean ) => {
 		setAutoRefresh( isChecked );
+		if ( ! isChecked ) {
+			setAutoRefreshDisabledReason( null );
+		}
 		recordTracksEvent( 'calypso_dashboard_site_logs_auto_refresh', { enabled: isChecked } );
 	};
 
@@ -377,6 +398,11 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 			{ notice && (
 				<div style={ { marginBottom: 12 } }>
 					<Notice variant={ notice.variant }>{ notice.message }</Notice>
+				</div>
+			) }
+			{ autoRefreshDisabledReason && (
+				<div style={ { marginBottom: 12 } }>
+					<Notice variant="warning">{ autoRefreshDisabledReason }</Notice>
 				</div>
 			) }
 			<CalloutOverlay
