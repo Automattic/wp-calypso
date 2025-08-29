@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import wpcom from 'calypso/lib/wp';
 
 export type IpsTag = {
@@ -42,8 +42,11 @@ export async function saveIpsTag( domain: string, ipsTag: string ): Promise< voi
 }
 
 export async function fetchIpsTagList(): Promise< IpsTag[] > {
-	/* translators: Please don't translate "IPS tag". */
-	const errorMessage = __( 'Failed to fetch IPS tag list. Please refresh the page and try again.' );
+	const errorMessage = sprintf(
+		/* translators: %s is the name of the list being fetched. */
+		__( 'Failed to fetch %(list)s list. Please refresh the page and try again.' ),
+		{ list: 'IPS tag' }
+	);
 	try {
 		const response = await fetch( 'https://widgets.wp.com/domains/ips-tag-list.min.json' );
 		if ( ! response.ok ) {
