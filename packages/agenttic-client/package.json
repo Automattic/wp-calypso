@@ -57,7 +57,7 @@
 		"vitest": "^1.0.0"
 	},
 	"dependencies": {
-		"@automattic/charts": "^0.14.0",
+		"@automattic/charts": ">=0.14.0 <1.0.0",
 		"@types/react": "^18.0.0",
 		"@visx/xychart": "^3.12.0",
 		"@wordpress/element": "^6.2.0",
