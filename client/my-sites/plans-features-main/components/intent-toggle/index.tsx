@@ -34,7 +34,7 @@ export default function IntentToggle( { currentIntent, onIntentChange }: IntentT
 			<ToggleGroupControl
 				label={ translate( 'Plan type selector' ) }
 				hideLabelFromVision
-				value={ currentIntent || 'plans-website-builder' }
+				value={ currentIntent || '' }
 				onChange={ handleToggle as ( value: string | number | undefined ) => void }
 				__next40pxDefaultSize
 				__nextHasNoMarginBottom
