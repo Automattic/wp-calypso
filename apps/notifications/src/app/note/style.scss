@@ -156,10 +156,4 @@
 	.components-external-link__contents {
 		text-decoration: none;
 	}
-
-	// Hide external link icons in Notifications for consistency, since most
-	// links are external, while post content links won’t display the icon.
-	.components-external-link__icon {
-		display: none;
-	}
 }

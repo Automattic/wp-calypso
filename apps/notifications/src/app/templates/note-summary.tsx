@@ -47,7 +47,6 @@ const NoteSummary = ( { note }: { note: Note } ) => {
 				<ExternalLink href={ note.url }>
 					<span
 						className="wpnc__subject"
-						style={ { whiteSpace: 'pre-wrap' } }
 						/* eslint-disable-next-line react/no-danger */
 						dangerouslySetInnerHTML={ {
 							__html: html( note.subject[ 0 ], {
