@@ -191,7 +191,6 @@ export interface Purchase {
 	is_jetpack_stats_product: boolean;
 	is_locked: boolean;
 	is_plan: boolean;
-	is_removable: boolean;
 	is_rechargable: boolean;
 	is_renewable: boolean;
 	is_renewal: boolean;
@@ -345,7 +344,7 @@ export function normalizePurchase( rawPurchase: RawPurchase ): Purchase {
 	};
 }
 
-export function removePurchase( purchaseId: string ) {
+export function removePurchase( purchaseId: number ) {
 	return wpcom.req.post( {
 		path: `/purchases/${ purchaseId }/delete`,
 		apiNamespace: 'wpcom/v2',
