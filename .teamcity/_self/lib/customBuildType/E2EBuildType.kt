@@ -59,7 +59,7 @@ open class E2EBuildType(
 	var buildTriggers: Triggers.() -> Unit = {},
 	var buildDependencies: Dependencies.() -> Unit = {},
 	var addWpcomVcsRoot: Boolean = false,
-	var buildSteps: BuildSteps.() -> Unit = {},
+	var buildSteps: BuildSteps.() -> Unit = {}
 
 ): BuildType() {
 	init {
