@@ -454,6 +454,7 @@ import {
 	FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL,
 	FEATURE_WOO_AUTOMATE,
 	FEATURE_WOO_SHIPPING_TRACKING,
+	FEATURE_GOOGLE_LISTING_ADS,
 } from './constants';
 import { isBigSkyOnboarding } from './is-big-sky-onboarding';
 import { isGlobalStylesOnPersonalEnabled } from './is-global-styles-on-personal-enabled';
@@ -1173,7 +1174,9 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		// Additional Commerce features
 		FEATURE_ACCEPT_PAYMENTS,
 		FEATURE_WOO_AUTOMATE,
+		FEATURE_PRODUCT_ADD_ONS,
 		FEATURE_WOO_SHIPPING_TRACKING,
+		FEATURE_GOOGLE_LISTING_ADS,
 	],
 } );
 
