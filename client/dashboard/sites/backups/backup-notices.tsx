@@ -21,9 +21,9 @@ export function BackupNotices( { site }: { site: Site } ) {
 			<Notice
 				variant="info"
 				title={ sprintf(
-					/* translators: %d is the backup progress percentage. */
-					__( 'Generating backup… (%d%% progress)' ),
-					backup?.percent ?? 0
+					/* translators: %s is the backup progress percentage. */
+					__( 'Generating backup… (%s%% progress)' ),
+					backup?.percent ?? '0'
 				) }
 			>
 				{ sprintf(
