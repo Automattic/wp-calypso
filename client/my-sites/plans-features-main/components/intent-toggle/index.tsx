@@ -3,6 +3,7 @@ import {
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { PlansIntent } from '@automattic/plans-grid-next';
 import './style.scss';
 
@@ -24,6 +25,11 @@ export default function IntentToggle( { currentIntent, onIntentChange }: IntentT
 
 		const newIntent: PlansIntent =
 			value === 'wordpress-hosting' ? 'plans-wordpress-hosting' : 'plans-website-builder';
+
+		recordTracksEvent( 'calypso_plans_intent_toggle_change', {
+			plans_intent: newIntent,
+		} );
+
 		onIntentChange( newIntent );
 	};
 
