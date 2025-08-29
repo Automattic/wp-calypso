@@ -1,5 +1,5 @@
-import wpcomMultiLevelTlds from './tlds/wpcom-multi-level-tlds.json';
-import { parseDomainAgainstTldList } from './utils';
+import { parseDomainAgainstTldList } from './parse-domain-against-tld-list';
+import wpcomMultiLevelTlds from './wpcom-multi-level-tlds.json';
 
 /**
  * Parse the tld from a given domain name, semi-naively. The function
@@ -11,7 +11,7 @@ import { parseDomainAgainstTldList } from './utils';
  * @param {string}     domainName     The domain name parse the tld from
  * @returns {string}                   The TLD or an empty string
  */
-export function getTld( domainName ) {
+export function getTld( domainName: string ) {
 	const lastIndexOfDot = domainName.lastIndexOf( '.' );
 
 	if ( lastIndexOfDot === -1 ) {

@@ -1,4 +1,4 @@
-import { getRootDomain } from 'calypso/lib/domains/utils';
+import { getRootDomain } from './get-root-domain';
 
 export function isSubdomain( domainName: string ): boolean {
 	if ( ! domainName || domainName === '' ) {

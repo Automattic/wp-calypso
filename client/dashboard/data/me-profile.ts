@@ -6,6 +6,7 @@ export interface UserProfile {
 	description: string;
 	display_name: string;
 	is_dev_account: boolean;
+	password: string;
 	tracks_opt_out: boolean;
 	user_email: string;
 	user_login: string;
@@ -24,6 +25,7 @@ export async function updateProfile(
 		'display_name',
 		'description',
 		'is_dev_account',
+		'password',
 		'tracks_opt_out',
 		'user_URL',
 	];

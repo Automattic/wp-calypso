@@ -39,6 +39,8 @@
 		"@wordpress/components": "^29.9.0",
 		"@wordpress/compose": "^7.23.0",
 		"@wordpress/data": "^10.23.0",
+		"@wordpress/dom-ready": "^4.29.0",
+		"@wordpress/i18n": "^5.23.0",
 		"@wordpress/plugins": "^7.23.0",
 		"@wordpress/private-apis": "^1.23.0",
 		"@wordpress/router": "^1.23.0",

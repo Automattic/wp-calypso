@@ -45,6 +45,7 @@ module.exports = {
 							'!@automattic/calypso-analytics',
 							'!@automattic/domains-table',
 							'!@automattic/domains-table/src/utils/*',
+							'!@automattic/generate-password',
 							'!@automattic/help-center',
 							'!@automattic/number-formatters',
 							'!@automattic/ui',

@@ -2,7 +2,6 @@ import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import {
 	fetchSiteBackupRestoreProgress,
 	initiateSiteBackupRestore,
-	type RestoreProgress,
 	type RestoreConfig,
 } from '../../data/site-backup-restore';
 import { queryClient } from '../query-client';
@@ -17,17 +16,6 @@ export const siteBackupRestoreProgressQuery = ( siteId: number, restoreId: numbe
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'backup', 'restore', restoreId, 'progress' ],
 		queryFn: () => fetchSiteBackupRestoreProgress( siteId, restoreId ),
-		refetchInterval: ( query: { state: { data?: RestoreProgress } } ) => {
-			const { data } = query.state;
-
-			// Poll every 1.5 seconds if restore is in progress
-			if ( data?.status === 'queued' || data?.status === 'running' ) {
-				return 1500;
-			}
-
-			// Stop polling if finished or failed
-			return false;
-		},
 	} );
 
 /**
