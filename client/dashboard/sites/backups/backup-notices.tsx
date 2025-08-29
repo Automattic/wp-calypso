@@ -9,8 +9,8 @@ import { Notice } from '../../components/notice';
 /**
  * Renders a contextual Notice based on the site's backup status
  */
-export function BackupNotices( { siteId }: { siteId: number } ) {
-	const { status, backup } = useBackupState( siteId );
+export function BackupNotices( { site }: { site: Site } ) {
+	const { status, backup } = useBackupState( site.ID );
 	const backupDate = useFormattedTime( backup?.started ?? '', {
 		timeStyle: 'short',
 	} );
