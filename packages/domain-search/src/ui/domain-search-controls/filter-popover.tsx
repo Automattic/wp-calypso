@@ -93,7 +93,7 @@ export const DomainSearchControlsFilterPopover = ( {
 	// Show list of available TLDs that weren't selected
 	const renderAvailableTldsList = () => {
 		return (
-			<Card>
+			<Card className="domain-search-controls__filters-popover-available-tlds-container">
 				<Scrollable scrollDirection="y" style={ { maxHeight: '18.5em' } }>
 					{ generateAvailableTldsList().map( ( tld ) => {
 						return tld.isLabel ? (
