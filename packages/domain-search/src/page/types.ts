@@ -58,7 +58,7 @@ export interface DomainSearchProps {
 }
 
 export interface FilterState {
-	exactMatchesOnly: boolean;
+	exactSldMatchesOnly: boolean;
 	tlds: string[];
 }
 

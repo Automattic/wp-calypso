@@ -737,45 +737,6 @@ class RegisterDomainStep extends Component {
 		);
 	}
 
-	getRecommendedTlds() {
-		return this.state.availableTlds
-			.slice( 0, 5 )
-			.filter( ( tld ) => ! this.state.filters.tlds?.includes( tld ) );
-	}
-
-	getExploreMoreTlds() {
-		return this.state.availableTlds
-			.slice( 5 )
-			.sort()
-			.filter( ( tld ) => ! this.state.filters.tlds?.includes( tld ) );
-	}
-
-	setExactMatchesOnlyInFilter( exactMatchesOnly ) {
-		this.onFiltersChange( {
-			exactSldMatchesOnly: exactMatchesOnly,
-		} );
-	}
-
-	// Only add TLD to current selection if it exists in the available TLDs list
-	validateTld( tld ) {
-		return this.state.availableTlds.includes( tld );
-	}
-
-	handleTldsChange( tokens ) {
-		const tlds = tokens.map( ( token ) => ( typeof token === 'string' ? token : token.value ) );
-		this.onFiltersChange( { tlds } );
-	}
-
-	addTldToFilter( tld ) {
-		if ( tld.startsWith( '.' ) ) {
-			tld = tld.slice( 1 );
-		}
-
-		this.onFiltersChange( {
-			tlds: [ ...this.state.filters.tlds, tld ],
-		} );
-	}
-
 	renderSearchFilters() {
 		const isRenderingInitialSuggestions =
 			! Array.isArray( this.state.searchResults ) &&
@@ -806,19 +767,14 @@ class RegisterDomainStep extends Component {
 				renderContent={ ( { onClose } ) => {
 					return (
 						<DomainSearchControls.FilterPopover
-							addTldToFilter={ ( tld ) => this.addTldToFilter( tld ) }
 							availableTlds={ this.state.availableTlds }
-							exploreMoreTlds={ this.getExploreMoreTlds() }
-							handleTldsChange={ ( tlds ) => this.handleTldsChange( tlds ) }
 							onClear={ () => {
 								onClose();
 								this.onFiltersReset();
 							} }
 							onClose={ onClose }
-							recommendedTlds={ this.getRecommendedTlds() }
-							setExactMatchesOnlyInFilter={ ( value ) => this.setExactMatchesOnlyInFilter( value ) }
+							setTemporaryFilter={ ( filter ) => this.onFiltersChange( filter ) }
 							temporaryFilter={ this.state.filters }
-							validateTld={ ( tld ) => this.validateTld( tld ) }
 						/>
 					);
 				} }

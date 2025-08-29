@@ -15,22 +15,18 @@ import type { TokenItem } from '@wordpress/components/build-types/form-token-fie
 import './filter-popover.scss';
 
 type Props = {
-	addTldToFilter: ( tld: string ) => void;
 	availableTlds: string[];
-	handleTldsChange: ( tokens: ( string | TokenItem )[] ) => void;
 	onClear: () => void;
 	onClose: () => void;
-	setExactMatchesOnlyInFilter: ( exactMatchesOnly: boolean ) => void;
+	setTemporaryFilter: ( filter: FilterState ) => void;
 	temporaryFilter: FilterState;
 };
 
 export const DomainSearchControlsFilterPopover = ( {
-	addTldToFilter,
 	availableTlds,
-	handleTldsChange,
 	onClear,
 	onClose,
-	setExactMatchesOnlyInFilter,
+	setTemporaryFilter,
 	temporaryFilter,
 }: Props ) => {
 	const { __ } = useI18n();
@@ -78,6 +74,20 @@ export const DomainSearchControlsFilterPopover = ( {
 		return list;
 	};
 
+	const addTldToFilter = useCallback(
+		( tld: string ) => {
+			if ( tld.startsWith( '.' ) ) {
+				tld = tld.slice( 1 );
+			}
+
+			setTemporaryFilter( {
+				...temporaryFilter,
+				tlds: [ ...temporaryFilter.tlds, tld ],
+			} );
+		},
+		[ setTemporaryFilter, temporaryFilter ]
+	);
+
 	// Show list of available TLDs that weren't selected
 	const renderAvailableTldsList = () => {
 		return (
@@ -92,6 +102,27 @@ export const DomainSearchControlsFilterPopover = ( {
 			</div>
 		);
 	};
+
+	const setExactMatchesOnlyInFilter = useCallback(
+		( exactSldMatchesOnly: boolean ) => {
+			setTemporaryFilter( {
+				...temporaryFilter,
+				exactSldMatchesOnly,
+			} );
+		},
+		[ setTemporaryFilter, temporaryFilter ]
+	);
+
+	const handleTldsChange = useCallback(
+		( tokens: ( string | TokenItem )[] ) => {
+			const tlds = tokens.map( ( token ) => ( typeof token === 'string' ? token : token.value ) );
+			setTemporaryFilter( {
+				...temporaryFilter,
+				tlds,
+			} );
+		},
+		[ setTemporaryFilter, temporaryFilter ]
+	);
 
 	// The popover needs to have the "domain-search" class because it is generated outside of the `DomainSearch` component
 	return (
@@ -111,7 +142,7 @@ export const DomainSearchControlsFilterPopover = ( {
 
 			<CheckboxControl
 				label={ __( 'Show exact matches only' ) }
-				checked={ temporaryFilter.exactMatchesOnly }
+				checked={ temporaryFilter.exactSldMatchesOnly }
 				onChange={ setExactMatchesOnlyInFilter }
 			/>
 			<HStack spacing={ 4 } className="domain-search-controls__filters-popover-buttons">
