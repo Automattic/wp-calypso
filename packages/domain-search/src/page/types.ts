@@ -3,6 +3,7 @@ import {
 	freeSuggestionQuery,
 	domainAvailabilityQuery,
 } from '@automattic/api-queries';
+import type { FilterState } from '../components/search-bar/types';
 import type {
 	DomainSuggestion,
 	DomainSuggestionQueryVendor,
@@ -55,11 +56,6 @@ export interface DomainSearchProps {
 	events?: Partial< DomainSearchEvents >;
 	currentSiteUrl?: string;
 	config?: Partial< DomainSearchConfig >;
-}
-
-export interface FilterState {
-	exactSldMatchesOnly: boolean;
-	tlds: string[];
 }
 
 export interface DomainSearchContextType
