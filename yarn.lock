@@ -1833,6 +1833,8 @@ __metadata:
     smooch: "npm:5.6.0"
     typescript: "npm:^5.8.3"
     wpcom-proxy-request: "npm:^7.0.5"
+  peerDependencies:
+    "@automattic/charts": ">=0.14.0 <1.0.0"
   languageName: unknown
   linkType: soft
 
