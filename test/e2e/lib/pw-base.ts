@@ -45,22 +45,73 @@ import { test as base, expect } from '@playwright/test';
 import { getAccount } from './get-account';
 
 export const test = base.extend< {
+	/**
+	 * Test account selected based on the current environment variables.
+	 */
 	accountGivenByEnvironment: TestAccount;
+	/**
+	 * Test account with a simple Gutenberg site.
+	 */
 	accountGutenbergSimple: TestAccount;
+	/**
+	 * Test account used for i18n locale switching.
+	 */
 	accounti18n: TestAccount;
+	/**
+	 * Client for interacting with emails during tests.
+	 */
 	clientEmail: EmailClient;
+	/**
+	 * Client for interacting with the WordPress.com REST API.
+	 */
 	clientRestAPI: RestAPIClient;
+	/**
+	 * Component for interacting with the block widget editor.
+	 */
 	componentBlockWidgetEditor: BlockWidgetEditorComponent;
+	/**
+	 * Component for interacting with the preview functionality.
+	 */
 	componentPreview: PreviewComponent;
+	/**
+	 * Component for interacting with the sidebar functionality.
+	 */
 	componentSidebar: SidebarComponent;
+	/**
+	 * Component for interacting with the site selection functionality.
+	 */
 	componentSiteSelect: SiteSelectComponent;
+	/**
+	 * Environment variables for the tests.
+	 */
 	environment: typeof envVariables;
+	/**
+	 * Helper data and utilities for tests.
+	 */
 	helperData: typeof DataHelper;
+	/**
+	 * Page object representing the Apple login page.
+	 */
 	pageAppleLogin: AppleLoginPage;
+	/**
+	 * Page object representing the WordPress editor page.
+	 */
 	pageEditor: EditorPage;
+	/**
+	 * Page object representing the WordPress.com login page.
+	 */
 	pageLogin: LoginPage;
+	/**
+	 * Page object representing the WordPress.com themes detail page.
+	 */
 	pageThemeDetails: ThemesDetailPage;
+	/**
+	 * Page object representing the WordPress.com themes listing page.
+	 */
 	pageThemes: ThemesPage;
+	/**
+	 * Secrets needed for end-to-end tests.
+	 */
 	secrets: Secrets;
 } >( {
 	accountGivenByEnvironment: async ( { page }, use ) => {
