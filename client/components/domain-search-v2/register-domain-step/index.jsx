@@ -750,9 +750,9 @@ class RegisterDomainStep extends Component {
 			.filter( ( tld ) => ! this.state.filters.tlds?.includes( tld ) );
 	}
 
-	setExactSldMatchesOnlyInFilter( exactSldMatchesOnly ) {
+	setExactMatchesOnlyInFilter( exactMatchesOnly ) {
 		this.onFiltersChange( {
-			exactSldMatchesOnly,
+			exactSldMatchesOnly: exactMatchesOnly,
 		} );
 	}
 
@@ -816,9 +816,7 @@ class RegisterDomainStep extends Component {
 							} }
 							onClose={ onClose }
 							recommendedTlds={ this.getRecommendedTlds() }
-							setExactSldMatchesOnlyInFilter={ ( value ) =>
-								this.setExactSldMatchesOnlyInFilter( value )
-							}
+							setExactMatchesOnlyInFilter={ ( value ) => this.setExactMatchesOnlyInFilter( value ) }
 							temporaryFilter={ this.state.filters }
 							validateTld={ ( tld ) => this.validateTld( tld ) }
 						/>
