@@ -1,9 +1,12 @@
 import {
-	Button,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
+	__experimentalScrollable as Scrollable,
+	Button,
+	Card,
 	CheckboxControl,
 	FormTokenField,
+	CardBody,
 } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback } from 'react';
@@ -91,15 +94,21 @@ export const DomainSearchControlsFilterPopover = ( {
 	// Show list of available TLDs that weren't selected
 	const renderAvailableTldsList = () => {
 		return (
-			<div className="domain-search-controls__filters-popover-available-tlds-container">
-				{ generateAvailableTldsList().map( ( tld ) => {
-					return tld.isLabel ? (
-						<FilterPopoverLabel key={ tld.text } text={ tld.text } />
-					) : (
-						<FilterPopoverTld key={ tld.text } tld={ tld.text } addTldToFilter={ addTldToFilter } />
-					);
-				} ) }
-			</div>
+			<Card>
+				<Scrollable scrollDirection="y" style={ { maxHeight: '18.5em' } }>
+					{ generateAvailableTldsList().map( ( tld ) => {
+						return tld.isLabel ? (
+							<FilterPopoverLabel key={ tld.text } text={ tld.text } />
+						) : (
+							<FilterPopoverTld
+								key={ tld.text }
+								tld={ tld.text }
+								addTldToFilter={ addTldToFilter }
+							/>
+						);
+					} ) }
+				</Scrollable>
+			</Card>
 		);
 	};
 
@@ -126,33 +135,40 @@ export const DomainSearchControlsFilterPopover = ( {
 
 	// The popover needs to have the "domain-search" class because it is generated outside of the `DomainSearch` component
 	return (
-		<VStack className="domain-search domain-search-controls__filters-popover" spacing={ 4 }>
-			<FormTokenField
-				__next40pxDefaultSize
-				__nextHasNoMarginBottom
-				__experimentalShowHowTo={ false }
-				__experimentalValidateInput={ validateTld }
-				label=""
-				value={ temporaryFilter.tlds }
-				suggestions={ availableTlds }
-				onChange={ handleTldsChange }
-				placeholder={ __( 'Search for an ending' ) }
-			/>
-			{ renderAvailableTldsList() }
-
-			<CheckboxControl
-				label={ __( 'Show exact matches only' ) }
-				checked={ temporaryFilter.exactSldMatchesOnly }
-				onChange={ setExactMatchesOnlyInFilter }
-			/>
-			<HStack spacing={ 4 } className="domain-search-controls__filters-popover-buttons">
-				<Button variant="secondary" onClick={ onClear }>
-					{ __( 'Clear' ) }
-				</Button>
-				<Button variant="primary" onClick={ onClose }>
-					{ __( 'Apply' ) }
-				</Button>
-			</HStack>
-		</VStack>
+		<Card
+			isBorderless
+			size="small"
+			className="domain-search domain-search-controls__filters-popover"
+		>
+			<CardBody>
+				<VStack spacing={ 4 }>
+					<FormTokenField
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom
+						__experimentalShowHowTo={ false }
+						__experimentalValidateInput={ validateTld }
+						label=""
+						value={ temporaryFilter.tlds }
+						suggestions={ availableTlds }
+						onChange={ handleTldsChange }
+						placeholder={ __( 'Search for an ending' ) }
+					/>
+					{ renderAvailableTldsList() }
+					<CheckboxControl
+						label={ __( 'Show exact matches only' ) }
+						checked={ temporaryFilter.exactSldMatchesOnly }
+						onChange={ setExactMatchesOnlyInFilter }
+					/>
+					<HStack spacing={ 4 } className="domain-search-controls__filters-popover-buttons">
+						<Button variant="secondary" onClick={ onClear }>
+							{ __( 'Clear' ) }
+						</Button>
+						<Button variant="primary" onClick={ onClose }>
+							{ __( 'Apply' ) }
+						</Button>
+					</HStack>
+				</VStack>
+			</CardBody>
+		</Card>
 	);
 };
