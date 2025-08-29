@@ -18,6 +18,7 @@ import {
 	userPaymentMethodsQuery,
 	userPaymentMethodSetBackupQuery,
 	userPaymentMethodDeleteQuery,
+	userPaymentMethodSetTaxInfoQuery,
 } from '../../app/queries/me-payment-methods';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
@@ -29,6 +30,7 @@ import { isCreditCard } from '../../utils/payment-method';
 import { PaymentMethodImage } from '../billing-purchases/payment-method-image';
 import { PaymentMethodDeleteDialog } from './payment-method-delete-dialog';
 import { PaymentMethodDetails } from './payment-method-details';
+import { PaymentMethodEditDialog } from './payment-method-edit-dialog';
 import type { StoredPaymentMethod } from '../../data/me-payment-methods';
 import type { View, Fields, SortDirection, Action } from '@wordpress/dataviews';
 
@@ -64,6 +66,9 @@ export default function PaymentMethods() {
 	const [ removeDialogPaymentMethod, setRemoveDialogPaymentMethod ] = useState<
 		StoredPaymentMethod | undefined
 	>();
+	const [ editAddressDialogPaymentMethod, setEditDialogPaymentMethod ] = useState<
+		StoredPaymentMethod | undefined
+	>();
 	const [ currentView, setView ] = useState( paymentMethodsDataView );
 	const ref = useResizeObserver( ( entries ) => {
 		const firstEntry = entries[ 0 ];
@@ -93,6 +98,7 @@ export default function PaymentMethods() {
 	const { mutate: deletePaymentMethod, isPending: isDeletingPaymentMethod } = useMutation(
 		userPaymentMethodDeleteQuery()
 	);
+	const { mutate: setPaymentMethodTaxInfo } = useMutation( userPaymentMethodSetTaxInfoQuery() );
 	const paymentMethodFields = getFields( {
 		isUpdatingPaymentMethods,
 		isSettingPaymentMethodBackup,
@@ -139,8 +145,9 @@ export default function PaymentMethods() {
 		{
 			id: 'edit-billing-address',
 			label: __( 'Edit billing information' ),
-			callback: () => {
-				// FIXME: allow editing billing information
+			callback: ( items ) => {
+				const item = items[ 0 ];
+				setEditDialogPaymentMethod( item );
 			},
 		},
 		{
@@ -187,6 +194,26 @@ export default function PaymentMethods() {
 						actions={ actions }
 					/>
 				</DataViewsCard>
+				{ ! isDeletingPaymentMethod && editAddressDialogPaymentMethod && (
+					<PaymentMethodEditDialog
+						paymentMethod={ editAddressDialogPaymentMethod }
+						isVisible={ Boolean( editAddressDialogPaymentMethod ) }
+						onCancel={ () => setEditDialogPaymentMethod( undefined ) }
+						onConfirm={ ( data ) => {
+							setPaymentMethodTaxInfo( data, {
+								onSuccess: () => {
+									createSuccessNotice( __( 'Billing address updated.' ), { type: 'snackbar' } );
+								},
+								onError: ( error ) => {
+									createErrorNotice( error?.message || __( 'Failed to update billing address.' ), {
+										type: 'snackbar',
+									} );
+								},
+							} );
+							setEditDialogPaymentMethod( undefined );
+						} }
+					/>
+				) }
 				{ ! isDeletingPaymentMethod && removeDialogPaymentMethod && (
 					<PaymentMethodDeleteDialog
 						isVisible={ Boolean( removeDialogPaymentMethod ) }

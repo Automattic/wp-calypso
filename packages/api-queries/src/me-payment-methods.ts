@@ -1,11 +1,12 @@
 import {
 	fetchUserPaymentMethods,
 	setPaymentMethodBackup,
-	requestPaymentMethodDeletion
+	requestPaymentMethodDeletion,
+	setPaymentMethodTaxInfo,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from '../query-client';
-import type { PaymentMethodRequestType } from '@automattic/api-core';
+import type { PaymentMethodRequestType, StoredPaymentMethod } from '../../data/me-payment-methods';
 
 export const userPaymentMethodsQuery = ( {
 	type = 'all',
@@ -44,7 +45,7 @@ export const userPaymentMethodsQuery = ( {
 
 export const userPaymentMethodSetBackupQuery = () =>
 	mutationOptions( {
-		mutationFn: ( data: { stored_details_id: string; is_backup: boolean } ) =>
+		mutationFn: ( data: Pick< StoredPaymentMethod, 'stored_details_id' | 'is_backup' > ) =>
 			setPaymentMethodBackup( data.stored_details_id, data.is_backup ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( {
@@ -56,6 +57,17 @@ export const userPaymentMethodSetBackupQuery = () =>
 export const userPaymentMethodDeleteQuery = () =>
 	mutationOptions( {
 		mutationFn: ( paymentMethodId: string ) => requestPaymentMethodDeletion( paymentMethodId ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( {
+				queryKey: [ 'me', 'payment-methods' ],
+			} );
+		},
+	} );
+
+export const userPaymentMethodSetTaxInfoQuery = () =>
+	mutationOptions( {
+		mutationFn: ( data: Pick< StoredPaymentMethod, 'stored_details_id' | 'tax_location' > ) =>
+			setPaymentMethodTaxInfo( data.stored_details_id, data.tax_location ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( {
 				queryKey: [ 'me', 'payment-methods' ],
