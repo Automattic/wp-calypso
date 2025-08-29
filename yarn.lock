@@ -291,11 +291,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/agenttic-client@npm:0.1.6":
-  version: 0.1.6
-  resolution: "@automattic/agenttic-client@npm:0.1.6"
+"@automattic/agenttic-client@npm:0.1.9":
+  version: 0.1.9
+  resolution: "@automattic/agenttic-client@npm:0.1.9"
   dependencies:
-    "@automattic/charts": "npm:^0.14.0"
+    "@automattic/charts": "npm:>=0.14.0 <1.0.0"
     "@types/react": "npm:^18.0.0"
     "@visx/xychart": "npm:^3.12.0"
     "@wordpress/element": "npm:^6.2.0"
@@ -309,15 +309,16 @@ __metadata:
   peerDependenciesMeta:
     "@wordpress/api-fetch":
       optional: true
-  checksum: 9e708881c58c62b81ca779058c290298468bbd4fae7b748c3a8ffca0934417ace1f135ed14371e6602dc87a83c6b81edbb00b75511ef8c33ed9f3f283a06ea4f
+  checksum: 86aa68e36acad2a215330ad1c67fc18462641a12e04cb58161c5dbd3d2a11afcd98269fb655421ec1d3857bce86b2ab291b0345014d4f0ba4b00e149f96d83ad
   languageName: node
   linkType: hard
 
-"@automattic/agenttic-ui@npm:^0.1.6":
-  version: 0.1.6
-  resolution: "@automattic/agenttic-ui@npm:0.1.6"
+"@automattic/agenttic-ui@npm:^0.1.9":
+  version: 0.1.9
+  resolution: "@automattic/agenttic-ui@npm:0.1.9"
   dependencies:
-    "@automattic/agenttic-client": "npm:0.1.6"
+    "@automattic/agenttic-client": "npm:0.1.9"
+    "@automattic/charts": "npm:>=0.14.0 <1.0.0"
     "@radix-ui/react-scroll-area": "npm:^1.2.9"
     "@radix-ui/react-slot": "npm:^1.2.3"
     "@visx/xychart": "npm:^3.12.0"
@@ -333,10 +334,9 @@ __metadata:
     react-markdown: "npm:^10.1.0"
     react-textarea-autosize: "npm:^8.5.9"
   peerDependencies:
-    "@automattic/charts": ^0.14.0
     react: ^18.0.0
     react-dom: ^18.0.0
-  checksum: fccca28e84b76b2988d0f0e3656b264dbad16744c2ee0586978380e972960148e3867a87930549cfd81e2beaa4728d5b10694858c00de7d96df4f1543bc5b9bf
+  checksum: f65af78650b94330656bfc8a8857dab1292568aa880973ec0d3a85af65f736b7e510fcdb4ba0b9e2614b1e57c9edd2d81824cabc9ed848bd8052e96c42c57094
   languageName: node
   linkType: hard
 
@@ -803,13 +803,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/charts@npm:^0.14.0":
-  version: 0.14.0
-  resolution: "@automattic/charts@npm:0.14.0"
+"@automattic/charts@npm:>=0.14.0 <1.0.0":
+  version: 0.30.0
+  resolution: "@automattic/charts@npm:0.30.0"
   dependencies:
-    "@automattic/number-formatters": "npm:^1.0.4"
-    "@babel/runtime": "npm:7.27.4"
+    "@automattic/number-formatters": "npm:^1.0.10"
+    "@babel/runtime": "npm:7.27.6"
     "@react-spring/web": "npm:9.7.5"
+    "@visx/annotation": "npm:^3.12.0"
     "@visx/axis": "npm:^3.12.0"
     "@visx/curve": "npm:^3.12.0"
     "@visx/event": "npm:^3.12.0"
@@ -824,13 +825,17 @@ __metadata:
     "@visx/text": "npm:^3.12.0"
     "@visx/tooltip": "npm:^3.12.0"
     "@visx/xychart": "npm:^3.12.0"
+    "@wordpress/i18n": "npm:^6.0.0"
     clsx: "npm:2.1.1"
     date-fns: "npm:^4.1.0"
+    deepmerge: "npm:4.3.1"
+    fast-deep-equal: "npm:3.1.3"
+    gridicons: "npm:3.4.2"
     tslib: "npm:2.5.0"
   peerDependencies:
     react: ^17.0.0 || ^18.0.0
     react-dom: ^17.0.0 || ^18.0.0
-  checksum: df616a9217b216c03fbeecbd95850b191c9fadbf983af3dae19566509cdd8e481528a3c650600199de88c4e6a6c8aa90eb79fd1a18de2b4537462d577239542c
+  checksum: 2c7fbd4a2c11c3e8030a1efa235da30daee2a350d26ad2b91bb5132e83ba5595dd75b6c47c40450ce57dfeb05e1fef6bd591a1a12aa0c3e166c44efbddd1c702
   languageName: node
   linkType: hard
 
@@ -1413,6 +1418,7 @@ __metadata:
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/charts": "npm:>=0.14.0 <1.0.0"
     "@automattic/help-center": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
@@ -1747,7 +1753,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/number-formatters@npm:^1.0.1, @automattic/number-formatters@npm:^1.0.10, @automattic/number-formatters@npm:^1.0.4":
+"@automattic/number-formatters@npm:^1.0.1, @automattic/number-formatters@npm:^1.0.10":
   version: 1.0.10
   resolution: "@automattic/number-formatters@npm:1.0.10"
   dependencies:
@@ -1805,7 +1811,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/odie-client@workspace:packages/odie-client"
   dependencies:
-    "@automattic/agenttic-ui": "npm:^0.1.6"
+    "@automattic/agenttic-ui": "npm:^0.1.9"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
@@ -4186,21 +4192,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:7.27.4":
-  version: 7.27.4
-  resolution: "@babel/runtime@npm:7.27.4"
-  checksum: ca99e964179c31615e1352e058cc9024df7111c829631c90eec84caba6703cc32acc81503771847c306b3c70b815609fe82dde8682936debe295b0b283b2dc6e
-  languageName: node
-  linkType: hard
-
-"@babel/runtime@npm:7.27.6, @babel/runtime@npm:^7.1.2, @babel/runtime@npm:^7.10.3, @babel/runtime@npm:^7.12.13, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.17.8, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.25.9, @babel/runtime@npm:^7.27.1, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.6.3, @babel/runtime@npm:^7.7.6, @babel/runtime@npm:^7.9.2":
+"@babel/runtime@npm:7.27.6":
   version: 7.27.6
   resolution: "@babel/runtime@npm:7.27.6"
   checksum: 89726be83f356f511dcdb74d3ea4d873a5f0cf0017d4530cb53aa27380c01ca102d573eff8b8b77815e624b1f8c24e7f0311834ad4fb632c90a770fda00bd4c8
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.20.13":
+"@babel/runtime@npm:^7.1.2, @babel/runtime@npm:^7.10.3, @babel/runtime@npm:^7.12.13, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.17.8, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.20.13, @babel/runtime@npm:^7.25.9, @babel/runtime@npm:^7.27.1, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.6.3, @babel/runtime@npm:^7.7.6, @babel/runtime@npm:^7.9.2":
   version: 7.28.3
   resolution: "@babel/runtime@npm:7.28.3"
   checksum: b360f82c2c5114f2a062d4d143d7b4ec690094764853937110585a9497977aed66c102166d0e404766c274e02a50ffb8f6d77fef7251ecf3f607f0e03e6397bc
@@ -15152,6 +15151,7 @@ __metadata:
   resolution: "calypso@workspace:client"
   dependencies:
     "@automattic/accessible-focus": "workspace:^"
+    "@automattic/agenttic-ui": "npm:^0.1.9"
     "@automattic/block-renderer": "workspace:^"
     "@automattic/browser-data-collector": "workspace:^"
     "@automattic/calypso-analytics": "workspace:^"
@@ -15168,6 +15168,7 @@ __metadata:
     "@automattic/calypso-sentry": "workspace:^"
     "@automattic/calypso-stripe": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
+    "@automattic/charts": "npm:>=0.14.0 <1.0.0"
     "@automattic/color-studio": "npm:^4.1.0"
     "@automattic/command-palette": "workspace:^"
     "@automattic/components": "workspace:^"
@@ -20299,7 +20300,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-deep-equal@npm:^3.1.1, fast-deep-equal@npm:^3.1.3":
+"fast-deep-equal@npm:3.1.3, fast-deep-equal@npm:^3.1.1, fast-deep-equal@npm:^3.1.3":
   version: 3.1.3
   resolution: "fast-deep-equal@npm:3.1.3"
   checksum: 40dedc862eb8992c54579c66d914635afbec43350afbbe991235fdcb4e3a8d5af1b23ae7e79bef7d4882d0ecee06c3197488026998fb19f72dc95acff1d1b1d0
@@ -38290,6 +38291,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "wp-calypso@workspace:."
   dependencies:
+    "@automattic/agenttic-ui": "npm:^0.1.9"
     "@automattic/calypso-babel-config": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"

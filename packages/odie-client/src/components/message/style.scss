@@ -22,7 +22,6 @@ $blueberry-color: #3858e9;
 	display: flex;
 	flex-direction: row;
 	gap: 8px;
-	padding: 16px;
 	flex-wrap: wrap;
 
 	.odie-chatbox-dislike-feedback-message {
@@ -722,10 +721,6 @@ $custom-border-corner-size: 16px;
 			box-shadow: 0 -1px 0 rgba( 0, 0, 0, 0.1 );
 		}
 	}
-}
-
-.odie-chatbox-thinking-icon {
-	margin-left: 8px;
 }
 
 .odie-chatbox-invalid__message {
