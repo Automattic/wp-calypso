@@ -44,7 +44,7 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		deemphasizedTlds: [],
 	},
 	filter: {
-		exactSldMatchesOnly: false,
+		exactMatchesOnly: false,
 		tlds: [],
 	},
 	setFilter: () => {},
@@ -71,7 +71,7 @@ export const useDomainSearchContextValue = (
 	const [ isFullCartOpen, setIsFullCartOpen ] = useState( false );
 	const [ query, setQuery ] = useState( initialQuery ?? '' );
 	const [ filter, setFilter ] = useState( {
-		exactSldMatchesOnly: false,
+		exactMatchesOnly: false,
 		tlds: [],
 	} as FilterState );
 

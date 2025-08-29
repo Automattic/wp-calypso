@@ -21,7 +21,7 @@ type Props = {
 	onClear: () => void;
 	onClose: () => void;
 	recommendedTlds: string[];
-	setExactSldMatchesOnlyInFilter: ( exactSldMatchesOnly: boolean ) => void;
+	setExactMatchesOnlyInFilter: ( exactMatchesOnly: boolean ) => void;
 	temporaryFilter: FilterState;
 	validateTld: ( tld: string ) => boolean;
 };
@@ -34,7 +34,7 @@ export const DomainSearchControlsFilterPopover = ( {
 	onClear,
 	onClose,
 	recommendedTlds,
-	setExactSldMatchesOnlyInFilter,
+	setExactMatchesOnlyInFilter,
 	temporaryFilter,
 	validateTld,
 }: Props ) => {
@@ -94,8 +94,8 @@ export const DomainSearchControlsFilterPopover = ( {
 
 			<CheckboxControl
 				label={ __( 'Show exact matches only' ) }
-				checked={ temporaryFilter.exactSldMatchesOnly }
-				onChange={ setExactSldMatchesOnlyInFilter }
+				checked={ temporaryFilter.exactMatchesOnly }
+				onChange={ setExactMatchesOnlyInFilter }
 			/>
 			<HStack spacing={ 4 } className="domain-search-controls__filters-popover-buttons">
 				<Button variant="secondary" onClick={ onClear }>

@@ -6,7 +6,7 @@ import { DomainSearchControls } from '../../ui';
 import type { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
 
 const emptyFilter: FilterState = {
-	exactSldMatchesOnly: false,
+	exactMatchesOnly: false,
 	tlds: [],
 };
 
@@ -30,7 +30,7 @@ export const Filter = ( { onSubmit }: Props ) => {
 	}, [ setFilter ] );
 
 	const getFiltercounts = useCallback( () => {
-		return filter.tlds.length + ( filter.exactSldMatchesOnly ? 1 : 0 );
+		return filter.tlds.length + ( filter.exactMatchesOnly ? 1 : 0 );
 	}, [ filter ] );
 
 	const setTldsInFilter = useCallback(
@@ -54,11 +54,11 @@ export const Filter = ( { onSubmit }: Props ) => {
 		} );
 	};
 
-	const setExactSldMatchesOnlyInFilter = useCallback(
-		( exactSldMatchesOnly: boolean ) => {
+	const setExactMatchesOnlyInFilter = useCallback(
+		( exactMatchesOnly: boolean ) => {
 			setTemporaryFilter( {
 				...temporaryFilter,
-				exactSldMatchesOnly,
+				exactMatchesOnly,
 			} );
 		},
 		[ setTemporaryFilter, temporaryFilter ]
@@ -107,7 +107,7 @@ export const Filter = ( { onSubmit }: Props ) => {
 						} }
 						onClose={ onClose }
 						recommendedTlds={ getRecommendedTlds() }
-						setExactSldMatchesOnlyInFilter={ setExactSldMatchesOnlyInFilter }
+						setExactMatchesOnlyInFilter={ setExactMatchesOnlyInFilter }
 						temporaryFilter={ temporaryFilter }
 						validateTld={ validateTld }
 					/>
