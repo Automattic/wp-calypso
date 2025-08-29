@@ -6,40 +6,51 @@ import {
 	Button,
 	Icon,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { check } from '@wordpress/icons';
 import type { StepComponentProps } from '../types';
 
 // TODO: This file needs full review of the copy and etc.
 // I didn't move to gutenberg components so some things (and styles) can probably be removed and/or replaced
 // Also I didn't review the copy for any of the messages
-export default function Done( { step, verificationStatus }: StepComponentProps ) {
+export default function Done( {
+	step,
+	domain,
+	queryError,
+	queryErrorDescription,
+}: StepComponentProps ) {
 	const isConnected = step === 'connected';
-	const { error } = verificationStatus || {};
 
-	if ( error ) {
+	if ( queryError ) {
+		let heading;
+		let contentMessage;
+
+		if ( queryError === 'access_denied' && queryErrorDescription?.startsWith( 'user_cancel' ) ) {
+			heading = __( 'Connecting your domain to WordPress.com was cancelled' );
+			contentMessage = sprintf(
+				/* translators: %s: the domain name that is being connected (ex.: example.com) */
+				__(
+					'You might want to start over or use one of the alternative methods to connect %s to WordPress.com.'
+				),
+				domain
+			);
+		} else {
+			heading = __( 'There was a problem connecting your domain' );
+			contentMessage = sprintf(
+				/* translators: %s: the domain name that is being connected (ex.: example.com) */
+				__(
+					'We got an error when trying to connect %s to WordPress.com. You might try again or get in contact with your DNS provider to figure out what went wrong.'
+				),
+				domain
+			);
+		}
+
 		return (
 			<Card>
 				<CardBody>
 					<VStack spacing={ 4 }>
-						<h2>{ __( 'Connection Error' ) }</h2>
-
-						<p>
-							{ __(
-								'We encountered an error while trying to verify your domain connection. Please check your DNS settings and try again.'
-							) }
-						</p>
-
-						{ error.message && (
-							<Card variant="secondary">
-								<CardBody>
-									<p>
-										<strong>{ __( 'Error details:' ) }</strong> { error.message }
-									</p>
-								</CardBody>
-							</Card>
-						) }
-
+						<h2>{ heading }</h2>
+						<p>{ contentMessage }</p>
 						<HStack justify="flex-start">
 							<Button variant="secondary">{ __( 'Try Again' ) }</Button>
 							<Button variant="tertiary">{ __( 'Get Help' ) }</Button>
