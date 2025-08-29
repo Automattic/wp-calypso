@@ -1,34 +1,5 @@
 .domain-search-controls__filters-popover {
-	padding: 16px;
 	width: 20em;
-
-	.components-form-token-field__input-container > div {
-		margin: 5px;
-	}
-
-	.components-form-token-field__token-text {
-		background: var( --domain-search-v2-background-color );
-		border-radius: 2px 0 0 2px;
-		border: 1px solid var( --domain-search-border-color );
-		border-right: none;
-	}
-
-	.components-form-token-field__remove-token {
-		background: var( --domain-search-v2-background-color );
-		border-radius: 0 2px 2px 0;
-		border: 1px solid var( --domain-search-border-color );
-		border-left: none;
-		cursor: pointer;
-	}
-}
-
-.domain-search-controls__filters-popover-available-tlds-container {
-	border-radius: var( --domain-search-input-border-radius );
-	border: 1px solid var( --domain-search-border-color );
-	border-top: none;
-	margin-top: -16px;
-	max-height: 18.5em;
-	overflow-y: scroll;
 }
 
 .domain-search-controls__filters-popover-list-label {
@@ -44,7 +15,6 @@
 
 .domain-search-controls__filters-popover-available-tld {
 	cursor: pointer;
-	display: block;
 	font-size: $font-body-small;
 	line-height: 1.5;
 	padding: 6px 16px;
