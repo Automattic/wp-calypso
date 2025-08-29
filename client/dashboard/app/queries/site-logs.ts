@@ -6,6 +6,6 @@ export const siteLogsQuery = ( siteId: number, params: SiteLogsParams, scrollId:
 		queryKey: [ 'site', siteId, 'logs', params, 'scroll', scrollId ],
 		queryFn: () => fetchSiteLogs( siteId, params, scrollId ?? undefined ),
 		placeholderData: keepPreviousData,
-		enabled: !! siteId && params.start <= params.end,
+		enabled: params.start <= params.end,
 		staleTime: Infinity, // The logs within a specified time range never change.
 	} );

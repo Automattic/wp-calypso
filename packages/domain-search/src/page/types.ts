@@ -26,6 +26,7 @@ export interface DomainSearchCart {
 export interface DomainSearchEvents {
 	onContinue: () => void;
 	onSkip: ( suggestion?: FreeDomainSuggestion ) => void;
+	onExternalDomainClick?: ( domainName: string ) => void;
 }
 
 export interface DomainSearchConfig {

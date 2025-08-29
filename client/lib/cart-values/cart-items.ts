@@ -47,9 +47,9 @@ import {
 	is100Year,
 	PLAN_FREE,
 } from '@automattic/calypso-products';
+import { getTld } from '@automattic/domain-search';
 import { isDomainForGravatarFlow, isHundredYearDomainFlow } from '@automattic/onboarding';
 import { isWpComProductRenewal as isRenewal } from '@automattic/wpcom-checkout';
-import { getTld } from 'calypso/lib/domains';
 import { domainProductSlugs } from 'calypso/lib/domains/constants';
 import type { WithCamelCaseSlug, WithSnakeCaseSlug } from '@automattic/calypso-products';
 import type { SiteDetails } from '@automattic/data-stores';

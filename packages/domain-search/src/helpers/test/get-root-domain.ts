@@ -1,4 +1,4 @@
-import { getRootDomain } from 'calypso/lib/domains/utils/get-root-domain';
+import { getRootDomain } from '../';
 
 describe( 'getRootDomain', () => {
 	test( 'should return an empty string if domain is missing', () => {

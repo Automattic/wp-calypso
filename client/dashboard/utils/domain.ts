@@ -205,3 +205,7 @@ export function findRegistrantWhois( whoisContacts: WhoisDataEntry[] | undefined
 export function findPrivacyServiceWhois( whoisContacts: WhoisDataEntry[] | undefined ) {
 	return whoisContacts?.find( ( contact ) => contact.type === WhoisType.PRIVACY_SERVICE );
 }
+
+export function getTopLevelOfTld( domainName: string ): string {
+	return domainName.substring( domainName.lastIndexOf( '.' ) + 1 );
+}

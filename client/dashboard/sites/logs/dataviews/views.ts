@@ -2,12 +2,36 @@ import { useState } from '@wordpress/element';
 import { LogType, FilterType } from '../../../data/site-logs';
 import type { View } from '@wordpress/dataviews';
 
-const getSortField = ( logType: LogType ) => ( logType === LogType.PHP ? 'timestamp' : 'date' );
+const phpLogsViewConfig = {
+	sortField: 'timestamp',
+	titleField: 'severity',
+	primaryField: 'severity',
+	visibleFields: [ 'timestamp', 'message' ],
+	allowedFilters: [ 'severity' ],
+	layout: {
+		styles: {
+			timestamp: { maxWidth: '175px', minWidth: '140px' },
+			name: { maxWidth: '200px', minWidth: '75px' },
+			message: { maxWidth: '30vw' },
+			file: { minWidth: '300px' },
+		},
+	},
+};
 
-const getVisibleFields = ( logType: LogType ) =>
-	logType === LogType.PHP
-		? [ 'severity', 'name', 'message' ]
-		: [ 'request_type', 'status', 'request_url' ];
+const serverLogsViewConfig = {
+	sortField: 'date',
+	titleField: 'status',
+	primaryField: 'severity',
+	visibleFields: [ 'date', 'request_type', 'request_url' ],
+	allowedFilters: [ 'cached', 'request_type', 'status', 'renderer' ],
+	layout: {
+		styles: {
+			date: { maxWidth: '175px', minWidth: '140px' },
+			request_url: { minWidth: '300px' },
+			http_referer: { minWidth: '300px' },
+		},
+	},
+};
 
 // Convert current view filters to API filter params
 const getFilterParamsFromView = ( view: View, fieldNames: string[] ): FilterType => {
@@ -47,30 +71,19 @@ export function useView( {
 	logType: LogType;
 	initialFilters?: View[ 'filters' ];
 } ) {
+	const config = logType === LogType.PHP ? phpLogsViewConfig : serverLogsViewConfig;
 	return useState< View >( () => ( {
 		type: 'table',
 		page: 1,
 		perPage: 50,
 		sort: {
-			field: getSortField( logType ),
+			field: config.sortField,
 			direction: 'desc',
 		},
 		filters: initialFilters ?? [],
-		titleField: getSortField( logType ),
-		fields: getVisibleFields( logType ),
-		layout: {
-			styles: {
-				// PHP errors
-				timestamp: { maxWidth: '150px' },
-				severity: { maxWidth: '150px' },
-				name: { maxWidth: '200px', minWidth: '75px' },
-				message: { maxWidth: '30vw' },
-				file: { minWidth: '300px' },
-				// Server errors
-				date: { maxWidth: '150px' },
-				request_url: { minWidth: '300px' },
-				http_referer: { minWidth: '300px' },
-			},
-		},
+		titleField: config.titleField,
+		primaryField: config.primaryField,
+		fields: config.visibleFields,
+		layout: config.layout,
 	} ) );
 }

@@ -1,7 +1,14 @@
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { __experimentalText as Text, TabPanel, ToggleControl } from '@wordpress/components';
-import { DataViews, View, Filter } from '@wordpress/dataviews';
+import {
+	__experimentalText as Text,
+	TabPanel,
+	ToggleControl,
+	Card,
+	CardHeader,
+	CardBody,
+} from '@wordpress/components';
+import { DataViews, View, Filter, Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
 import { getUnixTime, subDays, isSameSecond } from 'date-fns';
@@ -14,7 +21,6 @@ import { siteSettingsQuery } from '../../app/queries/site-settings';
 import { siteRoute } from '../../app/router/sites';
 import { Callout } from '../../components/callout';
 import { CalloutOverlay } from '../../components/callout-overlay';
-import { DataViewsCard } from '../../components/dataviews-card';
 import { DateRangePicker } from '../../components/date-range-picker';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
@@ -22,7 +28,6 @@ import PageLayout from '../../components/page-layout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { HostingFeatures } from '../../data/constants';
 import { LogType, PHPLog, ServerLog, SiteLogsParams } from '../../data/site-logs';
-import { parseYmdLocal, formatYmd } from '../../utils/datetime';
 import { hasHostingFeature } from '../../utils/site-features';
 import { useActions } from './dataviews/actions';
 import { useFields } from './dataviews/fields';
@@ -30,7 +35,12 @@ import { getInitialFiltersFromSearch, getAllowedFields } from './dataviews/filte
 import { useView, toFilterParams } from './dataviews/views';
 import { LogsDownloader } from './downloader';
 import illustrationUrl from './logs-callout-illustration.svg';
-import { buildTimeRangeInSeconds, getInitialDateRangeFromSearch } from './utils';
+import {
+	buildTimeRangeInSeconds,
+	getInitialDateRangeFromSearch,
+	getDefaultDateRange,
+} from './utils';
+import type { Action } from '@wordpress/dataviews';
 
 import './style.scss';
 
@@ -72,7 +82,7 @@ export function SiteLogsCallout( {
 }
 
 const LOG_TABS = [
-	{ name: 'php', title: __( 'PHP error' ) },
+	{ name: 'php', title: __( 'PHP errors' ) },
 	{ name: 'server', title: __( 'Web server' ) },
 ];
 
@@ -119,11 +129,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		initialFilters: getInitialFiltersFromSearch( logType, search ),
 	} );
 
-	const siteToday = parseYmdLocal( formatYmd( new Date(), timezoneString, gmtOffset ) )!;
-	const initial = {
-		start: new Date( siteToday.getFullYear(), siteToday.getMonth(), siteToday.getDate() - 6 ),
-		end: siteToday,
-	};
+	const initial = getDefaultDateRange( timezoneString, gmtOffset );
 
 	const initialFromUrl = getInitialDateRangeFromSearch( search );
 
@@ -139,7 +145,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		}
 		const tick = () => {
 			const end = new Date();
-			const start = subDays( end, 7 );
+			const start = subDays( end, 6 );
 
 			setDateRange( ( prev ) =>
 				isSameSecond( prev.start, start ) && isSameSecond( prev.end, end ) ? prev : { start, end }
@@ -219,15 +225,15 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 
 	const logs = useMemo( () => {
 		const suffix = scrollId ? scrollId.slice( 0, 8 ) : `p${ view.page }`;
-		const items = ( siteLogs?.logs ?? [] ) as Array< PHPLog | ServerLog >;
+		const items = siteLogs?.logs ?? [];
 
-		return items.map( ( log: PHPLog | ServerLog, item: number ) => {
+		return items.map( ( log, index ) => {
 			if ( logType === LogType.PHP ) {
 				const php = log as PHPLog;
 				return {
 					...php,
 					id: `${ php.timestamp }|${ php.file }|${ String( php.line ) }|${ suffix }|${ String(
-						item
+						index
 					) }`,
 				};
 			}
@@ -236,7 +242,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 				...server,
 				id: `${ String( server.timestamp ) }|${ server.request_type }|${ server.status }|${
 					server.request_url
-				}|${ server.user_ip }|${ suffix }|${ String( item ) }`,
+				}|${ server.user_ip }|${ suffix }|${ String( index ) }`,
 			};
 		} );
 	}, [ scrollId, view.page, siteLogs?.logs, logType ] );
@@ -346,9 +352,27 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		message: string;
 	} | null >( null );
 
-	if ( ! site ) {
-		return;
-	}
+	// Simple header const to eliminate duplication
+	const LogsHeader = (
+		<>
+			<LogsDownloader
+				siteId={ siteId }
+				siteSlug={ site.slug }
+				logType={ logType }
+				startSec={ startSec }
+				endSec={ endSec }
+				filter={ filter }
+				onSuccess={ ( message ) => setNotice( { variant: 'success', message } ) }
+				onError={ ( message ) => setNotice( { variant: 'error', message } ) }
+			/>
+			<ToggleControl
+				__nextHasNoMarginBottom
+				label={ __( 'Auto-refresh' ) }
+				checked={ autoRefresh }
+				onChange={ handleAutoRefreshClick }
+			/>
+		</>
+	);
 
 	return (
 		<PageLayout header={ <PageHeader title={ __( 'Logs' ) } /> }>
@@ -370,53 +394,52 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 							locale={ locale }
 							onChange={ handleDateRangeChange }
 						/>
-						<TabPanel
-							className="site-logs-tabs"
-							activeClass="is-active"
-							tabs={ LOG_TABS }
-							onSelect={ ( tabName ) => {
-								if ( tabName === LogType.PHP || tabName === LogType.SERVER ) {
-									handleTabChange( tabName );
-								}
-							} }
-							initialTabName={ logType }
-						>
-							{ () => (
-								<DataViewsCard>
-									<DataViews< PHPLog | ServerLog >
-										data={ logs ?? [] }
+						<Card className="site-logs-card">
+							<CardHeader style={ { paddingBottom: '0' } }>
+								<TabPanel
+									className="site-logs-tabs"
+									activeClass="is-active"
+									tabs={ LOG_TABS }
+									onSelect={ ( tabName ) => {
+										if ( tabName === LogType.PHP || tabName === LogType.SERVER ) {
+											handleTabChange( tabName );
+										}
+									} }
+									initialTabName={ logType }
+								>
+									{ () => null }
+								</TabPanel>
+							</CardHeader>
+							<CardBody>
+								{ logType === LogType.PHP ? (
+									<DataViews< PHPLog >
+										data={ logs as PHPLog[] }
 										isLoading={ isFetching }
 										paginationInfo={ paginationInfo }
-										fields={ fields ?? [] }
+										fields={ fields as Field< PHPLog >[] }
 										view={ view }
-										actions={ actions }
+										actions={ actions as Action< PHPLog >[] }
 										search={ false }
 										defaultLayouts={ { table: {} } }
 										onChangeView={ onChangeView }
-										header={
-											<>
-												<LogsDownloader
-													siteId={ siteId }
-													siteSlug={ site.slug }
-													logType={ logType }
-													startSec={ startSec }
-													endSec={ endSec }
-													filter={ filter }
-													onSuccess={ ( message ) => setNotice( { variant: 'success', message } ) }
-													onError={ ( message ) => setNotice( { variant: 'error', message } ) }
-												/>
-												<ToggleControl
-													__nextHasNoMarginBottom
-													label={ __( 'Auto-refresh' ) }
-													checked={ autoRefresh }
-													onChange={ handleAutoRefreshClick }
-												/>
-											</>
-										}
+										header={ LogsHeader }
 									/>
-								</DataViewsCard>
-							) }
-						</TabPanel>
+								) : (
+									<DataViews< ServerLog >
+										data={ logs as ServerLog[] }
+										isLoading={ isFetching }
+										paginationInfo={ paginationInfo }
+										fields={ fields as Field< ServerLog >[] }
+										view={ view }
+										actions={ actions as Action< ServerLog >[] }
+										search={ false }
+										defaultLayouts={ { table: {} } }
+										onChangeView={ onChangeView }
+										header={ LogsHeader }
+									/>
+								) }
+							</CardBody>
+						</Card>
 					</>
 				}
 			/>

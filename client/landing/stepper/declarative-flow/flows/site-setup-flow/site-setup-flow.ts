@@ -556,6 +556,10 @@ const siteSetupFlow: Flow = {
 						return goToFlow( backToFlow );
 					}
 
+					if ( entryPoint === 'wp-admin-importers-list-direct-importer' ) {
+						return window.location.assign( `${ adminUrl }import.php` );
+					}
+
 					if ( urlQueryParams.get( 'option' ) === 'content' ) {
 						return navigate( `importList?siteSlug=${ siteSlug }` );
 					}

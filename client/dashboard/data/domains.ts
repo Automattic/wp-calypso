@@ -16,6 +16,14 @@ export const DomainTransferStatus = {
 	PENDING_ASYNC: 'pending_async',
 } as const;
 
+export const DomainSubtype = {
+	DEFAULT_ADDRESS: 'default_address',
+	DOMAIN_CONNECTION: 'domain_connection',
+	DOMAIN_REGISTRATION: 'domain_registration',
+	DOMAIN_TRANSFER: 'domain_transfer',
+	SITE_REDIRECT: 'site_redirect',
+} as const;
+
 export interface DomainSummary {
 	aftermarket_auction: boolean;
 	auto_renewing: boolean;
@@ -48,6 +56,10 @@ export interface DomainSummary {
 	registration_date: string;
 	site_slug: string;
 	subscription_id: string;
+	subtype: {
+		id: ( typeof DomainSubtype )[ keyof typeof DomainSubtype ];
+		label: string;
+	};
 	transfer_status: ( typeof DomainTransferStatus )[ keyof typeof DomainTransferStatus ] | null;
 	type: ( typeof DomainTypes )[ keyof typeof DomainTypes ];
 	wpcom_domain: boolean;

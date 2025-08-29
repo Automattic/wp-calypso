@@ -341,7 +341,7 @@ export default function ReferHostingForm( {
 					/>
 				) }
 
-				{ fields.rfp?.enabled && (
+				{ fields.isRfp?.enabled && (
 					<RadioButtonField
 						label={ translate( 'Is this an RFP?' ) }
 						name="isRfp"
@@ -357,7 +357,12 @@ export default function ReferHostingForm( {
 			</FormSection>
 
 			<div className="refer-hosting-form__footer">
-				<Button variant="primary" onClick={ handleSubmit } isBusy={ isPending }>
+				<Button
+					variant="primary"
+					onClick={ handleSubmit }
+					isBusy={ isPending }
+					disabled={ isPending }
+				>
 					{ ctaText }
 				</Button>
 			</div>

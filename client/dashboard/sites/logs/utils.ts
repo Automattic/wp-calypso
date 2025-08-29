@@ -1,11 +1,22 @@
 import { dateI18n } from '@wordpress/date';
 import { startOfDay, endOfDay, fromUnixTime, isValid as isValidDate } from 'date-fns';
-import { formatDateWithOffset } from '../../utils/datetime';
+import { formatDateWithOffset, parseYmdLocal, formatYmd } from '../../utils/datetime';
 import type { PHPLog } from '../../data/site-logs';
 
 type DateRange = { start: Date; end: Date };
 
 const HOUR_MS = 3_600_000;
+
+/**
+ * Get the default date range for the logs.
+ */
+export function getDefaultDateRange( timezoneString?: string, gmtOffset?: number ) {
+	const siteToday = parseYmdLocal( formatYmd( new Date(), timezoneString, gmtOffset ) )!;
+	return {
+		start: new Date( siteToday.getFullYear(), siteToday.getMonth(), siteToday.getDate() - 6 ),
+		end: siteToday,
+	};
+}
 
 /**
  * Convert a local date range to inclusive epoch-second boundaries (UTC).
