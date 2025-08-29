@@ -156,10 +156,10 @@ export const DomainSearchControlsFilterPopover = ( {
 						onChange={ setExactMatchesOnlyInFilter }
 					/>
 					<HStack spacing={ 4 } className="domain-search-controls__filters-popover-buttons">
-						<Button variant="secondary" onClick={ onClear }>
+						<Button __next40pxDefaultSize variant="secondary" onClick={ onClear }>
 							{ __( 'Clear' ) }
 						</Button>
-						<Button variant="primary" onClick={ onClose }>
+						<Button __next40pxDefaultSize variant="primary" onClick={ onClose }>
 							{ __( 'Apply' ) }
 						</Button>
 					</HStack>
