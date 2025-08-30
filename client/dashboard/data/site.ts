@@ -81,6 +81,7 @@ export interface SiteOptions {
 	site_intent?: string;
 	software_version: string;
 	updated_at?: string;
+	wordads?: boolean;
 	wpcom_production_blog_id?: number;
 	wpcom_staging_blog_ids?: number[];
 }
