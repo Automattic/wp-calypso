@@ -4,7 +4,7 @@ import {
 	useAttachFileToConversation,
 	useAuthenticateZendeskMessaging,
 } from '@automattic/zendesk-client';
-import { DropZone } from '@wordpress/components';
+import { DropZone, Icon } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -137,7 +137,7 @@ export const useAttachmentHandler = () => {
 
 	const attachmentAction = {
 		id: 'attachment',
-		icon: <Icon size="18" icon={ image } />,
+		icon: <Icon size={ 18 } icon={ image } />,
 		onClick: () => {
 			const input = document.createElement( 'input' );
 			input.type = 'file';
