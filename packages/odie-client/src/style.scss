@@ -39,6 +39,7 @@ $blueberry-blue: #3858e9;
 	padding-top: 16px;
 	gap: 28px;
 	padding-bottom: 40px;
+	box-sizing: border-box;
 
 	&:has( .odie-notice ) {
 		margin-bottom: 135px;
