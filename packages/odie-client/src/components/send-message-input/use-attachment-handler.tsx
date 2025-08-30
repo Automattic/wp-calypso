@@ -137,7 +137,7 @@ export const useAttachmentHandler = () => {
 
 	const attachmentAction = {
 		id: 'attachment',
-		icon: image,
+		icon: <Icon size="18" icon={ image } />,
 		onClick: () => {
 			const input = document.createElement( 'input' );
 			input.type = 'file';
