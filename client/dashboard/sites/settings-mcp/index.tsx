@@ -24,7 +24,7 @@ import './style.scss';
 export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const { data: siteSettings, isLoading } = useQuery( siteSettingsQuery( site.ID ) );
+	const { data: siteSettings } = useSuspenseQuery( siteSettingsQuery( site.ID ) );
 	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
 	const mutation = useMutation( siteSettingsMutation( site.ID ) );
 
@@ -39,13 +39,6 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 	// Calculate if any abilities are enabled in form data (for master toggle state)
 	const anyAbilitiesEnabled =
 		hasAbilities && Object.values( formData ).some( ( ability ) => ability.enabled );
-
-	// Update form data when siteSettings changes
-	useEffect( () => {
-		if ( siteSettings?.mcp_abilities ) {
-			setFormData( siteSettings.mcp_abilities );
-		}
-	}, [ siteSettings?.mcp_abilities ] );
 
 	// Auto-disable master toggle if all abilities are disabled
 	useEffect( () => {
@@ -189,17 +182,6 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 	};
 
 	const renderContent = () => {
-		// Show loading state while data is being fetched
-		if ( isLoading ) {
-			return (
-				<Card>
-					<CardBody>
-						<p>{ __( 'Loading MCP settings…' ) }</p>
-					</CardBody>
-				</Card>
-			);
-		}
-
 		if ( ! hasAbilities ) {
 			return (
 				<Card>
