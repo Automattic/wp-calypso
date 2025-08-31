@@ -15,7 +15,6 @@ import { useState, useEffect } from 'react';
 import { isAutomatticianQuery } from '../../app/queries/me-a8c';
 import { siteBySlugQuery } from '../../app/queries/site';
 import { siteSettingsQuery, siteSettingsMutation } from '../../app/queries/site-settings';
-import { queryClient } from '../../app/query-client';
 import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';
 import type { SiteMcpAbilities } from '../../data/site-settings';
@@ -74,28 +73,17 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 			abilitiesArray[ abilityId ] = ability.enabled ? 1 : 0;
 		} );
 
-		// Create the mutation data with just the mcp_abilities
-		const mutationData = {
-			mcp_abilities: abilitiesArray,
-		};
-
-		mutation.mutate( mutationData, {
-			onSuccess: () => {
-				// Manually update the cache with the full ability objects
-				queryClient.setQueryData(
-					siteSettingsQuery( site.ID ).queryKey,
-					( oldData ) =>
-						oldData && {
-							...oldData,
-							mcp_abilities: formData, // Use our form data (full objects) instead of simplified data
-						}
-				);
-				createSuccessNotice( __( 'MCP abilities saved.' ), { type: 'snackbar' } );
-			},
-			onError: () => {
-				createErrorNotice( __( 'Failed to save MCP abilities.' ), { type: 'snackbar' } );
-			},
-		} );
+		mutation.mutate(
+			{ mcp_abilities: abilitiesArray },
+			{
+				onSuccess: () => {
+					createSuccessNotice( __( 'MCP abilities saved.' ), { type: 'snackbar' } );
+				},
+				onError: () => {
+					createErrorNotice( __( 'Failed to save MCP abilities.' ), { type: 'snackbar' } );
+				},
+			}
+		);
 	};
 
 	const handleMasterToggle = ( enabled: boolean ) => {
