@@ -189,6 +189,7 @@ export interface SendMessageParams {
 	sessionId?: string;
 	metadata?: Record< string, unknown >;
 	withHistory?: boolean; // Default: true - whether to include conversation history
+	abortSignal?: AbortSignal; // Optional: abort signal for canceling inflight requests
 }
 
 export interface TaskUpdate {

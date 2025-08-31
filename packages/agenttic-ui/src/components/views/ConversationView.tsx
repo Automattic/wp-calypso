@@ -14,6 +14,7 @@ interface InputHandlers {
 	textareaRef: React.RefObject< HTMLTextAreaElement >;
 	placeholder?: string;
 	isProcessing: boolean;
+	onStop?: () => void;
 }
 
 interface ConversationViewProps extends InputHandlers {
@@ -58,6 +59,7 @@ export function ConversationView( {
 	textareaRef,
 	placeholder,
 	isProcessing,
+	onStop,
 	fromCompact = false,
 	showHeader = false,
 	onClose,
@@ -105,6 +107,7 @@ export function ConversationView( {
 				textareaRef={ textareaRef }
 				placeholder={ placeholder }
 				isProcessing={ isProcessing }
+				onStop={ onStop }
 				fromCompact={ fromCompact }
 				onExpand={ onExpand }
 				notice={ notice }

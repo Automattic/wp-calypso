@@ -35,6 +35,7 @@ interface ChatInputProps {
 	focusOnMount?: boolean;
 	customActions?: ActionButton[];
 	actionOrder?: 'before-submit' | 'after-submit';
+	onStop?: () => void; // Optional callback for stopping current request
 }
 
 export function ChatInput( {
@@ -52,6 +53,7 @@ export function ChatInput( {
 	focusOnMount = false,
 	customActions = [],
 	actionOrder = 'before-submit',
+	onStop,
 }: ChatInputProps ) {
 	const textareaId = useId();
 	const canSubmit = value.trim() || isProcessing;
@@ -98,10 +100,18 @@ export function ChatInput( {
 	};
 
 	const renderSubmitButton = () => {
+		const handleClick = () => {
+			if ( isProcessing && onStop ) {
+				onStop();
+			} else {
+				onSubmit();
+			}
+		};
+
 		return (
 			<Button
 				className={ styles.button }
-				onClick={ onSubmit }
+				onClick={ handleClick }
 				disabled={ ! canSubmit }
 				variant="primary"
 				icon={ isProcessing ? <StopIcon /> : <ArrowUpIcon /> }

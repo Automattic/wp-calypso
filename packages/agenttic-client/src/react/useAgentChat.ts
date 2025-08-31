@@ -256,6 +256,9 @@ export interface UseAgentChatReturn {
 
 	// Tool integration
 	addMessage: ( message: UIMessage ) => void;
+
+	// Abort control
+	abortCurrentRequest: () => void;
 }
 
 // Internal state interface
@@ -267,6 +270,7 @@ interface AgentChatState {
 	suggestions: Suggestion[];
 	markdownComponents: MarkdownComponents;
 	markdownExtensions: MarkdownExtensions;
+	currentAbortController: AbortController | null;
 }
 
 /**
@@ -295,6 +299,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		suggestions: [],
 		markdownComponents: {},
 		markdownExtensions: {},
+		currentAbortController: null,
 	} );
 
 	// Initialize message actions
@@ -394,19 +399,26 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				showIcon: false,
 			};
 
+			// Create abort controller for this request
+			const abortController = new AbortController();
+
 			// Add user message to UI and set communication state
 			setState( ( prev ) => ( {
 				...prev,
 				uiMessages: [ ...prev.uiMessages, userMessage ],
 				isProcessing: true,
 				error: null,
+				currentAbortController: abortController,
 			} ) );
 
 			try {
 				let lastUpdate = null;
 				for await ( const update of agentManager.sendMessageStream(
 					agentKey,
-					message
+					message,
+					{
+						abortSignal: abortController.signal,
+					}
 				) ) {
 					lastUpdate = update;
 				}
@@ -447,9 +459,22 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 						clientMessages: updatedClientHistory,
 						uiMessages: mergedUIMessages,
 						isProcessing: false,
+						currentAbortController: null,
 					};
 				} );
 			} catch ( error ) {
+				// Handle AbortError specially - it's not really an error, just user cancellation
+				if ( error instanceof Error && error.name === 'AbortError' ) {
+					console.log( 'Request was aborted by user' );
+					setState( ( prev ) => ( {
+						...prev,
+						isProcessing: false,
+						error: null, // Don't show error for user-initiated abort
+						currentAbortController: null,
+					} ) );
+					return; // Don't re-throw AbortError
+				}
+
 				const errorMessage =
 					error instanceof Error
 						? error.message
@@ -458,6 +483,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					...prev,
 					isProcessing: false,
 					error: errorMessage,
+					currentAbortController: null,
 				} ) );
 				throw error;
 			}
@@ -623,6 +649,16 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		[ state.markdownComponents, state.markdownExtensions ]
 	);
 
+	// Create abort function - use setState callback to access current state
+	const abortCurrentRequest = useCallback( () => {
+		setState( ( currentState ) => {
+			if ( currentState.currentAbortController ) {
+				currentState.currentAbortController.abort();
+			}
+			return currentState; // No state change needed
+		} );
+	}, [] ); // Empty dependency array since we're accessing current state via setState callback
+
 	return {
 		// AgentUI props
 		messages: state.uiMessages,
@@ -646,6 +682,9 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 		// Tool integration
 		addMessage,
+
+		// Abort control
+		abortCurrentRequest,
 	};
 }
 

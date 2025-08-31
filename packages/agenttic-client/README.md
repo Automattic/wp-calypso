@@ -15,6 +15,7 @@ npm install @automattic/agenttic-client
 -   Tool execution system with automatic handling
 -   Context injection for each message
 -   Conversation persistence and management
+-   Request cancellation with abort controllers
 -   TypeScript support
 -   Message actions and markdown rendering
 
@@ -116,6 +117,7 @@ const {
 
 	// Core methods
 	onSubmit, // (message: string) => Promise<void>
+	abortCurrentRequest, // () => void - cancel in-flight request
 
 	// Configuration
 	registerSuggestions, // (suggestions: Suggestion[]) => void
@@ -217,6 +219,17 @@ for await (const update of client.sendMessageStream({
   console.log(update.text);
   if (update.final) break;
 }
+
+// With abort control
+const abortController = new AbortController();
+const task = await client.sendMessage({
+  message: createTextMessage('Hello'),
+  sessionId: 'session-123',
+  abortSignal: abortController.signal
+});
+
+// Cancel the request
+abortController.abort();
 ```
 
 ### Agent Manager
@@ -250,6 +263,46 @@ await manager.resetConversation( 'my-agent' );
 ```
 
 ## Additional Features
+
+### Request Cancellation
+
+Cancel in-flight requests using the built-in abort functionality:
+
+```typescript
+const { abortCurrentRequest, isProcessing } = useAgentChat(config);
+
+// Cancel current request
+if (isProcessing) {
+  abortCurrentRequest();
+}
+```
+
+For low-level client usage, use `AbortController`:
+
+```typescript
+import { createClient, createAbortController } from '@automattic/agenttic-client';
+
+const client = createClient(config);
+const abortController = createAbortController();
+
+// Start a request with abort signal
+const requestPromise = client.sendMessage({
+  message: createTextMessage('Hello'),
+  abortSignal: abortController.signal
+});
+
+// Cancel the request
+abortController.abort();
+
+// Handle cancellation
+try {
+  await requestPromise;
+} catch (error) {
+  if (error.name === 'AbortError') {
+    console.log('Request was cancelled');
+  }
+}
+```
 
 ### Message Actions
 

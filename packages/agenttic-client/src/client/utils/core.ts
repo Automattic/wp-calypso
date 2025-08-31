@@ -249,3 +249,11 @@ export function createToolResultMessage(
 		},
 	};
 }
+
+/**
+ * Create an AbortController for canceling requests
+ * Utility function for consumers who want to abort requests
+ */
+export function createAbortController(): AbortController {
+	return new AbortController();
+}

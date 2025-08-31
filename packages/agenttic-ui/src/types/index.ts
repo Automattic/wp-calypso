@@ -58,6 +58,7 @@ export interface AgentUIProps {
 	onOpen?: () => void;
 	onExpand?: () => void;
 	onClose?: () => void;
+	onStop?: () => void; // Optional callback to stop current request
 	emptyView?: React.ReactNode;
 	floatingChatState?: ChatState;
 	suggestions?: Suggestion[];

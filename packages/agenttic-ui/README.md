@@ -14,6 +14,7 @@ npm install @automattic/agenttic-ui
 - Floating and embedded chat variants
 - Smooth animations and drag-and-drop positioning
 - Message actions and markdown rendering
+- Request cancellation UI with stop button functionality
 - TypeScript support with comprehensive types
 - Storybook component documentation
 - Modular component architecture for custom layouts
@@ -32,6 +33,7 @@ function ChatApplication() {
     isProcessing,
     error,
     onSubmit,
+    abortCurrentRequest,
     suggestions,
     clearSuggestions,
     messageRenderer
@@ -46,6 +48,7 @@ function ChatApplication() {
       isProcessing={isProcessing}
       error={error}
       onSubmit={onSubmit}
+      onStop={abortCurrentRequest}
       suggestions={suggestions}
       clearSuggestions={clearSuggestions}
       messageRenderer={messageRenderer}
@@ -82,6 +85,7 @@ interface AgentUIProps {
   isProcessing: boolean;
   error?: string | null;
   onSubmit: (message: string) => void;
+  onStop?: () => void; // Optional callback to stop current request
 
   // UI configuration
   variant?: 'floating' | 'embedded';
@@ -201,6 +205,7 @@ Text input with auto-resize and submit handling.
   onChange={setValue}
   onSubmit={handleSubmit}
   onKeyDown={handleKeyDown}
+  onStop={handleStop} // Optional callback to stop current request
   placeholder="Type a message..."
   isProcessing={false}
   textareaRef={textareaRef}
@@ -372,6 +377,38 @@ Override CSS custom properties to theme the entire chat or specific areas:
 This approach allows granular theming of specific areas without affecting other parts of the application.
 
 ## Advanced Usage
+
+### Request Cancellation UI
+
+The UI automatically displays a stop button when `isProcessing` is true and an `onStop` callback is provided. The submit button transforms into a stop button during processing:
+
+```tsx
+const {
+  abortCurrentRequest,
+  isProcessing
+} = useAgentChat(config);
+
+<AgentUI
+  isProcessing={isProcessing}
+  onStop={abortCurrentRequest}
+  // When processing, the submit button becomes a stop button
+  // ... other props
+/>
+```
+
+For custom implementations:
+
+```tsx
+<ChatInput
+  isProcessing={isProcessing}
+  onStop={() => {
+    console.log('User requested to stop');
+    abortCurrentRequest();
+  }}
+  // The button automatically shows stop icon during processing
+  // ... other props
+/>
+```
 
 ### Custom Message Renderer
 

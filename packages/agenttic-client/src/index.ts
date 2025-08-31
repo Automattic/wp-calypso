@@ -16,6 +16,7 @@ export {
 	createTextMessage,
 	extractToolCallsFromMessage,
 	extractTextFromMessage,
+	createAbortController,
 } from './client/utils/core';
 export { createMessageRenderer } from './utils/createMessageRenderer';
 

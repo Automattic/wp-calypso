@@ -231,6 +231,7 @@ function conversationHistoryToDataParts(
  * @param toolProvider    - Tool provider for message enhancement
  * @param contextProvider - Context provider for message enhancement
  * @param sessionId       - Session identifier
+ * @param abortSignal     - Optional abort signal
  * @return Promise resolving to updated task
  */
 async function continueTask(
@@ -239,7 +240,8 @@ async function continueTask(
 	requestConfig: RequestConfig,
 	toolProvider?: any,
 	contextProvider?: any,
-	sessionId?: string
+	sessionId?: string,
+	abortSignal?: AbortSignal
 ): Promise< Task > {
 	const continueParams = {
 		message,
@@ -250,13 +252,15 @@ async function continueTask(
 	const preparedRequest = await prepareRequest(
 		continueParams,
 		requestConfig,
-		{ isStreaming: false },
+		{ isStreaming: false, abortSignal },
 		toolProvider,
 		contextProvider,
 		sessionId
 	);
 
-	return await executeRequest( preparedRequest, requestConfig );
+	return await executeRequest( preparedRequest, requestConfig, {
+		abortSignal,
+	} );
 }
 
 /**
@@ -268,6 +272,7 @@ async function continueTask(
  * @param toolProvider    - Tool provider for message enhancement
  * @param contextProvider - Context provider for message enhancement
  * @param sessionId       - Session identifier
+ * @param abortSignal     - Optional abort signal
  * @return AsyncIterable of task updates
  */
 async function continueTaskStreamed(
@@ -276,7 +281,8 @@ async function continueTaskStreamed(
 	requestConfig: RequestConfig,
 	toolProvider?: any,
 	contextProvider?: any,
-	sessionId?: string
+	sessionId?: string,
+	abortSignal?: AbortSignal
 ): Promise< AsyncIterable< TaskUpdate > > {
 	const continueParams = {
 		message,
@@ -287,7 +293,7 @@ async function continueTaskStreamed(
 	const preparedRequest = await prepareRequest(
 		continueParams,
 		requestConfig,
-		{ isStreaming: true },
+		{ isStreaming: true, abortSignal },
 		toolProvider,
 		contextProvider,
 		sessionId
@@ -296,6 +302,7 @@ async function continueTaskStreamed(
 	// Create the stream and process it with shared logic
 	const stream = executeStreamingRequest( preparedRequest, requestConfig, {
 		isStreaming: true,
+		abortSignal,
 	} );
 
 	return processAgentResponseStream(
@@ -305,7 +312,8 @@ async function continueTaskStreamed(
 		requestConfig,
 		sessionId,
 		true, // withHistory
-		[] // newConversationParts - empty for continueTask
+		[], // newConversationParts - empty for continueTask
+		abortSignal
 	);
 }
 
@@ -321,6 +329,7 @@ async function continueTaskStreamed(
  * @param sessionId            - Session identifier
  * @param withHistory          - Whether to include conversation history
  * @param newConversationParts - Array to track conversation parts for history
+ * @param abortSignal          - Optional abort signal
  * @return AsyncIterable of task updates
  */
 async function* processAgentResponseStream(
@@ -330,7 +339,8 @@ async function* processAgentResponseStream(
 	requestConfig: RequestConfig,
 	sessionId?: string,
 	withHistory: boolean = true,
-	newConversationParts: Message[] = []
+	newConversationParts: Message[] = [],
+	abortSignal?: AbortSignal
 ): AsyncIterable< TaskUpdate > {
 	for await ( const update of stream ) {
 		yield update;
@@ -491,7 +501,8 @@ async function* processAgentResponseStream(
 						requestConfig,
 						toolProvider,
 						contextProvider,
-						sessionId
+						sessionId,
+						abortSignal
 					);
 
 					// Get the final result from the stream
@@ -605,7 +616,8 @@ async function* processAgentResponseStream(
 										requestConfig,
 										toolProvider,
 										contextProvider,
-										sessionId
+										sessionId,
+										abortSignal
 									);
 
 								// Get the final result from the stream
@@ -774,7 +786,7 @@ export function createClient( config: ClientConfig ): Client {
 
 	return {
 		async sendMessage( params: SendMessageParams ): Promise< TaskUpdate > {
-			const { withHistory = true } = params;
+			const { withHistory = true, abortSignal } = params;
 			const sessionId = params.sessionId || defaultSessionId || undefined;
 
 			// Track new conversation parts since the initial message for tool result context
@@ -787,7 +799,7 @@ export function createClient( config: ClientConfig ): Client {
 			const preparedRequest = await prepareRequest(
 				params,
 				requestConfig,
-				{ isStreaming: false },
+				{ isStreaming: false, abortSignal },
 				toolProvider,
 				contextProvider,
 				sessionId
@@ -796,7 +808,8 @@ export function createClient( config: ClientConfig ): Client {
 			// Execute the initial request
 			let currentTask = await executeRequest(
 				preparedRequest,
-				requestConfig
+				requestConfig,
+				{ abortSignal }
 			);
 
 			// Track all tool calls and results from the entire execution
@@ -887,7 +900,8 @@ export function createClient( config: ClientConfig ): Client {
 						requestConfig,
 						toolProvider,
 						contextProvider,
-						sessionId
+						sessionId,
+						abortSignal
 					);
 				} else {
 					// Tools executed but don't want to return to agent
@@ -952,7 +966,7 @@ export function createClient( config: ClientConfig ): Client {
 		async *sendMessageStream(
 			params: SendMessageParams
 		): AsyncIterable< TaskUpdate > {
-			const { withHistory = true } = params;
+			const { withHistory = true, abortSignal } = params;
 			const sessionId = params.sessionId || defaultSessionId || undefined;
 
 			// Track new conversation parts since the initial message for tool result context
@@ -965,7 +979,7 @@ export function createClient( config: ClientConfig ): Client {
 			const preparedRequest = await prepareRequest(
 				params,
 				requestConfig,
-				{ isStreaming: true, streamingTimeout: timeout },
+				{ isStreaming: true, streamingTimeout: timeout, abortSignal },
 				toolProvider,
 				contextProvider,
 				sessionId
@@ -978,6 +992,7 @@ export function createClient( config: ClientConfig ): Client {
 				{
 					isStreaming: true,
 					streamingTimeout: timeout,
+					abortSignal,
 				}
 			);
 
@@ -988,7 +1003,8 @@ export function createClient( config: ClientConfig ): Client {
 				requestConfig,
 				sessionId,
 				withHistory,
-				newConversationParts
+				newConversationParts,
+				abortSignal
 			);
 		},
 

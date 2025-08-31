@@ -54,6 +54,7 @@ export function Chat( {
 	onOpen,
 	onExpand,
 	onClose,
+	onStop,
 	emptyView,
 	floatingChatState,
 	suggestions,
@@ -363,6 +364,7 @@ export function Chat( {
 					textareaRef={ input.textareaRef }
 					placeholder={ placeholder }
 					isProcessing={ isProcessing }
+					onStop={ onStop }
 					showHeader={ false }
 					notice={ notice }
 					suggestions={ suggestions }
@@ -462,6 +464,7 @@ export function Chat( {
 									onExpand={ handleExpand }
 									showExpandButton={ ! input.value.trim() }
 									focusOnMount={ wasClickedToOpen.current }
+									onStop={ onStop }
 								/>
 							</div>
 						) }
@@ -476,6 +479,7 @@ export function Chat( {
 								textareaRef={ input.textareaRef }
 								placeholder={ placeholder }
 								isProcessing={ isProcessing }
+								onStop={ onStop }
 								showHeader={ true }
 								onClose={ handleClose }
 								fromCompact={ fromCompact }

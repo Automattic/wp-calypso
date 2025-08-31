@@ -45,6 +45,7 @@ function constructAgentUrl( agentUrl: string, agentId: string ): string {
 export interface RequestOptions {
 	isStreaming?: boolean;
 	streamingTimeout?: number;
+	abortSignal?: AbortSignal; // Optional external abort signal
 }
 
 /**
@@ -93,6 +94,49 @@ async function getHeaders(
 	}
 
 	return baseHeaders;
+}
+
+/**
+ * Combine two abort signals into one.
+ *
+ * @param signal1 - First abort signal
+ * @param signal2 - Second abort signal (optional)
+ * @return Combined abort signal
+ */
+function combineSignals(
+	signal1: AbortSignal,
+	signal2?: AbortSignal
+): AbortSignal {
+	if ( ! signal2 ) {
+		return signal1;
+	}
+
+	const controller = new AbortController();
+
+	// Abort if either signal aborts
+	const handleAbort = ( signal: AbortSignal ) => {
+		if ( ! controller.signal.aborted ) {
+			controller.abort( signal.reason );
+		}
+	};
+
+	if ( signal1.aborted ) {
+		controller.abort( signal1.reason );
+	} else {
+		signal1.addEventListener( 'abort', () => handleAbort( signal1 ), {
+			once: true,
+		} );
+	}
+
+	if ( signal2.aborted ) {
+		controller.abort( signal2.reason );
+	} else {
+		signal2.addEventListener( 'abort', () => handleAbort( signal2 ), {
+			once: true,
+		} );
+	}
+
+	return controller.signal;
 }
 
 /**
@@ -180,33 +224,42 @@ export async function prepareRequest(
  *
  * @param preparedRequest - Prepared request data
  * @param config          - Request configuration
+ * @param options         - Request options (including external abort signal)
  * @return Promise resolving to the response task
  */
 export async function executeRequest(
 	preparedRequest: Awaited< ReturnType< typeof prepareRequest > >,
-	config: RequestConfig
+	config: RequestConfig,
+	options: RequestOptions = {}
 ): Promise< Task > {
 	const { request, headers, fullAgentUrl } = preparedRequest;
 	const { timeout } = config;
+	const { abortSignal: externalSignal } = options;
 
-	const { timeoutId, controller } = createTimeoutHandler(
+	// Always create timeout protection
+	const { timeoutId, controller: timeoutController } = createTimeoutHandler(
 		timeout,
 		'request'
 	);
 
+	// Combine external signal with timeout if provided
+	const signal = externalSignal
+		? combineSignals( timeoutController.signal, externalSignal )
+		: timeoutController.signal;
+
 	try {
-		const options = createFetchOptions(
+		const fetchOptions = createFetchOptions(
 			headers,
 			JSON.stringify( request ),
-			controller.signal
+			signal
 		);
 
 		logger( 'Making request to %s with options: %O', fullAgentUrl, {
-			method: options.method,
-			headers: options.headers,
+			method: fetchOptions.method,
+			headers: fetchOptions.headers,
 		} );
 
-		const response = await fetch( fullAgentUrl, options );
+		const response = await fetch( fullAgentUrl, fetchOptions );
 
 		clearTimeout( timeoutId );
 
@@ -235,7 +288,7 @@ export async function executeRequest(
  *
  * @param preparedRequest - Prepared request data
  * @param config          - Request configuration
- * @param options         - Request options
+ * @param options         - Request options (including external abort signal)
  * @return Async iterable of task updates
  */
 export async function* executeStreamingRequest(
@@ -245,18 +298,23 @@ export async function* executeStreamingRequest(
 ): AsyncIterable< TaskUpdate > {
 	const { request, headers, fullAgentUrl } = preparedRequest;
 	const {} = config;
-	const { streamingTimeout = 60000 } = options;
+	const { streamingTimeout = 60000, abortSignal: externalSignal } = options;
 
 	const { timeoutId, controller } = createTimeoutHandler(
 		streamingTimeout,
 		'streaming request'
 	);
 
+	// Combine external signal with timeout if provided
+	const signal = externalSignal
+		? combineSignals( controller.signal, externalSignal )
+		: controller.signal;
+
 	try {
 		const fetchOptions = createFetchOptions(
 			headers,
 			JSON.stringify( request ),
-			controller.signal
+			signal
 		);
 
 		const response = await fetch( fullAgentUrl, fetchOptions );

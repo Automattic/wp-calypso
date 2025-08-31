@@ -15,6 +15,7 @@ interface CompactViewProps {
 	focusOnMount?: boolean;
 	customActions?: ActionButton[];
 	actionOrder?: 'before-submit' | 'after-submit';
+	onStop?: () => void;
 }
 
 export function CompactView( {
@@ -31,6 +32,7 @@ export function CompactView( {
 	focusOnMount = false,
 	customActions,
 	actionOrder,
+	onStop,
 }: CompactViewProps ) {
 	return (
 		<ChatInput
@@ -47,6 +49,7 @@ export function CompactView( {
 			focusOnMount={ focusOnMount }
 			customActions={ customActions }
 			actionOrder={ actionOrder }
+			onStop={ onStop }
 		/>
 	);
 }

@@ -42,6 +42,7 @@ const FloatingDemo: React.FC = () => {
 		createFeedbackActions,
 		addMessage,
 		messageRenderer,
+		abortCurrentRequest,
 	} = useAgentChat( {
 		agentId: 'test',
 		agentUrl: 'https://public-api.wordpress.com/wpcom/v2/ai/agent',
@@ -322,6 +323,7 @@ const FloatingDemo: React.FC = () => {
 				isProcessing={ isProcessing }
 				error={ error }
 				onSubmit={ handleSubmit }
+				onStop={ abortCurrentRequest }
 				variant="floating"
 				suggestions={ suggestions }
 				clearSuggestions={ clearSuggestions }

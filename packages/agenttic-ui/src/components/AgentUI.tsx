@@ -52,6 +52,7 @@ import { Chat } from './chat/Chat';
  * @param props.onOpen
  * @param props.onExpand
  * @param props.onClose
+ * @param props.onStop
  * @param props.emptyView
  * @param props.messages
  * @param props.isProcessing
@@ -76,6 +77,7 @@ export const AgentUI: React.FC< AgentUIProps > = ( {
 	onOpen,
 	onExpand,
 	onClose,
+	onStop,
 	floatingChatState,
 	suggestions,
 	clearSuggestions,
@@ -96,6 +98,7 @@ export const AgentUI: React.FC< AgentUIProps > = ( {
 			onOpen={ onOpen }
 			onExpand={ onExpand }
 			onClose={ onClose }
+			onStop={ onStop }
 			floatingChatState={ floatingChatState }
 			suggestions={ suggestions }
 			clearSuggestions={ clearSuggestions }

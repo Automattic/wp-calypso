@@ -14,6 +14,7 @@ interface ChatFooterProps {
 	textareaRef: React.RefObject< HTMLTextAreaElement >;
 	placeholder?: string;
 	isProcessing: boolean;
+	onStop?: () => void;
 
 	// UI state
 	fromCompact?: boolean;
@@ -42,6 +43,7 @@ export function ChatFooter( {
 	textareaRef,
 	placeholder,
 	isProcessing,
+	onStop,
 	fromCompact = false,
 	onExpand,
 	notice,
@@ -83,6 +85,7 @@ export function ChatFooter( {
 				textareaRef={ textareaRef }
 				placeholder={ placeholder }
 				isProcessing={ isProcessing }
+				onStop={ onStop }
 				fromCompact={ fromCompact }
 				onExpand={ onExpand }
 				showExpandButton={ false }
