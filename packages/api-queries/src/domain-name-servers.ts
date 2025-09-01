@@ -10,9 +10,15 @@ export const domainNameServersQuery = ( domainName: string ) =>
 
 export const domainNameServersMutation = ( domainName: string ) =>
 	mutationOptions( {
-		mutationFn: ( nameservers: string[] ) => updateDomainNameServers( domainName, nameservers ),
-		onSuccess: ( _, variables ) => {
-			queryClient.setQueryData( domainNameServersQuery( domainName ).queryKey, variables );
+		mutationFn: ( {
+			nameServers,
+		}: {
+			nameServers: string[];
+			isUsingDefaultNameServers: boolean;
+		} ) => updateDomainNameServers( domainName, nameServers ),
+		onSuccess: ( _, data ) => {
+			// optimistically update the query data
+			queryClient.setQueryData( domainNameServersQuery( domainName ).queryKey, data );
 			queryClient.invalidateQueries( domainNameServersQuery( domainName ) );
 		},
 	} );

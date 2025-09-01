@@ -40,16 +40,19 @@ export default function NameServers() {
 
 	const onSubmit = useCallback(
 		( ns: string[] ) => {
-			updateNameServers( ns, {
-				onSuccess: () => {
-					createSuccessNotice( __( 'Name servers updated successfully.' ), {
-						type: 'snackbar',
-					} );
-				},
-				onError: ( e: Error ) => createErrorNotice( e.message, { type: 'snackbar' } ),
-			} );
+			updateNameServers(
+				{ nameServers: ns, isUsingDefaultNameServers },
+				{
+					onSuccess: () => {
+						createSuccessNotice( __( 'Name servers updated successfully.' ), {
+							type: 'snackbar',
+						} );
+					},
+					onError: ( e: Error ) => createErrorNotice( e.message, { type: 'snackbar' } ),
+				}
+			);
 		},
-		[ updateNameServers, createSuccessNotice, createErrorNotice ]
+		[ updateNameServers, createSuccessNotice, createErrorNotice, isUsingDefaultNameServers ]
 	);
 
 	return (
