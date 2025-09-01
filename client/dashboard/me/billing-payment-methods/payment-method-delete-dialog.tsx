@@ -12,8 +12,7 @@ import { Notice } from '../../components/notice';
 import { Text } from '../../components/text';
 import { formatDate } from '../../utils/datetime';
 import { PaymentMethodDetails } from './payment-method-details';
-import type { StoredPaymentMethod } from '../../data/me-payment-methods';
-import type { Purchase } from '../../data/purchase';
+import type { Purchase, StoredPaymentMethod } from '@automattic/api-core';
 
 interface Props {
 	paymentMethod: StoredPaymentMethod;

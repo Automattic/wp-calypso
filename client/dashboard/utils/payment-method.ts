@@ -1,4 +1,4 @@
-import type { StoredPaymentMethod, StoredPaymentMethodCard } from '../data/me-payment-methods';
+import type { StoredPaymentMethod, StoredPaymentMethodCard } from '@automattic/api-core';
 
 export function isCreditCard( item: StoredPaymentMethod ): item is StoredPaymentMethodCard {
 	if ( ! ( 'card_type' in item ) ) {

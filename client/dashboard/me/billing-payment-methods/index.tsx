@@ -31,7 +31,7 @@ import { PaymentMethodImage } from '../billing-purchases/payment-method-image';
 import { PaymentMethodDeleteDialog } from './payment-method-delete-dialog';
 import { PaymentMethodDetails } from './payment-method-details';
 import { PaymentMethodEditDialog } from './payment-method-edit-dialog';
-import type { StoredPaymentMethod } from '../../data/me-payment-methods';
+import type { StoredPaymentMethod } from '@automattic/api-core';
 import type { View, Fields, SortDirection, Action } from '@wordpress/dataviews';
 
 const paymentMethodWideFields = [ 'expiry', 'billing-address', 'backup', 'tax-info' ];

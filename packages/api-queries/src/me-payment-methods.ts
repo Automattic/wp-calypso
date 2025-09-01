@@ -6,7 +6,7 @@ import {
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from '../query-client';
-import type { PaymentMethodRequestType, StoredPaymentMethod } from '../../data/me-payment-methods';
+import type { PaymentMethodRequestType, StoredPaymentMethod } from '@automattic/api-core';
 
 export const userPaymentMethodsQuery = ( {
 	type = 'all',

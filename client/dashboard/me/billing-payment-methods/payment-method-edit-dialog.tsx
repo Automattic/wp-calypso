@@ -12,8 +12,7 @@ import { countryListQuery } from '../../app/queries/domain-supported-contries';
 import RequiredSelect from '../../components/required-select';
 import { Text } from '../../components/text';
 import { PaymentMethodDetails } from './payment-method-details';
-import type { CountryListItem } from '../../data/domain-supported-countries';
-import type { StoredPaymentMethod } from '../../data/me-payment-methods';
+import type { CountryListItem, StoredPaymentMethod } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 function getFields( {

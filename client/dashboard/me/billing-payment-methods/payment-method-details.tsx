@@ -1,7 +1,7 @@
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Text } from '../../components/text';
-import type { StoredPaymentMethod } from '../../data/me-payment-methods';
+import type { StoredPaymentMethod } from '@automattic/api-core';
 
 export function PaymentMethodDetails( { paymentMethod }: { paymentMethod: StoredPaymentMethod } ) {
 	if ( 'card_type' in paymentMethod && paymentMethod.card_type ) {
