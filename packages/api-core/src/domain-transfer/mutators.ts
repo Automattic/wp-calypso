@@ -58,7 +58,7 @@ export async function fetchIpsTagList(): Promise< IpsTag[] > {
 	}
 }
 
-export async function getDomainTransferRequest(
+export async function fetchDomainTransferRequest(
 	domain: string,
 	siteSlug: string
 ): Promise< DomainTransferRequest | null > {
@@ -67,7 +67,7 @@ export async function getDomainTransferRequest(
 	} );
 }
 
-export async function domainTransferRequestUpdate(
+export async function updateDomainTransferRequest(
 	domain: string,
 	siteSlug: string,
 	email: string
@@ -78,7 +78,7 @@ export async function domainTransferRequestUpdate(
 	} );
 }
 
-export async function domainTransferRequestDelete(
+export async function deleteDomainTransferRequest(
 	domain: string,
 	siteSlug: string
 ): Promise< void > {

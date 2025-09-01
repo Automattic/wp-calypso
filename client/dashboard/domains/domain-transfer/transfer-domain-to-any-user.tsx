@@ -17,8 +17,8 @@ import { useLocale } from '../../app/locale';
 import { domainQuery } from '../../app/queries/domain';
 import {
 	domainTransferRequestQuery,
-	domainTransferRequestUpdateMutation,
-	domainTransferRequestDeleteMutation,
+	updateDomainTransferRequestMutation,
+	deleteDomainTransferRequestMutation,
 } from '../../app/queries/domain-transfer';
 import { siteByIdQuery } from '../../app/queries/site';
 import { domainRoute } from '../../app/router/domains';
@@ -58,9 +58,9 @@ export default function TransferDomainToAnyUser() {
 		domainTransferRequestQuery( domainName, site.slug )
 	);
 	const { mutate: deleteDomainTransferRequest, isPending: isDeletingDomainTransferRequest } =
-		useMutation( domainTransferRequestDeleteMutation( domainName, site.slug ) );
+		useMutation( deleteDomainTransferRequestMutation( domainName, site.slug ) );
 	const { mutate: updateDomainTransferRequest, isPending: isUpdatingDomainTransferRequest } =
-		useMutation( domainTransferRequestUpdateMutation( domainName, site.slug ) );
+		useMutation( updateDomainTransferRequestMutation( domainName, site.slug ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const locale = useLocale();
 	const transferEmail = domainTransferRequest?.email;
