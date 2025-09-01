@@ -154,10 +154,12 @@ const GalleryOverlay = ( {
 		const previouslyFocusedElement = document.activeElement;
 
 		// Focus the close button when modal opens
-		const closeButton = document.querySelector( '.gallery-overlay__close' );
-		if ( closeButton ) {
-			closeButton.focus();
-		}
+		requestAnimationFrame( () => {
+			const closeButton = document.querySelector( '.gallery-overlay__close' );
+			if ( closeButton ) {
+				closeButton.focus();
+			}
+		} );
 
 		// Get all focusable elements within the modal
 		const getFocusableElements = () => {
@@ -167,21 +169,22 @@ const GalleryOverlay = ( {
 			}
 
 			const focusableSelectors = [
-				'button',
-				'[href]',
-				'input',
-				'select',
-				'textarea',
-				'[tabindex]:not([tabindex="-1"])',
+				'button:not([disabled]):not([aria-hidden="true"])',
+				'[href]:not([disabled]):not([aria-hidden="true"])',
+				'input:not([disabled]):not([aria-hidden="true"])',
+				'select:not([disabled]):not([aria-hidden="true"])',
+				'textarea:not([disabled]):not([aria-hidden="true"])',
+				'[tabindex]:not([tabindex="-1"]):not([disabled]):not([aria-hidden="true"])',
 			];
 
 			return Array.from( modal.querySelectorAll( focusableSelectors.join( ',' ) ) ).filter(
 				( element ) => {
+					const style = getComputedStyle( element );
 					return (
-						! element.disabled &&
 						element.offsetWidth > 0 &&
 						element.offsetHeight > 0 &&
-						getComputedStyle( element ).visibility !== 'hidden'
+						style.visibility !== 'hidden' &&
+						style.display !== 'none'
 					);
 				}
 			);
@@ -194,20 +197,29 @@ const GalleryOverlay = ( {
 
 			const focusableElements = getFocusableElements();
 			if ( focusableElements.length === 0 ) {
+				event.preventDefault();
 				return;
 			}
 
 			const firstElement = focusableElements[ 0 ];
 			const lastElement = focusableElements[ focusableElements.length - 1 ];
+			const currentElement = document.activeElement;
+
+			// Find current element index in our focusable list
+			const currentElementIndex = focusableElements.indexOf( currentElement );
 
 			if ( event.shiftKey ) {
-				// Shift + Tab: if focused on first element, go to last
-				if ( document.activeElement === firstElement ) {
+				// Shift + Tab (backwards)
+				if ( currentElementIndex <= 0 ) {
+					// If on first element or outside modal, go to last element
 					event.preventDefault();
 					lastElement.focus();
 				}
-			} else if ( document.activeElement === lastElement ) {
-				// Tab: if focused on last element, go to first
+			} else if (
+				currentElementIndex >= focusableElements.length - 1 ||
+				currentElementIndex === -1
+			) {
+				// Tab (forwards) - if on last element or outside modal, go to first element
 				event.preventDefault();
 				firstElement.focus();
 			}
@@ -219,7 +231,9 @@ const GalleryOverlay = ( {
 		return () => {
 			document.removeEventListener( 'keydown', handleTabKey );
 			if ( previouslyFocusedElement && typeof previouslyFocusedElement.focus === 'function' ) {
-				previouslyFocusedElement.focus();
+				requestAnimationFrame( () => {
+					previouslyFocusedElement.focus();
+				} );
 			}
 		};
 	}, [ isOpen ] );
