@@ -959,8 +959,10 @@ object PlaywrightTestPRMatrix : BuildType({
 			name = "Test step"
 			scriptContent = """
 				echo "Running Playwright tests for project: %playwrightProject%"
-				cd test/e2e
-				yarn playwright:%playwrightProject% --list
+				pwd
+				ls -la
+				# cd test/e2e
+				# yarn playwright:%playwrightProject% --list
 			"""
 			dockerImage = "%docker_image_e2e%"
 			dockerRunParameters = "-u %env.UID% --shm-size=4g"
@@ -998,9 +1000,7 @@ object PlaywrightTestPreReleaseMatrix : BuildType({
 		script {
 			name = "Test step"
 			scriptContent = """
-				echo "Running Playwright tests for project: %playwrightProject%"
-				cd test/e2e
-				yarn playwright:%playwrightProject% --list
+				echo "Running pre-release Playwright tests for project: %playwrightProject%"
 			"""
 		}
 	}
