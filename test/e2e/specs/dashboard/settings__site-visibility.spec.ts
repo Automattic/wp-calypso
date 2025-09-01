@@ -78,6 +78,8 @@ test.describe( 'Dashboard: Site Visibility Settings', { tag: '@dashboard' }, () 
 
 		await test.step( 'Then I can still see the live site as an external visitor', async function () {
 			await pageIncognito.goto( siteNew.blog_details.url );
+			// Soft assert to allow for the possibility that the site is still private
+			// or coming soon, and to test the robots.txt test step even if these checks fail.
 			await expect.soft( incognitoContentLocator ).not.toContainText( 'Private Site' );
 			await expect.soft( incognitoContentLocator ).not.toContainText( 'coming soon' );
 		} );
