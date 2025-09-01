@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	Button,
@@ -8,6 +8,7 @@ import {
 	Spinner,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
+import { useEffect } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { Icon, chevronDownSmall, plus } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
@@ -15,6 +16,7 @@ import { siteByIdQuery } from '../../app/queries/site';
 import {
 	stagingSiteCreateMutation,
 	isDeletingStagingSiteQuery,
+	hasStagingSiteQuery,
 } from '../../app/queries/site-staging-sites';
 import { production, staging } from '../../components/icons';
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
@@ -54,15 +56,22 @@ const EnvironmentSwitcherDropdown = ( {
 	currentSite,
 	otherEnvironment,
 	otherEnvironmentSite,
+	stagingSiteExists,
 	onClose,
 }: {
 	currentSite: Site;
 	otherEnvironment: EnvironmentType;
 	otherEnvironmentSite?: Site;
+	stagingSiteExists: boolean;
 	onClose: () => void;
 } ) => {
 	const productionSite = otherEnvironment === 'staging' ? currentSite : otherEnvironmentSite;
-	const stagingSite = otherEnvironment === 'staging' ? otherEnvironmentSite : currentSite;
+	let stagingSite;
+	if ( otherEnvironment === 'staging' ) {
+		stagingSite = stagingSiteExists ? otherEnvironmentSite : undefined;
+	} else {
+		stagingSite = currentSite;
+	}
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const mutation = useMutation( stagingSiteCreateMutation( productionSite?.ID ?? 0 ) );
 	const handleCreate = () => {
@@ -122,6 +131,7 @@ const EnvironmentSwitcherDropdown = ( {
 };
 
 const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
+	const queryClient = useQueryClient();
 	const otherEnvironment = site.is_wpcom_staging_site ? 'production' : 'staging';
 	const otherEnvironmentSiteId = site.is_wpcom_staging_site
 		? site.options?.wpcom_production_blog_id
@@ -132,10 +142,31 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 		enabled: !! otherEnvironmentSiteId,
 	} );
 
+	const stagingSiteId = site.is_wpcom_staging_site ? site.ID : otherEnvironmentSiteId;
 	const { data: isStagingSiteDeleting } = useQuery( {
-		...isDeletingStagingSiteQuery( otherEnvironmentSiteId ?? 0 ),
-		enabled: !! otherEnvironmentSiteId && otherEnvironment === 'staging',
+		...isDeletingStagingSiteQuery( stagingSiteId ?? 0 ),
+		enabled: !! stagingSiteId,
 	} );
+
+	const productionSiteId = site.is_wpcom_staging_site
+		? site.options?.wpcom_production_blog_id ?? 0
+		: site.ID;
+
+	const { data: stagingSiteExistsFromQuery } = useQuery( {
+		...hasStagingSiteQuery( productionSiteId ),
+		refetchInterval: isStagingSiteDeleting ? 3000 : false,
+		enabled: !! productionSiteId && isStagingSiteDeleting,
+	} );
+
+	// Clean up deletion flag when staging site no longer exists
+	useEffect( () => {
+		if ( isStagingSiteDeleting && stagingSiteExistsFromQuery === false && stagingSiteId ) {
+			queryClient.setQueryData( isDeletingStagingSiteQuery( stagingSiteId ).queryKey, false );
+		}
+	}, [ isStagingSiteDeleting, stagingSiteExistsFromQuery, stagingSiteId, queryClient ] );
+
+	const stagingSiteExists =
+		stagingSiteExistsFromQuery !== undefined ? stagingSiteExistsFromQuery : hasStagingSite( site );
 
 	return (
 		<HStack style={ { width: 'auto', flexShrink: 0 } }>
@@ -143,8 +174,9 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 				renderToggle={ ( { onToggle } ) => {
 					const canToggle =
 						! isStagingSiteDeleting &&
-						( hasStagingSite( site ) ||
-							( otherEnvironmentSite && canManageSite( otherEnvironmentSite ) ) );
+						( stagingSiteExists ||
+							( otherEnvironmentSite && canManageSite( otherEnvironmentSite ) ) ||
+							( otherEnvironment === 'staging' && ! stagingSiteExists ) );
 
 					return (
 						<Button
@@ -163,6 +195,7 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 						currentSite={ site }
 						otherEnvironment={ otherEnvironment }
 						otherEnvironmentSite={ otherEnvironmentSite }
+						stagingSiteExists={ stagingSiteExists }
 						onClose={ onClose }
 					/>
 				) }
