@@ -13,7 +13,7 @@ export * from './domain-whois';
 export * from './domain';
 export * from './domains';
 export * from './emails';
-export * from './geolocation';
+export * from './geo';
 export * from './me-a8c';
 export * from './me-account';
 export * from './me-blocked-sites';
