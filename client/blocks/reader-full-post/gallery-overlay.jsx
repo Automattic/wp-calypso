@@ -224,25 +224,6 @@ const GalleryOverlay = ( {
 		};
 	}, [ isOpen ] );
 
-	// Handle orientation changes for better responsive behavior
-	useEffect( () => {
-		if ( ! isOpen ) {
-			return;
-		}
-
-		const handleOrientationChange = () => {
-			// Small delay to allow viewport to adjust
-		};
-
-		window.addEventListener( 'orientationchange', handleOrientationChange );
-		window.addEventListener( 'resize', handleOrientationChange );
-
-		return () => {
-			window.removeEventListener( 'orientationchange', handleOrientationChange );
-			window.removeEventListener( 'resize', handleOrientationChange );
-		};
-	}, [ isOpen ] );
-
 	// Early return after all hooks to comply with Rules of Hooks
 	if ( ! isOpen || ! images.length ) {
 		return null;
