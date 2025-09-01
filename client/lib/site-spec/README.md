@@ -128,15 +128,6 @@ Run tests for the Site-Spec utilities:
 yarn test-client client/lib/site-spec/test/utils.js
 ```
 
-## Migration from sitespec
-
-If migrating from the old `sitespec` naming:
-
-1. Update feature flags from `sitespec-script` to `site-spec-script`
-2. Update configuration keys from `sitespec_*` to `site_spec_*`
-3. Update import paths from `calypso/lib/sitespec` to `calypso/lib/site-spec`
-4. Update debug namespaces from `calypso:sitespec:*` to `calypso:site-spec:*`
-
 ## Architecture
 
 The system follows WordPress Calypso patterns:

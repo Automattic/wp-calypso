@@ -245,7 +245,7 @@ class Document extends Component {
 					{ isSiteSpecEnabled() && (
 						<script
 							defer
-							id="sitespec"
+							id="site-spec"
 							src={ getSiteSpecUrl() }
 							data-provider="wordpress.com"
 							data-service="ai-site-builder"

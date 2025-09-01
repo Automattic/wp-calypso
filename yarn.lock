@@ -291,15 +291,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/agenttic-client@link:../agenttic/packages/agenttic-client::locator=%40automattic%2Fsite-spec%40file%3A..%2Fsite-spec%23..%2Fsite-spec%3A%3Ahash%3D8c2903%26locator%3Dwp-calypso%2540workspace%253A.":
+"@automattic/agenttic-client@link:../agenttic/packages/agenttic-client::locator=%40automattic%2Fsite-spec%40file%3A..%2Fsite-spec%23..%2Fsite-spec%3A%3Ahash%3D843874%26locator%3Dwp-calypso%2540workspace%253A.":
   version: 0.0.0-use.local
-  resolution: "@automattic/agenttic-client@link:../agenttic/packages/agenttic-client::locator=%40automattic%2Fsite-spec%40file%3A..%2Fsite-spec%23..%2Fsite-spec%3A%3Ahash%3D8c2903%26locator%3Dwp-calypso%2540workspace%253A."
+  resolution: "@automattic/agenttic-client@link:../agenttic/packages/agenttic-client::locator=%40automattic%2Fsite-spec%40file%3A..%2Fsite-spec%23..%2Fsite-spec%3A%3Ahash%3D843874%26locator%3Dwp-calypso%2540workspace%253A."
   languageName: node
   linkType: soft
 
-"@automattic/agenttic-ui@link:../agenttic/packages/agenttic-ui::locator=%40automattic%2Fsite-spec%40file%3A..%2Fsite-spec%23..%2Fsite-spec%3A%3Ahash%3D8c2903%26locator%3Dwp-calypso%2540workspace%253A.":
+"@automattic/agenttic-ui@link:../agenttic/packages/agenttic-ui::locator=%40automattic%2Fsite-spec%40file%3A..%2Fsite-spec%23..%2Fsite-spec%3A%3Ahash%3D843874%26locator%3Dwp-calypso%2540workspace%253A.":
   version: 0.0.0-use.local
-  resolution: "@automattic/agenttic-ui@link:../agenttic/packages/agenttic-ui::locator=%40automattic%2Fsite-spec%40file%3A..%2Fsite-spec%23..%2Fsite-spec%3A%3Ahash%3D8c2903%26locator%3Dwp-calypso%2540workspace%253A."
+  resolution: "@automattic/agenttic-ui@link:../agenttic/packages/agenttic-ui::locator=%40automattic%2Fsite-spec%40file%3A..%2Fsite-spec%23..%2Fsite-spec%3A%3Ahash%3D843874%26locator%3Dwp-calypso%2540workspace%253A."
   languageName: node
   linkType: soft
 
@@ -2045,14 +2045,17 @@ __metadata:
 
 "@automattic/site-spec@file:../site-spec::locator=wp-calypso%40workspace%3A.":
   version: 1.0.0
-  resolution: "@automattic/site-spec@file:../site-spec#../site-spec::hash=8c2903&locator=wp-calypso%40workspace%3A."
+  resolution: "@automattic/site-spec@file:../site-spec#../site-spec::hash=843874&locator=wp-calypso%40workspace%3A."
   dependencies:
     "@automattic/agenttic-client": "link:../agenttic/packages/agenttic-client"
     "@automattic/agenttic-ui": "link:../agenttic/packages/agenttic-ui"
+    "@rive-app/react-canvas": "npm:^4.23.1"
+    "@wordpress/icons": "npm:^10.2.0"
+    framer-motion: "npm:^12.23.12"
     react: "npm:^18.0.0"
     react-dom: "npm:^18.0.0"
     uuid: "npm:^11.0.5"
-  checksum: 96d6fd97407a4df93875f2a2ac002670a4c6568e923591c1f5fc98b2e3699c937833338be2a9a62ff38644b2e697c6bdc5285567bddf870ec38d19d13aadcd34
+  checksum: ce6637a3b572a61e5d4fe2ba64d8c5ad149c46cab191d0676369bcecad2565cae294c5c927c1381df31c402a97cafad1beddb66d651fa35474871a9054554098
   languageName: node
   linkType: hard
 
@@ -8009,6 +8012,24 @@ __metadata:
   version: 1.16.1
   resolution: "@remix-run/router@npm:1.16.1"
   checksum: 5f1b0aef4924830eeab9c86dcaa5af8157066e5de65b449e7fdf406532b2384828a46a447c31b0735fd713a06938dd88bfd4e566d9989be70c770457dda16c92
+  languageName: node
+  linkType: hard
+
+"@rive-app/canvas@npm:2.31.2":
+  version: 2.31.2
+  resolution: "@rive-app/canvas@npm:2.31.2"
+  checksum: b48e8ef34c9f6681c37a5186ca84c47684a0198ff3546cc16ccf374785ef1f32e10d80660f5d87929c127540290a4ab61c0c49647b1ca10f29afac60a18da7b8
+  languageName: node
+  linkType: hard
+
+"@rive-app/react-canvas@npm:^4.23.1":
+  version: 4.23.1
+  resolution: "@rive-app/react-canvas@npm:4.23.1"
+  dependencies:
+    "@rive-app/canvas": "npm:2.31.2"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0
+  checksum: 6ab369f834d360630217b0cfb4d0d2ada386a1d3befdfae0b20849fa3220535721072a30a17a7dca4067a9ec70841c18794811e701ba21d097c3fcb8541c5d00
   languageName: node
   linkType: hard
 
@@ -20755,6 +20776,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"framer-motion@npm:^12.23.12":
+  version: 12.23.12
+  resolution: "framer-motion@npm:12.23.12"
+  dependencies:
+    motion-dom: "npm:^12.23.12"
+    motion-utils: "npm:^12.23.6"
+    tslib: "npm:^2.4.0"
+  peerDependencies:
+    "@emotion/is-prop-valid": "*"
+    react: ^18.0.0 || ^19.0.0
+    react-dom: ^18.0.0 || ^19.0.0
+  peerDependenciesMeta:
+    "@emotion/is-prop-valid":
+      optional: true
+    react:
+      optional: true
+    react-dom:
+      optional: true
+  checksum: 40dfb57bf714075c4f6dd0bbe5b84dd11310114474ebf603846ef9b888ed475fa653271c1fd98ec57a6a1d0b781cdf8b3ebcd5e2c6a3620e934b46304ae0fd39
+  languageName: node
+  linkType: hard
+
 "fresh@npm:0.5.2":
   version: 0.5.2
   resolution: "fresh@npm:0.5.2"
@@ -27191,6 +27234,22 @@ __metadata:
   dependencies:
     color-name: "npm:^1.1.4"
   checksum: 778c82f67f638c03a1d0fa78dcd6ea376a9f17b5e78e349c7e34a290b496dbdb43fd0b1c38070e2062d5e784bcf08e57f499015fcbcf52b3a1887d7825ebb80d
+  languageName: node
+  linkType: hard
+
+"motion-dom@npm:^12.23.12":
+  version: 12.23.12
+  resolution: "motion-dom@npm:12.23.12"
+  dependencies:
+    motion-utils: "npm:^12.23.6"
+  checksum: 1b6a4b86c1aed5b5da7b8a5d1f8310ad169125235bdc1953b8c41cf9f4e2c460ee90bb48ffdae54daecb8db1d7006566ceb5f5c9ccdc82606d548c527cb2631e
+  languageName: node
+  linkType: hard
+
+"motion-utils@npm:^12.23.6":
+  version: 12.23.6
+  resolution: "motion-utils@npm:12.23.6"
+  checksum: c058e8ba6423b3baa63e985bcc669877ee7d9579d938f5348b4e60c5ea1b4b33dd7f4877434436a4a5807f3cf00370d3fd4079a6fdd6309c5c87aa62b311a897
   languageName: node
   linkType: hard
 
