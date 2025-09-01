@@ -924,6 +924,15 @@ object PlaywrightTestPRMatrix : BuildType({
 				value("mobile", label = "Mobile")
 			))
 		}
+		pullRequests {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			provider = github {
+				authType = token {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
+			}
+		}
 	}
 
 	triggers {
