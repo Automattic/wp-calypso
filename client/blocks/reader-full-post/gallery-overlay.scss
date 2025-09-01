@@ -1,6 +1,3 @@
-@import '@automattic/calypso-config';
-@import '@automattic/color-studio/dist/color-variables';
-
 // Z-index management for gallery overlay
 $gallery-overlay-z-index: 100000; // Higher than most UI elements
 $gallery-backdrop-z-index: 1;
