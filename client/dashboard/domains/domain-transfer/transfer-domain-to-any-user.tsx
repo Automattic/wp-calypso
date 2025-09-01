@@ -20,7 +20,6 @@ import {
 	updateDomainTransferRequestMutation,
 	deleteDomainTransferRequestMutation,
 } from '../../app/queries/domain-transfer';
-import { siteByIdQuery } from '../../app/queries/site';
 import { domainRoute } from '../../app/router/domains';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
@@ -53,14 +52,13 @@ const form = {
 export default function TransferDomainToAnyUser() {
 	const { domainName } = domainRoute.useParams() as { domainName: string };
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
-	const { data: site } = useSuspenseQuery( siteByIdQuery( domain.blog_id ) );
 	const { data: domainTransferRequest } = useSuspenseQuery(
-		domainTransferRequestQuery( domainName, site.slug )
+		domainTransferRequestQuery( domainName, domain.site_slug )
 	);
 	const { mutate: deleteDomainTransferRequest, isPending: isDeletingDomainTransferRequest } =
-		useMutation( deleteDomainTransferRequestMutation( domainName, site.slug ) );
+		useMutation( deleteDomainTransferRequestMutation( domainName, domain.site_slug ) );
 	const { mutate: updateDomainTransferRequest, isPending: isUpdatingDomainTransferRequest } =
-		useMutation( updateDomainTransferRequestMutation( domainName, site.slug ) );
+		useMutation( updateDomainTransferRequestMutation( domainName, domain.site_slug ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const locale = useLocale();
 	const transferEmail = domainTransferRequest?.email;
@@ -84,6 +82,9 @@ export default function TransferDomainToAnyUser() {
 			},
 			onError: () => {
 				createErrorNotice( __( 'An error occurred while initiating the domain transfer.' ) );
+			},
+			onSettled: () => {
+				setFormData( { email: '' } );
 			},
 		} );
 	};
