@@ -1,3 +1,3 @@
-# Calypso-Support-Session
+# Support Session
 
-Support session utils
+Helper functions to detect and manage support sessions in Calypso and potentially other Automattic applications.

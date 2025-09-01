@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/calypso-support-session",
 	"version": "1.0.0",
-	"description": "Support session utils.",
+	"description": "Helper functions to detect and manage support sessions in Calypso and potentially other Automattic applications.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
