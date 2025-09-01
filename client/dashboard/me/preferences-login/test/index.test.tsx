@@ -9,8 +9,7 @@ import nock from 'nock';
 import { DeepPartial } from 'utility-types/dist';
 import { render } from '../../../test-utils';
 import PreferencesLogin from '../index';
-import type { LoginPreferences } from '../../../data/me-preferences';
-import type { Site } from '../../../data/types';
+import type { LoginPreferences, Site } from '@automattic/api-core';
 
 const mockCreateSuccessNotice = jest.fn();
 const mockCreateErrorNotice = jest.fn();

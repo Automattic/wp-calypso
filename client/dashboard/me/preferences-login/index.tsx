@@ -16,8 +16,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { userPreferenceQuery, userPreferenceMutation } from '../../app/queries/me-preferences';
 import { sitesQuery } from '../../app/queries/sites';
 import { getSiteDisplayName } from '../../utils/site-name';
-import type { LandingPage } from '../../data/me-preferences';
-import type { Site } from '../../data/types';
+import type { LandingPage, Site } from '@automattic/api-core';
 
 interface LoginPreferencesFormData {
 	primarySiteId?: string;
