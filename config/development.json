@@ -33,7 +33,7 @@
 		"100-year-domain": true,
 		"100-year-plan/vip": true,
 		"a4a-dev-sites": true,
-		"summer-special-2025": true,
+		"summer-special-2025": false,
 		"ad-tracking": false,
 		"akismet/checkout-quantity-dropdown": true,
 		"calypso/ai-blogging-prompts": true,
