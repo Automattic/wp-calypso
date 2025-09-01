@@ -1,12 +1,12 @@
+import { fetchCountryList } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
-import { fetchCountryList } from '../../data/countries';
-import type { CountryListItem } from '../../data/types';
+import type { CountryListItem } from '@automattic/api-core';
 
 const emptyList: CountryListItem[] = [];
 
 export const countryListQuery = () =>
 	queryOptions( {
-		queryKey: [ 'checkout-country-list' ],
+		queryKey: [ 'supported-countries' ],
 		queryFn: fetchCountryList,
 		staleTime: 3600000, // 1 hour in milliseconds
 		meta: {

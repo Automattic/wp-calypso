@@ -1,5 +1,5 @@
+import { fetchUserTaxDetails, updateUserTaxDetails } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
-import { fetchUserTaxDetails, updateUserTaxDetails } from '../../data/me-tax-details';
 import { queryClient } from '../query-client';
 
 export const userTaxDetailsQuery = () =>

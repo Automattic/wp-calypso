@@ -1,6 +1,15 @@
+import { fetchUserTaxDetails } from '@automattic/api-queries';
 import { queryOptions } from '@tanstack/react-query';
-import { fetchUserTaxDetails, UserTaxDetails } from '../../data/me-tax-details';
-import type { FetchError } from '../../me/tax-details/user-tax-form';
+import type { UserTaxDetails } from '@automattic/api-core';
+
+export interface UpdateError {
+	message: string;
+	error: string;
+}
+export interface FetchError {
+	message: string;
+	error: string;
+}
 
 export const userTaxDetailsQuery = () =>
 	queryOptions< UserTaxDetails, FetchError >( {
