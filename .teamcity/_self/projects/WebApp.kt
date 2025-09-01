@@ -912,6 +912,11 @@ object PlaywrightTestPRMatrix : BuildType({
 	name = "E2E Tests (Playwright Test)"
 	description = "Runs Calypso e2e tests using Playwright Test runner with build matrix"
 
+	vcs {
+		root(Settings.WpCalypso)
+		cleanCheckout = true
+	}
+
 	features {
 		matrix {
 			param("playwrightProject", listOf(
@@ -938,11 +943,6 @@ object PlaywrightTestPRMatrix : BuildType({
 		snapshot(BuildDockerImage) {
 			onDependencyFailure = FailureAction.FAIL_TO_START
 		}
-	}
-
-	vcs {
-		root(Settings.WpCalypso)
-		cleanCheckout = true
 	}
 
 	steps {
