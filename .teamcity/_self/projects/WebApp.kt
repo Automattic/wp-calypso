@@ -920,6 +920,19 @@ object PlaywrightTestPRMatrix : BuildType({
 		}
 	}
 
+	triggers {
+		vcs {
+			branchFilter = """
+				+:*
+				-:pull*
+				-:trunk
+			""".trimIndent()
+			triggerRules = """
+				-:**.md
+			""".trimIndent()
+		}
+	}
+
 	steps {
 		script {
 			name = "Test step"
