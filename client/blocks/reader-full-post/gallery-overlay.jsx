@@ -2,7 +2,7 @@ import { Gridicon } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
 import './gallery-overlay.scss';
@@ -24,6 +24,7 @@ const GalleryOverlay = ( {
 	const [ touchEnd, setTouchEnd ] = useState( null );
 	const [ isTransitioning, setIsTransitioning ] = useState( false );
 	const [ slideDirection, setSlideDirection ] = useState( null );
+	const imageRef = useRef( null );
 
 	// Calculate navigation states (safe defaults if images is empty)
 	const currentImage = images[ currentIndex ] || {};
@@ -255,6 +256,32 @@ const GalleryOverlay = ( {
 		setImageError( true );
 	};
 
+	// Handle transition end for slide animations
+	const handleTransitionEnd = ( event ) => {
+		// Only handle our slide animations, not other transitions
+		if (
+			event.target === imageRef.current &&
+			( event.animationName === 'gallery-slide-out-left' ||
+				event.animationName === 'gallery-slide-out-right' )
+		) {
+			// Determine navigation direction from animation
+			const direction = event.animationName === 'gallery-slide-out-left' ? 'next' : 'previous';
+
+			// Perform navigation
+			if ( direction === 'next' && hasNext ) {
+				onNext();
+			} else if ( direction === 'previous' && hasPrevious ) {
+				onPrevious();
+			}
+
+			// Reset transition state after a brief delay for new image to appear
+			requestAnimationFrame( () => {
+				setIsTransitioning( false );
+				setSlideDirection( null );
+			} );
+		}
+	};
+
 	const handleBackdropClick = () => {
 		// Close overlay when clicking on the backdrop
 		onClose();
@@ -290,24 +317,10 @@ const GalleryOverlay = ( {
 		if ( isLeftSwipe && hasNext ) {
 			setSlideDirection( 'left' );
 			setIsTransitioning( true );
-			setTimeout( () => {
-				onNext();
-				setTimeout( () => {
-					setIsTransitioning( false );
-					setSlideDirection( null );
-				}, 50 );
-			}, 150 );
 		}
 		if ( isRightSwipe && hasPrevious ) {
 			setSlideDirection( 'right' );
 			setIsTransitioning( true );
-			setTimeout( () => {
-				onPrevious();
-				setTimeout( () => {
-					setIsTransitioning( false );
-					setSlideDirection( null );
-				}, 50 );
-			}, 150 );
 		}
 
 		setTouchStart( null );
@@ -401,6 +414,7 @@ const GalleryOverlay = ( {
 							</div>
 						) : (
 							<img
+								ref={ imageRef }
 								key={ `${ currentIndex }-${ imageKey }` }
 								src={ currentImage.src }
 								alt={
@@ -419,6 +433,7 @@ const GalleryOverlay = ( {
 								} ) }
 								onLoad={ handleImageLoad }
 								onError={ handleImageError }
+								onAnimationEnd={ handleTransitionEnd }
 							/>
 						) }
 					</div>
