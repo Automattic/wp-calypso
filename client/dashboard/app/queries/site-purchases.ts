@@ -1,5 +1,5 @@
+import { fetchSitePurchases } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
-import { fetchSitePurchases } from '../../data/site-purchases';
 
 export const siteHasCancelablePurchasesQuery = ( siteId: number, userId: number ) =>
 	queryOptions( {

@@ -12,7 +12,7 @@ import { DataViewsCard } from '../../components/dataviews-card';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import type { BlockedSite } from '../../data/me-blocked-sites';
+import type { BlockedSite } from '@automattic/api-core';
 import type { Field, View } from '@wordpress/dataviews';
 
 const DEFAULT_PAGE = 1;

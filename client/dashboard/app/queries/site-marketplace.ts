@@ -1,5 +1,5 @@
+import { reinstallMarketplacePlugins } from '@automattic/api-core';
 import { mutationOptions } from '@tanstack/react-query';
-import { reinstallMarketplacePlugins } from '../../data/site-marketplace';
 
 export const reinstallMarketplacePluginsQuery = ( siteId: number ) =>
 	mutationOptions( {

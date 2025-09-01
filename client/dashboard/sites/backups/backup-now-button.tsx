@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import { useBackupState } from '../../app/hooks/site-backup-state';
 import { siteBackupEnqueueMutation } from '../../app/queries/site-backups';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 
 interface BackupNowButtonProps {
 	site: Site;

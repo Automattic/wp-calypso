@@ -15,7 +15,7 @@ import { ConfirmNewOwnerForm, ConfirmNewOwnerFormData } from './confirm-new-owne
 import { EmailConfirmation } from './email-confirmation';
 import { InvitationEmailSent } from './invitation-email-sent';
 import { StartSiteTransferForm } from './start-site-transfer-form';
-import type { SiteOwnerTransferContext } from '../../data/types';
+import type { SiteOwnerTransferContext } from '@automattic/api-core';
 
 const MIN_STEP = 0;
 

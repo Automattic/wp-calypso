@@ -1,3 +1,4 @@
+import { JetpackModules } from '@automattic/api-core';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Card,
@@ -17,11 +18,9 @@ import {
 	siteJetpackSettingsMutation,
 } from '../../app/queries/site-jetpack-settings';
 import { SectionHeader } from '../../components/section-header';
-import { JetpackModules } from '../../data/constants';
 import { hasJetpackModule } from '../../utils/site-features';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
-import type { JetpackSettings } from '../../data/site-jetpack-settings';
-import type { Site } from '../../data/types';
+import type { JetpackSettings, Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 const fields: Field< JetpackSettings >[] = [

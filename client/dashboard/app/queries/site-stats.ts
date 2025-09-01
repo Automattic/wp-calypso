@@ -1,5 +1,5 @@
+import { fetchSiteEngagementStats } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
-import { fetchSiteEngagementStats } from '../../data/site-stats';
 
 export interface EngagementStatsDataPoint {
 	visitors: number;

@@ -2,7 +2,7 @@ import { __ } from '@wordpress/i18n';
 import { getFieldWithDot, getNormalizedName } from '../utils';
 import { domainValidator, hostnameValidator, ttlValidator } from './validators';
 import type { DnsRecordFormData, DnsRecordConfig } from './dns-record-configs';
-import type { DnsRecordType } from '../../../data/domain-dns-records';
+import type { DnsRecordType } from '@automattic/api-core';
 
 export const CNAMERecordConfig: DnsRecordConfig = {
 	description: __(

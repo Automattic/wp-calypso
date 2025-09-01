@@ -1,9 +1,5 @@
+import { pullFromStaging, pushToStaging, type StagingSyncOptions } from '@automattic/api-core';
 import { mutationOptions } from '@tanstack/react-query';
-import {
-	pullFromStaging,
-	pushToStaging,
-	type StagingSyncOptions,
-} from '../../data/site-staging-sync';
 import { queryClient } from '../query-client';
 import { stagingSiteSyncStateQuery } from './site-staging-sites';
 

@@ -1,13 +1,17 @@
+import { DotcomFeatures, WhoisType, DomainTypes } from '@automattic/api-core';
 import { addQueryArgs } from '@wordpress/url';
 import { isAfter, subMinutes, subDays } from 'date-fns';
-import { DotcomFeatures } from '../data/constants';
-import { WhoisType } from '../data/domain-whois';
-import { DomainTypes } from '../data/domains';
 import { getRenewalUrlFromPurchase } from './purchase';
 import { hasPlanFeature } from './site-features';
 import { userHasFlag } from './user';
-import type { Purchase } from '../data/purchase';
-import type { SiteDomain, DomainSummary, Site, User, WhoisDataEntry } from '../data/types';
+import type {
+	Purchase,
+	SiteDomain,
+	DomainSummary,
+	Site,
+	User,
+	WhoisDataEntry,
+} from '@automattic/api-core';
 
 export function getDomainSiteSlug( domain: DomainSummary ) {
 	return domain.primary_domain ? domain.domain : domain.site_slug;

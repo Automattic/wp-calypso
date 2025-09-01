@@ -16,7 +16,7 @@ import DomainForwardingForm from './form';
 import { DomainForwardingNotice } from './notice';
 import { formDataToSubmitData } from './utils';
 import type { FormData } from './form';
-import type { DomainForwardingSaveData } from '../../data/domain-forwarding';
+import type { DomainForwardingSaveData } from '@automattic/api-core';
 
 export default function EditDomainForwarding() {
 	const router = useRouter();

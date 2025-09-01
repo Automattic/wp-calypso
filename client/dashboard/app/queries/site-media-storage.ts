@@ -1,5 +1,5 @@
+import { fetchSiteMediaStorage } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
-import { fetchSiteMediaStorage } from '../../data/site-media-storage';
 
 export const siteMediaStorageQuery = ( siteId: number ) =>
 	queryOptions( {

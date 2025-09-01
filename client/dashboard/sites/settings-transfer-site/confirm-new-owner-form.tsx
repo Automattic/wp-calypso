@@ -13,7 +13,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { siteOwnerTransferEligibilityCheckMutation } from '../../app/queries/site-owner-transfer';
 import { SectionHeader } from '../../components/section-header';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 export type ConfirmNewOwnerFormData = {

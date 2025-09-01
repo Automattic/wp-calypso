@@ -8,7 +8,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useState } from 'react';
 import { siteOwnerTransferConfirmMutation } from '../../app/queries/site-owner-transfer';
 import Notice from '../../components/notice';
-import type { Site, SiteOwnerTransferConfirmation } from '../../data/types';
+import type { Site, SiteOwnerTransferConfirmation } from '@automattic/api-core';
 
 export function InvitationEmailSent( {
 	site,

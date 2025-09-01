@@ -1,8 +1,8 @@
+import { Domain } from '@automattic/api-core';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { calendar } from '@wordpress/icons';
 import { useLocale } from '../../app/locale';
-import { Domain } from '../../data/domain';
 import OverviewCard from '../../sites/overview-card';
 import { formatDate } from '../../utils/datetime';
 

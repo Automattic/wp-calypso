@@ -1,3 +1,4 @@
+import { Domain } from '@automattic/api-core';
 import {
 	Modal,
 	Button,
@@ -12,8 +13,7 @@ import { useState, useCallback } from 'react';
 import { domainTransferRoute } from '../../app/router/domains';
 import { profileRoute } from '../../app/router/me';
 import RouterLinkButton from '../../components/router-link-button';
-import { Domain } from '../../data/domain';
-import type { User } from '../../data/types';
+import type { User } from '@automattic/api-core';
 
 type Step = 'intro' | 'warning' | 'confirm';
 

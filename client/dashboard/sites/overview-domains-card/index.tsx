@@ -14,8 +14,8 @@ import { isTransferrableToWpcom } from '../../utils/domain-types';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import DomainTransferUpsellCard from '../overview-domain-transfer-upsell-card';
 import DomainUpsellCard from '../overview-domain-upsell-card';
-import type { Site, SiteDomain } from '../../data/types';
 import type { DomainsView } from '../../domains/dataviews';
+import type { Site, SiteDomain } from '@automattic/api-core';
 
 const getDomainId = ( domain: SiteDomain ): string => {
 	return `${ domain.domain }-${ domain.blog_id }`;

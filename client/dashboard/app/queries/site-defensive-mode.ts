@@ -1,10 +1,10 @@
-import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import {
 	fetchEdgeCacheDefensiveModeSettings,
 	updateEdgeCacheDefensiveModeSettings,
-} from '../../data/site-hosting-edge-cache';
+} from '@automattic/api-core';
+import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from '../query-client';
-import type { DefensiveModeSettingsUpdate } from '../../data/site-hosting-edge-cache';
+import type { DefensiveModeSettingsUpdate } from '@automattic/api-core';
 
 export const siteDefensiveModeSettingsQuery = ( siteId: number ) =>
 	queryOptions( {

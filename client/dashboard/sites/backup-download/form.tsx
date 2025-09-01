@@ -12,7 +12,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { siteBackupDownloadInitiateMutation } from '../../app/queries/site-backup-download';
 import { siteBackupDownloadRoute } from '../../app/router/sites';
-import type { DownloadConfig } from '../../data/site-backup-download';
+import type { DownloadConfig } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 const fields: Field< DownloadConfig >[] = [

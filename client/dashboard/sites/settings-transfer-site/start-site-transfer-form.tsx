@@ -14,7 +14,7 @@ import React, { useState } from 'react';
 import { siteOwnerTransferMutation } from '../../app/queries/site-owner-transfer';
 import Notice from '../../components/notice';
 import { SectionHeader } from '../../components/section-header';
-import type { Site, SiteOwnerTransferContext } from '../../data/types';
+import type { Site, SiteOwnerTransferContext } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 export type StartSiteTransferFormData = {

@@ -1,5 +1,5 @@
+import { fetchDomain, disconnectDomain } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
-import { fetchDomain, disconnectDomain } from '../../data/domain';
 import { queryClient } from '../query-client';
 
 export const domainQuery = ( domainName: string ) =>

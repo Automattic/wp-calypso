@@ -3,7 +3,7 @@ import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { notAllowed } from '@wordpress/icons';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
 export default function WebApplicationFirewallSettingsSummary( {

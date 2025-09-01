@@ -1,10 +1,10 @@
-import { mutationOptions, queryOptions } from '@tanstack/react-query';
-import { clearObjectCache } from '../../data/site-hosting';
 import {
+	clearObjectCache,
 	clearEdgeCache,
 	fetchEdgeCacheStatus,
 	updateEdgeCacheStatus,
-} from '../../data/site-hosting-edge-cache';
+} from '@automattic/api-core';
+import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { queryClient } from '../query-client';
 
 export const siteObjectCacheLastClearedTimestampQuery = ( siteId: number ) =>

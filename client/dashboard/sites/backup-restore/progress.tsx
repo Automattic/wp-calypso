@@ -10,7 +10,7 @@ import { useEffect } from 'react';
 import { siteBackupRestoreProgressQuery } from '../../app/queries/site-backup-restore';
 import Notice from '../../components/notice';
 import noSitesIllustration from '../no-sites-illustration.svg';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 
 function SiteBackupRestoreProgress( {
 	site,

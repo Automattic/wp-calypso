@@ -1,3 +1,13 @@
+import {
+	ProductUpgradeMap,
+	AkismetUpgradesProductMap,
+	SubscriptionBillPeriod,
+	DomainProductSlugs,
+	useMyDomainInputMode,
+	WPCOM_DIFM_LITE,
+	OFFSITE_REDIRECT,
+	DomainTransferStatus,
+} from '@automattic/api-core';
 import { domainManagementEdit, domainUseMyDomain } from '@automattic/domains-table/src/utils/paths';
 import { formatCurrency } from '@automattic/number-formatters';
 import { INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS } from '@automattic/urls';
@@ -46,16 +56,6 @@ import ClipboardInputControl from '../../../components/clipboard-input-control';
 import { useFormattedTime } from '../../../components/formatted-time';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
-import {
-	ProductUpgradeMap,
-	AkismetUpgradesProductMap,
-	SubscriptionBillPeriod,
-	DomainProductSlugs,
-	useMyDomainInputMode,
-	WPCOM_DIFM_LITE,
-	OFFSITE_REDIRECT,
-} from '../../../data/constants';
-import { DomainTransferStatus } from '../../../data/domains';
 import { formatDate } from '../../../utils/datetime';
 import { getEmailManagementPath } from '../../../utils/email-paths';
 import {
@@ -78,8 +78,7 @@ import {
 } from '../../../utils/purchase';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
 import { getPurchaseUrlForId, getAddPaymentMethodUrlFor } from '../urls';
-import type { User } from '../../../data/me';
-import type { Purchase } from '../../../data/purchase';
+import type { User, Purchase } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 import type { ReactNode, ReactElement } from 'react';
 

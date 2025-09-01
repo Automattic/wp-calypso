@@ -1,5 +1,5 @@
+import { fetchSiteActiveThemes } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
-import { fetchSiteActiveThemes } from '../../data/site-themes';
 
 export const siteActiveThemesQuery = ( siteId: number ) =>
 	queryOptions( {

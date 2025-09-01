@@ -1,5 +1,5 @@
+import { removePurchase } from '@automattic/api-core';
 import { mutationOptions } from '@tanstack/react-query';
-import { removePurchase } from '../../data/purchase';
 
 export const removePurchaseMutation = () =>
 	mutationOptions( {

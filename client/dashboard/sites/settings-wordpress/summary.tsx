@@ -5,7 +5,7 @@ import { siteWordPressVersionQuery } from '../../app/queries/site-wordpress-vers
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import { canViewWordPressSettings } from '../features';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
 export default function WordPressSettingsSummary( {

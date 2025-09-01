@@ -1,4 +1,4 @@
-import type { AtomicTransferStatus, Site } from '../data/types';
+import type { AtomicTransferStatus, Site } from '@automattic/api-core';
 
 export function isAtomicTransferInProgress( status: AtomicTransferStatus ) {
 	const inProgressStatuses: AtomicTransferStatus[] = [

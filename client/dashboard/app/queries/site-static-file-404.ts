@@ -1,5 +1,5 @@
+import { fetchStaticFile404Setting, updateStaticFile404Setting } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
-import { fetchStaticFile404Setting, updateStaticFile404Setting } from '../../data/site-hosting';
 import { queryClient } from '../query-client';
 
 export const siteStaticFile404SettingQuery = ( siteId: number ) =>

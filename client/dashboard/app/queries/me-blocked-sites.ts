@@ -1,5 +1,5 @@
+import { fetchBlockedSites, unblockSite } from '@automattic/api-core';
 import { infiniteQueryOptions, mutationOptions } from '@tanstack/react-query';
-import { fetchBlockedSites, unblockSite } from '../../data/me-blocked-sites';
 import { queryClient } from '../query-client';
 
 export const blockedSitesInfiniteQuery = ( perPage: number ) =>
