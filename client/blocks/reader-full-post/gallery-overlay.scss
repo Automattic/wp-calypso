@@ -7,18 +7,7 @@ $gallery-backdrop-z-index: 1;
 $gallery-controls-z-index: 10;
 $gallery-content-z-index: 5;
 
-// Screen reader only utility class
-.gallery-overlay__sr-only {
-	position: absolute !important;
-	width: 1px !important;
-	height: 1px !important;
-	padding: 0 !important;
-	margin: -1px !important;
-	overflow: hidden !important;
-	clip: rect(0, 0, 0, 0) !important;
-	white-space: nowrap !important;
-	border: 0 !important;
-}
+
 
 .gallery-overlay {
 	position: fixed;
@@ -314,12 +303,6 @@ $gallery-content-z-index: 5;
 		min-height: 300px;
 	}
 	
-	// Tablet: medium size
-	@include breakpoint-deprecated( '<960px' ) {
-		min-width: 250px;
-		min-height: 250px;
-	}
-	
 	// Mobile: smaller minimum size
 	@include breakpoint-deprecated( '<660px' ) {
 		min-width: 150px;
@@ -417,24 +400,7 @@ $gallery-content-z-index: 5;
 		max-height: 85vh;
 	}
 
-	// Enhanced image aspect ratio handling
-	&.has-dimensions {
-		object-fit: contain;
-	}
 
-	&.is-wide {
-		max-height: 70vh;
-	}
-
-	&.is-tall {
-		max-width: 60vw;
-	}
-
-	// High DPI display optimizations
-	@media (-webkit-min-device-pixel-ratio: 2) {
-		image-rendering: -webkit-optimize-contrast;
-		image-rendering: crisp-edges;
-	}
 }
 
 // Image error state

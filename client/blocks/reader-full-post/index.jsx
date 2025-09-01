@@ -276,7 +276,7 @@ export class FullPostView extends Component {
 		this.setState( { galleryError: null } );
 	};
 
-	// Extract image data from a gallery element with performance optimization
+	// Extract image data from a gallery element
 	extractGalleryImages = ( galleryElement ) => {
 		try {
 			const images = [];
@@ -285,22 +285,17 @@ export class FullPostView extends Component {
 			);
 
 			galleryImages.forEach( ( img, index ) => {
-				// Get the best available image source
-				const src = this.getOptimizedImageSrc( img );
-
 				// Validate image source
-				if ( ! src || src === '' ) {
+				if ( ! img.src || img.src === '' ) {
 					return; // Skip images without valid source
 				}
 
 				images.push( {
-					src,
+					src: img.src,
 					alt: img.alt || `Gallery image ${ index + 1 }`,
 					caption: this.getImageCaption( img ),
 					width: img.naturalWidth || img.width || null,
 					height: img.naturalHeight || img.height || null,
-					originalSrc: img.src, // Keep original for fallback
-					index,
 				} );
 			} );
 
@@ -309,49 +304,6 @@ export class FullPostView extends Component {
 			this.handleGalleryError( error );
 			return [];
 		}
-	};
-
-	// Get optimized image source based on screen size and device capabilities
-	getOptimizedImageSrc = ( img ) => {
-		const originalSrc = img.src || img.dataset.src || img.dataset.originalSrc;
-
-		if ( ! originalSrc ) {
-			return null;
-		}
-
-		// Check if we're on a high-DPI display
-		const devicePixelRatio = window.devicePixelRatio || 1;
-		const isHighDPI = devicePixelRatio > 1.5;
-
-		// Get viewport dimensions
-		const viewportWidth = window.innerWidth;
-		const viewportHeight = window.innerHeight;
-
-		// Calculate optimal image size (accounting for overlay max-width/height)
-		const maxDisplayWidth = Math.min( viewportWidth * 0.9, 1200 );
-		const maxDisplayHeight = Math.min( viewportHeight * 0.8, 900 );
-
-		// Adjust for high-DPI displays
-		const targetWidth = Math.round( maxDisplayWidth * ( isHighDPI ? 1.5 : 1 ) );
-		const targetHeight = Math.round( maxDisplayHeight * ( isHighDPI ? 1.5 : 1 ) );
-
-		// Try to optimize WordPress.com image URLs
-		if ( originalSrc.includes( 'wp.com' ) || originalSrc.includes( 'wordpress.com' ) ) {
-			// Remove existing size parameters
-			const baseSrc = originalSrc.split( '?' )[ 0 ];
-
-			// Add optimized parameters
-			const params = new URLSearchParams();
-			params.set( 'w', targetWidth );
-			params.set( 'h', targetHeight );
-			params.set( 'fit', 'fit' );
-			params.set( 'quality', isHighDPI ? '85' : '90' );
-
-			return `${ baseSrc }?${ params.toString() }`;
-		}
-
-		// For other CDNs or direct images, return original
-		return originalSrc;
 	};
 
 	// Get caption text for an image
@@ -424,133 +376,29 @@ export class FullPostView extends Component {
 			return;
 		}
 
-		// Performance optimization: only add handler if galleries exist
-		const hasGalleries = this.postContentWrapper.current.querySelector(
-			'.wp-block-gallery, .tiled-gallery'
-		);
-		if ( ! hasGalleries ) {
-			// Track that no galleries were found
-			this.trackGalleryEvent( 'gallery_no_galleries_found', {
-				post_id: this.props.post?.ID,
-			} );
-			return;
-		}
-
-		// Add event listener with passive option for better performance
-		this.postContentWrapper.current.addEventListener( 'click', this.handleGalleryImageClick, {
-			capture: true,
-			passive: false, // We need to call preventDefault
-		} );
-
-		// Track successful setup
-		this.trackGalleryEvent( 'gallery_handlers_setup', {
-			post_id: this.props.post?.ID,
-			gallery_count: this.postContentWrapper.current.querySelectorAll(
-				'.wp-block-gallery, .tiled-gallery'
-			).length,
-		} );
+		// Add event listener for gallery clicks
+		this.postContentWrapper.current.addEventListener( 'click', this.handleGalleryImageClick, true );
 	};
 
-	// Initialize gallery integration with error handling
+	// Initialize gallery integration
 	initializeGalleryIntegration = () => {
 		try {
 			// Set up gallery click handling
 			this.setupGalleryClickHandlers();
-
-			// Set up mutation observer for dynamic content
-			this.setupDynamicContentObserver();
-
-			// Track gallery integration success
-			this.trackGalleryEvent( 'gallery_integration_initialized', {
-				post_id: this.props.post?.ID,
-				has_content_wrapper: !! this.postContentWrapper.current,
-			} );
 		} catch ( error ) {
 			// If gallery integration fails, don't break the entire component
 			this.handleGalleryError( new Error( 'Gallery integration failed: ' + error.message ) );
 		}
 	};
 
-	// Set up observer for dynamically loaded content
-	setupDynamicContentObserver = () => {
-		if ( ! this.postContentWrapper.current || ! window.MutationObserver ) {
-			return;
-		}
-
-		// Create observer to watch for new gallery content
-		this.contentObserver = new MutationObserver( ( mutations ) => {
-			let hasNewGalleries = false;
-
-			mutations.forEach( ( mutation ) => {
-				if ( mutation.type === 'childList' ) {
-					mutation.addedNodes.forEach( ( node ) => {
-						if ( node.nodeType === Node.ELEMENT_NODE ) {
-							// Check if new node contains galleries
-							const galleries = node.querySelectorAll?.( '.wp-block-gallery, .tiled-gallery' );
-							if ( galleries && galleries.length > 0 ) {
-								hasNewGalleries = true;
-							}
-						}
-					} );
-				}
-			} );
-
-			// If new galleries are detected, refresh click handlers
-			if ( hasNewGalleries ) {
-				this.refreshGalleryHandlers();
-			}
-		} );
-
-		// Start observing
-		this.contentObserver.observe( this.postContentWrapper.current, {
-			childList: true,
-			subtree: true,
-		} );
-	};
-
-	// Refresh gallery handlers for dynamic content
-	refreshGalleryHandlers = () => {
-		try {
-			// Remove existing handlers
-			this.cleanupGalleryClickHandlers();
-
-			// Re-setup handlers with new content
-			this.setupGalleryClickHandlers();
-
-			// Track dynamic content detection
-			this.trackGalleryEvent( 'gallery_dynamic_content_detected', {
-				post_id: this.props.post?.ID,
-			} );
-		} catch ( error ) {
-			this.handleGalleryError(
-				new Error( 'Failed to refresh gallery handlers: ' + error.message )
-			);
-		}
-	};
-
 	// Clean up gallery click handlers
 	cleanupGalleryClickHandlers = () => {
 		if ( this.postContentWrapper.current ) {
-			// Remove event listener (matching the options used when adding)
-			this.postContentWrapper.current.removeEventListener( 'click', this.handleGalleryImageClick, {
-				capture: true,
-				passive: false,
-			} );
-
-			// Fallback: also try to remove with old format for compatibility
 			this.postContentWrapper.current.removeEventListener(
 				'click',
 				this.handleGalleryImageClick,
 				true
 			);
-		}
-	};
-
-	// Clean up dynamic content observer
-	cleanupDynamicContentObserver = () => {
-		if ( this.contentObserver ) {
-			this.contentObserver.disconnect();
-			this.contentObserver = null;
 		}
 	};
 
@@ -646,7 +494,6 @@ export class FullPostView extends Component {
 
 		// Clean up gallery integration
 		this.cleanupGalleryClickHandlers();
-		this.cleanupDynamicContentObserver();
 
 		// Track scroll depth and remove related instruments
 		this.trackScrollDepth( this.props.post );

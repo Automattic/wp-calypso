@@ -22,10 +22,8 @@ const GalleryOverlay = ( {
 	const translate = useTranslate();
 	const [ isImageLoading, setIsImageLoading ] = useState( false );
 	const [ imageError, setImageError ] = useState( false );
-	const [ imageDimensions, setImageDimensions ] = useState( null );
 	const [ touchStart, setTouchStart ] = useState( null );
 	const [ touchEnd, setTouchEnd ] = useState( null );
-	const [ announcement, setAnnouncement ] = useState( '' );
 
 	// Calculate navigation states (safe defaults if images is empty)
 	const currentImage = images[ currentIndex ] || {};
@@ -54,8 +52,6 @@ const GalleryOverlay = ( {
 					if ( hasPrevious && ! isInteractingWithButton ) {
 						event.preventDefault();
 						onPrevious();
-						// Announce navigation to screen readers
-						setAnnouncement( translate( 'Navigated to previous image' ) );
 					}
 					break;
 				case 'ArrowRight':
@@ -63,8 +59,6 @@ const GalleryOverlay = ( {
 					if ( hasNext && ! isInteractingWithButton ) {
 						event.preventDefault();
 						onNext();
-						// Announce navigation to screen readers
-						setAnnouncement( translate( 'Navigated to next image' ) );
 					}
 					break;
 				case ' ':
@@ -85,7 +79,6 @@ const GalleryOverlay = ( {
 					if ( hasMultipleImages && currentIndex > 0 && onGoToFirst && ! isInteractingWithButton ) {
 						event.preventDefault();
 						onGoToFirst();
-						setAnnouncement( translate( 'Navigated to first image' ) );
 					}
 					break;
 				case 'End':
@@ -97,7 +90,6 @@ const GalleryOverlay = ( {
 					) {
 						event.preventDefault();
 						onGoToLast();
-						setAnnouncement( translate( 'Navigated to last image' ) );
 					}
 					break;
 				case 'ArrowUp':
@@ -145,124 +137,32 @@ const GalleryOverlay = ( {
 		};
 	}, [ isOpen ] );
 
-	// Enhanced preloading for smoother navigation and performance
+	// Basic preloading for smoother navigation
 	useEffect( () => {
 		if ( ! isOpen || ! hasMultipleImages ) {
 			return;
 		}
 
-		const preloadImage = ( src, priority = 'normal' ) => {
-			return new Promise( ( resolve, reject ) => {
-				const img = new Image();
+		// Preload next image
+		if ( hasNext ) {
+			const img = new Image();
+			img.src = images[ currentIndex + 1 ].src;
+		}
 
-				// Handle successful load
-				img.onload = () => {
-					resolve( img );
-				};
-
-				// Handle load errors
-				img.onerror = () => {
-					reject( new Error( `Failed to preload image: ${ src }` ) );
-				};
-
-				// Set loading priority if supported
-				if ( 'loading' in img ) {
-					img.loading = priority === 'high' ? 'eager' : 'lazy';
-				}
-
-				// Start loading
-				img.src = src;
-			} );
-		};
-
-		const preloadImages = async () => {
-			const preloadPromises = [];
-
-			// Preload adjacent images with high priority
-			if ( hasNext ) {
-				preloadPromises.push(
-					preloadImage( images[ currentIndex + 1 ].src, 'high' ).catch( () => {} ) // Silently handle preload failures
-				);
-			}
-
-			if ( hasPrevious ) {
-				preloadPromises.push(
-					preloadImage( images[ currentIndex - 1 ].src, 'high' ).catch( () => {} )
-				);
-			}
-
-			// Preload further images with normal priority
-			const furtherIndices = [];
-			if ( currentIndex + 2 < images.length ) {
-				furtherIndices.push( currentIndex + 2 );
-			}
-			if ( currentIndex - 2 >= 0 ) {
-				furtherIndices.push( currentIndex - 2 );
-			}
-
-			furtherIndices.forEach( ( index ) => {
-				preloadPromises.push( preloadImage( images[ index ].src, 'normal' ).catch( () => {} ) );
-			} );
-
-			// Execute all preloads without blocking
-			if ( preloadPromises.length > 0 ) {
-				Promise.allSettled( preloadPromises );
-			}
-		};
-
-		// Debounce preloading to avoid excessive requests during rapid navigation
-		const timeoutId = setTimeout( preloadImages, 100 );
-
-		return () => clearTimeout( timeoutId );
+		// Preload previous image
+		if ( hasPrevious ) {
+			const img = new Image();
+			img.src = images[ currentIndex - 1 ].src;
+		}
 	}, [ isOpen, hasMultipleImages, hasNext, hasPrevious, currentIndex, images ] );
 
 	// Reset image states when current image changes
 	useEffect( () => {
 		if ( isOpen ) {
 			setImageError( false );
-			setImageDimensions( null );
 			setIsImageLoading( true );
 		}
 	}, [ currentIndex, isOpen ] );
-
-	// Screen reader announcements for navigation
-	useEffect( () => {
-		if ( ! isOpen || ! hasMultipleImages ) {
-			return;
-		}
-
-		const imagePosition = translate( 'Image %(current)d of %(total)d', {
-			args: {
-				current: currentIndex + 1,
-				total: images.length,
-			},
-		} );
-
-		let announcementText = imagePosition;
-
-		if ( currentImage.alt ) {
-			announcementText += `. ${ currentImage.alt }`;
-		}
-
-		if ( currentImage.caption ) {
-			announcementText += `. ${ currentImage.caption }`;
-		}
-
-		// Delay announcement to avoid conflicts with navigation sounds
-		const timeoutId = setTimeout( () => {
-			setAnnouncement( announcementText );
-		}, 300 );
-
-		return () => clearTimeout( timeoutId );
-	}, [
-		currentIndex,
-		isOpen,
-		hasMultipleImages,
-		currentImage.alt,
-		currentImage.caption,
-		images.length,
-		translate,
-	] );
 
 	// Focus trap implementation
 	useEffect( () => {
@@ -373,60 +273,19 @@ const GalleryOverlay = ( {
 		return null;
 	}
 
-	const handleImageLoad = ( event ) => {
+	const handleImageLoad = () => {
 		setIsImageLoading( false );
 		setImageError( false );
-
-		// Track image dimensions for better aspect ratio handling
-		const img = event.target;
-		setImageDimensions( {
-			width: img.naturalWidth,
-			height: img.naturalHeight,
-			aspectRatio: img.naturalWidth / img.naturalHeight,
-		} );
 	};
 
 	const handleImageLoadStart = () => {
 		setIsImageLoading( true );
 		setImageError( false );
-		setImageDimensions( null );
 	};
 
-	const getFallbackImageSrc = ( image ) => {
-		// Try different image size variants
-		const originalSrc = image.src;
-
-		// If we're loading a high-res version, try medium or thumbnail
-		if ( originalSrc.includes( '?w=' ) || originalSrc.includes( '&w=' ) ) {
-			// Try medium size first
-			const mediumSrc = originalSrc.replace( /[?&]w=\d+/, '?w=800' );
-			if ( mediumSrc !== originalSrc ) {
-				return mediumSrc;
-			}
-		}
-
-		// Try removing size parameters entirely for original
-		const baseSrc = originalSrc.split( '?' )[ 0 ];
-		if ( baseSrc !== originalSrc ) {
-			return baseSrc;
-		}
-
-		// No fallback available
-		return null;
-	};
-
-	const handleImageError = ( event ) => {
+	const handleImageError = () => {
 		setIsImageLoading( false );
 		setImageError( true );
-		setImageDimensions( null );
-
-		// Try to load a fallback if available
-		const img = event.target;
-		const fallbackSrc = getFallbackImageSrc( currentImage );
-
-		if ( fallbackSrc && img.src !== fallbackSrc ) {
-			img.src = fallbackSrc;
-		}
 	};
 
 	const handleBackdropClick = () => {
@@ -479,17 +338,7 @@ const GalleryOverlay = ( {
 			role="dialog"
 			aria-modal="true"
 			aria-label={ translate( 'Gallery image viewer' ) }
-			aria-describedby={ hasMultipleImages ? 'gallery-description' : undefined }
 		>
-			{ /* Screen reader announcements */ }
-			<div
-				id="gallery-announcements"
-				aria-live="polite"
-				aria-atomic="true"
-				className="gallery-overlay__sr-only"
-			>
-				{ announcement }
-			</div>
 			<div
 				className="gallery-overlay__backdrop"
 				onClick={ handleBackdropClick }
@@ -514,15 +363,9 @@ const GalleryOverlay = ( {
 				<button
 					className="gallery-overlay__nav gallery-overlay__nav--previous"
 					onClick={ onPrevious }
-					aria-label={ translate( 'Previous image (%(current)d of %(total)d)', {
-						args: {
-							current: currentIndex,
-							total: images.length,
-						},
-					} ) }
-					title={ translate( 'Previous image' ) }
+					aria-label={ translate( 'Previous image' ) }
 				>
-					<Gridicon icon="chevron-left" size={ 36 } aria-hidden="true" />
+					<Gridicon icon="chevron-left" size={ 36 } />
 				</button>
 			) }
 
@@ -531,15 +374,9 @@ const GalleryOverlay = ( {
 				<button
 					className="gallery-overlay__nav gallery-overlay__nav--next"
 					onClick={ onNext }
-					aria-label={ translate( 'Next image (%(current)d of %(total)d)', {
-						args: {
-							current: currentIndex + 2,
-							total: images.length,
-						},
-					} ) }
-					title={ translate( 'Next image' ) }
+					aria-label={ translate( 'Next image' ) }
 				>
-					<Gridicon icon="chevron-right" size={ 36 } aria-hidden="true" />
+					<Gridicon icon="chevron-right" size={ 36 } />
 				</button>
 			) }
 
@@ -604,29 +441,12 @@ const GalleryOverlay = ( {
 										},
 									} )
 								}
-								width={ currentImage.width }
-								height={ currentImage.height }
 								className={ clsx( 'gallery-overlay__image', {
 									'is-loading': isImageLoading,
-									'has-dimensions': imageDimensions,
-									'is-wide': imageDimensions?.aspectRatio > 1.5,
-									'is-tall': imageDimensions?.aspectRatio < 0.67,
 								} ) }
-								style={
-									imageDimensions
-										? {
-												'--image-aspect-ratio': imageDimensions.aspectRatio,
-												'--image-width': imageDimensions.width,
-												'--image-height': imageDimensions.height,
-										  }
-										: {}
-								}
 								onLoad={ handleImageLoad }
 								onLoadStart={ handleImageLoadStart }
 								onError={ handleImageError }
-								loading="eager"
-								decoding="async"
-								aria-describedby={ currentImage.caption ? 'gallery-caption' : undefined }
 							/>
 						) }
 					</div>
@@ -636,11 +456,7 @@ const GalleryOverlay = ( {
 				{ ! error && (
 					<div className="gallery-overlay__info">
 						{ hasMultipleImages && (
-							<div
-								id="gallery-description"
-								className="gallery-overlay__counter"
-								aria-label={ translate( 'Gallery navigation information' ) }
-							>
+							<div className="gallery-overlay__counter">
 								{ translate( '%(current)d of %(total)d', {
 									args: {
 										current: currentIndex + 1,
@@ -650,14 +466,7 @@ const GalleryOverlay = ( {
 							</div>
 						) }
 						{ currentImage.caption && (
-							<div
-								id="gallery-caption"
-								className="gallery-overlay__caption"
-								role="img"
-								aria-label={ translate( 'Image caption' ) }
-							>
-								{ currentImage.caption }
-							</div>
+							<div className="gallery-overlay__caption">{ currentImage.caption }</div>
 						) }
 					</div>
 				) }
