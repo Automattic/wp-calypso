@@ -202,19 +202,6 @@ export class FullPostView extends Component {
 		}
 	};
 
-	// Go to first image
-	goToFirstImage = () => {
-		this.goToImage( 0 );
-	};
-
-	// Go to last image
-	goToLastImage = () => {
-		const { galleryImages } = this.state;
-		if ( galleryImages.length > 0 ) {
-			this.goToImage( galleryImages.length - 1 );
-		}
-	};
-
 	// Handle gallery errors
 	handleGalleryError = ( error ) => {
 		// Log error for debugging (avoiding console.error in production)
@@ -959,8 +946,6 @@ export class FullPostView extends Component {
 					onClose={ this.closeGallery }
 					onNext={ this.nextImage }
 					onPrevious={ this.previousImage }
-					onGoToFirst={ this.goToFirstImage }
-					onGoToLast={ this.goToLastImage }
 					onClearError={ this.clearGalleryError }
 				/>
 			);

@@ -16,15 +16,11 @@ const GalleryOverlay = ( {
 	onClose,
 	onNext,
 	onPrevious,
-	onGoToFirst,
-	onGoToLast,
 	onClearError,
 } ) => {
 	const translate = useTranslate();
 	const [ isImageLoading, setIsImageLoading ] = useState( false );
 	const [ imageError, setImageError ] = useState( false );
-	const [ touchStart, setTouchStart ] = useState( null );
-	const [ touchEnd, setTouchEnd ] = useState( null );
 
 	// Calculate navigation states (safe defaults if images is empty)
 	const currentImage = images[ currentIndex ] || {};
@@ -49,14 +45,12 @@ const GalleryOverlay = ( {
 					onClose();
 					break;
 				case 'ArrowLeft':
-				case 'h': // Vim-style navigation
 					if ( hasPrevious && ! isInteractingWithButton ) {
 						event.preventDefault();
 						onPrevious();
 					}
 					break;
 				case 'ArrowRight':
-				case 'l': // Vim-style navigation
 					if ( hasNext && ! isInteractingWithButton ) {
 						event.preventDefault();
 						onNext();
@@ -77,23 +71,6 @@ const GalleryOverlay = ( {
 					}
 					// If focused on a button, let the button handle it naturally
 					return;
-				case 'Home':
-					if ( hasMultipleImages && currentIndex > 0 && onGoToFirst && ! isInteractingWithButton ) {
-						event.preventDefault();
-						onGoToFirst();
-					}
-					break;
-				case 'End':
-					if (
-						hasMultipleImages &&
-						currentIndex < images.length - 1 &&
-						onGoToLast &&
-						! isInteractingWithButton
-					) {
-						event.preventDefault();
-						onGoToLast();
-					}
-					break;
 				case 'ArrowUp':
 				case 'ArrowDown':
 					// Prevent default scrolling behavior
@@ -116,8 +93,6 @@ const GalleryOverlay = ( {
 		onClose,
 		onNext,
 		onPrevious,
-		onGoToFirst,
-		onGoToLast,
 		hasPrevious,
 		hasNext,
 		hasMultipleImages,
@@ -302,37 +277,6 @@ const GalleryOverlay = ( {
 		}
 	};
 
-	// Touch event handlers for swipe navigation
-	const handleTouchStart = ( event ) => {
-		setTouchEnd( null ); // Clear previous touch end
-		setTouchStart( event.targetTouches[ 0 ].clientX );
-	};
-
-	const handleTouchMove = ( event ) => {
-		setTouchEnd( event.targetTouches[ 0 ].clientX );
-	};
-
-	const handleTouchEnd = () => {
-		if ( ! touchStart || ! touchEnd ) {
-			return;
-		}
-
-		const distance = touchStart - touchEnd;
-		const isLeftSwipe = distance > 50;
-		const isRightSwipe = distance < -50;
-
-		if ( isLeftSwipe && hasNext ) {
-			onNext();
-		}
-		if ( isRightSwipe && hasPrevious ) {
-			onPrevious();
-		}
-
-		// Reset touch state
-		setTouchStart( null );
-		setTouchEnd( null );
-	};
-
 	const overlayContent = (
 		<div
 			className="gallery-overlay"
@@ -395,12 +339,7 @@ const GalleryOverlay = ( {
 						</div>
 					</div>
 				) : (
-					<div
-						className="gallery-overlay__image-container"
-						onTouchStart={ handleTouchStart }
-						onTouchMove={ handleTouchMove }
-						onTouchEnd={ handleTouchEnd }
-					>
+					<div className="gallery-overlay__image-container">
 						{ ( isImageLoading || isLoading ) && ! imageError && (
 							<div className="gallery-overlay__loading">
 								<Gridicon icon="sync" size={ 48 } />
@@ -496,8 +435,6 @@ GalleryOverlay.propTypes = {
 	onClose: PropTypes.func.isRequired,
 	onNext: PropTypes.func.isRequired,
 	onPrevious: PropTypes.func.isRequired,
-	onGoToFirst: PropTypes.func,
-	onGoToLast: PropTypes.func,
 	onClearError: PropTypes.func,
 };
 
