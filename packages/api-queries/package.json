@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/api-queries",
 	"version": "1.0.0",
-	"description": "API Queries.",
+	"description": "Convenience layer on top of @automattic/api-core to use TanStack Query.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
