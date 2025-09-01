@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 import './gallery-overlay.scss';
 
@@ -332,7 +333,7 @@ const GalleryOverlay = ( {
 		setTouchEnd( null );
 	};
 
-	return (
+	const overlayContent = (
 		<div
 			className="gallery-overlay"
 			role="dialog"
@@ -473,6 +474,9 @@ const GalleryOverlay = ( {
 			</div>
 		</div>
 	);
+
+	// Render the overlay at the document body level to ensure it's above all other elements
+	return isOpen ? createPortal( overlayContent, document.body ) : null;
 };
 
 GalleryOverlay.propTypes = {

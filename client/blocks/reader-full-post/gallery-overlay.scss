@@ -1,5 +1,5 @@
 // Z-index management for gallery overlay
-$gallery-overlay-z-index: 100000; // Higher than most UI elements
+$gallery-overlay-z-index: 10000000; // Higher than all Calypso UI elements (above webpack monitor)
 $gallery-backdrop-z-index: 1;
 $gallery-controls-z-index: 10;
 $gallery-content-z-index: 5;
@@ -12,7 +12,7 @@ $gallery-content-z-index: 5;
 	left: 0;
 	right: 0;
 	bottom: 0;
-	z-index: $gallery-overlay-z-index;
+	z-index: $gallery-overlay-z-index !important;
 	display: flex;
 	align-items: center;
 	justify-content: center;
