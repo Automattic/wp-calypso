@@ -52,7 +52,7 @@ const ReplyBlock = ( { note }: { note: Note } ) => {
 		const replyMessage = createInterpolateElement(
 			note.meta.ids.comment
 				? __( 'You <a>replied</a> to this comment.' )
-				: __( 'You <a>replied<a> to this post.' ),
+				: __( 'You <a>replied</a> to this post.' ),
 			{
 				a: <ExternalLink href={ replyURL } children={ null } />,
 			}
