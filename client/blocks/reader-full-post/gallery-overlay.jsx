@@ -19,6 +19,7 @@ const GalleryOverlay = ( {
 } ) => {
 	const translate = useTranslate();
 	const [ imageError, setImageError ] = useState( false );
+	const [ imageKey, setImageKey ] = useState( 0 );
 	const [ touchStart, setTouchStart ] = useState( null );
 	const [ touchEnd, setTouchEnd ] = useState( null );
 	const [ isTransitioning, setIsTransitioning ] = useState( false );
@@ -138,6 +139,7 @@ const GalleryOverlay = ( {
 	useEffect( () => {
 		if ( isOpen ) {
 			setImageError( false );
+			setImageKey( ( prev ) => prev + 1 );
 		}
 	}, [ currentIndex, isOpen ] );
 
@@ -389,13 +391,8 @@ const GalleryOverlay = ( {
 										className="gallery-overlay__retry-button"
 										onClick={ () => {
 											setImageError( false );
-											// Force image reload by updating src
-											const imgElement = document.querySelector( '.gallery-overlay__image' );
-											if ( imgElement ) {
-												const originalSrc = imgElement.src;
-												imgElement.src = '';
-												imgElement.src = originalSrc;
-											}
+											// Force image reload by incrementing key to trigger re-render
+											setImageKey( ( prev ) => prev + 1 );
 										} }
 									>
 										{ translate( 'Retry' ) }
@@ -404,6 +401,7 @@ const GalleryOverlay = ( {
 							</div>
 						) : (
 							<img
+								key={ `${ currentIndex }-${ imageKey }` }
 								src={ currentImage.src }
 								alt={
 									currentImage.alt ||
