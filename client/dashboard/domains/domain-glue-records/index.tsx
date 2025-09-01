@@ -1,3 +1,4 @@
+import { domainGlueRecordDeleteMutation, domainGlueRecordsQuery } from '@automattic/api-queries';
 import { isMobile } from '@automattic/viewport';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
@@ -7,10 +8,6 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState, useMemo } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import {
-	domainGlueRecordDeleteMutation,
-	domainGlueRecordsQuery,
-} from '../../app/queries/domain-glue-records';
 import {
 	domainRoute,
 	domainGlueRecordsAddRoute,

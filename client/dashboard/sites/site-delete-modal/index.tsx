@@ -1,3 +1,6 @@
+import { p2HubP2sQuery } from '@automattic/api-queries';
+import { siteDeleteMutation } from '@automattic/api-queries/src/site';
+import { siteHasCancelablePurchasesQuery } from '@automattic/api-queries/src/site-purchases';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
@@ -15,9 +18,6 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAuth } from '../../app/auth';
-import { p2HubP2sQuery } from '../../app/queries/p2';
-import { siteDeleteMutation } from '../../app/queries/site';
-import { siteHasCancelablePurchasesQuery } from '../../app/queries/site-purchases';
 import Notice from '../../components/notice';
 import type { Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';

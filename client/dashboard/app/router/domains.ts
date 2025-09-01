@@ -1,4 +1,15 @@
 import {
+	domainQuery,
+	domainDnsQuery,
+	domainForwardingQuery,
+	domainGlueRecordsQuery,
+	domainNameServersQuery,
+	sslDetailsQuery,
+	domainsQuery,
+	mailboxesQuery,
+	siteByIdQuery,
+} from '@automattic/api-queries';
+import {
 	createRoute,
 	createLazyRoute,
 	notFound,
@@ -6,15 +17,6 @@ import {
 	lazyRouteComponent,
 } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
-import { domainQuery } from '../queries/domain';
-import { domainDnsQuery } from '../queries/domain-dns-records';
-import { domainForwardingQuery } from '../queries/domain-forwarding';
-import { domainGlueRecordsQuery } from '../queries/domain-glue-records';
-import { domainNameServersQuery } from '../queries/domain-name-servers';
-import { sslDetailsQuery } from '../queries/domain-ssl';
-import { domainsQuery } from '../queries/domains';
-import { mailboxesQuery } from '../queries/emails';
-import { siteByIdQuery } from '../queries/site';
 import { queryClient } from '../query-client';
 import { rootRoute } from './root';
 

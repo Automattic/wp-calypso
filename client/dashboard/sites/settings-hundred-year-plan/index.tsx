@@ -1,3 +1,5 @@
+import { siteBySlugQuery } from '@automattic/api-queries/src/site';
+import { siteSettingsMutation, siteSettingsQuery } from '@automattic/api-queries/src/site-settings';
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { notFound } from '@tanstack/react-router';
 import {
@@ -14,8 +16,6 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteBySlugQuery } from '../../app/queries/site';
-import { siteSettingsMutation, siteSettingsQuery } from '../../app/queries/site-settings';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
 import { canViewHundredYearPlanSettings } from '../features';

@@ -1,4 +1,9 @@
 import { FreeSiteAddressType } from '@automattic/api-core';
+import {
+	validateSiteAddressChangeMutation,
+	changeSiteAddressChangeMutation,
+	siteDomainsQuery,
+} from '@automattic/api-queries';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
@@ -15,11 +20,6 @@ import { __, sprintf } from '@wordpress/i18n';
 import { check, closeSmall } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import {
-	validateSiteAddressChangeMutation,
-	changeSiteAddressChangeMutation,
-} from '../../app/queries/site-address-change';
-import { siteDomainsQuery } from '../../app/queries/site-domains';
 import SuffixInputControl from '../../components/input-control/suffix-input-control';
 import Notice from '../../components/notice';
 import { Text } from '../../components/text';

@@ -1,9 +1,9 @@
+import { domainsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useAuth } from '../app/auth';
-import { domainsQuery } from '../app/queries/domains';
 import { domainsPurchaseRoute } from '../app/router/domains';
 import { DataViewsCard } from '../components/dataviews-card';
 import { PageHeader } from '../components/page-header';

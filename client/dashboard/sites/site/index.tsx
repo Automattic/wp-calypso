@@ -1,3 +1,5 @@
+import { siteBySlugQuery } from '@automattic/api-queries/src/site';
+import { sitesQuery } from '@automattic/api-queries/src/sites';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet, notFound } from '@tanstack/react-router';
 import {
@@ -11,8 +13,6 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { plus } from '@wordpress/icons';
 import { useState } from 'react';
-import { siteBySlugQuery } from '../../app/queries/site';
-import { sitesQuery } from '../../app/queries/sites';
 import { siteRoute } from '../../app/router/sites';
 import HeaderBar from '../../components/header-bar';
 import MenuDivider from '../../components/menu-divider';

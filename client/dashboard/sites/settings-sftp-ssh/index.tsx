@@ -1,10 +1,10 @@
 import { HostingFeatures } from '@automattic/api-core';
+import { siteBySlugQuery } from '@automattic/api-queries/src/site';
+import { siteSftpUsersQuery } from '@automattic/api-queries/src/site-sftp';
+import { siteSshAccessStatusQuery } from '@automattic/api-queries/src/site-ssh';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { file } from '@wordpress/icons';
-import { siteBySlugQuery } from '../../app/queries/site';
-import { siteSftpUsersQuery } from '../../app/queries/site-sftp';
-import { siteSshAccessStatusQuery } from '../../app/queries/site-ssh';
 import PageLayout from '../../components/page-layout';
 import { hasHostingFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';

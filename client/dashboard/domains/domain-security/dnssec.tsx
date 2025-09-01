@@ -1,3 +1,4 @@
+import { domainDnssecMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
 	Card,
@@ -10,7 +11,6 @@ import {
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { domainDnssecMutation } from '../../app/queries/domain-dnssec';
 import { DnsSecRecordTextarea } from './dnssec-record-textarea';
 import type { Domain } from '@automattic/api-core';
 

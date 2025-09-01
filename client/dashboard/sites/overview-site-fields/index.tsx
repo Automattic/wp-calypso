@@ -1,4 +1,5 @@
 import { HostingFeatures } from '@automattic/api-core';
+import { siteAgencyBlogQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import {
@@ -7,7 +8,6 @@ import {
 	ExternalLink,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { siteAgencyBlogQuery } from '../../app/queries/site-agency';
 import { hasHostingFeature } from '../../utils/site-features';
 import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../../utils/site-provider';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';

@@ -1,11 +1,11 @@
+import { siteLaunchMutation, siteBySlugQuery } from '@automattic/api-queries/src/site';
+import { siteSettingsMutation, siteSettingsQuery } from '@automattic/api-queries/src/site-settings';
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteLaunchMutation, siteBySlugQuery } from '../../app/queries/site';
-import { siteSettingsMutation, siteSettingsQuery } from '../../app/queries/site-settings';
 import InlineSupportLink from '../../components/inline-support-link';
 import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';

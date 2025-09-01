@@ -1,4 +1,6 @@
 import { HostingFeatures } from '@automattic/api-core';
+import { sitePHPVersionQuery, sitePHPVersionMutation } from '@automattic/api-queries';
+import { siteBySlugQuery } from '@automattic/api-queries/src/site';
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
 	Card,
@@ -13,8 +15,6 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { getPHPVersions } from 'calypso/data/php-versions';
-import { siteBySlugQuery } from '../../app/queries/site';
-import { sitePHPVersionQuery, sitePHPVersionMutation } from '../../app/queries/site-php-version';
 import PageLayout from '../../components/page-layout';
 import RequiredSelect from '../../components/required-select';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';

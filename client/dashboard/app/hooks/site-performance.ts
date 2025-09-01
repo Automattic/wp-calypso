@@ -1,6 +1,9 @@
+import {
+	basicMetricsQuery,
+	performanceInsightsQuery,
+	siteSettingsQuery,
+} from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { basicMetricsQuery, performanceInsightsQuery } from '../queries/performance';
-import { siteSettingsQuery } from '../queries/site-settings';
 import type { UrlPerformanceInsights } from '@automattic/api-core';
 
 interface PerformanceData {

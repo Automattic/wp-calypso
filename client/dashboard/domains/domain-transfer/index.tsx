@@ -1,4 +1,9 @@
 import { DomainSubtype } from '@automattic/api-core';
+import {
+	domainQuery,
+	domainLockMutation,
+	domainTransferCodeMutation,
+} from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
 	Card,
@@ -14,8 +19,6 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useLocale } from '../../app/locale';
-import { domainQuery } from '../../app/queries/domain';
-import { domainLockMutation, domainTransferCodeMutation } from '../../app/queries/domain-transfer';
 import { domainRoute } from '../../app/router/domains';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';

@@ -1,3 +1,4 @@
+import { domainDnsMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { Icon } from '@wordpress/components';
@@ -6,7 +7,6 @@ import { __ } from '@wordpress/i18n';
 import { edit, trash } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo } from 'react';
-import { domainDnsMutation } from '../../app/queries/domain-dns-records';
 import { domainRoute, domainDnsEditRoute } from '../../app/router/domains';
 import type { DnsRecord } from '@automattic/api-core';
 import type { Action } from '@wordpress/dataviews';

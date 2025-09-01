@@ -1,3 +1,4 @@
+import { domainDnsMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
 	Modal,
@@ -12,7 +13,6 @@ import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState, useEffect } from 'react';
-import { domainDnsMutation } from '../../app/queries/domain-dns-records';
 import type { DnsRecord } from '@automattic/api-core';
 
 interface DnsImportDialogProps {

@@ -1,3 +1,4 @@
+import { siteJetpackSettingsQuery, siteJetpackSettingsMutation } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Card,
@@ -14,10 +15,6 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import {
-	siteJetpackSettingsQuery,
-	siteJetpackSettingsMutation,
-} from '../../app/queries/site-jetpack-settings';
 import { SectionHeader } from '../../components/section-header';
 import type { JetpackSettings, Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';

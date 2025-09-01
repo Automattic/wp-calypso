@@ -1,7 +1,7 @@
+import { siteWordPressVersionQuery } from '@automattic/api-queries/src/site-wordpress-version';
 import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { wordpress } from '@wordpress/icons';
-import { siteWordPressVersionQuery } from '../../app/queries/site-wordpress-version';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import { canViewWordPressSettings } from '../features';

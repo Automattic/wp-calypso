@@ -1,8 +1,8 @@
 import { HostingFeatures } from '@automattic/api-core';
+import { siteLastBackupQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { backup } from '@wordpress/icons';
-import { siteLastBackupQuery } from '../../app/queries/site-backups';
 import { useFormattedTime } from '../../components/formatted-time';
 import { useTimeSince } from '../../components/time-since';
 import { getBackupUrl } from '../../utils/site-backup';

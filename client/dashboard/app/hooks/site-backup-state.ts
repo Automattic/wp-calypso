@@ -1,7 +1,7 @@
 import { type BackupEntry } from '@automattic/api-core';
+import { siteBackupsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from 'react';
-import { siteBackupsQuery } from '../queries/site-backups';
 
 export type BackupState = 'default' | 'enqueued' | 'in_progress';
 

@@ -1,7 +1,7 @@
+import { domainWhoisQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
-import { domainWhoisQuery } from '../../app/queries/domain-whois';
 import { domainRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';

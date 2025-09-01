@@ -1,10 +1,9 @@
+import { domainQuery, domainForwardingSaveMutation } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { domainQuery } from '../../app/queries/domain';
-import { domainForwardingSaveMutation } from '../../app/queries/domain-forwarding';
 import { domainRoute, domainForwardingsRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';

@@ -1,4 +1,12 @@
 import { isWpError } from '@automattic/api-core';
+import {
+	siteSshAccessEnableMutation,
+	siteSshAccessDisableMutation,
+	siteSshKeysQuery,
+	siteSshKeysAttachMutation,
+	siteSshKeysDetachMutation,
+} from '@automattic/api-queries/src/site-ssh';
+import { sshKeysQuery } from '@automattic/api-queries/src/ssh';
 import { Badge } from '@automattic/ui';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import {
@@ -21,14 +29,6 @@ import { trash } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { useAuth } from '../../app/auth';
-import {
-	siteSshAccessEnableMutation,
-	siteSshAccessDisableMutation,
-	siteSshKeysQuery,
-	siteSshKeysAttachMutation,
-	siteSshKeysDetachMutation,
-} from '../../app/queries/site-ssh';
-import { sshKeysQuery } from '../../app/queries/ssh';
 import ClipboardInputControl from '../../components/clipboard-input-control';
 import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';

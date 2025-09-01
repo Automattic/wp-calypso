@@ -1,10 +1,10 @@
 import { HostingFeatures, JetpackModules } from '@automattic/api-core';
+import { siteJetpackModulesQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { key } from '@wordpress/icons';
-import { siteJetpackModulesQuery } from '../../app/queries/site-jetpack-modules';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { hasHostingFeature } from '../../utils/site-features';
 import { isJetpackModuleActivated } from '../../utils/site-jetpack-modules';

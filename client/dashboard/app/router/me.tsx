@@ -1,8 +1,7 @@
 import { fetchTwoStep } from '@automattic/api-core';
+import { profileQuery, userPurchasesQuery, purchaseQuery } from '@automattic/api-queries';
+import { sitesQuery } from '@automattic/api-queries/src/sites';
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
-import { profileQuery } from '../queries/me-profile';
-import { userPurchasesQuery, purchaseQuery } from '../queries/me-purchases';
-import { sitesQuery } from '../queries/sites';
 import { queryClient } from '../query-client';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';

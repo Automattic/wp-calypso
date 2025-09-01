@@ -1,3 +1,4 @@
+import { profileMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
@@ -12,7 +13,6 @@ import { __ } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
 import { useIsRegionInCcpaZone } from '../../app/analytics/country-code-cookie-gdpr';
 import { getTrackingPrefs, setTrackingPrefs } from '../../app/analytics/tracking-preferences';
-import { profileMutation } from '../../app/queries/me-profile';
 import { SectionHeader } from '../../components/section-header';
 import { Text } from '../../components/text';
 

@@ -1,11 +1,11 @@
 import { DotcomFeatures } from '@automattic/api-core';
+import { sitePlanSoftwareRestoreMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { addQueryArgs } from '@wordpress/url';
-import { sitePlanSoftwareRestoreMutation } from '../../app/queries/site-plans';
 import { ActionList } from '../../components/action-list';
 import { SectionHeader } from '../../components/section-header';
 import { hasPlanFeature } from '../../utils/site-features';
