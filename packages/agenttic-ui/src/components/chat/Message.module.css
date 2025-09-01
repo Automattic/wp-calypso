@@ -52,6 +52,16 @@
 .message ul {
     margin-bottom: var(--spacing-3);
     padding-left: var(--spacing-5);
+    padding-left: var(--spacing-4);
+}
+
+
+/* Nested list styling */
+.message ol ol,
+.message ol ul,
+.message ul ol,
+.message ul ul {
+    padding-left: var(--spacing-4);
 }
 
 .message p+:where(ol,ul) {
@@ -60,6 +70,7 @@
 
 .message li {
     margin-bottom: var(--spacing-2);
+    margin-bottom: var(--spacing-3);
 }
 
 .message li::marker {
