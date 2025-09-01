@@ -12,7 +12,10 @@ import { sprintf, __ } from '@wordpress/i18n';
 import { Icon, chevronDownSmall, plus } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { siteByIdQuery } from '../../app/queries/site';
-import { stagingSiteCreateMutation } from '../../app/queries/site-staging-sites';
+import {
+	stagingSiteCreateMutation,
+	isDeletingStagingSiteQuery,
+} from '../../app/queries/site-staging-sites';
 import { production, staging } from '../../components/icons';
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
 import { hasStagingSite } from '../../utils/site-staging-site';
@@ -129,13 +132,20 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 		enabled: !! otherEnvironmentSiteId,
 	} );
 
+	const { data: isStagingSiteDeleting } = useQuery( {
+		...isDeletingStagingSiteQuery( otherEnvironmentSiteId ?? 0 ),
+		enabled: !! otherEnvironmentSiteId && otherEnvironment === 'staging',
+	} );
+
 	return (
 		<HStack style={ { width: 'auto', flexShrink: 0 } }>
 			<Dropdown
 				renderToggle={ ( { onToggle } ) => {
 					const canToggle =
-						hasStagingSite( site ) ||
-						( otherEnvironmentSite && canManageSite( otherEnvironmentSite ) );
+						( hasStagingSite( site ) && ! isStagingSiteDeleting ) ||
+						( otherEnvironmentSite &&
+							canManageSite( otherEnvironmentSite ) &&
+							! isStagingSiteDeleting );
 
 					return (
 						<Button
