@@ -18,7 +18,7 @@ import { profileMutation } from '../../app/queries/me-profile';
 import { SectionHeader } from '../../components/section-header';
 import EditGravatar from '../edit-gravatar';
 import GravatarLogo from './gravatar-logo';
-import type { UserProfile } from '../../data/types';
+import type { UserProfile } from '@automattic/api-core';
 import type { Field, Form } from '@wordpress/dataviews';
 
 interface GravatarProfileSectionProps {

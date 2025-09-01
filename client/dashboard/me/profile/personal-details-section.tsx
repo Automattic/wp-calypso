@@ -15,7 +15,7 @@ import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { profileMutation } from '../../app/queries/me-profile';
 import { SectionHeader } from '../../components/section-header';
-import type { UserProfile } from '../../data/types';
+import type { UserProfile } from '@automattic/api-core';
 import type { Field, Form } from '@wordpress/dataviews';
 
 import './style.scss';
