@@ -8,7 +8,7 @@ import { useSelector } from 'calypso/state';
 import { getCurrentUserName, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { useFlowState } from '../declarative-flow/internals/state-manager/store';
 import { getFlowFromURL } from '../utils/get-flow-from-url';
-import type { DomainSuggestion } from '@automattic/data';
+import type { DomainSuggestion } from '@automattic/api-core';
 import type { NewSiteSuccessResponse, Site } from '@automattic/data-stores';
 import type { SiteGoal } from '@automattic/data-stores/src/onboard';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';

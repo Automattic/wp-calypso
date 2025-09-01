@@ -14,6 +14,7 @@
 	"dependencies": {
 		"@automattic/accessible-focus": "workspace:^",
 		"@automattic/agenttic-ui": "^0.1.9",
+		"@automattic/api-core": "workspace:^",
 		"@automattic/block-renderer": "workspace:^",
 		"@automattic/browser-data-collector": "workspace:^",
 		"@automattic/calypso-analytics": "workspace:^",
@@ -35,7 +36,6 @@
 		"@automattic/components": "workspace:^",
 		"@automattic/composite-checkout": "workspace:^",
 		"@automattic/create-calypso-config": "workspace:^",
-		"@automattic/data": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
 		"@automattic/design-picker": "workspace:^",
 		"@automattic/design-preview": "workspace:^",

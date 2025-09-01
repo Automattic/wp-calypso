@@ -5,15 +5,16 @@ import {
 	useNavigator,
 } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
-import { useState, useContext, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import getAllNotes from '../../panel/state/selectors/get-all-notes';
 import getIsLoading from '../../panel/state/selectors/get-is-loading';
 import { getFilters } from '../../panel/templates/filters';
-import { RestClientContext } from '../context';
+import { useAppContext } from '../context';
 import { getFields } from './dataviews';
 import type { Note } from '../types';
 import type { View } from '@wordpress/dataviews';
+import './style.scss';
 
 const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFilters > } ) => {
 	const { goTo } = useNavigator();
@@ -23,7 +24,7 @@ const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFil
 	);
 
 	const isLoading = useSelector( ( state ) => getIsLoading( state ) );
-	const restClient = useContext( RestClientContext );
+	const { client } = useAppContext();
 
 	const [ view, setView ] = useState< View >( {
 		type: 'list',
@@ -40,14 +41,14 @@ const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFil
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( notes, view, fields );
 
 	const onChangeSelection = ( selection: string[] ) => {
-		goTo( `/notes/${ selection[ 0 ] }`, { skipFocus: true } );
+		goTo( `/${ filterName }/notes/${ selection[ 0 ] }` );
 	};
 
 	const infiniteScrollHandler = useCallback( () => {
 		if ( ! isLoading ) {
-			restClient?.loadMore();
+			client?.loadMore();
 		}
-	}, [ restClient, isLoading ] );
+	}, [ client, isLoading ] );
 
 	useEffect( () => {
 		setView( ( currentView ) => ( { ...currentView, perPage: notes.length } ) );

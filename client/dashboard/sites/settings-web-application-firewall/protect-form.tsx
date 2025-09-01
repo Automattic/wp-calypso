@@ -13,10 +13,11 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import {
 	siteJetpackModulesQuery,
-	siteJetpackModuleMutation,
-} from '../../app/queries/site-jetpack-module';
+	siteJetpackModulesMutation,
+} from '../../app/queries/site-jetpack-modules';
 import { SectionHeader } from '../../components/section-header';
 import { JetpackModules } from '../../data/constants';
+import { isJetpackModuleActivated } from '../../utils/site-jetpack-modules';
 import type { Site } from '../../data/types';
 
 const fields = [
@@ -34,10 +35,10 @@ const form = {
 
 export default function ProtectForm( { site }: { site: Site } ) {
 	const { data: jetpackModules } = useSuspenseQuery( siteJetpackModulesQuery( site.ID ) );
-	const mutation = useMutation( siteJetpackModuleMutation( site.ID ) );
+	const mutation = useMutation( siteJetpackModulesMutation( site.ID ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
-	const currentProtect = jetpackModules?.includes( JetpackModules.PROTECT ) ?? false;
+	const currentProtect = isJetpackModuleActivated( jetpackModules, JetpackModules.PROTECT );
 
 	const [ formData, setFormData ] = useState< { protect: boolean } >( {
 		protect: currentProtect,

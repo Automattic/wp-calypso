@@ -37,7 +37,7 @@ import {
 	type ProvidedDependencies,
 	type SubmitHandler,
 } from '../../internals/types';
-import type { DomainSuggestion } from '@automattic/data';
+import type { DomainSuggestion } from '@automattic/api-core';
 
 const clearUseMyDomainsQueryParams = ( currentStepSlug: string | undefined ) => {
 	const isDomainsStep = currentStepSlug === 'domains';

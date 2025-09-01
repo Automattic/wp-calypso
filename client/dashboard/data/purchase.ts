@@ -1,3 +1,4 @@
+import wpcom from 'calypso/lib/wp';
 import { SubscriptionBillPeriod } from '../data/constants';
 
 export interface RefundOptions {
@@ -341,4 +342,11 @@ export function normalizePurchase( rawPurchase: RawPurchase ): Purchase {
 		is_domain: Boolean( rawPurchase.is_domain ),
 		is_domain_registration: Boolean( rawPurchase.is_domain_registration ),
 	};
+}
+
+export function removePurchase( purchaseId: number ) {
+	return wpcom.req.post( {
+		path: `/purchases/${ purchaseId }/delete`,
+		apiNamespace: 'wpcom/v2',
+	} );
 }

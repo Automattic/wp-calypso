@@ -16,3 +16,11 @@ export async function setPurchaseAutoRenew(
 		upgrade: normalizePurchase( data.upgrade ),
 	};
 }
+
+export async function fetchPurchase( purchaseId: number ): Promise< Purchase > {
+	const data = await wpcom.req.get( {
+		path: `/upgrades/${ purchaseId }`,
+		apiVersion: '1.1',
+	} );
+	return normalizePurchase( data );
+}

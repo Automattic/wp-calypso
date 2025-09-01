@@ -1,5 +1,5 @@
 {
-	"name": "@automattic/data",
+	"name": "@automattic/api-core",
 	"version": "1.0.0",
 	"description": "Data layer for the Automattic ecosystem.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
@@ -21,7 +21,7 @@
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
-		"directory": "packages/data"
+		"directory": "packages/api-core"
 	},
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"files": [

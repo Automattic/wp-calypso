@@ -22,6 +22,8 @@ object WebApp : Project({
 	buildType(BuildDockerImage)
 	buildType(playwrightPrBuildType("desktop", "23cc069f-59e5-4a63-a131-539fb55264e7"))
 	buildType(playwrightPrBuildType("mobile", "90fbd6b7-fddb-4668-9ed0-b32598143616"))
+	buildType(playwrightTestPR("desktop", "074d8ae0-0859-4b4d-bf66-709f24ae5406"))
+	buildType(playwrightTestPR("mobile", "a768e2d7-aaf7-47c2-b9ef-396c467c5311"))
 	buildType(PreReleaseE2ETests)
 	buildType(e2ePreReleaseBuildType("desktop", "532ee9d0-4671-4c53-a7aa-bb3c5de95c0a"))
 	buildType(e2ePreReleaseBuildType("mobile", "2d7f6910-92cf-44b4-a719-e4b2029ea36c"))
@@ -855,7 +857,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): E2EBuildTy
 		buildId = "calypso_WebApp_Calypso_E2E_Playwright_$targetDevice",
 		buildUuid = buildUuid,
 		buildName = "E2E Tests ($targetDevice)",
-		buildDescription = "Runs Calypso e2e tests on $targetDevice size",
+		buildDescription = "Runs Calypso e2e tests on $targetDevice size using Jest runner",
 		getCalypsoLiveURL = """
 			chmod +x ./bin/get-calypso-live-url.sh
 			CALYPSO_LIVE_URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
@@ -901,6 +903,24 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): E2EBuildTy
 			}
 		}
 	)
+}
+
+fun playwrightTestPR( targetDevice: String, buildUuid: String ): BuildType {
+	return BuildType {
+		id("calypso_WebApp_Calypso_E2E_Playwright_Test_$targetDevice")
+		uuid = buildUuid
+		name = "E2E Tests ($targetDevice) (PWTest)"
+		description = "Runs Calypso e2e tests on $targetDevice size using Playwright Test runner"
+
+		steps {
+			script {
+				name = "Test step"
+				scriptContent = """
+					echo "hello, it works"
+				"""
+			}
+		}
+	}
 }
 
 object PreReleaseE2ETests : BuildType({
