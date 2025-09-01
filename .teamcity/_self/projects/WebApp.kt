@@ -940,6 +940,11 @@ object PlaywrightTestPRMatrix : BuildType({
 		}
 	}
 
+	vcs {
+		root(Settings.WpCalypso)
+		cleanCheckout = true
+	}
+
 	steps {
 		script {
 			name = "Test step"
@@ -973,12 +978,18 @@ object PlaywrightTestPreReleaseMatrix : BuildType({
 		}
 	}
 
+	vcs {
+		root(Settings.WpCalypso)
+		cleanCheckout = true
+	}
+
 	steps {
 		script {
 			name = "Test step"
 			scriptContent = """
-				echo "Running pre-release Playwright tests for project: %playwrightProject%"
-				echo "hello, it works"
+				echo "Running Playwright tests for project: %playwrightProject%"
+				cd test/e2e
+				yarn playwright:%playwrightProject% --list
 			"""
 		}
 	}
