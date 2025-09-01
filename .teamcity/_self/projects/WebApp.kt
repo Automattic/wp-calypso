@@ -934,6 +934,12 @@ object PlaywrightTestPRMatrix : BuildType({
 		}
 	}
 
+	dependencies {
+		snapshot(BuildDockerImage) {
+			onDependencyFailure = FailureAction.FAIL_TO_START
+		}
+	}
+
 	steps {
 		script {
 			name = "Test step"
