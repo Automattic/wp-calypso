@@ -1,5 +1,6 @@
 import { DomainProductSlugs, DotcomPlans } from '@automattic/api-core';
 import { Button } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { differenceInCalendarDays } from 'date-fns';
 import { useAnalytics } from '../../../app/analytics';
@@ -27,6 +28,21 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		purchase.product_slug === DotcomPlans.HOSTING_TRIAL_MONTHLY
 	) {
 		return <TrialNotice purchase={ purchase } />;
+	}
+
+	if ( purchase.is_locked && purchase.is_iap_purchase ) {
+		return (
+			<Notice variant="info">
+				{ createInterpolateElement(
+					__(
+						'This product is an in-app purchase. You can manage it from within <managePurchase/>the app store</managePurchase>.'
+					),
+					{
+						managePurchase: <a href={ purchase.iap_purchase_management_link ?? undefined } />,
+					}
+				) }
+			</Notice>
+		);
 	}
 
 	// FIXME: add all the other things in PurchaseNotice
