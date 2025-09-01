@@ -92,6 +92,12 @@ export default function setup() {
 	// attach the static file server to serve the `public` dir
 	app.use( '/calypso', express.static( path.resolve( __dirname, '..', '..', '..', 'public' ) ) );
 
+	// serve site-spec files
+	app.use(
+		'/site-spec',
+		express.static( path.resolve( __dirname, '..', '..', '..', 'static', 'site-spec' ) )
+	);
+
 	// loaded when we detect stats blockers - see lib/analytics/index.js
 	app.get( '/nostats.js', function ( request, response ) {
 		analytics.tracks.recordEvent(
