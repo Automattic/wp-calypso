@@ -18,7 +18,7 @@ import { siteEdgeCacheStatusQuery } from '../queries/site-cache';
 import { siteDefensiveModeSettingsQuery } from '../queries/site-defensive-mode';
 import { siteDifmWebsiteContentQuery } from '../queries/site-do-it-for-me';
 import { siteDomainsQuery } from '../queries/site-domains';
-import { siteJetpackModulesQuery } from '../queries/site-jetpack-module';
+import { siteJetpackModulesQuery } from '../queries/site-jetpack-modules';
 import { siteJetpackSettingsQuery } from '../queries/site-jetpack-settings';
 import { siteMediaStorageQuery } from '../queries/site-media-storage';
 import { sitePHPVersionQuery } from '../queries/site-php-version';

@@ -1,4 +1,4 @@
-const NoteIcon = ( { icon, size = 48 }: { icon: string; size?: number } ) => {
+const NoteIcon = ( { icon, size = 40 }: { icon: string; size?: number } ) => {
 	return (
 		<img
 			src={ icon }

@@ -14,7 +14,7 @@ export const siteJetpackModulesQuery = ( siteId: number ) =>
 		queryFn: () => fetchJetpackModules( siteId ),
 	} );
 
-export const siteJetpackModuleMutation = ( siteId: number ) =>
+export const siteJetpackModulesMutation = ( siteId: number ) =>
 	mutationOptions( {
 		mutationFn: ( variables: { module: string; value: boolean } ) => {
 			const { module, value } = variables;
@@ -23,11 +23,14 @@ export const siteJetpackModuleMutation = ( siteId: number ) =>
 				: deactivateJetpackModule( siteId, module );
 		},
 		onSuccess: ( newData: unknown, variables: { module: string; value: boolean } ) => {
-			queryClient.setQueryData( siteJetpackModulesQuery( siteId ).queryKey, ( oldData = [] ) => {
-				if ( variables.value ) {
-					return [ ...oldData, variables.module ];
-				}
-				return oldData.filter( ( module ) => module !== variables.module );
+			queryClient.setQueryData( siteJetpackModulesQuery( siteId ).queryKey, ( oldData = {} ) => {
+				return {
+					...oldData,
+					[ variables.module ]: {
+						...oldData[ variables.module ],
+						activated: variables.value,
+					},
+				};
 			} );
 			queryClient.invalidateQueries( { queryKey: siteJetpackModulesQuery( siteId ).queryKey } );
 			queryClient.invalidateQueries( siteQueryFilter( siteId ) );

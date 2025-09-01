@@ -1,8 +1,8 @@
-# Data
+# API Core
 
-Data layer for the Automattic ecosystem.
+The API core definition for the Automattic ecosystem.
 
-This package is the bridge between consumers and the WordPress.com REST API, providing its data fetching functions, as well as their argument and return types. It exists as a way to centralize data fetching logic and type definitions, and to avoid duplicating code across clients.
+This package is the bridge between consumers and the REST APIs used throughout Automattic products, providing its data fetching functions, as well as their arguments and return types. It exists as a way to centralize data fetching logic and type definitions, and to avoid duplicating code across clients.
 
 Each resource is mapped to a folder, and each folder follows the following structure:
 
@@ -25,7 +25,7 @@ Each resource folder contains:
 Simply import the desired resource function or type from the package. Example:
 
 ```ts
-import { fetchDomainSuggestions, type DomainSuggestion } from '@automattic/data';
+import { fetchDomainSuggestions, type DomainSuggestion } from '@automattic/api-core';
 ```
 
 Then call it with the appropriate arguments. Example:
