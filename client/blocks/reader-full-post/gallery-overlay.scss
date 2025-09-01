@@ -184,6 +184,52 @@
 	animation: gallery-overlay-spin 1s linear infinite;
 }
 
+.gallery-overlay__error {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 200px;
+	color: #fff;
+}
+
+.gallery-overlay__error-content {
+	text-align: center;
+	max-width: 400px;
+	padding: 24px;
+
+	h3 {
+		margin: 16px 0 12px;
+		font-size: 20px;
+		font-weight: 600;
+	}
+
+	p {
+		margin: 0 0 20px;
+		opacity: 0.8;
+		line-height: 1.5;
+	}
+}
+
+.gallery-overlay__error-button {
+	background-color: rgba(255, 255, 255, 0.2);
+	border: 1px solid rgba(255, 255, 255, 0.3);
+	border-radius: 4px;
+	color: #fff;
+	padding: 8px 16px;
+	cursor: pointer;
+	font-size: 14px;
+	transition: background-color 0.2s ease;
+
+	&:hover {
+		background-color: rgba(255, 255, 255, 0.3);
+	}
+
+	&:focus {
+		outline: 2px solid #fff;
+		outline-offset: 2px;
+	}
+}
+
 .gallery-overlay__info {
 	margin-top: 16px;
 	text-align: center;

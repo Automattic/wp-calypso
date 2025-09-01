@@ -6,7 +6,19 @@ import { useState, useEffect } from 'react';
 
 import './gallery-overlay.scss';
 
-const GalleryOverlay = ( { isOpen, images, currentIndex, onClose, onNext, onPrevious } ) => {
+const GalleryOverlay = ( {
+	isOpen,
+	images,
+	currentIndex,
+	isLoading,
+	error,
+	onClose,
+	onNext,
+	onPrevious,
+	onGoToFirst,
+	onGoToLast,
+	onClearError,
+} ) => {
 	const translate = useTranslate();
 	const [ isImageLoading, setIsImageLoading ] = useState( false );
 	const [ touchStart, setTouchStart ] = useState( null );
@@ -46,20 +58,13 @@ const GalleryOverlay = ( { isOpen, images, currentIndex, onClose, onNext, onPrev
 					onClose();
 					break;
 				case 'Home':
-					if ( hasMultipleImages && currentIndex > 0 ) {
-						// Go to first image - we need to implement this
-						for ( let i = 0; i < currentIndex; i++ ) {
-							onPrevious();
-						}
+					if ( hasMultipleImages && currentIndex > 0 && onGoToFirst ) {
+						onGoToFirst();
 					}
 					break;
 				case 'End':
-					if ( hasMultipleImages && currentIndex < images.length - 1 ) {
-						// Go to last image - we need to implement this
-						const stepsToEnd = images.length - 1 - currentIndex;
-						for ( let i = 0; i < stepsToEnd; i++ ) {
-							onNext();
-						}
+					if ( hasMultipleImages && currentIndex < images.length - 1 && onGoToLast ) {
+						onGoToLast();
 					}
 					break;
 				default:
@@ -80,6 +85,8 @@ const GalleryOverlay = ( { isOpen, images, currentIndex, onClose, onNext, onPrev
 		onClose,
 		onNext,
 		onPrevious,
+		onGoToFirst,
+		onGoToLast,
 		hasPrevious,
 		hasNext,
 		hasMultipleImages,
@@ -228,44 +235,59 @@ const GalleryOverlay = ( { isOpen, images, currentIndex, onClose, onNext, onPrev
 
 			{ /* Image container */ }
 			<div className="gallery-overlay__content">
-				<div
-					className="gallery-overlay__image-container"
-					onTouchStart={ handleTouchStart }
-					onTouchMove={ handleTouchMove }
-					onTouchEnd={ handleTouchEnd }
-				>
-					{ isImageLoading && (
-						<div className="gallery-overlay__loading">
-							<Gridicon icon="sync" size={ 48 } />
+				{ error ? (
+					<div className="gallery-overlay__error">
+						<div className="gallery-overlay__error-content">
+							<Gridicon icon="notice" size={ 48 } />
+							<h3>{ translate( 'Gallery Error' ) }</h3>
+							<p>{ error }</p>
+							<button onClick={ onClearError } className="gallery-overlay__error-button">
+								{ translate( 'Try Again' ) }
+							</button>
 						</div>
-					) }
-					<img
-						src={ currentImage.src }
-						alt={ currentImage.alt }
-						className={ clsx( 'gallery-overlay__image', {
-							'is-loading': isImageLoading,
-						} ) }
-						onLoad={ handleImageLoad }
-						onLoadStart={ handleImageLoadStart }
-					/>
-				</div>
+					</div>
+				) : (
+					<div
+						className="gallery-overlay__image-container"
+						onTouchStart={ handleTouchStart }
+						onTouchMove={ handleTouchMove }
+						onTouchEnd={ handleTouchEnd }
+					>
+						{ ( isImageLoading || isLoading ) && (
+							<div className="gallery-overlay__loading">
+								<Gridicon icon="sync" size={ 48 } />
+							</div>
+						) }
+						<img
+							src={ currentImage.src }
+							alt={ currentImage.alt }
+							className={ clsx( 'gallery-overlay__image', {
+								'is-loading': isImageLoading,
+							} ) }
+							onLoad={ handleImageLoad }
+							onLoadStart={ handleImageLoadStart }
+						/>
+					</div>
+				) }
 
 				{ /* Image counter and caption */ }
-				<div className="gallery-overlay__info">
-					{ hasMultipleImages && (
-						<div className="gallery-overlay__counter">
-							{ translate( '%(current)d of %(total)d', {
-								args: {
-									current: currentIndex + 1,
-									total: images.length,
-								},
-							} ) }
-						</div>
-					) }
-					{ currentImage.caption && (
-						<div className="gallery-overlay__caption">{ currentImage.caption }</div>
-					) }
-				</div>
+				{ ! error && (
+					<div className="gallery-overlay__info">
+						{ hasMultipleImages && (
+							<div className="gallery-overlay__counter">
+								{ translate( '%(current)d of %(total)d', {
+									args: {
+										current: currentIndex + 1,
+										total: images.length,
+									},
+								} ) }
+							</div>
+						) }
+						{ currentImage.caption && (
+							<div className="gallery-overlay__caption">{ currentImage.caption }</div>
+						) }
+					</div>
+				) }
 			</div>
 		</div>
 	);
@@ -278,12 +300,19 @@ GalleryOverlay.propTypes = {
 			src: PropTypes.string.isRequired,
 			alt: PropTypes.string,
 			caption: PropTypes.string,
+			width: PropTypes.number,
+			height: PropTypes.number,
 		} )
 	).isRequired,
 	currentIndex: PropTypes.number.isRequired,
+	isLoading: PropTypes.bool,
+	error: PropTypes.string,
 	onClose: PropTypes.func.isRequired,
 	onNext: PropTypes.func.isRequired,
 	onPrevious: PropTypes.func.isRequired,
+	onGoToFirst: PropTypes.func,
+	onGoToLast: PropTypes.func,
+	onClearError: PropTypes.func,
 };
 
 export default GalleryOverlay;

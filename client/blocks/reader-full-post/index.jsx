@@ -110,6 +110,8 @@ export class FullPostView extends Component {
 		isGalleryOpen: false,
 		currentImageIndex: 0,
 		galleryImages: [],
+		galleryError: null,
+		isGalleryLoading: false,
 	};
 
 	openSuggestedFollowsModal = ( followClicked ) => {
@@ -121,51 +123,187 @@ export class FullPostView extends Component {
 
 	// Gallery overlay methods
 	openGallery = ( imageIndex, images ) => {
+		// Validate inputs
+		if ( ! Array.isArray( images ) || images.length === 0 ) {
+			this.setState( { galleryError: 'No images available to display' } );
+			return;
+		}
+
+		if ( imageIndex < 0 || imageIndex >= images.length ) {
+			this.setState( { galleryError: 'Invalid image index' } );
+			return;
+		}
+
+		// Clear any previous errors and open gallery
 		this.setState( {
 			isGalleryOpen: true,
 			currentImageIndex: imageIndex,
 			galleryImages: images,
+			galleryError: null,
+			isGalleryLoading: false,
+		} );
+
+		// Track gallery opened event
+		this.trackGalleryEvent( 'gallery_opened', {
+			image_count: images.length,
+			starting_index: imageIndex,
 		} );
 	};
 
 	closeGallery = () => {
+		// Track gallery closed event
+		const { currentImageIndex, galleryImages } = this.state;
+		this.trackGalleryEvent( 'gallery_closed', {
+			final_index: currentImageIndex,
+			total_images: galleryImages.length,
+		} );
+
 		this.setState( {
 			isGalleryOpen: false,
 			currentImageIndex: 0,
 			galleryImages: [],
+			galleryError: null,
+			isGalleryLoading: false,
 		} );
 	};
 
 	nextImage = () => {
 		const { currentImageIndex, galleryImages } = this.state;
+		if ( ! galleryImages.length ) {
+			return;
+		}
+
 		if ( currentImageIndex < galleryImages.length - 1 ) {
-			this.setState( { currentImageIndex: currentImageIndex + 1 } );
+			const newIndex = currentImageIndex + 1;
+			this.setState( { currentImageIndex: newIndex } );
+
+			// Track navigation event
+			this.trackGalleryEvent( 'gallery_navigate', {
+				direction: 'next',
+				from_index: currentImageIndex,
+				to_index: newIndex,
+			} );
 		}
 	};
 
 	previousImage = () => {
-		const { currentImageIndex } = this.state;
-		if ( currentImageIndex > 0 ) {
-			this.setState( { currentImageIndex: currentImageIndex - 1 } );
+		const { currentImageIndex, galleryImages } = this.state;
+		if ( ! galleryImages.length ) {
+			return;
 		}
+
+		if ( currentImageIndex > 0 ) {
+			const newIndex = currentImageIndex - 1;
+			this.setState( { currentImageIndex: newIndex } );
+
+			// Track navigation event
+			this.trackGalleryEvent( 'gallery_navigate', {
+				direction: 'previous',
+				from_index: currentImageIndex,
+				to_index: newIndex,
+			} );
+		}
+	};
+
+	// Jump to specific image index
+	goToImage = ( imageIndex ) => {
+		const { galleryImages, currentImageIndex } = this.state;
+		if ( ! galleryImages.length ) {
+			return;
+		}
+
+		if (
+			imageIndex >= 0 &&
+			imageIndex < galleryImages.length &&
+			imageIndex !== currentImageIndex
+		) {
+			this.setState( { currentImageIndex: imageIndex } );
+
+			// Track navigation event
+			this.trackGalleryEvent( 'gallery_navigate', {
+				direction: 'jump',
+				from_index: currentImageIndex,
+				to_index: imageIndex,
+			} );
+		}
+	};
+
+	// Go to first image
+	goToFirstImage = () => {
+		this.goToImage( 0 );
+	};
+
+	// Go to last image
+	goToLastImage = () => {
+		const { galleryImages } = this.state;
+		if ( galleryImages.length > 0 ) {
+			this.goToImage( galleryImages.length - 1 );
+		}
+	};
+
+	// Track gallery events for analytics
+	trackGalleryEvent = ( eventName, properties = {} ) => {
+		if ( this.props.post ) {
+			recordTrackForPost( `calypso_reader_gallery_${ eventName }`, this.props.post, {
+				...properties,
+				context: 'full-post',
+			} );
+		}
+	};
+
+	// Handle gallery errors
+	handleGalleryError = ( error ) => {
+		// Log error for debugging (avoiding console.error in production)
+		if ( 'development' === process.env.NODE_ENV ) {
+			// eslint-disable-next-line no-console
+			console.error( 'Gallery error:', error );
+		}
+
+		this.setState( {
+			galleryError: error.message || 'An error occurred while loading the gallery',
+			isGalleryLoading: false,
+		} );
+
+		// Track error for analytics
+		this.trackGalleryEvent( 'gallery_error', {
+			error_message: error.message || 'Unknown error',
+			error_type: error.name || 'Error',
+		} );
+	};
+
+	// Clear gallery error
+	clearGalleryError = () => {
+		this.setState( { galleryError: null } );
 	};
 
 	// Extract image data from a gallery element
 	extractGalleryImages = ( galleryElement ) => {
-		const images = [];
-		const galleryImages = galleryElement.querySelectorAll(
-			'.wp-block-image img, .blocks-gallery-item img'
-		);
+		try {
+			const images = [];
+			const galleryImages = galleryElement.querySelectorAll(
+				'.wp-block-image img, .blocks-gallery-item img'
+			);
 
-		galleryImages.forEach( ( img ) => {
-			images.push( {
-				src: img.src,
-				alt: img.alt || '',
-				caption: this.getImageCaption( img ),
+			galleryImages.forEach( ( img ) => {
+				// Validate image source
+				if ( ! img.src || img.src === '' ) {
+					return; // Skip images without valid source
+				}
+
+				images.push( {
+					src: img.src,
+					alt: img.alt || '',
+					caption: this.getImageCaption( img ),
+					width: img.naturalWidth || img.width || null,
+					height: img.naturalHeight || img.height || null,
+				} );
 			} );
-		} );
 
-		return images;
+			return images;
+		} catch ( error ) {
+			this.handleGalleryError( error );
+			return [];
+		}
 	};
 
 	// Get caption text for an image
@@ -188,33 +326,47 @@ export class FullPostView extends Component {
 
 	// Handle clicks on gallery images
 	handleGalleryImageClick = ( event ) => {
-		const img = event.target;
+		try {
+			const img = event.target;
 
-		// Only handle clicks on img elements
-		if ( img.tagName !== 'IMG' ) {
-			return;
-		}
+			// Only handle clicks on img elements
+			if ( img.tagName !== 'IMG' ) {
+				return;
+			}
 
-		// Check if this is a gallery image
-		const galleryElement = img.closest( '.wp-block-gallery, .tiled-gallery' );
-		if ( ! galleryElement ) {
-			return;
-		}
+			// Check if this is a gallery image
+			const galleryElement = img.closest( '.wp-block-gallery, .tiled-gallery' );
+			if ( ! galleryElement ) {
+				return;
+			}
 
-		// Prevent default link behavior
-		event.preventDefault();
-		event.stopPropagation();
+			// Prevent default link behavior
+			event.preventDefault();
+			event.stopPropagation();
 
-		// Extract all images from this gallery
-		const galleryImages = this.extractGalleryImages( galleryElement );
+			// Set loading state
+			this.setState( { isGalleryLoading: true, galleryError: null } );
 
-		// Find the index of the clicked image
-		const clickedImageIndex = galleryImages.findIndex(
-			( galleryImg ) => galleryImg.src === img.src
-		);
+			// Extract all images from this gallery
+			const galleryImages = this.extractGalleryImages( galleryElement );
 
-		if ( clickedImageIndex !== -1 ) {
-			this.openGallery( clickedImageIndex, galleryImages );
+			if ( galleryImages.length === 0 ) {
+				this.handleGalleryError( new Error( 'No valid images found in gallery' ) );
+				return;
+			}
+
+			// Find the index of the clicked image
+			const clickedImageIndex = galleryImages.findIndex(
+				( galleryImg ) => galleryImg.src === img.src
+			);
+
+			if ( clickedImageIndex !== -1 ) {
+				this.openGallery( clickedImageIndex, galleryImages );
+			} else {
+				this.handleGalleryError( new Error( 'Could not find clicked image in gallery' ) );
+			}
+		} catch ( error ) {
+			this.handleGalleryError( error );
 		}
 	};
 
@@ -1009,9 +1161,14 @@ export class FullPostView extends Component {
 						isOpen={ this.state.isGalleryOpen }
 						images={ this.state.galleryImages }
 						currentIndex={ this.state.currentImageIndex }
+						isLoading={ this.state.isGalleryLoading }
+						error={ this.state.galleryError }
 						onClose={ this.closeGallery }
 						onNext={ this.nextImage }
 						onPrevious={ this.previousImage }
+						onGoToFirst={ this.goToFirstImage }
+						onGoToLast={ this.goToLastImage }
+						onClearError={ this.clearGalleryError }
 					/>
 				</ReaderMain>
 			</div>
