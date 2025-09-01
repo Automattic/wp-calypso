@@ -72,16 +72,25 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	transition: background-color 0.2s ease, transform 0.2s ease;
+	transition: background-color 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+	opacity: 0.8;
 
 	&:hover {
-		background-color: rgba(255, 255, 255, 0.2);
-		transform: translateY(-50%) scale(1.05);
+		background-color: rgba(255, 255, 255, 0.3);
+		transform: translateY(-50%) scale(1.1);
+		opacity: 1;
 	}
 
 	&:focus {
 		outline: 2px solid #fff;
 		outline-offset: 2px;
+		background-color: rgba(255, 255, 255, 0.25);
+		opacity: 1;
+	}
+
+	&:active {
+		transform: translateY(-50%) scale(0.95);
+		background-color: rgba(255, 255, 255, 0.4);
 	}
 
 	&--previous {
@@ -103,6 +112,19 @@
 	@include breakpoint-deprecated( '<660px' ) {
 		width: 56px;
 		height: 56px;
+		opacity: 0.9;
+
+		&:hover {
+			// On mobile, reduce hover effects since they're not as useful
+			transform: translateY(-50%) scale(1.05);
+		}
+	}
+
+	// Better touch targets on mobile
+	@media (pointer: coarse) {
+		width: 60px;
+		height: 60px;
+		opacity: 0.9;
 	}
 }
 
@@ -122,6 +144,15 @@
 	justify-content: center;
 	min-width: 200px;
 	min-height: 200px;
+	touch-action: pan-x; // Allow horizontal panning for swipe gestures
+	
+	// Add subtle touch feedback on mobile
+	@media (pointer: coarse) {
+		&:active {
+			transform: scale(0.98);
+			transition: transform 0.1s ease;
+		}
+	}
 }
 
 .gallery-overlay__image {

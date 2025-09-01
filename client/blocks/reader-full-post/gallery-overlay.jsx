@@ -9,6 +9,14 @@ import './gallery-overlay.scss';
 const GalleryOverlay = ( { isOpen, images, currentIndex, onClose, onNext, onPrevious } ) => {
 	const translate = useTranslate();
 	const [ isImageLoading, setIsImageLoading ] = useState( false );
+	const [ touchStart, setTouchStart ] = useState( null );
+	const [ touchEnd, setTouchEnd ] = useState( null );
+
+	// Calculate navigation states (safe defaults if images is empty)
+	const currentImage = images[ currentIndex ] || {};
+	const hasMultipleImages = images.length > 1;
+	const hasPrevious = currentIndex > 0;
+	const hasNext = currentIndex < images.length - 1;
 
 	// Handle keyboard events
 	useEffect( () => {
@@ -22,14 +30,37 @@ const GalleryOverlay = ( { isOpen, images, currentIndex, onClose, onNext, onPrev
 					onClose();
 					break;
 				case 'ArrowLeft':
-					onPrevious();
+				case 'h': // Vim-style navigation
+					if ( hasPrevious ) {
+						onPrevious();
+					}
 					break;
 				case 'ArrowRight':
-					onNext();
+				case 'l': // Vim-style navigation
+					if ( hasNext ) {
+						onNext();
+					}
 					break;
 				case ' ':
 				case 'Enter':
 					onClose();
+					break;
+				case 'Home':
+					if ( hasMultipleImages && currentIndex > 0 ) {
+						// Go to first image - we need to implement this
+						for ( let i = 0; i < currentIndex; i++ ) {
+							onPrevious();
+						}
+					}
+					break;
+				case 'End':
+					if ( hasMultipleImages && currentIndex < images.length - 1 ) {
+						// Go to last image - we need to implement this
+						const stepsToEnd = images.length - 1 - currentIndex;
+						for ( let i = 0; i < stepsToEnd; i++ ) {
+							onNext();
+						}
+					}
 					break;
 				default:
 					return;
@@ -44,7 +75,17 @@ const GalleryOverlay = ( { isOpen, images, currentIndex, onClose, onNext, onPrev
 		return () => {
 			document.removeEventListener( 'keydown', handleKeydown );
 		};
-	}, [ isOpen, onClose, onNext, onPrevious ] );
+	}, [
+		isOpen,
+		onClose,
+		onNext,
+		onPrevious,
+		hasPrevious,
+		hasNext,
+		hasMultipleImages,
+		currentIndex,
+		images.length,
+	] );
 
 	// Prevent body scroll when overlay is open
 	useEffect( () => {
@@ -59,14 +100,32 @@ const GalleryOverlay = ( { isOpen, images, currentIndex, onClose, onNext, onPrev
 		};
 	}, [ isOpen ] );
 
+	// Preload adjacent images for smooth navigation
+	useEffect( () => {
+		if ( ! isOpen || ! hasMultipleImages ) {
+			return;
+		}
+
+		const preloadImage = ( src ) => {
+			const img = new Image();
+			img.src = src;
+		};
+
+		// Preload next image
+		if ( hasNext ) {
+			preloadImage( images[ currentIndex + 1 ].src );
+		}
+
+		// Preload previous image
+		if ( hasPrevious ) {
+			preloadImage( images[ currentIndex - 1 ].src );
+		}
+	}, [ isOpen, hasMultipleImages, hasNext, hasPrevious, currentIndex, images ] );
+
+	// Early return after all hooks to comply with Rules of Hooks
 	if ( ! isOpen || ! images.length ) {
 		return null;
 	}
-
-	const currentImage = images[ currentIndex ];
-	const hasMultipleImages = images.length > 1;
-	const hasPrevious = currentIndex > 0;
-	const hasNext = currentIndex < images.length - 1;
 
 	const handleImageLoad = () => {
 		setIsImageLoading( false );
@@ -87,6 +146,37 @@ const GalleryOverlay = ( { isOpen, images, currentIndex, onClose, onNext, onPrev
 			event.preventDefault();
 			onClose();
 		}
+	};
+
+	// Touch event handlers for swipe navigation
+	const handleTouchStart = ( event ) => {
+		setTouchEnd( null ); // Clear previous touch end
+		setTouchStart( event.targetTouches[ 0 ].clientX );
+	};
+
+	const handleTouchMove = ( event ) => {
+		setTouchEnd( event.targetTouches[ 0 ].clientX );
+	};
+
+	const handleTouchEnd = () => {
+		if ( ! touchStart || ! touchEnd ) {
+			return;
+		}
+
+		const distance = touchStart - touchEnd;
+		const isLeftSwipe = distance > 50;
+		const isRightSwipe = distance < -50;
+
+		if ( isLeftSwipe && hasNext ) {
+			onNext();
+		}
+		if ( isRightSwipe && hasPrevious ) {
+			onPrevious();
+		}
+
+		// Reset touch state
+		setTouchStart( null );
+		setTouchEnd( null );
 	};
 
 	return (
@@ -138,7 +228,12 @@ const GalleryOverlay = ( { isOpen, images, currentIndex, onClose, onNext, onPrev
 
 			{ /* Image container */ }
 			<div className="gallery-overlay__content">
-				<div className="gallery-overlay__image-container">
+				<div
+					className="gallery-overlay__image-container"
+					onTouchStart={ handleTouchStart }
+					onTouchMove={ handleTouchMove }
+					onTouchEnd={ handleTouchEnd }
+				>
 					{ isImageLoading && (
 						<div className="gallery-overlay__loading">
 							<Gridicon icon="sync" size={ 48 } />
