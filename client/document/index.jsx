@@ -25,6 +25,7 @@ import { isGravPoweredOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2
 import { jsonStringifyForHtml } from 'calypso/server/sanitize';
 import { initialClientsData, gravatarClientData } from 'calypso/state/oauth2-clients/reducer';
 import { isBilmurEnabled, getBilmurUrl } from './utils/bilmur';
+import { isSiteSpecEnabled, getSiteSpecUrl } from 'calypso/lib/site-spec';
 import { chunkCssLinks } from './utils/chunk';
 
 class Document extends Component {
@@ -238,6 +239,16 @@ class Document extends Component {
 							data-service="calypso"
 							data-customproperties={ `{"route_name": "${ sectionName }"}` }
 							data-site-tz="Etc/UTC"
+						/>
+					) }
+
+					{ isSiteSpecEnabled() && (
+						<script
+							defer
+							id="sitespec"
+							src={ getSiteSpecUrl() }
+							data-provider="wordpress.com"
+							data-service="ai-site-builder"
 						/>
 					) }
 

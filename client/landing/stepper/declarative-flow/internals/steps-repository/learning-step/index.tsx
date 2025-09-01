@@ -1,9 +1,12 @@
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import { loadSiteSpecScript, getSiteSpecConfig } from 'calypso/lib/site-spec';
 import type { Step as StepType } from '../../types';
 
-<script src="http://localhost:8085/dist/sitespec.umd.js"></script>;
+// Import React for debugging and exposure purposes
+import React from 'react';
+import ReactDOM from 'react-dom';
 
 // TypeScript declaration for the global SiteSpec
 declare global {
@@ -28,74 +31,62 @@ const LearningStep: StepType = function LearningStep() {
 	const translate = useTranslate();
 
 	useEffect( () => {
-		// Load site-spec script directly in the component
-		const loadSiteSpec = () => {
-			const initializeSiteSpec = () => {
-				console.log( '🔄 Initializing site-spec...' );
-				console.log( 'window.SiteSpec:', window.SiteSpec );
+		const initializeSiteSpec = async () => {
+			try {
+				// Simple React exposure for SiteSpec script
+				if ( !window.React ) {
+					console.log( '🔧 Exposing React globally for SiteSpec script' );
+					window.React = React;
+					window.ReactDOM = ReactDOM;
+				}
 
-				if ( typeof window !== 'undefined' && window.SiteSpec && window.SiteSpec.init ) {
+				// Load script using the WordPress-style utility
+				await loadSiteSpecScript();
+
+				console.log( '⏳ Waiting for React to be fully available...' );
+				await new Promise( resolve => setTimeout( resolve, 500 ) );
+
+				// Check if SiteSpec is available and initialize
+				if ( window.SiteSpec?.init ) {
 					console.log( '✅ SiteSpec.init is available, initializing...' );
-
+					const config = getSiteSpecConfig();
+					
 					const instance = window.SiteSpec.init( {
-						container: '#sitespec',
-						agentUrl: 'https://public-api.wordpress.com/wpcom/v2/ai/agent',
-						agentId: 'site-spec',
-						buildSiteUrl: 'https://wordpress.com/setup/ai-site-builder?spec_id=',
-						onMessage: ( message ) => {
-							console.log( 'Site spec message:', message );
-						},
-						onError: ( error ) => {
-							console.error( 'Site spec error:', error );
-						},
+						container: '#site-spec',
+						agentUrl: config.agentUrl,
+						agentId: config.agentId,
+						buildSiteUrl: config.buildSiteUrl,
+						onMessage: ( message ) => console.log( 'SiteSpec message:', message ),
+						onError: ( error ) => console.error( 'SiteSpec error:', error ),
 					} );
 
-					console.log( '✅ Site-spec initialized successfully:', instance );
-
-					// Cleanup function
 					return () => {
-						if ( instance && instance.destroy ) {
+						if ( instance?.destroy ) {
 							instance.destroy();
 						}
 					};
+				} else {
+					console.error( '❌ SiteSpec.init not available:', {
+						windowExists: typeof window !== 'undefined',
+						siteSpecExists: typeof window !== 'undefined' ? !! window.SiteSpec : false,
+						siteSpecValue: typeof window !== 'undefined' ? window.SiteSpec : 'N/A',
+						siteSpecInit: typeof window !== 'undefined' ? window.SiteSpec?.init : 'N/A',
+					} );
 				}
-				console.error( '❌ SiteSpec.init not available:', {
-					windowExists: typeof window !== 'undefined',
-					siteSpecExists: typeof window !== 'undefined' ? !! window.SiteSpec : false,
-					siteSpecValue: typeof window !== 'undefined' ? window.SiteSpec : 'N/A',
-					siteSpecInit: typeof window !== 'undefined' ? window.SiteSpec?.init : 'N/A',
-				} );
-			};
-			// Check if script is already loaded
-			if ( document.querySelector( 'script[src*="sitespec.umd.js"]' ) ) {
-				console.log( '✅ Site-spec script already loaded' );
-				initializeSiteSpec();
-				return;
+			} catch ( error ) {
+				console.error( '❌ Failed to initialize SiteSpec:', error );
 			}
-
-			console.log( '🔄 Loading site-spec script...' );
-			const script = document.createElement( 'script' );
-			script.src = 'http://localhost:8085/dist/sitespec.umd.js';
-			script.onload = () => {
-				console.log( '✅ Site-spec script loaded successfully' );
-				// Wait a bit for the library to initialize
-				setTimeout( initializeSiteSpec, 100 );
-			};
-			script.onerror = ( error ) => {
-				console.error( '❌ Failed to load site-spec script:', error );
-			};
-			document.head.appendChild( script );
 		};
 
-		// Start loading
-		loadSiteSpec();
+		// Start initialization
+		initializeSiteSpec();
 	}, [] );
 
 	return (
 		<>
 			<DocumentHead title={ translate( 'Build Your Site with AI' ) } />
 			{ /* SiteSpec chat interface container */ }
-			<div id="sitespec"></div>
+			<div id="site-spec"></div>
 		</>
 	);
 };

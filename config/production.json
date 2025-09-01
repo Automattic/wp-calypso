@@ -24,6 +24,7 @@
 		"ad-tracking": true,
 		"akismet/checkout-quantity-dropdown": true,
 		"bilmur-script": true,
+		"site-spec-script": true,
 		"calypso/ai-blogging-prompts": false,
 		"calypso/ai-site-builder-flow": true,
 		"calypso/all-domain-management": true,
