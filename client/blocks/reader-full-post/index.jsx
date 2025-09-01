@@ -343,8 +343,15 @@ export class FullPostView extends Component {
 		// Add keyboard navigation for gallery images
 		this.postContentWrapper.current.addEventListener( 'keydown', this.handleGalleryKeydown, true );
 
-		// Make gallery images focusable
-		this.makeGalleryImagesFocusable();
+		// Make gallery images focusable (with a small delay to ensure DOM is ready)
+		setTimeout( () => {
+			this.makeGalleryImagesFocusable();
+		}, 100 );
+
+		// Also try again after a longer delay in case content loads asynchronously
+		setTimeout( () => {
+			this.makeGalleryImagesFocusable();
+		}, 1000 );
 	};
 
 	// Handle keyboard events on gallery images
@@ -381,20 +388,33 @@ export class FullPostView extends Component {
 			return;
 		}
 
-		const galleryImages = this.postContentWrapper.current.querySelectorAll(
-			'.wp-block-gallery img, .tiled-gallery img'
-		);
+		// Try multiple selector patterns to catch all gallery structures
+		const selectors = [
+			'.wp-block-gallery img',
+			'.wp-block-gallery .wp-block-image img',
+			'.wp-block-gallery .wp-block-image .image-wrapper img',
+			'.tiled-gallery img',
+		];
 
-		galleryImages.forEach( ( img ) => {
-			// Make image focusable
-			img.setAttribute( 'tabindex', '0' );
+		selectors.forEach( ( selector ) => {
+			const galleryImages = this.postContentWrapper.current.querySelectorAll( selector );
 
-			// Add role and label for screen readers
-			img.setAttribute( 'role', 'button' );
-			img.setAttribute( 'aria-label', `Open gallery image: ${ img.alt || 'Image' }` );
+			galleryImages.forEach( ( img ) => {
+				// Skip if already processed
+				if ( img.getAttribute( 'tabindex' ) === '0' ) {
+					return;
+				}
 
-			// Add visual focus indicator
-			img.style.cursor = 'pointer';
+				// Make image focusable
+				img.setAttribute( 'tabindex', '0' );
+
+				// Add role and label for screen readers
+				img.setAttribute( 'role', 'button' );
+				img.setAttribute( 'aria-label', `Open gallery image: ${ img.alt || 'Image' }` );
+
+				// Add visual focus indicator
+				img.style.cursor = 'pointer';
+			} );
 		} );
 	};
 
@@ -483,6 +503,11 @@ export class FullPostView extends Component {
 				this.trackExitBeforeCompletion( prevProps.post );
 				this.setReadingStartTime();
 				this.resetScroll();
+
+				// Re-initialize gallery integration for new post
+				setTimeout( () => {
+					this.makeGalleryImagesFocusable();
+				}, 500 );
 			}
 		}
 

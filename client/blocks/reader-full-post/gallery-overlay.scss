@@ -25,7 +25,7 @@ $gallery-content-z-index: 5;
 		.gallery-overlay__nav,
 		.gallery-overlay__error-button {
 			&:focus {
-				outline: 1px dotted rgba(255, 255, 255, 0.4);
+				background: #999;
 			}
 		}
 	}
@@ -86,7 +86,8 @@ $gallery-content-z-index: 5;
 	justify-content: center;
 	transition: all 0.2s ease;
 
-	&:hover {
+	&:hover,
+	&:focus {
 		background-color: #999;
 		color: #fff;
 	}
@@ -569,6 +570,18 @@ $gallery-content-z-index: 5;
 
 	.gallery-overlay__image {
 		transition: none;
+	}
+}
+
+// Gallery image focus styles in the main content
+.reader-full-post__content {
+	.wp-block-gallery img,
+	.wp-block-gallery .wp-block-image .image-wrapper img,
+	.tiled-gallery img {
+		&:focus {
+			outline: 1px dashed var(--color-accent);
+			outline-offset: 2px;
+		}
 	}
 }
 
