@@ -1,4 +1,7 @@
 import config from '@automattic/calypso-config';
+// eslint-disable-next-line no-restricted-imports
+import { canBeTranslated, getLanguage, isLocaleVariant } from '@automattic/i18n-utils';
+import { SubLanguage } from '@automattic/languages';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
 	Notice,
@@ -21,7 +24,7 @@ import {
 } from '../../app/queries/me-user-preferences';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { availableLanguages } from '../../data/languages';
+import { languagesAsOptions } from '../../data/languages';
 import { UserSettingsPreferences } from '../../data/me-user-preferences';
 import type { Field } from '@wordpress/dataviews';
 
@@ -36,6 +39,67 @@ const languageForm = {
 		},
 	],
 };
+
+// TODO add tests.
+/**
+ * Adapted from https://github.com/Automattic/wp-calypso/blob/fbeb9c37266e2bfac7af881b1672a9f6d72a0670/client/me/account/main.jsx#L299
+ */
+const shouldDisplayCommunityTranslator = ( data: UserSettingsPreferences ) => {
+	const locale = data.language;
+
+	// disable for locales
+	if ( ! locale || ! canBeTranslated( locale ) ) {
+		return false;
+	}
+
+	// if the user hasn't yet selected a language, and the locale variants has no official GP translation set
+	if ( isLocaleVariant( locale ) && ! canBeTranslated( locale ) ) {
+		return false;
+	}
+	if ( data.locale_variant && ! canBeTranslated( data.locale_variant ) ) {
+		return false;
+	}
+
+	return true;
+};
+
+const thanksToCommunityTranslator = ( data: UserSettingsPreferences ) => {
+	if ( ! shouldDisplayCommunityTranslator( data ) ) {
+		return;
+	}
+
+	let language = getLanguage( data.language );
+
+	// if it's a variant, we want the parent language
+	if ( language && isLocaleVariant( language.langSlug ) ) {
+		language = getLanguage( ( language as SubLanguage ).parentLangSlug );
+	}
+	if ( ! language ) {
+		return;
+	}
+	return (
+		<>
+			<br />
+			{ createInterpolateElement(
+				sprintf(
+					/* translators: %s: selected interface language */
+					__(
+						'Thanks to all our <external>community members who helped translate to %s</external>'
+					),
+					language.name
+				),
+				{
+					external: (
+						<ExternalLink
+							href={ `https://translate.wordpress.com/translators/?contributor_locale=${ language.langSlug }` }
+						/>
+					),
+				}
+			) }
+		</>
+	);
+};
+
 export default function Preferences() {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: serverData } = useQuery( userPreferencesQuery() );
@@ -43,6 +107,10 @@ export default function Preferences() {
 	const [ savingData, setSavingData ] = useState<
 		Partial< UserSettingsPreferences > | undefined
 	>();
+	// in case we're using a locale variant we'll override the language since that's what's being used in the combobox.
+	if ( serverData?.locale_variant ) {
+		serverData.language = serverData.locale_variant;
+	}
 	const data = useMemo(
 		() => ( serverData ? { ...serverData, ...savingData, ...localData } : undefined ),
 		[ serverData, savingData, localData ]
@@ -72,10 +140,6 @@ export default function Preferences() {
 			},
 		} );
 	};
-
-	const langValue = data && data.language ? data.language : 'en';
-	const selectedLanguageLabel =
-		availableLanguages.find( ( opt ) => opt.value === langValue )?.label || langValue;
 
 	if ( ! data ) {
 		return null;
@@ -113,35 +177,18 @@ export default function Preferences() {
 									[ field.id ]: newValue,
 								} );
 							} }
-							options={ availableLanguages }
+							options={ field.elements || [] }
 						/>
 						<Text variant="muted">
 							{ __(
 								'This is the language of the interface you see across WordPress.com as a whole.'
 							) }
-							<br />
-							{ createInterpolateElement(
-								// TODO reimplement logic https://github.com/Automattic/wp-calypso/blob/fbeb9c37266e2bfac7af881b1672a9f6d72a0670/client/me/account/main.jsx#L299
-								sprintf(
-									/* translators: %s: selected interface language */
-									__(
-										'Thanks to all our <external>community members who helped translate to %s</external>'
-									),
-									selectedLanguageLabel
-								),
-								{
-									external: (
-										<ExternalLink
-											href={ `https://translate.wordpress.com/translators/?contributor_locale=${ langValue }` }
-										/>
-									),
-								}
-							) }
+							{ data && thanksToCommunityTranslator( data ) }
 						</Text>
 					</>
 				);
 			},
-			elements: availableLanguages,
+			elements: languagesAsOptions,
 		},
 		{
 			// TODO show it only when canDisplayCommunityTranslator is true, don't use the calypso/state
