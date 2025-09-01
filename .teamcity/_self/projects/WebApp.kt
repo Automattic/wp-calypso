@@ -946,13 +946,17 @@ object PlaywrightTestPRMatrix : BuildType({
 	}
 
 	steps {
-		script {
+		mergeTrunk( skipIfConflict = true )
+
+		bashNodeScript {
 			name = "Test step"
 			scriptContent = """
 				echo "Running Playwright tests for project: %playwrightProject%"
 				cd test/e2e
 				yarn playwright:%playwrightProject% --list
 			"""
+			dockerImage = "%docker_image_e2e%"
+			dockerRunParameters = "-u %env.UID% --shm-size=4g"
 		}
 	}
 })
