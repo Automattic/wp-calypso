@@ -38,6 +38,8 @@ $blueberry-blue: #3858e9;
 	overscroll-behavior: contain;
 	padding-top: 16px;
 	gap: 28px;
+	padding-bottom: 40px;
+	box-sizing: border-box;
 
 	&:has( .odie-notice ) {
 		margin-bottom: 135px;
@@ -99,23 +101,71 @@ $blueberry-blue: #3858e9;
 	text-align: left;
 	width: 100%;
 }
-.odie-chat-message-input-container {
+
+.odie-chat-message-input-container, .odie-closed-conversation-footer {
+	padding: 16px;
 	z-index: 10;
 	position: fixed;
 	bottom: 0;
 	left: 0;
 	right: 0;
-	max-width: 410px;
-	flex-shrink: 0;
-	background: var( --black-white-white, #fff );
-	border-radius: 0 0 24px 24px;
+}
 
-	.odie-send-message-container {
-		box-sizing: border-box;
+.odie-chat-message-input-container.agenttic {
+	--radius: 8px;
+}
+
+.odie-closed-conversation-footer {
+	border-top: 1px solid var( --studio-gray-5, #dcdcde );
+	background: var( --studio-white, #fff );
+	box-sizing: border-box;
+
+	width: 100%;
+	display: flex;
+	padding: 16px;
+	flex-direction: column;
+	align-items: center;
+	gap: 10px;
+
+	span {
+		color: var( --studio-gray-40, #787c82 );
+		font-size: $font-body-small;
+		line-height: 20px;
+	}
+
+	.odie-closed-conversation-footer__button {
+		display: flex;
+		height: 40px;
+		padding: 10px 24px;
+		justify-content: center;
+		align-items: center;
+		gap: 10px;
+		align-self: stretch;
+
 		border-radius: 4px;
-		border-top-left-radius: 0;
-		border-top-right-radius: 0;
-		padding: 16px;
-		border-top: 1px solid var(--gray-gray-5, #dcdcde);
+		border: 1px solid var( --studio-gray-10, #c3c4c7 );
+		background: var( --studio-white, #fff );
+		color: var( --studio-gray-100, #101517 );
+
+		svg {
+			color: var( --studio-gray-40 );
+		}
+
+		&:hover {
+			border-color: var( --color-neutral-20 ) !important;
+		}
+
+		&:focus {
+			outline: var( --studio-blue-50, #0675c4 ) solid 2px !important;
+		}
+
+		&:focus,
+		&:hover {
+			color: var( --studio-gray-100, #101517 ) !important;
+
+			svg {
+				color: var( --studio-gray-40 );
+			}
+		}
 	}
 }
