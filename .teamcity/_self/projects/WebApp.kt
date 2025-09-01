@@ -961,8 +961,6 @@ object PlaywrightTestPRMatrix : BuildType({
 				echo "Running Playwright tests for project: %playwrightProject%"
 				pwd
 				ls -la
-				cd calypso
-				ls -la
 				# cd test/e2e
 				# yarn playwright:%playwrightProject% --list
 			"""
