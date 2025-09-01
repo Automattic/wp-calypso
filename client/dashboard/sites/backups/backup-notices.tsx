@@ -5,7 +5,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useBackupState } from '../../app/hooks/site-backup-state';
 import { useFormattedTime } from '../../components/formatted-time';
 import { Notice } from '../../components/notice';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 
 /**
  * Renders a contextual Notice based on the site's backup status
