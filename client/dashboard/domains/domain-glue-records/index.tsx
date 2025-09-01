@@ -62,7 +62,13 @@ function DomainGlueRecords() {
 			{
 				id: 'delete',
 				label: __( 'Delete' ),
-				RenderModal: ( props ) => <DomainGlueRecordDeleteModal { ...props } />,
+				RenderModal: ( { items, closeModal } ) => (
+					<DomainGlueRecordDeleteModal
+						glueRecord={ items[ 0 ] }
+						onClose={ closeModal }
+						domainName={ domainName }
+					/>
+				),
 			},
 		],
 		[ domainName, navigate ]
