@@ -19,6 +19,7 @@ export * from './domains';
 export * from './emails';
 export * from './geo';
 export * from './me';
+export * from './me-account';
 export * from './me-blocked-sites';
 export * from './me-dpa';
 export * from './me-payment-methods';
