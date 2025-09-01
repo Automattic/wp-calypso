@@ -276,7 +276,7 @@ export class FullPostView extends Component {
 		this.setState( { galleryError: null } );
 	};
 
-	// Extract image data from a gallery element
+	// Extract image data from a gallery element with performance optimization
 	extractGalleryImages = ( galleryElement ) => {
 		try {
 			const images = [];
@@ -284,18 +284,23 @@ export class FullPostView extends Component {
 				'.wp-block-image img, .blocks-gallery-item img'
 			);
 
-			galleryImages.forEach( ( img ) => {
+			galleryImages.forEach( ( img, index ) => {
+				// Get the best available image source
+				const src = this.getOptimizedImageSrc( img );
+
 				// Validate image source
-				if ( ! img.src || img.src === '' ) {
+				if ( ! src || src === '' ) {
 					return; // Skip images without valid source
 				}
 
 				images.push( {
-					src: img.src,
-					alt: img.alt || '',
+					src,
+					alt: img.alt || `Gallery image ${ index + 1 }`,
 					caption: this.getImageCaption( img ),
 					width: img.naturalWidth || img.width || null,
 					height: img.naturalHeight || img.height || null,
+					originalSrc: img.src, // Keep original for fallback
+					index,
 				} );
 			} );
 
@@ -304,6 +309,49 @@ export class FullPostView extends Component {
 			this.handleGalleryError( error );
 			return [];
 		}
+	};
+
+	// Get optimized image source based on screen size and device capabilities
+	getOptimizedImageSrc = ( img ) => {
+		const originalSrc = img.src || img.dataset.src || img.dataset.originalSrc;
+
+		if ( ! originalSrc ) {
+			return null;
+		}
+
+		// Check if we're on a high-DPI display
+		const devicePixelRatio = window.devicePixelRatio || 1;
+		const isHighDPI = devicePixelRatio > 1.5;
+
+		// Get viewport dimensions
+		const viewportWidth = window.innerWidth;
+		const viewportHeight = window.innerHeight;
+
+		// Calculate optimal image size (accounting for overlay max-width/height)
+		const maxDisplayWidth = Math.min( viewportWidth * 0.9, 1200 );
+		const maxDisplayHeight = Math.min( viewportHeight * 0.8, 900 );
+
+		// Adjust for high-DPI displays
+		const targetWidth = Math.round( maxDisplayWidth * ( isHighDPI ? 1.5 : 1 ) );
+		const targetHeight = Math.round( maxDisplayHeight * ( isHighDPI ? 1.5 : 1 ) );
+
+		// Try to optimize WordPress.com image URLs
+		if ( originalSrc.includes( 'wp.com' ) || originalSrc.includes( 'wordpress.com' ) ) {
+			// Remove existing size parameters
+			const baseSrc = originalSrc.split( '?' )[ 0 ];
+
+			// Add optimized parameters
+			const params = new URLSearchParams();
+			params.set( 'w', targetWidth );
+			params.set( 'h', targetHeight );
+			params.set( 'fit', 'fit' );
+			params.set( 'quality', isHighDPI ? '85' : '90' );
+
+			return `${ baseSrc }?${ params.toString() }`;
+		}
+
+		// For other CDNs or direct images, return original
+		return originalSrc;
 	};
 
 	// Get caption text for an image

@@ -403,6 +403,85 @@ $gallery-content-z-index: 5;
 		max-width: 80vw;
 		max-height: 85vh;
 	}
+
+	// Enhanced image aspect ratio handling
+	&.has-dimensions {
+		object-fit: contain;
+	}
+
+	&.is-wide {
+		max-height: 70vh;
+	}
+
+	&.is-tall {
+		max-width: 60vw;
+	}
+
+	// High DPI display optimizations
+	@media (-webkit-min-device-pixel-ratio: 2) {
+		image-rendering: -webkit-optimize-contrast;
+		image-rendering: crisp-edges;
+	}
+}
+
+// Image error state
+.gallery-overlay__image-error {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+	min-height: 200px;
+	padding: 2rem;
+	text-align: center;
+	color: rgba(255, 255, 255, 0.8);
+}
+
+.gallery-overlay__image-error-content {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1rem;
+	max-width: 300px;
+
+	.gridicon {
+		opacity: 0.6;
+		color: rgba(255, 255, 255, 0.8);
+	}
+
+	p {
+		margin: 0;
+		font-size: 1rem;
+		line-height: 1.4;
+		color: rgba(255, 255, 255, 0.9);
+	}
+}
+
+.gallery-overlay__retry-button {
+	background: rgba(255, 255, 255, 0.1);
+	border: 1px solid rgba(255, 255, 255, 0.3);
+	border-radius: 4px;
+	padding: 0.5rem 1rem;
+	color: #fff;
+	font-size: 0.875rem;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	backdrop-filter: blur(4px);
+
+	&:hover {
+		background: rgba(255, 255, 255, 0.2);
+		border-color: rgba(255, 255, 255, 0.5);
+		transform: translateY(-1px);
+	}
+
+	&:active {
+		transform: translateY(0);
+	}
+
+	&:focus {
+		outline: 2px solid rgba(255, 255, 255, 0.6);
+		outline-offset: 2px;
+	}
 }
 
 .gallery-overlay__loading {

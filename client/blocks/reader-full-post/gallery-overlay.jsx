@@ -21,6 +21,8 @@ const GalleryOverlay = ( {
 } ) => {
 	const translate = useTranslate();
 	const [ isImageLoading, setIsImageLoading ] = useState( false );
+	const [ imageError, setImageError ] = useState( false );
+	const [ imageDimensions, setImageDimensions ] = useState( null );
 	const [ touchStart, setTouchStart ] = useState( null );
 	const [ touchEnd, setTouchEnd ] = useState( null );
 
@@ -107,27 +109,85 @@ const GalleryOverlay = ( {
 		};
 	}, [ isOpen ] );
 
-	// Preload adjacent images for smooth navigation
+	// Enhanced preloading for smoother navigation and performance
 	useEffect( () => {
 		if ( ! isOpen || ! hasMultipleImages ) {
 			return;
 		}
 
-		const preloadImage = ( src ) => {
-			const img = new Image();
-			img.src = src;
+		const preloadImage = ( src, priority = 'normal' ) => {
+			return new Promise( ( resolve, reject ) => {
+				const img = new Image();
+
+				// Handle successful load
+				img.onload = () => {
+					resolve( img );
+				};
+
+				// Handle load errors
+				img.onerror = () => {
+					reject( new Error( `Failed to preload image: ${ src }` ) );
+				};
+
+				// Set loading priority if supported
+				if ( 'loading' in img ) {
+					img.loading = priority === 'high' ? 'eager' : 'lazy';
+				}
+
+				// Start loading
+				img.src = src;
+			} );
 		};
 
-		// Preload next image
-		if ( hasNext ) {
-			preloadImage( images[ currentIndex + 1 ].src );
-		}
+		const preloadImages = async () => {
+			const preloadPromises = [];
 
-		// Preload previous image
-		if ( hasPrevious ) {
-			preloadImage( images[ currentIndex - 1 ].src );
-		}
+			// Preload adjacent images with high priority
+			if ( hasNext ) {
+				preloadPromises.push(
+					preloadImage( images[ currentIndex + 1 ].src, 'high' ).catch( () => {} ) // Silently handle preload failures
+				);
+			}
+
+			if ( hasPrevious ) {
+				preloadPromises.push(
+					preloadImage( images[ currentIndex - 1 ].src, 'high' ).catch( () => {} )
+				);
+			}
+
+			// Preload further images with normal priority
+			const furtherIndices = [];
+			if ( currentIndex + 2 < images.length ) {
+				furtherIndices.push( currentIndex + 2 );
+			}
+			if ( currentIndex - 2 >= 0 ) {
+				furtherIndices.push( currentIndex - 2 );
+			}
+
+			furtherIndices.forEach( ( index ) => {
+				preloadPromises.push( preloadImage( images[ index ].src, 'normal' ).catch( () => {} ) );
+			} );
+
+			// Execute all preloads without blocking
+			if ( preloadPromises.length > 0 ) {
+				Promise.allSettled( preloadPromises );
+			}
+		};
+
+		// Debounce preloading to avoid excessive requests during rapid navigation
+		const timeoutId = setTimeout( preloadImages, 100 );
+
+		return () => clearTimeout( timeoutId );
 	}, [ isOpen, hasMultipleImages, hasNext, hasPrevious, currentIndex, images ] );
+
+	// Reset image states when current image changes
+	useEffect( () => {
+		if ( isOpen ) {
+			setImageError( false );
+			setImageDimensions( null );
+			setIsImageLoading( true );
+		}
+	}, [ currentIndex, isOpen ] );
 
 	// Handle orientation changes for better responsive behavior
 	useEffect( () => {
@@ -158,12 +218,60 @@ const GalleryOverlay = ( {
 		return null;
 	}
 
-	const handleImageLoad = () => {
+	const handleImageLoad = ( event ) => {
 		setIsImageLoading( false );
+		setImageError( false );
+
+		// Track image dimensions for better aspect ratio handling
+		const img = event.target;
+		setImageDimensions( {
+			width: img.naturalWidth,
+			height: img.naturalHeight,
+			aspectRatio: img.naturalWidth / img.naturalHeight,
+		} );
 	};
 
 	const handleImageLoadStart = () => {
 		setIsImageLoading( true );
+		setImageError( false );
+		setImageDimensions( null );
+	};
+
+	const getFallbackImageSrc = ( image ) => {
+		// Try different image size variants
+		const originalSrc = image.src;
+
+		// If we're loading a high-res version, try medium or thumbnail
+		if ( originalSrc.includes( '?w=' ) || originalSrc.includes( '&w=' ) ) {
+			// Try medium size first
+			const mediumSrc = originalSrc.replace( /[?&]w=\d+/, '?w=800' );
+			if ( mediumSrc !== originalSrc ) {
+				return mediumSrc;
+			}
+		}
+
+		// Try removing size parameters entirely for original
+		const baseSrc = originalSrc.split( '?' )[ 0 ];
+		if ( baseSrc !== originalSrc ) {
+			return baseSrc;
+		}
+
+		// No fallback available
+		return null;
+	};
+
+	const handleImageError = ( event ) => {
+		setIsImageLoading( false );
+		setImageError( true );
+		setImageDimensions( null );
+
+		// Try to load a fallback if available
+		const img = event.target;
+		const fallbackSrc = getFallbackImageSrc( currentImage );
+
+		if ( fallbackSrc && img.src !== fallbackSrc ) {
+			img.src = fallbackSrc;
+		}
 	};
 
 	const handleBackdropClick = () => {
@@ -277,20 +385,63 @@ const GalleryOverlay = ( {
 						onTouchMove={ handleTouchMove }
 						onTouchEnd={ handleTouchEnd }
 					>
-						{ ( isImageLoading || isLoading ) && (
+						{ ( isImageLoading || isLoading ) && ! imageError && (
 							<div className="gallery-overlay__loading">
 								<Gridicon icon="sync" size={ 48 } />
 							</div>
 						) }
-						<img
-							src={ currentImage.src }
-							alt={ currentImage.alt }
-							className={ clsx( 'gallery-overlay__image', {
-								'is-loading': isImageLoading,
-							} ) }
-							onLoad={ handleImageLoad }
-							onLoadStart={ handleImageLoadStart }
-						/>
+
+						{ imageError ? (
+							<div className="gallery-overlay__image-error">
+								<div className="gallery-overlay__image-error-content">
+									<Gridicon icon="image" size={ 48 } />
+									<p>{ translate( 'Unable to load image' ) }</p>
+									<button
+										className="gallery-overlay__retry-button"
+										onClick={ () => {
+											setImageError( false );
+											setIsImageLoading( true );
+											// Force image reload by updating src
+											const imgElement = document.querySelector( '.gallery-overlay__image' );
+											if ( imgElement ) {
+												const originalSrc = imgElement.src;
+												imgElement.src = '';
+												imgElement.src = originalSrc;
+											}
+										} }
+									>
+										{ translate( 'Retry' ) }
+									</button>
+								</div>
+							</div>
+						) : (
+							<img
+								src={ currentImage.src }
+								alt={ currentImage.alt }
+								width={ currentImage.width }
+								height={ currentImage.height }
+								className={ clsx( 'gallery-overlay__image', {
+									'is-loading': isImageLoading,
+									'has-dimensions': imageDimensions,
+									'is-wide': imageDimensions?.aspectRatio > 1.5,
+									'is-tall': imageDimensions?.aspectRatio < 0.67,
+								} ) }
+								style={
+									imageDimensions
+										? {
+												'--image-aspect-ratio': imageDimensions.aspectRatio,
+												'--image-width': imageDimensions.width,
+												'--image-height': imageDimensions.height,
+										  }
+										: {}
+								}
+								onLoad={ handleImageLoad }
+								onLoadStart={ handleImageLoadStart }
+								onError={ handleImageError }
+								loading="eager"
+								decoding="async"
+							/>
+						) }
 					</div>
 				) }
 
