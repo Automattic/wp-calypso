@@ -8,6 +8,7 @@
 	"references": [
 		{ "path": "./accessible-focus" },
 		{ "path": "./api-core" },
+		{ "path": "./api-queries" },
 		{ "path": "./block-renderer" },
 		{ "path": "./browser-data-collector" },
 		{ "path": "./calypso-analytics" },
