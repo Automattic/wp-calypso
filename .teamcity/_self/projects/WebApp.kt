@@ -965,7 +965,6 @@ object PlaywrightTestPRMatrix : BuildType({
 				# yarn playwright:%playwrightProject% --list
 			"""
 			dockerImage = "%docker_image_e2e%"
-			dockerRunParameters = "-u %env.UID% --shm-size=4g"
 		}
 	}
 })
@@ -997,7 +996,7 @@ object PlaywrightTestPreReleaseMatrix : BuildType({
 	}
 
 	steps {
-		script {
+		bashNodeScript {
 			name = "Test step"
 			scriptContent = """
 				echo "Running pre-release Playwright tests for project: %playwrightProject%"
