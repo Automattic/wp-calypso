@@ -185,15 +185,18 @@ $gallery-content-z-index: 5;
 	transition: all 0.3s ease;
 	transform: scale(1);
 
-	&.is-loading {
-		opacity: 0.7;
-		transform: scale(0.98);
+	&.is-transitioning {
+		&.slide-left {
+			animation: gallery-slide-out-left 0.2s ease-out;
+		}
+		
+		&.slide-right {
+			animation: gallery-slide-out-right 0.2s ease-out;
+		}
 	}
 
 	// Add subtle glow effect
-	&:not(.is-loading) {
-		filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.1));
-	}
+	filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.1));
 
 	@include breakpoint-deprecated( '>1200px' ) {
 		max-width: 85vw;
@@ -269,15 +272,6 @@ $gallery-content-z-index: 5;
 	&:active {
 		transform: translateY(0);
 	}
-}
-
-.gallery-overlay__loading {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	color: #fff;
-	animation: gallery-overlay-spin 1s linear infinite;
 }
 
 .gallery-overlay__error {
@@ -384,12 +378,26 @@ $gallery-content-z-index: 5;
 	}
 }
 
-@keyframes gallery-overlay-spin {
-	from {
-		transform: translate(-50%, -50%) rotate(0deg);
+// Slide animations for swipe transitions
+@keyframes gallery-slide-out-left {
+	0% {
+		opacity: 1;
+		transform: translateX(0);
 	}
-	to {
-		transform: translate(-50%, -50%) rotate(360deg);
+	100% {
+		opacity: 0;
+		transform: translateX(-30px);
+	}
+}
+
+@keyframes gallery-slide-out-right {
+	0% {
+		opacity: 1;
+		transform: translateX(0);
+	}
+	100% {
+		opacity: 0;
+		transform: translateX(30px);
 	}
 }
 
@@ -405,12 +413,12 @@ $gallery-content-z-index: 5;
 		transition-duration: 0s;
 	}
 
-	.gallery-overlay__loading {
-		animation: none;
-	}
-
 	.gallery-overlay__image {
 		transition: none;
+		
+		&.is-transitioning {
+			animation: none;
+		}
 	}
 }
 

@@ -11,7 +11,6 @@ const GalleryOverlay = ( {
 	isOpen,
 	images,
 	currentIndex,
-	isLoading,
 	error,
 	onClose,
 	onNext,
@@ -19,8 +18,11 @@ const GalleryOverlay = ( {
 	onClearError,
 } ) => {
 	const translate = useTranslate();
-	const [ isImageLoading, setIsImageLoading ] = useState( false );
 	const [ imageError, setImageError ] = useState( false );
+	const [ touchStart, setTouchStart ] = useState( null );
+	const [ touchEnd, setTouchEnd ] = useState( null );
+	const [ isTransitioning, setIsTransitioning ] = useState( false );
+	const [ slideDirection, setSlideDirection ] = useState( null );
 
 	// Calculate navigation states (safe defaults if images is empty)
 	const currentImage = images[ currentIndex ] || {};
@@ -136,7 +138,6 @@ const GalleryOverlay = ( {
 	useEffect( () => {
 		if ( isOpen ) {
 			setImageError( false );
-			setIsImageLoading( true );
 		}
 	}, [ currentIndex, isOpen ] );
 
@@ -228,11 +229,6 @@ const GalleryOverlay = ( {
 
 		const handleOrientationChange = () => {
 			// Small delay to allow viewport to adjust
-			setTimeout( () => {
-				// Force a re-render to adjust image sizing
-				setIsImageLoading( true );
-				setTimeout( () => setIsImageLoading( false ), 100 );
-			}, 100 );
 		};
 
 		window.addEventListener( 'orientationchange', handleOrientationChange );
@@ -250,17 +246,10 @@ const GalleryOverlay = ( {
 	}
 
 	const handleImageLoad = () => {
-		setIsImageLoading( false );
-		setImageError( false );
-	};
-
-	const handleImageLoadStart = () => {
-		setIsImageLoading( true );
 		setImageError( false );
 	};
 
 	const handleImageError = () => {
-		setIsImageLoading( false );
 		setImageError( true );
 	};
 
@@ -275,6 +264,52 @@ const GalleryOverlay = ( {
 			event.preventDefault();
 			onClose();
 		}
+	};
+
+	// Simple touch handlers for mobile swiping
+	const handleTouchStart = ( event ) => {
+		setTouchEnd( null );
+		setTouchStart( event.targetTouches[ 0 ].clientX );
+	};
+
+	const handleTouchMove = ( event ) => {
+		setTouchEnd( event.targetTouches[ 0 ].clientX );
+	};
+
+	const handleTouchEnd = () => {
+		if ( ! touchStart || ! touchEnd ) {
+			return;
+		}
+
+		const distance = touchStart - touchEnd;
+		const isLeftSwipe = distance > 50;
+		const isRightSwipe = distance < -50;
+
+		if ( isLeftSwipe && hasNext ) {
+			setSlideDirection( 'left' );
+			setIsTransitioning( true );
+			setTimeout( () => {
+				onNext();
+				setTimeout( () => {
+					setIsTransitioning( false );
+					setSlideDirection( null );
+				}, 50 );
+			}, 150 );
+		}
+		if ( isRightSwipe && hasPrevious ) {
+			setSlideDirection( 'right' );
+			setIsTransitioning( true );
+			setTimeout( () => {
+				onPrevious();
+				setTimeout( () => {
+					setIsTransitioning( false );
+					setSlideDirection( null );
+				}, 50 );
+			}, 150 );
+		}
+
+		setTouchStart( null );
+		setTouchEnd( null );
 	};
 
 	const overlayContent = (
@@ -339,13 +374,12 @@ const GalleryOverlay = ( {
 						</div>
 					</div>
 				) : (
-					<div className="gallery-overlay__image-container">
-						{ ( isImageLoading || isLoading ) && ! imageError && (
-							<div className="gallery-overlay__loading">
-								<Gridicon icon="sync" size={ 48 } />
-							</div>
-						) }
-
+					<div
+						className="gallery-overlay__image-container"
+						onTouchStart={ handleTouchStart }
+						onTouchMove={ handleTouchMove }
+						onTouchEnd={ handleTouchEnd }
+					>
 						{ imageError ? (
 							<div className="gallery-overlay__image-error">
 								<div className="gallery-overlay__image-error-content">
@@ -355,7 +389,6 @@ const GalleryOverlay = ( {
 										className="gallery-overlay__retry-button"
 										onClick={ () => {
 											setImageError( false );
-											setIsImageLoading( true );
 											// Force image reload by updating src
 											const imgElement = document.querySelector( '.gallery-overlay__image' );
 											if ( imgElement ) {
@@ -382,10 +415,11 @@ const GalleryOverlay = ( {
 									} )
 								}
 								className={ clsx( 'gallery-overlay__image', {
-									'is-loading': isImageLoading,
+									'is-transitioning': isTransitioning,
+									'slide-left': slideDirection === 'left',
+									'slide-right': slideDirection === 'right',
 								} ) }
 								onLoad={ handleImageLoad }
-								onLoadStart={ handleImageLoadStart }
 								onError={ handleImageError }
 							/>
 						) }
@@ -430,7 +464,7 @@ GalleryOverlay.propTypes = {
 		} )
 	).isRequired,
 	currentIndex: PropTypes.number.isRequired,
-	isLoading: PropTypes.bool,
+
 	error: PropTypes.string,
 	onClose: PropTypes.func.isRequired,
 	onNext: PropTypes.func.isRequired,
