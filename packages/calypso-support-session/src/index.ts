@@ -1,5 +1,4 @@
 import debugModule from 'debug';
-import wpcom from 'calypso/lib/wp';
 import bypassLocalStorage from './bypass-local-storage';
 
 const debug = debugModule( 'calypso:support-user' );
@@ -48,7 +47,9 @@ export function isSupportSession() {
 	return isSupportUserSession() || isSupportNextSession();
 }
 
-export function maybeInitializeSupportSession() {
+export function maybeInitializeSupportSession( wpcom: {
+	setSupportUserToken: ( user: string, token: string, callback: ( error: Error ) => void ) => void;
+} ) {
 	if ( isSupportUserSession() ) {
 		const { user, token } = getStoredSupportUser();
 		debug( 'Booting hosting dashboard with support user', user );
@@ -63,13 +64,15 @@ export function maybeInitializeSupportSession() {
 
 		window.addEventListener( 'beforeunload', handleBeforeUnload );
 
-		wpcom.setSupportUserToken( user, token, ( error: Error ) => {
-			debug( 'Deactivating support user and rebooting due to token error', error.message );
+		if ( user && token ) {
+			wpcom.setSupportUserToken( user, token, ( error: Error ) => {
+				debug( 'Deactivating support user and rebooting due to token error', error.message );
 
-			window.sessionStorage.removeItem( STORAGE_KEY );
-			window.removeEventListener( 'beforeunload', handleBeforeUnload );
-			window.location.search = '';
-		} );
+				window.sessionStorage.removeItem( STORAGE_KEY );
+				window.removeEventListener( 'beforeunload', handleBeforeUnload );
+				window.location.search = '';
+			} );
+		}
 	}
 
 	if ( isSupportNextSession() ) {

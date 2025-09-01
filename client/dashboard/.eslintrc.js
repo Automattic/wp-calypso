@@ -32,6 +32,7 @@ module.exports = {
 						group: [
 							'@automattic/*',
 							'!@automattic/calypso-config',
+							'!@automattic/calypso-support-session',
 							'!@automattic/components',
 							'@automattic/components/*',
 							'!@automattic/components/src',

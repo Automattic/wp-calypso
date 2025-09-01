@@ -1,7 +1,7 @@
+import { isSupportSession } from '@automattic/calypso-support-session';
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 import { QueryClient, defaultShouldDehydrateQuery } from '@tanstack/react-query';
 import { persistQueryClient } from '@tanstack/react-query-persist-client';
-import { isSupportSession } from './auth/support-session';
 
 export const queryClient = new QueryClient( {
 	defaultOptions: {

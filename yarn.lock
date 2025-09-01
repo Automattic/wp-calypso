@@ -753,6 +753,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/calypso-support-session@workspace:^, @automattic/calypso-support-session@workspace:packages/calypso-support-session":
+  version: 0.0.0-use.local
+  resolution: "@automattic/calypso-support-session@workspace:packages/calypso-support-session"
+  dependencies:
+    "@automattic/calypso-typescript-config": "workspace:^"
+    tslib: "npm:^2.8.1"
+    typescript: "npm:^5.8.3"
+  languageName: unknown
+  linkType: soft
+
 "@automattic/calypso-typescript-config@workspace:^, @automattic/calypso-typescript-config@workspace:packages/calypso-typescript-config":
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-typescript-config@workspace:packages/calypso-typescript-config"
@@ -14918,6 +14928,7 @@ __metadata:
     "@automattic/calypso-router": "workspace:^"
     "@automattic/calypso-sentry": "workspace:^"
     "@automattic/calypso-stripe": "workspace:^"
+    "@automattic/calypso-support-session": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
     "@automattic/color-studio": "npm:^4.1.0"
     "@automattic/command-palette": "workspace:^"

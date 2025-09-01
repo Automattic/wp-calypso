@@ -1,9 +1,9 @@
 import { HostingFeatures, DotcomFeatures, LogType } from '@automattic/api-core';
+import { isSupportSession } from '@automattic/calypso-support-session';
 import { createRoute, redirect, createLazyRoute, lazyRouteComponent } from '@tanstack/react-router';
 import { canViewHundredYearPlanSettings, canViewWordPressSettings } from '../../sites/features';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import { hasSiteTrialEnded } from '../../utils/site-trial';
-import { isSupportSession } from '../auth/support-session';
 import { isAutomatticianQuery } from '../queries/me-a8c';
 import { rawUserPreferencesQuery } from '../queries/me-preferences';
 import { siteByIdQuery, siteBySlugQuery } from '../queries/site';

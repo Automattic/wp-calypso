@@ -13,6 +13,7 @@
 		{ "path": "./calypso-analytics" },
 		{ "path": "./calypso-config" },
 		{ "path": "./calypso-e2e" },
+		{ "path": "./calypso-support-session" },
 		{ "path": "./calypso-products" },
 		{ "path": "./calypso-razorpay" },
 		{ "path": "./calypso-paypal" },
