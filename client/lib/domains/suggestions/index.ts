@@ -4,7 +4,7 @@ import {
 	isHundredYearDomainFlow,
 	isNewsletterFlow,
 } from '@automattic/onboarding';
-import type { DomainSuggestionQueryVendor } from '@automattic/data';
+import type { DomainSuggestionQueryVendor } from '@automattic/api-core';
 
 interface DomainSuggestionsVendorOptions {
 	isSignup?: boolean;

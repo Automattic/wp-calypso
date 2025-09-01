@@ -291,6 +291,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/api-core@workspace:^, @automattic/api-core@workspace:packages/api-core":
+  version: 0.0.0-use.local
+  resolution: "@automattic/api-core@workspace:packages/api-core"
+  dependencies:
+    "@automattic/calypso-typescript-config": "workspace:^"
+    tslib: "npm:^2.8.1"
+    typescript: "npm:^5.8.3"
+  languageName: unknown
+  linkType: soft
+
 "@automattic/babel-plugin-i18n-calypso@workspace:^, @automattic/babel-plugin-i18n-calypso@workspace:packages/babel-plugin-i18n-calypso":
   version: 0.0.0-use.local
   resolution: "@automattic/babel-plugin-i18n-calypso@workspace:packages/babel-plugin-i18n-calypso"
@@ -963,11 +973,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/data-stores@workspace:packages/data-stores"
   dependencies:
+    "@automattic/api-core": "workspace:^"
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-products": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/data": "workspace:^"
     "@automattic/design-picker": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/js-utils": "workspace:^"
@@ -1005,16 +1015,6 @@ __metadata:
     "@wordpress/data": ^10.23.0
     react: ^18.3.1
     react-dom: ^18.3.1
-  languageName: unknown
-  linkType: soft
-
-"@automattic/data@workspace:^, @automattic/data@workspace:packages/data":
-  version: 0.0.0-use.local
-  resolution: "@automattic/data@workspace:packages/data"
-  dependencies:
-    "@automattic/calypso-typescript-config": "workspace:^"
-    tslib: "npm:^2.8.1"
-    typescript: "npm:^5.8.3"
   languageName: unknown
   linkType: soft
 
@@ -1126,9 +1126,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/domain-search@workspace:packages/domain-search"
   dependencies:
+    "@automattic/api-core": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/data": "workspace:^"
     "@storybook/addon-a11y": "npm:^8.6.14"
     "@tanstack/react-query": "npm:^5.83.0"
     "@testing-library/dom": "npm:^10.4.0"
@@ -14897,6 +14897,7 @@ __metadata:
   resolution: "calypso@workspace:client"
   dependencies:
     "@automattic/accessible-focus": "workspace:^"
+    "@automattic/api-core": "workspace:^"
     "@automattic/block-renderer": "workspace:^"
     "@automattic/browser-data-collector": "workspace:^"
     "@automattic/calypso-analytics": "workspace:^"
@@ -14918,7 +14919,6 @@ __metadata:
     "@automattic/components": "workspace:^"
     "@automattic/composite-checkout": "workspace:^"
     "@automattic/create-calypso-config": "workspace:^"
-    "@automattic/data": "workspace:^"
     "@automattic/data-stores": "workspace:^"
     "@automattic/design-picker": "workspace:^"
     "@automattic/design-preview": "workspace:^"
