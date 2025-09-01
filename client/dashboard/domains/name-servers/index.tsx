@@ -24,7 +24,7 @@ export default function NameServers() {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const {
-		data: { nameservers: nameServers, is_using_default_nameservers: isUsingDefaultNameServers },
+		data: { nameServers, isUsingDefaultNameServers },
 	} = useSuspenseQuery( domainNameServersQuery( domainName ) );
 
 	const { mutate: updateNameServers, isPending: isUpdatingNameServers } = useMutation(
