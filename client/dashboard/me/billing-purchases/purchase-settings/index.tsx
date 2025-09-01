@@ -81,6 +81,7 @@ import {
 } from '../../../utils/purchase';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
 import { getPurchaseUrlForId, getAddPaymentMethodUrlFor } from '../urls';
+import { PurchaseNotice } from './purchase-notice';
 import type { User, Purchase } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 import type { ReactNode, ReactElement } from 'react';
@@ -1126,6 +1127,7 @@ export default function PurchaseSettings() {
 					<ProductLink purchase={ purchase } />
 					<DomainRegistrationAgreement purchase={ purchase } />
 					{ ! purchase.partner_name && <PluginList purchase={ purchase } /> }
+					<PurchaseNotice purchase={ purchase } />
 				</VStack>
 			}
 		>
