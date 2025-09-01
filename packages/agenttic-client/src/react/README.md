@@ -123,6 +123,15 @@ Storage operations are designed to fail gracefully:
 -   If stored data is corrupted, it's ignored and a fresh conversation starts
 -   Network errors don't affect local conversation state
 
+## Tool Promise Resolution
+
+The agent manager automatically handles asynchronous tool results:
+
+**Automatic Promise Resolution:**
+
+-   Tool results containing unresolved promises (the promise needs to be attached to the tool response `result` property) are automatically detected and resolved before conversation is returned to the agent
+-   Resolved values are persisted to conversation storage and in-memory history
+
 ## Performance Considerations
 
 -   **Memory Usage**: Each cached conversation uses minimal memory (text + metadata only)

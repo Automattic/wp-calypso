@@ -33,6 +33,14 @@ import {
 const DEFAULT_TIMEOUT = 120000;
 
 /**
+ * Map to track tool result promises and their resolved values by tool call ID
+ */
+const toolResultPromises = new Map<
+	string,
+	{ promise: Promise< any >; resolvedValue: any }
+>();
+
+/**
  * Check if any tool calls in a message have matching callbacks
  * @param toolProvider - The tool provider to check
  * @param message      - The message containing tool calls
@@ -68,6 +76,48 @@ async function hasMatchingToolCallbacks(
 	}
 
 	return false;
+}
+
+/**
+ * Clear all entries from the tool result promises map
+ */
+function clearToolResultPromises(): void {
+	toolResultPromises.clear();
+}
+
+/**
+ * Update tool results with resolved promise values if they've resolved
+ * @param toolResults - Array of tool results that may have corresponding resolved promises
+ * @return Updated tool results with resolved values where available
+ */
+function updateToolResultsWithResolvedPromises( toolResults: any[] ): any[] {
+	return toolResults.map( ( toolResult ) => {
+		const toolCallId = toolResult.data.toolCallId;
+		const promiseEntry = toolResultPromises.get( toolCallId );
+
+		if ( promiseEntry && promiseEntry.resolvedValue !== null ) {
+			const resolvedValue = promiseEntry.resolvedValue;
+
+			// Check if it's an error result
+			if ( resolvedValue.error ) {
+				return createToolResultDataPart(
+					toolCallId,
+					toolResult.data.toolId,
+					undefined,
+					resolvedValue.error
+				);
+			}
+
+			// Use the resolved value
+			return createToolResultDataPart(
+				toolCallId,
+				toolResult.data.toolId,
+				resolvedValue
+			);
+		}
+
+		return toolResult;
+	} );
 }
 
 /**
@@ -445,6 +495,38 @@ async function* processAgentResponseStream(
 							);
 						}
 
+						// Check if result contains a promise and store it for later resolution
+						if ( result.result instanceof Promise ) {
+							const promise = result.result;
+							const promiseEntry = {
+								promise,
+								resolvedValue: null as any,
+							};
+
+							toolResultPromises.set(
+								toolCallId as string,
+								promiseEntry
+							);
+
+							// Set up handlers to track resolved values
+							promise
+								.then( ( resolvedValue: any ) => {
+									promiseEntry.resolvedValue = resolvedValue;
+								} )
+								.catch( ( error: any ) => {
+									console.error(
+										`Promise rejected for tool call ${ toolCallId }:`,
+										error
+									);
+									promiseEntry.resolvedValue = {
+										error:
+											error instanceof Error
+												? error.message
+												: String( error ),
+									};
+								} );
+						}
+
 						const toolResult = createToolResultDataPart(
 							toolCallId as string,
 							toolId as string,
@@ -765,6 +847,8 @@ async function* processAgentResponseStream(
  *
  * @param config
  */
+export { updateToolResultsWithResolvedPromises, clearToolResultPromises };
+
 export function createClient( config: ClientConfig ): Client {
 	const {
 		agentId,

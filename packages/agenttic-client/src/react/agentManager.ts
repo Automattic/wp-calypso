@@ -8,7 +8,11 @@ import type {
 	TaskUpdate,
 	TextPart,
 } from '../client/types/index';
-import { createClient } from '../client/index';
+import {
+	clearToolResultPromises,
+	createClient,
+	updateToolResultsWithResolvedPromises,
+} from '../client/index';
 import {
 	createTextMessage,
 	extractToolCallsFromMessage,
@@ -25,6 +29,46 @@ import {
 	extractNewContentFromMessage,
 	extractToolResultsFromMessage,
 } from './conversationUtils';
+
+/**
+ * Resolve any promises in conversation history messages
+ * @param conversationHistory - Array of messages that may contain tool results with promises
+ * @return Updated conversation history with resolved promises
+ */
+async function resolvePromisesInConversationHistory(
+	conversationHistory: Message[]
+): Promise< Message[] > {
+	const resolvedHistory: Message[] = [];
+
+	for ( const message of conversationHistory ) {
+		if ( message.parts && Array.isArray( message.parts ) ) {
+			// Check if this message has tool result parts that might contain promises
+			const hasToolResults = message.parts.some(
+				( part: any ) =>
+					part.type === 'data' &&
+					'toolCallId' in part.data &&
+					'result' in part.data
+			);
+
+			if ( hasToolResults ) {
+				const updatedParts = updateToolResultsWithResolvedPromises(
+					message.parts
+				);
+				resolvedHistory.push( {
+					...message,
+					parts: updatedParts,
+				} );
+			} else {
+				resolvedHistory.push( message );
+			}
+		} else {
+			resolvedHistory.push( message );
+		}
+	}
+
+	clearToolResultPromises();
+	return resolvedHistory;
+}
 
 /**
  * Configuration for agent manager
@@ -265,11 +309,29 @@ function createAgentManager(): AgentManager {
 			// Track current tool call IDs to ensure we only capture matching tool results
 			let currentToolCallIds: string[] = [];
 
+			// Resolve any promises in conversation history before sending to agent
+			const resolvedConversationHistory =
+				await resolvePromisesInConversationHistory(
+					currentConversationHistory
+				);
+
+			// Update the agent's conversation history with resolved values
+			managedAgent.conversationHistory = resolvedConversationHistory;
+			// Update local tracking to use resolved history
+			currentConversationHistory = resolvedConversationHistory;
+			// Persist resolved conversation history if withHistory is true
+			if ( withHistory ) {
+				await persistConversationHistory(
+					key,
+					resolvedConversationHistory
+				);
+			}
+
 			const messageObj: Message =
 				options.message ||
 				createTextMessageWithHistory(
 					message,
-					currentConversationHistory
+					resolvedConversationHistory
 				);
 
 			// Add user message to local conversation history before streaming (always)

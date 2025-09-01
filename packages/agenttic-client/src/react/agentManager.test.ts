@@ -15,6 +15,8 @@ import type {
 // Mock dependencies
 vi.mock( '../client/index', () => ( {
 	createClient: vi.fn(),
+	updateToolResultsWithResolvedPromises: vi.fn(),
+	clearToolResultPromises: vi.fn(),
 } ) );
 
 vi.mock( '../client/utils/index', () => ( {
@@ -31,7 +33,11 @@ vi.mock( './conversationStorage', () => ( {
 
 // Import after mocking
 import { type AgentManager, getAgentManager } from './agentManager';
-import { createClient } from '../client/index';
+import {
+	clearToolResultPromises,
+	createClient,
+	updateToolResultsWithResolvedPromises,
+} from '../client/index';
 import {
 	createTextMessage,
 	extractToolCallsFromMessage,
@@ -125,6 +131,10 @@ describe( 'agentManager', () => {
 		vi.mocked( storeConversation ).mockResolvedValue();
 		vi.mocked( clearConversation ).mockResolvedValue();
 		vi.mocked( extractToolCallsFromMessage ).mockReturnValue( [] );
+		vi.mocked( updateToolResultsWithResolvedPromises ).mockImplementation(
+			( parts ) => parts
+		);
+		vi.mocked( clearToolResultPromises ).mockReturnValue();
 
 		// Setup default mock for sendMessage to return the mockTask
 		mockClient.sendMessage.mockResolvedValue( mockTask );
@@ -519,6 +529,383 @@ describe( 'agentManager', () => {
 			const manager2 = getAgentManager();
 
 			expect( manager1 ).toBe( manager2 );
+		} );
+	} );
+
+	describe( 'Promise Resolution', () => {
+		beforeEach( async () => {
+			// Ensure we have a fresh agent manager for promise tests
+			await agentManager.createAgent( 'promise-test-key', testConfig );
+		} );
+
+		describe( 'resolvePromisesInConversationHistory', () => {
+			it( 'should call clearToolResultPromises to clean up promise map', async () => {
+				const configWithSession = {
+					...testConfig,
+					sessionId: 'test-session',
+				};
+				await agentManager.createAgent( 'test-key', configWithSession );
+
+				// Mock streaming updates
+				const mockUpdates: TaskUpdate[] = [
+					{
+						id: 'task-123',
+						status: {
+							state: 'completed',
+							message: mockAgentMessage,
+						},
+						final: true,
+						text: 'Response',
+					},
+				];
+
+				mockClient.sendMessageStream.mockImplementation(
+					async function* () {
+						for ( const update of mockUpdates ) {
+							yield update;
+						}
+					}
+				);
+
+				// Execute sendMessageStream which should trigger promise resolution
+				const results: TaskUpdate[] = [];
+				for await ( const update of agentManager.sendMessageStream(
+					'test-key',
+					'Hello'
+				) ) {
+					results.push( update );
+				}
+
+				// The key test: Verify clearToolResultPromises was called to clean up
+				// This ensures the promise map gets cleaned up after processing
+				expect( clearToolResultPromises ).toHaveBeenCalled();
+			} );
+
+			it( 'should clear promise map even when no promises need resolution', async () => {
+				const configWithSession = {
+					...testConfig,
+					sessionId: 'test-session',
+				};
+				await agentManager.createAgent( 'test-key', configWithSession );
+
+				// Create conversation history without tool results (just text)
+				const conversationWithoutPromises = [
+					{
+						role: 'user',
+						kind: 'message',
+						parts: [ { type: 'text', text: 'Hello' } as TextPart ],
+						messageId: 'user-1',
+					} as Message,
+				];
+				vi.mocked( loadConversation ).mockResolvedValue(
+					conversationWithoutPromises
+				);
+
+				// Mock streaming updates
+				const mockUpdates: TaskUpdate[] = [
+					{
+						id: 'task-123',
+						status: {
+							state: 'completed',
+							message: mockAgentMessage,
+						},
+						final: true,
+						text: 'Response',
+					},
+				];
+
+				mockClient.sendMessageStream.mockImplementation(
+					async function* () {
+						for ( const update of mockUpdates ) {
+							yield update;
+						}
+					}
+				);
+
+				// Execute sendMessageStream
+				const results: TaskUpdate[] = [];
+				for await ( const update of agentManager.sendMessageStream(
+					'test-key',
+					'Hello'
+				) ) {
+					results.push( update );
+				}
+
+				// updateToolResultsWithResolvedPromises should not be called for text-only messages
+				expect(
+					updateToolResultsWithResolvedPromises
+				).not.toHaveBeenCalled();
+
+				// clearToolResultPromises should still be called to clean up any existing promises
+				expect( clearToolResultPromises ).toHaveBeenCalled();
+			} );
+
+			it( 'should always clean up promise map regardless of conversation content', async () => {
+				await agentManager.createAgent( 'test-key', testConfig );
+
+				// Mock streaming updates
+				const mockUpdates: TaskUpdate[] = [
+					{
+						id: 'task-123',
+						status: {
+							state: 'completed',
+							message: mockAgentMessage,
+						},
+						final: true,
+						text: 'Response',
+					},
+				];
+
+				mockClient.sendMessageStream.mockImplementation(
+					async function* () {
+						for ( const update of mockUpdates ) {
+							yield update;
+						}
+					}
+				);
+
+				// Execute with withHistory=false
+				const results: TaskUpdate[] = [];
+				for await ( const update of agentManager.sendMessageStream(
+					'test-key',
+					'Hello',
+					{ withHistory: false }
+				) ) {
+					results.push( update );
+				}
+
+				// clearToolResultPromises should always be called to prevent memory leaks
+				expect( clearToolResultPromises ).toHaveBeenCalled();
+			} );
+
+			it( 'should handle messages without tool results', async () => {
+				const configWithSession = {
+					...testConfig,
+					sessionId: 'test-session',
+				};
+				await agentManager.createAgent( 'test-key', configWithSession );
+
+				// Create conversation history without tool results
+				const conversationWithoutPromises = [
+					{
+						role: 'user',
+						kind: 'message',
+						parts: [ { type: 'text', text: 'Hello' } as TextPart ],
+						messageId: 'user-1',
+					} as Message,
+				];
+				vi.mocked( loadConversation ).mockResolvedValue(
+					conversationWithoutPromises
+				);
+
+				// Mock streaming updates
+				const mockUpdates: TaskUpdate[] = [
+					{
+						id: 'task-123',
+						status: {
+							state: 'completed',
+							message: mockAgentMessage,
+						},
+						final: true,
+						text: 'Response',
+					},
+				];
+
+				mockClient.sendMessageStream.mockImplementation(
+					async function* () {
+						for ( const update of mockUpdates ) {
+							yield update;
+						}
+					}
+				);
+
+				// Execute sendMessageStream
+				const results: TaskUpdate[] = [];
+				for await ( const update of agentManager.sendMessageStream(
+					'test-key',
+					'Hello'
+				) ) {
+					results.push( update );
+				}
+
+				// updateToolResultsWithResolvedPromises should not be called for text-only messages
+				expect(
+					updateToolResultsWithResolvedPromises
+				).not.toHaveBeenCalled();
+
+				// clearToolResultPromises should still be called to clean up any existing promises
+				expect( clearToolResultPromises ).toHaveBeenCalled();
+			} );
+
+			it( 'should update both memory and storage with resolved promises', async () => {
+				const configWithSession = {
+					...testConfig,
+					sessionId: 'test-session',
+				};
+				await agentManager.createAgent( 'test-key', configWithSession );
+
+				// Create conversation history with promises
+				const originalConversation = [
+					{
+						role: 'agent',
+						kind: 'message',
+						parts: [
+							{
+								type: 'data',
+								data: {
+									toolCallId: 'tool-1',
+									result: Promise.resolve( 'resolved' ),
+								},
+							} as DataPart,
+						],
+						messageId: 'agent-1',
+					} as Message,
+				];
+
+				const resolvedConversation = [
+					{
+						role: 'agent',
+						kind: 'message',
+						parts: [
+							{
+								type: 'data',
+								data: {
+									toolCallId: 'tool-1',
+									result: 'resolved',
+								},
+							} as DataPart,
+						],
+						messageId: 'agent-1',
+					} as Message,
+				];
+
+				vi.mocked( loadConversation ).mockResolvedValue(
+					originalConversation
+				);
+				vi.mocked(
+					updateToolResultsWithResolvedPromises
+				).mockReturnValue( resolvedConversation[ 0 ].parts );
+
+				// Mock streaming updates
+				const mockUpdates: TaskUpdate[] = [
+					{
+						id: 'task-123',
+						status: {
+							state: 'completed',
+							message: mockAgentMessage,
+						},
+						final: true,
+						text: 'Response',
+					},
+				];
+
+				mockClient.sendMessageStream.mockImplementation(
+					async function* () {
+						for ( const update of mockUpdates ) {
+							yield update;
+						}
+					}
+				);
+
+				// Execute sendMessageStream
+				const results: TaskUpdate[] = [];
+				for await ( const update of agentManager.sendMessageStream(
+					'test-key',
+					'Hello'
+				) ) {
+					results.push( update );
+				}
+
+				// Verify storeConversation was called with resolved conversation
+				expect( storeConversation ).toHaveBeenCalledWith(
+					'test-session',
+					expect.any( Array ),
+					undefined
+				);
+
+				// Verify in-memory conversation history was updated
+				const finalHistory =
+					agentManager.getConversationHistory( 'test-key' );
+				expect( finalHistory.length ).toBeGreaterThan( 0 );
+			} );
+
+			it( 'should not persist when withHistory=false', async () => {
+				await agentManager.createAgent( 'test-key', testConfig );
+
+				// Create conversation history with promises
+				const conversationWithPromises = [
+					{
+						role: 'agent',
+						kind: 'message',
+						parts: [
+							{
+								type: 'data',
+								data: {
+									toolCallId: 'tool-1',
+									result: Promise.resolve( 'resolved' ),
+								},
+							} as DataPart,
+						],
+						messageId: 'agent-1',
+					} as Message,
+				];
+
+				// Set initial conversation history
+				agentManager.getConversationHistory = vi
+					.fn()
+					.mockReturnValue( conversationWithPromises );
+
+				// Mock streaming updates
+				const mockUpdates: TaskUpdate[] = [
+					{
+						id: 'task-123',
+						status: {
+							state: 'completed',
+							message: mockAgentMessage,
+						},
+						final: true,
+						text: 'Response',
+					},
+				];
+
+				mockClient.sendMessageStream.mockImplementation(
+					async function* () {
+						for ( const update of mockUpdates ) {
+							yield update;
+						}
+					}
+				);
+
+				// Execute with withHistory=false
+				const results: TaskUpdate[] = [];
+				for await ( const update of agentManager.sendMessageStream(
+					'test-key',
+					'Hello',
+					{ withHistory: false }
+				) ) {
+					results.push( update );
+				}
+
+				// clearToolResultPromises should still be called
+				expect( clearToolResultPromises ).toHaveBeenCalled();
+
+				// But storeConversation should not be called for resolved promises
+				expect( storeConversation ).not.toHaveBeenCalledWith(
+					expect.any( String ),
+					expect.arrayContaining( [
+						expect.objectContaining( {
+							parts: expect.arrayContaining( [
+								expect.objectContaining( {
+									data: expect.objectContaining( {
+										result: 'resolved',
+									} ),
+								} ),
+							] ),
+						} ),
+					] ),
+					expect.any( String )
+				);
+			} );
 		} );
 	} );
 } );
