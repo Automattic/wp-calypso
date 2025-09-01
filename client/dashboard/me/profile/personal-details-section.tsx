@@ -1,3 +1,4 @@
+import { profileMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
 	Button,
@@ -13,7 +14,6 @@ import { DataForm } from '@wordpress/dataviews';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import { profileMutation } from '../../app/queries/me-profile';
 import { SectionHeader } from '../../components/section-header';
 import type { UserProfile } from '@automattic/api-core';
 import type { Field, Form } from '@wordpress/dataviews';
