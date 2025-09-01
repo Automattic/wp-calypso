@@ -695,6 +695,8 @@ class RegisterDomainStep extends Component {
 				onContinue={ onContinue }
 				cart={ this.getCart() }
 				className="wpcom-domain-search-v2"
+				filter={ this.state.lastFilters }
+				setFilter={ ( filter ) => this.setState( { lastFilters: filter } ) }
 			>
 				<VStack spacing={ 8 }>
 					<VStack spacing={ 4 }>
@@ -724,10 +726,10 @@ class RegisterDomainStep extends Component {
 		return b.some( ( item ) => ! set.has( item ) );
 	}
 
-	didFilterChange() {
+	didFilterChange( newFilters ) {
 		return (
-			this.areArraysDifferent( this.state.lastFilters.tlds, this.state.filters.tlds ) ||
-			this.state.lastFilters.exactSldMatchesOnly !== this.state.filters.exactSldMatchesOnly
+			this.areArraysDifferent( this.state.lastFilters.tlds, newFilters.tlds ) ||
+			this.state.lastFilters.exactSldMatchesOnly !== newFilters.exactSldMatchesOnly
 		);
 	}
 
@@ -760,21 +762,19 @@ class RegisterDomainStep extends Component {
 					return (
 						<DomainSearchControls.FilterPopover
 							availableTlds={ this.state.availableTlds }
+							filter={ this.state.lastFilters }
 							onClear={ () => {
-								onClose();
 								this.onFiltersReset();
+								onClose();
 							} }
-							onClose={ onClose }
-							setTemporaryFilter={ ( filter ) => this.onFiltersChange( filter ) }
-							temporaryFilter={ this.state.filters }
+							onApply={ ( newFilters ) => {
+								if ( this.didFilterChange( newFilters ) ) {
+									this.onFiltersChange( newFilters, { shouldSubmit: true } );
+									onClose();
+								}
+							} }
 						/>
 					);
-				} }
-				onClose={ () => {
-					this.onFiltersChange( this.state.filters );
-					if ( this.didFilterChange() ) {
-						this.onFiltersSubmit();
-					}
 				} }
 			/>
 		);

@@ -9,7 +9,7 @@ import {
 	CardBody,
 } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { FilterState } from '../../components/search-bar/types';
 import { FilterPopoverLabel } from './filter-popover-label';
 import { FilterPopoverTld } from './filter-popover-tld';
@@ -18,20 +18,20 @@ import './filter-popover.scss';
 
 type Props = {
 	availableTlds: string[];
+	filter: FilterState;
+	onApply: ( filter: FilterState ) => void;
 	onClear: () => void;
-	onClose: () => void;
-	setTemporaryFilter: ( filter: FilterState ) => void;
-	temporaryFilter: FilterState;
 };
 
 export const DomainSearchControlsFilterPopover = ( {
 	availableTlds,
+	filter,
+	onApply,
 	onClear,
-	onClose,
-	setTemporaryFilter,
-	temporaryFilter,
 }: Props ) => {
 	const { __ } = useI18n();
+	// This is the filter that the user is currently selecting. It is only applied when the popover is closed
+	const [ temporaryFilter, setTemporaryFilter ] = useState( filter );
 
 	// Only add TLD to current selection if it exists in the available TLDs list
 	const validateTld = useCallback(
@@ -157,7 +157,13 @@ export const DomainSearchControlsFilterPopover = ( {
 						<Button __next40pxDefaultSize variant="secondary" onClick={ onClear }>
 							{ __( 'Clear' ) }
 						</Button>
-						<Button __next40pxDefaultSize variant="primary" onClick={ onClose }>
+						<Button
+							__next40pxDefaultSize
+							variant="primary"
+							onClick={ () => {
+								onApply( temporaryFilter );
+							} }
+						>
 							{ __( 'Apply' ) }
 						</Button>
 					</HStack>

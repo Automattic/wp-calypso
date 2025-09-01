@@ -4,9 +4,10 @@ import {
 	freeSuggestionQuery,
 } from '@automattic/api-queries';
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import { FilterState } from '../components/search-bar/types';
 import { domainAvailabilityQuery } from '../queries/availability';
 import { domainSuggestionsQuery, freeSuggestionQuery } from '../queries/suggestions';
-import type { DomainSearchProps, DomainSearchContextType, FilterState } from './types';
+import type { DomainSearchProps, DomainSearchContextType } from './types';
 
 const noop = () => {};
 
