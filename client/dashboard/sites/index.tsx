@@ -27,7 +27,7 @@ import {
 	DEFAULT_PER_PAGE_SIZES,
 } from './views';
 import type { ViewSearchParams } from './views';
-import type { FetchSitesOptions, Site } from '../data/types';
+import type { FetchSitesOptions, Site } from '@automattic/api-core';
 import type { View, Filter } from '@wordpress/dataviews';
 
 const getFetchSitesOptions = ( view: View, isRestoringAccount: boolean ): FetchSitesOptions => {

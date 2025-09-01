@@ -11,7 +11,7 @@ import PageLayout from '../components/page-layout';
 import RouterLinkButton from '../components/router-link-button';
 import { useActions, useFields, DEFAULT_VIEW, DEFAULT_LAYOUTS } from './dataviews';
 import type { DomainsView } from './dataviews';
-import type { DomainSummary } from '../data/types';
+import type { DomainSummary } from '@automattic/api-core';
 
 export function getDomainId( domain: DomainSummary ): string {
 	return `${ domain.domain }-${ domain.blog_id }`;

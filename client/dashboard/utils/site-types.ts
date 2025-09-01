@@ -1,4 +1,4 @@
-import type { Site } from '../data/types';
+import type { Site } from '@automattic/api-core';
 
 export function isSelfHostedJetpackConnected( site: Site ) {
 	return site.jetpack_connection && ! site.is_wpcom_atomic;
