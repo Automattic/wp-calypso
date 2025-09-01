@@ -1,5 +1,5 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { UserTaxDetails, UserTaxFormData } from '@automattic/api-core';
+import type { UserTaxDetails, UserTaxFormData } from './types';
 
 export async function setUserTaxDetails(
 	userTaxDetails: UserTaxDetails

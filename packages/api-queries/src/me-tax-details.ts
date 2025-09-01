@@ -1,6 +1,6 @@
-import { fetchUserTaxDetails } from '@automattic/api-queries';
-import { queryOptions } from '@tanstack/react-query';
-import type { UserTaxDetails } from '@automattic/api-core';
+import { fetchUserTaxDetails, updateUserTaxDetails } from '@automattic/api-core';
+import { queryClient } from '@automattic/api-queries';
+import { queryOptions, mutationOptions } from '@tanstack/react-query';
 
 export interface UpdateError {
 	message: string;
@@ -12,7 +12,18 @@ export interface FetchError {
 }
 
 export const userTaxDetailsQuery = () =>
-	queryOptions< UserTaxDetails, FetchError >( {
-		queryKey: [ 'me', 'billing', 'tax-details' ],
+	queryOptions( {
+		queryKey: [ 'me', 'billing-purchases', 'tax-details' ],
 		queryFn: fetchUserTaxDetails,
+	} );
+
+export const userTaxDetailsMutation = () =>
+	mutationOptions( {
+		mutationFn: updateUserTaxDetails,
+		onSuccess: ( newData ) => {
+			queryClient.setQueryData(
+				userTaxDetailsQuery().queryKey,
+				( oldData ) => oldData && { ...oldData, ...newData }
+			);
+		},
 	} );

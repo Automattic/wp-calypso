@@ -1,4 +1,3 @@
-import type { CountryListItemBase } from '@automattic/api-core';
 import type { Field, NormalizedField } from '@wordpress/dataviews';
 
 export interface UserTaxFormData {
@@ -32,12 +31,3 @@ export type UserTaxNormalizedField = NormalizedField< UserTaxFormData > & {
 };
 
 export type SetUserTaxDetails = ( userTaxDetails: UserTaxDetails ) => Promise< UserTaxDetails >;
-
-export interface CountryListItemWithoutVat extends CountryListItemBase {
-	vat_supported: false;
-}
-export interface CountryListItemWithVat extends CountryListItemBase {
-	vat_supported: true;
-	tax_country_codes: string[];
-}
-export type CountryListItem = CountryListItemWithVat | CountryListItemWithoutVat;

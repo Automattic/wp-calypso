@@ -1,9 +1,9 @@
-import { UserTaxDetails } from '@automattic/api-core';
+import { updateUserTaxDetails } from '@automattic/api-core';
 import {
 	countryListQuery,
 	geoLocationQuery,
 	userTaxDetailsQuery,
-	updateUserTaxDetails,
+	queryClient,
 } from '@automattic/api-queries';
 import { useResetSupportInteraction } from '@automattic/help-center/src/hooks/use-reset-support-interaction';
 import { CALYPSO_CONTACT } from '@automattic/urls';
@@ -24,10 +24,14 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState, useRef, useCallback } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
-import { queryClient } from '../../app/query-client';
 import InlineSupportLink from '../../components/inline-support-link';
 import { getTaxName, getDataFormCountryCodes, stripCountryCodeFromVatId } from '../../utils/tax';
-import type { UserTaxField, UserTaxFormData, UserTaxNormalizedField } from '@automattic/api-core';
+import type {
+	UserTaxDetails,
+	UserTaxField,
+	UserTaxFormData,
+	UserTaxNormalizedField,
+} from '@automattic/api-core';
 import './style.scss';
 
 export interface UserTaxFormControlProps {
