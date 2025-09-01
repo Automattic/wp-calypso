@@ -142,22 +142,9 @@ export class FullPostView extends Component {
 			galleryError: null,
 			isGalleryLoading: false,
 		} );
-
-		// Track gallery opened event
-		this.trackGalleryEvent( 'gallery_opened', {
-			image_count: images.length,
-			starting_index: imageIndex,
-		} );
 	};
 
 	closeGallery = () => {
-		// Track gallery closed event
-		const { currentImageIndex, galleryImages } = this.state;
-		this.trackGalleryEvent( 'gallery_closed', {
-			final_index: currentImageIndex,
-			total_images: galleryImages.length,
-		} );
-
 		this.setState( {
 			isGalleryOpen: false,
 			currentImageIndex: 0,
@@ -165,6 +152,14 @@ export class FullPostView extends Component {
 			galleryError: null,
 			isGalleryLoading: false,
 		} );
+
+		// Restore focus to the originally clicked image
+		if ( this.clickedImageElement && this.clickedImageElement.isConnected ) {
+			// Use setTimeout to ensure the modal is fully closed
+			setTimeout( () => {
+				this.clickedImageElement.focus();
+			}, 100 );
+		}
 	};
 
 	nextImage = () => {
@@ -176,13 +171,6 @@ export class FullPostView extends Component {
 		if ( currentImageIndex < galleryImages.length - 1 ) {
 			const newIndex = currentImageIndex + 1;
 			this.setState( { currentImageIndex: newIndex } );
-
-			// Track navigation event
-			this.trackGalleryEvent( 'gallery_navigate', {
-				direction: 'next',
-				from_index: currentImageIndex,
-				to_index: newIndex,
-			} );
 		}
 	};
 
@@ -195,13 +183,6 @@ export class FullPostView extends Component {
 		if ( currentImageIndex > 0 ) {
 			const newIndex = currentImageIndex - 1;
 			this.setState( { currentImageIndex: newIndex } );
-
-			// Track navigation event
-			this.trackGalleryEvent( 'gallery_navigate', {
-				direction: 'previous',
-				from_index: currentImageIndex,
-				to_index: newIndex,
-			} );
 		}
 	};
 
@@ -218,13 +199,6 @@ export class FullPostView extends Component {
 			imageIndex !== currentImageIndex
 		) {
 			this.setState( { currentImageIndex: imageIndex } );
-
-			// Track navigation event
-			this.trackGalleryEvent( 'gallery_navigate', {
-				direction: 'jump',
-				from_index: currentImageIndex,
-				to_index: imageIndex,
-			} );
 		}
 	};
 
@@ -241,16 +215,6 @@ export class FullPostView extends Component {
 		}
 	};
 
-	// Track gallery events for analytics
-	trackGalleryEvent = ( eventName, properties = {} ) => {
-		if ( this.props.post ) {
-			recordTrackForPost( `calypso_reader_gallery_${ eventName }`, this.props.post, {
-				...properties,
-				context: 'full-post',
-			} );
-		}
-	};
-
 	// Handle gallery errors
 	handleGalleryError = ( error ) => {
 		// Log error for debugging (avoiding console.error in production)
@@ -262,12 +226,6 @@ export class FullPostView extends Component {
 		this.setState( {
 			galleryError: error.message || 'An error occurred while loading the gallery',
 			isGalleryLoading: false,
-		} );
-
-		// Track error for analytics
-		this.trackGalleryEvent( 'gallery_error', {
-			error_message: error.message || 'Unknown error',
-			error_type: error.name || 'Error',
 		} );
 	};
 
@@ -344,6 +302,9 @@ export class FullPostView extends Component {
 			event.preventDefault();
 			event.stopPropagation();
 
+			// Store reference to the clicked image for focus restoration
+			this.clickedImageElement = img;
+
 			// Set loading state
 			this.setState( { isGalleryLoading: true, galleryError: null } );
 
@@ -378,6 +339,63 @@ export class FullPostView extends Component {
 
 		// Add event listener for gallery clicks
 		this.postContentWrapper.current.addEventListener( 'click', this.handleGalleryImageClick, true );
+
+		// Add keyboard navigation for gallery images
+		this.postContentWrapper.current.addEventListener( 'keydown', this.handleGalleryKeydown, true );
+
+		// Make gallery images focusable
+		this.makeGalleryImagesFocusable();
+	};
+
+	// Handle keyboard events on gallery images
+	handleGalleryKeydown = ( event ) => {
+		const img = event.target;
+
+		// Only handle keydown on img elements in galleries
+		if ( img.tagName !== 'IMG' ) {
+			return;
+		}
+
+		const galleryElement = img.closest( '.wp-block-gallery, .tiled-gallery' );
+		if ( ! galleryElement ) {
+			return;
+		}
+
+		// Handle Enter and Space to open gallery
+		if ( event.key === 'Enter' || event.key === ' ' ) {
+			event.preventDefault();
+			event.stopPropagation();
+
+			// Simulate a click event
+			this.handleGalleryImageClick( {
+				target: img,
+				preventDefault: () => {},
+				stopPropagation: () => {},
+			} );
+		}
+	};
+
+	// Make gallery images focusable and accessible
+	makeGalleryImagesFocusable = () => {
+		if ( ! this.postContentWrapper.current ) {
+			return;
+		}
+
+		const galleryImages = this.postContentWrapper.current.querySelectorAll(
+			'.wp-block-gallery img, .tiled-gallery img'
+		);
+
+		galleryImages.forEach( ( img ) => {
+			// Make image focusable
+			img.setAttribute( 'tabindex', '0' );
+
+			// Add role and label for screen readers
+			img.setAttribute( 'role', 'button' );
+			img.setAttribute( 'aria-label', `Open gallery image: ${ img.alt || 'Image' }` );
+
+			// Add visual focus indicator
+			img.style.cursor = 'pointer';
+		} );
 	};
 
 	// Initialize gallery integration
@@ -397,6 +415,11 @@ export class FullPostView extends Component {
 			this.postContentWrapper.current.removeEventListener(
 				'click',
 				this.handleGalleryImageClick,
+				true
+			);
+			this.postContentWrapper.current.removeEventListener(
+				'keydown',
+				this.handleGalleryKeydown,
 				true
 			);
 		}

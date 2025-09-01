@@ -75,7 +75,8 @@ const GalleryOverlay = ( {
 						event.preventDefault();
 						onClose();
 					}
-					break;
+					// If focused on a button, let the button handle it naturally
+					return;
 				case 'Home':
 					if ( hasMultipleImages && currentIndex > 0 && onGoToFirst && ! isInteractingWithButton ) {
 						event.preventDefault();
@@ -101,7 +102,6 @@ const GalleryOverlay = ( {
 				default:
 					return;
 			}
-			event.preventDefault();
 		};
 
 		if ( isOpen ) {

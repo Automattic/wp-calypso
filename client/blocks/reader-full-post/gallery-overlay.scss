@@ -25,11 +25,7 @@ $gallery-content-z-index: 5;
 		.gallery-overlay__nav,
 		.gallery-overlay__error-button {
 			&:focus {
-				outline: 3px solid #fff;
-				outline-offset: 3px;
-				box-shadow: 
-					0 0 0 1px rgba(0, 0, 0, 0.8),
-					0 0 0 4px #fff;
+				outline: 1px dotted rgba(255, 255, 255, 0.4);
 			}
 		}
 	}
@@ -39,7 +35,6 @@ $gallery-content-z-index: 5;
 		.gallery-overlay__close,
 		.gallery-overlay__nav,
 		.gallery-overlay__error-button {
-			border: 2px solid #fff;
 			background-color: rgba(0, 0, 0, 0.8);
 		}
 
@@ -79,41 +74,28 @@ $gallery-content-z-index: 5;
 	top: 24px;
 	right: 24px;
 	z-index: $gallery-controls-z-index;
-	width: 48px;
-	height: 48px;
-	border: 1px solid rgba(255, 255, 255, 0.1);
-	border-radius: 50%;
-	background-color: rgba(255, 255, 255, 0.1);
-	color: #fff;
+	width: 32px;
+	height: 32px;
+	border: none;
+	border-radius: 3px;
+	background-color: rgba(255, 255, 255, 0.05);
+	color: rgba(255, 255, 255, 0.7);
 	cursor: pointer;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	transition: all 0.2s ease;
-	backdrop-filter: blur(8px);
 
 	&:hover {
-		background-color: rgba(255, 255, 255, 0.25);
-		transform: scale(1.05);
-		border-color: rgba(255, 255, 255, 0.2);
-	}
-
-	&:focus {
-		outline: 2px solid #fff;
-		outline-offset: 2px;
-		background-color: rgba(255, 255, 255, 0.2);
-	}
-
-	&:active {
-		transform: scale(0.95);
-		background-color: rgba(255, 255, 255, 0.3);
+		background-color: #999;
+		color: #fff;
 	}
 
 	@include breakpoint-deprecated( '<660px' ) {
-		top: 16px;
-		right: 16px;
-		width: 44px;
-		height: 44px;
+		top: 20px;
+		right: 20px;
+		width: 28px;
+		height: 28px;
 	}
 }
 
@@ -122,126 +104,57 @@ $gallery-content-z-index: 5;
 	top: 50%;
 	transform: translateY(-50%);
 	z-index: $gallery-controls-z-index;
-	width: 64px;
-	height: 64px;
-	border: 1px solid rgba(255, 255, 255, 0.1);
-	border-radius: 50%;
-	background-color: rgba(255, 255, 255, 0.1);
-	color: #fff;
+	width: 36px;
+	height: 36px;
+	border: none;
+	border-radius: 3px;
+	background-color: rgba(255, 255, 255, 0.05);
+	color: rgba(255, 255, 255, 0.7);
 	cursor: pointer;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	transition: all 0.2s ease;
 	opacity: 0.8;
-	backdrop-filter: blur(8px);
 
 	&:hover {
-		background-color: rgba(255, 255, 255, 0.25);
-		transform: translateY(-50%) scale(1.08);
+		background-color: #999;
+		color: rgba(255, 255, 255, 0.9);
 		opacity: 1;
-		border-color: rgba(255, 255, 255, 0.2);
-		box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
 	}
 
 	&:focus {
-		outline: 2px solid #fff;
-		outline-offset: 2px;
-		background-color: rgba(255, 255, 255, 0.2);
+		background-color: #999;
 		opacity: 1;
 	}
 
-	&:active {
-		transform: translateY(-50%) scale(0.98);
-		background-color: rgba(255, 255, 255, 0.35);
-	}
-
-	// Add subtle shadow for depth
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-
 	&--previous {
-		left: 40px;
+		left: 24px;
 
-		// Desktop: larger click area
 		@include breakpoint-deprecated( '>1200px' ) {
-			left: 60px;
-			width: 72px;
-			height: 72px;
+			left: 32px;
 		}
 
 		@include breakpoint-deprecated( '<960px' ) {
-			left: 24px;
-		}
-
-		@include breakpoint-deprecated( '<660px' ) {
-			left: 16px;
+			left: 20px;
 		}
 	}
 
 	&--next {
-		right: 40px;
+		right: 24px;
 
-		// Desktop: larger click area
 		@include breakpoint-deprecated( '>1200px' ) {
-			right: 60px;
-			width: 72px;
-			height: 72px;
+			right: 32px;
 		}
 
 		@include breakpoint-deprecated( '<960px' ) {
-			right: 24px;
-		}
-
-		@include breakpoint-deprecated( '<660px' ) {
-			right: 16px;
+			right: 20px;
 		}
 	}
 
-	// Tablet optimizations
-	@include breakpoint-deprecated( '<960px' ) {
-		width: 60px;
-		height: 60px;
-		opacity: 0.9;
-
-		&:hover {
-			transform: translateY(-50%) scale(1.06);
-		}
-	}
-
-	// Mobile optimizations
+	// Mobile optimizations - hide navigation buttons on mobile
 	@include breakpoint-deprecated( '<660px' ) {
-		width: 56px;
-		height: 56px;
-		opacity: 0.9;
-
-		&:hover {
-			// On mobile, reduce hover effects since they're not as useful
-			transform: translateY(-50%) scale(1.05);
-		}
-	}
-
-	// Better touch targets for touch devices
-	@media (pointer: coarse) {
-		width: 64px;
-		height: 64px;
-		opacity: 0.95;
-
-		// Larger touch area for easier interaction
-		&::before {
-			content: '';
-			position: absolute;
-			top: -8px;
-			left: -8px;
-			right: -8px;
-			bottom: -8px;
-		}
-	}
-
-	// High-resolution displays
-	@media (-webkit-min-device-pixel-ratio: 2) {
-		&:hover {
-			transform: translateY(-50%) scale(1.05);
-		}
+		display: none;
 	}
 }
 
@@ -453,11 +366,6 @@ $gallery-content-z-index: 5;
 	&:active {
 		transform: translateY(0);
 	}
-
-	&:focus {
-		outline: 2px solid rgba(255, 255, 255, 0.6);
-		outline-offset: 2px;
-	}
 }
 
 .gallery-overlay__loading {
@@ -507,11 +415,6 @@ $gallery-content-z-index: 5;
 
 	&:hover {
 		background-color: rgba(255, 255, 255, 0.3);
-	}
-
-	&:focus {
-		outline: 2px solid #fff;
-		outline-offset: 2px;
 	}
 }
 
@@ -668,5 +571,6 @@ $gallery-content-z-index: 5;
 		transition: none;
 	}
 }
+
 
 
