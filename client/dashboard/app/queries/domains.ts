@@ -1,4 +1,4 @@
-import { fetchDomainSuggestions, type DomainSuggestionQuery } from '@automattic/data';
+import { fetchDomainSuggestions, type DomainSuggestionQuery } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
 import { fetchDomains } from '../../data/domains';
 

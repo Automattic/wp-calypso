@@ -131,21 +131,23 @@ export default function SsoForm( { site }: { site: Site } ) {
 			);
 		}
 
-		// Avoid showing a double notification if both module and settings have been changed.
-		if ( areSettingsDirty && ! isModuleDirty ) {
+		if ( areSettingsDirty ) {
 			jetpackSettingsMutation.mutate(
 				{
 					jetpack_sso_match_by_email: formData.jetpack_sso_match_by_email,
 					jetpack_sso_require_two_step: formData.jetpack_sso_require_two_step,
 				},
-				{
-					onSuccess: () => {
-						createSuccessNotice( __( 'Settings saved.' ), { type: 'snackbar' } );
-					},
-					onError: () => {
-						createErrorNotice( __( 'Failed to save settings.' ), { type: 'snackbar' } );
-					},
-				}
+				// Avoid showing a double notification if both module and settings have been changed.
+				! isModuleDirty
+					? {
+							onSuccess: () => {
+								createSuccessNotice( __( 'Settings saved.' ), { type: 'snackbar' } );
+							},
+							onError: () => {
+								createErrorNotice( __( 'Failed to save settings.' ), { type: 'snackbar' } );
+							},
+					  }
+					: {}
 			);
 		}
 	};
