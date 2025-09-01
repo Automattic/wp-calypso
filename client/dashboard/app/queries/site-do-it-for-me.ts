@@ -1,5 +1,5 @@
+import { fetchDifmWebsiteContent } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
-import { fetchDifmWebsiteContent } from '../../data/site-do-it-for-me';
 
 export const siteDifmWebsiteContentQuery = ( siteId: number ) =>
 	queryOptions( {

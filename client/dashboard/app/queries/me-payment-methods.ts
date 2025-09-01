@@ -1,6 +1,6 @@
+import { fetchUserPaymentMethods } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
-import { fetchUserPaymentMethods } from '../../data/me-payment-methods';
-import type { PaymentMethodRequestType } from '../../data/me-payment-methods';
+import type { PaymentMethodRequestType } from '@automattic/api-core';
 
 export const userPaymentMethodsQuery = ( {
 	type = 'all',

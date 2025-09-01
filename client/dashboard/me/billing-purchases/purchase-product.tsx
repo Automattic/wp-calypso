@@ -2,8 +2,7 @@ import { ExternalLink, Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { isTemporarySitePurchase, getSubtitleForDisplay } from '../../utils/purchase';
-import type { Purchase } from '../../data/purchase';
-import type { Site } from '../../data/site';
+import type { Purchase, Site } from '@automattic/api-core';
 
 export function PurchaseProduct( {
 	purchase,

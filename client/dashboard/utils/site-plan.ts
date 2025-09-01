@@ -1,3 +1,4 @@
+import { DotcomPlans, JetpackFeatures, type Site } from '@automattic/api-core';
 import { __ } from '@wordpress/i18n';
 import {
 	chartBar,
@@ -9,9 +10,7 @@ import {
 	shield,
 	video,
 } from '@wordpress/icons';
-import { DotcomPlans, JetpackFeatures } from '../data/constants';
 import { hasPlanFeature } from '../utils/site-features';
-import type { Site } from '../data/types';
 
 export const JETPACK_PRODUCTS = [
 	{

@@ -1,11 +1,11 @@
-import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import {
 	DomainGlueRecord,
 	fetchDomainGlueRecords,
 	createDomainGlueRecord,
 	updateDomainGlueRecord,
 	deleteDomainGlueRecord,
-} from '../../data/domain-glue-records';
+} from '@automattic/api-core';
+import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from '../query-client';
 
 export const domainGlueRecordsQuery = ( domainName: string ) =>

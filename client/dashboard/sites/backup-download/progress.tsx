@@ -10,7 +10,7 @@ import { useEffect } from 'react';
 import { siteBackupDownloadProgressQuery } from '../../app/queries/site-backup-download';
 import Notice from '../../components/notice';
 import backupDownloadIllustration from '../backups/backup-download-illustration.svg';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 
 function SiteBackupDownloadProgress( {
 	site,

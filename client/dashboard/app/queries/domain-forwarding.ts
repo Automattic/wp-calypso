@@ -1,10 +1,10 @@
-import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import {
 	fetchDomainForwarding,
 	deleteDomainForwarding,
 	saveDomainForwarding,
 	type DomainForwardingSaveData,
-} from '../../data/domain-forwarding';
+} from '@automattic/api-core';
+import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from '../query-client';
 
 export const domainForwardingQuery = ( domainName: string ) =>

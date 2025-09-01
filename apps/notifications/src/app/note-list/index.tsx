@@ -41,7 +41,7 @@ const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFil
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( notes, view, fields );
 
 	const onChangeSelection = ( selection: string[] ) => {
-		goTo( `/notes/${ selection[ 0 ] }`, { skipFocus: true } );
+		goTo( `/${ filterName }/notes/${ selection[ 0 ] }` );
 	};
 
 	const infiniteScrollHandler = useCallback( () => {

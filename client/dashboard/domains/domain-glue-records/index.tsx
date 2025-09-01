@@ -6,6 +6,7 @@ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState, useMemo } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import {
 	domainGlueRecordDeleteMutation,
 	domainGlueRecordsQuery,
@@ -19,7 +20,7 @@ import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
-import type { DomainGlueRecord } from '../../data/domain-glue-records';
+import type { DomainGlueRecord } from '@automattic/api-core';
 import type { Action, Field, ViewTable, ViewList, View } from '@wordpress/dataviews';
 
 type GlueRecordsView = ViewTable | ViewList;
@@ -51,6 +52,7 @@ function DomainGlueRecords() {
 	);
 	const deleteMutation = useMutation( domainGlueRecordDeleteMutation( domainName ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { recordTracksEvent } = useAnalytics();
 
 	const actions: Action< DomainGlueRecord >[] = useMemo(
 		() => [
@@ -75,17 +77,37 @@ function DomainGlueRecords() {
 							createSuccessNotice( __( 'Glue record was deleted successfully.' ), {
 								type: 'snackbar',
 							} );
+
+							recordTracksEvent( 'calypso_dashboard_domain_glue_records_delete_record', {
+								domain: domainName,
+								nameserver: item.nameserver,
+								address: item.ip_addresses[ 0 ],
+							} );
 						},
-						onError: () => {
+						onError: ( error ) => {
 							createErrorNotice( __( 'Failed to delete glue record.' ), {
 								type: 'snackbar',
+							} );
+
+							recordTracksEvent( 'calypso_dashboard_domain_glue_records_delete_record_failure', {
+								domain: domainName,
+								nameserver: item.nameserver,
+								address: item.ip_addresses[ 0 ],
+								error_message: error.message,
 							} );
 						},
 					} );
 				},
 			},
 		],
-		[ createErrorNotice, createSuccessNotice, deleteMutation, domainName, navigate ]
+		[
+			createErrorNotice,
+			createSuccessNotice,
+			deleteMutation,
+			domainName,
+			navigate,
+			recordTracksEvent,
+		]
 	);
 
 	const fields: Field< DomainGlueRecord >[] = useMemo(

@@ -18,7 +18,7 @@ import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
-import type { DomainForwarding } from '../../data/domain-forwarding';
+import type { DomainForwarding } from '@automattic/api-core';
 import type { Action, Field, ViewTable, ViewList, View } from '@wordpress/dataviews';
 
 function getForwardingId( forwarding: DomainForwarding ) {

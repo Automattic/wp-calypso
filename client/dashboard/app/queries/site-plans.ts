@@ -1,6 +1,5 @@
+import { restoreSitePlanSoftware, fetchSitePlans } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
-import { restoreSitePlanSoftware } from '../../data/site-hosting';
-import { fetchSitePlans } from '../../data/site-plans';
 
 export const siteCurrentPlanQuery = ( siteId: number ) =>
 	queryOptions( {

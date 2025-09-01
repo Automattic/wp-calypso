@@ -1,5 +1,5 @@
+import { fetchBasicMetrics, fetchPerformanceInsights } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
-import { fetchBasicMetrics, fetchPerformanceInsights } from '../../data/site-profiler';
 
 export const basicMetricsQuery = ( url: string ) =>
 	queryOptions( {

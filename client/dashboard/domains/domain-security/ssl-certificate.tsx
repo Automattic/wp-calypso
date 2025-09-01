@@ -19,8 +19,7 @@ import { provisionSslCertificateMutation } from '../../app/queries/domain-ssl';
 import { domainSecurityRoute } from '../../app/router/domains';
 import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
-import type { Domain } from '../../data/domain';
-import type { SslDetails } from '../../data/domain-ssl';
+import type { Domain, SslDetails } from '@automattic/api-core';
 
 interface SslCertificateProps {
 	domainName: string;

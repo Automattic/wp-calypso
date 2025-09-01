@@ -1,5 +1,5 @@
+import { fetchPHPVersion, updatePHPVersion } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
-import { fetchPHPVersion, updatePHPVersion } from '../../data/site-hosting';
 import { queryClient } from '../query-client';
 
 export const sitePHPVersionQuery = ( siteId: number ) =>

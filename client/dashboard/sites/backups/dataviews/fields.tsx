@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { useFormattedTime } from '../../../components/formatted-time';
 import { formatYmd } from '../../../utils/datetime';
 import { gridiconToWordPressIcon } from '../../../utils/gridicons';
-import type { ActivityLogEntry } from '../../../data/types';
+import type { ActivityLogEntry } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 const FormattedTime = ( { timestamp }: { timestamp: string } ) => {

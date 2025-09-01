@@ -1,11 +1,11 @@
-import { useQuery } from '@tanstack/react-query';
-import { useRef } from 'react';
-import { siteBackupsQuery } from '../../app/queries/site-backups';
 import {
-	BackupEntry,
+	type BackupEntry,
 	BackupEntryStatuses,
 	BackupEntryErrorStatuses,
-} from '../../data/site-backups';
+} from '@automattic/api-core';
+import { useQuery } from '@tanstack/react-query';
+import { useRef } from 'react';
+import { siteBackupsQuery } from '../queries/site-backups';
 
 export type BackupStateType = 'idle' | 'running' | 'success' | 'error';
 

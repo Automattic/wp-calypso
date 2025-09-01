@@ -44,7 +44,7 @@
 		"storybook:start": "storybook dev"
 	},
 	"dependencies": {
-		"@automattic/data": "workspace:^",
+		"@automattic/api-core": "workspace:^",
 		"@tanstack/react-query": "^5.83.0",
 		"@wordpress/components": "^29.9.0",
 		"@wordpress/icons": "^10.23.0",

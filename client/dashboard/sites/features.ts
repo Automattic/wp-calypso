@@ -1,7 +1,7 @@
-import { DotcomFeatures, HostingFeatures } from '../data/constants';
+import { DotcomFeatures, HostingFeatures } from '@automattic/api-core';
 import { hasHostingFeature, hasPlanFeature } from '../utils/site-features';
 import { isSelfHostedJetpackConnected, isP2 } from '../utils/site-types';
-import type { Site, User } from '../data/types';
+import type { Site, User } from '@automattic/api-core';
 
 export function canManageSite( site: Site ) {
 	if ( site.is_deleted || ! site.capabilities.manage_options ) {

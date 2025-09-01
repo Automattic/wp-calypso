@@ -1,3 +1,4 @@
+import { HostingFeatures } from '@automattic/api-core';
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
 	Card,
@@ -16,7 +17,6 @@ import { siteBySlugQuery } from '../../app/queries/site';
 import { sitePHPVersionQuery, sitePHPVersionMutation } from '../../app/queries/site-php-version';
 import PageLayout from '../../components/page-layout';
 import RequiredSelect from '../../components/required-select';
-import { HostingFeatures } from '../../data/constants';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import { getSitePlanDisplayName } from '../../utils/site-plan';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';

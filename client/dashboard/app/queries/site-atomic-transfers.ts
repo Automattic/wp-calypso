@@ -1,5 +1,5 @@
+import { fetchLatestAtomicTransfer } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
-import { fetchLatestAtomicTransfer } from '../../data/site-atomic-transfers';
 
 export const siteLatestAtomicTransferQuery = ( siteId: number ) =>
 	queryOptions( {

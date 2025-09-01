@@ -1,6 +1,5 @@
+import { fetchAgencyBlog, isWpError } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
-import { fetchAgencyBlog } from '../../data/agency';
-import { isWpError } from '../../data/error';
 
 export const siteAgencyBlogQuery = ( siteId: number ) =>
 	queryOptions( {

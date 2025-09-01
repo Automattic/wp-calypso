@@ -1,3 +1,4 @@
+import { FreeSiteAddressType } from '@automattic/api-core';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
@@ -22,8 +23,7 @@ import { siteDomainsQuery } from '../../app/queries/site-domains';
 import SuffixInputControl from '../../components/input-control/suffix-input-control';
 import Notice from '../../components/notice';
 import { Text } from '../../components/text';
-import { FreeSiteAddressType } from '../../data/site-address-change';
-import type { Site, DomainSummary } from '../../data/types';
+import type { Site, DomainSummary } from '@automattic/api-core';
 import type { DataFormControlProps, Field } from '@wordpress/dataviews';
 
 type NewSiteAddressFormData = {

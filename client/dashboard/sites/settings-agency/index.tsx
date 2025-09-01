@@ -21,7 +21,7 @@ import { siteSettingsMutation, siteSettingsQuery } from '../../app/queries/site-
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';
-import type { Site, SiteSettings } from '../../data/types';
+import type { Site, SiteSettings } from '@automattic/api-core';
 import type { Field, SimpleFormField } from '@wordpress/dataviews';
 
 export function canUpdateA4AFullyManagedSetting( site: Site ) {

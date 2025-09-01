@@ -1,3 +1,4 @@
+import { HostingFeatures } from '@automattic/api-core';
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -9,7 +10,6 @@ import { CalloutOverlay } from '../../components/callout-overlay';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
-import { HostingFeatures } from '../../data/constants';
 import { hasHostingFeature } from '../../utils/site-features';
 import illustrationUrl from './monitoring-callout-illustration.svg';
 

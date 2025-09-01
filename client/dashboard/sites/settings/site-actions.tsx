@@ -1,3 +1,4 @@
+import { DotcomFeatures } from '@automattic/api-core';
 import { useMutation } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -7,10 +8,9 @@ import { addQueryArgs } from '@wordpress/url';
 import { sitePlanSoftwareRestoreMutation } from '../../app/queries/site-plans';
 import { ActionList } from '../../components/action-list';
 import { SectionHeader } from '../../components/section-header';
-import { DotcomFeatures } from '../../data/constants';
 import { hasPlanFeature } from '../../utils/site-features';
 import { canViewSiteActions } from '../features';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 
 const RestorePlanSoftware = ( { site }: { site: Site } ) => {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );

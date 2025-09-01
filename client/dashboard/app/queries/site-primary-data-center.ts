@@ -1,5 +1,5 @@
+import { fetchPrimaryDataCenter } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
-import { fetchPrimaryDataCenter } from '../../data/site-hosting';
 
 export const sitePrimaryDataCenterQuery = ( siteId: number ) =>
 	queryOptions( {

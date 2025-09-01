@@ -20,7 +20,7 @@ import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
 import { canViewHundredYearPlanSettings } from '../features';
 import SettingsPageHeader from '../settings-page-header';
-import type { SiteSettings } from '../../data/types';
+import type { SiteSettings } from '@automattic/api-core';
 import type { Field, SimpleFormField } from '@wordpress/dataviews';
 
 const fields: Field< SiteSettings >[] = [

@@ -1,4 +1,4 @@
-import { LogType } from '../../../data/site-logs';
+import { LogType } from '@automattic/api-core';
 import type { Filter } from '@wordpress/dataviews';
 
 const SEVERITY_LABELS: Readonly< Record< string, string > > = {

@@ -1,9 +1,9 @@
-import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import {
 	fetchSiteResetContentSummary,
 	resetSite,
 	fetchSiteResetStatus,
-} from '../../data/site-reset';
+} from '@automattic/api-core';
+import { queryOptions, mutationOptions } from '@tanstack/react-query';
 
 export const siteResetContentSummaryQuery = ( siteId: number ) =>
 	queryOptions( {

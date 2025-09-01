@@ -1,11 +1,11 @@
-import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import {
 	fetchDomainWhois,
 	validateDomainWhois,
 	updateDomainWhois,
 	type DomainContactDetails,
 	type ContactValidationRequestContactInformation,
-} from '../../data/domain-whois';
+} from '@automattic/api-core';
+import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { camelToSnakeCase, mapRecordKeysRecursively } from '../../utils/domain';
 import { queryClient } from '../query-client';
 

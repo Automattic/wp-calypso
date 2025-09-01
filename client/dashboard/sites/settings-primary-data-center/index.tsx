@@ -1,3 +1,4 @@
+import { HostingFeatures } from '@automattic/api-core';
 import SummaryButton from '@automattic/components/src/summary-button';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
@@ -9,7 +10,6 @@ import { siteBySlugQuery } from '../../app/queries/site';
 import { sitePrimaryDataCenterQuery } from '../../app/queries/site-primary-data-center';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
-import { HostingFeatures } from '../../data/constants';
 import { hasHostingFeature } from '../../utils/site-features';
 import SettingsPageHeader from '../settings-page-header';
 

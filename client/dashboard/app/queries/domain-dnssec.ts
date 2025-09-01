@@ -1,5 +1,5 @@
+import { updateDNSSEC } from '@automattic/api-core';
 import { mutationOptions } from '@tanstack/react-query';
-import { updateDNSSEC } from '../../data/domain-dnssec';
 import { queryClient } from '../query-client';
 import { domainQuery } from './domain';
 

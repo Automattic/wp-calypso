@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import type { Site } from '../data/types';
+import type { Site } from '@automattic/api-core';
 
 function getWordPressVersionTagName( versionTag: string ) {
 	if ( versionTag === 'latest' ) {

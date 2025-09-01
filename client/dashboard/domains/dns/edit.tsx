@@ -11,7 +11,7 @@ import DNSRecordForm from './form';
 import { DNS_RECORD_CONFIGS } from './records/dns-record-configs';
 import { getProcessedRecord } from './utils';
 import type { DnsRecordTypeFormData, DnsRecordFormData } from './records/dns-record-configs';
-import type { DnsRecord } from '../../data/domain-dns-records';
+import type { DnsRecord } from '@automattic/api-core';
 
 export default function DomainEditDNS() {
 	const navigate = useNavigate();

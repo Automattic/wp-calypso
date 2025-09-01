@@ -1,6 +1,5 @@
+import { HostingFeatures, DotcomFeatures, LogType } from '@automattic/api-core';
 import { createRoute, redirect, createLazyRoute, lazyRouteComponent } from '@tanstack/react-router';
-import { HostingFeatures, DotcomFeatures } from '../../data/constants';
-import { LogType } from '../../data/site-logs';
 import { canViewHundredYearPlanSettings, canViewWordPressSettings } from '../../sites/features';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import { hasSiteTrialEnded } from '../../utils/site-trial';
@@ -18,7 +17,7 @@ import { siteEdgeCacheStatusQuery } from '../queries/site-cache';
 import { siteDefensiveModeSettingsQuery } from '../queries/site-defensive-mode';
 import { siteDifmWebsiteContentQuery } from '../queries/site-do-it-for-me';
 import { siteDomainsQuery } from '../queries/site-domains';
-import { siteJetpackModulesQuery } from '../queries/site-jetpack-module';
+import { siteJetpackModulesQuery } from '../queries/site-jetpack-modules';
 import { siteJetpackSettingsQuery } from '../queries/site-jetpack-settings';
 import { siteMediaStorageQuery } from '../queries/site-media-storage';
 import { sitePHPVersionQuery } from '../queries/site-php-version';

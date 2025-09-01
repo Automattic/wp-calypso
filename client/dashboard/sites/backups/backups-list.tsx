@@ -6,7 +6,7 @@ import { useBackupState } from '../../app/hooks/site-backup-state';
 import { siteRewindableActivityLogEntriesQuery } from '../../app/queries/site-activity-log';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { getFields } from './dataviews/fields';
-import type { ActivityLogEntry, Site } from '../../data/types';
+import type { ActivityLogEntry, Site } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 
 export function BackupsList( {

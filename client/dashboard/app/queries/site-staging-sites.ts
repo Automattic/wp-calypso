@@ -1,10 +1,10 @@
-import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import {
 	createStagingSite,
 	deleteStagingSite,
 	fetchStagingSiteOf,
 	fetchStagingSiteSyncState,
-} from '../../data/site-staging-site';
+} from '@automattic/api-core';
+import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { queryClient } from '../query-client';
 
 export const hasStagingSiteQuery = ( productionSiteId: number ) =>

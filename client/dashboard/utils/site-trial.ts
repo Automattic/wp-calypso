@@ -1,4 +1,4 @@
-import type { Site } from '../data/types';
+import type { Site } from '@automattic/api-core';
 
 export function wasBusinessTrial( site: Site ) {
 	return site.was_migration_trial || site.was_hosting_trial;

@@ -1,5 +1,5 @@
+import { fetchJetpackKeys } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
-import { fetchJetpackKeys } from '../../data/site-jetpack-keys';
 
 export const siteJetpackKeysQuery = ( siteId: number ) =>
 	queryOptions( {

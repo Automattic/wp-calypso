@@ -1,3 +1,4 @@
+import { isWpError } from '@automattic/api-core';
 import { Badge } from '@automattic/ui';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import {
@@ -31,8 +32,7 @@ import { sshKeysQuery } from '../../app/queries/ssh';
 import ClipboardInputControl from '../../components/clipboard-input-control';
 import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
-import { isWpError } from '../../data/error';
-import type { SftpUser, SiteSshKey, UserSshKey } from '../../data/types';
+import type { SftpUser, SiteSshKey, UserSshKey } from '@automattic/api-core';
 import type { DataFormControlProps, Field } from '@wordpress/dataviews';
 
 type SshCardFormData = {

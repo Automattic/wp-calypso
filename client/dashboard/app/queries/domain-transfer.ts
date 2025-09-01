@@ -1,13 +1,13 @@
-import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import {
 	fetchIpsTagList,
 	requestTransferCode,
 	saveIpsTag,
 	updateDomainLock,
-} from '../../data/domain-transfer';
+} from '@automattic/api-core';
+import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { queryClient } from '../query-client';
 import { domainQuery } from './domain';
-import type { Domain } from '../../data/domain';
+import type { Domain } from '@automattic/api-core';
 
 export const domainLockMutation = ( domain: string ) =>
 	mutationOptions( {

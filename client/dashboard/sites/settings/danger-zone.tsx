@@ -10,7 +10,7 @@ import SiteDeleteModal from '../site-delete-modal';
 import SiteLeaveModal from '../site-leave-modal';
 import SiteResetModal from '../site-reset-modal';
 import StagingSiteDeleteModal from '../staging-site-delete-modal';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 
 const SiteTransferAction = ( { site }: { site: Site } ) => {
 	const { slug } = site;

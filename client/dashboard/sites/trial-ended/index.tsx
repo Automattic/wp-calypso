@@ -18,7 +18,7 @@ import PageLayout from '../../components/page-layout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { wasEcommerceTrial } from '../../utils/site-trial';
 import SiteDeleteModal from '../site-delete-modal';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 import './style.scss';
 
 const PlanPrice = lazy( () =>

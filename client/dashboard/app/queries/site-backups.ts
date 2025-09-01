@@ -1,7 +1,9 @@
+import {
+	fetchSiteRewindableActivityLog,
+	enqueueSiteBackup,
+	fetchSiteBackups,
+} from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
-import { fetchSiteRewindableActivityLog } from '../../data/site-activity-log';
-import { enqueueSiteBackup } from '../../data/site-backup';
-import { fetchSiteBackups } from '../../data/site-backups';
 import { queryClient } from '../query-client';
 
 export const siteLastBackupQuery = ( siteId: number ) =>
