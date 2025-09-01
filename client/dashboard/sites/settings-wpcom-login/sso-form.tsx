@@ -15,7 +15,7 @@ import { useState } from 'react';
 import {
 	siteJetpackModulesQuery,
 	siteJetpackModulesMutation,
-} from '../../app/queries/site-jetpack-module';
+} from '../../app/queries/site-jetpack-modules';
 import {
 	siteJetpackSettingsQuery,
 	siteJetpackSettingsMutation,

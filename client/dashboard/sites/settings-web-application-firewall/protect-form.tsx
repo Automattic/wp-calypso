@@ -14,7 +14,7 @@ import { useState } from 'react';
 import {
 	siteJetpackModulesQuery,
 	siteJetpackModulesMutation,
-} from '../../app/queries/site-jetpack-module';
+} from '../../app/queries/site-jetpack-modules';
 import { SectionHeader } from '../../components/section-header';
 import { JetpackModules } from '../../data/constants';
 import { isJetpackModuleActivated } from '../../utils/site-jetpack-modules';

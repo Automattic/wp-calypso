@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { key } from '@wordpress/icons';
-import { siteJetpackModulesQuery } from '../../app/queries/site-jetpack-module';
+import { siteJetpackModulesQuery } from '../../app/queries/site-jetpack-modules';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { HostingFeatures, JetpackModules } from '../../data/constants';
 import { hasHostingFeature } from '../../utils/site-features';
