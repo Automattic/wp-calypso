@@ -14,8 +14,8 @@ export { MessageActions } from './components/chat/MessageActions';
 export { Notice } from './components/chat/Notice';
 export { Message } from './components/chat/Message';
 export { Suggestions } from './components/chat/Suggestions';
+export { AnimatedPlaceholder } from './components/chat/AnimatedPlaceholder';
 export * as animations from './components/animations';
-
 export { ThumbsUpIcon } from './components/icons/ThumbsUpIcon';
 export { ThumbsDownIcon } from './components/icons/ThumbsDownIcon';
 export { CopyIcon } from './components/icons/CopyIcon';
@@ -24,6 +24,7 @@ export { BigSkyIcon } from './components/icons/BigSkyIcon';
 export { StopIcon } from './components/icons/StopIcon';
 export { XIcon } from './components/icons/XIcon';
 export { ArrowUpIcon } from './components/icons/ArrowUpIcon';
+export { ZoomIcon } from './components/icons/ZoomIcon';
 
 // Types
 export type * from './types';

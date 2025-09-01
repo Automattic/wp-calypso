@@ -33,6 +33,7 @@ export interface MessageAction {
 	onClick: ( message: Message ) => void | Promise< void >;
 	tooltip?: string;
 	disabled?: boolean;
+	pressed?: boolean;
 }
 
 // UI package only exports UI-specific types
@@ -53,7 +54,7 @@ export interface AgentUIProps {
 	style?: React.CSSProperties;
 	variant?: 'floating' | 'embedded';
 	triggerIcon?: React.ReactNode;
-	placeholder?: string;
+	placeholder?: string | string[];
 	notice?: NoticeConfig;
 	onOpen?: () => void;
 	onExpand?: () => void;

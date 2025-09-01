@@ -9,6 +9,7 @@ import { DEFAULT_PLACEHOLDER } from '../../types';
 import styles from './ChatInput.module.css';
 import { ChevronUpIcon } from '../icons/ChevronUpIcon';
 import { __ } from '@wordpress/i18n';
+import { AnimatedPlaceholder } from './AnimatedPlaceholder';
 
 interface ActionButton {
 	id: string;
@@ -26,7 +27,7 @@ interface ChatInputProps {
 	onSubmit: () => void;
 	onKeyDown: ( e: React.KeyboardEvent< HTMLTextAreaElement > ) => void;
 	textareaRef: React.RefObject< HTMLTextAreaElement >;
-	placeholder?: string;
+	placeholder?: string | string[];
 	isProcessing: boolean;
 	onBlur?: () => void;
 	fromCompact?: boolean;
@@ -57,9 +58,21 @@ export function ChatInput( {
 }: ChatInputProps ) {
 	const textareaId = useId();
 	const canSubmit = value.trim() || isProcessing;
-	const displayPlaceholder = placeholder.endsWith( '…' )
-		? placeholder
-		: `${ placeholder }…`;
+
+	// Helper function to ensure text has ellipsis
+	const addEllipsis = ( text: string ) =>
+		text.endsWith( '…' ) ? text : `${ text }…`;
+
+	// Determine if we should use animated placeholder (array) or native placeholder (string)
+	const isAnimated = Array.isArray( placeholder );
+	let formattedPlaceholder;
+	if ( isAnimated ) {
+		formattedPlaceholder = placeholder.map( addEllipsis );
+	} else if ( placeholder ) {
+		formattedPlaceholder = addEllipsis( placeholder );
+	} else {
+		formattedPlaceholder = '';
+	}
 
 	// Set ref value on mount to prevent focus on mount from being triggered again
 	const focusOnMountRef = useRef( focusOnMount );
@@ -139,6 +152,11 @@ export function ChatInput( {
 						: fastSpringWithDelay,
 				} }
 			>
+				{ ! value && isAnimated && (
+					<AnimatedPlaceholder
+						texts={ formattedPlaceholder as string[] }
+					/>
+				) }
 				<Textarea
 					id={ textareaId }
 					ref={ textareaRef }
@@ -146,7 +164,9 @@ export function ChatInput( {
 					onChange={ ( e ) => onChange( e.target.value ) }
 					onKeyDown={ onKeyDown }
 					onBlur={ onBlur }
-					placeholder={ displayPlaceholder }
+					placeholder={
+						isAnimated ? '' : ( formattedPlaceholder as string )
+					}
 					rows={ 1 }
 				/>
 			</motion.div>

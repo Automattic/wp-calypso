@@ -197,6 +197,13 @@ const EmbeddedDemo: React.FC = () => {
 					suggestions={ suggestions }
 					clearSuggestions={ clearSuggestions }
 					messageRenderer={ messageRenderer }
+					placeholder={ [
+						'Ask me anything',
+						'How can I help you today?',
+						'What would you like to create?',
+						'Need help with your website?',
+						"Let's build something amazing",
+					] }
 					// notice={ {
 					// 	message: 'This is a notice',
 					// } }
