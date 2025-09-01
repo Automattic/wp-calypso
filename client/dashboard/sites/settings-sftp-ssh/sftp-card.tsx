@@ -18,7 +18,7 @@ import { siteSftpUsersResetPasswordMutation } from '../../app/queries/site-sftp'
 import ClipboardInputControl from '../../components/clipboard-input-control';
 import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
-import type { SftpUser } from '../../data/types';
+import type { SftpUser } from '@automattic/api-core';
 import type { DataFormControlProps, Field } from '@wordpress/dataviews';
 
 const SFTP_URL = 'sftp.wp.com';

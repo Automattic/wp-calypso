@@ -1,8 +1,8 @@
+import { fetchJetpackSettings, updateJetpackSettings } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
-import { fetchJetpackSettings, updateJetpackSettings } from '../../data/site-jetpack-settings';
 import { queryClient } from '../query-client';
 import { siteQueryFilter } from './site';
-import type { JetpackSettings } from '../../data/site-jetpack-settings';
+import type { JetpackSettings } from '@automattic/api-core';
 
 export const siteJetpackSettingsQuery = ( siteId: number ) =>
 	queryOptions( {

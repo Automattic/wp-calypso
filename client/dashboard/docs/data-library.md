@@ -28,6 +28,7 @@ This layer exports the API integration with the REST API, and the data types tha
 The data source layer uses `wpcom` from `calypso/lib/wp` for REST API calls. Each data requirement has corresponding fetch functions in `client/dashboard/data/<endpoint-group>.ts`. For example:
 
 `client/dashboard/data/site-reset.ts`:
+
 ```typescript
 export async function fetchSiteResetStatus( siteId: number ): Promise< SiteResetStatus > {
 	return wpcom.req.get( {
@@ -44,6 +45,7 @@ We usually return the raw response from the API. If you need to process the resp
 The data source layer defines clear TypeScript interfaces for the data structures returned / consumed by the endpoints, in the same file as the fetch functions. For example:
 
 `client/dashboard/data/site-reset.ts`:
+
 ```typescript
 export type SiteResetStatus = {
 	status: 'in-progress' | 'ready' | 'completed';
@@ -106,7 +108,6 @@ TanStack's `queryClient.ensureQueryData` checks if data is already cached before
 
 At the component level, we use the `useQuery` and `useSuspenseQuery` hooks to fetch data. This includes the data that we preloaded in the route loader:
 
-
 ```typescript
 const { data: currentVersion } = useSuspenseQuery( {
 	...sitePHPVersionQuery( site.ID ),
@@ -127,12 +128,13 @@ const { data: siteContentSummary, isLoading } = useQuery(
 To add a new data source to the dashboard:
 
 1. Create fetch functions and related types in `client/dashboard/data/<endpoint-group>.ts`.
-3. Define a new query in `client/dashboard/app/queries/` if needed.
-4. Use the query in a router loader or component.
+2. Define a new query in `client/dashboard/app/queries/` if needed.
+3. Use the query in a router loader or component.
 
 ### Example: adding a new data entity
 
 `client/dashboard/data/entity.ts`:
+
 ```typescript
 // Define the type
 export interface NewEntity {
@@ -151,6 +153,7 @@ export async function fetchNewEntity( id: string ): Promise< NewEntity > {
 ```
 
 `client/dashboard/app/queries/entity.ts`:
+
 ```typescript
 // Define the query
 export const newEntityQuery = ( id: string ) => queryOptions( {

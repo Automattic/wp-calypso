@@ -1,4 +1,3 @@
-import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import {
 	fetchDomainDns,
 	updateDomainDns,
@@ -7,7 +6,8 @@ import {
 	applyDnsTemplate,
 	type DnsTemplateVariables,
 	importDnsBind,
-} from '../../data/domain-dns-records';
+} from '@automattic/api-core';
+import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { queryClient } from '../query-client';
 
 export const domainDnsQuery = ( domainName: string ) =>

@@ -1,4 +1,4 @@
-import { DomainAvailabilityStatus } from '@automattic/data';
+import { DomainAvailabilityStatus } from '@automattic/api-core';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { useDomainSearch } from '../../page/context';

@@ -12,7 +12,7 @@ import { Callout } from '../../components/callout';
 import { TextBlur } from '../../components/text-blur';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { DomainUpsellIllustraction } from './upsell-illustration';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 
 const useDomainSuggestion = ( site: Site ) => {
 	const search = site.slug.split( '.' )[ 0 ];

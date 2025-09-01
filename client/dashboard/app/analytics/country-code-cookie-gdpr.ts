@@ -1,6 +1,6 @@
+import { fetchGeo } from '@automattic/api-core';
 import cookie from 'cookie';
 import { useEffect, useState } from 'react';
-import { fetchGeo } from '../../data/geo';
 import { isRegionInCcpaZone } from './geo-privacy';
 
 let refreshRequest: Promise< void > | null = null;

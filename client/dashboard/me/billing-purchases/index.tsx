@@ -17,7 +17,7 @@ import {
 	getItemId,
 	usePurchasesListActions,
 } from './dataviews';
-import type { Site } from '../../data/site';
+import type { Site } from '@automattic/api-core';
 import type { Operator, View } from '@wordpress/dataviews';
 
 function alterUrlForViewProp(

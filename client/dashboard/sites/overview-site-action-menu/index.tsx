@@ -7,7 +7,7 @@ import { useAnalytics } from '../../app/analytics';
 import { isSiteUsingBlockThemeQuery } from '../../app/queries/site-themes';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { getSiteEditUrl } from '../../utils/site-url';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 
 const SiteActionMenu = ( { site }: { site: Site } ) => {
 	const { recordTracksEvent } = useAnalytics();
@@ -21,12 +21,12 @@ const SiteActionMenu = ( { site }: { site: Site } ) => {
 
 	const handleEditSite = () => {
 		trackActionClick( 'edit-site' );
-		window.open( getSiteEditUrl( site, isSiteUsingBlockTheme ), '_blank' );
+		window.open( getSiteEditUrl( site, isSiteUsingBlockTheme ), '_blank', 'noreferrer,noopener' );
 	};
 
 	const handleWritePost = () => {
 		trackActionClick( 'write-post' );
-		window.open( `${ site.options?.admin_url }post-new.php`, '_blank' );
+		window.open( `${ site.options?.admin_url }post-new.php`, '_blank', 'noreferrer,noopener' );
 	};
 
 	const handleImportSite = () => {
@@ -35,7 +35,7 @@ const SiteActionMenu = ( { site }: { site: Site } ) => {
 			: addQueryArgs( '/setup/site-migration', { siteSlug: site.slug } );
 
 		trackActionClick( 'import-site' );
-		window.open( url, '_blank' );
+		window.open( url, '_blank', 'noreferrer,noopener' );
 	};
 
 	return (

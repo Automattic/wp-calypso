@@ -1,5 +1,5 @@
 import { isSelfHostedJetpackConnected } from './site-types';
-import type { Site } from '../data/types';
+import type { Site } from '@automattic/api-core';
 
 export function getBackupUrl( site: Site ) {
 	if ( isSelfHostedJetpackConnected( site ) ) {

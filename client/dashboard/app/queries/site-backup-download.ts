@@ -1,9 +1,10 @@
-import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import {
 	fetchSiteBackupDownloadProgress,
 	initiateSiteBackupDownload,
 	type DownloadConfig,
-} from '../../data/site-backup-download';
+} from '@automattic/api-core';
+import configApi from '@automattic/calypso-config';
+import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { queryClient } from '../query-client';
 
 /**
@@ -27,11 +28,11 @@ export const siteBackupDownloadInitiateMutation = ( siteId: number ) =>
 	mutationOptions( {
 		mutationFn: ( {
 			timestamp,
-			config,
+			config: downloadConfig,
 		}: {
 			timestamp: string | number;
 			config?: DownloadConfig;
-		} ) => initiateSiteBackupDownload( siteId, timestamp, config ),
+		} ) => initiateSiteBackupDownload( siteId, timestamp, configApi( 'env_id' ), downloadConfig ),
 		onSuccess: ( downloadId ) => {
 			// Start polling download progress
 			queryClient.prefetchQuery( siteBackupDownloadProgressQuery( siteId, downloadId ) );

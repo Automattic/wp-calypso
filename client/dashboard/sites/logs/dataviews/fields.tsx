@@ -1,3 +1,4 @@
+import { LogType, PHPLog, ServerLog } from '@automattic/api-core';
 import { formatNumber } from '@automattic/number-formatters';
 import { Badge } from '@automattic/ui';
 import { useViewportMatch } from '@wordpress/compose';
@@ -5,7 +6,6 @@ import { dateI18n } from '@wordpress/date';
 import { useMemo } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useLocale } from '../../../app/locale';
-import { LogType, PHPLog, ServerLog } from '../../../data/site-logs';
 import { formatDateWithOffset, getUtcOffsetDisplay } from '../../../utils/datetime';
 import type { Field, Operator, DataViewRenderFieldProps } from '@wordpress/dataviews';
 

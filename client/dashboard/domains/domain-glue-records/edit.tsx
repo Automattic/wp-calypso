@@ -1,3 +1,4 @@
+import { DomainGlueRecord } from '@automattic/api-core';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
@@ -10,7 +11,6 @@ import {
 import { domainRoute, domainGlueRecordsRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { DomainGlueRecord } from '../../data/domain-glue-records';
 import DomainGlueRecordsForm from './form';
 
 export default function EditDomainGlueRecords() {

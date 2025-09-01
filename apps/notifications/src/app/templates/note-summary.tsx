@@ -6,6 +6,7 @@ import {
 import { html } from '../../panel/indices-to-html';
 import NoteIcon from './note-icon';
 import type { Note } from '../types';
+import type { CSSProperties } from 'react';
 
 const getNoteIconLink = ( note: Note ) => {
 	if ( note.header?.[ 0 ].ranges?.[ 0 ].type === 'user' ) {
@@ -20,20 +21,28 @@ const getNoteIconLink = ( note: Note ) => {
 
 const NoteSummaryIcon = ( { note }: { note: Note } ) => {
 	const link = getNoteIconLink( note );
+	const style: CSSProperties = { position: 'relative', flexShrink: 0 };
 	const content = (
-		<div style={ { position: 'relative', flexShrink: 0 } }>
-			<div style={ { width: '32px', height: '32px', borderRadius: '50%', overflow: 'hidden' } }>
-				<NoteIcon icon={ note.icon } size={ 32 } />
-			</div>
+		<div
+			style={ {
+				display: 'flex',
+				alignItems: 'center',
+				justifyContent: 'center',
+				border: '1px solid rgba(0, 0, 0, 0.1)',
+				borderRadius: '50%',
+				overflow: 'hidden',
+			} }
+		>
+			<NoteIcon icon={ note.icon } size={ 40 } />
 		</div>
 	);
 
 	if ( ! link ) {
-		return content;
+		return <div style={ style }> { content }</div>;
 	}
 
 	return (
-		<a href={ link } target="_blank" rel="noopener noreferrer">
+		<a href={ link } style={ style } target="_blank" rel="noopener noreferrer">
 			{ content }
 		</a>
 	);

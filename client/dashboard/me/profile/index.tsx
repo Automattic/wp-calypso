@@ -22,7 +22,7 @@ import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import EditGravatar from '../edit-gravatar';
-import type { UserProfile } from '../../data/types';
+import type { UserProfile } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 import './style.scss';

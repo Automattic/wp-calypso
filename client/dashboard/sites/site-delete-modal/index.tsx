@@ -19,7 +19,7 @@ import { p2HubP2sQuery } from '../../app/queries/p2';
 import { siteDeleteMutation } from '../../app/queries/site';
 import { siteHasCancelablePurchasesQuery } from '../../app/queries/site-purchases';
 import Notice from '../../components/notice';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 type SiteDeleteFormData = {

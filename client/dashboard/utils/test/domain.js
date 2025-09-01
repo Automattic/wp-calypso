@@ -1,4 +1,4 @@
-import { WhoisType } from '../../data/domain-whois';
+import { WhoisType } from '@automattic/api-core';
 import { findRegistrantWhois, findPrivacyServiceWhois } from '../domain';
 
 describe( 'utils', () => {

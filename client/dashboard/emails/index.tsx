@@ -8,7 +8,7 @@ import { emailsQuery } from '../app/queries/emails';
 import { DataViewsCard } from '../components/dataviews-card';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
-import type { Email } from '../data/types';
+import type { Email } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 
 const fields = [

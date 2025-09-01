@@ -1,7 +1,7 @@
+import { fetchSftpUsers, createSftpUser, resetSftpPassword } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
-import { fetchSftpUsers, createSftpUser, resetSftpPassword } from '../../data/site-hosting-sftp';
 import { queryClient } from '../query-client';
-import type { SftpUser } from '../../data/site-hosting-sftp';
+import type { SftpUser } from '@automattic/api-core';
 
 export const siteSftpUsersQuery = ( siteId: number ) =>
 	queryOptions( {

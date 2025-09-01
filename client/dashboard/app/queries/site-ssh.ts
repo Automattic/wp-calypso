@@ -1,4 +1,3 @@
-import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import {
 	fetchSshAccessStatus,
 	enableSshAccess,
@@ -6,9 +5,10 @@ import {
 	fetchSiteSshKeys,
 	attachSiteSshKey,
 	detachSiteSshKey,
-} from '../../data/site-hosting-ssh';
+} from '@automattic/api-core';
+import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from '../query-client';
-import type { SiteSshKey } from '../../data/site-hosting-ssh';
+import type { SiteSshKey } from '@automattic/api-core';
 
 export const siteSshAccessStatusQuery = ( siteId: number ) =>
 	queryOptions( {

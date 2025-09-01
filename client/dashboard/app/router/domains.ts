@@ -283,7 +283,7 @@ export const domainTransferRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'transfer',
 } ).lazy( () =>
-	import( '../../sites/domains/placeholder' ).then( ( d ) =>
+	import( '../../domains/domain-transfer' ).then( ( d ) =>
 		createLazyRoute( 'domain-transfer' )( {
 			component: d.default,
 		} )

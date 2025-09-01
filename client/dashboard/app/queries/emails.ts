@@ -1,5 +1,5 @@
+import { fetchEmails, fetchMailboxes } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
-import { fetchEmails, fetchMailboxes } from '../../data/emails';
 
 export const emailsQuery = () =>
 	queryOptions( {

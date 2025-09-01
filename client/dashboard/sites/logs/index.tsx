@@ -1,3 +1,4 @@
+import { HostingFeatures, LogType, PHPLog, ServerLog, SiteLogsParams } from '@automattic/api-core';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
@@ -26,8 +27,6 @@ import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
-import { HostingFeatures } from '../../data/constants';
-import { LogType, PHPLog, ServerLog, SiteLogsParams } from '../../data/site-logs';
 import { hasHostingFeature } from '../../utils/site-features';
 import { useActions } from './dataviews/actions';
 import { useFields } from './dataviews/fields';

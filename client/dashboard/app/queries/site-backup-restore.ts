@@ -1,9 +1,10 @@
-import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import {
 	fetchSiteBackupRestoreProgress,
 	initiateSiteBackupRestore,
 	type RestoreConfig,
-} from '../../data/site-backup-restore';
+} from '@automattic/api-core';
+import configApi from '@automattic/calypso-config';
+import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { queryClient } from '../query-client';
 
 /**
@@ -25,8 +26,13 @@ export const siteBackupRestoreProgressQuery = ( siteId: number, restoreId: numbe
  */
 export const siteBackupRestoreInitiateMutation = ( siteId: number ) =>
 	mutationOptions( {
-		mutationFn: ( { timestamp, config }: { timestamp: string | number; config?: RestoreConfig } ) =>
-			initiateSiteBackupRestore( siteId, timestamp, config ),
+		mutationFn: ( {
+			timestamp,
+			config: restoreConfig,
+		}: {
+			timestamp: string | number;
+			config?: RestoreConfig;
+		} ) => initiateSiteBackupRestore( siteId, timestamp, configApi( 'env_id' ), restoreConfig ),
 		onSuccess: ( restoreId ) => {
 			// Start polling restore progress
 			queryClient.prefetchQuery( siteBackupRestoreProgressQuery( siteId, restoreId ) );

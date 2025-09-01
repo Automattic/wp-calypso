@@ -9,7 +9,7 @@ import { __ } from '@wordpress/i18n';
 import { Icon, download, check } from '@wordpress/icons';
 import { siteBackupsRoute } from '../../app/router/sites';
 import Notice from '../../components/notice';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 
 function SiteBackupDownloadSuccess( {
 	site,

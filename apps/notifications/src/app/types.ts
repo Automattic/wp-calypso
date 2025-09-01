@@ -61,6 +61,7 @@ export type Block = {
 			comment?: string;
 			reply_comment?: string;
 			user?: string;
+			home?: string;
 		};
 		titles?: {
 			home?: string;
@@ -103,6 +104,7 @@ export type Note = {
 			comment?: string;
 			reply_comment?: string;
 			user?: string;
+			home?: string;
 		};
 	};
 	title: string;

@@ -1,5 +1,5 @@
+import { fetchP2HubP2s } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
-import { fetchP2HubP2s } from '../../data/p2';
 
 export const p2HubP2sQuery = ( siteId: number, options: { limit?: number } = {} ) =>
 	queryOptions( {

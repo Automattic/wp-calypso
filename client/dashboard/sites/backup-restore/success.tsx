@@ -8,7 +8,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
 import { siteBackupsRoute } from '../../app/router/sites';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 
 const SiteBackupRestoreSuccess = ( {
 	restorePointDate,
