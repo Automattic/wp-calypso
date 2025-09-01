@@ -1,6 +1,4 @@
-import type { Domain } from '../../data/domain';
-import type { User } from '../../data/me';
-import type { Site } from '../../data/site';
+import type { Domain, User, Site } from '@automattic/api-core';
 
 export const WPCOM_DEFAULT_NAMESERVERS_REGEX = /^ns[1-4]\.wordpress\.com$/i;
 

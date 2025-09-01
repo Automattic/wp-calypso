@@ -17,7 +17,7 @@ import { useAuth } from '../../app/auth';
 import { siteHasCancelablePurchasesQuery } from '../../app/queries/site-purchases';
 import { siteCurrentUserQuery, siteUserDeleteMutation } from '../../app/queries/site-users';
 import RouterLinkButton from '../../components/router-link-button';
-import type { Site, User } from '../../data/types';
+import type { Site, User } from '@automattic/api-core';
 
 interface ContentInfoProps {
 	site: Site;

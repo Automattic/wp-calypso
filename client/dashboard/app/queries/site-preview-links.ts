@@ -1,9 +1,9 @@
-import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import {
 	fetchSitePreviewLinks,
 	createSitePreviewLink,
 	deleteSitePreviewLink,
-} from '../../data/site-preview-links';
+} from '@automattic/api-core';
+import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from '../query-client';
 
 export const sitePreviewLinksQuery = ( siteId: number ) =>

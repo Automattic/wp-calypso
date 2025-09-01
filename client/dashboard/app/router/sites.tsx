@@ -1,6 +1,5 @@
+import { HostingFeatures, DotcomFeatures, LogType } from '@automattic/api-core';
 import { createRoute, redirect, createLazyRoute, lazyRouteComponent } from '@tanstack/react-router';
-import { HostingFeatures, DotcomFeatures } from '../../data/constants';
-import { LogType } from '../../data/site-logs';
 import { canViewHundredYearPlanSettings, canViewWordPressSettings } from '../../sites/features';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import { hasSiteTrialEnded } from '../../utils/site-trial';

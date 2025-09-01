@@ -1,8 +1,5 @@
+import { Domain, DomainTypes, DomainTransferStatus, Purchase, Site } from '@automattic/api-core';
 import { __ } from '@wordpress/i18n';
-import { Domain } from '../../data/domain';
-import { DomainTypes, DomainTransferStatus } from '../../data/domains';
-import { Purchase } from '../../data/purchase';
-import { Site } from '../../data/site';
 import { isAkismetProduct } from '../../utils/purchase';
 
 export const shouldShowTransferAction = ( domain: Domain ) => {

@@ -1,5 +1,5 @@
+import { fetchSiteDomains, setPrimaryDomain } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
-import { fetchSiteDomains, setPrimaryDomain } from '../../data/site-domains';
 import { queryClient } from '../query-client';
 import { siteQueryFilter } from './site';
 

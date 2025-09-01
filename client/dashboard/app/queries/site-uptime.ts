@@ -1,5 +1,5 @@
+import { fetchSiteUptime } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
-import { fetchSiteUptime } from '../../data/site-jetpack-monitor-uptime';
 
 export const siteUptimeQuery = ( siteId: number, period?: string ) =>
 	queryOptions( {

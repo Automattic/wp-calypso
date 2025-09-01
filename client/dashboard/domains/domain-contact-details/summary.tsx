@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import type { Domain } from '../../data/types';
+import type { Domain } from '@automattic/api-core';
 import type { SummaryButtonBadgeProps } from '@automattic/components/src/summary-button/types';
 
 export default function DomainContactDetailsSettingsSummary( { domain }: { domain: Domain } ) {

@@ -1,3 +1,4 @@
+import { WPCOM_DIFM_LITE } from '@automattic/api-core';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
@@ -11,10 +12,9 @@ import { sitePurchasesQuery } from '../../app/queries/site-purchases';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
-import { WPCOM_DIFM_LITE } from '../../data/constants';
 import { formatDate } from '../../utils/datetime';
 import { hasGSuiteWithUs, hasTitanMailWithUs } from '../../utils/domain';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 
 function WebsiteContentSubmitted( { site }: { site: Site } ) {
 	const { recordTracksEvent } = useAnalytics();

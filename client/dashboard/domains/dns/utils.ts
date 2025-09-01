@@ -1,11 +1,10 @@
-import type { DnsRecord, DnsRecordType } from '../../data/domain-dns-records';
+import type { DnsRecord, DnsRecordType } from '@automattic/api-core';
 
 /**
  * Check if the provided name is the root domain name
  *
  * This checks a few different variations of the root domain name, such as
  * `@`, `@.example.com`, `@.example.com.`, `example.com` and `example.com.`.
- *
  * @param name - The name to check
  * @param domainName - The domain name
  * @returns True if the name is the root domain name, false otherwise
@@ -27,7 +26,6 @@ const isRootDomainName = ( name: string, domainName: string ): boolean => {
 
 /**
  * Check if the DNS record type supports a root domain `name` value
- *
  * @param type - The DNS record type
  * @returns True if the record type supports a root domain `name`, false otherwise
  */
@@ -40,7 +38,6 @@ const doesRecordTypeSupportRootDomainName = ( type: DnsRecordType ): boolean => 
 
 /**
  * Check if the provided name is the root domain name and the record type supports those
- *
  * @param name - The name of the DNS record
  * @param type - The type of the DNS record
  * @param domainName - The domain name
@@ -56,7 +53,6 @@ export const isRootDomainNameSupported = (
 
 /**
  * Add a dot to the end of the field if it doesn't have one to make it a FQDN
- *
  * @param field - The field to add a dot to
  * @returns The field with a dot
  */
@@ -72,7 +68,6 @@ export const getFieldWithDot = ( field: string ) => {
  *
  * This is done before persisting a DNS record.
  * For example, if the `name` field is `@`, it will be normalized to `example.com.`.
- *
  * @param name - The `name` field of the DNS record
  * @param type - The type of the DNS record
  * @param domainName - The domain name
@@ -96,7 +91,6 @@ export const getNormalizedName = ( name: string, type: DnsRecordType, domainName
  *
  * This is done after loading a DNS record from the backend.
  * For example, `name` fields that are the root domain name are replaced with an empty string.
- *
  * @param record
  * @returns
  */

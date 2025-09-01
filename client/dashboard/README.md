@@ -57,9 +57,9 @@ As we iterate on the new dashboard, we may want to share components with the exi
 
 The new hosting dashboard has stricter guidelines (see above) and ESlint rules, for this reason, the shareable components are currently build within the new dashboard. This is not the ideal solution but a pragmatic one.
 
-Shared components: 
+Shared components:
 
- - `/client/dashboard/sites/add-new-site/` - Add new site dropdown/modal content.
+- `/client/dashboard/sites/add-new-site/` - Add new site dropdown/modal content.
 
 ### Next
 

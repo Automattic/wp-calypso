@@ -1,3 +1,4 @@
+import { type DomainContactDetails } from '@automattic/api-core';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
 	ExternalLink,
@@ -18,7 +19,6 @@ import { countryListQuery, statesListQuery } from '../../app/queries/domain-supp
 import { domainWhoisMutation, domainWhoisValidateMutation } from '../../app/queries/domain-whois';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
-import { type DomainContactDetails } from '../../data/domain-whois';
 import { getContactFormFields } from './contact-form-fields';
 
 interface ContactFormProps {

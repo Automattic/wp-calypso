@@ -296,6 +296,9 @@ __metadata:
   resolution: "@automattic/api-core@workspace:packages/api-core"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/shopping-cart": "workspace:^"
+    "@wordpress/dataviews": "npm:^7.0.0"
+    "@wordpress/i18n": "npm:^5.23.0"
     tslib: "npm:^2.8.1"
     typescript: "npm:^5.8.3"
   languageName: unknown

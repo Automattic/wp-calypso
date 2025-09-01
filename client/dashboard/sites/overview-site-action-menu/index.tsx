@@ -7,7 +7,7 @@ import { useAnalytics } from '../../app/analytics';
 import { isSiteUsingBlockThemeQuery } from '../../app/queries/site-themes';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { getSiteEditUrl } from '../../utils/site-url';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 
 const SiteActionMenu = ( { site }: { site: Site } ) => {
 	const { recordTracksEvent } = useAnalytics();

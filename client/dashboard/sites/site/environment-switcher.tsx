@@ -18,7 +18,7 @@ import { production, staging } from '../../components/icons';
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
 import { hasStagingSite } from '../../utils/site-staging-site';
 import { canManageSite, canCreateStagingSite } from '../features';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 
 type EnvironmentType = 'production' | 'staging';
 

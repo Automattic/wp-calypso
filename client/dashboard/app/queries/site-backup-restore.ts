@@ -1,9 +1,9 @@
-import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import {
 	fetchSiteBackupRestoreProgress,
 	initiateSiteBackupRestore,
 	type RestoreConfig,
-} from '../../data/site-backup-restore';
+} from '@automattic/api-core';
+import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { queryClient } from '../query-client';
 
 /**

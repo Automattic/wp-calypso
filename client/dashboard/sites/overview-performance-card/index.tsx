@@ -1,3 +1,4 @@
+import { HostingFeatures } from '@automattic/api-core';
 import { useQuery } from '@tanstack/react-query';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
@@ -5,11 +6,10 @@ import { addQueryArgs } from '@wordpress/url';
 import { usePerformanceData } from '../../app/hooks/site-performance';
 import { siteSettingsQuery } from '../../app/queries/site-settings';
 import { useTimeSince } from '../../components/time-since';
-import { HostingFeatures } from '../../data/constants';
 import { getPerformanceStatus, getPerformanceStatusText } from '../../utils/site-performance';
 import HostingFeatureGatedWithOverviewCard from '../hosting-feature-gated-with-overview-card';
 import OverviewCard from '../overview-card';
-import type { PerformanceReport, Site, UrlPerformanceInsights } from '../../data/types';
+import type { PerformanceReport, Site, UrlPerformanceInsights } from '@automattic/api-core';
 
 const CARD_PROPS = {
 	icon: chartBar,

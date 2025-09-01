@@ -12,7 +12,7 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { domainDnssecMutation } from '../../app/queries/domain-dnssec';
 import { DnsSecRecordTextarea } from './dnssec-record-textarea';
-import type { Domain } from '../../data/domain';
+import type { Domain } from '@automattic/api-core';
 
 interface DnsSecProps {
 	domainName: string;

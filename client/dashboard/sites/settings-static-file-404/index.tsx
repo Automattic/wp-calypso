@@ -1,3 +1,4 @@
+import { HostingFeatures } from '@automattic/api-core';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -17,7 +18,6 @@ import {
 	siteStaticFile404SettingMutation,
 } from '../../app/queries/site-static-file-404';
 import PageLayout from '../../components/page-layout';
-import { HostingFeatures } from '../../data/constants';
 import { hasHostingFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SettingsPageHeader from '../settings-page-header';

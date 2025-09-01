@@ -5,7 +5,7 @@ import filesize from 'filesize';
 import { siteMediaStorageQuery } from '../../app/queries/site-media-storage';
 import { Stat } from '../../components/stat';
 import { getStorageAlertLevel } from '../../utils/site-storage';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 
 const MINIMUM_DISPLAYED_USAGE = 2.5;
 

@@ -1,3 +1,4 @@
+import { JetpackModules } from '@automattic/api-core';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Card,
@@ -16,9 +17,8 @@ import {
 	siteJetpackModulesMutation,
 } from '../../app/queries/site-jetpack-modules';
 import { SectionHeader } from '../../components/section-header';
-import { JetpackModules } from '../../data/constants';
 import { isJetpackModuleActivated } from '../../utils/site-jetpack-modules';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 
 const fields = [
 	{

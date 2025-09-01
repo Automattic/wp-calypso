@@ -7,7 +7,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { findRegistrantWhois } from '../../utils/domain';
 import ContactForm from './contact-form';
-import type { DomainContactDetails } from '../../data/types';
+import type { DomainContactDetails } from '@automattic/api-core';
 
 export default function DomainContactInfo() {
 	const { domainName } = domainRoute.useParams();

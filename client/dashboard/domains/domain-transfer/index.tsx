@@ -1,3 +1,4 @@
+import { DomainSubtype } from '@automattic/api-core';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
 	Card,
@@ -21,7 +22,6 @@ import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
-import { DomainSubtype } from '../../data/domains';
 import { formatDate } from '../../utils/datetime';
 import { getTopLevelOfTld } from '../../utils/domain';
 import InternalTransferOptions from './internal-transfer-options';

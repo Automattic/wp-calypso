@@ -1,3 +1,4 @@
+import { type DnsTemplateVariables } from '@automattic/api-core';
 import { useMutation } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -11,7 +12,6 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { domainDnsApplyTemplateMutation } from '../../app/queries/domain-dns-records';
 import { domainRoute } from '../../app/router/domains';
-import { type DnsTemplateVariables } from '../../data/domain-dns-records';
 
 export type EmailSetupFormData = {
 	record: string;

@@ -1,5 +1,5 @@
+import { fetchCountryList, fetchStatesList } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
-import { fetchCountryList, fetchStatesList } from '../../data/domain-supported-countries';
 
 export const countryListQuery = () =>
 	queryOptions( {

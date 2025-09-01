@@ -1,9 +1,9 @@
-import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import {
 	fetchSiteBackupDownloadProgress,
 	initiateSiteBackupDownload,
 	type DownloadConfig,
-} from '../../data/site-backup-download';
+} from '@automattic/api-core';
+import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { queryClient } from '../query-client';
 
 /**

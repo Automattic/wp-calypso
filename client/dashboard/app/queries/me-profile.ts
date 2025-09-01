@@ -1,5 +1,5 @@
+import { fetchProfile, updateProfile } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
-import { fetchProfile, updateProfile } from '../../data/me-profile';
 import { queryClient } from '../query-client';
 
 export const profileQuery = () =>

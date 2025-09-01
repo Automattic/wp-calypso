@@ -21,7 +21,7 @@ import {
 } from '../../app/queries/site-reset';
 import Notice from '../../components/notice';
 import ContentInfo from './content-info';
-import type { Site, SiteResetContentSummary, SiteResetStatus } from '../../data/types';
+import type { Site, SiteResetContentSummary, SiteResetStatus } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 import './style.scss';
