@@ -13,7 +13,6 @@ import ApproveButton from './button-approve';
 import EditButton from './button-edit';
 import LikeButton from './button-like';
 import SpamButton from './button-spam';
-import TrashButton from './button-trash';
 import ReplyInput from './comment-reply-input';
 
 const getType = ( note ) => ( null === getReferenceId( note, 'comment' ) ? 'post' : 'comment' );
@@ -43,7 +42,7 @@ const getInitialReplyValue = ( note ) => {
 	return getType( note ) === 'post' ? __( 'Reply to post…' ) : __( 'Reply to comment…' );
 };
 
-const ActionsPane = ( { isApproved, isLiked, note } ) => {
+const ActionsPane = ( { isApproved, isLiked, note, goBack } ) => {
 	const actions = getActions( note );
 	const hasAction = ( types ) =>
 		[].concat( types ).some( ( type ) => actions.hasOwnProperty( type ) );
@@ -52,8 +51,7 @@ const ActionsPane = ( { isApproved, isLiked, note } ) => {
 		<VStack spacing={ 4 } style={ { width: '100%' } }>
 			<HStack spacing={ 2 }>
 				{ hasAction( 'approve-comment' ) && <ApproveButton { ...{ note, isApproved } } /> }
-				{ hasAction( 'spam-comment' ) && <SpamButton note={ note } /> }
-				{ hasAction( 'trash-comment' ) && <TrashButton note={ note } /> }
+				{ hasAction( 'spam-comment' ) && <SpamButton note={ note } goBack={ goBack } /> }
 				{ hasAction( [ 'like-post', 'like-comment' ] ) && <LikeButton { ...{ note, isLiked } } /> }
 				{ hasAction( 'edit-comment' ) && <EditButton note={ note } /> }
 				{ hasAction( 'answer-prompt' ) && <AnswerPromptButton note={ note } /> }
@@ -69,6 +67,7 @@ ActionsPane.propTypes = {
 	isApproved: PropTypes.bool.isRequired,
 	isLiked: PropTypes.bool.isRequired,
 	note: PropTypes.object.isRequired,
+	goBack: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ( state, { note } ) => ( {

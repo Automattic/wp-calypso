@@ -82,7 +82,7 @@ export default function Notifications( { className }: { className: string } ) {
 				/>
 			) }
 			renderContent={ () => (
-				<div style={ { width: '480px', height: '100vh', maxHeight: 'inherit', margin: '-8px' } }>
+				<div style={ { width: '448px', height: '100vh', maxHeight: 'inherit', margin: '-8px' } }>
 					<Suspense fallback={ null }>
 						<AsyncNotificationApp
 							locale={ locale }

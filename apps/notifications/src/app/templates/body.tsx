@@ -69,7 +69,7 @@ const ReplyBlock = ( { note }: { note: Note } ) => {
 	return null;
 };
 
-export const ActionBlock = ( { note }: { note: Note } ) => {
+export const ActionBlock = ( { note, goBack }: { note: Note; goBack: () => void } ) => {
 	const blocks: BlockWithSignature[] = zipWithSignature( note.body, note );
 	const actionBlock = blocks.findLast(
 		( block ) => block.block.actions && 'user' !== block.signature.type
@@ -81,7 +81,7 @@ export const ActionBlock = ( { note }: { note: Note } ) => {
 
 	return (
 		<CardFooter size="small">
-			<NoteActions note={ note } />
+			<NoteActions note={ note } goBack={ goBack } />
 		</CardFooter>
 	);
 };
