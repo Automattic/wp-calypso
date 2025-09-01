@@ -2,7 +2,7 @@
     display: flex;
     align-items: center;
     gap: var(--spacing);
-    padding: 0 var(--spacing-3);
+    padding: 0 var(--spacing-2);
     color: var(--color-muted-foreground);
     font-size: var(--text-sm);
 }
