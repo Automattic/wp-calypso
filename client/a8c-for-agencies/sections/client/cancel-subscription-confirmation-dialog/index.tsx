@@ -20,14 +20,67 @@ type Props = {
 
 export default function CancelSubscriptionAction( { subscription, onCancelSubscription }: Props ) {
 	const translate = useTranslate();
+	const locale = useLocale();
 	const dispatch = useDispatch();
 
 	const [ isVisible, setIsVisible ] = useState( false );
 
+	const isBillingTypeBD = useSelector( getUserBillingType ) === 'billingdragon';
+	const { data: products } = useFetchClientProducts( false );
+	const storeSubscription = subscription.subscription;
+
+	const productName =
+		isBillingTypeBD && storeSubscription?.product_name
+			? storeSubscription.product_name
+			: products?.find( ( product ) => product.product_id === subscription.product_id )?.name ?? '';
+
+	const expiryDate = storeSubscription?.expiry
+		? formatDate( new Date( storeSubscription.expiry ), locale, { dateStyle: 'long' } )
+		: '';
+
 	const { mutate: cancelSubscription, isPending } = useCancelClientSubscription( {
 		onSuccess: () => {
+			let successMessage;
+
+			if ( storeSubscription?.is_refundable ) {
+				successMessage = translate(
+					"%(productName)s has been cancelled and we'll refund you %(amount)s %(currency)s. We've emailed you a receipt.",
+					{
+						args: {
+							productName,
+							amount: storeSubscription.purchase_price ?? '',
+							currency: storeSubscription.purchase_currency ?? '',
+						},
+						comment:
+							'%(productName)s is the name of the product, %(amount)s is the refund amount, %(currency)s is the currency code.',
+					}
+				);
+			} else {
+				successMessage = translate(
+					'%(productName)s has been canceled, but it will remain active until %(date)s. After that, it will not renew. {{link}}Learn more{{/link}}',
+					{
+						args: {
+							productName,
+							date: expiryDate,
+						},
+						components: {
+							link: (
+								<a
+									href={ localizeUrl(
+										'https://wordpress.com/support/manage-purchases/cancel-a-purchase/'
+									) }
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
+						},
+						comment: '%(productName)s is the name of the product, %(date)s is the expiry date.',
+					}
+				);
+			}
+
 			dispatch(
-				successNotice( translate( 'The subscription was successfully canceled.' ), {
+				successNotice( successMessage, {
 					id: 'a8c-cancel-subscription-success',
 				} )
 			);
