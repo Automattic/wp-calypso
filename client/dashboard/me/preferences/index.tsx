@@ -1,6 +1,11 @@
 import config from '@automattic/calypso-config';
 // eslint-disable-next-line no-restricted-imports
-import { canBeTranslated, getLanguage, isLocaleVariant } from '@automattic/i18n-utils';
+import {
+	canBeTranslated,
+	getLanguage,
+	isDefaultLocale,
+	isLocaleVariant,
+} from '@automattic/i18n-utils';
 import { SubLanguage } from '@automattic/languages';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
@@ -11,6 +16,7 @@ import {
 	__experimentalVStack as VStack,
 	ExternalLink,
 	ComboboxControl,
+	CheckboxControl,
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -186,8 +192,22 @@ export default function Preferences() {
 	];
 
 	if ( shouldShowEmpathyMode ) {
+		const isEmpathyModeFieldDisabled = !! isDefaultLocale( data.language || null );
 		languageFields.push( {
-			Edit: 'checkbox',
+			Edit: ( { field, data, onChange } ) => {
+				return (
+					<CheckboxControl
+						checked={ isEmpathyModeFieldDisabled ? false : field.getValue( { item: data } ) }
+						label={ field.label }
+						disabled={ isEmpathyModeFieldDisabled }
+						onChange={ ( newValue ) => {
+							onChange( {
+								[ field.id ]: newValue,
+							} );
+						} }
+					/>
+				);
+			},
 			id: 'i18n_empathy_mode',
 			label: 'Empathy mode (a8c-only)',
 			description: 'Pretend to use that language but display English where a translated exists', // TODO field should be disabled in case we're using default language https://github.com/Automattic/wp-calypso/blob/559b5e82dc96bd668fd6e5ef558d588d09eeb80f/client/components/language-picker/modal.tsx#L159
