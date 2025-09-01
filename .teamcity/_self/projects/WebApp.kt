@@ -939,7 +939,8 @@ object PlaywrightTestPRMatrix : BuildType({
 			name = "Test step"
 			scriptContent = """
 				echo "Running Playwright tests for project: %playwrightProject%"
-				echo "hello, it works"
+				cd test/e2e
+				yarn playwright:%playwrightProject% --list
 			"""
 		}
 	}
