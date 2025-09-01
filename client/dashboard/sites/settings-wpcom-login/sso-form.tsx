@@ -158,33 +158,31 @@ export default function SsoForm( {
 	const { isPending: isJetpackSettingsPending } = jetpackSettingsMutation;
 
 	return (
-		<>
-			<Card>
-				<CardBody>
-					<form onSubmit={ handleSubmit }>
-						<VStack spacing={ 4 }>
-							<DataForm< WpcomLoginFormData >
-								data={ formData }
-								fields={ fields }
-								form={ form }
-								onChange={ ( edits: Partial< WpcomLoginFormData > ) => {
-									setFormData( ( data ) => ( { ...data, ...edits } ) );
-								} }
-							/>
-							<ButtonStack justify="flex-start">
-								<Button
-									variant="primary"
-									type="submit"
-									isBusy={ isJetpackModulesPending || isJetpackSettingsPending }
-									disabled={ isJetpackModulesPending || isJetpackSettingsPending || ! isDirty }
-								>
-									{ __( 'Save' ) }
-								</Button>
-							</ButtonStack>
-						</VStack>
-					</form>
-				</CardBody>
-			</Card>
-		</>
+		<Card>
+			<CardBody>
+				<form onSubmit={ handleSubmit }>
+					<VStack spacing={ 4 }>
+						<DataForm< WpcomLoginFormData >
+							data={ formData }
+							fields={ fields }
+							form={ form }
+							onChange={ ( edits: Partial< WpcomLoginFormData > ) => {
+								setFormData( ( data ) => ( { ...data, ...edits } ) );
+							} }
+						/>
+						<ButtonStack justify="flex-start">
+							<Button
+								variant="primary"
+								type="submit"
+								isBusy={ isJetpackModulesPending || isJetpackSettingsPending }
+								disabled={ isJetpackModulesPending || isJetpackSettingsPending || ! isDirty }
+							>
+								{ __( 'Save' ) }
+							</Button>
+						</ButtonStack>
+					</VStack>
+				</form>
+			</CardBody>
+		</Card>
 	);
 }

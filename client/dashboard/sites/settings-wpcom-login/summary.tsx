@@ -7,16 +7,11 @@ import { __ } from '@wordpress/i18n';
 import { key } from '@wordpress/icons';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { hasHostingFeature } from '../../utils/site-features';
-<<<<<<< HEAD
-import { isJetpackModuleActivated } from '../../utils/site-jetpack-modules';
-import type { Site } from '@automattic/api-core';
-=======
 import {
 	jetpackModuleRequiresConnection,
 	isJetpackModuleActivated,
 } from '../../utils/site-jetpack-modules';
-import type { Site } from '../../data/types';
->>>>>>> afd2f5313a5 (Disable the SSO setting if the site is not connected, showing an info notice)
+import type { Site } from '@automattic/api-core';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
 export default function WpcomLoginSettingsSummary( {

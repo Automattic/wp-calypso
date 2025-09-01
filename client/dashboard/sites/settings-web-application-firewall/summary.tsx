@@ -17,12 +17,15 @@ export default function WebApplicationFirewallSettingsSummary( {
 		return null;
 	}
 
+	const badges = site.jetpack_connection ? undefined : [ { text: __( 'Unavailable' ) } ];
+
 	return (
 		<RouterLinkSummaryButton
 			to={ `/sites/${ site.slug }/settings/web-application-firewall` }
 			title={ __( 'Web Application Firewall (WAF)' ) }
 			density={ density }
 			decoration={ <Icon icon={ notAllowed } /> }
+			badges={ badges }
 		/>
 	);
 }
