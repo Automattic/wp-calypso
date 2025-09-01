@@ -1,10 +1,10 @@
 @import "@automattic/typography/styles/variables";
 
 .odie-closed-conversation-footer {
-	border-top: 1px solid var(--studio-gray-5, #DCDCDE);
 	background: var(--studio-white, #FFF);
+	border-radius: 0 0 24px 24px;
 	box-sizing: border-box;
-
+	z-index: 5;
 	width: 100%;
 	display: flex;
 	padding: 16px;
@@ -12,11 +12,6 @@
 	align-items: center;
 	gap: 10px;
 
-	span {
-		color: var(--studio-gray-40, #787C82);
-		font-size: $font-body-small;
-		line-height: 20px;
-	}
 
 	.odie-closed-conversation-footer__button {
 		display: flex;
@@ -27,10 +22,7 @@
 		gap: 10px;
 		align-self: stretch;
 
-		border-radius: 4px;
-		border: 1px solid var(--studio-gray-10, #C3C4C7);
-		background: var(--studio-white, #FFF);
-		color: var(--studio-gray-100, #101517);
+		border-radius: 8px;
 
 		svg {
 			color: var(--studio-gray-40);

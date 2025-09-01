@@ -34,7 +34,7 @@ function clusterMessagesBySender( messages: Message[] ) {
 	if ( ! messages.length ) {
 		return [];
 	}
-	let id = 1;
+	let id = 0;
 
 	let currentGroup: {
 		id: number;
@@ -71,6 +71,7 @@ export function MessagesClusterizer( { messages }: { messages: Message[] } ) {
 	return groups.map( ( group ) => {
 		const startingHumanSupport = group.messages.some( isTransitionToSupportMessage );
 		const endingHumanSupport = group.messages.some( isCSATMessage );
+		const isLastGroup = group.id === groups.length;
 
 		const messageHeader = () => {
 			// Only business messages have a header.
@@ -93,7 +94,9 @@ export function MessagesClusterizer( { messages }: { messages: Message[] } ) {
 				) }
 				<div
 					key={ group.id }
-					className={ cx( 'odie-chatbox-messages-cluster', `role-${ group.role }` ) }
+					className={ cx( 'odie-chatbox-messages-cluster', `role-${ group.role }`, {
+						'is-last-group': isLastGroup,
+					} ) }
 				>
 					{ messageHeader() }
 					{ group.messages.map( ( message ) => (
