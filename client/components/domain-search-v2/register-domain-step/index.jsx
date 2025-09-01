@@ -695,8 +695,6 @@ class RegisterDomainStep extends Component {
 				onContinue={ onContinue }
 				cart={ this.getCart() }
 				className="wpcom-domain-search-v2"
-				filter={ this.state.lastFilters }
-				setFilter={ ( filter ) => this.setState( { lastFilters: filter } ) }
 			>
 				<VStack spacing={ 8 }>
 					<VStack spacing={ 4 }>
