@@ -1,7 +1,11 @@
-@import "@automattic/typography/styles/variables";
+@import '@automattic/typography/styles/variables';
 
 .odie-closed-conversation-footer {
-	background: var(--studio-white, #FFF);
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: var( --studio-white, #fff );
 	border-radius: 0 0 24px 24px;
 	box-sizing: border-box;
 	z-index: 5;
@@ -12,37 +16,9 @@
 	align-items: center;
 	gap: 10px;
 
-
 	.odie-closed-conversation-footer__button {
 		display: flex;
-		height: 40px;
-		padding: 10px 24px;
-		justify-content: center;
-		align-items: center;
-		gap: 10px;
 		align-self: stretch;
-
 		border-radius: 8px;
-
-		svg {
-			color: var(--studio-gray-40);
-		}
-
-		&:hover {
-			border-color: var(--color-neutral-20)  !important;
-		}
-
-		&:focus {
-			outline: var(--studio-blue-50, #0675c4) solid 2px !important;
-		}
-
-		&:focus,
-		&:hover {
-			color: var(--studio-gray-100, #101517) !important;
-
-			svg {
-				color: var(--studio-gray-40);
-			}
-		}
 	}
 }

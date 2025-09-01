@@ -20,7 +20,12 @@ export const ClosedConversationFooter = () => {
 
 	return (
 		<div className="odie-closed-conversation-footer">
-			<Button onClick={ handleOnClick } className="odie-closed-conversation-footer__button">
+			<Button
+				__next40pxDefaultSize
+				variant="secondary"
+				onClick={ handleOnClick }
+				className="odie-closed-conversation-footer__button"
+			>
 				{ __( 'Still need help? Start a new chat', __i18n_text_domain__ ) }
 			</Button>
 		</div>

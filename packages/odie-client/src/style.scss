@@ -102,7 +102,7 @@ $blueberry-blue: #3858e9;
 	width: 100%;
 }
 
-.odie-chat-message-input-container, .odie-closed-conversation-footer {
+.odie-chat-message-input-container {
 	padding: 16px;
 	z-index: 10;
 	position: fixed;
@@ -113,59 +113,4 @@ $blueberry-blue: #3858e9;
 
 .odie-chat-message-input-container.agenttic {
 	--radius: 8px;
-}
-
-.odie-closed-conversation-footer {
-	border-top: 1px solid var( --studio-gray-5, #dcdcde );
-	background: var( --studio-white, #fff );
-	box-sizing: border-box;
-
-	width: 100%;
-	display: flex;
-	padding: 16px;
-	flex-direction: column;
-	align-items: center;
-	gap: 10px;
-
-	span {
-		color: var( --studio-gray-40, #787c82 );
-		font-size: $font-body-small;
-		line-height: 20px;
-	}
-
-	.odie-closed-conversation-footer__button {
-		display: flex;
-		height: 40px;
-		padding: 10px 24px;
-		justify-content: center;
-		align-items: center;
-		gap: 10px;
-		align-self: stretch;
-
-		border-radius: 4px;
-		border: 1px solid var( --studio-gray-10, #c3c4c7 );
-		background: var( --studio-white, #fff );
-		color: var( --studio-gray-100, #101517 );
-
-		svg {
-			color: var( --studio-gray-40 );
-		}
-
-		&:hover {
-			border-color: var( --color-neutral-20 ) !important;
-		}
-
-		&:focus {
-			outline: var( --studio-blue-50, #0675c4 ) solid 2px !important;
-		}
-
-		&:focus,
-		&:hover {
-			color: var( --studio-gray-100, #101517 ) !important;
-
-			svg {
-				color: var( --studio-gray-40 );
-			}
-		}
-	}
 }
