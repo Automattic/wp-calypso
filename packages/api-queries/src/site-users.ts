@@ -18,3 +18,9 @@ export const siteUserDeleteMutation = ( siteId: number ) =>
 			queryClient.invalidateQueries( { queryKey: [ 'sites' ] } );
 		},
 	} );
+
+export const siteUsersQuery = ( siteId: number ) =>
+	queryOptions( {
+		queryKey: [ 'site', siteId, 'users', 'list' ],
+		queryFn: () => fetchSiteUsers( siteId ),
+	} );
