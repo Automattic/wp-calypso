@@ -1,8 +1,8 @@
+import { fetchSiteSettings, updateSiteSettings } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
-import { fetchSiteSettings, updateSiteSettings } from '../../data/site-settings';
 import { queryClient } from '../query-client';
 import { siteQueryFilter } from './site';
-import type { SiteSettings } from '../../data/site-settings';
+import type { SiteSettings } from '@automattic/api-core';
 
 export const siteSettingsQuery = ( siteId: number ) =>
 	queryOptions( {

@@ -5,7 +5,7 @@ import { home } from '@wordpress/icons';
 import { siteAgencyBlogQuery } from '../../app/queries/site-agency';
 import { siteSettingsQuery } from '../../app/queries/site-settings';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
 export default function AgencySettingsSummary( {

@@ -1,6 +1,7 @@
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 import { QueryClient, defaultShouldDehydrateQuery } from '@tanstack/react-query';
 import { persistQueryClient } from '@tanstack/react-query-persist-client';
+import { isSupportSession } from './auth/support-session';
 
 export const queryClient = new QueryClient( {
 	defaultOptions: {
@@ -21,7 +22,7 @@ export const queryClient = new QueryClient( {
 } );
 
 const persister = createSyncStoragePersister( {
-	storage: typeof window !== 'undefined' ? window.localStorage : null,
+	storage: typeof window !== 'undefined' && ! isSupportSession() ? window.localStorage : null,
 } );
 
 const maxAge = 1000 * 60 * 60 * 24; // 24 hours

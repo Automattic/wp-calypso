@@ -1,3 +1,4 @@
+import { HostingFeatures } from '@automattic/api-core';
 import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -5,9 +6,8 @@ import { file } from '@wordpress/icons';
 import { siteSftpUsersQuery } from '../../app/queries/site-sftp';
 import { siteSshAccessStatusQuery } from '../../app/queries/site-ssh';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import { HostingFeatures } from '../../data/constants';
 import { hasHostingFeature } from '../../utils/site-features';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
 export default function SftpSshSettingsSummary( {

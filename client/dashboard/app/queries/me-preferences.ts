@@ -1,7 +1,7 @@
+import { fetchPreferences, updatePreferences } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
-import { fetchPreferences, updatePreferences } from '../../data/me-preferences';
 import { queryClient } from '../query-client';
-import type { UserPreferences } from '../../data/me-preferences';
+import type { UserPreferences } from '@automattic/api-core';
 
 const defaultValues: Required< UserPreferences > = {
 	'sites-view': {},

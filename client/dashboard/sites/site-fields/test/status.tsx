@@ -4,7 +4,7 @@
 import { render as testingLibraryRender } from '@testing-library/react';
 import { AuthContext } from '../../../app/auth';
 import { Status } from '../index';
-import type { User, Site } from '../../../data/types';
+import type { User, Site } from '@automattic/api-core';
 
 const userId = 1;
 

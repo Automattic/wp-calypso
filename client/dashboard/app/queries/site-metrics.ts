@@ -1,8 +1,5 @@
+import { fetchSiteHostingMetrics, type SiteHostingMetricsParams } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
-import {
-	fetchSiteHostingMetrics,
-	type SiteHostingMetricsParams,
-} from '../../data/site-hosting-metrics';
 
 export const siteMetricsQuery = ( siteId: number, params: SiteHostingMetricsParams ) =>
 	queryOptions( {

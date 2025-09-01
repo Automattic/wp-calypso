@@ -1,3 +1,4 @@
+import { JetpackModules } from '@automattic/api-core';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Card,
@@ -14,14 +15,14 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import {
 	siteJetpackModulesQuery,
-	siteJetpackModuleMutation,
-} from '../../app/queries/site-jetpack-module';
+	siteJetpackModulesMutation,
+} from '../../app/queries/site-jetpack-modules';
 import {
 	siteJetpackSettingsQuery,
 	siteJetpackSettingsMutation,
 } from '../../app/queries/site-jetpack-settings';
-import { JetpackModules } from '../../data/constants';
-import type { Site } from '../../data/types';
+import { isJetpackModuleActivated } from '../../utils/site-jetpack-modules';
+import type { Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 type WpcomLoginFormData = {
@@ -84,11 +85,11 @@ export default function SsoForm( { site }: { site: Site } ) {
 	const { data: jetpackModules } = useSuspenseQuery( siteJetpackModulesQuery( site.ID ) );
 	const { data: jetpackSettings } = useSuspenseQuery( siteJetpackSettingsQuery( site.ID ) );
 
-	const jetpackModulesMutation = useMutation( siteJetpackModuleMutation( site.ID ) );
+	const jetpackModulesMutation = useMutation( siteJetpackModulesMutation( site.ID ) );
 	const jetpackSettingsMutation = useMutation( siteJetpackSettingsMutation( site.ID ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
-	const currentSso = jetpackModules?.includes( JetpackModules.SSO ) ?? false;
+	const currentSso = isJetpackModuleActivated( jetpackModules, JetpackModules.SSO );
 	const currentMatchByEmail = jetpackSettings?.jetpack_sso_match_by_email ?? false;
 	const currentRequireTwoStep = jetpackSettings?.jetpack_sso_require_two_step ?? false;
 
@@ -130,21 +131,23 @@ export default function SsoForm( { site }: { site: Site } ) {
 			);
 		}
 
-		// Avoid showing a double notification if both module and settings have been changed.
-		if ( areSettingsDirty && ! isModuleDirty ) {
+		if ( areSettingsDirty ) {
 			jetpackSettingsMutation.mutate(
 				{
 					jetpack_sso_match_by_email: formData.jetpack_sso_match_by_email,
 					jetpack_sso_require_two_step: formData.jetpack_sso_require_two_step,
 				},
-				{
-					onSuccess: () => {
-						createSuccessNotice( __( 'Settings saved.' ), { type: 'snackbar' } );
-					},
-					onError: () => {
-						createErrorNotice( __( 'Failed to save settings.' ), { type: 'snackbar' } );
-					},
-				}
+				// Avoid showing a double notification if both module and settings have been changed.
+				! isModuleDirty
+					? {
+							onSuccess: () => {
+								createSuccessNotice( __( 'Settings saved.' ), { type: 'snackbar' } );
+							},
+							onError: () => {
+								createErrorNotice( __( 'Failed to save settings.' ), { type: 'snackbar' } );
+							},
+					  }
+					: {}
 			);
 		}
 	};

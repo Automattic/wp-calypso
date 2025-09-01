@@ -1,5 +1,5 @@
+import { fetchTwoStep } from '@automattic/api-core';
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
-import { fetchTwoStep } from '../../data/me';
 import { profileQuery } from '../queries/me-profile';
 import { userPurchasesQuery, purchaseQuery } from '../queries/me-purchases';
 import { sitesQuery } from '../queries/sites';

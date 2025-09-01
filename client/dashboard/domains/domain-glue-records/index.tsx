@@ -15,11 +15,11 @@ import {
 	domainGlueRecordsAddRoute,
 	domainGlueRecordsEditRoute,
 } from '../../app/router/domains';
-import DataViewsCard from '../../components/dataviews-card';
+import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
-import type { DomainGlueRecord } from '../../data/domain-glue-records';
+import type { DomainGlueRecord } from '@automattic/api-core';
 import type { Action, Field, ViewTable, ViewList, View } from '@wordpress/dataviews';
 
 type GlueRecordsView = ViewTable | ViewList;

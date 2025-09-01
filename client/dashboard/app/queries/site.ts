@@ -1,16 +1,16 @@
-import { mutationOptions, queryOptions } from '@tanstack/react-query';
-import { notFound } from '@tanstack/react-router';
-import { isWpError } from '../../data/error';
 import {
+	isWpError,
 	fetchSite,
 	deleteSite,
 	launchSite,
 	restoreSite,
 	SITE_FIELDS,
 	SITE_OPTIONS,
-} from '../../data/site';
+} from '@automattic/api-core';
+import { mutationOptions, queryOptions } from '@tanstack/react-query';
+import { notFound } from '@tanstack/react-router';
 import { queryClient } from '../query-client';
-import type { Site } from '../../data/site';
+import type { Site } from '@automattic/api-core';
 import type { Query } from '@tanstack/react-query';
 
 export const siteBySlugQuery = ( siteSlug: string ) =>

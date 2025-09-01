@@ -1,5 +1,5 @@
+import { fetchReaderTeams } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
-import { fetchReaderTeams } from '../../data/reader-teams';
 
 export const isAutomatticianQuery = () =>
 	queryOptions( {

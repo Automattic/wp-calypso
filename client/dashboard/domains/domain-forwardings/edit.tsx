@@ -16,7 +16,7 @@ import DomainForwardingForm from './form';
 import { DomainForwardingNotice } from './notice';
 import { formDataToSubmitData } from './utils';
 import type { FormData } from './form';
-import type { DomainForwardingSaveData } from '../../data/domain-forwarding';
+import type { DomainForwardingSaveData } from '@automattic/api-core';
 
 export default function EditDomainForwarding() {
 	const router = useRouter();
@@ -68,7 +68,7 @@ export default function EditDomainForwarding() {
 	};
 
 	return (
-		<PageLayout size="small" header={ <PageHeader title={ __( 'Edit Domain Forwarding' ) } /> }>
+		<PageLayout size="small" header={ <PageHeader title={ __( 'Edit domain forwarding' ) } /> }>
 			<DomainForwardingNotice domainName={ domainName } domainData={ domainData } />
 			<DomainForwardingForm
 				domainName={ domainName }

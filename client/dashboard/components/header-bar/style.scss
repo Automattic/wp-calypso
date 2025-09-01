@@ -7,6 +7,10 @@
 	background-color: var( --dashboard-header__background-color );
 	backdrop-filter: blur(4px);
 	color: var( --dashboard-header__color );
+
+	&.is-support-user-session {
+		background-color: var( --dashboard-header__support-background-color );
+	}
 }
 
 .dashboard-header-bar-title > span {

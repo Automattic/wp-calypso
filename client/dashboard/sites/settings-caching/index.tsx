@@ -1,3 +1,4 @@
+import { HostingFeatures } from '@automattic/api-core';
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import {
@@ -28,7 +29,6 @@ import { ActionList } from '../../components/action-list';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
-import { HostingFeatures } from '../../data/constants';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import { getSitePlanDisplayName } from '../../utils/site-plan';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';

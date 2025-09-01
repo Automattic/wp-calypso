@@ -5,7 +5,7 @@ import { siteLaunchpadQuery } from '../../app/queries/site-launchpad';
 import { launch } from '../../components/icons';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import OverviewCard from '../overview-card';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 
 const CARD_PROPS = {
 	title: __( 'Visibility' ),

@@ -92,7 +92,7 @@ function UserProfile() {
 				/>
 			) }
 			renderContent={ ( { onClose } ) => (
-				<VStack>
+				<VStack spacing={ 0 }>
 					<VStack style={ { padding: '16px', borderBottom: '1px solid #ccc' } } spacing={ 1 }>
 						<Text>{ user.display_name }</Text>
 						<Text variant="muted">@{ user.username }</Text>
@@ -115,9 +115,8 @@ function UserProfile() {
 							} }
 							shortcut="⌘K"
 						>
-							{ __( 'Command Palette' ) }
+							{ __( 'Command palette' ) }
 						</MenuItem>
-						<MenuItem onClick={ () => {} }>{ __( 'Theme' ) }</MenuItem>
 					</MenuGroup>
 					<MenuGroup>
 						<MenuItem onClick={ () => {} }>{ __( 'Log out' ) }</MenuItem>

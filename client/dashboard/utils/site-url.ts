@@ -1,5 +1,5 @@
 import { addQueryArgs } from '@wordpress/url';
-import type { Site } from '../data/types';
+import type { Site } from '@automattic/api-core';
 
 /**
  * Returns a user-friendly version of the site's URL.

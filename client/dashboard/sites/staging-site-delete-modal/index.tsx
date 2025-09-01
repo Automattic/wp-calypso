@@ -13,7 +13,7 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { siteByIdQuery } from '../../app/queries/site';
 import { stagingSiteDeleteMutation } from '../../app/queries/site-staging-sites';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 
 export default function StagingSiteDeleteModal( {
 	site,

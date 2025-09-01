@@ -1,5 +1,5 @@
+import { fetchSslDetails, provisionSslCertificate } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
-import { fetchSslDetails, provisionSslCertificate } from '../../data/domain-ssl';
 import { queryClient } from '../query-client';
 
 export const sslDetailsQuery = ( domainName: string ) =>

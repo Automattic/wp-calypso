@@ -19,8 +19,7 @@ import {
 	siteJetpackSettingsMutation,
 } from '../../app/queries/site-jetpack-settings';
 import { SectionHeader } from '../../components/section-header';
-import type { JetpackSettings } from '../../data/site-jetpack-settings';
-import type { Site } from '../../data/types';
+import type { JetpackSettings, Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 const fields: Field< JetpackSettings >[] = [

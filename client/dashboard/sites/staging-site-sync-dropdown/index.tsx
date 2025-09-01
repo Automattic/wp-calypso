@@ -12,7 +12,7 @@ import {
 	isStagingSiteSyncing,
 } from '../../utils/site-staging-site';
 import StagingSiteSyncModal from '../staging-site-sync-modal';
-import type { StagingSiteSyncDirection } from '../../data/types';
+import type { StagingSiteSyncDirection } from '@automattic/api-core';
 
 // TODO: We need to rewrite the modal, as it’s not compatible with v2.
 // Both the Modal and especially the FileBrowser rely heavily on Redux state
@@ -114,6 +114,7 @@ export default function StagingSiteSyncDropdown( {
 				popoverProps={ { placement: 'bottom-end' } }
 				renderToggle={ ( { isOpen, onToggle } ) => (
 					<Button
+						__next40pxDefaultSize
 						icon={ chevronDown }
 						iconPosition="right"
 						variant="secondary"

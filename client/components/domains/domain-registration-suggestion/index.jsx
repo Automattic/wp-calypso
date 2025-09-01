@@ -1,4 +1,5 @@
 import { Badge, Gridicon } from '@automattic/components';
+import { getTld } from '@automattic/domain-search';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { HUNDRED_YEAR_DOMAIN_FLOW } from '@automattic/onboarding';
@@ -25,7 +26,6 @@ import {
 import {
 	getDomainPrice,
 	getDomainSalePrice,
-	getTld,
 	isHstsRequired,
 	isDotGayNoticeRequired,
 } from 'calypso/lib/domains';

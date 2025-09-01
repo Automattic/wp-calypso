@@ -15,7 +15,7 @@ import {
 } from '../../app/queries/domain-dns-records';
 import { domainNameServersQuery } from '../../app/queries/domain-name-servers';
 import { domainDnsAddRoute, domainRoute } from '../../app/router/domains';
-import DataViewsCard from '../../components/dataviews-card';
+import { DataViewsCard } from '../../components/dataviews-card';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
@@ -31,7 +31,7 @@ import RestoreDefaultARecords from './restore-default-a-records';
 import RestoreDefaultCnameRecord from './restore-default-cname-record';
 import RestoreDefaultEmailRecords from './restore-default-email-records';
 import { hasDefaultARecords, hasDefaultCnameRecord, hasDefaultEmailRecords } from './utils';
-import type { DnsRecord } from '../../data/domain-dns-records';
+import type { DnsRecord } from '@automattic/api-core';
 import type { ViewTable, ViewList, View } from '@wordpress/dataviews';
 
 function getDnsRecordId( record: DnsRecord ) {
@@ -283,7 +283,7 @@ export default function DomainDns() {
 			header={
 				<VStack>
 					<PageHeader
-						title={ __( 'DNS Records' ) }
+						title={ __( 'DNS records' ) }
 						actions={
 							<>
 								<ImportBindFileButton

@@ -1,5 +1,5 @@
+import { fetchWordPressVersion, updateWordPressVersion } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
-import { fetchWordPressVersion, updateWordPressVersion } from '../../data/site-hosting';
 import { queryClient } from '../query-client';
 
 export const siteWordPressVersionQuery = ( siteId: number ) =>

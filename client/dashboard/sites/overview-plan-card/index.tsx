@@ -1,3 +1,4 @@
+import { DotcomPlans } from '@automattic/api-core';
 import { JetpackLogo } from '@automattic/components/src/logos/jetpack-logo';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -13,7 +14,6 @@ import { siteByIdQuery } from '../../app/queries/site';
 import { siteCurrentPlanQuery } from '../../app/queries/site-plans';
 import { sitePurchaseQuery } from '../../app/queries/site-purchases';
 import { PurchaseExpiryStatus } from '../../components/purchase-expiry-status';
-import { DotcomPlans } from '../../data/constants';
 import {
 	getJetpackProductsForSite,
 	getSitePlanDisplayName,
@@ -23,8 +23,7 @@ import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import OverviewCard from '../overview-card';
 import SiteBandwidthStat from './site-bandwidth-stat';
 import SiteStorageStat from './site-storage-stat';
-import type { Purchase } from '../../data/purchase';
-import type { Site } from '../../data/types';
+import type { Purchase, Site } from '@automattic/api-core';
 import './style.scss';
 
 function getJetpackProductsDescription( products: typeof JETPACK_PRODUCTS ) {

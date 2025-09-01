@@ -1,5 +1,5 @@
+import { fetchSshKeys } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
-import { fetchSshKeys } from '../../data/me-ssh';
 
 export const sshKeysQuery = () =>
 	queryOptions( {

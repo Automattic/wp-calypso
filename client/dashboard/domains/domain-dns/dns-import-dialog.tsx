@@ -13,7 +13,7 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState, useEffect } from 'react';
 import { domainDnsMutation } from '../../app/queries/domain-dns-records';
-import type { DnsRecord } from '../../data/domain-dns-records';
+import type { DnsRecord } from '@automattic/api-core';
 
 interface DnsImportDialogProps {
 	isOpen: boolean;
