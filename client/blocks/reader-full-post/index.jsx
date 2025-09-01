@@ -330,15 +330,9 @@ export class FullPostView extends Component {
 		// Add keyboard navigation for gallery images
 		this.postContentWrapper.current.addEventListener( 'keydown', this.handleGalleryKeydown, true );
 
-		// Make gallery images focusable (with a small delay to ensure DOM is ready)
-		setTimeout( () => {
-			this.makeGalleryImagesFocusable();
-		}, 100 );
-
-		// Also try again after a longer delay in case content loads asynchronously
-		setTimeout( () => {
-			this.makeGalleryImagesFocusable();
-		}, 1000 );
+		// Make gallery images focusable immediately and watch for DOM changes
+		this.makeGalleryImagesFocusable();
+		this.setupGalleryObserver();
 	};
 
 	// Handle keyboard events on gallery images
@@ -405,6 +399,60 @@ export class FullPostView extends Component {
 		} );
 	};
 
+	// Set up MutationObserver to watch for gallery DOM changes
+	setupGalleryObserver = () => {
+		if ( ! this.postContentWrapper.current || ! window.MutationObserver ) {
+			return;
+		}
+
+		// Clean up any existing observer
+		this.cleanupGalleryObserver();
+
+		this.galleryObserver = new MutationObserver( ( mutations ) => {
+			let shouldUpdateGalleries = false;
+
+			mutations.forEach( ( mutation ) => {
+				// Check if new nodes were added that might contain galleries
+				if ( mutation.type === 'childList' && mutation.addedNodes.length > 0 ) {
+					for ( const node of mutation.addedNodes ) {
+						if ( node.nodeType === Node.ELEMENT_NODE ) {
+							// Check if the added node contains gallery elements
+							if (
+								node.matches &&
+								( node.matches( '.wp-block-gallery, .tiled-gallery' ) ||
+									node.querySelector( '.wp-block-gallery, .tiled-gallery' ) )
+							) {
+								shouldUpdateGalleries = true;
+								break;
+							}
+						}
+					}
+				}
+			} );
+
+			if ( shouldUpdateGalleries ) {
+				// Use requestAnimationFrame to ensure DOM is settled
+				requestAnimationFrame( () => {
+					this.makeGalleryImagesFocusable();
+				} );
+			}
+		} );
+
+		// Observe changes to child elements and their subtrees
+		this.galleryObserver.observe( this.postContentWrapper.current, {
+			childList: true,
+			subtree: true,
+		} );
+	};
+
+	// Clean up MutationObserver
+	cleanupGalleryObserver = () => {
+		if ( this.galleryObserver ) {
+			this.galleryObserver.disconnect();
+			this.galleryObserver = null;
+		}
+	};
+
 	// Initialize gallery integration
 	initializeGalleryIntegration = () => {
 		try {
@@ -430,6 +478,9 @@ export class FullPostView extends Component {
 				true
 			);
 		}
+
+		// Clean up MutationObserver
+		this.cleanupGalleryObserver();
 	};
 
 	componentDidMount() {
@@ -492,9 +543,9 @@ export class FullPostView extends Component {
 				this.resetScroll();
 
 				// Re-initialize gallery integration for new post
-				setTimeout( () => {
+				requestAnimationFrame( () => {
 					this.makeGalleryImagesFocusable();
-				}, 500 );
+				} );
 			}
 		}
 
