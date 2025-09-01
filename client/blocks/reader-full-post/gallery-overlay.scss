@@ -1,10 +1,8 @@
 // Z-index management for gallery overlay
-$gallery-overlay-z-index: 10000000; // Higher than all Calypso UI elements (above webpack monitor)
+$gallery-overlay-z-index: 10000000;
 $gallery-backdrop-z-index: 1;
 $gallery-controls-z-index: 10;
 $gallery-content-z-index: 5;
-
-
 
 .gallery-overlay {
 	position: fixed;
@@ -17,38 +15,12 @@ $gallery-content-z-index: 5;
 	align-items: center;
 	justify-content: center;
 	animation: gallery-overlay-fade-in 0.3s ease-out;
-	backdrop-filter: blur(2px); // Modern browser backdrop blur
-
-	// Focus trap indicator
-	&:focus-within {
-		.gallery-overlay__close,
-		.gallery-overlay__nav,
-		.gallery-overlay__error-button {
-			&:focus {
-				background: #999;
-			}
-		}
-	}
+	backdrop-filter: blur(2px);
 
 	// High contrast mode support
 	@media (prefers-contrast: high) {
-		.gallery-overlay__close,
-		.gallery-overlay__nav,
-		.gallery-overlay__error-button {
-			background-color: rgba(0, 0, 0, 0.8);
-		}
-
 		.gallery-overlay__backdrop {
 			background: #000;
-		}
-	}
-
-	// Keyboard navigation indicator
-	&.is-keyboard-navigation {
-		.gallery-overlay__nav,
-		.gallery-overlay__close {
-			opacity: 1;
-			background-color: rgba(255, 255, 255, 0.2);
 		}
 	}
 }
@@ -169,34 +141,17 @@ $gallery-content-z-index: 5;
 	align-items: center;
 	animation: gallery-content-slide-in 0.4s ease-out;
 
-	// Tablet portrait/landscape handling
 	@include breakpoint-deprecated( '<960px' ) {
 		max-width: 98vw;
 		max-height: 85vh;
 	}
 
-	// Mobile optimizations
 	@include breakpoint-deprecated( '<660px' ) {
 		max-width: 100vw;
 		max-height: 80vh;
 	}
 
-	// Orientation-specific adjustments
-	@media (orientation: landscape) and (max-height: 600px) {
-		max-height: 75vh;
-		
-		.gallery-overlay__info {
-			margin-top: 8px;
-		}
-	}
 
-	@media (orientation: portrait) and (max-width: 480px) {
-		max-height: 85vh;
-		
-		.gallery-overlay__info {
-			margin-top: 12px;
-		}
-	}
 }
 
 .gallery-overlay__image-container {
@@ -206,47 +161,16 @@ $gallery-content-z-index: 5;
 	justify-content: center;
 	min-width: 200px;
 	min-height: 200px;
-	touch-action: pan-x; // Allow horizontal panning for swipe gestures
-	
-	// Desktop: larger minimum size
 	@include breakpoint-deprecated( '>1200px' ) {
 		min-width: 300px;
 		min-height: 300px;
 	}
 	
-	// Mobile: smaller minimum size
 	@include breakpoint-deprecated( '<660px' ) {
 		min-width: 150px;
 		min-height: 150px;
 	}
-	
-	// Add subtle touch feedback on touch devices
-	@media (pointer: coarse) {
-		&:active {
-			transform: scale(0.98);
-			transition: transform 0.1s ease;
-		}
-		
-		// Enhanced swipe area for better gesture detection
-		&::after {
-			content: '';
-			position: absolute;
-			top: -20px;
-			left: -20px;
-			right: -20px;
-			bottom: -20px;
-			pointer-events: none;
-		}
-	}
-	
-	// Orientation handling for image container
-	@media (orientation: landscape) and (max-height: 600px) {
-		min-height: 120px;
-	}
-	
-	@media (orientation: portrait) and (max-width: 480px) {
-		min-width: 120px;
-	}
+
 }
 
 .gallery-overlay__image {
@@ -271,20 +195,17 @@ $gallery-content-z-index: 5;
 		filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.1));
 	}
 
-	// Desktop: optimal viewing size
 	@include breakpoint-deprecated( '>1200px' ) {
 		max-width: 85vw;
 		max-height: 80vh;
 	}
 
-	// Tablet: adjust for smaller screens
 	@include breakpoint-deprecated( '<960px' ) {
 		max-width: 92vw;
 		max-height: 70vh;
 		border-radius: 8px;
 	}
 
-	// Mobile: maximize screen usage
 	@include breakpoint-deprecated( '<660px' ) {
 		max-width: 95vw;
 		max-height: 65vh;
@@ -293,25 +214,6 @@ $gallery-content-z-index: 5;
 			0 12px 24px rgba(0, 0, 0, 0.4),
 			0 4px 8px rgba(0, 0, 0, 0.2);
 	}
-
-	// Orientation-specific image sizing
-	@media (orientation: landscape) and (max-height: 600px) {
-		max-height: 60vh;
-		max-width: 90vw;
-	}
-
-	@media (orientation: portrait) and (max-width: 480px) {
-		max-height: 70vh;
-		max-width: 98vw;
-	}
-
-	// Ultra-wide screens
-	@media (min-width: 1600px) {
-		max-width: 80vw;
-		max-height: 85vh;
-	}
-
-
 }
 
 // Image error state
@@ -425,31 +327,9 @@ $gallery-content-z-index: 5;
 	max-width: 90vw;
 	padding: 0 16px;
 
-	// Desktop: more spacing
-	@include breakpoint-deprecated( '>1200px' ) {
-		margin-top: 24px;
-		max-width: 80vw;
-		padding: 0 24px;
-	}
-
-	// Tablet: moderate spacing
-	@include breakpoint-deprecated( '<960px' ) {
-		margin-top: 14px;
-		max-width: 92vw;
-		padding: 0 20px;
-	}
-
-	// Mobile: compact spacing
 	@include breakpoint-deprecated( '<660px' ) {
 		margin-top: 12px;
 		max-width: 95vw;
-		padding: 0 16px;
-	}
-
-	// Orientation adjustments
-	@media (orientation: landscape) and (max-height: 600px) {
-		margin-top: 8px;
-		padding: 0 12px;
 	}
 }
 
@@ -460,13 +340,6 @@ $gallery-content-z-index: 5;
 	margin-bottom: 8px;
 	opacity: 0.8;
 
-	// Desktop: slightly larger
-	@include breakpoint-deprecated( '>1200px' ) {
-		font-size: 15px;
-		margin-bottom: 10px;
-	}
-
-	// Mobile: smaller but readable
 	@include breakpoint-deprecated( '<660px' ) {
 		font-size: 13px;
 		margin-bottom: 6px;
@@ -481,32 +354,10 @@ $gallery-content-z-index: 5;
 	margin: 0 auto;
 	opacity: 0.9;
 
-	// Desktop: optimal reading size
-	@include breakpoint-deprecated( '>1200px' ) {
-		max-width: 700px;
-		font-size: 17px;
-		line-height: 1.5;
-	}
-
-	// Tablet: moderate sizing
-	@include breakpoint-deprecated( '<960px' ) {
-		max-width: 500px;
-		font-size: 15px;
-		line-height: 1.4;
-	}
-
-	// Mobile: compact but readable
 	@include breakpoint-deprecated( '<660px' ) {
 		max-width: 400px;
 		font-size: 14px;
 		line-height: 1.3;
-	}
-
-	// Landscape mobile: even more compact
-	@media (orientation: landscape) and (max-height: 600px) {
-		font-size: 13px;
-		line-height: 1.3;
-		max-width: 350px;
 	}
 }
 
@@ -542,17 +393,7 @@ $gallery-content-z-index: 5;
 	}
 }
 
-// Image transition animation
-@keyframes gallery-image-transition {
-	0% {
-		opacity: 0;
-		transform: scale(0.9);
-	}
-	100% {
-		opacity: 1;
-		transform: scale(1);
-	}
-}
+
 
 // Accessibility improvements
 @media (prefers-reduced-motion: reduce) {
@@ -584,6 +425,3 @@ $gallery-content-z-index: 5;
 		}
 	}
 }
-
-
-
