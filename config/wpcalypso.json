@@ -128,6 +128,7 @@
 		"reader": true,
 		"reader/full-errors": true,
 		"reader/quick-post": true,
+		"reader/discover/freshly-pressed": true,
 		"readymade-templates/showcase": true,
 		"redirect-fallback-browsers": true,
 		"rum-tracking/logstash": true,
