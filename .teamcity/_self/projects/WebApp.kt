@@ -908,7 +908,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): E2EBuildTy
 
 object PlaywrightTestPRMatrix : BuildType({
 	id("calypso_WebApp_Calypso_E2E_Playwright_Test_Matrix")
-	uuid = "acbd09c6-766a-49fc-9c11-5ef7a3be55c9"
+	uuid = "074d8ae0-0859-4b4d-bf66-709f24ae5406"
 	name = "E2E Tests (Playwright Test)"
 	description = "Runs Calypso e2e tests using Playwright Test runner with build matrix"
 
@@ -972,7 +972,7 @@ object PlaywrightTestPRMatrix : BuildType({
 
 object PlaywrightTestPreReleaseMatrix : BuildType({
 	id("calypso_WebApp_Calypso_E2E_Playwright_Pre_Release_Matrix")
-	uuid = "103c5c9c-7b64-4d60-bab6-192528645502"
+	uuid = "a1b2c3d4-e5f6-7890-1234-56789abcdef0"
 	name = "Pre-Release E2E Tests (Playwright Test)"
 	description = "Runs Calypso pre-release e2e tests using Playwright Test runner with build matrix"
 
