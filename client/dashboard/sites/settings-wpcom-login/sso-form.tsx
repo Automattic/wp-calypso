@@ -1,6 +1,5 @@
-import { JetpackModules } from '@automattic/api-core';
+import { JetpackModule, Site } from '@automattic/api-core';
 import {
-	siteJetpackModulesQuery,
 	siteJetpackModulesMutation,
 	siteJetpackSettingsQuery,
 	siteJetpackSettingsMutation,
@@ -10,24 +9,16 @@ import {
 	Card,
 	CardBody,
 	__experimentalVStack as VStack,
-	__experimentalText as Text,
 	Button,
 	CheckboxControl,
-	ExternalLink,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
-import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
-import Notice from '../../components/notice';
-import {
-	jetpackModuleRequiresConnection,
-	isJetpackModuleActivated,
-} from '../../utils/site-jetpack-modules';
-import type { Site } from '@automattic/api-core';
+import { isJetpackModuleActivated } from '../../utils/site-jetpack-modules';
 import type { Field } from '@wordpress/dataviews';
 
 type WpcomLoginFormData = {
@@ -36,17 +27,68 @@ type WpcomLoginFormData = {
 	jetpack_sso_require_two_step: boolean;
 };
 
-export default function SsoForm( { site }: { site: Site } ) {
-	const { data: jetpackModules } = useSuspenseQuery( siteJetpackModulesQuery( site.ID ) );
+const fields: Field< WpcomLoginFormData >[] = [
+	{
+		id: 'sso',
+		label: __( 'Allow users to log in to this site using WordPress.com accounts' ),
+		description: __( 'Use WordPress.com’s secure authentication.' ),
+		Edit: 'checkbox',
+	},
+	{
+		id: 'jetpack_sso_match_by_email',
+		label: __( 'Match accounts using email addresses' ),
+		Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
+			const { getValue, id, label } = field;
+			return (
+				<CheckboxControl
+					__nextHasNoMarginBottom
+					checked={ getValue( { item: data } ) || false }
+					disabled={ ! data.sso }
+					label={ hideLabelFromVision ? '' : label }
+					onChange={ () => {
+						onChange( { [ id ]: ! getValue( { item: data } ) } );
+					} }
+				/>
+			);
+		},
+	},
+	{
+		id: 'jetpack_sso_require_two_step',
+		label: __( 'Require two-step authentication' ),
+		Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
+			const { getValue, id, label } = field;
+			return (
+				<CheckboxControl
+					__nextHasNoMarginBottom
+					checked={ getValue( { item: data } ) || false }
+					disabled={ ! data.sso }
+					label={ hideLabelFromVision ? '' : label }
+					onChange={ () => {
+						onChange( { [ id ]: ! getValue( { item: data } ) } );
+					} }
+				/>
+			);
+		},
+	},
+];
+
+const form = {
+	layout: { type: 'regular' as const },
+	fields: [ 'sso', 'jetpack_sso_match_by_email', 'jetpack_sso_require_two_step' ],
+};
+
+export default function SsoForm( {
+	jetpackModules,
+	site,
+}: {
+	jetpackModules: Record< string, JetpackModule >;
+	site: Site;
+} ) {
 	const { data: jetpackSettings } = useSuspenseQuery( siteJetpackSettingsQuery( site.ID ) );
 
 	const jetpackModulesMutation = useMutation( siteJetpackModulesMutation( site.ID ) );
 	const jetpackSettingsMutation = useMutation( siteJetpackSettingsMutation( site.ID ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-
-	const ssoAvailable =
-		jetpackModuleRequiresConnection( jetpackModules, JetpackModules.SSO ) &&
-		site.jetpack_connection;
 
 	const currentSso = isJetpackModuleActivated( jetpackModules, JetpackModules.SSO );
 	const currentMatchByEmail = jetpackSettings?.jetpack_sso_match_by_email ?? false;
@@ -57,69 +99,6 @@ export default function SsoForm( { site }: { site: Site } ) {
 		jetpack_sso_match_by_email: currentMatchByEmail,
 		jetpack_sso_require_two_step: currentRequireTwoStep,
 	} );
-
-	const fields: Field< WpcomLoginFormData >[] = [
-		{
-			id: 'sso',
-			label: __( 'Allow users to log in to this site using WordPress.com accounts' ),
-			Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
-				const { getValue, id, label } = field;
-				return (
-					<CheckboxControl
-						__nextHasNoMarginBottom
-						checked={ getValue( { item: data } ) || false }
-						disabled={ ! data.sso || ! ssoAvailable }
-						help={ __( 'Use WordPress.com’s secure authentication.' ) }
-						label={ hideLabelFromVision ? '' : label }
-						onChange={ () => {
-							onChange( { [ id ]: ! getValue( { item: data } ) } );
-						} }
-					/>
-				);
-			},
-		},
-		{
-			id: 'jetpack_sso_match_by_email',
-			label: __( 'Match accounts using email addresses' ),
-			Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
-				const { getValue, id, label } = field;
-				return (
-					<CheckboxControl
-						__nextHasNoMarginBottom
-						checked={ getValue( { item: data } ) || false }
-						disabled={ ! data.sso || ! ssoAvailable }
-						label={ hideLabelFromVision ? '' : label }
-						onChange={ () => {
-							onChange( { [ id ]: ! getValue( { item: data } ) } );
-						} }
-					/>
-				);
-			},
-		},
-		{
-			id: 'jetpack_sso_require_two_step',
-			label: __( 'Require two-step authentication' ),
-			Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
-				const { getValue, id, label } = field;
-				return (
-					<CheckboxControl
-						__nextHasNoMarginBottom
-						checked={ getValue( { item: data } ) || false }
-						disabled={ ! data.sso || ! ssoAvailable }
-						label={ hideLabelFromVision ? '' : label }
-						onChange={ () => {
-							onChange( { [ id ]: ! getValue( { item: data } ) } );
-						} }
-					/>
-				);
-			},
-		},
-	];
-
-	const form = {
-		layout: { type: 'regular' as const },
-		fields: [ 'sso', 'jetpack_sso_match_by_email', 'jetpack_sso_require_two_step' ],
-	};
 
 	const isModuleDirty = formData.sso !== currentSso;
 	const areSettingsDirty =
@@ -180,22 +159,6 @@ export default function SsoForm( { site }: { site: Site } ) {
 
 	return (
 		<>
-			{ ! ssoAvailable && (
-				<Notice>
-					<Text as="p">
-						{ createInterpolateElement(
-							__(
-								'The WordPress.com login feature is disabled because your site is in development mode. <link>Learn more</link>'
-							),
-							{
-								// @ts-ignore - ExternalLink's children is not missing but it's provided by the createInterpolateElement above.
-								link: <ExternalLink href="https://jetpack.com/support/offline-mode/" />,
-							}
-						) }
-					</Text>
-				</Notice>
-			) }
-
 			<Card>
 				<CardBody>
 					<form onSubmit={ handleSubmit }>
@@ -213,12 +176,7 @@ export default function SsoForm( { site }: { site: Site } ) {
 									variant="primary"
 									type="submit"
 									isBusy={ isJetpackModulesPending || isJetpackSettingsPending }
-									disabled={
-										isJetpackModulesPending ||
-										isJetpackSettingsPending ||
-										! isDirty ||
-										! ssoAvailable
-									}
+									disabled={ isJetpackModulesPending || isJetpackSettingsPending || ! isDirty }
 								>
 									{ __( 'Save' ) }
 								</Button>

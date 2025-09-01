@@ -1,22 +1,30 @@
-import { HostingFeatures } from '@automattic/api-core';
-import { siteBySlugQuery } from '@automattic/api-queries';
+import { HostingFeatures, JetpackModules } from '@automattic/api-core';
+import { siteJetpackModulesQuery, siteBySlugQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { notFound } from '@tanstack/react-router';
+import { __experimentalText as Text, ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import InlineSupportLink from '../../components/inline-support-link';
+import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
+import { jetpackModuleRequiresConnection } from '../../utils/site-jetpack-modules';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SettingsPageHeader from '../settings-page-header';
 import SsoForm from './sso-form';
 
 export default function WpcomLoginSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const { data: jetpackModules } = useSuspenseQuery( siteJetpackModulesQuery( site.ID ) );
 
 	if ( ! isEnabled( 'dashboard/v2/security-settings' ) ) {
 		throw notFound();
 	}
+
+	const ssoAvailable =
+		jetpackModuleRequiresConnection( jetpackModules, JetpackModules.SSO ) &&
+		site.jetpack_connection;
 
 	return (
 		<PageLayout
@@ -40,7 +48,22 @@ export default function WpcomLoginSettings( { siteSlug }: { siteSlug: string } )
 				feature={ HostingFeatures.SECURITY_SETTINGS }
 				tracksFeatureId="settings-security"
 			>
-				<SsoForm site={ site } />
+				{ ! ssoAvailable && (
+					<Notice>
+						<Text as="p">
+							{ createInterpolateElement(
+								__(
+									'The WordPress.com login feature is disabled because your site is in offline mode. <link>Learn more</link>'
+								),
+								{
+									// @ts-ignore - ExternalLink's children is not missing but is provided by the createInterpolateElement above.
+									link: <ExternalLink href="https://jetpack.com/support/offline-mode/" />,
+								}
+							) }
+						</Text>
+					</Notice>
+				) }
+				{ ssoAvailable && <SsoForm jetpackModules={ jetpackModules } site={ site } /> }
 			</HostingFeatureGatedWithCallout>
 		</PageLayout>
 	);
