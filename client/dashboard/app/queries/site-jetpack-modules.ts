@@ -7,7 +7,6 @@ import {
 import { queryClient } from '../query-client';
 import { siteQueryFilter } from './site';
 import { sitesQuery } from './sites';
-import type { JetpackModule } from '../../data/site-jetpack-modules';
 
 export const siteJetpackModulesQuery = ( siteId: number ) =>
 	queryOptions( {
@@ -24,18 +23,15 @@ export const siteJetpackModulesMutation = ( siteId: number ) =>
 				: deactivateJetpackModule( siteId, module );
 		},
 		onSuccess: ( newData: unknown, variables: { module: string; value: boolean } ) => {
-			queryClient.setQueryData(
-				siteJetpackModulesQuery( siteId ).queryKey,
-				( oldData: Record< string, JetpackModule > = {} ) => {
-					return {
-						...oldData,
-						[ variables.module ]: {
-							...oldData[ variables.module ],
-							activated: variables.value,
-						},
-					};
-				}
-			);
+			queryClient.setQueryData( siteJetpackModulesQuery( siteId ).queryKey, ( oldData = {} ) => {
+				return {
+					...oldData,
+					[ variables.module ]: {
+						...oldData[ variables.module ],
+						activated: variables.value,
+					},
+				};
+			} );
 			queryClient.invalidateQueries( { queryKey: siteJetpackModulesQuery( siteId ).queryKey } );
 			queryClient.invalidateQueries( siteQueryFilter( siteId ) );
 			queryClient.invalidateQueries( { queryKey: sitesQuery().queryKey } );
