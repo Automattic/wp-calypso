@@ -1,17 +1,62 @@
 @import '@automattic/calypso-config';
 @import '@automattic/color-studio/dist/color-variables';
 
+// Z-index management for gallery overlay
+$gallery-overlay-z-index: 100000; // Higher than most UI elements
+$gallery-backdrop-z-index: 1;
+$gallery-controls-z-index: 10;
+$gallery-content-z-index: 5;
+
 .gallery-overlay {
 	position: fixed;
 	top: 0;
 	left: 0;
 	right: 0;
 	bottom: 0;
-	z-index: 10000;
+	z-index: $gallery-overlay-z-index;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	animation: gallery-overlay-fade-in 0.2s ease-out;
+	animation: gallery-overlay-fade-in 0.3s ease-out;
+	backdrop-filter: blur(2px); // Modern browser backdrop blur
+
+	// Focus trap indicator
+	&:focus-within {
+		.gallery-overlay__close,
+		.gallery-overlay__nav,
+		.gallery-overlay__error-button {
+			&:focus {
+				outline: 3px solid #fff;
+				outline-offset: 3px;
+				box-shadow: 
+					0 0 0 1px rgba(0, 0, 0, 0.8),
+					0 0 0 4px #fff;
+			}
+		}
+	}
+
+	// High contrast mode support
+	@media (prefers-contrast: high) {
+		.gallery-overlay__close,
+		.gallery-overlay__nav,
+		.gallery-overlay__error-button {
+			border: 2px solid #fff;
+			background-color: rgba(0, 0, 0, 0.8);
+		}
+
+		.gallery-overlay__backdrop {
+			background: #000;
+		}
+	}
+
+	// Keyboard navigation indicator
+	&.is-keyboard-navigation {
+		.gallery-overlay__nav,
+		.gallery-overlay__close {
+			opacity: 1;
+			background-color: rgba(255, 255, 255, 0.2);
+		}
+	}
 }
 
 .gallery-overlay__backdrop {
@@ -20,17 +65,24 @@
 	left: 0;
 	right: 0;
 	bottom: 0;
-	background-color: rgba(0, 0, 0, 0.9);
+	z-index: $gallery-backdrop-z-index;
+	background: linear-gradient(
+		to bottom,
+		rgba(0, 0, 0, 0.95) 0%,
+		rgba(0, 0, 0, 0.9) 50%,
+		rgba(0, 0, 0, 0.95) 100%
+	);
+	transition: opacity 0.3s ease;
 }
 
 .gallery-overlay__close {
 	position: absolute;
-	top: 20px;
-	right: 20px;
-	z-index: 10;
+	top: 24px;
+	right: 24px;
+	z-index: $gallery-controls-z-index;
 	width: 48px;
 	height: 48px;
-	border: none;
+	border: 1px solid rgba(255, 255, 255, 0.1);
 	border-radius: 50%;
 	background-color: rgba(255, 255, 255, 0.1);
 	color: #fff;
@@ -38,15 +90,24 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	transition: background-color 0.2s ease;
+	transition: all 0.2s ease;
+	backdrop-filter: blur(8px);
 
 	&:hover {
-		background-color: rgba(255, 255, 255, 0.2);
+		background-color: rgba(255, 255, 255, 0.25);
+		transform: scale(1.05);
+		border-color: rgba(255, 255, 255, 0.2);
 	}
 
 	&:focus {
 		outline: 2px solid #fff;
 		outline-offset: 2px;
+		background-color: rgba(255, 255, 255, 0.2);
+	}
+
+	&:active {
+		transform: scale(0.95);
+		background-color: rgba(255, 255, 255, 0.3);
 	}
 
 	@include breakpoint-deprecated( '<660px' ) {
@@ -61,10 +122,10 @@
 	position: absolute;
 	top: 50%;
 	transform: translateY(-50%);
-	z-index: 10;
+	z-index: $gallery-controls-z-index;
 	width: 64px;
 	height: 64px;
-	border: none;
+	border: 1px solid rgba(255, 255, 255, 0.1);
 	border-radius: 50%;
 	background-color: rgba(255, 255, 255, 0.1);
 	color: #fff;
@@ -72,26 +133,32 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	transition: background-color 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+	transition: all 0.2s ease;
 	opacity: 0.8;
+	backdrop-filter: blur(8px);
 
 	&:hover {
-		background-color: rgba(255, 255, 255, 0.3);
-		transform: translateY(-50%) scale(1.1);
+		background-color: rgba(255, 255, 255, 0.25);
+		transform: translateY(-50%) scale(1.08);
 		opacity: 1;
+		border-color: rgba(255, 255, 255, 0.2);
+		box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
 	}
 
 	&:focus {
 		outline: 2px solid #fff;
 		outline-offset: 2px;
-		background-color: rgba(255, 255, 255, 0.25);
+		background-color: rgba(255, 255, 255, 0.2);
 		opacity: 1;
 	}
 
 	&:active {
-		transform: translateY(-50%) scale(0.95);
-		background-color: rgba(255, 255, 255, 0.4);
+		transform: translateY(-50%) scale(0.98);
+		background-color: rgba(255, 255, 255, 0.35);
 	}
+
+	// Add subtle shadow for depth
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 
 	&--previous {
 		left: 32px;
@@ -130,11 +197,18 @@
 
 .gallery-overlay__content {
 	position: relative;
-	max-width: 90vw;
+	z-index: $gallery-content-z-index;
+	max-width: 95vw;
 	max-height: 90vh;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	animation: gallery-content-slide-in 0.4s ease-out;
+
+	@include breakpoint-deprecated( '<960px' ) {
+		max-width: 98vw;
+		max-height: 85vh;
+	}
 }
 
 .gallery-overlay__image-container {
@@ -157,21 +231,39 @@
 
 .gallery-overlay__image {
 	max-width: 90vw;
-	max-height: 80vh;
+	max-height: 75vh;
 	width: auto;
 	height: auto;
 	border-radius: 8px;
-	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-	transition: opacity 0.2s ease;
+	box-shadow: 
+		0 20px 40px rgba(0, 0, 0, 0.5),
+		0 8px 16px rgba(0, 0, 0, 0.3);
+	transition: all 0.3s ease;
+	transform: scale(1);
 
 	&.is-loading {
-		opacity: 0.5;
+		opacity: 0.7;
+		transform: scale(0.98);
+	}
+
+	// Add subtle glow effect
+	&:not(.is-loading) {
+		filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.1));
+	}
+
+	@include breakpoint-deprecated( '<960px' ) {
+		max-width: 92vw;
+		max-height: 70vh;
+		border-radius: 8px;
 	}
 
 	@include breakpoint-deprecated( '<660px' ) {
 		max-width: 95vw;
-		max-height: 75vh;
+		max-height: 65vh;
 		border-radius: 4px;
+		box-shadow: 
+			0 12px 24px rgba(0, 0, 0, 0.4),
+			0 4px 8px rgba(0, 0, 0, 0.2);
 	}
 }
 
@@ -276,9 +368,22 @@
 @keyframes gallery-overlay-fade-in {
 	from {
 		opacity: 0;
+		backdrop-filter: blur(0);
 	}
 	to {
 		opacity: 1;
+		backdrop-filter: blur(2px);
+	}
+}
+
+@keyframes gallery-content-slide-in {
+	from {
+		opacity: 0;
+		transform: translateY(20px) scale(0.95);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0) scale(1);
 	}
 }
 
@@ -288,6 +393,18 @@
 	}
 	to {
 		transform: translate(-50%, -50%) rotate(360deg);
+	}
+}
+
+// Image transition animation
+@keyframes gallery-image-transition {
+	0% {
+		opacity: 0;
+		transform: scale(0.9);
+	}
+	100% {
+		opacity: 1;
+		transform: scale(1);
 	}
 }
 
@@ -310,11 +427,4 @@
 	}
 }
 
-// Focus management
-.gallery-overlay:focus-within {
-	.gallery-overlay__close,
-	.gallery-overlay__nav {
-		outline: 2px solid #fff;
-		outline-offset: 2px;
-	}
-}
+

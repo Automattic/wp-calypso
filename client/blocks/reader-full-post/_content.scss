@@ -95,6 +95,25 @@
 	.wp-block-gallery .wp-block-image img,
 	.tiled-gallery img {
 		cursor: pointer;
+		transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+		&:hover {
+			transform: scale(1.02);
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+		}
+
+		&:active {
+			transform: scale(0.98);
+		}
+	}
+
+	// Add focus styles for keyboard navigation
+	.wp-block-gallery .wp-block-image,
+	.tiled-gallery figure {
+		&:focus-within img {
+			outline: 2px solid var(--color-accent, #0073aa);
+			outline-offset: 2px;
+		}
 	}
 	.image-wrapper img {
 		border-radius: $radius-large;
