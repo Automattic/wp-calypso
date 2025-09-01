@@ -77,6 +77,7 @@ import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { disableAppBanner, enableAppBanner } from 'calypso/state/ui/actions';
+import GalleryOverlay from './gallery-overlay';
 import ReaderFullPostHeader from './header';
 import ReaderFullPostContentPlaceholder from './placeholders/content';
 import ScrollTracker from './scroll-tracker';
@@ -1003,6 +1004,15 @@ export class FullPostView extends Component {
 							author={ feed?.blog_owner }
 						/>
 					) }
+
+					<GalleryOverlay
+						isOpen={ this.state.isGalleryOpen }
+						images={ this.state.galleryImages }
+						currentIndex={ this.state.currentImageIndex }
+						onClose={ this.closeGallery }
+						onNext={ this.nextImage }
+						onPrevious={ this.previousImage }
+					/>
 				</ReaderMain>
 			</div>
 		);

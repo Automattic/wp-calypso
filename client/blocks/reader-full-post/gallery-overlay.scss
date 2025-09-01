@@ -1,0 +1,243 @@
+@import '@automattic/calypso-config';
+@import '@automattic/color-studio/dist/color-variables';
+
+.gallery-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 10000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	animation: gallery-overlay-fade-in 0.2s ease-out;
+}
+
+.gallery-overlay__backdrop {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, 0.9);
+}
+
+.gallery-overlay__close {
+	position: absolute;
+	top: 20px;
+	right: 20px;
+	z-index: 10;
+	width: 48px;
+	height: 48px;
+	border: none;
+	border-radius: 50%;
+	background-color: rgba(255, 255, 255, 0.1);
+	color: #fff;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: background-color 0.2s ease;
+
+	&:hover {
+		background-color: rgba(255, 255, 255, 0.2);
+	}
+
+	&:focus {
+		outline: 2px solid #fff;
+		outline-offset: 2px;
+	}
+
+	@include breakpoint-deprecated( '<660px' ) {
+		top: 16px;
+		right: 16px;
+		width: 44px;
+		height: 44px;
+	}
+}
+
+.gallery-overlay__nav {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	z-index: 10;
+	width: 64px;
+	height: 64px;
+	border: none;
+	border-radius: 50%;
+	background-color: rgba(255, 255, 255, 0.1);
+	color: #fff;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: background-color 0.2s ease, transform 0.2s ease;
+
+	&:hover {
+		background-color: rgba(255, 255, 255, 0.2);
+		transform: translateY(-50%) scale(1.05);
+	}
+
+	&:focus {
+		outline: 2px solid #fff;
+		outline-offset: 2px;
+	}
+
+	&--previous {
+		left: 32px;
+
+		@include breakpoint-deprecated( '<660px' ) {
+			left: 16px;
+		}
+	}
+
+	&--next {
+		right: 32px;
+
+		@include breakpoint-deprecated( '<660px' ) {
+			right: 16px;
+		}
+	}
+
+	@include breakpoint-deprecated( '<660px' ) {
+		width: 56px;
+		height: 56px;
+	}
+}
+
+.gallery-overlay__content {
+	position: relative;
+	max-width: 90vw;
+	max-height: 90vh;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.gallery-overlay__image-container {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 200px;
+	min-height: 200px;
+}
+
+.gallery-overlay__image {
+	max-width: 90vw;
+	max-height: 80vh;
+	width: auto;
+	height: auto;
+	border-radius: 8px;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+	transition: opacity 0.2s ease;
+
+	&.is-loading {
+		opacity: 0.5;
+	}
+
+	@include breakpoint-deprecated( '<660px' ) {
+		max-width: 95vw;
+		max-height: 75vh;
+		border-radius: 4px;
+	}
+}
+
+.gallery-overlay__loading {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	color: #fff;
+	animation: gallery-overlay-spin 1s linear infinite;
+}
+
+.gallery-overlay__info {
+	margin-top: 16px;
+	text-align: center;
+	max-width: 90vw;
+
+	@include breakpoint-deprecated( '<660px' ) {
+		margin-top: 12px;
+		max-width: 95vw;
+	}
+}
+
+.gallery-overlay__counter {
+	color: #fff;
+	font-size: 14px;
+	font-weight: 500;
+	margin-bottom: 8px;
+	opacity: 0.8;
+
+	@include breakpoint-deprecated( '<660px' ) {
+		font-size: 13px;
+	}
+}
+
+.gallery-overlay__caption {
+	color: #fff;
+	font-size: 16px;
+	line-height: 1.4;
+	max-width: 600px;
+	margin: 0 auto;
+	opacity: 0.9;
+
+	@include breakpoint-deprecated( '<960px' ) {
+		max-width: 500px;
+		font-size: 15px;
+	}
+
+	@include breakpoint-deprecated( '<660px' ) {
+		max-width: 400px;
+		font-size: 14px;
+	}
+}
+
+// Animations
+@keyframes gallery-overlay-fade-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes gallery-overlay-spin {
+	from {
+		transform: translate(-50%, -50%) rotate(0deg);
+	}
+	to {
+		transform: translate(-50%, -50%) rotate(360deg);
+	}
+}
+
+// Accessibility improvements
+@media (prefers-reduced-motion: reduce) {
+	.gallery-overlay {
+		animation: none;
+	}
+
+	.gallery-overlay__nav {
+		transition-duration: 0s;
+	}
+
+	.gallery-overlay__loading {
+		animation: none;
+	}
+
+	.gallery-overlay__image {
+		transition: none;
+	}
+}
+
+// Focus management
+.gallery-overlay:focus-within {
+	.gallery-overlay__close,
+	.gallery-overlay__nav {
+		outline: 2px solid #fff;
+		outline-offset: 2px;
+	}
+}
