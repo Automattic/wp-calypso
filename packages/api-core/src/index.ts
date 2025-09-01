@@ -1,4 +1,6 @@
+// TODO: Colocate the contants within their respective resource folder.
 export * from './constants';
+export * from './error';
 
 export * from './agency';
 export * from './domain';
@@ -15,7 +17,6 @@ export * from './domain-transfer';
 export * from './domain-whois';
 export * from './domains';
 export * from './emails';
-export * from './error';
 export * from './geo';
 export * from './me';
 export * from './me-blocked-sites';
