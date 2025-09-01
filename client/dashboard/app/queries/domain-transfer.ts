@@ -4,9 +4,9 @@ import {
 	requestTransferCode,
 	saveIpsTag,
 	updateDomainLock,
-	getDomainTransferRequest,
-	domainTransferRequestUpdate,
-	domainTransferRequestDelete,
+	fetchDomainTransferRequest,
+	updateDomainTransferRequest,
+	deleteDomainTransferRequest,
 } from '../../data/domain-transfer';
 import { queryClient } from '../query-client';
 import { domainQuery } from './domain';
@@ -44,12 +44,12 @@ export const ipsTagMutation = ( domain: string ) =>
 export const domainTransferRequestQuery = ( domain: string, siteSlug: string ) =>
 	queryOptions( {
 		queryKey: [ 'domain-transfer-request', domain, siteSlug ],
-		queryFn: () => getDomainTransferRequest( domain, siteSlug ),
+		queryFn: () => fetchDomainTransferRequest( domain, siteSlug ),
 	} );
 
-export const domainTransferRequestUpdateMutation = ( domain: string, siteSlug: string ) =>
+export const updateDomainTransferRequestMutation = ( domain: string, siteSlug: string ) =>
 	mutationOptions( {
-		mutationFn: ( email: string ) => domainTransferRequestUpdate( domain, siteSlug, email ),
+		mutationFn: ( email: string ) => updateDomainTransferRequest( domain, siteSlug, email ),
 		onSuccess: ( _, email ) => {
 			// Manually update the cache before invalidating the query
 			queryClient.setQueryData( domainTransferRequestQuery( domain, siteSlug ).queryKey, {
@@ -60,9 +60,9 @@ export const domainTransferRequestUpdateMutation = ( domain: string, siteSlug: s
 		},
 	} );
 
-export const domainTransferRequestDeleteMutation = ( domain: string, siteSlug: string ) =>
+export const deleteDomainTransferRequestMutation = ( domain: string, siteSlug: string ) =>
 	mutationOptions( {
-		mutationFn: () => domainTransferRequestDelete( domain, siteSlug ),
+		mutationFn: () => deleteDomainTransferRequest( domain, siteSlug ),
 		onSuccess: () => {
 			// Manually update the cache before invalidating the query
 			queryClient.setQueryData( domainTransferRequestQuery( domain, siteSlug ).queryKey, null );
