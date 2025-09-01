@@ -1,8 +1,12 @@
+import { JetpackModules } from '@automattic/api-core';
+import { siteJetpackConnectionQuery, siteJetpackModulesQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
+import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { notAllowed } from '@wordpress/icons';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
+import { jetpackModuleRequiresConnection } from '../../utils/site-jetpack-modules';
 import type { Site } from '@automattic/api-core';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
@@ -13,11 +17,19 @@ export default function WebApplicationFirewallSettingsSummary( {
 	site: Site;
 	density?: Density;
 } ) {
+	const { data: jetpackModules } = useQuery( siteJetpackModulesQuery( site.ID ) );
+	const { data: jetpackConnection } = useQuery( siteJetpackConnectionQuery( site.ID ) );
+
 	if ( ! isEnabled( 'dashboard/v2/security-settings' ) ) {
 		return null;
 	}
 
-	const badges = site.jetpack_connection ? undefined : [ { text: __( 'Unavailable' ) } ];
+	const modulesAvailable =
+		( jetpackModuleRequiresConnection( jetpackModules, JetpackModules.WAF ) ||
+			jetpackModuleRequiresConnection( jetpackModules, JetpackModules.PROTECT ) ) &&
+		! jetpackConnection?.offlineMode?.isActive;
+
+	const badges = modulesAvailable ? undefined : [ { text: __( 'Unavailable' ) } ];
 
 	return (
 		<RouterLinkSummaryButton

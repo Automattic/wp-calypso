@@ -1,5 +1,9 @@
 import { HostingFeatures, JetpackModules } from '@automattic/api-core';
-import { siteJetpackModulesQuery, siteBySlugQuery } from '@automattic/api-queries';
+import {
+	siteBySlugQuery,
+	siteJetpackConnectionQuery,
+	siteJetpackModulesQuery,
+} from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { notFound } from '@tanstack/react-router';
@@ -20,14 +24,16 @@ import ProtectForm from './protect-form';
 export default function WebApplicationFirewallSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: jetpackModules } = useSuspenseQuery( siteJetpackModulesQuery( site.ID ) );
+	const { data: jetpackConnection } = useSuspenseQuery( siteJetpackConnectionQuery( site.ID ) );
 
 	if ( ! isEnabled( 'dashboard/v2/security-settings' ) ) {
 		throw notFound();
 	}
 
 	const modulesAvailable =
-		jetpackModuleRequiresConnection( jetpackModules, JetpackModules.WAF ) &&
-		site.jetpack_connection;
+		( jetpackModuleRequiresConnection( jetpackModules, JetpackModules.WAF ) ||
+			jetpackModuleRequiresConnection( jetpackModules, JetpackModules.PROTECT ) ) &&
+		! jetpackConnection?.offlineMode?.isActive;
 
 	return (
 		<PageLayout
@@ -56,7 +62,7 @@ export default function WebApplicationFirewallSettings( { siteSlug }: { siteSlug
 						<Text as="p">
 							{ createInterpolateElement(
 								__(
-									'The web application firewall (WAF) is disabled because your site is in development mode. <link>Learn more</link>'
+									'The web application firewall (WAF) is disabled because your site is in offline mode. <link>Learn more</link>'
 								),
 								{
 									// @ts-ignore - ExternalLink's children is not missing but it's provided by the createInterpolateElement above.

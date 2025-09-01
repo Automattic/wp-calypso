@@ -1,5 +1,5 @@
 import { HostingFeatures, JetpackModules } from '@automattic/api-core';
-import { siteJetpackModulesQuery } from '@automattic/api-queries';
+import { siteJetpackConnectionQuery, siteJetpackModulesQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
@@ -22,6 +22,7 @@ export default function WpcomLoginSettingsSummary( {
 	density?: Density;
 } ) {
 	const { data: jetpackModules } = useQuery( siteJetpackModulesQuery( site.ID ) );
+	const { data: jetpackConnection } = useQuery( siteJetpackConnectionQuery( site.ID ) );
 
 	if ( ! isEnabled( 'dashboard/v2/security-settings' ) ) {
 		return null;
@@ -29,7 +30,8 @@ export default function WpcomLoginSettingsSummary( {
 
 	const ssoAvailable =
 		jetpackModuleRequiresConnection( jetpackModules, JetpackModules.SSO ) &&
-		site.jetpack_connection;
+		! jetpackConnection?.offlineMode?.isActive;
+
 	const ssoEnabled = isJetpackModuleActivated( jetpackModules, JetpackModules.SSO );
 
 	let badges;

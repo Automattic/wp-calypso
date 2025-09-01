@@ -9,10 +9,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { SectionHeader } from '../../components/section-header';
-import {
-	jetpackModuleRequiresConnection,
-	isJetpackModuleActivated,
-} from '../../utils/site-jetpack-modules';
+import { isJetpackModuleActivated } from '../../utils/site-jetpack-modules';
 
 const fields = [
 	{
@@ -36,10 +33,6 @@ export default function ProtectForm( {
 } ) {
 	const mutation = useMutation( siteJetpackModulesMutation( site.ID ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-
-	const protectAvailable =
-		jetpackModuleRequiresConnection( jetpackModules, JetpackModules.SSO ) &&
-		site.jetpack_connection;
 
 	const currentProtect = isJetpackModuleActivated( jetpackModules, JetpackModules.PROTECT );
 
@@ -100,7 +93,7 @@ export default function ProtectForm( {
 								variant="primary"
 								type="submit"
 								isBusy={ isPending }
-								disabled={ isPending || ! isDirty || ! protectAvailable }
+								disabled={ isPending || ! isDirty }
 							>
 								{ __( 'Save' ) }
 							</Button>

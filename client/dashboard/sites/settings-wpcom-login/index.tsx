@@ -1,5 +1,9 @@
 import { HostingFeatures, JetpackModules } from '@automattic/api-core';
-import { siteJetpackModulesQuery, siteBySlugQuery } from '@automattic/api-queries';
+import {
+	siteBySlugQuery,
+	siteJetpackConnectionQuery,
+	siteJetpackModulesQuery,
+} from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { notFound } from '@tanstack/react-router';
@@ -17,6 +21,7 @@ import SsoForm from './sso-form';
 export default function WpcomLoginSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: jetpackModules } = useSuspenseQuery( siteJetpackModulesQuery( site.ID ) );
+	const { data: jetpackConnection } = useSuspenseQuery( siteJetpackConnectionQuery( site.ID ) );
 
 	if ( ! isEnabled( 'dashboard/v2/security-settings' ) ) {
 		throw notFound();
@@ -24,7 +29,7 @@ export default function WpcomLoginSettings( { siteSlug }: { siteSlug: string } )
 
 	const ssoAvailable =
 		jetpackModuleRequiresConnection( jetpackModules, JetpackModules.SSO ) &&
-		site.jetpack_connection;
+		! jetpackConnection?.offlineMode?.isActive;
 
 	return (
 		<PageLayout
