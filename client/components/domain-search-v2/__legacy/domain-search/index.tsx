@@ -1,4 +1,3 @@
-import { FilterState } from '@automattic/domain-search/src/components/search-bar/types';
 import clsx from 'clsx';
 import { createContext, useCallback, useContext, useLayoutEffect, useMemo, useState } from 'react';
 import type { DomainSearchCart, DomainSearchContextType } from './types';
@@ -19,11 +18,6 @@ export const DomainSearchContext = createContext< DomainSearchContextType >( {
 	isFullCartOpen: false,
 	closeFullCart: () => {},
 	openFullCart: () => {},
-	filter: {
-		exactSldMatchesOnly: false,
-		tlds: [],
-	},
-	setFilter: () => {},
 } );
 
 export const DomainSearch = ( {
@@ -31,15 +25,11 @@ export const DomainSearch = ( {
 	onContinue,
 	cart,
 	className,
-	setFilter,
-	filter,
 }: {
 	children: React.ReactNode;
 	onContinue: () => void;
 	cart: DomainSearchCart;
 	className?: string;
-	setFilter: ( filter: FilterState ) => void;
-	filter: FilterState;
 } ) => {
 	const [ isFullCartOpen, setIsFullCartOpen ] = useState( false );
 
@@ -58,10 +48,8 @@ export const DomainSearch = ( {
 			closeFullCart,
 			openFullCart,
 			isFullCartOpen,
-			filter,
-			setFilter,
 		} ),
-		[ onContinue, cart, closeFullCart, openFullCart, isFullCartOpen, filter, setFilter ]
+		[ onContinue, cart, closeFullCart, openFullCart, isFullCartOpen ]
 	);
 
 	const cartItemsLength = cart.items.length;

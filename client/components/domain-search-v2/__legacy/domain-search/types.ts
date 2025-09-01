@@ -1,5 +1,3 @@
-import { FilterState } from '@automattic/domain-search/src/components/search-bar/types';
-
 export interface SelectedDomain {
 	uuid: string;
 	domain: string;
@@ -24,6 +22,4 @@ export interface DomainSearchContextType {
 	isFullCartOpen: boolean;
 	closeFullCart: () => void;
 	openFullCart: () => void;
-	filter: FilterState;
-	setFilter: ( filter: FilterState ) => void;
 }
