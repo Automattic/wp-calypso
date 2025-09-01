@@ -1,5 +1,5 @@
 import { HostingFeatures } from '@automattic/api-core';
-import { sitePrimaryDataCenterQuery } from '@automattic/api-queries/src/site-primary-data-center';
+import { sitePrimaryDataCenterQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';

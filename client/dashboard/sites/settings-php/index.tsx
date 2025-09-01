@@ -1,6 +1,9 @@
 import { HostingFeatures } from '@automattic/api-core';
-import { sitePHPVersionQuery, sitePHPVersionMutation } from '@automattic/api-queries';
-import { siteBySlugQuery } from '@automattic/api-queries/src/site';
+import {
+	sitePHPVersionQuery,
+	sitePHPVersionMutation,
+	siteBySlugQuery,
+} from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
 	Card,

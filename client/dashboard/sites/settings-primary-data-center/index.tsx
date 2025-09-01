@@ -1,6 +1,5 @@
 import { HostingFeatures } from '@automattic/api-core';
-import { siteBySlugQuery } from '@automattic/api-queries/src/site';
-import { sitePrimaryDataCenterQuery } from '@automattic/api-queries/src/site-primary-data-center';
+import { siteBySlugQuery, sitePrimaryDataCenterQuery } from '@automattic/api-queries';
 import SummaryButton from '@automattic/components/src/summary-button';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';

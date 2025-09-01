@@ -6,8 +6,8 @@ import {
 	siteEdgeCacheLastClearedTimestampQuery,
 	siteObjectCacheClearMutation,
 	siteObjectCacheLastClearedTimestampQuery,
+	siteBySlugQuery,
 } from '@automattic/api-queries';
-import { siteBySlugQuery } from '@automattic/api-queries/src/site';
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import {

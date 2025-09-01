@@ -1,5 +1,5 @@
 import { HostingFeatures } from '@automattic/api-core';
-import { siteBySlugQuery } from '@automattic/api-queries/src/site';
+import { siteBySlugQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { notFound } from '@tanstack/react-router';

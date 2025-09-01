@@ -1,7 +1,5 @@
 import { HostingFeatures, LogType, PHPLog, ServerLog, SiteLogsParams } from '@automattic/api-core';
-import { siteLogsQuery } from '@automattic/api-queries';
-import { siteBySlugQuery } from '@automattic/api-queries/src/site';
-import { siteSettingsQuery } from '@automattic/api-queries/src/site-settings';
+import { siteLogsQuery, siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {

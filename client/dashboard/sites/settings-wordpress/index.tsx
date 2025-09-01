@@ -1,8 +1,8 @@
-import { siteBySlugQuery } from '@automattic/api-queries/src/site';
 import {
+	siteBySlugQuery,
 	siteWordPressVersionQuery,
 	siteWordPressVersionMutation,
-} from '@automattic/api-queries/src/site-wordpress-version';
+} from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
 	Card,

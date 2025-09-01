@@ -1,6 +1,5 @@
-import { emailsQuery } from '@automattic/api-queries';
+import { emailsQuery, queryClient } from '@automattic/api-queries';
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
-import { queryClient } from '../query-client';
 import { rootRoute } from './root';
 
 export const emailsRoute = createRoute( {

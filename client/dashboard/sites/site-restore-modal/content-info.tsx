@@ -1,4 +1,4 @@
-import { siteRestoreMutation } from '@automattic/api-queries/src/site';
+import { siteRestoreMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,

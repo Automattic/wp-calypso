@@ -1,5 +1,4 @@
-import { siteAgencyBlogQuery } from '@automattic/api-queries';
-import { siteSettingsQuery } from '@automattic/api-queries/src/site-settings';
+import { siteAgencyBlogQuery, siteSettingsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';

@@ -1,4 +1,4 @@
-import { siteWordPressVersionQuery } from '@automattic/api-queries/src/site-wordpress-version';
+import { siteWordPressVersionQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { wordpress } from '@wordpress/icons';

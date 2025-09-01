@@ -15,8 +15,8 @@ import {
 	siteDifmWebsiteContentQuery,
 	siteJetpackKeysQuery,
 	reinstallMarketplacePluginsQuery,
+	siteBySlugQuery,
 } from '@automattic/api-queries';
-import { siteBySlugQuery } from '@automattic/api-queries/src/site';
 import { domainManagementEdit, domainUseMyDomain } from '@automattic/domains-table/src/utils/paths';
 import { formatCurrency } from '@automattic/number-formatters';
 import { INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS } from '@automattic/urls';

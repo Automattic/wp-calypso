@@ -1,4 +1,4 @@
-import { sitePreviewLinksQuery } from '@automattic/api-queries/src/site-preview-links';
+import { sitePreviewLinksQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { link } from '@wordpress/icons';

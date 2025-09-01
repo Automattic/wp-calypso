@@ -1,5 +1,5 @@
 import { HostingFeatures, fetchPhpMyAdminToken } from '@automattic/api-core';
-import { siteBySlugQuery } from '@automattic/api-queries/src/site';
+import { siteBySlugQuery } from '@automattic/api-queries';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import {

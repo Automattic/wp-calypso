@@ -1,5 +1,4 @@
-import { siteBySlugQuery } from '@automattic/api-queries/src/site';
-import { siteSettingsQuery } from '@automattic/api-queries/src/site-settings';
+import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';

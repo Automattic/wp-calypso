@@ -1,3 +1,4 @@
+import { persistedQueryClientPromise } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import {
 	isSupportSession,
@@ -8,8 +9,8 @@ import '@wordpress/components/build-style/style.css';
 import '@wordpress/commands/build-style/style.css';
 import wpcom from 'calypso/lib/wp';
 import Layout from './layout';
-import { persistPromise } from './query-client';
 import type { AppConfig } from './context';
+
 import './style.scss';
 
 function boot( config: AppConfig ) {
@@ -25,7 +26,7 @@ function boot( config: AppConfig ) {
 	}
 	const root = createRoot( rootElement );
 
-	persistPromise.then( () => {
+	persistedQueryClientPromise.then( () => {
 		root.render( <Layout config={ config } /> );
 	} );
 }

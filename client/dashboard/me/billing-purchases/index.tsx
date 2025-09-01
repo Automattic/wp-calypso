@@ -2,8 +2,8 @@ import {
 	userPaymentMethodsQuery,
 	userPurchasesQuery,
 	userTransferredPurchasesQuery,
+	sitesQuery,
 } from '@automattic/api-queries';
-import { sitesQuery } from '@automattic/api-queries/src/sites';
 import { useQuery } from '@tanstack/react-query';
 import { useResizeObserver } from '@wordpress/compose';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';

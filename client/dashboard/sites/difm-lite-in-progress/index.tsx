@@ -1,7 +1,10 @@
 import { WPCOM_DIFM_LITE } from '@automattic/api-core';
-import { siteDifmWebsiteContentQuery, siteDomainsQuery } from '@automattic/api-queries';
-import { siteBySlugQuery } from '@automattic/api-queries/src/site';
-import { sitePurchasesQuery } from '@automattic/api-queries/src/site-purchases';
+import {
+	siteDifmWebsiteContentQuery,
+	siteDomainsQuery,
+	siteBySlugQuery,
+	sitePurchasesQuery,
+} from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';

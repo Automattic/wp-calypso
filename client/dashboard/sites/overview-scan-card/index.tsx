@@ -1,5 +1,5 @@
 import { HostingFeatures } from '@automattic/api-core';
-import { siteScanQuery } from '@automattic/api-queries/src/site-scan';
+import { siteScanQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { shield } from '@wordpress/icons';

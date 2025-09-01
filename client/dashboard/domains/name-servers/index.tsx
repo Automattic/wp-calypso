@@ -2,8 +2,8 @@ import {
 	domainQuery,
 	domainNameServersQuery,
 	domainNameServersMutation,
+	siteByIdQuery,
 } from '@automattic/api-queries';
-import { siteByIdQuery } from '@automattic/api-queries/src/site';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Card, CardBody } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';

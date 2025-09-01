@@ -3,7 +3,7 @@ import {
 	sitePreviewLinksQuery,
 	sitePreviewLinkCreateMutation,
 	sitePreviewLinkDeleteMutation,
-} from '@automattic/api-queries/src/site-preview-links';
+} from '@automattic/api-queries';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import {
 	Card,

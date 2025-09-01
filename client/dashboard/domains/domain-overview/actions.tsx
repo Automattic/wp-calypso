@@ -2,9 +2,9 @@ import {
 	domainQuery,
 	disconnectDomainMutation,
 	removePurchaseMutation,
+	siteByIdQuery,
+	sitePurchaseQuery,
 } from '@automattic/api-queries';
-import { siteByIdQuery } from '@automattic/api-queries/src/site';
-import { sitePurchaseQuery } from '@automattic/api-queries/src/site-purchases';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {

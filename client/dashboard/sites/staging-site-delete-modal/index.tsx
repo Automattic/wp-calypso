@@ -1,5 +1,4 @@
-import { siteByIdQuery } from '@automattic/api-queries/src/site';
-import { stagingSiteDeleteMutation } from '@automattic/api-queries/src/site-staging-sites';
+import { siteByIdQuery, stagingSiteDeleteMutation } from '@automattic/api-queries';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';

@@ -1,5 +1,4 @@
-import { domainQuery } from '@automattic/api-queries';
-import { sitePurchaseQuery } from '@automattic/api-queries/src/site-purchases';
+import { domainQuery, sitePurchaseQuery } from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';

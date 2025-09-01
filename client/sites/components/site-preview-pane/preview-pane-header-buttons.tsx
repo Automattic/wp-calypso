@@ -1,3 +1,4 @@
+import { siteByIdQuery, isDeletingStagingSiteQuery, queryClient } from '@automattic/api-queries';
 import { Button } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
 import { useMergeRefs } from '@wordpress/compose';
@@ -6,9 +7,6 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useRef, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { GuidedTourStep } from 'calypso/components/guided-tour/step';
-import { siteByIdQuery } from 'calypso/dashboard/app/queries/site';
-import { isDeletingStagingSiteQuery } from 'calypso/dashboard/app/queries/site-staging-sites';
-import { queryClient } from 'calypso/dashboard/app/query-client';
 import SyncDropdown from 'calypso/dashboard/sites/staging-site-sync-dropdown';
 import { isAtomicTransferredSite } from 'calypso/dashboard/utils/site-atomic-transfers';
 import { useCheckSyncStatus } from 'calypso/sites/staging-site/hooks/use-site-sync-status';

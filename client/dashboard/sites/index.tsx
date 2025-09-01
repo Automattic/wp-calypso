@@ -2,8 +2,8 @@ import {
 	isAutomatticianQuery,
 	userPreferenceQuery,
 	userPreferenceMutation,
+	sitesQuery,
 } from '@automattic/api-queries';
-import { sitesQuery } from '@automattic/api-queries/src/sites';
 import { useQuery, useSuspenseQuery, useMutation, keepPreviousData } from '@tanstack/react-query';
 import { useNavigate, useRouter } from '@tanstack/react-router';
 import { Button, Modal } from '@wordpress/components';

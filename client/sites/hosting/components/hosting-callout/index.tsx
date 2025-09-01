@@ -1,11 +1,10 @@
+import { siteLatestAtomicTransferQuery, siteByIdQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { useQuery } from '@tanstack/react-query';
 import { Button, __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
-import { siteByIdQuery } from 'calypso/dashboard/app/queries/site';
-import { siteLatestAtomicTransferQuery } from 'calypso/dashboard/app/queries/site-atomic-transfers';
 import { Callout } from 'calypso/dashboard/components/callout';
 import {
 	isAtomicTransferInProgress,

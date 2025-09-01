@@ -1,5 +1,4 @@
-import { siteBySlugQuery } from '@automattic/api-queries/src/site';
-import { siteSettingsMutation, siteSettingsQuery } from '@automattic/api-queries/src/site-settings';
+import { siteBySlugQuery, siteSettingsMutation, siteSettingsQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { notFound } from '@tanstack/react-router';
 import {

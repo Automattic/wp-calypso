@@ -1,6 +1,9 @@
-import { siteAgencyBlogQuery } from '@automattic/api-queries';
-import { siteBySlugQuery } from '@automattic/api-queries/src/site';
-import { siteSettingsMutation, siteSettingsQuery } from '@automattic/api-queries/src/site-settings';
+import {
+	siteAgencyBlogQuery,
+	siteBySlugQuery,
+	siteSettingsMutation,
+	siteSettingsQuery,
+} from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { notFound } from '@tanstack/react-router';
 import {

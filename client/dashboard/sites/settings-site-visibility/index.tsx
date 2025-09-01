@@ -1,5 +1,9 @@
-import { siteLaunchMutation, siteBySlugQuery } from '@automattic/api-queries/src/site';
-import { siteSettingsMutation, siteSettingsQuery } from '@automattic/api-queries/src/site-settings';
+import {
+	siteLaunchMutation,
+	siteBySlugQuery,
+	siteSettingsMutation,
+	siteSettingsQuery,
+} from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';

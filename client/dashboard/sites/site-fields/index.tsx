@@ -4,9 +4,9 @@ import {
 	siteLastBackupQuery,
 	siteMediaStorageQuery,
 	sitePHPVersionQuery,
+	siteEngagementStatsQuery,
+	siteUptimeQuery,
 } from '@automattic/api-queries';
-import { siteEngagementStatsQuery } from '@automattic/api-queries/src/site-stats';
-import { siteUptimeQuery } from '@automattic/api-queries/src/site-uptime';
 import { Badge } from '@automattic/ui';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';

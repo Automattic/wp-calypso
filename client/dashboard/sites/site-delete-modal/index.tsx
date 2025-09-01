@@ -1,6 +1,8 @@
-import { p2HubP2sQuery } from '@automattic/api-queries';
-import { siteDeleteMutation } from '@automattic/api-queries/src/site';
-import { siteHasCancelablePurchasesQuery } from '@automattic/api-queries/src/site-purchases';
+import {
+	p2HubP2sQuery,
+	siteDeleteMutation,
+	siteHasCancelablePurchasesQuery,
+} from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {

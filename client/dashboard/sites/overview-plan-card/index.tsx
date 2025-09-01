@@ -1,7 +1,5 @@
 import { DotcomPlans } from '@automattic/api-core';
-import { siteCurrentPlanQuery } from '@automattic/api-queries';
-import { siteByIdQuery } from '@automattic/api-queries/src/site';
-import { sitePurchaseQuery } from '@automattic/api-queries/src/site-purchases';
+import { siteCurrentPlanQuery, siteByIdQuery, sitePurchaseQuery } from '@automattic/api-queries';
 import { JetpackLogo } from '@automattic/components/src/logos/jetpack-logo';
 import { useQuery } from '@tanstack/react-query';
 import {

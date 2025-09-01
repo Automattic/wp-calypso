@@ -1,5 +1,4 @@
-import { sitePlanBySlugQuery } from '@automattic/api-queries';
-import { siteBySlugQuery } from '@automattic/api-queries/src/site';
+import { sitePlanBySlugQuery, siteBySlugQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Button,

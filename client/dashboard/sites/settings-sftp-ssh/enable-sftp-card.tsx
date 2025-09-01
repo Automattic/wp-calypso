@@ -1,4 +1,4 @@
-import { siteSftpUsersCreateMutation } from '@automattic/api-queries/src/site-sftp';
+import { siteSftpUsersCreateMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,

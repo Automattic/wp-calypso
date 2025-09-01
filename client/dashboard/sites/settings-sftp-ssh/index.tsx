@@ -1,7 +1,9 @@
 import { HostingFeatures } from '@automattic/api-core';
-import { siteBySlugQuery } from '@automattic/api-queries/src/site';
-import { siteSftpUsersQuery } from '@automattic/api-queries/src/site-sftp';
-import { siteSshAccessStatusQuery } from '@automattic/api-queries/src/site-ssh';
+import {
+	siteBySlugQuery,
+	siteSftpUsersQuery,
+	siteSshAccessStatusQuery,
+} from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { file } from '@wordpress/icons';

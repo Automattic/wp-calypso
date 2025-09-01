@@ -1,4 +1,4 @@
-import { siteSftpUsersResetPasswordMutation } from '@automattic/api-queries/src/site-sftp';
+import { siteSftpUsersResetPasswordMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
 	__experimentalConfirmDialog as ConfirmDialog,

@@ -2,7 +2,7 @@ import {
 	siteResetContentSummaryQuery,
 	siteResetMutation,
 	siteResetStatusQuery,
-} from '@automattic/api-queries/src/site-reset';
+} from '@automattic/api-queries';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,

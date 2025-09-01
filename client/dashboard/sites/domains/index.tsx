@@ -1,5 +1,4 @@
-import { siteDomainsQuery } from '@automattic/api-queries';
-import { siteBySlugQuery } from '@automattic/api-queries/src/site';
+import { siteDomainsQuery, siteBySlugQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';

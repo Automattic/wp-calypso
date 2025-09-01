@@ -5,8 +5,8 @@ import {
 	siteSshKeysQuery,
 	siteSshKeysAttachMutation,
 	siteSshKeysDetachMutation,
-} from '@automattic/api-queries/src/site-ssh';
-import { sshKeysQuery } from '@automattic/api-queries/src/ssh';
+	sshKeysQuery,
+} from '@automattic/api-queries';
 import { Badge } from '@automattic/ui';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import {

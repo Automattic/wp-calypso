@@ -1,8 +1,8 @@
-import { siteHasCancelablePurchasesQuery } from '@automattic/api-queries/src/site-purchases';
 import {
+	siteHasCancelablePurchasesQuery,
 	siteCurrentUserQuery,
 	siteUserDeleteMutation,
-} from '@automattic/api-queries/src/site-users';
+} from '@automattic/api-queries';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';

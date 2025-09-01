@@ -1,5 +1,5 @@
 import { Domain } from '@automattic/api-core';
-import { siteByIdQuery } from '@automattic/api-queries/src/site';
+import { siteByIdQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import OverviewCard from '../../sites/overview-card';

@@ -1,5 +1,4 @@
-import { siteBySlugQuery } from '@automattic/api-queries/src/site';
-import { sitesQuery } from '@automattic/api-queries/src/sites';
+import { siteBySlugQuery, sitesQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet, notFound } from '@tanstack/react-router';
 import {

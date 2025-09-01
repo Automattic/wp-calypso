@@ -8,6 +8,7 @@ import {
 	domainsQuery,
 	mailboxesQuery,
 	siteByIdQuery,
+	queryClient,
 } from '@automattic/api-queries';
 import {
 	createRoute,
@@ -17,7 +18,6 @@ import {
 	lazyRouteComponent,
 } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
-import { queryClient } from '../query-client';
 import { rootRoute } from './root';
 
 // Standalone domains route - requires rootRoute

@@ -1,4 +1,4 @@
-import { siteBySlugQuery } from '@automattic/api-queries/src/site';
+import { siteBySlugQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { siteRoute } from '../../app/router/sites';

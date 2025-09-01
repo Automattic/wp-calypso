@@ -1,4 +1,4 @@
-import { isSiteUsingBlockThemeQuery } from '@automattic/api-queries/src/site-themes';
+import { isSiteUsingBlockThemeQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';

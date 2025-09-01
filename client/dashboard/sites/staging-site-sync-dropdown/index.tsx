@@ -1,5 +1,4 @@
-import { siteBySlugQuery } from '@automattic/api-queries/src/site';
-import { stagingSiteSyncStateQuery } from '@automattic/api-queries/src/site-staging-sites';
+import { siteBySlugQuery, stagingSiteSyncStateQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Button, Dropdown, MenuGroup, MenuItem } from '@wordpress/components';
 import { useState } from '@wordpress/element';

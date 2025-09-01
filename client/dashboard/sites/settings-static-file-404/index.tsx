@@ -1,9 +1,9 @@
 import { HostingFeatures } from '@automattic/api-core';
-import { siteBySlugQuery } from '@automattic/api-queries/src/site';
 import {
+	siteBySlugQuery,
 	siteStaticFile404SettingQuery,
 	siteStaticFile404SettingMutation,
-} from '@automattic/api-queries/src/site-static-file-404';
+} from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,

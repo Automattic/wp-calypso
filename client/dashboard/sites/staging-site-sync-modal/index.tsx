@@ -1,8 +1,8 @@
-import { siteByIdQuery } from '@automattic/api-queries/src/site';
 import {
+	siteByIdQuery,
 	pushToStagingMutation,
 	pullFromStagingMutation,
-} from '@automattic/api-queries/src/site-staging-sync';
+} from '@automattic/api-queries';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import {
