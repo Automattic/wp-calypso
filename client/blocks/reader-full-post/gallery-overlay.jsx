@@ -25,6 +25,7 @@ const GalleryOverlay = ( {
 	const [ imageDimensions, setImageDimensions ] = useState( null );
 	const [ touchStart, setTouchStart ] = useState( null );
 	const [ touchEnd, setTouchEnd ] = useState( null );
+	const [ announcement, setAnnouncement ] = useState( '' );
 
 	// Calculate navigation states (safe defaults if images is empty)
 	const currentImage = images[ currentIndex ] || {};
@@ -39,35 +40,70 @@ const GalleryOverlay = ( {
 				return;
 			}
 
+			// Don't handle key events if user is interacting with focusable elements
+			const activeElement = document.activeElement;
+			const isInteractingWithButton = activeElement && activeElement.tagName === 'BUTTON';
+
 			switch ( event.key ) {
 				case 'Escape':
+					event.preventDefault();
 					onClose();
 					break;
 				case 'ArrowLeft':
 				case 'h': // Vim-style navigation
-					if ( hasPrevious ) {
+					if ( hasPrevious && ! isInteractingWithButton ) {
+						event.preventDefault();
 						onPrevious();
+						// Announce navigation to screen readers
+						setAnnouncement( translate( 'Navigated to previous image' ) );
 					}
 					break;
 				case 'ArrowRight':
 				case 'l': // Vim-style navigation
-					if ( hasNext ) {
+					if ( hasNext && ! isInteractingWithButton ) {
+						event.preventDefault();
 						onNext();
+						// Announce navigation to screen readers
+						setAnnouncement( translate( 'Navigated to next image' ) );
 					}
 					break;
 				case ' ':
+					// Space should only close if not focused on a button
+					if ( ! isInteractingWithButton ) {
+						event.preventDefault();
+						onClose();
+					}
+					break;
 				case 'Enter':
-					onClose();
+					// Enter should close from anywhere except buttons (which have their own handlers)
+					if ( ! isInteractingWithButton ) {
+						event.preventDefault();
+						onClose();
+					}
 					break;
 				case 'Home':
-					if ( hasMultipleImages && currentIndex > 0 && onGoToFirst ) {
+					if ( hasMultipleImages && currentIndex > 0 && onGoToFirst && ! isInteractingWithButton ) {
+						event.preventDefault();
 						onGoToFirst();
+						setAnnouncement( translate( 'Navigated to first image' ) );
 					}
 					break;
 				case 'End':
-					if ( hasMultipleImages && currentIndex < images.length - 1 && onGoToLast ) {
+					if (
+						hasMultipleImages &&
+						currentIndex < images.length - 1 &&
+						onGoToLast &&
+						! isInteractingWithButton
+					) {
+						event.preventDefault();
 						onGoToLast();
+						setAnnouncement( translate( 'Navigated to last image' ) );
 					}
+					break;
+				case 'ArrowUp':
+				case 'ArrowDown':
+					// Prevent default scrolling behavior
+					event.preventDefault();
 					break;
 				default:
 					return;
@@ -188,6 +224,125 @@ const GalleryOverlay = ( {
 			setIsImageLoading( true );
 		}
 	}, [ currentIndex, isOpen ] );
+
+	// Screen reader announcements for navigation
+	useEffect( () => {
+		if ( ! isOpen || ! hasMultipleImages ) {
+			return;
+		}
+
+		const imagePosition = translate( 'Image %(current)d of %(total)d', {
+			args: {
+				current: currentIndex + 1,
+				total: images.length,
+			},
+		} );
+
+		let announcementText = imagePosition;
+
+		if ( currentImage.alt ) {
+			announcementText += `. ${ currentImage.alt }`;
+		}
+
+		if ( currentImage.caption ) {
+			announcementText += `. ${ currentImage.caption }`;
+		}
+
+		// Delay announcement to avoid conflicts with navigation sounds
+		const timeoutId = setTimeout( () => {
+			setAnnouncement( announcementText );
+		}, 300 );
+
+		return () => clearTimeout( timeoutId );
+	}, [
+		currentIndex,
+		isOpen,
+		hasMultipleImages,
+		currentImage.alt,
+		currentImage.caption,
+		images.length,
+		translate,
+	] );
+
+	// Focus trap implementation
+	useEffect( () => {
+		if ( ! isOpen ) {
+			return;
+		}
+
+		// Store the previously focused element
+		const previouslyFocusedElement = document.activeElement;
+
+		// Focus the close button when modal opens
+		const closeButton = document.querySelector( '.gallery-overlay__close' );
+		if ( closeButton ) {
+			closeButton.focus();
+		}
+
+		// Get all focusable elements within the modal
+		const getFocusableElements = () => {
+			const modal = document.querySelector( '.gallery-overlay' );
+			if ( ! modal ) {
+				return [];
+			}
+
+			const focusableSelectors = [
+				'button',
+				'[href]',
+				'input',
+				'select',
+				'textarea',
+				'[tabindex]:not([tabindex="-1"])',
+			];
+
+			return Array.from( modal.querySelectorAll( focusableSelectors.join( ',' ) ) ).filter(
+				( element ) => {
+					return (
+						! element.disabled &&
+						element.offsetWidth > 0 &&
+						element.offsetHeight > 0 &&
+						getComputedStyle( element ).visibility !== 'hidden'
+					);
+				}
+			);
+		};
+
+		const handleTabKey = ( event ) => {
+			if ( event.key !== 'Tab' ) {
+				return;
+			}
+
+			const focusableElements = getFocusableElements();
+			if ( focusableElements.length === 0 ) {
+				return;
+			}
+
+			const firstElement = focusableElements[ 0 ];
+			const lastElement = focusableElements[ focusableElements.length - 1 ];
+
+			if ( event.shiftKey ) {
+				// Shift + Tab: if focused on first element, go to last
+				if ( document.activeElement === firstElement ) {
+					event.preventDefault();
+					lastElement.focus();
+				}
+			} else if ( document.activeElement === lastElement ) {
+				// Tab: if focused on last element, go to first
+				event.preventDefault();
+				firstElement.focus();
+			}
+		};
+
+		document.addEventListener( 'keydown', handleTabKey );
+
+		// Return focus to previously focused element when modal closes
+		return () => {
+			document.removeEventListener( 'keydown', handleTabKey );
+			if ( previouslyFocusedElement && typeof previouslyFocusedElement.focus === 'function' ) {
+				previouslyFocusedElement.focus();
+			}
+		};
+	}, [ isOpen ] );
 
 	// Handle orientation changes for better responsive behavior
 	useEffect( () => {
@@ -324,7 +479,17 @@ const GalleryOverlay = ( {
 			role="dialog"
 			aria-modal="true"
 			aria-label={ translate( 'Gallery image viewer' ) }
+			aria-describedby={ hasMultipleImages ? 'gallery-description' : undefined }
 		>
+			{ /* Screen reader announcements */ }
+			<div
+				id="gallery-announcements"
+				aria-live="polite"
+				aria-atomic="true"
+				className="gallery-overlay__sr-only"
+			>
+				{ announcement }
+			</div>
 			<div
 				className="gallery-overlay__backdrop"
 				onClick={ handleBackdropClick }
@@ -339,8 +504,9 @@ const GalleryOverlay = ( {
 				className="gallery-overlay__close"
 				onClick={ onClose }
 				aria-label={ translate( 'Close gallery' ) }
+				title={ translate( 'Close gallery (Escape)' ) }
 			>
-				<Gridicon icon="cross" size={ 24 } />
+				<Gridicon icon="cross" size={ 24 } aria-hidden="true" />
 			</button>
 
 			{ /* Previous button */ }
@@ -348,9 +514,15 @@ const GalleryOverlay = ( {
 				<button
 					className="gallery-overlay__nav gallery-overlay__nav--previous"
 					onClick={ onPrevious }
-					aria-label={ translate( 'Previous image' ) }
+					aria-label={ translate( 'Previous image (%(current)d of %(total)d)', {
+						args: {
+							current: currentIndex,
+							total: images.length,
+						},
+					} ) }
+					title={ translate( 'Previous image' ) }
 				>
-					<Gridicon icon="chevron-left" size={ 36 } />
+					<Gridicon icon="chevron-left" size={ 36 } aria-hidden="true" />
 				</button>
 			) }
 
@@ -359,9 +531,15 @@ const GalleryOverlay = ( {
 				<button
 					className="gallery-overlay__nav gallery-overlay__nav--next"
 					onClick={ onNext }
-					aria-label={ translate( 'Next image' ) }
+					aria-label={ translate( 'Next image (%(current)d of %(total)d)', {
+						args: {
+							current: currentIndex + 2,
+							total: images.length,
+						},
+					} ) }
+					title={ translate( 'Next image' ) }
 				>
-					<Gridicon icon="chevron-right" size={ 36 } />
+					<Gridicon icon="chevron-right" size={ 36 } aria-hidden="true" />
 				</button>
 			) }
 
@@ -417,7 +595,15 @@ const GalleryOverlay = ( {
 						) : (
 							<img
 								src={ currentImage.src }
-								alt={ currentImage.alt }
+								alt={
+									currentImage.alt ||
+									translate( 'Gallery image %(current)d of %(total)d', {
+										args: {
+											current: currentIndex + 1,
+											total: images.length,
+										},
+									} )
+								}
 								width={ currentImage.width }
 								height={ currentImage.height }
 								className={ clsx( 'gallery-overlay__image', {
@@ -440,6 +626,7 @@ const GalleryOverlay = ( {
 								onError={ handleImageError }
 								loading="eager"
 								decoding="async"
+								aria-describedby={ currentImage.caption ? 'gallery-caption' : undefined }
 							/>
 						) }
 					</div>
@@ -449,7 +636,11 @@ const GalleryOverlay = ( {
 				{ ! error && (
 					<div className="gallery-overlay__info">
 						{ hasMultipleImages && (
-							<div className="gallery-overlay__counter">
+							<div
+								id="gallery-description"
+								className="gallery-overlay__counter"
+								aria-label={ translate( 'Gallery navigation information' ) }
+							>
 								{ translate( '%(current)d of %(total)d', {
 									args: {
 										current: currentIndex + 1,
@@ -459,7 +650,14 @@ const GalleryOverlay = ( {
 							</div>
 						) }
 						{ currentImage.caption && (
-							<div className="gallery-overlay__caption">{ currentImage.caption }</div>
+							<div
+								id="gallery-caption"
+								className="gallery-overlay__caption"
+								role="img"
+								aria-label={ translate( 'Image caption' ) }
+							>
+								{ currentImage.caption }
+							</div>
 						) }
 					</div>
 				) }
