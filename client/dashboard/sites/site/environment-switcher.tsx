@@ -142,10 +142,9 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 			<Dropdown
 				renderToggle={ ( { onToggle } ) => {
 					const canToggle =
-						( hasStagingSite( site ) && ! isStagingSiteDeleting ) ||
-						( otherEnvironmentSite &&
-							canManageSite( otherEnvironmentSite ) &&
-							! isStagingSiteDeleting );
+						! isStagingSiteDeleting &&
+						( hasStagingSite( site ) ||
+							( otherEnvironmentSite && canManageSite( otherEnvironmentSite ) ) );
 
 					return (
 						<Button
