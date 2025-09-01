@@ -43,7 +43,7 @@ export default function Notifications( { className }: { className: string } ) {
 
 	useEffect( () => {
 		const handleKeyDown = ( event: KeyboardEvent ) => {
-			if ( event.target !== document.body && ( event.target as HTMLElement )?.tagName !== 'A' ) {
+			if ( event.target !== document.body ) {
 				return;
 			}
 			if ( event.altKey || event.ctrlKey || event.metaKey ) {
