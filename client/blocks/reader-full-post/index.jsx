@@ -155,10 +155,15 @@ export class FullPostView extends Component {
 
 		// Restore focus to the originally clicked image
 		if ( this.clickedImageElement && this.clickedImageElement.isConnected ) {
-			// Use setTimeout to ensure the modal is fully closed
-			setTimeout( () => {
-				this.clickedImageElement.focus();
-			}, 100 );
+			// Use requestAnimationFrame to ensure the modal is fully closed
+			requestAnimationFrame( () => {
+				// Double RAF to ensure DOM updates are complete
+				requestAnimationFrame( () => {
+					if ( this.clickedImageElement && this.clickedImageElement.isConnected ) {
+						this.clickedImageElement.focus();
+					}
+				} );
+			} );
 		}
 	};
 
