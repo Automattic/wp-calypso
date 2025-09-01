@@ -24,7 +24,7 @@ test.describe( 'Dashboard: Site Visibility Settings', { tag: '@dashboard' }, () 
 
 		await test.step( 'Then I can not see the site as an external visitor', async function () {
 			await pageIncognito.goto( siteNew.blog_details.url );
-			await expect.soft( incognitoContentLocator ).toContainText( 'Private Site' );
+			await expect( incognitoContentLocator ).toContainText( 'Private Site' );
 		} );
 	} );
 
@@ -51,7 +51,7 @@ test.describe( 'Dashboard: Site Visibility Settings', { tag: '@dashboard' }, () 
 
 		await test.step( 'Then I can see the coming soon message as an external visitor', async function () {
 			await pageIncognito.goto( siteNew.blog_details.url );
-			await expect.soft( incognitoContentLocator ).toContainText( 'coming soon' );
+			await expect( incognitoContentLocator ).toContainText( 'coming soon' );
 		} );
 	} );
 
@@ -84,7 +84,7 @@ test.describe( 'Dashboard: Site Visibility Settings', { tag: '@dashboard' }, () 
 
 		await test.step( 'But robots will see a disallow instruction', async function () {
 			await pageIncognito.goto( `${ siteNew.blog_details.url }robots.txt` );
-			await expect.soft( incognitoContentLocator ).toContainText( 'User-agent: *\nDisallow: /' );
+			await expect( incognitoContentLocator ).toContainText( 'User-agent: *\nDisallow: /' );
 		} );
 	} );
 } );
