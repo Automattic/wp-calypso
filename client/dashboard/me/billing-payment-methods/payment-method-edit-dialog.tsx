@@ -1,3 +1,4 @@
+import { countryListQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalConfirmDialog as ConfirmDialog,
@@ -8,7 +9,6 @@ import {
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import { countryListQuery } from '../../app/queries/domain-supported-contries';
 import RequiredSelect from '../../components/required-select';
 import { Text } from '../../components/text';
 import { PaymentMethodDetails } from './payment-method-details';

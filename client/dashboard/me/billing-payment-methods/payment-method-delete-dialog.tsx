@@ -1,3 +1,4 @@
+import { userPurchasesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalConfirmDialog as ConfirmDialog,
@@ -7,7 +8,6 @@ import {
 } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { useLocale } from '../../app/locale';
-import { userPurchasesQuery } from '../../app/queries/me-purchases';
 import { Notice } from '../../components/notice';
 import { Text } from '../../components/text';
 import { formatDate } from '../../utils/datetime';

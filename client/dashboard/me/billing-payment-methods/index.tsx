@@ -1,3 +1,9 @@
+import {
+	userPaymentMethodsQuery,
+	userPaymentMethodSetBackupQuery,
+	userPaymentMethodDeleteQuery,
+	userPaymentMethodSetTaxInfoQuery,
+} from '@automattic/api-queries';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import {
@@ -14,12 +20,6 @@ import { __, sprintf } from '@wordpress/i18n';
 import { info, warning } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState, useMemo } from 'react';
-import {
-	userPaymentMethodsQuery,
-	userPaymentMethodSetBackupQuery,
-	userPaymentMethodDeleteQuery,
-	userPaymentMethodSetTaxInfoQuery,
-} from '../../app/queries/me-payment-methods';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
