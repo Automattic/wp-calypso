@@ -1,4 +1,4 @@
-import { persistedQueryClientPromise } from '@automattic/api-queries';
+import { persistQueryClientPromise } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import {
 	isSupportSession,
@@ -26,7 +26,7 @@ function boot( config: AppConfig ) {
 	}
 	const root = createRoot( rootElement );
 
-	persistedQueryClientPromise.then( () => {
+	persistQueryClientPromise.then( () => {
 		root.render( <Layout config={ config } /> );
 	} );
 }

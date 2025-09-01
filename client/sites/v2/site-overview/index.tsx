@@ -1,4 +1,4 @@
-import { persistedQueryClientPromise, siteBySlugQuery, queryClient } from '@automattic/api-queries';
+import { persistQueryClientPromise, siteBySlugQuery, queryClient } from '@automattic/api-queries';
 import { useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { AUTH_QUERY_KEY } from 'calypso/dashboard/app/auth';
@@ -40,7 +40,7 @@ export default function DashboardBackportSiteOverview( { siteSlug }: { siteSlug?
 		}
 
 		Promise.all( [
-			persistedQueryClientPromise,
+			persistQueryClientPromise,
 			router.preloadRoute( {
 				to: `/sites/${ siteSlug }`,
 			} ),

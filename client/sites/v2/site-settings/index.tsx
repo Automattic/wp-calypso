@@ -2,7 +2,7 @@ import {
 	siteBySlugQuery,
 	siteSettingsQuery,
 	queryClient,
-	persistedQueryClientPromise,
+	persistQueryClientPromise,
 } from '@automattic/api-queries';
 import { useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -56,7 +56,7 @@ export default function DashboardBackportSiteSettingsRenderer( {
 		}
 
 		Promise.all( [
-			persistedQueryClientPromise,
+			persistQueryClientPromise,
 			router.preloadRoute( {
 				to: `/sites/${ siteSlug }/settings`,
 			} ),
