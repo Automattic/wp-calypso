@@ -1,17 +1,17 @@
 {
 	"name": "@automattic/api-queries",
 	"version": "1.0.0",
-	"description": "API Queries",
+	"description": "API Queries.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"types": "dist/types/index.d.ts",
-	"calypso:src": "src/index.tsx",
+	"calypso:src": "src/index.ts",
 	"exports": {
 		".": {
-			"calypso:src": "./src/index.tsx",
+			"calypso:src": "./src/index.ts",
 			"types": "./dist/types/index.d.ts",
 			"import": "./dist/esm/index.js",
 			"require": "./dist/cjs/index.js"
