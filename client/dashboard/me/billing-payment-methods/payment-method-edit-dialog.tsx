@@ -39,9 +39,7 @@ function getFields( {
 		},
 		{
 			id: 'subdivision_code',
-			// FIXME: replace this with "Province" in some countries (see getStateLabelText)
-			// translators: "State" as in the country governance division
-			label: __( 'State' ),
+			label: __( 'State/Province' ),
 			Edit: 'text',
 		},
 		{
@@ -151,7 +149,7 @@ export function PaymentMethodEditDialog( {
 						fields={ getFields( { countryList } ) }
 						form={ form }
 						onChange={ ( updated ) => {
-							setFormData( { ...paymentMethod.tax_location, ...updated } );
+							setFormData( ( previous ) => ( { ...previous, ...updated } ) );
 						} }
 					/>
 				) }
