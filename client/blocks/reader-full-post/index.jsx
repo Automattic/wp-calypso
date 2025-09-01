@@ -372,11 +372,110 @@ export class FullPostView extends Component {
 
 	// Set up gallery click handlers using event delegation
 	setupGalleryClickHandlers = () => {
-		if ( this.postContentWrapper.current ) {
-			this.postContentWrapper.current.addEventListener(
-				'click',
-				this.handleGalleryImageClick,
-				true
+		if ( ! this.postContentWrapper.current ) {
+			return;
+		}
+
+		// Performance optimization: only add handler if galleries exist
+		const hasGalleries = this.postContentWrapper.current.querySelector(
+			'.wp-block-gallery, .tiled-gallery'
+		);
+		if ( ! hasGalleries ) {
+			// Track that no galleries were found
+			this.trackGalleryEvent( 'gallery_no_galleries_found', {
+				post_id: this.props.post?.ID,
+			} );
+			return;
+		}
+
+		// Add event listener with passive option for better performance
+		this.postContentWrapper.current.addEventListener( 'click', this.handleGalleryImageClick, {
+			capture: true,
+			passive: false, // We need to call preventDefault
+		} );
+
+		// Track successful setup
+		this.trackGalleryEvent( 'gallery_handlers_setup', {
+			post_id: this.props.post?.ID,
+			gallery_count: this.postContentWrapper.current.querySelectorAll(
+				'.wp-block-gallery, .tiled-gallery'
+			).length,
+		} );
+	};
+
+	// Initialize gallery integration with error handling
+	initializeGalleryIntegration = () => {
+		try {
+			// Set up gallery click handling
+			this.setupGalleryClickHandlers();
+
+			// Set up mutation observer for dynamic content
+			this.setupDynamicContentObserver();
+
+			// Track gallery integration success
+			this.trackGalleryEvent( 'gallery_integration_initialized', {
+				post_id: this.props.post?.ID,
+				has_content_wrapper: !! this.postContentWrapper.current,
+			} );
+		} catch ( error ) {
+			// If gallery integration fails, don't break the entire component
+			this.handleGalleryError( new Error( 'Gallery integration failed: ' + error.message ) );
+		}
+	};
+
+	// Set up observer for dynamically loaded content
+	setupDynamicContentObserver = () => {
+		if ( ! this.postContentWrapper.current || ! window.MutationObserver ) {
+			return;
+		}
+
+		// Create observer to watch for new gallery content
+		this.contentObserver = new MutationObserver( ( mutations ) => {
+			let hasNewGalleries = false;
+
+			mutations.forEach( ( mutation ) => {
+				if ( mutation.type === 'childList' ) {
+					mutation.addedNodes.forEach( ( node ) => {
+						if ( node.nodeType === Node.ELEMENT_NODE ) {
+							// Check if new node contains galleries
+							const galleries = node.querySelectorAll?.( '.wp-block-gallery, .tiled-gallery' );
+							if ( galleries && galleries.length > 0 ) {
+								hasNewGalleries = true;
+							}
+						}
+					} );
+				}
+			} );
+
+			// If new galleries are detected, refresh click handlers
+			if ( hasNewGalleries ) {
+				this.refreshGalleryHandlers();
+			}
+		} );
+
+		// Start observing
+		this.contentObserver.observe( this.postContentWrapper.current, {
+			childList: true,
+			subtree: true,
+		} );
+	};
+
+	// Refresh gallery handlers for dynamic content
+	refreshGalleryHandlers = () => {
+		try {
+			// Remove existing handlers
+			this.cleanupGalleryClickHandlers();
+
+			// Re-setup handlers with new content
+			this.setupGalleryClickHandlers();
+
+			// Track dynamic content detection
+			this.trackGalleryEvent( 'gallery_dynamic_content_detected', {
+				post_id: this.props.post?.ID,
+			} );
+		} catch ( error ) {
+			this.handleGalleryError(
+				new Error( 'Failed to refresh gallery handlers: ' + error.message )
 			);
 		}
 	};
@@ -384,11 +483,26 @@ export class FullPostView extends Component {
 	// Clean up gallery click handlers
 	cleanupGalleryClickHandlers = () => {
 		if ( this.postContentWrapper.current ) {
+			// Remove event listener (matching the options used when adding)
+			this.postContentWrapper.current.removeEventListener( 'click', this.handleGalleryImageClick, {
+				capture: true,
+				passive: false,
+			} );
+
+			// Fallback: also try to remove with old format for compatibility
 			this.postContentWrapper.current.removeEventListener(
 				'click',
 				this.handleGalleryImageClick,
 				true
 			);
+		}
+	};
+
+	// Clean up dynamic content observer
+	cleanupDynamicContentObserver = () => {
+		if ( this.contentObserver ) {
+			this.contentObserver.disconnect();
+			this.contentObserver = null;
 		}
 	};
 
@@ -419,8 +533,8 @@ export class FullPostView extends Component {
 
 		document.addEventListener( 'visibilitychange', this.handleVisibilityChange );
 
-		// Set up gallery click handling
-		this.setupGalleryClickHandlers();
+		// Set up gallery click handling with error boundary
+		this.initializeGalleryIntegration();
 
 		const scrollableContainer =
 			document.querySelector( '#primary > div > div.recent-feed > section' ) || // for Recent Feed in Dataview
@@ -482,8 +596,9 @@ export class FullPostView extends Component {
 		document.removeEventListener( 'keydown', this.handleKeydown, true );
 		document.removeEventListener( 'visibilitychange', this.handleVisibilityChange );
 
-		// Clean up gallery click handlers
+		// Clean up gallery integration
 		this.cleanupGalleryClickHandlers();
+		this.cleanupDynamicContentObserver();
 
 		// Track scroll depth and remove related instruments
 		this.trackScrollDepth( this.props.post );
@@ -883,6 +998,36 @@ export class FullPostView extends Component {
 		);
 	};
 
+	// Render gallery overlay with error boundary
+	renderGalleryOverlay = () => {
+		try {
+			// Only render if we have the necessary data
+			if ( ! this.state.galleryImages && ! this.state.galleryError && ! this.state.isGalleryOpen ) {
+				return null;
+			}
+
+			return (
+				<GalleryOverlay
+					isOpen={ this.state.isGalleryOpen }
+					images={ this.state.galleryImages }
+					currentIndex={ this.state.currentImageIndex }
+					isLoading={ this.state.isGalleryLoading }
+					error={ this.state.galleryError }
+					onClose={ this.closeGallery }
+					onNext={ this.nextImage }
+					onPrevious={ this.previousImage }
+					onGoToFirst={ this.goToFirstImage }
+					onGoToLast={ this.goToLastImage }
+					onClearError={ this.clearGalleryError }
+				/>
+			);
+		} catch ( error ) {
+			// If gallery overlay fails to render, track error and return null
+			this.handleGalleryError( new Error( 'Gallery overlay render failed: ' + error.message ) );
+			return null;
+		}
+	};
+
 	render() {
 		const {
 			post,
@@ -1157,19 +1302,8 @@ export class FullPostView extends Component {
 						/>
 					) }
 
-					<GalleryOverlay
-						isOpen={ this.state.isGalleryOpen }
-						images={ this.state.galleryImages }
-						currentIndex={ this.state.currentImageIndex }
-						isLoading={ this.state.isGalleryLoading }
-						error={ this.state.galleryError }
-						onClose={ this.closeGallery }
-						onNext={ this.nextImage }
-						onPrevious={ this.previousImage }
-						onGoToFirst={ this.goToFirstImage }
-						onGoToLast={ this.goToLastImage }
-						onClearError={ this.clearGalleryError }
-					/>
+					{ /* Gallery Overlay with error boundary */ }
+					{ this.renderGalleryOverlay() }
 				</ReaderMain>
 			</div>
 		);
