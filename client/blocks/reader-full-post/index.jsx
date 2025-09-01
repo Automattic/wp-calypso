@@ -106,6 +106,9 @@ export class FullPostView extends Component {
 
 	state = {
 		isSuggestedFollowsModalOpen: false,
+		isGalleryOpen: false,
+		currentImageIndex: 0,
+		galleryImages: [],
 	};
 
 	openSuggestedFollowsModal = ( followClicked ) => {
@@ -113,6 +116,127 @@ export class FullPostView extends Component {
 	};
 	onCloseSuggestedFollowModal = () => {
 		this.setState( { isSuggestedFollowsModalOpen: false } );
+	};
+
+	// Gallery overlay methods
+	openGallery = ( imageIndex, images ) => {
+		this.setState( {
+			isGalleryOpen: true,
+			currentImageIndex: imageIndex,
+			galleryImages: images,
+		} );
+	};
+
+	closeGallery = () => {
+		this.setState( {
+			isGalleryOpen: false,
+			currentImageIndex: 0,
+			galleryImages: [],
+		} );
+	};
+
+	nextImage = () => {
+		const { currentImageIndex, galleryImages } = this.state;
+		if ( currentImageIndex < galleryImages.length - 1 ) {
+			this.setState( { currentImageIndex: currentImageIndex + 1 } );
+		}
+	};
+
+	previousImage = () => {
+		const { currentImageIndex } = this.state;
+		if ( currentImageIndex > 0 ) {
+			this.setState( { currentImageIndex: currentImageIndex - 1 } );
+		}
+	};
+
+	// Extract image data from a gallery element
+	extractGalleryImages = ( galleryElement ) => {
+		const images = [];
+		const galleryImages = galleryElement.querySelectorAll(
+			'.wp-block-image img, .blocks-gallery-item img'
+		);
+
+		galleryImages.forEach( ( img ) => {
+			images.push( {
+				src: img.src,
+				alt: img.alt || '',
+				caption: this.getImageCaption( img ),
+			} );
+		} );
+
+		return images;
+	};
+
+	// Get caption text for an image
+	getImageCaption = ( img ) => {
+		// Look for caption in various possible structures
+		const figcaption = img.closest( 'figure' )?.querySelector( 'figcaption' );
+		if ( figcaption ) {
+			return figcaption.textContent.trim();
+		}
+
+		const caption = img
+			.closest( '.wp-block-image' )
+			?.querySelector( '.blocks-gallery-item__caption, .wp-block-image__caption' );
+		if ( caption ) {
+			return caption.textContent.trim();
+		}
+
+		return '';
+	};
+
+	// Handle clicks on gallery images
+	handleGalleryImageClick = ( event ) => {
+		const img = event.target;
+
+		// Only handle clicks on img elements
+		if ( img.tagName !== 'IMG' ) {
+			return;
+		}
+
+		// Check if this is a gallery image
+		const galleryElement = img.closest( '.wp-block-gallery, .tiled-gallery' );
+		if ( ! galleryElement ) {
+			return;
+		}
+
+		// Prevent default link behavior
+		event.preventDefault();
+		event.stopPropagation();
+
+		// Extract all images from this gallery
+		const galleryImages = this.extractGalleryImages( galleryElement );
+
+		// Find the index of the clicked image
+		const clickedImageIndex = galleryImages.findIndex(
+			( galleryImg ) => galleryImg.src === img.src
+		);
+
+		if ( clickedImageIndex !== -1 ) {
+			this.openGallery( clickedImageIndex, galleryImages );
+		}
+	};
+
+	// Set up gallery click handlers using event delegation
+	setupGalleryClickHandlers = () => {
+		if ( this.postContentWrapper.current ) {
+			this.postContentWrapper.current.addEventListener(
+				'click',
+				this.handleGalleryImageClick,
+				true
+			);
+		}
+	};
+
+	// Clean up gallery click handlers
+	cleanupGalleryClickHandlers = () => {
+		if ( this.postContentWrapper.current ) {
+			this.postContentWrapper.current.removeEventListener(
+				'click',
+				this.handleGalleryImageClick,
+				true
+			);
+		}
 	};
 
 	componentDidMount() {
@@ -141,6 +265,9 @@ export class FullPostView extends Component {
 		document.addEventListener( 'keydown', this.handleKeydown, true );
 
 		document.addEventListener( 'visibilitychange', this.handleVisibilityChange );
+
+		// Set up gallery click handling
+		this.setupGalleryClickHandlers();
 
 		const scrollableContainer =
 			document.querySelector( '#primary > div > div.recent-feed > section' ) || // for Recent Feed in Dataview
@@ -201,6 +328,9 @@ export class FullPostView extends Component {
 		this.trackReadingTime();
 		document.removeEventListener( 'keydown', this.handleKeydown, true );
 		document.removeEventListener( 'visibilitychange', this.handleVisibilityChange );
+
+		// Clean up gallery click handlers
+		this.cleanupGalleryClickHandlers();
 
 		// Track scroll depth and remove related instruments
 		this.trackScrollDepth( this.props.post );

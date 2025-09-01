@@ -90,6 +90,12 @@
 			border-bottom-right-radius: $radius-large;
 		}
 	}
+
+	// Gallery images should show pointer cursor to indicate they're clickable
+	.wp-block-gallery .wp-block-image img,
+	.tiled-gallery img {
+		cursor: pointer;
+	}
 	.image-wrapper img {
 		border-radius: $radius-large;
 		display: inherit;
