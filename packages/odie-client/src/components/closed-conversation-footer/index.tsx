@@ -1,5 +1,4 @@
 import { Button } from '@wordpress/components';
-import { comment, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useOdieAssistantContext } from '../../context';
 import { useManageSupportInteraction } from '../../data';
@@ -20,11 +19,13 @@ export const ClosedConversationFooter = () => {
 	};
 
 	return (
-		<div className="odie-closed-conversation-footer">
-			<Button onClick={ handleOnClick } className="odie-closed-conversation-footer__button">
-				<Icon icon={ comment } />
-				{ __( 'New conversation', __i18n_text_domain__ ) }
-			</Button>
-		</div>
+		<Button
+			onClick={ handleOnClick }
+			className="button odie-closed-conversation-footer__button"
+			variant="secondary"
+			__next40pxDefaultSize
+		>
+			{ __( 'Still need help? Start a new chat', __i18n_text_domain__ ) }
+		</Button>
 	);
 };

@@ -33,7 +33,9 @@ export const OdieAssistant: React.FC = () => {
 			<div className="chat-box-message-container" id="odie-messages-container">
 				<MessagesContainer currentUser={ currentUser } />
 			</div>
-			{ showClosedConversationFooter ? <ClosedConversationFooter /> : <OdieSendMessageButton /> }
+			<div className="odie-chat-message-input-container">
+				{ showClosedConversationFooter ? <ClosedConversationFooter /> : <OdieSendMessageButton /> }
+			</div>
 		</div>
 	);
 };
