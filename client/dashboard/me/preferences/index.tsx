@@ -43,20 +43,13 @@ const languageForm = {
 // TODO add tests.
 /**
  * Adapted from https://github.com/Automattic/wp-calypso/blob/fbeb9c37266e2bfac7af881b1672a9f6d72a0670/client/me/account/main.jsx#L299
+ * In this case the data.language is the locale variant if we're using one, so we can skip the "isLocaleVariant checks and see if the locale can be translated or not"
  */
 const shouldDisplayCommunityTranslator = ( data: UserSettingsPreferences ) => {
 	const locale = data.language;
 
 	// disable for locales
 	if ( ! locale || ! canBeTranslated( locale ) ) {
-		return false;
-	}
-
-	// if the user hasn't yet selected a language, and the locale variants has no official GP translation set
-	if ( isLocaleVariant( locale ) && ! canBeTranslated( locale ) ) {
-		return false;
-	}
-	if ( data.locale_variant && ! canBeTranslated( data.locale_variant ) ) {
 		return false;
 	}
 
@@ -108,7 +101,7 @@ export default function Preferences() {
 		Partial< UserSettingsPreferences > | undefined
 	>();
 	// in case we're using a locale variant we'll override the language since that's what's being used in the combobox.
-	if ( serverData?.locale_variant ) {
+	if ( serverData?.locale_variant && serverData.locale_variant !== '' ) {
 		serverData.language = serverData.locale_variant;
 	}
 	const data = useMemo(
@@ -190,7 +183,20 @@ export default function Preferences() {
 			},
 			elements: languagesAsOptions,
 		},
-		{
+	];
+
+	if ( shouldShowEmpathyMode ) {
+		languageFields.push( {
+			Edit: 'checkbox',
+			id: 'i18n_empathy_mode',
+			label: 'Empathy mode (a8c-only)',
+			description: 'Pretend to use that language but display English where a translated exists', // TODO field should be disabled in case we're using default language https://github.com/Automattic/wp-calypso/blob/559b5e82dc96bd668fd6e5ef558d588d09eeb80f/client/components/language-picker/modal.tsx#L159
+			type: 'boolean',
+		} );
+	}
+
+	if ( shouldDisplayCommunityTranslator( data ) ) {
+		languageFields.push( {
 			// TODO show it only when canDisplayCommunityTranslator is true, don't use the calypso/state
 			Edit: 'checkbox',
 			id: 'enable_translator',
@@ -201,16 +207,6 @@ export default function Preferences() {
 					external: <ExternalLink href="https://translate.wordpress.com/community-translator/" />,
 				}
 			),
-			type: 'boolean',
-		},
-	];
-
-	if ( shouldShowEmpathyMode ) {
-		languageFields.push( {
-			Edit: 'checkbox',
-			id: 'i18n_empathy_mode',
-			label: 'Empathy mode (a8c-only)',
-			description: 'Pretend to use that language but display English where a translated exists', // TODO field should be disabled in case we're using default language https://github.com/Automattic/wp-calypso/blob/559b5e82dc96bd668fd6e5ef558d588d09eeb80f/client/components/language-picker/modal.tsx#L159
 			type: 'boolean',
 		} );
 	}
