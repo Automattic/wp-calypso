@@ -26,6 +26,17 @@ function SiteBackupRestoreProgress( {
 	const { data: restoreProgress } = useQuery( {
 		...siteBackupRestoreProgressQuery( site.ID, restoreId ),
 		enabled: !! restoreId,
+		refetchInterval: ( query ) => {
+			const { data } = query.state;
+
+			// Poll every 1.5 seconds if restore is in progress
+			if ( data?.status === 'queued' || data?.status === 'running' ) {
+				return 1500;
+			}
+
+			// Stop polling if finished or failed
+			return false;
+		},
 	} );
 
 	useEffect( () => {

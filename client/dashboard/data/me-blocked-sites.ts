@@ -6,16 +6,19 @@ export interface BlockedSite {
 	name: string;
 }
 
-export interface BlockedSiteResponse {
-	sites: BlockedSite[];
-	page: number;
-}
+export async function fetchBlockedSites( page: number, perPage: number ): Promise< BlockedSite[] > {
+	const { sites } = await wpcom.req.get(
+		{
+			path: '/me/blocks/sites',
+			apiNamespace: 'wpcom/v2',
+		},
+		{
+			page,
+			per_page: perPage,
+		}
+	);
 
-export async function fetchBlockedSites(): Promise< BlockedSiteResponse > {
-	return await wpcom.req.get( {
-		path: '/me/blocks/sites',
-		apiNamespace: 'wpcom/v2',
-	} );
+	return sites;
 }
 
 export async function unblockSite( siteId: number ): Promise< void > {

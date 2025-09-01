@@ -1,49 +1,94 @@
 import { useNavigate } from '@tanstack/react-router';
 import { Button, Dropdown } from '@wordpress/components';
-import '@wordpress/components/build-style/style.css';
 import { __ } from '@wordpress/i18n';
 import { bellUnread, bell } from '@wordpress/icons';
-import { Suspense, lazy } from 'react';
+import clsx from 'clsx';
+import { Suspense, lazy, useEffect, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
+import { useAuth } from '../auth';
+import { useLocale } from '../locale';
+import './style.scss';
 
 const AsyncNotificationApp = lazy( () => import( '@automattic/notifications/src/app' ) );
 
 export default function Notifications( { className }: { className: string } ) {
 	const navigate = useNavigate();
+	const { user } = useAuth();
+	const locale = useLocale();
+	const [ isOpen, setIsOpen ] = useState( false );
+	const [ hasUnseenNotifications, setHasUnseenNotifications ] = useState( user.has_unseen_notes );
 
-	const actionHandlers = ( onClosePanel: () => void ) => ( {
+	const handleToggle = ( willOpen: boolean ) => {
+		setIsOpen( willOpen );
+	};
+
+	const handleClose = () => {
+		handleToggle( false );
+	};
+
+	const actionHandlers = {
+		APP_RENDER_NOTES: [
+			( store: any, { newNoteCount }: { newNoteCount: number } ) => {
+				setHasUnseenNotifications( newNoteCount > 0 );
+			},
+		],
 		VIEW_SETTINGS: [
 			() => {
-				onClosePanel();
+				handleClose();
 				navigate( { to: '/me/notifications' } );
 			},
 		],
-		CLOSE_PANEL: [ onClosePanel ],
-	} );
+		CLOSE_PANEL: [ handleClose ],
+	};
 
-	// TODO: fetch unread notifications count
-	const hasUnreadNotifications = false;
+	useEffect( () => {
+		const handleKeyDown = ( event: KeyboardEvent ) => {
+			if ( event.target !== document.body ) {
+				return;
+			}
+			if ( event.altKey || event.ctrlKey || event.metaKey ) {
+				return;
+			}
+			if ( event.key === 'n' ) {
+				event.stopPropagation();
+				event.preventDefault();
+				handleToggle( true );
+			}
+		};
+
+		window.addEventListener( 'keydown', handleKeyDown, false );
+		return () => {
+			window.removeEventListener( 'keydown', handleKeyDown, false );
+		};
+	}, [] );
 
 	return (
 		<Dropdown
 			popoverProps={ {
 				placement: 'bottom-end',
 				offset: 8,
+				focusOnMount: true,
 			} }
+			open={ isOpen }
+			onToggle={ handleToggle }
 			renderToggle={ ( { isOpen, onToggle } ) => (
 				<Button
-					className={ className }
+					className={ clsx( className, 'dashboard-notifications__icon' ) }
 					onClick={ onToggle }
 					aria-expanded={ isOpen }
 					variant="tertiary"
 					label={ __( 'Notifications' ) }
-					icon={ hasUnreadNotifications ? bellUnread : bell }
+					icon={ hasUnseenNotifications ? bellUnread : bell }
 				/>
 			) }
-			renderContent={ ( { onClose } ) => (
-				<div style={ { width: '480px', margin: '-8px' } }>
+			renderContent={ () => (
+				<div style={ { width: '480px', height: '100vh', maxHeight: 'inherit', margin: '-8px' } }>
 					<Suspense fallback={ null }>
-						<AsyncNotificationApp actionHandlers={ actionHandlers( onClose ) } wpcom={ wpcom } />
+						<AsyncNotificationApp
+							locale={ locale }
+							actionHandlers={ actionHandlers }
+							wpcom={ wpcom }
+						/>
 					</Suspense>
 				</div>
 			) }

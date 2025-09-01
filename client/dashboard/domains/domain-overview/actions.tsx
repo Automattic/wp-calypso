@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
 import {
 	Button,
 	__experimentalVStack as VStack,
@@ -8,26 +9,42 @@ import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useCallback, useState } from 'react';
+import { useAuth } from '../../app/auth';
 import { domainQuery, disconnectDomainMutation } from '../../app/queries/domain';
+import { removePurchaseMutation } from '../../app/queries/purchase';
+import { siteByIdQuery } from '../../app/queries/site';
 import { sitePurchaseQuery } from '../../app/queries/site-purchases';
-import { domainRoute, domainTransferRoute } from '../../app/router/domains';
+import { domainRoute, domainsRoute, domainTransferRoute } from '../../app/router/domains';
 import { ActionList } from '../../components/action-list';
+import RemoveDomainDialog from '../../components/purchase-dialogs/remove-domain-dialog';
 import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
 import { getDomainRenewalUrl } from '../../utils/domain';
-import { shouldShowTransferAction, shouldShowDisconnectAction } from './actions.utils';
+import {
+	shouldShowTransferAction,
+	shouldShowDisconnectAction,
+	shouldShowDeleteAction,
+	getDeleteTitle,
+	getDeleteLabel,
+	getDeleteDescription,
+} from './actions.utils';
 
 export default function Actions() {
+	const router = useRouter();
+	const { user } = useAuth();
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
+	const { data: site } = useQuery( siteByIdQuery( domain.blog_id ) );
 	const { data: purchase } = useQuery(
 		sitePurchaseQuery( domain.blog_id, parseInt( domain.subscription_id, 10 ) )
 	);
 	const { mutate: disconnectDomain, isPending: isDisconnecting } = useMutation(
 		disconnectDomainMutation( domainName )
 	);
+	const { mutate: deleteDomain, isPending: isDeleting } = useMutation( removePurchaseMutation() );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const [ isDisconnectDialogOpen, setIsDisconnectDialogOpen ] = useState( false );
+	const [ isDeleteDialogOpen, setIsDeleteDialogOpen ] = useState( false );
 
 	const onDisconnectConfirm = useCallback(
 		() =>
@@ -42,6 +59,21 @@ export default function Actions() {
 				onError: ( e: Error ) => createErrorNotice( e.message, { type: 'snackbar' } ),
 			} ),
 		[ disconnectDomain, createSuccessNotice, createErrorNotice ]
+	);
+
+	const onDeleteConfirm = useCallback(
+		() =>
+			purchase &&
+			deleteDomain( purchase.ID, {
+				onSuccess: () => {
+					createSuccessNotice( __( 'The domain deletion has been completed.' ), {
+						type: 'snackbar',
+					} );
+					router.navigate( { to: domainsRoute.fullPath } );
+				},
+				onError: ( e: Error ) => createErrorNotice( e.message, { type: 'snackbar' } ),
+			} ),
+		[ purchase, deleteDomain, createSuccessNotice, createErrorNotice, router ]
 	);
 
 	return (
@@ -96,26 +128,42 @@ export default function Actions() {
 						}
 					/>
 				) }
-				<ActionList.ActionItem
-					title={ __( 'Delete' ) }
-					description={ __( 'Remove this domain permanently.' ) }
-					actions={
-						<Button size="compact" variant="secondary" isDestructive>
-							{ __( 'Delete' ) }
-						</Button>
-					}
-				/>
+				{ shouldShowDeleteAction( domain, purchase, site ) && (
+					<ActionList.ActionItem
+						title={ getDeleteTitle( domain ) }
+						description={ getDeleteDescription( domain ) }
+						actions={
+							<Button
+								size="compact"
+								variant="secondary"
+								isDestructive
+								isBusy={ isDeleting }
+								disabled={ isDeleting }
+								onClick={ () => setIsDeleteDialogOpen( true ) }
+							>
+								{ getDeleteLabel( domain ) }
+							</Button>
+						}
+					/>
+				) }
 			</ActionList>
 
-			{ isDisconnectDialogOpen && (
-				<ConfirmDialog
-					onConfirm={ onDisconnectConfirm }
-					onCancel={ () => setIsDisconnectDialogOpen( false ) }
-					confirmButtonText={ __( 'Detach' ) }
-				>
-					{ __( 'Are you sure you want to detach this domain?' ) }
-				</ConfirmDialog>
-			) }
+			<ConfirmDialog
+				isOpen={ isDisconnectDialogOpen }
+				confirmButtonText={ __( 'Detach' ) }
+				onCancel={ () => setIsDisconnectDialogOpen( false ) }
+				onConfirm={ onDisconnectConfirm }
+			>
+				{ __( 'Are you sure you want to detach this domain?' ) }
+			</ConfirmDialog>
+
+			<RemoveDomainDialog
+				isOpen={ isDeleteDialogOpen }
+				user={ user }
+				domain={ domain }
+				closeDialog={ () => setIsDeleteDialogOpen( false ) }
+				onConfirm={ onDeleteConfirm }
+			/>
 		</VStack>
 	);
 }

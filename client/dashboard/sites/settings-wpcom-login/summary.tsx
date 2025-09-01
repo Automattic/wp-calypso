@@ -3,10 +3,11 @@ import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { key } from '@wordpress/icons';
-import { siteJetpackModulesQuery } from '../../app/queries/site-jetpack-module';
+import { siteJetpackModulesQuery } from '../../app/queries/site-jetpack-modules';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { HostingFeatures, JetpackModules } from '../../data/constants';
 import { hasHostingFeature } from '../../utils/site-features';
+import { isJetpackModuleActivated } from '../../utils/site-jetpack-modules';
 import type { Site } from '../../data/types';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
@@ -23,7 +24,7 @@ export default function WpcomLoginSettingsSummary( {
 		return null;
 	}
 
-	const ssoEnabled = jetpackModules?.includes( JetpackModules.SSO ) ?? false;
+	const ssoEnabled = isJetpackModuleActivated( jetpackModules, JetpackModules.SSO );
 
 	let badges;
 	if ( hasHostingFeature( site, HostingFeatures.SECURITY_SETTINGS ) ) {

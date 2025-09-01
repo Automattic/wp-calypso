@@ -12,7 +12,37 @@ export function fetchDomainGlueRecords( domainName: string ): Promise< DomainGlu
 	} );
 }
 
-export function deleteDomainGlueRecord( domainName: string, nameServer: string ): Promise< void > {
+export function createDomainGlueRecord( glueRecord: DomainGlueRecord ): Promise< void > {
+	return wpcom.req.post(
+		{
+			path: '/domains/glue-records',
+			apiNamespace: 'wpcom/v2',
+		},
+		{
+			name_server: glueRecord.nameserver,
+			ip_addresses: glueRecord.ip_addresses,
+		}
+	);
+}
+
+export function updateDomainGlueRecord( glueRecord: DomainGlueRecord ): Promise< void > {
+	return wpcom.req.put(
+		{
+			path: '/domains/glue-records',
+			apiNamespace: 'wpcom/v2',
+			method: 'PUT',
+		},
+		{
+			name_server: glueRecord.nameserver,
+			ip_addresses: glueRecord.ip_addresses,
+		}
+	);
+}
+
+export function deleteDomainGlueRecord(
+	domainName: string,
+	glueRecord: DomainGlueRecord
+): Promise< void > {
 	return wpcom.req.post(
 		{
 			path: `/domains/glue-records/${ domainName }`,
@@ -20,7 +50,7 @@ export function deleteDomainGlueRecord( domainName: string, nameServer: string )
 			method: 'DELETE',
 		},
 		{
-			name_server: nameServer,
+			name_server: glueRecord.nameserver,
 		}
 	);
 }

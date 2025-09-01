@@ -38,13 +38,13 @@ export default function ImportBindFileButton( {
 
 	return (
 		<FormFileUpload
-			__next40pxDefaultSize
 			accept="text/plain"
 			multiple={ false }
 			onChange={ handleFileChange }
 			render={ ( { openFileDialog } ) => (
 				<Button
 					variant="secondary"
+					__next40pxDefaultSize
 					onClick={ openFileDialog }
 					isBusy={ importDnsBindMutation.isPending }
 				>

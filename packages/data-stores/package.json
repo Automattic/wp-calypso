@@ -46,6 +46,7 @@
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/calypso-config": "workspace:^",
 		"@automattic/calypso-products": "workspace:^",
+		"@automattic/data": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/js-utils": "workspace:^",
 		"@automattic/load-script": "workspace:^",

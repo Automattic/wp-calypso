@@ -116,7 +116,7 @@ body.is-section-reader {
 				border: 1px solid $gray-200;
 			}
 		}
-		.layout__primary > div > div:not( .tags__header ):not( .reader-notifications__3pc-notice ) {
+		.layout__primary > div > div:not(.tags__header):not(.reader-notifications__3pc-notice):not(.freshly-pressed-suggestion) {
 			height: 100%;
 			overflow-y: auto;
 			overflow-x: hidden;

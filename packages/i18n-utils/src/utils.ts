@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import languages, { Language, SubLanguage } from '@automattic/languages';
 import { hasTranslation } from '@wordpress/i18n';
-import { find, map, pickBy, includes } from 'lodash';
 import { getWpI18nLocaleSlug } from './locale-context';
 
 /**
@@ -84,10 +83,10 @@ export function translationExists( phrase: string ) {
 
 /**
  * Return a list of all supported language slugs
- * @returns {Array} A list of all supported language slugs
+ * @returns A list of all supported language slugs
  */
-export function getLanguageSlugs() {
-	return map( languages, 'langSlug' );
+export function getLanguageSlugs(): string[] {
+	return languages.map( ( language ) => language.langSlug );
 }
 
 /**
@@ -132,9 +131,14 @@ export function getLanguage( langSlug: string | undefined ): Language | undefine
 	langSlug = getMappedLanguageSlug( langSlug );
 	if ( langSlug && localeOnlyRegex.test( langSlug ) ) {
 		// Find for the langSlug first. If we can't find it, split it and find its parent slug.
+		const foundBySlug = languages.find( ( language ) => language.langSlug === langSlug );
+		if ( foundBySlug ) {
+			return foundBySlug;
+		}
+
 		// Please see the comment above `localeOnlyRegex` to see why we can split by - or _ and find the parent slug.
-		return ( find( languages, { langSlug } ) ||
-			find( languages, { langSlug: langSlug.split( /[-_]/ )[ 0 ] } ) ) as Language | undefined;
+		const parentSlug = langSlug.split( /[-_]/ )[ 0 ];
+		return languages.find( ( language ) => language.langSlug === parentSlug );
 	}
 
 	return undefined;
@@ -189,24 +193,26 @@ export function removeLocaleFromPath( path: string ): string {
 /**
  * Filter out unexpected values from the given language revisions object.
  * @param {Object} languageRevisions A candidate language revisions object for filtering.
- * @returns {Object} A valid language revisions object derived from the given one.
+ * @returns valid language revisions object derived from the given one.
  */
 export function filterLanguageRevisions( languageRevisions: Record< string, string > ) {
 	const langSlugs = getLanguageSlugs();
 
 	// Since there is no strong guarantee that the passed-in revisions map will have the identical set of languages as we define in calypso,
 	// simply filtering against what we have here should be sufficient.
-	return pickBy( languageRevisions, ( revision, slug ) => {
-		if ( typeof revision !== 'number' ) {
-			return false;
-		}
+	return Object.fromEntries(
+		Object.entries( languageRevisions ).filter( ( [ slug, revision ] ) => {
+			if ( typeof revision !== 'number' ) {
+				return false;
+			}
 
-		if ( ! includes( langSlugs, slug ) ) {
-			return false;
-		}
+			if ( ! langSlugs.includes( slug ) ) {
+				return false;
+			}
 
-		return true;
-	} );
+			return true;
+		} )
+	);
 }
 
 /**

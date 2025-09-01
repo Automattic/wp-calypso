@@ -51,7 +51,7 @@ const visibilityFields: Field< PrivacyFormData >[] = [
 				label: __( 'Private' ),
 				value: 'private',
 				description: __(
-					'Your site is only visible to you and logged-in members you approve. Everyone else will see a log in screen.'
+					'Your site is only visible to you and to logged-in members you approve. Everyone else will see a login screen.'
 				),
 			},
 		],

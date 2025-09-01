@@ -1,5 +1,4 @@
 import { PLAN_PERSONAL } from '@automattic/calypso-products';
-import { DomainSuggestion } from '@automattic/data-stores';
 import { isOnboardingFlow, useStepPersistedState } from '@automattic/onboarding';
 import { withShoppingCart, type ResponseCartProduct } from '@automattic/shopping-cart';
 import { localize } from 'i18n-calypso';
@@ -32,6 +31,7 @@ import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { useIsManagedSiteFlowProps } from './use-is-managed-site-flow';
 import type { ProvidedDependencies, Step } from '../../types';
+import type { DomainSuggestion } from '@automattic/data';
 
 type DomainStepSubmittedTypes = {
 	stepName?: 'domains';

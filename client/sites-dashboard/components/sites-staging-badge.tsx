@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import styled from '@emotion/styled';
 import SitesLaunchStatusBadge from './sites-launch-status-badge';
 
@@ -6,8 +5,8 @@ interface SitesStagingBadgeProps {
 	secondary?: boolean;
 }
 
-const COLOR = isEnabled( 'hosting/staging-sites-redesign' ) ? 'var( --studio-gray-90 )' : '#4f3500';
-const BACKGROUND_COLOR = isEnabled( 'hosting/staging-sites-redesign' ) ? '#dcdcde' : '#f0c930';
+const COLOR = 'var( --studio-gray-90 )';
+const BACKGROUND_COLOR = '#dcdcde';
 
 const SitesStagingBadge = styled( SitesLaunchStatusBadge )( ( props: SitesStagingBadgeProps ) => ( {
 	color: COLOR,

@@ -1,19 +1,19 @@
-import { createContext, useContext } from 'react';
+import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { domainAvailabilityQuery } from '../queries/availability';
-import { productsQuery } from '../queries/products';
-import { domainSuggestionsQuery } from '../queries/suggestions';
-import { type DomainSearchContextType } from './types';
+import { domainSuggestionsQuery, freeSuggestionQuery } from '../queries/suggestions';
+import type { DomainSearchProps, DomainSearchContextType } from './types';
 
 const noop = () => {};
 
 export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 	events: {
 		onContinue: noop,
+		onSkip: noop,
 	},
 	queries: {
-		domainSuggestions: domainSuggestionsQuery,
-		domainAvailability: domainAvailabilityQuery,
-		products: productsQuery,
+		domainSuggestions: ( query: string ) => domainSuggestionsQuery( query ),
+		domainAvailability: ( domainName: string ) => domainAvailabilityQuery( domainName ),
+		freeSuggestion: ( query: string ) => freeSuggestionQuery( query ),
 	},
 	cart: {
 		items: [],
@@ -27,6 +27,11 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 	openFullCart: () => {},
 	query: '',
 	setQuery: () => {},
+	config: {
+		vendor: 'variation2_front',
+		skippable: false,
+		deemphasizedTlds: [],
+	},
 };
 
 export const DomainSearchContext =
@@ -40,4 +45,73 @@ export const useDomainSearch = () => {
 	}
 
 	return context;
+};
+
+export const useDomainSearchContextValue = (
+	props: DomainSearchProps
+): typeof DEFAULT_CONTEXT_VALUE => {
+	const { currentSiteUrl, initialQuery, cart, events, slots, config } = props;
+
+	const [ isFullCartOpen, setIsFullCartOpen ] = useState( false );
+	const [ query, setQuery ] = useState( initialQuery ?? '' );
+
+	const closeFullCart = useCallback( () => {
+		setIsFullCartOpen( false );
+	}, [] );
+
+	const openFullCart = useCallback( () => {
+		setIsFullCartOpen( true );
+	}, [] );
+
+	const normalizedEvents = useMemo( () => {
+		return {
+			...DEFAULT_CONTEXT_VALUE.events,
+			...events,
+		};
+	}, [ events ] );
+
+	const normalizedConfig = useMemo( () => {
+		return {
+			...DEFAULT_CONTEXT_VALUE.config,
+			...config,
+		};
+	}, [ config ] );
+
+	return useMemo( () => {
+		return {
+			events: normalizedEvents,
+			config: normalizedConfig,
+			queries: {
+				domainSuggestions: ( query ) =>
+					domainSuggestionsQuery( query, {
+						quantity: 30,
+						vendor: normalizedConfig.vendor,
+					} ),
+				freeSuggestion: ( query ) => ( {
+					...freeSuggestionQuery( query ),
+					enabled: normalizedConfig.skippable,
+				} ),
+				domainAvailability: domainAvailabilityQuery,
+			},
+			cart,
+			isFullCartOpen,
+			closeFullCart,
+			openFullCart,
+			query,
+			setQuery,
+			slots,
+			currentSiteUrl,
+		};
+	}, [
+		isFullCartOpen,
+		closeFullCart,
+		openFullCart,
+		query,
+		setQuery,
+		cart,
+		normalizedEvents,
+		slots,
+		currentSiteUrl,
+		normalizedConfig,
+	] );
 };

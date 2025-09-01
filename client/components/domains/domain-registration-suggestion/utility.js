@@ -1,5 +1,5 @@
+import { getTld } from '@automattic/domain-search';
 import { translate } from 'i18n-calypso';
-import { getTld } from 'calypso/lib/domains';
 
 export const TLD_EXACT_MATCH = 'tld-exact';
 export const SLD_EXACT_MATCH = 'exact-match';
