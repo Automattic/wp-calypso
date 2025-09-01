@@ -1,3 +1,4 @@
+import { siteOwnerTransferEligibilityCheckMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -11,7 +12,6 @@ import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteOwnerTransferEligibilityCheckMutation } from '../../app/queries/site-owner-transfer';
 import { SectionHeader } from '../../components/section-header';
 import type { Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';

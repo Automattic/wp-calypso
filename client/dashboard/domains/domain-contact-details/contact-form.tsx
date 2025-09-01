@@ -1,4 +1,10 @@
 import { type DomainContactDetails } from '@automattic/api-core';
+import {
+	countryListQuery,
+	statesListQuery,
+	domainWhoisMutation,
+	domainWhoisValidateMutation,
+} from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
 	ExternalLink,
@@ -15,8 +21,6 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
-import { countryListQuery, statesListQuery } from '../../app/queries/domain-supported-contries';
-import { domainWhoisMutation, domainWhoisValidateMutation } from '../../app/queries/domain-whois';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { getContactFormFields } from './contact-form-fields';

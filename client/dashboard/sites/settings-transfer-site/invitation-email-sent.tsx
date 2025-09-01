@@ -1,3 +1,4 @@
+import { siteOwnerTransferConfirmMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { ExternalLink, Spinner } from '@wordpress/components';
@@ -6,7 +7,6 @@ import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useState } from 'react';
-import { siteOwnerTransferConfirmMutation } from '../../app/queries/site-owner-transfer';
 import Notice from '../../components/notice';
 import type { Site, SiteOwnerTransferConfirmation } from '@automattic/api-core';
 

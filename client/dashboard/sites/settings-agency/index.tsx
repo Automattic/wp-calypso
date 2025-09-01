@@ -1,3 +1,9 @@
+import {
+	siteAgencyBlogQuery,
+	siteBySlugQuery,
+	siteSettingsMutation,
+	siteSettingsQuery,
+} from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { notFound } from '@tanstack/react-router';
 import {
@@ -15,9 +21,6 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteBySlugQuery } from '../../app/queries/site';
-import { siteAgencyBlogQuery } from '../../app/queries/site-agency';
-import { siteSettingsMutation, siteSettingsQuery } from '../../app/queries/site-settings';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';

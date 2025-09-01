@@ -1,14 +1,11 @@
 import { DomainGlueRecord } from '@automattic/api-core';
+import { domainGlueRecordsQuery, domainGlueRecordUpdateMutation } from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../app/analytics';
-import {
-	domainGlueRecordsQuery,
-	domainGlueRecordUpdateMutation,
-} from '../../app/queries/domain-glue-records';
 import { domainRoute, domainGlueRecordsRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';

@@ -1,38 +1,40 @@
 import { HostingFeatures, DotcomFeatures, LogType } from '@automattic/api-core';
+import {
+	isAutomatticianQuery,
+	rawUserPreferencesQuery,
+	siteLastFiveActivityLogEntriesQuery,
+	siteRewindableActivityLogEntriesQuery,
+	siteAgencyBlogQuery,
+	siteLastBackupQuery,
+	siteEdgeCacheStatusQuery,
+	siteDefensiveModeSettingsQuery,
+	siteDifmWebsiteContentQuery,
+	siteDomainsQuery,
+	siteJetpackModulesQuery,
+	siteJetpackSettingsQuery,
+	siteMediaStorageQuery,
+	sitePHPVersionQuery,
+	siteCurrentPlanQuery,
+	siteBySlugQuery,
+	siteByIdQuery,
+	sitePreviewLinksQuery,
+	sitePrimaryDataCenterQuery,
+	sitePurchaseQuery,
+	sitePurchasesQuery,
+	siteScanQuery,
+	siteSettingsQuery,
+	siteSftpUsersQuery,
+	sitesQuery,
+	siteSshAccessStatusQuery,
+	siteStaticFile404SettingQuery,
+	siteWordPressVersionQuery,
+	queryClient,
+} from '@automattic/api-queries';
+import { isSupportSession } from '@automattic/calypso-support-session';
 import { createRoute, redirect, createLazyRoute, lazyRouteComponent } from '@tanstack/react-router';
 import { canViewHundredYearPlanSettings, canViewWordPressSettings } from '../../sites/features';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import { hasSiteTrialEnded } from '../../utils/site-trial';
-import { isSupportSession } from '../auth/support-session';
-import { isAutomatticianQuery } from '../queries/me-a8c';
-import { rawUserPreferencesQuery } from '../queries/me-preferences';
-import { siteByIdQuery, siteBySlugQuery } from '../queries/site';
-import {
-	siteLastFiveActivityLogEntriesQuery,
-	siteRewindableActivityLogEntriesQuery,
-} from '../queries/site-activity-log';
-import { siteAgencyBlogQuery } from '../queries/site-agency';
-import { siteLastBackupQuery } from '../queries/site-backups';
-import { siteEdgeCacheStatusQuery } from '../queries/site-cache';
-import { siteDefensiveModeSettingsQuery } from '../queries/site-defensive-mode';
-import { siteDifmWebsiteContentQuery } from '../queries/site-do-it-for-me';
-import { siteDomainsQuery } from '../queries/site-domains';
-import { siteJetpackModulesQuery } from '../queries/site-jetpack-modules';
-import { siteJetpackSettingsQuery } from '../queries/site-jetpack-settings';
-import { siteMediaStorageQuery } from '../queries/site-media-storage';
-import { sitePHPVersionQuery } from '../queries/site-php-version';
-import { siteCurrentPlanQuery } from '../queries/site-plans';
-import { sitePreviewLinksQuery } from '../queries/site-preview-links';
-import { sitePrimaryDataCenterQuery } from '../queries/site-primary-data-center';
-import { sitePurchaseQuery, sitePurchasesQuery } from '../queries/site-purchases';
-import { siteScanQuery } from '../queries/site-scan';
-import { siteSettingsQuery } from '../queries/site-settings';
-import { siteSftpUsersQuery } from '../queries/site-sftp';
-import { siteSshAccessStatusQuery } from '../queries/site-ssh';
-import { siteStaticFile404SettingQuery } from '../queries/site-static-file-404';
-import { siteWordPressVersionQuery } from '../queries/site-wordpress-version';
-import { sitesQuery } from '../queries/sites';
-import { queryClient } from '../query-client';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
 import type { AnyRoute } from '@tanstack/react-router';

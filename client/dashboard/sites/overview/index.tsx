@@ -1,3 +1,4 @@
+import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalDivider as Divider,
@@ -10,7 +11,6 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { chartBar, wordpress } from '@wordpress/icons';
 import clsx from 'clsx';
-import { siteBySlugQuery } from '../../app/queries/site';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getSiteDisplayName } from '../../utils/site-name';

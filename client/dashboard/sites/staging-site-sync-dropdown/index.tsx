@@ -1,11 +1,10 @@
+import { siteBySlugQuery, stagingSiteSyncStateQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Button, Dropdown, MenuGroup, MenuItem } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { chevronDown, cloudDownload, cloudUpload } from '@wordpress/icons';
 import { lazy, Suspense } from 'react';
-import { siteBySlugQuery } from '../../app/queries/site';
-import { stagingSiteSyncStateQuery } from '../../app/queries/site-staging-sites';
 import {
 	getProductionSiteId,
 	getStagingSiteId,

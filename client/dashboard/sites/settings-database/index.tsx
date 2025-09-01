@@ -1,4 +1,5 @@
 import { HostingFeatures, fetchPhpMyAdminToken } from '@automattic/api-core';
+import { siteBySlugQuery } from '@automattic/api-queries';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import {
@@ -15,7 +16,6 @@ import { __ } from '@wordpress/i18n';
 import { blockTable } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteBySlugQuery } from '../../app/queries/site';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';

@@ -1,10 +1,10 @@
+import { isSiteUsingBlockThemeQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { moreVertical } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { useAnalytics } from '../../app/analytics';
-import { isSiteUsingBlockThemeQuery } from '../../app/queries/site-themes';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { getSiteEditUrl } from '../../utils/site-url';
 import type { Site } from '@automattic/api-core';

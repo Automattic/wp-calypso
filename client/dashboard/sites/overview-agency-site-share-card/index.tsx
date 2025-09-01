@@ -1,7 +1,7 @@
+import { sitePreviewLinksQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { link } from '@wordpress/icons';
-import { sitePreviewLinksQuery } from '../../app/queries/site-preview-links';
 import OverviewCard from '../overview-card';
 import type { Site } from '@automattic/api-core';
 

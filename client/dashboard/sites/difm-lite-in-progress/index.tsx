@@ -1,14 +1,16 @@
 import { WPCOM_DIFM_LITE } from '@automattic/api-core';
+import {
+	siteDifmWebsiteContentQuery,
+	siteDomainsQuery,
+	siteBySlugQuery,
+	sitePurchasesQuery,
+} from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
 import { addDays, isPast } from 'date-fns';
 import { useAnalytics } from '../../app/analytics';
 import { useLocale } from '../../app/locale';
-import { siteBySlugQuery } from '../../app/queries/site';
-import { siteDifmWebsiteContentQuery } from '../../app/queries/site-do-it-for-me';
-import { siteDomainsQuery } from '../../app/queries/site-domains';
-import { sitePurchasesQuery } from '../../app/queries/site-purchases';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';

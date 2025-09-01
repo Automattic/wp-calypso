@@ -1,9 +1,9 @@
 import { Domain } from '@automattic/api-core';
+import { mailboxesQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { envelope } from '@wordpress/icons';
-import { mailboxesQuery } from '../../app/queries/emails';
 import { emailsRoute } from '../../app/router/emails';
 import OverviewCard from '../../sites/overview-card';
 import type { EmailProvider, Mailbox } from '@automattic/api-core';

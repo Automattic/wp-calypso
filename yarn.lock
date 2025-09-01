@@ -306,6 +306,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/api-queries@workspace:^, @automattic/api-queries@workspace:packages/api-queries":
+  version: 0.0.0-use.local
+  resolution: "@automattic/api-queries@workspace:packages/api-queries"
+  dependencies:
+    "@automattic/api-core": "workspace:^"
+    "@automattic/calypso-support-session": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@tanstack/query-sync-storage-persister": "npm:^5.83.0"
+    "@tanstack/react-query": "npm:^5.83.0"
+    "@tanstack/react-query-persist-client": "npm:^5.83.0"
+    react: "npm:^18.3.1"
+    tslib: "npm:^2.8.1"
+    typescript: "npm:^5.8.3"
+  languageName: unknown
+  linkType: soft
+
 "@automattic/babel-plugin-i18n-calypso@workspace:^, @automattic/babel-plugin-i18n-calypso@workspace:packages/babel-plugin-i18n-calypso":
   version: 0.0.0-use.local
   resolution: "@automattic/babel-plugin-i18n-calypso@workspace:packages/babel-plugin-i18n-calypso"
@@ -749,6 +765,16 @@ __metadata:
     debug: "npm:^4.4.1"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
+    typescript: "npm:^5.8.3"
+  languageName: unknown
+  linkType: soft
+
+"@automattic/calypso-support-session@workspace:^, @automattic/calypso-support-session@workspace:packages/calypso-support-session":
+  version: 0.0.0-use.local
+  resolution: "@automattic/calypso-support-session@workspace:packages/calypso-support-session"
+  dependencies:
+    "@automattic/calypso-typescript-config": "workspace:^"
+    tslib: "npm:^2.8.1"
     typescript: "npm:^5.8.3"
   languageName: unknown
   linkType: soft
@@ -14903,6 +14929,7 @@ __metadata:
   dependencies:
     "@automattic/accessible-focus": "workspace:^"
     "@automattic/api-core": "workspace:^"
+    "@automattic/api-queries": "workspace:^"
     "@automattic/block-renderer": "workspace:^"
     "@automattic/browser-data-collector": "workspace:^"
     "@automattic/calypso-analytics": "workspace:^"
@@ -14918,6 +14945,7 @@ __metadata:
     "@automattic/calypso-router": "workspace:^"
     "@automattic/calypso-sentry": "workspace:^"
     "@automattic/calypso-stripe": "workspace:^"
+    "@automattic/calypso-support-session": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
     "@automattic/color-studio": "npm:^4.1.0"
     "@automattic/command-palette": "workspace:^"

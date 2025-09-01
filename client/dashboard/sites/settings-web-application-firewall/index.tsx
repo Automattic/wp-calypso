@@ -1,10 +1,10 @@
 import { HostingFeatures } from '@automattic/api-core';
+import { siteBySlugQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { notFound } from '@tanstack/react-router';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { siteBySlugQuery } from '../../app/queries/site';
 import InlineSupportLink from '../../components/inline-support-link';
 import PageLayout from '../../components/page-layout';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';

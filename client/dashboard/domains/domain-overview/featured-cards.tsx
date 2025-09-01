@@ -1,6 +1,6 @@
+import { domainQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalGrid as Grid } from '@wordpress/components';
-import { domainQuery } from '../../app/queries/domain';
 import { domainRoute } from '../../app/router/domains';
 import FeaturedCardEmails from './featured-card-emails';
 import FeaturedCardPrivacy from './featured-card-privacy';

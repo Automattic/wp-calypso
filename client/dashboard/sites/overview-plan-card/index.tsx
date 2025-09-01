@@ -1,4 +1,5 @@
 import { DotcomPlans } from '@automattic/api-core';
+import { siteCurrentPlanQuery, siteByIdQuery, sitePurchaseQuery } from '@automattic/api-queries';
 import { JetpackLogo } from '@automattic/components/src/logos/jetpack-logo';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -10,9 +11,6 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
-import { siteByIdQuery } from '../../app/queries/site';
-import { siteCurrentPlanQuery } from '../../app/queries/site-plans';
-import { sitePurchaseQuery } from '../../app/queries/site-purchases';
 import { PurchaseExpiryStatus } from '../../components/purchase-expiry-status';
 import {
 	getJetpackProductsForSite,

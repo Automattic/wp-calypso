@@ -1,3 +1,4 @@
+import { siteBackupDownloadInitiateMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
 	Button,
@@ -10,7 +11,6 @@ import { __ } from '@wordpress/i18n';
 import { download } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteBackupDownloadInitiateMutation } from '../../app/queries/site-backup-download';
 import { siteBackupDownloadRoute } from '../../app/router/sites';
 import type { DownloadConfig } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';

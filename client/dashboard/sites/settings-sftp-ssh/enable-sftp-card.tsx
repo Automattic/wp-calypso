@@ -1,3 +1,4 @@
+import { siteSftpUsersCreateMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -14,7 +15,6 @@ import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { siteSftpUsersCreateMutation } from '../../app/queries/site-sftp';
 import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
 

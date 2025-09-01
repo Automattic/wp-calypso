@@ -1,3 +1,4 @@
+import { siteByIdQuery, stagingSiteCreateMutation } from '@automattic/api-queries';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -12,8 +13,6 @@ import { useDispatch } from '@wordpress/data';
 import { sprintf, __ } from '@wordpress/i18n';
 import { Icon, chevronDownSmall, plus } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
-import { siteByIdQuery } from '../../app/queries/site';
-import { stagingSiteCreateMutation } from '../../app/queries/site-staging-sites';
 import { production, staging } from '../../components/icons';
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
 import { hasStagingSite } from '../../utils/site-staging-site';

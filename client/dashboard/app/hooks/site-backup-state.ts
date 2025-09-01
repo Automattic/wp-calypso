@@ -3,9 +3,9 @@ import {
 	BackupEntryStatuses,
 	BackupEntryErrorStatuses,
 } from '@automattic/api-core';
+import { siteBackupsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useRef } from 'react';
-import { siteBackupsQuery } from '../queries/site-backups';
 
 export type BackupStateType = 'idle' | 'running' | 'success' | 'error';
 

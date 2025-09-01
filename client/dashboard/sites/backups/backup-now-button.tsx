@@ -1,10 +1,10 @@
+import { siteBackupEnqueueMutation, siteBackupsQuery } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useBackupState } from '../../app/hooks/site-backup-state';
-import { siteBackupEnqueueMutation, siteBackupsQuery } from '../../app/queries/site-backups';
 import type { Site } from '@automattic/api-core';
 
 interface BackupNowButtonProps {

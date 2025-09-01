@@ -1,3 +1,4 @@
+import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
@@ -14,7 +15,6 @@ import { __, isRTL, sprintf } from '@wordpress/i18n';
 import { Icon, cloud, chevronLeft, chevronRight } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../app/analytics';
-import { siteBySlugQuery } from '../../app/queries/site';
 import { siteBackupRestoreRoute, siteBackupsRoute } from '../../app/router/sites';
 import { useFormattedTime } from '../../components/formatted-time';
 import { PageHeader } from '../../components/page-header';

@@ -1,3 +1,8 @@
+import {
+	siteHasCancelablePurchasesQuery,
+	siteCurrentUserQuery,
+	siteUserDeleteMutation,
+} from '@automattic/api-queries';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
@@ -14,8 +19,6 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAuth } from '../../app/auth';
-import { siteHasCancelablePurchasesQuery } from '../../app/queries/site-purchases';
-import { siteCurrentUserQuery, siteUserDeleteMutation } from '../../app/queries/site-users';
 import RouterLinkButton from '../../components/router-link-button';
 import type { Site, User } from '@automattic/api-core';
 

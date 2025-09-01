@@ -1,11 +1,11 @@
 import { HostingFeatures } from '@automattic/api-core';
+import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet } from '@tanstack/react-router';
 import { __experimentalGrid as Grid, __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
 import { useState } from 'react';
-import { siteBySlugQuery } from '../../app/queries/site';
 import { siteRoute } from '../../app/router/sites';
 import { Callout } from '../../components/callout';
 import { CalloutOverlay } from '../../components/callout-overlay';

@@ -1,10 +1,10 @@
 import { HostingFeatures } from '@automattic/api-core';
+import { siteSettingsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { usePerformanceData } from '../../app/hooks/site-performance';
-import { siteSettingsQuery } from '../../app/queries/site-settings';
 import { useTimeSince } from '../../components/time-since';
 import { getPerformanceStatus, getPerformanceStatusText } from '../../utils/site-performance';
 import HostingFeatureGatedWithOverviewCard from '../hosting-feature-gated-with-overview-card';

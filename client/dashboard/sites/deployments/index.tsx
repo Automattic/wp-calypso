@@ -1,8 +1,8 @@
 import { HostingFeatures } from '@automattic/api-core';
+import { siteBySlugQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { siteBySlugQuery } from '../../app/queries/site';
 import { siteRoute } from '../../app/router/sites';
 import { Callout } from '../../components/callout';
 import { CalloutOverlay } from '../../components/callout-overlay';

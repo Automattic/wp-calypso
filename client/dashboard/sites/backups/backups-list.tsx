@@ -1,9 +1,9 @@
+import { siteRewindableActivityLogEntriesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect } from 'react';
 import { useBackupState } from '../../app/hooks/site-backup-state';
-import { siteRewindableActivityLogEntriesQuery } from '../../app/queries/site-activity-log';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { getFields } from './dataviews/fields';
 import type { ActivityLogEntry, Site } from '@automattic/api-core';
