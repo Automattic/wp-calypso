@@ -955,8 +955,6 @@ object PlaywrightTestPRMatrix : BuildType({
 	}
 
 	steps {
-		mergeTrunk( skipIfConflict = true )
-
 		bashNodeScript {
 			name = "Test step"
 			scriptContent = """
