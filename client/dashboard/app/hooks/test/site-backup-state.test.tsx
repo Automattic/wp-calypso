@@ -1,15 +1,15 @@
 /**
  * @jest-environment jsdom
  */
+import {
+	type BackupEntry,
+	BackupEntryStatuses,
+	BackupEntryErrorStatuses,
+} from '@automattic/api-core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
 import wpcom from 'calypso/lib/wp';
-import {
-	BackupEntry,
-	BackupEntryStatuses,
-	BackupEntryErrorStatuses,
-} from '../../../data/site-backups';
 import { useBackupState } from '../site-backup-state';
 
 // Mock lib/wp to return data directly from our test setup
