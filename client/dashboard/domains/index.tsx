@@ -4,7 +4,6 @@ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useAuth } from '../app/auth';
-import { domainsPurchaseRoute } from '../app/router/domains';
 import { DataViewsCard } from '../components/dataviews-card';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
