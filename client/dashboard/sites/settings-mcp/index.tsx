@@ -31,7 +31,9 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 	const mutation = useMutation( siteSettingsMutation( site.ID ) );
 
 	// Get abilities from the site settings data
-	const availableAbilities: [ string, any ][] = Object.entries( siteSettings?.mcp_abilities || {} );
+	const availableAbilities: [ string, SiteMcpAbilities[ string ] ][] = Object.entries(
+		siteSettings?.mcp_abilities || {}
+	);
 	const hasAbilities = availableAbilities.length > 0;
 
 	const [ formData, setFormData ] = useState< SiteMcpAbilities >(
@@ -51,7 +53,7 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 		// If we have abilities but none are enabled, and the master toggle is on,
 		// we need to turn off all abilities (which will turn off the master toggle)
 		if ( hasAbilities && enabledAbilitiesCount === 0 && anyAbilitiesEnabled ) {
-			const disabledAbilities: Record< string, any > = {};
+			const disabledAbilities: SiteMcpAbilities = {};
 			Object.entries( siteSettings?.mcp_abilities || {} ).forEach( ( [ abilityId, ability ] ) => {
 				disabledAbilities[ abilityId ] = {
 					...ability,
@@ -93,7 +95,7 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 		setFormData( () => {
 			if ( enabled ) {
 				// When enabling MCP, auto-enable all available abilities
-				const autoEnabledAbilities: Record< string, any > = {};
+				const autoEnabledAbilities: SiteMcpAbilities = {};
 				Object.entries( siteSettings?.mcp_abilities || {} ).forEach( ( [ abilityId, ability ] ) => {
 					autoEnabledAbilities[ abilityId ] = {
 						...ability,
@@ -103,7 +105,7 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 				return autoEnabledAbilities;
 			}
 			// When disabling MCP, disable all abilities
-			const disabledAbilities: Record< string, any > = {};
+			const disabledAbilities: SiteMcpAbilities = {};
 			Object.entries( siteSettings?.mcp_abilities || {} ).forEach( ( [ abilityId, ability ] ) => {
 				disabledAbilities[ abilityId ] = {
 					...ability,
@@ -125,36 +127,38 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 	};
 
 	// Get abilities from the site settings data, but use form data for current state
-	const abilities: [ string, any ][] = availableAbilities.map( ( [ abilityId, ability ] ) => [
-		abilityId,
-		{
-			...ability,
-			enabled: formData[ abilityId ]?.enabled ?? ability.enabled,
-		},
-	] );
+	const abilities: [ string, SiteMcpAbilities[ string ] ][] = availableAbilities.map(
+		( [ abilityId, ability ] ) => [
+			abilityId,
+			{
+				...ability,
+				enabled: formData[ abilityId ]?.enabled ?? ability.enabled,
+			},
+		]
+	);
 
 	// Group abilities by type first, then by category
-	const groupedByType: Record< string, Record< string, [ string, any ][] > > = abilities.reduce(
-		( typeGroups, [ abilityId, ability ] ) => {
-			const type = ability.type || 'tool'; // Default to 'tool' instead of 'other'
-			const category = ability.category || 'General';
+	const groupedByType: Record<
+		string,
+		Record< string, [ string, SiteMcpAbilities[ string ] ][] >
+	> = abilities.reduce( ( typeGroups, [ abilityId, ability ] ) => {
+		const type = ability.type || 'tool'; // Default to 'tool' instead of 'other'
+		const category = ability.category || 'General';
 
-			// Only include the three main types
-			if ( ! [ 'tool', 'resource', 'prompt' ].includes( type ) ) {
-				return typeGroups;
-			}
-
-			if ( ! typeGroups[ type ] ) {
-				typeGroups[ type ] = {};
-			}
-			if ( ! typeGroups[ type ][ category ] ) {
-				typeGroups[ type ][ category ] = [];
-			}
-			typeGroups[ type ][ category ].push( [ abilityId, ability ] );
+		// Only include the three main types
+		if ( ! [ 'tool', 'resource', 'prompt' ].includes( type ) ) {
 			return typeGroups;
-		},
-		{}
-	);
+		}
+
+		if ( ! typeGroups[ type ] ) {
+			typeGroups[ type ] = {};
+		}
+		if ( ! typeGroups[ type ][ category ] ) {
+			typeGroups[ type ][ category ] = [];
+		}
+		typeGroups[ type ][ category ].push( [ abilityId, ability ] );
+		return typeGroups;
+	}, {} );
 
 	// Type descriptions
 	const typeDescriptions: Record< string, string > = {
