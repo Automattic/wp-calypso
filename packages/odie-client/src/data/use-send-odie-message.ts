@@ -5,10 +5,12 @@ import apiFetch from '@wordpress/api-fetch';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useState } from 'react';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
+import useViewMostRecentOpenConversationNotice from '../components/notices/use-view-most-recent-conversation-notice';
 import {
 	getOdieRateLimitMessage,
 	getOdieEmailFallbackMessage,
 	getOdieErrorMessageNonEligible,
+	getExistingConversationMessage,
 } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useCreateZendeskConversation } from '../hooks';
@@ -58,6 +60,8 @@ export const useSendOdieMessage = () => {
 
 	const { addEventToInteraction } = useManageSupportInteraction();
 	const newConversation = useCreateZendeskConversation();
+	const warnAboutExistingConversation = useViewMostRecentOpenConversationNotice( true );
+
 	const internal_message_id = generateUUID();
 	const queryClient = useQueryClient();
 	const [ shouldCreateConversation, setShouldCreateConversation ] = useState< {
@@ -89,6 +93,11 @@ export const useSendOdieMessage = () => {
 		forceEmailSupport,
 	} = useOdieAssistantContext();
 
+	const hasBeenWarnedAboutExistingConversation = chat?.messages?.some(
+		( message ) =>
+			message.internal_message_id === getExistingConversationMessage().internal_message_id
+	);
+
 	/*
 		Adds a message to the chat.
 		If the message is a request for human support, it will escalate the chat to human support, if eligible.
@@ -110,6 +119,15 @@ export const useSendOdieMessage = () => {
 						...prevChat,
 						...props,
 						messages: [ ...prevChat.messages, getOdieEmailFallbackMessage() ],
+						status: 'loaded',
+					} ) );
+					broadcastOdieMessage( message, odieBroadcastClientId );
+					return;
+				} else if ( warnAboutExistingConversation && ! hasBeenWarnedAboutExistingConversation ) {
+					setChat( ( prevChat ) => ( {
+						...prevChat,
+						...props,
+						messages: [ ...prevChat.messages, getExistingConversationMessage() ],
 						status: 'loaded',
 					} ) );
 					broadcastOdieMessage( message, odieBroadcastClientId );

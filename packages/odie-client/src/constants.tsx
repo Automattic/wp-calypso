@@ -34,7 +34,7 @@ export const getOdieForwardToForumsMessage = (): string =>
 
 export const getOdieForwardToZendeskMessage = (): string =>
 	__(
-		'It sounds like you want to talk to a human. We’re here to help! Use the option below to message our Happiness Engineers.',
+		'No problem. We noticed you’re already talking with one of our agents. Would you like to continue talking with them?',
 		__i18n_text_domain__
 	);
 
@@ -112,6 +112,31 @@ export const getOdieEmailFallbackMessage = (): Message => ( {
 		},
 		question_tags: {
 			inquiry_type: 'request-for-human-support',
+		},
+		site_id: null,
+	},
+} );
+
+export const getExistingConversationMessage = (): Message => ( {
+	content: (
+		<>
+			<p className="odie-chatbox-message__content">
+				{ __( 'Yes, please take me to that chat.', __i18n_text_domain__ ) }
+			</p>
+			<p className="odie-chatbox-message__content">
+				{ __( 'No thanks, let’s keep it here.', __i18n_text_domain__ ) }
+			</p>
+		</>
+	),
+	role: 'bot',
+	internal_message_id: 'existing-conversation-message',
+	type: 'message',
+	context: {
+		question_tags: {
+			inquiry_type: 'request-for-human-support',
+		},
+		flags: {
+			forward_to_human_support: true,
 		},
 		site_id: null,
 	},
