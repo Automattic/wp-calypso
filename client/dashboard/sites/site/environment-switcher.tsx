@@ -1,3 +1,4 @@
+import { siteByIdQuery, stagingSiteCreateMutation } from '@automattic/api-queries';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -5,19 +6,18 @@ import {
 	Dropdown,
 	MenuGroup,
 	MenuItem,
+	NavigableMenu,
 	Spinner,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { sprintf, __ } from '@wordpress/i18n';
 import { Icon, chevronDownSmall, plus } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
-import { siteByIdQuery } from '../../app/queries/site';
-import { stagingSiteCreateMutation } from '../../app/queries/site-staging-sites';
 import { production, staging } from '../../components/icons';
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
 import { hasStagingSite } from '../../utils/site-staging-site';
 import { canManageSite, canCreateStagingSite } from '../features';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 
 type EnvironmentType = 'production' | 'staging';
 
@@ -86,35 +86,39 @@ const EnvironmentSwitcherDropdown = ( {
 	const handleUpsell = () => {};
 
 	return (
-		<MenuGroup>
-			{ productionSite && canManageSite( productionSite ) && (
-				<RouterLinkMenuItem to={ `/sites/${ productionSite.slug }` } onClick={ onClose }>
-					<Environment env="production" />
-				</RouterLinkMenuItem>
-			) }
-			{ stagingSite && canManageSite( stagingSite ) && (
-				<RouterLinkMenuItem to={ `/sites/${ stagingSite.slug }` } onClick={ onClose }>
-					<Environment env="staging" />
-				</RouterLinkMenuItem>
-			) }
-			{ otherEnvironment === 'staging' && productionSite && ! stagingSite && (
-				<MenuItem onClick={ canCreateStagingSite( productionSite ) ? handleCreate : handleUpsell }>
-					<HStack justify="flex-start">
-						{ mutation.isPending ? (
-							<>
-								<Spinner style={ { width: '24px', height: '24px', padding: '4px', margin: 0 } } />
-								<span>{ __( 'Creating staging site…' ) }</span>
-							</>
-						) : (
-							<>
-								<Icon icon={ plus } />
-								<span>{ __( 'Add staging site' ) }</span>
-							</>
-						) }
-					</HStack>
-				</MenuItem>
-			) }
-		</MenuGroup>
+		<NavigableMenu>
+			<MenuGroup>
+				{ productionSite && canManageSite( productionSite ) && (
+					<RouterLinkMenuItem to={ `/sites/${ productionSite.slug }` } onClick={ onClose }>
+						<Environment env="production" />
+					</RouterLinkMenuItem>
+				) }
+				{ stagingSite && canManageSite( stagingSite ) && (
+					<RouterLinkMenuItem to={ `/sites/${ stagingSite.slug }` } onClick={ onClose }>
+						<Environment env="staging" />
+					</RouterLinkMenuItem>
+				) }
+				{ otherEnvironment === 'staging' && productionSite && ! stagingSite && (
+					<MenuItem
+						onClick={ canCreateStagingSite( productionSite ) ? handleCreate : handleUpsell }
+					>
+						<HStack justify="flex-start">
+							{ mutation.isPending ? (
+								<>
+									<Spinner style={ { width: '24px', height: '24px', padding: '4px', margin: 0 } } />
+									<span>{ __( 'Creating staging site…' ) }</span>
+								</>
+							) : (
+								<>
+									<Icon icon={ plus } />
+									<span>{ __( 'Add staging site' ) }</span>
+								</>
+							) }
+						</HStack>
+					</MenuItem>
+				) }
+			</MenuGroup>
+		</NavigableMenu>
 	);
 };
 
@@ -132,7 +136,7 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 	return (
 		<HStack style={ { width: 'auto', flexShrink: 0 } }>
 			<Dropdown
-				renderToggle={ ( { onToggle } ) => {
+				renderToggle={ ( { isOpen, onToggle } ) => {
 					const canToggle =
 						hasStagingSite( site ) ||
 						( otherEnvironmentSite && canManageSite( otherEnvironmentSite ) );
@@ -144,6 +148,14 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 							iconPosition="right"
 							disabled={ ! canToggle }
 							onClick={ onToggle }
+							onKeyDown={ ( event: React.KeyboardEvent ) => {
+								if ( ! isOpen && event.code === 'ArrowDown' ) {
+									event.preventDefault();
+									onToggle();
+								}
+							} }
+							aria-haspopup="true"
+							aria-expanded={ isOpen }
 						>
 							<CurrentEnvironment site={ site } />
 						</Button>

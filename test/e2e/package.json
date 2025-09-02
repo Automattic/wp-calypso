@@ -26,7 +26,8 @@
 		"playwright": "npx playwright test --project=chrome --project=pixel",
 		"playwright:mobile": "npx playwright test --project=pixel",
 		"playwright:desktop": "npx playwright test --project=chrome",
-		"playwright:all": "npx playwright test"
+		"playwright:all": "npx playwright test",
+		"playwright:i18n": "npx playwright test --project=chrome --grep @i18n"
 	},
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",

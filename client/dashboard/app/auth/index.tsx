@@ -1,7 +1,7 @@
+import { fetchUser } from '@automattic/api-core';
 import { useQuery } from '@tanstack/react-query';
 import { createContext, useContext } from 'react';
-import { fetchUser } from '../../data/me';
-import type { User } from '../../data/types';
+import type { User } from '@automattic/api-core';
 
 export const AUTH_QUERY_KEY = [ 'auth', 'user' ];
 

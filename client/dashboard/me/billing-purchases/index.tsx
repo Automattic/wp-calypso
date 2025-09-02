@@ -1,13 +1,16 @@
+import {
+	userPaymentMethodsQuery,
+	userPurchasesQuery,
+	userTransferredPurchasesQuery,
+	sitesQuery,
+} from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useResizeObserver } from '@wordpress/compose';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo, useEffect, useRef } from 'react';
-import { userPaymentMethodsQuery } from '../../app/queries/me-payment-methods';
-import { userPurchasesQuery, userTransferredPurchasesQuery } from '../../app/queries/me-purchases';
-import { sitesQuery } from '../../app/queries/sites';
 import { purchasesRoute } from '../../app/router/me';
-import DataViewsCard from '../../components/dataviews-card';
+import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import {
@@ -17,7 +20,7 @@ import {
 	getItemId,
 	usePurchasesListActions,
 } from './dataviews';
-import type { Site } from '../../data/site';
+import type { Site } from '@automattic/api-core';
 import type { Operator, View } from '@wordpress/dataviews';
 
 function alterUrlForViewProp(

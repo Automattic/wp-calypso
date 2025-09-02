@@ -21,9 +21,7 @@ import {
 import { PurchasePaymentMethod } from './purchase-payment-method';
 import { PurchaseProduct } from './purchase-product';
 import { getPurchaseUrl, getAddPaymentMethodUrlFor } from './urls';
-import type { StoredPaymentMethod } from '../../data/me-payment-methods';
-import type { Purchase } from '../../data/purchase';
-import type { Site } from '../../data/site';
+import type { StoredPaymentMethod, Purchase, Site } from '@automattic/api-core';
 import type { SortDirection, View, Fields } from '@wordpress/dataviews';
 import type { ReactNode } from 'react';
 

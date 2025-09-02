@@ -1,12 +1,12 @@
+import { siteRewindableActivityLogEntriesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect } from 'react';
 import { useBackupState } from '../../app/hooks/site-backup-state';
-import { siteRewindableActivityLogEntriesQuery } from '../../app/queries/site-activity-log';
-import DataViewsCard from '../../components/dataviews-card';
+import { DataViewsCard } from '../../components/dataviews-card';
 import { getFields } from './dataviews/fields';
-import type { ActivityLogEntry, Site } from '../../data/types';
+import type { ActivityLogEntry, Site } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 
 export function BackupsList( {
@@ -26,11 +26,27 @@ export function BackupsList( {
 		perPage: 10,
 	} );
 
-	const { hasRecentlyCompleted } = useBackupState( site.ID );
+	const { backup, hasRecentlyCompleted } = useBackupState( site.ID );
 
 	const { data: activityLog = [], isLoading: isLoadingActivityLog } = useQuery( {
 		...siteRewindableActivityLogEntriesQuery( site.ID ),
-		refetchInterval: hasRecentlyCompleted ? 3000 : false,
+		// Refetch the activity log every 3 seconds when a recent backup completed until the backup is found in the Activity Log
+		refetchInterval: ( query ) => {
+			if ( ! backup || ! hasRecentlyCompleted ) {
+				return false;
+			}
+
+			const backupPeriod = parseInt( backup.period, 10 );
+			if ( isNaN( backupPeriod ) ) {
+				return false;
+			}
+
+			const successFullBackup = query.state.data?.current?.orderedItems?.some(
+				( entry ) => entry?.object?.backup_period === backupPeriod
+			);
+
+			return successFullBackup ? false : 3000;
+		},
 	} );
 
 	const fields = getFields();

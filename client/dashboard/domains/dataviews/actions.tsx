@@ -1,3 +1,5 @@
+import { DomainTypes, DomainTransferStatus } from '@automattic/api-core';
+import { userPurchasesQuery, siteSetPrimaryDomainMutation } from '@automattic/api-queries';
 import { useMyDomainInputMode } from '@automattic/domains-table/src/utils/constants';
 import { isFreeUrlDomainName } from '@automattic/domains-table/src/utils/is-free-url-domain-name';
 import {
@@ -14,9 +16,6 @@ import { sprintf, __ } from '@wordpress/i18n';
 import { payment, tool } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, Suspense, lazy } from 'react';
-import { userPurchasesQuery } from '../../app/queries/me-purchases';
-import { siteSetPrimaryDomainMutation } from '../../app/queries/site-domains';
-import { DomainTypes, DomainTransferStatus } from '../../data/domains';
 import {
 	isRecentlyRegistered,
 	isDomainRenewable,
@@ -27,7 +26,7 @@ import {
 	getDomainRenewalUrl,
 } from '../../utils/domain';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
-import type { DomainSummary, Site, User } from '../../data/types';
+import type { DomainSummary, Site, User } from '@automattic/api-core';
 import type { Action } from '@wordpress/dataviews';
 
 const SiteChangeAddressContent = lazy(

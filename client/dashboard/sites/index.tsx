@@ -1,3 +1,9 @@
+import {
+	isAutomatticianQuery,
+	userPreferenceQuery,
+	userPreferenceMutation,
+	sitesQuery,
+} from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery, useMutation, keepPreviousData } from '@tanstack/react-query';
 import { useNavigate, useRouter } from '@tanstack/react-router';
 import { Button, Modal } from '@wordpress/components';
@@ -6,11 +12,8 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
-import { isAutomatticianQuery } from '../app/queries/me-a8c';
-import { userPreferenceQuery, userPreferenceMutation } from '../app/queries/me-preferences';
-import { sitesQuery } from '../app/queries/sites';
 import { sitesRoute } from '../app/router/sites';
-import DataViewsCard from '../components/dataviews-card';
+import { DataViewsCard } from '../components/dataviews-card';
 import { DataViewsEmptyState } from '../components/dataviews-empty-state';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
@@ -27,7 +30,7 @@ import {
 	DEFAULT_PER_PAGE_SIZES,
 } from './views';
 import type { ViewSearchParams } from './views';
-import type { FetchSitesOptions, Site } from '../data/types';
+import type { FetchSitesOptions, Site } from '@automattic/api-core';
 import type { View, Filter } from '@wordpress/dataviews';
 
 const getFetchSitesOptions = ( view: View, isRestoringAccount: boolean ): FetchSitesOptions => {

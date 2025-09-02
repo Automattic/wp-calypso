@@ -1,5 +1,4 @@
 import * as AddOns from './add-ons';
-import * as DomainSuggestions from './domain-suggestions';
 import * as HelpCenter from './help-center';
 import * as Onboard from './onboard';
 import * as Plans from './plans';
@@ -19,7 +18,6 @@ export * from './starter-designs-queries';
 export * from './site/types';
 export * from './templates';
 export * from './onboard/types';
-export * from './domain-suggestions/types';
 export * from './plans/types';
 export * from './theme';
 export * from './user/types';
@@ -38,7 +36,6 @@ const { SubscriptionManager } = Reader;
 export {
 	AddOns,
 	User,
-	DomainSuggestions,
 	HelpCenter,
 	Site,
 	Plans,

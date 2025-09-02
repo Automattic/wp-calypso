@@ -1,5 +1,5 @@
 import { Message } from 'mailosaur/lib/models';
-import { test, expect } from '../../lib/pw_base';
+import { test, expect } from '../../lib/pw-base';
 
 test.describe( 'Authentication: Magic Link', () => {
 	test( 'As a WordPress.com user, I can use a magic link to login to WordPress.com', async ( {

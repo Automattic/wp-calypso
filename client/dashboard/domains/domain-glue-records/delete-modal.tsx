@@ -1,3 +1,4 @@
+import { domainGlueRecordDeleteMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -8,8 +9,8 @@ import {
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { domainGlueRecordDeleteMutation } from '../../app/queries/domain-glue-records';
-import type { DomainGlueRecord } from '../../data/domain-glue-records';
+import { useAnalytics } from '../../app/analytics';
+import type { DomainGlueRecord } from '@automattic/api-core';
 
 interface DomainGlueRecordDeleteModalProps {
 	glueRecord: DomainGlueRecord;
@@ -24,6 +25,7 @@ const DomainGlueRecordDeleteModal = ( {
 }: DomainGlueRecordDeleteModalProps ) => {
 	const deleteMutation = useMutation( domainGlueRecordDeleteMutation( domainName ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { recordTracksEvent } = useAnalytics();
 
 	const onConfirm = () => {
 		deleteMutation.mutate( glueRecord, {
@@ -32,11 +34,24 @@ const DomainGlueRecordDeleteModal = ( {
 					type: 'snackbar',
 				} );
 
+				recordTracksEvent( 'calypso_dashboard_domain_glue_records_delete_record', {
+					domain: domainName,
+					nameserver: glueRecord.nameserver,
+					address: glueRecord.ip_addresses[ 0 ],
+				} );
+
 				onClose?.();
 			},
-			onError: () => {
+			onError: ( error ) => {
 				createErrorNotice( __( 'Failed to delete glue record.' ), {
 					type: 'snackbar',
+				} );
+
+				recordTracksEvent( 'calypso_dashboard_domain_glue_records_delete_record_failure', {
+					domain: domainName,
+					nameserver: glueRecord.nameserver,
+					address: glueRecord.ip_addresses[ 0 ],
+					error_message: error.message,
 				} );
 
 				onClose?.();

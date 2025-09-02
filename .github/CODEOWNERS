@@ -22,6 +22,19 @@
 /client/my-sites/domains/email-providers-upsell/index.tsx @Automattic/yolo
 /client/my-sites/email @Automattic/yolo
 
+# Staging sites - new dashboard
+/packages/api-queries/src/site-staging-sync.ts @Automattic/yolo
+/packages/api-queries/src/site-staging-sites.ts @Automattic/yolo
+/packages/api-core/src/site-staging-site @Automattic/yolo
+/client/dashboard/utils/site-staging-site.ts @Automattic/yolo
+/client/dashboard/sites/staging-site-sync-dropdown @Automattic/yolo
+/client/dashboard/sites/staging-site-sync-modal @Automattic/yolo
+/client/dashboard/sites/staging-site-delete-modal @Automattic/yolo
+/client/dashboard/sites/site/environment-switcher.tsx @Automattic/yolo
+
+# Staging sites - interim dashboard
+/client/sites/staging-site @Automattic/yolo
+
 # Payments
 /client/lib/checkout/ @Automattic/shilling
 /client/me/purchases/add-new-payment-method/ @Automattic/shilling

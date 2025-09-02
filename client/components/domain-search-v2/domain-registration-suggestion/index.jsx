@@ -3,6 +3,7 @@ import {
 	DomainSuggestionBadge,
 	DomainSuggestionPrice,
 	DomainSuggestionPrimaryCTA,
+	getTld,
 } from '@automattic/domain-search';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
@@ -26,7 +27,6 @@ import {
 import {
 	getDomainPrice,
 	getDomainSalePrice,
-	getTld,
 	isHstsRequired,
 	isDotGayNoticeRequired,
 } from 'calypso/lib/domains';

@@ -1,13 +1,14 @@
+import { fetchDomainSuggestions } from '@automattic/api-core';
 import { isBlogger, isFreeWordPressComDomain } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { ResponsiveToolbarGroup } from '@automattic/components';
-import { fetchDomainSuggestions } from '@automattic/data';
 import {
 	DomainSearchControls,
 	DomainSearchNotice,
 	DomainSuggestionLoadMore,
 	DomainSuggestionFilterReset,
 	DomainSearchAlreadyOwnDomainCTA,
+	getTld,
 } from '@automattic/domain-search';
 import { formatCurrency } from '@automattic/number-formatters';
 import {
@@ -76,7 +77,6 @@ import {
 	checkDomainAvailability,
 	getAvailableTlds,
 	getDomainSuggestionSearch,
-	getTld,
 } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';

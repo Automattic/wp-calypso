@@ -16,6 +16,7 @@ import './style.scss';
 interface DashboardDomainSearchProps {
 	currentSiteId?: number;
 	currentSiteUrl?: string;
+	config?: ComponentProps< typeof DomainSearch >[ 'config' ];
 }
 
 function DomainSearchWithCart( {

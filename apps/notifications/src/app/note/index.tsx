@@ -5,7 +5,6 @@ import {
 	__experimentalHeading as Heading,
 	CardHeader,
 	CardBody,
-	CardFooter,
 	Navigator,
 	useNavigator,
 } from '@wordpress/components';
@@ -17,9 +16,9 @@ import { getActions } from '../../panel/helpers/notes';
 import getAllNotes from '../../panel/state/selectors/get-all-notes';
 import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved';
 import getIsNoteRead from '../../panel/state/selectors/get-is-note-read';
+import ActionDropdown from '../templates/action-dropdown';
 import { NoteBody, ActionBlock } from '../templates/body';
 import NoteSummary from '../templates/note-summary';
-import '../../panel/boot/stylesheets/style.scss';
 import './style.scss';
 import type { Note as NoteObject, Block } from '../types';
 
@@ -66,7 +65,7 @@ const getClasses = ( {
 };
 
 const Note = () => {
-	const { params } = useNavigator();
+	const { params, goBack } = useNavigator();
 	const { noteId } = params;
 	const note = useSelector( ( state ) =>
 		( getAllNotes( state ) as NoteObject[] ).find( ( note ) => String( note.id ) === noteId )
@@ -91,23 +90,19 @@ const Note = () => {
 							{ note.title }
 						</Heading>
 					</Navigator.BackButton>
+					<ActionDropdown note={ note } goBack={ goBack } />
 				</HStack>
 			</CardHeader>
 			<CardBody size="small" style={ { maxHeight: 'unset' } }>
 				<VStack justify="flex-start" spacing={ 4 }>
 					<NoteSummary note={ note } />
 					<Divider style={ { color: '#ddd' } } />
-					{ /* Add `wpnc__main` here to keep the same classes structure as v1. We'll iterate styles later. */ }
-					<div className="wpnc__main">
-						<div className={ getClasses( { note, isApproved, isRead } ) }>
-							<NoteBody note={ note } />
-						</div>
+					<div className={ getClasses( { note, isApproved, isRead } ) }>
+						<NoteBody note={ note } />
 					</div>
 				</VStack>
 			</CardBody>
-			<CardFooter size="small">
-				<ActionBlock note={ note } />
-			</CardFooter>
+			<ActionBlock note={ note } goBack={ goBack } />
 		</>
 	);
 };

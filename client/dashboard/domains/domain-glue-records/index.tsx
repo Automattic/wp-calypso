@@ -1,21 +1,21 @@
+import { domainGlueRecordsQuery } from '@automattic/api-queries';
 import { isMobile } from '@automattic/viewport';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
-import { domainGlueRecordsQuery } from '../../app/queries/domain-glue-records';
 import {
 	domainRoute,
 	domainGlueRecordsAddRoute,
 	domainGlueRecordsEditRoute,
 } from '../../app/router/domains';
-import DataViewsCard from '../../components/dataviews-card';
+import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
 import DomainGlueRecordDeleteModal from './delete-modal';
-import type { DomainGlueRecord } from '../../data/domain-glue-records';
+import type { DomainGlueRecord } from '@automattic/api-core';
 import type { Action, Field, ViewTable, ViewList, View } from '@wordpress/dataviews';
 
 type GlueRecordsView = ViewTable | ViewList;

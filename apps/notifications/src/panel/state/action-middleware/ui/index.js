@@ -1,4 +1,4 @@
-import { findNextNoteId } from '../../../templates';
+import findNextNoteId from '../../../utils/find-next-note-id';
 import * as types from '../../action-types';
 import actions from '../../actions';
 import getAllNotes from '../../selectors/get-all-notes';

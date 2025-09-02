@@ -3,8 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { lazy, useEffect, useState, ReactNode, Suspense } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import type { HostingFeatures } from '../../data/constants';
-import type { Site } from '../../data/types';
+import type { HostingFeatures, Site } from '@automattic/api-core';
 
 interface HostingFeatureActivationProps {
 	site: Site;

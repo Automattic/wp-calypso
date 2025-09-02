@@ -1,3 +1,4 @@
+import { sitePlanBySlugQuery, siteBySlugQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Button,
@@ -11,14 +12,12 @@ import {
 import { sprintf, __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useState, Suspense, lazy } from 'react';
-import { siteBySlugQuery } from '../../app/queries/site';
-import { sitePlanBySlugQuery } from '../../app/queries/site-plans';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { wasEcommerceTrial } from '../../utils/site-trial';
 import SiteDeleteModal from '../site-delete-modal';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 import './style.scss';
 
 const PlanPrice = lazy( () =>

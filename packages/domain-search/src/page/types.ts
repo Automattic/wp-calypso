@@ -1,8 +1,10 @@
 import { domainAvailabilityQuery } from '../queries/availability';
-import { productsQuery } from '../queries/products';
-import type { domainSuggestionsQuery } from '../queries/suggestions';
-import type { DomainSuggestion } from '@automattic/data';
-import type { QueryClient } from '@tanstack/react-query';
+import { domainSuggestionsQuery, freeSuggestionQuery } from '../queries/suggestions';
+import type {
+	DomainSuggestion,
+	DomainSuggestionQueryVendor,
+	FreeDomainSuggestion,
+} from '@automattic/api-core';
 import type { ComponentType } from 'react';
 
 export interface SelectedDomain {
@@ -23,6 +25,14 @@ export interface DomainSearchCart {
 
 export interface DomainSearchEvents {
 	onContinue: () => void;
+	onSkip: ( suggestion?: FreeDomainSuggestion ) => void;
+	onExternalDomainClick?: ( domainName: string ) => void;
+}
+
+export interface DomainSearchConfig {
+	vendor: DomainSuggestionQueryVendor;
+	skippable: boolean;
+	deemphasizedTlds: string[];
 }
 
 export interface DomainSearchProps {
@@ -35,11 +45,14 @@ export interface DomainSearchProps {
 	initialQuery?: string;
 	events?: Partial< DomainSearchEvents >;
 	currentSiteUrl?: string;
-	queryClient?: QueryClient;
+	config?: Partial< DomainSearchConfig >;
 }
 
 export interface DomainSearchContextType
-	extends Omit< DomainSearchProps, 'className' | 'initialQuery' | 'events' | 'queryClient' > {
+	extends Omit<
+		DomainSearchProps,
+		'className' | 'initialQuery' | 'events' | 'queryClient' | 'config'
+	> {
 	events: DomainSearchEvents;
 	isFullCartOpen: boolean;
 	closeFullCart: () => void;
@@ -47,8 +60,9 @@ export interface DomainSearchContextType
 	query: string;
 	setQuery: ( query: string ) => void;
 	queries: {
-		domainSuggestions: typeof domainSuggestionsQuery;
-		domainAvailability: typeof domainAvailabilityQuery;
-		products: typeof productsQuery;
+		domainSuggestions: ( query: string ) => ReturnType< typeof domainSuggestionsQuery >;
+		domainAvailability: ( domainName: string ) => ReturnType< typeof domainAvailabilityQuery >;
+		freeSuggestion: ( query: string ) => ReturnType< typeof freeSuggestionQuery >;
 	};
+	config: DomainSearchConfig;
 }

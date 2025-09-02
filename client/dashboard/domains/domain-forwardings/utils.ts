@@ -1,7 +1,7 @@
 // Validation helpers for domain forwarding form
 
 import type { FormData } from './form';
-import type { DomainForwarding, DomainForwardingSaveData } from '../../data/domain-forwarding';
+import type { DomainForwarding, DomainForwardingSaveData } from '@automattic/api-core';
 
 const SOFT_URL_REGEX =
 	/^(https?:)?(?:[a-zA-Z0-9-.]+\.)?[a-zA-Z]{0,}(?:\/[^\s]*){0,}(:[0-9/a-z-#]*)?$/i;

@@ -1,8 +1,7 @@
-import config from '@automattic/calypso-config';
-import { DotcomFeatures, HostingFeatures } from '../data/constants';
+import { DotcomFeatures, HostingFeatures } from '@automattic/api-core';
 import { hasHostingFeature, hasPlanFeature } from '../utils/site-features';
 import { isSelfHostedJetpackConnected, isP2 } from '../utils/site-types';
-import type { Site, User } from '../data/types';
+import type { Site, User } from '@automattic/api-core';
 
 export function canManageSite( site: Site ) {
 	if ( site.is_deleted || ! site.capabilities.manage_options ) {
@@ -59,15 +58,6 @@ export function canLeaveSite( site: Site ) {
 }
 
 export function canResetSite( site: Site ) {
-	return ! site.is_wpcom_staging_site;
-}
-
-export function canDeleteSite( site: Site ) {
-	// For staging sites, only show delete if the redesign feature flag is enabled
-	if ( site.is_wpcom_staging_site ) {
-		return config.isEnabled( 'hosting/staging-sites-redesign' );
-	}
-
 	return ! site.is_wpcom_staging_site;
 }
 

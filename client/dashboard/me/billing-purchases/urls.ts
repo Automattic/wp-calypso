@@ -1,4 +1,4 @@
-import type { Purchase } from '../../data/purchase';
+import type { Purchase } from '@automattic/api-core';
 
 export function getPurchaseUrl( purchase: Purchase ) {
 	return getPurchaseUrlForId( purchase.ID );
