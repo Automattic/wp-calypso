@@ -1008,7 +1008,7 @@ object PlaywrightTestPRMatrix : BuildType({
 
 				cd test/e2e
 				echo "Running Playwright tests for project: %playwrightProject%"
-				yarn test:pw:%playwrightProject%
+				yarn test:pw:%playwrightProject% --grep=@calypso-pr
 			"""
 			dockerImage = "%docker_image_e2e%"
 		}
