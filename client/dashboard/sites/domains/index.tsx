@@ -1,8 +1,10 @@
 import { siteDomainsQuery, siteBySlugQuery } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
 import { useAuth } from '../../app/auth';
 import { siteRoute } from '../../app/router/sites';
@@ -45,7 +47,15 @@ function SiteDomains() {
 				<PageHeader
 					title={ __( 'Domains' ) }
 					actions={
-						<Button href={ `/domains/add/${ site.slug }` } variant="primary" __next40pxDefaultSize>
+						<Button
+							href={
+								isEnabled( 'domain-search-rewrite' )
+									? addQueryArgs( '/setup/domain', { siteSlug: site.slug } )
+									: `/domains/add/${ site.slug }`
+							}
+							variant="primary"
+							__next40pxDefaultSize
+						>
 							{ __( 'Add New Domain' ) }
 						</Button>
 					}
