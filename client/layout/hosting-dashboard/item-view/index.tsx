@@ -1,3 +1,9 @@
+import {
+	siteByIdQuery,
+	siteLatestAtomicTransferQuery,
+	isDeletingStagingSiteQuery,
+	queryClient,
+} from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import React, { useState } from 'react';
@@ -5,10 +11,6 @@ import { GuidedTourStep } from 'calypso/components/guided-tour/step';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import { siteByIdQuery } from 'calypso/dashboard/app/queries/site';
-import { siteLatestAtomicTransferQuery } from 'calypso/dashboard/app/queries/site-atomic-transfers';
-import { isDeletingStagingSiteQuery } from 'calypso/dashboard/app/queries/site-staging-sites';
-import { queryClient } from 'calypso/dashboard/app/query-client';
 import {
 	isAtomicTransferInProgress,
 	isAtomicTransferredSite,

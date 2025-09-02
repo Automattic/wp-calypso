@@ -19,7 +19,7 @@ import {
 	NameServerKey,
 } from './types';
 import UpsellNudge from './upsell-nudge';
-import { areAllWpcomNameServers, validateHostname } from './utils';
+import { validateHostname } from './utils';
 
 const createNameServerField = ( index: number, formData: FormData, isBusy?: boolean ) => {
 	const baseField = {
@@ -97,6 +97,7 @@ interface Props {
 	domainSiteSlug: string;
 	showUpsellNudge?: boolean;
 	nameServers?: string[];
+	isUsingDefaultNameServers?: boolean;
 	isBusy?: boolean;
 	onSubmit: ( nameServers: string[] ) => void;
 }
@@ -106,14 +107,14 @@ export default function NameServersForm( {
 	domainSiteSlug,
 	showUpsellNudge,
 	nameServers = [],
+	isUsingDefaultNameServers = false,
 	isBusy,
 	onSubmit,
 }: Props ) {
-	const isWpcomNameservers = areAllWpcomNameServers( nameServers );
 	const [ formData, setFormData ] = useState< FormData >( () => {
 		// Start with a partial object
 		const initialData = {
-			useWpcomNameServers: isWpcomNameservers,
+			useWpcomNameServers: isUsingDefaultNameServers,
 		} as Partial< FormData >;
 
 		// Add all nameServer fields

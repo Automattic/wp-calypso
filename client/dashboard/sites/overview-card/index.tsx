@@ -186,7 +186,7 @@ export default function OverviewCard( {
 					href={ externalLink }
 					className="dashboard-overview-card__link"
 					target="_blank"
-					rel="noreferrer"
+					rel="external noreferrer noopener"
 					onClick={ handleClick }
 				>
 					{ topContent }

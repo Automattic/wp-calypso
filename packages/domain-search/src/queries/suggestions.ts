@@ -1,8 +1,23 @@
-import { fetchDomainSuggestions } from '@automattic/data';
+import {
+	type DomainSuggestionQuery,
+	fetchDomainSuggestions,
+	fetchFreeDomainSuggestion,
+} from '@automattic/api-core';
+import { queryOptions } from '@tanstack/react-query';
 
-export const domainSuggestionsQuery = ( query: string ) => ( {
-	queryKey: [ 'domain-suggestions', query ],
-	queryFn: () => fetchDomainSuggestions( query ),
-	refetchOnWindowFocus: false,
-	refetchOnMount: false,
-} );
+export const domainSuggestionsQuery = (
+	query: string,
+	params: Partial< DomainSuggestionQuery > = {}
+) =>
+	queryOptions( {
+		queryKey: [ 'domain-suggestions', query, params ],
+		queryFn: () => fetchDomainSuggestions( query, params ),
+		refetchOnWindowFocus: false,
+		refetchOnMount: false,
+	} );
+
+export const freeSuggestionQuery = ( query: string ) =>
+	queryOptions( {
+		queryKey: [ 'free-suggestion', query ],
+		queryFn: () => fetchFreeDomainSuggestion( query ),
+	} );

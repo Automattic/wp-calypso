@@ -28,6 +28,15 @@
 		button {
 			flex: 1;
 			margin: 0 7px;
+			min-width: 200px;
+
+			@include break-mobile {
+				min-width: 300px;
+			}
+
+			@include break-large {
+				min-width: unset;
+			}
 
 			&:hover {
 				background-color: initial;

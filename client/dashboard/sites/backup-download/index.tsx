@@ -1,21 +1,111 @@
+import { siteBySlugQuery } from '@automattic/api-queries';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
 	Button,
 	Card,
 	CardBody,
-	__experimentalHStack as HStack,
+	CardHeader,
+	ExternalLink,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { __, isRTL } from '@wordpress/i18n';
-import { chevronLeft, chevronRight } from '@wordpress/icons';
+import { useDispatch } from '@wordpress/data';
+import { createInterpolateElement, useState } from '@wordpress/element';
+import { __, isRTL, sprintf } from '@wordpress/i18n';
+import { Icon, cloud, chevronLeft, chevronRight } from '@wordpress/icons';
+import { store as noticesStore } from '@wordpress/notices';
+import { useAnalytics } from '../../app/analytics';
 import { siteBackupDownloadRoute, siteBackupsRoute } from '../../app/router/sites';
-import Notice from '../../components/notice';
+import { useFormattedTime } from '../../components/formatted-time';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { SectionHeader } from '../../components/section-header';
+import SiteBackupDownloadError from './error';
+import SiteBackupDownloadForm from './form';
+import SiteBackupDownloadProgress from './progress';
+import SiteBackupDownloadSuccess from './success';
+
+type DownloadStep = 'form' | 'progress' | 'success' | 'error';
 
 function SiteBackupDownload() {
 	const { siteSlug, rewindId } = siteBackupDownloadRoute.useParams();
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const [ currentStep, setCurrentStep ] = useState< DownloadStep >( 'form' );
+	const [ downloadId, setDownloadId ] = useState< number | null >( null );
+	const [ downloadUrl, setDownloadUrl ] = useState< string | null >( null );
+	const [ fileSizeBytes, setFileSizeBytes ] = useState< string | undefined >();
+	const { createSuccessNotice } = useDispatch( noticesStore );
+	const { recordTracksEvent } = useAnalytics();
+
 	const router = useRouter();
+
+	const handleDownloadInitiate = ( newDownloadId: number ) => {
+		recordTracksEvent( 'calypso_dashboard_backups_download_started' );
+		setCurrentStep( 'progress' );
+		setDownloadId( newDownloadId );
+	};
+
+	const handleDownloadComplete = ( newDownloadUrl: string, newFileSizeBytes?: string ) => {
+		recordTracksEvent( 'calypso_dashboard_backups_download_completed' );
+		setCurrentStep( 'success' );
+		setDownloadUrl( newDownloadUrl );
+		setFileSizeBytes( newFileSizeBytes );
+		createSuccessNotice( __( 'Backup download file is ready.' ), {
+			type: 'snackbar',
+		} );
+	};
+
+	const handleDownloadError = () => {
+		recordTracksEvent( 'calypso_dashboard_backups_download_failed' );
+		setCurrentStep( 'error' );
+	};
+
+	const handleRetry = () => {
+		recordTracksEvent( 'calypso_dashboard_backups_download_retry' );
+		setCurrentStep( 'form' );
+		setDownloadId( null );
+		setDownloadUrl( null );
+		setFileSizeBytes( undefined );
+	};
+
+	const downloadPointDate = useFormattedTime(
+		new Date( parseFloat( rewindId ) * 1000 ).toISOString(),
+		{
+			timeStyle: 'short',
+		}
+	);
+
+	const renderStep = () => {
+		switch ( currentStep ) {
+			case 'form':
+				return (
+					<SiteBackupDownloadForm
+						siteId={ site.ID }
+						onDownloadInitiate={ handleDownloadInitiate }
+					/>
+				);
+			case 'progress':
+				return downloadId ? (
+					<SiteBackupDownloadProgress
+						site={ site }
+						downloadId={ downloadId }
+						onDownloadComplete={ handleDownloadComplete }
+						onDownloadError={ handleDownloadError }
+					/>
+				) : null;
+			case 'success':
+				return downloadUrl ? (
+					<SiteBackupDownloadSuccess
+						site={ site }
+						downloadPointDate={ downloadPointDate }
+						downloadUrl={ downloadUrl }
+						fileSizeBytes={ fileSizeBytes }
+					/>
+				) : null;
+			case 'error':
+				return <SiteBackupDownloadError onRetry={ handleRetry } />;
+		}
+	};
 
 	const backButton = (
 		<Button
@@ -35,20 +125,28 @@ function SiteBackupDownload() {
 			header={ <PageHeader prefix={ backButton } title={ __( 'Download backup' ) } /> }
 		>
 			<Card>
+				<CardHeader>
+					<SectionHeader
+						title={ __( 'Download point' ) }
+						level={ 3 }
+						description={ createInterpolateElement(
+							/* translators: %s is the date of the download point */
+							sprintf( __( '%(downloadPointDate)s. <LearnMore />' ), {
+								downloadPointDate,
+							} ),
+							{
+								LearnMore: (
+									<ExternalLink href="https://jetpack.com/support/backup/">
+										{ __( 'Learn more' ) }
+									</ExternalLink>
+								),
+							}
+						) }
+						decoration={ <Icon icon={ cloud } /> }
+					/>
+				</CardHeader>
 				<CardBody>
-					<VStack spacing={ 4 }>
-						<p>Rewind ID: { rewindId }</p>
-						<Notice variant="info" title={ __( 'Download Information' ) }>
-							{ __(
-								'This backup contains all your site files, database, and settings from the selected restore point. The download will be prepared and made available for download.'
-							) }
-						</Notice>
-						<HStack justify="flex-start">
-							<Button variant="primary" type="submit">
-								{ __( 'Generate download' ) }
-							</Button>
-						</HStack>
-					</VStack>
+					<VStack spacing={ 4 }>{ renderStep() }</VStack>
 				</CardBody>
 			</Card>
 		</PageLayout>

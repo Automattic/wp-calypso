@@ -10,7 +10,7 @@ import type {
 } from './types';
 import type { FeatureId } from '../shared-types';
 import type { GlobalStyles } from '../site';
-import type { DomainSuggestion } from '@automattic/data';
+import type { DomainSuggestion } from '@automattic/api-core';
 // somewhat hacky, but resolves the circular dependency issue
 import type { Design, StyleVariation } from '@automattic/design-picker/src/types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';

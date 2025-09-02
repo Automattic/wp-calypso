@@ -1,5 +1,4 @@
-import { DotcomPlans } from '../data/constants';
-import type { Site } from '../data/types';
+import { DotcomPlans, type Site } from '@automattic/api-core';
 
 export const isSitePlanNotOneOf = ( site: Site, plans: DotcomPlans[] ) => {
 	if ( ! site.plan ) {

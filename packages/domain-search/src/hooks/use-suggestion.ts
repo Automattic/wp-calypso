@@ -15,8 +15,8 @@ export const useSuggestion = ( domainName: string ) => {
 
 			return {
 				...suggestion,
-				// TODO: Replace with actual logic
-				is_paid_domain: suggestion.domain_name === 'example.org',
+				// TODO: Replace with actual logic from the isPaidDomain function
+				is_paid_domain: true,
 			};
 		},
 	} );

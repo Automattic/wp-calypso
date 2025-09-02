@@ -1,3 +1,4 @@
+import { fetchSiteLogsBatch } from '@automattic/api-core';
 import { TZDate } from '@automattic/ui';
 import {
 	Button,
@@ -10,8 +11,7 @@ import { __ } from '@wordpress/i18n';
 import { download } from '@wordpress/icons';
 import { format } from 'date-fns';
 import { useAnalytics } from '../../app/analytics';
-import { fetchSiteLogsBatch } from '../../data/site-logs';
-import type { LogType, FilterType } from '../../data/site-logs';
+import type { LogType, FilterType } from '@automattic/api-core';
 
 const MAX_LOGS_DOWNLOAD = 10_000;
 

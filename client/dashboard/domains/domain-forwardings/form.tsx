@@ -13,7 +13,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { isTargetUrlValid, isSubdomainValid } from './utils';
-import type { DomainForwarding } from '../../data/domain-forwarding';
+import type { DomainForwarding } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 export interface FormData {
