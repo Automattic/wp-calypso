@@ -151,6 +151,9 @@ export default function Preferences() {
 		Object.entries( localData ).some( ( [ key, value ] ) => {
 			return serverData[ key as keyof UserSettingsPreferences ] !== value;
 		} );
+	const hasValidLanguage = !! localData?.language && localData.language !== '';
+	const canSubmit = ! isSaving && isDirty && hasValidLanguage;
+
 	let saveButtonLabel = __( 'Save' );
 
 	if ( isSaving ) {
@@ -176,8 +179,10 @@ export default function Preferences() {
 									[ field.id ]: newValue,
 								} );
 							} }
+							placeholder={ __( 'Select a language' ) }
 							options={ field.elements || [] }
 						/>
+
 						<Text variant="muted">
 							{ __(
 								'This is the language of the interface you see across WordPress.com as a whole.'
@@ -241,7 +246,6 @@ export default function Preferences() {
 									data={ data }
 									fields={ languageFields }
 									form={ languageForm }
-									//errors={ errors } // TODO support errors
 									onChange={ ( edits: Partial< UserSettingsPreferences > ) => {
 										setLocalData( ( current ) => ( { ...current, ...edits } ) );
 									} }
@@ -256,8 +260,9 @@ export default function Preferences() {
 										variant="primary"
 										type="submit"
 										className="language-preferences-form__submit"
+										accessibleWhenDisabled
 										isBusy={ isSaving }
-										disabled={ isSaving || ! isDirty }
+										disabled={ ! canSubmit }
 									>
 										{ saveButtonLabel }
 									</Button>
