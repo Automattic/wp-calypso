@@ -6,6 +6,7 @@ import {
 } from '@automattic/calypso-products';
 import { JetpackLogo } from '@automattic/components';
 import { AddOns } from '@automattic/data-stores';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { usePlansGridContext } from '../../grid-context';
@@ -91,9 +92,9 @@ const PlanFeaturesList = ( {
 						{ ! hideFeatureGroupTitles && (
 							<PlanFeaturesItem>
 								<h2
-									className={ `plans-grid-next-features-grid__feature-group-title${
-										intent === 'plans-wordpress-hosting' ? ' is-wordpress-hosting' : ''
-									}` }
+									className={ clsx( 'plans-grid-next-features-grid__feature-group-title', {
+										'is-wordpress-hosting': intent === 'plans-wordpress-hosting',
+									} ) }
 								>
 									{ featureGroup?.getTitle() }
 								</h2>
@@ -141,9 +142,9 @@ const PlanFeaturesList = ( {
 					{ ! hideFeatureGroupTitles && featureGroup?.getTitle() && (
 						<PlanFeaturesItem>
 							<h2
-								className={ `plans-grid-next-features-grid__feature-group-title${
-									intent === 'plans-wordpress-hosting' ? ' is-wordpress-hosting' : ''
-								}` }
+								className={ clsx( 'plans-grid-next-features-grid__feature-group-title', {
+									'is-wordpress-hosting': intent === 'plans-wordpress-hosting',
+								} ) }
 							>
 								{ featureGroup.getTitle() }
 							</h2>
