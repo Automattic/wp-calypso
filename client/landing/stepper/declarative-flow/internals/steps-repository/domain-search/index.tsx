@@ -4,19 +4,18 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import type { Step as StepType } from '../../types';
 
-const DomainSearchStep: StepType = function DomainSearchStep( { flow } ) {
-	const getContent = () => {
-		return <WPCOMDomainSearch />;
-	};
+import './style.scss';
 
+const DomainSearchStep: StepType = function DomainSearchStep( { flow } ) {
 	if ( shouldUseStepContainerV2( flow ) || flow === DOMAIN_FLOW ) {
 		return (
 			<Step.CenteredColumnLayout
 				topBar={ <Step.TopBar /> }
-				columnWidth={ 8 }
+				columnWidth={ 10 }
+				className="step-container-v2--domain-search"
 				heading={ <Step.Heading text="Domain Search" /> }
 			>
-				{ getContent() }
+				<WPCOMDomainSearch className="step-container-v2-domain-search" />
 			</Step.CenteredColumnLayout>
 		);
 	}
@@ -27,7 +26,7 @@ const DomainSearchStep: StepType = function DomainSearchStep( { flow } ) {
 			flowName={ flow }
 			goBack={ () => {} }
 			goNext={ () => {} }
-			stepContent={ getContent() }
+			stepContent={ <WPCOMDomainSearch /> }
 			recordTracksEvent={ recordTracksEvent }
 		/>
 	);
