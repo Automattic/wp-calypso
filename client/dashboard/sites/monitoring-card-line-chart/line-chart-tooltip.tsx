@@ -1,7 +1,5 @@
 import styled from '@emotion/styled';
-import { translate } from 'i18n-calypso';
-import moment from 'moment';
-import { UplotTooltipProps, seriesInfo, roundToTwoDecimals } from './uplot-tooltip-plugin';
+import { UplotTooltipProps, seriesInfo } from './uplot-tooltip-plugin';
 
 export interface HTTPCodeSerie {
 	statusCode: number;
@@ -72,12 +70,17 @@ export function LineChartTooltip( { tooltipSeries, footer }: LineChartTooltipPro
 export function FirstChartTooltipWithSeriesHandler(
 	seriesHandler: ( i: number, value: number ) => seriesInfo | null
 ) {
-	return ( { data, idx, ...rest }: UplotTooltipProps ) => {
-		const dateString = moment( data[ 0 ][ idx ] * 1000 ).format( 'HH:mm DD MMMM' );
+	const TooltipComponent = ( { data, idx, ...rest }: UplotTooltipProps ) => {
+		const dateString = new Date( data[ 0 ][ idx ] * 1000 ).toLocaleString( 'en-GB', {
+			hour: '2-digit',
+			minute: '2-digit',
+			day: '2-digit',
+			month: 'long',
+		} );
 
 		const series: seriesInfo[] = [];
-		for ( let i in data ) {
-			let val = seriesHandler( parseInt( i ), data[ i ][ idx ] );
+		for ( const i in data ) {
+			const val = seriesHandler( parseInt( i ), data[ i ][ idx ] );
 			if ( val !== null ) {
 				series.push( val );
 			}
@@ -85,46 +88,7 @@ export function FirstChartTooltipWithSeriesHandler(
 
 		return <LineChartTooltip { ...rest } tooltipSeries={ series } footer={ dateString } />;
 	};
-}
 
-interface HttpChartTooltipProps extends UplotTooltipProps {
-	series: HTTPCodeSerie[];
-}
-
-export function HttpChartTooltip( { data, idx, series = [], ...rest }: HttpChartTooltipProps ) {
-	const [ timestamps, ...requests ] = data;
-	const dateString = moment( timestamps[ idx ] * 1000 ).format( 'HH:mm DD MMMM' );
-	const totalRequests = roundToTwoDecimals(
-		requests.reduce( ( acc, serie ) => acc + roundToTwoDecimals( serie[ idx ] ), 0 )
-	);
-	/* translators: the totalRequests is a number of requests */
-	const totalRequestsString = translate( '%(totalRequests)s requests', {
-		args: {
-			totalRequests,
-		},
-	} );
-	const filteredTooltipSeries = series
-		.map( ( serie, serieI ) => ( {
-			color: serie.stroke,
-			label: serie.label,
-			value: roundToTwoDecimals( data[ serieI + 1 ][ idx ] ),
-			showInTooltip: serie.showInTooltip,
-		} ) )
-		.filter( ( serie ) => {
-			return !! serie.showInTooltip || serie.value > 0;
-		} );
-	return (
-		<LineChartTooltip
-			{ ...rest }
-			tooltipSeries={ filteredTooltipSeries }
-			footer={ `${ totalRequestsString } - ${ dateString }` }
-		/>
-	);
-}
-
-export function withSeries(
-	Component: React.ComponentType< HttpChartTooltipProps >,
-	series: HTTPCodeSerie[]
-) {
-	return ( props: UplotTooltipProps ) => <Component { ...props } series={ series } />;
+	TooltipComponent.displayName = 'TooltipComponent';
+	return TooltipComponent;
 }

@@ -1,12 +1,11 @@
 import { formatNumber } from '@automattic/number-formatters';
 import { Spinner } from '@wordpress/components';
 import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
+import clsx from 'clsx';
 import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
 import useResize from 'calypso/components/chart-uplot/hooks/use-resize';
-
 import './style.scss';
-import clsx from 'clsx';
 
 const DEFAULT_DIMENSIONS = {
 	height: 300,

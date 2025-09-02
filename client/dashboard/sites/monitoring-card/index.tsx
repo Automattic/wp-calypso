@@ -1,19 +1,14 @@
 import CircularProgressBar from '@automattic/components/src/circular-progress-bar';
-import { Link } from '@tanstack/react-router';
 import {
-	Button,
 	Card,
 	CardBody,
-	__experimentalDivider as Divider,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
-	__experimentalHeading as Heading,
 	Icon,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useAnalytics } from '../../app/analytics';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import { Text } from '../../components/text';
 import { TextSkeleton } from '../../components/text-skeleton';
@@ -38,13 +33,11 @@ export interface MonitoringCardProps {
 	externalLink?: string;
 	tracksId?: string;
 	bottom?: ReactNode;
-	onClick?: () => void;
 }
 
 export default function MonitoringCard( {
 	icon,
 	title,
-	heading,
 	description,
 	progress,
 	intent,
@@ -54,20 +47,7 @@ export default function MonitoringCard( {
 	externalLink,
 	tracksId,
 	bottom,
-	onClick,
 }: MonitoringCardProps ) {
-	const { recordTracksEvent } = useAnalytics();
-
-	const renderHeading = () => {
-		if ( isLoading ) {
-			return <TextSkeleton length={ 10 } />;
-		}
-		if ( heading ) {
-			return heading;
-		}
-		return <>&nbsp;</>;
-	};
-
 	const renderDescription = () => {
 		if ( isLoading ) {
 			return <TextSkeleton length={ 20 } />;

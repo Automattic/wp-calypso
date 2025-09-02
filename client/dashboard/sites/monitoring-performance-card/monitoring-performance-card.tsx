@@ -1,21 +1,19 @@
-import colorStudio from '@automattic/color-studio';
 import { __ } from '@wordpress/i18n';
-import { translate } from 'i18n-calypso';
-import type { Site } from 'calypso/dashboard/data/site';
-import MonitoringCard from 'calypso/dashboard/sites/monitoring-card';
-import { MonitoringLineChart } from 'calypso/dashboard/sites/monitoring-card-line-chart';
-import { timeHighlightPlugin } from 'calypso/dashboard/sites/monitoring-card-line-chart/time-highlight-plugin';
+import MonitoringCard from '../monitoring-card';
+import { MonitoringLineChart } from '../monitoring-card-line-chart';
+import { FirstChartTooltipWithSeriesHandler } from '../monitoring-card-line-chart/line-chart-tooltip';
+import { timeHighlightPlugin } from '../monitoring-card-line-chart/time-highlight-plugin';
 import {
 	roundToTwoDecimals,
 	seriesInfo,
 	tooltipsPlugin,
-} from 'calypso/dashboard/sites/monitoring-card-line-chart/uplot-tooltip-plugin';
-import { FirstChartTooltipWithSeriesHandler } from 'calypso/dashboard/sites/monitoring-card-line-chart/line-chart-tooltip';
+} from '../monitoring-card-line-chart/uplot-tooltip-plugin';
 import {
 	MetricsType,
 	PeriodData,
 	useSiteMetricsQuery,
 } from 'calypso/sites/monitoring/hooks/use-metrics-query';
+import type { Site } from 'calypso/dashboard/data/site';
 
 type TimeRange = {
 	start: number;
@@ -111,12 +109,12 @@ export default function MonitoringPerformanceCard( {
 	const tooltipSeriesCallback = ( i: number, value: number ): seriesInfo | null => {
 		const labelData: object = {
 			1: {
-				color: colorStudio.colors[ 'Blue 50' ],
-				label: translate( 'Requests per minute' ),
+				color: '#3858e9',
+				label: __( 'Requests per minute' ),
 			},
 			2: {
 				color: '#5BA300',
-				label: translate( 'Average response time (ms)' ),
+				label: __( 'Average response time (ms)' ),
 			},
 		};
 
@@ -134,7 +132,7 @@ export default function MonitoringPerformanceCard( {
 	return (
 		<MonitoringCard
 			title={ __( 'Server performance' ) }
-			heading={ __( 'Requests ' ) }
+			heading={ __( 'Requests' ) }
 			description={ __( 'Requests per minute and average server response time.' ) }
 			bottom={
 				<MonitoringLineChart
@@ -144,9 +142,9 @@ export default function MonitoringPerformanceCard( {
 					data={ formattedData as uPlot.AlignedData }
 					series={ [
 						{
-							fill: colorStudio.colors[ 'Blue 50' ],
+							fill: '#3858e9',
 							label: __( 'Requests per minute' ),
-							stroke: colorStudio.colors[ 'Blue 50' ],
+							stroke: '#3858e9',
 							showInLegend: true,
 							showInTooltip: true,
 						},
