@@ -49,7 +49,11 @@ export function RenewNoticeAction( {
 		! purchase.payment_type &&
 		( ! purchase.can_explicit_renew || shouldAddPaymentSourceInsteadOfRenewingNow )
 	) {
-		return <Button href={ changePaymentMethodPath }>{ __( 'Add payment method' ) }</Button>;
+		return (
+			<Button variant="primary" href={ changePaymentMethodPath }>
+				{ __( 'Add payment method' ) }
+			</Button>
+		);
 	}
 
 	// isExpiring(), which leads here (along with isExpired()) returns true
@@ -58,7 +62,11 @@ export function RenewNoticeAction( {
 	// subscription is actually expiring or expired; we want to show "Renew
 	// Now" in that case.
 	if ( purchase.payment_type === 'credits' && purchase.expiry_status === 'manual-renew' ) {
-		return <Button href={ changePaymentMethodPath }>{ __( 'Add payment method' ) }</Button>;
+		return (
+			<Button variant="primary" href={ changePaymentMethodPath }>
+				{ __( 'Add payment method' ) }
+			</Button>
+		);
 	}
 
 	if ( ! purchase.is_rechargable ) {
