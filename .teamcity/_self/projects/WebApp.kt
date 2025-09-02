@@ -973,7 +973,6 @@ object PlaywrightTestPRMatrix : BuildType({
 		param("env.DEBUG", "")
 		param("env.AUTHENTICATE_ACCOUNTS", "simpleSitePersonalPlanUser,gutenbergSimpleSiteUser,defaultUser")
 		param("env.LIVEBRANCHES", "true")
-		param("env.VIEWPORT_NAME", "$targetDevice")
 	}
 
 	steps {
