@@ -1,3 +1,9 @@
+import {
+	domainQuery,
+	domainTransferRequestQuery,
+	updateDomainTransferRequestMutation,
+	deleteDomainTransferRequestMutation,
+} from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Card,
@@ -14,12 +20,6 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useLocale } from '../../app/locale';
-import { domainQuery } from '../../app/queries/domain';
-import {
-	domainTransferRequestQuery,
-	updateDomainTransferRequestMutation,
-	deleteDomainTransferRequestMutation,
-} from '../../app/queries/domain-transfer';
 import { domainRoute } from '../../app/router/domains';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
