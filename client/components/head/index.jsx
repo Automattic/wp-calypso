@@ -69,9 +69,6 @@ const Head = ( {
 			/>
 			{ /* eslint-enable react/no-danger */ }
 			{ children }
-
-			{ /* Site-Spec AI Chat Interface Styles */ }
-			<link rel="stylesheet" href="http://localhost:8085/dist/style.css" />
 		</head>
 	);
 };
