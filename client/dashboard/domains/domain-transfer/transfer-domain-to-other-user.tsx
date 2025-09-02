@@ -5,6 +5,7 @@ import {
 	siteUsersQuery,
 } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
 import {
 	Card,
 	CardBody,
@@ -13,6 +14,7 @@ import {
 	__experimentalVStack as VStack,
 	Button,
 	ExternalLink,
+	Modal,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
@@ -38,13 +40,16 @@ const createFields = ( users: SiteUser[] ): Field< TransferFormData >[] => [
 	{
 		id: 'user',
 		label: __( 'NEW OWNER' ),
-		elements: [
-			{ value: '', label: 'Choose an administrator on this site' },
-			...users.map( ( user ) => ( {
-				value: user.id,
-				label: user.name,
-			} ) ),
-		],
+		elements:
+			users.length > 0
+				? [
+						{ value: '', label: 'Choose an administrator on this site' },
+						...users.map( ( user ) => ( {
+							value: user.id,
+							label: user.name,
+						} ) ),
+				  ]
+				: [ { value: '', label: '-- Site has no other administrators --' } ],
 		isValid: {
 			required: true,
 		},
@@ -67,6 +72,8 @@ export default function TransferDomainToOtherUser() {
 	const [ formData, setFormData ] = useState( {
 		user: '',
 	} );
+	const router = useRouter();
+	const [ isDialogOpen, setIsDialogOpen ] = useState( false );
 
 	const hasEmailWithUs = hasTitanMailWithUs( domain ) || hasGSuiteWithUs( domain );
 	const availableUsers = users.filter( ( user: SiteUser ) => {
@@ -76,15 +83,31 @@ export default function TransferDomainToOtherUser() {
 
 	const handleSubmit = ( event: React.FormEvent ) => {
 		event.preventDefault();
+		setIsDialogOpen( true );
+	};
+
+	const onConfirm = () => {
+		const selectedUser = availableUsers.find( ( user ) => user.id.toString() === formData.user );
 		domainTransferToOtherUser( formData.user, {
 			onSuccess: () => {
 				createSuccessNotice(
-					__( 'A domain transfer request has been emailed to the recipient’s address.' )
+					sprintf(
+						/* Translators: %s: domainName is the domain name, %s: selectedUserDisplay is the selected user display */
+						__( '%(selectedDomainName)s has been transferred to %(selectedUserDisplay)s' ),
+						{ args: { selectedDomainName: domainName, selectedUserDisplay: selectedUser?.name } }
+					)
 				);
-				// TODO: redirect to the domain management page
+				router.navigate( { to: domainRoute.fullPath, params: { domainName } } );
 			},
 			onError: () => {
-				createErrorNotice( __( 'An error occurred while initiating the domain transfer.' ) );
+				createErrorNotice(
+					sprintf(
+						/* Translators: %s: domainName is the domain name */
+						__( 'Failed to transfer %(selectedDomainName)s, please try again or contact support.' ),
+						{ args: { selectedDomainName: domainName } }
+					)
+				);
+				setIsDialogOpen( false );
 			},
 		} );
 	};
@@ -115,7 +138,7 @@ export default function TransferDomainToOtherUser() {
 			<VStack spacing={ 2 }>
 				<Text as="p">
 					{ createInterpolateElement(
-						/* Translators: domain is the domain name */
+						/* Translators: <domain/> is the domain name */
 						__(
 							'Transferring a domain to another user will give all the rights of the domain to that user. Please choose an administrator to transfer <domain/> to.'
 						),
@@ -182,6 +205,48 @@ export default function TransferDomainToOtherUser() {
 		);
 	};
 
+	const renderConfirmationDialog = () => {
+		const selectedUser = availableUsers.find( ( user ) => user.id.toString() === formData.user );
+
+		return (
+			<Modal title={ __( 'Confirm Transfer' ) } onRequestClose={ () => setIsDialogOpen( false ) }>
+				<VStack spacing={ 6 }>
+					<Text>
+						{ createInterpolateElement(
+							domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION
+								? __(
+										'Do you want to transfer the domain connection of <domainName/> to <selectedUserDisplay/>?'
+								  )
+								: __(
+										'Do you want to transfer the ownership of <domainName/> to <selectedUserDisplay/>?'
+								  ),
+							{
+								domainName: <strong>{ domainName }</strong>,
+								selectedUserDisplay: <strong>{ selectedUser?.name }</strong>,
+							}
+						) }
+					</Text>
+					<HStack justify="flex-end" spacing={ 2 }>
+						<Button
+							onClick={ () => setIsDialogOpen( false ) }
+							disabled={ isDomainTransferringToOtherUser }
+						>
+							{ __( 'Cancel' ) }
+						</Button>
+						<Button
+							variant="primary"
+							isBusy={ isDomainTransferringToOtherUser }
+							onClick={ onConfirm }
+							disabled={ isDomainTransferringToOtherUser }
+						>
+							{ __( 'Confirm Transfer' ) }
+						</Button>
+					</HStack>
+				</VStack>
+			</Modal>
+		);
+	};
+
 	const renderTransferForm = () => {
 		return (
 			<VStack spacing={ 8 }>
@@ -201,7 +266,6 @@ export default function TransferDomainToOtherUser() {
 								__next40pxDefaultSize
 								variant="primary"
 								type="submit"
-								isBusy={ isDomainTransferringToOtherUser }
 								disabled={ formData.user === '' }
 							>
 								{ __( 'Transfer Domain' ) }
@@ -213,6 +277,8 @@ export default function TransferDomainToOtherUser() {
 		);
 	};
 
+	// TO DO: render notices if the domain is not transferable
+
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Transfer to another user' ) } /> }>
 			<Card>
@@ -220,12 +286,13 @@ export default function TransferDomainToOtherUser() {
 					<VStack spacing={ 3 }>
 						<SectionHeader title={ __( 'Confirm new owner' ) } />
 						{ domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION
-							? renderTransferRegistrationMessage()
-							: renderTransferConnectionMessage() }
+							? renderTransferConnectionMessage()
+							: renderTransferRegistrationMessage() }
 						{ renderTransferForm() }
 					</VStack>
 				</CardBody>
 			</Card>
+			{ isDialogOpen && renderConfirmationDialog() }
 		</PageLayout>
 	);
 }
