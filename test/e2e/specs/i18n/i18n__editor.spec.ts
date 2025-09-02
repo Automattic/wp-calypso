@@ -59,12 +59,11 @@ test.describe( 'I18N: Editor', { tag: '@i18n' }, () => {
 
 				if ( locale === 'en' ) {
 					expect.soft( accessibleName ).toBe( englishText );
-					expect.soft( placeholderText ).toBe( englishText );
+					expect( placeholderText ).toBe( englishText );
 				} else {
 					for ( const value of [ accessibleName, placeholderText ] ) {
 						expect.soft( value ).not.toBe( englishText );
-						expect.soft( value ).not.toBeNull();
-						expect.soft( value ).not.toBeUndefined();
+						expect( value ).not.toBeNull();
 					}
 				}
 			} );
