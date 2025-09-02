@@ -1,4 +1,9 @@
-import { defineConfig, devices } from 'playwright/test';
+import { defineConfig, devices, type ReporterDescription } from 'playwright/test';
+
+const reporter: ReporterDescription[] = [
+	[ 'junit', { outputFile: 'output/results.xml' } ],
+	[ 'html', { outputFolder: 'output', open: process.env.CI ? 'never' : 'on-failure' } ],
+];
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -12,9 +17,9 @@ export default defineConfig( {
 	/* Retry on CI only */
 	retries: process.env.CI ? 1 : 0,
 	/* Workers should use what is available */
-	workers: '100%',
+	workers: 1,
 	/* Reporter to use. See https://playwright.dev/docs/test-reporters */
-	reporter: process.env.CI ? [ [ 'junit', { outputFile: 'results.xml' } ], [ 'html' ] ] : 'html',
+	reporter,
 	/* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
 	use: {
 		/* Base URL to use in actions like `await page.goto('/')`. */
