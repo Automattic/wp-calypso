@@ -152,16 +152,6 @@ function McpComponent( { path, userSettings, isUpdating } ) {
 			prompt: translate( 'Prompts' ),
 		};
 
-		// Format ability name for display
-		const formatAbilityName = ( abilityId ) => {
-			// Remove 'wpcom-mcp/' prefix and convert to title case
-			const name = abilityId.replace( 'wpcom-mcp/', '' );
-			return name
-				.split( '-' )
-				.map( ( word ) => word.charAt( 0 ).toUpperCase() + word.slice( 1 ) )
-				.join( ' ' );
-		};
-
 		return (
 			<>
 				<Card className="mcp__settings">
@@ -200,7 +190,7 @@ function McpComponent( { path, userSettings, isUpdating } ) {
 																				onChange={ ( checked ) =>
 																					handleAbilityChange( abilityId, checked )
 																				}
-																				label={ formatAbilityName( abilityId ) }
+																				label={ ability.title }
 																				disabled={ ! anyAbilitiesEnabled }
 																			/>
 																			<p className="mcp__ability-description">
