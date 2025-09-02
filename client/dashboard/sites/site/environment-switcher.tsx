@@ -21,7 +21,7 @@ import { Icon, chevronDownSmall, plus } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { production, staging } from '../../components/icons';
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
-import { hasStagingSite } from '../../utils/site-staging-site';
+import { hasStagingSite, getProductionSiteId } from '../../utils/site-staging-site';
 import { canManageSite, canCreateStagingSite } from '../features';
 import type { Site } from '@automattic/api-core';
 
@@ -153,9 +153,7 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 		enabled: !! stagingSiteId,
 	} );
 
-	const productionSiteId = site.is_wpcom_staging_site
-		? site.options?.wpcom_production_blog_id ?? 0
-		: site.ID;
+	const productionSiteId = getProductionSiteId( site ) || 0;
 
 	const { data: stagingSiteExistsFromQuery } = useQuery( {
 		...hasStagingSiteQuery( productionSiteId ),
