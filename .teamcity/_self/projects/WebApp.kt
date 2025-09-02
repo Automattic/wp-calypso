@@ -945,10 +945,15 @@ object PlaywrightTestPRMatrix : BuildType({
 		perfmon {
 		}
 		xmlReport {
-          reportType = XmlReport.XmlReportType.JUNIT
-          rules = "+:test/e2e/output/results.xml"
-		  verbose = true
-         }
+        	reportType = XmlReport.XmlReportType.JUNIT
+        	rules = "+:test/e2e/output/results.xml"
+			verbose = true
+        }
+		buildReportTab {
+        	id = "playwright-report"
+        	title = "Test Report"
+        	startPage = "test/e2e/output/html/index.html"
+        }
 	}
 
 	triggers {
