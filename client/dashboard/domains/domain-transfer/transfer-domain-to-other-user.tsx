@@ -38,13 +38,13 @@ const createFields = ( users: SiteUser[] ): Field< TransferFormData >[] => [
 		elements:
 			users.length > 0
 				? [
-						{ value: '', label: 'Choose an administrator on this site' },
+						{ value: '', label: __( 'Choose an administrator on this site' ) },
 						...users.map( ( user ) => ( {
 							value: user.id,
 							label: user.name,
 						} ) ),
 				  ]
-				: [ { value: '', label: '-- Site has no other administrators --' } ],
+				: [ { value: '', label: __( '-- Site has no other administrators --' ) } ],
 		isValid: {
 			required: true,
 		},
@@ -57,7 +57,7 @@ const form = {
 };
 
 export default function TransferDomainToOtherUser() {
-	const { domainName } = domainRoute.useParams() as { domainName: string };
+	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const { data: users } = useSuspenseQuery( siteUsersQuery( domain.blog_id ) );
 	const { user: currentUser } = useAuth();
@@ -74,6 +74,8 @@ export default function TransferDomainToOtherUser() {
 		return user.id !== currentUser.ID;
 	} );
 	const fields = createFields( availableUsers );
+
+	const isMapping = domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION;
 
 	const handleSubmit = ( event: React.FormEvent ) => {
 		event.preventDefault();
@@ -186,7 +188,7 @@ export default function TransferDomainToOtherUser() {
 				<VStack spacing={ 6 }>
 					<Text>
 						{ createInterpolateElement(
-							domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION
+							isMapping
 								? __(
 										'Do you want to transfer the domain connection of <domainName/> to <selectedUserDisplay/>?'
 								  )
@@ -245,9 +247,7 @@ export default function TransferDomainToOtherUser() {
 								type="submit"
 								disabled={ formData.user === '' }
 							>
-								{ domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION
-									? __( 'Transfer Domain Connection' )
-									: __( 'Transfer Domain' ) }
+								{ isMapping ? __( 'Transfer Domain Connection' ) : __( 'Transfer Domain' ) }
 							</Button>
 						</HStack>
 					</VStack>
@@ -265,7 +265,7 @@ export default function TransferDomainToOtherUser() {
 					<VStack spacing={ 3 }>
 						<SectionHeader title={ __( 'Confirm new owner' ) } />
 						<VStack spacing={ 4 }>
-							{ domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION
+							{ isMapping
 								? renderTransferConnectionMessage()
 								: renderTransferRegistrationMessage() }
 							{ renderTransferForm() }
