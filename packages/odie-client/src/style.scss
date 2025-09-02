@@ -35,16 +35,11 @@ $blueberry-blue: #3858e9;
 	flex-direction: column;
 	align-items: flex-start;
 	// Exclude chat-input from the height.
-	height: calc( 100% - 85px );
+	height: calc( 100% - 90px );
 	overscroll-behavior: contain;
 	padding-top: 16px;
 	gap: 28px;
 	box-sizing: border-box;
-
-	// Give empty chat more space for the footer.
-	&:not(:has( .odie-chatbox-message-introduction )) {
-		padding-bottom: 90px;
-	}
 
 	&:has( .odie-notice ) {
 		margin-bottom: 135px;
