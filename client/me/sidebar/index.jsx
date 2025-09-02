@@ -43,11 +43,11 @@ import 'calypso/my-sites/sidebar/style.scss'; // Copy styles from the My Sites s
 // Custom MCP icon component
 const McpIcon = () => (
 	<svg
-		width="20"
-		height="20"
+		width="24"
+		height="24"
 		viewBox="0 0 24 24"
-		fill="currentColor"
 		class="sidebar__menu-icon"
+		fill="currentColor"
 		aria-hidden="true"
 		focusable="false"
 	>
@@ -206,7 +206,7 @@ class MeSidebar extends Component {
 							selected={ itemLinkMatches( '/mcp', path ) }
 							link="/me/mcp"
 							label={ translate( 'MCP' ) + ' (' + translate( 'A8C Only' ) + ')' }
-							icon={ <McpIcon /> }
+							customIcon={ <McpIcon /> }
 							onNavigate={ this.onNavigate }
 							preloadSectionName="mcp"
 						/>
