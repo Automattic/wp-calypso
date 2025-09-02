@@ -106,8 +106,12 @@ function SiteMonitoring() {
 		return;
 	}
 
-	const handleTimeRangeChange = ( value: string ) => {
-		setTimeRange( value );
+	const handleTimeRangeChange = ( value: string | number | undefined ) => {
+		if ( ! value ) {
+			return;
+		}
+
+		setTimeRange( value.toString() );
 	};
 
 	return (
@@ -117,7 +121,7 @@ function SiteMonitoring() {
 					<HStack
 						justify="space-between"
 						alignment="stretch"
-						wrap="wrap"
+						wrap
 						spacing={ isSmallViewport ? 5 : 10 }
 						className={ clsx( 'site-monitoring-header' ) }
 					>
