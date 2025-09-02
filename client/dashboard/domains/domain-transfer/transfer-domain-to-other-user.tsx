@@ -1,9 +1,5 @@
 import { DomainSubtype, type SiteUser } from '@automattic/api-core';
-import {
-	domainQuery,
-	domainTransferToOtherUserMutation,
-	siteUsersQuery,
-} from '@automattic/api-queries';
+import { domainQuery, domainTransferToUserMutation, siteUsersQuery } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
@@ -23,13 +19,12 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAuth } from '../../app/auth';
-import { domainRoute } from '../../app/router/domains';
+import { domainRoute, domainsRoute } from '../../app/router/domains';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
-import { hasGSuiteWithUs, hasTitanMailWithUs } from '../../utils/domain';
 import type { Field } from '@wordpress/dataviews';
 
 export type TransferFormData = {
@@ -67,7 +62,7 @@ export default function TransferDomainToOtherUser() {
 	const { data: users } = useSuspenseQuery( siteUsersQuery( domain.blog_id ) );
 	const { user: currentUser } = useAuth();
 	const { mutate: domainTransferToOtherUser, isPending: isDomainTransferringToOtherUser } =
-		useMutation( domainTransferToOtherUserMutation( domainName, domain.blog_id ) );
+		useMutation( domainTransferToUserMutation( domainName, domain.blog_id ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const [ formData, setFormData ] = useState( {
 		user: '',
@@ -75,7 +70,6 @@ export default function TransferDomainToOtherUser() {
 	const router = useRouter();
 	const [ isDialogOpen, setIsDialogOpen ] = useState( false );
 
-	const hasEmailWithUs = hasTitanMailWithUs( domain ) || hasGSuiteWithUs( domain );
 	const availableUsers = users.filter( ( user: SiteUser ) => {
 		return user.id !== currentUser.ID;
 	} );
@@ -97,7 +91,8 @@ export default function TransferDomainToOtherUser() {
 						{ args: { selectedDomainName: domainName, selectedUserDisplay: selectedUser?.name } }
 					)
 				);
-				router.navigate( { to: domainRoute.fullPath, params: { domainName } } );
+				setIsDialogOpen( false );
+				router.navigate( { to: domainsRoute.fullPath, params: { domainName } } );
 			},
 			onError: () => {
 				createErrorNotice(
@@ -135,7 +130,7 @@ export default function TransferDomainToOtherUser() {
 
 	const renderTransferRegistrationMessage = () => {
 		return (
-			<VStack spacing={ 2 }>
+			<VStack spacing={ 4 }>
 				<Text as="p">
 					{ createInterpolateElement(
 						/* Translators: <domain/> is the domain name */
@@ -155,24 +150,13 @@ export default function TransferDomainToOtherUser() {
 						}
 					) }
 				</Text>
-				{ hasEmailWithUs && (
-					<Text as="p">
-						{ sprintf(
-							/* Translators: %s: domainName is the domain name */
-							__(
-								'The email subscription for %(domainName)s will be transferred along with the domain.'
-							),
-							{ domainName }
-						) }
-					</Text>
-				) }
 			</VStack>
 		);
 	};
 
 	const renderTransferConnectionMessage = () => {
 		return (
-			<VStack spacing={ 2 }>
+			<VStack spacing={ 4 }>
 				<Text as="p">
 					{ createInterpolateElement(
 						/* Translators: domain is the domain name */
@@ -190,17 +174,6 @@ export default function TransferDomainToOtherUser() {
 						}
 					) }
 				</Text>
-				{ hasEmailWithUs && (
-					<Text as="p">
-						{ sprintf(
-							/* Translators: %s: domainName is the domain name */
-							__(
-								'The email subscription for %(domainName)s will be transferred along with the domain.'
-							),
-							{ domainName }
-						) }
-					</Text>
-				) }
 			</VStack>
 		);
 	};
@@ -228,13 +201,17 @@ export default function TransferDomainToOtherUser() {
 					</Text>
 					<HStack justify="flex-end" spacing={ 2 }>
 						<Button
+							__next40pxDefaultSize
+							variant="secondary"
 							onClick={ () => setIsDialogOpen( false ) }
 							disabled={ isDomainTransferringToOtherUser }
 						>
 							{ __( 'Cancel' ) }
 						</Button>
 						<Button
+							__next40pxDefaultSize
 							variant="primary"
+							isDestructive
 							isBusy={ isDomainTransferringToOtherUser }
 							onClick={ onConfirm }
 							disabled={ isDomainTransferringToOtherUser }
@@ -268,7 +245,9 @@ export default function TransferDomainToOtherUser() {
 								type="submit"
 								disabled={ formData.user === '' }
 							>
-								{ __( 'Transfer Domain' ) }
+								{ domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION
+									? __( 'Transfer Domain Connection' )
+									: __( 'Transfer Domain' ) }
 							</Button>
 						</HStack>
 					</VStack>
@@ -285,10 +264,12 @@ export default function TransferDomainToOtherUser() {
 				<CardBody>
 					<VStack spacing={ 3 }>
 						<SectionHeader title={ __( 'Confirm new owner' ) } />
-						{ domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION
-							? renderTransferConnectionMessage()
-							: renderTransferRegistrationMessage() }
-						{ renderTransferForm() }
+						<VStack spacing={ 4 }>
+							{ domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION
+								? renderTransferConnectionMessage()
+								: renderTransferRegistrationMessage() }
+							{ renderTransferForm() }
+						</VStack>
 					</VStack>
 				</CardBody>
 			</Card>

@@ -87,12 +87,12 @@ export async function deleteDomainTransferRequest(
 	} );
 }
 
-export async function domainTransferToOtherUser(
+export async function domainTransferToUser(
 	domain: string,
 	siteId: number,
 	userId: string
 ): Promise< void > {
 	return wpcom.req.post( {
-		path: `/sites/${ siteId }/domains/${ domain }/transfer-to-other-user/${ userId }`,
+		path: `/sites/${ siteId }/domains/${ domain }/transfer-to-user/${ userId }`,
 	} );
 }

@@ -6,10 +6,11 @@ import {
 	fetchDomainTransferRequest,
 	updateDomainTransferRequest,
 	deleteDomainTransferRequest,
-	domainTransferToOtherUser,
+	domainTransferToUser,
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { domainQuery } from './domain';
+import { domainsQuery } from './domains';
 import { queryClient } from './query-client';
 import type { Domain } from '@automattic/api-core';
 
@@ -71,7 +72,10 @@ export const deleteDomainTransferRequestMutation = ( domain: string, siteSlug: s
 		},
 	} );
 
-export const domainTransferToOtherUserMutation = ( domain: string, siteId: number ) =>
+export const domainTransferToUserMutation = ( domain: string, siteId: number ) =>
 	mutationOptions( {
-		mutationFn: ( userId: string ) => domainTransferToOtherUser( domain, siteId, userId ),
+		mutationFn: ( userId: string ) => domainTransferToUser( domain, siteId, userId ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( domainsQuery() );
+		},
 	} );
