@@ -159,7 +159,7 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 
 	const productionSiteId = getProductionSiteId( site ) || 0;
 
-	//Stagubg site deletion process runs via async job. We need to keep on polling for the staging site deletion before we start displaying the button to add a staging site again
+	//Staging site deletion process runs via async job. We need to keep on polling for the staging site deletion before we start displaying the button to add a staging site again
 	const { data: stagingSiteExistsFromQuery } = useQuery( {
 		...hasStagingSiteQuery( productionSiteId ),
 		refetchInterval: isStagingSiteDeleting ? 3000 : false,
