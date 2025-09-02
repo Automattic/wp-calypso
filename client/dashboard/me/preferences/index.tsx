@@ -51,7 +51,7 @@ const languageForm = {
  * Adapted from https://github.com/Automattic/wp-calypso/blob/fbeb9c37266e2bfac7af881b1672a9f6d72a0670/client/me/account/main.jsx#L299
  * In this case the data.language is the locale variant if we're using one, so we can skip the "isLocaleVariant checks and see if the locale can be translated or not"
  */
-const shouldDisplayCommunityTranslator = ( data: UserSettingsPreferences ) => {
+const shouldDisplayCommunityTranslator = ( data: UserSettingsPreferences ): boolean => {
 	const locale = data.language;
 
 	// disable for locales
@@ -194,12 +194,10 @@ export default function Preferences() {
 			},
 			elements: languagesAsOptions,
 		},
-	];
-
-	if ( shouldShowEmpathyMode ) {
-		const isEmpathyModeFieldDisabled = !! isDefaultLocale( data.language || null );
-		languageFields.push( {
+		{
 			Edit: ( { field, data, onChange } ) => {
+				const isEmpathyModeFieldDisabled =
+					! data.language || data.language === '' || !! isDefaultLocale( data.language );
 				return (
 					<CheckboxControl
 						checked={ isEmpathyModeFieldDisabled ? false : field.getValue( { item: data } ) }
@@ -217,11 +215,11 @@ export default function Preferences() {
 			label: 'Empathy mode (a8c-only)',
 			description: 'Pretend to use that language but display English where a translated exists', // TODO field should be disabled in case we're using default language https://github.com/Automattic/wp-calypso/blob/559b5e82dc96bd668fd6e5ef558d588d09eeb80f/client/components/language-picker/modal.tsx#L159
 			type: 'boolean',
-		} );
-	}
-
-	if ( shouldDisplayCommunityTranslator( data ) ) {
-		languageFields.push( {
+			isVisible: () => {
+				return shouldShowEmpathyMode;
+			},
+		},
+		{
 			// TODO show it only when canDisplayCommunityTranslator is true, don't use the calypso/state
 			Edit: 'checkbox',
 			id: 'enable_translator',
@@ -233,8 +231,12 @@ export default function Preferences() {
 				}
 			),
 			type: 'boolean',
-		} );
-	}
+			isVisible: ( item ) => {
+				return shouldDisplayCommunityTranslator( item );
+			},
+		},
+	];
+
 	return (
 		<>
 			<form onSubmit={ handleSubmit }>
