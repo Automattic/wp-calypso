@@ -68,14 +68,3 @@
 	align-items: center;
 	position: relative;
 }
-
-.step-container-v2__visual-split {
-	margin-top: -17px;
-
-	// Target the last TR with class plans-grid-next-features-grid__feature-group-row
-	tr.plans-grid-next-features-grid__feature-group-row:last-child {
-		td {
-			padding-bottom: 18px;
-		}
-	}
-}

@@ -856,6 +856,8 @@ const PlansFeaturesMain = ( {
 							className={ clsx( 'plans-features-main__group', 'is-wpcom', 'is-2023-pricing-grid', {
 								'is-scrollable': plansWithScroll,
 								'is-plan-type-selector-visible': ! hidePlanSelector,
+								'is-visual-split-layout':
+									intent === 'plans-website-builder' || intent === 'plans-wordpress-hosting',
 							} ) }
 							data-e2e-plans="wpcom"
 						>
