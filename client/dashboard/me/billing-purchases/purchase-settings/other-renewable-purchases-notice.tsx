@@ -28,116 +28,54 @@ export function shouldShowOtherRenewablePurchasesNotice(
 		return false;
 	}
 
-	// For purchases included with a plan (for example, a domain mapping
-	// bundled with the plan), the plan purchase should be used here, since
-	// that is the one that can be directly renewed.
+	// For purchases included with a plan, use the plan purchase instead
 	const purchaseIsIncludedInPlan = Boolean(
 		isIncludedWithPlan( purchase ) && purchaseAttachedTo?.is_plan
 	);
 	const currentPurchase =
 		purchaseIsIncludedInPlan && purchaseAttachedTo ? purchaseAttachedTo : purchase;
 
-	// Show only if there is at least one other purchase to notify about.
+	// Get other renewable purchases for this site
 	const renewableSitePurchases: Purchase[] = []; // FIXME: get this; see getRenewableSitePurchases
 	const otherRenewableSitePurchases = renewableSitePurchases.filter(
 		( otherPurchase ) => otherPurchase.ID !== currentPurchase.ID
 	);
+
 	if ( otherRenewableSitePurchases.length === 0 ) {
 		return false;
 	}
 
-	// Main logic branches for determining which message to display.
-	const currentPurchaseNeedsToRenewSoon =
-		( isOneTimePurchase( currentPurchase ) ||
-			currentPurchase.partner_name ||
-			! currentPurchase.is_renewable ||
-			! currentPurchase.can_explicit_renew ) &&
-		isCloseToExpiration( currentPurchase );
-	const currentPurchaseCreditCardExpiresBeforeSubscription =
-		isRenewing( currentPurchase ) && creditCardExpiresBeforeSubscription( currentPurchase );
+	// Calculate purchase states once
 	const currentPurchaseIsExpiring = isExpiring( currentPurchase ) || isExpired( currentPurchase );
 	const anotherPurchaseIsExpiring = otherRenewableSitePurchases.some(
 		( otherPurchase ) => isExpiring( otherPurchase ) || isExpired( otherPurchase )
 	);
 
-	// Scenario 1: current-expires-soon-others-expire-soon
-	if ( currentPurchaseNeedsToRenewSoon && currentPurchaseIsExpiring && anotherPurchaseIsExpiring ) {
-		return true;
-	}
-
-	// Scenario 2: current-expires-soon-others-renew-soon
-	if (
-		currentPurchaseNeedsToRenewSoon &&
-		currentPurchaseIsExpiring &&
-		! anotherPurchaseIsExpiring
-	) {
-		return true;
-	}
-
-	// Scenario 3: current-renews-soon-others-expire-soon
-	if (
-		currentPurchaseNeedsToRenewSoon &&
+	// Special case: centennial plans with no expiring purchases don't show notices
+	const isCentennialWithNoExpiring =
+		purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD &&
 		! currentPurchaseIsExpiring &&
-		anotherPurchaseIsExpiring
-	) {
-		return true;
+		! anotherPurchaseIsExpiring;
+
+	if ( isCentennialWithNoExpiring ) {
+		return false;
 	}
 
-	// Scenario 4: current-renews-soon-others-renew-soon and current-renews-soon-others-renew-soon-cc-expiring
-	if (
-		currentPurchaseNeedsToRenewSoon &&
-		! currentPurchaseIsExpiring &&
-		! anotherPurchaseIsExpiring
-	) {
-		if ( ! currentPurchaseCreditCardExpiresBeforeSubscription ) {
-			return true;
-		} else if ( currentPurchase.payment_card_id ) {
-			return true;
+	// Special case: credit card expiring scenarios need additional checks
+	const needsCreditCardCheck = ! currentPurchaseIsExpiring && ! anotherPurchaseIsExpiring;
+
+	if ( needsCreditCardCheck ) {
+		const currentPurchaseCreditCardExpiresBeforeSubscription =
+			isRenewing( currentPurchase ) && creditCardExpiresBeforeSubscription( currentPurchase );
+
+		// Don't show if credit card expires but no payment card ID
+		if ( currentPurchaseCreditCardExpiresBeforeSubscription && ! currentPurchase.payment_card_id ) {
+			return false;
 		}
 	}
 
-	// Scenario 5: current-expires-later-others-expire-soon
-	if (
-		! currentPurchaseNeedsToRenewSoon &&
-		currentPurchaseIsExpiring &&
-		anotherPurchaseIsExpiring
-	) {
-		return true;
-	}
-
-	// Scenario 6: current-expires-later-others-renew-soon
-	if (
-		! currentPurchaseNeedsToRenewSoon &&
-		currentPurchaseIsExpiring &&
-		! anotherPurchaseIsExpiring
-	) {
-		return true;
-	}
-
-	// Scenario 7: current-renews-later-others-expire-soon
-	if (
-		! currentPurchaseNeedsToRenewSoon &&
-		! currentPurchaseIsExpiring &&
-		anotherPurchaseIsExpiring
-	) {
-		return true;
-	}
-
-	// Scenario 8: current-renews-later-others-renew-soon and current-renews-later-others-renew-soon-cc-expiring
-	if (
-		! currentPurchaseNeedsToRenewSoon &&
-		! currentPurchaseIsExpiring &&
-		! anotherPurchaseIsExpiring &&
-		purchase.bill_period_days !== SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD
-	) {
-		if ( ! currentPurchaseCreditCardExpiresBeforeSubscription ) {
-			return true;
-		} else if ( currentPurchase.payment_card_id ) {
-			return true;
-		}
-	}
-
-	return false;
+	// Show notice in all other cases
+	return true;
 }
 
 export function OtherRenewablePurchasesNotice( {
