@@ -395,7 +395,12 @@ function UnifiedPlansStep( {
 	const getSubheaderText = () => {
 		const freePlanButton = (
 			<Button
-				onClick={ () =>
+				onClick={ () => {
+					const event = new CustomEvent( 'calypso:plans:request-free-plan', { cancelable: true } );
+					const canceled = ! window.dispatchEvent( event );
+					if ( canceled ) {
+						return;
+					}
 					buildUpgradeFunction( {
 						additionalStepData,
 						flowName,
@@ -406,8 +411,8 @@ function UnifiedPlansStep( {
 						themeSlugWithRepo,
 						goToNextStep,
 						submitSignupStep: effectiveSubmitSignupStep,
-					} )
-				}
+					} );
+				} }
 				borderless
 				className="plans-features-main__free-plan-cta"
 			/>

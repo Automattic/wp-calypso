@@ -1,4 +1,4 @@
-import { isFreePlan } from '@automattic/calypso-products';
+import { isFreePlan, PLAN_FREE } from '@automattic/calypso-products';
 import { FREE_THEME } from '@automattic/design-picker';
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useCallback } from '@wordpress/element';
@@ -30,7 +30,10 @@ export function useModalResolutionCallback( {
 }: Props ) {
 	return useCallback(
 		( currentSelectedPlan?: string | null ): ModalType | null => {
-			if ( ! currentSelectedPlan || ! isFreePlan( currentSelectedPlan ) ) {
+			const inferredSelectedPlan =
+				currentSelectedPlan ?? ( intent === 'plans-website-builder' ? PLAN_FREE : null );
+
+			if ( ! inferredSelectedPlan || ! isFreePlan( inferredSelectedPlan ) ) {
 				return null;
 			}
 

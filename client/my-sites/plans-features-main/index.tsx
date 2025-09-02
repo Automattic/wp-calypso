@@ -282,6 +282,29 @@ const PlansFeaturesMain = ( {
 		setShowDomainUpsellDialog( true );
 	}, [ setShowDomainUpsellDialog ] );
 
+	// Listen for external free plan requests (e.g., Stepper header/subheader CTA)
+	useEffect( () => {
+		const onRequestFreePlan = ( event: Event ) => {
+			const displayedModal = resolveModal( PLAN_FREE );
+			if ( displayedModal ) {
+				event.preventDefault?.();
+				setLastClickedPlan( PLAN_FREE );
+				setIsModalOpen( true );
+			}
+		};
+
+		window.addEventListener(
+			'calypso:plans:request-free-plan',
+			onRequestFreePlan as EventListener
+		);
+		return () => {
+			window.removeEventListener(
+				'calypso:plans:request-free-plan',
+				onRequestFreePlan as EventListener
+			);
+		};
+	}, [ resolveModal ] );
+
 	const currentUserName = useSelector( getCurrentUserName );
 	const { wpcomFreeDomainSuggestion, invalidateDomainSuggestionCache } =
 		useGetFreeSubdomainSuggestion(
