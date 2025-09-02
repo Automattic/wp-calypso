@@ -62,7 +62,7 @@ export const HelpCenterSupportChatMessage = ( {
 	);
 
 	const messageDisplayName =
-		role === 'business' ? __( 'Happiness Engineer', __i18n_text_domain__ ) : displayName;
+		role === 'business' ? __( 'Happiness chat', __i18n_text_domain__ ) : displayName;
 
 	const renderAvatar = () => {
 		if ( role === 'bot' ) {
