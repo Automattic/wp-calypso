@@ -1,3 +1,4 @@
+import { sitesQuery, userPreferenceMutation, userPreferenceQuery } from '@automattic/api-queries';
 import { useQuery, useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Card,
@@ -13,8 +14,6 @@ import { DataForm, Field, Option } from '@wordpress/dataviews';
 import { useState, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { userPreferenceQuery, userPreferenceMutation } from '../../app/queries/me-preferences';
-import { sitesQuery } from '../../app/queries/sites';
 import { getSiteDisplayName } from '../../utils/site-name';
 import type { LandingPage, Site } from '@automattic/api-core';
 
