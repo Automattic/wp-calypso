@@ -10,6 +10,7 @@ import { SelectedFeatureData } from '../hooks/use-selected-feature';
 const Subheader = styled.p< { isUsingStepContainerV2?: boolean; isVisualSplitIntent?: boolean } >`
 	margin: ${ ( props ) => ( props.isVisualSplitIntent ? '-40px 0 30px 0' : '-32px 0 40px 0' ) };
 	color: var( --studio-gray-60 );
+	font-size: 1rem;
 	text-align: ${ ( props ) => ( props.isUsingStepContainerV2 ? 'left' : 'center' ) };
 	button.is-borderless {
 		font-weight: ${ ( props ) => ( props.isVisualSplitIntent ? 'inherit' : '500' ) };
