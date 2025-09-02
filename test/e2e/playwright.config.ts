@@ -9,6 +9,11 @@ const reporter: ReporterDescription[] = [
 	],
 ];
 
+if ( process.env.CI ) {
+	console.log( 'Running in CI, adding list reporter.' );
+	reporter.push( [ 'list' ] );
+}
+
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
