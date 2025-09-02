@@ -24,7 +24,6 @@ import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
-import { useIsVisualSplitEnabled } from 'calypso/lib/domains/use-visual-split-experiment';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { buildUpgradeFunction } from 'calypso/lib/signup/step-actions';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
@@ -234,8 +233,6 @@ function UnifiedPlansStep( {
 	);
 	const [ isStreamlinedPriceExperimentLoading, streamlinedPriceExperimentAssignment ] =
 		useStreamlinedPriceExperiment( flowName );
-
-	const [ , visualSplitVariation ] = useIsVisualSplitEnabled( flowName );
 
 	useSiteGlobalStylesOnPersonal();
 
@@ -597,8 +594,7 @@ function UnifiedPlansStep( {
 					}
 					heading={
 						<>
-							{ ( visualSplitVariation === 'default_websitebuilder' ||
-								visualSplitVariation === 'default_hosting' ) && (
+							{ ( intent === 'plans-website-builder' || intent === 'plans-wordpress-hosting' ) && (
 								<IntentToggle
 									currentIntent={ intent }
 									onIntentChange={ ( newIntent ) => {
