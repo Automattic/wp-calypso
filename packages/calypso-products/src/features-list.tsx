@@ -177,7 +177,7 @@ import {
 	FEATURE_SECURITY_BRUTE_FORCE,
 	FEATURE_SMART_REDIRECTS,
 	FEATURE_ALWAYS_ONLINE,
-	FEATURE_ALWAYS_ON_UPTIME,
+	FEATURE_99_999_UPTIME,
 	FEATURE_FAST_DNS,
 	FEATURE_STYLE_CUSTOMIZATION,
 	FEATURE_DESIGN_TOOLS,
@@ -1868,8 +1868,8 @@ const FEATURES_LIST: FeatureList = {
 		getDescription: () => i18n.translate( 'Build and count on a site designed to last forever.' ),
 	},
 
-	[ FEATURE_ALWAYS_ON_UPTIME ]: {
-		getSlug: () => FEATURE_ALWAYS_ON_UPTIME,
+	[ FEATURE_99_999_UPTIME ]: {
+		getSlug: () => FEATURE_99_999_UPTIME,
 		getTitle: () => i18n.translate( '99.999% uptime' ),
 		getDescription: () =>
 			i18n.translate( 'Exceptional reliability with industry-leading uptime guarantee.' ),
