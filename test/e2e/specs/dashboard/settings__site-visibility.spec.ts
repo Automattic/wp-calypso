@@ -10,7 +10,9 @@ test.describe( 'Dashboard: Site Visibility Settings', { tag: '@dashboard' }, () 
 	} ) => {
 		const incognitoContentLocator = pageIncognito.locator( 'html' );
 
-		await test.step( 'Given I am on the site visibility settings page', async function () {
+		await test.step( "Given I am on my new public site's visibility settings page", async function () {
+			// TODO: This should use a DashboardPage method to navigate to the correct page
+			// but it doesn't work for WordPress.com as it expects /v2 to be available.
 			await page.goto(
 				helperData.getCalypsoURL(
 					`sites/${ sitePublic.blog_details.site_slug }/settings/site-visibility`
@@ -18,11 +20,17 @@ test.describe( 'Dashboard: Site Visibility Settings', { tag: '@dashboard' }, () 
 			);
 		} );
 
-		await test.step( 'When I set the site visibility to Private', async function () {
+		await test.step( "When I set my site's visibility to Private", async function () {
 			await pageDashboard.setSiteVisibility( 'Private' );
 		} );
 
-		await test.step( 'Then I can not see the site as an external visitor', async function () {
+		await test.step( "And I save my site's visbility settings", async function () {
+			expect( await pageDashboard.saveSiteVisibilityChanges() ).toBe(
+				'Site visibility settings saved.'
+			);
+		} );
+
+		await test.step( 'Then I can not see my site if I check as an external visitor', async function () {
 			await pageIncognito.goto( sitePublic.blog_details.url );
 			await expect( incognitoContentLocator ).toContainText( 'Private Site' );
 		} );
@@ -37,7 +45,9 @@ test.describe( 'Dashboard: Site Visibility Settings', { tag: '@dashboard' }, () 
 	} ) => {
 		const incognitoContentLocator = pageIncognito.locator( 'html' );
 
-		await test.step( 'Given I am on the site visibility settings page', async function () {
+		await test.step( "Given I am on my new public site's visibility settings page", async function () {
+			// TODO: This should use a DashboardPage method to navigate to the correct page
+			// but it doesn't work for WordPress.com as it expects /v2 to be available.
 			await page.goto(
 				helperData.getCalypsoURL(
 					`sites/${ sitePublic.blog_details.site_slug }/settings/site-visibility`
@@ -45,11 +55,17 @@ test.describe( 'Dashboard: Site Visibility Settings', { tag: '@dashboard' }, () 
 			);
 		} );
 
-		await test.step( 'When I set the site visibility to Coming Soon', async function () {
+		await test.step( "When I set my site's visibility to 'Coming soon'", async function () {
 			await pageDashboard.setSiteVisibility( 'Coming soon' );
 		} );
 
-		await test.step( 'Then I can see the coming soon message as an external visitor', async function () {
+		await test.step( "And I save my site's visbility settings", async function () {
+			expect( await pageDashboard.saveSiteVisibilityChanges() ).toBe(
+				'Site visibility settings saved.'
+			);
+		} );
+
+		await test.step( 'Then I can see the coming soon message if I visit as an external visitor', async function () {
 			await pageIncognito.goto( sitePublic.blog_details.url );
 			await expect( incognitoContentLocator ).toContainText( 'coming soon' );
 		} );
@@ -64,7 +80,9 @@ test.describe( 'Dashboard: Site Visibility Settings', { tag: '@dashboard' }, () 
 	} ) => {
 		const incognitoContentLocator = pageIncognito.locator( 'html' );
 
-		await test.step( 'Given I am on the site visibility settings page for my public site', async function () {
+		await test.step( "Given I am on my new public site's visibility settings page", async function () {
+			// TODO: This should use a DashboardPage method to navigate to the correct page
+			// but it doesn't work for WordPress.com as it expects /v2 to be available.
 			await page.goto(
 				helperData.getCalypsoURL(
 					`sites/${ sitePublic.blog_details.site_slug }/settings/site-visibility`
@@ -72,11 +90,17 @@ test.describe( 'Dashboard: Site Visibility Settings', { tag: '@dashboard' }, () 
 			);
 		} );
 
-		await test.step( 'When I discourage search engines from indexing this site', async function () {
+		await test.step( 'When I discourage search engines from indexing my site', async function () {
 			await pageDashboard.setDiscourageSearchEngines();
 		} );
 
-		await test.step( 'Then I can still see the live site as an external visitor', async function () {
+		await test.step( "And I save my site's visbility settings", async function () {
+			expect( await pageDashboard.saveSiteVisibilityChanges() ).toBe(
+				'Site visibility settings saved.'
+			);
+		} );
+
+		await test.step( 'Then I can still my public site if I visit as an external visitor', async function () {
 			await pageIncognito.goto( sitePublic.blog_details.url );
 			// Soft assert to allow for the possibility that the site is still private
 			// or coming soon, and to test the robots.txt test step even if these checks fail.
@@ -84,7 +108,7 @@ test.describe( 'Dashboard: Site Visibility Settings', { tag: '@dashboard' }, () 
 			await expect.soft( incognitoContentLocator ).not.toContainText( 'coming soon' );
 		} );
 
-		await test.step( 'But robots will see a disallow instruction', async function () {
+		await test.step( 'But search engine robots will see a disallow instruction', async function () {
 			await pageIncognito.goto( `${ sitePublic.blog_details.url }robots.txt` );
 			await expect( incognitoContentLocator ).toContainText( 'User-agent: *\nDisallow: /' );
 		} );
