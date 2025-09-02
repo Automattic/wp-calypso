@@ -12,6 +12,9 @@ import Notice from '../../../components/notice';
 import {
 	isExpired,
 	isIncludedWithPlan,
+	isOneTimePurchase,
+	isCloseToExpiration,
+	creditCardExpiresBeforeSubscription,
 	getRenewalUrlFromPurchase,
 } from '../../../utils/purchase';
 import { getPurchaseUrl } from '../urls';
@@ -74,11 +77,9 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		);
 	}
 
-	// FIXME: finish these
-	// const expiringCreditCardNotice = this.renderCreditCardExpiringNotice();
-	// if ( expiringCreditCardNotice ) {
-	// 	return expiringCreditCardNotice;
-	// }
+	if ( shouldShowCardExpiringNotice( purchase ) ) {
+		return <CreditCardExpiringNotice purchase={ purchase } />;
+	}
 }
 
 function shouldShowExpiredRenewNotice(
@@ -288,3 +289,56 @@ function TrialNotice( { purchase }: { purchase: Purchase } ) {
 	);
 }
 
+function shouldShowCardExpiringNotice( purchase: Purchase ): boolean {
+	if (
+		isExpired( purchase ) ||
+		isOneTimePurchase( purchase ) ||
+		isIncludedWithPlan( purchase ) ||
+		! purchase.site_slug ||
+		! purchase.payment_card_id ||
+		purchase.is_hundred_year_domain
+	) {
+		return false;
+	}
+
+	if ( creditCardExpiresBeforeSubscription( purchase ) ) {
+		return true;
+	}
+	return false;
+}
+
+export function shouldShowCardExpiringWarning( purchase: Purchase ): boolean {
+	return Boolean(
+		! isIncludedWithPlan( purchase ) &&
+			purchase.payment_card_id &&
+			creditCardExpiresBeforeSubscription( purchase ) &&
+			isCloseToExpiration( purchase )
+	);
+}
+
+function CreditCardExpiringNotice( { purchase }: { purchase: Purchase } ) {
+	const siteSlug = purchase.site_slug ?? purchase.blog_id;
+	const changePaymentMethodPath = purchase.payment_card_id
+		? `/me/purchases/${ siteSlug }/${ purchase.ID }/payment-method/change/${ purchase.payment_card_id }`
+		: `/me/purchases/${ siteSlug }/${ purchase.ID }/payment-method/add`;
+	return (
+		<Notice variant={ shouldShowCardExpiringWarning( purchase ) ? 'error' : 'info' }>
+			{ createInterpolateElement(
+				sprintf(
+					// translators: cardType is a credit card brand, cardNumber is the last 4 digits of the credit card number, and cardExpiry is the card expiration date.
+					__(
+						'Your %(cardType)s ending in %(cardNumber)d expires %(cardExpiry)s – before the next renewal. Please {{a}}update your payment information{{/a}}.'
+					),
+					{
+						cardType: purchase.payment_card_type,
+						cardNumber: purchase.payment_card_id,
+						cardExpiry: purchase.payment_expiry,
+					}
+				),
+				{
+					a: <a href={ changePaymentMethodPath } />,
+				}
+			) }
+		</Notice>
+	);
+}
