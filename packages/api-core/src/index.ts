@@ -27,6 +27,7 @@ export * from './me-profile';
 export * from './me-purchases';
 export * from './me-shopping-cart';
 export * from './me-sites';
+export * from './plugins';
 export * from './me-ssh';
 export * from './p2';
 export * from './purchase';
