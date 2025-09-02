@@ -4,7 +4,7 @@ import {
 	isDeletingStagingSiteQuery,
 	hasStagingSiteQuery,
 } from '@automattic/api-queries';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	Button,
@@ -136,6 +136,7 @@ const EnvironmentSwitcherDropdown = ( {
 };
 
 const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
+	const queryClient = useQueryClient();
 	const otherEnvironment = site.is_wpcom_staging_site ? 'production' : 'staging';
 	const otherEnvironmentSiteId = site.is_wpcom_staging_site
 		? site.options?.wpcom_production_blog_id
