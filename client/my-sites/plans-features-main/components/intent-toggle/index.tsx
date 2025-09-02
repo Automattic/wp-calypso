@@ -41,11 +41,11 @@ export default function IntentToggle( { currentIntent, onIntentChange }: IntentT
 			>
 				<ToggleGroupControlOption
 					value="plans-website-builder"
-					label={ translate( 'Website Builder' ) }
+					label={ translate( 'Website builder' ) }
 				/>
 				<ToggleGroupControlOption
 					value="plans-wordpress-hosting"
-					label={ translate( 'WordPress Hosting' ) }
+					label={ translate( 'WordPress hosting' ) }
 				/>
 			</ToggleGroupControl>
 		</div>
