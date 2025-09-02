@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { MaterialIcon, ExternalLink, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { formatNumber } from '@automattic/number-formatters';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from '@automattic/urls';
 import i18n from 'i18n-calypso';
 import { MemoExoticComponent } from 'react';
@@ -1870,7 +1871,19 @@ const FEATURES_LIST: FeatureList = {
 
 	[ FEATURE_99_999_UPTIME ]: {
 		getSlug: () => FEATURE_99_999_UPTIME,
-		getTitle: () => i18n.translate( '99.999% uptime' ),
+		getTitle: () => {
+			const title = i18n.translate( '%(uptimePercent)s uptime', {
+				args: {
+					uptimePercent: formatNumber( 0.99999, {
+						numberFormatOptions: { style: 'percent', maximumFractionDigits: 3 },
+					} ),
+				},
+				comment: '99.999% uptime',
+			} );
+			return i18n.hasTranslation( '%(uptimePercent)s uptime' )
+				? title
+				: i18n.translate( '99.999% uptime' );
+		},
 		getDescription: () =>
 			i18n.translate( 'Exceptional reliability with industry-leading uptime guarantee.' ),
 	},
