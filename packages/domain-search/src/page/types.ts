@@ -3,6 +3,7 @@ import {
 	freeSuggestionQuery,
 	domainAvailabilityQuery,
 } from '@automattic/api-queries';
+import type { FilterState } from '../components/search-bar/types';
 import type {
 	DomainSuggestion,
 	DomainSuggestionQueryVendor,
@@ -68,6 +69,8 @@ export interface DomainSearchContextType
 	openFullCart: () => void;
 	query: string;
 	setQuery: ( query: string ) => void;
+	filter: FilterState;
+	setFilter: ( filter: FilterState ) => void;
 	queries: {
 		domainSuggestions: ( query: string ) => ReturnType< typeof domainSuggestionsQuery >;
 		domainAvailability: ( domainName: string ) => ReturnType< typeof domainAvailabilityQuery >;
