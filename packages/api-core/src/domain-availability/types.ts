@@ -80,6 +80,36 @@ export interface DomainAvailability {
 	 * @example 10.9
 	 */
 	sale_cost?: number;
+
+	/**
+	 * Maintenance end time, as a UNIX timestamp in seconds
+	 * @example "1714857600"
+	 */
+	maintenance_end_time?: string;
+
+	/**
+	 * Primary domain of other site
+	 * @example "example.com"
+	 */
+	other_site_domain?: string;
+
+	/**
+	 * Whether the other_site_domain is a domain-only site
+	 * @example true
+	 */
+	other_site_domain_only?: boolean;
+
+	/**
+	 * Whether the domain cannot be transferred to WordPress.com
+	 * @example true
+	 */
+	cannot_transfer_to_wordpress_com?: boolean;
+
+	/**
+	 * Whether the domain cannot be transferred to WordPress.com due to unsupported premium TLD
+	 * @example true
+	 */
+	cannot_transfer_due_to_unsupported_premium_tld?: boolean;
 }
 
 export enum DomainAvailabilityStatus {

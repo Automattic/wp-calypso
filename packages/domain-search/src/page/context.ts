@@ -12,6 +12,12 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 	events: {
 		onContinue: noop,
 		onSkip: noop,
+		onMakePrimaryAddressClick: noop,
+		onMoveDomainToSiteClick: noop,
+		onTransferDomainToWordPressComClick: noop,
+		onRegisterDomainClick: noop,
+		onCheckTransferStatusClick: noop,
+		onMapDomainClick: noop,
 	},
 	queries: {
 		domainSuggestions: ( query: string ) => domainSuggestionsQuery( query ),

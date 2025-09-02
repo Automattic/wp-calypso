@@ -30,6 +30,12 @@ export interface DomainSearchEvents {
 	onContinue: () => void;
 	onSkip: ( suggestion?: FreeDomainSuggestion ) => void;
 	onExternalDomainClick?: ( domainName: string ) => void;
+	onMakePrimaryAddressClick: ( domainName: string ) => void;
+	onMoveDomainToSiteClick: ( otherSiteDomain: string, domainName: string ) => void;
+	onTransferDomainToWordPressComClick: ( domainName: string ) => void;
+	onRegisterDomainClick: ( otherSiteDomain: string, domainName: string ) => void;
+	onCheckTransferStatusClick: ( domainName: string ) => void;
+	onMapDomainClick: ( currentSiteSlug: string, domainName: string ) => void;
 }
 
 export interface DomainSearchConfig {
