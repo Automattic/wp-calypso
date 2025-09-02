@@ -959,10 +959,8 @@ object PlaywrightTestPRMatrix : BuildType({
 			name = "Test step"
 			scriptContent = """
 				echo "Running Playwright tests for project: %playwrightProject%"
-				pwd
-				ls -la
-				# cd test/e2e
-				# yarn playwright:%playwrightProject% --list
+				cd test/e2e
+				yarn playwright:%playwrightProject% --list
 			"""
 			dockerImage = "%docker_image_e2e%"
 		}
