@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { translate } from 'i18n-calypso';
 import { createElement } from 'react';
+import { navigate } from 'calypso/lib/navigate';
 import SharingConnections from 'calypso/sites/marketing/connections/connections';
 import SharingButtons from 'calypso/sites/marketing/sharing/buttons';
 import MarketingTools from 'calypso/sites/marketing/tools';
@@ -12,7 +13,7 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import { setExpandedService } from 'calypso/state/sharing/actions';
 import { requestSite } from 'calypso/state/sites/actions';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteSlug, isJetpackSite, getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Sharing from './main';
 
@@ -105,6 +106,11 @@ export const sharingButtons = ( context, next ) => {
 		store.dispatch(
 			errorNotice( translate( 'You are not authorized to manage sharing settings for this site.' ) )
 		);
+	}
+
+	const isJetpack = isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } );
+	if ( ! isJetpack ) {
+		return navigate( getSiteAdminUrl( state, siteId, 'options-general.php?page=sharing' ) );
 	}
 
 	context.contentComponent = createElement( SharingButtons );
