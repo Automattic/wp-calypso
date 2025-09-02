@@ -34,18 +34,6 @@ import { languagesAsOptions } from '../../data/languages';
 import { UserSettingsPreferences } from '../../data/me-user-preferences';
 import type { Field } from '@wordpress/dataviews';
 
-const languageForm = {
-	type: 'regular' as const,
-	labelPosition: 'top' as const,
-	fields: [
-		{
-			id: 'interfaceLanguage',
-			label: __( 'Language' ),
-			children: [ 'language', 'enable_translator', 'i18n_empathy_mode' ],
-		},
-	],
-};
-
 // TODO add tests.
 /**
  * Adapted from https://github.com/Automattic/wp-calypso/blob/fbeb9c37266e2bfac7af881b1672a9f6d72a0670/client/me/account/main.jsx#L299
@@ -69,7 +57,7 @@ const thanksToCommunityTranslator = ( data: UserSettingsPreferences ) => {
 
 	let language = getLanguage( data.language );
 
-	// if it's a variant, we want the parent language
+	// if it's a variant, we want to link to the parent language
 	if ( language && isLocaleVariant( language.langSlug ) ) {
 		language = getLanguage( ( language as SubLanguage ).parentLangSlug );
 	}
@@ -100,13 +88,15 @@ const thanksToCommunityTranslator = ( data: UserSettingsPreferences ) => {
 	);
 };
 
-export default function Preferences() {
+export default function UserSettingsLanguageForm() {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: serverData } = useQuery( userSettingsPreferencesQuery() );
 	const [ localData, setLocalData ] = useState< Partial< UserSettingsPreferences > | undefined >();
+	const mutation = useMutation( userSettingsPreferencesMutation() );
 	const [ savingData, setSavingData ] = useState<
 		Partial< UserSettingsPreferences > | undefined
 	>();
+
 	// in case we're using a locale variant we'll override the language since that's what's being used in the combobox.
 	if ( serverData?.locale_variant && serverData.locale_variant !== '' ) {
 		serverData.language = serverData.locale_variant;
@@ -115,8 +105,11 @@ export default function Preferences() {
 		() => ( serverData ? { ...serverData, ...savingData, ...localData } : undefined ),
 		[ serverData, savingData, localData ]
 	);
-	const shouldShowEmpathyMode = config.isEnabled( 'i18n/empathy-mode' );
-	const mutation = useMutation( userSettingsPreferencesMutation() );
+
+	if ( ! data ) {
+		return null;
+	}
+
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
 		if ( ! localData ) {
@@ -141,27 +134,29 @@ export default function Preferences() {
 		} );
 	};
 
-	if ( ! data ) {
-		return null;
-	}
-
+	const shouldShowEmpathyMode = config.isEnabled( 'i18n/empathy-mode' );
 	const isSaving = mutation.isPending;
+
 	const isDirty =
 		!! localData &&
 		!! serverData &&
 		Object.entries( localData ).some( ( [ key, value ] ) => {
 			return serverData[ key as keyof UserSettingsPreferences ] !== value;
 		} );
-	const hasValidLanguage = !! localData?.language && localData.language !== ''; // TODO use isItemValid once DataForm validation is updated.
+
+	const hasValidLanguage = !! localData?.language && localData.language !== '';
 	const canSubmit = ! isSaving && isDirty && hasValidLanguage;
-
-	let saveButtonLabel = __( 'Save' );
-
-	if ( isSaving ) {
-		saveButtonLabel = __( 'Saving…' );
-	} else if ( mutation.isSuccess && ! isDirty ) {
-		saveButtonLabel = __( 'Saved!' );
-	}
+	const languageForm = {
+		type: 'regular' as const,
+		labelPosition: 'top' as const,
+		fields: [
+			{
+				id: 'interfaceLanguage',
+				label: __( 'Language' ),
+				children: [ 'language', 'enable_translator', 'i18n_empathy_mode' ],
+			},
+		],
+	};
 
 	const languageFields: Field< UserSettingsPreferences >[] = [
 		{
@@ -184,6 +179,7 @@ export default function Preferences() {
 							} }
 							placeholder={ __( 'Select a language' ) }
 							options={ field.elements || [] }
+							allowReset={ field.isValid?.required !== true }
 						/>
 
 						<Text variant="muted">
@@ -273,7 +269,7 @@ export default function Preferences() {
 										isBusy={ isSaving }
 										disabled={ ! canSubmit }
 									>
-										{ saveButtonLabel }
+										{ __( 'Save' ) }
 									</Button>
 								</div>
 							</VStack>
