@@ -8,8 +8,8 @@ import {
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
-import { useState } from '@wordpress/element';
 import { useViewportMatch } from '@wordpress/compose';
+import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -20,9 +20,9 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { hasHostingFeature } from '../../utils/site-features';
+import MonitoringPerformanceCard from '../monitoring-performance-card/monitoring-performance-card';
 import illustrationUrl from './monitoring-callout-illustration.svg';
 import './style.scss';
-import MonitoringPerformanceCard from 'calypso/dashboard/sites/monitoring-performance-card/monitoring-performance-card';
 
 export function SiteMonitoringCallout( {
 	siteSlug,
@@ -61,6 +61,13 @@ export function SiteMonitoringCallout( {
 	);
 }
 
+const hoursMap: Record< string, number > = {
+	'6-hours': 6,
+	'24-hours': 24,
+	'3-days': 72,
+	'7-days': 168,
+};
+
 function SiteMonitoringBody( { site, timeRange }: { site: object; timeRange: string } ) {
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 
@@ -70,13 +77,6 @@ function SiteMonitoringBody( { site, timeRange }: { site: object; timeRange: str
 		</VStack>
 	);
 }
-
-const hoursMap: Record< string, number > = {
-	'6-hours': 6,
-	'24-hours': 24,
-	'3-days': 72,
-	'7-days': 168,
-};
 
 const getDateRange = ( range: string ) => {
 	const now = new Date();
@@ -100,15 +100,18 @@ function SiteMonitoring() {
 	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
 
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
+	const [ timeRange, setTimeRange ] = useState( '24-hours' );
 
 	if ( ! site ) {
 		return;
 	}
 
-	const [ timeRange, setTimeRange ] = useState( '24-hours' );
+	const handleTimeRangeChange = ( value: string | number | undefined ) => {
+		if ( ! value ) {
+			return;
+		}
 
-	const handleTimeRangeChange = ( value: string ) => {
-		setTimeRange( value );
+		setTimeRange( value.toString() );
 	};
 
 	return (
@@ -118,6 +121,7 @@ function SiteMonitoring() {
 					<HStack
 						justify="space-between"
 						alignment="stretch"
+						wrap
 						spacing={ isSmallViewport ? 5 : 10 }
 						className={ clsx( 'site-monitoring-header' ) }
 					>
@@ -130,6 +134,8 @@ function SiteMonitoring() {
 								__next40pxDefaultSize
 								onChange={ handleTimeRangeChange }
 								className={ clsx( 'site-monitoring-header-range' ) }
+								label={ __( 'Time period' ) }
+								hideLabelFromVision
 							>
 								<ToggleGroupControlOption value="6-hours" label={ __( '6 hours' ) } />
 								<ToggleGroupControlOption value="24-hours" label={ __( '24 hours' ) } />
