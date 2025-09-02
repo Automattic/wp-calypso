@@ -1016,6 +1016,10 @@ object PlaywrightTestPRMatrix : BuildType({
 			dockerImage = "%docker_image_e2e%"
 		}
 	}
+
+	artifactRules = """
+		test/e2e/output => output
+	""".trimIndent()
 })
 
 object PlaywrightTestPreReleaseMatrix : BuildType({
