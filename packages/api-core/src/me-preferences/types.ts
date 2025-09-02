@@ -10,7 +10,7 @@ export type SitesViewPreferences = Partial< Omit< SitesView, 'type' | 'layout' >
 };
 
 export interface HostingDashboardV2OptInFlags {
-	value: 'opt-in' | 'opt-out';
+	value: 'unset' | 'opt-in' | 'opt-out';
 	updated_at: string; // ISO date string
 }
 
