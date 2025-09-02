@@ -1,8 +1,12 @@
 import { defineConfig, devices, type ReporterDescription } from 'playwright/test';
 
+const outputPath = './output';
 const reporter: ReporterDescription[] = [
-	[ 'junit', { outputFile: 'test-results/results.xml' } ],
-	[ 'html', { outputFolder: 'test-results/html', open: process.env.CI ? 'never' : 'on-failure' } ],
+	[ 'junit', { outputFile: `${ outputPath }/results.xml` } ],
+	[
+		'html',
+		{ outputFolder: `${ outputPath }/html`, open: process.env.CI ? 'never' : 'on-failure' },
+	],
 ];
 
 /**
@@ -21,6 +25,7 @@ export default defineConfig( {
 	/* Reporter to use. See https://playwright.dev/docs/test-reporters */
 	reporter,
 	/* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
+	outputDir: `${ outputPath }/test-results`,
 	use: {
 		/* Base URL to use in actions like `await page.goto('/')`. */
 		// baseURL: 'http://localhost:3000',
