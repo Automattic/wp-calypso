@@ -16,15 +16,6 @@ export interface UserTaxDetails {
 	can_user_edit?: boolean | false;
 }
 
-export interface UserTaxDetailsUpdateError {
-	message: string;
-	error: string;
-}
-export interface UserTaxDetailsFetchError {
-	message: string;
-	error: string;
-}
-
 export type UserTaxField = Field< UserTaxFormData > & {
 	isDisabled?: boolean;
 	isVatAlreadySet?: boolean;

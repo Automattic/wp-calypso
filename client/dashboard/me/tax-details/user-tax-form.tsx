@@ -31,8 +31,6 @@ import type {
 	UserTaxField,
 	UserTaxFormData,
 	UserTaxNormalizedField,
-	UserTaxDetailsUpdateError,
-	UserTaxDetailsFetchError,
 } from '@automattic/api-core';
 import './style.scss';
 
@@ -50,6 +48,14 @@ export interface UserTaxDetailsManager {
 	fetchError: UserTaxDetailsFetchError | null;
 	updateError: UserTaxDetailsUpdateError | null;
 	setUserTaxDetails: ( userTaxDetails: UserTaxDetails ) => Promise< UserTaxDetails >;
+}
+export interface UserTaxDetailsUpdateError {
+	message: string;
+	error?: string;
+}
+export interface UserTaxDetailsFetchError {
+	message: string;
+	error?: string;
 }
 
 const emptyUserTaxDetails = {};
@@ -138,9 +144,7 @@ export default function UserTaxForm() {
 	const countryCodes = getDataFormCountryCodes( countryList );
 
 	const [ localData, setLocalData ] = useState< Partial< UserTaxFormData > >( {} );
-	const query = useSuspenseQuery< UserTaxDetails, UserTaxDetailsFetchError >(
-		userTaxDetailsQuery()
-	);
+	const query = useSuspenseQuery( userTaxDetailsQuery() );
 	const userTaxDetails: UserTaxDetails = query.data ?? emptyUserTaxDetails;
 	const { data: geoData } = useSuspenseQuery( geoLocationQuery() );
 	const formData = useMemo( () => {

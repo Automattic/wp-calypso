@@ -6,7 +6,7 @@ import type { UserTaxFormData } from '@automattic/api-core';
 export const userTaxDetailsQuery = () =>
 	queryOptions( {
 		queryKey: [ 'me', 'billing-purchases', 'tax-details' ],
-		queryFn: fetchUserTaxDetails,
+		queryFn: () => fetchUserTaxDetails(),
 	} );
 
 export const userTaxDetailsMutation = () =>
