@@ -121,7 +121,7 @@ export default function RecoveryEmail() {
 				description:
 					/* translators: %s: email address */
 					__( 'Your primary email address is %s', serverData?.user_email ),
-				type: 'text' as const,
+				type: 'email',
 				Edit: ( { field, data, onChange } ) => {
 					const { id, getValue } = field;
 					return (
