@@ -6,7 +6,8 @@ import {
 } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useState, useEffect, useCallback } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import actions from '../../panel/state/actions';
 import getAllNotes from '../../panel/state/selectors/get-all-notes';
 import getIsLoading from '../../panel/state/selectors/get-is-loading';
 import getIsNoteHidden from '../../panel/state/selectors/get-is-note-hidden';
@@ -19,6 +20,7 @@ import type { View } from '@wordpress/dataviews';
 import './style.scss';
 
 const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFilters > } ) => {
+	const dispatch = useDispatch();
 	const { goTo } = useNavigator();
 	const filter = getFilters()[ filterName ];
 	const isNoteHidden = useSelector(
@@ -48,6 +50,8 @@ const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFil
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( notes, view, fields );
 
 	const onChangeSelection = ( selection: string[] ) => {
+		const noteId = selection[ 0 ];
+		dispatch( actions.ui.selectNote( noteId ) );
 		goTo( `/${ filterName }/notes/${ selection[ 0 ] }` );
 	};
 
