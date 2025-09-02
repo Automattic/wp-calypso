@@ -1,5 +1,5 @@
+import { LogType, FilterType } from '@automattic/api-core';
 import { useState } from '@wordpress/element';
-import { LogType, FilterType } from '../../../data/site-logs';
 import type { View } from '@wordpress/dataviews';
 
 const phpLogsViewConfig = {

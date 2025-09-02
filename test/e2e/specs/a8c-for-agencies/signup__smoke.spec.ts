@@ -1,4 +1,4 @@
-import { test, expect } from '../../lib/pw_base';
+import { test, expect } from '../../lib/pw-base';
 
 const A4A_URL = 'https://agencies.automattic.com';
 

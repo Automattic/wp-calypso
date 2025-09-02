@@ -1,3 +1,4 @@
+import { siteDomainsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -14,11 +15,10 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
-import { siteDomainsQuery } from '../../app/queries/site-domains';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { ShareSiteForm } from './share-site-form';
-import type { Site, SiteSettings } from '../../data/types';
+import type { Site, SiteSettings } from '@automattic/api-core';
 import type { UseMutationResult } from '@tanstack/react-query';
 import type { Field, Form } from '@wordpress/dataviews';
 

@@ -1,4 +1,4 @@
-import { __experimentalVStack as VStack, ExternalLink } from '@wordpress/components';
+import { __experimentalVStack as VStack, CardFooter, ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect, useMemo } from 'react';
@@ -52,7 +52,7 @@ const ReplyBlock = ( { note }: { note: Note } ) => {
 		const replyMessage = createInterpolateElement(
 			note.meta.ids.comment
 				? __( 'You <a>replied</a> to this comment.' )
-				: __( 'You <a>replied<a> to this post.' ),
+				: __( 'You <a>replied</a> to this post.' ),
 			{
 				a: <ExternalLink href={ replyURL } children={ null } />,
 			}
@@ -69,7 +69,7 @@ const ReplyBlock = ( { note }: { note: Note } ) => {
 	return null;
 };
 
-export const ActionBlock = ( { note }: { note: Note } ) => {
+export const ActionBlock = ( { note, goBack }: { note: Note; goBack: () => void } ) => {
 	const blocks: BlockWithSignature[] = zipWithSignature( note.body, note );
 	const actionBlock = blocks.findLast(
 		( block ) => block.block.actions && 'user' !== block.signature.type
@@ -79,7 +79,11 @@ export const ActionBlock = ( { note }: { note: Note } ) => {
 		return null;
 	}
 
-	return <NoteActions note={ note } />;
+	return (
+		<CardFooter size="small">
+			<NoteActions note={ note } goBack={ goBack } />
+		</CardFooter>
+	);
 };
 
 export const NoteBody = ( { note }: { note: Note } ) => {
@@ -103,16 +107,7 @@ export const NoteBody = ( { note }: { note: Note } ) => {
 
 			switch ( block.signature.type ) {
 				case 'user':
-					return (
-						<User
-							key={ key }
-							block={ block.block }
-							noteType={ note.type }
-							note={ note }
-							timestamp={ note.timestamp }
-							url={ note.url }
-						/>
-					);
+					return <User key={ key } block={ block.block } note={ note } />;
 				case 'comment':
 					return <Comment key={ key } block={ block.block } meta={ note.meta } />;
 				case 'post':
@@ -131,9 +126,7 @@ export const NoteBody = ( { note }: { note: Note } ) => {
 	return (
 		<VStack className="wpnc__body">
 			{ preface }
-			<div className="wpnc__body-content" style={ { margin: '0' } }>
-				{ body }
-			</div>
+			<div className="wpnc__body-content">{ body }</div>
 			<ReplyBlock note={ note } />
 		</VStack>
 	);

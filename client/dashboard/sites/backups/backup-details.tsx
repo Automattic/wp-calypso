@@ -15,7 +15,7 @@ import { siteBackupRestoreRoute, siteBackupDownloadRoute } from '../../app/route
 import { useFormattedTime } from '../../components/formatted-time';
 import { SectionHeader } from '../../components/section-header';
 import { gridiconToWordPressIcon } from '../../utils/gridicons';
-import type { ActivityLogEntry, Site } from '../../data/types';
+import type { ActivityLogEntry, Site } from '@automattic/api-core';
 
 export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; site: Site } ) {
 	const router = useRouter();

@@ -6,7 +6,7 @@ import { Callout } from '../../components/callout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import illustrationUrl from './upsell-illustration.svg';
 import type { CalloutProps } from '../../components/callout/types';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 
 export interface UpsellCalloutProps {
 	upsellIcon?: CalloutProps[ 'icon' ];

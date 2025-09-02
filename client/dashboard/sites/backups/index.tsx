@@ -1,24 +1,25 @@
+import { HostingFeatures } from '@automattic/api-core';
+import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet } from '@tanstack/react-router';
 import { __experimentalGrid as Grid, __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
 import { useState } from 'react';
-import { siteBySlugQuery } from '../../app/queries/site';
 import { siteRoute } from '../../app/router/sites';
 import { Callout } from '../../components/callout';
 import { CalloutOverlay } from '../../components/callout-overlay';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
-import { HostingFeatures } from '../../data/constants';
 import { hasHostingFeature } from '../../utils/site-features';
 import { BackupDetails } from './backup-details';
+import { BackupNotices } from './backup-notices';
 import { BackupNowButton } from './backup-now-button';
 import illustrationUrl from './backups-callout-illustration.svg';
 import { BackupsList } from './backups-list';
 import './style.scss';
-import type { ActivityLogEntry } from '../../data/types';
+import type { ActivityLogEntry } from '@automattic/api-core';
 
 export function SiteBackupsCallout( {
 	siteSlug,
@@ -72,6 +73,7 @@ export function BackupsListPage() {
 					actions={ hasBackups && <BackupNowButton site={ site } /> }
 				/>
 			}
+			notices={ <BackupNotices site={ site } /> }
 		>
 			{ hasBackups && (
 				<Grid columns={ 2 }>

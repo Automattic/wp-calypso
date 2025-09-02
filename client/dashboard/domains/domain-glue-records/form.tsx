@@ -12,7 +12,7 @@ import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Text } from '../../components/text';
 import { isValidIpAddress, isValidNameServerSubdomain } from '../../utils/domain';
-import type { DomainGlueRecord } from '../../data/domain-glue-records';
+import type { DomainGlueRecord } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 export interface FormData {

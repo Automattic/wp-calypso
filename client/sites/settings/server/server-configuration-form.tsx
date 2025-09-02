@@ -29,7 +29,7 @@ import { isFetchingAtomicHostingGeoAffinity } from 'calypso/state/selectors/is-f
 import { isFetchingAtomicHostingWpVersion } from 'calypso/state/selectors/is-fetching-atomic-hosting-wp-version';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import type { DataCenterOption } from 'calypso/data/data-center/types';
+import type { DataCenterOption } from '@automattic/api-core';
 
 import './server-configuration-form.scss';
 

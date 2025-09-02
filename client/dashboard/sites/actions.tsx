@@ -5,7 +5,7 @@ import { backup, wordpress } from '@wordpress/icons';
 import { lazy, Suspense } from 'react';
 import { isP2, isSelfHostedJetpackConnected } from '../utils/site-types';
 import { canManageSite } from './features';
-import type { Site } from '../data/types';
+import type { Site } from '@automattic/api-core';
 import type { AnyRouter } from '@tanstack/react-router';
 import type { Action } from '@wordpress/dataviews';
 

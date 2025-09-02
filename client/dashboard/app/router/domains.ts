@@ -1,4 +1,17 @@
 import {
+	domainQuery,
+	domainDnsQuery,
+	domainForwardingQuery,
+	domainGlueRecordsQuery,
+	domainNameServersQuery,
+	sslDetailsQuery,
+	domainsQuery,
+	mailboxesQuery,
+	siteByIdQuery,
+	queryClient,
+	domainTransferRequestQuery,
+} from '@automattic/api-queries';
+import {
 	createRoute,
 	createLazyRoute,
 	notFound,
@@ -6,16 +19,6 @@ import {
 	lazyRouteComponent,
 } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
-import { domainQuery } from '../queries/domain';
-import { domainDnsQuery } from '../queries/domain-dns-records';
-import { domainForwardingQuery } from '../queries/domain-forwarding';
-import { domainGlueRecordsQuery } from '../queries/domain-glue-records';
-import { domainNameServersQuery } from '../queries/domain-name-servers';
-import { sslDetailsQuery } from '../queries/domain-ssl';
-import { domainsQuery } from '../queries/domains';
-import { mailboxesQuery } from '../queries/emails';
-import { siteByIdQuery } from '../queries/site';
-import { queryClient } from '../query-client';
 import { rootRoute } from './root';
 
 // Standalone domains route - requires rootRoute
@@ -283,8 +286,23 @@ export const domainTransferRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'transfer',
 } ).lazy( () =>
-	import( '../../sites/domains/placeholder' ).then( ( d ) =>
+	import( '../../domains/domain-transfer' ).then( ( d ) =>
 		createLazyRoute( 'domain-transfer' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const domainTransferToAnyUserRoute = createRoute( {
+	getParentRoute: () => domainRoute,
+	path: 'transfer/any-user',
+	loader: async ( { params: { domainName } } ) => {
+		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
+		await queryClient.ensureQueryData( domainTransferRequestQuery( domainName, domain.site_slug ) );
+	},
+} ).lazy( () =>
+	import( '../../domains/domain-transfer/transfer-domain-to-any-user' ).then( ( d ) =>
+		createLazyRoute( 'domain-transfer-to-any-user' )( {
 			component: d.default,
 		} )
 	)
@@ -308,6 +326,7 @@ export const createDomainsRoutes = () => {
 			domainGlueRecordsAddRoute,
 			domainGlueRecordsEditRoute,
 			domainTransferRoute,
+			domainTransferToAnyUserRoute,
 			domainSecurityRoute,
 		] ),
 	];

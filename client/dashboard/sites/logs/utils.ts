@@ -1,7 +1,7 @@
 import { dateI18n } from '@wordpress/date';
 import { startOfDay, endOfDay, fromUnixTime, isValid as isValidDate } from 'date-fns';
 import { formatDateWithOffset, parseYmdLocal, formatYmd } from '../../utils/datetime';
-import type { PHPLog } from '../../data/site-logs';
+import type { PHPLog } from '@automattic/api-core';
 
 type DateRange = { start: Date; end: Date };
 

@@ -1,6 +1,5 @@
+import { domainQuery, sslDetailsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { domainQuery } from '../../app/queries/domain';
-import { sslDetailsQuery } from '../../app/queries/domain-ssl';
 import { domainRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
