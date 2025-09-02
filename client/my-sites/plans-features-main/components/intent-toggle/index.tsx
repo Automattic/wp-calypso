@@ -32,6 +32,7 @@ export default function IntentToggle( { currentIntent, onIntentChange }: IntentT
 	return (
 		<div className="plans-grid-next__intent-toggle">
 			<ToggleGroupControl
+				isBlock
 				label={ translate( 'Plan type selector' ) }
 				hideLabelFromVision
 				value={ currentIntent || '' }
