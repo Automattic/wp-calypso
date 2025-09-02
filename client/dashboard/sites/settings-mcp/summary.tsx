@@ -1,12 +1,20 @@
 import { useQuery } from '@tanstack/react-query';
-import { Icon } from '@wordpress/components';
+import { SVG, Path } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { tool } from '@wordpress/icons';
 import { isAutomatticianQuery } from '../../app/queries/me-a8c';
 import { siteSettingsQuery } from '../../app/queries/site-settings';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import type { Site } from '../../data/types';
 import type { Density } from '@automattic/components/src/summary-button/types';
+
+// Custom MCP icon component
+const McpIcon = () => (
+	<SVG width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+		<title>ModelContextProtocol</title>
+		<Path d="M15.688 2.343a2.588 2.588 0 00-3.61 0l-9.626 9.44a.863.863 0 01-1.203 0 .823.823 0 010-1.18l9.626-9.44a4.313 4.313 0 016.016 0 4.116 4.116 0 011.204 3.54 4.3 4.3 0 013.609 1.18l.05.05a4.115 4.115 0 010 5.9l-8.706 8.537a.274.274 0 000 .393l1.788 1.754a.823.823 0 010 1.18.863.863 0 01-1.203 0l-1.788-1.753a1.92 1.92 0 010-2.754l8.706-8.538a2.47 2.47 0 000-3.54l-.05-.049a2.588 2.588 0 00-3.607-.003l-7.172 7.034-.002.002-.098.097a.863.863 0 01-1.204 0 .823.823 0 010-1.18l7.273-7.133a2.47 2.47 0 00-.003-3.537z" />
+		<Path d="M14.485 4.703a.823.823 0 000-1.18.863.863 0 00-1.204 0l-7.119 6.982a4.115 4.115 0 000 5.9 4.314 4.314 0 006.016 0l7.12-6.982a.823.823 0 000-1.18.863.863 0 00-1.204 0l-7.119 6.982a2.588 2.588 0 01-3.61 0 2.47 2.47 0 010-3.54l7.12-6.982z" />
+	</SVG>
+);
 
 export default function McpSettingsSummary( { site, density }: { site: Site; density?: Density } ) {
 	const { data: siteSettings } = useQuery( siteSettingsQuery( site.ID ) );
@@ -31,11 +39,11 @@ export default function McpSettingsSummary( { site, density }: { site: Site; den
 	const isMcpEnabled = enabledAbilities.length > 0;
 
 	if ( ! isMcpEnabled ) {
-		badgeText = __( 'MCP Access Disabled' );
+		badgeText = __( 'Disabled' );
 	} else {
 		badgeText = sprintf(
 			// translators: %d is the number of abilities enabled
-			__( '%d MCP Abilities Enabled' ),
+			__( '%d Abilities Enabled' ),
 			enabledAbilities.length
 		);
 		badgeIntent = 'success';
@@ -44,9 +52,9 @@ export default function McpSettingsSummary( { site, density }: { site: Site; den
 	return (
 		<RouterLinkSummaryButton
 			to={ `/sites/${ site.slug }/settings/mcp` }
-			title={ __( 'Model Context Protocol (MCP)' ) }
+			title={ __( 'MCP' ) + ' (' + __( 'A8C Only' ) + ')' }
 			density={ density }
-			decoration={ <Icon icon={ tool } /> }
+			decoration={ <McpIcon /> }
 			badges={ [
 				{
 					text: badgeText,
