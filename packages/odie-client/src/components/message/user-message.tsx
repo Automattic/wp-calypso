@@ -99,7 +99,6 @@ export const UserMessage = ( {
 		forceEmailSupport,
 		message?.context?.flags?.is_error_message
 	);
-
 	const displayingThirdPartyMessage =
 		isUserEligibleForPaidSupport && ! canConnectToZendesk && isRequestingHumanSupport;
 
