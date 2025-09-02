@@ -17,7 +17,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import { SectionHeader } from '../../components/section-header';
 import EditGravatar from '../edit-gravatar';
-import GravatarLogo from './gravatar-logo';
+import GravatarLogo from '../profile/gravatar-logo';
 import type { UserProfile } from '@automattic/api-core';
 import type { Field, Form } from '@wordpress/dataviews';
 

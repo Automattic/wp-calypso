@@ -5,8 +5,8 @@ import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import './style.scss';
-import GravatarProfileSection from './gravatar-profile-section';
-import { PersonalDetailsSection } from './personal-details-section';
+import GravatarProfileSection from '../profile-gravatar';
+import PersonalDetailsSection from '../profile-personal-details';
 
 export default function Profile() {
 	const { data: serverData } = useQuery( profileQuery() );

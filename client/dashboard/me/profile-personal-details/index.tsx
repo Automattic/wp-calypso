@@ -18,8 +18,6 @@ import { SectionHeader } from '../../components/section-header';
 import type { UserProfile } from '@automattic/api-core';
 import type { Field, Form } from '@wordpress/dataviews';
 
-import './style.scss';
-
 const fields: Field< UserProfile >[] = [
 	{
 		id: 'first_name',
@@ -51,13 +49,12 @@ const fields: Field< UserProfile >[] = [
 	{
 		id: 'user_email',
 		label: __( 'Email address' ),
-		type: 'text',
+		type: 'email',
 	},
 	{
 		id: 'is_dev_account',
 		label: __( 'I am a developer' ),
-		// To do: replace with boolean once implemented.
-		type: 'integer',
+		type: 'boolean',
 		description: __( 'Opt me into previews of new developer-focused features.' ),
 		Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
 			const { id, getValue, description } = field;
@@ -91,7 +88,9 @@ const controlledKeys = fields
 	.filter( ( field ) => field.id !== 'user_login' )
 	.map( ( field ) => field.id );
 
-export function PersonalDetailsSection( { profile: serverProfile }: PersonalDetailsSectionProps ) {
+export default function PersonalDetailsSection( {
+	profile: serverProfile,
+}: PersonalDetailsSectionProps ) {
 	const [ edits, setEdits ] = useState< Partial< UserProfile > >( {} );
 	const data = useMemo( () => ( { ...serverProfile, ...edits } ), [ serverProfile, edits ] );
 	const mutation = useMutation( profileMutation() );
