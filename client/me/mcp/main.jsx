@@ -114,8 +114,13 @@ function McpComponent( { path, userSettings, isUpdating } ) {
 
 		// Group abilities by type first, then by category
 		const groupedByType = abilities.reduce( ( typeGroups, [ abilityId, ability ] ) => {
-			const type = ability.type || 'other';
-			const category = ability.category || 'Other';
+			const type = ability.type || 'tool'; // Default to 'tool' instead of 'other'
+			const category = ability.category || 'General';
+
+			// Only include the three main types
+			if ( ! [ 'tool', 'resource', 'prompt' ].includes( type ) ) {
+				return typeGroups;
+			}
 
 			if ( ! typeGroups[ type ] ) {
 				typeGroups[ type ] = {};
@@ -138,7 +143,13 @@ function McpComponent( { path, userSettings, isUpdating } ) {
 			prompt: translate(
 				'Prompts help AI assistants understand context and provide better responses to your queries.'
 			),
-			other: translate( "Other abilities that don't fit into the main categories." ),
+		};
+
+		// Type display names
+		const typeDisplayNames = {
+			tool: translate( 'Tools' ),
+			resource: translate( 'Resources' ),
+			prompt: translate( 'Prompts' ),
 		};
 
 		// Format ability name for display
@@ -171,13 +182,10 @@ function McpComponent( { path, userSettings, isUpdating } ) {
 											label={ translate( 'Allow MCP access' ) }
 										/>
 									</div>
-									<hr />
 									<VStack spacing={ 8 }>
 										{ Object.entries( groupedByType ).map( ( [ type, typeCategories ] ) => (
 											<div key={ type } className="mcp__type-section">
-												<h2 className="mcp__type-title">
-													{ type.charAt( 0 ).toUpperCase() + type.slice( 1 ) }s
-												</h2>
+												<h2 className="mcp__type-title">{ typeDisplayNames[ type ] }</h2>
 												<p className="mcp__type-description">{ typeDescriptions[ type ] }</p>
 												<VStack spacing={ 6 }>
 													{ Object.entries( typeCategories ).map(
@@ -232,9 +240,9 @@ function McpComponent( { path, userSettings, isUpdating } ) {
 
 	return (
 		<Main wideLayout className="mcp">
-			<PageViewTracker path={ path } title="MCP Client Access" />
-			<DocumentHead title={ translate( 'MCP Client Access' ) } />
-			<NavigationHeader navigationItems={ [] } title={ translate( 'MCP Client Access' ) } />
+			<PageViewTracker path={ path } title="MCP Account Settings" />
+			<DocumentHead title={ translate( 'Model Context Protocol (MCP) Account Settings' ) } />
+			<NavigationHeader navigationItems={ [] } title={ translate( 'MCP Account Settings' ) } />
 			{ renderContent() }
 		</Main>
 	);
