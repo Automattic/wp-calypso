@@ -20,7 +20,6 @@ import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { areAllWpcomNameServers } from '../name-servers/utils';
 import { useDnsActions } from './actions';
 import DnsActionsMenu from './dns-actions-menu';
 import DnsImportDialog from './dns-import-dialog';
@@ -66,7 +65,9 @@ export default function DomainDns() {
 	const restoreDefaultEmailRecordsMutation = useMutation( domainDnsEmailMutation( domainName ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
-	const { data: nameservers } = useSuspenseQuery( domainNameServersQuery( domainName ) );
+	const {
+		data: { nameServers, isUsingDefaultNameServers },
+	} = useSuspenseQuery( domainNameServersQuery( domainName ) );
 	const { data: dnsData, isLoading } = useQuery( domainDnsQuery( domainName ) );
 	const [ isRestoreDefaultARecordsDialogOpen, setIsRestoreDefaultARecordsDialogOpen ] =
 		useState( false );
@@ -193,7 +194,7 @@ export default function DomainDns() {
 	};
 
 	const renderDefaultARecordsNotice = () => {
-		if ( ! areAllWpcomNameServers( nameservers ) || hasDefaultARecordsValue ) {
+		if ( ! isUsingDefaultNameServers || hasDefaultARecordsValue ) {
 			return null;
 		}
 
@@ -226,7 +227,7 @@ export default function DomainDns() {
 	};
 
 	const renderDefaultCnameRecordNotice = () => {
-		if ( ! areAllWpcomNameServers( nameservers ) || hasDefaultCnameRecordValue ) {
+		if ( ! isUsingDefaultNameServers || hasDefaultCnameRecordValue ) {
 			return null;
 		}
 
@@ -263,7 +264,7 @@ export default function DomainDns() {
 	};
 
 	const renderExternalNameserversNotice = () => {
-		if ( areAllWpcomNameServers( nameservers ) || ! nameservers || ! nameservers.length ) {
+		if ( isUsingDefaultNameServers || ! nameServers || ! nameServers.length ) {
 			return null;
 		}
 
