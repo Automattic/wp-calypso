@@ -57,52 +57,18 @@ const CurrentEnvironment = ( { site }: { site: Site } ) => {
 	return <Environment env="production" />;
 };
 
-const StagingSiteActionButton = ( {
-	isDeletingStagingSite,
-	isCreatingStagingSite,
-}: {
-	isDeletingStagingSite: boolean;
-	isCreatingStagingSite: boolean;
-} ) => {
-	if ( isCreatingStagingSite ) {
-		return (
-			<>
-				<Spinner style={ { width: '24px', height: '24px', padding: '4px', margin: 0 } } />
-				<span>{ __( 'Creating staging site…' ) }</span>
-			</>
-		);
-	}
-
-	if ( isDeletingStagingSite ) {
-		return (
-			<>
-				<Spinner style={ { width: '24px', height: '24px', padding: '4px', margin: 0 } } />
-				<span>{ __( 'Deleting staging site…' ) }</span>
-			</>
-		);
-	}
-	return (
-		<>
-			<Icon icon={ plus } />
-			<span>{ __( 'Add staging site' ) }</span>
-		</>
-	);
-};
-
 const EnvironmentSwitcherDropdown = ( {
 	currentSite,
 	otherEnvironment,
 	otherEnvironmentSite,
 	stagingSiteExists,
 	onClose,
-	isDeletingStagingSite,
 }: {
 	currentSite: Site;
 	otherEnvironment: EnvironmentType;
 	otherEnvironmentSite?: Site;
 	stagingSiteExists: boolean;
 	onClose: () => void;
-	isDeletingStagingSite: boolean;
 } ) => {
 	const productionSite = otherEnvironment === 'staging' ? currentSite : otherEnvironmentSite;
 	let stagingSite;
@@ -154,10 +120,17 @@ const EnvironmentSwitcherDropdown = ( {
 						onClick={ canCreateStagingSite( productionSite ) ? handleCreate : handleUpsell }
 					>
 						<HStack justify="flex-start">
-							<StagingSiteActionButton
-								isDeletingStagingSite={ isDeletingStagingSite }
-								isCreatingStagingSite={ mutation.isPending }
-							/>
+							{ mutation.isPending ? (
+								<>
+									<Spinner style={ { width: '24px', height: '24px', padding: '4px', margin: 0 } } />
+									<span>{ __( 'Creating staging site…' ) }</span>
+								</>
+							) : (
+								<>
+									<Icon icon={ plus } />
+									<span>{ __( 'Add staging site' ) }</span>
+								</>
+							) }
 						</HStack>
 					</MenuItem>
 				) }
@@ -249,7 +222,6 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 						otherEnvironmentSite={ site.is_wpcom_staging_site ? productionSite : stagingSite }
 						stagingSiteExists={ stagingSiteExists }
 						onClose={ onClose }
-						isStagingSiteDeleting={ isStagingSiteDeleting }
 					/>
 				) }
 			/>
