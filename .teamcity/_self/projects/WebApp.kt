@@ -933,6 +933,22 @@ object PlaywrightTestPRMatrix : BuildType({
 				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
 			}
 		}
+		commitStatusPublisher {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			publisher = github {
+				githubUrl = "https://api.github.com"
+				authType = personalToken {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+			}
+		}
+		perfmon {
+		}
+		xmlReport {
+          reportType = XmlReport.XmlReportType.JUNIT
+          rules = "+:test/e2e/output/results.xml"
+		  verbose = true
+         }
 	}
 
 	triggers {
@@ -954,15 +970,48 @@ object PlaywrightTestPRMatrix : BuildType({
 		}
 	}
 
+	params {
+		param("env.NODE_CONFIG_ENV", "test")
+		param("env.PLAYWRIGHT_BROWSERS_PATH", "0")
+		param("env.LOCALE", "en")
+		param("env.AUTHENTICATE_ACCOUNTS", "simpleSitePersonalPlanUser,gutenbergSimpleSiteUser,defaultUser")
+		param("env.LIVEBRANCHES", "true")
+		param("env.CI", "true")
+	}
+
 	steps {
+		mergeTrunk( skipIfConflict = true )
+		
 		bashNodeScript {
-			name = "Test step"
+			name = "Prepare environment"
 			scriptContent = """
+				# Install deps
+				yarn workspaces focus wp-e2e-tests @automattic/calypso-e2e
+
+				# Decrypt secrets
+				E2E_SECRETS_KEY="%E2E_SECRETS_ENCRYPTION_KEY_CURRENT%" yarn workspace @automattic/calypso-e2e decrypt-secrets
+
+				# Build packages
+				yarn workspace @automattic/calypso-e2e build
+			""".trimIndent()
+			dockerImage = "%docker_image_e2e%"
+		}
+
+		bashNodeScript {
+			name = "Run e2e tests"
+			scriptContent = """
+				echo "Getting Calypso url for build ${BuildDockerImage.depParamRefs.buildNumber}"
+				chmod +x ./bin/get-calypso-live-url.sh
+				CALYPSO_LIVE_URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
+				if [[ ${'$'}? -ne 0 ]]; then
+					// Command failed. CALYPSO_LIVE_URL contains stderr
+					echo ${'$'}CALYPSO_LIVE_URL
+					exit 1
+				fi
+
+				cd test/e2e
 				echo "Running Playwright tests for project: %playwrightProject%"
-				pwd
-				ls -la
-				# cd test/e2e
-				# yarn playwright:%playwrightProject% --list
+				yarn test:pw:%playwrightProject% --grep=@calypso-pr
 			"""
 			dockerImage = "%docker_image_e2e%"
 		}

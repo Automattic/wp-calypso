@@ -1,11 +1,11 @@
-import { test, expect } from '../../lib/pw-base';
+import { test, expect, tags } from '../../lib/pw-base';
 
 const A4A_URL = 'https://agencies.automattic.com';
 
 /**
  * Verify the A4A > Signup page loads
  */
-test.describe( 'Automattic For Agencies: Sign Up Page', () => {
+test.describe( 'Automattic For Agencies: Sign Up Page', { tag: [ tags.CALYPSO_PR ] }, () => {
 	test( 'As an unauthenticated web agency owner, I can enter my agency details and see these displayed', async ( {
 		page,
 	} ) => {
