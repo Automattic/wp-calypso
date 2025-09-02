@@ -66,7 +66,7 @@ function SiteMonitoringBody( { site, timeRange }: { site: object; timeRange: str
 
 	return (
 		<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
-			Main Content ({ timeRange }).
+			<div>Main Content ({ timeRange }).</div>
 		</VStack>
 	);
 }
