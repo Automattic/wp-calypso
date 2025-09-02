@@ -1,3 +1,4 @@
+import { provisionSslCertificateMutation } from '@automattic/api-queries';
 import { Badge } from '@automattic/ui';
 import { CONTACT } from '@automattic/urls';
 import { useMutation } from '@tanstack/react-query';
@@ -15,7 +16,6 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { ReactElement } from 'react';
-import { provisionSslCertificateMutation } from '../../app/queries/domain-ssl';
 import { domainSecurityRoute } from '../../app/router/domains';
 import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';

@@ -1,3 +1,4 @@
+import { siteDomainsQuery, siteCurrentPlanQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Button, Card, CardHeader, CardBody } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
@@ -5,8 +6,6 @@ import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useState, useMemo } from 'react';
 import { useAuth } from '../../app/auth';
-import { siteDomainsQuery } from '../../app/queries/site-domains';
-import { siteCurrentPlanQuery } from '../../app/queries/site-plans';
 import { CalloutSkeleton } from '../../components/callout-skeleton';
 import { SectionHeader } from '../../components/section-header';
 import { useActions, useFields, DEFAULT_VIEW, DEFAULT_LAYOUTS } from '../../domains/dataviews';

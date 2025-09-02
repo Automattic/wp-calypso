@@ -1,4 +1,4 @@
-import { test } from '../../lib/pw_base';
+import { test } from '../../lib/pw-base';
 
 test.describe( 'Appearance: Theme Details Preview', () => {
 	test( 'As a gutenberg simple site user, I can preview a different theme on my site', async ( {

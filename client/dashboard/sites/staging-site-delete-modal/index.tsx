@@ -1,3 +1,4 @@
+import { siteByIdQuery, stagingSiteDeleteMutation } from '@automattic/api-queries';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
@@ -11,8 +12,6 @@ import {
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { siteByIdQuery } from '../../app/queries/site';
-import { stagingSiteDeleteMutation } from '../../app/queries/site-staging-sites';
 import type { Site } from '@automattic/api-core';
 
 export default function StagingSiteDeleteModal( {

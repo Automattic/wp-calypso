@@ -1,13 +1,11 @@
 import { DomainGlueRecord } from '@automattic/api-core';
+import { domainGlueRecordsQuery, domainGlueRecordUpdateMutation } from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import {
-	domainGlueRecordsQuery,
-	domainGlueRecordUpdateMutation,
-} from '../../app/queries/domain-glue-records';
+import { useAnalytics } from '../../app/analytics';
 import { domainRoute, domainGlueRecordsRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -19,6 +17,7 @@ export default function EditDomainGlueRecords() {
 	const { data: glueRecordsData } = useSuspenseQuery( domainGlueRecordsQuery( domainName ) );
 	const updateMutation = useMutation( domainGlueRecordUpdateMutation( domainName ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { recordTracksEvent } = useAnalytics();
 	const glueRecord = glueRecordsData.find(
 		( glueRecord: DomainGlueRecord ) => glueRecord.nameserver === nameServer
 	);
@@ -29,13 +28,27 @@ export default function EditDomainGlueRecords() {
 				createSuccessNotice( __( 'Glue record updated successfully.' ), {
 					type: 'snackbar',
 				} );
+
+				recordTracksEvent( 'calypso_dashboard_domain_glue_records_update_record', {
+					domain: domainName,
+					nameserver: updatedGlueRecord.nameserver,
+					address: updatedGlueRecord.ip_addresses[ 0 ],
+				} );
+
 				navigate( {
 					to: domainGlueRecordsRoute.fullPath,
 					params: { domainName },
 				} );
 			},
-			onError: () => {
+			onError: ( error ) => {
 				createErrorNotice( __( 'Failed to update glue record.' ), { type: 'snackbar' } );
+
+				recordTracksEvent( 'calypso_dashboard_domain_glue_records_update_record_failure', {
+					domain: domainName,
+					nameserver: updatedGlueRecord.nameserver,
+					address: updatedGlueRecord.ip_addresses[ 0 ],
+					error_message: error.message,
+				} );
 			},
 		} );
 	};

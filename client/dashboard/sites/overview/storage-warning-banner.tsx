@@ -1,8 +1,11 @@
+import {
+	userPreferenceQuery,
+	userPreferenceMutation,
+	siteMediaStorageQuery,
+} from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { sprintf, __ } from '@wordpress/i18n';
 import filesize from 'filesize';
-import { userPreferenceQuery, userPreferenceMutation } from '../../app/queries/me-preferences';
-import { siteMediaStorageQuery } from '../../app/queries/site-media-storage';
 import Notice from '../../components/notice';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { getStorageAlertLevel } from '../../utils/site-storage';

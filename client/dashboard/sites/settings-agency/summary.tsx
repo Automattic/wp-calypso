@@ -1,9 +1,8 @@
+import { siteAgencyBlogQuery, siteSettingsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { home } from '@wordpress/icons';
-import { siteAgencyBlogQuery } from '../../app/queries/site-agency';
-import { siteSettingsQuery } from '../../app/queries/site-settings';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import type { Site } from '@automattic/api-core';
 import type { Density } from '@automattic/components/src/summary-button/types';

@@ -1,4 +1,5 @@
 import { JetpackModules } from '@automattic/api-core';
+import { siteJetpackSettingsQuery, siteJetpackSettingsMutation } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Card,
@@ -13,10 +14,6 @@ import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import {
-	siteJetpackSettingsQuery,
-	siteJetpackSettingsMutation,
-} from '../../app/queries/site-jetpack-settings';
 import { SectionHeader } from '../../components/section-header';
 import { hasJetpackModule } from '../../utils/site-features';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';

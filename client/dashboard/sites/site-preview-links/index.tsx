@@ -1,4 +1,9 @@
 import { DotcomFeatures } from '@automattic/api-core';
+import {
+	sitePreviewLinksQuery,
+	sitePreviewLinkCreateMutation,
+	sitePreviewLinkDeleteMutation,
+} from '@automattic/api-queries';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import {
 	Card,
@@ -10,11 +15,6 @@ import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import {
-	sitePreviewLinksQuery,
-	sitePreviewLinkCreateMutation,
-	sitePreviewLinkDeleteMutation,
-} from '../../app/queries/site-preview-links';
 import { SectionHeader } from '../../components/section-header';
 import SitePreviewLink from '../../components/site-preview-link';
 import { hasPlanFeature } from '../../utils/site-features';

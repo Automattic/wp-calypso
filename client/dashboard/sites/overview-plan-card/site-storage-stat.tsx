@@ -1,8 +1,8 @@
+import { siteMediaStorageQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { ExternalLink, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import filesize from 'filesize';
-import { siteMediaStorageQuery } from '../../app/queries/site-media-storage';
 import { Stat } from '../../components/stat';
 import { getStorageAlertLevel } from '../../utils/site-storage';
 import type { Site } from '@automattic/api-core';

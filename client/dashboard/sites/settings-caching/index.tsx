@@ -1,4 +1,13 @@
 import { HostingFeatures } from '@automattic/api-core';
+import {
+	siteEdgeCacheStatusQuery,
+	siteEdgeCacheStatusMutation,
+	siteEdgeCacheClearMutation,
+	siteEdgeCacheLastClearedTimestampQuery,
+	siteObjectCacheClearMutation,
+	siteObjectCacheLastClearedTimestampQuery,
+	siteBySlugQuery,
+} from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import {
@@ -16,15 +25,6 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useState } from 'react';
-import { siteBySlugQuery } from '../../app/queries/site';
-import {
-	siteEdgeCacheStatusQuery,
-	siteEdgeCacheStatusMutation,
-	siteEdgeCacheClearMutation,
-	siteEdgeCacheLastClearedTimestampQuery,
-	siteObjectCacheClearMutation,
-	siteObjectCacheLastClearedTimestampQuery,
-} from '../../app/queries/site-cache';
 import { ActionList } from '../../components/action-list';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';

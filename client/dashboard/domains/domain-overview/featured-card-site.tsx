@@ -1,7 +1,7 @@
 import { Domain } from '@automattic/api-core';
+import { siteByIdQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
-import { siteByIdQuery } from '../../app/queries/site';
 import OverviewCard from '../../sites/overview-card';
 import SiteIcon from '../../sites/site-icon';
 

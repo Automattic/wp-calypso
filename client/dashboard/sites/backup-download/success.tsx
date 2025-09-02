@@ -7,6 +7,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, download, check } from '@wordpress/icons';
+import { useAnalytics } from '../../app/analytics';
 import { siteBackupsRoute } from '../../app/router/sites';
 import Notice from '../../components/notice';
 import type { Site } from '@automattic/api-core';
@@ -22,13 +23,16 @@ function SiteBackupDownloadSuccess( {
 	downloadUrl: string;
 	fileSizeBytes?: string;
 } ) {
+	const { recordTracksEvent } = useAnalytics();
 	const router = useRouter();
 
 	const handleAllBackupsClick = () => {
+		recordTracksEvent( 'calypso_dashboard_backups_download_all_backups' );
 		router.navigate( { to: siteBackupsRoute.fullPath, params: { siteSlug: site.slug } } );
 	};
 
 	const handleDownloadClick = () => {
+		recordTracksEvent( 'calypso_dashboard_backups_download_download_file' );
 		window.open( downloadUrl, '_blank' );
 	};
 

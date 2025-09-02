@@ -1,6 +1,5 @@
+import { siteBySlugQuery, sitesQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { siteBySlugQuery } from '../queries/site';
-import { sitesQuery } from '../queries/sites';
 import type { User, Site } from '@automattic/api-core';
 import type { QueryClient } from '@tanstack/react-query';
 import type { AnyRouter } from '@tanstack/react-router';

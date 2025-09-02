@@ -1,10 +1,9 @@
+import { siteDomainsQuery, siteBySlugQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useAuth } from '../../app/auth';
-import { siteBySlugQuery } from '../../app/queries/site';
-import { siteDomainsQuery } from '../../app/queries/site-domains';
 import { siteDomainsPurchaseRoute, siteRoute } from '../../app/router/sites';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';

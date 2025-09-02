@@ -14,6 +14,7 @@
 	"dependencies": {
 		"@automattic/accessible-focus": "workspace:^",
 		"@automattic/api-core": "workspace:^",
+		"@automattic/api-queries": "workspace:^",
 		"@automattic/block-renderer": "workspace:^",
 		"@automattic/browser-data-collector": "workspace:^",
 		"@automattic/calypso-analytics": "workspace:^",
@@ -28,6 +29,7 @@
 		"@automattic/calypso-router": "workspace:^",
 		"@automattic/calypso-sentry": "workspace:^",
 		"@automattic/calypso-stripe": "workspace:^",
+		"@automattic/calypso-support-session": "workspace:^",
 		"@automattic/calypso-url": "workspace:^",
 		"@automattic/color-studio": "^4.1.0",
 		"@automattic/command-palette": "workspace:^",

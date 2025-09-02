@@ -1,5 +1,5 @@
+import { isSupportSession } from '@automattic/calypso-support-session';
 import { __ } from '@wordpress/i18n';
-import { isSupportSession } from '../../app/auth/support-session';
 import { useAppContext } from '../../app/context';
 import ResponsiveMenu from '../../components/responsive-menu';
 import { hasSiteTrialEnded } from '../../utils/site-trial';

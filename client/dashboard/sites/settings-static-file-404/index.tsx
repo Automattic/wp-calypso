@@ -1,4 +1,9 @@
 import { HostingFeatures } from '@automattic/api-core';
+import {
+	siteBySlugQuery,
+	siteStaticFile404SettingQuery,
+	siteStaticFile404SettingMutation,
+} from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -12,11 +17,6 @@ import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteBySlugQuery } from '../../app/queries/site';
-import {
-	siteStaticFile404SettingQuery,
-	siteStaticFile404SettingMutation,
-} from '../../app/queries/site-static-file-404';
 import PageLayout from '../../components/page-layout';
 import { hasHostingFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
