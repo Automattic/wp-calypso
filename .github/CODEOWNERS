@@ -13,14 +13,14 @@
 /client/my-sites/comment* @Automattic/serenity
 
 # Email services
-/client/components/gsuite @Automattic/yolo
-/client/components/marketing-survey/gsuite-cancel-purchase-dialog @Automattic/yolo
-/client/lib/domains/email-forwarding @Automattic/yolo
-/client/lib/gsuite @Automattic/yolo
-/client/lib/titan @Automattic/yolo
-/client/my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice.jsx  @Automattic/yolo
-/client/my-sites/domains/email-providers-upsell/index.tsx @Automattic/yolo
-/client/my-sites/email @Automattic/yolo
+/client/components/gsuite @Automattic/jetpack-avalon
+/client/components/marketing-survey/gsuite-cancel-purchase-dialog @Automattic/jetpack-avalon
+/client/lib/domains/email-forwarding @Automattic/jetpack-avalon
+/client/lib/gsuite @Automattic/jetpack-avalon
+/client/lib/titan @Automattic/jetpack-avalon
+/client/my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice.jsx @Automattic/jetpack-avalon
+/client/my-sites/domains/email-providers-upsell/index.tsx @Automattic/jetpack-avalon
+/client/my-sites/email @Automattic/jetpack-avalon
 
 # Staging sites - new dashboard
 /packages/api-queries/src/site-staging-sync.ts @Automattic/yolo
