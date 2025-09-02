@@ -4,7 +4,7 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	Button,
-	Dropdown,
+	DropdownMenu,
 	MenuGroup,
 	MenuItem,
 } from '@wordpress/components';
@@ -66,32 +66,29 @@ function UserProfile() {
 	const openCommandPalette = useOpenCommandPalette();
 
 	return (
-		<Dropdown
+		<DropdownMenu
 			popoverProps={ {
 				placement: 'bottom-end',
 				offset: 8,
 			} }
-			renderToggle={ ( { isOpen, onToggle } ) => (
-				<Button
-					className="dashboard-secondary-menu__item"
-					onClick={ onToggle }
-					aria-expanded={ isOpen }
-					variant="tertiary"
-					label={ __( 'My profile' ) }
-					icon={
-						user.avatar_URL ? (
-							<img
-								className="dashboard-secondary-menu__avatar"
-								src={ user.avatar_URL }
-								alt={ __( 'User avatar' ) }
-							/>
-						) : (
-							commentAuthorAvatar
-						)
-					}
-				/>
-			) }
-			renderContent={ ( { onClose } ) => (
+			label={ __( 'My profile' ) }
+			icon={
+				user.avatar_URL ? (
+					<img
+						className="dashboard-secondary-menu__avatar"
+						src={ user.avatar_URL }
+						alt={ __( 'User avatar' ) }
+					/>
+				) : (
+					commentAuthorAvatar
+				)
+			}
+			toggleProps={ {
+				className: 'dashboard-secondary-menu__item',
+				variant: 'tertiary',
+			} }
+		>
+			{ ( { onClose } ) => (
 				<VStack spacing={ 0 }>
 					<VStack style={ { padding: '16px', borderBottom: '1px solid #ccc' } } spacing={ 1 }>
 						<Text>{ user.display_name }</Text>
@@ -123,7 +120,7 @@ function UserProfile() {
 					</MenuGroup>
 				</VStack>
 			) }
-		/>
+		</DropdownMenu>
 	);
 }
 
