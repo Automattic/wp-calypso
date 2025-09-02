@@ -6,6 +6,7 @@ import { PureComponent } from 'react';
 import ReactDom from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import DotPager from '../dot-pager';
+import Gallery from './gallery';
 
 const noop = () => {};
 const debug = debugFactory( 'calypso:components:embed-container' );
@@ -21,6 +22,7 @@ const embedsToLookFor = {
 	'.embed-tiktok': embedTikTok,
 	'.wp-block-jetpack-slideshow, .wp-block-newspack-blocks-carousel': embedCarousel,
 	'.wp-block-jetpack-tiled-gallery': embedTiledGallery,
+	'.wp-block-gallery': embedGallery,
 	'.wp-embedded-content': embedWordPressPost,
 	'a[data-pin-do="embedPin"]': embedPinterest,
 	'div.embed-issuu': embedIssuu,
@@ -28,6 +30,65 @@ const embedsToLookFor = {
 };
 
 const cacheBustQuery = `?v=${ Math.floor( new Date().getTime() / ( 1000 * 60 * 60 * 24 * 10 ) ) }`; // A new query every 10 days
+
+// Singleton modal for all image carousels on the page
+let globalModalContainer = null;
+let globalModalRoot = null;
+
+/**
+ * Gets or creates the global modal container and root
+ * @returns {Object} Object with modalContainer and modalRoot
+ */
+function getGlobalModal() {
+	if ( ! globalModalContainer ) {
+		globalModalContainer = document.createElement( 'div' );
+		globalModalContainer.id = 'reader-image-modal';
+		document.body.appendChild( globalModalContainer );
+		globalModalRoot = createRoot( globalModalContainer );
+	}
+	return { modalContainer: globalModalContainer, modalRoot: globalModalRoot };
+}
+
+/**
+ * Adds carousel modal functionality to images
+ * @param {NodeList} imageBlocks - Collection of image blocks or containers
+ */
+function addImageCarousel( imageBlocks ) {
+	const images = Array.from( imageBlocks ).map( ( item ) => {
+		const img = item.querySelector( 'img' );
+		return {
+			src: img.src,
+			alt: img.alt || '',
+			srcSet: img.srcSet || '',
+		};
+	} );
+
+	const { modalRoot } = getGlobalModal();
+
+	// Function to open modal at specific index
+	const openModal = ( initialIndex = 0 ) => {
+		modalRoot.render(
+			<Gallery
+				images={ images }
+				initialIndex={ initialIndex }
+				onClose={ () => {
+					modalRoot.render( null );
+				} }
+			/>
+		);
+	};
+
+	// Add click handlers to images
+	Array.from( imageBlocks ).forEach( ( item, index ) => {
+		const img = item.querySelector( 'img' );
+		if ( img ) {
+			img.style.cursor = 'pointer';
+			img.addEventListener( 'click', () => {
+				openModal( index );
+			} );
+		}
+	} );
+}
 
 const SLIDESHOW_URLS = {
 	CSS: `https://s0.wp.com/wp-content/mu-plugins/jetpack-plugin/production/modules/shortcodes/css/slideshow-shortcode.css${ cacheBustQuery }`,
@@ -110,10 +171,12 @@ function embedTwitter( domNode ) {
 
 	loadAndRun( 'https://platform.twitter.com/widgets.js', embedTwitter.bind( null, domNode ) );
 }
+
 function embedLink( domNode ) {
 	debug( 'processing link for', domNode );
 	domNode.setAttribute( 'target', '_blank' );
 }
+
 function embedFacebook( domNode ) {
 	debug( 'processing facebook for', domNode );
 	if ( typeof fb !== 'undefined' ) {
@@ -122,6 +185,7 @@ function embedFacebook( domNode ) {
 
 	loadAndRun( 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.2', noop );
 }
+
 function embedIssuu( domNode ) {
 	debug( 'processing Issuu for', domNode );
 
@@ -278,7 +342,7 @@ function embedTiledGallery( domNode ) {
 		// Replace the gallery with updated markup
 		createRoot( domNode ).render(
 			<div className="gallery-container">
-				{ imageItems.map( ( item ) => {
+				{ imageItems.map( ( item, index ) => {
 					const itemImage = item.querySelector( 'img' );
 					const itemLink = item.querySelector( 'a' );
 
@@ -293,7 +357,7 @@ function embedTiledGallery( domNode ) {
 					);
 
 					return (
-						<figure className="gallery-item">
+						<figure key={ index } className="gallery-item">
 							<div className="gallery-item-wrapper">
 								{ itemLink?.href ? <a href={ itemLink.href }>{ imageElement }</a> : imageElement }
 							</div>
@@ -302,6 +366,22 @@ function embedTiledGallery( domNode ) {
 				} ) }
 			</div>
 		);
+
+		// Add carousel functionality after React rendering
+		setTimeout( () => {
+			const newGalleryItems = domNode.querySelectorAll( '.gallery-item' );
+			addImageCarousel( newGalleryItems );
+		}, 0 );
+	}
+}
+
+function embedGallery( domNode ) {
+	debug( 'processing gallery for', domNode );
+	const imageBlocks = domNode.querySelectorAll( '.wp-block-image' );
+
+	if ( imageBlocks && imageBlocks.length > 0 ) {
+		// Add carousel functionality to images
+		addImageCarousel( imageBlocks );
 	}
 }
 
