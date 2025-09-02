@@ -1,4 +1,9 @@
-import { siteByIdQuery, stagingSiteCreateMutation } from '@automattic/api-queries';
+import {
+	siteByIdQuery,
+	stagingSiteCreateMutation,
+	isDeletingStagingSiteQuery,
+	hasStagingSiteQuery,
+} from '@automattic/api-queries';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
