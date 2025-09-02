@@ -944,6 +944,11 @@ object PlaywrightTestPRMatrix : BuildType({
 		}
 		perfmon {
 		}
+		xmlReport {
+          reportType = XmlReport.XmlReportType.JUNIT
+          rules = "+:test/e2e/output/results.xml"
+		  verbose = true
+         }
 	}
 
 	triggers {
