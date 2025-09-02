@@ -169,9 +169,16 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 	// Clean up deletion flag when staging site no longer exists
 	useEffect( () => {
 		if ( isStagingSiteDeleting && stagingSiteExistsFromQuery === false && stagingSiteId ) {
-			queryClient.setQueryData( isDeletingStagingSiteQuery( stagingSiteId ).queryKey, false );
+			queryClient.removeQueries( isDeletingStagingSiteQuery( stagingSiteId ) );
+			queryClient.removeQueries( hasStagingSiteQuery( productionSiteId ) );
 		}
-	}, [ isStagingSiteDeleting, stagingSiteExistsFromQuery, stagingSiteId, queryClient ] );
+	}, [
+		isStagingSiteDeleting,
+		stagingSiteExistsFromQuery,
+		stagingSiteId,
+		productionSiteId,
+		queryClient,
+	] );
 
 	const stagingSiteExists =
 		stagingSiteExistsFromQuery !== undefined ? stagingSiteExistsFromQuery : hasStagingSite( site );
