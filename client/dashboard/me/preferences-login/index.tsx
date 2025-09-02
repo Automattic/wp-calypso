@@ -99,6 +99,7 @@ export default function PreferencesLogin() {
 				return (
 					<VStack>
 						<CustomSelectControl
+							__next40pxDefaultSize
 							label={ hideLabelFromVision ? '' : field.label }
 							options={ customSelectOptions }
 							value={ customSelectOptions.find( ( option ) => option.key === value ) }
