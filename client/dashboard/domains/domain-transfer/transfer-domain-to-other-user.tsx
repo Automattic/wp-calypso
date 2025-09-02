@@ -17,7 +17,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useAuth } from '../../app/auth';
 import { domainRoute, domainsRoute } from '../../app/router/domains';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -70,10 +70,14 @@ export default function TransferDomainToOtherUser() {
 	const router = useRouter();
 	const [ isDialogOpen, setIsDialogOpen ] = useState( false );
 
-	const availableUsers = users.filter( ( user: SiteUser ) => {
-		return user.id !== currentUser.ID;
-	} );
-	const fields = createFields( availableUsers );
+	const availableUsers = useMemo( () => {
+		return users.filter( ( user: SiteUser ) => {
+			return user.id !== currentUser.ID;
+		} );
+	}, [ users, currentUser.ID ] );
+	const fields = useMemo( () => {
+		return createFields( availableUsers );
+	}, [ availableUsers ] );
 
 	const isMapping = domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION;
 
@@ -83,7 +87,9 @@ export default function TransferDomainToOtherUser() {
 	};
 
 	const onConfirm = () => {
-		const selectedUser = availableUsers.find( ( user ) => user.id.toString() === formData.user );
+		const selectedUser = availableUsers.find(
+			( user ) => ( user.id as unknown as string ) === formData.user
+		);
 		domainTransferToOtherUser( formData.user, {
 			onSuccess: () => {
 				createSuccessNotice(
