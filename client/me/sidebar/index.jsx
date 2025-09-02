@@ -1,3 +1,4 @@
+import { isAutomatticianQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -18,7 +19,6 @@ import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { withCurrentRoute } from 'calypso/components/route';
-import { isAutomatticianQuery } from 'calypso/dashboard/app/queries/me-a8c';
 import GlobalSidebar, { GLOBAL_SIDEBAR_EVENTS } from 'calypso/layout/global-sidebar';
 import Sidebar from 'calypso/layout/sidebar';
 import CollapseSidebar from 'calypso/layout/sidebar/collapse-sidebar';

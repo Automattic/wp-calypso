@@ -1,3 +1,4 @@
+import { isAutomatticianQuery } from '@automattic/api-queries';
 import { Card } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
 import { ToggleControl, __experimentalVStack as VStack } from '@wordpress/components';
@@ -9,7 +10,6 @@ import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
-import { isAutomatticianQuery } from 'calypso/dashboard/app/queries/me-a8c';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import { saveUserSettings } from 'calypso/state/user-settings/actions';
