@@ -8,5 +8,5 @@
 		"resolveJsonModule": true
 	},
 	"include": [ "src", "src/**/*.json" ],
-	"references": [ { "path": "../components" }, { "path": "../data" } ]
+	"references": [ { "path": "../components" }, { "path": "../api-core" } ]
 }

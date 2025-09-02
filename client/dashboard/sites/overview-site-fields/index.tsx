@@ -1,3 +1,5 @@
+import { HostingFeatures } from '@automattic/api-core';
+import { siteAgencyBlogQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import {
@@ -6,15 +8,13 @@ import {
 	ExternalLink,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { siteAgencyBlogQuery } from '../../app/queries/site-agency';
-import { HostingFeatures } from '../../data/constants';
 import { hasHostingFeature } from '../../utils/site-features';
 import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../../utils/site-provider';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { getSiteDisplayUrl } from '../../utils/site-url';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import { PHPVersion } from '../site-fields';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 import './style.scss';
 
 const Field = ( { children, title }: { children: React.ReactNode; title?: React.ReactNode } ) => {

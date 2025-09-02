@@ -1,3 +1,5 @@
+import { isWpError } from '@automattic/api-core';
+import { requestDpaMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -11,10 +13,8 @@ import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { envelope } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
-import { requestDpaMutation } from '../../app/queries/me-dpa';
 import { SectionHeader } from '../../components/section-header';
 import { Text } from '../../components/text';
-import { isWpError } from '../../data/error';
 
 export default function DpaCard() {
 	const mutation = useMutation( requestDpaMutation() );

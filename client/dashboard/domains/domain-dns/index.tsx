@@ -1,3 +1,10 @@
+import {
+	domainQuery,
+	domainDnsMutation,
+	domainDnsQuery,
+	domainDnsEmailMutation,
+	domainNameServersQuery,
+} from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
@@ -7,13 +14,6 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { domainQuery } from '../../app/queries/domain';
-import {
-	domainDnsMutation,
-	domainDnsQuery,
-	domainDnsEmailMutation,
-} from '../../app/queries/domain-dns-records';
-import { domainNameServersQuery } from '../../app/queries/domain-name-servers';
 import { domainDnsAddRoute, domainRoute } from '../../app/router/domains';
 import { DataViewsCard } from '../../components/dataviews-card';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -31,7 +31,7 @@ import RestoreDefaultARecords from './restore-default-a-records';
 import RestoreDefaultCnameRecord from './restore-default-cname-record';
 import RestoreDefaultEmailRecords from './restore-default-email-records';
 import { hasDefaultARecords, hasDefaultCnameRecord, hasDefaultEmailRecords } from './utils';
-import type { DnsRecord } from '../../data/domain-dns-records';
+import type { DnsRecord } from '@automattic/api-core';
 import type { ViewTable, ViewList, View } from '@wordpress/dataviews';
 
 function getDnsRecordId( record: DnsRecord ) {

@@ -2,7 +2,7 @@ import {
 	type DomainSuggestionQuery,
 	fetchDomainSuggestions,
 	fetchFreeDomainSuggestion,
-} from '@automattic/data';
+} from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
 
 export const domainSuggestionsQuery = (

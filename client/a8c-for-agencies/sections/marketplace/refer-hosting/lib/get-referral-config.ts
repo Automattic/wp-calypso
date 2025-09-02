@@ -42,7 +42,7 @@ export const getReferralConfig = (
 		leadType: {
 			enabled: type === 'enterprise',
 		},
-		rfp: {
+		isRfp: {
 			enabled: type === 'enterprise',
 		},
 	},

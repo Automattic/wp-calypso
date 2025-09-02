@@ -1,11 +1,9 @@
-import { MenuGroup, SearchControl } from '@wordpress/components';
+import { MenuGroup, NavigableMenu, SearchControl } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { type PropsWithChildren, type ReactNode, useMemo, useState } from 'react';
 import RouterLinkMenuItem from '../router-link-menu-item';
 import type { View } from '@wordpress/dataviews';
-
-import './switcher-content.scss';
 
 const DEFAULT_VIEW: View = {
 	type: 'list',
@@ -53,7 +51,7 @@ export default function SwitcherContent< T >( {
 	const { data: filteredData } = filterSortAndPaginate( items, view, fields );
 
 	return (
-		<div style={ { width: '280px' } }>
+		<NavigableMenu style={ { width: '280px' } }>
 			<MenuGroup>
 				<SearchControl
 					label={ __( 'Search' ) }
@@ -81,6 +79,6 @@ export default function SwitcherContent< T >( {
 				} ) }
 			</MenuGroup>
 			{ children }
-		</div>
+		</NavigableMenu>
 	);
 }

@@ -14,6 +14,7 @@ import MigrationIncentiveIcon from 'calypso/assets/images/a8c-for-agencies/migra
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useShowMigrationIncentive } from '../hook/use-show-migration-incentive';
+import { migrationIncentiveEndDateString } from '../lib/constants';
 
 import './style.scss';
 
@@ -80,7 +81,10 @@ export default function PressablePremiumPlanMigrationBanner( {
 
 	const terms = (
 		<span>
-			{ translate( 'Offer ends September 30, 2025. {{a}}Terms{{/a}} ↗', {
+			{ translate( 'Offer ends %(endDate)s. {{a}}Terms{{/a}} ↗', {
+				args: {
+					endDate: migrationIncentiveEndDateString,
+				},
 				components: {
 					a: (
 						<Button

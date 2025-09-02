@@ -14,6 +14,7 @@ The dashboard prototype follows a component-based architecture with a strong foc
 ## DataViews and DataForm
 
 The dashboard relies heavily on two core components for data display and interaction:
+
 - **DataViews**: A component for displaying lists a tabular, grid or list format, allowing for sorting, filtering, and pagination.
 - **DataForm**: A component for creating and editing data, providing a form-based interface for user input.
 
@@ -30,4 +31,3 @@ In addition to the core components, the dashboard includes several reusable layo
 - **DataViews Card**: A card component for displaying data views.
 - **Overview Card**: Standard card for data display
 - **Header Bar**: A reusable header bar component for displaying a header bar (main and secondary headers).
-

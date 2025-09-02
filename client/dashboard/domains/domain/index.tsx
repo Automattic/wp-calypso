@@ -1,10 +1,9 @@
+import { domainQuery, domainsQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet } from '@tanstack/react-router';
 import { __experimentalHStack as HStack, Icon } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { globe } from '@wordpress/icons';
-import { domainQuery } from '../../app/queries/domain';
-import { domainsQuery } from '../../app/queries/domains';
 import { domainRoute } from '../../app/router/domains';
 import HeaderBar from '../../components/header-bar';
 import MenuDivider from '../../components/menu-divider';

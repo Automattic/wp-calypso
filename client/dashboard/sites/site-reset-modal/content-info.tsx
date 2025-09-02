@@ -1,6 +1,6 @@
+import { SiteResetContentSummary } from '@automattic/api-core';
 import { __experimentalText as Text } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { SiteResetContentSummary } from '../../data/types';
 
 interface ContentItem {
 	text: string;

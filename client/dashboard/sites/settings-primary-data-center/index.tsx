@@ -1,3 +1,5 @@
+import { HostingFeatures } from '@automattic/api-core';
+import { siteBySlugQuery, sitePrimaryDataCenterQuery } from '@automattic/api-queries';
 import SummaryButton from '@automattic/components/src/summary-button';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
@@ -5,11 +7,8 @@ import { __experimentalVStack as VStack, Card, Icon } from '@wordpress/component
 import { __ } from '@wordpress/i18n';
 import { cloud } from '@wordpress/icons';
 import { getDataCenterOptions } from 'calypso/data/data-center';
-import { siteBySlugQuery } from '../../app/queries/site';
-import { sitePrimaryDataCenterQuery } from '../../app/queries/site-primary-data-center';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
-import { HostingFeatures } from '../../data/constants';
 import { hasHostingFeature } from '../../utils/site-features';
 import SettingsPageHeader from '../settings-page-header';
 

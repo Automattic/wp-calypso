@@ -1,11 +1,11 @@
+import { siteLaunchpadQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { lockOutline, published } from '@wordpress/icons';
-import { siteLaunchpadQuery } from '../../app/queries/site-launchpad';
 import { launch } from '../../components/icons';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import OverviewCard from '../overview-card';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 
 const CARD_PROPS = {
 	title: __( 'Visibility' ),

@@ -1,5 +1,5 @@
+import { type FreeDomainSuggestion, fetchFreeDomainSuggestion } from '@automattic/api-core';
 import configApi from '@automattic/calypso-config';
-import { type FreeDomainSuggestion, fetchFreeDomainSuggestion } from '@automattic/data';
 import { DataResponse } from '@automattic/plans-grid-next';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from '@wordpress/element';
