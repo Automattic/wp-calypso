@@ -30,6 +30,7 @@
 /client/dashboard/sites/staging-site-sync-dropdown @Automattic/yolo
 /client/dashboard/sites/staging-site-sync-modal @Automattic/yolo
 /client/dashboard/sites/staging-site-delete-modal @Automattic/yolo
+/client/dashboard/sites/site/environment-switcher.tsx @Automattic/yolo
 
 # Staging sites - interim dashboard
 /client/sites/staging-site @Automattic/yolo
