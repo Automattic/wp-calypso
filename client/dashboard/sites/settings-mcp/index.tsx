@@ -184,63 +184,57 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 
 		return (
 			<form onSubmit={ handleSubmit }>
-				<Card className="mcp__settings">
-					<CardBody>
-						<>
-							<div className="mcp__master-toggle">
-								<ToggleControl
-									checked={ anyAbilitiesEnabled }
-									onChange={ handleMasterToggle }
-									label={ __( 'Allow MCP access' ) }
-								/>
-							</div>
-							<VStack spacing={ 8 }>
-								{ Object.entries( groupedByType ).map( ( [ type, typeCategories ] ) => (
-									<div key={ type } className="mcp__type-section">
-										<h2 className="mcp__type-title">
-											{ type.charAt( 0 ).toUpperCase() + type.slice( 1 ) }s
-										</h2>
-										<p className="mcp__type-description">{ typeDescriptions[ type ] }</p>
-										<VStack spacing={ 6 }>
-											{ Object.entries( typeCategories ).map(
-												( [ category, categoryAbilities ] ) => (
-													<div key={ category } className="mcp__category">
-														<h3 className="mcp__category-title">{ category }</h3>
-														<VStack spacing={ 4 }>
-															{ categoryAbilities.map( ( [ abilityId, ability ] ) => (
-																<div key={ abilityId } className="mcp__ability-item">
-																	<ToggleControl
-																		checked={ ability.enabled }
-																		onChange={ ( checked ) =>
-																			handleAbilityChange( abilityId, checked )
-																		}
-																		label={ formatAbilityName( abilityId ) }
-																		disabled={ ! anyAbilitiesEnabled }
-																	/>
-																	<p className="mcp__ability-description">
-																		{ ability.description }
-																	</p>
-																</div>
-															) ) }
-														</VStack>
-													</div>
-												)
-											) }
-										</VStack>
-									</div>
-								) ) }
-							</VStack>
-						</>
-						<Button
-							variant="primary"
-							type="submit"
-							isBusy={ mutation.isPending }
-							disabled={ mutation.isPending }
-						>
-							{ mutation.isPending ? __( 'Saving…' ) : __( 'Save MCP abilities' ) }
-						</Button>
-					</CardBody>
-				</Card>
+				<div className="mcp__settings">
+					<>
+						<div className="mcp__master-toggle">
+							<ToggleControl
+								checked={ anyAbilitiesEnabled }
+								onChange={ handleMasterToggle }
+								label={ __( 'Allow MCP access' ) }
+							/>
+						</div>
+						<VStack spacing={ 8 }>
+							{ Object.entries( groupedByType ).map( ( [ type, typeCategories ] ) => (
+								<div key={ type } className="mcp__type-section">
+									<h2 className="mcp__type-title">
+										{ type.charAt( 0 ).toUpperCase() + type.slice( 1 ) }s
+									</h2>
+									<p className="mcp__type-description">{ typeDescriptions[ type ] }</p>
+									<VStack spacing={ 6 }>
+										{ Object.entries( typeCategories ).map( ( [ category, categoryAbilities ] ) => (
+											<div key={ category } className="mcp__category">
+												<h3 className="mcp__category-title">{ category }</h3>
+												<VStack spacing={ 4 }>
+													{ categoryAbilities.map( ( [ abilityId, ability ] ) => (
+														<div key={ abilityId } className="mcp__ability-item">
+															<ToggleControl
+																checked={ ability.enabled }
+																onChange={ ( checked ) =>
+																	handleAbilityChange( abilityId, checked )
+																}
+																label={ formatAbilityName( abilityId ) }
+																disabled={ ! anyAbilitiesEnabled }
+															/>
+															<p className="mcp__ability-description">{ ability.description }</p>
+														</div>
+													) ) }
+												</VStack>
+											</div>
+										) ) }
+									</VStack>
+								</div>
+							) ) }
+						</VStack>
+					</>
+					<Button
+						variant="primary"
+						type="submit"
+						isBusy={ mutation.isPending }
+						disabled={ mutation.isPending }
+					>
+						{ mutation.isPending ? __( 'Saving…' ) : __( 'Save MCP abilities' ) }
+					</Button>
+				</div>
 			</form>
 		);
 	};
