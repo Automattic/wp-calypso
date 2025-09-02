@@ -1,4 +1,4 @@
-import { fetchCurrentSiteUser, deleteSiteUser } from '@automattic/api-core';
+import { fetchCurrentSiteUser, deleteSiteUser, fetchSiteUsers } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
 import { siteQueryFilter } from './site';

@@ -1,4 +1,10 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { DomainSubtype, type SiteUser } from '@automattic/api-core';
+import {
+	domainQuery,
+	domainTransferToOtherUserMutation,
+	siteUsersQuery,
+} from '@automattic/api-queries';
+import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Card,
 	CardBody,
@@ -8,36 +14,37 @@ import {
 	Button,
 	ExternalLink,
 } from '@wordpress/components';
-// import { useDispatch } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-// import { store as noticesStore } from '@wordpress/notices';
+import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-// import { useAuth } from '../../app/auth';
-import { domainQuery } from '../../app/queries/domain';
-// import { domainTransferToOtherUserMutation } from '../../app/queries/domain-transfer';
-// import { siteUsersQuery } from '../../app/queries/site-users';
+import { useAuth } from '../../app/auth';
 import { domainRoute } from '../../app/router/domains';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
-import { DomainSubtype } from '../../data/domains';
-// import { SiteUser } from '../../data/site-users';
 import { hasGSuiteWithUs, hasTitanMailWithUs } from '../../utils/domain';
 import type { Field } from '@wordpress/dataviews';
 
 export type TransferFormData = {
-	email: string;
+	user: string;
 };
 
-const fields: Field< TransferFormData >[] = [
+const createFields = ( users: SiteUser[] ): Field< TransferFormData >[] => [
 	{
-		id: 'email',
-		label: __( 'Enter domain recipient’s email for transfer' ),
-		type: 'email' as const,
+		id: 'user',
+		label: __( 'NEW OWNER' ),
+		elements: [
+			{ value: '', label: 'Choose an administrator on this site' },
+			...users.map( ( user ) => ( {
+				value: user.id,
+				label: user.name,
+			} ) ),
+		],
 		isValid: {
 			required: true,
 		},
@@ -46,51 +53,40 @@ const fields: Field< TransferFormData >[] = [
 
 const form = {
 	layout: { type: 'regular' as const },
-	fields: [ 'email' ],
+	fields: [ 'user' ],
 };
 
 export default function TransferDomainToOtherUser() {
 	const { domainName } = domainRoute.useParams() as { domainName: string };
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
-	// const { data: users } = useSuspenseQuery( siteUsersQuery( domain.blog_id ) );
-	// const { user: currentUser } = useAuth();
-	// const { mutate: domainTransferToOtherUser, isPending: isDomainTransferringToOtherUser } =
-	// useMutation( domainTransferToOtherUserMutation( domainName, domain.blog_id, currentUser.ID ) );
-	// const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-
+	const { data: users } = useSuspenseQuery( siteUsersQuery( domain.blog_id ) );
+	const { user: currentUser } = useAuth();
+	const { mutate: domainTransferToOtherUser, isPending: isDomainTransferringToOtherUser } =
+		useMutation( domainTransferToOtherUserMutation( domainName, domain.blog_id ) );
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const [ formData, setFormData ] = useState( {
-		email: '',
+		user: '',
 	} );
 
 	const hasEmailWithUs = hasTitanMailWithUs( domain ) || hasGSuiteWithUs( domain );
-
-	// const isSaveDisabled = ! isItemValid( formData, fields, form );
-
-	// const filterAvailableUsers = ( users: SiteUser[] ) => {
-	// 	return users.filter( ( user ) => {
-	// 		console.log( user );
-	// 		const userId = user.linked_user_ID ?? user.id;
-	// 		return userId !== false && userId !== currentUser.ID;
-	// 	} );
-	// };
-
-	// const availableUsers = filterAvailableUsers( users );
+	const availableUsers = users.filter( ( user: SiteUser ) => {
+		return user.id !== currentUser.ID;
+	} );
+	const fields = createFields( availableUsers );
 
 	const handleSubmit = ( event: React.FormEvent ) => {
 		event.preventDefault();
-		// domainTransferToOtherUser( currentUser.ID, {
-		// 	onSuccess: () => {
-		// 		createSuccessNotice(
-		// 			__( 'A domain transfer request has been emailed to the recipient’s address.' )
-		// 		);
-		// 	},
-		// 	onError: () => {
-		// 		createErrorNotice( __( 'An error occurred while initiating the domain transfer.' ) );
-		// 	},
-		// 	onSettled: () => {
-		// 		setFormData( { userId: '' } );
-		// 	},
-		// } );
+		domainTransferToOtherUser( formData.user, {
+			onSuccess: () => {
+				createSuccessNotice(
+					__( 'A domain transfer request has been emailed to the recipient’s address.' )
+				);
+				// TODO: redirect to the domain management page
+			},
+			onError: () => {
+				createErrorNotice( __( 'An error occurred while initiating the domain transfer.' ) );
+			},
+		} );
 	};
 
 	const renderTransferNotice = () => {
@@ -205,8 +201,8 @@ export default function TransferDomainToOtherUser() {
 								__next40pxDefaultSize
 								variant="primary"
 								type="submit"
-								// isBusy={ isUpdatingDomainTransferRequest }
-								// disabled={ isSaveDisabled || isUpdatingDomainTransferRequest }
+								isBusy={ isDomainTransferringToOtherUser }
+								disabled={ formData.user === '' }
 							>
 								{ __( 'Transfer Domain' ) }
 							</Button>
