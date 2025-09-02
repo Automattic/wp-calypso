@@ -132,8 +132,13 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 
 	// Group abilities by type first, then by category
 	const groupedByType = abilities.reduce( ( typeGroups, [ abilityId, ability ] ) => {
-		const type = ability.type || 'other';
-		const category = ability.category || 'Other';
+		const type = ability.type || 'tool'; // Default to 'tool' instead of 'other'
+		const category = ability.category || 'General';
+
+		// Only include the three main types
+		if ( ! [ 'tool', 'resource', 'prompt' ].includes( type ) ) {
+			return typeGroups;
+		}
 
 		if ( ! typeGroups[ type ] ) {
 			typeGroups[ type ] = {};
@@ -156,7 +161,13 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 		prompt: __(
 			'Prompts help AI assistants understand context and provide better responses to your queries.'
 		),
-		other: __( "Other abilities that don't fit into the main categories." ),
+	};
+
+	// Type display names
+	const typeDisplayNames = {
+		tool: __( 'Tools' ),
+		resource: __( 'Resources' ),
+		prompt: __( 'Prompts' ),
 	};
 
 	// Format ability name for display
@@ -190,15 +201,13 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 							<ToggleControl
 								checked={ anyAbilitiesEnabled }
 								onChange={ handleMasterToggle }
-								label={ __( 'Allow MCP access' ) }
+								label={ __( 'Allow MCP access to this site' ) }
 							/>
 						</div>
 						<VStack spacing={ 8 }>
 							{ Object.entries( groupedByType ).map( ( [ type, typeCategories ] ) => (
 								<div key={ type } className="mcp__type-section">
-									<h2 className="mcp__type-title">
-										{ type.charAt( 0 ).toUpperCase() + type.slice( 1 ) }s
-									</h2>
+									<h2 className="mcp__type-title">{ typeDisplayNames[ type ] }</h2>
 									<p className="mcp__type-description">{ typeDescriptions[ type ] }</p>
 									<VStack spacing={ 6 }>
 										{ Object.entries( typeCategories ).map( ( [ category, categoryAbilities ] ) => (

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { SVG, Path } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { isAutomatticianQuery } from '../../app/queries/me-a8c';
 import { siteSettingsQuery } from '../../app/queries/site-settings';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
@@ -43,7 +43,7 @@ export default function McpSettingsSummary( { site, density }: { site: Site; den
 	} else {
 		badgeText = sprintf(
 			// translators: %d is the number of abilities enabled
-			__( '%d Abilities Enabled' ),
+			_n( '%d Ability Enabled', '%d Abilities Enabled', enabledAbilities.length ),
 			enabledAbilities.length
 		);
 		badgeIntent = 'success';
