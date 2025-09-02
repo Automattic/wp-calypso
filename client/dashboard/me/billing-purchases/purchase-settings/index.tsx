@@ -38,6 +38,7 @@ import {
 	Notice,
 	ExternalLink,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, isRTL, sprintf } from '@wordpress/i18n';
@@ -50,6 +51,7 @@ import {
 	siteLogo,
 	commentAuthorAvatar,
 } from '@wordpress/icons';
+import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import { useLocale } from '../../../app/locale';
@@ -443,11 +445,10 @@ function JetpackCRMDownloadsButton( { purchase }: { purchase: Purchase } ) {
 }
 
 function ReinstallButton( { purchase }: { purchase: Purchase } ) {
-	const {
-		mutate: reinstallPlugins,
-		error,
-		isPending: isMutationPending,
-	} = useMutation( reinstallMarketplacePluginsQuery( purchase.blog_id ) );
+	const { mutate: reinstallPlugins, isPending: isMutationPending } = useMutation(
+		reinstallMarketplacePluginsQuery( purchase.blog_id )
+	);
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	if ( ! isMarketplacePlugin( purchase ) ) {
 		return null;
 	}
@@ -465,19 +466,20 @@ function ReinstallButton( { purchase }: { purchase: Purchase } ) {
 						size="compact"
 						disabled={ isMutationPending }
 						onClick={ () => {
-							reinstallPlugins();
+							reinstallPlugins( undefined, {
+								onSuccess: () => {
+									createSuccessNotice( __( 'Plugins reinstalled.' ), { type: 'snackbar' } );
+								},
+								onError: ( error ) => {
+									createErrorNotice( error?.message || __( 'Failed to reinstall plugins.' ), {
+										type: 'snackbar',
+									} );
+								},
+							} );
 						} }
 					>
 						{ __( 'Reinstall plugins' ) }
 					</Button>
-					{
-						// FIXME: there's probably a better place for this error message
-						error && (
-							<Notice status="error" isDismissible={ false }>
-								{ error.message }
-							</Notice>
-						)
-					}
 				</>
 			}
 		/>
