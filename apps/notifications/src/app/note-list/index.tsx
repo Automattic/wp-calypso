@@ -10,6 +10,7 @@ import { useSelector } from 'react-redux';
 import getAllNotes from '../../panel/state/selectors/get-all-notes';
 import getIsLoading from '../../panel/state/selectors/get-is-loading';
 import getIsNoteHidden from '../../panel/state/selectors/get-is-note-hidden';
+import getSelectedNoteId from '../../panel/state/selectors/get-selected-note-id';
 import { getFilters } from '../../panel/templates/filters';
 import { useAppContext } from '../context';
 import { getFields } from './dataviews';
@@ -29,6 +30,8 @@ const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFil
 			( note ) => filter.filter( note ) && ! isNoteHidden( note.id )
 		)
 	);
+
+	const selectedNoteId = useSelector( getSelectedNoteId );
 
 	const isLoading = useSelector( ( state ) => getIsLoading( state ) );
 	const { client } = useAppContext();
@@ -88,6 +91,7 @@ const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFil
 			}
 			getItemId={ ( item ) => item.id.toString() }
 			onChangeView={ setView }
+			selection={ selectedNoteId ? [ selectedNoteId ] : undefined }
 			onChangeSelection={ onChangeSelection }
 		>
 			<>

@@ -11,8 +11,10 @@ import {
 import { isRTL } from '@wordpress/i18n';
 import { chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { getActions } from '../../panel/helpers/notes';
+import actions from '../../panel/state/actions';
 import getAllNotes from '../../panel/state/selectors/get-all-notes';
 import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved';
 import getIsNoteRead from '../../panel/state/selectors/get-is-note-read';
@@ -73,6 +75,14 @@ const Note = () => {
 
 	const isApproved = useSelector( ( state ) => note && getIsNoteApproved( state, note ) );
 	const isRead = useSelector( ( state ) => note && getIsNoteRead( state, note ) );
+
+	const dispatch = useDispatch();
+
+	useEffect( () => {
+		if ( noteId ) {
+			dispatch( actions.ui.selectNote( noteId ) );
+		}
+	}, [ noteId, dispatch ] );
 
 	if ( ! note ) {
 		return null;
