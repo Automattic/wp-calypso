@@ -60,7 +60,7 @@ export const OdieSendMessageButton = () => {
 	const customActions = showAttachmentButton ? [ attachmentAction ] : undefined;
 
 	const sendMessageHandler = useCallback( async () => {
-		const message = inputValue.trim().substring( 0, 4069 );
+		const message = inputValue.trim().substring( 0, 4096 );
 		if ( message === '' || isChatBusy ) {
 			return;
 		}
