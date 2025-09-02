@@ -93,6 +93,7 @@ export default function setup() {
 	app.use( '/calypso', express.static( path.resolve( __dirname, '..', '..', '..', 'public' ) ) );
 
 	// serve site-spec files
+	// @todo Understand if we actually need this or we can add it to the public dir
 	app.use(
 		'/site-spec',
 		express.static( path.resolve( __dirname, '..', '..', '..', 'static', 'site-spec' ) )

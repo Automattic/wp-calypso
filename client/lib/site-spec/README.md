@@ -1,10 +1,12 @@
 # Site-Spec Script Loading System
 
-This module provides utilities for loading and managing the Site-Spec script in WordPress Calypso.
+This module provides utilities for loading and managing the Site Spec lib in WordPress Calypso.
 
 ## Overview
 
-The Site-Spec script loading system follows WordPress Calypso patterns for external script management, similar to how Bilmur and other third-party scripts are handled.
+The Site Spec lib loading follows WordPress Calypso patterns for external lib management, similar to other third-party scripts are handled. 
+
+// @todo add example
 
 ## Configuration
 
@@ -91,6 +93,7 @@ const url = getSiteSpecUrl();
 
 ## API Reference
 
+// @todo Rename site-spec-script to site-spec or site-spec-script-lib or something
 ### `isSiteSpecEnabled()`
 Returns `true` if the `site-spec-script` feature flag is enabled.
 

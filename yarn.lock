@@ -291,18 +291,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/agenttic-client@link:../agenttic/packages/agenttic-client::locator=%40automattic%2Fsite-spec%40file%3A..%2Fsite-spec%23..%2Fsite-spec%3A%3Ahash%3D843874%26locator%3Dwp-calypso%2540workspace%253A.":
-  version: 0.0.0-use.local
-  resolution: "@automattic/agenttic-client@link:../agenttic/packages/agenttic-client::locator=%40automattic%2Fsite-spec%40file%3A..%2Fsite-spec%23..%2Fsite-spec%3A%3Ahash%3D843874%26locator%3Dwp-calypso%2540workspace%253A."
-  languageName: node
-  linkType: soft
-
-"@automattic/agenttic-ui@link:../agenttic/packages/agenttic-ui::locator=%40automattic%2Fsite-spec%40file%3A..%2Fsite-spec%23..%2Fsite-spec%3A%3Ahash%3D843874%26locator%3Dwp-calypso%2540workspace%253A.":
-  version: 0.0.0-use.local
-  resolution: "@automattic/agenttic-ui@link:../agenttic/packages/agenttic-ui::locator=%40automattic%2Fsite-spec%40file%3A..%2Fsite-spec%23..%2Fsite-spec%3A%3Ahash%3D843874%26locator%3Dwp-calypso%2540workspace%253A."
-  languageName: node
-  linkType: soft
-
 "@automattic/babel-plugin-i18n-calypso@workspace:^, @automattic/babel-plugin-i18n-calypso@workspace:packages/babel-plugin-i18n-calypso":
   version: 0.0.0-use.local
   resolution: "@automattic/babel-plugin-i18n-calypso@workspace:packages/babel-plugin-i18n-calypso"
@@ -2042,22 +2030,6 @@ __metadata:
     react-dom: ^18.3.1
   languageName: unknown
   linkType: soft
-
-"@automattic/site-spec@file:../site-spec::locator=wp-calypso%40workspace%3A.":
-  version: 1.0.0
-  resolution: "@automattic/site-spec@file:../site-spec#../site-spec::hash=843874&locator=wp-calypso%40workspace%3A."
-  dependencies:
-    "@automattic/agenttic-client": "link:../agenttic/packages/agenttic-client"
-    "@automattic/agenttic-ui": "link:../agenttic/packages/agenttic-ui"
-    "@rive-app/react-canvas": "npm:^4.23.1"
-    "@wordpress/icons": "npm:^10.2.0"
-    framer-motion: "npm:^12.23.12"
-    react: "npm:^18.0.0"
-    react-dom: "npm:^18.0.0"
-    uuid: "npm:^11.0.5"
-  checksum: ce6637a3b572a61e5d4fe2ba64d8c5ad149c46cab191d0676369bcecad2565cae294c5c927c1381df31c402a97cafad1beddb66d651fa35474871a9054554098
-  languageName: node
-  linkType: hard
 
 "@automattic/sites@workspace:^, @automattic/sites@workspace:packages/sites":
   version: 0.0.0-use.local
@@ -8012,24 +7984,6 @@ __metadata:
   version: 1.16.1
   resolution: "@remix-run/router@npm:1.16.1"
   checksum: 5f1b0aef4924830eeab9c86dcaa5af8157066e5de65b449e7fdf406532b2384828a46a447c31b0735fd713a06938dd88bfd4e566d9989be70c770457dda16c92
-  languageName: node
-  linkType: hard
-
-"@rive-app/canvas@npm:2.31.2":
-  version: 2.31.2
-  resolution: "@rive-app/canvas@npm:2.31.2"
-  checksum: b48e8ef34c9f6681c37a5186ca84c47684a0198ff3546cc16ccf374785ef1f32e10d80660f5d87929c127540290a4ab61c0c49647b1ca10f29afac60a18da7b8
-  languageName: node
-  linkType: hard
-
-"@rive-app/react-canvas@npm:^4.23.1":
-  version: 4.23.1
-  resolution: "@rive-app/react-canvas@npm:4.23.1"
-  dependencies:
-    "@rive-app/canvas": "npm:2.31.2"
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0
-  checksum: 6ab369f834d360630217b0cfb4d0d2ada386a1d3befdfae0b20849fa3220535721072a30a17a7dca4067a9ec70841c18794811e701ba21d097c3fcb8541c5d00
   languageName: node
   linkType: hard
 
@@ -20776,28 +20730,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"framer-motion@npm:^12.23.12":
-  version: 12.23.12
-  resolution: "framer-motion@npm:12.23.12"
-  dependencies:
-    motion-dom: "npm:^12.23.12"
-    motion-utils: "npm:^12.23.6"
-    tslib: "npm:^2.4.0"
-  peerDependencies:
-    "@emotion/is-prop-valid": "*"
-    react: ^18.0.0 || ^19.0.0
-    react-dom: ^18.0.0 || ^19.0.0
-  peerDependenciesMeta:
-    "@emotion/is-prop-valid":
-      optional: true
-    react:
-      optional: true
-    react-dom:
-      optional: true
-  checksum: 40dfb57bf714075c4f6dd0bbe5b84dd11310114474ebf603846ef9b888ed475fa653271c1fd98ec57a6a1d0b781cdf8b3ebcd5e2c6a3620e934b46304ae0fd39
-  languageName: node
-  linkType: hard
-
 "fresh@npm:0.5.2":
   version: 0.5.2
   resolution: "fresh@npm:0.5.2"
@@ -27237,22 +27169,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"motion-dom@npm:^12.23.12":
-  version: 12.23.12
-  resolution: "motion-dom@npm:12.23.12"
-  dependencies:
-    motion-utils: "npm:^12.23.6"
-  checksum: 1b6a4b86c1aed5b5da7b8a5d1f8310ad169125235bdc1953b8c41cf9f4e2c460ee90bb48ffdae54daecb8db1d7006566ceb5f5c9ccdc82606d548c527cb2631e
-  languageName: node
-  linkType: hard
-
-"motion-utils@npm:^12.23.6":
-  version: 12.23.6
-  resolution: "motion-utils@npm:12.23.6"
-  checksum: c058e8ba6423b3baa63e985bcc669877ee7d9579d938f5348b4e60c5ea1b4b33dd7f4877434436a4a5807f3cf00370d3fd4079a6fdd6309c5c87aa62b311a897
-  languageName: node
-  linkType: hard
-
 "mousetrap@npm:^1.6.5":
   version: 1.6.5
   resolution: "mousetrap@npm:1.6.5"
@@ -30909,7 +30825,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:18.3.1, react-dom@npm:^18.0.0, react-dom@npm:^18.3.0, react-dom@npm:^18.3.1":
+"react-dom@npm:18.3.1, react-dom@npm:^18.3.0, react-dom@npm:^18.3.1":
   version: 18.3.1
   resolution: "react-dom@npm:18.3.1"
   dependencies:
@@ -31410,7 +31326,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:18.3.1, react@npm:^18.0, react@npm:^18.0.0, react@npm:^18.3.0, react@npm:^18.3.1":
+"react@npm:18.3.1, react@npm:^18.0, react@npm:^18.3.0, react@npm:^18.3.1":
   version: 18.3.1
   resolution: "react@npm:18.3.1"
   dependencies:
@@ -37159,15 +37075,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uuid@npm:^11.0.5":
-  version: 11.1.0
-  resolution: "uuid@npm:11.1.0"
-  bin:
-    uuid: dist/esm/bin/uuid
-  checksum: 34aa51b9874ae398c2b799c88a127701408cd581ee89ec3baa53509dd8728cbb25826f2a038f9465f8b7be446f0fbf11558862965b18d21c993684297628d4d3
-  languageName: node
-  linkType: hard
-
 "uuid@npm:^3.3.2":
   version: 3.4.0
   resolution: "uuid@npm:3.4.0"
@@ -38024,7 +37931,6 @@ __metadata:
     "@automattic/number-formatters": "npm:^1.0.1"
     "@automattic/plans-grid-next": "workspace:^"
     "@automattic/privacy-toolset": "workspace:^"
-    "@automattic/site-spec": "file:../site-spec"
     "@automattic/typography": "workspace:^"
     "@automattic/urls": "workspace:^"
     "@automattic/verbum-block-editor": "workspace:^"
