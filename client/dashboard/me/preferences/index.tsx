@@ -1,3 +1,7 @@
+import {
+	userSettingsPreferencesMutation,
+	userSettingsPreferencesQuery,
+} from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 // eslint-disable-next-line no-restricted-imports
 import {
@@ -24,10 +28,6 @@ import { DataForm } from '@wordpress/dataviews';
 import { useMemo, useState, createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import {
-	userPreferencesMutation,
-	userPreferencesQuery,
-} from '../../app/queries/me-user-preferences';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { languagesAsOptions } from '../../data/languages';
@@ -101,7 +101,7 @@ const thanksToCommunityTranslator = ( data: UserSettingsPreferences ) => {
 
 export default function Preferences() {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const { data: serverData } = useQuery( userPreferencesQuery() );
+	const { data: serverData } = useQuery( userSettingsPreferencesQuery() );
 	const [ localData, setLocalData ] = useState< Partial< UserSettingsPreferences > | undefined >();
 	const [ savingData, setSavingData ] = useState<
 		Partial< UserSettingsPreferences > | undefined
@@ -115,7 +115,7 @@ export default function Preferences() {
 		[ serverData, savingData, localData ]
 	);
 	const shouldShowEmpathyMode = config.isEnabled( 'i18n/empathy-mode' );
-	const mutation = useMutation( userPreferencesMutation() );
+	const mutation = useMutation( userSettingsPreferencesMutation() );
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
 		if ( ! localData ) {
