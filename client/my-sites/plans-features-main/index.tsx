@@ -96,7 +96,6 @@ import type {
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { IAppState } from 'calypso/state/types';
 import './style.scss';
-
 const PlanComparisonHeader = styled.h1`
 	.plans .step-container .step-container__content &&,
 	&& {
@@ -105,7 +104,6 @@ const PlanComparisonHeader = styled.h1`
 		margin: 48px 0;
 	}
 `;
-
 export interface PlansFeaturesMainProps {
 	siteId?: number | null;
 	intent?: PlansIntent | null;
@@ -187,12 +185,6 @@ export interface PlansFeaturesMainProps {
 	deemphasizeFreePlan?: boolean;
 
 	selectedThemeType?: string;
-
-	/**
-	 * Controls whether to hide the PlansPageSubheader component.
-	 * This is useful when the parent component wants to provide its own subheader text.
-	 */
-	hidePlansPageSubheader?: boolean;
 }
 
 const PlansFeaturesMain = ( {
@@ -238,7 +230,6 @@ const PlansFeaturesMain = ( {
 	coupon,
 	onPlanIntervalUpdate,
 	selectedThemeType,
-	hidePlansPageSubheader,
 }: PlansFeaturesMainProps ) => {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	// TODO: Remove temporary eslint disable
@@ -281,30 +272,6 @@ const PlansFeaturesMain = ( {
 	const showDomainUpsellDialog = useCallback( () => {
 		setShowDomainUpsellDialog( true );
 	}, [ setShowDomainUpsellDialog ] );
-
-	// Listen for external free plan requests (e.g., Stepper header/subheader CTA)
-	useEffect( () => {
-		const onRequestFreePlan = ( event: Event ) => {
-			const displayedModal = resolveModal( PLAN_FREE );
-			if ( displayedModal ) {
-				event.preventDefault?.();
-				setLastClickedPlan( PLAN_FREE );
-				setIsModalOpen( true );
-			}
-		};
-
-		window.addEventListener(
-			'calypso:plans:request-free-plan',
-			onRequestFreePlan as EventListener
-		);
-		return () => {
-			window.removeEventListener(
-				'calypso:plans:request-free-plan',
-				onRequestFreePlan as EventListener
-			);
-		};
-	}, [ resolveModal ] );
-
 	const currentUserName = useSelector( getCurrentUserName );
 	const { wpcomFreeDomainSuggestion, invalidateDomainSuggestionCache } =
 		useGetFreeSubdomainSuggestion(
@@ -862,17 +829,16 @@ const PlansFeaturesMain = ( {
 							} ) }
 					/>
 				) }
-				{ ! hidePlansPageSubheader && (
-					<PlansPageSubheader
-						siteSlug={ siteSlug }
-						isDisplayingPlansNeededForFeature={ isDisplayingPlansNeededForFeature }
-						selectedFeature={ selectedFeatureData }
-						offeringFreePlan={ offeringFreePlan }
-						flowName={ flowName }
-						deemphasizeFreePlan={ deemphasizeFreePlan }
-						onFreePlanCTAClick={ onFreePlanCTAClick }
-					/>
-				) }
+				<PlansPageSubheader
+					siteSlug={ siteSlug }
+					isDisplayingPlansNeededForFeature={ isDisplayingPlansNeededForFeature }
+					selectedFeature={ selectedFeatureData }
+					offeringFreePlan={ offeringFreePlan }
+					flowName={ flowName }
+					deemphasizeFreePlan={ deemphasizeFreePlan }
+					onFreePlanCTAClick={ onFreePlanCTAClick }
+					intent={ intent }
+				/>
 				{ ! isPlansGridReady && <Spinner size={ 30 } /> }
 				{ isPlansGridReady && (
 					<>

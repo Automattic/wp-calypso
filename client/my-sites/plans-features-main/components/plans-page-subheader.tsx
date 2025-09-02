@@ -133,6 +133,7 @@ const PlansPageSubheader = ( {
 	flowName,
 	onFreePlanCTAClick,
 	selectedFeature,
+	intent,
 }: {
 	siteSlug?: string | null;
 	isDisplayingPlansNeededForFeature: boolean;
@@ -142,6 +143,7 @@ const PlansPageSubheader = ( {
 	flowName?: string | null;
 	onFreePlanCTAClick: () => void;
 	selectedFeature: SelectedFeatureData | null;
+	intent?: string;
 } ) => {
 	const translate = useTranslate();
 
@@ -150,6 +152,38 @@ const PlansPageSubheader = ( {
 	const isUsingStepContainerV2 = Boolean( flowName && shouldUseStepContainerV2( flowName ) );
 
 	const renderSubheader = () => {
+		// Website Builder intent: use the new copy
+		if ( intent === 'plans-website-builder' ) {
+			if ( deemphasizeFreePlan && offeringFreePlan ) {
+				return (
+					<Subheader isUsingStepContainerV2={ isUsingStepContainerV2 }>
+						{ translate(
+							'Everything you need to go from idea to one-of-a-kind site, blog, or newsletter. Or {{link}}start with our free plan{{/link}}.',
+							{ components: { link: <Button onClick={ onFreePlanCTAClick } borderless /> } }
+						) }
+					</Subheader>
+				);
+			}
+
+			return (
+				<Subheader isUsingStepContainerV2={ isUsingStepContainerV2 }>
+					{ translate(
+						'Everything you need to go from idea to one-of-a-kind site, blog, or newsletter.'
+					) }
+				</Subheader>
+			);
+		}
+
+		// WordPress Hosting intent: use hosting-specific copy
+		if ( intent === 'plans-wordpress-hosting' ) {
+			return (
+				<Subheader isUsingStepContainerV2={ isUsingStepContainerV2 }>
+					{ translate(
+						'All the security, flexibility, and control you need — without the overhead.'
+					) }
+				</Subheader>
+			);
+		}
 		if ( deemphasizeFreePlan && offeringFreePlan ) {
 			return (
 				<Subheader isUsingStepContainerV2={ isUsingStepContainerV2 }>

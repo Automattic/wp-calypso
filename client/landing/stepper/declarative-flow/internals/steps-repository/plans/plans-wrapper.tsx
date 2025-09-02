@@ -150,12 +150,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	};
 
 	const handleFreePlanButtonClick = () => {
-		const event = new CustomEvent( 'calypso:plans:request-free-plan', { cancelable: true } );
-		const canceledByListener = ! window.dispatchEvent( event );
-		if ( canceledByListener ) {
-			return;
-		}
-		// Fallback: proceed normally if no modal listener handled it
 		onUpgradeClick( null ); // onUpgradeClick expects a cart item -- null means Free Plan.
 		props.onSubmit( null );
 	};

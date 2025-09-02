@@ -395,12 +395,7 @@ function UnifiedPlansStep( {
 	const getSubheaderText = () => {
 		const freePlanButton = (
 			<Button
-				onClick={ () => {
-					const event = new CustomEvent( 'calypso:plans:request-free-plan', { cancelable: true } );
-					const canceled = ! window.dispatchEvent( event );
-					if ( canceled ) {
-						return;
-					}
+				onClick={ () =>
 					buildUpgradeFunction( {
 						additionalStepData,
 						flowName,
@@ -411,8 +406,8 @@ function UnifiedPlansStep( {
 						themeSlugWithRepo,
 						goToNextStep,
 						submitSignupStep: effectiveSubmitSignupStep,
-					} );
-				} }
+					} )
+				}
 				borderless
 				className="plans-features-main__free-plan-cta"
 			/>
@@ -425,21 +420,11 @@ function UnifiedPlansStep( {
 		}
 
 		if ( intent === 'plans-wordpress-hosting' ) {
-			return translate(
-				'All the security, flexibility, and control you need — without the overhead.'
-			);
+			return null; // Use PlansFeaturesMain subheader for hosting
 		}
 
 		if ( intent === 'plans-website-builder' ) {
-			if ( ! deemphasizeFreePlan ) {
-				return translate(
-					'Everything you need to go from idea to one-of-a-kind site, blog, or newsletter.'
-				);
-			}
-			return translate(
-				'Everything you need to go from idea to one-of-a-kind site, blog, or newsletter. Or {{link}}start with our free plan{{/link}}.',
-				{ components: { link: freePlanButton } }
-			);
+			return null; // Use PlansFeaturesMain subheader for website-builder
 		}
 
 		if ( useEmailOnboardingSubheader ) {
@@ -555,9 +540,6 @@ function UnifiedPlansStep( {
 				showPlanTypeSelectorDropdown={ config.isEnabled( 'onboarding/interval-dropdown' ) }
 				onPlanIntervalUpdate={ onPlanIntervalUpdate }
 				selectedThemeType={ selectedThemeType }
-				hidePlansPageSubheader={
-					intent === 'plans-wordpress-hosting' || intent === 'plans-website-builder'
-				}
 				renderSiblingWhenLoaded={ () => {
 					if ( ! isNewHostedSiteCreationFlow( flowName ) ) {
 						return null;
