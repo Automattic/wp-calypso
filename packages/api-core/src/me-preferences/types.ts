@@ -9,7 +9,13 @@ export type SitesViewPreferences = Partial< Omit< SitesView, 'type' | 'layout' >
 	layout?: Partial< ViewTable[ 'layout' ] & ViewGrid[ 'layout' ] >;
 };
 
+export interface HostingDashboardV2OptInFlags {
+	value: 'opt-in' | 'opt-out';
+	updated_at: string; // ISO date string
+}
+
 export interface UserPreferences {
 	'sites-view'?: SitesViewPreferences;
 	[ key: `hosting-dashboard-overview-storage-notice-dismissed-${ number }` ]: string | undefined; // Timestamp when the user dismissed the notice
+	'enable-hosting-dashboard-v2'?: HostingDashboardV2OptInFlags;
 }
