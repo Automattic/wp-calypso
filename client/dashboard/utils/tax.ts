@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import type { CountryListItem, CountryListItemWithVat } from '../data/types';
+import type { CountryListItem, CountryListItemWithVat } from '@automattic/api-core';
 
 interface CountryCodeOption {
 	label: string;
