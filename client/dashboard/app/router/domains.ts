@@ -315,7 +315,7 @@ export const domainTransferToOtherSiteRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'transfer/other-site',
 } ).lazy( () =>
-	import( '../../domains/domain-transfer/domain-transfer-to-other-site' ).then( ( d ) =>
+	import( '../../domains/domain-transfer/transfer-domain-to-other-site' ).then( ( d ) =>
 		createLazyRoute( 'domain-transfer-to-other-site' )( {
 			component: d.default,
 		} )
