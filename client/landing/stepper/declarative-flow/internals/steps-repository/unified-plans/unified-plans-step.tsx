@@ -420,14 +420,8 @@ function UnifiedPlansStep( {
 		}
 
 		if ( intent === 'plans-wordpress-hosting' ) {
-			if ( ! deemphasizeFreePlan ) {
-				return translate(
-					'All the security, flexibility, and control you need — without the overhead.'
-				);
-			}
 			return translate(
-				'All the security, flexibility, and control you need — without the overhead. Or {{link}}start with our free plan{{/link}}.',
-				{ components: { link: freePlanButton } }
+				'All the security, flexibility, and control you need — without the overhead.'
 			);
 		}
 
