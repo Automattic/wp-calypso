@@ -6,8 +6,6 @@ $blueberry-blue: #3858e9;
 	height: 100%;
 	display: flex;
 	flex-direction: column;
-	justify-content: space-between;
-	align-items: flex-end;
 }
 
 .chatbox-toggle {
@@ -34,8 +32,7 @@ $blueberry-blue: #3858e9;
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	// Exclude chat-input from the height.
-	height: calc( 100% - 90px );
+	height: 100%;	
 	overscroll-behavior: contain;
 	padding-top: 16px;
 	gap: 28px;
@@ -43,11 +40,6 @@ $blueberry-blue: #3858e9;
 
 	&:has( .odie-notice ) {
 		margin-bottom: 135px;
-	}
-
-	.odie-chatbox-bottom-edge {
-		min-height: 8px;
-		width: 100%;
 	}
 
 	.chatbox-loading-chat__spinner {
@@ -80,7 +72,8 @@ $blueberry-blue: #3858e9;
 
 .chat-box-message-container {
 	width: 100%;
-	height: 100%;
+	height: 0;
+	flex: 1;
 	background-color: #fff;
 }
 
@@ -104,11 +97,6 @@ $blueberry-blue: #3858e9;
 
 .odie-chat-message-input-container {
 	padding: 16px;
-	z-index: 10;
-	position: fixed;
-	bottom: 0;
-	left: 0;
-	right: 0;
 }
 
 .odie-chat-message-input-container.agenttic {
