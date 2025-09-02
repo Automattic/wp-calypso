@@ -17,7 +17,7 @@ export function useFields(
 ) {
 	const dispatch = useDispatch();
 
-	const fields = useMemo(
+	return useMemo(
 		() => [
 			{
 				id: 'status',
@@ -128,7 +128,7 @@ export function useFields(
 					) {
 						return (
 							<Button
-								variant="secondary"
+								variant="link"
 								onClick={ () => {
 									dispatch(
 										recordTracksEvent( 'calypso_plugins_manage_list_plugin_updateavailable_click', {
@@ -155,6 +155,4 @@ export function useFields(
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[ bulkActionDialog, openPluginSitesPane, isListView ]
 	);
-
-	return fields;
 }

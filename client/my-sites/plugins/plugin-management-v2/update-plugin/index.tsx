@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import { Icon, arrowRight } from '@wordpress/icons';
+import { Button as CoreButton } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
@@ -38,10 +38,7 @@ export default function UpdatePlugin( { plugin, selectedSite, className, updateP
 		}
 	}, [ plugin, selectedSite, updatePlugin, showPluginActionDialog ] );
 
-	const { currentVersionsRange, updatedVersions, hasUpdate } = usePluginVersionInfo(
-		plugin,
-		selectedSite?.ID
-	);
+	const { updatedVersions, hasUpdate } = usePluginVersionInfo( plugin, selectedSite?.ID );
 
 	const allowedActions = useSelector( ( state ) =>
 		getAllowedPluginActions( state, plugin, selectedSite )
@@ -87,25 +84,13 @@ export default function UpdatePlugin( { plugin, selectedSite, className, updateP
 		);
 	} else if ( hasUpdate ) {
 		content = (
-			<div className="update-plugin__plugin-update-wrapper">
-				<span className="update-plugin__current-version">
-					{ currentVersionsRange?.min }
-					{ currentVersionsRange?.max && ` - ${ currentVersionsRange.max }` }
-				</span>
-				<span className="update-plugin__arrow-icon">
-					<Icon size={ 24 } icon={ arrowRight } />
-				</span>
-				<Button
-					primary
-					onClick={ onShowUpdateConfirmationModal }
-					className="update-plugin__new-version"
-					compact
-				>
-					{ translate( 'Update to %(version)s', {
-						args: { version: updatedVersions[ 0 ] },
-					} ) }
-				</Button>
-			</div>
+			<CoreButton variant="link" onClick={ onShowUpdateConfirmationModal }>
+				{ translate( 'Update to version %(version)s', {
+					args: {
+						version: updatedVersions[ 0 ],
+					},
+				} ) }
+			</CoreButton>
 		);
 	}
 
