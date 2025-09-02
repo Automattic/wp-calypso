@@ -221,7 +221,6 @@ export type MessageAction = {
 };
 
 export type OdieMessage = {
-	displayName: string;
 	received: number;
 	role: string;
 	text: string;

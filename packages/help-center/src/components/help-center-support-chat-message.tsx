@@ -43,7 +43,7 @@ export const HelpCenterSupportChatMessage = ( {
 } ) => {
 	const { __ } = useI18n();
 	const { currentUser } = useHelpCenterContext();
-	const { displayName, received, role, text, altText } = message;
+	const { received, role, text, altText } = message;
 	const navigate = useNavigate();
 	const messageText =
 		'metadata' in message && message.metadata?.type === 'csat'
@@ -62,7 +62,9 @@ export const HelpCenterSupportChatMessage = ( {
 	);
 
 	const messageDisplayName =
-		role === 'business' ? __( 'Happiness chat', __i18n_text_domain__ ) : displayName;
+		role === 'business'
+			? __( 'Happiness chat', __i18n_text_domain__ )
+			: __( 'Support assistant chat', __i18n_text_domain__ );
 
 	const renderAvatar = () => {
 		if ( role === 'bot' ) {
