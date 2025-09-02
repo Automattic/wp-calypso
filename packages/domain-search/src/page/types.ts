@@ -1,5 +1,8 @@
-import { domainAvailabilityQuery } from '../queries/availability';
-import { domainSuggestionsQuery, freeSuggestionQuery } from '../queries/suggestions';
+import {
+	domainSuggestionsQuery,
+	freeSuggestionQuery,
+	domainAvailabilityQuery,
+} from '@automattic/api-queries';
 import type {
 	DomainSuggestion,
 	DomainSuggestionQueryVendor,
