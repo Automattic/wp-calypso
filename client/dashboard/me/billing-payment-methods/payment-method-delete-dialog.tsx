@@ -48,7 +48,7 @@ export const PaymentMethodDeleteDialog = ( {
 			onConfirm={ onConfirm }
 			onCancel={ onCancel }
 		>
-			<VStack style={ { gap: '24px' } }>
+			<VStack spacing={ 6 }>
 				<Heading level={ 2 } size={ 20 } weight={ 500 }>
 					{ __( 'Remove payment method' ) }
 				</Heading>
@@ -66,14 +66,16 @@ export const PaymentMethodDeleteDialog = ( {
 				</HStack>
 
 				{ associatedSubscriptions.length > 0 && (
-					<VStack style={ { gap: '24px' } }>
+					<VStack spacing={ 6 }>
 						<Heading level={ 3 } size={ 18 } weight={ 500 }>
 							{ __( 'Associated subscriptions' ) }
 						</Heading>
 						<VStack
+							spacing={ 6 }
 							style={
+								// Make the list scrollable because it could be very large.
 								// FIXME: this scrolling is not very elegant
-								{ gap: '24px', maxHeight: '150px', overflow: 'scroll', display: 'block' }
+								{ maxHeight: '150px', overflow: 'scroll', display: 'block' }
 							}
 						>
 							{ associatedSubscriptions.map( ( purchase: Purchase ) => (
