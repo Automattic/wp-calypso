@@ -1,0 +1,41 @@
+import { queryOptions, mutationOptions } from '@tanstack/react-query';
+import {
+	fetchAccountRecovery,
+	updateAccountRecoveryEmail,
+	removeAccountRecoveryEmail,
+	resendAccountRecoveryEmailValidation,
+} from '../../data/me-account-recovery';
+import { queryClient } from '../query-client';
+
+export const accountRecoveryQuery = () =>
+	queryOptions( {
+		queryKey: [ 'me', 'account-recovery' ],
+		queryFn: fetchAccountRecovery,
+	} );
+
+export const updateAccountRecoveryEmailMutation = () =>
+	mutationOptions( {
+		mutationFn: updateAccountRecoveryEmail,
+		onSuccess: ( _, email ) => {
+			queryClient.setQueryData(
+				accountRecoveryQuery().queryKey,
+				( oldData ) => oldData && { ...oldData, email }
+			);
+		},
+	} );
+
+export const removeAccountRecoveryEmailMutation = () =>
+	mutationOptions( {
+		mutationFn: removeAccountRecoveryEmail,
+		onSuccess: () => {
+			queryClient.setQueryData(
+				accountRecoveryQuery().queryKey,
+				( oldData ) => oldData && { ...oldData, email: '' }
+			);
+		},
+	} );
+
+export const resendAccountRecoveryEmailValidationMutation = () =>
+	mutationOptions( {
+		mutationFn: resendAccountRecoveryEmailValidation,
+	} );
