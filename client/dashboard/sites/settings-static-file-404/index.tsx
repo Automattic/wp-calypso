@@ -5,18 +5,13 @@ import {
 	siteStaticFile404SettingMutation,
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import {
-	__experimentalHStack as HStack,
-	__experimentalVStack as VStack,
-	Card,
-	CardBody,
-	Button,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, Card, CardBody, Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import { ButtonStack } from '../../components/button-stack';
 import PageLayout from '../../components/page-layout';
 import { hasHostingFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
@@ -114,7 +109,7 @@ export default function SiteStaticFile404Settings( { siteSlug }: { siteSlug: str
 										setFormData( ( data ) => ( { ...data, ...edits } ) );
 									} }
 								/>
-								<HStack justify="flex-start">
+								<ButtonStack justify="flex-start">
 									<Button
 										variant="primary"
 										type="submit"
@@ -123,7 +118,7 @@ export default function SiteStaticFile404Settings( { siteSlug }: { siteSlug: str
 									>
 										{ __( 'Save' ) }
 									</Button>
-								</HStack>
+								</ButtonStack>
 							</VStack>
 						</form>
 					</CardBody>

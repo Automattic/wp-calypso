@@ -4,7 +4,6 @@ import {
 	Button,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
-	__experimentalHStack as HStack,
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
@@ -12,6 +11,7 @@ import { __ } from '@wordpress/i18n';
 import { useState, useCallback } from 'react';
 import { domainTransferRoute } from '../../app/router/domains';
 import { profileRoute } from '../../app/router/me';
+import { ButtonStack } from '../../components/button-stack';
 import RouterLinkButton from '../../components/router-link-button';
 import type { User } from '@automattic/api-core';
 
@@ -160,7 +160,7 @@ export default function RemoveDomainDialog( {
 						</div>
 					</>
 				) }
-				<HStack justify="flex-end" spacing={ 2 }>
+				<ButtonStack justify="flex-end">
 					<Button variant="tertiary" onClick={ onCancel }>
 						{ __( 'Cancel' ) }
 					</Button>
@@ -179,7 +179,7 @@ export default function RemoveDomainDialog( {
 							{ __( 'Delete' ) }
 						</Button>
 					) }
-				</HStack>
+				</ButtonStack>
 			</VStack>
 		</Modal>
 	);

@@ -1,10 +1,6 @@
 import { siteBackupDownloadInitiateMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import {
-	Button,
-	__experimentalHStack as HStack,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
@@ -12,6 +8,7 @@ import { download } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { siteBackupDownloadRoute } from '../../app/router/sites';
+import { ButtonStack } from '../../components/button-stack';
 import type { DownloadConfig } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
@@ -120,7 +117,7 @@ function SiteBackupDownloadForm( {
 					onChange={ handleFormChange }
 				/>
 
-				<HStack justify="flex-start">
+				<ButtonStack justify="flex-start">
 					<Button
 						variant="primary"
 						icon={ download }
@@ -130,7 +127,7 @@ function SiteBackupDownloadForm( {
 					>
 						{ __( 'Generate download' ) }
 					</Button>
-				</HStack>
+				</ButtonStack>
 			</VStack>
 		</form>
 	);

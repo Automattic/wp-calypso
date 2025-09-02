@@ -29,6 +29,7 @@ import { trash } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { useAuth } from '../../app/auth';
+import { ButtonStack } from '../../components/button-stack';
 import ClipboardInputControl from '../../components/clipboard-input-control';
 import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
@@ -321,7 +322,7 @@ export default function SshCard( {
 						/>
 					) }
 					{ sshEnabled && ! userKeyIsAttached && (
-						<HStack justify="flex-start">
+						<ButtonStack justify="flex-start">
 							<Button
 								variant="primary"
 								isBusy={ attachSshKeyMutation.isPending }
@@ -338,7 +339,7 @@ export default function SshCard( {
 							>
 								{ __( 'Add new SSH key ↗' ) }
 							</Button>
-						</HStack>
+						</ButtonStack>
 					) }
 				</VStack>
 			</CardBody>

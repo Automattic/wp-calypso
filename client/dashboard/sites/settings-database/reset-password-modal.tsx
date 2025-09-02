@@ -1,6 +1,5 @@
 import { restoreDatabasePassword } from '@automattic/api-core';
 import {
-	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	Button,
@@ -8,6 +7,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
+import { ButtonStack } from '../../components/button-stack';
 
 interface ResetPasswordModalProps {
 	siteId: number;
@@ -43,12 +43,12 @@ export default function ResetPasswordModal( {
 				<Text>
 					{ __( 'Are you sure you want to restore the default password of your database?' ) }
 				</Text>
-				<HStack justify="flex-end" spacing={ 2 }>
+				<ButtonStack justify="flex-end">
 					<Button onClick={ onClose }>{ __( 'Cancel' ) }</Button>
 					<Button variant="primary" isBusy={ isRestoring } onClick={ handleRestore }>
 						{ __( 'Restore' ) }
 					</Button>
-				</HStack>
+				</ButtonStack>
 			</VStack>
 		</Modal>
 	);

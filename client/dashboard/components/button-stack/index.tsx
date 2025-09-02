@@ -2,14 +2,14 @@ import { __experimentalHStack as HStack } from '@wordpress/components';
 import { ReactNode } from 'react';
 import type { ComponentProps } from 'react';
 
-type ButtonGroupProps = {
+type ButtonStackProps = {
 	children: ReactNode;
 };
 
-export default function ButtonGroup( {
+export function ButtonStack( {
 	children,
 	...hStackProps
-}: ButtonGroupProps & ComponentProps< typeof HStack > ) {
+}: ButtonStackProps & Omit< ComponentProps< typeof HStack >, 'spacing' > ) {
 	return (
 		<HStack { ...hStackProps } spacing={ 3 }>
 			{ children }

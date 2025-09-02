@@ -8,7 +8,7 @@ import { rotateLeft } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { siteBackupRestoreRoute } from '../../app/router/sites';
-import ButtonGroup from '../../components/button-group';
+import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
 import type { RestoreConfig } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
@@ -130,7 +130,7 @@ function SiteBackupRestoreForm( {
 					{ restoreWarning }
 				</Notice>
 
-				<ButtonGroup justify="flex-start">
+				<ButtonStack justify="flex-start">
 					<Button
 						variant="primary"
 						icon={ rotateLeft }
@@ -140,7 +140,7 @@ function SiteBackupRestoreForm( {
 					>
 						{ __( 'Restore now' ) }
 					</Button>
-				</ButtonGroup>
+				</ButtonStack>
 			</VStack>
 		</form>
 	);

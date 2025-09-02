@@ -1,5 +1,5 @@
 import { __experimentalVStack as VStack } from '@wordpress/components';
-import ButtonGroup from '../button-group';
+import { ButtonStack } from '../button-stack';
 import './styles.scss';
 import { Text } from '../text';
 import type { ReactNode } from 'react';
@@ -31,9 +31,9 @@ export function DataViewsEmptyState( {
 				</Text>
 			</VStack>
 			{ actions && (
-				<ButtonGroup justify="center" wrap>
+				<ButtonStack justify="center" wrap>
 					{ actions }
-				</ButtonGroup>
+				</ButtonStack>
 			) }
 		</VStack>
 	);

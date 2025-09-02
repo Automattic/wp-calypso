@@ -1,7 +1,6 @@
 import { siteDomainsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import {
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Card,
 	CardBody,
@@ -15,6 +14,7 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
+import { ButtonStack } from '../../components/button-stack';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { ShareSiteForm } from './share-site-form';
@@ -244,7 +244,7 @@ export function PrivacyForm( {
 								form={ robotForm }
 								onChange={ ( { isPrimaryDomainStaging, ...edits } ) => handleChange( edits ) }
 							/>
-							<HStack justify="flex-start">
+							<ButtonStack justify="flex-start">
 								<Button
 									variant="primary"
 									__next40pxDefaultSize
@@ -254,7 +254,7 @@ export function PrivacyForm( {
 								>
 									{ __( 'Save' ) }
 								</Button>
-							</HStack>
+							</ButtonStack>
 						</VStack>
 					</form>
 				</CardBody>
