@@ -1,3 +1,8 @@
+import {
+	siteByIdQuery,
+	pushToStagingMutation,
+	pullFromStagingMutation,
+} from '@automattic/api-queries';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import {
@@ -13,11 +18,6 @@ import {
 import { createInterpolateElement, useState, useCallback } from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronRight, chevronLeft } from '@wordpress/icons';
-import { siteByIdQuery } from '../../app/queries/site';
-import {
-	pushToStagingMutation,
-	pullFromStagingMutation,
-} from '../../app/queries/site-staging-sync';
 import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
 import SiteEnvironmentBadge, { EnvironmentType } from '../../components/site-environment-badge';

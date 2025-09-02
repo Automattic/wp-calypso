@@ -1,9 +1,9 @@
+import { fetchShoppingCart, updateShoppingCart } from '@automattic/api-core';
 import { createShoppingCartManagerClient } from '@automattic/shopping-cart'; // eslint-disable-line no-restricted-imports
-import { wpcomGetCart, wpcomSetCart } from '../../data/me-shopping-cart';
 
 export const shoppingCartManagerClient = createShoppingCartManagerClient( {
-	getCart: wpcomGetCart,
-	setCart: wpcomSetCart,
+	getCart: fetchShoppingCart,
+	setCart: updateShoppingCart,
 } );
 
 export { useWPCOMShoppingCartForDomainSearch } from './use-wpcom-shopping-cart-for-domain-search';

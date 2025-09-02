@@ -1,3 +1,4 @@
+import { siteBackupRestoreInitiateMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
 	Button,
@@ -10,10 +11,9 @@ import { __ } from '@wordpress/i18n';
 import { rotateLeft } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteBackupRestoreInitiateMutation } from '../../app/queries/site-backup-restore';
 import { siteBackupRestoreRoute } from '../../app/router/sites';
 import Notice from '../../components/notice';
-import type { RestoreConfig } from '../../data/site-backup-restore';
+import type { RestoreConfig } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 const fields: Field< RestoreConfig >[] = [

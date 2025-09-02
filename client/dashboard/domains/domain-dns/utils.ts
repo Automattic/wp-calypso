@@ -1,4 +1,4 @@
-import { DnsRecord } from '../../data/domain-dns-records';
+import { DnsRecord } from '@automattic/api-core';
 
 const domainConnect = {
 	DISCOVERY_TXT_RECORD_NAME: '_domainconnect',

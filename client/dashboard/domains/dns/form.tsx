@@ -11,7 +11,7 @@ import { useState } from 'react';
 import RequiredSelect from '../../components/required-select';
 import { DNS_RECORD_CONFIGS } from './records/dns-record-configs';
 import type { DnsRecordTypeFormData, DnsRecordFormData } from './records/dns-record-configs';
-import type { DnsRecord, DnsRecordType } from '../../data/domain-dns-records';
+import type { DnsRecord, DnsRecordType } from '@automattic/api-core';
 
 const typeForm = {
 	layout: { type: 'regular' as const },

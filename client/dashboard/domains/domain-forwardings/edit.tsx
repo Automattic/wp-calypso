@@ -1,14 +1,14 @@
+import {
+	domainQuery,
+	domainForwardingQuery,
+	domainForwardingSaveMutation,
+} from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { notFound, useRouter } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { domainQuery } from '../../app/queries/domain';
-import {
-	domainForwardingQuery,
-	domainForwardingSaveMutation,
-} from '../../app/queries/domain-forwarding';
 import { domainRoute, domainForwardingsRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -16,7 +16,7 @@ import DomainForwardingForm from './form';
 import { DomainForwardingNotice } from './notice';
 import { formDataToSubmitData } from './utils';
 import type { FormData } from './form';
-import type { DomainForwardingSaveData } from '../../data/domain-forwarding';
+import type { DomainForwardingSaveData } from '@automattic/api-core';
 
 export default function EditDomainForwarding() {
 	const router = useRouter();

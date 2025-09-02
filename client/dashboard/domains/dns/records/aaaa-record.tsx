@@ -2,7 +2,7 @@ import { __ } from '@wordpress/i18n';
 import { getNormalizedName } from '../utils';
 import { hostnameValidator, ipv6Validator, ttlValidator } from './validators';
 import type { DnsRecordFormData, DnsRecordConfig } from './dns-record-configs';
-import type { DnsRecordType } from '../../../data/domain-dns-records';
+import type { DnsRecordType } from '@automattic/api-core';
 
 export const AAAARecordConfig: DnsRecordConfig = {
 	fields: [

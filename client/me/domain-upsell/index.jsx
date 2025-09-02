@@ -1,8 +1,8 @@
+import { fetchDomainSuggestions } from '@automattic/api-core';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { getPlan, isFreePlanProduct, getIntervalTypeForTerm } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Card, Gridicon, Spinner } from '@automattic/components';
-import { fetchDomainSuggestions } from '@automattic/data';
 import { useLocale } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useQuery } from '@tanstack/react-query';

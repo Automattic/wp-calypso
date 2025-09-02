@@ -1,3 +1,5 @@
+import { HostingFeatures, LogType, PHPLog, ServerLog, SiteLogsParams } from '@automattic/api-core';
+import { siteLogsQuery, siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
@@ -15,9 +17,6 @@ import { getUnixTime, subDays, isSameSecond } from 'date-fns';
 import { useMemo, useState, useRef, useEffect } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useLocale } from '../../app/locale';
-import { siteBySlugQuery } from '../../app/queries/site';
-import { siteLogsQuery } from '../../app/queries/site-logs';
-import { siteSettingsQuery } from '../../app/queries/site-settings';
 import { siteRoute } from '../../app/router/sites';
 import { Callout } from '../../components/callout';
 import { CalloutOverlay } from '../../components/callout-overlay';
@@ -26,8 +25,6 @@ import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
-import { HostingFeatures } from '../../data/constants';
-import { LogType, PHPLog, ServerLog, SiteLogsParams } from '../../data/site-logs';
 import { hasHostingFeature } from '../../utils/site-features';
 import { useActions } from './dataviews/actions';
 import { useFields } from './dataviews/fields';

@@ -14,7 +14,7 @@ import {
 	isAnyHostingFlow,
 } from '../';
 import cartManagerClient from './create-cart-manager-client';
-import type { DomainSuggestion } from '@automattic/data';
+import type { DomainSuggestion } from '@automattic/api-core';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 const debug = debugFactory( 'calypso:signup:step-actions' );

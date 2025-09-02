@@ -4,7 +4,7 @@ import type {
 	DomainSuggestion,
 	DomainSuggestionQueryVendor,
 	FreeDomainSuggestion,
-} from '@automattic/data';
+} from '@automattic/api-core';
 import type { ComponentType } from 'react';
 
 export interface SelectedDomain {

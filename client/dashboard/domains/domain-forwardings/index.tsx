@@ -1,3 +1,4 @@
+import { domainForwardingDeleteMutation, domainForwardingQuery } from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { Link, useRouter } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
@@ -5,10 +6,6 @@ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState, useMemo } from 'react';
-import {
-	domainForwardingDeleteMutation,
-	domainForwardingQuery,
-} from '../../app/queries/domain-forwarding';
 import {
 	domainRoute,
 	domainForwardingAddRoute,
@@ -18,7 +15,7 @@ import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
-import type { DomainForwarding } from '../../data/domain-forwarding';
+import type { DomainForwarding } from '@automattic/api-core';
 import type { Action, Field, ViewTable, ViewList, View } from '@wordpress/dataviews';
 
 function getForwardingId( forwarding: DomainForwarding ) {

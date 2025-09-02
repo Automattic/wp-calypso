@@ -1,3 +1,4 @@
+import { profileMutation } from '@automattic/api-queries';
 import { generatePassword } from '@automattic/generate-password';
 import { useMutation } from '@tanstack/react-query';
 import {
@@ -15,7 +16,6 @@ import { __ } from '@wordpress/i18n';
 import { seen, unseen } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useMemo, useState } from 'react';
-import { profileMutation } from '../../app/queries/me-profile';
 import PageLayout from '../../components/page-layout';
 import SecurityPageHeader from '../security-page-header';
 import type { Field } from '@wordpress/dataviews';

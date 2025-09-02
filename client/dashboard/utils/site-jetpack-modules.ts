@@ -1,4 +1,4 @@
-import type { JetpackModule } from '../data/site-jetpack-modules';
+import type { JetpackModule } from '@automattic/api-core';
 
 /**
  * Checks if a Jetpack module exists and is activated

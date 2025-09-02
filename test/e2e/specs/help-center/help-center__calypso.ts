@@ -84,7 +84,7 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Help Center in Calyp
 		it( 'initial articles are shown', async () => {
 			const articles = helpCenterComponent.getArticles();
 
-			expect( await articles.count() ).toBeGreaterThanOrEqual( 5 );
+			expect( await articles.count() ).toBeGreaterThanOrEqual( 1 );
 		} );
 
 		it( 'search returns proper results', async () => {

@@ -9,18 +9,25 @@ import { useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import getAllNotes from '../../panel/state/selectors/get-all-notes';
 import getIsLoading from '../../panel/state/selectors/get-is-loading';
+import getIsNoteHidden from '../../panel/state/selectors/get-is-note-hidden';
 import { getFilters } from '../../panel/templates/filters';
 import { useAppContext } from '../context';
 import { getFields } from './dataviews';
 import type { Note } from '../types';
 import type { View } from '@wordpress/dataviews';
+
 import './style.scss';
 
 const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFilters > } ) => {
 	const { goTo } = useNavigator();
 	const filter = getFilters()[ filterName ];
+	const isNoteHidden = useSelector(
+		( state ) => ( noteId: number ) => getIsNoteHidden( state, noteId )
+	);
 	const notes = useSelector( ( state ) =>
-		( ( getAllNotes( state ) || [] ) as Note[] ).filter( ( note ) => filter.filter( note ) )
+		( ( getAllNotes( state ) || [] ) as Note[] ).filter(
+			( note ) => filter.filter( note ) && ! isNoteHidden( note.id )
+		)
 	);
 
 	const isLoading = useSelector( ( state ) => getIsLoading( state ) );

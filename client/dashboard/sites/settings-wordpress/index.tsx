@@ -1,3 +1,8 @@
+import {
+	siteBySlugQuery,
+	siteWordPressVersionQuery,
+	siteWordPressVersionMutation,
+} from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
 	Card,
@@ -13,11 +18,6 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteBySlugQuery } from '../../app/queries/site';
-import {
-	siteWordPressVersionQuery,
-	siteWordPressVersionMutation,
-} from '../../app/queries/site-wordpress-version';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
 import RequiredSelect from '../../components/required-select';

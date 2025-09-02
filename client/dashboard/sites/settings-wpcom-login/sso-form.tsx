@@ -1,3 +1,10 @@
+import { JetpackModules } from '@automattic/api-core';
+import {
+	siteJetpackModulesQuery,
+	siteJetpackModulesMutation,
+	siteJetpackSettingsQuery,
+	siteJetpackSettingsMutation,
+} from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Card,
@@ -12,17 +19,8 @@ import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import {
-	siteJetpackModulesQuery,
-	siteJetpackModulesMutation,
-} from '../../app/queries/site-jetpack-modules';
-import {
-	siteJetpackSettingsQuery,
-	siteJetpackSettingsMutation,
-} from '../../app/queries/site-jetpack-settings';
-import { JetpackModules } from '../../data/constants';
 import { isJetpackModuleActivated } from '../../utils/site-jetpack-modules';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 type WpcomLoginFormData = {
@@ -131,21 +129,23 @@ export default function SsoForm( { site }: { site: Site } ) {
 			);
 		}
 
-		// Avoid showing a double notification if both module and settings have been changed.
-		if ( areSettingsDirty && ! isModuleDirty ) {
+		if ( areSettingsDirty ) {
 			jetpackSettingsMutation.mutate(
 				{
 					jetpack_sso_match_by_email: formData.jetpack_sso_match_by_email,
 					jetpack_sso_require_two_step: formData.jetpack_sso_require_two_step,
 				},
-				{
-					onSuccess: () => {
-						createSuccessNotice( __( 'Settings saved.' ), { type: 'snackbar' } );
-					},
-					onError: () => {
-						createErrorNotice( __( 'Failed to save settings.' ), { type: 'snackbar' } );
-					},
-				}
+				// Avoid showing a double notification if both module and settings have been changed.
+				! isModuleDirty
+					? {
+							onSuccess: () => {
+								createSuccessNotice( __( 'Settings saved.' ), { type: 'snackbar' } );
+							},
+							onError: () => {
+								createErrorNotice( __( 'Failed to save settings.' ), { type: 'snackbar' } );
+							},
+					  }
+					: {}
 			);
 		}
 	};
