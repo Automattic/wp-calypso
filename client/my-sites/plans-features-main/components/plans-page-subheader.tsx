@@ -185,7 +185,7 @@ const PlansPageSubheader = ( {
 		// WordPress Hosting intent: use hosting-specific copy
 		if ( intent === 'plans-wordpress-hosting' ) {
 			return (
-				<Subheader isUsingStepContainerV2={ isUsingStepContainerV2 }>
+				<Subheader { ...subheaderCommonProps }>
 					{ translate(
 						'All the security, flexibility, and control you need — without the overhead.'
 					) }
