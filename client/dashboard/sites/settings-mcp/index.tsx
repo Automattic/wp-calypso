@@ -1,3 +1,9 @@
+import {
+	isAutomatticianQuery,
+	siteBySlugQuery,
+	siteSettingsQuery,
+	siteSettingsMutation,
+} from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
@@ -12,9 +18,6 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState, useEffect } from 'react';
-import { isAutomatticianQuery } from '../../app/queries/me-a8c';
-import { siteBySlugQuery } from '../../app/queries/site';
-import { siteSettingsQuery, siteSettingsMutation } from '../../app/queries/site-settings';
 import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';
 import type { SiteMcpAbilities } from '@automattic/api-core';
@@ -28,7 +31,7 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 	const mutation = useMutation( siteSettingsMutation( site.ID ) );
 
 	// Get abilities from the site settings data
-	const availableAbilities = Object.entries( siteSettings?.mcp_abilities || {} );
+	const availableAbilities: [ string, any ][] = Object.entries( siteSettings?.mcp_abilities || {} );
 	const hasAbilities = availableAbilities.length > 0;
 
 	const [ formData, setFormData ] = useState< SiteMcpAbilities >(
@@ -68,7 +71,7 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 		e.preventDefault();
 
 		// Convert the abilities object to a simple key-value array with enabled status
-		const abilitiesArray = {};
+		const abilitiesArray: Record< string, number > = {};
 		Object.entries( formData ).forEach( ( [ abilityId, ability ] ) => {
 			abilitiesArray[ abilityId ] = ability.enabled ? 1 : 0;
 		} );
@@ -122,7 +125,7 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 	};
 
 	// Get abilities from the site settings data, but use form data for current state
-	const abilities = availableAbilities.map( ( [ abilityId, ability ] ) => [
+	const abilities: [ string, any ][] = availableAbilities.map( ( [ abilityId, ability ] ) => [
 		abilityId,
 		{
 			...ability,
@@ -131,27 +134,30 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 	] );
 
 	// Group abilities by type first, then by category
-	const groupedByType = abilities.reduce( ( typeGroups, [ abilityId, ability ] ) => {
-		const type = ability.type || 'tool'; // Default to 'tool' instead of 'other'
-		const category = ability.category || 'General';
+	const groupedByType: Record< string, Record< string, [ string, any ][] > > = abilities.reduce(
+		( typeGroups, [ abilityId, ability ] ) => {
+			const type = ability.type || 'tool'; // Default to 'tool' instead of 'other'
+			const category = ability.category || 'General';
 
-		// Only include the three main types
-		if ( ! [ 'tool', 'resource', 'prompt' ].includes( type ) ) {
+			// Only include the three main types
+			if ( ! [ 'tool', 'resource', 'prompt' ].includes( type ) ) {
+				return typeGroups;
+			}
+
+			if ( ! typeGroups[ type ] ) {
+				typeGroups[ type ] = {};
+			}
+			if ( ! typeGroups[ type ][ category ] ) {
+				typeGroups[ type ][ category ] = [];
+			}
+			typeGroups[ type ][ category ].push( [ abilityId, ability ] );
 			return typeGroups;
-		}
-
-		if ( ! typeGroups[ type ] ) {
-			typeGroups[ type ] = {};
-		}
-		if ( ! typeGroups[ type ][ category ] ) {
-			typeGroups[ type ][ category ] = [];
-		}
-		typeGroups[ type ][ category ].push( [ abilityId, ability ] );
-		return typeGroups;
-	}, {} );
+		},
+		{}
+	);
 
 	// Type descriptions
-	const typeDescriptions = {
+	const typeDescriptions: Record< string, string > = {
 		tool: __(
 			'Tools allow AI assistants to perform actions on your behalf, such as creating posts or managing site settings.'
 		),
@@ -164,7 +170,7 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 	};
 
 	// Type display names
-	const typeDisplayNames = {
+	const typeDisplayNames: Record< string, string > = {
 		tool: __( 'Tools' ),
 		resource: __( 'Resources' ),
 		prompt: __( 'Prompts' ),

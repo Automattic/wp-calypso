@@ -1,10 +1,9 @@
+import { isAutomatticianQuery, siteSettingsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { SVG, Path } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { isAutomatticianQuery } from '../../app/queries/me-a8c';
-import { siteSettingsQuery } from '../../app/queries/site-settings';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
 // Custom MCP icon component
