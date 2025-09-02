@@ -4,7 +4,6 @@ import { createElement } from 'react';
 import SharingConnections from 'calypso/sites/marketing/connections/connections';
 import SharingButtons from 'calypso/sites/marketing/sharing/buttons';
 import MarketingTools from 'calypso/sites/marketing/tools';
-import JetpackTraffic from 'calypso/sites/marketing/traffic/jetpack-traffic';
 import Traffic from 'calypso/sites/marketing/traffic/traffic';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
@@ -119,12 +118,6 @@ export const sharingButtons = ( context, next ) => {
 
 export const traffic = ( context, next ) => {
 	context.primary = createElement( Traffic );
-
-	next();
-};
-
-export const jetpackTraffic = ( context, next ) => {
-	context.contentComponent = createElement( JetpackTraffic );
 
 	next();
 };
