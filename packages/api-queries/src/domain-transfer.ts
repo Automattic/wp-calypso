@@ -43,7 +43,7 @@ export const ipsTagMutation = ( domain: string ) =>
 
 export const domainTransferRequestQuery = ( domain: string, siteSlug: string ) =>
 	queryOptions( {
-		queryKey: [ 'domain-transfer-request', domain, siteSlug ],
+		queryKey: [ 'domains', domain, 'domain-transfer-request', siteSlug ],
 		queryFn: () => fetchDomainTransferRequest( domain, siteSlug ),
 	} );
 
