@@ -7,12 +7,12 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
 import { SelectedFeatureData } from '../hooks/use-selected-feature';
 
-const Subheader = styled.p< { isUsingStepContainerV2?: boolean } >`
-	margin: -32px 0 40px 0;
+const Subheader = styled.p< { isUsingStepContainerV2?: boolean; isVisualSplitIntent?: boolean } >`
+	margin: ${ ( props ) => ( props.isVisualSplitIntent ? '-40px 0 30px 0' : '-32px 0 40px 0' ) };
 	color: var( --studio-gray-60 );
 	text-align: ${ ( props ) => ( props.isUsingStepContainerV2 ? 'left' : 'center' ) };
 	button.is-borderless {
-		font-weight: 500;
+		font-weight: ${ ( props ) => ( props.isVisualSplitIntent ? 'inherit' : '500' ) };
 		color: var( --studio-gray-90 );
 		text-decoration: underline;
 		font-size: 16px;
@@ -151,12 +151,20 @@ const PlansPageSubheader = ( {
 
 	const isUsingStepContainerV2 = Boolean( flowName && shouldUseStepContainerV2( flowName ) );
 
+	const isVisualSplitIntent =
+		intent === 'plans-wordpress-hosting' || intent === 'plans-website-builder';
+
+	const subheaderCommonProps = {
+		isUsingStepContainerV2,
+		isVisualSplitIntent,
+	};
+
 	const renderSubheader = () => {
 		// Website Builder intent: use the new copy
 		if ( intent === 'plans-website-builder' ) {
 			if ( deemphasizeFreePlan && offeringFreePlan ) {
 				return (
-					<Subheader isUsingStepContainerV2={ isUsingStepContainerV2 }>
+					<Subheader { ...subheaderCommonProps }>
 						{ translate(
 							'Everything you need to go from idea to one-of-a-kind site, blog, or newsletter. Or {{link}}start with our free plan{{/link}}.',
 							{ components: { link: <Button onClick={ onFreePlanCTAClick } borderless /> } }
@@ -166,7 +174,7 @@ const PlansPageSubheader = ( {
 			}
 
 			return (
-				<Subheader isUsingStepContainerV2={ isUsingStepContainerV2 }>
+				<Subheader { ...subheaderCommonProps }>
 					{ translate(
 						'Everything you need to go from idea to one-of-a-kind site, blog, or newsletter.'
 					) }
@@ -186,7 +194,7 @@ const PlansPageSubheader = ( {
 		}
 		if ( deemphasizeFreePlan && offeringFreePlan ) {
 			return (
-				<Subheader isUsingStepContainerV2={ isUsingStepContainerV2 }>
+				<Subheader { ...subheaderCommonProps }>
 					{ translate(
 						'Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.',
 						{
@@ -205,7 +213,7 @@ const PlansPageSubheader = ( {
 
 		if ( isOnboarding ) {
 			return (
-				<Subheader isUsingStepContainerV2={ isUsingStepContainerV2 }>
+				<Subheader { ...subheaderCommonProps }>
 					{ translate( 'Whatever site you’re building, there’s a plan to make it happen sooner.' ) }
 				</Subheader>
 			);
