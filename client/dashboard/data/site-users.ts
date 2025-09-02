@@ -2,6 +2,7 @@ import wpcom from 'calypso/lib/wp';
 
 export interface SiteUser {
 	id: number;
+	linked_user_ID?: number | false;
 }
 
 export async function fetchCurrentSiteUser( siteId: number ): Promise< SiteUser > {

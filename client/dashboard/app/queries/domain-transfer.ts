@@ -7,6 +7,7 @@ import {
 	fetchDomainTransferRequest,
 	updateDomainTransferRequest,
 	deleteDomainTransferRequest,
+	domainTransferToOtherUser,
 } from '../../data/domain-transfer';
 import { queryClient } from '../query-client';
 import { domainQuery } from './domain';
@@ -68,4 +69,13 @@ export const deleteDomainTransferRequestMutation = ( domain: string, siteSlug: s
 			queryClient.setQueryData( domainTransferRequestQuery( domain, siteSlug ).queryKey, null );
 			queryClient.invalidateQueries( domainTransferRequestQuery( domain, siteSlug ) );
 		},
+	} );
+
+export const domainTransferToOtherUserMutation = (
+	domain: string,
+	siteId: number,
+	userId: string
+) =>
+	mutationOptions( {
+		mutationFn: () => domainTransferToOtherUser( domain, siteId, userId ),
 	} );
