@@ -136,7 +136,6 @@ function SecondaryMenu() {
 				<Button
 					className="dashboard-secondary-menu__item"
 					icon={ <ReaderIcon /> }
-					label={ __( 'Reader' ) }
 					text={ __( 'Reader' ) }
 					href="/reader"
 				/>
