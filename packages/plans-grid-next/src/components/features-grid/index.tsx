@@ -179,9 +179,9 @@ const MobileView = ( {
 						<>
 							<PlanFeaturesItem>
 								<h2
-									className={ `plans-grid-next-features-grid__feature-group-title${
-										intent === 'plans-wordpress-hosting' ? ' is-wordpress-hosting' : ''
-									}` }
+									className={ clsx( 'plans-grid-next-features-grid__feature-group-title', {
+										'is-wordpress-hosting': intent === 'plans-wordpress-hosting',
+									} ) }
 								>
 									{ storageFeatureGroup?.getTitle() }
 								</h2>
