@@ -31,6 +31,8 @@ import type {
 	UserTaxField,
 	UserTaxFormData,
 	UserTaxNormalizedField,
+	UserTaxDetailsUpdateError,
+	UserTaxDetailsFetchError,
 } from '@automattic/api-core';
 import './style.scss';
 
@@ -40,21 +42,13 @@ export interface UserTaxFormControlProps {
 	onChange: ( edits: Partial< UserTaxFormData > ) => void;
 }
 
-export interface UpdateError {
-	message: string;
-	error: string;
-}
-export interface FetchError {
-	message: string;
-	error: string;
-}
 export interface UserTaxDetailsManager {
 	userTaxDetails: UserTaxDetails;
 	isLoading: boolean;
 	isUpdating: boolean;
 	isUpdateSuccessful: boolean;
-	fetchError: FetchError | null;
-	updateError: UpdateError | null;
+	fetchError: UserTaxDetailsFetchError | null;
+	updateError: UserTaxDetailsUpdateError | null;
 	setUserTaxDetails: ( userTaxDetails: UserTaxDetails ) => Promise< UserTaxDetails >;
 }
 
@@ -144,7 +138,9 @@ export default function UserTaxForm() {
 	const countryCodes = getDataFormCountryCodes( countryList );
 
 	const [ localData, setLocalData ] = useState< Partial< UserTaxFormData > >( {} );
-	const query = useSuspenseQuery< UserTaxDetails, FetchError >( userTaxDetailsQuery() );
+	const query = useSuspenseQuery< UserTaxDetails, UserTaxDetailsFetchError >(
+		userTaxDetailsQuery()
+	);
 	const userTaxDetails: UserTaxDetails = query.data ?? emptyUserTaxDetails;
 	const { data: geoData } = useSuspenseQuery( geoLocationQuery() );
 	const formData = useMemo( () => {
@@ -168,7 +164,7 @@ export default function UserTaxForm() {
 	const taxName = getTaxName( countryList, formData.country ?? geoData?.country_short ?? 'GB' );
 	const { createSuccessNotice, createErrorNotice, removeNotice } = useDispatch( noticesStore );
 	const userTaxDetailsMutation = () => {
-		return mutationOptions< UserTaxDetails, UpdateError, UserTaxDetails >( {
+		return mutationOptions< UserTaxDetails, UserTaxDetailsUpdateError, UserTaxDetails >( {
 			mutationFn: updateUserTaxDetails,
 			onSuccess: ( newData: UserTaxDetails ) => {
 				queryClient.setQueryData(
@@ -188,7 +184,7 @@ export default function UserTaxForm() {
 					}
 				);
 			},
-			onError: ( error: Error | UpdateError | FetchError ) => {
+			onError: ( error: Error | UserTaxDetailsUpdateError | UserTaxDetailsFetchError ) => {
 				removeNotice( 'vat_info_notice' );
 				if ( error?.message?.length > 0 ) {
 					createErrorNotice( error.message, { type: 'snackbar', id: 'vat_info_notice' } );
@@ -209,7 +205,7 @@ export default function UserTaxForm() {
 		} );
 	};
 
-	const mutation = useMutation< UserTaxDetails, UpdateError, UserTaxDetails >(
+	const mutation = useMutation< UserTaxDetails, UserTaxDetailsUpdateError, UserTaxDetails >(
 		userTaxDetailsMutation()
 	);
 	const formatUserTaxDetails = useCallback( ( data: UserTaxDetails ) => {
@@ -233,34 +229,34 @@ export default function UserTaxForm() {
 				isLoading: query.isLoading,
 				isUpdating: mutation.isPending,
 				isUpdateSuccessful: mutation.isSuccess,
-				fetchError: query.error as FetchError,
+				fetchError: query.error as UserTaxDetailsFetchError,
 				updateError: mutation.error,
 				setUserTaxDetails: setDetails,
 			} ),
 			[ query, setDetails, mutation ]
 		);
 
-	const lastFetchError = useRef< FetchError >();
-	const lastUpdateError = useRef< UpdateError >();
+	const lastUserTaxDetailsFetchError = useRef< UserTaxDetailsFetchError >();
+	const lastUserTaxDetailsUpdateError = useRef< UserTaxDetailsUpdateError >();
 	const { recordTracksEvent } = useAnalytics();
 
-	if ( updateError && lastUpdateError.current !== updateError ) {
+	if ( updateError && lastUserTaxDetailsUpdateError.current !== updateError ) {
 		recordTracksEvent( 'calypso_dashboard_vat_details_validation_failure', {
 			error: updateError.error,
 		} );
-		lastUpdateError.current = updateError;
+		lastUserTaxDetailsUpdateError.current = updateError;
 	}
 
 	if ( isUpdateSuccessful ) {
 		recordTracksEvent( 'calypso_dashboard_vat_details_validation_success' );
 	}
 
-	if ( fetchError && lastFetchError.current !== fetchError ) {
+	if ( fetchError && lastUserTaxDetailsFetchError.current !== fetchError ) {
 		recordTracksEvent( 'calypso_dashboard_vat_details_fetch_failure', {
 			error: fetchError.error,
 			message: fetchError.message,
 		} );
-		lastFetchError.current = fetchError;
+		lastUserTaxDetailsFetchError.current = fetchError;
 	}
 
 	const isVatAlreadySet = !! userTaxDetails.id;

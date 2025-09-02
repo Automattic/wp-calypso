@@ -3,15 +3,6 @@ import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
 import type { UserTaxFormData } from '@automattic/api-core';
 
-export interface UpdateError {
-	message: string;
-	error: string;
-}
-export interface FetchError {
-	message: string;
-	error: string;
-}
-
 export const userTaxDetailsQuery = () =>
 	queryOptions( {
 		queryKey: [ 'me', 'billing-purchases', 'tax-details' ],
