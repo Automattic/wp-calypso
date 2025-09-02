@@ -1,5 +1,5 @@
 import { Badge, Gridicon } from '@automattic/components';
-import { getTld } from '@automattic/domain-search';
+import { getTld, parseMatchReasons } from '@automattic/domain-search';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { HUNDRED_YEAR_DOMAIN_FLOW } from '@automattic/onboarding';
@@ -10,10 +10,6 @@ import { get, includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import {
-	parseMatchReasons,
-	VALID_MATCH_REASONS,
-} from 'calypso/components/domains/domain-registration-suggestion/utility';
 import DomainSuggestion from 'calypso/components/domains/domain-suggestion';
 import InfoPopover from 'calypso/components/info-popover';
 import {
@@ -46,7 +42,7 @@ class DomainRegistrationSuggestion extends Component {
 			domain_name: PropTypes.string.isRequired,
 			product_slug: PropTypes.string,
 			cost: PropTypes.string,
-			match_reasons: PropTypes.arrayOf( PropTypes.oneOf( VALID_MATCH_REASONS ) ),
+			match_reasons: PropTypes.arrayOf( PropTypes.string ),
 			currency_code: PropTypes.string,
 			policy_notices: PropTypes.arrayOf(
 				PropTypes.shape( {
