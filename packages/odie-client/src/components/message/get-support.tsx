@@ -38,6 +38,7 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 } ) => {
 	const navigate = useNavigate();
 	const createZendeskConversation = useCreateZendeskConversation();
+
 	const {
 		chat,
 		isUserEligibleForPaidSupport: contextIsUserEligibleForPaidSupport,
@@ -105,7 +106,6 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 							if ( isChatLoaded ) {
 								createZendeskConversation( {
 									avoidTransfer: true,
-									interactionId: mostRecentSupportInteractionId?.toString() ?? '',
 									createdFrom: 'chat_support_button',
 								} );
 							}

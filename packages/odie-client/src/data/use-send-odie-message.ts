@@ -60,7 +60,7 @@ export const useSendOdieMessage = () => {
 
 	const { addEventToInteraction } = useManageSupportInteraction();
 	const newConversation = useCreateZendeskConversation();
-	const warnAboutExistingConversation = useViewMostRecentOpenConversationNotice( true );
+	const warnAboutExistingConversation = useViewMostRecentOpenConversationNotice();
 
 	const internal_message_id = generateUUID();
 	const queryClient = useQueryClient();

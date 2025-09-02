@@ -118,16 +118,7 @@ export const getOdieEmailFallbackMessage = (): Message => ( {
 } );
 
 export const getExistingConversationMessage = (): Message => ( {
-	content: (
-		<>
-			<p className="odie-chatbox-message__content">
-				{ __( 'Yes, please take me to that chat.', __i18n_text_domain__ ) }
-			</p>
-			<p className="odie-chatbox-message__content">
-				{ __( 'No thanks, let’s keep it here.', __i18n_text_domain__ ) }
-			</p>
-		</>
-	),
+	content: '',
 	role: 'bot',
 	internal_message_id: 'existing-conversation-message',
 	type: 'message',

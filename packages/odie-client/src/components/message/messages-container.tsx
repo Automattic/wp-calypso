@@ -16,7 +16,6 @@ import {
 } from '../../hooks';
 import { useHelpCenterChatScroll } from '../../hooks/use-help-center-chat-scroll';
 import { interactionHasZendeskEvent, interactionHasEnded } from '../../utils';
-import useViewMostRecentOpenConversationNotice from '../notices/use-view-most-recent-conversation-notice';
 import { JumpToRecent } from './jump-to-recent';
 import { MessagesClusterizer } from './messages-cluster/messages-cluster';
 import { ThinkingPlaceholder } from './thinking-placeholder';
@@ -41,10 +40,6 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 
 	const messagesContainerRef = useRef< HTMLDivElement >( null );
 	const scrollParentRef = useRef< HTMLElement | null >( null );
-
-	useViewMostRecentOpenConversationNotice(
-		chatMessagesLoaded && chat?.provider === 'odie' && ! forceEmailSupport
-	);
 
 	const { alreadyHasActiveZendeskChat } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
