@@ -1,8 +1,8 @@
 import { defineConfig, devices, type ReporterDescription } from 'playwright/test';
 
 const reporter: ReporterDescription[] = [
-	[ 'junit', { outputFile: 'output/results.xml' } ],
-	[ 'html', { outputFolder: 'output', open: process.env.CI ? 'never' : 'on-failure' } ],
+	[ 'junit', { outputFile: 'test-results/results.xml' } ],
+	[ 'html', { outputFolder: 'test-results/html', open: process.env.CI ? 'never' : 'on-failure' } ],
 ];
 
 /**
