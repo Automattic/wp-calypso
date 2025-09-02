@@ -115,7 +115,7 @@ const EnvironmentSwitcherDropdown = ( {
 						<Environment env="staging" />
 					</RouterLinkMenuItem>
 				) }
-				{ otherEnvironment === 'staging' && productionSite && ! stagingSite && (
+				{ ! currentSite.is_wpcom_staging_site && productionSite && ! stagingSiteExists && (
 					<MenuItem
 						onClick={ canCreateStagingSite( productionSite ) ? handleCreate : handleUpsell }
 					>
@@ -141,27 +141,28 @@ const EnvironmentSwitcherDropdown = ( {
 
 const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 	const queryClient = useQueryClient();
-	const otherEnvironment = site.is_wpcom_staging_site ? 'production' : 'staging';
-	const otherEnvironmentSiteId = site.is_wpcom_staging_site
-		? site.options?.wpcom_production_blog_id
-		: site.options?.wpcom_staging_blog_ids?.[ 0 ];
 
-	const { data: otherEnvironmentSite } = useQuery( {
-		...siteByIdQuery( otherEnvironmentSiteId ?? 0 ),
-		enabled: !! otherEnvironmentSiteId,
+	const productionSiteId = getProductionSiteId( site );
+	const stagingSiteId = getStagingSiteId( site );
+
+	const { data: productionSite } = useQuery( {
+		...siteByIdQuery( productionSiteId ?? 0 ),
+		enabled: !! productionSiteId,
 	} );
 
-	const stagingSiteId = getStagingSiteId( site ) || otherEnvironmentSiteId;
+	const { data: stagingSite } = useQuery( {
+		...siteByIdQuery( stagingSiteId ?? 0 ),
+		enabled: !! stagingSiteId,
+	} );
+
 	const { data: isStagingSiteDeleting } = useQuery( {
 		...isDeletingStagingSiteQuery( stagingSiteId ?? 0 ),
 		enabled: !! stagingSiteId,
 	} );
 
-	const productionSiteId = getProductionSiteId( site ) || 0;
-
 	//Staging site deletion process runs via async job. We need to keep on polling for the staging site deletion before we start displaying the button to add a staging site again
 	const { data: stagingSiteExistsFromQuery } = useQuery( {
-		...hasStagingSiteQuery( productionSiteId ),
+		...hasStagingSiteQuery( productionSiteId ?? 0 ),
 		refetchInterval: isStagingSiteDeleting ? 3000 : false,
 		enabled: !! productionSiteId && isStagingSiteDeleting,
 	} );
@@ -170,7 +171,7 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 	useEffect( () => {
 		if ( isStagingSiteDeleting && stagingSiteExistsFromQuery === false && stagingSiteId ) {
 			queryClient.removeQueries( isDeletingStagingSiteQuery( stagingSiteId ) );
-			queryClient.removeQueries( hasStagingSiteQuery( productionSiteId ) );
+			queryClient.removeQueries( hasStagingSiteQuery( productionSiteId ?? 0 ) );
 		}
 	}, [
 		isStagingSiteDeleting,
@@ -190,8 +191,9 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 					const canToggle =
 						! isStagingSiteDeleting &&
 						( stagingSiteExists ||
-							( otherEnvironmentSite && canManageSite( otherEnvironmentSite ) ) ||
-							( otherEnvironment === 'staging' && ! stagingSiteExists ) );
+							( productionSite && canManageSite( productionSite ) ) ||
+							( stagingSite && canManageSite( stagingSite ) ) ||
+							( ! stagingSiteExists && productionSite ) );
 
 					return (
 						<Button
@@ -216,8 +218,8 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 				renderContent={ ( { onClose } ) => (
 					<EnvironmentSwitcherDropdown
 						currentSite={ site }
-						otherEnvironment={ otherEnvironment }
-						otherEnvironmentSite={ otherEnvironmentSite }
+						otherEnvironment={ site.is_wpcom_staging_site ? 'production' : 'staging' }
+						otherEnvironmentSite={ site.is_wpcom_staging_site ? productionSite : stagingSite }
 						stagingSiteExists={ stagingSiteExists }
 						onClose={ onClose }
 					/>
