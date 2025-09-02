@@ -6,14 +6,14 @@ test.describe( 'Dashboard: Site Visibility Settings', { tag: '@dashboard' }, () 
 		page,
 		pageDashboard,
 		pageIncognito,
-		siteNew,
+		sitePublic,
 	} ) => {
 		const incognitoContentLocator = pageIncognito.locator( 'html' );
 
 		await test.step( 'Given I am on the site visibility settings page', async function () {
 			await page.goto(
 				helperData.getCalypsoURL(
-					`sites/${ siteNew.blog_details.site_slug }/settings/site-visibility`
+					`sites/${ sitePublic.blog_details.site_slug }/settings/site-visibility`
 				)
 			);
 		} );
@@ -23,7 +23,7 @@ test.describe( 'Dashboard: Site Visibility Settings', { tag: '@dashboard' }, () 
 		} );
 
 		await test.step( 'Then I can not see the site as an external visitor', async function () {
-			await pageIncognito.goto( siteNew.blog_details.url );
+			await pageIncognito.goto( sitePublic.blog_details.url );
 			await expect( incognitoContentLocator ).toContainText( 'Private Site' );
 		} );
 	} );
@@ -33,14 +33,14 @@ test.describe( 'Dashboard: Site Visibility Settings', { tag: '@dashboard' }, () 
 		page,
 		pageDashboard,
 		pageIncognito,
-		siteNew,
+		sitePublic,
 	} ) => {
 		const incognitoContentLocator = pageIncognito.locator( 'html' );
 
 		await test.step( 'Given I am on the site visibility settings page', async function () {
 			await page.goto(
 				helperData.getCalypsoURL(
-					`sites/${ siteNew.blog_details.site_slug }/settings/site-visibility`
+					`sites/${ sitePublic.blog_details.site_slug }/settings/site-visibility`
 				)
 			);
 		} );
@@ -50,7 +50,7 @@ test.describe( 'Dashboard: Site Visibility Settings', { tag: '@dashboard' }, () 
 		} );
 
 		await test.step( 'Then I can see the coming soon message as an external visitor', async function () {
-			await pageIncognito.goto( siteNew.blog_details.url );
+			await pageIncognito.goto( sitePublic.blog_details.url );
 			await expect( incognitoContentLocator ).toContainText( 'coming soon' );
 		} );
 	} );
@@ -60,14 +60,14 @@ test.describe( 'Dashboard: Site Visibility Settings', { tag: '@dashboard' }, () 
 		page,
 		pageDashboard,
 		pageIncognito,
-		siteNew,
+		sitePublic,
 	} ) => {
 		const incognitoContentLocator = pageIncognito.locator( 'html' );
 
-		await test.step( 'Given I am on the site visibility settings page', async function () {
+		await test.step( 'Given I am on the site visibility settings page for my public site', async function () {
 			await page.goto(
 				helperData.getCalypsoURL(
-					`sites/${ siteNew.blog_details.site_slug }/settings/site-visibility`
+					`sites/${ sitePublic.blog_details.site_slug }/settings/site-visibility`
 				)
 			);
 		} );
@@ -77,7 +77,7 @@ test.describe( 'Dashboard: Site Visibility Settings', { tag: '@dashboard' }, () 
 		} );
 
 		await test.step( 'Then I can still see the live site as an external visitor', async function () {
-			await pageIncognito.goto( siteNew.blog_details.url );
+			await pageIncognito.goto( sitePublic.blog_details.url );
 			// Soft assert to allow for the possibility that the site is still private
 			// or coming soon, and to test the robots.txt test step even if these checks fail.
 			await expect.soft( incognitoContentLocator ).not.toContainText( 'Private Site' );
@@ -85,7 +85,7 @@ test.describe( 'Dashboard: Site Visibility Settings', { tag: '@dashboard' }, () 
 		} );
 
 		await test.step( 'But robots will see a disallow instruction', async function () {
-			await pageIncognito.goto( `${ siteNew.blog_details.url }robots.txt` );
+			await pageIncognito.goto( `${ sitePublic.blog_details.url }robots.txt` );
 			await expect( incognitoContentLocator ).toContainText( 'User-agent: *\nDisallow: /' );
 		} );
 	} );

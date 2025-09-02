@@ -126,9 +126,9 @@ export const test = base.extend< {
 	 */
 	secrets: Secrets;
 	/**
-	 * Details of a newly created site for testing.
+	 * Creates a new site with public visibility for testing.
 	 */
-	siteNew: NewSiteResponse;
+	sitePublic: NewSiteResponse;
 } >( {
 	accountGivenByEnvironment: async ( { page }, use ) => {
 		const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
@@ -207,8 +207,8 @@ export const test = base.extend< {
 		const secrets = SecretsManager.secrets;
 		await use( secrets );
 	},
-	siteNew: async ( { page, helperData }, use ) => {
-		const testUser = helperData.getNewTestUser( { usernamePrefix: 'sitevisibility' } );
+	sitePublic: async ( { page, helperData }, use ) => {
+		const testUser = helperData.getNewTestUser();
 		const siteName = helperData.getBlogName();
 		const loginPage = new LoginPage( page );
 		await loginPage.visit();
