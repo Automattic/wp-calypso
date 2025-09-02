@@ -1127,11 +1127,11 @@ export default function PurchaseSettings() {
 					<ProductLink purchase={ purchase } />
 					<DomainRegistrationAgreement purchase={ purchase } />
 					{ ! purchase.partner_name && <PluginList purchase={ purchase } /> }
-					<PurchaseNotice purchase={ purchase } />
 				</VStack>
 			}
 		>
 			<VStack spacing={ 6 }>
+				<PurchaseNotice purchase={ purchase } />
 				<HStack spacing={ 6 } justify="flex-start" alignment="center">
 					<PurchaseSettingsCard
 						icon={ calendar }
