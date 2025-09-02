@@ -23,14 +23,17 @@ export const siteSettingsMutation = ( siteId: number ) =>
 				if ( 'mcp_abilities' in newData && oldData.mcp_abilities ) {
 					// Transform the simplified response back to full objects
 					const updatedAbilities = { ...oldData.mcp_abilities };
-					Object.entries( newData.mcp_abilities ).forEach( ( [ abilityId, enabled ] ) => {
-						if ( updatedAbilities[ abilityId ] ) {
-							updatedAbilities[ abilityId ] = {
-								...updatedAbilities[ abilityId ],
-								enabled: enabled === 1,
-							};
-						}
-					} );
+					// Check if newData.mcp_abilities has the expected structure for updates
+					if ( newData.mcp_abilities && typeof newData.mcp_abilities === 'object' ) {
+						Object.entries( newData.mcp_abilities ).forEach( ( [ abilityId, enabled ] ) => {
+							if ( updatedAbilities[ abilityId ] && typeof enabled === 'number' ) {
+								updatedAbilities[ abilityId ] = {
+									...updatedAbilities[ abilityId ],
+									enabled: enabled === 1,
+								};
+							}
+						} );
+					}
 
 					return {
 						...oldData,
