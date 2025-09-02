@@ -29,6 +29,9 @@ export default function IntentToggle( { currentIntent, onIntentChange }: IntentT
 		onIntentChange( newIntent );
 	};
 
+	// Properly typed onChange handler for ToggleGroupControl
+	const handleToggleGroupChange: ( value: string | number | undefined ) => void = handleToggle;
+
 	return (
 		<div className="plans-grid-next__intent-toggle">
 			<ToggleGroupControl
@@ -36,7 +39,7 @@ export default function IntentToggle( { currentIntent, onIntentChange }: IntentT
 				label={ translate( 'Plan type selector' ) }
 				hideLabelFromVision
 				value={ currentIntent || '' }
-				onChange={ handleToggle as ( value: string | number | undefined ) => void }
+				onChange={ handleToggleGroupChange }
 				__next40pxDefaultSize
 				__nextHasNoMarginBottom
 			>
