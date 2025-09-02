@@ -88,6 +88,7 @@ const thanksToCommunityTranslator = ( data: UserSettingsPreferences ) => {
 					language.name
 				),
 				{
+					// TODO: ExternalLink requires children content.
 					external: (
 						<ExternalLink
 							href={ `https://translate.wordpress.com/translators/?contributor_locale=${ language.langSlug }` }
@@ -222,14 +223,18 @@ export default function Preferences() {
 			},
 		},
 		{
-			// TODO show it only when canDisplayCommunityTranslator is true, don't use the calypso/state
 			Edit: 'checkbox',
 			id: 'enable_translator',
 			label: __( 'Enable the in-page translator where available' ),
+			//TODO: Description only accepts a string.
 			description: createInterpolateElement(
-				__( 'This allows you to help translate WordPress.com. <external>Learn more</external>' ),
+				__( 'This allows you to help translate WordPress.com. <LearnMore/>' ),
 				{
-					external: <ExternalLink href="https://translate.wordpress.com/community-translator/" />,
+					external: (
+						<ExternalLink href="https://translate.wordpress.com/community-translator/">
+							{ __( 'Learn more' ) }
+						</ExternalLink>
+					),
 				}
 			),
 			type: 'boolean',
