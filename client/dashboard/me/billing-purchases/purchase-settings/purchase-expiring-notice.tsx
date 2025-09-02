@@ -1,5 +1,6 @@
 import { DotcomPlans, SubscriptionBillPeriod } from '@automattic/api-core';
 import { Link } from '@tanstack/react-router';
+import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { differenceInCalendarDays } from 'date-fns';
@@ -197,18 +198,18 @@ function ExpiringText( { purchase }: { purchase: Purchase } ) {
 	);
 }
 
-function ExpiringLaterText( {
+export function ExpiringLaterText( {
 	purchase,
-	autoRenewingUpgradesLink,
+	autoRenewingUpgradesAction,
 }: {
 	purchase: Purchase;
-	autoRenewingUpgradesLink?: string;
+	autoRenewingUpgradesAction?: () => void;
 } ) {
 	const purchaseName = purchase.is_domain ? purchase.meta ?? '' : purchase.product_name;
 	const expiry = getRelativeTimeString( new Date( purchase.expiry_date ) );
 
 	if ( purchase.payment_type === 'credits' ) {
-		if ( autoRenewingUpgradesLink ) {
+		if ( autoRenewingUpgradesAction ) {
 			return createInterpolateElement(
 				sprintf(
 					// translators: purchaseName is the name of the plan and expiry is a formatted string like "in 3 months".
@@ -218,7 +219,7 @@ function ExpiringLaterText( {
 					{ purchaseName, expiry }
 				),
 				{
-					link: <a href={ autoRenewingUpgradesLink } />,
+					link: <Button onClick={ autoRenewingUpgradesAction } />,
 				}
 			);
 		}
@@ -234,7 +235,7 @@ function ExpiringLaterText( {
 
 	if ( purchase.payment_type ) {
 		if ( purchase.is_rechargable ) {
-			if ( autoRenewingUpgradesLink ) {
+			if ( autoRenewingUpgradesAction ) {
 				return createInterpolateElement(
 					sprintf(
 						// translators: purchaseName is the name of the plan and expiry is a formatted string like "in 3 months".
@@ -244,7 +245,7 @@ function ExpiringLaterText( {
 						{ purchaseName, expiry }
 					),
 					{
-						link: <a href={ autoRenewingUpgradesLink } />,
+						link: <Button onClick={ autoRenewingUpgradesAction } />,
 					}
 				);
 			}
@@ -258,7 +259,7 @@ function ExpiringLaterText( {
 			);
 		}
 
-		if ( autoRenewingUpgradesLink ) {
+		if ( autoRenewingUpgradesAction ) {
 			return createInterpolateElement(
 				sprintf(
 					// translators: purchaseName is the name of the plan and expiry is a formatted string like "in 3 months".
@@ -268,7 +269,7 @@ function ExpiringLaterText( {
 					{ purchaseName, expiry }
 				),
 				{
-					link: <a href={ autoRenewingUpgradesLink } />,
+					link: <Button onClick={ autoRenewingUpgradesAction } />,
 				}
 			);
 		}
@@ -282,7 +283,7 @@ function ExpiringLaterText( {
 		);
 	}
 
-	if ( autoRenewingUpgradesLink ) {
+	if ( autoRenewingUpgradesAction ) {
 		return createInterpolateElement(
 			sprintf(
 				// translators: purchaseName is the name of the plan and expiry is a formatted string like "in 3 months".
@@ -292,7 +293,7 @@ function ExpiringLaterText( {
 				{ purchaseName, expiry }
 			),
 			{
-				link: <a href={ autoRenewingUpgradesLink } />,
+				link: <Button onClick={ autoRenewingUpgradesAction } />,
 			}
 		);
 	}

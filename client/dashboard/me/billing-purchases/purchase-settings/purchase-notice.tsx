@@ -18,6 +18,10 @@ import {
 	getRenewalUrlFromPurchase,
 } from '../../../utils/purchase';
 import { getPurchaseUrl } from '../urls';
+import {
+	OtherRenewablePurchasesNotice,
+	shouldShowOtherRenewablePurchasesNotice,
+} from './other-renewable-purchases-notice';
 import { PurchaseExpiringNotice, shouldShowExpiringNotice } from './purchase-expiring-notice';
 import { RenewNoticeAction, shouldShowRenewNoticeAction } from './renew-notice-action';
 import type { Purchase } from '@automattic/api-core';
@@ -57,11 +61,14 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		return <ConciergeConsumedNotice />;
 	}
 
-	// FIXME: add this one
-	// const otherRenewablePurchasesNotice = this.renderOtherRenewablePurchasesNotice();
-	// if ( otherRenewablePurchasesNotice ) {
-	// 	return otherRenewablePurchasesNotice;
-	// }
+	if ( shouldShowOtherRenewablePurchasesNotice( purchase, purchaseAttachedTo ) ) {
+		return (
+			<OtherRenewablePurchasesNotice
+				purchase={ purchase }
+				purchaseAttachedTo={ purchaseAttachedTo }
+			/>
+		);
+	}
 
 	if ( shouldShowExpiredRenewNotice( purchase, purchaseAttachedTo ) ) {
 		return <ExpiredRenewNotice purchase={ purchase } purchaseAttachedTo={ purchaseAttachedTo } />;
