@@ -8,4 +8,5 @@ export const domainAvailabilityQuery = ( domainName: string ) =>
 		refetchOnWindowFocus: false,
 		refetchOnMount: false,
 		enabled: false,
+		meta: { persist: false },
 	} );

@@ -14,6 +14,8 @@ export const domainSuggestionsQuery = (
 		queryFn: () => fetchDomainSuggestions( query, params ),
 		refetchOnWindowFocus: false,
 		refetchOnMount: false,
+		enabled: false,
+		meta: { persist: false },
 	} );
 
 export const freeSuggestionQuery = ( query: string ) =>

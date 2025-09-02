@@ -6,7 +6,16 @@ import { DomainSearchNotice } from '../../ui';
 
 export const SearchNotice = () => {
 	const { query, queries } = useDomainSearch();
-	const { data: availability } = useQuery( queries.domainAvailability( query ) );
+	const { error: suggestionError } = useQuery( queries.domainSuggestions( query ) );
+	const { data: availability, error: availabilityError } = useQuery(
+		queries.domainAvailability( query )
+	);
+
+	const errorMessage = suggestionError?.message ?? availabilityError?.message;
+
+	if ( errorMessage ) {
+		return <DomainSearchNotice status="error">{ errorMessage }</DomainSearchNotice>;
+	}
 
 	if ( availability?.status === DomainAvailabilityStatus.AVAILABLE ) {
 		return null;
