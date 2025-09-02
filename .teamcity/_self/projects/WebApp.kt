@@ -973,9 +973,7 @@ object PlaywrightTestPRMatrix : BuildType({
 	params {
 		param("env.NODE_CONFIG_ENV", "test")
 		param("env.PLAYWRIGHT_BROWSERS_PATH", "0")
-		param("env.HEADLESS", "true")
 		param("env.LOCALE", "en")
-		param("env.DEBUG", "")
 		param("env.AUTHENTICATE_ACCOUNTS", "simpleSitePersonalPlanUser,gutenbergSimpleSiteUser,defaultUser")
 		param("env.LIVEBRANCHES", "true")
 	}
@@ -990,7 +988,6 @@ object PlaywrightTestPRMatrix : BuildType({
 				yarn workspaces focus wp-e2e-tests @automattic/calypso-e2e
 
 				# Decrypt secrets
-				# Must do before build so the secrets are in the dist output
 				E2E_SECRETS_KEY="%E2E_SECRETS_ENCRYPTION_KEY_CURRENT%" yarn workspace @automattic/calypso-e2e decrypt-secrets
 
 				# Build packages
