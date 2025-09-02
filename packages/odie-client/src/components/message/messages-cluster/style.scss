@@ -3,11 +3,6 @@
     padding: 0;
 	box-sizing: border-box;
 
-	&.is-last-group {
-		// Room for the white-to-transparent gradient on the footer.
-		margin-bottom: 50px;
-	}
-
 	&.role-attachment {
 		padding: 0 16px;
 
