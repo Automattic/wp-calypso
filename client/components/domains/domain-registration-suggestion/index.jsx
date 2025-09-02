@@ -48,6 +48,13 @@ class DomainRegistrationSuggestion extends Component {
 			cost: PropTypes.string,
 			match_reasons: PropTypes.arrayOf( PropTypes.oneOf( VALID_MATCH_REASONS ) ),
 			currency_code: PropTypes.string,
+			policy_notices: PropTypes.arrayOf(
+				PropTypes.shape( {
+					type: PropTypes.string.isRequired,
+					label: PropTypes.string.isRequired,
+					message: PropTypes.string.isRequired,
+				} )
+			),
 		} ).isRequired,
 		suggestionSelected: PropTypes.bool,
 		onButtonClick: PropTypes.func.isRequired,
