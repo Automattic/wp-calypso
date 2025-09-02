@@ -43,6 +43,11 @@ export default function Notifications( { className }: { className: string } ) {
 				window.open( href, '_blank' );
 			},
 		],
+		ANSWER_PROMPT: [
+			( store: unknown, { href }: { href: string } ) => {
+				window.open( href, '_blank' );
+			},
+		],
 		CLOSE_PANEL: [ handleClose ],
 	};
 
