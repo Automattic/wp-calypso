@@ -1,14 +1,14 @@
 import { siteDomainsQuery, siteBySlugQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useAuth } from '../../app/auth';
-import { siteDomainsPurchaseRoute, siteRoute } from '../../app/router/sites';
+import { siteRoute } from '../../app/router/sites';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import RouterLinkButton from '../../components/router-link-button';
 import { useActions, useFields, DEFAULT_VIEW, DEFAULT_LAYOUTS } from '../../domains/dataviews';
 import type { DomainsView } from '../../domains/dataviews';
 import type { SiteDomain } from '@automattic/api-core';
@@ -45,13 +45,9 @@ function SiteDomains() {
 				<PageHeader
 					title={ __( 'Domains' ) }
 					actions={
-						<RouterLinkButton
-							to={ siteDomainsPurchaseRoute.fullPath }
-							params={ { siteSlug } }
-							variant="primary"
-						>
+						<Button href={ `/domains/add/${ site.slug }` } variant="primary" __next40pxDefaultSize>
 							{ __( 'Add New Domain' ) }
-						</RouterLinkButton>
+						</Button>
 					}
 				/>
 			}
