@@ -134,6 +134,8 @@ function SiteMonitoring() {
 								__next40pxDefaultSize
 								onChange={ handleTimeRangeChange }
 								className={ clsx( 'site-monitoring-header-range' ) }
+								label={ __( 'Time period' ) }
+								hideLabelFromVision
 							>
 								<ToggleGroupControlOption value="6-hours" label={ __( '6 hours' ) } />
 								<ToggleGroupControlOption value="24-hours" label={ __( '24 hours' ) } />
