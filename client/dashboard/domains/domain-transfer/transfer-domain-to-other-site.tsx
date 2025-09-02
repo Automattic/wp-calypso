@@ -2,15 +2,19 @@ import {
 	Card,
 	CardBody,
 	SearchControl,
+	__experimentalText as Text,
 	__experimentalVStack as VStack,
+	__experimentalConfirmDialog as ConfirmDialog,
 } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
+import { useState } from 'react';
 import { domainTransferToOtherSiteRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
 
 export default function DomainTransferToOtherSite() {
+	const [ isConfirmDialogOpen, setIsConfirmDialogOpen ] = useState( true );
 	const { domainName } = domainTransferToOtherSiteRoute.useParams();
 
 	return (
@@ -33,6 +37,29 @@ export default function DomainTransferToOtherSite() {
 						<div>
 							<SearchControl onChange={ () => {} } />
 						</div>
+						<ConfirmDialog
+							isOpen={ isConfirmDialogOpen }
+							confirmButtonText={ __( 'Confirm attachment' ) }
+							onConfirm={ () => setIsConfirmDialogOpen( false ) }
+							onCancel={ () => setIsConfirmDialogOpen( false ) }
+						>
+							<VStack spacing={ 4 } style={ { maxWidth: '450px' } }>
+								<Text as="p">
+									{ sprintf(
+										// translators: %1$s is the domain name, %2$s is the site name
+										__( 'Do you want to attach %1$s to site %2$s?' ),
+										domainName,
+										'Example Site Name'
+									) }
+								</Text>
+								{ /* TODO: Show this paragraph when we have a select site object to check if the target site has a paid plan */ }
+								<Text as="p">
+									{ __(
+										'The target site doesn’t have a paid plan, so you won’t be able to set this domain as primary on the site.'
+									) }
+								</Text>
+							</VStack>
+						</ConfirmDialog>
 					</VStack>
 				</CardBody>
 			</Card>
