@@ -151,7 +151,7 @@ export default function Preferences() {
 		Object.entries( localData ).some( ( [ key, value ] ) => {
 			return serverData[ key as keyof UserSettingsPreferences ] !== value;
 		} );
-	const hasValidLanguage = !! localData?.language && localData.language !== '';
+	const hasValidLanguage = !! localData?.language && localData.language !== ''; // TODO use isItemValid once DataForm validation is updated.
 	const canSubmit = ! isSaving && isDirty && hasValidLanguage;
 
 	let saveButtonLabel = __( 'Save' );
@@ -167,10 +167,12 @@ export default function Preferences() {
 			id: 'language',
 			label: __( 'Interface language' ),
 			type: 'text',
+			isValid: {
+				required: true,
+			},
 			Edit: ( { field, data, onChange } ) => {
 				return (
 					<>
-						{ /* TODO validate it, it should be required */ }
 						<ComboboxControl
 							value={ field.getValue( { item: data } ) ?? '' }
 							label={ __( 'Interface language' ) }
@@ -213,7 +215,7 @@ export default function Preferences() {
 			},
 			id: 'i18n_empathy_mode',
 			label: 'Empathy mode (a8c-only)',
-			description: 'Pretend to use that language but display English where a translated exists', // TODO field should be disabled in case we're using default language https://github.com/Automattic/wp-calypso/blob/559b5e82dc96bd668fd6e5ef558d588d09eeb80f/client/components/language-picker/modal.tsx#L159
+			description: 'Pretend to use that language but display English where a translated exists',
 			type: 'boolean',
 			isVisible: () => {
 				return shouldShowEmpathyMode;
