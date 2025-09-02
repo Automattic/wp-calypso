@@ -17,7 +17,7 @@ import { siteBySlugQuery } from '../../app/queries/site';
 import { siteSettingsQuery, siteSettingsMutation } from '../../app/queries/site-settings';
 import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';
-import type { SiteMcpAbilities } from '../../data/site-settings';
+import type { SiteMcpAbilities } from '@automattic/api-core';
 import './style.scss';
 
 export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {

@@ -1,5 +1,5 @@
-import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { fetchSiteSettings, updateSiteSettings } from '@automattic/api-core';
+import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
 import { siteQueryFilter } from './site';
 import type { SiteSettings } from '@automattic/api-core';
