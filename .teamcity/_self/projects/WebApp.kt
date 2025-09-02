@@ -950,11 +950,6 @@ object PlaywrightTestPRMatrix : BuildType({
         	rules = "+:test/e2e/output/results.xml"
 			verbose = true
         }
-		buildReportTab {
-        	id = "playwright-report"
-        	title = "Test Report"
-        	startPage = "test/e2e/output/html/index.html"
-        }
 	}
 
 	triggers {
