@@ -1,3 +1,4 @@
+import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
@@ -13,7 +14,7 @@ import { createInterpolateElement, useState } from '@wordpress/element';
 import { __, isRTL, sprintf } from '@wordpress/i18n';
 import { Icon, cloud, chevronLeft, chevronRight } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
-import { siteBySlugQuery } from '../../app/queries/site';
+import { useAnalytics } from '../../app/analytics';
 import { siteBackupDownloadRoute, siteBackupsRoute } from '../../app/router/sites';
 import { useFormattedTime } from '../../components/formatted-time';
 import { PageHeader } from '../../components/page-header';
@@ -34,15 +35,18 @@ function SiteBackupDownload() {
 	const [ downloadUrl, setDownloadUrl ] = useState< string | null >( null );
 	const [ fileSizeBytes, setFileSizeBytes ] = useState< string | undefined >();
 	const { createSuccessNotice } = useDispatch( noticesStore );
+	const { recordTracksEvent } = useAnalytics();
 
 	const router = useRouter();
 
 	const handleDownloadInitiate = ( newDownloadId: number ) => {
+		recordTracksEvent( 'calypso_dashboard_backups_download_started' );
 		setCurrentStep( 'progress' );
 		setDownloadId( newDownloadId );
 	};
 
 	const handleDownloadComplete = ( newDownloadUrl: string, newFileSizeBytes?: string ) => {
+		recordTracksEvent( 'calypso_dashboard_backups_download_completed' );
 		setCurrentStep( 'success' );
 		setDownloadUrl( newDownloadUrl );
 		setFileSizeBytes( newFileSizeBytes );
@@ -52,10 +56,12 @@ function SiteBackupDownload() {
 	};
 
 	const handleDownloadError = () => {
+		recordTracksEvent( 'calypso_dashboard_backups_download_failed' );
 		setCurrentStep( 'error' );
 	};
 
 	const handleRetry = () => {
+		recordTracksEvent( 'calypso_dashboard_backups_download_retry' );
 		setCurrentStep( 'form' );
 		setDownloadId( null );
 		setDownloadUrl( null );

@@ -1,10 +1,10 @@
+import { Domain } from '@automattic/api-core';
 import { Link } from '@tanstack/react-router';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { domainNameServersRoute } from '../../app/router/domains';
 import { siteDomainsRoute } from '../../app/router/sites';
 import { Notice } from '../../components/notice';
-import { Domain } from '../../data/domain';
 
 interface DomainForwardingNoticeProps {
 	domainName: string;

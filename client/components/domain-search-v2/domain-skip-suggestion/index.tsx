@@ -1,11 +1,10 @@
-import { type DomainSuggestion } from '@automattic/api-core';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { DomainSearchSkipSuggestion } from '@automattic/domain-search';
 import { useEffect, useCallback } from '@wordpress/element';
-import { Site } from 'calypso/dashboard/data/site';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { useDomainSearch } from '../__legacy/domain-search';
+import type { DomainSuggestion, Site } from '@automattic/api-core';
 
 type BaseProps = {
 	flowName?: string;

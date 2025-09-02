@@ -1,9 +1,9 @@
+import { DomainSubtype } from '@automattic/api-core';
 import { __ } from '@wordpress/i18n';
 import { ActionList } from '../../components/action-list';
 import RouterLinkButton from '../../components/router-link-button';
-import { DomainSubtype } from '../../data/domains';
 import { getTopLevelOfTld } from '../../utils/domain';
-import type { Domain } from '../../data/domain';
+import type { Domain } from '@automattic/api-core';
 
 const RESTRICTED_TRANSFER_TLDS = [ 'uk', 'fr', 'ca', 'de', 'jp' ];
 

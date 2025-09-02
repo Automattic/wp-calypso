@@ -1,16 +1,16 @@
+import { siteLastFiveActivityLogEntriesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardHeader, CardBody, Icon } from '@wordpress/components';
 import { DataViews } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
-import { siteLastFiveActivityLogEntriesQuery } from '../../app/queries/site-activity-log';
 import { SectionHeader } from '../../components/section-header';
 import { SummaryButtonCardFooter } from '../../components/summary-button-card-footer';
 import { TextSkeleton } from '../../components/text-skeleton';
 import TimeSince from '../../components/time-since';
 import { gridiconToWordPressIcon } from '../../utils/gridicons';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
-import type { ActivityLogEntry, Site } from '../../data/types';
+import type { ActivityLogEntry, Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 import './style.scss';
 

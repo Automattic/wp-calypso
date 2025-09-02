@@ -1,4 +1,4 @@
-import { test } from '../../lib/pw_base';
+import { test } from '../../lib/pw-base';
 
 test.describe( 'Appearance: Theme Widgets (Legacy)', () => {
 	test( 'As a non-atomic site user, I can use widgets on my site', async ( {

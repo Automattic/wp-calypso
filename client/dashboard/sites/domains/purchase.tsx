@@ -1,7 +1,7 @@
+import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { sprintf, __ } from '@wordpress/i18n';
-import { siteBySlugQuery } from '../../app/queries/site';
 import { siteDomainsRoute, siteRoute } from '../../app/router/sites';
 import DomainSearch from '../../components/domain-search';
 import FullScreenOverlay from '../../components/full-screen-overlay';

@@ -1,22 +1,29 @@
 import { __ } from '@wordpress/i18n';
 import { removeBug } from '@wordpress/icons';
 import PropTypes from 'prop-types';
+import { useState } from 'react';
 import { connect } from 'react-redux';
 import { keys } from '../../panel/helpers/input';
 import { spamNote } from '../../panel/state/notes/thunks';
-import { useAppContext } from '../context';
 import ActionButton from './action-button';
 
 // eslint-disable-next-line no-shadow
-const SpamButton = ( { note, spamNote } ) => {
-	const { client } = useAppContext();
+const SpamButton = ( { note, spamNote, goBack } ) => {
+	const [ isBusy, setIsBusy ] = useState( false );
+
+	const handleSpam = async () => {
+		setIsBusy( true );
+		await spamNote( note, true );
+		goBack();
+	};
 
 	return (
 		<ActionButton
 			icon={ removeBug }
 			isActive={ false }
+			isBusy={ isBusy }
 			hotkey={ keys.KEY_S }
-			onToggle={ () => spamNote( note, client ) }
+			onToggle={ handleSpam }
 			text={ __( 'Spam' ) }
 			title={ __( 'Mark comment as spam' ) }
 		/>
@@ -25,6 +32,7 @@ const SpamButton = ( { note, spamNote } ) => {
 
 SpamButton.propTypes = {
 	note: PropTypes.object.isRequired,
+	goBack: PropTypes.func.isRequired,
 };
 
 export default connect( null, { spamNote } )( SpamButton );

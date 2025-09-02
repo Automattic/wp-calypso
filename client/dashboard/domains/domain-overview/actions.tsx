@@ -1,3 +1,10 @@
+import {
+	domainQuery,
+	disconnectDomainMutation,
+	removePurchaseMutation,
+	siteByIdQuery,
+	sitePurchaseQuery,
+} from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
@@ -10,10 +17,6 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useCallback, useState } from 'react';
 import { useAuth } from '../../app/auth';
-import { domainQuery, disconnectDomainMutation } from '../../app/queries/domain';
-import { removePurchaseMutation } from '../../app/queries/purchase';
-import { siteByIdQuery } from '../../app/queries/site';
-import { sitePurchaseQuery } from '../../app/queries/site-purchases';
 import { domainRoute, domainsRoute, domainTransferRoute } from '../../app/router/domains';
 import { ActionList } from '../../components/action-list';
 import RemoveDomainDialog from '../../components/purchase-dialogs/remove-domain-dialog';

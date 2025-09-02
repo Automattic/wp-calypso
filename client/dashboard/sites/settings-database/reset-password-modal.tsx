@@ -1,3 +1,4 @@
+import { restoreDatabasePassword } from '@automattic/api-core';
 import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -7,7 +8,6 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import { restoreDatabasePassword } from '../../data/site-hosting';
 
 interface ResetPasswordModalProps {
 	siteId: number;

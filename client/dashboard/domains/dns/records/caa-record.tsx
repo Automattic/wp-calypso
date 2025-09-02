@@ -8,7 +8,7 @@ import {
 	ttlValidator,
 } from './validators';
 import type { DnsRecordFormData, DnsRecordConfig } from './dns-record-configs';
-import type { DnsRecordType } from '../../../data/domain-dns-records';
+import type { DnsRecordType } from '@automattic/api-core';
 
 export const CAARecordConfig: DnsRecordConfig = {
 	fields: [

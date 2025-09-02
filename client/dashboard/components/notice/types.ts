@@ -7,7 +7,6 @@ export type NoticeVariant = 'warning' | 'success' | 'error' | 'info';
 export interface NoticeProps {
 	/**
 	 * Indicates visually the message tone. These can be four: Info, Warning, Success, and Error.
-	 *
 	 * @default 'info'
 	 */
 	variant?: NoticeVariant;
@@ -30,7 +29,6 @@ export interface NoticeProps {
 	/**
 	 * Adjusts internal spacings according to the section where the component is placed.
 	 * High density reduces padding.
-	 *
 	 * @default 'low'
 	 */
 	density?: NoticeDensity;

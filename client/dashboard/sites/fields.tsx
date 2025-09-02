@@ -19,7 +19,7 @@ import {
 	Uptime,
 	SiteIconLink,
 } from './site-fields';
-import type { Site } from '../data/types';
+import type { Site } from '@automattic/api-core';
 import type { Field, Operator } from '@wordpress/dataviews';
 
 export const DEFAULT_FIELDS: Field< Site >[] = [
