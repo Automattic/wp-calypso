@@ -28,7 +28,7 @@ export default function Notifications( { className }: { className: string } ) {
 
 	const actionHandlers = {
 		APP_RENDER_NOTES: [
-			( store: any, { newNoteCount }: { newNoteCount: number } ) => {
+			( store: unknown, { newNoteCount }: { newNoteCount: number } ) => {
 				setHasUnseenNotifications( newNoteCount > 0 );
 			},
 		],
@@ -36,6 +36,11 @@ export default function Notifications( { className }: { className: string } ) {
 			() => {
 				handleClose();
 				navigate( { to: '/me/notifications' } );
+			},
+		],
+		EDIT_COMMENT: [
+			( store: unknown, { href }: { href: string } ) => {
+				window.open( href, '_blank' );
 			},
 		],
 		CLOSE_PANEL: [ handleClose ],

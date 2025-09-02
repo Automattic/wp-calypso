@@ -50,9 +50,13 @@ const ActionsPane = ( { isApproved, isLiked, note, goBack } ) => {
 	return (
 		<VStack spacing={ 4 } style={ { width: '100%' } }>
 			<HStack spacing={ 2 }>
-				{ hasAction( 'approve-comment' ) && <ApproveButton { ...{ note, isApproved } } /> }
+				{ hasAction( 'approve-comment' ) && (
+					<ApproveButton note={ note } isApproved={ isApproved } />
+				) }
 				{ hasAction( 'spam-comment' ) && <SpamButton note={ note } goBack={ goBack } /> }
-				{ hasAction( [ 'like-post', 'like-comment' ] ) && <LikeButton { ...{ note, isLiked } } /> }
+				{ hasAction( [ 'like-post', 'like-comment' ] ) && (
+					<LikeButton note={ note } isLiked={ isLiked } />
+				) }
 				{ hasAction( 'edit-comment' ) && <EditButton note={ note } /> }
 				{ hasAction( 'answer-prompt' ) && <AnswerPromptButton note={ note } /> }
 			</HStack>
