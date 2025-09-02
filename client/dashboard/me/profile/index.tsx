@@ -4,7 +4,6 @@ import { __ } from '@wordpress/i18n';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import './style.scss';
 import GravatarProfileSection from '../profile-gravatar';
 import PersonalDetailsSection from '../profile-personal-details';
 
