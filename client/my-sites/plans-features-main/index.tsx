@@ -332,8 +332,9 @@ const PlansFeaturesMain = ( {
 				? defaultWpcomPlansIntent
 				: intentFromProps || intentFromSiteMeta.intent || defaultWpcomPlansIntent;
 
-			// Always update intent when intentFromProps changes or when intent is not set
-			if ( ! intent || intentFromProps !== intent ) {
+			// Always update intent when intent is not set.
+			// When the escape hatch is used (forceDefaultPlans), do not override with intentFromProps.
+			if ( ! intent || ( ! forceDefaultPlans && intentFromProps !== intent ) ) {
 				setIntent( resolvedIntent );
 			}
 		}
