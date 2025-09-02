@@ -34,7 +34,7 @@ function clusterMessagesBySender( messages: Message[] ) {
 	if ( ! messages.length ) {
 		return [];
 	}
-	let id = 1;
+	let id = 0;
 
 	let currentGroup: {
 		id: number;

@@ -426,14 +426,6 @@ $blueberry-color: #3858e9;
 	}
 }
 
-.chatbox-messages:last-child {
-	margin-bottom: 72px;
-
-	&.force-email-support {
-		margin-bottom: 176px;
-	}
-}
-
 .odie-sources {
 	display: flex;
 	align-items: center;
@@ -734,10 +726,6 @@ $custom-border-corner-size: 16px;
 	height: 30px;
 	text-align: center;
 	padding-top: 6px;
-}
-
-.chatbox-messages {
-	position: relative;
 }
 
 .chatbox-messages__content {

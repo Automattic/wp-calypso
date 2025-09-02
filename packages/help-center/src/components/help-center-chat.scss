@@ -12,8 +12,4 @@ $footer-height: 73px;
 	flex-direction: column;
 	max-width: 410px;
 	padding: 0;
-
-	.chatbox {
-		padding-bottom: $footer-height / 2; // give room to the blending white gradient.
-	}
 }
