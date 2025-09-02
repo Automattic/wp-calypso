@@ -99,8 +99,6 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 			isForwardingToZendesk &&
 			! hasForwardedToZendesk &&
 			! chat.conversationId &&
-			createZendeskConversation &&
-			resetSupportInteraction &&
 			isChatLoaded &&
 			! forceEmailSupport
 		) {

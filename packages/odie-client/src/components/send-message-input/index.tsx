@@ -38,8 +38,7 @@ export const OdieSendMessageButton = () => {
 	const isInitialLoading = chat.status === 'loading';
 	const isLiveChat = chat.provider?.startsWith( 'zendesk' );
 	const [ inputValue, setInputValue ] = useState( '' );
-	const { isMessageLengthValid, setMessageLengthErrorNotice, clearMessageLengthErrorNotice } =
-		useMessageSizeErrorNotice();
+	const notice = useMessageSizeErrorNotice( inputValue.trim().length );
 
 	const { connectionStatus } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
@@ -61,13 +60,8 @@ export const OdieSendMessageButton = () => {
 	const customActions = showAttachmentButton ? [ attachmentAction ] : undefined;
 
 	const sendMessageHandler = useCallback( async () => {
-		const message = inputValue.trim();
+		const message = inputValue.trim().substring( 0, 4069 );
 		if ( message === '' || isChatBusy ) {
-			return;
-		}
-
-		if ( ! isMessageLengthValid( message ) ) {
-			setMessageLengthErrorNotice();
 			return;
 		}
 
@@ -105,27 +99,9 @@ export const OdieSendMessageButton = () => {
 		} finally {
 			textareaRef.current?.focus();
 		}
-	}, [
-		inputValue,
-		isChatBusy,
-		chat?.provider,
-		sendMessage,
-		isMessageLengthValid,
-		setMessageLengthErrorNotice,
-		trackEvent,
-	] );
+	}, [ inputValue, isChatBusy, chat?.provider, sendMessage, trackEvent ] );
 
 	const isEmailFallback = chat?.provider === 'zendesk' && forceEmailSupport;
-
-	const handleInputChange = useCallback(
-		( value: string ) => {
-			setInputValue( value );
-			if ( isMessageLengthValid( value ) ) {
-				clearMessageLengthErrorNotice();
-			}
-		},
-		[ isMessageLengthValid, clearMessageLengthErrorNotice ]
-	);
 
 	// Handle key events including Enter submission and paste
 	const handleKeyDown = useCallback(
@@ -148,10 +124,11 @@ export const OdieSendMessageButton = () => {
 				) : (
 					<ChatFooter
 						inputValue={ inputValue }
-						onInputChange={ handleInputChange }
+						onInputChange={ setInputValue }
 						onSubmit={ sendMessageHandler }
 						onKeyDown={ handleKeyDown }
 						textareaRef={ textareaRef }
+						notice={ notice }
 						placeholder={ textAreaPlaceholder }
 						isProcessing={
 							isChatBusy ||

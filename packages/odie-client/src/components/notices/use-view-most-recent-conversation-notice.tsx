@@ -1,13 +1,12 @@
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
-import { useCallback, useEffect } from '@wordpress/element';
+import { useCallback, useEffect, useState } from '@wordpress/element';
 import { __, _n } from '@wordpress/i18n';
+import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
 import { useGetSupportInteractionById } from '../../data';
 import { useGetMostRecentOpenConversation } from '../../hooks/use-get-most-recent-open-conversation';
-
-const OPEN_CONVERSATION_NOTICE_ID = 'view-most-recent-conversation-notice';
 
 export default function useViewMostRecentOpenConversationNotice( isEnabled: boolean ) {
 	const { mostRecentSupportInteractionId, totalNumberOfConversations } =
@@ -19,7 +18,8 @@ export default function useViewMostRecentOpenConversationNotice( isEnabled: bool
 			: null;
 	const { data: supportInteraction } = useGetSupportInteractionById( fetchSupportInteraction );
 	const { setCurrentSupportInteraction } = useDataStoreDispatch( HELP_CENTER_STORE );
-	const { trackEvent, setNotice } = useOdieAssistantContext();
+	const [ notice, setNotice ] = useState< React.ReactNode | null >( null );
+	const { trackEvent } = useOdieAssistantContext();
 	const location = useLocation();
 	const navigate = useNavigate();
 	const shouldDisplayNotice = supportInteraction || totalNumberOfConversations > 1;
@@ -38,7 +38,7 @@ export default function useViewMostRecentOpenConversationNotice( isEnabled: bool
 			total_number_of_conversations: totalNumberOfConversations,
 		} );
 
-		setNotice( OPEN_CONVERSATION_NOTICE_ID, null );
+		setNotice( null );
 	}, [
 		supportInteraction,
 		setCurrentSupportInteraction,
@@ -52,7 +52,6 @@ export default function useViewMostRecentOpenConversationNotice( isEnabled: bool
 	useEffect( () => {
 		if ( isEnabled && shouldDisplayNotice ) {
 			setNotice(
-				OPEN_CONVERSATION_NOTICE_ID,
 				<div className="odie-notice__view-conversation">
 					<span>
 						{ __( 'You have another open conversation already started.', __i18n_text_domain__ ) }
@@ -76,4 +75,6 @@ export default function useViewMostRecentOpenConversationNotice( isEnabled: bool
 		totalNumberOfConversations,
 		isEnabled,
 	] );
+
+	return notice;
 }
