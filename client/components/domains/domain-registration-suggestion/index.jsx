@@ -23,12 +23,7 @@ import {
 	isPaidDomain,
 	DOMAIN_PRICE_RULE,
 } from 'calypso/lib/cart-values/cart-items';
-import {
-	getDomainPrice,
-	getDomainSalePrice,
-	isHstsRequired,
-	isDotGayNoticeRequired,
-} from 'calypso/lib/domains';
+import { getDomainPrice, getDomainSalePrice } from 'calypso/lib/domains';
 import { shouldUseMultipleDomainsInCart } from 'calypso/signup/steps/domains/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
@@ -53,6 +48,13 @@ class DomainRegistrationSuggestion extends Component {
 			cost: PropTypes.string,
 			match_reasons: PropTypes.arrayOf( PropTypes.oneOf( VALID_MATCH_REASONS ) ),
 			currency_code: PropTypes.string,
+			policy_notices: PropTypes.arrayOf(
+				PropTypes.shape( {
+					type: PropTypes.string.isRequired,
+					label: PropTypes.string.isRequired,
+					message: PropTypes.string.isRequired,
+				} )
+			),
 		} ).isRequired,
 		suggestionSelected: PropTypes.bool,
 		onButtonClick: PropTypes.func.isRequired,
@@ -417,8 +419,6 @@ class DomainRegistrationSuggestion extends Component {
 
 	renderDomain( hasBadges = false ) {
 		const {
-			showHstsNotice,
-			showDotGayNotice,
 			suggestion: { domain_name: domain },
 		} = this.props;
 
@@ -444,7 +444,6 @@ class DomainRegistrationSuggestion extends Component {
 								</span>
 								<span className="domain-registration-suggestion__domain-title-tld">{ tld }</span>
 							</h3>
-							{ ( showHstsNotice || showDotGayNotice ) && this.renderInfoBubble() }
 						</div>
 					</div>
 				</div>
@@ -452,65 +451,44 @@ class DomainRegistrationSuggestion extends Component {
 		);
 	}
 
-	getHstsMessage() {
-		const {
-			translate,
-			suggestion: { domain_name: domain },
-		} = this.props;
-
-		return translate(
-			'All domains ending in {{strong}}%(tld)s{{/strong}} require an SSL certificate ' +
-				'to host a website. When you host this domain at WordPress.com an SSL ' +
-				'certificate is included. {{a}}Learn more{{/a}}.',
-			{
-				args: {
-					tld: '.' + getTld( domain ),
-				},
-				components: {
-					a: (
-						<a
-							href={ localizeUrl( HTTPS_SSL ) }
-							target="_blank"
-							rel="noopener noreferrer"
-							onClick={ ( event ) => {
-								event.stopPropagation();
-							} }
-						/>
-					),
-					strong: <strong />,
-				},
-			}
-		);
-	}
-
-	getDotGayMessage() {
+	getPolicyNoticeMessage( notice ) {
 		const { translate } = this.props;
 
-		return translate(
-			'Any anti-LGBTQ content is prohibited and can result in registration termination. The registry will donate 20% of all registration revenue to LGBTQ non-profit organizations.'
-		);
-	}
+		if ( notice.type === 'hsts' ) {
+			return translate(
+				'%(message)s When you host this domain at WordPress.com, an SSL ' +
+					'certificate is included. {{a}}Learn more{{/a}}.',
+				{
+					args: {
+						message: notice.message,
+					},
+					components: {
+						a: (
+							<a
+								href={ localizeUrl( HTTPS_SSL ) }
+								target="_blank"
+								rel="noopener noreferrer"
+								onClick={ ( event ) => {
+									event.stopPropagation();
+								} }
+							/>
+						),
+					},
+				}
+			);
+		}
 
-	renderInfoBubble() {
-		const { isFeatured, showHstsNotice, showDotGayNotice } = this.props;
-
-		const infoPopoverSize = isFeatured ? 22 : 18;
-		return (
-			<InfoPopover
-				className="domain-registration-suggestion__hsts-tooltip"
-				iconSize={ infoPopoverSize }
-				position="right"
-				showOnHover
-			>
-				{ ( showHstsNotice && this.getHstsMessage() ) ||
-					( showDotGayNotice && this.getDotGayMessage() ) }
-			</InfoPopover>
-		);
+		return notice.message;
 	}
 
 	renderBadges() {
 		const {
-			suggestion: { isRecommended, isBestAlternative, is_premium: isPremium },
+			suggestion: {
+				isRecommended,
+				isBestAlternative,
+				is_premium: isPremium,
+				policy_notices: policyNotices,
+			},
 			translate,
 			isFeatured,
 			productSaleCost,
@@ -530,6 +508,23 @@ class DomainRegistrationSuggestion extends Component {
 					{ translate( 'Best Alternative' ) }
 				</Badge>
 			);
+		}
+
+		if ( policyNotices ) {
+			policyNotices.forEach( ( notice ) => {
+				badges.push(
+					<Badge
+						key={ notice.type }
+						type="info"
+						className="domain-registration-suggestion__info-badge"
+					>
+						{ notice.label }
+						<InfoPopover iconSize={ 16 } showOnHover>
+							{ this.getPolicyNoticeMessage( notice ) }
+						</InfoPopover>
+					</Badge>
+				);
+			} );
 		}
 
 		const paidDomain = isPaidDomain( this.getPriceRule() );
@@ -661,8 +656,6 @@ const mapStateToProps = ( state, props ) => {
 	}
 
 	return {
-		showHstsNotice: isHstsRequired( productSlug, productsList ),
-		showDotGayNotice: isDotGayNoticeRequired( productSlug, productsList ),
 		productCost,
 		renewCost,
 		productSaleCost,

@@ -24,12 +24,7 @@ import {
 	isPaidDomain,
 	DOMAIN_PRICE_RULE,
 } from 'calypso/lib/cart-values/cart-items';
-import {
-	getDomainPrice,
-	getDomainSalePrice,
-	isHstsRequired,
-	isDotGayNoticeRequired,
-} from 'calypso/lib/domains';
+import { getDomainPrice, getDomainSalePrice } from 'calypso/lib/domains';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -55,6 +50,13 @@ class DomainRegistrationSuggestion extends Component {
 			cost: PropTypes.string,
 			match_reasons: PropTypes.arrayOf( PropTypes.oneOf( VALID_MATCH_REASONS ) ),
 			currency_code: PropTypes.string,
+			policy_notices: PropTypes.arrayOf(
+				PropTypes.shape( {
+					type: PropTypes.string.isRequired,
+					label: PropTypes.string.isRequired,
+					message: PropTypes.string.isRequired,
+				} )
+			),
 		} ).isRequired,
 		suggestionSelected: PropTypes.bool,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
@@ -257,50 +259,34 @@ class DomainRegistrationSuggestion extends Component {
 		);
 	}
 
-	getHstsMessage() {
-		const {
-			translate,
-			suggestion: { domain_name: domain },
-		} = this.props;
-
-		return translate(
-			'All domains ending in {{strong}}%(tld)s{{/strong}} require an SSL certificate ' +
-				'to host a website. When you host this domain at WordPress.com an SSL ' +
-				'certificate is included. {{a}}Learn more{{/a}}.',
-			{
-				args: {
-					tld: '.' + getTld( domain ),
-				},
-				components: {
-					a: (
-						<a
-							href={ localizeUrl( HTTPS_SSL ) }
-							target="_blank"
-							rel="noopener noreferrer"
-							onClick={ ( event ) => {
-								event.stopPropagation();
-							} }
-						/>
-					),
-					strong: <strong />,
-				},
-			}
-		);
-	}
-
-	getDotGayMessage() {
+	getPolicyNoticeMessage( notice ) {
 		const { translate } = this.props;
 
-		return translate(
-			'Any anti-LGBTQ content is prohibited and can result in registration termination. The registry will donate 20% of all registration revenue to LGBTQ non-profit organizations.'
-		);
-	}
+		if ( notice.type === 'hsts' ) {
+			return translate(
+				'%(message)s When you host this domain at WordPress.com, an SSL ' +
+					'certificate is included. {{a}}Learn more{{/a}}.',
+				{
+					args: {
+						message: notice.message,
+					},
+					components: {
+						a: (
+							<a
+								href={ localizeUrl( HTTPS_SSL ) }
+								target="_blank"
+								rel="noopener noreferrer"
+								onClick={ ( event ) => {
+									event.stopPropagation();
+								} }
+							/>
+						),
+					},
+				}
+			);
+		}
 
-	renderNotice() {
-		const { showHstsNotice, showDotGayNotice } = this.props;
-		return (
-			( showHstsNotice && this.getHstsMessage() ) || ( showDotGayNotice && this.getDotGayMessage() )
-		);
+		return notice.message;
 	}
 
 	isExactMatch = () => {
@@ -310,7 +296,12 @@ class DomainRegistrationSuggestion extends Component {
 
 	renderBadges() {
 		const {
-			suggestion: { isRecommended, isBestAlternative, is_premium: isPremium },
+			suggestion: {
+				isRecommended,
+				isBestAlternative,
+				is_premium: isPremium,
+				policy_notices: policyNotices,
+			},
 			translate,
 			isFeatured,
 			productSaleCost,
@@ -337,6 +328,19 @@ class DomainRegistrationSuggestion extends Component {
 					{ translate( 'Best alternative' ) }
 				</DomainSuggestionBadge>
 			);
+		}
+
+		if ( policyNotices ) {
+			policyNotices.forEach( ( notice ) => {
+				badges.push(
+					<DomainSuggestionBadge
+						key={ notice.type }
+						popover={ this.getPolicyNoticeMessage( notice ) }
+					>
+						{ notice.label }
+					</DomainSuggestionBadge>
+				);
+			} );
 		}
 
 		const skipSaleBadge = isHundredYearPlanFlow( flowName );
@@ -405,7 +409,6 @@ class DomainRegistrationSuggestion extends Component {
 		const [ domainName, ...tld ] = fullDomain.split( '.' );
 
 		const badges = this.renderBadges();
-		const notice = this.renderNotice();
 
 		const SuggestionComponent = isFeatured ? DomainSuggestion.Featured : DomainSuggestion;
 
@@ -454,7 +457,6 @@ class DomainRegistrationSuggestion extends Component {
 				domain={ domainName }
 				isHighlighted={ isFeatured && this.isExactMatch() }
 				matchReasons={ matchReasons }
-				notice={ notice }
 				tld={ tld.join( '.' ) }
 				price={ price }
 				cta={ cta }
@@ -500,8 +502,6 @@ const mapStateToProps = ( state, props ) => {
 
 	return {
 		zeroCost: formatCurrency( 0, currentUserCurrencyCode, { stripZeros: true } ),
-		showHstsNotice: isHstsRequired( productSlug, productsList ),
-		showDotGayNotice: isDotGayNoticeRequired( productSlug, productsList ),
 		productCost,
 		renewCost,
 		productSaleCost,
