@@ -1,5 +1,8 @@
-import { domainAvailabilityQuery } from '../queries/availability';
-import { domainSuggestionsQuery, freeSuggestionQuery } from '../queries/suggestions';
+import {
+	domainSuggestionsQuery,
+	freeSuggestionQuery,
+	domainAvailabilityQuery,
+} from '@automattic/api-queries';
 import type {
 	DomainSuggestion,
 	DomainSuggestionQueryVendor,
@@ -27,6 +30,12 @@ export interface DomainSearchEvents {
 	onContinue: () => void;
 	onSkip: ( suggestion?: FreeDomainSuggestion ) => void;
 	onExternalDomainClick?: ( domainName: string ) => void;
+	onMakePrimaryAddressClick: ( domainName: string ) => void;
+	onMoveDomainToSiteClick: ( otherSiteDomain: string, domainName: string ) => void;
+	onTransferDomainToWordPressComClick: ( domainName: string ) => void;
+	onRegisterDomainClick: ( otherSiteDomain: string, domainName: string ) => void;
+	onCheckTransferStatusClick: ( domainName: string ) => void;
+	onMapDomainClick: ( currentSiteSlug: string, domainName: string ) => void;
 }
 
 export interface DomainSearchConfig {

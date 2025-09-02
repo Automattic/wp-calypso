@@ -1,6 +1,9 @@
+import {
+	domainAvailabilityQuery,
+	domainSuggestionsQuery,
+	freeSuggestionQuery,
+} from '@automattic/api-queries';
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
-import { domainAvailabilityQuery } from '../queries/availability';
-import { domainSuggestionsQuery, freeSuggestionQuery } from '../queries/suggestions';
 import type { DomainSearchProps, DomainSearchContextType } from './types';
 
 const noop = () => {};
@@ -9,6 +12,12 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 	events: {
 		onContinue: noop,
 		onSkip: noop,
+		onMakePrimaryAddressClick: noop,
+		onMoveDomainToSiteClick: noop,
+		onTransferDomainToWordPressComClick: noop,
+		onRegisterDomainClick: noop,
+		onCheckTransferStatusClick: noop,
+		onMapDomainClick: noop,
 	},
 	queries: {
 		domainSuggestions: ( query: string ) => domainSuggestionsQuery( query ),
@@ -82,16 +91,21 @@ export const useDomainSearchContextValue = (
 			events: normalizedEvents,
 			config: normalizedConfig,
 			queries: {
-				domainSuggestions: ( query ) =>
-					domainSuggestionsQuery( query, {
+				domainSuggestions: ( query ) => ( {
+					...domainSuggestionsQuery( query, {
 						quantity: 30,
 						vendor: normalizedConfig.vendor,
 					} ),
+					enabled: false,
+				} ),
 				freeSuggestion: ( query ) => ( {
 					...freeSuggestionQuery( query ),
 					enabled: normalizedConfig.skippable,
 				} ),
-				domainAvailability: domainAvailabilityQuery,
+				domainAvailability: ( domainName ) => ( {
+					...domainAvailabilityQuery( domainName ),
+					enabled: false,
+				} ),
 			},
 			cart,
 			isFullCartOpen,
