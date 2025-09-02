@@ -18,7 +18,7 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import { useIsVisualSplitEnabled } from 'calypso/lib/domains/use-visual-split-experiment';
+import { useIsVisualSplitEnabled } from 'calypso/lib/plans/use-visual-split-experiment';
 import { getHidePlanPropsBasedOnThemeType } from 'calypso/my-sites/plans-features-main/components/utils/utils';
 import { getSignupCompleteSiteID, getSignupCompleteSlug } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
