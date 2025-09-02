@@ -5,16 +5,18 @@ import {
 	CardHeader,
 	Icon,
 	TabPanel,
+	useNavigator,
 } from '@wordpress/components';
 import '@wordpress/components/build-style/style.css';
 import { __ } from '@wordpress/i18n';
 import { bell } from '@wordpress/icons';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect } from 'react';
+import { modifierKeyIsActive } from '../../panel/helpers/input';
 import { getFilters } from '../../panel/templates/filters';
 import NoteList from '../note-list';
 import NotePanelActions from './actions';
 
-type ActiveTab = keyof ReturnType< typeof getFilters >;
+type FilterName = keyof ReturnType< typeof getFilters >;
 
 const NOTIFICATION_TABS = Object.values( getFilters() ).map( ( { name, label } ) => ( {
 	name,
@@ -22,17 +24,51 @@ const NOTIFICATION_TABS = Object.values( getFilters() ).map( ( { name, label } )
 } ) );
 
 const NotePanel = () => {
-	const [ activeTab, setActiveTab ] = useState< ActiveTab >( 'all' );
+	const { params, goTo } = useNavigator();
+	const { filterName = 'all' } = params;
 
-	// Ensure the component is focused on mount
-	// to avoid parent's <Popover>'s focus trap from moving.
-	const focusRef = useRef< HTMLDivElement >( null );
 	useEffect( () => {
-		focusRef.current?.focus();
+		const stopEvent = ( event: KeyboardEvent ) => {
+			event.stopPropagation();
+			event.preventDefault();
+		};
+
+		const handleKeyDown = ( event: KeyboardEvent ) => {
+			if ( modifierKeyIsActive( event ) ) {
+				return;
+			}
+			switch ( event.key ) {
+				case 'a':
+					stopEvent( event );
+					goTo( '/all', { replace: true } );
+					break;
+				case 'u':
+					stopEvent( event );
+					goTo( '/unread', { replace: true } );
+					break;
+				case 'c':
+					stopEvent( event );
+					goTo( '/comments', { replace: true } );
+					break;
+				case 'f':
+					stopEvent( event );
+					goTo( '/follows', { replace: true } );
+					break;
+				case 'l':
+					stopEvent( event );
+					goTo( '/likes', { replace: true } );
+					break;
+			}
+		};
+
+		window.addEventListener( 'keydown', handleKeyDown, false );
+		return () => {
+			window.removeEventListener( 'keydown', handleKeyDown, false );
+		};
 	}, [] );
 
 	return (
-		<div ref={ focusRef } tabIndex={ -1 }>
+		<>
 			<CardHeader
 				size="small"
 				style={ { flexDirection: 'column', alignItems: 'stretch', paddingBottom: 0 } }
@@ -50,17 +86,18 @@ const NotePanel = () => {
 					<TabPanel
 						activeClass="is-active"
 						tabs={ NOTIFICATION_TABS }
-						initialTabName={ activeTab }
+						initialTabName={ filterName as string }
+						key={ filterName as string }
 						onSelect={ ( tabName ) => {
-							setActiveTab( tabName as ActiveTab );
+							goTo( `/${ tabName }`, { replace: true } );
 						} }
 					>
 						{ () => null /* Placeholder div since content is rendered elsewhere */ }
 					</TabPanel>
 				</VStack>
 			</CardHeader>
-			<NoteList filterName={ activeTab } />
-		</div>
+			<NoteList filterName={ filterName as FilterName } />
+		</>
 	);
 };
 

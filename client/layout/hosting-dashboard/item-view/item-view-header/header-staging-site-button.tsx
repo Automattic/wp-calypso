@@ -1,11 +1,10 @@
-import { isEnabled } from '@automattic/calypso-config';
+import { siteByIdQuery } from '@automattic/api-queries';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { plus } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useMemo, useEffect } from 'react';
-import { siteByIdQuery } from 'calypso/dashboard/app/queries/site';
 import { isAtomicTransferredSite } from 'calypso/dashboard/utils/site-atomic-transfers';
 import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
 import { useAddStagingSiteMutation } from 'calypso/sites/staging-site/hooks/use-add-staging-site';
@@ -160,8 +159,8 @@ export default function HeaderStagingSiteButton( {
 		addStagingSite( { name: '' } );
 	}, [ dispatch, siteId, addStagingSite ] );
 
-	// Don't render if feature flag is disabled or conditions aren't met
-	if ( ! isEnabled( 'hosting/staging-sites-redesign' ) || ! showAddStagingButton ) {
+	// Don't render if conditions aren't met
+	if ( ! showAddStagingButton ) {
 		return null;
 	}
 

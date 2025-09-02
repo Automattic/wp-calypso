@@ -8,7 +8,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useLocale } from '../../../app/locale';
 import { getUtcOffsetDisplay } from '../../../utils/datetime';
 import { formatLogDateTimeForDisplay, toSeverityClass } from '../utils';
-import type { PHPLog } from '../../../data/site-logs';
+import type { PHPLog } from '@automattic/api-core';
 import './style.scss';
 
 export default function DetailsModalPHP( {

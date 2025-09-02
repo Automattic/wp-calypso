@@ -13,6 +13,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { useShowMigrationIncentive } from '../hook/use-show-migration-incentive';
+import { migrationIncentiveEndDateString } from '../lib/constants';
 
 import './style.scss';
 
@@ -110,7 +111,10 @@ export default function PressablePremiumPlanMigrationCard() {
 				</div>
 
 				<div className="pressable-premium-plan-migration-card__description">
-					{ translate( 'Offer ends September 30, 2025. {{a}}Terms{{/a}} ↗', {
+					{ translate( 'Offer ends %(endDate)s. {{a}}Terms{{/a}} ↗', {
+						args: {
+							endDate: migrationIncentiveEndDateString,
+						},
 						components: {
 							a: (
 								<Button

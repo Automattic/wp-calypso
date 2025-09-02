@@ -10,8 +10,7 @@ import { type DataFormControlProps, Field } from '@wordpress/dataviews';
 import { createInterpolateElement, useEffect } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import InlineSupportLink from '../../components/inline-support-link';
-import type { StatesListItem } from '../../data/domain-supported-countries';
-import type { DomainContactDetails } from '../../data/types';
+import type { StatesListItem, DomainContactDetails } from '@automattic/api-core';
 
 const createStateFieldEdit = ( statesList: StatesListItem[] | undefined ) => {
 	const StateFieldEdit = ( {

@@ -1,16 +1,15 @@
 import { __ } from '@wordpress/i18n';
 import { check } from '@wordpress/icons';
 import PropTypes from 'prop-types';
-import { useContext } from 'react';
 import { connect } from 'react-redux';
 import { keys } from '../../panel/helpers/input';
 import { getReferenceId } from '../../panel/helpers/notes';
 import { setApproveStatus as setApproveStatusAction } from '../../panel/state/notes/thunks';
-import { RestClientContext } from '../context';
+import { useAppContext } from '../context';
 import ActionButton from './action-button';
 
 const ApproveButton = ( { isApproved, note, setApproveStatus } ) => {
-	const restClient = useContext( RestClientContext );
+	const { client } = useAppContext();
 
 	return (
 		<ActionButton
@@ -24,7 +23,7 @@ const ApproveButton = ( { isApproved, note, setApproveStatus } ) => {
 					getReferenceId( note, 'comment' ),
 					! isApproved,
 					note.type,
-					restClient
+					client
 				)
 			}
 			text={ isApproved ? __( 'Approved' ) : __( 'Approve' ) }

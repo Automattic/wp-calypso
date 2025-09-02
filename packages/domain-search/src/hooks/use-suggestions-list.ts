@@ -1,4 +1,4 @@
-import { type DomainAvailability, DomainAvailabilityStatus } from '@automattic/data';
+import { type DomainAvailability, DomainAvailabilityStatus } from '@automattic/api-core';
 import { useQueries, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 import { partitionSuggestions } from '../helpers/partition-suggestions';

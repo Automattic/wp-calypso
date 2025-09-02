@@ -31,7 +31,7 @@ import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { useIsManagedSiteFlowProps } from './use-is-managed-site-flow';
 import type { ProvidedDependencies, Step } from '../../types';
-import type { DomainSuggestion } from '@automattic/data';
+import type { DomainSuggestion } from '@automattic/api-core';
 
 type DomainStepSubmittedTypes = {
 	stepName?: 'domains';
