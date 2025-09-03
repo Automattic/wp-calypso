@@ -58,6 +58,11 @@ import {
 	FEATURE_GROUP_BIG_SKY,
 	FEATURE_GROUP_UPLOAD_VIDEOS,
 	FEATURE_GROUP_STATS,
+	FEATURE_GROUP_WP_HOSTING_ESSENTIALS,
+	FEATURE_GROUP_WP_HOSTING_MANAGED,
+	FEATURE_GROUP_WP_HOSTING_DEVELOPER,
+	FEATURE_GROUP_WP_HOSTING_SUPPORT,
+	FEATURE_GROUP_WP_HOSTING_COMMERCE,
 } from './constants';
 import { PriceTierEntry } from './get-price-tier-for-units';
 import type { TranslateResult } from 'i18n-calypso';
@@ -143,6 +148,8 @@ export interface WPComPlan extends Plan {
 	getHostingSignupFeatures?: ( term?: Product[ 'term' ] ) => () => Feature[];
 	getHostingHighlightedFeatures?: () => Feature[];
 	getCancellationFeatures?: () => Feature[];
+	getVisualSplitBusinessFeatures?: () => Feature[];
+	getVisualSplitCommerceFeatures?: () => Feature[];
 }
 
 export type IncompleteWPcomPlan = Partial< WPComPlan > &
@@ -271,7 +278,12 @@ export type FeatureGroupSlug =
 	| typeof FEATURE_GROUP_THEMES
 	| typeof FEATURE_GROUP_WOO
 	| typeof FEATURE_GROUP_CUSTOM_PLUGINS
-	| typeof FEATURE_GROUP_DEV_TOOLS;
+	| typeof FEATURE_GROUP_DEV_TOOLS
+	| typeof FEATURE_GROUP_WP_HOSTING_ESSENTIALS
+	| typeof FEATURE_GROUP_WP_HOSTING_MANAGED
+	| typeof FEATURE_GROUP_WP_HOSTING_DEVELOPER
+	| typeof FEATURE_GROUP_WP_HOSTING_SUPPORT
+	| typeof FEATURE_GROUP_WP_HOSTING_COMMERCE;
 
 export interface FeatureFootnotes {
 	[ key: string ]: Feature[];

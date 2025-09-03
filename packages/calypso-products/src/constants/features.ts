@@ -351,6 +351,7 @@ export const FEATURE_POST_EDITS_HISTORY = 'post-edits-history';
 export const FEATURE_SECURITY_BRUTE_FORCE = 'security-brute-force';
 export const FEATURE_SMART_REDIRECTS = 'smart-redirects';
 export const FEATURE_ALWAYS_ONLINE = 'always-online';
+export const FEATURE_99_999_UPTIME = '99-999-uptime';
 export const FEATURE_FAST_DNS = 'fast-dns';
 export const FEATURE_STYLE_CUSTOMIZATION = 'style-customization';
 export const FEATURE_DESIGN_TOOLS = 'design-tools';
