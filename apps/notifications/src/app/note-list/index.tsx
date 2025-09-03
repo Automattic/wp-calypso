@@ -44,7 +44,7 @@ const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFil
 		type: 'list',
 		titleField: 'title',
 		mediaField: 'icon',
-		fields: [ 'date' ],
+		fields: [ 'info' ],
 		page: 1,
 		infiniteScrollEnabled: true,
 	} );
