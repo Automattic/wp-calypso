@@ -117,6 +117,13 @@ export const addImageCarousel = ( imageBlocks: Element[] ) => {
 		const img = item.querySelector( 'img' );
 		if ( img ) {
 			img.style.cursor = 'pointer';
+			img.setAttribute( 'role', 'button' );
+			img.setAttribute( 'tabindex', '0' );
+			img.addEventListener( 'keydown', ( event ) => {
+				if ( event.key === 'Enter' ) {
+					openModal( index );
+				}
+			} );
 			img.addEventListener( 'click', () => {
 				openModal( index );
 			} );
