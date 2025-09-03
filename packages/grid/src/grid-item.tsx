@@ -14,12 +14,16 @@ import ResizeHandle from './resize-handle';
  * Types
  */
 import type { GridLayoutItem } from './types';
-import type { CSSProperties, ReactNode } from 'react';
+import type { CSSProperties, ReactNode, Ref } from 'react';
 
-type RenderArgs = {
-	contentRef: ( el: HTMLDivElement | null ) => void;
-	contentStyle: CSSProperties;
-	resizeHandle: ReactNode;
+type GridItemBaseProps = {
+	item: GridLayoutItem;
+	maxColumns: number;
+	disabled?: boolean;
+	children: ReactNode;
+	onResize: ( delta: { width: number; height: number } ) => void;
+	onResizeEnd: () => void;
+	contentRef?: Ref< HTMLDivElement >;
 };
 
 export function GridItemBase( {
@@ -29,16 +33,8 @@ export function GridItemBase( {
 	children,
 	onResize,
 	onResizeEnd,
-	renderContent,
-}: {
-	item: GridLayoutItem;
-	maxColumns: number;
-	disabled?: boolean;
-	children: ReactNode;
-	onResize: ( delta: { width: number; height: number } ) => void;
-	onResizeEnd: () => void;
-	renderContent?: ( args: RenderArgs ) => ReactNode;
-} ) {
+	contentRef,
+}: GridItemBaseProps ) {
 	const [ previewDelta, setPreviewDelta ] = useState< { width: number; height: number } | null >(
 		null
 	);
@@ -79,15 +75,6 @@ export function GridItemBase( {
 		onResizeEnd();
 	};
 
-	const resizeHandle = (
-		<ResizeHandle
-			disabled={ disabled }
-			itemId={ item.key }
-			onResize={ handleResize }
-			onResizeEnd={ handleResizeEnd }
-		/>
-	);
-
 	const previewOverlay = previewDelta ? (
 		<div
 			style={ {
@@ -104,18 +91,18 @@ export function GridItemBase( {
 		/>
 	) : null;
 
-	const contentRefCb: ( el: HTMLDivElement | null ) => void = () => {};
-
 	return (
 		<div ref={ setNodeRef } style={ style } { ...attributes } { ...listeners }>
-			{ renderContent ? (
-				renderContent( { contentRef: ( el ) => contentRefCb( el ), contentStyle, resizeHandle } )
-			) : (
-				<div ref={ contentRefCb } style={ contentStyle }>
-					{ children }
-					{ resizeHandle }
-				</div>
-			) }
+			<div ref={ contentRef } style={ contentStyle }>
+				{ children }
+				<ResizeHandle
+					disabled={ disabled }
+					itemId={ item.key }
+					onResize={ handleResize }
+					onResizeEnd={ handleResizeEnd }
+				/>
+			</div>
+
 			{ previewOverlay }
 		</div>
 	);
@@ -129,17 +116,7 @@ export function GridItemBasic( props: {
 	onResize: ( delta: { width: number; height: number } ) => void;
 	onResizeEnd: () => void;
 } ) {
-	return (
-		<GridItemBase
-			{ ...props }
-			renderContent={ ( { contentRef, contentStyle, resizeHandle } ) => (
-				<div ref={ contentRef } style={ contentStyle }>
-					{ props.children }
-					{ resizeHandle }
-				</div>
-			) }
-		/>
-	);
+	return <GridItemBase { ...props } />;
 }
 
 export function GridItemMeasured( props: {
@@ -175,22 +152,8 @@ export function GridItemMeasured( props: {
 	);
 
 	return (
-		<GridItemBase
-			{ ...props }
-			renderContent={ ( { contentRef, contentStyle, resizeHandle } ) => (
-				<GridItemSizeProvider id={ props.item.key } size={ size }>
-					<div
-						ref={ ( el ) => {
-							contentRef( el );
-							contentMeasureRef( needMeasure ? el : null );
-						} }
-						style={ contentStyle }
-					>
-						{ props.children }
-						{ resizeHandle }
-					</div>
-				</GridItemSizeProvider>
-			) }
-		/>
+		<GridItemSizeProvider id={ props.item.key } size={ size }>
+			<GridItemBase { ...props } contentRef={ contentMeasureRef } />
+		</GridItemSizeProvider>
 	);
 }
