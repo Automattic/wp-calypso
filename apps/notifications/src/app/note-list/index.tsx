@@ -64,10 +64,10 @@ const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFil
 	}, [ client, isLoading ] );
 
 	useEffect( () => {
-		if ( filterName !== 'all' && notes.length < 10 && ! isLoading ) {
+		if ( notes.length < 10 && ! isLoading ) {
 			infiniteScrollHandler();
 		}
-	}, [ filterName, notes.length, isLoading, infiniteScrollHandler ] );
+	}, [ notes.length, isLoading, infiniteScrollHandler ] );
 
 	return (
 		<div className="wpnc__note-list">
