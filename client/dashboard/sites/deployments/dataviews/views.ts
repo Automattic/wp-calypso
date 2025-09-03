@@ -5,12 +5,12 @@ export const DEFAULT_VIEW: View = {
 	perPage: 25,
 	page: 1,
 	sort: {
-		field: 'updated_on',
+		field: 'created_on',
 		direction: 'desc' as SortDirection,
 	},
 	search: '',
 	filters: [],
-	fields: [ 'repository_name', 'commit', 'status', 'updated_on' ],
+	fields: [ 'repository_name', 'commit', 'status', 'created_on' ],
 	layout: {},
 };
 

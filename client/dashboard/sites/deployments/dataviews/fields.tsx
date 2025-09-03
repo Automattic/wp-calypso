@@ -1,3 +1,4 @@
+import { Badge } from '@automattic/ui';
 import {
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
@@ -10,10 +11,10 @@ import {
 	DeploymentStatusBadge,
 	DeploymentStatusValue,
 } from '../components/deployment-status-badge';
-import type { CodeDeploymentData } from '../hooks/use-code-deployments-query';
+import type { DeploymentRunWithDeploymentInfo } from '../hooks/use-code-deployment-runs-query';
 import type { Field } from '@wordpress/dataviews';
 
-export function useDeploymentFields(): Field< CodeDeploymentData >[] {
+export function useDeploymentFields(): Field< DeploymentRunWithDeploymentInfo >[] {
 	return useMemo(
 		() => [
 			{
@@ -33,16 +34,14 @@ export function useDeploymentFields(): Field< CodeDeploymentData >[] {
 				enableGlobalSearch: true,
 				enableSorting: false,
 				getValue: ( { item } ) => {
-					const run = item.current_deployment_run || item.current_deployed_run;
-					return run?.metadata?.commit_message || '';
+					return item.metadata?.commit_message || '';
 				},
 				render: ( { item } ) => {
-					const run = item.current_deployment_run || item.current_deployed_run;
-					if ( ! run?.metadata ) {
+					if ( ! item.metadata ) {
 						return <Text variant="muted">{ __( 'No commit info' ) }</Text>;
 					}
 
-					const { commit_message, commit_sha, author } = run.metadata;
+					const { commit_message, commit_sha, author } = item.metadata;
 					const [ installation, repo ] = item.repository_name.split( '/' );
 					const shortSha = commit_sha?.substring( 0, 7 ) || '';
 					const color = '#3b3b3b';
@@ -101,6 +100,7 @@ export function useDeploymentFields(): Field< CodeDeploymentData >[] {
 										{ author.name }
 									</Text>
 								</HStack>
+								{ item.is_active_deployment && <Badge>{ __( 'Active deployment' ) }</Badge> }
 							</HStack>
 						</VStack>
 					);
@@ -110,8 +110,7 @@ export function useDeploymentFields(): Field< CodeDeploymentData >[] {
 				id: 'status',
 				label: __( 'Status' ),
 				getValue: ( { item } ) => {
-					const run = item.current_deployment_run || item.current_deployed_run;
-					return run?.status || 'no-runs';
+					return item.status;
 				},
 				elements: [
 					{ value: 'pending', label: __( 'Pending' ) },
@@ -121,30 +120,24 @@ export function useDeploymentFields(): Field< CodeDeploymentData >[] {
 					{ value: 'failed', label: __( 'Error' ) },
 					{ value: 'warnings', label: __( 'Warnings' ) },
 					{ value: 'building', label: __( 'Building' ) },
-					{ value: 'no-runs', label: __( 'No deployments' ) },
+					{ value: 'dispatched', label: __( 'Dispatched' ) },
+					{ value: 'unknown', label: __( 'Unknown' ) },
 				],
 				filterBy: {
 					operators: [ 'is' ],
 				},
 				render: ( { item } ) => {
-					const run = item.current_deployment_run || item.current_deployed_run;
-					if ( ! run ) {
-						return <Text variant="muted">{ __( 'No deployments' ) }</Text>;
-					}
-					return <DeploymentStatusBadge status={ run.status as DeploymentStatusValue } />;
+					return <DeploymentStatusBadge status={ item.status as DeploymentStatusValue } />;
 				},
 			},
 			{
-				id: 'updated_on',
+				id: 'created_on',
 				label: __( 'Date' ),
 				getValue: ( { item } ) => {
-					const run = item.current_deployment_run || item.current_deployed_run;
-					return run?.updated_on || item.updated_on;
+					return item.created_on;
 				},
 				render: ( { item } ) => {
-					const run = item.current_deployment_run || item.current_deployed_run;
-					const timestamp = run?.updated_on || item.updated_on;
-					return <TimeSince timestamp={ timestamp } />;
+					return <TimeSince timestamp={ item.created_on } />;
 				},
 			},
 

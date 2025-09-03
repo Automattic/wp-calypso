@@ -56,10 +56,6 @@ export const useCodeDeploymentsQuery = (
 				path: `/sites/${ siteId }/hosting/code-deployments`,
 				apiNamespace: 'wpcom/v2',
 			} ),
-		meta: {
-			persist: false,
-		},
-		refetchInterval: 5000,
 		...options,
 	} );
 };

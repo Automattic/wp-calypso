@@ -7,7 +7,7 @@ import { siteRoute } from '../../app/router/sites';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { useDeploymentFields } from './dataviews/fields';
 import { DEFAULT_VIEW, DEFAULT_LAYOUTS } from './dataviews/views';
-import { useCodeDeploymentsQuery } from './hooks/use-code-deployments-query';
+import { useAllDeploymentRunsQuery } from './hooks/use-all-deployment-runs-query';
 import type { View } from '@wordpress/dataviews';
 
 export function DeploymentsList() {
@@ -15,14 +15,14 @@ export function DeploymentsList() {
 	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
 
-	const {
-		data: deployments = [],
-		isLoading,
-		isPlaceholderData,
-	} = useCodeDeploymentsQuery( site?.ID ?? null );
+	const { data: deploymentRuns = [], isLoading } = useAllDeploymentRunsQuery( site?.ID ?? null );
 
 	const fields = useDeploymentFields();
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate( deployments, view, fields );
+	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
+		deploymentRuns,
+		view,
+		fields as any
+	);
 
 	const hasFilterOrSearch = ( view.filters && view.filters.length > 0 ) || view.search;
 	const emptyTitle = hasFilterOrSearch ? __( 'No deployments found' ) : __( 'No deployments yet' );
@@ -30,11 +30,11 @@ export function DeploymentsList() {
 	return (
 		<DataViewsCard>
 			<DataViews
-				data={ filteredData }
+				data={ filteredData as any }
 				fields={ fields }
 				view={ view }
 				onChangeView={ setView }
-				isLoading={ isLoading || ( isPlaceholderData && filteredData.length === 0 ) }
+				isLoading={ isLoading }
 				defaultLayouts={ DEFAULT_LAYOUTS }
 				paginationInfo={ paginationInfo }
 				getItemId={ ( item ) => item.id.toString() }
