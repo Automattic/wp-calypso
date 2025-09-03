@@ -1,4 +1,9 @@
 import { __ } from '@wordpress/i18n';
+import {
+	MetricsType,
+	PeriodData,
+	useSiteMetricsQuery,
+} from 'calypso/sites/monitoring/hooks/use-metrics-query';
 import MonitoringCard from '../monitoring-card';
 import { MonitoringLineChart } from '../monitoring-card-line-chart';
 import { FirstChartTooltipWithSeriesHandler } from '../monitoring-card-line-chart/line-chart-tooltip';
@@ -8,11 +13,6 @@ import {
 	seriesInfo,
 	tooltipsPlugin,
 } from '../monitoring-card-line-chart/uplot-tooltip-plugin';
-import {
-	MetricsType,
-	PeriodData,
-	useSiteMetricsQuery,
-} from 'calypso/sites/monitoring/hooks/use-metrics-query';
 import type { Site } from 'calypso/dashboard/data/site';
 
 type TimeRange = {
