@@ -11,8 +11,8 @@ type GridItemCtx = { id: string; size: GridItemSize };
 
 const GridItemContext = createContext< GridItemCtx | null >( null );
 
-export function GridItemSizeProvider( p: React.PropsWithChildren< GridItemCtx > ) {
-	return <GridItemContext.Provider value={ p }>{ p.children }</GridItemContext.Provider>;
+export function GridItemSizeProvider( props: React.PropsWithChildren< GridItemCtx > ) {
+	return <GridItemContext.Provider value={ props }>{ props.children }</GridItemContext.Provider>;
 }
 
 export function useGridItemSize(): GridItemSize {

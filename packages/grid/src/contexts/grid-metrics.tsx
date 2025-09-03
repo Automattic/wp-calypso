@@ -42,3 +42,7 @@ export function useGridMetrics() {
 	}
 	return v;
 }
+
+export function useOptionalGridMetrics() {
+	return useContext( GridMetricsCtx );
+}
