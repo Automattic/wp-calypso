@@ -67,7 +67,6 @@ const LearningStep: StepType = function LearningStep() {
 
 		const initialize = async () => {
 			try {
-				// Best-effort CSS load; do not block init on failure.
 				try {
 					await loadSiteSpecCSS();
 				} catch ( cssErr ) {

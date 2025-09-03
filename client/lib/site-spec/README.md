@@ -46,6 +46,8 @@ Define the following configuration values:
 }
 ```
 
+**Note:** We are using `sitespec.bundle.umd.js` because React is not available globally in the version required by SiteSpec. The bundled version includes its own React instance to avoid version conflicts with WordPress Calypso's React setup.
+
 #### Production
 
 ```json
