@@ -86,19 +86,6 @@ export function getFields(): Field< Note >[] {
 				return <div>{ groupTitles[ groupKey ] }</div>;
 			},
 		},
-		{
-			id: 'content',
-			label: __( 'Content' ),
-			getValue: ( { item } ) => ( item.subject.length > 1 ? item.subject[ 1 ].text : '' ),
-			render: ( { field, item } ) => {
-				const excerpt = field.getValue( { item } );
-				if ( ! excerpt ) {
-					return null;
-				}
-
-				return <div className="wpnc__excerpt">{ excerpt }</div>;
-			},
-		},
 	];
 }
 
