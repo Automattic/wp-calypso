@@ -17,7 +17,7 @@ import type { Site } from '@automattic/api-core';
 export default function DomainTransferToOtherSite() {
 	const { domainName } = domainTransferToOtherSiteRoute.useParams();
 	const [ isConfirmDialogOpen, setIsConfirmDialogOpen ] = useState( false );
-	const [ selectedSite, setSelectedSite ] = useState< Site | null >( null );
+	const [ selectedSite, setSelectedSite ] = useState< Site >();
 
 	return (
 		<PageLayout
