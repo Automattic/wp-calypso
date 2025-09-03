@@ -1,7 +1,6 @@
 import { siteRestoreMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
-	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	Button,
@@ -10,6 +9,7 @@ import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { ButtonStack } from '../../components/button-stack';
 import { getSiteDisplayUrl } from '../../utils/site-url';
 import type { Site } from '@automattic/api-core';
 
@@ -62,14 +62,14 @@ export default function SiteRestoreContentInfo( { site, onClose }: ContentInfoPr
 						}
 					) }
 				</Text>
-				<HStack spacing={ 4 } justify="flex-end" expanded={ false }>
+				<ButtonStack justify="flex-end" expanded={ false }>
 					<Button variant="tertiary" onClick={ onClose }>
 						{ __( 'Cancel' ) }
 					</Button>
 					<Button variant="primary" type="submit" isBusy={ mutation.isPending }>
 						{ __( 'Restore site' ) }
 					</Button>
-				</HStack>
+				</ButtonStack>
 			</VStack>
 		</form>
 	);

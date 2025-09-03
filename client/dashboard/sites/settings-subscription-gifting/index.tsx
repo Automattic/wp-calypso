@@ -3,7 +3,6 @@ import { siteBySlugQuery, siteSettingsMutation, siteSettingsQuery } from '@autom
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { notFound } from '@tanstack/react-router';
 import {
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
 	Card,
@@ -16,6 +15,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import { ButtonStack } from '../../components/button-stack';
 import InlineSupportLink from '../../components/inline-support-link';
 import PageLayout from '../../components/page-layout';
 import { hasPlanFeature } from '../../utils/site-features';
@@ -123,7 +123,7 @@ export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: s
 									setFormData( ( data ) => ( { ...data, ...edits } ) );
 								} }
 							/>
-							<HStack justify="flex-start">
+							<ButtonStack justify="flex-start">
 								<Button
 									variant="primary"
 									type="submit"
@@ -132,7 +132,7 @@ export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: s
 								>
 									{ __( 'Save' ) }
 								</Button>
-							</HStack>
+							</ButtonStack>
 						</VStack>
 					</form>
 				</CardBody>

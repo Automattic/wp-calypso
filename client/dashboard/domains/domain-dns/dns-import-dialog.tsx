@@ -4,7 +4,6 @@ import {
 	Modal,
 	Button,
 	__experimentalVStack as VStack,
-	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	CheckboxControl,
 	__experimentalDivider as Divider,
@@ -13,6 +12,7 @@ import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState, useEffect } from 'react';
+import { ButtonStack } from '../../components/button-stack';
 import type { DnsRecord } from '@automattic/api-core';
 
 interface DnsImportDialogProps {
@@ -170,7 +170,7 @@ export default function DnsImportDialog( {
 					<Text>{ __( 'We couldn’t find valid DNS records to import.' ) }</Text>
 				) }
 
-				<HStack justify="flex-end" spacing={ 2 }>
+				<ButtonStack justify="flex-end">
 					<Button onClick={ onCancel } disabled={ updateDnsMutation.isPending }>
 						{ __( 'Cancel' ) }
 					</Button>
@@ -182,7 +182,7 @@ export default function DnsImportDialog( {
 					>
 						{ __( 'Import Selected Records' ) }
 					</Button>
-				</HStack>
+				</ButtonStack>
 			</VStack>
 		</Modal>
 	);

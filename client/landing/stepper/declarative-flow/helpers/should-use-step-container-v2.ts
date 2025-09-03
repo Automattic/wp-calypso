@@ -5,7 +5,6 @@ import {
 	NEW_HOSTED_SITE_FLOW,
 	TRANSFERRING_HOSTED_SITE_FLOW,
 	ONBOARDING_UNIFIED_FLOW,
-	DOMAIN_FLOW,
 } from '@automattic/onboarding';
 
 const FLOWS_USING_STEP_CONTAINER_V2 = [
@@ -15,7 +14,6 @@ const FLOWS_USING_STEP_CONTAINER_V2 = [
 	TRANSFERRING_HOSTED_SITE_FLOW,
 	SITE_MIGRATION_FLOW,
 	ONBOARDING_UNIFIED_FLOW,
-	DOMAIN_FLOW,
 ];
 
 export const shouldUseStepContainerV2 = ( flow: string ) => {

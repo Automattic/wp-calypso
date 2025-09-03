@@ -68,16 +68,6 @@ const hoursMap: Record< string, number > = {
 	'7-days': 168,
 };
 
-function SiteMonitoringBody( { site, timeRange }: { site: object; timeRange: string } ) {
-	const isSmallViewport = useViewportMatch( 'medium', '<' );
-
-	return (
-		<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
-			<MonitoringPerformanceCard site={ site } timeRange={ hoursMap[ timeRange ] } />
-		</VStack>
-	);
-}
-
 const getDateRange = ( range: string ) => {
 	const now = new Date();
 
@@ -94,6 +84,17 @@ const getDateRange = ( range: string ) => {
 
 	return `${ formatDate( start ) }–${ formatDate( now ) }`;
 };
+
+function SiteMonitoringBody( { site, timeRange }: { site: object; timeRange: string } ) {
+	const isSmallViewport = useViewportMatch( 'medium', '<' );
+
+	return (
+		<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
+			<Text className={ clsx( 'site-monitoring-dates' ) }>{ getDateRange( timeRange ) }</Text>
+			<MonitoringPerformanceCard site={ site } timeRange={ hoursMap[ timeRange ] } />
+		</VStack>
+	);
+}
 
 function SiteMonitoring() {
 	const { siteSlug } = siteRoute.useParams();
@@ -133,7 +134,6 @@ function SiteMonitoring() {
 								__nextHasNoMarginBottom
 								__next40pxDefaultSize
 								onChange={ handleTimeRangeChange }
-								className={ clsx( 'site-monitoring-header-range' ) }
 								label={ __( 'Time period' ) }
 								hideLabelFromVision
 							>
@@ -144,7 +144,6 @@ function SiteMonitoring() {
 							</ToggleGroupControl>
 						</div>
 					</HStack>
-					<Text className={ clsx( 'site-monitoring-dates' ) }>{ getDateRange( timeRange ) }</Text>
 				</>
 			}
 		>

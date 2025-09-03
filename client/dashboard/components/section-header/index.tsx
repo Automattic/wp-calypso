@@ -4,8 +4,8 @@ import {
 	__experimentalText as Text,
 } from '@wordpress/components';
 import clsx from 'clsx';
+import { ButtonStack } from '../button-stack';
 import type { SectionHeaderProps } from './types';
-
 import './style.scss';
 
 /**
@@ -41,15 +41,14 @@ export const SectionHeader = ( {
 						{ title }
 					</HeadingTag>
 					{ /* The wrapper is always needed for view transitions. */ }
-					<HStack
+					<ButtonStack
 						justify="flex-end"
 						expanded={ false }
 						alignment="center"
 						className="dashboard-section-header__actions"
-						spacing={ 3 }
 					>
 						{ actions }
-					</HStack>
+					</ButtonStack>
 				</HStack>
 			</HStack>
 			{ description && (
