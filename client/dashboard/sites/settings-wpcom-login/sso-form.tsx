@@ -81,7 +81,7 @@ export default function SsoForm( {
 	jetpackModules,
 	site,
 }: {
-	jetpackModules: Record< string, JetpackModule >;
+	jetpackModules: Record< string, JetpackModule > | undefined;
 	site: Site;
 } ) {
 	const { data: jetpackSettings } = useSuspenseQuery( siteJetpackSettingsQuery( site.ID ) );

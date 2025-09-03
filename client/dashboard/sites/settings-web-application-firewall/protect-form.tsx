@@ -1,4 +1,4 @@
-import { JetpackModules, Site } from '@automattic/api-core';
+import { JetpackModule, JetpackModules, Site } from '@automattic/api-core';
 import { siteJetpackModulesMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { Card, CardBody, __experimentalVStack as VStack, Button } from '@wordpress/components';
@@ -28,7 +28,7 @@ export default function ProtectForm( {
 	jetpackModules,
 	site,
 }: {
-	jetpackModules: Record< string, JetpackModule >;
+	jetpackModules: Record< string, JetpackModule > | undefined;
 	site: Site;
 } ) {
 	const mutation = useMutation( siteJetpackModulesMutation( site.ID ) );
