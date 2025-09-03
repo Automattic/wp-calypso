@@ -6,7 +6,7 @@ import { PureComponent } from 'react';
 import ReactDom from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import DotPager from '../dot-pager';
-import ImageCarousel from './gallery';
+import { addImageCarousel } from '../image-carousel';
 
 const noop = () => {};
 const debug = debugFactory( 'calypso:components:embed-container' );
@@ -30,81 +30,6 @@ const embedsToLookFor = {
 };
 
 const cacheBustQuery = `?v=${ Math.floor( new Date().getTime() / ( 1000 * 60 * 60 * 24 * 10 ) ) }`; // A new query every 10 days
-
-// Singleton modal for all image carousels on the page
-let globalModalContainer = null;
-let globalModalRoot = null;
-
-/**
- * Creates the global modal container and root
- * @returns {Object} Object with modalContainer and modalRoot
- */
-function createGlobalModal() {
-	globalModalContainer = document.querySelector( '.reader-image-carousel-overlay' );
-
-	if ( ! globalModalContainer ) {
-		globalModalContainer = document.createElement( 'div' );
-		globalModalContainer.classList.add( 'reader-image-carousel-overlay' );
-		document.body.appendChild( globalModalContainer );
-	}
-
-	globalModalRoot = createRoot( globalModalContainer );
-
-	return { modalContainer: globalModalContainer, modalRoot: globalModalRoot };
-}
-
-/**
- * Removes the global modal container from the DOM
- */
-function removeGlobalModal() {
-	if ( globalModalContainer && globalModalContainer.parentNode ) {
-		globalModalContainer.parentNode.removeChild( globalModalContainer );
-	}
-	globalModalContainer = null;
-	globalModalRoot = null;
-}
-
-/**
- * Adds carousel modal functionality to images
- * @param {NodeList} imageBlocks - Collection of image blocks or containers
- */
-function addImageCarousel( imageBlocks ) {
-	const images = Array.from( imageBlocks ).map( ( item ) => {
-		const img = item.querySelector( 'img' );
-		return {
-			src: img.src,
-			originalFile: img.dataset.origFile,
-			alt: img.alt || '',
-			srcSet: img.srcSet || '',
-		};
-	} );
-
-	// Function to open modal at specific index
-	const openModal = ( initialIndex = 0 ) => {
-		const { modalRoot } = createGlobalModal();
-		modalRoot.render(
-			<ImageCarousel
-				images={ images }
-				initialIndex={ initialIndex }
-				onClose={ () => {
-					modalRoot.render( null );
-					removeGlobalModal();
-				} }
-			/>
-		);
-	};
-
-	// Add click handlers to images
-	Array.from( imageBlocks ).forEach( ( item, index ) => {
-		const img = item.querySelector( 'img' );
-		if ( img ) {
-			img.style.cursor = 'pointer';
-			img.addEventListener( 'click', () => {
-				openModal( index );
-			} );
-		}
-	} );
-}
 
 const SLIDESHOW_URLS = {
 	CSS: `https://s0.wp.com/wp-content/mu-plugins/jetpack-plugin/production/modules/shortcodes/css/slideshow-shortcode.css${ cacheBustQuery }`,
