@@ -6,7 +6,7 @@ import { PureComponent } from 'react';
 import ReactDom from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import DotPager from '../dot-pager';
-import Gallery from './gallery';
+import ImageCarousel from './gallery';
 
 const noop = () => {};
 const debug = debugFactory( 'calypso:components:embed-container' );
@@ -36,17 +36,32 @@ let globalModalContainer = null;
 let globalModalRoot = null;
 
 /**
- * Gets or creates the global modal container and root
+ * Creates the global modal container and root
  * @returns {Object} Object with modalContainer and modalRoot
  */
-function getGlobalModal() {
+function createGlobalModal() {
+	globalModalContainer = document.querySelector( '.reader-image-carousel-overlay' );
+
 	if ( ! globalModalContainer ) {
 		globalModalContainer = document.createElement( 'div' );
-		globalModalContainer.id = 'reader-image-modal';
+		globalModalContainer.classList.add( 'reader-image-carousel-overlay' );
 		document.body.appendChild( globalModalContainer );
-		globalModalRoot = createRoot( globalModalContainer );
 	}
+
+	globalModalRoot = createRoot( globalModalContainer );
+
 	return { modalContainer: globalModalContainer, modalRoot: globalModalRoot };
+}
+
+/**
+ * Removes the global modal container from the DOM
+ */
+function removeGlobalModal() {
+	if ( globalModalContainer && globalModalContainer.parentNode ) {
+		globalModalContainer.parentNode.removeChild( globalModalContainer );
+	}
+	globalModalContainer = null;
+	globalModalRoot = null;
 }
 
 /**
@@ -58,21 +73,22 @@ function addImageCarousel( imageBlocks ) {
 		const img = item.querySelector( 'img' );
 		return {
 			src: img.src,
+			originalFile: img.dataset.origFile,
 			alt: img.alt || '',
 			srcSet: img.srcSet || '',
 		};
 	} );
 
-	const { modalRoot } = getGlobalModal();
-
 	// Function to open modal at specific index
 	const openModal = ( initialIndex = 0 ) => {
+		const { modalRoot } = createGlobalModal();
 		modalRoot.render(
-			<Gallery
+			<ImageCarousel
 				images={ images }
 				initialIndex={ initialIndex }
 				onClose={ () => {
 					modalRoot.render( null );
+					removeGlobalModal();
 				} }
 			/>
 		);

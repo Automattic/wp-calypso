@@ -1,251 +1,159 @@
-// Enhanced gallery with modal functionality
-.gallery-enhanced {
-	// Preserve all original styling while adding interactivity
-	img {
-		transition: opacity 0.2s ease, transform 0.2s ease;
-
-		&:hover {
-			opacity: 0.9;
-			transform: scale(1.02);
-		}
-
-		&:focus {
-			outline: 2px solid var(--color-primary);
-			outline-offset: 2px;
-		}
-	}
-}
-
-// Modal overlay styles
-.gallery-modal-overlay {
+// Carousel overlay that covers the entire screen
+.reader-image-carousel-overlay {
 	position: fixed;
 	top: 0;
 	left: 0;
-	right: 0;
-	bottom: 0;
-	background: rgba(0, 0, 0, 0.9);
+	width: 100%;
+	height: 100%;
+	background-color: #000;
+	z-index: 9999;
+	display: flex;
+	align-items: flex-start;
+	justify-content: center;
+}
+
+// Main container for the carousel content
+.reader-image-carousel-container {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin: 0 50px;
+
+	// Remove margins on mobile
+	@media (max-width: 768px) {
+		margin: 0;
+	}
+}
+
+// Swiper wrapper styles
+.reader-image-carousel-wrap {
+	width: 100%;
+	height: calc(100% - 64px);
+	position: relative;
+
+	.swiper-slide {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		
+		img {
+			max-width: 100%;
+			max-height: 100%;
+			object-fit: contain;
+		}
+	}
+
+	// Navigation arrows
+	.swiper-button-next,
+	.swiper-button-prev {
+		color: #FFF;
+		background-color: rgba(0, 0, 0, 0.5);
+		border-radius: 4px;
+		width: 30px;
+		height: 30px;
+		top: 50%;
+
+		&::after {
+			font-size: 12px;
+			font-weight: bold;
+		}
+
+		&:hover {
+			background-color: #999;
+		}
+
+		// Hide on mobile for touch navigation
+		@media (max-width: 768px) {
+			display: none;
+		}
+	}
+
+	.swiper-button-next {
+		right: 40px;
+	}
+
+	.swiper-button-prev {
+		left: 40px;
+	}
+}
+
+// Close button in top right
+.reader-image-carousel-close {
+	position: absolute;
+	top: 20px;
+	right: 20px;
+	background: rgba(0, 0, 0, 0.5);
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	z-index: 9999;
-	padding: 20px;
+	z-index: 10001;
 
-	.gallery-modal-overlay-backdrop {
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		background: transparent;
-		border: none;
-		cursor: pointer;
-		z-index: 1;
-	}
-
-	.gallery-modal-container {
-		position: relative;
-		width: 100%;
-		height: 100%;
-		max-width: 1200px;
-		max-height: 800px;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		z-index: 2;
-
-		.gallery-modal-close {
-			position: absolute;
-			top: 0;
-			right: 0;
-			background: rgba(0, 0, 0, 0.7);
-			color: var(--color-white);
-			border: none;
-			border-radius: 50%;
-			width: 48px;
-			height: 48px;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			cursor: pointer;
-			z-index: 10;
-			transition: all 0.2s ease;
-
-			&:hover {
-				background: rgba(0, 0, 0, 0.9);
-				transform: scale(1.1);
-			}
-		}
-
-		.gallery-modal-content {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			width: 100%;
-			height: 100%;
-			position: relative;
-
-			.gallery-modal-image-container {
-				flex: 1;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				max-height: 100%;
-
-				.gallery-modal-image {
-					max-width: 100%;
-					max-height: 100%;
-					width: auto;
-					height: auto;
-					object-fit: contain;
-					border-radius: 4px;
-				}
-			}
-
-			.gallery-modal-arrow {
-				position: absolute;
-				top: 50%;
-				transform: translateY(-50%);
-				background: rgba(0, 0, 0, 0.7);
-				color: var(--color-white);
-				border: none;
-				border-radius: 50%;
-				width: 56px;
-				height: 56px;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				cursor: pointer;
-				transition: all 0.2s ease;
-				z-index: 10;
-
-				&:hover {
-					background: rgba(0, 0, 0, 0.9);
-					transform: translateY(-50%) scale(1.1);
-				}
-
-				&.gallery-modal-arrow-prev {
-					left: 20px;
-				}
-
-				&.gallery-modal-arrow-next {
-					right: 20px;
-				}
-			}
-		}
-
-		.gallery-modal-info {
-			position: absolute;
-			bottom: 20px;
-			left: 50%;
-			transform: translateX(-50%);
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			gap: 16px;
-
-			.gallery-modal-counter {
-				background: rgba(0, 0, 0, 0.7);
-				color: var(--color-white);
-				padding: 8px 16px;
-				border-radius: 16px;
-				font-size: 14px;
-				font-weight: 500;
-			}
-
-			.gallery-modal-dots {
-				display: flex;
-				gap: 8px;
-
-				.gallery-modal-dot {
-					width: 10px;
-					height: 10px;
-					border-radius: 50%;
-					border: none;
-					background: rgba(255, 255, 255, 0.5);
-					cursor: pointer;
-					transition: all 0.2s ease;
-
-					&:hover {
-						background: rgba(255, 255, 255, 0.8);
-						transform: scale(1.2);
-					}
-
-					&.gallery-modal-dot-active {
-						background: var(--color-white);
-						transform: scale(1.2);
-					}
-				}
-			}
-		}
+	&:hover {
+		background-color: #999;
 	}
 }
 
-// Mobile responsive styles
+// Footer with pagination - full width across bottom
+.reader-image-carousel-footer {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	width: 100%;
+	height: 64px;
+	color: #FFF;
+	z-index: 10001;
+	padding: 16px;
+}
+
+.reader-image-carousel-pagination-container {
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+}
+
+.reader-image-carousel-pagination {
+	background: rgba(0, 0, 0, 0.5);
+	padding: 8px 16px;
+	border-radius: 16px;
+	font-size: 14px;
+	font-weight: 500;
+
+	span {
+		color: #FFF;
+	}
+}
+
+// Ensure all text and icons are white
+.reader-image-carousel-container * {
+	color: #FFF;
+}
+
+// Additional mobile responsiveness
 @media (max-width: 768px) {
-	.gallery-modal-overlay {
-		padding: 10px;
-
-		.gallery-modal-container {
-			max-height: 100vh;
-
-			.gallery-modal-close {
-				width: 40px;
-				height: 40px;
-			}
-
-			.gallery-modal-content {
-				.gallery-modal-arrow {
-					width: 44px;
-					height: 44px;
-
-					&.gallery-modal-arrow-prev {
-						left: 10px;
-					}
-
-					&.gallery-modal-arrow-next {
-						right: 10px;
-					}
-				}
-			}
-
-			.gallery-modal-info {
-				bottom: 10px;
-				gap: 12px;
-
-				.gallery-modal-counter {
-					padding: 6px 12px;
-					font-size: 12px;
-				}
-
-				.gallery-modal-dots {
-					gap: 6px;
-
-					.gallery-modal-dot {
-						width: 8px;
-						height: 8px;
-					}
-				}
-			}
-		}
+	.jp-carousel-overlay {
+		padding-top: 20px;
 	}
-}
 
-// Small screen adjustments
-@media (max-width: 480px) {
-	.gallery-modal-overlay {
-		.gallery-modal-container {
-			.gallery-modal-content {
-				.gallery-modal-arrow {
-					&.gallery-modal-arrow-prev {
-						left: 5px;
-					}
+	.reader-image-carousel-wrap {
+		height: calc(100vh - 100px);
+	}
 
-					&.gallery-modal-arrow-next {
-						right: 5px;
-					}
-				}
-			}
-		}
+	.reader-image-carousel-close {
+		top: 10px;
+		right: 10px;
+		width: 40px;
+		height: 40px;
+	}
+
+	.reader-image-carousel-footer {
+		bottom: 8px;
+		left: 8px;
 	}
 }
