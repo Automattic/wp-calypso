@@ -67,9 +67,14 @@ function SiteDeployments() {
 				<PageHeader
 					title={ __( 'Deployments' ) }
 					actions={
-						hasDeploymentFeature && (
-							<Button variant="primary">{ __( 'Trigger deployment' ) }</Button>
-						)
+						<>
+							<Button variant="secondary" __next40pxDefaultSize>
+								{ __( 'Manage repositories' ) }
+							</Button>
+							<Button variant="primary" __next40pxDefaultSize>
+								{ __( 'Trigger deployment' ) }
+							</Button>
+						</>
 					}
 				/>
 			}
