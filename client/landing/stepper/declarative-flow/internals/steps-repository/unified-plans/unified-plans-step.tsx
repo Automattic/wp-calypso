@@ -27,6 +27,7 @@ import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { buildUpgradeFunction } from 'calypso/lib/signup/step-actions';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
+import IntentToggle from 'calypso/my-sites/plans-features-main/components/intent-toggle';
 import { useFCCARestrictions } from 'calypso/my-sites/plans-features-main/hooks/use-fcca-restrictions';
 import {
 	useStreamlinedPriceExperiment,
@@ -122,6 +123,7 @@ export interface UnifiedPlansStepProps {
 
 	shouldHideNavButtons?: boolean;
 	intent?: PlansIntent;
+	onIntentChange?: ( intent: PlansIntent ) => void;
 	isLaunchPage?: boolean;
 	intervalType?: string;
 	fallbackSubHeaderText?: string;
@@ -221,6 +223,7 @@ function UnifiedPlansStep( {
 	progress,
 	queryParams: queryParamsFromProps,
 	shouldHideNavButtons,
+	onIntentChange,
 }: UnifiedPlansStepProps ) {
 	const [ isDesktop, setIsDesktop ] = useState< boolean | undefined >( isDesktopViewport() );
 	const dispatch = reduxUseDispatch();
@@ -371,16 +374,25 @@ function UnifiedPlansStep( {
 			return translate( 'The right plan for the right project' );
 		}
 
+		if ( intent === 'plans-wordpress-hosting' ) {
+			return translate( 'Managed hosting without limits' );
+		} else if ( intent === 'plans-website-builder' ) {
+			return translate( 'Create a beautiful WordPress website' );
+		}
 		return translate( 'There’s a plan for you' );
 	};
 
-	const getSubheaderText = () => {
-		if ( isNewHostedSiteCreationFlow( flowName ) ) {
-			return translate(
-				'Get the advanced features you need without ever thinking about overages.'
-			);
-		}
+	let paidDomainName = domainItem?.meta;
 
+	if ( ! paidDomainName && isDomainOnlySite && selectedSite?.URL ) {
+		paidDomainName = getDomainFromUrl( selectedSite.URL );
+	}
+
+	const deemphasizeFreePlan =
+		( ONBOARDING_FLOW === flowName && ( paidDomainName != null || isPaidTheme ) ) ||
+		deemphasizeFreePlanFromProps;
+
+	const getSubheaderText = () => {
 		const freePlanButton = (
 			<Button
 				onClick={ () =>
@@ -397,8 +409,23 @@ function UnifiedPlansStep( {
 					} )
 				}
 				borderless
+				className="plans-features-main__free-plan-cta"
 			/>
 		);
+
+		if ( isNewHostedSiteCreationFlow( flowName ) ) {
+			return translate(
+				'Get the advanced features you need without ever thinking about overages.'
+			);
+		}
+
+		if ( intent === 'plans-wordpress-hosting' ) {
+			return null; // Use PlansFeaturesMain subheader for hosting
+		}
+
+		if ( intent === 'plans-website-builder' ) {
+			return null; // Use PlansFeaturesMain subheader for website-builder
+		}
 
 		if ( useEmailOnboardingSubheader ) {
 			return translate(
@@ -464,23 +491,18 @@ function UnifiedPlansStep( {
 
 	const intervalTypeValue = intervalType || getIntervalType( path, defaultIntervalType );
 
-	let paidDomainName = domainItem?.meta;
-
-	if ( ! paidDomainName && isDomainOnlySite && selectedSite?.URL ) {
-		paidDomainName = getDomainFromUrl( selectedSite.URL );
-	}
-
 	let freeWPComSubdomain: string | undefined;
 	if ( typeof siteUrl === 'string' && siteUrl.includes( '.wordpress.com' ) ) {
 		freeWPComSubdomain = siteUrl;
 	}
 
-	const deemphasizeFreePlan =
-		( ONBOARDING_FLOW === flowName && ( paidDomainName != null || isPaidTheme ) ) ||
-		deemphasizeFreePlanFromProps;
-
 	const stepContent = (
-		<div>
+		<div
+			className={ clsx( {
+				'step-container-v2__visual-split':
+					intent === 'plans-wordpress-hosting' || intent === 'plans-website-builder',
+			} ) }
+		>
 			{ 'invalid' === step?.status && (
 				<div>
 					<Notice status="is-error" showDismiss={ false }>
@@ -551,7 +573,19 @@ function UnifiedPlansStep( {
 							}
 						/>
 					}
-					heading={ <Step.Heading text={ getHeaderText() } subText={ fallbackSubHeaderText } /> }
+					heading={
+						<>
+							{ ( intent === 'plans-website-builder' || intent === 'plans-wordpress-hosting' ) && (
+								<IntentToggle
+									currentIntent={ intent }
+									onIntentChange={ ( newIntent ) => {
+										onIntentChange?.( newIntent );
+									} }
+								/>
+							) }
+							<Step.Heading text={ getHeaderText() } subText={ fallbackSubHeaderText } />
+						</>
+					}
 				>
 					{ stepContent }
 				</Step.WideLayout>

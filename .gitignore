@@ -130,7 +130,6 @@ packages/plans-grid-next/static/mockServiceWorker.js
 .docusaurus
 
 # Playwright
-/test/e2e/playwright-report
-/test/e2e/test-results
+playwright-report/
 /cookies
-test/e2e/results.xml
+output/

@@ -1,10 +1,14 @@
-import { __ } from '@wordpress/i18n';
+import { __experimentalHStack as HStack, Icon } from '@wordpress/components';
+import { __, isRTL } from '@wordpress/i18n';
+import { chevronRight, chevronLeft } from '@wordpress/icons';
+import clsx from 'clsx';
 import { html } from '../../panel/indices-to-html';
 import noticon2gridicon from '../../panel/utils/noticon2gridicon';
 import Gridicon from '../templates/gridicons';
 import NoteIcon from '../templates/note-icon';
 import type { Note } from '../types';
-import type { Field } from '@wordpress/dataviews';
+import type { Action, Field } from '@wordpress/dataviews';
+import './dataviews-overrides.scss';
 
 const DAY_MILLISECONDS = 24 * 60 * 60 * 1000;
 
@@ -15,6 +19,27 @@ const groupTitles = [
 	__( 'Older than a week' ),
 	__( 'Older than a month' ),
 ];
+
+const RelativeDate = ( { timestamp }: { timestamp: string } ) => {
+	const now = new Date().setHours( 0, 0, 0, 0 );
+	const timeBoundaries = [
+		Infinity,
+		now,
+		new Date( now - DAY_MILLISECONDS ),
+		new Date( now - DAY_MILLISECONDS * 6 ),
+		new Date( now - DAY_MILLISECONDS * 30 ),
+		-Infinity,
+	];
+
+	const timeGroups = timeBoundaries
+		.slice( 0, -1 )
+		.map( ( val, index ) => [ val, timeBoundaries[ index + 1 ] ] );
+
+	const time = new Date( timestamp );
+	const groupKey = timeGroups.findIndex( ( [ after, before ] ) => before < time && time <= after );
+
+	return <span>{ groupTitles[ groupKey ] }</span>;
+};
 
 export function getFields(): Field< Note >[] {
 	return [
@@ -47,10 +72,9 @@ export function getFields(): Field< Note >[] {
 					links: false,
 				} ),
 			render: ( { field, item } ) => (
-				<div className="wpnc__text-summary">
+				<div className={ clsx( 'wpnc__note-list-item', { 'is-unread': ! item.read } ) }>
 					<div
 						className="wpnc__subject"
-						style={ { whiteSpace: 'pre-wrap' } }
 						/* eslint-disable-next-line react/no-danger */
 						dangerouslySetInnerHTML={ { __html: field.getValue( { item } ) } }
 					/>
@@ -58,43 +82,34 @@ export function getFields(): Field< Note >[] {
 			),
 		},
 		{
-			id: 'date',
-			label: __( 'Date' ),
-			getValue: ( { item } ) => item.timestamp,
+			id: 'info',
+			label: __( 'Info' ),
 			render: ( { item } ) => {
-				const now = new Date().setHours( 0, 0, 0, 0 );
-				const timeBoundaries = [
-					Infinity,
-					now,
-					new Date( now - DAY_MILLISECONDS ),
-					new Date( now - DAY_MILLISECONDS * 6 ),
-					new Date( now - DAY_MILLISECONDS * 30 ),
-					-Infinity,
-				];
-
-				const timeGroups = timeBoundaries
-					.slice( 0, -1 )
-					.map( ( val, index ) => [ val, timeBoundaries[ index + 1 ] ] );
-
-				const time = new Date( item.timestamp );
-				const groupKey = timeGroups.findIndex(
-					( [ after, before ] ) => before < time && time <= after
+				return (
+					<HStack spacing={ 1 }>
+						<RelativeDate timestamp={ item.timestamp } />
+						<span>•</span>
+						<span>{ item.title }</span>
+					</HStack>
 				);
-
-				return <div>{ groupTitles[ groupKey ] }</div>;
 			},
 		},
-		{
-			id: 'content',
-			label: __( 'Content' ),
-			getValue: ( { item } ) => ( item.subject.length > 1 ? item.subject[ 1 ].text : '' ),
-			render: ( { field, item } ) => {
-				const excerpt = field.getValue( { item } );
-				if ( ! excerpt ) {
-					return null;
-				}
+	];
+}
 
-				return <div className="wpnc__excerpt">{ excerpt }</div>;
+export function getActions( {
+	onSelect,
+}: {
+	onSelect: ( selection: string[] ) => void;
+} ): Action< Note >[] {
+	return [
+		{
+			id: 'view',
+			isPrimary: true,
+			icon: <Icon icon={ isRTL() ? chevronLeft : chevronRight } style={ { color: '#757575' } } />,
+			label: __( 'View' ),
+			callback: ( items: Note[] ) => {
+				onSelect( items.map( ( item ) => item.id.toString() ) );
 			},
 		},
 	];

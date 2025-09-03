@@ -28,7 +28,7 @@ export interface StoredPaymentMethodBase {
 	source: string | null;
 	original_stored_details_id: string;
 	is_rechargable: boolean;
-	payment_type: string;
+	payment_type: string | null;
 	is_expired: boolean;
 	is_backup: boolean;
 	tax_location: StoredPaymentMethodTaxLocation | null;
@@ -36,10 +36,6 @@ export interface StoredPaymentMethodBase {
 
 export interface StoredPaymentMethodPayPal extends StoredPaymentMethodBase {
 	payment_partner: 'paypal_express' | 'paypal_ppcp';
-}
-
-export interface StoredPaymentMethodRazorpay extends StoredPaymentMethodBase {
-	payment_partner: 'razorpay';
 }
 
 export interface StoredPaymentMethodCard extends StoredPaymentMethodBase {
