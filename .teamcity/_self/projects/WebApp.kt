@@ -12,18 +12,10 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.matrix
-import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.buildReportTab
 
 object WebApp : Project({
 	id("WebApp")
 	name = "Web app"
-
-	features {
-		buildReportTab {
-        	title = "Report"
-        	startPage = "output/html/index.html"
-    	}
-	}
 
 	buildType(RunAllUnitTests)
 	buildType(CheckCodeStyleBranch)
