@@ -12,6 +12,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
+import { useLocale } from '../../app/locale';
 import { siteRoute } from '../../app/router/sites';
 import { Callout } from '../../components/callout';
 import { CalloutOverlay } from '../../components/callout-overlay';
@@ -67,14 +68,14 @@ const hoursMap: Record< string, number > = {
 	'7-days': 168,
 };
 
-const getDateRange = ( range: string ) => {
+const getDateRange = ( range: string, locale: string ) => {
 	const now = new Date();
 
 	const hours = hoursMap[ range ] || 24;
 	const start = new Date( now.getTime() - hours * 60 * 60 * 1000 );
 
 	const formatDate = ( date: Date ) => {
-		return date.toLocaleDateString( 'en-US', {
+		return date.toLocaleDateString( locale, {
 			day: 'numeric',
 			month: 'long',
 			year: 'numeric',
@@ -84,12 +85,20 @@ const getDateRange = ( range: string ) => {
 	return `${ formatDate( start ) }–${ formatDate( now ) }`;
 };
 
-function SiteMonitoringBody( { site, timeRange }: { site: object; timeRange: string } ) {
+function SiteMonitoringBody( {
+	site,
+	timeRange,
+	locale,
+}: {
+	site: object;
+	timeRange: string;
+	locale: string;
+} ) {
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 
 	return (
 		<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
-			<Text variant="muted">{ getDateRange( timeRange ) }</Text>
+			<Text variant="muted">{ getDateRange( timeRange, locale ) }</Text>
 			<MonitoringPerformanceCard site={ site } timeRange={ hoursMap[ timeRange ] } />
 		</VStack>
 	);
@@ -98,6 +107,7 @@ function SiteMonitoringBody( { site, timeRange }: { site: object; timeRange: str
 function SiteMonitoring() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
+	const locale = useLocale();
 
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	const [ timeRange, setTimeRange ] = useState( '24-hours' );
@@ -149,7 +159,7 @@ function SiteMonitoring() {
 			<CalloutOverlay
 				showCallout={ ! hasHostingFeature( site, HostingFeatures.MONITOR ) }
 				callout={ <SiteMonitoringCallout siteSlug={ site.slug } /> }
-				main={ <SiteMonitoringBody timeRange={ timeRange } site={ site } /> }
+				main={ <SiteMonitoringBody timeRange={ timeRange } site={ site } locale={ locale } /> }
 			/>
 		</PageLayout>
 	);
