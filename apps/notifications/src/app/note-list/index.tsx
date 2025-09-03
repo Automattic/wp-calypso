@@ -33,22 +33,26 @@ const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFil
 	const isLoading = useSelector( ( state ) => getIsLoading( state ) );
 	const { client } = useAppContext();
 
-	const [ view, setView ] = useState< View >( {
+	const [ initialView, setView ] = useState< View >( {
 		type: 'list',
 		titleField: 'title',
 		mediaField: 'icon',
 		fields: [ 'content', 'date' ],
 		page: 1,
-		perPage: 10,
 		infiniteScrollEnabled: true,
 	} );
+
+	const view = { ...initialView, perPage: notes.length };
 
 	const fields = getFields();
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( notes, view, fields );
 
 	const onChangeSelection = ( selection: string[] ) => {
-		goTo( `/${ filterName }/notes/${ selection[ 0 ] }` );
+		const noteId = selection[ 0 ];
+		goTo( `/${ filterName }/notes/${ noteId }`, {
+			focusTargetSelector: `.dataviews-view-list__item[id$="-${ noteId }-item-wrapper"]`,
+		} );
 	};
 
 	const infiniteScrollHandler = useCallback( () => {
@@ -56,10 +60,6 @@ const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFil
 			client?.loadMore();
 		}
 	}, [ client, isLoading ] );
-
-	useEffect( () => {
-		setView( ( currentView ) => ( { ...currentView, perPage: notes.length } ) );
-	}, [ notes.length ] );
 
 	useEffect( () => {
 		if ( filterName !== 'all' && notes.length < 10 && ! isLoading ) {
