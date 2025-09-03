@@ -120,9 +120,13 @@ export default function SitesWithWooPayments() {
 			try {
 				await downloadCommissionsReport( selectedSite.blogId );
 				dispatch( recordTracksEvent( 'calypso_a4a_woopayments_download_commissions_report' ) );
-				setDownloadModal( { isVisible: false, isLoading: false } );
 			} catch ( error ) {
 				setDownloadModal( ( prev ) => ( { ...prev, isLoading: false } ) );
+				dispatch(
+					recordTracksEvent( 'calypso_a4a_woopayments_download_commissions_report_error' )
+				);
+			} finally {
+				setDownloadModal( { isVisible: false, isLoading: false } );
 			}
 		},
 		[ downloadCommissionsReport, dispatch ]
