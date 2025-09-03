@@ -1011,7 +1011,7 @@ object PlaywrightTestPRMatrix : BuildType({
 
 				cd test/e2e
 				echo "Running Playwright tests for project: %playwrightProject%"
-				yarn test:pw:%playwrightProject% --grep=@calypso-pr
+				yarn test:pw:%playwrightProject% --grep=@calypso-pr --reporter=blob
 			"""
 			dockerImage = "%docker_image_e2e%"
 		}
@@ -1019,6 +1019,7 @@ object PlaywrightTestPRMatrix : BuildType({
 
 	artifactRules = """
 		test/e2e/output => %playwrightProject%/output
+		test/e2e/blob-report => blob-report
 	""".trimIndent()
 })
 
