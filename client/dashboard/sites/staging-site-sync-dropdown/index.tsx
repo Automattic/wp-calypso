@@ -1,6 +1,6 @@
 import { siteBySlugQuery, stagingSiteSyncStateQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { Button, Dropdown, MenuGroup, MenuItem } from '@wordpress/components';
+import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { chevronDown, cloudDownload, cloudUpload } from '@wordpress/icons';
