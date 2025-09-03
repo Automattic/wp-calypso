@@ -73,6 +73,15 @@ import { loadSiteSpecScript } from 'calypso/lib/site-spec';
 await loadSiteSpecScript();
 ```
 
+### Load CSS Separately
+
+```javascript
+import { loadSiteSpecCSS } from 'calypso/lib/site-spec';
+
+// Load CSS only
+await loadSiteSpecCSS();
+```
+
 ### Check if Enabled
 
 ```javascript
@@ -101,6 +110,15 @@ const url = getSiteSpecUrl();
 // Returns the configured script URL
 ```
 
+### Get CSS URL
+
+```javascript
+import { getSiteSpecCssUrl } from 'calypso/lib/site-spec';
+
+const cssUrl = getSiteSpecCssUrl();
+// Returns the configured CSS URL
+```
+
 ## API Reference
 
 ### `isSiteSpecEnabled()`
@@ -125,7 +143,11 @@ Returns an object with the Site-Spec configuration:
 
 ### `loadSiteSpecScript()`
 
-Loads the Site-Spec script dynamically. Returns a Promise that resolves when the script is loaded.
+Loads the Site-Spec script dynamically. Returns a Promise that resolves when the script is loaded. Automatically loads CSS first if configured.
+
+### `loadSiteSpecCSS()`
+
+Loads the Site-Spec CSS separately. Returns a Promise that resolves when the CSS is loaded.
 
 ### `isSiteSpecScriptLoaded()`
 
