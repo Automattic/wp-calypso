@@ -1,4 +1,4 @@
-import { fetchCurrentSiteUser, deleteSiteUser } from '@automattic/api-core';
+import { fetchCurrentSiteUser, deleteSiteUser, fetchSiteUsers } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
 import { siteQueryFilter } from './site';
@@ -17,4 +17,10 @@ export const siteUserDeleteMutation = ( siteId: number ) =>
 			queryClient.invalidateQueries( { queryKey: [ 'site', siteId ] } );
 			queryClient.invalidateQueries( { queryKey: [ 'sites' ] } );
 		},
+	} );
+
+export const siteUsersQuery = ( siteId: number ) =>
+	queryOptions( {
+		queryKey: [ 'site', siteId, 'users', 'list' ],
+		queryFn: () => fetchSiteUsers( siteId ),
 	} );

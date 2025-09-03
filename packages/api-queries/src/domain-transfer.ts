@@ -6,9 +6,11 @@ import {
 	fetchDomainTransferRequest,
 	updateDomainTransferRequest,
 	deleteDomainTransferRequest,
+	domainTransferToUser,
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { domainQuery } from './domain';
+import { domainsQuery } from './domains';
 import { queryClient } from './query-client';
 import type { Domain } from '@automattic/api-core';
 
@@ -67,5 +69,13 @@ export const deleteDomainTransferRequestMutation = ( domain: string, siteSlug: s
 			// Manually update the cache before invalidating the query
 			queryClient.setQueryData( domainTransferRequestQuery( domain, siteSlug ).queryKey, null );
 			queryClient.invalidateQueries( domainTransferRequestQuery( domain, siteSlug ) );
+		},
+	} );
+
+export const domainTransferToUserMutation = ( domain: string, siteId: number ) =>
+	mutationOptions( {
+		mutationFn: ( userId: string ) => domainTransferToUser( domain, siteId, userId ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( domainsQuery() );
 		},
 	} );
