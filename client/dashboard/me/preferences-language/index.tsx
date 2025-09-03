@@ -30,7 +30,6 @@ import {
 } from './languages';
 import type { Field } from '@wordpress/dataviews';
 
-// TODO add tests.
 const thanksToCommunityTranslator = ( data: UserSettingsPreferences ) => {
 	if ( ! shouldDisplayCommunityTranslator( data ) ) {
 		return;
