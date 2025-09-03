@@ -127,7 +127,15 @@ export function GridItem( {
 					{ previewOverlay }
 				</GridItemSizeProvider>
 			) : (
-				<div style={ contentStyle }>{ children }</div>
+				<div ref={ contentMeasureRef } style={ contentStyle }>
+					{ children }
+					<ResizeHandle
+						disabled={ disabled }
+						itemId={ item.key }
+						onResize={ handleResize }
+						onResizeEnd={ handleResizeEnd }
+					/>
+				</div>
 			) }
 		</div>
 	);
