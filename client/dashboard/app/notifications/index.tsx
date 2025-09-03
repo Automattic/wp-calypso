@@ -1,5 +1,6 @@
 import { useNavigate } from '@tanstack/react-router';
 import { Button, Dropdown } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { bellUnread, bell } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -15,6 +16,7 @@ export default function Notifications( { className }: { className: string } ) {
 	const navigate = useNavigate();
 	const { user } = useAuth();
 	const locale = useLocale();
+	const isMobileViewport = useViewportMatch( 'small', '<' );
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ hasUnseenNotifications, setHasUnseenNotifications ] = useState( user.has_unseen_notes );
 
@@ -75,11 +77,13 @@ export default function Notifications( { className }: { className: string } ) {
 	return (
 		<Dropdown
 			popoverProps={ {
+				className: 'dashboard-notifications',
 				placement: 'bottom-end',
 				offset: 8,
 				focusOnMount: true,
 			} }
 			open={ isOpen }
+			expandOnMobile={ isMobileViewport }
 			onToggle={ handleToggle }
 			renderToggle={ ( { isOpen, onToggle } ) => (
 				<Button
@@ -92,10 +96,19 @@ export default function Notifications( { className }: { className: string } ) {
 				/>
 			) }
 			renderContent={ () => (
-				<div style={ { width: '448px', height: '100vh', maxHeight: 'inherit', margin: '-8px' } }>
+				<div
+					style={ {
+						width: '100vw',
+						height: '100vh',
+						maxWidth: ! isMobileViewport ? '448px' : undefined,
+						maxHeight: 'inherit',
+						margin: '-8px',
+					} }
+				>
 					<Suspense fallback={ null }>
 						<AsyncNotificationApp
 							locale={ locale }
+							isDismissible={ isMobileViewport }
 							actionHandlers={ actionHandlers }
 							wpcom={ wpcom }
 						/>
