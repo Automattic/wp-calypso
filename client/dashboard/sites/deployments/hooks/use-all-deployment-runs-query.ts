@@ -67,12 +67,9 @@ export const useAllDeploymentRunsQuery = (
 				( a, b ) => new Date( b.created_on ).getTime() - new Date( a.created_on ).getTime()
 			);
 		},
-		refetchInterval: ( query ) => {
-			const { data } = query.state;
-			const hasActiveRuns = data?.some(
-				( run ) => run.status === 'pending' || run.status === 'queued' || run.status === 'running'
-			);
-			return hasActiveRuns ? 5000 : false;
+		refetchInterval: 5000,
+		meta: {
+			persist: false,
 		},
 		...options,
 	} );
