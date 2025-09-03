@@ -60,17 +60,6 @@ export function SiteMonitoringCallout( {
 	);
 }
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
-function SiteMonitoringBody( { site, timeRange }: { site: object; timeRange: string } ) {
-	const isSmallViewport = useViewportMatch( 'medium', '<' );
-
-	return (
-		<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
-			<div>Main Content ({ timeRange }).</div>
-		</VStack>
-	);
-}
-
 const hoursMap: Record< string, number > = {
 	'6-hours': 6,
 	'24-hours': 24,
@@ -94,6 +83,18 @@ const getDateRange = ( range: string ) => {
 
 	return `${ formatDate( start ) }–${ formatDate( now ) }`;
 };
+
+/* eslint-disable @typescript-eslint/no-unused-vars */
+function SiteMonitoringBody( { site, timeRange }: { site: object; timeRange: string } ) {
+	const isSmallViewport = useViewportMatch( 'medium', '<' );
+
+	return (
+		<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
+			<Text className={ clsx( 'site-monitoring-dates' ) }>{ getDateRange( timeRange ) }</Text>
+			<div>Main Content ({ timeRange }).</div>
+		</VStack>
+	);
+}
 
 function SiteMonitoring() {
 	const { siteSlug } = siteRoute.useParams();
@@ -143,7 +144,6 @@ function SiteMonitoring() {
 							</ToggleGroupControl>
 						</div>
 					</HStack>
-					<Text className={ clsx( 'site-monitoring-dates' ) }>{ getDateRange( timeRange ) }</Text>
 				</>
 			}
 		>
