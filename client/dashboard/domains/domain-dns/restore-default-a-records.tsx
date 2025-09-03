@@ -2,10 +2,10 @@ import {
 	Modal,
 	Button,
 	__experimentalVStack as VStack,
-	__experimentalHStack as HStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { ButtonStack } from '../../components/button-stack';
 
 interface RestoreDefaultARecordsProps {
 	onConfirm: () => void;
@@ -32,14 +32,14 @@ export default function RestoreDefaultARecords( {
 		<Modal title={ __( 'Restore A records' ) } onRequestClose={ onCancel }>
 			<VStack spacing={ 6 }>
 				<Text>{ targetPlatformMessage }</Text>
-				<HStack justify="flex-end" spacing={ 2 }>
+				<ButtonStack justify="flex-end">
 					<Button onClick={ onCancel } isBusy={ isBusy }>
 						{ __( 'Cancel' ) }
 					</Button>
 					<Button variant="primary" isBusy={ isBusy } onClick={ onConfirm }>
 						{ __( 'Restore' ) }
 					</Button>
-				</HStack>
+				</ButtonStack>
 			</VStack>
 		</Modal>
 	);

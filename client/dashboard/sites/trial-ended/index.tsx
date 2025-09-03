@@ -12,6 +12,7 @@ import {
 import { sprintf, __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useState, Suspense, lazy } from 'react';
+import { ButtonStack } from '../../components/button-stack';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
@@ -98,7 +99,7 @@ const SiteTrialEnded = ( { siteSlug }: { siteSlug: string } ) => {
 									</Text>
 								</VStack>
 							</HStack>
-							<HStack>
+							<ButtonStack>
 								<UpsellCTAButton
 									text={ __( 'Purchase plan' ) }
 									tracksId="trial"
@@ -108,7 +109,7 @@ const SiteTrialEnded = ( { siteSlug }: { siteSlug: string } ) => {
 										redirect_to: backUrl,
 									} ) }
 								/>
-							</HStack>
+							</ButtonStack>
 						</VStack>
 					</CardBody>
 				</Card>

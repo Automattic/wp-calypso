@@ -4,6 +4,7 @@ import {
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { forwardRef } from 'react';
+import { ButtonStack } from '../button-stack';
 import type { ActionItemProps } from './types';
 import './action-item.scss';
 
@@ -26,15 +27,14 @@ function UnforwardedActionItem(
 							</Text>
 						) }
 					</VStack>
-					<HStack
+					<ButtonStack
 						className="action-item__actions"
-						spacing={ 2 }
 						justify="flex-end"
 						expanded={ false }
 						as="span"
 					>
 						{ actions }
-					</HStack>
+					</ButtonStack>
 				</HStack>
 			</HStack>
 		</VStack>

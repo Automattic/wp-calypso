@@ -9,6 +9,7 @@ import { __ } from '@wordpress/i18n';
 import { Icon, download, check } from '@wordpress/icons';
 import { useAnalytics } from '../../app/analytics';
 import { siteBackupsRoute } from '../../app/router/sites';
+import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
 import type { Site } from '@automattic/api-core';
 
@@ -48,7 +49,7 @@ function SiteBackupDownloadSuccess( {
 						</Text>
 					</VStack>
 				</HStack>
-				<HStack justify="flex-end">
+				<ButtonStack justify="flex-end">
 					<Button
 						variant="tertiary"
 						text={ __( 'All backups' ) }
@@ -60,7 +61,7 @@ function SiteBackupDownloadSuccess( {
 						text={ __( 'Download file' ) + ( fileSizeBytes ? ` (${ fileSizeBytes })` : '' ) }
 						onClick={ handleDownloadClick }
 					/>
-				</HStack>
+				</ButtonStack>
 			</HStack>
 
 			<Notice variant="info" title={ __( 'Check your email' ) }>
