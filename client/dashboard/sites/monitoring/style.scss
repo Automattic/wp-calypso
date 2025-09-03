@@ -1,24 +1,7 @@
 @import '@wordpress/base-styles/variables';
 
 .dashboard-page-layout {
-	.site-monitoring-header {
-		& > * {
-			flex-grow: 1;
-
-			&:last-child {
-				display: flex;
-				justify-content: flex-end;
-			}
-		}
-	}
-
 	.site-monitoring-dates {
 		color: var(--Scales-Grays-gray-700, #757575);
-
-		/* Body MD */
-		font-size: var(--m, 13px);
-		font-style: normal;
-		font-weight: var(--Regular, 400);
-		line-height: var(--s, 20px); /* 153.846% */
 	}
 }
