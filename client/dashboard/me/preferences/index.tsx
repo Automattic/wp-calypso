@@ -223,9 +223,6 @@ export default function UserSettingsLanguageForm() {
 		{
 			id: 'i18n_empathy_mode',
 			label: 'Empathy mode (a8c-only)',
-			description: __(
-				'Pretend to use that language but display English where a translated exists'
-			),
 			type: 'boolean',
 			isVisible: () => config.isEnabled( 'i18n/empathy-mode' ),
 			Edit: ( { field, data, onChange } ) => {
