@@ -20,7 +20,7 @@ import {
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
-import { useMemo, useState, createInterpolateElement } from '@wordpress/element';
+import { useMemo, useState, createInterpolateElement, useEffect } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { PageHeader } from '../../components/page-header';
@@ -74,6 +74,20 @@ export default function UserSettingsLanguageForm() {
 		Partial< UserSettingsPreferences > | undefined
 	>();
 
+	// After a successful save we reload the page with a query parameter and then
+	// display the success notice here, finally cleaning the URL so it stays the same.
+	useEffect( () => {
+		if ( typeof window === 'undefined' ) {
+			return;
+		}
+		const url = new URL( window.location.href );
+		if ( url.searchParams.has( 'settings-saved' ) ) {
+			createSuccessNotice( __( 'Language setting saved.' ), { type: 'snackbar' } );
+			url.searchParams.delete( 'settings-saved' );
+			window.history.replaceState( {}, '', url.toString() );
+		}
+	}, [ createSuccessNotice ] );
+
 	/**
 	 * When we save the language, in case we're using a locale_variant (a language without an official locale)
 	 * the API will return the parent language (example: es-cl will return 'es' in the 'language' field)
@@ -105,10 +119,13 @@ export default function UserSettingsLanguageForm() {
 		setLocalData( undefined );
 		setSavingData( mutationData );
 		mutation.mutate( mutationData, {
-			onSettled: () => {
-				setSavingData( undefined );
-				createSuccessNotice( __( 'Language setting saved.' ), { type: 'snackbar' } );
-				// TODO we need to reload the page to make sure the language is updated https://github.com/Automattic/wp-calypso/blob/fbeb9c37266e2bfac7af881b1672a9f6d72a0670/client/me/account/controller.js#L11
+			onSuccess: () => {
+				// Ensure the UI picks up the new language by reloading the page.
+				// Add a transient query param so we can show a success notice after reload.
+				const url = new URL( window.location.href );
+				url.searchParams.set( 'settings-saved', '1' );
+				// Replace to avoid adding an extra history entry.
+				window.location.replace( url.toString() );
 			},
 			onError: ( error ) => {
 				// Prepend previous attempted data back into local edits
@@ -116,6 +133,9 @@ export default function UserSettingsLanguageForm() {
 				createErrorNotice( error.message ?? __( 'Language setting could not be saved.' ), {
 					type: 'snackbar',
 				} );
+			},
+			onSettled: () => {
+				setSavingData( undefined );
 			},
 		} );
 	};
