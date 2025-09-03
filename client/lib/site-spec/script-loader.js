@@ -1,7 +1,4 @@
-import debugFactory from 'debug';
 import { getSiteSpecUrl, getSiteSpecCssUrl } from './utils';
-
-const debug = debugFactory( 'calypso:site-spec:script-loader' );
 
 let siteSpecScriptLoaded = false;
 
@@ -16,45 +13,33 @@ export function isSiteSpecScriptLoaded() {
  * Load the SiteSpec script.
  */
 export function loadSiteSpecScript() {
-	debug( '🔍 loadSiteSpecScript called' );
-
 	if ( siteSpecScriptLoaded ) {
-		debug( 'SiteSpec script already loaded' );
 		return Promise.resolve();
 	}
 
 	const scriptUrl = getSiteSpecUrl();
-	debug( 'loadSiteSpecScript called with URL:', scriptUrl );
 
 	if ( ! scriptUrl ) {
 		const error = new Error( 'SiteSpec not enabled or URL not configured' );
-		debug( '❌ Not loading SiteSpec script:', error.message );
 		return Promise.reject( error );
 	}
 
 	// Check if script is already in DOM
 	if ( document.querySelector( `script[src="${ scriptUrl }"]` ) ) {
-		debug( 'SiteSpec script already in DOM' );
 		siteSpecScriptLoaded = true;
 		return Promise.resolve();
 	}
-
-	debug( `Loading SiteSpec script from "${ scriptUrl }"` );
 
 	return new Promise( ( resolve, reject ) => {
 		// Load CSS first using configured CSS URL
 		const cssUrl = getSiteSpecCssUrl();
 		if ( ! cssUrl ) {
-			debug( '⚠️ SiteSpec CSS URL not configured, skipping CSS load' );
 			loadScript();
 			return;
 		}
 
-		debug( `Loading SiteSpec CSS from "${ cssUrl }"` );
-
 		// Check if CSS is already loaded
 		if ( document.querySelector( `link[href="${ cssUrl }"]` ) ) {
-			debug( 'SiteSpec CSS already loaded, proceeding with script' );
 			loadScript();
 			return;
 		}
@@ -65,13 +50,10 @@ export function loadSiteSpecScript() {
 		link.id = 'site-spec-styles';
 
 		link.onload = () => {
-			debug( '✅ SiteSpec CSS loaded successfully' );
 			loadScript();
 		};
 
 		link.onerror = () => {
-			debug( '⚠️ Warning: Failed to load SiteSpec CSS from', cssUrl );
-			debug( 'Continuing with script loading anyway...' );
 			loadScript();
 		};
 
@@ -86,14 +68,12 @@ export function loadSiteSpecScript() {
 			script.async = true;
 
 			script.onload = () => {
-				debug( '✅ SiteSpec script loaded successfully' );
 				siteSpecScriptLoaded = true;
 				resolve();
 			};
 
 			script.onerror = () => {
 				const error = new Error( `Failed to load SiteSpec script from ${ scriptUrl }` );
-				debug( '❌ Error loading SiteSpec script:', error.message );
 				reject( error );
 			};
 
@@ -108,15 +88,11 @@ export function loadSiteSpecScript() {
 export function loadSiteSpecCSS() {
 	const cssUrl = getSiteSpecCssUrl();
 	if ( ! cssUrl ) {
-		debug( 'Cannot load CSS: SiteSpec CSS URL not configured' );
 		return Promise.reject( new Error( 'SiteSpec CSS URL not configured' ) );
 	}
 
-	debug( `Loading SiteSpec CSS from "${ cssUrl }"` );
-
 	// Check if CSS is already loaded
 	if ( document.querySelector( `link[href="${ cssUrl }"]` ) ) {
-		debug( 'SiteSpec CSS already loaded' );
 		return Promise.resolve();
 	}
 
@@ -127,13 +103,11 @@ export function loadSiteSpecCSS() {
 		link.id = 'site-spec-styles';
 
 		link.onload = () => {
-			debug( '✅ SiteSpec CSS loaded successfully' );
 			resolve();
 		};
 
 		link.onerror = () => {
 			const error = new Error( `Failed to load SiteSpec CSS from ${ cssUrl }` );
-			debug( '❌ Error loading SiteSpec CSS:', error.message );
 			reject( error );
 		};
 
