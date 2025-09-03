@@ -1,4 +1,5 @@
 import {
+	availableTldsQuery,
 	domainAvailabilityQuery,
 	domainSuggestionsQuery,
 	freeSuggestionQuery,
@@ -21,6 +22,7 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		onMapDomainClick: noop,
 	},
 	queries: {
+		availableTlds: ( search?: string, vendor?: string ) => availableTldsQuery( vendor, search ),
 		domainSuggestions: ( query: string ) => domainSuggestionsQuery( query ),
 		domainAvailability: ( domainName: string ) => domainAvailabilityQuery( domainName ),
 		freeSuggestion: ( query: string ) => freeSuggestionQuery( query ),
@@ -114,6 +116,10 @@ export const useDomainSearchContextValue = (
 				} ),
 				domainAvailability: ( domainName ) => ( {
 					...domainAvailabilityQuery( domainName ),
+					enabled: false,
+				} ),
+				availableTlds: ( vendor, search ) => ( {
+					...availableTldsQuery( vendor, search ),
 					enabled: false,
 				} ),
 			},

@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import { Dropdown } from '@wordpress/components';
 import { useCallback, useMemo } from 'react';
 import { useDomainSearch } from '../../page/context';
@@ -10,13 +11,11 @@ const emptyFilter: FilterState = {
 };
 
 export const Filter = () => {
-	const { filter, setFilter } = useDomainSearch();
-
-	// TODO: Hardcoded for testing, should get those from the https://public-api.wordpress.com/rest/v1.1/domains/suggestions/tlds endpoint
-	const availableTlds = useMemo(
-		() => [ 'com', 'net', 'org', 'blog', 'dev', 'io', 'co', 'co.uk', 'com.br', 'de' ],
-		[]
-	);
+	const { filter, setFilter, query, queries } = useDomainSearch();
+	const { data: availableTlds = [] } = useQuery( {
+		...queries.availableTlds( query ),
+		enabled: true,
+	} );
 
 	const resetFilter = useCallback( () => {
 		setFilter( emptyFilter );
