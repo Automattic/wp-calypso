@@ -13,8 +13,10 @@ const meta: Meta< typeof Grid > = {
 	},
 	argTypes: {
 		children: { control: false },
+		exposeItemSize: { control: 'boolean' },
 	},
 };
+
 export default meta;
 
 function Card( {
@@ -141,6 +143,7 @@ export const EditableGrid: StoryObj< typeof Grid > = {
 				spacing={ 2 }
 				editMode
 				onChangeLayout={ ( newLayout ) => setLayout( newLayout ) }
+				exposeItemSize
 			>
 				<Card key="a" color="#f44336">
 					Card A

@@ -1,7 +1,14 @@
+/**
+ * External dependencies.
+ */
 import { DndContext, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { useResizeObserver, useDebounce, useEvent } from '@wordpress/compose';
 import { useMemo, Children, isValidElement, useState } from 'react';
+/**
+ * Internal dependencies.
+ */
+import { GridMetricsProvider } from './contexts';
 import { GridItem } from './grid-item';
 import type { GridLayoutItem, GridProps } from './types';
 import type { DragOverEvent } from '@dnd-kit/core';
@@ -16,6 +23,7 @@ export function Grid( {
 	minColumnWidth,
 	editMode = false,
 	onChangeLayout,
+	exposeItemSize = false,
 }: GridProps ) {
 	// Temporary layout to avoid updating the layout while dragging
 	const [ temporaryLayout, setTemporaryLayout ] = useState< GridLayoutItem[] | undefined >(
@@ -36,7 +44,9 @@ export function Grid( {
 		const maxColumns = Math.floor( ( containerWidth + gapPx ) / totalWidthPerColumn );
 		return Math.max( 1, maxColumns );
 	}, [ minColumnWidth, gapPx, containerWidth, columns ] );
-	const columnWidth = ( containerWidth - gapPx ) / effectiveColumns;
+
+	const totalGaps = Math.max( 0, ( effectiveColumns - 1 ) * gapPx );
+	const columnWidth = ( containerWidth - totalGaps ) / effectiveColumns;
 
 	const layoutMap = useMemo( () => {
 		const map = new Map< string, GridLayoutItem >();
@@ -137,6 +147,33 @@ export function Grid( {
 		}
 	}
 
+	const gridContent = (
+		<div
+			ref={ resizeObserverRef }
+			className={ className }
+			style={ {
+				display: 'grid',
+				gridTemplateColumns: `repeat(${ effectiveColumns }, 1fr)`,
+				gridAutoRows: rowHeight,
+				gap: gapPx,
+			} }
+		>
+			{ items.map( ( id ) => (
+				<GridItem
+					key={ id }
+					item={ layoutMap.get( id ) as GridLayoutItem }
+					maxColumns={ effectiveColumns }
+					disabled={ ! editMode }
+					onResize={ ( delta ) => handleResize( id, delta ) }
+					onResizeEnd={ persistTemporaryLayout }
+				>
+					{ childrenMap.get( id ) }
+				</GridItem>
+			) ) }
+			{ remaining }
+		</div>
+	);
+
 	return (
 		<DndContext
 			sensors={ sensors }
@@ -147,30 +184,18 @@ export function Grid( {
 			} }
 		>
 			<SortableContext items={ items } strategy={ () => null }>
-				<div
-					ref={ resizeObserverRef }
-					className={ className }
-					style={ {
-						display: 'grid',
-						gridTemplateColumns: `repeat(${ effectiveColumns }, 1fr)`,
-						gridAutoRows: rowHeight,
-						gap: gapPx,
-					} }
-				>
-					{ items.map( ( id ) => (
-						<GridItem
-							key={ id }
-							item={ layoutMap.get( id ) as GridLayoutItem }
-							maxColumns={ effectiveColumns }
-							disabled={ ! editMode }
-							onResize={ ( delta ) => handleResize( id, delta ) }
-							onResizeEnd={ persistTemporaryLayout }
-						>
-							{ childrenMap.get( id ) }
-						</GridItem>
-					) ) }
-					{ remaining }
-				</div>
+				{ exposeItemSize ? (
+					<GridMetricsProvider
+						columns={ effectiveColumns }
+						columnWidth={ columnWidth }
+						gapPx={ gapPx }
+						rowHeight={ rowHeight }
+					>
+						{ gridContent }
+					</GridMetricsProvider>
+				) : (
+					gridContent
+				) }
 			</SortableContext>
 		</DndContext>
 	);

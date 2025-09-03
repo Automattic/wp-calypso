@@ -74,6 +74,12 @@ interface BaseGridProps {
 	 * Callback fired when layout changes due to item dragging
 	 */
 	onChangeLayout?: ( newLayout: GridLayoutItem[] ) => void;
+
+	/**
+	 * Whether to expose the item size to the GridMetricsProvider
+	 * @default false
+	 */
+	exposeItemSize?: boolean;
 }
 
 interface StandardGridProps extends BaseGridProps {
