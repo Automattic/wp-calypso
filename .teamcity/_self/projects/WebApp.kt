@@ -20,7 +20,6 @@ object WebApp : Project({
 
 	features {
 		buildReportTab {
-        	id = "test-reports"
         	title = "Report"
         	startPage = "output/html/index.html"
     	}
@@ -1027,7 +1026,7 @@ object PlaywrightTestPRMatrix : BuildType({
 	}
 
 	artifactRules = """
-		test/e2e/output => output
+		test/e2e/output => %playwrightProject%/output
 	""".trimIndent()
 })
 
