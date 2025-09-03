@@ -23,6 +23,9 @@ export type PaymentMethodType =
 	| 'upi';
 
 export function getPaymentMethodImageURL( paymentMethodType: string ): string {
+	if ( paymentMethodType.startsWith( 'paypal' ) ) {
+		return payPalImage;
+	}
 	switch ( paymentMethodType as PaymentMethodType ) {
 		case 'amex':
 			return creditCardAmexImage;

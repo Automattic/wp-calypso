@@ -14,6 +14,7 @@ import { useEffect } from 'react';
 import { modifierKeyIsActive } from '../../panel/helpers/input';
 import { getFilters } from '../../panel/templates/filters';
 import NoteList from '../note-list';
+import CloseButton from '../templates/close-button';
 import NotePanelActions from './actions';
 
 type FilterName = keyof ReturnType< typeof getFilters >;
@@ -23,7 +24,7 @@ const NOTIFICATION_TABS = Object.values( getFilters() ).map( ( { name, label } )
 	title: label,
 } ) );
 
-const NotePanel = () => {
+const NotePanel = ( { isDismissible }: { isDismissible?: boolean } ) => {
 	const { params, goTo } = useNavigator();
 	const { filterName = 'all' } = params;
 
@@ -65,7 +66,7 @@ const NotePanel = () => {
 		return () => {
 			window.removeEventListener( 'keydown', handleKeyDown, false );
 		};
-	}, [] );
+	}, [ goTo ] );
 
 	return (
 		<>
@@ -75,13 +76,16 @@ const NotePanel = () => {
 			>
 				<VStack>
 					<HStack>
-						<Icon icon={ bell } />
-						<Heading level={ 3 } size={ 15 } weight={ 500 }>
-							{ __( 'Notifications' ) }
-						</Heading>
-						<div style={ { marginInlineStart: 'auto' } }>
+						<HStack justify="flex-start">
+							<Icon icon={ bell } />
+							<Heading level={ 3 } size={ 15 } weight={ 500 }>
+								{ __( 'Notifications' ) }
+							</Heading>
+						</HStack>
+						<HStack justify="flex-end">
 							<NotePanelActions />
-						</div>
+							{ isDismissible && <CloseButton /> }
+						</HStack>
 					</HStack>
 					<TabPanel
 						activeClass="is-active"

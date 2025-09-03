@@ -912,6 +912,11 @@ object PlaywrightTestPRMatrix : BuildType({
 	name = "E2E Tests (Playwright Test)"
 	description = "Runs Calypso e2e tests using Playwright Test runner with build matrix"
 
+	vcs {
+		root(Settings.WpCalypso)
+		cleanCheckout = true
+	}
+
 	features {
 		matrix {
 			param("playwrightProject", listOf(
@@ -919,6 +924,31 @@ object PlaywrightTestPRMatrix : BuildType({
 				value("mobile", label = "Mobile")
 			))
 		}
+		pullRequests {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			provider = github {
+				authType = token {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
+			}
+		}
+		commitStatusPublisher {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			publisher = github {
+				githubUrl = "https://api.github.com"
+				authType = personalToken {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+			}
+		}
+		perfmon {
+		}
+		xmlReport {
+        	reportType = XmlReport.XmlReportType.JUNIT
+        	rules = "+:test/e2e/output/results.xml"
+			verbose = true
+        }
 	}
 
 	triggers {
@@ -934,15 +964,62 @@ object PlaywrightTestPRMatrix : BuildType({
 		}
 	}
 
-	steps {
-		script {
-			name = "Test step"
-			scriptContent = """
-				echo "Running Playwright tests for project: %playwrightProject%"
-				echo "hello, it works"
-			"""
+	dependencies {
+		snapshot(BuildDockerImage) {
+			onDependencyFailure = FailureAction.FAIL_TO_START
 		}
 	}
+
+	params {
+		param("env.NODE_CONFIG_ENV", "test")
+		param("env.PLAYWRIGHT_BROWSERS_PATH", "0")
+		param("env.LOCALE", "en")
+		param("env.AUTHENTICATE_ACCOUNTS", "simpleSitePersonalPlanUser,gutenbergSimpleSiteUser,defaultUser")
+		param("env.LIVEBRANCHES", "true")
+		param("env.CI", "true")
+	}
+
+	steps {
+		mergeTrunk( skipIfConflict = true )
+		
+		bashNodeScript {
+			name = "Prepare environment"
+			scriptContent = """
+				# Install deps
+				yarn workspaces focus wp-e2e-tests @automattic/calypso-e2e
+
+				# Decrypt secrets
+				E2E_SECRETS_KEY="%E2E_SECRETS_ENCRYPTION_KEY_CURRENT%" yarn workspace @automattic/calypso-e2e decrypt-secrets
+
+				# Build packages
+				yarn workspace @automattic/calypso-e2e build
+			""".trimIndent()
+			dockerImage = "%docker_image_e2e%"
+		}
+
+		bashNodeScript {
+			name = "Run e2e tests"
+			scriptContent = """
+				echo "Getting Calypso url for build ${BuildDockerImage.depParamRefs.buildNumber}"
+				chmod +x ./bin/get-calypso-live-url.sh
+				CALYPSO_LIVE_URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
+				if [[ ${'$'}? -ne 0 ]]; then
+					// Command failed. CALYPSO_LIVE_URL contains stderr
+					echo ${'$'}CALYPSO_LIVE_URL
+					exit 1
+				fi
+
+				cd test/e2e
+				echo "Running Playwright tests for project: %playwrightProject%"
+				yarn test:pw:%playwrightProject% --grep=@calypso-pr
+			"""
+			dockerImage = "%docker_image_e2e%"
+		}
+	}
+
+	artifactRules = """
+		test/e2e/output => %playwrightProject%/output
+	""".trimIndent()
 })
 
 object PlaywrightTestPreReleaseMatrix : BuildType({
@@ -966,12 +1043,16 @@ object PlaywrightTestPreReleaseMatrix : BuildType({
 		}
 	}
 
+	vcs {
+		root(Settings.WpCalypso)
+		cleanCheckout = true
+	}
+
 	steps {
-		script {
+		bashNodeScript {
 			name = "Test step"
 			scriptContent = """
 				echo "Running pre-release Playwright tests for project: %playwrightProject%"
-				echo "hello, it works"
 			"""
 		}
 	}

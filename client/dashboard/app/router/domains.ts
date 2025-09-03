@@ -9,6 +9,7 @@ import {
 	mailboxesQuery,
 	siteByIdQuery,
 	queryClient,
+	domainTransferRequestQuery,
 } from '@automattic/api-queries';
 import {
 	createRoute,
@@ -28,18 +29,6 @@ export const domainsRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../domains' ).then( ( d ) =>
 		createLazyRoute( 'domains' )( {
-			component: d.default,
-		} )
-	)
-);
-
-// Standalone domains purchase route - requires rootRoute
-export const domainsPurchaseRoute = createRoute( {
-	getParentRoute: () => rootRoute,
-	path: 'domains/purchase',
-} ).lazy( () =>
-	import( '../../domains/purchase' ).then( ( d ) =>
-		createLazyRoute( 'domains-purchase' )( {
 			component: d.default,
 		} )
 	)
@@ -292,10 +281,39 @@ export const domainTransferRoute = createRoute( {
 	)
 );
 
+export const domainTransferToAnyUserRoute = createRoute( {
+	getParentRoute: () => domainRoute,
+	path: 'transfer/any-user',
+	loader: async ( { params: { domainName } } ) => {
+		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
+		await queryClient.ensureQueryData( domainTransferRequestQuery( domainName, domain.site_slug ) );
+	},
+} ).lazy( () =>
+	import( '../../domains/domain-transfer/transfer-domain-to-any-user' ).then( ( d ) =>
+		createLazyRoute( 'domain-transfer-to-any-user' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const domainTransferToOtherUserRoute = createRoute( {
+	getParentRoute: () => domainRoute,
+	path: 'transfer/other-user',
+	loader: async ( { params: { domainName } } ) => {
+		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
+		await queryClient.ensureQueryData( domainTransferRequestQuery( domainName, domain.site_slug ) );
+	},
+} ).lazy( () =>
+	import( '../../domains/domain-transfer/transfer-domain-to-other-user' ).then( ( d ) =>
+		createLazyRoute( 'domain-transfer-to-other-user' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const createDomainsRoutes = () => {
 	return [
 		domainsRoute,
-		domainsPurchaseRoute,
 		domainRoute.addChildren( [
 			domainOverviewRoute,
 			domainDnsRoute,
@@ -310,6 +328,8 @@ export const createDomainsRoutes = () => {
 			domainGlueRecordsAddRoute,
 			domainGlueRecordsEditRoute,
 			domainTransferRoute,
+			domainTransferToAnyUserRoute,
+			domainTransferToOtherUserRoute,
 			domainSecurityRoute,
 		] ),
 	];

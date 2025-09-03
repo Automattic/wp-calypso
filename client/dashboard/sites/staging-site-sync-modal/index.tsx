@@ -18,6 +18,7 @@ import {
 import { createInterpolateElement, useState, useCallback } from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronRight, chevronLeft } from '@wordpress/icons';
+import { ButtonStack } from '../../components/button-stack';
 import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
 import SiteEnvironmentBadge, { EnvironmentType } from '../../components/site-environment-badge';
@@ -300,7 +301,7 @@ export default function StagingSiteSyncModal( {
 							</Text>
 						</HStack>
 
-						<HStack justify="flex-end" spacing={ 4 }>
+						<ButtonStack justify="flex-end">
 							<Button variant="tertiary" onClick={ handleClose }>
 								{ __( 'Cancel' ) }
 							</Button>
@@ -312,7 +313,7 @@ export default function StagingSiteSyncModal( {
 							>
 								{ syncConfig.submit }
 							</Button>
-						</HStack>
+						</ButtonStack>
 					</HStack>
 				</VStack>
 			</VStack>
