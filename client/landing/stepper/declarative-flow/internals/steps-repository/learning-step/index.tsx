@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import { loadSiteSpecScript, getSiteSpecConfig } from 'calypso/lib/site-spec';
+import { loadSiteSpecScript, loadSiteSpecCSS, getSiteSpecConfig } from 'calypso/lib/site-spec';
 import type { Step as StepType } from '../../types';
 
 // Import React for debugging and exposure purposes
@@ -33,29 +33,29 @@ const LearningStep: StepType = function LearningStep() {
 	useEffect( () => {
 		const initializeSiteSpec = async () => {
 			try {
-				// Simple React exposure for SiteSpec script
+				// Expose React globally for SiteSpec script compatibility
 				if ( ! window.React ) {
-					console.log( '🔧 Exposing React globally for SiteSpec script' );
 					window.React = React;
 					window.ReactDOM = ReactDOM;
 				}
 
-				// Load script and CSS using the WordPress-style utility (the right way)
-				console.log( '🔄 About to call loadSiteSpecScript()...' );
+				// Load SiteSpec CSS first to ensure styling is available
+				try {
+					console.log( '🎨 Loading SiteSpec CSS...' );
+					await loadSiteSpecCSS();
+					console.log( '✅ SiteSpec CSS loaded successfully' );
+				} catch ( error ) {
+					console.warn( '⚠️ CSS loading failed, continuing with script:', error );
+				}
 
-				// Debug config
-				const config = getSiteSpecConfig();
-				console.log( '🔍 SiteSpec config:', config );
-
+				// Load SiteSpec script
 				await loadSiteSpecScript();
-				console.log( '✅ loadSiteSpecScript() completed' );
 
-				console.log( '⏳ Waiting for React to be fully available...' );
+				// Wait for script to be fully available
 				await new Promise( ( resolve ) => setTimeout( resolve, 500 ) );
 
-				// Check if SiteSpec is available and initialize
+				// Initialize SiteSpec if available
 				if ( window.SiteSpec?.init ) {
-					console.log( '✅ SiteSpec.init is available, initializing...' );
 					const config = getSiteSpecConfig();
 
 					const instance = window.SiteSpec.init( {
@@ -73,12 +73,7 @@ const LearningStep: StepType = function LearningStep() {
 						}
 					};
 				} else {
-					console.error( '❌ SiteSpec.init not available:', {
-						windowExists: typeof window !== 'undefined',
-						siteSpecExists: typeof window !== 'undefined' ? !! window.SiteSpec : false,
-						siteSpecValue: typeof window !== 'undefined' ? window.SiteSpec : 'N/A',
-						siteSpecInit: typeof window !== 'undefined' ? window.SiteSpec?.init : 'N/A',
-					} );
+					console.error( 'SiteSpec initialization failed: init function not available' );
 				}
 			} catch ( error ) {
 				console.error( '❌ Failed to initialize SiteSpec:', error );
