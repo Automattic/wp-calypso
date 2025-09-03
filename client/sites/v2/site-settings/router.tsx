@@ -91,6 +91,17 @@ const mcpRoute = createRoute( {
 	)
 );
 
+const mcpSetupRoute = createRoute( {
+	...appRouterSites.siteSettingsMcpSetupRoute.options,
+	getParentRoute: () => siteRoute,
+} ).lazy( () =>
+	import( 'calypso/dashboard/sites/settings-mcp/setup' ).then( ( d ) =>
+		createLazyRoute( 'mcp-setup' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 const hundredYearPlanRoute = createRoute( {
 	...appRouterSites.siteSettingsHundredYearPlanRoute.options,
 	getParentRoute: () => siteRoute,
@@ -201,6 +212,7 @@ const createRouteTree = () =>
 			databaseRoute,
 			agencyRoute,
 			mcpRoute,
+			mcpSetupRoute,
 			hundredYearPlanRoute,
 			primaryDataCenterRoute,
 			staticFile404Route,

@@ -214,6 +214,25 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 								label={ __( 'Allow MCP access to this site' ) }
 							/>
 						</div>
+
+						{ anyAbilitiesEnabled && (
+							<div className="mcp__setup-section">
+								<h3 className="mcp__setup-section-title">{ __( 'MCP Client Setup' ) }</h3>
+								<p className="mcp__setup-section-description">
+									{ __(
+										'Now that MCP is enabled, you can configure your MCP client to connect to this site.'
+									) }
+								</p>
+								<Button
+									variant="secondary"
+									href={ `/sites/${ siteSlug }/settings/mcp-setup` }
+									className="mcp__setup-button"
+								>
+									{ __( 'Configure MCP Client →' ) }
+								</Button>
+							</div>
+						) }
+
 						<VStack spacing={ 8 }>
 							{ Object.entries( groupedByType ).map( ( [ type, typeCategories ] ) => (
 								<div key={ type } className="mcp__type-section">
@@ -251,7 +270,7 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 						isBusy={ mutation.isPending }
 						disabled={ mutation.isPending }
 					>
-						{ mutation.isPending ? __( 'Saving…' ) : __( 'Save MCP abilities' ) }
+						{ mutation.isPending ? __( 'Saving…' ) : __( 'Save MCP settings' ) }
 					</Button>
 				</div>
 			</form>
