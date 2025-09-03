@@ -21,6 +21,7 @@ export const useGetSupportInteractionById = ( interactionId: string | null ) => 
 		refetchOnWindowFocus: false,
 		refetchOnReconnect: false,
 		enabled: !! interactionId,
+		staleTime: 1000 * 10, // 10 seconds
 	} );
 
 	return query;

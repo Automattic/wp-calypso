@@ -51,7 +51,7 @@ export default function HelpSearch() {
 	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const { url } = useStillNeedHelpURL();
 
-	const onClick = async () => {
+	const onClick = () => {
 		setNavigateToRoute( url );
 		setShowHelpCenter( true );
 		dispatch( recordTracksEvent( 'calypso_inlinehelp_get_help_click' ) );

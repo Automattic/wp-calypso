@@ -12,6 +12,8 @@ export const useCurrentSupportInteraction = () => {
 	const query = useGetSupportInteractionById( id || null );
 
 	useEffect( () => {
+		// If the support interaction is not found, drop the id param to automatically create a new one.
+		// This happens when jumping from staging to production.
 		if ( id && query.status === 'error' ) {
 			navigate( '/odie' );
 		}
