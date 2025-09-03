@@ -1,6 +1,5 @@
 import { __experimentalHStack as HStack } from '@wordpress/components';
-import { ReactNode } from 'react';
-import type { ComponentProps } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 
 type ButtonStackProps = {
 	children: ReactNode;
