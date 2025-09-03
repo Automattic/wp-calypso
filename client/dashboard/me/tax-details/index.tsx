@@ -3,7 +3,6 @@ import { __ } from '@wordpress/i18n';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import UserTaxForm from './user-tax-form';
-import './style.scss';
 
 export default function UserTaxInfoPage() {
 	return (

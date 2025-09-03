@@ -29,5 +29,3 @@ export type UserTaxNormalizedField = NormalizedField< UserTaxFormData > & {
 	canUserEdit?: boolean;
 	taxName?: string;
 };
-
-export type SetUserTaxDetails = ( userTaxDetails: UserTaxDetails ) => Promise< UserTaxDetails >;

@@ -1,14 +1,5 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { UserTaxDetails, UserTaxFormData } from './types';
-
-export async function setUserTaxDetails(
-	userTaxDetails: UserTaxDetails
-): Promise< UserTaxDetails > {
-	return await wpcom.req.post( {
-		path: '/me/vat-info',
-		body: userTaxDetails,
-	} );
-}
+import type { UserTaxFormData } from './types';
 
 export async function updateUserTaxDetails(
 	data: Partial< UserTaxFormData >

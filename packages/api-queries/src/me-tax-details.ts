@@ -1,7 +1,6 @@
 import { fetchUserTaxDetails, updateUserTaxDetails } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
-import type { UserTaxFormData } from '@automattic/api-core';
 
 export const userTaxDetailsQuery = () =>
 	queryOptions( {
@@ -15,7 +14,7 @@ export const userTaxDetailsMutation = () =>
 		onSuccess: ( newData ) => {
 			queryClient.setQueryData(
 				userTaxDetailsQuery().queryKey,
-				( oldData ) => oldData && ( { ...oldData, ...newData } as UserTaxFormData )
+				( oldData ) => oldData && { ...oldData, ...newData }
 			);
 		},
 	} );

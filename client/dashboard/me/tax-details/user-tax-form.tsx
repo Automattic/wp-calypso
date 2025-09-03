@@ -1,19 +1,20 @@
-import { updateUserTaxDetails } from '@automattic/api-core';
+import { isWpError } from '@automattic/api-core';
 import {
 	countryListQuery,
 	geoLocationQuery,
 	userTaxDetailsQuery,
-	queryClient,
+	userTaxDetailsMutation,
 } from '@automattic/api-queries';
 import { useResetSupportInteraction } from '@automattic/help-center/src/hooks/use-reset-support-interaction';
 import { CALYPSO_CONTACT } from '@automattic/urls';
-import { useSuspenseQuery, useMutation, mutationOptions } from '@tanstack/react-query';
+import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
 	Button,
 	__experimentalHStack as HStack,
 	__experimentalInputControl as InputControl,
 	__experimentalInputControlPrefixWrapper as InputControlPrefixWrapper,
 	__experimentalVStack as VStack,
+	__experimentalText as Text,
 	SelectControl,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -21,7 +22,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useState, useRef, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -32,7 +33,6 @@ import type {
 	UserTaxFormData,
 	UserTaxNormalizedField,
 } from '@automattic/api-core';
-import './style.scss';
 
 export interface UserTaxFormControlProps {
 	data: UserTaxFormData;
@@ -40,15 +40,6 @@ export interface UserTaxFormControlProps {
 	onChange: ( edits: Partial< UserTaxFormData > ) => void;
 }
 
-export interface UserTaxDetailsManager {
-	userTaxDetails: UserTaxDetails;
-	isLoading: boolean;
-	isUpdating: boolean;
-	isUpdateSuccessful: boolean;
-	fetchError: UserTaxDetailsFetchError | null;
-	updateError: UserTaxDetailsUpdateError | null;
-	setUserTaxDetails: ( userTaxDetails: UserTaxDetails ) => Promise< UserTaxDetails >;
-}
 export interface UserTaxDetailsUpdateError {
 	message: string;
 	error?: string;
@@ -142,6 +133,7 @@ function VatInputControl( { data, field, onChange }: UserTaxFormControlProps ) {
 export default function UserTaxForm() {
 	const { data: countryList } = useSuspenseQuery( countryListQuery() );
 	const countryCodes = getDataFormCountryCodes( countryList );
+	const { recordTracksEvent } = useAnalytics();
 
 	const [ localData, setLocalData ] = useState< Partial< UserTaxFormData > >( {} );
 	const query = useSuspenseQuery( userTaxDetailsQuery() );
@@ -167,14 +159,20 @@ export default function UserTaxForm() {
 	] );
 	const taxName = getTaxName( countryList, formData.country ?? geoData?.country_short ?? 'GB' );
 	const { createSuccessNotice, createErrorNotice, removeNotice } = useDispatch( noticesStore );
-	const userTaxDetailsMutation = () => {
-		return mutationOptions< UserTaxDetails, UserTaxDetailsUpdateError, UserTaxDetails >( {
-			mutationFn: updateUserTaxDetails,
-			onSuccess: ( newData: UserTaxDetails ) => {
-				queryClient.setQueryData(
-					userTaxDetailsQuery().queryKey,
-					( oldData ) => oldData && { ...oldData, ...newData }
-				);
+	const mutation = useMutation< UserTaxDetails, Error, UserTaxDetails >( userTaxDetailsMutation() );
+	const formatUserTaxDetails = ( data: UserTaxDetails ) => {
+		const { country, id } = data;
+
+		if ( !! id && id?.length > 1 ) {
+			return { ...data, id: stripCountryCodeFromVatId( id, country ) };
+		}
+
+		return data;
+	};
+	const setUserTaxDetails = ( userTaxDetails: UserTaxDetails ) =>
+		mutation.mutate( formatUserTaxDetails( userTaxDetails ), {
+			onSuccess() {
+				recordTracksEvent( 'calypso_dashboard_vat_details_validation_success' );
 				removeNotice( 'vat_info_notice' );
 				createSuccessNotice(
 					sprintf(
@@ -188,7 +186,12 @@ export default function UserTaxForm() {
 					}
 				);
 			},
-			onError: ( error: Error | UserTaxDetailsUpdateError | UserTaxDetailsFetchError ) => {
+			onError: ( error ) => {
+				if ( isWpError( error ) ) {
+					recordTracksEvent( 'calypso_dashboard_vat_details_validation_failure', {
+						error: error.error,
+					} );
+				}
 				removeNotice( 'vat_info_notice' );
 				if ( error?.message?.length > 0 ) {
 					createErrorNotice( error.message, { type: 'snackbar', id: 'vat_info_notice' } );
@@ -207,64 +210,9 @@ export default function UserTaxForm() {
 				);
 			},
 		} );
-	};
-
-	const mutation = useMutation< UserTaxDetails, UserTaxDetailsUpdateError, UserTaxDetails >(
-		userTaxDetailsMutation()
-	);
-	const formatUserTaxDetails = useCallback( ( data: UserTaxDetails ) => {
-		const { country, id } = data;
-
-		if ( !! id && id?.length > 1 ) {
-			return { ...data, id: stripCountryCodeFromVatId( id, country ) };
-		}
-
-		return data;
-	}, [] );
-	const setDetails = useCallback(
-		( userTaxDetails: UserTaxDetails ) => {
-			return mutation.mutate( formatUserTaxDetails( userTaxDetails ) );
-		},
-		[ mutation, formatUserTaxDetails ]
-	);
-	const { isLoading, isUpdating, isUpdateSuccessful, updateError, fetchError, setUserTaxDetails } =
-		useMemo(
-			() => ( {
-				isLoading: query.isLoading,
-				isUpdating: mutation.isPending,
-				isUpdateSuccessful: mutation.isSuccess,
-				fetchError: query.error as UserTaxDetailsFetchError,
-				updateError: mutation.error,
-				setUserTaxDetails: setDetails,
-			} ),
-			[ query, setDetails, mutation ]
-		);
-
-	const lastUserTaxDetailsFetchError = useRef< UserTaxDetailsFetchError >();
-	const lastUserTaxDetailsUpdateError = useRef< UserTaxDetailsUpdateError >();
-	const { recordTracksEvent } = useAnalytics();
-
-	if ( updateError && lastUserTaxDetailsUpdateError.current !== updateError ) {
-		recordTracksEvent( 'calypso_dashboard_vat_details_validation_failure', {
-			error: updateError.error,
-		} );
-		lastUserTaxDetailsUpdateError.current = updateError;
-	}
-
-	if ( isUpdateSuccessful ) {
-		recordTracksEvent( 'calypso_dashboard_vat_details_validation_success' );
-	}
-
-	if ( fetchError && lastUserTaxDetailsFetchError.current !== fetchError ) {
-		recordTracksEvent( 'calypso_dashboard_vat_details_fetch_failure', {
-			error: fetchError.error,
-			message: fetchError.message,
-		} );
-		lastUserTaxDetailsFetchError.current = fetchError;
-	}
 
 	const isVatAlreadySet = !! userTaxDetails.id;
-	const isDisabled = isLoading || isUpdating;
+	const isDisabled = query.isLoading || mutation.isPending;
 	const canUserEdit = userTaxDetails.can_user_edit ?? false;
 
 	const fields: UserTaxField[] = [
@@ -354,7 +302,7 @@ export default function UserTaxForm() {
 					} }
 				/>
 
-				<p>
+				<Text variant="muted">
 					{ createInterpolateElement(
 						sprintf(
 							/* translators: This is a list of tax-related reasons a customer might need to contact support, %(taxName)s is the name of taxes in the country (eg: "VAT" or "GST") or a generic fallback string of tax names */
@@ -375,8 +323,8 @@ export default function UserTaxForm() {
 							),
 						}
 					) }
-				</p>
-				<p>
+				</Text>
+				<Text variant="muted">
 					{ createInterpolateElement(
 						__( 'For more information about taxes, {{learnMoreLink}}click here{{/learnMoreLink}}.' )
 							.replaceAll( '{{learnMoreLink}}', '<learnMoreLink>' )
@@ -391,13 +339,13 @@ export default function UserTaxForm() {
 							),
 						}
 					) }
-				</p>
+				</Text>
 
 				<HStack justify="flex-start">
 					<Button
 						__next40pxDefaultSize
 						disabled={ isDisabled }
-						isBusy={ isUpdating }
+						isBusy={ mutation.isPending }
 						type="submit"
 						variant="primary"
 					>
