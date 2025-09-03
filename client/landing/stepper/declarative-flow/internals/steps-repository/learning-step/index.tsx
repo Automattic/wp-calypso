@@ -4,20 +4,16 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { loadSiteSpecScript, loadSiteSpecCSS, getSiteSpecConfig } from 'calypso/lib/site-spec';
 import type { Step as StepType } from '../../types';
 
-// TypeScript interfaces for better type safety
-// We might not need these types, but i'm keeping them for now for validation
 interface SiteSpecMessage {
 	type: string;
 	data?: unknown;
 	timestamp?: number;
 }
-
 interface SiteSpecError {
 	message: string;
 	code?: string | number;
 	stack?: string;
 }
-
 interface SiteSpecConfig {
 	container: string | HTMLElement;
 	agentUrl?: string;
@@ -27,12 +23,10 @@ interface SiteSpecConfig {
 	onMessage?: ( message: SiteSpecMessage ) => void;
 	onError?: ( error: SiteSpecError ) => void;
 }
-
 interface SiteSpecInstance {
 	destroy: () => void;
 }
 
-// TypeScript declaration for the global SiteSpec
 declare global {
 	interface Window {
 		SiteSpec?: {
@@ -41,88 +35,132 @@ declare global {
 	}
 }
 
+const INIT_TIMEOUT_MS = 5000;
+const POLL_MS = 100;
+
 const LearningStep: StepType = function LearningStep() {
 	const translate = useTranslate();
 	const siteSpecInstanceRef = useRef< SiteSpecInstance | null >( null );
 	const containerRef = useRef< HTMLDivElement >( null );
 
-	// Handle SiteSpec messages with proper typing
 	const handleSiteSpecMessage = useCallback( ( message: SiteSpecMessage ) => {
-		// TODO: Implement proper message handling based on message.type
-		console.log( 'SiteSpec message received:', message );
+		// TODO: replace with real routing/handling by message.type
+		// eslint-disable-next-line no-console
+		console.log( 'SiteSpec message:', message );
 	}, [] );
 
-	// Handle SiteSpec errors with proper typing
 	const handleSiteSpecError = useCallback( ( error: SiteSpecError ) => {
-		// TODO: Implement proper error handling and user feedback
-		console.error( 'SiteSpec error occurred:', error );
+		// TODO: surface to user toast, Sentry, etc.
+		// eslint-disable-next-line no-console
+		console.error( 'SiteSpec error:', error );
 	}, [] );
 
-	// Initialize SiteSpec with proper error handling and cleanup
 	useEffect( () => {
-		let isMounted = true;
+		// Avoid duplicate init on hot reload or prop changes.
+		if ( siteSpecInstanceRef.current ) {
+			return;
+		}
 
-		const initializeSiteSpec = async (): Promise< void > => {
+		let cancelled = false;
+		let pollId: number | undefined;
+		let timeoutId: number | undefined;
+
+		const initialize = async () => {
 			try {
-				// Load SiteSpec CSS first to ensure styling is available
+				// Best-effort CSS load; do not block init on failure.
 				try {
 					await loadSiteSpecCSS();
-				} catch ( error ) {
-					console.warn( 'SiteSpec CSS loading failed, continuing with script:', error );
+				} catch ( cssErr ) {
+					// eslint-disable-next-line no-console
+					console.warn( 'SiteSpec CSS failed to load; continuing:', cssErr );
 				}
 
-				// Load SiteSpec script
 				await loadSiteSpecScript();
 
-				// Wait for script to be fully available with timeout
-				await new Promise( ( resolve, reject ) => {
-					const timeout = setTimeout( () => {
-						reject( new Error( 'SiteSpec script initialization timeout' ) );
-					}, 5000 );
+				// Wait until window.SiteSpec?.init is available, or time out.
+				await new Promise< void >( ( resolve, reject ) => {
+					if ( typeof window === 'undefined' ) {
+						reject( new Error( 'Window is undefined (likely SSR)' ) );
+						return;
+					}
 
-					const checkSiteSpec = () => {
-						if ( window.SiteSpec?.init ) {
-							clearTimeout( timeout );
-							resolve( undefined );
-						} else {
-							setTimeout( checkSiteSpec, 100 );
+					const hasInit = () => !! window.SiteSpec?.init;
+
+					if ( hasInit() ) {
+						resolve();
+						return;
+					}
+
+					pollId = window.setInterval( () => {
+						if ( hasInit() ) {
+							if ( timeoutId ) {
+								window.clearTimeout( timeoutId );
+							}
+							if ( pollId ) {
+								window.clearInterval( pollId );
+							}
+							resolve();
 						}
-					};
-					checkSiteSpec();
+					}, POLL_MS );
+
+					timeoutId = window.setTimeout( () => {
+						if ( pollId ) {
+							window.clearInterval( pollId );
+						}
+						reject( new Error( 'SiteSpec script initialization timeout' ) );
+					}, INIT_TIMEOUT_MS );
 				} );
 
-				// Initialize SiteSpec if available and component is still mounted
-				if ( isMounted && window.SiteSpec?.init && containerRef.current ) {
-					const config = getSiteSpecConfig();
-
-					siteSpecInstanceRef.current = window.SiteSpec.init( {
-						container: containerRef.current,
-						agentUrl: config.agentUrl,
-						agentId: config.agentId,
-						buildSiteUrl: config.buildSiteUrl,
-						onMessage: handleSiteSpecMessage,
-						onError: handleSiteSpecError,
-					} );
+				if ( cancelled ) {
+					return;
 				}
-			} catch ( error ) {
-				if ( isMounted ) {
-					console.error( 'Failed to initialize SiteSpec:', error );
+				if ( ! containerRef.current ) {
+					throw new Error( 'Missing containerRef' );
+				}
+				if ( ! window.SiteSpec?.init ) {
+					throw new Error( 'SiteSpec.init not available' );
+				}
+
+				const config = getSiteSpecConfig();
+
+				// Spread config to avoid drift; override handlers/container explicitly.
+				const instance = window.SiteSpec.init( {
+					...config,
+					container: containerRef.current,
+					onMessage: handleSiteSpecMessage,
+					onError: handleSiteSpecError,
+				} );
+
+				siteSpecInstanceRef.current = instance;
+			} catch ( err ) {
+				if ( ! cancelled ) {
+					// eslint-disable-next-line no-console
+					console.error( 'Failed to initialize SiteSpec:', err );
+					handleSiteSpecError( {
+						message: err instanceof Error ? err.message : 'Unknown SiteSpec init error',
+						stack: err instanceof Error ? err.stack : undefined,
+					} );
 				}
 			}
 		};
 
-		// Start initialization
-		initializeSiteSpec();
+		void initialize();
 
-		// Cleanup function
 		return () => {
-			isMounted = false;
-			if ( siteSpecInstanceRef.current?.destroy ) {
-				siteSpecInstanceRef.current.destroy();
+			cancelled = true;
+			if ( timeoutId ) {
+				window.clearTimeout( timeoutId );
+			}
+			if ( pollId ) {
+				window.clearInterval( pollId );
+			}
+			try {
+				siteSpecInstanceRef.current?.destroy?.();
+			} finally {
 				siteSpecInstanceRef.current = null;
 			}
 		};
-	}, [ handleSiteSpecMessage, handleSiteSpecError ] );
+	}, [ handleSiteSpecError, handleSiteSpecMessage ] );
 
 	return (
 		<>
@@ -130,9 +168,6 @@ const LearningStep: StepType = function LearningStep() {
 			<div
 				ref={ containerRef }
 				id="site-spec"
-				role="main"
-				aria-label={ translate( 'AI Site Builder Interface' ) }
-				aria-live="polite"
 			/>
 		</>
 	);
