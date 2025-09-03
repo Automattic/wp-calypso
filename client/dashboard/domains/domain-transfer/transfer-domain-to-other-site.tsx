@@ -60,12 +60,13 @@ export default function DomainTransferToOtherSite() {
 							selectedSite?.name ?? ''
 						) }
 					</Text>
-					{ /* TODO: Show this paragraph when we have a select site object to check if the target site has a paid plan */ }
-					<Text as="p">
-						{ __(
-							'The target site doesn’t have a paid plan, so you won’t be able to set this domain as primary on the site.'
-						) }
-					</Text>
+					{ selectedSite?.plan?.is_free && (
+						<Text as="p">
+							{ __(
+								'The target site doesn’t have a paid plan, so you won’t be able to set this domain as primary on the site.'
+							) }
+						</Text>
+					) }
 				</VStack>
 			</ConfirmDialog>
 		</PageLayout>
