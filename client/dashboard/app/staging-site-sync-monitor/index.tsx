@@ -1,11 +1,11 @@
+import { stagingSiteSyncStateQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
 import { useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { getProductionSiteId, isStagingSiteSyncing } from '../../utils/site-staging-site';
-import { stagingSiteSyncStateQuery } from '../queries/site-staging-sites';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 
 interface StagingSiteSyncMonitorProps {
 	site: Site;
