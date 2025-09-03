@@ -43,6 +43,7 @@ export default function RecoverySMS() {
 	const [ formData, setFormData ] = useState< SecuritySMSFormData >( initialFormData );
 	const [ isRemoveDialogOpen, setIsRemoveDialogOpen ] = useState( false );
 	const [ showResendButton, setShowResendButton ] = useState( true );
+	const [ showSuccessNotice, setShowSuccessNotice ] = useState( false );
 
 	const { data: accountRecoveryData, isLoading: isAccountRecoveryDataLoading } = useQuery(
 		accountRecoveryQuery()
@@ -105,9 +106,7 @@ export default function RecoverySMS() {
 	const handleValidateSMSCode = () => {
 		validateSMSCodeMutation( formData.smsCode, {
 			onSuccess: () => {
-				createSuccessNotice( __( 'Your recovery SMS code was validated successfully.' ), {
-					type: 'snackbar',
-				} );
+				setShowSuccessNotice( true );
 			},
 			onError: ( error: Error ) => {
 				createErrorNotice( error.message || __( 'Failed to validate recovery SMS code.' ), {
@@ -232,6 +231,11 @@ export default function RecoverySMS() {
 										accountRecoveryPhone.number_full
 									) }
 								</Notice>
+							</Spacer>
+						) }
+						{ showSuccessNotice && (
+							<Spacer marginBottom={ 4 }>
+								<Notice variant="success">{ __( 'Recovery SMS number validated' ) }</Notice>
 							</Spacer>
 						) }
 						<form onSubmit={ handleSubmit }>
