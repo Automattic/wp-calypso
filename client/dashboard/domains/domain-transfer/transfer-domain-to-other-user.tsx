@@ -34,7 +34,7 @@ export type TransferFormData = {
 const createFields = ( users: SiteUser[] ): Field< TransferFormData >[] => [
 	{
 		id: 'user',
-		label: __( 'NEW OWNER' ),
+		label: __( 'New owner' ),
 		elements:
 			users.length > 0
 				? [
@@ -44,7 +44,7 @@ const createFields = ( users: SiteUser[] ): Field< TransferFormData >[] => [
 							label: user.name,
 						} ) ),
 				  ]
-				: [ { value: '', label: __( '-- Site has no other administrators --' ) } ],
+				: [ { value: '', label: '--' + __( 'Site has no other administrators' ) + '--' } ],
 		isValid: {
 			required: true,
 		},
