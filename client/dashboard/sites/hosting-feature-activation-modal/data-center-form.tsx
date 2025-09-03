@@ -2,6 +2,7 @@ import { Button, Card, CardBody, SelectControl } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import InlineSupportLink from '../../components/inline-support-link';
 import { Text } from '../../components/text';
 
@@ -34,6 +35,7 @@ interface DataCenterFormProps {
 }
 
 export function DataCenterForm( { value, onChange }: DataCenterFormProps ) {
+	const { recordTracksEvent } = useAnalytics();
 	const [ shouldShowForm, setShouldShowForm ] = useState( false );
 
 	if ( ! shouldShowForm ) {
@@ -44,7 +46,17 @@ export function DataCenterForm( { value, onChange }: DataCenterFormProps ) {
 						'Your site will be placed in the optimal data center, but you can <button>change it</button>.'
 					),
 					{
-						button: <Button variant="link" onClick={ () => setShouldShowForm( true ) } />,
+						button: (
+							<Button
+								variant="link"
+								onClick={ () => {
+									setShouldShowForm( true );
+									recordTracksEvent(
+										'calypso_dashboard_hosting_feature_activation_modal_data_center_form_show'
+									);
+								} }
+							/>
+						),
 					}
 				) }
 			</Text>
@@ -75,7 +87,13 @@ export function DataCenterForm( { value, onChange }: DataCenterFormProps ) {
 						label: option.label,
 						value: option.value,
 					} ) ) }
-					onChange={ ( value ) => onChange( value ) }
+					onChange={ ( value ) => {
+						onChange( value );
+						recordTracksEvent(
+							'calypso_dashboard_hosting_feature_activation_modal_data_center_form_change',
+							{ value }
+						);
+					} }
 					value={ value }
 				/>
 			</CardBody>

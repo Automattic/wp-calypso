@@ -65,7 +65,7 @@ export default function HostingFeatureActivation( {
 						onRequestClose={ () => setIsModalOpen( false ) }
 						size="medium"
 					>
-						<HostingFeatureActivationModal siteId={ site.ID } />
+						<HostingFeatureActivationModal siteId={ site.ID } onProceed={ handleConfirm } />
 					</Modal>
 				</Suspense>
 			) }

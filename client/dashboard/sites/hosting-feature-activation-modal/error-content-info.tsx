@@ -8,12 +8,13 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Fragment } from 'react';
+import ComponentViewTracker from '../../components/component-view-tracker';
 import { Notice } from '../../components/notice';
 import { Text } from '../../components/text';
 import type { NoticeVariant } from '../../components/notice/types';
 import type { AutomatedTransferEligibilityError } from '@automattic/api-core';
 
-const EligibilityErrors = {
+export const EligibilityErrors = {
 	BLOCKED_ATOMIC_TRANSFER: 'blocked_atomic_transfer',
 	TRANSFER_ALREADY_EXISTS: 'transfer_already_exists',
 	NO_BUSINESS_PLAN: 'no_business_plan',
@@ -31,6 +32,7 @@ const EligibilityErrors = {
 type EligibilityErrors = ( typeof EligibilityErrors )[ keyof typeof EligibilityErrors ];
 
 type BlockingMessage = {
+	code: string;
 	message: string;
 	variant: NoticeVariant;
 	supportUrl?: string;
@@ -38,26 +40,31 @@ type BlockingMessage = {
 
 const BlockingMessages: Partial< Record< EligibilityErrors, BlockingMessage > > = {
 	[ EligibilityErrors.BLOCKED_ATOMIC_TRANSFER ]: {
+		code: EligibilityErrors.BLOCKED_ATOMIC_TRANSFER,
 		message: __(
 			'This site is not currently eligible to install themes and plugins, or activate hosting access. Please contact our support team for help.'
 		),
 		variant: 'error',
 	},
 	[ EligibilityErrors.TRANSFER_ALREADY_EXISTS ]: {
+		code: EligibilityErrors.TRANSFER_ALREADY_EXISTS,
 		message: __(
 			'Installation in progress. Just a minute! Please wait until the installation is finished, then try again.'
 		),
 		variant: 'info',
 	},
 	[ EligibilityErrors.NO_JETPACK_SITES ]: {
+		code: EligibilityErrors.NO_JETPACK_SITES,
 		message: __( 'Try using a different site.' ),
 		variant: 'error',
 	},
 	[ EligibilityErrors.NO_VIP_SITES ]: {
+		code: EligibilityErrors.NO_VIP_SITES,
 		message: __( 'Try using a different site.' ),
 		variant: 'error',
 	},
 	[ EligibilityErrors.SITE_GRAYLISTED ]: {
+		code: EligibilityErrors.SITE_GRAYLISTED,
 		message: __(
 			'There’s an ongoing site dispute. Contact us to review your site’s standing and resolve the dispute.'
 		),
@@ -66,6 +73,7 @@ const BlockingMessages: Partial< Record< EligibilityErrors, BlockingMessage > > 
 		supportUrl: 'https://wordpress.com/support/suspended-blogs/',
 	},
 	[ EligibilityErrors.NO_SSL_CERTIFICATE ]: {
+		code: EligibilityErrors.NO_SSL_CERTIFICATE,
 		message: __(
 			'Certificate installation in progress. Hold tight! We are setting up a digital certificate to allow secure browsing on your site using "HTTPS".'
 		),
@@ -74,6 +82,7 @@ const BlockingMessages: Partial< Record< EligibilityErrors, BlockingMessage > > 
 };
 
 type HoldingMessage = {
+	code: string;
 	title: string;
 	description: string;
 	supportUrl?: string;
@@ -81,17 +90,20 @@ type HoldingMessage = {
 
 const HoldingMessages: Partial< Record< EligibilityErrors, HoldingMessage > > = {
 	[ EligibilityErrors.NO_BUSINESS_PLAN ]: {
+		code: EligibilityErrors.NO_BUSINESS_PLAN,
 		// TODO: Resolve plan name instead of hardcoding it.
 		title: __( 'Business plan required' ),
 		description: __( 'You’ll also get to install custom themes, plugins, and have more storage.' ),
 	},
 	[ EligibilityErrors.NON_ADMIN_USER ]: {
+		code: EligibilityErrors.NON_ADMIN_USER,
 		title: __( 'Site administrator only' ),
 		description: __( 'Only the site administrators can use this feature.' ),
 		// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
 		supportUrl: 'https://wordpress.com/support/user-roles/',
 	},
 	[ EligibilityErrors.NOT_RESOLVING_TO_WPCOM ]: {
+		code: EligibilityErrors.NOT_RESOLVING_TO_WPCOM,
 		title: __( 'Domain pointing to a different site' ),
 		description: __(
 			'Your domain is not properly set up to point to your site. Reset your domain’s A records in the Domains section to fix this.'
@@ -100,12 +112,14 @@ const HoldingMessages: Partial< Record< EligibilityErrors, HoldingMessage > > = 
 		supportUrl: 'https://wordpress.com/support/move-domain/setting-custom-a-records/',
 	},
 	[ EligibilityErrors.EMAIL_UNVERIFIED ]: {
+		code: EligibilityErrors.EMAIL_UNVERIFIED,
 		title: __( 'Confirm your email address' ),
 		description: __(
 			'Check your email for a message we sent you when you signed up. Click the link inside to confirm your email address. You may have to check your email client’s spam folder.'
 		),
 	},
 	[ EligibilityErrors.EXCESSIVE_DISK_SPACE ]: {
+		code: EligibilityErrors.EXCESSIVE_DISK_SPACE,
 		// TODO: Implement upsells
 		title: __( 'Increase storage space' ),
 		description: __(
@@ -113,6 +127,7 @@ const HoldingMessages: Partial< Record< EligibilityErrors, HoldingMessage > > = 
 		),
 	},
 	[ EligibilityErrors.IS_STAGING_SITE ]: {
+		code: EligibilityErrors.IS_STAGING_SITE,
 		title: __( 'Create a new staging site' ),
 		description: __(
 			'Hosting features cannot be activated for a staging site. Create a new staging site to continue.'
@@ -152,8 +167,15 @@ function findHoldingErrors( errors: AutomatedTransferEligibilityError[] ) {
 	}, [] as HoldingMessage[] );
 }
 
-export function hasBlockingError( errors: AutomatedTransferEligibilityError[] ) {
+export function hasAnyBlockingError( errors: AutomatedTransferEligibilityError[] ) {
 	return findFirstBlockingError( errors ) !== null;
+}
+
+export function hasHoldingError(
+	errors: AutomatedTransferEligibilityError[],
+	code: EligibilityErrors
+) {
+	return errors.some( ( error ) => error.code === code );
 }
 
 export function ErrorContentInfo( { errors }: { errors: AutomatedTransferEligibilityError[] } ) {
@@ -163,15 +185,21 @@ export function ErrorContentInfo( { errors }: { errors: AutomatedTransferEligibi
 	return (
 		<VStack>
 			{ blocking && (
-				<Notice variant={ blocking.variant }>
-					{ blocking.message }
-					{ blocking.supportUrl && (
-						<>
-							{ ' ' }
-							<ExternalLink href={ blocking.supportUrl }>{ __( 'Learn more' ) }</ExternalLink>
-						</>
-					) }
-				</Notice>
+				<>
+					<ComponentViewTracker
+						eventName="calypso_dashboard_hosting_feature_activation_modal_blocking_error_impression"
+						properties={ { code: blocking.code } }
+					/>
+					<Notice variant={ blocking.variant }>
+						{ blocking.message }
+						{ blocking.supportUrl && (
+							<>
+								{ ' ' }
+								<ExternalLink href={ blocking.supportUrl }>{ __( 'Learn more' ) }</ExternalLink>
+							</>
+						) }
+					</Notice>
+				</>
 			) }
 			{ holds.length > 0 && (
 				<Card size="small">
@@ -182,6 +210,10 @@ export function ErrorContentInfo( { errors }: { errors: AutomatedTransferEligibi
 					</CardHeader>
 					{ holds.map( ( hold, index ) => (
 						<Fragment key={ index }>
+							<ComponentViewTracker
+								eventName="calypso_dashboard_hosting_feature_activation_modal_holding_error_impression"
+								properties={ { code: hold.code } }
+							/>
 							<CardBody>
 								<VStack>
 									<Text as="h3" weight={ 500 }>
