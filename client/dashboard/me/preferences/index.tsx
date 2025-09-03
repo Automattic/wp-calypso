@@ -101,7 +101,12 @@ export default function UserSettingsLanguageForm() {
 		Partial< UserSettingsPreferences > | undefined
 	>();
 
-	// in case we're using a locale variant we'll override the language since that's what's being used in the combobox.
+	/**
+	 * When we save the language, in case we're using a locale_variant (a language without an official locale)
+	 * the API will return the parent language (example: es-cl will return 'es' in the 'language' field)
+	 * as such, we're overriding the language with the locale_variant, if present, this saves us from checking the data and allows us to
+	 * trust that the 'language' field contains a locale from the languages.
+	 */
 	if ( serverData?.locale_variant && serverData.locale_variant !== '' ) {
 		serverData.language = serverData.locale_variant;
 	}
@@ -113,6 +118,7 @@ export default function UserSettingsLanguageForm() {
 	if ( ! data ) {
 		return null;
 	}
+
 	const selectedLanguage: CalypsoLanguage | undefined = data.language
 		? ( getLanguage( data.language ) as CalypsoLanguage )
 		: undefined;
