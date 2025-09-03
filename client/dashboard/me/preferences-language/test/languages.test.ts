@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-
+import { UserSettingsPreferences } from '@automattic/api-core';
 import languages from '@automattic/languages';
 import {
 	languagesAsOptions,
