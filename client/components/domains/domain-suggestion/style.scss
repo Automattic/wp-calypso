@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .domain-suggestion {
 	display: flex;
@@ -26,10 +26,10 @@
 		cursor: pointer;
 
 		/* NOTE: easeOutExpo easing function from http://easings.net/#easeOutExpo */
-		transition: box-shadow 0.25s cubic-bezier( 0.19, 1, 0.22, 1 );
+		transition: box-shadow 0.25s cubic-bezier(0.19, 1, 0.22, 1);
 
 		&:hover {
-			z-index: z-index( 'root', '.domain-suggestion.is-clickable:hover' );
+			z-index: z-index("root", ".domain-suggestion.is-clickable:hover");
 		}
 	}
 
@@ -41,12 +41,12 @@
 		}
 
 		.domain-registration-suggestion__domain-title-name {
-			color: var( --studio-gray-60 );
+			color: var(--studio-gray-60);
 		}
 
 		.domain-registration-suggestion__domain-title-tld {
 			font-weight: 500;
-			color: var( --studio-gray-90 );
+			color: var(--studio-gray-90);
 		}
 	}
 
@@ -57,12 +57,12 @@
 		margin: 2px 4px 0 0;
 
 		&.badge--warning {
-			background-color: var( --color-warning-10 );
+			background-color: var(--color-warning-10);
 		}
 	}
 }
 
-.domain-suggestion:not( .featured-domain-suggestion ) {
+.domain-suggestion:not(.featured-domain-suggestion) {
 	display: flex;
 	flex-direction: column;
 
@@ -72,33 +72,33 @@
 	}
 
 	.is-section-signup & {
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			flex-direction: column;
 			align-items: center;
 		}
 	}
 
 	.is-section-stepper & {
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated(">480px") {
 			flex-direction: column;
 			align-items: center;
 		}
 	}
 
 	.is-section-domains & {
-		@include breakpoint-deprecated( '>800px' ) {
+		@include breakpoint-deprecated( ">800px" ) {
 			flex-direction: row;
 			align-items: center;
 		}
 	}
 
 	&.is-added {
-		background-color: var( --color-neutral-0 );
+		background-color: var(--color-neutral-0);
 
 		.domain-suggestion__content {
 			h3,
 			.domain-product-price {
-				color: var( --color-neutral );
+				color: var(--color-neutral);
 			}
 		}
 	}
@@ -109,7 +109,7 @@
 		.domain-suggestion__content {
 			h3,
 			.domain-product-price {
-				color: var( --color-neutral );
+				color: var(--color-neutral);
 			}
 		}
 	}
@@ -122,7 +122,7 @@
 	display: flex;
 	flex-direction: column;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
@@ -131,18 +131,18 @@
 
 	.calypso-notice.is-compact {
 		margin: 0 0 0 8px;
-		color: var( --color-text-inverted );
+		color: var(--color-text-inverted);
 
 		&.is-success {
-			background: var( --color-success );
+			background: var(--color-success);
 		}
 
 		&.is-info {
-			background: var( --color-primary );
+			background: var(--color-primary);
 		}
 
 		&.is-warning {
-			background: var( --color-warning );
+			background: var(--color-warning);
 		}
 
 		.calypso-notice__content {
@@ -156,21 +156,22 @@
 
 	.is-placeholder & {
 		animation: loading-fade 1.6s ease-in-out infinite;
-		background-color: var( --color-neutral-0 );
+		background-color: var(--color-neutral-0);
 		color: transparent;
 		min-height: 44px;
 	}
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		.is-placeholder & {
 			min-height: 22px;
 		}
+
 	}
 
 	> h3 {
 		word-break: break-all;
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			flex-grow: 2;
 		}
 	}
@@ -186,7 +187,7 @@
 	display: flex;
 	align-items: center;
 
-	@include breakpoint-deprecated( '>800px' ) {
+	@include breakpoint-deprecated( ">800px" ) {
 		max-width: 55%;
 	}
 }
@@ -198,12 +199,12 @@
 	align-items: flex-start;
 
 	&.domain-registration-suggestion__title-domain {
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			min-width: 50%;
 			margin-right: 1em;
 		}
 
-		@include breakpoint-deprecated( '>800px' ) {
+		@include breakpoint-deprecated( ">800px" ) {
 			min-width: 55%;
 			margin-right: 1em;
 		}
@@ -223,7 +224,7 @@
 		margin-left: 4px;
 	}
 
-	body.is-section-signup .layout:not( .dops ) & {
+	body.is-section-signup .layout:not(.dops) & {
 		.domain-registration-suggestion__hsts-tooltip {
 			padding: 0;
 		}
@@ -234,7 +235,7 @@
 	font-size: $font-body;
 	word-break: break-all;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		padding-right: 2em;
 	}
 }
@@ -265,14 +266,14 @@
 	padding: 0.25em 3em;
 	margin-left: 0;
 
-	@media ( min-width: 660px ) {
+	@media (min-width: 660px) {
 		width: auto;
 		flex: 1 0 auto;
 	}
 
 	.is-placeholder & {
 		animation: loading-fade 1.6s ease-in-out infinite;
-		background-color: var( --color-neutral-0 );
+		background-color: var(--color-neutral-0);
 		border: none;
 		border-radius: 0;
 		color: transparent;
@@ -281,7 +282,7 @@
 	}
 
 	&.is-borderless {
-		color: var( --color-primary );
+		color: var(--color-primary);
 		padding: 0;
 		display: flex;
 		align-items: center;
@@ -294,27 +295,28 @@
 			margin-right: 4px;
 		}
 	}
+
 }
 
 .domain-suggestion__chevron {
 	display: none;
 	margin-left: 10px;
 	flex: 1 0 auto;
-	color: var( --color-neutral-light );
+	color: var(--color-neutral-light);
 
 	.is-placeholder & {
 		animation: loading-fade 1.6s ease-in-out infinite;
-		color: var( --color-neutral-0 );
+		color: var(--color-neutral-0);
 	}
 
 	.is-section-signup & {
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			display: block;
 		}
 	}
 
 	.is-section-domains & {
-		@include breakpoint-deprecated( '>800px' ) {
+		@include breakpoint-deprecated( ">800px" ) {
 			display: block;
 		}
 	}
@@ -324,9 +326,10 @@
 	margin: 0 0 10px;
 	display: flex;
 	align-items: center;
-	&:not( .featured-domain-suggestion ) {
+	&:not(.featured-domain-suggestion) {
 		width: 100%;
 	}
+
 
 	@include break-mobile {
 		margin: 0 0 0 4px;
@@ -350,8 +353,8 @@
 
 body.is-section-stepper,
 body.is-section-signup {
-	&:not( :has( .step-container-v2 ) ) {
-		svg:not( .jetpack-logo, .social-buttons__button svg ) {
+	&:not(:has(.step-container-v2)) {
+		svg:not(.jetpack-logo, .social-buttons__button svg) {
 			padding-top: 0;
 			margin-right: 0;
 		}
@@ -401,7 +404,7 @@ body.is-section-signup {
 
 		.domain-product-price__free-text {
 			font-size: $font-body-small;
-			color: var( --studio-green-60 );
+			color: var(--studio-green-60);
 		}
 
 		.domain-product-price__free-price {
@@ -438,17 +441,17 @@ body.is-section-signup {
 		}
 
 		& .domain-registration-suggestion__domain-title {
-			color: var( --studio-gray-90 );
+			color: var(--studio-gray-90);
 		}
 
-		&:not( .featured-domain-suggestion ) {
+		&:not(.featured-domain-suggestion) {
 			background: none;
-			border-bottom: 1px solid rgba( 220, 220, 222, 0.64 );
+			border-bottom: 1px solid rgba(220, 220, 222, 0.64);
 			border-top: 1px solid #fff; /*This white border is to prevent jumpiness while showing borders on hover*/
 
 			.domain-registration-suggestion__domain-title {
 				.domain-registration-suggestion__domain-title-name {
-					color: var( --studio-gray-60 );
+					color: var(--studio-gray-60);
 				}
 
 				.domain-registration-suggestion__domain-title-tld {
@@ -472,12 +475,12 @@ body.is-section-signup {
 				}
 			}
 
-			.domain-product-price__price:not( .domain-product-price__free-price ) {
+			.domain-product-price__price:not(.domain-product-price__free-price) {
 				font-size: $font-body-small;
 			}
 
 			.domain-suggestion__action.is-borderless {
-				color: var( --color-text );
+				color: var(--color-text);
 				padding: 0 1.5em;
 				line-height: 24px;
 				@include break-mobile {
@@ -485,14 +488,14 @@ body.is-section-signup {
 				}
 
 				.gridicons-checkmark {
-					color: var( --studio-green-60 );
+					color: var(--studio-green-60);
 				}
 
 				&:disabled {
-					color: var( --color-neutral-20 );
+					color: var(--color-neutral-20);
 
 					.gridicons-checkmark {
-						color: var( --color-neutral-20 );
+						color: var(--color-neutral-20);
 					}
 				}
 
@@ -500,16 +503,10 @@ body.is-section-signup {
 					pointer-events: none;
 					animation: button__busy-animation 3000ms infinite linear;
 					background-size: 120px 100%;
-					background-image: linear-gradient(
-						-45deg,
-						var( --color-neutral-10 ) 28%,
-						var( --studio-gray-5 ) 28%,
-						var( --studio-gray-5 ) 72%,
-						var( --color-neutral-10 ) 72%
-					);
+					background-image: linear-gradient(-45deg, var(--color-neutral-10) 28%, var(--studio-gray-5) 28%, var(--studio-gray-5) 72%, var(--color-neutral-10) 72%);
 				}
 			}
-			.domain-suggestion__action:not( .is-borderless ) {
+			.domain-suggestion__action:not(.is-borderless) {
 				width: 100%;
 				height: auto;
 				line-height: 20px;
@@ -553,23 +550,21 @@ body.is-section-signup {
 			}
 		}
 
-		&.featured-domain-suggestion
-			.domain-suggestion__action-container
-			.domain-suggestion__action.is-borderless {
+		&.featured-domain-suggestion .domain-suggestion__action-container .domain-suggestion__action.is-borderless {
 			padding: 0.57em 1.3em !important;
 			box-shadow: none !important;
-			color: var( --color-text );
+			color: var(--color-text);
 			font-weight: normal !important;
 
 			.gridicons-checkmark {
-				color: var( --studio-green-60 );
+				color: var(--studio-green-60);
 			}
 
 			&:disabled {
-				color: var( --color-neutral-20 );
+				color: var(--color-neutral-20);
 
 				.gridicons-checkmark {
-					color: var( --color-neutral-20 );
+					color: var(--color-neutral-20);
 				}
 			}
 
@@ -577,13 +572,7 @@ body.is-section-signup {
 				pointer-events: none;
 				animation: button__busy-animation 3000ms infinite linear;
 				background-size: 120px 100%;
-				background-image: linear-gradient(
-					-45deg,
-					var( --color-neutral-10 ) 28%,
-					var( --studio-gray-5 ) 28%,
-					var( --studio-gray-5 ) 72%,
-					var( --color-neutral-10 ) 72%
-				);
+				background-image: linear-gradient(-45deg, var(--color-neutral-10) 28%, var(--studio-gray-5) 28%, var(--studio-gray-5) 72%, var(--color-neutral-10) 72%);
 			}
 		}
 	}
@@ -591,7 +580,7 @@ body.is-section-signup {
 
 .domain-suggestion__price-placeholder {
 	animation: loading-fade 1.6s ease-in-out infinite;
-	background-color: var( --color-neutral-0 );
+	background-color: var(--color-neutral-0);
 	color: transparent;
 	height: 16px;
 	margin: auto 0;

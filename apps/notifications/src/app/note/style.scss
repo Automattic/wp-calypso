@@ -1,7 +1,7 @@
-@import '@wordpress/base-styles/colors';
-@import '@wordpress/base-styles/variables';
-@import '@wordpress/base-styles/mixins';
-@import './reset.scss';
+@import "@wordpress/base-styles/colors";
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
+@import "./reset.scss";
 
 .wpnc__note .wpnc__body .wpnc__body-content {
 	padding: 0;
@@ -47,18 +47,18 @@
 		text-transform: uppercase;
 	}
 
-	.has-drop-cap:not( :focus )::first-letter {
+	.has-drop-cap:not(:focus)::first-letter {
 		font-weight: bold;
 		line-height: 0.66;
 		text-transform: uppercase;
 		font-style: normal;
 		float: left;
-		font-size: calc( 2 * 2.25rem );
+		font-size: calc(2 * 2.25rem);
 		margin: 0.05em 0.1em 0 0;
 	}
 
-	.has-drop-cap:not( :focus )::after {
-		content: '';
+	.has-drop-cap:not(:focus)::after {
+		content: "";
 		display: table;
 		clear: both;
 		padding-top: 14px;
@@ -103,13 +103,13 @@
 	// Links
 	a,
 	a:visited {
-		color: var( --wp-admin-theme-color );
+		color: var(--wp-admin-theme-color);
 	}
 
 	a:hover,
 	a:focus,
 	a:active {
-		color: var( --wp-admin-theme-color );
+		color: var(--wp-admin-theme-color);
 	}
 
 	h1,
@@ -225,7 +225,7 @@
 		padding-bottom: 16px;
 		border-bottom: 1px solid $gray-300;
 
-		&:not( :first-child ) {
+		&:not(:first-child) {
 			padding-top: 16px;
 		}
 	}
