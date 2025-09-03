@@ -22,6 +22,7 @@ import UpsellCTAButton from '../../components/upsell-cta-button';
 import { hasHostingFeature } from '../../utils/site-features';
 import MonitoringPerformanceCard from '../monitoring-performance-card/monitoring-performance-card';
 import illustrationUrl from './monitoring-callout-illustration.svg';
+import type { Site } from '@automattic/api-core';
 import './style.scss';
 
 export function SiteMonitoringCallout( {
@@ -90,7 +91,7 @@ function SiteMonitoringBody( {
 	timeRange,
 	locale,
 }: {
-	site: object;
+	site: Site;
 	timeRange: string;
 	locale: string;
 } ) {

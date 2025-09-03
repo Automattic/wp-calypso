@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import clsx from 'clsx';
 import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
-import useResize from 'calypso/components/chart-uplot/hooks/use-resize';
+import useResize from '../../../components/chart-uplot/hooks/use-resize';
 import './style.scss';
 
 const DEFAULT_DIMENSIONS = {

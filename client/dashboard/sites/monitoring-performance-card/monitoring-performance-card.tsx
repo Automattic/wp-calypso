@@ -3,7 +3,7 @@ import {
 	MetricsType,
 	PeriodData,
 	useSiteMetricsQuery,
-} from 'calypso/sites/monitoring/hooks/use-metrics-query';
+} from '../../../sites/monitoring/hooks/use-metrics-query';
 import MonitoringCard from '../monitoring-card';
 import { MonitoringLineChart } from '../monitoring-card-line-chart';
 import { FirstChartTooltipWithSeriesHandler } from '../monitoring-card-line-chart/line-chart-tooltip';
@@ -13,7 +13,7 @@ import {
 	seriesInfo,
 	tooltipsPlugin,
 } from '../monitoring-card-line-chart/uplot-tooltip-plugin';
-import type { Site } from 'calypso/dashboard/data/site';
+import type { Site } from '@automattic/api-core';
 
 type TimeRange = {
 	start: number;
