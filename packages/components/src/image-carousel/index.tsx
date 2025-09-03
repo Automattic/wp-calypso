@@ -119,6 +119,7 @@ export const addImageCarousel = ( imageBlocks: Element[] ) => {
 			img.style.cursor = 'pointer';
 			img.setAttribute( 'role', 'button' );
 			img.setAttribute( 'tabindex', '0' );
+			img.setAttribute( 'aria-label', 'View image in carousel' );
 			img.addEventListener( 'keydown', ( event ) => {
 				if ( event.key === 'Enter' ) {
 					openModal( index );
