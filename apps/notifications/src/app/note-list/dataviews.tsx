@@ -1,6 +1,7 @@
 import { __experimentalHStack as HStack, Icon } from '@wordpress/components';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronRight, chevronLeft } from '@wordpress/icons';
+import clsx from 'clsx';
 import { html } from '../../panel/indices-to-html';
 import noticon2gridicon from '../../panel/utils/noticon2gridicon';
 import Gridicon from '../templates/gridicons';
@@ -71,7 +72,7 @@ export function getFields(): Field< Note >[] {
 					links: false,
 				} ),
 			render: ( { field, item } ) => (
-				<div className="wpnc__text-summary">
+				<div className={ clsx( 'wpnc__note-list-item', { 'is-unread': ! item.read } ) }>
 					<div
 						className="wpnc__subject"
 						/* eslint-disable-next-line react/no-danger */
