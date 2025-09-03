@@ -1,7 +1,12 @@
 export interface AccountRecovery {
 	email: string;
 	email_validated: boolean;
-	phone: string;
+	phone: {
+		country_code: string;
+		country_numeric_code: string;
+		number: string;
+		number_full: string;
+	} | null;
 	phone_validated: boolean;
 }
 
