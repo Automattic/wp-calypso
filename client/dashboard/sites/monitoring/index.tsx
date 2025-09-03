@@ -12,7 +12,6 @@ import { useViewportMatch } from '@wordpress/compose';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
-import clsx from 'clsx';
 import { siteRoute } from '../../app/router/sites';
 import { Callout } from '../../components/callout';
 import { CalloutOverlay } from '../../components/callout-overlay';
@@ -90,7 +89,7 @@ function SiteMonitoringBody( { site, timeRange }: { site: object; timeRange: str
 
 	return (
 		<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
-			<Text className={ clsx( 'site-monitoring-dates' ) }>{ getDateRange( timeRange ) }</Text>
+			<Text variant="muted">{ getDateRange( timeRange ) }</Text>
 			<MonitoringPerformanceCard site={ site } timeRange={ hoursMap[ timeRange ] } />
 		</VStack>
 	);
