@@ -110,7 +110,7 @@ const HelpCenterContainer: React.FC< Container > = ( {
 				<OptionalDraggable
 					draggable={ ! isMobile && ! isMinimized }
 					nodeRef={ nodeRef }
-					handle=".help-center__container-header"
+					handle=".help-center-header__text"
 					bounds="body"
 				>
 					<Card className={ classNames } style={ { ...openingCoordinates } } ref={ cardMergeRefs }>
