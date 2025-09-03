@@ -1,5 +1,5 @@
 import { DomainProductSlugs, DotcomPlans } from '@automattic/api-core';
-import { purchaseQuery } from '@automattic/api-queries';
+import { purchaseQuery, sitePurchasesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
@@ -14,6 +14,7 @@ import {
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isCloseToExpiration,
+	needsToRenewSoon,
 	creditCardExpiresBeforeSubscription,
 	getRenewalUrlFromPurchase,
 } from '../../../utils/purchase';
@@ -32,6 +33,10 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		...purchaseQuery( purchase.attached_to_purchase_id ?? 0 ),
 		enabled: Boolean( purchase.attached_to_purchase_id ),
 	} );
+	const { data: sitePurchases } = useQuery( {
+		...sitePurchasesQuery( purchase.blog_id ?? 0 ),
+	} );
+	const renewableSitePurchases = sitePurchases?.filter( needsToRenewSoon );
 
 	if ( purchase.async_pending_payment_block_is_set ) {
 		return <AsyncPendingNotice />;
@@ -61,11 +66,18 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		return <ConciergeConsumedNotice />;
 	}
 
-	if ( shouldShowOtherRenewablePurchasesNotice( purchase, purchaseAttachedTo ) ) {
+	if (
+		shouldShowOtherRenewablePurchasesNotice(
+			purchase,
+			purchaseAttachedTo,
+			renewableSitePurchases ?? []
+		)
+	) {
 		return (
 			<OtherRenewablePurchasesNotice
 				purchase={ purchase }
 				purchaseAttachedTo={ purchaseAttachedTo }
+				renewableSitePurchases={ renewableSitePurchases ?? [] }
 			/>
 		);
 	}

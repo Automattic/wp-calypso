@@ -372,3 +372,26 @@ export function getRenewalUrlFromPurchase(
 	const servicePath = getServicePathForCheckoutFromPurchase( purchase );
 	return `/checkout/${ servicePath }${ checkoutProductSlug }/renew/${ purchase.ID }/${ checkoutSiteSlug }`;
 }
+
+/**
+ * Determines if the purchase needs to renew soon.
+ *
+ * This will return true if the purchase is either already expired or
+ * expiring/renewing soon.
+ *
+ * The intention here is to identify purchases that the user might reasonably
+ * want to manually renew (regardless of whether they are also scheduled to
+ * auto-renew).
+ */
+export function needsToRenewSoon( purchase: Purchase ): boolean {
+	// Skip purchases that never need to renew or that can't be renewed.
+	if (
+		isOneTimePurchase( purchase ) ||
+		purchase.partner_type ||
+		! purchase.is_renewable ||
+		! purchase.can_explicit_renew
+	) {
+		return false;
+	}
+	return isCloseToExpiration( purchase );
+}

@@ -9,8 +9,7 @@ import {
 	isExpiring,
 	isRenewing,
 	isIncludedWithPlan,
-	isOneTimePurchase,
-	isCloseToExpiration,
+	needsToRenewSoon,
 	isRecentMonthlyPurchase,
 	creditCardExpiresBeforeSubscription,
 } from '../../../utils/purchase';
@@ -22,7 +21,8 @@ import type { Purchase } from '@automattic/api-core';
 
 export function shouldShowOtherRenewablePurchasesNotice(
 	purchase: Purchase,
-	purchaseAttachedTo: Purchase | undefined
+	purchaseAttachedTo: Purchase | undefined,
+	renewableSitePurchases: Purchase[]
 ): boolean {
 	if ( ! purchase.site_slug ) {
 		return false;
@@ -36,7 +36,6 @@ export function shouldShowOtherRenewablePurchasesNotice(
 		purchaseIsIncludedInPlan && purchaseAttachedTo ? purchaseAttachedTo : purchase;
 
 	// Get other renewable purchases for this site
-	const renewableSitePurchases: Purchase[] = []; // FIXME: get this; see getRenewableSitePurchases
 	const otherRenewableSitePurchases = renewableSitePurchases.filter(
 		( otherPurchase ) => otherPurchase.ID !== currentPurchase.ID
 	);
@@ -81,9 +80,11 @@ export function shouldShowOtherRenewablePurchasesNotice(
 export function OtherRenewablePurchasesNotice( {
 	purchase,
 	purchaseAttachedTo,
+	renewableSitePurchases,
 }: {
 	purchase: Purchase;
 	purchaseAttachedTo: Purchase | undefined;
+	renewableSitePurchases: Purchase[];
 } ) {
 	if ( ! purchase.site_slug ) {
 		return null;
@@ -100,7 +101,6 @@ export function OtherRenewablePurchasesNotice( {
 	const includedPurchase = purchase;
 
 	// Show only if there is at least one other purchase to notify about.
-	const renewableSitePurchases: Purchase[] = []; // FIXME: get this; see getRenewableSitePurchases
 	const otherRenewableSitePurchases = renewableSitePurchases.filter(
 		( otherPurchase ) => otherPurchase.ID !== currentPurchase.ID
 	);
@@ -109,12 +109,7 @@ export function OtherRenewablePurchasesNotice( {
 	}
 
 	// Main logic branches for determining which message to display.
-	const currentPurchaseNeedsToRenewSoon =
-		( isOneTimePurchase( currentPurchase ) ||
-			currentPurchase.partner_name ||
-			! currentPurchase.is_renewable ||
-			! currentPurchase.can_explicit_renew ) &&
-		isCloseToExpiration( currentPurchase );
+	const currentPurchaseNeedsToRenewSoon = needsToRenewSoon( currentPurchase );
 	const currentPurchaseCreditCardExpiresBeforeSubscription =
 		isRenewing( currentPurchase ) && creditCardExpiresBeforeSubscription( currentPurchase );
 	const currentPurchaseIsExpiring = isExpiring( currentPurchase ) || isExpired( currentPurchase );
