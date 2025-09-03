@@ -110,6 +110,12 @@ export interface DomainAvailability {
 	 * @example true
 	 */
 	cannot_transfer_due_to_unsupported_premium_tld?: boolean;
+
+	/**
+	 * Trademark claims notice info
+	 * @example { "domain_name": "example.com", "trademark_claims_notice_info": "Trademark claims notice info" }
+	 */
+	trademark_claims_notice_info?: string;
 }
 
 export enum DomainAvailabilityStatus {
