@@ -1,4 +1,4 @@
-import { HostingFeatures } from '@automattic/api-core';
+import { DataCenterOptions, HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery, sitePrimaryDataCenterQuery } from '@automattic/api-queries';
 import SummaryButton from '@automattic/components/src/summary-button';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
@@ -6,7 +6,6 @@ import { useRouter } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Card, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { cloud } from '@wordpress/icons';
-import { getDataCenterOptions } from 'calypso/data/data-center';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
 import { hasHostingFeature } from '../../utils/site-features';
@@ -20,7 +19,7 @@ export default function PrimaryDataCenterSettings( { siteSlug }: { siteSlug: str
 		enabled: hasHostingFeature( site, HostingFeatures.PRIMARY_DATA_CENTER ),
 	} );
 
-	const dataCenterOptions = getDataCenterOptions();
+	const dataCenterOptions = DataCenterOptions;
 	const primaryDataCenterName = primaryDataCenter ? dataCenterOptions[ primaryDataCenter ] : null;
 
 	if ( ! primaryDataCenterName ) {

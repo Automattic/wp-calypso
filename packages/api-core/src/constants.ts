@@ -1,3 +1,5 @@
+import { __ } from '@wordpress/i18n';
+
 export enum DotcomPlans {
 	BUSINESS = 'business-bundle',
 	BUSINESS_MONTHLY = 'business-bundle-monthly',
@@ -239,4 +241,11 @@ export const DnsTemplates = {
 		PROVIDER: 'zoho-mail',
 		SERVICE: 'Zoho',
 	},
+};
+
+export const DataCenterOptions = {
+	bur: __( 'US West (Burbank, California)' ),
+	dfw: __( 'US Central (Dallas-Fort Worth, Texas)' ),
+	dca: __( 'US East (Washington, D.C.)' ),
+	ams: __( 'EU West (Amsterdam, Netherlands)' ),
 };

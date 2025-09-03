@@ -1,3 +1,4 @@
+import { DataCenterOptions } from '@automattic/api-core';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -12,7 +13,6 @@ import useCreateWPCOMDevSiteMutation, {
 import useCreateWPCOMSiteMutation from 'calypso/a8c-for-agencies/data/sites/use-create-wpcom-site';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
-import { getDataCenterOptions } from 'calypso/data/data-center';
 import { getPHPVersions } from 'calypso/data/php-versions';
 import { useDispatch } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -41,7 +41,7 @@ export default function SiteConfigurationsModal( {
 	);
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const translate = useTranslate();
-	const dataCenterOptions = getDataCenterOptions();
+	const dataCenterOptions = DataCenterOptions;
 	const { phpVersions, recommendedValue } = getPHPVersions();
 	const siteName = useSiteName( randomSiteName, isRandomSiteNameLoading );
 	const { mutate: createWPCOMSite } = useCreateWPCOMSiteMutation();

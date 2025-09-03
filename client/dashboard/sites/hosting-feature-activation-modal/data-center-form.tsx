@@ -1,3 +1,4 @@
+import { DataCenterOptions } from '@automattic/api-core';
 import { Button, Card, CardBody, SelectControl } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -5,27 +6,15 @@ import { useState } from 'react';
 import InlineSupportLink from '../../components/inline-support-link';
 import { Text } from '../../components/text';
 
-const DataCenterOptions = [
+const AllDataCenterOptions = [
 	{
 		value: '',
 		label: __( 'Optimal data center' ),
 	},
-	{
-		value: 'bur',
-		label: __( 'US West' ),
-	},
-	{
-		value: 'dfw',
-		label: __( 'US Central' ),
-	},
-	{
-		value: 'dca',
-		label: __( 'US East' ),
-	},
-	{
-		value: 'ams',
-		label: __( 'EU West' ),
-	},
+	...Object.entries( DataCenterOptions ).map( ( [ key, value ] ) => ( {
+		value: key,
+		label: value,
+	} ) ),
 ];
 
 interface DataCenterFormProps {
@@ -71,7 +60,7 @@ export function DataCenterForm( { value, onChange }: DataCenterFormProps ) {
 							),
 						}
 					) }
-					options={ DataCenterOptions.map( ( option ) => ( {
+					options={ AllDataCenterOptions.map( ( option ) => ( {
 						label: option.label,
 						value: option.value,
 					} ) ) }

@@ -1,10 +1,9 @@
-import { HostingFeatures } from '@automattic/api-core';
+import { DataCenterOptions, HostingFeatures } from '@automattic/api-core';
 import { sitePrimaryDataCenterQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { cloud } from '@wordpress/icons';
-import { getDataCenterOptions } from 'calypso/data/data-center';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { hasHostingFeature } from '../../utils/site-features';
 import type { Site } from '@automattic/api-core';
@@ -22,7 +21,7 @@ export default function SettingsPrimaryDataCenterSummary( {
 		enabled: hasHostingFeature( site, HostingFeatures.PRIMARY_DATA_CENTER ),
 	} );
 
-	const dataCenterOptions = getDataCenterOptions();
+	const dataCenterOptions = DataCenterOptions;
 	const primaryDataCenterName = primaryDataCenter ? dataCenterOptions[ primaryDataCenter ] : null;
 
 	if ( ! primaryDataCenterName ) {
