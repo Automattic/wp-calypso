@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import { useEffect, useState } from 'react';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-import getMostRecentOpenLiveInteraction from '../components/notices/use-view-most-recent-conversation-notice';
+import getMostRecentOpenLiveInteraction from '../components/notices/get-most-recent-open-live-interaction';
 import {
 	getOdieRateLimitMessage,
 	getOdieEmailFallbackMessage,

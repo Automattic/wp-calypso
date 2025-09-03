@@ -6,7 +6,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
 import { useGetSupportInteractionById } from '../../data';
 import { useCreateZendeskConversation } from '../../hooks';
-import getMostRecentOpenLiveInteraction from '../notices/use-view-most-recent-conversation-notice';
+import getMostRecentOpenLiveInteraction from '../notices/get-most-recent-open-live-interaction';
 
 import './get-support.scss';
 
