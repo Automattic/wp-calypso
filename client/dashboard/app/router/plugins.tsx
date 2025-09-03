@@ -12,6 +12,17 @@ export const pluginsRoute = createRoute( {
 	)
 );
 
+export const pluginRoute = createRoute( {
+	getParentRoute: () => rootRoute,
+	path: 'plugins/$pluginId',
+} ).lazy( () =>
+	import( '../../plugins/plugin' ).then( ( d ) =>
+		createLazyRoute( 'plugin' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const createPluginsRoutes = () => {
-	return [ pluginsRoute ];
+	return [ pluginsRoute, pluginRoute ];
 };
