@@ -1,4 +1,8 @@
-import { Button, __experimentalText as Text } from '@wordpress/components';
+import {
+	__experimentalText as Text,
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import TimeSince from '../../../components/time-since';
@@ -20,11 +24,7 @@ export function useDeploymentFields(): Field< CodeDeploymentData >[] {
 				getValue: ( { item } ) => item.repository_name,
 				render: ( { item } ) => {
 					const [ , repo ] = item.repository_name.split( '/' );
-					return (
-						<Button variant="link" style={ { padding: 0, height: 'auto' } }>
-							<strong>{ repo }</strong>
-						</Button>
-					);
+					return <Text>{ repo }</Text>;
 				},
 			},
 			{
@@ -47,87 +47,38 @@ export function useDeploymentFields(): Field< CodeDeploymentData >[] {
 					const shortSha = commit_sha?.substring( commit_sha.length - 7 ) || '';
 
 					return (
-						<div style={ { display: 'flex', flexDirection: 'column', gap: '6px', minWidth: 0 } }>
-							<Text
-								style={ {
-									fontWeight: 500,
-									lineHeight: '1.4',
-									overflow: 'hidden',
-									textOverflow: 'ellipsis',
-									whiteSpace: 'nowrap',
-								} }
-								title={ commit_message }
-							>
-								{ commit_message }
-							</Text>
-							<div
-								style={ {
-									display: 'flex',
-									alignItems: 'center',
-									gap: '12px',
-									fontSize: '12px',
-									color: '#646970',
-								} }
-							>
+						<VStack spacing={ 1 }>
+							<Text title={ commit_message }>{ commit_message }</Text>
+							<HStack spacing={ 3 } alignment="left">
 								<a
 									href={ `https://github.com/${ installation }/${ repo }/commit/${ commit_sha }` }
 									target="_blank"
 									rel="noopener noreferrer"
-									style={ {
-										fontSize: '12px',
-										color: '#3858e9',
-										textDecoration: 'none',
-										fontFamily: 'Monaco, Consolas, monospace',
-									} }
 								>
-									{ shortSha }
+									<Text as="code">{ shortSha }</Text>
 								</a>
-								<span
-									style={ {
-										display: 'flex',
-										alignItems: 'center',
-										gap: '4px',
-									} }
-								>
+								<HStack spacing={ 1 } alignment="left">
 									<svg width="12" height="12" viewBox="0 0 16 16" fill="#646970">
 										<path d="M11.75 2.5a.75.75 0 0 0-1.5 0V4H9A.75.75 0 0 0 9 5.5h1.25v1.25a.75.75 0 0 0 1.5 0V5.5H13a.75.75 0 0 0 0-1.5h-1.25V2.5z" />
 										<path d="M5.25 4a3.25 3.25 0 1 1 0 6.5 3.25 3.25 0 0 1 0-6.5zm0 1.5a1.75 1.75 0 1 0 0 3.5 1.75 1.75 0 0 0 0-3.5z" />
 										<path d="M5.25 11.25a.75.75 0 0 0-.75.75v1.25a.75.75 0 0 0 1.5 0V12a.75.75 0 0 0-.75-.75z" />
 									</svg>
-									<Text
-										as="code"
-										size={ 12 }
-										style={ {
-											fontFamily: 'Monaco, Consolas, monospace',
-											color: '#646970',
-										} }
-									>
+									<Text as="code" variant="muted">
 										{ item.branch_name }
 									</Text>
-								</span>
-								<div
-									style={ {
-										display: 'flex',
-										alignItems: 'center',
-										gap: '6px',
-									} }
-								>
+								</HStack>
+								<HStack spacing={ 1.5 } alignment="left">
 									<img
 										src={ author.avatar_url }
 										alt={ author.name }
-										style={ {
-											width: '16px',
-											height: '16px',
-											borderRadius: '50%',
-											flexShrink: 0,
-										} }
+										width={ 14 }
+										height={ 14 }
+										style={ { borderRadius: '50%' } }
 									/>
-									<Text size={ 12 } style={ { color: '#646970' } }>
-										{ author.name }
-									</Text>
-								</div>
-							</div>
-						</div>
+									<Text variant="muted">{ author.name }</Text>
+								</HStack>
+							</HStack>
+						</VStack>
 					);
 				},
 			},
