@@ -4,7 +4,6 @@ import {
 	userSettingsPreferencesQuery,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-// eslint-disable-next-line no-restricted-imports
 import { getLanguage, isDefaultLocale, isTranslatedIncompletely } from '@automattic/i18n-utils';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
