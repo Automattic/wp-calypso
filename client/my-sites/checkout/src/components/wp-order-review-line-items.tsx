@@ -1,10 +1,5 @@
 import config from '@automattic/calypso-config';
-import {
-	isAkismetProduct,
-	isJetpackPurchasableItem,
-	AKISMET_PRO_500_PRODUCTS,
-	isWpComPlan,
-} from '@automattic/calypso-products';
+import { AKISMET_PRO_500_PRODUCTS, isWpComPlan } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { isCopySiteFlow } from '@automattic/onboarding';
 import {
@@ -405,31 +400,20 @@ function LineItemWrapper( {
 		return true;
 	} )();
 
-	const isJetpack = responseCart.products.some( ( product ) =>
-		isJetpackPurchasableItem( product.product_slug )
-	);
-	const variantsFilterCallback = ( variant: WPCOMProductVariant ) => {
-		// Only show term variants which are equal to or longer than the variant that
-		// was in the cart when checkout finished loading (not necessarily the
-		// current variant). For WordPress.com only, not Jetpack, Akismet or Marketplace.
-		// See https://github.com/Automattic/wp-calypso/issues/69633
-		if ( ! initialVariantTerm ) {
-			return true;
-		}
-		const isAkismet = isAkismetProduct( { product_slug: variant.productSlug } );
-		const isMarketplace = product.extra?.is_marketplace_product;
-		const isA4A = product.extra?.isA4ASitelessCheckout;
-
-		if ( isJetpack || isAkismet || isMarketplace || isA4A ) {
-			return true;
+	const variantsFilterCallback: ( variant: WPCOMProductVariant ) => boolean = ( variant ) => {
+		if ( signupFlowName === 'onboarding-pm' && isWpComPlan( product.product_slug ) ) {
+			// Hide monthly variant in onboarding-pm flow if not already selected
+			if (
+				variant.termIntervalInMonths === 1 &&
+				variant.termIntervalInMonths !== initialVariantTerm
+			) {
+				return false;
+			}
 		}
 
-		return variant.termIntervalInMonths >= initialVariantTerm;
+		return true;
 	};
-	const variants = useGetProductVariants(
-		product,
-		! isStreamlinedPrice ? variantsFilterCallback : undefined
-	);
+	const variants = useGetProductVariants( product, variantsFilterCallback );
 
 	const areThereVariants = variants.length > 1;
 
