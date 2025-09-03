@@ -15,11 +15,13 @@ jest.mock( '@automattic/calypso-config', () => {
 	// Mock the default function for config keys
 	mockConfig.mockImplementation( ( key ) => {
 		const configValues = {
-			site_spec_url: 'https://example.com/site-spec.js',
-			site_spec_css_url: 'https://example.com/style.css',
-			site_spec_agent_url: 'https://api.example.com/agent',
-			site_spec_agent_id: 'test-agent',
-			site_spec_build_site_url: 'https://example.com/build?spec_id=',
+			site_spec: {
+				url: 'https://example.com/site-spec.js',
+				css_url: 'https://example.com/style.css',
+				agent_url: 'https://api.example.com/agent',
+				agent_id: 'test-agent',
+				build_site_url: 'https://example.com/build?spec_id=',
+			},
 		};
 		return configValues[ key ];
 	} );
@@ -52,7 +54,7 @@ describe( 'SiteSpec Utils', () => {
 	describe( 'getSiteSpecUrl', () => {
 		it( 'should return URL when feature flag is enabled', () => {
 			config.isEnabled.mockReturnValue( true );
-			config.mockReturnValueOnce( 'https://example.com/site-spec.js' );
+			config.mockReturnValueOnce( { url: 'https://example.com/site-spec.js' } );
 			expect( getSiteSpecUrl() ).toBe( 'https://example.com/site-spec.js' );
 		} );
 
@@ -72,7 +74,7 @@ describe( 'SiteSpec Utils', () => {
 		it( 'should return the configured CSS URL', () => {
 			const url = getSiteSpecCssUrl();
 			expect( url ).toBe( 'https://example.com/style.css' );
-			expect( config ).toHaveBeenCalledWith( 'site_spec_css_url' );
+			expect( config ).toHaveBeenCalledWith( 'site_spec' );
 		} );
 
 		it( 'should return null when CSS URL is not configured', () => {
@@ -84,10 +86,11 @@ describe( 'SiteSpec Utils', () => {
 
 	describe( 'getSiteSpecConfig', () => {
 		it( 'should return configuration object with all values', () => {
-			config
-				.mockReturnValueOnce( 'https://api.example.com/agent' ) // site_spec_agent_url
-				.mockReturnValueOnce( 'test-agent-id' ) // site_spec_agent_id
-				.mockReturnValueOnce( 'https://example.com/build?spec_id=' ); // site_spec_build_site_url
+			config.mockReturnValueOnce( {
+				agent_url: 'https://api.example.com/agent',
+				agent_id: 'test-agent-id',
+				build_site_url: 'https://example.com/build?spec_id=',
+			} );
 
 			const result = getSiteSpecConfig();
 

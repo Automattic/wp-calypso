@@ -14,8 +14,9 @@ export function isSiteSpecEnabled() {
  */
 export function getSiteSpecUrl() {
 	debug( '🔍 getSiteSpecUrl called' );
-	const url = config( 'site_spec_url' );
-	debug( '🔍 site_spec_url config value:', url );
+	const siteSpecConfig = config( 'site_spec' );
+	const url = siteSpecConfig?.url;
+	debug( '🔍 site_spec config value:', siteSpecConfig );
 	if ( ! url ) {
 		debug( '❌ SiteSpec URL not configured' );
 		return null;
@@ -29,8 +30,9 @@ export function getSiteSpecUrl() {
  */
 export function getSiteSpecCssUrl() {
 	debug( '🔍 getSiteSpecCssUrl called' );
-	const url = config( 'site_spec_css_url' );
-	debug( '🔍 site_spec_css_url config value:', url );
+	const siteSpecConfig = config( 'site_spec' );
+	const url = siteSpecConfig?.css_url;
+	debug( '🔍 site_spec config value:', siteSpecConfig );
 	if ( ! url ) {
 		debug( '❌ SiteSpec CSS URL not configured' );
 		return null;
@@ -43,10 +45,11 @@ export function getSiteSpecCssUrl() {
  * Get the site spec configuration object.
  */
 export function getSiteSpecConfig() {
+	const siteSpecConfig = config( 'site_spec' );
 	const configObj = {
-		agentUrl: config( 'site_spec_agent_url' ),
-		agentId: config( 'site_spec_agent_id' ),
-		buildSiteUrl: config( 'site_spec_build_site_url' ),
+		agentUrl: siteSpecConfig?.agent_url,
+		agentId: siteSpecConfig?.agent_id,
+		buildSiteUrl: siteSpecConfig?.build_site_url,
 	};
 
 	debug( 'getSiteSpecConfig:', configObj );

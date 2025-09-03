@@ -24,11 +24,11 @@ Enable the script loading with the `site-spec` feature flag:
 
 Define the following configuration values:
 
-- `site_spec_url`: Base URL for the Site-Spec script
-- `site_spec_css_url`: URL for the Site-Spec CSS styles
-- `site_spec_agent_url`: API endpoint for the Site-Spec agent
-- `site_spec_agent_id`: Identifier for the Site-Spec agent
-- `site_spec_build_site_url`: URL template for building sites
+- `site_spec.url`: Base URL for the Site-Spec script
+- `site_spec.css_url`: URL for the Site-Spec CSS styles
+- `site_spec.agent_url`: API endpoint for the Site-Spec agent
+- `site_spec.agent_id`: Identifier for the Site-Spec agent
+- `site_spec.build_site_url`: URL template for building sites
 
 ### Environment-Specific Configuration
 
@@ -36,7 +36,10 @@ Define the following configuration values:
 
 ```json
 {
-	"site_spec_url": "http://localhost:8085/dist/sitespec.umd.js",
+	"site_spec": {
+		"url": "http://your-site-spec.local/dist/sitespec.umd.js",
+		"css_url": "http://your-site-spec.local/dist/style.css"
+	},
 	"features": {
 		"site-spec": true
 	}
@@ -47,6 +50,10 @@ Define the following configuration values:
 
 ```json
 {
+	"site_spec": {
+		"url": "https://cdn.example.com/site-spec.js",
+		"css_url": "https://cdn.example.com/style.css"
+	},
 	"features": {
 		"site-spec": true
 	}
