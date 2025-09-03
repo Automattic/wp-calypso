@@ -120,7 +120,7 @@ export default function UserSettingsLanguageForm() {
 		} );
 	};
 
-	const isDefaultLanguageSelected = ! data.language && isDefaultLocale( data.language );
+	const isDefaultLanguageSelected = !! data.language && isDefaultLocale( data.language );
 	const showIncompleteLocaleControl =
 		! isDefaultLanguageSelected && !! data.language && isTranslatedIncompletely( data.language );
 	const isSaving = mutation.isPending;
