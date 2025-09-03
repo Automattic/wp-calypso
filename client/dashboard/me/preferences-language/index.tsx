@@ -45,12 +45,12 @@ const thanksToCommunityTranslator = ( data: UserSettingsPreferences ) => {
 				sprintf(
 					/* translators: %s: selected interface language */
 					__(
-						'Thanks to all our <external>community members who helped translate to %s</external>'
+						'Thanks to all our <externalLink>community members who helped translate to %s</externalLink>'
 					),
 					language.name
 				),
 				{
-					external: (
+					externalLink: (
 						<ExternalLink
 							href={ `https://translate.wordpress.com/translators/?contributor_locale=${ language.langSlug }` }
 							children={ null }
