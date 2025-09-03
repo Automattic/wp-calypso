@@ -20,11 +20,16 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState, useEffect } from 'react';
 import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';
-import type { SiteMcpAbilities } from '@automattic/api-core';
+import type { SiteMcpAbilities, SiteSettings } from '@automattic/api-core';
 import './style.scss';
 
 // Type for the API payload - simplified enabled/disabled flags
 type McpAbilitiesPayload = Record< string, number >;
+
+// Type for the mutation data - what the API actually expects
+type SiteSettingsMutationData = Partial< Omit< SiteSettings, 'mcp_abilities' > > & {
+	mcp_abilities?: McpAbilitiesPayload;
+};
 
 export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
@@ -81,17 +86,17 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 			abilitiesArray[ abilityId ] = ability.enabled ? 1 : 0;
 		} );
 
-		mutation.mutate(
-			{ mcp_abilities: abilitiesArray },
-			{
-				onSuccess: () => {
-					createSuccessNotice( __( 'MCP abilities saved.' ), { type: 'snackbar' } );
-				},
-				onError: () => {
-					createErrorNotice( __( 'Failed to save MCP abilities.' ), { type: 'snackbar' } );
-				},
-			}
-		);
+		// Create mutation data with the proper type for the API
+		const mutationData: SiteSettingsMutationData = { mcp_abilities: abilitiesArray };
+
+		mutation.mutate( mutationData, {
+			onSuccess: () => {
+				createSuccessNotice( __( 'MCP abilities saved.' ), { type: 'snackbar' } );
+			},
+			onError: () => {
+				createErrorNotice( __( 'Failed to save MCP abilities.' ), { type: 'snackbar' } );
+			},
+		} );
 	};
 
 	const handleMasterToggle = ( enabled: boolean ) => {
