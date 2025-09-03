@@ -126,25 +126,23 @@ function SiteMonitoring() {
 						spacing={ isSmallViewport ? 5 : 10 }
 						className={ clsx( 'site-monitoring-header' ) }
 					>
-						<PageHeader
-							title={ __( 'Monitoring' ) }
-							actions={
-								<ToggleGroupControl
-									value={ timeRange }
-									isBlock
-									__nextHasNoMarginBottom
-									__next40pxDefaultSize
-									onChange={ handleTimeRangeChange }
-									label={ __( 'Time period' ) }
-									hideLabelFromVision
-								>
-									<ToggleGroupControlOption value="6-hours" label={ __( '6 hours' ) } />
-									<ToggleGroupControlOption value="24-hours" label={ __( '24 hours' ) } />
-									<ToggleGroupControlOption value="3-days" label={ __( '3 days' ) } />
-									<ToggleGroupControlOption value="7-days" label={ __( '7 days' ) } />
-								</ToggleGroupControl>
-							}
-						/>
+						<PageHeader title={ __( 'Monitoring' ) } />
+						<div>
+							<ToggleGroupControl
+								value={ timeRange }
+								isBlock
+								__nextHasNoMarginBottom
+								__next40pxDefaultSize
+								onChange={ handleTimeRangeChange }
+								label={ __( 'Time period' ) }
+								hideLabelFromVision
+							>
+								<ToggleGroupControlOption value="6-hours" label={ __( '6 hours' ) } />
+								<ToggleGroupControlOption value="24-hours" label={ __( '24 hours' ) } />
+								<ToggleGroupControlOption value="3-days" label={ __( '3 days' ) } />
+								<ToggleGroupControlOption value="7-days" label={ __( '7 days' ) } />
+							</ToggleGroupControl>
+						</div>
 					</HStack>
 				</>
 			}
