@@ -18,6 +18,7 @@ export const languagesAsOptions = languages.map( ( lang: Language ) => {
 		label: lang.name,
 	};
 } );
+
 /**
  * Get the locale variant if the parentLangSlug is present
  */

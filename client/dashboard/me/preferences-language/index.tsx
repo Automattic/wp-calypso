@@ -1,0 +1,314 @@
+import { UserSettingsPreferences } from '@automattic/api-core';
+import {
+	userSettingsPreferencesMutation,
+	userSettingsPreferencesQuery,
+} from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
+import { getLanguage, isDefaultLocale, isTranslatedIncompletely } from '@automattic/i18n-utils';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import {
+	Notice,
+	Button,
+	Card,
+	CardBody,
+	__experimentalVStack as VStack,
+	ExternalLink,
+	ComboboxControl,
+	CheckboxControl,
+	__experimentalText as Text,
+} from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
+import { DataForm } from '@wordpress/dataviews';
+import { useMemo, useState, createInterpolateElement, useEffect } from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
+import {
+	languagesAsOptions,
+	shouldDisplayCommunityTranslator,
+	CalypsoLanguage,
+	getLocaleVariantOrLanguage,
+} from './languages';
+import type { Field } from '@wordpress/dataviews';
+
+// TODO add tests.
+const thanksToCommunityTranslator = ( data: UserSettingsPreferences ) => {
+	if ( ! shouldDisplayCommunityTranslator( data ) ) {
+		return;
+	}
+	const language = getLocaleVariantOrLanguage( data );
+	if ( ! language ) {
+		return;
+	}
+	return (
+		<>
+			<br />
+			{ createInterpolateElement(
+				sprintf(
+					/* translators: %s: selected interface language */
+					__(
+						'Thanks to all our <external>community members who helped translate to %s</external>'
+					),
+					language.name
+				),
+				{
+					external: (
+						<ExternalLink
+							href={ `https://translate.wordpress.com/translators/?contributor_locale=${ language.langSlug }` }
+							children={ null }
+						/>
+					),
+				}
+			) }
+		</>
+	);
+};
+export default function PreferencesLanguageForm() {
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { data: serverData } = useQuery( userSettingsPreferencesQuery() );
+	const [ localData, setLocalData ] = useState< Partial< UserSettingsPreferences > | undefined >();
+	const mutation = useMutation( userSettingsPreferencesMutation() );
+	const [ savingData, setSavingData ] = useState<
+		Partial< UserSettingsPreferences > | undefined
+	>();
+
+	// After a successful save we reload the page with a query parameter and then
+	// display the success notice here, finally cleaning the URL so it stays the same.
+	useEffect( () => {
+		if ( typeof window === 'undefined' ) {
+			return;
+		}
+		const url = new URL( window.location.href );
+		if ( url.searchParams.has( 'settings-saved' ) ) {
+			createSuccessNotice( __( 'Language setting saved.' ), { type: 'snackbar' } );
+			url.searchParams.delete( 'settings-saved' );
+			window.history.replaceState( {}, '', url.toString() );
+		}
+	}, [ createSuccessNotice ] );
+
+	/**
+	 * When we save the language, in case we're using a locale_variant (a language without an official locale)
+	 * the API will return the parent language (example: es-cl will return 'es' in the 'language' field)
+	 * as such, we're overriding the language with the locale_variant, if present, this saves us from checking the data and allows us to
+	 * trust that the 'language' field contains a locale from the languages.
+	 */
+	if ( serverData?.locale_variant && serverData.locale_variant !== '' ) {
+		serverData.language = serverData.locale_variant;
+	}
+	const data = useMemo(
+		() => ( serverData ? { ...serverData, ...savingData, ...localData } : undefined ),
+		[ serverData, savingData, localData ]
+	);
+
+	if ( ! data ) {
+		return null;
+	}
+	// We need the CalypsoLanguage to show the % of translated content in the use_fallback_for_incomplete_languages
+	const selectedLanguage: CalypsoLanguage | undefined = data.language
+		? ( getLanguage( data.language ) as CalypsoLanguage )
+		: undefined;
+
+	const handleSubmit = ( e: React.FormEvent ) => {
+		e.preventDefault();
+		if ( ! localData ) {
+			return;
+		}
+		const mutationData = localData;
+		setLocalData( undefined );
+		setSavingData( mutationData );
+		mutation.mutate( mutationData, {
+			onSuccess: () => {
+				// Ensure the UI picks up the new language by reloading the page.
+				// Add a transient query param so we can show a success notice after reload.
+				const url = new URL( window.location.href );
+				url.searchParams.set( 'settings-saved', '1' );
+				// Replace to avoid adding an extra history entry.
+				window.location.replace( url.toString() );
+			},
+			onError: ( error ) => {
+				// Prepend previous attempted data back into local edits
+				setLocalData( ( current ) => ( { ...mutationData, ...current } ) );
+				createErrorNotice( error.message ?? __( 'Language setting could not be saved.' ), {
+					type: 'snackbar',
+				} );
+			},
+			onSettled: () => {
+				setSavingData( undefined );
+			},
+		} );
+	};
+
+	const isDefaultLanguageSelected = !! data.language && isDefaultLocale( data.language );
+	const showIncompleteLocaleControl =
+		! isDefaultLanguageSelected && !! data.language && isTranslatedIncompletely( data.language );
+	const isSaving = mutation.isPending;
+
+	const isDirty =
+		!! localData &&
+		!! serverData &&
+		Object.entries( localData ).some( ( [ key, value ] ) => {
+			return serverData[ key as keyof UserSettingsPreferences ] !== value;
+		} );
+
+	const hasValidLanguage = !! data?.language && data.language !== '';
+	const canSubmit = ! isSaving && isDirty && hasValidLanguage;
+	const languageForm = {
+		type: 'regular' as const,
+		labelPosition: 'top' as const,
+		fields: [
+			{
+				id: 'interfaceLanguage',
+				label: __( 'Language' ),
+				children: [
+					'language',
+					'use_fallback_for_incomplete_languages',
+					'enable_translator',
+					'i18n_empathy_mode',
+				],
+			},
+		],
+	};
+
+	const languageFields: Field< UserSettingsPreferences >[] = [
+		{
+			id: 'language',
+			label: __( 'Interface language' ),
+			type: 'text',
+			isValid: {
+				required: true,
+			},
+			Edit: ( { field, data, onChange } ) => {
+				return (
+					<>
+						<ComboboxControl
+							value={ field.getValue( { item: data } ) ?? '' }
+							label={ __( 'Interface language' ) }
+							onChange={ ( newValue ) => {
+								onChange( {
+									[ field.id ]: newValue,
+								} );
+							} }
+							placeholder={ __( 'Select a language' ) }
+							options={ field.elements || [] }
+							allowReset={ field.isValid?.required !== true }
+						/>
+
+						<Text variant="muted">
+							{ __(
+								'This is the language of the interface you see across WordPress.com as a whole.'
+							) }
+							{ data && thanksToCommunityTranslator( data ) }
+						</Text>
+					</>
+				);
+			},
+			elements: languagesAsOptions,
+		},
+		{
+			id: 'use_fallback_for_incomplete_languages',
+			label: __( 'Display interface in English' ),
+			description:
+				/* translators: %(languageName)s is a localized language name, %(percentTranslated)d%% is a percentage number (0-100), followed by an escaped percent sign %%. */
+				sprintf( __( '(%(languageName)s is only %(percentTranslated)d%% translated)' ), {
+					languageName: selectedLanguage?.name,
+					percentTranslated: selectedLanguage?.calypsoPercentTranslated,
+				} ),
+			type: 'boolean',
+			Edit: 'checkbox',
+			isVisible: () => showIncompleteLocaleControl,
+		},
+		{
+			id: 'i18n_empathy_mode',
+			label: 'Empathy mode (a8c-only)',
+			type: 'boolean',
+			isVisible: () => config.isEnabled( 'i18n/empathy-mode' ),
+			Edit: ( { field, data, onChange } ) => {
+				const isEmpathyModeFieldDisabled =
+					! data.language || data.language === '' || !! isDefaultLocale( data.language );
+				return (
+					<CheckboxControl
+						checked={ isEmpathyModeFieldDisabled ? false : field.getValue( { item: data } ) }
+						label={ field.label }
+						disabled={ isEmpathyModeFieldDisabled }
+						onChange={ ( newValue ) => {
+							onChange( {
+								[ field.id ]: newValue,
+							} );
+						} }
+					/>
+				);
+			},
+		},
+		{
+			id: 'enable_translator',
+			label: __( 'Enable the in-page translator where available' ),
+			type: 'boolean',
+			isVisible: ( item ) => shouldDisplayCommunityTranslator( item ),
+			Edit: ( { field, data, onChange } ) => {
+				return (
+					<>
+						<CheckboxControl
+							checked={ field.getValue( { item: data } ) }
+							label={ field.label }
+							onChange={ ( newValue ) => {
+								onChange( {
+									[ field.id ]: newValue,
+								} );
+							} }
+						/>
+						{ /** printing it here instead of using the DataForm `description` because the description only supports strings. */ }
+						<Text variant="muted">
+							{ createInterpolateElement(
+								__( 'This allows you to help translate WordPress.com. <LearnMore/>' ),
+								{
+									LearnMore: (
+										<ExternalLink href="https://translate.wordpress.com/community-translator/">
+											{ __( 'Learn more' ) }
+										</ExternalLink>
+									),
+								}
+							) }
+						</Text>
+					</>
+				);
+			},
+		},
+	];
+
+	return (
+		<>
+			<form onSubmit={ handleSubmit }>
+				<Card>
+					<CardBody>
+						<VStack spacing={ 6 } className="dasboard-preferences__vstack">
+							<DataForm< UserSettingsPreferences >
+								data={ data }
+								fields={ languageFields }
+								form={ languageForm }
+								onChange={ ( edits: Partial< UserSettingsPreferences > ) => {
+									setLocalData( ( current ) => ( { ...current, ...edits } ) );
+								} }
+							/>
+							{ mutation.error && (
+								<Notice status="error" isDismissible={ false }>
+									{ mutation.error.message }
+								</Notice>
+							) }
+							<div>
+								<Button
+									variant="primary"
+									type="submit"
+									className="language-preferences-form__submit"
+									accessibleWhenDisabled
+									isBusy={ isSaving }
+									disabled={ ! canSubmit }
+								>
+									{ __( 'Save' ) }
+								</Button>
+							</div>
+						</VStack>
+					</CardBody>
+				</Card>
+			</form>
+		</>
+	);
+}
