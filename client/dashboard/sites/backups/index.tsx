@@ -79,7 +79,7 @@ export function BackupsListPage() {
 			notices={ <BackupNotices site={ site } /> }
 		>
 			{ hasBackups && (
-				<Grid columns={ columns }>
+				<Grid className="dashboard-backups__list-grid" columns={ columns }>
 					<BackupsList
 						site={ site }
 						selectedBackup={ selectedBackup }
