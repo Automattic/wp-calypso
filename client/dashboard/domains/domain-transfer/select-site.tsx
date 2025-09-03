@@ -106,7 +106,7 @@ export function SelectSite( { onSiteSelect }: Props ) {
 					value={ view.search }
 					onChange={ ( search ) => setView( { ...view, search } ) }
 				/>
-				<div style={ { height: '400px', overflow: 'auto' } }>
+				<div style={ { maxHeight: '400px', overflow: 'auto' } }>
 					<DataViews
 						data={ allLoadedRecords }
 						fields={ fields }
