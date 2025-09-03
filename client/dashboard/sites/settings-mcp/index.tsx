@@ -79,7 +79,10 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 		} );
 
 		// Create mutation data with the proper type for the API
-		const mutationData = { mcp_abilities: abilitiesArray } as Partial< SiteSettings >;
+		// Note: We use double type assertion (as unknown as Partial<SiteSettings>) because
+		// the API expects simplified mcp_abilities (Record<string, number>) but the TypeScript
+		// type defines full objects (SiteMcpAbilities). The mutation logic handles the transformation.
+		const mutationData = { mcp_abilities: abilitiesArray } as unknown as Partial< SiteSettings >;
 
 		mutation.mutate( mutationData, {
 			onSuccess: () => {
