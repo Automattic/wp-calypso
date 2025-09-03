@@ -24,7 +24,7 @@ const NOTIFICATION_TABS = Object.values( getFilters() ).map( ( { name, label } )
 	title: label,
 } ) );
 
-const NotePanel = ( { showCloseButton }: { showCloseButton?: boolean } ) => {
+const NotePanel = ( { isDismissible }: { isDismissible?: boolean } ) => {
 	const { params, goTo } = useNavigator();
 	const { filterName = 'all' } = params;
 
@@ -84,7 +84,7 @@ const NotePanel = ( { showCloseButton }: { showCloseButton?: boolean } ) => {
 						</HStack>
 						<HStack justify="flex-end">
 							<NotePanelActions />
-							{ showCloseButton && <CloseButton /> }
+							{ isDismissible && <CloseButton /> }
 						</HStack>
 					</HStack>
 					<TabPanel

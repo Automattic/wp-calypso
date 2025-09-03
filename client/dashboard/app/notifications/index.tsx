@@ -108,7 +108,7 @@ export default function Notifications( { className }: { className: string } ) {
 					<Suspense fallback={ null }>
 						<AsyncNotificationApp
 							locale={ locale }
-							showCloseButton={ isMobileViewport }
+							isDismissible={ isMobileViewport }
 							actionHandlers={ actionHandlers }
 							wpcom={ wpcom }
 						/>

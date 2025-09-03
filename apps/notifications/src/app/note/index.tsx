@@ -67,7 +67,7 @@ const getClasses = ( {
 	} );
 };
 
-const Note = ( { showCloseButton }: { showCloseButton?: boolean } ) => {
+const Note = ( { isDismissible }: { isDismissible?: boolean } ) => {
 	const dispatch = useDispatch();
 	const { params, goBack } = useNavigator();
 	const { noteId } = params;
@@ -102,7 +102,7 @@ const Note = ( { showCloseButton }: { showCloseButton?: boolean } ) => {
 					</Navigator.BackButton>
 					<HStack justify="flex-end">
 						<ActionDropdown note={ note } goBack={ goBack } />
-						{ showCloseButton && <CloseButton /> }
+						{ isDismissible && <CloseButton /> }
 					</HStack>
 				</HStack>
 			</CardHeader>

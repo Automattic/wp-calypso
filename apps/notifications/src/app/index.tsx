@@ -49,13 +49,13 @@ const defaultHandlers = {
 
 const NotificationApp = ( {
 	locale = 'en',
-	showCloseButton = false,
+	isDismissible = false,
 	customEnhancer,
 	actionHandlers = {},
 	wpcom,
 }: {
 	locale?: string;
-	showCloseButton?: boolean;
+	isDismissible?: boolean;
 	customEnhancer?: any;
 	actionHandlers?: any;
 	wpcom: any;
@@ -146,13 +146,13 @@ const NotificationApp = ( {
 						path="/:filterName"
 						style={ { display: 'flex', flexDirection: 'column', height: '100%' } }
 					>
-						<NotePanel showCloseButton={ showCloseButton } />
+						<NotePanel isDismissible={ isDismissible } />
 					</Navigator.Screen>
 					<Navigator.Screen
 						path="/:filterName/notes/:noteId"
 						style={ { display: 'flex', flexDirection: 'column', height: '100%' } }
 					>
-						<Note showCloseButton={ showCloseButton } />
+						<Note isDismissible={ isDismissible } />
 					</Navigator.Screen>
 				</Navigator>
 			</AppProvider>
