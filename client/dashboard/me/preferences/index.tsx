@@ -5,14 +5,7 @@ import {
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 // eslint-disable-next-line no-restricted-imports
-import {
-	canBeTranslated,
-	getLanguage,
-	isDefaultLocale,
-	isLocaleVariant,
-	isTranslatedIncompletely,
-} from '@automattic/i18n-utils';
-import { SubLanguage, Language } from '@automattic/languages';
+import { getLanguage, isDefaultLocale, isTranslatedIncompletely } from '@automattic/i18n-utils';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
 	Notice,
@@ -32,36 +25,20 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { languagesAsOptions } from './languages';
+import {
+	languagesAsOptions,
+	shouldDisplayCommunityTranslator,
+	CalypsoLanguage,
+	getLocaleVariantOrLanguage,
+} from './languages';
 import type { Field } from '@wordpress/dataviews';
 
 // TODO add tests.
-/**
- * Adapted from https://github.com/Automattic/wp-calypso/blob/fbeb9c37266e2bfac7af881b1672a9f6d72a0670/client/me/account/main.jsx#L299
- * In this case the data.language is the locale variant if we're using one, so we can skip the "isLocaleVariant checks and see if the locale can be translated or not"
- */
-const shouldDisplayCommunityTranslator = ( data: UserSettingsPreferences ): boolean => {
-	const locale = data.language;
-
-	// disable for locales
-	if ( ! locale || ! canBeTranslated( locale ) ) {
-		return false;
-	}
-
-	return true;
-};
-
 const thanksToCommunityTranslator = ( data: UserSettingsPreferences ) => {
 	if ( ! shouldDisplayCommunityTranslator( data ) ) {
 		return;
 	}
-
-	let language = getLanguage( data.language );
-
-	// if it's a variant, we want to link to the parent language
-	if ( language && isLocaleVariant( language.langSlug ) ) {
-		language = getLanguage( ( language as SubLanguage ).parentLangSlug );
-	}
+	const language = getLocaleVariantOrLanguage( data );
 	if ( ! language ) {
 		return;
 	}
@@ -87,10 +64,6 @@ const thanksToCommunityTranslator = ( data: UserSettingsPreferences ) => {
 			) }
 		</>
 	);
-};
-type CalypsoLanguage = Language & {
-	calypsoPercentTranslated: number;
-	isTranslatedCompletely: boolean;
 };
 export default function UserSettingsLanguageForm() {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
@@ -118,7 +91,7 @@ export default function UserSettingsLanguageForm() {
 	if ( ! data ) {
 		return null;
 	}
-
+	// We need the CalypsoLanguage to show the % of translated content in the use_fallback_for_incomplete_languages
 	const selectedLanguage: CalypsoLanguage | undefined = data.language
 		? ( getLanguage( data.language ) as CalypsoLanguage )
 		: undefined;
