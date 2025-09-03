@@ -1,6 +1,14 @@
 @import '@wordpress/base-styles/variables';
 
 .dashboard-page-layout {
+	.site-monitoring-header .dashboard-section-header {
+		width: 100%;
+
+		.dashboard-section-header__heading-row > .components-flex {
+			flex-wrap: wrap;
+		}
+	}
+
 	.site-monitoring-dates {
 		color: var(--Scales-Grays-gray-700, #757575);
 	}
