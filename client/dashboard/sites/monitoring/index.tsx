@@ -133,7 +133,6 @@ function SiteMonitoring() {
 								__nextHasNoMarginBottom
 								__next40pxDefaultSize
 								onChange={ handleTimeRangeChange }
-								className={ clsx( 'site-monitoring-header-range' ) }
 								label={ __( 'Time period' ) }
 								hideLabelFromVision
 							>

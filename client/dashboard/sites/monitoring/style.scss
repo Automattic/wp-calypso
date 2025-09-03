@@ -10,49 +10,6 @@
 				justify-content: flex-end;
 			}
 		}
-
-		.site-monitoring-header-range {
-			width: 281px;
-			height: 40px;
-			text-wrap: nowrap;
-
-			&, &:focus, &:hover {
-				border-radius: var(--radius-s, 2px);
-				border: var(--Input-Default, 1px) solid var(--Scales-Grays-gray-200, #E0E0E0);
-				box-shadow: none;
-			}
-
-			background: var(--scales-black-white-white, #FFF);
-			padding: 0;
-
-			&::before {
-				border: 1px solid var(--Scales-Grays-gray-600, #949494);
-				background: #FCFCFC;
-			}
-
-			& > div {
-				text-align: center;
-				padding: 0 12px;
-				flex-basis: content;
-
-				button div {
-					font-size: var(--m, 13px);
-					font-style: normal;
-					font-weight: var(--Regular, 400);
-					line-height: var(--s, 20px); /* 153.846% */
-					color: var(--Scales-Grays-gray-700, #757575);
-				}
-
-				button[aria-checked="true"] div {
-					color: var(--Scales-Grays-gray-900, #1E1E1E);
-					font-weight: 600;
-				}
-			}
-
-			.components-toggle-group-control-option-base {
-				z-index: 1;
-			}
-		}
 	}
 
 	.site-monitoring-dates {
