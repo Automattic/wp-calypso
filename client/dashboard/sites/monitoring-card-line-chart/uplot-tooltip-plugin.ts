@@ -4,7 +4,7 @@ import uPlot from 'uplot';
 export interface seriesInfo {
 	color: string;
 	label: string;
-	value: string | number;
+	value?: string | number;
 }
 
 export interface UplotTooltipProps {

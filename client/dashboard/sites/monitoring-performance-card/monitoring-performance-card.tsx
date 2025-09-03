@@ -107,18 +107,23 @@ export default function MonitoringPerformanceCard( {
 	);
 
 	const tooltipSeriesCallback = ( i: number, value: number ): seriesInfo | null => {
-		const labelData: object = {
-			1: {
+		if ( i === 0 ) {
+			return null;
+		}
+		--i;
+
+		const labelData: seriesInfo[] = [
+			{
 				color: '#3858e9',
 				label: __( 'Requests per minute' ),
 			},
-			2: {
+			{
 				color: '#5BA300',
 				label: __( 'Average response time (ms)' ),
 			},
-		};
+		];
 
-		if ( labelData.hasOwnProperty( i ) ) {
+		if ( labelData.length >= i ) {
 			return {
 				color: labelData[ i ].color,
 				label: labelData[ i ].label,
