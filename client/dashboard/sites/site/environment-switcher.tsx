@@ -3,6 +3,9 @@ import {
 	stagingSiteCreateMutation,
 	isDeletingStagingSiteQuery,
 	hasStagingSiteQuery,
+	// validQuotaQuery,
+	siteLatestAtomicTransferQuery,
+	isCreatingStagingSiteQuery,
 } from '@automattic/api-queries';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
@@ -21,6 +24,10 @@ import { Icon, chevronDownSmall, plus } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { production, staging } from '../../components/icons';
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
+import {
+	isAtomicTransferInProgress,
+	isAtomicTransferredSite,
+} from '../../utils/site-atomic-transfers';
 import {
 	hasStagingSite,
 	getProductionSiteId,
@@ -58,13 +65,28 @@ const CurrentEnvironment = ( { site }: { site: Site } ) => {
 };
 
 const StagingSiteActionButton = ( {
-	isDeletingStagingSite,
-	isCreatingStagingSite,
+	// productionSiteId,
+	// stagingSiteId,
+	isStagingSiteDeleting,
+	isStagingSiteCreating,
 }: {
-	isDeletingStagingSite: boolean;
-	isCreatingStagingSite: boolean;
+	// productionSiteId: number;
+	// stagingSiteId: number;
+	isStagingSiteDeleting: boolean;
+	isStagingSiteCreating: boolean;
 } ) => {
-	if ( isCreatingStagingSite ) {
+	// const {
+	// 	data: hasValidQuota,
+	// 	isLoading: isLoadingQuotaValidation,
+	// 	error: isErrorValidQuota,
+	// } = useQuery( {
+	// 	...validQuotaQuery( productionSiteId ?? 0 ),
+	// 	enabled: !! productionSiteId,
+	// 	staleTime: 10 * 1000,
+	// 	meta: { persist: false },
+	// } );
+
+	if ( isStagingSiteCreating ) {
 		return (
 			<>
 				<Spinner style={ { width: '24px', height: '24px', padding: '4px', margin: 0 } } />
@@ -73,7 +95,7 @@ const StagingSiteActionButton = ( {
 		);
 	}
 
-	if ( isDeletingStagingSite ) {
+	if ( isStagingSiteDeleting ) {
 		return (
 			<>
 				<Spinner style={ { width: '24px', height: '24px', padding: '4px', margin: 0 } } />
@@ -95,14 +117,18 @@ const EnvironmentSwitcherDropdown = ( {
 	otherEnvironmentSite,
 	stagingSiteExists,
 	onClose,
-	isDeletingStagingSite,
+	onAddStagingSite,
+	isStagingSiteDeleting,
+	isStagingSiteCreating,
 }: {
 	currentSite: Site;
 	otherEnvironment: EnvironmentType;
 	otherEnvironmentSite?: Site;
 	stagingSiteExists: boolean;
 	onClose: () => void;
-	isDeletingStagingSite: boolean;
+	onAddStagingSite: () => void;
+	isStagingSiteDeleting: boolean;
+	isStagingSiteCreating: boolean;
 } ) => {
 	// TODO: CHheck if this logic can be simplified once the whole flow for adding and deleting staging sites is working
 	// and the UI correctly reflects ongoing processes.
@@ -113,27 +139,6 @@ const EnvironmentSwitcherDropdown = ( {
 	} else {
 		stagingSite = currentSite;
 	}
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const mutation = useMutation( stagingSiteCreateMutation( productionSite?.ID ?? 0 ) );
-	const handleCreate = () => {
-		mutation.mutate( undefined, {
-			onSuccess: () => {
-				createSuccessNotice( __( 'Staging site created.' ), { type: 'snackbar' } );
-			},
-			onError: ( error: Error ) => {
-				createErrorNotice(
-					sprintf(
-						// translators: "reason" is why adding the staging site failed.
-						__( 'Failed to create staging site: %(reason)s' ),
-						{ reason: error.message }
-					),
-					{
-						type: 'snackbar',
-					}
-				);
-			},
-		} );
-	};
 
 	// TODO: Handle upsell.
 	const handleUpsell = () => {};
@@ -153,12 +158,14 @@ const EnvironmentSwitcherDropdown = ( {
 				) }
 				{ ! currentSite.is_wpcom_staging_site && productionSite && ! stagingSiteExists && (
 					<MenuItem
-						onClick={ canCreateStagingSite( productionSite ) ? handleCreate : handleUpsell }
+						onClick={ canCreateStagingSite( productionSite ) ? onAddStagingSite : handleUpsell }
 					>
 						<HStack justify="flex-start">
 							<StagingSiteActionButton
-								isDeletingStagingSite={ isDeletingStagingSite }
-								isCreatingStagingSite={ mutation.isPending }
+								productionSiteId={ productionSite.ID ?? 0 }
+								stagingSiteId={ stagingSite?.ID ?? 0 }
+								isStagingSiteDeleting={ isStagingSiteDeleting }
+								isStagingSiteCreating={ isStagingSiteCreating }
 							/>
 						</HStack>
 					</MenuItem>
@@ -179,9 +186,26 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 		enabled: !! productionSiteId,
 	} );
 
+	const { data: atomicTransfer } = useQuery( {
+		...siteLatestAtomicTransferQuery( stagingSiteId ?? 0 ),
+		refetchInterval: ( query ) => {
+			return isAtomicTransferInProgress( query.state.data?.status ?? 'pending' ) ? 2000 : false;
+		},
+		enabled: !! stagingSiteId,
+	} );
+
+	const transferStatus = atomicTransfer?.status;
+
 	const { data: stagingSite } = useQuery( {
 		...siteByIdQuery( stagingSiteId ?? 0 ),
-		enabled: !! stagingSiteId,
+		refetchInterval: ( query ) => {
+			if ( ! query.state.data ) {
+				return 0;
+			}
+
+			return ! isAtomicTransferredSite( query.state.data ) ? 2000 : false;
+		},
+		enabled: !! stagingSiteId && transferStatus === 'completed',
 	} );
 
 	const { data: isStagingSiteDeleting } = useQuery( {
@@ -189,6 +213,10 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 		enabled: !! stagingSiteId,
 	} );
 
+	const { data: isStagingSiteCreating } = useQuery( {
+		...isCreatingStagingSiteQuery( stagingSiteId ?? 0 ),
+		enabled: !! stagingSiteId,
+	} );
 	// Staging site deletion process runs via async job. We need to keep on polling for the staging site deletion before we start displaying the button to add a staging site again
 	const { data: stagingSiteExistsFromQuery } = useQuery( {
 		...hasStagingSiteQuery( productionSiteId ?? 0 ),
@@ -210,6 +238,47 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 		queryClient,
 	] );
 
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+
+	const isStagingSiteReady =
+		isStagingSiteCreating && stagingSite && isAtomicTransferredSite( stagingSite );
+
+	useEffect( () => {
+		const handleStagingSiteReady = async () => {
+			if ( ! stagingSite ) {
+				return;
+			}
+			createSuccessNotice( __( 'Staging site created.' ), { type: 'snackbar' } );
+			queryClient.setQueryData(
+				isCreatingStagingSiteQuery( productionSiteId ?? 0 ).queryKey,
+				false
+			);
+		};
+
+		if ( isStagingSiteReady ) {
+			handleStagingSiteReady();
+		}
+	}, [ queryClient, isStagingSiteReady, stagingSite, createSuccessNotice, productionSiteId ] );
+
+	const mutation = useMutation( stagingSiteCreateMutation( productionSite?.ID ?? 0 ) );
+
+	const handleAddStagingSite = () => {
+		mutation.mutate( undefined, {
+			onError: ( error: Error ) => {
+				createErrorNotice(
+					sprintf(
+						// translators: "reason" is why adding the staging site failed.
+						__( 'Failed to create staging site: %(reason)s' ),
+						{ reason: error.message }
+					),
+					{
+						type: 'snackbar',
+					}
+				);
+			},
+		} );
+	};
+
 	const stagingSiteExists =
 		stagingSiteExistsFromQuery !== undefined ? stagingSiteExistsFromQuery : hasStagingSite( site );
 
@@ -217,14 +286,11 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 		<HStack style={ { width: 'auto', flexShrink: 0 } }>
 			<Dropdown
 				renderToggle={ ( { isOpen, onToggle } ) => {
-					// TO DO: Let's make sure to revise these conditions and simplify them once we have the design and the full understanding of how the
+					// TODO: Let's make sure to revise these conditions and simplify them once we have the design and the full understanding of how the
 					// deletion in progress should look like and if it should have a loading state during deletion.
 					const canToggle =
-						! isStagingSiteDeleting &&
-						( stagingSiteExists ||
-							( productionSite && canManageSite( productionSite ) ) ||
-							( stagingSite && canManageSite( stagingSite ) ) ||
-							( ! stagingSiteExists && productionSite ) );
+						( productionSite && canManageSite( productionSite ) ) ||
+						( stagingSite && canManageSite( stagingSite ) );
 
 					return (
 						<Button
@@ -253,7 +319,9 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 						otherEnvironmentSite={ site.is_wpcom_staging_site ? productionSite : stagingSite }
 						stagingSiteExists={ stagingSiteExists }
 						onClose={ onClose }
-						isStagingSiteDeleting={ isStagingSiteDeleting }
+						onAddStagingSite={ handleAddStagingSite }
+						isStagingSiteDeleting={ !! isStagingSiteDeleting }
+						isStagingSiteCreating={ !! isStagingSiteCreating }
 					/>
 				) }
 			/>
