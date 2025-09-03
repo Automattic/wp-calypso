@@ -857,7 +857,7 @@ class RegisterDomainStep extends Component {
 		);
 	}
 
-	clearTrademarkClaimState = () => {
+	rejectTrademarkClaim = () => {
 		this.setState( {
 			selectedSuggestion: null,
 			selectedSuggestionPosition: null,
@@ -865,9 +865,8 @@ class RegisterDomainStep extends Component {
 		} );
 	};
 
-	acceptTrademarkClaim = async () => {
+	acceptTrademarkClaim = () => {
 		this.props.onAddDomain( this.state.selectedSuggestion, this.state.selectedSuggestionPosition );
-		this.clearTrademarkClaimState();
 	};
 
 	renderTrademarkClaimsNotice() {
@@ -881,8 +880,8 @@ class RegisterDomainStep extends Component {
 				isLoading={ isLoading }
 				isSignupStep={ isSignupStep }
 				onAccept={ this.acceptTrademarkClaim }
-				onGoBack={ this.clearTrademarkClaimState }
-				onReject={ this.clearTrademarkClaimState }
+				onGoBack={ this.rejectTrademarkClaim }
+				onReject={ this.rejectTrademarkClaim }
 				suggestion={ selectedSuggestion }
 				trademarkClaimsNoticeInfo={ trademarkClaimsNoticeInfo }
 			/>
@@ -1745,6 +1744,11 @@ class RegisterDomainStep extends Component {
 
 		const isSubDomainSuggestion = get( suggestion, 'isSubDomainSuggestion' );
 		if ( ! hasDomainInCart( this.props.cart, domain ) && ! isSubDomainSuggestion ) {
+			// For Multi-domain flows, add the domain first, than check availability
+			if ( shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
+				this.props.onAddDomain( suggestion, position, previousState );
+			}
+
 			this.setState( { pendingCheckSuggestion: suggestion } );
 			const promise = this.preCheckDomainAvailability( domain )
 				.catch( () => {
@@ -1778,6 +1782,7 @@ class RegisterDomainStep extends Component {
 							selectedSuggestion: suggestion,
 							selectedSuggestionPosition: position,
 						} );
+						this.props.onMappingError( domain, status );
 					} else if ( ! shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
 						this.props.onAddDomain( suggestion, position, previousState );
 					}
