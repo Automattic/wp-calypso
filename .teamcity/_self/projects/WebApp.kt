@@ -946,7 +946,7 @@ object PlaywrightTestPRMatrix : BuildType({
 		}
 		xmlReport {
         	reportType = XmlReport.XmlReportType.JUNIT
-        	rules = "+:test/e2e/output/results.xml"
+        	rules = "+:**/output/results.xml"
 			verbose = true
         }
 	}
