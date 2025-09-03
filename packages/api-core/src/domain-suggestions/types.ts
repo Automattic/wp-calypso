@@ -1,3 +1,5 @@
+import { TranslateResult } from 'i18n-calypso';
+
 export type DomainSuggestionQueryVendor =
 	| 'variation2_front'
 	| 'variation4_front'
@@ -181,6 +183,17 @@ export interface DomainSuggestion {
 	 * Whether the client should show the dot gay notice
 	 */
 	dot_gay_notice_required?: true;
+
+	/**
+	 * Policy notices associated with the domain
+	 */
+	policy_notices?: PolicyNotice[];
+}
+
+export interface PolicyNotice {
+	type: string;
+	label: string;
+	message: TranslateResult;
 }
 
 export interface FreeDomainSuggestion {

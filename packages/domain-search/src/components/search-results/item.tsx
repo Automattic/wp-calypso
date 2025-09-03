@@ -3,6 +3,7 @@ import { HTTPS_SSL } from '@automattic/urls';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useMemo } from 'react';
+import { usePolicyBadges } from '../../hooks/use-policy-badges';
 import { useSuggestion } from '../../hooks/use-suggestion';
 import { useDomainSuggestionBadges } from '../../hooks/use-suggestion-badges';
 import { DomainSuggestion } from '../../ui';
@@ -17,6 +18,8 @@ export const SearchResultsItem = ( { domainName }: SearchResultsItemProps ) => {
 	const [ domain, ...tlds ] = domainName.split( '.' );
 
 	const suggestionBadges = useDomainSuggestionBadges( domainName );
+	const policyBadges = usePolicyBadges( domainName );
+	const badges = [ ...suggestionBadges, ...policyBadges ];
 
 	const suggestion = useSuggestion( domainName );
 
@@ -52,7 +55,7 @@ export const SearchResultsItem = ( { domainName }: SearchResultsItemProps ) => {
 
 	return (
 		<DomainSuggestion
-			badges={ suggestionBadges.length > 0 ? suggestionBadges : undefined }
+			badges={ badges.length > 0 ? badges : undefined }
 			notice={ notice }
 			domain={ domain }
 			tld={ tld }
