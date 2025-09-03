@@ -70,6 +70,8 @@ const EnvironmentSwitcherDropdown = ( {
 	stagingSiteExists: boolean;
 	onClose: () => void;
 } ) => {
+	// TODO: CHheck if this logic can be simplified once the whole flow for adding and deleting staging sites is working
+	// and the UI correctly reflects ongoing processes.
 	const productionSite = otherEnvironment === 'staging' ? currentSite : otherEnvironmentSite;
 	let stagingSite;
 	if ( otherEnvironment === 'staging' ) {
@@ -188,6 +190,8 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 		<HStack style={ { width: 'auto', flexShrink: 0 } }>
 			<Dropdown
 				renderToggle={ ( { isOpen, onToggle } ) => {
+					// TO DO: Let's make sure to revise these conditions and simplify them once we have the design and the full understanding of how the
+					// deletion in progress should look like and if it should have a loading state during deletion.
 					const canToggle =
 						! isStagingSiteDeleting &&
 						( stagingSiteExists ||
