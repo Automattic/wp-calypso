@@ -36,8 +36,8 @@ export const usePolicyNotices = ( domainName: string ): PolicyNotice[] => {
 		return message;
 	};
 
-	return policyNotices.map( ( notice ) => ( {
-		...notice,
-		message: getPolicyNoticeMessage( notice ),
+	return policyNotices.map( ( policyNotice ) => ( {
+		...policyNotice,
+		message: getPolicyNoticeMessage( policyNotice ),
 	} ) );
 };
