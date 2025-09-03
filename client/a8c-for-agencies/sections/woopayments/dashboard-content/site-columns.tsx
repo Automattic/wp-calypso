@@ -107,7 +107,9 @@ export const WooPaymentsStatusColumn = ( {
 				) }
 			</p>
 			<a
-				href={ localizeUrl( 'https://wordpress.com/support/woopayments-commissions/' ) }
+				href={ localizeUrl(
+					'https://agencieshelp.automattic.com/knowledge-base/automattic-for-agencies-earnings/'
+				) }
 				className="woopayments-status-popover__link"
 				target="_blank"
 				rel="noopener noreferrer"
