@@ -34,7 +34,6 @@ describe( 'SiteSpec Utils', () => {
 
 	beforeEach( () => {
 		config = require( '@automattic/calypso-config' );
-		config.mockReset();
 		config.isEnabled.mockReset();
 	} );
 
@@ -52,19 +51,13 @@ describe( 'SiteSpec Utils', () => {
 	} );
 
 	describe( 'getSiteSpecUrl', () => {
-		it( 'should return URL when feature flag is enabled', () => {
-			config.isEnabled.mockReturnValue( true );
-			config.mockReturnValueOnce( { url: 'https://example.com/site-spec.js' } );
-			expect( getSiteSpecUrl() ).toBe( 'https://example.com/site-spec.js' );
-		} );
-
-		it( 'should return null when feature flag is disabled', () => {
-			config.isEnabled.mockReturnValue( false );
-			expect( getSiteSpecUrl() ).toBe( null );
+		it( 'should return the configured URL', () => {
+			const url = getSiteSpecUrl();
+			expect( url ).toBe( 'https://example.com/site-spec.js' );
+			expect( config ).toHaveBeenCalledWith( 'site_spec' );
 		} );
 
 		it( 'should return null when URL is not configured', () => {
-			config.isEnabled.mockReturnValue( true );
 			config.mockReturnValueOnce( undefined );
 			expect( getSiteSpecUrl() ).toBe( null );
 		} );
