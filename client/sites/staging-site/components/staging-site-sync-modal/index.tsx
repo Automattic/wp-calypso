@@ -394,6 +394,7 @@ export default function SyncModal( {
 		isSiteWooStore && targetEnvironment === 'production' && sqlNode?.checkState === 'checked';
 
 	const showDomainConfirmation = targetEnvironment === 'production' && ! isLoadingBackupAttempt;
+
 	// Allow button if there is no backup if the confirmation passes
 	// regardless of browserCheckList
 	const isButtonDisabled =
@@ -430,6 +431,7 @@ export default function SyncModal( {
 						siteTitle={ targetSiteTitle }
 					/>
 				</HStack>
+
 				<div
 					className={ clsx( 'staging-site-card', {
 						'confirmation-input': showDomainConfirmation,
