@@ -15,7 +15,6 @@ import {
 	useHelpCenterContext,
 	type HelpCenterRequiredInformation,
 } from '../contexts/HelpCenterContext';
-import { useActionHooks } from '../hooks';
 import { useOpeningCoordinates } from '../hooks/use-opening-coordinates';
 import { HELP_CENTER_STORE } from '../stores';
 import { Container } from '../types';
@@ -52,8 +51,6 @@ const HelpCenter: React.FC< Container > = ( {
 			initializeAnalytics( currentUser, null );
 		}
 	}, [ currentUser ] );
-
-	useActionHooks();
 
 	const openingCoordinates = useOpeningCoordinates( ! isHelpCenterShown, isMinimized );
 

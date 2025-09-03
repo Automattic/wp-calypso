@@ -1,8 +1,6 @@
-import { HelpCenterSelect } from '@automattic/data-stores';
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
-import { useSelect } from '@wordpress/data';
 import Smooch from 'smooch';
 import { useOdieAssistantContext } from '../context';
+import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
 import { getConversationIdFromInteraction } from '../utils';
 import { useCreateZendeskConversation } from './use-create-zendesk-conversation';
 import type { Message } from '../types';
@@ -11,12 +9,8 @@ import type { Message } from '../types';
  * Send a message to the Zendesk conversation.
  */
 export const useSendZendeskMessage = () => {
-	const currentConversationId = useSelect( ( select ) => {
-		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
-		const currentSupportInteraction = store.getCurrentSupportInteraction();
-
-		return getConversationIdFromInteraction( currentSupportInteraction );
-	}, [] );
+	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
+	const currentConversationId = getConversationIdFromInteraction( currentSupportInteraction );
 
 	const { setChatStatus, chat } = useOdieAssistantContext();
 	const newConversation = useCreateZendeskConversation();

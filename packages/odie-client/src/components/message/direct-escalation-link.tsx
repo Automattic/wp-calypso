@@ -1,10 +1,8 @@
-import { HelpCenterSelect } from '@automattic/data-stores';
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
-import { useSelect } from '@wordpress/data';
 import { useCallback, createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
+import { useCurrentSupportInteraction } from '../../data/use-current-support-interaction';
 import { useCreateZendeskConversation } from '../../hooks';
 import { interactionHasZendeskEvent } from '../../utils';
 
@@ -14,12 +12,7 @@ export const DirectEscalationLink = ( { messageId }: { messageId: number | undef
 		useOdieAssistantContext();
 	const navigate = useNavigate();
 
-	const { currentSupportInteraction } = useSelect( ( select ) => {
-		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
-		return {
-			currentSupportInteraction: store.getCurrentSupportInteraction(),
-		};
-	}, [] );
+	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 
 	const handleClick = useCallback( () => {
 		const hasZendeskConversationAlreadyStarted =

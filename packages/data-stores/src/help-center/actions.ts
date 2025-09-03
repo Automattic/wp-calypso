@@ -12,7 +12,6 @@ import type {
 	HelpCenterSelect,
 	HelpCenterShowOptions,
 } from './types';
-import type { SupportInteraction } from '@automattic/odie-client/src/types';
 import type { Location } from 'history';
 
 /**
@@ -53,13 +52,6 @@ export const saveOpenState = ( isShown: boolean | undefined, isMinimized: boolea
 		} as APIFetchOptions ).catch( () => {} );
 	}
 };
-
-export function setCurrentSupportInteraction( supportInteraction: SupportInteraction ) {
-	return {
-		type: 'HELP_CENTER_SET_CURRENT_SUPPORT_INTERACTION',
-		supportInteraction,
-	} as const;
-}
 
 export function setHelpCenterRouterHistory(
 	history: { entries: Location[]; index: number } | undefined
@@ -300,7 +292,6 @@ export type HelpCenterAction =
 			| typeof setNavigateToRoute
 			| typeof setOdieInitialPromptText
 			| typeof setOdieBotNameSlug
-			| typeof setCurrentSupportInteraction
 			| typeof setAllowPremiumSupport
 			| typeof setHelpCenterOptions
 	  >

@@ -1,7 +1,5 @@
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { isTestModeEnvironment } from '@automattic/zendesk-client';
 import { useMutation } from '@tanstack/react-query';
-import { useDispatch } from '@wordpress/data';
 import { handleSupportInteractionsFetch } from './handle-support-interactions-fetch';
 import type { SupportInteraction, SupportInteractionEvent } from '../types';
 
@@ -9,7 +7,6 @@ import type { SupportInteraction, SupportInteractionEvent } from '../types';
  * Manage support interaction events.
  */
 export const useManageSupportInteraction = () => {
-	const { setCurrentSupportInteraction } = useDispatch( HELP_CENTER_STORE );
 	const isTestMode = isTestModeEnvironment();
 	/**
 	 * Start a new support interaction.
@@ -23,18 +20,6 @@ export const useManageSupportInteraction = () => {
 				isTestMode,
 				eventData
 			) as unknown as Promise< SupportInteraction >,
-		onSuccess: (
-			newSupportInteraction: SupportInteraction,
-			eventData: SupportInteractionEvent
-		) => {
-			const hasExpectedEvent = newSupportInteraction?.events?.some(
-				( event ) => event.event_external_id === eventData.event_external_id
-			);
-
-			if ( hasExpectedEvent ) {
-				setCurrentSupportInteraction( newSupportInteraction );
-			}
-		},
 	} );
 
 	/**
@@ -59,18 +44,6 @@ export const useManageSupportInteraction = () => {
 				isTestMode,
 				eventData
 			) as unknown as Promise< SupportInteraction >,
-		onSuccess: (
-			newSupportInteraction: SupportInteraction,
-			variables: { interactionId: string; eventData: SupportInteractionEvent }
-		) => {
-			const hasExpectedEvent = newSupportInteraction?.events?.some(
-				( event ) => event.event_external_id === variables.eventData.event_external_id
-			);
-
-			if ( hasExpectedEvent ) {
-				setCurrentSupportInteraction( newSupportInteraction );
-			}
-		},
 	} );
 
 	/**

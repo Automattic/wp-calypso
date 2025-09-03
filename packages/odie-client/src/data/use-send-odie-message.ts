@@ -1,8 +1,5 @@
-import { HelpCenterSelect } from '@automattic/data-stores';
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
-import { useSelect } from '@wordpress/data';
 import { useEffect, useState } from 'react';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import getMostRecentOpenLiveInteraction from '../components/notices/use-view-most-recent-conversation-notice';
@@ -15,6 +12,7 @@ import {
 import { useOdieAssistantContext } from '../context';
 import { useCreateZendeskConversation } from '../hooks';
 import { generateUUID, getOdieIdFromInteraction, getIsRequestingHumanSupport } from '../utils';
+import { useCurrentSupportInteraction } from './use-current-support-interaction';
 import { useManageSupportInteraction, broadcastOdieMessage } from '.';
 import type { Chat, Message, ReturnedChat } from '../types';
 
@@ -47,16 +45,8 @@ const getErrorMessageForSiteIdAndInternalMessageId = (
  * @returns useMutation return object.
  */
 export const useSendOdieMessage = () => {
-	const { currentSupportInteraction, odieId } = useSelect( ( select ) => {
-		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
-		const currentSupportInteraction = store.getCurrentSupportInteraction();
-		const odieId = getOdieIdFromInteraction( currentSupportInteraction );
-
-		return {
-			currentSupportInteraction: store.getCurrentSupportInteraction(),
-			odieId,
-		};
-	}, [] );
+	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
+	const odieId = getOdieIdFromInteraction( currentSupportInteraction );
 
 	const { addEventToInteraction } = useManageSupportInteraction();
 	const newConversation = useCreateZendeskConversation();

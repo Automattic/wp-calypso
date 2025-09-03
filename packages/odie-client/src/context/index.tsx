@@ -1,8 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useResetSupportInteraction } from '@automattic/help-center/src/hooks/use-reset-support-interaction';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useSelect } from '@wordpress/data';
 import { createContext, useCallback, useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useOdieBroadcastWithCallbacks } from '../data';
 import { useGetCombinedChat } from '../hooks';
 import { isOdieAllowedBot, getIsRequestingHumanSupport } from '../utils';
@@ -91,6 +91,8 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 		};
 	}, [] );
 
+	const navigate = useNavigate();
+
 	const [ experimentVariationName, setExperimentVariationName ] = useState<
 		string | null | undefined
 	>( null );
@@ -126,15 +128,10 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 		[ botNameSlug, mainChatState ]
 	);
 
-	/**
-	 * Reset the support interaction and clear the chat.
-	 */
-	const { resetSupportInteraction } = useResetSupportInteraction();
 	const clearChat = useCallback( () => {
 		trackEvent( 'chat_cleared', {} );
-		setMainChatState( emptyChat );
-		resetSupportInteraction();
-	}, [ trackEvent, resetSupportInteraction, setMainChatState ] );
+		navigate( '/odie' );
+	}, [ trackEvent, navigate ] );
 
 	/**
 	 * Add a new message to the chat.

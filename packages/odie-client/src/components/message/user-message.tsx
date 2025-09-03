@@ -1,7 +1,4 @@
-import { HelpCenterSelect } from '@automattic/data-stores';
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { ExternalLink } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
 import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
@@ -15,6 +12,7 @@ import {
 	getOdieErrorMessageNonEligible,
 } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
+import { useCurrentSupportInteraction } from '../../data/use-current-support-interaction';
 import {
 	interactionHasZendeskEvent,
 	userProvidedEnoughInformation,
@@ -72,11 +70,7 @@ export const UserMessage = ( {
 	const { isUserEligibleForPaidSupport, trackEvent, chat, canConnectToZendesk, forceEmailSupport } =
 		useOdieAssistantContext();
 
-	const currentSupportInteraction = useSelect(
-		( select ) =>
-			( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getCurrentSupportInteraction(),
-		[]
-	);
+	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 
 	const hasCannedResponse = message.context?.flags?.canned_response;
 	const isRequestingHumanSupport = getIsRequestingHumanSupport( message );

@@ -15,6 +15,7 @@ import Draggable, { DraggableProps } from 'react-draggable';
  */
 import { FeatureFlagProvider } from '../contexts/FeatureFlagContext';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
+import { useActionHooks } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { Container } from '../types';
 import HelpCenterContent from './help-center-content';
@@ -71,6 +72,8 @@ const HelpCenterContainer: React.FC< Container > = ( {
 	const classNames = clsx( 'help-center__container', isMobile ? 'is-mobile' : 'is-desktop', {
 		'is-minimized': isMinimized,
 	} );
+
+	useActionHooks();
 
 	const onDismiss = useCallback( () => {
 		handleClose();

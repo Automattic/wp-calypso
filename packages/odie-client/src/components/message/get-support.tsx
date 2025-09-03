@@ -1,6 +1,4 @@
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { Icon } from '@wordpress/components';
-import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { chevronRight } from '@wordpress/icons';
 import React from 'react';
@@ -54,8 +52,6 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 		mostRecentSupportInteractionId || null
 	);
 
-	const { setCurrentSupportInteraction } = useDataStoreDispatch( HELP_CENTER_STORE );
-
 	// Early return if user is already talking to a human
 	if ( chat.provider !== 'odie' ) {
 		return null;
@@ -84,8 +80,7 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 						),
 						action: async () => {
 							trackEvent( 'chat_open_previous_conversation' );
-							setCurrentSupportInteraction( supportInteraction );
-							navigate( '/odie?id=' + mostRecentSupportInteractionId );
+							navigate( '/odie?id=' + supportInteraction.uuid );
 						},
 					} );
 				}

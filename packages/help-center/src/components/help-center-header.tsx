@@ -1,16 +1,16 @@
 /* eslint-disable no-restricted-imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useGetHistoryChats } from '@automattic/help-center/src/hooks/use-get-history-chats';
+import { useCurrentSupportInteraction } from '@automattic/odie-client/src/data/use-current-support-interaction';
 import {
 	CardHeader,
 	Button,
-	Spinner,
 	Flex,
 	__experimentalHStack as HStack,
 	privateApis as componentsPrivateApis,
 } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useMemo, useEffect, useState } from '@wordpress/element';
+import { useMemo } from '@wordpress/element';
 import {
 	lineSolid,
 	moreVertical,
@@ -26,7 +26,6 @@ import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/pri
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useResetSupportInteraction } from '../hooks/use-reset-support-interaction';
 import { HELP_CENTER_STORE } from '../stores';
 import { BackButton } from './back-button';
 import type { Header } from '../types';
@@ -68,8 +67,6 @@ const SupportModeTitle = () => {
 
 const EllipsisMenu = () => {
 	const { __ } = useI18n();
-	const { resetSupportInteraction, isMutating: isResettingSupportInteraction } =
-		useResetSupportInteraction();
 	const navigate = useNavigate();
 	const { recentConversations } = useGetHistoryChats();
 	const { areSoundNotificationsEnabled } = useSelect( ( select ) => {
@@ -81,9 +78,8 @@ const EllipsisMenu = () => {
 	const { setAreSoundNotificationsEnabled, setIsMinimized } = useDispatch( HELP_CENTER_STORE );
 
 	const clearChat = async () => {
-		const newInteraction = await resetSupportInteraction();
 		recordTracksEvent( 'calypso_inlinehelp_clear_conversation' );
-		navigate( `/odie/?id=${ newInteraction.uuid }` );
+		navigate( '/odie' );
 	};
 
 	const handleViewChats = () => {
@@ -98,9 +94,7 @@ const EllipsisMenu = () => {
 		setAreSoundNotificationsEnabled( ! areSoundNotificationsEnabled );
 	};
 
-	return isResettingSupportInteraction ? (
-		<Spinner width={ 24 } height={ 24 } />
-	) : (
+	return (
 		<Menu>
 			<Menu.TriggerButton
 				title={ __( 'Help Center Options', __i18n_text_domain__ ) }
@@ -145,22 +139,11 @@ const EllipsisMenu = () => {
 const useHeaderText = () => {
 	const { __ } = useI18n();
 	const { pathname } = useLocation();
-	const [ isConversationWithZendesk, setIsConversationWithZendesk ] = useState< boolean >( false );
-	const { currentSupportInteraction } = useSelect( ( select ) => {
-		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
-		return {
-			currentSupportInteraction: store.getCurrentSupportInteraction(),
-		};
-	}, [] );
+	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 
-	useEffect( () => {
-		if ( currentSupportInteraction ) {
-			const zendeskEvent = currentSupportInteraction?.events.find(
-				( event ) => event.event_source === 'zendesk'
-			);
-			setIsConversationWithZendesk( !! zendeskEvent );
-		}
-	}, [ currentSupportInteraction ] );
+	const isConversationWithZendesk = currentSupportInteraction?.events.some(
+		( event ) => event.event_source === 'zendesk'
+	);
 
 	return useMemo( () => {
 		switch ( pathname ) {
