@@ -9,6 +9,7 @@ export async function updateUserSettingsPreferences(
 		'locale_variant',
 		'i18n_empathy_mode',
 		'use_fallback_for_incomplete_languages',
+		'enable_translator',
 	];
 	for ( const key in data ) {
 		if ( ! saveableKeys.includes( key ) ) {

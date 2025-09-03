@@ -1,3 +1,4 @@
+import { UserSettingsPreferences } from '@automattic/api-core';
 import {
 	userSettingsPreferencesMutation,
 	userSettingsPreferencesQuery,
@@ -9,8 +10,9 @@ import {
 	getLanguage,
 	isDefaultLocale,
 	isLocaleVariant,
+	isTranslatedIncompletely,
 } from '@automattic/i18n-utils';
-import { SubLanguage } from '@automattic/languages';
+import { SubLanguage, Language } from '@automattic/languages';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
 	Notice,
@@ -30,8 +32,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { languagesAsOptions } from '../../data/languages';
-import { UserSettingsPreferences } from '../../data/me-user-preferences';
+import { languagesAsOptions } from './languages';
 import type { Field } from '@wordpress/dataviews';
 
 // TODO add tests.
@@ -76,10 +77,10 @@ const thanksToCommunityTranslator = ( data: UserSettingsPreferences ) => {
 					language.name
 				),
 				{
-					// TODO: ExternalLink requires children content.
 					external: (
 						<ExternalLink
 							href={ `https://translate.wordpress.com/translators/?contributor_locale=${ language.langSlug }` }
+							children={ null }
 						/>
 					),
 				}
@@ -87,7 +88,10 @@ const thanksToCommunityTranslator = ( data: UserSettingsPreferences ) => {
 		</>
 	);
 };
-
+type CalypsoLanguage = Language & {
+	calypsoPercentTranslated: number;
+	isTranslatedCompletely: boolean;
+};
 export default function UserSettingsLanguageForm() {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: serverData } = useQuery( userSettingsPreferencesQuery() );
@@ -109,6 +113,9 @@ export default function UserSettingsLanguageForm() {
 	if ( ! data ) {
 		return null;
 	}
+	const selectedLanguage: CalypsoLanguage | undefined = data.language
+		? ( getLanguage( data.language ) as CalypsoLanguage )
+		: undefined;
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
@@ -134,7 +141,9 @@ export default function UserSettingsLanguageForm() {
 		} );
 	};
 
-	const shouldShowEmpathyMode = config.isEnabled( 'i18n/empathy-mode' );
+	const isDefaultLanguageSelected = ! data.language && isDefaultLocale( data.language );
+	const showIncompleteLocaleControl =
+		! isDefaultLanguageSelected && !! data.language && isTranslatedIncompletely( data.language );
 	const isSaving = mutation.isPending;
 
 	const isDirty =
@@ -144,7 +153,7 @@ export default function UserSettingsLanguageForm() {
 			return serverData[ key as keyof UserSettingsPreferences ] !== value;
 		} );
 
-	const hasValidLanguage = !! localData?.language && localData.language !== '';
+	const hasValidLanguage = !! data?.language && data.language !== '';
 	const canSubmit = ! isSaving && isDirty && hasValidLanguage;
 	const languageForm = {
 		type: 'regular' as const,
@@ -153,7 +162,12 @@ export default function UserSettingsLanguageForm() {
 			{
 				id: 'interfaceLanguage',
 				label: __( 'Language' ),
-				children: [ 'language', 'enable_translator', 'i18n_empathy_mode' ],
+				children: [
+					'language',
+					'use_fallback_for_incomplete_languages',
+					'enable_translator',
+					'i18n_empathy_mode',
+				],
 			},
 		],
 	};
@@ -194,6 +208,26 @@ export default function UserSettingsLanguageForm() {
 			elements: languagesAsOptions,
 		},
 		{
+			id: 'use_fallback_for_incomplete_languages',
+			label: __( 'Display interface in English' ),
+			description:
+				/* translators: %(languageName)s is a localized language name, %(percentTranslated)d%% is a percentage number (0-100), followed by an escaped percent sign %%. */
+				sprintf( __( '(%(languageName)s is only %(percentTranslated)d%% translated)' ), {
+					languageName: selectedLanguage?.name,
+					percentTranslated: selectedLanguage?.calypsoPercentTranslated,
+				} ),
+			type: 'boolean',
+			Edit: 'checkbox',
+			isVisible: () => showIncompleteLocaleControl,
+		},
+		{
+			id: 'i18n_empathy_mode',
+			label: 'Empathy mode (a8c-only)',
+			description: __(
+				'Pretend to use that language but display English where a translated exists'
+			),
+			type: 'boolean',
+			isVisible: () => config.isEnabled( 'i18n/empathy-mode' ),
 			Edit: ( { field, data, onChange } ) => {
 				const isEmpathyModeFieldDisabled =
 					! data.language || data.language === '' || !! isDefaultLocale( data.language );
@@ -210,32 +244,39 @@ export default function UserSettingsLanguageForm() {
 					/>
 				);
 			},
-			id: 'i18n_empathy_mode',
-			label: 'Empathy mode (a8c-only)',
-			description: 'Pretend to use that language but display English where a translated exists',
-			type: 'boolean',
-			isVisible: () => {
-				return shouldShowEmpathyMode;
-			},
 		},
 		{
-			Edit: 'checkbox',
 			id: 'enable_translator',
 			label: __( 'Enable the in-page translator where available' ),
-			//TODO: Description only accepts a string.
-			description: createInterpolateElement(
-				__( 'This allows you to help translate WordPress.com. <LearnMore/>' ),
-				{
-					external: (
-						<ExternalLink href="https://translate.wordpress.com/community-translator/">
-							{ __( 'Learn more' ) }
-						</ExternalLink>
-					),
-				}
-			),
 			type: 'boolean',
-			isVisible: ( item ) => {
-				return shouldDisplayCommunityTranslator( item );
+			isVisible: ( item ) => shouldDisplayCommunityTranslator( item ),
+			Edit: ( { field, data, onChange } ) => {
+				return (
+					<>
+						<CheckboxControl
+							checked={ field.getValue( { item: data } ) }
+							label={ field.label }
+							onChange={ ( newValue ) => {
+								onChange( {
+									[ field.id ]: newValue,
+								} );
+							} }
+						/>
+						{ /** printing it here instead of using the DataForm `description` because the description only supports strings. */ }
+						<Text variant="muted">
+							{ createInterpolateElement(
+								__( 'This allows you to help translate WordPress.com. <LearnMore/>' ),
+								{
+									LearnMore: (
+										<ExternalLink href="https://translate.wordpress.com/community-translator/">
+											{ __( 'Learn more' ) }
+										</ExternalLink>
+									),
+								}
+							) }
+						</Text>
+					</>
+				);
 			},
 		},
 	];
