@@ -172,9 +172,6 @@ export default function PreferencesLanguageForm() {
 			id: 'language',
 			label: __( 'Interface language' ),
 			type: 'text',
-			isValid: {
-				required: true,
-			},
 			Edit: ( { field, data, onChange } ) => {
 				return (
 					<>
@@ -188,7 +185,7 @@ export default function PreferencesLanguageForm() {
 							} }
 							placeholder={ __( 'Select a language' ) }
 							options={ field.elements || [] }
-							allowReset={ field.isValid?.required !== true }
+							allowReset={ false } // a language is required so we're not allowing to reset it and have an empty state.
 						/>
 
 						<Text variant="muted">
