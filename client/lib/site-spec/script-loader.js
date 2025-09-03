@@ -16,6 +16,8 @@ export function isSiteSpecScriptLoaded() {
  * Load the SiteSpec script.
  */
 export function loadSiteSpecScript() {
+	debug( '🔍 loadSiteSpecScript called' );
+
 	if ( siteSpecScriptLoaded ) {
 		debug( 'SiteSpec script already loaded' );
 		return Promise.resolve();
@@ -26,7 +28,7 @@ export function loadSiteSpecScript() {
 
 	if ( ! scriptUrl ) {
 		const error = new Error( 'SiteSpec not enabled or URL not configured' );
-		debug( 'Not loading SiteSpec script:', error.message );
+		debug( '❌ Not loading SiteSpec script:', error.message );
 		return Promise.reject( error );
 	}
 
@@ -40,25 +42,65 @@ export function loadSiteSpecScript() {
 	debug( `Loading SiteSpec script from "${ scriptUrl }"` );
 
 	return new Promise( ( resolve, reject ) => {
-		const script = document.createElement( 'script' );
-		script.src = scriptUrl;
-		script.type = 'text/javascript';
-		script.id = 'site-spec-script';
-		script.async = true;
+		// Load CSS first
+		const cssUrl = scriptUrl.replace( 'sitespec.umd.js', 'style.css' );
+		debug( `Loading SiteSpec CSS from "${ cssUrl }"` );
 
-		script.onload = () => {
-			debug( 'SiteSpec script loaded successfully' );
-			siteSpecScriptLoaded = true;
-			resolve();
+		const link = document.createElement( 'link' );
+		link.rel = 'stylesheet';
+		link.href = cssUrl;
+		link.id = 'site-spec-styles';
+
+		link.onload = () => {
+			debug( 'SiteSpec CSS loaded successfully' );
+
+			// After CSS loads, load the script
+			const script = document.createElement( 'script' );
+			script.src = scriptUrl;
+			script.type = 'text/javascript';
+			script.id = 'site-spec-script';
+			script.async = true;
+
+			script.onload = () => {
+				debug( 'SiteSpec script loaded successfully' );
+				siteSpecScriptLoaded = true;
+				resolve();
+			};
+
+			script.onerror = () => {
+				const error = new Error( `Failed to load SiteSpec script from ${ scriptUrl }` );
+				debug( 'Error loading SiteSpec script:', error.message );
+				reject( error );
+			};
+
+			document.head.appendChild( script );
 		};
 
-		script.onerror = () => {
-			const error = new Error( `Failed to load SiteSpec script from ${ scriptUrl }` );
-			debug( 'Error loading SiteSpec script:', error.message );
-			reject( error );
+		link.onerror = () => {
+			debug( 'Warning: Failed to load SiteSpec CSS from', cssUrl );
+			// Continue with script loading even if CSS fails
+			const script = document.createElement( 'script' );
+			script.src = scriptUrl;
+			script.type = 'text/javascript';
+			script.id = 'site-spec-script';
+			script.async = true;
+
+			script.onload = () => {
+				debug( 'SiteSpec script loaded successfully' );
+				siteSpecScriptLoaded = true;
+				resolve();
+			};
+
+			script.onerror = () => {
+				const error = new Error( `Failed to load SiteSpec script from ${ scriptUrl }` );
+				debug( 'Error loading SiteSpec script:', error.message );
+				reject( error );
+			};
+
+			document.head.appendChild( script );
 		};
 
-		document.head.appendChild( script );
+		document.head.appendChild( link );
 	} );
 }
 

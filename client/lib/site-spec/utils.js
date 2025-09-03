@@ -13,11 +13,14 @@ export function isSiteSpecEnabled() {
  * Get the cache-busted URL for the site spec script.
  */
 export function getSiteSpecUrl() {
+	debug( '🔍 getSiteSpecUrl called' );
 	const url = config( 'site_spec_url' );
+	debug( '🔍 site_spec_url config value:', url );
 	if ( ! url ) {
-		debug( 'SiteSpec URL not configured' );
+		debug( '❌ SiteSpec URL not configured' );
 		return null;
 	}
+	debug( '✅ SiteSpec URL found:', url );
 	return url;
 }
 

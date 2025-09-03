@@ -40,27 +40,15 @@ const LearningStep: StepType = function LearningStep() {
 					window.ReactDOM = ReactDOM;
 				}
 
-				// Load CSS first
-				const cssUrl = 'http://localhost:8085/dist/style.css';
-				console.log( '🔄 Loading SiteSpec CSS from:', cssUrl );
+				// Load script and CSS using the WordPress-style utility (the right way)
+				console.log( '🔄 About to call loadSiteSpecScript()...' );
 
-				const link = document.createElement( 'link' );
-				link.rel = 'stylesheet';
-				link.href = cssUrl;
-				link.id = 'site-spec-styles';
+				// Debug config
+				const config = getSiteSpecConfig();
+				console.log( '🔍 SiteSpec config:', config );
 
-				link.onload = () => {
-					console.log( '✅ SiteSpec CSS loaded successfully' );
-				};
-
-				link.onerror = () => {
-					console.error( '❌ Failed to load SiteSpec CSS from:', cssUrl );
-				};
-
-				document.head.appendChild( link );
-
-				// Load script using the WordPress-style utility
 				await loadSiteSpecScript();
+				console.log( '✅ loadSiteSpecScript() completed' );
 
 				console.log( '⏳ Waiting for React to be fully available...' );
 				await new Promise( ( resolve ) => setTimeout( resolve, 500 ) );
