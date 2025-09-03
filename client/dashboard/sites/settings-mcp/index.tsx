@@ -23,6 +23,9 @@ import SettingsPageHeader from '../settings-page-header';
 import type { SiteMcpAbilities } from '@automattic/api-core';
 import './style.scss';
 
+// Type for the API payload - simplified enabled/disabled flags
+type McpAbilitiesPayload = Record< string, number >;
+
 export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
@@ -73,7 +76,7 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 		e.preventDefault();
 
 		// Convert the abilities object to a simple key-value array with enabled status
-		const abilitiesArray: Record< string, number > = {};
+		const abilitiesArray: McpAbilitiesPayload = {};
 		Object.entries( formData ).forEach( ( [ abilityId, ability ] ) => {
 			abilitiesArray[ abilityId ] = ability.enabled ? 1 : 0;
 		} );
@@ -141,24 +144,30 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 	const groupedByType: Record<
 		string,
 		Record< string, [ string, SiteMcpAbilities[ string ] ][] >
-	> = abilities.reduce( ( typeGroups, [ abilityId, ability ] ) => {
-		const type = ability.type || 'tool'; // Default to 'tool' instead of 'other'
-		const category = ability.category || 'General';
+	> = abilities.reduce(
+		(
+			typeGroups: Record< string, Record< string, [ string, SiteMcpAbilities[ string ] ][] > >,
+			[ abilityId, ability ]
+		) => {
+			const type = ability.type || 'tool'; // Default to 'tool' instead of 'other'
+			const category = ability.category || 'General';
 
-		// Only include the three main types
-		if ( ! [ 'tool', 'resource', 'prompt' ].includes( type ) ) {
+			// Only include the three main types
+			if ( ! [ 'tool', 'resource', 'prompt' ].includes( type ) ) {
+				return typeGroups;
+			}
+
+			if ( ! typeGroups[ type ] ) {
+				typeGroups[ type ] = {};
+			}
+			if ( ! typeGroups[ type ][ category ] ) {
+				typeGroups[ type ][ category ] = [];
+			}
+			typeGroups[ type ][ category ].push( [ abilityId, ability ] );
 			return typeGroups;
-		}
-
-		if ( ! typeGroups[ type ] ) {
-			typeGroups[ type ] = {};
-		}
-		if ( ! typeGroups[ type ][ category ] ) {
-			typeGroups[ type ][ category ] = [];
-		}
-		typeGroups[ type ][ category ].push( [ abilityId, ability ] );
-		return typeGroups;
-	}, {} );
+		},
+		{} as Record< string, Record< string, [ string, SiteMcpAbilities[ string ] ][] > >
+	);
 
 	// Type descriptions
 	const typeDescriptions: Record< string, string > = {
