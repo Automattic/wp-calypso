@@ -1747,11 +1747,7 @@ class RegisterDomainStep extends Component {
 		if ( ! hasDomainInCart( this.props.cart, domain ) && ! isSubDomainSuggestion ) {
 			this.setState( { pendingCheckSuggestion: suggestion } );
 			const promise = this.preCheckDomainAvailability( domain )
-				.catch( () => {
-					this.setState( { pendingCheckSuggestion: null } );
-				} )
 				.then( ( { status, trademarkClaimsNoticeInfo } ) => {
-					this.setState( { pendingCheckSuggestion: null } );
 					this.props.recordDomainAddAvailabilityPreCheck(
 						domain,
 						status,
@@ -1778,9 +1774,12 @@ class RegisterDomainStep extends Component {
 							selectedSuggestion: suggestion,
 							selectedSuggestionPosition: position,
 						} );
-					} else if ( ! shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
-						this.props.onAddDomain( suggestion, position, previousState );
+					} else {
+						return this.props.onAddDomain( suggestion, position, previousState );
 					}
+				} )
+				.finally( () => {
+					this.setState( { pendingCheckSuggestion: null } );
 				} );
 			this.props.checkDomainAvailabilityPromises?.push( promise );
 		} else {
