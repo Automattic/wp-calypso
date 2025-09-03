@@ -23,14 +23,6 @@ import SettingsPageHeader from '../settings-page-header';
 import type { SiteMcpAbilities, SiteSettings } from '@automattic/api-core';
 import './style.scss';
 
-// Type for the API payload - simplified enabled/disabled flags
-type McpAbilitiesPayload = Record< string, number >;
-
-// Type for the mutation data - what the API actually expects
-type SiteSettingsMutationData = Partial< Omit< SiteSettings, 'mcp_abilities' > > & {
-	mcp_abilities?: McpAbilitiesPayload;
-};
-
 export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
@@ -81,13 +73,13 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 		e.preventDefault();
 
 		// Convert the abilities object to a simple key-value array with enabled status
-		const abilitiesArray: McpAbilitiesPayload = {};
+		const abilitiesArray: Record< string, number > = {};
 		Object.entries( formData ).forEach( ( [ abilityId, ability ] ) => {
 			abilitiesArray[ abilityId ] = ability.enabled ? 1 : 0;
 		} );
 
 		// Create mutation data with the proper type for the API
-		const mutationData: SiteSettingsMutationData = { mcp_abilities: abilitiesArray };
+		const mutationData = { mcp_abilities: abilitiesArray } as Partial< SiteSettings >;
 
 		mutation.mutate( mutationData, {
 			onSuccess: () => {
