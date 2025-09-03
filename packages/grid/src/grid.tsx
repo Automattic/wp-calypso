@@ -166,6 +166,7 @@ export function Grid( {
 					disabled={ ! editMode }
 					onResize={ ( delta ) => handleResize( id, delta ) }
 					onResizeEnd={ persistTemporaryLayout }
+					exposeItemSize={ exposeItemSize }
 				>
 					{ childrenMap.get( id ) }
 				</GridItem>
