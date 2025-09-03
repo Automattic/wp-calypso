@@ -29,7 +29,7 @@ const LearningStep: StepType = function LearningStep() {
 		const initializeSiteSpec = async () => {
 			try {
 				// Load CSS and script
-		        await Promise.all([loadSiteSpecCSS(), loadSiteSpecScript()]);
+				await Promise.all( [ loadSiteSpecCSS(), loadSiteSpecScript() ] );
 
 				// Initialize SiteSpec
 				if ( window.SiteSpec?.init ) {
@@ -40,7 +40,8 @@ const LearningStep: StepType = function LearningStep() {
 					} );
 				}
 			} catch ( error ) {
-				console.error( translate( 'Failed to initialize SiteSpec: %s', { args: [ error ] } ) );
+				// eslint-disable-next-line no-console
+				console.error( 'Failed to initialize SiteSpec:', error );
 			}
 		};
 
