@@ -6,7 +6,6 @@ import {
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
-	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	Button,
@@ -20,6 +19,7 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAuth } from '../../app/auth';
+import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
 import type { Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
@@ -112,14 +112,14 @@ function SiteDeleteWarningContent( { site, onClose }: { site: Site; onClose: () 
 	return (
 		<>
 			<Text as="p">{ renderWarningContent() }</Text>
-			<HStack justify="flex-end">
+			<ButtonStack justify="flex-end">
 				{ ! isAtomicRemovalInProgress && (
 					<Button variant="tertiary" onClick={ onClose }>
 						{ __( 'Cancel' ) }
 					</Button>
 				) }
 				{ renderPrimaryButton() }
-			</HStack>
+			</ButtonStack>
 		</>
 	);
 }
@@ -207,7 +207,7 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 							setFormData( ( data ) => ( { ...data, ...edits } ) );
 						} }
 					/>
-					<HStack justify="flex-end">
+					<ButtonStack justify="flex-end">
 						<Button variant="tertiary" disabled={ mutation.isPending } onClick={ onClose }>
 							{ __( 'Cancel' ) }
 						</Button>
@@ -220,7 +220,7 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 						>
 							{ __( 'Delete site' ) }
 						</Button>
-					</HStack>
+					</ButtonStack>
 				</VStack>
 			</form>
 		</>

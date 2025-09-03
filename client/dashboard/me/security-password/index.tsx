@@ -2,7 +2,6 @@ import { profileMutation } from '@automattic/api-queries';
 import { generatePassword } from '@automattic/generate-password';
 import { useMutation } from '@tanstack/react-query';
 import {
-	__experimentalHStack as HStack,
 	__experimentalInputControl as InputControl,
 	__experimentalInputControlSuffixWrapper as InputControlSuffixWrapper,
 	__experimentalVStack as VStack,
@@ -16,6 +15,7 @@ import { __ } from '@wordpress/i18n';
 import { seen, unseen } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useMemo, useState } from 'react';
+import { ButtonStack } from '../../components/button-stack';
 import PageLayout from '../../components/page-layout';
 import SecurityPageHeader from '../security-page-header';
 import type { Field } from '@wordpress/dataviews';
@@ -142,7 +142,7 @@ export default function SecurityPassword() {
 									setFormData( ( data ) => ( { ...data, ...edits } ) );
 								} }
 							/>
-							<HStack spacing={ 3 } justify="flex-start">
+							<ButtonStack justify="flex-start">
 								<Button
 									variant="primary"
 									type="submit"
@@ -154,7 +154,7 @@ export default function SecurityPassword() {
 								<Button variant="secondary" onClick={ handleGeneratePassword }>
 									{ __( 'Generate strong password' ) }
 								</Button>
-							</HStack>
+							</ButtonStack>
 						</VStack>
 					</form>
 				</CardBody>

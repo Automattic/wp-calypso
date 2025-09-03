@@ -183,4 +183,13 @@ export const test = base.extend< {
 	},
 } );
 
+export const tags = {
+	AUTHENTICATION: '@authentication',
+	CALYPSO_PR: '@calypso-pr',
+	CALYPSO_RELEASE: '@calypso-release',
+	GUTENBERG: '@gutenberg',
+	I18N: '@i18n',
+	JETPACK_REMOTE_SITE: '@jetpack-remote-site',
+};
+
 export { expect };

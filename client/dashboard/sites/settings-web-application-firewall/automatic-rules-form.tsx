@@ -1,18 +1,13 @@
 import { HostingFeatures, JetpackModules } from '@automattic/api-core';
 import { siteJetpackSettingsQuery, siteJetpackSettingsMutation } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
-import {
-	Card,
-	CardBody,
-	__experimentalHStack as HStack,
-	__experimentalVStack as VStack,
-	Button,
-} from '@wordpress/components';
+import { Card, CardBody, __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import { ButtonStack } from '../../components/button-stack';
 import { SectionHeader } from '../../components/section-header';
 import { hasHostingFeature, hasJetpackModule } from '../../utils/site-features';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
@@ -105,7 +100,7 @@ export default function AutomaticRulesForm( { site }: { site: Site } ) {
 								setFormData( ( data ) => ( { ...data, ...edits } ) );
 							} }
 						/>
-						<HStack justify="flex-start">
+						<ButtonStack justify="flex-start">
 							<Button
 								variant="primary"
 								type="submit"
@@ -114,7 +109,7 @@ export default function AutomaticRulesForm( { site }: { site: Site } ) {
 							>
 								{ __( 'Save' ) }
 							</Button>
-						</HStack>
+						</ButtonStack>
 					</VStack>
 				</form>
 			</CardBody>

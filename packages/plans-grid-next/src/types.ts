@@ -77,6 +77,8 @@ export type PlansIntent =
 	| 'plans-site-selected-legacy'
 	| 'plans-playground'
 	| 'plans-playground-premium' // This plan intent is currently not utilized but will be soon
+	| 'plans-wordpress-hosting'
+	| 'plans-website-builder'
 	| 'default';
 
 export interface PlanActionOverrides {

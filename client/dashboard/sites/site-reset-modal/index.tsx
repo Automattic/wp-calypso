@@ -19,6 +19,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useState, useCallback } from 'react';
+import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
 import ContentInfo from './content-info';
 import type { Site, SiteResetContentSummary, SiteResetStatus } from '@automattic/api-core';
@@ -34,11 +35,11 @@ function ErrorContent( { message, onClose }: { message: string; onClose: () => v
 	return (
 		<VStack spacing={ 6 }>
 			<Text>{ message }</Text>
-			<HStack justify="flex-end">
+			<ButtonStack justify="flex-end">
 				<Button variant="primary" onClick={ onClose }>
 					{ __( 'OK' ) }
 				</Button>
-			</HStack>
+			</ButtonStack>
 		</VStack>
 	);
 }

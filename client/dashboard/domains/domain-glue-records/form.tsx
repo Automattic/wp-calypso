@@ -1,7 +1,6 @@
 import {
 	Card,
 	CardBody,
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalInputControl as InputControl,
 	__experimentalInputControlSuffixWrapper as InputControlSuffixWrapper,
@@ -10,6 +9,7 @@ import {
 import { DataForm, isItemValid } from '@wordpress/dataviews';
 import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { ButtonStack } from '../../components/button-stack';
 import { Text } from '../../components/text';
 import { isValidIpAddress, isValidNameServerSubdomain } from '../../utils/domain';
 import type { DomainGlueRecord } from '@automattic/api-core';
@@ -142,7 +142,7 @@ export default function DomainGlueRecordsForm( {
 							} }
 						/>
 
-						<HStack justify="start" spacing={ 4 }>
+						<ButtonStack justify="start">
 							<Button
 								variant="primary"
 								type="submit"
@@ -151,7 +151,7 @@ export default function DomainGlueRecordsForm( {
 							>
 								{ submitButtonText }
 							</Button>
-						</HStack>
+						</ButtonStack>
 					</VStack>
 				</form>
 			</CardBody>

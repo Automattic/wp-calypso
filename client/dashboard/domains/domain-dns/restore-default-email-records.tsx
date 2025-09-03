@@ -2,10 +2,10 @@ import {
 	Modal,
 	Button,
 	__experimentalVStack as VStack,
-	__experimentalHStack as HStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { ButtonStack } from '../../components/button-stack';
 
 interface RestoreDefaultEmailRecordsProps {
 	onConfirm: () => void;
@@ -29,12 +29,12 @@ export default function RestoreDefaultEmailRecords( {
 				<Text>
 					{ __( 'This will restore SPF, DKIM and DMARC records to their default configurations.' ) }
 				</Text>
-				<HStack justify="flex-end" spacing={ 2 }>
+				<ButtonStack justify="flex-end">
 					<Button onClick={ onCancel }>{ __( 'Cancel' ) }</Button>
 					<Button variant="primary" isBusy={ isBusy } onClick={ onConfirm }>
 						{ __( 'Restore' ) }
 					</Button>
-				</HStack>
+				</ButtonStack>
 			</VStack>
 		</Modal>
 	);

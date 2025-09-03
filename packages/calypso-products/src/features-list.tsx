@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { MaterialIcon, ExternalLink, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { formatNumber } from '@automattic/number-formatters';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from '@automattic/urls';
 import i18n from 'i18n-calypso';
 import { MemoExoticComponent } from 'react';
@@ -168,6 +169,7 @@ import {
 	FEATURE_MANAGED_HOSTING,
 	FEATURE_THE_READER,
 	WPCOM_FEATURES_NO_ADVERTS,
+	WPCOM_FEATURES_BACKUPS_RESTORE,
 	FEATURE_BEAUTIFUL_THEMES,
 	FEATURE_PAGES,
 	FEATURE_USERS,
@@ -176,6 +178,7 @@ import {
 	FEATURE_SECURITY_BRUTE_FORCE,
 	FEATURE_SMART_REDIRECTS,
 	FEATURE_ALWAYS_ONLINE,
+	FEATURE_99_999_UPTIME,
 	FEATURE_FAST_DNS,
 	FEATURE_STYLE_CUSTOMIZATION,
 	FEATURE_DESIGN_TOOLS,
@@ -1388,6 +1391,15 @@ const FEATURES_LIST: FeatureList = {
 			),
 	},
 
+	[ WPCOM_FEATURES_BACKUPS_RESTORE ]: {
+		getSlug: () => WPCOM_FEATURES_BACKUPS_RESTORE,
+		getTitle: () => i18n.translate( 'Real time full-site backup/restore' ),
+		getDescription: () =>
+			i18n.translate(
+				'Comprehensive real-time backups of your entire site with instant one-click restore capabilities.'
+			),
+	},
+
 	[ FEATURE_ONE_CLICK_FIX_V2 ]: {
 		getSlug: () => FEATURE_ONE_CLICK_FIX_V2,
 		getTitle: () => i18n.translate( 'One-click fixes for most issues' ),
@@ -1855,6 +1867,25 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_ALWAYS_ONLINE,
 		getTitle: () => i18n.translate( 'Online forever' ),
 		getDescription: () => i18n.translate( 'Build and count on a site designed to last forever.' ),
+	},
+
+	[ FEATURE_99_999_UPTIME ]: {
+		getSlug: () => FEATURE_99_999_UPTIME,
+		getTitle: () => {
+			const title = i18n.translate( '%(uptimePercent)s uptime', {
+				args: {
+					uptimePercent: formatNumber( 0.99999, {
+						numberFormatOptions: { style: 'percent', maximumFractionDigits: 3 },
+					} ),
+				},
+				comment: '99.999% uptime',
+			} );
+			return i18n.hasTranslation( '%(uptimePercent)s uptime' )
+				? title
+				: i18n.translate( '99.999% uptime' );
+		},
+		getDescription: () =>
+			i18n.translate( 'Exceptional reliability with industry-leading uptime guarantee.' ),
 	},
 	[ FEATURE_FAST_DNS ]: {
 		getSlug: () => FEATURE_FAST_DNS,

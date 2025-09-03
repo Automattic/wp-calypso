@@ -4,6 +4,7 @@ import {
 	Spinner,
 	FormFileUpload,
 	DropZone,
+	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -204,6 +205,13 @@ const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGra
 		transition: 'opacity 0.2s',
 	};
 
+	const handleUpdateAvatar = ( openFileDialog: () => void ) => {
+		handleUnverifiedUserClick();
+		if ( isEmailVerified ) {
+			openFileDialog();
+		}
+	};
+
 	return (
 		<VStack
 			style={ {
@@ -215,81 +223,88 @@ const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGra
 				accept="image/*"
 				onChange={ handleReceiveFile }
 				render={ ( { openFileDialog } ) => (
-					<button
-						type="button"
-						onClick={ () => {
-							handleUnverifiedUserClick();
-							if ( isEmailVerified ) {
-								openFileDialog();
-							}
-						} }
-						style={ {
-							border: 'none',
-							padding: 0,
-							background: 'transparent',
-							cursor: isEmailVerified ? 'pointer' : 'default',
-						} }
-						aria-label={ uploadButtonLabel }
-					>
-						<div
-							style={ {
-								position: 'relative',
-								width: 150,
-								height: 150,
-								borderRadius: '50%',
-								overflow: 'hidden',
+					<HStack justify="flex-start">
+						<button
+							type="button"
+							onClick={ () => {
+								handleUpdateAvatar( openFileDialog );
 							} }
-							onMouseOver={ handleMouseOver }
-							onMouseOut={ handleMouseOut }
-							onFocus={ handleFocus }
-							onBlur={ handleBlur }
-							onKeyDown={ handleKeyDown }
-							tabIndex={ 0 }
-							role="button"
+							style={ {
+								border: 'none',
+								padding: 0,
+								background: 'transparent',
+								cursor: isEmailVerified ? 'pointer' : 'default',
+							} }
 							aria-label={ uploadButtonLabel }
 						>
-							{ isEmailVerified && (
-								<DropZone
-									label={ __( 'Drop to upload profile photo' ) }
-									onFilesDrop={ ( files: File[] ) => {
-										if ( files.length ) {
-											uploadGravatarFile( files[ 0 ] );
-										}
-									} }
-									style={ {
-										position: 'absolute',
-										top: 0,
-										left: 0,
-										width: '100%',
-										height: '100%',
-										zIndex: 1,
-									} }
+							<div
+								style={ {
+									position: 'relative',
+									width: 150,
+									height: 150,
+									borderRadius: '50%',
+									overflow: 'hidden',
+								} }
+								onMouseOver={ handleMouseOver }
+								onMouseOut={ handleMouseOut }
+								onFocus={ handleFocus }
+								onBlur={ handleBlur }
+								onKeyDown={ handleKeyDown }
+								tabIndex={ 0 }
+								role="button"
+								aria-label={ uploadButtonLabel }
+							>
+								{ isEmailVerified && (
+									<DropZone
+										label={ __( 'Drop to upload profile photo' ) }
+										onFilesDrop={ ( files: File[] ) => {
+											if ( files.length ) {
+												uploadGravatarFile( files[ 0 ] );
+											}
+										} }
+										style={ {
+											position: 'absolute',
+											top: 0,
+											left: 0,
+											width: '100%',
+											height: '100%',
+											zIndex: 1,
+										} }
+									/>
+								) }
+
+								<img
+									src={ tempImage || avatarUrl }
+									alt={ __( 'Gravatar' ) }
+									width={ 150 }
+									height={ 150 }
+									style={ { objectFit: 'cover' } }
 								/>
-							) }
 
-							<img
-								src={ tempImage || avatarUrl }
-								alt={ __( 'Gravatar' ) }
-								width={ 150 }
-								height={ 150 }
-								style={ { objectFit: 'cover' } }
-							/>
+								<div className="overlay-hover" style={ overlayStyle }>
+									<div style={ { color: '#fff' } }>
+										{ ! isEmailVerified && (
+											<Icon icon={ caution } size={ 24 } style={ { fill: '#fff' } } />
+										) }
 
-							<div className="overlay-hover" style={ overlayStyle }>
-								<div style={ { color: '#fff' } }>
-									{ ! isEmailVerified && (
-										<Icon icon={ caution } size={ 24 } style={ { fill: '#fff' } } />
-									) }
+										{ isEmailVerified && ! isUploading && (
+											<Icon icon={ upload } size={ 24 } style={ { fill: '#fff' } } />
+										) }
 
-									{ isEmailVerified && ! isUploading && (
-										<Icon icon={ upload } size={ 24 } style={ { fill: '#fff' } } />
-									) }
-
-									{ isEmailVerified && isUploading && <Spinner /> }
+										{ isEmailVerified && isUploading && <Spinner /> }
+									</div>
 								</div>
 							</div>
-						</div>
-					</button>
+						</button>
+						<Button
+							variant="tertiary"
+							onClick={ () => {
+								handleUpdateAvatar( openFileDialog );
+							} }
+						>
+							{ __( 'Update avatar' ) }
+						</Button>
+					</HStack>
 				) }
 			/>
 

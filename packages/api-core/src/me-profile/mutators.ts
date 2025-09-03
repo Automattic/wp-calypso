@@ -5,6 +5,9 @@ export async function updateProfile(
 	data: Partial< UserProfile >
 ): Promise< Partial< UserProfile > > {
 	const saveableKeys = [
+		'first_name',
+		'last_name',
+		'user_email',
 		'advertising_targeting_opt_out',
 		'display_name',
 		'description',

@@ -5,7 +5,6 @@ import {
 	Card,
 	CardBody,
 	TextareaControl,
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
 } from '@wordpress/components';
@@ -14,6 +13,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import { ButtonStack } from '../../components/button-stack';
 import { SectionHeader } from '../../components/section-header';
 import { hasJetpackModule } from '../../utils/site-features';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
@@ -118,7 +118,7 @@ export default function BlockListForm( { site }: { site: Site } ) {
 								setFormData( ( data ) => ( { ...data, ...edits } ) );
 							} }
 						/>
-						<HStack justify="flex-start">
+						<ButtonStack justify="flex-start">
 							<Button
 								variant="primary"
 								type="submit"
@@ -127,7 +127,7 @@ export default function BlockListForm( { site }: { site: Site } ) {
 							>
 								{ __( 'Save' ) }
 							</Button>
-						</HStack>
+						</ButtonStack>
 					</VStack>
 				</form>
 			</CardBody>
