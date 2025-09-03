@@ -59,7 +59,7 @@ export default function CancelSubscriptionAction( { subscription, onCancelSubscr
 		onSuccess: () => {
 			let successMessage;
 
-			if ( storeSubscription?.is_refundable ) {
+			if ( storeSubscription && storeSubscription.is_refundable ) {
 				successMessage = translate(
 					"%(productName)s has been cancelled and we'll refund you %(amount)s %(currency)s. We've emailed you a receipt.",
 					{
@@ -72,7 +72,7 @@ export default function CancelSubscriptionAction( { subscription, onCancelSubscr
 							'%(productName)s is the name of the product, %(amount)s is the refund amount, %(currency)s is the currency code.',
 					}
 				);
-			} else {
+			} else if ( storeSubscription && ! storeSubscription.is_refundable ) {
 				successMessage = translate(
 					'%(productName)s has been canceled, but it will remain active until %(date)s. After that, it will not renew. {{link}}Learn more{{/link}}',
 					{
@@ -94,6 +94,9 @@ export default function CancelSubscriptionAction( { subscription, onCancelSubscr
 						comment: '%(productName)s is the name of the product, %(date)s is the expiry date.',
 					}
 				);
+			} else {
+				// Not BD subscription, fallback to old message.
+				successMessage = translate( 'The subscription was successfully canceled.' );
 			}
 
 			dispatch(
