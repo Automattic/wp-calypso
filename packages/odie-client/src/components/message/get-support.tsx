@@ -2,7 +2,7 @@ import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { chevronRight } from '@wordpress/icons';
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
 import { useGetSupportInteractionById } from '../../data';
 import { useCreateZendeskConversation } from '../../hooks';
@@ -36,6 +36,8 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 } ) => {
 	const navigate = useNavigate();
 	const createZendeskConversation = useCreateZendeskConversation();
+	const { search } = useLocation();
+	const params = new URLSearchParams( search );
 
 	const {
 		chat,
@@ -66,7 +68,10 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 					text: __( 'Email support', __i18n_text_domain__ ),
 					action: async () => {
 						onClickAdditionalEvent?.( 'email' );
-						navigate( '/contact-form?mode=EMAIL&wapuuFlow=true' );
+						params.set( 'mode', 'EMAIL' );
+						params.set( 'wapuuFlow', 'true' );
+						const url = '/contact-form?' + params.toString();
+						navigate( url );
 					},
 				} );
 			} else {
@@ -116,8 +121,11 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 			{
 				text: __( 'Ask in our forums', __i18n_text_domain__ ),
 				action: async () => {
+					const params = new URLSearchParams( search );
+					params.set( 'mode', 'FORUM' );
+					const url = '/contact-form?' + params.toString();
 					onClickAdditionalEvent?.( 'forum' );
-					navigate( '/contact-form?mode=FORUM' );
+					navigate( url );
 				},
 			},
 		];
