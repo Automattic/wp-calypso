@@ -17,6 +17,12 @@ object WebApp : Project({
 	id("WebApp")
 	name = "Web app"
 
+	buildReportTab {
+        id = "test-reports"
+        title = "Report"
+        startPage = "output/html/index.html"
+    }
+
 	buildType(RunAllUnitTests)
 	buildType(CheckCodeStyleBranch)
 	buildType(Translate)
