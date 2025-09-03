@@ -6,6 +6,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { ButtonStack } from '../../components/button-stack';
 import { formatYmd } from '../../utils/datetime';
 import { DateInputs } from './date-inputs';
 import { PresetsListbox } from './presets-listbox';
@@ -213,14 +214,14 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 				</div>
 			</HStack>
 
-			<HStack as="div" spacing={ 2 } justify="flex-end">
+			<ButtonStack as="div" justify="flex-end">
 				<Button variant="secondary" onClick={ clear }>
 					{ __( 'Clear' ) }
 				</Button>
 				<Button variant="primary" onClick={ apply } disabled={ ! fromDraft || ! toDraft }>
 					{ __( 'Apply' ) }
 				</Button>
-			</HStack>
+			</ButtonStack>
 		</VStack>
 	);
 }

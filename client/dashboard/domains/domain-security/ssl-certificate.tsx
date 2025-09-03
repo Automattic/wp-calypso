@@ -17,6 +17,7 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { ReactElement } from 'react';
 import { domainSecurityRoute } from '../../app/router/domains';
+import { ButtonStack } from '../../components/button-stack';
 import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
 import type { Domain, SslDetails } from '@automattic/api-core';
@@ -166,7 +167,7 @@ export default function SslCertificate( { domainName, domain, sslDetails }: SslC
 							</Text>
 						) }
 						{ shouldShowProvisionButton && (
-							<HStack justify="flex-start">
+							<ButtonStack justify="flex-start">
 								<Button
 									__next40pxDefaultSize
 									variant="primary"
@@ -176,7 +177,7 @@ export default function SslCertificate( { domainName, domain, sslDetails }: SslC
 								>
 									{ __( 'Provision certificate' ) }
 								</Button>
-							</HStack>
+							</ButtonStack>
 						) }
 					</VStack>
 				</VStack>

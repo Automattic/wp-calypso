@@ -22,6 +22,7 @@ import {
 import { withShoppingCart } from '@automattic/shopping-cart';
 import {
 	Button,
+	Dropdown,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -90,7 +91,6 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 import { DomainSearch } from '../__legacy/domain-search';
 import { DomainCartV2 } from '../domain-cart';
-import DropdownFilters from '../domain-search-filters';
 import { DomainSearchInput } from '../domain-search-input';
 import DomainSearchResults from '../domain-search-results';
 import { FreeDomainForAYearPromo } from '../free-domain-for-a-year-promo';
@@ -713,6 +713,24 @@ class RegisterDomainStep extends Component {
 		);
 	}
 
+	areArraysDifferent( a, b ) {
+		if ( ! a || ! b ) {
+			return a !== b;
+		}
+		if ( a.length !== b.length ) {
+			return true;
+		}
+		const set = new Set( a );
+		return b.some( ( item ) => ! set.has( item ) );
+	}
+
+	didFilterChange( newFilters ) {
+		return (
+			this.areArraysDifferent( this.state.lastFilters.tlds, newFilters.tlds ) ||
+			this.state.lastFilters.exactSldMatchesOnly !== newFilters.exactSldMatchesOnly
+		);
+	}
+
 	renderSearchFilters() {
 		const isRenderingInitialSuggestions =
 			! Array.isArray( this.state.searchResults ) &&
@@ -720,27 +738,43 @@ class RegisterDomainStep extends Component {
 			! this.props.showExampleSuggestions;
 		const showFilters = ! isRenderingInitialSuggestions || this.props.isOnboarding;
 
-		const showTldFilter =
-			( Array.isArray( this.state.availableTlds ) && this.state.availableTlds.length > 0 ) ||
-			this.state.loadingResults;
-
 		if ( [ HUNDRED_YEAR_PLAN_FLOW, HUNDRED_YEAR_DOMAIN_FLOW ].includes( this.props.flowName ) ) {
 			return null;
 		}
 
+		if ( ! showFilters ) {
+			return null;
+		}
+
+		const filterCount =
+			this.state.lastFilters.tlds.length + ( this.state.lastFilters.exactSldMatchesOnly ? 1 : 0 );
+
 		return (
-			showFilters && (
-				<DropdownFilters
-					availableTlds={ this.state.availableTlds }
-					filters={ this.state.filters }
-					lastFilters={ this.state.lastFilters }
-					onChange={ this.onFiltersChange }
-					onReset={ this.onFiltersReset }
-					onSubmit={ this.onFiltersSubmit }
-					showPlaceholder={ this.state.loadingResults || ! this.getSuggestionsFromProps() }
-					showTldFilter={ showTldFilter }
-				/>
-			)
+			<Dropdown
+				showArrow={ false }
+				popoverProps={ { placement: 'bottom-end', offset: 10, noArrow: false, inline: true } }
+				renderToggle={ ( { onToggle } ) => {
+					return <DomainSearchControls.FilterButton count={ filterCount } onClick={ onToggle } />;
+				} }
+				renderContent={ ( { onClose } ) => {
+					return (
+						<DomainSearchControls.FilterPopover
+							availableTlds={ this.state.availableTlds }
+							filter={ this.state.lastFilters }
+							onClear={ () => {
+								this.onFiltersReset();
+								onClose();
+							} }
+							onApply={ ( newFilters ) => {
+								if ( this.didFilterChange( newFilters ) ) {
+									this.onFiltersChange( newFilters, { shouldSubmit: true } );
+									onClose();
+								}
+							} }
+						/>
+					);
+				} }
+			/>
 		);
 	}
 

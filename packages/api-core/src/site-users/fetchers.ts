@@ -7,3 +7,10 @@ export async function fetchCurrentSiteUser( siteId: number ): Promise< SiteUser 
 		apiNamespace: 'wp/v2',
 	} );
 }
+
+export async function fetchSiteUsers( siteId: number ): Promise< SiteUser[] > {
+	return wpcom.req.get( {
+		path: `/sites/${ siteId }/users`,
+		apiNamespace: 'wp/v2',
+	} );
+}

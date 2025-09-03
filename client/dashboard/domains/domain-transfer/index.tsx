@@ -20,6 +20,7 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useLocale } from '../../app/locale';
 import { domainRoute } from '../../app/router/domains';
+import { ButtonStack } from '../../components/button-stack';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
@@ -153,7 +154,7 @@ export default function DomainTransfer() {
 
 	const renderAuthCodeButton = () => {
 		return (
-			<HStack alignment="left">
+			<ButtonStack alignment="left">
 				<Button
 					__next40pxDefaultSize
 					variant="secondary"
@@ -163,7 +164,7 @@ export default function DomainTransfer() {
 				>
 					{ __( 'Get authorization code' ) }
 				</Button>
-			</HStack>
+			</ButtonStack>
 		);
 	};
 

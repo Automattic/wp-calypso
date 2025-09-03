@@ -5,7 +5,5 @@ export const domainAvailabilityQuery = ( domainName: string ) =>
 	queryOptions( {
 		queryKey: [ 'domain-availability', domainName ],
 		queryFn: () => fetchDomainAvailability( domainName ),
-		refetchOnWindowFocus: false,
-		refetchOnMount: false,
-		enabled: false,
+		meta: { persist: false },
 	} );

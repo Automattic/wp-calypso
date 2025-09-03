@@ -34,9 +34,14 @@ const ReplyBlock = ( { note }: { note: Note } ) => {
 			return;
 		}
 
+		const { site: siteId, reply_comment: replyCommentId } = note.meta.ids;
+		if ( ! siteId || ! replyCommentId ) {
+			return;
+		}
+
 		wpcom()
-			.site( note.meta.ids.site )
-			.comment( note.meta.ids.reply_comment )
+			.site( siteId )
+			.comment( replyCommentId )
 			.get( ( error: Error | null, data: { URL: string } ) => {
 				if ( ! error ) {
 					setReplyURL( data.URL );
