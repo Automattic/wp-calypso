@@ -4,10 +4,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { loadSiteSpecScript, loadSiteSpecCSS, getSiteSpecConfig } from 'calypso/lib/site-spec';
 import type { Step as StepType } from '../../types';
 
-// Import React for debugging and exposure purposes
-import React from 'react';
-import ReactDOM from 'react-dom';
-
 // TypeScript declaration for the global SiteSpec
 declare global {
 	interface Window {
@@ -33,12 +29,6 @@ const LearningStep: StepType = function LearningStep() {
 	useEffect( () => {
 		const initializeSiteSpec = async () => {
 			try {
-				// Expose React globally for SiteSpec script compatibility
-				if ( ! window.React ) {
-					window.React = React;
-					window.ReactDOM = ReactDOM;
-				}
-
 				// Load SiteSpec CSS first to ensure styling is available
 				try {
 					await loadSiteSpecCSS();
