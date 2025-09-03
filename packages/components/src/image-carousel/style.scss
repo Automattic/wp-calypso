@@ -10,6 +10,15 @@
 	align-items: flex-start;
 	justify-content: center;
 	background-color: #000;
+	transition: opacity 200ms ease-out;
+
+	@starting-style {
+		opacity: 0;
+	}
+
+	&.is-closing {
+		opacity: 0;
+	}
 
 	@media (max-width: 768px) {
 		padding-top: 20px;

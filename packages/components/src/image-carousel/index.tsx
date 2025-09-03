@@ -96,6 +96,7 @@ const ImageCarouselModal = ( {
 
 // Global state
 let modalRoot: ReturnType< typeof createRoot > | null = null;
+let modalContainer: HTMLElement | null = null;
 
 /**
  * "Add" function that manages both pieces
@@ -113,7 +114,7 @@ export const addImageCarousel = ( imageBlocks: Element[] ) => {
 
 	// Create persistent modal overlay if it doesn't exist
 	if ( ! modalRoot ) {
-		const modalContainer = document.createElement( 'div' );
+		modalContainer = document.createElement( 'div' );
 		modalContainer.id = 'reader-image-carousel-modal';
 		document.body.appendChild( modalContainer );
 		modalRoot = createRoot( modalContainer );
@@ -121,7 +122,14 @@ export const addImageCarousel = ( imageBlocks: Element[] ) => {
 
 	const openModal = ( initialIndex: number ) => {
 		const handleClose = () => {
-			modalRoot?.render( null );
+			modalContainer
+				?.querySelector( '.reader-image-carousel-overlay' )
+				?.classList.add( 'is-closing' );
+
+			// Wait for transition to complete before removing
+			setTimeout( () => {
+				modalRoot?.render( null );
+			}, 200 );
 		};
 
 		// Render modal with carousel content
