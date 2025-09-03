@@ -9,7 +9,7 @@ import { useMemo, Children, isValidElement, useState } from 'react';
  * Internal dependencies.
  */
 import { GridMetricsProvider } from './contexts';
-import { GridItem } from './grid-item';
+import { GridItemBasic, GridItemMeasured } from './grid-item';
 import type { GridLayoutItem, GridProps } from './types';
 import type { DragOverEvent } from '@dnd-kit/core';
 
@@ -147,6 +147,8 @@ export function Grid( {
 		}
 	}
 
+	const ItemComponent = exposeItemSize ? GridItemMeasured : GridItemBasic;
+
 	const gridContent = (
 		<div
 			ref={ resizeObserverRef }
@@ -159,17 +161,16 @@ export function Grid( {
 			} }
 		>
 			{ items.map( ( id ) => (
-				<GridItem
+				<ItemComponent
 					key={ id }
 					item={ layoutMap.get( id ) as GridLayoutItem }
 					maxColumns={ effectiveColumns }
 					disabled={ ! editMode }
 					onResize={ ( delta ) => handleResize( id, delta ) }
 					onResizeEnd={ persistTemporaryLayout }
-					exposeItemSize={ exposeItemSize }
 				>
 					{ childrenMap.get( id ) }
-				</GridItem>
+				</ItemComponent>
 			) ) }
 			{ remaining }
 		</div>

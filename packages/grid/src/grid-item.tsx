@@ -8,34 +8,46 @@ import { useState, useMemo } from 'react';
 /**
  * Internal dependencies.
  */
-import { useOptionalGridMetrics, GridItemSizeProvider } from './contexts';
+import { useGridMetrics, GridItemSizeProvider } from './contexts';
 import ResizeHandle from './resize-handle';
+/**
+ * Types
+ */
 import type { GridLayoutItem } from './types';
+import type { CSSProperties, ReactNode } from 'react';
 
-export function GridItem( {
+type RenderArgs = {
+	contentRef: ( el: HTMLDivElement | null ) => void;
+	contentStyle: CSSProperties;
+	resizeHandle: ReactNode;
+};
+
+export function GridItemBase( {
 	item,
 	maxColumns,
 	disabled = false,
 	children,
 	onResize,
 	onResizeEnd,
-	exposeItemSize,
+	renderContent,
 }: {
 	item: GridLayoutItem;
 	maxColumns: number;
 	disabled?: boolean;
-	children: React.ReactNode;
+	children: ReactNode;
 	onResize: ( delta: { width: number; height: number } ) => void;
 	onResizeEnd: () => void;
-	exposeItemSize?: boolean;
+	renderContent?: ( args: RenderArgs ) => ReactNode;
 } ) {
 	const [ previewDelta, setPreviewDelta ] = useState< { width: number; height: number } | null >(
 		null
 	);
+
 	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable( {
 		id: item.key,
 		disabled,
 	} );
+
 	const dragCursor = isDragging ? 'grabbing' : 'grab';
 	const style = {
 		transform: CSS.Translate.toString( transform ),
@@ -49,11 +61,8 @@ export function GridItem( {
 		zIndex: isDragging ? 2 : undefined,
 	};
 
-	// Inner content style with scaling effect
-	// The reason we need a separate "content" div is because the scaling animation
-	// impacts the computation done by useSortable if they're applied to the same div.
-	const contentStyle = {
-		position: 'relative' as const,
+	const contentStyle: CSSProperties = {
+		position: 'relative',
 		transition: 'transform 200ms ease, box-shadow 200ms ease',
 		transform: isDragging ? 'scale(1.05)' : undefined,
 		boxShadow: isDragging ? '0 5px 10px rgba(0,0,0,0.15)' : undefined,
@@ -70,7 +79,15 @@ export function GridItem( {
 		onResizeEnd();
 	};
 
-	// Preview overlay element (rendered directly in the GridItem)
+	const resizeHandle = (
+		<ResizeHandle
+			disabled={ disabled }
+			itemId={ item.key }
+			onResize={ handleResize }
+			onResizeEnd={ handleResizeEnd }
+		/>
+	);
+
 	const previewOverlay = previewDelta ? (
 		<div
 			style={ {
@@ -87,56 +104,93 @@ export function GridItem( {
 		/>
 	) : null;
 
-	const gridMetrics = useOptionalGridMetrics();
+	const contentRefCb: ( el: HTMLDivElement | null ) => void = () => {};
 
-	const cols = item.fullWidth ? maxColumns : Math.min( item.width ?? 1, maxColumns );
-	const rows = item.height ?? 1;
+	return (
+		<div ref={ setNodeRef } style={ style } { ...attributes } { ...listeners }>
+			{ renderContent ? (
+				renderContent( { contentRef: ( el ) => contentRefCb( el ), contentStyle, resizeHandle } )
+			) : (
+				<div ref={ contentRefCb } style={ contentStyle }>
+					{ children }
+					{ resizeHandle }
+				</div>
+			) }
+			{ previewOverlay }
+		</div>
+	);
+}
 
-	const [ measuredHeightPx, setMeasuredHeightPx ] = useState( 0 );
+export function GridItemBasic( props: {
+	item: GridLayoutItem;
+	maxColumns: number;
+	disabled?: boolean;
+	children: ReactNode;
+	onResize: ( delta: { width: number; height: number } ) => void;
+	onResizeEnd: () => void;
+} ) {
+	return (
+		<GridItemBase
+			{ ...props }
+			renderContent={ ( { contentRef, contentStyle, resizeHandle } ) => (
+				<div ref={ contentRef } style={ contentStyle }>
+					{ props.children }
+					{ resizeHandle }
+				</div>
+			) }
+		/>
+	);
+}
+
+export function GridItemMeasured( props: {
+	item: GridLayoutItem;
+	maxColumns: number;
+	disabled?: boolean;
+	children: ReactNode;
+	onResize: ( delta: { width: number; height: number } ) => void;
+	onResizeEnd: () => void;
+} ) {
+	const metrics = useGridMetrics();
+	const cols = props.item.fullWidth
+		? props.maxColumns
+		: Math.min( props.item.width ?? 1, props.maxColumns );
+	const rows = props.item.height ?? 1;
+
+	const needMeasure = !! metrics && metrics.rowHeight === 'auto';
+	const [ heightPxMeasured, setHeightPxMeasured ] = useState( 0 );
 	const contentMeasureRef = useResizeObserver( ( [ { contentRect } ] ) => {
-		setMeasuredHeightPx( contentRect.height );
+		if ( ! needMeasure ) {
+			return;
+		}
+		setHeightPxMeasured( contentRect.height );
 	} );
 
-	const widthPx = exposeItemSize && gridMetrics ? gridMetrics.spanToPxX( cols ) : 0;
-
-	let heightPx = 0;
-	if ( exposeItemSize && gridMetrics ) {
-		heightPx = gridMetrics.rowHeight === 'auto' ? measuredHeightPx : gridMetrics.spanToPxY( rows );
-	}
+	const widthPx = metrics ? metrics.spanToPxX( cols ) : 0;
+	const baseHeightPx = metrics ? metrics.spanToPxY( rows ) : 0;
+	const heightPx = needMeasure ? heightPxMeasured : baseHeightPx;
 
 	const size = useMemo(
 		() => ( { widthPx, heightPx, cols, rows } ),
 		[ widthPx, heightPx, cols, rows ]
 	);
 
-	const shouldProvideSize = exposeItemSize && !! gridMetrics;
-
 	return (
-		<div ref={ setNodeRef } style={ style } { ...attributes } { ...listeners }>
-			{ shouldProvideSize ? (
-				<GridItemSizeProvider id={ item.key } size={ size }>
-					<div ref={ contentMeasureRef } style={ contentStyle }>
-						{ children }
-						<ResizeHandle
-							disabled={ disabled }
-							itemId={ item.key }
-							onResize={ handleResize }
-							onResizeEnd={ handleResizeEnd }
-						/>
+		<GridItemBase
+			{ ...props }
+			renderContent={ ( { contentRef, contentStyle, resizeHandle } ) => (
+				<GridItemSizeProvider id={ props.item.key } size={ size }>
+					<div
+						ref={ ( el ) => {
+							contentRef( el );
+							contentMeasureRef( needMeasure ? el : null );
+						} }
+						style={ contentStyle }
+					>
+						{ props.children }
+						{ resizeHandle }
 					</div>
-					{ previewOverlay }
 				</GridItemSizeProvider>
-			) : (
-				<div ref={ contentMeasureRef } style={ contentStyle }>
-					{ children }
-					<ResizeHandle
-						disabled={ disabled }
-						itemId={ item.key }
-						onResize={ handleResize }
-						onResizeEnd={ handleResizeEnd }
-					/>
-				</div>
 			) }
-		</div>
+		/>
 	);
 }
