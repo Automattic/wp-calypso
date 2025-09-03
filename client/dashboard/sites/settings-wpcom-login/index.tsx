@@ -13,7 +13,7 @@ import { __ } from '@wordpress/i18n';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
-import { jetpackModuleRequiresConnection } from '../../utils/site-jetpack-modules';
+import { isJetpackModuleAvailable } from '../../utils/site-jetpack-modules';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SettingsPageHeader from '../settings-page-header';
 import SsoForm from './sso-form';
@@ -27,9 +27,11 @@ export default function WpcomLoginSettings( { siteSlug }: { siteSlug: string } )
 		throw notFound();
 	}
 
-	const ssoAvailable =
-		jetpackModuleRequiresConnection( jetpackModules, JetpackModules.SSO ) &&
-		! jetpackConnection?.offlineMode?.isActive;
+	const ssoAvailable = isJetpackModuleAvailable(
+		jetpackModules,
+		jetpackConnection,
+		JetpackModules.SSO
+	);
 
 	return (
 		<PageLayout

@@ -13,7 +13,7 @@ import { __ } from '@wordpress/i18n';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
-import { jetpackModuleRequiresConnection } from '../../utils/site-jetpack-modules';
+import { isJetpackModuleAvailable } from '../../utils/site-jetpack-modules';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SettingsPageHeader from '../settings-page-header';
 import AllowListForm from './allow-list-form';
@@ -31,9 +31,8 @@ export default function WebApplicationFirewallSettings( { siteSlug }: { siteSlug
 	}
 
 	const modulesAvailable =
-		( jetpackModuleRequiresConnection( jetpackModules, JetpackModules.WAF ) ||
-			jetpackModuleRequiresConnection( jetpackModules, JetpackModules.PROTECT ) ) &&
-		! jetpackConnection?.offlineMode?.isActive;
+		isJetpackModuleAvailable( jetpackModules, jetpackConnection, JetpackModules.WAF ) &&
+		isJetpackModuleAvailable( jetpackModules, jetpackConnection, JetpackModules.PROTECT );
 
 	return (
 		<PageLayout

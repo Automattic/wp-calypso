@@ -6,7 +6,7 @@ import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { notAllowed } from '@wordpress/icons';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import { jetpackModuleRequiresConnection } from '../../utils/site-jetpack-modules';
+import { isJetpackModuleAvailable } from '../../utils/site-jetpack-modules';
 import type { Site } from '@automattic/api-core';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
@@ -25,9 +25,8 @@ export default function WebApplicationFirewallSettingsSummary( {
 	}
 
 	const modulesAvailable =
-		( jetpackModuleRequiresConnection( jetpackModules, JetpackModules.WAF ) ||
-			jetpackModuleRequiresConnection( jetpackModules, JetpackModules.PROTECT ) ) &&
-		! jetpackConnection?.offlineMode?.isActive;
+		isJetpackModuleAvailable( jetpackModules, jetpackConnection, JetpackModules.WAF ) &&
+		isJetpackModuleAvailable( jetpackModules, jetpackConnection, JetpackModules.PROTECT );
 
 	const badges = modulesAvailable ? undefined : [ { text: __( 'Unavailable' ) } ];
 

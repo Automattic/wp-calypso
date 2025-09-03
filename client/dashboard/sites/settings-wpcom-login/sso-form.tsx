@@ -1,4 +1,4 @@
-import { JetpackModule, Site } from '@automattic/api-core';
+import { JetpackModule, JetpackModules, Site } from '@automattic/api-core';
 import {
 	siteJetpackModulesMutation,
 	siteJetpackSettingsQuery,

@@ -8,7 +8,7 @@ import { key } from '@wordpress/icons';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { hasHostingFeature } from '../../utils/site-features';
 import {
-	jetpackModuleRequiresConnection,
+	isJetpackModuleAvailable,
 	isJetpackModuleActivated,
 } from '../../utils/site-jetpack-modules';
 import type { Site } from '@automattic/api-core';
@@ -28,9 +28,11 @@ export default function WpcomLoginSettingsSummary( {
 		return null;
 	}
 
-	const ssoAvailable =
-		jetpackModuleRequiresConnection( jetpackModules, JetpackModules.SSO ) &&
-		! jetpackConnection?.offlineMode?.isActive;
+	const ssoAvailable = isJetpackModuleAvailable(
+		jetpackModules,
+		jetpackConnection,
+		JetpackModules.SSO
+	);
 
 	const ssoEnabled = isJetpackModuleActivated( jetpackModules, JetpackModules.SSO );
 
