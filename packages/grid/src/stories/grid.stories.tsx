@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useGridItemSize } from '../';
 import { Grid } from '../grid';
 import type { GridLayoutItem } from '../types';
 import type { Meta, StoryObj } from '@storybook/react';
@@ -14,6 +15,11 @@ const meta: Meta< typeof Grid > = {
 	argTypes: {
 		children: { control: false },
 		exposeItemSize: { control: 'boolean' },
+		rowHeight: {
+			control: { type: 'select' },
+			options: [ 'auto', 128, 256, 512 ],
+			defaultValue: 128,
+		},
 	},
 };
 
@@ -183,6 +189,125 @@ export const EditableGrid: StoryObj< typeof Grid > = {
 			description: {
 				story:
 					'This example demonstrates the Grid component in edit mode with drag, drop, and resize functionality. Use the edit mode to reorder and resize the cards. Grab and drag the handle in the bottom-right corner of each card to resize it. The layout and edit mode are managed with local state.',
+			},
+		},
+		layout: '',
+	},
+};
+
+function SizeBadge() {
+	const { widthPx, heightPx, cols, rows } = useGridItemSize();
+	const w = Math.round( widthPx );
+	const h = Math.round( heightPx );
+	return (
+		<div
+			style={ {
+				position: 'absolute',
+				right: 6,
+				bottom: 6,
+				padding: '2px 6px',
+				fontSize: 11,
+				fontFamily: 'monospace',
+				background: 'rgba(0,0,0,0.7)',
+				color: 'white',
+				borderRadius: 4,
+				pointerEvents: 'none',
+			} }
+		>
+			{ w }x{ h || '—' } px · { cols }x{ rows }
+		</div>
+	);
+}
+
+function CardWithSize( {
+	color,
+	children,
+	...props
+}: { color: string; children: React.ReactNode } & HTMLAttributes< HTMLDivElement > ) {
+	return (
+		<div
+			{ ...props }
+			style={ {
+				backgroundColor: color,
+				color: 'white',
+				padding: '20px',
+				display: 'flex',
+				alignItems: 'center',
+				justifyContent: 'center',
+				height: '100%',
+				boxSizing: 'border-box',
+				position: 'relative',
+				...props?.style,
+			} }
+		>
+			{ children }
+			<SizeBadge />
+		</div>
+	);
+}
+
+export const EditableGridWithSizes: StoryObj< typeof Grid > = {
+	render: function EditableGridWithSizes( args ) {
+		const [ layout, setLayout ] = useState< GridLayoutItem[] >( [
+			{ key: 'a', width: 1, height: 1 },
+			{ key: 'b', width: 2, height: 1 },
+			{ key: 'c', width: 1, height: 1 },
+			{ key: 'd', width: 2, height: 1 },
+			{ key: 'e', width: 1, height: 1 },
+			{ key: 'f', width: 1, height: 1 },
+			{ key: 'g', width: 2, height: 1, fullWidth: true },
+			{ key: 'h', width: 1, height: 1 },
+			{ key: 'i', width: 1, height: 1 },
+			{ key: 'j', width: 1, height: 1 },
+		] );
+
+		return (
+			<Grid
+				layout={ layout }
+				minColumnWidth={ 160 }
+				rowHeight={ args.rowHeight }
+				spacing={ 2 }
+				editMode
+				onChangeLayout={ ( nl ) => setLayout( nl ) }
+				exposeItemSize
+			>
+				<CardWithSize key="a" color="#f44336">
+					Card A
+				</CardWithSize>
+				<CardWithSize key="b" color="#2196f3">
+					Card B
+				</CardWithSize>
+				<CardWithSize key="c" color="#4caf50">
+					Card C
+				</CardWithSize>
+				<CardWithSize key="d" color="#ff9800">
+					Card D
+				</CardWithSize>
+				<CardWithSize key="e" color="#9c27b0">
+					Card E
+				</CardWithSize>
+				<CardWithSize key="f" color="#607d8b">
+					Card F
+				</CardWithSize>
+				<CardWithSize key="g" color="#3f51b5">
+					Card G with full width
+				</CardWithSize>
+				<CardWithSize key="h" color="#8bc34a">
+					Card H
+				</CardWithSize>
+				<CardWithSize key="i" color="#cddc39">
+					Card I
+				</CardWithSize>
+				<CardWithSize key="j" color="#ffeb3b">
+					Card J
+				</CardWithSize>
+			</Grid>
+		);
+	},
+	parameters: {
+		docs: {
+			description: {
+				story: 'Overlay with current tile dimensions (px and spans) using useGridItemSize().',
 			},
 		},
 		layout: '',
