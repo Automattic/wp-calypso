@@ -16,7 +16,7 @@ export default function Notifications( { className }: { className: string } ) {
 	const navigate = useNavigate();
 	const { user } = useAuth();
 	const locale = useLocale();
-	const isMobileViewport = useViewportMatch( 'medium', '<' );
+	const isMobileViewport = useViewportMatch( 'small', '<' );
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ hasUnseenNotifications, setHasUnseenNotifications ] = useState( user.has_unseen_notes );
 
@@ -100,7 +100,7 @@ export default function Notifications( { className }: { className: string } ) {
 					style={ {
 						width: '100vw',
 						height: '100vh',
-						maxWidth: '448px',
+						maxWidth: ! isMobileViewport ? '448px' : undefined,
 						maxHeight: 'inherit',
 						margin: '-8px',
 					} }
