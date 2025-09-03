@@ -41,11 +41,9 @@ const LearningStep: StepType = function LearningStep() {
 
 				// Load SiteSpec CSS first to ensure styling is available
 				try {
-					console.log( '🎨 Loading SiteSpec CSS...' );
 					await loadSiteSpecCSS();
-					console.log( '✅ SiteSpec CSS loaded successfully' );
 				} catch ( error ) {
-					console.warn( '⚠️ CSS loading failed, continuing with script:', error );
+					console.warn( 'SiteSpec CSS loading failed, continuing with script:', error );
 				}
 
 				// Load SiteSpec script
@@ -63,8 +61,14 @@ const LearningStep: StepType = function LearningStep() {
 						agentUrl: config.agentUrl,
 						agentId: config.agentId,
 						buildSiteUrl: config.buildSiteUrl,
-						onMessage: ( message ) => console.log( 'SiteSpec message:', message ),
-						onError: ( error ) => console.error( 'SiteSpec error:', error ),
+						onMessage: ( message ) => {
+							// Handle SiteSpec messages as needed
+							console.log( 'SiteSpec message:', message );
+						},
+						onError: ( error ) => {
+							// Handle SiteSpec errors as needed
+							console.error( 'SiteSpec error:', error );
+						},
 					} );
 
 					return () => {
@@ -76,7 +80,7 @@ const LearningStep: StepType = function LearningStep() {
 					console.error( 'SiteSpec initialization failed: init function not available' );
 				}
 			} catch ( error ) {
-				console.error( '❌ Failed to initialize SiteSpec:', error );
+				console.error( 'Failed to initialize SiteSpec:', error );
 			}
 		};
 
