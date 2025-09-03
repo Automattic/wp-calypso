@@ -175,5 +175,9 @@
 	"boom_analytics_key": "production",
 	"theme_color": "#1D2327",
 	"hotjar_enabled": true,
-	"survicate_enabled": true
+	"survicate_enabled": true,
+	"site_spec": {
+		"url": "http://widgets.wp.com/site-spec/bundle-1.0.0.umd.js",
+		"css_url": "http://widgets.wp.com/site-spec/style-1.0.0.css"
+	}
 }

@@ -208,8 +208,8 @@
 	"100_year_plan_calendly_id": "wpcom-100-years/30min",
 	"bilmur_url": "https://s0.wp.com/wp-content/js/bilmur.min.js",
 	"site_spec": {
-		"url": "http://localhost:8085/dist/sitespec.umd.js",
-		"css_url": "http://localhost:8085/dist/style.css",
+		"url": "http://widgets.wp.com/site-spec/bundle-1.0.0.umd.js",
+		"css_url": "http://widgets.wp.com/site-spec/style-1.0.0.css",
 		"agent_url": "https://public-api.wordpress.com/wpcom/v2/ai/agent",
 		"agent_id": "site-spec",
 		"build_site_url": "https://wordpress.com/setup/ai-site-builder?spec_id="

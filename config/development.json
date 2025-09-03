@@ -19,8 +19,8 @@
 	"hotjar_enabled": true,
 	"survicate_enabled": true,
 	"site_spec": {
-		"url": "http://localhost:8085/dist/sitespec.bundle.umd.js",
-		"css_url": "http://localhost:8085/dist/style.css"
+		"url": "http://widgets.wp.com/site-spec/bundle-1.0.0.umd.js",
+		"css_url": "http://widgets.wp.com/site-spec/style-1.0.0.css"
 	},
 	"login_url": "https://wordpress.com/wp-login.php",
 	"logout_url": "https://wordpress.com/wp-login.php?action=logout&redirect_to=https%3A%2F%2F|subdomain|wordpress.com",
