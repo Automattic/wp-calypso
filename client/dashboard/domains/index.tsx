@@ -1,17 +1,17 @@
+import { domainsQuery } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
+import { Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useAuth } from '../app/auth';
-import { domainsQuery } from '../app/queries/domains';
-import { domainsPurchaseRoute } from '../app/router/domains';
 import { DataViewsCard } from '../components/dataviews-card';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
-import RouterLinkButton from '../components/router-link-button';
 import { useActions, useFields, DEFAULT_VIEW, DEFAULT_LAYOUTS } from './dataviews';
 import type { DomainsView } from './dataviews';
-import type { DomainSummary } from '../data/types';
+import type { DomainSummary } from '@automattic/api-core';
 
 export function getDomainId( domain: DomainSummary ): string {
 	return `${ domain.domain }-${ domain.blog_id }`;
@@ -39,13 +39,13 @@ function Domains() {
 				<PageHeader
 					title={ __( 'Domains' ) }
 					actions={
-						<RouterLinkButton
+						<Button
 							variant="primary"
 							__next40pxDefaultSize
-							to={ domainsPurchaseRoute.fullPath }
+							href={ isEnabled( 'domain-search-rewrite' ) ? '/setup/domain' : '/start/domain' }
 						>
 							{ __( 'Add New Domain' ) }
-						</RouterLinkButton>
+						</Button>
 					}
 				/>
 			}

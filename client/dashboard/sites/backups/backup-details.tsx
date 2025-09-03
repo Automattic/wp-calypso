@@ -12,10 +12,11 @@ import {
 import { __, sprintf } from '@wordpress/i18n';
 import { rotateLeft, download } from '@wordpress/icons';
 import { siteBackupRestoreRoute, siteBackupDownloadRoute } from '../../app/router/sites';
+import { ButtonStack } from '../../components/button-stack';
 import { useFormattedTime } from '../../components/formatted-time';
 import { SectionHeader } from '../../components/section-header';
 import { gridiconToWordPressIcon } from '../../utils/gridicons';
-import type { ActivityLogEntry, Site } from '../../data/types';
+import type { ActivityLogEntry, Site } from '@automattic/api-core';
 
 export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; site: Site } ) {
 	const router = useRouter();
@@ -46,7 +47,7 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 					decoration={ <Icon icon={ gridiconToWordPressIcon( backup.gridicon ) } /> }
 					actions={
 						backup.rewind_id && (
-							<HStack spacing={ 2 }>
+							<ButtonStack>
 								<Button
 									variant="secondary"
 									size="compact"
@@ -63,7 +64,7 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 								>
 									{ __( 'Restore to this point' ) }
 								</Button>
-							</HStack>
+							</ButtonStack>
 						)
 					}
 				/>

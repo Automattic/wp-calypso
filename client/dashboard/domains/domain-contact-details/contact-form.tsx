@@ -1,7 +1,13 @@
+import { type DomainContactDetails } from '@automattic/api-core';
+import {
+	countryListQuery,
+	statesListQuery,
+	domainWhoisMutation,
+	domainWhoisValidateMutation,
+} from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
 	ExternalLink,
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	Button,
@@ -14,11 +20,9 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
-import { countryListQuery, statesListQuery } from '../../app/queries/domain-supported-contries';
-import { domainWhoisMutation, domainWhoisValidateMutation } from '../../app/queries/domain-whois';
+import { ButtonStack } from '../../components/button-stack';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
-import { type DomainContactDetails } from '../../data/domain-whois';
 import { getContactFormFields } from './contact-form-fields';
 
 interface ContactFormProps {
@@ -182,7 +186,7 @@ export default function ContactForm( {
 							</VStack>
 						</Notice>
 						<form onSubmit={ handleSubmit }>
-							<HStack justify="flex-start" spacing={ 2 }>
+							<ButtonStack justify="flex-start">
 								<Button
 									variant="primary"
 									type="submit"
@@ -194,7 +198,7 @@ export default function ContactForm( {
 								<Button variant="secondary" onClick={ onCancel }>
 									{ __( 'Cancel' ) }
 								</Button>
-							</HStack>
+							</ButtonStack>
 						</form>
 					</VStack>
 				</CardBody>

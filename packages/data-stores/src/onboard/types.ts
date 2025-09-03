@@ -1,5 +1,5 @@
 import { GlobalStyles } from '../site';
-import type { DomainSuggestion } from '@automattic/data';
+import type { DomainSuggestion } from '@automattic/api-core';
 
 export type DomainForm = {
 	lastQuery?: string;

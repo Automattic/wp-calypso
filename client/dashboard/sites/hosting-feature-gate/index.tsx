@@ -2,8 +2,7 @@ import React, { ReactNode } from 'react';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import HostingFeatureActivation from './activation';
 import HostingFeatureUpsell from './upsell';
-import type { HostingFeatures } from '../../data/constants';
-import type { Site } from '../../data/types';
+import type { HostingFeatures, Site } from '@automattic/api-core';
 
 export interface HostingFeatureGateProps {
 	site: Site;

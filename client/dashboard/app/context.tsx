@@ -23,6 +23,7 @@ export type AppConfig = {
 	supports: {
 		overview: boolean;
 		sites: SiteFeatureSupports | false;
+		plugins: boolean;
 		domains: boolean;
 		emails: boolean;
 		reader: boolean;
@@ -40,6 +41,7 @@ const AppContext = createContext< AppConfig >( {
 	supports: {
 		overview: false,
 		sites: false,
+		plugins: false,
 		domains: false,
 		emails: false,
 		reader: false,

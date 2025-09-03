@@ -1,8 +1,8 @@
 /**
  * @jest-environment jsdom
  */
+import { Domain } from '@automattic/api-core';
 import { screen } from '@testing-library/react';
-import { Domain } from '../../../data/domain';
 import { render } from '../../../test-utils';
 
 const domainName = 'example.com';

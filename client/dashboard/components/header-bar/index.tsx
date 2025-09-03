@@ -1,6 +1,6 @@
+import { isSupportUserSession } from '@automattic/calypso-support-session';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import clsx from 'clsx';
-import { isSupportUserSession } from '../../app/auth/support-session';
 import './style.scss';
 
 function Header( { as = 'div', children }: { as?: 'div' | 'header'; children?: React.ReactNode } ) {

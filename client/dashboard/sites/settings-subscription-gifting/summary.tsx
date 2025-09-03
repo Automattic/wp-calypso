@@ -1,10 +1,10 @@
+import { DotcomFeatures } from '@automattic/api-core';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { heading } from '@wordpress/icons';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import { DotcomFeatures } from '../../data/constants';
 import { hasPlanFeature } from '../../utils/site-features';
-import type { Site, SiteSettings } from '../../data/types';
+import type { Site, SiteSettings } from '@automattic/api-core';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
 export default function SubscriptionGiftingSettingsSummary( {

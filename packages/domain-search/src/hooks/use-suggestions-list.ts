@@ -1,4 +1,4 @@
-import { type DomainAvailability, DomainAvailabilityStatus } from '@automattic/data';
+import { type DomainAvailability, DomainAvailabilityStatus } from '@automattic/api-core';
 import { useQueries, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 import { partitionSuggestions } from '../helpers/partition-suggestions';
@@ -7,9 +7,10 @@ import { useDomainSearch } from '../page/context';
 export const useSuggestionsList = () => {
 	const { query, queries, config } = useDomainSearch();
 
-	const { data: suggestions = [], isLoading: isLoadingSuggestions } = useQuery(
-		queries.domainSuggestions( query )
-	);
+	const { data: suggestions = [], isLoading: isLoadingSuggestions } = useQuery( {
+		...queries.domainSuggestions( query ),
+		enabled: true,
+	} );
 
 	const { isLoading: isLoadingFreeSuggestion } = useQuery( queries.freeSuggestion( query ) );
 

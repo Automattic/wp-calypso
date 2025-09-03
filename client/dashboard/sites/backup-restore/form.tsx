@@ -1,15 +1,16 @@
+import { siteBackupRestoreInitiateMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import { Button, __experimentalHStack as HStack } from '@wordpress/components';
+import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { rotateLeft } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteBackupRestoreInitiateMutation } from '../../app/queries/site-backup-restore';
 import { siteBackupRestoreRoute } from '../../app/router/sites';
+import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
-import type { RestoreConfig } from '../../data/site-backup-restore';
+import type { RestoreConfig } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 const fields: Field< RestoreConfig >[] = [
@@ -99,6 +100,11 @@ function SiteBackupRestoreForm( {
 		);
 	};
 
+	const handleSubmit = ( e: React.FormEvent ) => {
+		e.preventDefault();
+		handleRestore();
+	};
+
 	const restoreWarning = formData.sqls
 		? __(
 				'This action will replace all settings, posts, pages and other site content with the information from the selected restore point.'
@@ -110,31 +116,33 @@ function SiteBackupRestoreForm( {
 	const isFormValid = Object.values( formData ).some( ( value ) => value );
 
 	return (
-		<>
-			<p>{ __( 'Choose the items you wish to restore:' ) }</p>
-			<DataForm< RestoreConfig >
-				data={ formData }
-				fields={ fields }
-				form={ form }
-				onChange={ handleFormChange }
-			/>
+		<form onSubmit={ handleSubmit }>
+			<VStack spacing={ 4 }>
+				<p>{ __( 'Choose the items you wish to restore:' ) }</p>
+				<DataForm< RestoreConfig >
+					data={ formData }
+					fields={ fields }
+					form={ form }
+					onChange={ handleFormChange }
+				/>
 
-			<Notice variant="info" title={ __( 'Important' ) }>
-				{ restoreWarning }
-			</Notice>
+				<Notice variant="info" title={ __( 'Important' ) }>
+					{ restoreWarning }
+				</Notice>
 
-			<HStack justify="flex-start">
-				<Button
-					variant="primary"
-					icon={ rotateLeft }
-					onClick={ handleRestore }
-					isBusy={ isRestoreMutationPending }
-					disabled={ ! isFormValid || isRestoreMutationPending }
-				>
-					{ __( 'Restore now' ) }
-				</Button>
-			</HStack>
-		</>
+				<ButtonStack justify="flex-start">
+					<Button
+						variant="primary"
+						icon={ rotateLeft }
+						type="submit"
+						isBusy={ isRestoreMutationPending }
+						disabled={ ! isFormValid || isRestoreMutationPending }
+					>
+						{ __( 'Restore now' ) }
+					</Button>
+				</ButtonStack>
+			</VStack>
+		</form>
 	);
 }
 

@@ -3,8 +3,8 @@ import {
 	HostingFeatures,
 	JetpackFeatures,
 	JetpackModules,
-} from '../data/constants';
-import type { Site } from '../data/types';
+} from '@automattic/api-core';
+import type { Site } from '@automattic/api-core';
 
 // Returns whether the plan supports a specific feature.
 export function hasPlanFeature( site: Site, feature: `${ DotcomFeatures | JetpackFeatures }` ) {

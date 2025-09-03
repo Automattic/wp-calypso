@@ -1,3 +1,4 @@
+import { pushToStagingMutation, pullFromStagingMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
 	Button,
@@ -24,10 +25,6 @@ import { __, isRTL } from '@wordpress/i18n';
 import { chevronRight, chevronLeft } from '@wordpress/icons';
 import clsx from 'clsx';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
-import {
-	pushToStagingMutation,
-	pullFromStagingMutation,
-} from 'calypso/dashboard/app/queries/site-staging-sync';
 import InlineSupportLink from 'calypso/dashboard/components/inline-support-link';
 import { SectionHeader } from 'calypso/dashboard/components/section-header';
 import SiteEnvironmentBadge, {

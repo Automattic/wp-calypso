@@ -1,3 +1,22 @@
+import {
+	ProductUpgradeMap,
+	AkismetUpgradesProductMap,
+	SubscriptionBillPeriod,
+	DomainProductSlugs,
+	useMyDomainInputMode,
+	WPCOM_DIFM_LITE,
+	OFFSITE_REDIRECT,
+	DomainTransferStatus,
+} from '@automattic/api-core';
+import {
+	domainsQuery,
+	purchaseQuery,
+	userPurchaseSetAutoRenewQuery,
+	siteDifmWebsiteContentQuery,
+	siteJetpackKeysQuery,
+	reinstallMarketplacePluginsQuery,
+	siteBySlugQuery,
+} from '@automattic/api-queries';
 import { domainManagementEdit, domainUseMyDomain } from '@automattic/domains-table/src/utils/paths';
 import { formatCurrency } from '@automattic/number-formatters';
 import { INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS } from '@automattic/urls';
@@ -34,28 +53,12 @@ import {
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import { useLocale } from '../../../app/locale';
-import { domainsQuery } from '../../../app/queries/domains';
-import { purchaseQuery, userPurchaseSetAutoRenewQuery } from '../../../app/queries/me-purchases';
-import { siteBySlugQuery } from '../../../app/queries/site';
-import { siteDifmWebsiteContentQuery } from '../../../app/queries/site-do-it-for-me';
-import { siteJetpackKeysQuery } from '../../../app/queries/site-jetpack-keys';
-import { reinstallMarketplacePluginsQuery } from '../../../app/queries/site-marketplace';
 import { purchaseSettingsRoute } from '../../../app/router/me';
 import { ActionList } from '../../../components/action-list';
 import ClipboardInputControl from '../../../components/clipboard-input-control';
 import { useFormattedTime } from '../../../components/formatted-time';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
-import {
-	ProductUpgradeMap,
-	AkismetUpgradesProductMap,
-	SubscriptionBillPeriod,
-	DomainProductSlugs,
-	useMyDomainInputMode,
-	WPCOM_DIFM_LITE,
-	OFFSITE_REDIRECT,
-} from '../../../data/constants';
-import { DomainTransferStatus } from '../../../data/domains';
 import { formatDate } from '../../../utils/datetime';
 import { getEmailManagementPath } from '../../../utils/email-paths';
 import {
@@ -78,8 +81,7 @@ import {
 } from '../../../utils/purchase';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
 import { getPurchaseUrlForId, getAddPaymentMethodUrlFor } from '../urls';
-import type { User } from '../../../data/me';
-import type { Purchase } from '../../../data/purchase';
+import type { User, Purchase } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 import type { ReactNode, ReactElement } from 'react';
 

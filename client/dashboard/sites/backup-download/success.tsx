@@ -7,9 +7,11 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, download, check } from '@wordpress/icons';
+import { useAnalytics } from '../../app/analytics';
 import { siteBackupsRoute } from '../../app/router/sites';
+import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 
 function SiteBackupDownloadSuccess( {
 	site,
@@ -22,13 +24,16 @@ function SiteBackupDownloadSuccess( {
 	downloadUrl: string;
 	fileSizeBytes?: string;
 } ) {
+	const { recordTracksEvent } = useAnalytics();
 	const router = useRouter();
 
 	const handleAllBackupsClick = () => {
+		recordTracksEvent( 'calypso_dashboard_backups_download_all_backups' );
 		router.navigate( { to: siteBackupsRoute.fullPath, params: { siteSlug: site.slug } } );
 	};
 
 	const handleDownloadClick = () => {
+		recordTracksEvent( 'calypso_dashboard_backups_download_download_file' );
 		window.open( downloadUrl, '_blank' );
 	};
 
@@ -44,7 +49,7 @@ function SiteBackupDownloadSuccess( {
 						</Text>
 					</VStack>
 				</HStack>
-				<HStack justify="flex-end">
+				<ButtonStack justify="flex-end">
 					<Button
 						variant="tertiary"
 						text={ __( 'All backups' ) }
@@ -56,7 +61,7 @@ function SiteBackupDownloadSuccess( {
 						text={ __( 'Download file' ) + ( fileSizeBytes ? ` (${ fileSizeBytes })` : '' ) }
 						onClick={ handleDownloadClick }
 					/>
-				</HStack>
+				</ButtonStack>
 			</HStack>
 
 			<Notice variant="info" title={ __( 'Check your email' ) }>
