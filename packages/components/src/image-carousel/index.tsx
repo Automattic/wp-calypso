@@ -1,3 +1,4 @@
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useState, useEffect } from '@wordpress/element';
 import { Icon, close } from '@wordpress/icons';
 import { createRoot } from 'react-dom/client';
@@ -31,6 +32,15 @@ const ImageCarouselModal = ( {
 	onClose: () => void;
 } ) => {
 	const [ currentIndex, setCurrentIndex ] = useState( initialIndex );
+	const isMobile = useMobileBreakpoint();
+
+	const getImageSrc = ( image: CarouselImage ) => {
+		if ( image.originalFile ) {
+			return isMobile ? image.originalFile + '?w=1000' : image.originalFile + '?w=2000';
+		}
+
+		return image.src;
+	};
 
 	// Handle escape key close
 	useEffect( () => {
@@ -60,7 +70,7 @@ const ImageCarouselModal = ( {
 					slidesPerView={ 1 }
 					initialSlide={ initialIndex }
 					loop
-					navigation
+					navigation={ isMobile ? false : true }
 					freeMode={ false }
 					onSlideChange={ ( swiper ) => setCurrentIndex( swiper.realIndex ) }
 				>
@@ -68,7 +78,7 @@ const ImageCarouselModal = ( {
 						<SwiperSlide key={ index } virtualIndex={ index }>
 							<img
 								// Adding width to get an appropriate size image
-								src={ image.originalFile ? image.originalFile + '?w=2000' : image.src }
+								src={ getImageSrc( image ) }
 								alt={ image.alt || '' }
 							/>
 						</SwiperSlide>
@@ -87,7 +97,7 @@ const ImageCarouselModal = ( {
 				</div>
 			</div>
 
-			<button className="reader-image-carousel-close" onClick={ onClose }>
+			<button className="reader-image-carousel-close" onClick={ onClose } aria-label="Close">
 				<Icon icon={ close } size={ 17 } style={ { fill: '#fff' } } />
 			</button>
 		</div>
