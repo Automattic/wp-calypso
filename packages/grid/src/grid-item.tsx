@@ -101,8 +101,7 @@ export function GridItem( {
 
 	let heightPx = 0;
 	if ( exposeItemSize && gridMetrics ) {
-		heightPx =
-			gridMetrics.rowHeight === 'auto' ? measuredHeightPx : gridMetrics.spanToPxY( rows );
+		heightPx = gridMetrics.rowHeight === 'auto' ? measuredHeightPx : gridMetrics.spanToPxY( rows );
 	}
 
 	const size = useMemo(
