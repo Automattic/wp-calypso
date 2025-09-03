@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
 import { useGetSupportInteractionById } from '../../data';
 import { useCreateZendeskConversation } from '../../hooks';
-import { useGetMostRecentOpenConversation } from '../../hooks/use-get-most-recent-open-conversation';
+import getMostRecentOpenLiveInteraction from '../notices/use-view-most-recent-conversation-notice';
 
 import './get-support.scss';
 
@@ -48,10 +48,10 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 		forceEmailSupport: contextForceEmailSupport,
 	} = useOdieAssistantContext();
 
-	const { mostRecentSupportInteractionId } = useGetMostRecentOpenConversation();
+	const mostRecentSupportInteractionId = getMostRecentOpenLiveInteraction();
 
 	const { data: supportInteraction } = useGetSupportInteractionById(
-		mostRecentSupportInteractionId?.toString() ?? null
+		mostRecentSupportInteractionId || null
 	);
 
 	const { setCurrentSupportInteraction } = useDataStoreDispatch( HELP_CENTER_STORE );

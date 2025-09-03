@@ -5,7 +5,7 @@ import apiFetch from '@wordpress/api-fetch';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useState } from 'react';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-import useViewMostRecentOpenConversationNotice from '../components/notices/use-view-most-recent-conversation-notice';
+import getMostRecentOpenLiveInteraction from '../components/notices/use-view-most-recent-conversation-notice';
 import {
 	getOdieRateLimitMessage,
 	getOdieEmailFallbackMessage,
@@ -60,7 +60,6 @@ export const useSendOdieMessage = () => {
 
 	const { addEventToInteraction } = useManageSupportInteraction();
 	const newConversation = useCreateZendeskConversation();
-	const warnAboutExistingConversation = useViewMostRecentOpenConversationNotice();
 
 	const internal_message_id = generateUUID();
 	const queryClient = useQueryClient();
@@ -112,6 +111,8 @@ export const useSendOdieMessage = () => {
 		props?: Partial< Chat >;
 		isFromError: boolean;
 	} ) => {
+		const warnAboutExistingConversation = getMostRecentOpenLiveInteraction();
+
 		if ( ! Array.isArray( message ) ) {
 			if ( getIsRequestingHumanSupport( message ) ) {
 				if ( forceEmailSupport ) {

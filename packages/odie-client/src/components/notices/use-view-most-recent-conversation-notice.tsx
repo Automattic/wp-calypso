@@ -1,16 +1,23 @@
-import { useGetSupportInteractionById } from '../../data';
-import { useGetMostRecentOpenConversation } from '../../hooks/use-get-most-recent-open-conversation';
+import Smooch from 'smooch';
+import { ZendeskConversation } from '../../types';
 
-export default function useViewMostRecentOpenConversationNotice() {
-	const { mostRecentSupportInteractionId, totalNumberOfConversations } =
-		useGetMostRecentOpenConversation();
+/**
+ * Queries the Smooch SDK and gets the latest open conversation. Try to call as late as possible and don't cache the result.
+ * @returns The support interaction ID of the latest open conversation.
+ */
+export default function getMostRecentOpenLiveInteraction() {
+	try {
+		const conversations: ZendeskConversation[] = ( Smooch?.getConversations?.() ??
+			[] ) as unknown as ZendeskConversation[];
 
-	const fetchSupportInteraction =
-		mostRecentSupportInteractionId?.toString() && totalNumberOfConversations === 1
-			? mostRecentSupportInteractionId.toString()
-			: null;
-	const { data: supportInteraction } = useGetSupportInteractionById( fetchSupportInteraction );
-	const shouldDisplayNotice = supportInteraction || totalNumberOfConversations > 1;
+		// They're already sorted by lastUpdatedAt, so we can just find the first one that's open.
+		const latestOpenConversation = conversations.find( ( conversation ) =>
+			// having a csat message means the conversation is closed
+			conversation.messages.every( ( message ) => message.metadata?.type !== 'csat' )
+		);
 
-	return shouldDisplayNotice;
+		return latestOpenConversation?.metadata.supportInteractionId;
+	} catch {
+		return null;
+	}
 }
