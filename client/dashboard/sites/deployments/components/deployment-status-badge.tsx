@@ -1,4 +1,5 @@
 import { Badge } from '@automattic/ui';
+import { __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 export const DeployStatus = {
@@ -54,5 +55,8 @@ function getStatusIntent( status: DeploymentStatusValue ) {
 }
 
 export function DeploymentStatusBadge( { status }: DeploymentStatusBadgeProps ) {
+	if ( status === 'queued' ) {
+		return <Text variant="muted">{ getStatusText( status ) }</Text>;
+	}
 	return <Badge intent={ getStatusIntent( status ) }>{ getStatusText( status ) }</Badge>;
 }
