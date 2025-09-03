@@ -175,6 +175,7 @@
 		"signup/social-first": true,
 		"site-indicator": true,
 		"site-profiler/metrics": true,
+		"site-spec": true,
 		"sites/drive-migrations": true,
 		"ssr/prefetch-timebox": false,
 		"stats/archive-breakdown": true,
@@ -196,7 +197,6 @@
 		"upgrades/wpcom-monthly-plans": true,
 		"user-management-revamp": true,
 		"wpcom-user-bootstrap": false,
-		"yolo/command-palette": true,
-		"site-spec-script": true
+		"yolo/command-palette": true
 	}
 }

@@ -165,10 +165,7 @@ const LearningStep: StepType = function LearningStep() {
 	return (
 		<>
 			<DocumentHead title={ translate( 'Build Your Site with AI' ) } />
-			<div
-				ref={ containerRef }
-				id="site-spec"
-			/>
+			<div ref={ containerRef } id="site-spec" />
 		</>
 	);
 };

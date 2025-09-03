@@ -4,7 +4,7 @@ This module provides utilities for loading and managing the Site Spec lib in Wor
 
 ## Overview
 
-The Site Spec lib loading follows WordPress Calypso patterns for external lib management, similar to other third-party scripts are handled. 
+The Site Spec lib loading follows WordPress Calypso patterns for external lib management, similar to other third-party scripts are handled.
 
 // @todo add example
 
@@ -12,13 +12,13 @@ The Site Spec lib loading follows WordPress Calypso patterns for external lib ma
 
 ### Feature Flag
 
-Enable the script loading with the `site-spec-script` feature flag:
+Enable the script loading with the `site-spec` feature flag:
 
 ```json
 {
-  "features": {
-    "site-spec-script": true
-  }
+	"features": {
+		"site-spec": true
+	}
 }
 ```
 
@@ -34,21 +34,23 @@ Define the following configuration values:
 ### Environment-Specific Configuration
 
 #### Development
+
 ```json
 {
-  "site_spec_url": "http://localhost:8085/dist/sitespec.umd.js",
-  "features": {
-    "site-spec-script": true
-  }
+	"site_spec_url": "http://localhost:8085/dist/sitespec.umd.js",
+	"features": {
+		"site-spec": true
+	}
 }
 ```
 
 #### Production
+
 ```json
 {
-  "features": {
-    "site-spec-script": true
-  }
+	"features": {
+		"site-spec": true
+	}
 }
 ```
 
@@ -69,7 +71,7 @@ await loadSiteSpecScript();
 import { isSiteSpecEnabled } from 'calypso/lib/site-spec';
 
 if ( isSiteSpecEnabled() ) {
-  // Site-Spec is enabled
+	// Site-Spec is enabled
 }
 ```
 
@@ -94,25 +96,33 @@ const url = getSiteSpecUrl();
 ## API Reference
 
 // @todo Rename site-spec-script to site-spec or site-spec-script-lib or something
+
 ### `isSiteSpecEnabled()`
-Returns `true` if the `site-spec-script` feature flag is enabled.
+
+Returns `true` if the `site-spec` feature flag is enabled.
 
 ### `getSiteSpecUrl()`
+
 Returns the configured script URL, or `null` if not configured.
 
 ### `getSiteSpecConfig()`
+
 Returns an object with the Site-Spec configuration:
+
 - `agentUrl`: The agent API endpoint
 - `agentId`: The agent identifier
 - `buildSiteUrl`: The build site URL template
 
 ### `loadSiteSpecScript()`
+
 Loads the Site-Spec script dynamically. Returns a Promise that resolves when the script is loaded.
 
 ### `isSiteSpecScriptLoaded()`
+
 Returns `true` if the script has already been loaded.
 
 ### `resetSiteSpecScriptState()`
+
 Resets the internal script loading state (useful for testing).
 
 ## Error Handling

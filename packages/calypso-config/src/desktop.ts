@@ -20,9 +20,9 @@ const features = {
 	// that may/may not be relevant to override for the Desktop app.
 	'signup/social': false,
 	'signup/social-first': false,
+	'site-spec': false,
 	'login/magic-login': false,
 	'bilmur-script': false,
-	'site-spec-script': false,
 };
 
 export default ( data: ConfigData ): ConfigData => {

@@ -4,7 +4,7 @@ import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:site-spec:utils' );
 
 export function isSiteSpecEnabled() {
-	const enabled = config.isEnabled( 'site-spec-script' );
+	const enabled = config.isEnabled( 'site-spec' );
 	debug( 'isSiteSpecEnabled:', enabled );
 	return enabled;
 }

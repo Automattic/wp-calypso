@@ -85,7 +85,7 @@ export function loadSiteSpecScript() {
 			const script = document.createElement( 'script' );
 			script.src = scriptUrl;
 			script.type = 'text/javascript';
-			script.id = 'site-spec-script';
+			script.id = 'site-spec';
 			script.async = true;
 
 			script.onload = () => {

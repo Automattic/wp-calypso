@@ -6,7 +6,7 @@ jest.mock( '@automattic/calypso-config', () => {
 
 	// Mock the isEnabled method
 	mockConfig.isEnabled = jest.fn( ( feature ) => {
-		if ( feature === 'site-spec-script' ) {
+		if ( feature === 'site-spec' ) {
 			return true;
 		}
 		return false;
@@ -39,7 +39,7 @@ describe( 'SiteSpec Utils', () => {
 		it( 'should return true when feature flag is enabled', () => {
 			config.isEnabled.mockReturnValue( true );
 			expect( isSiteSpecEnabled() ).toBe( true );
-			expect( config.isEnabled ).toHaveBeenCalledWith( 'site-spec-script' );
+			expect( config.isEnabled ).toHaveBeenCalledWith( 'site-spec' );
 		} );
 
 		it( 'should return false when feature flag is disabled', () => {
