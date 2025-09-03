@@ -9,7 +9,6 @@ import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Card,
 	CardBody,
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
 	CheckboxControl,
@@ -19,6 +18,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import { ButtonStack } from '../../components/button-stack';
 import { isJetpackModuleActivated } from '../../utils/site-jetpack-modules';
 import type { Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
@@ -167,7 +167,7 @@ export default function SsoForm( { site }: { site: Site } ) {
 								setFormData( ( data ) => ( { ...data, ...edits } ) );
 							} }
 						/>
-						<HStack justify="flex-start">
+						<ButtonStack justify="flex-start">
 							<Button
 								variant="primary"
 								type="submit"
@@ -176,7 +176,7 @@ export default function SsoForm( { site }: { site: Site } ) {
 							>
 								{ __( 'Save' ) }
 							</Button>
-						</HStack>
+						</ButtonStack>
 					</VStack>
 				</form>
 			</CardBody>

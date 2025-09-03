@@ -1,17 +1,14 @@
 import { type DnsTemplateVariables } from '@automattic/api-core';
 import { domainDnsApplyTemplateMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import {
-	__experimentalHStack as HStack,
-	__experimentalVStack as VStack,
-	Button,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm, Field, isItemValid } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { domainRoute } from '../../app/router/domains';
+import { ButtonStack } from '../../components/button-stack';
 
 export type EmailSetupFormData = {
 	record: string;
@@ -118,7 +115,7 @@ export default function EmailSetupForm( {
 							setFormData( ( data ) => ( { ...data, ...edits } ) );
 						} }
 					/>
-					<HStack justify="flex-start">
+					<ButtonStack justify="flex-start">
 						<Button
 							type="submit"
 							variant="primary"
@@ -134,7 +131,7 @@ export default function EmailSetupForm( {
 								} )
 							}
 						</Button>
-					</HStack>
+					</ButtonStack>
 				</VStack>
 			</form>
 		</div>

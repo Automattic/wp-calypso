@@ -5,10 +5,7 @@ import type { UserPreferences } from '@automattic/api-core';
 
 const defaultValues: Required< UserPreferences > = {
 	'sites-view': {},
-	'login-preferences': {
-		defaultLandingPage: 'primary-site-dashboard',
-		primarySiteId: undefined,
-	},
+	'hosting-dashboard-opt-in': { value: 'unset', updated_at: '' },
 };
 
 // Returns all user preferences, without applying any defaults.

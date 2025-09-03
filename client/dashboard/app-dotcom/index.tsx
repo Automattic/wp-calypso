@@ -26,5 +26,6 @@ boot( {
 			privacy: true,
 			apps: true,
 		},
+		plugins: true,
 	},
 } );

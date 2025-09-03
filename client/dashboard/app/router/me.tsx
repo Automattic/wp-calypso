@@ -107,7 +107,7 @@ export const paymentMethodsRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'billing/payment-methods',
 } ).lazy( () =>
-	import( '../../me/payment-methods' ).then( ( d ) =>
+	import( '../../me/billing-payment-methods' ).then( ( d ) =>
 		createLazyRoute( 'payment-methods' )( {
 			component: d.default,
 		} )
@@ -224,6 +224,50 @@ export const notificationsRoute = createRoute( {
 	)
 );
 
+export const notificationsSitesRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'notifications/sites',
+} ).lazy( () =>
+	import( '../../me/notifications-sites' ).then( ( d ) =>
+		createLazyRoute( 'notifications-sites' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const notificationsEmailsRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'notifications/emails',
+} ).lazy( () =>
+	import( '../../me/notifications-emails' ).then( ( d ) =>
+		createLazyRoute( 'notifications-emails' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const notificationsCommentsRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'notifications/comments',
+} ).lazy( () =>
+	import( '../../me/notifications-comments' ).then( ( d ) =>
+		createLazyRoute( 'notifications-comments' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const notificationsExtrasRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'notifications/extras',
+} ).lazy( () =>
+	import( '../../me/notifications-extras' ).then( ( d ) =>
+		createLazyRoute( 'notifications-extras' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const blockedSitesRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'blocked-sites',
@@ -279,6 +323,10 @@ export const createMeRoutes = ( config: AppConfig ) => {
 		securitySocialLoginsRoute,
 		notificationsRoute,
 		preferencesRoute,
+		notificationsSitesRoute,
+		notificationsEmailsRoute,
+		notificationsCommentsRoute,
+		notificationsExtrasRoute,
 	];
 
 	if ( config.supports.me.privacy ) {

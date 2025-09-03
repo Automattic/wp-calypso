@@ -9,15 +9,13 @@ export type SitesViewPreferences = Partial< Omit< SitesView, 'type' | 'layout' >
 	layout?: Partial< ViewTable[ 'layout' ] & ViewGrid[ 'layout' ] >;
 };
 
-export type LoginPreferences = {
-	primarySiteId?: string;
-	defaultLandingPage?: LandingPage;
-};
-
-export type LandingPage = 'primary-site-dashboard' | 'sites' | 'reader';
+export interface HostingDashboardOptIn {
+	value: 'unset' | 'opt-in' | 'opt-out';
+	updated_at: string; // ISO date string
+}
 
 export interface UserPreferences {
 	'sites-view'?: SitesViewPreferences;
-	'login-preferences'?: LoginPreferences;
 	[ key: `hosting-dashboard-overview-storage-notice-dismissed-${ number }` ]: string | undefined; // Timestamp when the user dismissed the notice
+	'hosting-dashboard-opt-in'?: HostingDashboardOptIn;
 }

@@ -13,9 +13,12 @@ import { purchasesRoute } from '../../app/router/me';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { adjustDataViewFieldsForWidth } from '../../utils/dataviews-width';
 import {
+	purchasesWideFields,
+	purchasesDesktopFields,
+	purchasesMobileFields,
 	purchasesDataView,
-	adjustViewFieldsForWidth,
 	getFields,
 	getItemId,
 	usePurchasesListActions,
@@ -109,7 +112,13 @@ export default function PurchasesList() {
 	const ref = useResizeObserver( ( entries ) => {
 		const firstEntry = entries[ 0 ];
 		if ( firstEntry ) {
-			adjustViewFieldsForWidth( firstEntry.contentRect.width, setView );
+			adjustDataViewFieldsForWidth( {
+				width: firstEntry.contentRect.width,
+				setView,
+				wideFields: purchasesWideFields,
+				desktopFields: purchasesDesktopFields,
+				mobileFields: purchasesMobileFields,
+			} );
 		}
 	} );
 	const { data: paymentMethods } = useQuery( userPaymentMethodsQuery( {} ) );

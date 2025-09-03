@@ -7,7 +7,6 @@ import {
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { notFound } from '@tanstack/react-router';
 import {
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
 	Card,
@@ -21,6 +20,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';
@@ -120,7 +120,7 @@ export default function SettingsAgency( { siteSlug }: { siteSlug: string } ) {
 									setFormData( ( data ) => ( { ...data, ...edits } ) );
 								} }
 							/>
-							<HStack justify="flex-start">
+							<ButtonStack justify="flex-start">
 								<Button
 									variant="primary"
 									type="submit"
@@ -129,7 +129,7 @@ export default function SettingsAgency( { siteSlug }: { siteSlug: string } ) {
 								>
 									{ __( 'Save' ) }
 								</Button>
-							</HStack>
+							</ButtonStack>
 						</VStack>
 					</form>
 				</CardBody>

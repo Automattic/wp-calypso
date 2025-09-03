@@ -16,7 +16,7 @@ const TrashButton = ( { note, translate, trashNote } ) => {
 			icon="trash"
 			isActive={ false }
 			hotkey={ keys.KEY_T }
-			onToggle={ () => trashNote( note, restClient ) }
+			onToggle={ () => trashNote( note, false, restClient ) }
 			text={ translate( 'Trash', { context: 'verb: imperative' } ) }
 			title={ translate( 'Trash comment', { context: 'verb: imperative' } ) }
 		/>

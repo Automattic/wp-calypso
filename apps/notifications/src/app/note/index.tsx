@@ -11,11 +11,14 @@ import {
 import { isRTL } from '@wordpress/i18n';
 import { chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { getActions } from '../../panel/helpers/notes';
+import actions from '../../panel/state/actions';
 import getAllNotes from '../../panel/state/selectors/get-all-notes';
 import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved';
 import getIsNoteRead from '../../panel/state/selectors/get-is-note-read';
+import ActionDropdown from '../templates/action-dropdown';
 import { NoteBody, ActionBlock } from '../templates/body';
 import NoteSummary from '../templates/note-summary';
 import './style.scss';
@@ -64,7 +67,8 @@ const getClasses = ( {
 };
 
 const Note = () => {
-	const { params } = useNavigator();
+	const dispatch = useDispatch();
+	const { params, goBack } = useNavigator();
 	const { noteId } = params;
 	const note = useSelector( ( state ) =>
 		( getAllNotes( state ) as NoteObject[] ).find( ( note ) => String( note.id ) === noteId )
@@ -72,6 +76,12 @@ const Note = () => {
 
 	const isApproved = useSelector( ( state ) => note && getIsNoteApproved( state, note ) );
 	const isRead = useSelector( ( state ) => note && getIsNoteRead( state, note ) );
+
+	useEffect( () => {
+		if ( note?.id ) {
+			dispatch( actions.ui.selectNote( note.id ) );
+		}
+	}, [ note?.id, dispatch ] );
 
 	if ( ! note ) {
 		return null;
@@ -89,6 +99,7 @@ const Note = () => {
 							{ note.title }
 						</Heading>
 					</Navigator.BackButton>
+					<ActionDropdown note={ note } goBack={ goBack } />
 				</HStack>
 			</CardHeader>
 			<CardBody size="small" style={ { maxHeight: 'unset' } }>
@@ -100,7 +111,7 @@ const Note = () => {
 					</div>
 				</VStack>
 			</CardBody>
-			<ActionBlock note={ note } />
+			<ActionBlock note={ note } goBack={ goBack } />
 		</>
 	);
 };

@@ -1,7 +1,6 @@
 import { siteOwnerTransferMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	Button,
@@ -12,6 +11,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import React, { useState } from 'react';
+import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
 import { SectionHeader } from '../../components/section-header';
 import type { Site, SiteOwnerTransferContext } from '@automattic/api-core';
@@ -196,7 +196,7 @@ export function StartSiteTransferForm( {
 						setFormData( ( data ) => ( { ...data, ...edits } ) );
 					} }
 				/>
-				<HStack justify="flex-start">
+				<ButtonStack justify="flex-start">
 					<Button
 						variant="primary"
 						type="submit"
@@ -208,7 +208,7 @@ export function StartSiteTransferForm( {
 					<Button variant="tertiary" onClick={ onBack } disabled={ mutation.isPending }>
 						{ __( 'Back' ) }
 					</Button>
-				</HStack>
+				</ButtonStack>
 			</VStack>
 		</form>
 	);

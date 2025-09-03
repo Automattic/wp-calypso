@@ -1,5 +1,20 @@
 import type { DomainSummary } from '../domains';
 
+export const EmailSubscriptionStatus = {
+	NO_SUBSCRIPTION: 'no_subscription',
+	ACTIVE: 'active',
+	DELETED: 'deleted',
+	SUSPENDED: 'suspended',
+} as const;
+
+export type EmailSubscriptionStatus =
+	( typeof EmailSubscriptionStatus )[ keyof typeof EmailSubscriptionStatus ];
+
+export type EmailSubscription = {
+	status: EmailSubscriptionStatus;
+	is_eligible_for_introductory_offer: boolean;
+};
+
 export interface Domain extends DomainSummary {
 	auth_code_required: boolean;
 	auto_renewal_date: string;
@@ -28,4 +43,6 @@ export interface Domain extends DomainSummary {
 	ssl_status: 'active' | 'inactive' | 'newly_registered' | 'pending';
 	subdomain_part: string;
 	transfer_away_eligible_at: string;
+	google_apps_subscription: EmailSubscription;
+	titan_mail_subscription: EmailSubscription;
 }

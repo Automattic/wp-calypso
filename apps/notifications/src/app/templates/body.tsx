@@ -34,9 +34,14 @@ const ReplyBlock = ( { note }: { note: Note } ) => {
 			return;
 		}
 
+		const { site: siteId, reply_comment: replyCommentId } = note.meta.ids;
+		if ( ! siteId || ! replyCommentId ) {
+			return;
+		}
+
 		wpcom()
-			.site( note.meta.ids.site )
-			.comment( note.meta.ids.reply_comment )
+			.site( siteId )
+			.comment( replyCommentId )
 			.get( ( error: Error | null, data: { URL: string } ) => {
 				if ( ! error ) {
 					setReplyURL( data.URL );
@@ -69,7 +74,7 @@ const ReplyBlock = ( { note }: { note: Note } ) => {
 	return null;
 };
 
-export const ActionBlock = ( { note }: { note: Note } ) => {
+export const ActionBlock = ( { note, goBack }: { note: Note; goBack: () => void } ) => {
 	const blocks: BlockWithSignature[] = zipWithSignature( note.body, note );
 	const actionBlock = blocks.findLast(
 		( block ) => block.block.actions && 'user' !== block.signature.type
@@ -81,7 +86,7 @@ export const ActionBlock = ( { note }: { note: Note } ) => {
 
 	return (
 		<CardFooter size="small">
-			<NoteActions note={ note } />
+			<NoteActions note={ note } goBack={ goBack } />
 		</CardFooter>
 	);
 };
