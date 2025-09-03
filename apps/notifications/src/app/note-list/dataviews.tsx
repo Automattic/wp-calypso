@@ -1,10 +1,13 @@
-import { __ } from '@wordpress/i18n';
+import { Icon } from '@wordpress/components';
+import { __, isRTL } from '@wordpress/i18n';
+import { chevronRight, chevronLeft } from '@wordpress/icons';
 import { html } from '../../panel/indices-to-html';
 import noticon2gridicon from '../../panel/utils/noticon2gridicon';
 import Gridicon from '../templates/gridicons';
 import NoteIcon from '../templates/note-icon';
 import type { Note } from '../types';
-import type { Field } from '@wordpress/dataviews';
+import type { Action, Field } from '@wordpress/dataviews';
+import './dataviews-overrides.scss';
 
 const DAY_MILLISECONDS = 24 * 60 * 60 * 1000;
 
@@ -50,7 +53,6 @@ export function getFields(): Field< Note >[] {
 				<div className="wpnc__text-summary">
 					<div
 						className="wpnc__subject"
-						style={ { whiteSpace: 'pre-wrap' } }
 						/* eslint-disable-next-line react/no-danger */
 						dangerouslySetInnerHTML={ { __html: field.getValue( { item } ) } }
 					/>
@@ -95,6 +97,24 @@ export function getFields(): Field< Note >[] {
 				}
 
 				return <div className="wpnc__excerpt">{ excerpt }</div>;
+			},
+		},
+	];
+}
+
+export function getActions( {
+	onSelect,
+}: {
+	onSelect: ( selection: string[] ) => void;
+} ): Action< Note >[] {
+	return [
+		{
+			id: 'view',
+			isPrimary: true,
+			icon: <Icon icon={ isRTL() ? chevronLeft : chevronRight } />,
+			label: __( 'View' ),
+			callback: ( items: Note[] ) => {
+				onSelect( items.map( ( item ) => item.id.toString() ) );
 			},
 		},
 	];
