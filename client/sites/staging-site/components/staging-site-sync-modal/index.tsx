@@ -394,7 +394,6 @@ export default function SyncModal( {
 		isSiteWooStore && targetEnvironment === 'production' && sqlNode?.checkState === 'checked';
 
 	const showDomainConfirmation = targetEnvironment === 'production' && ! isLoadingBackupAttempt;
-
 	// Allow button if there is no backup if the confirmation passes
 	// regardless of browserCheckList
 	const isButtonDisabled =
@@ -431,37 +430,6 @@ export default function SyncModal( {
 						siteTitle={ targetSiteTitle }
 					/>
 				</HStack>
-				{ ( shouldDisableGranularSync || sqlNode?.checkState === 'checked' ) && (
-					<VStack>
-						<Notice status="warning" isDismissible={ false }>
-							<Text as="p" weight="bold" style={ { lineHeight: '24px' } }>
-								{ __( 'Warning! Database will be overwritten.' ) }
-							</Text>
-							<Text as="p">
-								{ __(
-									'Selecting this option will overwrite the site database, including any posts, pages, products, or orders.'
-								) }
-							</Text>
-							{ showWooCommerceWarning && (
-								<Text as="p" style={ { marginTop: '16px' } }>
-									{ createInterpolateElement(
-										__(
-											'This site also has WooCommerce installed. We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins. <a>Learn more</a>'
-										),
-										{
-											a: (
-												<ExternalLink
-													href="https://developer.wordpress.com/docs/developer-tools/staging-sites/sync-staging-production/#staging-to-production"
-													children={ null }
-												/>
-											),
-										}
-									) }
-								</Text>
-							) }
-						</Notice>
-					</VStack>
-				) }
 				<div
 					className={ clsx( 'staging-site-card', {
 						'confirmation-input': showDomainConfirmation,
@@ -539,7 +507,6 @@ export default function SyncModal( {
 									borderBottom: '1px solid var(--wp-components-color-gray-300, #ddd)',
 									padding: '16px 0',
 									marginTop: '8px',
-									marginBottom: '24px',
 								} }
 							>
 								{ isLoadingBackupAttempt ? (
@@ -558,6 +525,37 @@ export default function SyncModal( {
 					</Tooltip>
 				</div>
 				<VStack className="staging-site-card__footer" spacing={ 6 }>
+					{ ( shouldDisableGranularSync || sqlNode?.checkState === 'checked' ) && (
+						<VStack>
+							<Notice status="warning" isDismissible={ false }>
+								<Text as="p" weight="bold" style={ { lineHeight: '24px' } }>
+									{ __( 'Warning! Database will be overwritten.' ) }
+								</Text>
+								<Text as="p">
+									{ __(
+										'Selecting this option will overwrite the site database, including any posts, pages, products, or orders.'
+									) }
+								</Text>
+								{ showWooCommerceWarning && (
+									<Text as="p" style={ { marginTop: '16px' } }>
+										{ createInterpolateElement(
+											__(
+												'This site also has WooCommerce installed. We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins. <a>Learn more</a>'
+											),
+											{
+												a: (
+													<ExternalLink
+														href="https://developer.wordpress.com/docs/developer-tools/staging-sites/sync-staging-production/#staging-to-production"
+														children={ null }
+													/>
+												),
+											}
+										) }
+									</Text>
+								) }
+							</Notice>
+						</VStack>
+					) }
 					{ showDomainConfirmation && (
 						<InputControl
 							__next40pxDefaultSize
