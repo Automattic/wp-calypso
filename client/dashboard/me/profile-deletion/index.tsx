@@ -77,6 +77,7 @@ export default function AccountDeletionSection() {
 				onConfirm={ handleConfirmDelete }
 				username={ user.username }
 				isDeleting={ mutation.isPending }
+				siteCount={ user.site_count || 0 }
 			/>
 		</>
 	);
