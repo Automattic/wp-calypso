@@ -1,6 +1,14 @@
+/**
+ * External dependencies.
+ */
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { useState } from 'react';
+import { useResizeObserver } from '@wordpress/compose';
+import { useState, useMemo } from 'react';
+/**
+ * Internal dependencies.
+ */
+import { useOptionalGridMetrics, GridItemSizeProvider } from './contexts';
 import ResizeHandle from './resize-handle';
 import type { GridLayoutItem } from './types';
 
@@ -11,6 +19,7 @@ export function GridItem( {
 	children,
 	onResize,
 	onResizeEnd,
+	exposeItemSize,
 }: {
 	item: GridLayoutItem;
 	maxColumns: number;
@@ -18,6 +27,7 @@ export function GridItem( {
 	children: React.ReactNode;
 	onResize: ( delta: { width: number; height: number } ) => void;
 	onResizeEnd: () => void;
+	exposeItemSize?: boolean;
 } ) {
 	const [ previewDelta, setPreviewDelta ] = useState< { width: number; height: number } | null >(
 		null
@@ -77,18 +87,49 @@ export function GridItem( {
 		/>
 	) : null;
 
+	const gridMetrics = useOptionalGridMetrics();
+
+	const cols = item.fullWidth ? maxColumns : Math.min( item.width ?? 1, maxColumns );
+	const rows = item.height ?? 1;
+
+	const [ measuredHeightPx, setMeasuredHeightPx ] = useState( 0 );
+	const contentMeasureRef = useResizeObserver( ( [ { contentRect } ] ) => {
+		setMeasuredHeightPx( contentRect.height );
+	} );
+
+	const widthPx = exposeItemSize && gridMetrics ? gridMetrics.spanToPxX( cols ) : 0;
+
+	let heightPx = 0;
+	if ( exposeItemSize && gridMetrics ) {
+		heightPx =
+			gridMetrics.rowHeight === 'auto' ? measuredHeightPx : gridMetrics.spanToPxY( rows );
+	}
+
+	const size = useMemo(
+		() => ( { widthPx, heightPx, cols, rows } ),
+		[ widthPx, heightPx, cols, rows ]
+	);
+
+	const shouldProvideSize = exposeItemSize && !! gridMetrics;
+
 	return (
 		<div ref={ setNodeRef } style={ style } { ...attributes } { ...listeners }>
-			<div style={ contentStyle }>
-				{ children }
-				<ResizeHandle
-					disabled={ disabled }
-					itemId={ item.key }
-					onResize={ handleResize }
-					onResizeEnd={ handleResizeEnd }
-				/>
-			</div>
-			{ previewOverlay }
+			{ shouldProvideSize ? (
+				<GridItemSizeProvider id={ item.key } size={ size }>
+					<div ref={ contentMeasureRef } style={ contentStyle }>
+						{ children }
+						<ResizeHandle
+							disabled={ disabled }
+							itemId={ item.key }
+							onResize={ handleResize }
+							onResizeEnd={ handleResizeEnd }
+						/>
+					</div>
+					{ previewOverlay }
+				</GridItemSizeProvider>
+			) : (
+				<div style={ contentStyle }>{ children }</div>
+			) }
 		</div>
 	);
 }
