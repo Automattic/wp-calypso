@@ -7,6 +7,7 @@ import { __ } from '@wordpress/i18n';
 import { notAllowed } from '@wordpress/icons';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { isJetpackModuleAvailable } from '../../utils/site-jetpack-modules';
+import { isSimple } from '../../utils/site-types';
 import type { Site } from '@automattic/api-core';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
@@ -17,8 +18,14 @@ export default function WebApplicationFirewallSettingsSummary( {
 	site: Site;
 	density?: Density;
 } ) {
-	const { data: jetpackModules } = useQuery( siteJetpackModulesQuery( site.ID ) );
-	const { data: jetpackConnection } = useQuery( siteJetpackConnectionQuery( site.ID ) );
+	const { data: jetpackModules } = useQuery( {
+		...siteJetpackModulesQuery( site.ID ),
+		enabled: ! isSimple( site ),
+	} );
+	const { data: jetpackConnection } = useQuery( {
+		...siteJetpackConnectionQuery( site.ID ),
+		enabled: ! isSimple( site ),
+	} );
 
 	if ( ! isEnabled( 'dashboard/v2/security-settings' ) ) {
 		return null;

@@ -5,7 +5,7 @@ import {
 	siteJetpackModulesQuery,
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { notFound } from '@tanstack/react-router';
 import { __experimentalText as Text, ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
@@ -14,14 +14,21 @@ import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
 import { isJetpackModuleAvailable } from '../../utils/site-jetpack-modules';
+import { isSimple } from '../../utils/site-types';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SettingsPageHeader from '../settings-page-header';
 import SsoForm from './sso-form';
 
 export default function WpcomLoginSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const { data: jetpackModules } = useSuspenseQuery( siteJetpackModulesQuery( site.ID ) );
-	const { data: jetpackConnection } = useSuspenseQuery( siteJetpackConnectionQuery( site.ID ) );
+	const { data: jetpackModules } = useQuery( {
+		...siteJetpackModulesQuery( site.ID ),
+		enabled: ! isSimple( site ),
+	} );
+	const { data: jetpackConnection } = useQuery( {
+		...siteJetpackConnectionQuery( site.ID ),
+		enabled: ! isSimple( site ),
+	} );
 
 	if ( ! isEnabled( 'dashboard/v2/security-settings' ) ) {
 		throw notFound();

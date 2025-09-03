@@ -11,6 +11,7 @@ import {
 	isJetpackModuleAvailable,
 	isJetpackModuleActivated,
 } from '../../utils/site-jetpack-modules';
+import { isSimple } from '../../utils/site-types';
 import type { Site } from '@automattic/api-core';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
@@ -21,8 +22,14 @@ export default function WpcomLoginSettingsSummary( {
 	site: Site;
 	density?: Density;
 } ) {
-	const { data: jetpackModules } = useQuery( siteJetpackModulesQuery( site.ID ) );
-	const { data: jetpackConnection } = useQuery( siteJetpackConnectionQuery( site.ID ) );
+	const { data: jetpackModules } = useQuery( {
+		...siteJetpackModulesQuery( site.ID ),
+		enabled: ! isSimple( site ),
+	} );
+	const { data: jetpackConnection } = useQuery( {
+		...siteJetpackConnectionQuery( site.ID ),
+		enabled: ! isSimple( site ),
+	} );
 
 	if ( ! isEnabled( 'dashboard/v2/security-settings' ) ) {
 		return null;
