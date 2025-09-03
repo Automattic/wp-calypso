@@ -8,16 +8,14 @@ import {
 	isSavingPreference,
 	isFetchingPreferences,
 } from 'calypso/state/preferences/selectors';
-import type { HostingDashboardV2OptInFlags } from '@automattic/api-core';
+import type { HostingDashboardOptIn } from '@automattic/api-core';
 
 export default function ToggleNewHostingDashboard() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const enableNewHostingDashboard = useSelector(
 		( state ) =>
-			getPreference( state, 'enable-hosting-dashboard-v2' ) as
-				| HostingDashboardV2OptInFlags
-				| undefined
+			getPreference( state, 'hosting-dashboard-opt-in' ) as HostingDashboardOptIn | undefined
 	);
 
 	const isSaving = useSelector( isSavingPreference );
@@ -33,9 +31,9 @@ export default function ToggleNewHostingDashboard() {
 		const preference = {
 			value: value ? 'opt-in' : 'opt-out',
 			updated_at: new Date().toISOString(),
-		} satisfies HostingDashboardV2OptInFlags;
+		} satisfies HostingDashboardOptIn;
 
-		dispatch( savePreference( 'enable-hosting-dashboard-v2', preference ) );
+		dispatch( savePreference( 'hosting-dashboard-opt-in', preference ) );
 	};
 
 	return (

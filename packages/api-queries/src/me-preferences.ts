@@ -5,7 +5,7 @@ import type { UserPreferences } from '@automattic/api-core';
 
 const defaultValues: Required< UserPreferences > = {
 	'sites-view': {},
-	'enable-hosting-dashboard-v2': { value: 'unset', updated_at: '' },
+	'hosting-dashboard-opt-in': { value: 'unset', updated_at: '' },
 };
 
 // Returns all user preferences, without applying any defaults.
