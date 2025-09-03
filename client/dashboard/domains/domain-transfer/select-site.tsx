@@ -6,7 +6,11 @@ import { useMemo, useState, useEffect, useCallback } from 'react';
 import type { Site } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 
-export function SelectSite() {
+interface Props {
+	onSiteSelect: ( site: Site ) => void;
+}
+
+export function SelectSite( { onSiteSelect }: Props ) {
 	const { data: sites = [], isLoading } = useQuery( sitesQuery() );
 	const perPage = 5;
 	const [ view, setView ] = useState< View >( {
@@ -19,8 +23,24 @@ export function SelectSite() {
 	} );
 	// Custom pagination handler that simulates server-side pagination
 	const [ allLoadedRecords, setAllLoadedRecords ] = useState< Site[] >( [] );
+	const [ selection, setSelection ] = useState< string[] >( [] );
 	const totalPages = Math.ceil( sites.length / perPage );
 	const currentPage = view.page || 1;
+
+	// Handle selection changes
+	const handleSelectionChange = useCallback(
+		( newSelection: string[] ) => {
+			setSelection( newSelection );
+
+			// Get selected site objects
+			const selectedSite = sites.find( ( site ) =>
+				newSelection.includes( site.ID?.toString() ?? '' )
+			);
+
+			selectedSite && onSiteSelect( selectedSite );
+		},
+		[ sites, onSiteSelect ]
+	);
 
 	const fields = [
 		{
@@ -96,6 +116,8 @@ export function SelectSite() {
 						getItemId={ ( site: Site ) => site.ID?.toString() ?? '' }
 						defaultLayouts={ { list: {} } }
 						onChangeView={ setView }
+						selection={ selection }
+						onChangeSelection={ handleSelectionChange }
 					>
 						<DataViews.Layout />
 					</DataViews>
