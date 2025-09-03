@@ -3,6 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { lazy, useEffect, useState, ReactNode, Suspense } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import HostingFeatureActivationModal from '../hosting-feature-activation-modal';
 import type { HostingFeatures, Site } from '@automattic/api-core';
 
 interface HostingFeatureActivationProps {
@@ -30,20 +31,6 @@ export default function HostingFeatureActivation( {
 	}, [ recordTracksEvent, tracksFeatureId ] );
 
 	const handleClick = () => {
-		if ( window.location.pathname.startsWith( '/v2/' ) ) {
-			// The current behavior is as follows:
-			// - In v2, we're redirecting to the v1 activation flow.
-			// - In backported v1, we're async-loading the "calypso/blocks/eligibility-warnings" component.
-			//
-			// TODO: consolidate the above by porting the component in v2.
-			// See: DOTDASH-72
-
-			window.location.href = addQueryArgs( `/hosting-features/${ site.slug }`, {
-				activate: true,
-			} );
-			return;
-		}
-
 		recordTracksEvent( 'calypso_dashboard_hosting_feature_activation_click', {
 			feature_id: tracksFeatureId,
 		} );
@@ -65,10 +52,25 @@ export default function HostingFeatureActivation( {
 		} );
 	};
 
+	const shouldLoadV2 = window.location.pathname.startsWith( '/v2/' );
+
 	return (
 		<>
 			{ renderActivationComponent( { onClick: handleClick } ) }
-			{ isModalOpen && (
+
+			{ shouldLoadV2 && isModalOpen && (
+				<Suspense fallback={ null }>
+					<Modal
+						title={ __( 'Before you continue' ) }
+						onRequestClose={ () => setIsModalOpen( false ) }
+						size="medium"
+					>
+						<HostingFeatureActivationModal siteId={ site.ID } />
+					</Modal>
+				</Suspense>
+			) }
+
+			{ ! shouldLoadV2 && isModalOpen && (
 				<Suspense fallback={ null }>
 					<Modal
 						title={ __( 'Before you continue' ) }

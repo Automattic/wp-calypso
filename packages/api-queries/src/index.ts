@@ -27,6 +27,7 @@ export * from './site-activity-log';
 export * from './site-address-change';
 export * from './site-agency';
 export * from './site-atomic-transfers';
+export * from './site-automated-transfers-eligibility';
 export * from './site-backup-download';
 export * from './site-backup-restore';
 export * from './site-backups';
