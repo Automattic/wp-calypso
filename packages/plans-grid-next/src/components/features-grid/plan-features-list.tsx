@@ -89,11 +89,13 @@ const PlanFeaturesList = ( {
 						isTableCell={ options?.isTableCell }
 						className="plan-features-2023-grid__table-item"
 					>
-						{ ! hideFeatureGroupTitles && (
+						{ ! hideFeatureGroupTitles && 'plans-wordpress-hosting' !== intent && (
 							<PlanFeaturesItem>
 								<h2
 									className={ clsx( 'plans-grid-next-features-grid__feature-group-title', {
-										'is-wordpress-hosting': intent === 'plans-wordpress-hosting',
+										// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+										// @ts-ignore
+										'is-wordpress-hosting': 'plans-wordpress-hosting' === intent,
 									} ) }
 								>
 									{ featureGroup?.getTitle() }
