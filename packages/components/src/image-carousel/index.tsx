@@ -1,4 +1,4 @@
-import { useState } from '@wordpress/element';
+import { useState, useEffect } from '@wordpress/element';
 import { Icon, close } from '@wordpress/icons';
 import { createRoot } from 'react-dom/client';
 import { Navigation, Keyboard } from 'swiper/modules';
@@ -32,6 +32,24 @@ const ImageCarouselModal = ( {
 } ) => {
 	const [ currentIndex, setCurrentIndex ] = useState( initialIndex );
 
+	// Handle escape key close
+	useEffect( () => {
+		const handleKeyDown = ( event: KeyboardEvent ) => {
+			if ( event.key === 'Escape' ) {
+				event.preventDefault();
+				event.stopPropagation();
+				onClose();
+			}
+		};
+
+		// Listen on window with highest priority
+		window.addEventListener( 'keydown', handleKeyDown, { capture: true } );
+
+		return () => {
+			window.removeEventListener( 'keydown', handleKeyDown, { capture: true } );
+		};
+	}, [ onClose ] );
+
 	return (
 		<div className="reader-image-carousel-overlay">
 			<div className="reader-image-carousel-container">
@@ -43,7 +61,7 @@ const ImageCarouselModal = ( {
 					initialSlide={ initialIndex }
 					loop
 					navigation
-					centeredSlides
+					freeMode={ false }
 					onSlideChange={ ( swiper ) => setCurrentIndex( swiper.realIndex ) }
 				>
 					{ images.map( ( image, index ) => (

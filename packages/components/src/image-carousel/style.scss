@@ -69,7 +69,8 @@
 }
 
 .reader-image-carousel-close {
-	height: 28px;
+	height: 30px;
+	width: 30px;
 	position: absolute;
 	top: 20px;
 	right: 30px;
@@ -78,6 +79,9 @@
 	background: rgba(0, 0, 0, 0.5);
 	border-radius: 4px;
 	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 
 	&:hover {
 		background-color: #999;
