@@ -28,7 +28,7 @@ export default function StagingSiteSyncMonitor( { site }: StagingSiteSyncMonitor
 
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
-	if ( productionSiteId && stagingSiteSyncState && wasSyncingRef.current && ! isSyncing ) {
+	if ( productionSiteId && wasSyncingRef.current && ! isSyncing ) {
 		if ( stagingSiteSyncState?.status === 'completed' ) {
 			createSuccessNotice( __( 'Synchronization completed successfully.' ), {
 				type: 'snackbar',
