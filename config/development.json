@@ -19,6 +19,7 @@
 	"hotjar_enabled": true,
 	"survicate_enabled": true,
 	"site_spec_url": "http://localhost:8085/dist/sitespec.bundle.umd.js",
+	"site_spec_css_url": "http://localhost:8085/dist/style.css",
 	"login_url": "https://wordpress.com/wp-login.php",
 	"logout_url": "https://wordpress.com/wp-login.php?action=logout&redirect_to=https%3A%2F%2F|subdomain|wordpress.com",
 	"facebook_api_key": "249643311490",

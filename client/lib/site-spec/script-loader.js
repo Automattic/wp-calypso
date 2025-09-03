@@ -1,5 +1,5 @@
 import debugFactory from 'debug';
-import { getSiteSpecUrl } from './utils';
+import { getSiteSpecUrl, getSiteSpecCssUrl } from './utils';
 
 const debug = debugFactory( 'calypso:site-spec:script-loader' );
 
@@ -42,15 +42,12 @@ export function loadSiteSpecScript() {
 	debug( `Loading SiteSpec script from "${ scriptUrl }"` );
 
 	return new Promise( ( resolve, reject ) => {
-		// Load CSS first - handle both .umd.js and .bundle.umd.js
-		let cssUrl;
-		if ( scriptUrl.includes( 'sitespec.bundle.umd.js' ) ) {
-			cssUrl = scriptUrl.replace( 'sitespec.bundle.umd.js', 'style.css' );
-		} else if ( scriptUrl.includes( 'sitespec.umd.js' ) ) {
-			cssUrl = scriptUrl.replace( 'sitespec.umd.js', 'style.css' );
-		} else {
-			// Fallback: assume CSS is in the same directory with style.css name
-			cssUrl = scriptUrl.replace( /\/[^\/]+\.js$/, '/style.css' );
+		// Load CSS first using configured CSS URL
+		const cssUrl = getSiteSpecCssUrl();
+		if ( ! cssUrl ) {
+			debug( '⚠️ SiteSpec CSS URL not configured, skipping CSS load' );
+			loadScript();
+			return;
 		}
 
 		debug( `Loading SiteSpec CSS from "${ cssUrl }"` );
@@ -109,20 +106,10 @@ export function loadSiteSpecScript() {
  * Load SiteSpec CSS separately (useful for testing or manual loading)
  */
 export function loadSiteSpecCSS() {
-	const scriptUrl = getSiteSpecUrl();
-	if ( ! scriptUrl ) {
-		debug( 'Cannot load CSS: SiteSpec URL not configured' );
-		return Promise.reject( new Error( 'SiteSpec URL not configured' ) );
-	}
-
-	// Handle both .umd.js and .bundle.umd.js
-	let cssUrl;
-	if ( scriptUrl.includes( 'sitespec.bundle.umd.js' ) ) {
-		cssUrl = scriptUrl.replace( 'sitespec.bundle.umd.js', 'style.css' );
-	} else if ( scriptUrl.includes( 'sitespec.umd.js' ) ) {
-		cssUrl = scriptUrl.replace( 'sitespec.umd.js', 'style.css' );
-	} else {
-		cssUrl = scriptUrl.replace( /\/[^\/]+\.js$/, '/style.css' );
+	const cssUrl = getSiteSpecCssUrl();
+	if ( ! cssUrl ) {
+		debug( 'Cannot load CSS: SiteSpec CSS URL not configured' );
+		return Promise.reject( new Error( 'SiteSpec CSS URL not configured' ) );
 	}
 
 	debug( `Loading SiteSpec CSS from "${ cssUrl }"` );

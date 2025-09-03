@@ -25,6 +25,21 @@ export function getSiteSpecUrl() {
 }
 
 /**
+ * Get the cache-busted URL for the site spec CSS.
+ */
+export function getSiteSpecCssUrl() {
+	debug( '🔍 getSiteSpecCssUrl called' );
+	const url = config( 'site_spec_css_url' );
+	debug( '🔍 site_spec_css_url config value:', url );
+	if ( ! url ) {
+		debug( '❌ SiteSpec CSS URL not configured' );
+		return null;
+	}
+	debug( '✅ SiteSpec CSS URL found:', url );
+	return url;
+}
+
+/**
  * Get the site spec configuration object.
  */
 export function getSiteSpecConfig() {

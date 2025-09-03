@@ -6,8 +6,6 @@ This module provides utilities for loading and managing the Site Spec lib in Wor
 
 The Site Spec lib loading follows WordPress Calypso patterns for external lib management, similar to other third-party scripts are handled.
 
-// @todo add example
-
 ## Configuration
 
 ### Feature Flag
@@ -27,6 +25,7 @@ Enable the script loading with the `site-spec` feature flag:
 Define the following configuration values:
 
 - `site_spec_url`: Base URL for the Site-Spec script
+- `site_spec_css_url`: URL for the Site-Spec CSS styles
 - `site_spec_agent_url`: API endpoint for the Site-Spec agent
 - `site_spec_agent_id`: Identifier for the Site-Spec agent
 - `site_spec_build_site_url`: URL template for building sites
@@ -95,8 +94,6 @@ const url = getSiteSpecUrl();
 
 ## API Reference
 
-// @todo Rename site-spec-script to site-spec or site-spec-script-lib or something
-
 ### `isSiteSpecEnabled()`
 
 Returns `true` if the `site-spec` feature flag is enabled.
@@ -104,6 +101,10 @@ Returns `true` if the `site-spec` feature flag is enabled.
 ### `getSiteSpecUrl()`
 
 Returns the configured script URL, or `null` if not configured.
+
+### `getSiteSpecCssUrl()`
+
+Returns the configured CSS URL, or `null` if not configured.
 
 ### `getSiteSpecConfig()`
 

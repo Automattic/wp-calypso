@@ -1,4 +1,4 @@
-import { isSiteSpecEnabled, getSiteSpecUrl, getSiteSpecConfig } from '../utils';
+import { isSiteSpecEnabled, getSiteSpecUrl, getSiteSpecCssUrl, getSiteSpecConfig } from '../utils';
 
 // Mock the calypso-config module
 jest.mock( '@automattic/calypso-config', () => {
@@ -16,6 +16,7 @@ jest.mock( '@automattic/calypso-config', () => {
 	mockConfig.mockImplementation( ( key ) => {
 		const configValues = {
 			site_spec_url: 'https://example.com/site-spec.js',
+			site_spec_css_url: 'https://example.com/style.css',
 			site_spec_agent_url: 'https://api.example.com/agent',
 			site_spec_agent_id: 'test-agent',
 			site_spec_build_site_url: 'https://example.com/build?spec_id=',
@@ -64,6 +65,20 @@ describe( 'SiteSpec Utils', () => {
 			config.isEnabled.mockReturnValue( true );
 			config.mockReturnValueOnce( undefined );
 			expect( getSiteSpecUrl() ).toBe( null );
+		} );
+	} );
+
+	describe( 'getSiteSpecCssUrl', () => {
+		it( 'should return the configured CSS URL', () => {
+			const url = getSiteSpecCssUrl();
+			expect( url ).toBe( 'https://example.com/style.css' );
+			expect( config ).toHaveBeenCalledWith( 'site_spec_css_url' );
+		} );
+
+		it( 'should return null when CSS URL is not configured', () => {
+			config.mockReturnValue( null );
+			const url = getSiteSpecCssUrl();
+			expect( url ).toBeNull();
 		} );
 	} );
 
