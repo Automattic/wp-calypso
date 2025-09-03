@@ -12,6 +12,7 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	Button,
+	Modal,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm, isItemValid } from '@wordpress/dataviews';
@@ -67,6 +68,8 @@ export default function TransferDomainToAnyUser() {
 	const [ formData, setFormData ] = useState( {
 		email: '',
 	} );
+	const [ isTransferDialogOpen, setIsTransferDialogOpen ] = useState( false );
+	const [ isCancelDialogOpen, setIsCancelDialogOpen ] = useState( false );
 
 	const hasEmailWithUs = hasTitanMailWithUs( domain ) || hasGSuiteWithUs( domain );
 
@@ -74,14 +77,20 @@ export default function TransferDomainToAnyUser() {
 
 	const handleSubmit = ( event: React.FormEvent ) => {
 		event.preventDefault();
+		setIsTransferDialogOpen( true );
+	};
+
+	const onConfirm = () => {
 		updateDomainTransferRequest( formData.email, {
 			onSuccess: () => {
 				createSuccessNotice(
 					__( 'A domain transfer request has been emailed to the recipient’s address.' )
 				);
+				setIsTransferDialogOpen( false );
 			},
 			onError: () => {
 				createErrorNotice( __( 'An error occurred while initiating the domain transfer.' ) );
+				setIsTransferDialogOpen( false );
 			},
 			onSettled: () => {
 				setFormData( { email: '' } );
@@ -90,12 +99,18 @@ export default function TransferDomainToAnyUser() {
 	};
 
 	const handleCancelTransfer = () => {
+		setIsCancelDialogOpen( true );
+	};
+
+	const onConfirmCancel = () => {
 		deleteDomainTransferRequest( undefined, {
 			onSuccess: () => {
 				createSuccessNotice( __( 'Your domain transfer has been cancelled.' ) );
+				setIsCancelDialogOpen( false );
 			},
 			onError: () => {
 				createErrorNotice( __( 'The domain transfer cannot be cancelled at this time.' ) );
+				setIsCancelDialogOpen( false );
 			},
 		} );
 	};
@@ -168,6 +183,87 @@ export default function TransferDomainToAnyUser() {
 		);
 	};
 
+	const renderConfirmationDialog = () => {
+		return (
+			<Modal
+				title={ __( 'Confirm Transfer' ) }
+				onRequestClose={ () => setIsTransferDialogOpen( false ) }
+			>
+				<VStack spacing={ 6 }>
+					<Text>
+						{ createInterpolateElement(
+							__( 'Do you want to transfer the ownership of <domainName/> to <recipientEmail/>?' ),
+							{
+								domainName: <strong>{ domainName }</strong>,
+								recipientEmail: <strong>{ formData.email }</strong>,
+							}
+						) }
+					</Text>
+					<HStack justify="flex-end" spacing={ 2 }>
+						<Button
+							__next40pxDefaultSize
+							variant="secondary"
+							onClick={ () => setIsTransferDialogOpen( false ) }
+							disabled={ isUpdatingDomainTransferRequest }
+						>
+							{ __( 'Cancel' ) }
+						</Button>
+						<Button
+							__next40pxDefaultSize
+							variant="primary"
+							isDestructive
+							isBusy={ isUpdatingDomainTransferRequest }
+							onClick={ onConfirm }
+							disabled={ isUpdatingDomainTransferRequest }
+						>
+							{ __( 'Confirm Transfer' ) }
+						</Button>
+					</HStack>
+				</VStack>
+			</Modal>
+		);
+	};
+
+	const renderCancelConfirmationDialog = () => {
+		return (
+			<Modal
+				title={ __( 'Confirm Cancel Transfer' ) }
+				onRequestClose={ () => setIsCancelDialogOpen( false ) }
+			>
+				<VStack spacing={ 6 }>
+					<Text>
+						{ createInterpolateElement(
+							__( 'Are you sure you want to cancel the transfer request for <domainName/>?' ),
+							{
+								domainName: <strong>{ domainName }</strong>,
+							}
+						) }
+					</Text>
+					<HStack justify="flex-end" spacing={ 2 }>
+						<Button
+							__next40pxDefaultSize
+							variant="secondary"
+							onClick={ () => setIsCancelDialogOpen( false ) }
+							disabled={ isDeletingDomainTransferRequest }
+						>
+							{ __( 'Keep Transfer' ) }
+						</Button>
+						<Button
+							__next40pxDefaultSize
+							variant="primary"
+							isDestructive
+							isBusy={ isDeletingDomainTransferRequest }
+							onClick={ onConfirmCancel }
+							disabled={ isDeletingDomainTransferRequest }
+						>
+							{ __( 'Cancel Transfer' ) }
+						</Button>
+					</HStack>
+				</VStack>
+			</Modal>
+		);
+	};
+
 	const renderCancelTransfer = () => {
 		const expiresAt = new Date( requestedAt || '' );
 		expiresAt.setHours( expiresAt.getHours() + 24 );
@@ -227,6 +323,8 @@ export default function TransferDomainToAnyUser() {
 					</VStack>
 				</CardBody>
 			</Card>
+			{ isTransferDialogOpen && renderConfirmationDialog() }
+			{ isCancelDialogOpen && renderCancelConfirmationDialog() }
 		</PageLayout>
 	);
 }
