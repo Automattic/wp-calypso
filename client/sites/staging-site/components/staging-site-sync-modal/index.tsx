@@ -535,7 +535,7 @@ export default function SyncModal( {
 								</Text>
 								<Text as="p">
 									{ __(
-										'Selecting this option will overwrite the site database, including any posts, pages, products, or orders.'
+										'Selecting database option will overwrite the site database, including any posts, pages, products, or orders.'
 									) }
 								</Text>
 								{ showWooCommerceWarning && (
