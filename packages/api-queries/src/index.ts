@@ -35,6 +35,7 @@ export * from './site-cache';
 export * from './site-defensive-mode';
 export * from './site-do-it-for-me';
 export * from './site-domains';
+export * from './site-jetpack-connection';
 export * from './site-jetpack-keys';
 export * from './site-jetpack-modules';
 export * from './site-jetpack-settings';

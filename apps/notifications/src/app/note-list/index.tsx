@@ -12,7 +12,7 @@ import getIsLoading from '../../panel/state/selectors/get-is-loading';
 import getIsNoteHidden from '../../panel/state/selectors/get-is-note-hidden';
 import { getFilters } from '../../panel/templates/filters';
 import { useAppContext } from '../context';
-import { getFields } from './dataviews';
+import { getFields, getActions } from './dataviews';
 import type { Note } from '../types';
 import type { View } from '@wordpress/dataviews';
 
@@ -33,11 +33,18 @@ const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFil
 	const isLoading = useSelector( ( state ) => getIsLoading( state ) );
 	const { client } = useAppContext();
 
+	const onChangeSelection = ( selection: string[] ) => {
+		const noteId = selection[ 0 ];
+		goTo( `/${ filterName }/notes/${ noteId }`, {
+			focusTargetSelector: `.dataviews-view-list__item[id$="-${ noteId }-item-wrapper"]`,
+		} );
+	};
+
 	const [ initialView, setView ] = useState< View >( {
 		type: 'list',
 		titleField: 'title',
 		mediaField: 'icon',
-		fields: [ 'content', 'date' ],
+		fields: [ 'info' ],
 		page: 1,
 		infiniteScrollEnabled: true,
 	} );
@@ -46,14 +53,9 @@ const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFil
 
 	const fields = getFields();
 
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate( notes, view, fields );
+	const actions = getActions( { onSelect: onChangeSelection } );
 
-	const onChangeSelection = ( selection: string[] ) => {
-		const noteId = selection[ 0 ];
-		goTo( `/${ filterName }/notes/${ noteId }`, {
-			focusTargetSelector: `.dataviews-view-list__item[id$="-${ noteId }-item-wrapper"]`,
-		} );
-	};
+	const { data: filteredData, paginationInfo } = filterSortAndPaginate( notes, view, fields );
 
 	const infiniteScrollHandler = useCallback( () => {
 		if ( ! isLoading ) {
@@ -62,38 +64,39 @@ const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFil
 	}, [ client, isLoading ] );
 
 	useEffect( () => {
-		if ( filterName !== 'all' && notes.length < 10 && ! isLoading ) {
+		if ( notes.length < 10 && ! isLoading ) {
 			infiniteScrollHandler();
 		}
-	}, [ filterName, notes.length, isLoading, infiniteScrollHandler ] );
+	}, [ notes.length, isLoading, infiniteScrollHandler ] );
 
 	return (
-		<DataViews< Note >
-			data={ filteredData }
-			fields={ fields }
-			view={ view }
-			isLoading={ isLoading }
-			defaultLayouts={ { table: {} } }
-			paginationInfo={ {
-				...paginationInfo,
-				infiniteScrollHandler,
-			} }
-			empty={
-				<VStack alignment="center">
-					<Text size={ 15 } weight={ 500 }>
-						{ filter.emptyMessage }
-					</Text>
-					<ExternalLink href={ filter.emptyLink }>{ filter.emptyLinkMessage }</ExternalLink>
-				</VStack>
-			}
-			getItemId={ ( item ) => item.id.toString() }
-			onChangeView={ setView }
-			onChangeSelection={ onChangeSelection }
-		>
-			<>
+		<div className="wpnc__note-list">
+			<DataViews< Note >
+				data={ filteredData }
+				fields={ fields }
+				actions={ actions }
+				view={ view }
+				isLoading={ isLoading }
+				defaultLayouts={ { table: {} } }
+				paginationInfo={ {
+					...paginationInfo,
+					infiniteScrollHandler,
+				} }
+				empty={
+					<VStack alignment="center">
+						<Text size={ 15 } weight={ 500 }>
+							{ filter.emptyMessage }
+						</Text>
+						<ExternalLink href={ filter.emptyLink }>{ filter.emptyLinkMessage }</ExternalLink>
+					</VStack>
+				}
+				getItemId={ ( item ) => item.id.toString() }
+				onChangeView={ setView }
+				onChangeSelection={ onChangeSelection }
+			>
 				<DataViews.Layout />
-			</>
-		</DataViews>
+			</DataViews>
+		</div>
 	);
 };
 

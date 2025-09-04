@@ -9,6 +9,7 @@ import {
 	CardHeader,
 	Icon,
 } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import { rotateLeft, download } from '@wordpress/icons';
 import { siteBackupRestoreRoute, siteBackupDownloadRoute } from '../../app/router/sites';
@@ -24,6 +25,9 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 		dateStyle: 'medium',
 		timeStyle: 'short',
 	} );
+
+	const isSmallViewport = useViewportMatch( 'medium', '<' );
+	const direction = isSmallViewport ? 'column' : 'row';
 
 	const handleRestoreClick = () => {
 		router.navigate( {
@@ -47,7 +51,7 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 					decoration={ <Icon icon={ gridiconToWordPressIcon( backup.gridicon ) } /> }
 					actions={
 						backup.rewind_id && (
-							<ButtonStack>
+							<ButtonStack alignment="stretch" direction={ direction }>
 								<Button
 									variant="secondary"
 									size="compact"
