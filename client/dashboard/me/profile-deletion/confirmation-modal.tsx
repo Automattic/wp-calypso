@@ -20,7 +20,6 @@ interface AlternativeOption {
 }
 
 interface AccountDeletionConfirmModalProps {
-	isOpen: boolean;
 	onClose: () => void;
 	onConfirm: () => void;
 	username: string;
@@ -29,7 +28,6 @@ interface AccountDeletionConfirmModalProps {
 }
 
 export default function AccountDeletionConfirmModal( {
-	isOpen,
 	onClose,
 	onConfirm,
 	username,
@@ -72,11 +70,6 @@ export default function AccountDeletionConfirmModal( {
 			supportLink: localizeUrl( 'https://wordpress.com/support/passwords/' ),
 		},
 	];
-
-	// If not open, render nothing
-	if ( ! isOpen ) {
-		return null;
-	}
 
 	// Reset state when modal closes
 	const handleClose = () => {

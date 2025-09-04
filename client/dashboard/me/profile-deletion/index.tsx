@@ -71,14 +71,15 @@ export default function AccountDeletionSection() {
 				</CardBody>
 			</Card>
 
-			<AccountDeletionConfirmModal
-				isOpen={ showConfirmModal }
-				onClose={ handleCloseModal }
-				onConfirm={ handleConfirmDelete }
-				username={ user.username }
-				isDeleting={ mutation.isPending }
-				siteCount={ user.site_count || 0 }
-			/>
+			{ showConfirmModal && (
+				<AccountDeletionConfirmModal
+					onClose={ handleCloseModal }
+					onConfirm={ handleConfirmDelete }
+					username={ user.username }
+					isDeleting={ mutation.isPending }
+					siteCount={ user.site_count || 0 }
+				/>
+			) }
 		</>
 	);
 }
