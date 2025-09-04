@@ -1,4 +1,8 @@
-import { siteBySlugQuery, stagingSiteSyncStateQuery } from '@automattic/api-queries';
+import {
+	siteBySlugQuery,
+	stagingSiteSyncStateQuery,
+	isDeletingStagingSiteQuery,
+} from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
 import { useState } from '@wordpress/element';
@@ -42,6 +46,11 @@ export default function StagingSiteSyncDropdown( {
 	const productionSiteId = site ? getProductionSiteId( site ) : null;
 	const stagingSiteId = site ? getStagingSiteId( site ) : null;
 
+	const { data: isStagingSiteDeletionInProgress } = useQuery( {
+		...isDeletingStagingSiteQuery( stagingSiteId ?? 0 ),
+		enabled: !! stagingSiteId,
+	} );
+
 	const { data: stagingSiteSyncState, refetch: fetchStagingSiteSyncState } = useQuery( {
 		...stagingSiteSyncStateQuery( productionSiteId ?? 0 ),
 		enabled: !! productionSiteId,
@@ -74,7 +83,7 @@ export default function StagingSiteSyncDropdown( {
 
 	// The sync is not allowed if the staging site is in a transition or is deleting.
 	// We should consider this when we start to rewrite the StagingSiteSyncModal.
-	if ( ! productionSiteId || ! stagingSiteId ) {
+	if ( ! productionSiteId || ! stagingSiteId || isStagingSiteDeletionInProgress ) {
 		return null;
 	}
 

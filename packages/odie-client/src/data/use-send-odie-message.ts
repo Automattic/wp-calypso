@@ -152,6 +152,7 @@ export const useSendOdieMessage = () => {
 	return useMutation< ReturnedChat, Error, Message >( {
 		mutationFn: async ( message: Message ): Promise< ReturnedChat > => {
 			const chatIdSegment = odieId ? `/${ odieId }` : '';
+			const path = window.location.pathname + window.location.search;
 			return canAccessWpcomApis()
 				? await wpcomRequest( {
 						method: 'POST',
@@ -160,7 +161,7 @@ export const useSendOdieMessage = () => {
 						body: {
 							message: message.content,
 							...( version && { version } ),
-							context: { selectedSiteId },
+							context: { selectedSiteId, path },
 						},
 				  } )
 				: await apiFetch( {
@@ -169,7 +170,7 @@ export const useSendOdieMessage = () => {
 						data: {
 							message: message.content,
 							...( version && { version } ),
-							context: { selectedSiteId },
+							context: { selectedSiteId, path },
 						},
 				  } );
 		},
