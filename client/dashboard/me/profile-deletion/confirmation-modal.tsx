@@ -71,13 +71,6 @@ export default function AccountDeletionConfirmModal( {
 		},
 	];
 
-	// Reset state when modal closes
-	const handleClose = () => {
-		setConfirmText( '' );
-		setShowAlternatives( true );
-		onClose();
-	};
-
 	const handleContinue = () => {
 		setShowAlternatives( false );
 	};
@@ -85,7 +78,7 @@ export default function AccountDeletionConfirmModal( {
 	return (
 		<Modal
 			title={ showAlternatives ? __( 'Are you sure?' ) : __( 'Confirm account deletion' ) }
-			onRequestClose={ handleClose }
+			onRequestClose={ onClose }
 		>
 			<VStack spacing={ 4 }>
 				{ showAlternatives ? (
@@ -128,7 +121,7 @@ export default function AccountDeletionConfirmModal( {
 							) ) }
 						</ActionList>
 						<ButtonStack justify="flex-end">
-							<Button variant="tertiary" onClick={ handleClose }>
+							<Button variant="tertiary" onClick={ onClose }>
 								{ __( 'Cancel' ) }
 							</Button>
 							<Button variant="primary" onClick={ handleContinue }>
@@ -152,7 +145,7 @@ export default function AccountDeletionConfirmModal( {
 							__nextHasNoMarginBottom
 						/>
 						<ButtonStack justify="flex-end">
-							<Button variant="tertiary" onClick={ handleClose } disabled={ isDeleting }>
+							<Button variant="tertiary" onClick={ onClose } disabled={ isDeleting }>
 								{ __( 'Cancel' ) }
 							</Button>
 							<Button
