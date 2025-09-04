@@ -167,28 +167,27 @@ export default function PreferencesLanguageForm() {
 			type: 'text',
 			Edit: ( { field, data, onChange } ) => {
 				return (
-					<>
-						<ComboboxControl
-							value={ field.getValue( { item: data } ) ?? '' }
-							label={ __( 'Interface language' ) }
-							onChange={ ( newValue ) => {
-								onChange( {
-									[ field.id ]: newValue,
-								} );
-							} }
-							placeholder={ __( 'Select a language' ) }
-							options={ field.elements || [] }
-							allowReset={ false } // a language is required so we're not allowing to reset it and have an empty state.
-							__next40pxDefaultSize
-						/>
-
-						<Text variant="muted">
-							{ __(
-								'This is the language of the interface you see across WordPress.com as a whole.'
-							) }
-							{ data && thanksToCommunityTranslator( data ) }
-						</Text>
-					</>
+					<ComboboxControl
+						value={ field.getValue( { item: data } ) ?? '' }
+						label={ __( 'Interface language' ) }
+						onChange={ ( newValue ) => {
+							onChange( {
+								[ field.id ]: newValue,
+							} );
+						} }
+						placeholder={ __( 'Select a language' ) }
+						options={ field.elements || [] }
+						allowReset={ false } // a language is required so we're not allowing to reset it and have an empty state.
+						__next40pxDefaultSize
+						help={
+							<>
+								{ __(
+									'This is the language of the interface you see across WordPress.com as a whole.'
+								) }
+								{ data && thanksToCommunityTranslator( data ) }
+							</>
+						}
+					/>
 				);
 			},
 			elements: languagesAsOptions,
@@ -235,30 +234,25 @@ export default function PreferencesLanguageForm() {
 			isVisible: ( item ) => shouldDisplayCommunityTranslator( item ),
 			Edit: ( { field, data, onChange } ) => {
 				return (
-					<>
-						<CheckboxControl
-							checked={ field.getValue( { item: data } ) }
-							label={ field.label }
-							onChange={ ( newValue ) => {
-								onChange( {
-									[ field.id ]: newValue,
-								} );
-							} }
-						/>
-						{ /** printing it here instead of using the DataForm `description` because the description only supports strings. */ }
-						<Text variant="muted">
-							{ createInterpolateElement(
-								__( 'This allows you to help translate WordPress.com. <LearnMore/>' ),
-								{
-									LearnMore: (
-										<ExternalLink href="https://translate.wordpress.com/community-translator/">
-											{ __( 'Learn more' ) }
-										</ExternalLink>
-									),
-								}
-							) }
-						</Text>
-					</>
+					<CheckboxControl
+						checked={ field.getValue( { item: data } ) }
+						label={ field.label }
+						onChange={ ( newValue ) => {
+							onChange( {
+								[ field.id ]: newValue,
+							} );
+						} }
+						help={ createInterpolateElement(
+							__( 'This allows you to help translate WordPress.com. <LearnMore/>' ),
+							{
+								LearnMore: (
+									<ExternalLink href="https://translate.wordpress.com/community-translator/">
+										{ __( 'Learn more' ) }
+									</ExternalLink>
+								),
+							}
+						) }
+					/>
 				);
 			},
 		},
