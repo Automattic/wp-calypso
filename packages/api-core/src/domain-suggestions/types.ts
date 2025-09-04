@@ -10,7 +10,7 @@ export type DomainSuggestionQueryVendor =
 
 export interface DomainSuggestionQuery {
 	/**
-	 * True to only provide exact domain matches
+	 * True to only provide exact domain name match suggestions
 	 */
 	exact_sld_matches_only?: boolean;
 
