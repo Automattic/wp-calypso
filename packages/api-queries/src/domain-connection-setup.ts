@@ -1,5 +1,5 @@
 import {
-	fetchDomainSetupInfo,
+	fetchDomainMappingSetupInfo,
 	updateConnectionModeAndGetMappingStatus,
 } from '@automattic/api-core';
 import { queryClient } from '@automattic/api-queries';
@@ -12,8 +12,7 @@ export const domainConnectionSetupInfoQuery = (
 ) =>
 	queryOptions( {
 		queryKey: [ 'domain-setup-info', domainName, siteId ],
-		queryFn: () => fetchDomainSetupInfo( domainName, siteId, redirectURL || '' ),
-		enabled: !! siteId && !! domainName,
+		queryFn: () => fetchDomainMappingSetupInfo( domainName, siteId, redirectURL || '' ),
 	} );
 
 export const updateConnectionModeMutation = ( domainName: string, siteId: number ) =>

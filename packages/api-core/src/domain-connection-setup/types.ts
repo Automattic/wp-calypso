@@ -1,3 +1,13 @@
+export enum DomainConnectionSetupMode {
+	SUGGESTED = 'suggested',
+	ADVANCED = 'advanced',
+	DC = 'dc',
+	DONE = 'done',
+	OWNERSHIP_VERIFICATION = 'ownership_verification',
+	TRANSFER = 'transfer',
+}
+
+// POST response
 export type DomainMappingStatus = {
 	has_mapping_records: boolean;
 	has_wpcom_nameservers: boolean;
@@ -6,15 +16,16 @@ export type DomainMappingStatus = {
 	resolves_to_wpcom: boolean;
 	host_ip_addresses: string[];
 	name_servers: string[];
-	mode: string;
+	mode: DomainConnectionSetupMode;
 };
 
-export type DomainSetupInfo = {
-	connection_mode?: string;
-	domain_connect_apply_wpcom_hosting?: boolean;
-	domain_connect_provider_id?: string;
-	default_ip_addresses?: string[];
-	wpcom_name_servers?: string[];
-	is_subdomain?: boolean;
-	is_supported_tld?: boolean;
+// GET response
+export type DomainMappingSetupInfo = {
+	connection_mode: DomainConnectionSetupMode | null;
+	domain_connect_apply_wpcom_hosting: boolean | null;
+	domain_connect_provider_id: string | null;
+	default_ip_addresses: string[];
+	wpcom_name_servers: string[];
+	is_subdomain: boolean;
+	root_domain: string;
 };

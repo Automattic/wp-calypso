@@ -338,7 +338,7 @@ export const domainConnectionSetupRoute = createRoute( {
 			domainConnectionSetupInfoQuery(
 				domainName,
 				domain.blog_id,
-				`https://wordpress.com/v2/domains/${ domainName }/domain-connection-setup` // TO DO: replace with the correct URL
+				encodeURIComponent( `${ window.location.href }?step=dc_return` ) // TO DO: get step name from the type definition
 			)
 		);
 	},
