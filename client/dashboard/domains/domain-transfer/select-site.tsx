@@ -125,9 +125,7 @@ export function SelectSite( { onSiteSelect }: Props ) {
 						setView( { ...view, search } );
 						setSelection( [] );
 						// Keep focus on search input after filtering
-						queueMicrotask( () => {
-							searchInputRef.current?.focus();
-						} );
+						setTimeout( () => searchInputRef.current?.focus(), 0 );
 					} }
 				/>
 				<DataViews
