@@ -22,7 +22,6 @@ export const usePrepareDownload = ( siteId: number, onError: () => void ) => {
 		...siteBackupFilteredDownloadStatusQuery( siteId, buildKey, dataType ),
 		enabled: !! buildKey && status === PREPARE_DOWNLOAD_STATUS.PREPARING,
 		refetchInterval: 5000,
-		retry: false,
 	} );
 
 	useEffect( () => {
@@ -35,23 +34,23 @@ export const usePrepareDownload = ( siteId: number, onError: () => void ) => {
 		}
 	}, [ isSuccess, isError, handleError, data?.status ] );
 
-	const mutation = useMutation( {
-		...siteBackupFilteredDownloadPrepareMutation(),
-		onSuccess: ( data ) => {
-			setBuildKey( data.key );
-		},
-		onError: handleError,
-	} );
-
-	const { mutate } = mutation;
+	const { mutate } = useMutation( siteBackupFilteredDownloadPrepareMutation() );
 
 	const prepareDownload = useCallback(
 		( siteId: number, rewindId: string, manifestFilter: string, dataType: number ) => {
 			setStatus( PREPARE_DOWNLOAD_STATUS.PREPARING );
 			setDataType( dataType );
-			return mutate( { siteId, rewindId, manifestFilter, dataType } );
+			return mutate(
+				{ siteId, rewindId, manifestFilter, dataType },
+				{
+					onSuccess: ( data ) => {
+						setBuildKey( data.key );
+					},
+					onError: handleError,
+				}
+			);
 		},
-		[ mutate ]
+		[ mutate, handleError ]
 	);
 
 	return {
