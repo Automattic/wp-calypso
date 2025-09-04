@@ -75,6 +75,7 @@ import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import wpcom from 'calypso/lib/wp';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { domainUseMyDomain } from 'calypso/my-sites/domains/paths';
+import { shouldUseMultipleDomainsInCart } from 'calypso/signup/steps/domains/utils';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
@@ -1583,6 +1584,11 @@ class RegisterDomainStep extends Component {
 
 		const isSubDomainSuggestion = get( suggestion, 'isSubDomainSuggestion' );
 		if ( ! hasDomainInCart( this.props.cart, domain ) && ! isSubDomainSuggestion ) {
+			// For Multi-domain flows, add the domain first, than check availability
+			if ( shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
+				this.props.onAddDomain( suggestion, position, previousState );
+			}
+
 			this.setState( { pendingCheckSuggestion: suggestion } );
 			const promise = this.preCheckDomainAvailability( domain )
 				.catch( () => [] )
@@ -1614,7 +1620,7 @@ class RegisterDomainStep extends Component {
 							selectedSuggestion: suggestion,
 							selectedSuggestionPosition: position,
 						} );
-					} else {
+					} else if ( ! shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
 						this.props.onAddDomain( suggestion, position, previousState );
 					}
 				} );

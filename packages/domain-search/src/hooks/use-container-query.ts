@@ -6,8 +6,10 @@ export const useContainerQuery = < T extends string >(
 ): {
 	ref: ( element: Element | null | undefined ) => void;
 	activeQuery: T;
+	currentWidth: number | null;
 } => {
 	const [ activeQuery, setActiveQuery ] = useState< T >( Object.keys( queries )[ 0 ] as T );
+	const [ currentWidth, setCurrentWidth ] = useState< number | null >( null );
 
 	const initialMountRef = useRef< Element | null | undefined >( null );
 
@@ -16,6 +18,7 @@ export const useContainerQuery = < T extends string >(
 		if ( query ) {
 			setActiveQuery( query[ 0 ] as T );
 		}
+		setCurrentWidth( width );
 	} );
 
 	useLayoutEffect( () => {
@@ -36,5 +39,6 @@ export const useContainerQuery = < T extends string >(
 			resizableContainerRef( element );
 		},
 		activeQuery,
+		currentWidth,
 	};
 };
