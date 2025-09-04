@@ -1,13 +1,21 @@
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { Button, ExternalLink, TextareaControl, SelectControl } from '@wordpress/components';
+import {
+	Button,
+	ExternalLink,
+	TextareaControl,
+	SelectControl,
+	__experimentalVStack as VStack,
+	__experimentalText as Text,
+	Card,
+	CardBody,
+} from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { copy, check } from '@wordpress/icons';
 import { useState } from 'react';
 import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';
-import '../settings-mcp/style.scss';
 
 export default function McpSetup( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
@@ -121,17 +129,23 @@ export default function McpSetup( { siteSlug }: { siteSlug: string } ) {
 					/>
 				}
 			>
-				<div className="mcp-setup__no-abilities">
-					<p>{ __( 'No MCP abilities are currently enabled for this site.' ) }</p>
-					<p>
-						{ __(
-							'MCP abilities define what actions and data your MCP client can access on this site. You need to enable at least one ability in the main MCP settings before configuring your client.'
-						) }
-					</p>
-					<Button variant="primary" href={ `/sites/${ siteSlug }/settings/mcp` }>
-						{ __( 'Go to MCP Settings' ) }
-					</Button>
-				</div>
+				<Card>
+					<CardBody>
+						<VStack spacing={ 4 }>
+							<Text as="p" variant="muted">
+								{ __( 'No MCP abilities are currently enabled for this site.' ) }
+							</Text>
+							<Text as="p" variant="muted">
+								{ __(
+									'MCP abilities define what actions and data your MCP client can access on this site. You need to enable at least one ability in the main MCP settings before configuring your client.'
+								) }
+							</Text>
+							<Button variant="primary" href={ `/sites/${ siteSlug }/settings/mcp` }>
+								{ __( 'Go to MCP Settings' ) }
+							</Button>
+						</VStack>
+					</CardBody>
+				</Card>
 			</PageLayout>
 		);
 	}
@@ -148,125 +162,181 @@ export default function McpSetup( { siteSlug }: { siteSlug: string } ) {
 				/>
 			}
 		>
-			<div className="mcp-setup">
-				<div className="mcp-setup__intro">
-					<p>
-						{ __(
-							'WordPress.com provides MCP (Model Context Protocol) support, which allows AI assistants to interact directly with your WordPress.com site.'
-						) }
-					</p>
-					<p>
-						{ __(
-							'The JSON configuration below sets up a secure connection between your AI assistant and your WordPress.com site. It works by:'
-						) }
-					</p>
-					<ul>
-						<li>
-							{ __( 'Running a bridge server using the WordPress.com-specific MCP package' ) }
-						</li>
-						<li>
+			<Card>
+				<CardBody>
+					<VStack spacing={ 4 }>
+						<Text as="p">
 							{ __(
-								'Handling OAuth 2.1 authentication to securely connect to your WordPress.com site'
+								'WordPress.com provides MCP (Model Context Protocol) support, which allows AI assistants to interact directly with your WordPress.com site.'
 							) }
-						</li>
-						<li>
-							{ __( "Providing real-time access to your site's content and management features" ) }
-						</li>
-					</ul>
-				</div>
+						</Text>
+						<Text as="p">
+							{ __(
+								'The JSON configuration below sets up a secure connection between your AI assistant and your WordPress.com site. It works by:'
+							) }
+						</Text>
+						<VStack spacing={ 2 }>
+							<Text as="li" style={ { listStyle: 'none' } }>
+								{ __( 'Running a bridge server using the WordPress.com-specific MCP package' ) }
+							</Text>
+							<Text as="li" style={ { listStyle: 'none' } }>
+								{ __(
+									'Handling OAuth 2.1 authentication to securely connect to your WordPress.com site'
+								) }
+							</Text>
+							<Text as="li" style={ { listStyle: 'none' } }>
+								{ __(
+									"Providing real-time access to your site's content and management features"
+								) }
+							</Text>
+						</VStack>
+					</VStack>
+				</CardBody>
+			</Card>
 
-				<div className="mcp-setup__client-selection">
-					<SelectControl
-						label={ __( 'MCP Client' ) }
-						value={ selectedMcpClient }
-						options={ mcpClientOptions }
-						onChange={ setSelectedMcpClient }
-						help={ __( 'Choose your MCP client to get the correct configuration format.' ) }
-					/>
-				</div>
-
-				<div className="mcp-setup__config-section">
-					<h3 className="mcp-setup__config-title">{ __( 'MCP Server Configuration' ) }</h3>
-
-					<div className="mcp-setup__config-textarea-wrapper">
-						<div className="mcp-setup__config-header">
-							<Button
-								icon={ copyStatus === 'success' ? check : copy }
-								variant="tertiary"
-								size="small"
-								onClick={ copyToClipboard }
-								className="mcp-setup__copy-button"
-								aria-label={ __( 'Copy configuration to clipboard' ) }
+			<div style={ { marginTop: '24px' } }>
+				<Card>
+					<CardBody>
+						<VStack spacing={ 6 }>
+							<SelectControl
+								label={ __( 'MCP Client' ) }
+								value={ selectedMcpClient }
+								options={ mcpClientOptions }
+								onChange={ setSelectedMcpClient }
+								help={ __( 'Choose your MCP client to get the correct configuration format.' ) }
 							/>
-						</div>
-						<TextareaControl
-							value={ JSON.stringify( generateMcpConfig( selectedMcpClient ), null, 2 ) }
-							onChange={ () => {} } // Required prop for read-only textarea
-							readOnly
-							className="mcp-setup__config-textarea"
-							help={ __( "Copy this configuration and paste it into your MCP client's settings." ) }
-						/>
 
-						{ clientDocumentation[ selectedMcpClient as keyof typeof clientDocumentation ] && (
-							<div className="mcp-setup__documentation-link">
-								<ExternalLink
-									href={
-										clientDocumentation[ selectedMcpClient as keyof typeof clientDocumentation ]
+							<VStack spacing={ 4 }>
+								<Text as="h3" variant="title.small">
+									{ __( 'MCP Server Configuration' ) }
+								</Text>
+
+								<VStack spacing={ 3 }>
+									<div
+										style={ {
+											display: 'flex',
+											justifyContent: 'space-between',
+											alignItems: 'center',
+										} }
+									>
+										{ clientDocumentation[
+											selectedMcpClient as keyof typeof clientDocumentation
+										] && (
+											<ExternalLink
+												href={
+													clientDocumentation[
+														selectedMcpClient as keyof typeof clientDocumentation
+													]
+												}
+												size="small"
+											>
+												{ __( 'View setup instructions for' ) }{ ' ' }
+												{
+													mcpClientOptions.find( ( opt ) => opt.value === selectedMcpClient )?.label
+												}
+											</ExternalLink>
+										) }
+										<Button
+											icon={ copyStatus === 'success' ? check : copy }
+											variant="tertiary"
+											size="small"
+											onClick={ copyToClipboard }
+											aria-label={ __( 'Copy configuration to clipboard' ) }
+										/>
+									</div>
+									<TextareaControl
+										value={ JSON.stringify( generateMcpConfig( selectedMcpClient ), null, 2 ) }
+										onChange={ () => {} } // Required prop for read-only textarea
+										readOnly
+										help={ __(
+											"Copy this configuration and paste it into your MCP client's settings."
+										) }
+										style={ { 'min-height': '240px' } }
+									/>
+								</VStack>
+							</VStack>
+						</VStack>
+						<VStack spacing={ 3 }>
+							<Text as="li" variant="muted" style={ { listStyle: 'none' } }>
+								{ createInterpolateElement(
+									sprintf(
+										/* translators: %s is the unique server name for this WordPress.com site */
+										__(
+											'<code>%s</code> is a unique identifier for this WordPress.com connection'
+										),
+										serverName
+									),
+									{
+										code: (
+											<code
+												key="server-name"
+												style={ {
+													backgroundColor: '#f0f0f1',
+													padding: '2px 6px',
+													borderRadius: '3px',
+													fontFamily: 'monospace',
+													fontSize: '13px',
+												} }
+											>
+												{ serverName }
+											</code>
+										),
 									}
-									className="mcp-setup__docs-link"
-								>
-									{ __( 'View setup instructions for' ) }{ ' ' }
-									{ mcpClientOptions.find( ( opt ) => opt.value === selectedMcpClient )?.label }
-								</ExternalLink>
-							</div>
-						) }
-					</div>
-				</div>
-
-				<div className="mcp-setup__config-explanation">
-					<ul>
-						<li>
-							{ createInterpolateElement(
-								sprintf(
-									/* translators: %s is the unique server name for this WordPress.com site */
-									__(
-										'Server name: A unique identifier <code>%s</code> for this WordPress.com connection'
+								) }
+							</Text>
+							<Text as="li" variant="muted" style={ { listStyle: 'none' } }>
+								{ createInterpolateElement(
+									sprintf(
+										/* translators: @automattic/mcp-wpcom-remote is the package name and should not be translated */
+										__( '<code>%s</code> is the official WordPress.com MCP server package' ),
+										'@automattic/mcp-wpcom-remote'
 									),
-									serverName
-								),
-								{
-									code: <code key="server-name">{ serverName }</code>,
-								}
-							) }
-						</li>
-						<li>
-							{ createInterpolateElement(
-								sprintf(
-									/* translators: @automattic/mcp-wpcom-remote is the package name and should not be translated */
-									__( 'Package: <code>%s</code> is the official WordPress.com MCP server' ),
-									'@automattic/mcp-wpcom-remote'
-								),
-								{
-									code: <code key="package-name">@automattic/mcp-wpcom-remote</code>,
-								}
-							) }
-						</li>
-						<li>
-							{ createInterpolateElement(
-								sprintf(
-									/* translators: WP_API_URL is the environment variable name and should not be translated */
-									__(
-										'Environment variable: <code>%s</code> automatically points to your site-specific API endpoint'
+									{
+										code: (
+											<code
+												key="package-name"
+												style={ {
+													backgroundColor: '#f0f0f1',
+													padding: '2px 6px',
+													borderRadius: '3px',
+													fontFamily: 'monospace',
+													fontSize: '13px',
+												} }
+											>
+												@automattic/mcp-wpcom-remote
+											</code>
+										),
+									}
+								) }
+							</Text>
+							<Text as="li" variant="muted" style={ { listStyle: 'none' } }>
+								{ createInterpolateElement(
+									sprintf(
+										/* translators: @automattic/mcp-wpcom-remote is the package name and should not be translated */
+										__( '<code>%s</code> is the site-specific API endpoint' ),
+										'WP_API_URL'
 									),
-									'WP_API_URL'
-								),
-								{
-									code: <code key="env-var">WP_API_URL</code>,
-								}
-							) }
-						</li>
-					</ul>
-				</div>
+									{
+										code: (
+											<code
+												key="package-name"
+												style={ {
+													backgroundColor: '#f0f0f1',
+													padding: '2px 6px',
+													borderRadius: '3px',
+													fontFamily: 'monospace',
+													fontSize: '13px',
+												} }
+											>
+												WP_API_URL
+											</code>
+										),
+									}
+								) }
+							</Text>
+						</VStack>
+					</CardBody>
+				</Card>
 			</div>
 		</PageLayout>
 	);

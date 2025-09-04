@@ -12,6 +12,7 @@ import {
 	CardBody,
 	ToggleControl,
 	ExternalLink,
+	__experimentalText as Text,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
@@ -21,7 +22,6 @@ import { useState, useEffect } from 'react';
 import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';
 import type { SiteMcpAbilities, SiteSettings } from '@automattic/api-core';
-import './style.scss';
 
 export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
@@ -194,9 +194,9 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 			return (
 				<Card>
 					<CardBody>
-						<p style={ { color: '#646970', fontSize: '14px', margin: 0 } }>
+						<Text as="p" variant="muted">
 							{ __( 'No MCP abilities are currently available.' ) }
-						</p>
+						</Text>
 					</CardBody>
 				</Card>
 			);
@@ -204,74 +204,84 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 
 		return (
 			<form onSubmit={ handleSubmit }>
-				<div className="mcp__settings">
-					<>
-						<div className="mcp__master-toggle">
-							<ToggleControl
-								checked={ anyAbilitiesEnabled }
-								onChange={ handleMasterToggle }
-								label={ __( 'Allow MCP access to this site' ) }
-							/>
-						</div>
-
-						{ anyAbilitiesEnabled && (
-							<div className="mcp__setup-section">
-								<h3 className="mcp__setup-section-title">{ __( 'MCP Client Setup' ) }</h3>
-								<p className="mcp__setup-section-description">
-									{ __(
-										'Now that MCP is enabled, you can configure your MCP client to connect to this site.'
-									) }
-								</p>
-								<Button
-									variant="secondary"
-									href={ `/sites/${ siteSlug }/settings/mcp-setup` }
-									className="mcp__setup-button"
-								>
-									{ __( 'Configure MCP Client →' ) }
-								</Button>
+				<Card>
+					<CardBody>
+						<VStack spacing={ 4 }>
+							<div
+								style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }
+							>
+								<ToggleControl
+									checked={ anyAbilitiesEnabled }
+									onChange={ handleMasterToggle }
+									label={ __( 'Allow MCP access to this site' ) }
+								/>
+								{ anyAbilitiesEnabled && (
+									<Button variant="secondary" href={ `/sites/${ siteSlug }/settings/mcp-setup` }>
+										{ __( 'Configure MCP Client' ) }
+									</Button>
+								) }
 							</div>
-						) }
-
-						<VStack spacing={ 8 }>
-							{ Object.entries( groupedByType ).map( ( [ type, typeCategories ] ) => (
-								<div key={ type } className="mcp__type-section">
-									<h2 className="mcp__type-title">{ typeDisplayNames[ type ] }</h2>
-									<p className="mcp__type-description">{ typeDescriptions[ type ] }</p>
-									<VStack spacing={ 6 }>
-										{ Object.entries( typeCategories ).map( ( [ category, categoryAbilities ] ) => (
-											<div key={ category } className="mcp__category">
-												<h3 className="mcp__category-title">{ category }</h3>
-												<VStack spacing={ 4 }>
-													{ categoryAbilities.map( ( [ abilityId, ability ] ) => (
-														<div key={ abilityId } className="mcp__ability-item">
-															<ToggleControl
-																checked={ ability.enabled }
-																onChange={ ( checked ) =>
-																	handleAbilityChange( abilityId, checked )
-																}
-																label={ ability.title }
-																disabled={ ! anyAbilitiesEnabled }
-															/>
-															<p className="mcp__ability-description">{ ability.description }</p>
-														</div>
-													) ) }
-												</VStack>
-											</div>
-										) ) }
-									</VStack>
-								</div>
-							) ) }
 						</VStack>
+					</CardBody>
+				</Card>
+
+				{ hasAbilities && anyAbilitiesEnabled && (
+					<>
+						{ Object.entries( groupedByType ).map( ( [ type, typeCategories ] ) => (
+							<div key={ type } style={ { marginTop: '24px' } }>
+								<Text as="h1">{ typeDisplayNames[ type ] }</Text>
+								<Text as="p" variant="muted" style={ { marginBottom: '16px' } }>
+									{ typeDescriptions[ type ] }
+								</Text>
+								<Card>
+									<CardBody>
+										<VStack spacing={ 6 }>
+											{ Object.entries( typeCategories ).map(
+												( [ category, categoryAbilities ] ) => (
+													<VStack key={ category } spacing={ 4 }>
+														<Text
+															as="h3"
+															variant="title.small"
+															style={ { textTransform: 'capitalize' } }
+														>
+															{ category }
+														</Text>
+														{ categoryAbilities.map( ( [ abilityId, ability ] ) => (
+															<VStack key={ abilityId } spacing={ 3 }>
+																<ToggleControl
+																	checked={ ability.enabled }
+																	onChange={ ( checked ) =>
+																		handleAbilityChange( abilityId, checked )
+																	}
+																	label={ ability.title }
+																	disabled={ ! anyAbilitiesEnabled }
+																	help={ ability.description }
+																/>
+															</VStack>
+														) ) }
+													</VStack>
+												)
+											) }
+										</VStack>
+									</CardBody>
+								</Card>
+							</div>
+						) ) }
 					</>
-					<Button
-						variant="primary"
-						type="submit"
-						isBusy={ mutation.isPending }
-						disabled={ mutation.isPending }
-					>
-						{ mutation.isPending ? __( 'Saving…' ) : __( 'Save MCP settings' ) }
-					</Button>
-				</div>
+				) }
+
+				{ hasAbilities && (
+					<div style={ { marginTop: '24px' } }>
+						<Button
+							variant="primary"
+							type="submit"
+							isBusy={ mutation.isPending }
+							disabled={ mutation.isPending }
+						>
+							{ mutation.isPending ? __( 'Saving…' ) : __( 'Save MCP settings' ) }
+						</Button>
+					</div>
+				) }
 			</form>
 		);
 	};
