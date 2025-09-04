@@ -90,7 +90,7 @@ export default function PreferencesLanguageForm() {
 	 * as such, we're overriding the language with the locale_variant, if present, this saves us from checking the data and allows us to
 	 * trust that the 'language' field contains a locale from the languages.
 	 */
-	if ( serverData?.locale_variant && serverData.locale_variant !== '' ) {
+	if ( serverData?.locale_variant ) {
 		serverData.language = serverData.locale_variant;
 	}
 	const data = useMemo(
