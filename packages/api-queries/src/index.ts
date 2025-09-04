@@ -66,3 +66,4 @@ export * from './site';
 export * from './sites';
 export * from './ssh';
 export * from './plugins';
+export * from './wp-org-plugin';

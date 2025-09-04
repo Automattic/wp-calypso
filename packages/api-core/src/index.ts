@@ -30,6 +30,7 @@ export * from './me-sites';
 export * from './me-sites-plugins';
 export * from './me-ssh';
 export * from './p2';
+export * from './plugins';
 export * from './purchase';
 export * from './read-teams';
 export * from './site';
