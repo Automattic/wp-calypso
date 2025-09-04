@@ -105,9 +105,15 @@ export function SelectSite( { onSiteSelect }: Props ) {
 		infiniteScrollHandler: infiniteScrollHandler,
 	};
 
-	if ( isLoading ) {
-		return <div>Loading sites...</div>;
-	}
+	const getEmptyStateMessage = () => {
+		if ( isLoading ) {
+			return __( 'Loading sites…' );
+		}
+		if ( view.search ) {
+			return __( 'No sites found' );
+		}
+		return __( 'No sites' );
+	};
 
 	return (
 		<div className="domain-transfer-select-site">
@@ -133,7 +139,7 @@ export function SelectSite( { onSiteSelect }: Props ) {
 					onChangeView={ setView }
 					selection={ selection }
 					onChangeSelection={ handleSelectionChange }
-					empty={ view.search ? __( 'No sites found' ) : __( 'No sites' ) }
+					empty={ getEmptyStateMessage() }
 				>
 					<DataViews.Layout />
 				</DataViews>
