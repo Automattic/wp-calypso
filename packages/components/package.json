@@ -78,7 +78,6 @@
 		"prop-types": "^15.8.1",
 		"react-modal": "^3.16.3",
 		"react-router-dom": "^6.23.1",
-		"swiper": "^11.2.10",
 		"utility-types": "^3.10.0"
 	},
 	"peerDependencies": {

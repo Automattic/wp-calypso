@@ -1,15 +1,10 @@
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useState, useEffect } from '@wordpress/element';
-import { Icon, close } from '@wordpress/icons';
+import { Icon, close, chevronLeft, chevronRight } from '@wordpress/icons';
+import { useTranslate } from 'i18n-calypso';
 import { createRoot } from 'react-dom/client';
-import { Navigation, Keyboard } from 'swiper/modules';
-import { Swiper, SwiperSlide } from 'swiper/react';
+import Swipeable from '../swipeable';
 
-/**
- * Styles
- */
-import 'swiper/css';
-import 'swiper/css/navigation';
 import './style.scss';
 
 interface CarouselImage {
@@ -31,6 +26,7 @@ const ImageCarouselModal = ( {
 	initialIndex?: number;
 	onClose: () => void;
 } ) => {
+	const translate = useTranslate();
 	const [ currentIndex, setCurrentIndex ] = useState( initialIndex );
 	const isMobile = useMobileBreakpoint();
 
@@ -42,13 +38,19 @@ const ImageCarouselModal = ( {
 		return image.src;
 	};
 
-	// Handle escape key close
+	// Handle escape and arrow key navigation
 	useEffect( () => {
 		const handleKeyDown = ( event: KeyboardEvent ) => {
 			if ( event.key === 'Escape' ) {
 				event.preventDefault();
 				event.stopPropagation();
 				onClose();
+			} else if ( event.key === 'ArrowLeft' ) {
+				event.preventDefault();
+				setCurrentIndex( ( prev ) => ( prev > 0 ? prev - 1 : images.length - 1 ) );
+			} else if ( event.key === 'ArrowRight' ) {
+				event.preventDefault();
+				setCurrentIndex( ( prev ) => ( prev < images.length - 1 ? prev + 1 : 0 ) );
 			}
 		};
 
@@ -58,48 +60,76 @@ const ImageCarouselModal = ( {
 		return () => {
 			window.removeEventListener( 'keydown', handleKeyDown, { capture: true } );
 		};
-	}, [ onClose ] );
+	}, [ onClose, images.length ] );
+
+	const goToPrevious = () => {
+		setCurrentIndex( ( prev ) => ( prev > 0 ? prev - 1 : images.length - 1 ) );
+	};
+
+	const goToNext = () => {
+		setCurrentIndex( ( prev ) => ( prev < images.length - 1 ? prev + 1 : 0 ) );
+	};
+
+	const handlePageSelect = ( newIndex: number ) => {
+		setCurrentIndex( newIndex );
+	};
+
+	if ( images.length === 0 ) {
+		return null;
+	}
 
 	return (
 		<div className="reader-image-carousel-overlay">
-			<div className="reader-image-carousel-container">
-				<Swiper
-					className="reader-image-carousel-wrap"
-					modules={ [ Navigation, Keyboard ] }
-					keyboard={ { enabled: true } }
-					slidesPerView={ 1 }
-					initialSlide={ initialIndex }
-					loop
-					navigation={ isMobile ? false : true }
-					freeMode={ false }
-					onSlideChange={ ( swiper ) => setCurrentIndex( swiper.realIndex ) }
-				>
-					{ images.map( ( image, index ) => (
-						<SwiperSlide key={ index } virtualIndex={ index }>
-							<img
-								// Adding width to get an appropriate size image
-								src={ getImageSrc( image ) }
-								alt={ image.alt || '' }
-							/>
-						</SwiperSlide>
-					) ) }
-				</Swiper>
+			<Swipeable
+				className="reader-image-carousel-wrap"
+				currentPage={ currentIndex }
+				onPageSelect={ handlePageSelect }
+				pageClassName="reader-image-carousel-slide"
+				containerClassName="reader-image-carousel-container"
+				isClickEnabled={ false }
+			>
+				{ images.map( ( image, index ) => (
+					<img key={ index } src={ getImageSrc( image ) } alt={ image.alt || '' } />
+				) ) }
+			</Swipeable>
 
-				<div className="reader-image-carousel-footer">
-					<div className="reader-image-carousel-pagination">
-						<span>
-							{ currentIndex + 1 } / { images.length }
-						</span>
-					</div>
-					<div className="reader-image-carousel-caption">
-						{ images[ currentIndex ].caption?.replace( /<[^>]*>/g, '' ) }
-					</div>
+			<button
+				className="reader-image-carousel-button reader-image-carousel-button--close"
+				onClick={ onClose }
+				aria-label={ translate( 'Close modal' ) }
+			>
+				<Icon icon={ close } size={ 17 } />
+			</button>
+
+			{ ! isMobile && (
+				<>
+					<button
+						className="reader-image-carousel-button reader-image-carousel-button--prev"
+						onClick={ goToPrevious }
+						aria-label={ translate( 'Previous image' ) }
+					>
+						<Icon icon={ chevronLeft } size={ 24 } />
+					</button>
+					<button
+						className="reader-image-carousel-button reader-image-carousel-button--next"
+						onClick={ goToNext }
+						aria-label={ translate( 'Next image' ) }
+					>
+						<Icon icon={ chevronRight } size={ 24 } />
+					</button>
+				</>
+			) }
+
+			<div className="reader-image-carousel-footer">
+				<div className="reader-image-carousel-pagination">
+					<span>
+						{ currentIndex + 1 } / { images.length }
+					</span>
+				</div>
+				<div className="reader-image-carousel-caption">
+					{ images[ currentIndex ].caption?.replace( /<[^>]*>/g, '' ) }
 				</div>
 			</div>
-
-			<button className="reader-image-carousel-close" onClick={ onClose } aria-label="Close">
-				<Icon icon={ close } size={ 17 } style={ { fill: '#fff' } } />
-			</button>
 		</div>
 	);
 };

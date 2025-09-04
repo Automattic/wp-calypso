@@ -1,14 +1,7 @@
-:root {
-	--swiper-navigation-sides-offset: 40px;
-}
-
 .reader-image-carousel-overlay {
 	position: fixed;
 	inset: 0;
 	z-index: 9999;
-	display: flex;
-	align-items: flex-start;
-	justify-content: center;
 	background-color: #000;
 	transition: opacity 200ms ease-out;
 
@@ -25,78 +18,87 @@
 	}
 }
 
-.reader-image-carousel-container {
-	width: 100%;
-	height: 100%;
-	align-items: start;
-}
-
 .reader-image-carousel-wrap {
-	position: relative;
 	width: 100%;
-	height: calc(100% - 64px);
-
+	height: calc(100vh - 64px);
+	
 	@media (max-width: 768px) {
 		height: calc(100vh - 100px);
 	}
 
-	.swiper-slide {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		
-		img {
-			max-width: 100%;
-			max-height: 100%;
-			object-fit: contain;
-		}
+	.swipeable__container {
+		height: 100%;
 	}
 
-	.swiper-button-next,
-	.swiper-button-prev {
-		top: calc(50% + 20px);
-		width: 30px;
-		height: 30px;
-		color: #999;
-		background-color: rgba(0, 0, 0, 0.5);
-		border-radius: 4px;
+	.swipeable__pages {
+		height: 100%;
+	}
 
-		&::after {
-			font-size: 12px;
-			font-weight: bold;
-		}
-
-		&:hover {
-			color: #fff;
-			background-color: #999;
-		}
+	.swipeable__page {
+		height: 100%;
 	}
 }
 
-.reader-image-carousel-close {
-	height: 30px;
-	width: 30px;
+.reader-image-carousel-slide {
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	img {
+		max-width: 100%;
+		max-height: 100%;
+		width: auto;
+		height: auto;
+		object-fit: contain;
+	}
+}
+
+.reader-image-carousel-button {
 	position: absolute;
-	top: 20px;
-	right: 30px;
-	z-index: 10001;
+	width: 30px;
+	height: 30px;
+	z-index: 10000;
 	border: none;
-	background: rgba(0, 0, 0, 0.5);
+	background-color: rgba(0, 0, 0, 0.5);
 	border-radius: 4px;
 	cursor: pointer;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 
-	&:hover {
-		background-color: #999;
+	svg {
+		fill: #999;
 	}
 
-	@media (max-width: 768px) {
-		top: 10px;
-		right: 10px;
-		width: 40px;
-		height: 40px;
+	&:hover {
+		background-color: #999;
+
+		svg {
+			fill: #fff;
+		}
+	}
+
+	&--prev {
+		top: calc(50% - 15px);
+		left: 40px;
+	}
+
+	&--next {
+		top: calc(50% - 15px);
+		right: 40px;
+	}
+
+	&--close {
+		top: 30px;
+		right: 40px;
+
+		@media (max-width: 768px) {
+			top: 10px;
+			right: 10px;
+			width: 40px;
+			height: 40px;
+		}
 	}
 }
 
