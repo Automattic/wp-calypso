@@ -102,7 +102,6 @@ export default function AccountDeletionConfirmModal( {
 													target="_blank"
 													rel="noopener noreferrer"
 													aria-label={ __( 'Get help' ) }
-													style={ { minWidth: 'auto' } }
 												/>
 											) }
 											<Button
@@ -113,7 +112,6 @@ export default function AccountDeletionConfirmModal( {
 												target="_blank"
 												rel="noopener noreferrer"
 												aria-label={ option.text }
-												style={ { minWidth: 'auto' } }
 											/>
 										</HStack>
 									}
