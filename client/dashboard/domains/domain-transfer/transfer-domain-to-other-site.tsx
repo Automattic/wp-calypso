@@ -71,6 +71,7 @@ export default function DomainTransferToOtherSite() {
 							level={ 3 }
 						/>
 						<SelectSite
+							attachedSiteId={ domain?.blog_id }
 							onSiteSelect={ ( site ) => {
 								setSelectedSite( site );
 								setIsConfirmDialogOpen( true );

@@ -15,12 +15,16 @@ import type { View } from '@wordpress/dataviews';
 import './select-site.scss';
 
 interface Props {
+	attachedSiteId?: number;
 	onSiteSelect: ( site: Site ) => void;
 }
 
-export function SelectSite( { onSiteSelect }: Props ) {
+export function SelectSite( { attachedSiteId, onSiteSelect }: Props ) {
 	const { data: allSites = [], isLoading } = useQuery( sitesQuery() );
-	const sites = useMemo( () => allSites.filter( ( site ) => canManageSite( site ) ), [ allSites ] );
+	const sites = useMemo(
+		() => allSites.filter( ( site ) => canManageSite( site ) && site.ID !== attachedSiteId ),
+		[ allSites, attachedSiteId ]
+	);
 	const searchInputRef = useRef< HTMLInputElement >( null );
 
 	const perPage = 6;
