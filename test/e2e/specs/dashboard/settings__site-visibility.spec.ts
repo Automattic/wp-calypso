@@ -11,6 +11,7 @@ test.describe(
 
 		test( 'As a new simple site user, I can set my site visibility to Private, so that only I can see my site', async ( {
 			pageDashboard,
+			pageDashboardVisibilitySettings,
 			pageIncognito,
 			sitePublic,
 		} ) => {
@@ -21,11 +22,11 @@ test.describe(
 			} );
 
 			await test.step( "When I set my site's visibility to Private", async function () {
-				await pageDashboard.setSiteVisibility( 'Private' );
+				await pageDashboardVisibilitySettings.setSiteVisibility( 'Private' );
 			} );
 
 			await test.step( "And I save my site's visbility settings", async function () {
-				expect( await pageDashboard.saveSiteVisibilityChanges() ).toBe(
+				expect( await pageDashboardVisibilitySettings.saveSiteVisibilityChanges() ).toBe(
 					'Site visibility settings saved.'
 				);
 			} );
@@ -38,6 +39,7 @@ test.describe(
 
 		test( 'As a new simple site user, I can set my site visibility to Coming Soon, so that others see a nice coming soon message', async ( {
 			pageDashboard,
+			pageDashboardVisibilitySettings,
 			pageIncognito,
 			sitePublic,
 		} ) => {
@@ -48,11 +50,11 @@ test.describe(
 			} );
 
 			await test.step( "When I set my site's visibility to 'Coming soon'", async function () {
-				await pageDashboard.setSiteVisibility( 'Coming soon' );
+				await pageDashboardVisibilitySettings.setSiteVisibility( 'Coming soon' );
 			} );
 
 			await test.step( "And I save my site's visbility settings", async function () {
-				expect( await pageDashboard.saveSiteVisibilityChanges() ).toBe(
+				expect( await pageDashboardVisibilitySettings.saveSiteVisibilityChanges() ).toBe(
 					'Site visibility settings saved.'
 				);
 			} );
@@ -65,6 +67,7 @@ test.describe(
 
 		test( 'As a new simple site user, I can set my site visibility to Public and discourage search engines, so that my content is less likely to show on search engines like Google', async ( {
 			pageDashboard,
+			pageDashboardVisibilitySettings,
 			pageIncognito,
 			sitePublic,
 		} ) => {
@@ -75,11 +78,11 @@ test.describe(
 			} );
 
 			await test.step( 'When I discourage search engines from indexing my site', async function () {
-				await pageDashboard.setDiscourageSearchEngines();
+				await pageDashboardVisibilitySettings.setDiscourageSearchEngines();
 			} );
 
 			await test.step( "And I save my site's visbility settings", async function () {
-				expect( await pageDashboard.saveSiteVisibilityChanges() ).toBe(
+				expect( await pageDashboardVisibilitySettings.saveSiteVisibilityChanges() ).toBe(
 					'Site visibility settings saved.'
 				);
 			} );

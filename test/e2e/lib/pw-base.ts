@@ -25,6 +25,7 @@ import {
 	AppleLoginPage,
 	BlockWidgetEditorComponent,
 	DashboardPage,
+	DashboardVisibilitySettingsPage,
 	DataHelper,
 	EditorPage,
 	EmailClient,
@@ -102,6 +103,10 @@ export const test = base.extend< {
 	 * Page object representing the WordPress.com dashboard.
 	 */
 	pageDashboard: DashboardPage;
+	/**
+	 * Page object representing the WordPress.com dashboard visibility settings page.
+	 */
+	pageDashboardVisibilitySettings: DashboardVisibilitySettingsPage;
 	/**
 	 * Page object representing the WordPress editor page.
 	 */
@@ -181,6 +186,10 @@ export const test = base.extend< {
 	pageDashboard: async ( { page }, use ) => {
 		const dashboardPage = new DashboardPage( page );
 		await use( dashboardPage );
+	},
+	pageDashboardVisibilitySettings: async ( { page }, use ) => {
+		const dashboardVisibilitySettingsPage = new DashboardVisibilitySettingsPage( page );
+		await use( dashboardVisibilitySettingsPage );
 	},
 	pageEditor: async ( { page }, use ) => {
 		const editorPage = new EditorPage( page );

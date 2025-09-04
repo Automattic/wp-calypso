@@ -85,36 +85,6 @@ export class DashboardPage {
 	}
 
 	/**
-	 * Sets the "Discourage search engines from indexing this site" option.
-	 *
-	 * @returns Promise that resolves when this option is set
-	 */
-	async setDiscourageSearchEngines(): Promise< void > {
-		await this.page
-			.getByRole( 'checkbox', { name: 'Discourage search engines from indexing this site' } )
-			.click();
-	}
-
-	/**
-	 * Sets the site visibility by selecting the appropriate radio button
-	 *
-	 * @param visibility - The desired site visibility.
-	 * @returns Promise that resolves when the radio button is set.
-	 */
-	async setSiteVisibility( visibility: 'Public' | 'Private' | 'Coming soon' ): Promise< void > {
-		await this.page.getByRole( 'radio', { name: visibility } ).click();
-	}
-
-	/**
-	 * Saves changes on the settings page by clicking the Save button and waiting for the request to finish.
-	 * @returns Promise that resolves to the text content of the dismissal notice, or null if no notice appears.
-	 */
-	async saveSiteVisibilityChanges(): Promise< string | null > {
-		await this.page.getByRole( 'button', { name: 'Save' } ).click();
-		return await this.page.getByRole( 'button', { name: 'Dismiss this notice' } ).textContent();
-	}
-
-	/**
 	 * Checks if the current page is a 404 error page.
 	 *
 	 * @returns Promise that resolves to true if the page is a 404 error page.
