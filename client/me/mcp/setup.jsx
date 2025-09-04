@@ -12,7 +12,7 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
-import { copy, check } from '@wordpress/icons';
+import { copy, check, error } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { connect } from 'react-redux';
@@ -113,9 +113,21 @@ function McpSetupComponent( { path, userSettings } ) {
 			await navigator.clipboard.writeText( configText );
 			setCopyStatus( 'success' );
 			setTimeout( () => setCopyStatus( 'idle' ), 2000 );
-		} catch ( error ) {
+		} catch ( err ) {
 			setCopyStatus( 'error' );
 			setTimeout( () => setCopyStatus( 'idle' ), 2000 );
+		}
+	};
+
+	// Helper function to get the appropriate icon based on copy status
+	const getCopyIcon = () => {
+		switch ( copyStatus ) {
+			case 'success':
+				return check;
+			case 'error':
+				return error;
+			default:
+				return copy;
 		}
 	};
 
@@ -242,9 +254,12 @@ function McpSetupComponent( { path, userSettings } ) {
 											</ExternalLink>
 										) }
 										<Button
-											icon={ copyStatus === 'success' ? check : copy }
+											icon={ getCopyIcon() }
 											variant="tertiary"
 											size="small"
+											style={ {
+												color: copyStatus === 'error' ? 'var(--color-error)' : undefined,
+											} }
 											onClick={ copyToClipboard }
 											aria-label={ translate( 'Copy configuration to clipboard' ) }
 										/>
