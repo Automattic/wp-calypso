@@ -20,7 +20,7 @@ export const getPriceRuleForSuggestion = ( {
 	responseCart: ResponseCart;
 } ) => {
 	if ( isHundredYearPlanFlow( flowName ) ) {
-		return DomainPriceRule.NO_PRICE;
+		return DomainPriceRule.HIDE_PRICE;
 	}
 
 	if ( isHundredYearDomainFlow( flowName ) ) {

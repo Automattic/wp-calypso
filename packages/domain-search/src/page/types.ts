@@ -48,7 +48,7 @@ export interface DomainSearchConfig {
 
 export enum DomainPriceRule {
 	ONE_TIME_PRICE = 'ONE_TIME_PRICE',
-	NO_PRICE = 'NO_PRICE',
+	HIDE_PRICE = 'HIDE_PRICE',
 	FREE_DOMAIN = 'FREE_DOMAIN',
 	FREE_FOR_FIRST_YEAR = 'FREE_FOR_FIRST_YEAR',
 	PRICE = 'PRICE',

@@ -25,7 +25,7 @@ export const DomainSuggestionPrice = ( { domainName }: DomainSuggestionPriceProp
 			  } )
 			: priceSource.sale_cost;
 
-	if ( suggestion.price_rule === DomainPriceRule.NO_PRICE ) {
+	if ( suggestion.price_rule === DomainPriceRule.HIDE_PRICE ) {
 		return null;
 	}
 
