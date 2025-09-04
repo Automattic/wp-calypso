@@ -86,7 +86,6 @@ const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFil
 	return (
 		<div ref={ noteListRef } className="wpnc__note-list">
 			<DataViews< Note >
-				key={ filterName }
 				data={ filteredData }
 				fields={ fields }
 				actions={ actions }
