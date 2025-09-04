@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 
-export function isSiteSpecEnabled() {
+export function isSiteSpecEnabled(): boolean {
 	return config.isEnabled( 'site-spec' );
 }
 
@@ -9,8 +9,8 @@ export function isSiteSpecEnabled() {
  * @param {string} urlKey - The key to get from site spec config ('url' or 'css_url')
  * @returns {string|null} The URL or null if not found
  */
-export function getSiteSpecUrl( urlKey = 'url' ) {
-	const siteSpecConfig = config( 'site_spec' );
+export function getSiteSpecUrl( urlKey: string = 'url' ): string | null {
+	const siteSpecConfig = config( 'site_spec' ) as Record< string, any > | undefined;
 	const url = siteSpecConfig?.[ urlKey ];
 	if ( ! url ) {
 		return null;
@@ -21,8 +21,12 @@ export function getSiteSpecUrl( urlKey = 'url' ) {
 /**
  * Get the site spec configuration object.
  */
-export function getSiteSpecConfig() {
-	const siteSpecConfig = config( 'site_spec' );
+export function getSiteSpecConfig(): {
+	agentUrl?: string;
+	agentId?: string;
+	buildSiteUrl?: string;
+} {
+	const siteSpecConfig = config( 'site_spec' ) as Record< string, any > | undefined;
 	const configObj = {
 		agentUrl: siteSpecConfig?.agent_url,
 		agentId: siteSpecConfig?.agent_id,

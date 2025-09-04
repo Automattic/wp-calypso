@@ -2,10 +2,10 @@ import { isSiteSpecEnabled, getSiteSpecUrl, getSiteSpecConfig } from '../utils';
 
 // Mock the calypso-config module
 jest.mock( '@automattic/calypso-config', () => {
-	const mockConfig = jest.fn();
+	const mockConfig = jest.fn() as any;
 
 	// Mock the isEnabled method
-	mockConfig.isEnabled = jest.fn( ( feature ) => {
+	mockConfig.isEnabled = jest.fn( ( feature: string ) => {
 		if ( feature === 'site-spec' ) {
 			return true;
 		}
@@ -13,8 +13,8 @@ jest.mock( '@automattic/calypso-config', () => {
 	} );
 
 	// Mock the default function for config keys
-	mockConfig.mockImplementation( ( key ) => {
-		const configValues = {
+	mockConfig.mockImplementation( ( key: string ) => {
+		const configValues: Record< string, any > = {
 			site_spec: {
 				url: 'https://example.com/site-spec.js',
 				css_url: 'https://example.com/style.css',
@@ -30,7 +30,7 @@ jest.mock( '@automattic/calypso-config', () => {
 } );
 
 describe( 'SiteSpec Utils', () => {
-	let config;
+	let config: any;
 
 	beforeEach( () => {
 		config = require( '@automattic/calypso-config' );
