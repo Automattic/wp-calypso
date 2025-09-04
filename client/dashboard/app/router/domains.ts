@@ -314,6 +314,9 @@ export const domainTransferToOtherUserRoute = createRoute( {
 export const domainTransferToOtherSiteRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'transfer/other-site',
+	loader: async ( { params: { domainName } } ) => {
+		return queryClient.ensureQueryData( domainQuery( domainName ) );
+	},
 } ).lazy( () =>
 	import( '../../domains/domain-transfer/transfer-domain-to-other-site' ).then( ( d ) =>
 		createLazyRoute( 'domain-transfer-to-other-site' )( {
