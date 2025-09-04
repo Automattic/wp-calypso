@@ -7,7 +7,7 @@ import {
 } from '@wordpress/components';
 import { DataViews } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useMemo, useState, useEffect, useCallback, useRef } from 'react';
+import { useMemo, useState, useCallback, useRef } from 'react';
 import { canManageSite } from '../../sites/features';
 import SiteIcon from '../../sites/site-icon';
 import type { Site } from '@automattic/api-core';
@@ -34,8 +34,7 @@ export function SelectSite( { onSiteSelect }: Props ) {
 		mediaField: 'icon',
 		infiniteScrollEnabled: true,
 	} );
-	// Custom pagination handler that simulates server-side pagination
-	const [ allLoadedRecords, setAllLoadedRecords ] = useState< Site[] >( [] );
+
 	const [ selection, setSelection ] = useState< string[] >( [] );
 	const totalPages = Math.ceil( sites.length / perPage );
 	const currentPage = view.page || 1;
@@ -100,14 +99,9 @@ export function SelectSite( { onSiteSelect }: Props ) {
 		return filteredSites.slice( 0, endIndex );
 	}, [ sites, currentPage, perPage, view.search ] );
 
-	// Update displayed data when page changes
-	useEffect( () => {
-		setAllLoadedRecords( displayedData );
-	}, [ displayedData ] );
-
 	const paginationInfo = {
-		totalItems: sites.length,
-		totalPages: Math.ceil( sites.length / perPage ),
+		totalItems: displayedData.length,
+		totalPages: Math.ceil( displayedData.length / perPage ),
 		infiniteScrollHandler: infiniteScrollHandler,
 	};
 
@@ -130,7 +124,7 @@ export function SelectSite( { onSiteSelect }: Props ) {
 					} }
 				/>
 				<DataViews
-					data={ allLoadedRecords }
+					data={ displayedData }
 					fields={ fields }
 					view={ view }
 					paginationInfo={ paginationInfo }
