@@ -1,14 +1,9 @@
 @import '@automattic/typography/styles/variables';
 
 .odie-closed-conversation-footer {
-	position: fixed;
-	bottom: 0;
-	left: 0;
-	right: 0;
 	background: var( --studio-white, #fff );
 	border-radius: 0 0 24px 24px;
 	box-sizing: border-box;
-	z-index: 5;
 	width: 100%;
 	display: flex;
 	padding: 16px;
