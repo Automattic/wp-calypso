@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useDomainSearch } from '../page/context';
 
 export const useSuggestion = ( domainName: string ) => {
-	const { query, queries, filter } = useDomainSearch();
+	const { query, queries, filter, getPriceRuleForSuggestion } = useDomainSearch();
 
 	const { data: suggestion } = useQuery( {
 		...queries.domainSuggestions( query, {
@@ -18,8 +18,7 @@ export const useSuggestion = ( domainName: string ) => {
 
 			return {
 				...suggestion,
-				// TODO: Replace with actual logic from the isPaidDomain function
-				is_paid_domain: true,
+				price_rule: getPriceRuleForSuggestion( suggestion ),
 			};
 		},
 	} );

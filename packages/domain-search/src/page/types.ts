@@ -46,6 +46,17 @@ export interface DomainSearchConfig {
 	deemphasizedTlds: string[];
 }
 
+export enum DomainPriceRule {
+	ONE_TIME_PRICE = 'ONE_TIME_PRICE',
+	FREE_DOMAIN = 'FREE_DOMAIN',
+	FREE_FOR_FIRST_YEAR = 'FREE_FOR_FIRST_YEAR',
+	FREE_WITH_PLAN = 'FREE_WITH_PLAN',
+	PRICE = 'PRICE',
+	DOMAIN_MOVE_PRICE = 'DOMAIN_MOVE_PRICE',
+	INCLUDED_IN_HIGHER_PLAN = 'INCLUDED_IN_HIGHER_PLAN',
+	UPGRADE_TO_HIGHER_PLAN_TO_BUY = 'UPGRADE_TO_HIGHER_PLAN_TO_BUY',
+}
+
 export interface DomainSearchProps {
 	slots?: {
 		BeforeResults?: ComponentType;
@@ -57,12 +68,13 @@ export interface DomainSearchProps {
 	events?: Partial< DomainSearchEvents >;
 	currentSiteUrl?: string;
 	config?: Partial< DomainSearchConfig >;
+	getPriceRuleForSuggestion?: ( suggestion: DomainSuggestion ) => DomainPriceRule;
 }
 
 export interface DomainSearchContextType
 	extends Omit<
 		DomainSearchProps,
-		'className' | 'initialQuery' | 'events' | 'queryClient' | 'config'
+		'className' | 'initialQuery' | 'events' | 'config' | 'getPriceRuleForSuggestion'
 	> {
 	events: DomainSearchEvents;
 	isFullCartOpen: boolean;
@@ -82,4 +94,5 @@ export interface DomainSearchContextType
 		freeSuggestion: ( query: string ) => ReturnType< typeof freeSuggestionQuery >;
 	};
 	config: DomainSearchConfig;
+	getPriceRuleForSuggestion: ( suggestion: DomainSuggestion ) => DomainPriceRule;
 }

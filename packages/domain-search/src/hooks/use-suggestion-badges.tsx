@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { type ReactNode, useMemo } from 'react';
+import { DomainPriceRule } from '../page';
 import { useDomainSearch } from '../page/context';
 import { DomainSuggestionBadge } from '../ui';
 import { useSuggestion } from './use-suggestion';
@@ -16,7 +17,7 @@ export const useDomainSuggestionBadges = ( domainName: string ) => {
 
 		const saleCost = availability?.sale_cost ?? suggestion.sale_cost;
 
-		if ( suggestion.is_paid_domain && saleCost ) {
+		if ( suggestion.price_rule === DomainPriceRule.PRICE && saleCost ) {
 			computedBadges.push(
 				<DomainSuggestionBadge key="sale" variation="warning">
 					{ __( 'Sale' ) }
