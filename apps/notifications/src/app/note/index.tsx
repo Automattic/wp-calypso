@@ -98,7 +98,7 @@ const Note = ( { isDismissible }: { isDismissible?: boolean } ) => {
 							{ note.title }
 						</Heading>
 					</HStack>
-					<HStack justify="flex-end">
+					<HStack justify="flex-end" style={ { width: 'auto' } }>
 						<ActionDropdown note={ note } goBack={ goBack } />
 						{ isDismissible && <CloseButton /> }
 					</HStack>
