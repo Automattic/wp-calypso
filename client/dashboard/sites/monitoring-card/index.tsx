@@ -91,16 +91,14 @@ export default function MonitoringCard( {
 				) }
 				{ topContent }
 				{ ! isLoading && children && (
-					<>
-						<VStack
-							className="dashboard-monitoring-card__content"
-							spacing={ 2 }
-							justify="flex-start"
-							style={ { flexGrow: 1 } }
-						>
-							{ children }
-						</VStack>
-					</>
+					<VStack
+						className="dashboard-monitoring-card__content"
+						spacing={ 2 }
+						justify="flex-start"
+						style={ { flexGrow: 1 } }
+					>
+						{ children }
+					</VStack>
 				) }
 			</CardBody>
 		</Card>
