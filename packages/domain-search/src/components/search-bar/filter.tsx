@@ -12,7 +12,7 @@ const emptyFilter: FilterState = {
 
 export const Filter = () => {
 	const { filter, setFilter, query, queries } = useDomainSearch();
-	const { data: availableTlds = [], isFetching: isFetchingTlds } = useQuery< string[] >( {
+	const { data: availableTlds = [], isFetching: isFetchingTlds } = useQuery( {
 		...queries.availableTlds( query ),
 		enabled: true,
 	} ) as { data: string[]; isFetching: boolean };
