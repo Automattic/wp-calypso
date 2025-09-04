@@ -31,6 +31,7 @@ export const useManageSupportInteraction = () => {
 			];
 			// Save the interaction to the query client to avoid a new API call.
 			queryClient.setQueryData( queryKey, interaction );
+			// Add the new interaction to the list of interactions without refetching them.
 			queryClient.setQueryData(
 				[ 'support-interactions', 'get-interactions', isTestMode ],
 				( oldData: SupportInteraction[] ) => {
@@ -77,7 +78,9 @@ export const useManageSupportInteraction = () => {
 				interaction.uuid,
 				isTestMode,
 			];
+			// Update the interaction with the new events.
 			queryClient.setQueryData( queryKey, interaction );
+			// The support history relies on the list of interactions to have fresh events.
 			queryClient.setQueryData(
 				[ 'support-interactions', 'get-interactions', isTestMode ],
 				( oldData: SupportInteraction[] ) => {
@@ -91,6 +94,7 @@ export const useManageSupportInteraction = () => {
 					return newData;
 				}
 			);
+			// The support history relies on the list of odie-interactions to be fresh. Invalidate.
 			queryClient.invalidateQueries( {
 				queryKey: [ 'odie-interactions' ],
 			} );
