@@ -26,6 +26,10 @@ export const Filter = () => {
 		[ filter ]
 	);
 
+	if ( ! isFetchingTlds && ( ! availableTlds || availableTlds.length === 0 ) ) {
+		return null;
+	}
+
 	return (
 		<Dropdown
 			showArrow={ false }
