@@ -16,7 +16,7 @@ export class HotkeyContainer extends Component {
 		shortcuts: PropTypes.arrayOf(
 			PropTypes.shape( {
 				action: PropTypes.func.isRequired,
-				hotkey: PropTypes.number.isRequired,
+				hotkey: PropTypes.string.isRequired,
 				withModifiers: PropTypes.bool,
 			} )
 		),
@@ -36,7 +36,7 @@ export class HotkeyContainer extends Component {
 		}
 
 		this.props.shortcuts
-			.filter( ( shortcut ) => shortcut.hotkey === event.keyCode )
+			.filter( ( shortcut ) => shortcut.hotkey === event.key )
 			.filter(
 				( shortcut ) => ( shortcut.withModifiers || false ) === modifierKeyIsActive( event )
 			)

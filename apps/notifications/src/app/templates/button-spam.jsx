@@ -3,7 +3,6 @@ import { removeBug } from '@wordpress/icons';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { connect } from 'react-redux';
-import { keys } from '../../panel/helpers/input';
 import { spamNote } from '../../panel/state/notes/thunks';
 import ActionButton from './action-button';
 
@@ -22,7 +21,7 @@ const SpamButton = ( { note, spamNote, goBack } ) => {
 			icon={ removeBug }
 			isActive={ false }
 			isBusy={ isBusy }
-			hotkey={ keys.KEY_S }
+			hotkey="s"
 			onToggle={ handleSpam }
 			text={ __( 'Spam' ) }
 			title={ __( 'Mark comment as spam' ) }
