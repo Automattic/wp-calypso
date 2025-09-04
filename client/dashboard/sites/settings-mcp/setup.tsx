@@ -219,9 +219,7 @@ export default function McpSetup( { siteSlug }: { siteSlug: string } ) {
 							/>
 
 							<VStack spacing={ 4 }>
-								<Text as="h3" variant="title.small">
-									{ __( 'MCP Server Configuration' ) }
-								</Text>
+								<Text as="h3">{ __( 'MCP Server Configuration' ) }</Text>
 
 								<VStack spacing={ 3 }>
 									<div

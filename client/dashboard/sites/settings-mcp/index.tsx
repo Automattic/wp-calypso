@@ -239,11 +239,7 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 											{ Object.entries( typeCategories ).map(
 												( [ category, categoryAbilities ] ) => (
 													<VStack key={ category } spacing={ 4 }>
-														<Text
-															as="h3"
-															variant="title.small"
-															style={ { textTransform: 'capitalize' } }
-														>
+														<Text as="h3" style={ { textTransform: 'capitalize' } }>
 															{ category }
 														</Text>
 														{ categoryAbilities.map( ( [ abilityId, ability ] ) => (
