@@ -12,7 +12,7 @@ const emptyFilter: FilterState = {
 
 export const Filter = () => {
 	const { filter, setFilter, query, queries } = useDomainSearch();
-	const { data: availableTlds = [] } = useQuery( {
+	const { data: availableTlds = [], isFetching: isFetchingTlds } = useQuery< string[] >( {
 		...queries.availableTlds( query ),
 		enabled: true,
 	} );
@@ -35,7 +35,13 @@ export const Filter = () => {
 			showArrow={ false }
 			popoverProps={ { placement: 'bottom-end', offset: 10, noArrow: false, inline: true } }
 			renderToggle={ ( { onToggle } ) => {
-				return <DomainSearchControls.FilterButton count={ filterCount } onClick={ onToggle } />;
+				return (
+					<DomainSearchControls.FilterButton
+						count={ filterCount }
+						onClick={ onToggle }
+						disabled={ isFetchingTlds }
+					/>
+				);
 			} }
 			renderContent={ ( { onClose } ) => {
 				return (
