@@ -45,3 +45,27 @@ export async function fetchSiteBackupDownloadProgress(
 		error: code ? { code, message } : undefined,
 	};
 }
+
+/**
+ * Get status of a filtered backup download preparation.
+ * @param siteId - The ID of the site to check download status for.
+ * @param buildKey - The build key from prepare download response.
+ * @param dataType - The data type for the download.
+ * @returns A promise that resolves to the download status.
+ */
+export function getBackupDownloadStatus(
+	siteId: number,
+	buildKey: string,
+	dataType: number
+): Promise< any > {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteId }/rewind/backup/filtered/status`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{
+			data_type: dataType,
+			key: buildKey,
+		}
+	);
+}

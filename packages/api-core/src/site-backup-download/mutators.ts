@@ -27,3 +27,30 @@ export async function initiateSiteBackupDownload(
 
 	return data.downloadId;
 }
+
+/**
+ * Prepare a filtered backup download.
+ * @param siteId - The ID of the site to prepare download for.
+ * @param rewindId - The backup/rewind ID to download from.
+ * @param manifestFilter - The manifest filter specifying what to include.
+ * @param dataType - The data type for the download.
+ * @returns A promise that resolves to the prepare download response.
+ */
+export function prepareBackupDownload(
+	siteId: number,
+	rewindId: string,
+	manifestFilter: string,
+	dataType: number
+): Promise< any > {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteId }/rewind/backup/filtered/prepare`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{
+			backup_id: rewindId,
+			manifest_filter: manifestFilter,
+			data_type: dataType,
+		}
+	);
+}
