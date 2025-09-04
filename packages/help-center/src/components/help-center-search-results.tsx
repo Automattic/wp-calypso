@@ -32,7 +32,6 @@ import { useAdminResults } from '../hooks/use-admin-results';
 import { useContextBasedSearchMapping } from '../hooks/use-context-based-search-mapping';
 import { useHelpSearchQuery } from '../hooks/use-help-search-query';
 import { HELP_CENTER_STORE } from '../stores';
-import HelpCenterRecentConversations from './help-center-recent-conversations';
 import PlaceholderLines from './placeholder-lines';
 import type { SearchResult } from '../types';
 import type { HelpCenterSelect } from '@automattic/data-stores';
@@ -121,10 +120,6 @@ interface SearchResultsSectionProps {
 	condition: boolean;
 }
 
-const noop = () => {
-	return;
-};
-
 function debounceSpeak( {
 	message = '',
 	priority = 'polite' as 'polite' | 'assertive',
@@ -177,7 +172,6 @@ interface HelpSearchResultsProps {
 		event: React.MouseEvent< HTMLAnchorElement, MouseEvent >,
 		result: SearchResult
 	) => void;
-	onAdminSectionSelect?: ( event: React.MouseEvent< HTMLAnchorElement, MouseEvent > ) => void;
 	searchQuery: string;
 	placeholderLines: number;
 	openAdminInNewTab: boolean;
@@ -188,7 +182,6 @@ interface HelpSearchResultsProps {
 function HelpSearchResults( {
 	externalLinks = false,
 	onSelect,
-	onAdminSectionSelect = noop,
 	searchQuery = '',
 	placeholderLines,
 	openAdminInNewTab = false,
@@ -293,8 +286,6 @@ function HelpSearchResults( {
 			} else {
 				openAdminInNewTab ? window.open( link, '_blank' ) : window.open( link, '_self' );
 			}
-
-			onAdminSectionSelect( event );
 			return;
 		}
 
@@ -383,7 +374,6 @@ function HelpSearchResults( {
 
 	return (
 		<div className="help-center-search-results" aria-label={ resultsLabel }>
-			{ ! searchQuery && <HelpCenterRecentConversations /> }
 			{ isSearching && ! searchResults.length && <PlaceholderLines lines={ placeholderLines } /> }
 			{ searchQuery && ! ( hasAPIResults || isSearching ) ? (
 				<div className="help-center-search-results__empty-results">
@@ -410,7 +400,6 @@ function HelpSearchResults( {
 HelpSearchResults.propTypes = {
 	searchQuery: PropTypes.string,
 	onSelect: PropTypes.func.isRequired,
-	onAdminSectionSelect: PropTypes.func,
 };
 
 export default HelpSearchResults;
