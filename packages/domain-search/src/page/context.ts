@@ -23,7 +23,8 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 	},
 	queries: {
 		availableTlds: ( search?: string, vendor?: string ) => availableTldsQuery( vendor, search ),
-		domainSuggestions: ( query: string ) => domainSuggestionsQuery( query ),
+		domainSuggestions: ( query: string, params?: Partial< typeof domainSuggestionsQuery > ) =>
+			domainSuggestionsQuery( query, params ),
 		domainAvailability: ( domainName: string ) => domainAvailabilityQuery( domainName ),
 		freeSuggestion: ( query: string ) => freeSuggestionQuery( query ),
 	},
@@ -103,7 +104,7 @@ export const useDomainSearchContextValue = (
 			events: normalizedEvents,
 			config: normalizedConfig,
 			queries: {
-				domainSuggestions: ( query, params ) => ( {
+				domainSuggestions: ( query, params = {} ) => ( {
 					...domainSuggestionsQuery( query, {
 						...params,
 						quantity: 30,
