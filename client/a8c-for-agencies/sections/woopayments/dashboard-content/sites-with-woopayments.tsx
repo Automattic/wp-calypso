@@ -14,12 +14,7 @@ import { useWooPaymentsContext } from '../context';
 import { useDownloadCommissionsReport } from '../hooks/use-download-commissions-report';
 import { getSiteData } from '../lib/site-data';
 import SitesWithWooPaymentsMobileView from './mobile-view';
-import {
-	SiteColumn,
-	TransactionsColumn,
-	CommissionsPaidColumn,
-	WooPaymentsStatusColumn,
-} from './site-columns';
+import { SiteColumn, CommissionsPaidColumn, WooPaymentsStatusColumn } from './site-columns';
 import type { SitesWithWooPaymentsState } from '../types';
 
 export default function SitesWithWooPayments() {
@@ -46,7 +41,7 @@ export default function SitesWithWooPayments() {
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
-		fields: [ 'site', 'transactions', 'commissionsPaid', 'woopaymentsStatus' ],
+		fields: [ 'site', 'commissionsPaid', 'woopaymentsStatus' ],
 	} );
 
 	const fields = useMemo(
@@ -58,20 +53,6 @@ export default function SitesWithWooPayments() {
 				render: ( { item }: { item: SitesWithWooPaymentsState } ) => (
 					<SiteColumn site={ item.siteUrl } />
 				),
-				enableHiding: false,
-				enableSorting: false,
-			},
-			{
-				id: 'transactions',
-				label: translate( 'Transactions' ).toUpperCase(),
-				getValue: () => '-',
-				render: ( { item } ) => {
-					if ( isLoadingWooPaymentsData ) {
-						return <TextPlaceholder />;
-					}
-					const { transactions } = getSiteData( woopaymentsData, item.blogId );
-					return <TransactionsColumn transactions={ transactions } />;
-				},
 				enableHiding: false,
 				enableSorting: false,
 			},
