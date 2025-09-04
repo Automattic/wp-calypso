@@ -244,7 +244,6 @@ export default function PreferencesLanguageForm() {
 							<Button
 								variant="primary"
 								type="submit"
-								className="language-preferences-form__submit"
 								accessibleWhenDisabled
 								isBusy={ isSaving }
 								disabled={ ! canSubmit }
