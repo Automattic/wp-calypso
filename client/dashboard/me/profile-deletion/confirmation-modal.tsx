@@ -2,11 +2,11 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	Button,
 	Modal,
-	TextControl,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { DataForm, Field, isItemValid } from '@wordpress/dataviews';
 import { useState } from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronLeft, chevronRight, help } from '@wordpress/icons';
@@ -18,6 +18,10 @@ interface AlternativeOption {
 	text: string;
 	to: string;
 	supportLink?: string;
+}
+
+interface ConfirmationFormData {
+	confirmText: string;
 }
 
 interface AccountDeletionConfirmModalProps {
@@ -36,8 +40,7 @@ export default function AccountDeletionConfirmModal( {
 	siteCount = 0,
 }: AccountDeletionConfirmModalProps ) {
 	const [ showAlternatives, setShowAlternatives ] = useState( true );
-	const [ confirmText, setConfirmText ] = useState( '' );
-	const isConfirmDisabled = confirmText !== username || isDeleting;
+	const [ formData, setFormData ] = useState< ConfirmationFormData >( { confirmText: '' } );
 
 	// Alternative options to show before account deletion
 	const alternativeOptions: AlternativeOption[] = [
@@ -128,6 +131,31 @@ export default function AccountDeletionConfirmModal( {
 		);
 	}
 
+	// DataForm configuration for the confirmation form
+	const fields: Field< ConfirmationFormData >[] = [
+		{
+			id: 'confirmText',
+			type: 'text',
+			label: __( 'Type your username to confirm' ),
+			placeholder: username,
+			isValid: {
+				required: true,
+				custom: ( data: ConfirmationFormData ) => {
+					return data.confirmText === username
+						? null
+						: __( 'Please type your username exactly as shown' );
+				},
+			},
+		},
+	];
+
+	const form = {
+		layout: { type: 'regular' as const },
+		fields: [ 'confirmText' ],
+	};
+
+	const isConfirmDisabled = ! isItemValid( formData, fields, form ) || isDeleting;
+
 	return (
 		<Modal title={ __( 'Confirm account deletion' ) } onRequestClose={ onClose }>
 			<VStack spacing={ 6 }>
@@ -136,13 +164,13 @@ export default function AccountDeletionConfirmModal( {
 						'Please type your username in the field below to confirm. Your account will then be gone forever.'
 					) }
 				</Text>
-				<TextControl
-					label={ __( 'Type your username to confirm' ) }
-					value={ confirmText }
-					onChange={ setConfirmText }
-					placeholder={ username }
-					__next40pxDefaultSize
-					__nextHasNoMarginBottom
+				<DataForm< ConfirmationFormData >
+					data={ formData }
+					fields={ fields }
+					form={ form }
+					onChange={ ( edits: Partial< ConfirmationFormData > ) => {
+						setFormData( ( data ) => ( { ...data, ...edits } ) );
+					} }
 				/>
 				<ButtonStack justify="flex-end">
 					<Button variant="tertiary" onClick={ onClose } disabled={ isDeleting }>
