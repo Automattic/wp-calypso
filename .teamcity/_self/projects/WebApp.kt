@@ -945,10 +945,10 @@ object PlaywrightTestPRMatrix : BuildType({
 		perfmon {
 		}
 		xmlReport {
-          reportType = XmlReport.XmlReportType.JUNIT
-          rules = "+:test/e2e/output/results.xml"
-		  verbose = true
-         }
+        	reportType = XmlReport.XmlReportType.JUNIT
+        	rules = "+:test/e2e/output/results.xml"
+			verbose = true
+        }
 	}
 
 	triggers {
@@ -1016,6 +1016,10 @@ object PlaywrightTestPRMatrix : BuildType({
 			dockerImage = "%docker_image_e2e%"
 		}
 	}
+
+	artifactRules = """
+		test/e2e/output => %playwrightProject%/output
+	""".trimIndent()
 })
 
 object PlaywrightTestPreReleaseMatrix : BuildType({
