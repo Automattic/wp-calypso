@@ -1,20 +1,10 @@
-import { prepareBackupDownload } from '@automattic/api-core';
-import { siteBackupFilteredDownloadStatusQuery } from '@automattic/api-queries';
+import {
+	siteBackupFilteredDownloadStatusQuery,
+	siteBackupFilteredDownloadPrepareMutation,
+} from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from '@wordpress/element';
 import { PREPARE_DOWNLOAD_STATUS } from './constants';
-
-interface PrepareDownloadArgs {
-	siteId: number;
-	rewindId: string;
-	manifestFilter: string;
-	dataType: number;
-}
-
-interface FilteredPrepareResponse {
-	ok: boolean;
-	key: string;
-}
 
 export const usePrepareDownload = ( siteId: number, onError: () => void ) => {
 	const [ status, setStatus ] = useState( PREPARE_DOWNLOAD_STATUS.NOT_STARTED );
@@ -46,9 +36,8 @@ export const usePrepareDownload = ( siteId: number, onError: () => void ) => {
 	}, [ isSuccess, isError, handleError, data?.status ] );
 
 	const mutation = useMutation( {
-		mutationFn: ( { siteId, rewindId, manifestFilter, dataType }: PrepareDownloadArgs ) =>
-			prepareBackupDownload( siteId, rewindId, manifestFilter, dataType ),
-		onSuccess: ( data: FilteredPrepareResponse ) => {
+		...siteBackupFilteredDownloadPrepareMutation(),
+		onSuccess: ( data ) => {
 			setBuildKey( data.key );
 		},
 		onError: handleError,
