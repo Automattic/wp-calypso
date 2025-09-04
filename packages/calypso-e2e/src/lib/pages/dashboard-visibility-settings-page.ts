@@ -16,7 +16,7 @@ export class DashboardVisibilitySettingsPage {
 	private page: Page;
 
 	/**
-	 * Constructs a new DashboardPage instance.
+	 * Constructs a new DashboardVisibilitySettingsPage instance.
 	 *
 	 * @param page - The Playwright page object.
 	 */
