@@ -1,12 +1,12 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { render } from '../../../test-utils';
 import AccountDeletionConfirmModal from '../confirmation-modal';
 
 const defaultProps = {
-	isOpen: true,
 	onClose: jest.fn(),
 	onConfirm: jest.fn(),
 	username: 'testuser',
@@ -49,7 +49,7 @@ describe( 'AccountDeletionConfirmModal', () => {
 				'Please type your username in the field below to confirm. Your account will then be gone forever.'
 			)
 		).toBeInTheDocument();
-		expect( screen.getByLabelText( 'Type your username to confirm' ) ).toBeInTheDocument();
+		expect( screen.getByLabelText( /Type your username to confirm/ ) ).toBeInTheDocument();
 	} );
 
 	it( 'enables delete button only when username is correctly typed', () => {
@@ -59,7 +59,7 @@ describe( 'AccountDeletionConfirmModal', () => {
 		fireEvent.click( screen.getByText( 'Continue' ) );
 
 		const deleteButton = screen.getByText( 'Delete account' );
-		const usernameInput = screen.getByLabelText( 'Type your username to confirm' );
+		const usernameInput = screen.getByLabelText( /Type your username to confirm/ );
 
 		expect( deleteButton ).toBeDisabled();
 
@@ -86,17 +86,11 @@ describe( 'AccountDeletionConfirmModal', () => {
 		// Go to confirmation screen
 		fireEvent.click( screen.getByText( 'Continue' ) );
 
-		const usernameInput = screen.getByLabelText( 'Type your username to confirm' );
+		const usernameInput = screen.getByLabelText( /Type your username to confirm/ );
 		fireEvent.change( usernameInput, { target: { value: 'testuser' } } );
 
 		fireEvent.click( screen.getByText( 'Delete account' ) );
 
 		expect( onConfirm ).toHaveBeenCalled();
-	} );
-
-	it( 'does not render when isOpen is false', () => {
-		render( <AccountDeletionConfirmModal { ...defaultProps } isOpen={ false } /> );
-
-		expect( screen.queryByText( 'Are you sure?' ) ).not.toBeInTheDocument();
 	} );
 } );
