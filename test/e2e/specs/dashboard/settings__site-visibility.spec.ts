@@ -4,20 +4,19 @@ test.describe(
 	'Dashboard: Site Visibility Settings',
 	{ tag: [ '@dashboard', '@calypso-pr' ] },
 	() => {
+		test.skip(
+			process.env.CALYPSO_BASE_URL === 'https://wordpress.com',
+			'Skipping for wordpress.com as it does not have v2 dashboard enabled yet.'
+		);
+
 		test( 'As a new simple site user, I can set my site visibility to Private, so that only I can see my site', async ( {
-			helperData,
-			page,
 			pageDashboard,
 			pageIncognito,
 			sitePublic,
 		} ) => {
 			await test.step( "Given I am on my new public site's visibility settings page", async function () {
-				// TODO: This should use a DashboardPage method to navigate to the correct page
-				// but it doesn't work for WordPress.com as it expects /v2 to be available.
-				await page.goto(
-					helperData.getCalypsoURL(
-						`sites/${ sitePublic.blog_details.site_slug }/settings/site-visibility`
-					)
+				await pageDashboard.visitPath(
+					`sites/${ sitePublic.blog_details.site_slug }/settings/site-visibility`
 				);
 			} );
 
@@ -38,19 +37,13 @@ test.describe(
 		} );
 
 		test( 'As a new simple site user, I can set my site visibility to Coming Soon, so that others see a nice coming soon message', async ( {
-			helperData,
-			page,
 			pageDashboard,
 			pageIncognito,
 			sitePublic,
 		} ) => {
 			await test.step( "Given I am on my new public site's visibility settings page", async function () {
-				// TODO: This should use a DashboardPage method to navigate to the correct page
-				// but it doesn't work for WordPress.com as it expects /v2 to be available.
-				await page.goto(
-					helperData.getCalypsoURL(
-						`sites/${ sitePublic.blog_details.site_slug }/settings/site-visibility`
-					)
+				await pageDashboard.visitPath(
+					`sites/${ sitePublic.blog_details.site_slug }/settings/site-visibility`
 				);
 			} );
 
@@ -71,19 +64,13 @@ test.describe(
 		} );
 
 		test( 'As a new simple site user, I can set my site visibility to Public and discourage search engines, so that my content is less likely to show on search engines like Google', async ( {
-			helperData,
-			page,
 			pageDashboard,
 			pageIncognito,
 			sitePublic,
 		} ) => {
 			await test.step( "Given I am on my new public site's visibility settings page", async function () {
-				// TODO: This should use a DashboardPage method to navigate to the correct page
-				// but it doesn't work for WordPress.com as it expects /v2 to be available.
-				await page.goto(
-					helperData.getCalypsoURL(
-						`sites/${ sitePublic.blog_details.site_slug }/settings/site-visibility`
-					)
+				await pageDashboard.visitPath(
+					`sites/${ sitePublic.blog_details.site_slug }/settings/site-visibility`
 				);
 			} );
 
