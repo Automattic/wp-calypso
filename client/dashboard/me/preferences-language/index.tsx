@@ -148,7 +148,7 @@ export default function PreferencesLanguageForm() {
 			return serverData[ key as keyof UserSettingsPreferences ] !== value;
 		} );
 
-	const hasValidLanguage = !! data?.language && data.language !== '';
+	const hasValidLanguage = !! data?.language;
 	const canSubmit = ! isSaving && isDirty && hasValidLanguage;
 	const languageForm = {
 		type: 'regular' as const,
