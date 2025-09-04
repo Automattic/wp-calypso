@@ -1,7 +1,6 @@
 import { __experimentalText as Text, __experimentalHStack as HStack } from '@wordpress/components';
 import { globe, Icon } from '@wordpress/icons';
 import { useDomainSuggestionContainerContext } from '../../hooks/use-domain-suggestion-container';
-import { DomainSuggestionPopover } from '../domain-suggestion-popover';
 import { DomainSuggestionsList } from '../domain-suggestions-list';
 import { Featured } from './featured';
 import { SuggestionPlaceholder } from './index.placeholder';
@@ -15,7 +14,6 @@ type DomainSuggestionProps = {
 	tld: string;
 	price: React.ReactNode;
 	badges?: React.ReactNode;
-	notice?: React.ReactNode;
 	cta: React.ReactNode;
 };
 
@@ -26,7 +24,6 @@ const DomainSuggestionComponent = ( {
 	tld,
 	price,
 	badges,
-	notice,
 	cta,
 }: DomainSuggestionProps ) => {
 	const listContext = useDomainSuggestionContainerContext();
@@ -56,19 +53,6 @@ const DomainSuggestionComponent = ( {
 				>
 					.{ tld }
 				</Text>
-				{ notice && (
-					<>
-						<span
-							aria-hidden="true"
-							style={ {
-								marginRight: activeQuery === 'large' ? '8px' : '4px',
-							} }
-						/>
-						<span className="domain-suggestions-list-item__notice">
-							<DomainSuggestionPopover>{ notice }</DomainSuggestionPopover>
-						</span>
-					</>
-				) }
 			</span>
 			{ badges && <span className="domain-suggestions-list-item__badges">{ badges }</span> }
 		</Text>

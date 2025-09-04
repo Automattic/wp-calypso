@@ -1,5 +1,5 @@
+import { fetchBackupFileUrl } from '@automattic/api-core';
 import { useQuery } from '@tanstack/react-query';
-import wp from 'calypso/lib/wp';
 import { encodeToBase64 } from './util';
 
 export const useBackupFileQuery = (
@@ -12,12 +12,7 @@ export const useBackupFileQuery = (
 
 	return useQuery( {
 		queryKey: [ 'jetpack-backup-file-url', siteId, rewindId, encodedManifestPath ],
-		queryFn: async () => {
-			return wp.req.get( {
-				path: `/sites/${ siteId }/rewind/backup/${ rewindId }/file/${ encodedManifestPath }/url`,
-				apiNamespace: 'wpcom/v2',
-			} );
-		},
+		queryFn: () => fetchBackupFileUrl( siteId, rewindId!, encodedManifestPath ),
 		enabled: !! siteId && !! rewindId && !! manifestPath && shouldFetch,
 		meta: { persist: false },
 		staleTime: Infinity,

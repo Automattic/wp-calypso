@@ -10,8 +10,8 @@ const reporter: ReporterDescription[] = [
 ];
 
 if ( process.env.CI ) {
-	console.log( 'Running in CI, adding list reporter.' );
 	reporter.push( [ 'list' ] );
+	reporter.push( [ 'blob' ] );
 }
 
 /**

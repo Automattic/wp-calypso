@@ -207,6 +207,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/manage-my-profile/',
 		post_id: 19775,
 	},
+	mcp: {
+		link: 'https://wordpress.com/support/account-settings/',
+		post_id: 80368,
+	},
 	media: {
 		link: 'https://wordpress.com/support/media/',
 		post_id: 853,
