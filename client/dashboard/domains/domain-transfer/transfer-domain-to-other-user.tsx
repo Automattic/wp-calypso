@@ -20,6 +20,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { useAuth } from '../../app/auth';
 import { domainRoute, domainsRoute } from '../../app/router/domains';
+import { ButtonStack } from '../../components/button-stack';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
@@ -207,7 +208,7 @@ export default function TransferDomainToOtherUser() {
 							}
 						) }
 					</Text>
-					<HStack justify="flex-end" spacing={ 2 }>
+					<ButtonStack justify="flex-end">
 						<Button
 							__next40pxDefaultSize
 							variant="secondary"
@@ -226,7 +227,7 @@ export default function TransferDomainToOtherUser() {
 						>
 							{ __( 'Confirm Transfer' ) }
 						</Button>
-					</HStack>
+					</ButtonStack>
 				</VStack>
 			</Modal>
 		);

@@ -116,6 +116,7 @@ export default function StagingSiteSyncDropdown( {
 					iconPosition: 'right',
 					variant: 'secondary',
 					disabled: isSyncing,
+					isBusy: isSyncing,
 				} }
 				icon={ chevronDown }
 				text={ isSyncing ? __( 'Syncing…' ) : __( 'Sync' ) }
