@@ -1,16 +1,23 @@
 import { isAutomatticianQuery } from '@automattic/api-queries';
-import { Card } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
-import { ToggleControl, __experimentalVStack as VStack, Button } from '@wordpress/components';
+import {
+	ToggleControl,
+	__experimentalVStack as VStack,
+	Button,
+	Card,
+	CardBody,
+	CardHeader,
+	__experimentalText as Text,
+} from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import { connect, useDispatch as useReduxDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormButton from 'calypso/components/forms/form-button';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
+import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import { saveUserSettings } from 'calypso/state/user-settings/actions';
@@ -154,93 +161,98 @@ function McpComponent( { path, userSettings, isUpdating } ) {
 		};
 
 		return (
-			<>
-				<Card className="mcp__settings">
-					<form onSubmit={ handleSubmit }>
-						<FormFieldset>
-							{ hasAbilities ? (
-								<>
-									<div className="mcp__master-toggle">
-										<ToggleControl
-											checked={ anyAbilitiesEnabled }
-											onChange={ handleMasterToggle }
-											label={ translate( 'Allow MCP access' ) }
-										/>
-									</div>
-
+			<form onSubmit={ handleSubmit }>
+				<SectionHeader label={ translate( 'MCP Access Control' ) } />
+				<Card style={ { borderRadius: '0' } }>
+					<CardBody>
+						{ hasAbilities ? (
+							<VStack spacing={ 2 }>
+								<div
+									style={ {
+										display: 'flex',
+										justifyContent: 'space-between',
+										alignItems: 'center',
+									} }
+								>
+									<ToggleControl
+										checked={ anyAbilitiesEnabled }
+										onChange={ handleMasterToggle }
+										label={ translate( 'Allow MCP access' ) }
+									/>
 									{ anyAbilitiesEnabled && (
-										<div className="mcp__setup-section">
-											<h3 className="mcp__setup-section-title">
-												{ translate( 'MCP Client Setup' ) }
-											</h3>
-											<p className="mcp__setup-section-description">
-												{ translate(
-													'Now that MCP is enabled, you can configure your MCP client to connect to your account.'
-												) }
-											</p>
-											<Button
-												variant="secondary"
-												href="/me/mcp-setup"
-												className="mcp__setup-button"
-											>
-												{ translate( 'Configure MCP Client →' ) }
-											</Button>
-										</div>
+										<Button variant="secondary" href="/me/mcp-setup">
+											{ translate( 'Configure MCP Client' ) }
+										</Button>
 									) }
-
-									<VStack spacing={ 8 }>
-										{ Object.entries( groupedByType ).map( ( [ type, typeCategories ] ) => (
-											<div key={ type } className="mcp__type-section">
-												<h2 className="mcp__type-title">{ typeDisplayNames[ type ] }</h2>
-												<p className="mcp__type-description">{ typeDescriptions[ type ] }</p>
-												<VStack spacing={ 6 }>
-													{ Object.entries( typeCategories ).map(
-														( [ category, categoryAbilities ] ) => (
-															<div key={ category } className="mcp__category">
-																<h3 className="mcp__category-title">{ category }</h3>
-																<VStack spacing={ 4 }>
-																	{ categoryAbilities.map( ( [ abilityId, ability ] ) => (
-																		<div key={ abilityId } className="mcp__ability-item">
-																			<ToggleControl
-																				checked={ ability.enabled }
-																				onChange={ ( checked ) =>
-																					handleAbilityChange( abilityId, checked )
-																				}
-																				label={ ability.title }
-																				disabled={ ! anyAbilitiesEnabled }
-																			/>
-																			<p className="mcp__ability-description">
-																				{ ability.description }
-																			</p>
-																		</div>
-																	) ) }
-																</VStack>
-															</div>
-														)
-													) }
-												</VStack>
-											</div>
-										) ) }
-									</VStack>
-								</>
-							) : (
-								<p style={ { color: '#646970', fontSize: '14px', margin: 0 } }>
-									{ translate( 'No MCP abilities are currently available.' ) }
-								</p>
-							) }
-						</FormFieldset>
-
-						{ hasAbilities && (
-							<FormButton
-								isSubmitting={ isUpdating }
-								disabled={ isUpdating || ! hasUnsavedChanges }
-							>
-								{ isUpdating ? translate( 'Saving…' ) : translate( 'Save MCP abilities' ) }
-							</FormButton>
+								</div>
+							</VStack>
+						) : (
+							<Text as="p" variant="muted">
+								{ translate( 'No MCP abilities are currently available.' ) }
+							</Text>
 						) }
-					</form>
+					</CardBody>
 				</Card>
-			</>
+
+				{ hasAbilities && anyAbilitiesEnabled && (
+					<>
+						{ Object.entries( groupedByType ).map( ( [ type, typeCategories ] ) => (
+							<div key={ type } style={ { marginTop: '24px' } }>
+								<Card style={ { borderRadius: '0' } }>
+									<CardHeader size="small">
+										<VStack spacing={ 2 }>
+											<Text as="h1">{ typeDisplayNames[ type ] }</Text>
+											<Text as="p" variant="muted">
+												{ typeDescriptions[ type ] }
+											</Text>
+										</VStack>
+									</CardHeader>
+									<CardBody>
+										<VStack spacing={ 6 }>
+											{ Object.entries( typeCategories ).map(
+												( [ category, categoryAbilities ] ) => (
+													<VStack key={ category } spacing={ 4 }>
+														<Text
+															as="h3"
+															variant="title.small"
+															style={ { textTransform: 'capitalize' } }
+														>
+															{ category }
+														</Text>
+														<VStack spacing={ 4 }>
+															{ categoryAbilities.map( ( [ abilityId, ability ] ) => (
+																<VStack key={ abilityId } spacing={ 3 }>
+																	<ToggleControl
+																		checked={ ability.enabled }
+																		onChange={ ( checked ) =>
+																			handleAbilityChange( abilityId, checked )
+																		}
+																		label={ ability.title }
+																		help={ ability.description }
+																		disabled={ ! anyAbilitiesEnabled }
+																	/>
+																</VStack>
+															) ) }
+														</VStack>
+													</VStack>
+												)
+											) }
+										</VStack>
+									</CardBody>
+								</Card>
+							</div>
+						) ) }
+					</>
+				) }
+
+				{ hasAbilities && (
+					<div style={ { marginTop: '24px' } }>
+						<FormButton isSubmitting={ isUpdating } disabled={ isUpdating || ! hasUnsavedChanges }>
+							{ isUpdating ? translate( 'Saving…' ) : translate( 'Save MCP abilities' ) }
+						</FormButton>
+					</div>
+				) }
+			</form>
 		);
 	};
 
