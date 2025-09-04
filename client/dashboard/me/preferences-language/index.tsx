@@ -37,11 +37,11 @@ export default function PreferencesLanguageForm() {
 		if ( typeof window === 'undefined' ) {
 			return;
 		}
-		const url = new URL( window.location.href );
-		if ( url.searchParams.has( 'settings-saved' ) ) {
+		const params = new URLSearchParams( window.location.search );
+		if ( params.get( 'updated' ) === 'language' ) {
 			createSuccessNotice( __( 'Language setting saved.' ), { type: 'snackbar' } );
-			url.searchParams.delete( 'settings-saved' );
-			window.history.replaceState( {}, '', url.toString() );
+			params.delete( 'updated' );
+			window.history.replaceState( {}, '', window.location.pathname );
 		}
 	}, [ createSuccessNotice ] );
 
@@ -73,13 +73,12 @@ export default function PreferencesLanguageForm() {
 			return;
 		}
 		const mutationData = formData;
-		setFormData( undefined );
 		mutation.mutate( mutationData, {
 			onSuccess: () => {
 				// Ensure the UI picks up the new language by reloading the page.
 				// Add a transient query param so we can show a success notice after reload.
 				const url = new URL( window.location.href );
-				url.searchParams.set( 'settings-saved', '1' );
+				url.searchParams.set( 'updated', 'language' );
 				// Replace to avoid adding an extra history entry.
 				window.location.replace( url.toString() );
 			},
