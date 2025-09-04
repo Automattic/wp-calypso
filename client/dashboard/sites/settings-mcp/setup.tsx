@@ -12,7 +12,7 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { copy, check } from '@wordpress/icons';
+import { copy, check, error } from '@wordpress/icons';
 import { useState } from 'react';
 import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';
@@ -110,6 +110,18 @@ export default function McpSetup( { siteSlug }: { siteSlug: string } ) {
 		} catch ( error ) {
 			setCopyStatus( 'error' );
 			setTimeout( () => setCopyStatus( 'idle' ), 2000 );
+		}
+	};
+
+	// Helper function to get the appropriate icon based on copy status
+	const getCopyIcon = () => {
+		switch ( copyStatus ) {
+			case 'success':
+				return check;
+			case 'error':
+				return error;
+			default:
+				return copy;
 		}
 	};
 
@@ -237,9 +249,13 @@ export default function McpSetup( { siteSlug }: { siteSlug: string } ) {
 											</ExternalLink>
 										) }
 										<Button
-											icon={ copyStatus === 'success' ? check : copy }
+											icon={ getCopyIcon() }
 											variant="tertiary"
 											size="small"
+											style={ {
+												cursor: 'pointer',
+												color: copyStatus === 'error' ? 'var(--color-error)' : undefined,
+											} }
 											onClick={ copyToClipboard }
 											aria-label={ __( 'Copy configuration to clipboard' ) }
 										/>
