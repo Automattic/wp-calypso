@@ -90,7 +90,7 @@ export default function AccountDeletionConfirmModal( {
 						<ActionList>
 							{ alternativeOptions.map( ( option ) => (
 								<ActionList.ActionItem
-									key={ option.href }
+									key={ option.to }
 									title={ option.text }
 									actions={
 										<HStack spacing={ 0 } expanded={ false }>
