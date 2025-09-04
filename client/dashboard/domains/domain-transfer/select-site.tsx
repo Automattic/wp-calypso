@@ -6,6 +6,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { DataViews } from '@wordpress/dataviews';
+import { __ } from '@wordpress/i18n';
 import { useMemo, useState, useEffect, useCallback, useRef } from 'react';
 import { canManageSite } from '../../sites/features';
 import SiteIcon from '../../sites/site-icon';
@@ -22,7 +23,7 @@ export function SelectSite( { onSiteSelect }: Props ) {
 	const sites = useMemo( () => allSites.filter( ( site ) => canManageSite( site ) ), [ allSites ] );
 	const searchInputRef = useRef< HTMLInputElement >( null );
 
-	const perPage = 5;
+	const perPage = 6;
 	const [ view, setView ] = useState< View >( {
 		type: 'list',
 		perPage,
@@ -138,6 +139,7 @@ export function SelectSite( { onSiteSelect }: Props ) {
 					onChangeView={ setView }
 					selection={ selection }
 					onChangeSelection={ handleSelectionChange }
+					empty={ view.search ? __( 'No sites found' ) : __( 'No sites' ) }
 				>
 					<DataViews.Layout />
 				</DataViews>
