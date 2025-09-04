@@ -179,6 +179,7 @@ export default function PreferencesLanguageForm() {
 							placeholder={ __( 'Select a language' ) }
 							options={ field.elements || [] }
 							allowReset={ false } // a language is required so we're not allowing to reset it and have an empty state.
+							__next40pxDefaultSize
 						/>
 
 						<Text variant="muted">
