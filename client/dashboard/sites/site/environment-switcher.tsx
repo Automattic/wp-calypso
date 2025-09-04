@@ -208,6 +208,7 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 
 	// Clean up deletion flag when staging site no longer exists
 	useEffect( () => {
+		// TODO: Check if this logic works when the deletion is finished
 		if (
 			isStagingSiteDeleting &&
 			stagingSiteExistsFromQuery === false &&
@@ -233,19 +234,15 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 		isStagingSiteCreating && stagingSite && isAtomicTransferredSite( stagingSite );
 
 	useEffect( () => {
-		const handleStagingSiteReady = async () => {
-			if ( ! stagingSite ) {
-				return;
-			}
+		if ( ! stagingSite ) {
+			return;
+		}
+		if ( isStagingSiteReady ) {
 			createSuccessNotice( __( 'Staging site created.' ), { type: 'snackbar' } );
 			queryClient.setQueryData(
 				isCreatingStagingSiteQuery( productionSiteId ?? 0 ).queryKey,
 				false
 			);
-		};
-
-		if ( isStagingSiteReady ) {
-			handleStagingSiteReady();
 		}
 	}, [ queryClient, isStagingSiteReady, stagingSite, createSuccessNotice, productionSiteId ] );
 
