@@ -16,23 +16,8 @@ import type { Site, PluginItem } from '@automattic/api-core';
 // getUniquePlugins not used anymore; plugin list derives from selected sites
 
 export default function NewSchedule() {
-	const sitesQueryResult = useQuery( sitesQuery() );
-	const sites = sitesQueryResult.data as Site[] | undefined;
+	useQuery( sitesQuery() );
 	const { data: sitesPlugins } = useQuery( pluginsQuery() );
-
-	// Filter sites to match legacy Scheduled Updates eligibility
-	const eligibleSites: Site[] = useMemo( () => {
-		return ( sites ?? [] ).filter( ( site ) => {
-			const capsObj =
-				( site as unknown as { capabilities?: Record< string, boolean > } ).capabilities || {};
-			const canUpdatePlugins = Boolean(
-				( capsObj as Record< string, boolean > )[ 'update_plugins' ]
-			);
-			const isAtomic = Boolean( site.is_wpcom_atomic );
-			const isStaging = Boolean( site.is_wpcom_staging_site );
-			return isAtomic && canUpdatePlugins && ! isStaging;
-		} );
-	}, [ sites ] );
 
 	const [ selectedSiteIds, setSelectedSiteIds ] = useState< string[] >( [] );
 	const [ selectedPluginSlugs, setSelectedPluginSlugs ] = useState< string[] >( [] );
@@ -77,7 +62,6 @@ export default function NewSchedule() {
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'New schedule' ) } /> }>
 			<PluginsScheduleNewSites
-				sites={ eligibleSites }
 				selection={ selectedSiteIds }
 				onChangeSelection={ ( ids ) => setSelectedSiteIds( ids ) }
 				actions={ siteBulkActions }

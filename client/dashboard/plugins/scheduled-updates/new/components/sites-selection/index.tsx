@@ -3,16 +3,17 @@ import { DataViews, Field, View, filterSortAndPaginate, type Action } from '@wor
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import { DataViewsCard } from '../../../../../components/dataviews-card';
+import { useEligibleSites } from '../../hooks/use-eligible-sites';
 import type { Site } from '@automattic/api-core';
 
 type Props = {
-	sites: Site[];
 	selection: string[];
 	onChangeSelection: ( ids: string[] ) => void;
 	actions: Array< Action< Site > >;
 };
 
-export function PluginsScheduleNewSites( { sites, selection, onChangeSelection, actions }: Props ) {
+export function PluginsScheduleNewSites( { selection, onChangeSelection, actions }: Props ) {
+	const { data: sites = [] } = useEligibleSites();
 	const siteFields: Field< Site >[] = useMemo(
 		() => [
 			{
@@ -29,7 +30,7 @@ export function PluginsScheduleNewSites( { sites, selection, onChangeSelection, 
 	const [ view, setView ] = useState< View >( {
 		type: 'table',
 		page: 1,
-		perPage: 10,
+		perPage: 5,
 		sort: { field: 'title', direction: 'asc' },
 		fields: [],
 		titleField: 'title',

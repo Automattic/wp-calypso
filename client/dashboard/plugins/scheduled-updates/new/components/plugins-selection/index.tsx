@@ -3,6 +3,7 @@ import { DataViews, Field, View, filterSortAndPaginate, type Action } from '@wor
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import { DataViewsCard } from '../../../../../components/dataviews-card';
+import { DataViewsEmptyState } from '../../../../../components/dataviews-empty-state';
 import type { PluginItem } from '@automattic/api-core';
 
 export type PluginRow = { id: string; name: string };
@@ -60,7 +61,7 @@ export function PluginsScheduleNewPlugins( {
 	const [ view, setView ] = useState< View >( {
 		type: 'table',
 		page: 1,
-		perPage: 10,
+		perPage: 5,
 		sort: { field: 'name', direction: 'asc' },
 		fields: [],
 		titleField: 'name',
@@ -92,7 +93,9 @@ export function PluginsScheduleNewPlugins( {
 								paginationInfo={ paginationInfo }
 							/>
 						) : (
-							<p>{ __( 'Please select a site to view available plugins.' ) }</p>
+							<DataViewsEmptyState
+								description={ __( 'Please select a site to view available plugins.' ) }
+							/>
 						) }
 					</div>
 				</DataViewsCard>
