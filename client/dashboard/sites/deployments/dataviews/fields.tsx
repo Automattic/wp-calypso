@@ -3,6 +3,7 @@ import {
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
+	ExternalLink,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
@@ -50,10 +51,8 @@ export function useDeploymentFields(): Field< DeploymentRunWithDeploymentInfo >[
 						<VStack spacing={ 1 }>
 							<Text title={ commit_message }>{ commit_message }</Text>
 							<HStack spacing={ 3 } alignment="left" style={ { width: 'auto' } }>
-								<a
+								<ExternalLink
 									href={ `https://github.com/${ installation }/${ repo }/commit/${ commit_sha }` }
-									target="_blank"
-									rel="noopener noreferrer"
 								>
 									<Text
 										as="code"
@@ -62,7 +61,7 @@ export function useDeploymentFields(): Field< DeploymentRunWithDeploymentInfo >[
 									>
 										{ shortSha }
 									</Text>
-								</a>
+								</ExternalLink>
 								<HStack spacing={ 1 } alignment="left" style={ { width: 'auto' } }>
 									<svg
 										width="16"
