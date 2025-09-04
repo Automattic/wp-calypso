@@ -98,7 +98,7 @@ const AssignedTo = ( { purchase, handleAssignToSite, data, isFetching }: Props )
 			<>
 				<p>
 					{ translate(
-						'Your client canceled this product, but it will remain active until {{b}}%(expiryDate)s{{/b}}. After that, it will not renew.',
+						'This product was cancelled, but it will remain active until {{b}}%(expiryDate)s{{/b}}. After that, it will not renew.',
 						{
 							args: {
 								expiryDate: isFetchingProductInfo ? '...' : expiryDate || 'N/A',
@@ -130,9 +130,7 @@ const AssignedTo = ( { purchase, handleAssignToSite, data, isFetching }: Props )
 			</>
 		);
 	} else if ( purchase.subscription && purchase.subscription.is_refundable ) {
-		cancellationInfo = (
-			<p>{ translate( 'Your client canceled this product, and was refunded.' ) }</p>
-		);
+		cancellationInfo = <p>{ translate( 'This product was cancelled, and was refunded.' ) }</p>;
 	}
 
 	const isAwaitingPayment = purchase.status === 'pending';
