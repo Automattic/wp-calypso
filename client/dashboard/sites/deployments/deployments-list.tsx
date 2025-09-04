@@ -21,7 +21,7 @@ export function DeploymentsList() {
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
 		deploymentRuns,
 		view,
-		fields as any
+		fields
 	);
 
 	const hasFilterOrSearch = ( view.filters && view.filters.length > 0 ) || view.search;
