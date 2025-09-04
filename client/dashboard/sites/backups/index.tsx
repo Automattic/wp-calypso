@@ -3,6 +3,7 @@ import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet } from '@tanstack/react-router';
 import { __experimentalGrid as Grid, __experimentalText as Text } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
 import { useState } from 'react';
@@ -62,6 +63,8 @@ export function BackupsListPage() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const [ selectedBackup, setSelectedBackup ] = useState< ActivityLogEntry | null >( null );
+	const isSmallViewport = useViewportMatch( 'medium', '<' );
+	const columns = isSmallViewport ? 1 : 2;
 
 	const hasBackups = hasHostingFeature( site, HostingFeatures.BACKUPS );
 
@@ -76,7 +79,7 @@ export function BackupsListPage() {
 			notices={ <BackupNotices site={ site } /> }
 		>
 			{ hasBackups && (
-				<Grid columns={ 2 }>
+				<Grid className="dashboard-backups__list-grid" columns={ columns }>
 					<BackupsList
 						site={ site }
 						selectedBackup={ selectedBackup }
