@@ -1,118 +1,55 @@
+import './style.scss';
+
 import { sitesQuery, pluginsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import {
-	Button,
-	Card,
-	CardBody,
-	CardHeader,
-	RadioControl,
-	SelectControl,
-	TextControl,
-} from '@wordpress/components';
-import { DataViews, Field, View, filterSortAndPaginate, type Action } from '@wordpress/dataviews';
+import { Button } from '@wordpress/components';
+import { type Action } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
-import { DataViewsCard } from '../../../components/dataviews-card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
-import type { Site, PluginItem, PluginsResponse } from '@automattic/api-core';
+import { PluginsScheduleNewFrequency, type Weekday } from './components/frequency-selection';
+import { PluginsScheduleNewPlugins, type PluginRow } from './components/plugins-selection';
+import { PluginsScheduleNewSites } from './components/sites-selection';
+import type { Site, PluginItem } from '@automattic/api-core';
 
-type Weekday = 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday';
-
-function getUniquePlugins( response?: PluginsResponse ): Array< { slug: string; name: string } > {
-	if ( ! response?.sites ) {
-		return [];
-	}
-	const map = new Map< string, string >();
-	Object.values( response.sites ).forEach( ( plugins: PluginItem[] ) => {
-		plugins.forEach( ( p ) => {
-			if ( ! p.slug ) {
-				return;
-			}
-			const name = p.name || p.slug;
-			if ( ! map.has( p.slug ) ) {
-				map.set( p.slug, name );
-			}
-		} );
-	} );
-	return Array.from( map.entries() ).map( ( [ slug, name ] ) => ( { slug, name } ) );
-}
+// getUniquePlugins not used anymore; plugin list derives from selected sites
 
 export default function NewSchedule() {
 	const sitesQueryResult = useQuery( sitesQuery() );
 	const sites = sitesQueryResult.data as Site[] | undefined;
 	const { data: sitesPlugins } = useQuery( pluginsQuery() );
 
-	const pluginOptions = useMemo( () => getUniquePlugins( sitesPlugins ), [ sitesPlugins ] );
+	// Filter sites to match legacy Scheduled Updates eligibility
+	const eligibleSites: Site[] = useMemo( () => {
+		return ( sites ?? [] ).filter( ( site ) => {
+			const capsObj =
+				( site as unknown as { capabilities?: Record< string, boolean > } ).capabilities || {};
+			const canUpdatePlugins = Boolean(
+				( capsObj as Record< string, boolean > )[ 'update_plugins' ]
+			);
+			const isAtomic = Boolean( site.is_wpcom_atomic );
+			const isStaging = Boolean( site.is_wpcom_staging_site );
+			return isAtomic && canUpdatePlugins && ! isStaging;
+		} );
+	}, [ sites ] );
 
 	const [ selectedSiteIds, setSelectedSiteIds ] = useState< string[] >( [] );
 	const [ selectedPluginSlugs, setSelectedPluginSlugs ] = useState< string[] >( [] );
 
-	// Sites DataViews setup
-	const siteFields: Field< Site >[] = useMemo(
+	// Strongly-typed bulk actions to enable selection UI, no actions column displayed via CSS
+	const siteBulkActions: Array< Action< Site > > = useMemo(
 		() => [
 			{
-				id: 'title',
-				label: __( 'Site' ),
-				enableGlobalSearch: true,
-				render: ( { item } ) => item.name || item.URL || String( item.ID ),
-				getValue: ( { item } ) => item.name || item.URL || String( item.ID ),
+				id: 'bulk-select-sites',
+				label: __( 'Select' ),
+				supportsBulk: true,
+				callback: () => {},
 			},
 		],
 		[]
 	);
-	const [ sitesView, setSitesView ] = useState< View >( {
-		type: 'table',
-		page: 1,
-		perPage: 10,
-		sort: { field: 'title', direction: 'asc' },
-		fields: [],
-		titleField: 'title',
-	} );
-	const { data: filteredSites, paginationInfo: sitesPagination } = useMemo( () => {
-		return filterSortAndPaginate( ( sites ?? [] ) as Site[], sitesView, siteFields );
-	}, [ sites, sitesView, siteFields ] );
 
-	// Provide a bulk-capable action to enable selection UI
-	const siteActions: Array< Action< Site > > = [
-		{
-			id: 'noop',
-			label: __( 'Select' ),
-			callback: () => {},
-			supportsBulk: true,
-			isPrimary: false,
-		},
-	];
-
-	// Plugins DataViews setup
-	type PluginRow = { id: string; name: string };
-	const pluginRows: PluginRow[] = useMemo(
-		() => pluginOptions.map( ( p ) => ( { id: p.slug, name: p.name } ) ),
-		[ pluginOptions ]
-	);
-	const pluginFields: Field< PluginRow >[] = useMemo(
-		() => [
-			{
-				id: 'name',
-				label: __( 'Plugin' ),
-				enableGlobalSearch: true,
-				render: ( { item } ) => item.name,
-				getValue: ( { item } ) => item.name,
-			},
-		],
-		[]
-	);
-	const [ pluginsView, setPluginsView ] = useState< View >( {
-		type: 'table',
-		page: 1,
-		perPage: 10,
-		sort: { field: 'name', direction: 'asc' },
-		fields: [],
-		titleField: 'name',
-	} );
-	const { data: filteredPlugins, paginationInfo: pluginsPagination } = useMemo( () => {
-		return filterSortAndPaginate( pluginRows, pluginsView, pluginFields );
-	}, [ pluginRows, pluginsView, pluginFields ] );
 	const [ frequency, setFrequency ] = useState< 'daily' | 'weekly' >( 'daily' );
 	const [ weekday, setWeekday ] = useState< Weekday >( 'Monday' );
 	const [ time, setTime ] = useState( '04:00' );
@@ -124,95 +61,46 @@ export default function NewSchedule() {
 		isTimeValid &&
 		( frequency === 'daily' || ( frequency === 'weekly' && !! weekday ) );
 
+	// Strongly-typed bulk actions for plugin rows
+	const pluginBulkActions: Array< Action< PluginRow > > = useMemo(
+		() => [
+			{
+				id: 'bulk-select-plugins',
+				label: __( 'Select' ),
+				supportsBulk: true,
+				callback: () => {},
+			},
+		],
+		[]
+	);
+
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'New schedule' ) } /> }>
-			<Card>
-				<CardHeader>
-					<strong>{ __( 'Select sites' ) }</strong>
-				</CardHeader>
-				<CardBody>
-					<DataViewsCard>
-						<DataViews
-							data={ filteredSites }
-							fields={ siteFields }
-							view={ sitesView }
-							onChangeView={ setSitesView }
-							selection={ selectedSiteIds }
-							onChangeSelection={ ( ids ) => setSelectedSiteIds( ids as string[] ) }
-							getItemId={ ( item: Site ) => String( item.ID ) }
-							actions={ siteActions }
-							defaultLayouts={ { table: {} } }
-							paginationInfo={ sitesPagination }
-						/>
-					</DataViewsCard>
-				</CardBody>
-			</Card>
+			<PluginsScheduleNewSites
+				sites={ eligibleSites }
+				selection={ selectedSiteIds }
+				onChangeSelection={ ( ids ) => setSelectedSiteIds( ids ) }
+				actions={ siteBulkActions }
+			/>
 
-			<Card>
-				<CardHeader>
-					<strong>{ __( 'Select plugins' ) }</strong>
-				</CardHeader>
-				<CardBody>
-					<DataViewsCard>
-						<DataViews
-							data={ filteredPlugins }
-							fields={ pluginFields }
-							view={ pluginsView }
-							onChangeView={ setPluginsView }
-							selection={ selectedPluginSlugs }
-							onChangeSelection={ ( ids ) => setSelectedPluginSlugs( ids as string[] ) }
-							getItemId={ ( item: { id: string } ) => item.id }
-							actions={ [
-								{ id: 'noop', label: __( 'Select' ), callback: () => {}, supportsBulk: true },
-							] }
-							defaultLayouts={ { table: {} } }
-							paginationInfo={ pluginsPagination }
-						/>
-					</DataViewsCard>
-				</CardBody>
-			</Card>
+			<PluginsScheduleNewPlugins
+				sitesPlugins={ sitesPlugins as { sites?: Record< string, PluginItem[] > } }
+				selectedSiteIds={ selectedSiteIds }
+				selection={ selectedPluginSlugs }
+				onChangeSelection={ ( ids ) => setSelectedPluginSlugs( ids ) }
+				actions={ pluginBulkActions }
+			/>
 
-			<Card>
-				<CardHeader>
-					<strong>{ __( 'Select frequency' ) }</strong>
-				</CardHeader>
-				<CardBody>
-					<fieldset>
-						<legend className="screen-reader-text">{ __( 'Schedule frequency' ) }</legend>
-						<RadioControl
-							label={ __( 'Frequency' ) }
-							selected={ frequency }
-							onChange={ ( val: string ) => setFrequency( val === 'weekly' ? 'weekly' : 'daily' ) }
-							options={ [
-								{ label: __( 'Daily' ), value: 'daily' },
-								{ label: __( 'Weekly' ), value: 'weekly' },
-							] }
-						/>
-						{ frequency === 'weekly' && (
-							<SelectControl
-								label={ __( 'Weekday' ) }
-								value={ weekday }
-								onChange={ ( val: string ) => setWeekday( val as Weekday ) }
-								options={ [
-									{ label: __( 'Monday' ), value: 'Monday' },
-									{ label: __( 'Tuesday' ), value: 'Tuesday' },
-									{ label: __( 'Wednesday' ), value: 'Wednesday' },
-									{ label: __( 'Thursday' ), value: 'Thursday' },
-									{ label: __( 'Friday' ), value: 'Friday' },
-									{ label: __( 'Saturday' ), value: 'Saturday' },
-									{ label: __( 'Sunday' ), value: 'Sunday' },
-								] }
-							/>
-						) }
-						<TextControl
-							label={ __( 'Time (HH:MM)' ) }
-							value={ time }
-							onChange={ ( val: string ) => setTime( val ) }
-							help={ isTimeValid ? undefined : __( 'Enter a valid 24h time, e.g. 04:00' ) }
-						/>
-					</fieldset>
-				</CardBody>
-			</Card>
+			<PluginsScheduleNewFrequency
+				frequency={ frequency }
+				weekday={ weekday }
+				time={ time }
+				onChange={ ( next ) => {
+					setFrequency( next.frequency );
+					setWeekday( next.weekday );
+					setTime( next.time );
+				} }
+			/>
 
 			<div style={ { marginTop: 16 } }>
 				<Button variant="primary" disabled={ ! isValid } __next40pxDefaultSize>
