@@ -12,9 +12,9 @@ export const userSettingsPreferencesMutation = () =>
 	mutationOptions( {
 		mutationFn: updateUserSettingsPreferences,
 		onSuccess: ( newData ) => {
-			queryClient.setQueryData(
-				userSettingsPreferencesQuery().queryKey,
-				( oldData ) => oldData && { ...oldData, ...newData }
-			);
+			queryClient.setQueryData( userSettingsPreferencesQuery().queryKey, ( oldData ) => ( {
+				...oldData,
+				...newData,
+			} ) );
 		},
 	} );
