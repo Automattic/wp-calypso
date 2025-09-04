@@ -92,14 +92,15 @@ const Note = ( { isDismissible }: { isDismissible?: boolean } ) => {
 		<>
 			<CardHeader size="small">
 				<HStack>
-					<Navigator.BackButton
-						icon={ isRTL() ? chevronRight : chevronLeft }
-						style={ { flexShrink: 0, padding: 0 } }
-					>
+					<HStack justify="flex-start">
+						<Navigator.BackButton
+							icon={ isRTL() ? chevronRight : chevronLeft }
+							style={ { flexShrink: 0, padding: 0 } }
+						/>
 						<Heading level={ 3 } size={ 15 } weight={ 500 }>
 							{ note.title }
 						</Heading>
-					</Navigator.BackButton>
+					</HStack>
 					<HStack justify="flex-end">
 						<ActionDropdown note={ note } goBack={ goBack } />
 						{ isDismissible && <CloseButton /> }
