@@ -238,7 +238,6 @@ export default function McpSetup( { siteSlug }: { siteSlug: string } ) {
 														selectedMcpClient as keyof typeof clientDocumentation
 													]
 												}
-												size="small"
 											>
 												{ __( 'View setup instructions for' ) }{ ' ' }
 												{
@@ -265,7 +264,7 @@ export default function McpSetup( { siteSlug }: { siteSlug: string } ) {
 										help={ __(
 											"Copy this configuration and paste it into your MCP client's settings."
 										) }
-										style={ { 'min-height': '240px' } }
+										style={ { minHeight: '240px' } }
 									/>
 								</VStack>
 							</VStack>
