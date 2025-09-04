@@ -127,6 +127,9 @@ export function useDeploymentFields(): Field< DeploymentRunWithDeploymentInfo >[
 				filterBy: {
 					operators: [ 'is' ],
 				},
+				getValue: ( { item } ) => {
+					return item.is_automated;
+				},
 				render: ( { item } ) => ( item.is_automated ? __( 'Yes' ) : __( 'No' ) ),
 			},
 		],
