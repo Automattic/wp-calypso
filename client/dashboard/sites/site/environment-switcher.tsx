@@ -4,6 +4,7 @@ import {
 	isDeletingStagingSiteQuery,
 	hasStagingSiteQuery,
 } from '@automattic/api-queries';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -87,6 +88,7 @@ const EnvironmentSwitcherDropdown = ( {
 				createSuccessNotice( __( 'Staging site created.' ), { type: 'snackbar' } );
 			},
 			onError: ( error: Error ) => {
+				recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_failure' );
 				createErrorNotice(
 					sprintf(
 						// translators: "reason" is why adding the staging site failed.
