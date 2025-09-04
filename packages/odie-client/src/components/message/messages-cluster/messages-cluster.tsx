@@ -96,9 +96,9 @@ export function MessagesClusterizer( { messages }: { messages: Message[] } ) {
 					className={ cx( 'odie-chatbox-messages-cluster', `role-${ group.role }` ) }
 				>
 					{ messageHeader() }
-					{ group.messages.map( ( message ) => (
+					{ group.messages.map( ( message, index ) => (
 						<ChatMessage
-							key={ message.message_id }
+							key={ message.message_id || index }
 							message={ message }
 							currentUser={ currentUser }
 						/>
