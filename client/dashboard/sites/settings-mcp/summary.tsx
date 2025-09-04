@@ -31,19 +31,19 @@ export default function McpSettingsSummary( { site, density }: { site: Site; den
 	let badgeText: string;
 	let badgeIntent: 'success' | 'info' | undefined;
 
-	const enabledAbilities = Object.entries( siteSettings.mcp_abilities )
-		.filter( ( [ , ability ] ) => ability.enabled )
-		.map( ( [ abilityId ] ) => abilityId );
+	const enabledTools = Object.entries( siteSettings.mcp_abilities )
+		.filter( ( [ , tool ] ) => tool.enabled )
+		.map( ( [ toolId ] ) => toolId );
 
-	const isMcpEnabled = enabledAbilities.length > 0;
+	const isMcpEnabled = enabledTools.length > 0;
 
 	if ( ! isMcpEnabled ) {
 		badgeText = __( 'Disabled' );
 	} else {
 		badgeText = sprintf(
-			// translators: %d is the number of abilities enabled
-			_n( '%d Ability Enabled', '%d Abilities Enabled', enabledAbilities.length ),
-			enabledAbilities.length
+			// translators: %d is the number of tools enabled
+			_n( '%d Tool Enabled', '%d Tools Enabled', enabledTools.length ),
+			enabledTools.length
 		);
 		badgeIntent = 'success';
 	}

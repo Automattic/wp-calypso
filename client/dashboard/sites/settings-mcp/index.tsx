@@ -30,41 +30,38 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
 	const mutation = useMutation( siteSettingsMutation( site.ID ) );
 
-	// Get abilities from the site settings data
-	const availableAbilities: [ string, SiteMcpAbilities[ string ] ][] = Object.entries(
+	// Get tools from the site settings data
+	const availableTools: [ string, SiteMcpAbilities[ string ] ][] = Object.entries(
 		siteSettings?.mcp_abilities || {}
 	);
-	const hasAbilities = availableAbilities.length > 0;
+	const hasTools = availableTools.length > 0;
 
 	const [ formData, setFormData ] = useState< SiteMcpAbilities >(
 		siteSettings?.mcp_abilities ?? {}
 	);
 
-	// Calculate if any abilities are enabled in form data (for master toggle state)
-	const anyAbilitiesEnabled =
-		hasAbilities && Object.values( formData ).some( ( ability ) => ability.enabled );
+	// Calculate if any tools are enabled in form data (for master toggle state)
+	const anyToolsEnabled = hasTools && Object.values( formData ).some( ( tool ) => tool.enabled );
 
-	// Auto-disable master toggle if all abilities are disabled
+	// Auto-disable master toggle if all tools are disabled
 	useEffect( () => {
-		const enabledAbilitiesCount = Object.values( formData ).filter(
-			( ability ) => ability.enabled
-		).length;
+		const enabledToolsCount = Object.values( formData ).filter( ( tool ) => tool.enabled ).length;
 
-		// If we have abilities but none are enabled, and the master toggle is on,
-		// we need to turn off all abilities (which will turn off the master toggle)
-		if ( hasAbilities && enabledAbilitiesCount === 0 && anyAbilitiesEnabled ) {
-			const disabledAbilities: SiteMcpAbilities = {};
-			Object.entries( siteSettings?.mcp_abilities || {} ).forEach( ( [ abilityId, ability ] ) => {
-				disabledAbilities[ abilityId ] = {
-					...ability,
+		// If we have tools but none are enabled, and the master toggle is on,
+		// we need to turn off all tools (which will turn off the master toggle)
+		if ( hasTools && enabledToolsCount === 0 && anyToolsEnabled ) {
+			const disabledTools: SiteMcpAbilities = {};
+			Object.entries( siteSettings?.mcp_abilities || {} ).forEach( ( [ toolId, tool ] ) => {
+				disabledTools[ toolId ] = {
+					...tool,
 					enabled: false,
 				};
 			} );
-			setFormData( disabledAbilities );
+			setFormData( disabledTools );
 		}
-	}, [ formData, hasAbilities, anyAbilitiesEnabled, siteSettings?.mcp_abilities ] );
+	}, [ formData, hasTools, anyToolsEnabled, siteSettings?.mcp_abilities ] );
 
-	// Gate access to Automatticians only and only if there are abilities to configure
+	// Gate access to Automatticians only and only if there are tools to configure
 	if ( ! isAutomattician ) {
 		return null;
 	}
@@ -72,24 +69,24 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
 
-		// Convert the abilities object to a simple key-value array with enabled status
-		const abilitiesArray: Record< string, number > = {};
-		Object.entries( formData ).forEach( ( [ abilityId, ability ] ) => {
-			abilitiesArray[ abilityId ] = ability.enabled ? 1 : 0;
+		// Convert the tools object to a simple key-value array with enabled status
+		const toolsArray: Record< string, number > = {};
+		Object.entries( formData ).forEach( ( [ toolId, tool ] ) => {
+			toolsArray[ toolId ] = tool.enabled ? 1 : 0;
 		} );
 
 		// Create mutation data with the proper type for the API
 		// Note: We use double type assertion (as unknown as Partial<SiteSettings>) because
 		// the API expects simplified mcp_abilities (Record<string, number>) but the TypeScript
 		// type defines full objects (SiteMcpAbilities). The mutation logic handles the transformation.
-		const mutationData = { mcp_abilities: abilitiesArray } as unknown as Partial< SiteSettings >;
+		const mutationData = { mcp_abilities: toolsArray } as unknown as Partial< SiteSettings >;
 
 		mutation.mutate( mutationData, {
 			onSuccess: () => {
-				createSuccessNotice( __( 'MCP abilities saved.' ), { type: 'snackbar' } );
+				createSuccessNotice( __( 'MCP tools saved.' ), { type: 'snackbar' } );
 			},
 			onError: () => {
-				createErrorNotice( __( 'Failed to save MCP abilities.' ), { type: 'snackbar' } );
+				createErrorNotice( __( 'Failed to save MCP tools.' ), { type: 'snackbar' } );
 			},
 		} );
 	};
@@ -97,60 +94,60 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 	const handleMasterToggle = ( enabled: boolean ) => {
 		setFormData( () => {
 			if ( enabled ) {
-				// When enabling MCP, auto-enable all available abilities
-				const autoEnabledAbilities: SiteMcpAbilities = {};
-				Object.entries( siteSettings?.mcp_abilities || {} ).forEach( ( [ abilityId, ability ] ) => {
-					autoEnabledAbilities[ abilityId ] = {
-						...ability,
-						enabled: true, // Auto-enable all abilities
+				// When enabling MCP, auto-enable all available tools
+				const autoEnabledTools: SiteMcpAbilities = {};
+				Object.entries( siteSettings?.mcp_abilities || {} ).forEach( ( [ toolId, tool ] ) => {
+					autoEnabledTools[ toolId ] = {
+						...tool,
+						enabled: true, // Auto-enable all tools
 					};
 				} );
-				return autoEnabledAbilities;
+				return autoEnabledTools;
 			}
-			// When disabling MCP, disable all abilities
-			const disabledAbilities: SiteMcpAbilities = {};
-			Object.entries( siteSettings?.mcp_abilities || {} ).forEach( ( [ abilityId, ability ] ) => {
-				disabledAbilities[ abilityId ] = {
-					...ability,
+			// When disabling MCP, disable all tools
+			const disabledTools: SiteMcpAbilities = {};
+			Object.entries( siteSettings?.mcp_abilities || {} ).forEach( ( [ toolId, tool ] ) => {
+				disabledTools[ toolId ] = {
+					...tool,
 					enabled: false,
 				};
 			} );
-			return disabledAbilities;
+			return disabledTools;
 		} );
 	};
 
-	const handleAbilityChange = ( abilityId: string, enabled: boolean ) => {
+	const handleToolChange = ( toolId: string, enabled: boolean ) => {
 		setFormData( ( prev ) => ( {
 			...prev,
-			[ abilityId ]: {
-				...prev[ abilityId ],
+			[ toolId ]: {
+				...prev[ toolId ],
 				enabled,
 			},
 		} ) );
 	};
 
-	// Get abilities from the site settings data, but use form data for current state
-	const abilities: [ string, SiteMcpAbilities[ string ] ][] = availableAbilities.map(
-		( [ abilityId, ability ] ) => [
-			abilityId,
+	// Get tools from the site settings data, but use form data for current state
+	const tools: [ string, SiteMcpAbilities[ string ] ][] = availableTools.map(
+		( [ toolId, tool ] ) => [
+			toolId,
 			{
-				...ability,
-				enabled: formData[ abilityId ]?.enabled ?? ability.enabled,
+				...tool,
+				enabled: formData[ toolId ]?.enabled ?? tool.enabled,
 			},
 		]
 	);
 
-	// Group abilities by type first, then by category
+	// Group tools by type first, then by category
 	const groupedByType: Record<
 		string,
 		Record< string, [ string, SiteMcpAbilities[ string ] ][] >
-	> = abilities.reduce(
+	> = tools.reduce(
 		(
 			typeGroups: Record< string, Record< string, [ string, SiteMcpAbilities[ string ] ][] > >,
-			[ abilityId, ability ]
+			[ toolId, tool ]
 		) => {
-			const type = ability.type || 'tool'; // Default to 'tool' instead of 'other'
-			const category = ability.category || 'General';
+			const type = tool.type || 'tool'; // Default to 'tool' instead of 'other'
+			const category = tool.category || 'General';
 
 			// Only include the three main types
 			if ( ! [ 'tool', 'resource', 'prompt' ].includes( type ) ) {
@@ -163,7 +160,7 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 			if ( ! typeGroups[ type ][ category ] ) {
 				typeGroups[ type ][ category ] = [];
 			}
-			typeGroups[ type ][ category ].push( [ abilityId, ability ] );
+			typeGroups[ type ][ category ].push( [ toolId, tool ] );
 			return typeGroups;
 		},
 		{} as Record< string, Record< string, [ string, SiteMcpAbilities[ string ] ][] > >
@@ -190,12 +187,12 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 	};
 
 	const renderContent = () => {
-		if ( ! hasAbilities ) {
+		if ( ! hasTools ) {
 			return (
 				<Card>
 					<CardBody>
 						<Text as="p" variant="muted">
-							{ __( 'No MCP abilities are currently available.' ) }
+							{ __( 'No MCP tools are currently available.' ) }
 						</Text>
 					</CardBody>
 				</Card>
@@ -211,11 +208,11 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 								style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }
 							>
 								<ToggleControl
-									checked={ anyAbilitiesEnabled }
+									checked={ anyToolsEnabled }
 									onChange={ handleMasterToggle }
 									label={ __( 'Allow MCP access to this site' ) }
 								/>
-								{ anyAbilitiesEnabled && (
+								{ anyToolsEnabled && (
 									<Button variant="secondary" href={ `/sites/${ siteSlug }/settings/mcp-setup` }>
 										{ __( 'Configure MCP Client' ) }
 									</Button>
@@ -225,7 +222,7 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 					</CardBody>
 				</Card>
 
-				{ hasAbilities && anyAbilitiesEnabled && (
+				{ hasTools && anyToolsEnabled && (
 					<>
 						{ Object.entries( groupedByType ).map( ( [ type, typeCategories ] ) => (
 							<div key={ type } style={ { marginTop: '24px' } }>
@@ -236,28 +233,24 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 								<Card>
 									<CardBody>
 										<VStack spacing={ 6 }>
-											{ Object.entries( typeCategories ).map(
-												( [ category, categoryAbilities ] ) => (
-													<VStack key={ category } spacing={ 4 }>
-														<Text as="h3" style={ { textTransform: 'capitalize' } }>
-															{ category }
-														</Text>
-														{ categoryAbilities.map( ( [ abilityId, ability ] ) => (
-															<VStack key={ abilityId } spacing={ 3 }>
-																<ToggleControl
-																	checked={ ability.enabled }
-																	onChange={ ( checked ) =>
-																		handleAbilityChange( abilityId, checked )
-																	}
-																	label={ ability.title }
-																	disabled={ ! anyAbilitiesEnabled }
-																	help={ ability.description }
-																/>
-															</VStack>
-														) ) }
-													</VStack>
-												)
-											) }
+											{ Object.entries( typeCategories ).map( ( [ category, categoryTools ] ) => (
+												<VStack key={ category } spacing={ 4 }>
+													<Text as="h3" style={ { textTransform: 'capitalize' } }>
+														{ category }
+													</Text>
+													{ categoryTools.map( ( [ toolId, tool ] ) => (
+														<VStack key={ toolId } spacing={ 3 }>
+															<ToggleControl
+																checked={ tool.enabled }
+																onChange={ ( checked ) => handleToolChange( toolId, checked ) }
+																label={ tool.title }
+																disabled={ ! anyToolsEnabled }
+																help={ tool.description }
+															/>
+														</VStack>
+													) ) }
+												</VStack>
+											) ) }
 										</VStack>
 									</CardBody>
 								</Card>
@@ -266,7 +259,7 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 					</>
 				) }
 
-				{ hasAbilities && (
+				{ hasTools && (
 					<div style={ { marginTop: '24px' } }>
 						<Button
 							variant="primary"
@@ -274,7 +267,7 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 							isBusy={ mutation.isPending }
 							disabled={ mutation.isPending }
 						>
-							{ mutation.isPending ? __( 'Saving…' ) : __( 'Save MCP settings' ) }
+							{ mutation.isPending ? __( 'Saving…' ) : __( 'Save MCP tools' ) }
 						</Button>
 					</div>
 				) }

@@ -125,12 +125,12 @@ export default function McpSetup( { siteSlug }: { siteSlug: string } ) {
 		}
 	};
 
-	// Check if any abilities are enabled
-	const hasEnabledAbilities =
+	// Check if any tools are enabled
+	const hasEnabledTools =
 		siteSettings?.mcp_abilities &&
-		Object.values( siteSettings.mcp_abilities ).some( ( ability ) => ability.enabled );
+		Object.values( siteSettings.mcp_abilities ).some( ( tool ) => tool.enabled );
 
-	if ( ! hasEnabledAbilities ) {
+	if ( ! hasEnabledTools ) {
 		return (
 			<PageLayout
 				size="small"
@@ -145,11 +145,11 @@ export default function McpSetup( { siteSlug }: { siteSlug: string } ) {
 					<CardBody>
 						<VStack spacing={ 4 }>
 							<Text as="p" variant="muted">
-								{ __( 'No MCP abilities are currently enabled for this site.' ) }
+								{ __( 'No MCP tools are currently enabled for this site.' ) }
 							</Text>
 							<Text as="p" variant="muted">
 								{ __(
-									'MCP abilities define what actions and data your MCP client can access on this site. You need to enable at least one ability in the main MCP settings before configuring your client.'
+									'MCP tools define what actions and data your MCP client can access on this site. You need to enable at least one tool in the main MCP settings before configuring your client.'
 								) }
 							</Text>
 							<Button variant="primary" href={ `/sites/${ siteSlug }/settings/mcp` }>
@@ -270,7 +270,7 @@ export default function McpSetup( { siteSlug }: { siteSlug: string } ) {
 							</VStack>
 						</VStack>
 						<VStack spacing={ 3 }>
-							<Text as="li" variant="muted" style={ { listStyle: 'none' } }>
+							<Text as="li" style={ { listStyle: 'none' } }>
 								{ createInterpolateElement(
 									sprintf(
 										/* translators: %s is the unique server name for this WordPress.com site */
@@ -297,7 +297,7 @@ export default function McpSetup( { siteSlug }: { siteSlug: string } ) {
 									}
 								) }
 							</Text>
-							<Text as="li" variant="muted" style={ { listStyle: 'none' } }>
+							<Text as="li" style={ { listStyle: 'none' } }>
 								{ createInterpolateElement(
 									sprintf(
 										/* translators: @automattic/mcp-wpcom-remote is the package name and should not be translated */
@@ -322,7 +322,7 @@ export default function McpSetup( { siteSlug }: { siteSlug: string } ) {
 									}
 								) }
 							</Text>
-							<Text as="li" variant="muted" style={ { listStyle: 'none' } }>
+							<Text as="li" style={ { listStyle: 'none' } }>
 								{ createInterpolateElement(
 									sprintf(
 										/* translators: @automattic/mcp-wpcom-remote is the package name and should not be translated */
