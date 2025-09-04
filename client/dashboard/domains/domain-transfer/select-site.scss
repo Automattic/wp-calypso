@@ -4,6 +4,10 @@
 	.dataviews-wrapper {
 		max-height: 345px;
 		overflow: auto;
+
+		@media ( max-width: 600px ) {
+			max-height: 250px;
+		}
 	}
 	
 	.dataviews-view-list div[role="article"] .dataviews-view-list__item-wrapper {
