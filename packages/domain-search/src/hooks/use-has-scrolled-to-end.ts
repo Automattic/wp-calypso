@@ -13,7 +13,11 @@ export const useHasScrolledToEnd = ( contentRef: RefObject< HTMLElement > ) => {
 		const checkIfScrollHasReachedBottom = () => {
 			const { scrollHeight, scrollTop, clientHeight } = contentElement;
 
-			if ( scrollHeight - scrollTop === clientHeight ) {
+			// NOTE: scrollTop is fractional, while scrollHeight and clientHeight are
+			// not, so without this Math.abs() trick then sometimes the result won't
+			// work because scrollTop may not be exactly equal to el.scrollHeight -
+			// el.clientHeight when scrolled to the bottom.
+			if ( Math.abs( scrollHeight - clientHeight - scrollTop ) < 1 ) {
 				setHasScrolledToEnd( true );
 			}
 		};
