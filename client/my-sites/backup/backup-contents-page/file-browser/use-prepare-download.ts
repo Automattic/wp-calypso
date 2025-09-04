@@ -1,4 +1,5 @@
-import { prepareBackupDownload, getBackupDownloadStatus } from '@automattic/api-core';
+import { prepareBackupDownload } from '@automattic/api-core';
+import { siteBackupFilteredDownloadStatusQuery } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from '@wordpress/element';
 import { PREPARE_DOWNLOAD_STATUS } from './constants';
@@ -13,14 +14,6 @@ interface PrepareDownloadArgs {
 interface FilteredPrepareResponse {
 	ok: boolean;
 	key: string;
-}
-
-interface FilteredStatusResponse {
-	ok: boolean;
-	status: string;
-	download_id: string;
-	token: string;
-	url: string;
 }
 
 export const usePrepareDownload = ( siteId: number, onError: () => void ) => {
@@ -39,12 +32,13 @@ export const usePrepareDownload = ( siteId: number, onError: () => void ) => {
 		data,
 		isSuccess: isQuerySuccess,
 		isError: isQueryError,
-	} = useQuery< FilteredStatusResponse >( {
-		queryKey: [ 'jetpack-backup-filtered-status', buildKey, siteId, dataType ],
-		queryFn: () => getBackupDownloadStatus( siteId, buildKey, dataType ),
-		enabled: buildKey !== '' && status === PREPARE_DOWNLOAD_STATUS.PREPARING,
-		refetchInterval: 5000, // 5 seconds
-		retry: false,
+	} = useQuery( {
+		...siteBackupFilteredDownloadStatusQuery(
+			siteId,
+			buildKey,
+			dataType,
+			buildKey !== '' && status === PREPARE_DOWNLOAD_STATUS.PREPARING
+		),
 	} );
 
 	useEffect( () => {

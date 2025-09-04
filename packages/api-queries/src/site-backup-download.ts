@@ -1,6 +1,8 @@
 import {
 	fetchSiteBackupDownloadProgress,
 	initiateSiteBackupDownload,
+	prepareBackupDownload,
+	getBackupDownloadStatus,
 	type DownloadConfig,
 } from '@automattic/api-core';
 import configApi from '@automattic/calypso-config';
@@ -37,4 +39,47 @@ export const siteBackupDownloadInitiateMutation = ( siteId: number ) =>
 			// Start polling download progress
 			queryClient.prefetchQuery( siteBackupDownloadProgressQuery( siteId, downloadId ) );
 		},
+	} );
+
+/**
+ * Fetch the status of a filtered backup download preparation.
+ * @param siteId - The ID of the site to fetch the status for.
+ * @param buildKey - The build key to fetch the status for.
+ * @param dataType - The data type to fetch the status for.
+ * @param enabled - Whether the query is enabled.
+ * @returns A promise that resolves to the download status.
+ */
+export const siteBackupFilteredDownloadStatusQuery = (
+	siteId: number,
+	buildKey: string,
+	dataType: number,
+	enabled = false
+) =>
+	queryOptions( {
+		queryKey: [ 'site', siteId, 'backup', 'download', 'status', buildKey, dataType ],
+		queryFn: () => getBackupDownloadStatus( siteId, buildKey, dataType ),
+
+		// These should be handled by the consumer
+		enabled: !! buildKey && enabled,
+		refetchInterval: 5000,
+		retry: false,
+	} );
+
+/**
+ * Prepare a filtered backup download.
+ * @returns A promise that resolves to the prepare download response.
+ */
+export const siteBackupFilteredDownloadPrepareMutation = () =>
+	mutationOptions( {
+		mutationFn: ( {
+			siteId,
+			rewindId,
+			manifestFilter,
+			dataType,
+		}: {
+			siteId: number;
+			rewindId: string;
+			manifestFilter: string;
+			dataType: number;
+		} ) => prepareBackupDownload( siteId, rewindId, manifestFilter, dataType ),
 	} );
