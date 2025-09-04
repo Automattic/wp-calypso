@@ -147,7 +147,7 @@ function McpSetupComponent( { path, userSettings } ) {
 				<DocumentHead title={ translate( 'MCP Setup' ) } />
 				<NavigationHeader navigationItems={ [] } title={ translate( 'MCP Setup' ) } />
 				<SectionHeader label={ translate( 'Setup Required' ) } />
-				<Card>
+				<Card style={ { borderRadius: '0' } }>
 					<CardBody>
 						<VStack spacing={ 4 }>
 							<Text as="p" variant="muted">
@@ -178,7 +178,7 @@ function McpSetupComponent( { path, userSettings } ) {
 				{ translate( 'WordPress.com MCP Setup' ) }
 			</HeaderCake>
 
-			<Card>
+			<Card style={ { borderRadius: '0' } }>
 				<CardBody>
 					<VStack spacing={ 4 }>
 						<Text as="p">
@@ -214,7 +214,7 @@ function McpSetupComponent( { path, userSettings } ) {
 
 			<div style={ { marginTop: '24px' } }>
 				<SectionHeader label={ translate( 'Client Configuration' ) } />
-				<Card>
+				<Card style={ { borderRadius: '0' } }>
 					<CardBody>
 						<VStack spacing={ 6 }>
 							<SelectControl
