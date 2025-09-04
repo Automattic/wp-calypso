@@ -106,8 +106,7 @@ const AssignedTo = ( { purchase, handleAssignToSite, data, isFetching }: Props )
 							components: {
 								b: <b />,
 							},
-							comment:
-								'%(cancellationDate)s is the date when the client canceled the product. %(expiryDate)s is the date when the product will expire.',
+							comment: '%(expiryDate)s is the date when the product will expire.',
 						}
 					) }
 				</p>
