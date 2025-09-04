@@ -77,4 +77,5 @@ export * from './site-wordpress-version';
 export * from './site';
 export * from './sites';
 export * from './ssh';
+export * from './site-plugins';
 export * from './plugins';

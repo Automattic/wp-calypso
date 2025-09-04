@@ -1,6 +1,6 @@
 import './style.scss';
 
-import { sitesQuery, pluginsQuery } from '@automattic/api-queries';
+import { sitesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { type Action } from '@wordpress/dataviews';
@@ -11,13 +11,12 @@ import PageLayout from '../../../components/page-layout';
 import { PluginsScheduleNewFrequency, type Weekday } from './components/frequency-selection';
 import { PluginsScheduleNewPlugins, type PluginRow } from './components/plugins-selection';
 import { PluginsScheduleNewSites } from './components/sites-selection';
-import type { Site, PluginItem } from '@automattic/api-core';
+import type { Site } from '@automattic/api-core';
 
 // getUniquePlugins not used anymore; plugin list derives from selected sites
 
 export default function NewSchedule() {
 	useQuery( sitesQuery() );
-	const { data: sitesPlugins } = useQuery( pluginsQuery() );
 
 	const [ selectedSiteIds, setSelectedSiteIds ] = useState< string[] >( [] );
 	const [ selectedPluginSlugs, setSelectedPluginSlugs ] = useState< string[] >( [] );
@@ -68,7 +67,6 @@ export default function NewSchedule() {
 			/>
 
 			<PluginsScheduleNewPlugins
-				sitesPlugins={ sitesPlugins as { sites?: Record< string, PluginItem[] > } }
 				selectedSiteIds={ selectedSiteIds }
 				selection={ selectedPluginSlugs }
 				onChangeSelection={ ( ids ) => setSelectedPluginSlugs( ids ) }

@@ -21,3 +21,9 @@ export type SitePlugin = {
 	uninstallable?: boolean;
 	version: string;
 };
+
+export type CorePlugin = {
+	plugin: string;
+	name: string;
+	is_managed?: boolean;
+};

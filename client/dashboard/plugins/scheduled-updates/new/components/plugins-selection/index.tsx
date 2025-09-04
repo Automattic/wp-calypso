@@ -4,12 +4,11 @@ import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import { DataViewsCard } from '../../../../../components/dataviews-card';
 import { DataViewsEmptyState } from '../../../../../components/dataviews-empty-state';
-import type { PluginItem } from '@automattic/api-core';
+import { useEligiblePlugins } from '../../hooks/use-eligible-plugins';
 
 export type PluginRow = { id: string; name: string };
 
 type Props = {
-	sitesPlugins?: { sites?: Record< string, PluginItem[] > };
 	selectedSiteIds: string[];
 	selection: string[];
 	onChangeSelection: ( slugs: string[] ) => void;
@@ -17,33 +16,16 @@ type Props = {
 };
 
 export function PluginsScheduleNewPlugins( {
-	sitesPlugins,
 	selectedSiteIds,
 	selection,
 	onChangeSelection,
 	actions,
 }: Props ) {
-	const pluginRows: PluginRow[] = useMemo( () => {
-		if ( ! sitesPlugins?.sites || selectedSiteIds.length === 0 ) {
-			return [];
-		}
-		const map = new Map< string, string >();
-		Object.entries( sitesPlugins.sites ).forEach( ( [ siteId, plugins ] ) => {
-			if ( ! selectedSiteIds.includes( String( siteId ) ) ) {
-				return;
-			}
-			( plugins as PluginItem[] ).forEach( ( p ) => {
-				if ( ! p.slug ) {
-					return;
-				}
-				const name = p.name || p.slug;
-				if ( ! map.has( p.slug ) ) {
-					map.set( p.slug, name );
-				}
-			} );
-		} );
-		return Array.from( map.entries() ).map( ( [ slug, name ] ) => ( { id: slug, name } ) );
-	}, [ sitesPlugins, selectedSiteIds ] );
+	const eligiblePlugins = useEligiblePlugins( selectedSiteIds );
+	const pluginRows: PluginRow[] = useMemo(
+		() => eligiblePlugins.map( ( plugin ) => ( { id: plugin.id, name: plugin.name } ) ),
+		[ eligiblePlugins ]
+	);
 
 	const pluginFields: Field< PluginRow >[] = useMemo(
 		() => [
@@ -94,6 +76,7 @@ export function PluginsScheduleNewPlugins( {
 							/>
 						) : (
 							<DataViewsEmptyState
+								title=""
 								description={ __( 'Please select a site to view available plugins.' ) }
 							/>
 						) }
