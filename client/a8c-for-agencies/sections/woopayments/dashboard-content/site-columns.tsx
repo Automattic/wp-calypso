@@ -13,13 +13,11 @@ export const SiteColumn = ( { site }: { site: string } ) => {
 	return urlToSlug( site );
 };
 
-export const TransactionsColumn = memo( ( { transactions }: { transactions: number | null } ) => {
-	return transactions ?? <Gridicon icon="minus" />;
-} );
-
 export const CommissionsPaidColumn = memo( ( { payout }: { payout: number | null } ) => {
 	return payout ? formatCurrency( payout, 'USD', { stripZeros: true } ) : <Gridicon icon="minus" />;
 } );
+
+CommissionsPaidColumn.displayName = 'CommissionsPaidColumn';
 
 export const WooPaymentsStatusColumn = ( { state, siteId }: { state: string; siteId: number } ) => {
 	const translate = useTranslate();
