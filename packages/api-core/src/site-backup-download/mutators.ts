@@ -1,5 +1,9 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { DownloadConfig, DownloadStatusResponse } from './types';
+import type {
+	DownloadConfig,
+	DownloadStatusResponse,
+	PrepareBackupDownloadResponse,
+} from './types';
 
 /**
  * Initiate a download operation for a site backup at a specific timestamp.
@@ -41,7 +45,7 @@ export function prepareBackupDownload(
 	rewindId: string,
 	manifestFilter: string,
 	dataType: number
-): Promise< any > {
+): Promise< PrepareBackupDownloadResponse > {
 	return wpcom.req.post(
 		{
 			path: `/sites/${ siteId }/rewind/backup/filtered/prepare`,

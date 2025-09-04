@@ -1,5 +1,10 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { BackupEntry } from './types';
+import type {
+	BackupEntry,
+	BackupContentsResponse,
+	BackupPathInfoResponse,
+	BackupFileResponse,
+} from './types';
 
 /**
  * Fetch the list of backups for a site.
@@ -23,7 +28,7 @@ export function fetchBackupContents(
 	siteId: number,
 	rewindId: number,
 	path: string
-): Promise< any > {
+): Promise< BackupContentsResponse > {
 	return wpcom.req.post(
 		{
 			path: `/sites/${ siteId }/rewind/backup/ls`,
@@ -49,7 +54,7 @@ export function fetchBackupPathInfo(
 	rewindId: string,
 	manifestPath: string,
 	extensionType = ''
-): Promise< any > {
+): Promise< BackupPathInfoResponse > {
 	return wpcom.req.post(
 		{
 			path: `/sites/${ siteId }/rewind/backup/path-info`,
@@ -74,7 +79,7 @@ export function fetchBackupFile(
 	siteId: number,
 	rewindId: string,
 	encodedManifestPath: string
-): Promise< any > {
+): Promise< BackupFileResponse > {
 	return wpcom.req.get( {
 		path: `/sites/${ siteId }/rewind/backup/${ rewindId }/file/${ encodedManifestPath }/url`,
 		apiNamespace: 'wpcom/v2',

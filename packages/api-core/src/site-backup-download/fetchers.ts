@@ -1,5 +1,9 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { DownloadProgress, DownloadStatusResponse } from './types';
+import type {
+	DownloadProgress,
+	DownloadStatusResponse,
+	BackupDownloadStatusResponse,
+} from './types';
 
 /**
  * Fetch the progress of a download operation.
@@ -57,7 +61,7 @@ export function getBackupDownloadStatus(
 	siteId: number,
 	buildKey: string,
 	dataType: number
-): Promise< any > {
+): Promise< BackupDownloadStatusResponse > {
 	return wpcom.req.post(
 		{
 			path: `/sites/${ siteId }/rewind/backup/filtered/status`,

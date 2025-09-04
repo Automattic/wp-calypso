@@ -53,3 +53,16 @@ export interface DownloadStatusResponse {
 	code: string;
 	message: string;
 }
+
+export interface PrepareBackupDownloadResponse {
+	ok: boolean;
+	key: string;
+}
+
+export interface BackupDownloadStatusResponse {
+	ok: boolean;
+	status: string;
+	download_id: string;
+	token: string;
+	url: string;
+}
