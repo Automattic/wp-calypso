@@ -223,40 +223,38 @@ export default function PreferencesLanguageForm() {
 	];
 
 	return (
-		<>
-			<form onSubmit={ handleSubmit }>
-				<Card>
-					<CardBody>
-						<VStack spacing={ 6 } className="dasboard-preferences__vstack">
-							<DataForm< UserSettingsPreferences >
-								data={ data }
-								fields={ languageFields }
-								form={ languageForm }
-								onChange={ ( edits: Partial< UserSettingsPreferences > ) => {
-									setFormData( ( current ) => ( { ...current, ...edits } ) );
-								} }
-							/>
-							{ mutation.error && (
-								<Notice status="error" isDismissible={ false }>
-									{ mutation.error.message }
-								</Notice>
-							) }
-							<div>
-								<Button
-									variant="primary"
-									type="submit"
-									className="language-preferences-form__submit"
-									accessibleWhenDisabled
-									isBusy={ isSaving }
-									disabled={ ! canSubmit }
-								>
-									{ __( 'Save' ) }
-								</Button>
-							</div>
-						</VStack>
-					</CardBody>
-				</Card>
-			</form>
-		</>
+		<form onSubmit={ handleSubmit }>
+			<Card>
+				<CardBody>
+					<VStack spacing={ 6 } className="dasboard-preferences__vstack">
+						<DataForm< UserSettingsPreferences >
+							data={ data }
+							fields={ languageFields }
+							form={ languageForm }
+							onChange={ ( edits: Partial< UserSettingsPreferences > ) => {
+								setFormData( ( current ) => ( { ...current, ...edits } ) );
+							} }
+						/>
+						{ mutation.error && (
+							<Notice status="error" isDismissible={ false }>
+								{ mutation.error.message }
+							</Notice>
+						) }
+						<div>
+							<Button
+								variant="primary"
+								type="submit"
+								className="language-preferences-form__submit"
+								accessibleWhenDisabled
+								isBusy={ isSaving }
+								disabled={ ! canSubmit }
+							>
+								{ __( 'Save' ) }
+							</Button>
+						</div>
+					</VStack>
+				</CardBody>
+			</Card>
+		</form>
 	);
 }
