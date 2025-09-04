@@ -131,16 +131,16 @@ function McpSetupComponent( { path, userSettings } ) {
 		}
 	};
 
-	// Check if any abilities are enabled
-	const hasEnabledAbilities =
+	// Check if any tools are enabled
+	const hasEnabledTools =
 		userSettings?.mcp_abilities &&
-		Object.values( userSettings.mcp_abilities ).some( ( ability ) => ability.enabled );
+		Object.values( userSettings.mcp_abilities ).some( ( tool ) => tool.enabled );
 
 	if ( ! isAutomattician ) {
 		return null;
 	}
 
-	if ( ! hasEnabledAbilities ) {
+	if ( ! hasEnabledTools ) {
 		return (
 			<Main wideLayout className="mcp-setup">
 				<PageViewTracker path={ path } title="MCP Setup" />
@@ -151,11 +151,11 @@ function McpSetupComponent( { path, userSettings } ) {
 					<CardBody>
 						<VStack spacing={ 4 }>
 							<Text as="p" variant="muted">
-								{ translate( 'No MCP abilities are currently enabled for your account.' ) }
+								{ translate( 'No MCP tools are currently enabled for your account.' ) }
 							</Text>
 							<Text as="p" variant="muted">
 								{ translate(
-									'MCP abilities define what actions and data your MCP client can access on your account. You need to enable at least one ability in the main MCP settings before configuring your client.'
+									'MCP tools define what actions and data your MCP client can access on your account. You need to enable at least one tool in the main MCP settings before configuring your client.'
 								) }
 							</Text>
 							<Button variant="primary" href="/me/mcp">

@@ -28,18 +28,18 @@ function McpComponent( { path, userSettings, isUpdating } ) {
 	const reduxDispatch = useReduxDispatch();
 	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
 
-	// Get abilities from user settings
+	// Get tools from user settings
 	const mcpAbilities = userSettings?.mcp_abilities || {};
-	const availableAbilities = Object.entries( mcpAbilities );
-	const hasAbilities = availableAbilities.length > 0;
+	const availableTools = Object.entries( mcpAbilities );
+	const hasTools = availableTools.length > 0;
 
 	const [ formData, setFormData ] = useState( {
 		mcp_abilities: mcpAbilities,
 	} );
 
-	// Calculate if any abilities are enabled (for master toggle and individual toggle disabled state)
-	const anyAbilitiesEnabled =
-		hasAbilities && Object.values( formData.mcp_abilities ).some( ( ability ) => ability.enabled );
+	// Calculate if any tools are enabled (for master toggle and individual toggle disabled state)
+	const anyToolsEnabled =
+		hasTools && Object.values( formData.mcp_abilities ).some( ( tool ) => tool.enabled );
 
 	// Check if form data has changed from original user settings
 	const hasUnsavedChanges = ( () => {
@@ -47,9 +47,9 @@ function McpComponent( { path, userSettings, isUpdating } ) {
 			return false;
 		}
 
-		return Object.keys( userSettings.mcp_abilities ).some( ( abilityId ) => {
-			const originalEnabled = userSettings.mcp_abilities[ abilityId ]?.enabled;
-			const currentEnabled = formData.mcp_abilities[ abilityId ]?.enabled;
+		return Object.keys( userSettings.mcp_abilities ).some( ( toolId ) => {
+			const originalEnabled = userSettings.mcp_abilities[ toolId ]?.enabled;
+			const currentEnabled = formData.mcp_abilities[ toolId ]?.enabled;
 			return originalEnabled !== currentEnabled;
 		} );
 	} )();
@@ -71,25 +71,25 @@ function McpComponent( { path, userSettings, isUpdating } ) {
 		e.preventDefault();
 
 		// Use settingsOverride to bypass the unsaved settings mechanism
-		// Convert the abilities object to a simple key-value array with enabled status
-		const abilitiesArray = {};
-		Object.entries( formData.mcp_abilities ).forEach( ( [ abilityId, ability ] ) => {
-			abilitiesArray[ abilityId ] = ability.enabled ? 1 : 0;
+		// Convert the tools object to a simple key-value array with enabled status
+		const toolsArray = {};
+		Object.entries( formData.mcp_abilities ).forEach( ( [ toolId, tool ] ) => {
+			toolsArray[ toolId ] = tool.enabled ? 1 : 0;
 		} );
 
-		const settingsData = { mcp_abilities: abilitiesArray };
+		const settingsData = { mcp_abilities: toolsArray };
 
 		// Save directly using settingsOverride
 		reduxDispatch( saveUserSettings( settingsData ) );
 	};
 
-	const handleAbilityChange = ( abilityId, enabled ) => {
+	const handleToolChange = ( toolId, enabled ) => {
 		setFormData( ( prev ) => ( {
 			...prev,
 			mcp_abilities: {
 				...prev.mcp_abilities,
-				[ abilityId ]: {
-					...prev.mcp_abilities[ abilityId ],
+				[ toolId ]: {
+					...prev.mcp_abilities[ toolId ],
 					enabled,
 				},
 			},
@@ -99,9 +99,9 @@ function McpComponent( { path, userSettings, isUpdating } ) {
 	const handleMasterToggle = ( enabled ) => {
 		setFormData( ( prev ) => ( {
 			...prev,
-			mcp_abilities: Object.keys( prev.mcp_abilities ).reduce( ( acc, abilityId ) => {
-				acc[ abilityId ] = {
-					...prev.mcp_abilities[ abilityId ],
+			mcp_abilities: Object.keys( prev.mcp_abilities ).reduce( ( acc, toolId ) => {
+				acc[ toolId ] = {
+					...prev.mcp_abilities[ toolId ],
 					enabled,
 				};
 				return acc;
@@ -110,19 +110,19 @@ function McpComponent( { path, userSettings, isUpdating } ) {
 	};
 
 	const renderContent = () => {
-		// Get abilities from user settings, but use form data for current state
-		const abilities = availableAbilities.map( ( [ abilityId, ability ] ) => [
-			abilityId,
+		// Get tools from user settings, but use form data for current state
+		const tools = availableTools.map( ( [ toolId, tool ] ) => [
+			toolId,
 			{
-				...ability,
-				enabled: formData.mcp_abilities?.[ abilityId ]?.enabled ?? ability.enabled,
+				...tool,
+				enabled: formData.mcp_abilities?.[ toolId ]?.enabled ?? tool.enabled,
 			},
 		] );
 
-		// Group abilities by type first, then by category
-		const groupedByType = abilities.reduce( ( typeGroups, [ abilityId, ability ] ) => {
-			const type = ability.type || 'tool'; // Default to 'tool' instead of 'other'
-			const category = ability.category || 'General';
+		// Group tools by type first, then by category
+		const groupedByType = tools.reduce( ( typeGroups, [ toolId, tool ] ) => {
+			const type = tool.type || 'tool'; // Default to 'tool' instead of 'other'
+			const category = tool.category || 'General';
 
 			// Only include the three main types
 			if ( ! [ 'tool', 'resource', 'prompt' ].includes( type ) ) {
@@ -135,7 +135,7 @@ function McpComponent( { path, userSettings, isUpdating } ) {
 			if ( ! typeGroups[ type ][ category ] ) {
 				typeGroups[ type ][ category ] = [];
 			}
-			typeGroups[ type ][ category ].push( [ abilityId, ability ] );
+			typeGroups[ type ][ category ].push( [ toolId, tool ] );
 			return typeGroups;
 		}, {} );
 
@@ -164,7 +164,7 @@ function McpComponent( { path, userSettings, isUpdating } ) {
 				<SectionHeader label={ translate( 'MCP Access Control' ) } />
 				<Card style={ { borderRadius: '0' } }>
 					<CardBody>
-						{ hasAbilities ? (
+						{ hasTools ? (
 							<VStack spacing={ 2 }>
 								<div
 									style={ {
@@ -174,11 +174,11 @@ function McpComponent( { path, userSettings, isUpdating } ) {
 									} }
 								>
 									<ToggleControl
-										checked={ anyAbilitiesEnabled }
+										checked={ anyToolsEnabled }
 										onChange={ handleMasterToggle }
 										label={ translate( 'Allow MCP access' ) }
 									/>
-									{ anyAbilitiesEnabled && (
+									{ anyToolsEnabled && (
 										<Button variant="secondary" href="/me/mcp-setup">
 											{ translate( 'Configure MCP Client' ) }
 										</Button>
@@ -187,13 +187,13 @@ function McpComponent( { path, userSettings, isUpdating } ) {
 							</VStack>
 						) : (
 							<Text as="p" variant="muted">
-								{ translate( 'No MCP abilities are currently available.' ) }
+								{ translate( 'No MCP tools are currently available.' ) }
 							</Text>
 						) }
 					</CardBody>
 				</Card>
 
-				{ hasAbilities && anyAbilitiesEnabled && (
+				{ hasTools && anyToolsEnabled && (
 					<>
 						{ Object.entries( groupedByType ).map( ( [ type, typeCategories ] ) => (
 							<div key={ type } style={ { marginTop: '24px' } }>
@@ -208,30 +208,26 @@ function McpComponent( { path, userSettings, isUpdating } ) {
 									</CardHeader>
 									<CardBody>
 										<VStack spacing={ 6 }>
-											{ Object.entries( typeCategories ).map(
-												( [ category, categoryAbilities ] ) => (
-													<VStack key={ category } spacing={ 4 }>
-														<Text as="h3" style={ { textTransform: 'capitalize' } }>
-															{ category }
-														</Text>
-														<VStack spacing={ 4 }>
-															{ categoryAbilities.map( ( [ abilityId, ability ] ) => (
-																<VStack key={ abilityId } spacing={ 3 }>
-																	<ToggleControl
-																		checked={ ability.enabled }
-																		onChange={ ( checked ) =>
-																			handleAbilityChange( abilityId, checked )
-																		}
-																		label={ ability.title }
-																		help={ ability.description }
-																		disabled={ ! anyAbilitiesEnabled }
-																	/>
-																</VStack>
-															) ) }
-														</VStack>
+											{ Object.entries( typeCategories ).map( ( [ category, categoryTools ] ) => (
+												<VStack key={ category } spacing={ 4 }>
+													<Text as="h3" style={ { textTransform: 'capitalize' } }>
+														{ category }
+													</Text>
+													<VStack spacing={ 4 }>
+														{ categoryTools.map( ( [ toolId, tool ] ) => (
+															<VStack key={ toolId } spacing={ 3 }>
+																<ToggleControl
+																	checked={ tool.enabled }
+																	onChange={ ( checked ) => handleToolChange( toolId, checked ) }
+																	label={ tool.title }
+																	help={ tool.description }
+																	disabled={ ! anyToolsEnabled }
+																/>
+															</VStack>
+														) ) }
 													</VStack>
-												)
-											) }
+												</VStack>
+											) ) }
 										</VStack>
 									</CardBody>
 								</Card>
@@ -240,10 +236,10 @@ function McpComponent( { path, userSettings, isUpdating } ) {
 					</>
 				) }
 
-				{ hasAbilities && (
+				{ hasTools && (
 					<div style={ { marginTop: '24px' } }>
 						<FormButton isSubmitting={ isUpdating } disabled={ isUpdating || ! hasUnsavedChanges }>
-							{ isUpdating ? translate( 'Saving…' ) : translate( 'Save MCP abilities' ) }
+							{ isUpdating ? translate( 'Saving…' ) : translate( 'Save MCP tools' ) }
 						</FormButton>
 					</div>
 				) }
