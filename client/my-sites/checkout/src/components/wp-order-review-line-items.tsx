@@ -280,6 +280,7 @@ function LineItemWrapper( {
 	onRemoveProductCancel,
 	hasPartnerCoupon,
 	isDisabled,
+	initialVariantTerm,
 	toggleVariantSelector,
 	variantOpenId,
 	isAkPro500Cart,
@@ -403,7 +404,11 @@ function LineItemWrapper( {
 		if ( signupFlowName === 'onboarding-pm' && isWpComPlan( product.product_slug ) ) {
 			const domainRegistrations = getDomainRegistrations( responseCart );
 			// Hide monthly variant when a paid domain is in the cart
-			if ( variant.termIntervalInMonths === 1 && domainRegistrations.length > 0 ) {
+			if (
+				variant.termIntervalInMonths === 1 &&
+				variant.termIntervalInMonths !== initialVariantTerm &&
+				domainRegistrations.length > 0
+			) {
 				return false;
 			}
 		}
