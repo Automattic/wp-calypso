@@ -15,7 +15,7 @@ const DomainSearchStep: StepType = function DomainSearchStep( { flow } ) {
 				className="step-container-v2--domain-search"
 				heading={ <Step.Heading text="Domain Search" /> }
 			>
-				<WPCOMDomainSearch className="step-container-v2-domain-search" />
+				<WPCOMDomainSearch className="step-container-v2-domain-search" flowName={ flow } />
 			</Step.CenteredColumnLayout>
 		);
 	}
@@ -26,7 +26,7 @@ const DomainSearchStep: StepType = function DomainSearchStep( { flow } ) {
 			flowName={ flow }
 			goBack={ () => {} }
 			goNext={ () => {} }
-			stepContent={ <WPCOMDomainSearch /> }
+			stepContent={ <WPCOMDomainSearch flowName={ flow } /> }
 			recordTracksEvent={ recordTracksEvent }
 		/>
 	);

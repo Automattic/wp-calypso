@@ -12,7 +12,7 @@ export type StepProps = {
 
 export default function DomainSearchStep( props: StepProps ) {
 	const getContent = () => {
-		return <WPCOMDomainSearch />;
+		return <WPCOMDomainSearch flowName={ props.flowName } />;
 	};
 
 	return (

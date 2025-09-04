@@ -4,6 +4,7 @@ import {
 	isDomainForGravatarFlow,
 	isDomainUpsellFlow,
 	isHundredYearDomainFlow,
+	isHundredYearPlanFlow,
 } from '@automattic/onboarding';
 import {
 	isDomainBeingUsedForPlan,
@@ -22,6 +23,10 @@ export const getPriceRuleForSuggestion = ( {
 	flowName: string;
 	responseCart: ResponseCart;
 } ) => {
+	if ( isHundredYearPlanFlow( flowName ) ) {
+		return DomainPriceRule.NO_PRICE;
+	}
+
 	if ( isHundredYearDomainFlow( flowName ) ) {
 		return DomainPriceRule.ONE_TIME_PRICE;
 	}

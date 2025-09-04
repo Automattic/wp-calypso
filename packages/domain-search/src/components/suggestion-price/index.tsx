@@ -1,6 +1,8 @@
 import { formatCurrency } from '@automattic/number-formatters';
 import { useQuery } from '@tanstack/react-query';
+import { __ } from '@wordpress/i18n';
 import { useSuggestion } from '../../hooks/use-suggestion';
+import { DomainPriceRule } from '../../page';
 import { useDomainSearch } from '../../page/context';
 import { DomainSuggestionPrice as DomainSuggestionPriceComponent } from '../../ui';
 export interface DomainSuggestionPriceProps {
@@ -22,6 +24,36 @@ export const DomainSuggestionPrice = ( { domainName }: DomainSuggestionPriceProp
 					stripZeros: true,
 			  } )
 			: priceSource.sale_cost;
+
+	if ( suggestion.price_rule === DomainPriceRule.NO_PRICE ) {
+		return null;
+	}
+
+	if ( suggestion.price_rule === DomainPriceRule.ONE_TIME_PRICE ) {
+		return <DomainSuggestionPriceComponent price={ priceSource.cost } />;
+	}
+
+	if ( suggestion.price_rule === DomainPriceRule.FREE_DOMAIN ) {
+		return <DomainSuggestionPriceComponent price={ __( 'Free' ) } />;
+	}
+
+	if ( suggestion.price_rule === DomainPriceRule.DOMAIN_MOVE_PRICE ) {
+		return <DomainSuggestionPriceComponent price={ __( 'Move your existing domain' ) } />;
+	}
+
+	if (
+		[ DomainPriceRule.FREE_FOR_FIRST_YEAR, DomainPriceRule.FREE_WITH_PLAN ].includes(
+			suggestion.price_rule
+		)
+	) {
+		return (
+			<DomainSuggestionPriceComponent
+				price={ priceSource.cost }
+				salePrice={ saleCost }
+				renewPrice={ priceSource.renew_cost }
+			/>
+		);
+	}
 
 	return (
 		<DomainSuggestionPriceComponent
