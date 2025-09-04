@@ -1,4 +1,3 @@
-import { UserSettingsPreferences } from '@automattic/api-core';
 import {
 	userSettingsPreferencesMutation,
 	userSettingsPreferencesQuery,
@@ -23,6 +22,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { languagesAsOptions, shouldDisplayCommunityTranslator, CalypsoLanguage } from './languages';
 import ThanksToCommunityTranslator from './thanks-to-community-translator';
+import type { UserSettingsPreferences } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 export default function PreferencesLanguageForm() {
