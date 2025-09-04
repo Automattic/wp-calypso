@@ -11,6 +11,7 @@ import {
 	queryClient,
 	domainTransferRequestQuery,
 	domainWhoisQuery,
+	domainConnectionSetupInfoQuery,
 } from '@automattic/api-queries';
 import {
 	createRoute,
@@ -328,6 +329,27 @@ export const domainTransferToOtherSiteRoute = createRoute( {
 	)
 );
 
+export const domainConnectionSetupRoute = createRoute( {
+	getParentRoute: () => domainRoute,
+	path: 'domain-connection-setup',
+	loader: async ( { params: { domainName } } ) => {
+		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
+		await queryClient.ensureQueryData(
+			domainConnectionSetupInfoQuery(
+				domainName,
+				domain.blog_id,
+				`https://wordpress.com/v2/domains/${ domainName }/domain-connection-setup` // TO DO: replace with the correct URL
+			)
+		);
+	},
+} ).lazy( () =>
+	import( '../../domains/domain-connection-setup' ).then( ( d ) =>
+		createLazyRoute( 'domain-connection-setup' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const createDomainsRoutes = () => {
 	return [
 		domainsRoute,
@@ -336,6 +358,7 @@ export const createDomainsRoutes = () => {
 			domainDnsRoute,
 			domainDnsAddRoute,
 			domainDnsEditRoute,
+			domainConnectionSetupRoute,
 			domainForwardingsRoute,
 			domainForwardingAddRoute,
 			domainForwardingEditRoute,
