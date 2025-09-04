@@ -1,5 +1,3 @@
-import { TranslateResult } from 'i18n-calypso';
-
 export type DomainSuggestionQueryVendor =
 	| 'variation2_front'
 	| 'variation4_front'
@@ -193,7 +191,7 @@ export interface DomainSuggestion {
 export interface PolicyNotice {
 	type: string;
 	label: string;
-	message: TranslateResult;
+	message: string;
 }
 
 export interface FreeDomainSuggestion {
