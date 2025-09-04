@@ -13,7 +13,7 @@ import {
 	DeploymentStatusBadge,
 	DeploymentStatusValue,
 } from '../components/deployment-status-badge';
-import type { DeploymentRunWithDeploymentInfo } from '../hooks/use-code-deployment-runs-query';
+import type { DeploymentRunWithDeploymentInfo } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 export function useDeploymentFields(): Field< DeploymentRunWithDeploymentInfo >[] {

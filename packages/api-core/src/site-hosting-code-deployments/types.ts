@@ -1,9 +1,3 @@
-import { useQuery, UseQueryOptions } from '@tanstack/react-query';
-import wp from 'calypso/lib/wp';
-
-export const CODE_DEPLOYMENTS_RUNS_QUERY_KEY = 'code-deployments-runs';
-export const GITHUB_DEPLOYMENTS_QUERY_KEY = 'github-deployments';
-
 export type DeploymentRunStatus =
 	| 'pending'
 	| 'queued'
@@ -39,31 +33,30 @@ export interface DeploymentRun {
 	metadata: DeploymentRunMetadata;
 }
 
+export interface CodeDeploymentData {
+	id: number;
+	blog_id: number;
+	created_by_user_id: number;
+	created_on: string;
+	updated_on: string;
+	external_repository_id: number;
+	repository_name: string;
+	branch_name: string;
+	target_dir: string;
+	is_automated: boolean;
+	installation_id: number;
+	created_by: {
+		id: number;
+		name: string;
+	};
+	current_deployed_run?: DeploymentRun;
+	current_deployment_run?: DeploymentRun;
+	workflow_path?: string;
+}
+
 export interface DeploymentRunWithDeploymentInfo extends DeploymentRun {
 	repository_name: string;
 	branch_name: string;
 	is_automated: boolean;
 	is_active_deployment: boolean;
 }
-
-export const useCodeDeploymentsRunsQuery = (
-	siteId: number | null,
-	deploymentId: number,
-	options?: UseQueryOptions< DeploymentRun[] >
-) => {
-	return useQuery< DeploymentRun[] >( {
-		enabled: !! siteId,
-		queryKey: [
-			GITHUB_DEPLOYMENTS_QUERY_KEY,
-			CODE_DEPLOYMENTS_RUNS_QUERY_KEY,
-			siteId,
-			deploymentId,
-		],
-		queryFn: (): DeploymentRun[] =>
-			wp.req.get( {
-				path: `/sites/${ siteId }/hosting/code-deployments/${ deploymentId }/runs`,
-				apiNamespace: 'wpcom/v2',
-			} ),
-		...options,
-	} );
-};

@@ -42,6 +42,7 @@ export * from './site-backups';
 export * from './site-do-it-for-me';
 export * from './site-domains';
 export * from './site-hosting';
+export * from './site-hosting-code-deployments';
 export * from './site-hosting-edge-cache';
 export * from './site-hosting-metrics';
 export * from './site-hosting-sftp';
