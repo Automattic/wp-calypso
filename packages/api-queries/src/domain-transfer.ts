@@ -81,11 +81,7 @@ export const domainTransferToUserMutation = ( domain: string, siteId: number ) =
 		},
 	} );
 
-export const transferDomainToSiteMutation = (
-	domain: string,
-	siteId: string,
-	targetSiteId: string
-) =>
+export const transferDomainToSiteMutation = ( domain: string, siteId: number ) =>
 	mutationOptions( {
-		mutationFn: () => transferDomainToSite( domain, siteId, targetSiteId ),
+		mutationFn: ( targetSiteId: number ) => transferDomainToSite( domain, siteId, targetSiteId ),
 	} );

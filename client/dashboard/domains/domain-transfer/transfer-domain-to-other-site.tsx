@@ -1,3 +1,5 @@
+import { transferDomainToSiteMutation, domainQuery } from '@automattic/api-queries';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import {
 	Card,
 	CardBody,
@@ -16,8 +18,13 @@ import type { Site } from '@automattic/api-core';
 
 export default function DomainTransferToOtherSite() {
 	const { domainName } = domainTransferToOtherSiteRoute.useParams();
+	const { data: domain } = useQuery( domainQuery( domainName ) );
 	const [ isConfirmDialogOpen, setIsConfirmDialogOpen ] = useState( false );
 	const [ selectedSite, setSelectedSite ] = useState< Site >();
+
+	const { mutate: transferDomainToSite } = useMutation(
+		transferDomainToSiteMutation( domainName, domain?.blog_id ?? 0 )
+	);
 
 	return (
 		<PageLayout
@@ -48,7 +55,10 @@ export default function DomainTransferToOtherSite() {
 			<ConfirmDialog
 				isOpen={ !! selectedSite && isConfirmDialogOpen }
 				confirmButtonText={ __( 'Confirm attachment' ) }
-				onConfirm={ () => setIsConfirmDialogOpen( false ) }
+				onConfirm={ () => {
+					setIsConfirmDialogOpen( false );
+					selectedSite && transferDomainToSite( selectedSite.ID );
+				} }
 				onCancel={ () => setIsConfirmDialogOpen( false ) }
 			>
 				<VStack spacing={ 4 } style={ { maxWidth: '450px' } }>

@@ -99,8 +99,8 @@ export async function domainTransferToUser(
 
 export async function transferDomainToSite(
 	domain: string,
-	siteId: string,
-	targetSiteId: string
+	siteId: number,
+	targetSiteId: number
 ): Promise< void > {
 	return wpcom.req.post( {
 		path: `/sites/${ siteId }/domains/${ domain }/transfer-to-site/${ targetSiteId }`,
