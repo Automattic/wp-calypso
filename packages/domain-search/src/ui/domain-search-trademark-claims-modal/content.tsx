@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { ReactNode } from 'react';
+import { TRADE_MARK_CLAIMS_MODAL_COPY } from './constants';
 import type {
 	TrademarkClaim,
 	TrademarkClaimContact,
@@ -125,11 +126,7 @@ const renderCases = ( { notExactMatch }: TrademarkClaim ) => {
 
 	return (
 		<div key="claim-cases">
-			<p>
-				{ __(
-					'This domain name label has previously been found to be used or registered abusively against the following trademarks according to the referenced decisions:'
-				) }
-			</p>
+			<p>{ TRADE_MARK_CLAIMS_MODAL_COPY.COURT_CASES }</p>
 
 			{ courtCases && renderCourtCases( courtCases ) }
 			{ udrpCases && renderUdrpCases( udrpCases ) }
