@@ -65,9 +65,7 @@ export function DeploymentsList() {
 			}
 		} );
 
-		return allRuns.sort(
-			( a, b ) => new Date( b.created_on ).getTime() - new Date( a.created_on ).getTime()
-		);
+		return allRuns;
 	}, [ deployments, deploymentRunsQueries ] );
 
 	const isLoading =
