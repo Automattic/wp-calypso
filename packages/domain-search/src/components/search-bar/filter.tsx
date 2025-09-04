@@ -15,7 +15,7 @@ export const Filter = () => {
 	const { data: availableTlds = [], isFetching: isFetchingTlds } = useQuery< string[] >( {
 		...queries.availableTlds( query ),
 		enabled: true,
-	} );
+	} ) as { data: string[]; isFetching: boolean };
 
 	const resetFilter = useCallback( () => {
 		setFilter( emptyFilter );
