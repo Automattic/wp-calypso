@@ -128,6 +128,7 @@ export const OdieSendMessageButton = () => {
 						onSubmit={ sendMessageHandler }
 						onKeyDown={ handleKeyDown }
 						textareaRef={ textareaRef }
+						disabled={ !! notice }
 						notice={ notice }
 						placeholder={ textAreaPlaceholder }
 						isProcessing={
