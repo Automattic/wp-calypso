@@ -258,7 +258,7 @@ export function DomainTransactionVolumeSummary( { item }: { item: BillingTransac
 
 	const volume = parseInt( String( item.volume ) );
 
-	if ( 'wp-domains' !== item.product_slug ) {
+	if ( 'wp-domains' !== item.product_slug || item.variation_slug === 'wp-domain-mapping' ) {
 		return null;
 	}
 
