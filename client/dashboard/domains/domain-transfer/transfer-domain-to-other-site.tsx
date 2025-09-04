@@ -38,12 +38,17 @@ export default function DomainTransferToOtherSite() {
 		!! selectedSite &&
 			transferDomainToSite( selectedSite.ID, {
 				onSuccess: () => {
-					createSuccessNotice( __( 'Domain transferred successfully.' ) );
+					createSuccessNotice( __( 'Domain transferred successfully.' ), { type: 'snackbar' } );
 					setIsConfirmDialogOpen( false );
 					navigate( { to: domainRoute.fullPath, params: { domainName } } );
 				},
-				onError: () => {
-					createErrorNotice( __( 'An error occurred while transferring the domain.' ) );
+				onError: ( e ) => {
+					createErrorNotice(
+						e.message || __( 'An error occurred while transferring the domain.' ),
+						{
+							type: 'snackbar',
+						}
+					);
 				},
 			} );
 	};
