@@ -8,8 +8,8 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useState } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
-import { chevronRight, help } from '@wordpress/icons';
+import { __, isRTL } from '@wordpress/i18n';
+import { chevronLeft, chevronRight, help } from '@wordpress/icons';
 import ActionList from '../../components/action-list';
 import { ButtonStack } from '../../components/button-stack';
 import RouterLinkButton from '../../components/router-link-button';
@@ -108,7 +108,7 @@ export default function AccountDeletionConfirmModal( {
 											<RouterLinkButton
 												__next40pxDefaultSize
 												variant="tertiary"
-												icon={ chevronRight }
+												icon={ isRTL() ? chevronLeft : chevronRight }
 												size="compact"
 												to={ option.to }
 												rel="noopener noreferrer"
