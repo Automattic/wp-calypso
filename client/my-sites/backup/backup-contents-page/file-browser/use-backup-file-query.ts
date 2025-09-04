@@ -1,4 +1,4 @@
-import { fetchBackupFile } from '@automattic/api-core';
+import { fetchBackupFileUrl } from '@automattic/api-core';
 import { useQuery } from '@tanstack/react-query';
 import { encodeToBase64 } from './util';
 
@@ -12,7 +12,7 @@ export const useBackupFileQuery = (
 
 	return useQuery( {
 		queryKey: [ 'jetpack-backup-file-url', siteId, rewindId, encodedManifestPath ],
-		queryFn: () => fetchBackupFile( siteId, rewindId!, encodedManifestPath ),
+		queryFn: () => fetchBackupFileUrl( siteId, rewindId!, encodedManifestPath ),
 		enabled: !! siteId && !! rewindId && !! manifestPath && shouldFetch,
 		meta: { persist: false },
 		staleTime: Infinity,

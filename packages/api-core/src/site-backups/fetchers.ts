@@ -3,7 +3,7 @@ import type {
 	BackupEntry,
 	BackupContentsResponse,
 	BackupPathInfoResponse,
-	BackupFileResponse,
+	BackupFileUrl,
 } from './types';
 
 /**
@@ -75,11 +75,11 @@ export function fetchBackupPathInfo(
  * @param encodedManifestPath - The base64 encoded manifest path.
  * @returns A promise that resolves to the backup file URL data.
  */
-export function fetchBackupFile(
+export function fetchBackupFileUrl(
 	siteId: number,
 	rewindId: string,
 	encodedManifestPath: string
-): Promise< BackupFileResponse > {
+): Promise< BackupFileUrl > {
 	return wpcom.req.get( {
 		path: `/sites/${ siteId }/rewind/backup/${ rewindId }/file/${ encodedManifestPath }/url`,
 		apiNamespace: 'wpcom/v2',
