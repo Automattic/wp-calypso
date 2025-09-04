@@ -26,9 +26,9 @@ const meta = {
 			control: 'object',
 			description: 'Custom empty state component',
 		},
-		fromCompact: {
-			control: 'boolean',
-			description: 'Whether transitioning from compact mode',
+		messageRenderer: {
+			control: 'object',
+			description: 'Custom message renderer component',
 		},
 	},
 } satisfies Meta< typeof Messages >;

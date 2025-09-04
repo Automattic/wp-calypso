@@ -47,7 +47,7 @@
 	"author": "Automattic",
 	"license": "MIT",
 	"engines": {
-		"node": ">=18.0.0"
+		"node": ">=20.0.0"
 	},
 	"devDependencies": {
 		"@wordpress/api-fetch": "^7.0.0",

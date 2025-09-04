@@ -1,5 +1,4 @@
 /* Storybook-specific styles */
-
 #storybook-root {
   font-family: var(--font-sans);
   color: var(--color-foreground);
@@ -13,6 +12,10 @@
   letter-spacing: var(--text-base--tracking);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
+}
+
+.docs-story {
+  padding: 24px 0;
 }
 
 

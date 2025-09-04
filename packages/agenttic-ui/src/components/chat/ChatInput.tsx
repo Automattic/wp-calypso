@@ -37,6 +37,7 @@ interface ChatInputProps {
 	customActions?: ActionButton[];
 	actionOrder?: 'before-submit' | 'after-submit';
 	onStop?: () => void; // Optional callback for stopping current request
+	disabled?: boolean; // Allow disabling submit button for validation
 }
 
 export function ChatInput( {
@@ -55,9 +56,10 @@ export function ChatInput( {
 	customActions = [],
 	actionOrder = 'before-submit',
 	onStop,
+	disabled = false,
 }: ChatInputProps ) {
 	const textareaId = useId();
-	const canSubmit = value.trim() || isProcessing;
+	const canSubmit = ( value.trim() || isProcessing ) && ! disabled;
 
 	// Helper function to ensure text has ellipsis
 	const addEllipsis = ( text: string ) =>

@@ -22,6 +22,9 @@ interface ChatFooterProps {
 	fromCompact?: boolean;
 	onExpand?: () => void;
 
+	// Validation
+	disabled?: boolean;
+
 	// Notifications
 	notice?: NoticeConfig;
 
@@ -48,6 +51,7 @@ export function ChatFooter( {
 	onStop,
 	fromCompact = false,
 	onExpand,
+	disabled,
 	notice,
 	suggestions,
 	clearSuggestions,
@@ -100,6 +104,7 @@ export function ChatFooter( {
 				focusOnMount={ focusOnMount }
 				customActions={ customActions }
 				actionOrder={ actionOrder }
+				disabled={ disabled }
 			/>
 		</motion.div>
 	);
