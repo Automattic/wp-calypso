@@ -1,16 +1,9 @@
-import { HelpCenterSelect } from '@automattic/data-stores';
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useManageSupportInteraction } from '@automattic/odie-client/src/data';
+import { useCurrentSupportInteraction } from '@automattic/odie-client/src/data/use-current-support-interaction';
 import { useQueryClient } from '@tanstack/react-query';
-import { useSelect } from '@wordpress/data';
 
 export const useResetSupportInteraction = () => {
-	const { currentSupportInteraction } = useSelect( ( select ) => {
-		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
-		return {
-			currentSupportInteraction: store.getCurrentSupportInteraction(),
-		};
-	}, [] );
+	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const { startNewInteraction, resolveInteraction, isMutating } = useManageSupportInteraction();
 	const queryClient = useQueryClient();
 

@@ -66,8 +66,8 @@ class MemoryHistory {
 		this.notifyListeners( Action.Push );
 	}
 
-	replace( path: string, state?: any ) {
-		const location = this.createLocation( path, state );
+	replace( path: Location, state?: any ) {
+		const location = this.createLocation( path.pathname + path.search + path.hash, state );
 		this.entries[ this.index ] = location;
 		this.notifyListeners( Action.Replace );
 	}
