@@ -20,18 +20,11 @@ export const Notice: React.FC< NoticeProps > = ( { content, onClose } ) => {
 };
 
 export const Notices = () => {
-	const { notices, setNotice, chat } = useOdieAssistantContext();
+	const { chat } = useOdieAssistantContext();
 
 	return (
 		<div className="odie-notices">
 			{ chat.provider?.startsWith( 'zendesk' ) && <ConnectionStatus /> }
-			{ Object.entries( notices ).map( ( [ noticeId, noticeContent ] ) => (
-				<Notice
-					key={ noticeId }
-					content={ noticeContent }
-					onClose={ () => setNotice( noticeId, null ) }
-				/>
-			) ) }
 		</div>
 	);
 };

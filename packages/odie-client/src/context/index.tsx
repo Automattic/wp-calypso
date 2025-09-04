@@ -50,8 +50,6 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 	setMessageLikedStatus: noop,
 	trackEvent: noop,
 	forceEmailSupport: false,
-	setNotice: noop,
-	notices: {},
 	sectionName: '',
 } );
 
@@ -105,8 +103,6 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 		isUserEligibleForPaidSupport && canConnectToZendesk,
 		isLoadingCanConnectToZendesk
 	);
-
-	const [ notices, setNotices ] = useState< Record< string, string | React.ReactNode > >( {} );
 
 	/**
 	 * Has the user ever escalated to get human support?
@@ -176,29 +172,6 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	};
 
 	useOdieBroadcastWithCallbacks( { addMessage }, odieBroadcastClientId );
-	/**
-	 * Set a notice with a specific ID.
-	 * If noticeText is null, the notice with the given ID will be removed.
-	 */
-	const setNotice = useCallback(
-		( noticeId: string, content: string | React.ReactNode | null ) => {
-			setNotices( ( prevNotices ) => {
-				if ( content === null ) {
-					// Remove the notice if content is null
-					const newNotices = { ...prevNotices };
-					delete newNotices[ noticeId ];
-					return newNotices;
-				}
-
-				// Add or update the notice
-				return {
-					...prevNotices,
-					[ noticeId ]: content,
-				};
-			} );
-		},
-		[ setNotices ]
-	);
 
 	/**
 	 * Version for Odie API.
@@ -227,7 +200,6 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				isLoadingCanConnectToZendesk,
 				hasUserEverEscalatedToHumanSupport,
 				odieBroadcastClientId,
-				notices,
 				selectedSiteId,
 				selectedSiteURL,
 				userFieldMessage,
@@ -235,7 +207,6 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				setChatStatus,
 				setExperimentVariationName,
 				setMessageLikedStatus,
-				setNotice,
 				trackEvent,
 				version: overriddenVersion,
 				forceEmailSupport,
