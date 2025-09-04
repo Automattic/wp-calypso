@@ -3,7 +3,6 @@ import {
 	deleteStagingSite,
 	fetchStagingSiteOf,
 	fetchStagingSiteSyncState,
-	validateQuota,
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
@@ -49,10 +48,4 @@ export const stagingSiteSyncStateQuery = ( siteId: number ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'staging-site-sync-state' ],
 		queryFn: () => fetchStagingSiteSyncState( siteId ),
-	} );
-
-export const validQuotaQuery = ( siteId: number ) =>
-	queryOptions( {
-		queryKey: [ 'site', siteId, 'valid-quota' ],
-		queryFn: () => validateQuota( siteId ),
 	} );
