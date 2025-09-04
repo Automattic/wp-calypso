@@ -582,7 +582,11 @@ function ReceiptLineItem( {
 					{ isTransactionJetpackSearch10kTier( item ) && (
 						<em>{ renderJetpackSearch10kTierBreakdown( item, subtotal_integer, translate ) }</em>
 					) }
-					{ item.volume && <em>{ renderDomainTransactionVolumeSummary( item, translate ) }</em> }
+					{ item.volume &&
+						item.product_slug === 'wp-domains' &&
+						item.variation_slug !== 'wp-domain-mapping' && (
+							<em>{ renderDomainTransactionVolumeSummary( item, translate ) }</em>
+						) }
 				</td>
 				<td className="billing-history__receipt-amount">
 					{ doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
