@@ -44,7 +44,7 @@ export function SelectSite( { onSiteSelect }: Props ) {
 		( newSelection: string[] ) => {
 			setSelection( newSelection );
 
-			// Get selected site objects
+			// Get selected site object
 			const selectedSite = sites.find( ( site ) =>
 				newSelection.includes( site.ID?.toString() ?? '' )
 			);
