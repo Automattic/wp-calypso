@@ -17,7 +17,7 @@ import {
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
-import { has100YearPlan } from 'calypso/lib/cart-values/cart-items';
+import { has100YearPlan, getDomainRegistrations } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { useGetProductVariants } from 'calypso/my-sites/checkout/src/hooks/product-variants';
 import {
@@ -280,7 +280,6 @@ function LineItemWrapper( {
 	onRemoveProductCancel,
 	hasPartnerCoupon,
 	isDisabled,
-	initialVariantTerm,
 	toggleVariantSelector,
 	variantOpenId,
 	isAkPro500Cart,
@@ -402,11 +401,9 @@ function LineItemWrapper( {
 
 	const variantsFilterCallback: ( variant: WPCOMProductVariant ) => boolean = ( variant ) => {
 		if ( signupFlowName === 'onboarding-pm' && isWpComPlan( product.product_slug ) ) {
-			// Hide monthly variant in onboarding-pm flow if not already selected
-			if (
-				variant.termIntervalInMonths === 1 &&
-				variant.termIntervalInMonths !== initialVariantTerm
-			) {
+			const domainRegistrations = getDomainRegistrations( responseCart );
+			// Hide monthly variant when a paid domain is in the cart
+			if ( variant.termIntervalInMonths === 1 && domainRegistrations.length > 0 ) {
 				return false;
 			}
 		}
