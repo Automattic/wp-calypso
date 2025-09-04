@@ -21,45 +21,10 @@ import { DataForm } from '@wordpress/dataviews';
 import { useMemo, useState, createInterpolateElement, useEffect } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import {
-	languagesAsOptions,
-	shouldDisplayCommunityTranslator,
-	CalypsoLanguage,
-	getLocaleVariantOrLanguage,
-} from './languages';
+import { languagesAsOptions, shouldDisplayCommunityTranslator, CalypsoLanguage } from './languages';
+import ThanksToCommunityTranslator from './thanks-to-community-translator';
 import type { Field } from '@wordpress/dataviews';
 
-const thanksToCommunityTranslator = ( data: UserSettingsPreferences ) => {
-	if ( ! shouldDisplayCommunityTranslator( data.language ) ) {
-		return;
-	}
-	const language = getLocaleVariantOrLanguage( data.language );
-	if ( ! language ) {
-		return;
-	}
-	return (
-		<>
-			<br />
-			{ createInterpolateElement(
-				sprintf(
-					/* translators: %s: selected interface language */
-					__(
-						'Thanks to all our <externalLink>community members who helped translate to %s</externalLink>'
-					),
-					language.name
-				),
-				{
-					externalLink: (
-						<ExternalLink
-							href={ `https://translate.wordpress.com/translators/?contributor_locale=${ language.langSlug }` }
-							children={ null }
-						/>
-					),
-				}
-			) }
-		</>
-	);
-};
 export default function PreferencesLanguageForm() {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: serverData } = useQuery( userSettingsPreferencesQuery() );
@@ -183,7 +148,7 @@ export default function PreferencesLanguageForm() {
 								{ __(
 									'This is the language of the interface you see across WordPress.com as a whole.'
 								) }
-								{ data && thanksToCommunityTranslator( data ) }
+								<ThanksToCommunityTranslator locale={ data?.language } />
 							</>
 						}
 					/>
@@ -230,7 +195,7 @@ export default function PreferencesLanguageForm() {
 			id: 'enable_translator',
 			label: __( 'Enable the in-page translator where available' ),
 			type: 'boolean',
-			isVisible: ( item ) => shouldDisplayCommunityTranslator( item ),
+			isVisible: ( item ) => shouldDisplayCommunityTranslator( item.language ),
 			Edit: ( { field, data, onChange } ) => {
 				return (
 					<CheckboxControl
