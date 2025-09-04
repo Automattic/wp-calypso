@@ -248,7 +248,7 @@ function renderSpaceAddOnquantitySummary(
 	} );
 }
 
-export function DomainTransactionVolumeSummary( item: BillingTransactionItem ) {
+export function DomainTransactionVolumeSummary( { item }: { item: BillingTransactionItem } ) {
 	const translate = useTranslate();
 	if ( ! item.volume ) {
 		return null;
