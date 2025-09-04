@@ -94,7 +94,7 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 					window.location.pathname = domainManagementLink( domain, siteSlug, false );
 				},
 				isEligible: ( item: DomainSummary ) => {
-					// What is equivalent to DomainTypes.WPCOM?
+					// What is DomainSubtype equivalent to DomainTypes.WPCOM?
 					return item.type !== DomainTypes.WPCOM;
 				},
 			},
