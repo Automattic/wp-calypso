@@ -10,6 +10,7 @@ export const useBackupPathInfoQuery = (
 ) => {
 	return useQuery( {
 		...siteBackupPathInfoQuery( siteId, rewindId, manifestPath, extensionType ),
+		enabled: !! siteId,
 		select: parseBackupPathInfo,
 	} );
 };

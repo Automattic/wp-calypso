@@ -30,17 +30,10 @@ export const siteBackupEnqueueMutation = ( siteId: number ) =>
 		},
 	} );
 
-export const siteBackupContentsQuery = (
-	siteId: number,
-	rewindId: number,
-	path: string,
-	enabled = true
-) =>
+export const siteBackupContentsQuery = ( siteId: number, rewindId: number, path: string ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'backup', rewindId, 'contents', path ],
 		queryFn: () => fetchBackupContents( siteId, rewindId, path ),
-		enabled: !! siteId && !! rewindId && !! path && enabled,
-		meta: { persist: false },
 		staleTime: Infinity,
 	} );
 
@@ -53,23 +46,16 @@ export const siteBackupPathInfoQuery = (
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'backup', rewindId, 'path-info', manifestPath, extensionType ],
 		queryFn: () => fetchBackupPathInfo( siteId, rewindId, manifestPath, extensionType ),
-		enabled: !! siteId,
-		meta: { persist: false },
 		staleTime: Infinity,
-		retry: 2,
 	} );
 
-export const siteBackupFileQuery = (
+export const siteBackupFileUrlQuery = (
 	siteId: number,
 	rewindId: string,
-	encodedManifestPath: string,
-	enabled = true
+	encodedManifestPath: string
 ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'backup', rewindId, 'file', encodedManifestPath ],
 		queryFn: () => fetchBackupFileUrl( siteId, rewindId, encodedManifestPath ),
-		enabled: !! siteId && !! rewindId && !! encodedManifestPath && enabled,
 		meta: { persist: false },
-		staleTime: Infinity,
-		retry: 2,
 	} );

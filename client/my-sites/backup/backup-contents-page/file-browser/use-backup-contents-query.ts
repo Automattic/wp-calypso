@@ -9,7 +9,8 @@ export const useBackupContentsQuery = (
 	shouldFetch = true
 ) => {
 	return useQuery( {
-		...siteBackupContentsQuery( siteId, rewindId, path, shouldFetch ),
+		...siteBackupContentsQuery( siteId, rewindId, path ),
+		enabled: !! siteId && !! rewindId && !! path && shouldFetch,
 		select: parseBackupContentsData,
 	} );
 };
