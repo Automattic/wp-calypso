@@ -222,7 +222,7 @@ class Search extends Component {
 
 	onChange = ( event ) => {
 		// SearchControl handle event.
-		if ( event instanceof String ) {
+		if ( typeof event === 'string' ) {
 			this.setState( {
 				keyword: event,
 			} );
@@ -354,6 +354,7 @@ class Search extends Component {
 		if ( this.props.useSearchControl ) {
 			return (
 				<SearchControl
+					__nextHasNoMarginBottom
 					className={ clsx( 'search__input', this.props.className ) }
 					id={ 'search-component-' + this.instanceId }
 					autoFocus={ this.props.autoFocus } // eslint-disable-line jsx-a11y/no-autofocus

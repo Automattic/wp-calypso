@@ -10,4 +10,10 @@
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
+
+	.card.search-card {
+		border: none;
+		border-radius: unset;
+		box-shadow: none;
+	}
 }
