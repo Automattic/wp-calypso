@@ -31,10 +31,10 @@ import {
 import type { Field } from '@wordpress/dataviews';
 
 const thanksToCommunityTranslator = ( data: UserSettingsPreferences ) => {
-	if ( ! shouldDisplayCommunityTranslator( data ) ) {
+	if ( ! shouldDisplayCommunityTranslator( data.language ) ) {
 		return;
 	}
-	const language = getLocaleVariantOrLanguage( data );
+	const language = getLocaleVariantOrLanguage( data.language );
 	if ( ! language ) {
 		return;
 	}

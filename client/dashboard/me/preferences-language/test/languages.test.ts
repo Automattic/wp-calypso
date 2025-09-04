@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import { UserSettingsPreferences } from '@automattic/api-core';
 import languages from '@automattic/languages';
 import {
 	languagesAsOptions,
@@ -47,7 +46,7 @@ describe( 'languages utilities', () => {
 	describe( 'getLocaleVariantOrLanguage', () => {
 		it( 'should return parent language when locale is a variant (es-cl)', () => {
 			// es-cl is a real locale variant in the languages package
-			const result = getLocaleVariantOrLanguage( { language: 'es-cl' } );
+			const result = getLocaleVariantOrLanguage( 'es-cl' );
 
 			// Should return the parent Spanish language
 			expect( result ).toBeDefined();
@@ -55,7 +54,7 @@ describe( 'languages utilities', () => {
 		} );
 
 		it( 'should return the language itself when not a variant', () => {
-			const result = getLocaleVariantOrLanguage( { language: 'en' } );
+			const result = getLocaleVariantOrLanguage( 'en' );
 
 			// English is not a variant, should return itself
 			expect( result ).toBeDefined();
@@ -66,30 +65,29 @@ describe( 'languages utilities', () => {
 	describe( 'shouldDisplayCommunityTranslator', () => {
 		it( 'should return appropriate result for translatable locales using real data', () => {
 			// Test with Spanish - commonly translatable
-			const resultEs = shouldDisplayCommunityTranslator( { language: 'es' } );
+			const resultEs = shouldDisplayCommunityTranslator( 'es' );
 			expect( resultEs ).toBe( true );
 
-			const resultEn = shouldDisplayCommunityTranslator( { language: 'en' } );
+			const resultEn = shouldDisplayCommunityTranslator( 'en' );
 			expect( resultEn ).toBe( false );
 
 			// Test with Spanish Chile variant
-			const resultEsCl = shouldDisplayCommunityTranslator( { language: 'es-cl' } );
+			const resultEsCl = shouldDisplayCommunityTranslator( 'es-cl' );
 			expect( resultEsCl ).toBe( true );
 		} );
 
 		it( 'should return false when locale is empty', () => {
-			const result = shouldDisplayCommunityTranslator( { language: '' } );
+			const result = shouldDisplayCommunityTranslator( '' );
 			expect( result ).toBe( false );
 		} );
 
 		it( 'should return false when language is undefined', () => {
-			const userSettings = {} as UserSettingsPreferences;
-			const result = shouldDisplayCommunityTranslator( userSettings );
+			const result = shouldDisplayCommunityTranslator( undefined );
 			expect( result ).toBe( false );
 		} );
 
 		it( 'should handle unknown locale', () => {
-			const result = shouldDisplayCommunityTranslator( { language: 'xyz-unknown' } );
+			const result = shouldDisplayCommunityTranslator( 'xyz-unknown' );
 			// The actual result depends on how canBeTranslated handles unknown locales
 			expect( typeof result ).toBe( 'boolean' );
 		} );
