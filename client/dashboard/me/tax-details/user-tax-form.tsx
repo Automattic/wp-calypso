@@ -83,10 +83,8 @@ function VatIdControl( { data, field, onChange }: UserTaxFormControlProps ) {
 			sprintf(
 				/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
 				__(
-					'To change your %(taxName)s ID, {{contactSupportLink}}please contact support{{/contactSupportLink}}.'
-				)
-					.replaceAll( '{{contactSupportLink}}', '<contactSupportLink>' )
-					.replaceAll( '{{/contactSupportLink}}', '</contactSupportLink>' ),
+					'To change your %(taxName)s ID, <contactSupportLink>please contact support</contactSupportLink>.'
+				),
 				{ taxName: taxName ?? __( 'VAT' ) }
 			),
 			{
@@ -307,10 +305,8 @@ export default function UserTaxForm() {
 						sprintf(
 							/* translators: This is a list of tax-related reasons a customer might need to contact support, %(taxName)s is the name of taxes in the country (eg: "VAT" or "GST") or a generic fallback string of tax names */
 							__(
-								'If you need to update existing %(taxName)s details, have been charged taxes as a business subject to reverse charges, or do not see your country listed in this form {{contactSupportLink}}contact our Happiness Engineers{{/contactSupportLink}}. Include your %(taxName)s number and country code when you contact us.'
-							)
-								.replaceAll( '{{contactSupportLink}}', '<contactSupportLink>' )
-								.replaceAll( '{{/contactSupportLink}}', '</contactSupportLink>' ),
+								'If you need to update existing %(taxName)s details, have been charged taxes as a business subject to reverse charges, or do not see your country listed in this form <contactSupportLink>contact our Happiness Engineers</contactSupportLink>. Include your %(taxName)s number and country code when you contact us.'
+							),
 							{ taxName: taxName ?? fallbackTaxName }
 						),
 						{
@@ -326,9 +322,7 @@ export default function UserTaxForm() {
 				</Text>
 				<Text variant="muted">
 					{ createInterpolateElement(
-						__( 'For more information about taxes, {{learnMoreLink}}click here{{/learnMoreLink}}.' )
-							.replaceAll( '{{learnMoreLink}}', '<learnMoreLink>' )
-							.replaceAll( '{{/learnMoreLink}}', '</learnMoreLink>' ),
+						__( 'For more information about taxes, <learnMoreLink>click here</learnMoreLink>.' ),
 						{
 							learnMoreLink: (
 								<InlineSupportLink
