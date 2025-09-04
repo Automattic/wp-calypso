@@ -156,37 +156,46 @@ export default function AccountDeletionConfirmModal( {
 
 	const isConfirmDisabled = ! isItemValid( formData, fields, form ) || isDeleting;
 
+	const handleSubmit = ( event: React.FormEvent ) => {
+		event.preventDefault();
+		if ( ! isConfirmDisabled ) {
+			onConfirm();
+		}
+	};
+
 	return (
 		<Modal title={ __( 'Confirm account deletion' ) } onRequestClose={ onClose }>
-			<VStack spacing={ 6 }>
-				<Text>
-					{ __(
-						'Please type your username in the field below to confirm. Your account will then be gone forever.'
-					) }
-				</Text>
-				<DataForm< ConfirmationFormData >
-					data={ formData }
-					fields={ fields }
-					form={ form }
-					onChange={ ( edits: Partial< ConfirmationFormData > ) => {
-						setFormData( ( data ) => ( { ...data, ...edits } ) );
-					} }
-				/>
-				<ButtonStack justify="flex-end">
-					<Button variant="tertiary" onClick={ onClose } disabled={ isDeleting }>
-						{ __( 'Cancel' ) }
-					</Button>
-					<Button
-						variant="primary"
-						isDestructive
-						onClick={ onConfirm }
-						disabled={ isConfirmDisabled }
-						isBusy={ isDeleting }
-					>
-						{ isDeleting ? __( 'Deleting account…' ) : __( 'Delete account' ) }
-					</Button>
-				</ButtonStack>
-			</VStack>
+			<form onSubmit={ handleSubmit }>
+				<VStack spacing={ 6 }>
+					<Text>
+						{ __(
+							'Please type your username in the field below to confirm. Your account will then be gone forever.'
+						) }
+					</Text>
+					<DataForm< ConfirmationFormData >
+						data={ formData }
+						fields={ fields }
+						form={ form }
+						onChange={ ( edits: Partial< ConfirmationFormData > ) => {
+							setFormData( ( data ) => ( { ...data, ...edits } ) );
+						} }
+					/>
+					<ButtonStack justify="flex-end">
+						<Button variant="tertiary" onClick={ onClose } disabled={ isDeleting }>
+							{ __( 'Cancel' ) }
+						</Button>
+						<Button
+							variant="primary"
+							isDestructive
+							type="submit"
+							disabled={ isConfirmDisabled }
+							isBusy={ isDeleting }
+						>
+							{ isDeleting ? __( 'Deleting account…' ) : __( 'Delete account' ) }
+						</Button>
+					</ButtonStack>
+				</VStack>
+			</form>
 		</Modal>
 	);
 }
