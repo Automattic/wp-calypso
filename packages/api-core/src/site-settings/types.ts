@@ -21,6 +21,7 @@ export type SiteMcpAbilities = Record<
 	string,
 	{
 		name: string;
+		title: string;
 		description: string;
 		category: string;
 		type: string;

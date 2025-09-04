@@ -189,16 +189,6 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 		prompt: __( 'Prompts' ),
 	};
 
-	// Format ability name for display
-	const formatAbilityName = ( abilityId: string ) => {
-		// Remove 'wpcom-mcp/' prefix and convert to title case
-		const name = abilityId.replace( 'wpcom-mcp/', '' );
-		return name
-			.split( '-' )
-			.map( ( word ) => word.charAt( 0 ).toUpperCase() + word.slice( 1 ) )
-			.join( ' ' );
-	};
-
 	const renderContent = () => {
 		if ( ! hasAbilities ) {
 			return (
@@ -259,7 +249,7 @@ export default function SettingsMcp( { siteSlug }: { siteSlug: string } ) {
 																onChange={ ( checked ) =>
 																	handleAbilityChange( abilityId, checked )
 																}
-																label={ formatAbilityName( abilityId ) }
+																label={ ability.title }
 																disabled={ ! anyAbilitiesEnabled }
 															/>
 															<p className="mcp__ability-description">{ ability.description }</p>
