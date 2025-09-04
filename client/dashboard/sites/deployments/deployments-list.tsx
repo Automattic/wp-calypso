@@ -1,8 +1,12 @@
-import { siteBySlugQuery, codeDeploymentsQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
+import {
+	siteBySlugQuery,
+	codeDeploymentsQuery,
+	codeDeploymentRunsQuery,
+} from '@automattic/api-queries';
+import { useQuery, useQueries } from '@tanstack/react-query';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { siteRoute } from '../../app/router/sites';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { useDeploymentFields } from './dataviews/fields';
@@ -11,7 +15,6 @@ import type {
 	DeploymentRun,
 	DeploymentRunWithDeploymentInfo,
 	CodeDeploymentData,
-	fetchCodeDeploymentRuns,
 } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 
@@ -25,23 +28,26 @@ export function DeploymentsList() {
 		enabled: !! site?.ID,
 	} );
 
-	const { data: deploymentRuns = [], isLoading: runsLoading } = useQuery<
-		DeploymentRunWithDeploymentInfo[]
-	>( {
-		enabled: !! site?.ID && deployments.length > 0,
-		queryKey: [
-			'site',
-			site?.ID,
-			'code-deployments-runs',
-			'all-runs',
-			deployments.map( ( d: CodeDeploymentData ) => d.id ).sort(),
-		],
-		queryFn: async (): Promise< DeploymentRunWithDeploymentInfo[] > => {
-			const allRunsPromises = deployments.map( async ( deployment: CodeDeploymentData ) => {
-				const runs: DeploymentRun[] = await fetchCodeDeploymentRuns( site!.ID, deployment.id );
+	// Fetch all deployment runs in parallel
+	const deploymentRunsQueries = useQueries( {
+		queries: deployments.map( ( deployment: CodeDeploymentData ) => ( {
+			...codeDeploymentRunsQuery( site?.ID || 0, deployment.id ),
+			enabled: !! site?.ID,
+			refetchInterval: 5000,
+			meta: {
+				persist: false,
+			},
+		} ) ),
+	} );
 
-				return runs.map( ( run ) => {
-					// Find the most recent deployment run for this deployment to mark as active
+	// Transform the data to include deployment info and mark active deployments
+	const deploymentRuns: DeploymentRunWithDeploymentInfo[] = useMemo( () => {
+		const allRuns: DeploymentRunWithDeploymentInfo[] = [];
+
+		deploymentRunsQueries.forEach( ( query, index ) => {
+			const deployment = deployments[ index ];
+			if ( query.data && deployment ) {
+				const runsWithInfo = query.data.map( ( run: DeploymentRun ) => {
 					const isActiveDeployment =
 						deployment.current_deployment_run?.id === run.id ||
 						( ! deployment.current_deployment_run &&
@@ -55,34 +61,17 @@ export function DeploymentsList() {
 						is_active_deployment: isActiveDeployment,
 					};
 				} );
-			} );
+				allRuns.push( ...runsWithInfo );
+			}
+		} );
 
-			const allRunsArrays = await Promise.all( allRunsPromises );
-			const flattenedRuns = allRunsArrays.flat();
+		return allRuns.sort(
+			( a, b ) => new Date( b.created_on ).getTime() - new Date( a.created_on ).getTime()
+		);
+	}, [ deployments, deploymentRunsQueries ] );
 
-			// Sort by created_on descending (most recent first)
-			return flattenedRuns.sort(
-				( a, b ) => new Date( b.created_on ).getTime() - new Date( a.created_on ).getTime()
-			);
-		},
-		refetchInterval: ( query ) => {
-			const { data } = query.state;
-			const hasActiveRuns = data?.some(
-				( run ) =>
-					run.status === 'pending' ||
-					run.status === 'queued' ||
-					run.status === 'running' ||
-					run.status === 'building' ||
-					run.status === 'dispatched'
-			);
-			return hasActiveRuns ? 5000 : false;
-		},
-		meta: {
-			persist: false,
-		},
-	} );
-
-	const isLoading = deploymentsLoading || runsLoading;
+	const isLoading =
+		deploymentsLoading || deploymentRunsQueries.some( ( query ) => query.isLoading );
 
 	const fields = useDeploymentFields();
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
