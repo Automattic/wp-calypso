@@ -48,8 +48,8 @@ export const DomainSuggestionPrice = ( { domainName }: DomainSuggestionPriceProp
 
 		return (
 			<DomainSuggestionPriceComponent
-				price={ zeroCost }
-				salePrice={ saleCost }
+				price={ priceSource.cost }
+				salePrice={ zeroCost }
 				renewPrice={ priceSource.renew_cost }
 			/>
 		);
