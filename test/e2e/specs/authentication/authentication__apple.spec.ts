@@ -1,6 +1,6 @@
-import { test, expect } from '../../lib/pw-base';
+import { tags, test, expect } from '../../lib/pw-base';
 
-test.describe( 'Authentication: Apple', () => {
+test.describe( 'Authentication: Apple', { tag: [ tags.AUTHENTICATION ] }, () => {
 	test.describe.configure( { mode: 'serial' } ); // Since both tests use the same Apple ID, they should not be run at the same time
 
 	let code: string;

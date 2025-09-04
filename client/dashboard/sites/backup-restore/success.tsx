@@ -9,6 +9,7 @@ import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
 import { useAnalytics } from '../../app/analytics';
 import { siteBackupsRoute } from '../../app/router/sites';
+import { ButtonStack } from '../../components/button-stack';
 import type { Site } from '@automattic/api-core';
 
 const SiteBackupRestoreSuccess = ( {
@@ -42,14 +43,14 @@ const SiteBackupRestoreSuccess = ( {
 					</Text>
 				</VStack>
 			</HStack>
-			<HStack justify="flex-end">
+			<ButtonStack justify="flex-end">
 				<Button variant="tertiary" text={ __( 'All backups' ) } onClick={ handleAllBackupsClick } />
 				<Button
 					variant="primary"
 					text={ __( 'View website ↗' ) }
 					onClick={ handleViewWebsiteClick }
 				/>
-			</HStack>
+			</ButtonStack>
 		</HStack>
 	);
 };

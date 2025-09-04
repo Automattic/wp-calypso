@@ -7,9 +7,10 @@ import { useDomainSearch } from '../page/context';
 export const useSuggestionsList = () => {
 	const { query, queries, config } = useDomainSearch();
 
-	const { data: suggestions = [], isLoading: isLoadingSuggestions } = useQuery(
-		queries.domainSuggestions( query )
-	);
+	const { data: suggestions = [], isLoading: isLoadingSuggestions } = useQuery( {
+		...queries.domainSuggestions( query ),
+		enabled: true,
+	} );
 
 	const { isLoading: isLoadingFreeSuggestion } = useQuery( queries.freeSuggestion( query ) );
 

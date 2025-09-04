@@ -276,17 +276,6 @@ export const siteDomainsRoute = createRoute( {
 	)
 );
 
-export const siteDomainsPurchaseRoute = createRoute( {
-	getParentRoute: () => siteRoute,
-	path: 'domains/purchase',
-} ).lazy( () =>
-	import( '../../sites/domains/purchase' ).then( ( d ) =>
-		createLazyRoute( 'site-domains-purchase' )( {
-			component: d.default,
-		} )
-	)
-);
-
 export const siteEmailsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'emails',
@@ -694,7 +683,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 	}
 
 	if ( config.supports.sites.domains ) {
-		siteRoutes.push( siteDomainsRoute, siteDomainsPurchaseRoute );
+		siteRoutes.push( siteDomainsRoute );
 	}
 
 	if ( config.supports.sites.emails ) {

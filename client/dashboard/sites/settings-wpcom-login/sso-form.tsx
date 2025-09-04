@@ -1,6 +1,5 @@
-import { JetpackModules } from '@automattic/api-core';
+import { JetpackModule, JetpackModules, Site } from '@automattic/api-core';
 import {
-	siteJetpackModulesQuery,
 	siteJetpackModulesMutation,
 	siteJetpackSettingsQuery,
 	siteJetpackSettingsMutation,
@@ -9,7 +8,6 @@ import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Card,
 	CardBody,
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
 	CheckboxControl,
@@ -19,8 +17,8 @@ import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import { ButtonStack } from '../../components/button-stack';
 import { isJetpackModuleActivated } from '../../utils/site-jetpack-modules';
-import type { Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 type WpcomLoginFormData = {
@@ -79,8 +77,13 @@ const form = {
 	fields: [ 'sso', 'jetpack_sso_match_by_email', 'jetpack_sso_require_two_step' ],
 };
 
-export default function SsoForm( { site }: { site: Site } ) {
-	const { data: jetpackModules } = useSuspenseQuery( siteJetpackModulesQuery( site.ID ) );
+export default function SsoForm( {
+	jetpackModules,
+	site,
+}: {
+	jetpackModules: Record< string, JetpackModule > | undefined;
+	site: Site;
+} ) {
 	const { data: jetpackSettings } = useSuspenseQuery( siteJetpackSettingsQuery( site.ID ) );
 
 	const jetpackModulesMutation = useMutation( siteJetpackModulesMutation( site.ID ) );
@@ -167,7 +170,7 @@ export default function SsoForm( { site }: { site: Site } ) {
 								setFormData( ( data ) => ( { ...data, ...edits } ) );
 							} }
 						/>
-						<HStack justify="flex-start">
+						<ButtonStack justify="flex-start">
 							<Button
 								variant="primary"
 								type="submit"
@@ -176,7 +179,7 @@ export default function SsoForm( { site }: { site: Site } ) {
 							>
 								{ __( 'Save' ) }
 							</Button>
-						</HStack>
+						</ButtonStack>
 					</VStack>
 				</form>
 			</CardBody>

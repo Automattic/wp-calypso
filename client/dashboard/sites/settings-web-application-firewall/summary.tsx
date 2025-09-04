@@ -1,8 +1,13 @@
+import { JetpackModules } from '@automattic/api-core';
+import { siteJetpackConnectionQuery, siteJetpackModulesQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
+import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { notAllowed } from '@wordpress/icons';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
+import { isJetpackModuleAvailable } from '../../utils/site-jetpack-modules';
+import { isSimple } from '../../utils/site-types';
 import type { Site } from '@automattic/api-core';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
@@ -13,9 +18,24 @@ export default function WebApplicationFirewallSettingsSummary( {
 	site: Site;
 	density?: Density;
 } ) {
+	const { data: jetpackModules } = useQuery( {
+		...siteJetpackModulesQuery( site.ID ),
+		enabled: ! isSimple( site ),
+	} );
+	const { data: jetpackConnection } = useQuery( {
+		...siteJetpackConnectionQuery( site.ID ),
+		enabled: ! isSimple( site ),
+	} );
+
 	if ( ! isEnabled( 'dashboard/v2/security-settings' ) ) {
 		return null;
 	}
+
+	const modulesAvailable =
+		isJetpackModuleAvailable( jetpackModules, jetpackConnection, JetpackModules.WAF ) &&
+		isJetpackModuleAvailable( jetpackModules, jetpackConnection, JetpackModules.PROTECT );
+
+	const badges = modulesAvailable ? undefined : [ { text: __( 'Unavailable' ) } ];
 
 	return (
 		<RouterLinkSummaryButton
@@ -23,6 +43,7 @@ export default function WebApplicationFirewallSettingsSummary( {
 			title={ __( 'Web Application Firewall (WAF)' ) }
 			density={ density }
 			decoration={ <Icon icon={ notAllowed } /> }
+			badges={ badges }
 		/>
 	);
 }

@@ -11,6 +11,7 @@ import { sprintf, __ } from '@wordpress/i18n';
 import { addDays, isPast } from 'date-fns';
 import { useAnalytics } from '../../app/analytics';
 import { useLocale } from '../../app/locale';
+import { ButtonStack } from '../../components/button-stack';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
@@ -111,14 +112,14 @@ function WebsiteContentSubmissionPending( { site }: { site: Site } ) {
 			}
 			size="small"
 		>
-			<HStack spacing={ 4 } justify="start">
+			<ButtonStack justify="start">
 				<Button
 					variant="primary"
 					href={ `/start/site-content-collection/website-content?siteSlug=${ site.slug }` }
 				>
 					{ __( 'Provide website content' ) }
 				</Button>
-			</HStack>
+			</ButtonStack>
 		</PageLayout>
 	);
 }

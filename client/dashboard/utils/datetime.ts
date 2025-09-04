@@ -175,6 +175,18 @@ export function getRelativeTimeString( date: Date ): string {
 }
 
 /**
+ * Format a Date into a credit card expiry format (MM/YY).
+ *
+ * The use of `MM/YY` should not be localized as it is an ISO standard across credit card forms: https://en.wikipedia.org/wiki/ISO/IEC_7813
+ */
+export function formatCreditCardExpiry( cardExpiryDate: Date ): string {
+	return `${
+		// Note that months are 0 based here so we have to add 1.
+		cardExpiryDate.getMonth() + 1
+	}/${ cardExpiryDate.getFullYear().toString().slice( -2 ) }`;
+}
+
+/**
  * Transform a credit card expiry date like `11/23` into a Date representing 2023-11-30.
  *
  * Returns the last day of the month because credit cards typically expire at the end of the valid month.

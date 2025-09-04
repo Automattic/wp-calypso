@@ -1,5 +1,5 @@
 import { RestAPIClient } from '@automattic/calypso-e2e';
-import { test, expect } from '../../lib/pw-base';
+import { tags, test, expect } from '../../lib/pw-base';
 import { locale } from '../../lib/types-shared';
 
 const localesToTest: Array< locale > = [
@@ -21,7 +21,7 @@ const localesToTest: Array< locale > = [
 	'zh-cn',
 	'zh-tw',
 ];
-test.describe( 'I18N: Editor', { tag: '@i18n' }, () => {
+test.describe( 'I18N: Editor', { tag: tags.I18N }, () => {
 	test.describe.configure( { mode: 'serial' } ); // Since all tests use the same account which changes its locale, they should not be run in parallel
 	for ( const locale of localesToTest ) {
 		test( `As an i18n visitor using '${ locale }' as my locale I can see localised editor content`, async ( {

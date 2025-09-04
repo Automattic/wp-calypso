@@ -163,7 +163,7 @@ const useHeaderText = () => {
 					? __( 'Support Team', __i18n_text_domain__ )
 					: __( 'Support Assistant', __i18n_text_domain__ );
 			case '/chat-history':
-				return __( 'History', __i18n_text_domain__ );
+				return __( 'Support history', __i18n_text_domain__ );
 			default:
 				return __( 'Help Center', __i18n_text_domain__ );
 		}

@@ -24,7 +24,6 @@ const getPlaceholderAttachmentMessage = ( file: File ) => {
 	return zendeskMessageConverter( {
 		role: 'user',
 		type: getFileType( file ),
-		displayName: '',
 		text: '',
 		id: String( new Date().getTime() ),
 		received: new Date().getTime(),

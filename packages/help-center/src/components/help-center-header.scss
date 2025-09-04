@@ -6,11 +6,6 @@
  * Help Center Header
  */
 .help-center .help-center__container {
-	&.is-desktop .help-center__container-header {
-		cursor: move;
-	}
-	
-
 	.components-card__header {
 		padding: 9px 16px;
 
@@ -26,6 +21,7 @@
 		.help-center__container-header {
 			.help-center-header__text {
 				flex: unset;
+				cursor: pointer;
 			}
 		}
 	}
@@ -55,13 +51,6 @@
 			}
 		}
 
-		// This icon does not accept size prop due to a bug - https://github.com/WordPress/gutenberg/pull/40315
-		// We can remove this when the bug is fixed AND the package is updated.
-		.help-center-header__minimize svg {
-			transform: scale(0.7, 1);
-			transform-origin: center;
-		}
-
 		.help-center-header__text {
 			display: flex;
 			align-items: center;
@@ -69,6 +58,7 @@
 			font-size: $root-font-size;
 			font-weight: 500;
 			flex: 1;
+			cursor: move;
 
 			:focus {
 				outline: none;

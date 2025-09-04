@@ -3,6 +3,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState } from 'react';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchControls } from '../../ui';
+import { Filter } from './filter';
 
 const DELAY_TIMEOUT = 300;
 
@@ -39,7 +40,7 @@ export const SearchBar = () => {
 				onBlur={ () => {} }
 				onKeyDown={ () => {} }
 			/>
-			<DomainSearchControls.FilterButton count={ 3 } onClick={ () => {} } />
+			<Filter />
 		</HStack>
 	);
 };
