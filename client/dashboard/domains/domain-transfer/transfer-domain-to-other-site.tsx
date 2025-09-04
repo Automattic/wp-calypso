@@ -1,15 +1,20 @@
 import { transferDomainToSiteMutation, domainQuery } from '@automattic/api-queries';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import {
+	Modal,
+	Button,
 	Card,
 	CardBody,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
-	__experimentalConfirmDialog as ConfirmDialog,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { sprintf, __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { domainTransferToOtherSiteRoute } from '../../app/router/domains';
+import { domainRoute, domainTransferToOtherSiteRoute } from '../../app/router/domains';
+import { ButtonStack } from '../../components/button-stack';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
@@ -17,14 +22,31 @@ import { SelectSite } from './select-site';
 import type { Site } from '@automattic/api-core';
 
 export default function DomainTransferToOtherSite() {
+	const navigate = useNavigate();
 	const { domainName } = domainTransferToOtherSiteRoute.useParams();
-	const { data: domain } = useQuery( domainQuery( domainName ) );
-	const [ isConfirmDialogOpen, setIsConfirmDialogOpen ] = useState( false );
+	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const [ selectedSite, setSelectedSite ] = useState< Site >();
+	const [ isConfirmDialogOpen, setIsConfirmDialogOpen ] = useState( false );
 
-	const { mutate: transferDomainToSite } = useMutation(
+	const { mutate: transferDomainToSite, isPending: isTransferringDomain } = useMutation(
 		transferDomainToSiteMutation( domainName, domain?.blog_id ?? 0 )
 	);
+
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+
+	const onConfirmTransfer = () => {
+		!! selectedSite &&
+			transferDomainToSite( selectedSite.ID, {
+				onSuccess: () => {
+					createSuccessNotice( __( 'Domain transferred successfully.' ) );
+					setIsConfirmDialogOpen( false );
+					navigate( { to: domainRoute.fullPath, params: { domainName } } );
+				},
+				onError: () => {
+					createErrorNotice( __( 'An error occurred while transferring the domain.' ) );
+				},
+			} );
+	};
 
 	return (
 		<PageLayout
@@ -52,33 +74,47 @@ export default function DomainTransferToOtherSite() {
 					</VStack>
 				</CardBody>
 			</Card>
-			<ConfirmDialog
-				isOpen={ !! selectedSite && isConfirmDialogOpen }
-				confirmButtonText={ __( 'Confirm attachment' ) }
-				onConfirm={ () => {
-					setIsConfirmDialogOpen( false );
-					selectedSite && transferDomainToSite( selectedSite.ID );
-				} }
-				onCancel={ () => setIsConfirmDialogOpen( false ) }
-			>
-				<VStack spacing={ 4 } style={ { maxWidth: '450px' } }>
-					<Text as="p">
-						{ sprintf(
-							// translators: %1$s is the domain name, %2$s is the site name
-							__( 'Do you want to attach %1$s to site %2$s?' ),
-							domainName,
-							selectedSite?.name ?? ''
-						) }
-					</Text>
-					{ selectedSite?.plan?.is_free && (
+			{ !! selectedSite && isConfirmDialogOpen && (
+				<Modal
+					__experimentalHideHeader
+					onRequestClose={ () => ! isTransferringDomain && setIsConfirmDialogOpen( false ) }
+				>
+					<VStack spacing={ 4 } style={ { maxWidth: '450px' } }>
 						<Text as="p">
-							{ __(
-								'The target site doesn’t have a paid plan, so you won’t be able to set this domain as primary on the site.'
+							{ sprintf(
+								// translators: %1$s is the domain name, %2$s is the site name
+								__( 'Do you want to attach %1$s to site %2$s?' ),
+								domainName,
+								selectedSite.name
 							) }
 						</Text>
-					) }
-				</VStack>
-			</ConfirmDialog>
+						{ selectedSite?.plan?.is_free && (
+							<Text as="p">
+								{ __(
+									'The target site doesn’t have a paid plan, so you won’t be able to set this domain as primary on the site.'
+								) }
+							</Text>
+						) }
+						<ButtonStack justify="flex-end">
+							<Button
+								variant="secondary"
+								disabled={ isTransferringDomain }
+								onClick={ () => setIsConfirmDialogOpen( false ) }
+							>
+								{ __( 'Cancel' ) }
+							</Button>
+							<Button
+								variant="primary"
+								isBusy={ isTransferringDomain }
+								disabled={ isTransferringDomain }
+								onClick={ onConfirmTransfer }
+							>
+								{ __( 'Confirm attachment' ) }
+							</Button>
+						</ButtonStack>
+					</VStack>
+				</Modal>
+			) }
 		</PageLayout>
 	);
 }
