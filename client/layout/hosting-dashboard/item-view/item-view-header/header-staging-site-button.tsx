@@ -204,14 +204,7 @@ export default function HeaderStagingSiteButton( {
 		>
 			{ isAddingStagingSite ? (
 				<>
-					<Spinner
-						style={ {
-							width: '18px !important',
-							height: '18px !important',
-							paddingRight: '2px',
-							margin: 0,
-						} }
-					/>
+					<Spinner />
 					{ __( 'Adding staging site…' ) }
 				</>
 			) : (
