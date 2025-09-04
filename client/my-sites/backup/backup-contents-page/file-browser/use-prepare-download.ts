@@ -28,28 +28,22 @@ export const usePrepareDownload = ( siteId: number, onError: () => void ) => {
 		onError();
 	}, [ onError ] );
 
-	const {
-		data,
-		isSuccess: isQuerySuccess,
-		isError: isQueryError,
-	} = useQuery( {
-		...siteBackupFilteredDownloadStatusQuery(
-			siteId,
-			buildKey,
-			dataType,
-			buildKey !== '' && status === PREPARE_DOWNLOAD_STATUS.PREPARING
-		),
+	const { data, isSuccess, isError } = useQuery( {
+		...siteBackupFilteredDownloadStatusQuery( siteId, buildKey, dataType ),
+		enabled: !! buildKey && status === PREPARE_DOWNLOAD_STATUS.PREPARING,
+		refetchInterval: 5000,
+		retry: false,
 	} );
 
 	useEffect( () => {
-		if ( isQuerySuccess && data?.status === 'ready' ) {
+		if ( isSuccess && data?.status === 'ready' ) {
 			setStatus( PREPARE_DOWNLOAD_STATUS.READY );
 		}
 
-		if ( isQueryError ) {
+		if ( isError ) {
 			handleError();
 		}
-	}, [ isQuerySuccess, isQueryError, handleError, data?.status ] );
+	}, [ isSuccess, isError, handleError, data?.status ] );
 
 	const mutation = useMutation( {
 		mutationFn: ( { siteId, rewindId, manifestFilter, dataType }: PrepareDownloadArgs ) =>
