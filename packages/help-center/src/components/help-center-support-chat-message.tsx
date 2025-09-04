@@ -1,8 +1,8 @@
 /* eslint-disable no-restricted-imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Gravatar, TimeSince } from '@automattic/components';
+import { Gravatar, TimeSince, WordPressLogo } from '@automattic/components';
 import SummaryButton from '@automattic/components/src/summary-button';
-import { HumanAvatar, WapuuAvatar } from '@automattic/odie-client/src/assets';
+import { WapuuAvatar } from '@automattic/odie-client/src/assets';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { chevronRight, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -43,7 +43,7 @@ export const HelpCenterSupportChatMessage = ( {
 } ) => {
 	const { __ } = useI18n();
 	const { currentUser } = useHelpCenterContext();
-	const { displayName, received, role, text, altText } = message;
+	const { received, role, text, altText } = message;
 	const navigate = useNavigate();
 	const messageText =
 		'metadata' in message && message.metadata?.type === 'csat'
@@ -62,7 +62,9 @@ export const HelpCenterSupportChatMessage = ( {
 	);
 
 	const messageDisplayName =
-		role === 'business' ? __( 'Happiness Engineer', __i18n_text_domain__ ) : displayName;
+		role === 'business'
+			? __( 'Happiness chat', __i18n_text_domain__ )
+			: __( 'Support assistant chat', __i18n_text_domain__ );
 
 	const renderAvatar = () => {
 		if ( role === 'bot' ) {
@@ -70,7 +72,7 @@ export const HelpCenterSupportChatMessage = ( {
 		}
 
 		if ( role === 'business' ) {
-			return <HumanAvatar title={ __( 'User Avatar', __i18n_text_domain__ ) } />;
+			return <WordPressLogo size={ 20 } />;
 		}
 
 		return (
