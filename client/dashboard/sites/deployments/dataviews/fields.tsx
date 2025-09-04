@@ -21,7 +21,7 @@ export function useDeploymentFields(): Field< DeploymentRunWithDeploymentInfo >[
 		() => [
 			{
 				id: 'repository_name',
-				label: __( 'Repository' ),
+				label: __( 'Repo' ),
 				enableHiding: false,
 				enableGlobalSearch: true,
 				getValue: ( { item } ) => item.repository_name,
@@ -32,7 +32,7 @@ export function useDeploymentFields(): Field< DeploymentRunWithDeploymentInfo >[
 			},
 			{
 				id: 'commit',
-				label: __( 'Commit' ),
+				label: __( 'Commits' ),
 				enableGlobalSearch: true,
 				enableSorting: false,
 				getValue: ( { item } ) => {
