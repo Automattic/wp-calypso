@@ -92,7 +92,7 @@ export default function AccountDeletionConfirmModal( {
 									key={ option.href }
 									title={ option.text }
 									actions={
-										<HStack spacing={ 2 } expanded={ false }>
+										<HStack spacing={ 0 } expanded={ false }>
 											{ option.supportLink && (
 												<Button
 													variant="tertiary"
