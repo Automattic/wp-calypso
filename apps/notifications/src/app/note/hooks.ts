@@ -77,5 +77,5 @@ export function useNoteNavigationViaKeyboardShortcuts( {
 		return () => {
 			window.removeEventListener( 'keydown', handleKeyDown, false );
 		};
-	}, [ areKeyboardShortcutsEnabled, visibleNotes, note ] ); // eslint-disable-line react-hooks/exhaustive-deps
+	}, [ areKeyboardShortcutsEnabled, note ] ); // eslint-disable-line react-hooks/exhaustive-deps
 }

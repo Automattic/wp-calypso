@@ -81,24 +81,23 @@ const Note = ( { isDismissible }: { isDismissible?: boolean } ) => {
 		( state ) => ( noteId: number ) => getIsNoteHidden( state, noteId )
 	);
 
-	const visibleNotes = useSelector( ( state ) =>
-		( ( getAllNotes( state ) || [] ) as NoteObject[] ).filter(
-			( note ) => filter.filter( note ) && ! isNoteHidden( note.id )
-		)
-	);
+	const notes = useSelector( ( state ) => ( getAllNotes( state ) || [] ) as NoteObject[] );
+	const note = notes.find( ( note ) => String( note.id ) === noteId );
 
-	const note = visibleNotes.find( ( note ) => String( note.id ) === noteId );
+	const visibleNotes = notes.filter(
+		( note ) => filter.filter( note ) && ! isNoteHidden( note.id )
+	);
 
 	const isApproved = useSelector( ( state ) => note && getIsNoteApproved( state, note ) );
 	const isRead = useSelector( ( state ) => note && getIsNoteRead( state, note ) );
+
+	useNoteNavigationViaKeyboardShortcuts( { visibleNotes, note } );
 
 	useEffect( () => {
 		if ( note?.id ) {
 			dispatch( actions.ui.selectNote( note.id ) );
 		}
 	}, [ note?.id, dispatch ] );
-
-	useNoteNavigationViaKeyboardShortcuts( { visibleNotes, note } );
 
 	if ( ! note ) {
 		return null;
