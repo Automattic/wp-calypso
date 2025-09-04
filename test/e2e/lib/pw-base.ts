@@ -31,6 +31,7 @@ import {
 	envToFeatureKey,
 	envVariables,
 	getTestAccountByFeature,
+	IncognitoPage,
 	LoginPage,
 	NewSiteResponse,
 	PreviewComponent,
@@ -44,7 +45,7 @@ import {
 	ThemesPage,
 	UserSignupPage,
 } from '@automattic/calypso-e2e';
-import { test as base, expect, Page } from '@playwright/test';
+import { test as base, expect } from '@playwright/test';
 import { apiCloseAccount } from '../specs/shared';
 import { getAccount } from './get-account';
 
@@ -108,7 +109,7 @@ export const test = base.extend< {
 	/**
 	 * Playwright `Page` representing an incognito browser context with no signed in state.
 	 */
-	pageIncognito: Page;
+	pageIncognito: IncognitoPage;
 	/**
 	 * Page object representing the WordPress.com login page.
 	 */
@@ -186,10 +187,10 @@ export const test = base.extend< {
 		await use( editorPage );
 	},
 	pageIncognito: async ( { browser }, use ) => {
-		const context = await browser.newContext();
-		const incognitoPage = await context.newPage();
+		const incognitoPage = new IncognitoPage( browser );
+		await incognitoPage.spawn();
 		await use( incognitoPage );
-		await context.close();
+		await incognitoPage.close();
 	},
 	pageLogin: async ( { page }, use ) => {
 		const loginPage = new LoginPage( page );

@@ -11,8 +11,6 @@ test.describe(
 			pageIncognito,
 			sitePublic,
 		} ) => {
-			const incognitoContentLocator = pageIncognito.locator( 'html' );
-
 			await test.step( "Given I am on my new public site's visibility settings page", async function () {
 				// TODO: This should use a DashboardPage method to navigate to the correct page
 				// but it doesn't work for WordPress.com as it expects /v2 to be available.
@@ -35,7 +33,7 @@ test.describe(
 
 			await test.step( 'Then I can not see my site if I check as an external visitor', async function () {
 				await pageIncognito.goto( sitePublic.blog_details.url );
-				await expect( incognitoContentLocator ).toContainText( 'Private Site' );
+				expect( await pageIncognito.getPageText() ).toContain( 'Private Site' );
 			} );
 		} );
 
@@ -46,8 +44,6 @@ test.describe(
 			pageIncognito,
 			sitePublic,
 		} ) => {
-			const incognitoContentLocator = pageIncognito.locator( 'html' );
-
 			await test.step( "Given I am on my new public site's visibility settings page", async function () {
 				// TODO: This should use a DashboardPage method to navigate to the correct page
 				// but it doesn't work for WordPress.com as it expects /v2 to be available.
@@ -70,7 +66,7 @@ test.describe(
 
 			await test.step( 'Then I can see the coming soon message if I visit as an external visitor', async function () {
 				await pageIncognito.goto( sitePublic.blog_details.url );
-				await expect( incognitoContentLocator ).toContainText( 'coming soon' );
+				expect( await pageIncognito.getPageText() ).toContain( 'coming soon' );
 			} );
 		} );
 
@@ -81,8 +77,6 @@ test.describe(
 			pageIncognito,
 			sitePublic,
 		} ) => {
-			const incognitoContentLocator = pageIncognito.locator( 'html' );
-
 			await test.step( "Given I am on my new public site's visibility settings page", async function () {
 				// TODO: This should use a DashboardPage method to navigate to the correct page
 				// but it doesn't work for WordPress.com as it expects /v2 to be available.
@@ -107,13 +101,13 @@ test.describe(
 				await pageIncognito.goto( sitePublic.blog_details.url );
 				// Soft assert to allow for the possibility that the site is still private
 				// or coming soon, and to test the robots.txt test step even if these checks fail.
-				await expect.soft( incognitoContentLocator ).not.toContainText( 'Private Site' );
-				await expect.soft( incognitoContentLocator ).not.toContainText( 'coming soon' );
+				expect.soft( await pageIncognito.getPageText() ).not.toContain( 'Private Site' );
+				expect.soft( await pageIncognito.getPageText() ).not.toContain( 'coming soon' );
 			} );
 
 			await test.step( 'But search engine robots will see a disallow instruction', async function () {
 				await pageIncognito.goto( `${ sitePublic.blog_details.url }robots.txt` );
-				await expect( incognitoContentLocator ).toContainText( 'User-agent: *\nDisallow: /' );
+				expect( await pageIncognito.getPageText() ).toContain( 'User-agent: *\nDisallow: /' );
 			} );
 		} );
 	}

@@ -8,6 +8,7 @@ export * from './domains-page';
 export * from './editor-page';
 export * from './full-site-editor-page';
 export * from './general-settings-page';
+export * from './incognito-page';
 export * from './individual-purchase-page';
 export * from './invite-people-page';
 export * from './login-page';
