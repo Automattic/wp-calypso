@@ -83,6 +83,7 @@ const EnvironmentSwitcherDropdown = ( {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const mutation = useMutation( stagingSiteCreateMutation( productionSite?.ID ?? 0 ) );
 	const handleCreate = () => {
+		recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_click' );
 		mutation.mutate( undefined, {
 			onSuccess: () => {
 				createSuccessNotice( __( 'Staging site created.' ), { type: 'snackbar' } );
