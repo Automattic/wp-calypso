@@ -64,11 +64,8 @@ const thanksToCommunityTranslator = ( data: UserSettingsPreferences ) => {
 export default function PreferencesLanguageForm() {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: serverData } = useQuery( userSettingsPreferencesQuery() );
-	const [ localData, setLocalData ] = useState< Partial< UserSettingsPreferences > | undefined >();
+	const [ formData, setFormData ] = useState< Partial< UserSettingsPreferences > | undefined >();
 	const mutation = useMutation( userSettingsPreferencesMutation() );
-	const [ savingData, setSavingData ] = useState<
-		Partial< UserSettingsPreferences > | undefined
-	>();
 
 	// After a successful save we reload the page with a query parameter and then
 	// display the success notice here, finally cleaning the URL so it stays the same.
@@ -94,8 +91,8 @@ export default function PreferencesLanguageForm() {
 		serverData.language = serverData.locale_variant;
 	}
 	const data = useMemo(
-		() => ( serverData ? { ...serverData, ...savingData, ...localData } : undefined ),
-		[ serverData, savingData, localData ]
+		() => ( serverData ? { ...serverData, ...formData } : undefined ),
+		[ serverData, formData ]
 	);
 
 	if ( ! data ) {
@@ -108,12 +105,11 @@ export default function PreferencesLanguageForm() {
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		if ( ! localData ) {
+		if ( ! formData ) {
 			return;
 		}
-		const mutationData = localData;
-		setLocalData( undefined );
-		setSavingData( mutationData );
+		const mutationData = formData;
+		setFormData( undefined );
 		mutation.mutate( mutationData, {
 			onSuccess: () => {
 				// Ensure the UI picks up the new language by reloading the page.
@@ -125,13 +121,10 @@ export default function PreferencesLanguageForm() {
 			},
 			onError: ( error ) => {
 				// Prepend previous attempted data back into local edits
-				setLocalData( ( current ) => ( { ...mutationData, ...current } ) );
+				setFormData( ( current ) => ( { ...mutationData, ...current } ) );
 				createErrorNotice( error.message ?? __( 'Language setting could not be saved.' ), {
 					type: 'snackbar',
 				} );
-			},
-			onSettled: () => {
-				setSavingData( undefined );
 			},
 		} );
 	};
@@ -142,9 +135,9 @@ export default function PreferencesLanguageForm() {
 	const isSaving = mutation.isPending;
 
 	const isDirty =
-		!! localData &&
+		!! formData &&
 		!! serverData &&
-		Object.entries( localData ).some( ( [ key, value ] ) => {
+		Object.entries( formData ).some( ( [ key, value ] ) => {
 			return serverData[ key as keyof UserSettingsPreferences ] !== value;
 		} );
 
@@ -281,7 +274,7 @@ export default function PreferencesLanguageForm() {
 								fields={ languageFields }
 								form={ languageForm }
 								onChange={ ( edits: Partial< UserSettingsPreferences > ) => {
-									setLocalData( ( current ) => ( { ...current, ...edits } ) );
+									setFormData( ( current ) => ( { ...current, ...edits } ) );
 								} }
 							/>
 							{ mutation.error && (
