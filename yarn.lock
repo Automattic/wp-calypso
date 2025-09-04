@@ -313,29 +313,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@automattic/agenttic-client@npm:0.1.9":
-  version: 0.1.9
-  resolution: "@automattic/agenttic-client@npm:0.1.9"
-  dependencies:
-    "@automattic/charts": "npm:>=0.14.0 <1.0.0"
-    "@types/react": "npm:^18.0.0"
-    "@visx/xychart": "npm:^3.12.0"
-    "@wordpress/element": "npm:^6.2.0"
-    "@wordpress/i18n": "npm:^6.1.0"
-    react: "npm:^18.0.0"
-    react-markdown: "npm:^10.1.0"
-    remark-gfm: "npm:^4.0.1"
-  peerDependencies:
-    "@wordpress/api-fetch": ^6.0.0 || ^7.0.0
-    react: ^18.0.0
-  peerDependenciesMeta:
-    "@wordpress/api-fetch":
-      optional: true
-  checksum: 86aa68e36acad2a215330ad1c67fc18462641a12e04cb58161c5dbd3d2a11afcd98269fb655421ec1d3857bce86b2ab291b0345014d4f0ba4b00e149f96d83ad
-  languageName: node
-  linkType: hard
-
-"@automattic/agenttic-ui@npm:^0.1.10":
+"@automattic/agenttic-ui@npm:^0.1.10, @automattic/agenttic-ui@npm:^0.1.9":
   version: 0.1.10
   resolution: "@automattic/agenttic-ui@npm:0.1.10"
   dependencies:
@@ -362,32 +340,36 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@automattic/agenttic-ui@npm:^0.1.9":
-  version: 0.1.9
-  resolution: "@automattic/agenttic-ui@npm:0.1.9"
+"@automattic/api-core@workspace:^, @automattic/api-core@workspace:packages/api-core":
+  version: 0.0.0-use.local
+  resolution: "@automattic/api-core@workspace:packages/api-core"
   dependencies:
-    "@automattic/agenttic-client": "npm:0.1.9"
-    "@automattic/charts": "npm:>=0.14.0 <1.0.0"
-    "@radix-ui/react-scroll-area": "npm:^1.2.9"
-    "@radix-ui/react-slot": "npm:^1.2.3"
-    "@visx/xychart": "npm:^3.12.0"
-    "@wordpress/data": "npm:^10.0.0"
-    "@wordpress/element": "npm:^6.24.0"
-    "@wordpress/i18n": "npm:^6.1.0"
-    class-variance-authority: "npm:^0.7.1"
-    clsx: "npm:^2.1.1"
-    framer-motion: "npm:^12.23.0"
-    lucide-react: "npm:^0.525.0"
-    react: "npm:^18.0.0"
-    react-dom: "npm:^18.0.0"
-    react-markdown: "npm:^10.1.0"
-    react-textarea-autosize: "npm:^8.5.9"
-  peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  checksum: f65af78650b94330656bfc8a8857dab1292568aa880973ec0d3a85af65f736b7e510fcdb4ba0b9e2614b1e57c9edd2d81824cabc9ed848bd8052e96c42c57094
-  languageName: node
-  linkType: hard
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/shopping-cart": "workspace:^"
+    "@wordpress/dataviews": "npm:^7.0.0"
+    "@wordpress/i18n": "npm:^5.23.0"
+    react: "npm:^18.3.1"
+    react-dom: "npm:^18.3.1"
+    tslib: "npm:^2.8.1"
+    typescript: "npm:^5.8.3"
+  languageName: unknown
+  linkType: soft
+
+"@automattic/api-queries@workspace:^, @automattic/api-queries@workspace:packages/api-queries":
+  version: 0.0.0-use.local
+  resolution: "@automattic/api-queries@workspace:packages/api-queries"
+  dependencies:
+    "@automattic/api-core": "workspace:^"
+    "@automattic/calypso-support-session": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@tanstack/query-sync-storage-persister": "npm:^5.83.0"
+    "@tanstack/react-query": "npm:^5.83.0"
+    "@tanstack/react-query-persist-client": "npm:^5.83.0"
+    react: "npm:^18.3.1"
+    tslib: "npm:^2.8.1"
+    typescript: "npm:^5.8.3"
+  languageName: unknown
+  linkType: soft
 
 "@automattic/babel-plugin-i18n-calypso@workspace:^, @automattic/babel-plugin-i18n-calypso@workspace:packages/babel-plugin-i18n-calypso":
   version: 0.0.0-use.local
