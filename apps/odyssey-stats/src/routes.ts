@@ -14,6 +14,7 @@ import {
 	emailStats,
 	emailSummary,
 	redirectToDaySummary,
+	statsMoved,
 } from 'calypso/my-sites/stats/controller';
 import config from './lib/config-api';
 import { makeLayout, render as clientRender } from './page-middleware/layout';
@@ -95,6 +96,7 @@ export default function ( pageBase = '/' ) {
 	// Email stats Pages
 	statsPage( `/stats/email/:statType/:period(${ validEmailPeriods })/:email_id/:site`, emailStats );
 	statsPage( '/stats/day/emails/:site', emailSummary );
+	statsPage( '/stats/moved/:site', statsMoved );
 
 	// Anything else should redirect to default stats page
 	statsPage( '*', redirectToSiteTrafficPage );
