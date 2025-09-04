@@ -90,14 +90,17 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 				isBusy={ isPending }
 				onClick={ () => addToCart( { acceptedTrademarkClaim: false } ) }
 			/>
-			<DomainSearchTrademarkClaimsModal
-				isOpen={ trademarkClaimModalOpen }
-				onAccept={ () => {
-					setTrademarkClaimModalOpen( false );
-					addToCart( { acceptedTrademarkClaim: true } );
-				} }
-				onClose={ () => setTrademarkClaimModalOpen( false ) }
-			/>
+			{ availability?.trademark_claims_notice_info && trademarkClaimModalOpen && (
+				<DomainSearchTrademarkClaimsModal
+					domainName={ domainName }
+					trademarkClaimsNoticeInfo={ availability.trademark_claims_notice_info }
+					onAccept={ () => {
+						setTrademarkClaimModalOpen( false );
+						addToCart( { acceptedTrademarkClaim: true } );
+					} }
+					onClose={ () => setTrademarkClaimModalOpen( false ) }
+				/>
+			) }
 		</>
 	);
 };

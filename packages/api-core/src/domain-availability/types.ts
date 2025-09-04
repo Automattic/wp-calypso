@@ -115,7 +115,7 @@ export interface DomainAvailability {
 	 * Trademark claims notice info
 	 * @example { "domain_name": "example.com", "trademark_claims_notice_info": "Trademark claims notice info" }
 	 */
-	trademark_claims_notice_info?: string;
+	trademark_claims_notice_info?: TrademarkClaimsNoticeInfo;
 }
 
 export enum DomainAvailabilityStatus {
@@ -166,4 +166,47 @@ export enum DomainAvailabilityStatus {
 	UNKNOWN = 'unknown',
 	UNKOWN_ACTIVE = 'unknown_active_domain_with_wpcom',
 	WPCOM_STAGING_DOMAIN = 'wpcom_staging_domain',
+}
+
+export interface TrademarkClaimsNoticeInfo {
+	claim: TrademarkClaim | TrademarkClaim[];
+}
+
+export interface TrademarkClaimContact {
+	name?: string;
+	org?: string;
+	voice?: string;
+	fax?: string;
+	email?: string;
+	addr?: {
+		street?: string[];
+		city?: string;
+		sp?: string;
+		pc?: string;
+		cc?: string;
+	};
+}
+
+export interface TrademarkClaimCourtCase {
+	refNum: string;
+	cc: string;
+	courtName: string;
+}
+
+export interface TrademarkClaimUdrpCase {
+	caseNo: string;
+	udrpProvider: string;
+}
+
+export interface TrademarkClaim {
+	markName?: string;
+	jurDesc?: string;
+	goodsAndServices?: string[];
+	classDesc?: string[];
+	holder?: TrademarkClaimContact;
+	contact?: TrademarkClaimContact;
+	notExactMatch?: {
+		court?: TrademarkClaimCourtCase[];
+		udrp?: TrademarkClaimUdrpCase[];
+	};
 }
