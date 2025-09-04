@@ -15,7 +15,6 @@ import {
 	ExternalLink,
 	ComboboxControl,
 	CheckboxControl,
-	__experimentalText as Text,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
