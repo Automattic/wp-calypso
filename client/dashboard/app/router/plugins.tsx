@@ -32,18 +32,22 @@ export const pluginsManageRoute = createRoute( {
 	)
 );
 
-export const pluginsScheduleRoute = createRoute( {
+export const pluginsScheduledUpdatesRoute = createRoute( {
 	getParentRoute: () => pluginsRoute,
-	path: 'schedule',
+	path: 'scheduled-updates',
 } ).lazy( () =>
-	import( '../../plugins/schedule' ).then( ( d ) =>
-		createLazyRoute( 'plugins-schedule' )( {
+	import( '../../plugins/scheduled-updates' ).then( ( d ) =>
+		createLazyRoute( 'plugins-scheduled-updates' )( {
 			component: d.default,
 		} )
 	)
 );
 
 export const createPluginsRoutes = () => {
-	const childRoutes: AnyRoute[] = [ pluginsIndexRoute, pluginsManageRoute, pluginsScheduleRoute ];
+	const childRoutes: AnyRoute[] = [
+		pluginsIndexRoute,
+		pluginsManageRoute,
+		pluginsScheduledUpdatesRoute,
+	];
 	return [ pluginsRoute.addChildren( childRoutes ) ];
 };
