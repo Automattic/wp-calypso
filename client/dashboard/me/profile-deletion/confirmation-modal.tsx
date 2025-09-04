@@ -76,89 +76,88 @@ export default function AccountDeletionConfirmModal( {
 		setShowAlternatives( false );
 	};
 
-	return (
-		<Modal
-			title={ showAlternatives ? __( 'Are you sure?' ) : __( 'Confirm account deletion' ) }
-			onRequestClose={ onClose }
-		>
-			<VStack spacing={ 4 }>
-				{ showAlternatives ? (
-					<>
-						<Text>
-							{ __( "Here's a few options to try before you permanently delete your account." ) }
-						</Text>
-						<ActionList>
-							{ alternativeOptions.map( ( option ) => (
-								<ActionList.ActionItem
-									key={ option.to }
-									title={ option.text }
-									actions={
-										<HStack spacing={ 0 } expanded={ false }>
-											{ option.supportLink && (
-												<Button
-													variant="tertiary"
-													icon={ help }
-													size="compact"
-													href={ option.supportLink }
-													target="_blank"
-													rel="noopener noreferrer"
-													aria-label={ __( 'Get help' ) }
-												/>
-											) }
-											<RouterLinkButton
-												__next40pxDefaultSize
+	if ( showAlternatives ) {
+		return (
+			<Modal title={ __( 'Are you sure?' ) } onRequestClose={ onClose }>
+				<VStack spacing={ 6 }>
+					<Text>
+						{ __( "Here's a few options to try before you permanently delete your account." ) }
+					</Text>
+					<ActionList>
+						{ alternativeOptions.map( ( option ) => (
+							<ActionList.ActionItem
+								key={ option.to }
+								title={ option.text }
+								actions={
+									<HStack spacing={ 0 } expanded={ false }>
+										{ option.supportLink && (
+											<Button
 												variant="tertiary"
-												icon={ isRTL() ? chevronLeft : chevronRight }
+												icon={ help }
 												size="compact"
-												to={ option.to }
+												href={ option.supportLink }
+												target="_blank"
 												rel="noopener noreferrer"
-												aria-label={ option.text }
+												aria-label={ __( 'Get help' ) }
 											/>
-										</HStack>
-									}
-								/>
-							) ) }
-						</ActionList>
-						<ButtonStack justify="flex-end">
-							<Button variant="tertiary" onClick={ onClose }>
-								{ __( 'Cancel' ) }
-							</Button>
-							<Button variant="primary" onClick={ handleContinue }>
-								{ __( 'Continue' ) }
-							</Button>
-						</ButtonStack>
-					</>
-				) : (
-					<>
-						<Text>
-							{ __(
-								'Please type your username in the field below to confirm. Your account will then be gone forever.'
-							) }
-						</Text>
-						<TextControl
-							label={ __( 'Type your username to confirm' ) }
-							value={ confirmText }
-							onChange={ setConfirmText }
-							placeholder={ username }
-							__next40pxDefaultSize
-							__nextHasNoMarginBottom
-						/>
-						<ButtonStack justify="flex-end">
-							<Button variant="tertiary" onClick={ onClose } disabled={ isDeleting }>
-								{ __( 'Cancel' ) }
-							</Button>
-							<Button
-								variant="primary"
-								isDestructive
-								onClick={ onConfirm }
-								disabled={ isConfirmDisabled }
-								isBusy={ isDeleting }
-							>
-								{ isDeleting ? __( 'Deleting account…' ) : __( 'Delete account' ) }
-							</Button>
-						</ButtonStack>
-					</>
-				) }
+										) }
+										<RouterLinkButton
+											__next40pxDefaultSize
+											variant="tertiary"
+											icon={ isRTL() ? chevronLeft : chevronRight }
+											size="compact"
+											to={ option.to }
+											rel="noopener noreferrer"
+											aria-label={ option.text }
+										/>
+									</HStack>
+								}
+							/>
+						) ) }
+					</ActionList>
+					<ButtonStack justify="flex-end">
+						<Button variant="tertiary" onClick={ onClose }>
+							{ __( 'Cancel' ) }
+						</Button>
+						<Button variant="primary" onClick={ handleContinue }>
+							{ __( 'Continue' ) }
+						</Button>
+					</ButtonStack>
+				</VStack>
+			</Modal>
+		);
+	}
+
+	return (
+		<Modal title={ __( 'Confirm account deletion' ) } onRequestClose={ onClose }>
+			<VStack spacing={ 6 }>
+				<Text>
+					{ __(
+						'Please type your username in the field below to confirm. Your account will then be gone forever.'
+					) }
+				</Text>
+				<TextControl
+					label={ __( 'Type your username to confirm' ) }
+					value={ confirmText }
+					onChange={ setConfirmText }
+					placeholder={ username }
+					__next40pxDefaultSize
+					__nextHasNoMarginBottom
+				/>
+				<ButtonStack justify="flex-end">
+					<Button variant="tertiary" onClick={ onClose } disabled={ isDeleting }>
+						{ __( 'Cancel' ) }
+					</Button>
+					<Button
+						variant="primary"
+						isDestructive
+						onClick={ onConfirm }
+						disabled={ isConfirmDisabled }
+						isBusy={ isDeleting }
+					>
+						{ isDeleting ? __( 'Deleting account…' ) : __( 'Delete account' ) }
+					</Button>
+				</ButtonStack>
 			</VStack>
 		</Modal>
 	);
