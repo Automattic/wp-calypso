@@ -113,7 +113,6 @@ export interface DomainAvailability {
 
 	/**
 	 * Trademark claims notice info
-	 * @example { "domain_name": "example.com", "trademark_claims_notice_info": "Trademark claims notice info" }
 	 */
 	trademark_claims_notice_info?: TrademarkClaimsNoticeInfo;
 }
