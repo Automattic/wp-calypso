@@ -12,6 +12,8 @@
 	gap: 16px;
 
 	.card.search-card {
+		// We don't want any styles from the card component.
+		all: unset;
 		border: none;
 		border-radius: unset;
 		box-shadow: none;
