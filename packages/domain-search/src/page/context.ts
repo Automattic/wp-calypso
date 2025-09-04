@@ -103,8 +103,9 @@ export const useDomainSearchContextValue = (
 			events: normalizedEvents,
 			config: normalizedConfig,
 			queries: {
-				domainSuggestions: ( query ) => ( {
+				domainSuggestions: ( query, params ) => ( {
 					...domainSuggestionsQuery( query, {
+						...params,
 						quantity: 30,
 						vendor: normalizedConfig.vendor,
 					} ),
