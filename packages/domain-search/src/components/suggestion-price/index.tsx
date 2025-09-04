@@ -41,14 +41,14 @@ export const DomainSuggestionPrice = ( { domainName }: DomainSuggestionPriceProp
 		return <DomainSuggestionPriceComponent price={ __( 'Move your existing domain' ) } />;
 	}
 
-	if (
-		[ DomainPriceRule.FREE_FOR_FIRST_YEAR, DomainPriceRule.FREE_WITH_PLAN ].includes(
-			suggestion.price_rule
-		)
-	) {
+	if ( suggestion.price_rule === DomainPriceRule.FREE_FOR_FIRST_YEAR ) {
+		const zeroCost = formatCurrency( 0, priceSource.currency_code, {
+			stripZeros: true,
+		} );
+
 		return (
 			<DomainSuggestionPriceComponent
-				price={ priceSource.cost }
+				price={ zeroCost }
 				salePrice={ saleCost }
 				renewPrice={ priceSource.renew_cost }
 			/>

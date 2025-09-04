@@ -6,11 +6,7 @@ import {
 	isHundredYearDomainFlow,
 	isHundredYearPlanFlow,
 } from '@automattic/onboarding';
-import {
-	isDomainBeingUsedForPlan,
-	isMonthlyOrFreeFlow,
-	isNextDomainFree,
-} from 'calypso/lib/cart-values/cart-items';
+import { isMonthlyOrFreeFlow, isNextDomainFree } from 'calypso/lib/cart-values/cart-items';
 import type { DomainSuggestion } from '@automattic/api-core';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
@@ -49,15 +45,11 @@ export const getPriceRuleForSuggestion = ( {
 
 	// TODO: Migrate domainAndPlanUpsellFlow to domain upsell
 	if ( isDomainUpsellFlow( flowName ) ) {
-		return DomainPriceRule.FREE_WITH_PLAN;
-	}
-
-	if ( isDomainBeingUsedForPlan( responseCart, suggestion.domain_name ) ) {
-		return DomainPriceRule.FREE_WITH_PLAN;
+		return DomainPriceRule.FREE_FOR_FIRST_YEAR;
 	}
 
 	if ( isNextDomainFree( responseCart, suggestion.domain_name ) ) {
-		return DomainPriceRule.FREE_WITH_PLAN;
+		return DomainPriceRule.FREE_FOR_FIRST_YEAR;
 	}
 
 	return DomainPriceRule.PRICE;
