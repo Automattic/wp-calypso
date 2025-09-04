@@ -12,10 +12,11 @@ import { __ } from '@wordpress/i18n';
 import { chevronRight, help } from '@wordpress/icons';
 import ActionList from '../../components/action-list';
 import { ButtonStack } from '../../components/button-stack';
+import RouterLinkButton from '../../components/router-link-button';
 
 interface AlternativeOption {
 	text: string;
-	href: string;
+	to: string;
 	supportLink?: string;
 }
 
@@ -44,29 +45,29 @@ export default function AccountDeletionConfirmModal( {
 			? [
 					{
 						text: __( "Change your site's address" ),
-						href: '/v2/domains',
+						to: '/v2/domains',
 						supportLink: localizeUrl( 'https://wordpress.com/support/changing-site-address/' ),
 					},
 					{
 						text: __( 'Delete a site' ),
-						href: '/v2/sites',
+						to: '/v2/sites',
 						supportLink: localizeUrl( 'https://wordpress.com/support/delete-site/' ),
 					},
 			  ]
 			: [] ),
 		{
 			text: __( 'Start a new site' ),
-			href: '/start?ref=me-account-close',
+			to: '/start?ref=me-account-close',
 			supportLink: localizeUrl( 'https://wordpress.com/support/create-a-blog/' ),
 		},
 		{
 			text: __( 'Change your username' ),
-			href: '/v2/me/account',
+			to: '/v2/me/account',
 			supportLink: localizeUrl( 'https://wordpress.com/support/change-your-username/' ),
 		},
 		{
 			text: __( 'Change your password' ),
-			href: '/v2/me/security',
+			to: '/v2/me/security',
 			supportLink: localizeUrl( 'https://wordpress.com/support/passwords/' ),
 		},
 	];
@@ -104,12 +105,12 @@ export default function AccountDeletionConfirmModal( {
 													aria-label={ __( 'Get help' ) }
 												/>
 											) }
-											<Button
+											<RouterLinkButton
+												__next40pxDefaultSize
 												variant="tertiary"
 												icon={ chevronRight }
 												size="compact"
-												href={ option.href }
-												target="_blank"
+												to={ option.to }
 												rel="noopener noreferrer"
 												aria-label={ option.text }
 											/>
