@@ -18,11 +18,6 @@ export default function AccountDeletionSection() {
 	const [ showConfirmModal, setShowConfirmModal ] = useState( false );
 	const mutation = useMutation( closeAccountMutation() );
 
-	// Ensure we have a username before rendering
-	if ( ! user?.username ) {
-		return null;
-	}
-
 	const handleDeleteClick = () => {
 		setShowConfirmModal( true );
 	};
