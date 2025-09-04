@@ -1,16 +1,11 @@
-import { Spinner } from '@automattic/components';
 import { isMobile } from '@automattic/viewport';
-import { Icon, search, closeSmall } from '@wordpress/icons';
-import clsx from 'clsx';
+import { SearchControl } from '@wordpress/components';
 import i18n from 'i18n-calypso';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import FormTextInput from 'calypso/components/forms/form-text-input';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-
-import './style.scss';
 
 /**
  * Internal variables
@@ -218,9 +213,9 @@ class Search extends Component {
 		this.setState( { hasFocus: false } );
 	};
 
-	onChange = ( event ) => {
+	onChange = ( value ) => {
 		this.setState( {
-			keyword: event.target.value,
+			keyword: value,
 		} );
 	};
 
@@ -332,7 +327,6 @@ class Search extends Component {
 		const searchValue = this.state.keyword;
 		const placeholder = this.props.placeholder || i18n.translate( 'Search…', { textOnly: true } );
 		const inputLabel = this.props.inputLabel;
-		const enableOpenIcon = this.props.pinned && ! this.state.isOpen;
 		const isOpenUnpinnedOrQueried =
 			this.state.isOpen || ! this.props.pinned || this.props.initialValue;
 
@@ -342,65 +336,35 @@ class Search extends Component {
 			spellCheck: 'false',
 		};
 
-		const searchClass = clsx( this.props.additionalClasses, this.props.dir, {
-			'is-expanded-to-container': this.props.fitsContainer,
-			'is-open': isOpenUnpinnedOrQueried,
-			'is-searching': this.props.searching,
-			'is-compact': this.props.compact,
-			'has-focus': ! this.props.hideFocus && this.state.hasFocus,
-			'has-open-icon': ! this.props.hideOpenIcon,
-			search: true,
-		} );
-
-		const fadeDivClass = clsx( 'search__input-fade', this.props.dir );
-		const inputClass = clsx( 'search__input', this.props.dir );
-
 		return (
-			<div dir={ this.props.dir || null } className={ searchClass } role="search">
-				<Spinner />
-				<div
-					role="button"
-					className="search__icon-navigation"
-					ref={ this.setOpenIconRef }
-					onClick={ enableOpenIcon ? this.openSearch : this.focus }
-					tabIndex={ enableOpenIcon ? '0' : null }
-					onKeyDown={ enableOpenIcon ? this.openListener : null }
-					aria-controls={ 'search-component-' + this.instanceId }
-					aria-label={ i18n.translate( 'Open Search', { context: 'button label' } ) }
-				>
-					{ ! this.props.hideOpenIcon && <Icon icon={ search } className="search__open-icon" /> }
-				</div>
-				<div className={ fadeDivClass }>
-					<FormTextInput
-						type="search"
-						id={ 'search-component-' + this.instanceId }
-						autoFocus={ this.props.autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
-						aria-describedby={ this.props.describedBy }
-						aria-label={ inputLabel ? inputLabel : i18n.translate( 'Search' ) }
-						aria-hidden={ ! isOpenUnpinnedOrQueried }
-						className={ inputClass }
-						placeholder={ placeholder }
-						role="searchbox"
-						value={ searchValue }
-						inputRef={ this.setSearchInputRef }
-						onChange={ this.onChange }
-						onKeyUp={ this.keyUp }
-						onKeyDown={ this.keyDown }
-						onMouseUp={ this.props.onClick }
-						onFocus={ this.onFocus }
-						onBlur={ this.onBlur }
-						disabled={ this.props.disabled }
-						autoCapitalize="none"
-						dir={ this.props.dir }
-						maxLength={ this.props.maxLength }
-						minLength={ this.props.minLength }
-						{ ...autocorrect }
-					/>
-					{ this.props.overlayStyling && this.renderStylingDiv() }
-				</div>
-				{ this.closeButton() }
+			<>
+				<SearchControl
+					__nextHasNoMarginBottom
+					id={ 'search-component-' + this.instanceId }
+					autoFocus={ this.props.autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
+					aria-describedby={ this.props.describedBy }
+					aria-label={ inputLabel ? inputLabel : i18n.translate( 'Search' ) }
+					aria-hidden={ ! isOpenUnpinnedOrQueried }
+					placeholder={ placeholder }
+					role="searchbox"
+					value={ searchValue }
+					inputRef={ this.setSearchInputRef }
+					onChange={ this.onChange }
+					onKeyUp={ this.keyUp }
+					onKeyDown={ this.keyDown }
+					onMouseUp={ this.props.onClick }
+					onFocus={ this.onFocus }
+					onBlur={ this.onBlur }
+					disabled={ this.props.disabled }
+					autoCapitalize="none"
+					dir={ this.props.dir }
+					maxLength={ this.props.maxLength }
+					minLength={ this.props.minLength }
+					{ ...autocorrect }
+				/>
+				{ this.props.overlayStyling && this.renderStylingDiv() }
 				{ this.props.children }
-			</div>
+			</>
 		);
 	}
 
@@ -410,26 +374,6 @@ class Search extends Component {
 				{ this.props.overlayStyling( this.state.keyword ) }
 			</div>
 		);
-	}
-
-	closeButton() {
-		if ( ! this.props.hideClose && ( this.state.keyword || this.state.isOpen ) ) {
-			return (
-				<div
-					role="button"
-					className="search__icon-navigation"
-					onClick={ this.closeSearch }
-					tabIndex="0"
-					onKeyDown={ this.closeListener }
-					aria-controls={ 'search-component-' + this.instanceId }
-					aria-label={ i18n.translate( 'Close Search', { context: 'button label' } ) }
-				>
-					<Icon icon={ closeSmall } className="search__close-icon" />
-				</div>
-			);
-		}
-
-		return null;
 	}
 }
 

@@ -132,11 +132,6 @@ $min_results_height: 180px;
 				color: var( --color-text-subtle );
 			}
 
-			.search__input-fade {
-				// compensate for border radius to avoid clipping
-				margin-right: 1px;
-			}
-
 			.spinner {
 				padding: 0 6px;
 				width: 24px;

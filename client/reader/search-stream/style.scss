@@ -71,10 +71,6 @@
 	-webkit-font-smoothing: subpixel-antialiased; // Fixes fixed elements text aliasing in Safari
 	padding: 24px 0 0;
 	margin: 0 -1px;
-
-	.search__input-fade::before {
-		border-radius: 4px;
-	}
 }
 
 .search-stream__fixed-area .section-nav-tabs.is-dropdown {
