@@ -3,7 +3,6 @@ import {
 	stagingSiteCreateMutation,
 	isDeletingStagingSiteQuery,
 	hasStagingSiteQuery,
-	// validQuotaQuery,
 	siteLatestAtomicTransferQuery,
 	isCreatingStagingSiteQuery,
 } from '@automattic/api-queries';
@@ -65,27 +64,12 @@ const CurrentEnvironment = ( { site }: { site: Site } ) => {
 };
 
 const StagingSiteActionButton = ( {
-	// productionSiteId,
-	// stagingSiteId,
 	isStagingSiteDeleting,
 	isStagingSiteCreating,
 }: {
-	// productionSiteId: number;
-	// stagingSiteId: number;
 	isStagingSiteDeleting: boolean;
 	isStagingSiteCreating: boolean;
 } ) => {
-	// const {
-	// 	data: hasValidQuota,
-	// 	isLoading: isLoadingQuotaValidation,
-	// 	error: isErrorValidQuota,
-	// } = useQuery( {
-	// 	...validQuotaQuery( productionSiteId ?? 0 ),
-	// 	enabled: !! productionSiteId,
-	// 	staleTime: 10 * 1000,
-	// 	meta: { persist: false },
-	// } );
-
 	if ( isStagingSiteCreating ) {
 		return (
 			<>
@@ -162,8 +146,6 @@ const EnvironmentSwitcherDropdown = ( {
 					>
 						<HStack justify="flex-start">
 							<StagingSiteActionButton
-								productionSiteId={ productionSite.ID ?? 0 }
-								stagingSiteId={ stagingSite?.ID ?? 0 }
 								isStagingSiteDeleting={ isStagingSiteDeleting }
 								isStagingSiteCreating={ isStagingSiteCreating }
 							/>
