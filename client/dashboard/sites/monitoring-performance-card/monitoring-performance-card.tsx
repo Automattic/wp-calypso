@@ -137,43 +137,43 @@ export default function MonitoringPerformanceCard( {
 	return (
 		<MonitoringCard
 			title={ __( 'Server performance' ) }
-			heading={ __( 'Requests' ) }
 			description={ __( 'Requests per minute and average server response time.' ) }
-			bottom={
-				<MonitoringLineChart
-					timeRange={ timeRange }
-					title={ __( 'Server performance' ) }
-					subtitle={ __( 'Requests per minute and average server response time' ) }
-					data={ formattedData as uPlot.AlignedData }
-					series={ [
-						{
-							fill: '#3858e9',
-							label: __( 'Requests per minute' ),
-							stroke: '#3858e9',
-							showInLegend: true,
-							showInTooltip: true,
-						},
-						{
-							fill: '#5BA300',
-							label: __( 'Average response time (ms)' ),
-							stroke: '#5BA300',
-							scale: 'average-response-time',
-							unit: 'ms',
-							showInLegend: true,
-							showInTooltip: true,
-						},
-					] }
-					isLoading={ isLoadingLineChart }
-					options={ {
-						plugins: [
-							timeHighlightPlugin( 'auto' ),
-							tooltipsPlugin( FirstChartTooltipWithSeriesHandler( tooltipSeriesCallback ), {
-								position: 'followCursor',
-							} ),
-						],
-					} }
-				></MonitoringLineChart>
-			}
-		/>
+			onDownloadClick={ () => {} }
+			onAnchorClick={ () => {} }
+		>
+			<MonitoringLineChart
+				timeRange={ timeRange }
+				title={ __( 'Server performance' ) }
+				subtitle={ __( 'Requests per minute and average server response time' ) }
+				data={ formattedData as uPlot.AlignedData }
+				series={ [
+					{
+						fill: '#3858e9',
+						label: __( 'Requests per minute' ),
+						stroke: '#3858e9',
+						showInLegend: true,
+						showInTooltip: true,
+					},
+					{
+						fill: '#5BA300',
+						label: __( 'Average response time (ms)' ),
+						stroke: '#5BA300',
+						scale: 'average-response-time',
+						unit: 'ms',
+						showInLegend: true,
+						showInTooltip: true,
+					},
+				] }
+				isLoading={ isLoadingLineChart }
+				options={ {
+					plugins: [
+						timeHighlightPlugin( 'auto' ),
+						tooltipsPlugin( FirstChartTooltipWithSeriesHandler( tooltipSeriesCallback ), {
+							position: 'followCursor',
+						} ),
+					],
+				} }
+			></MonitoringLineChart>
+		</MonitoringCard>
 	);
 }

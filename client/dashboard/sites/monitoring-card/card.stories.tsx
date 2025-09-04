@@ -5,24 +5,13 @@ import {
 	createRouter,
 	createRootRoute,
 } from '@tanstack/react-router';
-import {
-	people,
-	seen,
-	wordpress,
-	backup,
-	download,
-	starEmpty,
-	comment,
-	envelope,
-} from '@wordpress/icons';
-import './style.stories.scss';
 import MonitoringCard from './';
 
 const meta = {
 	title: 'client/dashboard/MonitoringCard',
 	component: MonitoringCard,
 	parameters: {
-		layout: 'centered',
+		layout: 'padded',
 	},
 	tags: [ 'autodocs' ],
 	decorators: [
@@ -36,85 +25,30 @@ const meta = {
 			/>
 		),
 	],
-	argTypes: {
-		icon: {
-			control: 'select',
-			options: [
-				'people',
-				'seen',
-				'wordpress',
-				'backup',
-				'download',
-				'starEmpty',
-				'comment',
-				'envelope',
-			],
-			mapping: {
-				people,
-				seen,
-				wordpress,
-				backup,
-				download,
-				starEmpty,
-				comment,
-				envelope,
-			},
-		},
-	},
 } satisfies Meta< typeof MonitoringCard >;
 
 export default meta;
 type Story = StoryObj< typeof meta >;
 
+const defaultArgs = {
+	title: 'Server performance',
+	description: 'Requests per minute and average server response time.',
+	onAnchorClick: () => {},
+	onDownloadClick: () => {},
+	isLoading: false,
+};
+
 export const Default: Story = {
 	args: {
-		title: 'Visitors',
-		heading: '1,245',
-		description: 'Past 7 days',
-		icon: people,
+		...defaultArgs,
+		children:
+			'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
 	},
 };
 
-export const WithProgress: Story = {
+export const Loading: Story = {
 	args: {
-		title: 'Migrate',
-		heading: 'Migrating site',
-		description: 'We’ll email you when it’s done',
-		icon: download,
-		link: '/',
-		progress: {
-			value: 76,
-			max: 100,
-			label: '76%',
-		},
-	},
-};
-
-export const WithLink: Story = {
-	args: {
-		title: 'Comments',
-		heading: '24',
-		description: 'Past 7 days',
-		icon: comment,
-		externalLink: 'https://wordpress.com',
-	},
-};
-
-export const WithExtraBottomContent: Story = {
-	args: {
-		title: 'Plan',
-		heading: 'Personal',
-		description: 'Upgrade to unlock more features',
-		icon: wordpress,
-		link: '/',
-		bottom: (
-			<>
-				<div>Extra content</div>
-				<div style={ { maxWidth: 500 } }>
-					This is some extra content that appears at the bottom of the card. It should not be
-					included as part of the clickable area of the card.
-				</div>
-			</>
-		),
+		...defaultArgs,
+		isLoading: true,
 	},
 };

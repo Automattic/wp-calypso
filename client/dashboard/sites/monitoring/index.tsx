@@ -20,10 +20,10 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { hasHostingFeature } from '../../utils/site-features';
+import MonitoringCard from '../monitoring-card';
 import MonitoringPerformanceCard from '../monitoring-performance-card/monitoring-performance-card';
 import illustrationUrl from './monitoring-callout-illustration.svg';
 import type { Site } from '@automattic/api-core';
-import './style.scss';
 
 export function SiteMonitoringCallout( {
 	siteSlug,
@@ -100,7 +100,48 @@ function SiteMonitoringBody( {
 	return (
 		<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
 			<Text variant="muted">{ getDateRange( timeRange, locale ) }</Text>
+
 			<MonitoringPerformanceCard site={ site } timeRange={ hoursMap[ timeRange ] } />
+
+			<HStack wrap alignment="stretch" spacing={ isSmallViewport ? 4 : 8 }>
+				<MonitoringCard
+					title={ __( 'HTTP request methods' ) }
+					description={ __( 'Percentage of traffic per HTTP request method.' ) }
+					onDownloadClick={ () => {} }
+					onAnchorClick={ () => {} }
+				>
+					[HTTP request methods graph]
+				</MonitoringCard>
+
+				<MonitoringCard
+					title={ __( 'Response types' ) }
+					description={ __( 'Percentage of dynamic versus static responses.' ) }
+					onDownloadClick={ () => {} }
+					onAnchorClick={ () => {} }
+				>
+					[Response types graph]
+				</MonitoringCard>
+			</HStack>
+
+			<MonitoringCard
+				title={ __( 'Successful HTTP responses' ) }
+				description={ __( 'Requests per minute completed without errors by the server.' ) }
+				onDownloadClick={ () => {} }
+				onAnchorClick={ () => {} }
+			>
+				[Successful HTTP responses graph]
+			</MonitoringCard>
+
+			<MonitoringCard
+				title={ __( 'Unsuccessful HTTP responses' ) }
+				description={ __(
+					'Requests per minute that encountered errors or issues during processing.'
+				) }
+				onDownloadClick={ () => {} }
+				onAnchorClick={ () => {} }
+			>
+				[Unsuccessful HTTP responses graph]
+			</MonitoringCard>
 		</VStack>
 	);
 }
