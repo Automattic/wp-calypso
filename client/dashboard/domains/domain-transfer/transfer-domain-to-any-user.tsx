@@ -22,6 +22,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useLocale } from '../../app/locale';
 import { domainRoute } from '../../app/router/domains';
+import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -199,7 +200,7 @@ export default function TransferDomainToAnyUser() {
 							}
 						) }
 					</Text>
-					<HStack justify="flex-end" spacing={ 2 }>
+					<ButtonStack justify="flex-end">
 						<Button
 							__next40pxDefaultSize
 							variant="secondary"
@@ -218,7 +219,7 @@ export default function TransferDomainToAnyUser() {
 						>
 							{ __( 'Confirm Transfer' ) }
 						</Button>
-					</HStack>
+					</ButtonStack>
 				</VStack>
 			</Modal>
 		);
@@ -239,7 +240,7 @@ export default function TransferDomainToAnyUser() {
 							}
 						) }
 					</Text>
-					<HStack justify="flex-end" spacing={ 2 }>
+					<ButtonStack justify="flex-end">
 						<Button
 							__next40pxDefaultSize
 							variant="secondary"
@@ -258,7 +259,7 @@ export default function TransferDomainToAnyUser() {
 						>
 							{ __( 'Cancel Transfer' ) }
 						</Button>
-					</HStack>
+					</ButtonStack>
 				</VStack>
 			</Modal>
 		);
