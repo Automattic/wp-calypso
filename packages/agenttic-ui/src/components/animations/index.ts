@@ -7,13 +7,6 @@ export const springConfig: Transition = {
 	damping: 30,
 };
 
-// Layout transition for morphing between states
-export const layoutTransition: Transition = {
-	type: 'spring',
-	stiffness: 400,
-	damping: 35,
-};
-
 // Fast spring for UI elements appearing
 export const fastSpring: Transition = {
 	type: 'spring',
@@ -33,7 +26,7 @@ export const fastSpringWithDelay: Transition = {
 export const morphSpring: Transition = {
 	type: 'spring',
 	damping: 40,
-	stiffness: 400,
+	stiffness: 500,
 	mass: 0.8,
 };
 

@@ -11,7 +11,6 @@ interface MessagesProps {
 	isProcessing?: boolean;
 	error?: string | null;
 	emptyView?: React.ReactNode;
-	fromCompact?: boolean;
 	messageRenderer?: ComponentType< { children: string } >;
 }
 
@@ -20,7 +19,6 @@ export function Messages( {
 	isProcessing,
 	error,
 	emptyView,
-	fromCompact = false,
 	messageRenderer,
 }: MessagesProps ) {
 	const scrollAreaRef = useRef< HTMLDivElement >( null );
@@ -33,30 +31,25 @@ export function Messages( {
 		const hasNewMessage =
 			messages.length > previousMessagesRef.current.length;
 
-		if ( hasNewMessage && scrollAreaRef.current ) {
-			// Find all message elements
-			const messageElements = scrollAreaRef.current.querySelectorAll(
-				'[data-slot="message"]'
-			);
-			const lastMessageElement =
-				messageElements[ messageElements.length - 1 ];
-
-			if ( lastMessageElement ) {
-				// Scroll to the top of the last message
-				const scrollTop =
-					lastMessageElement.getBoundingClientRect().top -
-					scrollAreaRef.current.getBoundingClientRect().top +
-					scrollAreaRef.current.scrollTop;
-
-				// Use instant scroll when coming from compact on first render
-				const behavior =
-					fromCompact && isFirstRender.current ? 'auto' : 'smooth';
-
-				scrollAreaRef.current.scrollTo( {
-					top: scrollTop,
-					behavior: behavior as ScrollBehavior,
-				} );
-			}
+		// Handle initial render - always scroll to bottom instantly when expanding
+		if (
+			isFirstRender.current &&
+			messages.length > 0 &&
+			scrollAreaRef.current
+		) {
+			scrollAreaRef.current.scrollTop =
+				scrollAreaRef.current.scrollHeight;
+		}
+		// Handle new messages - scroll smoothly
+		else if (
+			hasNewMessage &&
+			! isFirstRender.current &&
+			scrollAreaRef.current
+		) {
+			scrollAreaRef.current.scrollTo( {
+				top: scrollAreaRef.current.scrollHeight,
+				behavior: 'smooth',
+			} );
 		}
 
 		// Check if a new AI agent message was added for live region announcements
@@ -88,7 +81,7 @@ export function Messages( {
 		}
 
 		previousMessagesRef.current = messages;
-	}, [ messages, fromCompact ] );
+	}, [ messages ] );
 
 	if ( messages.length === 0 ) {
 		if ( emptyView ) {

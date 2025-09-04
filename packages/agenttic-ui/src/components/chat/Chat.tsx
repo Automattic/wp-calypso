@@ -71,6 +71,9 @@ export function Chat( {
 	const wasClickedToOpen = useRef( false );
 	const wasClickedToClose = useRef( false );
 	const wasClickedToExpand = useRef( false );
+
+	// Track animation state
+	const [ isAnimating, setIsAnimating ] = useState( false );
 	useEffect( () => {
 		// Reset flags when chat state changes.
 		wasClickedToOpen.current = false;
@@ -395,7 +398,9 @@ export function Chat( {
 			<motion.div
 				ref={ chatRef }
 				data-slot="chat-floating"
-				className={ cn( className, styles.container, styles.floating ) }
+				className={ cn( className, styles.container, styles.floating, {
+					animating: isAnimating,
+				} ) }
 				onMouseLeave={
 					chat.state === 'compact' ? handleAutoCollapse : undefined
 				}
@@ -435,6 +440,8 @@ export function Chat( {
 							? { duration: 0 }
 							: morphSpring,
 					} }
+					onAnimationStart={ () => setIsAnimating( true ) }
+					onAnimationComplete={ () => setIsAnimating( false ) }
 					style={ {
 						borderRadius: STYLE_CONSTANTS.BORDER_RADIUS,
 					} }

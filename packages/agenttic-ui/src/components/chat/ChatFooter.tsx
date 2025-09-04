@@ -1,5 +1,7 @@
+import { motion } from 'framer-motion';
 import React, { useCallback } from 'react';
 import type { NoticeConfig, Suggestion } from '../../types';
+import { fastSpring } from '../animations';
 import { type ActionButton, ChatInput } from './ChatInput';
 import { Notice } from './Notice';
 import { Suggestions } from './Suggestions';
@@ -61,7 +63,13 @@ export function ChatFooter( {
 		[ onInputChange, clearSuggestions ]
 	);
 	return (
-		<div data-slot="chat-footer" className={ styles.container }>
+		<motion.div
+			data-slot="chat-footer"
+			className={ styles.container }
+			initial={ { opacity: 0, scale: 1 } }
+			animate={ { opacity: 1, scale: 1 } }
+			transition={ { ...fastSpring } }
+		>
 			{ ! inputValue && (
 				<Suggestions
 					suggestions={ suggestions }
@@ -93,6 +101,6 @@ export function ChatFooter( {
 				customActions={ customActions }
 				actionOrder={ actionOrder }
 			/>
-		</div>
+		</motion.div>
 	);
 }

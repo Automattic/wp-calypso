@@ -11,6 +11,11 @@
     z-index: 10;
 }
 
+/* Hide scrollbar visually during animations */
+:global(.animating) .container::-webkit-scrollbar {
+    display: none; 
+}
+
 /* Reduce gap for consecutive messages from same role */
 .container [data-role="user"]:has(+ [data-role="user"]),
 .container [data-role="agent"]:has(+ [data-role="agent"]) {

@@ -96,7 +96,6 @@ export function ConversationView( {
 				isProcessing={ isProcessing }
 				error={ error }
 				emptyView={ emptyView }
-				fromCompact={ fromCompact }
 				messageRenderer={ messageRenderer }
 			/>
 			<ChatFooter
