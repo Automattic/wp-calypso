@@ -1,3 +1,9 @@
+import {
+	domainQuery,
+	domainNameServersQuery,
+	domainNameServersMutation,
+	siteByIdQuery,
+} from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Card, CardBody } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -5,12 +11,6 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useCallback } from 'react';
 import { useAuth } from '../../app/auth';
-import { domainQuery } from '../../app/queries/domain';
-import {
-	domainNameServersQuery,
-	domainNameServersMutation,
-} from '../../app/queries/domain-name-servers';
-import { siteByIdQuery } from '../../app/queries/site';
 import { domainRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -23,7 +23,10 @@ export default function NameServers() {
 	const { domainName } = domainRoute.useParams();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
-	const { data: nameServers } = useSuspenseQuery( domainNameServersQuery( domainName ) );
+	const {
+		data: { nameServers, isUsingDefaultNameServers },
+	} = useSuspenseQuery( domainNameServersQuery( domainName ) );
+
 	const { mutate: updateNameServers, isPending: isUpdatingNameServers } = useMutation(
 		domainNameServersMutation( domainName )
 	);
@@ -56,10 +59,11 @@ export default function NameServers() {
 					<NameServersForm
 						domainName={ domainName }
 						domainSiteSlug={ getDomainSiteSlug( domain ) }
+						nameServers={ nameServers }
+						isUsingDefaultNameServers={ isUsingDefaultNameServers }
 						isBusy={ isUpdatingNameServers }
-						nameServers={ nameServers ?? [] }
-						onSubmit={ onSubmit }
 						showUpsellNudge={ showUpsellNudge }
+						onSubmit={ onSubmit }
 					/>
 				</CardBody>
 			</Card>

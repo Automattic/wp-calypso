@@ -343,8 +343,8 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderCommentsMenu() {
-		const { adminMenu } = this.props;
-		if ( ! adminMenu ) {
+		const { adminMenu, domainOnlySite } = this.props;
+		if ( ! adminMenu || domainOnlySite ) {
 			return null;
 		}
 

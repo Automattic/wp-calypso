@@ -2,11 +2,10 @@ import { NormalizedField } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { isRootDomainNameSupported } from '../utils';
 import type { DnsRecordFormData } from './dns-record-configs';
-import type { DnsRecordType } from '../../../data/domain-dns-records';
+import type { DnsRecordType } from '@automattic/api-core';
 
 /**
  * Check if the provided `name` is a valid hostname according to the record type
- *
  * @param name - The name of the DNS record
  * @param type - The type of the DNS record
  * @param domainName - The domain name

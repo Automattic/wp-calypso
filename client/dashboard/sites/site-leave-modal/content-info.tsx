@@ -1,8 +1,12 @@
+import {
+	siteHasCancelablePurchasesQuery,
+	siteCurrentUserQuery,
+	siteUserDeleteMutation,
+} from '@automattic/api-queries';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
-	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	Button,
@@ -14,10 +18,9 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAuth } from '../../app/auth';
-import { siteHasCancelablePurchasesQuery } from '../../app/queries/site-purchases';
-import { siteCurrentUserQuery, siteUserDeleteMutation } from '../../app/queries/site-users';
+import { ButtonStack } from '../../components/button-stack';
 import RouterLinkButton from '../../components/router-link-button';
-import type { Site, User } from '../../data/types';
+import type { Site, User } from '@automattic/api-core';
 
 interface ContentInfoProps {
 	site: Site;
@@ -42,7 +45,7 @@ function ContentHasPurchasesCancelable( { site, onClose }: ContentInfoProps ) {
 					) }
 				</Text>
 			</VStack>
-			<HStack spacing={ 4 } justify="flex-end" expanded={ false }>
+			<ButtonStack justify="flex-end" expanded={ false }>
 				<Button variant="tertiary" onClick={ onClose }>
 					{ __( 'Cancel' ) }
 				</Button>
@@ -55,7 +58,7 @@ function ContentHasPurchasesCancelable( { site, onClose }: ContentInfoProps ) {
 				>
 					{ __( 'Manage purchases' ) }
 				</Button>
-			</HStack>
+			</ButtonStack>
 		</>
 	);
 }
@@ -70,7 +73,7 @@ function ContentSiteOwner( { site, onClose }: ContentInfoProps ) {
 					) }
 				</Text>
 			</VStack>
-			<HStack spacing={ 4 } justify="flex-end" expanded={ false }>
+			<ButtonStack justify="flex-end" expanded={ false }>
 				<Button variant="tertiary" onClick={ onClose }>
 					{ __( 'Cancel' ) }
 				</Button>
@@ -83,7 +86,7 @@ function ContentSiteOwner( { site, onClose }: ContentInfoProps ) {
 				>
 					{ __( 'Transfer ownership' ) }
 				</RouterLinkButton>
-			</HStack>
+			</ButtonStack>
 		</>
 	);
 }
@@ -170,7 +173,7 @@ function ContentLeaveSite( { site, onClose }: ContentInfoProps ) {
 						setFormData( ( data ) => ( { ...data, ...edits } ) );
 					} }
 				/>
-				<HStack spacing={ 4 } justify="flex-end" expanded={ false }>
+				<ButtonStack justify="flex-end" expanded={ false }>
 					<Button variant="tertiary" onClick={ onClose }>
 						{ __( 'Cancel' ) }
 					</Button>
@@ -182,7 +185,7 @@ function ContentLeaveSite( { site, onClose }: ContentInfoProps ) {
 					>
 						{ __( 'Leave site' ) }
 					</Button>
-				</HStack>
+				</ButtonStack>
 			</VStack>
 		</form>
 	);

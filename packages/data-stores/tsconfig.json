@@ -11,7 +11,7 @@
 		{ "path": "../calypso-analytics" },
 		{ "path": "../calypso-products" },
 		{ "path": "../calypso-config" },
-		{ "path": "../data" },
+		{ "path": "../api-core" },
 		{ "path": "../global-styles" },
 		{ "path": "../i18n-utils" },
 		{ "path": "../shopping-cart" },

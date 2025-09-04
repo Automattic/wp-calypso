@@ -1,19 +1,16 @@
+import { siteBackupRestoreInitiateMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import {
-	Button,
-	__experimentalHStack as HStack,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { rotateLeft } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteBackupRestoreInitiateMutation } from '../../app/queries/site-backup-restore';
 import { siteBackupRestoreRoute } from '../../app/router/sites';
+import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
-import type { RestoreConfig } from '../../data/site-backup-restore';
+import type { RestoreConfig } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 const fields: Field< RestoreConfig >[] = [
@@ -133,7 +130,7 @@ function SiteBackupRestoreForm( {
 					{ restoreWarning }
 				</Notice>
 
-				<HStack justify="flex-start">
+				<ButtonStack justify="flex-start">
 					<Button
 						variant="primary"
 						icon={ rotateLeft }
@@ -143,7 +140,7 @@ function SiteBackupRestoreForm( {
 					>
 						{ __( 'Restore now' ) }
 					</Button>
-				</HStack>
+				</ButtonStack>
 			</VStack>
 		</form>
 	);

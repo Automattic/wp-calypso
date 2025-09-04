@@ -1,7 +1,10 @@
 import { Dropdown, Button } from '@wordpress/components';
 import { chevronDownSmall } from '@wordpress/icons';
 import SwitcherContent, { type RenderItemIcon } from './switcher-content';
-import type { PropsWithChildren } from 'react';
+
+interface RenderCallbackProps {
+	onClose: () => void;
+}
 
 export default function Switcher< T >( {
 	items,
@@ -10,13 +13,14 @@ export default function Switcher< T >( {
 	getItemName,
 	getItemUrl,
 	renderItemIcon,
-}: PropsWithChildren< {
+}: {
 	items?: T[];
 	value: T;
+	children?: ( props: RenderCallbackProps ) => React.ReactNode;
 	getItemName: ( item: T ) => string;
 	getItemUrl: ( item: T ) => string;
 	renderItemIcon: RenderItemIcon< T >;
-} > ) {
+} ) {
 	return (
 		<Dropdown
 			renderToggle={ ( { onToggle, isOpen } ) => (
@@ -48,7 +52,7 @@ export default function Switcher< T >( {
 					renderItemIcon={ renderItemIcon }
 					onClose={ onClose }
 				>
-					{ children }
+					{ children?.( { onClose } ) }
 				</SwitcherContent>
 			) }
 		/>

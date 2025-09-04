@@ -2,10 +2,12 @@ import { Navigator } from '@wordpress/components';
 import { useEffect, useState } from 'react';
 import { Provider } from 'react-redux';
 import repliesCache from '../panel/comment-replies-cache';
+import { modifierKeyIsActive } from '../panel/helpers/input';
 import RestClient from '../panel/rest-client';
 import { init as initAPI } from '../panel/rest-client/wpcom';
 import { init as initStore } from '../panel/state';
 import { SET_IS_SHOWING } from '../panel/state/action-types';
+import actions from '../panel/state/actions';
 import { addListeners, removeListeners } from '../panel/state/create-listener-middleware';
 import getIsPanelOpen from '../panel/state/selectors/get-is-panel-open';
 import { AppProvider } from './context';
@@ -47,11 +49,13 @@ const defaultHandlers = {
 
 const NotificationApp = ( {
 	locale = 'en',
+	isDismissible = false,
 	customEnhancer,
 	actionHandlers = {},
 	wpcom,
 }: {
 	locale?: string;
+	isDismissible?: boolean;
 	customEnhancer?: any;
 	actionHandlers?: any;
 	wpcom: any;
@@ -102,6 +106,34 @@ const NotificationApp = ( {
 		};
 	}, [ actionHandlers ] );
 
+	useEffect( () => {
+		const stopEvent = ( event: KeyboardEvent ) => {
+			event.stopPropagation();
+			event.preventDefault();
+		};
+
+		const handleKeyDown = ( event: KeyboardEvent ) => {
+			if ( modifierKeyIsActive( event ) ) {
+				return;
+			}
+			switch ( event.key ) {
+				case 'n':
+					stopEvent( event );
+					store.dispatch( actions.ui.closePanel() );
+					break;
+				case 'i':
+					stopEvent( event );
+					store.dispatch( actions.ui.toggleShortcutsPopover() );
+					break;
+			}
+		};
+
+		window.addEventListener( 'keydown', handleKeyDown, false );
+		return () => {
+			window.removeEventListener( 'keydown', handleKeyDown, false );
+		};
+	}, [] );
+
 	if ( ! isReady ) {
 		return null;
 	}
@@ -114,13 +146,13 @@ const NotificationApp = ( {
 						path="/:filterName"
 						style={ { display: 'flex', flexDirection: 'column', height: '100%' } }
 					>
-						<NotePanel />
+						<NotePanel isDismissible={ isDismissible } />
 					</Navigator.Screen>
 					<Navigator.Screen
 						path="/:filterName/notes/:noteId"
 						style={ { display: 'flex', flexDirection: 'column', height: '100%' } }
 					>
-						<Note />
+						<Note isDismissible={ isDismissible } />
 					</Navigator.Screen>
 				</Navigator>
 			</AppProvider>

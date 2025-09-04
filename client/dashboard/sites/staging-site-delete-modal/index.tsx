@@ -1,8 +1,8 @@
+import { siteByIdQuery, stagingSiteDeleteMutation } from '@automattic/api-queries';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
-	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	Button,
@@ -11,9 +11,8 @@ import {
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { siteByIdQuery } from '../../app/queries/site';
-import { stagingSiteDeleteMutation } from '../../app/queries/site-staging-sites';
-import type { Site } from '../../data/types';
+import { ButtonStack } from '../../components/button-stack';
+import type { Site } from '@automattic/api-core';
 
 export default function StagingSiteDeleteModal( {
 	site,
@@ -71,7 +70,7 @@ export default function StagingSiteDeleteModal( {
 						'Are you sure you want to delete this staging site? This action cannot be undone and will permanently remove all staging site content.'
 					) }
 				</Text>
-				<HStack justify="flex-end">
+				<ButtonStack justify="flex-end">
 					<Button variant="tertiary" disabled={ mutation.isPending } onClick={ onClose }>
 						{ __( 'Cancel' ) }
 					</Button>
@@ -84,7 +83,7 @@ export default function StagingSiteDeleteModal( {
 					>
 						{ __( 'Delete staging site' ) }
 					</Button>
-				</HStack>
+				</ButtonStack>
 			</VStack>
 		</Modal>
 	);

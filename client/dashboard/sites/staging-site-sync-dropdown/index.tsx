@@ -1,18 +1,17 @@
+import { siteBySlugQuery, stagingSiteSyncStateQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { Button, Dropdown, MenuGroup, MenuItem } from '@wordpress/components';
+import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { chevronDown, cloudDownload, cloudUpload } from '@wordpress/icons';
 import { lazy, Suspense } from 'react';
-import { siteBySlugQuery } from '../../app/queries/site';
-import { stagingSiteSyncStateQuery } from '../../app/queries/site-staging-sites';
 import {
 	getProductionSiteId,
 	getStagingSiteId,
 	isStagingSiteSyncing,
 } from '../../utils/site-staging-site';
 import StagingSiteSyncModal from '../staging-site-sync-modal';
-import type { StagingSiteSyncDirection } from '../../data/types';
+import type { StagingSiteSyncDirection } from '@automattic/api-core';
 
 // TODO: We need to rewrite the modal, as it’s not compatible with v2.
 // Both the Modal and especially the FileBrowser rely heavily on Redux state
@@ -109,49 +108,46 @@ export default function StagingSiteSyncDropdown( {
 
 	return (
 		<>
-			<Dropdown
+			<DropdownMenu
 				className={ className }
 				popoverProps={ { placement: 'bottom-end' } }
-				renderToggle={ ( { isOpen, onToggle } ) => (
-					<Button
-						__next40pxDefaultSize
-						icon={ chevronDown }
-						iconPosition="right"
-						variant="secondary"
-						aria-expanded={ isOpen }
-						onClick={ () => onToggle() }
-						disabled={ isSyncing }
-					>
-						{ isSyncing ? __( 'Syncing…' ) : __( 'Sync' ) }
-					</Button>
+				toggleProps={ {
+					__next40pxDefaultSize: true,
+					iconPosition: 'right',
+					variant: 'secondary',
+					disabled: isSyncing,
+				} }
+				icon={ chevronDown }
+				text={ isSyncing ? __( 'Syncing…' ) : __( 'Sync' ) }
+				/* DropdownMenu prop types are too strict here. We don't need a label because our button has visible text. */
+				/* We can't pass the button's text to `label` because it causes a tooltip to appear. */
+				label={ null as any } // eslint-disable-line @typescript-eslint/no-explicit-any
+			>
+				{ ( { onClose } ) => (
+					<MenuGroup className={ className }>
+						<MenuItem
+							onClick={ () => {
+								onClose();
+								handleOpenModal( 'pull' );
+							} }
+							icon={ cloudDownload }
+							iconPosition="left"
+						>
+							{ pullLabel }
+						</MenuItem>
+						<MenuItem
+							onClick={ () => {
+								onClose();
+								handleOpenModal( 'push' );
+							} }
+							icon={ cloudUpload }
+							iconPosition="left"
+						>
+							{ pushLabel }
+						</MenuItem>
+					</MenuGroup>
 				) }
-				renderContent={ ( { onClose } ) => (
-					<div>
-						<MenuGroup className={ className }>
-							<MenuItem
-								onClick={ () => {
-									onClose();
-									handleOpenModal( 'pull' );
-								} }
-								icon={ cloudDownload }
-								iconPosition="left"
-							>
-								{ pullLabel }
-							</MenuItem>
-							<MenuItem
-								onClick={ () => {
-									onClose();
-									handleOpenModal( 'push' );
-								} }
-								icon={ cloudUpload }
-								iconPosition="left"
-							>
-								{ pushLabel }
-							</MenuItem>
-						</MenuGroup>
-					</div>
-				) }
-			/>
+			</DropdownMenu>
 			{ isModalOpen && renderModal() }
 		</>
 	);

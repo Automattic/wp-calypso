@@ -1,3 +1,4 @@
+import { fetchDomainSuggestions } from '@automattic/api-core';
 import {
 	getPlan,
 	isFreePlanProduct,
@@ -5,7 +6,6 @@ import {
 	domainProductSlugs,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { fetchDomainSuggestions } from '@automattic/data';
 import { useLocale } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useQuery } from '@tanstack/react-query';

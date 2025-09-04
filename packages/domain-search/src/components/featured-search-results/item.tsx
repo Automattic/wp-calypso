@@ -1,6 +1,8 @@
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
+import { parseMatchReasons } from '../../helpers';
 import { type FeaturedSuggestionReason } from '../../helpers/partition-suggestions';
+import { useSuggestion } from '../../hooks/use-suggestion';
 import { useDomainSuggestionBadges } from '../../hooks/use-suggestion-badges';
 import { DomainSuggestion, DomainSuggestionBadge } from '../../ui';
 import { DomainSuggestionCTA } from '../suggestion-cta';
@@ -18,6 +20,12 @@ export const FeaturedSearchResultsItem = ( {
 	isSingleFeaturedSuggestion,
 }: FeaturedSearchResultsItemProps ) => {
 	const [ domain, ...tlds ] = domainName.split( '.' );
+
+	const suggestion = useSuggestion( domainName );
+
+	const matchReasons = useMemo( () => {
+		return parseMatchReasons( domainName, suggestion.match_reasons );
+	}, [ domainName, suggestion.match_reasons ] );
 
 	const suggestionBadges = useDomainSuggestionBadges( domainName );
 
@@ -51,6 +59,7 @@ export const FeaturedSearchResultsItem = ( {
 		<DomainSuggestion.Featured
 			isHighlighted={ reason === 'exact-match' }
 			isSingleFeaturedSuggestion={ isSingleFeaturedSuggestion }
+			matchReasons={ matchReasons }
 			badges={ badges.length > 0 ? badges : undefined }
 			domain={ domain }
 			tld={ tlds.join( '.' ) }

@@ -1,7 +1,6 @@
 import {
 	Card,
 	CardBody,
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
 	Panel,
@@ -12,8 +11,9 @@ import {
 import { DataForm } from '@wordpress/dataviews';
 import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { ButtonStack } from '../../components/button-stack';
 import { isTargetUrlValid, isSubdomainValid } from './utils';
-import type { DomainForwarding } from '../../data/domain-forwarding';
+import type { DomainForwarding } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 export interface FormData {
@@ -220,8 +220,7 @@ export default function DomainForwardingForm( {
 								</PanelRow>
 							</PanelBody>
 						</Panel>
-
-						<HStack justify="start" spacing={ 4 }>
+						<ButtonStack justify="start">
 							<Button
 								variant="primary"
 								type="submit"
@@ -230,7 +229,7 @@ export default function DomainForwardingForm( {
 							>
 								{ submitButtonText }
 							</Button>
-						</HStack>
+						</ButtonStack>
 					</VStack>
 				</form>
 			</CardBody>

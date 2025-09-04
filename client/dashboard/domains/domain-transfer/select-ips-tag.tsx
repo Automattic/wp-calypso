@@ -1,9 +1,9 @@
+import { ipsTagListQuery, ipsTagMutation } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Button,
 	FormTokenField,
 	Modal,
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	ExternalLink,
@@ -11,7 +11,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import { ipsTagListQuery, ipsTagMutation } from '../../app/queries/domain-transfer';
+import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
 
 interface SelectIpsTagProps {
@@ -76,7 +76,7 @@ export default function SelectIpsTag( { domain, isDomainLocked }: SelectIpsTagPr
 								'control of the domain.'
 						) }
 					</Text>
-					<HStack justify="flex-end" spacing={ 2 }>
+					<ButtonStack justify="flex-end">
 						<Button
 							onClick={ () => setIsDialogOpen( false ) }
 							disabled={ saveIpsTagMutation.isPending }
@@ -92,7 +92,7 @@ export default function SelectIpsTag( { domain, isDomainLocked }: SelectIpsTagPr
 						>
 							{ __( 'Submit' ) }
 						</Button>
-					</HStack>
+					</ButtonStack>
 				</VStack>
 			</Modal>
 		);
@@ -124,7 +124,7 @@ export default function SelectIpsTag( { domain, isDomainLocked }: SelectIpsTagPr
 						}
 					) }
 				</Text>
-				<HStack alignment="left">
+				<ButtonStack alignment="left">
 					<Button
 						__next40pxDefaultSize
 						variant="secondary"
@@ -133,7 +133,7 @@ export default function SelectIpsTag( { domain, isDomainLocked }: SelectIpsTagPr
 					>
 						{ __( 'Submit' ) }
 					</Button>
-				</HStack>
+				</ButtonStack>
 			</>
 		);
 	};

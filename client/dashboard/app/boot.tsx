@@ -1,11 +1,16 @@
+import { persistQueryClientPromise } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
+import {
+	isSupportSession,
+	maybeInitializeSupportSession,
+} from '@automattic/calypso-support-session';
 import { createRoot } from 'react-dom/client';
 import '@wordpress/components/build-style/style.css';
 import '@wordpress/commands/build-style/style.css';
-import { isSupportSession, maybeInitializeSupportSession } from './auth/support-session';
+import wpcom from 'calypso/lib/wp';
 import Layout from './layout';
-import { persistPromise } from './query-client';
 import type { AppConfig } from './context';
+
 import './style.scss';
 
 function boot( config: AppConfig ) {
@@ -13,7 +18,7 @@ function boot( config: AppConfig ) {
 		throw new Error( 'Dashboard v2 is not enabled' );
 	}
 
-	maybeInitializeSupportSession();
+	maybeInitializeSupportSession( wpcom );
 
 	const rootElement = document.getElementById( 'wpcom' );
 	if ( rootElement === null ) {
@@ -21,7 +26,7 @@ function boot( config: AppConfig ) {
 	}
 	const root = createRoot( rootElement );
 
-	persistPromise.then( () => {
+	persistQueryClientPromise.then( () => {
 		root.render( <Layout config={ config } /> );
 	} );
 }

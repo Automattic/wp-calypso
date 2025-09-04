@@ -1,0 +1,9 @@
+@layer module, consumer-styles;
+
+@layer consumer-styles {
+	.step-container-v2-domain-search {
+		--domain-search-mini-cart-inline-padding: var( --step-container-v2-content-inline-padding );
+		--domain-search-mini-cart-max-width: var( --step-container-v2-content-row-max-width );
+		--domain-search-full-cart-z-index: 3;
+	}
+}

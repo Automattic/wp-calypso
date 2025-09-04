@@ -1,22 +1,20 @@
-import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
+import { HostingFeatures } from '@automattic/api-core';
 import {
-	Card,
-	CardBody,
-	__experimentalHStack as HStack,
-	__experimentalVStack as VStack,
-	Button,
-} from '@wordpress/components';
+	sitePHPVersionQuery,
+	sitePHPVersionMutation,
+	siteBySlugQuery,
+} from '@automattic/api-queries';
+import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
+import { Card, CardBody, __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { getPHPVersions } from 'calypso/data/php-versions';
-import { siteBySlugQuery } from '../../app/queries/site';
-import { sitePHPVersionQuery, sitePHPVersionMutation } from '../../app/queries/site-php-version';
+import { ButtonStack } from '../../components/button-stack';
 import PageLayout from '../../components/page-layout';
 import RequiredSelect from '../../components/required-select';
-import { HostingFeatures } from '../../data/constants';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import { getSitePlanDisplayName } from '../../utils/site-plan';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
@@ -105,7 +103,7 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 										setFormData( ( data ) => ( { ...data, ...edits } ) );
 									} }
 								/>
-								<HStack justify="flex-start">
+								<ButtonStack justify="flex-start">
 									<Button
 										variant="primary"
 										type="submit"
@@ -114,7 +112,7 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 									>
 										{ __( 'Save' ) }
 									</Button>
-								</HStack>
+								</ButtonStack>
 							</VStack>
 						</form>
 					</CardBody>

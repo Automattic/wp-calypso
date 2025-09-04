@@ -1,9 +1,10 @@
 import { useNavigate } from '@tanstack/react-router';
 import { Button, Dropdown } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { bellUnread, bell } from '@wordpress/icons';
 import clsx from 'clsx';
-import { Suspense, lazy, useState } from 'react';
+import { Suspense, lazy, useEffect, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
 import { useAuth } from '../auth';
 import { useLocale } from '../locale';
@@ -15,30 +16,75 @@ export default function Notifications( { className }: { className: string } ) {
 	const navigate = useNavigate();
 	const { user } = useAuth();
 	const locale = useLocale();
+	const isMobileViewport = useViewportMatch( 'small', '<' );
+	const [ isOpen, setIsOpen ] = useState( false );
 	const [ hasUnseenNotifications, setHasUnseenNotifications ] = useState( user.has_unseen_notes );
 
-	const actionHandlers = ( onClosePanel: () => void ) => ( {
+	const handleToggle = ( willOpen: boolean ) => {
+		setIsOpen( willOpen );
+	};
+
+	const handleClose = () => {
+		handleToggle( false );
+	};
+
+	const actionHandlers = {
 		APP_RENDER_NOTES: [
-			( store: any, { newNoteCount }: { newNoteCount: number } ) => {
+			( store: unknown, { newNoteCount }: { newNoteCount: number } ) => {
 				setHasUnseenNotifications( newNoteCount > 0 );
 			},
 		],
 		VIEW_SETTINGS: [
 			() => {
-				onClosePanel();
+				handleClose();
 				navigate( { to: '/me/notifications' } );
 			},
 		],
-		CLOSE_PANEL: [ onClosePanel ],
-	} );
+		EDIT_COMMENT: [
+			( store: unknown, { href }: { href: string } ) => {
+				window.open( href, '_blank' );
+			},
+		],
+		ANSWER_PROMPT: [
+			( store: unknown, { href }: { href: string } ) => {
+				window.open( href, '_blank' );
+			},
+		],
+		CLOSE_PANEL: [ handleClose ],
+	};
+
+	useEffect( () => {
+		const handleKeyDown = ( event: KeyboardEvent ) => {
+			if ( event.target !== document.body ) {
+				return;
+			}
+			if ( event.altKey || event.ctrlKey || event.metaKey ) {
+				return;
+			}
+			if ( event.key === 'n' ) {
+				event.stopPropagation();
+				event.preventDefault();
+				handleToggle( true );
+			}
+		};
+
+		window.addEventListener( 'keydown', handleKeyDown, false );
+		return () => {
+			window.removeEventListener( 'keydown', handleKeyDown, false );
+		};
+	}, [] );
 
 	return (
 		<Dropdown
 			popoverProps={ {
+				className: 'dashboard-notifications',
 				placement: 'bottom-end',
 				offset: 8,
 				focusOnMount: true,
 			} }
+			open={ isOpen }
+			expandOnMobile={ isMobileViewport }
+			onToggle={ handleToggle }
 			renderToggle={ ( { isOpen, onToggle } ) => (
 				<Button
 					className={ clsx( className, 'dashboard-notifications__icon' ) }
@@ -49,12 +95,21 @@ export default function Notifications( { className }: { className: string } ) {
 					icon={ hasUnseenNotifications ? bellUnread : bell }
 				/>
 			) }
-			renderContent={ ( { onClose } ) => (
-				<div style={ { width: '480px', height: '100vh', maxHeight: 'inherit', margin: '-8px' } }>
+			renderContent={ () => (
+				<div
+					style={ {
+						width: '100vw',
+						height: '100vh',
+						maxWidth: ! isMobileViewport ? '448px' : undefined,
+						maxHeight: 'inherit',
+						margin: '-8px',
+					} }
+				>
 					<Suspense fallback={ null }>
 						<AsyncNotificationApp
 							locale={ locale }
-							actionHandlers={ actionHandlers( onClose ) }
+							isDismissible={ isMobileViewport }
+							actionHandlers={ actionHandlers }
 							wpcom={ wpcom }
 						/>
 					</Suspense>

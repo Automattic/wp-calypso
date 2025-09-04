@@ -1,0 +1,32 @@
+.domain-search-controls__filters-popover {
+	width: 20rem;
+}
+
+.domain-search-controls__filters-popover-available-tlds-container {
+	border-radius: 2px;
+}
+
+.domain-search-controls__filters-popover-list-label {
+	padding: 6px 16px;
+
+	&:first-child {
+		padding: 12px 16px 6px;
+	}
+}
+
+.domain-search-controls__filters-popover-available-tld {
+	cursor: pointer;
+	padding: 6px 16px;
+
+	&:hover {
+		background: var( --wp-admin-theme-color );
+		color: var( --domain-search-v2-background-color );
+	}
+}
+
+.domain-search-controls__filters-popover-buttons {
+	button {
+		flex-grow: 1;
+		justify-content: center;
+	}
+}

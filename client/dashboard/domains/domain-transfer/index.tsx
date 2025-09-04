@@ -1,3 +1,9 @@
+import { DomainSubtype } from '@automattic/api-core';
+import {
+	domainQuery,
+	domainLockMutation,
+	domainTransferCodeMutation,
+} from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
 	Card,
@@ -13,15 +19,13 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useLocale } from '../../app/locale';
-import { domainQuery } from '../../app/queries/domain';
-import { domainLockMutation, domainTransferCodeMutation } from '../../app/queries/domain-transfer';
 import { domainRoute } from '../../app/router/domains';
+import { ButtonStack } from '../../components/button-stack';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
-import { DomainSubtype } from '../../data/domains';
 import { formatDate } from '../../utils/datetime';
 import { getTopLevelOfTld } from '../../utils/domain';
 import InternalTransferOptions from './internal-transfer-options';
@@ -150,7 +154,7 @@ export default function DomainTransfer() {
 
 	const renderAuthCodeButton = () => {
 		return (
-			<HStack alignment="left">
+			<ButtonStack alignment="left">
 				<Button
 					__next40pxDefaultSize
 					variant="secondary"
@@ -160,7 +164,7 @@ export default function DomainTransfer() {
 				>
 					{ __( 'Get authorization code' ) }
 				</Button>
-			</HStack>
+			</ButtonStack>
 		);
 	};
 

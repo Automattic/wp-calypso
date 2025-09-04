@@ -16,6 +16,7 @@ import {
 	getPlanFeaturesGroupedForComparisonGrid,
 	getWooExpressFeaturesGroupedForFeaturesGrid,
 	getSimplifiedPlanFeaturesGroupedForFeaturesGrid,
+	getWordPressHostingFeaturesGroupedForFeaturesGrid,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
@@ -95,7 +96,6 @@ import type {
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { IAppState } from 'calypso/state/types';
 import './style.scss';
-
 const PlanComparisonHeader = styled.h1`
 	.plans .step-container .step-container__content &&,
 	&& {
@@ -104,7 +104,6 @@ const PlanComparisonHeader = styled.h1`
 		margin: 48px 0;
 	}
 `;
-
 export interface PlansFeaturesMainProps {
 	siteId?: number | null;
 	intent?: PlansIntent | null;
@@ -273,7 +272,6 @@ const PlansFeaturesMain = ( {
 	const showDomainUpsellDialog = useCallback( () => {
 		setShowDomainUpsellDialog( true );
 	}, [ setShowDomainUpsellDialog ] );
-
 	const currentUserName = useSelector( getCurrentUserName );
 	const { wpcomFreeDomainSuggestion, invalidateDomainSuggestionCache } =
 		useGetFreeSubdomainSuggestion(
@@ -329,12 +327,16 @@ const PlansFeaturesMain = ( {
 		// - at which point, we'll inject the upsell plan to the tailored plans mix instead
 		if ( defaultWpcomPlansIntent !== intent && forceDefaultPlans ) {
 			setIntent( defaultWpcomPlansIntent );
-		} else if ( ! intent ) {
-			setIntent(
-				planFromUpsells
-					? defaultWpcomPlansIntent
-					: intentFromProps || intentFromSiteMeta.intent || defaultWpcomPlansIntent
-			);
+		} else {
+			const resolvedIntent = planFromUpsells
+				? defaultWpcomPlansIntent
+				: intentFromProps || intentFromSiteMeta.intent || defaultWpcomPlansIntent;
+
+			// Always update intent when intent is not set.
+			// When the escape hatch is used (forceDefaultPlans), do not override with intentFromProps.
+			if ( ! intent || ( ! forceDefaultPlans && intentFromProps !== intent ) ) {
+				setIntent( resolvedIntent );
+			}
 		}
 	}, [
 		intent,
@@ -467,10 +469,13 @@ const PlansFeaturesMain = ( {
 		[ gridPlansForFeaturesGridRaw, deemphasizeFreePlan ]
 	);
 
+	const isVisualSplitEnabled =
+		intent === 'plans-website-builder' || intent === 'plans-wordpress-hosting';
 	// In some cases, the free plan is not an option at all. Make sure not to offer it in the subheader.
-	const offeringFreePlan = gridPlansForFeaturesGridRaw?.some(
-		( { planSlug } ) => planSlug === PLAN_FREE
-	);
+	// For website builder and wordpress hosting intents, we always want to offer the free plan even if it's not in the grid
+	const offeringFreePlan =
+		isVisualSplitEnabled ||
+		gridPlansForFeaturesGridRaw?.some( ( { planSlug } ) => planSlug === PLAN_FREE );
 
 	const [ isStreamlinedPriceExperimentLoading, streamlinedPriceExperimentAssignment ] =
 		useStreamlinedPriceExperiment( flowName );
@@ -484,7 +489,7 @@ const PlansFeaturesMain = ( {
 	// monthly plans because monthly plans do not come with a free domain.
 	// We are also hiding the plan interval selector and showing terms savings prices
 	// for the compatible streamlined price experiment variations.
-	if ( redirectToAddDomainFlow !== undefined || hidePlanTypeSelector ) {
+	if ( redirectToAddDomainFlow !== undefined || hidePlanTypeSelector || isVisualSplitEnabled ) {
 		hidePlanSelector = true;
 	}
 	if ( ! isStreamlinedPriceExperimentLoading && ! showStreamlinedPriceExperiment ) {
@@ -710,6 +715,8 @@ const PlansFeaturesMain = ( {
 	let featureGroupMapForFeaturesGrid;
 	if ( hasWooExpressFeatures ) {
 		featureGroupMapForFeaturesGrid = getWooExpressFeaturesGroupedForFeaturesGrid();
+	} else if ( intent === 'plans-wordpress-hosting' ) {
+		featureGroupMapForFeaturesGrid = getWordPressHostingFeaturesGroupedForFeaturesGrid();
 	} else if ( showSimplifiedFeatures ) {
 		featureGroupMapForFeaturesGrid = getSimplifiedPlanFeaturesGroupedForFeaturesGrid( {
 			isSummerSpecial,
@@ -831,6 +838,7 @@ const PlansFeaturesMain = ( {
 					flowName={ flowName }
 					deemphasizeFreePlan={ deemphasizeFreePlan }
 					onFreePlanCTAClick={ onFreePlanCTAClick }
+					intent={ intent }
 				/>
 				{ ! isPlansGridReady && <Spinner size={ 30 } /> }
 				{ isPlansGridReady && (
@@ -849,6 +857,8 @@ const PlansFeaturesMain = ( {
 							className={ clsx( 'plans-features-main__group', 'is-wpcom', 'is-2023-pricing-grid', {
 								'is-scrollable': plansWithScroll,
 								'is-plan-type-selector-visible': ! hidePlanSelector,
+								'is-visual-split-layout':
+									intent === 'plans-website-builder' || intent === 'plans-wordpress-hosting',
 							} ) }
 							data-e2e-plans="wpcom"
 						>
@@ -888,7 +898,9 @@ const PlansFeaturesMain = ( {
 										enableStorageAsBadge={ ! showSimplifiedFeatures }
 										enableReducedFeatureGroupSpacing={ showSimplifiedFeatures }
 										enableLogosOnlyForEnterprisePlan={ showSimplifiedFeatures }
-										hideFeatureGroupTitles={ showSimplifiedFeatures }
+										hideFeatureGroupTitles={
+											showSimplifiedFeatures && intent !== 'plans-wordpress-hosting'
+										}
 										enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
 										showStreamlinedBillingDescription={ showStreamlinedPriceExperiment }
 									/>

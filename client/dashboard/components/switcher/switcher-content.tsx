@@ -5,8 +5,6 @@ import { type PropsWithChildren, type ReactNode, useMemo, useState } from 'react
 import RouterLinkMenuItem from '../router-link-menu-item';
 import type { View } from '@wordpress/dataviews';
 
-import './switcher-content.scss';
-
 const DEFAULT_VIEW: View = {
 	type: 'list',
 	page: 1,

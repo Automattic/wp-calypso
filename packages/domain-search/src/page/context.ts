@@ -1,6 +1,10 @@
+import {
+	domainAvailabilityQuery,
+	domainSuggestionsQuery,
+	freeSuggestionQuery,
+} from '@automattic/api-queries';
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
-import { domainAvailabilityQuery } from '../queries/availability';
-import { domainSuggestionsQuery, freeSuggestionQuery } from '../queries/suggestions';
+import { FilterState } from '../components/search-bar/types';
 import type { DomainSearchProps, DomainSearchContextType } from './types';
 
 const noop = () => {};
@@ -9,6 +13,12 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 	events: {
 		onContinue: noop,
 		onSkip: noop,
+		onMakePrimaryAddressClick: noop,
+		onMoveDomainToSiteClick: noop,
+		onTransferDomainToWordPressComClick: noop,
+		onRegisterDomainClick: noop,
+		onCheckTransferStatusClick: noop,
+		onMapDomainClick: noop,
 	},
 	queries: {
 		domainSuggestions: ( query: string ) => domainSuggestionsQuery( query ),
@@ -32,6 +42,11 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		skippable: false,
 		deemphasizedTlds: [],
 	},
+	filter: {
+		exactSldMatchesOnly: false,
+		tlds: [],
+	},
+	setFilter: () => {},
 };
 
 export const DomainSearchContext =
@@ -54,6 +69,10 @@ export const useDomainSearchContextValue = (
 
 	const [ isFullCartOpen, setIsFullCartOpen ] = useState( false );
 	const [ query, setQuery ] = useState( initialQuery ?? '' );
+	const [ filter, setFilter ] = useState( {
+		exactSldMatchesOnly: false,
+		tlds: [],
+	} as FilterState );
 
 	const closeFullCart = useCallback( () => {
 		setIsFullCartOpen( false );
@@ -82,16 +101,21 @@ export const useDomainSearchContextValue = (
 			events: normalizedEvents,
 			config: normalizedConfig,
 			queries: {
-				domainSuggestions: ( query ) =>
-					domainSuggestionsQuery( query, {
+				domainSuggestions: ( query ) => ( {
+					...domainSuggestionsQuery( query, {
 						quantity: 30,
 						vendor: normalizedConfig.vendor,
 					} ),
+					enabled: false,
+				} ),
 				freeSuggestion: ( query ) => ( {
 					...freeSuggestionQuery( query ),
 					enabled: normalizedConfig.skippable,
 				} ),
-				domainAvailability: domainAvailabilityQuery,
+				domainAvailability: ( domainName ) => ( {
+					...domainAvailabilityQuery( domainName ),
+					enabled: false,
+				} ),
 			},
 			cart,
 			isFullCartOpen,
@@ -101,6 +125,8 @@ export const useDomainSearchContextValue = (
 			setQuery,
 			slots,
 			currentSiteUrl,
+			filter,
+			setFilter,
 		};
 	}, [
 		isFullCartOpen,
@@ -113,5 +139,7 @@ export const useDomainSearchContextValue = (
 		slots,
 		currentSiteUrl,
 		normalizedConfig,
+		filter,
+		setFilter,
 	] );
 };

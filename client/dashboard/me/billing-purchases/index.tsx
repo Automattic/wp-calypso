@@ -1,23 +1,29 @@
+import {
+	userPaymentMethodsQuery,
+	userPurchasesQuery,
+	userTransferredPurchasesQuery,
+	sitesQuery,
+} from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useResizeObserver } from '@wordpress/compose';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo, useEffect, useRef } from 'react';
-import { userPaymentMethodsQuery } from '../../app/queries/me-payment-methods';
-import { userPurchasesQuery, userTransferredPurchasesQuery } from '../../app/queries/me-purchases';
-import { sitesQuery } from '../../app/queries/sites';
 import { purchasesRoute } from '../../app/router/me';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { adjustDataViewFieldsForWidth } from '../../utils/dataviews-width';
 import {
+	purchasesWideFields,
+	purchasesDesktopFields,
+	purchasesMobileFields,
 	purchasesDataView,
-	adjustViewFieldsForWidth,
 	getFields,
 	getItemId,
 	usePurchasesListActions,
 } from './dataviews';
-import type { Site } from '../../data/site';
+import type { Site } from '@automattic/api-core';
 import type { Operator, View } from '@wordpress/dataviews';
 
 function alterUrlForViewProp(
@@ -106,7 +112,13 @@ export default function PurchasesList() {
 	const ref = useResizeObserver( ( entries ) => {
 		const firstEntry = entries[ 0 ];
 		if ( firstEntry ) {
-			adjustViewFieldsForWidth( firstEntry.contentRect.width, setView );
+			adjustDataViewFieldsForWidth( {
+				width: firstEntry.contentRect.width,
+				setView,
+				wideFields: purchasesWideFields,
+				desktopFields: purchasesDesktopFields,
+				mobileFields: purchasesMobileFields,
+			} );
 		}
 	} );
 	const { data: paymentMethods } = useQuery( userPaymentMethodsQuery( {} ) );
