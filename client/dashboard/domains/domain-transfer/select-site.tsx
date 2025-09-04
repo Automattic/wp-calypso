@@ -1,24 +1,36 @@
 import { sitesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { __experimentalVStack as VStack, SearchControl } from '@wordpress/components';
+import {
+	SearchControl,
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { DataViews } from '@wordpress/dataviews';
-import { useMemo, useState, useEffect, useCallback } from 'react';
+import { useMemo, useState, useEffect, useCallback, useRef } from 'react';
+import { canManageSite } from '../../sites/features';
+import SiteIcon from '../../sites/site-icon';
 import type { Site } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
+import './select-site.scss';
 
 interface Props {
 	onSiteSelect: ( site: Site ) => void;
 }
 
 export function SelectSite( { onSiteSelect }: Props ) {
-	const { data: sites = [], isLoading } = useQuery( sitesQuery() );
+	const { data: allSites = [], isLoading } = useQuery( sitesQuery() );
+	const sites = useMemo( () => allSites.filter( ( site ) => canManageSite( site ) ), [ allSites ] );
+	const searchInputRef = useRef< HTMLInputElement >( null );
+
 	const perPage = 5;
 	const [ view, setView ] = useState< View >( {
 		type: 'list',
 		perPage,
 		page: 1,
 		search: '',
-		fields: [ 'name', 'URL' ],
+		titleField: 'name',
+		descriptionField: 'URL',
+		mediaField: 'icon',
 		infiniteScrollEnabled: true,
 	} );
 	// Custom pagination handler that simulates server-side pagination
@@ -44,6 +56,10 @@ export function SelectSite( { onSiteSelect }: Props ) {
 
 	const fields = [
 		{
+			id: 'icon',
+			render: ( { item }: { item: Site } ) => <SiteIcon site={ item } size={ 32 } />,
+		},
+		{
 			id: 'name',
 			label: 'Site Name',
 			render: ( { item }: { item: Site } ) => item.name,
@@ -52,7 +68,7 @@ export function SelectSite( { onSiteSelect }: Props ) {
 			id: 'URL',
 			label: 'URL',
 			render: ( { item }: { item: Site } ) => {
-				return <div>{ item.URL }</div>;
+				return <Text className="domain-transfer-select-site__url-field">{ item.URL }</Text>;
 			},
 		},
 	];
@@ -99,29 +115,34 @@ export function SelectSite( { onSiteSelect }: Props ) {
 	}
 
 	return (
-		<div>
+		<div className="domain-transfer-select-site">
 			<VStack spacing={ 4 }>
 				<SearchControl
+					ref={ searchInputRef }
 					size="compact"
 					value={ view.search }
-					onChange={ ( search ) => setView( { ...view, search } ) }
+					onChange={ ( search ) => {
+						setView( { ...view, search } );
+						setSelection( [] );
+						// Keep focus on search input after filtering
+						setTimeout( () => {
+							searchInputRef.current?.focus();
+						}, 0 );
+					} }
 				/>
-				<div style={ { maxHeight: '400px', overflow: 'auto' } }>
-					<DataViews
-						data={ allLoadedRecords }
-						fields={ fields }
-						view={ view }
-						search
-						paginationInfo={ paginationInfo }
-						getItemId={ ( site: Site ) => site.ID?.toString() ?? '' }
-						defaultLayouts={ { list: {} } }
-						onChangeView={ setView }
-						selection={ selection }
-						onChangeSelection={ handleSelectionChange }
-					>
-						<DataViews.Layout />
-					</DataViews>
-				</div>
+				<DataViews
+					data={ allLoadedRecords }
+					fields={ fields }
+					view={ view }
+					paginationInfo={ paginationInfo }
+					getItemId={ ( site: Site ) => site.ID?.toString() ?? '' }
+					defaultLayouts={ { list: {} } }
+					onChangeView={ setView }
+					selection={ selection }
+					onChangeSelection={ handleSelectionChange }
+				>
+					<DataViews.Layout />
+				</DataViews>
 			</VStack>
 		</div>
 	);

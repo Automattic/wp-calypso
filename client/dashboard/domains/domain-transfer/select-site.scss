@@ -1,0 +1,26 @@
+@import '@wordpress/base-styles/colors';
+
+.domain-transfer-select-site {
+	.dataviews-wrapper {
+		max-height: 345px;
+		overflow: auto;
+	}
+	
+	.dataviews-view-list div[role="article"] .dataviews-view-list__item-wrapper {
+		padding: 0.5rem;
+	}
+
+	.domain-transfer-select-site__url-field {
+		color: #{$gray-700};
+	}
+
+	.dataviews-view-list__field-wrapper {
+		gap: 0;
+	}
+
+	.dataviews-view-list__media-wrapper {
+		width: auto;
+		height: auto;
+		align-self: center;
+	}
+}
