@@ -68,6 +68,13 @@ const ScanAtomicTransferWrapper = () => {
 		return <ScanLoadingPlaceholder />;
 	}
 
+	// If the site already has the Scan feature, skip the AT flow entirely
+	// and let the normal Scan page render (even if scanState is 'unavailable').
+	// The Scan page will query status and progress from the API directly.
+	if ( hasScanFeature ) {
+		return null;
+	}
+
 	// If site doesn't have scan feature, show Business plan upsell instead of activation
 	if ( ! hasScanFeature ) {
 		return <WPCOMScanUpsellPage />;
