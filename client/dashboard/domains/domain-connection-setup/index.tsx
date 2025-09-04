@@ -5,12 +5,14 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { domainRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { StepSlug } from './constants';
 import {
-	connectADomainStepsDefinition,
-	connectASubdomainStepsDefinition,
-	type StepsDefinition,
-} from './page-definitions';
+	connectADomainDomainConnectionStepsMap,
+	connectASubdomainDomainConnectionStepsMap,
+	DomainConnectionStepsMap,
+	StepName,
+	// getStepName,
+	getProgressStepList,
+} from './types';
 
 export default function DomainConnectionSetup() {
 	const { domainName } = domainRoute.useParams();
@@ -23,58 +25,74 @@ export default function DomainConnectionSetup() {
 			`https://wordpress.com/v2/domains/${ domainName }/domain-connection-setup`
 		)
 	);
-	const stepsDefinition: StepsDefinition = isSubdomain( domainName )
-		? connectASubdomainStepsDefinition
-		: connectADomainStepsDefinition;
+	const stepsDefinition: DomainConnectionStepsMap = isSubdomain( domainName )
+		? connectASubdomainDomainConnectionStepsMap
+		: connectADomainDomainConnectionStepsMap;
 
 	const firstStep = isSubdomain( domainName )
-		? StepSlug.SUBDOMAIN_SUGGESTED_START
-		: StepSlug.SUGGESTED_START;
+		? StepName.SUBDOMAIN_SUGGESTED_START
+		: StepName.SUGGESTED_START;
 
-	const resolveMappingSetupStep = (
+	const resolveStepName = (
 		connectionMode: DomainConnectionSetupMode | null,
 		supportsDomainConnect: boolean,
 		domainName: string
-	): StepSlug => {
+	): StepName => {
 		if ( initialStep ) {
-			return initialStep as StepSlug;
+			return initialStep as StepName;
 		}
 		// If connectionMode is present we'll send you to the last step of the relevant flow
 		if ( connectionMode ) {
 			if ( isSubdomain( domainName ) ) {
 				return connectionMode === DomainConnectionSetupMode.ADVANCED
-					? StepSlug.SUBDOMAIN_ADVANCED_UPDATE
-					: StepSlug.SUBDOMAIN_SUGGESTED_UPDATE;
+					? StepName.SUBDOMAIN_ADVANCED_UPDATE
+					: StepName.SUBDOMAIN_SUGGESTED_UPDATE;
 			}
 			if ( connectionMode === DomainConnectionSetupMode.ADVANCED ) {
-				return StepSlug.ADVANCED_UPDATE;
+				return StepName.ADVANCED_UPDATE;
 			} else if ( connectionMode === DomainConnectionSetupMode.DC ) {
-				return StepSlug.DC_START;
+				return StepName.DC_START;
 			}
-			return StepSlug.SUGGESTED_UPDATE;
+			return StepName.SUGGESTED_UPDATE;
 		}
 		// If connectionMode is not present we'll send you to one of the start steps
 		if ( supportsDomainConnect ) {
-			return StepSlug.DC_START;
+			return StepName.DC_START;
 		}
 		return firstStep;
 	};
 
-	const resolvedPageSlug = resolveMappingSetupStep(
+	// const parsedShowErrors = showErrors === 'true' || showErrors === '1';
+	// const parsedIsFirstVisit = isFirstVisit === 'true' || isFirstVisit === '1';
+
+	const resolvedStepName = resolveStepName(
 		domainConnectionSetupInfo.connection_mode,
 		!! domainConnectionSetupInfo.domain_connect_apply_wpcom_hosting,
 		domainName
 	);
 
-	const stepDefinition = stepsDefinition[ resolvedPageSlug ];
-	const StepsComponent = stepDefinition?.component;
+	const StepsComponent = stepsDefinition[ resolvedStepName ]?.component;
+
+	if ( ! StepsComponent ) {
+		return null;
+	}
 
 	return (
 		<PageLayout size="small" header={ <PageHeader title="Domain Connection Setup" /> }>
-			<div>domainName: { domainName }</div>
-			<div>connectionMode: { domainConnectionSetupInfo.connection_mode }</div>
-			<div>resolvedPageSlug: { resolvedPageSlug }</div>
-			{ StepsComponent }
+			<div>domainName { domainName }</div>
+			<div>connectionMode { domainConnectionSetupInfo.connection_mode }</div>
+			<StepsComponent
+				domainName={ domainName }
+				stepName={ resolvedStepName }
+				mode={ domainConnectionSetupInfo.connection_mode }
+				progressStepList={ getProgressStepList(
+					domainConnectionSetupInfo.connection_mode,
+					stepsDefinition
+				) }
+				onNextStep={ () => {} }
+				setPage={ () => {} }
+			/>
+			<div>resolvedStepName { resolvedStepName }</div>
 			<div>Support link placeholder</div>
 			<div>Switch setup info link placeholder</div>
 		</PageLayout>
