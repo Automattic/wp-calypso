@@ -104,6 +104,7 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 				isVisible
 				placeholder={ __( 'Search for help', __i18n_text_domain__ ) }
 				sectionName={ sectionName }
+				useSearchControl
 			/>
 			<HelpCenterSearchResults
 				onSelect={ redirectToArticle }
