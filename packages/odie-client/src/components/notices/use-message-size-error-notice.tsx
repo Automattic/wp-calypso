@@ -8,7 +8,7 @@ export default function useMessageSizeErrorNotice( messageLength: number ) {
 
 	return isMessageTooLong
 		? {
-				icon: <Icon fill="brown" size={ 24 } icon={ error } />,
+				icon: <Icon size={ 24 } icon={ error } />,
 				message: sprintf(
 					/* translators: %(messageLength)d is the current message length and %(maxMessageLength)d is the maximum message length. */
 					__(
