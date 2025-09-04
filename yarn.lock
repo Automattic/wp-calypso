@@ -952,7 +952,6 @@ __metadata:
     react-modal: "npm:^3.16.3"
     react-router-dom: "npm:^6.23.1"
     storybook: "npm:^8.6.14"
-    swiper: "npm:^11.2.10"
     typescript: "npm:^5.8.3"
     utility-types: "npm:^3.10.0"
     webpack: "npm:^5.99.8"
@@ -35382,13 +35381,6 @@ __metadata:
   version: 10.3.1
   resolution: "swiper@npm:10.3.1"
   checksum: 1e9ad5480cbf451d99fab280553d5105eb314f381d98610771f0808cac03962d87967a190696686d62bce8e4ebcbf34962c369f9d502b34fef1582ced17f6f98
-  languageName: node
-  linkType: hard
-
-"swiper@npm:^11.2.10":
-  version: 11.2.10
-  resolution: "swiper@npm:11.2.10"
-  checksum: b7e3a7c79d92ccc62af77744edc376c9aefc771a0abd50c4adf07b5e3450b5da9ca7f84f5809e275ff65e1bc9d4500d930628e84a76fc7f2db403291c69b7fac
   languageName: node
   linkType: hard
 
