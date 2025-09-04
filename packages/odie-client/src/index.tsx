@@ -1,4 +1,3 @@
-import { isTestModeEnvironment } from '@automattic/zendesk-client';
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -33,14 +32,6 @@ export const OdieAssistant: React.FC = () => {
 				event_external_id: newID,
 			} ).then( ( interaction ) => {
 				navigate( `/odie?id=${ interaction.uuid }`, { replace: true } );
-				const isTestMode = isTestModeEnvironment();
-				const queryKey = [
-					'support-interactions',
-					'get-interaction-by-id',
-					interaction.uuid,
-					isTestMode,
-				];
-				queryClient.setQueryData( queryKey, interaction );
 			} );
 		}
 	}, [

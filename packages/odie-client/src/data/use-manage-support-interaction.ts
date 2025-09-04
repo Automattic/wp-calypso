@@ -1,5 +1,5 @@
 import { isTestModeEnvironment } from '@automattic/zendesk-client';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { handleSupportInteractionsFetch } from './handle-support-interactions-fetch';
 import type { SupportInteraction, SupportInteractionEvent } from '../types';
 
@@ -8,6 +8,7 @@ import type { SupportInteraction, SupportInteractionEvent } from '../types';
  */
 export const useManageSupportInteraction = () => {
 	const isTestMode = isTestModeEnvironment();
+	const queryClient = useQueryClient();
 	/**
 	 * Start a new support interaction.
 	 */
@@ -20,6 +21,30 @@ export const useManageSupportInteraction = () => {
 				isTestMode,
 				eventData
 			) as unknown as Promise< SupportInteraction >,
+		onSuccess: ( interaction ) => {
+			const isTestMode = isTestModeEnvironment();
+			const queryKey = [
+				'support-interactions',
+				'get-interaction-by-id',
+				interaction.uuid,
+				isTestMode,
+			];
+			// Save the interaction to the query client to avoid a new API call.
+			queryClient.setQueryData( queryKey, interaction );
+			queryClient.setQueryData(
+				[ 'support-interactions', 'get-interactions', isTestMode ],
+				( oldData: SupportInteraction[] ) => {
+					const newData = [ ...oldData ];
+					const index = newData.findIndex( ( i ) => i.uuid === interaction.uuid );
+					if ( index !== -1 ) {
+						newData[ index ] = interaction;
+					} else {
+						newData.push( interaction );
+					}
+					return newData;
+				}
+			);
+		},
 	} );
 
 	/**
@@ -44,6 +69,32 @@ export const useManageSupportInteraction = () => {
 				isTestMode,
 				eventData
 			) as unknown as Promise< SupportInteraction >,
+		onSuccess: ( interaction ) => {
+			const isTestMode = isTestModeEnvironment();
+			const queryKey = [
+				'support-interactions',
+				'get-interaction-by-id',
+				interaction.uuid,
+				isTestMode,
+			];
+			queryClient.setQueryData( queryKey, interaction );
+			queryClient.setQueryData(
+				[ 'support-interactions', 'get-interactions', isTestMode ],
+				( oldData: SupportInteraction[] ) => {
+					const newData = [ ...oldData ];
+					const index = newData.findIndex( ( i ) => i.uuid === interaction.uuid );
+					if ( index !== -1 ) {
+						newData[ index ] = interaction;
+					} else {
+						newData.push( interaction );
+					}
+					return newData;
+				}
+			);
+			queryClient.invalidateQueries( {
+				queryKey: [ 'odie-interactions' ],
+			} );
+		},
 	} );
 
 	/**
