@@ -52,6 +52,7 @@ export const useFields = ( {
 				label: __( 'Type' ),
 				enableHiding: false,
 				enableSorting: false,
+				getValue: ( { item }: { item: DomainSummary } ) => item.subtype.label ?? '',
 			},
 			// {
 			// 	id: 'owner',
