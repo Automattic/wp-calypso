@@ -21,6 +21,7 @@ import { useEffect } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { Icon, chevronDownSmall, plus } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
+import { useState } from 'react';
 import { production, staging } from '../../components/icons';
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
 import {
@@ -159,9 +160,10 @@ const EnvironmentSwitcherDropdown = ( {
 
 const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 	const queryClient = useQueryClient();
+	const [ createdStagingSiteId, setCreatedStagingSiteId ] = useState< number | null >( null );
 
 	const productionSiteId = getProductionSiteId( site );
-	const stagingSiteId = getStagingSiteId( site );
+	const stagingSiteId = getStagingSiteId( site ) || createdStagingSiteId;
 
 	const { data: productionSite } = useQuery( {
 		...siteByIdQuery( productionSiteId ?? 0 ),
@@ -196,8 +198,8 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 	} );
 
 	const { data: isStagingSiteCreating } = useQuery( {
-		...isCreatingStagingSiteQuery( stagingSiteId ?? 0 ),
-		enabled: !! stagingSiteId,
+		...isCreatingStagingSiteQuery( productionSiteId ?? 0 ),
+		enabled: !! productionSiteId,
 	} );
 	// Staging site deletion process runs via async job. We need to keep on polling for the staging site deletion before we start displaying the button to add a staging site again
 	const { data: stagingSiteExistsFromQuery } = useQuery( {
@@ -208,7 +210,13 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 
 	// Clean up deletion flag when staging site no longer exists
 	useEffect( () => {
-		if ( isStagingSiteDeleting && stagingSiteExistsFromQuery === false && stagingSiteId ) {
+		if (
+			isStagingSiteDeleting &&
+			stagingSiteExistsFromQuery === false &&
+			productionSite &&
+			! hasStagingSite( productionSite ) &&
+			stagingSiteId
+		) {
 			queryClient.removeQueries( isDeletingStagingSiteQuery( stagingSiteId ) );
 			queryClient.removeQueries( hasStagingSiteQuery( productionSiteId ?? 0 ) );
 		}
@@ -218,6 +226,7 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 		stagingSiteId,
 		productionSiteId,
 		queryClient,
+		productionSite,
 	] );
 
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
@@ -246,6 +255,9 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 
 	const handleAddStagingSite = () => {
 		mutation.mutate( undefined, {
+			onSuccess: ( data: { id: number } ) => {
+				setCreatedStagingSiteId( data.id );
+			},
 			onError: ( error: Error ) => {
 				createErrorNotice(
 					sprintf(
