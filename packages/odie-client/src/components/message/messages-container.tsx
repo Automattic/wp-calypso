@@ -1,13 +1,11 @@
-import { HelpCenterSelect } from '@automattic/data-stores';
 import { useResetSupportInteraction } from '@automattic/help-center/src/hooks/use-reset-support-interaction';
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { Spinner } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
 import clx from 'classnames';
 import { useEffect, useRef, useState } from 'react';
 import { NavigationType, useNavigationType, useSearchParams } from 'react-router-dom';
 import { getOdieInitialMessage } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
+import { useCurrentSupportInteraction } from '../../data/use-current-support-interaction';
 import {
 	useAutoScroll,
 	useCreateZendeskConversation,
@@ -41,15 +39,10 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	const messagesContainerRef = useRef< HTMLDivElement >( null );
 	const scrollParentRef = useRef< HTMLElement | null >( null );
 
-	const { alreadyHasActiveZendeskChat } = useSelect( ( select ) => {
-		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
-		const currentInteraction = helpCenterSelect.getCurrentSupportInteraction();
-		return {
-			alreadyHasActiveZendeskChat:
-				interactionHasZendeskEvent( currentInteraction ) &&
-				! interactionHasEnded( currentInteraction ),
-		};
-	}, [] );
+	const { data: currentInteraction } = useCurrentSupportInteraction();
+
+	const alreadyHasActiveZendeskChat =
+		interactionHasZendeskEvent( currentInteraction ) && ! interactionHasEnded( currentInteraction );
 
 	useZendeskMessageListener();
 	const isScrolling = useAutoScroll( messagesContainerRef, shouldEnableAutoScroll );

@@ -1,11 +1,9 @@
-import { HelpCenterSelect } from '@automattic/data-stores';
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useUpdateZendeskUserFields } from '@automattic/zendesk-client';
-import { useSelect } from '@wordpress/data';
 import Smooch from 'smooch';
 import { getOdieOnErrorTransferMessage, getOdieTransferMessage } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useManageSupportInteraction } from '../data';
+import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
 
 export const useCreateZendeskConversation = (): ( ( {
 	avoidTransfer,
@@ -28,12 +26,7 @@ export const useCreateZendeskConversation = (): ( ( {
 		trackEvent,
 		sectionName,
 	} = useOdieAssistantContext();
-	const { currentSupportInteraction } = useSelect( ( select ) => {
-		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
-		return {
-			currentSupportInteraction: store.getCurrentSupportInteraction(),
-		};
-	}, [] );
+	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const { isPending: isSubmittingZendeskUserFields, mutateAsync: submitUserFields } =
 		useUpdateZendeskUserFields();
 	const { addEventToInteraction } = useManageSupportInteraction();

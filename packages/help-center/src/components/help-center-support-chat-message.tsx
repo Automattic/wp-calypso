@@ -3,14 +3,12 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gravatar, TimeSince, WordPressLogo } from '@automattic/components';
 import SummaryButton from '@automattic/components/src/summary-button';
 import { WapuuAvatar } from '@automattic/odie-client/src/assets';
-import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { chevronRight, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { Link, useNavigate } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useGetHistoryChats } from '../hooks';
-import { HELP_CENTER_STORE } from '../stores';
 import type {
 	OdieConversation,
 	OdieMessage,
@@ -55,7 +53,6 @@ export const HelpCenterSupportChatMessage = ( {
 	const helpCenterContext = useHelpCenterContext();
 	const helpCenterContextSectionName = helpCenterContext.sectionName;
 	const { supportInteractions } = useGetHistoryChats();
-	const { setCurrentSupportInteraction } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const supportInteraction = supportInteractions.find(
 		( interaction ) => interaction.uuid === conversation.metadata?.supportInteractionId
@@ -170,7 +167,6 @@ export const HelpCenterSupportChatMessage = ( {
 				}
 				onClick={ () => {
 					trackContactButtonClicked( sectionName || helpCenterContextSectionName );
-					setCurrentSupportInteraction( supportInteraction );
 					navigate( `/odie?id=${ supportInteraction?.uuid }` );
 				} }
 			/>
@@ -182,7 +178,6 @@ export const HelpCenterSupportChatMessage = ( {
 			to={ `/odie?id=${ supportInteraction?.uuid }` }
 			onClick={ () => {
 				trackContactButtonClicked( sectionName || helpCenterContextSectionName );
-				setCurrentSupportInteraction( supportInteraction );
 			} }
 			className={ clsx( 'help-center-support-chat__conversation-container', {
 				'is-unread-message': hasUnreadMessages,
