@@ -2,8 +2,8 @@
     position: relative;
     display: flex;
     align-items: center;
-    min-height: var(--spacing-10);
-    padding: var(--spacing) var(--spacing) var(--spacing) var(--spacing-4);
+    padding: var(--spacing);
+    padding-left: var(--spacing-3);
     gap: var(--spacing-3);
     background-color: var(--color-muted);
     border-radius: var(--radius-sm);

@@ -57,23 +57,27 @@ export interface UIMessage {
 export interface UIMessageAction {
 	id: string;
 	label: string;
-	icon: React.ReactNode;
+	icon?: React.ReactNode;
 	onClick: ( message: UIMessage ) => void | Promise< void >;
 	disabled?: boolean;
 	tooltip?: string;
+	pressed?: boolean;
+	showLabel?: boolean;
 }
 
 // Internal types for message actions with conditional logic
 export interface MessageActionDefinition {
 	id: string;
 	label: string;
-	icon: ReactNode;
+	icon?: ReactNode;
 	onClick: ( message: UIMessage ) => void | Promise< void >;
 	// Complex condition function - evaluated in client
 	condition?: ( message: UIMessage ) => boolean;
 	// Static disabled state
 	disabled?: boolean;
 	tooltip?: string;
+	pressed?: boolean;
+	showLabel?: boolean;
 }
 
 export interface MessageActionsRegistration {

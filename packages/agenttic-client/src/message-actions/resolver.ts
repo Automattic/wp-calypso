@@ -36,6 +36,8 @@ export function resolveActionsForMessage(
 			onClick: action.onClick,
 			tooltip: action.tooltip,
 			disabled: action.disabled || false,
+			pressed: action.pressed,
+			showLabel: action.showLabel,
 		} ) );
 	return filteredActions;
 }

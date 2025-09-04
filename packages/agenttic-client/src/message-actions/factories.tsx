@@ -51,33 +51,42 @@ export const createFeedbackActions = (
 
 			const actions: MessageActionDefinition[] = [];
 
-			// Add thumbs up if not hidden
-			if ( feedbackState !== 'down' ) {
-				actions.push( {
-					id: 'feedback-up',
-					icon: config.icons.up,
-					label: 'Good response',
-					onClick: async () => {
+			// Always show both feedback buttons, use pressed to indicate selection
+			actions.push( {
+				id: 'feedback-up',
+				icon: config.icons.up,
+				label: 'Good response',
+				onClick: async () => {
+					// Toggle off if already selected, otherwise set to up
+					if ( feedbackState === 'up' ) {
+						delete feedbackByMessageId[ message.id ];
+					} else {
 						await handleFeedback( message.id, 'up' );
-					},
-					tooltip: 'This response was helpful',
-					disabled: feedbackState === 'up',
-				} );
-			}
+					}
+					notifyListeners();
+				},
+				tooltip: 'This response was helpful',
+				pressed: feedbackState === 'up',
+				disabled: feedbackState === 'down', // Disable if other is selected
+			} );
 
-			// Add thumbs down if not hidden
-			if ( feedbackState !== 'up' ) {
-				actions.push( {
-					id: 'feedback-down',
-					icon: config.icons.down,
-					label: 'Bad response',
-					onClick: async () => {
+			actions.push( {
+				id: 'feedback-down',
+				icon: config.icons.down,
+				label: 'Bad response',
+				onClick: async () => {
+					// Toggle off if already selected, otherwise set to down
+					if ( feedbackState === 'down' ) {
+						delete feedbackByMessageId[ message.id ];
+					} else {
 						await handleFeedback( message.id, 'down' );
-					},
-					tooltip: 'This response was not helpful',
-					disabled: feedbackState === 'down',
-				} );
-			}
+					}
+					notifyListeners();
+				},
+				tooltip: 'This response was not helpful',
+				pressed: feedbackState === 'down',
+				disabled: feedbackState === 'up', // Disable if other is selected
+			} );
 
 			return actions;
 		},

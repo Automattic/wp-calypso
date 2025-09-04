@@ -211,8 +211,8 @@ const FloatingDemo: React.FC = () => {
 			onFeedback: handleFeedback,
 			condition: ( message ) => message.role === 'agent',
 			icons: {
-				up: <ThumbsUpIcon size={ 16 } />,
-				down: <ThumbsDownIcon size={ 16 } />,
+				up: <ThumbsUpIcon />,
+				down: <ThumbsDownIcon />,
 			},
 		} );
 		const feedbackRegistration = {
@@ -230,7 +230,7 @@ const FloatingDemo: React.FC = () => {
 		const copyAction = {
 			id: 'copy',
 			label: 'Copy message',
-			icon: <CopyIcon size={ 16 } />,
+			icon: <CopyIcon />,
 			onClick: handleCopy,
 			condition: ( message: UIMessage ) => message.role === 'agent',
 			tooltip: 'Copy message content',

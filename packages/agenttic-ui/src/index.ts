@@ -24,7 +24,9 @@ export { BigSkyIcon } from './components/icons/BigSkyIcon';
 export { StopIcon } from './components/icons/StopIcon';
 export { XIcon } from './components/icons/XIcon';
 export { ArrowUpIcon } from './components/icons/ArrowUpIcon';
+export { ChevronUpIcon } from './components/icons/ChevronUpIcon';
 export { ZoomIcon } from './components/icons/ZoomIcon';
+export { ZoomIconFilled } from './components/icons/ZoomIconFilled';
 
 // Types
 export type * from './types';

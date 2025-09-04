@@ -8,6 +8,7 @@ interface ButtonProps extends React.ComponentProps< 'button' > {
 	size?: 'sm' | 'icon';
 	icon?: React.ReactNode;
 	asChild?: boolean;
+	pressed?: boolean;
 }
 
 const Button = React.forwardRef< HTMLButtonElement, ButtonProps >(
@@ -19,6 +20,7 @@ const Button = React.forwardRef< HTMLButtonElement, ButtonProps >(
 			icon,
 			children,
 			asChild = false,
+			pressed = false,
 			...props
 		},
 		ref
@@ -40,8 +42,10 @@ const Button = React.forwardRef< HTMLButtonElement, ButtonProps >(
 					styles[ variant ],
 					effectiveSize && styles[ effectiveSize ],
 					hasIcon && children ? styles.withTextAndIcon : undefined,
+					pressed ? styles.pressed : undefined,
 					className
 				) }
+				aria-pressed={ pressed }
 				{ ...props }
 			>
 				{ icon }

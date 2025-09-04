@@ -23,7 +23,7 @@ export const Default: Story = {
 export const WithIcon: Story = {
 	args: {
 		message: 'Notice with an icon',
-		icon: <StylesIcon size={ 16 } />,
+		icon: <StylesIcon />,
 	},
 };
 

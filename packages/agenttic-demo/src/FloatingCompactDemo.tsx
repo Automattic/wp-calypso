@@ -9,9 +9,10 @@ import { useAgentChat } from '@automattic/agenttic-client';
 import type { ContextProvider, UIMessage } from '@automattic/agenttic-client';
 import {
 	AgentUI,
-	CopyIcon,
 	ThumbsDownIcon,
 	ThumbsUpIcon,
+	ZoomIcon,
+	ZoomIconFilled,
 } from '@automattic/agenttic-ui';
 import {
 	getClientContext,
@@ -25,7 +26,10 @@ const FloatingCompactDemo: React.FC = () => {
 	const [ contextProvider ] = useState< ContextProvider >( () => ( {
 		getClientContext,
 	} ) );
-
+	const [ isZoomed, setIsZoomed ] = useState( false );
+	const [ feedbackState, setFeedbackState ] = useState<
+		Record< string, 'up' | 'down' >
+	>( {} );
 	const addMessageRef = useRef< ( ( message: any ) => void ) | null >( null );
 
 	const {
@@ -175,29 +179,25 @@ const FloatingCompactDemo: React.FC = () => {
 	const handleFeedback = useCallback(
 		async ( messageId: string, feedback: 'up' | 'down' ) => {
 			console.log( `Feedback for message ${ messageId }: ${ feedback }` );
+			setFeedbackState( ( prev ) => {
+				const current = prev[ messageId ];
+				if ( current === feedback ) {
+					// Toggle off if clicking the same feedback
+					const { [ messageId ]: _, ...rest } = prev;
+					return rest;
+				}
+				// Set new feedback
+				return { ...prev, [ messageId ]: feedback };
+			} );
 		},
 		[]
 	);
 
-	const handleCopy = useCallback( async ( message: UIMessage ) => {
-		const textContent = message.content
-			.filter( ( item ) => item.type === 'text' )
-			.map( ( item ) => item.text )
-			.join( '\n' );
+	const hasRegisteredExtensions = useRef( false );
 
-		try {
-			// @ts-ignore - navigator is available in browser
-			await navigator.clipboard.writeText( textContent );
-			console.log( 'Message copied to clipboard' );
-		} catch ( err ) {
-			console.error( 'Failed to copy message:', err );
-		}
-	}, [] );
-
-	const hasRegistered = useRef( false );
-
+	// Register extensions and components only once
 	useEffect( () => {
-		if ( hasRegistered.current ) {
+		if ( hasRegisteredExtensions.current ) {
 			return;
 		}
 
@@ -207,55 +207,76 @@ const FloatingCompactDemo: React.FC = () => {
 		// Register custom markdown components
 		registerMarkdownComponents( customMarkdownComponents );
 
-		const feedbackManager = createFeedbackActions( {
-			onFeedback: handleFeedback,
-			condition: ( message ) => message.role === 'agent',
-			icons: {
-				up: <ThumbsUpIcon size={ 16 } />,
-				down: <ThumbsDownIcon size={ 16 } />,
-			},
-		} );
-		const feedbackRegistration = {
-			id: 'demo-feedback',
-			actions: ( message: UIMessage ) =>
-				feedbackManager.getActionsForMessage( message ),
-		};
-		registerMessageActions( feedbackRegistration );
-
-		const handleFeedbackChange = () => {
-			registerMessageActions( { ...feedbackRegistration } );
-		};
-		feedbackManager.onChange( handleFeedbackChange );
-
-		const copyAction = {
-			id: 'copy',
-			label: 'Copy message',
-			icon: <CopyIcon size={ 16 } />,
-			onClick: handleCopy,
-			condition: ( message: UIMessage ) => message.role === 'agent',
-			tooltip: 'Copy message content',
-		};
-
-		registerMessageActions( {
-			id: 'demo-copy',
-			actions: [ copyAction ],
-		} );
-
-		hasRegistered.current = true;
-
-		return () => {
-			feedbackManager.offChange( handleFeedbackChange );
-		};
+		hasRegisteredExtensions.current = true;
 	}, [
 		registerMarkdownExtensions,
 		registerMarkdownComponents,
 		customMarkdownExtensions,
 		customMarkdownComponents,
-		registerMessageActions,
-		createFeedbackActions,
-		handleFeedback,
-		handleCopy,
 	] );
+
+	const feedbackActions = useCallback(
+		( message: UIMessage ) => {
+			if ( message.role !== 'agent' ) return [];
+
+			const currentFeedback = feedbackState[ message.id ];
+
+			return [
+				{
+					id: 'feedback-up',
+					icon: <ThumbsUpIcon />,
+					label: 'Good response',
+					onClick: async () => {
+						await handleFeedback( message.id, 'up' );
+					},
+					tooltip: 'This response was helpful',
+					pressed: currentFeedback === 'up',
+					disabled: currentFeedback === 'down',
+				},
+				{
+					id: 'feedback-down',
+					icon: <ThumbsDownIcon />,
+					label: 'Bad response',
+					onClick: async () => {
+						await handleFeedback( message.id, 'down' );
+					},
+					tooltip: 'This response was not helpful',
+					pressed: currentFeedback === 'down',
+					disabled: currentFeedback === 'up',
+				},
+			];
+		},
+		[ feedbackState, handleFeedback ]
+	);
+
+	// Register feedback actions once
+	useEffect( () => {
+		registerMessageActions( {
+			id: 'demo-feedback',
+			actions: feedbackActions,
+		} );
+	}, [ registerMessageActions, feedbackActions ] );
+
+	useEffect( () => {
+		const zoomAction = {
+			id: 'zoom-toggle',
+			label: isZoomed ? '50%' : '100%',
+			showLabel: true,
+			icon: isZoomed ? <ZoomIconFilled /> : <ZoomIcon />,
+			onClick: () => {
+				setIsZoomed( ! isZoomed );
+				console.log( 'Zoom toggled:', ! isZoomed );
+			},
+			condition: ( message: UIMessage ) => message.role === 'agent',
+			tooltip: isZoomed ? 'Zoom to 100%' : 'Zoom to 50%',
+			pressed: isZoomed,
+		};
+
+		registerMessageActions( {
+			id: 'demo-zoom',
+			actions: [ zoomAction ],
+		} );
+	}, [ isZoomed, registerMessageActions ] );
 
 	return (
 		<div

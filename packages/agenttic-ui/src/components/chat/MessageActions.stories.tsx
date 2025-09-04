@@ -78,8 +78,8 @@ export const FeedbackExample: Story = {
 					},
 					condition: ( msg: MessageType ) => msg.role === 'agent',
 					icons: {
-						up: <ThumbsUpIcon size={ 16 } />,
-						down: <ThumbsDownIcon size={ 16 } />,
+						up: <ThumbsUpIcon />,
+						down: <ThumbsDownIcon />,
 					},
 				} );
 			}
@@ -227,7 +227,7 @@ export const DisabledActions: Story = {
 				{
 					id: 'feedback-up',
 					label: 'Already liked',
-					icon: <ThumbsUpIcon size={ 16 } />,
+					icon: <ThumbsUpIcon />,
 					onClick: () => console.log( 'This should not fire' ),
 					disabled: true,
 					tooltip: 'You already liked this message',

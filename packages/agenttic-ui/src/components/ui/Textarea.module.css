@@ -5,10 +5,7 @@
     border: 0;
     background-color: transparent;
     min-height: var(--spacing-10);
-    padding-left: var(--spacing-3);
-    padding-right: var(--spacing-3);
-    padding-top: var(--spacing-2);
-    padding-bottom: var(--spacing-2);
+    padding: var(--spacing-2);
     scrollbar-width: none;
     resize: none;
 }

@@ -28,12 +28,13 @@ export interface Message {
 
 export interface MessageAction {
 	id: string;
-	icon: React.ReactNode;
+	icon?: React.ReactNode;
 	label: string;
 	onClick: ( message: Message ) => void | Promise< void >;
 	tooltip?: string;
 	disabled?: boolean;
 	pressed?: boolean;
+	showLabel?: boolean;
 }
 
 // UI package only exports UI-specific types

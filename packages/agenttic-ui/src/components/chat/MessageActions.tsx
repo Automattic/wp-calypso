@@ -29,10 +29,13 @@ export function MessageActions( { message }: MessageActionsProps ) {
 						size="sm"
 						type="button"
 						disabled={ action.disabled }
+						pressed={ action.pressed }
 						title={ action.tooltip || action.label }
 						aria-label={ action.label }
 						{ ...( action.tooltip && { title: action.tooltip } ) }
-					/>
+					>
+						{ action.showLabel ? action.label : undefined }
+					</Button>
 				);
 			} ) }
 		</div>

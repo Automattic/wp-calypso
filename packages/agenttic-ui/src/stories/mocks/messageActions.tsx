@@ -103,7 +103,7 @@ export const mockHandlers = {
 export const copyAction: MessageAction = {
 	id: 'copy',
 	label: 'Copy message',
-	icon: <CopyIcon size={ 16 } />,
+	icon: <CopyIcon />,
 	onClick: mockHandlers.onCopy,
 	tooltip: 'Copy to clipboard',
 };
@@ -224,7 +224,7 @@ export function createMessageWithFeedback(
 		actions.push( {
 			id: 'feedback-up',
 			label: 'Good response',
-			icon: <ThumbsUpIcon size={ 16 } />,
+			icon: <ThumbsUpIcon />,
 			onClick: () => mockHandlers.onFeedback( base.id, 'up' ),
 			tooltip: 'This response was helpful',
 			disabled: feedbackState === 'up',
@@ -235,7 +235,7 @@ export function createMessageWithFeedback(
 		actions.push( {
 			id: 'feedback-down',
 			label: 'Bad response',
-			icon: <ThumbsDownIcon size={ 16 } />,
+			icon: <ThumbsDownIcon />,
 			onClick: () => mockHandlers.onFeedback( base.id, 'down' ),
 			tooltip: 'This response was not helpful',
 			disabled: feedbackState === 'down',

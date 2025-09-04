@@ -1,8 +1,8 @@
 .container {
 	display: flex;
-	gap: var(--spacing-1);
 	align-items: center;
     margin-top: var(--spacing-2);
+    gap: var(--spacing-1);
 }
 
 .container button[aria-hidden="true"] {

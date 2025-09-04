@@ -1,6 +1,6 @@
 import type { BaseIconProps } from './types';
 
-export function ZoomIcon( { className, size = 24 }: BaseIconProps ) {
+export function ZoomIconFilled( { className, size = 24 }: BaseIconProps ) {
 	return (
 		<svg
 			width={ size }
@@ -10,6 +10,10 @@ export function ZoomIcon( { className, size = 24 }: BaseIconProps ) {
 			xmlns="http://www.w3.org/2000/svg"
 			className={ className }
 		>
+			<path
+				d="M11.2222 14.3333C12.9404 14.3333 14.3333 12.9404 14.3333 11.2222C14.3333 9.50401 12.9404 8.11111 11.2222 8.11111C9.50401 8.11111 8.11111 9.50401 8.11111 11.2222C8.11111 12.9404 9.50401 14.3333 11.2222 14.3333Z"
+				fill="currentColor"
+			/>
 			<path
 				fillRule="evenodd"
 				clipRule="evenodd"
