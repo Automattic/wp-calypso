@@ -27,7 +27,7 @@ export const getPriceRuleForSuggestion = ( {
 		return DomainPriceRule.ONE_TIME_PRICE;
 	}
 
-	if ( suggestion?.is_premium ) {
+	if ( suggestion.is_premium ) {
 		return DomainPriceRule.PRICE;
 	}
 

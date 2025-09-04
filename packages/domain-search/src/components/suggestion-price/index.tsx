@@ -33,10 +33,6 @@ export const DomainSuggestionPrice = ( { domainName }: DomainSuggestionPriceProp
 		return <DomainSuggestionPriceComponent price={ priceSource.cost } />;
 	}
 
-	if ( suggestion.price_rule === DomainPriceRule.FREE_DOMAIN ) {
-		return <DomainSuggestionPriceComponent price={ __( 'Free' ) } />;
-	}
-
 	if ( suggestion.price_rule === DomainPriceRule.DOMAIN_MOVE_PRICE ) {
 		return <DomainSuggestionPriceComponent price={ __( 'Move your existing domain' ) } />;
 	}
