@@ -1,13 +1,14 @@
 import { isAutomatticianQuery } from '@automattic/api-queries';
 import { Card } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
-import { ToggleControl, __experimentalVStack as VStack } from '@wordpress/components';
+import { ToggleControl, __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import { connect, useDispatch as useReduxDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -157,12 +158,6 @@ function McpComponent( { path, userSettings, isUpdating } ) {
 				<Card className="mcp__settings">
 					<form onSubmit={ handleSubmit }>
 						<FormFieldset>
-							<p>
-								{ translate(
-									'MCP (Model Context Protocol) enables AI assistants to securely access and interact with your WordPress.com data. ' +
-										'These settings control which specific capabilities are available to AI tools that use MCP.'
-								) }
-							</p>
 							{ hasAbilities ? (
 								<>
 									<div className="mcp__master-toggle">
@@ -172,6 +167,27 @@ function McpComponent( { path, userSettings, isUpdating } ) {
 											label={ translate( 'Allow MCP access' ) }
 										/>
 									</div>
+
+									{ anyAbilitiesEnabled && (
+										<div className="mcp__setup-section">
+											<h3 className="mcp__setup-section-title">
+												{ translate( 'MCP Client Setup' ) }
+											</h3>
+											<p className="mcp__setup-section-description">
+												{ translate(
+													'Now that MCP is enabled, you can configure your MCP client to connect to your account.'
+												) }
+											</p>
+											<Button
+												variant="secondary"
+												href="/me/mcp-setup"
+												className="mcp__setup-button"
+											>
+												{ translate( 'Configure MCP Client →' ) }
+											</Button>
+										</div>
+									) }
+
 									<VStack spacing={ 8 }>
 										{ Object.entries( groupedByType ).map( ( [ type, typeCategories ] ) => (
 											<div key={ type } className="mcp__type-section">
@@ -232,7 +248,18 @@ function McpComponent( { path, userSettings, isUpdating } ) {
 		<Main wideLayout className="mcp">
 			<PageViewTracker path={ path } title="MCP Account Settings" />
 			<DocumentHead title={ translate( 'Model Context Protocol (MCP) Account Settings' ) } />
-			<NavigationHeader navigationItems={ [] } title={ translate( 'MCP Account Settings' ) } />
+			<NavigationHeader
+				navigationItems={ [] }
+				title={ translate( 'MCP Account Settings' ) }
+				subtitle={ translate(
+					'MCP (Model Context Protocol) enables AI assistants to securely access and interact with your WordPress.com data. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+					{
+						components: {
+							learnMoreLink: <InlineSupportLink supportContext="mcp" showIcon={ false } />,
+						},
+					}
+				) }
+			/>
 			{ renderContent() }
 		</Main>
 	);

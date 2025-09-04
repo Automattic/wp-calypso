@@ -56,7 +56,7 @@
 		color: var(--color-neutral-50);
 		font-size: 14px;
 		line-height: 1.4;
-		padding-left: 40px;
+		padding-inline-start: 40px;
 	}
 
 	&__master-toggle {
@@ -74,13 +74,255 @@
 		color: var(--color-neutral-50);
 		font-size: 14px;
 		line-height: 1.4;
-		padding-left: 40px;
+		padding-inline-start: 40px;
+	}
+
+	&__setup-section {
+		margin-bottom: 32px;
+		padding: 24px;
+		border-radius: 8px;
+		border: 1px solid var(--color-neutral-10);
+		background-color: var(--color-neutral-0);
+		text-align: center;
+
+		&-title {
+			margin: 0 0 12px 0;
+			font-size: 16px;
+			font-weight: 600;
+			color: var(--color-neutral-70);
+		}
+
+		&-description {
+			margin: 0 0 20px 0;
+			color: var(--color-neutral-50);
+			font-size: 14px;
+			line-height: 1.5;
+		}
+	}
+
+	&__setup-button {
+		min-width: 200px;
 	}
 
 	&__settings {
 		.components-toggle-control {
 			margin-bottom: 0;
 			font-weight: 600;
+		}
+	}
+
+	&__learn-more {
+		margin-bottom: 24px;
+		text-align: center;
+	}
+}
+
+// MCP Setup Page Styles
+.mcp-setup {
+	&__intro {
+		margin-bottom: 32px;
+		padding: 20px;
+		background: var(--color-surface);
+		border-radius: 8px;
+		border: 1px solid var(--color-border-subtle);
+
+		p {
+			margin: 0 0 12px 0;
+			color: var(--color-text);
+			line-height: 1.6;
+			font-size: 14px;
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
+
+		ul {
+			margin: 0;
+			padding-inline-start: 20px;
+		}
+
+		li {
+			margin-bottom: 12px;
+			color: var(--color-text);
+			line-height: 1.6;
+			font-size: 14px;
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
+	}
+
+	&__client-selection {
+		margin-bottom: 32px;
+
+		&-help {
+			margin: 0 0 12px 0;
+			color: var(--color-neutral-50);
+			font-size: 14px;
+			line-height: 1.5;
+			font-style: italic;
+		}
+
+		.components-base-control__label {
+			font-weight: 600;
+			font-size: 14px;
+			color: var(--color-neutral-70);
+			margin-bottom: 8px;
+		}
+
+		.components-base-control__help {
+			margin-top: 8px;
+			font-size: 13px;
+			color: var(--color-neutral-50);
+		}
+
+		.components-select-control__input {
+			min-height: 36px;
+		}
+	}
+
+	&__config-section {
+		margin-bottom: 32px;
+		padding: 24px;
+		border-radius: 8px;
+		border: 1px solid var(--color-neutral-10);
+		background-color: var(--color-neutral-0);
+	}
+
+	&__config-title {
+		margin: 0 0 16px 0;
+		font-size: 18px;
+		font-weight: 600;
+		color: var(--color-text);
+	}
+
+	&__config-textarea-wrapper {
+		position: relative;
+	}
+
+	&__config-header {
+		position: absolute;
+		top: 15px;
+		inset-inline-end: 15px;
+		z-index: 10;
+	}
+
+	&__copy-button {
+		.components-button__icon {
+			width: 16px;
+			height: 16px;
+		}
+
+		&:hover {
+			background-color: var(--color-neutral-10);
+		}
+
+		&:focus {
+			box-shadow: 0 0 0 2px var(--color-primary);
+		}
+	}
+
+	&__config-textarea {
+		.components-textarea-control__input {
+			font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+			font-size: 13px;
+			line-height: 1.4;
+			background-color: var(--color-neutral-0);
+			border: 1px solid var(--color-neutral-10);
+			border-radius: 4px;
+			padding: 12px;
+			min-height: 260px;
+			resize: vertical;
+			cursor: text;
+		}
+
+		.components-base-control__help {
+			margin-top: 8px;
+			font-size: 13px;
+			color: var(--color-neutral-50);
+		}
+	}
+
+	&__documentation-link {
+		margin-top: 12px;
+		text-align: center;
+
+		.mcp-setup__docs-link {
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+			color: var(--color-primary);
+			text-decoration: none;
+			font-size: 14px;
+			font-weight: 500;
+
+			&:hover {
+				color: var(--color-primary-dark);
+				text-decoration: underline;
+			}
+
+			&:focus {
+				outline: 2px solid var(--color-primary);
+				outline-offset: 2px;
+				border-radius: 4px;
+			}
+		}
+	}
+
+	&__navigation {
+		text-align: center;
+		padding-top: 24px;
+		border-top: 1px solid var(--color-neutral-10);
+	}
+
+	&__config-explanation {
+		margin-top: 24px;
+		padding: 20px;
+		background: var(--color-surface);
+		border-radius: 8px;
+		border: 1px solid var(--color-border-subtle);
+
+		ul {
+			margin: 0;
+			padding-inline-start: 20px;
+		}
+
+		li {
+			margin-bottom: 12px;
+			color: var(--color-text);
+			line-height: 1.6;
+			font-size: 14px;
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+
+			code {
+				background: var(--color-neutral-0);
+				padding: 2px 6px;
+				border-radius: 4px;
+				font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+				font-size: 13px;
+				border: 1px solid var(--color-neutral-10);
+			}
+		}
+	}
+
+	&__no-abilities {
+		text-align: center;
+		padding: 48px 24px;
+
+		p {
+			margin: 0 0 16px 0;
+			color: var(--color-neutral-50);
+			font-size: 14px;
+			line-height: 1.5;
+
+			&:last-of-type {
+				margin-bottom: 24px;
+			}
 		}
 	}
 }

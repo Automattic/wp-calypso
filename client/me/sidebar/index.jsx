@@ -44,7 +44,7 @@ import 'calypso/my-sites/sidebar/style.scss'; // Copy styles from the My Sites s
 const McpIcon = () => (
 	<svg
 		width="24"
-		height="24"
+		height="20"
 		viewBox="0 0 24 24"
 		class="sidebar__menu-icon"
 		fill="currentColor"
