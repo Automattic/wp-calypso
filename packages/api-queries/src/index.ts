@@ -19,6 +19,7 @@ export * from './me-payment-methods';
 export * from './me-preferences';
 export * from './me-profile';
 export * from './me-purchases';
+export * from './notification-device';
 export * from './p2';
 export * from './performance';
 export * from './purchase';
