@@ -1,4 +1,4 @@
-import { getSiteSpecUrl, getSiteSpecCssUrl } from './utils';
+import { getSiteSpecUrl } from './utils';
 
 let siteSpecScriptLoaded = false;
 
@@ -32,7 +32,7 @@ export function loadSiteSpecScript() {
 
 	return new Promise( ( resolve, reject ) => {
 		// Load CSS first using configured CSS URL
-		const cssUrl = getSiteSpecCssUrl();
+		const cssUrl = getSiteSpecUrl( 'css_url' );
 		if ( ! cssUrl ) {
 			loadScript();
 			return;
@@ -86,7 +86,7 @@ export function loadSiteSpecScript() {
  * Load SiteSpec CSS separately (useful for testing or manual loading)
  */
 export function loadSiteSpecCSS() {
-	const cssUrl = getSiteSpecCssUrl();
+	const cssUrl = getSiteSpecUrl( 'css_url' );
 	if ( ! cssUrl ) {
 		return Promise.reject( new Error( 'SiteSpec CSS URL not configured' ) );
 	}

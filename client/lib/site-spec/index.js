@@ -1,4 +1,4 @@
-export { isSiteSpecEnabled, getSiteSpecUrl, getSiteSpecCssUrl, getSiteSpecConfig } from './utils';
+export { isSiteSpecEnabled, getSiteSpecUrl, getSiteSpecConfig } from './utils';
 export {
 	loadSiteSpecScript,
 	loadSiteSpecCSS,

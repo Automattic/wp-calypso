@@ -113,9 +113,9 @@ const url = getSiteSpecUrl();
 ### Get CSS URL
 
 ```javascript
-import { getSiteSpecCssUrl } from 'calypso/lib/site-spec';
+import { getSiteSpecUrl } from 'calypso/lib/site-spec';
 
-const cssUrl = getSiteSpecCssUrl();
+const cssUrl = getSiteSpecUrl( 'css_url' );
 // Returns the configured CSS URL
 ```
 
@@ -125,13 +125,12 @@ const cssUrl = getSiteSpecCssUrl();
 
 Returns `true` if the `site-spec` feature flag is enabled.
 
-### `getSiteSpecUrl()`
+### `getSiteSpecUrl( urlKey = 'url' )`
 
-Returns the configured script URL, or `null` if not configured.
+Returns the configured URL for the specified key, or `null` if not configured.
 
-### `getSiteSpecCssUrl()`
-
-Returns the configured CSS URL, or `null` if not configured.
+- `urlKey`: The configuration key to retrieve ('url' for script, 'css_url' for CSS)
+- Returns: The configured URL string or `null`
 
 ### `getSiteSpecConfig()`
 
