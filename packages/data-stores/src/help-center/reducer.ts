@@ -2,7 +2,6 @@ import { combineReducers } from '@wordpress/data';
 import { SiteDetails } from '../site';
 import type { HelpCenterAction } from './actions';
 import type { HelpCenterOptions } from './types';
-import type { SupportInteraction } from '@automattic/odie-client/src/types';
 import type { Location } from 'history';
 import type { Reducer } from 'redux';
 
@@ -51,16 +50,6 @@ const showMessagingWidget: Reducer< boolean | undefined, HelpCenterAction > = ( 
 	switch ( action.type ) {
 		case 'HELP_CENTER_SET_SHOW_MESSAGING_WIDGET':
 			return action.show;
-	}
-	return state;
-};
-
-const currentSupportInteraction: Reducer< SupportInteraction | undefined, HelpCenterAction > = (
-	state,
-	action
-) => {
-	if ( action.type === 'HELP_CENTER_SET_CURRENT_SUPPORT_INTERACTION' ) {
-		return action.supportInteraction;
 	}
 	return state;
 };
@@ -198,7 +187,6 @@ const helpCenterOptions: Reducer< HelpCenterOptions, HelpCenterAction > = (
 };
 
 const reducer = combineReducers( {
-	currentSupportInteraction,
 	showHelpCenter,
 	showMessagingLauncher,
 	showMessagingWidget,
