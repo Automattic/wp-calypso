@@ -41,13 +41,6 @@ export const siteBackupDownloadInitiateMutation = ( siteId: number ) =>
 		},
 	} );
 
-/**
- * Fetch the status of a filtered backup download preparation.
- * @param siteId - The ID of the site to fetch the status for.
- * @param buildKey - The build key to fetch the status for.
- * @param dataType - The data type to fetch the status for.
- * @returns A promise that resolves to the download status.
- */
 export const siteBackupFilteredDownloadStatusQuery = (
 	siteId: number,
 	buildKey: string,
@@ -58,10 +51,6 @@ export const siteBackupFilteredDownloadStatusQuery = (
 		queryFn: () => getBackupDownloadStatus( siteId, buildKey, dataType ),
 	} );
 
-/**
- * Prepare a filtered backup download.
- * @returns A promise that resolves to the prepare download response.
- */
 export const siteBackupFilteredDownloadPrepareMutation = () =>
 	mutationOptions( {
 		mutationFn: ( {
