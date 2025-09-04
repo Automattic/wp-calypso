@@ -46,7 +46,7 @@ const McpIcon = ( { style } ) => (
 		width="24"
 		height="24"
 		viewBox="0 0 24 24"
-		class="sidebar__menu-icon"
+		className="sidebar__menu-icon"
 		fill="currentColor"
 		aria-hidden="true"
 		focusable="false"

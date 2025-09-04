@@ -1,13 +1,13 @@
 import { isAutomatticianQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import {
-	ToggleControl,
-	__experimentalVStack as VStack,
 	Button,
+	__experimentalVStack as VStack,
+	__experimentalText as Text,
 	Card,
 	CardBody,
 	CardHeader,
-	__experimentalText as Text,
+	ToggleControl,
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
@@ -22,7 +22,6 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import { saveUserSettings } from 'calypso/state/user-settings/actions';
 import { isUpdatingUserSettings } from 'calypso/state/user-settings/selectors';
-import './style.scss';
 
 function McpComponent( { path, userSettings, isUpdating } ) {
 	const translate = useTranslate();
@@ -212,11 +211,7 @@ function McpComponent( { path, userSettings, isUpdating } ) {
 											{ Object.entries( typeCategories ).map(
 												( [ category, categoryAbilities ] ) => (
 													<VStack key={ category } spacing={ 4 }>
-														<Text
-															as="h3"
-															variant="title.small"
-															style={ { textTransform: 'capitalize' } }
-														>
+														<Text as="h3" style={ { textTransform: 'capitalize' } }>
 															{ category }
 														</Text>
 														<VStack spacing={ 4 }>

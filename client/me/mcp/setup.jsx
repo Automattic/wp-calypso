@@ -228,9 +228,7 @@ function McpSetupComponent( { path, userSettings } ) {
 							/>
 
 							<VStack spacing={ 4 }>
-								<Text as="h3" variant="title.small">
-									{ translate( 'MCP Server Configuration' ) }
-								</Text>
+								<Text as="h3">{ translate( 'MCP Server Configuration' ) }</Text>
 
 								<VStack spacing={ 3 }>
 									<div
