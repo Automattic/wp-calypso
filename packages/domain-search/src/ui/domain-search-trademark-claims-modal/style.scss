@@ -20,6 +20,10 @@
 	flex-direction: column;
 	gap: $grid-unit-20;
 	font-size: $font-size-large;
+
+	p {
+		margin-bottom: 0;
+	}
 }
 
 .domain-search-trademark-claims-modal__content-claim-item {

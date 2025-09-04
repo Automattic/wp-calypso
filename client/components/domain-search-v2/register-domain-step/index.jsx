@@ -72,7 +72,6 @@ import {
 	isMissingVendor,
 	markFeaturedSuggestions,
 } from 'calypso/components/domains/register-domain-step/utility';
-import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-notice';
 import { getDomainsInCart, hasDomainInCart } from 'calypso/lib/cart-values/cart-items';
 import {
 	checkDomainAvailability,
@@ -620,12 +619,6 @@ class RegisterDomainStep extends Component {
 	render() {
 		const { onContinue, isDomainAndPlanPackageFlow, translate } = this.props;
 
-		const { trademarkClaimsNoticeInfo } = this.state;
-
-		if ( trademarkClaimsNoticeInfo ) {
-			return this.renderTrademarkClaimsNotice();
-		}
-
 		const notices = this.renderGeneralNotices();
 
 		const showFreeDomainPromo =
@@ -869,25 +862,6 @@ class RegisterDomainStep extends Component {
 		this.props.onAddDomain( this.state.selectedSuggestion, this.state.selectedSuggestionPosition );
 		this.clearTrademarkClaimState();
 	};
-
-	renderTrademarkClaimsNotice() {
-		const { isSignupStep } = this.props;
-		const { selectedSuggestion, trademarkClaimsNoticeInfo, isLoading } = this.state;
-		const domain = get( selectedSuggestion, 'domain_name' );
-
-		return (
-			<TrademarkClaimsNotice
-				domain={ domain }
-				isLoading={ isLoading }
-				isSignupStep={ isSignupStep }
-				onAccept={ this.acceptTrademarkClaim }
-				onGoBack={ this.clearTrademarkClaimState }
-				onReject={ this.clearTrademarkClaimState }
-				suggestion={ selectedSuggestion }
-				trademarkClaimsNoticeInfo={ trademarkClaimsNoticeInfo }
-			/>
-		);
-	}
 
 	renderFilterResetNotice() {
 		const { exactSldMatchesOnly = false, tlds = [] } = this.state.lastFilters;
@@ -1235,9 +1209,14 @@ class RegisterDomainStep extends Component {
 					const isAvailable = domainAvailability.AVAILABLE === status;
 					const isAvailableSupportedPremiumDomain =
 						domainAvailability.AVAILABLE_PREMIUM === status && result?.is_supported_premium_domain;
+
+					const trademarkClaimsNoticeInfo = get( result, 'trademark_claims_notice_info', null );
+
 					resolve( {
 						status: ! isAvailable && ! isAvailableSupportedPremiumDomain ? status : null,
-						trademarkClaimsNoticeInfo: get( result, 'trademark_claims_notice_info', null ),
+						trademarkClaimsNoticeInfo: trademarkClaimsNoticeInfo
+							? { domain, trademarkClaimsNoticeInfo }
+							: null,
 					} );
 				}
 			);
@@ -1872,6 +1851,9 @@ class RegisterDomainStep extends Component {
 				temporaryCart={ this.props.temporaryCart }
 				domainRemovalQueue={ this.props.domainRemovalQueue }
 				flowName={ this.props.flowName }
+				trademarkClaimsNoticeInfo={ this.state.trademarkClaimsNoticeInfo }
+				onAcceptTrademarkClaim={ this.acceptTrademarkClaim }
+				onRejectTrademarkClaim={ this.clearTrademarkClaimState }
 			/>
 		);
 	}
