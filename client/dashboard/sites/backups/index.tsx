@@ -2,10 +2,14 @@ import { HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet } from '@tanstack/react-router';
-import { __experimentalGrid as Grid, __experimentalText as Text } from '@wordpress/components';
+import {
+	__experimentalGrid as Grid,
+	__experimentalText as Text,
+	Button,
+} from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
-import { chartBar } from '@wordpress/icons';
+import { chartBar, arrowLeft } from '@wordpress/icons';
 import { useState } from 'react';
 import { siteRoute } from '../../app/router/sites';
 import { Callout } from '../../components/callout';
@@ -63,10 +67,22 @@ export function BackupsListPage() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const [ selectedBackup, setSelectedBackup ] = useState< ActivityLogEntry | null >( null );
+	const [ showDetails, setShowDetails ] = useState( false );
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	const columns = isSmallViewport ? 1 : 2;
 
 	const hasBackups = hasHostingFeature( site, HostingFeatures.BACKUPS );
+
+	const handleBackupSelection = ( backup: ActivityLogEntry | null ) => {
+		setSelectedBackup( backup );
+		if ( isSmallViewport && backup ) {
+			setShowDetails( true );
+		}
+	};
+
+	const handleBackToList = () => {
+		setShowDetails( false );
+	};
 
 	return (
 		<PageLayout
@@ -79,14 +95,29 @@ export function BackupsListPage() {
 			notices={ <BackupNotices site={ site } /> }
 		>
 			{ hasBackups && (
-				<Grid className="dashboard-backups__list-grid" columns={ columns }>
-					<BackupsList
-						site={ site }
-						selectedBackup={ selectedBackup }
-						setSelectedBackup={ setSelectedBackup }
-					/>
-					{ selectedBackup && <BackupDetails backup={ selectedBackup } site={ site } /> }
-				</Grid>
+				<>
+					{ isSmallViewport && showDetails && selectedBackup && (
+						<>
+							<Button variant="tertiary" icon={ arrowLeft } onClick={ handleBackToList }>
+								{ __( 'All backups' ) }
+							</Button>
+							<BackupDetails backup={ selectedBackup } site={ site } />
+						</>
+					) }
+					{ ! isSmallViewport || ! showDetails ? (
+						<Grid columns={ columns } templateColumns={ ! isSmallViewport ? '40% 1fr' : undefined }>
+							<BackupsList
+								site={ site }
+								selectedBackup={ selectedBackup }
+								setSelectedBackup={ handleBackupSelection }
+								autoSelect={ ! isSmallViewport }
+							/>
+							{ ! isSmallViewport && selectedBackup && (
+								<BackupDetails backup={ selectedBackup } site={ site } />
+							) }
+						</Grid>
+					) : null }
+				</>
 			) }
 		</PageLayout>
 	);
