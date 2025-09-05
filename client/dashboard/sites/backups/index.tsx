@@ -8,8 +8,8 @@ import {
 	Button,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { __ } from '@wordpress/i18n';
-import { chartBar, arrowLeft } from '@wordpress/icons';
+import { __, isRTL } from '@wordpress/i18n';
+import { chartBar, arrowLeft, chevronLeft, chevronRight } from '@wordpress/icons';
 import { useState } from 'react';
 import { siteRoute } from '../../app/router/sites';
 import { Callout } from '../../components/callout';
@@ -80,15 +80,24 @@ export function BackupsListPage() {
 		}
 	};
 
-	const handleBackToList = () => {
-		setShowDetails( false );
-	};
+	const backButton = (
+		<Button
+			className="dashboard-page-header__back-button"
+			icon={ isRTL() ? chevronRight : chevronLeft }
+			onClick={ () => {
+				setShowDetails( false );
+			} }
+		>
+			{ __( 'All backups' ) }
+		</Button>
+	);
 
 	return (
 		<PageLayout
 			header={
 				<PageHeader
 					title={ __( 'Backups' ) }
+					prefix={ isSmallViewport && showDetails ? backButton : undefined }
 					actions={ hasBackups && <BackupNowButton site={ site } /> }
 				/>
 			}
@@ -97,12 +106,7 @@ export function BackupsListPage() {
 			{ hasBackups && (
 				<>
 					{ isSmallViewport && showDetails && selectedBackup && (
-						<>
-							<Button variant="tertiary" icon={ arrowLeft } onClick={ handleBackToList }>
-								{ __( 'All backups' ) }
-							</Button>
-							<BackupDetails backup={ selectedBackup } site={ site } />
-						</>
+						<BackupDetails backup={ selectedBackup } site={ site } />
 					) }
 					{ ! isSmallViewport || ! showDetails ? (
 						<Grid columns={ columns } templateColumns={ ! isSmallViewport ? '40% 1fr' : undefined }>
