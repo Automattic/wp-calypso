@@ -1,4 +1,5 @@
 import {
+	availableTldsQuery,
 	domainSuggestionsQuery,
 	freeSuggestionQuery,
 	domainAvailabilityQuery,
@@ -72,7 +73,11 @@ export interface DomainSearchContextType
 	filter: FilterState;
 	setFilter: ( filter: FilterState ) => void;
 	queries: {
-		domainSuggestions: ( query: string ) => ReturnType< typeof domainSuggestionsQuery >;
+		availableTlds: ( query?: string, vendor?: string ) => ReturnType< typeof availableTldsQuery >;
+		domainSuggestions: (
+			query: string,
+			params?: Partial< typeof domainSuggestionsQuery >
+		) => ReturnType< typeof domainSuggestionsQuery >;
 		domainAvailability: ( domainName: string ) => ReturnType< typeof domainAvailabilityQuery >;
 		freeSuggestion: ( query: string ) => ReturnType< typeof freeSuggestionQuery >;
 	};

@@ -2,10 +2,13 @@ import { useQuery } from '@tanstack/react-query';
 import { useDomainSearch } from '../page/context';
 
 export const useSuggestion = ( domainName: string ) => {
-	const { query, queries } = useDomainSearch();
+	const { query, queries, filter } = useDomainSearch();
 
 	const { data: suggestion } = useQuery( {
-		...queries.domainSuggestions( query ),
+		...queries.domainSuggestions( query, {
+			tlds: filter.tlds,
+			exact_sld_matches_only: filter.exactSldMatchesOnly,
+		} ),
 		select: ( data ) => {
 			const suggestion = data.find( ( suggestion ) => suggestion.domain_name === domainName );
 

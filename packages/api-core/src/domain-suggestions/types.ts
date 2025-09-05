@@ -10,6 +10,11 @@ export type DomainSuggestionQueryVendor =
 
 export interface DomainSuggestionQuery {
 	/**
+	 * True to only provide exact domain name match suggestions
+	 */
+	exact_sld_matches_only?: boolean;
+
+	/**
 	 * True to include .blog subdomain suggestions
 	 * @example
 	 * example.photo.blog

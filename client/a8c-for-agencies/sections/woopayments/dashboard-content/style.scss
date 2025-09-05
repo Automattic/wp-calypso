@@ -85,3 +85,54 @@
 		margin: 0;
 	}
 }
+
+.woopayments-status-column {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	position: relative;
+
+	.woopayments-status-column__info-icon {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+		color: var(--color-neutral-60);
+		transition: color 0.2s ease;
+
+		&:hover {
+			color: var(--color-neutral-80);
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--color-primary);
+			outline-offset: 2px;
+			border-radius: 2px;
+		}
+	}
+}
+
+.woopayments-status-popover {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+
+	.woopayments-status-popover__text {
+		@include body-medium;
+		margin: 0;
+		color: var(--color-text-black);
+		line-height: 1.4;
+	}
+
+	.woopayments-status-popover__link {
+		@include body-medium;
+		display: inline-flex;
+		justify-content: left;
+		gap: 4px;
+		color: var(--color-primary);
+
+		&:hover {
+			color: var(--color-primary-dark);
+		}
+	}
+}
