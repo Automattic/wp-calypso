@@ -106,17 +106,19 @@ export const WooPaymentsStatusColumn = ( {
 					'This WooPayments site is not eligible for commission since it was connected after the incentive expiration date.'
 				) }
 			</p>
-			<a
-				href={ localizeUrl(
+			<Button
+					variant="link"
+					className="woopayments-status-popover__link"
+					href={ localizeUrl(
 					'https://agencieshelp.automattic.com/knowledge-base/automattic-for-agencies-earnings/'
-				) }
-				className="woopayments-status-popover__link"
-				target="_blank"
-				rel="noopener noreferrer"
-			>
-				{ translate( 'Learn more about the incentive' ) }
-				<Gridicon icon="external" size={ 16 } />
-			</a>
+				    ) }
+					target="_blank"
+				>
+					<>
+						{ translate( 'Learn more about the incentive' ) }
+						<Icon icon={ external } size={ 18 } />
+					</>
+				</Button>
 		</div>
 	);
 
