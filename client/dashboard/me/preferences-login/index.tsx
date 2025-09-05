@@ -1,5 +1,5 @@
-import { sitesQuery, userPreferenceMutation, userPreferenceQuery } from '@automattic/api-queries';
-import { useQuery, useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import { sitesQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import {
 	Card,
 	CardBody,
@@ -9,26 +9,20 @@ import {
 	__experimentalText as Text,
 	CustomSelectControl,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataForm, Field, Option } from '@wordpress/dataviews';
 import { useState, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { getSiteDisplayName } from '../../utils/site-name';
-import type { LandingPage, Site } from '@automattic/api-core';
+import { useLoginPreferences, useUpdateLoginPreferences, type LoginPreferencesData } from './query';
+import type { Site } from '@automattic/api-core';
 
-interface LoginPreferencesFormData {
-	primarySiteId?: string;
-	defaultLandingPage: LandingPage;
-}
+type LoginPreferencesFormData = LoginPreferencesData;
 
 type SiteOption = Option< string >;
 
 export default function PreferencesLogin() {
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-
-	// Fetch current login preferences
-	const { data: loginPrefs } = useSuspenseQuery( userPreferenceQuery( 'login-preferences' ) );
+	// Fetch login preferences using combined hook
+	const { data: loginPrefs, isLoading: isLoadingPrefs } = useLoginPreferences();
 
 	// Fetch user's sites
 	const { data: sites = [] } = useQuery(
@@ -59,8 +53,8 @@ export default function PreferencesLogin() {
 		}
 	}, [ formData.primarySiteId, sites ] );
 
-	// Update preferences mutation
-	const updatePreferences = useMutation( userPreferenceMutation( 'login-preferences' ) );
+	// Update preferences using combined hook
+	const updatePreferences = useUpdateLoginPreferences();
 
 	// Check if form has been modified
 	const isDirty = Boolean(
@@ -69,7 +63,7 @@ export default function PreferencesLogin() {
 				loginPrefs.defaultLandingPage !== formData.defaultLandingPage )
 	);
 
-	const isBusy = updatePreferences.isPending;
+	const isBusy = updatePreferences.isPending || isLoadingPrefs;
 
 	// Prepare site options for DataForm
 	const siteOptions: SiteOption[] = sites.map( ( site: Site ) => ( {
@@ -135,19 +129,7 @@ export default function PreferencesLogin() {
 
 	const handleSubmit = async ( e: React.FormEvent ) => {
 		e.preventDefault();
-		try {
-			await updatePreferences.mutateAsync( {
-				...loginPrefs,
-				primarySiteId: formData.primarySiteId,
-				defaultLandingPage: formData.defaultLandingPage,
-			} );
-
-			createSuccessNotice( __( 'Login preferences saved successfully.' ), { type: 'snackbar' } );
-		} catch ( error ) {
-			createErrorNotice( __( 'Failed to save login preferences. Please try again.' ), {
-				type: 'snackbar',
-			} );
-		}
+		await updatePreferences.mutateAsync( formData );
 	};
 
 	return (
