@@ -32,6 +32,7 @@ export * from './me-sites';
 export * from './me-sites-plugins';
 export * from './me-ssh';
 export * from './me-tax-details';
+export * from './me-two-step';
 export * from './meta-sms-country-codes';
 export * from './p2';
 export * from './purchase';
