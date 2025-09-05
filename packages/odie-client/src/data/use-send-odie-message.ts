@@ -154,20 +154,35 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 			const chatIdSegment = odieId ? `/${ odieId }` : '';
 			const path = window.location.pathname + window.location.search;
 			const request = canAccessWpcomApis()
-				? wpcomRequest< ReturnedChat >( {
-						method: 'POST',
-						path: `/odie/chat/${ botNameSlug }${ chatIdSegment }`,
-						apiNamespace: 'wpcom/v2',
-						body: {
-							message: message.content,
-							...( version && { version } ),
-							context: { selectedSiteId, path },
-						},
+				? new Promise( ( resolve, reject ) => {
+						// Elaborate logic to support aborting requests.
+						const callback = function ( error: unknown, response: unknown ) {
+							if ( error ) {
+								reject( error );
+							}
+							resolve( response as ReturnedChat );
+						};
+						const request = wpcomRequest(
+							{
+								method: 'POST',
+								path: `/odie/chat/${ botNameSlug }${ chatIdSegment }`,
+								apiNamespace: 'wpcom/v2',
+								body: {
+									message: message.content,
+									...( version && { version } ),
+									context: { selectedSiteId, path },
+								},
+							},
+							callback
+						);
+						signal.addEventListener( 'abort', () =>
+							wpcomRequest( { abort: true, callback: request.params.callback as string } )
+						);
 				  } )
 				: apiFetch< ReturnedChat >( {
 						path: `/help-center/odie/chat/${ botNameSlug }${ chatIdSegment }`,
 						method: 'POST',
-
+						signal,
 						data: {
 							message: message.content,
 							...( version && { version } ),
@@ -177,7 +192,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 
 			return await Promise.race( [
 				request,
-				new Promise< ReturnedChat >( ( _, reject ) => ( signal.onabort = reject ) ),
+				new Promise< ReturnedChat >( ( _, reject ) => signal.addEventListener( 'abort', reject ) ),
 			] );
 		},
 		onMutate: () => {
