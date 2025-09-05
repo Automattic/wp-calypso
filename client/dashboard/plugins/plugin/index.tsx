@@ -12,6 +12,7 @@ import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
+import { Text } from '../../components/text';
 import { TextBlur } from '../../components/text-blur';
 
 const decodeHtmlEntities = ( text: string ): string => {
@@ -213,11 +214,21 @@ export default function Plugin() {
 		<PageLayout
 			size="large"
 			header={
-				<PageHeader
-					title={
-						wpOrgPlugin ? decodeHtmlEntities( wpOrgPlugin.name ) : <TextBlur>{ pluginId }</TextBlur>
-					}
-				/>
+				<VStack spacing={ 2 }>
+					<Text as="p" variant="muted">
+						{ __( 'Manage plugins' ) }
+					</Text>
+
+					<PageHeader
+						title={
+							wpOrgPlugin ? (
+								decodeHtmlEntities( wpOrgPlugin.name )
+							) : (
+								<TextBlur>{ pluginId }</TextBlur>
+							)
+						}
+					/>
+				</VStack>
 			}
 		>
 			<VStack spacing={ 20 }>
