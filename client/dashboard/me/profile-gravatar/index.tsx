@@ -11,9 +11,11 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { DataForm, isItemValid } from '@wordpress/dataviews';
 import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { isValidUrl } from '../../../lib/importer/url-validation';
 import { SectionHeader } from '../../components/section-header';
@@ -102,6 +104,7 @@ export default function GravatarProfileSection( {
 	const [ edits, setEdits ] = useState< Partial< UserSettings > >( {} );
 	const data = useMemo( () => ( { ...serverProfile, ...edits } ), [ serverProfile, edits ] );
 	const mutation = useMutation( userSettingsMutation() );
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const isSaving = mutation.isPending;
 	const isDirty = controlledKeys.some(
 		( key ) => data[ key as keyof UserSettings ] !== serverProfile[ key as keyof UserSettings ]
@@ -123,7 +126,19 @@ export default function GravatarProfileSection( {
 			return;
 		}
 
-		mutation.mutate( edits, { onSuccess: () => setEdits( {} ) } );
+		mutation.mutate( edits, {
+			onSuccess: () => {
+				setEdits( {} );
+				createSuccessNotice( __( 'Public Gravatar profile saved successfully.' ), {
+					type: 'snackbar',
+				} );
+			},
+			onError: ( error: Error ) => {
+				createErrorNotice( error.message || __( 'Failed to save public Gravatar profile.' ), {
+					type: 'snackbar',
+				} );
+			},
+		} );
 	};
 
 	return (
