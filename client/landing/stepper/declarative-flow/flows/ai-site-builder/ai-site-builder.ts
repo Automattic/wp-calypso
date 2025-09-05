@@ -36,31 +36,28 @@ const deletePage = async ( siteId: string | number, pageId: number ): Promise< b
 };
 
 function initialize() {
-	// stepsWithRequiredLogin will take care of redirecting to the login step if the user is not logged in.
+	// If spec_id is present, skip the SiteSpec widget and go directly to site creation
+	// If not present, show the SiteSpec widget to collect specifications
 	const queryParams = new URLSearchParams( window.location.search );
 	const hasSpecId = queryParams.get( 'spec_id' );
 
-	const steps = [];
-
-	// Only add the site-spec step if spec_id query parameter is not present
-	// This allows bypassing the SiteSpec widget when user already has a site specification
-	if ( ! hasSpecId ) {
-		steps.push( STEPS.SITE_SPEC );
+	if ( hasSpecId ) {
+		// Skip SiteSpec widget, go directly to site creation
+		return [
+			...stepsWithRequiredLogin( [
+				STEPS.SITE_CREATION_STEP,
+				STEPS.PROCESSING,
+				STEPS.ERROR,
+				shouldRenderRewrittenDomainSearch() ? STEPS.DOMAIN_SEARCH : STEPS.UNIFIED_DOMAINS,
+				STEPS.UNIFIED_PLANS,
+				STEPS.SITE_LAUNCH,
+				STEPS.PROCESSING,
+			] ),
+		];
 	}
 
-	steps.push(
-		...stepsWithRequiredLogin( [
-			STEPS.SITE_CREATION_STEP,
-			STEPS.PROCESSING,
-			STEPS.ERROR,
-			shouldRenderRewrittenDomainSearch() ? STEPS.DOMAIN_SEARCH : STEPS.UNIFIED_DOMAINS,
-			STEPS.UNIFIED_PLANS,
-			STEPS.SITE_LAUNCH,
-			STEPS.PROCESSING,
-		] )
-	);
-
-	return steps;
+	// Show SiteSpec widget to collect specifications
+	return [ STEPS.SITE_SPEC ];
 }
 
 const aiSiteBuilder: FlowV2< typeof initialize > = {
@@ -97,8 +94,10 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 		const submit: SubmitHandler< typeof initialize > = async function ( submittedStep ) {
 			const { slug, providedDependencies } = submittedStep;
 			switch ( slug ) {
-				case 'site-spec': {
-					return navigate( 'create-site' );
+				case 'learning-step': {
+					// SiteSpec widget will redirect to this flow with spec_id parameter
+					// This case should not be reached in normal flow
+					return;
 				}
 				// The create-site step will start creating a site and will add the promise of that operation to pendingAction field in the store.
 				case 'create-site': {
