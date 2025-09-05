@@ -92,6 +92,21 @@ export function BackupsListPage() {
 		</Button>
 	);
 
+	const renderMobileView = () => {
+		if ( showDetails && selectedBackup ) {
+			return <BackupDetails backup={ selectedBackup } site={ site } />;
+		}
+
+		return (
+			<BackupsList
+				site={ site }
+				selectedBackup={ selectedBackup }
+				setSelectedBackup={ handleBackupSelection }
+				autoSelect={ false }
+			/>
+		);
+	};
+
 	return (
 		<PageLayout
 			header={
@@ -105,22 +120,19 @@ export function BackupsListPage() {
 		>
 			{ hasBackups && (
 				<>
-					{ isSmallViewport && showDetails && selectedBackup && (
-						<BackupDetails backup={ selectedBackup } site={ site } />
-					) }
-					{ ! isSmallViewport || ! showDetails ? (
-						<Grid columns={ columns } templateColumns={ ! isSmallViewport ? '40% 1fr' : undefined }>
+					{ isSmallViewport ? (
+						renderMobileView()
+					) : (
+						<Grid columns={ columns } templateColumns="40% 1fr">
 							<BackupsList
 								site={ site }
 								selectedBackup={ selectedBackup }
 								setSelectedBackup={ handleBackupSelection }
-								autoSelect={ ! isSmallViewport }
 							/>
-							{ ! isSmallViewport && selectedBackup && (
-								<BackupDetails backup={ selectedBackup } site={ site } />
-							) }
+
+							{ selectedBackup && <BackupDetails backup={ selectedBackup } site={ site } /> }
 						</Grid>
-					) : null }
+					) }
 				</>
 			) }
 		</PageLayout>
