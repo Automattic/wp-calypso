@@ -1,4 +1,3 @@
-import type { useOpeningCoordinates } from './hooks/use-opening-coordinates';
 import type { HelpCenterSite, SiteDetails } from '@automattic/data-stores';
 import type { ReactElement } from 'react';
 
@@ -8,7 +7,6 @@ export interface Container {
 	isLoading?: boolean;
 	hidden?: boolean;
 	currentRoute?: string;
-	openingCoordinates?: ReturnType< typeof useOpeningCoordinates >;
 }
 
 export interface PostObject {

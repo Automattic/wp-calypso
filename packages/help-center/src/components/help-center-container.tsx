@@ -51,12 +51,7 @@ const OptionalDraggable: FC< OptionalDraggableProps > = ( { draggable, ...props 
 	);
 };
 
-const HelpCenterContainer: React.FC< Container > = ( {
-	handleClose,
-	hidden,
-	currentRoute,
-	openingCoordinates,
-} ) => {
+const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, currentRoute } ) => {
 	const { show, isMinimized } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return {
@@ -64,7 +59,6 @@ const HelpCenterContainer: React.FC< Container > = ( {
 			isMinimized: store.getIsMinimized(),
 		};
 	}, [] );
-
 	const { sectionName } = useHelpCenterContext();
 
 	const nodeRef = useRef< HTMLDivElement >( null );
@@ -116,7 +110,7 @@ const HelpCenterContainer: React.FC< Container > = ( {
 					handle=".help-center-header__text"
 					bounds="body"
 				>
-					<Card className={ classNames } style={ { ...openingCoordinates } } ref={ cardMergeRefs }>
+					<Card className={ classNames } ref={ cardMergeRefs }>
 						<HelpCenterHeader onDismiss={ onDismiss } />
 						<HelpCenterContent currentRoute={ currentRoute } />
 						{ ! isMinimized && <HelpCenterFooter /> }
