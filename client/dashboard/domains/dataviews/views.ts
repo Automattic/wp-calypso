@@ -24,6 +24,11 @@ export const DEFAULT_VIEW: Partial< DomainsView > = {
 	],
 };
 
+export const SITE_CONTEXT_VIEW: Partial< DomainsView > = {
+	...DEFAULT_VIEW,
+	fields: [ 'type', 'ssl_status', 'expiry', 'domain_status' ],
+};
+
 // Default layouts
 export const DEFAULT_LAYOUTS = {
 	table: {},

@@ -8,7 +8,7 @@ import { useState, useMemo } from 'react';
 import { useAuth } from '../../app/auth';
 import { CalloutSkeleton } from '../../components/callout-skeleton';
 import { SectionHeader } from '../../components/section-header';
-import { useActions, useFields, DEFAULT_VIEW, DEFAULT_LAYOUTS } from '../../domains/dataviews';
+import { useActions, useFields, SITE_CONTEXT_VIEW, DEFAULT_LAYOUTS } from '../../domains/dataviews';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import DomainTransferUpsellCard from '../overview-domain-transfer-upsell-card';
@@ -38,7 +38,7 @@ const SiteDomainDataViews = ( {
 	const actions = useActions( { user, site } );
 
 	const [ initialView, setView ] = useState< DomainsView >( {
-		...DEFAULT_VIEW,
+		...SITE_CONTEXT_VIEW,
 		type,
 	} );
 
