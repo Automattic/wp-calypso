@@ -37,6 +37,11 @@ function PrimaryMenuMobile() {
 							{ __( 'Emails' ) }
 						</RouterLinkMenuItem>
 					) }
+					{ supports.plugins && (
+						<RouterLinkMenuItem to="/plugins" onClick={ onClose }>
+							{ __( 'Plugins' ) }
+						</RouterLinkMenuItem>
+					) }
 				</>
 			) }
 		</DropdownMenu>

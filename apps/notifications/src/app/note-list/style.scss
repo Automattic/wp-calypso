@@ -9,8 +9,10 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 
-		.wpnc__gridicon {
-			vertical-align: top;
+		.wpnc__gridicon svg {
+			display: inline-block;
+			transform: translateY(2px);
+			fill: #8c8f94;
 		}
 	}
 }

@@ -1,6 +1,6 @@
 import { JETPACK_CONTACT_SUPPORT } from '@automattic/urls';
 import { Button, ExternalLink } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
+import { createInterpolateElement, useState, useEffect } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useBackupState } from '../../app/hooks/site-backup-state';
 import { useFormattedTime } from '../../components/formatted-time';
@@ -15,6 +15,18 @@ export function BackupNotices( { site }: { site: Site } ) {
 	const backupDate = useFormattedTime( backup?.started ?? '', {
 		timeStyle: 'short',
 	} );
+	const [ isDismissed, setIsDismissed ] = useState( false );
+
+	const handleDismiss = () => {
+		setIsDismissed( true );
+	};
+
+	useEffect( () => {
+		// Reset dismissal when a new backup starts
+		if ( status === 'running' ) {
+			setIsDismissed( false );
+		}
+	}, [ status ] );
 
 	if ( status === 'running' ) {
 		return (
@@ -35,19 +47,20 @@ export function BackupNotices( { site }: { site: Site } ) {
 		);
 	}
 
-	if ( status === 'success' ) {
+	if ( status === 'success' && ! isDismissed ) {
 		return (
-			<Notice variant="success" title={ __( 'Backup completed' ) }>
+			<Notice variant="success" title={ __( 'Backup completed' ) } onClose={ handleDismiss }>
 				{ __( 'You’ll be able to access your new backup in just a few minutes.' ) }
 			</Notice>
 		);
 	}
 
-	if ( status === 'error' ) {
+	if ( status === 'error' && ! isDismissed ) {
 		return (
 			<Notice
 				variant="error"
 				title={ __( 'Latest backup couldn’t be completed' ) }
+				onClose={ handleDismiss }
 				actions={
 					<Button variant="primary" href={ JETPACK_CONTACT_SUPPORT } target="_blank">
 						{ __( 'Contact support' ) }
