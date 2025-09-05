@@ -1045,7 +1045,7 @@ object PlaywrightTestPRMatrix : BuildType({
 				echo "##teamcity[notification notifier='slack' message='Report available: ${'$'}{ARCHIVE_NAME}|nBranch: %teamcity.build.branch%' sendTo='calypso-e2e-reports-ext' connectionId='PROJECT_EXT_11']"
 			""".trimIndent()
 			conditions {
-				matches("teamcity.build.branch", "e2e/.*")
+				matches("teamcity.build.branch", ".*/.*e2e.*")
 			}
 			dockerImage = "%docker_image_e2e%"
 		}
