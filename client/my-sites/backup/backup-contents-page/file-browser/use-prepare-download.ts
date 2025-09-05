@@ -1,6 +1,6 @@
+import { prepareBackupDownload, getBackupDownloadStatus } from '@automattic/api-core';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from '@wordpress/element';
-import wp from 'calypso/lib/wp';
 import { PREPARE_DOWNLOAD_STATUS } from './constants';
 
 interface PrepareDownloadArgs {
@@ -41,17 +41,7 @@ export const usePrepareDownload = ( siteId: number, onError: () => void ) => {
 		isError: isQueryError,
 	} = useQuery< FilteredStatusResponse >( {
 		queryKey: [ 'jetpack-backup-filtered-status', buildKey, siteId, dataType ],
-		queryFn: () =>
-			wp.req.post(
-				{
-					path: `/sites/${ siteId }/rewind/backup/filtered/status`,
-					apiNamespace: 'wpcom/v2',
-				},
-				{
-					data_type: dataType,
-					key: buildKey,
-				}
-			),
+		queryFn: () => getBackupDownloadStatus( siteId, buildKey, dataType ),
 		enabled: buildKey !== '' && status === PREPARE_DOWNLOAD_STATUS.PREPARING,
 		refetchInterval: 5000, // 5 seconds
 		retry: false,
@@ -69,17 +59,7 @@ export const usePrepareDownload = ( siteId: number, onError: () => void ) => {
 
 	const mutation = useMutation( {
 		mutationFn: ( { siteId, rewindId, manifestFilter, dataType }: PrepareDownloadArgs ) =>
-			wp.req.post(
-				{
-					path: `/sites/${ siteId }/rewind/backup/filtered/prepare`,
-					apiNamespace: 'wpcom/v2',
-				},
-				{
-					backup_id: rewindId,
-					manifest_filter: manifestFilter,
-					data_type: dataType,
-				}
-			),
+			prepareBackupDownload( siteId, rewindId, manifestFilter, dataType ),
 		onSuccess: ( data: FilteredPrepareResponse ) => {
 			setBuildKey( data.key );
 		},

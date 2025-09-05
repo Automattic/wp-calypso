@@ -1,0 +1,37 @@
+@import '@wordpress/base-styles/colors';
+
+.wpnc__note-list .dataviews-view-list {
+	// When displaying fields in the DataViews, using the --wp-admin-theme-color color on hover is overwhelming.
+	// We override the hover color with the text color.
+	div[role="article"] {
+		.dataviews-view-list__item-wrapper {
+			.dataviews-view-list__fields {
+				color: $gray-700;
+			}
+		}
+	}
+
+	// We override styles with the selected styles for unread items.
+	div[role="article"]:has(.is-unread),
+	div[role="article"]:has(.is-unread):focus-within {
+		& + & {
+			border-top: 1px solid rgba(var(--wp-admin-theme-color--rgb), 0.12);
+		}
+
+		.dataviews-view-list__item-wrapper {
+			background-color: rgba(var(--wp-admin-theme-color--rgb), 0.04);
+		}
+	}
+
+	// We override hover styles for unread items.
+	div[role="article"]:where(.is-hovered):has(.is-unread),
+	div[role="article"]:where(.is-hovered):has(.is-unread):focus-within {
+		.dataviews-view-list__item-wrapper {
+			background-color: rgba(var(--wp-admin-theme-color--rgb), 0.08);
+		}
+	}
+
+	.dataviews-view-list__item-actions {
+		align-self: flex-start;
+	}
+}

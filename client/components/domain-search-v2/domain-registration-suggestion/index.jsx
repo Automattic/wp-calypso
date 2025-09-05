@@ -72,6 +72,9 @@ class DomainRegistrationSuggestion extends Component {
 		hideMatchReasons: PropTypes.bool,
 		domainAndPlanUpsellFlow: PropTypes.bool,
 		products: PropTypes.object,
+		trademarkClaimsNoticeInfo: PropTypes.object,
+		onAcceptTrademarkClaim: PropTypes.func,
+		onRejectTrademarkClaim: PropTypes.func,
 	};
 
 	componentDidMount() {
@@ -444,7 +447,15 @@ class DomainRegistrationSuggestion extends Component {
 					renewPrice={ renewCost }
 				/>
 			);
-			cta = <DomainSuggestionCTA uuid={ fullDomain } onClick={ this.onButtonClick } />;
+			cta = (
+				<DomainSuggestionCTA
+					uuid={ fullDomain }
+					onClick={ this.onButtonClick }
+					trademarkClaimsNoticeInfo={ this.props.trademarkClaimsNoticeInfo }
+					onAcceptTrademarkClaim={ this.props.onAcceptTrademarkClaim }
+					onRejectTrademarkClaim={ this.props.onRejectTrademarkClaim }
+				/>
+			);
 		}
 
 		return (

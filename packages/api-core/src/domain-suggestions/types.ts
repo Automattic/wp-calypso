@@ -181,6 +181,17 @@ export interface DomainSuggestion {
 	 * Whether the client should show the dot gay notice
 	 */
 	dot_gay_notice_required?: true;
+
+	/**
+	 * Policy notices associated with the domain
+	 */
+	policy_notices?: PolicyNotice[];
+}
+
+export interface PolicyNotice {
+	type: string;
+	label: string;
+	message: string;
 }
 
 export interface FreeDomainSuggestion {

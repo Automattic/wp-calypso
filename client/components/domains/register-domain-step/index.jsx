@@ -653,7 +653,7 @@ class RegisterDomainStep extends Component {
 		);
 	}
 
-	rejectTrademarkClaim = () => {
+	clearTrademarkClaimState = () => {
 		this.setState( {
 			selectedSuggestion: null,
 			selectedSuggestionPosition: null,
@@ -663,6 +663,7 @@ class RegisterDomainStep extends Component {
 
 	acceptTrademarkClaim = () => {
 		this.props.onAddDomain( this.state.selectedSuggestion, this.state.selectedSuggestionPosition );
+		this.clearTrademarkClaimState();
 	};
 
 	renderTrademarkClaimsNotice() {
@@ -676,8 +677,8 @@ class RegisterDomainStep extends Component {
 				isLoading={ isLoading }
 				isSignupStep={ isSignupStep }
 				onAccept={ this.acceptTrademarkClaim }
-				onGoBack={ this.rejectTrademarkClaim }
-				onReject={ this.rejectTrademarkClaim }
+				onGoBack={ this.clearTrademarkClaimState }
+				onReject={ this.clearTrademarkClaimState }
 				suggestion={ selectedSuggestion }
 				trademarkClaimsNoticeInfo={ trademarkClaimsNoticeInfo }
 			/>
@@ -1619,7 +1620,6 @@ class RegisterDomainStep extends Component {
 							selectedSuggestion: suggestion,
 							selectedSuggestionPosition: position,
 						} );
-						this.props.onMappingError( domain, status );
 					} else if ( ! shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
 						this.props.onAddDomain( suggestion, position, previousState );
 					}
