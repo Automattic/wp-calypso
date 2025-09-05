@@ -23,7 +23,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { languagesAsOptions, shouldDisplayCommunityTranslator, CalypsoLanguage } from './languages';
 import ThanksToCommunityTranslator from './thanks-to-community-translator';
 import type { UserSettingsPreferences } from '@automattic/api-core';
-import type { Field } from '@wordpress/dataviews';
+import type { Field, Form } from '@wordpress/dataviews';
 
 export default function PreferencesLanguageForm() {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
@@ -106,9 +106,11 @@ export default function PreferencesLanguageForm() {
 
 	const hasValidLanguage = !! data?.language;
 	const canSubmit = ! isSaving && isDirty && hasValidLanguage;
-	const languageForm = {
-		type: 'regular' as const,
-		labelPosition: 'top' as const,
+	const languageForm: Form = {
+		layout: {
+			type: 'regular' as const,
+			labelPosition: 'top' as const,
+		},
 		fields: [
 			{
 				id: 'interfaceLanguage',
