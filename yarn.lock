@@ -1169,6 +1169,7 @@ __metadata:
     "@types/jest": "npm:^29.5.14"
     "@wordpress/base-styles": "npm:^5.23.0"
     "@wordpress/components": "npm:^29.9.0"
+    "@wordpress/compose": "npm:7.23.0"
     "@wordpress/icons": "npm:^10.23.0"
     "@wordpress/react-i18n": "npm:^4.23.0"
     clsx: "npm:^2.1.1"

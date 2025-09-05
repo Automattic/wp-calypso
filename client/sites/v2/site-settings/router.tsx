@@ -80,6 +80,28 @@ const agencyRoute = createRoute( {
 	)
 );
 
+const mcpRoute = createRoute( {
+	...appRouterSites.siteSettingsMcpRoute.options,
+	getParentRoute: () => siteRoute,
+} ).lazy( () =>
+	import( 'calypso/dashboard/sites/settings-mcp' ).then( ( d ) =>
+		createLazyRoute( 'mcp' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+const mcpSetupRoute = createRoute( {
+	...appRouterSites.siteSettingsMcpSetupRoute.options,
+	getParentRoute: () => siteRoute,
+} ).lazy( () =>
+	import( 'calypso/dashboard/sites/settings-mcp/setup' ).then( ( d ) =>
+		createLazyRoute( 'mcp-setup' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 const hundredYearPlanRoute = createRoute( {
 	...appRouterSites.siteSettingsHundredYearPlanRoute.options,
 	getParentRoute: () => siteRoute,
@@ -189,6 +211,8 @@ const createRouteTree = () =>
 			phpRoute,
 			databaseRoute,
 			agencyRoute,
+			mcpRoute,
+			mcpSetupRoute,
 			hundredYearPlanRoute,
 			primaryDataCenterRoute,
 			staticFile404Route,
