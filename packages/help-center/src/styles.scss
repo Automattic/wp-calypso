@@ -128,6 +128,7 @@
 		animation: 0.25s ease-out 0s 1 normal none running fadeIn;
 
 		&.is-minimized {
+			animation: none;
 			min-height: $head-foot-height;
 			max-height: $head-foot-height;
 			top: calc( 100vh - #{$head-foot-height} );
