@@ -9,7 +9,7 @@ import {
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __, isRTL } from '@wordpress/i18n';
-import { chartBar, arrowLeft, chevronLeft, chevronRight } from '@wordpress/icons';
+import { chartBar, chevronLeft, chevronRight } from '@wordpress/icons';
 import { useState } from 'react';
 import { siteRoute } from '../../app/router/sites';
 import { Callout } from '../../components/callout';
