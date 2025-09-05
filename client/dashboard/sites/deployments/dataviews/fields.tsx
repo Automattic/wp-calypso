@@ -16,14 +16,26 @@ import {
 import type { DeploymentRunWithDeploymentInfo } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
-export function useDeploymentFields(): Field< DeploymentRunWithDeploymentInfo >[] {
+interface FilterOptions {
+	repositoryOptions: { value: string; label: string }[];
+	userNameOptions: { value: string; label: string }[];
+}
+
+export function useDeploymentFields( {
+	repositoryOptions = [],
+	userNameOptions = [],
+}: FilterOptions ): Field< DeploymentRunWithDeploymentInfo >[] {
 	return useMemo(
 		() => [
 			{
 				id: 'repository_name',
-				label: __( 'Repo' ),
+				label: __( 'Repository' ),
 				enableHiding: false,
 				enableGlobalSearch: true,
+				elements: repositoryOptions,
+				filterBy: {
+					operators: [ 'isAny' ],
+				},
 				getValue: ( { item } ) => item.repository_name,
 				render: ( { item } ) => {
 					const [ , repo ] = item.repository_name.split( '/' );
@@ -106,6 +118,24 @@ export function useDeploymentFields(): Field< DeploymentRunWithDeploymentInfo >[
 				},
 			},
 			{
+				id: 'user_name',
+				label: __( 'User name' ),
+				enableGlobalSearch: true,
+				elements: userNameOptions,
+				filterBy: {
+					operators: [ 'isAny' ],
+				},
+				getValue: ( { item } ) => {
+					return item.metadata?.author?.name || '';
+				},
+				render: ( { item } ) => {
+					if ( ! item.metadata?.author ) {
+						return <Text variant="muted">{ __( 'Unknown' ) }</Text>;
+					}
+					return <Text>{ item.metadata.author.name }</Text>;
+				},
+			},
+			{
 				id: 'created_on',
 				label: __( 'Date' ),
 				getValue: ( { item } ) => {
@@ -115,24 +145,23 @@ export function useDeploymentFields(): Field< DeploymentRunWithDeploymentInfo >[
 					return <TimeSince timestamp={ item.created_on } />;
 				},
 			},
-
 			{
-				id: 'is_automated',
+				id: 'is_active_deployment',
 				type: 'boolean',
-				label: __( 'Automated' ),
+				label: __( 'Active deployment' ),
 				elements: [
-					{ value: true, label: __( 'Yes' ) },
-					{ value: false, label: __( 'No' ) },
+					{ value: true, label: __( 'Active' ) },
+					{ value: false, label: __( 'Not active' ) },
 				],
 				filterBy: {
 					operators: [ 'is' ],
 				},
 				getValue: ( { item } ) => {
-					return item.is_automated;
+					return item.is_active_deployment || false;
 				},
-				render: ( { item } ) => ( item.is_automated ? __( 'Yes' ) : __( 'No' ) ),
+				render: ( { item } ) => ( item.is_active_deployment ? __( 'Active' ) : __( 'Not active' ) ),
 			},
 		],
-		[]
+		[ repositoryOptions, userNameOptions ]
 	);
 }

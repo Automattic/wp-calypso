@@ -71,7 +71,29 @@ export function DeploymentsList() {
 	const isLoading =
 		deploymentsLoading || deploymentRunsQueries.some( ( query ) => query.isLoading );
 
-	const fields = useDeploymentFields();
+	const repositoryOptions = useMemo( () => {
+		return Array.from( new Set( deploymentRuns.map( ( item ) => item.repository_name ) ) )
+			.sort()
+			.map( ( repo ) => ( {
+				value: repo,
+				label: repo.split( '/' )[ 1 ] || repo,
+			} ) );
+	}, [ deploymentRuns ] );
+
+	const userNameOptions = useMemo( () => {
+		return Array.from(
+			new Set(
+				deploymentRuns.map( ( item ) => item.metadata?.author?.name ).filter( Boolean ) as string[]
+			)
+		)
+			.sort()
+			.map( ( name ) => ( {
+				value: name,
+				label: name,
+			} ) );
+	}, [ deploymentRuns ] );
+
+	const fields = useDeploymentFields( { repositoryOptions, userNameOptions } );
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
 		deploymentRuns,
 		view,
