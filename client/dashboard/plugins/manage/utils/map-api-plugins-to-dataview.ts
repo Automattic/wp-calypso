@@ -52,13 +52,13 @@ export function mapApiPluginsToDataViewPlugins( response?: PluginsResponse ): Pl
 			if ( p.autoupdate ) {
 				entry.autoupdateCount += 1;
 			}
-			map.set( p.slug, entry );
+			map.set( p.id, entry );
 		} );
 	} );
 
 	return Array.from( map.entries() ).map(
-		( [ slug, { name, count, activeCount, updateCount, autoupdateCount, siteIds } ] ) => ( {
-			id: slug,
+		( [ id, { name, count, activeCount, updateCount, autoupdateCount, siteIds } ] ) => ( {
+			id,
 			name,
 			sitesCount: count,
 			hasUpdate: toTriState( updateCount, count ),

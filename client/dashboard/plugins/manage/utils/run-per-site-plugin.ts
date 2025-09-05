@@ -11,7 +11,6 @@ import type { SitePluginAction } from '../types';
 export type RunPerSiteResult = {
 	successCount: number;
 	errorCount: number;
-	messages: string[];
 };
 
 export const runPerSitePlugin = async (
@@ -47,18 +46,13 @@ export const runPerSitePlugin = async (
 				opts = sitePluginRemoveMutation( siteId );
 				break;
 		}
-		const result = await opts.mutationFn?.( slug as any );
-		await opts.onSuccess?.( result as any, slug as any, undefined );
+		const onSuccess = opts?.onSuccess as () => void;
+		return opts.mutationFn?.( slug ).then( () => onSuccess?.() );
 	} );
+
 	const results = await Promise.allSettled( tasks );
 	const failures = results.filter( ( r ) => r.status === 'rejected' ) as PromiseRejectedResult[];
 	const successCount = results.length - failures.length;
 	const errorCount = failures.length;
-	const messages = failures
-		.map( ( f ) => {
-			const reason: any = f.reason;
-			return ( reason && ( reason.message || reason?.data?.message ) ) || '';
-		} )
-		.filter( Boolean );
-	return { successCount, errorCount, messages };
+	return { successCount, errorCount };
 };
