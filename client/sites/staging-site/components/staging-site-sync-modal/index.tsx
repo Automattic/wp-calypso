@@ -409,7 +409,13 @@ export default function SyncModal( {
 			style={ { maxWidth: '668px' } }
 		>
 			<QueryRewindState siteId={ querySiteId } />
-			<VStack spacing={ 5 }>
+			<VStack
+				spacing={ 5 }
+				style={ {
+					paddingBottom:
+						shouldDisableGranularSync || sqlNode?.checkState === 'checked' ? '0px' : '140px',
+				} }
+			>
 				<Text>
 					{ createInterpolateElement( syncConfig[ environment ].description, {
 						a: <ExternalLink href={ `/activity-log/${ targetSiteSlug }` } children={ null } />,
@@ -432,6 +438,7 @@ export default function SyncModal( {
 				<div
 					className={ clsx( 'staging-site-card', {
 						'confirmation-input': showDomainConfirmation,
+						'has-warning': shouldDisableGranularSync || sqlNode?.checkState === 'checked',
 					} ) }
 				>
 					<Tooltip

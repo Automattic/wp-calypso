@@ -312,7 +312,16 @@
 	border-top: 1px solid var( --studio-gray-5 );
 	padding: 16px 32px 16px;
 	background: #fff;
-	margin-left: -32px;
-	margin-right: -32px;
-	margin-bottom: -32px;
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	left: 0;
+	z-index: 10;
 }
+
+// Expand modal when warning is shown
+.components-modal__content:has(.staging-site-card.has-warning) {
+	min-height: 600px;
+	height: auto;
+}
+
