@@ -72,10 +72,11 @@ const StagingSiteActionButton = ( {
 	isStagingSiteDeleting: boolean;
 	isStagingSiteCreating: boolean;
 } ) => {
+	const spinnerStyle = { width: '24px', height: '24px', padding: '4px', margin: 0 };
 	if ( isStagingSiteCreating ) {
 		return (
 			<>
-				<Spinner style={ { width: '24px', height: '24px', padding: '4px', margin: 0 } } />
+				<Spinner style={ spinnerStyle } />
 				<span>{ __( 'Adding staging site…' ) }</span>
 			</>
 		);
@@ -84,7 +85,7 @@ const StagingSiteActionButton = ( {
 	if ( isStagingSiteDeleting ) {
 		return (
 			<>
-				<Spinner style={ { width: '24px', height: '24px', padding: '4px', margin: 0 } } />
+				<Spinner style={ spinnerStyle } />
 				<span>{ __( 'Deleting staging site…' ) }</span>
 			</>
 		);
@@ -192,7 +193,7 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 				return 0;
 			}
 
-			return ! isAtomicTransferredSite( query.state.data ) ? 2000 : false;
+			return isAtomicTransferredSite( query.state.data ) ? false : 2000;
 		},
 		enabled: !! stagingSiteId && transferStatus === 'completed',
 	} );
@@ -243,7 +244,10 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 			return;
 		}
 		if ( isStagingSiteReady ) {
-			createSuccessNotice( __( 'Staging site created.' ), { type: 'snackbar' } );
+			createSuccessNotice( __( 'Staging site added.' ), {
+				type: 'snackbar',
+				explicitDismiss: true,
+			} );
 			productionSite && queryClient.invalidateQueries( siteBySlugQuery( productionSite.slug ) );
 			queryClient.setQueryData(
 				isCreatingStagingSiteQuery( productionSiteId ?? 0 ).queryKey,
