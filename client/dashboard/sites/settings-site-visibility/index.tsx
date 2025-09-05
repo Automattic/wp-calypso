@@ -1,11 +1,15 @@
+import {
+	siteLaunchMutation,
+	siteBySlugQuery,
+	siteSettingsMutation,
+	siteSettingsQuery,
+} from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteLaunchMutation, siteBySlugQuery } from '../../app/queries/site';
-import { siteSettingsMutation, siteSettingsQuery } from '../../app/queries/site-settings';
 import InlineSupportLink from '../../components/inline-support-link';
 import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';
@@ -13,7 +17,6 @@ import AgencyDevelopmentSiteLaunchModal from './agency-development-site-launch-m
 import { LaunchAgencyDevelopmentSiteForm, LaunchForm } from './launch-form';
 import { PrivacyForm } from './privacy-form';
 import { ShareSiteForm } from './share-site-form';
-import './style.scss';
 
 export default function SiteVisibilitySettings( { siteSlug }: { siteSlug: string } ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );

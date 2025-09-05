@@ -125,7 +125,7 @@ export class LoginPage {
 	 * Clicks the "Continue with Apple" link.
 	 */
 	async clickLoginWithApple(): Promise< Locator > {
-		const locator = await this.page.locator( ':text-is("Continue with Apple")' );
+		const locator = this.page.locator( ':text-is("Continue with Apple")' );
 		await locator.click();
 
 		return locator;

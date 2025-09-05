@@ -1,8 +1,7 @@
+import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { siteBySlugQuery } from '../../app/queries/site';
-import { siteSettingsQuery } from '../../app/queries/site-settings';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
@@ -12,6 +11,7 @@ import CachingSettingsSummary from '../settings-caching/summary';
 import DatabaseSettingsSummary from '../settings-database/summary';
 import DefensiveModeSettingsSummary from '../settings-defensive-mode/summary';
 import HundredYearPlanSettingsSummary from '../settings-hundred-year-plan/summary';
+import McpSettingsSummary from '../settings-mcp/summary';
 import PHPSettingsSummary from '../settings-php/summary';
 import PrimaryDataCenterSettingsSummary from '../settings-primary-data-center/summary';
 import SftpSshSettingsSummary from '../settings-sftp-ssh/summary';
@@ -20,6 +20,7 @@ import StaticFile404SettingsSummary from '../settings-static-file-404/summary';
 import SubscriptionGiftingSettingsSummary from '../settings-subscription-gifting/summary';
 import WebApplicationFirewallSettingsSummary from '../settings-web-application-firewall/summary';
 import WordPressSettingsSummary from '../settings-wordpress/summary';
+import WpcomLoginSettingsSummary from '../settings-wpcom-login/summary';
 import DangerZone from './danger-zone';
 import SiteActions from './site-actions';
 
@@ -48,12 +49,14 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 					<PrimaryDataCenterSettingsSummary site={ site } />
 					<StaticFile404SettingsSummary site={ site } />
 					<CachingSettingsSummary site={ site } />
+					<McpSettingsSummary site={ site } />
 				</SummaryButtonList>
 			</VStack>
 			<VStack spacing={ 3 }>
 				<SectionHeader title={ __( 'Security' ) } level={ 3 } />
 				<SummaryButtonList>
 					<WebApplicationFirewallSettingsSummary site={ site } />
+					<WpcomLoginSettingsSummary site={ site } />
 					<DefensiveModeSettingsSummary site={ site } />
 				</SummaryButtonList>
 			</VStack>

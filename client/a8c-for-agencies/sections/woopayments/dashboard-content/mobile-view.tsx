@@ -12,8 +12,8 @@ import { getSiteData } from '../lib/site-data';
 import {
 	SiteColumn,
 	WooPaymentsStatusColumn,
-	TransactionsColumn,
 	CommissionsPaidColumn,
+	TimeframeCommissionsColumn,
 } from './site-columns';
 import type { SitesWithWooPaymentsState } from '../types';
 
@@ -38,17 +38,6 @@ export default function SitesWithWooPaymentsMobileView( {
 								<SiteColumn site={ item.siteUrl } />
 							</div>
 						</ListItemCardContent>
-						<ListItemCardContent title={ translate( 'Transactions' ) }>
-							<div className="sites-with-woopayments-list-mobile-view__column">
-								{ isLoadingWooPaymentsData ? (
-									<TextPlaceholder />
-								) : (
-									<TransactionsColumn
-										transactions={ getSiteData( woopaymentsData, item.blogId ).transactions }
-									/>
-								) }
-							</div>
-						</ListItemCardContent>
 						<ListItemCardContent title={ translate( 'Commissions Paid' ) }>
 							<div className="sites-with-woopayments-list-mobile-view__column">
 								{ isLoadingWooPaymentsData ? (
@@ -60,8 +49,23 @@ export default function SitesWithWooPaymentsMobileView( {
 								) }
 							</div>
 						</ListItemCardContent>
+						<ListItemCardContent title={ translate( 'Timeframe Commissions' ) }>
+							<div className="sites-with-woopayments-list-mobile-view__column">
+								{ isLoadingWooPaymentsData ? (
+									<TextPlaceholder />
+								) : (
+									<TimeframeCommissionsColumn
+										estimatedPayout={ getSiteData( woopaymentsData, item.blogId ).estimatedPayout }
+									/>
+								) }
+							</div>
+						</ListItemCardContent>
 						<ListItemCardContent title={ translate( 'Review status' ) }>
-							<WooPaymentsStatusColumn state={ item.state } siteId={ item.blogId } />
+							<WooPaymentsStatusColumn
+								state={ item.state }
+								siteId={ item.blogId }
+								woopaymentsData={ woopaymentsData }
+							/>
 						</ListItemCardContent>
 					</ListItemCard>
 				) ) }

@@ -1,7 +1,12 @@
+import {
+	siteAgencyBlogQuery,
+	siteBySlugQuery,
+	siteSettingsMutation,
+	siteSettingsQuery,
+} from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { notFound } from '@tanstack/react-router';
 import {
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
 	Card,
@@ -15,13 +20,11 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteBySlugQuery } from '../../app/queries/site';
-import { siteAgencyBlogQuery } from '../../app/queries/site-agency';
-import { siteSettingsMutation, siteSettingsQuery } from '../../app/queries/site-settings';
+import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';
-import type { Site, SiteSettings } from '../../data/types';
+import type { Site, SiteSettings } from '@automattic/api-core';
 import type { Field, SimpleFormField } from '@wordpress/dataviews';
 
 export function canUpdateA4AFullyManagedSetting( site: Site ) {
@@ -52,7 +55,7 @@ const fields: Field< SiteSettings >[] = [
 ];
 
 const form = {
-	type: 'regular' as const,
+	layout: { type: 'regular' as const },
 	fields: [ { id: 'is_fully_managed_agency_site' } as SimpleFormField ],
 };
 
@@ -117,7 +120,7 @@ export default function SettingsAgency( { siteSlug }: { siteSlug: string } ) {
 									setFormData( ( data ) => ( { ...data, ...edits } ) );
 								} }
 							/>
-							<HStack justify="flex-start">
+							<ButtonStack justify="flex-start">
 								<Button
 									variant="primary"
 									type="submit"
@@ -126,7 +129,7 @@ export default function SettingsAgency( { siteSlug }: { siteSlug: string } ) {
 								>
 									{ __( 'Save' ) }
 								</Button>
-							</HStack>
+							</ButtonStack>
 						</VStack>
 					</form>
 				</CardBody>

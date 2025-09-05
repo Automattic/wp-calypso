@@ -6,7 +6,7 @@ import {
 	__experimentalInputControl as InputControl,
 	ToggleControl,
 } from '@wordpress/components';
-import { Field, DataForm, NormalizedField } from '@wordpress/dataviews';
+import { Field, DataForm, NormalizedField, isItemValid } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState, useCallback, useMemo } from 'react';
@@ -15,37 +15,106 @@ import {
 	MIN_NAME_SERVERS_LENGTH,
 	MAX_NAME_SERVERS_LENGTH,
 	WPCOM_DEFAULT_NAME_SERVERS,
+	FormData,
 	NameServerKey,
 } from './types';
 import UpsellNudge from './upsell-nudge';
-import { areAllWpcomNameServers, validateHostname } from './utils';
+import { validateHostname } from './utils';
 
-type FormData = {
-	useWpcomNameServers: boolean;
-} & {
-	[ K in NameServerKey ]: string;
+const createNameServerField = ( index: number, formData: FormData, isBusy?: boolean ) => {
+	const baseField = {
+		id: `nameServer${ index }` as NameServerKey,
+		type: 'text' as const,
+		label: sprintf(
+			// translators: %s is the name server number (1-4)
+			__( 'Custom name server %s' ),
+			index
+		),
+		placeholder: sprintf(
+			// translators: %s is the name server number (1-4)
+			__( 'ns%s.domain.com' ),
+			index
+		),
+		isValid: {
+			required: index <= MIN_NAME_SERVERS_LENGTH,
+			custom: ( formData: FormData, field: NormalizedField< FormData > ) => {
+				const value = formData[ field.id as NameServerKey ];
+				// Skip validation for empty optional fields
+				if ( ! value && ! field.isValid?.required ) {
+					return null;
+				}
+				return validateHostname( value ) ? null : __( 'Please enter a valid hostname' );
+			},
+		},
+		isVisible: ( item: FormData ) => {
+			// For WP.com nameservers, show field only if it has a value
+			if ( item.useWpcomNameServers ) {
+				return Boolean( item[ `nameServer${ index }` as NameServerKey ] );
+			}
+
+			// For custom nameservers, show fields 3 and 4 only if previous field has value
+			if ( index > MIN_NAME_SERVERS_LENGTH ) {
+				return Boolean( item[ `nameServer${ index - 1 }` as NameServerKey ] );
+			}
+
+			// Always show MIN_NAME_SERVERS_LENGTH fields
+			return true;
+		},
+	};
+
+	return formData.useWpcomNameServers || isBusy
+		? {
+				...baseField,
+				Edit: ( { field }: { field: Field< FormData > } ) => (
+					<InputControl
+						__next40pxDefaultSize
+						disabled
+						label={ field.label }
+						value={ formData[ field.id as NameServerKey ]?.toLowerCase() }
+					/>
+				),
+		  }
+		: baseField;
+};
+
+const getFormNameServers = ( { useWpcomNameServers, ...nameServers }: FormData ) =>
+	Object.values( nameServers ).filter( Boolean );
+
+const isNameServersChanged = ( formData: FormData, nameServers: string[] ) => {
+	const currentNameServers = getFormNameServers( formData );
+	// Different lengths means there's definitely a change
+	if ( currentNameServers.length !== nameServers.length ) {
+		return true;
+	}
+	// Check if every nameserver matches in the same position
+	return currentNameServers.some(
+		( ns, index ) => ns.toLowerCase() !== ( nameServers[ index ] || '' ).toLowerCase()
+	);
 };
 
 interface Props {
 	domainName: string;
+	domainSiteSlug: string;
 	showUpsellNudge?: boolean;
 	nameServers?: string[];
+	isUsingDefaultNameServers?: boolean;
 	isBusy?: boolean;
 	onSubmit: ( nameServers: string[] ) => void;
 }
 
 export default function NameServersForm( {
 	domainName,
+	domainSiteSlug,
 	showUpsellNudge,
 	nameServers = [],
+	isUsingDefaultNameServers = false,
 	isBusy,
 	onSubmit,
 }: Props ) {
-	const isWpcomNameservers = areAllWpcomNameServers( nameServers );
 	const [ formData, setFormData ] = useState< FormData >( () => {
 		// Start with a partial object
 		const initialData = {
-			useWpcomNameServers: isWpcomNameservers,
+			useWpcomNameServers: isUsingDefaultNameServers,
 		} as Partial< FormData >;
 
 		// Add all nameServer fields
@@ -58,8 +127,9 @@ export default function NameServersForm( {
 		return initialData as FormData;
 	} );
 
-	const formObj = useMemo(
+	const form = useMemo(
 		() => ( {
+			layout: { type: 'regular' as const },
 			fields: [
 				'useWpcomNameServers',
 				...Array.from(
@@ -69,65 +139,6 @@ export default function NameServersForm( {
 			],
 		} ),
 		[]
-	);
-
-	const createNameServerField = useCallback(
-		( index: number ) => {
-			const baseField = {
-				id: `nameServer${ index }` as NameServerKey,
-				type: 'text' as const,
-				label: sprintf(
-					// translators: %s is the name server number (1-4)
-					__( 'Custom name server %s' ),
-					index
-				),
-				placeholder: sprintf(
-					// translators: %s is the name server number (1-4)
-					__( 'ns%s.domain.com' ),
-					index
-				),
-				isValid: {
-					required: index <= MIN_NAME_SERVERS_LENGTH,
-					custom: ( formData: FormData, field: NormalizedField< FormData > ) => {
-						const value = formData[ field.id as NameServerKey ];
-						// Skip validation for empty optional fields
-						if ( ! value && ! field.isValid?.required ) {
-							return '';
-						}
-						return validateHostname( value ) ? '' : __( 'Please enter a valid hostname' );
-					},
-				},
-				isVisible: ( item: FormData ) => {
-					// For WP.com nameservers, show field only if it has a value
-					if ( item.useWpcomNameServers ) {
-						return Boolean( item[ `nameServer${ index }` as NameServerKey ] );
-					}
-
-					// For custom nameservers, show fields 3 and 4 only if previous field has value
-					if ( index > MIN_NAME_SERVERS_LENGTH ) {
-						return Boolean( item[ `nameServer${ index - 1 }` as NameServerKey ] );
-					}
-
-					// Always show MIN_NAME_SERVERS_LENGTH fields
-					return true;
-				},
-			};
-
-			return formData.useWpcomNameServers || isBusy
-				? {
-						...baseField,
-						Edit: ( { field }: { field: Field< FormData > } ) => (
-							<InputControl
-								__next40pxDefaultSize
-								disabled
-								label={ field.label }
-								value={ formData[ field.id as NameServerKey ]?.toLowerCase() }
-							/>
-						),
-				  }
-				: baseField;
-		},
-		[ formData, isBusy ]
 	);
 
 	const fields = useMemo(
@@ -158,7 +169,9 @@ export default function NameServersForm( {
 									} );
 								} }
 							/>
-							{ showUpsellNudge && <UpsellNudge domainName={ domainName } /> }
+							{ showUpsellNudge && (
+								<UpsellNudge domainName={ domainName } domainSiteSlug={ domainSiteSlug } />
+							) }
 							{ ! data.useWpcomNameServers && (
 								<Text>
 									{ createInterpolateElement(
@@ -177,25 +190,24 @@ export default function NameServersForm( {
 				},
 			},
 			...Array.from( { length: MAX_NAME_SERVERS_LENGTH }, ( _, i ) =>
-				createNameServerField( i + 1 )
+				createNameServerField( i + 1, formData, isBusy )
 			),
 		],
-		[ createNameServerField, isBusy, showUpsellNudge, domainName ]
+		[ formData, isBusy, showUpsellNudge, domainName, domainSiteSlug ]
 	);
 
 	const handleSubmit = useCallback(
 		( e: React.FormEvent ) => {
 			e.preventDefault();
-
-			// Get all nameServer values dynamically
-			const nameServerValues = Array.from(
-				{ length: MAX_NAME_SERVERS_LENGTH },
-				( _, i ) => formData[ `nameServer${ i + 1 }` as NameServerKey ]
-			).filter( Boolean );
-			onSubmit( nameServerValues );
+			onSubmit( getFormNameServers( formData ) );
 		},
-		[ formData, onSubmit ]
+		[ onSubmit, formData ]
 	);
+
+	const canSubmit =
+		! isBusy &&
+		isItemValid( formData, fields, form ) &&
+		isNameServersChanged( formData, nameServers );
 
 	return (
 		<form onSubmit={ handleSubmit }>
@@ -203,7 +215,7 @@ export default function NameServersForm( {
 				<DataForm< FormData >
 					data={ formData }
 					fields={ fields }
-					form={ formObj }
+					form={ form }
 					onChange={ ( value ) => {
 						setFormData( ( data ) => ( { ...data, ...value } ) );
 					} }
@@ -213,7 +225,7 @@ export default function NameServersForm( {
 						__next40pxDefaultSize
 						variant="primary"
 						type="submit"
-						disabled={ isBusy }
+						disabled={ ! canSubmit }
 						isBusy={ isBusy }
 					>
 						{ __( 'Save' ) }

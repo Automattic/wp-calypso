@@ -1,23 +1,18 @@
-import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { HostingFeatures } from '@automattic/api-core';
 import {
-	__experimentalHStack as HStack,
-	__experimentalVStack as VStack,
-	Card,
-	CardBody,
-	Button,
-} from '@wordpress/components';
+	siteBySlugQuery,
+	siteStaticFile404SettingQuery,
+	siteStaticFile404SettingMutation,
+} from '@automattic/api-queries';
+import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { __experimentalVStack as VStack, Card, CardBody, Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteBySlugQuery } from '../../app/queries/site';
-import {
-	siteStaticFile404SettingQuery,
-	siteStaticFile404SettingMutation,
-} from '../../app/queries/site-static-file-404';
+import { ButtonStack } from '../../components/button-stack';
 import PageLayout from '../../components/page-layout';
-import { HostingFeatures } from '../../data/constants';
 import { hasHostingFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SettingsPageHeader from '../settings-page-header';
@@ -51,9 +46,8 @@ const fields: Field< { setting: string } >[] = [
 ];
 
 const form = {
-	type: 'regular' as const,
+	layout: { type: 'regular' as const, labelPosition: 'none' as const },
 	fields: [ 'setting' ],
-	labelPosition: 'none' as const,
 };
 
 export default function SiteStaticFile404Settings( { siteSlug }: { siteSlug: string } ) {
@@ -115,7 +109,7 @@ export default function SiteStaticFile404Settings( { siteSlug }: { siteSlug: str
 										setFormData( ( data ) => ( { ...data, ...edits } ) );
 									} }
 								/>
-								<HStack justify="flex-start">
+								<ButtonStack justify="flex-start">
 									<Button
 										variant="primary"
 										type="submit"
@@ -124,7 +118,7 @@ export default function SiteStaticFile404Settings( { siteSlug }: { siteSlug: str
 									>
 										{ __( 'Save' ) }
 									</Button>
-								</HStack>
+								</ButtonStack>
 							</VStack>
 						</form>
 					</CardBody>

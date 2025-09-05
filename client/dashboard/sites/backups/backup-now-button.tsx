@@ -1,46 +1,24 @@
+import { siteBackupEnqueueMutation, siteBackupsQuery } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useCallback, useEffect, useState } from 'react';
-import { siteBackupEnqueueMutation, siteBackupsQuery } from '../../app/queries/site-backups';
-import { type BackupEntry } from '../../data/site-backups';
-import type { Site } from '../../data/types';
+import { useEffect, useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
+import { useBackupState } from '../../app/hooks/site-backup-state';
+import type { Site } from '@automattic/api-core';
 
 interface BackupNowButtonProps {
 	site: Site;
 }
 
-type BackupState = 'default' | 'enqueued' | 'in_progress';
-
 export function BackupNowButton( { site }: BackupNowButtonProps ) {
+	const { recordTracksEvent } = useAnalytics();
+
 	const [ isEnqueued, setIsEnqueued ] = useState( false );
+	const { status } = useBackupState( site.ID );
+	const isRunning = status === 'running';
 
-	// Determine current state
-	const getBackupState = useCallback(
-		( backups: BackupEntry[] ): BackupState => {
-			const currentBackup = backups[ 0 ];
-			if ( currentBackup?.status === 'started' ) {
-				return 'in_progress';
-			}
-			if ( currentBackup?.status === 'queued' || isEnqueued ) {
-				return 'enqueued';
-			}
-			return 'default';
-		},
-		[ isEnqueued ]
-	);
-
-	// Check for in-progress backup using rewind/backups endpoint
-	const { data: rewindBackups = [] } = useQuery( {
-		...siteBackupsQuery( site.ID ),
-		refetchInterval: ( query ) => {
-			const backups = query.state.data || [];
-			const backupState = getBackupState( backups );
-			// Poll when backup is enqueued or in progress
-			return backupState !== 'default' ? 2000 : false;
-		},
-	} );
-
+	// Enqueue a new backup
 	const { mutate: triggerBackup, isPending } = useMutation( {
 		...siteBackupEnqueueMutation( site.ID ),
 		onMutate: () => {
@@ -48,44 +26,61 @@ export function BackupNowButton( { site }: BackupNowButtonProps ) {
 		},
 	} );
 
-	const backupState = getBackupState( rewindBackups );
+	// Lets fetch backups if we just enqueued a backup or if there's a backup running
+	useQuery( {
+		...siteBackupsQuery( site.ID ),
+		refetchInterval: isRunning || isEnqueued ? 2000 : false,
+	} );
 
 	// Reset enqueued state when backup actually starts
 	useEffect( () => {
-		if ( backupState === 'in_progress' && isEnqueued ) {
+		if ( isRunning && isEnqueued ) {
 			setIsEnqueued( false );
 		}
-	}, [ backupState, isEnqueued ] );
+	}, [ status, isEnqueued, isRunning ] );
 
-	const buttonContent = {
-		enqueued: {
-			label: __( 'Backup enqueued' ),
-			tooltip: __( 'A backup has been queued and will start shortly.' ),
-		},
-		in_progress: {
-			label: __( 'Backup in progress' ),
-			tooltip: __( 'A backup is currently in progress.' ),
-		},
-		default: {
-			label: __( 'Back up now' ),
-			tooltip: __( 'Create a backup of your site now.' ),
-		},
+	const handleClick = () => {
+		recordTracksEvent( 'calypso_dashboard_backups_backup_now' );
+		triggerBackup();
 	};
 
-	const isBusy = backupState !== 'default' || isPending;
+	// Generate button content based on backup status
+	const getButtonContent = () => {
+		// Show enqueued state only for this button when it triggered the backup
+		if ( isEnqueued ) {
+			return {
+				label: __( 'Backup enqueued' ),
+				tooltip: __( 'A backup has been queued and will start shortly.' ),
+			};
+		}
+
+		if ( status === 'running' ) {
+			return {
+				label: __( 'Backup in progress' ),
+				tooltip: __( 'A backup is currently in progress.' ),
+			};
+		}
+
+		return {
+			label: __( 'Back up now' ),
+			tooltip: __( 'Create a backup of your site now.' ),
+		};
+	};
+
+	const isBusy = isRunning || isPending || isEnqueued;
 
 	return (
 		<Button
 			variant="secondary"
-			onClick={ () => triggerBackup() }
+			onClick={ handleClick }
 			disabled={ isBusy }
 			isBusy={ isBusy }
 			accessibleWhenDisabled
-			description={ buttonContent[ backupState ].tooltip }
-			label={ buttonContent[ backupState ].label }
+			description={ getButtonContent().tooltip }
+			label={ getButtonContent().label }
 			showTooltip
 		>
-			{ buttonContent[ backupState ].label }
+			{ getButtonContent().label }
 		</Button>
 	);
 }

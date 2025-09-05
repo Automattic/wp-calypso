@@ -32,7 +32,7 @@ const Featured = ( {
 	cta,
 	isSingleFeaturedSuggestion,
 }: DomainSuggestionFeaturedProps ) => {
-	const { containerRef, activeQuery } = useDomainSuggestionContainer();
+	const { containerRef, activeQuery, currentWidth } = useDomainSuggestionContainer();
 
 	const contextValue = useMemo(
 		() =>
@@ -47,8 +47,9 @@ const Featured = ( {
 						: undefined,
 				priceSize: activeQuery === 'large' ? 20 : 18,
 				isFeatured: true,
+				currentWidth: currentWidth,
 			} ) as const,
-		[ activeQuery, matchReasons, isSingleFeaturedSuggestion ]
+		[ activeQuery, matchReasons, isSingleFeaturedSuggestion, currentWidth ]
 	);
 
 	const title = (

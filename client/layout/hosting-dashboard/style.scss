@@ -1,14 +1,14 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
 
 .main.hosting-dashboard-layout-column,
 .main.hosting-dashboard-layout {
-	background: var(--color-surface);
+	background: var( --color-surface );
 	margin: 0;
-	border-radius: 8px; /* stylelint-disable-line scales/radii */
+	border-radius: 8px;
 	overflow: hidden;
-	height: calc(100vh - 32px);
+	height: calc( 100vh - 32px );
 	padding-block-end: 0;
 
 	header.current-section {
@@ -22,7 +22,7 @@
 }
 
 .main.hosting-dashboard-layout-column {
-	border-radius: 8px; /* stylelint-disable-line scales/radii */
+	border-radius: 8px;
 	display: flex;
 	flex-direction: column;
 
@@ -74,7 +74,7 @@
 	> * {
 		padding-inline: 16px;
 
-		@include breakpoint-deprecated( ">660px" ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			// TODO: This is currently overridden as `none` in the Sites Dashboard for both Dotcom and A4A to align with Core's DataViews.
 			// Consider removing this max-width as the default across all layouts.
 			max-width: 1500px;
@@ -86,33 +86,32 @@
 
 .hosting-dashboard-layout__top-wrapper {
 	padding-block-start: 16px;
-	border-block-end: 1px solid var(--color-neutral-5);
+	border-block-end: 1px solid var( --color-neutral-5 );
 
-	@include breakpoint-deprecated( "<660px" ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		padding: 0;
 	}
 
 	.notice-banner {
-
 		&.is-info {
-			border-left-color: var(--color-primary);
+			border-left-color: var( --color-primary );
 
 			.notice-banner__icon {
-				fill: var(--color-primary);
+				fill: var( --color-primary );
 			}
 		}
 	}
 
 	// If we don't have a navigation, we will require some spacing on the borders.
-	&:not(.has-navigation) {
+	&:not( .has-navigation ) {
 		padding-block-end: 16px;
 	}
 }
 
 .main.hosting-dashboard-layout.is-with-border {
-	@include breakpoint-deprecated( ">660px" ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		.hosting-dashboard-layout__top-wrapper {
-			border-block-end: 1px solid var(--color-neutral-5);
+			border-block-end: 1px solid var( --color-neutral-5 );
 		}
 	}
 }
@@ -134,7 +133,7 @@
 		margin-inline-start: 24px;
 	}
 
-	@include breakpoint-deprecated( "<1280px" ) {
+	@include breakpoint-deprecated( '<1280px' ) {
 		flex-wrap: wrap;
 		gap: 16px;
 
@@ -166,7 +165,7 @@
 		}
 	}
 
-	@include breakpoint-deprecated( "<660px" ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		align-items: center;
 		justify-content: space-between;
 		> * {
@@ -188,11 +187,11 @@
 
 .hosting-dashboard-layout__sticky-header {
 	position: fixed;
-	width: calc(100%);
+	width: calc( 100% );
 	left: 0;
-	top: var(--masterbar-height);
-	background-color: rgba(246, 247, 247, 0.95);
-	box-shadow: 2px 2px 2px 0 rgb(0 0 0 / 8%);
+	top: var( --masterbar-height );
+	background-color: rgba( 246, 247, 247, 0.95 );
+	box-shadow: 2px 2px 2px 0 rgb( 0 0 0 / 8% );
 	z-index: 1001;
 	height: 74px;
 
@@ -219,14 +218,14 @@
 		margin-block-end: 0;
 	}
 
-	@include breakpoint-deprecated( ">660px" ) {
-		width: calc(100% - var(--sidebar-width-min));
-		left: var(--sidebar-width-min);
+	@include breakpoint-deprecated( '>660px' ) {
+		width: calc( 100% - var( --sidebar-width-min ) );
+		left: var( --sidebar-width-min );
 	}
 
-	@include breakpoint-deprecated( ">960px" ) {
-		width: calc(100% - var(--sidebar-width-max));
-		left: var(--sidebar-width-max);
+	@include breakpoint-deprecated( '>960px' ) {
+		width: calc( 100% - var( --sidebar-width-max ) );
+		left: var( --sidebar-width-max );
 	}
 }
 
@@ -234,28 +233,28 @@
 	margin-block-end: 4px;
 
 	&.is-hidden-on-mobile {
-		@include breakpoint-deprecated( "<660px" ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			display: none;
 		}
 	}
 }
 
 .hosting-dashboard-layout__header-title {
-	color: var(--studio-gray-80, #2c3338);
-	font-size: rem(24px);
+	color: var( --studio-gray-80, #2c3338 );
+	font-size: rem( 24px );
 	font-weight: 500;
 	line-height: 1.25;
 	letter-spacing: -0.5px;
 }
 
 .hosting-dashboard-layout__header-subtitle {
-	font-size: rem(16px);
+	font-size: rem( 16px );
 	font-weight: 400;
 	line-height: 1.5;
-	color: var(--color-neutral-60);
+	color: var( --color-neutral-60 );
 	margin: 8px 0 0 0;
 
-	@include breakpoint-deprecated( "<660px" ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		display: none;
 	}
 }
@@ -265,8 +264,8 @@
 
 	&.section-nav-updated .count {
 		border-radius: 4px;
-		border: 1px solid var(--color-neutral-5);
-		background: var(--color-surface);
+		border: 1px solid var( --color-neutral-5 );
+		background: var( --color-surface );
 	}
 
 	.section-nav__mobile-header-text .count {
@@ -274,7 +273,7 @@
 	}
 
 	.select-dropdown__item.is-selected .count {
-		color: var(--color-text);
+		color: var( --color-text );
 	}
 
 	.select-dropdown__header {
@@ -284,7 +283,7 @@
 			top: 12.5px;
 		}
 
-		@include breakpoint-deprecated( ">660px" ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			border-width: 1px;
 		}
 	}
@@ -298,7 +297,7 @@
 		width: 100%;
 		margin: 0 0 1px 0;
 
-		@include breakpoint-deprecated( ">660px" ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			margin-block-end: 12px;
 		}
 	}
@@ -318,7 +317,7 @@
 		z-index: 23;
 	}
 
-	@include breakpoint-deprecated( ">1040px" ) {
+	@include breakpoint-deprecated( '>1040px' ) {
 		margin-inline: -16px;
 	}
 

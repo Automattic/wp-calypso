@@ -10,6 +10,11 @@ export type SiteFeatureSupports = {
 	emails: boolean;
 };
 
+export type MeSupports = {
+	privacy: boolean;
+	apps: boolean;
+};
+
 export type AppConfig = {
 	basePath: string;
 	mainRoute: string;
@@ -18,12 +23,13 @@ export type AppConfig = {
 	supports: {
 		overview: boolean;
 		sites: SiteFeatureSupports | false;
+		plugins: boolean;
 		domains: boolean;
 		emails: boolean;
 		reader: boolean;
 		help: boolean;
 		notifications: boolean;
-		me: boolean;
+		me: MeSupports | false;
 	};
 };
 
@@ -35,6 +41,7 @@ const AppContext = createContext< AppConfig >( {
 	supports: {
 		overview: false,
 		sites: false,
+		plugins: false,
 		domains: false,
 		emails: false,
 		reader: false,

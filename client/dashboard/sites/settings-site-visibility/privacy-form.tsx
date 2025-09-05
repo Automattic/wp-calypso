@@ -1,6 +1,6 @@
+import { siteDomainsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import {
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Card,
 	CardBody,
@@ -14,11 +14,11 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
-import { siteDomainsQuery } from '../../app/queries/site-domains';
+import { ButtonStack } from '../../components/button-stack';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { ShareSiteForm } from './share-site-form';
-import type { Site, SiteSettings } from '../../data/types';
+import type { Site, SiteSettings } from '@automattic/api-core';
 import type { UseMutationResult } from '@tanstack/react-query';
 import type { Field, Form } from '@wordpress/dataviews';
 
@@ -51,7 +51,7 @@ const visibilityFields: Field< PrivacyFormData >[] = [
 				label: __( 'Private' ),
 				value: 'private',
 				description: __(
-					'Your site is only visible to you and logged-in members you approve. Everyone else will see a log in screen.'
+					'Your site is only visible to you and to logged-in members you approve. Everyone else will see a login screen.'
 				),
 			},
 		],
@@ -59,8 +59,10 @@ const visibilityFields: Field< PrivacyFormData >[] = [
 ];
 
 const visibilityForm = {
-	type: 'regular',
-	fields: [ { id: 'visibility', labelPosition: 'none' } ],
+	layout: {
+		type: 'regular' as const,
+	},
+	fields: [ { id: 'visibility', layout: { type: 'regular', labelPosition: 'none' } } ],
 } satisfies Form;
 
 // This form also has access to `isPrimaryDomainStaging` which isn't a persisted setting, but is data
@@ -113,7 +115,7 @@ const robotFields: Field< PrivacyFormData & { isPrimaryDomainStaging: boolean } 
 ];
 
 const robotForm = {
-	type: 'regular',
+	layout: { type: 'regular' as const },
 	fields: [ 'discourageSearchEngines', 'preventThirdPartySharing' ],
 } satisfies Form;
 
@@ -242,7 +244,7 @@ export function PrivacyForm( {
 								form={ robotForm }
 								onChange={ ( { isPrimaryDomainStaging, ...edits } ) => handleChange( edits ) }
 							/>
-							<HStack justify="flex-start">
+							<ButtonStack justify="flex-start">
 								<Button
 									variant="primary"
 									__next40pxDefaultSize
@@ -252,7 +254,7 @@ export function PrivacyForm( {
 								>
 									{ __( 'Save' ) }
 								</Button>
-							</HStack>
+							</ButtonStack>
 						</VStack>
 					</form>
 				</CardBody>

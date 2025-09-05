@@ -1,22 +1,24 @@
+import { domainQuery, sitePurchaseQuery } from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { useLocale } from '../../app/locale';
-import { domainQuery } from '../../app/queries/domain';
-import { sitePurchaseQuery } from '../../app/queries/site-purchases';
-import { domainRoute } from '../../app/router';
+import { domainRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { formatDate } from '../../utils/datetime';
 import { getDomainRenewalUrl } from '../../utils/domain';
+import Actions from './actions';
+import FeaturedCards from './featured-cards';
+import DomainOverviewSettings from './settings';
 
 export default function DomainOverview() {
 	const locale = useLocale();
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
-	const { data: purchase } = useQuery(
+	const { data: purchase } = useSuspenseQuery(
 		sitePurchaseQuery( domain.blog_id, parseInt( domain.subscription_id, 10 ) )
 	);
 
@@ -63,6 +65,10 @@ export default function DomainOverview() {
 					}
 				/>
 			}
-		></PageLayout>
+		>
+			<FeaturedCards />
+			<DomainOverviewSettings />
+			<Actions />
+		</PageLayout>
 	);
 }

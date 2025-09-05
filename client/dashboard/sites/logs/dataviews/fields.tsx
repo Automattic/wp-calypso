@@ -1,18 +1,19 @@
+import { LogType, PHPLog, ServerLog } from '@automattic/api-core';
 import { formatNumber } from '@automattic/number-formatters';
 import { Badge } from '@automattic/ui';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useViewportMatch } from '@wordpress/compose';
+import { dateI18n } from '@wordpress/date';
 import { useMemo } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useLocale } from '../../../app/locale';
-import { siteBySlugQuery } from '../../../app/queries/site';
-import { siteSettingsQuery } from '../../../app/queries/site-settings';
-import { siteRoute } from '../../../app/router';
-import { LogType } from '../../../data/site-logs';
 import { formatDateWithOffset, getUtcOffsetDisplay } from '../../../utils/datetime';
-import type { PHPLog, ServerLog } from '../../../data/site-logs';
-import type { Field, Operator } from '@wordpress/dataviews';
+import type { Field } from '@wordpress/dataviews';
 
 import './style.scss';
+
+type UseFieldsArgs =
+	| { logType: LogType; timezoneString: string; gmtOffset?: number }
+	| { logType: LogType; timezoneString?: undefined; gmtOffset: number };
 
 const VALUES_CACHED = [ 'false', 'true' ] as const;
 const VALUES_RENDERER = [ 'php', 'static' ] as const;
@@ -44,25 +45,39 @@ const getLabelRenderer = ( renderer: string ) => {
 const toSeverityClass = ( severity: PHPLog[ 'severity' ] ) =>
 	severity.split( ' ' )[ 0 ].toLowerCase();
 
-export function useFields( { logType }: { logType: LogType } ): Field< PHPLog | ServerLog >[] {
-	const { siteSlug } = siteRoute.useParams();
-	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const siteId = site?.ID as number;
-
-	const { data: gmtOffset } = useSuspenseQuery( {
-		...siteSettingsQuery( siteId ),
-		select: ( s ) => s?.gmt_offset ?? 0,
-	} );
-
+export function useFields( {
+	logType,
+	timezoneString,
+	gmtOffset,
+}: UseFieldsArgs ): Field< PHPLog >[] | Field< ServerLog >[] {
 	const locale = useLocale();
 
-	const dateTimeLabel = sprintf(
-		/* Translators: %s is the site's GMT offset */
-		__( 'Date & time (%s)' ),
-		getUtcOffsetDisplay( gmtOffset )
-	);
+	let dateTimeLabel = __( 'Date & time' );
+
+	const isLargeScreen = useViewportMatch( 'huge', '>=' );
+
+	/* translators: %s is the site's timezone (e.g., "Europe/London") or UTC offset (e.g., "UTC+02:00") */
+	const dateTimeWithTz = __( 'Date & time (%s)' );
+	if ( timezoneString && isLargeScreen ) {
+		dateTimeLabel = sprintf( dateTimeWithTz, timezoneString );
+	} else if ( typeof gmtOffset === 'number' ) {
+		dateTimeLabel = sprintf( dateTimeWithTz, getUtcOffsetDisplay( gmtOffset ) );
+	}
 
 	return useMemo( () => {
+		const formatCell = ( value?: string | number ) => {
+			if ( ! value ) {
+				return '';
+			}
+			const date = typeof value === 'number' ? new Date( value * 1000 ) : new Date( value );
+			return timezoneString
+				? dateI18n( 'M j, Y \\a\\t g:i A', date, timezoneString )
+				: formatDateWithOffset( date, gmtOffset as number, locale, {
+						dateStyle: 'medium',
+						timeStyle: 'short',
+				  } );
+		};
+
 		if ( logType === LogType.PHP ) {
 			return [
 				{
@@ -71,14 +86,12 @@ export function useFields( { logType }: { logType: LogType } ): Field< PHPLog | 
 					label: dateTimeLabel,
 					enableHiding: false,
 					enableSorting: true,
-					getValue: ( { item } ) => ( item as PHPLog ).timestamp,
-					render: ( { field, item } ) => (
-						<span>
-							{ ( field.getValue( { item } ) as string )
-								? formatDateWithOffset( field.getValue( { item } ) as string, gmtOffset, locale )
-								: '' }
-						</span>
-					),
+					getValue: ( { item } ) => item.timestamp,
+					render: ( { item } ) => {
+						const value = item.timestamp;
+						return <span>{ formatCell( value ) }</span>;
+					},
+					filterBy: { operators: [] },
 				},
 				{
 					id: 'severity',
@@ -86,63 +99,61 @@ export function useFields( { logType }: { logType: LogType } ): Field< PHPLog | 
 					label: __( 'Severity' ),
 					enableSorting: false,
 					elements: VALUES_SEVERITY.map( ( severity ) => ( { value: severity, label: severity } ) ),
-					getValue: ( { item } ) => ( item as PHPLog ).severity,
-					render: ( { field, item } ) => (
-						<Badge
-							intent="default"
-							className={ `badge--${ toSeverityClass( field.getValue( { item } ) ) }` }
-						>
-							{ field.getValue( { item } ) }
+					getValue: ( { item } ) => item.severity,
+					render: ( { item } ) => (
+						<Badge intent="default" className={ `badge--${ toSeverityClass( item.severity ) }` }>
+							{ item.severity }
 						</Badge>
 					),
+					filterBy: { operators: [ 'isAny' ] },
 				},
 				{
 					id: 'message',
 					type: 'text',
 					label: __( 'Message' ),
 					enableSorting: false,
-					getValue: ( { item } ) => ( item as PHPLog ).message,
-					render: ( { field, item } ) => (
-						<span className="site-logs-ellipsis">{ String( field.getValue( { item } ) ) }</span>
+					getValue: ( { item } ) => item.message,
+					render: ( { item } ) => (
+						<span className="site-logs-ellipsis">{ String( item.message ) }</span>
 					),
+					filterBy: { operators: [] },
 				},
 				{
 					id: 'kind',
 					type: 'text',
 					label: __( 'Group' ),
 					enableSorting: false,
-					getValue: ( { item } ) => ( item as PHPLog ).kind,
+					getValue: ( { item } ) => item.kind,
+					filterBy: { operators: [] },
 				},
 				{
 					id: 'name',
 					type: 'text',
 					label: __( 'Source' ),
-
 					enableSorting: false,
-					getValue: ( { item } ) => ( item as PHPLog ).name,
-					render: ( { field, item } ) => (
-						<span className="site-logs-wrap">{ String( field.getValue( { item } ) ) }</span>
-					),
+					getValue: ( { item } ) => item.name,
+					render: ( { item } ) => <span className="site-logs-wrap">{ String( item.name ) }</span>,
+					filterBy: { operators: [] },
 				},
 				{
 					id: 'file',
 					type: 'text',
 					label: __( 'File' ),
 					enableSorting: false,
-					getValue: ( { item } ) => ( item as PHPLog ).file,
-					render: ( { field, item } ) => (
-						<span className="site-logs-wrap">{ String( field.getValue( { item } ) ) }</span>
-					),
+					getValue: ( { item } ) => item.file,
+					render: ( { item } ) => <span className="site-logs-wrap">{ String( item.file ) }</span>,
+					filterBy: { operators: [] },
 				},
 				{
 					id: 'line',
 					type: 'integer',
 					label: __( 'Line' ),
 					enableSorting: false,
-					getValue: ( { item } ) => ( item as PHPLog ).line,
-					render: ( { field, item } ) => formatNumber( field.getValue( { item } ) as number ),
+					getValue: ( { item } ) => item.line,
+					render: ( { item } ) => formatNumber( item.line ),
+					filterBy: { operators: [] },
 				},
-			];
+			] satisfies Field< PHPLog >[];
 		}
 
 		// server (web) logs
@@ -153,12 +164,12 @@ export function useFields( { logType }: { logType: LogType } ): Field< PHPLog | 
 				label: dateTimeLabel,
 				enableHiding: false,
 				enableSorting: true,
-				getValue: ( { item } ) => ( item as PHPLog ).timestamp,
-				render: ( { field, item } ) => (
-					<span>
-						{ formatDateWithOffset( field.getValue( { item } ) as string, gmtOffset, locale ) }
-					</span>
-				),
+				getValue: ( { item } ) => item.date ?? item.timestamp,
+				render: ( { item } ) => {
+					const value = item.date ?? item.timestamp;
+					return <span>{ formatCell( value ) }</span>;
+				},
+				filterBy: { operators: [] },
 			},
 			{
 				id: 'request_type',
@@ -166,12 +177,13 @@ export function useFields( { logType }: { logType: LogType } ): Field< PHPLog | 
 				label: __( 'Request type' ),
 				enableSorting: false,
 				elements: VALUES_REQUEST_TYPE.map( ( t ) => ( { value: t, label: t } ) ),
-				getValue: ( { item } ) => ( item as ServerLog ).request_type,
-				render: ( { field, item } ) => (
-					<Badge intent="default" className={ `badge--${ field.getValue( { item } ) }` }>
-						{ field.getValue( { item } ) }
+				getValue: ( { item } ) => item.request_type,
+				render: ( { item } ) => (
+					<Badge intent="default" className={ `badge--${ item.request_type }` }>
+						{ item.request_type }
 					</Badge>
 				),
+				filterBy: { operators: [ 'isAny' ] },
 			},
 			{
 				id: 'status',
@@ -179,142 +191,153 @@ export function useFields( { logType }: { logType: LogType } ): Field< PHPLog | 
 				label: __( 'Status' ),
 				enableSorting: false,
 				elements: VALUES_STATUS.map( ( status ) => ( { value: status, label: status } ) ),
-				getValue: ( { item } ) => ( item as ServerLog ).status,
+				getValue: ( { item } ) => item.status,
+				filterBy: { operators: [ 'isAny' ] },
 			},
 			{
 				id: 'request_url',
 				type: 'text',
 				label: __( 'Request URL' ),
 				enableSorting: false,
-				getValue: ( { item } ) => ( item as ServerLog ).request_url,
-				render: ( { field, item } ) => (
-					<span className="site-logs-wrap">{ String( field.getValue( { item } ) ) }</span>
+				getValue: ( { item } ) => item.request_url,
+				render: ( { item } ) => (
+					<span className="site-logs-wrap">{ String( item.request_url ) }</span>
 				),
+				filterBy: { operators: [] },
 			},
 			{
 				id: 'body_bytes_sent',
 				type: 'integer',
 				label: __( 'Body bytes sent' ),
 				enableSorting: false,
-				getValue: ( { item } ) => ( item as ServerLog ).body_bytes_sent,
-				render: ( { field, item } ) => (
-					<span>{ formatNumber( field.getValue( { item } ) as number ) }</span>
-				),
+				getValue: ( { item } ) => item.body_bytes_sent,
+				render: ( { item } ) => <span>{ formatNumber( item.body_bytes_sent ) }</span>,
+				filterBy: { operators: [] },
 			},
 			{
 				id: 'cached',
 				type: 'text',
 				label: __( 'Cached' ),
 				enableSorting: false,
-				getValue: ( { item } ) => ( item as ServerLog ).cached,
+				getValue: ( { item } ) => item.cached,
 				elements: VALUES_CACHED.map( ( cachedValue ) => ( {
 					value: cachedValue,
 					label: getLabelCached( cachedValue ),
 				} ) ),
-				filterBy: { operators: [ 'isAny' as Operator ] },
-				render: ( { field, item } ) => (
-					<span>{ getLabelCached( field.getValue( { item } ) as string ) }</span>
-				),
+				render: ( { item } ) => <span>{ getLabelCached( item.cached ) }</span>,
+				filterBy: { operators: [ 'isAny' ] },
 			},
 			{
 				id: 'http_host',
 				type: 'text',
 				label: __( 'HTTP Host' ),
 				enableSorting: false,
-				getValue: ( { item } ) => ( item as ServerLog ).http_host,
+				getValue: ( { item } ) => item.http_host,
+				filterBy: { operators: [] },
 			},
 			{
 				id: 'http_referer',
 				type: 'text',
 				label: __( 'HTTP Referrer' ),
 				enableSorting: false,
-				getValue: ( { item } ) => ( item as ServerLog ).http_referer,
-				render: ( { field, item } ) => (
-					<span className="site-logs-wrap">{ String( field.getValue( { item } ) ) }</span>
+				getValue: ( { item } ) => item.http_referer,
+				render: ( { item } ) => (
+					<span className="site-logs-wrap">{ String( item.http_referer ) }</span>
 				),
+				filterBy: { operators: [] },
 			},
 			{
 				id: 'http2',
 				type: 'text',
 				label: __( 'HTTP/2' ),
 				enableSorting: false,
-				getValue: ( { item } ) => ( item as ServerLog ).http2,
+				getValue: ( { item } ) => item.http2,
+				filterBy: { operators: [] },
 			},
 			{
 				id: 'http_user_agent',
 				type: 'text',
 				label: __( 'User Agent' ),
 				enableSorting: false,
-				getValue: ( { item } ) => ( item as ServerLog ).http_user_agent,
+				getValue: ( { item } ) => item.http_user_agent,
+				filterBy: { operators: [] },
 			},
 			{
 				id: 'http_version',
 				type: 'text',
 				label: __( 'HTTP Version' ),
 				enableSorting: false,
-				getValue: ( { item } ) => ( item as ServerLog ).http_version,
+				getValue: ( { item } ) => item.http_version,
+				filterBy: { operators: [] },
 			},
 			{
 				id: 'http_x_forwarded_for',
 				type: 'text',
 				label: __( 'X-Forwarded-For' ),
 				enableSorting: false,
-				getValue: ( { item } ) => ( item as ServerLog ).http_x_forwarded_for,
+				getValue: ( { item } ) => item.http_x_forwarded_for,
+				filterBy: { operators: [] },
 			},
 			{
 				id: 'renderer',
 				type: 'text',
 				label: __( 'Renderer' ),
 				enableSorting: false,
-				getValue: ( { item } ) => ( item as ServerLog ).renderer,
+				getValue: ( { item } ) => item.renderer,
 				elements: VALUES_RENDERER.map( ( renderer ) => ( {
 					value: renderer,
 					label: getLabelRenderer( renderer ),
 				} ) ),
-				filterBy: { operators: [ 'isAny' as Operator ] },
+				filterBy: { operators: [ 'isAny' ] },
 			},
 			{
 				id: 'request_completion',
 				type: 'text',
 				label: __( 'Request Completion' ),
 				enableSorting: false,
-				getValue: ( { item } ) => ( item as ServerLog ).request_completion,
+				getValue: ( { item } ) => item.request_completion,
+				filterBy: { operators: [] },
 			},
 			{
 				id: 'request_time',
 				type: 'text',
 				label: __( 'Request Time' ),
 				enableSorting: false,
-				getValue: ( { item } ) => ( item as ServerLog ).request_time,
+				getValue: ( { item } ) => item.request_time,
+				filterBy: { operators: [] },
 			},
 			{
 				id: 'scheme',
 				type: 'text',
 				label: __( 'Scheme' ),
 				enableSorting: false,
-				getValue: ( { item } ) => ( item as ServerLog ).scheme,
+				getValue: ( { item } ) => item.scheme,
+				filterBy: { operators: [] },
 			},
 			{
 				id: 'timestamp',
 				type: 'integer',
 				label: __( 'Timestamp' ),
 				enableSorting: false,
-				getValue: ( { item } ) => ( item as ServerLog ).timestamp,
+				getValue: ( { item } ) => item.timestamp,
+				filterBy: { operators: [] },
 			},
 			{
 				id: 'type',
 				type: 'text',
 				label: __( 'Type' ),
 				enableSorting: false,
-				getValue: ( { item } ) => ( item as ServerLog ).type,
+				getValue: ( { item } ) => item.type,
+				filterBy: { operators: [] },
 			},
 			{
 				id: 'user_ip',
 				type: 'text',
 				label: __( 'User IP' ),
 				enableSorting: false,
-				getValue: ( { item } ) => ( item as ServerLog ).user_ip,
+				getValue: ( { item } ) => item.user_ip,
+				filterBy: { operators: [] },
 			},
-		];
-	}, [ dateTimeLabel, gmtOffset, locale, logType ] );
+		] satisfies Field< ServerLog >[];
+	}, [ dateTimeLabel, gmtOffset, locale, logType, timezoneString ] );
 }

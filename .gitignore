@@ -128,3 +128,8 @@ packages/plans-grid-next/static/mockServiceWorker.js
 .phpunit.cache
 
 .docusaurus
+
+# Playwright
+playwright-report/
+/cookies
+output/

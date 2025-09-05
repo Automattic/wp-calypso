@@ -1,23 +1,26 @@
-import { useQuery } from '@tanstack/react-query';
-import { __experimentalText as Text, __experimentalGrid as Grid } from '@wordpress/components';
+import { HostingFeatures } from '@automattic/api-core';
+import { siteBySlugQuery } from '@automattic/api-queries';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { Outlet } from '@tanstack/react-router';
+import { __experimentalGrid as Grid, __experimentalText as Text } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
 import { useState } from 'react';
-import { siteBySlugQuery } from '../../app/queries/site';
-import { siteRoute } from '../../app/router';
+import { siteRoute } from '../../app/router/sites';
 import { Callout } from '../../components/callout';
 import { CalloutOverlay } from '../../components/callout-overlay';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
-import { HostingFeatures } from '../../data/constants';
 import { hasHostingFeature } from '../../utils/site-features';
 import { BackupDetails } from './backup-details';
+import { BackupNotices } from './backup-notices';
 import { BackupNowButton } from './backup-now-button';
 import illustrationUrl from './backups-callout-illustration.svg';
 import { BackupsList } from './backups-list';
 import './style.scss';
-import type { ActivityLogEntry, Site } from '../../data/types';
+import type { ActivityLogEntry } from '@automattic/api-core';
 
 export function SiteBackupsCallout( {
 	siteSlug,
@@ -56,28 +59,12 @@ export function SiteBackupsCallout( {
 	);
 }
 
-function BackupsLayout( { site }: { site: Site } ) {
-	const [ selectedBackup, setSelectedBackup ] = useState< ActivityLogEntry | null >( null );
-
-	return (
-		<Grid columns={ 2 }>
-			<BackupsList
-				site={ site }
-				selectedBackup={ selectedBackup }
-				setSelectedBackup={ setSelectedBackup }
-			/>
-			{ selectedBackup && <BackupDetails backup={ selectedBackup } /> }
-		</Grid>
-	);
-}
-
-function SiteBackups() {
+export function BackupsListPage() {
 	const { siteSlug } = siteRoute.useParams();
-	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
-
-	if ( ! site ) {
-		return;
-	}
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const [ selectedBackup, setSelectedBackup ] = useState< ActivityLogEntry | null >( null );
+	const isSmallViewport = useViewportMatch( 'medium', '<' );
+	const columns = isSmallViewport ? 1 : 2;
 
 	const hasBackups = hasHostingFeature( site, HostingFeatures.BACKUPS );
 
@@ -89,13 +76,34 @@ function SiteBackups() {
 					actions={ hasBackups && <BackupNowButton site={ site } /> }
 				/>
 			}
+			notices={ <BackupNotices site={ site } /> }
 		>
-			<CalloutOverlay
-				showCallout={ ! hasBackups }
-				callout={ <SiteBackupsCallout siteSlug={ site.slug } /> }
-				main={ <BackupsLayout site={ site } /> }
-			/>
+			{ hasBackups && (
+				<Grid className="dashboard-backups__list-grid" columns={ columns }>
+					<BackupsList
+						site={ site }
+						selectedBackup={ selectedBackup }
+						setSelectedBackup={ setSelectedBackup }
+					/>
+					{ selectedBackup && <BackupDetails backup={ selectedBackup } site={ site } /> }
+				</Grid>
+			) }
 		</PageLayout>
+	);
+}
+
+function SiteBackups() {
+	const { siteSlug } = siteRoute.useParams();
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+
+	const hasBackups = hasHostingFeature( site, HostingFeatures.BACKUPS );
+
+	return (
+		<CalloutOverlay
+			showCallout={ ! hasBackups }
+			callout={ <SiteBackupsCallout siteSlug={ site.slug } /> }
+			main={ <Outlet /> }
+		/>
 	);
 }
 

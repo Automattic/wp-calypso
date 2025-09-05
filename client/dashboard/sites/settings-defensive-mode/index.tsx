@@ -1,9 +1,14 @@
+import { HostingFeatures } from '@automattic/api-core';
+import {
+	siteDefensiveModeSettingsQuery,
+	siteDefensiveModeSettingsMutation,
+	siteBySlugQuery,
+} from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
 	Card,
 	CardBody,
 	ExternalLink,
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	Button,
@@ -14,20 +19,15 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteBySlugQuery } from '../../app/queries/site';
-import {
-	siteDefensiveModeSettingsQuery,
-	siteDefensiveModeSettingsMutation,
-} from '../../app/queries/site-defensive-mode';
+import { ButtonStack } from '../../components/button-stack';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
-import { HostingFeatures } from '../../data/constants';
 import { hasHostingFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SettingsPageHeader from '../settings-page-header';
-import type { DefensiveModeSettingsUpdate } from '../../data/types';
+import type { DefensiveModeSettingsUpdate } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 const availableTtls = [
@@ -63,7 +63,7 @@ const fields: Field< { ttl: string } >[] = [
 ];
 
 const form = {
-	type: 'regular' as const,
+	layout: { type: 'regular' as const },
 	fields: [ 'ttl' ],
 };
 
@@ -191,7 +191,7 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 										setFormData( ( data ) => ( { ...data, ...edits } ) );
 									} }
 								/>
-								<HStack justify="flex-start">
+								<ButtonStack justify="flex-start">
 									<Button
 										__next40pxDefaultSize
 										variant="primary"
@@ -201,7 +201,7 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 									>
 										{ __( 'Enable' ) }
 									</Button>
-								</HStack>
+								</ButtonStack>
 							</VStack>
 						</form>
 					</CardBody>

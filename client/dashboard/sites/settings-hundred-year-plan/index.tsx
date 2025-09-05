@@ -1,7 +1,7 @@
+import { siteBySlugQuery, siteSettingsMutation, siteSettingsQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { notFound } from '@tanstack/react-router';
 import {
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
 	Card,
@@ -14,13 +14,12 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteBySlugQuery } from '../../app/queries/site';
-import { siteSettingsMutation, siteSettingsQuery } from '../../app/queries/site-settings';
+import { ButtonStack } from '../../components/button-stack';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
 import { canViewHundredYearPlanSettings } from '../features';
 import SettingsPageHeader from '../settings-page-header';
-import type { SiteSettings } from '../../data/types';
+import type { SiteSettings } from '@automattic/api-core';
 import type { Field, SimpleFormField } from '@wordpress/dataviews';
 
 const fields: Field< SiteSettings >[] = [
@@ -43,7 +42,7 @@ const fields: Field< SiteSettings >[] = [
 ];
 
 const form = {
-	type: 'regular' as const,
+	layout: { type: 'regular' as const },
 	fields: [ { id: 'wpcom_legacy_contact' }, { id: 'wpcom_locked_mode' } ] as SimpleFormField[],
 };
 
@@ -120,7 +119,7 @@ export default function HundredYearPlanSettings( { siteSlug }: { siteSlug: strin
 									setFormData( ( data ) => ( { ...data, ...edits } ) );
 								} }
 							/>
-							<HStack justify="flex-start">
+							<ButtonStack justify="flex-start">
 								<Button
 									variant="primary"
 									type="submit"
@@ -129,7 +128,7 @@ export default function HundredYearPlanSettings( { siteSlug }: { siteSlug: strin
 								>
 									{ __( 'Save' ) }
 								</Button>
-							</HStack>
+							</ButtonStack>
 						</VStack>
 					</form>
 				</CardBody>

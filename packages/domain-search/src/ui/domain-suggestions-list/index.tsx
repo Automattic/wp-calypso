@@ -10,9 +10,12 @@ interface DomainSuggestionsListProps {
 }
 
 export const DomainSuggestionsList = ( { children }: DomainSuggestionsListProps ) => {
-	const { containerRef, activeQuery } = useDomainSuggestionContainer();
+	const { containerRef, activeQuery, currentWidth } = useDomainSuggestionContainer();
 
-	const contextValue = useMemo( () => ( { activeQuery } ), [ activeQuery ] );
+	const contextValue = useMemo(
+		() => ( { activeQuery, currentWidth } ),
+		[ activeQuery, currentWidth ]
+	);
 
 	const childrenWithSeparators = useMemo( () => {
 		const totalChildren = Children.count( children );

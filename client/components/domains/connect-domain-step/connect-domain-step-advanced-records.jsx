@@ -1,8 +1,8 @@
 import { Button } from '@automattic/components';
+import { isSubdomain } from '@automattic/domain-search';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
-import { isSubdomain } from 'calypso/lib/domains';
 import ConnectDomainStepClipboardButton from './connect-domain-step-clipboard-button';
 import ConnectDomainStepVerificationNotice from './connect-domain-step-verification-error-notice';
 import ConnectDomainStepWrapper from './connect-domain-step-wrapper';

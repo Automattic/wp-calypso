@@ -1,19 +1,18 @@
-import config from '@automattic/calypso-config';
+import { siteByIdQuery, isDeletingStagingSiteQuery, queryClient } from '@automattic/api-queries';
 import { Button } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
 import { useMergeRefs } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { GuidedTourStep } from 'calypso/components/guided-tour/step';
-import { isDeletingStagingSiteQuery } from 'calypso/dashboard/app/queries/site-staging-sites';
-import { queryClient } from 'calypso/dashboard/app/query-client';
 import SyncDropdown from 'calypso/dashboard/sites/staging-site-sync-dropdown';
+import { isAtomicTransferredSite } from 'calypso/dashboard/utils/site-atomic-transfers';
 import { useCheckSyncStatus } from 'calypso/sites/staging-site/hooks/use-site-sync-status';
+import { useStagingSite } from 'calypso/sites/staging-site/hooks/use-staging-site';
 import { useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import hasWpcomStagingSite from 'calypso/state/selectors/has-wpcom-staging-site';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { useSiteAdminInterfaceData } from 'calypso/state/sites/hooks';
 import { getSite } from 'calypso/state/sites/selectors';
@@ -35,16 +34,31 @@ const PreviewPaneHeaderButtons = ( { focusRef, itemData }: Props ) => {
 	const dispatch = useDispatch();
 	const previousSyncInProgress = useRef< boolean >( false );
 
-	const stagingSitesRedesign = config.isEnabled( 'hosting/staging-sites-redesign' );
-
 	const site = useSelector( ( state ) => getSite( state, itemData.blogId ) );
 
 	const isStagingSite = useSelector( ( state ) =>
 		isSiteWpcomStaging( state, itemData.blogId ?? null )
 	);
-	const hasStagingSite = useSelector( ( state ) =>
-		hasWpcomStagingSite( state, itemData.blogId ?? null )
-	);
+
+	const { data: stagingSites } = useStagingSite( itemData.blogId ?? 0, {
+		enabled: ! isStagingSite && !! site?.is_wpcom_atomic,
+	} );
+
+	const siteWithStagingIds = useMemo( () => {
+		if ( ! site?.options || ! site.is_wpcom_atomic ) {
+			return site;
+		}
+
+		const stagingBlogIds = stagingSites?.map( ( stagingSite ) => stagingSite.id ) ?? [];
+
+		return {
+			...site,
+			options: {
+				...site.options,
+				wpcom_staging_blog_ids: stagingBlogIds,
+			},
+		};
+	}, [ site, stagingSites ] );
 	const isStagingSiteInTransition = useSelector( ( state ) =>
 		getIsStagingSiteInTransition( state, itemData.blogId ?? 0 )
 	);
@@ -54,11 +68,34 @@ const PreviewPaneHeaderButtons = ( { focusRef, itemData }: Props ) => {
 		queryClient
 	);
 
+	const stagingSiteId = isStagingSite
+		? itemData.blogId
+		: siteWithStagingIds?.options?.wpcom_staging_blog_ids?.[ 0 ];
+
+	const { data: stagingSite } = useQuery( {
+		...siteByIdQuery( stagingSiteId ?? 0 ),
+		enabled: !! stagingSiteId,
+		refetchInterval: ( query ) => {
+			return query.state.data?.jetpack_connection ? false : 5000;
+		},
+	} );
+
+	const hasStagingSiteJetpackConnection = stagingSite?.jetpack_connection;
+
+	// Use staging readiness logic like the environment switcher
+	const supportsStaging = siteWithStagingIds
+		? isStagingSite ||
+		  isAtomicTransferredSite( {
+				is_wpcom_atomic: siteWithStagingIds.is_wpcom_atomic,
+				capabilities: siteWithStagingIds.capabilities,
+		  } )
+		: false;
+
 	const shouldShowSyncDropdown = Boolean(
-		stagingSitesRedesign &&
-			( isStagingSite || hasStagingSite ) &&
+		supportsStaging &&
 			! isStagingSiteInTransition &&
-			! isStagingSiteDeletionInProgress
+			! isStagingSiteDeletionInProgress &&
+			hasStagingSiteJetpackConnection
 	);
 
 	const productionSiteId = isStagingSite

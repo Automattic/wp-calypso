@@ -30,6 +30,7 @@ type Story = StoryObj< typeof NameServersForm >;
 export const Default: Story = {
 	args: {
 		domainName: 'example.com',
+		domainSiteSlug: 'example.wordpress.com',
 		nameServers: [],
 		isBusy: false,
 		showUpsellNudge: false,
@@ -40,6 +41,7 @@ export const Default: Story = {
 export const WithNameservers: Story = {
 	args: {
 		domainName: 'example.com',
+		domainSiteSlug: 'example.wordpress.com',
 		nameServers: [ 'ns1.wordpress.com', 'ns2.wordpress.com', 'ns3.wordpress.com' ],
 		isBusy: false,
 		showUpsellNudge: false,
@@ -50,6 +52,7 @@ export const WithNameservers: Story = {
 export const WithUpsellNudge: Story = {
 	args: {
 		domainName: 'example.com',
+		domainSiteSlug: 'example.wordpress.com',
 		nameServers: [],
 		isBusy: false,
 		showUpsellNudge: true,
@@ -60,6 +63,7 @@ export const WithUpsellNudge: Story = {
 export const IsBusy: Story = {
 	args: {
 		domainName: 'example.com',
+		domainSiteSlug: 'example.wordpress.com',
 		nameServers: [],
 		isBusy: true,
 		showUpsellNudge: false,

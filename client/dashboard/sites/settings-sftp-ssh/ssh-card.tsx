@@ -1,3 +1,12 @@
+import { isWpError } from '@automattic/api-core';
+import {
+	siteSshAccessEnableMutation,
+	siteSshAccessDisableMutation,
+	siteSshKeysQuery,
+	siteSshKeysAttachMutation,
+	siteSshKeysDetachMutation,
+	sshKeysQuery,
+} from '@automattic/api-queries';
 import { Badge } from '@automattic/ui';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import {
@@ -20,19 +29,11 @@ import { trash } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { useAuth } from '../../app/auth';
-import {
-	siteSshAccessEnableMutation,
-	siteSshAccessDisableMutation,
-	siteSshKeysQuery,
-	siteSshKeysAttachMutation,
-	siteSshKeysDetachMutation,
-} from '../../app/queries/site-ssh';
-import { sshKeysQuery } from '../../app/queries/ssh';
+import { ButtonStack } from '../../components/button-stack';
 import ClipboardInputControl from '../../components/clipboard-input-control';
 import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
-import { isWpError } from '../../data/error';
-import type { SftpUser, SiteSshKey, UserSshKey } from '../../data/types';
+import type { SftpUser, SiteSshKey, UserSshKey } from '@automattic/api-core';
 import type { DataFormControlProps, Field } from '@wordpress/dataviews';
 
 type SshCardFormData = {
@@ -275,7 +276,7 @@ export default function SshCard( {
 	];
 
 	const form = {
-		type: 'regular' as const,
+		layout: { type: 'regular' as const },
 		fields: [ 'connection_command', 'ssh_key' ],
 	};
 
@@ -321,7 +322,7 @@ export default function SshCard( {
 						/>
 					) }
 					{ sshEnabled && ! userKeyIsAttached && (
-						<HStack justify="flex-start">
+						<ButtonStack justify="flex-start">
 							<Button
 								variant="primary"
 								isBusy={ attachSshKeyMutation.isPending }
@@ -338,7 +339,7 @@ export default function SshCard( {
 							>
 								{ __( 'Add new SSH key ↗' ) }
 							</Button>
-						</HStack>
+						</ButtonStack>
 					) }
 				</VStack>
 			</CardBody>

@@ -1,16 +1,15 @@
 import config from '@automattic/calypso-config';
-import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	Button,
-	Dropdown,
+	DropdownMenu,
 	MenuGroup,
 	MenuItem,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { help, bellUnread, bell, commentAuthorAvatar } from '@wordpress/icons';
+import { help, commentAuthorAvatar } from '@wordpress/icons';
 import { Suspense, lazy, useCallback } from 'react';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
@@ -18,6 +17,7 @@ import { useAuth } from '../auth';
 import { useOpenCommandPalette } from '../command-palette/utils';
 import { useAppContext } from '../context';
 import { useHelpCenter } from '../help-center';
+import Notifications from '../notifications';
 
 import './style.scss';
 
@@ -66,33 +66,30 @@ function UserProfile() {
 	const openCommandPalette = useOpenCommandPalette();
 
 	return (
-		<Dropdown
+		<DropdownMenu
 			popoverProps={ {
 				placement: 'bottom-end',
 				offset: 8,
 			} }
-			renderToggle={ ( { isOpen, onToggle } ) => (
-				<Button
-					className="dashboard-secondary-menu__item"
-					onClick={ onToggle }
-					aria-expanded={ isOpen }
-					variant="tertiary"
-					label={ __( 'My profile' ) }
-					icon={
-						user.avatar_URL ? (
-							<img
-								className="dashboard-secondary-menu__avatar"
-								src={ user.avatar_URL }
-								alt={ __( 'User avatar' ) }
-							/>
-						) : (
-							commentAuthorAvatar
-						)
-					}
-				/>
-			) }
-			renderContent={ ( { onClose } ) => (
-				<VStack>
+			label={ __( 'My profile' ) }
+			icon={
+				user.avatar_URL ? (
+					<img
+						className="dashboard-secondary-menu__avatar"
+						src={ user.avatar_URL }
+						alt={ __( 'User avatar' ) }
+					/>
+				) : (
+					commentAuthorAvatar
+				)
+			}
+			toggleProps={ {
+				className: 'dashboard-secondary-menu__item',
+				variant: 'tertiary',
+			} }
+		>
+			{ ( { onClose } ) => (
+				<VStack spacing={ 0 }>
 					<VStack style={ { padding: '16px', borderBottom: '1px solid #ccc' } } spacing={ 1 }>
 						<Text>{ user.display_name }</Text>
 						<Text variant="muted">@{ user.username }</Text>
@@ -115,24 +112,20 @@ function UserProfile() {
 							} }
 							shortcut="⌘K"
 						>
-							{ __( 'Command Palette' ) }
+							{ __( 'Command palette' ) }
 						</MenuItem>
-						<MenuItem onClick={ () => {} }>{ __( 'Theme' ) }</MenuItem>
 					</MenuGroup>
 					<MenuGroup>
 						<MenuItem onClick={ () => {} }>{ __( 'Log out' ) }</MenuItem>
 					</MenuGroup>
 				</VStack>
 			) }
-		/>
+		</DropdownMenu>
 	);
 }
 
 function SecondaryMenu() {
-	const navigate = useNavigate();
 	const { supports } = useAppContext();
-	const hasUnreadNotifications = false;
-	const notificationsPath = '/me/notifications';
 
 	return (
 		<HStack spacing={ 2 } justify="flex-end">
@@ -140,25 +133,12 @@ function SecondaryMenu() {
 				<Button
 					className="dashboard-secondary-menu__item"
 					icon={ <ReaderIcon /> }
-					label={ __( 'Reader' ) }
 					text={ __( 'Reader' ) }
 					href="/reader"
 				/>
 			) }
 			{ supports.help && <Help /> }
-			{ supports.notifications && (
-				<Button
-					className="dashboard-secondary-menu__item"
-					label={ __( 'Notifications' ) }
-					icon={ hasUnreadNotifications ? bellUnread : bell }
-					variant="tertiary"
-					onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) => {
-						e.preventDefault();
-						navigate( { to: notificationsPath } );
-					} }
-					href={ notificationsPath }
-				/>
-			) }
+			{ supports.notifications && <Notifications className="dashboard-secondary-menu__item" /> }
 			<UserProfile />
 		</HStack>
 	);

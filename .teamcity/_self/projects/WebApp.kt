@@ -11,6 +11,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.*
+import jetbrains.buildServer.configs.kotlin.v2019_2.matrix
 
 object WebApp : Project({
 	id("WebApp")
@@ -22,6 +23,8 @@ object WebApp : Project({
 	buildType(BuildDockerImage)
 	buildType(playwrightPrBuildType("desktop", "23cc069f-59e5-4a63-a131-539fb55264e7"))
 	buildType(playwrightPrBuildType("mobile", "90fbd6b7-fddb-4668-9ed0-b32598143616"))
+	buildType(PlaywrightTestPRMatrix)
+	buildType(PlaywrightTestPreReleaseMatrix)
 	buildType(PreReleaseE2ETests)
 	buildType(e2ePreReleaseBuildType("desktop", "532ee9d0-4671-4c53-a7aa-bb3c5de95c0a"))
 	buildType(e2ePreReleaseBuildType("mobile", "2d7f6910-92cf-44b4-a719-e4b2029ea36c"))
@@ -855,7 +858,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): E2EBuildTy
 		buildId = "calypso_WebApp_Calypso_E2E_Playwright_$targetDevice",
 		buildUuid = buildUuid,
 		buildName = "E2E Tests ($targetDevice)",
-		buildDescription = "Runs Calypso e2e tests on $targetDevice size",
+		buildDescription = "Runs Calypso e2e tests on $targetDevice size using Jest runner",
 		getCalypsoLiveURL = """
 			chmod +x ./bin/get-calypso-live-url.sh
 			CALYPSO_LIVE_URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
@@ -902,6 +905,169 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): E2EBuildTy
 		}
 	)
 }
+
+object PlaywrightTestPRMatrix : BuildType({
+	id("calypso_WebApp_Calypso_E2E_Playwright_Test_Matrix")
+	uuid = "074d8ae0-0859-4b4d-bf66-709f24ae5406"
+	name = "E2E Tests (Playwright Test)"
+	description = "Runs Calypso e2e tests using Playwright Test runner with build matrix"
+
+	vcs {
+		root(Settings.WpCalypso)
+		cleanCheckout = true
+	}
+
+	features {
+		matrix {
+			param("playwrightProject", listOf(
+				value("desktop", label = "Desktop"),
+				value("mobile", label = "Mobile")
+			))
+		}
+		pullRequests {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			provider = github {
+				authType = token {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
+			}
+		}
+		commitStatusPublisher {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			publisher = github {
+				githubUrl = "https://api.github.com"
+				authType = personalToken {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+			}
+		}
+		perfmon {
+		}
+		xmlReport {
+        	reportType = XmlReport.XmlReportType.JUNIT
+        	rules = "+:test/e2e/output/results.xml"
+			verbose = true
+        }
+	}
+
+	triggers {
+		vcs {
+			branchFilter = """
+				+:*
+				-:pull*
+				-:trunk
+			""".trimIndent()
+			triggerRules = """
+				-:**.md
+			""".trimIndent()
+		}
+	}
+
+	dependencies {
+		snapshot(BuildDockerImage) {
+			onDependencyFailure = FailureAction.FAIL_TO_START
+		}
+	}
+
+	params {
+		param("env.NODE_CONFIG_ENV", "test")
+		param("env.PLAYWRIGHT_BROWSERS_PATH", "0")
+		param("env.LOCALE", "en")
+		param("env.AUTHENTICATE_ACCOUNTS", "simpleSitePersonalPlanUser,gutenbergSimpleSiteUser,defaultUser")
+		param("env.LIVEBRANCHES", "true")
+		param("env.CI", "true")
+	}
+
+	steps {
+		mergeTrunk( skipIfConflict = true )
+		
+		bashNodeScript {
+			name = "Prepare environment"
+			scriptContent = """
+				# Install deps
+				yarn workspaces focus wp-e2e-tests @automattic/calypso-e2e
+
+				# Decrypt secrets
+				E2E_SECRETS_KEY="%E2E_SECRETS_ENCRYPTION_KEY_CURRENT%" yarn workspace @automattic/calypso-e2e decrypt-secrets
+
+				# Build packages
+				yarn workspace @automattic/calypso-e2e build
+			""".trimIndent()
+			dockerImage = "%docker_image_e2e%"
+		}
+
+		bashNodeScript {
+			name = "Run e2e tests"
+			scriptContent = """
+				echo "Getting Calypso url for build ${BuildDockerImage.depParamRefs.buildNumber}"
+				chmod +x ./bin/get-calypso-live-url.sh
+				CALYPSO_LIVE_URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
+				if [[ ${'$'}? -ne 0 ]]; then
+					// Command failed. CALYPSO_LIVE_URL contains stderr
+					echo ${'$'}CALYPSO_LIVE_URL
+					exit 1
+				fi
+
+				# Check if test/e2e or packages/calypso-e2e files have been changed
+				CHANGED_FILES=${'$'}(git diff --name-only refs/remotes/origin/trunk...HEAD)
+				if echo "${'$'}CHANGED_FILES" | grep -q -E "^(test/e2e/|packages/calypso-e2e/)"; then
+					echo "Changes detected in test/e2e/ or packages/calypso-e2e/, running all tests"
+					GREP_FLAG=""
+				else
+					echo "No changes in test/e2e/ or packages/calypso-e2e/, running @calypso-pr tests only"
+					GREP_FLAG="--grep=@calypso-pr"
+				fi
+
+				cd test/e2e
+				echo "Running Playwright tests for project: %playwrightProject%"
+				yarn test:pw:%playwrightProject% ${'$'}GREP_FLAG
+			"""
+			dockerImage = "%docker_image_e2e%"
+		}
+	}
+
+	artifactRules = """
+		test/e2e/output => %playwrightProject%/output
+		test/e2e/blob-report => blob-report
+	""".trimIndent()
+})
+
+object PlaywrightTestPreReleaseMatrix : BuildType({
+	id("calypso_WebApp_Calypso_E2E_Playwright_Pre_Release_Matrix")
+	uuid = "a1b2c3d4-e5f6-7890-1234-56789abcdef0"
+	name = "Pre-Release E2E Tests (Playwright Test)"
+	description = "Runs Calypso pre-release e2e tests using Playwright Test runner with build matrix"
+
+	features {
+		matrix {
+			param("playwrightProject", listOf(
+				value("desktop", label = "Desktop"),
+				value("mobile", label = "Mobile")
+			))
+		}
+	}
+
+	dependencies {
+		snapshot(PreReleaseE2ETests) {
+			onDependencyFailure = FailureAction.IGNORE
+		}
+	}
+
+	vcs {
+		root(Settings.WpCalypso)
+		cleanCheckout = true
+	}
+
+	steps {
+		bashNodeScript {
+			name = "Test step"
+			scriptContent = """
+				echo "Running pre-release Playwright tests for project: %playwrightProject%"
+			"""
+		}
+	}
+})
 
 object PreReleaseE2ETests : BuildType({
 	id("calypso_WebApp_Calypso_E2E_Pre_Release")

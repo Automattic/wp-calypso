@@ -1,23 +1,15 @@
-import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
-import {
-	Card,
-	CardBody,
-	__experimentalHStack as HStack,
-	__experimentalVStack as VStack,
-	Button,
-} from '@wordpress/components';
+import { JetpackModule, JetpackModules, Site } from '@automattic/api-core';
+import { siteJetpackModulesMutation } from '@automattic/api-queries';
+import { useMutation } from '@tanstack/react-query';
+import { Card, CardBody, __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import {
-	siteJetpackModulesQuery,
-	siteJetpackModuleMutation,
-} from '../../app/queries/site-jetpack-module';
+import { ButtonStack } from '../../components/button-stack';
 import { SectionHeader } from '../../components/section-header';
-import { JetpackModules } from '../../data/constants';
-import type { Site } from '../../data/types';
+import { isJetpackModuleActivated } from '../../utils/site-jetpack-modules';
 
 const fields = [
 	{
@@ -28,16 +20,21 @@ const fields = [
 ];
 
 const form = {
-	type: 'regular' as const,
+	layout: { type: 'regular' as const },
 	fields: [ 'protect' ],
 };
 
-export default function ProtectForm( { site }: { site: Site } ) {
-	const { data: jetpackModules } = useSuspenseQuery( siteJetpackModulesQuery( site.ID ) );
-	const mutation = useMutation( siteJetpackModuleMutation( site.ID ) );
+export default function ProtectForm( {
+	jetpackModules,
+	site,
+}: {
+	jetpackModules: Record< string, JetpackModule > | undefined;
+	site: Site;
+} ) {
+	const mutation = useMutation( siteJetpackModulesMutation( site.ID ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
-	const currentProtect = jetpackModules?.includes( JetpackModules.PROTECT ) ?? false;
+	const currentProtect = isJetpackModuleActivated( jetpackModules, JetpackModules.PROTECT );
 
 	const [ formData, setFormData ] = useState< { protect: boolean } >( {
 		protect: currentProtect,
@@ -91,7 +88,7 @@ export default function ProtectForm( { site }: { site: Site } ) {
 								setFormData( ( data ) => ( { ...data, ...edits } ) );
 							} }
 						/>
-						<HStack justify="flex-start">
+						<ButtonStack justify="flex-start">
 							<Button
 								variant="primary"
 								type="submit"
@@ -100,7 +97,7 @@ export default function ProtectForm( { site }: { site: Site } ) {
 							>
 								{ __( 'Save' ) }
 							</Button>
-						</HStack>
+						</ButtonStack>
 					</VStack>
 				</form>
 			</CardBody>

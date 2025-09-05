@@ -207,6 +207,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/manage-my-profile/',
 		post_id: 19775,
 	},
+	mcp: {
+		link: 'https://wordpress.com/support/account-settings/',
+		post_id: 80368,
+	},
 	media: {
 		link: 'https://wordpress.com/support/media/',
 		post_id: 853,
@@ -603,6 +607,10 @@ const contextLinks = {
 		link: 'https://developer.wordpress.com/docs/guides/security/#5-firewall-protection',
 		post_id: 122861,
 		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
+	},
+	'security-wpcom-login': {
+		link: 'https://wordpress.com/support/wordpress-com-secure-sign-on-sso/',
+		post_id: 175831,
 	},
 };
 

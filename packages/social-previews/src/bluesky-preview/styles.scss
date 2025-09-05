@@ -1,5 +1,5 @@
-@import "./variables";
-@import "../shared";
+@import './variables';
+@import '../shared';
 
 .bluesky-preview__section {
 	max-width: 100%;
@@ -34,10 +34,8 @@
 }
 
 .bluesky-preview__media {
-
 	margin-top: 8px;
 	min-height: 64px;
-	/* stylelint-disable-next-line scales/radii */
 	border-radius: 8px;
 
 	&.as-grid {
@@ -51,7 +49,6 @@
 	&-item {
 		display: flex;
 		border: 0;
-		/* stylelint-disable-next-line scales/radii */
 		border-radius: 8px;
 		overflow: hidden;
 
@@ -61,5 +58,4 @@
 			object-fit: cover;
 		}
 	}
-
 }

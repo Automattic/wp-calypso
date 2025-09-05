@@ -1,7 +1,7 @@
+import { siteSftpUsersResetPasswordMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
 	__experimentalConfirmDialog as ConfirmDialog,
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	BaseControl,
 	Button,
@@ -14,11 +14,11 @@ import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import React, { useState } from 'react';
-import { siteSftpUsersResetPasswordMutation } from '../../app/queries/site-sftp';
+import { ButtonStack } from '../../components/button-stack';
 import ClipboardInputControl from '../../components/clipboard-input-control';
 import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
-import type { SftpUser } from '../../data/types';
+import type { SftpUser } from '@automattic/api-core';
 import type { DataFormControlProps, Field } from '@wordpress/dataviews';
 
 const SFTP_URL = 'sftp.wp.com';
@@ -128,7 +128,7 @@ export default function SftpCard( {
 	];
 
 	const form = {
-		type: 'regular' as const,
+		layout: { type: 'regular' as const },
 		fields: [ 'url', 'port', 'username', 'password' ],
 	};
 
@@ -172,7 +172,7 @@ export default function SftpCard( {
 						onChange={ noop }
 					/>
 					{ ! password && (
-						<HStack justify="flex-start">
+						<ButtonStack justify="flex-start">
 							<Button
 								variant="secondary"
 								isBusy={ mutation.isPending }
@@ -180,7 +180,7 @@ export default function SftpCard( {
 							>
 								{ __( 'Reset password' ) }
 							</Button>
-						</HStack>
+						</ButtonStack>
 					) }
 				</VStack>
 			</CardBody>

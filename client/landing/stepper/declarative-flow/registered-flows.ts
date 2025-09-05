@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import {
 	START_WRITING_FLOW,
 	CONNECT_DOMAIN_FLOW,
+	DOMAIN_FLOW,
 	NEW_HOSTED_SITE_FLOW,
 	TRANSFERRING_HOSTED_SITE_FLOW,
 	DOMAIN_TRANSFER,
@@ -39,6 +40,8 @@ const availableFlows: Record< string, () => Promise< { default: FlowV2< any > } 
 		import(
 			/* webpackChunkName: "onboarding-unified-flow" */ './flows/onboarding-unified/onboarding-unified'
 		),
+
+	[ DOMAIN_FLOW ]: () => import( /* webpackChunkName: "domain-flow" */ './flows/domain/domain' ),
 };
 
 /**

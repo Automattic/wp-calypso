@@ -76,7 +76,7 @@ See the [list of groups](tests_ci.md#featuretest-groups).
 
 Specified accounts will be pre-authenticated prior to the main test suite executions and their cookies saved to be re-used until expiry (typically 3 days).
 
-Specify a list of user accounts found in [Secret Manager](packages/calypso-e2e/src/secrets/secrets-manager.ts), separated by commas:
+Specify a list of user accounts found in [Secret Manager](../../../packages/calypso-e2e/src/secrets/secrets-manager.ts), separated by commas:
 
 ```bash
 export AUTHENTICATE_ACCOUNTS=simpleSitePersonalPlanUser,atomicUser,defaultUser

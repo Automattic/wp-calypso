@@ -1,5 +1,6 @@
 import { PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
 import { CompactCard, ScreenReaderText, MaterialIcon } from '@automattic/components';
+import { getRootDomain, isSubdomain } from '@automattic/domain-search';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get, times } from 'lodash';
@@ -12,9 +13,7 @@ import DomainSuggestion from 'calypso/components/domains/domain-suggestion';
 import FeaturedDomainSuggestions from 'calypso/components/domains/featured-domain-suggestions';
 import Notice from 'calypso/components/notice';
 import { isDomainMappingFree, isNextDomainFree } from 'calypso/lib/cart-values/cart-items';
-import { isSubdomain } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
-import { getRootDomain } from 'calypso/lib/domains/utils';
 import { DESIGN_TYPE_STORE } from 'calypso/signup/constants';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 

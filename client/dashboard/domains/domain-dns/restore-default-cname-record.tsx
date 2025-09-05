@@ -2,10 +2,10 @@ import {
 	Modal,
 	Button,
 	__experimentalVStack as VStack,
-	__experimentalHStack as HStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { ButtonStack } from '../../components/button-stack';
 
 interface RestoreDefaultCnameRecordProps {
 	onConfirm: () => void;
@@ -27,12 +27,12 @@ export default function RestoreDefaultCnameRecord( {
 		<Modal title={ __( 'Restore CNAME record' ) } onRequestClose={ onCancel }>
 			<VStack spacing={ 6 }>
 				<Text>{ __( 'In case a www CNAME record already exists, it will be deleted.' ) }</Text>
-				<HStack justify="flex-end" spacing={ 2 }>
+				<ButtonStack justify="flex-end">
 					<Button onClick={ onCancel }>{ __( 'Cancel' ) }</Button>
 					<Button variant="primary" isBusy={ isBusy } onClick={ onConfirm }>
 						{ __( 'Restore' ) }
 					</Button>
-				</HStack>
+				</ButtonStack>
 			</VStack>
 		</Modal>
 	);

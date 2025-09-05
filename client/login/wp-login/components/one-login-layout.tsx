@@ -21,6 +21,7 @@ interface OneLoginLayoutProps {
 	signupUrl?: string;
 	isSectionSignup?: boolean;
 	loginUrl?: string;
+	isLostPasswordView?: boolean;
 }
 
 const OneLoginLayout = ( {
@@ -29,6 +30,7 @@ const OneLoginLayout = ( {
 	signupUrl: signupUrlProp,
 	isSectionSignup,
 	loginUrl,
+	isLostPasswordView,
 }: OneLoginLayoutProps ) => {
 	const translate = useTranslate();
 	const locale = useSelector( getCurrentUserLocale );
@@ -53,6 +55,10 @@ const OneLoginLayout = ( {
 				dispatch( redirectToLogout( signupUrl ) );
 			}
 		};
+
+		if ( isLostPasswordView ) {
+			return null;
+		}
 
 		return (
 			<Step.LinkButton href={ signupUrl } key="sign-up-link" onClick={ handleClick } rel="external">

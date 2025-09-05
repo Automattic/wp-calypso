@@ -1,7 +1,8 @@
+import { HostingFeatures, fetchPhpMyAdminToken } from '@automattic/api-core';
+import { siteBySlugQuery } from '@automattic/api-queries';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import {
-	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	Button,
@@ -14,12 +15,10 @@ import { __ } from '@wordpress/i18n';
 import { blockTable } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteBySlugQuery } from '../../app/queries/site';
+import { ButtonStack } from '../../components/button-stack';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
-import { HostingFeatures } from '../../data/constants';
-import { fetchPhpMyAdminToken } from '../../data/site-hosting';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SettingsPageHeader from '../settings-page-header';
 import ResetPasswordModal from './reset-password-modal';
@@ -118,7 +117,7 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 									) }
 								</Notice>
 							</VStack>
-							<HStack justify="flex-start" expanded={ false } as="span">
+							<ButtonStack justify="flex-start" expanded={ false } as="span">
 								<Button
 									variant="primary"
 									isBusy={ isFetchingToken }
@@ -126,7 +125,7 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 								>
 									{ __( 'Open phpMyAdmin ↗' ) }
 								</Button>
-							</HStack>
+							</ButtonStack>
 							<Text variant="muted" lineHeight="20px">
 								{ createInterpolateElement(
 									__( 'Having problems with access? Try <link>resetting the password</link>.' ),

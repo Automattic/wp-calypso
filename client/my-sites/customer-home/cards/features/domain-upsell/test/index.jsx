@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
@@ -58,21 +59,6 @@ const initialState = {
 	},
 };
 
-jest.mock( '@automattic/domain-picker', () => {
-	return {
-		useDomainSuggestions: () => {
-			return {
-				allDomainSuggestions: [
-					{
-						is_free: false,
-						product_slug: 'mydomain.com',
-					},
-				],
-			};
-		},
-	};
-} );
-
 let pageLink = '';
 jest.mock( '@automattic/calypso-router', () => ( link ) => ( pageLink = link ) );
 
@@ -87,9 +73,11 @@ describe( 'index', () => {
 		const store = mockStore( initialState );
 
 		render(
-			<Provider store={ store }>
-				<DomainUpsell />
-			</Provider>
+			<QueryClientProvider client={ new QueryClient() }>
+				<Provider store={ store }>
+					<DomainUpsell />
+				</Provider>
+			</QueryClientProvider>
 		);
 
 		expect(
@@ -107,6 +95,19 @@ describe( 'index', () => {
 
 	test( 'Should test the purchase button link on Free and Monthly plans', async () => {
 		nock.cleanAll();
+
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.get( '/rest/v1.1/domains/suggestions' )
+			.query( true )
+			.reply( 200, [
+				{
+					is_free: false,
+					product_slug: 'dotcom_domain',
+					domain_name: 'example.com',
+				},
+			] );
+
 		nock( 'https://public-api.wordpress.com' )
 			.persist()
 			.post( '/rest/v1.1/me/shopping-cart/1' )
@@ -116,10 +117,18 @@ describe( 'index', () => {
 		const store = mockStore( initialState );
 
 		render(
-			<Provider store={ store }>
-				<DomainUpsell />
-			</Provider>
+			<QueryClientProvider client={ new QueryClient() }>
+				<Provider store={ store }>
+					<DomainUpsell />
+				</Provider>
+			</QueryClientProvider>
 		);
+
+		await waitFor( () => {
+			expect( screen.getByTestId( 'domain-upsell-domain-name' ) ).toHaveTextContent(
+				'example.com'
+			);
+		} );
 
 		const user = userEvent.setup();
 		await user.click( screen.getByRole( 'button', { name: buyThisDomainCta } ) );
@@ -132,6 +141,19 @@ describe( 'index', () => {
 
 	test( 'Should test the purchase button link on Yearly plans', async () => {
 		nock.cleanAll();
+
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.get( '/rest/v1.1/domains/suggestions' )
+			.query( true )
+			.reply( 200, [
+				{
+					is_free: false,
+					product_slug: 'dotcom_domain',
+					domain_name: 'example.com',
+				},
+			] );
+
 		nock( 'https://public-api.wordpress.com' )
 			.persist()
 			.post( '/rest/v1.1/me/shopping-cart/1' )
@@ -161,10 +183,18 @@ describe( 'index', () => {
 		const store = mockStore( newInitialState );
 
 		render(
-			<Provider store={ store }>
-				<DomainUpsell />
-			</Provider>
+			<QueryClientProvider client={ new QueryClient() }>
+				<Provider store={ store }>
+					<DomainUpsell />
+				</Provider>
+			</QueryClientProvider>
 		);
+
+		await waitFor( () => {
+			expect( screen.getByTestId( 'domain-upsell-domain-name' ) ).toHaveTextContent(
+				'example.com'
+			);
+		} );
 
 		const user = userEvent.setup();
 		await user.click( screen.getByRole( 'button', { name: buyThisDomainCta } ) );
@@ -198,9 +228,11 @@ describe( 'index', () => {
 		const store = mockStore( newInitialState );
 
 		render(
-			<Provider store={ store }>
-				<DomainUpsell />
-			</Provider>
+			<QueryClientProvider client={ new QueryClient() }>
+				<Provider store={ store }>
+					<DomainUpsell />
+				</Provider>
+			</QueryClientProvider>
 		);
 
 		expect(
@@ -253,9 +285,11 @@ describe( 'index', () => {
 		const store = mockStore( newInitialState );
 
 		render(
-			<Provider store={ store }>
-				<DomainUpsell />
-			</Provider>
+			<QueryClientProvider client={ new QueryClient() }>
+				<Provider store={ store }>
+					<DomainUpsell />
+				</Provider>
+			</QueryClientProvider>
 		);
 
 		expect(
@@ -277,9 +311,11 @@ describe( 'index', () => {
 		const store = mockStore( newInitialState );
 
 		render(
-			<Provider store={ store }>
-				<DomainUpsell />
-			</Provider>
+			<QueryClientProvider client={ new QueryClient() }>
+				<Provider store={ store }>
+					<DomainUpsell />
+				</Provider>
+			</QueryClientProvider>
 		);
 
 		expect(

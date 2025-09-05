@@ -4,6 +4,7 @@ export const HOSTING_LP_FLOW = 'hosting-start';
 export const NEW_HOSTED_SITE_FLOW = 'new-hosted-site';
 export const TRANSFERRING_HOSTED_SITE_FLOW = 'transferring-hosted-site';
 export const CONNECT_DOMAIN_FLOW = 'connect-domain';
+export const DOMAIN_FLOW = 'domain';
 export const ENTREPRENEUR_FLOW = 'entrepreneur';
 export const FREE_FLOW = 'free';
 export const SITE_MIGRATION_FLOW = 'site-migration';
@@ -35,7 +36,7 @@ export const ONBOARDING_UNIFIED_FLOW = 'onboarding-unified';
 export const AI_SITE_BUILDER_FLOW = 'ai-site-builder';
 export const PLAYGROUND_FLOW = 'playground';
 
-export const isNewsletterFlow = ( flowName: string | null ) => {
+export const isNewsletterFlow = ( flowName: string | null | undefined ) => {
 	return Boolean( flowName && NEWSLETTER_FLOW === flowName );
 };
 

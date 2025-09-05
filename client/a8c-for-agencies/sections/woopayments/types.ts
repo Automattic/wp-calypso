@@ -17,12 +17,15 @@ export interface SitesWithWooPaymentsState {
 	state: string;
 }
 
+interface WooPaymentsDataObject {
+	payout: number;
+	tpv: number;
+	transactions: number;
+}
+
 export interface WooPaymentsData {
 	data: {
-		total?: {
-			payout: number;
-			tpv: number;
-			transactions: number;
+		total?: WooPaymentsDataObject & {
 			sites?: {
 				[ key: number ]: {
 					tpv?: number;
@@ -31,10 +34,28 @@ export interface WooPaymentsData {
 				};
 			};
 		};
-		estimated?: {
-			payout: number;
-			tpv: number;
-			transactions: number;
+		estimated?: WooPaymentsDataObject & {
+			sites?: {
+				[ key: number ]: WooPaymentsDataObject;
+			};
+			current_quarter: WooPaymentsDataObject & {
+				sites?: {
+					[ key: number ]: {
+						tpv?: number;
+						payout?: number;
+						transactions?: number;
+					};
+				};
+			};
+			previous_quarter: WooPaymentsDataObject & {
+				sites?: {
+					[ key: number ]: {
+						tpv?: number;
+						payout?: number;
+						transactions?: number;
+					};
+				};
+			};
 		};
 	};
 	status: string;
