@@ -71,5 +71,6 @@ export * from './site-staging-site';
 export * from './site-staging-sync';
 export * from './site-stats';
 export * from './site-themes';
+export * from './site-plugins';
 export * from './site-users';
 export * from './upgrades';

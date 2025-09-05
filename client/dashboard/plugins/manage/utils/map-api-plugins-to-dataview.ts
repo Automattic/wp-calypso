@@ -1,0 +1,70 @@
+import type { PluginListRow } from '../types';
+import type { PluginItem, PluginsResponse } from '@automattic/api-core';
+
+function toTriState( count: number, total: number ): 'all' | 'some' | 'none' {
+	if ( total === 0 || count === 0 ) {
+		return 'none';
+	}
+	if ( count === total ) {
+		return 'all';
+	}
+	return 'some';
+}
+
+export function mapApiPluginsToDataViewPlugins( response?: PluginsResponse ): PluginListRow[] {
+	if ( ! response?.sites ) {
+		return [];
+	}
+	const sites = response.sites;
+	type Aggregated = {
+		name: string;
+		count: number;
+		activeCount: number;
+		updateCount: number;
+		autoupdateCount: number;
+		siteIds: number[];
+	};
+	const map = new Map< string, Aggregated >();
+	Object.entries( sites ).forEach( ( [ siteIdStr, plugins ] ) => {
+		const siteId = Number( siteIdStr );
+		( plugins as PluginItem[] ).forEach( ( p ) => {
+			if ( ! p.slug ) {
+				return;
+			}
+
+			const entry: Aggregated = map.get( p.slug ) || {
+				name: p.name || p.slug,
+				count: 0,
+				activeCount: 0,
+				updateCount: 0,
+				autoupdateCount: 0,
+				siteIds: [],
+			};
+			entry.count += 1;
+			entry.name = p.name || entry.name;
+			entry.siteIds.push( siteId );
+			if ( p.active ) {
+				entry.activeCount += 1;
+			}
+			if ( p.update ) {
+				entry.updateCount += 1;
+			}
+			if ( p.autoupdate ) {
+				entry.autoupdateCount += 1;
+			}
+			map.set( p.slug, entry );
+		} );
+	} );
+
+	return Array.from( map.entries() ).map(
+		( [ slug, { name, count, activeCount, updateCount, autoupdateCount, siteIds } ] ) => ( {
+			id: slug,
+			name,
+			sitesCount: count,
+			hasUpdate: toTriState( updateCount, count ),
+			isActive: toTriState( activeCount, count ),
+			areAutoUpdatesEnabled: toTriState( autoupdateCount, count ),
+			siteIds,
+		} )
+	);
+}
