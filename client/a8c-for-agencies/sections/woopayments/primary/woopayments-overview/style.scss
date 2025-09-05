@@ -2,10 +2,6 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
 
-$woocommerce-purple-0: #F2EDFF;
-$woocommerce-purple-5: #E1D7FF;
-$woocommerce-purple-40: #873EFF;
-$woocommerce-purple-50: #720EEC;
 $alt-color: #FAF7F3;
 
 .woopayments-overview {
@@ -87,8 +83,8 @@ a.components-button.woopayments-overview__button {
 	&:hover,
 	&:focus,
 	&:focus-visible {
-		color: $woocommerce-purple-40;
-		border: 1px solid $woocommerce-purple-40;
+		color: var(--studio-woocommerce-purple-40);
+		border: 1px solid var(--studio-woocommerce-purple-40);
 		box-shadow: none;
 		text-decoration: none;
 	}
@@ -108,7 +104,7 @@ a.components-button.woopayments-overview__button {
 
 .woopayments-overview__list {
 	.simple-list-icon {
-		fill: $woocommerce-purple-50;
+		fill: var(--studio-woocommerce-purple-50);
 	}
 }
 
@@ -141,7 +137,7 @@ a.components-button.woopayments-overview__button {
 	th,
 	td {
 		padding: 10px 12px;
-		border: 1px solid $woocommerce-purple-0;
+		border: 1px solid var(--studio-woocommerce-purple-0);
 	}
 
 	th:first-child,
