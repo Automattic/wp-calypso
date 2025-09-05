@@ -18,7 +18,7 @@ export const DEFAULT_VIEW: Partial< DomainsView > = {
 		'type',
 		// 'owner',
 		'blog_name',
-		// 'ssl_status',
+		'ssl_status',
 		'expiry',
 		'domain_status',
 	],

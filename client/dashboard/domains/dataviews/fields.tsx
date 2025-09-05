@@ -13,6 +13,7 @@ import { siteRoute } from '../../app/router/sites';
 import { Text } from '../../components/text';
 import SiteIcon from '../../sites/site-icon';
 import { isRecentlyRegistered } from '../../utils/domain';
+import { DomainSslField } from './field-ssl';
 import type { DomainSummary, Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
@@ -192,12 +193,13 @@ export const useFields = ( {
 					<DomainSite domain={ item } value={ field.getValue( { item } ) } />
 				),
 			},
-			// {
-			// 	id: 'ssl_status',
-			// 	label: __( 'SSL' ),
-			// 	enableHiding: false,
-			// 	enableSorting: true,
-			// },
+			{
+				id: 'ssl_status',
+				label: __( 'SSL' ),
+				enableHiding: true,
+				enableSorting: false,
+				render: ( { item } ) => <DomainSslField domain={ item } />,
+			},
 			{
 				id: 'expiry',
 				label: __( 'Expires/Renews on' ),
