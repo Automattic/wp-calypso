@@ -1052,7 +1052,7 @@ object PlaywrightTestPRMatrix : BuildType({
 				aws s3 cp ${'$'}{ARCHIVE_NAME}.tgz.enc %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT%
 			""".trimIndent()
 			conditions {
-				equals("teamcity.build.branch", "trunk")
+				matches("teamcity.build.branch", "e2e/.*")
 			}
 			dockerImage = "%docker_image_e2e%"
 		}
