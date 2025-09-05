@@ -37,8 +37,18 @@ const deletePage = async ( siteId: string | number, pageId: number ): Promise< b
 
 function initialize() {
 	// stepsWithRequiredLogin will take care of redirecting to the login step if the user is not logged in.
-	return [
-		STEPS.LEARNING_STEP,
+	const queryParams = new URLSearchParams( window.location.search );
+	const hasSpecId = queryParams.get( 'spec_id' );
+
+	const steps = [];
+
+	// Only add the site-spec step if spec_id query parameter is not present
+	// This allows bypassing the SiteSpec widget when user already has a site specification
+	if ( ! hasSpecId ) {
+		steps.push( STEPS.SITE_SPEC );
+	}
+
+	steps.push(
 		...stepsWithRequiredLogin( [
 			STEPS.SITE_CREATION_STEP,
 			STEPS.PROCESSING,
@@ -47,8 +57,10 @@ function initialize() {
 			STEPS.UNIFIED_PLANS,
 			STEPS.SITE_LAUNCH,
 			STEPS.PROCESSING,
-		] ),
-	];
+		] )
+	);
+
+	return steps;
 }
 
 const aiSiteBuilder: FlowV2< typeof initialize > = {
@@ -66,7 +78,7 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 			if ( siteId ) {
 				dispatch( setSelectedSiteId( parseInt( siteId ) ) );
 			}
-		}, [ siteId ] );
+		}, [ siteId, dispatch ] );
 		useEffect( () => {
 			if ( prompt && prompt.length > 0 ) {
 				window.sessionStorage.setItem( 'stored_ai_prompt', prompt );
@@ -85,7 +97,7 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 		const submit: SubmitHandler< typeof initialize > = async function ( submittedStep ) {
 			const { slug, providedDependencies } = submittedStep;
 			switch ( slug ) {
-				case 'learning-step': {
+				case 'site-spec': {
 					return navigate( 'create-site' );
 				}
 				// The create-site step will start creating a site and will add the promise of that operation to pendingAction field in the store.

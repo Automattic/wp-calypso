@@ -3,7 +3,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { useSiteSpec } from 'calypso/lib/site-spec';
 import type { Step as StepType } from '../../types';
 
-const LearningStep: StepType = function LearningStep() {
+const SiteSpec: StepType = function SiteSpec() {
 	const translate = useTranslate();
 	// Use the SiteSpec hook to handle the loading and initialization of the SiteSpec widget
 	useSiteSpec();
@@ -16,4 +16,4 @@ const LearningStep: StepType = function LearningStep() {
 	);
 };
 
-export default LearningStep;
+export default SiteSpec;
