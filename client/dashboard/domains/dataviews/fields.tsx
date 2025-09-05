@@ -145,11 +145,7 @@ export const useFields = ( {
 				label: __( 'Primary' ),
 				getValue: ( { item }: { item: DomainSummary } ) => item.primary_domain,
 				render: ( { field, item } ) =>
-					field.getValue( { item } ) ? (
-						<Text>{ __( 'Primary' ) }</Text>
-					) : (
-						<Text variant="muted">—</Text>
-					),
+					field.getValue( { item } ) ? <Text>{ __( 'Primary' ) }</Text> : <IneligibleIndicator />,
 			},
 			{
 				id: 'type',
