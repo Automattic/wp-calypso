@@ -40,10 +40,15 @@ export const useSendZendeskMessage = ( signal: AbortSignal ) => {
 
 			Smooch.sendMessage( messageToSend, conversationId );
 			return new Promise< Message >( ( resolve, reject ) => {
+				function onMessageSent( message: Message ) {
+					// @ts-expect-error -- 'off' is not part of the def.
+					Smooch.off( 'message:sent', onMessageSent );
+					resolve( message );
+				}
 				signal.onabort = reject;
 				// When this isn't called, the promise will not resolve,
 				// and Tanstack Query will automatically retry if they user comes back online 🔥.
-				Smooch.on( 'message:sent', resolve as any );
+				Smooch.on( 'message:sent', onMessageSent as any );
 			} );
 		},
 		onMutate: () => {
