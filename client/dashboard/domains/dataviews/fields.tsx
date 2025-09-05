@@ -3,16 +3,16 @@ import { siteBySlugQuery } from '@automattic/api-queries';
 import { Badge } from '@automattic/ui';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
-import { Icon, __experimentalHStack as HStack } from '@wordpress/components';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { dateI18n } from '@wordpress/date';
-import { sprintf, __ } from '@wordpress/i18n';
-import { caution, reusableBlock } from '@wordpress/icons';
+import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { domainOverviewRoute } from '../../app/router/domains';
 import { siteRoute } from '../../app/router/sites';
 import { Text } from '../../components/text';
 import SiteIcon from '../../sites/site-icon';
 import { isRecentlyRegistered } from '../../utils/domain';
+import { DomainExpiryField } from './field-expiry';
 import { DomainSslField } from './field-ssl';
 import type { DomainSummary, Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
@@ -71,68 +71,6 @@ const DomainSite = ( { domain, value }: { domain: DomainSummary; value: string }
 			>
 				<Text>{ value }</Text>
 			</Link>
-		</HStack>
-	);
-};
-
-const DomainExpiry = ( {
-	domain,
-	value,
-	isCompact = false,
-}: {
-	domain: DomainSummary;
-	value: string;
-	isCompact?: boolean;
-} ) => {
-	if ( ! domain.expiry ) {
-		return __( 'Free forever' );
-	}
-
-	const isAutoRenewing = Boolean( domain.auto_renewing );
-	const isExpired = new Date( domain.expiry ) < new Date();
-	const isHundredYearDomain = Boolean( domain.is_hundred_year_domain );
-	const renderExpiry = () => {
-		if ( isHundredYearDomain ) {
-			return sprintf(
-				/* translators: %s - The date until which a domain was paid for */
-				__( 'Paid until %s' ),
-				value
-			);
-		}
-
-		if ( isExpired ) {
-			return sprintf(
-				/* translators: %s - The date on which a domain has expired */
-				__( 'Expired on %s' ),
-				value
-			);
-		}
-
-		if ( ! isAutoRenewing ) {
-			return sprintf(
-				/* translators: %s - The date on which a domain expires */
-				__( 'Expires on %s' ),
-				value
-			);
-		}
-
-		return sprintf(
-			/* translators: %s - The future date on which a domain renews */
-			__( 'Renews on %s' ),
-			value
-		);
-	};
-
-	return (
-		<HStack justify="flex-start" alignment="center" spacing={ 1 }>
-			{ ! isCompact && (
-				<Icon
-					icon={ isExpired || isHundredYearDomain ? caution : reusableBlock }
-					size={ 16 }
-					style={ { fill: 'currentColor' } }
-				/>
-			) }
-			<span>{ renderExpiry() }</span>
 		</HStack>
 	);
 };
@@ -219,7 +157,7 @@ export const useFields = ( {
 					}
 
 					return (
-						<DomainExpiry
+						<DomainExpiryField
 							domain={ item }
 							value={ field.getValue( { item } ) }
 							isCompact={ !! site }
