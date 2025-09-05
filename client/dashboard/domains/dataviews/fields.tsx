@@ -1,5 +1,7 @@
 import { DomainTypes } from '@automattic/api-core';
+import { siteBySlugQuery } from '@automattic/api-queries';
 import { Badge } from '@automattic/ui';
+import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { Icon, __experimentalHStack as HStack } from '@wordpress/components';
 import { dateI18n } from '@wordpress/date';
@@ -7,7 +9,9 @@ import { sprintf, __ } from '@wordpress/i18n';
 import { caution, reusableBlock } from '@wordpress/icons';
 import { useMemo } from 'react';
 import { domainOverviewRoute } from '../../app/router/domains';
+import { siteRoute } from '../../app/router/sites';
 import { Text } from '../../components/text';
+import SiteIcon from '../../sites/site-icon';
 import { isRecentlyRegistered } from '../../utils/domain';
 import type { DomainSummary, Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
@@ -50,6 +54,23 @@ const DomainName = ( {
 				) }
 			</HStack>
 		</Link>
+	);
+};
+
+const DomainSite = ( { domain, value }: { domain: DomainSummary; value: string } ) => {
+	const { data: site } = useQuery( siteBySlugQuery( domain.site_slug ) );
+
+	return (
+		<HStack spacing={ 2 } alignment="left">
+			{ site && <SiteIcon size={ 16 } site={ site } /> }
+			<Link
+				to={ siteRoute.fullPath }
+				params={ { siteSlug: domain?.site_slug } }
+				style={ { textDecoration: 'none' } }
+			>
+				<Text>{ value }</Text>
+			</Link>
+		</HStack>
 	);
 };
 
@@ -164,7 +185,12 @@ export const useFields = ( {
 				label: __( 'Site' ),
 				enableHiding: false,
 				enableSorting: true,
-				getValue: ( { item }: { item: DomainSummary } ) => item.blog_name ?? '',
+				getValue: ( { item }: { item: DomainSummary } ) => {
+					return item.blog_name ?? '';
+				},
+				render: ( { field, item } ) => (
+					<DomainSite domain={ item } value={ field.getValue( { item } ) } />
+				),
 			},
 			// {
 			// 	id: 'ssl_status',
