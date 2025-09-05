@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import { loadSiteSpecScript, loadSiteSpecCSS, getSiteSpecConfig } from 'calypso/lib/site-spec';
+import { loadSiteSpecScriptAndCSS, getSiteSpecConfig } from 'calypso/lib/site-spec';
 import type { Step as StepType } from '../../types';
 
 // TypeScript declaration for SiteSpec
@@ -28,8 +28,8 @@ const LearningStep: StepType = function LearningStep() {
 	useEffect( () => {
 		const initializeSiteSpec = async () => {
 			try {
-				// Load CSS and script
-				await Promise.all( [ loadSiteSpecCSS(), loadSiteSpecScript() ] );
+				// Loads site spec script and css
+				await loadSiteSpecScriptAndCSS();
 
 				// Initialize SiteSpec
 				if ( window.SiteSpec?.init ) {

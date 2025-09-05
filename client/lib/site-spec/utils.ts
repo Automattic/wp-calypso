@@ -5,7 +5,7 @@ interface SiteSpecRawConfig {
 	agent_url?: string;
 	agent_id?: string;
 	build_site_url?: string;
-	url: string;
+	script_url: string;
 	css_url: string;
 }
 
@@ -17,18 +17,25 @@ interface SiteSpecConfig {
 }
 
 // Config key for URL functions
-type UrlKey = 'url' | 'css_url';
+type UrlKey = 'script_url' | 'css_url';
 
+// Resource type mapping
+export type ResourceType = 'script' | 'css';
+
+/**
+ * Checks if the SiteSpec feature is enabled in the current environment.
+ * @returns {boolean} True if SiteSpec is enabled, false otherwise
+ */
 export function isSiteSpecEnabled(): boolean {
 	return config.isEnabled( 'site-spec' );
 }
 
 /**
- * Get the cache-busted URL for the site spec script or CSS.
- * @param urlKey - The key to get from site spec config ('url' or 'css_url')
- * @returns The URL or null if not found
+ * Retrieves the cache-busted URL for a specific SiteSpec resource.
+ * @param {UrlKey} [urlKey] - The configuration key for the resource type
+ * @returns {string | null} The complete URL with cache-busting parameters, or null if not configured
  */
-export function getSiteSpecUrl( urlKey: UrlKey = 'url' ): string | null {
+export function getSiteSpecUrl( urlKey: UrlKey = 'script_url' ): string | null {
 	const siteSpecConfig = config( 'site_spec' ) as SiteSpecRawConfig | undefined;
 	const url = siteSpecConfig?.[ urlKey ];
 
@@ -36,8 +43,18 @@ export function getSiteSpecUrl( urlKey: UrlKey = 'url' ): string | null {
 }
 
 /**
- * Get the site spec configuration object.
- * Only includes properties that are defined in the config.
+ * Retrieves the cache-busted URL for a SiteSpec resource using the resource type.
+ * @param {ResourceType} type - The type of resource to retrieve ('script' or 'css')
+ * @returns {string | null} The complete URL with cache-busting parameters, or null if not configured
+ */
+export function getSiteSpecUrlByType( type: ResourceType ): string | null {
+	const urlKey = type === 'script' ? 'script_url' : 'css_url';
+	return getSiteSpecUrl( urlKey );
+}
+
+/**
+ * Retrieves the SiteSpec configuration object for initializing the widget.
+ * @returns {SiteSpecConfig} Configuration object containing agent settings and build URLs
  */
 export function getSiteSpecConfig(): SiteSpecConfig {
 	const siteSpecConfig = config( 'site_spec' ) as SiteSpecRawConfig | undefined;

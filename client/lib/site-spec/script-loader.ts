@@ -1,109 +1,165 @@
-import { getSiteSpecUrl } from './utils';
+import { getSiteSpecUrlByType, ResourceType } from './utils';
 
-let siteSpecScriptLoaded = false;
-let scriptLoadPromise: Promise< void > | null = null;
-let cssLoadPromise: Promise< void > | null = null;
+/**
+ * Types and configuration
+ */
 
-export function isSiteSpecScriptLoaded() {
-	const scriptUrl = getSiteSpecUrl();
-	return (
-		siteSpecScriptLoaded ||
-		( !! scriptUrl && !! document.querySelector( `script[src="${ scriptUrl }"]` ) )
-	);
+interface ResourceConfig {
+	tagName: 'script' | 'link';
+	attributes: Record< string, string >;
+	errorMessage: string;
+	elementId: string;
+	urlAttr: 'src' | 'href';
 }
 
-export async function loadSiteSpecScript( opts: { withCss?: boolean } = {} ) {
-	const { withCss = true } = opts;
+const RESOURCE_CONFIGS: Record< ResourceType, ResourceConfig > = {
+	script: {
+		tagName: 'script',
+		attributes: { type: 'text/javascript' },
+		errorMessage: 'Failed to load SiteSpec script from',
+		elementId: 'site-spec',
+		urlAttr: 'src',
+	},
+	css: {
+		tagName: 'link',
+		attributes: { rel: 'stylesheet' },
+		errorMessage: 'Failed to load SiteSpec CSS from',
+		elementId: 'site-spec-styles',
+		urlAttr: 'href',
+	},
+};
 
-	if ( siteSpecScriptLoaded ) {
-		return;
-	}
-	if ( scriptLoadPromise ) {
-		return scriptLoadPromise;
-	}
+/**
+ * Internal state and utilities
+ */
+/**
+ * Cache in-flight loads per (type,url) so repeated calls share a single promise.
+ * This prevents duplicate requests when multiple components try to load the same resource.
+ */
+const loadingPromises = new Map< string, Promise< void > >();
 
-	const scriptUrl = getSiteSpecUrl();
-	if ( ! scriptUrl ) {
-		throw new Error( 'SiteSpec not enabled or URL not configured' );
-	}
-
-	scriptLoadPromise = ( async () => {
-		// Load CSS first, if configured
-		if ( withCss ) {
-			await loadSiteSpecCSS().catch( () => {
-				// Don’t block script on CSS failure
-			} );
-		}
-
-		// Already present in DOM?
-		if ( document.querySelector( `script[src="${ scriptUrl }"]` ) ) {
-			siteSpecScriptLoaded = true;
-			return;
-		}
-
-		await injectScript( scriptUrl );
-		siteSpecScriptLoaded = true;
-	} )();
-
-	try {
-		await scriptLoadPromise;
-	} finally {
-		scriptLoadPromise = null;
+/**
+ * Ensure the DOM is available for resource injection
+ */
+function ensureDomAvailable(): void {
+	// If running in SSR or a non-browser environment, bail early with a helpful message.
+	if ( typeof document === 'undefined' || ! document?.head ) {
+		throw new Error(
+			'SiteSpec assets can only be loaded in a browser environment (no document/head).'
+		);
 	}
 }
 
-export function loadSiteSpecCSS(): Promise< void > {
-	const cssUrl = getSiteSpecUrl( 'css_url' );
-	if ( ! cssUrl ) {
-		return Promise.reject( new Error( 'SiteSpec CSS URL not configured' ) );
-	}
+/**
+ * Generate a unique cache key for a resource type and URL combination
+ */
+function cacheKeyFor( type: ResourceType, url: string ): string {
+	return `${ type }:${ url }`;
+}
 
-	// Already present?
-	if ( document.querySelector( `link[href="${ cssUrl }"]` ) ) {
+/**
+ * Check if a resource with the exact URL already exists in the DOM
+ */
+function isResourceInDOM( url: string, type: ResourceType ): boolean {
+	const config = RESOURCE_CONFIGS[ type ];
+	const selector =
+		type === 'script'
+			? `script[${ config.urlAttr }="${ url }"]`
+			: `link[${ config.urlAttr }="${ url }"]`;
+	return !! document.querySelector( selector );
+}
+
+/**
+ * Loading logic
+ */
+
+/**
+ * Generic injector used by both CSS & script.
+ * Creates and injects DOM elements for resource loading.
+ */
+function injectResource( url: string, type: ResourceType ): Promise< void > {
+	ensureDomAvailable();
+	const config = RESOURCE_CONFIGS[ type ];
+
+	return new Promise< void >( ( resolve, reject ) => {
+		const element = document.createElement( config.tagName ) as HTMLScriptElement | HTMLLinkElement;
+
+		element.id = config.elementId;
+
+		// Set common attributes
+		for ( const [ attributeKey, attributeValue ] of Object.entries( config.attributes ) ) {
+			element.setAttribute( attributeKey, attributeValue );
+		}
+
+		// Set URL attribute based on resource type (src for script, href for CSS)
+		if ( config.urlAttr === 'src' ) {
+			const scriptElement = element as HTMLScriptElement;
+			scriptElement.src = url;
+			scriptElement.async = true;
+		} else {
+			const linkElement = element as HTMLLinkElement;
+			linkElement.href = url;
+		}
+
+		element.onload = () => resolve();
+		element.onerror = () => reject( new Error( `${ config.errorMessage } ${ url }` ) );
+
+		document.head.appendChild( element );
+	} );
+}
+
+/**
+ * Ensures a specific resource is loaded, with intelligent caching to prevent duplicate requests.
+ * @private
+ * @param {string} url - The URL of the resource to load
+ * @param {ResourceType} type - The type of resource ('script' or 'css')
+ * @returns {Promise<void>} Promise that resolves when the resource is loaded
+ */
+function ensureResourceLoaded( url: string, type: ResourceType ): Promise< void > {
+	// Exists in DOM? done
+	if ( isResourceInDOM( url, type ) ) {
 		return Promise.resolve();
 	}
 
-	// Already loading?
-	if ( cssLoadPromise ) {
-		return cssLoadPromise;
+	const key = cacheKeyFor( type, url );
+	const existingPromise = loadingPromises.get( key );
+	if ( existingPromise ) {
+		return existingPromise;
 	}
 
-	cssLoadPromise = injectCss( cssUrl ).finally( () => {
-		cssLoadPromise = null;
+	// Start a new load and cache it until it settles.
+	const loadPromise = injectResource( url, type ).finally( () => {
+		loadingPromises.delete( key );
 	} );
-	return cssLoadPromise;
+
+	loadingPromises.set( key, loadPromise );
+	return loadPromise;
 }
 
-export function resetSiteSpecScriptState() {
-	siteSpecScriptLoaded = false;
-	scriptLoadPromise = null;
-	cssLoadPromise = null;
-	// Note: DOM nodes (script/link) are left in place intentionally.
+async function loadResource( type: ResourceType ): Promise< void > {
+	const url = getSiteSpecUrlByType( type );
+	if ( ! url ) {
+		return Promise.reject( new Error( `SiteSpec ${ type } URL not configured` ) );
+	}
+	return ensureResourceLoaded( url, type );
 }
 
-/* ------- tiny internal helpers ------- */
-
-function injectScript( url: string ): Promise< void > {
-	return new Promise( ( resolve, reject ) => {
-		const el = document.createElement( 'script' );
-		el.src = url;
-		el.type = 'text/javascript';
-		el.id = 'site-spec';
-		el.async = true;
-		el.onload = () => resolve();
-		el.onerror = () => reject( new Error( `Failed to load SiteSpec script from ${ url }` ) );
-		document.head.appendChild( el );
-	} );
+/**
+ * Loads both SiteSpec CSS and JavaScript resources in the correct order.
+ * @async
+ * @returns {Promise<void>} Promise that resolves when both resources are loaded
+ * @throws {Error} When resource URLs are not configured or loading fails
+ */
+export async function loadSiteSpecScriptAndCSS(): Promise< void > {
+	await loadResource( 'css' );
+	await loadResource( 'script' );
+	return;
 }
 
-function injectCss( url: string ): Promise< void > {
-	return new Promise( ( resolve, reject ) => {
-		const el = document.createElement( 'link' );
-		el.rel = 'stylesheet';
-		el.href = url;
-		el.id = 'site-spec-styles';
-		el.onload = () => resolve();
-		el.onerror = () => reject( new Error( `Failed to load SiteSpec CSS from ${ url }` ) );
-		document.head.appendChild( el );
-	} );
+/**
+ * Resets the loader's internal state without affecting existing DOM elements.
+ * @returns {void}
+ */
+export function resetSiteSpecScriptState(): void {
+	loadingPromises.clear();
 }

@@ -1,7 +1,2 @@
-export { isSiteSpecEnabled, getSiteSpecUrl, getSiteSpecConfig } from './utils';
-export {
-	loadSiteSpecScript,
-	loadSiteSpecCSS,
-	isSiteSpecScriptLoaded,
-	resetSiteSpecScriptState,
-} from './script-loader';
+export { isSiteSpecEnabled, getSiteSpecUrlByType, getSiteSpecConfig } from './utils';
+export { loadSiteSpecScriptAndCSS, resetSiteSpecScriptState } from './script-loader';

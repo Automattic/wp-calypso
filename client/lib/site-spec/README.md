@@ -1,10 +1,15 @@
 # Site-Spec Script Loading System
 
-This module provides utilities for loading and managing the Site Spec lib in WordPress Calypso.
+A robust, type-safe module for dynamically loading and managing SiteSpec resources in WordPress Calypso.
 
 ## Overview
 
-The Site Spec lib loading follows WordPress Calypso patterns for external lib management, similar to other third-party scripts are handled.
+This module provides intelligent resource loading with built-in caching, error handling, and DOM management. It follows WordPress Calypso patterns for external library management while providing a clean, modern API.
+
+## Features
+
+- **Loading**: Automatically loads CSS and JavaScript in the correct order
+
 
 ## Configuration
 
@@ -24,7 +29,7 @@ Enable the script loading with the `site-spec` feature flag:
 
 Define the following configuration values:
 
-- `site_spec.url`: Base URL for the Site-Spec script
+- `site_spec.script_url`: Base URL for the Site-Spec JavaScript bundle
 - `site_spec.css_url`: URL for the Site-Spec CSS styles
 - `site_spec.agent_id`: Identifier for the Site-Spec agent
 - `site_spec.agent_url`: (Optional) API endpoint for the Site-Spec agent
@@ -39,7 +44,7 @@ Define the following configuration values:
 ```json
 {
 	"site_spec": {
-		"url": "http://your-site-spec.local/dist/sitespec.umd.js",
+		"script_url": "http://your-site-spec.local/dist/sitespec.umd.js",
 		"css_url": "http://your-site-spec.local/dist/style.css"
 	},
 	"features": {
@@ -64,114 +69,171 @@ Define the following configuration values:
 }
 ```
 
-## Usage
+## API Reference
 
-### Basic Script Loading
+### Core Functions
 
-```javascript
-import { loadSiteSpecScript } from 'calypso/lib/site-spec';
+#### `loadSiteSpecScriptAndCSS()`
 
-// Load the script
-await loadSiteSpecScript();
-```
+Loads both SiteSpec CSS and JavaScript resources in the correct order.
 
-### Load CSS Separately
+```typescript
+import { loadSiteSpecScriptAndCSS } from 'calypso/lib/site-spec';
 
-```javascript
-import { loadSiteSpecCSS } from 'calypso/lib/site-spec';
-
-// Load CSS only
-await loadSiteSpecCSS();
-```
-
-### Check if Enabled
-
-```javascript
-import { isSiteSpecEnabled } from 'calypso/lib/site-spec';
-
-if ( isSiteSpecEnabled() ) {
-	// Site-Spec is enabled
+// Load both resources
+try {
+  await loadSiteSpecScriptAndCSS();
+  console.log('SiteSpec resources loaded successfully');
+} catch (error) {
+  console.error('Failed to load SiteSpec:', error);
 }
 ```
 
-### Get Configuration
+**Returns:** `Promise<void>`
 
-```javascript
+#### `isSiteSpecEnabled()`
+
+Checks if the SiteSpec feature is enabled in the current environment.
+
+```typescript
+import { isSiteSpecEnabled } from 'calypso/lib/site-spec';
+
+if (isSiteSpecEnabled()) {
+  await loadSiteSpecScriptAndCSS();
+}
+```
+
+**Returns:** `boolean`
+
+#### `getSiteSpecConfig()`
+
+Retrieves the SiteSpec configuration object for initializing the widget.
+
+```typescript
 import { getSiteSpecConfig } from 'calypso/lib/site-spec';
 
 const config = getSiteSpecConfig();
-// Returns: { agentUrl, agentId, buildSiteUrl }
+// Returns: { agentUrl?, agentId?, buildSiteUrl? }
 ```
 
-### Get Script URL
+**Returns:** `SiteSpecConfig`
 
-```javascript
+### Utility Functions
+
+#### `getSiteSpecUrl(urlKey)`
+
+Retrieves the cache-busted URL for a specific SiteSpec resource.
+
+```typescript
 import { getSiteSpecUrl } from 'calypso/lib/site-spec';
 
-const url = getSiteSpecUrl();
-// Returns the configured script URL
+const scriptUrl = getSiteSpecUrl('script_url');
+const cssUrl = getSiteSpecUrl('css_url');
 ```
 
-### Get CSS URL
+**Parameters:**
+- `urlKey` (optional): `'script_url' | 'css_url'` - Defaults to `'script_url'`
 
-```javascript
-import { getSiteSpecUrl } from 'calypso/lib/site-spec';
+**Returns:** `string | null`
 
-const cssUrl = getSiteSpecUrl( 'css_url' );
-// Returns the configured CSS URL
+#### `resetSiteSpecScriptState()`
+
+Resets the loader's internal state without affecting existing DOM elements.
+
+```typescript
+import { resetSiteSpecScriptState } from 'calypso/lib/site-spec';
+
+resetSiteSpecScriptState();
+await loadSiteSpecScriptAndCSS();
 ```
 
-## API Reference
+**Returns:** `void`
 
-### `isSiteSpecEnabled()`
+## Complete Example
 
-Returns `true` if the `site-spec` feature flag is enabled.
+Here's a complete example of how to use the SiteSpec loader in a React component:
 
-### `getSiteSpecUrl( urlKey = 'url' )`
+```typescript
+import { useEffect } from 'react';
+import { 
+  loadSiteSpecScriptAndCSS, 
+  getSiteSpecConfig, 
+  isSiteSpecEnabled 
+} from 'calypso/lib/site-spec';
 
-Returns the configured URL for the specified key, or `null` if not configured.
+const SiteSpecComponent = () => {
+  useEffect(() => {
+    const initializeSiteSpec = async () => {
+      try {
+        // Check if SiteSpec is enabled
+        if (!isSiteSpecEnabled()) {
+          console.log('SiteSpec is not enabled');
+          return;
+        }
 
-- `urlKey`: The configuration key to retrieve ('url' for script, 'css_url' for CSS)
-- Returns: The configured URL string or `null`
+        // Load both CSS and JavaScript resources
+        await loadSiteSpecScriptAndCSS();
 
-### `getSiteSpecConfig()`
+        // Initialize the SiteSpec widget
+        if (window.SiteSpec?.init) {
+          const config = getSiteSpecConfig();
+          window.SiteSpec.init({
+            container: '#site-spec',
+            ...config,
+            onMessage: (message) => {
+              console.log('SiteSpec message:', message);
+            },
+            onError: (error) => {
+              console.error('SiteSpec error:', error);
+            }
+          });
+        }
+      } catch (error) {
+        console.error('Failed to initialize SiteSpec:', error);
+      }
+    };
 
-Returns an object with the Site-Spec configuration:
+    initializeSiteSpec();
+  }, []);
 
-- `agentUrl`: The agent API endpoint
-- `agentId`: The agent identifier
-- `buildSiteUrl`: The build site URL template
+  return <div id="site-spec" />;
+};
 
-### `loadSiteSpecScript()`
+export default SiteSpecComponent;
+```
 
-Loads the Site-Spec script dynamically. Returns a Promise that resolves when the script is loaded. Automatically loads CSS first if configured.
+## Type Definitions
 
-### `loadSiteSpecCSS()`
+```typescript
+// Resource types
+type ResourceType = 'script' | 'css';
 
-Loads the Site-Spec CSS separately. Returns a Promise that resolves when the CSS is loaded.
+// Configuration object
+interface SiteSpecConfig {
+  agentUrl?: string;
+  agentId?: string;
+  buildSiteUrl?: string;
+}
 
-### `isSiteSpecScriptLoaded()`
-
-Returns `true` if the script has already been loaded.
-
-### `resetSiteSpecScriptState()`
-
-Resets the internal script loading state (useful for testing).
+// URL configuration keys
+type UrlKey = 'script_url' | 'css_url';
+```
 
 ## Error Handling
 
 The system includes comprehensive error handling:
 
-- **Configuration errors**: Logged when required config is missing
-- **Script loading errors**: Caught and logged during dynamic loading
-- **Network errors**: Handled gracefully with fallbacks
+- **Configuration errors**: Thrown when required URLs are not configured
+- **Network errors**: Caught and re-thrown with descriptive messages
+- **DOM errors**: Handled gracefully in SSR environments
+- **Duplicate loading**: Prevented through intelligent caching
 
 ## Testing
 
 Run tests for the Site-Spec utilities:
 
 ```bash
-yarn test-client client/lib/site-spec/test/utils.js
+yarn test-client client/lib/site-spec
 ```
 
 ## Architecture
