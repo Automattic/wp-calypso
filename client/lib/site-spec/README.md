@@ -73,24 +73,6 @@ Define the following configuration values:
 
 ### Core Functions
 
-#### `loadSiteSpecScriptAndCSS()`
-
-Loads both SiteSpec CSS and JavaScript resources in the correct order.
-
-```typescript
-import { loadSiteSpecScriptAndCSS } from 'calypso/lib/site-spec';
-
-// Load both resources
-try {
-  await loadSiteSpecScriptAndCSS();
-  console.log('SiteSpec resources loaded successfully');
-} catch (error) {
-  console.error('Failed to load SiteSpec:', error);
-}
-```
-
-**Returns:** `Promise<void>`
-
 #### `isSiteSpecEnabled()`
 
 Checks if the SiteSpec feature is enabled in the current environment.
@@ -136,6 +118,47 @@ const cssUrl = getSiteSpecUrl('css_url');
 
 **Returns:** `string | null`
 
+#### `useSiteSpec(options)`
+
+Custom React hook for loading and managing SiteSpec resources.
+
+```typescript
+import { useSiteSpec } from 'calypso/lib/site-spec';
+
+const MyComponent = () => {
+  useSiteSpec({
+    container: '#site-spec', // Optional: container selector (default: '#site-spec')
+    onMessage: (message) => { /* handle messages */ },
+    onError: (error) => { /* handle errors */ },
+  });
+};
+```
+
+**Parameters:**
+- `options.container` (optional): `string` - Container selector for the widget (default: `'#site-spec'`)
+- `options.onMessage` (optional): `(message: unknown) => void` - Message handler
+- `options.onError` (optional): `(error: unknown) => void` - Error handler
+
+**Returns:** Object with manual control functions (for advanced usage)
+
+#### `loadSiteSpecScriptAndCSS()`
+
+Loads both SiteSpec CSS and JavaScript resources in the correct order.
+
+```typescript
+import { loadSiteSpecScriptAndCSS } from 'calypso/lib/site-spec';
+
+// Load both resources
+try {
+  await loadSiteSpecScriptAndCSS();
+  console.log('SiteSpec resources loaded successfully');
+} catch (error) {
+  console.error('Failed to load SiteSpec:', error);
+}
+```
+
+**Returns:** `Promise<void>`
+
 #### `resetSiteSpecScriptState()`
 
 Resets the loader's internal state without affecting existing DOM elements.
@@ -144,63 +167,66 @@ Resets the loader's internal state without affecting existing DOM elements.
 import { resetSiteSpecScriptState } from 'calypso/lib/site-spec';
 
 resetSiteSpecScriptState();
-await loadSiteSpecScriptAndCSS();
 ```
 
 **Returns:** `void`
 
-## Complete Example
+## Usage Patterns
 
-Here's a complete example of how to use the SiteSpec loader in a React component:
+### Option 1: React Hook (Recommended)
+Use the `useSiteSpec` hook for React components:
 
 ```typescript
-import { useEffect } from 'react';
-import { 
-  loadSiteSpecScriptAndCSS, 
-  getSiteSpecConfig, 
-  isSiteSpecEnabled 
-} from 'calypso/lib/site-spec';
+import { useSiteSpec } from 'calypso/lib/site-spec';
+
+const MyComponent = () => {
+  useSiteSpec({ container: '#site-spec' });
+  return <div id="site-spec" />;
+};
+```
+
+### Option 2: Manual Loading
+Use the individual functions for more control:
+
+```typescript
+import { loadSiteSpecScriptAndCSS, getSiteSpecConfig } from 'calypso/lib/site-spec';
+
+const initializeSiteSpec = async () => {
+  await loadSiteSpecScriptAndCSS();
+  
+  if (window.SiteSpec?.init) {
+    const config = getSiteSpecConfig();
+    window.SiteSpec.init({ container: '#site-spec', ...config });
+  }
+};
+```
+
+## Complete Example
+
+Here's a complete example of how to use SiteSpec in a React component:
+
+```typescript
+import { useSiteSpec } from 'calypso/lib/site-spec';
 
 const SiteSpecComponent = () => {
-  useEffect(() => {
-    const initializeSiteSpec = async () => {
-      try {
-        // Check if SiteSpec is enabled
-        if (!isSiteSpecEnabled()) {
-          console.log('SiteSpec is not enabled');
-          return;
-        }
-
-        // Load both CSS and JavaScript resources
-        await loadSiteSpecScriptAndCSS();
-
-        // Initialize the SiteSpec widget
-        if (window.SiteSpec?.init) {
-          const config = getSiteSpecConfig();
-          window.SiteSpec.init({
-            container: '#site-spec',
-            ...config,
-            onMessage: (message) => {
-              console.log('SiteSpec message:', message);
-            },
-            onError: (error) => {
-              console.error('SiteSpec error:', error);
-            }
-          });
-        }
-      } catch (error) {
-        console.error('Failed to initialize SiteSpec:', error);
-      }
-    };
-
-    initializeSiteSpec();
-  }, []);
+  // Use the SiteSpec hook to handle all loading and initialization
+  useSiteSpec({
+    container: '#site-spec',
+    onMessage: (message) => {
+      console.log('SiteSpec message:', message);
+    },
+    onError: (error) => {
+      console.error('SiteSpec error:', error);
+    },
+  });
 
   return <div id="site-spec" />;
 };
 
 export default SiteSpecComponent;
 ```
+
+**Note:** This approach loads SiteSpec scripts and CSS only when the component mounts, and removes them when the component unmounts. This is more efficient than loading globally for all pages.
 
 ## Type Definitions
 
