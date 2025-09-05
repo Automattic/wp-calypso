@@ -12,6 +12,13 @@ import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
+import { TextBlur } from '../../components/text-blur';
+
+const decodeHtmlEntities = ( text: string ): string => {
+	const textarea = document.createElement( 'textarea' );
+	textarea.innerHTML = text;
+	return textarea.value;
+};
 
 const defaultSitesWithThisPluginView: View = {
 	type: 'table',
@@ -168,9 +175,11 @@ const SitesWithoutThisPlugin = ( {
 export default function Plugin() {
 	const { pluginId } = pluginRoute.useParams();
 	const locale = useLocale();
-	const { data: sitesPlugins } = useQuery( pluginsQuery() );
-	const { data: sites } = useQuery( sitesQuery() );
-	const { data: wpOrgPlugin } = useQuery( wpOrgPluginQuery( pluginId, locale ) );
+	const { data: sitesPlugins, isLoading: isLoadingSitesPlugins } = useQuery( pluginsQuery() );
+	const { data: sites, isLoading: isLoadingSites } = useQuery( sitesQuery() );
+	const { data: wpOrgPlugin, isLoading: isLoadingWpOrgPlugin } = useQuery(
+		wpOrgPluginQuery( pluginId, locale )
+	);
 
 	const siteIdsWithThisPlugin = sitesPlugins?.sites
 		? Object.entries( sitesPlugins.sites ).flatMap( ( [ siteId, plugins ] ) =>
@@ -192,7 +201,7 @@ export default function Plugin() {
 		  )
 		: [ [], [] ];
 
-	if ( ! wpOrgPlugin ) {
+	if ( ! isLoadingSitesPlugins && ! isLoadingSites && ! isLoadingWpOrgPlugin && ! wpOrgPlugin ) {
 		return (
 			<PageLayout size="large" header={ <PageHeader title={ __( 'Plugin Not Found' ) } /> }>
 				<div>{ __( 'Plugin not found' ) }</div>
@@ -201,29 +210,42 @@ export default function Plugin() {
 	}
 
 	return (
-		<PageLayout size="large" header={ <PageHeader title={ wpOrgPlugin.name } /> }>
-			<VStack spacing={ 4 } style={ { marginBottom: '24px' } }>
-				<SectionHeader
-					title={ sprintf(
-						// translators: %(count) is the number of sites the plugin is installed on.
-						_n(
-							'Installed on %(count)d site',
-							'Installed on %(count)d sites',
-							siteIdsWithThisPlugin.length
-						),
-						{ count: siteIdsWithThisPlugin.length }
-					) }
+		<PageLayout
+			size="large"
+			header={
+				<PageHeader
+					title={
+						wpOrgPlugin ? decodeHtmlEntities( wpOrgPlugin.name ) : <TextBlur>{ pluginId }</TextBlur>
+					}
 				/>
+			}
+		>
+			<VStack spacing={ 20 }>
+				<VStack spacing={ 6 }>
+					<SectionHeader
+						title={ sprintf(
+							// translators: %(count) is the number of sites the plugin is installed on.
+							_n(
+								'Installed on %(count)d site',
+								'Installed on %(count)d sites',
+								siteIdsWithThisPlugin.length
+							),
+							{ count: siteIdsWithThisPlugin.length }
+						) }
+					/>
 
-				<DataViewsCard>
-					<SitesWithThisPlugin sitesWithThisPlugin={ sitesWithThisPlugin } />
-				</DataViewsCard>
+					<DataViewsCard>
+						<SitesWithThisPlugin sitesWithThisPlugin={ sitesWithThisPlugin } />
+					</DataViewsCard>
+				</VStack>
 
-				<SectionHeader title={ __( 'Available on' ) } />
+				<VStack spacing={ 6 }>
+					<SectionHeader title={ __( 'Available on' ) } />
 
-				<DataViewsCard>
-					<SitesWithoutThisPlugin sitesWithoutThisPlugin={ sitesWithoutThisPlugin } />
-				</DataViewsCard>
+					<DataViewsCard>
+						<SitesWithoutThisPlugin sitesWithoutThisPlugin={ sitesWithoutThisPlugin } />
+					</DataViewsCard>
+				</VStack>
 			</VStack>
 		</PageLayout>
 	);
