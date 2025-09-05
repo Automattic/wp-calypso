@@ -1,12 +1,9 @@
 import { Site } from '@automattic/api-core';
-import { wpOrgPluginQuery, pluginsQuery, sitesQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
-import { useLocale } from '../../app/locale';
-import { pluginRoute } from '../../app/router/plugins';
+import { usePlugin } from './use-plugin';
 
 const defaultView: View = {
 	type: 'table',
@@ -20,13 +17,9 @@ const defaultView: View = {
 	titleField: 'domain',
 };
 
-export const SitesWithoutThisPlugin = ( { sites }: { sites: Site[] } ) => {
+export const SitesWithoutThisPlugin = ( { pluginId }: { pluginId: string } ) => {
 	const [ view, setView ] = useState< View >( defaultView );
-	const { pluginId } = pluginRoute.useParams();
-	const locale = useLocale();
-	const { isLoading: isLoadingSitesPlugins } = useQuery( pluginsQuery() );
-	const { isLoading: isLoadingSites } = useQuery( sitesQuery() );
-	const { isLoading: isLoadingWpOrgPlugin } = useQuery( wpOrgPluginQuery( pluginId, locale ) );
+	const { isLoading, sitesWithoutThisPlugin } = usePlugin( pluginId );
 
 	const fields = useMemo(
 		() => [
@@ -51,12 +44,12 @@ export const SitesWithoutThisPlugin = ( { sites }: { sites: Site[] } ) => {
 		[ pluginId ]
 	);
 
-	const { data, paginationInfo } = filterSortAndPaginate( sites, view, fields );
+	const { data, paginationInfo } = filterSortAndPaginate( sitesWithoutThisPlugin, view, fields );
 
 	return (
 		<DataViews
 			search={ false }
-			isLoading={ isLoadingSitesPlugins || isLoadingSites || isLoadingWpOrgPlugin }
+			isLoading={ isLoading }
 			data={ data }
 			fields={ fields }
 			view={ view }

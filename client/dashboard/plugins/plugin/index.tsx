@@ -1,9 +1,5 @@
-import { Site } from '@automattic/api-core';
-import { wpOrgPluginQuery, pluginsQuery, sitesQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { useLocale } from '../../app/locale';
 import { pluginRoute } from '../../app/router/plugins';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
@@ -13,37 +9,13 @@ import { Text } from '../../components/text';
 import { TextBlur } from '../../components/text-blur';
 import { SitesWithThisPlugin } from './sites-with-this-plugin';
 import { SitesWithoutThisPlugin } from './sites-without-this-plugin';
+import { usePlugin } from './use-plugin';
 
 export default function Plugin() {
 	const { pluginId } = pluginRoute.useParams();
-	const locale = useLocale();
-	const { data: sitesPlugins, isLoading: isLoadingSitesPlugins } = useQuery( pluginsQuery() );
-	const { data: sites, isLoading: isLoadingSites } = useQuery( sitesQuery() );
-	const { data: wpOrgPlugin, isLoading: isLoadingWpOrgPlugin } = useQuery(
-		wpOrgPluginQuery( pluginId, locale )
-	);
+	const { isLoading, sitesWithThisPlugin, wpOrgPlugin } = usePlugin( pluginId );
 
-	const siteIdsWithThisPlugin = sitesPlugins?.sites
-		? Object.entries( sitesPlugins.sites ).flatMap( ( [ siteId, plugins ] ) =>
-				plugins.some( ( p ) => p.slug === pluginId ) ? [ siteId ] : []
-		  )
-		: [];
-
-	const [ sitesWithThisPlugin, sitesWithoutThisPlugin ] = sites
-		? sites.reduce(
-				( acc, site ) => {
-					if ( siteIdsWithThisPlugin.includes( String( site.ID ) ) ) {
-						acc[ 0 ].push( site );
-					} else {
-						acc[ 1 ].push( site );
-					}
-					return acc;
-				},
-				[ [], [] ] as [ Site[], Site[] ]
-		  )
-		: [ [], [] ];
-
-	if ( ! isLoadingSitesPlugins && ! isLoadingSites && ! isLoadingWpOrgPlugin && ! wpOrgPlugin ) {
+	if ( ! isLoading && ! wpOrgPlugin ) {
 		return (
 			<PageLayout size="large" header={ <PageHeader title={ __( 'Plugin Not Found' ) } /> }>
 				<div>{ __( 'Plugin not found' ) }</div>
@@ -81,14 +53,14 @@ export default function Plugin() {
 							_n(
 								'Installed on %(count)d site',
 								'Installed on %(count)d sites',
-								siteIdsWithThisPlugin.length
+								sitesWithThisPlugin.length
 							),
-							{ count: siteIdsWithThisPlugin.length }
+							{ count: sitesWithThisPlugin.length }
 						) }
 					/>
 
 					<DataViewsCard>
-						<SitesWithThisPlugin sites={ sitesWithThisPlugin } />
+						<SitesWithThisPlugin pluginId={ pluginId } />
 					</DataViewsCard>
 				</VStack>
 
@@ -96,7 +68,7 @@ export default function Plugin() {
 					<SectionHeader title={ __( 'Available on' ) } />
 
 					<DataViewsCard>
-						<SitesWithoutThisPlugin sites={ sitesWithoutThisPlugin } />
+						<SitesWithoutThisPlugin pluginId={ pluginId } />
 					</DataViewsCard>
 				</VStack>
 			</VStack>
