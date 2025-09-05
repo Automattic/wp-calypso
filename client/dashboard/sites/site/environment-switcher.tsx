@@ -144,7 +144,11 @@ const EnvironmentSwitcherDropdown = ( {
 				) }
 				{ showActionButton && (
 					<MenuItem
-						onClick={ canCreateStagingSite( productionSite ) ? onAddStagingSite : handleUpsell }
+						onClick={
+							productionSite && canCreateStagingSite( productionSite )
+								? onAddStagingSite
+								: handleUpsell
+						}
 						disabled={ isStagingSiteCreating || isStagingSiteDeleting }
 					>
 						<HStack justify="flex-start">
