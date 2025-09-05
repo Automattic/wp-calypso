@@ -15,12 +15,6 @@ import { SectionHeader } from '../../components/section-header';
 import { Text } from '../../components/text';
 import { TextBlur } from '../../components/text-blur';
 
-const decodeHtmlEntities = ( text: string ): string => {
-	const textarea = document.createElement( 'textarea' );
-	textarea.innerHTML = text;
-	return textarea.value;
-};
-
 const defaultSitesWithThisPluginView: View = {
 	type: 'table',
 	fields: [ 'activate', 'autoupdate', 'update' ],
@@ -222,7 +216,8 @@ export default function Plugin() {
 					<PageHeader
 						title={
 							wpOrgPlugin ? (
-								decodeHtmlEntities( wpOrgPlugin.name )
+								// @ts-expect-error: Can only set one of `children` or `props.dangerouslySetInnerHTML`.
+								<Text dangerouslySetInnerHTML={ { __html: wpOrgPlugin.name } } />
 							) : (
 								<TextBlur>{ pluginId }</TextBlur>
 							)
