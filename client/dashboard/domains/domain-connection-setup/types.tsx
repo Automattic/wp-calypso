@@ -1,5 +1,6 @@
 import { DomainConnectionSetupMode } from '@automattic/api-core';
 import { __ } from '@wordpress/i18n';
+import ConnectDomainStepLogin from './steps/step-login';
 import ConnectDomainStepSuggestedStart from './steps/suggested-start';
 
 export enum StepType {
@@ -51,7 +52,7 @@ export type DomainConnectionStepComponentProps = {
 	domainName: string;
 	stepName: StepName;
 	mode: DomainConnectionSetupMode | null;
-	progressStepList: StepType[];
+	// progressStepList: StepType[];
 	onNextStep: () => void;
 	setPage: ( stepName: StepName ) => void;
 };
@@ -68,7 +69,6 @@ export type DomainConnectionStep = {
 
 export type DomainConnectionStepsMap = Partial< Record< StepName, DomainConnectionStep > >;
 
-// TO DO: Remove partial whenb we have implememted all steps
 export const connectADomainDomainConnectionStepsMap: DomainConnectionStepsMap = {
 	// Suggested flow
 	[ StepName.SUGGESTED_START ]: {
@@ -81,7 +81,7 @@ export const connectADomainDomainConnectionStepsMap: DomainConnectionStepsMap = 
 		mode: DomainConnectionSetupMode.SUGGESTED,
 		step: StepType.LOG_IN_TO_PROVIDER,
 		name: () => __( 'Log in to provider' ),
-		component: ConnectDomainStepSuggestedStart,
+		component: ConnectDomainStepLogin,
 		next: StepName.SUGGESTED_UPDATE,
 		prev: StepName.SUGGESTED_START,
 	},
@@ -235,27 +235,4 @@ export const connectASubdomainDomainConnectionStepsMap: DomainConnectionStepsMap
 		prev: StepName.SUBDOMAIN_ADVANCED_UPDATE,
 		singleColumnLayout: true,
 	},
-};
-
-export const getStepName = (
-	mode: DomainConnectionSetupMode,
-	step: StepType,
-	stepsDefinition: DomainConnectionStepsMap
-) => {
-	const matchingEntry = Object.entries( stepsDefinition ).find( ( [ , pageDefinition ] ) => {
-		return pageDefinition.mode === mode && pageDefinition.step === step;
-	} );
-	return matchingEntry?.[ 0 ] as StepName | undefined;
-};
-
-export const getProgressStepList = (
-	mode: DomainConnectionSetupMode | null,
-	stepsDefinition: DomainConnectionStepsMap
-): StepType[] => {
-	const progressStepList = Object.entries( stepsDefinition )
-		.filter( ( [ , pageDefinition ] ) => {
-			return pageDefinition.mode === mode;
-		} )
-		.map( ( [ , pageDefinition ] ) => pageDefinition.step );
-	return progressStepList;
 };

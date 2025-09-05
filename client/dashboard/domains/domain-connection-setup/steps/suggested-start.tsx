@@ -8,25 +8,17 @@ import {
 	Panel,
 	PanelBody,
 	PanelRow,
+	__experimentalText as Text,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { caution } from '@wordpress/icons';
 import Notice from '../../../components/notice';
 import { StepName, type DomainConnectionStepComponentProps } from '../types';
-// import type { DomainMappingSetupInfo } from '@automattic/api-core';
-// import Progress from '../components/progress';
-// import type { StepComponentProps } from '../types';
-
-// type SuggestedStartProps = DomainConnectionStepComponentProps & {
-// 	onNextStep: () => void;
-// 	setPage: ( stepName: StepName ) => void;
-// };
 
 export default function SuggestedStart( {
 	domainName,
-	progressStepList,
-	stepName,
+	// stepName,
 	setPage,
 	onNextStep,
 }: DomainConnectionStepComponentProps ) {
@@ -44,20 +36,16 @@ export default function SuggestedStart( {
 				'This is the easiest way to connect your domain, using name servers. If needed you can also use our <a>advanced setup</a>, using root A & CNAME records.'
 		  );
 
-	const showProgress = Object.keys( progressStepList ).includes( stepName );
-
 	return (
 		<VStack spacing={ 6 }>
-			{ /* { showProgress && <Progress steps={ progressStepList } currentStep={ stepName } /> } */ }
-			{ showProgress && <>Progress</> }
 			<Card>
 				<CardBody>
 					<VStack spacing={ 4 }>
-						<p>
+						<Text variant="muted" lineHeight="20px" as="p">
 							{ createInterpolateElement( message, {
 								a: <Button variant="link" onClick={ switchToAdvancedSetup } />,
 							} ) }
-						</p>
+						</Text>
 
 						<Notice variant="info" title={ __( 'How long will it take?' ) }>
 							{ __( 'It takes 5–15 minutes to set up.' ) }
@@ -72,28 +60,32 @@ export default function SuggestedStart( {
 								initialOpen={ false }
 							>
 								<PanelRow>
-									<VStack spacing={ 2 }>
-										<p>
-											{ createInterpolateElement(
-												__(
-													'If you have any email or services other than web hosting connected to this domain, we recommend you copy over your DNS records before proceeding with this setup to avoid disruptions. You can then start the setup again by going back to <em>Upgrades > Domains</em>.'
-												),
-												{
-													em: <em />,
-												}
-											) }
-										</p>
-										<HStack justify="flex-start">
-											<Button variant="secondary">{ __( 'Go to DNS records' ) }</Button>
-										</HStack>
-										<p>
-											{ __(
-												'Alternatively, you can continue to use your current DNS provider by adding the correct A records and CNAME records using our advanced setup.'
-											) }
-										</p>
-										<HStack justify="flex-start">
-											<Button variant="secondary">{ __( 'Switch to advanced setup' ) }</Button>
-										</HStack>
+									<VStack spacing={ 4 }>
+										<VStack spacing={ 2 }>
+											<Text as="p">
+												{ createInterpolateElement(
+													__(
+														'If you have any email or services other than web hosting connected to this domain, we recommend you copy over your DNS records before proceeding with this setup to avoid disruptions. You can then start the setup again by going back to <em>Upgrades > Domains</em>.'
+													),
+													{
+														em: <em />,
+													}
+												) }
+											</Text>
+											<HStack justify="flex-start">
+												<Button variant="secondary">{ __( 'Go to DNS records' ) }</Button>
+											</HStack>
+										</VStack>
+										<VStack spacing={ 2 }>
+											<Text as="p">
+												{ __(
+													'Alternatively, you can continue to use your current DNS provider by adding the correct A records and CNAME records using our advanced setup.'
+												) }
+											</Text>
+											<HStack justify="flex-start">
+												<Button variant="secondary">{ __( 'Switch to advanced setup' ) }</Button>
+											</HStack>
+										</VStack>
 									</VStack>
 								</PanelRow>
 							</PanelBody>
