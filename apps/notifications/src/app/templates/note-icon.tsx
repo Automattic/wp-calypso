@@ -6,7 +6,7 @@ const NoteIcon = ( { icon, size = 40 }: { icon: string; size?: number } ) => {
 			width={ size }
 			height={ size }
 			loading="lazy"
-			style={ { width: size, height: size, minWidth: size } }
+			style={ { width: size, height: size, minWidth: size, borderRadius: '50%' } }
 		/>
 	);
 };

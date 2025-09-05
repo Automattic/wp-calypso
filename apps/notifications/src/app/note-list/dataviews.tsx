@@ -1,14 +1,43 @@
 import { __experimentalHStack as HStack, Icon } from '@wordpress/components';
 import { __, isRTL } from '@wordpress/i18n';
-import { chevronRight, chevronLeft } from '@wordpress/icons';
+import {
+	chartBar,
+	chevronRight,
+	chevronLeft,
+	caution,
+	check,
+	comment,
+	info,
+	lockOutline,
+	plus,
+	store,
+	trendingUp,
+	thumbsUp,
+	update,
+} from '@wordpress/icons';
 import clsx from 'clsx';
 import { html } from '../../panel/indices-to-html';
-import noticon2gridicon from '../../panel/utils/noticon2gridicon';
-import Gridicon from '../templates/gridicons';
 import NoteIcon from '../templates/note-icon';
 import type { Note } from '../types';
 import type { Action, Field } from '@wordpress/dataviews';
+import type { JSX } from 'react';
 import './dataviews-overrides.scss';
+
+const iconMap: { [ key in string ]: JSX.Element } = {
+	'\uf814': comment, // mention
+	'\uf300': comment,
+	'\uf801': plus,
+	'\uf455': info,
+	'\uf470': lockOutline,
+	'\uf806': chartBar, // stats
+	'\uf805': update, // reblog
+	'\uf408': thumbsUp, // star
+	'\uf804': trendingUp, // 'trophy',
+	'\uf467': comment, // reply
+	'\uf414': caution, // warning
+	'\uf418': check,
+	'\uf447': store, // cart
+};
 
 const DAY_MILLISECONDS = 24 * 60 * 60 * 1000;
 
@@ -47,19 +76,10 @@ export function getFields(): Field< Note >[] {
 			id: 'icon',
 			label: __( 'Icon' ),
 			render: ( { item } ) => (
-				<div className="wpnc__note-icon" style={ { position: 'relative', height: '100%' } }>
+				<div className={ clsx( 'wpnc__note-icon', { 'is-unread': ! item.read } ) }>
 					<NoteIcon icon={ item.icon } size={ 52 } />
-					<span
-						className="wpnc__gridicon"
-						style={ {
-							position: 'absolute',
-							bottom: '-5px',
-							right: 0,
-							border: '1px solid #fff',
-							background: '#ddd',
-						} }
-					>
-						<Gridicon icon={ noticon2gridicon( item.noticon ) } size={ 16 } />
+					<span className="wpnc__gridicon">
+						<Icon icon={ iconMap[ item.noticon ] ?? info } size={ 10 } />
 					</span>
 				</div>
 			),
