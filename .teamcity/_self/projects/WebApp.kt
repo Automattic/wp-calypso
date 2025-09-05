@@ -949,6 +949,18 @@ object PlaywrightTestPRMatrix : BuildType({
         	rules = "+:test/e2e/output/results.xml"
 			verbose = true
         }
+		notifications {
+			notifierSettings = slackNotifier {
+				connection = "PROJECT_EXT_11"
+				sendTo = "#calypso-e2e-reports-ext"
+				messageFormat = verboseMessageFormat {
+					addStatusText = true,
+					addBranch = true
+				}
+			}
+			branchFilter = "+:e2e/*"
+			buildFailed = true
+		}
 	}
 
 	triggers {
@@ -1023,6 +1035,25 @@ object PlaywrightTestPRMatrix : BuildType({
 				echo "Running Playwright tests for project: %playwrightProject%"
 				yarn test:pw:%playwrightProject% ${'$'}GREP_FLAG
 			"""
+			dockerImage = "%docker_image_e2e%"
+		}
+
+		bashNodeScript {
+			name = "Upload report to S3"
+			scriptContent = """
+				ARCHIVE_NAME="%build.counter%-%build.vcs.number%-%playwrightProject%"
+				
+				# Need to use -C to avoid creation of an unnecessary top level directory.
+				tar cvfz - -C test/e2e/output/html . | openssl enc -aes-256-cbc -salt -out ${'$'}{ARCHIVE_NAME}.tgz.enc -pass env:E2E_SECRETS_ENCRYPTION_KEY_CURRENT
+
+				aws configure set aws_access_key_id %CALYPSO_E2E_DASHBOARD_AWS_S3_ACCESS_KEY_ID%
+				aws configure set aws_secret_access_key %CALYPSO_E2E_DASHBOARD_AWS_S3_SECRET_ACCESS_KEY%
+
+				aws s3 cp ${'$'}{ARCHIVE_NAME}.tgz.enc %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT%
+			""".trimIndent()
+			conditions {
+				equals("teamcity.build.branch", "trunk")
+			}
 			dockerImage = "%docker_image_e2e%"
 		}
 	}
