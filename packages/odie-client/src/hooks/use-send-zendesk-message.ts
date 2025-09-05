@@ -17,14 +17,17 @@ export const useSendZendeskMessage = ( signal: AbortSignal ) => {
 	const newConversation = useCreateZendeskConversation();
 
 	// < void, Error, { message: Message; signal: AbortSignal } >
-	const conversationId = currentConversationId || chat.conversationId;
+	let conversationId = currentConversationId || chat.conversationId;
 	return useMutation( {
 		mutationFn: async ( message: Message ): Promise< Message > => {
 			if ( ! conversationId ) {
 				// Start a new conversation if it doesn't exist
-				await newConversation( { createdFrom: 'send_zendesk_message' } );
-				setChatStatus( 'loaded' );
-				return message;
+				// TODO: this can create excess tickets. We should track down the real issue.
+				conversationId = await newConversation( { createdFrom: 'send_zendesk_message' } );
+				setChat( {
+					...chat,
+					conversationId,
+				} );
 			}
 
 			const messageToSend = {

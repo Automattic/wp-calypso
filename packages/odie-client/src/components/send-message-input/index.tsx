@@ -136,7 +136,7 @@ export const OdieSendMessageButton = () => {
 						onKeyDown={ handleKeyDown }
 						textareaRef={ textareaRef }
 						disabled={ !! notice || ( isLiveChat && connectionStatus !== 'connected' ) }
-						onStop={ () => abort() }
+						onStop={ abort }
 						notice={ notice }
 						placeholder={ textAreaPlaceholder }
 						isProcessing={ isChatBusy || isAttachingFile || cantTransferToZendesk }
