@@ -1,7 +1,10 @@
 import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { pluginsScheduledUpdatesRoute } from '../../app/router/plugins';
+import {
+	pluginsScheduledUpdatesNewRoute,
+	pluginsScheduledUpdatesRoute,
+} from '../../app/router/plugins';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 
@@ -17,7 +20,7 @@ export default function PluginsScheduledUpdates() {
 					actions={
 						<Button
 							variant="primary"
-							onClick={ () => navigate( { to: '/plugins/scheduled-updates/new' } ) }
+							onClick={ () => navigate( { to: pluginsScheduledUpdatesNewRoute.to } ) }
 							__next40pxDefaultSize
 						>
 							{ __( 'New schedule' ) }
