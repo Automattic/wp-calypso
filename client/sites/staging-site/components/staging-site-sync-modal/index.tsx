@@ -415,7 +415,7 @@ export default function SyncModal( {
 					paddingBottom: ( () => {
 						const hasWarning = shouldDisableGranularSync || sqlNode?.checkState === 'checked';
 						if ( hasWarning && isFileBrowserVisible ) {
-							return '400px';
+							return '300px';
 						}
 						if ( hasWarning ) {
 							return '0px';
