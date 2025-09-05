@@ -952,7 +952,7 @@ object PlaywrightTestPRMatrix : BuildType({
 		notifications {
 			notifierSettings = slackNotifier {
 				connection = "PROJECT_EXT_11"
-				sendTo = "#calypso-e2e-reports-ext"
+				sendTo = "C09DMP444T0"
 				messageFormat = verboseMessageFormat {
 					addStatusText = true,
 					addBranch = true
