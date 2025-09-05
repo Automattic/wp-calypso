@@ -4,6 +4,7 @@ import { Link } from '@tanstack/react-router';
 import { DataViews, Field, View, filterSortAndPaginate, type Action } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
+import { pluginRoute } from '../../app/router/plugins';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -24,7 +25,9 @@ const fields: Field< PluginListRow >[] = [
 		enableSorting: true,
 		getValue: ( { item } ) => item.name,
 		render: ( { item, field } ) => (
-			<Link to={ `/plugins/${ item.id }` }>{ field.getValue( { item } ) }</Link>
+			<Link to={ pluginRoute.to } params={ { pluginId: item.id } }>
+				{ field.getValue( { item } ) }
+			</Link>
 		),
 	},
 	{
