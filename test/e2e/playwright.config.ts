@@ -41,8 +41,6 @@ export default defineConfig( {
 		video: 'on-first-retry',
 	},
 
-	/* Configure projects for major browsers */
-	// See https://github.com/microsoft/playwright/blob/main/packages/playwright-core/src/server/deviceDescriptorsSource.json */
 	projects: [
 		{
 			name: 'chrome',
