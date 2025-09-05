@@ -122,6 +122,10 @@ export const OdieSendMessageButton = () => {
 		[ sendMessageHandler, handleImagePaste ]
 	);
 
+	const isDisabled = !! notice || ( isLiveChat && connectionStatus !== 'connected' );
+	// When there is a reason to disable the input, we should not convey a processing state.
+	const isProcessing = ( isChatBusy || isAttachingFile || cantTransferToZendesk ) && ! isDisabled;
+
 	return (
 		<>
 			<div className="odie-chat-message-input-container agenttic" ref={ divContainerRef }>
@@ -135,11 +139,11 @@ export const OdieSendMessageButton = () => {
 						onSubmit={ sendMessageHandler }
 						onKeyDown={ handleKeyDown }
 						textareaRef={ textareaRef }
-						disabled={ !! notice || ( isLiveChat && connectionStatus !== 'connected' ) }
+						disabled={ isDisabled }
 						onStop={ abort }
 						notice={ notice }
 						placeholder={ textAreaPlaceholder }
-						isProcessing={ isChatBusy || isAttachingFile || cantTransferToZendesk }
+						isProcessing={ isProcessing }
 						focusOnMount={ ! isInitialLoading }
 						customActions={ customActions }
 						actionOrder="before-submit"

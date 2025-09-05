@@ -39,11 +39,12 @@ export const useSendZendeskMessage = ( signal: AbortSignal ) => {
 			};
 
 			Smooch.sendMessage( messageToSend, conversationId );
-			const result = await new Promise< Message >( ( resolve, reject ) => {
+			return new Promise< Message >( ( resolve, reject ) => {
 				signal.onabort = reject;
+				// When this isn't called, the promise will not resolve,
+				// and Tanstack Query will automatically retry if they user comes back online 🔥.
 				Smooch.on( 'message:sent', resolve as any );
 			} );
-			return result;
 		},
 		onMutate: () => {
 			setChatStatus( 'sending' );
