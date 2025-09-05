@@ -10,7 +10,6 @@ This library provides a reusable React hook that handles loading and initializin
 
 - **Automatic Loading**: Loads CSS and JavaScript resources only when needed
 - **React Integration**: hook-based API for React components
-- **SSR Safe**: Works with server-side rendering
 - **Auto Cleanup**: Cleans up resources when components unmount
 
 ## Configuration
@@ -56,7 +55,7 @@ Define the following configuration values:
 }
 ```
 
-**Note:** We are using `sitespec.bundle.umd.js` because React is not available globally in the version required by SiteSpec. The bundled version includes its own React instance to avoid version conflicts with WordPress Calypso's React setup.
+**Note:** We are using `bundle-1.0.0.umd.js` because React is not available globally in the version required by SiteSpec. The bundled version includes its own React instance to avoid version conflicts with WordPress Calypso's React setup.
 
 #### Production
 
@@ -68,7 +67,7 @@ Define the following configuration values:
 		"agent_id": "site-spec"
 	},
 	"features": {
-		"site-spec": true // It is false for the moment
+		"site-spec": true
 	}
 }
 ```
@@ -116,9 +115,9 @@ Custom React hook for loading and managing SiteSpec resources.
 
 #### Parameters
 
-- `options.container` (string, optional): Container selector for the widget (default: `'#site-spec-container'`)
-- `options.onMessage` (function, optional): Message handler callback
-- `options.onError` (function, optional): Error handler callback
+- `options.container` (string | HTMLElement, optional): Container selector or DOM element for the widget (default: `'#site-spec-container'`)
+- `options.onMessage` (function, optional): Message handler callback for SiteSpec widget messages
+- `options.onError` (function, optional): Error handler callback for loading and initialization errors
 
 #### Example
 
@@ -137,13 +136,13 @@ useSiteSpec({
 ## How It Works
 
 1. **Feature Check**: Verifies that the `site-spec` feature flag is enabled
-2. **Resource Loading**: Dynamically loads CSS and JavaScript from the configured URLs
-3. **Widget Initialization**: Initializes the SiteSpec widget with the provided configuration
-4. **Cleanup**: Removes resources when the component unmounts
+2. **SSR Guard**: Exits early if running in server-side rendering or non-browser environment
+3. **Resource Loading**: Dynamically loads CSS and JavaScript from the configured URLs (with duplicate request prevention)
+4. **Widget Initialization**: Initializes the SiteSpec widget with the provided configuration
+5. **Cleanup**: Removes internal state and tracking when the component unmounts
 
 ## Notes
 
-- The hook automatically handles duplicate initialization attempts
-- Resources are only loaded when the component mounts
-- The widget is automatically cleaned up when the component unmounts
-- All operations are SSR-safe and won't cause server-side rendering errors
+- The hook automatically handles duplicate initialization attempts and prevents multiple initializations of the same container
+- Resources are only loaded when the component mounts and the feature flag is enabled
+- Internal state is cleaned up when the component unmounts, but loaded resources remain in the DOM for reuse
