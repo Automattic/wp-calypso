@@ -5,14 +5,13 @@ import { Link } from '@tanstack/react-router';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { partition } from 'lodash';
 import { useMemo, useState } from 'react';
 import { useLocale } from '../../app/locale';
 import { pluginRoute } from '../../app/router/plugins';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { Text } from '../../components/text';
+import { SectionHeader } from '../../components/section-header';
 
 const defaultSitesWithThisPluginView: View = {
 	type: 'table',
@@ -22,7 +21,7 @@ const defaultSitesWithThisPluginView: View = {
 };
 
 const SitesWithThisPlugin = ( { sitesWithThisPlugin }: { sitesWithThisPlugin: Site[] } ) => {
-	const [ view, setView ] = useState( defaultSitesWithThisPluginView );
+	const [ view, setView ] = useState< View >( defaultSitesWithThisPluginView );
 	const { pluginId } = pluginRoute.useParams();
 	const locale = useLocale();
 	const { data: sitesPlugins, isLoading: isLoadingSitesPlugins } = useQuery( pluginsQuery() );
@@ -102,6 +101,11 @@ const SitesWithThisPlugin = ( { sitesWithThisPlugin }: { sitesWithThisPlugin: Si
 const defaultSitesWithoutThisPluginView: View = {
 	type: 'table',
 	fields: [ 'link' ],
+	layout: {
+		styles: {
+			link: { align: 'end' },
+		},
+	},
 	sort: { field: 'name', direction: 'asc' },
 	titleField: 'domain',
 };
@@ -111,7 +115,7 @@ const SitesWithoutThisPlugin = ( {
 }: {
 	sitesWithoutThisPlugin: Site[];
 } ) => {
-	const [ view, setView ] = useState( defaultSitesWithoutThisPluginView );
+	const [ view, setView ] = useState< View >( defaultSitesWithoutThisPluginView );
 	const { pluginId } = pluginRoute.useParams();
 	const locale = useLocale();
 	const { isLoading: isLoadingSitesPlugins } = useQuery( pluginsQuery() );
@@ -131,14 +135,14 @@ const SitesWithoutThisPlugin = ( {
 			},
 			{
 				id: 'link',
-				label: null, // how to hide the header!?
+				header: <div />,
 				getValue: ( { item }: { item: Site } ) => item.URL,
 				render: ( { item }: { item: Site } ) => (
-					<Link to="/sites/">{ __( 'Go to plugin page' ) }</Link>
+					<Link to={ `/plugins/${ pluginId }/${ item.slug }` }>{ __( 'Go to plugin page' ) }</Link>
 				),
 			},
 		],
-		[]
+		[ pluginId ]
 	);
 
 	const { data, paginationInfo } = filterSortAndPaginate( sitesWithoutThisPlugin, view, fields );
@@ -154,7 +158,10 @@ const SitesWithoutThisPlugin = ( {
 			defaultLayouts={ { table: {} } }
 			getItemId={ ( item ) => String( item.ID ) }
 			paginationInfo={ paginationInfo }
-		/>
+		>
+			<DataViews.Layout />
+			<DataViews.Pagination />
+		</DataViews>
 	);
 };
 
@@ -171,9 +178,19 @@ export default function Plugin() {
 		  )
 		: [];
 
-	const [ sitesWithThisPlugin, sitesWithoutThisPlugin ] = partition( sites, ( site ) =>
-		siteIdsWithThisPlugin.includes( String( site.ID ) )
-	);
+	const [ sitesWithThisPlugin, sitesWithoutThisPlugin ] = sites
+		? sites.reduce(
+				( acc, site ) => {
+					if ( siteIdsWithThisPlugin.includes( String( site.ID ) ) ) {
+						acc[ 0 ].push( site );
+					} else {
+						acc[ 1 ].push( site );
+					}
+					return acc;
+				},
+				[ [], [] ] as [ Site[], Site[] ]
+		  )
+		: [ [], [] ];
 
 	if ( ! wpOrgPlugin ) {
 		return (
@@ -186,8 +203,8 @@ export default function Plugin() {
 	return (
 		<PageLayout size="large" header={ <PageHeader title={ wpOrgPlugin.name } /> }>
 			<VStack spacing={ 4 } style={ { marginBottom: '24px' } }>
-				<Text as="h2" weight={ 500 }>
-					{ sprintf(
+				<SectionHeader
+					title={ sprintf(
 						// translators: %(count) is the number of sites the plugin is installed on.
 						_n(
 							'Installed on %(count)d site',
@@ -196,15 +213,13 @@ export default function Plugin() {
 						),
 						{ count: siteIdsWithThisPlugin.length }
 					) }
-				</Text>
+				/>
 
 				<DataViewsCard>
 					<SitesWithThisPlugin sitesWithThisPlugin={ sitesWithThisPlugin } />
 				</DataViewsCard>
 
-				<Text as="h2" weight={ 500 }>
-					{ __( 'Available on' ) }
-				</Text>
+				<SectionHeader title={ __( 'Available on' ) } />
 
 				<DataViewsCard>
 					<SitesWithoutThisPlugin sitesWithoutThisPlugin={ sitesWithoutThisPlugin } />
