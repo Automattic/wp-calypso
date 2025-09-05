@@ -9,6 +9,11 @@ import {
 import { __ } from '@wordpress/i18n';
 import { isAkismetProduct } from '../../utils/purchase';
 
+export const transferableTypes: DomainSubtype[] = [
+	DomainSubtype.DEFAULT_ADDRESS,
+	DomainSubtype.DOMAIN_CONNECTION,
+	DomainSubtype.DOMAIN_REGISTRATION,
+];
 export const disconnectableTypes: DomainSubtype[] = [ DomainSubtype.DOMAIN_REGISTRATION ];
 
 export const shouldShowTransferAction = ( domain: Domain ) => {
@@ -18,7 +23,8 @@ export const shouldShowTransferAction = ( domain: Domain ) => {
 		domain.pending_registration ||
 		domain.pending_registration_at_registry ||
 		domain.move_to_new_site_pending ||
-		domain.aftermarket_auction
+		domain.aftermarket_auction ||
+		! transferableTypes.includes( domain.subtype.id )
 	) {
 		return false;
 	}
