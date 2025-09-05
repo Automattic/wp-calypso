@@ -412,8 +412,16 @@ export default function SyncModal( {
 			<VStack
 				spacing={ 5 }
 				style={ {
-					paddingBottom:
-						shouldDisableGranularSync || sqlNode?.checkState === 'checked' ? '0px' : '140px',
+					paddingBottom: ( () => {
+						const hasWarning = shouldDisableGranularSync || sqlNode?.checkState === 'checked';
+						if ( hasWarning && isFileBrowserVisible ) {
+							return '400px';
+						}
+						if ( hasWarning ) {
+							return '0px';
+						}
+						return '140px';
+					} )(),
 				} }
 			>
 				<Text>
@@ -439,6 +447,7 @@ export default function SyncModal( {
 					className={ clsx( 'staging-site-card', {
 						'confirmation-input': showDomainConfirmation,
 						'has-warning': shouldDisableGranularSync || sqlNode?.checkState === 'checked',
+						'has-file-browser': isFileBrowserVisible,
 					} ) }
 				>
 					<Tooltip

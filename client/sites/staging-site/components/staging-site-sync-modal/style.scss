@@ -321,7 +321,9 @@
 
 // Expand modal when warning is shown
 .components-modal__content:has(.staging-site-card.has-warning) {
-	min-height: 600px;
+	min-height: 550px;
 	height: auto;
 }
+
+
 
