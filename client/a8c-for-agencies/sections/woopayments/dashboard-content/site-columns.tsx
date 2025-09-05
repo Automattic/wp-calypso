@@ -16,6 +16,18 @@ export const SiteColumn = ( { site }: { site: string } ) => {
 export const CommissionsPaidColumn = memo( ( { payout }: { payout: number | null } ) => {
 	return payout ? formatCurrency( payout, 'USD', { stripZeros: true } ) : <Gridicon icon="minus" />;
 } );
+CommissionsPaidColumn.displayName = 'CommissionsPaidColumn';
+
+export const TimeframeCommissionsColumn = memo(
+	( { estimatedPayout }: { estimatedPayout: number | null } ) => {
+		return estimatedPayout ? (
+			formatCurrency( estimatedPayout, 'USD', { stripZeros: true } )
+		) : (
+			<Gridicon icon="minus" />
+		);
+	}
+);
+TimeframeCommissionsColumn.displayName = 'TimeframeCommissionsColumn';
 
 CommissionsPaidColumn.displayName = 'CommissionsPaidColumn';
 
