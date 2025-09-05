@@ -1,16 +1,11 @@
 import { DomainTypes } from '@automattic/api-core';
-import { siteBySlugQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
-import { __experimentalHStack as HStack } from '@wordpress/components';
 import { dateI18n } from '@wordpress/date';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
-import { siteRoute } from '../../app/router/sites';
 import { Text } from '../../components/text';
-import SiteIcon from '../../sites/site-icon';
 import { isRecentlyRegistered } from '../../utils/domain';
 import { DomainNameField } from './field-domain-name';
+import { DomainSiteField } from './field-domain-site';
 import { DomainExpiryField } from './field-expiry';
 import { DomainSslField } from './field-ssl';
 import type { DomainSummary, Site } from '@automattic/api-core';
@@ -19,23 +14,6 @@ import type { Field } from '@wordpress/dataviews';
 const THREE_DAYS_IN_MINUTES = 3 * 1440;
 
 const IneligibleIndicator = () => <Text color="#CCCCCC">-</Text>;
-
-const DomainSite = ( { domain, value }: { domain: DomainSummary; value: string } ) => {
-	const { data: site } = useQuery( siteBySlugQuery( domain.site_slug ) );
-
-	return (
-		<HStack spacing={ 2 } alignment="left">
-			{ site && <SiteIcon size={ 16 } site={ site } /> }
-			<Link
-				to={ siteRoute.fullPath }
-				params={ { siteSlug: domain?.site_slug } }
-				style={ { textDecoration: 'none' } }
-			>
-				<Text>{ value }</Text>
-			</Link>
-		</HStack>
-	);
-};
 
 export const useFields = ( {
 	site,
@@ -90,7 +68,7 @@ export const useFields = ( {
 					return item.blog_name ?? '';
 				},
 				render: ( { field, item } ) => (
-					<DomainSite domain={ item } value={ field.getValue( { item } ) } />
+					<DomainSiteField domain={ item } value={ field.getValue( { item } ) } />
 				),
 			},
 			{
