@@ -983,14 +983,15 @@ const PlansFeaturesMain = ( {
 					</>
 				) }
 			</div>
-			{ config.isEnabled( 'summer-special-2025' ) && (
-				<AsyncLoad
-					require="calypso/blocks/summer-special-banner"
-					placeholder={ null }
-					visiblePlans={ gridPlansForFeaturesGrid }
-					isFixed
-				/>
-			) }
+			{ config.isEnabled( 'summer-special-2025' ) &&
+				config.isEnabled( 'summer-special-2025-banner' ) && (
+					<AsyncLoad
+						require="calypso/blocks/summer-special-banner"
+						placeholder={ null }
+						visiblePlans={ gridPlansForFeaturesGrid }
+						isFixed
+					/>
+				) }
 			{ isPlansGridReady && renderSiblingWhenLoaded?.() }
 		</>
 	);
