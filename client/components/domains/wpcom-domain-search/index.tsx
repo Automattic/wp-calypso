@@ -1,42 +1,38 @@
 import { DomainSearch } from '@automattic/domain-search';
-import { ShoppingCartProvider, useShoppingCart } from '@automattic/shopping-cart';
-import { useCallback, type ComponentProps } from 'react';
+import { ShoppingCartProvider } from '@automattic/shopping-cart';
+import { useMemo, type ComponentProps } from 'react';
 import { shoppingCartManagerClient } from 'calypso/dashboard/app/shopping-cart';
-import { getPriceRuleForSuggestion } from './get-price-rule-for-suggestion';
 import { useWPCOMShoppingCartForDomainSearch } from './use-wpcom-shopping-cart-for-domain-search';
-import type { DomainSuggestion } from '@automattic/api-core';
 
-type DomainSearchProps = Omit<
-	ComponentProps< typeof DomainSearch >,
-	'cart' | 'getPriceRuleForSuggestion'
-> & {
+type DomainSearchProps = Omit< ComponentProps< typeof DomainSearch >, 'cart' > & {
 	currentSiteId?: number;
 	flowName: string;
 };
 
-const DomainSearchWithCart = ( { currentSiteId, flowName, ...props }: DomainSearchProps ) => {
+const DomainSearchWithCart = ( {
+	currentSiteId,
+	flowName,
+	config: externalConfig,
+	...props
+}: DomainSearchProps ) => {
 	const cartKey = currentSiteId ?? 'no-site';
 
-	const cart = useWPCOMShoppingCartForDomainSearch( {
+	const { cart, isNextDomainFree } = useWPCOMShoppingCartForDomainSearch( {
 		cartKey,
+		flowName,
 	} );
 
-	const { responseCart } = useShoppingCart( cartKey );
+	const config = useMemo( () => {
+		return {
+			...externalConfig,
+			priceRules: {
+				...externalConfig?.priceRules,
+				freeForFirstYear: isNextDomainFree,
+			},
+		};
+	}, [ externalConfig, isNextDomainFree ] );
 
-	const memoizedGetPriceRuleForSuggestion = useCallback(
-		( suggestion: DomainSuggestion ) => {
-			return getPriceRuleForSuggestion( { suggestion, flowName, responseCart } );
-		},
-		[ responseCart, flowName ]
-	);
-
-	return (
-		<DomainSearch
-			{ ...props }
-			getPriceRuleForSuggestion={ memoizedGetPriceRuleForSuggestion }
-			cart={ cart }
-		/>
-	);
+	return <DomainSearch { ...props } config={ config } cart={ cart } />;
 };
 
 export const WPCOMDomainSearch = ( props: DomainSearchProps ) => {

@@ -5,11 +5,11 @@ import { useLayoutEffect } from 'react';
 import { DomainSearchContext, useDomainSearchContextValue } from './context';
 import { EmptyPage } from './empty';
 import { ResultsPage } from './results';
-import { type DomainSearchProps, DomainPriceRule } from './types';
+import { type DomainSearchProps } from './types';
 
 import './style.scss';
 
-const DomainSearch = ( props: DomainSearchProps ) => {
+export const DomainSearch = ( props: DomainSearchProps ) => {
 	const contextValue = useDomainSearchContextValue( props );
 
 	const cartItemsLength = contextValue.cart.items.length;
@@ -38,5 +38,3 @@ const DomainSearch = ( props: DomainSearchProps ) => {
 		</QueryClientProvider>
 	);
 };
-
-export { DomainSearch, DomainPriceRule };

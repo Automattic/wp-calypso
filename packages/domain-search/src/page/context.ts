@@ -6,7 +6,7 @@ import {
 } from '@automattic/api-queries';
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { FilterState } from '../components/search-bar/types';
-import { type DomainSearchProps, type DomainSearchContextType, DomainPriceRule } from './types';
+import { type DomainSearchProps, type DomainSearchContextType } from './types';
 
 const noop = () => {};
 
@@ -44,13 +44,18 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		vendor: 'variation2_front',
 		skippable: false,
 		deemphasizedTlds: [],
+		priceRules: {
+			hidePrice: false,
+			oneTimePrice: false,
+			forceRegularPrice: false,
+			freeForFirstYear: false,
+		},
 	},
 	filter: {
 		exactSldMatchesOnly: false,
 		tlds: [],
 	},
 	setFilter: () => {},
-	getPriceRuleForSuggestion: () => DomainPriceRule.PRICE,
 };
 
 export const DomainSearchContext =
@@ -137,8 +142,6 @@ export const useDomainSearchContextValue = (
 			currentSiteUrl,
 			filter,
 			setFilter,
-			getPriceRuleForSuggestion:
-				props.getPriceRuleForSuggestion ?? DEFAULT_CONTEXT_VALUE.getPriceRuleForSuggestion,
 		};
 	}, [
 		isFullCartOpen,
@@ -153,6 +156,5 @@ export const useDomainSearchContextValue = (
 		normalizedConfig,
 		filter,
 		setFilter,
-		props.getPriceRuleForSuggestion,
 	] );
 };

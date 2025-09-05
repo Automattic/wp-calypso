@@ -1,8 +1,7 @@
 import { formatCurrency } from '@automattic/number-formatters';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
-import { useSuggestion } from '../../hooks/use-suggestion';
-import { DomainPriceRule } from '../../page';
+import { DomainPriceRule, useSuggestion } from '../../hooks/use-suggestion';
 import { useDomainSearch } from '../../page/context';
 import { DomainSuggestionPrice as DomainSuggestionPriceComponent } from '../../ui';
 export interface DomainSuggestionPriceProps {

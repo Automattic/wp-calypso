@@ -4,6 +4,7 @@ import {
 	freeSuggestionQuery,
 	domainAvailabilityQuery,
 } from '@automattic/api-queries';
+import { PriceRulesConfig } from '../hooks/use-suggestion';
 import type { FilterState } from '../components/search-bar/types';
 import type {
 	DomainSuggestion,
@@ -44,14 +45,7 @@ export interface DomainSearchConfig {
 	vendor: DomainSuggestionQueryVendor;
 	skippable: boolean;
 	deemphasizedTlds: string[];
-}
-
-export enum DomainPriceRule {
-	ONE_TIME_PRICE = 'ONE_TIME_PRICE',
-	HIDE_PRICE = 'HIDE_PRICE',
-	FREE_FOR_FIRST_YEAR = 'FREE_FOR_FIRST_YEAR',
-	PRICE = 'PRICE',
-	DOMAIN_MOVE_PRICE = 'DOMAIN_MOVE_PRICE',
+	priceRules: PriceRulesConfig;
 }
 
 export interface DomainSearchProps {
@@ -65,7 +59,6 @@ export interface DomainSearchProps {
 	events?: Partial< DomainSearchEvents >;
 	currentSiteUrl?: string;
 	config?: Partial< DomainSearchConfig >;
-	getPriceRuleForSuggestion?: ( suggestion: DomainSuggestion ) => DomainPriceRule;
 }
 
 export interface DomainSearchContextType
@@ -91,5 +84,6 @@ export interface DomainSearchContextType
 		freeSuggestion: ( query: string ) => ReturnType< typeof freeSuggestionQuery >;
 	};
 	config: DomainSearchConfig;
-	getPriceRuleForSuggestion: ( suggestion: DomainSuggestion ) => DomainPriceRule;
 }
+
+export type { PriceRulesConfig };
