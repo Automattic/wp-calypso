@@ -1,6 +1,15 @@
-import { Domain, DomainTypes, DomainTransferStatus, Purchase, Site } from '@automattic/api-core';
+import {
+	Domain,
+	DomainTypes,
+	DomainSubtype,
+	DomainTransferStatus,
+	Purchase,
+	Site,
+} from '@automattic/api-core';
 import { __ } from '@wordpress/i18n';
 import { isAkismetProduct } from '../../utils/purchase';
+
+export const disconnectableTypes: DomainSubtype[] = [ DomainSubtype.DOMAIN_REGISTRATION ];
 
 export const shouldShowTransferAction = ( domain: Domain ) => {
 	if (
@@ -21,7 +30,8 @@ export const shouldShowDisconnectAction = ( domain: Domain ) => {
 	if (
 		domain.is_domain_only_site ||
 		domain.move_to_new_site_pending ||
-		! domain.current_user_is_owner
+		! domain.current_user_is_owner ||
+		! disconnectableTypes.includes( domain.subtype.id )
 	) {
 		return false;
 	}
