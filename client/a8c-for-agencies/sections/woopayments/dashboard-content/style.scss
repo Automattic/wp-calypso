@@ -127,20 +127,12 @@
 	.woopayments-status-popover__link {
 		@include body-medium;
 		display: inline-flex;
-		align-items: center;
+		justify-content: left;
 		gap: 4px;
 		color: var(--color-primary);
-		text-decoration: underline;
-		transition: color 0.2s ease;
 
 		&:hover {
 			color: var(--color-primary-dark);
-		}
-
-		&:focus-visible {
-			outline: 2px solid var(--color-primary);
-			outline-offset: 2px;
-			border-radius: 2px;
 		}
 	}
 }
