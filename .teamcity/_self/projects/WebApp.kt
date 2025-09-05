@@ -954,7 +954,7 @@ object PlaywrightTestPRMatrix : BuildType({
 				connection = "PROJECT_EXT_11"
 				sendTo = "C09DMP444T0"
 				messageFormat = verboseMessageFormat {
-					addStatusText = true,
+					addStatusText = true
 					addBranch = true
 				}
 			}
