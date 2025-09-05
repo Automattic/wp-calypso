@@ -23,11 +23,10 @@
 		"test:mobile": "VIEWPORT_NAME=mobile yarn jest",
 		"debug": "PWDEBUG=1 DEBUG=pw:api yarn run test",
 		"debug:mobile": "PWDEBUG=1 DEBUG=pw:api yarn run test:mobile",
-		"playwright": "npx playwright test --project=chrome --project=pixel",
-		"playwright:mobile": "npx playwright test --project=pixel",
-		"playwright:desktop": "npx playwright test --project=chrome",
-		"playwright:all": "npx playwright test",
-		"playwright:i18n": "npx playwright test --project=chrome --grep @i18n"
+		"test:pw:mobile": "yarn playwright test --project=pixel",
+		"test:pw:desktop": "yarn playwright test --project=chrome",
+		"test:pw": "yarn playwright test",
+		"test:pw:i18n": "yarn playwright test --project=chrome --grep @i18n"
 	},
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",

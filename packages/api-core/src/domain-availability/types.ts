@@ -80,6 +80,41 @@ export interface DomainAvailability {
 	 * @example 10.9
 	 */
 	sale_cost?: number;
+
+	/**
+	 * Maintenance end time, as a UNIX timestamp in seconds
+	 * @example "1714857600"
+	 */
+	maintenance_end_time?: string;
+
+	/**
+	 * Primary domain of other site
+	 * @example "example.com"
+	 */
+	other_site_domain?: string;
+
+	/**
+	 * Whether the other_site_domain is a domain-only site
+	 * @example true
+	 */
+	other_site_domain_only?: boolean;
+
+	/**
+	 * Whether the domain cannot be transferred to WordPress.com
+	 * @example true
+	 */
+	cannot_transfer_to_wordpress_com?: boolean;
+
+	/**
+	 * Whether the domain cannot be transferred to WordPress.com due to unsupported premium TLD
+	 * @example true
+	 */
+	cannot_transfer_due_to_unsupported_premium_tld?: boolean;
+
+	/**
+	 * Trademark claims notice info
+	 */
+	trademark_claims_notice_info?: TrademarkClaimsNoticeInfo;
 }
 
 export enum DomainAvailabilityStatus {
@@ -130,4 +165,47 @@ export enum DomainAvailabilityStatus {
 	UNKNOWN = 'unknown',
 	UNKOWN_ACTIVE = 'unknown_active_domain_with_wpcom',
 	WPCOM_STAGING_DOMAIN = 'wpcom_staging_domain',
+}
+
+export interface TrademarkClaimsNoticeInfo {
+	claim: TrademarkClaim | TrademarkClaim[];
+}
+
+export interface TrademarkClaimContact {
+	name?: string;
+	org?: string;
+	voice?: string;
+	fax?: string;
+	email?: string;
+	addr?: {
+		street?: string[];
+		city?: string;
+		sp?: string;
+		pc?: string;
+		cc?: string;
+	};
+}
+
+export interface TrademarkClaimCourtCase {
+	refNum: string;
+	cc: string;
+	courtName: string;
+}
+
+export interface TrademarkClaimUdrpCase {
+	caseNo: string;
+	udrpProvider: string;
+}
+
+export interface TrademarkClaim {
+	markName?: string;
+	jurDesc?: string;
+	goodsAndServices?: string[];
+	classDesc?: string[];
+	holder?: TrademarkClaimContact;
+	contact?: TrademarkClaimContact;
+	notExactMatch?: {
+		court?: TrademarkClaimCourtCase[];
+		udrp?: TrademarkClaimUdrpCase[];
+	};
 }

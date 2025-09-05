@@ -34,9 +34,14 @@ const ReplyBlock = ( { note }: { note: Note } ) => {
 			return;
 		}
 
+		const { site: siteId, reply_comment: replyCommentId } = note.meta.ids;
+		if ( ! siteId || ! replyCommentId ) {
+			return;
+		}
+
 		wpcom()
-			.site( note.meta.ids.site )
-			.comment( note.meta.ids.reply_comment )
+			.site( siteId )
+			.comment( replyCommentId )
 			.get( ( error: Error | null, data: { URL: string } ) => {
 				if ( ! error ) {
 					setReplyURL( data.URL );
@@ -80,7 +85,10 @@ export const ActionBlock = ( { note, goBack }: { note: Note; goBack: () => void 
 	}
 
 	return (
-		<CardFooter size="small">
+		<CardFooter
+			size="small"
+			style={ { position: 'sticky', bottom: 0, background: '#fff', zIndex: 1 } }
+		>
 			<NoteActions note={ note } goBack={ goBack } />
 		</CardFooter>
 	);

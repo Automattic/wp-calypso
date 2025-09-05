@@ -1,5 +1,5 @@
 import { HostingFeatures, JetpackModules } from '@automattic/api-core';
-import { siteJetpackModulesQuery } from '@automattic/api-queries';
+import { siteJetpackConnectionQuery, siteJetpackModulesQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
@@ -7,7 +7,11 @@ import { __ } from '@wordpress/i18n';
 import { key } from '@wordpress/icons';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { hasHostingFeature } from '../../utils/site-features';
-import { isJetpackModuleActivated } from '../../utils/site-jetpack-modules';
+import {
+	isJetpackModuleAvailable,
+	isJetpackModuleActivated,
+} from '../../utils/site-jetpack-modules';
+import { isSimple } from '../../utils/site-types';
 import type { Site } from '@automattic/api-core';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
@@ -18,16 +22,31 @@ export default function WpcomLoginSettingsSummary( {
 	site: Site;
 	density?: Density;
 } ) {
-	const { data: jetpackModules } = useQuery( siteJetpackModulesQuery( site.ID ) );
+	const { data: jetpackModules } = useQuery( {
+		...siteJetpackModulesQuery( site.ID ),
+		enabled: ! isSimple( site ),
+	} );
+	const { data: jetpackConnection } = useQuery( {
+		...siteJetpackConnectionQuery( site.ID ),
+		enabled: ! isSimple( site ),
+	} );
 
 	if ( ! isEnabled( 'dashboard/v2/security-settings' ) ) {
 		return null;
 	}
 
+	const ssoAvailable = isJetpackModuleAvailable(
+		jetpackModules,
+		jetpackConnection,
+		JetpackModules.SSO
+	);
+
 	const ssoEnabled = isJetpackModuleActivated( jetpackModules, JetpackModules.SSO );
 
 	let badges;
-	if ( hasHostingFeature( site, HostingFeatures.SECURITY_SETTINGS ) ) {
+	if ( ! ssoAvailable ) {
+		badges = [ { text: __( 'Unavailable' ) } ];
+	} else if ( hasHostingFeature( site, HostingFeatures.SECURITY_SETTINGS ) ) {
 		badges = ssoEnabled
 			? [ { text: __( 'Enabled' ), intent: 'success' as const } ]
 			: [ { text: __( 'Disabled' ) } ];

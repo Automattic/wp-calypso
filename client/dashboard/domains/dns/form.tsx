@@ -1,13 +1,8 @@
-import {
-	Card,
-	CardBody,
-	__experimentalHStack as HStack,
-	__experimentalVStack as VStack,
-	Button,
-} from '@wordpress/components';
+import { Card, CardBody, __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { DataForm, Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
+import { ButtonStack } from '../../components/button-stack';
 import RequiredSelect from '../../components/required-select';
 import { DNS_RECORD_CONFIGS } from './records/dns-record-configs';
 import type { DnsRecordTypeFormData, DnsRecordFormData } from './records/dns-record-configs';
@@ -138,14 +133,14 @@ export default function DNSRecordForm( {
 								setFormData( ( data ) => ( { ...data, ...edits } ) );
 							} }
 						/>
-						<HStack justify="flex-start">
+						<ButtonStack justify="flex-start">
 							<Button variant="primary" type="submit" isBusy={ isBusy } disabled={ isBusy }>
 								{ submitButtonText }
 							</Button>
 							<Button type="button" disabled={ isBusy } onClick={ handleCancel }>
 								{ __( 'Cancel' ) }
 							</Button>
-						</HStack>
+						</ButtonStack>
 					</VStack>
 				</form>
 			</CardBody>

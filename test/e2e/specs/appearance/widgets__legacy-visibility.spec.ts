@@ -1,6 +1,6 @@
-import { test } from '../../lib/pw-base';
+import { tags, test } from '../../lib/pw-base';
 
-test.describe( 'Appearance: Theme Widgets (Legacy)', () => {
+test.describe( 'Appearance: Theme Widgets (Legacy)', { tag: [ tags.GUTENBERG ] }, () => {
 	test( 'As a non-atomic site user, I can use widgets on my site', async ( {
 		page,
 		accountGivenByEnvironment,

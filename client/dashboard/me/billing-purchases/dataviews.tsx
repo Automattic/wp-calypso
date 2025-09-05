@@ -27,9 +27,9 @@ import type { ReactNode } from 'react';
 
 import './style.scss';
 
-const purchasesWideFields = [ 'status', 'payment-method' ];
-const purchasesDesktopFields = [ 'status' ];
-const purchasesMobileFields: string[] = [];
+export const purchasesWideFields = [ 'status', 'payment-method' ];
+export const purchasesDesktopFields = [ 'status' ];
+export const purchasesMobileFields: string[] = [];
 const defaultPerPage = 10;
 const defaultSort = {
 	field: 'site',
@@ -429,48 +429,6 @@ export function getFields( {
 export const getItemId = ( purchase: Purchase ) => {
 	return purchase.ID.toString();
 };
-
-export function adjustViewFieldsForWidth(
-	width: number,
-	setView: ( setter: View | ( ( view: View ) => View ) ) => void
-): void {
-	if ( width >= 1280 ) {
-		setView( ( view ) => {
-			if ( view.fields?.length !== purchasesWideFields.length ) {
-				return {
-					...view,
-					fields: purchasesWideFields,
-				};
-			}
-			return view;
-		} );
-		return;
-	}
-	if ( width >= 960 ) {
-		setView( ( view ) => {
-			if ( view.fields?.length !== purchasesDesktopFields.length ) {
-				return {
-					...view,
-					fields: purchasesDesktopFields,
-				};
-			}
-			return view;
-		} );
-		return;
-	}
-	if ( width < 960 ) {
-		setView( ( view ) => {
-			if ( view.fields?.length !== purchasesMobileFields.length ) {
-				return {
-					...view,
-					fields: purchasesMobileFields,
-				};
-			}
-			return view;
-		} );
-		return;
-	}
-}
 
 export function usePurchasesListActions( {
 	transferredPurchases,

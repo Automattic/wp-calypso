@@ -247,6 +247,9 @@ class DomainSearchResults extends Component {
 					isCartPendingUpdateDomain={ this.props.isCartPendingUpdateDomain }
 					temporaryCart={ this.props.temporaryCart }
 					domainRemovalQueue={ this.props.domainRemovalQueue }
+					trademarkClaimsNoticeInfo={ this.props.trademarkClaimsNoticeInfo }
+					onAcceptTrademarkClaim={ this.props.onAcceptTrademarkClaim }
+					onRejectTrademarkClaim={ this.props.onRejectTrademarkClaim }
 				/>
 			);
 
@@ -282,6 +285,9 @@ class DomainSearchResults extends Component {
 						isCartPendingUpdateDomain={ this.props.isCartPendingUpdateDomain }
 						temporaryCart={ this.props.temporaryCart }
 						domainRemovalQueue={ this.props.domainRemovalQueue }
+						trademarkClaimsNoticeInfo={ this.props.trademarkClaimsNoticeInfo }
+						onAcceptTrademarkClaim={ this.props.onAcceptTrademarkClaim }
+						onRejectTrademarkClaim={ this.props.onRejectTrademarkClaim }
 					/>
 				);
 			} );

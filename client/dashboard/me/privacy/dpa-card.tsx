@@ -2,7 +2,6 @@ import { isWpError } from '@automattic/api-core';
 import { requestDpaMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
 	Card,
@@ -13,6 +12,7 @@ import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { envelope } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
+import { ButtonStack } from '../../components/button-stack';
 import { SectionHeader } from '../../components/section-header';
 import { Text } from '../../components/text';
 
@@ -64,7 +64,7 @@ export default function DpaCard() {
 						}
 						level={ 3 }
 					/>
-					<HStack justify="flex-start">
+					<ButtonStack justify="flex-start">
 						<Button
 							__next40pxDefaultSize
 							variant="secondary"
@@ -73,7 +73,7 @@ export default function DpaCard() {
 						>
 							{ __( 'Request a DPA' ) }
 						</Button>
-					</HStack>
+					</ButtonStack>
 				</VStack>
 			</CardBody>
 		</Card>

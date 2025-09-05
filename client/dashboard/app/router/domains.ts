@@ -34,18 +34,6 @@ export const domainsRoute = createRoute( {
 	)
 );
 
-// Standalone domains purchase route - requires rootRoute
-export const domainsPurchaseRoute = createRoute( {
-	getParentRoute: () => rootRoute,
-	path: 'domains/purchase',
-} ).lazy( () =>
-	import( '../../domains/purchase' ).then( ( d ) =>
-		createLazyRoute( 'domains-purchase' )( {
-			component: d.default,
-		} )
-	)
-);
-
 // Domain management root route
 export const domainRoute = createRoute( {
 	getParentRoute: () => rootRoute,
@@ -308,10 +296,24 @@ export const domainTransferToAnyUserRoute = createRoute( {
 	)
 );
 
+export const domainTransferToOtherUserRoute = createRoute( {
+	getParentRoute: () => domainRoute,
+	path: 'transfer/other-user',
+	loader: async ( { params: { domainName } } ) => {
+		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
+		await queryClient.ensureQueryData( domainTransferRequestQuery( domainName, domain.site_slug ) );
+	},
+} ).lazy( () =>
+	import( '../../domains/domain-transfer/transfer-domain-to-other-user' ).then( ( d ) =>
+		createLazyRoute( 'domain-transfer-to-other-user' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const createDomainsRoutes = () => {
 	return [
 		domainsRoute,
-		domainsPurchaseRoute,
 		domainRoute.addChildren( [
 			domainOverviewRoute,
 			domainDnsRoute,
@@ -327,6 +329,7 @@ export const createDomainsRoutes = () => {
 			domainGlueRecordsEditRoute,
 			domainTransferRoute,
 			domainTransferToAnyUserRoute,
+			domainTransferToOtherUserRoute,
 			domainSecurityRoute,
 		] ),
 	];

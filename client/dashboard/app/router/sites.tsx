@@ -276,17 +276,6 @@ export const siteDomainsRoute = createRoute( {
 	)
 );
 
-export const siteDomainsPurchaseRoute = createRoute( {
-	getParentRoute: () => siteRoute,
-	path: 'domains/purchase',
-} ).lazy( () =>
-	import( '../../sites/domains/purchase' ).then( ( d ) =>
-		createLazyRoute( 'site-domains-purchase' )( {
-			component: d.default,
-		} )
-	)
-);
-
 export const siteEmailsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'emails',
@@ -420,6 +409,40 @@ export const siteSettingsAgencyRoute = createRoute( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
+);
+
+export const siteSettingsMcpRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/mcp',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
+	},
+} ).lazy( () =>
+	import( '../../sites/settings-mcp' ).then( ( d ) => {
+		return createLazyRoute( 'site-settings-mcp' )( {
+			component: () => {
+				return <d.default siteSlug={ siteRoute.useParams().siteSlug } />;
+			},
+		} );
+	} )
+);
+
+export const siteSettingsMcpSetupRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/mcp-setup',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
+	},
+} ).lazy( () =>
+	import( '../../sites/settings-mcp/setup' ).then( ( d ) => {
+		return createLazyRoute( 'site-settings-mcp-setup' )( {
+			component: () => {
+				return <d.default siteSlug={ siteRoute.useParams().siteSlug } />;
+			},
+		} );
+	} )
 );
 
 export const siteSettingsHundredYearPlanRoute = createRoute( {
@@ -652,6 +675,8 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteSettingsWordPressRoute,
 		siteSettingsPHPRoute,
 		siteSettingsAgencyRoute,
+		siteSettingsMcpRoute,
+		siteSettingsMcpSetupRoute,
 		siteSettingsHundredYearPlanRoute,
 		siteSettingsPrimaryDataCenterRoute,
 		siteSettingsStaticFile404Route,
@@ -694,7 +719,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 	}
 
 	if ( config.supports.sites.domains ) {
-		siteRoutes.push( siteDomainsRoute, siteDomainsPurchaseRoute );
+		siteRoutes.push( siteDomainsRoute );
 	}
 
 	if ( config.supports.sites.emails ) {
