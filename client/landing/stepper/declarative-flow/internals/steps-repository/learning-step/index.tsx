@@ -3,18 +3,15 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { useSiteSpec } from 'calypso/lib/site-spec';
 import type { Step as StepType } from '../../types';
 
-// TypeScript declaration for SiteSpec
-
 const LearningStep: StepType = function LearningStep() {
 	const translate = useTranslate();
-	const siteSpecContainer = 'site-spec-container-mine';
-	// Use the SiteSpec hook to handle all loading and initialization
-	useSiteSpec( { container: `#${ siteSpecContainer }` } );
+	// Use the SiteSpec hook to handle the loading and initialization of the SiteSpec widget
+	useSiteSpec();
 
 	return (
 		<>
 			<DocumentHead title={ translate( 'Build Your Site with AI' ) } />
-			<div id={ siteSpecContainer } />
+			<div id="site-spec-container" />
 		</>
 	);
 };
