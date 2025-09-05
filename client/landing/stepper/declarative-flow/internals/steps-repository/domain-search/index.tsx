@@ -1,4 +1,10 @@
-import { DOMAIN_FLOW, isHundredYearDomainFlow, Step, StepContainer } from '@automattic/onboarding';
+import {
+	DOMAIN_FLOW,
+	isHundredYearDomainFlow,
+	isHundredYearPlanFlow,
+	Step,
+	StepContainer,
+} from '@automattic/onboarding';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
@@ -15,7 +21,7 @@ const DomainSearchStep: StepType = function DomainSearchStep( { flow } ) {
 			flowName: flow,
 		} ),
 		priceRules: {
-			hidePrice: isHundredYearDomainFlow( flow ),
+			hidePrice: isHundredYearPlanFlow( flow ),
 			oneTimePrice: isHundredYearDomainFlow( flow ),
 		},
 	};
