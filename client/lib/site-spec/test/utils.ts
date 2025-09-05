@@ -16,53 +16,53 @@ import {
 } from '../utils';
 
 // Mock the calypso-config module
-jest.mock( '@automattic/calypso-config', () => {
-	const mockConfig = jest.fn() as jest.MockedFunction<
-		typeof import('@automattic/calypso-config').default
-	>;
-
-	// Mock the isEnabled method
-	mockConfig.isEnabled = jest.fn( ( feature: string ) => {
-		if ( feature === 'site-spec' ) {
-			return true;
-		}
-		return false;
-	} );
-
-	// Mock the default function for config keys
-	mockConfig.mockImplementation( ( key: string ) => {
-		const configValues: Record< string, unknown > = {
-			site_spec: {
-				script_url: 'https://example.com/site-spec.js',
-				css_url: 'https://example.com/style.css',
-				agent_url: 'https://api.example.com/agent',
-				agent_id: 'test-agent',
-				build_site_url: 'https://example.com/build?spec_id=',
-			},
-		};
-		return configValues[ key ];
-	} );
-
-	return mockConfig;
-} );
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
+jest.mock(
+	'@automattic/calypso-config',
+	() =>
+		( {
+			__esModule: true,
+			default: Object.assign( jest.fn(), {
+				isEnabled: jest.fn(),
+			} ),
+		} ) as any
+);
 
 describe( 'SiteSpec Utils', () => {
-	let config: jest.MockedFunction< typeof import('@automattic/calypso-config').default >;
+	const mockConfig = require( '@automattic/calypso-config' ).default;
 
 	beforeEach( () => {
-		config = require( '@automattic/calypso-config' );
-		config.isEnabled.mockReset();
+		// Reset all mocks
+		jest.clearAllMocks();
+
+		// Setup default mock implementations
+		mockConfig.mockImplementation( ( key: string ) => {
+			const configValues: Record< string, unknown > = {
+				site_spec: {
+					script_url: 'https://example.com/site-spec.js',
+					css_url: 'https://example.com/style.css',
+					agent_url: 'https://api.example.com/agent',
+					agent_id: 'test-agent',
+					build_site_url: 'https://example.com/build?spec_id=',
+				},
+			};
+			return configValues[ key ];
+		} );
+
+		mockConfig.isEnabled.mockImplementation( ( feature: string ) => {
+			return feature === 'site-spec';
+		} );
 	} );
 
 	describe( 'isSiteSpecEnabled', () => {
 		it( 'should return true when feature flag is enabled', () => {
-			config.isEnabled.mockReturnValue( true );
+			mockConfig.isEnabled.mockReturnValue( true );
 			expect( isSiteSpecEnabled() ).toBe( true );
-			expect( config.isEnabled ).toHaveBeenCalledWith( 'site-spec' );
+			expect( mockConfig.isEnabled ).toHaveBeenCalledWith( 'site-spec' );
 		} );
 
 		it( 'should return false when feature flag is disabled', () => {
-			config.isEnabled.mockReturnValue( false );
+			mockConfig.isEnabled.mockReturnValue( false );
 			expect( isSiteSpecEnabled() ).toBe( false );
 		} );
 	} );
@@ -71,28 +71,28 @@ describe( 'SiteSpec Utils', () => {
 		it( 'should return the configured script URL by default', () => {
 			const url = getSiteSpecUrl();
 			expect( url ).toBe( 'https://example.com/site-spec.js' );
-			expect( config ).toHaveBeenCalledWith( 'site_spec' );
+			expect( mockConfig ).toHaveBeenCalledWith( 'site_spec' );
 		} );
 
 		it( 'should return the configured script URL when script_url is requested', () => {
 			const url = getSiteSpecUrl( 'script_url' );
 			expect( url ).toBe( 'https://example.com/site-spec.js' );
-			expect( config ).toHaveBeenCalledWith( 'site_spec' );
+			expect( mockConfig ).toHaveBeenCalledWith( 'site_spec' );
 		} );
 
 		it( 'should return the configured CSS URL when css_url is requested', () => {
 			const url = getSiteSpecUrl( 'css_url' );
 			expect( url ).toBe( 'https://example.com/style.css' );
-			expect( config ).toHaveBeenCalledWith( 'site_spec' );
+			expect( mockConfig ).toHaveBeenCalledWith( 'site_spec' );
 		} );
 
 		it( 'should return null when URL is not configured', () => {
-			config.mockReturnValueOnce( undefined );
+			mockConfig.mockReturnValueOnce( undefined );
 			expect( getSiteSpecUrl() ).toBe( null );
 		} );
 
 		it( 'should return null when specific URL key is not configured', () => {
-			config.mockReturnValueOnce( { script_url: 'https://example.com/script.js' } );
+			mockConfig.mockReturnValueOnce( { script_url: 'https://example.com/script.js' } );
 			const url = getSiteSpecUrl( 'css_url' );
 			expect( url ).toBe( null );
 		} );
@@ -102,23 +102,23 @@ describe( 'SiteSpec Utils', () => {
 		it( 'should return script URL when type is script', () => {
 			const url = getSiteSpecUrlByType( 'script' );
 			expect( url ).toBe( 'https://example.com/site-spec.js' );
-			expect( config ).toHaveBeenCalledWith( 'site_spec' );
+			expect( mockConfig ).toHaveBeenCalledWith( 'site_spec' );
 		} );
 
 		it( 'should return CSS URL when type is css', () => {
 			const url = getSiteSpecUrlByType( 'css' );
 			expect( url ).toBe( 'https://example.com/style.css' );
-			expect( config ).toHaveBeenCalledWith( 'site_spec' );
+			expect( mockConfig ).toHaveBeenCalledWith( 'site_spec' );
 		} );
 
 		it( 'should return null when script URL is not configured', () => {
-			config.mockReturnValueOnce( { css_url: 'https://example.com/style.css' } );
+			mockConfig.mockReturnValueOnce( { css_url: 'https://example.com/style.css' } );
 			const url = getSiteSpecUrlByType( 'script' );
 			expect( url ).toBe( null );
 		} );
 
 		it( 'should return null when CSS URL is not configured', () => {
-			config.mockReturnValueOnce( { script_url: 'https://example.com/script.js' } );
+			mockConfig.mockReturnValueOnce( { script_url: 'https://example.com/script.js' } );
 			const url = getSiteSpecUrlByType( 'css' );
 			expect( url ).toBe( null );
 		} );
@@ -126,7 +126,7 @@ describe( 'SiteSpec Utils', () => {
 
 	describe( 'getSiteSpecConfig', () => {
 		it( 'should return configuration object with all values', () => {
-			config.mockReturnValueOnce( {
+			mockConfig.mockReturnValueOnce( {
 				agent_url: 'https://api.example.com/agent',
 				agent_id: 'test-agent-id',
 				build_site_url: 'https://example.com/build?spec_id=',
@@ -142,13 +142,13 @@ describe( 'SiteSpec Utils', () => {
 		} );
 
 		it( 'should return empty object when config is undefined', () => {
-			config.mockReturnValueOnce( undefined );
+			mockConfig.mockReturnValueOnce( undefined );
 			const result = getSiteSpecConfig();
 			expect( result ).toEqual( {} );
 		} );
 
 		it( 'should return partial configuration when some values are missing', () => {
-			config.mockReturnValueOnce( {
+			mockConfig.mockReturnValueOnce( {
 				agent_id: 'test-agent-id',
 				// Missing agent_url and build_site_url
 			} );
