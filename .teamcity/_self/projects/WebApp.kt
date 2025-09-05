@@ -1030,9 +1030,10 @@ object PlaywrightTestPRMatrix : BuildType({
 			name = "Upload report to S3"
 			scriptContent = """
 				ARCHIVE_NAME="%build.counter%-%build.vcs.number%-%playwrightProject%"
+				export E2E_SECRETS_KEY="%E2E_SECRETS_ENCRYPTION_KEY_CURRENT%"
 				
 				# Need to use -C to avoid creation of an unnecessary top level directory.
-				tar cvfz - -C test/e2e/output/html . | openssl enc -aes-256-cbc -salt -out ${'$'}{ARCHIVE_NAME}.tgz.enc -pass env:E2E_SECRETS_ENCRYPTION_KEY_CURRENT
+				tar cvfz - -C test/e2e/output/html . | openssl enc -aes-256-cbc -salt -out ${'$'}{ARCHIVE_NAME}.tgz.enc -pass env:E2E_SECRETS_KEY
 
 				aws configure set aws_access_key_id %CALYPSO_E2E_DASHBOARD_AWS_S3_ACCESS_KEY_ID%
 				aws configure set aws_secret_access_key %CALYPSO_E2E_DASHBOARD_AWS_S3_SECRET_ACCESS_KEY%
