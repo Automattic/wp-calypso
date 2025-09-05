@@ -143,7 +143,7 @@ const EnvironmentSwitcherDropdown = ( {
 				) }
 				{ showActionButton && (
 					<MenuItem
-						onClick={ canCreateStagingSite( currentSite ) ? onAddStagingSite : handleUpsell }
+						onClick={ canCreateStagingSite( productionSite ) ? onAddStagingSite : handleUpsell }
 						disabled={ isStagingSiteCreating || isStagingSiteDeleting }
 					>
 						<HStack justify="flex-start">
@@ -198,8 +198,8 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 	} );
 
 	const { data: isStagingSiteDeleting } = useQuery( {
-		...isDeletingStagingSiteQuery( stagingSiteId ?? 0 ),
-		enabled: !! stagingSiteId,
+		...isDeletingStagingSiteQuery( productionSiteId ?? 0 ),
+		enabled: !! productionSiteId,
 	} );
 
 	// Staging site deletion process runs via async job. We need to keep on polling for the staging site deletion before we start displaying the button to add a staging site again
@@ -211,21 +211,23 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 
 	// Clean up deletion flag when staging site no longer exists
 	useEffect( () => {
-		// TODO: Check if this logic works when the deletion is finished
 		if (
 			isStagingSiteDeleting &&
 			stagingSiteExistsFromQuery === false &&
 			productionSite &&
-			! hasStagingSite( productionSite ) &&
-			stagingSiteId
+			productionSiteId
 		) {
-			queryClient.removeQueries( isDeletingStagingSiteQuery( stagingSiteId ) );
-			queryClient.removeQueries( hasStagingSiteQuery( productionSiteId ?? 0 ) );
+			if ( hasStagingSite( productionSite ) ) {
+				// Check again if it has a staging site
+				queryClient.invalidateQueries( siteByIdQuery( productionSiteId ) );
+			} else {
+				// No staging site exists, so we can invalidate the deletion flag
+				queryClient.invalidateQueries( isDeletingStagingSiteQuery( productionSiteId ) );
+			}
 		}
 	}, [
 		isStagingSiteDeleting,
 		stagingSiteExistsFromQuery,
-		stagingSiteId,
 		productionSiteId,
 		queryClient,
 		productionSite,

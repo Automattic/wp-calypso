@@ -40,7 +40,9 @@ export const stagingSiteDeleteMutation = ( stagingSiteId: number, productionSite
 	mutationOptions( {
 		mutationFn: () => deleteStagingSite( stagingSiteId, productionSiteId ),
 		onSuccess: () => {
-			queryClient.setQueryData( isDeletingStagingSiteQuery( stagingSiteId ).queryKey, true );
+			// Use productionSiteId for the deleting flag as the stagingSiteId
+			// can be undefined before the staging site is deleted
+			queryClient.setQueryData( isDeletingStagingSiteQuery( productionSiteId ).queryKey, true );
 		},
 	} );
 
