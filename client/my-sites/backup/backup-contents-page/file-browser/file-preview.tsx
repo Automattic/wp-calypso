@@ -2,20 +2,19 @@ import { useEffect, useState } from '@wordpress/element';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback } from 'react';
-import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { FileBrowserItem } from './types';
 import { useBackupFileQuery } from './use-backup-file-query';
 
 interface FilePreviewProps {
 	item: FileBrowserItem;
 	siteId: number;
+	onTrackEvent?: ( eventName: string, properties?: Record< string, unknown > ) => void;
 }
 
 /**
  * This component is responsible for rendering the preview of a file.
  */
-const FilePreview: FunctionComponent< FilePreviewProps > = ( { item, siteId } ) => {
+const FilePreview: FunctionComponent< FilePreviewProps > = ( { item, siteId, onTrackEvent } ) => {
 	const translate = useTranslate();
 	const [ fileContent, setFileContent ] = useState( '' );
 	const [ showSensitivePreview, setShowSensitivePreview ] = useState( false );
@@ -38,12 +37,12 @@ const FilePreview: FunctionComponent< FilePreviewProps > = ( { item, siteId } ) 
 		shouldPreviewFile
 	);
 
-	const dispatch = useDispatch();
-
 	const handleShowPreviewClick = useCallback( () => {
 		setShowSensitivePreview( true );
-		dispatch( recordTracksEvent( 'calypso_jetpack_backup_browser_preview_file_sensitive_click' ) );
-	}, [ dispatch ] );
+		if ( onTrackEvent ) {
+			onTrackEvent( 'calypso_jetpack_backup_browser_preview_file_sensitive_click' );
+		}
+	}, [ onTrackEvent ] );
 
 	useEffect( () => {
 		if ( isSuccess && data && data.url && isTextContent ) {
@@ -100,11 +99,11 @@ const FilePreview: FunctionComponent< FilePreviewProps > = ( { item, siteId } ) 
 				break;
 		}
 
-		dispatch(
-			recordTracksEvent( 'calypso_jetpack_backup_browser_preview_file', {
+		if ( onTrackEvent ) {
+			onTrackEvent( 'calypso_jetpack_backup_browser_preview_file', {
 				file_type: item.type,
-			} )
-		);
+			} );
+		}
 		return content;
 	};
 

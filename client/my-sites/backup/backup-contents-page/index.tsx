@@ -13,10 +13,14 @@ import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { useDispatch, useSelector } from 'calypso/state';
+import { rewindRequestGranularBackup } from 'calypso/state/activity-log/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
+import { hasJetpackCredentials } from 'calypso/state/jetpack/credentials/selectors';
+import canRestoreSite from 'calypso/state/rewind/selectors/can-restore-site';
 import getBackupBrowserCheckList from 'calypso/state/rewind/selectors/get-backup-browser-check-list';
-import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { backupMainPath } from '../paths';
 import FileBrowser from './file-browser';
 import './style.scss';
@@ -26,16 +30,26 @@ interface OwnProps {
 	siteId: number;
 }
 
-const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId } ) => {
+const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId: propSiteId } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const getDisplayDate = useGetDisplayDate();
 	const moment = useLocalizedMoment();
 	const displayDate = getDisplayDate( moment.unix( rewindId ), false );
-	const browserCheckList = useSelector( ( state ) => getBackupBrowserCheckList( state, siteId ) );
 
-	const isMultiSite = useSelector( ( state ) => isJetpackSiteMultiSite( state, siteId ) );
-	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
+	// Use propSiteId if provided, otherwise fall back to selected site
+	const selectedSiteId = useSelector( getSelectedSiteId ) as number;
+	const effectiveSiteId = propSiteId ?? selectedSiteId;
+
+	const browserCheckList = useSelector( ( state ) =>
+		getBackupBrowserCheckList( state, effectiveSiteId )
+	);
+	const isMultiSite = useSelector( ( state ) => isJetpackSiteMultiSite( state, effectiveSiteId ) );
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, effectiveSiteId ) ) as string;
+	const hasCredentials = useSelector( ( state ) =>
+		hasJetpackCredentials( state, effectiveSiteId )
+	);
+	const canRestore = useSelector( ( state ) => canRestoreSite( state, effectiveSiteId ) );
 
 	useEffect( () => {
 		dispatch( recordTracksEvent( 'calypso_jetpack_backup_browser_view' ) );
@@ -45,9 +59,23 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 		dispatch( recordTracksEvent( 'calypso_jetpack_backup_browser_learn_about_click' ) );
 	}, [ dispatch ] );
 
+	const handleTrackEvent = useCallback(
+		( eventName: string, properties?: Record< string, any > ) => {
+			dispatch( recordTracksEvent( eventName, properties ) );
+		},
+		[ dispatch ]
+	);
+
+	const handleRequestGranularBackup = useCallback(
+		( siteId: number, rewindId: number, includePaths: string, excludePaths: string ) => {
+			dispatch( rewindRequestGranularBackup( siteId, rewindId, includePaths, excludePaths ) );
+		},
+		[ dispatch ]
+	);
+
 	return (
 		<>
-			<QuerySiteCredentials siteId={ siteId } />
+			<QuerySiteCredentials siteId={ effectiveSiteId } />
 			<Main className="backup-contents-page">
 				<DocumentHead title={ translate( 'Backup contents' ) } />
 				{ isJetpackCloud() && <SidebarNavigation /> }
@@ -80,7 +108,15 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 						) }
 					</div>
 					<div className="backup-contents-page__body">
-						<FileBrowser rewindId={ rewindId } />
+						<FileBrowser
+							rewindId={ rewindId }
+							siteId={ effectiveSiteId }
+							siteSlug={ siteSlug }
+							hasCredentials={ hasCredentials }
+							canRestore={ canRestore }
+							onTrackEvent={ handleTrackEvent }
+							onRequestGranularBackup={ handleRequestGranularBackup }
+						/>
 					</div>
 				</Card>
 			</Main>

@@ -5,12 +5,8 @@ import { useCallback, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useEffect } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { useDispatch, useSelector } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
-import { hasJetpackCredentials } from 'calypso/state/jetpack/credentials/selectors';
+import { useDispatch } from 'calypso/state';
 import { setNodeCheckState } from 'calypso/state/rewind/browser/actions';
-import canRestoreSite from 'calypso/state/rewind/selectors/can-restore-site';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { backupGranularRestorePath } from '../../paths';
 import { PREPARE_DOWNLOAD_STATUS } from './constants';
 import FilePreview from './file-preview';
@@ -30,6 +26,10 @@ interface FileInfoCardProps {
 	rewindId: number;
 	parentItem?: FileBrowserItem; // This is used to pass the extension details to the child node
 	path: string;
+	siteSlug: string;
+	hasCredentials: boolean;
+	canRestore: boolean;
+	onTrackEvent: ( eventName: string, properties?: Record< string, unknown > ) => void;
 }
 
 const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
@@ -38,6 +38,10 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 	rewindId,
 	parentItem,
 	path,
+	siteSlug,
+	hasCredentials,
+	canRestore,
+	onTrackEvent,
 } ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
@@ -55,10 +59,7 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 		item.extensionType ?? ''
 	);
 
-	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) ) as string;
-
-	const isRestoreDisabled = useSelector( ( state ) => ! canRestoreSite( state, siteId ) );
-	const hasCredentials = useSelector( ( state ) => hasJetpackCredentials( state, siteId ) );
+	const isRestoreDisabled = ! canRestore;
 
 	// Dispatch an error notice if the download could not be prepared
 	const handlePrepareDownloadError = useCallback( () => {
@@ -82,15 +83,13 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 
 	const trackDownloadByType = useCallback(
 		( fileType: string ) => {
-			dispatch(
-				recordTracksEvent( 'calypso_jetpack_backup_browser_download', {
-					file_type: fileType,
-				} )
-			);
+			onTrackEvent( 'calypso_jetpack_backup_browser_download', {
+				file_type: fileType,
+			} );
 
 			return;
 		},
-		[ dispatch ]
+		[ onTrackEvent ]
 	);
 
 	const triggerFileDownload = useCallback( ( fileUrl: string ) => {
@@ -188,13 +187,11 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 		page.redirect( backupGranularRestorePath( siteSlug, rewindId as unknown as string ) );
 
 		// Tracks restore interest
-		dispatch(
-			recordTracksEvent( 'calypso_jetpack_backup_browser_restore_single_file', {
-				file_type: item.type,
-				has_credentials: hasCredentials,
-			} )
-		);
-	}, [ dispatch, hasCredentials, item.type, path, rewindId, siteId, siteSlug ] );
+		onTrackEvent( 'calypso_jetpack_backup_browser_restore_single_file', {
+			file_type: item.type,
+			has_credentials: hasCredentials,
+		} );
+	}, [ dispatch, hasCredentials, item.type, path, rewindId, siteId, siteSlug, onTrackEvent ] );
 
 	useEffect( () => {
 		if ( prepareDownloadStatus === PREPARE_DOWNLOAD_STATUS.PREPARING ) {
@@ -358,7 +355,7 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 			) }
 
 			{ fileInfo?.size !== undefined && fileInfo.size > 0 && (
-				<FilePreview item={ item } siteId={ siteId } />
+				<FilePreview item={ item } siteId={ siteId } onTrackEvent={ onTrackEvent } />
 			) }
 		</div>
 	);
