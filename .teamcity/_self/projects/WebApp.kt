@@ -949,18 +949,6 @@ object PlaywrightTestPRMatrix : BuildType({
         	rules = "+:test/e2e/output/results.xml"
 			verbose = true
         }
-		notifications {
-			notifierSettings = slackNotifier {
-				connection = "PROJECT_EXT_11"
-				sendTo = "C09DMP444T0"
-				messageFormat = verboseMessageFormat {
-					addStatusText = true
-					addBranch = true
-				}
-			}
-			branchFilter = "+:e2e/*"
-			buildFailed = true
-		}
 	}
 
 	triggers {
@@ -1050,6 +1038,12 @@ object PlaywrightTestPRMatrix : BuildType({
 				aws configure set aws_secret_access_key %CALYPSO_E2E_DASHBOARD_AWS_S3_SECRET_ACCESS_KEY%
 
 				aws s3 cp ${'$'}{ARCHIVE_NAME}.tgz.enc %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT%
+				
+				# Set build parameter with S3 URL for notifications
+				echo "##teamcity[setParameter name='s3.report.url' value='%CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT%/${'$'}{ARCHIVE_NAME}.tgz.enc']"
+				
+				# Send custom Slack notification with S3 link
+				echo "##teamcity[notification notifier='slack' message='Report available: ${'$'}{ARCHIVE_NAME}|nBranch: %teamcity.build.branch%' sendTo='C09DMP444T0' connectionId='PROJECT_EXT_11']"
 			""".trimIndent()
 			conditions {
 				matches("teamcity.build.branch", "e2e/.*")
