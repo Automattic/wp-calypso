@@ -24,6 +24,7 @@ export * from './me-dpa';
 export * from './me-payment-methods';
 export * from './me-preferences';
 export * from './me-profile';
+export * from './me-settings';
 export * from './me-purchases';
 export * from './me-shopping-cart';
 export * from './me-sites';
