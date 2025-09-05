@@ -109,7 +109,7 @@ function SiteBackupRestore() {
 			header={ <PageHeader prefix={ backButton } title={ __( 'Site restore' ) } /> }
 		>
 			<Card>
-				{ currentStep !== 'success' && currentStep !== 'error' && (
+				{ currentStep !== 'success' && (
 					<CardHeader>
 						<SectionHeader
 							title={ __( 'Restore point' ) }
