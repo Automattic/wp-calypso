@@ -74,7 +74,7 @@ afterEach( () => {
 	jest.resetAllMocks();
 } );
 
-test( 'renders preferences page with correct layout', async () => {
+test( 'renders preferences page with PreferencesLogin component', async () => {
 	renderPreferences();
 
 	await waitFor( () => {
@@ -84,27 +84,4 @@ test( 'renders preferences page with correct layout', async () => {
 	expect( screen.getByTestId( 'page-layout' ) ).toBeInTheDocument();
 	expect( screen.getByTestId( 'page-layout' ) ).toHaveAttribute( 'data-size', 'small' );
 	expect( screen.getByText( 'Login preferences' ) ).toBeInTheDocument();
-} );
-
-test( 'renders page header with correct title', async () => {
-	renderPreferences();
-
-	await waitFor( () => {
-		expect( screen.getByText( 'Preferences' ) ).toBeInTheDocument();
-	} );
-
-	const header = screen.getByText( 'Preferences' );
-	expect( header ).toBeInTheDocument();
-} );
-
-test( 'uses small page layout size', async () => {
-	renderPreferences();
-
-	await waitFor( () => {
-		expect( screen.getByText( 'Preferences' ) ).toBeInTheDocument();
-	} );
-
-	const pageLayout = screen.getByTestId( 'page-layout' );
-	expect( pageLayout ).toBeInTheDocument();
-	expect( pageLayout ).toHaveAttribute( 'data-size', 'small' );
 } );
