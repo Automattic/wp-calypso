@@ -1041,11 +1041,8 @@ object PlaywrightTestPRMatrix : BuildType({
 
 				aws s3 cp ${'$'}{ARCHIVE_NAME}.tgz.enc %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT%
 				
-				# Set build parameter with S3 URL for notifications
-				echo "##teamcity[setParameter name='s3.report.url' value='%CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT%/${'$'}{ARCHIVE_NAME}.tgz.enc']"
-				
-				# Send custom Slack notification with S3 link
-				echo "##teamcity[notification notifier='slack' message='Report available: ${'$'}{ARCHIVE_NAME}|nBranch: %teamcity.build.branch%' sendTo='C09DMP444T0' connectionId='PROJECT_EXT_11']"
+				# Send custom Slack notification
+				echo "##teamcity[notification notifier='slack' message='Report available: ${'$'}{ARCHIVE_NAME}|nBranch: %teamcity.build.branch%' sendTo='#e2eflowtesting-notif' connectionId='PROJECT_EXT_11']"
 			""".trimIndent()
 			conditions {
 				matches("teamcity.build.branch", "e2e/.*")
