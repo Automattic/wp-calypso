@@ -945,10 +945,10 @@ object PlaywrightTestPRMatrix : BuildType({
 		perfmon {
 		}
 		xmlReport {
-          reportType = XmlReport.XmlReportType.JUNIT
-          rules = "+:test/e2e/output/results.xml"
-		  verbose = true
-         }
+        	reportType = XmlReport.XmlReportType.JUNIT
+        	rules = "+:test/e2e/output/results.xml"
+			verbose = true
+        }
 	}
 
 	triggers {
@@ -1009,13 +1009,28 @@ object PlaywrightTestPRMatrix : BuildType({
 					exit 1
 				fi
 
+				# Check if test/e2e or packages/calypso-e2e files have been changed
+				CHANGED_FILES=${'$'}(git diff --name-only refs/remotes/origin/trunk...HEAD)
+				if echo "${'$'}CHANGED_FILES" | grep -q -E "^(test/e2e/|packages/calypso-e2e/)"; then
+					echo "Changes detected in test/e2e/ or packages/calypso-e2e/, running all tests"
+					GREP_FLAG=""
+				else
+					echo "No changes in test/e2e/ or packages/calypso-e2e/, running @calypso-pr tests only"
+					GREP_FLAG="--grep=@calypso-pr"
+				fi
+
 				cd test/e2e
 				echo "Running Playwright tests for project: %playwrightProject%"
-				yarn test:pw:%playwrightProject% --grep=@calypso-pr
+				yarn test:pw:%playwrightProject% ${'$'}GREP_FLAG
 			"""
 			dockerImage = "%docker_image_e2e%"
 		}
 	}
+
+	artifactRules = """
+		test/e2e/output => %playwrightProject%/output
+		test/e2e/blob-report => blob-report
+	""".trimIndent()
 })
 
 object PlaywrightTestPreReleaseMatrix : BuildType({

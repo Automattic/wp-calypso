@@ -1,6 +1,6 @@
-import { JetpackModules } from '@automattic/api-core';
-import { siteJetpackModulesQuery, siteJetpackModulesMutation } from '@automattic/api-queries';
-import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import { JetpackModule, JetpackModules, Site } from '@automattic/api-core';
+import { siteJetpackModulesMutation } from '@automattic/api-queries';
+import { useMutation } from '@tanstack/react-query';
 import { Card, CardBody, __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
@@ -10,7 +10,6 @@ import { useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { SectionHeader } from '../../components/section-header';
 import { isJetpackModuleActivated } from '../../utils/site-jetpack-modules';
-import type { Site } from '@automattic/api-core';
 
 const fields = [
 	{
@@ -25,8 +24,13 @@ const form = {
 	fields: [ 'protect' ],
 };
 
-export default function ProtectForm( { site }: { site: Site } ) {
-	const { data: jetpackModules } = useSuspenseQuery( siteJetpackModulesQuery( site.ID ) );
+export default function ProtectForm( {
+	jetpackModules,
+	site,
+}: {
+	jetpackModules: Record< string, JetpackModule > | undefined;
+	site: Site;
+} ) {
 	const mutation = useMutation( siteJetpackModulesMutation( site.ID ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 

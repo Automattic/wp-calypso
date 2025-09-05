@@ -478,7 +478,7 @@ const PlansFeaturesMain = ( {
 		gridPlansForFeaturesGridRaw?.some( ( { planSlug } ) => planSlug === PLAN_FREE );
 
 	const [ isStreamlinedPriceExperimentLoading, streamlinedPriceExperimentAssignment ] =
-		useStreamlinedPriceExperiment( flowName );
+		useStreamlinedPriceExperiment();
 
 	const showStreamlinedPriceExperiment =
 		isInSignup && isStreamlinedPricePlansTreatment( streamlinedPriceExperimentAssignment );

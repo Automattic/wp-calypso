@@ -20,6 +20,7 @@ import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved'
 import getIsNoteRead from '../../panel/state/selectors/get-is-note-read';
 import ActionDropdown from '../templates/action-dropdown';
 import { NoteBody, ActionBlock } from '../templates/body';
+import CloseButton from '../templates/close-button';
 import NoteSummary from '../templates/note-summary';
 import './style.scss';
 import type { Note as NoteObject, Block } from '../types';
@@ -66,7 +67,7 @@ const getClasses = ( {
 	} );
 };
 
-const Note = () => {
+const Note = ( { isDismissible }: { isDismissible?: boolean } ) => {
 	const dispatch = useDispatch();
 	const { params, goBack } = useNavigator();
 	const { noteId } = params;
@@ -89,17 +90,21 @@ const Note = () => {
 
 	return (
 		<>
-			<CardHeader size="small">
+			<CardHeader
+				size="small"
+				style={ { position: 'sticky', top: 0, background: '#fff', zIndex: 1 } }
+			>
 				<HStack>
-					<Navigator.BackButton
-						icon={ isRTL() ? chevronRight : chevronLeft }
-						style={ { padding: 0 } }
-					>
+					<HStack justify="flex-start">
+						<Navigator.BackButton size="small" icon={ isRTL() ? chevronRight : chevronLeft } />
 						<Heading level={ 3 } size={ 15 } weight={ 500 }>
 							{ note.title }
 						</Heading>
-					</Navigator.BackButton>
-					<ActionDropdown note={ note } goBack={ goBack } />
+					</HStack>
+					<HStack justify="flex-end" style={ { width: 'auto' } }>
+						<ActionDropdown note={ note } goBack={ goBack } />
+						{ isDismissible && <CloseButton /> }
+					</HStack>
 				</HStack>
 			</CardHeader>
 			<CardBody size="small" style={ { maxHeight: 'unset' } }>

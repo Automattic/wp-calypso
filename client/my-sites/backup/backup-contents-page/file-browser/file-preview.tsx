@@ -78,14 +78,14 @@ const FilePreview: FunctionComponent< FilePreviewProps > = ( { item, siteId } ) 
 				content = <pre>{ fileContent }</pre>;
 				break;
 			case 'image':
-				content = <img src={ data.url } alt="file-preview" />;
+				content = <img src={ data?.url } alt="file-preview" />;
 				break;
 			case 'audio':
 				content = (
 					// We don't have captions for backed up audio files
 					// eslint-disable-next-line jsx-a11y/media-has-caption
 					<audio controls>
-						<source src={ data.url } type="audio/mpeg" />
+						<source src={ data?.url } type="audio/mpeg" />
 					</audio>
 				);
 				break;
@@ -94,7 +94,7 @@ const FilePreview: FunctionComponent< FilePreviewProps > = ( { item, siteId } ) 
 					// We don't have captions for backed up video files
 					// eslint-disable-next-line jsx-a11y/media-has-caption
 					<video controls>
-						<source src={ data.url } type="video/mp4" />
+						<source src={ data?.url } type="video/mp4" />
 					</video>
 				);
 				break;
