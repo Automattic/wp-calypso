@@ -27,3 +27,36 @@ export interface BackupEntry {
 	is_backup: string;
 	is_scan: string;
 }
+
+export interface BackupContentsResponse {
+	ok: boolean;
+	error: string;
+	contents: {
+		[ key: string ]: {
+			id?: string;
+			type: 'file' | 'dir' | 'wordpress' | 'table' | 'theme' | 'plugin' | 'archive';
+			has_children: boolean;
+			period?: string;
+			sort?: number;
+			manifest_path?: string;
+			label?: string;
+			row_count?: number;
+			extension_version?: string;
+			total_items?: number;
+		};
+	};
+}
+
+export interface BackupPathInfoResponse {
+	download_url?: string;
+	mtime?: number;
+	size?: number;
+	hash?: string;
+	data_type?: number;
+	manifest_filter?: string;
+	error?: string;
+}
+
+export interface BackupFileUrl {
+	url: string;
+}

@@ -1,4 +1,5 @@
 import { Button, CompactCard } from '@automattic/components';
+import { TRADE_MARK_CLAIMS_MODAL_COPY } from '@automattic/domain-search';
 import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
@@ -115,11 +116,7 @@ class TrademarkClaimsNotice extends Component {
 		return (
 			<CompactCard>
 				<h2>{ translate( '%(domain)s matches a trademark.', { args: { domain } } ) }</h2>
-				<p>
-					{ translate(
-						"To continue, you must agree not to infringe on the trademark holders' rights. Please review and acknowledge the following notice."
-					) }
-				</p>
+				<p>{ TRADE_MARK_CLAIMS_MODAL_COPY.PREAMBLE }</p>
 			</CompactCard>
 		);
 	};
