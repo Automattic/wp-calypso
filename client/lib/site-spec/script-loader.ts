@@ -39,7 +39,8 @@ const RESOURCE_CONFIGS: Record< ResourceType, ResourceConfig > = {
 const loadingPromises = new Map< string, Promise< void > >();
 
 /**
- * Ensure the DOM is available for resource injection
+ * Ensures the DOM is available for resource injection.
+ * @throws {Error} When running in SSR or non-browser environment
  */
 function ensureDomAvailable(): void {
 	// If running in SSR or a non-browser environment, bail early with a helpful message.
@@ -51,14 +52,20 @@ function ensureDomAvailable(): void {
 }
 
 /**
- * Generate a unique cache key for a resource type and URL combination
+ * Generates a unique cache key for a resource type and URL combination.
+ * @param type - The type of resource ({@link ResourceType})
+ * @param url - The URL of the resource
+ * @returns A unique cache key string
  */
 function cacheKeyFor( type: ResourceType, url: string ): string {
 	return `${ type }:${ url }`;
 }
 
 /**
- * Check if a resource with the exact URL already exists in the DOM
+ * Checks if a resource with the exact URL already exists in the DOM.
+ * @param url - The URL of the resource to check
+ * @param type - The type of resource ({@link ResourceType})
+ * @returns True if the resource exists in the DOM, false otherwise
  */
 function isResourceInDOM( url: string, type: ResourceType ): boolean {
 	const config = RESOURCE_CONFIGS[ type ];
@@ -76,6 +83,10 @@ function isResourceInDOM( url: string, type: ResourceType ): boolean {
 /**
  * Generic injector used by both CSS & script.
  * Creates and injects DOM elements for resource loading.
+ * @param url - The URL of the resource to inject
+ * @param type - The type of resource ({@link ResourceType})
+ * @returns Promise that resolves when the resource is loaded
+ * @throws {Error} When resource loading fails
  */
 function injectResource( url: string, type: ResourceType ): Promise< void > {
 	ensureDomAvailable();
@@ -111,9 +122,9 @@ function injectResource( url: string, type: ResourceType ): Promise< void > {
 /**
  * Ensures a specific resource is loaded, with intelligent caching to prevent duplicate requests.
  * @private
- * @param {string} url - The URL of the resource to load
- * @param {ResourceType} type - The type of resource ('script' or 'css')
- * @returns {Promise<void>} Promise that resolves when the resource is loaded
+ * @param url - The URL of the resource to load
+ * @param type - The type of resource ({@link ResourceType})
+ * @returns Promise that resolves when the resource is loaded
  */
 function ensureResourceLoaded( url: string, type: ResourceType ): Promise< void > {
 	// Exists in DOM? done
@@ -136,6 +147,12 @@ function ensureResourceLoaded( url: string, type: ResourceType ): Promise< void 
 	return loadPromise;
 }
 
+/**
+ * Loads a specific resource type (script or CSS).
+ * @param type - The type of resource to load ({@link ResourceType})
+ * @returns Promise that resolves when the resource is loaded
+ * @throws {Error} When resource URL is not configured
+ */
 async function loadResource( type: ResourceType ): Promise< void > {
 	const url = getSiteSpecUrlByType( type );
 	if ( ! url ) {
@@ -147,7 +164,7 @@ async function loadResource( type: ResourceType ): Promise< void > {
 /**
  * Loads both SiteSpec CSS and JavaScript resources in the correct order.
  * @async
- * @returns {Promise<void>} Promise that resolves when both resources are loaded
+ * @returns Promise that resolves when both resources are loaded
  * @throws {Error} When resource URLs are not configured or loading fails
  */
 export async function loadSiteSpecScriptAndCSS(): Promise< void > {

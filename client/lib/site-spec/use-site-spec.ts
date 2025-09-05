@@ -29,7 +29,7 @@ declare global {
  * - Cleaning up resources when component unmounts
  * - Preventing duplicate script loading
  * @param options - Configuration options for the hook
- * @param options.container - Container selector for the widget (default: '#site-spec')
+ * @param options.container - Container selector for the widget (default: '#site-spec-container')
  * @param options.onMessage - Message handler callback
  * @param options.onError - Error handler callback
  */

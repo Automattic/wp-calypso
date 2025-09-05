@@ -81,8 +81,8 @@ Define the following configuration values:
 import { useSiteSpec } from 'calypso/lib/site-spec';
 
 const MyComponent = () => {
-  useSiteSpec({ container: '#site-spec' });
-  return <div id="site-spec" />;
+  useSiteSpec({ container: '#site-spec-container' });
+  return <div id="site-spec-container" />;
 };
 ```
 
@@ -93,7 +93,7 @@ import { useSiteSpec } from 'calypso/lib/site-spec';
 
 const SiteSpecComponent = () => {
   useSiteSpec({
-    container: '#site-spec',
+    container: '#site-spec-container',
     onMessage: (message) => {
       console.log('SiteSpec message:', message);
     },
@@ -102,7 +102,7 @@ const SiteSpecComponent = () => {
     },
   });
 
-  return <div id="site-spec" />;
+  return <div id="site-spec-container" />;
 };
 
 export default SiteSpecComponent;
@@ -116,7 +116,7 @@ Custom React hook for loading and managing SiteSpec resources.
 
 #### Parameters
 
-- `options.container` (string, optional): Container selector for the widget (default: `'#site-spec'`)
+- `options.container` (string, optional): Container selector for the widget (default: `'#site-spec-container'`)
 - `options.onMessage` (function, optional): Message handler callback
 - `options.onError` (function, optional): Error handler callback
 

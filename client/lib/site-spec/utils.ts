@@ -24,7 +24,7 @@ export type ResourceType = 'script' | 'css';
 
 /**
  * Checks if the SiteSpec feature is enabled in the current environment.
- * @returns {boolean} True if SiteSpec is enabled, false otherwise
+ * @returns True if SiteSpec is enabled, false otherwise
  */
 export function isSiteSpecEnabled(): boolean {
 	return config.isEnabled( 'site-spec' );
@@ -32,8 +32,8 @@ export function isSiteSpecEnabled(): boolean {
 
 /**
  * Retrieves the cache-busted URL for a specific SiteSpec resource.
- * @param {UrlKey} [urlKey] - The configuration key for the resource type
- * @returns {string | null} The complete URL with cache-busting parameters, or null if not configured
+ * @param urlKey - The configuration key for the resource type ({@link UrlKey}, default: 'script_url')
+ * @returns The complete URL with cache-busting parameters, or null if not configured
  */
 export function getSiteSpecUrl( urlKey: UrlKey = 'script_url' ): string | null {
 	const siteSpecConfig = config( 'site_spec' ) as SiteSpecRawConfig | undefined;
@@ -44,8 +44,8 @@ export function getSiteSpecUrl( urlKey: UrlKey = 'script_url' ): string | null {
 
 /**
  * Retrieves the cache-busted URL for a SiteSpec resource using the resource type.
- * @param {ResourceType} type - The type of resource to retrieve ('script' or 'css')
- * @returns {string | null} The complete URL with cache-busting parameters, or null if not configured
+ * @param type - The type of resource to retrieve ({@link ResourceType})
+ * @returns The complete URL with cache-busting parameters, or null if not configured
  */
 export function getSiteSpecUrlByType( type: ResourceType ): string | null {
 	const urlKey = type === 'script' ? 'script_url' : 'css_url';
