@@ -15,7 +15,7 @@
 	cursor: default;
 	transition: max-height 0.5s;
 
-	animation: 0.2s ease-out 0s 1 normal none running slideIn;
+	animation: slideIn 0.2s ease-out forwards;
 	transform-origin: bottom;
 	position: fixed;
 
@@ -57,7 +57,7 @@
 	.help-center__section-title {
 		font-size: $font-body-small;
 		font-weight: 500;
-		color: var(--studio-gray-100);
+		color: var( --studio-gray-100 );
 		margin: 32px 0 1em;
 	}
 
@@ -82,6 +82,7 @@
 	}
 
 	&.is-minimized {
+		animation: none;
 		.help-center__container-header {
 			padding: 8px 16px;
 			cursor: pointer;
@@ -101,12 +102,12 @@
 		height: 80vh;
 		max-height: 800px;
 		border-radius: 16px;
+		right: 50px;
+		bottom: 50px;
 
 		&.is-minimized {
 			height: $head-foot-height;
-			top: unset;
-			right: 50px;
-			bottom: calc( #{$header-height} + 16px );
+			bottom: 0;
 
 			border-bottom-left-radius: 0;
 			border-bottom-right-radius: 0;
@@ -153,12 +154,12 @@
 	@keyframes slideIn {
 		0% {
 			opacity: 0;
-			transform: translateY( 10px );
-		}	
+			bottom: 30px;
+		}
 
 		100% {
 			opacity: 1;
-			transform: translateY( 0 );
+			bottom: 50px;
 		}
 	}
 
