@@ -1,8 +1,10 @@
 import { useEffect } from 'react';
 import { loadSiteSpecScriptAndCSS, resetSiteSpecScriptState } from './script-loader';
 import { getSiteSpecConfig, isSiteSpecEnabled } from './utils';
-// TypeScript declaration for SiteSpec
 
+/**
+ * TypeScript declaration for SiteSpec
+ */
 declare global {
 	interface Window {
 		SiteSpec?: {
@@ -30,7 +32,6 @@ declare global {
  * @param options.container - Container selector for the widget (default: '#site-spec')
  * @param options.onMessage - Message handler callback
  * @param options.onError - Error handler callback
- * @returns Object with loading state and cleanup function
  */
 export function useSiteSpec(
 	options: {
@@ -77,20 +78,12 @@ export function useSiteSpec(
 			try {
 				// Initialize SiteSpec when available
 				if ( window.SiteSpec?.init ) {
-					// Check if SiteSpec is already initialized on this container
-					// Dont we already have a check for this in the script-loader?
-					// Maybe we can just use the containerElement directly?
-					// Do we really need to check this?
-					// TODO: Remove this check
 					const containerElement = document.querySelector( container );
 					if ( containerElement && containerElement.querySelector( '.site-spec-app' ) ) {
 						// eslint-disable-next-line no-console
 						console.log( 'SiteSpec already initialized on this container' );
 						return;
 					}
-
-					// Clear any existing content
-					containerElement.innerHTML = '';
 					// Use the DOM element directly
 					window.SiteSpec.init( {
 						container: containerElement as HTMLElement,
@@ -131,8 +124,5 @@ export function useSiteSpec(
 		}
 	}, [ container, onMessage, onError ] );
 
-	return {
-		loadSiteSpecScriptAndCSS,
-		resetSiteSpecScriptState,
-	};
+	// Hook doesn't need to return anything since it handles everything internally
 }

@@ -250,7 +250,6 @@ class Document extends Component {
 					{ entrypoint.js.map( ( asset ) => (
 						<script key={ asset } src={ asset } />
 					) ) }
-
 					<script
 						nonce={ inlineScriptNonce }
 						dangerouslySetInnerHTML={ {
