@@ -1,17 +1,16 @@
 import { DomainTypes } from '@automattic/api-core';
 import { siteBySlugQuery } from '@automattic/api-queries';
-import { Badge } from '@automattic/ui';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { dateI18n } from '@wordpress/date';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
-import { domainOverviewRoute } from '../../app/router/domains';
 import { siteRoute } from '../../app/router/sites';
 import { Text } from '../../components/text';
 import SiteIcon from '../../sites/site-icon';
 import { isRecentlyRegistered } from '../../utils/domain';
+import { DomainNameField } from './field-domain-name';
 import { DomainExpiryField } from './field-expiry';
 import { DomainSslField } from './field-ssl';
 import type { DomainSummary, Site } from '@automattic/api-core';
@@ -19,44 +18,7 @@ import type { Field } from '@wordpress/dataviews';
 
 const THREE_DAYS_IN_MINUTES = 3 * 1440;
 
-const textOverflowStyles = {
-	overflowX: 'hidden',
-	textOverflow: 'ellipsis',
-	whiteSpace: 'nowrap',
-} as const;
-
 const IneligibleIndicator = () => <Text color="#CCCCCC">-</Text>;
-
-const DomainName = ( {
-	domain,
-	site,
-	value,
-	showPrimaryDomainBadge,
-}: {
-	domain: DomainSummary;
-	site?: Site;
-	value: string;
-	showPrimaryDomainBadge?: boolean;
-} ) => {
-	const siteSlug = site?.slug ?? domain.site_slug;
-
-	return (
-		<Link
-			to={ domainOverviewRoute.fullPath }
-			params={ { siteSlug, domainName: domain.domain } }
-			disabled={ domain.type === DomainTypes.WPCOM }
-		>
-			<HStack spacing={ 1 }>
-				<span style={ textOverflowStyles }>{ value }</span>
-				{ showPrimaryDomainBadge && domain.primary_domain && (
-					<span style={ { flexShrink: 0 } }>
-						<Badge>{ __( 'Primary' ) }</Badge>
-					</span>
-				) }
-			</HStack>
-		</Link>
-	);
-};
 
 const DomainSite = ( { domain, value }: { domain: DomainSummary; value: string } ) => {
 	const { data: site } = useQuery( siteBySlugQuery( domain.site_slug ) );
@@ -92,7 +54,7 @@ export const useFields = ( {
 				enableGlobalSearch: true,
 				getValue: ( { item }: { item: DomainSummary } ) => item.domain,
 				render: ( { field, item } ) => (
-					<DomainName
+					<DomainNameField
 						domain={ item }
 						site={ site }
 						value={ field.getValue( { item } ) }
