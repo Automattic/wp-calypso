@@ -90,7 +90,10 @@ const Note = ( { isDismissible }: { isDismissible?: boolean } ) => {
 
 	return (
 		<>
-			<CardHeader size="small">
+			<CardHeader
+				size="small"
+				style={ { position: 'sticky', top: 0, background: '#fff', zIndex: 1 } }
+			>
 				<HStack>
 					<HStack justify="flex-start">
 						<Navigator.BackButton size="small" icon={ isRTL() ? chevronRight : chevronLeft } />

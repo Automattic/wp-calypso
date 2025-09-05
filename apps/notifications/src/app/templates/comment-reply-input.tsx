@@ -5,6 +5,7 @@ import {
 	TextareaControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { send } from '@wordpress/icons';
 import debugModule from 'debug';
 import { useRef, useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -212,7 +213,7 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 	return (
 		<VStack>
 			<form onSubmit={ handleSubmit }>
-				<HStack spacing={ 4 } alignment="flex-start">
+				<HStack spacing={ 2 } alignment="flex-start">
 					<TextareaControl
 						className="comment-reply-input__textarea"
 						ref={ replyInputRef }
@@ -230,12 +231,11 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 						title={
 							value.length ? __( 'Submit reply' ) : __( 'Write your response in order to submit' )
 						}
+						icon={ send }
 						isBusy={ isSubmitting }
 						disabled={ ! value.length }
 						__next40pxDefaultSize
-					>
-						{ __( 'Send' ) }
-					</Button>
+					/>
 				</HStack>
 			</form>
 			<Suggestions
