@@ -210,8 +210,6 @@
 	"site_spec": {
 		"url": "http://widgets.wp.com/site-spec/bundle-1.0.0.umd.js",
 		"css_url": "http://widgets.wp.com/site-spec/style-1.0.0.css",
-		"agent_url": "https://public-api.wordpress.com/wpcom/v2/ai/agent",
-		"agent_id": "site-spec",
-		"build_site_url": "https://wordpress.com/setup/ai-site-builder?spec_id="
+		"agent_id": "site-spec"
 	}
 }
