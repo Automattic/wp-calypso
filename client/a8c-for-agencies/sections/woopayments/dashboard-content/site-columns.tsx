@@ -8,6 +8,7 @@ import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/s
 import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import type { WooPaymentsData } from '../types';
 
 export const SiteColumn = ( { site }: { site: string } ) => {
 	return urlToSlug( site );
@@ -29,9 +30,15 @@ export const TimeframeCommissionsColumn = memo(
 );
 TimeframeCommissionsColumn.displayName = 'TimeframeCommissionsColumn';
 
-CommissionsPaidColumn.displayName = 'CommissionsPaidColumn';
-
-export const WooPaymentsStatusColumn = ( { state, siteId }: { state: string; siteId: number } ) => {
+export const WooPaymentsStatusColumn = ( {
+	state,
+	siteId,
+	woopaymentsData,
+}: {
+	state: string;
+	siteId: number;
+	woopaymentsData?: WooPaymentsData;
+} ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -50,6 +57,17 @@ export const WooPaymentsStatusColumn = ( { state, siteId }: { state: string; sit
 	}
 
 	const getStatusProps = () => {
+		// Check if site exists in woopaymentsData
+		const siteExistsInWooPaymentsData = woopaymentsData?.data?.total?.sites?.[ siteId ];
+
+		// If site is active but not in woopaymentsData, it's not eligible
+		if ( state === 'active' && ! siteExistsInWooPaymentsData ) {
+			return {
+				statusText: translate( 'Not eligible' ),
+				statusType: 'error',
+			};
+		}
+
 		switch ( state ) {
 			case 'active':
 				return {
