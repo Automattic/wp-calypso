@@ -42,7 +42,7 @@ const SitesWithThisPlugin = ( { sitesWithThisPlugin }: { sitesWithThisPlugin: Si
 				enableGlobalSearch: true,
 			},
 			{
-				id: 'activate',
+				id: 'active',
 				label: __( 'Active' ),
 				getValue: ( { item }: { item: Site } ) =>
 					sitesPlugins?.sites[ item.ID ].find( ( p ) => p.slug === pluginId )?.active ?? false,
