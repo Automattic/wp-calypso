@@ -39,6 +39,9 @@ export class FeaturedDomainSuggestions extends Component {
 			'domainAndPlanUpsellFlow',
 			'temporaryCart',
 			'domainRemovalQueue',
+			'trademarkClaimsNoticeInfo',
+			'onAcceptTrademarkClaim',
+			'onRejectTrademarkClaim',
 		];
 		return pick( this.props, childKeys );
 	}

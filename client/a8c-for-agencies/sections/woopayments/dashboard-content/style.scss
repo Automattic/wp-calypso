@@ -30,3 +30,58 @@
 	}
 }
 
+.download-commissions-modal {
+	@include break-medium {
+		min-width: 400px;
+	}
+
+	@include break-large {
+		min-width: 512px;
+	}
+
+	.download-commissions-modal__title {
+		@include heading-x-large;
+		margin: 0 0 20px;
+		padding: 0;
+	}
+
+	.download-commissions-modal__instruction {
+		@include body-medium;
+		margin: 0;
+		color: var(--color-accent-60);
+		display: flex;
+		align-items: center;
+		gap: 16px;
+	}
+
+	.download-commissions-modal__instruction-text {
+		flex: 1;
+		line-height: 1.4;
+	}
+
+	.download-commissions-modal__close-button {
+		position: absolute;
+		inset-inline-end: 1rem;
+		inset-block-start: 1rem;
+		cursor: pointer;
+		transition: scale 0.2s ease-in;
+		max-height: 24px;
+
+		&:hover {
+			scale: 1.2;
+		}
+
+		&:focus-visible {
+			border-color: var(--color-primary);
+			outline: none;
+			box-shadow: 0 0 0 2px var(--color-primary-10);
+			border-radius: 4px;
+		}
+	}
+
+	.components-spinner {
+		width: 24px;
+		height: 24px;
+		margin: 0;
+	}
+}

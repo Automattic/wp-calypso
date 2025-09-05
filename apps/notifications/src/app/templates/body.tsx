@@ -85,7 +85,10 @@ export const ActionBlock = ( { note, goBack }: { note: Note; goBack: () => void 
 	}
 
 	return (
-		<CardFooter size="small">
+		<CardFooter
+			size="small"
+			style={ { position: 'sticky', bottom: 0, background: '#fff', zIndex: 1 } }
+		>
 			<NoteActions note={ note } goBack={ goBack } />
 		</CardFooter>
 	);

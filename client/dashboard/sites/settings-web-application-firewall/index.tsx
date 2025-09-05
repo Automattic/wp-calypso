@@ -1,12 +1,20 @@
-import { HostingFeatures } from '@automattic/api-core';
-import { siteBySlugQuery } from '@automattic/api-queries';
+import { HostingFeatures, JetpackModules } from '@automattic/api-core';
+import {
+	siteBySlugQuery,
+	siteJetpackConnectionQuery,
+	siteJetpackModulesQuery,
+} from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { notFound } from '@tanstack/react-router';
+import { __experimentalText as Text, ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import InlineSupportLink from '../../components/inline-support-link';
+import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
+import { isJetpackModuleAvailable } from '../../utils/site-jetpack-modules';
+import { isSimple } from '../../utils/site-types';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SettingsPageHeader from '../settings-page-header';
 import AllowListForm from './allow-list-form';
@@ -16,10 +24,22 @@ import ProtectForm from './protect-form';
 
 export default function WebApplicationFirewallSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const { data: jetpackModules } = useQuery( {
+		...siteJetpackModulesQuery( site.ID ),
+		enabled: ! isSimple( site ),
+	} );
+	const { data: jetpackConnection } = useQuery( {
+		...siteJetpackConnectionQuery( site.ID ),
+		enabled: ! isSimple( site ),
+	} );
 
 	if ( ! isEnabled( 'dashboard/v2/security-settings' ) ) {
 		throw notFound();
 	}
+
+	const modulesAvailable =
+		isJetpackModuleAvailable( jetpackModules, jetpackConnection, JetpackModules.WAF ) &&
+		isJetpackModuleAvailable( jetpackModules, jetpackConnection, JetpackModules.PROTECT );
 
 	return (
 		<PageLayout
@@ -43,13 +63,33 @@ export default function WebApplicationFirewallSettings( { siteSlug }: { siteSlug
 				feature={ HostingFeatures.SECURITY_SETTINGS }
 				tracksFeatureId="settings-security"
 			>
-				<AutomaticRulesForm site={ site } />
+				{ ! modulesAvailable && (
+					<Notice>
+						<Text as="p">
+							{ createInterpolateElement(
+								__(
+									'The web application firewall (WAF) is disabled because your site is in offline mode. <link>Learn more</link>'
+								),
+								{
+									// @ts-ignore - ExternalLink's children is not missing but it's provided by the createInterpolateElement above.
+									link: <ExternalLink href="https://jetpack.com/support/offline-mode/" />,
+								}
+							) }
+						</Text>
+					</Notice>
+				) }
 
-				<ProtectForm site={ site } />
+				{ modulesAvailable && (
+					<>
+						<AutomaticRulesForm site={ site } />
 
-				<BlockListForm site={ site } />
+						<ProtectForm jetpackModules={ jetpackModules } site={ site } />
 
-				<AllowListForm site={ site } />
+						<BlockListForm site={ site } />
+
+						<AllowListForm site={ site } />
+					</>
+				) }
 			</HostingFeatureGatedWithCallout>
 		</PageLayout>
 	);
