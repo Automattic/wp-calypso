@@ -58,6 +58,10 @@ $blueberry-color: #3858e9;
 	word-break: break-word;
 	column-gap: 0;
 
+	&.is-sending {
+		opacity: 0.5;
+	}
+
 	&.odie-chatbox-message-user {
 		border-radius: 24px 24px 8px 24px;
 		background-color: $gray-200;

@@ -1,3 +1,4 @@
+import { useMutation } from '@tanstack/react-query';
 import Smooch from 'smooch';
 import { useOdieAssistantContext } from '../context';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
@@ -8,31 +9,61 @@ import type { Message } from '../types';
 /**
  * Send a message to the Zendesk conversation.
  */
-export const useSendZendeskMessage = () => {
+export const useSendZendeskMessage = ( signal: AbortSignal ) => {
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const currentConversationId = getConversationIdFromInteraction( currentSupportInteraction );
 
-	const { setChatStatus, chat } = useOdieAssistantContext();
+	const { setChatStatus, chat, setChat } = useOdieAssistantContext();
 	const newConversation = useCreateZendeskConversation();
 
+	// < void, Error, { message: Message; signal: AbortSignal } >
 	const conversationId = currentConversationId || chat.conversationId;
-	return async ( message: Message ) => {
-		setChatStatus( 'sending' );
+	return useMutation( {
+		mutationFn: async ( message: Message ): Promise< Message > => {
+			if ( ! conversationId ) {
+				// Start a new conversation if it doesn't exist
+				await newConversation( { createdFrom: 'send_zendesk_message' } );
+				setChatStatus( 'loaded' );
+				return message;
+			}
 
-		if ( ! conversationId ) {
-			// Start a new conversation if it doesn't exist
-			await newConversation( { createdFrom: 'send_zendesk_message' } );
+			const messageToSend = {
+				type: 'text',
+				text: message.content as string,
+				...( message.payload && { payload: message.payload } ),
+				...( message.metadata && { metadata: message.metadata } ),
+				isSending: true,
+			};
+
+			Smooch.sendMessage( messageToSend, conversationId );
+			const result = await new Promise< Message >( ( resolve, reject ) => {
+				signal.onabort = reject;
+				Smooch.on( 'message:sent', resolve as any );
+			} );
+			return result;
+		},
+		onMutate: () => {
+			setChatStatus( 'sending' );
+		},
+		onSettled: () => {
 			setChatStatus( 'loaded' );
-			return;
-		}
-
-		const messageToSend = {
-			type: 'text',
-			text: message.content as string,
-			...( message.payload && { payload: message.payload } ),
-			...( message.metadata && { metadata: message.metadata } ),
-		};
-		await Smooch.sendMessage( messageToSend, conversationId );
-		setChatStatus( 'loaded' );
-	};
+		},
+		onSuccess: ( data: Message ) => {
+			// Update the chat with the message that was sent
+			setChat( ( chat ) => ( {
+				...chat,
+				messages: chat.messages.map( ( message ) =>
+					message.metadata?.temporary_id === data.metadata?.temporary_id
+						? { ...message, isSending: false }
+						: message
+				),
+			} ) );
+			setChatStatus( 'loaded' );
+		},
+		onError: ( error ) => {
+			if ( error instanceof Event && error.type === 'abort' ) {
+				setChatStatus( 'loaded' );
+			}
+		},
+	} );
 };
