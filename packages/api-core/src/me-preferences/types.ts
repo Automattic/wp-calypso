@@ -15,15 +15,21 @@ export interface HostingDashboardOptIn {
 }
 
 export interface LandingPagePreference {
-	useSitesAsLandingPage?: boolean;
-	useReaderAsLandingPage?: boolean;
-	updatedAt?: number;
+	updatedAt: number;
+}
+
+export interface SitesLandingPage extends LandingPagePreference {
+	useSitesAsLandingPage: boolean;
+}
+
+export interface ReaderLandingPage extends LandingPagePreference {
+	useReaderAsLandingPage: boolean;
 }
 
 export interface UserPreferences {
 	'sites-view'?: SitesViewPreferences;
-	'sites-landing-page'?: LandingPagePreference;
-	'reader-landing-page'?: LandingPagePreference;
+	'sites-landing-page'?: SitesLandingPage;
+	'reader-landing-page'?: ReaderLandingPage;
 	[ key: `hosting-dashboard-overview-storage-notice-dismissed-${ number }` ]: string | undefined; // Timestamp when the user dismissed the notice
 	'hosting-dashboard-opt-in'?: HostingDashboardOptIn;
 }
