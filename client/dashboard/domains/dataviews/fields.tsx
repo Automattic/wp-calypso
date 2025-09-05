@@ -142,9 +142,14 @@ export const useFields = ( {
 			},
 			{
 				id: 'is_primary_domain',
+				label: __( 'Primary' ),
 				getValue: ( { item }: { item: DomainSummary } ) => item.primary_domain,
 				render: ( { field, item } ) =>
-					field.getValue( { item } ) ? <Text>{ __( 'Primary' ) }</Text> : null,
+					field.getValue( { item } ) ? (
+						<Text>{ __( 'Primary' ) }</Text>
+					) : (
+						<Text variant="muted">—</Text>
+					),
 			},
 			{
 				id: 'type',
