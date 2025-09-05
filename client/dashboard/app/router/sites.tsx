@@ -411,6 +411,40 @@ export const siteSettingsAgencyRoute = createRoute( {
 	)
 );
 
+export const siteSettingsMcpRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/mcp',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
+	},
+} ).lazy( () =>
+	import( '../../sites/settings-mcp' ).then( ( d ) => {
+		return createLazyRoute( 'site-settings-mcp' )( {
+			component: () => {
+				return <d.default siteSlug={ siteRoute.useParams().siteSlug } />;
+			},
+		} );
+	} )
+);
+
+export const siteSettingsMcpSetupRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/mcp-setup',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
+	},
+} ).lazy( () =>
+	import( '../../sites/settings-mcp/setup' ).then( ( d ) => {
+		return createLazyRoute( 'site-settings-mcp-setup' )( {
+			component: () => {
+				return <d.default siteSlug={ siteRoute.useParams().siteSlug } />;
+			},
+		} );
+	} )
+);
+
 export const siteSettingsHundredYearPlanRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings/hundred-year-plan',
@@ -641,6 +675,8 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteSettingsWordPressRoute,
 		siteSettingsPHPRoute,
 		siteSettingsAgencyRoute,
+		siteSettingsMcpRoute,
+		siteSettingsMcpSetupRoute,
 		siteSettingsHundredYearPlanRoute,
 		siteSettingsPrimaryDataCenterRoute,
 		siteSettingsStaticFile404Route,

@@ -54,6 +54,7 @@ module.exports = {
 							'!@automattic/ui',
 							'!@automattic/urls',
 							'!@automattic/viewport',
+							'!@automattic/languages',
 							// Please do not add exceptions unless agreed on
 							// with the #architecture group.
 						],
