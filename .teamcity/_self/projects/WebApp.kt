@@ -1028,6 +1028,7 @@ object PlaywrightTestPRMatrix : BuildType({
 
 		bashNodeScript {
 			name = "Upload report to S3"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
 				ARCHIVE_NAME="%build.counter%-%build.vcs.number%-%playwrightProject%"
 				export E2E_SECRETS_KEY="%E2E_SECRETS_ENCRYPTION_KEY_CURRENT%"
