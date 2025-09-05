@@ -5,6 +5,8 @@ import type { UserPreferences } from '@automattic/api-core';
 
 const defaultValues: Required< UserPreferences > = {
 	'sites-view': {},
+	'sites-landing-page': {},
+	'reader-landing-page': {},
 	'hosting-dashboard-opt-in': { value: 'unset', updated_at: '' },
 };
 
