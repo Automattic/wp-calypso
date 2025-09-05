@@ -924,9 +924,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: ( hasSummerSpecialSticker?: boolean ) => [
 		FEATURE_AUDIO_UPLOADS,
-		...( hasSummerSpecialSticker
-			? [ PRODUCT_JETPACK_SCAN, PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY ]
-			: [] ),
+		...( hasSummerSpecialSticker ? [ WPCOM_FEATURES_SCAN, WPCOM_FEATURES_BACKUPS ] : [] ),
 	],
 	getInferiorFeatures: () => [],
 	getCancellationFeatures: () => [
@@ -1536,12 +1534,8 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: ( hasSummerSpecialSticker?: boolean ) => [
 		FEATURE_AUDIO_UPLOADS,
-		WPCOM_FEATURES_SCAN,
 		WPCOM_FEATURES_ANTISPAM,
-		WPCOM_FEATURES_BACKUPS,
-		...( hasSummerSpecialSticker
-			? [ PRODUCT_JETPACK_SCAN, PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY ]
-			: [] ),
+		...( hasSummerSpecialSticker ? [ WPCOM_FEATURES_SCAN, WPCOM_FEATURES_BACKUPS ] : [] ),
 	],
 	getInferiorFeatures: () => [],
 	getCancellationFeatures: () => [
