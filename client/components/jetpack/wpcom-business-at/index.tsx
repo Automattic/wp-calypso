@@ -36,9 +36,12 @@ import {
 	getEligibility,
 	EligibilityData,
 } from 'calypso/state/automated-transfer/selectors';
+import { autoConfigCredentials } from 'calypso/state/jetpack/credentials/actions';
 import { successNotice } from 'calypso/state/notices/actions';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import isRequestingSiteFeatures from 'calypso/state/selectors/is-requesting-site-features';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { initiateThemeTransfer } from 'calypso/state/themes/actions';
@@ -50,6 +53,7 @@ import 'calypso/blocks/eligibility-warnings/style.scss';
 interface BlockingHoldNoticeProps {
 	siteId: number;
 	productName: string;
+	suppressInstallNotice?: boolean;
 }
 
 // This gets the values of the object transferStates.
@@ -90,7 +94,11 @@ const vaultpressContent: AtomicContentSwitch = {
 	getProductUrl: ( siteSlug: string ) => `/backup/${ siteSlug }`,
 };
 
-function BlockingHoldNotice( { siteId, productName }: BlockingHoldNoticeProps ) {
+function BlockingHoldNotice( {
+	siteId,
+	productName,
+	suppressInstallNotice = false,
+}: BlockingHoldNoticeProps ) {
 	const { eligibilityHolds: holds } = useSelector( ( state ) => getEligibility( state, siteId ) );
 	if ( ! holds ) {
 		return null;
@@ -105,10 +113,18 @@ function BlockingHoldNotice( { siteId, productName }: BlockingHoldNoticeProps ) 
 		)
 	);
 
+	// Minimal change: always suppress the transient "Installation in progress" notice
+	// by filtering out TRANSFER_ALREADY_EXISTS from the holds passed to the notice.
+	const filteredHolds = holds.filter( ( h: string ) => h !== 'TRANSFER_ALREADY_EXISTS' );
+
+	const holdsForNotice = suppressInstallNotice
+		? filteredHolds.filter( ( h: string ) => h !== 'TRANSFER_ALREADY_EXISTS' )
+		: filteredHolds;
+
 	return (
 		<HardBlockingNotice
 			translate={ translate }
-			holds={ holds }
+			holds={ holdsForNotice }
 			blockingMessages={ blockingMessages }
 		/>
 	);
@@ -141,6 +157,7 @@ export default function WPCOMBusinessAT( {
 }: { content?: AtomicContentSwitch } = {} ) {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const siteSlug = useSelector( getSelectedSiteSlug ) as string;
+	const rewindState = useSelector( ( state ) => getRewindState( state, siteId ) );
 
 	// Gets the site eligibility data.
 	const isEligible = useSelector( ( state ) => isEligibleForAutomatedTransfer( state, siteId ) );
@@ -164,6 +181,7 @@ export default function WPCOMBusinessAT( {
 	// Gets state to control dialog and continue button.
 	const [ showDialog, setShowDialog ] = useState( false );
 	const onClose = () => setShowDialog( false );
+	const [ isRewindActivating, setIsRewindActivating ] = useState( false );
 
 	// Handles dispatching automated transfer.
 	const dispatch = useDispatch();
@@ -174,6 +192,10 @@ export default function WPCOMBusinessAT( {
 	const trackInitiateAT = useTrackCallback( initiateAT, 'calypso_jetpack_backup_business_at' );
 
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+	const isAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId ) );
+
+	const rewindAtomicDeactivated =
+		isAtomic && ( rewindState as { state?: string } | undefined )?.state === 'unavailable';
 
 	// Check if features are loaded
 	const featuresNotLoaded = useSelector(
@@ -270,7 +292,11 @@ export default function WPCOMBusinessAT( {
 				align="left"
 				brandFont
 			/>
-			<BlockingHoldNotice siteId={ siteId } productName={ content.header } />
+			<BlockingHoldNotice
+				siteId={ siteId }
+				productName={ content.header }
+				suppressInstallNotice={ rewindAtomicDeactivated }
+			/>
 			<TransferFailureNotice
 				transferStatus={ automatedTransferStatus as TransferStatus }
 				productName={ content.header }
@@ -287,10 +313,21 @@ export default function WPCOMBusinessAT( {
 						loadingText={ content.primaryPromo.promoCTA.loadingText }
 						loading={
 							automatedTransferStatus === START ||
-							( automatedTransferStatus === COMPLETE && ! isJetpack )
+							( automatedTransferStatus === COMPLETE && ! isJetpack ) ||
+							isRewindActivating
 						}
-						onClick={ initiateATOrShowWarnings }
-						disabled={ cannotInitiateTransfer }
+						onClick={ () => {
+							if ( rewindAtomicDeactivated ) {
+								setIsRewindActivating( true );
+								dispatch( autoConfigCredentials( siteId ) );
+								page( content.getProductUrl( siteSlug ) );
+								return;
+							}
+							initiateATOrShowWarnings();
+						} }
+						disabled={
+							( cannotInitiateTransfer && ! rewindAtomicDeactivated ) || isRewindActivating
+						}
 					/>
 				</div>
 			</PromoCard>
