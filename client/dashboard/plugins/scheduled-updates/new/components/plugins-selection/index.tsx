@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import { DataViewsCard } from '../../../../../components/dataviews-card';
 import { DataViewsEmptyState } from '../../../../../components/dataviews-empty-state';
-import { useEligiblePlugins } from '../../hooks/use-eligible-plugins';
+import { useEligiblePlugins } from '../../../hooks/use-eligible-plugins';
 
 export type PluginRow = { id: string; name: string };
 
