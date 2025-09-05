@@ -179,7 +179,7 @@ export class HelpCenterComponent {
 				},
 				{ timeout: 15 * 1000 }
 			),
-			this.popup.getByPlaceholder( 'Search for help' ).fill( query ),
+			this.popup.getByPlaceholder( 'Search guides…' ).fill( query ),
 		] );
 
 		await this.popup.locator( '.placeholder-lines__help-center' ).waitFor( { state: 'detached' } );
