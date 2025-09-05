@@ -1,4 +1,4 @@
-import { DomainTypes, DomainTransferStatus, DomainSubtype } from '@automattic/api-core';
+import { DomainTransferStatus, DomainSubtype } from '@automattic/api-core';
 import { userPurchasesQuery, siteSetPrimaryDomainMutation } from '@automattic/api-queries';
 import { useMyDomainInputMode } from '@automattic/domains-table/src/utils/constants';
 import { isFreeUrlDomainName } from '@automattic/domains-table/src/utils/is-free-url-domain-name';
@@ -94,8 +94,7 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 					window.location.pathname = domainManagementLink( domain, siteSlug, false );
 				},
 				isEligible: ( item: DomainSummary ) => {
-					// What is DomainSubtype equivalent to DomainTypes.WPCOM?
-					return item.type !== DomainTypes.WPCOM;
+					return item.subtype.id !== DomainSubtype.DEFAULT_ADDRESS;
 				},
 			},
 			{

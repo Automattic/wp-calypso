@@ -1,4 +1,4 @@
-import { DomainTypes, DomainSubtype } from '@automattic/api-core';
+import { DomainSubtype } from '@automattic/api-core';
 import { dateI18n } from '@wordpress/date';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
