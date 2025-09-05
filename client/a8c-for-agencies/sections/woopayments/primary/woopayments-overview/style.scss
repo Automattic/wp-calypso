@@ -5,6 +5,8 @@
 $woocommerce-purple-0: #F2EDFF;
 $woocommerce-purple-5: #E1D7FF;
 $woocommerce-purple-40: #873EFF;
+$woocommerce-purple-50: #720EEC;
+$alt-color: #FAF7F3;
 
 .woopayments-overview {
 	.hosting-dashboard-layout__header-actions {
@@ -48,6 +50,30 @@ $woocommerce-purple-40: #873EFF;
 	}
 }
 
+.woopayments-overview__revenue-share-section {
+	.page-section-column__content {
+		height: 100%;
+	}
+}
+
+.woopayments-overview__revenue-share-container {
+	padding: 24px;
+	background-color: $alt-color;
+	height: 100%;
+
+	.woopayments-overview__list .simple-list-icon {
+		fill: #000;
+	}
+}
+
+.woopayments-overview__revenue-share-icon {
+	margin-block-end: 12px;
+
+	img {
+		max-width: 45px;
+	}
+}
+
 .woopayments-overview__revenue-share-subheading {
 	font-weight: 600;
 }
@@ -80,6 +106,12 @@ a.components-button.woopayments-overview__button {
 	}
 }
 
+.woopayments-overview__list {
+	.simple-list-icon {
+		fill: $woocommerce-purple-50;
+	}
+}
+
 .woopayments-overview__buttons-container {
 	display: flex;
 	flex-direction: column;
@@ -100,34 +132,34 @@ a.components-button.woopayments-overview__button {
 }
 
 .woopayments-overview__commissions-table {
-	@include body-small;
-	background-color: $white;
+	background-color: $alt-color;
 	width: 100%;
-	border: 1px solid $woocommerce-purple-5;
+	border: none;
 	border-radius: 4px;
+	border-collapse: collapse;
 
 	th,
 	td {
-		padding: 10px 12px; border: 0;
+		padding: 10px 12px;
+		border: 1px solid $woocommerce-purple-0;
 	}
 
-	tr > *:not( :last-child ) {
-		border-right: 1px solid $woocommerce-purple-0;
+	th:first-child,
+	td:first-child {
+		border-left: none;
 	}
 
-	thead {
-		th {
-			border-bottom: 1px solid $woocommerce-purple-0;
-		}
+	th:last-child,
+	td:last-child {
+		border-right: none;
 	}
 
-	tbody {
-		tr {
-			&:not(:last-child) {
-				> * {
-					border-bottom: 1px solid $woocommerce-purple-0;
-				}
-			}
-		}
+	tr:first-child th,
+	tr:first-child td {
+		border-top: none;
+	}
+
+	tr:last-child td {
+		border-bottom: none;
 	}
 }

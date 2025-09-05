@@ -11,16 +11,19 @@ import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar
 import { A4A_WOOPAYMENTS_DASHBOARD_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
 import { extractStrings } from 'calypso/a8c-for-agencies/lib/translation';
-import backgroundImage1 from 'calypso/assets/images/a8c-for-agencies/woopayments/background-image-1.svg';
 import cartImage from 'calypso/assets/images/a8c-for-agencies/woopayments/cart.png';
 import ccImage from 'calypso/assets/images/a8c-for-agencies/woopayments/cc-image.png';
 import demoImage from 'calypso/assets/images/a8c-for-agencies/woopayments/demo.png';
+import earnMoreImage from 'calypso/assets/images/a8c-for-agencies/woopayments/earn-more.png';
+import iconStorePlus from 'calypso/assets/images/a8c-for-agencies/woopayments/icon-store-plus.png';
+import iconStore from 'calypso/assets/images/a8c-for-agencies/woopayments/icon-store.png';
 import wooPaymentsLogo from 'calypso/assets/images/a8c-for-agencies/woopayments/logo.svg';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 	LayoutHeaderActions as Actions,
 } from 'calypso/layout/hosting-dashboard/header';
+import { preventWidows } from 'calypso/lib/formatting';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -258,8 +261,10 @@ const WooPaymentsOverview = () => {
 									{ translate( "Transform Your Clients' Success Into Real Agency Revenue" ) }
 								</div>
 								<div className="woopayments-overview__description">
-									{ translate(
-										'As an Automattic for Agencies partner, every WooPayments transaction creates new earning potential for your business. Unlock exclusive, built-in commissions just for helping your clients grow—whether you’re onboarding new stores or deepening relationships with those you already support'
+									{ preventWidows(
+										translate(
+											"As an Automattic for Agencies partner, every WooPayments transaction creates new earning potential for your business. Unlock exclusive, built-in commissions just for helping your clients grow—whether you're onboarding new stores or deepening relationships with those you already support."
+										)
 									) }
 								</div>
 							</div>
@@ -272,22 +277,63 @@ const WooPaymentsOverview = () => {
 				</PageSectionColumns>
 
 				<PageSectionColumns
-					heading={ translate( 'How revenue share works' ) }
+					heading={ translate( 'Earn more from every project' ) }
 					background={ {
-						image: backgroundImage1,
-						color: '#F2EDFF',
-						size: 'auto',
+						color: '#FAF7F3',
 					} }
 				>
 					<PageSectionColumns.Column>
+						<div className="woopayments-overview__content">
+							<div>
+								<div className="woopayments-overview__description">
+									{ preventWidows(
+										translate(
+											"Every client you serve with WooPayments can help accelerate your agency's revenue. Simply connect the Automattic for Agencies plugin once WooPayments is active, and we’ll take care of the rest."
+										)
+									) }
+								</div>
+							</div>
+							<div className="woopayments-overview__buttons-container">
+								<Button
+									__next40pxDefaultSize
+									href="https://automattic.com/for-agencies/program-incentives"
+									target="_blank"
+									rel="noopener noreferrer"
+									className="woopayments-overview__button"
+									onClick={ () => {
+										dispatch(
+											recordTracksEvent( 'calypso_a4a_woopayments_view_details_button_click' )
+										);
+									} }
+								>
+									{ translate( 'View details and start earning ↗' ) }
+								</Button>
+							</div>
+						</div>
+					</PageSectionColumns.Column>
+					<PageSectionColumns.Column alignCenter>
+						<img src={ earnMoreImage } alt="{ translate( 'Earn more from every project' ) }" />
+					</PageSectionColumns.Column>
+				</PageSectionColumns>
+
+				<PageSectionColumns
+					className="woopayments-overview__revenue-share-section"
+					heading={ translate( 'How revenue share works' ) }
+				>
+					<PageSectionColumns.Column>
 						<>
-							<div className="woopayments-overview__description">
+							<div className="woopayments-overview__description woopayments-overview__revenue-share-container">
+								<div className="woopayments-overview__revenue-share-icon">
+									<img src={ iconStorePlus } alt="Revenue Share" />
+								</div>
 								<div className="woopayments-overview__revenue-share-subheading">
 									{ translate( 'For new WooPayments clients you help launch' ) }
 								</div>
 								<div>
-									{ translate(
-										'Earn a generous 5 basis points (bps) revenue share on all Total Payments Volume (TPV) processed on client sites you onboard after joining Automattic for Agencies.'
+									{ preventWidows(
+										translate(
+											'Earn a generous 5 basis points (bps) revenue share on all Total Payments Volume (TPV) processed on client sites you onboard after joining Automattic for Agencies.'
+										)
 									) }
 								</div>
 							</div>
@@ -295,7 +341,10 @@ const WooPaymentsOverview = () => {
 					</PageSectionColumns.Column>
 					<PageSectionColumns.Column>
 						<>
-							<div className="woopayments-overview__description">
+							<div className="woopayments-overview__description woopayments-overview__revenue-share-container">
+								<div className="woopayments-overview__revenue-share-icon">
+									<img src={ iconStore } alt="Revenue Share" />
+								</div>
 								<div className="woopayments-overview__revenue-share-subheading">
 									{ translate( 'For existing WooPayments clients you already manage' ) }
 								</div>
@@ -305,15 +354,16 @@ const WooPaymentsOverview = () => {
 									) }
 								</div>
 								<div>
-									<ul>
-										<li>{ translate( '$1M+ in annual TPV: 3 bps revenue share' ) }</li>
-										<li>{ translate( '$500k-$1M in annual TPV: 2 bps revenue share' ) }</li>
-										<li>
-											{ translate(
+									<SimpleList
+										className="woopayments-overview__list"
+										items={ [
+											translate( '$1M+ in annual TPV: 3 bps revenue share' ),
+											translate( '$500k-$1M in annual TPV: 2 bps revenue share' ),
+											translate(
 												'Connect eligible stores to A4A within 30 days of joining to participate in these tiers.'
-											) }
-										</li>
-									</ul>
+											),
+										] }
+									/>
 								</div>
 							</div>
 						</>
@@ -371,38 +421,16 @@ const WooPaymentsOverview = () => {
 										}
 									) }
 								</div>
-								<div>
-									{ translate(
-										"Every client you serve with WooPayments can help accelerate your agency's revenue. {{br/}}Simply connect the Automattic for Agencies plugin once WooPayments is active, and we'll take care of the rest.",
-										{
-											components: {
-												br: <br />,
-											},
-										}
-									) }
-								</div>
-								<div className="woopayments-overview__buttons-container">
-									<Button
-										__next40pxDefaultSize
-										href="https://automattic.com/for-agencies/program-incentives"
-										target="_blank"
-										rel="noopener noreferrer"
-										className="woopayments-overview__button"
-										onClick={ () => {
-											dispatch(
-												recordTracksEvent( 'calypso_a4a_woopayments_view_details_button_click' )
-											);
-										} }
-									>
-										{ translate( 'View details and start earning ↗' ) }
-									</Button>
-								</div>
 							</div>
 						</>
 					</PageSectionColumns.Column>
 				</PageSectionColumns>
 
-				<PageSectionColumns>
+				<PageSectionColumns
+					background={ {
+						color: '#F1F1F2',
+					} }
+				>
 					<PageSectionColumns.Column heading={ translate( 'About WooPayments' ) }>
 						<div className="woopayments-overview__description">
 							<div>
@@ -439,7 +467,7 @@ const WooPaymentsOverview = () => {
 						</>
 					}
 					background={ {
-						color: '#F2EDFF',
+						color: '#FAF7F3',
 					} }
 				>
 					<PageSectionColumns.Column>

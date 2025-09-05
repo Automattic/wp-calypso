@@ -34,9 +34,15 @@ interface PageSectionColumnsProps {
 	heading?: ReactNode;
 	children: ReactNode;
 	background?: SectionBackground;
+	className?: string;
 }
 
-const PageSectionColumns = ( { heading, children, background }: PageSectionColumnsProps ) => {
+const PageSectionColumns = ( {
+	heading,
+	children,
+	background,
+	className,
+}: PageSectionColumnsProps ) => {
 	const isNarrowView = useBreakpoint( '<960px' );
 
 	const backgroundImageUrl =
@@ -44,7 +50,7 @@ const PageSectionColumns = ( { heading, children, background }: PageSectionColum
 
 	return (
 		<div
-			className={ clsx( 'page-section-columns', {
+			className={ clsx( 'page-section-columns', className, {
 				'is-dark-background': background?.isDarkBackground,
 			} ) }
 			style={ {
