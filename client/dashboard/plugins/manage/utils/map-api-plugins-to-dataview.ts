@@ -28,11 +28,11 @@ export function mapApiPluginsToDataViewPlugins( response?: PluginsResponse ): Pl
 	Object.entries( sites ).forEach( ( [ siteIdStr, plugins ] ) => {
 		const siteId = Number( siteIdStr );
 		( plugins as PluginItem[] ).forEach( ( p ) => {
-			if ( ! p.slug ) {
+			if ( ! p.id ) {
 				return;
 			}
 
-			const entry: Aggregated = map.get( p.slug ) || {
+			const entry: Aggregated = map.get( p.id ) || {
 				name: p.name || p.slug,
 				count: 0,
 				activeCount: 0,
