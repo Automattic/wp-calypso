@@ -96,7 +96,7 @@ const makeRequest = ( originalParams, fn ) => {
 
 	// generate a uuid for this API request
 	const id = crypto.randomUUID();
-	params.callback = id;
+	params.callback = params.callback || id;
 	params.supports_args = true; // supports receiving variable amount of arguments
 	params.supports_error_obj = true; // better Error object info
 	params.supports_progress = true; // supports receiving XHR "progress" events

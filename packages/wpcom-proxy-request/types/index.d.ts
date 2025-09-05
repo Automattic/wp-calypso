@@ -5,6 +5,11 @@
  * for inspiration, e.g. `@automattic/data-stores`.)
  */
 
+export interface WpcomRequestParamsAbort {
+	abort: true;
+	callback: string;
+}
+
 export interface WpcomRequestParams {
 	path?: string;
 	method?: string;
@@ -29,5 +34,6 @@ export function requestAllBlogsAccess(): ReturnType< typeof request >;
 export default function request(
 	params: WpcomRequestParams,
 	callback: ( err: unknown, body: unknown, headers: unknown ) => void
-): XMLHttpRequest;
+): XMLHttpRequest & { params: Record< string, unknown > };
 export default function request< T >( params: WpcomRequestParams ): Promise< T >;
+export default function request( params: WpcomRequestParamsAbort ): void;
