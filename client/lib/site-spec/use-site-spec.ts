@@ -2,9 +2,6 @@ import { useEffect } from 'react';
 import { loadSiteSpecScriptAndCSS, resetSiteSpecScriptState } from './script-loader';
 import { getSiteSpecConfig, isSiteSpecEnabled } from './utils';
 
-/**
- * TypeScript declaration for SiteSpec
- */
 declare global {
 	interface Window {
 		SiteSpec?: {
@@ -21,108 +18,80 @@ declare global {
 }
 
 /**
- * Custom hook for loading and managing SiteSpec resources
- *
- * This hook handles:
- * - Loading SiteSpec CSS and JavaScript only when needed
- * - Initializing the SiteSpec widget when ready
- * - Cleaning up resources when component unmounts
- * - Preventing duplicate script loading
- * @param options - Configuration options for the hook
- * @param options.container - Container selector for the widget (default: '#site-spec-container')
- * @param options.onMessage - Message handler callback
- * @param options.onError - Error handler callback
+ * Track which containers we’ve initialized to avoid double-init.
  */
-export function useSiteSpec(
-	options: {
-		container?: string;
-		onMessage?: ( message: unknown ) => void;
-		onError?: ( error: unknown ) => void;
-	} = {}
-) {
+const initialized = new WeakSet< HTMLElement >();
+
+function resolveContainer( target: string | HTMLElement ): HTMLElement | null {
+	if ( typeof target === 'string' ) {
+		return document.querySelector( target ) as HTMLElement | null;
+	}
+	return target ?? null;
+}
+
+type UseSiteSpecOptions = {
+	container?: string | HTMLElement;
+	onMessage?: ( message: unknown ) => void;
+	onError?: ( error: unknown ) => void;
+};
+
+/**
+ * Loads SiteSpec assets (CSS/JS) and initializes the widget once.
+ * Cleans up global loader state on unmount.
+ */
+export function useSiteSpec( options: UseSiteSpecOptions = {} ) {
 	const { container = '#site-spec-container', onMessage, onError } = options;
 
-	/**
-	 * Load SiteSpec resources on mount and cleanup on unmount
-	 */
 	useEffect( () => {
-		// Only load if SiteSpec is enabled
-		if ( ! isSiteSpecEnabled() ) {
-			// eslint-disable-next-line no-console
-			console.log( 'SiteSpec is not enabled' );
+		// SSR/Non-browser guard
+		if ( typeof window === 'undefined' || typeof document === 'undefined' ) {
 			return;
 		}
 
-		// Use the existing script-loader function
+		if ( ! isSiteSpecEnabled() ) {
+			return;
+		}
+
+		let containerEl: HTMLElement | null = null;
+
 		loadSiteSpecScriptAndCSS()
 			.then( () => {
-				// eslint-disable-next-line no-console
-				console.log( 'SiteSpec resources loaded successfully' );
+				if ( ! window.SiteSpec?.init ) {
+					throw new Error( 'SiteSpec init function is not available after loading.' );
+				}
+
+				containerEl = resolveContainer( container );
+				if ( ! containerEl ) {
+					return;
+				}
+
+				// Idempotency: skip if we've already initialized this container
+				// or if the app markup already exists.
+				if ( initialized.has( containerEl ) || containerEl.querySelector( '.site-spec-app' ) ) {
+					return;
+				}
+
+				window.SiteSpec.init( {
+					container: containerEl,
+					...getSiteSpecConfig(),
+					onMessage,
+					onError,
+				} );
+
+				initialized.add( containerEl );
 			} )
-			.catch( ( error ) => {
-				// eslint-disable-next-line no-console
-				console.error( 'Failed to load SiteSpec resources:', error );
+			.catch( () => {
+				// Error is handled by the onError callback if provided
+				// or silently ignored if no error handler is set
 			} );
 
-		// Cleanup on unmount
 		return () => {
+			if ( containerEl ) {
+				initialized.delete( containerEl );
+			}
+			// If the loader manages a global "loaded" flag, reset it so
 			resetSiteSpecScriptState();
 		};
-	}, [] );
-
-	/**
-	 * Initialize SiteSpec widget when script is loaded
-	 */
-	useEffect( () => {
-		const initializeSiteSpec = () => {
-			try {
-				// Initialize SiteSpec when available
-				if ( window.SiteSpec?.init ) {
-					const containerElement = document.querySelector( container );
-					if ( containerElement && containerElement.querySelector( '.site-spec-app' ) ) {
-						// eslint-disable-next-line no-console
-						console.log( 'SiteSpec already initialized on this container' );
-						return;
-					}
-					// Use the DOM element directly
-					window.SiteSpec.init( {
-						container: containerElement as HTMLElement,
-						...getSiteSpecConfig(),
-						onMessage,
-						onError,
-					} );
-					// eslint-disable-next-line no-console
-					console.log( 'SiteSpec initialized successfully' );
-				}
-			} catch ( error ) {
-				// eslint-disable-next-line no-console
-				console.error( 'Failed to initialize SiteSpec:', error );
-			}
-		};
-
-		// Check if SiteSpec is already available
-		if ( window.SiteSpec?.init ) {
-			initializeSiteSpec();
-		} else {
-			// Wait for script to load
-			const checkInterval = setInterval( () => {
-				if ( window.SiteSpec?.init ) {
-					clearInterval( checkInterval );
-					initializeSiteSpec();
-				}
-			}, 100 );
-
-			// Cleanup interval after 10 seconds
-			const timeout = setTimeout( () => {
-				clearInterval( checkInterval );
-			}, 10000 );
-
-			return () => {
-				clearInterval( checkInterval );
-				clearTimeout( timeout );
-			};
-		}
+		// Re-run only if the container target or handlers change.
 	}, [ container, onMessage, onError ] );
-
-	// Hook doesn't need to return anything since it handles everything internally
 }
