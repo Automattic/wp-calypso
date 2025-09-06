@@ -3,7 +3,7 @@ import { __experimentalHStack as HStack, Button, Icon } from '@wordpress/compone
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { pages } from '@wordpress/icons';
-import { StepName, StepType } from './types';
+import { StepName, StepType } from '../types';
 
 type SwitchSetupProps = {
 	currentStepType: StepType;

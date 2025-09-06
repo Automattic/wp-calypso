@@ -1,5 +1,9 @@
-import { DomainConnectionSetupMode } from '@automattic/api-core';
-import { domainConnectionSetupInfoQuery, domainQuery } from '@automattic/api-queries';
+import { DomainAvailabilityStatus, DomainConnectionSetupMode } from '@automattic/api-core';
+import {
+	domainAvailabilityQuery,
+	domainConnectionSetupInfoQuery,
+	domainQuery,
+} from '@automattic/api-queries';
 import { isSubdomain } from '@automattic/domain-search';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import {
@@ -12,7 +16,8 @@ import { useState } from 'react';
 import { domainRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import SwitchSetup from './switsh-setup';
+import Progress from './components/progress';
+import SwitchSetup from './components/switch-setup';
 import {
 	connectADomainDomainConnectionStepsMap,
 	connectASubdomainDomainConnectionStepsMap,
@@ -57,9 +62,8 @@ export default function DomainConnectionSetup() {
 	const stepsDefinition: DomainConnectionStepsMap = isSubdomain( domainName )
 		? connectASubdomainDomainConnectionStepsMap
 		: connectADomainDomainConnectionStepsMap;
-
-	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const { initialStep: intialStepName } = domainRoute.useSearch();
+	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const { data: domainConnectionSetupInfo } = useSuspenseQuery(
 		domainConnectionSetupInfoQuery(
 			domainName,
@@ -67,6 +71,10 @@ export default function DomainConnectionSetup() {
 			`https://wordpress.com/v2/domains/${ domainName }/domain-connection-setup`
 		)
 	);
+	const { data: availability } = useSuspenseQuery( domainAvailabilityQuery( domainName ) );
+
+	const isConnectSupported = availability.mappable === DomainAvailabilityStatus.MAPPABLE;
+	const rootDomainProvider = availability.root_domain_provider;
 
 	const firstStepName = isSubdomain( domainName )
 		? StepName.SUBDOMAIN_SUGGESTED_START
@@ -99,7 +107,7 @@ export default function DomainConnectionSetup() {
 	};
 
 	const showProgress = Object.keys(
-		getProgressStepList( domainConnectionSetupInfo.connection_mode, stepsDefinition )
+		getProgressStepList( currentStep.mode, stepsDefinition )
 	).includes( currentStepName );
 
 	const StepsComponent = currentStep.component;
@@ -113,6 +121,12 @@ export default function DomainConnectionSetup() {
 					</Button>
 				</HStack>
 			) }
+			{ showProgress && (
+				<Progress
+					steps={ getProgressStepList( currentStep.mode, stepsDefinition ) }
+					currentStepName={ currentStepName }
+				/>
+			) }
 			<VStack>
 				<StepsComponent
 					domainName={ domainName }
@@ -120,6 +134,8 @@ export default function DomainConnectionSetup() {
 					mode={ currentStep.mode }
 					onNextStep={ setNextStepName }
 					setPage={ setCurrentStepName }
+					isConnectSupported={ isConnectSupported }
+					rootDomainProvider={ rootDomainProvider }
 				/>
 				<SwitchSetup
 					currentStepType={ currentStep.step }
@@ -128,7 +144,6 @@ export default function DomainConnectionSetup() {
 					isSubdomain={ isSubdomain( domainName ) }
 					setPage={ setCurrentStepName }
 				/>
-				{ showProgress && <>Show progress</> }
 			</VStack>
 		</PageLayout>
 	);

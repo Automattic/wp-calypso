@@ -83,7 +83,9 @@ export default function SuggestedStart( {
 												) }
 											</Text>
 											<HStack justify="flex-start">
-												<Button variant="secondary">{ __( 'Switch to advanced setup' ) }</Button>
+												<Button variant="secondary" onClick={ switchToAdvancedSetup }>
+													{ __( 'Switch to advanced setup' ) }
+												</Button>
 											</HStack>
 										</VStack>
 									</VStack>

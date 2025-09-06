@@ -55,17 +55,21 @@ export type DomainConnectionStepComponentProps = {
 	// progressStepList: StepType[];
 	onNextStep: () => void;
 	setPage: ( stepName: StepName ) => void;
+	isConnectSupported: boolean;
+	rootDomainProvider: string;
 };
 
 export type DomainConnectionStep = {
 	mode: DomainConnectionSetupMode;
 	step: StepType;
-	name?: () => string;
+	name?: string;
 	component: React.ComponentType< DomainConnectionStepComponentProps >;
 	next?: StepName;
 	prev?: StepName;
 	singleColumnLayout?: boolean;
 };
+
+export type DomainConnectionProgressStepList = Partial< Record< StepName, string > >;
 
 export type DomainConnectionStepsMap = Partial< Record< StepName, DomainConnectionStep > >;
 
@@ -80,7 +84,9 @@ export const connectADomainDomainConnectionStepsMap: DomainConnectionStepsMap = 
 	[ StepName.SUGGESTED_LOGIN ]: {
 		mode: DomainConnectionSetupMode.SUGGESTED,
 		step: StepType.LOG_IN_TO_PROVIDER,
-		name: () => __( 'Log in to provider' ),
+		get name() {
+			return __( 'Log in to provider' );
+		},
 		component: ConnectDomainStepLogin,
 		next: StepName.SUGGESTED_UPDATE,
 		prev: StepName.SUGGESTED_START,
@@ -88,7 +94,9 @@ export const connectADomainDomainConnectionStepsMap: DomainConnectionStepsMap = 
 	[ StepName.SUGGESTED_UPDATE ]: {
 		mode: DomainConnectionSetupMode.SUGGESTED,
 		step: StepType.UPDATE_NAME_SERVERS,
-		name: () => __( 'Update name servers' ),
+		get name() {
+			return __( 'Update name servers' );
+		},
 		component: ConnectDomainStepSuggestedStart,
 		prev: StepName.SUGGESTED_LOGIN,
 	},
@@ -118,7 +126,9 @@ export const connectADomainDomainConnectionStepsMap: DomainConnectionStepsMap = 
 	[ StepName.ADVANCED_LOGIN ]: {
 		mode: DomainConnectionSetupMode.ADVANCED,
 		step: StepType.LOG_IN_TO_PROVIDER,
-		name: () => __( 'Log in to provider' ),
+		get name() {
+			return __( 'Log in to provider' );
+		},
 		component: ConnectDomainStepSuggestedStart,
 		next: StepName.ADVANCED_UPDATE,
 		prev: StepName.ADVANCED_START,
@@ -126,7 +136,9 @@ export const connectADomainDomainConnectionStepsMap: DomainConnectionStepsMap = 
 	[ StepName.ADVANCED_UPDATE ]: {
 		mode: DomainConnectionSetupMode.ADVANCED,
 		step: StepType.UPDATE_A_RECORDS,
-		name: () => __( 'Update root A records & CNAME record' ),
+		get name() {
+			return __( 'Update root A records & CNAME record' );
+		},
 		component: ConnectDomainStepSuggestedStart,
 		prev: StepName.ADVANCED_LOGIN,
 	},
@@ -171,7 +183,9 @@ export const connectASubdomainDomainConnectionStepsMap: DomainConnectionStepsMap
 	[ StepName.SUBDOMAIN_SUGGESTED_LOGIN ]: {
 		mode: DomainConnectionSetupMode.SUGGESTED,
 		step: StepType.LOG_IN_TO_PROVIDER,
-		name: () => __( 'Log in to provider' ),
+		get name() {
+			return __( 'Log in to provider' );
+		},
 		component: ConnectDomainStepSuggestedStart,
 		next: StepName.SUBDOMAIN_SUGGESTED_UPDATE,
 		prev: StepName.SUBDOMAIN_SUGGESTED_START,
@@ -179,7 +193,9 @@ export const connectASubdomainDomainConnectionStepsMap: DomainConnectionStepsMap
 	[ StepName.SUBDOMAIN_SUGGESTED_UPDATE ]: {
 		mode: DomainConnectionSetupMode.SUGGESTED,
 		step: StepType.UPDATE_NS_RECORDS,
-		name: () => __( 'Update NS records' ),
+		get name() {
+			return __( 'Update NS records' );
+		},
 		component: ConnectDomainStepSuggestedStart,
 		prev: StepName.SUBDOMAIN_SUGGESTED_LOGIN,
 	},
@@ -209,7 +225,9 @@ export const connectASubdomainDomainConnectionStepsMap: DomainConnectionStepsMap
 	[ StepName.SUBDOMAIN_ADVANCED_LOGIN ]: {
 		mode: DomainConnectionSetupMode.ADVANCED,
 		step: StepType.LOG_IN_TO_PROVIDER,
-		name: () => __( 'Log in to provider' ),
+		get name() {
+			return __( 'Log in to provider' );
+		},
 		component: ConnectDomainStepSuggestedStart,
 		next: StepName.SUBDOMAIN_ADVANCED_UPDATE,
 		prev: StepName.SUBDOMAIN_ADVANCED_START,
@@ -217,7 +235,9 @@ export const connectASubdomainDomainConnectionStepsMap: DomainConnectionStepsMap
 	[ StepName.SUBDOMAIN_ADVANCED_UPDATE ]: {
 		mode: DomainConnectionSetupMode.ADVANCED,
 		step: StepType.UPDATE_CNAME_RECORDS,
-		name: () => __( 'Update A & CNAME records' ),
+		get name() {
+			return __( 'Update A & CNAME records' );
+		},
 		component: ConnectDomainStepSuggestedStart,
 		prev: StepName.SUBDOMAIN_ADVANCED_LOGIN,
 	},
