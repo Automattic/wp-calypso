@@ -4,8 +4,9 @@ import { HelpCenterSelect } from '@automattic/data-stores';
 import { EmailFallbackNotice } from '@automattic/help-center/src/components/notices';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useSelect } from '@wordpress/data';
-import { useCallback, useRef, useState } from '@wordpress/element';
+import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import Smooch from 'smooch';
 import { useOdieAssistantContext } from '../../context';
 import { useSendChatMessage } from '../../hooks';
 import { Message } from '../../types';
@@ -47,6 +48,16 @@ export const OdieSendMessageButton = () => {
 		};
 	}, [] );
 
+	useEffect( () => {
+		if ( isLiveChat ) {
+			if ( inputValue.length > 0 ) {
+				Smooch.startTyping();
+			} else {
+				Smooch.stopTyping();
+			}
+		}
+	}, [ inputValue, isLiveChat ] );
+
 	const {
 		handleImagePaste,
 		attachmentAction,
@@ -54,6 +65,22 @@ export const OdieSendMessageButton = () => {
 		showAttachmentButton,
 		AttachmentDropZone,
 	} = useAttachmentHandler();
+
+	useEffect( () => {
+		function handleBlur() {
+			Smooch.stopTyping();
+		}
+		if ( isLiveChat ) {
+			const textarea = textareaRef.current;
+			if ( textarea ) {
+				textarea.addEventListener( 'blur', handleBlur );
+
+				return () => {
+					textarea.removeEventListener( 'blur', handleBlur );
+				};
+			}
+		}
+	}, [ textareaRef, isLiveChat ] );
 
 	const textAreaPlaceholder = getTextAreaPlaceholder( isChatBusy, cantTransferToZendesk );
 
@@ -68,6 +95,8 @@ export const OdieSendMessageButton = () => {
 		// Immediately clear the input field
 		if ( chat?.provider === 'odie' ) {
 			setInputValue( '' );
+		} else if ( chat.conversationId ) {
+			Smooch.stopTyping();
 		}
 
 		try {
@@ -99,7 +128,7 @@ export const OdieSendMessageButton = () => {
 		} finally {
 			textareaRef.current?.focus();
 		}
-	}, [ inputValue, isChatBusy, chat?.provider, sendMessage, trackEvent ] );
+	}, [ inputValue, isChatBusy, chat?.provider, sendMessage, trackEvent, chat.conversationId ] );
 
 	const isEmailFallback = chat?.provider === 'zendesk' && forceEmailSupport;
 
