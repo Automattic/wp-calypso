@@ -1,9 +1,9 @@
 import { __experimentalHStack as HStack, Icon } from '@wordpress/components';
 import { check } from '@wordpress/icons';
-import type { DomainConnectionProgressStepList, StepName } from '../types';
+import type { ProgressStepList, StepName } from '../types';
 
 interface ProgressProps {
-	steps: DomainConnectionProgressStepList;
+	steps: ProgressStepList;
 	currentStepName: StepName;
 }
 

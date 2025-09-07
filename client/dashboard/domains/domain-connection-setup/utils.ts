@@ -2,12 +2,7 @@ import { DomainConnectionSetupMode, DomainMappingStatus } from '@automattic/api-
 import { isSubdomain } from '@automattic/domain-search';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import {
-	StepType,
-	StepName,
-	DomainConnectionStepsMap,
-	DomainConnectionProgressStepList,
-} from './types';
+import { StepType, StepName, DomainConnectionStepsMap, ProgressStepList } from './types';
 
 export const getStepName = (
 	mode: DomainConnectionSetupMode,
@@ -15,7 +10,7 @@ export const getStepName = (
 	stepsDefinition: DomainConnectionStepsMap
 ) => {
 	const matchingEntry = Object.entries( stepsDefinition ).find( ( [ , pageDefinition ] ) => {
-		return pageDefinition.mode === mode && pageDefinition.step === step;
+		return pageDefinition.mode === mode && pageDefinition.stepType === step;
 	} );
 	return matchingEntry?.[ 0 ] as StepName | undefined;
 };
@@ -23,7 +18,7 @@ export const getStepName = (
 export const getProgressStepList = (
 	mode: DomainConnectionSetupMode,
 	stepsDefinition: DomainConnectionStepsMap
-): DomainConnectionProgressStepList => {
+): ProgressStepList => {
 	const modeSteps = Object.fromEntries(
 		Object.entries( stepsDefinition ).filter(
 			( [ , pageDefinition ] ) => pageDefinition.mode === mode
@@ -31,7 +26,7 @@ export const getProgressStepList = (
 	);
 
 	let step = Object.values( modeSteps ).find(
-		( pageDefinition ) => pageDefinition.step === StepType.START
+		( pageDefinition ) => pageDefinition.stepType === StepType.START
 	);
 
 	const stepList = [];

@@ -162,6 +162,7 @@ export default function DomainConnectionSetup() {
 				<StepsComponent
 					domainName={ domainName }
 					stepName={ currentStepName }
+					stepType={ currentStep.stepType }
 					mode={ currentStep.mode }
 					onNextStep={ setNextStepName }
 					setPage={ setCurrentStepName }
@@ -177,7 +178,7 @@ export default function DomainConnectionSetup() {
 				/>
 				{ /* Add support link */ }
 				<SwitchSetup
-					currentStepType={ currentStep.step }
+					currentStepType={ currentStep.stepType }
 					currentMode={ currentStep.mode }
 					supportsDomainConnect={ !! domainConnectionSetupInfo.domain_connect_apply_wpcom_hosting }
 					isSubdomain={ isSubdomain( domainName ) }

@@ -12,12 +12,7 @@ import { __ } from '@wordpress/i18n';
 import Notice from '../../../components/notice';
 import { StepName, type StepComponentProps } from '../types';
 
-export function AdvancedStart( {
-	domainName,
-	// stepName,
-	setPage,
-	onNextStep,
-}: StepComponentProps ) {
+export function AdvancedStart( { domainName, setPage, onNextStep }: StepComponentProps ) {
 	const isSubdomainFlow = isSubdomain( domainName );
 	const firstStep = isSubdomainFlow ? StepName.SUBDOMAIN_SUGGESTED_START : StepName.SUGGESTED_START;
 	const switchToSuggestedSetup = () => setPage( firstStep );

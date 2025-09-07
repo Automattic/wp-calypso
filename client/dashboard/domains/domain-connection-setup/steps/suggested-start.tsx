@@ -16,16 +16,9 @@ import { caution } from '@wordpress/icons';
 import Notice from '../../../components/notice';
 import { StepName, type StepComponentProps } from '../types';
 
-export function SuggestedStart( {
-	domainName,
-	// stepName,
-	setPage,
-	onNextStep,
-}: StepComponentProps ) {
+export function SuggestedStart( { domainName, setPage, onNextStep }: StepComponentProps ) {
 	const isSubdomainFlow = isSubdomain( domainName );
-
 	const firstStep = isSubdomainFlow ? StepName.SUBDOMAIN_ADVANCED_START : StepName.ADVANCED_START;
-
 	const switchToAdvancedSetup = () => setPage( firstStep );
 
 	const message = isSubdomainFlow
@@ -52,7 +45,6 @@ export function SuggestedStart( {
 							<br />
 							{ __( 'It can take up to 72 hours for the domain to be fully connected.' ) }
 						</Notice>
-
 						<Panel>
 							<PanelBody
 								title={ __( 'Do you have email or other services connected to this domain?' ) }
