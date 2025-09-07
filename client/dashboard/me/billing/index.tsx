@@ -1,10 +1,11 @@
 import { __experimentalVStack as VStack, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { backup, payment, receipt, institution } from '@wordpress/icons';
+import { backup, payment, receipt, institution, currencyDollar } from '@wordpress/icons';
 import {
 	purchasesRoute,
 	billingHistoryRoute,
 	paymentMethodsRoute,
+	monetizeSubscriptionsRoute,
 	taxDetailsRoute,
 } from '../../app/router/me';
 import { PageHeader } from '../../components/page-header';
@@ -28,6 +29,12 @@ function Billing() {
 					description={ __( 'View email receipts for past purchases.' ) }
 					decoration={ <Icon icon={ backup } /> }
 					to={ billingHistoryRoute.to }
+				/>
+				<RouterLinkSummaryButton
+					title={ __( 'Monetize subscriptions' ) }
+					description={ __( 'Manage Monetize subscriptions.' ) }
+					decoration={ <Icon icon={ currencyDollar } /> }
+					to={ monetizeSubscriptionsRoute.to }
 				/>
 				<RouterLinkSummaryButton
 					title={ __( 'Payment methods' ) }

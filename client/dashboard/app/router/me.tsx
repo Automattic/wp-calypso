@@ -206,6 +206,17 @@ export const paymentMethodsRoute = createRoute( {
 	)
 );
 
+export const monetizeSubscriptionsRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'billing/monetize-subscriptions',
+} ).lazy( () =>
+	import( '../../me/monetize-subscriptions' ).then( ( d ) =>
+		createLazyRoute( 'monetize-subscriptions' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const taxDetailsRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -615,6 +626,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 		billingRoute.addChildren( [
 			billingIndexRoute,
 			billingHistoryRoute,
+			monetizeSubscriptionsRoute,
 			purchasesRoute,
 			purchaseSettingsRoute,
 			paymentMethodsRoute,
