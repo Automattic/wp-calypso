@@ -5,6 +5,7 @@ import {
 	purchaseQuery,
 	receiptQuery,
 	sitesQuery,
+	billingTransactionsQuery,
 	queryClient,
 	accountRecoveryQuery,
 	smsCountryCodesQuery,
@@ -129,6 +130,9 @@ export const billingHistoryRoute = createRoute( {
 		],
 	} ),
 	getParentRoute: () => billingRoute,
+	loader: async () => {
+		await queryClient.ensureQueryData( billingTransactionsQuery() );
+	},
 	path: '/billing-history',
 } );
 
