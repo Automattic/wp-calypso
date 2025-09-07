@@ -14,14 +14,14 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { caution } from '@wordpress/icons';
 import Notice from '../../../components/notice';
-import { StepName, type DomainConnectionStepComponentProps } from '../types';
+import { StepName, type StepComponentProps } from '../types';
 
-export default function SuggestedStart( {
+export function SuggestedStart( {
 	domainName,
 	// stepName,
 	setPage,
 	onNextStep,
-}: DomainConnectionStepComponentProps ) {
+}: StepComponentProps ) {
 	const isSubdomainFlow = isSubdomain( domainName );
 
 	const firstStep = isSubdomainFlow ? StepName.SUBDOMAIN_ADVANCED_START : StepName.ADVANCED_START;

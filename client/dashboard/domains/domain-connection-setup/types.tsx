@@ -1,7 +1,10 @@
-import { DomainConnectionSetupMode } from '@automattic/api-core';
+import {
+	DomainConnectionSetupMode,
+	DomainMappingSetupInfo,
+	DomainMappingStatus,
+} from '@automattic/api-core';
 import { __ } from '@wordpress/i18n';
-import ConnectDomainStepLogin from './steps/step-login';
-import ConnectDomainStepSuggestedStart from './steps/suggested-start';
+import { Login, SuggestedStart, SuggestedRecords, AdvancedStart } from './steps';
 
 export enum StepType {
 	START = 'start_setup',
@@ -48,22 +51,28 @@ export enum StepName {
 	SUBDOMAIN_ADVANCED_CONNECTED = 'subdomain_advanced_connected',
 }
 
-export type DomainConnectionStepComponentProps = {
+export type StepComponentProps = {
 	domainName: string;
 	stepName: StepName;
 	mode: DomainConnectionSetupMode | null;
-	// progressStepList: StepType[];
 	onNextStep: () => void;
 	setPage: ( stepName: StepName ) => void;
-	isConnectSupported: boolean;
-	rootDomainProvider: string;
+	domainSetupInfo: DomainMappingSetupInfo;
+	verificationStatus: DomainMappingStatus | undefined;
+	onVerifyConnection: () => void;
+	verificationInProgress: boolean;
+	showErrors: boolean;
+	isFirstVisit: boolean;
+	queryError: string | null;
+	queryErrorDescription: string | null;
+	isOwnershipVerificationFlow: boolean;
 };
 
 export type DomainConnectionStep = {
 	mode: DomainConnectionSetupMode;
 	step: StepType;
 	name?: string;
-	component: React.ComponentType< DomainConnectionStepComponentProps >;
+	component: React.ComponentType< StepComponentProps >;
 	next?: StepName;
 	prev?: StepName;
 	singleColumnLayout?: boolean;
@@ -78,7 +87,7 @@ export const connectADomainDomainConnectionStepsMap: DomainConnectionStepsMap = 
 	[ StepName.SUGGESTED_START ]: {
 		mode: DomainConnectionSetupMode.SUGGESTED,
 		step: StepType.START,
-		component: ConnectDomainStepSuggestedStart,
+		component: SuggestedStart,
 		next: StepName.SUGGESTED_LOGIN,
 	},
 	[ StepName.SUGGESTED_LOGIN ]: {
@@ -87,7 +96,7 @@ export const connectADomainDomainConnectionStepsMap: DomainConnectionStepsMap = 
 		get name() {
 			return __( 'Log in to provider' );
 		},
-		component: ConnectDomainStepLogin,
+		component: Login,
 		next: StepName.SUGGESTED_UPDATE,
 		prev: StepName.SUGGESTED_START,
 	},
@@ -97,20 +106,20 @@ export const connectADomainDomainConnectionStepsMap: DomainConnectionStepsMap = 
 		get name() {
 			return __( 'Update name servers' );
 		},
-		component: ConnectDomainStepSuggestedStart,
+		component: SuggestedRecords,
 		prev: StepName.SUGGESTED_LOGIN,
 	},
 	[ StepName.SUGGESTED_CONNECTED ]: {
 		mode: DomainConnectionSetupMode.SUGGESTED,
 		step: StepType.CONNECTED,
-		component: ConnectDomainStepSuggestedStart,
+		component: SuggestedStart,
 		prev: StepName.SUGGESTED_UPDATE,
 		singleColumnLayout: true,
 	},
 	[ StepName.SUGGESTED_VERIFYING ]: {
 		mode: DomainConnectionSetupMode.SUGGESTED,
 		step: StepType.VERIFYING,
-		component: ConnectDomainStepSuggestedStart,
+		component: SuggestedStart,
 		prev: StepName.SUGGESTED_UPDATE,
 		singleColumnLayout: true,
 	},
@@ -119,7 +128,7 @@ export const connectADomainDomainConnectionStepsMap: DomainConnectionStepsMap = 
 	[ StepName.ADVANCED_START ]: {
 		mode: DomainConnectionSetupMode.ADVANCED,
 		step: StepType.START,
-		component: ConnectDomainStepSuggestedStart,
+		component: AdvancedStart,
 		next: StepName.ADVANCED_LOGIN,
 		prev: StepName.SUGGESTED_START,
 	},
@@ -129,7 +138,7 @@ export const connectADomainDomainConnectionStepsMap: DomainConnectionStepsMap = 
 		get name() {
 			return __( 'Log in to provider' );
 		},
-		component: ConnectDomainStepSuggestedStart,
+		component: Login,
 		next: StepName.ADVANCED_UPDATE,
 		prev: StepName.ADVANCED_START,
 	},
@@ -139,20 +148,20 @@ export const connectADomainDomainConnectionStepsMap: DomainConnectionStepsMap = 
 		get name() {
 			return __( 'Update root A records & CNAME record' );
 		},
-		component: ConnectDomainStepSuggestedStart,
+		component: SuggestedRecords,
 		prev: StepName.ADVANCED_LOGIN,
 	},
 	[ StepName.ADVANCED_CONNECTED ]: {
 		mode: DomainConnectionSetupMode.ADVANCED,
 		step: StepType.CONNECTED,
-		component: ConnectDomainStepSuggestedStart,
+		component: SuggestedStart,
 		prev: StepName.ADVANCED_UPDATE,
 		singleColumnLayout: true,
 	},
 	[ StepName.ADVANCED_VERIFYING ]: {
 		mode: DomainConnectionSetupMode.ADVANCED,
 		step: StepType.VERIFYING,
-		component: ConnectDomainStepSuggestedStart,
+		component: SuggestedStart,
 		prev: StepName.ADVANCED_UPDATE,
 		singleColumnLayout: true,
 	},
@@ -161,12 +170,12 @@ export const connectADomainDomainConnectionStepsMap: DomainConnectionStepsMap = 
 	[ StepName.DC_START ]: {
 		mode: DomainConnectionSetupMode.DC,
 		step: StepType.START,
-		component: ConnectDomainStepSuggestedStart,
+		component: SuggestedStart,
 	},
 	[ StepName.DC_RETURN ]: {
 		mode: DomainConnectionSetupMode.DC,
 		step: StepType.VERIFYING,
-		component: ConnectDomainStepSuggestedStart,
+		component: SuggestedStart,
 		prev: StepName.DC_START,
 		singleColumnLayout: true,
 	},
@@ -177,7 +186,7 @@ export const connectASubdomainDomainConnectionStepsMap: DomainConnectionStepsMap
 	[ StepName.SUBDOMAIN_SUGGESTED_START ]: {
 		mode: DomainConnectionSetupMode.SUGGESTED,
 		step: StepType.START,
-		component: ConnectDomainStepSuggestedStart,
+		component: SuggestedStart,
 		next: StepName.SUBDOMAIN_SUGGESTED_LOGIN,
 	},
 	[ StepName.SUBDOMAIN_SUGGESTED_LOGIN ]: {
@@ -186,7 +195,7 @@ export const connectASubdomainDomainConnectionStepsMap: DomainConnectionStepsMap
 		get name() {
 			return __( 'Log in to provider' );
 		},
-		component: ConnectDomainStepSuggestedStart,
+		component: SuggestedStart,
 		next: StepName.SUBDOMAIN_SUGGESTED_UPDATE,
 		prev: StepName.SUBDOMAIN_SUGGESTED_START,
 	},
@@ -196,20 +205,20 @@ export const connectASubdomainDomainConnectionStepsMap: DomainConnectionStepsMap
 		get name() {
 			return __( 'Update NS records' );
 		},
-		component: ConnectDomainStepSuggestedStart,
+		component: SuggestedStart,
 		prev: StepName.SUBDOMAIN_SUGGESTED_LOGIN,
 	},
 	[ StepName.SUBDOMAIN_SUGGESTED_CONNECTED ]: {
 		mode: DomainConnectionSetupMode.SUGGESTED,
 		step: StepType.CONNECTED,
-		component: ConnectDomainStepSuggestedStart,
+		component: SuggestedStart,
 		prev: StepName.SUBDOMAIN_SUGGESTED_UPDATE,
 		singleColumnLayout: true,
 	},
 	[ StepName.SUBDOMAIN_SUGGESTED_VERIFYING ]: {
 		mode: DomainConnectionSetupMode.SUGGESTED,
 		step: StepType.VERIFYING,
-		component: ConnectDomainStepSuggestedStart,
+		component: SuggestedStart,
 		prev: StepName.SUBDOMAIN_SUGGESTED_UPDATE,
 		singleColumnLayout: true,
 	},
@@ -218,7 +227,7 @@ export const connectASubdomainDomainConnectionStepsMap: DomainConnectionStepsMap
 	[ StepName.SUBDOMAIN_ADVANCED_START ]: {
 		mode: DomainConnectionSetupMode.ADVANCED,
 		step: StepType.START,
-		component: ConnectDomainStepSuggestedStart,
+		component: AdvancedStart,
 		next: StepName.SUBDOMAIN_ADVANCED_LOGIN,
 		prev: StepName.SUBDOMAIN_SUGGESTED_START,
 	},
@@ -228,7 +237,7 @@ export const connectASubdomainDomainConnectionStepsMap: DomainConnectionStepsMap
 		get name() {
 			return __( 'Log in to provider' );
 		},
-		component: ConnectDomainStepSuggestedStart,
+		component: SuggestedStart,
 		next: StepName.SUBDOMAIN_ADVANCED_UPDATE,
 		prev: StepName.SUBDOMAIN_ADVANCED_START,
 	},
@@ -238,21 +247,27 @@ export const connectASubdomainDomainConnectionStepsMap: DomainConnectionStepsMap
 		get name() {
 			return __( 'Update A & CNAME records' );
 		},
-		component: ConnectDomainStepSuggestedStart,
+		component: SuggestedStart,
 		prev: StepName.SUBDOMAIN_ADVANCED_LOGIN,
 	},
 	[ StepName.SUBDOMAIN_ADVANCED_CONNECTED ]: {
 		mode: DomainConnectionSetupMode.ADVANCED,
 		step: StepType.CONNECTED,
-		component: ConnectDomainStepSuggestedStart,
+		component: SuggestedStart,
 		prev: StepName.SUBDOMAIN_ADVANCED_UPDATE,
 		singleColumnLayout: true,
 	},
 	[ StepName.SUBDOMAIN_ADVANCED_VERIFYING ]: {
 		mode: DomainConnectionSetupMode.ADVANCED,
 		step: StepType.VERIFYING,
-		component: ConnectDomainStepSuggestedStart,
+		component: SuggestedStart,
 		prev: StepName.SUBDOMAIN_ADVANCED_UPDATE,
 		singleColumnLayout: true,
 	},
+};
+
+export type DNSRecord = {
+	type: string;
+	name: string;
+	value: string;
 };
