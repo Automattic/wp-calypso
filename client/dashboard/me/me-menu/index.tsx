@@ -13,6 +13,7 @@ const MeMenu = () => {
 	return (
 		<ResponsiveMenu>
 			<ResponsiveMenu.Item to="/me/profile">{ __( 'Profile' ) }</ResponsiveMenu.Item>
+			<ResponsiveMenu.Item to="/me/preferences">{ __( 'Preferences' ) }</ResponsiveMenu.Item>
 			<ResponsiveMenu.Item to="/me/billing">{ __( 'Billing' ) }</ResponsiveMenu.Item>
 			<ResponsiveMenu.Item to="/me/security">{ __( 'Security' ) }</ResponsiveMenu.Item>
 			{ hasAppSupport( supports, 'privacy' ) && (

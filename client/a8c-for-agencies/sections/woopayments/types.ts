@@ -35,8 +35,27 @@ export interface WooPaymentsData {
 			};
 		};
 		estimated?: WooPaymentsDataObject & {
-			current_quarter: WooPaymentsDataObject;
-			previous_quarter: WooPaymentsDataObject;
+			sites?: {
+				[ key: number ]: WooPaymentsDataObject;
+			};
+			current_quarter: WooPaymentsDataObject & {
+				sites?: {
+					[ key: number ]: {
+						tpv?: number;
+						payout?: number;
+						transactions?: number;
+					};
+				};
+			};
+			previous_quarter: WooPaymentsDataObject & {
+				sites?: {
+					[ key: number ]: {
+						tpv?: number;
+						payout?: number;
+						transactions?: number;
+					};
+				};
+			};
 		};
 	};
 	status: string;

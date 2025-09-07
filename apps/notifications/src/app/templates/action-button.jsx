@@ -30,7 +30,7 @@ const ActionButton = ( { isActive, isBusy, hotkey, icon, onToggle, text, title }
 ActionButton.propTypes = {
 	isActive: PropTypes.bool.isRequired,
 	hotkey: PropTypes.number,
-	icon: PropTypes.string,
+	icon: PropTypes.object,
 	onToggle: PropTypes.func.isRequired,
 	text: PropTypes.string.isRequired,
 	title: PropTypes.string.isRequired,
