@@ -97,7 +97,7 @@ export function SuggestedRecords( {
 							<Button
 								__next40pxDefaultSize
 								variant="primary"
-								onClick={ onVerifyConnection }
+								onClick={ () => onVerifyConnection( true ) }
 								isBusy={ verificationInProgress }
 								disabled={ verificationInProgress }
 							>

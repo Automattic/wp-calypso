@@ -22,9 +22,8 @@ import SwitchSetup from './components/switch-setup';
 import {
 	connectADomainDomainConnectionStepsMap,
 	connectASubdomainDomainConnectionStepsMap,
-	DomainConnectionStepsMap,
-	StepName,
-} from './types';
+} from './steps-map';
+import { DomainConnectionStepsMap, StepName } from './types';
 import { getProgressStepList, isMappingVerificationSuccess, resolveStepName } from './utils';
 
 export default function DomainConnectionSetup() {

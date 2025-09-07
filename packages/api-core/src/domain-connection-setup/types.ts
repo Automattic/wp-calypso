@@ -22,7 +22,7 @@ export type DomainMappingStatus = {
 // GET response
 export type DomainMappingSetupInfo = {
 	connection_mode: DomainConnectionSetupMode | null;
-	domain_connect_apply_wpcom_hosting: boolean | null;
+	domain_connect_apply_wpcom_hosting: string | null;
 	domain_connect_provider_id: string | null;
 	default_ip_addresses: string[];
 	wpcom_name_servers: string[];

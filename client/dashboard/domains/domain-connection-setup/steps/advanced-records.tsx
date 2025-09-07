@@ -121,7 +121,7 @@ export function AdvancedRecords( {
 						<HStack justify="flex-start">
 							<Button
 								variant="primary"
-								onClick={ onVerifyConnection }
+								onClick={ () => onVerifyConnection( false ) }
 								isBusy={ verificationInProgress }
 								disabled={ verificationInProgress }
 							>

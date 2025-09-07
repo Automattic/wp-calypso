@@ -42,7 +42,7 @@ export default function SwitchSetup( {
 		}
 		if ( currentMode === DomainConnectionSetupMode.SUGGESTED && isSubdomain ) {
 			return __(
-				"Can't set NS records for your subdomain? Switch to our <aadv>advanced setup</aadv>."
+				'Can’t set NS records for your subdomain? Switch to our <aadv>advanced setup</aadv>.'
 			);
 		} else if ( currentMode === DomainConnectionSetupMode.ADVANCED ) {
 			return __( 'Switch to our <asug>suggested setup</asug>.' );
