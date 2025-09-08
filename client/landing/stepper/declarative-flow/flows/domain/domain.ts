@@ -72,20 +72,13 @@ const domain: FlowV2< typeof initialize > = {
 						throw new Error( 'No provided dependencies found' );
 					}
 
-					setSiteUrl( providedDependencies.siteUrl as string );
-					setDomain( providedDependencies.suggestion as DomainSuggestion );
-					setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
-					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
-					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
-
 					if ( providedDependencies.navigateToUseMyDomain ) {
 						const currentQueryArgs = getQueryArgs( window.location.href );
 						currentQueryArgs.step = 'domain-input';
 
 						let useMyDomainURL = addQueryArgs( '/use-my-domain', currentQueryArgs );
 
-						const lastQueryParam = ( providedDependencies?.domainForm as { lastQuery?: string } )
-							?.lastQuery;
+						const lastQueryParam = providedDependencies.lastQuery;
 
 						if ( lastQueryParam !== undefined ) {
 							currentQueryArgs.initialQuery = lastQueryParam;
@@ -99,6 +92,12 @@ const domain: FlowV2< typeof initialize > = {
 						} );
 						return navigate( useMyDomainURL as typeof currentStepSlug );
 					}
+
+					setSiteUrl( providedDependencies.siteUrl as string );
+					setDomain( providedDependencies.suggestion as DomainSuggestion );
+					setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
+					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
+					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
 
 					return;
 				case 'use-my-domain':

@@ -5,6 +5,7 @@ import {
 	StepContainer,
 	isStartWritingFlow,
 	Step,
+	DOMAIN_FLOW,
 } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
@@ -108,7 +109,7 @@ const UseMyDomain: StepType< {
 					isStepper
 					stepLocation={ location }
 					registerNowAction={ handleGoBack }
-					hideHeader={ shouldUseStepContainerV2( flow ) }
+					hideHeader={ shouldUseStepContainerV2( flow ) || flow === DOMAIN_FLOW }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
@@ -118,6 +119,7 @@ const UseMyDomain: StepType< {
 		switch ( flow ) {
 			case START_WRITING_FLOW:
 			case ONBOARDING_FLOW:
+			case DOMAIN_FLOW:
 				return getBlogOnboardingFlowStepContent();
 			default:
 				return getDefaultStepContent();
@@ -126,7 +128,7 @@ const UseMyDomain: StepType< {
 
 	const shouldHideButtons = isStartWritingFlow( flow );
 
-	if ( shouldUseStepContainerV2( flow ) ) {
+	if ( shouldUseStepContainerV2( flow ) || flow === DOMAIN_FLOW ) {
 		const [ columnWidth, headingText ] =
 			useMyDomainMode === 'domain-input'
 				? [ 4 as const, __( 'Use a domain I own' ) ]
