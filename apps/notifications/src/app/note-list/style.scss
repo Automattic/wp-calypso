@@ -11,12 +11,6 @@
 		white-space: pre-wrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
-
-		.wpnc__gridicon svg {
-			display: inline-block;
-			transform: translateY(2px);
-			fill: #8c8f94;
-		}
 	}
 
 	.wpnc__note-icon {
@@ -45,4 +39,10 @@
 			background: var(--wp-admin-theme-color);
 		}
 	}
+}
+
+.wpnc__gridicon .gridicons-reply {
+	display: inline-block;
+	transform: translateY(2px);
+	fill: #8c8f94;
 }
