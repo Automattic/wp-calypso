@@ -2,7 +2,6 @@ import { isSupportSession } from '@automattic/calypso-support-session';
 import { __ } from '@wordpress/i18n';
 import { useAppContext } from '../../app/context';
 import ResponsiveMenu from '../../components/responsive-menu';
-import { isSiteMigrationInProgress } from '../../utils/site-status';
 import { hasSiteTrialEnded } from '../../utils/site-trial';
 import type { AppConfig, SiteFeatureSupports } from '../../app/context';
 import type { Site } from '@automattic/api-core';
@@ -20,16 +19,6 @@ const SiteMenu = ( { site }: { site: Site } ) => {
 			<ResponsiveMenu label={ __( 'Site Menu' ) }>
 				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/trial-ended` }>
 					{ __( 'Trial ended' ) }
-				</ResponsiveMenu.Item>
-			</ResponsiveMenu>
-		);
-	}
-
-	if ( isSiteMigrationInProgress( site ) ) {
-		return (
-			<ResponsiveMenu label={ __( 'Site Menu' ) }>
-				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/site-migration-in-progress` }>
-					{ __( 'Migration in progress' ) }
 				</ResponsiveMenu.Item>
 			</ResponsiveMenu>
 		);
