@@ -45,4 +45,12 @@
 		align-self: flex-start;
 		margin-inline-start: 12px;
 	}
+
+	.dataviews-view-list__item-actions button {
+		color: $gray-700;
+	}
+
+	div[role="article"]:where(.is-hovered) .dataviews-view-list__item-actions button {
+		color: initial;
+	}
 }

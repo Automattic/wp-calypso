@@ -126,7 +126,7 @@ export function getActions( {
 		{
 			id: 'view',
 			isPrimary: true,
-			icon: <Icon icon={ isRTL() ? chevronLeft : chevronRight } style={ { color: '#757575' } } />,
+			icon: <Icon icon={ isRTL() ? chevronLeft : chevronRight } />,
 			label: __( 'View' ),
 			callback: ( items: Note[] ) => {
 				onSelect( items.map( ( item ) => item.id.toString() ) );
