@@ -94,27 +94,27 @@ export default function MonitoringPerformanceCard( {
 } ) {
 	const { formattedData, isLoading: isLoadingLineChart } = useSiteMetricsData( site.ID, timeRange );
 
+	const seriesLabelData = [
+		{
+			color: '#3858e9',
+			label: __( 'Requests per minute' ),
+		},
+		{
+			color: '#5BA300',
+			label: __( 'Average response time (ms)' ),
+		},
+	];
+
 	const tooltipSeriesCallback = ( i: number, value: number ): seriesInfo | null => {
 		if ( i === 0 ) {
 			return null;
 		}
 		--i;
 
-		const labelData: seriesInfo[] = [
-			{
-				color: '#3858e9',
-				label: __( 'Requests per minute' ),
-			},
-			{
-				color: '#5BA300',
-				label: __( 'Average response time (ms)' ),
-			},
-		];
-
-		if ( labelData.length >= i ) {
+		if ( seriesLabelData.length > i ) {
 			return {
-				color: labelData[ i ].color,
-				label: labelData[ i ].label,
+				color: seriesLabelData[ i ].color,
+				label: seriesLabelData[ i ].label,
 				value: roundToTwoDecimals( value ),
 			};
 		}
@@ -136,16 +136,16 @@ export default function MonitoringPerformanceCard( {
 				data={ formattedData as uPlot.AlignedData }
 				series={ [
 					{
-						fill: '#3858e9',
-						label: __( 'Requests per minute' ),
-						stroke: '#3858e9',
+						fill: seriesLabelData[ 0 ].color,
+						label: seriesLabelData[ 0 ].label,
+						stroke: seriesLabelData[ 0 ].color,
 						showInLegend: true,
 						showInTooltip: true,
 					},
 					{
-						fill: '#5BA300',
-						label: __( 'Average response time (ms)' ),
-						stroke: '#5BA300',
+						fill: seriesLabelData[ 1 ].color,
+						label: seriesLabelData[ 1 ].label,
+						stroke: seriesLabelData[ 1 ].color,
 						scale: 'average-response-time',
 						unit: 'ms',
 						showInLegend: true,
