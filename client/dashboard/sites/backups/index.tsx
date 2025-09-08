@@ -88,7 +88,7 @@ export function BackupsListPage() {
 				setShowDetails( false );
 			} }
 		>
-			{ __( 'All backups' ) }
+			{ __( 'Backups' ) }
 		</Button>
 	);
 
@@ -111,7 +111,7 @@ export function BackupsListPage() {
 		<PageLayout
 			header={
 				<PageHeader
-					title={ __( 'Backups' ) }
+					title={ isSmallViewport && showDetails ? __( 'Backup details' ) : __( 'Backups' ) }
 					prefix={ isSmallViewport && showDetails ? backButton : undefined }
 					actions={ hasBackups && <BackupNowButton site={ site } /> }
 				/>
