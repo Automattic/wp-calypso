@@ -14,28 +14,24 @@
 		text-overflow: ellipsis;
 	}
 
-	.wpnc__note-icon {
-		position: relative;
-		height: 100%;
+	.wpnc__note-icon .wpnc__gridicon {
+		position: absolute;
+		bottom: -4px;
+		right: -4px;
+		display: flex;
+		padding: 2px;
+		border: 1.5px solid $white;
+		border-radius: 50%;
+		color: $white;
+		background: $gray-300;
+		overflow: hidden;
+		z-index: 1;
 
 		svg {
 			fill: currentColor;
 		}
 
-		.wpnc__gridicon {
-			position: absolute;
-			bottom: -2px;
-			right: -2px;
-			display: flex;
-			padding: 2px;
-			border: 1.5px solid $white;
-			border-radius: 50%;
-			color: $white;
-			background: $gray-300;
-			overflow: hidden;
-		}
-
-		&.is-unread .wpnc__gridicon {
+		&.is-unread {
 			color: $white;
 			background: var(--wp-admin-theme-color);
 		}

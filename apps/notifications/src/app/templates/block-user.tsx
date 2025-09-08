@@ -78,10 +78,10 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 				<img
 					src={ media?.url }
 					alt={ block.text }
-					width={ 40 }
-					height={ 40 }
+					width={ 32 }
+					height={ 32 }
 					loading="lazy"
-					style={ { width: 40, height: 40, minWidth: 40, margin: 0 } }
+					style={ { width: 32, height: 32, minWidth: 32, margin: 0 } }
 				/>
 			</a>
 			<VStack alignment="flex-start" spacing={ 0 }>

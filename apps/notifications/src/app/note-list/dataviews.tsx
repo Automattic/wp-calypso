@@ -17,7 +17,7 @@ import {
 } from '@wordpress/icons';
 import clsx from 'clsx';
 import { html } from '../../panel/indices-to-html';
-import NoteIcon from '../templates/note-icon';
+import NoteIcon from '../note-icon';
 import type { Note } from '../types';
 import type { Action, Field } from '@wordpress/dataviews';
 import type { JSX } from 'react';
@@ -76,12 +76,15 @@ export function getFields(): Field< Note >[] {
 			id: 'icon',
 			label: __( 'Icon' ),
 			render: ( { item } ) => (
-				<div className={ clsx( 'wpnc__note-icon', { 'is-unread': ! item.read } ) }>
-					<NoteIcon icon={ item.icon } size={ 52 } />
-					<span className="wpnc__gridicon">
-						<Icon icon={ iconMap[ item.noticon ] ?? info } size={ 10 } />
-					</span>
-				</div>
+				<NoteIcon
+					icon={ item.icon }
+					size={ 32 }
+					badge={
+						<span className={ clsx( 'wpnc__gridicon', { 'is-unread': ! item.read } ) }>
+							<Icon icon={ iconMap[ item.noticon ] ?? info } size={ 10 } />
+						</span>
+					}
+				/>
 			),
 		},
 		{
