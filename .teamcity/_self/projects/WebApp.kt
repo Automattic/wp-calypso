@@ -977,7 +977,7 @@ object PlaywrightTestPRMatrix : BuildType({
 		param("env.AUTHENTICATE_ACCOUNTS", "simpleSitePersonalPlanUser,gutenbergSimpleSiteUser,defaultUser")
 		param("env.LIVEBRANCHES", "true")
 		param("env.CI", "true")
-		param("REPORT_URL", "https://automattic.github.io/wp-calypso-test-results")
+		param("REPORT_URL", "https://automattic.github.io/wp-calypso-test-results/r")
 	}
 
 	steps {
@@ -1040,8 +1040,8 @@ object PlaywrightTestPRMatrix : BuildType({
 				aws configure set aws_access_key_id %CALYPSO_E2E_DASHBOARD_AWS_S3_ACCESS_KEY_ID%
 				aws configure set aws_secret_access_key %CALYPSO_E2E_DASHBOARD_AWS_S3_SECRET_ACCESS_KEY%
 
-				aws s3 cp ${'$'}{ARCHIVE_NAME}.tgz.enc %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT%
-				
+				aws s3 cp ${'$'}{ARCHIVE_NAME}.tgz.enc %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT%/archive/
+
 				# Send custom Slack notification
 				echo "##teamcity[notification notifier='slack' message='Report available: %REPORT_URL%/${'$'}{ARCHIVE_NAME}.tgz.enc|nBranch: %teamcity.build.branch%' sendTo='calypso-e2e-reports-ext' connectionId='PROJECT_EXT_11']"
 			""".trimIndent()
