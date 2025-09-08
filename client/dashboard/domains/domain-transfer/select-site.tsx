@@ -138,7 +138,7 @@ export function SelectSite( { attachedSiteId, onSiteSelect }: Props ) {
 					fields={ fields }
 					view={ view }
 					paginationInfo={ paginationInfo }
-					getItemId={ ( site: Site ) => site.ID?.toString() ?? '' }
+					getItemId={ ( site: Site ) => site.ID.toString() }
 					defaultLayouts={ { list: {} } }
 					onChangeView={ setView }
 					selection={ selection }
