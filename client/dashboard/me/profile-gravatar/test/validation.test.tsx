@@ -34,13 +34,6 @@ jest.mock( '@tanstack/react-query', () => ( {
 	} ) ),
 } ) );
 
-// Mock URL validation
-jest.mock( '../../../../lib/importer/url-validation', () => ( {
-	isValidUrl: jest.fn( ( url ) => {
-		return url && ( url.startsWith( 'http://' ) || url.startsWith( 'https://' ) );
-	} ),
-} ) );
-
 const mockProfile: UserProfile = {
 	advertising_targeting_opt_out: false,
 	avatar_URL: 'https://gravatar.com/avatar/test',
