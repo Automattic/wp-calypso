@@ -10,7 +10,7 @@ import useGetDisplayDate from 'calypso/components/jetpack/daily-backup-status/us
 import { useFirstMatchingBackupAttempt } from 'calypso/my-sites/backup/hooks';
 import FileBrowserHeader from './file-browser-header';
 import FileBrowserNode from './file-browser-node';
-import { FileBrowserItem, FileBrowserExternalProps } from './types';
+import { FileBrowserItem } from './types';
 
 export interface FileBrowserConfig {
 	restrictedPaths?: string[];
