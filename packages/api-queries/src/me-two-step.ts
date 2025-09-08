@@ -2,9 +2,11 @@ import {
 	fetchSecurityKeys,
 	fetchSecurityKeyRegistrationChallenge,
 	validateSecurityKeyRegistration,
+	deleteSecurityKey,
 } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
+import { queryClient } from './query-client';
 
 const addHostnameToData = ( data: Record< string, unknown > ) => {
 	if ( 'production' !== config( 'env_id' ) ) {
@@ -31,5 +33,13 @@ export const validateSecurityKeyRegistrationMutation = () =>
 	mutationOptions( {
 		mutationFn: ( data: Record< string, unknown > ) => {
 			return validateSecurityKeyRegistration( addHostnameToData( data ) );
+		},
+	} );
+
+export const deleteSecurityKeyMutation = () =>
+	mutationOptions( {
+		mutationFn: deleteSecurityKey,
+		onSuccess: () => {
+			queryClient.invalidateQueries( securityKeysQuery() );
 		},
 	} );

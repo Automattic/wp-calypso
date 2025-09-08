@@ -1,5 +1,5 @@
-import { securityKeysQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
+import { securityKeysQuery, deleteSecurityKeyMutation } from '@automattic/api-queries';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import {
 	__experimentalConfirmDialog as ConfirmDialog,
 	Button,
@@ -8,10 +8,12 @@ import {
 	CardBody,
 	Icon,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { DataViews } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { closeSmall } from '@wordpress/icons';
+import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import InlineSupportLink from '../../../../components/inline-support-link';
 import { SectionHeader } from '../../../../components/section-header';
@@ -42,12 +44,32 @@ const SecurityKeysList = ( {
 	data: SecurityKeyRegistration[];
 	isLoading: boolean;
 } ) => {
+	const { mutate: deleteSecurityKey } = useMutation( deleteSecurityKeyMutation() );
+
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+
 	const [ selectedKeyToRemove, setSelectedKeyToRemove ] =
 		useState< SecurityKeyRegistration | null >( null );
 
 	const handleRemove = () => {
 		setSelectedKeyToRemove( null );
-		// TODO: Remove the key
+		if ( selectedKeyToRemove ) {
+			deleteSecurityKey(
+				{ credential_id: selectedKeyToRemove.id },
+				{
+					onSuccess: () => {
+						createSuccessNotice( __( 'Security key removed successfully!' ), {
+							type: 'snackbar',
+						} );
+					},
+					onError: () => {
+						createErrorNotice( __( 'Failed to remove security key.' ), {
+							type: 'snackbar',
+						} );
+					},
+				}
+			);
+		}
 	};
 
 	return (

@@ -23,3 +23,7 @@ export interface SecurityKeyRegistrationChallenge {
 	}[];
 	timeout: number;
 }
+
+export interface DeleteSecurityKeyArgs {
+	credential_id: string;
+}
