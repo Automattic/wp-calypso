@@ -101,7 +101,7 @@
 		&:has(.wpnc__button) {
 			margin: 0 -#{$grid-unit-20};
 			padding: 16px;
-			border-top: 1px solid $gray-300;
+			border-top: 1px solid $gray-100;
 		}
 	}
 
@@ -134,7 +134,7 @@
 
 	.wpnc__hr-separator {
 		border: none;
-		border-top: 1px solid $gray-300;
+		border-top: 1px solid $gray-100;
 	}
 
 	// Links
@@ -241,6 +241,15 @@
 		font-weight: 500;
 	}
 
+	.wpnc__user-description-separator {
+		color: $gray-700;
+
+		&:first-child,
+		&:last-child {
+			display: none;
+		}
+	}
+
 	a {
 		text-decoration: none;
 	}
@@ -266,7 +275,7 @@
 .wpnc__note.wpnc__follow .wpnc__body .wpnc__body-content {
 	.wpnc__user {
 		padding-bottom: 16px;
-		border-bottom: 1px solid $gray-300;
+		border-bottom: 1px solid $gray-100;
 
 		&:not(:first-child) {
 			padding-top: 16px;
