@@ -1,11 +1,4 @@
-import {
-	Card,
-	CardBody,
-	CardHeader,
-	RadioControl,
-	SelectControl,
-	TextControl,
-} from '@wordpress/components';
+import { Card, CardBody, RadioControl, SelectControl, TextControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 export type Weekday =
@@ -29,9 +22,6 @@ export function PluginsScheduleNewFrequency( { frequency, weekday, time, onChang
 
 	return (
 		<Card>
-			<CardHeader>
-				<strong>{ __( 'Select frequency' ) }</strong>
-			</CardHeader>
 			<CardBody>
 				<fieldset>
 					<legend className="screen-reader-text">{ __( 'Schedule frequency' ) }</legend>

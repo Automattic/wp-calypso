@@ -1,4 +1,3 @@
-import { Card, CardBody, CardHeader } from '@wordpress/components';
 import { DataViews, Field, View, filterSortAndPaginate, type Action } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
@@ -33,70 +32,65 @@ const siteFields: Field< Site >[] = [
 	},
 ];
 
-// Strongly-typed bulk actions to enable selection UI, no actions column displayed via CSS
-const actions: Array< Action< Site > > = [
-	{
-		id: 'bulk-select-sites',
-		label: __( 'Select' ),
-		supportsBulk: true,
-		callback: () => {},
-	},
-];
-
-const DEFAULT_VIEW: View = {
-	type: 'table',
-	page: 1,
-	perPage: 5,
-	sort: { field: 'name', direction: 'asc' },
-	fields: [],
-	titleField: 'name',
-	descriptionField: 'url',
-	mediaField: 'icon.ico',
-	showMedia: true,
-};
-
 type Props = {
 	selection: string[];
 	onChangeSelection: ( ids: string[] ) => void;
 };
 
-export function PluginsScheduleNewSites( { selection, onChangeSelection }: Props ) {
+function ScheduledUpdatesSitesSelection( { selection, onChangeSelection }: Props ) {
 	const { data: sites = [] } = useEligibleSites();
-	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
+	const [ view, setView ] = useState< View >( {
+		type: 'table',
+		page: 1,
+		perPage: 5,
+		sort: { field: 'name', direction: 'asc' },
+		fields: [],
+		titleField: 'name',
+		descriptionField: 'url',
+		mediaField: 'icon.ico',
+		showMedia: true,
+	} );
+
 	const { data: filtered, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( sites as Site[], view, siteFields );
 	}, [ sites, view ] );
 
+	const actions: Array< Action< Site > > = useMemo(
+		() => [
+			{
+				id: 'bulk-select-sites',
+				label: __( 'Select' ),
+				supportsBulk: true,
+				callback: ( items: Site[] ) =>
+					onChangeSelection( items.map( ( item ) => String( item.ID ) ) ),
+			},
+		],
+		[ onChangeSelection ]
+	);
+
 	return (
-		<Card>
-			<CardHeader>
-				<strong>{ __( 'Select sites' ) }</strong>
-			</CardHeader>
-			<CardBody>
-				<DataViewsCard>
-					<div className="plugins-schedule-new">
-						<DataViews< Site >
-							data={ filtered }
-							fields={ siteFields }
-							view={ view }
-							onChangeView={ setView }
-							selection={ selection }
-							onChangeSelection={ ( ids ) => onChangeSelection( ids as string[] ) }
-							getItemId={ ( item: Site ) => String( item.ID ) }
-							actions={ actions }
-							defaultLayouts={ {
-								table: {
-									showMedia: true,
-									mediaField: 'icon.ico',
-									titleField: 'name',
-									descriptionField: 'url',
-								},
-							} }
-							paginationInfo={ paginationInfo }
-						/>
-					</div>
-				</DataViewsCard>
-			</CardBody>
-		</Card>
+		<DataViewsCard>
+			<DataViews< Site >
+				data={ filtered }
+				fields={ siteFields }
+				view={ view }
+				onChangeView={ setView }
+				selection={ selection }
+				onChangeSelection={ ( ids ) => onChangeSelection( ids as string[] ) }
+				getItemId={ ( item: Site ) => String( item.ID ) }
+				actions={ actions }
+				defaultLayouts={ {
+					table: {
+						showMedia: true,
+						mediaField: 'icon.ico',
+						titleField: 'name',
+						descriptionField: 'url',
+					},
+				} }
+				paginationInfo={ paginationInfo }
+			/>
+		</DataViewsCard>
 	);
 }
+
+export default ScheduledUpdatesSitesSelection;

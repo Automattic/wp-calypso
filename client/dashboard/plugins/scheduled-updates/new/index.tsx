@@ -1,22 +1,14 @@
-import './style.scss';
-
-import { sitesQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
-import { Button } from '@wordpress/components';
-import { type Action } from '@wordpress/dataviews';
+import { Button, Card, CardBody, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
+import { SectionHeader } from '../../../components/section-header';
 import { PluginsScheduleNewFrequency, type Weekday } from './components/frequency-selection';
-import { PluginsScheduleNewPlugins, type PluginRow } from './components/plugins-selection';
-import { PluginsScheduleNewSites } from './components/sites-selection';
+import PluginsSelection from './components/plugins-selection';
+import SitesSelection from './components/sites-selection';
 
-// getUniquePlugins not used anymore; plugin list derives from selected sites
-
-export default function NewSchedule() {
-	useQuery( sitesQuery() );
-
+function ScheduledUpdatesNew() {
 	const [ selectedSiteIds, setSelectedSiteIds ] = useState< string[] >( [] );
 	const [ selectedPluginSlugs, setSelectedPluginSlugs ] = useState< string[] >( [] );
 
@@ -31,43 +23,41 @@ export default function NewSchedule() {
 		isTimeValid &&
 		( frequency === 'daily' || ( frequency === 'weekly' && !! weekday ) );
 
-	// Strongly-typed bulk actions for plugin rows
-	const pluginBulkActions: Array< Action< PluginRow > > = useMemo(
-		() => [
-			{
-				id: 'bulk-select-plugins',
-				label: __( 'Select' ),
-				supportsBulk: true,
-				callback: () => {},
-			},
-		],
-		[]
-	);
-
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'New schedule' ) } /> }>
-			<PluginsScheduleNewSites
-				selection={ selectedSiteIds }
-				onChangeSelection={ ( ids ) => setSelectedSiteIds( ids ) }
-			/>
-
-			<PluginsScheduleNewPlugins
-				selectedSiteIds={ selectedSiteIds }
-				selection={ selectedPluginSlugs }
-				onChangeSelection={ ( ids ) => setSelectedPluginSlugs( ids ) }
-				actions={ pluginBulkActions }
-			/>
-
-			<PluginsScheduleNewFrequency
-				frequency={ frequency }
-				weekday={ weekday }
-				time={ time }
-				onChange={ ( next ) => {
-					setFrequency( next.frequency );
-					setWeekday( next.weekday );
-					setTime( next.time );
-				} }
-			/>
+			<Card>
+				<CardBody>
+					<VStack spacing={ 6 }>
+						<SectionHeader title={ __( '1. Select sites' ) } />
+						<SitesSelection
+							selection={ selectedSiteIds }
+							onChangeSelection={ ( ids ) => setSelectedSiteIds( ids ) }
+						/>
+						<SectionHeader
+							title={ __( '2. Select plugins' ) }
+							description={ __(
+								'Plugins not listed below are automatically updated by WordPress.com.'
+							) }
+						/>
+						<PluginsSelection
+							selectedSiteIds={ selectedSiteIds }
+							selection={ selectedPluginSlugs }
+							onChangeSelection={ ( ids ) => setSelectedPluginSlugs( ids ) }
+						/>
+						<SectionHeader title={ __( '3. Select frequency' ) } />
+						<PluginsScheduleNewFrequency
+							frequency={ frequency }
+							weekday={ weekday }
+							time={ time }
+							onChange={ ( next ) => {
+								setFrequency( next.frequency );
+								setWeekday( next.weekday );
+								setTime( next.time );
+							} }
+						/>
+					</VStack>
+				</CardBody>
+			</Card>
 
 			<div style={ { marginTop: 16 } }>
 				<Button variant="primary" disabled={ ! isValid } __next40pxDefaultSize>
@@ -77,3 +67,5 @@ export default function NewSchedule() {
 		</PageLayout>
 	);
 }
+
+export default ScheduledUpdatesNew;
