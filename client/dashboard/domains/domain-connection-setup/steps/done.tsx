@@ -9,7 +9,7 @@ import {
 	__experimentalHeading as Heading,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { check } from '@wordpress/icons';
+import { check, update } from '@wordpress/icons';
 import { StepType, type StepComponentProps } from '../types';
 
 // TODO: This file needs full review of the copy and etc.
@@ -68,26 +68,24 @@ export function Done( {
 	if ( isConnected ) {
 		return (
 			<VStack spacing={ 6 } style={ { textAlign: 'center', padding: '40px 20px' } }>
-				<div style={ { fontSize: '48px', color: '#00A32A' } }>
-					<Icon icon={ check } size={ 48 } />
-				</div>
+				<HStack spacing={ 2 }>
+					<Icon icon={ check } />
+					<Heading level={ 2 } size={ 20 } weight={ 500 }>
+						{ __( 'Successfully connected!' ) }
+					</Heading>
+				</HStack>
 
-				<h2>
-					<Icon icon={ check } size={ 18 } style={ { marginRight: '8px', color: '#00A32A' } } />
-					{ __( 'Successfully connected!' ) }
-				</h2>
-
-				<p>
+				<Text as="p">
 					{ __(
 						'Your domain is now connected to WordPress.com. Your site should be accessible at your custom domain within the next few minutes.'
 					) }
-				</p>
+				</Text>
 
-				<p>
+				<Text as="p">
 					{ __(
 						"If your site isn't loading at your custom domain after a few hours, check that your DNS changes have been saved correctly at your domain provider."
 					) }
-				</p>
+				</Text>
 
 				<HStack justify="center">
 					<Button variant="primary">{ __( 'Visit Your Site' ) }</Button>
@@ -100,21 +98,24 @@ export function Done( {
 	// Verifying state
 	return (
 		<VStack spacing={ 6 } style={ { textAlign: 'center', padding: '40px 20px' } }>
-			<div style={ { fontSize: '24px' } }>🔄</div>
+			<HStack spacing={ 2 }>
+				<Icon icon={ update } size={ 48 } style={ { color: '#00A32A' } } />
+				<Heading level={ 2 } size={ 20 } weight={ 500 }>
+					{ __( 'Verifying connection…' ) }
+				</Heading>
+			</HStack>
 
-			<h2>{ __( 'Verifying connection…' ) }</h2>
-
-			<p>
+			<Text as="p">
 				{ __(
 					"We're checking if your domain is properly connected to WordPress.com. This may take a few moments."
 				) }
-			</p>
+			</Text>
 
-			<p>
+			<Text as="p">
 				{ __(
 					"DNS changes can take up to 72 hours to fully propagate. If the verification doesn't complete immediately, that's normal."
 				) }
-			</p>
+			</Text>
 
 			<HStack justify="center">
 				<Button variant="secondary">{ __( 'Check Again' ) }</Button>

@@ -4,6 +4,7 @@ import {
 	Card,
 	CardBody,
 	Button,
+	__experimentalText as Text,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { external } from '@wordpress/icons';
@@ -32,7 +33,7 @@ export function DomainConnectStart( {
 			<Card>
 				<CardBody>
 					<VStack spacing={ 4 }>
-						<p>
+						<Text as="p">
 							{ sprintf(
 								/* translators: %1s is the field to copy */
 								__(
@@ -40,7 +41,7 @@ export function DomainConnectStart( {
 								),
 								domainName
 							) }
-						</p>
+						</Text>
 
 						<Notice variant="info" title={ __( 'How long will it take?' ) }>
 							{ __( 'It takes 2 minutes to set up.' ) }
