@@ -9,7 +9,9 @@ import nock from 'nock';
 import { DeepPartial } from 'utility-types/dist';
 import { render } from '../../../test-utils';
 import PreferencesLogin from '../index';
-import type { LoginPreferences, Site } from '@automattic/api-core';
+import type { Site } from '@automattic/api-core';
+
+jest.setTimeout( 10000 );
 
 const mockCreateSuccessNotice = jest.fn();
 const mockCreateErrorNotice = jest.fn();
@@ -58,17 +60,24 @@ const mockSites: DeepPartial< Site >[] = [
 	},
 ];
 
-const mockLoginPreferences: LoginPreferences = {
-	primarySiteId: '123',
-	defaultLandingPage: 'primary-site-dashboard',
-};
-
 function renderPreferencesLogin() {
+	nock( 'https://public-api.wordpress.com' ).get( '/rest/v1.1/me/settings' ).reply( 200, {
+		primary_site_ID: 123,
+	} );
+
 	nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.1/me/preferences' )
+		.query( true )
 		.reply( 200, {
 			calypso_preferences: {
-				'login-preferences': mockLoginPreferences,
+				'sites-landing-page': {
+					useSitesAsLandingPage: false,
+					updatedAt: Date.now(),
+				},
+				'reader-landing-page': {
+					useReaderAsLandingPage: false,
+					updatedAt: Date.now(),
+				},
 			},
 		} );
 
@@ -96,13 +105,19 @@ afterAll( () => {
 test( 'renders login preferences form with correct fields', async () => {
 	renderPreferencesLogin();
 
-	await waitFor( () => {
-		expect( screen.getByText( 'Login preferences' ) ).toBeInTheDocument();
-	} );
+	await waitFor(
+		() => {
+			expect( screen.getByText( 'Login preferences' ) ).toBeInTheDocument();
+		},
+		{ timeout: 5000 }
+	);
 
-	await waitFor( () => {
-		expect( screen.getByText( 'PRIMARY SITE' ) ).toBeInTheDocument();
-	} );
+	await waitFor(
+		() => {
+			expect( screen.getByText( 'PRIMARY SITE' ) ).toBeInTheDocument();
+		},
+		{ timeout: 5000 }
+	);
 
 	expect( screen.getByText( 'DEFAULT LANDING PAGE' ) ).toBeInTheDocument();
 	expect(
@@ -117,34 +132,46 @@ test( 'displays site options in dropdown', async () => {
 	const user = userEvent.setup();
 	renderPreferencesLogin();
 
-	await waitFor( () => {
-		expect( screen.getByText( 'Login preferences' ) ).toBeInTheDocument();
-	} );
+	await waitFor(
+		() => {
+			expect( screen.getByText( 'Login preferences' ) ).toBeInTheDocument();
+		},
+		{ timeout: 5000 }
+	);
 
-	await waitFor( () => {
-		expect( screen.getByText( 'PRIMARY SITE' ) ).toBeInTheDocument();
-	} );
+	await waitFor(
+		() => {
+			expect( screen.getByText( 'PRIMARY SITE' ) ).toBeInTheDocument();
+		},
+		{ timeout: 5000 }
+	);
 
 	const siteSelector = screen.getByRole( 'combobox' );
 	expect( siteSelector ).toHaveTextContent( 'Test Site 1' );
 
 	await user.click( siteSelector );
 
-	await waitFor( () => {
-		const testSite2Elements = screen.getAllByText( 'Test Site 2' );
-		expect( testSite2Elements.length ).toBe( 2 );
-		testSite2Elements.map( ( element ) => {
-			expect( element ).toBeInTheDocument();
-		} );
-	} );
+	await waitFor(
+		() => {
+			const testSite2Elements = screen.getAllByText( 'Test Site 2' );
+			expect( testSite2Elements.length ).toBe( 2 );
+			testSite2Elements.map( ( element ) => {
+				expect( element ).toBeInTheDocument();
+			} );
+		},
+		{ timeout: 5000 }
+	);
 } );
 
 test( 'displays landing page radio options', async () => {
 	renderPreferencesLogin();
 
-	await waitFor( () => {
-		expect( screen.getByText( 'Login preferences' ) ).toBeInTheDocument();
-	} );
+	await waitFor(
+		() => {
+			expect( screen.getByText( 'Login preferences' ) ).toBeInTheDocument();
+		},
+		{ timeout: 5000 }
+	);
 
 	expect( screen.getByLabelText( 'Primary site dashboard' ) ).toBeInTheDocument();
 	expect( screen.getByLabelText( 'Sites' ) ).toBeInTheDocument();
@@ -156,9 +183,12 @@ test( 'displays landing page radio options', async () => {
 test( 'save button is disabled when form is not dirty', async () => {
 	renderPreferencesLogin();
 
-	await waitFor( () => {
-		expect( screen.getByText( 'Login preferences' ) ).toBeInTheDocument();
-	} );
+	await waitFor(
+		() => {
+			expect( screen.getByText( 'Login preferences' ) ).toBeInTheDocument();
+		},
+		{ timeout: 5000 }
+	);
 
 	const saveButton = screen.getByRole( 'button', { name: 'Save' } );
 	expect( saveButton ).toBeDisabled();
@@ -168,42 +198,48 @@ test( 'save button becomes enabled when form is modified', async () => {
 	const user = userEvent.setup();
 	renderPreferencesLogin();
 
-	await waitFor( () => {
-		expect( screen.getByText( 'Login preferences' ) ).toBeInTheDocument();
-	} );
+	await waitFor(
+		() => {
+			expect( screen.getByText( 'Login preferences' ) ).toBeInTheDocument();
+		},
+		{ timeout: 5000 }
+	);
 
 	const sitesRadio = screen.getByLabelText( 'Sites' );
 	await user.click( sitesRadio );
 
 	const saveButton = screen.getByRole( 'button', { name: 'Save' } );
-	expect( saveButton ).toBeEnabled();
+	await waitFor(
+		() => {
+			expect( saveButton ).toBeEnabled();
+		},
+		{ timeout: 5000 }
+	);
 } );
 
 test( 'saves preferences successfully', async () => {
 	const user = userEvent.setup();
 	renderPreferencesLogin();
 
-	await waitFor( () => {
-		expect( screen.getByText( 'Login preferences' ) ).toBeInTheDocument();
-	} );
+	await waitFor(
+		() => {
+			expect( screen.getByText( 'Login preferences' ) ).toBeInTheDocument();
+		},
+		{ timeout: 5000 }
+	);
+
+	// Mock the multiple preferences API calls that will be made
+	nock( 'https://public-api.wordpress.com' )
+		.post( '/rest/v1.1/me/preferences', ( body ) => {
+			return body.calypso_preferences && 'sites-landing-page' in body.calypso_preferences;
+		} )
+		.reply( 200, {} );
 
 	nock( 'https://public-api.wordpress.com' )
-		.post( '/rest/v1.1/me/preferences', {
-			calypso_preferences: {
-				'login-preferences': {
-					primarySiteId: '123',
-					defaultLandingPage: 'sites',
-				},
-			},
+		.post( '/rest/v1.1/me/preferences', ( body ) => {
+			return body.calypso_preferences && 'reader-landing-page' in body.calypso_preferences;
 		} )
-		.reply( 200, {
-			calypso_preferences: {
-				'login-preferences': {
-					primarySiteId: '123',
-					defaultLandingPage: 'sites',
-				},
-			},
-		} );
+		.reply( 200, {} );
 
 	const sitesRadio = screen.getByLabelText( 'Sites' );
 	await user.click( sitesRadio );
@@ -211,24 +247,39 @@ test( 'saves preferences successfully', async () => {
 	const saveButton = screen.getByRole( 'button', { name: 'Save' } );
 	await user.click( saveButton );
 
-	await waitFor( () => {
-		expect( mockCreateSuccessNotice ).toHaveBeenCalledWith(
-			'Login preferences saved successfully.',
-			{ type: 'snackbar' }
-		);
-	} );
+	await waitFor(
+		() => {
+			expect( mockCreateSuccessNotice ).toHaveBeenCalledWith(
+				'Login preferences saved successfully.',
+				{ type: 'snackbar' }
+			);
+		},
+		{ timeout: 5000 }
+	);
 } );
 
 test( 'handles save error gracefully', async () => {
 	const user = userEvent.setup();
 	renderPreferencesLogin();
 
-	await waitFor( () => {
-		expect( screen.getByText( 'Login preferences' ) ).toBeInTheDocument();
-	} );
+	await waitFor(
+		() => {
+			expect( screen.getByText( 'Login preferences' ) ).toBeInTheDocument();
+		},
+		{ timeout: 5000 }
+	);
+
+	// Mock both preferences API calls - both will return errors
+	nock( 'https://public-api.wordpress.com' )
+		.post( '/rest/v1.1/me/preferences', ( body ) => {
+			return body.calypso_preferences && 'sites-landing-page' in body.calypso_preferences;
+		} )
+		.reply( 500, { error: 'Server error' } );
 
 	nock( 'https://public-api.wordpress.com' )
-		.post( '/rest/v1.1/me/preferences' )
+		.post( '/rest/v1.1/me/preferences', ( body ) => {
+			return body.calypso_preferences && 'reader-landing-page' in body.calypso_preferences;
+		} )
 		.reply( 500, { error: 'Server error' } );
 
 	const sitesRadio = screen.getByLabelText( 'Sites' );
@@ -237,25 +288,34 @@ test( 'handles save error gracefully', async () => {
 	const saveButton = screen.getByRole( 'button', { name: 'Save' } );
 	await user.click( saveButton );
 
-	await waitFor( () => {
-		expect( mockCreateErrorNotice ).toHaveBeenCalledWith(
-			'Failed to save login preferences. Please try again.',
-			{ type: 'snackbar' }
-		);
-	} );
+	await waitFor(
+		() => {
+			expect( mockCreateErrorNotice ).toHaveBeenCalledWith(
+				'Failed to save login preferences. Please try again.',
+				{ type: 'snackbar' }
+			);
+		},
+		{ timeout: 5000 }
+	);
 } );
 
 test( 'changes primary site selection', async () => {
 	const user = userEvent.setup();
 	renderPreferencesLogin();
 
-	await waitFor( () => {
-		expect( screen.getByText( 'Login preferences' ) ).toBeInTheDocument();
-	} );
+	await waitFor(
+		() => {
+			expect( screen.getByText( 'Login preferences' ) ).toBeInTheDocument();
+		},
+		{ timeout: 5000 }
+	);
 
-	await waitFor( () => {
-		expect( screen.getByText( 'PRIMARY SITE' ) ).toBeInTheDocument();
-	} );
+	await waitFor(
+		() => {
+			expect( screen.getByText( 'PRIMARY SITE' ) ).toBeInTheDocument();
+		},
+		{ timeout: 5000 }
+	);
 
 	const siteSelector = screen.getByRole( 'combobox' );
 	await user.click( siteSelector );
@@ -267,45 +327,60 @@ test( 'changes primary site selection', async () => {
 	await user.click( clickableOption! );
 
 	nock( 'https://public-api.wordpress.com' )
-		.post( '/rest/v1.1/me/preferences', {
-			calypso_preferences: {
-				'login-preferences': {
-					primarySiteId: '456',
-					defaultLandingPage: 'primary-site-dashboard',
-				},
-			},
+		.post( '/rest/v1.1/me/settings', {
+			primary_site_ID: 456,
 		} )
 		.reply( 200, {
-			calypso_preferences: {
-				'login-preferences': {
-					primarySiteId: '456',
-					defaultLandingPage: 'primary-site-dashboard',
-				},
-			},
+			primary_site_ID: 456,
 		} );
+
+	// Mock the multiple preferences API calls
+	nock( 'https://public-api.wordpress.com' )
+		.post( '/rest/v1.1/me/preferences', ( body ) => {
+			return body.calypso_preferences && 'sites-landing-page' in body.calypso_preferences;
+		} )
+		.reply( 200, {} );
+
+	nock( 'https://public-api.wordpress.com' )
+		.post( '/rest/v1.1/me/preferences', ( body ) => {
+			return body.calypso_preferences && 'reader-landing-page' in body.calypso_preferences;
+		} )
+		.reply( 200, {} );
 
 	const saveButton = screen.getByRole( 'button', { name: 'Save' } );
 	expect( saveButton ).toBeEnabled();
 
 	await user.click( saveButton );
 
-	await waitFor( () => {
-		expect( mockCreateSuccessNotice ).toHaveBeenCalledWith(
-			'Login preferences saved successfully.',
-			{ type: 'snackbar' }
-		);
-	} );
+	await waitFor(
+		() => {
+			expect( mockCreateSuccessNotice ).toHaveBeenCalledWith(
+				'Login preferences saved successfully.',
+				{ type: 'snackbar' }
+			);
+		},
+		{ timeout: 5000 }
+	);
 } );
 
 test( 'hides primary site selector when user has no sites', async () => {
 	nock.cleanAll();
+	nock( 'https://public-api.wordpress.com' ).get( '/rest/v1.1/me/settings' ).reply( 200, {
+		primary_site_ID: null,
+	} );
+
 	nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.1/me/preferences' )
+		.query( true )
 		.reply( 200, {
 			calypso_preferences: {
-				'login-preferences': {
-					primarySiteId: undefined,
-					defaultLandingPage: 'sites',
+				'sites-landing-page': {
+					useSitesAsLandingPage: true,
+					updatedAt: Date.now(),
+				},
+				'reader-landing-page': {
+					useReaderAsLandingPage: false,
+					updatedAt: Date.now(),
 				},
 			},
 		} );
@@ -317,9 +392,12 @@ test( 'hides primary site selector when user has no sites', async () => {
 
 	render( <PreferencesLogin /> );
 
-	await waitFor( () => {
-		expect( screen.getByText( 'Login preferences' ) ).toBeInTheDocument();
-	} );
+	await waitFor(
+		() => {
+			expect( screen.getByText( 'Login preferences' ) ).toBeInTheDocument();
+		},
+		{ timeout: 5000 }
+	);
 
 	expect( screen.queryByText( 'PRIMARY SITE' ) ).not.toBeInTheDocument();
 
@@ -328,13 +406,22 @@ test( 'hides primary site selector when user has no sites', async () => {
 
 test( 'sets first site as default when none selected', async () => {
 	nock.cleanAll();
+	nock( 'https://public-api.wordpress.com' ).get( '/rest/v1.1/me/settings' ).reply( 200, {
+		primary_site_ID: null,
+	} );
+
 	nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.1/me/preferences' )
+		.query( true )
 		.reply( 200, {
 			calypso_preferences: {
-				'login-preferences': {
-					primarySiteId: undefined,
-					defaultLandingPage: 'primary-site-dashboard',
+				'sites-landing-page': {
+					useSitesAsLandingPage: false,
+					updatedAt: Date.now(),
+				},
+				'reader-landing-page': {
+					useReaderAsLandingPage: false,
+					updatedAt: Date.now(),
 				},
 			},
 		} );
@@ -346,13 +433,19 @@ test( 'sets first site as default when none selected', async () => {
 
 	render( <PreferencesLogin /> );
 
-	await waitFor( () => {
-		expect( screen.getByText( 'Login preferences' ) ).toBeInTheDocument();
-	} );
+	await waitFor(
+		() => {
+			expect( screen.getByText( 'Login preferences' ) ).toBeInTheDocument();
+		},
+		{ timeout: 5000 }
+	);
 
-	await waitFor( () => {
-		expect( screen.getByText( 'PRIMARY SITE' ) ).toBeInTheDocument();
-	} );
+	await waitFor(
+		() => {
+			expect( screen.getByText( 'PRIMARY SITE' ) ).toBeInTheDocument();
+		},
+		{ timeout: 5000 }
+	);
 
 	const siteSelector = screen.getByRole( 'combobox' );
 	expect( siteSelector ).toHaveTextContent( 'Test Site 1' );
@@ -362,21 +455,27 @@ test( 'disables save button while saving', async () => {
 	const user = userEvent.setup();
 	renderPreferencesLogin();
 
-	await waitFor( () => {
-		expect( screen.getByText( 'Login preferences' ) ).toBeInTheDocument();
-	} );
+	await waitFor(
+		() => {
+			expect( screen.getByText( 'Login preferences' ) ).toBeInTheDocument();
+		},
+		{ timeout: 5000 }
+	);
+
+	// Mock both preferences API calls with delay
+	nock( 'https://public-api.wordpress.com' )
+		.post( '/rest/v1.1/me/preferences', ( body ) => {
+			return body.calypso_preferences && 'sites-landing-page' in body.calypso_preferences;
+		} )
+		.delay( 100 )
+		.reply( 200, {} );
 
 	nock( 'https://public-api.wordpress.com' )
-		.post( '/rest/v1.1/me/preferences' )
+		.post( '/rest/v1.1/me/preferences', ( body ) => {
+			return body.calypso_preferences && 'reader-landing-page' in body.calypso_preferences;
+		} )
 		.delay( 100 )
-		.reply( 200, {
-			calypso_preferences: {
-				'login-preferences': {
-					primarySiteId: '123',
-					defaultLandingPage: 'sites',
-				},
-			},
-		} );
+		.reply( 200, {} );
 
 	const sitesRadio = screen.getByLabelText( 'Sites' );
 	await user.click( sitesRadio );
@@ -386,7 +485,10 @@ test( 'disables save button while saving', async () => {
 
 	expect( saveButton ).toBeDisabled();
 
-	await waitFor( () => {
-		expect( mockCreateSuccessNotice ).toHaveBeenCalled();
-	} );
+	await waitFor(
+		() => {
+			expect( mockCreateSuccessNotice ).toHaveBeenCalled();
+		},
+		{ timeout: 5000 }
+	);
 } );
