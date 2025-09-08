@@ -43,7 +43,7 @@ export function Done( {
 		}
 		return (
 			<>
-				<Heading level={ 2 } size={ 20 } weight={ 500 }>
+				<Heading level={ 2 } size={ 20 } weight={ 500 } align="center">
 					{ heading }
 				</Heading>
 				<Text as="p" align="center">
