@@ -274,11 +274,12 @@
 .wpnc__note.wpnc__comment_like .wpnc__body .wpnc__body-content,
 .wpnc__note.wpnc__follow .wpnc__body .wpnc__body-content {
 	.wpnc__user {
-		padding-bottom: 16px;
+		padding: 12px 0;
 		border-bottom: 1px solid $gray-100;
 
-		&:not(:first-child) {
-			padding-top: 16px;
+		&:first-child {
+			padding-top: 0;
+			margin-top: -4px;
 		}
 	}
 
