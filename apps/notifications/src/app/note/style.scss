@@ -214,7 +214,7 @@
 }
 
 .wpnc__text-summary {
-	.components-external-link {
+	.components-external-link:not(:hover) {
 		color: inherit;
 	}
 

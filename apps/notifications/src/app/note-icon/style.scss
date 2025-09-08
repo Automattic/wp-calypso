@@ -21,7 +21,12 @@
 		left: 0;
 		width: 100%;
 		height: 100%;
-		box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+		border: solid 1px rgba(0, 0, 0, 0.1);
 		border-radius: 50%;
+		transition: border-color 0.15s ease-in-out;
+
+		a:hover & {
+			border: solid 1px var(--wp-admin-theme-color);
+		}
 	}
 }
