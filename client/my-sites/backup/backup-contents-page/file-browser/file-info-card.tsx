@@ -2,7 +2,7 @@ import { fetchBackupExtensionUrl, fetchBackupFileUrl } from '@automattic/api-cor
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
 import { useCallback, useState } from '@wordpress/element';
-import { useTranslate } from 'i18n-calypso';
+import { __ } from '@wordpress/i18n';
 import { FunctionComponent, useEffect } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useDispatch } from 'calypso/state';
@@ -43,7 +43,6 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 	isRestoreEnabled,
 	onTrackEvent,
 } ) => {
-	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const dispatch = useDispatch();
 
@@ -245,7 +244,7 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 			onClick={ downloadFile }
 			disabled={ isProcessingDownload }
 		>
-			{ isProcessingDownload ? <Spinner /> : translate( 'Download file' ) }
+			{ isProcessingDownload ? <Spinner /> : __( 'Download file' ) }
 		</Button>
 	);
 
@@ -255,7 +254,7 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 			href={ fileInfo.downloadUrl }
 			onClick={ () => trackDownloadByType( item.type ) }
 		>
-			{ translate( 'Download file' ) }
+			{ __( 'Download file' ) }
 		</Button>
 	);
 
@@ -268,10 +267,10 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 			{ isProcessingDownload ? (
 				<>
 					<Spinner className="file-card__prepare-download-spinner" size={ 16 } />
-					{ translate( 'Preparing' ) }
+					{ __( 'Preparing' ) }
 				</>
 			) : (
-				translate( 'Prepare and download' )
+				__( 'Prepare and download' )
 			) }
 		</Button>
 	);
@@ -293,7 +292,10 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 				{ item.type === 'table' && (
 					<div className="file-card__detail">
 						<span className="file-card__label">
-							{ translate( 'Rows:', { comment: 'Rows refers to database table rows.' } ) }{ ' ' }
+							{
+								/* translators: This refers to database table rows. */
+								__( 'Rows:' )
+							}{ ' ' }
 						</span>
 						<span className="file-card__value">{ item.rowCount }</span>
 					</div>
@@ -303,7 +305,10 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 					{ modifiedTime && (
 						<div className="file-card__detail">
 							<span className="file-card__label">
-								{ translate( 'Modified:', { comment: 'Date when the file was modified.' } ) }{ ' ' }
+								{
+									/* translators: This refers to the date when the file was modified. */
+									__( 'Modified:' )
+								}{ ' ' }
 							</span>
 							<span className="file-card__value">{ modifiedTime }</span>
 						</div>
@@ -312,9 +317,10 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 					{ size && (
 						<div className="file-card__detail">
 							<span className="file-card__label">
-								{ translate( 'Size:', {
-									comment: 'This refers to file size (bytes, kilobytes, gigabytes, etc.',
-								} ) }{ ' ' }
+								{
+									/* translators: This refers to the file size (bytes, kilobytes, gigabytes, etc.). */
+									__( 'Size:' )
+								}{ ' ' }
 							</span>
 							<span className="file-card__value">
 								{ size.unitAmount } { size.unit }
@@ -326,9 +332,10 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 				{ fileInfo?.hash && (
 					<div className="file-card__detail">
 						<span className="file-card__label">
-							{ translate( 'Hash:', {
-								comment: 'This refers to a unique identifier or checksum.',
-							} ) }{ ' ' }
+							{
+								/* translators: This refers to a unique identifier or checksum. */
+								__( 'Hash:' )
+							}{ ' ' }
 						</span>
 						<span className="file-card__value">{ fileInfo.hash }</span>
 					</div>
@@ -345,7 +352,7 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 								onClick={ restoreFile }
 								disabled={ ! isRestoreEnabled }
 							>
-								{ translate( 'Restore' ) }
+								{ __( 'Restore' ) }
 							</Button>
 						) }
 					</div>

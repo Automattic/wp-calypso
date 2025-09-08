@@ -1,6 +1,6 @@
 import { useEffect, useState } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback } from 'react';
 import { FileBrowserItem } from './types';
 import { useBackupFileQuery } from './use-backup-file-query';
@@ -15,7 +15,6 @@ interface FilePreviewProps {
  * This component is responsible for rendering the preview of a file.
  */
 const FilePreview: FunctionComponent< FilePreviewProps > = ( { item, siteId, onTrackEvent } ) => {
-	const translate = useTranslate();
 	const [ fileContent, setFileContent ] = useState( '' );
 	const [ showSensitivePreview, setShowSensitivePreview ] = useState( false );
 
@@ -56,9 +55,9 @@ const FilePreview: FunctionComponent< FilePreviewProps > = ( { item, siteId, onT
 	if ( isSensitive && ! showSensitivePreview ) {
 		return (
 			<div className="file-card__preview-sensitive">
-				<p>{ translate( 'This preview is hidden because it contains sensitive information.' ) }</p>
+				<p>{ __( 'This preview is hidden because it contains sensitive information.' ) }</p>
 				<button className="button button-small" onClick={ handleShowPreviewClick }>
-					{ translate( 'Show preview' ) }
+					{ __( 'Show preview' ) }
 				</button>
 			</div>
 		);

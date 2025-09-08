@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { CheckboxControl } from '@wordpress/components';
 import { useCallback } from '@wordpress/element';
-import { useTranslate } from 'i18n-calypso';
+import { __ } from '@wordpress/i18n';
 import { FunctionComponent } from 'react';
 import { backupDownloadPath } from 'calypso/my-sites/backup/paths';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -39,7 +39,6 @@ const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( {
 	onRequestGranularDownload,
 } ) => {
 	const dispatch = useDispatch();
-	const translate = useTranslate();
 	const rootNode = useSelector( ( state ) => getBackupBrowserNode( state, siteId, '/' ) );
 	const browserCheckList = useSelector( ( state ) => getBackupBrowserCheckList( state, siteId ) );
 
@@ -79,7 +78,7 @@ const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( {
 			{ showHeaderButtons && browserCheckList.totalItems > 0 && (
 				<div className="file-browser-header__action-buttons">
 					<Button className="file-browser-header__download-button" onClick={ onDownloadClick }>
-						{ translate( 'Download selected files' ) }
+						{ __( 'Download selected files' ) }
 					</Button>
 					<Button
 						className="file-browser-header__restore-button"
@@ -87,7 +86,7 @@ const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( {
 						disabled={ ! isRestoreEnabled }
 						primary
 					>
-						{ translate( 'Restore selected files' ) }
+						{ __( 'Restore selected files' ) }
 					</Button>
 				</div>
 			) }
@@ -100,7 +99,7 @@ const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( {
 					className={ `${ rootNode && rootNode.checkState === 'mixed' ? 'mixed' : '' }` }
 				/>
 				<div className="file-browser-header__selecting-info">
-					{ browserCheckList.totalItems } { translate( 'files selected' ) }
+					{ browserCheckList.totalItems } { __( 'files selected' ) }
 				</div>
 			</div>
 		</div>
