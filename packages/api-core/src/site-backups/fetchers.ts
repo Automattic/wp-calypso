@@ -3,7 +3,7 @@ import type {
 	BackupEntry,
 	BackupContentsResponse,
 	BackupPathInfoResponse,
-	BackupFileUrl,
+	BackupItemUrl,
 } from './types';
 
 /**
@@ -79,9 +79,28 @@ export function fetchBackupFileUrl(
 	siteId: number,
 	rewindId: string,
 	encodedManifestPath: string
-): Promise< BackupFileUrl > {
+): Promise< BackupItemUrl > {
 	return wpcom.req.get( {
 		path: `/sites/${ siteId }/rewind/backup/${ rewindId }/file/${ encodedManifestPath }/url`,
 		apiNamespace: 'wpcom/v2',
 	} );
+}
+
+export function fetchBackupExtensionUrl(
+	siteId: number,
+	period: string,
+	archiveType: string,
+	extensionSlug: string,
+	extensionVersion: string
+): Promise< BackupItemUrl > {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteId }/rewind/backup/${ period }/extension/${ archiveType }/url`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{
+			extension_slug: extensionSlug,
+			extension_version: extensionVersion,
+		}
+	);
 }

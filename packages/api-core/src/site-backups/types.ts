@@ -57,6 +57,6 @@ export interface BackupPathInfoResponse {
 	error?: string;
 }
 
-export interface BackupFileUrl {
+export interface BackupItemUrl {
 	url: string;
 }

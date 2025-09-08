@@ -14,8 +14,6 @@ import { setupMiddlewares, configureReduxStore } from './common';
 import createStore from './store';
 
 import 'calypso/assets/stylesheets/style.scss';
-// goofy import for environment badge, which is SSR'd
-import 'calypso/components/environment-badge/style.scss';
 
 async function main() {
 	const currentUser = await initializeCurrentUser();

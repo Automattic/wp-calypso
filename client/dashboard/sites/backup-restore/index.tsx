@@ -109,26 +109,28 @@ function SiteBackupRestore() {
 			header={ <PageHeader prefix={ backButton } title={ __( 'Site restore' ) } /> }
 		>
 			<Card>
-				<CardHeader>
-					<SectionHeader
-						title={ __( 'Restore point' ) }
-						level={ 3 }
-						description={ createInterpolateElement(
-							/* translators: %s is the date of the restore point */
-							sprintf( __( '%(restorePointDate)s. <LearnMore />' ), {
-								restorePointDate,
-							} ),
-							{
-								LearnMore: (
-									<ExternalLink href="https://jetpack.com/support/backup/restoring-with-jetpack-backup/">
-										{ __( 'Learn more' ) }
-									</ExternalLink>
-								),
-							}
-						) }
-						decoration={ <Icon icon={ cloud } /> }
-					/>
-				</CardHeader>
+				{ currentStep !== 'success' && (
+					<CardHeader>
+						<SectionHeader
+							title={ __( 'Restore point' ) }
+							level={ 3 }
+							description={ createInterpolateElement(
+								/* translators: %s is the date of the restore point */
+								sprintf( __( '%(restorePointDate)s. <LearnMore />' ), {
+									restorePointDate,
+								} ),
+								{
+									LearnMore: (
+										<ExternalLink href="https://jetpack.com/support/backup/restoring-with-jetpack-backup/">
+											{ __( 'Learn more' ) }
+										</ExternalLink>
+									),
+								}
+							) }
+							decoration={ <Icon icon={ cloud } /> }
+						/>
+					</CardHeader>
+				) }
 				<CardBody>
 					<VStack spacing={ 4 }>{ renderStep() }</VStack>
 				</CardBody>

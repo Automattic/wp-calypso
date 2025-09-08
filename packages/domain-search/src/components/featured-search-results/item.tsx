@@ -25,6 +25,10 @@ export const FeaturedSearchResultsItem = ( {
 	const suggestion = useSuggestion( domainName );
 
 	const matchReasons = useMemo( () => {
+		if ( ! suggestion.match_reasons ) {
+			return;
+		}
+
 		return parseMatchReasons( domainName, suggestion.match_reasons );
 	}, [ domainName, suggestion.match_reasons ] );
 
