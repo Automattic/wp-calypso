@@ -11,8 +11,6 @@ import { render } from '../../../test-utils';
 import PreferencesLogin from '../index';
 import type { Site } from '@automattic/api-core';
 
-jest.setTimeout( 10000 );
-
 const mockCreateSuccessNotice = jest.fn();
 const mockCreateErrorNotice = jest.fn();
 
