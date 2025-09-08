@@ -34,7 +34,15 @@ const clearUseMyDomainsQueryParams = ( currentStepSlug: string | undefined ) => 
 };
 
 function initialize() {
-	const steps = [ STEPS.DOMAIN_SEARCH, STEPS.USE_MY_DOMAIN ];
+	const steps = [
+		STEPS.DOMAIN_SEARCH,
+		STEPS.USE_MY_DOMAIN,
+		STEPS.NEW_OR_EXISTING_SITE,
+		STEPS.SITE_PICKER,
+		STEPS.PLANS,
+		STEPS.SITE_CREATION_STEP,
+		STEPS.PROCESSING,
+	];
 
 	return stepsWithRequiredLogin( steps );
 }
@@ -99,7 +107,7 @@ const domain: FlowV2< typeof initialize > = {
 					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
 					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
 
-					return;
+					return navigate( STEPS.NEW_OR_EXISTING_SITE.slug );
 				case 'use-my-domain':
 					setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
 					if ( providedDependencies?.mode && providedDependencies?.domain ) {
@@ -127,6 +135,29 @@ const domain: FlowV2< typeof initialize > = {
 					} );
 
 					return;
+
+				case STEPS.NEW_OR_EXISTING_SITE.slug:
+					if ( providedDependencies.newExistingSiteChoice === 'domain' ) {
+						return window.location.assign(
+							addQueryArgs( '/checkout/no-site', {
+								redirect_to: '/domains/manage',
+								signup: 0,
+								isDomainOnly: 1,
+								checkoutBackUrl: addQueryArgs(
+									'/setup/domain/new-or-existing-site',
+									window.location.search
+								),
+							} )
+						);
+					}
+
+					if ( providedDependencies.newExistingSiteChoice === 'existing-site' ) {
+						return navigate( STEPS.SITE_PICKER.slug );
+					}
+
+					if ( providedDependencies.newExistingSiteChoice === 'new-site' ) {
+						return navigate( STEPS.PLANS.slug );
+					}
 				default:
 					return;
 			}
