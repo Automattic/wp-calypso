@@ -22,7 +22,7 @@ class EnvVariables implements SupportedEnvVariables {
 		TEST_ON_ATOMIC: false,
 		ATOMIC_VARIATION: 'default',
 		JETPACK_TARGET: 'wpcom-production',
-		CALYPSO_BASE_URL: 'https://wordpress.com',
+		CALYPSO_BASE_URL: 'http://calypso.localhost:3000',
 		BROWSER_NAME: 'chromium',
 		ALLURE_RESULTS_PATH: '',
 		RUN_ID: '',
