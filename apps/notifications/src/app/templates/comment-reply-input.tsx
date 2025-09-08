@@ -92,12 +92,14 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 
 			let wpObject;
 			let submitComment;
-			if ( note.meta.ids.comment ) {
+			if ( note.meta?.ids?.site && note.meta?.ids?.comment ) {
 				wpObject = wpcom().site( note.meta.ids.site ).comment( note.meta.ids.comment );
 				submitComment = wpObject.reply;
-			} else {
+			} else if ( note.meta?.ids?.site && note.meta?.ids?.post ) {
 				wpObject = wpcom().site( note.meta.ids.site ).post( note.meta.ids.post ).comment();
 				submitComment = wpObject.add;
+			} else {
+				return;
 			}
 
 			submitComment.call( wpObject, replyInputRef.current.value, ( error: Error | null ) => {
@@ -114,7 +116,7 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 					return;
 				}
 
-				if ( note.meta.ids.comment ) {
+				if ( note.meta?.ids?.comment ) {
 					// pre-emptively approve the comment if it wasn't already
 					dispatch( actions.notes.approveNote( note.id, true ) );
 					client?.getNote( note.id );
@@ -239,7 +241,7 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 				</HStack>
 			</form>
 			<Suggestions
-				site={ note.meta.ids.site }
+				site={ note.meta?.ids?.site }
 				onInsertSuggestion={ insertSuggestion }
 				getContextEl={ () => replyInputRef.current }
 			/>

@@ -1,11 +1,9 @@
-import { DomainSuggestion } from '@automattic/domain-search';
+import { DomainSuggestion, FeaturedDomainSuggestionsList } from '@automattic/domain-search';
 import { localize } from 'i18n-calypso';
 import { pick } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import DomainRegistrationSuggestion from '../domain-registration-suggestion';
-
-import './style.scss';
 
 export class FeaturedDomainSuggestions extends Component {
 	static propTypes = {
@@ -69,40 +67,35 @@ export class FeaturedDomainSuggestions extends Component {
 		);
 
 		return (
-			<div className="featured-domain-suggestions-v2">
-				<div className="featured-domain-suggestions-v2__content">
-					{ featuredSuggestions.map( ( suggestion, index ) => (
-						<div className="featured-domain-suggestions-v2__item" key={ suggestion.domain_name }>
-							<DomainRegistrationSuggestion
-								suggestion={ suggestion }
-								isFeatured
-								isSingleFeaturedSuggestion={ featuredSuggestionsWithoutExactMatch.length === 1 }
-								railcarId={ this.props.railcarId + '-' + index }
-								isSignupStep={ this.props.isSignupStep }
-								uiPosition={ index }
-								premiumDomain={ this.props.premiumDomains[ suggestion.domain_name ] }
-								fetchAlgo={ this.getFetchAlgorithm( suggestion ) }
-								buttonStyles={ { primary: true } }
-								hideMatchReasons={ this.props.hideMatchReasons }
-								products={ this.props.products ?? undefined }
-								isCartPendingUpdateDomain={ this.props.isCartPendingUpdateDomain }
-								{ ...childProps }
-							/>
-						</div>
-					) ) }
-				</div>
-			</div>
+			<FeaturedDomainSuggestionsList>
+				{ featuredSuggestions.map( ( suggestion, index ) => (
+					<DomainRegistrationSuggestion
+						key={ suggestion.domain_name }
+						suggestion={ suggestion }
+						isFeatured
+						isSingleFeaturedSuggestion={ featuredSuggestionsWithoutExactMatch.length === 1 }
+						railcarId={ this.props.railcarId + '-' + index }
+						isSignupStep={ this.props.isSignupStep }
+						uiPosition={ index }
+						premiumDomain={ this.props.premiumDomains[ suggestion.domain_name ] }
+						fetchAlgo={ this.getFetchAlgorithm( suggestion ) }
+						buttonStyles={ { primary: true } }
+						hideMatchReasons={ this.props.hideMatchReasons }
+						products={ this.props.products ?? undefined }
+						isCartPendingUpdateDomain={ this.props.isCartPendingUpdateDomain }
+						{ ...childProps }
+					/>
+				) ) }
+			</FeaturedDomainSuggestionsList>
 		);
 	}
 
 	renderPlaceholders() {
 		return (
-			<div className="featured-domain-suggestions-v2">
-				<div className="featured-domain-suggestions-v2__content">
-					<DomainSuggestion.Featured.Placeholder />
-					<DomainSuggestion.Featured.Placeholder />
-				</div>
-			</div>
+			<FeaturedDomainSuggestionsList>
+				<DomainSuggestion.Featured.Placeholder />
+				<DomainSuggestion.Featured.Placeholder />
+			</FeaturedDomainSuggestionsList>
 		);
 	}
 }

@@ -1,11 +1,10 @@
-import { fetchBackupFileUrl } from '@automattic/api-core';
+import { fetchBackupExtensionUrl, fetchBackupFileUrl } from '@automattic/api-core';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
 import { useCallback, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useEffect } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import wp from 'calypso/lib/wp';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { hasJetpackCredentials } from 'calypso/state/jetpack/credentials/selectors';
@@ -123,7 +122,7 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 					return;
 				} );
 		} else {
-			if ( fileInfo === undefined || parentItem === undefined ) {
+			if ( ! fileInfo || ! parentItem || ! parentItem.extensionVersion ) {
 				handleDownloadError();
 				return;
 			}
@@ -135,19 +134,13 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 				archiveType = 'theme';
 			}
 
-			const period = Math.round( rewindId );
-
-			wp.req
-				.post(
-					{
-						path: `/sites/${ siteId }/rewind/backup/${ period }/extension/${ archiveType }/url`,
-						apiNamespace: 'wpcom/v2',
-					},
-					{
-						extension_slug: parentItem.name,
-						extension_version: parentItem.extensionVersion,
-					}
-				)
+			fetchBackupExtensionUrl(
+				siteId,
+				Math.round( rewindId ).toString(),
+				archiveType,
+				parentItem.name,
+				parentItem.extensionVersion
+			)
 				.then( ( response: { url: string } ) => {
 					if ( ! response.url ) {
 						handleDownloadError();
