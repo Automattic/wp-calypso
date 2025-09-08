@@ -1,10 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-import { act, screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { useDispatch } from '@wordpress/data';
+import nock from 'nock';
 import { render } from '../../../test-utils';
 import GravatarProfileSection from '../index';
 import type { UserProfile } from '@automattic/api-core';
@@ -19,23 +20,6 @@ jest.mock( '@wordpress/data', () => ( {
 	createReduxStore: jest.fn(),
 	createSelector: jest.fn(),
 	register: jest.fn(),
-} ) );
-
-// Mock the profile mutation
-const mockMutate = jest.fn();
-jest.mock( '@automattic/api-queries', () => ( {
-	profileMutation: jest.fn( () => ( {
-		mutationFn: jest.fn(),
-	} ) ),
-} ) );
-
-jest.mock( '@tanstack/react-query', () => ( {
-	...jest.requireActual( '@tanstack/react-query' ),
-	useMutation: jest.fn( () => ( {
-		mutate: mockMutate,
-		isPending: false,
-		error: null,
-	} ) ),
 } ) );
 
 const mockProfile: UserProfile = {
@@ -64,6 +48,11 @@ describe( 'GravatarProfileSection Notifications', () => {
 		const user = userEvent.setup();
 		render( <GravatarProfileSection profile={ mockProfile } /> );
 
+		// Mock the POST HTTP request
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/settings' )
+			.reply( 200, { display_name: 'Updated User' } );
+
 		// Make a change to enable the save button
 		const displayNameInput = screen.getByDisplayValue( 'Test User' );
 		await user.clear( displayNameInput );
@@ -73,27 +62,24 @@ describe( 'GravatarProfileSection Notifications', () => {
 		const saveButton = screen.getByRole( 'button', { name: 'Save' } );
 		await user.click( saveButton );
 
-		// Verify the mutation was called
-		expect( mockMutate ).toHaveBeenCalled();
-
-		// Simulate successful mutation by calling the onSuccess callback
-		await act( async () => {
-			const mutateCall = mockMutate.mock.calls[ 0 ];
-			const options = mutateCall[ 1 ];
-			options.onSuccess();
+		// Wait for success notification to be called
+		await waitFor( () => {
+			expect( mockCreateSuccessNotice ).toHaveBeenCalledWith(
+				'Public Gravatar profile saved successfully.',
+				{ type: 'snackbar' }
+			);
 		} );
-
-		// Verify success notification was called
-		expect( mockCreateSuccessNotice ).toHaveBeenCalledWith(
-			'Public Gravatar profile saved successfully.',
-			{ type: 'snackbar' }
-		);
 	} );
 
 	it( 'should show error notification when form save fails with error message', async () => {
 		const user = userEvent.setup();
 		render( <GravatarProfileSection profile={ mockProfile } /> );
 
+		// Mock the POST HTTP request
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/settings' )
+			.reply( 400, { message: 'Network error occurred' } );
+
 		// Make a change to enable the save button
 		const displayNameInput = screen.getByDisplayValue( 'Test User' );
 		await user.clear( displayNameInput );
@@ -103,23 +89,20 @@ describe( 'GravatarProfileSection Notifications', () => {
 		const saveButton = screen.getByRole( 'button', { name: 'Save' } );
 		await user.click( saveButton );
 
-		// Simulate failed mutation by calling the onError callback
-		await act( async () => {
-			const mutateCall = mockMutate.mock.calls[ 0 ];
-			const options = mutateCall[ 1 ];
-			const error = new Error( 'Network error occurred' );
-			options.onError( error );
-		} );
-
-		// Verify error notification was called with the error message
-		expect( mockCreateErrorNotice ).toHaveBeenCalledWith( 'Network error occurred', {
-			type: 'snackbar',
+		// Wait for error notification to be called
+		await waitFor( () => {
+			expect( mockCreateErrorNotice ).toHaveBeenCalledWith( 'Network error occurred', {
+				type: 'snackbar',
+			} );
 		} );
 	} );
 
-	it( 'should show fallback error notification when form save fails without error message', async () => {
+	it( 'should show error notification when form save fails with HTTP error', async () => {
 		const user = userEvent.setup();
 		render( <GravatarProfileSection profile={ mockProfile } /> );
+
+		// Mock the POST HTTP request
+		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/me/settings' ).reply( 500, {} );
 
 		// Make a change to enable the save button
 		const displayNameInput = screen.getByDisplayValue( 'Test User' );
@@ -130,18 +113,12 @@ describe( 'GravatarProfileSection Notifications', () => {
 		const saveButton = screen.getByRole( 'button', { name: 'Save' } );
 		await user.click( saveButton );
 
-		// Simulate failed mutation with empty error message
-		await act( async () => {
-			const mutateCall = mockMutate.mock.calls[ 0 ];
-			const options = mutateCall[ 1 ];
-			const error = new Error( '' );
-			options.onError( error );
+		// Wait for error notification with HTTP status message to be called
+		await waitFor( () => {
+			expect( mockCreateErrorNotice ).toHaveBeenCalledWith(
+				'500 status code for "POST /rest/v1.1/me/settings"',
+				{ type: 'snackbar' }
+			);
 		} );
-
-		// Verify error notification was called with fallback message
-		expect( mockCreateErrorNotice ).toHaveBeenCalledWith(
-			'Failed to save public Gravatar profile.',
-			{ type: 'snackbar' }
-		);
 	} );
 } );

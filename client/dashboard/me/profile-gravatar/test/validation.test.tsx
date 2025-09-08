@@ -4,35 +4,9 @@
 import { screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
-import { useDispatch } from '@wordpress/data';
 import { render } from '../../../test-utils';
 import GravatarProfileSection from '../index';
 import type { UserProfile } from '@automattic/api-core';
-
-// Mock the WordPress data store
-jest.mock( '@wordpress/data', () => ( {
-	useDispatch: jest.fn(),
-	combineReducers: jest.fn(),
-	createReduxStore: jest.fn(),
-	createSelector: jest.fn(),
-	register: jest.fn(),
-} ) );
-
-// Mock the profile mutation
-jest.mock( '@automattic/api-queries', () => ( {
-	profileMutation: jest.fn( () => ( {
-		mutationFn: jest.fn(),
-	} ) ),
-} ) );
-
-jest.mock( '@tanstack/react-query', () => ( {
-	...jest.requireActual( '@tanstack/react-query' ),
-	useMutation: jest.fn( () => ( {
-		mutate: jest.fn(),
-		isPending: false,
-		error: null,
-	} ) ),
-} ) );
 
 const mockProfile: UserProfile = {
 	advertising_targeting_opt_out: false,
@@ -48,14 +22,6 @@ const mockProfile: UserProfile = {
 };
 
 describe( 'GravatarProfileSection Form Validation', () => {
-	beforeEach( () => {
-		jest.clearAllMocks();
-		( useDispatch as jest.Mock ).mockReturnValue( {
-			createSuccessNotice: jest.fn(),
-			createErrorNotice: jest.fn(),
-		} );
-	} );
-
 	describe( 'Display Name Validation', () => {
 		it( 'should show validation error for display names longer than 250 characters', async () => {
 			const user = userEvent.setup();
