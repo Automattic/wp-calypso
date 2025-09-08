@@ -11,7 +11,6 @@ import PageLayout from '../../../components/page-layout';
 import { PluginsScheduleNewFrequency, type Weekday } from './components/frequency-selection';
 import { PluginsScheduleNewPlugins, type PluginRow } from './components/plugins-selection';
 import { PluginsScheduleNewSites } from './components/sites-selection';
-import type { Site } from '@automattic/api-core';
 
 // getUniquePlugins not used anymore; plugin list derives from selected sites
 
@@ -20,19 +19,6 @@ export default function NewSchedule() {
 
 	const [ selectedSiteIds, setSelectedSiteIds ] = useState< string[] >( [] );
 	const [ selectedPluginSlugs, setSelectedPluginSlugs ] = useState< string[] >( [] );
-
-	// Strongly-typed bulk actions to enable selection UI, no actions column displayed via CSS
-	const siteBulkActions: Array< Action< Site > > = useMemo(
-		() => [
-			{
-				id: 'bulk-select-sites',
-				label: __( 'Select' ),
-				supportsBulk: true,
-				callback: () => {},
-			},
-		],
-		[]
-	);
 
 	const [ frequency, setFrequency ] = useState< 'daily' | 'weekly' >( 'daily' );
 	const [ weekday, setWeekday ] = useState< Weekday >( 'Monday' );
@@ -63,7 +49,6 @@ export default function NewSchedule() {
 			<PluginsScheduleNewSites
 				selection={ selectedSiteIds }
 				onChangeSelection={ ( ids ) => setSelectedSiteIds( ids ) }
-				actions={ siteBulkActions }
 			/>
 
 			<PluginsScheduleNewPlugins
