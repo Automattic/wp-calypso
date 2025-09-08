@@ -10,6 +10,7 @@ import { __ } from '@wordpress/i18n';
 import { useMemo, useState, useCallback, useRef } from 'react';
 import { canManageSite } from '../../sites/features';
 import SiteIcon from '../../sites/site-icon';
+import { getSiteDisplayUrl } from '../../utils/site-url';
 import type { Site } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 import './select-site.scss';
@@ -72,7 +73,11 @@ export function SelectSite( { attachedSiteId, onSiteSelect }: Props ) {
 			id: 'URL',
 			label: 'URL',
 			render: ( { item }: { item: Site } ) => {
-				return <Text className="domain-transfer-select-site__url-field">{ item.URL }</Text>;
+				return (
+					<Text className="domain-transfer-select-site__url-field">
+						{ getSiteDisplayUrl( item ) }
+					</Text>
+				);
 			},
 		},
 	];
