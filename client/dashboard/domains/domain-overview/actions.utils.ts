@@ -1,11 +1,4 @@
-import {
-	Domain,
-	DomainSubtype,
-	DomainSubtype,
-	DomainTransferStatus,
-	Purchase,
-	Site,
-} from '@automattic/api-core';
+import { Domain, DomainSubtype, DomainTransferStatus, Purchase, Site } from '@automattic/api-core';
 import { __ } from '@wordpress/i18n';
 import { isAkismetProduct } from '../../utils/purchase';
 
