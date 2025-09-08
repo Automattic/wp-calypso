@@ -168,7 +168,7 @@ export const STEPS = {
 	},
 
 	SITE_SPEC: {
-		slug: 'learning-step',
+		slug: 'site-spec',
 		asyncComponent: () => import( './steps-repository/site-spec' ),
 	},
 

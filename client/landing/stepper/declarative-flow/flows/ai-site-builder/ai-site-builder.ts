@@ -94,7 +94,7 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 		const submit: SubmitHandler< typeof initialize > = async function ( submittedStep ) {
 			const { slug, providedDependencies } = submittedStep;
 			switch ( slug ) {
-				case 'learning-step': {
+				case 'site-spec': {
 					// SiteSpec widget will redirect to this flow with spec_id parameter
 					// This case should not be reached in normal flow
 					return;
