@@ -1000,6 +1000,7 @@ object PlaywrightTestPRMatrix : BuildType({
 
 		bashNodeScript {
 			name = "Run e2e tests"
+			id = "run_e2e_tests"
 			scriptContent = """
 				echo "Getting Calypso url for build ${BuildDockerImage.depParamRefs.buildNumber}"
 				chmod +x ./bin/get-calypso-live-url.sh
@@ -1029,7 +1030,10 @@ object PlaywrightTestPRMatrix : BuildType({
 
 		bashNodeScript {
 			name = "Upload report and send Slack notification"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			conditions {
+				matches("teamcity.build.branch", ".*e2e.*")
+				equals("teamcity.build.step.status.run_e2e_tests", "failure")
+			}
 			scriptContent = """
 				ARCHIVE_NAME="%build.counter%-%build.vcs.number%-%playwrightProject%"
 				export E2E_SECRETS_KEY="%E2E_SECRETS_ENCRYPTION_KEY_CURRENT%"
