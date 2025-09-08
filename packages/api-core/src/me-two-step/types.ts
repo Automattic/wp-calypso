@@ -50,3 +50,16 @@ export interface CreateApplicationPasswordArgs {
 export interface CreateApplicationPasswordResponse {
 	application_password: string;
 }
+export interface AppAuthSetup {
+	otpauth_uri: string;
+	time_code: string;
+}
+
+export interface ValidateTwoStepCodeArgs {
+	code: string;
+	action: string;
+}
+
+export interface GenerateBackupCodesResponse {
+	codes: string[];
+}

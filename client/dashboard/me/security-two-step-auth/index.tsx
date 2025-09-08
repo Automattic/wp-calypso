@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import PageLayout from '../../components/page-layout';
 import SecurityPageHeader from '../security-page-header';
+import SecurityTwoStepAuthEmptyState from './empty-state';
 import SecurityTwoStepAuthMainPage from './main-page';
 
 export default function SecurityTwoStepAuth() {
@@ -28,9 +29,11 @@ export default function SecurityTwoStepAuth() {
 				/>
 			}
 		>
-			{
-				isTwoStepEnabled ? <SecurityTwoStepAuthMainPage userSettings={ userSettings } /> : null // TODO: Add empty state
-			}
+			{ isTwoStepEnabled ? (
+				<SecurityTwoStepAuthMainPage userSettings={ userSettings } />
+			) : (
+				<SecurityTwoStepAuthEmptyState />
+			) }
 		</PageLayout>
 	);
 }
