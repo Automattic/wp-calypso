@@ -1030,6 +1030,7 @@ object PlaywrightTestPRMatrix : BuildType({
 
 		bashNodeScript {
 			name = "Upload report and send Slack notification"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			conditions {
 				matches("teamcity.build.branch", ".*e2e.*")
 				equals("teamcity.build.step.status.run_e2e_tests", "failure")
