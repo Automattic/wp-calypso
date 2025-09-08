@@ -4,7 +4,7 @@ import {
 	userPreferenceQuery,
 	userPreferenceMutation,
 } from '@automattic/api-queries';
-import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
@@ -21,18 +21,19 @@ const READER_AS_LANDING_PAGE_PREFERENCE = 'reader-landing-page';
 
 export function useLoginPreferences() {
 	// Fetch user settings for primary_site_ID
-	const userSettingsResult = useSuspenseQuery( userSettingsQuery() );
+	const userSettingsResult = useQuery( userSettingsQuery() );
 
 	// Fetch preferences for landing page settings
 	const sitesLandingResult = useQuery( userPreferenceQuery( SITES_AS_LANDING_PAGE_PREFERENCE ) );
 	const readerLandingResult = useQuery( userPreferenceQuery( READER_AS_LANDING_PAGE_PREFERENCE ) );
 
 	const data: LoginPreferencesData = {
-		primarySiteId: userSettingsResult.data.primary_site_ID?.toString(),
+		primarySiteId: userSettingsResult.data?.primary_site_ID?.toString(),
 		defaultLandingPage: getDefaultLandingPage( sitesLandingResult.data, readerLandingResult.data ),
 	};
 
-	const isLoading = sitesLandingResult.isLoading || readerLandingResult.isLoading;
+	const isLoading =
+		userSettingsResult.isLoading || sitesLandingResult.isLoading || readerLandingResult.isLoading;
 
 	return {
 		data,
@@ -67,7 +68,6 @@ export function useUpdateLoginPreferences() {
 
 			// Update landing page preferences
 			const updatedAt = Date.now();
-
 			promises.push(
 				sitesLandingUpdate.mutateAsync( {
 					useSitesAsLandingPage: data.defaultLandingPage === 'sites',

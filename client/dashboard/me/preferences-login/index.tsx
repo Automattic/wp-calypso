@@ -29,38 +29,38 @@ export default function PreferencesLogin() {
 		sitesQuery( { site_visibility: 'visible', include_a8c_owned: false } )
 	);
 
-	// Initialize form data from server data
+	// Initialize form data with default values
 	const [ formData, setFormData ] = useState< LoginPreferencesFormData >( () => ( {
-		primarySiteId: loginPrefs?.primarySiteId,
-		defaultLandingPage: loginPrefs?.defaultLandingPage || 'primary-site-dashboard',
+		primarySiteId: undefined,
+		defaultLandingPage: 'primary-site-dashboard',
 	} ) );
+
+	// Track original values for dirty detection
+	const [ originalData, setOriginalData ] = useState< LoginPreferencesFormData | null >( null );
 
 	// Update form data when server data changes
 	useEffect( () => {
-		setFormData( {
-			primarySiteId: loginPrefs?.primarySiteId,
-			defaultLandingPage: loginPrefs?.defaultLandingPage || 'primary-site-dashboard',
-		} );
-	}, [ loginPrefs ] );
-
-	// Set default primary site if none selected and sites are available
-	useEffect( () => {
-		if ( ! formData.primarySiteId && sites.length > 0 ) {
-			setFormData( ( prev ) => ( {
-				...prev,
-				primarySiteId: sites[ 0 ].ID.toString(),
-			} ) );
+		if ( loginPrefs && ! originalData ) {
+			const defaultSiteId =
+				loginPrefs.primarySiteId || ( sites.length > 0 ? sites[ 0 ].ID.toString() : undefined );
+			const data = {
+				primarySiteId: defaultSiteId,
+				defaultLandingPage: loginPrefs.defaultLandingPage || 'primary-site-dashboard',
+			};
+			setFormData( data );
+			setOriginalData( data );
 		}
-	}, [ formData.primarySiteId, sites ] );
+	}, [ loginPrefs, sites, originalData ] );
 
 	// Update preferences using combined hook
 	const updatePreferences = useUpdateLoginPreferences();
 
 	// Check if form has been modified
 	const isDirty = Boolean(
-		loginPrefs &&
-			( loginPrefs.primarySiteId !== formData.primarySiteId ||
-				loginPrefs.defaultLandingPage !== formData.defaultLandingPage )
+		! isLoadingPrefs &&
+			originalData &&
+			( originalData.primarySiteId !== formData.primarySiteId ||
+				originalData.defaultLandingPage !== formData.defaultLandingPage )
 	);
 
 	const isBusy = updatePreferences.isPending || isLoadingPrefs;
@@ -127,9 +127,9 @@ export default function PreferencesLogin() {
 		fields: [ 'primarySiteId', 'defaultLandingPage' ],
 	};
 
-	const handleSubmit = async ( e: React.FormEvent ) => {
+	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		await updatePreferences.mutateAsync( formData );
+		updatePreferences.mutate( formData );
 	};
 
 	return (
