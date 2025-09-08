@@ -33,6 +33,21 @@ const serverLogsViewConfig = {
 	},
 };
 
+const activityLogsViewConfig = {
+	sortField: 'published',
+	titleField: 'summary',
+	primaryField: 'summary',
+	visibleFields: [ 'published', 'summary', 'actor' ],
+	allowedFilters: [] as string[],
+	layout: {
+		styles: {
+			published: { maxWidth: '175px', minWidth: '140px' },
+			summary: { minWidth: '300px' },
+			actor: { maxWidth: '150px', minWidth: '75px' },
+		},
+	},
+};
+
 // Convert current view filters to API filter params
 const getFilterParamsFromView = ( view: View, fieldNames: string[] ): FilterType => {
 	const allowed = new Set( fieldNames );
@@ -56,9 +71,19 @@ const getFilterParamsFromView = ( view: View, fieldNames: string[] ): FilterType
 	return out;
 };
 
-export function toFilterParams( { view, logType }: { view: View; logType: LogType } ): FilterType {
+export function toFilterParams( {
+	view,
+	logType,
+}: {
+	view: View;
+	logType: LogType | 'activity';
+} ): FilterType {
 	if ( logType === LogType.PHP ) {
 		return getFilterParamsFromView( view, [ 'severity' ] );
+	}
+
+	if ( logType === 'activity' ) {
+		return getFilterParamsFromView( view, [] );
 	}
 
 	return getFilterParamsFromView( view, [ 'cached', 'request_type', 'status', 'renderer' ] );
@@ -68,10 +93,17 @@ export function useView( {
 	logType,
 	initialFilters,
 }: {
-	logType: LogType;
+	logType: LogType | 'activity';
 	initialFilters?: View[ 'filters' ];
 } ) {
-	const config = logType === LogType.PHP ? phpLogsViewConfig : serverLogsViewConfig;
+	let config;
+	if ( logType === LogType.PHP ) {
+		config = phpLogsViewConfig;
+	} else if ( logType === 'activity' ) {
+		config = activityLogsViewConfig;
+	} else {
+		config = serverLogsViewConfig;
+	}
 	return useState< View >( () => ( {
 		type: 'table',
 		page: 1,

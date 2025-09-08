@@ -1,4 +1,4 @@
-import { LogType, PHPLog, ServerLog } from '@automattic/api-core';
+import { LogType, PHPLog, ServerLog, ActivityLogEntry } from '@automattic/api-core';
 import { formatNumber } from '@automattic/number-formatters';
 import { Badge } from '@automattic/ui';
 import { useViewportMatch } from '@wordpress/compose';
@@ -12,8 +12,8 @@ import type { Field } from '@wordpress/dataviews';
 import './style.scss';
 
 type UseFieldsArgs =
-	| { logType: LogType; timezoneString: string; gmtOffset?: number }
-	| { logType: LogType; timezoneString?: undefined; gmtOffset: number };
+	| { logType: LogType | 'activity'; timezoneString: string; gmtOffset?: number }
+	| { logType: LogType | 'activity'; timezoneString?: undefined; gmtOffset: number };
 
 const VALUES_CACHED = [ 'false', 'true' ] as const;
 const VALUES_RENDERER = [ 'php', 'static' ] as const;
@@ -49,7 +49,7 @@ export function useFields( {
 	logType,
 	timezoneString,
 	gmtOffset,
-}: UseFieldsArgs ): Field< PHPLog >[] | Field< ServerLog >[] {
+}: UseFieldsArgs ): Field< PHPLog >[] | Field< ServerLog >[] | Field< ActivityLogEntry >[] {
 	const locale = useLocale();
 
 	let dateTimeLabel = __( 'Date & time' );
@@ -154,6 +154,55 @@ export function useFields( {
 					filterBy: { operators: [] },
 				},
 			] satisfies Field< PHPLog >[];
+		}
+
+		if ( logType === 'activity' ) {
+			return [
+				{
+					id: 'published',
+					type: 'datetime',
+					label: dateTimeLabel,
+					enableHiding: false,
+					enableSorting: true,
+					getValue: ( { item } ) => item.published,
+					render: ( { item } ) => {
+						const value = item.published;
+						return <span>{ formatCell( value ) }</span>;
+					},
+					filterBy: { operators: [] },
+				},
+				{
+					id: 'summary',
+					type: 'text',
+					label: __( 'Event' ),
+					enableSorting: false,
+					getValue: ( { item } ) => item.summary,
+					render: ( { item } ) => (
+						<span className="site-logs-ellipsis">{ String( item.summary ) }</span>
+					),
+					filterBy: { operators: [] },
+				},
+				{
+					id: 'content',
+					type: 'text',
+					label: __( 'Message' ),
+					enableSorting: false,
+					getValue: ( { item } ) => item.content?.text || '',
+					render: ( { item } ) => (
+						<span className="site-logs-ellipsis">{ String( item.content?.text ) }</span>
+					),
+					filterBy: { operators: [] },
+				},
+				{
+					id: 'actor',
+					type: 'text',
+					label: __( 'User' ),
+					enableSorting: false,
+					getValue: ( { item } ) => item.actor?.name || __( 'Unknown' ),
+					render: ( { item } ) => <span>{ item.actor?.name || __( 'Unknown' ) }</span>,
+					filterBy: { operators: [] },
+				},
+			] satisfies Field< ActivityLogEntry >[];
 		}
 
 		// server (web) logs

@@ -40,12 +40,20 @@ function csvEscape( value: unknown ): string {
 async function downloadSiteLogs( args: {
 	siteId: number;
 	siteSlug: string;
-	logType: LogType;
+	logType: LogType | 'activity';
 	startSec: number;
 	endSec: number;
 	filter: FilterType;
 } ): Promise< DownloadLogsResult > {
 	const { siteId, siteSlug, logType, startSec, endSec, filter } = args;
+
+	// Activity logs don't support batch downloads yet
+	if ( logType === 'activity' ) {
+		return {
+			ok: false,
+			message: __( 'Activity log downloads are not yet supported.' ),
+		};
+	}
 
 	let scrollId: string | null = null;
 	const rows: string[] = [];
@@ -130,7 +138,7 @@ export function LogsDownloader( {
 }: {
 	siteId: number;
 	siteSlug: string;
-	logType: LogType;
+	logType: LogType | 'activity';
 	startSec: number;
 	endSec: number;
 	filter: FilterType;

@@ -214,6 +214,21 @@ export const siteLogsServerRoute = createRoute( {
 	)
 );
 
+export const siteLogsActivityRoute = createRoute( {
+	getParentRoute: () => siteLogsRoute,
+	path: 'activity',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
+	},
+} ).lazy( () =>
+	import( '../../sites/logs' ).then( ( d ) =>
+		createLazyRoute( 'site-logs-activity' )( {
+			component: () => <d.default logType="activity" />,
+		} )
+	)
+);
+
 export const siteBackupsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'backups',
@@ -704,7 +719,12 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 
 	if ( config.supports.sites.logs ) {
 		siteRoutes.push(
-			siteLogsRoute.addChildren( [ siteLogsIndexRoute, siteLogsPhpRoute, siteLogsServerRoute ] )
+			siteLogsRoute.addChildren( [
+				siteLogsIndexRoute,
+				siteLogsPhpRoute,
+				siteLogsServerRoute,
+				siteLogsActivityRoute,
+			] )
 		);
 	}
 

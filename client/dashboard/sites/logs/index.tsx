@@ -1,6 +1,20 @@
-import { HostingFeatures, LogType, PHPLog, ServerLog, SiteLogsParams } from '@automattic/api-core';
-import { siteLogsQuery, siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import {
+	HostingFeatures,
+	LogType,
+	PHPLog,
+	ServerLog,
+	SiteLogsParams,
+	SiteLogsData,
+	ActivityLogEntry,
+	ActivityLog,
+} from '@automattic/api-core';
+import {
+	siteLogsQuery,
+	siteBySlugQuery,
+	siteSettingsQuery,
+	siteActivityLogQuery,
+} from '@automattic/api-queries';
+import { useQuery, useSuspenseQuery, skipToken } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
 	__experimentalText as Text,
@@ -40,6 +54,18 @@ import {
 import type { Action } from '@wordpress/dataviews';
 
 import './style.scss';
+
+// Helper types and functions
+type LogsData = SiteLogsData | ActivityLog | undefined;
+
+// Type guards
+const isSiteLogsData = ( data: LogsData ): data is SiteLogsData => {
+	return data != null && 'logs' in data && 'total_results' in data;
+};
+
+const isActivityLogData = ( data: LogsData ): data is ActivityLog => {
+	return data != null && 'current' in data;
+};
 
 export function SiteLogsCallout( {
 	siteSlug,
@@ -81,6 +107,7 @@ export function SiteLogsCallout( {
 const LOG_TABS = [
 	{ name: 'php', title: __( 'PHP errors' ) },
 	{ name: 'server', title: __( 'Web server' ) },
+	{ name: 'activity', title: __( 'Activity' ) },
 ];
 
 function filtersSignature(
@@ -98,7 +125,7 @@ function filtersSignature(
 		.join( '|' );
 }
 
-function SiteLogs( { logType }: { logType: LogType } ) {
+function SiteLogs( { logType }: { logType: LogType | 'activity' } ) {
 	const locale = useLocale();
 	const { siteSlug } = siteRoute.useParams();
 	const router = useRouter();
@@ -174,14 +201,17 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 
 	const filter = useMemo( () => toFilterParams( { view, logType } ), [ view, logType ] );
 
-	const params: SiteLogsParams = {
-		logType,
-		start: startSec,
-		end: endSec,
-		filter,
-		sortOrder: view.sort?.direction,
-		pageSize: view.perPage,
-	};
+	const params: SiteLogsParams | null =
+		logType !== 'activity'
+			? {
+					logType: logType as LogType,
+					start: startSec,
+					end: endSec,
+					filter,
+					sortOrder: view.sort?.direction,
+					pageSize: view.perPage,
+			  }
+			: null;
 
 	// This keeps a per-page cursor cache - page 1 has no cursor.
 	const cursorsRef = useRef< Map< number, string > >( new Map() );
@@ -189,21 +219,41 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	// For the current page, use its cursor (or null/undefined on page 1).
 	const scrollId = cursorsRef.current.get( view.page ?? 1 ) ?? null;
 
-	const { data: siteLogs, isFetching } = useQuery( siteLogsQuery( siteId, params, scrollId ) );
+	// For activity logs, we use a different query
+	const shouldFetchRegularLogs = logType !== 'activity' && !! params;
+	const { data: siteLogsData, isFetching: isFetchingLogs } = useQuery(
+		shouldFetchRegularLogs && params
+			? siteLogsQuery( siteId, params, scrollId )
+			: { queryKey: [ 'disabled-logs' ], queryFn: skipToken }
+	);
+
+	const shouldFetchActivityLogs = logType === 'activity';
+	const { data: activityLogData, isFetching: isFetchingActivity } = useQuery(
+		shouldFetchActivityLogs
+			? siteActivityLogQuery( siteId, view.perPage || 50 )
+			: { queryKey: [ 'disabled-activity' ], queryFn: skipToken }
+	);
+
+	const siteLogs: LogsData = logType === 'activity' ? activityLogData : siteLogsData;
+	const isFetching = logType === 'activity' ? isFetchingActivity : isFetchingLogs;
 
 	useEffect( () => {
-		if ( ! siteLogs ) {
+		if ( ! siteLogs || logType === 'activity' ) {
 			return;
 		}
 		const nextPage = ( view.page ?? 1 ) + 1;
-		const id = siteLogs.scroll_id;
+		let id: string | undefined;
+
+		if ( isSiteLogsData( siteLogs ) ) {
+			id = siteLogs.scroll_id || undefined;
+		}
 
 		if ( id ) {
 			cursorsRef.current.set( nextPage, id );
 		} else {
 			cursorsRef.current.delete( nextPage );
 		}
-	}, [ siteLogs, view.page ] );
+	}, [ siteLogs, view.page, logType ] );
 
 	const handleDateRangeChange = ( next: { start: Date; end: Date } ) => {
 		setAutoRefresh( false );
@@ -220,11 +270,28 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		window.history.replaceState( null, '', url.pathname + url.search );
 	};
 
+	// Extract the data for memoization
+	const siteLogsArray = isSiteLogsData( siteLogs ) ? siteLogs.logs : undefined;
+	const activityLogsArray = isActivityLogData( siteLogs )
+		? siteLogs.current?.orderedItems
+		: undefined;
+
 	const logs = useMemo( () => {
 		const suffix = scrollId ? scrollId.slice( 0, 8 ) : `p${ view.page }`;
-		const items = siteLogs?.logs ?? [];
 
-		return items.map( ( log, index ) => {
+		if ( logType === 'activity' ) {
+			const items = activityLogsArray ?? [];
+			return items.map(
+				( log: ActivityLogEntry, index: number ) =>
+					( {
+						...log,
+						id: `${ log.activity_id }|${ suffix }|${ String( index ) }`,
+					} ) as ActivityLogEntry & { id: string }
+			);
+		}
+
+		const items = siteLogsArray ?? [];
+		return items.map( ( log: PHPLog | ServerLog, index: number ) => {
 			if ( logType === LogType.PHP ) {
 				const php = log as PHPLog;
 				return {
@@ -232,7 +299,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 					id: `${ php.timestamp }|${ php.file }|${ String( php.line ) }|${ suffix }|${ String(
 						index
 					) }`,
-				};
+				} as PHPLog & { id: string };
 			}
 			const server = log as ServerLog;
 			return {
@@ -240,23 +307,34 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 				id: `${ String( server.timestamp ) }|${ server.request_type }|${ server.status }|${
 					server.request_url
 				}|${ server.user_ip }|${ suffix }|${ String( index ) }`,
-			};
+			} as ServerLog & { id: string };
 		} );
-	}, [ scrollId, view.page, siteLogs?.logs, logType ] );
+	}, [ scrollId, view.page, siteLogsArray, activityLogsArray, logType ] );
 
 	const paginationInfo = {
-		totalItems: siteLogs?.total_results || 0,
-		totalPages:
-			!! siteLogs?.total_results && !! view.perPage
-				? Math.ceil( siteLogs.total_results / view.perPage )
-				: 0,
+		totalItems: ( () => {
+			if ( logType === 'activity' ) {
+				return activityLogsArray?.length || 0;
+			}
+			return isSiteLogsData( siteLogs ) ? siteLogs.total_results : 0;
+		} )(),
+		totalPages: ( () => {
+			if ( logType === 'activity' ) {
+				const itemCount = activityLogsArray?.length || 0;
+				return itemCount && view.perPage ? Math.ceil( itemCount / view.perPage ) : 0;
+			}
+			const totalResults = isSiteLogsData( siteLogs ) ? siteLogs.total_results : 0;
+			return totalResults && view.perPage ? Math.ceil( totalResults / view.perPage ) : 0;
+		} )(),
 	};
 
-	const handleTabChange = ( tab: LogType ) => {
+	const handleTabChange = ( tab: LogType | 'activity' ) => {
 		if ( tab === LogType.PHP ) {
 			router.navigate( { to: `/sites/${ siteSlug }/logs/php` } );
-		} else {
+		} else if ( tab === LogType.SERVER ) {
 			router.navigate( { to: `/sites/${ siteSlug }/logs/server` } );
+		} else if ( tab === 'activity' ) {
+			router.navigate( { to: `/sites/${ siteSlug }/logs/activity` } );
 		}
 	};
 
@@ -352,22 +430,26 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	// Simple header const to eliminate duplication
 	const LogsHeader = (
 		<>
-			<LogsDownloader
-				siteId={ siteId }
-				siteSlug={ site.slug }
-				logType={ logType }
-				startSec={ startSec }
-				endSec={ endSec }
-				filter={ filter }
-				onSuccess={ ( message ) => setNotice( { variant: 'success', message } ) }
-				onError={ ( message ) => setNotice( { variant: 'error', message } ) }
-			/>
-			<ToggleControl
-				__nextHasNoMarginBottom
-				label={ __( 'Auto-refresh' ) }
-				checked={ autoRefresh }
-				onChange={ handleAutoRefreshClick }
-			/>
+			{ logType !== 'activity' && (
+				<LogsDownloader
+					siteId={ siteId }
+					siteSlug={ site.slug }
+					logType={ logType as LogType }
+					startSec={ startSec }
+					endSec={ endSec }
+					filter={ filter }
+					onSuccess={ ( message ) => setNotice( { variant: 'success', message } ) }
+					onError={ ( message ) => setNotice( { variant: 'error', message } ) }
+				/>
+			) }
+			{ logType !== 'activity' && (
+				<ToggleControl
+					__nextHasNoMarginBottom
+					label={ __( 'Auto-refresh' ) }
+					checked={ autoRefresh }
+					onChange={ handleAutoRefreshClick }
+				/>
+			) }
 		</>
 	);
 
@@ -383,14 +465,16 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 				callout={ <SiteLogsCallout siteSlug={ site.slug } /> }
 				main={
 					<>
-						<DateRangePicker
-							start={ dateRange.start }
-							end={ dateRange.end }
-							gmtOffset={ gmtOffset }
-							timezoneString={ timezoneString }
-							locale={ locale }
-							onChange={ handleDateRangeChange }
-						/>
+						{ logType !== 'activity' && (
+							<DateRangePicker
+								start={ dateRange.start }
+								end={ dateRange.end }
+								gmtOffset={ gmtOffset }
+								timezoneString={ timezoneString }
+								locale={ locale }
+								onChange={ handleDateRangeChange }
+							/>
+						) }
 						<Card className="site-logs-card">
 							<CardHeader style={ { paddingBottom: '0' } }>
 								<TabPanel
@@ -398,8 +482,12 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 									activeClass="is-active"
 									tabs={ LOG_TABS }
 									onSelect={ ( tabName ) => {
-										if ( tabName === LogType.PHP || tabName === LogType.SERVER ) {
-											handleTabChange( tabName );
+										if (
+											tabName === LogType.PHP ||
+											tabName === LogType.SERVER ||
+											tabName === 'activity'
+										) {
+											handleTabChange( tabName as LogType | 'activity' );
 										}
 									} }
 									initialTabName={ logType }
@@ -408,33 +496,61 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 								</TabPanel>
 							</CardHeader>
 							<CardBody>
-								{ logType === LogType.PHP ? (
-									<DataViews< PHPLog >
-										data={ logs as PHPLog[] }
-										isLoading={ isFetching }
-										paginationInfo={ paginationInfo }
-										fields={ fields as Field< PHPLog >[] }
-										view={ view }
-										actions={ actions as Action< PHPLog >[] }
-										search={ false }
-										defaultLayouts={ { table: {} } }
-										onChangeView={ onChangeView }
-										header={ LogsHeader }
-									/>
-								) : (
-									<DataViews< ServerLog >
-										data={ logs as ServerLog[] }
-										isLoading={ isFetching }
-										paginationInfo={ paginationInfo }
-										fields={ fields as Field< ServerLog >[] }
-										view={ view }
-										actions={ actions as Action< ServerLog >[] }
-										search={ false }
-										defaultLayouts={ { table: {} } }
-										onChangeView={ onChangeView }
-										header={ LogsHeader }
-									/>
-								) }
+								{ ( () => {
+									if ( logType === LogType.PHP ) {
+										return (
+											<DataViews< PHPLog & { id: string } >
+												data={ logs as ( PHPLog & { id: string } )[] }
+												isLoading={ isFetching }
+												paginationInfo={ paginationInfo }
+												fields={ fields as Field< PHPLog & { id: string } >[] }
+												view={ view }
+												actions={ actions as Action< PHPLog & { id: string } >[] }
+												search={ false }
+												defaultLayouts={ { table: {} } }
+												onChangeView={ onChangeView }
+												header={ LogsHeader }
+												getItemId={ ( item ) => item.id }
+											/>
+										);
+									}
+
+									if ( logType === 'activity' ) {
+										return (
+											<DataViews< ActivityLogEntry & { id: string } >
+												data={ logs as ( ActivityLogEntry & { id: string } )[] }
+												isLoading={ isFetching }
+												paginationInfo={ paginationInfo }
+												fields={ fields as unknown as Field< ActivityLogEntry & { id: string } >[] }
+												view={ view }
+												actions={
+													actions as unknown as Action< ActivityLogEntry & { id: string } >[]
+												}
+												search={ false }
+												defaultLayouts={ { table: {} } }
+												onChangeView={ onChangeView }
+												header={ LogsHeader }
+												getItemId={ ( item ) => item.id }
+											/>
+										);
+									}
+
+									return (
+										<DataViews< ServerLog & { id: string } >
+											data={ logs as ( ServerLog & { id: string } )[] }
+											isLoading={ isFetching }
+											paginationInfo={ paginationInfo }
+											fields={ fields as Field< ServerLog & { id: string } >[] }
+											view={ view }
+											actions={ actions as Action< ServerLog & { id: string } >[] }
+											search={ false }
+											defaultLayouts={ { table: {} } }
+											onChangeView={ onChangeView }
+											header={ LogsHeader }
+											getItemId={ ( item ) => item.id }
+										/>
+									);
+								} )() }
 							</CardBody>
 						</Card>
 					</>
