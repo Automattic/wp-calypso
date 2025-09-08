@@ -17,6 +17,8 @@ module.exports = {
 							'!calypso/lib',
 							'calypso/lib/*',
 							'!calypso/lib/wp',
+							// Allowed: calypso/lib/load-dev-helpers
+							'!calypso/lib/load-dev-helpers',
 							// Allowed: calypso/assets/icons
 							// Allowed: calypso/assets/images
 							'!calypso/assets',
@@ -54,6 +56,7 @@ module.exports = {
 							'!@automattic/ui',
 							'!@automattic/urls',
 							'!@automattic/viewport',
+							'!@automattic/languages',
 							// Please do not add exceptions unless agreed on
 							// with the #architecture group.
 						],

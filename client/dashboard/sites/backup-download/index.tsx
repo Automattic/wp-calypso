@@ -125,26 +125,28 @@ function SiteBackupDownload() {
 			header={ <PageHeader prefix={ backButton } title={ __( 'Download backup' ) } /> }
 		>
 			<Card>
-				<CardHeader>
-					<SectionHeader
-						title={ __( 'Download point' ) }
-						level={ 3 }
-						description={ createInterpolateElement(
-							/* translators: %s is the date of the download point */
-							sprintf( __( '%(downloadPointDate)s. <LearnMore />' ), {
-								downloadPointDate,
-							} ),
-							{
-								LearnMore: (
-									<ExternalLink href="https://jetpack.com/support/backup/">
-										{ __( 'Learn more' ) }
-									</ExternalLink>
-								),
-							}
-						) }
-						decoration={ <Icon icon={ cloud } /> }
-					/>
-				</CardHeader>
+				{ currentStep !== 'success' && (
+					<CardHeader>
+						<SectionHeader
+							title={ __( 'Download point' ) }
+							level={ 3 }
+							description={ createInterpolateElement(
+								/* translators: %s is the date of the download point */
+								sprintf( __( '%(downloadPointDate)s. <LearnMore />' ), {
+									downloadPointDate,
+								} ),
+								{
+									LearnMore: (
+										<ExternalLink href="https://jetpack.com/support/backup/">
+											{ __( 'Learn more' ) }
+										</ExternalLink>
+									),
+								}
+							) }
+							decoration={ <Icon icon={ cloud } /> }
+						/>
+					</CardHeader>
+				) }
 				<CardBody>
 					<VStack spacing={ 4 }>{ renderStep() }</VStack>
 				</CardBody>

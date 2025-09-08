@@ -1,5 +1,6 @@
 export { DomainSearchAlreadyOwnDomainCTA } from './domain-search-already-own-domain-cta';
 export { DomainSearchNotice } from './domain-search-notice';
+export * from './domain-search-trademark-claims-modal';
 export { DomainsMiniCart } from './domains-mini-cart';
 export { DomainsFullCart } from './domains-full-cart';
 export { DomainsFullCartItems } from './domains-full-cart-items';

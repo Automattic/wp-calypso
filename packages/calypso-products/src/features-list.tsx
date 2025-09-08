@@ -816,38 +816,11 @@ const FEATURES_LIST: FeatureList = {
 				</span>
 			);
 		},
-		getDescription: () => {
-			const result = i18n.fixMe( {
-				text: 'Until %(date)s: Unlock plugin access on new Personal and Premium plans.',
-				newCopy: i18n.translate(
-					// translators: %(date)s is a date string in the format of "August 25, 2025"
-					'Until %(date)s: Unlock plugin access on new Personal and Premium plans.',
-					{
-						args: {
-							date: new Intl.DateTimeFormat( i18n.getLocaleSlug() || 'en-US', {
-								month: 'long',
-								day: 'numeric',
-								year: 'numeric',
-							} ).format( new Date( '2025-08-31' ) ),
-						},
-					}
-				),
-				oldCopy: i18n.translate(
-					// translators: %(date)s is a date string in the format of "August 25, 2025"
-					'One-time offer: Install plugins available in all paid plans. Valid until %(date)s!',
-					{
-						args: {
-							date: new Intl.DateTimeFormat( i18n.getLocaleSlug() || 'en-US', {
-								month: 'long',
-								day: 'numeric',
-								year: 'numeric',
-							} ).format( new Date( '2025-08-31' ) ),
-						},
-					}
-				),
-			} );
-			return result || '';
-		},
+		getDescription: () =>
+			i18n.translate(
+				'Plugins extend the functionality of your site and ' +
+					'open up endless possibilities for presenting your content and interacting with visitors.'
+			),
 	},
 
 	[ FEATURE_INSTALL_PLUGINS ]: {
