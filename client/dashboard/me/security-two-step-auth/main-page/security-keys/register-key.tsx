@@ -7,7 +7,7 @@ import {
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { ButtonStack } from '../../../../components/button-stack';
@@ -39,9 +39,13 @@ export default function RegisterKey( {
 		try {
 			await registerSecurityKey( formData.keyName.trim() );
 
-			createSuccessNotice( __( 'Security key added successfully!' ), {
-				type: 'snackbar',
-			} );
+			createSuccessNotice(
+				/* translators: %s is the security key name */
+				sprintf( __( 'Security key "%s" added successfully!' ), formData.keyName ),
+				{
+					type: 'snackbar',
+				}
+			);
 			refetch();
 			onClose();
 		} catch ( err ) {
