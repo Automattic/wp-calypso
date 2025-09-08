@@ -4,7 +4,6 @@ import { CheckboxControl } from '@wordpress/components';
 import { useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { FunctionComponent } from 'react';
-import { backupDownloadPath } from 'calypso/my-sites/backup/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { setNodeCheckState } from 'calypso/state/rewind/browser/actions';
 import getBackupBrowserCheckList from 'calypso/state/rewind/selectors/get-backup-browser-check-list';
@@ -48,7 +47,6 @@ const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( {
 
 		onRequestGranularDownload?.( siteId, rewindId, includePaths, excludePaths );
 		onTrackEvent?.( 'calypso_jetpack_backup_browser_download_multiple_files' );
-		page.redirect( backupDownloadPath( siteSlug, rewindId as unknown as string ) );
 	};
 	const onRestoreClick = () => {
 		onTrackEvent?.( 'calypso_jetpack_backup_browser_restore_multiple_files', {

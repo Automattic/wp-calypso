@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { Button, ExternalLink } from '@wordpress/components';
 import { arrowLeft, Icon } from '@wordpress/icons';
@@ -20,7 +21,7 @@ import canRestoreSite from 'calypso/state/rewind/selectors/can-restore-site';
 import getBackupBrowserCheckList from 'calypso/state/rewind/selectors/get-backup-browser-check-list';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
-import { backupMainPath } from '../paths';
+import { backupDownloadPath, backupMainPath } from '../paths';
 import FileBrowser from './file-browser';
 import './style.scss';
 
@@ -60,8 +61,9 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 	const handleRequestGranularDownload = useCallback(
 		( siteId: number, rewindId: number, includePaths: string, excludePaths: string ) => {
 			dispatch( rewindRequestGranularBackup( siteId, rewindId, includePaths, excludePaths ) );
+			page.redirect( backupDownloadPath( siteSlug, rewindId as unknown as string ) );
 		},
-		[ dispatch ]
+		[ dispatch, siteSlug ]
 	);
 
 	return (
