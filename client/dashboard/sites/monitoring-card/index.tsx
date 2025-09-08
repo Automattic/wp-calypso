@@ -52,7 +52,7 @@ export default function MonitoringCard( {
 			justify="space-between"
 			alignment="flex-start"
 		>
-			<VStack spacing={ 4 } style={ { flexGrow: 1 } }>
+			<VStack spacing={ 4 } className="dashboard-monitoring-card__header">
 				<HStack justify="space-between">
 					<HStack spacing={ 1 } alignment="center" expanded={ false }>
 						<Text weight="bold" size="15px">
@@ -91,12 +91,7 @@ export default function MonitoringCard( {
 				) }
 				{ topContent }
 				{ ! isLoading && children && (
-					<VStack
-						className="dashboard-monitoring-card__content"
-						spacing={ 2 }
-						justify="flex-start"
-						style={ { flexGrow: 1 } }
-					>
+					<VStack className="dashboard-monitoring-card__content" spacing={ 2 } justify="flex-start">
 						{ children }
 					</VStack>
 				) }
