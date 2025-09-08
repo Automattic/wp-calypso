@@ -4,6 +4,9 @@ import { debounce } from 'lodash';
 export default function loadDevHelpers( reduxStore ) {
 	const badge = document.querySelector( '.environment-badge' );
 	if ( badge ) {
+		// goofy import for environment badge, which is SSR'd
+		asyncRequire( 'calypso/components/environment-badge/style.scss' );
+
 		// Show/hide Dev Tools menu as mouse enters/leaves
 		const remove = debounce( () => {
 			badge.classList.remove( 'hovered' );
