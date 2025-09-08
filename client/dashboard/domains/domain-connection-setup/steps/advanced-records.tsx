@@ -25,7 +25,6 @@ export function AdvancedRecords( {
 }: StepComponentProps ) {
 	const isSubdomainFlow = isSubdomain( domainName );
 
-	// Generate the records based on the setup info
 	const records: DNSRecord[] = domainSetupInfo?.default_ip_addresses.map( ( ipAddress ) => {
 		return {
 			type: 'A',

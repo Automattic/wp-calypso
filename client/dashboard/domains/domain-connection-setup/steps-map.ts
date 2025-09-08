@@ -3,6 +3,7 @@ import { __ } from '@wordpress/i18n';
 import {
 	AdvancedRecords,
 	AdvancedStart,
+	DomainConnectStart,
 	Done,
 	Login,
 	SuggestedRecords,
@@ -98,7 +99,7 @@ export const connectADomainDomainConnectionStepsMap: DomainConnectionStepsMap = 
 	[ StepName.DC_START ]: {
 		mode: DomainConnectionSetupMode.DC,
 		stepType: StepType.START,
-		component: SuggestedStart, // TODO: change to DCStart
+		component: DomainConnectStart,
 	},
 	[ StepName.DC_RETURN ]: {
 		mode: DomainConnectionSetupMode.DC,

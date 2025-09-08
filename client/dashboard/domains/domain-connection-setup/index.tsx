@@ -12,7 +12,9 @@ import {
 	Button,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { domainRoute, domainConnectionSetupRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
@@ -51,7 +53,7 @@ export default function DomainConnectionSetup() {
 	const { data: domainConnectionSetupInfo } = useSuspenseQuery(
 		domainConnectionSetupInfoQuery( domainName, domain.blog_id, encodeURIComponent( returnUrl ) )
 	);
-
+	const { createErrorNotice } = useDispatch( noticesStore );
 	// Update connection mode mutation
 	const { mutate: updateConnectionMode, isPending: isUpdatingConnectionMode } = useMutation(
 		updateConnectionModeMutation( domainName, domain.blog_id )
@@ -118,10 +120,15 @@ export default function DomainConnectionSetup() {
 				}
 			},
 			onError: () => {
-				// TO DO: show snackbar error or pass the error to the component?
 				if ( setStepAfterVerify ) {
 					setCurrentStepName( verifyingSlug );
 				}
+				createErrorNotice(
+					__( 'We couldn’t verify the connection for your domain, please try again.' ),
+					{
+						type: 'snackbar',
+					}
+				);
 			},
 		} );
 	};

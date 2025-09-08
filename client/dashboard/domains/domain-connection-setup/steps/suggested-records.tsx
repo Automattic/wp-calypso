@@ -24,7 +24,6 @@ export function SuggestedRecords( {
 }: StepComponentProps ) {
 	const isSubdomainFlow = isSubdomain( domainName );
 
-	// Generate the records based on the setup info
 	const records: DNSRecord[] = domainSetupInfo?.wpcom_name_servers.map( ( nameServer ) => {
 		return {
 			type: 'NS',
