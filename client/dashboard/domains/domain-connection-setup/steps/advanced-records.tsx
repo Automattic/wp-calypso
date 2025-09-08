@@ -4,7 +4,6 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
-	__experimentalHeading as Heading,
 	Card,
 	CardBody,
 	Button,
@@ -58,12 +57,6 @@ export function AdvancedRecords( {
 				<CardBody>
 					<VStack spacing={ 4 }>
 						{ showErrors && renderErrorNotice() }
-
-						<Heading level={ 2 } size={ 20 } weight={ 500 }>
-							{ isSubdomainFlow
-								? __( 'Update A & CNAME records' )
-								: __( 'Update root A records & CNAME record' ) }
-						</Heading>
 
 						<Text as="p">
 							{ isSubdomainFlow

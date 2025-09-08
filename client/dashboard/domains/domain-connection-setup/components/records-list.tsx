@@ -6,8 +6,10 @@ import {
 	Card,
 	CardBody,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
-import ClipboardButton from './clipboard-button';
+import { useDispatch } from '@wordpress/data';
+import { __, sprintf } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
+import ClipboardInputControl from '../../../components/clipboard-input-control';
 import type { DNSRecord } from '../types';
 
 interface RecordsListProps {
@@ -16,9 +18,28 @@ interface RecordsListProps {
 }
 
 export default function RecordsList( { records, justValues = false }: RecordsListProps ) {
+	const { createSuccessNotice } = useDispatch( noticesStore );
+
 	if ( records.length === 0 ) {
 		return null;
 	}
+
+	const handleCopy = ( label?: React.ReactNode ) => {
+		if ( ! label ) {
+			return;
+		}
+
+		createSuccessNotice(
+			sprintf(
+				/* translators: %s is the copied field */
+				__( 'Copied %s to clipboard.' ),
+				label
+			),
+			{
+				type: 'snackbar',
+			}
+		);
+	};
 
 	return (
 		<Card variant="secondary">
@@ -41,8 +62,18 @@ export default function RecordsList( { records, justValues = false }: RecordsLis
 							<HStack justify="flex-start" key={ index } spacing={ 2 }>
 								<Text style={ { width: '80px' } }>{ record.type }</Text>
 								<Grid columns={ 2 } style={ { width: '100%' } } templateColumns="50% 50%">
-									<ClipboardButton text={ record.name } />
-									<ClipboardButton text={ record.value } />
+									<ClipboardInputControl
+										value={ record.name }
+										readOnly
+										__next40pxDefaultSize
+										onCopy={ handleCopy }
+									/>
+									<ClipboardInputControl
+										value={ record.value }
+										readOnly
+										__next40pxDefaultSize
+										onCopy={ handleCopy }
+									/>
 								</Grid>
 							</HStack>
 						) ) }
@@ -50,7 +81,13 @@ export default function RecordsList( { records, justValues = false }: RecordsLis
 					{ justValues && (
 						<VStack spacing={ 2 }>
 							{ records.map( ( record, index ) => (
-								<ClipboardButton key={ index } text={ record.value } />
+								<ClipboardInputControl
+									key={ index }
+									value={ record.value }
+									readOnly
+									__next40pxDefaultSize
+									onCopy={ handleCopy }
+								/>
 							) ) }
 						</VStack>
 					) }
