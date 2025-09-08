@@ -1,4 +1,4 @@
-import { DotcomFeatures, WhoisType, DomainTypes } from '@automattic/api-core';
+import { DotcomFeatures, WhoisType, DomainSubtype } from '@automattic/api-core';
 import { addQueryArgs } from '@wordpress/url';
 import { isAfter, subMinutes, subDays } from 'date-fns';
 import { getRenewalUrlFromPurchase } from './purchase';
@@ -98,7 +98,7 @@ const shouldUpgradeToMakeDomainPrimary = ( {
 	user: User;
 } ) => {
 	return (
-		( isRegisteredDomain( domain ) || domain.type === DomainTypes.MAPPED ) &&
+		domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION &&
 		! domain.current_user_can_create_site_from_domain_only &&
 		! domain.primary_domain &&
 		! domain.wpcom_domain &&
