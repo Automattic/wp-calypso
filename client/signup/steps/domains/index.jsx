@@ -100,11 +100,7 @@ import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import DomainsMiniCart from './domains-mini-cart';
-import {
-	getExternalBackUrl,
-	shouldUseMultipleDomainsInCart,
-	sortProductsByPriceDescending,
-} from './utils';
+import { getExternalBackUrl, shouldUseMultipleDomainsInCart } from './utils';
 import './style.scss';
 
 class RenderDomainsStepComponent extends Component {
@@ -799,17 +795,15 @@ class RenderDomainsStepComponent extends Component {
 					productsInCart = productsInCart.filter( ( product ) => {
 						return ! this.state.domainsWithMappingError.includes( product.meta );
 					} );
-					// Sort products to ensure the user gets the best deal with the free domain bundle promotion.
-					const sortedProducts = sortProductsByPriceDescending( productsInCart );
 					this.props.shoppingCartManager
-						.replaceProductsInCart( sortedProducts )
+						.replaceProductsInCart( productsInCart )
 						.then( () => {
 							this.setState( { replaceDomainFailedMessage: null } );
 							if ( this.state.domainAddingQueue?.length > 0 ) {
 								this.setState( ( state ) => ( {
 									domainAddingQueue: state.domainAddingQueue.filter(
 										( domainInQueue ) =>
-											! sortedProducts.find( ( item ) => item.meta === domainInQueue.meta )
+											! productsInCart.find( ( item ) => item.meta === domainInQueue.meta )
 									),
 								} ) );
 							}
@@ -817,7 +811,7 @@ class RenderDomainsStepComponent extends Component {
 								this.setState( ( state ) => ( {
 									temporaryCart: state.temporaryCart.filter(
 										( temporaryCart ) =>
-											! sortedProducts.find( ( item ) => item.meta === temporaryCart.meta )
+											! productsInCart.find( ( item ) => item.meta === temporaryCart.meta )
 									),
 								} ) );
 							}
@@ -966,7 +960,7 @@ class RenderDomainsStepComponent extends Component {
 		const { step, cart, multiDomainDefaultPlan, shoppingCartManager, goToNextStep } = this.props;
 		const { lastDomainSearched } = step.domainForm ?? {};
 
-		const domainCart = sortProductsByPriceDescending( getDomainsInCart( this.props.cart ) );
+		const domainCart = getDomainsInCart( this.props.cart );
 		const { suggestion } = step;
 		const isPurchasingItem =
 			( suggestion && Boolean( suggestion.product_slug ) ) || domainCart?.length > 0;
