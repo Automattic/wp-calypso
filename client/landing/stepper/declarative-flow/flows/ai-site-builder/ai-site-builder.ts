@@ -55,8 +55,8 @@ function initialize() {
 		return defaultSteps;
 	}
 
-	// Show SiteSpec widget to collect specifications
-	return [ STEPS.SITE_SPEC, defaultSteps ];
+	// Show SiteSpec widget to collect specifications, then continue
+	return [ STEPS.SITE_SPEC, ...defaultSteps ];
 }
 
 const aiSiteBuilder: FlowV2< typeof initialize > = {
