@@ -150,10 +150,7 @@ export default function GravatarProfileSection( {
 							decoration={ <GravatarLogo /> }
 							level={ 3 }
 							title={ __( 'Public Gravatar profile' ) }
-						/>
-
-						<Text>
-							{ createInterpolateElement(
+							description={ createInterpolateElement(
 								sprintf(
 									/* translators: %1$s: User email */
 									__(
@@ -167,7 +164,7 @@ export default function GravatarProfileSection( {
 									external: <ExternalLink href="https://gravatar.com" />,
 								}
 							) }
-						</Text>
+						/>
 
 						<DataForm< UserSettings >
 							data={ data }
