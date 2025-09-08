@@ -17,11 +17,13 @@ import { ButtonStack } from '../../components/button-stack';
 import { useFormattedTime } from '../../components/formatted-time';
 import { SectionHeader } from '../../components/section-header';
 import { gridiconToWordPressIcon } from '../../utils/gridicons';
+import { ImagePreview } from './image-preview';
 import type { ActivityLogEntry, Site } from '@automattic/api-core';
 
 export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; site: Site } ) {
 	const router = useRouter();
-	const formattedTime = useFormattedTime( backup.published, {
+	const publishedTimestamp = backup.published || backup.last_published;
+	const formattedTime = useFormattedTime( publishedTimestamp, {
 		dateStyle: 'medium',
 		timeStyle: 'short',
 	} );
@@ -90,6 +92,15 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 									sprintf( __( 'By %s' ), backup.actor.name )
 								}
 							</Text>
+						) }
+					</HStack>
+					<HStack justify="flex-start" style={ { flexWrap: 'wrap' } }>
+						{ backup.streams ? (
+							backup.streams.map( ( item, index ) => (
+								<ImagePreview key={ index } item={ item } multipleImages />
+							) )
+						) : (
+							<ImagePreview item={ backup } />
 						) }
 					</HStack>
 				</VStack>
