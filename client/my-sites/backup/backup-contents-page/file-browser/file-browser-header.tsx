@@ -17,10 +17,10 @@ interface FileBrowserHeaderProps {
 	showHeaderButtons?: boolean;
 	siteId: number;
 	siteSlug: string;
-	hasCredentials: boolean;
-	canRestore: boolean;
-	onTrackEvent: ( eventName: string, properties?: Record< string, unknown > ) => void;
-	onRequestGranularBackup: (
+	hasCredentials?: boolean;
+	isRestoreEnabled: boolean;
+	onTrackEvent?: ( eventName: string, properties?: Record< string, unknown > ) => void;
+	onRequestGranularDownload?: (
 		siteId: number,
 		rewindId: number,
 		includePaths: string,
@@ -34,27 +34,26 @@ const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( {
 	siteId,
 	siteSlug,
 	hasCredentials,
-	canRestore,
+	isRestoreEnabled,
 	onTrackEvent,
-	onRequestGranularBackup,
+	onRequestGranularDownload,
 } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const rootNode = useSelector( ( state ) => getBackupBrowserNode( state, siteId, '/' ) );
 	const browserCheckList = useSelector( ( state ) => getBackupBrowserCheckList( state, siteId ) );
-	const isRestoreDisabled = ! canRestore;
 
 	const onDownloadClick = () => {
 		const includePaths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
 		const excludePaths = browserCheckList.excludeList.map( ( item ) => item.id ).join( ',' );
 
-		onRequestGranularBackup( siteId, rewindId, includePaths, excludePaths );
-		onTrackEvent( 'calypso_jetpack_backup_browser_download_multiple_files' );
+		onRequestGranularDownload?.( siteId, rewindId, includePaths, excludePaths );
+		onTrackEvent?.( 'calypso_jetpack_backup_browser_download_multiple_files' );
 		page.redirect( backupDownloadPath( siteSlug, rewindId as unknown as string ) );
 	};
 	const onRestoreClick = () => {
-		onTrackEvent( 'calypso_jetpack_backup_browser_restore_multiple_files', {
-			has_credentials: hasCredentials,
+		onTrackEvent?.( 'calypso_jetpack_backup_browser_restore_multiple_files', {
+			...( hasCredentials !== undefined && { has_credentials: hasCredentials } ),
 		} );
 		page.redirect( backupGranularRestorePath( siteSlug, rewindId as unknown as string ) );
 	};
@@ -85,7 +84,7 @@ const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( {
 					<Button
 						className="file-browser-header__restore-button"
 						onClick={ onRestoreClick }
-						disabled={ isRestoreDisabled }
+						disabled={ ! isRestoreEnabled }
 						primary
 					>
 						{ translate( 'Restore selected files' ) }

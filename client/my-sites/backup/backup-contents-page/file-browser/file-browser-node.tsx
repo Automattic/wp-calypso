@@ -27,7 +27,7 @@ interface FileBrowserNodeProps {
 	// External props for FileInfoCard
 	siteSlug?: string;
 	hasCredentials?: boolean;
-	canRestore?: boolean;
+	isRestoreEnabled?: boolean;
 	onTrackEvent?: ( eventName: string, properties?: Record< string, unknown > ) => void;
 }
 
@@ -43,7 +43,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	siteId,
 	siteSlug,
 	hasCredentials,
-	canRestore,
+	isRestoreEnabled,
 	onTrackEvent,
 } ) => {
 	const isRoot = path === '/';
@@ -299,7 +299,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 						siteId={ siteId }
 						siteSlug={ siteSlug }
 						hasCredentials={ hasCredentials }
-						canRestore={ canRestore }
+						isRestoreEnabled={ isRestoreEnabled }
 						onTrackEvent={ onTrackEvent }
 						// Hacky way to pass extensions details to the child node
 						{ ...( childItem.type === 'archive' ? { parentItem: item } : {} ) }
@@ -387,8 +387,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 			{ isCurrentNodeClicked &&
 				showFileCard &&
 				siteSlug &&
-				hasCredentials !== undefined &&
-				canRestore !== undefined &&
+				isRestoreEnabled !== undefined &&
 				onTrackEvent && (
 					<FileInfoCard
 						siteId={ siteId }
@@ -398,7 +397,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 						path={ path }
 						siteSlug={ siteSlug }
 						hasCredentials={ hasCredentials }
-						canRestore={ canRestore }
+						isRestoreEnabled={ isRestoreEnabled }
 						onTrackEvent={ onTrackEvent }
 					/>
 				) }

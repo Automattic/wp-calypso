@@ -36,9 +36,9 @@ const FileBrowser: FunctionComponent< FileBrowserProps > = ( {
 	siteId,
 	siteSlug,
 	hasCredentials,
-	canRestore,
+	isRestoreEnabled,
 	onTrackEvent,
-	onRequestGranularBackup,
+	onRequestGranularDownload,
 } ) => {
 	// This is the path of the node that is clicked
 	const [ activeNodePath, setActiveNodePath ] = useState< string >( '' );
@@ -71,9 +71,9 @@ const FileBrowser: FunctionComponent< FileBrowserProps > = ( {
 				siteId={ siteId }
 				siteSlug={ siteSlug }
 				hasCredentials={ hasCredentials }
-				canRestore={ canRestore }
+				isRestoreEnabled={ isRestoreEnabled }
 				onTrackEvent={ onTrackEvent }
-				onRequestGranularBackup={ onRequestGranularBackup }
+				onRequestGranularDownload={ onRequestGranularDownload }
 			/>
 			{ fileBrowserConfig?.showBackupTime && (
 				<HStack alignment="left" spacing={ 1 }>
@@ -101,7 +101,7 @@ const FileBrowser: FunctionComponent< FileBrowserProps > = ( {
 				siteId={ siteId }
 				siteSlug={ siteSlug }
 				hasCredentials={ hasCredentials }
-				canRestore={ canRestore }
+				isRestoreEnabled={ isRestoreEnabled }
 				onTrackEvent={ onTrackEvent }
 			/>
 		</div>

@@ -49,7 +49,7 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId: 
 	const hasCredentials = useSelector( ( state ) =>
 		hasJetpackCredentials( state, effectiveSiteId )
 	);
-	const canRestore = useSelector( ( state ) => canRestoreSite( state, effectiveSiteId ) );
+	const isRestoreEnabled = useSelector( ( state ) => canRestoreSite( state, effectiveSiteId ) );
 
 	useEffect( () => {
 		dispatch( recordTracksEvent( 'calypso_jetpack_backup_browser_view' ) );
@@ -66,7 +66,7 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId: 
 		[ dispatch ]
 	);
 
-	const handleRequestGranularBackup = useCallback(
+	const handleRequestGranularDownload = useCallback(
 		( siteId: number, rewindId: number, includePaths: string, excludePaths: string ) => {
 			dispatch( rewindRequestGranularBackup( siteId, rewindId, includePaths, excludePaths ) );
 		},
@@ -113,9 +113,9 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId: 
 							siteId={ effectiveSiteId }
 							siteSlug={ siteSlug }
 							hasCredentials={ hasCredentials }
-							canRestore={ canRestore }
+							isRestoreEnabled={ isRestoreEnabled }
 							onTrackEvent={ handleTrackEvent }
-							onRequestGranularBackup={ handleRequestGranularBackup }
+							onRequestGranularDownload={ handleRequestGranularDownload }
 						/>
 					</div>
 				</Card>

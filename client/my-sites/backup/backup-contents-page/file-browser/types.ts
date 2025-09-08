@@ -78,14 +78,14 @@ export interface FileBrowserExternalProps {
 	// Site data
 	siteId: number;
 	siteSlug: string;
-	hasCredentials: boolean;
-	canRestore: boolean;
+	hasCredentials?: boolean;
+	isRestoreEnabled: boolean;
 
-	// Analytics callback
-	onTrackEvent: ( eventName: string, properties?: Record< string, unknown > ) => void;
+	// Tracks analytics callback
+	onTrackEvent?: ( eventName: string, properties?: Record< string, unknown > ) => void;
 
-	// Backup action callback
-	onRequestGranularBackup: (
+	// Granular download action callback
+	onRequestGranularDownload?: (
 		siteId: number,
 		rewindId: number,
 		includePaths: string,

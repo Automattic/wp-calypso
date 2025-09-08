@@ -27,8 +27,8 @@ interface FileInfoCardProps {
 	parentItem?: FileBrowserItem; // This is used to pass the extension details to the child node
 	path: string;
 	siteSlug: string;
-	hasCredentials: boolean;
-	canRestore: boolean;
+	hasCredentials?: boolean;
+	isRestoreEnabled: boolean;
 	onTrackEvent: ( eventName: string, properties?: Record< string, unknown > ) => void;
 }
 
@@ -40,7 +40,7 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 	path,
 	siteSlug,
 	hasCredentials,
-	canRestore,
+	isRestoreEnabled,
 	onTrackEvent,
 } ) => {
 	const translate = useTranslate();
@@ -58,8 +58,6 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 		item.manifestPath ?? '',
 		item.extensionType ?? ''
 	);
-
-	const isRestoreDisabled = ! canRestore;
 
 	// Dispatch an error notice if the download could not be prepared
 	const handlePrepareDownloadError = useCallback( () => {
@@ -189,7 +187,7 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 		// Tracks restore interest
 		onTrackEvent( 'calypso_jetpack_backup_browser_restore_single_file', {
 			file_type: item.type,
-			has_credentials: hasCredentials,
+			...( hasCredentials !== undefined && { has_credentials: hasCredentials } ),
 		} );
 	}, [ dispatch, hasCredentials, item.type, path, rewindId, siteId, siteSlug, onTrackEvent ] );
 
@@ -345,7 +343,7 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 							<Button
 								className="file-card__action"
 								onClick={ restoreFile }
-								disabled={ isRestoreDisabled }
+								disabled={ ! isRestoreEnabled }
 							>
 								{ translate( 'Restore' ) }
 							</Button>
