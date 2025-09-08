@@ -1,5 +1,9 @@
 import { SearchForm } from '../components/search-form';
 
 export const EmptyPage = () => {
-	return <SearchForm />;
+	return (
+		<div className="domain-search--empty-state">
+			<SearchForm />
+		</div>
+	);
 };

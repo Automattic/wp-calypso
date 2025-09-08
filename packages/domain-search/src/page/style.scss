@@ -22,5 +22,20 @@
 		--domain-search-mini-cart-height: 80px;
 		--domain-search-mini-cart-inline-padding: 1rem;
 		--domain-search-mini-cart-max-width: 64rem;
+		--domain-search-empty-state-max-width: 50rem;
+
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.domain-search--empty-state {
+		width: 100%;
+		max-width: var( --domain-search-empty-state-max-width );
+	}
+
+	.domain-search--results {
+		width: 100%;
+		max-width: var( --domain-search-mini-cart-max-width );
 	}
 }

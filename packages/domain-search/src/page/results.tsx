@@ -15,7 +15,7 @@ export const ResultsPage = () => {
 	const { isLoading, featuredSuggestions, regularSuggestions } = useSuggestionsList();
 
 	return (
-		<VStack spacing={ 8 }>
+		<VStack spacing={ 8 } className="domain-search--results">
 			<VStack spacing={ 4 }>
 				<SearchBar />
 				{ ! isLoading && <SearchNotice /> }
