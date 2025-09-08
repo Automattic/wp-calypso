@@ -5,8 +5,8 @@ test.describe(
 	{ tag: [ '@dashboard', '@calypso-pr' ] },
 	() => {
 		test.skip(
-			process.env.CALYPSO_BASE_URL === 'https://wordpress.com',
-			'Skipping for wordpress.com as it does not have v2 dashboard enabled yet.'
+			! process.env.CALYPSO_BASE_URL || process.env.CALYPSO_BASE_URL === 'https://wordpress.com',
+			'Skipping for wordpress.com or if CALYPSO_BASE_URL is undefined, as v2 dashboard is not enabled yet.'
 		);
 
 		test( 'As a new simple site user, I can set my site visibility to Private, so that only I can see my site', async ( {
