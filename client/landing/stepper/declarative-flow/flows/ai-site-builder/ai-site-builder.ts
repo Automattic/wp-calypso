@@ -40,24 +40,23 @@ function initialize() {
 	// If not present, show the SiteSpec widget to collect specifications
 	const queryParams = new URLSearchParams( window.location.search );
 	const hasSpecId = queryParams.get( 'spec_id' );
+	const defaultSteps = stepsWithRequiredLogin( [
+		STEPS.SITE_CREATION_STEP,
+		STEPS.PROCESSING,
+		STEPS.ERROR,
+		shouldRenderRewrittenDomainSearch() ? STEPS.DOMAIN_SEARCH : STEPS.UNIFIED_DOMAINS,
+		STEPS.UNIFIED_PLANS,
+		STEPS.SITE_LAUNCH,
+		STEPS.PROCESSING,
+	] );
 
 	if ( hasSpecId ) {
 		// Skip SiteSpec widget, go directly to site creation
-		return [
-			...stepsWithRequiredLogin( [
-				STEPS.SITE_CREATION_STEP,
-				STEPS.PROCESSING,
-				STEPS.ERROR,
-				shouldRenderRewrittenDomainSearch() ? STEPS.DOMAIN_SEARCH : STEPS.UNIFIED_DOMAINS,
-				STEPS.UNIFIED_PLANS,
-				STEPS.SITE_LAUNCH,
-				STEPS.PROCESSING,
-			] ),
-		];
+		return defaultSteps;
 	}
 
 	// Show SiteSpec widget to collect specifications
-	return [ STEPS.SITE_SPEC ];
+	return [ STEPS.SITE_SPEC, defaultSteps ];
 }
 
 const aiSiteBuilder: FlowV2< typeof initialize > = {
