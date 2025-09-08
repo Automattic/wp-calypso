@@ -977,7 +977,7 @@ object PlaywrightTestPRMatrix : BuildType({
 		param("env.AUTHENTICATE_ACCOUNTS", "simpleSitePersonalPlanUser,gutenbergSimpleSiteUser,defaultUser")
 		param("env.LIVEBRANCHES", "true")
 		param("env.CI", "true")
-		param("REPORT_URL", "credentialsJSON:c8cd11f4-71a1-41f4-a601-979c7a00c420")
+		param("REPORT_URL", "https://automattic.github.io/wp-calypso-test-results")
 	}
 
 	steps {
