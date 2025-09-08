@@ -24,8 +24,7 @@ interface FileBrowserNodeProps {
 	parentItem?: FileBrowserItem; // This is used to pass the extension details to the child node
 	fileBrowserConfig?: FileBrowserConfig;
 	siteId: number;
-	// External props for FileInfoCard
-	siteSlug?: string;
+	siteSlug: string;
 	hasCredentials?: boolean;
 	isRestoreEnabled?: boolean;
 	onTrackEvent?: ( eventName: string, properties?: Record< string, unknown > ) => void;
@@ -384,23 +383,19 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 					</>
 				) }
 			</div>
-			{ isCurrentNodeClicked &&
-				showFileCard &&
-				siteSlug &&
-				isRestoreEnabled !== undefined &&
-				onTrackEvent && (
-					<FileInfoCard
-						siteId={ siteId }
-						rewindId={ rewindId }
-						item={ item }
-						parentItem={ parentItem }
-						path={ path }
-						siteSlug={ siteSlug }
-						hasCredentials={ hasCredentials }
-						isRestoreEnabled={ isRestoreEnabled }
-						onTrackEvent={ onTrackEvent }
-					/>
-				) }
+			{ isCurrentNodeClicked && showFileCard && isRestoreEnabled !== undefined && onTrackEvent && (
+				<FileInfoCard
+					siteId={ siteId }
+					rewindId={ rewindId }
+					item={ item }
+					parentItem={ parentItem }
+					path={ path }
+					siteSlug={ siteSlug }
+					hasCredentials={ hasCredentials }
+					isRestoreEnabled={ isRestoreEnabled }
+					onTrackEvent={ onTrackEvent }
+				/>
+			) }
 			{ isOpen && (
 				<>
 					{ item.hasChildren && ! shouldRestrictChildren( item ) && (
