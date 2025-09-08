@@ -1028,7 +1028,7 @@ object PlaywrightTestPRMatrix : BuildType({
 		}
 
 		bashNodeScript {
-			name = "Upload report to S3"
+			name = "Upload report and send Slack notification"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
 				ARCHIVE_NAME="%build.counter%-%build.vcs.number%-%playwrightProject%"
