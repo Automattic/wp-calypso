@@ -103,7 +103,7 @@ b. set the viewport size for the command only: `VIEWPORT_NAME=<viewport> yarn je
 
 ### Target a different environment
 
-By default these tests target http://calypso.localhost:3000. To target a webapp running in a different environment:
+By default these tests target <http://calypso.localhost:3000>. To target a webapp running in a different environment:
 
 1. determine the base URL to use for the appropriate environment.
 
