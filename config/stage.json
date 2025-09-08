@@ -50,6 +50,7 @@
 		"hosting/hosting-features-callout": true,
 		"hosting-server-settings-enhancements": true,
 		"summer-special-2025": false,
+		"summer-special-2025-banner": false,
 		"i18n/empathy-mode": true,
 		"importer/site-backups": true,
 		"importer/unified": true,
