@@ -5,7 +5,6 @@ import { modifierKeyIsActive } from '../../panel/helpers/input';
 import getIsLoading from '../../panel/state/selectors/get-is-loading';
 import getKeyboardShortcutsEnabled from '../../panel/state/selectors/get-keyboard-shortcuts-enabled';
 import { useAppContext } from '../context';
-import './style.scss';
 import type { Note } from '../types';
 
 export function useNoteNavigationViaKeyboardShortcuts( {
