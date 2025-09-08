@@ -5,7 +5,7 @@ import {
 	__experimentalHStack as HStack,
 	Button,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import {
 	chartBar as chartBarIcon,
 	download as downloadIcon,
@@ -52,7 +52,7 @@ export default function MonitoringCard( {
 			justify="space-between"
 			alignment="flex-start"
 		>
-			<VStack spacing={ 4 } style={ { flexGrow: 1 } }>
+			<VStack spacing={ 4 } className="dashboard-monitoring-card__header">
 				<HStack justify="space-between">
 					<HStack spacing={ 1 } alignment="center" expanded={ false }>
 						<Text weight="bold" size="15px">
@@ -60,16 +60,35 @@ export default function MonitoringCard( {
 						</Text>
 					</HStack>
 					<HStack spacing={ 2 } alignment="center" expanded={ false }>
-						<Button icon={ chartBarIcon } label={ __( 'Chart' ) } />
+						<Button
+							icon={ chartBarIcon }
+							label={ sprintf(
+								/* translators: %s is the card title */
+								__( 'View %s chart.' ),
+								title
+							) }
+						/>
 						{ onDownloadClick && (
 							<Button
 								icon={ downloadIcon }
-								label={ __( 'Download' ) }
+								label={ sprintf(
+									/* translators: %s is the card title */
+									__( 'Download %s data.' ),
+									title
+								) }
 								onClick={ onDownloadClick }
 							/>
 						) }
 						{ onAnchorClick && (
-							<Button icon={ linkIcon } label={ __( 'Anchor' ) } onClick={ onAnchorClick } />
+							<Button
+								icon={ linkIcon }
+								label={ sprintf(
+									/* translators: %s is the card title */
+									__( 'Permalink: %s.' ),
+									title
+								) }
+								onClick={ onAnchorClick }
+							/>
 						) }
 					</HStack>
 				</HStack>
@@ -91,12 +110,7 @@ export default function MonitoringCard( {
 				) }
 				{ topContent }
 				{ ! isLoading && children && (
-					<VStack
-						className="dashboard-monitoring-card__content"
-						spacing={ 2 }
-						justify="flex-start"
-						style={ { flexGrow: 1 } }
-					>
+					<VStack className="dashboard-monitoring-card__content" spacing={ 2 } justify="flex-start">
 						{ children }
 					</VStack>
 				) }

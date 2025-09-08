@@ -1,6 +1,7 @@
 import { formatCurrency } from '@automattic/number-formatters';
 import { useQuery } from '@tanstack/react-query';
-import { useSuggestion } from '../../hooks/use-suggestion';
+import { __ } from '@wordpress/i18n';
+import { DomainPriceRule, useSuggestion } from '../../hooks/use-suggestion';
 import { useDomainSearch } from '../../page/context';
 import { DomainSuggestionPrice as DomainSuggestionPriceComponent } from '../../ui';
 export interface DomainSuggestionPriceProps {
@@ -22,6 +23,32 @@ export const DomainSuggestionPrice = ( { domainName }: DomainSuggestionPriceProp
 					stripZeros: true,
 			  } )
 			: priceSource.sale_cost;
+
+	if ( suggestion.price_rule === DomainPriceRule.HIDE_PRICE ) {
+		return null;
+	}
+
+	if ( suggestion.price_rule === DomainPriceRule.ONE_TIME_PRICE ) {
+		return <DomainSuggestionPriceComponent price={ priceSource.cost } />;
+	}
+
+	if ( suggestion.price_rule === DomainPriceRule.DOMAIN_MOVE_PRICE ) {
+		return <DomainSuggestionPriceComponent price={ __( 'Move your existing domain' ) } />;
+	}
+
+	if ( suggestion.price_rule === DomainPriceRule.FREE_FOR_FIRST_YEAR ) {
+		const zeroCost = formatCurrency( 0, priceSource.currency_code, {
+			stripZeros: true,
+		} );
+
+		return (
+			<DomainSuggestionPriceComponent
+				price={ priceSource.cost }
+				salePrice={ zeroCost }
+				renewPrice={ priceSource.renew_cost }
+			/>
+		);
+	}
 
 	return (
 		<DomainSuggestionPriceComponent

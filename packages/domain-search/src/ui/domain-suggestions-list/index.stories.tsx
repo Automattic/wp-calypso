@@ -33,7 +33,6 @@ export const Default = () => {
 						key={ suggestion.uuid }
 						domain={ suggestion.domain }
 						tld={ suggestion.tld }
-						notice={ suggestion.domain === 'tha-lasso' ? 'hello' : undefined }
 						price={
 							<DomainSuggestionPrice
 								salePrice={ suggestion.salePrice }

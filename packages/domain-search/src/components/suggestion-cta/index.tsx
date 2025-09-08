@@ -1,10 +1,12 @@
-import { useIsMutating, useMutation, useQuery } from '@tanstack/react-query';
+import { useIsMutating, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { envelope } from '@wordpress/icons';
+import { useState } from 'react';
 import { useIsCurrentMutation } from '../../hooks/use-is-current-mutation';
 import { useSuggestion } from '../../hooks/use-suggestion';
 import { useDomainSearch } from '../../page/context';
 import {
+	DomainSearchTrademarkClaimsModal,
 	DomainSuggestionContinueCTA,
 	DomainSuggestionErrorCTA,
 	DomainSuggestionPrimaryCTA,
@@ -16,8 +18,13 @@ export interface DomainSuggestionCTAProps {
 
 export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) => {
 	const { cart, events, queries } = useDomainSearch();
-
 	const suggestion = useSuggestion( domainName );
+
+	const queryClient = useQueryClient();
+
+	const { data: availability } = useQuery( queries.domainAvailability( domainName ) );
+
+	const [ trademarkClaimModalOpen, setTrademarkClaimModalOpen ] = useState( false );
 
 	const {
 		mutate: addToCart,
@@ -25,15 +32,27 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 		error,
 		submittedAt,
 	} = useMutation( {
-		mutationFn: () => cart.onAddItem( suggestion ),
+		mutationFn: async ( { acceptedTrademarkClaim }: { acceptedTrademarkClaim: boolean } ) => {
+			if ( acceptedTrademarkClaim ) {
+				return cart.onAddItem( suggestion );
+			}
+
+			const availability = await queryClient.ensureQueryData(
+				queries.domainAvailability( domainName )
+			);
+
+			if ( ! availability?.trademark_claims_notice_info ) {
+				return cart.onAddItem( suggestion );
+			}
+
+			setTrademarkClaimModalOpen( true );
+		},
 		networkMode: 'always',
 		retry: false,
 	} );
 
 	const isMutating = !! useIsMutating();
 	const isCurrentMutation = useIsCurrentMutation( submittedAt );
-
-	const { data: availability } = useQuery( queries.domainAvailability( domainName ) );
 
 	if ( availability?.is_price_limit_exceeded ) {
 		return (
@@ -56,14 +75,32 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 	const errorMessage = isCurrentMutation && error?.message;
 
 	if ( errorMessage ) {
-		return <DomainSuggestionErrorCTA errorMessage={ errorMessage } callback={ addToCart } />;
+		return (
+			<DomainSuggestionErrorCTA
+				errorMessage={ errorMessage }
+				callback={ () => addToCart( { acceptedTrademarkClaim: false } ) }
+			/>
+		);
 	}
 
 	return (
-		<DomainSuggestionPrimaryCTA
-			disabled={ isMutating }
-			isBusy={ isPending }
-			onClick={ addToCart }
-		/>
+		<>
+			<DomainSuggestionPrimaryCTA
+				disabled={ isMutating }
+				isBusy={ isPending }
+				onClick={ () => addToCart( { acceptedTrademarkClaim: false } ) }
+			/>
+			{ availability?.trademark_claims_notice_info && trademarkClaimModalOpen && (
+				<DomainSearchTrademarkClaimsModal
+					domainName={ domainName }
+					trademarkClaimsNoticeInfo={ availability.trademark_claims_notice_info }
+					onAccept={ () => {
+						setTrademarkClaimModalOpen( false );
+						addToCart( { acceptedTrademarkClaim: true } );
+					} }
+					onClose={ () => setTrademarkClaimModalOpen( false ) }
+				/>
+			) }
+		</>
 	);
 };

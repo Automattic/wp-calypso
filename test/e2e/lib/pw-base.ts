@@ -187,9 +187,14 @@ export const tags = {
 	AUTHENTICATION: '@authentication',
 	CALYPSO_PR: '@calypso-pr',
 	CALYPSO_RELEASE: '@calypso-release',
+	EXAMPLE_BLOCKS: '@example-blocks',
 	GUTENBERG: '@gutenberg',
 	I18N: '@i18n',
 	JETPACK_REMOTE_SITE: '@jetpack-remote-site',
+	JETPACK_WPCOM_INTEGRATION: '@jetpack-wpcom-integration',
+	LEGAL: '@legal',
+	P2: '@p2',
+	SETTINGS: '@settings',
 };
 
 export { expect };

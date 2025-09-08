@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import { getActions } from '../../panel/helpers/notes';
 import { trashNote } from '../../panel/state/notes/thunks';
 import { Note } from '../types';
+import HotkeyContainer from './container-hotkey';
 
 export default function ActionDropdown( { note, goBack }: { note: Note; goBack: () => void } ) {
 	const dispatch = useDispatch();
@@ -26,21 +27,27 @@ export default function ActionDropdown( { note, goBack }: { note: Note; goBack: 
 	};
 
 	return (
-		<DropdownMenu icon={ moreVertical } label={ __( 'Actions' ) }>
-			{ ( { onClose } ) => {
-				return (
-					<MenuGroup>
-						<MenuItem
-							onClick={ async () => {
-								await handleDelete();
-								onClose();
-							} }
-						>
-							{ isDeleting ? __( 'Moving to the Trash…' ) : __( 'Trash' ) }
-						</MenuItem>
-					</MenuGroup>
-				);
-			} }
-		</DropdownMenu>
+		<HotkeyContainer shortcuts={ [ { hotkey: 't', action: handleDelete } ] }>
+			<DropdownMenu
+				icon={ moreVertical }
+				label={ __( 'Actions' ) }
+				toggleProps={ { size: 'small' } }
+			>
+				{ ( { onClose } ) => {
+					return (
+						<MenuGroup>
+							<MenuItem
+								onClick={ async () => {
+									await handleDelete();
+									onClose();
+								} }
+							>
+								{ isDeleting ? __( 'Moving to the Trash…' ) : __( 'Trash' ) }
+							</MenuItem>
+						</MenuGroup>
+					);
+				} }
+			</DropdownMenu>
+		</HotkeyContainer>
 	);
 }
