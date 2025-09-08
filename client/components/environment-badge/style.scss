@@ -24,9 +24,7 @@ $z-index: 999;
 
 	.bug-report {
 		position: relative;
-		display: inline-block;
-		width: 26px;
-		height: 26px;
+		display: inline-flex;
 		background-color: #fff;
 		border: solid 1px #3c434a;
 		border-radius: 50%;
@@ -36,10 +34,7 @@ $z-index: 999;
 		text-align: center;
 		z-index: $z-index + 1;
 		transition: border-radius 0.2s ease-out;
-
-		.gridicon {
-			vertical-align: middle;
-		}
+		vertical-align: middle;
 	}
 
 	.environment {

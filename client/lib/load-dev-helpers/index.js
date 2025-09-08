@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { debounce } from 'lodash';
+import { debounce } from '@wordpress/compose';
 
 export default function loadDevHelpers( reduxStore ) {
 	const badge = document.querySelector( '.environment-badge' );
