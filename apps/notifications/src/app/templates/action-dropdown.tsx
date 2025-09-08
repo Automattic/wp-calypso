@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux';
 import { getActions } from '../../panel/helpers/notes';
 import { trashNote } from '../../panel/state/notes/thunks';
 import { Note } from '../types';
-import { HotkeyContainer } from './container-hotkey';
+import HotkeyContainer from './container-hotkey';
 
 export default function ActionDropdown( { note, goBack }: { note: Note; goBack: () => void } ) {
 	const dispatch = useDispatch();
