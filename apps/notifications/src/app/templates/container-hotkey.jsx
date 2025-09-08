@@ -20,6 +20,7 @@ export class HotkeyContainer extends Component {
 				withModifiers: PropTypes.bool,
 			} )
 		),
+		children: PropTypes.node,
 	};
 
 	componentDidMount() {
