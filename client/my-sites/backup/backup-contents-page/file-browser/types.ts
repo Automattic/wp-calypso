@@ -72,23 +72,3 @@ export interface FileBrowserItemInfo {
 }
 
 export type FileBrowserCheckState = 'checked' | 'unchecked' | 'mixed';
-
-// External dependencies that will be provided as props
-export interface FileBrowserExternalProps {
-	// Site data
-	siteId: number;
-	siteSlug: string;
-	hasCredentials?: boolean;
-	isRestoreEnabled?: boolean;
-
-	// Tracks analytics callback
-	onTrackEvent?: ( eventName: string, properties?: Record< string, unknown > ) => void;
-
-	// Granular download action callback
-	onRequestGranularDownload?: (
-		siteId: number,
-		rewindId: number,
-		includePaths: string,
-		excludePaths: string
-	) => void;
-}

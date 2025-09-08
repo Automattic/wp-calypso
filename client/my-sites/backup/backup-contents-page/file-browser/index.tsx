@@ -25,9 +25,26 @@ export interface FileBrowserConfig {
 	siteId?: number;
 }
 
-interface FileBrowserProps extends FileBrowserExternalProps {
+interface FileBrowserProps {
 	rewindId: number;
+	siteId: number;
+	siteSlug: string;
 	fileBrowserConfig?: FileBrowserConfig;
+
+	// Optional site data props
+	hasCredentials?: boolean;
+	isRestoreEnabled?: boolean;
+
+	// Tracks analytics callback
+	onTrackEvent?: ( eventName: string, properties?: Record< string, unknown > ) => void;
+
+	// Granular download action callback
+	onRequestGranularDownload?: (
+		siteId: number,
+		rewindId: number,
+		includePaths: string,
+		excludePaths: string
+	) => void;
 }
 
 const FileBrowser: FunctionComponent< FileBrowserProps > = ( {
