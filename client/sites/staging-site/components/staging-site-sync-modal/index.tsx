@@ -414,8 +414,14 @@ export default function SyncModal( {
 				style={ {
 					paddingBottom: ( () => {
 						const hasWarning = shouldDisableGranularSync || sqlNode?.checkState === 'checked';
+						if ( hasWarning && isFileBrowserVisible && showWooCommerceWarning ) {
+							return '320px';
+						}
 						if ( hasWarning && isFileBrowserVisible ) {
 							return '280px';
+						}
+						if ( hasWarning && showWooCommerceWarning ) {
+							return '50px';
 						}
 						if ( hasWarning ) {
 							return '0px';
@@ -448,6 +454,7 @@ export default function SyncModal( {
 						'confirmation-input': showDomainConfirmation,
 						'has-warning': shouldDisableGranularSync || sqlNode?.checkState === 'checked',
 						'has-file-browser': isFileBrowserVisible,
+						'has-woocommerce-warning': showWooCommerceWarning,
 					} ) }
 				>
 					<Tooltip
