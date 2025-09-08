@@ -129,7 +129,7 @@ export function getMappingVerificationErrorMessage(
 		name_servers: nameServers,
 	} = verificationStatus || {};
 
-	const genericError = __( "We couldn't verify the connection for your domain, please try again." );
+	const genericError = __( 'We couldn’t verify the connection for your domain, please try again.' );
 
 	// if ( error ) {
 	// 	return error?.message || genericError;
@@ -137,7 +137,7 @@ export function getMappingVerificationErrorMessage(
 
 	if ( DomainConnectionSetupMode.SUGGESTED === mode && ! hasWpcomNameservers ) {
 		if ( nameServers.length === 0 ) {
-			return __( "We couldn't retrieve the name servers for your domain. Please try again." );
+			return __( 'We couldn’t retrieve the name servers for your domain. Please try again.' );
 		}
 
 		return createInterpolateElement(
@@ -151,7 +151,7 @@ export function getMappingVerificationErrorMessage(
 
 	if ( DomainConnectionSetupMode.ADVANCED === mode && ! hasWpcomIpAddresses ) {
 		if ( hostIpAddresses.length === 0 ) {
-			return __( "We couldn't find any A records for your domain. Please try again." );
+			return __( 'We couldn’t find any A records for your domain. Please try again.' );
 		}
 
 		return createInterpolateElement(
