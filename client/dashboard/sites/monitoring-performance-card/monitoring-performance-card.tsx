@@ -48,10 +48,7 @@ export function useSiteMetricsData( siteId: number, timeRange: number ) {
 			( acc, period, index ) => {
 				// Check if the timestamp is already in the arrays, if not, push it
 				if ( acc[ 0 ][ acc[ 0 ].length - 1 ] !== period.timestamp ) {
-					// Temporarily convert timestamp to ISO string for better readability in the example.
-					// We will revert it back to epoch in the actual implementation:
-					// acc[ 0 ].push( period.timestamp );
-					acc[ 0 ].push( new Date( period.timestamp * 1000 ).toISOString() );
+					acc[ 0 ].push( period.timestamp );
 
 					const requestsPerSecondValue = getDimensionValue( period );
 					if ( requestsPerSecondValue !== null ) {
