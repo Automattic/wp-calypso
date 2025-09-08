@@ -37,6 +37,7 @@ export * from './site-backup-restore';
 export * from './site-backups';
 export * from './site-cache';
 export * from './site-defensive-mode';
+export * from './site-deployments';
 export * from './site-do-it-for-me';
 export * from './site-domains';
 export * from './site-jetpack-connection';
