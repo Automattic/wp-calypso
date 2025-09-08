@@ -11,7 +11,7 @@ import { siteRoute } from '../../app/router/sites';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { useActions, useFields, DEFAULT_VIEW, DEFAULT_LAYOUTS } from '../../domains/dataviews';
+import { useActions, useFields, DEFAULT_LAYOUTS, SITE_CONTEXT_VIEW } from '../../domains/dataviews';
 import type { DomainsView } from '../../domains/dataviews';
 import type { SiteDomain } from '@automattic/api-core';
 
@@ -31,7 +31,7 @@ function SiteDomains() {
 	const actions = useActions( { user, site } );
 
 	const [ view, setView ] = useState< DomainsView >( () => ( {
-		...DEFAULT_VIEW,
+		...SITE_CONTEXT_VIEW,
 		type: 'table',
 	} ) );
 
