@@ -1,11 +1,12 @@
 import {
+	availableTldsQuery,
 	domainAvailabilityQuery,
 	domainSuggestionsQuery,
 	freeSuggestionQuery,
 } from '@automattic/api-queries';
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { FilterState } from '../components/search-bar/types';
-import type { DomainSearchProps, DomainSearchContextType } from './types';
+import { type DomainSearchProps, type DomainSearchContextType } from './types';
 
 const noop = () => {};
 
@@ -21,7 +22,9 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		onMapDomainClick: noop,
 	},
 	queries: {
-		domainSuggestions: ( query: string ) => domainSuggestionsQuery( query ),
+		availableTlds: ( search?: string, vendor?: string ) => availableTldsQuery( vendor, search ),
+		domainSuggestions: ( query: string, params?: Partial< typeof domainSuggestionsQuery > ) =>
+			domainSuggestionsQuery( query, params ),
 		domainAvailability: ( domainName: string ) => domainAvailabilityQuery( domainName ),
 		freeSuggestion: ( query: string ) => freeSuggestionQuery( query ),
 	},
@@ -41,6 +44,12 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		vendor: 'variation2_front',
 		skippable: false,
 		deemphasizedTlds: [],
+		priceRules: {
+			hidePrice: false,
+			oneTimePrice: false,
+			forceRegularPrice: false,
+			freeForFirstYear: false,
+		},
 	},
 	filter: {
 		exactSldMatchesOnly: false,
@@ -98,11 +107,13 @@ export const useDomainSearchContextValue = (
 
 	return useMemo( () => {
 		return {
+			...DEFAULT_CONTEXT_VALUE,
 			events: normalizedEvents,
 			config: normalizedConfig,
 			queries: {
-				domainSuggestions: ( query ) => ( {
+				domainSuggestions: ( query, params = {} ) => ( {
 					...domainSuggestionsQuery( query, {
+						...params,
 						quantity: 30,
 						vendor: normalizedConfig.vendor,
 					} ),
@@ -114,6 +125,10 @@ export const useDomainSearchContextValue = (
 				} ),
 				domainAvailability: ( domainName ) => ( {
 					...domainAvailabilityQuery( domainName ),
+					enabled: false,
+				} ),
+				availableTlds: ( vendor, search ) => ( {
+					...availableTldsQuery( vendor, search ),
 					enabled: false,
 				} ),
 			},

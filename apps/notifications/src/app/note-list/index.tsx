@@ -64,7 +64,7 @@ const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFil
 	}, [ client, isLoading ] );
 
 	useEffect( () => {
-		if ( notes.length < 10 && ! isLoading ) {
+		if ( notes.length <= 10 && ! isLoading ) {
 			infiniteScrollHandler();
 		}
 	}, [ notes.length, isLoading, infiniteScrollHandler ] );
