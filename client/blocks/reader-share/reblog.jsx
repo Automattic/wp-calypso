@@ -2,6 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import SiteSelector from 'calypso/components/site-selector';
 import ReaderPopoverMenu from 'calypso/reader/components/reader-popover/menu';
 import * as stats from 'calypso/reader/stats';
+import { getLocation } from 'calypso/reader/stats';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
@@ -32,7 +33,8 @@ const ReaderReblogSelection = ( props ) => {
 		// Add 'comment' specificity to stats and tracks names if this is for a comment.
 		stats.recordAction( `share_wordpress${ props.comment ? '_comment' : '' }` );
 		stats.recordGaEvent( `Clicked on Share${ props.comment ? ' Comment' : '' } to WordPress` );
-		const pathnameOverride = currentPath === 'single_post' ? previousPath : undefined;
+		const statsLocation = getLocation( currentPath );
+		const pathnameOverride = statsLocation === 'single_post' ? previousPath : undefined;
 
 		dispatch(
 			recordReaderTracksEvent(
