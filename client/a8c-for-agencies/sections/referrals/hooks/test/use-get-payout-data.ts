@@ -24,6 +24,10 @@ const mockGetCurrentCycleActivityWindow =
 	getNextPayoutDate.getCurrentCycleActivityWindow as jest.MockedFunction<
 		typeof getNextPayoutDate.getCurrentCycleActivityWindow
 	>;
+const mockAreNextAndCurrentPayoutDatesEqual =
+	getNextPayoutDate.areNextAndCurrentPayoutDatesEqual as jest.MockedFunction<
+		typeof getNextPayoutDate.areNextAndCurrentPayoutDatesEqual
+	>;
 
 // Mock Date.prototype.toLocaleString to ensure consistent formatting across environments
 const originalToLocaleString = Date.prototype.toLocaleString;
@@ -59,6 +63,7 @@ describe( 'useGetPayoutData', () => {
 		mockGetCurrentCyclePayoutDate.mockReturnValue( mockCurrentCyclePayoutDate );
 		mockGetNextPayoutDateActivityWindow.mockReturnValue( mockNextPayoutWindow );
 		mockGetCurrentCycleActivityWindow.mockReturnValue( mockCurrentCycleWindow );
+		mockAreNextAndCurrentPayoutDatesEqual.mockReturnValue( false );
 	} );
 
 	it( 'should format next payout activity window with year', () => {
@@ -95,6 +100,7 @@ describe( 'useGetPayoutData', () => {
 		const sameDateValue = new Date( '2024-06-01' );
 		mockGetNextPayoutDate.mockReturnValue( sameDateValue );
 		mockGetCurrentCyclePayoutDate.mockReturnValue( sameDateValue );
+		mockAreNextAndCurrentPayoutDatesEqual.mockReturnValue( true );
 
 		const { result } = renderHook( () => useGetPayoutData() );
 

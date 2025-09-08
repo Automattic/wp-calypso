@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/components",
-	"version": "3.0.1",
+	"version": "3.0.2",
 	"description": "Automattic Components.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -56,7 +56,6 @@
 		"@emotion/css": "^11.11.2",
 		"@emotion/react": "^11.11.1",
 		"@emotion/styled": "^11.11.0",
-		"@storybook/addon-actions": "^8.6.14",
 		"@wordpress/base-styles": "^5.23.0",
 		"@wordpress/components": "^29.9.0",
 		"@wordpress/compose": "7.23.0",
@@ -90,6 +89,7 @@
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
+		"@storybook/addon-actions": "^8.6.14",
 		"@storybook/react": "^8.6.14",
 		"@storybook/test": "^8.6.14",
 		"@testing-library/dom": "^10.4.0",

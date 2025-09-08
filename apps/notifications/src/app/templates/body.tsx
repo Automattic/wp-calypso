@@ -15,7 +15,7 @@ import NotePreface from './preface';
 import type { Note, Block, BlockWithSignature } from '../types';
 
 const isReplyBlock = ( note: Note, block: Block ) =>
-	block.ranges && block.ranges.length > 1 && block.ranges[ 1 ].id === note.meta?.ids.reply_comment;
+	block.ranges && block.ranges.length > 1 && block.ranges[ 1 ].id === note.meta?.ids?.reply_comment;
 
 const ReplyBlock = ( { note }: { note: Note } ) => {
 	const [ replyURL, setReplyURL ] = useState< string >( '' );
@@ -34,7 +34,7 @@ const ReplyBlock = ( { note }: { note: Note } ) => {
 			return;
 		}
 
-		const { site: siteId, reply_comment: replyCommentId } = note.meta.ids;
+		const { site: siteId, reply_comment: replyCommentId } = note.meta?.ids || {};
 		if ( ! siteId || ! replyCommentId ) {
 			return;
 		}
@@ -55,7 +55,7 @@ const ReplyBlock = ( { note }: { note: Note } ) => {
 
 	if ( replyURL ) {
 		const replyMessage = createInterpolateElement(
-			note.meta.ids.comment
+			note.meta?.ids?.comment
 				? __( 'You <a>replied</a> to this comment.' )
 				: __( 'You <a>replied</a> to this post.' ),
 			{

@@ -45,6 +45,17 @@ export const profileRoute = createRoute( {
 	)
 );
 
+const preferencesRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'preferences',
+} ).lazy( () =>
+	import( '../../me/preferences' ).then( ( d ) =>
+		createLazyRoute( 'preferences' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const billingRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'billing',
@@ -297,6 +308,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 
 	const meRoutes: AnyRoute[] = [
 		profileRoute,
+		preferencesRoute,
 		billingRoute,
 		billingHistoryRoute,
 		purchasesRoute,

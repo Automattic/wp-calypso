@@ -13,6 +13,7 @@ export const PREINSTALLED_PLUGINS = [
 	'full-site-editing',
 	'layout-grid',
 	'page-optimize',
+	'paypal-payment-buttons',
 ]; // These plugins auto update but shouldn't be deactivated.
 
 export const PREINSTALLED_PREMIUM_PLUGINS = {

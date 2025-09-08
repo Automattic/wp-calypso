@@ -2,7 +2,6 @@ import { __ } from '@wordpress/i18n';
 import { pin } from '@wordpress/icons';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { keys } from '../../panel/helpers/input';
 import { getNewPostLink } from '../../panel/helpers/notes';
 import { answerPrompt } from '../../panel/state/ui/actions';
 import ActionButton from './action-button';
@@ -18,7 +17,7 @@ const AnswerPromptButton = ( { answerPrompt, note } ) => {
 		<ActionButton
 			icon={ pin }
 			isActive={ false }
-			hotkey={ keys.KEY_E }
+			hotkey="e"
 			onToggle={ () => answerPrompt( siteId, newPostLink ) }
 			text={ __( 'Post Answer' ) }
 			title={ __( 'Post Answer' ) }

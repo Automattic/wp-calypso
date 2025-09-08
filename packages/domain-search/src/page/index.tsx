@@ -5,7 +5,7 @@ import { useLayoutEffect } from 'react';
 import { DomainSearchContext, useDomainSearchContextValue } from './context';
 import { EmptyPage } from './empty';
 import { ResultsPage } from './results';
-import type { DomainSearchProps } from './types';
+import { type DomainSearchProps } from './types';
 
 import './style.scss';
 
