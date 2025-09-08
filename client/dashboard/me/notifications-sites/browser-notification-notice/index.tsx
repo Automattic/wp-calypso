@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-restricted-imports
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Button } from '@wordpress/components';
+import { ExternalLink } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Notice } from '../../../components/notice';
 
@@ -10,16 +10,11 @@ export const BrowserNotificationNotice = () => {
 			variant="warning"
 			density="low"
 			actions={
-				<>
-					<Button
-						variant="link"
-						href={ localizeUrl( 'https://wordpress.com/support/troubleshoot-browser-block-chat/' ) }
-						target="_blank"
-						rel="noreferrer"
-					>
-						{ __( 'View instructions to enable' ) }
-					</Button>
-				</>
+				<ExternalLink
+					href={ localizeUrl( 'https://wordpress.com/support/troubleshoot-browser-block-chat/' ) }
+				>
+					{ __( 'View instructions to enable' ) }
+				</ExternalLink>
 			}
 		>
 			{ __( 'Your browser is currently set to block notifications from WordPress.com.' ) }
