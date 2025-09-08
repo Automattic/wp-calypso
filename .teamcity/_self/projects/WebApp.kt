@@ -977,6 +977,7 @@ object PlaywrightTestPRMatrix : BuildType({
 		param("env.AUTHENTICATE_ACCOUNTS", "simpleSitePersonalPlanUser,gutenbergSimpleSiteUser,defaultUser")
 		param("env.LIVEBRANCHES", "true")
 		param("env.CI", "true")
+		param("REPORT_URL", "https://automattic.github.io/wp-calypso-test-results/r")
 	}
 
 	steps {
@@ -999,6 +1000,7 @@ object PlaywrightTestPRMatrix : BuildType({
 
 		bashNodeScript {
 			name = "Run e2e tests"
+			id = "run_e2e_tests"
 			scriptContent = """
 				echo "Getting Calypso url for build ${BuildDockerImage.depParamRefs.buildNumber}"
 				chmod +x ./bin/get-calypso-live-url.sh
@@ -1009,16 +1011,54 @@ object PlaywrightTestPRMatrix : BuildType({
 					exit 1
 				fi
 
+				# Check if test/e2e or packages/calypso-e2e files have been changed
+				CHANGED_FILES=${'$'}(git diff --name-only refs/remotes/origin/trunk...HEAD)
+				if echo "${'$'}CHANGED_FILES" | grep -q -E "^(test/e2e/|packages/calypso-e2e/)"; then
+					echo "Changes detected in test/e2e/ or packages/calypso-e2e/, running all tests"
+					GREP_FLAG=""
+				else
+					echo "No changes in test/e2e/ or packages/calypso-e2e/, running @calypso-pr tests only"
+					GREP_FLAG="--grep=@calypso-pr"
+				fi
+
 				cd test/e2e
 				echo "Running Playwright tests for project: %playwrightProject%"
-				yarn test:pw:%playwrightProject% --grep=@calypso-pr
+				yarn test:pw:%playwrightProject% ${'$'}GREP_FLAG
 			"""
+			dockerImage = "%docker_image_e2e%"
+		}
+
+		bashNodeScript {
+			name = "Upload report and send Slack notification"
+			conditions {
+				matches("teamcity.build.branch", ".*e2e.*")
+				equals("teamcity.build.step.status.run_e2e_tests", "failure")
+			}
+			scriptContent = """
+				ARCHIVE_NAME="%build.counter%-%build.vcs.number%-%playwrightProject%"
+				export E2E_SECRETS_KEY="%E2E_SECRETS_ENCRYPTION_KEY_CURRENT%"
+				
+				# Need to use -C to avoid creation of an unnecessary top level directory.
+				tar cvfz - -C test/e2e/output/html . | openssl enc -aes-256-cbc -salt -out ${'$'}{ARCHIVE_NAME}.tgz.enc -pass env:E2E_SECRETS_KEY
+
+				aws configure set aws_access_key_id %CALYPSO_E2E_DASHBOARD_AWS_S3_ACCESS_KEY_ID%
+				aws configure set aws_secret_access_key %CALYPSO_E2E_DASHBOARD_AWS_S3_SECRET_ACCESS_KEY%
+
+				aws s3 cp ${'$'}{ARCHIVE_NAME}.tgz.enc %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT%/archive/
+
+				# Send custom Slack notification
+				echo "##teamcity[notification notifier='slack' message='Report available: %REPORT_URL%/${'$'}{ARCHIVE_NAME}.tgz.enc|nBranch: %teamcity.build.branch%' sendTo='calypso-e2e-reports-ext' connectionId='PROJECT_EXT_11']"
+			""".trimIndent()
+			conditions {
+				matches("teamcity.build.branch", ".*e2e.*")
+			}
 			dockerImage = "%docker_image_e2e%"
 		}
 	}
 
 	artifactRules = """
 		test/e2e/output => %playwrightProject%/output
+		test/e2e/blob-report => blob-report
 	""".trimIndent()
 })
 

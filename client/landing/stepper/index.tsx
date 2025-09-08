@@ -18,6 +18,7 @@ import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import { AsyncHelpCenterApp } from 'calypso/components/help-center';
 import getSuperProps from 'calypso/lib/analytics/super-props';
 import { setupErrorLogger } from 'calypso/lib/error-logger/setup-error-logger';
+import loadDevHelpers from 'calypso/lib/load-dev-helpers';
 import { addQueryArgs } from 'calypso/lib/url';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { onDisablePersistence } from 'calypso/lib/user/store';
@@ -30,7 +31,6 @@ import { setStore } from 'calypso/state/redux-store';
 import { setCurrentFlowName } from 'calypso/state/signup/flow/actions';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { FlowRenderer } from './declarative-flow/internals';
-import 'calypso/components/environment-badge/style.scss';
 import 'calypso/assets/stylesheets/style.scss';
 import { createSessionId } from './declarative-flow/internals/state-manager/create-session-id';
 import availableFlows from './declarative-flow/registered-flows';
@@ -120,6 +120,8 @@ async function main() {
 	initializeAnalytics( user, getSuperProps( reduxStore ) );
 
 	setupErrorLogger( reduxStore );
+
+	loadDevHelpers( reduxStore );
 
 	// When re-using steps from /start, we need to set the current flow name in the redux store, since some depend on it.
 	reduxStore.dispatch( setCurrentFlowName( flow.name ) );

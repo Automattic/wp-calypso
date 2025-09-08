@@ -2,6 +2,7 @@ import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { parseMatchReasons } from '../../helpers';
 import { type FeaturedSuggestionReason } from '../../helpers/partition-suggestions';
+import { usePolicyBadges } from '../../hooks/use-policy-badges';
 import { useSuggestion } from '../../hooks/use-suggestion';
 import { useDomainSuggestionBadges } from '../../hooks/use-suggestion-badges';
 import { DomainSuggestion, DomainSuggestionBadge } from '../../ui';
@@ -24,10 +25,15 @@ export const FeaturedSearchResultsItem = ( {
 	const suggestion = useSuggestion( domainName );
 
 	const matchReasons = useMemo( () => {
+		if ( ! suggestion.match_reasons ) {
+			return;
+		}
+
 		return parseMatchReasons( domainName, suggestion.match_reasons );
 	}, [ domainName, suggestion.match_reasons ] );
 
 	const suggestionBadges = useDomainSuggestionBadges( domainName );
+	const policyBadges = usePolicyBadges( domainName );
 
 	const badges = useMemo( () => {
 		if ( reason === 'exact-match' ) {
@@ -35,10 +41,11 @@ export const FeaturedSearchResultsItem = ( {
 				<DomainSuggestionBadge key="available" variation="success">
 					{ __( "It's available!" ) }
 				</DomainSuggestionBadge>,
+				...policyBadges,
 			];
 		}
 
-		const existingBadges = [ ...suggestionBadges ];
+		const existingBadges = [ ...suggestionBadges, ...policyBadges ];
 
 		if ( reason === 'recommended' ) {
 			existingBadges.unshift(
@@ -53,7 +60,7 @@ export const FeaturedSearchResultsItem = ( {
 			);
 		}
 		return existingBadges;
-	}, [ reason, suggestionBadges ] );
+	}, [ reason, suggestionBadges, policyBadges ] );
 
 	return (
 		<DomainSuggestion.Featured

@@ -16,8 +16,8 @@ import { getSiteData } from '../lib/site-data';
 import SitesWithWooPaymentsMobileView from './mobile-view';
 import {
 	SiteColumn,
-	TransactionsColumn,
 	CommissionsPaidColumn,
+	TimeframeCommissionsColumn,
 	WooPaymentsStatusColumn,
 } from './site-columns';
 import type { SitesWithWooPaymentsState } from '../types';
@@ -46,7 +46,7 @@ export default function SitesWithWooPayments() {
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
-		fields: [ 'site', 'transactions', 'commissionsPaid', 'woopaymentsStatus' ],
+		fields: [ 'site', 'commissionsPaid', 'timeframeCommissions', 'woopaymentsStatus' ],
 	} );
 
 	const fields = useMemo(
@@ -58,20 +58,6 @@ export default function SitesWithWooPayments() {
 				render: ( { item }: { item: SitesWithWooPaymentsState } ) => (
 					<SiteColumn site={ item.siteUrl } />
 				),
-				enableHiding: false,
-				enableSorting: false,
-			},
-			{
-				id: 'transactions',
-				label: translate( 'Transactions' ).toUpperCase(),
-				getValue: () => '-',
-				render: ( { item } ) => {
-					if ( isLoadingWooPaymentsData ) {
-						return <TextPlaceholder />;
-					}
-					const { transactions } = getSiteData( woopaymentsData, item.blogId );
-					return <TransactionsColumn transactions={ transactions } />;
-				},
 				enableHiding: false,
 				enableSorting: false,
 			},
@@ -90,11 +76,29 @@ export default function SitesWithWooPayments() {
 				enableSorting: false,
 			},
 			{
+				id: 'timeframeCommissions',
+				label: translate( 'Timeframe Commissions' ).toUpperCase(),
+				getValue: () => '-',
+				render: ( { item } ) => {
+					if ( isLoadingWooPaymentsData ) {
+						return <TextPlaceholder />;
+					}
+					const { estimatedPayout } = getSiteData( woopaymentsData, item.blogId );
+					return <TimeframeCommissionsColumn estimatedPayout={ estimatedPayout } />;
+				},
+				enableHiding: false,
+				enableSorting: false,
+			},
+			{
 				id: 'woopaymentsStatus',
 				label: translate( 'WooPayments Status' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item } ) => (
-					<WooPaymentsStatusColumn state={ item.state } siteId={ item.blogId } />
+					<WooPaymentsStatusColumn
+						state={ item.state }
+						siteId={ item.blogId }
+						woopaymentsData={ woopaymentsData }
+					/>
 				),
 				enableHiding: false,
 				enableSorting: false,

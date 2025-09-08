@@ -7,6 +7,7 @@ import {
 import { createRoot } from 'react-dom/client';
 import '@wordpress/components/build-style/style.css';
 import '@wordpress/commands/build-style/style.css';
+import loadDevHelpers from 'calypso/lib/load-dev-helpers';
 import wpcom from 'calypso/lib/wp';
 import Layout from './layout';
 import type { AppConfig } from './context';
@@ -19,6 +20,7 @@ function boot( config: AppConfig ) {
 	}
 
 	maybeInitializeSupportSession( wpcom );
+	loadDevHelpers();
 
 	const rootElement = document.getElementById( 'wpcom' );
 	if ( rootElement === null ) {

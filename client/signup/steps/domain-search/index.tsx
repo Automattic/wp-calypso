@@ -1,4 +1,6 @@
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
+import { isMonthlyOrFreeFlow } from 'calypso/lib/cart-values/cart-items';
+import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import StepWrapper from 'calypso/signup/step-wrapper';
 
 export type StepProps = {
@@ -12,7 +14,21 @@ export type StepProps = {
 
 export default function DomainSearchStep( props: StepProps ) {
 	const getContent = () => {
-		return <WPCOMDomainSearch />;
+		return (
+			<WPCOMDomainSearch
+				flowName={ props.flowName }
+				config={ {
+					vendor: getSuggestionsVendor( {
+						isSignup: true,
+						isDomainOnly: props.flowName === 'domain',
+						flowName: props.flowName,
+					} ),
+					priceRules: {
+						forceRegularPrice: isMonthlyOrFreeFlow( props.flowName ),
+					},
+				} }
+			/>
+		);
 	};
 
 	return (

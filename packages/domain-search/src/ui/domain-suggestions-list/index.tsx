@@ -5,14 +5,19 @@ import {
 	useDomainSuggestionContainer,
 } from '../../hooks/use-domain-suggestion-container';
 
+import './style.scss';
+
 interface DomainSuggestionsListProps {
 	children: React.ReactNode;
 }
 
 export const DomainSuggestionsList = ( { children }: DomainSuggestionsListProps ) => {
-	const { containerRef, activeQuery } = useDomainSuggestionContainer();
+	const { containerRef, activeQuery, currentWidth } = useDomainSuggestionContainer();
 
-	const contextValue = useMemo( () => ( { activeQuery } ), [ activeQuery ] );
+	const contextValue = useMemo(
+		() => ( { activeQuery, currentWidth } ),
+		[ activeQuery, currentWidth ]
+	);
 
 	const childrenWithSeparators = useMemo( () => {
 		const totalChildren = Children.count( children );
@@ -25,7 +30,9 @@ export const DomainSuggestionsList = ( { children }: DomainSuggestionsListProps 
 			return (
 				<Fragment key={ `child-${ index }` }>
 					{ child }
-					{ index < totalChildren - 1 && <CardDivider /> }
+					{ index < totalChildren - 1 && (
+						<CardDivider className="domain-suggestions-list__divider" />
+					) }
 				</Fragment>
 			);
 		} );

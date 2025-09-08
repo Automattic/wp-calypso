@@ -10,6 +10,11 @@ export type DomainSuggestionQueryVendor =
 
 export interface DomainSuggestionQuery {
 	/**
+	 * True to only provide exact domain name match suggestions
+	 */
+	exact_sld_matches_only?: boolean;
+
+	/**
 	 * True to include .blog subdomain suggestions
 	 * @example
 	 * example.photo.blog
@@ -96,7 +101,7 @@ export interface DomainSuggestion {
 	 * Reasons for suggestion the domain
 	 * @example [ "exact-match" ]
 	 */
-	match_reasons: string[];
+	match_reasons?: string[];
 
 	/**
 	 * Maximum number of years the domain can be registered for
@@ -181,6 +186,17 @@ export interface DomainSuggestion {
 	 * Whether the client should show the dot gay notice
 	 */
 	dot_gay_notice_required?: true;
+
+	/**
+	 * Policy notices associated with the domain
+	 */
+	policy_notices?: PolicyNotice[];
+}
+
+export interface PolicyNotice {
+	type: string;
+	label: string;
+	message: string;
 }
 
 export interface FreeDomainSuggestion {

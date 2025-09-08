@@ -1,3 +1,4 @@
+import { getDataCenterOptions } from '@automattic/api-core';
 import { Button, FormLabel, LoadingPlaceholder } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -12,7 +13,6 @@ import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
-import { getDataCenterOptions } from 'calypso/data/data-center';
 import { getPHPVersions } from 'calypso/data/php-versions';
 import { useSelector } from 'calypso/state';
 import {

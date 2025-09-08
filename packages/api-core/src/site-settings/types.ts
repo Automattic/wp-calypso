@@ -14,4 +14,17 @@ export interface SiteSettings {
 	wpcom_performance_report_url?: string;
 	wpcom_legacy_contact?: string;
 	wpcom_locked_mode?: boolean;
+	mcp_abilities?: SiteMcpAbilities;
 }
+
+export type SiteMcpAbilities = Record<
+	string,
+	{
+		name: string;
+		title: string;
+		description: string;
+		category: string;
+		type: string;
+		enabled: boolean;
+	}
+>;
