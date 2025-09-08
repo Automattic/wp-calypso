@@ -8,9 +8,9 @@ import type { Note } from '../types';
 
 import './style.scss';
 
-function focusToNote( noteListRef: React.RefObject< HTMLObjectElement >, note: Note ) {
+function focusToNote( noteListRef: React.RefObject< HTMLObjectElement >, note?: Note ) {
 	const noteEl = noteListRef.current?.querySelector(
-		`.dataviews-view-list__item[id$="-${ note.id }-item-wrapper"]`
+		`.dataviews-view-list__item[id$="-${ note?.id }-item-wrapper"]`
 	) as HTMLElement;
 
 	noteEl?.focus();
