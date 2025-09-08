@@ -18,6 +18,7 @@ export function Done( {
 	queryErrorDescription,
 }: StepComponentProps ) {
 	const isConnected = stepType === StepType.CONNECTED;
+	const isVerifying = stepType === StepType.VERIFYING;
 
 	const renderQueryError = () => {
 		let contentMessage;
@@ -105,7 +106,7 @@ export function Done( {
 				<VStack spacing={ 4 }>
 					{ queryError && renderQueryError() }
 					{ ! queryError && isConnected && renderConnected() }
-					{ ! queryError && ! isConnected && renderVerifying() }
+					{ ! queryError && isVerifying && renderVerifying() }
 				</VStack>
 			</CardBody>
 		</Card>
