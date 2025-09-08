@@ -1,4 +1,4 @@
-import { DataCenterOptions } from '@automattic/api-core';
+import { getDataCenterOptions } from '@automattic/api-core';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -17,6 +17,7 @@ import { getPHPVersions } from 'calypso/data/php-versions';
 import { useDispatch } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { useSiteName } from './use-site-name';
+import type { DataCenterOption } from '@automattic/api-core';
 
 import './style.scss';
 
@@ -41,7 +42,7 @@ export default function SiteConfigurationsModal( {
 	);
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const translate = useTranslate();
-	const dataCenterOptions = DataCenterOptions;
+	const dataCenterOptions = getDataCenterOptions();
 	const { phpVersions, recommendedValue } = getPHPVersions();
 	const siteName = useSiteName( randomSiteName, isRandomSiteNameLoading );
 	const { mutate: createWPCOMSite } = useCreateWPCOMSiteMutation();
@@ -68,10 +69,10 @@ export default function SiteConfigurationsModal( {
 	} );
 
 	const dataCenterOptionsElements = (
-		Object.keys( dataCenterOptions ) as Array< keyof typeof dataCenterOptions >
+		Object.keys( dataCenterOptions ) as Array< DataCenterOption >
 	 ).map( ( key ) => (
-		<option key={ key } value={ key }>
-			{ dataCenterOptions[ key as keyof typeof dataCenterOptions ] }
+		<option key={ key as string } value={ key as string }>
+			{ dataCenterOptions[ key as DataCenterOption ] }
 		</option>
 	) );
 

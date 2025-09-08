@@ -1,4 +1,4 @@
-import { DataCenterOptions } from '@automattic/api-core';
+import { getDataCenterOptions } from '@automattic/api-core';
 import { Button, FormLabel, LoadingPlaceholder } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -95,7 +95,7 @@ export default function ServerConfigurationForm( { disabled }: ServerConfigurati
 	const isStaticFile404Changed = selectedStaticFile404 && selectedStaticFile404 !== staticFile404;
 
 	const { recommendedValue, phpVersions } = getPHPVersions( siteId );
-	const dataCenterOptions = DataCenterOptions;
+	const dataCenterOptions = getDataCenterOptions();
 
 	const wpVersionRef = useRef< HTMLLabelElement >( null );
 	const wpVersionDropdownRef = useRef< HTMLSelectElement >( null );

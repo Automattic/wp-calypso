@@ -1,4 +1,4 @@
-import { DataCenterOptions } from '@automattic/api-core';
+import { getDataCenterOptions } from '@automattic/api-core';
 import { Button, Card, CardBody, SelectControl } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -11,9 +11,9 @@ const AllDataCenterOptions = [
 		value: '',
 		label: __( 'Optimal data center' ),
 	},
-	...Object.entries( DataCenterOptions ).map( ( [ key, value ] ) => ( {
+	...Object.entries( getDataCenterOptions() ).map( ( [ key, value ] ) => ( {
 		value: key,
-		label: value,
+		label: value as string,
 	} ) ),
 ];
 

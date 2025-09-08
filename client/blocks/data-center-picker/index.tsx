@@ -1,4 +1,4 @@
-import { DataCenterOptions } from '@automattic/api-core';
+import { getDataCenterOptions } from '@automattic/api-core';
 import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { SelectControl } from '@wordpress/components';
@@ -22,10 +22,10 @@ const AllDataCenterOptions = [
 			return translate( 'Optimal data center' );
 		},
 	},
-	...Object.entries( DataCenterOptions ).map( ( [ key, value ] ) => ( {
+	...Object.entries( getDataCenterOptions() ).map( ( [ key, value ] ) => ( {
 		value: key,
 		get label(): string {
-			return value;
+			return value as string;
 		},
 	} ) ),
 ];

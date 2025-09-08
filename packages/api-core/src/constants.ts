@@ -1,4 +1,5 @@
 import { __ } from '@wordpress/i18n';
+import { DataCenterOption } from './site-hosting/types';
 
 export enum DotcomPlans {
 	BUSINESS = 'business-bundle',
@@ -243,9 +244,9 @@ export const DnsTemplates = {
 	},
 };
 
-export const DataCenterOptions = {
+export const getDataCenterOptions = (): Record< DataCenterOption, string > => ( {
 	bur: __( 'US West (Burbank, California)' ),
 	dfw: __( 'US Central (Dallas-Fort Worth, Texas)' ),
 	dca: __( 'US East (Washington, D.C.)' ),
 	ams: __( 'EU West (Amsterdam, Netherlands)' ),
-};
+} );
