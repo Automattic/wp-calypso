@@ -83,8 +83,8 @@ export default function SiteMigrationIcon( {
 					/>
 				</clipPath>
 				<linearGradient id="overlay_gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-					<stop offset="0%" stop-color="rgba(255,255,255,0.32)" />
-					<stop offset="100%" stop-color="rgba(255,255,255,0.32)" />
+					<stop offset="0%" stopColor="rgba(255,255,255,0.32)" />
+					<stop offset="100%" stopColor="rgba(255,255,255,0.32)" />
 				</linearGradient>
 			</defs>
 		</svg>
