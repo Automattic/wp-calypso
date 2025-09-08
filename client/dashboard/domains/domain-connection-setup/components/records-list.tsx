@@ -1,6 +1,8 @@
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
+	__experimentalGrid as Grid,
+	__experimentalText as Text,
 	Card,
 	CardBody,
 } from '@wordpress/components';
@@ -23,32 +25,32 @@ export default function RecordsList( { records, justValues = false }: RecordsLis
 			<CardBody>
 				<VStack spacing={ 3 }>
 					{ ! justValues && (
-						<HStack>
-							<div style={ { width: '80px' } }>{ __( 'Type' ) }</div>
-							<div style={ { width: '290px' } }>{ __( 'Name' ) }</div>
-							<div style={ { width: '290px' } }>{ __( 'Value' ) }</div>
+						<HStack justify="flex-start">
+							<Text style={ { width: '80px' } } weight={ 500 }>
+								{ __( 'Type' ) }
+							</Text>
+							<Grid columns={ 2 } style={ { width: '100%' } } templateColumns="50% 50%">
+								<Text weight={ 500 }>{ __( 'Name' ) }</Text>
+								<Text weight={ 500 }>{ __( 'Value' ) }</Text>
+							</Grid>
 						</HStack>
 					) }
 
 					{ ! justValues &&
 						records.map( ( record, index ) => (
-							<HStack key={ index } spacing={ 2 }>
-								<div style={ { width: '80px', fontSize: '14px' } }>{ record.type }</div>
-								<div style={ { width: '290px' } }>
+							<HStack justify="flex-start" key={ index } spacing={ 2 }>
+								<Text style={ { width: '80px' } }>{ record.type }</Text>
+								<Grid columns={ 2 } style={ { width: '100%' } } templateColumns="50% 50%">
 									<ClipboardButton text={ record.name } />
-								</div>
-								<div style={ { width: '290px' } }>
 									<ClipboardButton text={ record.value } />
-								</div>
+								</Grid>
 							</HStack>
 						) ) }
 
 					{ justValues && (
 						<VStack spacing={ 2 }>
 							{ records.map( ( record, index ) => (
-								<div style={ { width: '290px' } } key={ index }>
-									<ClipboardButton text={ record.value } />
-								</div>
+								<ClipboardButton key={ index } text={ record.value } />
 							) ) }
 						</VStack>
 					) }

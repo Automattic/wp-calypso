@@ -36,7 +36,7 @@ export default function ClipboardButton( { text }: ClipboardButtonProps ) {
 			>
 				<HStack spacing={ 2 } justify="flex-start">
 					<Icon icon={ copied ? check : copy } size={ 16 } />
-					<span>{ copied ? __( 'Copied' ) : __( 'Copy' ) }</span>
+					<Text>{ copied ? __( 'Copied' ) : __( 'Copy' ) }</Text>
 				</HStack>
 			</Button>
 		</HStack>

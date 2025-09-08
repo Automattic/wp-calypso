@@ -26,44 +26,20 @@ export function AdvancedRecords( {
 }: StepComponentProps ) {
 	const isSubdomainFlow = isSubdomain( domainName );
 
-	// TODO: those need to come from domainSetupInfo data - see the original code in client/components/domains/connect-domain-step/connect-domain-step-advanced-records.jsx
-
 	// Generate the records based on the setup info
-	const records: DNSRecord[] = isSubdomainFlow
-		? [
-				{
-					type: 'A',
-					name: domainName,
-					value: domainSetupInfo.default_ip_addresses?.[ 0 ] || '192.0.78.24',
-				},
-				{
-					type: 'A',
-					name: domainName,
-					value: domainSetupInfo.default_ip_addresses?.[ 1 ] || '192.0.78.25',
-				},
-				{
-					type: 'CNAME',
-					name: `www.${ domainName }`,
-					value: domainName,
-				},
-		  ]
-		: [
-				{
-					type: 'A',
-					name: '@',
-					value: domainSetupInfo.default_ip_addresses?.[ 0 ] || '192.0.78.24',
-				},
-				{
-					type: 'A',
-					name: '@',
-					value: domainSetupInfo.default_ip_addresses?.[ 1 ] || '192.0.78.25',
-				},
-				{
-					type: 'CNAME',
-					name: 'www',
-					value: domainName,
-				},
-		  ];
+	const records: DNSRecord[] = domainSetupInfo?.default_ip_addresses.map( ( ipAddress ) => {
+		return {
+			type: 'A',
+			name: isSubdomainFlow ? domainName : '@',
+			value: ipAddress,
+		};
+	} );
+
+	records.push( {
+		type: 'CNAME',
+		name: `www.${ domainName }`,
+		value: domainName,
+	} );
 
 	const renderErrorNotice = () => {
 		return (

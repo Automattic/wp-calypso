@@ -3,7 +3,6 @@ import {
 	__experimentalHStack as HStack,
 	Card,
 	CardBody,
-	Button,
 	Icon,
 	__experimentalText as Text,
 	__experimentalHeading as Heading,
@@ -12,9 +11,6 @@ import { __, sprintf } from '@wordpress/i18n';
 import { check, update } from '@wordpress/icons';
 import { StepType, type StepComponentProps } from '../types';
 
-// TODO: This file needs full review of the copy and etc.
-// I didn't move to gutenberg components so some things (and styles) can probably be removed and/or replaced
-// Also I didn't review the copy for any of the messages
 export function Done( {
 	stepType,
 	domainName,
@@ -23,10 +19,9 @@ export function Done( {
 }: StepComponentProps ) {
 	const isConnected = stepType === StepType.CONNECTED;
 
-	if ( queryError ) {
-		let heading;
+	const renderQueryError = () => {
 		let contentMessage;
-
+		let heading;
 		if ( queryError === 'access_denied' && queryErrorDescription?.startsWith( 'user_cancel' ) ) {
 			heading = __( 'Connecting your domain to WordPress.com was cancelled' );
 			contentMessage = sprintf(
@@ -46,81 +41,73 @@ export function Done( {
 				domainName
 			);
 		}
-
 		return (
-			<Card>
-				<CardBody>
-					<VStack spacing={ 4 }>
-						<Heading level={ 2 } size={ 20 } weight={ 500 }>
-							{ heading }
-						</Heading>
-						<Text as="p">{ contentMessage }</Text>
-						<HStack justify="flex-start">
-							<Button variant="secondary">{ __( 'Try Again' ) }</Button>
-							<Button variant="tertiary">{ __( 'Get Help' ) }</Button>
-						</HStack>
-					</VStack>
-				</CardBody>
-			</Card>
+			<>
+				<Heading level={ 2 } size={ 20 } weight={ 500 }>
+					{ heading }
+				</Heading>
+				<Text as="p" align="center">
+					{ contentMessage }
+				</Text>
+			</>
 		);
-	}
+	};
 
-	if ( isConnected ) {
+	const renderConnected = () => {
 		return (
-			<VStack spacing={ 6 } style={ { textAlign: 'center', padding: '40px 20px' } }>
-				<HStack spacing={ 2 }>
+			<>
+				<HStack spacing={ 2 } justify="center">
 					<Icon icon={ check } />
 					<Heading level={ 2 } size={ 20 } weight={ 500 }>
 						{ __( 'Successfully connected!' ) }
 					</Heading>
 				</HStack>
-
-				<Text as="p">
+				<Text as="p" align="center">
 					{ __(
 						'Your domain is now connected to WordPress.com. Your site should be accessible at your custom domain within the next few minutes.'
 					) }
 				</Text>
-
-				<Text as="p">
+				<Text as="p" align="center">
 					{ __(
 						"If your site isn't loading at your custom domain after a few hours, check that your DNS changes have been saved correctly at your domain provider."
 					) }
 				</Text>
-
-				<HStack justify="center">
-					<Button variant="primary">{ __( 'Visit Your Site' ) }</Button>
-					<Button variant="secondary">{ __( 'Manage Domain' ) }</Button>
-				</HStack>
-			</VStack>
+			</>
 		);
-	}
+	};
 
-	// Verifying state
+	const renderVerifying = () => {
+		return (
+			<>
+				<HStack spacing={ 2 } justify="center">
+					<Icon icon={ update } size={ 48 } style={ { color: '#00A32A' } } />
+					<Heading level={ 2 } size={ 20 } weight={ 500 }>
+						{ __( 'Verifying connection…' ) }
+					</Heading>
+				</HStack>
+				<Text as="p" align="center">
+					{ __(
+						"We're checking if your domain is properly connected to WordPress.com. This may take a few moments."
+					) }
+				</Text>
+				<Text as="p" align="center">
+					{ __(
+						"DNS changes can take up to 72 hours to fully propagate. If the verification doesn't complete immediately, that's normal."
+					) }
+				</Text>
+			</>
+		);
+	};
+
 	return (
-		<VStack spacing={ 6 } style={ { textAlign: 'center', padding: '40px 20px' } }>
-			<HStack spacing={ 2 }>
-				<Icon icon={ update } size={ 48 } style={ { color: '#00A32A' } } />
-				<Heading level={ 2 } size={ 20 } weight={ 500 }>
-					{ __( 'Verifying connection…' ) }
-				</Heading>
-			</HStack>
-
-			<Text as="p">
-				{ __(
-					"We're checking if your domain is properly connected to WordPress.com. This may take a few moments."
-				) }
-			</Text>
-
-			<Text as="p">
-				{ __(
-					"DNS changes can take up to 72 hours to fully propagate. If the verification doesn't complete immediately, that's normal."
-				) }
-			</Text>
-
-			<HStack justify="center">
-				<Button variant="secondary">{ __( 'Check Again' ) }</Button>
-				<Button variant="tertiary">{ __( 'Continue Without Waiting' ) }</Button>
-			</HStack>
-		</VStack>
+		<Card>
+			<CardBody>
+				<VStack spacing={ 4 }>
+					{ queryError && renderQueryError() }
+					{ ! queryError && isConnected && renderConnected() }
+					{ ! queryError && ! isConnected && renderVerifying() }
+				</VStack>
+			</CardBody>
+		</Card>
 	);
 }

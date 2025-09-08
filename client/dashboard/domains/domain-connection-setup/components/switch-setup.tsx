@@ -1,5 +1,10 @@
 import { DomainConnectionSetupMode } from '@automattic/api-core';
-import { __experimentalHStack as HStack, Button, Icon } from '@wordpress/components';
+import {
+	__experimentalHStack as HStack,
+	Button,
+	Icon,
+	__experimentalText as Text,
+} from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { pages } from '@wordpress/icons';
@@ -52,14 +57,14 @@ export default function SwitchSetup( {
 
 	return (
 		<HStack justify="flex-start">
-			<Icon icon={ pages } size={ 16 } /* eslint-disable-line */ />
-			<span>
+			<Icon icon={ pages } size={ 16 } />
+			<Text variant="muted">
 				{ createInterpolateElement( getMessage(), {
 					asug: <Button variant="link" onClick={ switchToSuggestedSetup } />,
 					aadv: <Button variant="link" onClick={ switchToAdvancedSetup } />,
 					adc: <Button variant="link" onClick={ switchToDomainConnectSetup } />,
 				} ) }
-			</span>
+			</Text>
 		</HStack>
 	);
 }

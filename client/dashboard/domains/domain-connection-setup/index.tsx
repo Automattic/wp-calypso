@@ -18,6 +18,7 @@ import { domainRoute, domainConnectionSetupRoute } from '../../app/router/domain
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import Progress from './components/progress';
+import SupportLink from './components/support-link';
 import SwitchSetup from './components/switch-setup';
 import {
 	connectADomainDomainConnectionStepsMap,
@@ -157,7 +158,7 @@ export default function DomainConnectionSetup() {
 					currentStepName={ currentStepName }
 				/>
 			) }
-			<VStack>
+			<VStack spacing={ 6 }>
 				<StepsComponent
 					domainName={ domainName }
 					stepName={ currentStepName }
@@ -175,14 +176,22 @@ export default function DomainConnectionSetup() {
 					queryErrorDescription={ queryErrorDescription }
 					isOwnershipVerificationFlow={ false }
 				/>
-				{ /* Add support link */ }
-				<SwitchSetup
-					currentStepType={ currentStep.stepType }
-					currentMode={ currentStep.mode }
-					supportsDomainConnect={ !! domainConnectionSetupInfo.domain_connect_apply_wpcom_hosting }
-					isSubdomain={ isSubdomain( domainName ) }
-					setPage={ setCurrentStepName }
-				/>
+				<VStack spacing={ 2 }>
+					{ [
+						DomainConnectionSetupMode.SUGGESTED,
+						DomainConnectionSetupMode.ADVANCED,
+						DomainConnectionSetupMode.DONE,
+					].includes( currentStep.mode ) && <SupportLink mode={ currentStep.mode } /> }
+					<SwitchSetup
+						currentStepType={ currentStep.stepType }
+						currentMode={ currentStep.mode }
+						supportsDomainConnect={
+							!! domainConnectionSetupInfo.domain_connect_apply_wpcom_hosting
+						}
+						isSubdomain={ isSubdomain( domainName ) }
+						setPage={ setCurrentStepName }
+					/>
+				</VStack>
 			</VStack>
 		</PageLayout>
 	);

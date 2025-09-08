@@ -1,6 +1,13 @@
-import { __experimentalHStack as HStack, Icon } from '@wordpress/components';
+import {
+	__experimentalHStack as HStack,
+	Icon,
+	__experimentalText as Text,
+} from '@wordpress/components';
 import { check } from '@wordpress/icons';
+import clsx from 'clsx';
 import type { ProgressStepList, StepName } from '../types';
+
+import './style.scss';
 
 interface ProgressProps {
 	steps: ProgressStepList;
@@ -16,56 +23,34 @@ export default function Progress( { steps, currentStepName }: ProgressProps ) {
 	}
 
 	return (
-		<HStack spacing={ 4 } justify="flex-start" alignment="left" expanded={ false }>
+		<HStack
+			spacing={ 4 }
+			justify="flex-start"
+			alignment="left"
+			className="progress-step"
+			expanded={ false }
+		>
 			{ stepEntries.map( ( [ slug, name ], index ) => {
 				const isCompleted = index < currentStepIndex;
 				const isCurrent = index === currentStepIndex;
 
-				let selectedStyle = {
-					backgroundColor: 'transparent',
-					borderColor: '#ddd',
-					color: '#666',
-				};
-
-				if ( isCompleted ) {
-					selectedStyle = {
-						backgroundColor: '#007CBA',
-						borderColor: '#007CBA',
-						color: '#fff',
-					};
-				} else if ( isCurrent ) {
-					selectedStyle = {
-						backgroundColor: '#007CBA',
-						borderColor: '#007CBA',
-						color: '#fff',
-					};
-				}
-
 				return (
 					<HStack key={ slug } spacing={ 2 } justify="flex-start" expanded={ false }>
 						<div
-							style={ {
-								width: '24px',
-								height: '24px',
-								borderRadius: '50%',
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-								fontSize: '12px',
-								fontWeight: 500,
-								border: '1px solid',
-								...selectedStyle,
-							} }
+							className={ clsx( 'progress-step__circle', {
+								'progress-step__circle--completed': isCompleted,
+								'progress-step__circle--current': isCurrent,
+							} ) }
 						>
-							{ isCompleted ? <Icon icon={ check } size={ 14 } /> : index + 1 }
+							{ isCompleted ? <Icon icon={ check } size={ 20 } /> : index + 1 }
 						</div>
-						<span
-							style={ {
-								color: isCurrent ? '#000' : '#666',
-							} }
+						<Text
+							className={ clsx( 'progress-step__label', {
+								'progress-step__label--current': isCurrent,
+							} ) }
 						>
 							{ name }
-						</span>
+						</Text>
 					</HStack>
 				);
 			} ) }

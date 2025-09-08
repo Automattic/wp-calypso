@@ -42,7 +42,7 @@ export function AdvancedStart( { domainName, setPage, onNextStep }: StepComponen
 							{ __( 'It can take up to 72 hours for the domain to be fully connected.' ) }
 						</Notice>
 						<HStack justify="flex-start">
-							<Button variant="primary" onClick={ onNextStep }>
+							<Button __next40pxDefaultSize variant="primary" onClick={ onNextStep }>
 								{ __( 'Start setup' ) }
 							</Button>
 						</HStack>

@@ -6,6 +6,7 @@ import {
 	Card,
 	CardBody,
 	Button,
+	__experimentalText as Text,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import Notice from '../../../components/notice';
@@ -24,41 +25,13 @@ export function SuggestedRecords( {
 	const isSubdomainFlow = isSubdomain( domainName );
 
 	// Generate the records based on the setup info
-	const records: DNSRecord[] = isSubdomainFlow
-		? [
-				{
-					type: 'NS',
-					name: domainName,
-					value: domainSetupInfo?.wpcom_name_servers?.[ 0 ] || 'ns1.wordpress.com',
-				},
-				{
-					type: 'NS',
-					name: domainName,
-					value: domainSetupInfo?.wpcom_name_servers?.[ 1 ] || 'ns2.wordpress.com',
-				},
-				{
-					type: 'NS',
-					name: domainName,
-					value: domainSetupInfo?.wpcom_name_servers?.[ 2 ] || 'ns3.wordpress.com',
-				},
-		  ]
-		: [
-				{
-					type: 'NS',
-					name: '@',
-					value: domainSetupInfo?.wpcom_name_servers?.[ 0 ] || 'ns1.wordpress.com',
-				},
-				{
-					type: 'NS',
-					name: '@',
-					value: domainSetupInfo?.wpcom_name_servers?.[ 1 ] || 'ns2.wordpress.com',
-				},
-				{
-					type: 'NS',
-					name: '@',
-					value: domainSetupInfo?.wpcom_name_servers?.[ 2 ] || 'ns3.wordpress.com',
-				},
-		  ];
+	const records: DNSRecord[] = domainSetupInfo?.wpcom_name_servers.map( ( nameServer ) => {
+		return {
+			type: 'NS',
+			name: isSubdomainFlow ? domainName : '@',
+			value: nameServer,
+		};
+	} );
 
 	const renderErrorNotice = () => {
 		return (
@@ -77,7 +50,7 @@ export function SuggestedRecords( {
 				<CardBody>
 					<VStack spacing={ 4 }>
 						{ showErrors && renderErrorNotice() }
-						<p>
+						<Text as="p">
 							{ isSubdomainFlow
 								? __(
 										'Update the NS records for your subdomain to point to WordPress.com name servers.'
@@ -85,13 +58,13 @@ export function SuggestedRecords( {
 								: __(
 										'Find the name servers on your domain’s settings page. Replace all the name servers of your domain to use the following values:'
 								  ) }
-						</p>
+						</Text>
 
-						<RecordsList records={ records } justValues={ ! isSubdomainFlow } />
+						<RecordsList records={ records } justValues />
 
-						<p>
+						<Text as="p">
 							{ __( 'Once you’ve updated the name servers click on "Verify Connection" below.' ) }
-						</p>
+						</Text>
 
 						<HStack justify="flex-start">
 							<Button
