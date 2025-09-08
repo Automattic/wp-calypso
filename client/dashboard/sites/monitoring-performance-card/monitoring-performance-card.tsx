@@ -1,9 +1,6 @@
+import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import {
-	MetricsType,
-	PeriodData,
-	useSiteMetricsQuery,
-} from '../../../sites/monitoring/hooks/use-metrics-query';
+import { PeriodData, useSiteMetricsQuery } from '../../../sites/monitoring/hooks/use-metrics-query';
 import MonitoringCard from '../monitoring-card';
 import { MonitoringLineChart } from '../monitoring-card-line-chart';
 import { FirstChartTooltipWithSeriesHandler } from '../monitoring-card-line-chart/line-chart-tooltip';
@@ -20,38 +17,34 @@ type TimeRange = {
 	end: number;
 };
 
-function convertTimeRangeToUnix( timeRange: number ) {
+function convertTimeRangeToUnix( timeRange: number ): TimeRange {
 	const start = Math.floor( new Date().getTime() / 1000 ) - timeRange * 3600;
 	const end = Math.floor( new Date().getTime() / 1000 );
 
 	return { start, end };
 }
 
-export function useSiteMetricsData( siteId: number, timeRange: TimeRange, metric?: MetricsType ) {
-	// Use the custom hook for time range selection
-	const { start, end } = timeRange;
+export function useSiteMetricsData( siteId: number, timeRange: number ) {
+	// Memoize timestamps to prevent graph reloading on every render. Only refresh the data on time range change.
+	const { start, end } = useMemo( () => convertTimeRangeToUnix( timeRange ), [ timeRange ] );
 
 	const { data: requestsData, isLoading } = useSiteMetricsQuery( siteId, {
 		start,
 		end,
-		metric: metric || 'requests_persec',
+		metric: 'requests_persec',
 	} );
-
 	const { data: responseTimeData } = useSiteMetricsQuery( siteId, {
 		start,
 		end,
-		metric: metric || 'response_time_average',
+		metric: 'response_time_average',
 	} );
 
-	// Function to get the dimension value for a specific key and period
+	// Function to get the dimension value for a specific key and period.
 	const getDimensionValue = ( period: PeriodData ) => {
-		if ( typeof period?.dimension === 'object' && Object.keys( period.dimension ).length === 0 ) {
-			// If the dimension is an empty object, return 0
-			return 0;
-		} else if ( typeof period?.dimension === 'object' ) {
-			// If the dimension is an object, try to find and return the dimension value
-			const firstKey = Object.keys( period.dimension )[ 0 ];
-			return firstKey ? period.dimension[ firstKey ] : null;
+		if ( typeof period?.dimension === 'object' ) {
+			return Object.values( period.dimension ).length > 0
+				? Object.values( period.dimension )[ 0 ]
+				: 0;
 		}
 
 		return null;
@@ -61,11 +54,9 @@ export function useSiteMetricsData( siteId: number, timeRange: TimeRange, metric
 	const formattedData =
 		requestsData?.data?.periods?.reduce(
 			( acc, period, index ) => {
-				const timestamp = period.timestamp;
-
 				// Check if the timestamp is already in the arrays, if not, push it
-				if ( acc[ 0 ][ acc[ 0 ].length - 1 ] !== timestamp ) {
-					acc[ 0 ].push( timestamp );
+				if ( acc[ 0 ][ acc[ 0 ].length - 1 ] !== period.timestamp ) {
+					acc[ 0 ].push( period.timestamp );
 
 					const requestsPerSecondValue = getDimensionValue( period );
 					if ( requestsPerSecondValue !== null ) {
@@ -101,10 +92,7 @@ export default function MonitoringPerformanceCard( {
 	site: Site;
 	timeRange: number;
 } ) {
-	const { formattedData, isLoading: isLoadingLineChart } = useSiteMetricsData(
-		site.ID,
-		convertTimeRangeToUnix( timeRange )
-	);
+	const { formattedData, isLoading: isLoadingLineChart } = useSiteMetricsData( site.ID, timeRange );
 
 	const tooltipSeriesCallback = ( i: number, value: number ): seriesInfo | null => {
 		if ( i === 0 ) {
@@ -173,7 +161,7 @@ export default function MonitoringPerformanceCard( {
 						} ),
 					],
 				} }
-			></MonitoringLineChart>
+			/>
 		</MonitoringCard>
 	);
 }
