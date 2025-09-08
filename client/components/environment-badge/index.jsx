@@ -1,4 +1,5 @@
-import { Gridicon, ExternalLink } from '@automattic/components';
+import { Icon } from '@wordpress/components';
+import { bug } from '@wordpress/icons';
 import { node, string } from 'prop-types';
 
 import './style.scss';
@@ -52,14 +53,15 @@ function EnvironmentBadge( { badge, feedbackURL, children } ) {
 		<div className="environment-badge">
 			{ children }
 			<span className={ `environment is-${ badge } is-env` }>{ badge }</span>
-			<ExternalLink
+			<a
 				className="bug-report"
 				href={ feedbackURL }
 				title="Report an issue"
 				target="_blank"
+				rel="noopener noreferrer"
 			>
-				<Gridicon icon="bug" size={ 18 } />
-			</ExternalLink>
+				<Icon icon={ bug } size={ 24 } />
+			</a>
 		</div>
 	);
 }
