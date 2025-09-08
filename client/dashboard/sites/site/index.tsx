@@ -1,4 +1,4 @@
-import { siteBySlugQuery, sitesQuery } from '@automattic/api-queries';
+import { siteBySlugQuery, sitesQuery, isDeletingStagingSiteQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet, notFound } from '@tanstack/react-router';
 import {
@@ -14,6 +14,7 @@ import { plus } from '@wordpress/icons';
 import { useState } from 'react';
 import { siteRoute } from '../../app/router/sites';
 import StagingSiteSyncMonitor from '../../app/staging-site-sync-monitor';
+import { CalloutOverlay } from '../../components/callout-overlay';
 import HeaderBar from '../../components/header-bar';
 import MenuDivider from '../../components/menu-divider';
 import Switcher from '../../components/switcher';
@@ -23,6 +24,7 @@ import AddNewSite from '../add-new-site';
 import { canManageSite, canSwitchEnvironment } from '../features';
 import SiteIcon from '../site-icon';
 import SiteMenu from '../site-menu';
+import { StagingSiteDeletionCallout } from '../staging-site-deletion-callout';
 import EnvironmentSwitcher from './environment-switcher';
 
 function Site() {
@@ -32,11 +34,16 @@ function Site() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
+	const { data: isStagingSiteDeletionInProgress } = useQuery( {
+		...isDeletingStagingSiteQuery( site.ID ),
+		enabled: !! site.ID,
+	} );
+
 	if ( ! canManageSite( site ) ) {
 		throw notFound();
 	}
 
-	return (
+	const siteContent = (
 		<>
 			{ hasStagingSite( site ) && <StagingSiteSyncMonitor site={ site } /> }
 			<HeaderBar>
@@ -86,6 +93,16 @@ function Site() {
 			</HeaderBar>
 			<Outlet />
 		</>
+	);
+
+	//const isStagingSiteDeletionInProgressX = true;
+
+	return (
+		<CalloutOverlay
+			showCallout={ !! isStagingSiteDeletionInProgress && site.is_wpcom_staging_site }
+			callout={ <StagingSiteDeletionCallout site={ site } /> }
+			main={ siteContent }
+		/>
 	);
 }
 
