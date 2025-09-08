@@ -32,12 +32,12 @@ describe( 'BrowserNotificationCard', () => {
 		return render( ui, { wrapper: Wrapper( queryClient || new QueryClient() ) } );
 	};
 
-	it( 'renders the option to enable browser notification', async () => {
+	it( 'renders the option to enable browser notifications', async () => {
 		renderWithProvider( <BrowserNotificationCard status="granted" /> );
 
 		await waitFor( () => {
 			expect(
-				screen.getByRole( 'checkbox', { name: 'Enable browser notification' } )
+				screen.getByRole( 'checkbox', { name: 'Enable browser notifications' } )
 			).toBeEnabled();
 		} );
 	} );
@@ -46,7 +46,7 @@ describe( 'BrowserNotificationCard', () => {
 		renderWithProvider( <BrowserNotificationCard status="denied" /> );
 
 		expect(
-			screen.getByRole( 'checkbox', { name: 'Enable browser notification' } )
+			screen.getByRole( 'checkbox', { name: 'Enable browser notifications' } )
 		).toBeDisabled();
 	} );
 
@@ -54,7 +54,7 @@ describe( 'BrowserNotificationCard', () => {
 		renderWithProvider( <BrowserNotificationCard status="not-supported" /> );
 
 		expect(
-			screen.getByRole( 'checkbox', { name: 'Enable browser notification' } )
+			screen.getByRole( 'checkbox', { name: 'Enable browser notifications' } )
 		).toBeDisabled();
 	} );
 
@@ -88,16 +88,16 @@ describe( 'BrowserNotificationCard', () => {
 		renderWithProvider( <BrowserNotificationCard status="granted" /> );
 
 		await waitFor( () => {
-			expect( screen.getByLabelText( 'Enable browser notification' ) ).toBeEnabled();
+			expect( screen.getByLabelText( 'Enable browser notifications' ) ).toBeEnabled();
 		} );
 
 		await userEvent.click(
-			screen.getByRole( 'checkbox', { name: 'Enable browser notification' } )
+			screen.getByRole( 'checkbox', { name: 'Enable browser notifications' } )
 		);
 
 		await waitFor( () => {
 			expect(
-				screen.getByRole( 'checkbox', { name: 'Enable browser notification' } )
+				screen.getByRole( 'checkbox', { name: 'Enable browser notifications' } )
 			).toBeChecked();
 		} );
 	} );
@@ -137,17 +137,17 @@ describe( 'BrowserNotificationCard', () => {
 
 		await waitFor( () => {
 			expect(
-				screen.getByRole( 'checkbox', { name: 'Enable browser notification' } )
+				screen.getByRole( 'checkbox', { name: 'Enable browser notifications' } )
 			).toBeChecked();
 		} );
 
 		await userEvent.click(
-			screen.getByRole( 'checkbox', { name: 'Enable browser notification' } )
+			screen.getByRole( 'checkbox', { name: 'Enable browser notifications' } )
 		);
 
 		await waitFor( () => {
 			expect(
-				screen.getByRole( 'checkbox', { name: 'Enable browser notification' } )
+				screen.getByRole( 'checkbox', { name: 'Enable browser notifications' } )
 			).not.toBeChecked();
 		} );
 	} );

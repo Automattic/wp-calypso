@@ -86,7 +86,7 @@ export const BrowserNotificationCard = ( {
 					<VStack spacing={ 4 }>
 						<ToggleControl
 							__nextHasNoMarginBottom
-							label={ __( 'Enable browser notification' ) }
+							label={ __( 'Enable browser notifications' ) }
 							checked={ checked }
 							onChange={ handleChange }
 							disabled={ disabled }
