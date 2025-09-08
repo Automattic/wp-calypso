@@ -79,7 +79,7 @@ export interface FileBrowserExternalProps {
 	siteId: number;
 	siteSlug: string;
 	hasCredentials?: boolean;
-	isRestoreEnabled: boolean;
+	isRestoreEnabled?: boolean;
 
 	// Tracks analytics callback
 	onTrackEvent?: ( eventName: string, properties?: Record< string, unknown > ) => void;

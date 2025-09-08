@@ -18,7 +18,7 @@ interface FileBrowserHeaderProps {
 	siteId: number;
 	siteSlug: string;
 	hasCredentials?: boolean;
-	isRestoreEnabled: boolean;
+	isRestoreEnabled?: boolean;
 	onTrackEvent?: ( eventName: string, properties?: Record< string, unknown > ) => void;
 	onRequestGranularDownload?: (
 		siteId: number,
