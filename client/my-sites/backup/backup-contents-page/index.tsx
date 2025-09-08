@@ -20,7 +20,6 @@ import canRestoreSite from 'calypso/state/rewind/selectors/can-restore-site';
 import getBackupBrowserCheckList from 'calypso/state/rewind/selectors/get-backup-browser-check-list';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { backupMainPath } from '../paths';
 import FileBrowser from './file-browser';
 import './style.scss';
@@ -30,26 +29,18 @@ interface OwnProps {
 	siteId: number;
 }
 
-const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId: propSiteId } ) => {
+const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const getDisplayDate = useGetDisplayDate();
 	const moment = useLocalizedMoment();
 	const displayDate = getDisplayDate( moment.unix( rewindId ), false );
 
-	// Use propSiteId if provided, otherwise fall back to selected site
-	const selectedSiteId = useSelector( getSelectedSiteId ) as number;
-	const effectiveSiteId = propSiteId ?? selectedSiteId;
-
-	const browserCheckList = useSelector( ( state ) =>
-		getBackupBrowserCheckList( state, effectiveSiteId )
-	);
-	const isMultiSite = useSelector( ( state ) => isJetpackSiteMultiSite( state, effectiveSiteId ) );
-	const siteSlug = useSelector( ( state ) => getSiteSlug( state, effectiveSiteId ) ) as string;
-	const hasCredentials = useSelector( ( state ) =>
-		hasJetpackCredentials( state, effectiveSiteId )
-	);
-	const isRestoreEnabled = useSelector( ( state ) => canRestoreSite( state, effectiveSiteId ) );
+	const browserCheckList = useSelector( ( state ) => getBackupBrowserCheckList( state, siteId ) );
+	const isMultiSite = useSelector( ( state ) => isJetpackSiteMultiSite( state, siteId ) );
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) ) as string;
+	const hasCredentials = useSelector( ( state ) => hasJetpackCredentials( state, siteId ) );
+	const isRestoreEnabled = useSelector( ( state ) => canRestoreSite( state, siteId ) );
 
 	useEffect( () => {
 		dispatch( recordTracksEvent( 'calypso_jetpack_backup_browser_view' ) );
@@ -60,7 +51,7 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId: 
 	}, [ dispatch ] );
 
 	const handleTrackEvent = useCallback(
-		( eventName: string, properties?: Record< string, any > ) => {
+		( eventName: string, properties?: Record< string, unknown > ) => {
 			dispatch( recordTracksEvent( eventName, properties ) );
 		},
 		[ dispatch ]
@@ -75,7 +66,7 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId: 
 
 	return (
 		<>
-			<QuerySiteCredentials siteId={ effectiveSiteId } />
+			<QuerySiteCredentials siteId={ siteId } />
 			<Main className="backup-contents-page">
 				<DocumentHead title={ translate( 'Backup contents' ) } />
 				{ isJetpackCloud() && <SidebarNavigation /> }
@@ -110,7 +101,7 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId: 
 					<div className="backup-contents-page__body">
 						<FileBrowser
 							rewindId={ rewindId }
-							siteId={ effectiveSiteId }
+							siteId={ siteId }
 							siteSlug={ siteSlug }
 							hasCredentials={ hasCredentials }
 							isRestoreEnabled={ isRestoreEnabled }
