@@ -82,10 +82,11 @@ export default function DomainTransferToOtherSite() {
 			</Card>
 			{ !! selectedSite && isConfirmDialogOpen && (
 				<Modal
+					size="medium"
 					__experimentalHideHeader
 					onRequestClose={ () => ! isTransferringDomain && setIsConfirmDialogOpen( false ) }
 				>
-					<VStack spacing={ 4 } style={ { maxWidth: '450px' } }>
+					<VStack spacing={ 4 }>
 						<Text as="p">
 							{ sprintf(
 								// translators: %1$s is the domain name, %2$s is the site name
