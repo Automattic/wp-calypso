@@ -52,7 +52,7 @@ function ScheduledUpdatesSitesSelection( { selection, onChangeSelection }: Props
 	} );
 
 	const { data: filtered, paginationInfo } = useMemo( () => {
-		return filterSortAndPaginate( sites as Site[], view, siteFields );
+		return filterSortAndPaginate( sites, view, siteFields );
 	}, [ sites, view ] );
 
 	const actions: Array< Action< Site > > = useMemo(

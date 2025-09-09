@@ -1,31 +1,30 @@
 import { sitePluginsQuery } from '@automattic/api-queries';
 import { useQueries } from '@tanstack/react-query';
 import { useMemo } from 'react';
-
-export type EligiblePlugin = { id: string; name: string };
+import type { SitePlugin } from '@automattic/api-core';
 
 export function useEligiblePlugins( selectedSiteIds: string[] ) {
 	const queries = useQueries( {
-		queries: selectedSiteIds.map( ( id ) => sitePluginsQuery( Number( id ) ) ),
+		queries: selectedSiteIds.map( ( id ) => ( {
+			...sitePluginsQuery( Number( id ) ),
+			select: ( plugins: SitePlugin[] ) => plugins.filter( ( plugin ) => ! plugin.is_managed ),
+		} ) ),
 	} );
 
-	const data = queries.map( ( query ) => query.data ).filter( Boolean );
+	const updatesKey = queries.map( ( query ) => String( query.dataUpdatedAt ?? 0 ) ).join( '|' );
 
-	return useMemo< EligiblePlugin[] >( () => {
-		if ( data.length === 0 ) {
+	return useMemo< SitePlugin[] >( () => {
+		const allPlugins = queries.flatMap( ( query ) => query.data ?? [] );
+		if ( allPlugins.length === 0 ) {
 			return [];
 		}
-		const allPlugins = data.flat();
-		const unique = new Map< string, EligiblePlugin >();
-		for ( const plugin of allPlugins ) {
-			if ( plugin?.is_managed ) {
-				continue;
-			}
-			const slug = plugin?.plugin?.split( '/' )[ 0 ] || plugin?.name;
-			if ( slug && ! unique.has( slug ) ) {
-				unique.set( slug, { id: slug, name: plugin?.name || slug } );
-			}
-		}
-		return Array.from( unique.values() ).sort( ( a, b ) => a.name.localeCompare( b.name ) );
-	}, [ data ] );
+		const unique = new Map< string, SitePlugin >(
+			allPlugins.map( ( plugin ) => [ plugin.slug, plugin ] )
+		);
+		return Array.from( unique.values() ).sort( ( a, b ) =>
+			( a.name || a.slug ).localeCompare( b.name || b.slug )
+		);
+		// We intentionally memoize on updatesKey only; queries array identity changes every render.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ updatesKey ] );
 }
