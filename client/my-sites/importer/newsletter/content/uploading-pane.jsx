@@ -72,7 +72,7 @@ export class UploadingPane extends PureComponent {
 		) {
 			switch ( importerStatus.importerFileType ) {
 				case 'content':
-					this.props.startMappingAuthors( importerStatus.importerId );
+					// Don't automatically transition to mapping authors - let ConversionSummary handle this
 					break;
 				case 'playground':
 				case 'jetpack_backup':
