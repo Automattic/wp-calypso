@@ -84,13 +84,12 @@ const EnvironmentSwitcherDropdown = ( {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const mutation = useMutation( stagingSiteCreateMutation( productionSite?.ID ?? 0 ) );
 
-	const { refetch: checkConnectionHealth } = useQuery( {
+	const { data: connectionHealth } = useQuery( {
 		...jetpackConnectionHealthQuery( productionSite?.ID ?? 0 ),
-		enabled: false,
+		enabled: !! productionSite?.ID,
 	} );
 
 	const handleCreate = async () => {
-		const { data: connectionHealth } = await checkConnectionHealth();
 		if ( ! connectionHealth?.is_healthy ) {
 			createErrorNotice(
 				__(
