@@ -122,31 +122,33 @@ export function useProductDescription( productSlug: string ): {
 
 		switch ( productSlug ) {
 			case 'jetpack-complete':
-				description = translate( 'Includes all Security 1TB and full Jetpack package.' );
+				description = translate(
+					'Includes all Security products (1TB storage) and the full Jetpack suite.'
+				);
 				features.push(
 					translate( 'All Security products' ),
 					translate( '1TB cloud storage' ),
-					translate( 'Full Jetpack package' )
+					translate( 'Full Jetpack suite' )
 				);
 				break;
 			case 'jetpack-security-t1':
 				description = translate(
-					'Includes VaultPress Backup 10GB, Scan Daily and Akismet Anti-spam.'
+					'Includes VaultPress Backup 10GB, Scan Daily, and Akismet Anti-spam.'
 				);
 				features.push(
 					translate( 'VaultPress Backup 10GB' ),
 					translate( 'Scan Daily' ),
-					translate( 'Akismet Anti-spam*' )
+					translate( 'Akismet Anti-spam' )
 				);
 				break;
 			case 'jetpack-security-t2':
 				description = translate(
-					'Includes VaultPress Backup 1TB, Scan Daily and Akismet Anti-spam.'
+					'Includes VaultPress Backup 1TB, Scan Daily, and Akismet Anti-spam.'
 				);
 				features.push(
 					translate( 'VaultPress Backup 1TB' ),
 					translate( 'Scan Daily' ),
-					translate( 'Akismet Anti-spam*' )
+					translate( 'Akismet Anti-spam' )
 				);
 				break;
 			case 'jetpack-growth':
@@ -155,7 +157,7 @@ export function useProductDescription( productSlug: string ): {
 				break;
 			case 'jetpack-starter':
 				description = translate( 'Includes VaultPress Backup 1GB and Akismet Anti-spam.' );
-				features.push( translate( 'VaultPress Backup 1GB' ), translate( 'Akismet Anti-spam*' ) );
+				features.push( translate( 'VaultPress Backup 1GB' ), translate( 'Akismet Anti-spam' ) );
 				break;
 			case 'jetpack-anti-spam':
 				description = translate( 'Automatically clear spam from your comments and forms.' );

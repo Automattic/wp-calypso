@@ -24,7 +24,7 @@ import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import type { FlowV2, SubmitHandler } from '../../internals/types';
-import type { DomainSuggestion } from '@automattic/data';
+import type { DomainSuggestion } from '@automattic/api-core';
 import type { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import type { Store } from 'redux';
 

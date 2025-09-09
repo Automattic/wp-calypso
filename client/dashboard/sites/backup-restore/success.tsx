@@ -7,8 +7,10 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
+import { useAnalytics } from '../../app/analytics';
 import { siteBackupsRoute } from '../../app/router/sites';
-import type { Site } from '../../data/types';
+import { ButtonStack } from '../../components/button-stack';
+import type { Site } from '@automattic/api-core';
 
 const SiteBackupRestoreSuccess = ( {
 	restorePointDate,
@@ -17,7 +19,19 @@ const SiteBackupRestoreSuccess = ( {
 	restorePointDate: string;
 	site: Site;
 } ) => {
+	const { recordTracksEvent } = useAnalytics();
 	const router = useRouter();
+
+	const handleAllBackupsClick = () => {
+		recordTracksEvent( 'calypso_dashboard_backups_restore_all_backups' );
+		router.navigate( { to: siteBackupsRoute.fullPath, params: { siteSlug: site.slug } } );
+	};
+
+	const handleViewWebsiteClick = () => {
+		recordTracksEvent( 'calypso_dashboard_backups_restore_view_website' );
+		window.open( site.URL, '_blank' );
+	};
+
 	return (
 		<HStack spacing={ 4 }>
 			<HStack justify="flex-start">
@@ -29,21 +43,14 @@ const SiteBackupRestoreSuccess = ( {
 					</Text>
 				</VStack>
 			</HStack>
-			<HStack justify="flex-end">
-				<Button
-					variant="tertiary"
-					text={ __( 'All backups' ) }
-					onClick={ () =>
-						router.navigate( { to: siteBackupsRoute.fullPath, params: { siteSlug: site.slug } } )
-					}
-				/>
+			<ButtonStack justify="flex-end">
+				<Button variant="tertiary" text={ __( 'All backups' ) } onClick={ handleAllBackupsClick } />
 				<Button
 					variant="primary"
-					href={ site.URL }
-					target="_blank"
 					text={ __( 'View website ↗' ) }
+					onClick={ handleViewWebsiteClick }
 				/>
-			</HStack>
+			</ButtonStack>
 		</HStack>
 	);
 };

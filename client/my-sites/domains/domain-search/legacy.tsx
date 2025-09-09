@@ -66,8 +66,8 @@ import {
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
 import { recordUseYourDomainButtonClick } from '../../../components/domains/register-domain-step/analytics';
+import type { DomainSuggestion } from '@automattic/api-core';
 import type { Context } from '@automattic/calypso-router';
-import type { DomainSuggestion } from '@automattic/data';
 import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';

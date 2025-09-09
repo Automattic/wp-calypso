@@ -1,15 +1,10 @@
+import { domainGlueRecordsQuery } from '@automattic/api-queries';
 import { isMobile } from '@automattic/viewport';
-import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
-import { useDispatch } from '@wordpress/data';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState, useMemo } from 'react';
-import {
-	domainGlueRecordDeleteMutation,
-	domainGlueRecordsQuery,
-} from '../../app/queries/domain-glue-records';
 import {
 	domainRoute,
 	domainGlueRecordsAddRoute,
@@ -19,7 +14,8 @@ import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
-import type { DomainGlueRecord } from '../../data/domain-glue-records';
+import DomainGlueRecordDeleteModal from './delete-modal';
+import type { DomainGlueRecord } from '@automattic/api-core';
 import type { Action, Field, ViewTable, ViewList, View } from '@wordpress/dataviews';
 
 type GlueRecordsView = ViewTable | ViewList;
@@ -49,8 +45,6 @@ function DomainGlueRecords() {
 	const { data: glueRecordsData, isLoading } = useSuspenseQuery(
 		domainGlueRecordsQuery( domainName )
 	);
-	const deleteMutation = useMutation( domainGlueRecordDeleteMutation( domainName ) );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const actions: Action< DomainGlueRecord >[] = useMemo(
 		() => [
@@ -68,24 +62,16 @@ function DomainGlueRecords() {
 			{
 				id: 'delete',
 				label: __( 'Delete' ),
-				callback: ( items ) => {
-					const item = items[ 0 ];
-					deleteMutation.mutate( item, {
-						onSuccess: () => {
-							createSuccessNotice( __( 'Glue record was deleted successfully.' ), {
-								type: 'snackbar',
-							} );
-						},
-						onError: () => {
-							createErrorNotice( __( 'Failed to delete glue record.' ), {
-								type: 'snackbar',
-							} );
-						},
-					} );
-				},
+				RenderModal: ( { items, closeModal } ) => (
+					<DomainGlueRecordDeleteModal
+						glueRecord={ items[ 0 ] }
+						onClose={ closeModal }
+						domainName={ domainName }
+					/>
+				),
 			},
 		],
-		[ createErrorNotice, createSuccessNotice, deleteMutation, domainName, navigate ]
+		[ domainName, navigate ]
 	);
 
 	const fields: Field< DomainGlueRecord >[] = useMemo(

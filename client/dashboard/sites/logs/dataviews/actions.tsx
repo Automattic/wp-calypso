@@ -1,9 +1,9 @@
+import { LogType, PHPLog, ServerLog } from '@automattic/api-core';
 import { useDispatch } from '@wordpress/data';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { details } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
-import { LogType, PHPLog, ServerLog } from '../../../data/site-logs';
 import DetailsModalPHP from '../components/details-modal-php';
 import DetailsModalServer from '../components/details-modal-server';
 import type { Action } from '@wordpress/dataviews';

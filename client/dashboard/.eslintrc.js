@@ -17,6 +17,8 @@ module.exports = {
 							'!calypso/lib',
 							'calypso/lib/*',
 							'!calypso/lib/wp',
+							// Allowed: calypso/lib/load-dev-helpers
+							'!calypso/lib/load-dev-helpers',
 							// Allowed: calypso/assets/icons
 							// Allowed: calypso/assets/images
 							'!calypso/assets',
@@ -32,11 +34,13 @@ module.exports = {
 						group: [
 							'@automattic/*',
 							'!@automattic/calypso-config',
+							'!@automattic/calypso-support-session',
 							'!@automattic/components',
 							'@automattic/components/*',
 							'!@automattic/components/src',
 							'@automattic/components/src/*',
-							'!@automattic/data',
+							'!@automattic/api-core',
+							'!@automattic/api-queries',
 							'!@automattic/components/src/circular-progress-bar',
 							'!@automattic/components/src/summary-button',
 							'!@automattic/components/src/breadcrumbs',
@@ -47,10 +51,12 @@ module.exports = {
 							'!@automattic/domains-table/src/utils/*',
 							'!@automattic/generate-password',
 							'!@automattic/help-center',
+							'!@automattic/i18n-utils',
 							'!@automattic/number-formatters',
 							'!@automattic/ui',
 							'!@automattic/urls',
 							'!@automattic/viewport',
+							'!@automattic/languages',
 							// Please do not add exceptions unless agreed on
 							// with the #architecture group.
 						],

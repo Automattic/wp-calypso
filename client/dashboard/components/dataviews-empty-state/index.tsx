@@ -1,7 +1,5 @@
-import {
-	__experimentalVStack as VStack,
-	__experimentalHStack as HStack,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
+import { ButtonStack } from '../button-stack';
 import './styles.scss';
 import { Text } from '../text';
 import type { ReactNode } from 'react';
@@ -33,9 +31,9 @@ export function DataViewsEmptyState( {
 				</Text>
 			</VStack>
 			{ actions && (
-				<HStack spacing={ 4 } justify="center" wrap>
+				<ButtonStack justify="center" wrap>
 					{ actions }
-				</HStack>
+				</ButtonStack>
 			) }
 		</VStack>
 	);

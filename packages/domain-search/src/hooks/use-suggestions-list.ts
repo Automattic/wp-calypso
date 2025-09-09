@@ -1,21 +1,26 @@
-import { type DomainAvailability, DomainAvailabilityStatus } from '@automattic/data';
+import { type DomainAvailability, DomainAvailabilityStatus } from '@automattic/api-core';
 import { useQueries, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
+import { getTld } from '../helpers';
 import { partitionSuggestions } from '../helpers/partition-suggestions';
 import { useDomainSearch } from '../page/context';
 
 export const useSuggestionsList = () => {
-	const { query, queries, config } = useDomainSearch();
+	const { query, queries, config, filter } = useDomainSearch();
 
-	const { data: suggestions = [], isLoading: isLoadingSuggestions } = useQuery(
-		queries.domainSuggestions( query )
-	);
+	const { data: suggestions = [], isLoading: isLoadingSuggestions } = useQuery( {
+		...queries.domainSuggestions( query, {
+			tlds: filter.tlds,
+			exact_sld_matches_only: filter.exactSldMatchesOnly,
+		} ),
+		enabled: true,
+	} );
 
 	const { isLoading: isLoadingFreeSuggestion } = useQuery( queries.freeSuggestion( query ) );
 
 	const { isLoading: isLoadingQueryAvailability } = useQuery( {
 		...queries.domainAvailability( query ),
-		enabled: true,
+		enabled: !! getTld( query ),
 	} );
 
 	const premiumSuggestions = useMemo(

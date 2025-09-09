@@ -1,4 +1,4 @@
-import type { SiteMediaStorage } from '../data/types';
+import type { SiteMediaStorage } from '@automattic/api-core';
 
 const ALERT_FRACTION = 0.8;
 

@@ -10,6 +10,7 @@ import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { addSurvicate } from 'calypso/lib/analytics/survicate';
 import { shouldRenderRewrittenDomainSearch } from 'calypso/lib/domains/should-render-rewritten-domain-search';
 import { useIsDomainSearchV2Enabled } from 'calypso/lib/domains/use-domain-search-v2';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { pathToUrl } from 'calypso/lib/url';
 import {
 	persistSignupDestination,
@@ -37,7 +38,7 @@ import {
 	type ProvidedDependencies,
 	type SubmitHandler,
 } from '../../internals/types';
-import type { DomainSuggestion } from '@automattic/data';
+import type { DomainSuggestion } from '@automattic/api-core';
 
 const clearUseMyDomainsQueryParams = ( currentStepSlug: string | undefined ) => {
 	const isDomainsStep = currentStepSlug === 'domains';
@@ -334,6 +335,11 @@ const onboarding: FlowV2< typeof initialize > = {
 		// Load Survicate
 		useEffect( () => {
 			addSurvicate();
+		}, [] );
+
+		// Preload the visual split experiment
+		useEffect( () => {
+			loadExperimentAssignment( 'calypso_plans_page_visual_separation_2025_09' );
 		}, [] );
 	},
 };

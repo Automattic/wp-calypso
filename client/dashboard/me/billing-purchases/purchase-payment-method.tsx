@@ -2,7 +2,7 @@ import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { isExpired, isRenewing, isAkismetFreeProduct } from '../../utils/purchase';
 import { PaymentMethodImage } from './payment-method-image';
-import type { Purchase } from '../../data/purchase';
+import type { Purchase } from '@automattic/api-core';
 
 export function PurchasePaymentMethod( {
 	purchase,

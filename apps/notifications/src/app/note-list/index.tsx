@@ -5,44 +5,66 @@ import {
 	useNavigator,
 } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import getAllNotes from '../../panel/state/selectors/get-all-notes';
 import getIsLoading from '../../panel/state/selectors/get-is-loading';
+import getIsNoteHidden from '../../panel/state/selectors/get-is-note-hidden';
 import { getFilters } from '../../panel/templates/filters';
 import { useAppContext } from '../context';
-import { getFields } from './dataviews';
+import { getFields, getActions } from './dataviews';
+import {
+	useNoteListFocusToLastSelectedNote,
+	useNoteListNavigationKeyboardShortcuts,
+} from './hooks';
 import type { Note } from '../types';
 import type { View } from '@wordpress/dataviews';
+
 import './style.scss';
 
 const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFilters > } ) => {
 	const { goTo } = useNavigator();
 	const filter = getFilters()[ filterName ];
+
+	const isNoteHidden = useSelector(
+		( state ) => ( noteId: number ) => getIsNoteHidden( state, noteId )
+	);
+
 	const notes = useSelector( ( state ) =>
 		( ( getAllNotes( state ) || [] ) as Note[] ).filter( ( note ) => filter.filter( note ) )
 	);
 
+	// Filter out hidden notes, i.e. notes that have been just marked as spam or moved to the trash.
+	const visibleNotes = notes.filter( ( note ) => ! isNoteHidden( note.id ) );
+
 	const isLoading = useSelector( ( state ) => getIsLoading( state ) );
 	const { client } = useAppContext();
 
-	const [ view, setView ] = useState< View >( {
+	const onChangeSelection = ( selection: string[] ) => {
+		const noteId = selection[ 0 ];
+		goTo( `/${ filterName }/notes/${ noteId }` );
+	};
+
+	const [ initialView, setView ] = useState< View >( {
 		type: 'list',
 		titleField: 'title',
 		mediaField: 'icon',
-		fields: [ 'content', 'date' ],
+		fields: [ 'info' ],
 		page: 1,
-		perPage: 10,
 		infiniteScrollEnabled: true,
 	} );
 
+	const view = { ...initialView, perPage: visibleNotes.length };
+
 	const fields = getFields();
 
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate( notes, view, fields );
+	const actions = getActions( { onSelect: onChangeSelection } );
 
-	const onChangeSelection = ( selection: string[] ) => {
-		goTo( `/${ filterName }/notes/${ selection[ 0 ] }` );
-	};
+	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
+		visibleNotes,
+		view,
+		fields
+	);
 
 	const infiniteScrollHandler = useCallback( () => {
 		if ( ! isLoading ) {
@@ -51,42 +73,44 @@ const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFil
 	}, [ client, isLoading ] );
 
 	useEffect( () => {
-		setView( ( currentView ) => ( { ...currentView, perPage: notes.length } ) );
-	}, [ notes.length ] );
-
-	useEffect( () => {
-		if ( filterName !== 'all' && notes.length < 10 && ! isLoading ) {
+		if ( visibleNotes.length <= 10 && ! isLoading ) {
 			infiniteScrollHandler();
 		}
-	}, [ filterName, notes.length, isLoading, infiniteScrollHandler ] );
+	}, [ visibleNotes.length, isLoading, infiniteScrollHandler ] );
+
+	const noteListRef = useRef< HTMLObjectElement >( null );
+
+	useNoteListFocusToLastSelectedNote( { noteListRef, notes } );
+	useNoteListNavigationKeyboardShortcuts( { noteListRef, visibleNotes } );
 
 	return (
-		<DataViews< Note >
-			data={ filteredData }
-			fields={ fields }
-			view={ view }
-			isLoading={ isLoading }
-			defaultLayouts={ { table: {} } }
-			paginationInfo={ {
-				...paginationInfo,
-				infiniteScrollHandler,
-			} }
-			empty={
-				<VStack alignment="center">
-					<Text size={ 15 } weight={ 500 }>
-						{ filter.emptyMessage }
-					</Text>
-					<ExternalLink href={ filter.emptyLink }>{ filter.emptyLinkMessage }</ExternalLink>
-				</VStack>
-			}
-			getItemId={ ( item ) => item.id.toString() }
-			onChangeView={ setView }
-			onChangeSelection={ onChangeSelection }
-		>
-			<>
+		<div ref={ noteListRef } className="wpnc__note-list">
+			<DataViews< Note >
+				data={ filteredData }
+				fields={ fields }
+				actions={ actions }
+				view={ view }
+				isLoading={ isLoading }
+				defaultLayouts={ { table: {} } }
+				paginationInfo={ {
+					...paginationInfo,
+					infiniteScrollHandler,
+				} }
+				empty={
+					<VStack alignment="center">
+						<Text size={ 15 } weight={ 500 }>
+							{ filter.emptyMessage }
+						</Text>
+						<ExternalLink href={ filter.emptyLink }>{ filter.emptyLinkMessage }</ExternalLink>
+					</VStack>
+				}
+				getItemId={ ( item ) => item.id.toString() }
+				onChangeView={ setView }
+				onChangeSelection={ onChangeSelection }
+			>
 				<DataViews.Layout />
-			</>
-		</DataViews>
+			</DataViews>
+		</div>
 	);
 };
 

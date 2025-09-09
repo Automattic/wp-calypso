@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { backup } from '@wordpress/icons';
 import { siteBackupRestoreRoute } from '../../../app/router/sites';
 import { getBackupUrl } from '../../../utils/site-backup';
-import type { ActivityLogEntry, Site } from '../../../data/types';
+import type { ActivityLogEntry, Site } from '@automattic/api-core';
 import type { AnyRouter } from '@tanstack/react-router';
 
 export function getActions( site: Site, router: AnyRouter ): Action< ActivityLogEntry >[] {

@@ -1,7 +1,7 @@
 import fastDeepEqual from 'fast-deep-equal/es6';
 import { DEFAULT_FIELDS } from './fields';
 import type { AnalyticsClient } from '../app/analytics';
-import type { User, SitesView, SitesViewPreferences } from '../data/types';
+import type { User, SitesView, SitesViewPreferences } from '@automattic/api-core';
 import type { Operator, SortDirection, SupportedLayouts } from '@wordpress/dataviews';
 
 export const DEFAULT_LAYOUTS: SupportedLayouts = {

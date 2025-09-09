@@ -1,3 +1,4 @@
+import { blockedSitesInfiniteQuery, unblockSiteMutation } from '@automattic/api-queries';
 import { useMutation, useInfiniteQuery } from '@tanstack/react-query';
 import { ExternalLink, Icon } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -7,12 +8,11 @@ import { __, sprintf } from '@wordpress/i18n';
 import { closeSmall } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { blockedSitesInfiniteQuery, unblockSiteMutation } from '../../app/queries/me-blocked-sites';
 import { DataViewsCard } from '../../components/dataviews-card';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import type { BlockedSite } from '../../data/me-blocked-sites';
+import type { BlockedSite } from '@automattic/api-core';
 import type { Field, View } from '@wordpress/dataviews';
 
 const DEFAULT_PAGE = 1;

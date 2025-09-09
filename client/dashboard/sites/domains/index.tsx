@@ -1,18 +1,19 @@
+import { siteDomainsQuery, siteBySlugQuery } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
 import { useAuth } from '../../app/auth';
-import { siteBySlugQuery } from '../../app/queries/site';
-import { siteDomainsQuery } from '../../app/queries/site-domains';
-import { siteDomainsPurchaseRoute, siteRoute } from '../../app/router/sites';
+import { siteRoute } from '../../app/router/sites';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import RouterLinkButton from '../../components/router-link-button';
 import { useActions, useFields, DEFAULT_VIEW, DEFAULT_LAYOUTS } from '../../domains/dataviews';
-import type { SiteDomain } from '../../data/types';
 import type { DomainsView } from '../../domains/dataviews';
+import type { SiteDomain } from '@automattic/api-core';
 
 function getDomainId( domain: SiteDomain ) {
 	return `${ domain.domain }-${ domain.blog_id }`;
@@ -46,13 +47,17 @@ function SiteDomains() {
 				<PageHeader
 					title={ __( 'Domains' ) }
 					actions={
-						<RouterLinkButton
-							to={ siteDomainsPurchaseRoute.fullPath }
-							params={ { siteSlug } }
+						<Button
+							href={
+								isEnabled( 'domain-search-rewrite' )
+									? addQueryArgs( '/setup/domain', { siteSlug: site.slug } )
+									: `/domains/add/${ site.slug }`
+							}
 							variant="primary"
+							__next40pxDefaultSize
 						>
 							{ __( 'Add New Domain' ) }
-						</RouterLinkButton>
+						</Button>
 					}
 				/>
 			}

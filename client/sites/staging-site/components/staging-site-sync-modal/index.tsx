@@ -1,3 +1,4 @@
+import { pushToStagingMutation, pullFromStagingMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
 	Button,
@@ -24,10 +25,6 @@ import { __, isRTL } from '@wordpress/i18n';
 import { chevronRight, chevronLeft } from '@wordpress/icons';
 import clsx from 'clsx';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
-import {
-	pushToStagingMutation,
-	pullFromStagingMutation,
-} from 'calypso/dashboard/app/queries/site-staging-sync';
 import InlineSupportLink from 'calypso/dashboard/components/inline-support-link';
 import { SectionHeader } from 'calypso/dashboard/components/section-header';
 import SiteEnvironmentBadge, {
@@ -230,6 +227,7 @@ export default function SyncModal( {
 	const sqlNode = useSelector( ( state ) => getBackupBrowserNode( state, querySiteId, SQL_PATH ) );
 
 	const isSiteWooStore = !! useSelector( ( state ) => isSiteStore( state, querySiteId ) );
+	const querySiteSlug = useSelector( ( state ) => getSiteSlug( state, querySiteId ) ) as string;
 	const filesAndFoldersNodesCheckState = useMemo( () => {
 		const nodes = [ wpContentNode, wpConfigNode ].filter( Boolean );
 		if ( nodes.length === 0 ) {
@@ -498,6 +496,7 @@ export default function SyncModal( {
 								<FileBrowser
 									rewindId={ rewindId }
 									siteId={ querySiteId }
+									siteSlug={ querySiteSlug }
 									fileBrowserConfig={ fileBrowserConfig }
 								/>
 							</div>

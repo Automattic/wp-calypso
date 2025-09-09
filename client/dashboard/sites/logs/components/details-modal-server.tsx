@@ -4,7 +4,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useLocale } from '../../../app/locale';
 import { getUtcOffsetDisplay } from '../../../utils/datetime';
 import { formatLogDateTimeForDisplay } from '../utils';
-import type { ServerLog } from '../../../data/site-logs';
+import type { ServerLog } from '@automattic/api-core';
 import './style.scss';
 
 export default function DetailsModalServer( {

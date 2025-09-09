@@ -7,7 +7,7 @@ import { MXRecordConfig } from './mx-record';
 import { NSRecordConfig } from './ns-record';
 import { SRVRecordConfig } from './srv-record';
 import { TXTRecordConfig } from './txt-record';
-import type { DnsRecord, DnsRecordType } from '../../../data/domain-dns-records';
+import type { DnsRecord, DnsRecordType } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 export type DnsRecordTypeFormData = {

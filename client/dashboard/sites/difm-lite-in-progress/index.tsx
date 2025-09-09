@@ -1,20 +1,23 @@
+import { WPCOM_DIFM_LITE } from '@automattic/api-core';
+import {
+	siteDifmWebsiteContentQuery,
+	siteDomainsQuery,
+	siteBySlugQuery,
+	sitePurchasesQuery,
+} from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
 import { addDays, isPast } from 'date-fns';
 import { useAnalytics } from '../../app/analytics';
 import { useLocale } from '../../app/locale';
-import { siteBySlugQuery } from '../../app/queries/site';
-import { siteDifmWebsiteContentQuery } from '../../app/queries/site-do-it-for-me';
-import { siteDomainsQuery } from '../../app/queries/site-domains';
-import { sitePurchasesQuery } from '../../app/queries/site-purchases';
+import { ButtonStack } from '../../components/button-stack';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
-import { WPCOM_DIFM_LITE } from '../../data/constants';
 import { formatDate } from '../../utils/datetime';
 import { hasGSuiteWithUs, hasTitanMailWithUs } from '../../utils/domain';
-import type { Site } from '../../data/types';
+import type { Site } from '@automattic/api-core';
 
 function WebsiteContentSubmitted( { site }: { site: Site } ) {
 	const { recordTracksEvent } = useAnalytics();
@@ -109,14 +112,14 @@ function WebsiteContentSubmissionPending( { site }: { site: Site } ) {
 			}
 			size="small"
 		>
-			<HStack spacing={ 4 } justify="start">
+			<ButtonStack justify="start">
 				<Button
 					variant="primary"
 					href={ `/start/site-content-collection/website-content?siteSlug=${ site.slug }` }
 				>
 					{ __( 'Provide website content' ) }
 				</Button>
-			</HStack>
+			</ButtonStack>
 		</PageLayout>
 	);
 }

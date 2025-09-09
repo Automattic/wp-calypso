@@ -1,3 +1,4 @@
+import { siteBackupDownloadProgressQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
@@ -7,10 +8,9 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useEffect } from 'react';
-import { siteBackupDownloadProgressQuery } from '../../app/queries/site-backup-download';
 import Notice from '../../components/notice';
-import backupDownloadIllustration from '../backups/backup-download-illustration.svg';
-import type { Site } from '../../data/types';
+import downloadIllustration from './backup-download-illustration.svg';
+import type { Site } from '@automattic/api-core';
 
 function SiteBackupDownloadProgress( {
 	site,
@@ -56,13 +56,7 @@ function SiteBackupDownloadProgress( {
 	return (
 		<>
 			<VStack spacing={ 4 } alignment="center">
-				<img
-					src={ backupDownloadIllustration }
-					alt=""
-					width={ 408 }
-					height={ 280 }
-					style={ { opacity: 0.2 } }
-				/>
+				<img src={ downloadIllustration } alt="" width={ 408 } height={ 280 } />
 				<Text size={ 20 }> { __( 'Initializing the download process' ) } </Text>
 				<Text size={ 13 } variant="muted">
 					{ sprintf(

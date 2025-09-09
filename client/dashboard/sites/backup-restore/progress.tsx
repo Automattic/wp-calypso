@@ -1,3 +1,4 @@
+import { siteBackupRestoreProgressQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
@@ -7,10 +8,9 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useEffect } from 'react';
-import { siteBackupRestoreProgressQuery } from '../../app/queries/site-backup-restore';
 import Notice from '../../components/notice';
-import noSitesIllustration from '../no-sites-illustration.svg';
-import type { Site } from '../../data/types';
+import progressIllustration from './restore-progress-illustration.svg';
+import type { Site } from '@automattic/api-core';
 
 function SiteBackupRestoreProgress( {
 	site,
@@ -52,13 +52,7 @@ function SiteBackupRestoreProgress( {
 	return (
 		<>
 			<VStack spacing={ 4 } alignment="center">
-				<img
-					src={ noSitesIllustration }
-					alt=""
-					width={ 408 }
-					height={ 280 }
-					style={ { opacity: 0.2 } }
-				/>
+				<img src={ progressIllustration } alt="" width={ 408 } height={ 280 } />
 				<Text size={ 20 }>
 					{ isRunning ? restoreProgress?.message : __( 'Initializing the restore process' ) }
 				</Text>
