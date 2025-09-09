@@ -48,11 +48,3 @@ export const deleteSecurityKeyMutation = () =>
 			queryClient.invalidateQueries( securityKeysQuery() );
 		},
 	} );
-
-export const deleteSecurityKeyMutation = () =>
-	mutationOptions( {
-		mutationFn: deleteSecurityKey,
-		onSuccess: () => {
-			queryClient.invalidateQueries( securityKeysQuery() );
-		},
-	} );
