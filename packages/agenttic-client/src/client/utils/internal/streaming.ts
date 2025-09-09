@@ -1,6 +1,6 @@
-import type { Task, TaskUpdate } from '../../types/index';
+import type { Message, Task, TaskUpdate } from '../../types/index';
 import { logger } from '../logger';
-import { extractTextFromMessage } from '../core';
+import { extractTextFromMessage, generateMessageId } from '../core';
 
 /**
  * Parse a stream chunk from a server-sent events stream.
@@ -82,15 +82,30 @@ export function parseStreamChunk(
 }
 
 /**
+ * Options for parsing SSE streams
+ */
+export interface ParseSSEStreamOptions {
+	/** Whether to process delta messages for token streaming. Default: false */
+	supportDeltas?: boolean;
+}
+
+/**
  * Parse SSE stream and yield task updates
- * @param stream
+ * Handles delta messages, regular task updates, and JSON-RPC responses
+ * @param stream  - The readable stream to parse
+ * @param options - Configuration options for parsing
  */
 export async function* parseSSEStream(
-	stream: ReadableStream< Uint8Array >
+	stream: ReadableStream< Uint8Array >,
+	options: ParseSSEStreamOptions = {}
 ): AsyncIterable< TaskUpdate > {
+	const { supportDeltas = false } = options;
 	const reader = stream.getReader();
 	const decoder = new TextDecoder();
 	let buffer = '';
+	const accumulator = new DeltaAccumulator();
+	let currentTaskId: string | null = null;
+	let lastStatus: any = null;
 
 	try {
 		while ( true ) {
@@ -103,14 +118,78 @@ export async function* parseSSEStream(
 			const { events, nextBuffer } = parseStreamChunk( chunk, buffer );
 
 			if ( events && Array.isArray( events ) ) {
-				for ( const event of events ) {
+				for ( let i = 0; i < events.length; i++ ) {
+					const event = events[ i ];
+
+					// Pace delta messages for smoother rendering (only delay between deltas, not first one)
+					if (
+						i > 0 &&
+						event.method === 'message/delta' &&
+						typeof requestAnimationFrame !== 'undefined'
+					) {
+						await new Promise( ( resolve ) => {
+							requestAnimationFrame( () => resolve( undefined ) );
+						} );
+					}
+
 					if ( event.error ) {
 						throw new Error(
 							`Streaming error: ${ event.error.message }`
 						);
 					}
 
-					if ( event.result && event.result.status ) {
+					// Handle delta messages
+					if (
+						supportDeltas &&
+						event.method === 'message/delta' &&
+						event.params?.delta
+					) {
+						const delta = event.params.delta;
+
+						try {
+							if ( delta.deltaType === 'content' ) {
+								accumulator.processContentDelta(
+									delta.content
+								);
+
+								if ( ! currentTaskId && event.params.id ) {
+									currentTaskId = event.params.id;
+								}
+
+								if ( currentTaskId ) {
+									const currentMessage =
+										accumulator.getCurrentMessage();
+									yield {
+										id: currentTaskId,
+										status: {
+											state: 'working',
+											message: currentMessage,
+										},
+										final: false,
+										text: accumulator.getTextContent(),
+									};
+								}
+							}
+						} catch ( error ) {
+							// Log error but continue processing
+							logger( 'Failed to process delta: %o', error );
+						}
+					}
+					// Handle regular task updates
+					else if ( event.result && event.result.status ) {
+						// Store task ID for delta messages
+						currentTaskId = event.result.id;
+						lastStatus = event.result.status;
+
+						// When token streaming is enabled, the final message already contains
+						// the complete text. We can now reset the accumulator since streaming is complete.
+						if (
+							accumulator.getTextContent() ||
+							accumulator.getCurrentMessage().parts.length > 0
+						) {
+							accumulator.reset();
+						}
+
 						const update: TaskUpdate = {
 							id: event.result.id,
 							status: event.result.status,
@@ -127,6 +206,28 @@ export async function* parseSSEStream(
 						};
 
 						yield update;
+					}
+					// Handle regular JSON-RPC responses (for non-token-streaming)
+					else if ( event.id && event.result ) {
+						// This is a regular response, not a delta
+						currentTaskId = event.result.id;
+						if ( event.result.status ) {
+							const update: TaskUpdate = {
+								id: event.result.id,
+								status: event.result.status,
+								final:
+									event.result.status.state === 'completed' ||
+									event.result.status.state === 'failed' ||
+									event.result.status.state === 'canceled',
+								text: extractTextFromMessage(
+									event.result.status?.message || {
+										role: 'agent',
+										parts: [],
+									}
+								),
+							};
+							yield update;
+						}
 					}
 				}
 			}
@@ -161,4 +262,155 @@ export async function streamToTask(
 	}
 
 	return finalTask;
+}
+
+/**
+ * Delta message types from the server
+ */
+export interface ContentDelta {
+	type: 'content';
+	content: string;
+}
+
+export interface ToolNameDelta {
+	type: 'tool_name';
+	content: string;
+	toolCallId: string;
+	toolCallIndex: number;
+}
+
+export interface ToolArgumentDelta {
+	type: 'tool_argument';
+	content: string;
+	toolCallId: string;
+	toolCallIndex: number;
+}
+
+export type DeltaMessage = ContentDelta | ToolNameDelta | ToolArgumentDelta;
+
+/**
+ * Accumulator for delta messages
+ * Manages the state of partial messages during streaming
+ */
+export class DeltaAccumulator {
+	private textContent: string = '';
+	private toolCalls: Map<
+		number,
+		{
+			toolCallId: string;
+			toolName: string;
+			argumentFragments: string[];
+		}
+	> = new Map();
+
+	/**
+	 * Process a simple content delta (server's actual format)
+	 * @param content - The text content to append
+	 */
+	public processContentDelta( content: string ): void {
+		this.textContent += content;
+	}
+
+	/**
+	 * Process a delta message and accumulate the content (original format)
+	 * @param delta - The delta message to process
+	 */
+	public processDelta( delta: DeltaMessage ): void {
+		switch ( delta.type ) {
+			case 'content':
+				this.textContent += delta.content;
+				break;
+
+			case 'tool_name':
+				if ( ! this.toolCalls.has( delta.toolCallIndex ) ) {
+					this.toolCalls.set( delta.toolCallIndex, {
+						toolCallId: delta.toolCallId,
+						toolName: '',
+						argumentFragments: [],
+					} );
+				}
+				const toolCall = this.toolCalls.get( delta.toolCallIndex )!;
+				toolCall.toolName += delta.content;
+				break;
+
+			case 'tool_argument':
+				if ( ! this.toolCalls.has( delta.toolCallIndex ) ) {
+					this.toolCalls.set( delta.toolCallIndex, {
+						toolCallId: delta.toolCallId,
+						toolName: '',
+						argumentFragments: [],
+					} );
+				}
+				const call = this.toolCalls.get( delta.toolCallIndex )!;
+				call.argumentFragments.push( delta.content );
+				break;
+		}
+	}
+
+	/**
+	 * Get the accumulated text content
+	 */
+	public getTextContent(): string {
+		return this.textContent;
+	}
+
+	/**
+	 * Get the current accumulated message
+	 * @param role - The role for the message (default: 'agent')
+	 */
+	public getCurrentMessage( role: 'agent' | 'user' = 'agent' ): Message {
+		const parts: any[] = [];
+
+		// Add text content if present
+		if ( this.textContent ) {
+			parts.push( {
+				type: 'text',
+				text: this.textContent,
+			} );
+		}
+
+		// Add tool calls if present
+		for ( const [ index, toolCall ] of this.toolCalls ) {
+			if ( toolCall.toolName ) {
+				// Only add tool call if we have at least the name
+				const argumentsStr = toolCall.argumentFragments.join( '' );
+
+				// Try to parse arguments if we have a complete JSON
+				let args: any = {};
+				if ( argumentsStr ) {
+					try {
+						args = JSON.parse( argumentsStr );
+					} catch {
+						// If parsing fails, we might have incomplete JSON
+						// We'll include the raw string for debugging
+						args = { _raw: argumentsStr };
+					}
+				}
+
+				parts.push( {
+					type: 'data',
+					data: {
+						toolCallId: toolCall.toolCallId,
+						toolId: toolCall.toolName,
+						arguments: args,
+					},
+				} );
+			}
+		}
+
+		return {
+			role,
+			parts,
+			kind: 'message',
+			messageId: generateMessageId(),
+		};
+	}
+
+	/**
+	 * Reset the accumulator
+	 */
+	public reset(): void {
+		this.textContent = '';
+		this.toolCalls.clear();
+	}
 }

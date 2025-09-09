@@ -64,7 +64,8 @@
 		"@wordpress/i18n": "^6.1.0",
 		"react": "^18.0.0",
 		"react-markdown": "^10.1.0",
-		"remark-gfm": "^4.0.1"
+		"remark-gfm": "^4.0.1",
+		"streamdown": "1.1.1"
 	},
 	"peerDependencies": {
 		"@wordpress/api-fetch": "^6.0.0 || ^7.0.0",

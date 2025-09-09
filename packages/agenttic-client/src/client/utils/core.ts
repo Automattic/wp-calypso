@@ -61,12 +61,14 @@ export function createTextPart( text: string ): TextPart {
  * Create a message/send request payload
  * @param params
  * @param method
+ * @param tokenStreaming - Whether to enable token streaming
  */
 export function createSendMessageRequest(
 	params: MessageSendParams,
-	method: string = 'message/send'
+	method: string = 'message/send',
+	tokenStreaming: boolean = false
 ): SendMessageRequest {
-	return {
+	const request: SendMessageRequest = {
 		jsonrpc: '2.0',
 		id: createRequestId(),
 		method,
@@ -75,6 +77,12 @@ export function createSendMessageRequest(
 			...params,
 		},
 	};
+
+	if ( tokenStreaming && method === 'message/stream' ) {
+		request.tokenStreaming = true;
+	}
+
+	return request;
 }
 
 /**

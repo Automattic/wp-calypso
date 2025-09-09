@@ -232,6 +232,7 @@ export interface UseAgentChatConfig {
 	contextProvider?: ContextProvider;
 	toolProvider?: ToolProvider;
 	authProvider?: AuthProvider;
+	enableStreaming?: boolean; // Enable token-by-token streaming
 }
 
 // Hook return interface
@@ -343,6 +344,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 						toolProvider:
 							config.toolProvider || createNoOpToolProvider(),
 						authProvider: config.authProvider,
+						enableStreaming: config.enableStreaming,
 					} );
 
 					// Load conversation history and transform for UI
@@ -377,6 +379,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		config.contextProvider,
 		config.toolProvider,
 		config.authProvider,
+		config.enableStreaming,
 		isValidConfig,
 	] );
 
@@ -416,7 +419,10 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			} ) );
 
 			try {
-				let lastUpdate = null;
+				// Track streaming message for incremental updates
+				let streamingMessageId: string | null = null;
+				let finalMessageAdded = false;
+
 				for await ( const update of agentManager.sendMessageStream(
 					agentKey,
 					message,
@@ -424,48 +430,147 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 						abortSignal: abortController.signal,
 					}
 				) ) {
-					lastUpdate = update;
+					// Handle incremental text updates during streaming
+					if ( ! update.final && update.text ) {
+						// Create or update the streaming message
+						if ( ! streamingMessageId ) {
+							streamingMessageId = `agent-streaming-${ Date.now() }`;
+							const streamingMessage: UIMessage = {
+								id: streamingMessageId,
+								role: 'agent',
+								content: [
+									{ type: 'text', text: update.text },
+								],
+								timestamp: Date.now(),
+								archived: false,
+								showIcon: true,
+								icon: 'assistant',
+							};
+
+							setState( ( prev ) => ( {
+								...prev,
+								uiMessages: [
+									...prev.uiMessages,
+									streamingMessage,
+								],
+							} ) );
+						} else {
+							// Update existing streaming message with accumulated text
+							setState( ( prev ) => ( {
+								...prev,
+								uiMessages: prev.uiMessages.map( ( msg ) =>
+									msg.id === streamingMessageId
+										? {
+												...msg,
+												content: [
+													{
+														type: 'text',
+														text: update.text,
+													},
+												],
+										  }
+										: msg
+								),
+							} ) );
+						}
+					}
+
+					// Handle final update - replace streaming message with final message
+					if (
+						update.final &&
+						update.status?.message &&
+						streamingMessageId
+					) {
+						finalMessageAdded = true;
+						const currentStreamingId = streamingMessageId;
+						const finalMessage = transformClientMessageToUI(
+							update.status.message,
+							registrationsRef.current
+						);
+
+						if ( finalMessage ) {
+							setState( ( prev ) => {
+								// Replace the streaming message with the final message
+								const updatedMessages = prev.uiMessages.map(
+									( msg ) =>
+										msg.id === currentStreamingId
+											? finalMessage
+											: msg
+								);
+
+								// Update client messages from conversation history
+								const updatedClientHistory =
+									agentManager.getConversationHistory(
+										agentKey
+									);
+
+								return {
+									...prev,
+									clientMessages: updatedClientHistory,
+									uiMessages: updatedMessages,
+									isProcessing: false,
+									currentAbortController: null,
+								};
+							} );
+						}
+
+						// Clear the streaming message ID after replacement
+						streamingMessageId = null;
+					}
 				}
 
-				// Update internal messages and transform for UI
-				const updatedClientHistory =
-					agentManager.getConversationHistory( agentKey );
+				// Only update from conversation history if we didn't already handle the final message
+				if ( ! finalMessageAdded ) {
+					// Update internal messages and transform for UI
+					const updatedClientHistory =
+						agentManager.getConversationHistory( agentKey );
 
-				setState( ( prev ) => {
-					// Transform client messages to UI format
-					const transformedClientMessages = updatedClientHistory
-						.map( ( msg ) =>
-							transformClientMessageToUI(
-								msg,
-								registrationsRef.current
+					setState( ( prev ) => {
+						// Remove any remaining streaming message
+						let filteredMessages = prev.uiMessages;
+						if ( streamingMessageId ) {
+							filteredMessages = prev.uiMessages.filter(
+								( msg ) => msg.id !== streamingMessageId
+							);
+						}
+
+						// Transform client messages to UI format
+						const transformedClientMessages = updatedClientHistory
+							.map( ( msg ) =>
+								transformClientMessageToUI(
+									msg,
+									registrationsRef.current
+								)
 							)
-						)
-						.filter( ( msg ): msg is UIMessage => msg !== null );
+							.filter(
+								( msg ): msg is UIMessage => msg !== null
+							);
 
-					// Find UI-only messages (component messages not in client history)
-					const clientMessageIds = new Set(
-						updatedClientHistory.map( ( msg ) => msg.messageId )
-					);
-					const uiOnlyMessages = prev.uiMessages.filter(
-						( msg ) =>
-							! clientMessageIds.has( msg.id ) &&
-							msg.content[ 0 ]?.type === 'component'
-					);
+						// Find UI-only messages (component messages not in client history)
+						const clientMessageIds = new Set(
+							updatedClientHistory.map( ( msg ) => msg.messageId )
+						);
+						const uiOnlyMessages = filteredMessages.filter(
+							( msg ) =>
+								! clientMessageIds.has( msg.id ) &&
+								msg.content[ 0 ]?.type === 'component'
+						);
 
-					// Merge client-based messages with UI-only component messages and sort by timestamp
-					const mergedUIMessages = sortUIMessagesByTime( [
-						...transformedClientMessages,
-						...uiOnlyMessages,
-					] );
+						// Merge client-based messages with UI-only component messages and sort by timestamp
+						const mergedUIMessages = sortUIMessagesByTime( [
+							...transformedClientMessages,
+							...uiOnlyMessages,
+						] );
 
-					return {
-						...prev,
-						clientMessages: updatedClientHistory,
-						uiMessages: mergedUIMessages,
-						isProcessing: false,
-						currentAbortController: null,
-					};
-				} );
+						return {
+							...prev,
+							clientMessages: updatedClientHistory,
+							uiMessages: mergedUIMessages,
+							isProcessing: false,
+							currentAbortController: null,
+						};
+					} );
+				}
 			} catch ( error ) {
 				// Handle AbortError specially - it's not really an error, just user cancellation
 				if ( error instanceof Error && error.name === 'AbortError' ) {

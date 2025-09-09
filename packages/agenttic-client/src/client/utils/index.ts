@@ -29,6 +29,7 @@ export {
 	parseStreamChunk,
 	parseSSEStream,
 	streamToTask,
+	type ParseSSEStreamOptions,
 } from './internal/streaming';
 
 export {

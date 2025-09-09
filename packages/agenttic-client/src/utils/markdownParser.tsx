@@ -1,12 +1,12 @@
 /**
  * Markdown Parser Utility
  *
- * Converts markdown text to React components using react-markdown
+ * Converts markdown text to React components using streamdown
  * with custom components and extensions support.
  */
 
 import React from 'react';
-import Markdown from 'react-markdown';
+import Markdown from 'streamdown';
 import type { Components } from 'react-markdown';
 import type { PluggableList } from 'unified';
 import {
@@ -28,7 +28,7 @@ interface ParseMarkdownOptions {
 }
 
 /**
- * Parses markdown text into a React component using react-markdown
+ * Parses markdown text into a React component using streamdown
  * @param text    - The markdown text to parse
  * @param options - Custom components and extensions to use
  * @return React element containing the parsed markdown

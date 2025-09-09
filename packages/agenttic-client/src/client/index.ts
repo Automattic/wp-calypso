@@ -15,6 +15,7 @@ import {
 	executeStreamingRequest,
 	prepareRequest,
 	type RequestConfig,
+	type RequestOptions,
 } from './utils/index';
 import {
 	createAgentTextMessage,
@@ -323,6 +324,7 @@ async function continueTask(
  * @param contextProvider - Context provider for message enhancement
  * @param sessionId       - Session identifier
  * @param abortSignal     - Optional abort signal
+ * @param requestOptions  - Optional additional request options
  * @return AsyncIterable of task updates
  */
 async function continueTaskStreamed(
@@ -332,7 +334,8 @@ async function continueTaskStreamed(
 	toolProvider?: any,
 	contextProvider?: any,
 	sessionId?: string,
-	abortSignal?: AbortSignal
+	abortSignal?: AbortSignal,
+	requestOptions?: RequestOptions
 ): Promise< AsyncIterable< TaskUpdate > > {
 	const continueParams = {
 		message,
@@ -340,10 +343,16 @@ async function continueTaskStreamed(
 		sessionId: undefined, // Use task's session
 	};
 
+	// Use same options as original request, defaulting to streaming-only if not provided
+	const options = requestOptions || { isStreaming: true };
+
 	const preparedRequest = await prepareRequest(
 		continueParams,
 		requestConfig,
-		{ isStreaming: true, abortSignal },
+		{
+			...options,
+			abortSignal,
+		},
 		toolProvider,
 		contextProvider,
 		sessionId
@@ -351,7 +360,7 @@ async function continueTaskStreamed(
 
 	// Create the stream and process it with shared logic
 	const stream = executeStreamingRequest( preparedRequest, requestConfig, {
-		isStreaming: true,
+		...options,
 		abortSignal,
 	} );
 
@@ -363,7 +372,8 @@ async function continueTaskStreamed(
 		sessionId,
 		true, // withHistory
 		[], // newConversationParts - empty for continueTask
-		abortSignal
+		abortSignal,
+		options // Pass through the same request options
 	);
 }
 
@@ -380,6 +390,7 @@ async function continueTaskStreamed(
  * @param withHistory          - Whether to include conversation history
  * @param newConversationParts - Array to track conversation parts for history
  * @param abortSignal          - Optional abort signal
+ * @param requestOptions       - Optional additional request options
  * @return AsyncIterable of task updates
  */
 async function* processAgentResponseStream(
@@ -390,7 +401,8 @@ async function* processAgentResponseStream(
 	sessionId?: string,
 	withHistory: boolean = true,
 	newConversationParts: Message[] = [],
-	abortSignal?: AbortSignal
+	abortSignal?: AbortSignal,
+	requestOptions?: RequestOptions
 ): AsyncIterable< TaskUpdate > {
 	for await ( const update of stream ) {
 		yield update;
@@ -584,7 +596,8 @@ async function* processAgentResponseStream(
 						toolProvider,
 						contextProvider,
 						sessionId,
-						abortSignal
+						abortSignal,
+						requestOptions
 					);
 
 					// Get the final result from the stream
@@ -699,7 +712,8 @@ async function* processAgentResponseStream(
 										toolProvider,
 										contextProvider,
 										sessionId,
-										abortSignal
+										abortSignal,
+										requestOptions
 									);
 
 								// Get the final result from the stream
@@ -858,6 +872,7 @@ export function createClient( config: ClientConfig ): Client {
 		timeout = DEFAULT_TIMEOUT,
 		toolProvider,
 		contextProvider,
+		enableStreaming = false,
 	} = config;
 
 	// Create request configuration
@@ -1050,8 +1065,15 @@ export function createClient( config: ClientConfig ): Client {
 		async *sendMessageStream(
 			params: SendMessageParams
 		): AsyncIterable< TaskUpdate > {
-			const { withHistory = true, abortSignal } = params;
+			const {
+				withHistory = true,
+				abortSignal,
+				enableStreaming: requestStreaming,
+			} = params;
 			const sessionId = params.sessionId || defaultSessionId || undefined;
+
+			// Determine if we should use token streaming for this request
+			const useTokenStreaming = requestStreaming ?? enableStreaming;
 
 			// Track new conversation parts since the initial message for tool result context
 			const newConversationParts: Message[] = [];
@@ -1059,11 +1081,16 @@ export function createClient( config: ClientConfig ): Client {
 			// Add the initial user message to new conversation parts (always)
 			newConversationParts.push( params.message );
 
-			// Prepare the request
+			// Prepare the request - always use streaming endpoint, but token streaming is optional
 			const preparedRequest = await prepareRequest(
 				params,
 				requestConfig,
-				{ isStreaming: true, streamingTimeout: timeout, abortSignal },
+				{
+					isStreaming: true, // Always use message/stream endpoint for SSE
+					enableTokenStreaming: useTokenStreaming, // Optional token-by-token streaming
+					streamingTimeout: timeout,
+					abortSignal,
+				},
 				toolProvider,
 				contextProvider,
 				sessionId
@@ -1075,6 +1102,7 @@ export function createClient( config: ClientConfig ): Client {
 				requestConfig,
 				{
 					isStreaming: true,
+					enableTokenStreaming: useTokenStreaming, // Token streaming is optional
 					streamingTimeout: timeout,
 					abortSignal,
 				}
@@ -1088,7 +1116,12 @@ export function createClient( config: ClientConfig ): Client {
 				sessionId,
 				withHistory,
 				newConversationParts,
-				abortSignal
+				abortSignal,
+				{
+					isStreaming: true,
+					enableTokenStreaming: useTokenStreaming,
+					streamingTimeout: timeout,
+				}
 			);
 		},
 

@@ -43,7 +43,8 @@ function constructAgentUrl( agentUrl: string, agentId: string ): string {
  * Options for request execution
  */
 export interface RequestOptions {
-	isStreaming?: boolean;
+	isStreaming?: boolean; // Use message/stream endpoint for SSE
+	enableTokenStreaming?: boolean; // Enable token-by-token streaming (requires isStreaming)
 	streamingTimeout?: number;
 	abortSignal?: AbortSignal; // Optional external abort signal
 }
@@ -181,7 +182,7 @@ export async function prepareRequest(
 ) {
 	const { message, sessionId, taskId, metadata } = params;
 	const { agentId, agentUrl, authProvider, proxy } = config;
-	const { isStreaming = false } = options;
+	const { isStreaming = false, enableTokenStreaming = false } = options;
 
 	const effectiveSessionId = sessionId || defaultSessionId;
 	const fullAgentUrl = constructAgentUrl( agentUrl, agentId );
@@ -193,7 +194,8 @@ export async function prepareRequest(
 		contextProvider
 	);
 
-	// Create request payload
+	// Create request payload with token streaming flag
+	// Use message/stream for SSE, add tokenStreaming: true for token streaming
 	const request = createSendMessageRequest(
 		{
 			id: taskId,
@@ -201,7 +203,8 @@ export async function prepareRequest(
 			message: enhancedMessage,
 			metadata,
 		},
-		isStreaming ? 'message/stream' : 'message/send'
+		isStreaming ? 'message/stream' : 'message/send',
+		enableTokenStreaming && isStreaming // Only enable token streaming if using SSE
 	);
 
 	// Get headers
@@ -298,7 +301,11 @@ export async function* executeStreamingRequest(
 ): AsyncIterable< TaskUpdate > {
 	const { request, headers, fullAgentUrl } = preparedRequest;
 	const {} = config;
-	const { streamingTimeout = 60000, abortSignal: externalSignal } = options;
+	const {
+		streamingTimeout = 60000,
+		abortSignal: externalSignal,
+		enableTokenStreaming = false,
+	} = options;
 
 	const { timeoutId, controller } = createTimeoutHandler(
 		streamingTimeout,
@@ -311,11 +318,9 @@ export async function* executeStreamingRequest(
 		: controller.signal;
 
 	try {
-		const fetchOptions = createFetchOptions(
-			headers,
-			JSON.stringify( request ),
-			signal
-		);
+		const requestBody = JSON.stringify( request );
+
+		const fetchOptions = createFetchOptions( headers, requestBody, signal );
 
 		const response = await fetch( fullAgentUrl, fetchOptions );
 
@@ -324,8 +329,19 @@ export async function* executeStreamingRequest(
 		// Validate streaming response
 		validateStreamingResponse( response, 'streaming request' );
 
-		// Parse the SSE stream and yield task updates
-		yield* parseSSEStream( response.body as ReadableStream< Uint8Array > );
+		// Check if response.body exists
+		if ( ! response.body ) {
+			throw new Error(
+				'Response body is null - server may not support streaming'
+			);
+		}
+
+		const supportDeltas =
+			enableTokenStreaming && request.tokenStreaming === true;
+
+		yield* parseSSEStream( response.body as ReadableStream< Uint8Array >, {
+			supportDeltas,
+		} );
 	} catch ( error ) {
 		handleRequestError( error, timeoutId, 'streaming request' );
 	}

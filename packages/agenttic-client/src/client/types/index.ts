@@ -143,7 +143,10 @@ export interface MessageSendParams {
 	metadata?: Record< string, unknown >;
 }
 
-export type SendMessageRequest = JsonRpcRequest< MessageSendParams >;
+export interface SendMessageRequest
+	extends JsonRpcRequest< MessageSendParams > {
+	tokenStreaming?: boolean; // Enable token-by-token streaming
+}
 export type SendMessageResponse = JsonRpcResponse< Task >;
 
 // Events for streaming responses
@@ -181,6 +184,7 @@ export interface ClientConfig {
 	toolProvider?: ToolProvider;
 	contextProvider?: ContextProvider;
 	conversationStorageKey?: string;
+	enableStreaming?: boolean; // Enable token-by-token streaming (requires server support)
 }
 
 export interface SendMessageParams {
@@ -190,6 +194,7 @@ export interface SendMessageParams {
 	metadata?: Record< string, unknown >;
 	withHistory?: boolean; // Default: true - whether to include conversation history
 	abortSignal?: AbortSignal; // Optional: abort signal for canceling inflight requests
+	enableStreaming?: boolean; // Override client's default streaming setting for this request
 }
 
 export interface TaskUpdate {
