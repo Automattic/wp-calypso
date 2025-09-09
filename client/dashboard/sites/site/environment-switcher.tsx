@@ -84,9 +84,15 @@ const EnvironmentSwitcherDropdown = ( {
 	const mutation = useMutation( stagingSiteCreateMutation( productionSite?.ID ?? 0 ) );
 	const handleCreate = () => {
 		recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_click' );
+
+		createSuccessNotice(
+			__( 'We are adding your staging site. We will send you an email when it is done.' ),
+			{ type: 'snackbar' }
+		);
+
 		mutation.mutate( undefined, {
 			onSuccess: () => {
-				createSuccessNotice( __( 'Staging site created.' ), { type: 'snackbar' } );
+				createSuccessNotice( __( 'Staging site added.' ), { type: 'snackbar' } );
 			},
 			onError: ( error: Error ) => {
 				recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_failure' );
