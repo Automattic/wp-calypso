@@ -89,6 +89,7 @@ export default function RegisterKey( { onClose }: { onClose: () => void } ) {
 							__next40pxDefaultSize
 							type="text"
 							label={ field.label }
+							help={ field.description }
 							placeholder={ field.placeholder }
 							value={ getValue( { item: data } ) }
 							onChange={ ( value ) => {
