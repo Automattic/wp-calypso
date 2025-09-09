@@ -1,4 +1,11 @@
-import { Card, CardBody, RadioControl, SelectControl, TextControl } from '@wordpress/components';
+import {
+	Card,
+	CardBody,
+	RadioControl,
+	SelectControl,
+	__experimentalVStack as VStack,
+	__experimentalHStack as HStack,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 export type Weekday =
@@ -17,16 +24,19 @@ type Props = {
 	onChange: ( next: { frequency: 'daily' | 'weekly'; weekday: Weekday; time: string } ) => void;
 };
 
-export function PluginsScheduleNewFrequency( { frequency, weekday, time, onChange }: Props ) {
-	const isTimeValid = /^([01]\d|2[0-3]):[0-5]\d$/.test( time );
+const HOUR_OPTIONS_24 = [ ...Array( 24 ).keys() ].map( ( i ) => ( {
+	label: i.toString().padStart( 2, '0' ) + ':00',
+	value: i.toString().padStart( 2, '0' ) + ':00',
+} ) );
+
+function ScheduledUpdatesFrequencySelection( { frequency, weekday, time, onChange }: Props ) {
+	const [ hour24 ] = time.split( ':' );
 
 	return (
 		<Card>
 			<CardBody>
-				<fieldset>
-					<legend className="screen-reader-text">{ __( 'Schedule frequency' ) }</legend>
+				<VStack spacing={ 4 }>
 					<RadioControl
-						label={ __( 'Frequency' ) }
 						selected={ frequency }
 						onChange={ ( val: string ) =>
 							onChange( { frequency: val === 'weekly' ? 'weekly' : 'daily', weekday, time } )
@@ -36,32 +46,48 @@ export function PluginsScheduleNewFrequency( { frequency, weekday, time, onChang
 							{ label: __( 'Weekly' ), value: 'weekly' },
 						] }
 					/>
-					{ frequency === 'weekly' && (
+
+					{ frequency === 'weekly' ? (
+						<HStack spacing={ 6 } justify="space-between" alignment="start">
+							<VStack spacing={ 2 } style={ { flex: 1 } }>
+								<SelectControl
+									label={ __( 'Select day' ) }
+									value={ weekday }
+									onChange={ ( val: string ) =>
+										onChange( { frequency, weekday: val as Weekday, time } )
+									}
+									options={ [
+										{ label: __( 'Monday' ), value: 'Monday' },
+										{ label: __( 'Tuesday' ), value: 'Tuesday' },
+										{ label: __( 'Wednesday' ), value: 'Wednesday' },
+										{ label: __( 'Thursday' ), value: 'Thursday' },
+										{ label: __( 'Friday' ), value: 'Friday' },
+										{ label: __( 'Saturday' ), value: 'Saturday' },
+										{ label: __( 'Sunday' ), value: 'Sunday' },
+									] }
+								/>
+							</VStack>
+							<VStack spacing={ 2 } style={ { flex: 1 } }>
+								<SelectControl
+									label={ __( 'Select time' ) }
+									value={ hour24.padStart( 2, '0' ) + ':00' }
+									onChange={ ( val: string ) => onChange( { frequency, weekday, time: val } ) }
+									options={ HOUR_OPTIONS_24 }
+								/>
+							</VStack>
+						</HStack>
+					) : (
 						<SelectControl
-							label={ __( 'Weekday' ) }
-							value={ weekday }
-							onChange={ ( val: string ) =>
-								onChange( { frequency, weekday: val as Weekday, time } )
-							}
-							options={ [
-								{ label: __( 'Monday' ), value: 'Monday' },
-								{ label: __( 'Tuesday' ), value: 'Tuesday' },
-								{ label: __( 'Wednesday' ), value: 'Wednesday' },
-								{ label: __( 'Thursday' ), value: 'Thursday' },
-								{ label: __( 'Friday' ), value: 'Friday' },
-								{ label: __( 'Saturday' ), value: 'Saturday' },
-								{ label: __( 'Sunday' ), value: 'Sunday' },
-							] }
+							label={ __( 'Select time' ) }
+							value={ hour24.padStart( 2, '0' ) + ':00' }
+							onChange={ ( val: string ) => onChange( { frequency, weekday, time: val } ) }
+							options={ HOUR_OPTIONS_24 }
 						/>
 					) }
-					<TextControl
-						label={ __( 'Time (HH:MM)' ) }
-						value={ time }
-						onChange={ ( val: string ) => onChange( { frequency, weekday, time: val } ) }
-						help={ isTimeValid ? undefined : __( 'Enter a valid 24h time, e.g. 04:00' ) }
-					/>
-				</fieldset>
+				</VStack>
 			</CardBody>
 		</Card>
 	);
 }
+
+export default ScheduledUpdatesFrequencySelection;

@@ -1,10 +1,16 @@
-import { Button, Card, CardBody, __experimentalVStack as VStack } from '@wordpress/components';
+import {
+	Button,
+	Card,
+	CardBody,
+	__experimentalVStack as VStack,
+	__experimentalHStack as HStack,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { SectionHeader } from '../../../components/section-header';
-import { PluginsScheduleNewFrequency, type Weekday } from './components/frequency-selection';
+import FrequencySelection, { type Weekday } from './components/frequency-selection';
 import PluginsSelection from './components/plugins-selection';
 import SitesSelection from './components/sites-selection';
 
@@ -45,7 +51,7 @@ function ScheduledUpdatesNew() {
 							onChangeSelection={ ( ids ) => setSelectedPluginSlugs( ids ) }
 						/>
 						<SectionHeader title={ __( '3. Select frequency' ) } />
-						<PluginsScheduleNewFrequency
+						<FrequencySelection
 							frequency={ frequency }
 							weekday={ weekday }
 							time={ time }
@@ -55,15 +61,14 @@ function ScheduledUpdatesNew() {
 								setTime( next.time );
 							} }
 						/>
+						<HStack justify="start">
+							<Button variant="primary" disabled={ ! isValid } __next40pxDefaultSize>
+								{ __( 'Create schedule' ) }
+							</Button>
+						</HStack>
 					</VStack>
 				</CardBody>
 			</Card>
-
-			<div style={ { marginTop: 16 } }>
-				<Button variant="primary" disabled={ ! isValid } __next40pxDefaultSize>
-					{ __( 'Create schedule' ) }
-				</Button>
-			</div>
 		</PageLayout>
 	);
 }
