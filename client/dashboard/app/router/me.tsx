@@ -6,6 +6,7 @@ import {
 	sitesQuery,
 	queryClient,
 	accountRecoveryQuery,
+	smsCountryCodesQuery,
 } from '@automattic/api-queries';
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { rootRoute } from './root';
@@ -162,7 +163,12 @@ export const securityPasswordRoute = createRoute( {
 export const securityAccountRecoveryRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'security/account-recovery',
-	loader: () => queryClient.ensureQueryData( accountRecoveryQuery() ),
+	loader: async () => {
+		await Promise.all( [
+			queryClient.ensureQueryData( accountRecoveryQuery() ),
+			queryClient.ensureQueryData( smsCountryCodesQuery() ),
+		] );
+	},
 } ).lazy( () =>
 	import( '../../me/security-account-recovery' ).then( ( d ) =>
 		createLazyRoute( 'security-account-recovery' )( {

@@ -4,12 +4,12 @@ import {
 	removeAccountRecoverySMSMutation,
 	resendAccountRecoverySMSValidationMutation,
 	validateAccountRecoverySMSCodeMutation,
+	smsCountryCodesQuery,
 } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
 	__experimentalConfirmDialog as ConfirmDialog,
-	__experimentalInputControl as InputControl,
 	Button,
 	Card,
 	CardBody,
@@ -38,6 +38,7 @@ const initialFormData: SecuritySMSFormData = {
 
 export default function RecoverySMS() {
 	const { data: accountRecoveryData } = useSuspenseQuery( accountRecoveryQuery() );
+	const { data: smsCountryCodes } = useSuspenseQuery( smsCountryCodesQuery() );
 
 	const { mutate: validateSMS, isPending: isValidateSMSPending } = useMutation(
 		updateAccountRecoverySMSMutation()
@@ -57,12 +58,13 @@ export default function RecoverySMS() {
 	const accountRecoveryPhone = accountRecoveryData.phone;
 
 	const [ formData, setFormData ] = useState< SecuritySMSFormData >( {
-		...initialFormData,
 		smsNumber: {
 			phoneNumber: accountRecoveryPhone?.number || '',
-			countryCode: accountRecoveryPhone?.country_code || '',
-			countryNumericCode: accountRecoveryPhone?.country_numeric_code || '',
+			countryCode: accountRecoveryPhone?.country_code || smsCountryCodes[ 0 ].code,
+			countryNumericCode:
+				accountRecoveryPhone?.country_numeric_code || smsCountryCodes[ 0 ].numeric_code,
 		},
+		smsCode: '',
 	} );
 	const [ isRemoveDialogOpen, setIsRemoveDialogOpen ] = useState( false );
 	const [ showResendButton, setShowResendButton ] = useState( true );
@@ -174,18 +176,6 @@ export default function RecoverySMS() {
 				id: 'smsCode',
 				label: __( 'SMS code' ),
 				type: 'text',
-				Edit: ( { field, data, onChange } ) => {
-					return (
-						<InputControl
-							__next40pxDefaultSize
-							label={ field.label }
-							value={ data.smsCode }
-							onChange={ ( value ) => {
-								onChange( { ...data, smsCode: value } );
-							} }
-						/>
-					);
-				},
 				isVisible: () => !! shouldShowValidationNotice,
 			},
 		],

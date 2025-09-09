@@ -1,12 +1,12 @@
 import { smsCountryCodesQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	__experimentalInputControl as InputControl,
 	SelectControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useEffect, useCallback } from 'react';
+import { useCallback } from 'react';
 import type { SecuritySMSNumber } from './types';
 
 import './style.scss';
@@ -21,9 +21,7 @@ export default function PhoneNumberInput( {
 	onChange: ( value: Partial< SecuritySMSNumber > ) => void;
 	isDisabled: boolean;
 } ) {
-	const { data: smsCountryCodes, isLoading: isLoadingSmsCountryCodes } = useQuery(
-		smsCountryCodesQuery()
-	);
+	const { data: smsCountryCodes } = useSuspenseQuery( smsCountryCodesQuery() );
 
 	const countryCodes =
 		smsCountryCodes?.map( ( countryCode ) => ( {
@@ -47,16 +45,6 @@ export default function PhoneNumberInput( {
 		[ data, onChange, smsCountryCodes ]
 	);
 
-	// Set the initial country code if it's not already set
-	useEffect( () => {
-		if ( ! smsCountryCodes?.length ) {
-			return;
-		}
-		if ( ! data.countryCode ) {
-			onChangeCountryCode( smsCountryCodes[ 0 ].code );
-		}
-	}, [ smsCountryCodes, onChangeCountryCode, data.countryCode ] );
-
 	return (
 		<HStack>
 			<SelectControl
@@ -66,7 +54,7 @@ export default function PhoneNumberInput( {
 				onChange={ onChangeCountryCode }
 				__next40pxDefaultSize
 				__nextHasNoMarginBottom
-				disabled={ isLoadingSmsCountryCodes || isDisabled }
+				disabled={ isDisabled }
 			/>
 			<InputControl
 				className="phone-number-input__number-input"
