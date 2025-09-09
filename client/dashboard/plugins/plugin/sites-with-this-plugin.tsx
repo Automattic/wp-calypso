@@ -6,7 +6,7 @@ import { usePlugin } from './use-plugin';
 
 const defaultView: View = {
 	type: 'table',
-	fields: [ 'activate', 'autoupdate', 'update' ],
+	fields: [ 'active', 'autoupdate', 'update' ],
 	sort: { field: 'name', direction: 'asc' },
 	titleField: 'domain',
 };
