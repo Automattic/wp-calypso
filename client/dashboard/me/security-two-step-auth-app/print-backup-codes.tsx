@@ -11,7 +11,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { page, cloudDownload, copySmall } from '@wordpress/icons';
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { Notice } from '../../components/notice';
 import { SectionHeader } from '../../components/section-header';
@@ -25,7 +25,7 @@ export default function PrintBackupCodes( { username }: { username?: string } ) 
 		generateBackupCodes();
 	}, [ generateBackupCodes ] );
 
-	const getBackupCodeHTML = useCallback( ( codes: string[] ) => {
+	const getBackupCodeHTML = ( codes: string[] ) => {
 		let html = '<html><head><title>';
 
 		html += __( 'WordPress.com Backup Verification Codes' );
@@ -56,9 +56,9 @@ export default function PrintBackupCodes( { username }: { username?: string } ) 
 		html += '</div></body></html>';
 
 		return html;
-	}, [] );
+	};
 
-	const handlePrint = useCallback( () => {
+	const handlePrint = () => {
 		if ( ! backupCodes?.codes ) {
 			return;
 		}
@@ -73,9 +73,9 @@ export default function PrintBackupCodes( { username }: { username?: string } ) 
 				popup.close();
 			}, 100 );
 		}
-	}, [ backupCodes?.codes, getBackupCodeHTML ] );
+	};
 
-	const handleDownload = useCallback( () => {
+	const handleDownload = () => {
 		if ( ! backupCodes?.codes ) {
 			return;
 		}
@@ -90,15 +90,15 @@ export default function PrintBackupCodes( { username }: { username?: string } ) 
 		link.click();
 		document.body.removeChild( link );
 		URL.revokeObjectURL( url );
-	}, [ backupCodes?.codes, username ] );
+	};
 
-	const handleCopy = useCallback( () => {
+	const handleCopy = () => {
 		if ( ! backupCodes?.codes ) {
 			return;
 		}
 		const codesText = backupCodes.codes.join( '\n' );
 		navigator.clipboard.writeText( codesText );
-	}, [ backupCodes?.codes ] );
+	};
 
 	return (
 		<Card>

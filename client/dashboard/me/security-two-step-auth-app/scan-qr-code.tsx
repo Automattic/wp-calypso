@@ -71,13 +71,17 @@ export default function ScanQRCode() {
 			{
 				id: 'code',
 				type: 'text',
+				label: __( 'Code' ),
+				placeholder: '123456',
 				Edit: ( { field, data, onChange } ) => {
 					const { id, getValue } = field;
 					return (
 						<InputControl
+							hideLabelFromVision
 							__next40pxDefaultSize
 							type="text"
-							placeholder="123456"
+							label={ field.label }
+							placeholder={ field.placeholder }
 							value={ getValue( { item: data } ) }
 							onChange={ ( value ) => {
 								return onChange( { [ id ]: value ?? '' } );

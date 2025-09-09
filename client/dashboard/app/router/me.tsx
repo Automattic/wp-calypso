@@ -191,6 +191,7 @@ export const securityTwoStepAuthRoute = createRoute( {
 export const securityTwoStepAuthAppRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'security/two-step-auth/app',
+	loader: () => queryClient.ensureQueryData( profileQuery() ),
 } ).lazy( () =>
 	import( '../../me/security-two-step-auth-app' ).then( ( d ) =>
 		createLazyRoute( 'security-two-step-auth-app' )( {
