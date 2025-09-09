@@ -1,6 +1,6 @@
 import { fetchTwoStep } from '@automattic/api-core';
 import {
-	profileQuery,
+	userSettingsQuery,
 	userPurchasesQuery,
 	purchaseQuery,
 	sitesQuery,
@@ -14,7 +14,7 @@ import type { AnyRoute } from '@tanstack/react-router';
 export const meRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'me',
-	loader: () => queryClient.ensureQueryData( profileQuery() ),
+	loader: () => queryClient.ensureQueryData( userSettingsQuery() ),
 	beforeLoad: async ( { cause } ) => {
 		if ( cause !== 'enter' ) {
 			return;

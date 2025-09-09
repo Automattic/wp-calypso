@@ -54,7 +54,6 @@
 		"dashboard/v2": true,
 		"dashboard/v2/backport/site-overview": true,
 		"dashboard/v2/backport/sites-list": true,
-		"dashboard/v2/security-settings": true,
 		"design-picker/use-assembler-styles": true,
 		"dev/account-settings-helper": true,
 		"dev/auth-helper": true,

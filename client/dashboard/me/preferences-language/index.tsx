@@ -1,7 +1,4 @@
-import {
-	userSettingsPreferencesMutation,
-	userSettingsPreferencesQuery,
-} from '@automattic/api-queries';
+import { userSettingsMutation, userSettingsQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { getLanguage, isDefaultLocale, isTranslatedIncompletely } from '@automattic/i18n-utils';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -22,14 +19,17 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { languagesAsOptions, shouldDisplayCommunityTranslator, CalypsoLanguage } from './languages';
 import ThanksToCommunityTranslator from './thanks-to-community-translator';
-import type { UserSettingsPreferences } from '@automattic/api-core';
+import type { UserSettings } from '@automattic/api-core';
 import type { Field, Form } from '@wordpress/dataviews';
 
 export default function PreferencesLanguageForm() {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const { data: serverData } = useQuery( userSettingsPreferencesQuery() );
-	const [ formData, setFormData ] = useState< Partial< UserSettingsPreferences > | undefined >();
-	const mutation = useMutation( userSettingsPreferencesMutation() );
+	const { data: serverData } = useQuery( {
+		...userSettingsQuery(),
+		meta: { persist: false },
+	} );
+	const [ formData, setFormData ] = useState< Partial< UserSettings > | undefined >();
+	const mutation = useMutation( userSettingsMutation() );
 
 	// After a successful save we reload the page with a query parameter and then
 	// display the success notice here, finally cleaning the URL so it stays the same.
@@ -101,7 +101,7 @@ export default function PreferencesLanguageForm() {
 		!! formData &&
 		!! serverData &&
 		Object.entries( formData ).some( ( [ key, value ] ) => {
-			return serverData[ key as keyof UserSettingsPreferences ] !== value;
+			return serverData[ key as keyof UserSettings ] !== value;
 		} );
 
 	const hasValidLanguage = !! data?.language;
@@ -125,7 +125,7 @@ export default function PreferencesLanguageForm() {
 		],
 	};
 
-	const languageFields: Field< UserSettingsPreferences >[] = [
+	const languageFields: Field< UserSettings >[] = [
 		{
 			id: 'language',
 			label: __( 'Interface language' ),
@@ -228,11 +228,11 @@ export default function PreferencesLanguageForm() {
 			<Card>
 				<CardBody>
 					<VStack spacing={ 6 } className="dasboard-preferences__vstack">
-						<DataForm< UserSettingsPreferences >
+						<DataForm< UserSettings >
 							data={ data }
 							fields={ languageFields }
 							form={ languageForm }
-							onChange={ ( edits: Partial< UserSettingsPreferences > ) => {
+							onChange={ ( edits: Partial< UserSettings > ) => {
 								setFormData( ( current ) => ( { ...current, ...edits } ) );
 							} }
 						/>

@@ -2,10 +2,14 @@ import { HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet } from '@tanstack/react-router';
-import { __experimentalGrid as Grid, __experimentalText as Text } from '@wordpress/components';
+import {
+	__experimentalGrid as Grid,
+	__experimentalText as Text,
+	Button,
+} from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { __ } from '@wordpress/i18n';
-import { chartBar } from '@wordpress/icons';
+import { __, isRTL } from '@wordpress/i18n';
+import { chartBar, chevronLeft, chevronRight } from '@wordpress/icons';
 import { useState } from 'react';
 import { siteRoute } from '../../app/router/sites';
 import { Callout } from '../../components/callout';
@@ -63,30 +67,73 @@ export function BackupsListPage() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const [ selectedBackup, setSelectedBackup ] = useState< ActivityLogEntry | null >( null );
+	const [ showDetails, setShowDetails ] = useState( false );
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	const columns = isSmallViewport ? 1 : 2;
 
 	const hasBackups = hasHostingFeature( site, HostingFeatures.BACKUPS );
 
+	const handleBackupSelection = ( backup: ActivityLogEntry | null ) => {
+		setSelectedBackup( backup );
+		if ( isSmallViewport && backup ) {
+			setShowDetails( true );
+		}
+	};
+
+	const backButton = (
+		<Button
+			className="dashboard-page-header__back-button"
+			icon={ isRTL() ? chevronRight : chevronLeft }
+			onClick={ () => {
+				setShowDetails( false );
+			} }
+		>
+			{ __( 'Backups' ) }
+		</Button>
+	);
+
+	const renderMobileView = () => {
+		if ( showDetails && selectedBackup ) {
+			return <BackupDetails backup={ selectedBackup } site={ site } />;
+		}
+
+		return (
+			<BackupsList
+				site={ site }
+				selectedBackup={ selectedBackup }
+				setSelectedBackup={ handleBackupSelection }
+				autoSelect={ false }
+			/>
+		);
+	};
+
 	return (
 		<PageLayout
 			header={
 				<PageHeader
-					title={ __( 'Backups' ) }
+					title={ isSmallViewport && showDetails ? __( 'Backup details' ) : __( 'Backups' ) }
+					prefix={ isSmallViewport && showDetails ? backButton : undefined }
 					actions={ hasBackups && <BackupNowButton site={ site } /> }
 				/>
 			}
 			notices={ <BackupNotices site={ site } /> }
 		>
 			{ hasBackups && (
-				<Grid className="dashboard-backups__list-grid" columns={ columns }>
-					<BackupsList
-						site={ site }
-						selectedBackup={ selectedBackup }
-						setSelectedBackup={ setSelectedBackup }
-					/>
-					{ selectedBackup && <BackupDetails backup={ selectedBackup } site={ site } /> }
-				</Grid>
+				<>
+					{ isSmallViewport ? (
+						renderMobileView()
+					) : (
+						<Grid columns={ columns } templateColumns="40% 1fr">
+							<BackupsList
+								site={ site }
+								selectedBackup={ selectedBackup }
+								setSelectedBackup={ handleBackupSelection }
+							/>
+
+							{ selectedBackup && <BackupDetails backup={ selectedBackup } site={ site } /> }
+						</Grid>
+					) }
+				</>
 			) }
 		</PageLayout>
 	);
