@@ -7,18 +7,14 @@ import {
 	__experimentalHStack as HStack,
 	Button,
 	__experimentalText as Text,
-	CustomSelectControl,
 } from '@wordpress/components';
-import { DataForm, Field, Option } from '@wordpress/dataviews';
+import { DataForm, Field } from '@wordpress/dataviews';
 import { useState, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { getSiteDisplayName } from '../../utils/site-name';
+import PreferencesLoginSiteDropdown from '../preferences-login-site-dropdown';
 import { useLoginPreferences, useUpdateLoginPreferences, type LoginPreferencesData } from './query';
-import type { Site } from '@automattic/api-core';
 
 type LoginPreferencesFormData = LoginPreferencesData;
-
-type SiteOption = Option< string >;
 
 export default function PreferencesLogin() {
 	// Fetch login preferences using combined hook
@@ -65,42 +61,28 @@ export default function PreferencesLogin() {
 
 	const isBusy = updatePreferences.isPending || isLoadingPrefs;
 
-	// Prepare site options for DataForm
-	const siteOptions: SiteOption[] = sites.map( ( site: Site ) => ( {
-		value: site.ID.toString(),
-		label: getSiteDisplayName( site ),
-	} ) );
-
 	// Define form fields
 	const fields: Field< LoginPreferencesFormData >[] = [
 		{
 			id: 'primarySiteId',
 			label: __( 'PRIMARY SITE' ),
-			description: __( 'Choose the default site dashboard you’ll see at login.' ),
+			description: __( "Choose the default site dashboard you'll see at login." ),
 			isVisible: () => sites.length > 0,
-			elements: siteOptions,
 			Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
-				const { id, getValue, elements } = field;
+				const { id, getValue } = field;
 				const value = getValue( { item: data } );
-				const typedElements = elements as SiteOption[];
-				const customSelectOptions =
-					typedElements?.map( ( option ) => ( {
-						key: option.value,
-						name: option.label,
-						hint: option.label,
-					} ) ) || [];
 				return (
 					<VStack>
-						<CustomSelectControl
-							__next40pxDefaultSize
-							label={ hideLabelFromVision ? '' : field.label }
-							options={ customSelectOptions }
-							value={ customSelectOptions.find( ( option ) => option.key === value ) }
-							onChange={ ( { selectedItem } ) => {
-								if ( selectedItem?.key ) {
-									onChange( { [ id ]: selectedItem.key } );
+						<PreferencesLoginSiteDropdown
+							sites={ sites }
+							value={ value }
+							onChange={ ( newValue ) => {
+								if ( newValue ) {
+									onChange( { [ id ]: newValue } );
 								}
 							} }
+							label={ hideLabelFromVision ? '' : field.label }
+							hideLabelFromVision={ hideLabelFromVision }
 						/>
 						<Text variant="muted" as="p">
 							{ field.description }

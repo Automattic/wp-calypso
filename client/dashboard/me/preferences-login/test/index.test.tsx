@@ -119,7 +119,7 @@ test( 'renders login preferences form with correct fields', async () => {
 
 	expect( screen.getByText( 'DEFAULT LANDING PAGE' ) ).toBeInTheDocument();
 	expect(
-		screen.getByText( 'Choose the default site dashboard you’ll see at login.' )
+		screen.getByText( "Choose the default site dashboard you'll see at login." )
 	).toBeInTheDocument();
 	expect(
 		screen.getByText( 'Select what you’ll see by default when visiting WordPress.com.' )
