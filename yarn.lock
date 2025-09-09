@@ -15187,9 +15187,9 @@ __metadata:
   resolution: "calypso@workspace:client"
   dependencies:
     "@automattic/accessible-focus": "workspace:^"
+    "@automattic/agenttic-ui": "npm:^0.1.9"
     "@automattic/api-core": "workspace:^"
     "@automattic/api-queries": "workspace:^"
-    "@automattic/agenttic-ui": "npm:^0.1.9"
     "@automattic/block-renderer": "workspace:^"
     "@automattic/browser-data-collector": "workspace:^"
     "@automattic/calypso-analytics": "workspace:^"
@@ -27505,12 +27505,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"motion-dom@npm:^11.18.1":
+  version: 11.18.1
+  resolution: "motion-dom@npm:11.18.1"
+  dependencies:
+    motion-utils: "npm:^11.18.1"
+  checksum: 98378bdf9d77870829cdf3624c5eff02e48cfa820dfc74450364d7421884700048d60e277bfbf477df33270fbae4c1980e5914586f5b6dff28d4921fdca8ac47
+  languageName: node
+  linkType: hard
+
 "motion-dom@npm:^12.23.12":
   version: 12.23.12
   resolution: "motion-dom@npm:12.23.12"
   dependencies:
     motion-utils: "npm:^12.23.6"
   checksum: 1b6a4b86c1aed5b5da7b8a5d1f8310ad169125235bdc1953b8c41cf9f4e2c460ee90bb48ffdae54daecb8db1d7006566ceb5f5c9ccdc82606d548c527cb2631e
+  languageName: node
+  linkType: hard
+
+"motion-utils@npm:^11.18.1":
+  version: 11.18.1
+  resolution: "motion-utils@npm:11.18.1"
+  checksum: dac083bdeb6e433a277ac4362211b0fdce59ff09d6f7897f0f49d1e3561209c6481f676876daf99a33485054bc7e4b1d1b8d1de16f7b1e5c6f117fe76358ca00
   languageName: node
   linkType: hard
 
