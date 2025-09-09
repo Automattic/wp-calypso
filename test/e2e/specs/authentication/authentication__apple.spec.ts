@@ -2,6 +2,10 @@ import { tags, test, expect } from '../../lib/pw-base';
 
 test.describe( 'Authentication: Apple', { tag: [ tags.AUTHENTICATION ] }, () => {
 	test.describe.configure( { mode: 'serial' } ); // Since both tests use the same Apple ID, they should not be run at the same time
+	test.skip(
+		!! process.env.CI,
+		'These tests are problematic on CI since they rely on Apple ID MFA which has a rate limit'
+	);
 
 	let code: string;
 
