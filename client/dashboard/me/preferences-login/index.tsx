@@ -11,13 +11,13 @@ import { DataForm, Field } from '@wordpress/dataviews';
 import { useState, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import PreferencesLoginSiteDropdown from '../preferences-login-site-dropdown';
 import {
 	LandingPage,
 	useLoginPreferences,
 	useUpdateLoginPreferences,
 	type LoginPreferencesData,
 } from './query';
+import PreferencesLoginSiteDropdown from './site-dropdown';
 
 type LoginPreferencesFormData = LoginPreferencesData;
 
