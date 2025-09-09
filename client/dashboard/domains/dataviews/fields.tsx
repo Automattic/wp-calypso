@@ -1,119 +1,19 @@
 import { DomainTypes } from '@automattic/api-core';
-import { Badge } from '@automattic/ui';
-import { Link } from '@tanstack/react-router';
-import { Icon, __experimentalHStack as HStack } from '@wordpress/components';
 import { dateI18n } from '@wordpress/date';
-import { sprintf, __ } from '@wordpress/i18n';
-import { caution, reusableBlock } from '@wordpress/icons';
+import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
-import { domainOverviewRoute } from '../../app/router/domains';
 import { Text } from '../../components/text';
 import { isRecentlyRegistered } from '../../utils/domain';
+import { DomainNameField } from './field-domain-name';
+import { DomainSiteField } from './field-domain-site';
+import { DomainExpiryField } from './field-expiry';
+import { DomainSslField } from './field-ssl';
 import type { DomainSummary, Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 const THREE_DAYS_IN_MINUTES = 3 * 1440;
 
-const textOverflowStyles = {
-	overflowX: 'hidden',
-	textOverflow: 'ellipsis',
-	whiteSpace: 'nowrap',
-} as const;
-
 const IneligibleIndicator = () => <Text color="#CCCCCC">-</Text>;
-
-const DomainName = ( {
-	domain,
-	site,
-	value,
-	showPrimaryDomainBadge,
-}: {
-	domain: DomainSummary;
-	site?: Site;
-	value: string;
-	showPrimaryDomainBadge?: boolean;
-} ) => {
-	const siteSlug = site?.slug ?? domain.site_slug;
-
-	return (
-		<Link
-			to={ domainOverviewRoute.fullPath }
-			params={ { siteSlug, domainName: domain.domain } }
-			disabled={ domain.type === DomainTypes.WPCOM }
-		>
-			<HStack spacing={ 1 }>
-				<span style={ textOverflowStyles }>{ value }</span>
-				{ showPrimaryDomainBadge && domain.primary_domain && (
-					<span style={ { flexShrink: 0 } }>
-						<Badge>{ __( 'Primary' ) }</Badge>
-					</span>
-				) }
-			</HStack>
-		</Link>
-	);
-};
-
-const DomainExpiry = ( {
-	domain,
-	value,
-	isCompact = false,
-}: {
-	domain: DomainSummary;
-	value: string;
-	isCompact?: boolean;
-} ) => {
-	if ( ! domain.expiry ) {
-		return __( 'Free forever' );
-	}
-
-	const isAutoRenewing = Boolean( domain.auto_renewing );
-	const isExpired = new Date( domain.expiry ) < new Date();
-	const isHundredYearDomain = Boolean( domain.is_hundred_year_domain );
-	const renderExpiry = () => {
-		if ( isHundredYearDomain ) {
-			return sprintf(
-				/* translators: %s - The date until which a domain was paid for */
-				__( 'Paid until %s' ),
-				value
-			);
-		}
-
-		if ( isExpired ) {
-			return sprintf(
-				/* translators: %s - The date on which a domain has expired */
-				__( 'Expired on %s' ),
-				value
-			);
-		}
-
-		if ( ! isAutoRenewing ) {
-			return sprintf(
-				/* translators: %s - The date on which a domain expires */
-				__( 'Expires on %s' ),
-				value
-			);
-		}
-
-		return sprintf(
-			/* translators: %s - The future date on which a domain renews */
-			__( 'Renews on %s' ),
-			value
-		);
-	};
-
-	return (
-		<HStack justify="flex-start" alignment="center" spacing={ 1 }>
-			{ ! isCompact && (
-				<Icon
-					icon={ isExpired || isHundredYearDomain ? caution : reusableBlock }
-					size={ 16 }
-					style={ { fill: 'currentColor' } }
-				/>
-			) }
-			<span>{ renderExpiry() }</span>
-		</HStack>
-	);
-};
 
 export const useFields = ( {
 	site,
@@ -132,7 +32,7 @@ export const useFields = ( {
 				enableGlobalSearch: true,
 				getValue: ( { item }: { item: DomainSummary } ) => item.domain,
 				render: ( { field, item } ) => (
-					<DomainName
+					<DomainNameField
 						domain={ item }
 						site={ site }
 						value={ field.getValue( { item } ) }
@@ -142,9 +42,10 @@ export const useFields = ( {
 			},
 			{
 				id: 'is_primary_domain',
+				label: __( 'Primary' ),
 				getValue: ( { item }: { item: DomainSummary } ) => item.primary_domain,
 				render: ( { field, item } ) =>
-					field.getValue( { item } ) ? <Text>{ __( 'Primary' ) }</Text> : null,
+					field.getValue( { item } ) ? <Text>{ __( 'Primary' ) }</Text> : <IneligibleIndicator />,
 			},
 			{
 				id: 'type',
@@ -163,14 +64,20 @@ export const useFields = ( {
 				label: __( 'Site' ),
 				enableHiding: false,
 				enableSorting: true,
-				getValue: ( { item }: { item: DomainSummary } ) => item.blog_name ?? '',
+				getValue: ( { item }: { item: DomainSummary } ) => {
+					return item.blog_name ?? '';
+				},
+				render: ( { field, item } ) => (
+					<DomainSiteField domain={ item } value={ field.getValue( { item } ) } />
+				),
 			},
-			// {
-			// 	id: 'ssl_status',
-			// 	label: __( 'SSL' ),
-			// 	enableHiding: false,
-			// 	enableSorting: true,
-			// },
+			{
+				id: 'ssl_status',
+				label: __( 'SSL' ),
+				enableHiding: true,
+				enableSorting: false,
+				render: ( { item } ) => <DomainSslField domain={ item } />,
+			},
 			{
 				id: 'expiry',
 				label: __( 'Expires/Renews on' ),
@@ -190,7 +97,7 @@ export const useFields = ( {
 					}
 
 					return (
-						<DomainExpiry
+						<DomainExpiryField
 							domain={ item }
 							value={ field.getValue( { item } ) }
 							isCompact={ !! site }
