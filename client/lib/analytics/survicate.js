@@ -41,16 +41,18 @@ export function addSurvicate() {
 
 			const user = getCurrentUser();
 
-			// Ensure _sva is available before calling it
-			// eslint-disable-next-line no-undef
-			if ( typeof _sva !== 'undefined' && _sva.setVisitorTraits ) {
+			setTimeout( () => {
 				// eslint-disable-next-line no-undef
-				_sva.setVisitorTraits( {
-					email: user.email,
-				} );
-			} else {
-				survicateDebug( 'Survicate _sva object not available' );
-			}
+				if ( typeof _sva !== 'undefined' && _sva.setVisitorTraits ) {
+					// eslint-disable-next-line no-undef
+					_sva.setVisitorTraits( {
+						email: user.email,
+					} );
+					survicateDebug( 'Survicate visitor traits set with email: ' + user.email );
+				} else {
+					survicateDebug( 'Survicate _sva object not available' );
+				}
+			}, 1000 );
 		};
 
 		s.onerror = function () {
