@@ -10,6 +10,7 @@ import {
 	siteByIdQuery,
 	queryClient,
 	domainTransferRequestQuery,
+	domainWhoisQuery,
 } from '@automattic/api-queries';
 import {
 	createRoute,
@@ -190,6 +191,8 @@ export const domainForwardingEditRoute = createRoute( {
 export const domainContactInfoRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'contact-info',
+	loader: ( { params: { domainName } } ) =>
+		queryClient.ensureQueryData( domainWhoisQuery( domainName ) ),
 } ).lazy( () =>
 	import( '../../domains/domain-contact-details' ).then( ( d ) =>
 		createLazyRoute( 'domain-contact-info' )( {

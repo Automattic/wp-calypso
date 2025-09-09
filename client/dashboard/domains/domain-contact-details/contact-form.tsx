@@ -29,16 +29,10 @@ interface ContactFormProps {
 	domainName: string;
 	initialData?: DomainContactDetails;
 	onSubmit?: ( data: DomainContactDetails ) => void;
-	onCancel?: () => void;
 	errors?: Partial< Record< keyof DomainContactDetails, string > >;
 }
 
-export default function ContactForm( {
-	domainName,
-	initialData,
-	onSubmit,
-	onCancel,
-}: ContactFormProps ) {
+export default function ContactForm( { domainName, initialData, onSubmit }: ContactFormProps ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: countryList } = useQuery( countryListQuery() );
 	const [ formData, setFormData ] = useState< DomainContactDetails >(
@@ -194,9 +188,6 @@ export default function ContactForm( {
 									disabled={ ! canSave || ! isDirty || isSubmitting }
 								>
 									{ __( 'Save contact info' ) }
-								</Button>
-								<Button variant="secondary" onClick={ onCancel }>
-									{ __( 'Cancel' ) }
 								</Button>
 							</ButtonStack>
 						</form>
