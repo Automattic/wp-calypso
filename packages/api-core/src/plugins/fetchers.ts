@@ -1,7 +1,8 @@
 import languages, { Language } from '@automattic/languages';
 import { find } from 'lodash';
 import { stringify as stringifyQs } from 'qs';
-import { WpOrgPlugin } from './types';
+import { wpcom } from '../wpcom-fetcher';
+import { WpComPlugin, WpOrgPlugin } from './types';
 
 function getWporgLocaleCode( currentUserLocale: string ) {
 	const result = find( languages, { langSlug: currentUserLocale } ) as Language;
@@ -23,6 +24,8 @@ async function getRequest( url: string, query: Record< string, string > ) {
 	if ( response.ok ) {
 		return await response.json();
 	}
+
+	return null;
 }
 
 const WPORG_PLUGINS_ENDPOINT = 'https://api.wordpress.org/plugins/info/1.2/';
@@ -42,4 +45,11 @@ export function fetchWpOrgPlugin( pluginSlug: string, locale: string ): Promise<
 	};
 
 	return getRequest( WPORG_PLUGINS_ENDPOINT, query );
+}
+
+export function fetchWpComPlugin( slug: string ): Promise< WpComPlugin > {
+	return wpcom.req.get( {
+		path: `/marketplace/products/${ slug }`,
+		apiNamespace: 'wpcom/v2',
+	} );
 }

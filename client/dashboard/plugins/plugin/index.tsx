@@ -13,9 +13,9 @@ import { usePlugin } from './use-plugin';
 
 export default function Plugin() {
 	const { pluginId } = pluginRoute.useParams();
-	const { isLoading, sitesWithThisPlugin, wpOrgPlugin } = usePlugin( pluginId );
+	const { isLoading, sitesWithThisPlugin, plugin } = usePlugin( pluginId );
 
-	if ( ! isLoading && ! wpOrgPlugin ) {
+	if ( ! isLoading && ! plugin ) {
 		return (
 			<PageLayout size="large" header={ <PageHeader title={ __( 'Plugin Not Found' ) } /> }>
 				<div>{ __( 'Plugin not found' ) }</div>
@@ -34,9 +34,9 @@ export default function Plugin() {
 
 					<PageHeader
 						title={
-							wpOrgPlugin ? (
+							plugin ? (
 								// @ts-expect-error: Can only set one of `children` or `props.dangerouslySetInnerHTML`.
-								<Text dangerouslySetInnerHTML={ { __html: wpOrgPlugin.name } } />
+								<Text dangerouslySetInnerHTML={ { __html: plugin.name } } />
 							) : (
 								<TextBlur>{ pluginId }</TextBlur>
 							)

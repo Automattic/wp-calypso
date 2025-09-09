@@ -1,5 +1,10 @@
 import { PluginItem, Site } from '@automattic/api-core';
-import { wpOrgPluginQuery, pluginsQuery, sitesQuery } from '@automattic/api-queries';
+import {
+	wpOrgPluginQuery,
+	pluginsQuery,
+	sitesQuery,
+	wpComPluginQuery,
+} from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { useLocale } from '../../app/locale';
@@ -10,6 +15,9 @@ export const usePlugin = ( pluginId: string ) => {
 	const { data: sites, isLoading: isLoadingSites } = useQuery( sitesQuery() );
 	const { data: wpOrgPlugin, isLoading: isLoadingWpOrgPlugin } = useQuery(
 		wpOrgPluginQuery( pluginId, locale )
+	);
+	const { data: wpComPlugin, isLoading: isLoadingWpComPlugin } = useQuery(
+		wpComPluginQuery( pluginId )
 	);
 
 	const pluginBySiteId = useMemo(
@@ -41,10 +49,11 @@ export const usePlugin = ( pluginId: string ) => {
 		: [ [], [] ];
 
 	return {
-		isLoading: isLoadingSitesPlugins || isLoadingSites || isLoadingWpOrgPlugin,
+		isLoading:
+			isLoadingSitesPlugins || isLoadingSites || isLoadingWpOrgPlugin || isLoadingWpComPlugin,
 		pluginBySiteId,
 		sitesWithThisPlugin,
 		sitesWithoutThisPlugin,
-		wpOrgPlugin,
+		plugin: wpOrgPlugin || wpComPlugin,
 	};
 };
