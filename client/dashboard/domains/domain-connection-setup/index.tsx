@@ -26,7 +26,7 @@ import {
 	connectADomainDomainConnectionStepsMap,
 	connectASubdomainDomainConnectionStepsMap,
 } from './steps-map';
-import { DomainConnectionStepsMap, StepName, StepNameValue } from './types';
+import { DomainConnectionStepsMap, StepName, type StepNameValue } from './types';
 import { getProgressStepList, isMappingVerificationSuccess, resolveStepName } from './utils';
 
 export default function DomainConnectionSetup() {
@@ -151,7 +151,7 @@ export default function DomainConnectionSetup() {
 	const StepsComponent = currentStep.component;
 
 	return (
-		<PageLayout size="small" header={ <PageHeader title="Domain Connection Setup" /> }>
+		<PageLayout size="small" header={ <PageHeader title={ __( 'Domain Connection Setup' ) } /> }>
 			{ currentStep.prev && (
 				<HStack>
 					<Button onClick={ goBack } variant="link">
@@ -184,11 +184,11 @@ export default function DomainConnectionSetup() {
 					isOwnershipVerificationFlow={ false }
 				/>
 				<VStack spacing={ 2 }>
-					{ [
-						DomainConnectionSetupMode.SUGGESTED,
-						DomainConnectionSetupMode.ADVANCED,
-						DomainConnectionSetupMode.DONE,
-					].includes( currentStep.mode ) && <SupportLink mode={ currentStep.mode } /> }
+					{ ( currentStep.mode === DomainConnectionSetupMode.SUGGESTED ||
+						currentStep.mode === DomainConnectionSetupMode.ADVANCED ||
+						currentStep.mode === DomainConnectionSetupMode.DONE ) && (
+						<SupportLink mode={ currentStep.mode } />
+					) }
 					<SwitchSetup
 						currentStepType={ currentStep.stepType }
 						currentMode={ currentStep.mode }

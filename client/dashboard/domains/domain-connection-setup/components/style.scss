@@ -18,14 +18,14 @@
 		&--completed {
 			background-color: var( --dashboard__background-color-success );
 			border-color: var( --dashboard__background-color-success );
-			color: #fff;
-			fill: #fff;
+			color: $white;
+			fill: $white;
 		}
 
 		&--current {
 			background-color: var( --wp-admin-theme-color );
 			border-color: var( --wp-admin-theme-color );
-			color: #fff;
+			color: $white;
 		}
 	}
 

@@ -5,13 +5,13 @@ import {
 } from '@wordpress/components';
 import { check } from '@wordpress/icons';
 import clsx from 'clsx';
-import type { ProgressStepList, StepName } from '../types';
+import type { ProgressStepList, StepNameValue } from '../types';
 
 import './style.scss';
 
 interface ProgressProps {
 	steps: ProgressStepList;
-	currentStepName: StepName;
+	currentStepName: StepNameValue;
 }
 
 export default function Progress( { steps, currentStepName }: ProgressProps ) {
@@ -23,19 +23,19 @@ export default function Progress( { steps, currentStepName }: ProgressProps ) {
 	}
 
 	return (
-		<HStack
-			spacing={ 4 }
-			justify="flex-start"
-			alignment="left"
-			className="progress-step"
-			expanded={ false }
-		>
+		<HStack spacing={ 4 } justify="flex-start" alignment="left" expanded={ false }>
 			{ stepEntries.map( ( [ slug, name ], index ) => {
 				const isCompleted = index < currentStepIndex;
 				const isCurrent = index === currentStepIndex;
 
 				return (
-					<HStack key={ slug } spacing={ 2 } justify="flex-start" expanded={ false }>
+					<HStack
+						className="progress-step"
+						key={ slug }
+						spacing={ 2 }
+						justify="flex-start"
+						expanded={ false }
+					>
 						<div
 							className={ clsx( 'progress-step__circle', {
 								'progress-step__circle--completed': isCompleted,
