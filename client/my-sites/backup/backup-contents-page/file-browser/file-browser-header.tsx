@@ -72,16 +72,11 @@ function FileBrowserHeader( {
 		<div className="file-browser-header">
 			{ showHeaderButtons && browserCheckList.totalItems > 0 && (
 				<ButtonStack justify="flex-start">
-					<Button
-						__next40pxDefaultSize
-						className="file-browser-header__download-button"
-						onClick={ onDownloadClick }
-					>
+					<Button __next40pxDefaultSize onClick={ onDownloadClick }>
 						{ __( 'Download selected files' ) }
 					</Button>
 					<Button
 						__next40pxDefaultSize
-						className="file-browser-header__restore-button"
 						onClick={ onRestoreClick }
 						disabled={ ! isRestoreEnabled }
 						variant="primary"
