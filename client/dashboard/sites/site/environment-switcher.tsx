@@ -93,7 +93,7 @@ const EnvironmentSwitcherDropdown = ( {
 		if ( ! connectionHealth?.is_healthy ) {
 			createErrorNotice(
 				__(
-					'Unable to add a staging site due to a Jetpack connection issue. Reload the page or contact support if it persists.'
+					'Cannot add a staging site due to a Jetpack connection issue. Reload the page or contact support if it persists.'
 				),
 				{
 					type: 'snackbar',
