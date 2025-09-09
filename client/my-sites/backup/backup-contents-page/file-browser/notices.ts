@@ -6,10 +6,7 @@ const NOTICE_DURATION = 5000;
 
 export const onRetrievingFileInfoError = () => {
 	return errorNotice(
-		__(
-			'There was an error retrieving your file information. Please, try again.',
-			'jetpack-backup'
-		),
+		__( 'There was an error retrieving your file information. Please, try again.' ),
 		{
 			duration: NOTICE_DURATION,
 			isPersistent: NOTICE_PERSISTENT,
@@ -18,21 +15,15 @@ export const onRetrievingFileInfoError = () => {
 };
 
 export const onProcessingDownloadError = () => {
-	return errorNotice(
-		__( 'There was an error processing your download. Please, try again.', 'jetpack-backup' ),
-		{
-			duration: NOTICE_DURATION,
-			isPersistent: NOTICE_PERSISTENT,
-		}
-	);
+	return errorNotice( __( 'There was an error processing your download. Please, try again.' ), {
+		duration: NOTICE_DURATION,
+		isPersistent: NOTICE_PERSISTENT,
+	} );
 };
 
 export const onPreparingDownloadError = () => {
-	return errorNotice(
-		__( 'There was an error preparing your download. Please, try again.', 'jetpack-backup' ),
-		{
-			duration: NOTICE_DURATION,
-			isPersistent: NOTICE_PERSISTENT,
-		}
-	);
+	return errorNotice( __( 'There was an error preparing your download. Please, try again.' ), {
+		duration: NOTICE_DURATION,
+		isPersistent: NOTICE_PERSISTENT,
+	} );
 };
