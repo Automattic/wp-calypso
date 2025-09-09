@@ -162,12 +162,6 @@ const onboarding: FlowV2< typeof initialize > = {
 						throw new Error( 'No provided dependencies found' );
 					}
 
-					setSiteUrl( providedDependencies.siteUrl as string );
-					setDomain( providedDependencies.suggestion as DomainSuggestion );
-					setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
-					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
-					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
-
 					if ( providedDependencies.navigateToUseMyDomain ) {
 						const currentQueryArgs = getQueryArgs( window.location.href );
 						currentQueryArgs.step = 'domain-input';
@@ -189,6 +183,12 @@ const onboarding: FlowV2< typeof initialize > = {
 						} );
 						return navigate( useMyDomainURL as typeof currentStepSlug );
 					}
+
+					setSiteUrl( providedDependencies.siteUrl as string );
+					setDomain( providedDependencies.suggestion as DomainSuggestion );
+					setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
+					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
+					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
 
 					return navigate( 'plans' );
 				case 'use-my-domain':

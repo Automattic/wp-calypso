@@ -19,7 +19,6 @@ import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login
 import { recordStepNavigation } from '../../internals/analytics/record-step-navigation';
 import { STEPS } from '../../internals/steps';
 import { type FlowV2, type SubmitHandler } from '../../internals/types';
-import type { DomainSuggestion } from '@automattic/api-core';
 
 const clearUseMyDomainsQueryParams = ( currentStepSlug: string | undefined ) => {
 	const isDomainsStep = currentStepSlug === 'domains';
@@ -58,7 +57,7 @@ const domain: FlowV2< typeof initialize > = {
 	__experimentalUseBuiltinAuth: true,
 	initialize,
 	useStepNavigation( currentStepSlug, navigate ) {
-		const { setDomain, setDomainCartItem, setDomainCartItems, setSiteUrl, setSignupDomainOrigin } =
+		const { setDomainCartItem, setDomainCartItems, setSiteUrl, setSignupDomainOrigin } =
 			useDispatch( ONBOARD_STORE ) as OnboardActions;
 
 		const { signupDomainOrigin } = useSelect(
@@ -75,7 +74,7 @@ const domain: FlowV2< typeof initialize > = {
 		const submit: SubmitHandler< typeof initialize > = async ( submittedStep ) => {
 			const { slug, providedDependencies } = submittedStep;
 			switch ( slug ) {
-				case 'domains':
+				case STEPS.DOMAIN_SEARCH.slug:
 					if ( ! providedDependencies ) {
 						throw new Error( 'No provided dependencies found' );
 					}
@@ -102,13 +101,12 @@ const domain: FlowV2< typeof initialize > = {
 					}
 
 					setSiteUrl( providedDependencies.siteUrl as string );
-					setDomain( providedDependencies.suggestion as DomainSuggestion );
 					setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
 					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
 					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
 
 					return navigate( STEPS.NEW_OR_EXISTING_SITE.slug );
-				case 'use-my-domain':
+				case STEPS.USE_MY_DOMAIN.slug:
 					setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
 					if ( providedDependencies?.mode && providedDependencies?.domain ) {
 						setUseMyDomainTracksEventProps( {

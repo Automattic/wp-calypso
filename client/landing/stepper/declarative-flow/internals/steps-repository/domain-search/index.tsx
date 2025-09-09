@@ -13,7 +13,6 @@ import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { useQuery } from '../../../../hooks/use-query';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import type { Step as StepType } from '../../types';
-import type { DomainSuggestion } from '@automattic/api-core';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 import './style.scss';
@@ -28,7 +27,6 @@ type UseMyDomain = {
 type StepSubmission = {
 	navigateToUseMyDomain?: never;
 	siteUrl?: string;
-	suggestion: DomainSuggestion;
 	domainItem: MinimalRequestCartProduct;
 	domainCart: MinimalRequestCartProduct[];
 	signupDomainOrigin?: string;
@@ -74,6 +72,12 @@ const DomainSearchStep: StepType< {
 							navigation.submit( {
 								navigateToUseMyDomain: true,
 								lastQuery: domainName,
+							} );
+						},
+						onContinue: ( items ) => {
+							navigation.submit( {
+								domainCart: items,
+								domainItem: items[ 0 ],
 							} );
 						},
 					} }
