@@ -1,3 +1,5 @@
+import { pushToStagingMutation, pullFromStagingMutation } from '@automattic/api-queries';
+import { useMutation } from '@tanstack/react-query';
 import {
 	Button,
 	ExternalLink,
@@ -30,10 +32,6 @@ import SiteEnvironmentBadge, {
 } from 'calypso/dashboard/components/site-environment-badge';
 import FileBrowser from 'calypso/my-sites/backup/backup-contents-page/file-browser';
 import { useFirstMatchingBackupAttempt } from 'calypso/my-sites/backup/hooks';
-import {
-	usePullFromStagingMutation,
-	usePushToStagingMutation,
-} from 'calypso/sites/staging-site/hooks/use-staging-sync';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setNodeCheckState } from 'calypso/state/rewind/browser/actions';
@@ -44,6 +42,10 @@ import { getSiteSlug, getSiteTitle } from 'calypso/state/sites/selectors';
 import type { FileBrowserConfig } from 'calypso/my-sites/backup/backup-contents-page/file-browser';
 
 import './style.scss';
+
+interface SyncError extends Error {
+	code?: string;
+}
 
 const WP_ROOT_PATH = '/';
 const WP_CONFIG_PATH = '/wp-config.php';
@@ -225,6 +227,7 @@ export default function SyncModal( {
 	const sqlNode = useSelector( ( state ) => getBackupBrowserNode( state, querySiteId, SQL_PATH ) );
 
 	const isSiteWooStore = !! useSelector( ( state ) => isSiteStore( state, querySiteId ) );
+	const querySiteSlug = useSelector( ( state ) => getSiteSlug( state, querySiteId ) ) as string;
 	const filesAndFoldersNodesCheckState = useMemo( () => {
 		const nodes = [ wpContentNode, wpConfigNode ].filter( Boolean );
 		if ( nodes.length === 0 ) {
@@ -255,49 +258,8 @@ export default function SyncModal( {
 		onClose();
 	}, [ dispatch, onClose, querySiteId ] );
 
-	const { pullFromStaging, isLoading: isPullLoading } = usePullFromStagingMutation(
-		productionSiteId,
-		stagingSiteId,
-		{
-			onSuccess: ( _, options ) => {
-				onSyncStart();
-				handleClose();
-				dispatch(
-					recordTracksEvent( 'calypso_hosting_configuration_staging_site_pull_success', options )
-				);
-			},
-			onError: ( error, options ) => {
-				dispatch(
-					recordTracksEvent( 'calypso_hosting_configuration_staging_site_pull_failure', {
-						code: error.code,
-						...options,
-					} )
-				);
-			},
-		}
-	);
-
-	const { pushToStaging, isLoading: isPushLoading } = usePushToStagingMutation(
-		productionSiteId,
-		stagingSiteId,
-		{
-			onSuccess: ( _, options ) => {
-				onSyncStart();
-				handleClose();
-				dispatch(
-					recordTracksEvent( 'calypso_hosting_configuration_staging_site_push_success', options )
-				);
-			},
-			onError: ( error, options ) => {
-				dispatch(
-					recordTracksEvent( 'calypso_hosting_configuration_staging_site_push_failure', {
-						code: error.code,
-						...options,
-					} )
-				);
-			},
-		}
-	);
+	const pullMutation = useMutation( pullFromStagingMutation( productionSiteId, stagingSiteId ) );
+	const pushMutation = useMutation( pushToStagingMutation( productionSiteId, stagingSiteId ) );
 
 	const { backupAttempt: lastKnownBackupAttempt, isLoading: isLoadingBackupAttempt } =
 		useFirstMatchingBackupAttempt( querySiteId, {
@@ -333,9 +295,59 @@ export default function SyncModal( {
 			( syncType === 'pull' && environment === 'production' ) ||
 			( syncType === 'push' && environment === 'staging' )
 		) {
-			pullFromStaging( { types: 'paths', include_paths, exclude_paths } );
+			pullMutation.mutate(
+				{ types: 'paths', include_paths, exclude_paths },
+				{
+					onSuccess: () => {
+						onSyncStart();
+						handleClose();
+						dispatch(
+							recordTracksEvent( 'calypso_hosting_configuration_staging_site_pull_success', {
+								types: 'paths',
+								include_paths,
+								exclude_paths,
+							} )
+						);
+					},
+					onError: ( error: SyncError ) => {
+						dispatch(
+							recordTracksEvent( 'calypso_hosting_configuration_staging_site_pull_failure', {
+								code: error.code,
+								types: 'paths',
+								include_paths,
+								exclude_paths,
+							} )
+						);
+					},
+				}
+			);
 		} else {
-			pushToStaging( { types: 'paths', include_paths, exclude_paths } );
+			pushMutation.mutate(
+				{ types: 'paths', include_paths, exclude_paths },
+				{
+					onSuccess: () => {
+						onSyncStart();
+						handleClose();
+						dispatch(
+							recordTracksEvent( 'calypso_hosting_configuration_staging_site_push_success', {
+								types: 'paths',
+								include_paths,
+								exclude_paths,
+							} )
+						);
+					},
+					onError: ( error: SyncError ) => {
+						dispatch(
+							recordTracksEvent( 'calypso_hosting_configuration_staging_site_push_failure', {
+								code: error.code,
+								types: 'paths',
+								include_paths,
+								exclude_paths,
+							} )
+						);
+					},
+				}
+			);
 		}
 	};
 
@@ -388,8 +400,8 @@ export default function SyncModal( {
 		( browserCheckList.totalItems === 0 &&
 			browserCheckList.includeList.length === 0 &&
 			lastKnownBackupAttempt ) ||
-		isPullLoading ||
-		isPushLoading;
+		pullMutation.isPending ||
+		pushMutation.isPending;
 
 	return (
 		<Modal
@@ -484,6 +496,7 @@ export default function SyncModal( {
 								<FileBrowser
 									rewindId={ rewindId }
 									siteId={ querySiteId }
+									siteSlug={ querySiteSlug }
 									fileBrowserConfig={ fileBrowserConfig }
 								/>
 							</div>
@@ -583,7 +596,7 @@ export default function SyncModal( {
 							<Button
 								variant="primary"
 								onClick={ handleConfirm }
-								isBusy={ isPullLoading || isPushLoading }
+								isBusy={ pullMutation.isPending || pushMutation.isPending }
 								disabled={ isButtonDisabled }
 							>
 								{ syncConfig.submit }

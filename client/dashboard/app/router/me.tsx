@@ -1,9 +1,12 @@
+import { fetchTwoStep } from '@automattic/api-core';
+import {
+	profileQuery,
+	userPurchasesQuery,
+	purchaseQuery,
+	sitesQuery,
+	queryClient,
+} from '@automattic/api-queries';
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
-import { fetchTwoStep } from '../../data/me';
-import { profileQuery } from '../queries/me-profile';
-import { userPurchasesQuery, purchaseQuery } from '../queries/me-purchases';
-import { sitesQuery } from '../queries/sites';
-import { queryClient } from '../query-client';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
 import type { AnyRoute } from '@tanstack/react-router';
@@ -37,6 +40,17 @@ export const profileRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../me/profile' ).then( ( d ) =>
 		createLazyRoute( 'profile' )( {
+			component: d.default,
+		} )
+	)
+);
+
+const preferencesRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'preferences',
+} ).lazy( () =>
+	import( '../../me/preferences' ).then( ( d ) =>
+		createLazyRoute( 'preferences' )( {
 			component: d.default,
 		} )
 	)
@@ -104,7 +118,7 @@ export const paymentMethodsRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'billing/payment-methods',
 } ).lazy( () =>
-	import( '../../me/payment-methods' ).then( ( d ) =>
+	import( '../../me/billing-payment-methods' ).then( ( d ) =>
 		createLazyRoute( 'payment-methods' )( {
 			component: d.default,
 		} )
@@ -221,6 +235,50 @@ export const notificationsRoute = createRoute( {
 	)
 );
 
+export const notificationsSitesRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'notifications/sites',
+} ).lazy( () =>
+	import( '../../me/notifications-sites' ).then( ( d ) =>
+		createLazyRoute( 'notifications-sites' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const notificationsEmailsRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'notifications/emails',
+} ).lazy( () =>
+	import( '../../me/notifications-emails' ).then( ( d ) =>
+		createLazyRoute( 'notifications-emails' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const notificationsCommentsRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'notifications/comments',
+} ).lazy( () =>
+	import( '../../me/notifications-comments' ).then( ( d ) =>
+		createLazyRoute( 'notifications-comments' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const notificationsExtrasRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'notifications/extras',
+} ).lazy( () =>
+	import( '../../me/notifications-extras' ).then( ( d ) =>
+		createLazyRoute( 'notifications-extras' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const blockedSitesRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'blocked-sites',
@@ -250,6 +308,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 
 	const meRoutes: AnyRoute[] = [
 		profileRoute,
+		preferencesRoute,
 		billingRoute,
 		billingHistoryRoute,
 		purchasesRoute,
@@ -264,6 +323,10 @@ export const createMeRoutes = ( config: AppConfig ) => {
 		securityConnectedAppsRoute,
 		securitySocialLoginsRoute,
 		notificationsRoute,
+		notificationsSitesRoute,
+		notificationsEmailsRoute,
+		notificationsCommentsRoute,
+		notificationsExtrasRoute,
 	];
 
 	if ( config.supports.me.privacy ) {

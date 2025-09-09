@@ -1,3 +1,4 @@
+import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
@@ -13,7 +14,7 @@ import { createInterpolateElement, useState } from '@wordpress/element';
 import { __, isRTL, sprintf } from '@wordpress/i18n';
 import { Icon, cloud, chevronLeft, chevronRight } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
-import { siteBySlugQuery } from '../../app/queries/site';
+import { useAnalytics } from '../../app/analytics';
 import { siteBackupRestoreRoute, siteBackupsRoute } from '../../app/router/sites';
 import { useFormattedTime } from '../../components/formatted-time';
 import { PageHeader } from '../../components/page-header';
@@ -32,15 +33,18 @@ function SiteBackupRestore() {
 	const [ currentStep, setCurrentStep ] = useState< RestoreStep >( 'form' );
 	const [ restoreId, setRestoreId ] = useState< number | null >( null );
 	const { createSuccessNotice } = useDispatch( noticesStore );
+	const { recordTracksEvent } = useAnalytics();
 
 	const router = useRouter();
 
 	const handleRestoreInitiate = ( newRestoreId: number ) => {
+		recordTracksEvent( 'calypso_dashboard_backups_restore_started' );
 		setCurrentStep( 'progress' );
 		setRestoreId( newRestoreId );
 	};
 
 	const handleRestoreComplete = () => {
+		recordTracksEvent( 'calypso_dashboard_backups_restore_completed' );
 		setCurrentStep( 'success' );
 		createSuccessNotice( __( 'Site restore completed.' ), {
 			type: 'snackbar',
@@ -48,10 +52,12 @@ function SiteBackupRestore() {
 	};
 
 	const handleRestoreError = () => {
+		recordTracksEvent( 'calypso_dashboard_backups_restore_failed' );
 		setCurrentStep( 'error' );
 	};
 
 	const handleRetry = () => {
+		recordTracksEvent( 'calypso_dashboard_backups_restore_retry' );
 		setCurrentStep( 'form' );
 		setRestoreId( null );
 	};
@@ -103,26 +109,28 @@ function SiteBackupRestore() {
 			header={ <PageHeader prefix={ backButton } title={ __( 'Site restore' ) } /> }
 		>
 			<Card>
-				<CardHeader>
-					<SectionHeader
-						title={ __( 'Restore point' ) }
-						level={ 3 }
-						description={ createInterpolateElement(
-							/* translators: %s is the date of the restore point */
-							sprintf( __( '%(restorePointDate)s. <LearnMore />' ), {
-								restorePointDate,
-							} ),
-							{
-								LearnMore: (
-									<ExternalLink href="https://jetpack.com/support/backup/restoring-with-jetpack-backup/">
-										{ __( 'Learn more' ) }
-									</ExternalLink>
-								),
-							}
-						) }
-						decoration={ <Icon icon={ cloud } /> }
-					/>
-				</CardHeader>
+				{ currentStep !== 'success' && (
+					<CardHeader>
+						<SectionHeader
+							title={ __( 'Restore point' ) }
+							level={ 3 }
+							description={ createInterpolateElement(
+								/* translators: %s is the date of the restore point */
+								sprintf( __( '%(restorePointDate)s. <LearnMore />' ), {
+									restorePointDate,
+								} ),
+								{
+									LearnMore: (
+										<ExternalLink href="https://jetpack.com/support/backup/restoring-with-jetpack-backup/">
+											{ __( 'Learn more' ) }
+										</ExternalLink>
+									),
+								}
+							) }
+							decoration={ <Icon icon={ cloud } /> }
+						/>
+					</CardHeader>
+				) }
 				<CardBody>
 					<VStack spacing={ 4 }>{ renderStep() }</VStack>
 				</CardBody>

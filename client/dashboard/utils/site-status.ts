@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import type { Site } from '../data/types';
+import type { Site } from '@automattic/api-core';
 
 export const STATUS_LABELS = {
 	public: __( 'Public' ),
@@ -40,6 +40,37 @@ export function getSiteStatus( item: Site ) {
 	}
 
 	return 'public';
+}
+
+export function getSiteMigrationState( item: Site ) {
+	const { migration_status } = item.site_migration;
+	if ( migration_status === 'migration-in-progress' ) {
+		return { status: 'started', type: 'difm' };
+	}
+
+	const [ , status, type ] = migration_status?.split( '-' ) ?? [];
+	if ( ! [ 'pending', 'started', 'completed' ].includes( status ) ) {
+		return null;
+	}
+
+	if ( ! [ 'difm', 'diy' ].includes( type ) ) {
+		return null;
+	}
+
+	if ( ! status || ! type ) {
+		return null;
+	}
+
+	return { status, type };
+}
+
+export function isSiteMigrationInProgress( item: Site ) {
+	const { status } = getSiteMigrationState( item ) ?? {};
+	if ( ! status ) {
+		return false;
+	}
+
+	return [ 'pending', 'started' ].includes( status );
 }
 
 export function getSiteStatusLabel( item: Site ) {

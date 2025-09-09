@@ -2,6 +2,7 @@ import { BadgeType, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { A4A_SITES_LINK_NEEDS_SETUP } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/status-badge';
+import { isWPCOMHostingProduct } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
 import { addQueryArgs, urlToSlug } from 'calypso/lib/url';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { ReferralPurchase } from '../../types';
@@ -39,12 +40,14 @@ const AssignedTo = ( { purchase, handleAssignToSite, data, isFetching }: Props )
 	const translate = useTranslate();
 	const product = data?.find( ( product ) => product.product_id === purchase.product_id );
 	const isPressable = product?.slug.startsWith( 'pressable' );
-	const isWPCOMLicense = product?.family_slug === 'wpcom-hosting';
+	const licenseKey = purchase.license?.license_key || '';
+	const isWPCOMLicense = isWPCOMHostingProduct( licenseKey );
+
 	const redirectUrl =
 		purchase.license &&
 		( isWPCOMLicense
-			? addQueryArgs( { license_key: purchase.license.license_key }, A4A_SITES_LINK_NEEDS_SETUP )
-			: addQueryArgs( { key: purchase.license.license_key }, '/marketplace/assign-license' ) );
+			? addQueryArgs( { license_key: licenseKey }, A4A_SITES_LINK_NEEDS_SETUP )
+			: addQueryArgs( { key: licenseKey }, '/marketplace/assign-license' ) );
 
 	const showAssignButton = purchase.status === 'active' && redirectUrl;
 	const [ statusType, statusText ] = getPurchaseStatus( purchase, translate );

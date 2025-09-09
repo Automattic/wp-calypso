@@ -1,27 +1,10 @@
+import {
+	siteBackupFilteredDownloadStatusQuery,
+	siteBackupFilteredDownloadPrepareMutation,
+} from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from '@wordpress/element';
-import wp from 'calypso/lib/wp';
 import { PREPARE_DOWNLOAD_STATUS } from './constants';
-
-interface PrepareDownloadArgs {
-	siteId: number;
-	rewindId: string;
-	manifestFilter: string;
-	dataType: number;
-}
-
-interface FilteredPrepareResponse {
-	ok: boolean;
-	key: string;
-}
-
-interface FilteredStatusResponse {
-	ok: boolean;
-	status: string;
-	download_id: string;
-	token: string;
-	url: string;
-}
 
 export const usePrepareDownload = ( siteId: number, onError: () => void ) => {
 	const [ status, setStatus ] = useState( PREPARE_DOWNLOAD_STATUS.NOT_STARTED );
@@ -35,66 +18,39 @@ export const usePrepareDownload = ( siteId: number, onError: () => void ) => {
 		onError();
 	}, [ onError ] );
 
-	const {
-		data,
-		isSuccess: isQuerySuccess,
-		isError: isQueryError,
-	} = useQuery< FilteredStatusResponse >( {
-		queryKey: [ 'jetpack-backup-filtered-status', buildKey, siteId, dataType ],
-		queryFn: () =>
-			wp.req.post(
-				{
-					path: `/sites/${ siteId }/rewind/backup/filtered/status`,
-					apiNamespace: 'wpcom/v2',
-				},
-				{
-					data_type: dataType,
-					key: buildKey,
-				}
-			),
-		enabled: buildKey !== '' && status === PREPARE_DOWNLOAD_STATUS.PREPARING,
-		refetchInterval: 5000, // 5 seconds
-		retry: false,
+	const { data, isSuccess, isError } = useQuery( {
+		...siteBackupFilteredDownloadStatusQuery( siteId, buildKey, dataType ),
+		enabled: !! buildKey && status === PREPARE_DOWNLOAD_STATUS.PREPARING,
+		refetchInterval: 5000,
 	} );
 
 	useEffect( () => {
-		if ( isQuerySuccess && data?.status === 'ready' ) {
+		if ( isSuccess && data?.status === 'ready' ) {
 			setStatus( PREPARE_DOWNLOAD_STATUS.READY );
 		}
 
-		if ( isQueryError ) {
+		if ( isError ) {
 			handleError();
 		}
-	}, [ isQuerySuccess, isQueryError, handleError, data?.status ] );
+	}, [ isSuccess, isError, handleError, data?.status ] );
 
-	const mutation = useMutation( {
-		mutationFn: ( { siteId, rewindId, manifestFilter, dataType }: PrepareDownloadArgs ) =>
-			wp.req.post(
-				{
-					path: `/sites/${ siteId }/rewind/backup/filtered/prepare`,
-					apiNamespace: 'wpcom/v2',
-				},
-				{
-					backup_id: rewindId,
-					manifest_filter: manifestFilter,
-					data_type: dataType,
-				}
-			),
-		onSuccess: ( data: FilteredPrepareResponse ) => {
-			setBuildKey( data.key );
-		},
-		onError: handleError,
-	} );
-
-	const { mutate } = mutation;
+	const { mutate } = useMutation( siteBackupFilteredDownloadPrepareMutation() );
 
 	const prepareDownload = useCallback(
 		( siteId: number, rewindId: string, manifestFilter: string, dataType: number ) => {
 			setStatus( PREPARE_DOWNLOAD_STATUS.PREPARING );
 			setDataType( dataType );
-			return mutate( { siteId, rewindId, manifestFilter, dataType } );
+			return mutate(
+				{ siteId, rewindId, manifestFilter, dataType },
+				{
+					onSuccess: ( data ) => {
+						setBuildKey( data.key );
+					},
+					onError: handleError,
+				}
+			);
 		},
-		[ mutate ]
+		[ mutate, handleError ]
 	);
 
 	return {

@@ -10,6 +10,7 @@ import { __ } from '@wordpress/i18n';
 import { info, published, error, closeSmall } from '@wordpress/icons';
 import clsx from 'clsx';
 import { forwardRef } from 'react';
+import { ButtonStack } from '../button-stack';
 import { caution } from './icons';
 import type { NoticeVariant, NoticeProps } from './types';
 import './style.scss';
@@ -64,9 +65,9 @@ function UnforwardedNotice(
 							<span className="dashboard-notice__description">{ children }</span>
 						</VStack>
 						{ actions && (
-							<HStack className="dashboard-notice__actions" spacing={ 3 } justify="flex-start">
+							<ButtonStack className="dashboard-notice__actions" justify="flex-start">
 								{ actions }
-							</HStack>
+							</ButtonStack>
 						) }
 					</VStack>
 					{ !! onClose && (

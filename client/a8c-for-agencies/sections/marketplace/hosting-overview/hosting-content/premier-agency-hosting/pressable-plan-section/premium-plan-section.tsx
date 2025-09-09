@@ -1,8 +1,12 @@
 import { formatCurrency } from '@automattic/number-formatters';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
+import { external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { A4A_MARKETPLACE_HOSTING_REFER_PRESSABLE_PREMIUM_PLAN_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
+import useScheduleCall from 'calypso/a8c-for-agencies/hooks/use-schedule-call';
+import { PRESSABLE_PREMIUM_PLAN_COMMISSION_PERCENTAGE } from 'calypso/a8c-for-agencies/sections/marketplace/lib/constants';
 import PressableLogo from 'calypso/assets/images/a8c-for-agencies/pressable-logo.svg';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -18,6 +22,10 @@ export default function PremiumPlanSection( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
+	const isDesktop = useBreakpoint( '>1280px' );
+
+	const { scheduleCall, isLoading } = useScheduleCall();
+
 	const onReferNowClick = () => {
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_marketplace_hosting_pressable_premium_refer_now_click' )
@@ -28,6 +36,7 @@ export default function PremiumPlanSection( {
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_marketplace_hosting_pressable_premium_talk_to_us_click' )
 		);
+		scheduleCall();
 	};
 
 	return (
@@ -38,7 +47,11 @@ export default function PremiumPlanSection( {
 
 				<div className="premium-plan-section__content">
 					<div className="premium-plan-section__heading">
-						{ translate( 'Earn 20% on Premium Plan Referrals' ) }
+						{ translate( 'Earn %(commission)s%% on Premium Plan Referrals', {
+							args: {
+								commission: PRESSABLE_PREMIUM_PLAN_COMMISSION_PERCENTAGE,
+							},
+						} ) }
 					</div>
 					<div className="premium-plan-section__subheading">
 						{ translate( 'For mission critical sites that demand extra attention and resources.' ) }
@@ -57,15 +70,18 @@ export default function PremiumPlanSection( {
 
 						<Button
 							className="premium-plan-section__cta-button"
-							href="https://wpvip.com/get-a-demo/?utm_source=partner&utm_medium=referral&utm_campaign=a4a"
 							onClick={ onTalkToUsClick }
-							target="_blank"
 							variant="secondary"
+							icon={ external }
 							iconPosition="right"
 							iconSize={ 16 }
 							__next40pxDefaultSize
+							isBusy={ isLoading }
+							disabled={ isLoading }
 						>
-							{ translate( 'Buying for your agency? Talk to us' ) }
+							{ isDesktop
+								? translate( 'Buying for your agency? Talk to us' )
+								: translate( 'For your agency? Talk to us' ) }
 						</Button>
 					</div>
 				</div>
@@ -78,7 +94,7 @@ export default function PremiumPlanSection( {
 							price: formatCurrency( 350, 'USD', {
 								stripZeros: true,
 							} ),
-							commission: '20',
+							commission: PRESSABLE_PREMIUM_PLAN_COMMISSION_PERCENTAGE,
 						},
 					}
 				) }

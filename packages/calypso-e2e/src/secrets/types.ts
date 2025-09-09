@@ -26,6 +26,9 @@ export interface TestAccountCredentials {
 	};
 }
 
+/**
+ * Secrets needed for end-to-end tests.
+ */
 export interface Secrets {
 	storeSandboxCookieValue: string;
 	testCouponCode: string;

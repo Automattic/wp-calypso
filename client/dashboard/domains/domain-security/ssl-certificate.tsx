@@ -1,3 +1,4 @@
+import { provisionSslCertificateMutation } from '@automattic/api-queries';
 import { Badge } from '@automattic/ui';
 import { CONTACT } from '@automattic/urls';
 import { useMutation } from '@tanstack/react-query';
@@ -15,12 +16,11 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { ReactElement } from 'react';
-import { provisionSslCertificateMutation } from '../../app/queries/domain-ssl';
 import { domainSecurityRoute } from '../../app/router/domains';
+import { ButtonStack } from '../../components/button-stack';
 import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
-import type { Domain } from '../../data/domain';
-import type { SslDetails } from '../../data/domain-ssl';
+import type { Domain, SslDetails } from '@automattic/api-core';
 
 interface SslCertificateProps {
 	domainName: string;
@@ -167,7 +167,7 @@ export default function SslCertificate( { domainName, domain, sslDetails }: SslC
 							</Text>
 						) }
 						{ shouldShowProvisionButton && (
-							<HStack justify="flex-start">
+							<ButtonStack justify="flex-start">
 								<Button
 									__next40pxDefaultSize
 									variant="primary"
@@ -177,7 +177,7 @@ export default function SslCertificate( { domainName, domain, sslDetails }: SslC
 								>
 									{ __( 'Provision certificate' ) }
 								</Button>
-							</HStack>
+							</ButtonStack>
 						) }
 					</VStack>
 				</VStack>

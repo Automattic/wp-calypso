@@ -1,8 +1,8 @@
-import config from '@automattic/calypso-config';
-import { DotcomFeatures, HostingFeatures } from '../data/constants';
+import { DotcomFeatures, HostingFeatures } from '@automattic/api-core';
 import { hasHostingFeature, hasPlanFeature } from '../utils/site-features';
+import { isSiteMigrationInProgress } from '../utils/site-status';
 import { isSelfHostedJetpackConnected, isP2 } from '../utils/site-types';
-import type { Site, User } from '../data/types';
+import type { Site, User } from '@automattic/api-core';
 
 export function canManageSite( site: Site ) {
 	if ( site.is_deleted || ! site.capabilities.manage_options ) {
@@ -62,20 +62,19 @@ export function canResetSite( site: Site ) {
 	return ! site.is_wpcom_staging_site;
 }
 
-export function canDeleteSite( site: Site ) {
-	// For staging sites, only show delete if the redesign feature flag is enabled
-	if ( site.is_wpcom_staging_site ) {
-		return config.isEnabled( 'hosting/staging-sites-redesign' );
+export function canSwitchEnvironment( site: Site ) {
+	if ( isSiteMigrationInProgress( site ) ) {
+		return false;
 	}
 
-	return ! site.is_wpcom_staging_site;
-}
-
-export function canSwitchEnvironment( site: Site ) {
 	return hasHostingFeature( site, HostingFeatures.STAGING_SITE );
 }
 
 export function canCreateStagingSite( site: Site ) {
+	if ( isSiteMigrationInProgress( site ) ) {
+		return false;
+	}
+
 	return (
 		hasHostingFeature( site, HostingFeatures.STAGING_SITE ) &&
 		! site.is_wpcom_staging_site &&

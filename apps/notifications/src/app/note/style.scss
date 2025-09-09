@@ -1,6 +1,14 @@
+@import "@wordpress/base-styles/colors";
 @import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
+@import "./reset.scss";
 
-.wpnc__main {
+.wpnc__note .wpnc__body .wpnc__body-content {
+	padding: 0;
+	margin: 0;
+	line-height: 20px;
+	text-wrap: balance;
+
 	.has-text-align-center {
 		text-align: center;
 	}
@@ -18,15 +26,21 @@
 	}
 
 	.wpnc__h1 {
-		font-size: $font-headline-small;
+		font-size: $font-size-2x-large;
+		font-weight: 850; /* stylelint-disable-line scales/font-weights */
+		line-height: 1.4;
 	}
 
 	.wpnc__h2 {
-		font-size: $font-title-large;
+		font-size: 26px;
+		font-weight: 750; /* stylelint-disable-line scales/font-weights */
+		line-height: 1.4;
 	}
 
 	.wpnc__h3 {
-		font-size: $font-title-medium;
+		font-size: 18px;
+		font-weight: 700;
+		line-height: 1.4;
 	}
 
 	.uppercase {
@@ -66,22 +80,67 @@
 
 	.wpnc__image {
 		display: block;
-		margin: auto;
 		max-width: 100%;
 		height: auto;
+		margin: auto;
 	}
 
 	.wpnc__badge {
 		display: block;
 		margin: 0 auto;
-		padding: 36px 16px 16px;
+		padding: $grid-unit-20;
+	}
+
+	.wpnc__paragraph {
+		padding: $grid-unit-20 0;
+
+		&:first-child {
+			padding-top: 0;
+		}
+
+		&:has(.wpnc__button) {
+			margin: 0 -#{$grid-unit-20};
+			padding: 16px;
+			border-top: 1px solid $gray-300;
+		}
+	}
+
+	.wpnc__button {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		height: 36px;
+		padding: 6px 12px;
+		margin: 0;
+		border: 0;
+		border-radius: 2px;
+		box-sizing: border-box;
+		font-family: inherit;
+		font-size: 13px;
+		color: var(--wp-components-color-accent-inverted, #fff);
+		background: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9 ));
+		white-space: nowrap;
+		text-decoration: none;
+		text-shadow: none;
+		outline: 1px solid transparent;
+		cursor: pointer;
+
+		&:hover:not(:disabled) {
+			color: var(--wp-components-color-accent-inverted, #fff);
+			background: var(--wp-components-color-accent-darker-10, var(--wp-admin-theme-color-darker-10, #2145e6));
+		}
+	}
+
+	.wpnc__hr-separator {
+		border: none;
+		border-top: 1px solid $gray-300;
 	}
 
 	// Links
 	a,
 	a:visited {
 		color: var(--wp-admin-theme-color);
-		text-decoration: none;
 	}
 
 	a:hover,
@@ -104,39 +163,38 @@
 		max-width: 128px;
 	}
 
-	.wpnc__note {
-		blockquote {
-			padding: 0 24px 0 32px;
-			margin: 16px 0 32px;
-			border-left: 3px solid #f6f7f7;
-			color: #646970;
-			font-weight: 400;
-			background: transparent;
-		}
+	blockquote {
+		padding: 0 $grid-unit-20;
+		margin: 0 0 $grid-unit-20 0;
+		box-shadow: inset 3px 0 0 #f0f0f0;
+		font-weight: 400;
+		font-style: italic;
+		color: #646970;
+		background: transparent;
+	}
 
-		ul,
-		ol {
-			margin-left: 1.5em;
-			list-style-position: inside;
-		}
+	ul,
+	ol {
+		margin-left: 1.5em;
+		list-style-position: inside;
+	}
 
+	ul {
+		list-style-type: disc;
 		ul {
-			list-style-type: disc;
+			list-style-type: circle;
 			ul {
-				list-style-type: circle;
-				ul {
-					list-style-type: square;
-				}
+				list-style-type: square;
 			}
 		}
+	}
 
-		ol {
-			list-style-type: decimal;
-		}
+	ol {
+		list-style-type: decimal;
+	}
 
-		li {
-			margin: auto;
-		}
+	li {
+		margin: auto;
 	}
 }
 
@@ -145,5 +203,92 @@
 
 	> .components-base-control__field {
 		margin-bottom: 0;
+	}
+}
+
+.wpnc__subject {
+	.wpnc__user,
+	.wpnc__post {
+		font-weight: 500;
+	}
+}
+
+.wpnc__text-summary {
+	.components-external-link {
+		color: inherit;
+	}
+
+	.components-external-link__contents {
+		text-decoration: none;
+	}
+}
+
+/**
+ * User
+ */
+.wpnc__user {
+	.wpnc__note & {
+		padding: 0;
+	}
+
+	.wpnc__user-title {
+		font-weight: 500;
+	}
+
+	a {
+		text-decoration: none;
+	}
+}
+
+/**
+ * Comment
+ */
+.wpnc__note.wpnc__comment .wpnc__body .wpnc__body-content {
+	padding: 0 0 0 $grid-unit-20;
+	box-shadow: inset 3px 0 0 #f0f0f0;
+
+	.wpnc__user {
+		padding: 0 0 $grid-unit-20 0;
+	}
+}
+
+/**
+ * Likes, Follows
+ */
+.wpnc__note.wpnc__like .wpnc__body .wpnc__body-content,
+.wpnc__note.wpnc__comment_like .wpnc__body .wpnc__body-content,
+.wpnc__note.wpnc__follow .wpnc__body .wpnc__body-content {
+	.wpnc__user {
+		padding-bottom: 16px;
+		border-bottom: 1px solid $gray-300;
+
+		&:not(:first-child) {
+			padding-top: 16px;
+		}
+	}
+
+	.wpnc__paragraph {
+		padding: 16px 0 0;
+	}
+}
+
+.wpnc__action-link.has-icon.has-text {
+	flex: 1;
+	justify-content: center;
+}
+
+/**
+ * Reply
+ */
+.wpnc__reply {
+	color: #646970;
+
+	.wpnc__gridicon {
+		fill: currentColor;
+	}
+
+	a {
+		font-weight: 600;
+		color: inherit;
 	}
 }

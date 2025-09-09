@@ -1,4 +1,4 @@
-import { __experimentalVStack as VStack, ExternalLink } from '@wordpress/components';
+import { __experimentalVStack as VStack, CardFooter, ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect, useMemo } from 'react';
@@ -15,7 +15,7 @@ import NotePreface from './preface';
 import type { Note, Block, BlockWithSignature } from '../types';
 
 const isReplyBlock = ( note: Note, block: Block ) =>
-	block.ranges && block.ranges.length > 1 && block.ranges[ 1 ].id === note.meta?.ids.reply_comment;
+	block.ranges && block.ranges.length > 1 && block.ranges[ 1 ].id === note.meta?.ids?.reply_comment;
 
 const ReplyBlock = ( { note }: { note: Note } ) => {
 	const [ replyURL, setReplyURL ] = useState< string >( '' );
@@ -34,9 +34,14 @@ const ReplyBlock = ( { note }: { note: Note } ) => {
 			return;
 		}
 
+		const { site: siteId, reply_comment: replyCommentId } = note.meta?.ids || {};
+		if ( ! siteId || ! replyCommentId ) {
+			return;
+		}
+
 		wpcom()
-			.site( note.meta.ids.site )
-			.comment( note.meta.ids.reply_comment )
+			.site( siteId )
+			.comment( replyCommentId )
 			.get( ( error: Error | null, data: { URL: string } ) => {
 				if ( ! error ) {
 					setReplyURL( data.URL );
@@ -50,9 +55,9 @@ const ReplyBlock = ( { note }: { note: Note } ) => {
 
 	if ( replyURL ) {
 		const replyMessage = createInterpolateElement(
-			note.meta.ids.comment
+			note.meta?.ids?.comment
 				? __( 'You <a>replied</a> to this comment.' )
-				: __( 'You <a>replied<a> to this post.' ),
+				: __( 'You <a>replied</a> to this post.' ),
 			{
 				a: <ExternalLink href={ replyURL } children={ null } />,
 			}
@@ -69,7 +74,7 @@ const ReplyBlock = ( { note }: { note: Note } ) => {
 	return null;
 };
 
-export const ActionBlock = ( { note }: { note: Note } ) => {
+export const ActionBlock = ( { note, goBack }: { note: Note; goBack: () => void } ) => {
 	const blocks: BlockWithSignature[] = zipWithSignature( note.body, note );
 	const actionBlock = blocks.findLast(
 		( block ) => block.block.actions && 'user' !== block.signature.type
@@ -79,7 +84,14 @@ export const ActionBlock = ( { note }: { note: Note } ) => {
 		return null;
 	}
 
-	return <NoteActions note={ note } />;
+	return (
+		<CardFooter
+			size="small"
+			style={ { position: 'sticky', bottom: 0, background: '#fff', zIndex: 1 } }
+		>
+			<NoteActions note={ note } goBack={ goBack } />
+		</CardFooter>
+	);
 };
 
 export const NoteBody = ( { note }: { note: Note } ) => {
@@ -103,16 +115,7 @@ export const NoteBody = ( { note }: { note: Note } ) => {
 
 			switch ( block.signature.type ) {
 				case 'user':
-					return (
-						<User
-							key={ key }
-							block={ block.block }
-							noteType={ note.type }
-							note={ note }
-							timestamp={ note.timestamp }
-							url={ note.url }
-						/>
-					);
+					return <User key={ key } block={ block.block } note={ note } />;
 				case 'comment':
 					return <Comment key={ key } block={ block.block } meta={ note.meta } />;
 				case 'post':
@@ -131,9 +134,7 @@ export const NoteBody = ( { note }: { note: Note } ) => {
 	return (
 		<VStack className="wpnc__body">
 			{ preface }
-			<div className="wpnc__body-content" style={ { margin: '0' } }>
-				{ body }
-			</div>
+			<div className="wpnc__body-content">{ body }</div>
 			<ReplyBlock note={ note } />
 		</VStack>
 	);

@@ -5,8 +5,9 @@ import {
 	TextareaControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { send } from '@wordpress/icons';
 import debugModule from 'debug';
-import { useRef, useState, useEffect, useContext, useCallback } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import repliesCache from '../../panel/comment-replies-cache';
 import { modifierKeyIsActive } from '../../panel/helpers/input';
@@ -16,7 +17,7 @@ import { wpcom } from '../../panel/rest-client/wpcom';
 import actions from '../../panel/state/actions';
 import getKeyboardShortcutsEnabled from '../../panel/state/selectors/get-keyboard-shortcuts-enabled';
 import Suggestions from '../../panel/suggestions';
-import { RestClientContext } from '../context';
+import { useAppContext } from '../context';
 import type { Note } from '../types';
 import type { FormEvent } from 'react';
 
@@ -51,7 +52,7 @@ function getRowCount( textareaElement: HTMLTextAreaElement | null ) {
 // 2. Route back to list after successful comment post (should we?)
 const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: string } ) => {
 	const dispatch = useDispatch();
-	const restClient = useContext( RestClientContext );
+	const { client } = useAppContext();
 	const keyboardShortcutsAreEnabled = useSelector( ( state ) =>
 		getKeyboardShortcutsEnabled( state )
 	);
@@ -91,12 +92,14 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 
 			let wpObject;
 			let submitComment;
-			if ( note.meta.ids.comment ) {
+			if ( note.meta?.ids?.site && note.meta?.ids?.comment ) {
 				wpObject = wpcom().site( note.meta.ids.site ).comment( note.meta.ids.comment );
 				submitComment = wpObject.reply;
-			} else {
+			} else if ( note.meta?.ids?.site && note.meta?.ids?.post ) {
 				wpObject = wpcom().site( note.meta.ids.site ).post( note.meta.ids.post ).comment();
 				submitComment = wpObject.add;
+			} else {
+				return;
 			}
 
 			submitComment.call( wpObject, replyInputRef.current.value, ( error: Error | null ) => {
@@ -113,10 +116,10 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 					return;
 				}
 
-				if ( note.meta.ids.comment ) {
+				if ( note.meta?.ids?.comment ) {
 					// pre-emptively approve the comment if it wasn't already
 					dispatch( actions.notes.approveNote( note.id, true ) );
-					restClient?.getNote( note.id );
+					client?.getNote( note.id );
 				}
 
 				// remove focus from textarea so we can resume using keyboard
@@ -131,7 +134,7 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 				repliesCache.removeItem( savedReplyKey );
 			} );
 		},
-		[ restClient, note, savedReplyKey, isSubmittingRef, dispatch ]
+		[ client, note, savedReplyKey, isSubmittingRef, dispatch ]
 	);
 
 	const handleChange = ( value: string ) => {
@@ -212,13 +215,14 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 	return (
 		<VStack>
 			<form onSubmit={ handleSubmit }>
-				<HStack spacing={ 4 } alignment="flex-start">
+				<HStack spacing={ 2 } alignment="flex-start">
 					<TextareaControl
 						className="comment-reply-input__textarea"
 						ref={ replyInputRef }
 						rows={ getRowCount( replyInputRef.current ) }
 						value={ value }
 						placeholder={ defaultValue }
+						__nextHasNoMarginBottom
 						onFocus={ handleFocus }
 						onBlur={ handleBlur }
 						onChange={ handleChange }
@@ -229,16 +233,15 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 						title={
 							value.length ? __( 'Submit reply' ) : __( 'Write your response in order to submit' )
 						}
+						icon={ send }
 						isBusy={ isSubmitting }
 						disabled={ ! value.length }
 						__next40pxDefaultSize
-					>
-						{ __( 'Send' ) }
-					</Button>
+					/>
 				</HStack>
 			</form>
 			<Suggestions
-				site={ note.meta.ids.site }
+				site={ note.meta?.ids?.site }
 				onInsertSuggestion={ insertSuggestion }
 				getContextEl={ () => replyInputRef.current }
 			/>

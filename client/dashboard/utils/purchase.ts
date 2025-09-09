@@ -1,14 +1,14 @@
-import { formatNumber } from '@automattic/number-formatters';
-import { __, sprintf } from '@wordpress/i18n';
 import {
 	SubscriptionBillPeriod,
 	AkismetPlans,
 	TitanMailSlugs,
 	GoogleWorkspaceSlugs,
-} from '../data/constants';
+} from '@automattic/api-core';
+import { formatNumber } from '@automattic/number-formatters';
+import { __, sprintf } from '@wordpress/i18n';
 import { isWithinLast, isWithinNext, getDateFromCreditCardExpiry } from './datetime';
 import { encodeProductForUrl } from './wpcom-checkout';
-import type { Purchase } from '../data/purchase';
+import type { Purchase } from '@automattic/api-core';
 
 export function isTemporarySitePurchase( purchase: Purchase ): boolean {
 	const { domain } = purchase;

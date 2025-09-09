@@ -61,6 +61,7 @@ export type Block = {
 			comment?: string;
 			reply_comment?: string;
 			user?: string;
+			home?: string;
 		};
 		titles?: {
 			home?: string;
@@ -89,20 +90,21 @@ export type Note = {
 	timestamp: string;
 	icon: string;
 	url: string;
-	meta: {
-		ids: {
+	meta?: {
+		ids?: {
 			site?: number;
 			post?: number;
 			comment?: number;
 			reply_comment?: number;
 			user?: number;
 		};
-		links: {
+		links?: {
 			site?: string;
 			post?: string;
 			comment?: string;
 			reply_comment?: string;
 			user?: string;
+			home?: string;
 		};
 	};
 	title: string;

@@ -1,38 +1,41 @@
-import { createRoute, redirect, createLazyRoute, lazyRouteComponent } from '@tanstack/react-router';
-import { HostingFeatures, DotcomFeatures } from '../../data/constants';
-import { LogType } from '../../data/site-logs';
-import { canViewHundredYearPlanSettings, canViewWordPressSettings } from '../../sites/features';
-import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
-import { hasSiteTrialEnded } from '../../utils/site-trial';
-import { isAutomatticianQuery } from '../queries/me-a8c';
-import { rawUserPreferencesQuery } from '../queries/me-preferences';
-import { siteByIdQuery, siteBySlugQuery } from '../queries/site';
+import { HostingFeatures, DotcomFeatures, LogType } from '@automattic/api-core';
 import {
+	isAutomatticianQuery,
+	rawUserPreferencesQuery,
 	siteLastFiveActivityLogEntriesQuery,
 	siteRewindableActivityLogEntriesQuery,
-} from '../queries/site-activity-log';
-import { siteAgencyBlogQuery } from '../queries/site-agency';
-import { siteLastBackupQuery } from '../queries/site-backups';
-import { siteEdgeCacheStatusQuery } from '../queries/site-cache';
-import { siteDefensiveModeSettingsQuery } from '../queries/site-defensive-mode';
-import { siteDifmWebsiteContentQuery } from '../queries/site-do-it-for-me';
-import { siteDomainsQuery } from '../queries/site-domains';
-import { siteJetpackModulesQuery } from '../queries/site-jetpack-module';
-import { siteJetpackSettingsQuery } from '../queries/site-jetpack-settings';
-import { siteMediaStorageQuery } from '../queries/site-media-storage';
-import { sitePHPVersionQuery } from '../queries/site-php-version';
-import { siteCurrentPlanQuery } from '../queries/site-plans';
-import { sitePreviewLinksQuery } from '../queries/site-preview-links';
-import { sitePrimaryDataCenterQuery } from '../queries/site-primary-data-center';
-import { sitePurchaseQuery, sitePurchasesQuery } from '../queries/site-purchases';
-import { siteScanQuery } from '../queries/site-scan';
-import { siteSettingsQuery } from '../queries/site-settings';
-import { siteSftpUsersQuery } from '../queries/site-sftp';
-import { siteSshAccessStatusQuery } from '../queries/site-ssh';
-import { siteStaticFile404SettingQuery } from '../queries/site-static-file-404';
-import { siteWordPressVersionQuery } from '../queries/site-wordpress-version';
-import { sitesQuery } from '../queries/sites';
-import { queryClient } from '../query-client';
+	siteAgencyBlogQuery,
+	siteLastBackupQuery,
+	siteEdgeCacheStatusQuery,
+	siteDefensiveModeSettingsQuery,
+	siteDifmWebsiteContentQuery,
+	siteDomainsQuery,
+	siteJetpackModulesQuery,
+	siteJetpackSettingsQuery,
+	siteMediaStorageQuery,
+	sitePHPVersionQuery,
+	siteCurrentPlanQuery,
+	siteBySlugQuery,
+	siteByIdQuery,
+	sitePreviewLinksQuery,
+	sitePrimaryDataCenterQuery,
+	sitePurchaseQuery,
+	sitePurchasesQuery,
+	siteScanQuery,
+	siteSettingsQuery,
+	siteSftpUsersQuery,
+	sitesQuery,
+	siteSshAccessStatusQuery,
+	siteStaticFile404SettingQuery,
+	siteWordPressVersionQuery,
+	queryClient,
+} from '@automattic/api-queries';
+import { isSupportSession } from '@automattic/calypso-support-session';
+import { createRoute, redirect, createLazyRoute, lazyRouteComponent } from '@tanstack/react-router';
+import { canViewHundredYearPlanSettings, canViewWordPressSettings } from '../../sites/features';
+import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
+import { isSiteMigrationInProgress } from '../../utils/site-status';
+import { hasSiteTrialEnded } from '../../utils/site-trial';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
 import type { AnyRoute } from '@tanstack/react-router';
@@ -89,9 +92,15 @@ export const siteRoute = createRoute( {
 		const difmAllowedRoutes = getDifmLiteAllowedRoutes();
 		if (
 			site.options?.is_difm_lite_in_progress &&
+			! isSupportSession() &&
 			! matches.some( ( match ) => difmAllowedRoutes.includes( match.routeId ) )
 		) {
 			throw redirect( { to: difmUrl } );
+		}
+
+		const migrationUrl = `/sites/${ siteSlug }/site-migration-in-progress`;
+		if ( isSiteMigrationInProgress( site ) && ! location.pathname.includes( migrationUrl ) ) {
+			throw redirect( { to: migrationUrl } );
 		}
 	},
 	loader: async ( { params: { siteSlug } } ) => {
@@ -273,17 +282,6 @@ export const siteDomainsRoute = createRoute( {
 	)
 );
 
-export const siteDomainsPurchaseRoute = createRoute( {
-	getParentRoute: () => siteRoute,
-	path: 'domains/purchase',
-} ).lazy( () =>
-	import( '../../sites/domains/purchase' ).then( ( d ) =>
-		createLazyRoute( 'site-domains-purchase' )( {
-			component: d.default,
-		} )
-	)
-);
-
 export const siteEmailsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'emails',
@@ -417,6 +415,40 @@ export const siteSettingsAgencyRoute = createRoute( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
+);
+
+export const siteSettingsMcpRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/mcp',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
+	},
+} ).lazy( () =>
+	import( '../../sites/settings-mcp' ).then( ( d ) => {
+		return createLazyRoute( 'site-settings-mcp' )( {
+			component: () => {
+				return <d.default siteSlug={ siteRoute.useParams().siteSlug } />;
+			},
+		} );
+	} )
+);
+
+export const siteSettingsMcpSetupRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/mcp-setup',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
+	},
+} ).lazy( () =>
+	import( '../../sites/settings-mcp/setup' ).then( ( d ) => {
+		return createLazyRoute( 'site-settings-mcp-setup' )( {
+			component: () => {
+				return <d.default siteSlug={ siteRoute.useParams().siteSlug } />;
+			},
+		} );
+	} )
 );
 
 export const siteSettingsHundredYearPlanRoute = createRoute( {
@@ -629,6 +661,27 @@ export const siteDifmLiteInProgressRoute = createRoute( {
 	)
 );
 
+export const siteMigrationInProgressRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'site-migration-in-progress',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause !== 'enter' ) {
+			return;
+		}
+
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! isSiteMigrationInProgress( site ) ) {
+			throw redirect( { to: `/sites/${ siteSlug }` } );
+		}
+	},
+} ).lazy( () =>
+	import( '../../sites/migration-in-progress' ).then( ( d ) =>
+		createLazyRoute( 'site-migration-in-progress' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 export const siteLogsChildRoutes: AnyRoute[] = [
 	siteLogsIndexRoute,
 	siteLogsPhpRoute,
@@ -649,6 +702,8 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteSettingsWordPressRoute,
 		siteSettingsPHPRoute,
 		siteSettingsAgencyRoute,
+		siteSettingsMcpRoute,
+		siteSettingsMcpSetupRoute,
 		siteSettingsHundredYearPlanRoute,
 		siteSettingsPrimaryDataCenterRoute,
 		siteSettingsStaticFile404Route,
@@ -660,6 +715,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteSettingsWpcomLoginRoute,
 		siteTrialEndedRoute,
 		siteDifmLiteInProgressRoute,
+		siteMigrationInProgressRoute,
 	];
 
 	if ( config.supports.sites.deployments ) {
@@ -691,7 +747,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 	}
 
 	if ( config.supports.sites.domains ) {
-		siteRoutes.push( siteDomainsRoute, siteDomainsPurchaseRoute );
+		siteRoutes.push( siteDomainsRoute );
 	}
 
 	if ( config.supports.sites.emails ) {

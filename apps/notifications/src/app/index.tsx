@@ -1,14 +1,19 @@
 import { Navigator } from '@wordpress/components';
-import { useEffect, useState, Suspense, lazy } from 'react';
+import { useEffect, useState } from 'react';
 import { Provider } from 'react-redux';
 import repliesCache from '../panel/comment-replies-cache';
+import { modifierKeyIsActive } from '../panel/helpers/input';
 import RestClient from '../panel/rest-client';
 import { init as initAPI } from '../panel/rest-client/wpcom';
 import { init as initStore } from '../panel/state';
 import { SET_IS_SHOWING } from '../panel/state/action-types';
+import actions from '../panel/state/actions';
 import { addListeners, removeListeners } from '../panel/state/create-listener-middleware';
 import getIsPanelOpen from '../panel/state/selectors/get-is-panel-open';
-import { RestClientContext } from './context';
+import getKeyboardShortcutsEnabled from '../panel/state/selectors/get-keyboard-shortcuts-enabled';
+import { AppProvider } from './context';
+import Note from './note';
+import NotePanel from './note-panel';
 
 let client: any;
 
@@ -43,17 +48,15 @@ const defaultHandlers = {
 	],
 };
 
-const NotePanel = lazy( () => import( './note-panel' ) );
-
-const Note = lazy( () => import( './note' ) );
-
 const NotificationApp = ( {
 	locale = 'en',
+	isDismissible = false,
 	customEnhancer,
 	actionHandlers = {},
 	wpcom,
 }: {
 	locale?: string;
+	isDismissible?: boolean;
 	customEnhancer?: any;
 	actionHandlers?: any;
 	wpcom: any;
@@ -104,32 +107,63 @@ const NotificationApp = ( {
 		};
 	}, [ actionHandlers ] );
 
+	useEffect( () => {
+		store.dispatch( actions.ui.enableKeyboardShortcuts() );
+	}, [] );
+
+	useEffect( () => {
+		const stopEvent = ( event: KeyboardEvent ) => {
+			event.stopPropagation();
+			event.preventDefault();
+		};
+
+		const handleKeyDown = ( event: KeyboardEvent ) => {
+			if ( ! getKeyboardShortcutsEnabled( store.getState() ) ) {
+				return;
+			}
+			if ( modifierKeyIsActive( event ) ) {
+				return;
+			}
+			switch ( event.key ) {
+				case 'n':
+					stopEvent( event );
+					store.dispatch( actions.ui.closePanel() );
+					break;
+				case 'i':
+					stopEvent( event );
+					store.dispatch( actions.ui.toggleShortcutsPopover() );
+					break;
+			}
+		};
+
+		window.addEventListener( 'keydown', handleKeyDown, false );
+		return () => {
+			window.removeEventListener( 'keydown', handleKeyDown, false );
+		};
+	}, [] );
+
 	if ( ! isReady ) {
 		return null;
 	}
 
 	return (
 		<Provider store={ store }>
-			<RestClientContext.Provider value={ client }>
-				<Navigator initialPath="/" style={ { maxHeight: 'inherit', height: '100%' } }>
+			<AppProvider client={ client } locale={ locale }>
+				<Navigator initialPath="/all" style={ { maxHeight: 'inherit', height: '100%' } }>
 					<Navigator.Screen
-						path="/"
+						path="/:filterName"
 						style={ { display: 'flex', flexDirection: 'column', height: '100%' } }
 					>
-						<Suspense fallback={ null }>
-							<NotePanel />
-						</Suspense>
+						<NotePanel isDismissible={ isDismissible } />
 					</Navigator.Screen>
 					<Navigator.Screen
-						path="/notes/:noteId"
+						path="/:filterName/notes/:noteId"
 						style={ { display: 'flex', flexDirection: 'column', height: '100%' } }
 					>
-						<Suspense fallback={ null }>
-							<Note />
-						</Suspense>
+						<Note isDismissible={ isDismissible } />
 					</Navigator.Screen>
 				</Navigator>
-			</RestClientContext.Provider>
+			</AppProvider>
 		</Provider>
 	);
 };

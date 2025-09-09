@@ -291,6 +291,37 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/api-core@workspace:^, @automattic/api-core@workspace:packages/api-core":
+  version: 0.0.0-use.local
+  resolution: "@automattic/api-core@workspace:packages/api-core"
+  dependencies:
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/shopping-cart": "workspace:^"
+    "@wordpress/dataviews": "npm:^7.0.0"
+    "@wordpress/i18n": "npm:^5.23.0"
+    react: "npm:^18.3.1"
+    react-dom: "npm:^18.3.1"
+    tslib: "npm:^2.8.1"
+    typescript: "npm:^5.8.3"
+  languageName: unknown
+  linkType: soft
+
+"@automattic/api-queries@workspace:^, @automattic/api-queries@workspace:packages/api-queries":
+  version: 0.0.0-use.local
+  resolution: "@automattic/api-queries@workspace:packages/api-queries"
+  dependencies:
+    "@automattic/api-core": "workspace:^"
+    "@automattic/calypso-support-session": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@tanstack/query-sync-storage-persister": "npm:^5.83.0"
+    "@tanstack/react-query": "npm:^5.83.0"
+    "@tanstack/react-query-persist-client": "npm:^5.83.0"
+    react: "npm:^18.3.1"
+    tslib: "npm:^2.8.1"
+    typescript: "npm:^5.8.3"
+  languageName: unknown
+  linkType: soft
+
 "@automattic/babel-plugin-i18n-calypso@workspace:^, @automattic/babel-plugin-i18n-calypso@workspace:packages/babel-plugin-i18n-calypso":
   version: 0.0.0-use.local
   resolution: "@automattic/babel-plugin-i18n-calypso@workspace:packages/babel-plugin-i18n-calypso"
@@ -738,6 +769,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/calypso-support-session@workspace:^, @automattic/calypso-support-session@workspace:packages/calypso-support-session":
+  version: 0.0.0-use.local
+  resolution: "@automattic/calypso-support-session@workspace:packages/calypso-support-session"
+  dependencies:
+    "@automattic/calypso-typescript-config": "workspace:^"
+    tslib: "npm:^2.8.1"
+    typescript: "npm:^5.8.3"
+  languageName: unknown
+  linkType: soft
+
 "@automattic/calypso-typescript-config@workspace:^, @automattic/calypso-typescript-config@workspace:packages/calypso-typescript-config":
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-typescript-config@workspace:packages/calypso-typescript-config"
@@ -963,6 +1004,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/data-stores@workspace:packages/data-stores"
   dependencies:
+    "@automattic/api-core": "workspace:^"
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-products": "workspace:^"
@@ -1004,16 +1046,6 @@ __metadata:
     "@wordpress/data": ^10.23.0
     react: ^18.3.1
     react-dom: ^18.3.1
-  languageName: unknown
-  linkType: soft
-
-"@automattic/data@workspace:^, @automattic/data@workspace:packages/data":
-  version: 0.0.0-use.local
-  resolution: "@automattic/data@workspace:packages/data"
-  dependencies:
-    "@automattic/calypso-typescript-config": "workspace:^"
-    tslib: "npm:^2.8.1"
-    typescript: "npm:^5.8.3"
   languageName: unknown
   linkType: soft
 
@@ -1125,9 +1157,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/domain-search@workspace:packages/domain-search"
   dependencies:
+    "@automattic/api-core": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/data": "workspace:^"
+    "@automattic/i18n-utils": "workspace:^"
+    "@automattic/urls": "workspace:^"
     "@storybook/addon-a11y": "npm:^8.6.14"
     "@tanstack/react-query": "npm:^5.83.0"
     "@testing-library/dom": "npm:^10.4.0"
@@ -1135,10 +1169,13 @@ __metadata:
     "@types/jest": "npm:^29.5.14"
     "@wordpress/base-styles": "npm:^5.23.0"
     "@wordpress/components": "npm:^29.9.0"
+    "@wordpress/compose": "npm:7.23.0"
     "@wordpress/icons": "npm:^10.23.0"
     "@wordpress/react-i18n": "npm:^4.23.0"
     clsx: "npm:^2.1.1"
     copyfiles: "npm:^2.4.1"
+    i18n-calypso: "workspace:^"
+    moment: "npm:^2.30.1"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     storybook: "npm:^8.6.14"
@@ -1341,6 +1378,8 @@ __metadata:
     "@wordpress/compose": "npm:^7.23.0"
     "@wordpress/data": "npm:^10.23.0"
     "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.24.0"
+    "@wordpress/dom-ready": "npm:^4.29.0"
+    "@wordpress/i18n": "npm:^5.23.0"
     "@wordpress/plugins": "npm:^7.23.0"
     "@wordpress/private-apis": "npm:^1.23.0"
     "@wordpress/readable-js-assets-webpack-plugin": "npm:^3.24.0"
@@ -14894,6 +14933,8 @@ __metadata:
   resolution: "calypso@workspace:client"
   dependencies:
     "@automattic/accessible-focus": "workspace:^"
+    "@automattic/api-core": "workspace:^"
+    "@automattic/api-queries": "workspace:^"
     "@automattic/block-renderer": "workspace:^"
     "@automattic/browser-data-collector": "workspace:^"
     "@automattic/calypso-analytics": "workspace:^"
@@ -14909,13 +14950,13 @@ __metadata:
     "@automattic/calypso-router": "workspace:^"
     "@automattic/calypso-sentry": "workspace:^"
     "@automattic/calypso-stripe": "workspace:^"
+    "@automattic/calypso-support-session": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
     "@automattic/color-studio": "npm:^4.1.0"
     "@automattic/command-palette": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/composite-checkout": "workspace:^"
     "@automattic/create-calypso-config": "workspace:^"
-    "@automattic/data": "workspace:^"
     "@automattic/data-stores": "workspace:^"
     "@automattic/design-picker": "workspace:^"
     "@automattic/design-preview": "workspace:^"

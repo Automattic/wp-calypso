@@ -1,9 +1,9 @@
+import { domainDnsMutation, domainDnsQuery } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { domainDnsMutation, domainDnsQuery } from '../../app/queries/domain-dns-records';
 import { domainRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -11,7 +11,7 @@ import DNSRecordForm from './form';
 import { DNS_RECORD_CONFIGS } from './records/dns-record-configs';
 import { getProcessedRecord } from './utils';
 import type { DnsRecordTypeFormData, DnsRecordFormData } from './records/dns-record-configs';
-import type { DnsRecord } from '../../data/domain-dns-records';
+import type { DnsRecord } from '@automattic/api-core';
 
 export default function DomainEditDNS() {
 	const navigate = useNavigate();

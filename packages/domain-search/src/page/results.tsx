@@ -1,6 +1,4 @@
-import { useQueries, useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
-import { useMemo } from 'react';
 import { Cart } from '../components/cart';
 import { FeaturedSearchResults } from '../components/featured-search-results';
 import { SearchBar } from '../components/search-bar';
@@ -8,36 +6,16 @@ import { SearchNotice } from '../components/search-notice';
 import { SearchResults } from '../components/search-results';
 import { SkipSuggestion } from '../components/skip-suggestion';
 import { UnavailableSearchResult } from '../components/unavailable-search-result';
-import { partitionSuggestions } from '../helpers/partition-suggestions';
+import { useSuggestionsList } from '../hooks/use-suggestions-list';
 import { useDomainSearch } from './context';
 
 export const ResultsPage = () => {
-	const { slots, query, queries } = useDomainSearch();
+	const { slots, config } = useDomainSearch();
 
-	const { data: suggestions, isLoading: isLoadingSuggestions } = useQuery(
-		queries.domainSuggestions( query )
-	);
-
-	const { isLoading: isLoadingQueryAvailability } = useQuery( queries.domainAvailability( query ) );
-
-	const domainAvailabilityQueries = useQueries( {
-		queries:
-			suggestions?.map( ( suggestion ) => ( {
-				...queries.domainAvailability( suggestion.domain_name ),
-			} ) ) ?? [],
-	} );
-
-	const isLoading =
-		isLoadingSuggestions ||
-		isLoadingQueryAvailability ||
-		domainAvailabilityQueries.some( ( query ) => query.isLoading );
-
-	const { featuredSuggestions, freeSuggestion, regularSuggestions } = useMemo( () => {
-		return partitionSuggestions( suggestions ?? [], query );
-	}, [ suggestions, query ] );
+	const { isLoading, featuredSuggestions, regularSuggestions } = useSuggestionsList();
 
 	return (
-		<VStack spacing={ 8 }>
+		<VStack spacing={ 8 } className="domain-search--results">
 			<VStack spacing={ 4 }>
 				<SearchBar />
 				{ ! isLoading && <SearchNotice /> }
@@ -50,10 +28,8 @@ export const ResultsPage = () => {
 				) : (
 					<FeaturedSearchResults suggestions={ featuredSuggestions } />
 				) }
-				{ isLoading ? (
-					<SkipSuggestion.Placeholder />
-				) : (
-					<SkipSuggestion freeSuggestion={ freeSuggestion } />
+				{ config.skippable && (
+					<> { isLoading ? <SkipSuggestion.Placeholder /> : <SkipSuggestion /> } </>
 				) }
 				{ isLoading ? (
 					<SearchResults.Placeholder />

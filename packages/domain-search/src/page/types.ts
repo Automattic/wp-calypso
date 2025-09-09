@@ -1,8 +1,16 @@
-import { domainAvailabilityQuery } from '../queries/availability';
-import { productsQuery } from '../queries/products';
-import type { domainSuggestionsQuery } from '../queries/suggestions';
-import type { DomainSuggestion } from '@automattic/data';
-import type { QueryClient } from '@tanstack/react-query';
+import {
+	availableTldsQuery,
+	domainSuggestionsQuery,
+	freeSuggestionQuery,
+	domainAvailabilityQuery,
+} from '@automattic/api-queries';
+import { PriceRulesConfig } from '../hooks/use-suggestion';
+import type { FilterState } from '../components/search-bar/types';
+import type {
+	DomainSuggestion,
+	DomainSuggestionQueryVendor,
+	FreeDomainSuggestion,
+} from '@automattic/api-core';
 import type { ComponentType } from 'react';
 
 export interface SelectedDomain {
@@ -23,6 +31,21 @@ export interface DomainSearchCart {
 
 export interface DomainSearchEvents {
 	onContinue: () => void;
+	onSkip: ( suggestion?: FreeDomainSuggestion ) => void;
+	onExternalDomainClick?: ( domainName: string ) => void;
+	onMakePrimaryAddressClick: ( domainName: string ) => void;
+	onMoveDomainToSiteClick: ( otherSiteDomain: string, domainName: string ) => void;
+	onTransferDomainToWordPressComClick: ( domainName: string ) => void;
+	onRegisterDomainClick: ( otherSiteDomain: string, domainName: string ) => void;
+	onCheckTransferStatusClick: ( domainName: string ) => void;
+	onMapDomainClick: ( currentSiteSlug: string, domainName: string ) => void;
+}
+
+export interface DomainSearchConfig {
+	vendor: DomainSuggestionQueryVendor;
+	skippable: boolean;
+	deemphasizedTlds: string[];
+	priceRules: PriceRulesConfig;
 }
 
 export interface DomainSearchProps {
@@ -35,20 +58,32 @@ export interface DomainSearchProps {
 	initialQuery?: string;
 	events?: Partial< DomainSearchEvents >;
 	currentSiteUrl?: string;
-	queryClient?: QueryClient;
+	config?: Partial< DomainSearchConfig >;
 }
 
 export interface DomainSearchContextType
-	extends Omit< DomainSearchProps, 'className' | 'initialQuery' | 'events' | 'queryClient' > {
+	extends Omit<
+		DomainSearchProps,
+		'className' | 'initialQuery' | 'events' | 'config' | 'getPriceRuleForSuggestion'
+	> {
 	events: DomainSearchEvents;
 	isFullCartOpen: boolean;
 	closeFullCart: () => void;
 	openFullCart: () => void;
 	query: string;
 	setQuery: ( query: string ) => void;
+	filter: FilterState;
+	setFilter: ( filter: FilterState ) => void;
 	queries: {
-		domainSuggestions: typeof domainSuggestionsQuery;
-		domainAvailability: typeof domainAvailabilityQuery;
-		products: typeof productsQuery;
+		availableTlds: ( query?: string, vendor?: string ) => ReturnType< typeof availableTldsQuery >;
+		domainSuggestions: (
+			query: string,
+			params?: Partial< typeof domainSuggestionsQuery >
+		) => ReturnType< typeof domainSuggestionsQuery >;
+		domainAvailability: ( domainName: string ) => ReturnType< typeof domainAvailabilityQuery >;
+		freeSuggestion: ( query: string ) => ReturnType< typeof freeSuggestionQuery >;
 	};
+	config: DomainSearchConfig;
 }
+
+export type { PriceRulesConfig };

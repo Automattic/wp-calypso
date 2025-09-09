@@ -1,3 +1,4 @@
+import { DomainTypes } from '@automattic/api-core';
 import { Badge } from '@automattic/ui';
 import { Link } from '@tanstack/react-router';
 import { Icon, __experimentalHStack as HStack } from '@wordpress/components';
@@ -7,9 +8,8 @@ import { caution, reusableBlock } from '@wordpress/icons';
 import { useMemo } from 'react';
 import { domainOverviewRoute } from '../../app/router/domains';
 import { Text } from '../../components/text';
-import { DomainTypes } from '../../data/domains';
 import { isRecentlyRegistered } from '../../utils/domain';
-import type { DomainSummary, Site } from '../../data/types';
+import type { DomainSummary, Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 const THREE_DAYS_IN_MINUTES = 3 * 1440;
