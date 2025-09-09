@@ -276,6 +276,7 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 		mutation.mutate( undefined, {
 			onSuccess: () => {
 				queryClient.invalidateQueries( siteByIdQuery( productionSiteId ?? 0 ) );
+				queryClient.invalidateQueries( hasStagingSiteQuery( productionSiteId ?? 0 ) );
 			},
 			onError: ( error: Error ) => {
 				recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_failure' );
