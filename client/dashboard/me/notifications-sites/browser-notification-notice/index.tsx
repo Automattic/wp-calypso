@@ -11,7 +11,9 @@ export const BrowserNotificationNotice = () => {
 			density="low"
 			actions={
 				<ExternalLink
-					href={ localizeUrl( 'https://wordpress.com/support/troubleshoot-browser-block-chat/' ) }
+					href={ localizeUrl(
+						'https://wordpress.com/support/notifications/browser-notifications/#troubleshooting'
+					) }
 				>
 					{ __( 'View instructions to enable' ) }
 				</ExternalLink>
