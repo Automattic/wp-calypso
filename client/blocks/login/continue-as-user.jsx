@@ -97,7 +97,7 @@ export default function ContinueAsUser( {
 					className="continue-as-user__change-user-link"
 					onClick={ onChangeAccount }
 				>
-					{ translate( 'Login with a different account' ) }
+					{ translate( 'Log in with a different account' ) }
 				</Button>
 			</div>
 		);
