@@ -61,7 +61,7 @@ function FileBrowserNode( {
 
 	const {
 		isSuccess,
-		isInitialLoading,
+		isLoading,
 		data: backupFiles,
 	} = useBackupContentsQuery( siteId, rewindId, path, fetchContentsOnMount );
 
@@ -260,7 +260,7 @@ function FileBrowserNode( {
 	);
 
 	const renderChildren = () => {
-		if ( isInitialLoading ) {
+		if ( isLoading ) {
 			return (
 				<>
 					<div className="file-browser-node__loading placeholder" />

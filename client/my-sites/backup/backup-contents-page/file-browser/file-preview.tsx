@@ -29,12 +29,12 @@ function FilePreview( { item, siteId, onTrackEvent }: FilePreviewProps ) {
 	const shouldPreviewFile =
 		isValidType && ( ! isSensitive || ( isSensitive && showSensitivePreview ) );
 
-	const { isSuccess, isError, isInitialLoading, data } = useBackupFileQuery(
-		siteId,
-		item.period,
-		item.manifestPath,
-		shouldPreviewFile
-	);
+	const {
+		isSuccess,
+		isError,
+		isLoading: isQueryLoading,
+		data,
+	} = useBackupFileQuery( siteId, item.period, item.manifestPath, shouldPreviewFile );
 
 	const handleShowPreviewClick = useCallback( () => {
 		setShowSensitivePreview( true );
@@ -106,7 +106,7 @@ function FilePreview( { item, siteId, onTrackEvent }: FilePreviewProps ) {
 		return content;
 	};
 
-	const isLoading = isTextContent ? ! fileContent && ! isError : isInitialLoading;
+	const isLoading = isTextContent ? ! fileContent && ! isError : isQueryLoading;
 	const isReady = isTextContent ? fileContent : isSuccess;
 	const classNames = clsx( 'file-card__preview', item.type, {
 		'file-card__preview--is-loading': isLoading,
