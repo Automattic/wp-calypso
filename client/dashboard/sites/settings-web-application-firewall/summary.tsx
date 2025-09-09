@@ -30,7 +30,9 @@ export default function WebApplicationFirewallSettingsSummary( {
 		isJetpackModuleAvailable( jetpackModules, jetpackConnection, JetpackModules.WAF ) &&
 		isJetpackModuleAvailable( jetpackModules, jetpackConnection, JetpackModules.PROTECT );
 
-	const badges = modulesAvailable ? undefined : [ { text: __( 'Unavailable' ) } ];
+	// Don't show any badge for Simple sites.
+	const badges =
+		isSimple( site ) || modulesAvailable ? undefined : [ { text: __( 'Unavailable' ) } ];
 
 	return (
 		<RouterLinkSummaryButton
