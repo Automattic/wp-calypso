@@ -19,7 +19,7 @@ export const updateAccountRecoveryEmailMutation = () =>
 		onSuccess: ( _, email ) => {
 			queryClient.setQueryData(
 				accountRecoveryQuery().queryKey,
-				( oldData ) => oldData && { ...oldData, email }
+				( oldData ) => oldData && { ...oldData, email, email_validated: false }
 			);
 		},
 	} );
@@ -30,7 +30,7 @@ export const removeAccountRecoveryEmailMutation = () =>
 		onSuccess: () => {
 			queryClient.setQueryData(
 				accountRecoveryQuery().queryKey,
-				( oldData ) => oldData && { ...oldData, email: '' }
+				( oldData ) => oldData && { ...oldData, email: '', email_validated: false }
 			);
 		},
 	} );

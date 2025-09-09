@@ -1,7 +1,6 @@
 import { wpcom } from '../wpcom-fetcher';
 import type { AccountRecovery, AccountRecoverySuccess } from './types';
 
-// Email-related actions
 export async function updateAccountRecoveryEmail( email: string ): Promise< AccountRecovery > {
 	return wpcom.req.post( '/me/account-recovery/email', { email } );
 }

@@ -5,12 +5,10 @@ import {
 	removeAccountRecoveryEmailMutation,
 	resendAccountRecoveryEmailValidationMutation,
 } from '@automattic/api-queries';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
-	__experimentalHStack as HStack,
 	__experimentalInputControl as InputControl,
 	__experimentalVStack as VStack,
-	__experimentalSpacer as Spacer,
 	__experimentalConfirmDialog as ConfirmDialog,
 	Button,
 	Card,
@@ -18,9 +16,10 @@ import {
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
+import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
 import { SectionHeader } from '../../components/section-header';
 import type { Field } from '@wordpress/dataviews';
@@ -30,25 +29,18 @@ type SecurityEmailFormData = {
 };
 
 export default function RecoveryEmail() {
-	const [ formData, setFormData ] = useState< SecurityEmailFormData >( {
-		email: '',
-	} );
-	const [ isRemoveDialogOpen, setIsRemoveDialogOpen ] = useState( false );
-	const [ showResendButton, setShowResendButton ] = useState( true );
-
-	const { data: accountRecoveryData, isLoading: isAccountRecoveryDataLoading } = useQuery(
+	const { data: accountRecoveryData, isLoading: isAccountRecoveryDataLoading } = useSuspenseQuery(
 		accountRecoveryQuery()
 	);
+	const { data: serverData } = useQuery( profileQuery() );
 
-	const { mutate: validateEmailMutation, isPending: isValidateEmailPending } = useMutation(
+	const { mutate: validateEmail, isPending: isValidateEmailPending } = useMutation(
 		updateAccountRecoveryEmailMutation()
 	);
-
-	const { mutate: removeEmailMutation, isPending: isRemoveEmailPending } = useMutation(
+	const { mutate: removeEmail, isPending: isRemoveEmailPending } = useMutation(
 		removeAccountRecoveryEmailMutation()
 	);
-
-	const { mutate: resendValidationMutation, isPending: isResendValidationPending } = useMutation(
+	const { mutate: resendValidation, isPending: isResendValidationPending } = useMutation(
 		resendAccountRecoveryEmailValidationMutation()
 	);
 
@@ -56,13 +48,15 @@ export default function RecoveryEmail() {
 
 	const accountRecoveryEmail = accountRecoveryData?.email;
 
-	useEffect( () => {
-		setFormData( { email: accountRecoveryEmail || '' } );
-	}, [ accountRecoveryEmail ] );
+	const [ isRemoveDialogOpen, setIsRemoveDialogOpen ] = useState( false );
+	const [ showResendButton, setShowResendButton ] = useState( true );
+	const [ formData, setFormData ] = useState< SecurityEmailFormData >( {
+		email: accountRecoveryEmail || '',
+	} );
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		validateEmailMutation( formData.email, {
+		validateEmail( formData.email, {
 			onSuccess: () => {
 				createSuccessNotice( __( 'Your recovery email was saved successfully.' ), {
 					type: 'snackbar',
@@ -78,7 +72,7 @@ export default function RecoveryEmail() {
 
 	const handleRemove = () => {
 		setIsRemoveDialogOpen( false );
-		removeEmailMutation( undefined, {
+		removeEmail( undefined, {
 			onSuccess: () => {
 				createSuccessNotice( __( 'Your recovery email was removed successfully.' ), {
 					type: 'snackbar',
@@ -95,7 +89,7 @@ export default function RecoveryEmail() {
 
 	const handleResendValidation = () => {
 		setShowResendButton( false );
-		resendValidationMutation( undefined, {
+		resendValidation( undefined, {
 			onSuccess: () => {
 				createSuccessNotice( __( 'Your recovery email validation was resent successfully.' ), {
 					type: 'snackbar',
@@ -109,8 +103,6 @@ export default function RecoveryEmail() {
 		} );
 	};
 
-	const { data: serverData } = useQuery( profileQuery() );
-
 	const shouldShowValidationNotice = accountRecoveryEmail && ! accountRecoveryData?.email_validated;
 
 	const fields: Field< SecurityEmailFormData >[] = useMemo(
@@ -120,7 +112,7 @@ export default function RecoveryEmail() {
 				label: __( 'Email address' ),
 				description:
 					/* translators: %s: email address */
-					__( 'Your primary email address is %s', serverData?.user_email ),
+					sprintf( __( 'Your primary email address is %s' ), serverData?.user_email ),
 				type: 'email',
 				Edit: ( { field, data, onChange } ) => {
 					const { id, getValue } = field;
@@ -129,6 +121,7 @@ export default function RecoveryEmail() {
 							__next40pxDefaultSize
 							type="email"
 							label={ field.label }
+							help={ field.description }
 							placeholder={ field.placeholder }
 							value={ getValue( { item: data } ) }
 							onChange={ ( value ) => {
@@ -150,27 +143,25 @@ export default function RecoveryEmail() {
 					<VStack spacing={ 4 }>
 						<SectionHeader title={ __( 'Recovery email' ) } level={ 3 } />
 						{ shouldShowValidationNotice && (
-							<Spacer marginBottom={ 4 }>
-								<Notice
-									variant="warning"
-									title={ __( 'Please validate your email address' ) }
-									actions={
-										showResendButton && (
-											<Button
-												variant="link"
-												onClick={ handleResendValidation }
-												disabled={ isResendValidationPending }
-											>
-												{ __( 'Resend validation email' ) }
-											</Button>
-										)
-									}
-								>
-									{ __(
-										"We've sent you an email with a validation link to click. Check spam or junk folders if you're unable to find it."
-									) }
-								</Notice>
-							</Spacer>
+							<Notice
+								variant="warning"
+								title={ __( 'Please validate your email address' ) }
+								actions={
+									showResendButton && (
+										<Button
+											variant="link"
+											onClick={ handleResendValidation }
+											disabled={ isResendValidationPending }
+										>
+											{ __( 'Resend validation email' ) }
+										</Button>
+									)
+								}
+							>
+								{ __(
+									'We’ve sent you an email with a validation link to click. Check spam or junk folders if you’re unable to find it.'
+								) }
+							</Notice>
 						) }
 						<form onSubmit={ handleSubmit }>
 							<VStack spacing={ 4 }>
@@ -182,7 +173,7 @@ export default function RecoveryEmail() {
 										setFormData( ( data ) => ( { ...data, ...edits } ) );
 									} }
 								/>
-								<HStack spacing={ 3 } justify="flex-start">
+								<ButtonStack justify="flex-start">
 									<Button
 										variant="primary"
 										type="submit"
@@ -205,7 +196,7 @@ export default function RecoveryEmail() {
 											{ __( 'Remove email' ) }
 										</Button>
 									) }
-								</HStack>
+								</ButtonStack>
 							</VStack>
 						</form>
 					</VStack>
