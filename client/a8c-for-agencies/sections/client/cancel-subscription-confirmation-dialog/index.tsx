@@ -61,15 +61,12 @@ export default function CancelSubscriptionAction( { subscription, onCancelSubscr
 
 			if ( storeSubscription && storeSubscription.is_refundable ) {
 				successMessage = translate(
-					"%(productName)s has been cancelled and we'll refund you %(amount)s %(currency)s. We've emailed you a receipt.",
+					"%(productName)s has been cancelled, and we'll refund you the amount paid. We've emailed you a receipt.",
 					{
 						args: {
 							productName,
-							amount: storeSubscription.purchase_price ?? '',
-							currency: storeSubscription.purchase_currency ?? '',
 						},
-						comment:
-							'%(productName)s is the name of the product, %(amount)s is the refund amount, %(currency)s is the currency code.',
+						comment: '%(productName)s is the name of the product.',
 					}
 				);
 			} else if ( storeSubscription && ! storeSubscription.is_refundable ) {
