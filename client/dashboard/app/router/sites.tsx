@@ -34,6 +34,7 @@ import { isSupportSession } from '@automattic/calypso-support-session';
 import { createRoute, redirect, createLazyRoute, lazyRouteComponent } from '@tanstack/react-router';
 import { canViewHundredYearPlanSettings, canViewWordPressSettings } from '../../sites/features';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
+import { isSiteMigrationInProgress } from '../../utils/site-status';
 import { hasSiteTrialEnded } from '../../utils/site-trial';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
@@ -95,6 +96,11 @@ export const siteRoute = createRoute( {
 			! matches.some( ( match ) => difmAllowedRoutes.includes( match.routeId ) )
 		) {
 			throw redirect( { to: difmUrl } );
+		}
+
+		const migrationUrl = `/sites/${ siteSlug }/site-migration-in-progress`;
+		if ( isSiteMigrationInProgress( site ) && ! location.pathname.includes( migrationUrl ) ) {
+			throw redirect( { to: migrationUrl } );
 		}
 	},
 	loader: async ( { params: { siteSlug } } ) => {
@@ -655,6 +661,27 @@ export const siteDifmLiteInProgressRoute = createRoute( {
 	)
 );
 
+export const siteMigrationInProgressRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'site-migration-in-progress',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause !== 'enter' ) {
+			return;
+		}
+
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! isSiteMigrationInProgress( site ) ) {
+			throw redirect( { to: `/sites/${ siteSlug }` } );
+		}
+	},
+} ).lazy( () =>
+	import( '../../sites/migration-in-progress' ).then( ( d ) =>
+		createLazyRoute( 'site-migration-in-progress' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 export const siteLogsChildRoutes: AnyRoute[] = [
 	siteLogsIndexRoute,
 	siteLogsPhpRoute,
@@ -688,6 +715,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteSettingsWpcomLoginRoute,
 		siteTrialEndedRoute,
 		siteDifmLiteInProgressRoute,
+		siteMigrationInProgressRoute,
 	];
 
 	if ( config.supports.sites.deployments ) {

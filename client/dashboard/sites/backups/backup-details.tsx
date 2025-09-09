@@ -27,7 +27,7 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 	} );
 
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
-	const direction = isSmallViewport ? 'column' : 'row';
+	const direction = isSmallViewport ? 'column-reverse' : 'row';
 
 	const handleRestoreClick = () => {
 		router.navigate( {
@@ -43,35 +43,38 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 		} );
 	};
 
+	const actions = backup.rewind_id ? (
+		<ButtonStack alignment="stretch" justify="center" direction={ direction }>
+			<Button
+				variant="tertiary"
+				size={ isSmallViewport ? 'default' : 'compact' }
+				icon={ download }
+				onClick={ handleDownloadClick }
+				style={ { justifyContent: 'center' } }
+			>
+				{ __( 'Download backup' ) }
+			</Button>
+			<Button
+				variant="primary"
+				size={ isSmallViewport ? 'default' : 'compact' }
+				icon={ rotateLeft }
+				onClick={ handleRestoreClick }
+				style={ { justifyContent: 'center' } }
+			>
+				{ __( 'Restore to this point' ) }
+			</Button>
+		</ButtonStack>
+	) : null;
+
 	return (
 		<Card>
 			<CardHeader style={ { flexDirection: 'column', alignItems: 'stretch' } }>
 				<SectionHeader
 					title={ backup.summary }
 					decoration={ <Icon icon={ gridiconToWordPressIcon( backup.gridicon ) } /> }
-					actions={
-						backup.rewind_id && (
-							<ButtonStack alignment="stretch" direction={ direction }>
-								<Button
-									variant="secondary"
-									size="compact"
-									icon={ download }
-									onClick={ handleDownloadClick }
-								>
-									{ __( 'Download backup' ) }
-								</Button>
-								<Button
-									variant="primary"
-									size="compact"
-									icon={ rotateLeft }
-									onClick={ handleRestoreClick }
-								>
-									{ __( 'Restore to this point' ) }
-								</Button>
-							</ButtonStack>
-						)
-					}
+					actions={ ! isSmallViewport ? actions : null }
 				/>
+				{ isSmallViewport ? actions : null }
 			</CardHeader>
 			<CardBody>
 				<VStack>

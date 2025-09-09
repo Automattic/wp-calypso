@@ -17,6 +17,8 @@ module.exports = {
 							'!calypso/lib',
 							'calypso/lib/*',
 							'!calypso/lib/wp',
+							// Allowed: calypso/lib/load-dev-helpers
+							'!calypso/lib/load-dev-helpers',
 							// Allowed: calypso/assets/icons
 							// Allowed: calypso/assets/images
 							'!calypso/assets',
