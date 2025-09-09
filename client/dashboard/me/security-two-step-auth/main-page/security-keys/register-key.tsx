@@ -1,3 +1,5 @@
+import { registerSecurityKeyMutation } from '@automattic/api-queries';
+import { useMutation } from '@tanstack/react-query';
 import {
 	Modal,
 	Button,
@@ -11,51 +13,66 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { ButtonStack } from '../../../../components/button-stack';
-import { useRegisterSecurityKey } from '../../hooks/use-register-security-key';
 import type { Field } from '@wordpress/dataviews';
 
 type SecurityKeyFormData = {
 	keyName: string;
 };
 
-export default function RegisterKey( {
-	onClose,
-	refetch,
-}: {
-	onClose: () => void;
-	refetch: () => void;
-} ) {
+export default function RegisterKey( { onClose }: { onClose: () => void } ) {
 	const [ formData, setFormData ] = useState< SecurityKeyFormData >( {
 		keyName: '',
 	} );
 
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const { mutateAsync: registerSecurityKey, isPending: isRegisteringSecurityKey } =
-		useRegisterSecurityKey();
+	const { mutateAsync: registerSecurityKey, isPending: isRegisteringSecurityKey } = useMutation(
+		registerSecurityKeyMutation()
+	);
 
 	const handleSubmit = async ( e: React.FormEvent< HTMLFormElement > ) => {
 		e.preventDefault();
 
-		try {
-			await registerSecurityKey( formData.keyName.trim() );
+		registerSecurityKey( formData.keyName.trim(), {
+			onSuccess: () => {
+				createSuccessNotice(
+					/* translators: %s is the security key name */
+					sprintf( __( 'Security key "%s" added.' ), formData.keyName ),
+					{
+						type: 'snackbar',
+					}
+				);
+				onClose();
+			},
+			onError: ( err ) => {
+				let errorMessage = __( 'Failed to add security key. Please try again.' );
 
-			createSuccessNotice(
-				/* translators: %s is the security key name */
-				sprintf( __( 'Security key "%s" added successfully!' ), formData.keyName ),
-				{
-					type: 'snackbar',
+				// Handle WebAuthn specific errors with user-friendly messages
+				if ( err instanceof Error ) {
+					switch ( err.name ) {
+						case 'InvalidStateError':
+							errorMessage = __( 'Security key has already been registered.' );
+							break;
+						case 'NotAllowedError':
+							errorMessage = __( 'Security key interaction timed out or canceled.' );
+							break;
+						case 'AbortError':
+							errorMessage = __( 'Security key interaction canceled.' );
+							break;
+						case 'NotSupportedError':
+						case 'SecurityError':
+							errorMessage = __( 'Security key registration error.' );
+							break;
+						default:
+							errorMessage = err.message;
+					}
 				}
-			);
-			refetch();
-			onClose();
-		} catch ( err ) {
-			const errorMessage =
-				err instanceof Error ? err.message : __( 'Failed to add security key. Please try again.' );
-			createErrorNotice( errorMessage, {
-				type: 'snackbar',
-			} );
-			onClose();
-		}
+
+				createErrorNotice( errorMessage, {
+					type: 'snackbar',
+				} );
+				onClose();
+			},
+		} );
 	};
 
 	const fields: Field< SecurityKeyFormData >[] = useMemo(

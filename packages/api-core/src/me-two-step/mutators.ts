@@ -1,8 +1,8 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { DeleteSecurityKeyArgs } from './types';
+import type { DeleteSecurityKeyArgs, ValidateSecurityKeyRegistrationArgs } from './types';
 
 export async function validateSecurityKeyRegistration(
-	data: Record< string, unknown >
+	data: ValidateSecurityKeyRegistrationArgs
 ): Promise< Record< string, unknown > > {
 	return wpcom.req.post( {
 		path: '/me/two-step/security-key/registration_validate',

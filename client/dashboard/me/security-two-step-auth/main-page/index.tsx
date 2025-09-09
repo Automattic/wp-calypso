@@ -20,7 +20,7 @@ export default function SecurityTwoStepAuthMainPage( {
 					sprintf(
 						/* translators: %s is the phone number */
 						__(
-							"You're all set to receive authentication codes at %s. Want to use a different number? Just disable two-step authentication and set it up again using the new number."
+							'You‘re all set to receive authentication codes at %s. Want to use a different number? Just disable two-step authentication and set it up again using the new number.'
 						),
 						two_step_sms_phone_number
 					) }

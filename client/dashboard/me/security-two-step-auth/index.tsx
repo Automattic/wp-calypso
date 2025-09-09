@@ -19,10 +19,10 @@ export default function SecurityTwoStepAuth() {
 					description={
 						isTwoStepEnabled
 							? __(
-									"When you log in to WordPress.com, you'll need to enter your username and password, as well as a unique passcode sent to you via test message."
+									'When you log in to WordPress.com, you‘ll need to enter your username and password, as well as a unique passcode sent to you via test message.'
 							  )
 							: __(
-									"Keep your account extra safe with two-step authentication. You'll use your password plus a temporary code from your phone to sign in."
+									'Keep your account extra safe with two-step authentication. You‘ll use your password plus a temporary code from your phone to sign in.'
 							  )
 					}
 				/>

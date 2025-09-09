@@ -17,7 +17,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import InlineSupportLink from '../../../../components/inline-support-link';
 import { SectionHeader } from '../../../../components/section-header';
-import { isWebAuthnSupported } from '../../hooks/use-register-security-key';
+import { isWebAuthnSupported } from '../../utils';
 import RegisterKey from './register-key';
 import type { UserSecurityKeys } from '@automattic/api-core';
 
@@ -58,7 +58,7 @@ const SecurityKeysList = ( {
 				{ credential_id: selectedKeyToRemove.id },
 				{
 					onSuccess: () => {
-						createSuccessNotice( __( 'Security key removed successfully!' ), {
+						createSuccessNotice( __( 'Security key removed.' ), {
 							type: 'snackbar',
 						} );
 					},
@@ -82,7 +82,7 @@ const SecurityKeysList = ( {
 				getItemId={ ( item ) => item.id }
 				paginationInfo={ { totalItems: data.length, totalPages: 1 } }
 				defaultLayouts={ { list: {} } }
-				empty={ __( 'No security keys registered' ) }
+				empty={ __( 'No security keys registered.' ) }
 				isLoading={ isLoading }
 				actions={ [
 					{
@@ -114,7 +114,7 @@ const SecurityKeysList = ( {
 export default function SecurityKeys() {
 	const [ isAddKeyModalOpen, setIsAddKeyModalOpen ] = useState( false );
 
-	const { data: securityKeys, isLoading, refetch } = useQuery( securityKeysQuery() );
+	const { data: securityKeys, isLoading } = useQuery( securityKeysQuery() );
 
 	const registrations = securityKeys?.registrations ?? [];
 
@@ -129,7 +129,7 @@ export default function SecurityKeys() {
 					isBrowserSupported
 						? createInterpolateElement(
 								__(
-									'Security keys offer a more robust form of two-step authentication. your security key may be a physical device, or you can use passkey support built into your browser. <learnMoreLink>Learn more</learnMoreLink>'
+									'Security keys offer a more robust form of two-step authentication. Your security key may be a physical device, or you can use passkey support built into your browser. <learnMoreLink>Learn more</learnMoreLink>'
 								),
 								{
 									learnMoreLink: (
@@ -140,7 +140,7 @@ export default function SecurityKeys() {
 								}
 						  )
 						: __(
-								"Your browser doesn't support the FIDO2 security key standard yet. To use a second factor security key to sign in please try a supported browser like Chrome, Safari, or Firefox."
+								'Your browser doesn‘t support the FIDO2 security key standard yet. To use a second factor security key to sign in please try a supported browser like Chrome, Safari, or Firefox.'
 						  )
 				}
 			/>
@@ -166,9 +166,7 @@ export default function SecurityKeys() {
 							<SecurityKeysList data={ registrations } isLoading={ isLoading } />
 						</CardBody>
 					</Card>
-					{ isAddKeyModalOpen && (
-						<RegisterKey onClose={ () => setIsAddKeyModalOpen( false ) } refetch={ refetch } />
-					) }
+					{ isAddKeyModalOpen && <RegisterKey onClose={ () => setIsAddKeyModalOpen( false ) } /> }
 				</>
 			) }
 		</>

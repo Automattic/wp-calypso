@@ -5,15 +5,9 @@ import {
 	deleteSecurityKey,
 } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
+import { create } from '@github/webauthn-json';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
-
-const addHostnameToData = ( data: Record< string, unknown > ) => {
-	if ( 'production' !== config( 'env_id' ) ) {
-		data.hostname = window.location.hostname;
-	}
-	return data;
-};
 
 export const securityKeysQuery = () =>
 	queryOptions( {
@@ -21,18 +15,29 @@ export const securityKeysQuery = () =>
 		queryFn: fetchSecurityKeys,
 	} );
 
-export const securityKeyRegistrationChallengeQuery = () =>
-	queryOptions( {
-		queryKey: [ 'me', 'security-key-registration-challenge' ],
-		queryFn: () => {
-			return fetchSecurityKeyRegistrationChallenge( addHostnameToData( {} ) );
-		},
-	} );
-
-export const validateSecurityKeyRegistrationMutation = () =>
+export const registerSecurityKeyMutation = () =>
 	mutationOptions( {
-		mutationFn: ( data: Record< string, unknown > ) => {
-			return validateSecurityKeyRegistration( addHostnameToData( data ) );
+		mutationFn: async ( keyName: string ) => {
+			// Get hostname for non-production environments
+			const hostname = 'production' !== config( 'env_id' ) ? window.location.hostname : undefined;
+
+			// First, fetch the registration challenge
+			const options = await fetchSecurityKeyRegistrationChallenge( { hostname } );
+
+			// Create the WebAuthn credential
+			const credential = await create( { publicKey: options } );
+
+			// Validate the registration with the server
+			const validationData = {
+				data: JSON.stringify( credential ),
+				name: keyName,
+				hostname,
+			};
+
+			return await validateSecurityKeyRegistration( validationData );
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries( securityKeysQuery() );
 		},
 	} );
 

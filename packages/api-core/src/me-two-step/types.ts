@@ -27,3 +27,13 @@ export interface SecurityKeyRegistrationChallenge {
 export interface DeleteSecurityKeyArgs {
 	credential_id: string;
 }
+
+export interface SecurityKeyRegistrationChallengeArgs {
+	hostname?: string;
+}
+
+export interface ValidateSecurityKeyRegistrationArgs {
+	data: string;
+	name: string;
+	hostname?: string;
+}

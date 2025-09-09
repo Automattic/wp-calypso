@@ -1,5 +1,9 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { UserSecurityKeys, SecurityKeyRegistrationChallenge } from './types';
+import type {
+	UserSecurityKeys,
+	SecurityKeyRegistrationChallenge,
+	SecurityKeyRegistrationChallengeArgs,
+} from './types';
 
 export async function fetchSecurityKeys(): Promise< UserSecurityKeys > {
 	return wpcom.req.get( {
@@ -9,7 +13,7 @@ export async function fetchSecurityKeys(): Promise< UserSecurityKeys > {
 }
 
 export async function fetchSecurityKeyRegistrationChallenge(
-	data: Record< string, unknown >
+	data: SecurityKeyRegistrationChallengeArgs
 ): Promise< SecurityKeyRegistrationChallenge > {
 	return wpcom.req.get(
 		{
