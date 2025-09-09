@@ -22,9 +22,10 @@ export function Login( {
 	onNextStep,
 	isOwnershipVerificationFlow,
 }: StepComponentProps ) {
-	const { data: availability, isLoading: isLoadingAvailability } = useQuery(
-		domainAvailabilityQuery( domainName, isOwnershipVerificationFlow )
-	);
+	const { data: availability, isLoading: isLoadingAvailability } = useQuery( {
+		...domainAvailabilityQuery( domainName ),
+		enabled: isOwnershipVerificationFlow,
+	} );
 	const [ isConnectSupported, setIsConnectSupported ] = useState( true );
 	const [ rootDomainProvider, setRootDomainProvider ] = useState( 'unknown' );
 
