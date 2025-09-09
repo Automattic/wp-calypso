@@ -1,10 +1,12 @@
 import {
 	ComboboxControl,
+	Icon,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { useMemo } from '@wordpress/element';
+import { check, globe } from '@wordpress/icons';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSiteDisplayUrl } from '../../utils/site-url';
 import type { Site } from '@automattic/api-core';
@@ -55,22 +57,20 @@ function SiteIcon( { site, size = 24 }: { site: Site; size?: number } ) {
 		);
 	}
 
-	// Fallback to first letter
+	// Fallback to WordPress globe icon
 	return (
 		<div
 			style={ {
 				...dims,
-				fontSize: size * 0.5,
 				backgroundColor: '#ddd',
 				borderRadius: '4px',
 				display: 'flex',
 				alignItems: 'center',
 				justifyContent: 'center',
-				fontWeight: 'bold',
 				color: '#666',
 			} }
 		>
-			<span>{ getSiteDisplayName( site ).charAt( 0 ).toUpperCase() }</span>
+			<Icon icon={ globe } size={ size * 0.7 } />
 		</div>
 	);
 }
@@ -97,17 +97,22 @@ export default function PreferencesLoginSiteDropdown( {
 			return null;
 		}
 
+		const isSelected = item.value === value;
+
 		return (
-			<HStack spacing={ 3 } alignment="left">
-				<SiteIcon site={ siteOption.site } size={ 24 } />
-				<VStack spacing={ 0 }>
-					<Text as="div" weight={ 500 } lineHeight={ 1.2 }>
-						{ item.label }
-					</Text>
-					<Text as="div" variant="muted" size={ 13 } lineHeight={ 1.2 }>
-						{ getSiteDisplayUrl( siteOption.site ) }
-					</Text>
-				</VStack>
+			<HStack spacing={ 3 } alignment="left" justify="space-between">
+				<HStack spacing={ 3 } alignment="left">
+					<SiteIcon site={ siteOption.site } size={ 24 } />
+					<VStack spacing={ 0 }>
+						<Text as="div" weight={ 500 } lineHeight={ 1.2 }>
+							{ item.label }
+						</Text>
+						<Text as="div" variant="muted" size={ 13 } lineHeight={ 1.2 }>
+							{ getSiteDisplayUrl( siteOption.site ) }
+						</Text>
+					</VStack>
+				</HStack>
+				{ isSelected && <Icon icon={ check } size={ 18 } /> }
 			</HStack>
 		);
 	};
