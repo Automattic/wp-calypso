@@ -1,60 +1,20 @@
 import { HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery, codeDeploymentsQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { __experimentalText as Text, Button } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { siteRoute } from '../../app/router/sites';
-import { Callout } from '../../components/callout';
 import { CalloutOverlay } from '../../components/callout-overlay';
 import { DataViewsCard } from '../../components/dataviews-card';
 import PageLayout from '../../components/page-layout';
-import UpsellCTAButton from '../../components/upsell-cta-button';
 import { hasHostingFeature } from '../../utils/site-features';
-import illustrationUrl from '../deployments/deployments-callout-illustration.svg';
-import ghIconUrl from '../deployments/gh-icon.svg';
+import { DeploymentCallout } from '../deployment-list/deployment-callout';
 import SettingsPageHeader from '../settings-page-header';
 import { useRepositoryFields } from './dataviews/fields';
 import { DEFAULT_VIEW, DEFAULT_LAYOUTS } from './dataviews/views';
 import type { View } from '@wordpress/dataviews';
-
-export function SiteRepositoriesCallout( {
-	siteSlug,
-	titleAs = 'h1',
-}: {
-	siteSlug: string;
-	titleAs?: React.ElementType | keyof JSX.IntrinsicElements;
-} ) {
-	return (
-		<Callout
-			icon={ <img src={ ghIconUrl } alt={ __( 'GitHub logo' ) } /> }
-			title={ __( 'Deploy from GitHub' ) }
-			titleAs={ titleAs }
-			image={ illustrationUrl }
-			description={
-				<>
-					<Text as="p" variant="muted">
-						{ __(
-							'Connect your GitHub repo directly to your WordPress.com site—with seamless integration, straightforward version control, and automated workflows.'
-						) }
-					</Text>
-					<Text as="p" variant="muted">
-						{ __( 'Available on the WordPress.com Business and Commerce plans.' ) }
-					</Text>
-				</>
-			}
-			actions={
-				<UpsellCTAButton
-					text={ __( 'Upgrade plan' ) }
-					tracksId="deployments"
-					variant="primary"
-					href={ `/checkout/${ siteSlug }/business` }
-				/>
-			}
-		/>
-	);
-}
 
 function RepositoriesList() {
 	const { siteSlug } = siteRoute.useParams();
@@ -111,7 +71,7 @@ function SiteRepositories() {
 		>
 			<CalloutOverlay
 				showCallout={ ! hasDeploymentFeature }
-				callout={ <SiteRepositoriesCallout siteSlug={ site.slug } /> }
+				callout={ <DeploymentCallout siteSlug={ site.slug } /> }
 				main={ <RepositoriesList /> }
 			/>
 		</PageLayout>
