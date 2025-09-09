@@ -32,7 +32,7 @@ const iconMap: { [ key in string ]: JSX.Element } = {
 	'\uf806': chartBar, // stats
 	'\uf805': update, // reblog
 	'\uf408': thumbsUp, // star
-	'\uf804': trendingUp, // 'trophy',
+	'\uf804': trendingUp, // trophy
 	'\uf467': comment, // reply
 	'\uf414': caution, // warning
 	'\uf418': check,
