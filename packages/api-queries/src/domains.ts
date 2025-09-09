@@ -1,4 +1,5 @@
 import {
+	fetchAvailableTlds,
 	fetchDomainSuggestions,
 	fetchFreeDomainSuggestion,
 	type DomainSuggestionQuery,
@@ -26,4 +27,10 @@ export const freeSuggestionQuery = ( query: string ) =>
 	queryOptions( {
 		queryKey: [ 'free-suggestion', query ],
 		queryFn: () => fetchFreeDomainSuggestion( query ),
+	} );
+
+export const availableTldsQuery = ( query?: string, vendor?: string ) =>
+	queryOptions( {
+		queryKey: [ 'available-tlds', query, vendor ],
+		queryFn: () => fetchAvailableTlds( query, vendor ),
 	} );

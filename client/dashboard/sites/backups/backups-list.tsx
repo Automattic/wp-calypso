@@ -13,10 +13,12 @@ export function BackupsList( {
 	site,
 	selectedBackup,
 	setSelectedBackup,
+	autoSelect = true,
 }: {
 	site: Site;
 	selectedBackup: ActivityLogEntry | null;
 	setSelectedBackup: ( backup: ActivityLogEntry | null ) => void;
+	autoSelect?: boolean;
 } ) {
 	const [ view, setView ] = useState< View >( {
 		type: 'list',
@@ -53,11 +55,11 @@ export function BackupsList( {
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( activityLog, view, fields );
 
 	useEffect( () => {
-		if ( ! isLoadingActivityLog && activityLog.length > 0 && ! selectedBackup ) {
+		if ( autoSelect && ! isLoadingActivityLog && activityLog.length > 0 && ! selectedBackup ) {
 			const firstBackup = activityLog[ 0 ];
 			setSelectedBackup( firstBackup );
 		}
-	}, [ isLoadingActivityLog, activityLog, selectedBackup, setSelectedBackup ] );
+	}, [ autoSelect, isLoadingActivityLog, activityLog, selectedBackup, setSelectedBackup ] );
 
 	const onChangeSelection = ( selection: string[] ) => {
 		const backup =

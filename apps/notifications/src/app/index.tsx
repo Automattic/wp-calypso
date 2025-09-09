@@ -10,6 +10,7 @@ import { SET_IS_SHOWING } from '../panel/state/action-types';
 import actions from '../panel/state/actions';
 import { addListeners, removeListeners } from '../panel/state/create-listener-middleware';
 import getIsPanelOpen from '../panel/state/selectors/get-is-panel-open';
+import getKeyboardShortcutsEnabled from '../panel/state/selectors/get-keyboard-shortcuts-enabled';
 import { AppProvider } from './context';
 import Note from './note';
 import NotePanel from './note-panel';
@@ -49,11 +50,13 @@ const defaultHandlers = {
 
 const NotificationApp = ( {
 	locale = 'en',
+	isDismissible = false,
 	customEnhancer,
 	actionHandlers = {},
 	wpcom,
 }: {
 	locale?: string;
+	isDismissible?: boolean;
 	customEnhancer?: any;
 	actionHandlers?: any;
 	wpcom: any;
@@ -105,12 +108,19 @@ const NotificationApp = ( {
 	}, [ actionHandlers ] );
 
 	useEffect( () => {
+		store.dispatch( actions.ui.enableKeyboardShortcuts() );
+	}, [] );
+
+	useEffect( () => {
 		const stopEvent = ( event: KeyboardEvent ) => {
 			event.stopPropagation();
 			event.preventDefault();
 		};
 
 		const handleKeyDown = ( event: KeyboardEvent ) => {
+			if ( ! getKeyboardShortcutsEnabled( store.getState() ) ) {
+				return;
+			}
 			if ( modifierKeyIsActive( event ) ) {
 				return;
 			}
@@ -144,13 +154,13 @@ const NotificationApp = ( {
 						path="/:filterName"
 						style={ { display: 'flex', flexDirection: 'column', height: '100%' } }
 					>
-						<NotePanel />
+						<NotePanel isDismissible={ isDismissible } />
 					</Navigator.Screen>
 					<Navigator.Screen
 						path="/:filterName/notes/:noteId"
 						style={ { display: 'flex', flexDirection: 'column', height: '100%' } }
 					>
-						<Note />
+						<Note isDismissible={ isDismissible } />
 					</Navigator.Screen>
 				</Navigator>
 			</AppProvider>

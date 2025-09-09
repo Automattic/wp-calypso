@@ -72,7 +72,6 @@ import {
 	isMissingVendor,
 	markFeaturedSuggestions,
 } from 'calypso/components/domains/register-domain-step/utility';
-import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-notice';
 import { getDomainsInCart, hasDomainInCart } from 'calypso/lib/cart-values/cart-items';
 import {
 	checkDomainAvailability,
@@ -620,12 +619,6 @@ class RegisterDomainStep extends Component {
 	render() {
 		const { onContinue, isDomainAndPlanPackageFlow, translate } = this.props;
 
-		const { trademarkClaimsNoticeInfo } = this.state;
-
-		if ( trademarkClaimsNoticeInfo ) {
-			return this.renderTrademarkClaimsNotice();
-		}
-
 		const notices = this.renderGeneralNotices();
 
 		const showFreeDomainPromo =
@@ -643,7 +636,7 @@ class RegisterDomainStep extends Component {
 					cart={ this.getCart() }
 					className="wpcom-domain-search-v2 initial-state"
 				>
-					<VStack spacing={ 8 }>
+					<VStack spacing={ 8 } style={ { width: '100%' } }>
 						<VStack spacing={ 2 }>
 							<HStack spacing={ 4 } className="wpcom-domain-search-v2__empty-state-search-controls">
 								{ this.renderSearchBar() }
@@ -696,7 +689,7 @@ class RegisterDomainStep extends Component {
 				cart={ this.getCart() }
 				className="wpcom-domain-search-v2"
 			>
-				<VStack spacing={ 8 }>
+				<VStack spacing={ 8 } style={ { width: '100%' } }>
 					<VStack spacing={ 4 }>
 						{ this.renderSearchControls() }
 						{ isDomainAndPlanPackageFlow && this.renderQuickFilters() }
@@ -857,7 +850,7 @@ class RegisterDomainStep extends Component {
 		);
 	}
 
-	rejectTrademarkClaim = () => {
+	clearTrademarkClaimState = () => {
 		this.setState( {
 			selectedSuggestion: null,
 			selectedSuggestionPosition: null,
@@ -865,28 +858,10 @@ class RegisterDomainStep extends Component {
 		} );
 	};
 
-	acceptTrademarkClaim = () => {
+	acceptTrademarkClaim = async () => {
 		this.props.onAddDomain( this.state.selectedSuggestion, this.state.selectedSuggestionPosition );
+		this.clearTrademarkClaimState();
 	};
-
-	renderTrademarkClaimsNotice() {
-		const { isSignupStep } = this.props;
-		const { selectedSuggestion, trademarkClaimsNoticeInfo, isLoading } = this.state;
-		const domain = get( selectedSuggestion, 'domain_name' );
-
-		return (
-			<TrademarkClaimsNotice
-				domain={ domain }
-				isLoading={ isLoading }
-				isSignupStep={ isSignupStep }
-				onAccept={ this.acceptTrademarkClaim }
-				onGoBack={ this.rejectTrademarkClaim }
-				onReject={ this.rejectTrademarkClaim }
-				suggestion={ selectedSuggestion }
-				trademarkClaimsNoticeInfo={ trademarkClaimsNoticeInfo }
-			/>
-		);
-	}
 
 	renderFilterResetNotice() {
 		const { exactSldMatchesOnly = false, tlds = [] } = this.state.lastFilters;
@@ -1234,9 +1209,14 @@ class RegisterDomainStep extends Component {
 					const isAvailable = domainAvailability.AVAILABLE === status;
 					const isAvailableSupportedPremiumDomain =
 						domainAvailability.AVAILABLE_PREMIUM === status && result?.is_supported_premium_domain;
+
+					const trademarkClaimsNoticeInfo = get( result, 'trademark_claims_notice_info', null );
+
 					resolve( {
 						status: ! isAvailable && ! isAvailableSupportedPremiumDomain ? status : null,
-						trademarkClaimsNoticeInfo: get( result, 'trademark_claims_notice_info', null ),
+						trademarkClaimsNoticeInfo: trademarkClaimsNoticeInfo
+							? { domain, trademarkClaimsNoticeInfo }
+							: null,
 					} );
 				}
 			);
@@ -1744,18 +1724,9 @@ class RegisterDomainStep extends Component {
 
 		const isSubDomainSuggestion = get( suggestion, 'isSubDomainSuggestion' );
 		if ( ! hasDomainInCart( this.props.cart, domain ) && ! isSubDomainSuggestion ) {
-			// For Multi-domain flows, add the domain first, than check availability
-			if ( shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
-				this.props.onAddDomain( suggestion, position, previousState );
-			}
-
 			this.setState( { pendingCheckSuggestion: suggestion } );
 			const promise = this.preCheckDomainAvailability( domain )
-				.catch( () => {
-					this.setState( { pendingCheckSuggestion: null } );
-				} )
 				.then( ( { status, trademarkClaimsNoticeInfo } ) => {
-					this.setState( { pendingCheckSuggestion: null } );
 					this.props.recordDomainAddAvailabilityPreCheck(
 						domain,
 						status,
@@ -1782,10 +1753,12 @@ class RegisterDomainStep extends Component {
 							selectedSuggestion: suggestion,
 							selectedSuggestionPosition: position,
 						} );
-						this.props.onMappingError( domain, status );
-					} else if ( ! shouldUseMultipleDomainsInCart( this.props.flowName ) ) {
-						this.props.onAddDomain( suggestion, position, previousState );
+					} else {
+						return this.props.onAddDomain( suggestion, position, previousState );
 					}
+				} )
+				.finally( () => {
+					this.setState( { pendingCheckSuggestion: null } );
 				} );
 			this.props.checkDomainAvailabilityPromises?.push( promise );
 		} else {
@@ -1878,6 +1851,9 @@ class RegisterDomainStep extends Component {
 				temporaryCart={ this.props.temporaryCart }
 				domainRemovalQueue={ this.props.domainRemovalQueue }
 				flowName={ this.props.flowName }
+				trademarkClaimsNoticeInfo={ this.state.trademarkClaimsNoticeInfo }
+				onAcceptTrademarkClaim={ this.acceptTrademarkClaim }
+				onRejectTrademarkClaim={ this.clearTrademarkClaimState }
 			/>
 		);
 	}

@@ -87,7 +87,7 @@ export const PaymentMethodDeleteDialog = ( {
 									<Text>
 										{ sprintf(
 											// translators: date is a formatted renewal date
-											__( 'Renews on on %(date)s' ),
+											__( 'Renews on %(date)s' ),
 											{
 												date: formatDate( new Date( purchase.renew_date ), locale, {
 													dateStyle: 'long',

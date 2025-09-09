@@ -1,22 +1,20 @@
 import { useEffect, useState } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback } from 'react';
-import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { FileBrowserItem } from './types';
 import { useBackupFileQuery } from './use-backup-file-query';
 
 interface FilePreviewProps {
 	item: FileBrowserItem;
 	siteId: number;
+	onTrackEvent?: ( eventName: string, properties?: Record< string, unknown > ) => void;
 }
 
 /**
  * This component is responsible for rendering the preview of a file.
  */
-const FilePreview: FunctionComponent< FilePreviewProps > = ( { item, siteId } ) => {
-	const translate = useTranslate();
+const FilePreview: FunctionComponent< FilePreviewProps > = ( { item, siteId, onTrackEvent } ) => {
 	const [ fileContent, setFileContent ] = useState( '' );
 	const [ showSensitivePreview, setShowSensitivePreview ] = useState( false );
 
@@ -38,12 +36,12 @@ const FilePreview: FunctionComponent< FilePreviewProps > = ( { item, siteId } ) 
 		shouldPreviewFile
 	);
 
-	const dispatch = useDispatch();
-
 	const handleShowPreviewClick = useCallback( () => {
 		setShowSensitivePreview( true );
-		dispatch( recordTracksEvent( 'calypso_jetpack_backup_browser_preview_file_sensitive_click' ) );
-	}, [ dispatch ] );
+		if ( onTrackEvent ) {
+			onTrackEvent( 'calypso_jetpack_backup_browser_preview_file_sensitive_click' );
+		}
+	}, [ onTrackEvent ] );
 
 	useEffect( () => {
 		if ( isSuccess && data && data.url && isTextContent ) {
@@ -57,9 +55,9 @@ const FilePreview: FunctionComponent< FilePreviewProps > = ( { item, siteId } ) 
 	if ( isSensitive && ! showSensitivePreview ) {
 		return (
 			<div className="file-card__preview-sensitive">
-				<p>{ translate( 'This preview is hidden because it contains sensitive information.' ) }</p>
+				<p>{ __( 'This preview is hidden because it contains sensitive information.' ) }</p>
 				<button className="button button-small" onClick={ handleShowPreviewClick }>
-					{ translate( 'Show preview' ) }
+					{ __( 'Show preview' ) }
 				</button>
 			</div>
 		);
@@ -78,14 +76,14 @@ const FilePreview: FunctionComponent< FilePreviewProps > = ( { item, siteId } ) 
 				content = <pre>{ fileContent }</pre>;
 				break;
 			case 'image':
-				content = <img src={ data.url } alt="file-preview" />;
+				content = <img src={ data?.url } alt="file-preview" />;
 				break;
 			case 'audio':
 				content = (
 					// We don't have captions for backed up audio files
 					// eslint-disable-next-line jsx-a11y/media-has-caption
 					<audio controls>
-						<source src={ data.url } type="audio/mpeg" />
+						<source src={ data?.url } type="audio/mpeg" />
 					</audio>
 				);
 				break;
@@ -94,17 +92,17 @@ const FilePreview: FunctionComponent< FilePreviewProps > = ( { item, siteId } ) 
 					// We don't have captions for backed up video files
 					// eslint-disable-next-line jsx-a11y/media-has-caption
 					<video controls>
-						<source src={ data.url } type="video/mp4" />
+						<source src={ data?.url } type="video/mp4" />
 					</video>
 				);
 				break;
 		}
 
-		dispatch(
-			recordTracksEvent( 'calypso_jetpack_backup_browser_preview_file', {
+		if ( onTrackEvent ) {
+			onTrackEvent( 'calypso_jetpack_backup_browser_preview_file', {
 				file_type: item.type,
-			} )
-		);
+			} );
+		}
 		return content;
 	};
 

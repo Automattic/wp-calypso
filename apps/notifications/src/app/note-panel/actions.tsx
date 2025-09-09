@@ -25,6 +25,9 @@ export default function NotePanelActions() {
 			label={ __( 'Actions' ) }
 			onToggle={ setIsOpen }
 			open={ isOpen || isShortcutsPopoverOpen }
+			toggleProps={ {
+				size: 'small',
+			} }
 			popoverProps={ {
 				focusOnMount: true,
 			} }

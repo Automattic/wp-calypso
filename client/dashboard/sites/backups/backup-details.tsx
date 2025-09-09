@@ -9,6 +9,7 @@ import {
 	CardHeader,
 	Icon,
 } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import { rotateLeft, download } from '@wordpress/icons';
 import { siteBackupRestoreRoute, siteBackupDownloadRoute } from '../../app/router/sites';
@@ -25,6 +26,9 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 		timeStyle: 'short',
 	} );
 
+	const isSmallViewport = useViewportMatch( 'medium', '<' );
+	const direction = isSmallViewport ? 'column-reverse' : 'row';
+
 	const handleRestoreClick = () => {
 		router.navigate( {
 			to: siteBackupRestoreRoute.fullPath,
@@ -39,35 +43,38 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 		} );
 	};
 
+	const actions = backup.rewind_id ? (
+		<ButtonStack alignment="stretch" justify="center" direction={ direction }>
+			<Button
+				variant="tertiary"
+				size={ isSmallViewport ? 'default' : 'compact' }
+				icon={ download }
+				onClick={ handleDownloadClick }
+				style={ { justifyContent: 'center' } }
+			>
+				{ __( 'Download backup' ) }
+			</Button>
+			<Button
+				variant="primary"
+				size={ isSmallViewport ? 'default' : 'compact' }
+				icon={ rotateLeft }
+				onClick={ handleRestoreClick }
+				style={ { justifyContent: 'center' } }
+			>
+				{ __( 'Restore to this point' ) }
+			</Button>
+		</ButtonStack>
+	) : null;
+
 	return (
 		<Card>
 			<CardHeader style={ { flexDirection: 'column', alignItems: 'stretch' } }>
 				<SectionHeader
 					title={ backup.summary }
 					decoration={ <Icon icon={ gridiconToWordPressIcon( backup.gridicon ) } /> }
-					actions={
-						backup.rewind_id && (
-							<ButtonStack>
-								<Button
-									variant="secondary"
-									size="compact"
-									icon={ download }
-									onClick={ handleDownloadClick }
-								>
-									{ __( 'Download backup' ) }
-								</Button>
-								<Button
-									variant="primary"
-									size="compact"
-									icon={ rotateLeft }
-									onClick={ handleRestoreClick }
-								>
-									{ __( 'Restore to this point' ) }
-								</Button>
-							</ButtonStack>
-						)
-					}
+					actions={ ! isSmallViewport ? actions : null }
 				/>
+				{ isSmallViewport ? actions : null }
 			</CardHeader>
 			<CardBody>
 				<VStack>

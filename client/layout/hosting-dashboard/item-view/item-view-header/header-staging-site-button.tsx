@@ -1,6 +1,6 @@
 import { siteByIdQuery } from '@automattic/api-queries';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
-import { Button } from '@wordpress/components';
+import { Button, Spinner } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { plus } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -202,7 +202,14 @@ export default function HeaderStagingSiteButton( {
 			label={ disabledReason }
 			tooltipPosition="top"
 		>
-			{ isAddingStagingSite ? __( 'Adding staging site…' ) : __( 'Add staging site' ) }
+			{ isAddingStagingSite ? (
+				<>
+					<Spinner />
+					{ __( 'Adding staging site…' ) }
+				</>
+			) : (
+				__( 'Add staging site' )
+			) }
 		</Button>
 	);
 }

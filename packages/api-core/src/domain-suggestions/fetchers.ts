@@ -45,3 +45,23 @@ export async function fetchFreeDomainSuggestion( search: string ): Promise< Free
 
 	return suggestion;
 }
+
+export async function fetchAvailableTlds( search?: string, vendor?: string ): Promise< string[] > {
+	const defaultAvailableTldsQuery = {
+		vendor: 'variation2_front',
+	};
+
+	const tlds = await wpcom.req.get(
+		{
+			apiVersion: '1.1',
+			path: '/domains/suggestions/tlds',
+		},
+		{
+			...defaultAvailableTldsQuery,
+			search,
+			vendor,
+		}
+	);
+
+	return tlds;
+}

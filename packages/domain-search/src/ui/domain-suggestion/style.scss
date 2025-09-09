@@ -1,11 +1,5 @@
 @import '@wordpress/base-styles/colors';
 
-.domain-suggestions-list-item__notice {
-	height: 1lh;
-	display: inline-block;
-	vertical-align: top;
-}
-
 .domain-suggestions-list-item__icon {
 	fill: #{$gray-700};
 	flex-shrink: 0;

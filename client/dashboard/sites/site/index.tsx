@@ -13,10 +13,13 @@ import { __ } from '@wordpress/i18n';
 import { plus } from '@wordpress/icons';
 import { useState } from 'react';
 import { siteRoute } from '../../app/router/sites';
+import StagingSiteSyncMonitor from '../../app/staging-site-sync-monitor';
 import HeaderBar from '../../components/header-bar';
 import MenuDivider from '../../components/menu-divider';
 import Switcher from '../../components/switcher';
 import { getSiteDisplayName } from '../../utils/site-name';
+import { hasStagingSite } from '../../utils/site-staging-site';
+import { isSiteMigrationInProgress } from '../../utils/site-status';
 import AddNewSite from '../add-new-site';
 import { canManageSite, canSwitchEnvironment } from '../features';
 import SiteIcon from '../site-icon';
@@ -36,6 +39,7 @@ function Site() {
 
 	return (
 		<>
+			{ hasStagingSite( site ) && <StagingSiteSyncMonitor site={ site } /> }
 			<HeaderBar>
 				<HStack justify={ isDesktop ? 'flex-start' : 'space-between' } spacing={ 3 }>
 					<HeaderBar.Title>
@@ -77,8 +81,12 @@ function Site() {
 							<EnvironmentSwitcher site={ site } />
 						</>
 					) }
-					{ isDesktop && <MenuDivider /> }
-					<SiteMenu site={ site } />
+					{ ! isSiteMigrationInProgress( site ) && (
+						<>
+							{ isDesktop && <MenuDivider /> }
+							<SiteMenu site={ site } />
+						</>
+					) }
 				</HStack>
 			</HeaderBar>
 			<Outlet />

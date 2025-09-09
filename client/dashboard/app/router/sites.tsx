@@ -34,6 +34,7 @@ import { isSupportSession } from '@automattic/calypso-support-session';
 import { createRoute, redirect, createLazyRoute, lazyRouteComponent } from '@tanstack/react-router';
 import { canViewHundredYearPlanSettings, canViewWordPressSettings } from '../../sites/features';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
+import { isSiteMigrationInProgress } from '../../utils/site-status';
 import { hasSiteTrialEnded } from '../../utils/site-trial';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
@@ -95,6 +96,11 @@ export const siteRoute = createRoute( {
 			! matches.some( ( match ) => difmAllowedRoutes.includes( match.routeId ) )
 		) {
 			throw redirect( { to: difmUrl } );
+		}
+
+		const migrationUrl = `/sites/${ siteSlug }/site-migration-in-progress`;
+		if ( isSiteMigrationInProgress( site ) && ! location.pathname.includes( migrationUrl ) ) {
+			throw redirect( { to: migrationUrl } );
 		}
 	},
 	loader: async ( { params: { siteSlug } } ) => {
@@ -411,6 +417,40 @@ export const siteSettingsAgencyRoute = createRoute( {
 	)
 );
 
+export const siteSettingsMcpRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/mcp',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
+	},
+} ).lazy( () =>
+	import( '../../sites/settings-mcp' ).then( ( d ) => {
+		return createLazyRoute( 'site-settings-mcp' )( {
+			component: () => {
+				return <d.default siteSlug={ siteRoute.useParams().siteSlug } />;
+			},
+		} );
+	} )
+);
+
+export const siteSettingsMcpSetupRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/mcp-setup',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
+	},
+} ).lazy( () =>
+	import( '../../sites/settings-mcp/setup' ).then( ( d ) => {
+		return createLazyRoute( 'site-settings-mcp-setup' )( {
+			component: () => {
+				return <d.default siteSlug={ siteRoute.useParams().siteSlug } />;
+			},
+		} );
+	} )
+);
+
 export const siteSettingsHundredYearPlanRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings/hundred-year-plan',
@@ -621,6 +661,27 @@ export const siteDifmLiteInProgressRoute = createRoute( {
 	)
 );
 
+export const siteMigrationInProgressRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'site-migration-in-progress',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause !== 'enter' ) {
+			return;
+		}
+
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! isSiteMigrationInProgress( site ) ) {
+			throw redirect( { to: `/sites/${ siteSlug }` } );
+		}
+	},
+} ).lazy( () =>
+	import( '../../sites/migration-in-progress' ).then( ( d ) =>
+		createLazyRoute( 'site-migration-in-progress' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 export const siteLogsChildRoutes: AnyRoute[] = [
 	siteLogsIndexRoute,
 	siteLogsPhpRoute,
@@ -641,6 +702,8 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteSettingsWordPressRoute,
 		siteSettingsPHPRoute,
 		siteSettingsAgencyRoute,
+		siteSettingsMcpRoute,
+		siteSettingsMcpSetupRoute,
 		siteSettingsHundredYearPlanRoute,
 		siteSettingsPrimaryDataCenterRoute,
 		siteSettingsStaticFile404Route,
@@ -652,6 +715,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteSettingsWpcomLoginRoute,
 		siteTrialEndedRoute,
 		siteDifmLiteInProgressRoute,
+		siteMigrationInProgressRoute,
 	];
 
 	if ( config.supports.sites.deployments ) {

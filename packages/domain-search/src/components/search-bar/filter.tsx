@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import { Dropdown } from '@wordpress/components';
 import { useCallback, useMemo } from 'react';
 import { useDomainSearch } from '../../page/context';
@@ -9,14 +10,19 @@ const emptyFilter: FilterState = {
 	tlds: [],
 };
 
-export const Filter = () => {
-	const { filter, setFilter } = useDomainSearch();
+const POPOVER_PROPS = {
+	placement: 'bottom-end',
+	offset: 10,
+	noArrow: false,
+	inline: true,
+};
 
-	// TODO: Hardcoded for testing, should get those from the https://public-api.wordpress.com/rest/v1.1/domains/suggestions/tlds endpoint
-	const availableTlds = useMemo(
-		() => [ 'com', 'net', 'org', 'blog', 'dev', 'io', 'co', 'co.uk', 'com.br', 'de' ],
-		[]
-	);
+export const Filter = () => {
+	const { filter, setFilter, query, queries } = useDomainSearch();
+	const { data: availableTlds = [], isFetching: isFetchingTlds } = useQuery( {
+		...queries.availableTlds( query ),
+		enabled: true,
+	} ) as { data: string[]; isFetching: boolean };
 
 	const resetFilter = useCallback( () => {
 		setFilter( emptyFilter );
@@ -27,12 +33,23 @@ export const Filter = () => {
 		[ filter ]
 	);
 
+	if ( ! isFetchingTlds && ( ! availableTlds || availableTlds.length === 0 ) ) {
+		return null;
+	}
+
 	return (
 		<Dropdown
 			showArrow={ false }
-			popoverProps={ { placement: 'bottom-end', offset: 10, noArrow: false, inline: true } }
+			className="domain-search__search-bar-filters"
+			popoverProps={ POPOVER_PROPS }
 			renderToggle={ ( { onToggle } ) => {
-				return <DomainSearchControls.FilterButton count={ filterCount } onClick={ onToggle } />;
+				return (
+					<DomainSearchControls.FilterButton
+						count={ filterCount }
+						onClick={ onToggle }
+						disabled={ isFetchingTlds }
+					/>
+				);
 			} }
 			renderContent={ ( { onClose } ) => {
 				return (
