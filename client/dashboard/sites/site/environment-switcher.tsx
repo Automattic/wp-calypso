@@ -212,18 +212,24 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 
 	// Clean up deletion flag when staging site no longer exists
 	useEffect( () => {
-		const invalidateQueries = async ( productionSiteId: number, stagingSiteId: number ) => {
+		const invalidateQueries = async (
+			productionSiteId: number,
+			productionSiteSlug: string,
+			stagingSiteId: number
+		) => {
 			// Ensure the new site is retrieved before invalidating the deletion flag
 			await queryClient.invalidateQueries( siteByIdQuery( productionSiteId ) );
+			await queryClient.invalidateQueries( siteBySlugQuery( productionSiteSlug ) );
 			await queryClient.invalidateQueries( isDeletingStagingSiteQuery( stagingSiteId ) );
 		};
 		if (
 			isStagingSiteDeleting &&
 			stagingSiteExistsFromQuery === false &&
 			productionSiteId &&
+			productionSite &&
 			stagingSiteId
 		) {
-			invalidateQueries( productionSiteId, stagingSiteId );
+			invalidateQueries( productionSiteId, productionSite?.slug, stagingSiteId );
 		}
 	}, [
 		isStagingSiteDeleting,
@@ -231,6 +237,7 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 		queryClient,
 		stagingSiteId,
 		productionSiteId,
+		productionSite,
 	] );
 
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
