@@ -2,6 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { ChatFooter } from './ChatFooter';
 import React, { useRef } from 'react';
 import type { Suggestion } from '../../types';
+import { AgentUIProvider } from '../../context/AgentUIContext';
+import type { AgentUIContextValue } from '../../context/AgentUIContext';
 
 const meta = {
 	title: 'Chat/ChatFooter',
@@ -91,6 +93,52 @@ const mockSuggestions: Suggestion[] = [
 	},
 ];
 
+// Mock context value for stories
+const mockContextValue = {
+	// Core data
+	messages: [],
+	isProcessing: false,
+	error: null,
+
+	// Input state
+	inputValue: '',
+	setInputValue: () => {},
+	clearInput: () => {},
+	textareaRef: { current: null },
+	handleKeyDown: () => {},
+
+	// Actions
+	onSubmit: () => {},
+	handleSubmit: () => {},
+	onStop: () => {},
+
+	// UI state
+	variant: 'embedded' as const,
+	placeholder: undefined,
+	emptyView: null,
+	messageRenderer: undefined,
+
+	// Floating chat specific
+	floatingChatState: 'compact' as const,
+	triggerIcon: null,
+	onOpen: () => {},
+	onExpand: () => {},
+	onClose: () => {},
+
+	// Suggestions
+	suggestions: undefined,
+	clearSuggestions: () => {},
+	handleSuggestionSubmit: () => {},
+
+	// Notice
+	notice: undefined,
+
+	// Internal state for components
+	focusOnMount: false,
+	fromCompact: false,
+	showExpandButton: true,
+} as AgentUIContextValue;
+
 // Wrapper component to handle state for stories
 const ChatFooterWrapper = (
 	args: React.ComponentProps< typeof ChatFooter >
@@ -113,18 +161,20 @@ const ChatFooterWrapper = (
 	}, [ args.suggestions ] );
 
 	return (
-		<ChatFooter
-			{ ...args }
-			inputValue={ inputValue }
-			onInputChange={ setInputValue }
-			onSubmit={ () => console.log( 'Submitted:', inputValue ) }
-			onKeyDown={ ( e ) => console.log( 'Key pressed:', e.key ) }
-			textareaRef={ textareaRef }
-			suggestions={ suggestions }
-			clearSuggestions={ () => setSuggestions( [] ) }
-			onStop={ () => console.log( 'Stopped processing' ) }
-			onExpand={ () => console.log( 'Expand clicked' ) }
-		/>
+		<AgentUIProvider value={ mockContextValue }>
+			<ChatFooter
+				{ ...args }
+				inputValue={ inputValue }
+				onInputChange={ setInputValue }
+				onSubmit={ () => console.log( 'Submitted:', inputValue ) }
+				onKeyDown={ ( e ) => console.log( 'Key pressed:', e.key ) }
+				textareaRef={ textareaRef }
+				suggestions={ suggestions }
+				clearSuggestions={ () => setSuggestions( [] ) }
+				onStop={ () => console.log( 'Stopped processing' ) }
+				onExpand={ () => console.log( 'Expand clicked' ) }
+			/>
+		</AgentUIProvider>
 	);
 };
 
@@ -239,6 +289,9 @@ export const WithNotice: Story = {
 const ValidationDemoWrapper = () => {
 	const [ inputValue, setInputValue ] = React.useState( '' );
 	const [ isValid, setIsValid ] = React.useState( false );
+	const [ suggestions, setSuggestions ] = React.useState(
+		inputValue ? [] : mockSuggestions
+	);
 	const textareaRef = useRef< HTMLTextAreaElement >( null );
 
 	// Validation rules: must contain at least one word that's 3+ characters long
@@ -257,44 +310,26 @@ const ValidationDemoWrapper = () => {
 	};
 
 	return (
-		<div style={ { maxWidth: '600px' } }>
-			<ChatFooter
-				inputValue={ inputValue }
-				onInputChange={ setInputValue }
-				onSubmit={ () => {
-					console.log( 'Submitted:', inputValue );
-					setInputValue( '' );
-				} }
-				onKeyDown={ ( e ) => console.log( 'Key pressed:', e.key ) }
-				textareaRef={ textareaRef }
-				isProcessing={ false }
-				disabled={ ! isValid }
-				notice={ notice }
-				placeholder="Type a message with at least one 3+ character word..."
-				suggestions={
-					inputValue
-						? []
-						: [
-								{
-									id: '1',
-									label: 'Greeting',
-									prompt: 'Hello there!',
-								},
-								{
-									id: '2',
-									label: 'Help Request',
-									prompt: 'Can you help me?',
-								},
-								{
-									id: '3',
-									label: 'Introduction',
-									prompt: 'What is your name?',
-								},
-						  ]
-				}
-				clearSuggestions={ () => {} }
-			/>
-		</div>
+		<AgentUIProvider value={ mockContextValue }>
+			<div style={ { maxWidth: '600px' } }>
+				<ChatFooter
+					inputValue={ inputValue }
+					onInputChange={ setInputValue }
+					onSubmit={ () => {
+						console.log( 'Submitted:', inputValue );
+						setInputValue( '' );
+					} }
+					onKeyDown={ ( e ) => console.log( 'Key pressed:', e.key ) }
+					textareaRef={ textareaRef }
+					isProcessing={ false }
+					disabled={ ! isValid }
+					notice={ notice }
+					placeholder="Type a message with at least one 3+ character word..."
+					suggestions={ suggestions }
+					clearSuggestions={ () => setSuggestions( [] ) }
+				/>
+			</div>
+		</AgentUIProvider>
 	);
 };
 

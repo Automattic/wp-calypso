@@ -2,6 +2,7 @@
 #storybook-root {
   font-family: var(--font-sans);
   color: var(--color-foreground);
+  padding-top: 50px;
 }
 
 .sb-show-main {
