@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { __experimentalText as Text, Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { siteRoute } from '../../app/router/sites';
 import { Callout } from '../../components/callout';
 import { CalloutOverlay } from '../../components/callout-overlay';
@@ -17,7 +17,6 @@ import ghIconUrl from '../deployments/gh-icon.svg';
 import SettingsPageHeader from '../settings-page-header';
 import { useRepositoryFields } from './dataviews/fields';
 import { DEFAULT_VIEW, DEFAULT_LAYOUTS } from './dataviews/views';
-import type { CodeDeploymentData } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 
 export function SiteRepositoriesCallout( {
@@ -67,28 +66,8 @@ function RepositoriesList() {
 		enabled: !! site?.ID,
 	} );
 
-	const repositoryData: CodeDeploymentData[] = useMemo( () => {
-		const uniqueRepos = new Map< string, CodeDeploymentData >();
-
-		deployments.forEach( ( deployment: CodeDeploymentData ) => {
-			const repoKey = deployment.repository_name;
-			if (
-				! uniqueRepos.has( repoKey ) ||
-				( uniqueRepos.get( repoKey )?.updated_on || '' ) < deployment.updated_on
-			) {
-				uniqueRepos.set( repoKey, deployment );
-			}
-		} );
-
-		return Array.from( uniqueRepos.values() );
-	}, [ deployments ] );
-
 	const fields = useRepositoryFields();
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
-		repositoryData,
-		view,
-		fields
-	);
+	const { data: filteredData, paginationInfo } = filterSortAndPaginate( deployments, view, fields );
 
 	const hasFilterOrSearch = ( view.filters && view.filters.length > 0 ) || view.search;
 	const emptyTitle = hasFilterOrSearch
