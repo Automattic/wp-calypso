@@ -172,24 +172,16 @@ export function useFields( {
 					filterBy: { operators: [] },
 				},
 				{
-					id: 'summary',
+					id: 'event',
 					type: 'text',
 					label: __( 'Event' ),
 					enableSorting: false,
 					getValue: ( { item } ) => item.summary,
 					render: ( { item } ) => (
-						<span className="site-logs-ellipsis">{ String( item.summary ) }</span>
-					),
-					filterBy: { operators: [] },
-				},
-				{
-					id: 'content',
-					type: 'text',
-					label: __( 'Message' ),
-					enableSorting: false,
-					getValue: ( { item } ) => item.content?.text || '',
-					render: ( { item } ) => (
-						<span className="site-logs-ellipsis">{ String( item.content?.text ) }</span>
+						<>
+							<strong>{ item.summary }:</strong>{ ' ' }
+							<span className="site-logs-ellipsis">{ String( item.content.text ) }</span>
+						</>
 					),
 					filterBy: { operators: [] },
 				},

@@ -35,9 +35,9 @@ const serverLogsViewConfig = {
 
 const activityLogsViewConfig = {
 	sortField: 'published',
-	titleField: 'summary',
-	primaryField: 'summary',
-	visibleFields: [ 'published', 'summary', 'actor' ],
+	titleField: '',
+	primaryField: 'event',
+	visibleFields: [ 'published', 'event', 'actor' ],
 	allowedFilters: [] as string[],
 	layout: {
 		styles: {
