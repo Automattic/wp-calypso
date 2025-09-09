@@ -120,6 +120,7 @@ export default function PreferencesLoginSiteDropdown( {
 	return (
 		<ComboboxControl
 			__next40pxDefaultSize
+			__nextHasNoMarginBottom
 			label={ hideLabelFromVision ? '' : label }
 			value={ value }
 			onChange={ onChange }
