@@ -39,7 +39,7 @@ export function getSiteSpecUrl( urlKey: UrlKey = 'script_url' ): string | null {
 	const siteSpecConfig = config( 'site_spec' ) as SiteSpecRawConfig | undefined;
 	const url = siteSpecConfig?.[ urlKey ];
 
-	return url || null;
+	return url?.trim() ?? null;
 }
 
 /**
