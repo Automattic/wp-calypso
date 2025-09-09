@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import phone from 'phone';
 
-export default function validatePhone( phoneNumber: string ) {
+export function validatePhone( phoneNumber: string ) {
 	const phoneNumberWithoutPlus = phoneNumber.replace( /\+/, '' );
 
 	if ( phoneNumberWithoutPlus.length === 0 ) {

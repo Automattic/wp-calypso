@@ -13,7 +13,6 @@ export async function resendAccountRecoveryEmailValidation(): Promise< AccountRe
 	return wpcom.req.post( '/me/account-recovery/email/validation/new' );
 }
 
-// SMS-related actions
 export async function updateAccountRecoverySMS(
 	countryCode: string,
 	phoneNumber: string

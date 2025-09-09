@@ -11,7 +11,6 @@ import {
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
 
-// Email-related queries and mutations
 export const accountRecoveryQuery = () =>
 	queryOptions( {
 		queryKey: [ 'me', 'account-recovery' ],
@@ -44,8 +43,6 @@ export const resendAccountRecoveryEmailValidationMutation = () =>
 	mutationOptions( {
 		mutationFn: resendAccountRecoveryEmailValidation,
 	} );
-
-// SMS-related mutations
 
 type UpdateAccountRecoverySMSMutationParams = {
 	countryCode: string;
@@ -81,7 +78,7 @@ export const removeAccountRecoverySMSMutation = () =>
 		onSuccess: () => {
 			queryClient.setQueryData(
 				accountRecoveryQuery().queryKey,
-				( oldData ) => oldData && { ...oldData, phone: null }
+				( oldData ) => oldData && { ...oldData, phone: null, phone_validated: false }
 			);
 		},
 	} );

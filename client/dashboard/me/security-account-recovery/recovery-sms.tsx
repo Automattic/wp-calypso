@@ -5,11 +5,9 @@ import {
 	resendAccountRecoverySMSValidationMutation,
 	validateAccountRecoverySMSCodeMutation,
 } from '@automattic/api-queries';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	__experimentalSpacer as Spacer,
 	__experimentalConfirmDialog as ConfirmDialog,
 	__experimentalInputControl as InputControl,
 	Button,
@@ -20,10 +18,11 @@ import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
+import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
 import { SectionHeader } from '../../components/section-header';
-import validatePhone from '../../utils/validate-phone';
+import { validatePhone } from '../../utils/phone-number';
 import PhoneNumberInput from './phone-number-input';
 import type { SecuritySMSFormData } from './types';
 import type { Field } from '@wordpress/dataviews';
@@ -38,48 +37,39 @@ const initialFormData: SecuritySMSFormData = {
 };
 
 export default function RecoverySMS() {
+	const { data: accountRecoveryData } = useSuspenseQuery( accountRecoveryQuery() );
+
+	const { mutate: validateSMS, isPending: isValidateSMSPending } = useMutation(
+		updateAccountRecoverySMSMutation()
+	);
+	const { mutate: removeSMS, isPending: isRemoveSMSPending } = useMutation(
+		removeAccountRecoverySMSMutation()
+	);
+	const { mutate: resendValidation, isPending: isResendValidationPending } = useMutation(
+		resendAccountRecoverySMSValidationMutation()
+	);
+	const { mutate: validateSMSCode, isPending: isValidateSMSCodePending } = useMutation(
+		validateAccountRecoverySMSCodeMutation()
+	);
+
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
-	const [ formData, setFormData ] = useState< SecuritySMSFormData >( initialFormData );
+	const accountRecoveryPhone = accountRecoveryData.phone;
+
+	const [ formData, setFormData ] = useState< SecuritySMSFormData >( {
+		...initialFormData,
+		smsNumber: {
+			phoneNumber: accountRecoveryPhone?.number || '',
+			countryCode: accountRecoveryPhone?.country_code || '',
+			countryNumericCode: accountRecoveryPhone?.country_numeric_code || '',
+		},
+	} );
 	const [ isRemoveDialogOpen, setIsRemoveDialogOpen ] = useState( false );
 	const [ showResendButton, setShowResendButton ] = useState( true );
 	const [ showSuccessNotice, setShowSuccessNotice ] = useState( false );
 
-	const { data: accountRecoveryData, isLoading: isAccountRecoveryDataLoading } = useQuery(
-		accountRecoveryQuery()
-	);
-
-	const { mutate: validateSMSMutation, isPending: isValidateSMSPending } = useMutation(
-		updateAccountRecoverySMSMutation()
-	);
-
-	const { mutate: removeSMSMutation, isPending: isRemoveSMSPending } = useMutation(
-		removeAccountRecoverySMSMutation()
-	);
-
-	const { mutate: resendValidationMutation, isPending: isResendValidationPending } = useMutation(
-		resendAccountRecoverySMSValidationMutation()
-	);
-
-	const { mutate: validateSMSCodeMutation, isPending: isValidateSMSCodePending } = useMutation(
-		validateAccountRecoverySMSCodeMutation()
-	);
-
-	const accountRecoveryPhone = accountRecoveryData?.phone;
-	const shouldShowValidationNotice = accountRecoveryPhone && ! accountRecoveryData?.phone_validated;
-
+	const shouldShowValidationNotice = accountRecoveryPhone && ! accountRecoveryData.phone_validated;
 	const fullPhoneNumber = `${ formData.smsNumber.countryNumericCode }${ formData.smsNumber.phoneNumber }`;
-
-	useEffect( () => {
-		setFormData( {
-			smsNumber: {
-				phoneNumber: accountRecoveryPhone?.number || '',
-				countryCode: accountRecoveryPhone?.country_code || '',
-				countryNumericCode: accountRecoveryPhone?.country_numeric_code || '',
-			},
-			smsCode: '',
-		} );
-	}, [ accountRecoveryPhone ] );
 
 	const handleValidateSMS = () => {
 		const validation = validatePhone( fullPhoneNumber );
@@ -89,7 +79,7 @@ export default function RecoverySMS() {
 			} );
 			return;
 		}
-		validateSMSMutation( formData.smsNumber, {
+		validateSMS( formData.smsNumber, {
 			onSuccess: () => {
 				createSuccessNotice( __( 'Your recovery SMS number was saved successfully.' ), {
 					type: 'snackbar',
@@ -104,7 +94,7 @@ export default function RecoverySMS() {
 	};
 
 	const handleValidateSMSCode = () => {
-		validateSMSCodeMutation( formData.smsCode, {
+		validateSMSCode( formData.smsCode, {
 			onSuccess: () => {
 				setShowSuccessNotice( true );
 			},
@@ -127,7 +117,7 @@ export default function RecoverySMS() {
 
 	const handleRemove = () => {
 		setIsRemoveDialogOpen( false );
-		removeSMSMutation( undefined, {
+		removeSMS( undefined, {
 			onSuccess: () => {
 				createSuccessNotice( __( 'Your recovery SMS number was removed successfully.' ), {
 					type: 'snackbar',
@@ -144,7 +134,7 @@ export default function RecoverySMS() {
 
 	const handleResendValidation = () => {
 		setShowResendButton( false );
-		resendValidationMutation( undefined, {
+		resendValidation( undefined, {
 			onSuccess: () => {
 				createSuccessNotice( __( 'Your recovery SMS validation was resent successfully.' ), {
 					type: 'snackbar',
@@ -171,7 +161,7 @@ export default function RecoverySMS() {
 							onChange={ ( edits ) => {
 								onChange( { ...data, smsNumber: edits } );
 							} }
-							isDisabled={ isAccountRecoveryDataLoading || isValidateSMSPending }
+							isDisabled={ isValidateSMSPending }
 						/>
 					);
 				},
@@ -199,7 +189,7 @@ export default function RecoverySMS() {
 				isVisible: () => !! shouldShowValidationNotice,
 			},
 		],
-		[ isAccountRecoveryDataLoading, isValidateSMSPending, shouldShowValidationNotice ]
+		[ isValidateSMSPending, shouldShowValidationNotice ]
 	);
 
 	return (
@@ -209,34 +199,30 @@ export default function RecoverySMS() {
 					<VStack spacing={ 4 }>
 						<SectionHeader title={ __( 'Recovery SMS number' ) } level={ 3 } />
 						{ shouldShowValidationNotice && (
-							<Spacer marginBottom={ 4 }>
-								<Notice
-									variant="warning"
-									title={ __( 'Please validate your recovery SMS number' ) }
-									actions={
-										showResendButton && (
-											<Button
-												variant="link"
-												onClick={ handleResendValidation }
-												disabled={ isResendValidationPending }
-											>
-												{ __( 'Resend code' ) }
-											</Button>
-										)
-									}
-								>
-									{ sprintf(
-										/* translators: %s: phone number */
-										__( 'A validation code was sent to %s' ),
-										accountRecoveryPhone.number_full
-									) }
-								</Notice>
-							</Spacer>
+							<Notice
+								variant="warning"
+								title={ __( 'Please validate your recovery SMS number' ) }
+								actions={
+									showResendButton && (
+										<Button
+											variant="link"
+											onClick={ handleResendValidation }
+											disabled={ isResendValidationPending }
+										>
+											{ __( 'Resend code' ) }
+										</Button>
+									)
+								}
+							>
+								{ sprintf(
+									/* translators: %s: phone number */
+									__( 'A validation code was sent to %s' ),
+									accountRecoveryPhone.number_full
+								) }
+							</Notice>
 						) }
 						{ showSuccessNotice && (
-							<Spacer marginBottom={ 4 }>
-								<Notice variant="success">{ __( 'Recovery SMS number validated' ) }</Notice>
-							</Spacer>
+							<Notice variant="success">{ __( 'Recovery SMS number validated' ) }</Notice>
 						) }
 						<form onSubmit={ handleSubmit }>
 							<VStack spacing={ 4 }>
@@ -248,7 +234,7 @@ export default function RecoverySMS() {
 										setFormData( ( data ) => ( { ...data, ...edits } ) );
 									} }
 								/>
-								<HStack spacing={ 3 } justify="flex-start">
+								<ButtonStack justify="flex-start">
 									<Button
 										variant="primary"
 										type="submit"
@@ -275,7 +261,7 @@ export default function RecoverySMS() {
 											{ __( 'Remove SMS number' ) }
 										</Button>
 									) }
-								</HStack>
+								</ButtonStack>
 							</VStack>
 						</form>
 					</VStack>
