@@ -6,7 +6,6 @@ export const userSettingsQuery = () =>
 	queryOptions( {
 		queryKey: [ 'me', 'settings' ],
 		queryFn: fetchUserSettings,
-		meta: { persist: false },
 	} );
 
 export const userSettingsMutation = () =>

@@ -24,7 +24,10 @@ import type { Field, Form } from '@wordpress/dataviews';
 
 export default function PreferencesLanguageForm() {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const { data: serverData } = useQuery( userSettingsQuery() );
+	const { data: serverData } = useQuery( {
+		...userSettingsQuery(),
+		meta: { persist: false },
+	} );
 	const [ formData, setFormData ] = useState< Partial< UserSettings > | undefined >();
 	const mutation = useMutation( userSettingsMutation() );
 
