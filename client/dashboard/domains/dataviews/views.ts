@@ -15,7 +15,6 @@ export const DEFAULT_VIEW: Partial< DomainsView > = {
 	titleField: 'domain',
 	// descriptionField: 'domain_type',
 	fields: [
-		'type',
 		// 'owner',
 		'blog_name',
 		'ssl_status',
