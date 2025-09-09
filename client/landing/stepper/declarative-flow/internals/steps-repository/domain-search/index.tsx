@@ -11,6 +11,7 @@ import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-searc
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { useQuery } from '../../../../hooks/use-query';
+import { useSite } from '../../../../hooks/use-site';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import type { Step as StepType } from '../../types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -35,7 +36,8 @@ type StepSubmission = {
 const DomainSearchStep: StepType< {
 	submits: UseMyDomain | StepSubmission;
 } > = function DomainSearchStep( { navigation, flow } ) {
-	const initialQuery = useQuery().get( 'new' ) ?? '';
+	const site = useSite();
+	const initialQuery = useQuery().get( 'new' ) ?? site?.slug ?? '';
 
 	const config = {
 		vendor: getSuggestionsVendor( {
@@ -64,6 +66,7 @@ const DomainSearchStep: StepType< {
 			>
 				<WPCOMDomainSearch
 					className="step-container-v2-domain-search"
+					currentSiteId={ site?.ID }
 					flowName={ flow }
 					config={ config }
 					initialQuery={ initialQuery }

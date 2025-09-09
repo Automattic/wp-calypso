@@ -1,4 +1,4 @@
-import { StepContainer } from '@automattic/onboarding';
+import { DOMAIN_FLOW, StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import QuerySites from 'calypso/components/data/query-sites';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -25,12 +25,14 @@ const SitePicker: Step< {
 	};
 
 	const filter = ( site: SiteDetails ) => {
+		const isSiteUnlaunched = flow !== DOMAIN_FLOW ? site.launch_status === 'unlaunched' : true;
+
 		return !! (
 			site.capabilities?.manage_options &&
 			( site.is_wpcom_atomic || ! site.jetpack ) &&
 			! site.options?.is_wpforteams_site &&
 			! site.is_wpcom_staging_site &&
-			site.launch_status === 'unlaunched'
+			isSiteUnlaunched
 		);
 	};
 
