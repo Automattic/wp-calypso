@@ -202,13 +202,6 @@
 				font-weight: bold;
 			}
 
-			&__prepare-download-spinner {
-				display: inline-block;
-				margin-right: 6px;
-				margin-top: -3px;
-				vertical-align: middle;
-			}
-
 			&__preview {
 				margin: 16px auto 0;
 				padding: 0 8px;
@@ -277,10 +270,6 @@
 	.file-browser-header {
 		padding: 0 2px;
 		border-bottom: 1px solid var( --studio-gray-5 );
-		.file-browser-header__action-buttons .button {
-			padding: 8px 32px;
-			margin-right: 16px;
-		}
 		.file-browser-header__selecting {
 			display: none;
 		}

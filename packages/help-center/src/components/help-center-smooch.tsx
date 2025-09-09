@@ -218,10 +218,6 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 			Smooch?.off?.( 'reconnecting', reconnectingListener );
 			// @ts-expect-error -- 'off' is not part of the def.
 			Smooch?.off?.( 'connected', connectedListener );
-			// @ts-expect-error -- 'off' is not part of the def.
-			Smooch?.off?.( 'message:received', getUnreadListener );
-			// @ts-expect-error -- 'off' is not part of the def.
-			Smooch?.off?.( 'message:sent', clientIdListener );
 		};
 	}, [
 		getUnreadListener,

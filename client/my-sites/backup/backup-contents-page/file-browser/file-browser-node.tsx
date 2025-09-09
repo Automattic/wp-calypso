@@ -3,7 +3,6 @@ import { useCallback, useState, useEffect } from '@wordpress/element';
 import { __, sprintf, isRTL } from '@wordpress/i18n';
 import { chevronDown, chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
-import { FunctionComponent } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { addChildNodes, setNodeCheckState } from 'calypso/state/rewind/browser/actions';
 import getBackupBrowserNode from 'calypso/state/rewind/selectors/get-backup-browser-node';
@@ -28,9 +27,10 @@ interface FileBrowserNodeProps {
 	hasCredentials?: boolean;
 	isRestoreEnabled?: boolean;
 	onTrackEvent?: ( eventName: string, properties?: Record< string, unknown > ) => void;
+	onRequestGranularRestore: ( siteSlug: string, rewindId: number ) => void;
 }
 
-const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
+function FileBrowserNode( {
 	item,
 	path,
 	rewindId,
@@ -44,7 +44,8 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	hasCredentials,
 	isRestoreEnabled,
 	onTrackEvent,
-} ) => {
+	onRequestGranularRestore,
+}: FileBrowserNodeProps ) {
 	const isRoot = path === '/';
 	const dispatch = useDispatch();
 	const isCurrentNodeClicked = activeNodePath === path;
@@ -60,7 +61,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 
 	const {
 		isSuccess,
-		isInitialLoading,
+		isLoading,
 		data: backupFiles,
 	} = useBackupContentsQuery( siteId, rewindId, path, fetchContentsOnMount );
 
@@ -259,7 +260,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	);
 
 	const renderChildren = () => {
-		if ( isInitialLoading ) {
+		if ( isLoading ) {
 			return (
 				<>
 					<div className="file-browser-node__loading placeholder" />
@@ -300,6 +301,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 						hasCredentials={ hasCredentials }
 						isRestoreEnabled={ isRestoreEnabled }
 						onTrackEvent={ onTrackEvent }
+						onRequestGranularRestore={ onRequestGranularRestore }
 						// Hacky way to pass extensions details to the child node
 						{ ...( childItem.type === 'archive' ? { parentItem: item } : {} ) }
 					/>
@@ -394,6 +396,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 					hasCredentials={ hasCredentials }
 					isRestoreEnabled={ isRestoreEnabled }
 					onTrackEvent={ onTrackEvent }
+					onRequestGranularRestore={ onRequestGranularRestore }
 				/>
 			) }
 			{ isOpen && (
@@ -405,6 +408,6 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 			) }
 		</div>
 	);
-};
+}
 
 export default FileBrowserNode;
