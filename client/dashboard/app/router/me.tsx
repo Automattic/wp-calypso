@@ -301,17 +301,6 @@ export const appsRoute = createRoute( {
 	)
 );
 
-export const preferencesRoute = createRoute( {
-	getParentRoute: () => meRoute,
-	path: 'preferences',
-} ).lazy( () =>
-	import( '../../me/preferences' ).then( ( d ) =>
-		createLazyRoute( 'preferences' )( {
-			component: d.default,
-		} )
-	)
-);
-
 export const createMeRoutes = ( config: AppConfig ) => {
 	if ( ! config.supports.me ) {
 		return [];
@@ -334,7 +323,6 @@ export const createMeRoutes = ( config: AppConfig ) => {
 		securityConnectedAppsRoute,
 		securitySocialLoginsRoute,
 		notificationsRoute,
-		preferencesRoute,
 		notificationsSitesRoute,
 		notificationsEmailsRoute,
 		notificationsCommentsRoute,
