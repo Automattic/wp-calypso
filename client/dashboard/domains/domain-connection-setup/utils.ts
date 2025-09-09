@@ -1,22 +1,33 @@
-import { DomainConnectionSetupMode, DomainMappingStatus } from '@automattic/api-core';
+import {
+	type DomainConnectionSetupModeValue,
+	DomainConnectionSetupMode,
+	DomainMappingStatus,
+} from '@automattic/api-core';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { isSubdomain } from '../../utils/domain';
-import { StepType, StepName, DomainConnectionStepsMap, ProgressStepList } from './types';
+import {
+	StepType,
+	StepName,
+	StepTypeValue,
+	StepNameValue,
+	DomainConnectionStepsMap,
+	ProgressStepList,
+} from './types';
 
 export const getStepName = (
-	mode: DomainConnectionSetupMode,
-	step: StepType,
+	mode: DomainConnectionSetupModeValue,
+	step: StepTypeValue,
 	stepsDefinition: DomainConnectionStepsMap
 ) => {
 	const matchingEntry = Object.entries( stepsDefinition ).find( ( [ , pageDefinition ] ) => {
 		return pageDefinition.mode === mode && pageDefinition.stepType === step;
 	} );
-	return matchingEntry?.[ 0 ] as StepName | undefined;
+	return matchingEntry?.[ 0 ] as StepNameValue | undefined;
 };
 
 export const getProgressStepList = (
-	mode: DomainConnectionSetupMode,
+	mode: DomainConnectionSetupModeValue,
 	stepsDefinition: DomainConnectionStepsMap
 ): ProgressStepList => {
 	const modeSteps = Object.fromEntries(
@@ -47,7 +58,7 @@ export const getProgressStepList = (
 };
 
 export function isMappingVerificationSuccess(
-	mode: DomainConnectionSetupMode,
+	mode: DomainConnectionSetupModeValue,
 	verificationStatus: DomainMappingStatus | undefined
 ) {
 	if ( ! verificationStatus ) {
@@ -73,14 +84,14 @@ export function isMappingVerificationSuccess(
 }
 
 export const resolveStepName = (
-	connectionMode: DomainConnectionSetupMode | null,
+	connectionMode: DomainConnectionSetupModeValue | null,
 	supportsDomainConnect: boolean,
 	domainName: string,
-	initialStep: StepName,
-	firstStep: StepName // default step
-): StepName => {
+	initialStep: StepNameValue,
+	firstStep: StepNameValue // default step
+): StepNameValue => {
 	if ( initialStep ) {
-		return initialStep as StepName;
+		return initialStep as StepNameValue;
 	}
 	// If connectionMode is present we'll send you to the last step of the relevant flow
 	if ( connectionMode ) {
@@ -104,17 +115,12 @@ export const resolveStepName = (
 };
 
 export function getMappingVerificationErrorMessage(
-	mode: DomainConnectionSetupMode,
+	mode: DomainConnectionSetupModeValue,
 	verificationStatus: DomainMappingStatus | undefined
 ) {
 	if ( ! verificationStatus ) {
 		return;
 	}
-	// const { data, error } = verificationStatus;
-
-	// if ( ! data && ! error ) {
-	// 	return;
-	// }
 
 	if ( isMappingVerificationSuccess( mode, verificationStatus ) ) {
 		return;

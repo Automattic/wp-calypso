@@ -26,7 +26,7 @@ import {
 	connectADomainDomainConnectionStepsMap,
 	connectASubdomainDomainConnectionStepsMap,
 } from './steps-map';
-import { DomainConnectionStepsMap, StepName } from './types';
+import { DomainConnectionStepsMap, StepName, StepNameValue } from './types';
 import { getProgressStepList, isMappingVerificationSuccess, resolveStepName } from './utils';
 
 export default function DomainConnectionSetup() {
@@ -66,15 +66,15 @@ export default function DomainConnectionSetup() {
 	// 1. initialStepName (from query string)
 	// 2. calculated step name based on api response data
 	// 3. firstStepName (default first step)
-	const firstStepName = isSubdomain( domainName )
+	const firstStepName: StepNameValue = isSubdomain( domainName )
 		? StepName.SUBDOMAIN_SUGGESTED_START
 		: StepName.SUGGESTED_START;
-	const [ currentStepName, setCurrentStepName ] = useState< StepName >(
+	const [ currentStepName, setCurrentStepName ] = useState< StepNameValue >(
 		resolveStepName(
 			domainConnectionSetupInfo.connection_mode,
 			!! domainConnectionSetupInfo.domain_connect_apply_wpcom_hosting,
 			domainName,
-			intialStepName,
+			intialStepName as StepNameValue,
 			firstStepName
 		)
 	);
@@ -83,17 +83,17 @@ export default function DomainConnectionSetup() {
 		? connectASubdomainDomainConnectionStepsMap
 		: connectADomainDomainConnectionStepsMap;
 
-	const currentStep = stepsDefinition[ currentStepName ];
+	const currentStep = stepsDefinition[ currentStepName as StepNameValue ];
 	if ( ! currentStep ) {
 		return null;
 	}
 
 	const verifyConnection = ( setStepAfterVerify = true ): void => {
-		let connectedSlug =
+		let connectedSlug: StepNameValue =
 			DomainConnectionSetupMode.SUGGESTED === currentStep.mode
 				? StepName.SUGGESTED_CONNECTED
 				: StepName.ADVANCED_CONNECTED;
-		let verifyingSlug =
+		let verifyingSlug: StepNameValue =
 			DomainConnectionSetupMode.SUGGESTED === currentStep.mode
 				? StepName.SUGGESTED_VERIFYING
 				: StepName.ADVANCED_VERIFYING;
@@ -134,7 +134,7 @@ export default function DomainConnectionSetup() {
 	};
 
 	const setNextStepName = () => {
-		const next = stepsDefinition[ currentStepName ]?.next;
+		const next = stepsDefinition[ currentStepName as StepNameValue ]?.next;
 		next && setCurrentStepName( next );
 	};
 
@@ -146,7 +146,7 @@ export default function DomainConnectionSetup() {
 
 	const showProgress = Object.keys(
 		getProgressStepList( currentStep.mode, stepsDefinition )
-	).includes( currentStepName );
+	).includes( currentStepName as string );
 
 	const StepsComponent = currentStep.component;
 

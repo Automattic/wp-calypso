@@ -1,6 +1,6 @@
 import { DomainConnectionSetupMode } from '@automattic/api-core';
 import { Meta, StoryObj } from '@storybook/react';
-import { StepType, StepName } from '../types';
+import { StepType, type StepNameValue } from '../types';
 import SwitchSetup from './switch-setup';
 
 const meta: Meta< typeof SwitchSetup > = {
@@ -26,7 +26,7 @@ export const SuggestedModeWithDomainConnect: Story = {
 		supportsDomainConnect: true,
 		isSubdomain: false,
 		// eslint-disable-next-line no-console
-		setPage: ( stepName: StepName ) => console.log( 'setPage called with:', stepName ),
+		setPage: ( stepName: StepNameValue ) => console.log( 'setPage called with:', stepName ),
 	},
 };
 
@@ -37,7 +37,7 @@ export const AdvancedModeWithDomainConnect: Story = {
 		supportsDomainConnect: true,
 		isSubdomain: false,
 		// eslint-disable-next-line no-console
-		setPage: ( stepName: StepName ) => console.log( 'setPage called with:', stepName ),
+		setPage: ( stepName: StepNameValue ) => console.log( 'setPage called with:', stepName ),
 	},
 };
 
@@ -48,7 +48,7 @@ export const DomainConnectMode: Story = {
 		supportsDomainConnect: true,
 		isSubdomain: false,
 		// eslint-disable-next-line no-console
-		setPage: ( stepName: StepName ) => console.log( 'setPage called with:', stepName ),
+		setPage: ( stepName: StepNameValue ) => console.log( 'setPage called with:', stepName ),
 	},
 };
 
@@ -59,7 +59,7 @@ export const SuggestedModeWithoutDomainConnect: Story = {
 		supportsDomainConnect: false,
 		isSubdomain: false,
 		// eslint-disable-next-line no-console
-		setPage: ( stepName: StepName ) => console.log( 'setPage called with:', stepName ),
+		setPage: ( stepName: StepNameValue ) => console.log( 'setPage called with:', stepName ),
 	},
 };
 
@@ -70,7 +70,7 @@ export const AdvancedModeWithoutDomainConnect: Story = {
 		supportsDomainConnect: false,
 		isSubdomain: false,
 		// eslint-disable-next-line no-console
-		setPage: ( stepName: StepName ) => console.log( 'setPage called with:', stepName ),
+		setPage: ( stepName: StepNameValue ) => console.log( 'setPage called with:', stepName ),
 	},
 };
 
@@ -81,7 +81,7 @@ export const SubdomainSuggestedMode: Story = {
 		supportsDomainConnect: false,
 		isSubdomain: true,
 		// eslint-disable-next-line no-console
-		setPage: ( stepName: StepName ) => console.log( 'setPage called with:', stepName ),
+		setPage: ( stepName: StepNameValue ) => console.log( 'setPage called with:', stepName ),
 	},
 };
 
@@ -92,7 +92,7 @@ export const SubdomainAdvancedMode: Story = {
 		supportsDomainConnect: false,
 		isSubdomain: true,
 		// eslint-disable-next-line no-console
-		setPage: ( stepName: StepName ) => console.log( 'setPage called with:', stepName ),
+		setPage: ( stepName: StepNameValue ) => console.log( 'setPage called with:', stepName ),
 	},
 };
 
@@ -103,7 +103,7 @@ export const ConnectedState: Story = {
 		supportsDomainConnect: true,
 		isSubdomain: false,
 		// eslint-disable-next-line no-console
-		setPage: ( stepName: StepName ) => console.log( 'setPage called with:', stepName ),
+		setPage: ( stepName: StepNameValue ) => console.log( 'setPage called with:', stepName ),
 	},
 };
 
@@ -114,6 +114,6 @@ export const VerifyingState: Story = {
 		supportsDomainConnect: false,
 		isSubdomain: false,
 		// eslint-disable-next-line no-console
-		setPage: ( stepName: StepName ) => console.log( 'setPage called with:', stepName ),
+		setPage: ( stepName: StepNameValue ) => console.log( 'setPage called with:', stepName ),
 	},
 };

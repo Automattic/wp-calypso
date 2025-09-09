@@ -1,4 +1,7 @@
-import { DomainConnectionSetupMode } from '@automattic/api-core';
+import {
+	type DomainConnectionSetupModeValue,
+	DomainConnectionSetupMode,
+} from '@automattic/api-core';
 import {
 	__experimentalHStack as HStack,
 	Button,
@@ -8,14 +11,14 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { pages } from '@wordpress/icons';
-import { StepName, StepType } from '../types';
+import { StepName, StepType, type StepNameValue, type StepTypeValue } from '../types';
 
 type SwitchSetupProps = {
-	currentStepType: StepType;
-	currentMode: DomainConnectionSetupMode;
+	currentStepType: StepTypeValue;
+	currentMode: DomainConnectionSetupModeValue;
 	supportsDomainConnect: boolean;
 	isSubdomain: boolean;
-	setPage: ( stepName: StepName ) => void;
+	setPage: ( stepName: StepNameValue ) => void;
 };
 
 export default function SwitchSetup( {
@@ -25,7 +28,7 @@ export default function SwitchSetup( {
 	isSubdomain,
 	setPage,
 }: SwitchSetupProps ) {
-	if ( [ StepType.CONNECTED, StepType.VERIFYING ].includes( currentStepType ) ) {
+	if ( currentStepType === StepType.CONNECTED || currentStepType === StepType.VERIFYING ) {
 		return null;
 	}
 

@@ -1,11 +1,14 @@
-export enum DomainConnectionSetupMode {
-	SUGGESTED = 'suggested',
-	ADVANCED = 'advanced',
-	DC = 'dc',
-	DONE = 'done',
-	OWNERSHIP_VERIFICATION = 'ownership_verification',
-	TRANSFER = 'transfer',
-}
+export const DomainConnectionSetupMode = {
+	SUGGESTED: 'suggested',
+	ADVANCED: 'advanced',
+	DC: 'dc',
+	DONE: 'done',
+	OWNERSHIP_VERIFICATION: 'ownership_verification',
+	TRANSFER: 'transfer',
+} as const;
+
+export type DomainConnectionSetupModeValue =
+	( typeof DomainConnectionSetupMode )[ keyof typeof DomainConnectionSetupMode ];
 
 // POST response
 export type DomainMappingStatus = {
@@ -16,12 +19,12 @@ export type DomainMappingStatus = {
 	resolves_to_wpcom: boolean;
 	host_ip_addresses: string[];
 	name_servers: string[];
-	mode: DomainConnectionSetupMode;
+	mode: DomainConnectionSetupModeValue;
 };
 
 // GET response
 export type DomainMappingSetupInfo = {
-	connection_mode: DomainConnectionSetupMode | null;
+	connection_mode: DomainConnectionSetupModeValue | null;
 	domain_connect_apply_wpcom_hosting: string | null;
 	domain_connect_provider_id: string | null;
 	default_ip_addresses: string[];
