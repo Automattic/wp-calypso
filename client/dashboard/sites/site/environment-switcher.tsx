@@ -114,16 +114,13 @@ const EnvironmentSwitcherDropdown = ( {
 	// TODO: Handle upsell.
 	const handleUpsell = () => {};
 
-	const showStagingSite =
-		stagingSite &&
-		canManageSite( stagingSite ) &&
-		! isStagingSiteDeleting &&
-		! isStagingSiteCreating;
+	const isActionInProgress = isStagingSiteCreating || isStagingSiteDeleting;
+
+	const showStagingSite = stagingSite && canManageSite( stagingSite ) && ! isActionInProgress;
 
 	const showActionButton =
 		( ! currentSite.is_wpcom_staging_site && productionSite && ! stagingSite ) ||
-		isStagingSiteCreating ||
-		isStagingSiteDeleting;
+		isActionInProgress;
 
 	return (
 		<NavigableMenu>
@@ -145,7 +142,9 @@ const EnvironmentSwitcherDropdown = ( {
 								? onAddStagingSite
 								: handleUpsell
 						}
-						disabled={ isStagingSiteCreating || isStagingSiteDeleting }
+						disabled={ isActionInProgress }
+						isSelected={ isActionInProgress }
+						role="menuitemcheckbox"
 					>
 						<HStack justify="flex-start">
 							<StagingSiteActionButton
