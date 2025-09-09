@@ -1,6 +1,6 @@
 import { HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery, codeDeploymentsQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalText as Text, Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
@@ -58,13 +58,10 @@ export function SiteRepositoriesCallout( {
 
 function RepositoriesList() {
 	const { siteSlug } = siteRoute.useParams();
-	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
 
-	const { data: deployments = [], isLoading } = useQuery( {
-		...codeDeploymentsQuery( site?.ID || 0 ),
-		enabled: !! site?.ID,
-	} );
+	const { data: deployments = [], isLoading } = useQuery( codeDeploymentsQuery( site.ID ) );
 
 	const fields = useRepositoryFields();
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( deployments, view, fields );
@@ -93,11 +90,7 @@ function RepositoriesList() {
 
 function SiteRepositories() {
 	const { siteSlug } = siteRoute.useParams();
-	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
-
-	if ( ! site ) {
-		return;
-	}
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
 	const hasDeploymentFeature = hasHostingFeature( site, HostingFeatures.DEPLOYMENT );
 
