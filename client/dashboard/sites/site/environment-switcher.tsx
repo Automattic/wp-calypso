@@ -29,11 +29,7 @@ import {
 	isAtomicTransferInProgress,
 	isAtomicTransferredSite,
 } from '../../utils/site-atomic-transfers';
-import {
-	hasStagingSite,
-	getProductionSiteId,
-	getStagingSiteId,
-} from '../../utils/site-staging-site';
+import { getProductionSiteId, getStagingSiteId } from '../../utils/site-staging-site';
 import { canManageSite, canCreateStagingSite } from '../features';
 import type { Site } from '@automattic/api-core';
 
@@ -203,8 +199,8 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 	} );
 
 	const { data: isStagingSiteDeleting } = useQuery( {
-		...isDeletingStagingSiteQuery( productionSiteId ?? 0 ),
-		enabled: !! productionSiteId,
+		...isDeletingStagingSiteQuery( stagingSiteId ?? 0 ),
+		enabled: !! stagingSiteId,
 	} );
 
 	// Staging site deletion process runs via async job. We need to keep on polling for the staging site deletion before we start displaying the button to add a staging site again
@@ -216,26 +212,25 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 
 	// Clean up deletion flag when staging site no longer exists
 	useEffect( () => {
+		const invalidateQueries = async ( productionSiteId: number, stagingSiteId: number ) => {
+			// Ensure the new site is retrieved before invalidating the deletion flag
+			await queryClient.invalidateQueries( siteByIdQuery( productionSiteId ) );
+			await queryClient.invalidateQueries( isDeletingStagingSiteQuery( stagingSiteId ) );
+		};
 		if (
 			isStagingSiteDeleting &&
 			stagingSiteExistsFromQuery === false &&
-			productionSite &&
-			productionSiteId
+			productionSiteId &&
+			stagingSiteId
 		) {
-			if ( hasStagingSite( productionSite ) ) {
-				// Check again if it has a staging site
-				queryClient.invalidateQueries( siteByIdQuery( productionSiteId ) );
-			} else {
-				// No staging site exists, so we can invalidate the deletion flag
-				queryClient.invalidateQueries( isDeletingStagingSiteQuery( productionSiteId ) );
-			}
+			invalidateQueries( productionSiteId, stagingSiteId );
 		}
 	}, [
 		isStagingSiteDeleting,
 		stagingSiteExistsFromQuery,
-		productionSiteId,
 		queryClient,
-		productionSite,
+		stagingSiteId,
+		productionSiteId,
 	] );
 
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );

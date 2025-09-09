@@ -47,8 +47,8 @@ export default function StagingSiteSyncDropdown( {
 	const stagingSiteId = site ? getStagingSiteId( site ) : null;
 
 	const { data: isStagingSiteDeletionInProgress } = useQuery( {
-		...isDeletingStagingSiteQuery( productionSiteId ?? 0 ),
-		enabled: !! productionSiteId,
+		...isDeletingStagingSiteQuery( stagingSiteId ?? 0 ),
+		enabled: !! stagingSiteId,
 	} );
 
 	const { data: stagingSiteSyncState, refetch: fetchStagingSiteSyncState } = useQuery( {
