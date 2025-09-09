@@ -6,7 +6,6 @@ import {
 	SelectControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useCallback } from 'react';
 import type { SecuritySMSNumber } from './types';
 
 import './style.scss';
@@ -29,21 +28,18 @@ export default function PhoneNumberInput( {
 			value: countryCode.code,
 		} ) ) ?? [];
 
-	const onChangeCountryCode = useCallback(
-		( value: string ) => {
-			const countryCode = smsCountryCodes?.find( ( countryCode ) => countryCode.code === value );
-			if ( ! countryCode ) {
-				return;
-			}
+	const onChangeCountryCode = ( value: string ) => {
+		const countryCode = smsCountryCodes?.find( ( countryCode ) => countryCode.code === value );
+		if ( ! countryCode ) {
+			return;
+		}
 
-			return onChange( {
-				...data,
-				countryCode: countryCode.code,
-				countryNumericCode: countryCode.numeric_code,
-			} );
-		},
-		[ data, onChange, smsCountryCodes ]
-	);
+		return onChange( {
+			...data,
+			countryCode: countryCode.code,
+			countryNumericCode: countryCode.numeric_code,
+		} );
+	};
 
 	return (
 		<HStack>
