@@ -16,4 +16,5 @@ export interface UserSettings {
 	i18n_empathy_mode?: boolean;
 	use_fallback_for_incomplete_languages?: boolean;
 	enable_translator?: boolean;
+	subscription_delivery_email_blocked?: boolean;
 }
