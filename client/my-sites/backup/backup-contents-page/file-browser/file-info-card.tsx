@@ -1,9 +1,9 @@
 import { fetchBackupExtensionUrl, fetchBackupFileUrl } from '@automattic/api-core';
 import page from '@automattic/calypso-router';
-import { Button, Spinner } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { useCallback, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { FunctionComponent, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useDispatch } from 'calypso/state';
 import { setNodeCheckState } from 'calypso/state/rewind/browser/actions';
@@ -32,7 +32,7 @@ interface FileInfoCardProps {
 	onTrackEvent: ( eventName: string, properties?: Record< string, unknown > ) => void;
 }
 
-const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
+function FileInfoCard( {
 	siteId,
 	item,
 	rewindId,
@@ -42,13 +42,13 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 	hasCredentials,
 	isRestoreEnabled,
 	onTrackEvent,
-} ) => {
+}: FileInfoCardProps ) {
 	const moment = useLocalizedMoment();
 	const dispatch = useDispatch();
 
 	const {
 		isSuccess,
-		isInitialLoading,
+		isLoading,
 		isError,
 		data: fileInfo,
 	} = useBackupPathInfoQuery(
@@ -230,7 +230,7 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 		return null;
 	}
 
-	if ( isInitialLoading ) {
+	if ( isLoading ) {
 		return <div className="file-browser-node__loading placeholder" />;
 	}
 
@@ -243,8 +243,10 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 			className="file-card__action"
 			onClick={ downloadFile }
 			disabled={ isProcessingDownload }
+			isBusy={ isProcessingDownload }
+			variant="secondary"
 		>
-			{ isProcessingDownload ? <Spinner /> : __( 'Download file' ) }
+			{ isProcessingDownload ? __( 'Preparing' ) : __( 'Download file' ) }
 		</Button>
 	);
 
@@ -253,6 +255,7 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 			className="file-card__action"
 			href={ fileInfo.downloadUrl }
 			onClick={ () => trackDownloadByType( item.type ) }
+			variant="secondary"
 		>
 			{ __( 'Download file' ) }
 		</Button>
@@ -263,15 +266,10 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 			className="file-card__action"
 			onClick={ prepareDownloadClick }
 			disabled={ isProcessingDownload }
+			isBusy={ isProcessingDownload }
+			variant="secondary"
 		>
-			{ isProcessingDownload ? (
-				<>
-					<Spinner className="file-card__prepare-download-spinner" size={ 16 } />
-					{ __( 'Preparing' ) }
-				</>
-			) : (
-				__( 'Prepare and download' )
-			) }
+			{ isProcessingDownload ? __( 'Preparing' ) : __( 'Prepare and download' ) }
 		</Button>
 	);
 
@@ -351,6 +349,7 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 								className="file-card__action"
 								onClick={ restoreFile }
 								disabled={ ! isRestoreEnabled }
+								variant="secondary"
 							>
 								{ __( 'Restore' ) }
 							</Button>
@@ -364,6 +363,6 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 			) }
 		</div>
 	);
-};
+}
 
 export default FileInfoCard;

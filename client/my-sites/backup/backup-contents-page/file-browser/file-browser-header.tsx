@@ -1,21 +1,17 @@
-import page from '@automattic/calypso-router';
-import { Button } from '@automattic/components';
-import { CheckboxControl } from '@wordpress/components';
+import { Button, CheckboxControl } from '@wordpress/components';
 import { useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { FunctionComponent } from 'react';
+import { ButtonStack } from 'calypso/dashboard/components/button-stack';
 import { useDispatch, useSelector } from 'calypso/state';
 import { setNodeCheckState } from 'calypso/state/rewind/browser/actions';
 import getBackupBrowserCheckList from 'calypso/state/rewind/selectors/get-backup-browser-check-list';
 import getBackupBrowserNode from 'calypso/state/rewind/selectors/get-backup-browser-node';
-import { backupGranularRestorePath } from '../../paths';
 import { FileBrowserCheckState } from './types';
 
 interface FileBrowserHeaderProps {
 	rewindId: number;
 	showHeaderButtons?: boolean;
 	siteId: number;
-	siteSlug: string;
 	hasCredentials?: boolean;
 	isRestoreEnabled?: boolean;
 	onTrackEvent?: ( eventName: string, properties?: Record< string, unknown > ) => void;
@@ -25,18 +21,19 @@ interface FileBrowserHeaderProps {
 		includePaths: string,
 		excludePaths: string
 	) => void;
+	onRequestGranularRestore?: ( siteId: number, rewindId: number ) => void;
 }
 
-const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( {
+function FileBrowserHeader( {
 	rewindId,
 	showHeaderButtons = true,
 	siteId,
-	siteSlug,
 	hasCredentials,
 	isRestoreEnabled,
 	onTrackEvent,
 	onRequestGranularDownload,
-} ) => {
+	onRequestGranularRestore,
+}: FileBrowserHeaderProps ) {
 	const dispatch = useDispatch();
 	const rootNode = useSelector( ( state ) => getBackupBrowserNode( state, siteId, '/' ) );
 	const browserCheckList = useSelector( ( state ) => getBackupBrowserCheckList( state, siteId ) );
@@ -49,10 +46,10 @@ const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( {
 		onTrackEvent?.( 'calypso_jetpack_backup_browser_download_multiple_files' );
 	};
 	const onRestoreClick = () => {
+		onRequestGranularRestore?.( siteId, rewindId );
 		onTrackEvent?.( 'calypso_jetpack_backup_browser_restore_multiple_files', {
 			...( hasCredentials !== undefined && { has_credentials: hasCredentials } ),
 		} );
-		page.redirect( backupGranularRestorePath( siteSlug, rewindId as unknown as string ) );
 	};
 	// When the checkbox is clicked, we'll update the check state in the state
 	const updateNodeCheckState = useCallback(
@@ -74,19 +71,24 @@ const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( {
 	return (
 		<div className="file-browser-header">
 			{ showHeaderButtons && browserCheckList.totalItems > 0 && (
-				<div className="file-browser-header__action-buttons">
-					<Button className="file-browser-header__download-button" onClick={ onDownloadClick }>
+				<ButtonStack justify="flex-start">
+					<Button
+						__next40pxDefaultSize
+						className="file-browser-header__download-button"
+						onClick={ onDownloadClick }
+					>
 						{ __( 'Download selected files' ) }
 					</Button>
 					<Button
+						__next40pxDefaultSize
 						className="file-browser-header__restore-button"
 						onClick={ onRestoreClick }
 						disabled={ ! isRestoreEnabled }
-						primary
+						variant="primary"
 					>
 						{ __( 'Restore selected files' ) }
 					</Button>
-				</div>
+				</ButtonStack>
 			) }
 			<div className="file-browser-header__selecting">
 				<CheckboxControl
@@ -102,6 +104,6 @@ const FileBrowserHeader: FunctionComponent< FileBrowserHeaderProps > = ( {
 			</div>
 		</div>
 	);
-};
+}
 
 export default FileBrowserHeader;

@@ -3,7 +3,6 @@ import { useCallback, useState, useEffect } from '@wordpress/element';
 import { __, sprintf, isRTL } from '@wordpress/i18n';
 import { chevronDown, chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
-import { FunctionComponent } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { addChildNodes, setNodeCheckState } from 'calypso/state/rewind/browser/actions';
 import getBackupBrowserNode from 'calypso/state/rewind/selectors/get-backup-browser-node';
@@ -30,7 +29,7 @@ interface FileBrowserNodeProps {
 	onTrackEvent?: ( eventName: string, properties?: Record< string, unknown > ) => void;
 }
 
-const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
+function FileBrowserNode( {
 	item,
 	path,
 	rewindId,
@@ -44,7 +43,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	hasCredentials,
 	isRestoreEnabled,
 	onTrackEvent,
-} ) => {
+}: FileBrowserNodeProps ) {
 	const isRoot = path === '/';
 	const dispatch = useDispatch();
 	const isCurrentNodeClicked = activeNodePath === path;
@@ -405,6 +404,6 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 			) }
 		</div>
 	);
-};
+}
 
 export default FileBrowserNode;
