@@ -3,9 +3,9 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useLayoutEffect } from 'react';
 import { DomainSearchContext, useDomainSearchContextValue } from './context';
-import { EmptyPage } from './empty';
+import { InitialState } from './initial-state';
 import { ResultsPage } from './results';
-import type { DomainSearchProps } from './types';
+import { type DomainSearchProps } from './types';
 
 import './style.scss';
 
@@ -24,7 +24,7 @@ export const DomainSearch = ( props: DomainSearchProps ) => {
 
 	const getContent = () => {
 		if ( ! contextValue.query ) {
-			return <EmptyPage />;
+			return <InitialState />;
 		}
 
 		return <ResultsPage />;

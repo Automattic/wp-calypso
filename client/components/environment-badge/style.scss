@@ -1,12 +1,14 @@
+$z-index: 999;
+
 .environment-badge {
 	padding: 0;
 	position: fixed;
 	bottom: 27px;
 	right: 86px;
-	z-index: z-index("root", ".environment-badge");
+	z-index: $z-index;
 
 	// The hovered class is toggled in load-dev-helpers/index.js
-	&.hovered .environment {
+	&.hovered .environment:not(:empty) {
 		display: inline-block;
 
 		// hide everything inside each tab
@@ -22,22 +24,17 @@
 
 	.bug-report {
 		position: relative;
-		display: inline-block;
-		width: 26px;
-		height: 26px;
-		background-color: var(--color-surface);
-		border: solid 1px var(--color-neutral-70);
+		display: inline-flex;
+		background-color: #fff;
+		border: solid 1px #3c434a;
 		border-radius: 50%;
-		color: var(--color-neutral-70);
+		color: #3c434a;
 		margin-left: -4px;
 		text-decoration: none;
 		text-align: center;
-		z-index: z-index(".environment-badge", ".environment-badge .bug-report");
+		z-index: $z-index + 1;
 		transition: border-radius 0.2s ease-out;
-
-		.gridicon {
-			vertical-align: middle;
-		}
+		vertical-align: middle;
 	}
 
 	.environment {
@@ -50,8 +47,8 @@
 		padding: 4px 7px 4px 6px;
 		vertical-align: middle;
 		transition: all 0.2s ease-out;
-		background-color: var(--color-surface);
-		box-shadow: 0 0 0 1px var(--color-neutral-70);
+		background-color: #fff;
+		box-shadow: 0 0 0 1px #3c434a;
 
 		&.is-env {
 			display: inline-block;
@@ -59,40 +56,40 @@
 		a {
 			text-decoration: none;
 			display: inline-block;
-			color: var(--color-neutral-70);
+			color: #3c434a;
 
 			&:hover {
 				transform: scale(1.1);
 			}
 		}
 
-		@mixin env-bug-style( $color-name ) {
-			background-color: var(--studio-#{$color-name}-20);
-			color: var(--studio-#{$color-name}-90);
-		}
-
 		&.is-staging {
-			@include env-bug-style( "orange" );
+			color: #361f00;
+			background-color: #faa754;
 		}
 		&.is-wpcalypso {
-			@include env-bug-style( "celadon" );
+			color: #003024;
+			background-color: #31cc9f;
 		}
 		&.is-dev {
-			@include env-bug-style( "purple" );
+			color: #35163b;
+			background-color: #d48fc8;
 		}
 		&.is-horizon,
 		&.is-feedback {
-			@include env-bug-style( "blue" );
+			color: #14215a;
+			background-color: #adbaf3;
 		}
 		&.is-jetpack-cloud-dev,
 		&.is-jetpack-cloud-staging {
-			@include env-bug-style( "jetpack-green" );
+			color: #003010;
+			background-color: #64ca43;
 		}
 
 		&.branch-name {
 			text-transform: inherit;
-			background-color: var(--color-neutral-70);
-			color: var(--color-text-inverted);
+			background-color: #3c434a;
+			color: #fff;
 		}
 	}
 

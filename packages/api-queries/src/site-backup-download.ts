@@ -1,6 +1,8 @@
 import {
 	fetchSiteBackupDownloadProgress,
 	initiateSiteBackupDownload,
+	prepareBackupDownload,
+	getBackupDownloadStatus,
 	type DownloadConfig,
 } from '@automattic/api-core';
 import configApi from '@automattic/calypso-config';
@@ -37,4 +39,29 @@ export const siteBackupDownloadInitiateMutation = ( siteId: number ) =>
 			// Start polling download progress
 			queryClient.prefetchQuery( siteBackupDownloadProgressQuery( siteId, downloadId ) );
 		},
+	} );
+
+export const siteBackupFilteredDownloadStatusQuery = (
+	siteId: number,
+	buildKey: string,
+	dataType: number
+) =>
+	queryOptions( {
+		queryKey: [ 'site', siteId, 'backup', 'download', 'status', buildKey, dataType ],
+		queryFn: () => getBackupDownloadStatus( siteId, buildKey, dataType ),
+	} );
+
+export const siteBackupFilteredDownloadPrepareMutation = () =>
+	mutationOptions( {
+		mutationFn: ( {
+			siteId,
+			rewindId,
+			manifestFilter,
+			dataType,
+		}: {
+			siteId: number;
+			rewindId: string;
+			manifestFilter: string;
+			dataType: number;
+		} ) => prepareBackupDownload( siteId, rewindId, manifestFilter, dataType ),
 	} );

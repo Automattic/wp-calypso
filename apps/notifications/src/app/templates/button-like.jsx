@@ -2,7 +2,6 @@ import { __ } from '@wordpress/i18n';
 import { thumbsUp } from '@wordpress/icons';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { keys } from '../../panel/helpers/input';
 import { getReferenceId } from '../../panel/helpers/notes';
 import { setLikeStatus } from '../../panel/state/notes/thunks/index';
 import { useAppContext } from '../context';
@@ -30,7 +29,7 @@ const LikeButton = ( { commentId, isLiked, note, setLikeStatus } ) => {
 		<ActionButton
 			icon={ thumbsUp }
 			isActive={ isLiked }
-			hotkey={ keys.KEY_L }
+			hotkey="l"
 			onToggle={ () =>
 				setLikeStatus(
 					note.id,
