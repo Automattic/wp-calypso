@@ -609,6 +609,17 @@ export const siteSettingsWpcomLoginRoute = createRoute( {
 	)
 );
 
+export const siteSettingsRepositoriesRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/repositories',
+} ).lazy( () =>
+	import( '../../sites/settings-repositories' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-repositories' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const siteTrialEndedRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'trial-ended',
@@ -704,6 +715,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteSettingsAgencyRoute,
 		siteSettingsMcpRoute,
 		siteSettingsMcpSetupRoute,
+		siteSettingsRepositoriesRoute,
 		siteSettingsHundredYearPlanRoute,
 		siteSettingsPrimaryDataCenterRoute,
 		siteSettingsStaticFile404Route,

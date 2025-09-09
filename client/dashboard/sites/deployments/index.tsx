@@ -1,6 +1,7 @@
 import { HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
+import { Link } from '@tanstack/react-router';
 import { __experimentalText as Text, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { siteRoute } from '../../app/router/sites';
@@ -68,9 +69,11 @@ function SiteDeployments() {
 					title={ __( 'Deployments' ) }
 					actions={
 						<>
-							<Button variant="secondary" __next40pxDefaultSize>
-								{ __( 'Manage repositories' ) }
-							</Button>
+							<Link to="/sites/$siteSlug/settings/repositories" params={ { siteSlug } }>
+								<Button variant="secondary" __next40pxDefaultSize>
+									{ __( 'Manage repositories' ) }
+								</Button>
+							</Link>
 							<Button variant="primary" __next40pxDefaultSize>
 								{ __( 'Trigger deployment' ) }
 							</Button>
