@@ -80,9 +80,10 @@ export function useSiteSpec( options: UseSiteSpecOptions = {} ) {
 
 				initialized.add( containerEl );
 			} )
-			.catch( () => {
+			.catch( ( error ) => {
 				// Error is handled by the onError callback if provided
-				// or silently ignored if no error handler is set
+				// eslint-disable-next-line no-console
+				console.warn( 'SiteSpec initialization failed:', error );
 			} );
 
 		return () => {
