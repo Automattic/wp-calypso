@@ -1,4 +1,3 @@
-import { isSubdomain } from '@automattic/domain-search';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -10,6 +9,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import Notice from '../../../components/notice';
+import { isSubdomain } from '../../../utils/domain';
 import { StepName, type StepComponentProps } from '../types';
 
 export function AdvancedStart( { domainName, setPage, onNextStep }: StepComponentProps ) {

@@ -1,5 +1,4 @@
 import { DomainConnectionSetupMode } from '@automattic/api-core';
-import { isSubdomain } from '@automattic/domain-search';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -11,6 +10,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import Notice from '../../../components/notice';
+import { isSubdomain } from '../../../utils/domain';
 import RecordsList from '../components/records-list';
 import { getMappingVerificationErrorMessage } from '../utils';
 import type { StepComponentProps, DNSRecord } from '../types';

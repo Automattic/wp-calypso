@@ -1,7 +1,7 @@
 import { DomainConnectionSetupMode, DomainMappingStatus } from '@automattic/api-core';
-import { isSubdomain } from '@automattic/domain-search';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { isSubdomain } from '../../utils/domain';
 import { StepType, StepName, DomainConnectionStepsMap, ProgressStepList } from './types';
 
 export const getStepName = (

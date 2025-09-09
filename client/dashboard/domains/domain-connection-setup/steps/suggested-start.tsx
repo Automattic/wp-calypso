@@ -1,4 +1,3 @@
-import { isSubdomain } from '@automattic/domain-search';
 import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
@@ -15,6 +14,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { caution } from '@wordpress/icons';
 import Notice from '../../../components/notice';
+import { isSubdomain } from '../../../utils/domain';
 import { StepName, type StepComponentProps } from '../types';
 
 export function SuggestedStart( { domainName, setPage, onNextStep }: StepComponentProps ) {

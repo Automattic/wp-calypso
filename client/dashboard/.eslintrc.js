@@ -47,7 +47,6 @@ module.exports = {
 							'!@automattic/components/src/breadcrumbs/types',
 							'!@automattic/components/src/logos',
 							'!@automattic/calypso-analytics',
-							'!@automattic/domain-search',
 							'!@automattic/domains-table',
 							'!@automattic/domains-table/src/utils/*',
 							'!@automattic/generate-password',

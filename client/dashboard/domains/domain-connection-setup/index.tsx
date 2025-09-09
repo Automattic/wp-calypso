@@ -4,7 +4,6 @@ import {
 	domainQuery,
 	updateConnectionModeMutation,
 } from '@automattic/api-queries';
-import { isSubdomain } from '@automattic/domain-search';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
@@ -19,6 +18,7 @@ import { useState } from 'react';
 import { domainRoute, domainConnectionSetupRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { isSubdomain } from '../../utils/domain';
 import Progress from './components/progress';
 import SupportLink from './components/support-link';
 import SwitchSetup from './components/switch-setup';
