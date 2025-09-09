@@ -3,6 +3,9 @@ import {
 	fetchSecurityKeyRegistrationChallenge,
 	validateSecurityKeyRegistration,
 	deleteSecurityKey,
+	fetchApplicationPasswords,
+	createApplicationPassword,
+	deleteApplicationPassword,
 } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import { create } from '@github/webauthn-json';
@@ -46,5 +49,27 @@ export const deleteSecurityKeyMutation = () =>
 		mutationFn: deleteSecurityKey,
 		onSuccess: () => {
 			queryClient.invalidateQueries( securityKeysQuery() );
+		},
+	} );
+
+export const applicationPasswordsQuery = () =>
+	queryOptions( {
+		queryKey: [ 'me', 'application-passwords' ],
+		queryFn: fetchApplicationPasswords,
+	} );
+
+export const createApplicationPasswordMutation = () =>
+	mutationOptions( {
+		mutationFn: createApplicationPassword,
+		onSuccess: () => {
+			queryClient.invalidateQueries( applicationPasswordsQuery() );
+		},
+	} );
+
+export const deleteApplicationPasswordMutation = () =>
+	mutationOptions( {
+		mutationFn: deleteApplicationPassword,
+		onSuccess: () => {
+			queryClient.invalidateQueries( applicationPasswordsQuery() );
 		},
 	} );

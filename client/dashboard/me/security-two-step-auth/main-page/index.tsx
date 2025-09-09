@@ -1,8 +1,10 @@
 import { localizeUrl } from '@automattic/i18n-utils';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import InlineSupportLink from '../../../components/inline-support-link';
 import Notice from '../../../components/notice';
+import ApplicationPasswords from './application-passwords';
 import SecurityKeys from './security-keys';
 import type { UserSettings } from '@automattic/api-core';
 
@@ -14,7 +16,7 @@ export default function SecurityTwoStepAuthMainPage( {
 	const { two_step_app_enabled, two_step_sms_enabled, two_step_sms_phone_number } = userSettings;
 
 	return (
-		<>
+		<VStack spacing={ 8 }>
 			<Notice variant="info" title={ __( 'Two-step authentication is enabled' ) }>
 				{ two_step_sms_enabled &&
 					sprintf(
@@ -43,6 +45,7 @@ export default function SecurityTwoStepAuthMainPage( {
 					) }
 			</Notice>
 			<SecurityKeys />
-		</>
+			<ApplicationPasswords />
+		</VStack>
 	);
 }
