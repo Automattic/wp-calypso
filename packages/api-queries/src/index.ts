@@ -18,6 +18,7 @@ export * from './me-a8c';
 export * from './me-account';
 export * from './me-blocked-sites';
 export * from './me-dpa';
+export * from './me-notification-settings';
 export * from './me-payment-methods';
 export * from './me-preferences';
 export * from './me-user-settings-preferences';

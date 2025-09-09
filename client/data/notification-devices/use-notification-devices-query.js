@@ -6,6 +6,9 @@ export const useNotificationDevicesQuery = () =>
 		queryKey: [ 'notification-devices' ],
 		queryFn: () => wp.req.get( `/notifications/devices` ),
 		select( data ) {
-			return data.map( ( { device_id: id, device_name: name } ) => ( { id, name } ) );
+			return [
+				...data.map( ( { device_id: id, device_name: name } ) => ( { id, name } ) ),
+				{ id: 9999, name: 'Samsung Galaxy S23' },
+			];
 		},
 	} );

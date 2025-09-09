@@ -1,0 +1,70 @@
+@keyframes expand {
+	from {
+		height: 50px;
+	}
+	to {
+		height: 900px;
+	}
+}
+
+@keyframes collapse {
+	from {
+		height: 900px;
+	}
+	to {
+		height: 50px;
+	}
+}
+
+.sites-list__card {
+	width: 100%;
+	transition: min-height 0.3s ease-in-out;
+	overflow: hidden;
+	min-height: 80px;
+	&.is-open {
+		min-height: 700px;
+	}
+}
+
+.sites-list__card-body {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	grid-auto-rows: minmax(100px, auto);
+	// grid-template-columns: 1fr 1fr 1fr;
+	grid-template-areas:
+			"header header header"
+			"label checkbox checkbox"
+			"label checkbox checkbox"
+			"label checkbox checkbox";
+
+
+}
+// .sites-list__settings-fields {
+// 	grid-area: fields;
+// }
+// .sites-list__settings-row {
+// 	grid-area: row;
+// }
+.sites-list__settings-label {
+	grid-area: label;
+}
+
+.sites-list__settings-checkbox {
+	grid-area: checkbox;
+}
+
+
+.sites-list__settings-header {
+	grid-area: header;
+}
+
+// .sites-list__card-content {
+// 	overflow: hidden;
+// 	// animation: collapse 0.3s ease-in-out both;
+
+// 	&.is-open {
+// 		max-height: 900px;
+// 		// animation: expand 0.3s ease-in-out both;
+// 	}
+// }
+

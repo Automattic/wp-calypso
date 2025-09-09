@@ -1,6 +1,8 @@
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { SitesList } from './sites-list';
 
 export default function NotificationsSites() {
 	return (
@@ -14,6 +16,10 @@ export default function NotificationsSites() {
 					) }
 				/>
 			}
-		></PageLayout>
+		>
+			<VStack spacing={ 4 }>
+				<SitesList />
+			</VStack>
+		</PageLayout>
 	);
 }

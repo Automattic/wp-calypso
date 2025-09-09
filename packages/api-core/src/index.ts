@@ -22,6 +22,7 @@ export * from './me';
 export * from './me-account';
 export * from './me-blocked-sites';
 export * from './me-dpa';
+export * from './me-notification-devices';
 export * from './me-payment-methods';
 export * from './me-preferences';
 export * from './me-user-settings-preferences';
