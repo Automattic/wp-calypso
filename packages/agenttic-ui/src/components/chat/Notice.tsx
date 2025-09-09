@@ -13,6 +13,7 @@ interface NoticeProps {
 	};
 	dismissible?: boolean;
 	onDismiss?: () => void;
+	className?: string;
 }
 
 export function Notice( {
@@ -21,6 +22,7 @@ export function Notice( {
 	action,
 	dismissible = true,
 	onDismiss,
+	className,
 }: NoticeProps ) {
 	return (
 		<div

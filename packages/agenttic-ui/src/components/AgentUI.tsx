@@ -2,6 +2,14 @@ import React from 'react';
 import type { AgentUIProps } from '../types';
 import { cn } from '../utils/classNames';
 import { Chat } from './chat/Chat';
+import { AgentUIContainer } from './AgentUIContainer';
+import { AgentUIHeader } from './composable/AgentUIHeader';
+import { AgentUIMessages } from './composable/AgentUIMessages';
+import { AgentUIInput } from './composable/AgentUIInput';
+import { AgentUISuggestions } from './composable/AgentUISuggestions';
+import { AgentUINotice } from './composable/AgentUINotice';
+import { AgentUIFooter } from './composable/AgentUIFooter';
+import { AgentUIConversationView } from './composable/AgentUIConversationView';
 
 /**
  * AgentUI - Pure UI component for chat interface
@@ -64,48 +72,36 @@ import { Chat } from './chat/Chat';
  * @param props.floatingChatState
  * @param props.className         - Additional CSS classes to apply to the component
  */
-export const AgentUI: React.FC< AgentUIProps > = ( {
-	messages,
-	isProcessing,
-	error,
-	onSubmit,
-	variant = 'floating',
-	triggerIcon,
-	placeholder,
-	notice,
-	emptyView,
-	onOpen,
-	onExpand,
-	onClose,
-	onStop,
-	floatingChatState,
-	suggestions,
-	clearSuggestions,
-	messageRenderer,
-	className,
-} ) => {
-	return (
-		<Chat
-			messages={ messages }
-			isProcessing={ isProcessing }
-			error={ error }
-			onSubmit={ onSubmit }
-			variant={ variant }
-			triggerIcon={ triggerIcon }
-			placeholder={ placeholder }
-			notice={ notice }
-			emptyView={ emptyView }
-			onOpen={ onOpen }
-			onExpand={ onExpand }
-			onClose={ onClose }
-			onStop={ onStop }
-			floatingChatState={ floatingChatState }
-			suggestions={ suggestions }
-			clearSuggestions={ clearSuggestions }
-			messageRenderer={ messageRenderer }
-			className={ cn( 'agenttic', className ) }
-		/>
-	);
+const AgentUINamespace = {
+	// Core container with state management
+	Container: AgentUIContainer,
+
+	// Individual composable components
+	Header: AgentUIHeader,
+	Messages: AgentUIMessages,
+	Input: AgentUIInput,
+	Suggestions: AgentUISuggestions,
+	Notice: AgentUINotice,
+
+	// Convenience wrappers
+	Footer: AgentUIFooter,
+	ConversationView: AgentUIConversationView,
 };
+
+// Main convenience wrapper - provides current API with new composable architecture
+export const AgentUI: React.FC< AgentUIProps > & typeof AgentUINamespace =
+	Object.assign(
+		( props: AgentUIProps ) => (
+			<AgentUIContainer
+				{ ...props }
+				className={ cn( 'agenttic', props.className ) }
+			>
+				<AgentUIConversationView
+					showHeader={ props.variant === 'floating' }
+				/>
+			</AgentUIContainer>
+		),
+		AgentUINamespace
+	);
 
 export default AgentUI;

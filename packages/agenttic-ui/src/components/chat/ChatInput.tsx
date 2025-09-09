@@ -10,6 +10,7 @@ import styles from './ChatInput.module.css';
 import { ChevronUpIcon } from '../icons/ChevronUpIcon';
 import { __ } from '@wordpress/i18n';
 import { AnimatedPlaceholder } from './AnimatedPlaceholder';
+import { useAgentUIContext } from '../../context/AgentUIContext';
 
 interface ActionButton {
 	id: string;
@@ -38,6 +39,7 @@ interface ChatInputProps {
 	actionOrder?: 'before-submit' | 'after-submit';
 	onStop?: () => void; // Optional callback for stopping current request
 	disabled?: boolean; // Allow disabling submit button for validation
+	className?: string;
 }
 
 export function ChatInput( {
@@ -57,9 +59,11 @@ export function ChatInput( {
 	actionOrder = 'before-submit',
 	onStop,
 	disabled = false,
+	className,
 }: ChatInputProps ) {
 	const textareaId = useId();
 	const canSubmit = ( value.trim() || isProcessing ) && ! disabled;
+	const { variant, floatingChatState } = useAgentUIContext();
 
 	// Helper function to ensure text has ellipsis
 	const addEllipsis = ( text: string ) =>
@@ -103,6 +107,9 @@ export function ChatInput( {
 	};
 
 	const renderExpandButton = () => {
+		if ( variant === 'embedded' || floatingChatState === 'expanded' ) {
+			return null;
+		}
 		return showExpandButton && onExpand ? (
 			<Button
 				className={ styles.button }

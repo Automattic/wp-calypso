@@ -7,9 +7,10 @@ import { __ } from '@wordpress/i18n';
 
 interface ChatHeaderProps {
 	onClose?: () => void;
+	className?: string;
 }
 
-export function ChatHeader( { onClose }: ChatHeaderProps ) {
+export function ChatHeader( { onClose, className }: ChatHeaderProps ) {
 	return (
 		<motion.div
 			data-slot="chat-header"

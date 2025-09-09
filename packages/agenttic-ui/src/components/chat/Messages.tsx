@@ -12,6 +12,7 @@ interface MessagesProps {
 	error?: string | null;
 	emptyView?: React.ReactNode;
 	messageRenderer?: ComponentType< { children: string } >;
+	className?: string;
 }
 
 export function Messages( {
@@ -20,6 +21,7 @@ export function Messages( {
 	error,
 	emptyView,
 	messageRenderer,
+	className,
 }: MessagesProps ) {
 	const scrollAreaRef = useRef< HTMLDivElement >( null );
 	const previousMessagesRef = useRef< MessageType[] >( [] );

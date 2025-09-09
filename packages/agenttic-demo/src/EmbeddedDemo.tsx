@@ -29,6 +29,7 @@ const EmbeddedDemo: React.FC = () => {
 		error,
 		onSubmit,
 		suggestions,
+		registerSuggestions,
 		clearSuggestions,
 		registerMarkdownComponents,
 		registerMarkdownExtensions,
@@ -52,6 +53,33 @@ const EmbeddedDemo: React.FC = () => {
 	useEffect( () => {
 		addMessageRef.current = addMessage;
 	}, [ addMessage ] );
+
+	// Sample suggestions for embedded demo
+	const sampleSuggestions = useMemo(
+		() => [
+			{
+				id: '1',
+				label: 'Create a blog post',
+				prompt: 'Help me create a blog post about web development',
+			},
+			{
+				id: '2',
+				label: 'Design tips',
+				prompt: 'Give me some design tips for my website',
+			},
+			{
+				id: '3',
+				label: 'SEO advice',
+				prompt: 'How can I improve my website SEO?',
+			},
+		],
+		[]
+	);
+
+	// Register suggestions on mount
+	useEffect( () => {
+		registerSuggestions( sampleSuggestions );
+	}, [ registerSuggestions, sampleSuggestions ] );
 
 	// Custom markdown components for demo
 	const customMarkdownComponents = useMemo(
@@ -151,6 +179,73 @@ const EmbeddedDemo: React.FC = () => {
 		createFeedbackActions,
 		handleFeedback,
 	] );
+	const suggestionSets = useMemo(
+		() => ( {
+			button: [
+				{
+					id: '1',
+					label: 'Edit link',
+					prompt: 'Change the button link to:',
+				},
+				{
+					id: '2',
+					label: 'Remove button',
+					prompt: 'Remove this button',
+				},
+				{
+					id: '3',
+					label: 'Change color',
+					prompt: 'Change the button color to blue',
+				},
+			],
+			heading: [
+				{
+					id: '4',
+					label: 'Make uppercase',
+					prompt: 'Make this text uppercase',
+				},
+				{
+					id: '5',
+					label: 'Change color',
+					prompt: 'Change the text color to:',
+				},
+				{
+					id: '6',
+					label: 'Add shadow',
+					prompt: 'Add a drop shadow to this text',
+				},
+			],
+			image: [
+				{ id: '7', label: 'Add image', prompt: 'Add an image here' },
+				{ id: '8', label: 'Add video', prompt: 'Embed a video' },
+				{
+					id: '9',
+					label: 'Add gallery',
+					prompt: 'Create a photo gallery',
+				},
+			],
+			pattern: [
+				{
+					id: '10',
+					label: 'Apply style',
+					prompt: 'Show me the styles for this pattern.',
+				},
+				{
+					id: '11',
+					label: 'Change layout',
+					prompt: 'Give me alternative layout variations for this pattern, keeping all content and copy exactly the same.',
+				},
+			],
+			none: [],
+		} ),
+		[]
+	);
+	const handleContextChange = useCallback(
+		( context: keyof typeof suggestionSets ) => {
+			registerSuggestions( suggestionSets[ context ] );
+		},
+		[ registerSuggestions, suggestionSets ]
+	);
 
 	return (
 		<>
@@ -176,6 +271,14 @@ const EmbeddedDemo: React.FC = () => {
                     --color-muted: oklch(0.925 0 0);
                     --color-muted-foreground: oklch(0.6 0 0);
                 }
+                
+                /* Override suggestions positioning to appear below footer */
+                .embedded-demo .agenttic [data-slot="conversation-view"] > div:last-child {
+                    position: static !important;
+                    transform: none !important;
+                    margin-top: var(--spacing-2);
+                    padding: var(--spacing-2);
+                }
                 ` }
 			</style>
 			<div
@@ -187,7 +290,60 @@ const EmbeddedDemo: React.FC = () => {
 					margin: '0 auto',
 				} }
 			>
-				<AgentUI
+				<div
+					style={ {
+						position: 'fixed',
+						top: '0',
+						right: '0',
+						display: 'flex',
+						flexWrap: 'wrap',
+						gap: '2px',
+					} }
+				>
+					<button
+						onClick={ () => handleContextChange( 'heading' ) }
+						style={ {
+							padding: '8px 10px',
+							background: '#000',
+							color: '#fff',
+							cursor: 'pointer',
+							fontSize: '12px',
+							fontFamily: 'monospace',
+							textTransform: 'uppercase',
+						} }
+					>
+						Heading
+					</button>
+					<button
+						onClick={ () => handleContextChange( 'image' ) }
+						style={ {
+							padding: '4px 8px',
+							background: '#000',
+							color: '#fff',
+							cursor: 'pointer',
+							fontSize: '12px',
+							fontFamily: 'monospace',
+							textTransform: 'uppercase',
+						} }
+					>
+						Image
+					</button>
+					<button
+						onClick={ () => handleContextChange( 'pattern' ) }
+						style={ {
+							padding: '4px 8px',
+							background: '#000',
+							color: '#fff',
+							cursor: 'pointer',
+							fontSize: '12px',
+							fontFamily: 'monospace',
+							textTransform: 'uppercase',
+						} }
+					>
+						Pattern
+					</button>
+				</div>
+				<AgentUI.Container
 					messages={ messages }
 					isProcessing={ isProcessing }
 					error={ error }
@@ -197,6 +353,7 @@ const EmbeddedDemo: React.FC = () => {
 					suggestions={ suggestions }
 					clearSuggestions={ clearSuggestions }
 					messageRenderer={ messageRenderer }
+					className="agenttic"
 					placeholder={ [
 						'Ask me anything',
 						'How can I help you today?',
@@ -204,10 +361,16 @@ const EmbeddedDemo: React.FC = () => {
 						'Need help with your website?',
 						"Let's build something amazing",
 					] }
-					// notice={ {
-					// 	message: 'This is a notice',
-					// } }
-				/>
+				>
+					<AgentUI.ConversationView showHeader={ false }>
+						<AgentUI.Messages />
+						<AgentUI.Footer>
+							<AgentUI.Notice />
+							<AgentUI.Input />
+						</AgentUI.Footer>
+						<AgentUI.Suggestions />
+					</AgentUI.ConversationView>
+				</AgentUI.Container>
 			</div>
 		</>
 	);

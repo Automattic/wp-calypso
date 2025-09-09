@@ -10,321 +10,345 @@ npm install @automattic/agenttic-ui
 
 ## Key Features
 
-- Pure UI components with no agent communication logic
-- Floating and embedded chat variants
-- Smooth animations and drag-and-drop positioning
-- Message actions and markdown rendering
-- Request cancellation UI with stop button functionality
-- TypeScript support with comprehensive types
-- Storybook component documentation
-- Modular component architecture for custom layouts
+-   Pure UI components with no agent communication logic
+-   Composable architecture for complete layout flexibility
+-   Floating and embedded chat variants
+-   Controlled input support for external value management
+-   Smooth animations and drag-and-drop positioning
+-   Message actions and markdown rendering
+-   Request cancellation UI with stop button functionality
+-   TypeScript support with comprehensive types
+-   Storybook component documentation
 
 ## Quick Start
 
-### Complete Chat Interface
+### Complete Chat Interface (Convenience API)
 
 ```tsx
 import { useAgentChat } from '@automattic/agenttic-client';
 import { AgentUI } from '@automattic/agenttic-ui';
 
 function ChatApplication() {
-  const {
-    messages,
-    isProcessing,
-    error,
-    onSubmit,
-    abortCurrentRequest,
-    suggestions,
-    clearSuggestions,
-    messageRenderer
-  } = useAgentChat({
-    agentId: 'big-sky',
-    sessionId: 'my-session'
-  });
+	const {
+		messages,
+		isProcessing,
+		error,
+		onSubmit,
+		abortCurrentRequest,
+		suggestions,
+		clearSuggestions,
+		messageRenderer,
+	} = useAgentChat( {
+		agentId: 'big-sky',
+		sessionId: 'my-session',
+	} );
 
-  return (
-    <AgentUI
-      messages={messages}
-      isProcessing={isProcessing}
-      error={error}
-      onSubmit={onSubmit}
-      onStop={abortCurrentRequest}
-      suggestions={suggestions}
-      clearSuggestions={clearSuggestions}
-      messageRenderer={messageRenderer}
-      variant="floating"
-      placeholder="Ask me anything..."
-    />
-  );
+	return (
+		<AgentUI
+			messages={ messages }
+			isProcessing={ isProcessing }
+			error={ error }
+			onSubmit={ onSubmit }
+			onStop={ abortCurrentRequest }
+			suggestions={ suggestions }
+			clearSuggestions={ clearSuggestions }
+			messageRenderer={ messageRenderer }
+			variant="floating"
+			placeholder="Ask me anything..."
+		/>
+	);
 }
 ```
 
-### Embedded Chat
+### Composable Architecture
+
+For complete control over layout and component ordering:
 
 ```tsx
-<AgentUI
-  messages={messages}
-  isProcessing={isProcessing}
-  error={error}
-  onSubmit={onSubmit}
-  variant="embedded"
-  placeholder="How can I help you?"
-/>
+import { AgentUI } from '@automattic/agenttic-ui';
+
+function CustomChatLayout() {
+	return (
+		<AgentUI.Container
+			messages={ messages }
+			isProcessing={ isProcessing }
+			error={ error }
+			onSubmit={ onSubmit }
+			onStop={ abortCurrentRequest }
+			variant="embedded"
+		>
+			<AgentUI.ConversationView>
+				<AgentUI.Header />
+				<AgentUI.Messages />
+				<AgentUI.Footer>
+					<AgentUI.Notice />
+					<AgentUI.Input />
+				</AgentUI.Footer>
+				<AgentUI.Suggestions />
+			</AgentUI.ConversationView>
+		</AgentUI.Container>
+	);
+}
 ```
 
-## Core Components
+### Controlled Input
 
-### AgentUI
+External control of input value and changes:
 
-The main component that provides a complete chat interface.
+```tsx
+function ExternallyControlledChat() {
+	const [ inputValue, setInputValue ] = useState( '' );
+
+	return (
+		<AgentUI
+			messages={ messages }
+			isProcessing={ isProcessing }
+			onSubmit={ onSubmit }
+			inputValue={ inputValue }
+			onInputChange={ setInputValue }
+			variant="embedded"
+		/>
+	);
+}
+```
+
+## Architecture
+
+### AgentUI Components
+
+**AgentUI** - Convenience wrapper with default layout
+**AgentUI.Container** - Root container with state management and context
+**AgentUI.ConversationView** - Conversation layout wrapper
+**AgentUI.Header** - Chat header with close/expand buttons
+**AgentUI.Messages** - Message history display
+**AgentUI.Footer** - Footer wrapper for input and notice
+**AgentUI.Input** - Text input with auto-resize
+**AgentUI.Notice** - Error and notification display
+**AgentUI.Suggestions** - Quick action suggestions
+
+### AgentUIProps Interface
 
 ```tsx
 interface AgentUIProps {
-  // Core chat data
-  messages: Message[];
-  isProcessing: boolean;
-  error?: string | null;
-  onSubmit: (message: string) => void;
-  onStop?: () => void; // Optional callback to stop current request
+	// Core chat data
+	messages: Message[];
+	isProcessing: boolean;
+	error?: string | null;
+	onSubmit: ( message: string ) => void;
+	onStop?: () => void;
 
-  // UI configuration
-  variant?: 'floating' | 'embedded';
-  placeholder?: string;
-  triggerIcon?: React.ReactNode;
-  notice?: NoticeConfig;
-  emptyView?: React.ReactNode;
+	// UI configuration
+	variant?: 'floating' | 'embedded';
+	placeholder?: string | string[];
+	triggerIcon?: React.ReactNode;
+	notice?: NoticeConfig;
+	emptyView?: React.ReactNode;
 
-  // Chat state management (floating variant)
-  floatingChatState?: ChatState;
-  onOpen?: () => void;
-  onExpand?: () => void;
-  onClose?: () => void;
+	// Chat state management (floating variant)
+	floatingChatState?: ChatState;
+	onOpen?: () => void;
+	onExpand?: () => void;
+	onClose?: () => void;
 
-  // Suggestions
-  suggestions?: Suggestion[];
-  clearSuggestions?: () => void;
+	// Suggestions
+	suggestions?: Suggestion[];
+	clearSuggestions?: () => void;
 
-  // Message rendering
-  messageRenderer?: ComponentType<{ children: string }>;
+	// Message rendering
+	messageRenderer?: ComponentType< { children: string } >;
 
-  // Styling
-  className?: string;
-  style?: React.CSSProperties;
+	// Controlled input (optional)
+	inputValue?: string;
+	onInputChange?: ( value: string ) => void;
+
+	// Styling
+	className?: string;
+	style?: React.CSSProperties;
 }
 ```
 
-**Variants:**
-- `floating` - Draggable chat widget with collapsed/compact/expanded states
-- `embedded` - Fixed chat interface for integration in existing layouts
+## Usage Patterns
+
+### Flexible Component Ordering
+
+Place suggestions anywhere in your layout:
+
+```tsx
+<AgentUI.Container {...props}>
+  <AgentUI.ConversationView>
+    <AgentUI.Messages />
+    <AgentUI.Suggestions /> {/* Above input */}
+    <AgentUI.Footer>
+      <AgentUI.Input />
+    </AgentUI.Footer>
+  </AgentUI.ConversationView>
+</AgentUI.Container>
+
+// Or below input:
+<AgentUI.Container {...props}>
+  <AgentUI.ConversationView>
+    <AgentUI.Messages />
+    <AgentUI.Footer>
+      <AgentUI.Input />
+    </AgentUI.Footer>
+    <AgentUI.Suggestions /> {/* Below input */}
+  </AgentUI.ConversationView>
+</AgentUI.Container>
+```
 
 ### Individual Components
 
-For custom chat layouts, use individual components:
+Use individual components for complete customization:
 
 ```tsx
 import {
-  Chat,
-  Messages,
-  Message,
-  ChatInput,
-  Suggestions
+	Messages,
+	Message,
+	ChatInput,
+	Suggestions,
 } from '@automattic/agenttic-ui';
 
-function CustomChat() {
-  return (
-    <div className="my-chat-container">
-      <Messages messages={messages} messageRenderer={messageRenderer} />
-      <Suggestions 
-        suggestions={suggestions} 
-        onSuggestionClick={onSubmit}
-        onClear={clearSuggestions}
-      />
-      <ChatInput
-        value={inputValue}
-        onChange={setInputValue}
-        onSubmit={onSubmit}
-        placeholder="Type a message..."
-        isProcessing={isProcessing}
-      />
-    </div>
-  );
+function FullyCustomChat() {
+	return (
+		<div className="my-chat-container">
+			<Messages
+				messages={ messages }
+				messageRenderer={ messageRenderer }
+			/>
+			<ChatInput
+				value={ inputValue }
+				onChange={ setInputValue }
+				onSubmit={ onSubmit }
+				placeholder="Type a message..."
+				isProcessing={ isProcessing }
+			/>
+			<Suggestions
+				suggestions={ suggestions }
+				onSuggestionClick={ onSubmit }
+				onClear={ clearSuggestions }
+			/>
+		</div>
+	);
 }
 ```
 
-## Component APIs
+### Request Cancellation
 
-### Chat
-
-Main chat component supporting both floating and embedded variants.
+Stop button appears automatically during processing:
 
 ```tsx
-<Chat
-  messages={messages}
-  isProcessing={isProcessing}
-  error={error}
-  onSubmit={onSubmit}
-  variant="floating"
-  placeholder="Ask anything..."
-  suggestions={suggestions}
-  clearSuggestions={clearSuggestions}
-  messageRenderer={messageRenderer}
+<AgentUI
+	isProcessing={ isProcessing }
+	onStop={ abortCurrentRequest }
+	// Submit button becomes stop button when processing
 />
 ```
 
-### Messages
-
-Container for displaying message history.
+### Custom Message Renderer
 
 ```tsx
-<Messages 
-  messages={messages}
-  messageRenderer={messageRenderer}
-  emptyView={<div>No messages yet</div>}
-/>
+import { ReactMarkdown } from 'react-markdown';
+
+const customRenderer = ( { children }: { children: string } ) => (
+	<ReactMarkdown remarkPlugins={ [ remarkGfm ] }>{ children }</ReactMarkdown>
+);
+
+<AgentUI messageRenderer={ customRenderer } />;
 ```
 
-### Message
+### Chat State Control
 
-Individual message component with action support.
-
-```tsx
-<Message
-  message={message}
-  messageRenderer={messageRenderer}
-  showIcon={true}
-/>
-```
-
-### ChatInput
-
-Text input with auto-resize and submit handling.
+For floating variant, control state externally:
 
 ```tsx
-<ChatInput
-  value={value}
-  onChange={setValue}
-  onSubmit={handleSubmit}
-  onKeyDown={handleKeyDown}
-  onStop={handleStop} // Optional callback to stop current request
-  placeholder="Type a message..."
-  isProcessing={false}
-  textareaRef={textareaRef}
-/>
-```
+const [ chatState, setChatState ] = useState< ChatState >( 'collapsed' );
 
-### Suggestions
-
-Quick action suggestions for users.
-
-```tsx
-<Suggestions
-  suggestions={[
-    { id: '1', label: 'Help me code', prompt: 'Can you help me write code?' },
-    { id: '2', label: 'Explain concept', prompt: 'Explain this concept to me' }
-  ]}
-  onSuggestionClick={onSubmit}
-  onClear={clearSuggestions}
-/>
+<AgentUI
+	variant="floating"
+	floatingChatState={ chatState }
+	onOpen={ () => setChatState( 'compact' ) }
+	onExpand={ () => setChatState( 'expanded' ) }
+	onClose={ () => setChatState( 'collapsed' ) }
+/>;
 ```
 
 ## Hooks
 
 ### useChat
 
-Manages chat state for floating variant.
+Manages floating chat state:
 
 ```tsx
 const {
-  state,        // 'collapsed' | 'compact' | 'expanded'
-  setState,
-  isOpen,       // boolean
-  open,         // () => void
-  close,        // () => void
-  toggle        // () => void
-} = useChat(initialState);
+	state, // 'collapsed' | 'compact' | 'expanded'
+	setState,
+	isOpen, // boolean
+	open, // () => void
+	close, // () => void
+	toggle, // () => void
+} = useChat( initialState );
 ```
 
 ### useInput
 
-Manages text input state with auto-resize and keyboard handling.
+Manages input state with auto-resize:
 
 ```tsx
-const {
-  value,
-  setValue,
-  clear,
-  textareaRef,
-  handleKeyDown,
-  adjustHeight
-} = useInput({
-  value: inputValue,
-  setValue: setInputValue,
-  onSubmit: handleSubmit,
-  isProcessing: false
-});
-```
-
-## Icons
-
-Pre-built icon components for consistent UI:
-
-```tsx
-import {
-  ThumbsUpIcon,
-  ThumbsDownIcon,
-  CopyIcon,
-  StopIcon,
-  ArrowUpIcon,
-  XIcon,
-  BigSkyIcon,
-  StylesIcon
-} from '@automattic/agenttic-ui';
+const { value, setValue, clear, textareaRef, handleKeyDown, adjustHeight } =
+	useInput( {
+		value: inputValue,
+		setValue: setInputValue,
+		onSubmit: handleSubmit,
+		isProcessing: false,
+	} );
 ```
 
 ## Type Definitions
 
 ```tsx
 interface Message {
-  id: string;
-  role: 'user' | 'agent';
-  content: Array<{
-    type: 'text' | 'image_url' | 'component';
-    text?: string;
-    image_url?: string;
-    component?: React.ComponentType;
-    componentProps?: any;
-  }>;
-  timestamp: number;
-  archived: boolean;
-  showIcon: boolean;
-  icon?: string;
-  actions?: MessageAction[];
+	id: string;
+	role: 'user' | 'agent';
+	content: Array< {
+		type: 'text' | 'image_url' | 'component';
+		text?: string;
+		image_url?: string;
+		component?: React.ComponentType;
+		componentProps?: any;
+	} >;
+	timestamp: number;
+	archived: boolean;
+	showIcon: boolean;
+	icon?: string;
+	actions?: MessageAction[];
 }
 
 interface MessageAction {
-  id: string;
-  icon: React.ReactNode;
-  label: string;
-  onClick: (message: Message) => void | Promise<void>;
-  tooltip?: string;
-  disabled?: boolean;
+	id: string;
+	icon?: React.ReactNode;
+	label: string;
+	onClick: ( message: Message ) => void | Promise< void >;
+	tooltip?: string;
+	disabled?: boolean;
+	pressed?: boolean;
+	showLabel?: boolean;
 }
 
 interface Suggestion {
-  id: string;
-  label: string;
-  prompt: string;
+	id: string;
+	label: string;
+	prompt: string;
 }
 
 interface NoticeConfig {
-  icon?: React.ReactNode;
-  message: string;
-  action?: {
-    label: string;
-    onClick: () => void;
-  };
-  dismissible?: boolean;
-  onDismiss?: () => void;
+	icon?: React.ReactNode;
+	message: string;
+	action?: {
+		label: string;
+		onClick: () => void;
+	};
+	dismissible?: boolean;
+	onDismiss?: () => void;
 }
 
 type ChatState = 'collapsed' | 'compact' | 'expanded';
@@ -334,163 +358,46 @@ type ChatState = 'collapsed' | 'compact' | 'expanded';
 
 ### CSS Import
 
-Components automatically import their styles. For manual control:
-
-```css
-/* In your CSS */
-@import '@automattic/agenttic-ui/index.css';
-```
-
 ```tsx
-// In JavaScript/TypeScript
 import '@automattic/agenttic-ui/index.css';
 ```
 
 ### CSS Scoping
 
-All AgentUI styles are scoped to the `.agenttic` class to prevent conflicts with host applications. This ensures that the component styles don't interfere with your existing styles.
+All styles are scoped to `.agenttic` class to prevent conflicts.
 
 ### Customization
 
-Override CSS custom properties to theme the entire chat or specific areas:
+Override CSS custom properties:
 
 ```css
-/* Global theming */
 .agenttic {
-  --color-primary: #your-brand-color;
-  --color-background: #ffffff;
-  --color-foreground: #000000;
-  /* ...other custom properties as needed. */
+	--color-primary: #your-brand-color;
+	--color-background: #ffffff;
+	--color-foreground: #000000;
 }
 
-/* Target specific UI areas, e.g. the chat footer as seen in Big Sky embedded site spec. */
-.agenttic [data-slot="chat-footer"] {
-  --color-background: oklch(1 0 0);
-  --color-foreground: oklch(0.241 0 0);
-  --color-primary: #your-brand-color;
-  --color-primary-foreground: oklch(1 0 0);
-  --color-muted: oklch(0.925 0 0);
-  --color-muted-foreground: oklch(0.6 0 0);
+.agenttic [data-slot='chat-footer'] {
+	--color-background: oklch( 1 0 0 );
+	--color-primary: #your-brand-color;
 }
 ```
 
-This approach allows granular theming of specific areas without affecting other parts of the application.
+## Icons
 
-## Advanced Usage
-
-### Request Cancellation UI
-
-The UI automatically displays a stop button when `isProcessing` is true and an `onStop` callback is provided. The submit button transforms into a stop button during processing:
+Pre-built icon components:
 
 ```tsx
-const {
-  abortCurrentRequest,
-  isProcessing
-} = useAgentChat(config);
-
-<AgentUI
-  isProcessing={isProcessing}
-  onStop={abortCurrentRequest}
-  // When processing, the submit button becomes a stop button
-  // ... other props
-/>
-```
-
-For custom implementations:
-
-```tsx
-<ChatInput
-  isProcessing={isProcessing}
-  onStop={() => {
-    console.log('User requested to stop');
-    abortCurrentRequest();
-  }}
-  // The button automatically shows stop icon during processing
-  // ... other props
-/>
-```
-
-### Custom Message Renderer
-
-Provide a custom markdown renderer:
-
-```tsx
-import { ReactMarkdown } from 'react-markdown';
-
-const customRenderer = ({ children }: { children: string }) => (
-  <ReactMarkdown 
-    remarkPlugins={[remarkGfm]}
-    components={{
-      code: ({ children }) => <code className="custom-code">{children}</code>
-    }}
-  >
-    {children}
-  </ReactMarkdown>
-);
-
-<AgentUI
-  messages={messages}
-  messageRenderer={customRenderer}
-  // ... other props
-/>
-```
-
-### Message Actions
-
-Messages can include interactive actions:
-
-```tsx
-const messagesWithActions = messages.map(message => ({
-  ...message,
-  actions: message.role === 'agent' ? [
-    {
-      id: 'copy',
-      icon: <CopyIcon />,
-      label: 'Copy',
-      onClick: () => navigator.clipboard.writeText(message.content[0].text)
-    },
-    {
-      id: 'feedback',
-      icon: <ThumbsUpIcon />,
-      label: 'Good response',
-      onClick: () => console.log('Positive feedback')
-    }
-  ] : []
-}));
-```
-
-### Controlled Chat State
-
-For floating variant, control the chat state externally:
-
-```tsx
-const [chatState, setChatState] = useState<ChatState>('collapsed');
-
-<AgentUI
-  variant="floating"
-  floatingChatState={chatState}
-  onOpen={() => setChatState('compact')}
-  onExpand={() => setChatState('expanded')}
-  onClose={() => setChatState('collapsed')}
-  // ... other props
-/>
-```
-
-### Custom Empty View
-
-Provide custom content when there are no messages:
-
-```tsx
-<AgentUI
-  messages={[]}
-  emptyView={
-    <div className="welcome-message">
-      <h3>Welcome to AI Assistant</h3>
-      <p>I'm here to help you with any questions.</p>
-    </div>
-  }
-  // ... other props
-/>
+import {
+	ThumbsUpIcon,
+	ThumbsDownIcon,
+	CopyIcon,
+	StopIcon,
+	ArrowUpIcon,
+	XIcon,
+	BigSkyIcon,
+	StylesIcon,
+} from '@automattic/agenttic-ui';
 ```
 
 ## Development
@@ -512,32 +419,19 @@ pnpm type-check
 pnpm storybook
 ```
 
-## Storybook Documentation
-
-Interactive component documentation is available via Storybook:
-
-```bash
-pnpm storybook
-```
-
-Visit `http://localhost:6006` to explore component examples and documentation.
-
 ## Integration with agenttic-client
-
-This UI package is designed to work seamlessly with `@automattic/agenttic-client`:
 
 ```tsx
 import { useAgentChat } from '@automattic/agenttic-client';
 import { AgentUI } from '@automattic/agenttic-ui';
 
 function App() {
-  const agentProps = useAgentChat({
-    agentId: 'big-sky',
-    // ... configuration
-  });
+	const agentProps = useAgentChat( {
+		agentId: 'big-sky',
+	} );
 
-  return <AgentUI {...agentProps} variant="floating" />;
+	return <AgentUI { ...agentProps } variant="floating" />;
 }
 ```
 
-The `useAgentChat` hook returns props that match the `AgentUI` interface perfectly, making integration seamless.
+The `useAgentChat` hook returns props that match the `AgentUI` interface.

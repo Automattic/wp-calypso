@@ -66,6 +66,10 @@ export interface AgentUIProps {
 	suggestions?: Suggestion[];
 	clearSuggestions?: () => void;
 	messageRenderer?: ComponentType< { children: string } >;
+
+	// Controlled input props (optional)
+	inputValue?: string;
+	onInputChange?: ( value: string ) => void;
 }
 
 export interface NoticeConfig {
