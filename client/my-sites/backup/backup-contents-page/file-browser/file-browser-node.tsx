@@ -5,7 +5,6 @@ import { chevronDown, chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import { FunctionComponent } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { addChildNodes, setNodeCheckState } from 'calypso/state/rewind/browser/actions';
 import getBackupBrowserNode from 'calypso/state/rewind/selectors/get-backup-browser-node';
 import FileInfoCard from './file-info-card';
@@ -25,6 +24,10 @@ interface FileBrowserNodeProps {
 	parentItem?: FileBrowserItem; // This is used to pass the extension details to the child node
 	fileBrowserConfig?: FileBrowserConfig;
 	siteId: number;
+	siteSlug: string;
+	hasCredentials?: boolean;
+	isRestoreEnabled?: boolean;
+	onTrackEvent?: ( eventName: string, properties?: Record< string, unknown > ) => void;
 }
 
 const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
@@ -37,6 +40,10 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 	parentItem,
 	fileBrowserConfig,
 	siteId,
+	siteSlug,
+	hasCredentials,
+	isRestoreEnabled,
+	onTrackEvent,
 } ) => {
 	const isRoot = path === '/';
 	const dispatch = useDispatch();
@@ -166,12 +173,10 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 		if ( ! isOpen ) {
 			setFetchContentsOnMount( true );
 
-			if ( item.type !== 'dir' ) {
-				dispatch(
-					recordTracksEvent( 'calypso_jetpack_backup_browser_view_file', {
-						file_type: item.type,
-					} )
-				);
+			if ( item.type !== 'dir' && onTrackEvent ) {
+				onTrackEvent( 'calypso_jetpack_backup_browser_view_file', {
+					file_type: item.type,
+				} );
 			}
 		}
 
@@ -192,7 +197,6 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 			setIsOpen( ! isOpen );
 		}
 	}, [
-		dispatch,
 		expandDirectoriesOnClick,
 		isOpen,
 		item,
@@ -200,6 +204,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 		setActiveNodePath,
 		onCheckboxChange,
 		showFileCard,
+		onTrackEvent,
 	] );
 
 	const handleExpandButtonClick = useCallback( () => {
@@ -291,6 +296,10 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 						setActiveNodePath={ setActiveNodePath }
 						fileBrowserConfig={ fileBrowserConfig }
 						siteId={ siteId }
+						siteSlug={ siteSlug }
+						hasCredentials={ hasCredentials }
+						isRestoreEnabled={ isRestoreEnabled }
+						onTrackEvent={ onTrackEvent }
 						// Hacky way to pass extensions details to the child node
 						{ ...( childItem.type === 'archive' ? { parentItem: item } : {} ) }
 					/>
@@ -374,13 +383,17 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 					</>
 				) }
 			</div>
-			{ isCurrentNodeClicked && showFileCard && (
+			{ isCurrentNodeClicked && showFileCard && isRestoreEnabled !== undefined && onTrackEvent && (
 				<FileInfoCard
 					siteId={ siteId }
 					rewindId={ rewindId }
 					item={ item }
 					parentItem={ parentItem }
 					path={ path }
+					siteSlug={ siteSlug }
+					hasCredentials={ hasCredentials }
+					isRestoreEnabled={ isRestoreEnabled }
+					onTrackEvent={ onTrackEvent }
 				/>
 			) }
 			{ isOpen && (

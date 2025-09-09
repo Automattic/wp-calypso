@@ -1,4 +1,4 @@
-import { fetchBackupPathInfo } from '@automattic/api-core';
+import { siteBackupPathInfoQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { parseBackupPathInfo } from './util';
 
@@ -9,12 +9,8 @@ export const useBackupPathInfoQuery = (
 	extensionType = ''
 ) => {
 	return useQuery( {
-		queryKey: [ 'jetpack-backup-path-info', siteId, rewindId, manifestPath, extensionType ],
-		queryFn: () => fetchBackupPathInfo( siteId, rewindId, manifestPath, extensionType ),
+		...siteBackupPathInfoQuery( siteId, rewindId, manifestPath, extensionType ),
 		enabled: !! siteId,
-		meta: { persist: false },
 		select: parseBackupPathInfo,
-		staleTime: Infinity,
-		retry: 2,
 	} );
 };

@@ -5,6 +5,8 @@ import {
 	useDomainSuggestionContainer,
 } from '../../hooks/use-domain-suggestion-container';
 
+import './style.scss';
+
 interface DomainSuggestionsListProps {
 	children: React.ReactNode;
 }
@@ -28,7 +30,9 @@ export const DomainSuggestionsList = ( { children }: DomainSuggestionsListProps 
 			return (
 				<Fragment key={ `child-${ index }` }>
 					{ child }
-					{ index < totalChildren - 1 && <CardDivider /> }
+					{ index < totalChildren - 1 && (
+						<CardDivider className="domain-suggestions-list__divider" />
+					) }
 				</Fragment>
 			);
 		} );
