@@ -62,7 +62,7 @@ export function useRepositoryFields() {
 				getValue: ( { item } ) => ( item.is_automated ? 'On' : 'ff' ),
 				render: ( { item } ) => (
 					<Text size="small" style={ { color: '#3b3b3b' } }>
-						{ item.is_automated ? __( 'Auto Deploys: On' ) : __( 'Auto Deploys: Off' ) }
+						{ item.is_automated ? __( 'Auto Deploy: On' ) : __( 'Auto Deploy: Off' ) }
 					</Text>
 				),
 				enableHiding: true,

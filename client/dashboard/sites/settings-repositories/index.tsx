@@ -1,9 +1,11 @@
 import { HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery, codeDeploymentsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { __experimentalText as Text } from '@wordpress/components';
+import { Link } from '@tanstack/react-router';
+import { __experimentalText as Text, Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
+import { chevronLeft } from '@wordpress/icons';
 import { useState, useMemo } from 'react';
 import { siteRoute } from '../../app/router/sites';
 import { Callout } from '../../components/callout';
@@ -67,9 +69,7 @@ function RepositoriesList() {
 		enabled: !! site?.ID,
 	} );
 
-	// Transform deployments data to focus on repository information
 	const repositoryData: CodeDeploymentData[] = useMemo( () => {
-		// Group by repository and show unique repositories
 		const uniqueRepos = new Map< string, CodeDeploymentData >();
 
 		deployments.forEach( ( deployment: CodeDeploymentData ) => {
@@ -129,10 +129,20 @@ function SiteRepositories() {
 			size="small"
 			header={
 				<PageHeader
+					prefix={
+						<Link to="/sites/$siteSlug/settings" params={ { siteSlug } }>
+							<Button variant="tertiary" icon={ chevronLeft } __next40pxDefaultSize>
+								{ __( 'Back' ) }
+							</Button>
+						</Link>
+					}
 					title={ __( 'Repositories' ) }
-					description={ __(
-						'View and manage GitHub repositories connected to your site for deployments.'
-					) }
+					description={ __( 'Connect repositories to your WordPress site.' ) }
+					actions={
+						<Button variant="primary" __next40pxDefaultSize>
+							{ __( 'Connect repository' ) }
+						</Button>
+					}
 				/>
 			}
 		>
