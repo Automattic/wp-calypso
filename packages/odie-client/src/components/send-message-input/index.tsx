@@ -9,8 +9,7 @@ import { __ } from '@wordpress/i18n';
 import { useOdieAssistantContext } from '../../context';
 import { useSendChatMessage } from '../../hooks';
 import { Message } from '../../types';
-import { Notices } from '../notices';
-import useMessageSizeErrorNotice from '../notices/use-message-size-error-notice';
+import { useConnectionStatusNotice, useMessageSizeErrorNotice } from '../notices';
 import { useAttachmentHandler } from './use-attachment-handler';
 
 const getTextAreaPlaceholder = (
@@ -38,7 +37,11 @@ export const OdieSendMessageButton = () => {
 	const isInitialLoading = chat.status === 'loading';
 	const isLiveChat = chat.provider?.startsWith( 'zendesk' );
 	const [ inputValue, setInputValue ] = useState( '' );
-	const notice = useMessageSizeErrorNotice( inputValue.trim().length );
+	const messageSizeNotice = useMessageSizeErrorNotice( inputValue.trim().length );
+	const connectionNotice = useConnectionStatusNotice();
+
+	// Prioritize connection status notice over message size notice
+	const notice = connectionNotice || messageSizeNotice;
 
 	const { connectionStatus } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
@@ -118,7 +121,6 @@ export const OdieSendMessageButton = () => {
 	return (
 		<>
 			<div className="odie-chat-message-input-container agenttic" ref={ divContainerRef }>
-				<Notices />
 				{ isEmailFallback ? (
 					<EmailFallbackNotice />
 				) : (
