@@ -65,23 +65,6 @@ const FloatingCompactDemo: React.FC = () => {
 
 	const suggestionSets = useMemo(
 		() => ( {
-			button: [
-				{
-					id: '1',
-					label: 'Edit link',
-					prompt: 'Change the button link to:',
-				},
-				{
-					id: '2',
-					label: 'Remove button',
-					prompt: 'Remove this button',
-				},
-				{
-					id: '3',
-					label: 'Change color',
-					prompt: 'Change the button color to blue',
-				},
-			],
 			heading: [
 				{
 					id: '4',
@@ -93,30 +76,33 @@ const FloatingCompactDemo: React.FC = () => {
 					label: 'Change color',
 					prompt: 'Change the text color to:',
 				},
-				{
-					id: '6',
-					label: 'Add shadow',
-					prompt: 'Add a drop shadow to this text',
-				},
 			],
 			image: [
-				{ id: '7', label: 'Add image', prompt: 'Add an image here' },
-				{ id: '8', label: 'Add video', prompt: 'Embed a video' },
+				{
+					id: '7',
+					label: 'Make new image',
+					prompt: 'Add an image here',
+				},
 				{
 					id: '9',
-					label: 'Add gallery',
-					prompt: 'Create a photo gallery',
+					label: 'Add gallery with three images',
+					prompt: 'Add a new gallery pattern to the page with three images, right below the currently selected pattern.',
 				},
 			],
 			pattern: [
 				{
-					id: '10',
-					label: 'Apply style',
-					prompt: 'Show me the styles for this pattern.',
+					id: 'add-overlay',
+					label: 'Add overlay',
+					prompt: 'Add an overlay to the cover block and give me the color picker tool to change it.',
 				},
 				{
-					id: '11',
-					label: 'Change layout',
+					id: 'change-pattern-style',
+					label: 'Change pattern style',
+					prompt: 'Show me the different styles I can apply to this pattern.',
+				},
+				{
+					id: 'show-pattern-layout',
+					label: 'Show different layouts',
 					prompt: 'Give me alternative layout variations for this pattern, keeping all content and copy exactly the same.',
 				},
 			],
@@ -130,42 +116,6 @@ const FloatingCompactDemo: React.FC = () => {
 			registerSuggestions( suggestionSets[ context ] );
 		},
 		[ registerSuggestions, suggestionSets ]
-	);
-
-	// Custom markdown components for demo
-	const customMarkdownComponents = useMemo(
-		() => ( {
-			// Custom blockquote with left border and styling
-			blockquote: ( { children, ...props }: any ) => (
-				<blockquote
-					{ ...props }
-					style={ {
-						borderLeft: '4px solid #007cba',
-						backgroundColor: '#f0f8ff',
-						margin: '16px 0',
-						padding: '12px 16px',
-						fontStyle: 'italic',
-						borderRadius: '0 4px 4px 0',
-					} }
-				>
-					{ children }
-				</blockquote>
-			),
-		} ),
-		[]
-	);
-
-	// Memoize the markdown extensions object to prevent re-renders
-	const customMarkdownExtensions = useMemo(
-		() => ( {
-			charts: {
-				enabled: true,
-			},
-			gfm: {
-				enabled: true, // Enables tables, strikethrough, task lists, autolinks
-			},
-		} ),
-		[]
 	);
 
 	const handleSubmit = useCallback(
@@ -200,20 +150,8 @@ const FloatingCompactDemo: React.FC = () => {
 		if ( hasRegisteredExtensions.current ) {
 			return;
 		}
-
-		// Register chart extensions
-		registerMarkdownExtensions( customMarkdownExtensions );
-
-		// Register custom markdown components
-		registerMarkdownComponents( customMarkdownComponents );
-
 		hasRegisteredExtensions.current = true;
-	}, [
-		registerMarkdownExtensions,
-		registerMarkdownComponents,
-		customMarkdownExtensions,
-		customMarkdownComponents,
-	] );
+	}, [] );
 
 	const feedbackActions = useCallback(
 		( message: UIMessage ) => {

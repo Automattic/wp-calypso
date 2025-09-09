@@ -10,12 +10,16 @@ export interface SuggestionsProps {
 	className?: string;
 	suggestions?: Suggestion[];
 	onSubmit?: ( message: string ) => void;
+	layout?: 'horizontal' | 'vertical';
+	visible?: boolean;
 }
 
 export const Suggestions: React.FC< SuggestionsProps > = ( {
 	className,
 	suggestions,
 	onSubmit,
+	layout = 'horizontal',
+	visible = true,
 } ) => {
 	const handleSuggestionClick = ( suggestion: Suggestion ) => {
 		if ( onSubmit ) {
@@ -29,9 +33,13 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 
 	return (
 		<AnimatePresence>
-			{ suggestions && suggestions.length > 0 && (
+			{ suggestions && suggestions.length > 0 && visible && (
 				<motion.div
-					className={ cn( styles.container, className ) }
+					className={ cn(
+						styles.container,
+						layout === 'vertical' ? styles.vertical : '',
+						className
+					) }
 					initial={ { opacity: 0, y: '-80%' } }
 					animate={ { opacity: 1, y: '-100%' } }
 					exit={ { opacity: 0, y: '-80%' } }
@@ -43,6 +51,7 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 								key={ suggestion.id }
 								initial={ { opacity: 0, y: 10 } }
 								animate={ { opacity: 1, y: 0 } }
+								exit={ { opacity: 0, y: 10 } }
 								transition={ {
 									...fastSpringWithDelay,
 									delay: index * 0.05,
@@ -52,7 +61,14 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 									onClick={ () =>
 										handleSuggestionClick( suggestion )
 									}
-									variant="outline"
+									variant={
+										layout === 'vertical'
+											? 'transparent'
+											: 'outline'
+									}
+									size={
+										layout === 'vertical' ? 'lg' : undefined
+									}
 									className={ styles.button }
 								>
 									{ suggestion.label }

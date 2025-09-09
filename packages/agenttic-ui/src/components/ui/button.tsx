@@ -4,8 +4,8 @@ import { cn } from '../../utils/classNames';
 import styles from './button.module.css';
 
 interface ButtonProps extends React.ComponentProps< 'button' > {
-	variant?: 'primary' | 'ghost' | 'outline' | 'link' | 'icon';
-	size?: 'sm' | 'icon';
+	variant?: 'primary' | 'ghost' | 'outline' | 'link' | 'icon' | 'transparent';
+	size?: 'icon' | 'sm' | 'lg';
 	icon?: React.ReactNode;
 	asChild?: boolean;
 	pressed?: boolean;

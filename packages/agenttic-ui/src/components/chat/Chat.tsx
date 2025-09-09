@@ -472,6 +472,8 @@ export function Chat( {
 									showExpandButton={ ! input.value.trim() }
 									focusOnMount={ wasClickedToOpen.current }
 									onStop={ onStop }
+									suggestions={ suggestions }
+									clearSuggestions={ clearSuggestions }
 								/>
 							</div>
 						) }

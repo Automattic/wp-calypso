@@ -6,7 +6,7 @@
   cursor: pointer;
   display: inline-flex;
   flex-shrink: 0;
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-medium);
   font-size: var(--text-sm);
   gap: calc(var(--spacing) * 0.5);
   justify-content: center;
@@ -86,11 +86,9 @@
 .outline {
     box-shadow: var(--shadow-outline);
     background-color: var(--color-background);
-    height: calc( var(--spacing-8) - 1px);
 }
   
 .outline:hover:not(:disabled) {
-    color: var(--color-primary);
     box-shadow: var(--shadow-outline-strong);
 }
 
@@ -108,6 +106,17 @@
     svg {
         color: var(--color-foreground);
     }
+}
+
+.transparent {
+    background-color: color-mix(in srgb, var(--color-background) 95%, transparent);
+    color: var(--color-foreground);
+    box-shadow: var(--shadow-lg);
+}
+
+.transparent:hover:not(:disabled) {
+    background-color: var(--color-background);
+    box-shadow: var(--shadow-lg);
 }
 
 .link {
@@ -151,6 +160,14 @@
 .sm svg {
     height: var(--spacing-6);
     width: var(--spacing-6);
+}
+
+.lg {
+    height: var(--spacing-10);
+    border-radius: var(--radius-md);
+    font-size: var(--text-base);  
+    padding-left: var(--spacing-3\.5);
+    padding-right: var(--spacing-3\.5);
 }
 
 /* ICONS */

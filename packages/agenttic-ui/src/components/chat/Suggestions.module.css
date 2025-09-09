@@ -16,3 +16,12 @@
 .container::-webkit-scrollbar {
   display: none;
 }
+
+.vertical {
+  flex-direction: column;
+  gap: var(--spacing-1);
+  overflow: visible;
+  padding: 1px; /* Account for the shadow of the buttons. */
+  padding-bottom: var(--spacing-1);
+  z-index: -1; /* Make them appear behind the compact state. */
+}
