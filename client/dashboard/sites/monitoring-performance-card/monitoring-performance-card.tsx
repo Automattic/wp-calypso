@@ -1,13 +1,10 @@
+import { siteMetricsQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { PeriodData, useSiteMetricsQuery } from '../../../sites/monitoring/hooks/use-metrics-query';
 import MonitoringCard from '../monitoring-card';
+import type { PeriodData, TimeRange } from '../monitoring/types';
 import type { Site } from '@automattic/api-core';
-
-type TimeRange = {
-	start: number;
-	end: number;
-};
 
 function convertTimeRangeToUnix( timeRange: number ): TimeRange {
 	const start = Math.floor( new Date().getTime() / 1000 ) - timeRange * 3600;
@@ -20,16 +17,14 @@ function useSiteMetricsData( siteId: number, timeRange: number ) {
 	// Memoize timestamps to prevent graph reloading on every render. Only refresh the data on time range change.
 	const { start, end } = useMemo( () => convertTimeRangeToUnix( timeRange ), [ timeRange ] );
 
-	const { data: requestsData, isLoading } = useSiteMetricsQuery( siteId, {
-		start,
-		end,
-		metric: 'requests_persec',
-	} );
-	const { data: responseTimeData } = useSiteMetricsQuery( siteId, {
-		start,
-		end,
-		metric: 'response_time_average',
-	} );
+	const { data: requestsData, isPending: isLoadingRequestsData } = useQuery(
+		siteMetricsQuery( siteId, { start, end, metric: 'requests_persec' } )
+	);
+	const { data: responseTimeData, isPending: isLoadingResponseTimeData } = useQuery(
+		siteMetricsQuery( siteId, { start, end, metric: 'response_time_average' } )
+	);
+
+	const isLoading = isLoadingRequestsData || isLoadingResponseTimeData;
 
 	// Function to get the dimension value for a specific key and period.
 	const getDimensionValue = ( period: PeriodData ) => {
