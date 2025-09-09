@@ -67,12 +67,16 @@ export default function RecordsList( { records, justValues = false }: RecordsLis
 										readOnly
 										__next40pxDefaultSize
 										onCopy={ handleCopy }
+										label={ __( 'Name' ) }
+										hideLabelFromVision
 									/>
 									<ClipboardInputControl
 										value={ record.value }
 										readOnly
 										__next40pxDefaultSize
 										onCopy={ handleCopy }
+										label={ __( 'Value' ) }
+										hideLabelFromVision
 									/>
 								</Grid>
 							</HStack>
@@ -87,6 +91,8 @@ export default function RecordsList( { records, justValues = false }: RecordsLis
 									readOnly
 									__next40pxDefaultSize
 									onCopy={ handleCopy }
+									label={ __( 'Value' ) }
+									hideLabelFromVision
 								/>
 							) ) }
 						</VStack>

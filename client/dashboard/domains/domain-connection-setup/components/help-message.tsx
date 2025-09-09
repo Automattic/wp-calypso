@@ -16,10 +16,10 @@ import { createElement, createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { help } from '@wordpress/icons';
 
-type SupportLinkProps = {
+type HelpMessageProps = {
 	mode: DomainConnectionSetupModeValue;
 };
-export default function SupportLink( { mode }: SupportLinkProps ) {
+export default function HelpMessage( { mode }: HelpMessageProps ) {
 	const supportLink: Partial< Record< DomainConnectionSetupModeValue, string > > = {
 		[ DomainConnectionSetupMode.SUGGESTED ]: MAP_DOMAIN_CHANGE_NAME_SERVERS,
 		[ DomainConnectionSetupMode.ADVANCED ]: MAP_EXISTING_DOMAIN_UPDATE_A_RECORDS,

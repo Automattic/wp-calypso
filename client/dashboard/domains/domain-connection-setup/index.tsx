@@ -12,15 +12,16 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
+import { __, isRTL } from '@wordpress/i18n';
+import { chevronLeft, chevronRight } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { domainRoute, domainConnectionSetupRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { isSubdomain } from '../../utils/domain';
+import HelpMessage from './components/help-message';
 import Progress from './components/progress';
-import SupportLink from './components/support-link';
 import SwitchSetup from './components/switch-setup';
 import {
 	connectADomainDomainConnectionStepsMap,
@@ -154,8 +155,8 @@ export default function DomainConnectionSetup() {
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Domain Connection Setup' ) } /> }>
 			{ currentStep.prev && (
 				<HStack>
-					<Button onClick={ goBack } variant="link">
-						{ __( '← Back' ) }
+					<Button icon={ isRTL() ? chevronRight : chevronLeft } onClick={ goBack }>
+						{ __( 'Back' ) }
 					</Button>
 				</HStack>
 			) }
@@ -187,7 +188,7 @@ export default function DomainConnectionSetup() {
 					{ ( currentStep.mode === DomainConnectionSetupMode.SUGGESTED ||
 						currentStep.mode === DomainConnectionSetupMode.ADVANCED ||
 						currentStep.mode === DomainConnectionSetupMode.DONE ) && (
-						<SupportLink mode={ currentStep.mode } />
+						<HelpMessage mode={ currentStep.mode } />
 					) }
 					<SwitchSetup
 						currentStepType={ currentStep.stepType }

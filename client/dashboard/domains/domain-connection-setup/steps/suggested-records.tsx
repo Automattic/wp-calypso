@@ -44,41 +44,39 @@ export function SuggestedRecords( {
 	};
 
 	return (
-		<VStack spacing={ 6 }>
-			<Card>
-				<CardBody>
-					<VStack spacing={ 4 }>
-						{ showErrors && renderErrorNotice() }
-						<Text as="p">
-							{ isSubdomainFlow
-								? __(
-										'Update the NS records for your subdomain to point to WordPress.com name servers.'
-								  )
-								: __(
-										'Find the name servers on your domain’s settings page. Replace all the name servers of your domain to use the following values:'
-								  ) }
-						</Text>
+		<Card>
+			<CardBody>
+				<VStack spacing={ 4 }>
+					{ showErrors && renderErrorNotice() }
+					<Text as="p">
+						{ isSubdomainFlow
+							? __(
+									'Update the NS records for your subdomain to point to WordPress.com name servers.'
+							  )
+							: __(
+									'Find the name servers on your domain’s settings page. Replace all the name servers of your domain to use the following values:'
+							  ) }
+					</Text>
 
-						<RecordsList records={ records } justValues />
+					<RecordsList records={ records } justValues />
 
-						<Text as="p">
-							{ __( 'Once you’ve updated the name servers click on "Verify Connection" below.' ) }
-						</Text>
+					<Text as="p">
+						{ __( 'Once you’ve updated the name servers click on "Verify Connection" below.' ) }
+					</Text>
 
-						<HStack justify="flex-start">
-							<Button
-								__next40pxDefaultSize
-								variant="primary"
-								onClick={ () => onVerifyConnection( true ) }
-								isBusy={ verificationInProgress }
-								disabled={ verificationInProgress }
-							>
-								{ verificationInProgress ? __( 'Verifying…' ) : __( 'Verify Connection' ) }
-							</Button>
-						</HStack>
-					</VStack>
-				</CardBody>
-			</Card>
-		</VStack>
+					<HStack justify="flex-start">
+						<Button
+							__next40pxDefaultSize
+							variant="primary"
+							onClick={ () => onVerifyConnection( true ) }
+							isBusy={ verificationInProgress }
+							disabled={ verificationInProgress }
+						>
+							{ verificationInProgress ? __( 'Verifying…' ) : __( 'Verify Connection' ) }
+						</Button>
+					</HStack>
+				</VStack>
+			</CardBody>
+		</Card>
 	);
 }
