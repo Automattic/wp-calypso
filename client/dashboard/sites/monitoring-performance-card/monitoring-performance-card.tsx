@@ -24,8 +24,6 @@ function useSiteMetricsData( siteId: number, timeRange: number ) {
 		siteMetricsQuery( siteId, { start, end, metric: 'response_time_average' } )
 	);
 
-	const isLoading = isLoadingRequestsData || isLoadingResponseTimeData;
-
 	// Function to get the dimension value for a specific key and period.
 	const getDimensionValue = ( period: PeriodData ) => {
 		if ( typeof period?.dimension === 'object' ) {
@@ -68,7 +66,7 @@ function useSiteMetricsData( siteId: number, timeRange: number ) {
 
 	return {
 		formattedData,
-		isLoading,
+		isLoading: isLoadingRequestsData || isLoadingResponseTimeData,
 	};
 }
 
