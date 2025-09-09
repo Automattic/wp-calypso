@@ -1,7 +1,7 @@
 import { useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
-import { FunctionComponent, useCallback } from 'react';
+import { useCallback } from 'react';
 import { FileBrowserItem } from './types';
 import { useBackupFileQuery } from './use-backup-file-query';
 
@@ -14,7 +14,7 @@ interface FilePreviewProps {
 /**
  * This component is responsible for rendering the preview of a file.
  */
-const FilePreview: FunctionComponent< FilePreviewProps > = ( { item, siteId, onTrackEvent } ) => {
+function FilePreview( { item, siteId, onTrackEvent }: FilePreviewProps ) {
 	const [ fileContent, setFileContent ] = useState( '' );
 	const [ showSensitivePreview, setShowSensitivePreview ] = useState( false );
 
@@ -29,12 +29,12 @@ const FilePreview: FunctionComponent< FilePreviewProps > = ( { item, siteId, onT
 	const shouldPreviewFile =
 		isValidType && ( ! isSensitive || ( isSensitive && showSensitivePreview ) );
 
-	const { isSuccess, isError, isInitialLoading, data } = useBackupFileQuery(
-		siteId,
-		item.period,
-		item.manifestPath,
-		shouldPreviewFile
-	);
+	const {
+		isSuccess,
+		isError,
+		isLoading: isQueryLoading,
+		data,
+	} = useBackupFileQuery( siteId, item.period, item.manifestPath, shouldPreviewFile );
 
 	const handleShowPreviewClick = useCallback( () => {
 		setShowSensitivePreview( true );
@@ -106,7 +106,7 @@ const FilePreview: FunctionComponent< FilePreviewProps > = ( { item, siteId, onT
 		return content;
 	};
 
-	const isLoading = isTextContent ? ! fileContent && ! isError : isInitialLoading;
+	const isLoading = isTextContent ? ! fileContent && ! isError : isQueryLoading;
 	const isReady = isTextContent ? fileContent : isSuccess;
 	const classNames = clsx( 'file-card__preview', item.type, {
 		'file-card__preview--is-loading': isLoading,
@@ -120,6 +120,6 @@ const FilePreview: FunctionComponent< FilePreviewProps > = ( { item, siteId, onT
 			</div>
 		</>
 	);
-};
+}
 
 export default FilePreview;

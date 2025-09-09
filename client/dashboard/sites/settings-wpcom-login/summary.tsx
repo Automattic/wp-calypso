@@ -1,6 +1,5 @@
 import { HostingFeatures, JetpackModules } from '@automattic/api-core';
 import { siteJetpackConnectionQuery, siteJetpackModulesQuery } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -30,10 +29,6 @@ export default function WpcomLoginSettingsSummary( {
 		...siteJetpackConnectionQuery( site.ID ),
 		enabled: ! isSimple( site ),
 	} );
-
-	if ( ! isEnabled( 'dashboard/v2/security-settings' ) ) {
-		return null;
-	}
 
 	const ssoAvailable = isJetpackModuleAvailable(
 		jetpackModules,
