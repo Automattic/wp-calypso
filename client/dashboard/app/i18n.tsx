@@ -1,9 +1,12 @@
-import { defaultI18n } from '@wordpress/i18n';
+import { defaultI18n, type I18n, type LocaleData } from '@wordpress/i18n';
 import { I18nProvider as WPI18nProvider } from '@wordpress/react-i18n';
 import { useEffect, useState, type PropsWithChildren } from 'react';
 import { useAuth } from './auth';
 
-async function fetchLocaleData( language: string, signal: AbortSignal ) {
+async function fetchLocaleData(
+	language: string,
+	signal: AbortSignal
+): Promise< [ string, LocaleData | undefined ] > {
 	if ( language === 'en' ) {
 		return [ language, undefined ];
 	}
@@ -25,6 +28,26 @@ async function fetchLocaleData( language: string, signal: AbortSignal ) {
 		// the i18n provider would be stuck forever in a non-loaded state.
 		return [ 'en', undefined ];
 	}
+}
+
+function getHtmlLangAttribute( i18n: I18n, fallback: string ) {
+	// translation of this string contains the desired HTML attribute value
+	const slug = i18n.__( 'html_lang_attribute' );
+
+	// Hasn't been translated? Some languages don't have the translation for this string,
+	// or maybe we are dealing with the default `en` locale. Return the general purpose locale slug
+	// -- there's no special one available for `<html lang>`.
+	if ( slug === 'html_lang_attribute' ) {
+		return fallback;
+	}
+
+	return slug;
+}
+
+function setLocaleInDOM( i18n: I18n, fallbackLangAttr: string ) {
+	const htmlLangAttribute = getHtmlLangAttribute( i18n, fallbackLangAttr );
+	document.documentElement.lang = htmlLangAttribute;
+	document.documentElement.dir = i18n.isRTL() ? 'rtl' : 'ltr';
 }
 
 // Determine the locale to use. The current implementation reads the logged-in user's
@@ -50,6 +73,7 @@ export function I18nProvider( { children }: PropsWithChildren ) {
 				// `realLanguage` can be different from `language` when loading language data fails
 				// and it falls back to `en`.
 				setLoadedLocale( realLanguage );
+				setLocaleInDOM( i18n, realLanguage );
 			} )
 			.catch( () => {
 				// Ignore abort errors as they are expected during cleanup
