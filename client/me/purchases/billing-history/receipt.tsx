@@ -41,7 +41,7 @@ import {
 	getTransactionTermLabel,
 	groupDomainProducts,
 	renderTransactionQuantitySummary,
-	renderDomainTransactionVolumeSummary,
+	DomainTransactionVolumeSummary,
 	transactionIncludesTax,
 	isTransactionJetpackSearch10kTier,
 	renderJetpackSearch10kTierBreakdown,
@@ -582,7 +582,7 @@ function ReceiptLineItem( {
 					{ isTransactionJetpackSearch10kTier( item ) && (
 						<em>{ renderJetpackSearch10kTierBreakdown( item, subtotal_integer, translate ) }</em>
 					) }
-					{ item.volume && <em>{ renderDomainTransactionVolumeSummary( item, translate ) }</em> }
+					<DomainTransactionVolumeSummary item={ item } />
 				</td>
 				<td className="billing-history__receipt-amount">
 					{ doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
