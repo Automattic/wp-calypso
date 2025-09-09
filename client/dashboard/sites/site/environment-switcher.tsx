@@ -3,6 +3,7 @@ import {
 	stagingSiteCreateMutation,
 	isDeletingStagingSiteQuery,
 	hasStagingSiteQuery,
+	jetpackConnectionHealthQuery,
 } from '@automattic/api-queries';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -82,7 +83,26 @@ const EnvironmentSwitcherDropdown = ( {
 	}
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const mutation = useMutation( stagingSiteCreateMutation( productionSite?.ID ?? 0 ) );
-	const handleCreate = () => {
+
+	const { refetch: checkConnectionHealth } = useQuery( {
+		...jetpackConnectionHealthQuery( productionSite?.ID ?? 0 ),
+		enabled: false,
+	} );
+
+	const handleCreate = async () => {
+		const { data: connectionHealth } = await checkConnectionHealth();
+		if ( ! connectionHealth?.is_healthy ) {
+			createErrorNotice(
+				__(
+					'Cannot create staging site due to Jetpack connection issue. Please check your site connection and try again.'
+				),
+				{
+					type: 'snackbar',
+				}
+			);
+			return;
+		}
+
 		recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_click' );
 		mutation.mutate( undefined, {
 			onSuccess: () => {
