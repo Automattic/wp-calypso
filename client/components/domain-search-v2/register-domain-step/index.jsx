@@ -636,7 +636,7 @@ class RegisterDomainStep extends Component {
 					cart={ this.getCart() }
 					className="wpcom-domain-search-v2 initial-state"
 				>
-					<VStack spacing={ 8 }>
+					<VStack spacing={ 8 } style={ { width: '100%' } }>
 						<VStack spacing={ 2 }>
 							<HStack spacing={ 4 } className="wpcom-domain-search-v2__empty-state-search-controls">
 								{ this.renderSearchBar() }
@@ -689,7 +689,7 @@ class RegisterDomainStep extends Component {
 				cart={ this.getCart() }
 				className="wpcom-domain-search-v2"
 			>
-				<VStack spacing={ 8 }>
+				<VStack spacing={ 8 } style={ { width: '100%' } }>
 					<VStack spacing={ 4 }>
 						{ this.renderSearchControls() }
 						{ isDomainAndPlanPackageFlow && this.renderQuickFilters() }

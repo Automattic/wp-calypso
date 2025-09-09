@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { MaterialIcon, ExternalLink, Gridicon } from '@automattic/components';
+import { MaterialIcon, ExternalLink } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { formatNumber } from '@automattic/number-formatters';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from '@automattic/urls';
@@ -799,23 +799,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL ]: {
 		getSlug: () => FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL,
-		getTitle: () => {
-			return (
-				<span style={ { fontWeight: 500 } }>
-					{ i18n.translate( 'Install plugins' ) }
-					<Gridicon
-						icon="info-outline"
-						size={ 16 }
-						style={ {
-							fill: 'var(--studio-blue-50)',
-							verticalAlign: 'middle',
-							marginLeft: '2px',
-							marginTop: '-2px',
-						} }
-					/>
-				</span>
-			);
-		},
+		getTitle: () => i18n.translate( 'Install plugins' ),
 		getDescription: () =>
 			i18n.translate(
 				'Plugins extend the functionality of your site and ' +
