@@ -1,5 +1,3 @@
-import { sitesQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
 import {
 	Card,
 	CardBody,
@@ -8,22 +6,32 @@ import {
 	Button,
 	__experimentalText as Text,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { DataForm, Field } from '@wordpress/dataviews';
 import { useState, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import PreferencesLoginSiteDropdown from '../preferences-login-site-dropdown';
-import { useLoginPreferences, useUpdateLoginPreferences, type LoginPreferencesData } from './query';
+import {
+	LandingPage,
+	useLoginPreferences,
+	useUpdateLoginPreferences,
+	type LoginPreferencesData,
+} from './query';
 
 type LoginPreferencesFormData = LoginPreferencesData;
 
 export default function PreferencesLogin() {
-	// Fetch login preferences using combined hook
-	const { data: loginPrefs, isLoading: isLoadingPrefs } = useLoginPreferences();
+	// Fetch login preferences and sites using combined hook
+	const {
+		data: loginPreferences,
+		sites = [],
+		isLoading: isLoadingPreferences,
+	} = useLoginPreferences();
 
-	// Fetch user's sites
-	const { data: sites = [] } = useQuery(
-		sitesQuery( { site_visibility: 'visible', include_a8c_owned: false } )
-	);
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+
+	const [ init, setInit ] = useState( false );
 
 	// Initialize form data with default values
 	const [ formData, setFormData ] = useState< LoginPreferencesFormData >( () => ( {
@@ -31,42 +39,35 @@ export default function PreferencesLogin() {
 		defaultLandingPage: 'primary-site-dashboard',
 	} ) );
 
-	// Track original values for dirty detection
-	const [ originalData, setOriginalData ] = useState< LoginPreferencesFormData | null >( null );
-
-	// Update form data when server data changes
+	// initialize the form
 	useEffect( () => {
-		if ( loginPrefs && ! originalData ) {
-			const defaultSiteId =
-				loginPrefs.primarySiteId || ( sites.length > 0 ? sites[ 0 ].ID.toString() : undefined );
+		if ( loginPreferences && ! init ) {
 			const data = {
-				primarySiteId: defaultSiteId,
-				defaultLandingPage: loginPrefs.defaultLandingPage || 'primary-site-dashboard',
+				primarySiteId: loginPreferences.primarySiteId,
+				defaultLandingPage: loginPreferences.defaultLandingPage || 'primary-site-dashboard',
 			};
 			setFormData( data );
-			setOriginalData( data );
+			setInit( true );
 		}
-	}, [ loginPrefs, sites, originalData ] );
+	}, [ loginPreferences, init ] );
 
 	// Update preferences using combined hook
 	const updatePreferences = useUpdateLoginPreferences();
 
 	// Check if form has been modified
 	const isDirty = Boolean(
-		! isLoadingPrefs &&
-			originalData &&
-			( originalData.primarySiteId !== formData.primarySiteId ||
-				originalData.defaultLandingPage !== formData.defaultLandingPage )
+		loginPreferences.primarySiteId !== formData.primarySiteId ||
+			loginPreferences.defaultLandingPage !== formData.defaultLandingPage
 	);
 
-	const isBusy = updatePreferences.isPending || isLoadingPrefs;
+	const isBusy = updatePreferences.isPending || isLoadingPreferences;
 
 	// Define form fields
 	const fields: Field< LoginPreferencesFormData >[] = [
 		{
 			id: 'primarySiteId',
 			label: __( 'PRIMARY SITE' ),
-			description: __( "Choose the default site dashboard you'll see at login." ),
+			description: __( 'Choose the default site dashboard you’ll see at login.' ),
 			isVisible: () => sites.length > 0,
 			Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
 				const { id, getValue } = field;
@@ -99,7 +100,7 @@ export default function PreferencesLogin() {
 				{ label: __( 'Primary site dashboard' ), value: 'primary-site-dashboard' },
 				{ label: __( 'Sites' ), value: 'sites' },
 				{ label: __( 'Reader' ), value: 'reader' },
-			],
+			] satisfies { label: string; value: LandingPage }[],
 		},
 	];
 
@@ -111,7 +112,16 @@ export default function PreferencesLogin() {
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		updatePreferences.mutate( formData );
+		updatePreferences.mutate( formData, {
+			onSuccess: () => {
+				createSuccessNotice( __( 'Login preferences saved successfully.' ), { type: 'snackbar' } );
+			},
+			onError: () => {
+				createErrorNotice( __( 'Failed to save login preferences. Please try again.' ), {
+					type: 'snackbar',
+				} );
+			},
+		} );
 	};
 
 	return (

@@ -3,11 +3,9 @@ import {
 	userSettingsMutation,
 	userPreferenceQuery,
 	userPreferenceMutation,
+	sitesQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { useDispatch } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 
 export type LandingPage = 'primary-site-dashboard' | 'sites' | 'reader';
 
@@ -23,28 +21,46 @@ export function useLoginPreferences() {
 	// Fetch user settings for primary_site_ID
 	const userSettingsResult = useQuery( userSettingsQuery() );
 
+	// Fetch user's sites
+	const sitesResult = useQuery(
+		sitesQuery( { site_visibility: 'visible', include_a8c_owned: false } )
+	);
+
 	// Fetch preferences for landing page settings
 	const sitesLandingResult = useQuery( userPreferenceQuery( SITES_AS_LANDING_PAGE_PREFERENCE ) );
 	const readerLandingResult = useQuery( userPreferenceQuery( READER_AS_LANDING_PAGE_PREFERENCE ) );
 
+	// Validate primary_site_ID exists in user's current sites
+	const rawPrimarySiteId = userSettingsResult.data?.primary_site_ID;
+	const sites = sitesResult.data || [];
+	const isValidPrimarySite = rawPrimarySiteId
+		? sites.some( ( site ) => site.ID === rawPrimarySiteId )
+		: false;
+
 	const data: LoginPreferencesData = {
-		primarySiteId: userSettingsResult.data?.primary_site_ID?.toString(),
+		primarySiteId: isValidPrimarySite && rawPrimarySiteId ? rawPrimarySiteId.toString() : undefined,
 		defaultLandingPage: getDefaultLandingPage( sitesLandingResult.data, readerLandingResult.data ),
 	};
 
 	const isLoading =
-		userSettingsResult.isLoading || sitesLandingResult.isLoading || readerLandingResult.isLoading;
+		userSettingsResult.isLoading ||
+		sitesResult.isLoading ||
+		sitesLandingResult.isLoading ||
+		readerLandingResult.isLoading;
 
 	return {
 		data,
+		sites,
 		isLoading,
-		error: userSettingsResult.error || sitesLandingResult.error || readerLandingResult.error,
+		error:
+			userSettingsResult.error ||
+			sitesResult.error ||
+			sitesLandingResult.error ||
+			readerLandingResult.error,
 	};
 }
 
 export function useUpdateLoginPreferences() {
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-
 	const userSettingsUpdate = useMutation( userSettingsMutation() );
 	const sitesLandingUpdate = useMutation(
 		userPreferenceMutation( SITES_AS_LANDING_PAGE_PREFERENCE )
@@ -68,29 +84,17 @@ export function useUpdateLoginPreferences() {
 
 			// Update landing page preferences
 			const updatedAt = Date.now();
-			promises.push(
-				sitesLandingUpdate.mutateAsync( {
-					useSitesAsLandingPage: data.defaultLandingPage === 'sites',
-					updatedAt,
-				} )
-			);
 
-			promises.push(
-				readerLandingUpdate.mutateAsync( {
-					useReaderAsLandingPage: data.defaultLandingPage === 'reader',
-					updatedAt,
-				} )
-			);
-
-			await Promise.all( promises );
-		},
-		onSuccess: () => {
-			createSuccessNotice( __( 'Login preferences saved successfully.' ), { type: 'snackbar' } );
-		},
-		onError: () => {
-			createErrorNotice( __( 'Failed to save login preferences. Please try again.' ), {
-				type: 'snackbar',
+			// the following calls the same api - must be called sequentially
+			await sitesLandingUpdate.mutateAsync( {
+				useSitesAsLandingPage: data.defaultLandingPage === 'sites',
+				updatedAt,
 			} );
+			await readerLandingUpdate.mutateAsync( {
+				useReaderAsLandingPage: data.defaultLandingPage === 'reader',
+				updatedAt,
+			} );
+			await Promise.all( promises );
 		},
 	} );
 }
