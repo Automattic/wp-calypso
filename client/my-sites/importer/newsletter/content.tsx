@@ -1,21 +1,15 @@
 import { Card } from '@automattic/components';
 import { useQueryClient } from '@tanstack/react-query';
-import { Button } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
-import { external } from '@wordpress/icons';
-import { useI18n } from '@wordpress/react-i18n';
-import { fixMe } from 'i18n-calypso';
 import { useEffect } from 'react';
-import exportSubstackDataImg from 'calypso/assets/images/importer/export-substack-content.png';
 import importerConfig from 'calypso/lib/importer/importer-config';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
+import { ContentDataHint } from 'calypso/my-sites/importer/newsletter/content-data-hint';
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchImporterState, startImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import { getImporterStatusForSiteId } from 'calypso/state/imports/selectors';
 import FileImporter from './content-upload/file-importer';
 import { EngineTypes } from './types';
-import { normalizeFromSite } from './utils';
 import type { SiteDetails } from '@automattic/data-stores';
 
 interface ContentProps {
@@ -35,7 +29,6 @@ export default function Content( {
 	fromSite,
 	skipNextStep,
 }: ContentProps ) {
-	const { __ } = useI18n();
 	const siteTitle = selectedSite.title;
 	const siteId = selectedSite.ID;
 
@@ -78,78 +71,12 @@ export default function Content( {
 		importerStatus?.importerState !== appStates.IMPORTING &&
 		importerStatus?.importerState !== appStates.IMPORT_SUCCESS;
 
-	const normalizedFromSite = normalizeFromSite( fromSite );
-	const baseUrl = normalizedFromSite.startsWith( 'http' )
-		? normalizedFromSite
-		: `https://${ normalizedFromSite }`;
-
-	const settingsUrl = `${
-		baseUrl.endsWith( '/' ) ? baseUrl.slice( 0, -1 ) : baseUrl
-	}/publish/settings?search=export`;
-
 	return (
 		<Card>
 			<Interval onTick={ fetchImporters } period={ EVERY_FIVE_SECONDS } />
 
 			{ showExportDataHint && (
-				<>
-					<h2>{ __( 'Step 1: Export your content from Substack' ) }</h2>
-					<p>
-						{ createInterpolateElement(
-							( fixMe( {
-								text: 'Generate a ZIP file of all your Substack posts. On Substack, go to Settings > Import/Export, click <strong>New export</strong>, and upload the downloaded ZIP file in the next step.',
-								newCopy: __(
-									'Generate a ZIP file of all your Substack posts. On Substack, go to Settings > Import/Export, click <strong>New export</strong>, and upload the downloaded ZIP file in the next step.'
-								),
-								oldCopy: __(
-									'Generate a ZIP file of all your Substack posts. On Substack, go to Settings > Exports, click <strong>New export</strong>, and upload the downloaded ZIP file in the next step.'
-								),
-							} ) || '' ) as string,
-							{
-								strong: <strong />,
-							}
-						) }
-					</p>
-					<img
-						src={ exportSubstackDataImg }
-						alt={ __( 'Export Substack data' ) }
-						className="export-content"
-					/>
-					<Button
-						href={ settingsUrl }
-						target="_blank"
-						rel="noreferrer noopener"
-						icon={ external }
-						iconPosition="right"
-						variant="primary"
-					>
-						{ __( 'Open Substack settings' ) }
-					</Button>
-					<hr />
-					<h2>{ __( 'Step 2: Import your content to WordPress.com' ) }</h2>
-					<p>
-						{ createInterpolateElement(
-							( fixMe( {
-								text: 'Your posts may be added to your homepage by default. If you prefer your posts to load on a separate page, first go to <a>Reading settings</a>, and change "Your homepage displays" to a static page.',
-								newCopy: __(
-									'Your posts may be added to your homepage by default. If you prefer your posts to load on a separate page, first go to <a>Reading settings</a>, and change "Your homepage displays" to a static page.'
-								),
-								oldCopy: __(
-									'Your posts may be added to your homepage by default. If you prefer your posts to load on a separate page, first go to <a>Reading Settings</a>, and change "Your homepage displays" to a static page.'
-								),
-							} ) || '' ) as string,
-							{
-								a: (
-									<a
-										href={ `${ selectedSite.URL }/wp-admin/options-reading.php` }
-										target="_blank"
-										rel="noreferrer noopener"
-									/>
-								),
-							}
-						) }
-					</p>
-				</>
+				<ContentDataHint selectedSiteUrl={ selectedSite.URL } fromSite={ fromSite } />
 			) }
 			{ importerStatus && (
 				<FileImporter

@@ -1,7 +1,7 @@
 import { UrlData } from 'calypso/blocks/import/types';
 import type { SiteDetails } from '@automattic/data-stores';
 
-export type Importer = 'blogger' | 'medium' | 'squarespace' | 'wix' | 'wordpress';
+export type Importer = 'blogger' | 'medium' | 'squarespace' | 'substack' | 'wix' | 'wordpress';
 export type QueryObject = {
 	from: string;
 	to: string;
