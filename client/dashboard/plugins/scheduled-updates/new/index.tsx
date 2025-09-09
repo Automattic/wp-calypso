@@ -23,7 +23,17 @@ function ScheduledUpdatesNew() {
 	const isValid = selectedSiteIds.length > 0 && selectedPluginSlugs.length > 0;
 
 	return (
-		<PageLayout size="small" header={ <PageHeader title={ __( 'New schedule' ) } /> }>
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					title={ __( 'New schedule' ) }
+					description={ __(
+						'First, choose the sites you want. Next, select the plugins to update. Finally, set how often the updates should run.'
+					) }
+				/>
+			}
+		>
 			<Card>
 				<CardBody>
 					<VStack spacing={ 6 }>
