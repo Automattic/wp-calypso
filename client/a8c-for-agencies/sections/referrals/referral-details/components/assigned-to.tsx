@@ -92,8 +92,11 @@ const AssignedTo = ( { purchase, handleAssignToSite, data, isFetching }: Props )
 
 	let cancellationInfo = null;
 
-	// If the purchase has a subscription we can get the information from the object.
-	if ( purchase.subscription && ! purchase.subscription.is_refundable ) {
+	// If the purchase has a subscription, get details and check the status.
+	const subscription = purchase?.subscription;
+
+	if ( subscription && subscription.status === 'active' && ! subscription.is_auto_renew_enabled ) {
+		// If the subscription is still active but auto-renew is disabled, show the expiration info.
 		cancellationInfo = (
 			<>
 				<p>
@@ -129,8 +132,6 @@ const AssignedTo = ( { purchase, handleAssignToSite, data, isFetching }: Props )
 				</p>
 			</>
 		);
-	} else if ( purchase.subscription && purchase.subscription.is_refundable ) {
-		cancellationInfo = <p>{ translate( 'This product was cancelled, and was refunded.' ) }</p>;
 	}
 
 	const isAwaitingPayment = purchase.status === 'pending';
