@@ -156,7 +156,7 @@ function ensureResourceLoaded( url: string, type: ResourceType ): Promise< void 
 async function loadResource( type: ResourceType ): Promise< void > {
 	const url = getSiteSpecUrlByType( type );
 	if ( ! url ) {
-		return Promise.reject( new Error( `SiteSpec ${ type } URL not configured` ) );
+		throw new Error( `SiteSpec ${ type } URL not configured` );
 	}
 	return ensureResourceLoaded( url, type );
 }
