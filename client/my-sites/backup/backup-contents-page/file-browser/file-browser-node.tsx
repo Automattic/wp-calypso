@@ -27,6 +27,7 @@ interface FileBrowserNodeProps {
 	hasCredentials?: boolean;
 	isRestoreEnabled?: boolean;
 	onTrackEvent?: ( eventName: string, properties?: Record< string, unknown > ) => void;
+	onRequestGranularRestore: ( siteSlug: string, rewindId: number ) => void;
 }
 
 function FileBrowserNode( {
@@ -43,6 +44,7 @@ function FileBrowserNode( {
 	hasCredentials,
 	isRestoreEnabled,
 	onTrackEvent,
+	onRequestGranularRestore,
 }: FileBrowserNodeProps ) {
 	const isRoot = path === '/';
 	const dispatch = useDispatch();
@@ -299,6 +301,7 @@ function FileBrowserNode( {
 						hasCredentials={ hasCredentials }
 						isRestoreEnabled={ isRestoreEnabled }
 						onTrackEvent={ onTrackEvent }
+						onRequestGranularRestore={ onRequestGranularRestore }
 						// Hacky way to pass extensions details to the child node
 						{ ...( childItem.type === 'archive' ? { parentItem: item } : {} ) }
 					/>
@@ -393,6 +396,7 @@ function FileBrowserNode( {
 					hasCredentials={ hasCredentials }
 					isRestoreEnabled={ isRestoreEnabled }
 					onTrackEvent={ onTrackEvent }
+					onRequestGranularRestore={ onRequestGranularRestore }
 				/>
 			) }
 			{ isOpen && (

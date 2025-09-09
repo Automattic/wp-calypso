@@ -46,7 +46,7 @@ interface FileBrowserProps {
 	) => void;
 
 	// Granular restore action callback
-	onRequestGranularRestore?: ( siteId: number, rewindId: number ) => void;
+	onRequestGranularRestore?: ( siteSlug: string, rewindId: number ) => void;
 }
 
 function FileBrowser( {
@@ -58,7 +58,7 @@ function FileBrowser( {
 	isRestoreEnabled,
 	onTrackEvent,
 	onRequestGranularDownload,
-	onRequestGranularRestore,
+	onRequestGranularRestore = () => {},
 }: FileBrowserProps ) {
 	// This is the path of the node that is clicked
 	const [ activeNodePath, setActiveNodePath ] = useState< string >( '' );
@@ -89,6 +89,7 @@ function FileBrowser( {
 				rewindId={ rewindId }
 				showHeaderButtons={ fileBrowserConfig?.showHeaderButtons ?? true }
 				siteId={ siteId }
+				siteSlug={ siteSlug }
 				hasCredentials={ hasCredentials }
 				isRestoreEnabled={ isRestoreEnabled }
 				onTrackEvent={ onTrackEvent }
@@ -123,6 +124,7 @@ function FileBrowser( {
 				hasCredentials={ hasCredentials }
 				isRestoreEnabled={ isRestoreEnabled }
 				onTrackEvent={ onTrackEvent }
+				onRequestGranularRestore={ onRequestGranularRestore }
 			/>
 		</div>
 	);

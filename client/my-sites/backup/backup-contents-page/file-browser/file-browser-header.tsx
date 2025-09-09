@@ -12,6 +12,7 @@ interface FileBrowserHeaderProps {
 	rewindId: number;
 	showHeaderButtons?: boolean;
 	siteId: number;
+	siteSlug: string;
 	hasCredentials?: boolean;
 	isRestoreEnabled?: boolean;
 	onTrackEvent?: ( eventName: string, properties?: Record< string, unknown > ) => void;
@@ -21,13 +22,14 @@ interface FileBrowserHeaderProps {
 		includePaths: string,
 		excludePaths: string
 	) => void;
-	onRequestGranularRestore?: ( siteId: number, rewindId: number ) => void;
+	onRequestGranularRestore: ( siteSlug: string, rewindId: number ) => void;
 }
 
 function FileBrowserHeader( {
 	rewindId,
 	showHeaderButtons = true,
 	siteId,
+	siteSlug,
 	hasCredentials,
 	isRestoreEnabled,
 	onTrackEvent,
@@ -46,7 +48,7 @@ function FileBrowserHeader( {
 		onTrackEvent?.( 'calypso_jetpack_backup_browser_download_multiple_files' );
 	};
 	const onRestoreClick = () => {
-		onRequestGranularRestore?.( siteId, rewindId );
+		onRequestGranularRestore( siteSlug, rewindId );
 		onTrackEvent?.( 'calypso_jetpack_backup_browser_restore_multiple_files', {
 			...( hasCredentials !== undefined && { has_credentials: hasCredentials } ),
 		} );

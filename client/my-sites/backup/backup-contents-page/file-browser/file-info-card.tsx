@@ -1,5 +1,4 @@
 import { fetchBackupExtensionUrl, fetchBackupFileUrl } from '@automattic/api-core';
-import page from '@automattic/calypso-router';
 import { Button } from '@wordpress/components';
 import { useCallback, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -7,7 +6,6 @@ import { useEffect } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useDispatch } from 'calypso/state';
 import { setNodeCheckState } from 'calypso/state/rewind/browser/actions';
-import { backupGranularRestorePath } from '../../paths';
 import { PREPARE_DOWNLOAD_STATUS } from './constants';
 import FilePreview from './file-preview';
 import {
@@ -30,6 +28,7 @@ interface FileInfoCardProps {
 	hasCredentials?: boolean;
 	isRestoreEnabled?: boolean;
 	onTrackEvent: ( eventName: string, properties?: Record< string, unknown > ) => void;
+	onRequestGranularRestore: ( siteSlug: string, rewindId: number ) => void;
 }
 
 function FileInfoCard( {
@@ -42,6 +41,7 @@ function FileInfoCard( {
 	hasCredentials,
 	isRestoreEnabled,
 	onTrackEvent,
+	onRequestGranularRestore,
 }: FileInfoCardProps ) {
 	const moment = useLocalizedMoment();
 	const dispatch = useDispatch();
@@ -180,15 +180,25 @@ function FileInfoCard( {
 		// Mark this file as selected
 		dispatch( setNodeCheckState( siteId, path, 'checked' ) );
 
-		// Redirect to granular restore page
-		page.redirect( backupGranularRestorePath( siteSlug, rewindId as unknown as string ) );
+		// Request granular restore
+		onRequestGranularRestore( siteSlug, rewindId );
 
 		// Tracks restore interest
 		onTrackEvent( 'calypso_jetpack_backup_browser_restore_single_file', {
 			file_type: item.type,
 			...( hasCredentials !== undefined && { has_credentials: hasCredentials } ),
 		} );
-	}, [ dispatch, hasCredentials, item.type, path, rewindId, siteId, siteSlug, onTrackEvent ] );
+	}, [
+		dispatch,
+		siteId,
+		path,
+		onRequestGranularRestore,
+		siteSlug,
+		rewindId,
+		onTrackEvent,
+		item.type,
+		hasCredentials,
+	] );
 
 	useEffect( () => {
 		if ( prepareDownloadStatus === PREPARE_DOWNLOAD_STATUS.PREPARING ) {
