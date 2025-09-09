@@ -66,12 +66,9 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 		[ dispatch, siteSlug ]
 	);
 
-	const handleRequestGranularRestore = useCallback(
-		( siteId: number, rewindId: number ) => {
-			page.redirect( backupGranularRestorePath( siteSlug, rewindId as unknown as string ) );
-		},
-		[ siteSlug ]
-	);
+	const handleRequestGranularRestore = useCallback( ( siteSlug: string, rewindId: number ) => {
+		page.redirect( backupGranularRestorePath( siteSlug, rewindId as unknown as string ) );
+	}, [] );
 
 	return (
 		<>
