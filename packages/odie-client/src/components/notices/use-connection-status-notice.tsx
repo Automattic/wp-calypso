@@ -41,7 +41,7 @@ export default function useConnectionStatusNotice() {
 		},
 		connected: {
 			icon: <Icon size={ 24 } icon={ check } />,
-			message: __( 'You\'re back online with support.', __i18n_text_domain__ ),
+			message: __( "You're back online with support.", __i18n_text_domain__ ),
 			status: 'success' as const,
 			dismissible: true,
 			onDismiss: () => setShouldWarn( false ),
