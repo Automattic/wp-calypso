@@ -15,21 +15,18 @@ import {
 	getSiteSpecConfig,
 } from '../utils';
 
-// Mock the calypso-config module
-// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
-jest.mock(
-	'@automattic/calypso-config',
-	() =>
-		( {
-			__esModule: true,
-			default: Object.assign( jest.fn(), {
-				isEnabled: jest.fn(),
-			} ),
-		} ) as any
-);
+interface MockWithIsEnabled extends jest.Mock {
+	isEnabled: jest.Mock;
+}
+
+jest.mock( '@automattic/calypso-config', () => {
+	const mockFn: MockWithIsEnabled = jest.fn() as MockWithIsEnabled;
+	mockFn.isEnabled = jest.fn();
+	return mockFn;
+} );
 
 describe( 'SiteSpec Utils', () => {
-	const mockConfig = require( '@automattic/calypso-config' ).default;
+	const mockConfig = require( '@automattic/calypso-config' );
 
 	beforeEach( () => {
 		// Reset all mocks
