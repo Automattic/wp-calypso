@@ -1,22 +1,20 @@
 import { HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery, codeDeploymentsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
 import { __experimentalText as Text, Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { chevronLeft } from '@wordpress/icons';
 import { useState, useMemo } from 'react';
 import { siteRoute } from '../../app/router/sites';
 import { Callout } from '../../components/callout';
 import { CalloutOverlay } from '../../components/callout-overlay';
 import { DataViewsCard } from '../../components/dataviews-card';
-import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { hasHostingFeature } from '../../utils/site-features';
 import illustrationUrl from '../deployments/deployments-callout-illustration.svg';
 import ghIconUrl from '../deployments/gh-icon.svg';
+import SettingsPageHeader from '../settings-page-header';
 import { useRepositoryFields } from './dataviews/fields';
 import { DEFAULT_VIEW, DEFAULT_LAYOUTS } from './dataviews/views';
 import type { CodeDeploymentData } from '@automattic/api-core';
@@ -128,14 +126,7 @@ function SiteRepositories() {
 		<PageLayout
 			size="small"
 			header={
-				<PageHeader
-					prefix={
-						<Link to="/sites/$siteSlug/settings" params={ { siteSlug } }>
-							<Button variant="tertiary" icon={ chevronLeft } __next40pxDefaultSize>
-								{ __( 'Back' ) }
-							</Button>
-						</Link>
-					}
+				<SettingsPageHeader
 					title={ __( 'Repositories' ) }
 					description={ __( 'Connect repositories to your WordPress site.' ) }
 					actions={
