@@ -30,8 +30,6 @@ const HOUR_OPTIONS_24 = [ ...Array( 24 ).keys() ].map( ( i ) => ( {
 } ) );
 
 function ScheduledUpdatesFrequencySelection( { frequency, weekday, time, onChange }: Props ) {
-	const [ hour24 ] = time.split( ':' );
-
 	return (
 		<Card>
 			<CardBody>
@@ -70,7 +68,7 @@ function ScheduledUpdatesFrequencySelection( { frequency, weekday, time, onChang
 							<VStack spacing={ 2 } style={ { flex: 1 } }>
 								<SelectControl
 									label={ __( 'Select time' ) }
-									value={ hour24.padStart( 2, '0' ) + ':00' }
+									value={ time }
 									onChange={ ( val: string ) => onChange( { frequency, weekday, time: val } ) }
 									options={ HOUR_OPTIONS_24 }
 								/>
@@ -79,7 +77,7 @@ function ScheduledUpdatesFrequencySelection( { frequency, weekday, time, onChang
 					) : (
 						<SelectControl
 							label={ __( 'Select time' ) }
-							value={ hour24.padStart( 2, '0' ) + ':00' }
+							value={ time }
 							onChange={ ( val: string ) => onChange( { frequency, weekday, time: val } ) }
 							options={ HOUR_OPTIONS_24 }
 						/>

@@ -17,17 +17,10 @@ import SitesSelection from './components/sites-selection';
 function ScheduledUpdatesNew() {
 	const [ selectedSiteIds, setSelectedSiteIds ] = useState< string[] >( [] );
 	const [ selectedPluginSlugs, setSelectedPluginSlugs ] = useState< string[] >( [] );
-
 	const [ frequency, setFrequency ] = useState< 'daily' | 'weekly' >( 'daily' );
 	const [ weekday, setWeekday ] = useState< Weekday >( 'Monday' );
 	const [ time, setTime ] = useState( '04:00' );
-
-	const isTimeValid = /^([01]\d|2[0-3]):[0-5]\d$/.test( time );
-	const isValid =
-		selectedSiteIds.length > 0 &&
-		selectedPluginSlugs.length > 0 &&
-		isTimeValid &&
-		( frequency === 'daily' || ( frequency === 'weekly' && !! weekday ) );
+	const isValid = selectedSiteIds.length > 0 && selectedPluginSlugs.length > 0;
 
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'New schedule' ) } /> }>
