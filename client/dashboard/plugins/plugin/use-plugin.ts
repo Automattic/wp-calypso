@@ -34,6 +34,10 @@ export const usePlugin = ( pluginId: string ) => {
 
 	const siteIdsWithThisPlugin = Array.from( pluginBySiteId.keys() );
 
+	const pluginData = pluginBySiteId.size
+		? pluginBySiteId.get( siteIdsWithThisPlugin[ 0 ] )
+		: undefined;
+
 	const [ sitesWithThisPlugin, sitesWithoutThisPlugin ] = sites
 		? sites.reduce(
 				( acc, site ) => {
@@ -54,6 +58,6 @@ export const usePlugin = ( pluginId: string ) => {
 		pluginBySiteId,
 		sitesWithThisPlugin,
 		sitesWithoutThisPlugin,
-		plugin: wpOrgPlugin || wpComPlugin,
+		plugin: wpOrgPlugin || wpComPlugin || pluginData,
 	};
 };
