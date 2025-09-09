@@ -101,7 +101,7 @@ yarn workspace wp-e2e-tests build --watch
 yarn workspace wp-e2e-tests test -- <test_path>
 ```
 
-By default this should run on http://calypso.localhost:3000, if you wish to run on another environment such as https://wpcalypso.wordpress.com you can set an environment variable:
+By default this should run on <http://calypso.localhost:3000>, if you wish to run on another environment such as <https://wpcalypso.wordpress.com> you can set an environment variable:
 
 ```bash
 CALYPSO_BASE_URL=https://wpcalypso.wordpress.com yarn workspace wp-e2e-tests test -- <test_path>

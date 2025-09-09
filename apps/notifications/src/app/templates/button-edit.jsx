@@ -2,7 +2,6 @@ import { __ } from '@wordpress/i18n';
 import { edit } from '@wordpress/icons';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { keys } from '../../panel/helpers/input';
 import { getEditCommentLink } from '../../panel/helpers/notes';
 import { editComment } from '../../panel/state/ui/actions';
 import ActionButton from './action-button';
@@ -14,7 +13,7 @@ const EditButton = ( { editComment, note } ) => {
 		<ActionButton
 			icon={ edit }
 			isActive={ false }
-			hotkey={ keys.KEY_E }
+			hotkey="e"
 			onToggle={ () => editComment( siteId, postId, commentId, getEditCommentLink( note ) ) }
 			text={ __( 'Edit' ) }
 			title={ __( 'Edit comment' ) }

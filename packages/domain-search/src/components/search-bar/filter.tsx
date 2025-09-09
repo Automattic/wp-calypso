@@ -10,6 +10,13 @@ const emptyFilter: FilterState = {
 	tlds: [],
 };
 
+const POPOVER_PROPS = {
+	placement: 'bottom-end',
+	offset: 10,
+	noArrow: false,
+	inline: true,
+};
+
 export const Filter = () => {
 	const { filter, setFilter, query, queries } = useDomainSearch();
 	const { data: availableTlds = [], isFetching: isFetchingTlds } = useQuery( {
@@ -33,7 +40,8 @@ export const Filter = () => {
 	return (
 		<Dropdown
 			showArrow={ false }
-			popoverProps={ { placement: 'bottom-end', offset: 10, noArrow: false, inline: true } }
+			className="domain-search__search-bar-filters"
+			popoverProps={ POPOVER_PROPS }
 			renderToggle={ ( { onToggle } ) => {
 				return (
 					<DomainSearchControls.FilterButton
