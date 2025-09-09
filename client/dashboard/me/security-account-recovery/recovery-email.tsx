@@ -29,9 +29,7 @@ type SecurityEmailFormData = {
 };
 
 export default function RecoveryEmail() {
-	const { data: accountRecoveryData, isLoading: isAccountRecoveryDataLoading } = useSuspenseQuery(
-		accountRecoveryQuery()
-	);
+	const { data: accountRecoveryData } = useSuspenseQuery( accountRecoveryQuery() );
 	const { data: serverData } = useQuery( profileQuery() );
 
 	const { mutate: validateEmail, isPending: isValidateEmailPending } = useMutation(
@@ -46,7 +44,7 @@ export default function RecoveryEmail() {
 
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
-	const accountRecoveryEmail = accountRecoveryData?.email;
+	const accountRecoveryEmail = accountRecoveryData.email;
 
 	const [ isRemoveDialogOpen, setIsRemoveDialogOpen ] = useState( false );
 	const [ showResendButton, setShowResendButton ] = useState( true );
@@ -103,7 +101,7 @@ export default function RecoveryEmail() {
 		} );
 	};
 
-	const shouldShowValidationNotice = accountRecoveryEmail && ! accountRecoveryData?.email_validated;
+	const shouldShowValidationNotice = accountRecoveryEmail && ! accountRecoveryData.email_validated;
 
 	const fields: Field< SecurityEmailFormData >[] = useMemo(
 		() => [
@@ -127,13 +125,13 @@ export default function RecoveryEmail() {
 							onChange={ ( value ) => {
 								return onChange( { [ id ]: value ?? '' } );
 							} }
-							disabled={ isAccountRecoveryDataLoading || isValidateEmailPending }
+							disabled={ isValidateEmailPending }
 						/>
 					);
 				},
 			},
 		],
-		[ serverData?.user_email, isAccountRecoveryDataLoading, isValidateEmailPending ]
+		[ serverData?.user_email, isValidateEmailPending ]
 	);
 
 	return (
