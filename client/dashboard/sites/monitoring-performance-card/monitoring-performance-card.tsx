@@ -16,7 +16,7 @@ function convertTimeRangeToUnix( timeRange: number ): TimeRange {
 	return { start, end };
 }
 
-export function useSiteMetricsData( siteId: number, timeRange: number ) {
+function useSiteMetricsData( siteId: number, timeRange: number ) {
 	// Memoize timestamps to prevent graph reloading on every render. Only refresh the data on time range change.
 	const { start, end } = useMemo( () => convertTimeRangeToUnix( timeRange ), [ timeRange ] );
 
