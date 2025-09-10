@@ -87,3 +87,26 @@ export const isUpdatingDomainPrivacy = ( state, siteId, domain ) => {
 export const isUpdatingPrimaryDomain = ( state, siteId ) => {
 	return state?.sites?.domains?.updatingPrimaryDomain?.[ siteId ];
 };
+
+/**
+ * Determines whether the domain details is being requested via the API.
+ * @param {Object} state - global state tree
+ * @param {string} domainName - domain name
+ * @returns {boolean} true if the domain details is being requested, false otherwise
+ */
+export const isRequestingDomainDetails = ( state, domainName ) => {
+	console.log( 'isRequestingDomainDetails', domainName );
+	console.log( state?.sites?.domains?.requesting[ domainName ] );
+
+	return state?.sites?.domains?.requesting[ domainName ] || false;
+};
+
+/**
+ * Returns the error for the specified domain details request.
+ * @param {Object} state - global state tree
+ * @param {string} domainName - domain name
+ * @returns {string|null} error message or null
+ */
+export const getDomainDetailsError = ( state, domainName ) => {
+	return state?.sites?.domains?.errors[ domainName ] || null;
+};

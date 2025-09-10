@@ -16,6 +16,10 @@ import {
 	SITE_DOMAINS_REQUEST,
 	SITE_DOMAINS_REQUEST_FAILURE,
 	SITE_DOMAINS_REQUEST_SUCCESS,
+	DOMAIN_DETAILS_RECEIVE,
+	DOMAIN_DETAILS_REQUEST,
+	DOMAIN_DETAILS_REQUEST_FAILURE,
+	DOMAIN_DETAILS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import { requestSite } from 'calypso/state/sites/actions';
 import { createSiteDomainObject } from './assembler';
@@ -220,5 +224,113 @@ export function markAsPendingMove( siteId, domain ) {
 		type: DOMAIN_MARK_AS_PENDING_MOVE,
 		siteId,
 		domain,
+	};
+}
+
+/**
+ * Action creator function
+ *
+ * Returns an action object to be used in signalling that
+ * domain details for a given domain have been received.
+ * @param {string} domainName - domain name
+ * @param {Object} domainDetails - domain details object gotten from WP REST-API response
+ * @returns {Object} the action object
+ */
+export const domainDetailsReceiveAction = ( domainName, domainDetails ) => {
+	const action = {
+		type: DOMAIN_DETAILS_RECEIVE,
+		domain: domainName,
+		siteId: domainDetails.blog_id,
+		domainDetails: createSiteDomainObject( domainDetails ),
+	};
+
+	debug( 'returning action: %o', action );
+	return action;
+};
+
+/**
+ * Action creator function
+ *
+ * Return DOMAIN_DETAILS_REQUEST action object
+ * @param {string} domainName - domain name
+ * @returns {Object} action object
+ */
+export const domainDetailsRequestAction = ( domainName ) => {
+	const action = {
+		type: DOMAIN_DETAILS_REQUEST,
+		domainName,
+	};
+
+	debug( 'returning action: %o', action );
+	return action;
+};
+
+/**
+ * Action creator function
+ *
+ * Return DOMAIN_DETAILS_REQUEST_SUCCESS action object
+ * @param {string} domainName - domain name
+ * @returns {Object} action object
+ */
+export const domainDetailsRequestSuccessAction = ( domainName ) => {
+	const action = {
+		type: DOMAIN_DETAILS_REQUEST_SUCCESS,
+		domainName,
+	};
+
+	debug( 'returning action: %o', action );
+	return action;
+};
+
+/**
+ * Action creator function
+ *
+ * Return DOMAIN_DETAILS_REQUEST_FAILURE action object
+ * @param {string} domainName - domain name
+ * @param {Object} error - error message according to REST-API error response
+ * @returns {Object} action object
+ */
+export const domainDetailsRequestFailureAction = ( domainName, error ) => {
+	const action = {
+		type: DOMAIN_DETAILS_REQUEST_FAILURE,
+		domainName,
+		error,
+	};
+
+	debug( 'returning action: %o', action );
+	return action;
+};
+
+/**
+ * Fetches domain details for the given domain.
+ * @param {string} domainName - domain name
+ * @returns {Function} a promise that will resolve once fetching is completed
+ */
+export function fetchDomainDetails( domainName ) {
+	return ( dispatch ) => {
+		dispatch( domainDetailsRequestAction( domainName ) );
+
+		return wpcom.req
+			.get( `/domain-details/${ domainName }/`, { apiVersion: '1.2' } )
+			.then( ( data ) => {
+				const { error, message } = data;
+
+				if ( error ) {
+					throw new Error( message );
+				}
+
+				dispatch( domainDetailsRequestSuccessAction( domainName ) );
+				dispatch( domainDetailsReceiveAction( domainName, data ) );
+			} )
+			.catch( ( error ) => {
+				const message =
+					error instanceof Error
+						? error.message
+						: translate(
+								'There was a problem fetching domain details. Please try again later or contact support.'
+						  );
+
+				dispatch( domainDetailsRequestFailureAction( domainName, message ) );
+			} );
 	};
 }
