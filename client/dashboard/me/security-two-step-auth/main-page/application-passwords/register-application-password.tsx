@@ -101,7 +101,7 @@ export default function RegisterApplicationPassword( { onClose }: { onClose: () 
 						{ createInterpolateElement(
 							/* translators: %s is the application name */
 							__(
-								"Use this password to log in to <applicationName />. Keep this password safe as you won't be able to view it again."
+								'Use this password to log in to <applicationName />. Keep this password safe as you won‘t be able to view it again.'
 							),
 							{
 								applicationName: <strong>{ formData.applicationName }</strong>,

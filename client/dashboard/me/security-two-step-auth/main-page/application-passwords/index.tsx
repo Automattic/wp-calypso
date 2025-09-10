@@ -22,9 +22,7 @@ import { useState } from 'react';
 import InlineSupportLink from '../../../../components/inline-support-link';
 import { SectionHeader } from '../../../../components/section-header';
 import RegisterApplicationPassword from './register-application-password';
-import type { ApplicationPasswords } from '@automattic/api-core';
-
-type ApplicationPassword = ApplicationPasswords[ 'application_passwords' ][ number ];
+import type { ApplicationPassword } from '@automattic/api-core';
 
 const fields = [
 	{
@@ -122,7 +120,7 @@ export default function ApplicationPasswords() {
 	const [ isAddApplicationPasswordModalOpen, setIsAddApplicationPasswordModalOpen ] =
 		useState( false );
 
-	const { data, isLoading } = useQuery( applicationPasswordsQuery() );
+	const { data: applicationPasswords, isLoading } = useQuery( applicationPasswordsQuery() );
 
 	return (
 		<>
@@ -162,10 +160,7 @@ export default function ApplicationPasswords() {
 					/>
 				</CardHeader>
 				<CardBody>
-					<ApplicationPasswordsList
-						data={ data?.application_passwords ?? [] }
-						isLoading={ isLoading }
-					/>
+					<ApplicationPasswordsList data={ applicationPasswords ?? [] } isLoading={ isLoading } />
 				</CardBody>
 			</Card>
 			{ isAddApplicationPasswordModalOpen && (

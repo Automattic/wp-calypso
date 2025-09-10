@@ -3,7 +3,7 @@ import type {
 	UserSecurityKeys,
 	SecurityKeyRegistrationChallenge,
 	SecurityKeyRegistrationChallengeArgs,
-	ApplicationPasswords,
+	ApplicationPassword,
 } from './types';
 
 export async function fetchSecurityKeys(): Promise< UserSecurityKeys > {
@@ -27,9 +27,10 @@ export async function fetchSecurityKeyRegistrationChallenge(
 	);
 }
 
-export async function fetchApplicationPasswords(): Promise< ApplicationPasswords > {
-	return wpcom.req.get( {
+export async function fetchApplicationPasswords(): Promise< ApplicationPassword[] > {
+	const { application_passwords } = await wpcom.req.get( {
 		path: '/me/two-step/application-passwords',
 		apiVersion: '1.1',
 	} );
+	return application_passwords;
 }
