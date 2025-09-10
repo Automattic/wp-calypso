@@ -281,10 +281,6 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 
 	const handleAddStagingSite = () => {
 		recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_click' );
-		createSuccessNotice(
-			__( 'We are adding your staging site. We will send you an email when it is done.' ),
-			{ type: 'snackbar' }
-		);
 
 		if ( ! connectionHealth?.is_healthy ) {
 			createNotice( 'error', __( 'Cannot add a staging site due to a Jetpack connection issue.' ), {
