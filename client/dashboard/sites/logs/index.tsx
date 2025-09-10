@@ -236,7 +236,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 			: { queryKey: [ 'disabled-logs' ], queryFn: skipToken }
 	);
 
-	const shouldFetchActivityLogs = isActivityLogType;
+	const shouldFetchActivityLogs = isActivityLogType && !! activityLogQueryParams;
 	const { data: activityLogData, isFetching: isFetchingActivity } = useQuery(
 		shouldFetchActivityLogs
 			? siteActivityLogQuery( siteId, activityLogQueryParams )
