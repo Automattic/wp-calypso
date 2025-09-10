@@ -15,14 +15,46 @@ interface ContactFormPrivacyProps {
 
 export default function ContactFormPrivacy( { domain }: ContactFormPrivacyProps ) {
 	const renderPrivacyProtection = () => {
+		let note;
+
+		if ( ! domain.privacy_available ) {
+			note = createInterpolateElement(
+				__(
+					'Privacy protection is not available due to the registry’s policies. <link>Learn more</link>'
+				),
+				{
+					link: <InlineSupportLink supportContext="domain-registrations-and-privacy" />,
+				}
+			);
+
+			if ( domain.private_domain ) {
+				note = createInterpolateElement(
+					__(
+						'Privacy protection must be enabled due to the registry’s policies. <link>Learn more</link>'
+					),
+					{
+						link: <InlineSupportLink supportContext="domain-registrations-and-privacy" />,
+					}
+				);
+			}
+		}
+
 		return (
-			<ToggleControl
-				__nextHasNoMarginBottom
-				checked={ domain.private_domain }
-				disabled={ ! domain.privacy_available }
-				onChange={ () => {} }
-				label={ __( 'Privacy protection' ) }
-			/>
+			<>
+				<ToggleControl
+					__nextHasNoMarginBottom
+					checked={ domain.private_domain }
+					disabled={ ! domain.privacy_available }
+					onChange={ () => {} }
+					label={ __( 'Privacy protection' ) }
+				/>
+
+				{ note && (
+					<Text as="p" variant="muted">
+						{ note }
+					</Text>
+				) }
+			</>
 		);
 	};
 
@@ -37,7 +69,7 @@ export default function ContactFormPrivacy( { domain }: ContactFormPrivacyProps 
 		}
 
 		return (
-			<VStack spacing={ 2 }>
+			<>
 				<ToggleControl
 					__nextHasNoMarginBottom
 					checked={ domain.contact_info_disclosed }
@@ -53,7 +85,7 @@ export default function ContactFormPrivacy( { domain }: ContactFormPrivacyProps 
 						) }
 					</Text>
 				) }
-			</VStack>
+			</>
 		);
 	};
 
