@@ -2,7 +2,6 @@ import { __ } from '@wordpress/i18n';
 import { check } from '@wordpress/icons';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { keys } from '../../panel/helpers/input';
 import { getReferenceId } from '../../panel/helpers/notes';
 import { setApproveStatus as setApproveStatusAction } from '../../panel/state/notes/thunks';
 import { useAppContext } from '../context';
@@ -15,7 +14,7 @@ const ApproveButton = ( { isApproved, note, setApproveStatus } ) => {
 		<ActionButton
 			icon={ check }
 			isActive={ isApproved }
-			hotkey={ keys.KEY_A }
+			hotkey="a"
 			onToggle={ () =>
 				setApproveStatus(
 					note.id,

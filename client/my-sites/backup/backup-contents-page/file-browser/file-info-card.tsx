@@ -1,17 +1,11 @@
 import { fetchBackupExtensionUrl, fetchBackupFileUrl } from '@automattic/api-core';
-import page from '@automattic/calypso-router';
-import { Button, Spinner } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { useCallback, useState } from '@wordpress/element';
-import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent, useEffect } from 'react';
+import { __ } from '@wordpress/i18n';
+import { useEffect } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { useDispatch, useSelector } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
-import { hasJetpackCredentials } from 'calypso/state/jetpack/credentials/selectors';
+import { useDispatch } from 'calypso/state';
 import { setNodeCheckState } from 'calypso/state/rewind/browser/actions';
-import canRestoreSite from 'calypso/state/rewind/selectors/can-restore-site';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { backupGranularRestorePath } from '../../paths';
 import { PREPARE_DOWNLOAD_STATUS } from './constants';
 import FilePreview from './file-preview';
 import {
@@ -30,22 +24,31 @@ interface FileInfoCardProps {
 	rewindId: number;
 	parentItem?: FileBrowserItem; // This is used to pass the extension details to the child node
 	path: string;
+	siteSlug: string;
+	hasCredentials?: boolean;
+	isRestoreEnabled?: boolean;
+	onTrackEvent: ( eventName: string, properties?: Record< string, unknown > ) => void;
+	onRequestGranularRestore: ( siteSlug: string, rewindId: number ) => void;
 }
 
-const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
+function FileInfoCard( {
 	siteId,
 	item,
 	rewindId,
 	parentItem,
 	path,
-} ) => {
-	const translate = useTranslate();
+	siteSlug,
+	hasCredentials,
+	isRestoreEnabled,
+	onTrackEvent,
+	onRequestGranularRestore,
+}: FileInfoCardProps ) {
 	const moment = useLocalizedMoment();
 	const dispatch = useDispatch();
 
 	const {
 		isSuccess,
-		isInitialLoading,
+		isLoading,
 		isError,
 		data: fileInfo,
 	} = useBackupPathInfoQuery(
@@ -54,11 +57,6 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 		item.manifestPath ?? '',
 		item.extensionType ?? ''
 	);
-
-	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) ) as string;
-
-	const isRestoreDisabled = useSelector( ( state ) => ! canRestoreSite( state, siteId ) );
-	const hasCredentials = useSelector( ( state ) => hasJetpackCredentials( state, siteId ) );
 
 	// Dispatch an error notice if the download could not be prepared
 	const handlePrepareDownloadError = useCallback( () => {
@@ -82,15 +80,13 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 
 	const trackDownloadByType = useCallback(
 		( fileType: string ) => {
-			dispatch(
-				recordTracksEvent( 'calypso_jetpack_backup_browser_download', {
-					file_type: fileType,
-				} )
-			);
+			onTrackEvent( 'calypso_jetpack_backup_browser_download', {
+				file_type: fileType,
+			} );
 
 			return;
 		},
-		[ dispatch ]
+		[ onTrackEvent ]
 	);
 
 	const triggerFileDownload = useCallback( ( fileUrl: string ) => {
@@ -184,17 +180,25 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 		// Mark this file as selected
 		dispatch( setNodeCheckState( siteId, path, 'checked' ) );
 
-		// Redirect to granular restore page
-		page.redirect( backupGranularRestorePath( siteSlug, rewindId as unknown as string ) );
+		// Request granular restore
+		onRequestGranularRestore( siteSlug, rewindId );
 
 		// Tracks restore interest
-		dispatch(
-			recordTracksEvent( 'calypso_jetpack_backup_browser_restore_single_file', {
-				file_type: item.type,
-				has_credentials: hasCredentials,
-			} )
-		);
-	}, [ dispatch, hasCredentials, item.type, path, rewindId, siteId, siteSlug ] );
+		onTrackEvent( 'calypso_jetpack_backup_browser_restore_single_file', {
+			file_type: item.type,
+			...( hasCredentials !== undefined && { has_credentials: hasCredentials } ),
+		} );
+	}, [
+		dispatch,
+		siteId,
+		path,
+		onRequestGranularRestore,
+		siteSlug,
+		rewindId,
+		onTrackEvent,
+		item.type,
+		hasCredentials,
+	] );
 
 	useEffect( () => {
 		if ( prepareDownloadStatus === PREPARE_DOWNLOAD_STATUS.PREPARING ) {
@@ -236,7 +240,7 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 		return null;
 	}
 
-	if ( isInitialLoading ) {
+	if ( isLoading ) {
 		return <div className="file-browser-node__loading placeholder" />;
 	}
 
@@ -249,8 +253,10 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 			className="file-card__action"
 			onClick={ downloadFile }
 			disabled={ isProcessingDownload }
+			isBusy={ isProcessingDownload }
+			variant="secondary"
 		>
-			{ isProcessingDownload ? <Spinner /> : translate( 'Download file' ) }
+			{ isProcessingDownload ? __( 'Preparing' ) : __( 'Download file' ) }
 		</Button>
 	);
 
@@ -259,8 +265,9 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 			className="file-card__action"
 			href={ fileInfo.downloadUrl }
 			onClick={ () => trackDownloadByType( item.type ) }
+			variant="secondary"
 		>
-			{ translate( 'Download file' ) }
+			{ __( 'Download file' ) }
 		</Button>
 	);
 
@@ -269,15 +276,10 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 			className="file-card__action"
 			onClick={ prepareDownloadClick }
 			disabled={ isProcessingDownload }
+			isBusy={ isProcessingDownload }
+			variant="secondary"
 		>
-			{ isProcessingDownload ? (
-				<>
-					<Spinner className="file-card__prepare-download-spinner" size={ 16 } />
-					{ translate( 'Preparing' ) }
-				</>
-			) : (
-				translate( 'Prepare and download' )
-			) }
+			{ isProcessingDownload ? __( 'Preparing' ) : __( 'Prepare and download' ) }
 		</Button>
 	);
 
@@ -298,7 +300,10 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 				{ item.type === 'table' && (
 					<div className="file-card__detail">
 						<span className="file-card__label">
-							{ translate( 'Rows:', { comment: 'Rows refers to database table rows.' } ) }{ ' ' }
+							{
+								/* translators: This refers to database table rows. */
+								__( 'Rows:' )
+							}{ ' ' }
 						</span>
 						<span className="file-card__value">{ item.rowCount }</span>
 					</div>
@@ -308,7 +313,10 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 					{ modifiedTime && (
 						<div className="file-card__detail">
 							<span className="file-card__label">
-								{ translate( 'Modified:', { comment: 'Date when the file was modified.' } ) }{ ' ' }
+								{
+									/* translators: This refers to the date when the file was modified. */
+									__( 'Modified:' )
+								}{ ' ' }
 							</span>
 							<span className="file-card__value">{ modifiedTime }</span>
 						</div>
@@ -317,9 +325,10 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 					{ size && (
 						<div className="file-card__detail">
 							<span className="file-card__label">
-								{ translate( 'Size:', {
-									comment: 'This refers to file size (bytes, kilobytes, gigabytes, etc.',
-								} ) }{ ' ' }
+								{
+									/* translators: This refers to the file size (bytes, kilobytes, gigabytes, etc.). */
+									__( 'Size:' )
+								}{ ' ' }
 							</span>
 							<span className="file-card__value">
 								{ size.unitAmount } { size.unit }
@@ -331,9 +340,10 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 				{ fileInfo?.hash && (
 					<div className="file-card__detail">
 						<span className="file-card__label">
-							{ translate( 'Hash:', {
-								comment: 'This refers to a unique identifier or checksum.',
-							} ) }{ ' ' }
+							{
+								/* translators: This refers to a unique identifier or checksum. */
+								__( 'Hash:' )
+							}{ ' ' }
 						</span>
 						<span className="file-card__value">{ fileInfo.hash }</span>
 					</div>
@@ -348,9 +358,10 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 							<Button
 								className="file-card__action"
 								onClick={ restoreFile }
-								disabled={ isRestoreDisabled }
+								disabled={ ! isRestoreEnabled }
+								variant="secondary"
 							>
-								{ translate( 'Restore' ) }
+								{ __( 'Restore' ) }
 							</Button>
 						) }
 					</div>
@@ -358,10 +369,10 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 			) }
 
 			{ fileInfo?.size !== undefined && fileInfo.size > 0 && (
-				<FilePreview item={ item } siteId={ siteId } />
+				<FilePreview item={ item } siteId={ siteId } onTrackEvent={ onTrackEvent } />
 			) }
 		</div>
 	);
-};
+}
 
 export default FileInfoCard;

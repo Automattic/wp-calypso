@@ -1,4 +1,4 @@
-import { profileMutation } from '@automattic/api-queries';
+import { userSettingsMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
@@ -19,7 +19,7 @@ import { Text } from '../../components/text';
 export default function DoNotSellCard() {
 	const { recordTracksEvent } = useAnalytics();
 	const isRegionInCcpaZone = useIsRegionInCcpaZone();
-	const mutation = useMutation( profileMutation() );
+	const mutation = useMutation( userSettingsMutation() );
 
 	if ( ! isRegionInCcpaZone ) {
 		return null;

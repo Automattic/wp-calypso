@@ -84,8 +84,9 @@ export const ECOMMERCE_BUNDLED_PLUGINS = [
 
 export const UNLISTED_PLUGINS = [
 	'automated-db-schenker-shipping',
-	'wp-fusion-lite',
 	'social-blend',
+	'wp-fusion-lite',
+	'wp-persistent-login',
 ];
 
 export const WPBEGINNER_PLUGINS = [

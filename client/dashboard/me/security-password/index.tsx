@@ -1,4 +1,4 @@
-import { profileMutation } from '@automattic/api-queries';
+import { userSettingsMutation } from '@automattic/api-queries';
 import { generatePassword } from '@automattic/generate-password';
 import { useMutation } from '@tanstack/react-query';
 import {
@@ -27,7 +27,7 @@ type SecurityPasswordFormData = {
 };
 
 export default function SecurityPassword() {
-	const mutation = useMutation( profileMutation() );
+	const mutation = useMutation( userSettingsMutation() );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const [ isPasswordVisible, setIsPasswordVisible ] = useState( false );

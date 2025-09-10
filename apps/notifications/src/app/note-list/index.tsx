@@ -5,7 +5,7 @@ import {
 	useNavigator,
 } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import getAllNotes from '../../panel/state/selectors/get-all-notes';
 import getIsLoading from '../../panel/state/selectors/get-is-loading';
@@ -13,6 +13,10 @@ import getIsNoteHidden from '../../panel/state/selectors/get-is-note-hidden';
 import { getFilters } from '../../panel/templates/filters';
 import { useAppContext } from '../context';
 import { getFields, getActions } from './dataviews';
+import {
+	useNoteListFocusToLastSelectedNote,
+	useNoteListNavigationKeyboardShortcuts,
+} from './hooks';
 import type { Note } from '../types';
 import type { View } from '@wordpress/dataviews';
 
@@ -21,23 +25,24 @@ import './style.scss';
 const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFilters > } ) => {
 	const { goTo } = useNavigator();
 	const filter = getFilters()[ filterName ];
+
 	const isNoteHidden = useSelector(
 		( state ) => ( noteId: number ) => getIsNoteHidden( state, noteId )
 	);
+
 	const notes = useSelector( ( state ) =>
-		( ( getAllNotes( state ) || [] ) as Note[] ).filter(
-			( note ) => filter.filter( note ) && ! isNoteHidden( note.id )
-		)
+		( ( getAllNotes( state ) || [] ) as Note[] ).filter( ( note ) => filter.filter( note ) )
 	);
+
+	// Filter out hidden notes, i.e. notes that have been just marked as spam or moved to the trash.
+	const visibleNotes = notes.filter( ( note ) => ! isNoteHidden( note.id ) );
 
 	const isLoading = useSelector( ( state ) => getIsLoading( state ) );
 	const { client } = useAppContext();
 
 	const onChangeSelection = ( selection: string[] ) => {
 		const noteId = selection[ 0 ];
-		goTo( `/${ filterName }/notes/${ noteId }`, {
-			focusTargetSelector: `.dataviews-view-list__item[id$="-${ noteId }-item-wrapper"]`,
-		} );
+		goTo( `/${ filterName }/notes/${ noteId }` );
 	};
 
 	const [ initialView, setView ] = useState< View >( {
@@ -49,13 +54,17 @@ const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFil
 		infiniteScrollEnabled: true,
 	} );
 
-	const view = { ...initialView, perPage: notes.length };
+	const view = { ...initialView, perPage: visibleNotes.length };
 
 	const fields = getFields();
 
 	const actions = getActions( { onSelect: onChangeSelection } );
 
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate( notes, view, fields );
+	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
+		visibleNotes,
+		view,
+		fields
+	);
 
 	const infiniteScrollHandler = useCallback( () => {
 		if ( ! isLoading ) {
@@ -64,13 +73,18 @@ const NoteList = ( { filterName }: { filterName: keyof ReturnType< typeof getFil
 	}, [ client, isLoading ] );
 
 	useEffect( () => {
-		if ( notes.length <= 10 && ! isLoading ) {
+		if ( visibleNotes.length <= 10 && ! isLoading ) {
 			infiniteScrollHandler();
 		}
-	}, [ notes.length, isLoading, infiniteScrollHandler ] );
+	}, [ visibleNotes.length, isLoading, infiniteScrollHandler ] );
+
+	const noteListRef = useRef< HTMLObjectElement >( null );
+
+	useNoteListFocusToLastSelectedNote( { noteListRef, notes } );
+	useNoteListNavigationKeyboardShortcuts( { noteListRef, visibleNotes } );
 
 	return (
-		<div className="wpnc__note-list">
+		<div ref={ noteListRef } className="wpnc__note-list">
 			<DataViews< Note >
 				data={ filteredData }
 				fields={ fields }

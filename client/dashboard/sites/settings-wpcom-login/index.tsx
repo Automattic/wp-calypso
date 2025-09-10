@@ -4,9 +4,7 @@ import {
 	siteJetpackConnectionQuery,
 	siteJetpackModulesQuery,
 } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { notFound } from '@tanstack/react-router';
 import { __experimentalText as Text, ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -29,10 +27,6 @@ export default function WpcomLoginSettings( { siteSlug }: { siteSlug: string } )
 		...siteJetpackConnectionQuery( site.ID ),
 		enabled: ! isSimple( site ),
 	} );
-
-	if ( ! isEnabled( 'dashboard/v2/security-settings' ) ) {
-		throw notFound();
-	}
 
 	const ssoAvailable = isJetpackModuleAvailable(
 		jetpackModules,
