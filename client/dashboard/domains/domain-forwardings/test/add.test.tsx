@@ -33,7 +33,7 @@ function renderForm( props: TestFormProps = {} ) {
 
 afterEach( () => nock.cleanAll() );
 
-test.skip( 'renders domain forwarding form with correct fields', async () => {
+test( 'renders domain forwarding form with correct fields', async () => {
 	renderForm();
 
 	await waitFor( () => {
@@ -45,7 +45,7 @@ test.skip( 'renders domain forwarding form with correct fields', async () => {
 	expect( screen.getByRole( 'button', { name: 'Add' } ) ).toBeInTheDocument();
 } );
 
-test.skip( 'hides source URL selector when forceSubdomain is true', async () => {
+test( 'hides source URL selector when forceSubdomain is true', async () => {
 	renderForm( { forceSubdomain: true } );
 
 	await waitFor( () => {
@@ -57,7 +57,7 @@ test.skip( 'hides source URL selector when forceSubdomain is true', async () => 
 	expect( screen.getByText( 'Subdomain' ) ).toBeInTheDocument();
 } );
 
-test.skip( 'shows both root domain and subdomain options when forceSubdomain is false', async () => {
+test( 'shows both root domain and subdomain options when forceSubdomain is false', async () => {
 	renderForm( { forceSubdomain: false } );
 
 	await waitFor( () => {
@@ -68,7 +68,7 @@ test.skip( 'shows both root domain and subdomain options when forceSubdomain is 
 	expect( screen.getByText( 'Source URL' ) ).toBeInTheDocument();
 } );
 
-test.skip( 'calls onSubmit with correct data when form is submitted', async () => {
+test( 'calls onSubmit with correct data when form is submitted', async () => {
 	const user = userEvent.setup();
 	const mockOnSubmit = jest.fn();
 
@@ -100,7 +100,7 @@ test.skip( 'calls onSubmit with correct data when form is submitted', async () =
 	} );
 } );
 
-test.skip( 'disables submit button when isSubmitting is true', async () => {
+test( 'disables submit button when isSubmitting is true', async () => {
 	renderForm( { isSubmitting: true } );
 
 	await waitFor( () => {
@@ -111,7 +111,7 @@ test.skip( 'disables submit button when isSubmitting is true', async () => {
 	expect( submitButton ).toBeDisabled();
 } );
 
-test.skip( 'shows advanced settings panel', async () => {
+test( 'shows advanced settings panel', async () => {
 	const user = userEvent.setup();
 	renderForm();
 
@@ -132,7 +132,7 @@ test.skip( 'shows advanced settings panel', async () => {
 	} );
 } );
 
-test.skip( 'shows validation error when subdomain starts with dash and is blurred', async () => {
+test( 'shows validation error when subdomain starts with dash and is blurred', async () => {
 	const user = userEvent.setup();
 
 	renderForm();
@@ -152,7 +152,7 @@ test.skip( 'shows validation error when subdomain starts with dash and is blurre
 	} );
 } );
 
-test.skip( 'shows validation error when target URL is empty and blurred', async () => {
+test( 'shows validation error when target URL is empty and blurred', async () => {
 	const user = userEvent.setup();
 
 	renderForm();
@@ -176,7 +176,7 @@ test.skip( 'shows validation error when target URL is empty and blurred', async 
 	} );
 } );
 
-test.skip( 'shows validation error when target URL is invalid and blurred', async () => {
+test( 'shows validation error when target URL is invalid and blurred', async () => {
 	const user = userEvent.setup();
 
 	renderForm();
@@ -200,7 +200,7 @@ test.skip( 'shows validation error when target URL is invalid and blurred', asyn
 	} );
 } );
 
-test.skip( 'shows validation error when target URL redirects to same domain without path', async () => {
+test( 'shows validation error when target URL redirects to same domain without path', async () => {
 	const user = userEvent.setup();
 
 	renderForm();
@@ -224,7 +224,7 @@ test.skip( 'shows validation error when target URL redirects to same domain with
 	} );
 } );
 
-test.skip( 'allows target URL that redirects to same domain with path', async () => {
+test( 'allows target URL that redirects to same domain with path', async () => {
 	const user = userEvent.setup();
 	const mockOnSubmit = jest.fn();
 
@@ -258,7 +258,7 @@ test.skip( 'allows target URL that redirects to same domain with path', async ()
 	} );
 } );
 
-test.skip( 'allows target URL without protocol (normalizes input)', async () => {
+test( 'allows target URL without protocol (normalizes input)', async () => {
 	const user = userEvent.setup();
 	const mockOnSubmit = jest.fn();
 
@@ -294,7 +294,7 @@ test.skip( 'allows target URL without protocol (normalizes input)', async () => 
 	} );
 } );
 
-test.skip( 'pre-fills form with initial data when provided', async () => {
+test( 'pre-fills form with initial data when provided', async () => {
 	const initialData = {
 		domain_redirect_id: 123,
 		subdomain: 'blog',

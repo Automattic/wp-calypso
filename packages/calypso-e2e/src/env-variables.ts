@@ -8,25 +8,26 @@ import { TestAccountName } from '.';
 
 class EnvVariables implements SupportedEnvVariables {
 	private _defaultEnvVariables: SupportedEnvVariables = {
-		VIEWPORT_NAME: 'desktop',
-		TEST_LOCALES: [ ...getMag16Locales() ],
-		HEADLESS: false,
-		SLOW_MO: 0,
-		TIMEOUT: 10000,
+		ALLURE_RESULTS_PATH: '',
+		ARTIFACTS_PATH: path.join( process.cwd(), 'results' ),
+		ATOMIC_VARIATION: 'default',
+		AUTHENTICATE_ACCOUNTS: [],
+		BROWSER_NAME: 'chromium',
+		CALYPSO_BASE_URL: 'http://calypso.localhost:3000',
+		COBLOCKS_EDGE: false,
+		COOKIES_PATH: path.join( process.cwd(), 'cookies' ),
 		GUTENBERG_EDGE: false,
 		GUTENBERG_NIGHTLY: false,
-		COBLOCKS_EDGE: false,
-		AUTHENTICATE_ACCOUNTS: [],
-		COOKIES_PATH: path.join( process.cwd(), 'cookies' ),
-		ARTIFACTS_PATH: path.join( process.cwd(), 'results' ),
-		TEST_ON_ATOMIC: false,
-		ATOMIC_VARIATION: 'default',
+		HEADLESS: false,
 		JETPACK_TARGET: 'wpcom-production',
-		CALYPSO_BASE_URL: 'https://wordpress.com',
-		BROWSER_NAME: 'chromium',
-		ALLURE_RESULTS_PATH: '',
-		RUN_ID: '',
 		RETRY_COUNT: 0,
+		RUN_ID: '',
+		SLOW_MO: 0,
+		TEST_LOCALES: [ ...getMag16Locales() ],
+		TEST_ON_ATOMIC: false,
+		TIMEOUT: 10000,
+		VIEWPORT_NAME: 'desktop',
+		WPCOM_BASE_URL: 'https://wordpress.com',
 	};
 
 	get VIEWPORT_NAME(): string {
@@ -183,6 +184,10 @@ class EnvVariables implements SupportedEnvVariables {
 		return value as JetpackTarget;
 	}
 
+	/**
+	 * Returns the Calypso base URL.
+	 * @example 'http://localhost:3000'
+	 */
 	get CALYPSO_BASE_URL(): string {
 		const value = process.env.CALYPSO_BASE_URL;
 		if ( ! value ) {
@@ -197,6 +202,26 @@ class EnvVariables implements SupportedEnvVariables {
 			throw new Error(
 				`Invalid CALYPSO_BASE_URL value: ${ value }.\nYou must provide a valid URL.`
 			);
+		}
+		return value;
+	}
+
+	/**
+	 * Returns the WordPress.com base URL typically used for testing non-Calypso Marketing pages.
+	 * @example 'https://wordpress.com'
+	 */
+	get WPCOM_BASE_URL(): string {
+		const value = process.env.WPCOM_BASE_URL;
+		if ( ! value ) {
+			return this._defaultEnvVariables.WPCOM_BASE_URL;
+		}
+
+		try {
+			// Disabling eslint because this constructor is really the simplest way to validate a URL.
+			// eslint-disable-next-line no-new
+			new URL( value );
+		} catch ( error ) {
+			throw new Error( `Invalid WPCOM_BASE_URL value: ${ value }.\nYou must provide a valid URL.` );
 		}
 		return value;
 	}

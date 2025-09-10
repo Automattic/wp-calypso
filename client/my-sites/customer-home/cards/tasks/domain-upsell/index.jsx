@@ -112,6 +112,7 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 		{
 			domainAndPlanPackage: true,
 			domain: true,
+			back_to: window.location.href.replace( window.location.origin, '' ),
 		},
 		`/domains/add/${ siteSlug }`
 	);

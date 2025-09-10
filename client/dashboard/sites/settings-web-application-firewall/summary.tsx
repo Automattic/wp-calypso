@@ -1,6 +1,5 @@
 import { JetpackModules } from '@automattic/api-core';
 import { siteJetpackConnectionQuery, siteJetpackModulesQuery } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -27,15 +26,13 @@ export default function WebApplicationFirewallSettingsSummary( {
 		enabled: ! isSimple( site ),
 	} );
 
-	if ( ! isEnabled( 'dashboard/v2/security-settings' ) ) {
-		return null;
-	}
-
 	const modulesAvailable =
 		isJetpackModuleAvailable( jetpackModules, jetpackConnection, JetpackModules.WAF ) &&
 		isJetpackModuleAvailable( jetpackModules, jetpackConnection, JetpackModules.PROTECT );
 
-	const badges = modulesAvailable ? undefined : [ { text: __( 'Unavailable' ) } ];
+	// Don't show any badge for Simple sites.
+	const badges =
+		isSimple( site ) || modulesAvailable ? undefined : [ { text: __( 'Unavailable' ) } ];
 
 	return (
 		<RouterLinkSummaryButton

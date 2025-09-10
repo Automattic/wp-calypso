@@ -1,6 +1,5 @@
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { plus, published } from '@wordpress/icons';
 import { useState } from 'react';
 import useSafe from '../../panel/helpers/use-safe';
 import { bumpStat } from '../../panel/rest-client/bump-stat';
@@ -65,11 +64,9 @@ export const FollowLink = ( {
 
 	return (
 		<Button
-			variant="tertiary"
-			size="small"
-			icon={ isFollowing ? published : plus }
-			iconSize={ 16 }
-			style={ { padding: 0 } }
+			variant="link"
+			size="compact"
+			style={ { height: '16px', textDecoration: 'none' } }
 			onClick={ toggleFollowStatus }
 		>
 			{ isFollowing ? __( 'Subscribed' ) : __( 'Subscribe' ) }
