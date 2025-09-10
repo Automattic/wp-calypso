@@ -17,6 +17,7 @@ export default function ContactFormPrivacy( { domain }: ContactFormPrivacyProps 
 	const renderPrivacyProtection = () => {
 		return (
 			<ToggleControl
+				__nextHasNoMarginBottom
 				checked={ domain.private_domain }
 				disabled={ ! domain.privacy_available }
 				onChange={ () => {} }
@@ -25,7 +26,7 @@ export default function ContactFormPrivacy( { domain }: ContactFormPrivacyProps 
 		);
 	};
 
-	const renderPrivacyDisclosure = () => {
+	const renderContactDisclosure = () => {
 		if (
 			! domain.privacy_available ||
 			! domain.contact_info_disclosure_available ||
@@ -36,12 +37,23 @@ export default function ContactFormPrivacy( { domain }: ContactFormPrivacyProps 
 		}
 
 		return (
-			<ToggleControl
-				checked={ domain.contact_info_disclosed }
-				onChange={ () => {} }
-				disabled={ domain.is_pending_icann_verification }
-				label={ __( 'Display my contact information in public WHOIS' ) }
-			/>
+			<VStack spacing={ 2 }>
+				<ToggleControl
+					__nextHasNoMarginBottom
+					checked={ domain.contact_info_disclosed }
+					onChange={ () => {} }
+					disabled={ domain.is_pending_icann_verification }
+					label={ __( 'Display my contact information in public WHOIS' ) }
+				/>
+
+				{ domain.is_pending_icann_verification && (
+					<Text as="p" variant="muted">
+						{ __(
+							'You need to verify the contact information for the domain before you can disclose it publicly.'
+						) }
+					</Text>
+				) }
+			</VStack>
 		);
 	};
 
@@ -49,10 +61,8 @@ export default function ContactFormPrivacy( { domain }: ContactFormPrivacyProps 
 		<VStack spacing={ 4 }>
 			<SectionHeader title={ __( 'Privacy protection' ) } level={ 3 } />
 
-			<VStack spacing={ 2 }>
-				{ renderPrivacyProtection() }
-				{ renderPrivacyDisclosure() }
-			</VStack>
+			{ renderPrivacyProtection() }
+			{ renderContactDisclosure() }
 
 			{ domain.privacy_available && (
 				<Text as="p" variant="muted">
