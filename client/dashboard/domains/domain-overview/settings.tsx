@@ -21,7 +21,7 @@ export default function DomainOverviewSettings( { domain }: { domain: Domain } )
 		domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION &&
 		! domain.is_gravatar_restricted_domain // TODO: should we show some notice for gravatar domains instead of just hiding the button?
 	) {
-		buttonListItems.push( <NameServersSettingsSummary domain={ domain } /> );
+		buttonListItems.push( <NameServersSettingsSummary key="name-servers" domain={ domain } /> );
 	}
 
 	if (
@@ -33,8 +33,10 @@ export default function DomainOverviewSettings( { domain }: { domain: Domain } )
 		domain.transfer_status !== DomainTransferStatus.PENDING_ASYNC &&
 		domain.can_manage_dns_records
 	) {
-		buttonListItems.push( <DnsSettingsSummary domain={ domain } /> );
-		buttonListItems.push( <DomainForwardingsSettingsSummary domain={ domain } /> );
+		buttonListItems.push( <DnsSettingsSummary key="dns" domain={ domain } /> );
+		buttonListItems.push(
+			<DomainForwardingsSettingsSummary key="forwardings" domain={ domain } />
+		);
 	}
 
 	/**
@@ -47,7 +49,9 @@ export default function DomainOverviewSettings( { domain }: { domain: Domain } )
 		! domain.pending_transfer &&
 		! domain.expired
 	) {
-		buttonListItems.push( <DomainContactDetailsSettingsSummary domain={ domain } /> );
+		buttonListItems.push(
+			<DomainContactDetailsSettingsSummary key="contact-details" domain={ domain } />
+		);
 	}
 
 	/**
@@ -62,7 +66,7 @@ export default function DomainOverviewSettings( { domain }: { domain: Domain } )
 		].includes( domain.subtype.id ) &&
 		domain.transfer_status !== DomainTransferStatus.PENDING_ASYNC
 	) {
-		buttonListItems.push( <DomainSecuritySettingsSummary domain={ domain } /> );
+		buttonListItems.push( <DomainSecuritySettingsSummary key="security" domain={ domain } /> );
 	}
 
 	if (
@@ -71,7 +75,9 @@ export default function DomainOverviewSettings( { domain }: { domain: Domain } )
 		domain.can_manage_dns_records
 		// TODO: Add property that shows or hides this option depending on the availability of the feature
 	) {
-		buttonListItems.push( <DomainGlueRecordsSettingsSummary domain={ domain } /> );
+		buttonListItems.push(
+			<DomainGlueRecordsSettingsSummary key="glue-records" domain={ domain } />
+		);
 	}
 
 	return (
