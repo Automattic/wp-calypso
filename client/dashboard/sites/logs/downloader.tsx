@@ -48,7 +48,7 @@ async function downloadSiteLogs( args: {
 	const { siteId, siteSlug, logType, startSec, endSec, filter } = args;
 
 	// Activity logs don't support batch downloads yet
-	if ( logType === 'activity' ) {
+	if ( LogType.ACTIVITY ) {
 		return {
 			ok: false,
 			message: __( 'Activity log downloads are not yet supported.' ),

@@ -16,20 +16,17 @@ type SimpleFilter = {
 	value: string[];
 };
 
-export function getAllowedFields( logType: LogType | 'activity' ): ReadonlyArray< string > {
+export function getAllowedFields( logType: LogType ): ReadonlyArray< string > {
 	if ( logType === LogType.PHP ) {
 		return [ 'severity' ];
 	}
-	if ( logType === 'activity' ) {
+	if ( logType === LogType.ACTIVITY ) {
 		return [];
 	}
 	return [ 'cached', 'renderer', 'request_type', 'status' ];
 }
 
-export function getInitialFiltersFromSearch(
-	logType: LogType | 'activity',
-	search: string
-): Filter[] {
+export function getInitialFiltersFromSearch( logType: LogType, search: string ): Filter[] {
 	const allowed = getAllowedFields( logType );
 	const params = new URLSearchParams( search );
 

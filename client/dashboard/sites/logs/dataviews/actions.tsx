@@ -63,7 +63,7 @@ export function useActions( {
 			return [ commonDetailsAction, copyMessageAction ];
 		}
 
-		if ( logType === 'activity' ) {
+		if ( logType === LogType.ACTIVITY ) {
 			const copySummaryAction: Action< ActivityLogEntry > = {
 				id: 'copy-summary',
 				label: __( 'Copy activity summary' ),

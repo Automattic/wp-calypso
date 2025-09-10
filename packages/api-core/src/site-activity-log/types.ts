@@ -48,6 +48,10 @@ export interface ActivityLog {
 	current?: {
 		orderedItems: ActivityLogEntry[];
 	};
+	totalItems: number;
+	pages: number;
+	itemsPerPage: number;
+	totalPages: number;
 }
 
 // Activity Log: shared primitives
@@ -79,3 +83,19 @@ export type ActivityActor = {
 	is_cli?: boolean;
 	is_happiness?: boolean;
 };
+
+export interface ActivityLogParams {
+	after?: number;
+	before?: number;
+	sort_order?: 'asc' | 'desc';
+	page?: number;
+	aggregate?: boolean;
+	action?: string;
+	by?: string;
+	date_range?: string;
+	number?: number;
+	not_group?: string;
+	group?: string;
+	name?: string;
+	text_search?: string;
+}

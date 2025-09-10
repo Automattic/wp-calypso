@@ -1,18 +1,16 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { ActivityLog } from './types';
+import type { ActivityLog, ActivityLogParams } from './types';
 
 export async function fetchSiteActivityLog(
 	siteId: number,
-	{ number }: { number: number }
+	params: ActivityLogParams
 ): Promise< ActivityLog > {
 	return wpcom.req.get(
 		{
 			path: `/sites/${ siteId }/activity`,
 			apiNamespace: 'wpcom/v2',
 		},
-		{
-			number,
-		}
+		params
 	);
 }
 

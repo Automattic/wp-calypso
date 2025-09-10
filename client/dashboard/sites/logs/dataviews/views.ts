@@ -77,7 +77,7 @@ export function toFilterParams( { view, logType }: { view: View; logType: LogTyp
 		return getFilterParamsFromView( view, [ 'severity' ] );
 	}
 
-	if ( logType === 'activity' ) {
+	if ( logType === LogType.ACTIVITY ) {
 		return getFilterParamsFromView( view, [] );
 	}
 
@@ -94,7 +94,7 @@ export function useView( {
 	let config;
 	if ( logType === LogType.PHP ) {
 		config = phpLogsViewConfig;
-	} else if ( logType === 'activity' ) {
+	} else if ( logType === LogType.ACTIVITY ) {
 		config = activityLogsViewConfig;
 	} else {
 		config = serverLogsViewConfig;
@@ -102,7 +102,7 @@ export function useView( {
 	return useState< View >( () => ( {
 		type: 'table',
 		page: 1,
-		perPage: 50,
+		perPage: logType === LogType.ACTIVITY ? 20 : 50,
 		sort: {
 			field: config.sortField,
 			direction: 'desc',

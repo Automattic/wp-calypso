@@ -7,6 +7,7 @@ import {
 	SiteLogsData,
 	ActivityLogEntry,
 	ActivityLog,
+	ActivityLogParams,
 } from '@automattic/api-core';
 import {
 	siteLogsQuery,
@@ -125,7 +126,7 @@ function filtersSignature(
 		.join( '|' );
 }
 
-function SiteLogs( { logType }: { logType: LogType | 'activity' } ) {
+function SiteLogs( { logType }: { logType: LogType } ) {
 	const locale = useLocale();
 	const { siteSlug } = siteRoute.useParams();
 	const router = useRouter();
@@ -201,7 +202,7 @@ function SiteLogs( { logType }: { logType: LogType | 'activity' } ) {
 
 	const filter = useMemo( () => toFilterParams( { view, logType } ), [ view, logType ] );
 
-	const params: SiteLogsParams | null =
+	const siteLogQueryParams: SiteLogsParams | null =
 		logType !== 'activity'
 			? {
 					logType: logType as LogType,
@@ -212,33 +213,41 @@ function SiteLogs( { logType }: { logType: LogType | 'activity' } ) {
 					pageSize: view.perPage,
 			  }
 			: null;
+	const activityLogQueryParams: ActivityLogParams | null =
+		logType === 'activity'
+			? {
+					sort_order: view.sort?.direction,
+					number: view.perPage || 20,
+					page: view.page,
+			  }
+			: null;
 
 	// This keeps a per-page cursor cache - page 1 has no cursor.
 	const cursorsRef = useRef< Map< number, string > >( new Map() );
 
 	// For the current page, use its cursor (or null/undefined on page 1).
 	const scrollId = cursorsRef.current.get( view.page ?? 1 ) ?? null;
-
+	const isActivityLogType = logType === LogType.ACTIVITY;
 	// For activity logs, we use a different query
-	const shouldFetchRegularLogs = logType !== 'activity' && !! params;
+	const shouldFetchRegularLogs = logType !== LogType.ACTIVITY && !! siteLogQueryParams;
 	const { data: siteLogsData, isFetching: isFetchingLogs } = useQuery(
-		shouldFetchRegularLogs && params
-			? siteLogsQuery( siteId, params, scrollId )
+		shouldFetchRegularLogs && siteLogQueryParams
+			? siteLogsQuery( siteId, siteLogQueryParams, scrollId )
 			: { queryKey: [ 'disabled-logs' ], queryFn: skipToken }
 	);
 
-	const shouldFetchActivityLogs = logType === 'activity';
+	const shouldFetchActivityLogs = isActivityLogType;
 	const { data: activityLogData, isFetching: isFetchingActivity } = useQuery(
 		shouldFetchActivityLogs
-			? siteActivityLogQuery( siteId, view.perPage || 50 )
+			? siteActivityLogQuery( siteId, activityLogQueryParams )
 			: { queryKey: [ 'disabled-activity' ], queryFn: skipToken }
 	);
 
-	const siteLogs: LogsData = logType === 'activity' ? activityLogData : siteLogsData;
-	const isFetching = logType === 'activity' ? isFetchingActivity : isFetchingLogs;
+	const siteLogs: LogsData = isActivityLogType ? activityLogData : siteLogsData;
+	const isFetching = isActivityLogType ? isFetchingActivity : isFetchingLogs;
 
 	useEffect( () => {
-		if ( ! siteLogs || logType === 'activity' ) {
+		if ( ! siteLogs || isActivityLogType ) {
 			return;
 		}
 		const nextPage = ( view.page ?? 1 ) + 1;
@@ -253,7 +262,7 @@ function SiteLogs( { logType }: { logType: LogType | 'activity' } ) {
 		} else {
 			cursorsRef.current.delete( nextPage );
 		}
-	}, [ siteLogs, view.page, logType ] );
+	}, [ siteLogs, view.page, logType, isActivityLogType ] );
 
 	const handleDateRangeChange = ( next: { start: Date; end: Date } ) => {
 		setAutoRefresh( false );
@@ -271,27 +280,27 @@ function SiteLogs( { logType }: { logType: LogType | 'activity' } ) {
 	};
 
 	// Extract the data for memoization
-	const siteLogsArray = isSiteLogsData( siteLogs ) ? siteLogs.logs : undefined;
-	const activityLogsArray = isActivityLogData( siteLogs )
-		? siteLogs.current?.orderedItems
-		: undefined;
 
+	let siteLogsArray;
+	if ( isSiteLogsData( siteLogs ) ) {
+		siteLogsArray = siteLogs.logs;
+	} else if ( isActivityLogData( siteLogs ) ) {
+		siteLogsArray = siteLogs.current?.orderedItems;
+	} else {
+		siteLogsArray = undefined;
+	}
 	const logs = useMemo( () => {
 		const suffix = scrollId ? scrollId.slice( 0, 8 ) : `p${ view.page }`;
 
-		if ( logType === 'activity' ) {
-			const items = activityLogsArray ?? [];
-			return items.map(
-				( log: ActivityLogEntry, index: number ) =>
-					( {
-						...log,
-						id: `${ log.activity_id }|${ suffix }|${ String( index ) }`,
-					} ) as ActivityLogEntry & { id: string }
-			);
-		}
-
 		const items = siteLogsArray ?? [];
-		return items.map( ( log: PHPLog | ServerLog, index: number ) => {
+		return items.map( ( log: PHPLog | ServerLog | ActivityLogEntry, index: number ) => {
+			if ( logType === LogType.ACTIVITY ) {
+				const activity = log as ActivityLogEntry;
+				return {
+					...activity,
+					id: `${ activity.activity_id }|${ suffix }|${ String( index ) }`,
+				} as ActivityLogEntry & { id: string };
+			}
 			if ( logType === LogType.PHP ) {
 				const php = log as PHPLog;
 				return {
@@ -309,31 +318,30 @@ function SiteLogs( { logType }: { logType: LogType | 'activity' } ) {
 				}|${ server.user_ip }|${ suffix }|${ String( index ) }`,
 			} as ServerLog & { id: string };
 		} );
-	}, [ scrollId, view.page, siteLogsArray, activityLogsArray, logType ] );
+	}, [ scrollId, view.page, siteLogsArray, logType ] );
 
 	const paginationInfo = {
 		totalItems: ( () => {
-			if ( logType === 'activity' ) {
-				return activityLogsArray?.length || 0;
+			if ( isActivityLogData( siteLogs ) ) {
+				return siteLogs.totalItems;
 			}
 			return isSiteLogsData( siteLogs ) ? siteLogs.total_results : 0;
 		} )(),
 		totalPages: ( () => {
-			if ( logType === 'activity' ) {
-				const itemCount = activityLogsArray?.length || 0;
-				return itemCount && view.perPage ? Math.ceil( itemCount / view.perPage ) : 0;
+			if ( isActivityLogData( siteLogs ) ) {
+				return siteLogs.totalPages;
 			}
 			const totalResults = isSiteLogsData( siteLogs ) ? siteLogs.total_results : 0;
 			return totalResults && view.perPage ? Math.ceil( totalResults / view.perPage ) : 0;
 		} )(),
 	};
 
-	const handleTabChange = ( tab: LogType | 'activity' ) => {
+	const handleTabChange = ( tab: LogType ) => {
 		if ( tab === LogType.PHP ) {
 			router.navigate( { to: `/sites/${ siteSlug }/logs/php` } );
 		} else if ( tab === LogType.SERVER ) {
 			router.navigate( { to: `/sites/${ siteSlug }/logs/server` } );
-		} else if ( tab === 'activity' ) {
+		} else if ( tab === LogType.ACTIVITY ) {
 			router.navigate( { to: `/sites/${ siteSlug }/logs/activity` } );
 		}
 	};
@@ -485,9 +493,9 @@ function SiteLogs( { logType }: { logType: LogType | 'activity' } ) {
 										if (
 											tabName === LogType.PHP ||
 											tabName === LogType.SERVER ||
-											tabName === 'activity'
+											tabName === LogType.ACTIVITY
 										) {
-											handleTabChange( tabName as LogType | 'activity' );
+											handleTabChange( tabName as LogType );
 										}
 									} }
 									initialTabName={ logType }
@@ -515,7 +523,7 @@ function SiteLogs( { logType }: { logType: LogType | 'activity' } ) {
 										);
 									}
 
-									if ( logType === 'activity' ) {
+									if ( logType === LogType.ACTIVITY ) {
 										return (
 											<DataViews< ActivityLogEntry & { id: string } >
 												data={ logs as ( ActivityLogEntry & { id: string } )[] }

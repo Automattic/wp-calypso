@@ -17,3 +17,9 @@ export const siteRewindableActivityLogEntriesQuery = (
 		queryFn: () => fetchSiteRewindableActivityLog( siteId, { number } ),
 		select: ( data ) => data.current?.orderedItems?.slice( 0, number ) ?? [],
 	} );
+
+export const siteActivityLogQuery = ( siteId: number, activityLogQueryParams: ActivityLogParams ) =>
+	queryOptions( {
+		queryKey: [ 'site', siteId, 'activity-log', activityLogQueryParams ],
+		queryFn: () => fetchSiteActivityLog( siteId, activityLogQueryParams ),
+	} );

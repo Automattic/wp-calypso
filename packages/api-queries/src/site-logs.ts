@@ -9,10 +9,3 @@ export const siteLogsQuery = ( siteId: number, params: SiteLogsParams, scrollId:
 		enabled: params.start <= params.end,
 		staleTime: Infinity, // The logs within a specified time range never change.
 	} );
-
-export const siteActivityLogQuery = ( siteId: number, number: number = 50 ) =>
-	queryOptions( {
-		queryKey: [ 'site', siteId, 'activity-log', number ],
-		queryFn: () => fetchSiteActivityLog( siteId, { number } ),
-		placeholderData: keepPreviousData,
-	} );
