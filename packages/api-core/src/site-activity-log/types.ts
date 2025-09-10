@@ -1,11 +1,18 @@
 export interface ActivityLogEntry {
 	activity_id: string;
 	actor: {
+		type: 'Person' | 'Application'; // What else?
 		name: string;
+		external_user_id?: number;
+		wpcom_user_id?: number;
+		icon?: ActivityLogIcon;
+		role?: string;
+		is_cli?: boolean;
 	};
 	content: {
 		text: string;
 	};
+	type: 'Announce'; // What else?
 	gridicon: string;
 	name: string;
 	object?: {
@@ -19,7 +26,14 @@ export interface ActivityLogEntry {
 	};
 	published: string;
 	rewind_id: string;
+
 	summary: string;
+}
+export interface ActivityLogIcon {
+	type: 'Image';
+	url: string;
+	width: number;
+	height: number;
 }
 
 export interface ActivityLog {
