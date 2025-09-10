@@ -21,7 +21,7 @@ import canRestoreSite from 'calypso/state/rewind/selectors/can-restore-site';
 import getBackupBrowserCheckList from 'calypso/state/rewind/selectors/get-backup-browser-check-list';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
-import { backupDownloadPath, backupMainPath } from '../paths';
+import { backupDownloadPath, backupGranularRestorePath, backupMainPath } from '../paths';
 import FileBrowser from './file-browser';
 import './style.scss';
 
@@ -66,6 +66,10 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 		[ dispatch, siteSlug ]
 	);
 
+	const handleRequestGranularRestore = useCallback( ( siteSlug: string, rewindId: number ) => {
+		page.redirect( backupGranularRestorePath( siteSlug, rewindId as unknown as string ) );
+	}, [] );
+
 	return (
 		<>
 			<QuerySiteCredentials siteId={ siteId } />
@@ -109,6 +113,7 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 							isRestoreEnabled={ isRestoreEnabled }
 							onTrackEvent={ handleTrackEvent }
 							onRequestGranularDownload={ handleRequestGranularDownload }
+							onRequestGranularRestore={ handleRequestGranularRestore }
 						/>
 					</div>
 				</Card>

@@ -24,10 +24,31 @@ interface Props {
 	isSocialFirst?: boolean;
 	isWooJPC?: boolean;
 	isWCCOM?: boolean;
+	isBlazePro?: boolean;
 	isFromAkismet?: boolean;
 	isFromAutomatticForAgenciesPlugin?: boolean;
 	isGravPoweredClient?: boolean;
+	isUserLoggedIn?: boolean;
 }
+
+const getLoggedInUserHeaderText = ( {
+	isSocialFirst,
+	isWooJPC,
+	isWCCOM,
+	isBlazePro,
+	translate,
+}: {
+	isSocialFirst?: boolean;
+	isWooJPC?: boolean;
+	isWCCOM?: boolean;
+	isBlazePro?: boolean;
+	translate: ( arg0: string, arg1?: object ) => TranslateResult;
+} ): TranslateResult | null => {
+	if ( isSocialFirst && ( isWooJPC || isWCCOM || isBlazePro ) ) {
+		return translate( 'Connect your account' );
+	}
+	return null;
+};
 
 /**
  * This function is used to get the header text for the login page.
@@ -44,13 +65,28 @@ export function getHeaderText( {
 	isWooJPC,
 	isJetpack,
 	isWCCOM,
+	isBlazePro,
 	isFromAkismet,
 	isFromAutomatticForAgenciesPlugin,
 	isGravPoweredClient,
 	currentQuery,
 	translate,
 	twoStepNonce,
+	isUserLoggedIn,
 }: Props ): TranslateResult {
+	if ( isUserLoggedIn ) {
+		const loggedInText = getLoggedInUserHeaderText( {
+			isSocialFirst,
+			isWooJPC,
+			isWCCOM,
+			isBlazePro,
+			translate,
+		} );
+		if ( loggedInText ) {
+			return loggedInText;
+		}
+	}
+
 	let headerText = translate( 'Log in to your account' );
 
 	if ( isSocialFirst ) {
