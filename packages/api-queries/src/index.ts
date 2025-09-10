@@ -23,7 +23,7 @@ export * from './me-preferences';
 export * from './me-profile';
 export * from './me-purchases';
 export * from './me-tax-details';
-export * from './notification-device';
+export * from './notification-devices';
 export * from './p2';
 export * from './performance';
 export * from './purchase';

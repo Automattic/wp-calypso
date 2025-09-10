@@ -31,7 +31,7 @@ export * from './me-sites';
 export * from './me-sites-plugins';
 export * from './me-ssh';
 export * from './me-tax-details';
-export * from './notifications-device';
+export * from './notification-devices';
 export * from './p2';
 export * from './purchase';
 export * from './read-teams';
