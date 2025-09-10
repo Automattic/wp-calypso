@@ -6,20 +6,7 @@ import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { render } from '../../../test-utils';
 import GravatarProfileSection from '../index';
-import type { UserProfile } from '@automattic/api-core';
-
-const mockProfile: UserProfile = {
-	advertising_targeting_opt_out: false,
-	avatar_URL: 'https://gravatar.com/avatar/test',
-	description: 'Test description',
-	display_name: 'Test User',
-	is_dev_account: false,
-	password: 'password',
-	tracks_opt_out: false,
-	user_email: 'test@example.com',
-	user_login: 'testuser',
-	user_URL: 'https://example.com',
-};
+import { mockProfile } from './mock-profile';
 
 describe( 'GravatarProfileSection Form Validation', () => {
 	describe( 'Display Name Validation', () => {

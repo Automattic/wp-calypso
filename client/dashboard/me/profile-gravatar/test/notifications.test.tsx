@@ -8,7 +8,7 @@ import { useDispatch } from '@wordpress/data';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import GravatarProfileSection from '../index';
-import type { UserProfile } from '@automattic/api-core';
+import { mockProfile } from './mock-profile';
 
 // Mock the WordPress data store
 const mockCreateSuccessNotice = jest.fn();
@@ -21,19 +21,6 @@ jest.mock( '@wordpress/data', () => ( {
 	createSelector: jest.fn(),
 	register: jest.fn(),
 } ) );
-
-const mockProfile: UserProfile = {
-	advertising_targeting_opt_out: false,
-	avatar_URL: 'https://gravatar.com/avatar/test',
-	description: 'Test description',
-	display_name: 'Test User',
-	is_dev_account: false,
-	password: 'password',
-	tracks_opt_out: false,
-	user_email: 'test@example.com',
-	user_login: 'testuser',
-	user_URL: 'https://example.com',
-};
 
 describe( 'GravatarProfileSection Notifications', () => {
 	beforeEach( () => {
