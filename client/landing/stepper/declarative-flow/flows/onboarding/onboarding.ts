@@ -192,7 +192,12 @@ const onboarding: FlowV2< typeof initialize > = {
 					return navigate( 'plans' );
 				case 'use-my-domain':
 					setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
-					if ( providedDependencies?.mode && providedDependencies?.domain ) {
+					if (
+						providedDependencies &&
+						'mode' in providedDependencies &&
+						providedDependencies.mode &&
+						providedDependencies.domain
+					) {
 						setUseMyDomainTracksEventProps( {
 							...useMyDomainTracksEventProps,
 							signup_domain_origin: SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN,

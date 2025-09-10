@@ -7,6 +7,7 @@ import {
 	Step,
 	DOMAIN_FLOW,
 } from '@automattic/onboarding';
+import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
@@ -33,6 +34,7 @@ const UseMyDomain: StepType< {
 				mode: 'transfer' | 'connect';
 				domain: string;
 		  }
+		| { domainCartItem: MinimalRequestCartProduct }
 		| undefined;
 } > = function UseMyDomain( { navigation, flow } ) {
 	const { __ } = useI18n();
@@ -64,7 +66,7 @@ const UseMyDomain: StepType< {
 		setHideFreePlan( true );
 		setDomainCartItem( domainCartItem );
 
-		submit?.( undefined );
+		submit?.( { domainCartItem } );
 	};
 
 	const handleOnConnect = async ( domain: string ) => {
@@ -72,7 +74,7 @@ const UseMyDomain: StepType< {
 		setHideFreePlan( true );
 		setDomainCartItem( domainCartItem );
 
-		submit?.( undefined );
+		submit?.( { domainCartItem } );
 	};
 
 	const getInitialQuery = function () {

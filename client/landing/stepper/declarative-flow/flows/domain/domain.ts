@@ -137,7 +137,12 @@ const domain: FlowV2< typeof initialize > = {
 					return navigate( STEPS.NEW_OR_EXISTING_SITE.slug );
 				case STEPS.USE_MY_DOMAIN.slug:
 					setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
-					if ( providedDependencies?.mode && providedDependencies?.domain ) {
+					if (
+						providedDependencies &&
+						'mode' in providedDependencies &&
+						providedDependencies.mode &&
+						providedDependencies.domain
+					) {
 						setUseMyDomainTracksEventProps( {
 							...useMyDomainTracksEventProps,
 							signup_domain_origin: SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN,
@@ -161,7 +166,26 @@ const domain: FlowV2< typeof initialize > = {
 						providedDependencies: useMyDomainTracksEventProps,
 					} );
 
-					return;
+					if ( siteSlug && providedDependencies && 'domainCartItem' in providedDependencies ) {
+						setSignupCompleteFlowName( this.name );
+						setSignupCompleteSlug( siteSlug );
+
+						setPendingAction( async () => {
+							await addProductsToCart( siteSlug, this.name, [
+								providedDependencies.domainCartItem,
+							] );
+
+							return {
+								siteSlug,
+								goToCheckout: true,
+								siteCreated: false,
+							};
+						} );
+
+						return navigate( STEPS.PROCESSING.slug );
+					}
+
+					return navigate( STEPS.NEW_OR_EXISTING_SITE.slug );
 
 				case STEPS.NEW_OR_EXISTING_SITE.slug:
 					if ( providedDependencies.newExistingSiteChoice === 'domain' ) {

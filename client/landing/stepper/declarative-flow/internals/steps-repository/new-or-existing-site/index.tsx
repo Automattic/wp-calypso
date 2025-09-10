@@ -1,5 +1,6 @@
 import { PLAN_100_YEARS, getPlan } from '@automattic/calypso-products';
 import { WordPressLogo } from '@automattic/components';
+import { type OnboardSelect } from '@automattic/data-stores';
 import {
 	type SelectItem,
 	IntentScreen,
@@ -13,11 +14,13 @@ import {
 	Step,
 } from '@automattic/onboarding';
 import { Icon } from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
 import { globe } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
+import { ONBOARD_STORE } from '../../../../stores';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import NewSiteIcon from './icons/new-site';
 import { ChoiceType } from './types';
@@ -28,6 +31,23 @@ import './styles.scss';
 type NewOrExistingSiteIntent = SelectItem< ChoiceType >;
 
 const useIntentsForFlow = ( flowName: string ): NewOrExistingSiteIntent[] => {
+	const { productCartItems, domainCartItem } = useSelect(
+		( select ) => ( {
+			signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
+			domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
+			productCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getProductCartItems(),
+		} ),
+		[]
+	);
+
+	const mergedCartItems = [ domainCartItem, ...( productCartItems ?? [] ) ].filter(
+		( item ) => !! item
+	);
+
+	const hasDomainOperation = mergedCartItems.some( ( item ) =>
+		[ 'domain_transfer', 'domain_map' ].includes( item.product_slug )
+	);
+
 	const translate = useTranslate();
 	switch ( flowName ) {
 		case HUNDRED_YEAR_PLAN_FLOW:
@@ -84,16 +104,8 @@ const useIntentsForFlow = ( flowName: string ): NewOrExistingSiteIntent[] => {
 					actionText: translate( 'Start a new site' ),
 				},
 			];
-		case DOMAIN_FLOW:
-			return [
-				{
-					key: 'domain',
-					title: translate( 'Just buy a domain' ),
-					description: translate( 'Add a site later.' ),
-					icon: <Icon icon={ globe } />,
-					value: 'domain',
-					actionText: translate( 'Continue' ),
-				},
+		case DOMAIN_FLOW: {
+			const options = [
 				{
 					key: 'existing-site',
 					title: translate( 'Existing WordPress.com site' ),
@@ -111,6 +123,20 @@ const useIntentsForFlow = ( flowName: string ): NewOrExistingSiteIntent[] => {
 					actionText: translate( 'Create a new site' ),
 				},
 			];
+
+			if ( ! hasDomainOperation ) {
+				options.unshift( {
+					key: 'domain',
+					title: translate( 'Just buy a domain' ),
+					description: translate( 'Add a site later.' ),
+					icon: <Icon icon={ globe } />,
+					value: 'domain',
+					actionText: translate( 'Continue' ),
+				} );
+			}
+
+			return options as NewOrExistingSiteIntent[];
+		}
 		default:
 			return [];
 	}
