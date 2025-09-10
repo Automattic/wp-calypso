@@ -1,4 +1,4 @@
-export interface WooCommercePlugin {
+export interface MarketplacePlugin {
 	id: number;
 	wccom_id: string;
 	name: string;
