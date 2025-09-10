@@ -25,10 +25,6 @@ export default function useConnectionStatusNotice( isLiveChat: boolean = false )
 		}
 	}, [ connectionStatus, isLiveChat ] );
 
-	if ( ! isLiveChat ) {
-		return undefined;
-	}
-
 	if ( ! shouldWarn ) {
 		return undefined;
 	}
