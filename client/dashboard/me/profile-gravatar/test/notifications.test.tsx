@@ -8,7 +8,7 @@ import { useDispatch } from '@wordpress/data';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import GravatarProfileSection from '../index';
-import { mockProfile } from './mock-profile';
+import { mockUserSettings } from './__mocks__/user-settings';
 
 // Mock the WordPress data store
 const mockCreateSuccessNotice = jest.fn();
@@ -33,7 +33,7 @@ describe( 'GravatarProfileSection Notifications', () => {
 
 	it( 'should show success notification when form is saved successfully', async () => {
 		const user = userEvent.setup();
-		render( <GravatarProfileSection profile={ mockProfile } /> );
+		render( <GravatarProfileSection profile={ mockUserSettings } /> );
 
 		// Mock the POST HTTP request
 		nock( 'https://public-api.wordpress.com' )
@@ -60,7 +60,7 @@ describe( 'GravatarProfileSection Notifications', () => {
 
 	it( 'should show error notification when form save fails with error message', async () => {
 		const user = userEvent.setup();
-		render( <GravatarProfileSection profile={ mockProfile } /> );
+		render( <GravatarProfileSection profile={ mockUserSettings } /> );
 
 		// Mock the POST HTTP request
 		nock( 'https://public-api.wordpress.com' )
@@ -86,7 +86,7 @@ describe( 'GravatarProfileSection Notifications', () => {
 
 	it( 'should show error notification when form save fails with HTTP error', async () => {
 		const user = userEvent.setup();
-		render( <GravatarProfileSection profile={ mockProfile } /> );
+		render( <GravatarProfileSection profile={ mockUserSettings } /> );
 
 		// Mock the POST HTTP request
 		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/me/settings' ).reply( 500, {} );

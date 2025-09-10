@@ -1,6 +1,6 @@
 import type { UserSettings } from '@automattic/api-core';
 
-export const mockProfile: UserSettings = {
+export const mockUserSettings: UserSettings = {
 	advertising_targeting_opt_out: false,
 	avatar_URL: 'https://gravatar.com/avatar/test',
 	description: 'Test description',

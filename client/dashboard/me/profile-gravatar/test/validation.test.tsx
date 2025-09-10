@@ -6,13 +6,13 @@ import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { render } from '../../../test-utils';
 import GravatarProfileSection from '../index';
-import { mockProfile } from './mock-profile';
+import { mockUserSettings } from './__mocks__/user-settings';
 
 describe( 'GravatarProfileSection Form Validation', () => {
 	describe( 'Display Name Validation', () => {
 		it( 'should show validation error for display names longer than 250 characters', async () => {
 			const user = userEvent.setup();
-			render( <GravatarProfileSection profile={ mockProfile } /> );
+			render( <GravatarProfileSection profile={ mockUserSettings } /> );
 
 			const displayNameInput = screen.getByDisplayValue( 'Test User' );
 			const longName = 'a'.repeat( 251 );
@@ -28,7 +28,7 @@ describe( 'GravatarProfileSection Form Validation', () => {
 
 		it( 'should accept display names at the character limit', async () => {
 			const user = userEvent.setup();
-			render( <GravatarProfileSection profile={ mockProfile } /> );
+			render( <GravatarProfileSection profile={ mockUserSettings } /> );
 
 			const displayNameInput = screen.getByDisplayValue( 'Test User' );
 			const maxLengthName = 'a'.repeat( 250 );
@@ -44,7 +44,7 @@ describe( 'GravatarProfileSection Form Validation', () => {
 
 		it( 'should disable save button when display name validation fails', async () => {
 			const user = userEvent.setup();
-			render( <GravatarProfileSection profile={ mockProfile } /> );
+			render( <GravatarProfileSection profile={ mockUserSettings } /> );
 
 			const displayNameInput = screen.getByDisplayValue( 'Test User' );
 			const longName = 'a'.repeat( 251 );
@@ -60,7 +60,7 @@ describe( 'GravatarProfileSection Form Validation', () => {
 	describe( 'URL Validation', () => {
 		it( 'should show validation error for invalid URLs', async () => {
 			const user = userEvent.setup();
-			render( <GravatarProfileSection profile={ mockProfile } /> );
+			render( <GravatarProfileSection profile={ mockUserSettings } /> );
 
 			const urlInput = screen.getByDisplayValue( 'https://example.com' );
 
@@ -73,7 +73,7 @@ describe( 'GravatarProfileSection Form Validation', () => {
 
 		it( 'should accept valid URLs', async () => {
 			const user = userEvent.setup();
-			render( <GravatarProfileSection profile={ mockProfile } /> );
+			render( <GravatarProfileSection profile={ mockUserSettings } /> );
 
 			const urlInput = screen.getByDisplayValue( 'https://example.com' );
 
@@ -86,7 +86,7 @@ describe( 'GravatarProfileSection Form Validation', () => {
 
 		it( 'should allow empty URLs (optional field)', async () => {
 			const user = userEvent.setup();
-			render( <GravatarProfileSection profile={ mockProfile } /> );
+			render( <GravatarProfileSection profile={ mockUserSettings } /> );
 
 			const urlInput = screen.getByDisplayValue( 'https://example.com' );
 
@@ -98,7 +98,7 @@ describe( 'GravatarProfileSection Form Validation', () => {
 
 		it( 'should disable save button when URL validation fails', async () => {
 			const user = userEvent.setup();
-			render( <GravatarProfileSection profile={ mockProfile } /> );
+			render( <GravatarProfileSection profile={ mockUserSettings } /> );
 
 			const urlInput = screen.getByDisplayValue( 'https://example.com' );
 
