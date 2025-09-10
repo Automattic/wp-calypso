@@ -43,11 +43,14 @@ export function getFields(): Field< ActivityLogEntry >[] {
 			label: __( 'Date' ),
 			type: 'date',
 			filterBy: {
-				operators: [ 'on' ],
+				operators: [ 'on', 'after', 'before' ],
 			},
 			getValue: ( { item } ) => {
-				const date = new Date( getPublishedTimestamp( item ) );
-				return formatYmd( date );
+				const timestamp = getPublishedTimestamp( item );
+				if ( ! timestamp ) {
+					return null;
+				}
+				return formatYmd( new Date( timestamp ) );
 			},
 			render: ( { item } ) => <FormattedTime timestamp={ getPublishedTimestamp( item ) } />,
 		},
