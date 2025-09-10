@@ -1,10 +1,12 @@
 import { fetchTwoStep } from '@automattic/api-core';
 import {
-	profileQuery,
+	userSettingsQuery,
 	userPurchasesQuery,
 	purchaseQuery,
 	sitesQuery,
 	queryClient,
+	accountRecoveryQuery,
+	smsCountryCodesQuery,
 } from '@automattic/api-queries';
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { rootRoute } from './root';
@@ -14,7 +16,7 @@ import type { AnyRoute } from '@tanstack/react-router';
 export const meRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'me',
-	loader: () => queryClient.ensureQueryData( profileQuery() ),
+	loader: () => queryClient.ensureQueryData( userSettingsQuery() ),
 	beforeLoad: async ( { cause } ) => {
 		if ( cause !== 'enter' ) {
 			return;
@@ -161,6 +163,12 @@ export const securityPasswordRoute = createRoute( {
 export const securityAccountRecoveryRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'security/account-recovery',
+	loader: async () => {
+		await Promise.all( [
+			queryClient.ensureQueryData( accountRecoveryQuery() ),
+			queryClient.ensureQueryData( smsCountryCodesQuery() ),
+		] );
+	},
 } ).lazy( () =>
 	import( '../../me/security-account-recovery' ).then( ( d ) =>
 		createLazyRoute( 'security-account-recovery' )( {
