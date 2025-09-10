@@ -28,6 +28,7 @@ import {
 	recordTracksEventWithClientId as recordTracksEvent,
 	enhanceWithSiteType,
 } from 'calypso/state/analytics/actions';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { wasManualRenewalImmediateLoginAttempted } from 'calypso/state/immediate-login/selectors';
 import { getRedirectToOriginal } from 'calypso/state/login/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -104,6 +105,7 @@ export class Login extends Component {
 			'isWooJPC',
 			'isJetpack',
 			'isWCCOM',
+			'isBlazePro',
 			'isFromAkismet',
 			'isFromAutomatticForAgenciesPlugin',
 			'isGravPoweredClient',
@@ -292,11 +294,13 @@ export class Login extends Component {
 			isWooJPC,
 			isJetpack,
 			isWCCOM,
+			isBlazePro,
 			isFromAkismet,
 			isFromAutomatticForAgenciesPlugin,
 			isGravPoweredClient,
 			currentQuery,
 			translate,
+			isUserLoggedIn: isLoggedIn,
 		} = this.props;
 
 		// TODO: remove isGravPoweredClient when login pages are unified.
@@ -313,11 +317,13 @@ export class Login extends Component {
 			isWooJPC,
 			isJetpack,
 			isWCCOM,
+			isBlazePro,
 			isFromAkismet,
 			isFromAutomatticForAgenciesPlugin,
 			isGravPoweredClient,
 			currentQuery,
 			translate,
+			isUserLoggedIn: isLoggedIn,
 		} );
 
 		const headingSubText = getHeadingSubText( {
@@ -444,6 +450,7 @@ export default connect(
 				'automattic-for-agencies-client' ===
 					new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
 			isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),
+			isUserLoggedIn: isUserLoggedIn( state ),
 		};
 	},
 	{

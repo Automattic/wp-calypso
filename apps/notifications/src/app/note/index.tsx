@@ -124,8 +124,12 @@ const Note = ( { isDismissible }: { isDismissible?: boolean } ) => {
 			</CardHeader>
 			<CardBody size="small" style={ { maxHeight: 'unset' } }>
 				<VStack justify="flex-start" spacing={ 4 }>
-					<NoteSummary note={ note } />
-					<Divider style={ { color: '#ddd' } } />
+					{ note.type !== 'like' && note.type !== 'comment_like' && (
+						<>
+							<NoteSummary note={ note } />
+							<Divider style={ { color: '#f0f0f0' } } />
+						</>
+					) }
 					<div className={ getClasses( { note, isApproved, isRead } ) }>
 						<NoteBody note={ note } />
 					</div>
