@@ -6,10 +6,14 @@ import {
 	fetchApplicationPasswords,
 	createApplicationPassword,
 	deleteApplicationPassword,
+	fetchAppAuthSetup,
+	validateTwoStepCode,
+	generateBackupCodes,
 } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import { create } from '@github/webauthn-json';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
+import { userSettingsQuery } from './me-settings';
 import { queryClient } from './query-client';
 
 export const securityKeysQuery = () =>
@@ -72,4 +76,23 @@ export const deleteApplicationPasswordMutation = () =>
 		onSuccess: () => {
 			queryClient.invalidateQueries( applicationPasswordsQuery() );
 		},
+	} );
+
+export const appAuthSetupQuery = () =>
+	queryOptions( {
+		queryKey: [ 'me', 'app-auth-setup' ],
+		queryFn: fetchAppAuthSetup,
+	} );
+
+export const validateTwoStepCodeMutation = () =>
+	mutationOptions( {
+		mutationFn: validateTwoStepCode,
+		onSuccess: () => {
+			queryClient.invalidateQueries( userSettingsQuery() );
+		},
+	} );
+
+export const generateBackupCodesMutation = () =>
+	mutationOptions( {
+		mutationFn: generateBackupCodes,
 	} );

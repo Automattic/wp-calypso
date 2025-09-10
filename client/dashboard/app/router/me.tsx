@@ -188,6 +188,18 @@ export const securityTwoStepAuthRoute = createRoute( {
 	)
 );
 
+export const securityTwoStepAuthAppRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'security/two-step-auth/app',
+	loader: () => queryClient.ensureQueryData( userSettingsQuery() ),
+} ).lazy( () =>
+	import( '../../me/security-two-step-auth-app' ).then( ( d ) =>
+		createLazyRoute( 'security-two-step-auth-app' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const securitySshKeyRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'security/ssh-key',
@@ -327,6 +339,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 		securityPasswordRoute,
 		securityAccountRecoveryRoute,
 		securityTwoStepAuthRoute,
+		securityTwoStepAuthAppRoute,
 		securitySshKeyRoute,
 		securityConnectedAppsRoute,
 		securitySocialLoginsRoute,

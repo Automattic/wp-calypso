@@ -14,23 +14,24 @@ export type AtomicVariation =
 	| 'mixed';
 
 export interface SupportedEnvVariables {
-	readonly VIEWPORT_NAME: ViewportName;
+	readonly ALLURE_RESULTS_PATH: string;
+	readonly ARTIFACTS_PATH: string;
+	readonly ATOMIC_VARIATION: AtomicVariation;
+	readonly AUTHENTICATE_ACCOUNTS: TestAccountName[];
+	readonly BROWSER_NAME: string;
+	readonly CALYPSO_BASE_URL: string;
+	readonly COBLOCKS_EDGE: boolean;
+	readonly COOKIES_PATH: string;
 	readonly GUTENBERG_EDGE: boolean;
 	readonly GUTENBERG_NIGHTLY: boolean;
-	readonly COBLOCKS_EDGE: boolean;
-	readonly TEST_LOCALES: TestLocales;
-	readonly COOKIES_PATH: string;
-	readonly AUTHENTICATE_ACCOUNTS: TestAccountName[];
-	readonly ARTIFACTS_PATH: string;
 	readonly HEADLESS: boolean;
-	readonly SLOW_MO: number;
-	readonly TIMEOUT: number;
-	readonly TEST_ON_ATOMIC: boolean;
-	readonly ATOMIC_VARIATION: AtomicVariation;
 	readonly JETPACK_TARGET: JetpackTarget;
-	readonly CALYPSO_BASE_URL: string;
-	readonly BROWSER_NAME: string;
-	readonly ALLURE_RESULTS_PATH: string;
-	readonly RUN_ID: string;
 	readonly RETRY_COUNT: number;
+	readonly RUN_ID: string;
+	readonly SLOW_MO: number;
+	readonly TEST_LOCALES: TestLocales;
+	readonly TEST_ON_ATOMIC: boolean;
+	readonly TIMEOUT: number;
+	readonly VIEWPORT_NAME: ViewportName;
+	readonly WPCOM_BASE_URL: string;
 }
