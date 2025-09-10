@@ -98,9 +98,9 @@ const StatsMoved = () => {
 			<DocumentHead title={ translate( 'Stats' ) } />
 			<FeatureMoved
 				icon={ megaphone }
-				title={ translate( 'Stats has moved' ) }
-				description={ translate( 'Stats are now accessed via Stats in your dashboard.' ) }
-				buttonText={ translate( 'Go to Stats' ) }
+				title={ translate( 'Jetpack Stats has moved' ) }
+				description={ translate( 'Jetpack Stats is now accessed via the Stats top-level menu in your dashboard.' ) }
+				buttonText={ translate( 'Go to Jetpack Stats' ) }
 				buttonLink={ wpAdminUrl }
 				image={ image }
 			/>
