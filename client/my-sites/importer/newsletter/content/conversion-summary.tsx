@@ -220,6 +220,11 @@ const ConversionSummary = ( { importerStatus }: ConversionSummaryProps ) => {
 	const posts = importerStatus?.customData?.postsNumber || 0;
 	const pages = importerStatus?.customData?.pagesNumber || 0;
 	const attachments = importerStatus?.customData?.attachmentsNumber || 0;
+
+	/**
+	 * DEMO DATA
+	 * needs to be removed
+	 */
 	const unsupportedFiles = {
 		avif: 1,
 		svg: 5,
