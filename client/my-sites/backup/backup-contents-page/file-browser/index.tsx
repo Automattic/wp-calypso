@@ -9,7 +9,7 @@ import useGetDisplayDate from 'calypso/components/jetpack/daily-backup-status/us
 import { useFirstMatchingBackupAttempt } from 'calypso/my-sites/backup/hooks';
 import FileBrowserHeader from './file-browser-header';
 import FileBrowserNode from './file-browser-node';
-import { FileBrowserItem } from './types';
+import { FileBrowserItem, FileBrowserStateActions } from './types';
 
 export interface FileBrowserConfig {
 	restrictedPaths?: string[];
@@ -29,6 +29,7 @@ interface FileBrowserProps {
 	siteId: number;
 	siteSlug: string;
 	fileBrowserConfig?: FileBrowserConfig;
+	fileBrowserState: FileBrowserStateActions;
 
 	// Optional site data props
 	hasCredentials?: boolean;
@@ -59,6 +60,7 @@ function FileBrowser( {
 	onTrackEvent,
 	onRequestGranularDownload,
 	onRequestGranularRestore = () => {},
+	fileBrowserState,
 }: FileBrowserProps ) {
 	// This is the path of the node that is clicked
 	const [ activeNodePath, setActiveNodePath ] = useState< string >( '' );
@@ -95,6 +97,7 @@ function FileBrowser( {
 				onTrackEvent={ onTrackEvent }
 				onRequestGranularDownload={ onRequestGranularDownload }
 				onRequestGranularRestore={ onRequestGranularRestore }
+				fileBrowserState={ fileBrowserState }
 			/>
 			{ fileBrowserConfig?.showBackupTime && (
 				<HStack alignment="left" spacing={ 1 }>
@@ -125,6 +128,7 @@ function FileBrowser( {
 				isRestoreEnabled={ isRestoreEnabled }
 				onTrackEvent={ onTrackEvent }
 				onRequestGranularRestore={ onRequestGranularRestore }
+				fileBrowserState={ fileBrowserState }
 			/>
 		</div>
 	);

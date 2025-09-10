@@ -5,7 +5,6 @@ import { __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useDispatch } from 'calypso/state';
-import { setNodeCheckState } from 'calypso/state/rewind/browser/actions';
 import { PREPARE_DOWNLOAD_STATUS } from './constants';
 import FilePreview from './file-preview';
 import {
@@ -13,7 +12,7 @@ import {
 	onProcessingDownloadError,
 	onRetrievingFileInfoError,
 } from './notices';
-import { FileBrowserItem } from './types';
+import { FileBrowserItem, FileBrowserStateActions } from './types';
 import { useBackupPathInfoQuery } from './use-backup-path-info-query';
 import { usePrepareDownload } from './use-prepare-download';
 import { encodeToBase64, convertBytes } from './util';
@@ -27,6 +26,7 @@ interface FileInfoCardProps {
 	siteSlug: string;
 	hasCredentials?: boolean;
 	isRestoreEnabled?: boolean;
+	fileBrowserState: FileBrowserStateActions;
 	onTrackEvent: ( eventName: string, properties?: Record< string, unknown > ) => void;
 	onRequestGranularRestore: ( siteSlug: string, rewindId: number ) => void;
 }
@@ -40,11 +40,13 @@ function FileInfoCard( {
 	siteSlug,
 	hasCredentials,
 	isRestoreEnabled,
+	fileBrowserState,
 	onTrackEvent,
 	onRequestGranularRestore,
 }: FileInfoCardProps ) {
 	const moment = useLocalizedMoment();
 	const dispatch = useDispatch();
+	const { setNodeCheckState } = fileBrowserState;
 
 	const {
 		isSuccess,
@@ -175,10 +177,10 @@ function FileInfoCard( {
 
 	const restoreFile = useCallback( () => {
 		// Reset checklist
-		dispatch( setNodeCheckState( siteId, '/', 'unchecked' ) );
+		setNodeCheckState( siteId, '/', 'unchecked' );
 
 		// Mark this file as selected
-		dispatch( setNodeCheckState( siteId, path, 'checked' ) );
+		setNodeCheckState( siteId, path, 'checked' );
 
 		// Request granular restore
 		onRequestGranularRestore( siteSlug, rewindId );
@@ -189,7 +191,7 @@ function FileInfoCard( {
 			...( hasCredentials !== undefined && { has_credentials: hasCredentials } ),
 		} );
 	}, [
-		dispatch,
+		setNodeCheckState,
 		siteId,
 		path,
 		onRequestGranularRestore,

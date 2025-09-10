@@ -1,12 +1,7 @@
 import { Button, CheckboxControl } from '@wordpress/components';
-import { useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { ButtonStack } from 'calypso/dashboard/components/button-stack';
-import { useDispatch, useSelector } from 'calypso/state';
-import { setNodeCheckState } from 'calypso/state/rewind/browser/actions';
-import getBackupBrowserCheckList from 'calypso/state/rewind/selectors/get-backup-browser-check-list';
-import getBackupBrowserNode from 'calypso/state/rewind/selectors/get-backup-browser-node';
-import { FileBrowserCheckState } from './types';
+import { FileBrowserStateActions } from './types';
 
 interface FileBrowserHeaderProps {
 	rewindId: number;
@@ -23,6 +18,7 @@ interface FileBrowserHeaderProps {
 		excludePaths: string
 	) => void;
 	onRequestGranularRestore: ( siteSlug: string, rewindId: number ) => void;
+	fileBrowserState: FileBrowserStateActions;
 }
 
 function FileBrowserHeader( {
@@ -35,10 +31,11 @@ function FileBrowserHeader( {
 	onTrackEvent,
 	onRequestGranularDownload,
 	onRequestGranularRestore,
+	fileBrowserState,
 }: FileBrowserHeaderProps ) {
-	const dispatch = useDispatch();
-	const rootNode = useSelector( ( state ) => getBackupBrowserNode( state, siteId, '/' ) );
-	const browserCheckList = useSelector( ( state ) => getBackupBrowserCheckList( state, siteId ) );
+	const { getNode, getCheckList, setNodeCheckState } = fileBrowserState;
+	const rootNode = getNode( '/' );
+	const browserCheckList = getCheckList();
 
 	const onDownloadClick = () => {
 		const includePaths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
@@ -53,21 +50,10 @@ function FileBrowserHeader( {
 			...( hasCredentials !== undefined && { has_credentials: hasCredentials } ),
 		} );
 	};
-	// When the checkbox is clicked, we'll update the check state in the state
-	const updateNodeCheckState = useCallback(
-		( siteId: number, path: string, checkState: FileBrowserCheckState ) => {
-			dispatch( setNodeCheckState( siteId, path, checkState ) );
-		},
-		[ dispatch ]
-	);
-
 	// A simple toggle.  Mixed will go to unchecked.
 	const onCheckboxChange = () => {
-		updateNodeCheckState(
-			siteId,
-			'/',
-			rootNode && rootNode.checkState === 'unchecked' ? 'checked' : 'unchecked'
-		);
+		const newCheckState = rootNode && rootNode.checkState === 'unchecked' ? 'checked' : 'unchecked';
+		setNodeCheckState( siteId, '/', newCheckState );
 	};
 
 	return (
@@ -91,7 +77,7 @@ function FileBrowserHeader( {
 				<CheckboxControl
 					__nextHasNoMarginBottom
 					checked={ rootNode ? rootNode.checkState === 'checked' : false }
-					indeterminate={ rootNode && rootNode.checkState === 'mixed' }
+					indeterminate={ rootNode?.checkState === 'mixed' }
 					onChange={ onCheckboxChange }
 					className={ `${ rootNode && rootNode.checkState === 'mixed' ? 'mixed' : '' }` }
 				/>

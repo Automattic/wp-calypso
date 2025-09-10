@@ -28,6 +28,7 @@ export interface FileBrowserItem {
 	manifestPath?: string;
 	extensionType?: string;
 	totalItems?: number;
+	path?: string;
 }
 
 export interface BackupLsResponse {
@@ -72,3 +73,42 @@ export interface FileBrowserItemInfo {
 }
 
 export type FileBrowserCheckState = 'checked' | 'unchecked' | 'mixed';
+
+export type FileBrowserNodeType = ApiFileType; // Use the complete API type set
+
+export interface FileBrowserNode {
+	id: string;
+	path: string;
+	type: FileBrowserNodeType;
+	ancestors: string[];
+	checkState: FileBrowserCheckState;
+	childrenLoaded: boolean;
+	children: FileBrowserNode[];
+	totalItems: number;
+}
+
+export interface FileBrowserCheckListInfo {
+	id: string;
+	path: string;
+}
+
+export interface FileBrowserNodeCheckList {
+	totalItems: number;
+	includeList: FileBrowserCheckListInfo[];
+	excludeList: FileBrowserCheckListInfo[];
+}
+
+export interface FileBrowserState {
+	rootNode: FileBrowserNode;
+}
+
+export interface FileBrowserStateActions {
+	getNode: ( path: string ) => FileBrowserNode | null;
+	getCheckList: () => FileBrowserNodeCheckList;
+	setNodeCheckState: (
+		siteId: number,
+		nodePath: string,
+		checkState: FileBrowserCheckState
+	) => void;
+	addChildNodes: ( siteId: number, parentPath: string, childrenPaths: FileBrowserItem[] ) => void;
+}

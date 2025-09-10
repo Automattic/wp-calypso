@@ -3,13 +3,10 @@ import { useCallback, useState, useEffect } from '@wordpress/element';
 import { __, sprintf, isRTL } from '@wordpress/i18n';
 import { chevronDown, chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useDispatch, useSelector } from 'calypso/state';
-import { addChildNodes, setNodeCheckState } from 'calypso/state/rewind/browser/actions';
-import getBackupBrowserNode from 'calypso/state/rewind/selectors/get-backup-browser-node';
 import FileInfoCard from './file-info-card';
 import FileTypeIcon from './file-type-icon';
 import { useTruncatedFileName } from './hooks';
-import { FileBrowserItem, FileBrowserCheckState } from './types';
+import { FileBrowserItem, FileBrowserCheckState, FileBrowserStateActions } from './types';
 import { useBackupContentsQuery } from './use-backup-contents-query';
 import type { FileBrowserConfig } from './index';
 
@@ -26,6 +23,7 @@ interface FileBrowserNodeProps {
 	siteSlug: string;
 	hasCredentials?: boolean;
 	isRestoreEnabled?: boolean;
+	fileBrowserState: FileBrowserStateActions;
 	onTrackEvent?: ( eventName: string, properties?: Record< string, unknown > ) => void;
 	onRequestGranularRestore: ( siteSlug: string, rewindId: number ) => void;
 }
@@ -43,11 +41,11 @@ function FileBrowserNode( {
 	siteSlug,
 	hasCredentials,
 	isRestoreEnabled,
+	fileBrowserState,
 	onTrackEvent,
 	onRequestGranularRestore,
 }: FileBrowserNodeProps ) {
 	const isRoot = path === '/';
-	const dispatch = useDispatch();
 	const isCurrentNodeClicked = activeNodePath === path;
 	const showFileCard = fileBrowserConfig?.showFileCard ?? true;
 	const showSeparateExpandButton = fileBrowserConfig?.showSeparateExpandButton ?? false;
@@ -55,7 +53,8 @@ function FileBrowserNode( {
 	const [ fetchContentsOnMount, setFetchContentsOnMount ] = useState< boolean >( isRoot );
 	const [ isOpen, setIsOpen ] = useState< boolean >( isRoot );
 	const [ addedAnyChildren, setAddedAnyChildren ] = useState< boolean >( false );
-	const browserNodeItem = useSelector( ( state ) => getBackupBrowserNode( state, siteId, path ) );
+	const { getNode, addChildNodes, setNodeCheckState } = fileBrowserState;
+	const browserNodeItem = getNode( path );
 	const expandIcon = isRTL() ? chevronLeft : chevronRight;
 	const expandDirectoriesOnClick = fileBrowserConfig?.expandDirectoriesOnClick ?? true;
 
@@ -108,31 +107,18 @@ function FileBrowserNode( {
 	const addChildrenWhenLoaded = useCallback(
 		( siteId: number, path: string, backupFiles: FileBrowserItem[] ) => {
 			if ( backupFiles ) {
-				dispatch(
-					addChildNodes(
-						siteId,
-						path,
-						backupFiles.filter( shouldAddChildNode ).map( ( childItem: FileBrowserItem ) => {
-							return {
-								id: childItem.id ?? '',
-								path: childItem.name,
-								type: childItem.type,
-								totalItems: childItem.totalItems,
-							};
-						} )
-					)
-				);
+				addChildNodes( siteId, path, backupFiles.filter( shouldAddChildNode ) );
 			}
 		},
-		[ dispatch, shouldAddChildNode ]
+		[ addChildNodes, shouldAddChildNode ]
 	);
 
 	// When the checkbox is clicked, we'll update the check state in the state
 	const updateNodeCheckState = useCallback(
 		( siteId: number, path: string, checkState: FileBrowserCheckState ) => {
-			dispatch( setNodeCheckState( siteId, path, checkState ) );
+			setNodeCheckState( siteId, path, checkState );
 		},
-		[ dispatch ]
+		[ setNodeCheckState ]
 	);
 
 	// Using isSuccess to track the API call status
@@ -300,6 +286,7 @@ function FileBrowserNode( {
 						siteSlug={ siteSlug }
 						hasCredentials={ hasCredentials }
 						isRestoreEnabled={ isRestoreEnabled }
+						fileBrowserState={ fileBrowserState }
 						onTrackEvent={ onTrackEvent }
 						onRequestGranularRestore={ onRequestGranularRestore }
 						// Hacky way to pass extensions details to the child node
@@ -321,8 +308,8 @@ function FileBrowserNode( {
 		return (
 			<CheckboxControl
 				__nextHasNoMarginBottom
-				checked={ browserNodeItem ? browserNodeItem.checkState === 'checked' : false }
-				indeterminate={ browserNodeItem && browserNodeItem.checkState === 'mixed' }
+				checked={ browserNodeItem?.checkState === 'checked' }
+				indeterminate={ browserNodeItem?.checkState === 'mixed' }
 				onChange={ onCheckboxChange }
 				// translators: %s is a file or directory name
 				aria-label={ sprintf( __( 'Select %s' ), item.name ) }
@@ -395,6 +382,7 @@ function FileBrowserNode( {
 					siteSlug={ siteSlug }
 					hasCredentials={ hasCredentials }
 					isRestoreEnabled={ isRestoreEnabled }
+					fileBrowserState={ fileBrowserState }
 					onTrackEvent={ onTrackEvent }
 					onRequestGranularRestore={ onRequestGranularRestore }
 				/>
