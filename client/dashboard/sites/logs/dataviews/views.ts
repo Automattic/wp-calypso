@@ -38,10 +38,11 @@ const activityLogsViewConfig = {
 	titleField: '',
 	primaryField: 'event',
 	visibleFields: [ 'published', 'event', 'actor' ],
-	allowedFilters: [] as string[],
+	allowedFilters: [ 'published_utc' ],
 	layout: {
 		styles: {
 			published: { maxWidth: '175px', minWidth: '140px' },
+			published_utc: { maxWidth: '175px', minWidth: '140px' },
 			summary: { minWidth: '300px' },
 			actor: { maxWidth: '150px', minWidth: '75px' },
 		},
