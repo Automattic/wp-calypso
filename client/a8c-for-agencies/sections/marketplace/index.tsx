@@ -44,15 +44,13 @@ export default function () {
 		);
 	}
 
-	if ( isEnabled( 'pressable-premium-plan' ) ) {
-		page(
-			A4A_MARKETPLACE_HOSTING_REFER_PRESSABLE_PREMIUM_PLAN_LINK,
-			requireAccessContext,
-			marketplaceReferPremiumPlanContext,
-			makeLayout,
-			clientRender
-		);
-	}
+	page(
+		A4A_MARKETPLACE_HOSTING_REFER_PRESSABLE_PREMIUM_PLAN_LINK,
+		requireAccessContext,
+		marketplaceReferPremiumPlanContext,
+		makeLayout,
+		clientRender
+	);
 
 	page(
 		`${ A4A_MARKETPLACE_HOSTING_LINK }/:section?`,

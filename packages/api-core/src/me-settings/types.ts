@@ -17,4 +17,13 @@ export interface UserSettings {
 	use_fallback_for_incomplete_languages?: boolean;
 	enable_translator?: boolean;
 	subscription_delivery_email_blocked?: boolean;
+	two_step_app_enabled: boolean;
+	two_step_backup_codes_printed: boolean;
+	two_step_enabled: boolean;
+	two_step_enhanced_security: boolean;
+	two_step_enhanced_security_forced: boolean;
+	two_step_security_key_enabled: boolean;
+	two_step_sms_country: string;
+	two_step_sms_enabled: boolean;
+	two_step_sms_phone_number: string;
 }
