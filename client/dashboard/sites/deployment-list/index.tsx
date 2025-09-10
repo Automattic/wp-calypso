@@ -1,13 +1,13 @@
 import { HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { siteRoute } from '../../app/router/sites';
 import { CalloutOverlay } from '../../components/callout-overlay';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import RouterLinkButton from '../../components/router-link-button';
 import { hasHostingFeature } from '../../utils/site-features';
 import { DeploymentCallout } from './deployment-callout';
 import { DeploymentsList } from './deployments-list';
@@ -29,11 +29,14 @@ function SiteDeployments() {
 					title={ __( 'Deployments' ) }
 					actions={
 						<>
-							<Link to="/sites/$siteSlug/settings/repositories" params={ { siteSlug } }>
-								<Button variant="secondary" __next40pxDefaultSize>
-									{ __( 'Manage repositories' ) }
-								</Button>
-							</Link>
+							<RouterLinkButton
+								to="/sites/$siteSlug/settings/repositories"
+								params={ { siteSlug } }
+								variant="secondary"
+								__next40pxDefaultSize
+							>
+								{ __( 'Manage repositories' ) }
+							</RouterLinkButton>
 							<Button variant="primary" __next40pxDefaultSize>
 								{ __( 'Trigger deployment' ) }
 							</Button>
