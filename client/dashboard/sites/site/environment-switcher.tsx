@@ -286,7 +286,7 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 		if ( ! hasValidQuota ) {
 			createErrorNotice(
 				__(
-					'Your available storage space is lower than 50%, which is insufficient for creating a staging site.'
+					'Your available storage space is below 50%, which is insufficient for creating a staging site.'
 				),
 				{
 					type: 'snackbar',
