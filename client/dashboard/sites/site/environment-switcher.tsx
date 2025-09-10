@@ -274,7 +274,7 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 
 	const { data: hasValidQuota } = useQuery( {
 		...hasValidQuotaQuery( productionSite?.ID ?? 0 ),
-		enabled: !! productionSite?.ID,
+		enabled: !! productionSite?.ID & ! stagingSite && ! isStagingSiteCreating,
 		meta: {
 			persist: false,
 		},
