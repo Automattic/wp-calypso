@@ -1,4 +1,4 @@
-import { fetchSiteLogs, SiteLogsParams, fetchSiteActivityLog } from '@automattic/api-core';
+import { fetchSiteLogs, SiteLogsParams } from '@automattic/api-core';
 import { queryOptions, keepPreviousData } from '@tanstack/react-query';
 
 export const siteLogsQuery = ( siteId: number, params: SiteLogsParams, scrollId: string | null ) =>

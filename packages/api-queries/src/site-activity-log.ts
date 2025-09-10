@@ -1,4 +1,8 @@
-import { fetchSiteActivityLog, fetchSiteRewindableActivityLog } from '@automattic/api-core';
+import {
+	fetchSiteActivityLog,
+	fetchSiteRewindableActivityLog,
+	ActivityLogParams,
+} from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
 
 export const siteLastFiveActivityLogEntriesQuery = ( siteId: number ) =>
