@@ -212,6 +212,8 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 		enabled: !! productionSiteId && isStagingSiteDeleting,
 	} );
 
+	const { createSuccessNotice, createNotice, createErrorNotice } = useDispatch( noticesStore );
+
 	// Clean up deletion flag when staging site no longer exists
 	useEffect( () => {
 		const invalidateQueries = async (
@@ -231,6 +233,10 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 			productionSite &&
 			stagingSiteId
 		) {
+			createSuccessNotice( __( 'Staging site deleted.' ), {
+				type: 'snackbar',
+				explicitDismiss: true,
+			} );
 			invalidateQueries( productionSiteId, productionSite?.slug, stagingSiteId );
 		}
 	}, [
@@ -240,9 +246,9 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 		stagingSiteId,
 		productionSiteId,
 		productionSite,
+		createSuccessNotice,
 	] );
 
-	const { createSuccessNotice, createNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { setShowHelpCenter, setNavigateToRoute } = useHelpCenter();
 
 	const isStagingSiteReady =
