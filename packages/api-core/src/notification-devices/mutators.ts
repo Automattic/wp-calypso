@@ -1,14 +1,16 @@
 import { wpcom } from '../wpcom-fetcher';
 import { NotificationsDevice, NotificationsDeviceResponse } from './types';
 
-export const createNotificationsDevice = ( pushSubscription: NotificationsDevice ) => {
+export const createNotificationsDevice = (
+	pushSubscription: NotificationsDevice
+): Promise< NotificationsDeviceResponse > => {
 	const { device_token, device_family, device_name } = pushSubscription;
 
 	return wpcom.req.post( '/devices/new', {
 		device_token: JSON.stringify( device_token ),
 		device_family,
 		device_name,
-	} ) as Promise< NotificationsDeviceResponse >;
+	} );
 };
 
 export const deleteNotificationsDevice = ( deviceId: string ) => {
