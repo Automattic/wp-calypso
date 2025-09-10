@@ -21,7 +21,7 @@ import PageLayout from '../../components/page-layout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { hasHostingFeature } from '../../utils/site-features';
 import MonitoringCard from '../monitoring-card';
-import MonitoringPerformanceCard from '../monitoring-performance-card/monitoring-performance-card';
+import MonitoringPerformanceCard from '../monitoring-performance-card';
 import illustrationUrl from './monitoring-callout-illustration.svg';
 import type { Site } from '@automattic/api-core';
 
