@@ -7,7 +7,6 @@ import { useEffect } from 'react';
 import { useIsValidWooPartner } from 'calypso/landing/stepper/hooks/use-is-valid-woo-partner';
 import { recordFreeHostingTrialStarted } from 'calypso/lib/analytics/ad-tracking/ad-track-trial-start';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { shouldRenderRewrittenDomainSearch } from 'calypso/lib/domains/should-render-rewritten-domain-search';
 import {
 	setSignupCompleteSlug,
 	persistSignupDestination,
@@ -28,9 +27,7 @@ import type { DomainSuggestion } from '@automattic/api-core';
 import type { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import type { Store } from 'redux';
 
-const DOMAINS_STEP = shouldRenderRewrittenDomainSearch()
-	? STEPS.DOMAIN_SEARCH
-	: STEPS.UNIFIED_DOMAINS;
+const DOMAINS_STEP = STEPS.UNIFIED_DOMAINS;
 
 async function initialize( reduxStore: Store ) {
 	const { resetOnboardStore, setPlanCartItem } = dispatch( ONBOARD_STORE ) as OnboardActions;
