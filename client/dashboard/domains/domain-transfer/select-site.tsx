@@ -4,6 +4,7 @@ import {
 	SearchControl,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
+	__experimentalHStack as HStack,
 } from '@wordpress/components';
 import { DataViews } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
@@ -127,17 +128,19 @@ export function SelectSite( { attachedSiteId, onSiteSelect }: Props ) {
 	return (
 		<div className="domain-transfer-select-site">
 			<VStack spacing={ 4 }>
-				<SearchControl
-					ref={ searchInputRef }
-					size="compact"
-					value={ view.search }
-					onChange={ ( search ) => {
-						setView( { ...view, search } );
-						setSelection( [] );
-						// Keep focus on search input after filtering
-						setTimeout( () => searchInputRef.current?.focus(), 0 );
-					} }
-				/>
+				<HStack>
+					<SearchControl
+						ref={ searchInputRef }
+						size="compact"
+						value={ view.search }
+						onChange={ ( search ) => {
+							setView( { ...view, search } );
+							setSelection( [] );
+							// Keep focus on search input after filtering
+							setTimeout( () => searchInputRef.current?.focus(), 0 );
+						} }
+					/>
+				</HStack>
 				<DataViews
 					data={ displayedData }
 					fields={ fields }
