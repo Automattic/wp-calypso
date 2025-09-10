@@ -1,16 +1,16 @@
 import { HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { Button } from '@wordpress/components';
+import { Button, __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { siteRoute } from '../../app/router/sites';
-import { CalloutOverlay } from '../../components/callout-overlay';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
-import { hasHostingFeature } from '../../utils/site-features';
-import { DeploymentCallout } from './deployment-callout';
+import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
+import illustrationUrl from './deployments-callout-illustration.svg';
 import { DeploymentsList } from './deployments-list';
+import ghIconUrl from './gh-icon.svg';
 
 function SiteDeployments() {
 	const { siteSlug } = siteRoute.useParams();
@@ -19,8 +19,6 @@ function SiteDeployments() {
 	if ( ! site ) {
 		return;
 	}
-
-	const hasDeploymentFeature = hasHostingFeature( site, HostingFeatures.DEPLOYMENT );
 
 	return (
 		<PageLayout
@@ -45,11 +43,25 @@ function SiteDeployments() {
 				/>
 			}
 		>
-			<CalloutOverlay
-				showCallout={ ! hasDeploymentFeature }
-				callout={ <DeploymentCallout siteSlug={ site.slug } /> }
-				main={ <DeploymentsList /> }
-			/>
+			<HostingFeatureGatedWithCallout
+				site={ site }
+				feature={ HostingFeatures.DEPLOYMENT }
+				tracksFeatureId="deployments-list"
+				upsellIcon={ <img src={ ghIconUrl } alt={ __( 'GitHub logo' ) } /> }
+				upsellImage={ illustrationUrl }
+				upsellTitle={ __( 'Deploy from GitHub' ) }
+				upsellDescription={
+					<>
+						<Text as="p" variant="muted">
+							{ __(
+								'Connect your GitHub repo directly to your WordPress.com site—with seamless integration, straightforward version control, and automated workflows.'
+							) }
+						</Text>
+					</>
+				}
+			>
+				<DeploymentsList />
+			</HostingFeatureGatedWithCallout>
 		</PageLayout>
 	);
 }

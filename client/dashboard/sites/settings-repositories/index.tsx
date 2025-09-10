@@ -1,16 +1,16 @@
 import { HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery, codeDeploymentsQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { Button } from '@wordpress/components';
+import { Button, __experimentalText as Text } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { siteRoute } from '../../app/router/sites';
-import { CalloutOverlay } from '../../components/callout-overlay';
 import { DataViewsCard } from '../../components/dataviews-card';
 import PageLayout from '../../components/page-layout';
-import { hasHostingFeature } from '../../utils/site-features';
-import { DeploymentCallout } from '../deployment-list/deployment-callout';
+import illustrationUrl from '../deployment-list/deployments-callout-illustration.svg';
+import ghIconUrl from '../deployment-list/gh-icon.svg';
+import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SettingsPageHeader from '../settings-page-header';
 import { useRepositoryFields } from './dataviews/fields';
 import { DEFAULT_VIEW, DEFAULT_LAYOUTS } from './dataviews/views';
@@ -52,8 +52,6 @@ function SiteRepositories() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
-	const hasDeploymentFeature = hasHostingFeature( site, HostingFeatures.DEPLOYMENT );
-
 	return (
 		<PageLayout
 			size="small"
@@ -69,11 +67,25 @@ function SiteRepositories() {
 				/>
 			}
 		>
-			<CalloutOverlay
-				showCallout={ ! hasDeploymentFeature }
-				callout={ <DeploymentCallout siteSlug={ site.slug } /> }
-				main={ <RepositoriesList /> }
-			/>
+			<HostingFeatureGatedWithCallout
+				site={ site }
+				feature={ HostingFeatures.DEPLOYMENT }
+				tracksFeatureId="settings-repositories"
+				upsellIcon={ <img src={ ghIconUrl } alt={ __( 'GitHub logo' ) } /> }
+				upsellImage={ illustrationUrl }
+				upsellTitle={ __( 'Deploy from GitHub' ) }
+				upsellDescription={
+					<>
+						<Text as="p" variant="muted">
+							{ __(
+								'Connect your GitHub repo directly to your WordPress.com site—with seamless integration, straightforward version control, and automated workflows.'
+							) }
+						</Text>
+					</>
+				}
+			>
+				<RepositoriesList />
+			</HostingFeatureGatedWithCallout>
 		</PageLayout>
 	);
 }
