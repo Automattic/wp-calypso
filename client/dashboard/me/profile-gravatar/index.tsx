@@ -1,4 +1,4 @@
-import { profileMutation } from '@automattic/api-queries';
+import { userSettingsMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
 	Button,
@@ -18,14 +18,14 @@ import { useState } from 'react';
 import { SectionHeader } from '../../components/section-header';
 import EditGravatar from './edit-gravatar';
 import GravatarLogo from './gravatar-logo';
-import type { UserProfile } from '@automattic/api-core';
+import type { UserSettings } from '@automattic/api-core';
 import type { Field, Form } from '@wordpress/dataviews';
 
 interface GravatarProfileSectionProps {
-	profile: UserProfile;
+	profile: UserSettings;
 }
 
-const fields: Field< UserProfile >[] = [
+const fields: Field< UserSettings >[] = [
 	{
 		id: 'avatar_URL',
 		label: __( 'Avatar' ),
@@ -74,15 +74,15 @@ const controlledKeys = fields
 export default function GravatarProfileSection( {
 	profile: serverProfile,
 }: GravatarProfileSectionProps ) {
-	const [ edits, setEdits ] = useState< Partial< UserProfile > >( {} );
+	const [ edits, setEdits ] = useState< Partial< UserSettings > >( {} );
 	const data = useMemo( () => ( { ...serverProfile, ...edits } ), [ serverProfile, edits ] );
-	const mutation = useMutation( profileMutation() );
+	const mutation = useMutation( userSettingsMutation() );
 	const isSaving = mutation.isPending;
 	const isDirty = controlledKeys.some(
-		( key ) => data[ key as keyof UserProfile ] !== serverProfile[ key as keyof UserProfile ]
+		( key ) => data[ key as keyof UserSettings ] !== serverProfile[ key as keyof UserSettings ]
 	);
 
-	const onChange = ( partial: Partial< UserProfile > ) => {
+	const onChange = ( partial: Partial< UserSettings > ) => {
 		setEdits( ( current ) => ( { ...current, ...partial } ) );
 	};
 
@@ -124,7 +124,7 @@ export default function GravatarProfileSection( {
 							) }
 						</Text>
 
-						<DataForm< UserProfile >
+						<DataForm< UserSettings >
 							data={ data }
 							fields={ fields }
 							form={ form }

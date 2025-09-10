@@ -5,12 +5,8 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { FunctionComponent } from 'react';
 import useGetDisplayDate from 'calypso/components/jetpack/daily-backup-status/use-get-display-date';
 import { useFirstMatchingBackupAttempt } from 'calypso/my-sites/backup/hooks';
-import { useSelector } from 'calypso/state';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import FileBrowserHeader from './file-browser-header';
 import FileBrowserNode from './file-browser-node';
 import { FileBrowserItem } from './types';
@@ -30,30 +26,48 @@ export interface FileBrowserConfig {
 
 interface FileBrowserProps {
 	rewindId: number;
+	siteId: number;
+	siteSlug: string;
 	fileBrowserConfig?: FileBrowserConfig;
-	siteId?: number;
+
+	// Optional site data props
+	hasCredentials?: boolean;
+	isRestoreEnabled?: boolean;
+
+	// Tracks analytics callback
+	onTrackEvent?: ( eventName: string, properties?: Record< string, unknown > ) => void;
+
+	// Granular download action callback
+	onRequestGranularDownload?: (
+		siteId: number,
+		rewindId: number,
+		includePaths: string,
+		excludePaths: string
+	) => void;
+
+	// Granular restore action callback
+	onRequestGranularRestore?: ( siteSlug: string, rewindId: number ) => void;
 }
 
-const FileBrowser: FunctionComponent< FileBrowserProps > = ( {
+function FileBrowser( {
 	rewindId,
 	fileBrowserConfig,
 	siteId,
-} ) => {
+	siteSlug,
+	hasCredentials,
+	isRestoreEnabled,
+	onTrackEvent,
+	onRequestGranularDownload,
+	onRequestGranularRestore = () => {},
+}: FileBrowserProps ) {
 	// This is the path of the node that is clicked
 	const [ activeNodePath, setActiveNodePath ] = useState< string >( '' );
-	const selectedSiteId = useSelector( getSelectedSiteId ) as number;
-	const effectiveSiteId = siteId ?? selectedSiteId;
+	const getDisplayDate = useGetDisplayDate( siteId );
 
-	const effectiveSiteSlug = useSelector( ( state ) => getSiteSlug( state, effectiveSiteId ) ) || '';
-	const getDisplayDate = useGetDisplayDate( effectiveSiteId );
-
-	const { backupAttempt: lastKnownBackupAttempt } = useFirstMatchingBackupAttempt(
-		effectiveSiteId,
-		{
-			sortOrder: 'desc',
-			successOnly: true,
-		}
-	);
+	const { backupAttempt: lastKnownBackupAttempt } = useFirstMatchingBackupAttempt( siteId, {
+		sortOrder: 'desc',
+		successOnly: true,
+	} );
 
 	const displayBackupDate = lastKnownBackupAttempt
 		? getDisplayDate( lastKnownBackupAttempt.activityTs, false )
@@ -74,7 +88,13 @@ const FileBrowser: FunctionComponent< FileBrowserProps > = ( {
 			<FileBrowserHeader
 				rewindId={ rewindId }
 				showHeaderButtons={ fileBrowserConfig?.showHeaderButtons ?? true }
-				siteId={ effectiveSiteId }
+				siteId={ siteId }
+				siteSlug={ siteSlug }
+				hasCredentials={ hasCredentials }
+				isRestoreEnabled={ isRestoreEnabled }
+				onTrackEvent={ onTrackEvent }
+				onRequestGranularDownload={ onRequestGranularDownload }
+				onRequestGranularRestore={ onRequestGranularRestore }
 			/>
 			{ fileBrowserConfig?.showBackupTime && (
 				<HStack alignment="left" spacing={ 1 }>
@@ -87,10 +107,7 @@ const FileBrowser: FunctionComponent< FileBrowserProps > = ( {
 									date: <span>{ displayBackupDate }</span>,
 							  } )
 							: __( 'There are no backups.' ) }{ ' ' }
-						<ExternalLink
-							href={ `/backup/${ effectiveSiteSlug }` }
-							children={ __( 'Create new backup' ) }
-						/>
+						<ExternalLink href={ `/backup/${ siteSlug }` } children={ __( 'Create new backup' ) } />
 					</Text>
 				</HStack>
 			) }
@@ -102,10 +119,15 @@ const FileBrowser: FunctionComponent< FileBrowserProps > = ( {
 				setActiveNodePath={ handleClick }
 				activeNodePath={ activeNodePath }
 				fileBrowserConfig={ fileBrowserConfig }
-				siteId={ effectiveSiteId }
+				siteId={ siteId }
+				siteSlug={ siteSlug }
+				hasCredentials={ hasCredentials }
+				isRestoreEnabled={ isRestoreEnabled }
+				onTrackEvent={ onTrackEvent }
+				onRequestGranularRestore={ onRequestGranularRestore }
 			/>
 		</div>
 	);
-};
+}
 
 export default FileBrowser;

@@ -1,7 +1,8 @@
 import { __ } from '@wordpress/i18n';
 import PageLayout from '../../components/page-layout';
-import { Text } from '../../components/text';
 import SecurityPageHeader from '../security-page-header';
+import RecoveryEmail from './recovery-email';
+import RecoverySMS from './recovery-sms';
 
 export default function SecurityAccountRecovery() {
 	return (
@@ -16,7 +17,8 @@ export default function SecurityAccountRecovery() {
 				/>
 			}
 		>
-			<Text>Content goes here</Text>
+			<RecoveryEmail />
+			<RecoverySMS />
 		</PageLayout>
 	);
 }

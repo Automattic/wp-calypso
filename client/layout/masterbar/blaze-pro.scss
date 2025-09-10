@@ -166,110 +166,19 @@ body.is-section-login {
 		}
 	}
 
+	&.is-section-signup .layout__content,
+	.layout__content {
+		padding-top: 85px;
+
+		@media ( max-width: $break-mobile ) {
+			padding-top: 50px;
+			padding-bottom: 80px;
+		}
+	}
+
 	&.is-section-signup::before,
 	&.is-section-signup .layout__primary::before {
 		display: none;
-	}
-
-	.login__body--continue-as-user {
-		align-items: center;
-		display: flex;
-		flex-direction: column;
-
-		.card.auth-form__social.is-login {
-			width: 326px;
-		}
-
-		.auth-form__separator::before,
-		.auth-form__separator::after {
-			display: none;
-		}
-	}
-
-	.continue-as-user {
-		margin: 0;
-		width: 326px;
-		height: unset;
-
-		~ .auth-form__separator {
-			margin: 32px auto;
-		}
-
-		.continue-as-user__user-info {
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-			align-items: center;
-			align-self: stretch;
-			border: 1px solid #ccc;
-			width: 100%;
-			box-sizing: border-box;
-			padding: 32px 24px 16px 24px;
-			position: relative;
-		}
-
-		~ .card.auth-form__social.is-login {
-			margin: 0;
-			padding: 0;
-			max-width: initial;
-		}
-
-
-		.continue-as-user__gravatar-link {
-			margin: 0 0 8px;
-			padding: 0;
-			border: 0;
-			border-radius: 0;
-			width: 100%;
-		}
-
-		.gravatar.continue-as-user__gravatar {
-			width: 80px;
-			height: 80px;
-			box-sizing: border-box;
-		}
-
-		.continue-as-user__username {
-			color: var(--color-black);
-			font-family: $inter;
-			font-size: 1rem;
-			font-weight: 600;
-			line-height: 20px;
-		}
-
-		.continue-as-user__email {
-			color: var(--studio-gray-60);
-			font-family: $inter;
-			font-size: 0.875rem;
-			font-weight: 500;
-			line-height: 20px;
-			margin: 0;
-			text-align: center;
-		}
-
-		.continue-as-user__not-you {
-			align-items: center;
-			bottom: auto;
-			display: flex;
-			gap: 4px;
-			height: 32px;
-			justify-content: center;
-			margin-bottom: 0;
-			padding: 4px 16px;
-			position: inherit;
-		}
-
-		.continue-as-user__change-user-link {
-			font-size: 0.875rem;
-			font-weight: 500;
-		}
-
-		.continue-as-user__continue-button {
-			font-size: rem(13px);
-			font-weight: 600;
-			margin-top: 24px;
-			width: 326px;
-		}
 	}
 
 	.card.auth-form__social.is-login {
@@ -302,7 +211,6 @@ body.is-section-login {
 				font-family: $inter;
 				font-size: rem(13px);
 			}
-
 		}
 	}
 
@@ -316,7 +224,7 @@ body.is-section-login {
 
 		a,
 		a:visited {
-			color: var(--studio-gray-60);
+			color: var( --studio-gray-60 );
 			text-decoration: underline;
 		}
 	}
@@ -415,28 +323,5 @@ body.is-section-login {
 
 	.login__lostpassword-subtitle {
 		width: 360px;
-	}
-}
-
-// Hacks for Continue-as-a-user for Sign Up (but user is already logged in)
-.is-blaze-pro {
-	.step-wrapper__content {
-		align-items: center;
-		display: flex;
-		flex-direction: column;
-	}
-
-	&.layout:not(.dops) .step-wrapper .step-wrapper__header {
-		margin-top: 0;
-	}
-
-	// Do not show ToS twice for Sign In...
-	&.layout.is-section-login .continue-as-user .auth-form__social-buttons-tos {
-		display: none;
-	}
-
-	// ... though ToS should be shown for Sign Up (for logged in users)
-	&.layout.is-section-signup.is-logged-in .continue-as-user .auth-form__social-buttons-tos {
-		margin-top: 24px;
 	}
 }

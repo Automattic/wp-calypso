@@ -12,7 +12,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
-import clsx from 'clsx';
+import { useLocale } from '../../app/locale';
 import { siteRoute } from '../../app/router/sites';
 import { Callout } from '../../components/callout';
 import { CalloutOverlay } from '../../components/callout-overlay';
@@ -20,8 +20,9 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { hasHostingFeature } from '../../utils/site-features';
+import MonitoringCard from '../monitoring-card';
 import illustrationUrl from './monitoring-callout-illustration.svg';
-import './style.scss';
+import type { Site } from '@automattic/api-core';
 
 export function SiteMonitoringCallout( {
 	siteSlug,
@@ -67,14 +68,14 @@ const hoursMap: Record< string, number > = {
 	'7-days': 168,
 };
 
-const getDateRange = ( range: string ) => {
+const getDateRange = ( range: string, locale: string ) => {
 	const now = new Date();
 
 	const hours = hoursMap[ range ] || 24;
 	const start = new Date( now.getTime() - hours * 60 * 60 * 1000 );
 
 	const formatDate = ( date: Date ) => {
-		return date.toLocaleDateString( 'en-US', {
+		return date.toLocaleDateString( locale, {
 			day: 'numeric',
 			month: 'long',
 			year: 'numeric',
@@ -85,13 +86,69 @@ const getDateRange = ( range: string ) => {
 };
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
-function SiteMonitoringBody( { site, timeRange }: { site: object; timeRange: string } ) {
+function SiteMonitoringBody( {
+	site,
+	timeRange,
+	locale,
+}: {
+	site: Site;
+	timeRange: string;
+	locale: string;
+} ) {
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 
 	return (
 		<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
-			<Text className={ clsx( 'site-monitoring-dates' ) }>{ getDateRange( timeRange ) }</Text>
-			<div>Main Content ({ timeRange }).</div>
+			<Text variant="muted">{ getDateRange( timeRange, locale ) }</Text>
+
+			<MonitoringCard
+				title={ __( 'Server performance' ) }
+				description={ __( 'Requests per minute and average server response time.' ) }
+				onDownloadClick={ () => {} }
+				onAnchorClick={ () => {} }
+			>
+				[Server performance graph]
+			</MonitoringCard>
+
+			<HStack wrap alignment="stretch" spacing={ isSmallViewport ? 4 : 8 }>
+				<MonitoringCard
+					title={ __( 'HTTP request methods' ) }
+					description={ __( 'Percentage of traffic per HTTP request method.' ) }
+					onDownloadClick={ () => {} }
+					onAnchorClick={ () => {} }
+				>
+					[HTTP request methods graph]
+				</MonitoringCard>
+
+				<MonitoringCard
+					title={ __( 'Response types' ) }
+					description={ __( 'Percentage of dynamic versus static responses.' ) }
+					onDownloadClick={ () => {} }
+					onAnchorClick={ () => {} }
+				>
+					[Response types graph]
+				</MonitoringCard>
+			</HStack>
+
+			<MonitoringCard
+				title={ __( 'Successful HTTP responses' ) }
+				description={ __( 'Requests per minute completed without errors by the server.' ) }
+				onDownloadClick={ () => {} }
+				onAnchorClick={ () => {} }
+			>
+				[Successful HTTP responses graph]
+			</MonitoringCard>
+
+			<MonitoringCard
+				title={ __( 'Unsuccessful HTTP responses' ) }
+				description={ __(
+					'Requests per minute that encountered errors or issues during processing.'
+				) }
+				onDownloadClick={ () => {} }
+				onAnchorClick={ () => {} }
+			>
+				[Unsuccessful HTTP responses graph]
+			</MonitoringCard>
 		</VStack>
 	);
 }
@@ -99,6 +156,7 @@ function SiteMonitoringBody( { site, timeRange }: { site: object; timeRange: str
 function SiteMonitoring() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
+	const locale = useLocale();
 
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	const [ timeRange, setTimeRange ] = useState( '24-hours' );
@@ -118,39 +176,36 @@ function SiteMonitoring() {
 	return (
 		<PageLayout
 			header={
-				<>
-					<HStack
-						justify="space-between"
-						alignment="stretch"
-						wrap
-						spacing={ isSmallViewport ? 5 : 10 }
-						className={ clsx( 'site-monitoring-header' ) }
-					>
-						<PageHeader title={ __( 'Monitoring' ) } />
-						<div>
-							<ToggleGroupControl
-								value={ timeRange }
-								isBlock
-								__nextHasNoMarginBottom
-								__next40pxDefaultSize
-								onChange={ handleTimeRangeChange }
-								label={ __( 'Time period' ) }
-								hideLabelFromVision
-							>
-								<ToggleGroupControlOption value="6-hours" label={ __( '6 hours' ) } />
-								<ToggleGroupControlOption value="24-hours" label={ __( '24 hours' ) } />
-								<ToggleGroupControlOption value="3-days" label={ __( '3 days' ) } />
-								<ToggleGroupControlOption value="7-days" label={ __( '7 days' ) } />
-							</ToggleGroupControl>
-						</div>
-					</HStack>
-				</>
+				<HStack
+					justify="space-between"
+					alignment="stretch"
+					wrap
+					spacing={ isSmallViewport ? 5 : 10 }
+				>
+					<PageHeader title={ __( 'Monitoring' ) } />
+					<div>
+						<ToggleGroupControl
+							value={ timeRange }
+							isBlock
+							__nextHasNoMarginBottom
+							__next40pxDefaultSize
+							onChange={ handleTimeRangeChange }
+							label={ __( 'Time period' ) }
+							hideLabelFromVision
+						>
+							<ToggleGroupControlOption value="6-hours" label={ __( '6 hours' ) } />
+							<ToggleGroupControlOption value="24-hours" label={ __( '24 hours' ) } />
+							<ToggleGroupControlOption value="3-days" label={ __( '3 days' ) } />
+							<ToggleGroupControlOption value="7-days" label={ __( '7 days' ) } />
+						</ToggleGroupControl>
+					</div>
+				</HStack>
 			}
 		>
 			<CalloutOverlay
 				showCallout={ ! hasHostingFeature( site, HostingFeatures.MONITOR ) }
 				callout={ <SiteMonitoringCallout siteSlug={ site.slug } /> }
-				main={ <SiteMonitoringBody timeRange={ timeRange } site={ site } /> }
+				main={ <SiteMonitoringBody timeRange={ timeRange } site={ site } locale={ locale } /> }
 			/>
 		</PageLayout>
 	);
