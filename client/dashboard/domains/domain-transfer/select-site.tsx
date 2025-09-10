@@ -2,7 +2,6 @@ import { sitesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import {
 	SearchControl,
-	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
@@ -73,13 +72,7 @@ export function SelectSite( { attachedSiteId, onSiteSelect }: Props ) {
 		{
 			id: 'URL',
 			label: 'URL',
-			render: ( { item }: { item: Site } ) => {
-				return (
-					<Text className="domain-transfer-select-site__url-field">
-						{ getSiteDisplayUrl( item ) }
-					</Text>
-				);
-			},
+			getValue: ( { item }: { item: Site } ) => getSiteDisplayUrl( item ),
 		},
 	];
 
