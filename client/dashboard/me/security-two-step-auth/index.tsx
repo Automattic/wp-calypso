@@ -1,4 +1,4 @@
-import { profileQuery } from '@automattic/api-queries';
+import { userSettingsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import PageLayout from '../../components/page-layout';
@@ -6,7 +6,7 @@ import SecurityPageHeader from '../security-page-header';
 import SecurityTwoStepAuthMainPage from './main-page';
 
 export default function SecurityTwoStepAuth() {
-	const { data: userSettings } = useQuery( profileQuery() );
+	const { data: userSettings } = useQuery( userSettingsQuery() );
 
 	const isTwoStepEnabled = userSettings?.two_step_enabled;
 

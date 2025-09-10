@@ -4,12 +4,12 @@ import { __, sprintf } from '@wordpress/i18n';
 import InlineSupportLink from '../../../components/inline-support-link';
 import Notice from '../../../components/notice';
 import SecurityKeys from './security-keys';
-import type { UserProfile } from '@automattic/api-core';
+import type { UserSettings } from '@automattic/api-core';
 
 export default function SecurityTwoStepAuthMainPage( {
 	userSettings,
 }: {
-	userSettings: UserProfile;
+	userSettings: UserSettings;
 } ) {
 	const { two_step_app_enabled, two_step_sms_enabled, two_step_sms_phone_number } = userSettings;
 
