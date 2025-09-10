@@ -34,7 +34,7 @@ export default function DomainConnectionSetup() {
 	const { domainName } = domainRoute.useParams();
 
 	const {
-		initialStep: intialStepName,
+		step: intialStepName,
 		showErrors,
 		isFirstVisit,
 		queryError,
@@ -50,9 +50,9 @@ export default function DomainConnectionSetup() {
 		to: domainConnectionSetupRoute.fullPath,
 		params: { domainName },
 	} ).href;
-	const returnUrl = new URL( relativePath, window.location.origin ).href;
+	const returnUrl = new URL( relativePath, window.location.origin ).href + '?step=dc_return';
 	const { data: domainConnectionSetupInfo } = useSuspenseQuery(
-		domainConnectionSetupInfoQuery( domainName, domain.blog_id, encodeURIComponent( returnUrl ) )
+		domainConnectionSetupInfoQuery( domainName, domain.blog_id, returnUrl )
 	);
 	const { createErrorNotice } = useDispatch( noticesStore );
 	// Update connection mode mutation

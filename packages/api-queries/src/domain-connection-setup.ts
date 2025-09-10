@@ -11,7 +11,7 @@ export const domainConnectionSetupInfoQuery = (
 	redirectURL?: string
 ) =>
 	queryOptions( {
-		queryKey: [ 'domain-setup-info', domainName, siteId ],
+		queryKey: [ 'domain-setup-info', domainName, siteId, redirectURL ],
 		queryFn: () => fetchDomainMappingSetupInfo( domainName, siteId, redirectURL || '' ),
 	} );
 

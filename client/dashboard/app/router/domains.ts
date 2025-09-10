@@ -21,6 +21,7 @@ import {
 	lazyRouteComponent,
 } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
+import { StepName } from '../../domains/domain-connection-setup/types';
 import { rootRoute } from './root';
 
 // Standalone domains route - requires rootRoute
@@ -338,7 +339,7 @@ export const domainConnectionSetupRoute = createRoute( {
 			domainConnectionSetupInfoQuery(
 				domainName,
 				domain.blog_id,
-				encodeURIComponent( `${ window.location.href }?step=dc_return` ) // TO DO: get step name from the type definition
+				`${ window.location.href }?step=${ StepName.DC_RETURN }`
 			)
 		);
 	},
