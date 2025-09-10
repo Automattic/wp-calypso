@@ -35,8 +35,8 @@ export function SelectSite( { attachedSiteId, onSiteSelect }: Props ) {
 		perPage,
 		page: 1,
 		search: '',
+		fields: [ 'URL' ],
 		titleField: 'name',
-		descriptionField: 'URL',
 		mediaField: 'icon',
 		infiniteScrollEnabled: true,
 	} );
@@ -63,7 +63,7 @@ export function SelectSite( { attachedSiteId, onSiteSelect }: Props ) {
 	const fields = [
 		{
 			id: 'icon',
-			render: ( { item }: { item: Site } ) => <SiteIcon site={ item } size={ 32 } />,
+			render: ( { item }: { item: Site } ) => <SiteIcon site={ item } size={ 52 } />,
 		},
 		{
 			id: 'name',

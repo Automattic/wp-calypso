@@ -1,31 +1,12 @@
-@import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/breakpoints';
 
 .domain-transfer-select-site {
 	.dataviews-wrapper {
-		max-height: 345px;
+		max-height: 430px;
 		overflow: auto;
 
 		@media ( max-width: $break-small ) {
-			max-height: 250px;
+			max-height: 330px;
 		}
-	}
-	
-	.dataviews-view-list div[role="article"] .dataviews-view-list__item-wrapper {
-		padding: 0.5rem;
-	}
-
-	.domain-transfer-select-site__url-field {
-		color: #{$gray-700};
-	}
-
-	.dataviews-view-list__field-wrapper {
-		gap: 0;
-	}
-
-	.dataviews-view-list__media-wrapper {
-		width: auto;
-		height: auto;
-		align-self: center;
 	}
 }
