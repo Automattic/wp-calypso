@@ -3,7 +3,7 @@ import {
 	deviceRegistrationMutation,
 	deviceRemovalMutation,
 } from '@automattic/api-queries';
-import { type PushNotificationStatus } from '@automattic/api-queries/src/notification-device';
+import { type PushNotificationStatus } from '@automattic/api-queries/src/notification-devices';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
 	Card,
