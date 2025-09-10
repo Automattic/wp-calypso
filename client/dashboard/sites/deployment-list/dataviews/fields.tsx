@@ -8,11 +8,8 @@ import {
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import TimeSince from '../../../components/time-since';
-import { BranchDisplay } from '../components/branch-display';
-import {
-	DeploymentStatusBadge,
-	DeploymentStatusValue,
-} from '../components/deployment-status-badge';
+import { BranchDisplay } from '../branch-display';
+import { DeploymentStatusBadge, DeploymentStatusValue } from '../deployment-status-badge';
 import type { DeploymentRunWithDeploymentInfo } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 

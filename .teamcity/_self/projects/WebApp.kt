@@ -1004,11 +1004,18 @@ object PlaywrightTestPRMatrix : BuildType({
 			scriptContent = """
 				echo "Getting Calypso url for build ${BuildDockerImage.depParamRefs.buildNumber}"
 				chmod +x ./bin/get-calypso-live-url.sh
-				CALYPSO_LIVE_URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
+				CALYPSO_BASE_URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
 				if [[ ${'$'}? -ne 0 ]]; then
-					// Command failed. CALYPSO_LIVE_URL contains stderr
-					echo ${'$'}CALYPSO_LIVE_URL
+					// Command failed. CALYPSO_BASE_URL contains stderr
+					echo ${'$'}CALYPSO_BASE_URL
 					exit 1
+				fi
+				
+				export CALYPSO_BASE_URL
+
+				# We only want to override the Calypso URL if we have a live one to use!
+				if [[ -n ${'$'}CALYPSO_LIVE_URL ]]; then
+					export CALYPSO_BASE_URL=${'$'}CALYPSO_LIVE_URL
 				fi
 
 				# Check if test/e2e or packages/calypso-e2e files have been changed
