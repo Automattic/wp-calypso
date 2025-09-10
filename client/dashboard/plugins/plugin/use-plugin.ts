@@ -2,7 +2,7 @@ import { PluginItem, Site } from '@automattic/api-core';
 import {
 	pluginsQuery,
 	sitesQuery,
-	wooCommercePluginQuery,
+	marketplacePluginQuery,
 	wpOrgPluginQuery,
 } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
@@ -14,7 +14,7 @@ export const usePlugin = ( pluginId: string ) => {
 	const { data: sitesPlugins, isLoading: isLoadingSitesPlugins } = useQuery( pluginsQuery() );
 	const { data: sites, isLoading: isLoadingSites } = useQuery( sitesQuery() );
 	const { data: wooCommercePlugin, isLoading: isLoadingWooCommercePlugin } = useQuery(
-		wooCommercePluginQuery( pluginId )
+		marketplacePluginQuery( pluginId )
 	);
 	const { data: wpOrgPlugin, isLoading: isLoadingWpOrgPlugin } = useQuery(
 		wpOrgPluginQuery( pluginId, locale )
