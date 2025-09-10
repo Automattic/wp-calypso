@@ -14,9 +14,9 @@
 	text-overflow: ellipsis;
 }
 
-/* Badges */
 .site-logs-card,
 .site-logs-details-modal {
+	/* Badges */
 	.badge--POST,
 	.badge--deprecated {
 		background-color: #bbe0fa;
@@ -48,6 +48,7 @@
 		background-color: #dcdcee;
 		color: #2c3338;
 	}
+	/** Activity log icon and event color **/
 
 	.site-activity-logs__event-icon {
 		fill: $gray-700;
