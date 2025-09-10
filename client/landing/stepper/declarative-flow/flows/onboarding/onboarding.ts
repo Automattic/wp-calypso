@@ -339,7 +339,7 @@ const onboarding: FlowV2< typeof initialize > = {
 
 		// Preload the visual split experiment
 		useEffect( () => {
-			loadExperimentAssignment( 'calypso_plans_page_visual_separation_2025_09' );
+			loadExperimentAssignment( 'calypso_plans_page_visual_separation_2025_09_v2' );
 		}, [] );
 	},
 };

@@ -14,3 +14,10 @@ export async function deleteStagingSite( stagingSiteId: number, productionSiteId
 		apiNamespace: 'wpcom/v2',
 	} );
 }
+
+export async function validateStagingSiteQuota( siteId: number ) {
+	return wpcom.req.post( {
+		path: `/sites/${ siteId }/staging-site/validate-quota`,
+		apiNamespace: 'wpcom/v2',
+	} );
+}

@@ -14,3 +14,8 @@ export interface JetpackConnection {
 		wpLocalConstant: boolean;
 	};
 }
+
+export interface JetpackConnectionHealth {
+	is_healthy: boolean;
+	error?: string;
+}

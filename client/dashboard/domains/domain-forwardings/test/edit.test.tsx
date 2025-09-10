@@ -32,7 +32,7 @@ function renderEditForm( props: TestFormProps = {} ) {
 
 afterEach( () => nock.cleanAll() );
 
-test.skip( 'renders edit form with pre-filled subdomain forwarding data', async () => {
+test( 'renders edit form with pre-filled subdomain forwarding data', async () => {
 	const initialData = {
 		domain_redirect_id: 123,
 		subdomain: 'blog',
@@ -53,7 +53,7 @@ test.skip( 'renders edit form with pre-filled subdomain forwarding data', async 
 	expect( screen.getByRole( 'button', { name: 'Update' } ) ).toBeInTheDocument();
 } );
 
-test.skip( 'renders edit form with pre-filled root domain forwarding data', async () => {
+test( 'renders edit form with pre-filled root domain forwarding data', async () => {
 	const initialData = {
 		domain_redirect_id: 123,
 		target_host: 'newsite.com',
@@ -72,7 +72,7 @@ test.skip( 'renders edit form with pre-filled root domain forwarding data', asyn
 	expect( screen.getByText( 'Source URL' ) ).toBeInTheDocument();
 } );
 
-test.skip( 'forces subdomain mode when forceSubdomain is true for existing subdomain forwarding', async () => {
+test( 'forces subdomain mode when forceSubdomain is true for existing subdomain forwarding', async () => {
 	const initialData = {
 		domain_redirect_id: 123,
 		subdomain: 'blog',
@@ -96,7 +96,7 @@ test.skip( 'forces subdomain mode when forceSubdomain is true for existing subdo
 	expect( screen.getByText( 'Subdomain' ) ).toBeInTheDocument();
 } );
 
-test.skip( 'calls onSubmit with updated data when form is submitted', async () => {
+test( 'calls onSubmit with updated data when form is submitted', async () => {
 	const user = userEvent.setup();
 	const mockOnSubmit = jest.fn();
 
@@ -142,7 +142,7 @@ test.skip( 'calls onSubmit with updated data when form is submitted', async () =
 	} );
 } );
 
-test.skip( 'shows advanced settings panel expanded when initial data has non-default values', async () => {
+test( 'shows advanced settings panel expanded when initial data has non-default values', async () => {
 	const initialData = {
 		domain_redirect_id: 123,
 		subdomain: 'blog',
@@ -166,7 +166,7 @@ test.skip( 'shows advanced settings panel expanded when initial data has non-def
 	} );
 } );
 
-test.skip( 'disables submit button when isSubmitting is true', async () => {
+test( 'disables submit button when isSubmitting is true', async () => {
 	const initialData = {
 		domain_redirect_id: 123,
 		subdomain: 'blog',
@@ -189,7 +189,7 @@ test.skip( 'disables submit button when isSubmitting is true', async () => {
 	expect( submitButton ).toBeDisabled();
 } );
 
-test.skip( 'handles HTTP vs HTTPS protocol correctly in pre-filled data', async () => {
+test( 'handles HTTP vs HTTPS protocol correctly in pre-filled data', async () => {
 	const httpData = {
 		domain_redirect_id: 123,
 		subdomain: 'blog',
@@ -207,7 +207,7 @@ test.skip( 'handles HTTP vs HTTPS protocol correctly in pre-filled data', async 
 	} );
 } );
 
-test.skip( 'handles advanced settings correctly when updating', async () => {
+test( 'handles advanced settings correctly when updating', async () => {
 	const user = userEvent.setup();
 	const mockOnSubmit = jest.fn();
 

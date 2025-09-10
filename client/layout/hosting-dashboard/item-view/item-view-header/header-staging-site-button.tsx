@@ -1,4 +1,4 @@
-import { siteByIdQuery } from '@automattic/api-queries';
+import { siteByIdQuery, hasValidQuotaQuery } from '@automattic/api-queries';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 import { Button, Spinner } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
@@ -10,7 +10,6 @@ import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpt
 import { useAddStagingSiteMutation } from 'calypso/sites/staging-site/hooks/use-add-staging-site';
 import { useCheckStagingSiteStatus } from 'calypso/sites/staging-site/hooks/use-check-staging-site-status';
 import { USE_STAGING_SITE_LOCK_QUERY_KEY } from 'calypso/sites/staging-site/hooks/use-get-lock-query';
-import { useHasValidQuotaQuery } from 'calypso/sites/staging-site/hooks/use-has-valid-quota';
 import { useStagingSite } from 'calypso/sites/staging-site/hooks/use-staging-site';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -60,7 +59,13 @@ export default function HeaderStagingSiteButton( {
 		data: hasValidQuota,
 		isLoading: isLoadingQuotaValidation,
 		error: isErrorValidQuota,
-	} = useHasValidQuotaQuery( siteId );
+	} = useQuery( {
+		...hasValidQuotaQuery( siteId ),
+		enabled: !! siteId,
+		meta: {
+			persist: false,
+		},
+	} );
 
 	// Notice IDs for staging site operations
 	const stagingSiteAddFailureNoticeId = 'staging-site-add-failure';
