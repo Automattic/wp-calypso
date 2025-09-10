@@ -1,5 +1,6 @@
 import { DESKTOP_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
+import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { useResizeObserver } from '@wordpress/compose';
 import { DataViews, filterSortAndPaginate, type View } from '@wordpress/dataviews';
@@ -15,8 +16,8 @@ import {
 	purchasesMobileFields,
 } from '../billing-purchases/dataviews';
 import { useMembershipsFieldDefinitions } from './dataviews';
-import { MembershipSubscription } from './types';
 import { getMonetizeSubscriptionUrl } from './urls';
+import { monetizeSubscriptionsQuery } from '@automattic/api-queries';
 
 const defaultPerPage = 10;
 
@@ -59,6 +60,9 @@ function MonetizeSubscriptions() {
 	const membershipsDataFields = useMembershipsFieldDefinitions();
 	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
 	const navigate = useNavigate();
+	const { data: monetizeSubscriptions, isLoading: isLoadingMemberships } = useQuery(
+		monetizeSubscriptionsQuery()
+	);
 
 	// Hide fields at mobile width
 	useEffect( () => {
@@ -95,8 +99,8 @@ function MonetizeSubscriptions() {
 	);
 
 	const { data: adjustedMemberships, paginationInfo } = useMemo( () => {
-		return filterSortAndPaginate( memberships, currentView, membershipsDataFields );
-	}, [ memberships, currentView, membershipsDataFields ] );
+		return filterSortAndPaginate( monetizeSubscriptions, currentView, membershipsDataFields );
+	}, [ monetizeSubscriptions, currentView, membershipsDataFields ] );
 
 	const getItemId = ( item: MembershipSubscription ) => {
 		return item.ID;
@@ -108,6 +112,7 @@ function MonetizeSubscriptions() {
 				<DataViewsCard>
 					<DataViews
 						data={ adjustedMemberships }
+						isLoading={ isLoadingMemberships }
 						fields={ membershipsDataFields }
 						view={ currentView }
 						onChangeView={ setView }

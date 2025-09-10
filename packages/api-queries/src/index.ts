@@ -29,6 +29,7 @@ export * from './me-dpa';
 export * from './me-payment-methods';
 export * from './me-preferences';
 export * from './me-purchases';
+export * from './me-monetize';
 export * from './me-settings';
 export * from './me-notifications-settings';
 export * from './me-notifications-devices';
