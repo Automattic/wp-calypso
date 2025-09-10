@@ -37,8 +37,8 @@ export default function DomainConnectionSetup() {
 		step: intialStepName,
 		showErrors,
 		isFirstVisit,
-		queryError,
-		queryErrorDescription,
+		error: queryError,
+		error_description: queryErrorDescription,
 	} = domainRoute.useSearch();
 
 	// Load domain data
