@@ -31,6 +31,14 @@ export default function ClipboardInputControl( {
 		}
 	}, [ isCopied ] );
 
+	const label = props.label
+		? sprintf(
+				/* translators: %s is the field to copy */
+				__( 'Copy %s' ),
+				props.label
+		  )
+		: __( 'Copy' );
+
 	return (
 		<InputControl
 			{ ...props }
@@ -39,15 +47,7 @@ export default function ClipboardInputControl( {
 					<Button
 						size="small"
 						icon={ copySmall }
-						label={
-							isCopied
-								? __( 'Copied' )
-								: sprintf(
-										/* translators: %s is the field to copy */
-										__( 'Copy %s' ),
-										props.label
-								  )
-						}
+						label={ isCopied ? __( 'Copied' ) : label }
 						onClick={ handleCopy }
 					/>
 				</InputControlSuffixWrapper>

@@ -1,7 +1,7 @@
-@import "@wordpress/base-styles/colors";
-@import "@wordpress/base-styles/variables";
-@import "@wordpress/base-styles/mixins";
-@import "./reset.scss";
+@import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/mixins';
+@import './reset.scss';
 
 .wpnc__note .wpnc__body .wpnc__body-content {
 	padding: 0;
@@ -101,7 +101,7 @@
 		&:has(.wpnc__button) {
 			margin: 0 -#{$grid-unit-20};
 			padding: 16px;
-			border-top: 1px solid $gray-300;
+			border-top: 1px solid $gray-100;
 		}
 	}
 
@@ -134,7 +134,7 @@
 
 	.wpnc__hr-separator {
 		border: none;
-		border-top: 1px solid $gray-300;
+		border-top: 1px solid $gray-100;
 	}
 
 	// Links
@@ -214,13 +214,19 @@
 }
 
 .wpnc__text-summary {
-	.components-external-link {
+	.components-external-link:not(:hover) {
 		color: inherit;
 	}
 
 	.components-external-link__contents {
 		text-decoration: none;
 	}
+}
+
+.wpnc__gridicon .gridicons-reply {
+	display: inline-block;
+	transform: translateY(2px);
+	fill: #8c8f94;
 }
 
 /**
@@ -233,6 +239,15 @@
 
 	.wpnc__user-title {
 		font-weight: 500;
+	}
+
+	.wpnc__user-description-separator {
+		color: $gray-700;
+
+		&:first-child,
+		&:last-child {
+			display: none;
+		}
 	}
 
 	a {
@@ -259,11 +274,12 @@
 .wpnc__note.wpnc__comment_like .wpnc__body .wpnc__body-content,
 .wpnc__note.wpnc__follow .wpnc__body .wpnc__body-content {
 	.wpnc__user {
-		padding-bottom: 16px;
-		border-bottom: 1px solid $gray-300;
+		padding: 12px 0;
+		border-bottom: 1px solid $gray-100;
 
-		&:not(:first-child) {
-			padding-top: 16px;
+		&:first-child {
+			padding-top: 0;
+			margin-top: -4px;
 		}
 	}
 
