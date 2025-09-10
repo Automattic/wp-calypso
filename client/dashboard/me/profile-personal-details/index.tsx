@@ -1,4 +1,4 @@
-import { profileMutation } from '@automattic/api-queries';
+import { userSettingsMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
 	Button,
@@ -15,10 +15,10 @@ import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { SectionHeader } from '../../components/section-header';
-import type { UserProfile } from '@automattic/api-core';
+import type { UserSettings } from '@automattic/api-core';
 import type { Field, Form } from '@wordpress/dataviews';
 
-const fields: Field< UserProfile >[] = [
+const fields: Field< UserSettings >[] = [
 	{
 		id: 'first_name',
 		label: __( 'First name' ),
@@ -80,7 +80,7 @@ const form: Form = {
 };
 
 interface PersonalDetailsSectionProps {
-	profile: UserProfile;
+	profile: UserSettings;
 }
 
 // excluding user_login since it's read-only
@@ -91,15 +91,15 @@ const controlledKeys = fields
 export default function PersonalDetailsSection( {
 	profile: serverProfile,
 }: PersonalDetailsSectionProps ) {
-	const [ edits, setEdits ] = useState< Partial< UserProfile > >( {} );
+	const [ edits, setEdits ] = useState< Partial< UserSettings > >( {} );
 	const data = useMemo( () => ( { ...serverProfile, ...edits } ), [ serverProfile, edits ] );
-	const mutation = useMutation( profileMutation() );
+	const mutation = useMutation( userSettingsMutation() );
 	const isSaving = mutation.isPending;
 	const isDirty = controlledKeys.some( ( key ) => {
-		return data?.[ key as keyof UserProfile ] !== serverProfile?.[ key as keyof UserProfile ];
+		return data?.[ key as keyof UserSettings ] !== serverProfile?.[ key as keyof UserSettings ];
 	} );
 
-	function onChange( partial: Partial< UserProfile > ) {
+	function onChange( partial: Partial< UserSettings > ) {
 		setEdits( ( current ) => ( { ...current, ...partial } ) );
 	}
 
@@ -120,7 +120,7 @@ export default function PersonalDetailsSection( {
 					<VStack spacing={ 4 }>
 						<SectionHeader level={ 3 } title={ __( 'Personal details' ) } />
 
-						<DataForm< UserProfile >
+						<DataForm< UserSettings >
 							data={ data }
 							fields={ fields }
 							form={ form }

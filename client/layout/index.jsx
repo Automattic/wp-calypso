@@ -60,9 +60,6 @@ import HelpCenterLoader from './help-center-loader';
 import LayoutLoader from './loader';
 import { shouldLoadInlineHelp, handleScroll } from './utils';
 
-// goofy import for environment badge, which is SSR'd
-import 'calypso/components/environment-badge/style.scss';
-
 /*
  * Hotfix for card and button styles hierarchy after <GdprBanner /> removal (see: #70601)
  * TODO: Find a way to improve our async loading that will not require these imports in the global scope (context: pbNhbs-4xL-p2)
