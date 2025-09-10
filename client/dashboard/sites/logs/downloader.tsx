@@ -40,7 +40,7 @@ function csvEscape( value: unknown ): string {
 async function downloadSiteLogs( args: {
 	siteId: number;
 	siteSlug: string;
-	logType: LogType | 'activity';
+	logType: LogType;
 	startSec: number;
 	endSec: number;
 	filter: FilterType;
@@ -138,7 +138,7 @@ export function LogsDownloader( {
 }: {
 	siteId: number;
 	siteSlug: string;
-	logType: LogType | 'activity';
+	logType: LogType;
 	startSec: number;
 	endSec: number;
 	filter: FilterType;

@@ -9,7 +9,7 @@ import DetailsModalServer from '../components/details-modal-server';
 import type { Action } from '@wordpress/dataviews';
 
 export interface UseLogActionsOptions {
-	logType: LogType | 'activity';
+	logType: LogType;
 	isLoading: boolean;
 	gmtOffset: number;
 	timezoneString?: string;

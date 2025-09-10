@@ -72,13 +72,7 @@ const getFilterParamsFromView = ( view: View, fieldNames: string[] ): FilterType
 	return out;
 };
 
-export function toFilterParams( {
-	view,
-	logType,
-}: {
-	view: View;
-	logType: LogType | 'activity';
-} ): FilterType {
+export function toFilterParams( { view, logType }: { view: View; logType: LogType } ): FilterType {
 	if ( logType === LogType.PHP ) {
 		return getFilterParamsFromView( view, [ 'severity' ] );
 	}
@@ -94,7 +88,7 @@ export function useView( {
 	logType,
 	initialFilters,
 }: {
-	logType: LogType | 'activity';
+	logType: LogType;
 	initialFilters?: View[ 'filters' ];
 } ) {
 	let config;
