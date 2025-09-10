@@ -1,5 +1,5 @@
 import {
-	profileQuery,
+	userSettingsQuery,
 	accountRecoveryQuery,
 	updateAccountRecoveryEmailMutation,
 	removeAccountRecoveryEmailMutation,
@@ -30,7 +30,7 @@ type SecurityEmailFormData = {
 
 export default function RecoveryEmail() {
 	const { data: accountRecoveryData } = useSuspenseQuery( accountRecoveryQuery() );
-	const { data: serverData } = useQuery( profileQuery() );
+	const { data: serverData } = useQuery( userSettingsQuery() );
 
 	const { mutate: validateEmail, isPending: isValidateEmailPending } = useMutation(
 		updateAccountRecoveryEmailMutation()
