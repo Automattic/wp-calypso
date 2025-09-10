@@ -46,8 +46,8 @@ const fields: Field< ActivityLogEntry >[] = [
 
 function getActivityLogUrl( site: Site ) {
 	return isSelfHostedJetpackConnected( site )
-		? `https://cloud.jetpack.com/activity-log/${ site.slug }`
-		: `/activity-log/${ site.slug }`;
+		? `https://cloud.jetpack.com/activity-log/size=${ site.slug }`
+		: `/v2/sites/${ site.slug }/logs/activity`;
 }
 
 export default function LatestActivityCard( {
