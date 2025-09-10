@@ -1,6 +1,15 @@
 import type { PluginListRow } from '../types';
 import type { PluginItem, PluginsResponse } from '@automattic/api-core';
 
+type Aggregated = {
+	name: string;
+	count: number;
+	activeCount: number;
+	updateCount: number;
+	autoupdateCount: number;
+	siteIds: number[];
+};
+
 function mapCountToQuantifier( count: number, total: number ): 'all' | 'some' | 'none' {
 	if ( total === 0 || count === 0 ) {
 		return 'none';
@@ -16,14 +25,6 @@ export function mapApiPluginsToDataViewPlugins( response?: PluginsResponse ): Pl
 		return [];
 	}
 	const sites = response.sites;
-	type Aggregated = {
-		name: string;
-		count: number;
-		activeCount: number;
-		updateCount: number;
-		autoupdateCount: number;
-		siteIds: number[];
-	};
 	const map = new Map< string, Aggregated >();
 	Object.entries( sites ).forEach( ( [ siteIdStr, plugins ] ) => {
 		const siteId = Number( siteIdStr );
