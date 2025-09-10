@@ -3,9 +3,9 @@ import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import { DataViewsCard } from '../../../../../components/dataviews-card';
 import { useEligiblePlugins } from '../../../hooks/use-eligible-plugins';
-import type { SitePlugin } from '@automattic/api-core';
+import type { CorePlugin } from '@automattic/api-core';
 
-const pluginFields: Field< SitePlugin >[] = [
+const pluginFields: Field< CorePlugin >[] = [
 	{
 		id: 'name',
 		label: __( 'Plugin' ),
@@ -36,15 +36,20 @@ function ScheduledUpdatesPluginsSelection( {
 		titleField: 'name',
 	} );
 	const { data: filtered, paginationInfo } = useMemo( () => {
-		return filterSortAndPaginate( eligiblePlugins, view, pluginFields );
+		return filterSortAndPaginate< CorePlugin >(
+			eligiblePlugins as CorePlugin[],
+			view,
+			pluginFields as Field< CorePlugin >[]
+		);
 	}, [ eligiblePlugins, view ] );
-	const actions: Array< Action< SitePlugin > > = useMemo(
+	const actions: Array< Action< CorePlugin > > = useMemo(
 		() => [
 			{
 				id: 'bulk-select-plugins',
 				label: __( 'Select' ),
 				supportsBulk: true,
-				callback: ( items: SitePlugin[] ) => onChangeSelection( items.map( ( item ) => item.id ) ),
+				callback: ( items: CorePlugin[] ) =>
+					onChangeSelection( items.map( ( item ) => item.plugin ) ),
 			},
 		],
 		[ onChangeSelection ]
@@ -52,14 +57,14 @@ function ScheduledUpdatesPluginsSelection( {
 
 	return (
 		<DataViewsCard>
-			<DataViews< SitePlugin >
+			<DataViews< CorePlugin >
 				data={ filtered }
 				fields={ pluginFields }
 				view={ view }
 				onChangeView={ setView }
 				selection={ selection }
 				onChangeSelection={ ( ids ) => onChangeSelection( ids as string[] ) }
-				getItemId={ ( item: SitePlugin ) => item.id }
+				getItemId={ ( item: CorePlugin ) => item.plugin }
 				actions={ actions }
 				defaultLayouts={ { table: {} } }
 				paginationInfo={ paginationInfo }
