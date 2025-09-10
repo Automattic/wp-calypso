@@ -127,10 +127,10 @@ const EnvironmentSwitcherDropdown = ( {
 	);
 	useEffect( () => {
 		if ( isActionInProgress && productionMenuItemRef.current ) {
-			// This type juggling is added because the ref type of the RouterLinkMenuItem is
+			// This type juggling with as unknown as is added because the ref type of the RouterLinkMenuItem is
 			// MutableRefObject<LegacyRef<HTMLButtonElement> | undefined>
-			// So the current is LegacyRef<HTMLButtonElement> | undefined
-			// but it should not fail as we are checking if it is not null
+			// So the current property is of type LegacyRef<HTMLButtonElement>
+			// but the call to focus should not fail as we are checking for null first
 			const element = productionMenuItemRef.current as unknown as HTMLButtonElement;
 			element?.focus();
 		}
