@@ -185,7 +185,7 @@ export function useFields( {
 					label: __( 'Date & Time (UTC)' ),
 					enableHiding: true,
 					enableSorting: true,
-					getValue: ( { item } ) => item.published, // TODO we should probably export it as UTC
+					getValue: ( { item } ) => item.published,
 					render: ( { item } ) => {
 						const value = item.published;
 						return <span>{ formatDateCell( value, true ) }</span>;
@@ -204,7 +204,7 @@ export function useFields( {
 								<Icon
 									className="site-activity-logs__event-icon"
 									icon={ gridiconToWordPressIcon( item.gridicon ) }
-									style={ { fill: 'Scales/Grays/gray-700' } }
+									size={ 24 }
 								/>
 							) }
 							<strong>{ item.summary }</strong>

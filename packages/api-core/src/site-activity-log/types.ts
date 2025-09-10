@@ -1,20 +1,14 @@
 export interface ActivityLogEntry {
 	activity_id: string;
-	actor: {
-		type: 'Person' | 'Application'; // What else?
-		name: string;
-		external_user_id?: number;
-		wpcom_user_id?: number;
-		icon?: ActivityLogIcon;
-		role?: string;
-		is_cli?: boolean;
-	};
+	actor: ActivityActor;
 	content: {
 		text: string;
+		range?: ActivityNotificationRange;
 	};
 	type: 'Announce'; // What else?
 	gridicon: string;
 	name: string;
+	generator?: ActivityGenerator;
 	object?: {
 		backup_type?: string;
 		rewind_id?: string;
@@ -26,7 +20,7 @@ export interface ActivityLogEntry {
 	};
 	published: string;
 	rewind_id: string;
-
+	status: ActivityStatus;
 	summary: string;
 }
 export interface ActivityLogIcon {
@@ -35,9 +29,53 @@ export interface ActivityLogIcon {
 	width: number;
 	height: number;
 }
+export interface ActivityNotificationRange {
+	// Node-local unique ID and parent reference
+	id: string;
+	parent?: string | null;
+	// UCS-2 indices within `text` [start, end)
+	indices: [ number, number ];
+	// Optional presentational attributes
+	style?: string;
+	class?: string;
+	section?: string;
+	url?: string;
+	type: string;
+	intent?: string;
+}
 
 export interface ActivityLog {
 	current?: {
 		orderedItems: ActivityLogEntry[];
 	};
 }
+
+// Activity Log: shared primitives
+
+export interface ActivityImage {
+	type: 'Image';
+	url: string;
+	width?: number;
+	height?: number;
+}
+
+export type ActivityStatus = 'error' | 'info' | 'success' | 'warning' | null;
+
+export interface ActivityGenerator {
+	jetpack_version?: string; // e.g., '12.3'
+	blog_id: number;
+}
+
+export type ActivityActor = {
+	// Typically 'Person'; can also be 'Application' or 'Happiness Engineer'
+	type: 'Person' | 'Application' | 'Happiness Engineer';
+	name: string;
+	// Present for Person actors
+	external_user_id?: number | string | null;
+	wpcom_user_id?: number | null;
+	role?: string;
+	icon?: ActivityImage;
+	// Flags used in actor detection
+	is_cli?: boolean;
+	is_happiness?: boolean;
+};
