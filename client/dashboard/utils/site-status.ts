@@ -1,6 +1,14 @@
 import { __ } from '@wordpress/i18n';
 import type { Site } from '@automattic/api-core';
 
+export interface MigrationStatus {
+	status: 'pending' | 'started' | 'completed';
+	type: 'difm' | 'diy';
+}
+
+const MIGRATION_STATUSES: MigrationStatus[ 'status' ][] = [ 'pending', 'started', 'completed' ];
+const MIGRATION_TYPES: MigrationStatus[ 'type' ][] = [ 'difm', 'diy' ];
+
 export const STATUS_LABELS = {
 	public: __( 'Public' ),
 	private: __( 'Private' ),
@@ -42,18 +50,18 @@ export function getSiteStatus( item: Site ) {
 	return 'public';
 }
 
-export function getSiteMigrationState( item: Site ) {
+export function getSiteMigrationState( item: Site ): MigrationStatus | null {
 	const { migration_status } = item.site_migration;
 	if ( migration_status === 'migration-in-progress' ) {
 		return { status: 'started', type: 'difm' };
 	}
 
 	const [ , status, type ] = migration_status?.split( '-' ) ?? [];
-	if ( ! [ 'pending', 'started', 'completed' ].includes( status ) ) {
+	if ( ! MIGRATION_STATUSES.includes( status as MigrationStatus[ 'status' ] ) ) {
 		return null;
 	}
 
-	if ( ! [ 'difm', 'diy' ].includes( type ) ) {
+	if ( ! MIGRATION_TYPES.includes( type as MigrationStatus[ 'type' ] ) ) {
 		return null;
 	}
 
@@ -61,7 +69,7 @@ export function getSiteMigrationState( item: Site ) {
 		return null;
 	}
 
-	return { status, type };
+	return { status: status as MigrationStatus[ 'status' ], type: type as MigrationStatus[ 'type' ] };
 }
 
 export function isSiteMigrationInProgress( item: Site ) {
