@@ -43,7 +43,7 @@
 		"@automattic/viewport-react": "workspace:^",
 		"@popperjs/core": "^2.11.8",
 		"@wordpress/base-styles": "^5.23.0",
-		"@wordpress/components": "^29.9.0",
+		"@wordpress/components": "^30.2.0",
 		"@wordpress/dom": "^4.23.0",
 		"@wordpress/element": "^6.23.0",
 		"@wordpress/i18n": "^5.23.0",

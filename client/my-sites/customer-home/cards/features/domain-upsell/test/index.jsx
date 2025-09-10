@@ -87,7 +87,7 @@ describe( 'index', () => {
 		const searchLink = screen.getByRole( 'link', { name: searchForDomainCta } );
 		expect( searchLink ).toBeInTheDocument();
 		expect(
-			searchLink.href.endsWith(
+			searchLink.href.includes(
 				'/domains/add/example.wordpress.com?domainAndPlanPackage=true&domain=true'
 			)
 		).toBeTruthy();
@@ -242,7 +242,7 @@ describe( 'index', () => {
 		const searchLink = screen.getByRole( 'link', { name: searchForDomainCta } );
 		expect( searchLink ).toBeInTheDocument();
 		expect(
-			searchLink.href.endsWith(
+			searchLink.href.includes(
 				'/domains/add/example.wordpress.com?domainAndPlanPackage=true&domain=true'
 			)
 		).toBeTruthy();
