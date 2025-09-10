@@ -1,5 +1,6 @@
 import { useRouter } from '@tanstack/react-router';
 import {
+	__experimentalGrid as Grid,
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -94,7 +95,7 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 							</Text>
 						) }
 					</HStack>
-					<HStack justify="flex-start" style={ { flexWrap: 'wrap' } }>
+					<Grid templateColumns="repeat(auto-fit, minmax(200px, 1fr))">
 						{ backup.streams ? (
 							backup.streams.map( ( item, index ) => (
 								<ImagePreview key={ index } item={ item } multipleImages />
@@ -102,7 +103,7 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 						) : (
 							<ImagePreview item={ backup } />
 						) }
-					</HStack>
+					</Grid>
 				</VStack>
 			</CardBody>
 		</Card>

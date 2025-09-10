@@ -19,7 +19,7 @@ export function ImagePreview( { item, multipleImages = false }: ImagePreviewProp
 				<img
 					src={ image.medium_url }
 					alt={ image.name }
-					style={ { maxWidth: '256px', maxHeight: '256px' } }
+					style={ { width: '100%', aspectRatio: '1 / 1', objectFit: 'cover' } }
 				/>
 			</a>
 			{ multipleImages && <Text weight={ 500 }>{ image.name }</Text> }
