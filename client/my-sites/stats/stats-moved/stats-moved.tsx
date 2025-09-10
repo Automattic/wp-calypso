@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
-import { megaphone } from '@wordpress/icons';
+import { chartBar } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -97,9 +97,11 @@ const StatsMoved = () => {
 		<Main>
 			<DocumentHead title={ translate( 'Stats' ) } />
 			<FeatureMoved
-				icon={ megaphone }
+				icon={ chartBar }
 				title={ translate( 'Jetpack Stats has moved' ) }
-				description={ translate( 'Jetpack Stats is now accessed via the Stats top-level menu in your dashboard.' ) }
+				description={ translate(
+					'Jetpack Stats is now accessed via the Stats top-level menu in your dashboard.'
+				) }
 				buttonText={ translate( 'Go to Jetpack Stats' ) }
 				buttonLink={ wpAdminUrl }
 				image={ image }
