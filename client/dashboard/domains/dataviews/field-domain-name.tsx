@@ -1,4 +1,4 @@
-import { DomainTypes } from '@automattic/api-core';
+import { DomainSubtype } from '@automattic/api-core';
 import { Badge } from '@automattic/ui';
 import { Link } from '@tanstack/react-router';
 import { __experimentalHStack as HStack } from '@wordpress/components';
@@ -24,7 +24,7 @@ export const DomainNameField = ( {
 		<Link
 			to={ domainOverviewRoute.fullPath }
 			params={ { siteSlug, domainName: domain.domain } }
-			disabled={ domain.type === DomainTypes.WPCOM }
+			disabled={ domain.subtype.id === DomainSubtype.DEFAULT_ADDRESS }
 		>
 			<HStack spacing={ 1 }>
 				<span style={ textOverflowStyles }>{ value }</span>
