@@ -2,6 +2,7 @@ import page from '@automattic/calypso-router';
 import { translate } from 'i18n-calypso';
 import { createElement } from 'react';
 import { navigate } from 'calypso/lib/navigate';
+import SharingConnections from 'calypso/sites/marketing/connections/connections';
 import SharingButtons from 'calypso/sites/marketing/sharing/buttons';
 import MarketingTools from 'calypso/sites/marketing/tools';
 import Traffic from 'calypso/sites/marketing/traffic/traffic';
@@ -9,6 +10,8 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
+import { setExpandedService } from 'calypso/state/sharing/actions';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSiteSlug, isJetpackSite, getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -68,6 +71,28 @@ export const layout = ( context, next ) => {
 };
 
 export const connections = ( context, next ) => {
+	const { store } = context;
+	const { dispatch } = store;
+	dispatch( setExpandedService( context.query.service ) );
+
+	const state = store.getState();
+	const siteId = getSelectedSiteId( state );
+	const isP2Hub = isSiteP2Hub( state, siteId );
+
+	if ( siteId && ! canCurrentUser( state, siteId, 'publish_posts' ) ) {
+		dispatch(
+			errorNotice( translate( 'You are not authorized to manage sharing settings for this site.' ) )
+		);
+	}
+
+	const siteSlug = getSiteSlug( state, siteId );
+
+	context.contentComponent = createElement( SharingConnections, { isP2Hub, siteId, siteSlug } );
+
+	next();
+};
+
+export const jetpackSocial = ( context, next ) => {
 	context.contentComponent = createElement( JetpackSocial );
 
 	next();
