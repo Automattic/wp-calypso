@@ -151,7 +151,7 @@ export default function ContactForm( { domainName, initialData }: ContactFormPro
 			{ ! domain.is_hundred_year_domain && (
 				<Card>
 					<CardBody>
-						<ContactFormPrivacy domain={ domain } />
+						<ContactFormPrivacy domainName={ domainName } />
 					</CardBody>
 				</Card>
 			) }

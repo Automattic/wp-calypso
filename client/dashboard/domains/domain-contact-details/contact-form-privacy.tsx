@@ -1,4 +1,10 @@
 import {
+	domainPrivacyDisableMutation,
+	domainPrivacyEnableMutation,
+	domainQuery,
+} from '@automattic/api-queries';
+import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	ToggleControl,
@@ -7,13 +13,30 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
-import type { Domain } from '@automattic/api-core';
 
 interface ContactFormPrivacyProps {
-	domain: Domain;
+	domainName: string;
 }
 
-export default function ContactFormPrivacy( { domain }: ContactFormPrivacyProps ) {
+export default function ContactFormPrivacy( { domainName }: ContactFormPrivacyProps ) {
+	const { data: domain, isFetching: domainQueryIsFetching } = useSuspenseQuery(
+		domainQuery( domainName )
+	);
+	const enablePrivacyMutation = useMutation( domainPrivacyEnableMutation( domainName ) );
+	const disablePrivacyMutation = useMutation( domainPrivacyDisableMutation( domainName ) );
+	const isUpdatingPrivacy =
+		enablePrivacyMutation.isPending || disablePrivacyMutation.isPending || domainQueryIsFetching;
+
+	const togglePrivacy = () => {
+		if ( domain.private_domain ) {
+			disablePrivacyMutation.mutate( undefined, {
+				onSuccess: () => {},
+			} );
+		} else {
+			enablePrivacyMutation.mutate();
+		}
+	};
+
 	const renderPrivacyProtection = () => {
 		let note;
 
@@ -44,8 +67,8 @@ export default function ContactFormPrivacy( { domain }: ContactFormPrivacyProps 
 				<ToggleControl
 					__nextHasNoMarginBottom
 					checked={ domain.private_domain }
-					disabled={ ! domain.privacy_available }
-					onChange={ () => {} }
+					disabled={ isUpdatingPrivacy || ! domain.privacy_available }
+					onChange={ togglePrivacy }
 					label={ __( 'Privacy protection' ) }
 				/>
 
@@ -74,7 +97,7 @@ export default function ContactFormPrivacy( { domain }: ContactFormPrivacyProps 
 					__nextHasNoMarginBottom
 					checked={ domain.contact_info_disclosed }
 					onChange={ () => {} }
-					disabled={ domain.is_pending_icann_verification }
+					disabled={ isUpdatingPrivacy || domain.is_pending_icann_verification }
 					label={ __( 'Display my contact information in public WHOIS' ) }
 				/>
 
