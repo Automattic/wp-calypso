@@ -18,7 +18,7 @@ export async function fetchSiteActivityLog(
 
 export async function fetchSiteRewindableActivityLog(
 	siteId: number,
-	{ number, aggregate }: { number: number; aggregate: boolean }
+	{ number, aggregate = false }: { number: number; aggregate?: boolean }
 ): Promise< ActivityLog > {
 	return wpcom.req.get(
 		{
