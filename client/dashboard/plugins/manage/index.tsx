@@ -1,8 +1,10 @@
 import { pluginsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
+import { Link } from '@tanstack/react-router';
 import { DataViews, Field, View, filterSortAndPaginate, type Action } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
+import { pluginRoute } from '../../app/router/plugins';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -22,7 +24,11 @@ const fields: Field< PluginListRow >[] = [
 		enableHiding: false,
 		enableSorting: true,
 		getValue: ( { item } ) => item.name,
-		render: ( { item, field } ) => field.getValue( { item } ),
+		render: ( { item, field } ) => (
+			<Link to={ pluginRoute.to } params={ { pluginId: item.id } }>
+				{ field.getValue( { item } ) }
+			</Link>
+		),
 	},
 	{
 		id: 'sitesCount',

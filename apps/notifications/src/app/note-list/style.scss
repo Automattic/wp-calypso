@@ -1,5 +1,8 @@
+@import '@wordpress/base-styles/colors';
+
 .wpnc__note-list {
 	flex: 1;
+	margin-top: -1px; // Make border collapsed
 	overflow: hidden;
 
 	.wpnc__note-list-item {
@@ -9,11 +12,34 @@
 		white-space: pre-wrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
+	}
 
-		.wpnc__gridicon svg {
-			display: inline-block;
-			transform: translateY(2px);
-			fill: #8c8f94;
+	.wpnc__note-icon .wpnc__gridicon {
+		position: absolute;
+		bottom: -4px;
+		right: -4px;
+		display: flex;
+		padding: 2px;
+		border: 1.5px solid $white;
+		border-radius: 50%;
+		color: $white;
+		background: $gray-300;
+		overflow: hidden;
+		z-index: 1;
+
+		svg {
+			fill: currentColor;
+		}
+
+		&.is-unread {
+			color: $white;
+			background: var(--wp-admin-theme-color);
 		}
 	}
+}
+
+.wpnc__gridicon .gridicons-reply {
+	display: inline-block;
+	transform: translateY(2px);
+	fill: #8c8f94;
 }
