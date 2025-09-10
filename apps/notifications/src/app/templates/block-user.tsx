@@ -3,11 +3,11 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
-	ExternalLink,
 } from '@wordpress/components';
 import { useSelector } from 'react-redux';
 import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved';
 import { useAppContext } from '../context';
+import NoteIcon from '../note-icon';
 import FollowLink, { followStatTypes } from './follow-link';
 import type { Note, Block } from '../types';
 
@@ -70,19 +70,11 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 				style={ {
 					display: 'flex',
 					flexShrink: 0,
-					border: '1px solid rgba(0, 0, 0, 0.1)',
 					borderRadius: '50%',
 					overflow: 'hidden',
 				} }
 			>
-				<img
-					src={ media?.url }
-					alt={ block.text }
-					width={ 40 }
-					height={ 40 }
-					loading="lazy"
-					style={ { width: 40, height: 40, minWidth: 40, margin: 0 } }
-				/>
+				<NoteIcon icon={ media?.url } alt={ block.text } size={ 32 } />
 			</a>
 			<VStack alignment="flex-start" spacing={ 0 }>
 				<a className="wpnc__user-title" href={ readerProfileUrl } target="_blank" rel="noreferrer">
@@ -94,26 +86,29 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 							<Text variant="muted">{ formatDate( note.timestamp, locale ) }</Text>
 						</a>
 					) }
-					{ note.type === 'comment' && homeTitle && <span>•</span> }
+					<span className="wpnc__user-description-separator">•</span>
 					{ homeTitle && (
-						<ExternalLink
+						<a
 							href={ homeLink }
+							target="_blank"
+							rel="noopener noreferrer"
 							style={ { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }
 						>
 							{ homeTitle }
-						</ExternalLink>
+						</a>
 					) }
+					<span className="wpnc__user-description-separator">•</span>
+					{ note.type !== 'comment' &&
+						!! block.meta?.ids?.site &&
+						block.actions &&
+						'follow' in block.actions && (
+							<FollowLink
+								site={ block.meta.ids.site }
+								isFollowing={ !! block.actions.follow }
+								noteType={ note.type as keyof typeof followStatTypes }
+							/>
+						) }
 				</HStack>
-				{ note.type !== 'comment' &&
-					!! block.meta?.ids?.site &&
-					block.actions &&
-					'follow' in block.actions && (
-						<FollowLink
-							site={ block.meta.ids.site }
-							isFollowing={ !! block.actions.follow }
-							noteType={ note.type as keyof typeof followStatTypes }
-						/>
-					) }
 			</VStack>
 		</HStack>
 	);

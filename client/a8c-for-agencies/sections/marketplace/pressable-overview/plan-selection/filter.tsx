@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useMobileBreakpoint, useDesktopBreakpoint } from '@automattic/viewport-react';
 import { RadioControl, TabPanel } from '@wordpress/components';
 import clsx from 'clsx';
@@ -182,8 +181,6 @@ export default function PlanSelectionFilter( {
 		}
 	}, [ pressablePlan, lowPlanOptions, areSignaturePlans ] );
 
-	const isPressablePremiumPlanEnabled = isEnabled( 'pressable-premium-plan' );
-
 	const tabs = useMemo(
 		() => [
 			...( areSignaturePlans
@@ -213,16 +210,12 @@ export default function PlanSelectionFilter( {
 							title: isDesktop ? translate( 'Enterprise Plans' ) : translate( 'Enterprise' ),
 						},
 				  ] ),
-			...( isPressablePremiumPlanEnabled
-				? [
-						{
-							name: PLAN_CATEGORY_PREMIUM,
-							title: isDesktop ? translate( 'Premium Plans' ) : translate( 'Premium' ),
-						},
-				  ]
-				: [] ),
+			{
+				name: PLAN_CATEGORY_PREMIUM,
+				title: isDesktop ? translate( 'Premium Plans' ) : translate( 'Premium' ),
+			},
 		],
-		[ areSignaturePlans, disableStandardTab, isPressablePremiumPlanEnabled, translate, isDesktop ]
+		[ areSignaturePlans, disableStandardTab, translate, isDesktop ]
 	);
 
 	if ( isLoading ) {
