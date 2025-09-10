@@ -1,22 +1,20 @@
 import { useEffect, useState } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent, useCallback } from 'react';
-import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { useCallback } from 'react';
 import { FileBrowserItem } from './types';
 import { useBackupFileQuery } from './use-backup-file-query';
 
 interface FilePreviewProps {
 	item: FileBrowserItem;
 	siteId: number;
+	onTrackEvent?: ( eventName: string, properties?: Record< string, unknown > ) => void;
 }
 
 /**
  * This component is responsible for rendering the preview of a file.
  */
-const FilePreview: FunctionComponent< FilePreviewProps > = ( { item, siteId } ) => {
-	const translate = useTranslate();
+function FilePreview( { item, siteId, onTrackEvent }: FilePreviewProps ) {
 	const [ fileContent, setFileContent ] = useState( '' );
 	const [ showSensitivePreview, setShowSensitivePreview ] = useState( false );
 
@@ -31,19 +29,19 @@ const FilePreview: FunctionComponent< FilePreviewProps > = ( { item, siteId } ) 
 	const shouldPreviewFile =
 		isValidType && ( ! isSensitive || ( isSensitive && showSensitivePreview ) );
 
-	const { isSuccess, isError, isInitialLoading, data } = useBackupFileQuery(
-		siteId,
-		item.period,
-		item.manifestPath,
-		shouldPreviewFile
-	);
-
-	const dispatch = useDispatch();
+	const {
+		isSuccess,
+		isError,
+		isLoading: isQueryLoading,
+		data,
+	} = useBackupFileQuery( siteId, item.period, item.manifestPath, shouldPreviewFile );
 
 	const handleShowPreviewClick = useCallback( () => {
 		setShowSensitivePreview( true );
-		dispatch( recordTracksEvent( 'calypso_jetpack_backup_browser_preview_file_sensitive_click' ) );
-	}, [ dispatch ] );
+		if ( onTrackEvent ) {
+			onTrackEvent( 'calypso_jetpack_backup_browser_preview_file_sensitive_click' );
+		}
+	}, [ onTrackEvent ] );
 
 	useEffect( () => {
 		if ( isSuccess && data && data.url && isTextContent ) {
@@ -57,9 +55,9 @@ const FilePreview: FunctionComponent< FilePreviewProps > = ( { item, siteId } ) 
 	if ( isSensitive && ! showSensitivePreview ) {
 		return (
 			<div className="file-card__preview-sensitive">
-				<p>{ translate( 'This preview is hidden because it contains sensitive information.' ) }</p>
+				<p>{ __( 'This preview is hidden because it contains sensitive information.' ) }</p>
 				<button className="button button-small" onClick={ handleShowPreviewClick }>
-					{ translate( 'Show preview' ) }
+					{ __( 'Show preview' ) }
 				</button>
 			</div>
 		);
@@ -100,15 +98,15 @@ const FilePreview: FunctionComponent< FilePreviewProps > = ( { item, siteId } ) 
 				break;
 		}
 
-		dispatch(
-			recordTracksEvent( 'calypso_jetpack_backup_browser_preview_file', {
+		if ( onTrackEvent ) {
+			onTrackEvent( 'calypso_jetpack_backup_browser_preview_file', {
 				file_type: item.type,
-			} )
-		);
+			} );
+		}
 		return content;
 	};
 
-	const isLoading = isTextContent ? ! fileContent && ! isError : isInitialLoading;
+	const isLoading = isTextContent ? ! fileContent && ! isError : isQueryLoading;
 	const isReady = isTextContent ? fileContent : isSuccess;
 	const classNames = clsx( 'file-card__preview', item.type, {
 		'file-card__preview--is-loading': isLoading,
@@ -122,6 +120,6 @@ const FilePreview: FunctionComponent< FilePreviewProps > = ( { item, siteId } ) 
 			</div>
 		</>
 	);
-};
+}
 
 export default FilePreview;

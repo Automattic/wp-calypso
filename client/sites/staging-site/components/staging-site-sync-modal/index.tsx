@@ -227,6 +227,7 @@ export default function SyncModal( {
 	const sqlNode = useSelector( ( state ) => getBackupBrowserNode( state, querySiteId, SQL_PATH ) );
 
 	const isSiteWooStore = !! useSelector( ( state ) => isSiteStore( state, querySiteId ) );
+	const querySiteSlug = useSelector( ( state ) => getSiteSlug( state, querySiteId ) ) as string;
 	const filesAndFoldersNodesCheckState = useMemo( () => {
 		const nodes = [ wpContentNode, wpConfigNode ].filter( Boolean );
 		if ( nodes.length === 0 ) {
@@ -495,6 +496,7 @@ export default function SyncModal( {
 								<FileBrowser
 									rewindId={ rewindId }
 									siteId={ querySiteId }
+									siteSlug={ querySiteSlug }
 									fileBrowserConfig={ fileBrowserConfig }
 								/>
 							</div>

@@ -28,10 +28,11 @@ for ( const locale of localesToTest ) {
 		test.use( { locale: locale } );
 		test( `As an unauthenticated visitor using '${ locale }' as my locale, I can visit the homepage and see the correct URL`, async ( {
 			page,
+			environment,
 			helperData,
 		} ) => {
-			const homePageURL = helperData.getCalypsoURL();
-			const localisedHomePageURL = helperData.getCalypsoURL( helperData.getLocalePath( locale ) );
+			const homePageURL = environment.WPCOM_BASE_URL;
+			const localisedHomePageURL = `${ homePageURL }/${ helperData.getLocalePath( locale ) }`;
 
 			await test.step( 'When I visit the homepage', async () => {
 				await page.goto( homePageURL );
@@ -48,14 +49,12 @@ for ( const locale of localesToTest ) {
 		test.use( { locale: locale } );
 		test( `As an unauthenticated visitor using '${ locale }' as my locale, I can visit the plans page and see the correct URL for the pricing page`, async ( {
 			page,
+			environment,
 			helperData,
 		} ) => {
-			const plansPageURL = helperData.getCalypsoURL(
-				`${ helperData.getLocalePath( locale ) }plans/`
-			);
-			const pricingPageURL = helperData.getCalypsoURL(
-				`${ helperData.getLocalePath( locale ) }pricing/`
-			);
+			const homePageURL = environment.WPCOM_BASE_URL;
+			const plansPageURL = `${ homePageURL }/${ helperData.getLocalePath( locale ) }plans/`;
+			const pricingPageURL = `${ homePageURL }/${ helperData.getLocalePath( locale ) }pricing/`;
 
 			await test.step( 'When I visit the plans page in my locale', async () => {
 				await page.goto( plansPageURL );

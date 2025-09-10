@@ -19,6 +19,7 @@ import MenuDivider from '../../components/menu-divider';
 import Switcher from '../../components/switcher';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { hasStagingSite } from '../../utils/site-staging-site';
+import { isSiteMigrationInProgress } from '../../utils/site-status';
 import AddNewSite from '../add-new-site';
 import { canManageSite, canSwitchEnvironment } from '../features';
 import SiteIcon from '../site-icon';
@@ -80,8 +81,12 @@ function Site() {
 							<EnvironmentSwitcher site={ site } />
 						</>
 					) }
-					{ isDesktop && <MenuDivider /> }
-					<SiteMenu site={ site } />
+					{ ! isSiteMigrationInProgress( site ) && (
+						<>
+							{ isDesktop && <MenuDivider /> }
+							<SiteMenu site={ site } />
+						</>
+					) }
 				</HStack>
 			</HeaderBar>
 			<Outlet />

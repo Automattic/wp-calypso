@@ -1,5 +1,6 @@
 import { DotcomFeatures, HostingFeatures } from '@automattic/api-core';
 import { hasHostingFeature, hasPlanFeature } from '../utils/site-features';
+import { isSiteMigrationInProgress } from '../utils/site-status';
 import { isSelfHostedJetpackConnected, isP2 } from '../utils/site-types';
 import type { Site, User } from '@automattic/api-core';
 
@@ -62,10 +63,18 @@ export function canResetSite( site: Site ) {
 }
 
 export function canSwitchEnvironment( site: Site ) {
+	if ( isSiteMigrationInProgress( site ) ) {
+		return false;
+	}
+
 	return hasHostingFeature( site, HostingFeatures.STAGING_SITE );
 }
 
 export function canCreateStagingSite( site: Site ) {
+	if ( isSiteMigrationInProgress( site ) ) {
+		return false;
+	}
+
 	return (
 		hasHostingFeature( site, HostingFeatures.STAGING_SITE ) &&
 		! site.is_wpcom_staging_site &&

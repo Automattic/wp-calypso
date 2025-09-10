@@ -1,4 +1,4 @@
-import { SiteDeploymentsCallout } from 'calypso/dashboard/sites/deployments';
+import { SiteDeploymentsCallout } from 'calypso/dashboard/sites/deployment-list';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { hostingFeaturesCallout } from 'calypso/sites/hosting/controller';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';

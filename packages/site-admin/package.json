@@ -65,7 +65,7 @@
 	"dependencies": {
 		"@wordpress/base-styles": "^5.23.0",
 		"@wordpress/commands": "^1.23.0",
-		"@wordpress/components": "^29.9.0",
+		"@wordpress/components": "^30.2.0",
 		"@wordpress/compose": "^7.23.0",
 		"@wordpress/core-data": "^7.23.0",
 		"@wordpress/dom": "^4.23.0",

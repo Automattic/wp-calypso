@@ -847,7 +847,7 @@ export function isPaidDomain( domainPriceRule: string ): boolean {
 	return DOMAIN_PRICE_RULE.PRICE === domainPriceRule;
 }
 
-const isMonthlyOrFreeFlow = ( flowName: string | undefined ): boolean => {
+export const isMonthlyOrFreeFlow = ( flowName: string | undefined ): boolean => {
 	return Boolean(
 		flowName &&
 			[

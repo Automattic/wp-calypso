@@ -4,6 +4,7 @@ import {
 	freeSuggestionQuery,
 	domainAvailabilityQuery,
 } from '@automattic/api-queries';
+import { PriceRulesConfig } from '../hooks/use-suggestion';
 import type { FilterState } from '../components/search-bar/types';
 import type {
 	DomainSuggestion,
@@ -44,6 +45,7 @@ export interface DomainSearchConfig {
 	vendor: DomainSuggestionQueryVendor;
 	skippable: boolean;
 	deemphasizedTlds: string[];
+	priceRules: PriceRulesConfig;
 }
 
 export interface DomainSearchProps {
@@ -62,7 +64,7 @@ export interface DomainSearchProps {
 export interface DomainSearchContextType
 	extends Omit<
 		DomainSearchProps,
-		'className' | 'initialQuery' | 'events' | 'queryClient' | 'config'
+		'className' | 'initialQuery' | 'events' | 'config' | 'getPriceRuleForSuggestion'
 	> {
 	events: DomainSearchEvents;
 	isFullCartOpen: boolean;
@@ -83,3 +85,5 @@ export interface DomainSearchContextType
 	};
 	config: DomainSearchConfig;
 }
+
+export type { PriceRulesConfig };
