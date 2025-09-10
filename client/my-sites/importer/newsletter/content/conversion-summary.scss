@@ -1,0 +1,27 @@
+.importer__conversion-summary-pane {
+    .conversion-summary__success {
+        margin-bottom: 1.5em;
+    }
+
+    .conversion-summary__post-errors, .conversion-summary__unsupported-files {
+        p {
+            margin-bottom: .825em;
+        }
+
+        .post-errors__item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+            padding-left: 6px;
+
+            p {
+                margin: 0;
+            }
+
+            .post-errors__item-icon {
+                flex-shrink: 0;
+            }
+        }
+    }
+}
