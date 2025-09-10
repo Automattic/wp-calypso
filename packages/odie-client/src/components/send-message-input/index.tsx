@@ -38,7 +38,7 @@ export const OdieSendMessageButton = () => {
 	const isLiveChat = chat.provider?.startsWith( 'zendesk' );
 	const [ inputValue, setInputValue ] = useState( '' );
 	const messageSizeNotice = useMessageSizeErrorNotice( inputValue.trim().length );
-	const connectionNotice = useConnectionStatusNotice();
+	const connectionNotice = useConnectionStatusNotice( isLiveChat );
 
 	// Prioritize connection status notice over message size notice
 	const notice = connectionNotice || messageSizeNotice;

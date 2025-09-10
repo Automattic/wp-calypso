@@ -5,22 +5,29 @@ import { Icon, check, warning, info } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState } from 'react';
 
-type ConnectionStatus = 'connected' | 'reconnecting' | 'disconnected';
-
-export default function useConnectionStatusNotice() {
+export default function useConnectionStatusNotice( isLiveChat: boolean = false ) {
 	const [ shouldWarn, setShouldWarn ] = useState( false );
 	const { __ } = useI18n();
 
-	const connectionStatus: ConnectionStatus = useSelect(
+	const connectionStatus = useSelect(
 		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getZendeskConnectionStatus(),
 		[]
 	);
 
 	useEffect( () => {
+		if ( ! isLiveChat ) {
+			setShouldWarn( false );
+			return;
+		}
+
 		if ( connectionStatus === 'disconnected' ) {
 			setShouldWarn( true );
 		}
-	}, [ connectionStatus ] );
+	}, [ connectionStatus, isLiveChat ] );
+
+	if ( ! isLiveChat ) {
+		return undefined;
+	}
 
 	if ( ! shouldWarn ) {
 		return undefined;
