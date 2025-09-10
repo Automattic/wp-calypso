@@ -13,10 +13,8 @@ const SupportDocLink = ( { title, onLinkClickHandler }: SearchResultItemProps ) 
 	return (
 		<div className="odie-support-doc-link__container">
 			<div className="odie-support-doc-link__link">
-				<a href={ anchor } onClick={ onLinkClickHandler }>
-					<div className="icon-background">
-						<Icon icon={ page } />
-					</div>
+				<a href={ anchor } onClick={ onLinkClickHandler } target="_blank" rel="noreferrer">
+					<Icon icon={ page } />
 					<span>{ decodeEntities( title ) }</span>
 					<Icon width={ 20 } height={ 20 } icon={ chevronRight } />
 				</a>

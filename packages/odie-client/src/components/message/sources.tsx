@@ -47,7 +47,7 @@ export const Sources = ( { message }: { message: Message } ) => {
 		<FoldableCard
 			className="odie-sources-foldable-card"
 			clickableHeader
-			header={ __( 'Related Guides', __i18n_text_domain__ ) }
+			header={ __( 'Sources', __i18n_text_domain__ ) }
 			onClose={ () =>
 				trackEvent( 'chat_message_action_sources', {
 					action: 'close',

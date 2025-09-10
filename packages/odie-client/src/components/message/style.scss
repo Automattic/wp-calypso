@@ -190,6 +190,7 @@ $blueberry-color: #3858e9;
 		.card.odie-foldable-card.odie-sources-foldable-card {
 			margin-top: 4px;
 			border-radius: 4px;
+			box-shadow: none;
 
 			&.is-expanded {
 				.odie-foldable-card__content {
