@@ -1013,6 +1013,11 @@ object PlaywrightTestPRMatrix : BuildType({
 				
 				export CALYPSO_BASE_URL
 
+				# We only want to override the Calypso URL if we have a live one to use!
+				if [[ -n ${'$'}CALYPSO_LIVE_URL ]]; then
+					export CALYPSO_BASE_URL=${'$'}CALYPSO_LIVE_URL
+				fi
+
 				# Check if test/e2e or packages/calypso-e2e files have been changed
 				CHANGED_FILES=${'$'}(git diff --name-only refs/remotes/origin/trunk...HEAD)
 				if echo "${'$'}CHANGED_FILES" | grep -q -E "^(test/e2e/|packages/calypso-e2e/)"; then

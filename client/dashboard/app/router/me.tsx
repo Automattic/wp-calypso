@@ -5,6 +5,8 @@ import {
 	purchaseQuery,
 	sitesQuery,
 	queryClient,
+	accountRecoveryQuery,
+	smsCountryCodesQuery,
 } from '@automattic/api-queries';
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { rootRoute } from './root';
@@ -161,6 +163,12 @@ export const securityPasswordRoute = createRoute( {
 export const securityAccountRecoveryRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'security/account-recovery',
+	loader: async () => {
+		await Promise.all( [
+			queryClient.ensureQueryData( accountRecoveryQuery() ),
+			queryClient.ensureQueryData( smsCountryCodesQuery() ),
+		] );
+	},
 } ).lazy( () =>
 	import( '../../me/security-account-recovery' ).then( ( d ) =>
 		createLazyRoute( 'security-account-recovery' )( {
@@ -175,6 +183,18 @@ export const securityTwoStepAuthRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../me/security-two-step-auth' ).then( ( d ) =>
 		createLazyRoute( 'security-two-step-auth' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const securityTwoStepAuthAppRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'security/two-step-auth/app',
+	loader: () => queryClient.ensureQueryData( userSettingsQuery() ),
+} ).lazy( () =>
+	import( '../../me/security-two-step-auth-app' ).then( ( d ) =>
+		createLazyRoute( 'security-two-step-auth-app' )( {
 			component: d.default,
 		} )
 	)
@@ -319,6 +339,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 		securityPasswordRoute,
 		securityAccountRecoveryRoute,
 		securityTwoStepAuthRoute,
+		securityTwoStepAuthAppRoute,
 		securitySshKeyRoute,
 		securityConnectedAppsRoute,
 		securitySocialLoginsRoute,
