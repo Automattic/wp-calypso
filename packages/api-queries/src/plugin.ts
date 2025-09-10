@@ -3,7 +3,7 @@ import { queryOptions } from '@tanstack/react-query';
 
 export const marketplacePluginQuery = ( slug: string ) =>
 	queryOptions( {
-		queryKey: [ 'marketplace-products', slug ],
+		queryKey: [ 'marketplace-plugin', slug ],
 		queryFn: () => fetchMarketplacePlugin( slug ),
 	} );
 
