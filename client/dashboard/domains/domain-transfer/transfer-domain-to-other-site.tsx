@@ -17,7 +17,6 @@ import { domainRoute, domainTransferToOtherSiteRoute } from '../../app/router/do
 import { ButtonStack } from '../../components/button-stack';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { SectionHeader } from '../../components/section-header';
 import { SelectSite } from './select-site';
 import type { Site } from '@automattic/api-core';
 
@@ -56,20 +55,20 @@ export default function DomainTransferToOtherSite() {
 	return (
 		<PageLayout
 			size="small"
-			header={ <PageHeader title={ __( 'To another WordPress.com site' ) } /> }
+			header={
+				<PageHeader
+					title={ __( 'Attach to another site' ) }
+					description={ sprintf(
+						// translators: %s is the domain name
+						__( 'Attach %s to a site you’re an administrator of:' ),
+						domainName
+					) }
+				/>
+			}
 		>
 			<Card>
 				<CardBody>
 					<VStack spacing={ 10 }>
-						<SectionHeader
-							title={ __( 'Confirm new owner' ) }
-							description={ sprintf(
-								// translators: %s is the domain name
-								__( 'Attach %s to a site you’re an administrator of:' ),
-								domainName
-							) }
-							level={ 3 }
-						/>
 						<SelectSite
 							attachedSiteId={ domain?.blog_id }
 							onSiteSelect={ ( site ) => {
