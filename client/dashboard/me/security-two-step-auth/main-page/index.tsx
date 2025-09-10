@@ -4,7 +4,9 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import InlineSupportLink from '../../../components/inline-support-link';
 import Notice from '../../../components/notice';
+import TwoStepAuthActions from './actions';
 import ApplicationPasswords from './application-passwords';
+import BackupCodes from './backup-codes';
 import SecurityKeys from './security-keys';
 import type { UserSettings } from '@automattic/api-core';
 
@@ -46,6 +48,8 @@ export default function SecurityTwoStepAuthMainPage( {
 			</Notice>
 			<SecurityKeys />
 			<ApplicationPasswords />
+			<BackupCodes />
+			<TwoStepAuthActions />
 		</VStack>
 	);
 }

@@ -87,8 +87,14 @@ export const appAuthSetupQuery = () =>
 export const validateTwoStepCodeMutation = () =>
 	mutationOptions( {
 		mutationFn: validateTwoStepCode,
-		onSuccess: () => {
-			queryClient.invalidateQueries( userSettingsQuery() );
+		onSuccess: ( data ) => {
+			// This is a workaround to handle the error/success response
+			// from the API as it always returns 200 status code.
+			if ( data.success === true ) {
+				queryClient.invalidateQueries( userSettingsQuery() );
+			} else {
+				throw new Error( 'Invalid code' );
+			}
 		},
 	} );
 
