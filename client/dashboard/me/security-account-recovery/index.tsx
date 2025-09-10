@@ -2,6 +2,7 @@ import { __ } from '@wordpress/i18n';
 import PageLayout from '../../components/page-layout';
 import SecurityPageHeader from '../security-page-header';
 import RecoveryEmail from './recovery-email';
+import RecoverySMS from './recovery-sms';
 
 export default function SecurityAccountRecovery() {
 	return (
@@ -17,6 +18,7 @@ export default function SecurityAccountRecovery() {
 			}
 		>
 			<RecoveryEmail />
+			<RecoverySMS />
 		</PageLayout>
 	);
 }
