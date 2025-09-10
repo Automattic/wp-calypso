@@ -28,11 +28,9 @@ import { getContactFormFields } from './contact-form-fields';
 interface ContactFormProps {
 	domainName: string;
 	initialData?: DomainContactDetails;
-	onSubmit?: ( data: DomainContactDetails ) => void;
-	errors?: Partial< Record< keyof DomainContactDetails, string > >;
 }
 
-export default function ContactForm( { domainName, initialData, onSubmit }: ContactFormProps ) {
+export default function ContactForm( { domainName, initialData }: ContactFormProps ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: countryList } = useQuery( countryListQuery() );
 	const [ formData, setFormData ] = useState< DomainContactDetails >(
@@ -59,7 +57,6 @@ export default function ContactForm( { domainName, initialData, onSubmit }: Cont
 						{
 							onSuccess: () => {
 								createSuccessNotice( __( 'Contact details saved.' ), { type: 'snackbar' } );
-								onSubmit?.( formData );
 							},
 							onError: ( error: Error ) => {
 								createErrorNotice( error.message, {

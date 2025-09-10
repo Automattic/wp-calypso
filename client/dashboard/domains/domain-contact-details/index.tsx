@@ -33,7 +33,6 @@ export default function DomainContactInfo() {
 						fax: registrantWhoisData?.fax ?? '',
 					} as DomainContactDetails
 				}
-				errors={ {} }
 			/>
 		</PageLayout>
 	);
