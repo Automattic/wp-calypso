@@ -99,10 +99,10 @@ export default function NoticeSummary( { type }: Props ) {
 			case 'request-client-payment':
 				return [
 					translate(
-						'Your client will be sent an invoice asking them to create a WordPress.com account to pay for these products. They will be invoiced at the start of each month until they choose to cancel. Depending on how many days are left in the month, your client may be charged less than the total above for their first invoice.'
+						"We'll email your client with instructions to create a WordPress.com account and complete their purchase. Once their payment is successful, they'll be enrolled in an automatically renewing subscription, billed monthly or annually, based on their selection at checkout. The client may cancel their subscription at any time."
 					),
 					translate(
-						'Once paid, you can manage these products on behalf of your client. The client can cancel their products at any time.'
+						"After their purchase, you'll be able to manage the products on your client's behalf."
 					),
 				];
 
