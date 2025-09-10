@@ -13,7 +13,7 @@ import {
 import config from '@automattic/calypso-config';
 import { create } from '@github/webauthn-json';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
-import { profileQuery } from './me-profile';
+import { userSettingsQuery } from './me-settings';
 import { queryClient } from './query-client';
 
 export const securityKeysQuery = () =>
@@ -88,7 +88,7 @@ export const validateTwoStepCodeMutation = () =>
 	mutationOptions( {
 		mutationFn: validateTwoStepCode,
 		onSuccess: () => {
-			queryClient.invalidateQueries( profileQuery() );
+			queryClient.invalidateQueries( userSettingsQuery() );
 		},
 	} );
 

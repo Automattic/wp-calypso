@@ -1,4 +1,4 @@
-import { profileQuery } from '@automattic/api-queries';
+import { userSettingsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -8,7 +8,7 @@ import PrintBackupCodes from './print-backup-codes';
 import ScanQRCode from './scan-qr-code';
 
 export default function SecurityTwoStepAuthApp() {
-	const { data: userSettings } = useSuspenseQuery( profileQuery() );
+	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 
 	const isTwoStepAppEnabled = userSettings.two_step_app_enabled;
 	const isBackupCodesPrinted = userSettings.two_step_backup_codes_printed;
