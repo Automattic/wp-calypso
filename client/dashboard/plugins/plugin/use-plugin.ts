@@ -13,7 +13,7 @@ export const usePlugin = ( pluginId: string ) => {
 	const locale = useLocale();
 	const { data: sitesPlugins, isLoading: isLoadingSitesPlugins } = useQuery( pluginsQuery() );
 	const { data: sites, isLoading: isLoadingSites } = useQuery( sitesQuery() );
-	const { data: wooCommercePlugin, isLoading: isLoadingWooCommercePlugin } = useQuery(
+	const { data: marketplacePlugin, isLoading: isLoadingMarketplacePlugin } = useQuery(
 		marketplacePluginQuery( pluginId )
 	);
 	const { data: wpOrgPlugin, isLoading: isLoadingWpOrgPlugin } = useQuery(
@@ -54,10 +54,10 @@ export const usePlugin = ( pluginId: string ) => {
 
 	return {
 		isLoading:
-			isLoadingSitesPlugins || isLoadingSites || isLoadingWpOrgPlugin || isLoadingWooCommercePlugin,
+			isLoadingSitesPlugins || isLoadingSites || isLoadingWpOrgPlugin || isLoadingMarketplacePlugin,
 		pluginBySiteId,
 		sitesWithThisPlugin,
 		sitesWithoutThisPlugin,
-		plugin: wpOrgPlugin || wooCommercePlugin || pluginData,
+		plugin: wpOrgPlugin || marketplacePlugin || pluginData,
 	};
 };
