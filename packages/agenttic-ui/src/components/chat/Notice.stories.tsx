@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Notice } from './Notice';
 import { StylesIcon } from '../icons/StylesIcon';
+import { CheckIcon } from '../icons/CheckIcon';
+import { XIcon } from '../icons/XIcon';
 
 const meta = {
 	title: 'Chat/Notice',
@@ -49,5 +51,33 @@ export const NonDismissible: Story = {
 	args: {
 		message: 'This notice cannot be dismissed.',
 		dismissible: false,
+	},
+};
+
+export const Success: Story = {
+	args: {
+		message: 'Operation completed successfully!',
+		status: 'success',
+		icon: <CheckIcon />,
+	},
+};
+
+export const Warning: Story = {
+	args: {
+		message: 'Please review your settings before proceeding.',
+		status: 'warning',
+		icon: <StylesIcon />,
+	},
+};
+
+export const Error: Story = {
+	args: {
+		message: 'An error occurred while processing your request.',
+		status: 'error',
+		icon: <XIcon />,
+		action: {
+			label: 'Retry',
+			onClick: () => console.log( 'Retrying...' ),
+		},
 	},
 };

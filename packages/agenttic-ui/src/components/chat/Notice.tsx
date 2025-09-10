@@ -14,6 +14,7 @@ interface NoticeProps {
 	dismissible?: boolean;
 	onDismiss?: () => void;
 	className?: string;
+	status?: 'success' | 'warning' | 'error';
 }
 
 export function Notice( {
@@ -23,13 +24,21 @@ export function Notice( {
 	dismissible = true,
 	onDismiss,
 	className,
+	status,
 }: NoticeProps ) {
 	return (
 		<div
 			data-slot="notice"
-			className={ cn( styles.container, {
-				[ styles.containerWithIcon ]: !! icon,
-			} ) }
+			className={ cn(
+				styles.container,
+				{
+					[ styles.containerWithIcon ]: !! icon,
+					[ styles.isSuccess ]: status === 'success',
+					[ styles.isWarning ]: status === 'warning',
+					[ styles.isError ]: status === 'error',
+				},
+				className
+			) }
 		>
 			<div className={ styles.content }>
 				{ icon && <div className={ styles.icon }>{ icon }</div> }

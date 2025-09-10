@@ -6,6 +6,7 @@ import { ImageIcon } from '../icons/ImageIcon';
 import { PageIcon } from '../icons/PageIcon';
 import { StylesIcon } from '../icons/StylesIcon';
 import { CheckIcon } from '../icons/CheckIcon';
+import { AgentUI } from '../AgentUI';
 
 const meta = {
 	title: 'Chat/ChatInput',
@@ -14,6 +15,18 @@ const meta = {
 		layout: 'padded',
 	},
 	tags: [ 'autodocs' ],
+	decorators: [
+		( Story, context ) => (
+			<AgentUI.Container
+				messages={ [] }
+				isProcessing={ Boolean( context.args?.isProcessing ) }
+				onSubmit={ () => {} }
+				variant="embedded"
+			>
+				<Story />
+			</AgentUI.Container>
+		),
+	],
 } satisfies Meta< typeof ChatInput >;
 
 export default meta;

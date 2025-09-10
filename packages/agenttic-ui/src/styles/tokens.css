@@ -10,6 +10,12 @@
   --color-destructive: oklch(0.492 0.2095 28.09);
   --color-muted: color-mix(in srgb, var(--color-foreground) 10%, var(--color-background));
   --color-muted-foreground: color-mix(in srgb, var(--color-background) 40%, var(--color-foreground));
+  --color-success: rgba(74, 184, 102, 0.04);
+  --color-success-icon: #2C723E;
+  --color-warning: rgba(240, 184, 73, 0.04);
+  --color-warning-icon: #A77F30;
+  --color-error: rgba(204, 24, 24, 0.04);  
+  --color-error-icon: #8C0B0B;
 
   /* === TYPOGRAPHY === */
 

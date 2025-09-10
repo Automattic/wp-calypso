@@ -17,6 +17,33 @@
     padding-left: var(--spacing-3);
 }
 
+.is-success {
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    background-color: var(--color-success);
+}
+
+.is-success svg path {
+    fill: var(--color-success-icon);
+}
+
+.is-warning {
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    background-color: var(--color-warning);
+}
+
+.is-warning svg path {
+    fill: var(--color-warning-icon);
+}
+
+.is-error {
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    background-color: var(--color-error);
+}
+
+.is-error svg path {
+    fill: var(--color-error-icon);
+}
+
 .content {
     align-items: center;
     display: flex;
