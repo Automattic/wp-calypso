@@ -19,7 +19,7 @@ import {
 	Spinner,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { useEffect } from '@wordpress/element';
+import { useEffect, useRef } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { Icon, chevronDownSmall, plus } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
@@ -122,8 +122,24 @@ const EnvironmentSwitcherDropdown = ( {
 		( ! currentSite.is_wpcom_staging_site && productionSite && ! stagingSite ) ||
 		isActionInProgress;
 
+	const dropDownRef = useRef< React.ComponentRef< typeof NavigableMenu > | null >( null );
+	useEffect( () => {
+		if ( isActionInProgress ) {
+			// Find the first focusable element within the NavigableMenu
+			const menuElement = dropDownRef.current;
+			if ( menuElement ) {
+				const firstFocusableElement = menuElement.querySelector(
+					'[role="menuitem"]:not([disabled])'
+				);
+				if ( firstFocusableElement ) {
+					( firstFocusableElement as HTMLElement ).focus();
+				}
+			}
+		}
+	}, [ isActionInProgress ] );
+
 	return (
-		<NavigableMenu>
+		<NavigableMenu ref={ dropDownRef }>
 			<MenuGroup>
 				{ productionSite && canManageSite( productionSite ) && (
 					<RouterLinkMenuItem to={ `/sites/${ productionSite.slug }` } onClick={ onClose }>
@@ -143,8 +159,6 @@ const EnvironmentSwitcherDropdown = ( {
 								: handleUpsell
 						}
 						disabled={ isActionInProgress }
-						isSelected={ isActionInProgress }
-						role="menuitemcheckbox"
 					>
 						<HStack justify="flex-start">
 							<StagingSiteActionButton
