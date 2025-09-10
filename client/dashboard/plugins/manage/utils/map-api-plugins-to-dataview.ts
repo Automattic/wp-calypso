@@ -1,7 +1,7 @@
 import type { PluginListRow } from '../types';
 import type { PluginItem, PluginsResponse } from '@automattic/api-core';
 
-function toTriState( count: number, total: number ): 'all' | 'some' | 'none' {
+function mapCountToQuantifier( count: number, total: number ): 'all' | 'some' | 'none' {
 	if ( total === 0 || count === 0 ) {
 		return 'none';
 	}
@@ -61,9 +61,9 @@ export function mapApiPluginsToDataViewPlugins( response?: PluginsResponse ): Pl
 			id,
 			name,
 			sitesCount: count,
-			hasUpdate: toTriState( updateCount, count ),
-			isActive: toTriState( activeCount, count ),
-			areAutoUpdatesEnabled: toTriState( autoupdateCount, count ),
+			hasUpdate: mapCountToQuantifier( updateCount, count ),
+			isActive: mapCountToQuantifier( activeCount, count ),
+			areAutoUpdatesEnabled: mapCountToQuantifier( autoupdateCount, count ),
 			siteIds,
 		} )
 	);
