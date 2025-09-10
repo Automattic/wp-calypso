@@ -122,27 +122,29 @@ const EnvironmentSwitcherDropdown = ( {
 		( ! currentSite.is_wpcom_staging_site && productionSite && ! stagingSite ) ||
 		isActionInProgress;
 
-	const dropDownRef = useRef< React.ComponentRef< typeof NavigableMenu > | null >( null );
+	const productionMenuItemRef = useRef< React.ComponentRef< typeof RouterLinkMenuItem > | null >(
+		null
+	);
 	useEffect( () => {
-		if ( isActionInProgress ) {
-			// Find the first focusable element within the NavigableMenu
-			const menuElement = dropDownRef.current;
-			if ( menuElement ) {
-				const firstFocusableElement = menuElement.querySelector(
-					'[role="menuitem"]:not([disabled])'
-				);
-				if ( firstFocusableElement ) {
-					( firstFocusableElement as HTMLElement ).focus();
-				}
-			}
+		if ( isActionInProgress && productionMenuItemRef.current ) {
+			// This type juggling is added because the ref type of the RouterLinkMenuItem is
+			// MutableRefObject<LegacyRef<HTMLButtonElement> | undefined>
+			// So the current is LegacyRef<HTMLButtonElement> | undefined
+			// but it should not fail as we are checking if it is not null
+			const element = productionMenuItemRef.current as unknown as HTMLButtonElement;
+			element?.focus();
 		}
 	}, [ isActionInProgress ] );
 
 	return (
-		<NavigableMenu ref={ dropDownRef }>
+		<NavigableMenu>
 			<MenuGroup>
 				{ productionSite && canManageSite( productionSite ) && (
-					<RouterLinkMenuItem to={ `/sites/${ productionSite.slug }` } onClick={ onClose }>
+					<RouterLinkMenuItem
+						ref={ productionMenuItemRef }
+						to={ `/sites/${ productionSite.slug }` }
+						onClick={ onClose }
+					>
 						<Environment env="production" />
 					</RouterLinkMenuItem>
 				) }
