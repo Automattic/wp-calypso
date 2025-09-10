@@ -35,6 +35,7 @@ export * from './me-tax-details';
 export * from './me-two-step';
 export * from './meta-sms-country-codes';
 export * from './p2';
+export * from './plugins';
 export * from './purchase';
 export * from './read-teams';
 export * from './site';
