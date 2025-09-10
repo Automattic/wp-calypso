@@ -19,6 +19,7 @@ export const MessageContent = ( {
 		'odie-chatbox-message',
 		`odie-chatbox-message-${ message.role }`,
 		`odie-chatbox-message-${ message.type ?? 'message' }`,
+		{ 'is-sending': message.isSending },
 		{
 			'odie-chatbox-message-conversation-feedback': isFeedbackMessage,
 		}

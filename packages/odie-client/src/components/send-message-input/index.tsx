@@ -33,7 +33,7 @@ export const OdieSendMessageButton = () => {
 		( chat.messages?.[ chat.messages.length - 1 ]?.context?.flags?.forward_to_human_support &&
 			! canConnectToZendesk ) ??
 		false;
-	const sendMessage = useSendChatMessage();
+	const { sendMessage, abort } = useSendChatMessage();
 	const isChatBusy = chat.status === 'loading' || chat.status === 'sending';
 	const isInitialLoading = chat.status === 'loading';
 	const isLiveChat = chat.provider?.startsWith( 'zendesk' );
@@ -80,8 +80,15 @@ export const OdieSendMessageButton = () => {
 				content: inputValue,
 				role: 'user',
 				type: 'message',
+				// Odie messages are considered sent immediately.
+				// Because it's impossible to know if the message was sent or until the response is received.
+				// Which takes north of 10 seconds.
+				isSending: chat?.provider !== 'odie',
+				metadata: { temporary_id: crypto.randomUUID() },
 			} as Message;
-			await sendMessage( messageObj );
+
+			sendMessage( messageObj );
+
 			// Clear input after zendesk messages are sent
 			if ( chat?.provider === 'zendesk' ) {
 				setInputValue( '' );
@@ -115,6 +122,10 @@ export const OdieSendMessageButton = () => {
 		[ sendMessageHandler, handleImagePaste ]
 	);
 
+	const isDisabled = !! notice || ( isLiveChat && connectionStatus !== 'connected' );
+	// When there is a reason to disable the input, we should not convey a processing state.
+	const isProcessing = ( isChatBusy || isAttachingFile || cantTransferToZendesk ) && ! isDisabled;
+
 	return (
 		<>
 			<div className="odie-chat-message-input-container agenttic" ref={ divContainerRef }>
@@ -128,15 +139,11 @@ export const OdieSendMessageButton = () => {
 						onSubmit={ sendMessageHandler }
 						onKeyDown={ handleKeyDown }
 						textareaRef={ textareaRef }
-						disabled={ !! notice }
+						disabled={ isDisabled }
+						onStop={ abort }
 						notice={ notice }
 						placeholder={ textAreaPlaceholder }
-						isProcessing={
-							isChatBusy ||
-							isAttachingFile ||
-							cantTransferToZendesk ||
-							( isLiveChat && connectionStatus !== 'connected' )
-						}
+						isProcessing={ isProcessing }
 						focusOnMount={ ! isInitialLoading }
 						customActions={ customActions }
 						actionOrder="before-submit"

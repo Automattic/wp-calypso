@@ -28,7 +28,7 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 		}
 		return chatFeedbackOptions[ 0 ]?.metadata?.ticket_id ?? null;
 	}, [ chatFeedbackOptions ] );
-	const sendMessage = useSendChatMessage();
+	const { sendMessage } = useSendChatMessage();
 
 	const badRatingReasons = getBadRatingReasons();
 

@@ -44,7 +44,7 @@ const getErrorMessageForSiteIdAndInternalMessageId = (
  * If the chat_id is not set, it will create a new chat and send a message to the chat.
  * @returns useMutation return object.
  */
-export const useSendOdieMessage = () => {
+export const useSendOdieMessage = ( signal: AbortSignal ) => {
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const odieId = getOdieIdFromInteraction( currentSupportInteraction );
 
@@ -154,19 +154,21 @@ export const useSendOdieMessage = () => {
 			const chatIdSegment = odieId ? `/${ odieId }` : '';
 			const path = window.location.pathname + window.location.search;
 			return canAccessWpcomApis()
-				? await wpcomRequest( {
+				? wpcomRequest< ReturnedChat >( {
 						method: 'POST',
 						path: `/odie/chat/${ botNameSlug }${ chatIdSegment }`,
 						apiNamespace: 'wpcom/v2',
+						signal,
 						body: {
 							message: message.content,
 							...( version && { version } ),
 							context: { selectedSiteId, path },
 						},
 				  } )
-				: await apiFetch( {
+				: apiFetch< ReturnedChat >( {
 						path: `/help-center/odie/chat/${ botNameSlug }${ chatIdSegment }`,
 						method: 'POST',
+						signal,
 						data: {
 							message: message.content,
 							...( version && { version } ),
@@ -230,9 +232,14 @@ export const useSendOdieMessage = () => {
 			} );
 		},
 		onSettled: () => {
+			setChatStatus( 'loaded' );
 			queryClient.invalidateQueries( { queryKey: [ 'odie-chat', botNameSlug, odieId ] } );
 		},
 		onError: ( error ) => {
+			if ( error instanceof Event && error.type === 'abort' ) {
+				return;
+			}
+
 			const isRateLimitError = error.message.includes( '429' );
 
 			if ( isRateLimitError ) {

@@ -15,7 +15,7 @@ export const useCreateZendeskConversation = (): ( ( {
 	interactionId?: string;
 	createdFrom?: string;
 	isFromError?: boolean;
-} ) => Promise< void > ) => {
+} ) => Promise< string > ) => {
 	const {
 		selectedSiteId,
 		selectedSiteURL,
@@ -62,7 +62,7 @@ export const useCreateZendeskConversation = (): ( ( {
 			chat.status === 'transfer' ||
 			chat.provider === 'zendesk'
 		) {
-			return;
+			return chat.conversationId || '';
 		}
 
 		setChat( ( prevChat ) => ( {
@@ -137,6 +137,8 @@ export const useCreateZendeskConversation = (): ( ( {
 			provider: 'zendesk',
 			status: 'loaded',
 		} ) );
+
+		return conversation.id;
 	};
 
 	return createConversation;
