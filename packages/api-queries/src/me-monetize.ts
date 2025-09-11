@@ -1,5 +1,5 @@
-import { queryOptions } from '@tanstack/react-query';
 import { fetchMonetizeSubscriptions } from '@automattic/api-core';
+import { queryOptions } from '@tanstack/react-query';
 
 export const monetizeSubscriptionsQuery = () =>
 	queryOptions( {

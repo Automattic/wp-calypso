@@ -1,11 +1,10 @@
-import { normalizePurchase } from '../purchase';
+import { MembershipSubscription, normalizeMonetizeSubscription } from '../monetize';
 import { wpcom } from '../wpcom-fetcher';
-import type { Purchase } from '../purchase';
 
-export async function fetchMonetizeSubscriptions(): Promise< Purchase[] > {
+export async function fetchMonetizeSubscriptions(): Promise< MembershipSubscription > {
 	const data = await wpcom.req.get( {
-		path: '/me/purchases',
+		path: '/me/memberships/subscriptions',
 		apiVersion: '1.1',
 	} );
-	return data.map( normalizePurchase );
+	return data.subscriptions.map( normalizeMonetizeSubscription );
 }

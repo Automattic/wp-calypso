@@ -1,23 +1,17 @@
-import { DESKTOP_BREAKPOINT } from '@automattic/viewport';
-import { useBreakpoint } from '@automattic/viewport-react';
+import { MembershipSubscription } from '@automattic/api-core';
+import { monetizeSubscriptionsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { useResizeObserver } from '@wordpress/compose';
 import { DataViews, filterSortAndPaginate, type View } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { adjustDataViewFieldsForWidth } from '../../utils/dataviews-width';
-import {
-	purchasesWideFields,
-	purchasesDesktopFields,
-	purchasesMobileFields,
-} from '../billing-purchases/dataviews';
 import { useMembershipsFieldDefinitions } from './dataviews';
 import { getMonetizeSubscriptionUrl } from './urls';
-import { monetizeSubscriptionsQuery } from '@automattic/api-queries';
 
 const defaultPerPage = 10;
 
@@ -50,31 +44,18 @@ function MonetizeSubscriptions() {
 			adjustDataViewFieldsForWidth( {
 				width: firstEntry.contentRect.width,
 				setView,
-				wideFields: purchasesWideFields,
-				desktopFields: purchasesDesktopFields,
-				mobileFields: purchasesMobileFields,
+				wideFields: membershipsDesktopFields,
+				desktopFields: membershipsDesktopFields,
+				mobileFields: membershipsMobileFields,
 			} );
 		}
 	} );
 
 	const membershipsDataFields = useMembershipsFieldDefinitions();
-	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
 	const navigate = useNavigate();
 	const { data: monetizeSubscriptions, isLoading: isLoadingMemberships } = useQuery(
 		monetizeSubscriptionsQuery()
 	);
-
-	// Hide fields at mobile width
-	useEffect( () => {
-		if ( isDesktop && currentView.fields === membershipsMobileFields ) {
-			setView( { ...currentView, fields: membershipsDesktopFields } );
-			return;
-		}
-		if ( ! isDesktop && currentView.fields === membershipsDesktopFields ) {
-			setView( { ...currentView, fields: membershipsMobileFields } );
-			return;
-		}
-	}, [ isDesktop, currentView, setView ] );
 
 	const actions = useMemo(
 		() => [
