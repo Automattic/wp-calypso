@@ -40,6 +40,7 @@ import { itemsSchema } from './schema';
  * @returns {any} - new copy of the state
  */
 const modifySiteDomainObjectImmutable = ( state, siteId, domain, modifyDomainProperties ) => {
+	// state[ siteId ] might not be defined yet when using the `domain-details` query
 	if ( ! state[ siteId ] ) {
 		return Object.assign( {}, state, {
 			[ siteId ]: [ { ...modifyDomainProperties } ],
