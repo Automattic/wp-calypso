@@ -21,7 +21,6 @@ import {
 	getUploadFilename,
 	getUploadPercentComplete,
 } from 'calypso/state/imports/uploads/selectors';
-import ExportDataGuide from './export-data-guide';
 
 const noop = () => {};
 
@@ -237,7 +236,6 @@ export class UploadingPane extends PureComponent {
 
 		return (
 			<div>
-				<ExportDataGuide fromSite={ this.props.fromSite } selectedSiteUrl={ this.props.site.URL } />
 				<div
 					className="importer__uploading-pane"
 					role="button"

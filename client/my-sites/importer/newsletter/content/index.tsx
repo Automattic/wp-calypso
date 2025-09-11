@@ -11,6 +11,7 @@ import { fetchImporterState, startImport, cancelImport } from 'calypso/state/imp
 import { appStates } from 'calypso/state/imports/constants';
 import { getImporterStatusForSiteId } from 'calypso/state/imports/selectors';
 import { EngineTypes, ImporterState } from '../types';
+import ExportDataGuide from './export-data-guide';
 import ImportingPane from './importing-pane';
 import UploadingPane from './uploading-pane';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -107,7 +108,7 @@ export default function Content( {
 		} ).substack;
 
 	const handleImportStart = () => {
-		if ( overrideDestination ) {
+		if ( ! overrideDestination ) {
 			dispatch( startImport( siteId, importerId ) );
 		}
 
@@ -147,6 +148,9 @@ export default function Content( {
 	return (
 		<Card>
 			<Interval onTick={ fetchImporters } period={ EVERY_FIVE_SECONDS } />
+			{ ! isImporting( importerState ) && (
+				<ExportDataGuide fromSite={ fromSite } selectedSiteUrl={ selectedSite.URL } />
+			) }
 			{ importerStatus && (
 				<Card { ...cardProps }>
 					{ errorData && (
