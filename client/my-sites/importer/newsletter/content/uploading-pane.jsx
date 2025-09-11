@@ -23,8 +23,6 @@ import {
 } from 'calypso/state/imports/uploads/selectors';
 import ExportDataGuide from './export-data-guide';
 
-import './uploading-pane.scss';
-
 const noop = () => {};
 
 export class UploadingPane extends PureComponent {

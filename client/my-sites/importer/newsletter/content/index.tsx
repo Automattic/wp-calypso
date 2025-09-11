@@ -15,6 +15,8 @@ import ImportingPane from './importing-pane';
 import UploadingPane from './uploading-pane';
 import type { SiteDetails } from '@automattic/data-stores';
 
+import './style.scss';
+
 interface ContentProps {
 	nextStepUrl: string;
 	engine: EngineTypes;

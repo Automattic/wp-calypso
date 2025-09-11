@@ -14,8 +14,6 @@ import ImporterActionButton from 'calypso/my-sites/importer/importer-action-butt
 import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
 import { SummaryStat } from '../components';
 
-import './author-mapping-pane.scss';
-
 class AuthorMappingPane extends PureComponent {
 	static displayName = 'AuthorMappingPane';
 
