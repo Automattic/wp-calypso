@@ -115,6 +115,9 @@ const SiteMigrationCredentials: StepType< {
 			automated_migration: true,
 		} );
 
+		// Fire Google Ads tracking event when credentials are skipped
+		recordMigrationCredentialsEvent( 'SiteMigrationCredentials' );
+
 		try {
 			await sendTicketAsync( {
 				locale,
