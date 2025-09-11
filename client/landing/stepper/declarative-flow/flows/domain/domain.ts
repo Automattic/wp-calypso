@@ -130,7 +130,10 @@ const domain: FlowV2< typeof initialize > = {
 							addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
 								redirect_to: `/domains/manage/${ siteSlug }`,
 								signup: 1,
-								checkoutBackUrl: new URL( `/domains/add/${ siteSlug }`, window.location.href ).href,
+								cancel_to: new URL(
+									addQueryArgs( '/setup/domain', { siteSlug } ),
+									window.location.href
+								).href,
 							} )
 						);
 					}
@@ -195,7 +198,7 @@ const domain: FlowV2< typeof initialize > = {
 								redirect_to: '/domains/manage',
 								signup: 0,
 								isDomainOnly: 1,
-								checkoutBackUrl: new URL(
+								cancel_to: new URL(
 									addQueryArgs( '/setup/domain/new-or-existing-site', window.location.search ),
 									window.location.href
 								).href,
@@ -273,8 +276,8 @@ const domain: FlowV2< typeof initialize > = {
 								addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
 									redirect_to: destination,
 									signup: 1,
-									checkoutBackUrl: new URL(
-										`/domains/add/${ providedDependencies.siteSlug }`,
+									cancel_to: new URL(
+										addQueryArgs( '/setup/domain', { siteSlug } ),
 										window.location.href
 									).href,
 								} )
