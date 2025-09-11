@@ -4,7 +4,6 @@ import { useMyDomainInputMode } from '@automattic/domains-table/src/utils/consta
 import { isFreeUrlDomainName } from '@automattic/domains-table/src/utils/is-free-url-domain-name';
 import {
 	domainManagementEditContactInfo,
-	domainManagementLink,
 	domainUseMyDomain,
 } from '@automattic/domains-table/src/utils/paths';
 import { useQuery, useMutation } from '@tanstack/react-query';
@@ -15,7 +14,11 @@ import { sprintf, __ } from '@wordpress/i18n';
 import { payment, tool } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, Suspense, lazy } from 'react';
-import { domainDnsRoute, domainConnectionSetupRoute } from '../../app/router/domains';
+import {
+	domainOverviewRoute,
+	domainDnsRoute,
+	domainConnectionSetupRoute,
+} from '../../app/router/domains';
 import {
 	isRecentlyRegistered,
 	isDomainRenewable,
@@ -94,8 +97,13 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				supportsBulk: false,
 				callback: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
-					const siteSlug = getDomainSiteSlug( domain );
-					window.location.pathname = domainManagementLink( domain, siteSlug, false );
+
+					router.navigate( {
+						to: domainOverviewRoute.fullPath,
+						params: {
+							domainName: domain.domain,
+						},
+					} );
 				},
 				isEligible: ( item: DomainSummary ) => {
 					return item.subtype.id !== DomainSubtype.DEFAULT_ADDRESS;
