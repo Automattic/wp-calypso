@@ -1,3 +1,4 @@
+import { sitePluginRemoveMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import ActionRenderModal, { getModalHeader } from '../components/action-render-modal';
@@ -11,7 +12,7 @@ export const deleteAction: Action< PluginListRow > = {
 	isPrimary: false,
 	modalHeader: getModalHeader( 'delete' ),
 	RenderModal: ( { items, closeModal, onActionPerformed } ) => {
-		const { mutateAsync } = useMutation( sitePluginDeleteMutation() );
+		const { mutateAsync } = useMutation( sitePluginRemoveMutation() );
 		const action = buildBulkSitesPluginAction( mutateAsync );
 
 		return (
