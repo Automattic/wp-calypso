@@ -3,10 +3,11 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { video, verse, page, file, Icon, audio, gallery, post, code, help } from '@wordpress/icons';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { useResetMutation } from 'calypso/data/paid-newsletter/use-reset-mutation';
 import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
 import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
 import { useDispatch } from 'calypso/state';
-import { startMappingAuthors } from 'calypso/state/imports/actions';
+import { startMappingAuthors, cancelImport } from 'calypso/state/imports/actions';
 import { SummaryStat } from '../components';
 
 import './conversion-summary.scss';
@@ -20,6 +21,9 @@ interface PostErrorsType {
 }
 
 interface ConversionSummaryProps {
+	siteId: number;
+	importerEngine: string;
+	fromSite: string;
 	importerStatus: {
 		importerId: string;
 		customData?: {
@@ -48,7 +52,7 @@ const UnsupportedFilesMessage = ( {
 			? sprintf(
 					/* translators: %s is the file type */
 					__(
-						'You had an image file type that we do not support. You will need to convert any %s files to a different format and upload them.'
+						'You had an image file type that we do not support. You will need to convert any <strong>%s</strong> files to a different format and upload them.'
 					),
 					fileEntries[ 0 ][ 0 ]
 			  )
@@ -57,7 +61,7 @@ const UnsupportedFilesMessage = ( {
 					__(
 						'You had some image file types that we do not support. You will need to convert any %s files to a different format and upload them.'
 					),
-					fileEntries.map( ( [ ext ] ) => ext ).join( ', ' )
+					fileEntries.map( ( [ ext ] ) => '<strong>' + ext + '</strong>' ).join( ', ' )
 			  ) ) + ' ';
 
 	return (
@@ -75,6 +79,7 @@ const UnsupportedFilesMessage = ( {
 								supportPostId={ 2037 }
 							/>
 						),
+						strong: <strong />,
 					}
 				) }
 			</p>
@@ -166,7 +171,7 @@ const PostErrorsMessage = ( { postErrors }: { postErrors: PostErrorsType } ) => 
 				<>
 					<p>
 						{ __(
-							'Some of the content could not not be converted properly. Don`t fret, you can manually add them to your site using the blocks below.'
+							"Some of the content could not not be converted properly. Don't fret, you can manually add them to your site using the blocks below."
 						) }
 					</p>
 					{ Object.entries( nodeFailedErrors ).map(
@@ -210,38 +215,29 @@ const PostErrorsMessage = ( { postErrors }: { postErrors: PostErrorsType } ) => 
 	);
 };
 
-const ConversionSummary = ( { importerStatus }: ConversionSummaryProps ) => {
+const ConversionSummary = ( {
+	siteId,
+	importerStatus,
+	importerEngine,
+	fromSite,
+}: ConversionSummaryProps ) => {
 	const dispatch = useDispatch();
+	const { resetPaidNewsletter } = useResetMutation();
 
 	const handleContinue = () => {
 		dispatch( startMappingAuthors( importerStatus.importerId ) );
 	};
 
-	const posts = importerStatus?.customData?.postsNumber || 0;
-	const pages = importerStatus?.customData?.pagesNumber || 0;
-	const attachments = importerStatus?.customData?.attachmentsNumber || 0;
+	const handleBack = () => {
+		resetPaidNewsletter( siteId, importerEngine, 'content', fromSite );
+		dispatch( cancelImport( siteId, importerStatus.importerId ) );
+	};
 
-	/**
-	 * DEMO DATA
-	 * needs to be removed
-	 */
-	const unsupportedFiles = {
-		avif: 1,
-		svg: 5,
-		webp: 10,
-	};
-	const postErrors = {
-		convert_node_failed: {
-			'native-audio-embed': [ 173265379 ],
-			'native-video-embed': [ 165043140 ],
-			'digest-post-embed': [ 173265379, 173265379, 173265379 ],
-			'captioned-button-wrap': [ 165043140 ],
-			'poll-embed': [ 170183 ],
-			'latex-rendered': [ 97 ],
-			'image-gallery-embed': [ 173265379 ],
-		},
-		convert_html_to_gutenberg_failed: [ 173265379 ],
-	};
+	const posts = 712;
+	const pages = importerStatus?.customData?.pagesNumber || 0;
+	const attachments = 2989;
+	const unsupportedFiles = {};
+	const postErrors = {};
 
 	const hasUnsupportedFiles = Object.keys( unsupportedFiles ).length > 0;
 	const hasPostErrors = Object.keys( postErrors ).length > 0;
@@ -251,17 +247,17 @@ const ConversionSummary = ( { importerStatus }: ConversionSummaryProps ) => {
 		<div className="importer__conversion-summary-pane">
 			<div className="conversion-summary__success">
 				<h2>{ __( 'Conversion summary' ) }</h2>
-				<div className="success-stats">
-					<p>
-						{ ( hasIssues
-							? __(
-									'We have converted your content to WordPress. Most of your content was processed successfully, with some items noted below.'
-							  )
-							: __(
-									'We have successfully converted your content to WordPress. Next we will begin uploading it to your site.'
-							  ) ) + ' ' }
-						{ __( "Here's an overview of what will be added to your site." ) }
-					</p>
+				<p>
+					{ ( hasIssues
+						? __(
+								'We have converted your content to WordPress. Most of your content was processed successfully, with some items noted below.'
+						  )
+						: __(
+								'We have successfully converted your content to WordPress. Next we will begin uploading it to your site.'
+						  ) ) + ' ' }
+					{ __( "Here's an overview of what will be added to your site." ) }
+				</p>
+				<div className="success-stats summary__content-stats">
 					{ posts > 0 && <SummaryStat count={ posts } label={ __( 'Posts' ) } icon={ verse } /> }
 					{ pages > 0 && <SummaryStat count={ pages } label={ __( 'Pages' ) } icon={ page } /> }
 					{ attachments > 0 && (
@@ -270,19 +266,23 @@ const ConversionSummary = ( { importerStatus }: ConversionSummaryProps ) => {
 				</div>
 			</div>
 			{ hasIssues && (
-				<div className="conversion-summary__issues">
-					<h2>{ __( 'Items that need your attention' ) }</h2>
-					{ hasUnsupportedFiles && (
-						<UnsupportedFilesMessage unsupportedFileTypes={ unsupportedFiles } />
-					) }
-					{ hasPostErrors && <PostErrorsMessage postErrors={ postErrors } /> }
-				</div>
+				<>
+					<hr />
+					<div className="conversion-summary__issues">
+						<h2>{ __( 'Items that need your attention' ) }</h2>
+						{ hasUnsupportedFiles && (
+							<UnsupportedFilesMessage unsupportedFileTypes={ unsupportedFiles } />
+						) }
+						{ hasPostErrors && <PostErrorsMessage postErrors={ postErrors } /> }
+					</div>
+				</>
 			) }
 
-			<ImporterActionButtonContainer noSpacing>
+			<ImporterActionButtonContainer>
 				<ImporterActionButton primary onClick={ handleContinue }>
 					{ __( 'Continue' ) }
 				</ImporterActionButton>
+				<ImporterActionButton onClick={ handleBack }>{ __( 'Go back' ) }</ImporterActionButton>
 			</ImporterActionButtonContainer>
 		</div>
 	);

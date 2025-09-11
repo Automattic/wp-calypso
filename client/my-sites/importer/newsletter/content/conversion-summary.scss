@@ -1,11 +1,23 @@
 .importer__conversion-summary-pane {
     .conversion-summary__success {
         margin-bottom: 1.5em;
+
+        h2 + p {
+            margin-top: 0;
+        }
+
+        .summary__content-row {
+            padding-left: 6px;
+        }
     }
 
     .conversion-summary__post-errors, .conversion-summary__unsupported-files {
         p {
             margin-bottom: .825em;
+
+            + .post-errors__item {
+                margin-top: 1.5em;
+            }
         }
 
         .post-errors__item {
@@ -14,14 +26,19 @@
             gap: 8px;
             margin-bottom: 6px;
             padding-left: 6px;
-
+            
             p {
                 margin: 0;
+                line-height: 26px;
             }
 
             .post-errors__item-icon {
                 flex-shrink: 0;
             }
         }
+    }
+
+    .importer-action-buttons__container {
+        margin-top: 24px;
     }
 }

@@ -99,6 +99,7 @@ export class ImportingPane extends PureComponent {
 			name: PropTypes.string.isRequired,
 			single_user_site: PropTypes.bool.isRequired,
 		} ).isRequired,
+		importerEngine: PropTypes.string.isRequired,
 		sourceType: PropTypes.string.isRequired,
 		nextStepUrl: PropTypes.string.isRequired,
 		invalidateCardData: PropTypes.func,
@@ -227,6 +228,7 @@ export class ImportingPane extends PureComponent {
 			sourceType,
 			site,
 			invalidateCardData,
+			importerEngine,
 		} = this.props;
 		const { customData } = importerStatus;
 
@@ -254,7 +256,13 @@ export class ImportingPane extends PureComponent {
 
 		return (
 			<div className="importer__importing-pane">
-				{ this.isUploadSuccess() && <ConversionSummary importerStatus={ importerStatus } /> }
+				{ this.isUploadSuccess() && (
+					<ConversionSummary
+						siteId={ siteId }
+						importerStatus={ importerStatus }
+						importerEngine={ importerEngine }
+					/>
+				) }
 				{ this.isMapping() && (
 					<AuthorMappingPane
 						onMap={ this.handleOnMap }
