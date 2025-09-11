@@ -54,7 +54,6 @@ export default function AccountDeletionSection() {
 								isDestructive
 								variant="secondary"
 								size="compact"
-								style={ { minWidth: 'fit-content' } }
 							>
 								{ __( 'Delete account' ) }
 							</Button>
