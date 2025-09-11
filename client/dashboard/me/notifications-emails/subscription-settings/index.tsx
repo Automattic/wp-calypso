@@ -57,6 +57,21 @@ export const SubscriptionSettings = () => {
 		[ dataState, originalSettings ]
 	);
 
+	useBlocker( {
+		enableBeforeUnload: isDataStateDirty,
+		shouldBlockFn: () => {
+			if ( ! isDataStateDirty ) {
+				return false;
+			}
+
+			const shouldLeave = confirm(
+				__( 'You have unsaved changes. Are you sure you want to leave?' )
+			);
+
+			return ! shouldLeave;
+		},
+	} );
+
 	const handleSubmit = useCallback(
 		( e: React.FormEvent ) => {
 			e.preventDefault();
@@ -71,21 +86,6 @@ export const SubscriptionSettings = () => {
 		},
 		[ setDataState ]
 	);
-
-	useBlocker( {
-		enableBeforeUnload: true,
-		shouldBlockFn: () => {
-			if ( ! isDataStateDirty ) {
-				return false;
-			}
-
-			const shouldLeave = confirm(
-				__( 'You have unsaved changes. Are you sure you want to leave?' )
-			);
-
-			return ! shouldLeave;
-		},
-	} );
 
 	return (
 		<Card>
