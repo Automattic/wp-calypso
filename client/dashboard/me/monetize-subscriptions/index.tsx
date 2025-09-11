@@ -80,7 +80,7 @@ function MonetizeSubscriptions() {
 	);
 
 	const { data: adjustedMemberships, paginationInfo } = useMemo( () => {
-		return filterSortAndPaginate( monetizeSubscriptions, currentView, membershipsDataFields );
+		return filterSortAndPaginate( monetizeSubscriptions ?? [], currentView, membershipsDataFields );
 	}, [ monetizeSubscriptions, currentView, membershipsDataFields ] );
 
 	const getItemId = ( item: MembershipSubscription ) => {
