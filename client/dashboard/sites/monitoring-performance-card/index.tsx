@@ -121,7 +121,6 @@ export default function MonitoringPerformanceCard( {
 			description={ __( 'Requests per minute and average server response time.' ) }
 			onDownloadClick={ () => {} }
 			onAnchorClick={ () => {} }
-			isLoading={ isLoadingLineChart }
 		>
 			<MonitoringLineChart
 				timeRange={ timeRange }
