@@ -2,10 +2,7 @@ import { DomainTransferStatus, DomainSubtype } from '@automattic/api-core';
 import { userPurchasesQuery, siteSetPrimaryDomainMutation } from '@automattic/api-queries';
 import { useMyDomainInputMode } from '@automattic/domains-table/src/utils/constants';
 import { isFreeUrlDomainName } from '@automattic/domains-table/src/utils/is-free-url-domain-name';
-import {
-	domainManagementEditContactInfo,
-	domainUseMyDomain,
-} from '@automattic/domains-table/src/utils/paths';
+import { domainUseMyDomain } from '@automattic/domains-table/src/utils/paths';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { Icon } from '@wordpress/components';
@@ -17,6 +14,7 @@ import { useMemo, Suspense, lazy } from 'react';
 import {
 	domainOverviewRoute,
 	domainDnsRoute,
+	domainContactInfoRoute,
 	domainConnectionSetupRoute,
 } from '../../app/router/domains';
 import {
@@ -46,7 +44,6 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: purchases } = useQuery( userPurchasesQuery() );
 	const setPrimaryDomainMutation = useMutation( siteSetPrimaryDomainMutation() );
-	const context = site ? 'site' : 'domains';
 	const actions: Action< DomainSummary >[] = useMemo(
 		() => [
 			{
@@ -137,13 +134,13 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				supportsBulk: false,
 				callback: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
-					const siteSlug = getDomainSiteSlug( domain );
-					window.location.pathname = domainManagementEditContactInfo(
-						siteSlug,
-						domain.domain,
-						null,
-						context
-					);
+
+					router.navigate( {
+						to: domainContactInfoRoute.fullPath,
+						params: {
+							domainName: domain.domain,
+						},
+					} );
 				},
 				isEligible: ( item: DomainSummary ) => {
 					return (
@@ -254,7 +251,7 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 		[
 			user,
 			site,
-			context,
+			router,
 			purchases,
 			setPrimaryDomainMutation,
 			createSuccessNotice,
