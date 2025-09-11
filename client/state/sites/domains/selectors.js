@@ -95,9 +95,6 @@ export const isUpdatingPrimaryDomain = ( state, siteId ) => {
  * @returns {boolean} true if the domain details is being requested, false otherwise
  */
 export const isRequestingDomainDetails = ( state, domainName ) => {
-	console.log( 'isRequestingDomainDetails', domainName );
-	console.log( state?.sites?.domains?.requesting[ domainName ] );
-
 	return state?.sites?.domains?.requesting[ domainName ] || false;
 };
 
