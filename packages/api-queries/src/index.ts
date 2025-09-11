@@ -33,6 +33,7 @@ export * from './performance';
 export * from './plugin';
 export * from './purchase';
 export * from './site-activity-log';
+export * from './site-activity-log-backup';
 export * from './site-address-change';
 export * from './site-agency';
 export * from './site-atomic-transfers';

@@ -43,6 +43,7 @@ export * from './purchase';
 export * from './read-teams';
 export * from './site';
 export * from './site-activity-log';
+export * from './site-activity-log-backup';
 export * from './site-address-change';
 export * from './site-atomic-transfers';
 export * from './site-automated-transfers-eligibility';
