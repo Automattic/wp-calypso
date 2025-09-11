@@ -13,6 +13,7 @@ const defaultProps = {
 	username: 'testuser',
 	isDeleting: false,
 	siteCount: 2,
+	purchases: [],
 };
 
 describe( 'AccountDeletionConfirmModal', () => {
@@ -96,17 +97,20 @@ describe( 'AccountDeletionConfirmModal', () => {
 	} );
 
 	it( 'blocks deletion when user has active purchases', async () => {
-		const { queryClient } = render( <AccountDeletionConfirmModal { ...defaultProps } /> );
-		// Seed React Query cache with one cancelable purchase
-		const { userPurchasesQuery } = require( '@automattic/api-queries' );
-		queryClient.setQueryData( userPurchasesQuery().queryKey, [
-			{
-				ID: 1,
-				expiry_status: 'active',
-				product_slug: 'pro_plan',
-				is_cancelable: true,
-			} as Partial< Purchase >,
-		] );
+		render(
+			<AccountDeletionConfirmModal
+				{ ...defaultProps }
+				purchases={ [
+					{
+						ID: 1,
+						expiry_status: 'active',
+						product_slug: 'pro_plan',
+						is_cancelable: true,
+					} as Partial< Purchase >,
+				] }
+			/>
+		);
+
 		// React Query will notify subscribers; wait for the UI to update
 		await screen.findByText( 'You still have active purchases on your account.' );
 		expect( screen.getByText( 'Manage purchases' ) ).toBeInTheDocument();
