@@ -5,7 +5,7 @@ import { Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useAuth } from '../../app/auth';
 import { siteRoute } from '../../app/router/sites';
 import { DataViewsCard } from '../../components/dataviews-card';
@@ -35,8 +35,19 @@ function SiteDomains() {
 		type: 'table',
 	} ) );
 
+	const filteredSiteDomains = useMemo( () => {
+		// If the site has *.wpcomstaging.com domain, exclude *.wordpress.com
+		if ( siteDomains && siteDomains.find( ( domain ) => domain.is_wpcom_staging_domain ) ) {
+			return siteDomains.filter(
+				( domain ) => ! domain.wpcom_domain || domain.is_wpcom_staging_domain
+			);
+		}
+
+		return siteDomains;
+	}, [ siteDomains ] );
+
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
-		siteDomains ?? [],
+		filteredSiteDomains ?? [],
 		view,
 		fields
 	);
