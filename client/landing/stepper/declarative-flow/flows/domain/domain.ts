@@ -43,7 +43,7 @@ function initialize() {
 		STEPS.USE_MY_DOMAIN,
 		STEPS.NEW_OR_EXISTING_SITE,
 		STEPS.SITE_PICKER,
-		STEPS.PLANS,
+		STEPS.UNIFIED_PLANS,
 		STEPS.SITE_CREATION_STEP,
 		STEPS.PROCESSING,
 	];
@@ -207,7 +207,7 @@ const domain: FlowV2< typeof initialize > = {
 					}
 
 					if ( providedDependencies.newExistingSiteChoice === 'new-site' ) {
-						return navigate( STEPS.PLANS.slug );
+						return navigate( STEPS.UNIFIED_PLANS.slug );
 					}
 
 					return;
@@ -226,7 +226,7 @@ const domain: FlowV2< typeof initialize > = {
 					return navigate( STEPS.PROCESSING.slug );
 				}
 
-				case STEPS.PLANS.slug: {
+				case STEPS.UNIFIED_PLANS.slug: {
 					const cartItems = providedDependencies.cartItems;
 					const [ pickedPlan, ...products ] = cartItems ?? [];
 

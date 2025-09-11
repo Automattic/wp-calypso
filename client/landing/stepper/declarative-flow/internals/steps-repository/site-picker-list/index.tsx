@@ -1,16 +1,16 @@
-import { DOMAIN_FLOW, StepContainer } from '@automattic/onboarding';
+import { DOMAIN_FLOW, Step, StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import QuerySites from 'calypso/components/data/query-sites';
 import FormattedHeader from 'calypso/components/formatted-header';
 import SiteSelector from 'calypso/components/site-selector';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import type { Step } from '../../types';
+import type { Step as StepType } from '../../types';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { SiteId } from 'calypso/types';
 
 import './styles.scss';
 
-const SitePicker: Step< {
+const SitePicker: StepType< {
 	submits: {
 		siteSlug: string;
 		siteId: SiteId;
@@ -36,16 +36,33 @@ const SitePicker: Step< {
 		);
 	};
 
+	const stepContent = (
+		<>
+			<QuerySites allSites />
+			<SiteSelector filter={ filter } onSiteSelect={ selectSite } />
+		</>
+	);
+
+	if ( flow === DOMAIN_FLOW ) {
+		return (
+			<Step.CenteredColumnLayout
+				columnWidth={ 4 }
+				className="step-container-v2--site-picker"
+				topBar={
+					<Step.TopBar leftElement={ goBack ? <Step.BackButton onClick={ goBack } /> : null } />
+				}
+				heading={ <Step.Heading text={ translate( 'Select your site' ) } /> }
+			>
+				{ stepContent }
+			</Step.CenteredColumnLayout>
+		);
+	}
+
 	return (
 		<>
 			<StepContainer
-				stepName="site-picker"
-				stepContent={
-					<div className="site-picker__container">
-						<QuerySites allSites />
-						<SiteSelector filter={ filter } onSiteSelect={ selectSite } />
-					</div>
-				}
+				stepName="site-picker-step"
+				stepContent={ <div className="site-picker__container">{ stepContent }</div> }
 				formattedHeader={
 					<FormattedHeader align="center" headerText={ translate( 'Select your site' ) } />
 				}

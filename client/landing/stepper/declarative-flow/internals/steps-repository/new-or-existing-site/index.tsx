@@ -107,20 +107,36 @@ const useIntentsForFlow = ( flowName: string ): NewOrExistingSiteIntent[] => {
 		case DOMAIN_FLOW: {
 			const options = [
 				{
-					key: 'existing-site',
-					title: translate( 'Existing WordPress.com site' ),
-					description: '',
-					icon: <WordPressLogo size={ 24 } />,
-					value: 'existing-site',
-					actionText: translate( 'Select a site' ),
-				},
-				{
 					key: 'new-site',
 					title: translate( 'New site' ),
-					description: '',
+					description: translate(
+						'Customize and launch your site.{{br/}}{{freeDomainPromo}}Free domain for the first year on annual plans.{{/freeDomainPromo}}',
+						{
+							components: {
+								freeDomainPromo: <span className="new-or-existing-site__free-domain-promo" />,
+								br: <br aria-hidden="true" />,
+							},
+						}
+					),
 					icon: <NewSiteIcon />,
 					value: 'new-site',
 					actionText: translate( 'Create a new site' ),
+				},
+				{
+					key: 'existing-site',
+					title: translate( 'Existing WordPress.com site' ),
+					description: translate(
+						'Use the domain with a site you already started.{{br/}}{{freeDomainPromo}}Free domain for the first year on annual plans.{{/freeDomainPromo}}',
+						{
+							components: {
+								freeDomainPromo: <span className="new-or-existing-site__free-domain-promo" />,
+								br: <br aria-hidden="true" />,
+							},
+						}
+					),
+					icon: <WordPressLogo size={ 24 } />,
+					value: 'existing-site',
+					actionText: translate( 'Select a site' ),
 				},
 			];
 
@@ -144,7 +160,7 @@ const useIntentsForFlow = ( flowName: string ): NewOrExistingSiteIntent[] => {
 
 const NewOrExistingSiteStep: StepType< { submits: { newExistingSiteChoice: ChoiceType } } > =
 	function NewOrExistingSiteStep( { navigation, flow } ) {
-		const { submit } = navigation;
+		const { submit, goBack } = navigation;
 		const translate = useTranslate();
 
 		const intents = useIntentsForFlow( flow );
@@ -180,8 +196,11 @@ const NewOrExistingSiteStep: StepType< { submits: { newExistingSiteChoice: Choic
 		if ( flow === DOMAIN_FLOW ) {
 			return (
 				<Step.CenteredColumnLayout
-					columnWidth={ 6 }
-					topBar={ <Step.TopBar /> }
+					columnWidth={ 5 }
+					className="step-container-v2--new-or-existing-site"
+					topBar={
+						<Step.TopBar leftElement={ goBack ? <Step.BackButton onClick={ goBack } /> : null } />
+					}
 					heading={ <Step.Heading text={ getHeaderText() } subText={ getSubHeaderText() } /> }
 				>
 					<IntentScreen
