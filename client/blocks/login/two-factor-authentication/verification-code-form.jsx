@@ -68,8 +68,9 @@ class VerificationCodeForm extends Component {
 	onSubmitForm = ( event ) => {
 		event.preventDefault();
 
-		const { onSuccess, twoFactorAuthType } = this.props;
+		const { onSuccess, twoFactorAuthType: _twoFactorAuthType, twoFactorEmailNonce } = this.props;
 		const { twoStepCode } = this.state;
+		const twoFactorAuthType = twoFactorEmailNonce ? 'email' : _twoFactorAuthType;
 
 		this.props.recordTracksEvent( 'calypso_login_two_factor_verification_code_submit' );
 
