@@ -258,7 +258,7 @@ export const domainDetailsReceiveAction = ( domainName, domainDetails ) => {
 export const domainDetailsRequestAction = ( domainName ) => {
 	const action = {
 		type: DOMAIN_DETAILS_REQUEST,
-		domainName,
+		domain: domainName,
 	};
 
 	debug( 'returning action: %o', action );
@@ -275,7 +275,7 @@ export const domainDetailsRequestAction = ( domainName ) => {
 export const domainDetailsRequestSuccessAction = ( domainName ) => {
 	const action = {
 		type: DOMAIN_DETAILS_REQUEST_SUCCESS,
-		domainName,
+		domain: domainName,
 	};
 
 	debug( 'returning action: %o', action );
@@ -293,7 +293,7 @@ export const domainDetailsRequestSuccessAction = ( domainName ) => {
 export const domainDetailsRequestFailureAction = ( domainName, error ) => {
 	const action = {
 		type: DOMAIN_DETAILS_REQUEST_FAILURE,
-		domainName,
+		domain: domainName,
 		error,
 	};
 
