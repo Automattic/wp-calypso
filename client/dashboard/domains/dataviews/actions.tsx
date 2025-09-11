@@ -1,8 +1,6 @@
 import { DomainTransferStatus, DomainSubtype } from '@automattic/api-core';
 import { userPurchasesQuery, siteSetPrimaryDomainMutation } from '@automattic/api-queries';
-import { useMyDomainInputMode } from '@automattic/domains-table/src/utils/constants';
 import { isFreeUrlDomainName } from '@automattic/domains-table/src/utils/is-free-url-domain-name';
-import { domainUseMyDomain } from '@automattic/domains-table/src/utils/paths';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { Icon } from '@wordpress/components';
@@ -16,6 +14,7 @@ import {
 	domainDnsRoute,
 	domainContactInfoRoute,
 	domainConnectionSetupRoute,
+	domainTransferToOtherSiteRoute,
 } from '../../app/router/domains';
 import {
 	isRecentlyRegistered,
@@ -23,7 +22,6 @@ import {
 	isDomainUpdatable,
 	isDomainInGracePeriod,
 	canSetAsPrimary,
-	getDomainSiteSlug,
 	getDomainRenewalUrl,
 } from '../../utils/domain';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
@@ -203,12 +201,13 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				supportsBulk: false,
 				callback: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
-					const siteSlug = getDomainSiteSlug( domain );
-					window.location.pathname = domainUseMyDomain(
-						siteSlug,
-						domain.domain,
-						useMyDomainInputMode.transferDomain
-					);
+
+					router.navigate( {
+						to: domainTransferToOtherSiteRoute.fullPath,
+						params: {
+							domainName: domain.domain,
+						},
+					} );
 				},
 				isEligible: ( item: DomainSummary ) => {
 					return isTransferrableToWpcom( item );
