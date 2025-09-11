@@ -1,3 +1,4 @@
+import { createJetpackMonitorSettings } from '@automattic/api-core';
 import { updateSchedulesBatchCreateMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
@@ -12,11 +13,13 @@ import { useCallback, useMemo, useState } from 'react';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { SectionHeader } from '../../../components/section-header';
+import { useEligibleSites } from '../hooks/use-eligible-sites';
 import FrequencySelection, { type Frequency, type Weekday } from './components/frequency-selection';
 import PluginsSelection from './components/plugins-selection';
 import SitesSelection from './components/sites-selection';
-import { DEFAULT_FREQUENCY, DEFAULT_TIME, DEFAULT_WEEKDAY } from './constants';
+import { DEFAULT_FREQUENCY, DEFAULT_TIME, DEFAULT_WEEKDAY, CRON_CHECK_INTERVAL } from './constants';
 import { prepareTimestamp } from './helpers';
+import type { Site } from '@automattic/api-core';
 
 const BLOCK_CREATE = true;
 
@@ -28,6 +31,7 @@ function ScheduledUpdatesNew() {
 	const [ time, setTime ] = useState( DEFAULT_TIME );
 	const isValid = selectedSiteIds.length > 0 && selectedPluginSlugs.length > 0 && ! BLOCK_CREATE;
 
+	const { data: eligibleSites = [] } = useEligibleSites();
 	const siteIdsAsNumbers = useMemo(
 		() => selectedSiteIds.map( ( id ) => Number( id ) ),
 		[ selectedSiteIds ]
@@ -45,11 +49,40 @@ function ScheduledUpdatesNew() {
 			schedule: {
 				timestamp,
 				interval: frequency,
+				health_check_paths: [],
 			},
+			health_check_paths: [],
 		};
-
-		createMutation.mutate( body );
-	}, [ isValid, frequency, weekday, time, selectedPluginSlugs, createMutation ] );
+		createMutation.mutate( body, {
+			onSuccess: async () => {
+				// Create monitor settings for each selected site
+				const siteMap = new Map( ( eligibleSites as Site[] ).map( ( s ) => [ s.ID, s ] ) );
+				const requests = siteIdsAsNumbers
+					.map( ( siteId ) => siteMap.get( siteId ) )
+					.filter( Boolean )
+					.map( ( site ) => {
+						const s = site as Site;
+						const siteUrl = s.URL as string;
+						return createJetpackMonitorSettings( s.ID, {
+							urls: [
+								{ monitor_url: siteUrl, check_interval: CRON_CHECK_INTERVAL },
+								{ monitor_url: siteUrl + '/wp-cron.php', check_interval: CRON_CHECK_INTERVAL },
+							],
+						} );
+					} );
+				await Promise.allSettled( requests );
+			},
+		} );
+	}, [
+		isValid,
+		frequency,
+		weekday,
+		time,
+		selectedPluginSlugs,
+		createMutation,
+		eligibleSites,
+		siteIdsAsNumbers,
+	] );
 
 	return (
 		<PageLayout
