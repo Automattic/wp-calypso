@@ -4,10 +4,10 @@ import FinalConfirmationModal from './final-confirmation-modal';
 import PurchasesModal from './purchases-modal';
 import type { Purchase } from '@automattic/api-core';
 
-type PurchaseLike = Pick< Purchase, 'expiry_status' | 'product_slug' > & {
-	is_cancelable?: boolean;
-	is_refundable?: boolean;
-};
+type PurchaseLike = Pick<
+	Purchase,
+	'expiry_status' | 'product_slug' | 'is_cancelable' | 'is_refundable'
+>;
 
 interface AccountDeletionModalProps {
 	onClose: () => void;
@@ -28,17 +28,15 @@ export default function AccountDeletionModal( {
 }: AccountDeletionModalProps ) {
 	const [ showAlternatives, setShowAlternatives ] = useState( true );
 
-	const hasCancelablePurchases = Array.isArray( purchases )
-		? ( purchases as PurchaseLike[] ).some( ( p ) => {
-				if ( p.expiry_status === 'expired' ) {
-					return false;
-				}
-				if ( p.product_slug === 'premium_theme' && ! p.is_refundable ) {
-					return false;
-				}
-				return Boolean( p.is_cancelable );
-		  } )
-		: false;
+	const hasCancelablePurchases = purchases.some( ( p ) => {
+		if ( p.expiry_status === 'expired' ) {
+			return false;
+		}
+		if ( p.product_slug === 'premium_theme' && ! p.is_refundable ) {
+			return false;
+		}
+		return Boolean( p.is_cancelable );
+	} );
 
 	if ( hasCancelablePurchases ) {
 		return <PurchasesModal onClose={ onClose } />;
