@@ -11,6 +11,7 @@ export const MessageContent = ( { message }: { message: Message } ) => {
 	const isFeedbackMessage = isCSATMessage( message );
 	const messageClasses = clsx(
 		'odie-chatbox-message',
+		'agenttic',
 		`odie-chatbox-message-${ message.role }`,
 		`odie-chatbox-message-${ message.type ?? 'message' }`,
 		{ 'is-sending': message.isSending },
