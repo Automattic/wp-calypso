@@ -14,6 +14,7 @@ import {
 	domainDnsRoute,
 	domainContactInfoRoute,
 	domainConnectionSetupRoute,
+	domainTransferToAnyUserRoute,
 	domainTransferToOtherSiteRoute,
 } from '../../app/router/domains';
 import {
@@ -203,7 +204,7 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 					const domain = items[ 0 ];
 
 					router.navigate( {
-						to: domainTransferToOtherSiteRoute.fullPath,
+						to: domainTransferToAnyUserRoute.fullPath,
 						params: {
 							domainName: domain.domain,
 						},
