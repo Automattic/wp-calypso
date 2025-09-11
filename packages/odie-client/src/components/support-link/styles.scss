@@ -42,17 +42,11 @@ $gray-700: #646970;
 				outline-offset: -2px;
 			}
 	
-			padding-top: 4px;
-			padding-bottom: 4px;
 			display: flex;
 			text-decoration: none;
 			color: var(--studio-gray-900);
 			font-size: $font-body-small;
-			border-radius: 2px;
-			font-weight: normal;
 			align-items: center;
-			transition: background-color 0.3s ease;
-			line-height: 1.4;
 			width: 100%;
 			min-width: 0;
 			box-sizing: border-box;
