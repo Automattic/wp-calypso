@@ -118,3 +118,55 @@ export const siteScheduledUpdatesDeleteMutation = ( siteId: number ) =>
 			}
 		},
 	} );
+
+// Batch create across multiple sites, mirroring legacy behavior
+export const siteScheduledUpdatesBatchCreateMutation = ( siteIds: number[] ) =>
+	mutationOptions( {
+		mutationFn: async ( body: CreateUpdateScheduleBody ) => {
+			const results = await Promise.all(
+				siteIds.map( async ( siteId ) => {
+					try {
+						const response = await createSiteUpdateSchedule( siteId, body );
+						return { siteId, response } as const;
+					} catch ( error ) {
+						return { siteId, error } as const;
+					}
+				} )
+			);
+			return results;
+		},
+		onMutate: ( body: CreateUpdateScheduleBody ) => {
+			const previous: Record< number, ScheduleUpdates[] > = {};
+			siteIds.forEach( ( siteId ) => {
+				const key = siteScheduledUpdatesQuery( siteId ).queryKey;
+				const prev = ( queryClient.getQueryData( key ) as ScheduleUpdates[] ) || [];
+				previous[ siteId ] = prev;
+				const optimistic = [
+					...prev,
+					{
+						id: 'temp-id',
+						args: body.plugins,
+						timestamp: body.schedule.timestamp,
+						schedule: body.schedule.interval,
+						interval: body.schedule.timestamp as unknown as number,
+					} as unknown as ScheduleUpdates,
+				];
+				queryClient.setQueryData( key, optimistic );
+			} );
+			return { previous };
+		},
+		onError: ( _err, _vars, ctx ) => {
+			const prev = ctx?.previous as Record< number, ScheduleUpdates[] > | undefined;
+			if ( prev ) {
+				Object.entries( prev ).forEach( ( [ siteId, list ] ) => {
+					const key = siteScheduledUpdatesQuery( Number( siteId ) ).queryKey;
+					queryClient.setQueryData( key, list );
+				} );
+			}
+		},
+		onSettled: () => {
+			siteIds.forEach( ( siteId ) =>
+				queryClient.invalidateQueries( { queryKey: siteScheduledUpdatesQuery( siteId ).queryKey } )
+			);
+		},
+	} );
