@@ -9,7 +9,6 @@ import { isAtomicTransferredSite } from 'calypso/dashboard/utils/site-atomic-tra
 import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
 import { useAddStagingSiteMutation } from 'calypso/sites/staging-site/hooks/use-add-staging-site';
 import { useCheckStagingSiteStatus } from 'calypso/sites/staging-site/hooks/use-check-staging-site-status';
-import { USE_STAGING_SITE_LOCK_QUERY_KEY } from 'calypso/sites/staging-site/hooks/use-get-lock-query';
 import { useStagingSite } from 'calypso/sites/staging-site/hooks/use-staging-site';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -24,6 +23,7 @@ import { getStagingSiteStatus } from 'calypso/state/staging-site/selectors/get-s
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 const stagingSiteAddSuccessNoticeId = 'staging-site-add-success';
+const USE_STAGING_SITE_LOCK_QUERY_KEY = 'staging-site-lock';
 
 interface HeaderStagingSiteButtonProps {
 	siteId: number;
