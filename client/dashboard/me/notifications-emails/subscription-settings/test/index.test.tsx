@@ -16,12 +16,15 @@ jest.mock(
 	() =>
 		( { children }: { children: React.ReactNode } ) => <span>{ children }</span>
 );
+
 jest.mock( '../../../../app/hooks/use-notice', () => ( {
 	useNotice: jest.fn().mockReturnValue( {
 		createSuccessNotice: jest.fn(),
 		createErrorNotice: jest.fn(),
 	} ),
 } ) );
+
+jest.mock( '@tanstack/react-router' );
 
 const mockGetIsAutomatticianApi = ( isAutomttician: boolean ) => {
 	return nock( 'https://public-api.wordpress.com:443' )

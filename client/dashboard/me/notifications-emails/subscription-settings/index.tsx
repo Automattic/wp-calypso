@@ -4,6 +4,7 @@ import {
 	userSettingsQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { useBlocker } from '@tanstack/react-router';
 import {
 	Card,
 	CardBody,
@@ -70,6 +71,21 @@ export const SubscriptionSettings = () => {
 		},
 		[ setDataState ]
 	);
+
+	useBlocker( {
+		enableBeforeUnload: true,
+		shouldBlockFn: () => {
+			if ( ! isDataStateDirty ) {
+				return false;
+			}
+
+			const shouldLeave = confirm(
+				__( 'You have unsaved changes. Are you sure you want to leave?' )
+			);
+
+			return ! shouldLeave;
+		},
+	} );
 
 	return (
 		<Card>
