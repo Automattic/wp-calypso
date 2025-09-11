@@ -9,7 +9,7 @@ import { trash } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useAuth } from '../../app/auth';
 import ActionItem from '../../components/action-list/action-item';
-import AccountDeletionConfirmModal from './confirmation-modal';
+import AccountDeletionConfirmModal from './account-deletion-modal';
 
 export default function AccountDeletionSection() {
 	const { user } = useAuth();
