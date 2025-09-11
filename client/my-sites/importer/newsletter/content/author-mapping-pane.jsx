@@ -12,7 +12,7 @@ import useUsersQuery from 'calypso/data/users/use-users-query';
 import AuthorMapping from 'calypso/my-sites/importer/author-mapping-item';
 import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
 import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
-import SummaryStat from '../summary/SummaryStat';
+import { SummaryStat } from '../components';
 
 import './author-mapping-pane.scss';
 
@@ -32,11 +32,11 @@ class AuthorMappingPane extends PureComponent {
 			customData: PropTypes.shape( {
 				unsupportedFileTypes: PropTypes.oneOfType( [
 					PropTypes.objectOf( PropTypes.number ),
-					PropTypes.arrayOf( null ), // If there are no unsupported file types we get an empty array
+					PropTypes.array, // If there are no errors we get an empty array
 				] ),
 				postErrors: PropTypes.oneOfType( [
-					PropTypes.objectOf( PropTypes.array ),
-					PropTypes.arrayOf( null ), // If there are no errors we get an empty array
+					PropTypes.object,
+					PropTypes.array, // If there are no errors we get an empty array
 				] ),
 				postsNumber: PropTypes.number,
 				pagesNumber: PropTypes.number,

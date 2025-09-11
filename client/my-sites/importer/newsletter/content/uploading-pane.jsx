@@ -21,6 +21,7 @@ import {
 	getUploadFilename,
 	getUploadPercentComplete,
 } from 'calypso/state/imports/uploads/selectors';
+import ExportDataGuide from './export-data-guide';
 
 import './uploading-pane.scss';
 
@@ -38,6 +39,7 @@ export class UploadingPane extends PureComponent {
 		percentComplete: PropTypes.number,
 		site: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
+			URL: PropTypes.string.isRequired,
 			single_user_site: PropTypes.bool.isRequired,
 		} ).isRequired,
 		optionalUrl: PropTypes.shape( {
@@ -237,6 +239,7 @@ export class UploadingPane extends PureComponent {
 
 		return (
 			<div>
+				<ExportDataGuide fromSite={ this.props.fromSite } selectedSiteUrl={ this.props.site.URL } />
 				<div
 					className="importer__uploading-pane"
 					role="button"
