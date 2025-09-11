@@ -109,7 +109,6 @@ describe( 'AccountDeletionConfirmModal', () => {
 			/>
 		);
 
-		// React Query will notify subscribers; wait for the UI to update
 		await screen.findByText( 'You still have active purchases on your account.' );
 		expect( screen.getByText( 'Manage purchases' ) ).toBeInTheDocument();
 	} );
