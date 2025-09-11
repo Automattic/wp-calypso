@@ -2,6 +2,7 @@ import { Step } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { recordMigrationCredentialsEvent } from 'calypso/lib/analytics/ad-tracking/record-migration-events';
 import { CredentialsForm } from './components/credentials-form';
 import type { Step as StepType } from '../../types';
 import './style.scss';
@@ -22,6 +23,10 @@ const SiteMigrationFallbackCredentials: StepType< {
 
 	const handleSubmit = ( from?: string ) => {
 		const action = 'submit';
+
+		// Fire Google Ads tracking event when credentials are submitted
+		recordMigrationCredentialsEvent( 'SiteMigrationFallbackCredentials' );
+
 		return navigation.submit?.( { action, from } );
 	};
 

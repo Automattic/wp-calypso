@@ -10,6 +10,7 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteIdParam } from 'calypso/landing/stepper/hooks/use-site-id-param';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { useSubmitMigrationTicket } from 'calypso/landing/stepper/hooks/use-submit-migration-ticket';
+import { recordMigrationCredentialsEvent } from 'calypso/lib/analytics/ad-tracking/record-migration-events';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useDispatch } from 'calypso/state';
 import { resetSite } from 'calypso/state/sites/actions';
@@ -95,6 +96,10 @@ const SiteMigrationCredentials: StepType< {
 		applicationPasswordsInfo?: ApplicationPasswordsInfo
 	) => {
 		const action = getAction( siteInfo, applicationPasswordsInfo );
+
+		// Fire Google Ads tracking event when credentials are submitted
+		recordMigrationCredentialsEvent( 'SiteMigrationCredentials' );
+
 		siteId && dispatch( resetSite( siteId ) );
 		return navigation.submit?.( {
 			action,

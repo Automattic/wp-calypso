@@ -11,8 +11,7 @@ import { useMigrationCancellation } from 'calypso/data/site-migration/landing/us
 import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
 import { useHostingProviderUrlDetails } from 'calypso/data/site-profiler/use-hosting-provider-url-details';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import { debug, TRACKING_IDS } from 'calypso/lib/analytics/ad-tracking/constants';
-import { mayWeTrackByTracker } from 'calypso/lib/analytics/tracker-buckets';
+import { recordMigrationStartEvent } from 'calypso/lib/analytics/ad-tracking/record-migration-events';
 import FlowCard from '../components/flow-card';
 import type { Step as StepType } from '../../types';
 import './style.scss';
@@ -69,17 +68,7 @@ const SiteMigrationImportOrMigrate: StepType< {
 
 	// Fire Google Ads tracking event when component loads
 	useEffect( () => {
-		if ( mayWeTrackByTracker( 'googleAds' ) ) {
-			const params = [
-				'event',
-				'conversion',
-				{
-					send_to: TRACKING_IDS.wpcomGoogleAdsGtagMigrationStart,
-				},
-			];
-			debug( 'SiteMigrationImportOrMigrate: [Google Ads Gtag] Migration Start', params );
-			window.gtag( ...params );
-		}
+		recordMigrationStartEvent( 'SiteMigrationImportOrMigrate' );
 	}, [] );
 
 	const handleClick = ( destination: 'migrate' | 'import' | 'upgrade' ) => {
