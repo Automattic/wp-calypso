@@ -388,6 +388,7 @@ $blueberry-color: #3858e9;
 
 .odie-chatbox-message.odie-chatbox-message-bot.odie-chatbox-message-message {
 	flex-wrap: wrap;
+	flex-direction: column;
 }
 
 .odie-fullscreen {

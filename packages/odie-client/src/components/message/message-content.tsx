@@ -7,13 +7,7 @@ import MarkdownOrChildren from './mardown-or-children';
 import { UserMessage } from './user-message';
 import type { ZendeskMessage, Message } from '../../types';
 
-export const MessageContent = ( {
-	isDisliked = false,
-	message,
-}: {
-	message: Message;
-	isDisliked?: boolean;
-} ) => {
+export const MessageContent = ( { message }: { message: Message } ) => {
 	const isFeedbackMessage = isCSATMessage( message );
 	const messageClasses = clsx(
 		'odie-chatbox-message',
@@ -60,7 +54,6 @@ export const MessageContent = ( {
 				! message.type ) && (
 				<UserMessage
 					message={ markdownMessageContent }
-					isDisliked={ isDisliked }
 					isMessageWithEscalationOption={ isMessageWithEscalationOption }
 				/>
 			) }

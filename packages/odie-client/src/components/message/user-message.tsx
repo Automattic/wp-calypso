@@ -18,12 +18,12 @@ import {
 	userProvidedEnoughInformation,
 	getIsRequestingHumanSupport,
 } from '../../utils';
+import BotMessageActions from './bot-message-actions';
 import CustomALink from './custom-a-link';
 import { DirectEscalationLink } from './direct-escalation-link';
 import { GetSupport } from './get-support';
 import { MarkdownOrChildren } from './mardown-or-children';
 import Sources from './sources';
-import WasThisHelpfulButtons from './was-this-helpful-buttons';
 import type { Message } from '../../types';
 
 const getDisplayMessage = (
@@ -60,10 +60,8 @@ const getDisplayMessage = (
 
 export const UserMessage = ( {
 	message,
-	isDisliked = false,
 	isMessageWithEscalationOption = false,
 }: {
-	isDisliked?: boolean;
 	message: Message;
 	isMessageWithEscalationOption?: boolean;
 } ) => {
@@ -125,9 +123,6 @@ export const UserMessage = ( {
 			{ ! interactionHasZendeskEvent( currentSupportInteraction ) && (
 				<>
 					{ showDirectEscalationLink && <DirectEscalationLink messageId={ message.message_id } /> }
-					{ ! message.rating_value && (
-						<WasThisHelpfulButtons message={ message } isDisliked={ isDisliked } />
-					) }
 				</>
 			) }
 		</>
@@ -148,25 +143,30 @@ export const UserMessage = ( {
 				/>
 			</div>
 			{ isMessageWithEscalationOption && (
-				<div
-					className={ clsx( 'chat-feedback-wrapper', {
-						'chat-feedback-wrapper-no-extra-contact': ! isRequestingHumanSupport,
-						'chat-feedback-wrapper-third-party-cookies': displayingThirdPartyMessage,
-					} ) }
-				>
-					<Sources message={ message } />
-					{ isRequestingHumanSupport && (
-						<GetSupport
-							onClickAdditionalEvent={ ( destination ) => {
-								trackEvent( 'chat_get_support', {
-									location: 'user-message',
-									destination,
-								} );
-							} }
-						/>
+				<>
+					{ ! interactionHasZendeskEvent( currentSupportInteraction ) && ! message.rating_value && (
+						<BotMessageActions message={ message } />
 					) }
-					{ isMessageShowingDisclaimer && renderDisclaimers() }
-				</div>
+					<div
+						className={ clsx( 'chat-feedback-wrapper', {
+							'chat-feedback-wrapper-no-extra-contact': ! isRequestingHumanSupport,
+							'chat-feedback-wrapper-third-party-cookies': displayingThirdPartyMessage,
+						} ) }
+					>
+						<Sources message={ message } />
+						{ isRequestingHumanSupport && (
+							<GetSupport
+								onClickAdditionalEvent={ ( destination ) => {
+									trackEvent( 'chat_get_support', {
+										location: 'user-message',
+										destination,
+									} );
+								} }
+							/>
+						) }
+						{ isMessageShowingDisclaimer && renderDisclaimers() }
+					</div>
+				</>
 			) }
 		</>
 	);

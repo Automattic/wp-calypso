@@ -24,7 +24,6 @@ export type MessageIndicators = {
 const ChatMessage = ( { message, currentUser }: ChatMessageProps ) => {
 	const { botName } = useOdieAssistantContext();
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
-	const [ isDisliked ] = useState( false );
 
 	const handleBackdropClick = () => {
 		setIsFullscreen( false );
@@ -42,7 +41,7 @@ const ChatMessage = ( { message, currentUser }: ChatMessageProps ) => {
 		<div className="help-center-experience-disabled">
 			<div className="odie-fullscreen" onClick={ handleBackdropClick }>
 				<div className="odie-fullscreen-backdrop" onClick={ handleContentClick }>
-					<MessageContent message={ message } isDisliked={ isDisliked } />
+					<MessageContent message={ message } />
 				</div>
 			</div>
 		</div>
@@ -50,7 +49,7 @@ const ChatMessage = ( { message, currentUser }: ChatMessageProps ) => {
 
 	return (
 		<>
-			<MessageContent message={ message } isDisliked={ isDisliked } />
+			<MessageContent message={ message } />
 			{ isFullscreen && ReactDOM.createPortal( fullscreenContent, document.body ) }
 		</>
 	);
