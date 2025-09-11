@@ -375,6 +375,7 @@ export default {
 				component={ DomainManagement.Settings }
 				context={ pageContext }
 				selectedDomainName={ selectedDomainName }
+				needsDomains
 			/>
 		);
 		next();
