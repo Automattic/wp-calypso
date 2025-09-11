@@ -102,11 +102,9 @@ describe( 'AccountDeletionConfirmModal', () => {
 				{ ...defaultProps }
 				purchases={ [
 					{
-						ID: 1,
-						expiry_status: 'active',
+						expiry_status: 'active' as const,
 						product_slug: 'pro_plan',
-						is_cancelable: true,
-					} as Partial< Purchase >,
+					} as Pick< Purchase, 'expiry_status' | 'product_slug' >,
 				] }
 			/>
 		);
