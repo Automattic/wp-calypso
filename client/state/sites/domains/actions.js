@@ -232,14 +232,14 @@ export function markAsPendingMove( siteId, domain ) {
  *
  * Returns an action object to be used in signalling that
  * domain details for a given domain have been received.
- * @param {string} domainName - domain name
+ * @param {string} domain - domain name
  * @param {Object} domainDetails - domain details object gotten from WP REST-API response
  * @returns {Object} the action object
  */
-export const domainDetailsReceiveAction = ( domainName, domainDetails ) => {
+export const domainDetailsReceiveAction = ( domain, domainDetails ) => {
 	const action = {
 		type: DOMAIN_DETAILS_RECEIVE,
-		domain: domainName,
+		domain,
 		siteId: domainDetails.blog_id,
 		domainDetails: createSiteDomainObject( domainDetails ),
 	};
@@ -252,13 +252,13 @@ export const domainDetailsReceiveAction = ( domainName, domainDetails ) => {
  * Action creator function
  *
  * Return DOMAIN_DETAILS_REQUEST action object
- * @param {string} domainName - domain name
+ * @param {string} domain - domain name
  * @returns {Object} action object
  */
-export const domainDetailsRequestAction = ( domainName ) => {
+export const domainDetailsRequestAction = ( domain ) => {
 	const action = {
 		type: DOMAIN_DETAILS_REQUEST,
-		domain: domainName,
+		domain,
 	};
 
 	debug( 'returning action: %o', action );
@@ -269,13 +269,13 @@ export const domainDetailsRequestAction = ( domainName ) => {
  * Action creator function
  *
  * Return DOMAIN_DETAILS_REQUEST_SUCCESS action object
- * @param {string} domainName - domain name
+ * @param {string} domain - domain name
  * @returns {Object} action object
  */
-export const domainDetailsRequestSuccessAction = ( domainName ) => {
+export const domainDetailsRequestSuccessAction = ( domain ) => {
 	const action = {
 		type: DOMAIN_DETAILS_REQUEST_SUCCESS,
-		domain: domainName,
+		domain,
 	};
 
 	debug( 'returning action: %o', action );
@@ -286,14 +286,14 @@ export const domainDetailsRequestSuccessAction = ( domainName ) => {
  * Action creator function
  *
  * Return DOMAIN_DETAILS_REQUEST_FAILURE action object
- * @param {string} domainName - domain name
+ * @param {string} domain - domain name
  * @param {Object} error - error message according to REST-API error response
  * @returns {Object} action object
  */
-export const domainDetailsRequestFailureAction = ( domainName, error ) => {
+export const domainDetailsRequestFailureAction = ( domain, error ) => {
 	const action = {
 		type: DOMAIN_DETAILS_REQUEST_FAILURE,
-		domain: domainName,
+		domain,
 		error,
 	};
 
@@ -303,15 +303,15 @@ export const domainDetailsRequestFailureAction = ( domainName, error ) => {
 
 /**
  * Fetches domain details for the given domain.
- * @param {string} domainName - domain name
+ * @param {string} domain - domain name
  * @returns {Function} a promise that will resolve once fetching is completed
  */
-export function fetchDomainDetails( domainName ) {
+export function fetchDomainDetails( domain ) {
 	return ( dispatch ) => {
-		dispatch( domainDetailsRequestAction( domainName ) );
+		dispatch( domainDetailsRequestAction( domain ) );
 
 		return wpcom.req
-			.get( `/domain-details/${ domainName }`, { apiVersion: '1.2', include_status: false } )
+			.get( `/domain-details/${ domain }`, { apiVersion: '1.2', include_status: false } )
 			.then( ( data ) => {
 				const { error, message } = data;
 
@@ -319,8 +319,8 @@ export function fetchDomainDetails( domainName ) {
 					throw new Error( message );
 				}
 
-				dispatch( domainDetailsRequestSuccessAction( domainName ) );
-				dispatch( domainDetailsReceiveAction( domainName, data ) );
+				dispatch( domainDetailsRequestSuccessAction( domain ) );
+				dispatch( domainDetailsReceiveAction( domain, data ) );
 			} )
 			.catch( ( error ) => {
 				const message =
@@ -330,7 +330,7 @@ export function fetchDomainDetails( domainName ) {
 								'There was a problem fetching domain details. Please try again later or contact support.'
 						  );
 
-				dispatch( domainDetailsRequestFailureAction( domainName, message ) );
+				dispatch( domainDetailsRequestFailureAction( domain, message ) );
 			} );
 	};
 }
