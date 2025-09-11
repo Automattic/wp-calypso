@@ -95,7 +95,7 @@ export const PauseAllEmails = () => {
 								help={ __(
 									'Pause all email updates from sites you’re subscribed to on WordPress.com. This includes newsletters from the sites you follow. You can turn them back on anytime.'
 								) }
-								label={ __( 'Pause All Emails' ) }
+								label={ __( 'Pause all emails' ) }
 								checked={ enabled }
 								onChange={ handleChange }
 								disabled={ isSaving }
