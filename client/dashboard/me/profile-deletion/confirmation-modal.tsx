@@ -48,12 +48,12 @@ export default function AccountDeletionConfirmModal( {
 			? [
 					{
 						text: __( "Change your site's address" ),
-						to: '/v2/domains',
+						to: '/domains',
 						supportLink: localizeUrl( 'https://wordpress.com/support/changing-site-address/' ),
 					},
 					{
 						text: __( 'Delete a site' ),
-						to: '/v2/sites',
+						to: '/sites',
 						supportLink: localizeUrl( 'https://wordpress.com/support/delete-site/' ),
 					},
 			  ]
@@ -65,12 +65,12 @@ export default function AccountDeletionConfirmModal( {
 		},
 		{
 			text: __( 'Change your username' ),
-			to: '/v2/me/account',
+			to: '/me/account',
 			supportLink: localizeUrl( 'https://wordpress.com/support/change-your-username/' ),
 		},
 		{
 			text: __( 'Change your password' ),
-			to: '/v2/me/security',
+			to: '/me/security',
 			supportLink: localizeUrl( 'https://wordpress.com/support/passwords/' ),
 		},
 	];
