@@ -27,6 +27,7 @@ export * from './me-settings';
 export * from './me-tax-details';
 export * from './me-two-step';
 export * from './meta-sms-country-codes';
+export * from './notification-devices';
 export * from './p2';
 export * from './performance';
 export * from './plugin';

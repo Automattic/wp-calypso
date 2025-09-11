@@ -12,6 +12,8 @@ import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { pluginsPath } from 'calypso/my-sites/marketing/paths';
 import { useSelector } from 'calypso/state';
+import { useActivityPubStatus } from 'calypso/state/activitypub/use-activitypub-status';
+import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import * as T from 'calypso/types';
 import MarketingToolsFeature from './feature';
@@ -34,7 +36,21 @@ export default function MarketingTools() {
 		{ key: 'favourite', text: translate( 'User favorites' ) },
 	];
 
-	const marketingFeatures = getMarketingFeaturesData( selectedSiteSlug, translate, localizeUrl );
+	const activityPubSettingsUrl = useSelector( ( state ) =>
+		getSiteAdminUrl( state, siteId, 'options-general.php?page=activitypub' )
+	);
+	const activityPubStatus = useActivityPubStatus( siteId, () => {
+		if ( activityPubSettingsUrl ) {
+			window.location.href = activityPubSettingsUrl;
+		}
+	} );
+
+	const marketingFeatures = getMarketingFeaturesData(
+		selectedSiteSlug,
+		translate,
+		localizeUrl,
+		activityPubStatus
+	);
 
 	const marketingFeaturesFiltered = useMemo( () => {
 		let filteredFeatures = marketingFeatures.filter( ( feature ) =>
