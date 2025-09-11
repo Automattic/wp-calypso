@@ -95,7 +95,7 @@ export default function PreferencesLanguageForm() {
 						createSuccessNotice( __( 'New Hosting Dashboard enabled.' ), { type: 'snackbar' } );
 					} else {
 						setIsRedirecting( true );
-						window.location.href = '/me/account';
+						window.location.href = '/me/account?updated=dashboard';
 					}
 				},
 				onError( _, { value } ) {
