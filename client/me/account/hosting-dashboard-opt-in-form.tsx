@@ -9,6 +9,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import SectionHeader from 'calypso/components/section-header';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import {
 	getPreference,
@@ -52,11 +53,24 @@ export default function HostingDashboardOptInForm() {
 			updated_at: new Date().toISOString(),
 		} satisfies HostingDashboardOptIn;
 
-		await dispatch( savePreference( 'hosting-dashboard-opt-in', preference ) );
-
-		if ( enabled ) {
-			setIsRedirecting( true );
-			window.location.href = '/v2/me/preferences';
+		try {
+			await dispatch( savePreference( 'hosting-dashboard-opt-in', preference ) );
+			if ( enabled ) {
+				setIsRedirecting( true );
+				window.location.href = '/v2/me/preferences?updated=dashboard';
+			} else {
+				dispatch(
+					successNotice( translate( 'Successfully saved preference.' ), {
+						duration: 5000,
+					} )
+				);
+			}
+		} catch {
+			dispatch(
+				errorNotice( translate( 'Failed to save preference.' ), {
+					duration: 5000,
+				} )
+			);
 		}
 	};
 
