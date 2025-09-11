@@ -15,6 +15,7 @@ import {
 	getPreference,
 	isSavingPreference,
 	isFetchingPreferences,
+	preferencesLastSaveError,
 } from 'calypso/state/preferences/selectors';
 import type { HostingDashboardOptIn } from '@automattic/api-core';
 
@@ -27,6 +28,7 @@ export default function HostingDashboardOptInForm() {
 	);
 	const isSaving = useSelector( isSavingPreference );
 	const isFetching = useSelector( isFetchingPreferences );
+	const lastSaveError = useSelector( preferencesLastSaveError );
 	const [ isRedirecting, setIsRedirecting ] = useState( false );
 	const [ enabled, setEnabled ] = useState( savedPreference?.value === 'opt-in' );
 
@@ -53,21 +55,20 @@ export default function HostingDashboardOptInForm() {
 			updated_at: new Date().toISOString(),
 		} satisfies HostingDashboardOptIn;
 
-		try {
-			await dispatch( savePreference( 'hosting-dashboard-opt-in', preference ) );
-			if ( enabled ) {
-				setIsRedirecting( true );
-				window.location.href = '/v2/me/preferences?updated=dashboard';
-			} else {
-				dispatch(
-					successNotice( translate( 'Successfully saved preference.' ), {
-						duration: 5000,
-					} )
-				);
-			}
-		} catch {
+		await dispatch( savePreference( 'hosting-dashboard-opt-in', preference ) );
+
+		if ( lastSaveError ) {
 			dispatch(
 				errorNotice( translate( 'Failed to save preference.' ), {
+					duration: 5000,
+				} )
+			);
+		} else if ( enabled ) {
+			setIsRedirecting( true );
+			window.location.href = '/v2/me/preferences?updated=dashboard';
+		} else {
+			dispatch(
+				successNotice( translate( 'Successfully saved preference.' ), {
 					duration: 5000,
 				} )
 			);
