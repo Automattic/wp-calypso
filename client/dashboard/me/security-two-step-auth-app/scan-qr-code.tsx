@@ -60,8 +60,12 @@ export default function ScanQRCode() {
 									type: 'snackbar',
 								} );
 							} }
-							onError={ () => {
-								createErrorNotice( __( 'Failed to enable two-step authentication.' ), {
+							onError={ ( err: Error ) => {
+								const errorMessage =
+									err.cause === 'invalid_code'
+										? __( 'You entered an invalid code. Please try again.' )
+										: __( 'Failed to enable two-step authentication.' );
+								createErrorNotice( errorMessage, {
 									type: 'snackbar',
 								} );
 							} }

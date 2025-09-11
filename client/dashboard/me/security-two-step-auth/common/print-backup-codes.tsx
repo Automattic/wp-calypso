@@ -28,6 +28,8 @@ export default function PrintBackupCodes( {
 	username?: string;
 	hideVerifyBackupCodesHeader?: boolean;
 } ) {
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+
 	const { mutate: generateBackupCodes, data: backupCodes } = useMutation(
 		generateBackupCodesMutation()
 	);
@@ -111,7 +113,16 @@ export default function PrintBackupCodes( {
 			return;
 		}
 		const codesText = backupCodes.codes.join( '\n' );
-		navigator.clipboard.writeText( codesText );
+		try {
+			navigator.clipboard.writeText( codesText );
+			createSuccessNotice( __( 'Copied backup codes.' ), {
+				type: 'snackbar',
+			} );
+		} catch ( _e ) {
+			createErrorNotice( __( 'Failed to copy backup codes.' ), {
+				type: 'snackbar',
+			} );
+		}
 	};
 
 	const onContinue = () => {

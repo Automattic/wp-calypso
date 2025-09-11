@@ -17,7 +17,7 @@ interface VerifyCodeFormProps {
 	actionType: 'enable-two-step' | 'create-backup-receipt';
 	customField?: { label?: string; placeholder?: string; hideLabelFromVision?: boolean };
 	onSuccess?: () => void;
-	onError?: () => void;
+	onError?: ( e: Error ) => void;
 	primaryButtonText?: string;
 	showCancelButton?: boolean;
 	infoNoticeText?: string;
@@ -57,8 +57,8 @@ export default function VerifyCodeForm( {
 				onSuccess: () => {
 					onSuccess?.();
 				},
-				onError: () => {
-					onError?.();
+				onError: ( e: Error ) => {
+					onError?.( e );
 				},
 			}
 		);

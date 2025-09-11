@@ -24,7 +24,7 @@ export default function BackupCodes() {
 				) }
 			/>
 			{ isBackupCodesPrinted ? (
-				<Notice variant="success">{ __( 'Backups codes have been verified.' ) }</Notice>
+				<Notice variant="success">{ __( 'Backup codes have been verified.' ) }</Notice>
 			) : (
 				<Card>
 					<CardBody>

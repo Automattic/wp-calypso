@@ -93,7 +93,8 @@ export const validateTwoStepCodeMutation = () =>
 			if ( data.success === true ) {
 				queryClient.invalidateQueries( userSettingsQuery() );
 			} else {
-				throw new Error( 'Invalid code' );
+				// when invalid code, data.success is false
+				throw new Error( 'Invalid code', { cause: 'invalid_code' } );
 			}
 		},
 	} );
