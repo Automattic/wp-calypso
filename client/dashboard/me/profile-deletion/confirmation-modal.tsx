@@ -18,6 +18,7 @@ interface AlternativeOption {
 	text: string;
 	to: string;
 	supportLink?: string;
+	useRouterButton?: boolean;
 }
 
 interface ConfirmationFormData {
@@ -62,6 +63,7 @@ export default function AccountDeletionConfirmModal( {
 			text: __( 'Start a new site' ),
 			to: '/start?ref=me-account-close',
 			supportLink: localizeUrl( 'https://wordpress.com/support/create-a-blog/' ),
+			useRouterButton: false,
 		},
 		{
 			text: __( 'Change your username' ),
@@ -104,15 +106,26 @@ export default function AccountDeletionConfirmModal( {
 												aria-label={ __( 'Get help' ) }
 											/>
 										) }
-										<RouterLinkButton
-											__next40pxDefaultSize
-											variant="tertiary"
-											icon={ isRTL() ? chevronLeft : chevronRight }
-											size="compact"
-											to={ option.to }
-											rel="noopener noreferrer"
-											aria-label={ option.text }
-										/>
+										{ option.useRouterButton ? (
+											<RouterLinkButton
+												__next40pxDefaultSize
+												variant="tertiary"
+												icon={ isRTL() ? chevronLeft : chevronRight }
+												size="compact"
+												to={ option.to }
+												rel="noopener noreferrer"
+												aria-label={ option.text }
+											/>
+										) : (
+											<Button
+												variant="tertiary"
+												icon={ isRTL() ? chevronLeft : chevronRight }
+												size="compact"
+												href={ option.to }
+												rel="noopener noreferrer"
+												aria-label={ option.text }
+											/>
+										) }
 									</HStack>
 								}
 							/>
