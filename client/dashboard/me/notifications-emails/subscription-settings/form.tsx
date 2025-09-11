@@ -5,6 +5,22 @@ import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo } from 'react';
 import InlineSupportLink from '../../../components/inline-support-link';
 
+/**
+ * Format the date to the user's local time
+ * Including or not the AM/PM suffix depending on the user's locale
+ * It will also include the time zone if the user has it set
+ * @param date - The date to format
+ * @returns The formatted date
+ */
+const formatDateToLocalTime = ( date: Date ) => {
+	//undefined means it should use the user locale
+	const userLocale = undefined;
+	return new Intl.DateTimeFormat( userLocale, {
+		hour: '2-digit',
+		minute: '2-digit',
+	} ).format( date );
+};
+
 export type SettingsData = Pick<
 	UserSettings,
 	| 'p2_disable_autofollow_on_comment'
@@ -55,54 +71,17 @@ const baseFields: Field< SettingsData >[] = [
 		label: __( 'Hour' ),
 		type: 'integer' as const,
 		elements: [
-			{
-				label: __( '12:00 AM - 2:00 AM' ),
-				value: 0,
-			},
-			{
-				label: __( '2:00 AM - 4:00 AM' ),
-				value: 2,
-			},
-			{
-				label: __( '4:00 AM - 6:00 AM' ),
-				value: 4,
-			},
-			{
-				label: __( '6:00 AM - 8:00 AM' ),
-				value: 6,
-			},
-			{
-				label: __( '8:00 AM - 10:00 AM' ),
-				value: 8,
-			},
-			{
-				label: __( '10:00 AM - 12:00 PM' ),
-				value: 10,
-			},
-			{
-				label: __( '12:00 PM - 2:00 PM' ),
-				value: 12,
-			},
-			{
-				label: __( '2:00 PM - 4:00 PM' ),
-				value: 14,
-			},
-			{
-				label: __( '4:00 PM - 6:00 PM' ),
-				value: 16,
-			},
-			{
-				label: __( '6:00 PM - 8:00 PM' ),
-				value: 18,
-			},
-			{
-				label: __( '8:00 PM - 10:00 PM' ),
-				value: 20,
-			},
-			{
-				label: __( '10:00 PM - 12:00 AM' ),
-				value: 22,
-			},
+			...Array.from( { length: 12 }, ( _, i ) => {
+				const startHour = i * 2;
+				const endHour = startHour + 2;
+				return {
+					label: [
+						formatDateToLocalTime( new Date( 0, 0, 0, startHour, 0 ) ),
+						formatDateToLocalTime( new Date( 0, 0, 0, endHour, 0 ) ),
+					].join( ' - ' ),
+					value: startHour,
+				};
+			} ),
 		],
 	},
 	{
@@ -175,14 +154,12 @@ export const getSettingsKeys = (): ( keyof SettingsData )[] => {
 };
 
 export const getSettings = ( data: UserSettings ): SettingsData => {
-	const result: Partial< SettingsData > = {};
-	for ( const key of getSettingsKeys() ) {
-		if ( key && key in data ) {
-			// @ts-expect-error data[ key ] is of type string | number | boolean
-			result[ key ] = data[ key ] as SettingsData[ keyof SettingsData ];
-		}
-	}
-	return result as SettingsData;
+	return getSettingsKeys().reduce( ( acc, key ) => {
+		// @ts-expect-error data[ key ] is of type string | number | boolean
+		acc[ key ] = data[ key ] as SettingsData[ keyof SettingsData ];
+
+		return acc;
+	}, {} as SettingsData );
 };
 
 /**
