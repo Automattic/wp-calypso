@@ -92,7 +92,7 @@ export default function PreferencesLanguageForm() {
 			{
 				onSuccess( _, { value } ) {
 					if ( value === 'opt-in' ) {
-						createSuccessNotice( __( 'Saved new Hosting Dashboard.' ), { type: 'snackbar' } );
+						createSuccessNotice( __( 'New Hosting Dashboard enabled.' ), { type: 'snackbar' } );
 					} else {
 						setIsRedirecting( true );
 						window.location.href = '/me/account';
@@ -101,8 +101,8 @@ export default function PreferencesLanguageForm() {
 				onError( _, { value } ) {
 					createErrorNotice(
 						value === 'opt-in'
-							? __( 'Failed to choose new Hosting Dashboard.' )
-							: __( 'Failed to choose old dashboard.' ),
+							? __( 'Failed to enable new Hosting Dashboard.' )
+							: __( 'Failed to disable new Hosting Dashboard.' ),
 						{
 							type: 'snackbar',
 						}
