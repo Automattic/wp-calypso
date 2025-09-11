@@ -2,6 +2,7 @@ import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import PageLayout from '../../components/page-layout';
 import { getSiteMigrationState } from '../../utils/site-status';
+import { InProgressContentInfo } from './in-progress-content-info';
 import { PendingContentInfo } from './pending-content-info';
 
 export default function SiteMigrationOverview( { siteSlug }: { siteSlug: string } ) {
@@ -13,7 +14,7 @@ export default function SiteMigrationOverview( { siteSlug }: { siteSlug: string 
 			return <PendingContentInfo site={ site } type={ migrationState?.type } />;
 		}
 
-		return null;
+		return <InProgressContentInfo site={ site } />;
 	}
 
 	return <PageLayout>{ getContent() }</PageLayout>;

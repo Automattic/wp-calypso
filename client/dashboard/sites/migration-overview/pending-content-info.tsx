@@ -5,15 +5,11 @@ import {
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
-	__experimentalGrid as Grid,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
-	Card,
-	CardBody,
 	Modal,
 } from '@wordpress/components';
-import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -25,41 +21,9 @@ import { ButtonStack } from '../../components/button-stack';
 import { PageHeader } from '../../components/page-header';
 import { Text } from '../../components/text';
 import { getSiteMigrationState } from '../../utils/site-status';
+import { HostingCards } from './hosting-cards';
 import type { MigrationStatus } from '../../utils/site-status';
 import type { Site } from '@automattic/api-core';
-
-const GRID_CARDS = [
-	{
-		title: __( 'Seriously secure' ),
-		description: __(
-			'Firewalls, encryption, brute force, and DDoS protection. Your security’s all taken care of so you can stay one step ahead of any threats.'
-		),
-	},
-	{
-		title: __( 'Unmetered bandwidth' ),
-		description: __(
-			'With 99.999%% uptime and entirely unmetered bandwidth and traffic on every plan, you’ll never need to worry about being too successful.'
-		),
-	},
-	{
-		title: __( 'Power, meet performance' ),
-		description: __(
-			'Our custom 28+ location CDN and 99.999%% uptime ensure your site is always fast and always available from anywhere in the world.'
-		),
-	},
-	{
-		title: __( 'Plugins, themes, and custom code' ),
-		description: __(
-			'Build anything with full support and automatic updates for 50,000+ plugins and themes. Or start from scratch with your own custom code.'
-		),
-	},
-	{
-		title: __( 'Expert support' ),
-		description: __(
-			'Whenever you’re stuck, whatever you’re trying to make happen – our Happiness Engineers have the answers.'
-		),
-	},
-];
 
 const getContinueMigrationUrl = ( site: Site ): string | null => {
 	const migrationState = getSiteMigrationState( site );
@@ -82,36 +46,6 @@ const getContinueMigrationUrl = ( site: Site ): string | null => {
 
 	return addQueryArgs( '/setup/site-migration/site-migration-credentials', queryArgs );
 };
-
-function HostingCards() {
-	const isSmallViewport = useViewportMatch( 'medium', '<' );
-	const layout = { columns: 3, rows: 2, gap: 4 };
-
-	if ( isSmallViewport ) {
-		layout.columns = 1;
-		layout.rows = GRID_CARDS.length;
-		layout.gap = 4;
-	}
-
-	return (
-		<Grid { ...layout }>
-			{ GRID_CARDS.map( ( card ) => (
-				<Card key={ card.title }>
-					<CardBody>
-						<VStack spacing={ 2 }>
-							<Text as="p" size="15px" weight={ 500 } lineHeight="20px">
-								{ card.title }
-							</Text>
-							<Text as="p" variant="muted">
-								{ card.description }
-							</Text>
-						</VStack>
-					</CardBody>
-				</Card>
-			) ) }
-		</Grid>
-	);
-}
 
 function CancellationModal( { site, onClose }: { site: Site; onClose: () => void } ) {
 	const navigate = useNavigate();
