@@ -51,7 +51,6 @@ export const meRoute = createRoute( {
 		} )
 	)
 );
-
 export const profileRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -212,6 +211,17 @@ export const monetizeSubscriptionsRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../me/monetize-subscriptions' ).then( ( d ) =>
 		createLazyRoute( 'monetize-subscriptions' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const monetizeSubscriptionRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'billing/monetize-subscriptions/$subscriptionId',
+} ).lazy( () =>
+	import( '../../me/monetize-subscriptions/monetize-subscription' ).then( ( d ) =>
+		createLazyRoute( 'monetize-subscription' )( {
 			component: d.default,
 		} )
 	)
