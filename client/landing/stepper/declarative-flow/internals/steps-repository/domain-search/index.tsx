@@ -53,7 +53,13 @@ const DomainSearchStep: StepType< {
 	if ( shouldUseStepContainerV2( flow ) ) {
 		return (
 			<Step.CenteredColumnLayout
-				topBar={ <Step.TopBar /> }
+				topBar={
+					<Step.TopBar
+						leftElement={
+							navigation.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : undefined
+						}
+					/>
+				}
 				columnWidth={ 10 }
 				className="step-container-v2--domain-search"
 				heading={
