@@ -225,24 +225,10 @@ function CardWithSize( {
 	...props
 }: { color: string; children: React.ReactNode } & HTMLAttributes< HTMLDivElement > ) {
 	return (
-		<div
-			{ ...props }
-			style={ {
-				backgroundColor: color,
-				color: 'white',
-				padding: '20px',
-				display: 'flex',
-				alignItems: 'center',
-				justifyContent: 'center',
-				height: '100%',
-				boxSizing: 'border-box',
-				position: 'relative',
-				...props?.style,
-			} }
-		>
+		<Card { ...props } color={ color }>
 			{ children }
 			<SizeBadge />
-		</div>
+		</Card>
 	);
 }
 
@@ -265,7 +251,7 @@ export const EditableGridWithSizes: StoryObj< typeof Grid > = {
 			<Grid
 				layout={ layout }
 				minColumnWidth={ 160 }
-				rowHeight={ args.rowHeight }
+				rowHeight={ args.rowHeight ?? 128 }
 				spacing={ 2 }
 				editMode
 				onChangeLayout={ ( nl ) => setLayout( nl ) }
