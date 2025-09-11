@@ -2,7 +2,10 @@ import { SitePlugin } from '@automattic/api-core';
 import { ActionOnExecuteResponse } from '../components/action-render-modal';
 import type { PluginListRow } from '../types';
 
-type PluginMutationAction = ( vars: { siteId: number; pluginId: string } ) => Promise< SitePlugin >;
+type PluginMutationAction = ( vars: {
+	siteId: number;
+	pluginId: string;
+} ) => Promise< SitePlugin | void >;
 
 export const buildBulkSitesPluginAction = ( action: PluginMutationAction ) => {
 	return async ( items: PluginListRow[] ): Promise< ActionOnExecuteResponse > => {
