@@ -33,7 +33,7 @@ describe( 'PauseAllEmails', () => {
 		render( <PauseAllEmails />, { wrapper: Wrapper() } );
 
 		await waitFor( () => {
-			expect( screen.getByRole( 'checkbox', { name: /Pause All Emails/ } ) ).not.toBeChecked();
+			expect( screen.getByRole( 'checkbox', { name: /Pause all emails/ } ) ).not.toBeChecked();
 		} );
 	} );
 
@@ -44,7 +44,7 @@ describe( 'PauseAllEmails', () => {
 
 		render( <PauseAllEmails />, { wrapper: Wrapper() } );
 		await waitFor( () => {
-			expect( screen.getByRole( 'checkbox', { name: /Pause All Emails/ } ) ).toBeChecked();
+			expect( screen.getByRole( 'checkbox', { name: /Pause all emails/ } ) ).toBeChecked();
 		} );
 	} );
 
@@ -72,7 +72,7 @@ describe( 'PauseAllEmails', () => {
 
 		render( <PauseAllEmails />, { wrapper: Wrapper() } );
 
-		await userEvent.click( await screen.findByRole( 'checkbox', { name: /Pause All Emails/ } ) );
+		await userEvent.click( await screen.findByRole( 'checkbox', { name: /Pause all emails/ } ) );
 		await userEvent.click( await screen.getByRole( 'button', { name: /Save/ } ) );
 
 		expect( await screen.findByText( /Are you sure you want to pause all emails?/ ) ).toBeVisible();

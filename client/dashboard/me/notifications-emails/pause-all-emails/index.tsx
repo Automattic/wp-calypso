@@ -82,7 +82,7 @@ export const PauseAllEmails = () => {
 				<h3>{ __( 'Are you sure you want to pause all emails?' ) }</h3>
 				<p>
 					{ __(
-						"You have active newsletter subscriptions. Pausing emails means you won't receive any newsletter updates."
+						'If you have active newsletter subscriptions, pausing emails means you won’t receive updates from them.'
 					) }
 				</p>
 			</ConfirmDialog>
