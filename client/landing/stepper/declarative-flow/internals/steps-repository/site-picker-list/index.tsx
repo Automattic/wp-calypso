@@ -1,8 +1,9 @@
-import { DOMAIN_FLOW, Step, StepContainer } from '@automattic/onboarding';
+import { isDomainFlow, Step, StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import QuerySites from 'calypso/components/data/query-sites';
 import FormattedHeader from 'calypso/components/formatted-header';
 import SiteSelector from 'calypso/components/site-selector';
+import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step as StepType } from '../../types';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -26,7 +27,7 @@ const SitePicker: StepType< {
 	};
 
 	const filter = ( site: SiteDetails ) => {
-		const isSiteUnlaunched = flow !== DOMAIN_FLOW ? site.launch_status === 'unlaunched' : true;
+		const isSiteUnlaunched = isDomainFlow( flow ) ? true : site.launch_status === 'unlaunched';
 
 		return !! (
 			site.capabilities?.manage_options &&
@@ -44,7 +45,7 @@ const SitePicker: StepType< {
 		</>
 	);
 
-	if ( flow === DOMAIN_FLOW ) {
+	if ( shouldUseStepContainerV2( flow ) ) {
 		return (
 			<Step.CenteredColumnLayout
 				columnWidth={ 4 }

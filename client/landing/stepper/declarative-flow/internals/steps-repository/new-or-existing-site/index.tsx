@@ -21,6 +21,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
 import { ONBOARD_STORE } from '../../../../stores';
+import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import NewSiteIcon from './icons/new-site';
 import { ChoiceType } from './types';
@@ -193,7 +194,7 @@ const NewOrExistingSiteStep: StepType< { submits: { newExistingSiteChoice: Choic
 			}
 		};
 
-		if ( flow === DOMAIN_FLOW ) {
+		if ( shouldUseStepContainerV2( flow ) ) {
 			return (
 				<Step.CenteredColumnLayout
 					columnWidth={ 5 }

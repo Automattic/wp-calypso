@@ -1,5 +1,4 @@
 import {
-	DOMAIN_FLOW,
 	isDomainFlow,
 	isHundredYearDomainFlow,
 	isHundredYearPlanFlow,
@@ -51,7 +50,7 @@ const DomainSearchStep: StepType< {
 		},
 	};
 
-	if ( shouldUseStepContainerV2( flow ) || flow === DOMAIN_FLOW ) {
+	if ( shouldUseStepContainerV2( flow ) ) {
 		return (
 			<Step.CenteredColumnLayout
 				topBar={ <Step.TopBar /> }

@@ -111,7 +111,7 @@ const UseMyDomain: StepType< {
 					isStepper
 					stepLocation={ location }
 					registerNowAction={ handleGoBack }
-					hideHeader={ shouldUseStepContainerV2( flow ) || flow === DOMAIN_FLOW }
+					hideHeader={ shouldUseStepContainerV2( flow ) }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
@@ -130,7 +130,7 @@ const UseMyDomain: StepType< {
 
 	const shouldHideButtons = isStartWritingFlow( flow );
 
-	if ( shouldUseStepContainerV2( flow ) || flow === DOMAIN_FLOW ) {
+	if ( shouldUseStepContainerV2( flow ) ) {
 		const [ columnWidth, headingText ] =
 			useMyDomainMode === 'domain-input'
 				? [ 4 as const, __( 'Use a domain I own' ) ]
