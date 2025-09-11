@@ -7,7 +7,9 @@
 	"boom_analytics_key": false,
 	"client_slug": false,
 	"facebook_api_key": false,
-	"features": {},
+	"features": {
+		"enforce_interstitial_plans_grid": false
+	},
 	"google_recaptcha_site_key": false,
 	"hotjar_enabled": false,
 	"survicate_enabled": false,

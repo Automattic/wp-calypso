@@ -33,6 +33,7 @@ import {
 	transferDomainToAnyUser,
 	checkoutFailedPurchases,
 	refreshUserSession,
+	redirectWpcomPlansToPlansGrid,
 } from './controller';
 
 export default function () {
@@ -324,6 +325,7 @@ export default function () {
 		redirectLoggedOut,
 		siteSelection,
 		redirectJetpackLegacyPlans,
+		redirectWpcomPlansToPlansGrid,
 		checkout,
 		makeLayout,
 		clientRender
@@ -336,6 +338,7 @@ export default function () {
 		redirectLoggedOut,
 		siteSelection,
 		redirectJetpackLegacyPlans,
+		redirectWpcomPlansToPlansGrid,
 		checkout,
 		makeLayout,
 		clientRender
@@ -369,6 +372,31 @@ export default function () {
 		'/checkout/:site/with-gsuite/:domain/:receiptId?',
 		redirectLoggedOut,
 		siteSelection,
+		makeLayout,
+		clientRender
+	);
+
+	// Routes for plans grid selections - bypass the redirect middleware
+	page(
+		'/checkout/from-plans/:site/:product',
+		setLocaleMiddleware(),
+		redirectMyJetpack,
+		redirectLoggedOut,
+		siteSelection,
+		redirectJetpackLegacyPlans,
+		checkout,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/checkout/from-plans/:site/:product/:domainOrProduct',
+		setLocaleMiddleware(),
+		redirectMyJetpack,
+		redirectLoggedOut,
+		siteSelection,
+		redirectJetpackLegacyPlans,
+		checkout,
 		makeLayout,
 		clientRender
 	);

@@ -1,4 +1,9 @@
-import { isJetpackLegacyItem, isJetpackLegacyTermUpgrade } from '@automattic/calypso-products';
+import config from '@automattic/calypso-config';
+import {
+	isWpComPlan,
+	isJetpackLegacyItem,
+	isJetpackLegacyTermUpgrade,
+} from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
@@ -259,6 +264,33 @@ export function redirectJetpackLegacyPlans( context, next ) {
 				`?${ COMPARE_PLANS_QUERY_PARAM }=${ product },${ recommendedItems }`
 		);
 
+		return;
+	}
+
+	next();
+}
+
+export function redirectWpcomPlansToPlansGrid( context, next ) {
+	const product = getProductSlugFromContext( context );
+	const state = context.store.getState();
+	const selectedSite = getSelectedSite( state );
+
+	// Only redirect direct /checkout requests, not /checkout/from-plans, and only for WordPress.com plans
+	if (
+		isWpComPlan( product ) &&
+		config.isEnabled( 'enforce_interstitial_plans_grid' ) &&
+		! context.pathname.startsWith( '/checkout/from-plans/' )
+	) {
+		// Preserve all query parameters when redirecting
+		const existingQuery = context.querystring ? `&${ context.querystring }` : '';
+		const redirectUrl = `/plans/${
+			selectedSite?.slug || ''
+		}?product=${ product }${ existingQuery }`;
+
+		debug(
+			`Redirecting WordPress.com plan checkout to plans grid: ${ context.pathname } -> ${ redirectUrl }`
+		);
+		page( redirectUrl );
 		return;
 	}
 

@@ -117,7 +117,11 @@ function DescriptionMessage( { isDomainUpsell, isFreePlan, yourDomainName, siteS
 		// show Warning only on free plans.
 		isFreePlan
 			? dispatch( WpcomPlansUI.store ).setShowDomainUpsellDialog( true )
-			: page( `/checkout/${ siteSlug }` );
+			: page(
+					isEnabled( 'enforce_interstitial_plans_grid' )
+						? `/checkout/from-plans/${ siteSlug }`
+						: `/checkout/${ siteSlug }`
+			  );
 	};
 
 	const subtitle = isFreePlan
@@ -225,7 +229,11 @@ class PlansComponent extends Component {
 				query: { discount },
 			},
 		} = this.props;
-		const checkoutPath = `/checkout/${ selectedSite.slug }/${ item.product_slug }/`;
+
+		// Use new /checkout/from-plans path if feature flag is enabled to avoid redirect loop
+		const checkoutPath = isEnabled( 'enforce_interstitial_plans_grid' )
+			? `/checkout/from-plans/${ selectedSite.slug }/${ item.product_slug }/`
+			: `/checkout/${ selectedSite.slug }/${ item.product_slug }/`;
 
 		page(
 			discount
