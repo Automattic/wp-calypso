@@ -110,7 +110,7 @@ const CancelDifmMigrationForm = ( { siteId }: { siteId: number } ) => {
 	const { data } = useFindZendeskMigrationTicket( siteId, isMigrationCompleted === false );
 
 	if ( ! data?.ticket_id ) {
-		return null;
+		// return null;
 	}
 
 	if ( ! site ) {
