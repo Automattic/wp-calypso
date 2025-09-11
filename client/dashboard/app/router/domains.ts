@@ -10,6 +10,7 @@ import {
 	siteByIdQuery,
 	queryClient,
 	domainTransferRequestQuery,
+	domainWhoisQuery,
 } from '@automattic/api-queries';
 import {
 	createRoute,
@@ -190,6 +191,8 @@ export const domainForwardingEditRoute = createRoute( {
 export const domainContactInfoRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'contact-info',
+	loader: ( { params: { domainName } } ) =>
+		queryClient.ensureQueryData( domainWhoisQuery( domainName ) ),
 } ).lazy( () =>
 	import( '../../domains/domain-contact-details' ).then( ( d ) =>
 		createLazyRoute( 'domain-contact-info' )( {
@@ -311,6 +314,20 @@ export const domainTransferToOtherUserRoute = createRoute( {
 	)
 );
 
+export const domainTransferToOtherSiteRoute = createRoute( {
+	getParentRoute: () => domainRoute,
+	path: 'transfer/other-site',
+	loader: async ( { params: { domainName } } ) => {
+		return queryClient.ensureQueryData( domainQuery( domainName ) );
+	},
+} ).lazy( () =>
+	import( '../../domains/domain-transfer/transfer-domain-to-other-site' ).then( ( d ) =>
+		createLazyRoute( 'domain-transfer-to-other-site' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const createDomainsRoutes = () => {
 	return [
 		domainsRoute,
@@ -330,6 +347,7 @@ export const createDomainsRoutes = () => {
 			domainTransferRoute,
 			domainTransferToAnyUserRoute,
 			domainTransferToOtherUserRoute,
+			domainTransferToOtherSiteRoute,
 			domainSecurityRoute,
 		] ),
 	];

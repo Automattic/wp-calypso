@@ -1,4 +1,4 @@
-import { DomainTypes } from '@automattic/api-core';
+import { DomainSubtype } from '@automattic/api-core';
 import { dateI18n } from '@wordpress/date';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
@@ -52,6 +52,7 @@ export const useFields = ( {
 				label: __( 'Type' ),
 				enableHiding: false,
 				enableSorting: false,
+				getValue: ( { item }: { item: DomainSummary } ) => item.subtype.label ?? '',
 			},
 			// {
 			// 	id: 'owner',
@@ -89,7 +90,7 @@ export const useFields = ( {
 					// Site Overview does not show the Status column, so we use this column for error messages.
 					if (
 						site &&
-						item.type === DomainTypes.MAPPED &&
+						item.subtype.id === DomainSubtype.DOMAIN_CONNECTION &&
 						! item.points_to_wpcom &&
 						! isRecentlyRegistered( item.registration_date, THREE_DAYS_IN_MINUTES )
 					) {
