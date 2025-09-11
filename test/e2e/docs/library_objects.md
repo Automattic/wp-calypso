@@ -10,7 +10,7 @@ The `@automattic/calypso-e2e` package offers a robust set of library objects pat
 
 For a brief introduction to Page Object Models, please refer to [this page](https://playwright.dev/docs/test-pom).
 
-> ⚠️ **If adding a new library object file to `calypso-e2e`**: Make sure you update `index.html` in the same directory to export the file's content otherwise it won't be available from the test project.
+> ⚠️ **If adding a new library object file to `calypso-e2e`**: Make sure you update `index.ts` in the same directory to export the file's content otherwise it won't be available from the test project.
 
 <!-- TOC -->
 
