@@ -15,13 +15,17 @@ export const DEFAULT_VIEW: Partial< DomainsView > = {
 	titleField: 'domain',
 	// descriptionField: 'domain_type',
 	fields: [
-		'type',
 		// 'owner',
 		'blog_name',
-		// 'ssl_status',
+		'ssl_status',
 		'expiry',
 		'domain_status',
 	],
+};
+
+export const SITE_CONTEXT_VIEW: Partial< DomainsView > = {
+	...DEFAULT_VIEW,
+	fields: [ 'type', 'ssl_status', 'expiry', 'domain_status' ],
 };
 
 // Default layouts

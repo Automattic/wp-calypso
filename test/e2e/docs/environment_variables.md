@@ -10,7 +10,7 @@ Environment Variables control much of the runtime configuration for E2E tests.
 | --------------------- | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
 | ARTIFACTS_PATH        | Path on disk to test artifacts (screenshots, logs, etc).                                                        | ./results/                                        |
 | AUTHENTICATE_ACCOUNTS | Comma-delimited list of accounts to pre-authenticate for later use.                                             | simpleSitePersonalPlanUser,atomicUser,defaultUser |
-| CALYPSO_BASE_URL      | The base URL to use for Calypso                                                                                 | <https://wordpress.com>                           |
+| CALYPSO_BASE_URL      | The base URL to use for Calypso                                                                                 | <http://calypso.localhost:3000>                   |
 | COBLOCKS_EDGE         | Use the bleeding edge CoBlocks build.                                                                           | false                                             |
 | COOKIES_PATH          | Path on disk to the saved authenticated cookies.                                                                | ./cookies/                                        |
 | GUTENBERG_EDGE        | Use the bleeding edge Gutenberg build.                                                                          | false                                             |
@@ -20,6 +20,7 @@ Environment Variables control much of the runtime configuration for E2E tests.
 | TEST_LOCALES          | The locales to target for I18N testing                                                                          | A long list of currently supported locales.       |
 | TEST_ON_ATOMIC        | Use a user with an Atomic site.                                                                                 | false                                             |
 | VIEWPORT_NAME         | Specify the viewport to be used.                                                                                | desktop                                           |
+| WPCOM_BASE_URL        | The base URL to use for WordPress.com marketing pages, typically accessed when not logged in                    | <https://wordpress.com>                           |
 
 <!-- When adding new rows, run the following command to sort the resulting sub-table in alphabetical order:
 

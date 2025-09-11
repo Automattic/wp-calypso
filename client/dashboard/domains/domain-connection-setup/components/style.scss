@@ -1,0 +1,39 @@
+@import "@wordpress/base-styles/variables";
+
+.progress-step {
+	&__circle {
+		width: 24px;
+		height: 24px;
+		border-radius: $radius-round;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 12px;
+		font-weight: 500;
+		border: 1px solid;
+		background-color: transparent;
+		border-color: $gray-200;
+		color: $gray-600;
+
+		&--completed {
+			background-color: var( --dashboard__background-color-success );
+			border-color: var( --dashboard__background-color-success );
+			color: $white;
+			fill: $white;
+		}
+
+		&--current {
+			background-color: var( --wp-admin-theme-color );
+			border-color: var( --wp-admin-theme-color );
+			color: $white;
+		}
+	}
+
+	&__label {
+		color: $gray-600;
+
+		&--current {
+			color: $gray-900;
+		}
+	}
+}

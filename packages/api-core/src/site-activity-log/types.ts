@@ -7,6 +7,13 @@ export interface ActivityLogEntry {
 		text: string;
 	};
 	gridicon: string;
+	image?: {
+		available: boolean;
+		medium_url: string;
+		name: string;
+		url: string;
+	};
+	last_published: string;
 	name: string;
 	object?: {
 		backup_type?: string;
@@ -20,6 +27,7 @@ export interface ActivityLogEntry {
 	published: string;
 	rewind_id: string;
 	summary: string;
+	streams: ActivityLogEntry[];
 }
 
 export interface ActivityLog {

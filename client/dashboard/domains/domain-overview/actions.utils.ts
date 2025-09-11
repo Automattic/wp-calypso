@@ -1,11 +1,4 @@
-import {
-	Domain,
-	DomainTypes,
-	DomainSubtype,
-	DomainTransferStatus,
-	Purchase,
-	Site,
-} from '@automattic/api-core';
+import { Domain, DomainSubtype, DomainTransferStatus, Purchase, Site } from '@automattic/api-core';
 import { __ } from '@wordpress/i18n';
 import { isAkismetProduct } from '../../utils/purchase';
 
@@ -69,8 +62,8 @@ export const shouldShowDeleteAction = ( domain: Domain, purchase?: Purchase, sit
 
 // Delete action utils
 export const getDeleteTitle = ( domain: Domain ) => {
-	switch ( domain.type ) {
-		case DomainTypes.TRANSFER:
+	switch ( domain.subtype.id ) {
+		case DomainSubtype.DOMAIN_TRANSFER:
 			return __( 'Cancel transfer' );
 		default:
 			return __( 'Delete' );
@@ -78,8 +71,8 @@ export const getDeleteTitle = ( domain: Domain ) => {
 };
 
 export const getDeleteLabel = ( domain: Domain ) => {
-	switch ( domain.type ) {
-		case DomainTypes.TRANSFER:
+	switch ( domain.subtype.id ) {
+		case DomainSubtype.DOMAIN_TRANSFER:
 			return __( 'Cancel' );
 		default:
 			return __( 'Delete' );
@@ -87,12 +80,12 @@ export const getDeleteLabel = ( domain: Domain ) => {
 };
 
 export const getDeleteDescription = ( domain: Domain ) => {
-	switch ( domain.type ) {
-		case DomainTypes.SITE_REDIRECT:
+	switch ( domain.subtype.id ) {
+		case DomainSubtype.SITE_REDIRECT:
 			return __( 'Remove this site redirect permanently.' );
-		case DomainTypes.MAPPED:
+		case DomainSubtype.DOMAIN_CONNECTION:
 			return __( 'Remove this domain connection permanently.' );
-		case DomainTypes.TRANSFER:
+		case DomainSubtype.DOMAIN_TRANSFER:
 			return __( 'Cancel this domain transfer.' );
 		default:
 			return __( 'Remove this domain permanently.' );
