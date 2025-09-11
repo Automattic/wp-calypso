@@ -1,7 +1,7 @@
 import {
-	deviceQuery,
-	deviceRegistrationMutation,
-	deviceRemovalMutation,
+	notificationDeviceQuery,
+	notificationDeviceRegistrationMutation,
+	notificationDeviceRemovalMutation,
 } from '@automattic/api-queries';
 import { type PushNotificationStatus } from '@automattic/api-queries/src/notification-devices';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -33,9 +33,11 @@ export const BrowserNotificationCard = ( {
 		mutate: registerDevice,
 		isPending: isRegisteringDevice,
 		error: deviceError,
-	} = useMutation( deviceRegistrationMutation() );
-	const { data: device, isLoading: isLoadingDevice } = useQuery( deviceQuery() );
-	const { mutate: removeDevice, isPending: isRemoving } = useMutation( deviceRemovalMutation() );
+	} = useMutation( notificationDeviceRegistrationMutation() );
+	const { data: device, isLoading: isLoadingDevice } = useQuery( notificationDeviceQuery() );
+	const { mutate: removeDevice, isPending: isRemoving } = useMutation(
+		notificationDeviceRemovalMutation()
+	);
 	const deviceId = device?.ID;
 
 	const isPending = isLoadingDevice || isRegisteringDevice || isRemoving;

@@ -16,7 +16,7 @@ const deviceQueryKey = [ 'notifications', 'device' ];
  * This data is persisted by the query client after the creation of the notifications device is successful.
  * @returns
  */
-export const deviceQuery = () =>
+export const notificationDeviceQuery = () =>
 	queryOptions< NotificationsDeviceResponse | null, Error >( {
 		queryKey: deviceQueryKey,
 		queryFn: () => Promise.resolve( queryClient.getQueryData( deviceQueryKey ) ?? null ),
@@ -27,25 +27,25 @@ export const deviceQuery = () =>
  * This mutation will update the notifications device query data.
  * @returns
  */
-export const deviceRemovalMutation = () =>
+export const notificationDeviceRemovalMutation = () =>
 	mutationOptions( {
 		mutationFn: ( deviceId: string ) => deleteNotificationsDevice( deviceId ),
 		onMutate: () => {
-			const previousData = queryClient.getQueryData( deviceQuery().queryKey );
-			queryClient.setQueryData( deviceQuery().queryKey, null );
+			const previousData = queryClient.getQueryData( notificationDeviceQuery().queryKey );
+			queryClient.setQueryData( notificationDeviceQuery().queryKey, null );
 
 			return { previousData };
 		},
 		onSuccess: () => {
-			queryClient.setQueryData( deviceQuery().queryKey, null );
+			queryClient.setQueryData( notificationDeviceQuery().queryKey, null );
 		},
 		onError: ( _, __, context ) => {
 			// Revert the previous data
-			queryClient.setQueryData( deviceQuery().queryKey, context?.previousData );
+			queryClient.setQueryData( notificationDeviceQuery().queryKey, context?.previousData );
 		},
 	} );
 
-export const pushPermissionStateQuery = () => {
+export const notificationPushPermissionStateQuery = () => {
 	return queryOptions( {
 		queryKey: [ 'notifications', 'push-permission-state' ],
 		queryFn: getPushNotificationState,
@@ -61,7 +61,7 @@ export const pushPermissionStateQuery = () => {
  * This mutation will update the notifications device query data.
  * @returns
  */
-export const deviceRegistrationMutation = () =>
+export const notificationDeviceRegistrationMutation = () =>
 	mutationOptions< NotificationsDeviceResponse, Error >( {
 		mutationFn: async () => {
 			const subscription = await startBrowserSubscription();
@@ -73,13 +73,13 @@ export const deviceRegistrationMutation = () =>
 			} );
 		},
 		onSuccess: ( data ) => {
-			queryClient.setQueryData( deviceQuery().queryKey, data );
+			queryClient.setQueryData( notificationDeviceQuery().queryKey, data );
 		},
 		onSettled: () => {
 			// It invalidates the push permission state because when there is an error, the browser updates the permission state.
 			// So we need to invalidate the query to get the up to date one.
 			queryClient.invalidateQueries( {
-				queryKey: pushPermissionStateQuery().queryKey,
+				queryKey: notificationPushPermissionStateQuery().queryKey,
 			} );
 		},
 	} );

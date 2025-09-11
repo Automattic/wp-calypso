@@ -1,5 +1,5 @@
 /** @jest-environment jsdom */
-import { deviceQuery } from '@automattic/api-queries';
+import { notificationDeviceQuery } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -106,7 +106,7 @@ describe( 'BrowserNotificationCard', () => {
 		const queryClient = new QueryClient();
 		const deviceId = 'device_id_2';
 
-		queryClient.setQueryData( deviceQuery().queryKey, {
+		queryClient.setQueryData( notificationDeviceQuery().queryKey, {
 			ID: deviceId,
 		} );
 

@@ -1,4 +1,4 @@
-import { pushPermissionStateQuery } from '@automattic/api-queries';
+import { notificationPushPermissionStateQuery } from '@automattic/api-queries';
 // eslint-disable-next-line no-restricted-imports
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
@@ -9,7 +9,7 @@ import { BrowserNotificationCard } from './browser-notification-card';
 import { BrowserNotificationNotice } from './browser-notification-notice';
 
 export default function NotificationsSites() {
-	const { data: status } = useQuery( pushPermissionStateQuery() );
+	const { data: status } = useQuery( notificationPushPermissionStateQuery() );
 
 	return (
 		<PageLayout
