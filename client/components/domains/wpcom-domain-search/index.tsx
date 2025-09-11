@@ -12,9 +12,24 @@ type DomainSearchProps = Omit< ComponentProps< typeof DomainSearch >, 'cart' | '
 	};
 };
 
+const SESSION_STORAGE_QUERY_KEY = 'domain-search-query';
+
+const getInitialQuery = () => {
+	try {
+		return sessionStorage.getItem( SESSION_STORAGE_QUERY_KEY ) ?? '';
+	} catch {
+		return '';
+	}
+};
+
+const setInitialQuery = ( query: string ) => {
+	sessionStorage.setItem( SESSION_STORAGE_QUERY_KEY, query );
+};
+
 const DomainSearchWithCart = ( {
 	currentSiteId,
 	flowName,
+	initialQuery: externalInitialQuery,
 	config: externalConfig,
 	...props
 }: DomainSearchProps ) => {
@@ -24,6 +39,10 @@ const DomainSearchWithCart = ( {
 		cartKey,
 		flowName,
 	} );
+
+	const initialQuery = useMemo( () => {
+		return externalInitialQuery ?? getInitialQuery();
+	}, [ externalInitialQuery ] );
 
 	const config = useMemo( () => {
 		return {
@@ -38,13 +57,24 @@ const DomainSearchWithCart = ( {
 	const events = useMemo( () => {
 		return {
 			...props.events,
+			onQueryChange: ( query: string ) => {
+				setInitialQuery( query );
+			},
 			onContinue: () => {
 				props.events?.onContinue?.( items );
 			},
 		};
 	}, [ props.events, items ] );
 
-	return <DomainSearch { ...props } config={ config } cart={ cart } events={ events } />;
+	return (
+		<DomainSearch
+			{ ...props }
+			config={ config }
+			cart={ cart }
+			events={ events }
+			initialQuery={ initialQuery }
+		/>
+	);
 };
 
 export const WPCOMDomainSearch = ( props: DomainSearchProps ) => {

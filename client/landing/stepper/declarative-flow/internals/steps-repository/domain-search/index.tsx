@@ -37,7 +37,7 @@ const DomainSearchStep: StepType< {
 	submits: UseMyDomain | StepSubmission;
 } > = function DomainSearchStep( { navigation, flow } ) {
 	const site = useSite();
-	const initialQuery = useQuery().get( 'new' ) ?? site?.slug ?? '';
+	const initialQuery = useQuery().get( 'new' ) ?? site?.slug;
 
 	const config = {
 		vendor: getSuggestionsVendor( {

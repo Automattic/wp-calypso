@@ -39,6 +39,7 @@ export interface DomainSearchEvents {
 	onRegisterDomainClick: ( otherSiteDomain: string, domainName: string ) => void;
 	onCheckTransferStatusClick: ( domainName: string ) => void;
 	onMapDomainClick: ( currentSiteSlug: string, domainName: string ) => void;
+	onQueryChange: ( query: string ) => void;
 }
 
 export interface DomainSearchConfig {
