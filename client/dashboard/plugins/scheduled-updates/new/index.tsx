@@ -2,7 +2,9 @@ import {
 	updateSchedulesBatchCreateMutation,
 	siteJetpackMonitorSettingsCreateMutation,
 } from '@automattic/api-queries';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useMutation } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import {
 	Button,
 	Card,
@@ -12,6 +14,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
+import { pluginsScheduledUpdatesRoute } from '../../../app/router/plugins';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { SectionHeader } from '../../../components/section-header';
@@ -33,6 +36,7 @@ function ScheduledUpdatesNew() {
 	const [ time, setTime ] = useState( DEFAULT_TIME );
 	const isValid = selectedSiteIds.length > 0 && selectedPluginSlugs.length > 0 && ! BLOCK_CREATE;
 
+	const navigate = useNavigate( { from: pluginsScheduledUpdatesRoute.fullPath } );
 	const { data: eligibleSites = [] } = useEligibleSites();
 	const siteIdsAsNumbers = useMemo(
 		() => selectedSiteIds.map( ( id ) => Number( id ) ),
@@ -63,12 +67,25 @@ function ScheduledUpdatesNew() {
 					.filter( ( result ) => ! result.error )
 					.map( ( result ) => result.siteId );
 
+				// Compute hours and weekday from the scheduled timestamp (parity with legacy)
+				const eventDate = new Date( timestamp * 1000 );
+				const hours = eventDate.getHours();
+				const weekdayIndex = frequency === 'weekly' ? eventDate.getDay() : undefined;
+
 				// Create monitor settings for each successful site using per-site mutation (with retry)
 				const siteMap = new Map( eligibleSites.map( ( site ) => [ site.ID, site ] ) );
 				const monitorTasks = successfulSiteIds
 					.map( ( siteId ) => siteMap.get( siteId ) )
 					.filter( ( site ): site is Site => Boolean( site ) )
 					.map( ( site ) => {
+						recordTracksEvent( 'calypso_scheduled_updates_create_schedule', {
+							site_slug: site.slug,
+							frequency,
+							plugins_number: selectedPluginSlugs.length,
+							hours,
+							weekday: weekdayIndex,
+						} );
+
 						return async () => {
 							await createMonitorForSite( {
 								siteId: site.ID,
@@ -81,7 +98,10 @@ function ScheduledUpdatesNew() {
 							} );
 						};
 					} );
+
 				await runWithConcurrency( monitorTasks, 4 );
+				// Navigate back to the schedules list
+				navigate( { to: pluginsScheduledUpdatesRoute.to } );
 			},
 		} );
 	}, [
@@ -92,6 +112,7 @@ function ScheduledUpdatesNew() {
 		selectedPluginSlugs,
 		createMutation,
 		eligibleSites,
+		navigate,
 		createMonitorForSite,
 	] );
 
