@@ -14,6 +14,7 @@ const SitePicker: StepType< {
 	submits: {
 		siteSlug: string;
 		siteId: SiteId;
+		site: SiteDetails;
 	};
 } > = function SitePicker( { navigation, flow } ) {
 	const translate = useTranslate();
@@ -21,7 +22,7 @@ const SitePicker: StepType< {
 
 	const selectSite = ( siteId: SiteId, site: SiteDetails ) => {
 		const siteSlug = site.URL ? new URL( site.URL ).host : '';
-		submit?.( { siteSlug, siteId } );
+		submit?.( { siteSlug, siteId, site } );
 	};
 
 	const filter = ( site: SiteDetails ) => {

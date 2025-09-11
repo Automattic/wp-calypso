@@ -5,6 +5,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { useState, useEffect } from 'react';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
+import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
 import {
 	clearSignupCompleteSlug,
 	clearSignupCompleteFlowName,
@@ -213,6 +214,10 @@ const domain: FlowV2< typeof initialize > = {
 					return;
 
 				case STEPS.SITE_PICKER.slug: {
+					if ( ! siteHasPaidPlan( providedDependencies.site ) ) {
+						return navigate( STEPS.UNIFIED_PLANS.slug );
+					}
+
 					setPendingAction( async () => {
 						await addProductsToCart( providedDependencies.siteSlug, this.name, productCartItems );
 
