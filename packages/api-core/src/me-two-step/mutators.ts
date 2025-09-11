@@ -6,7 +6,6 @@ import type {
 	CreateApplicationPasswordResponse,
 	ValidateTwoStepCodeArgs,
 	GenerateBackupCodesResponse,
-	SetupSMSArgs,
 } from './types';
 
 export async function validateSecurityKeyRegistration(
@@ -69,15 +68,7 @@ export async function deleteApplicationPassword(
 	} );
 }
 
-export async function setupSMS( data: SetupSMSArgs ): Promise< Record< string, unknown > > {
-	return wpcom.req.post( {
-		path: '/me/settings',
-		apiVersion: '1.1',
-		body: data,
-	} );
-}
-
-export async function sendSMSCode(): Promise< Record< string, unknown > > {
+export async function sendTwoStepAuthSMSCode(): Promise< Record< string, unknown > > {
 	return wpcom.req.post( {
 		path: '/me/two-step/sms/new',
 		apiVersion: '1.1',

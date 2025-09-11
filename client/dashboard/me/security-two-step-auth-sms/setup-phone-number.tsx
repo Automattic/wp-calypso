@@ -1,7 +1,7 @@
 import {
 	smsCountryCodesQuery,
-	setupSMSMutation,
-	resendSMSCodeMutation,
+	setupTwoStepAuthSMSMutation,
+	resendTwoStepAuthSMSCodeMutation,
 } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
@@ -30,8 +30,12 @@ export default function SetupPhoneNumber( { userSettings }: { userSettings: User
 
 	const { data: smsCountryCodes } = useSuspenseQuery( smsCountryCodesQuery() );
 
-	const { mutate: setupSMS, isPending: isSetupSMSPending } = useMutation( setupSMSMutation() );
-	const { mutate: resendSMSCode, isPending: isResending } = useMutation( resendSMSCodeMutation() );
+	const { mutate: setupTwoStepAuthSMS, isPending: isSetupSMSPending } = useMutation(
+		setupTwoStepAuthSMSMutation()
+	);
+	const { mutate: resendTwoStepAuthSMSCode, isPending: isResending } = useMutation(
+		resendTwoStepAuthSMSCodeMutation()
+	);
 
 	const initialCountryCode = userSettings.two_step_sms_country;
 	const initialPhoneNumber = userSettings.two_step_sms_phone_number || '';
@@ -71,7 +75,7 @@ export default function SetupPhoneNumber( { userSettings }: { userSettings: User
 
 		setIsSMSResendThrottled( true );
 
-		setupSMS(
+		setupTwoStepAuthSMS(
 			{
 				two_step_sms_country: formData.phoneNumber.countryCode,
 				two_step_sms_phone_number: formData.phoneNumber.phoneNumber,
@@ -81,8 +85,16 @@ export default function SetupPhoneNumber( { userSettings }: { userSettings: User
 					setShowVerifyCode( true );
 					handleThrottleSMSRequests();
 				},
-				onError: () => {
-					createErrorNotice( __( 'Failed to save phone number. Please try again.' ), {
+				onError: ( e: Error ) => {
+					const cause = e?.cause as { error?: string; message?: string };
+					const error = cause?.error;
+					const errorMessage =
+						error === 'rate_limited'
+							? __(
+									'Unable to request a code via SMS right now. Please try again after one minute.'
+							  )
+							: cause?.message || __( 'Failed to save phone number. Please try again.' );
+					createErrorNotice( errorMessage, {
 						type: 'snackbar',
 					} );
 					setIsSMSResendThrottled( false );
@@ -93,7 +105,7 @@ export default function SetupPhoneNumber( { userSettings }: { userSettings: User
 
 	const handleResend = () => {
 		setIsSMSResendThrottled( true );
-		resendSMSCode( undefined, {
+		resendTwoStepAuthSMSCode( undefined, {
 			onSuccess: () => {
 				createSuccessNotice( __( 'Verification code sent to your phone.' ), {
 					type: 'snackbar',
