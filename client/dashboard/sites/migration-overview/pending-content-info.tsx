@@ -2,7 +2,7 @@ import {
 	deleteSiteMigrationPendingStatusQuery,
 	siteMigrationKeyQuery,
 } from '@automattic/api-queries';
-import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
@@ -105,9 +105,13 @@ export function PendingContentInfo( {
 } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { createSuccessNotice } = useDispatch( noticesStore );
-	const { data: migrationKey } = useSuspenseQuery( siteMigrationKeyQuery( site.ID ) );
+	const { data: migrationKey, isLoading } = useQuery( siteMigrationKeyQuery( site.ID ) );
 	const [ isCancellationModalOpen, setIsCancellationModalOpen ] = useState( false );
 	const continueMigrationUrl = getContinueMigrationUrl( site );
+
+	if ( isLoading ) {
+		return null;
+	}
 
 	return (
 		<>
