@@ -144,7 +144,7 @@ export const UserMessage = ( {
 			</div>
 			{ isMessageWithEscalationOption && (
 				<>
-					{ ! interactionHasZendeskEvent( currentSupportInteraction ) && ! message.rating_value && (
+					{ ! interactionHasZendeskEvent( currentSupportInteraction ) && (
 						<BotMessageActions message={ message } />
 					) }
 					<div

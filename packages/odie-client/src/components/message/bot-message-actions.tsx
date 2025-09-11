@@ -3,7 +3,6 @@ import { Icon } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { check } from '@wordpress/icons';
-import clsx from 'clsx';
 import { ODIE_THUMBS_DOWN_RATING_VALUE, ODIE_THUMBS_UP_RATING_VALUE } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
 import { useSendOdieFeedback } from '../../data';
@@ -60,16 +59,6 @@ const BotMessageActions = ( { message }: { message: Message } ) => {
 		}
 	};
 
-	const thumbsUpClasses = clsx( {
-		'odie-feedback-component-button-icon-disabled': rated && notLiked,
-		'odie-feedback-component-button-icon-pressed': rated && liked,
-	} );
-
-	const thumbsDownClasses = clsx( {
-		'odie-feedback-component-button-icon-disabled': rated && liked,
-		'odie-feedback-component-button-icon-pressed': rated && notLiked,
-	} );
-
 	const messageActions = [
 		{
 			id: 'thumbs-up',
@@ -91,7 +80,7 @@ const BotMessageActions = ( { message }: { message: Message } ) => {
 		},
 		{
 			id: 'copy',
-			icon: isCopied ? <Icon icon={ check } size={ 16 } /> : <CopyIcon />,
+			icon: isCopied ? <Icon icon={ check } size={ 24 } /> : <CopyIcon />,
 			label: isCopied ? __( 'Copied', __i18n_text_domain__ ) : __( 'Copy', __i18n_text_domain__ ),
 			onClick: handleCopyToClipboard,
 			tooltip: isCopied

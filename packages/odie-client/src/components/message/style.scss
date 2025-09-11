@@ -489,17 +489,6 @@ $feedback-button-size: 28px;
 	}
 }
 
-.odie-feedback-component-button-icon-disabled {
-	background-color: var( --color-surface );
-	pointer-events: none;
-	fill: var( --color-neutral-20 );
-}
-
-.odie-feedback-component-button-icon-pressed {
-	background-color: $blueberry-color;
-	fill: var( --color-text-inverted );
-}
-
 $custom-border-corner-size: 16px;
 
 .odie-gradient-to-white {
