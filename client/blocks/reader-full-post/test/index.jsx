@@ -15,6 +15,7 @@ const MockFullPostView = ( { commentsApiDisabled, shouldShowComments } ) => {
 			{ ! commentsApiDisabled && shouldShowComments( post ) && (
 				<div data-testid="comments">Comments Component</div>
 			) }
+			{ /* This mimics the ReaderPostActions logic */ }
 			{ ! commentsApiDisabled && <div data-testid="comment-button">Comment Button</div> }
 		</div>
 	);

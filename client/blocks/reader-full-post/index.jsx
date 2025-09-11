@@ -806,6 +806,7 @@ export class FullPostView extends Component {
 								site={ site }
 								onCommentClick={ this.handleCommentClick }
 								fullPost
+								commentsApiDisabled={ commentsApiDisabled }
 							/>
 
 							{ ! isLoading && <ReaderPerformanceTrackerStop /> }
