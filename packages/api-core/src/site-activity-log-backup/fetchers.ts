@@ -1,7 +1,7 @@
 import { wpcom } from '../wpcom-fetcher';
 import type { ActivityLog } from '../site-activity-log/types';
 
-export async function fetchSiteRewindableActivityLog(
+export async function fetchSiteBackupActivityLog(
 	siteId: number,
 	{ number, aggregate = false }: { number: number; aggregate?: boolean }
 ): Promise< ActivityLog > {

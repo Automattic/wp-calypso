@@ -1,5 +1,5 @@
 import {
-	fetchSiteRewindableActivityLog,
+	fetchSiteBackupActivityLog,
 	enqueueSiteBackup,
 	fetchSiteBackups,
 	fetchBackupContents,
@@ -12,7 +12,7 @@ import { queryClient } from './query-client';
 export const siteLastBackupQuery = ( siteId: number ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'backups', 'last' ],
-		queryFn: () => fetchSiteRewindableActivityLog( siteId, { number: 1 } ),
+		queryFn: () => fetchSiteBackupActivityLog( siteId, { number: 1 } ),
 		select: ( data ) => data.current?.orderedItems[ 0 ] ?? null,
 	} );
 
