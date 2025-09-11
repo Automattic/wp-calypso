@@ -28,7 +28,7 @@ export function useEligiblePlugins( selectedSiteIds: string[] ) {
 				const pluginFile = plugin.plugin;
 				const canonical = pluginFile?.endsWith( '.php' ) ? pluginFile : `${ pluginFile }.php`;
 				const name = plugin.name ? decodeEntities( plugin.name ) : plugin.name;
-				return { ...plugin, plugin: canonical, name } as CorePlugin;
+				return { ...plugin, plugin: canonical, name };
 			} );
 
 		const unique = new Map< string, CorePlugin >( normalized.map( ( p ) => [ p.plugin, p ] ) );

@@ -15,6 +15,15 @@ const pluginFields: Field< CorePlugin >[] = [
 	},
 ];
 
+const defaultView: View = {
+	type: 'table',
+	page: 1,
+	perPage: 5,
+	sort: { field: 'name', direction: 'asc' },
+	fields: [],
+	titleField: 'name',
+};
+
 type Props = {
 	selectedSiteIds: string[];
 	selection: string[];
@@ -27,20 +36,9 @@ function ScheduledUpdatesPluginsSelection( {
 	onChangeSelection,
 }: Props ) {
 	const eligiblePlugins = useEligiblePlugins( selectedSiteIds );
-	const [ view, setView ] = useState< View >( {
-		type: 'table',
-		page: 1,
-		perPage: 5,
-		sort: { field: 'name', direction: 'asc' },
-		fields: [],
-		titleField: 'name',
-	} );
+	const [ view, setView ] = useState< View >( defaultView );
 	const { data: filtered, paginationInfo } = useMemo( () => {
-		return filterSortAndPaginate< CorePlugin >(
-			eligiblePlugins as CorePlugin[],
-			view,
-			pluginFields as Field< CorePlugin >[]
-		);
+		return filterSortAndPaginate( eligiblePlugins, view, pluginFields );
 	}, [ eligiblePlugins, view ] );
 	const actions: Array< Action< CorePlugin > > = useMemo(
 		() => [

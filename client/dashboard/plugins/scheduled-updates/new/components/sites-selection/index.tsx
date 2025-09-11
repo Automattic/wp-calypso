@@ -32,6 +32,18 @@ const siteFields: Field< Site >[] = [
 	},
 ];
 
+const defaultView: View = {
+	type: 'table',
+	page: 1,
+	perPage: 5,
+	sort: { field: 'name', direction: 'asc' },
+	fields: [],
+	titleField: 'name',
+	descriptionField: 'url',
+	mediaField: 'icon.ico',
+	showMedia: true,
+};
+
 type Props = {
 	selection: string[];
 	onChangeSelection: ( ids: string[] ) => void;
@@ -39,18 +51,7 @@ type Props = {
 
 function ScheduledUpdatesSitesSelection( { selection, onChangeSelection }: Props ) {
 	const { data: sites = [] } = useEligibleSites();
-	const [ view, setView ] = useState< View >( {
-		type: 'table',
-		page: 1,
-		perPage: 5,
-		sort: { field: 'name', direction: 'asc' },
-		fields: [],
-		titleField: 'name',
-		descriptionField: 'url',
-		mediaField: 'icon.ico',
-		showMedia: true,
-	} );
-
+	const [ view, setView ] = useState< View >( defaultView );
 	const { data: filtered, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( sites, view, siteFields );
 	}, [ sites, view ] );
