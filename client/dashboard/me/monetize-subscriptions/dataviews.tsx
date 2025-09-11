@@ -1,50 +1,14 @@
-import { formatCurrency } from '@automattic/number-formatters';
+import { MembershipSubscription } from '@automattic/api-core';
 import { Fields } from '@wordpress/dataviews';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { MembershipIcon, MembershipSiteLink } from './membership-item';
-import { MembershipSubscription } from './types';
-import { createInterpolateElement } from '@wordpress/element';
+import { MembershipIcon, MembershipTerms, MembershipType } from './membership-item';
 
 export function useMembershipsFieldDefinitions() {
 	return useMemo( () => {
 		return getMembershipsFieldDefinitions();
 	}, [] );
 }
-
-export const MembershipTerms = ( { subscription }: { subscription: MembershipSubscription } ) => {
-	const moment = useLocalizedMoment();
-
-	if ( subscription.end_date === null ) {
-		return <>{ __( 'Never expires' ) }</>;
-	}
-
-	const renewText =
-		subscription.renew_interval === null
-			? // eslint-disable-next-line @wordpress/i18n-translator-comments
-			  __( 'Expires on %(date)s' )
-			: // eslint-disable-next-line @wordpress/i18n-translator-comments
-			  __( 'Renews at %(amount)s on %(date)s' );
-	return (
-		<>
-			{ sprintf( renewText, {
-				date: moment( subscription.end_date ).format( 'LL' ),
-			} ) }
-		</>
-	);
-};
-
-export const MembershipType = ( { subscription }: { subscription: MembershipSubscription } ) => {
-	if ( subscription.end_date === null ) {
-		return createInterpolateElement( __( 'Purchased from <MembershipSiteLink/>' ), {
-			MembershipSiteLink: <MembershipSiteLink subscription={ subscription } />,
-		} );
-	}
-	return createInterpolateElement( __( 'Subscription to <MembershipSiteLink/>' ), {
-		MembershipSiteLink: <MembershipSiteLink subscription={ subscription } />,
-	} );
-};
 
 export function getMembershipsFieldDefinitions(): Fields< MembershipSubscription > {
 	const getPurchaseUrl = ( item: MembershipSubscription ) => {

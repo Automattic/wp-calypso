@@ -1,15 +1,12 @@
-import { Site } from '@automattic/api-core';
-import { CompactCard } from '@automattic/components';
+import { MembershipSubscription, Site } from '@automattic/api-core';
 import { formatCurrency } from '@automattic/number-formatters';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { formatDate } from 'date-fns';
 import { useEffect, useState } from 'react';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import SiteIcon from '../../sites/site-icon';
-import { MembershipSubscription } from './types';
 
 export const MembershipTerms = ( { subscription }: { subscription: MembershipSubscription } ) => {
-	const moment = useLocalizedMoment();
-
 	if ( subscription.end_date === null ) {
 		return <>{ __( 'Never expires' ) }</>;
 	}
@@ -19,12 +16,12 @@ export const MembershipTerms = ( { subscription }: { subscription: MembershipSub
 			{ subscription.renew_interval === null
 				? // eslint-disable-next-line @wordpress/i18n-translator-comments
 				  sprintf( __( 'Expires on %(date)s' ), {
-						date: moment( subscription.end_date ).format( 'LL' ),
+						date: formatDate( subscription.end_date, 'LL' ),
 				  } )
 				: // eslint-disable-next-line @wordpress/i18n-translator-comments
 				  sprintf( __( 'Renews at %(amount)s on %(date)s' ), {
 						amount: formatCurrency( Number( subscription.renewal_price ), subscription.currency ),
-						date: moment( subscription.end_date ).format( 'LL' ),
+						date: formatDate( subscription.end_date, 'LL' ),
 				  } ) }
 		</>
 	);
@@ -59,18 +56,14 @@ export const MembershipSiteLink = ( {
 
 export const MembershipType = ( { subscription }: { subscription: MembershipSubscription } ) => {
 	if ( subscription.end_date === null ) {
-		return (
-			<>
-				__( 'Purchased from <MembershipSiteLink subscription={ subscription } /> ')
-			</>
-		);
+		return createInterpolateElement( __( 'Purchased from <MembershipSiteLink/>' ), {
+			MembershipSiteLink: <MembershipSiteLink subscription={ subscription } />,
+		} );
 	}
 
-	return (
-		<>
-			__( 'Subscription to <MembershipSiteLink subscription={ subscription } />' )
-		</>
-	);
+	return createInterpolateElement( __( 'Subscription to <MembershipSiteLink/>' ), {
+		MembershipSiteLink: <MembershipSiteLink subscription={ subscription } />,
+	} );
 };
 
 export const MembershipIcon = ( { subscription }: { subscription: MembershipSubscription } ) => {
@@ -99,38 +92,3 @@ export const MembershipIcon = ( { subscription }: { subscription: MembershipSubs
 
 	return <></>;
 };
-
-export default function MembershipItem( {
-	subscription,
-}: {
-	subscription: MembershipSubscription;
-} ) {
-	return (
-		<CompactCard
-			className="membership-item"
-			key={ subscription.ID }
-			href={ '/me/purchases/other/' + subscription.ID }
-		>
-			<div className="membership-item__wrapper purchases-layout__wrapper">
-				<div className="membership-item__site purchases-layout__site">
-					<MembershipIcon subscription={ subscription } />
-				</div>
-
-				<div className="membership-item__information purchase-item__information purchases-layout__information">
-					<div className="membership-item__title purchase-item__title">{ subscription.title }</div>
-					<div className="membership-item__purchase-type purchase-item__purchase-type">
-						<MembershipType subscription={ subscription } />
-					</div>
-				</div>
-
-				<div className="membership-item__status purchase-item__status purchases-layout__status">
-					<MembershipTerms subscription={ subscription } />
-				</div>
-
-				<div className="membership-item__payment-method purchase-item__payment-method purchases-layout__payment-method">
-					{ __( 'Credit card' ) }
-				</div>
-			</div>
-		</CompactCard>
-	);
-}
