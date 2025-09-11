@@ -53,7 +53,11 @@ const modifySiteDomainObjectImmutable = ( state, siteId, domain, modifyDomainPro
 	// Copy as we shouldn't mutate original state
 	const newDomains = [ ...state[ siteId ] ];
 	// Update privacy
-	newDomains.splice( domainIndex, 1, Object.assign( {}, targetDomain, modifyDomainProperties ) );
+	if ( domainIndex === -1 ) {
+		newDomains.push( Object.assign( {}, targetDomain, modifyDomainProperties ) );
+	} else {
+		newDomains.splice( domainIndex, 1, Object.assign( {}, targetDomain, modifyDomainProperties ) );
+	}
 
 	return Object.assign( {}, state, {
 		[ siteId ]: newDomains,
