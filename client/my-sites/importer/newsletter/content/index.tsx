@@ -109,7 +109,7 @@ export default function Content( {
 
 	const handleImportStart = () => {
 		if ( ! overrideDestination ) {
-			dispatch( startImport( siteId, importerId ) );
+			dispatch( startImport( siteId, importerStatus.type ) );
 		}
 
 		dispatch(
