@@ -48,6 +48,7 @@ import {
 	recordPermalinkClick,
 } from 'calypso/reader/stats';
 import { showSelectedPost } from 'calypso/reader/utils';
+import { requestPostComments } from 'calypso/state/comments/actions';
 import { isCommentsApiDisabled } from 'calypso/state/comments/selectors/get-comments-api-disabled';
 import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
@@ -134,6 +135,9 @@ export class FullPostView extends Component {
 			this.scrollToComments();
 		}
 
+		// Ensure we check comments API availability for this post
+		this.checkCommentsApiAvailability();
+
 		// Adds WPiFrameResize listener for setting the corect height in embedded iFrames.
 		this.stopResize =
 			this.postContentWrapper.current && WPiFrameResize( this.postContentWrapper.current );
@@ -173,6 +177,9 @@ export class FullPostView extends Component {
 				this.setReadingStartTime();
 				this.resetScroll();
 			}
+
+			// Check comments API availability when post changes
+			this.checkCommentsApiAvailability();
 		}
 
 		if ( this.props.shouldShowComments && ! prevProps.shouldShowComments ) {
@@ -585,6 +592,19 @@ export class FullPostView extends Component {
 		}
 	};
 
+	checkCommentsApiAvailability = () => {
+		const { post, commentsApiDisabled } = this.props;
+
+		// Only check if we don't already know the API is disabled
+		// and if we have a valid post with a site ID
+		if ( ! commentsApiDisabled && post?.site_ID && post?.ID && ! post.is_external ) {
+			this.props.requestPostComments( {
+				siteId: post.site_ID,
+				postId: post.ID,
+			} );
+		}
+	};
+
 	renderMarkAsSenButton = () => {
 		const { post } = this.props;
 		return (
@@ -942,5 +962,6 @@ export default connect(
 		requestMarkAsSeenBlog,
 		requestMarkAsUnseenBlog,
 		showSelectedPost,
+		requestPostComments,
 	}
 )( FullPostView );
