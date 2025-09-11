@@ -3,19 +3,20 @@ import { userPurchasesQuery, siteSetPrimaryDomainMutation } from '@automattic/ap
 import { useMyDomainInputMode } from '@automattic/domains-table/src/utils/constants';
 import { isFreeUrlDomainName } from '@automattic/domains-table/src/utils/is-free-url-domain-name';
 import {
-	domainManagementDNS,
 	domainManagementEditContactInfo,
 	domainManagementLink,
 	domainMappingSetup,
 	domainUseMyDomain,
 } from '@automattic/domains-table/src/utils/paths';
 import { useQuery, useMutation } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
 import { Icon } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { sprintf, __ } from '@wordpress/i18n';
 import { payment, tool } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, Suspense, lazy } from 'react';
+import { domainDnsRoute } from '../../app/router/domains';
 import {
 	isRecentlyRegistered,
 	isDomainRenewable,
@@ -39,6 +40,7 @@ const SiteChangeAddressContent = lazy(
 const noop = () => {};
 
 export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
+	const router = useRouter();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: purchases } = useQuery( userPurchasesQuery() );
 	const setPrimaryDomainMutation = useMutation( siteSetPrimaryDomainMutation() );
@@ -103,8 +105,13 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				supportsBulk: false,
 				callback: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
-					const siteSlug = getDomainSiteSlug( domain );
-					window.location.pathname = domainManagementDNS( siteSlug, domain.domain, context );
+
+					router.navigate( {
+						to: domainDnsRoute.fullPath,
+						params: {
+							domainName: domain.domain,
+						},
+					} );
 				},
 				isEligible: ( item: DomainSummary ) => {
 					return (
