@@ -311,7 +311,7 @@ export function fetchDomainDetails( domainName ) {
 		dispatch( domainDetailsRequestAction( domainName ) );
 
 		return wpcom.req
-			.get( `/domain-details/${ domainName }/`, { apiVersion: '1.2' } )
+			.get( `/domain-details/${ domainName }`, { apiVersion: '1.2', include_status: false } )
 			.then( ( data ) => {
 				const { error, message } = data;
 
