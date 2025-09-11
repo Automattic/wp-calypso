@@ -2,10 +2,10 @@ import { useRouter } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronLeft, chevronRight } from '@wordpress/icons';
-import { PageHeader } from '../../components/page-header';
-import PageLayout from '../../components/page-layout';
+import { PageHeader } from '../../../components/page-header';
+import PageLayout from '../../../components/page-layout';
 
-export default function SecurityTwoStepAuthAppPageLayout( {
+export default function SecurityTwoStepAuthPageLayout( {
 	children,
 }: {
 	children: React.ReactNode;

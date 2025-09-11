@@ -21,6 +21,11 @@ interface VerifyCodeFormProps {
 	primaryButtonText?: string;
 	showCancelButton?: boolean;
 	infoNoticeText?: string;
+	resendButtonProps?: {
+		onClick: () => void;
+		isBusy: boolean;
+		disabled: boolean;
+	};
 }
 
 type TwoStepAuthAppFormData = {
@@ -35,6 +40,7 @@ export default function VerifyCodeForm( {
 	primaryButtonText,
 	showCancelButton = true,
 	infoNoticeText,
+	resendButtonProps,
 }: VerifyCodeFormProps ) {
 	const router = useRouter();
 
@@ -113,6 +119,17 @@ export default function VerifyCodeForm( {
 						>
 							{ primaryButtonText ?? __( 'Enable' ) }
 						</Button>
+
+						{ resendButtonProps && (
+							<Button
+								variant="secondary"
+								onClick={ resendButtonProps.onClick }
+								isBusy={ resendButtonProps.isBusy }
+								disabled={ resendButtonProps.disabled || isValidateTwoStepCodePending }
+							>
+								{ __( 'Resend code' ) }
+							</Button>
+						) }
 
 						{ showCancelButton && (
 							<Button

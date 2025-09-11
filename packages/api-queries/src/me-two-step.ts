@@ -9,12 +9,15 @@ import {
 	fetchAppAuthSetup,
 	validateTwoStepCode,
 	generateBackupCodes,
+	setupSMS,
+	sendSMSCode,
 } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import { create } from '@github/webauthn-json';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { userSettingsQuery } from './me-settings';
 import { queryClient } from './query-client';
+import type { SetupSMSArgs } from '@automattic/api-core';
 
 export const securityKeysQuery = () =>
 	queryOptions( {
@@ -102,4 +105,17 @@ export const validateTwoStepCodeMutation = () =>
 export const generateBackupCodesMutation = () =>
 	mutationOptions( {
 		mutationFn: generateBackupCodes,
+	} );
+
+export const setupSMSMutation = () =>
+	mutationOptions( {
+		mutationFn: async ( data: SetupSMSArgs ) => {
+			await setupSMS( data );
+			return await sendSMSCode();
+		},
+	} );
+
+export const resendSMSCodeMutation = () =>
+	mutationOptions( {
+		mutationFn: sendSMSCode,
 	} );

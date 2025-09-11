@@ -181,7 +181,12 @@ export const securityAccountRecoveryRoute = createRoute( {
 export const securityTwoStepAuthRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'security/two-step-auth',
-	loader: () => queryClient.ensureQueryData( userSettingsQuery() ),
+	loader: async () => {
+		await Promise.all( [
+			queryClient.ensureQueryData( userSettingsQuery() ),
+			queryClient.ensureQueryData( smsCountryCodesQuery() ),
+		] );
+	},
 } ).lazy( () =>
 	import( '../../me/security-two-step-auth' ).then( ( d ) =>
 		createLazyRoute( 'security-two-step-auth' )( {
@@ -202,6 +207,23 @@ export const securityTwoStepAuthAppRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../me/security-two-step-auth-app' ).then( ( d ) =>
 		createLazyRoute( 'security-two-step-auth-app' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const securityTwoStepAuthSMSRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'security/two-step-auth/sms',
+	loader: async () => {
+		await Promise.all( [
+			queryClient.ensureQueryData( userSettingsQuery() ),
+			queryClient.ensureQueryData( smsCountryCodesQuery() ),
+		] );
+	},
+} ).lazy( () =>
+	import( '../../me/security-two-step-auth-sms' ).then( ( d ) =>
+		createLazyRoute( 'security-two-step-auth-sms' )( {
 			component: d.default,
 		} )
 	)
@@ -359,6 +381,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 		securityAccountRecoveryRoute,
 		securityTwoStepAuthRoute,
 		securityTwoStepAuthAppRoute,
+		securityTwoStepAuthSMSRoute,
 		securityTwoStepAuthBackupCodesRoute,
 		securitySshKeyRoute,
 		securityConnectedAppsRoute,

@@ -63,3 +63,8 @@ export interface ValidateTwoStepCodeArgs {
 export interface GenerateBackupCodesResponse {
 	codes: string[];
 }
+
+export interface SetupSMSArgs {
+	two_step_sms_country: string;
+	two_step_sms_phone_number: string;
+}
