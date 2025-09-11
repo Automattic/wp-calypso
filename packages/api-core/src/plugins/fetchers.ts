@@ -1,8 +1,7 @@
 import languages, { Language } from '@automattic/languages';
 import { find } from 'lodash';
 import { stringify as stringifyQs } from 'qs';
-import { wpcom } from '../wpcom-fetcher';
-import { WpComPlugin, WpOrgPlugin } from './types';
+import { WpOrgPlugin } from './types';
 
 function getWporgLocaleCode( currentUserLocale: string ) {
 	const result = find( languages, { langSlug: currentUserLocale } ) as Language;
@@ -45,11 +44,4 @@ export function fetchWpOrgPlugin( pluginSlug: string, locale: string ): Promise<
 	};
 
 	return getRequest( WPORG_PLUGINS_ENDPOINT, query );
-}
-
-export function fetchWpComPlugin( slug: string ): Promise< WpComPlugin > {
-	return wpcom.req.get( {
-		path: `/marketplace/products/${ slug }`,
-		apiNamespace: 'wpcom/v2',
-	} );
 }

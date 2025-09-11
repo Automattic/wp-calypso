@@ -127,7 +127,7 @@ export function getHeaderText( {
 			: translate( 'Log in to WordPress.com' );
 	}
 
-	if ( twoFactorAuthType === 'authenticator' ) {
+	if ( twoFactorAuthType === 'authenticator' || twoFactorAuthType === 'email' ) {
 		headerText = translate( 'Continue with an authentication code' );
 	}
 

@@ -263,6 +263,7 @@ const twoFactorProperties = [
 	'two_step_nonce',
 	'two_step_supported_auth_types',
 	'two_step_notification_sent',
+	'two_step_nonce_email',
 	'two_step_nonce_backup',
 	'two_step_nonce_sms',
 	'two_step_nonce_authenticator',

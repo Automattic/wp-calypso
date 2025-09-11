@@ -12,7 +12,6 @@ yarn test:pw ./specs/dashboard/dashboard__authentication.spec.ts --repeat-each=1
 Running 200 tests using 10 workers
   200 passed (1.7m)
 ```
-
 ### Use `expect.poll` to poll for expected values
 
 Given the following function on a page object:

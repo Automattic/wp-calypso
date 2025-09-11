@@ -245,6 +245,7 @@ export class Login extends Component {
 			isGravPoweredClient &&
 			! currentRoute.startsWith( '/log-in/push' ) &&
 			! currentRoute.startsWith( '/log-in/authenticator' ) &&
+			! currentRoute.startsWith( '/log-in/email' ) &&
 			! currentRoute.startsWith( '/log-in/sms' ) &&
 			! currentRoute.startsWith( '/log-in/webauthn' ) &&
 			! currentRoute.startsWith( '/log-in/backup' );
