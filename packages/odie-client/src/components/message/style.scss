@@ -187,49 +187,44 @@ $blueberry-color: #3858e9;
 	.chat-feedback-wrapper {
 		width: 100%;
 
-		.card.odie-foldable-card.odie-sources-foldable-card {
-			margin-top: 4px;
-			border-radius: 4px;
+		.odie-sources-foldable-card {
 			box-shadow: none;
 
-			&.is-expanded {
-				.odie-foldable-card__content {
-					border-top: none;
+			&:not(.is-expanded) {
+				.foldable-card__content {
+					border: none;
 				}
 			}
 
-			.odie-foldable-card__header {
-				font-size: $font-body-extra-small;
-				min-height: 48px;
-				padding: 12px 16px;
+			.foldable-card__header {
+				min-height: 24px;
+				padding: 0;	
+			}
 
-				.odie-foldable-card__expand {
-					&:focus {
-						outline: none;
-					}
-					.gridicon {
-						fill: #1e1e1e;
-					}
+			.foldable-card__summary, 
+			.foldable-card__summary-expanded {
+				margin-right: 24px;
+			}
+
+			.foldable-card__main {
+				button {
+					height: 24px;
+					width: 24px;
 				}
 			}
 
-			.odie-chatbox-message-sources {
-				margin: 0 12px 12px 12px;
+			.foldable-card__content {
+				margin-top: 12px;
+				border: 1px solid var(--color-neutral-5);
+				border-radius: 8px;
+
 				.odie-support-doc-link__link {
-					.icon-background {
-						padding: 4px;
-						svg {
-							fill: $blueberry-color;
-						}
-					}
 					a {
-						color: $blueberry-color;
-						& span {
-							font-size: $font-body-extra-small;
-						}
-						> svg:last-child {
-							display: none;
-						}
+						display: flex;
+						align-items: center;
+						justify-content: space-between;
+						padding: 4px 8px;
+						gap: 8px;	
 					}
 				}
 			}
@@ -382,10 +377,6 @@ $blueberry-color: #3858e9;
 	cursor: not-allowed;
 }
 
-.odie-sources-foldable-card {
-	overflow-x: hidden !important;
-}
-
 .odie-chatbox-message p:first-of-type {
 	padding-top: 0;
 }
@@ -423,10 +414,6 @@ $blueberry-color: #3858e9;
 			margin: auto;
 			font-size: $font-body;
 			padding-top: 0;
-		}
-
-		.odie-foldable-card.odie-sources-foldable-card {
-			margin-bottom: 0;
 		}
 	}
 }
