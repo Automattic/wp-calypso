@@ -4,10 +4,10 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { PropsWithChildren } from 'react';
-import { useNotice } from '../../hooks/use-notice';
+import { useNotice } from '../../../../app/hooks/use-notice';
 import { PauseAllEmails } from '../index';
 
-jest.mock( '../../hooks/use-notice', () => ( {
+jest.mock( '../../../../app/hooks/use-notice', () => ( {
 	useNotice: jest.fn().mockReturnValue( {
 		createSuccessNotice: jest.fn(),
 		createErrorNotice: jest.fn(),

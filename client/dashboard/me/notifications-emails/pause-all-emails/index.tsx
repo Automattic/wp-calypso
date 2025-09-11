@@ -11,7 +11,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect } from 'react';
-import { useNotice } from '../hooks/use-notice';
+import { useNotice } from '../../../app/hooks/use-notice';
 
 const isAllWpcomEmailsDisabled = ( settings: UserSettings ) => {
 	return settings.subscription_delivery_email_blocked === true;
