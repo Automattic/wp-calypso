@@ -217,7 +217,16 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				id: 'connect-to-site',
 				label: __( 'Attach to an existing site' ),
 				supportsBulk: false,
-				callback: () => {},
+				callback: ( items: DomainSummary[] ) => {
+					const domain = items[ 0 ];
+
+					router.navigate( {
+						to: domainTransferToOtherSiteRoute.fullPath,
+						params: {
+							domainName: domain.domain,
+						},
+					} );
+				},
 				isEligible: () => false,
 			},
 			{
