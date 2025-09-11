@@ -5,7 +5,6 @@ import { isFreeUrlDomainName } from '@automattic/domains-table/src/utils/is-free
 import {
 	domainManagementEditContactInfo,
 	domainManagementLink,
-	domainMappingSetup,
 	domainUseMyDomain,
 } from '@automattic/domains-table/src/utils/paths';
 import { useQuery, useMutation } from '@tanstack/react-query';
@@ -16,7 +15,7 @@ import { sprintf, __ } from '@wordpress/i18n';
 import { payment, tool } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, Suspense, lazy } from 'react';
-import { domainDnsRoute } from '../../app/router/domains';
+import { domainDnsRoute, domainConnectionSetupRoute } from '../../app/router/domains';
 import {
 	isRecentlyRegistered,
 	isDomainRenewable,
@@ -73,10 +72,13 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				label: __( 'Set up connection' ),
 				callback: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
-					const siteSlug = getDomainSiteSlug( domain );
 
-					// Use href instead of pathname to preserve query parameters.
-					window.location.href = domainMappingSetup( siteSlug, domain.domain );
+					router.navigate( {
+						to: domainConnectionSetupRoute.fullPath,
+						params: {
+							domainName: domain.domain,
+						},
+					} );
 				},
 				isEligible: ( item: DomainSummary ) =>
 					item.subtype.id === DomainSubtype.DOMAIN_CONNECTION && ! item.points_to_wpcom,
