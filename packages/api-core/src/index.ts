@@ -65,6 +65,7 @@ export * from './site-hosting-ssh';
 export * from './site-jetpack-connection';
 export * from './site-jetpack-keys';
 export * from './site-jetpack-modules';
+export * from './site-jetpack-monitor-settings';
 export * from './site-jetpack-monitor-uptime';
 export * from './site-jetpack-settings';
 export * from './site-launchpad';
