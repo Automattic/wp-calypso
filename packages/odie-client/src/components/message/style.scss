@@ -178,6 +178,11 @@ $blueberry-color: #3858e9;
 				padding-right: 20px;
 			}
 		}
+
+		button[aria-pressed='true'] {
+			background-color: var( --studio-gray-10 );
+			color: oklch( 0.241 0 0 );
+		}
 	}
 
 	&.odie-chatbox-message-error {

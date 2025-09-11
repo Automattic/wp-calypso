@@ -15,9 +15,7 @@ const BotMessageActions = ( { message }: { message: Message } ) => {
 
 	const liked = message.rating_value?.toString() === '1' || message.liked || false;
 	const notLiked = message.rating_value?.toString() === '0' || message.liked === false;
-	const rated =
-		( message.rating_value !== null && message.rating_value !== undefined ) ||
-		( message.liked !== null && message.liked !== undefined );
+	const rated = liked || notLiked;
 
 	const handleIsHelpful = ( isHelpful: boolean ) => {
 		sendOdieMessageFeedback( {
@@ -67,7 +65,7 @@ const BotMessageActions = ( { message }: { message: Message } ) => {
 						icon: <ThumbsUpIcon />,
 						label: __( 'Yes, this was helpful', __i18n_text_domain__ ),
 						onClick: () => handleIsHelpful( true ),
-						disabled: rated && ! liked,
+						disabled: rated,
 						pressed: rated && liked,
 						tooltip: __( 'Yes, this was helpful', __i18n_text_domain__ ),
 					},
@@ -81,7 +79,7 @@ const BotMessageActions = ( { message }: { message: Message } ) => {
 						icon: <ThumbsDownIcon />,
 						label: __( 'No, this was not helpful', __i18n_text_domain__ ),
 						onClick: () => handleIsHelpful( false ),
-						disabled: rated && liked,
+						disabled: rated,
 						pressed: rated && notLiked,
 						tooltip: __( 'No, this was not helpful', __i18n_text_domain__ ),
 					},
