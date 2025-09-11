@@ -5,12 +5,14 @@ import { Step } from '@automattic/onboarding';
 import { canInstallPlugins } from '@automattic/sites';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useMigrationCancellation } from 'calypso/data/site-migration/landing/use-migration-cancellation';
 import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
 import { useHostingProviderUrlDetails } from 'calypso/data/site-profiler/use-hosting-provider-url-details';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { debug, TRACKING_IDS } from 'calypso/lib/analytics/ad-tracking/constants';
+import { mayWeTrackByTracker } from 'calypso/lib/analytics/tracker-buckets';
 import FlowCard from '../components/flow-card';
 import type { Step as StepType } from '../../types';
 import './style.scss';
@@ -64,6 +66,21 @@ const SiteMigrationImportOrMigrate: StepType< {
 	const hostingProviderName = hostingProviderDetails.name;
 	const shouldDisplayHostIdentificationMessage =
 		! hostingProviderDetails.is_unknown && ! hostingProviderDetails.is_a8c;
+
+	// Fire Google Ads tracking event when component loads
+	useEffect( () => {
+		if ( mayWeTrackByTracker( 'googleAds' ) ) {
+			const params = [
+				'event',
+				'conversion',
+				{
+					send_to: TRACKING_IDS.wpcomGoogleAdsGtagMigrationStart,
+				},
+			];
+			debug( 'SiteMigrationImportOrMigrate: [Google Ads Gtag] Migration Start', params );
+			window.gtag( ...params );
+		}
+	}, [] );
 
 	const handleClick = ( destination: 'migrate' | 'import' | 'upgrade' ) => {
 		if ( destination === 'migrate' && ! siteCanInstallPlugins ) {
