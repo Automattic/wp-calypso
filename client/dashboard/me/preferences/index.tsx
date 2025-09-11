@@ -8,7 +8,7 @@ import PreferencesNewHostingDashboard from '../preferences-new-hosting-dashboard
 export default function Preferences() {
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Preferences' ) } /> }>
-			<FlashMessage value="dashboard" message={ __( 'Successfuilly saved preference.' ) } />
+			<FlashMessage value="dashboard" message={ __( 'Successfully saved preference.' ) } />
 			<PreferencesNewHostingDashboard />
 			<PreferencesLanguageForm />
 		</PageLayout>
