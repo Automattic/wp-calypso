@@ -180,8 +180,11 @@ $blueberry-color: #3858e9;
 		}
 
 		button[aria-pressed='true'] {
-			background-color: var( --studio-gray-10 );
-			color: oklch( 0.241 0 0 );
+			background-color: var( --studio-gray-5 );
+			opacity: 1;
+			svg {
+				color: var(--color-foreground);
+			}
 		}
 	}
 
