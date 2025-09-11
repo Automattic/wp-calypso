@@ -1,6 +1,7 @@
 export * from './query-client';
 
 export * from './domain-availability';
+export * from './domain-connection-setup';
 export * from './domain-dns-records';
 export * from './domain-dnssec';
 export * from './domain-forwarding';

@@ -320,6 +320,13 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 			return;
 		}
 
+		createSuccessNotice(
+			__( 'We are adding your staging site. We will send you an email when it is done.' ),
+			{
+				type: 'snackbar',
+			}
+		);
+
 		mutation.mutate( undefined, {
 			onSuccess: () => {
 				queryClient.invalidateQueries( siteByIdQuery( productionSiteId ?? 0 ) );

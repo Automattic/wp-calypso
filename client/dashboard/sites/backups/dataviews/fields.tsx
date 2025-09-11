@@ -14,6 +14,8 @@ const FormattedTime = ( { timestamp }: { timestamp: string } ) => {
 	return <>{ formattedTime }</>;
 };
 
+const getPublishedTimestamp = ( item: ActivityLogEntry ) => item.published || item.last_published;
+
 export function getFields(): Field< ActivityLogEntry >[] {
 	return [
 		{
@@ -44,10 +46,10 @@ export function getFields(): Field< ActivityLogEntry >[] {
 				operators: [ 'on' ],
 			},
 			getValue: ( { item } ) => {
-				const date = new Date( item.published );
+				const date = new Date( getPublishedTimestamp( item ) );
 				return formatYmd( date );
 			},
-			render: ( { item } ) => <FormattedTime timestamp={ item.published } />,
+			render: ( { item } ) => <FormattedTime timestamp={ getPublishedTimestamp( item ) } />,
 		},
 		{
 			id: 'content_text',

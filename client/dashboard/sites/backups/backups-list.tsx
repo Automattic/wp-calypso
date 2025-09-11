@@ -31,7 +31,7 @@ export function BackupsList( {
 	const { backup, hasRecentlyCompleted } = useBackupState( site.ID );
 
 	const { data: activityLog = [], isLoading: isLoadingActivityLog } = useQuery( {
-		...siteRewindableActivityLogEntriesQuery( site.ID ),
+		...siteRewindableActivityLogEntriesQuery( site.ID, undefined, true ),
 		// Refetch the activity log every 3 seconds when a recent backup completed until the backup is found in the Activity Log
 		refetchInterval: ( query ) => {
 			if ( ! backup || ! hasRecentlyCompleted ) {
