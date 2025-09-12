@@ -64,9 +64,9 @@ const JetpackSocial = () => {
 	const image = images[ userLocale ] ?? images.en;
 
 	if (
-		! hasEnTranslation( 'Connections has moved' ) ||
+		! hasEnTranslation( 'Social connections have moved' ) ||
 		! hasEnTranslation(
-			'Connections is now part of Jetpack for enhanced features. Access it via Jetpack → Social in your dashboard.'
+			'Social connections are now part of Jetpack for enhanced features. Access them via Jetpack → Social in your dashboard.'
 		) ||
 		( ! isPrivate && ! hasEnTranslation( 'Go to Jetpack Social' ) ) ||
 		( isPrivate && ! hasEnTranslation( 'Go to Reading Settings' ) ) ||
@@ -83,11 +83,11 @@ const JetpackSocial = () => {
 		<div className="jetpack-social">
 			<FeatureMoved
 				icon={ share }
-				title={ translate( 'Connections has moved' ) }
+				title={ translate( 'Social connections have moved' ) }
 				description={
 					<>
 						{ translate(
-							'Connections is now part of Jetpack for enhanced features. Access it via Jetpack → Social in your dashboard.'
+							'Social connections are now part of Jetpack for enhanced features. Access them via Jetpack → Social in your dashboard.'
 						) }
 						{ isPrivate && (
 							<>
