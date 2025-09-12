@@ -84,8 +84,10 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 							</>
 						),
 						action: async () => {
+							const params = new URLSearchParams( search );
+							params.set( 'id', supportInteraction.uuid );
 							trackEvent( 'chat_open_previous_conversation' );
-							navigate( '/odie?id=' + supportInteraction.uuid );
+							navigate( '/odie?' + params.toString() );
 						},
 					} );
 				}
@@ -94,8 +96,9 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 					buttons.push( {
 						text: __( 'Get support', __i18n_text_domain__ ),
 						action: async () => {
+							const params = new URLSearchParams( search );
 							onClickAdditionalEvent?.( 'chat-ai' );
-							navigate( '/odie' );
+							navigate( '/odie?' + params.toString() );
 						},
 					} );
 				} else if ( canConnectToZendesk || contextCanConnectToZendesk ) {
