@@ -3,10 +3,10 @@ import { formatCurrency } from '@automattic/number-formatters';
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { Card, Notice } from '@wordpress/components';
+import { Card, Notice, Gridicon } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { Icon, trash, replace } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { formatDate } from 'date-fns';
 import { useEffect } from 'react';
@@ -65,41 +65,28 @@ export default function MonetizeSubscription() {
 		if ( stoppingStatus === 'fail' || updatingStatus === 'fail' ) {
 			// run is-error notice to contact support
 			if ( isProduct ) {
-				createErrorNotice(
-					createInterpolateElement(
-						__(
-							'There was a problem while removing your product, please <a><strong>contact support</strong></a>.'
-						),
+				createErrorNotice( __( 'There was a problem while removing your product.' ), {
+					actions: [
 						{
-							a: <a href={ CALYPSO_CONTACT } />,
-							strong: <strong />,
-						}
-					)
-				);
+							url: CALYPSO_CONTACT,
+							label: __( 'Please contact support' ),
+						},
+					],
+				} );
 			} else if ( stoppingStatus === 'fail' ) {
-				createErrorNotice(
-					createInterpolateElement(
-						__(
-							'There was a problem while stopping your subscription, please <a><strong>contact support</strong></a>.'
-						),
+				createErrorNotice( __( 'There was a problem while stopping your subscription.' ), {
+					actions: [
 						{
-							a: <a href={ CALYPSO_CONTACT } />,
-							strong: <strong />,
-						}
-					)
-				);
+							url: CALYPSO_CONTACT,
+							label: __( 'Please contact support' ),
+						},
+					],
+				} );
 			} else if ( updatingStatus === 'fail' ) {
-				createErrorNotice(
-					createInterpolateElement(
-						__(
-							'There was a problem while updating your subscription, please <a><strong>contact support</strong></a>.'
-						),
-						{
-							a: <a href={ CALYPSO_CONTACT } />,
-							strong: <strong />,
-						}
-					)
-				);
+				createErrorNotice( __( 'There was a problem while updating your subscription.' ), {
+					url: CALYPSO_CONTACT,
+					label: __( 'Please contact support' ),
+				} );
 			}
 		} else if ( stoppingStatus === 'success' ) {
 			// redirect back to Purchases list
@@ -118,15 +105,11 @@ export default function MonetizeSubscription() {
 			}
 		>
 			{ isStopping && (
-				<Notice
-					status="info"
-					isLoading
-					text={ isProduct ? __( 'Removing this product' ) : __( 'Stopping this subscription' ) }
-				/>
+				<Notice status="info">
+					{ isProduct ? __( 'Removing this product' ) : __( 'Stopping this subscription' ) }
+				</Notice>
 			) }
-			{ isUpdating && (
-				<Notice status="info" isLoading text={ __( 'Updating subscription auto-renew' ) } />
-			) }
+			{ isUpdating && <Notice status="info">{ __( 'Updating subscription auto-renew' ) }</Notice> }
 			{ subscription && (
 				<>
 					<Card className="memberships__subscription-meta">
@@ -137,7 +120,10 @@ export default function MonetizeSubscription() {
 						<div className="memberships__subscription-header">
 							<div className="memberships__subscription-title">{ subscription.title }</div>
 							<div className="memberships__subscription-price">
-								{ formatCurrency( subscription.renewal_price, subscription.currency ) }
+								{ formatCurrency(
+									parseFloat( subscription.renewal_price ),
+									subscription.currency
+								) }
 							</div>
 						</div>
 						<ul className="memberships__subscription-inner-meta">
@@ -183,13 +169,13 @@ export default function MonetizeSubscription() {
 							onClick={ isAutoRenewing ? disableAutoRenew : enableAutoRenew }
 							disabled={ isUpdating }
 						>
-							<MaterialIcon icon="autorenew" className="card__icon" />
+							<Icon icon={ replace } />
 							{ isAutoRenewing ? __( 'Disable auto-renew' ) : __( 'Enable auto-renew' ) }
 							<Gridicon className="card__link-indicator" icon="chevron-right" />
 						</Card>
 					) }
-					<Card tagName="button" className="remove-purchase__card" onClick={ stopSubscription }>
-						<MaterialIcon icon="delete" className="card__icon" />
+					<Card tagName="button" onClick={ stopSubscription }>
+						<Icon icon={ trash } />
 						{ isProduct
 							? // eslint-disable-next-line @wordpress/i18n-translator-comments
 							  sprintf( __( 'Remove %s product' ), subscription.title )
