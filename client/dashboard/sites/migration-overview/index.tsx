@@ -10,17 +10,25 @@ export default function SiteMigrationOverview( { siteSlug }: { siteSlug: string 
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const migrationState = getSiteMigrationState( site );
 
-	function getContent() {
-		if ( migrationState?.status === 'pending' ) {
-			return <PendingContentInfo site={ site } type={ migrationState?.type } />;
-		}
-
-		if ( migrationState?.type === 'difm' ) {
-			return <StartedDIFMContentInfo site={ site } />;
-		}
-
-		return <InProgressContentInfo site={ site } />;
+	if ( migrationState?.status === 'pending' ) {
+		return (
+			<PageLayout>
+				<PendingContentInfo site={ site } type={ migrationState?.type } />
+			</PageLayout>
+		);
 	}
 
-	return <PageLayout>{ getContent() }</PageLayout>;
+	if ( migrationState?.type === 'difm' ) {
+		return (
+			<PageLayout size="small">
+				<StartedDIFMContentInfo site={ site } />
+			</PageLayout>
+		);
+	}
+
+	return (
+		<PageLayout>
+			<InProgressContentInfo site={ site } />
+		</PageLayout>
+	);
 }
