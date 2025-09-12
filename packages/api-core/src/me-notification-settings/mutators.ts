@@ -7,27 +7,18 @@ export async function updateWpcomNotificationSettings(
 	const saveableKeys: ( keyof WpcomNotificationSettings )[] = [
 		'marketing',
 		'research',
-		'affiliates',
 		'community',
 		'promotion',
 		'news',
 		'digest',
 		'reports',
 		'news_developer',
-		'wpcom_spain',
 		'scheduled_updates',
-		'learn',
-		'a4a_agencies',
-		'jetpack_agencies',
-		'jetpack_manage_onboarding',
 		'jetpack_marketing',
 		'jetpack_research',
 		'jetpack_promotion',
 		'jetpack_news',
 		'jetpack_reports',
-		'akismet_marketing',
-		'woopay_marketing',
-		'gravatar_onboarding',
 	];
 
 	const wpcomPayload = Object.fromEntries(
