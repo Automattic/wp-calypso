@@ -1,7 +1,7 @@
 import { Button, CheckboxControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { ButtonStack } from 'calypso/dashboard/components/button-stack';
-import { FileBrowserStateActions } from './types';
+import { useFileBrowserContext } from './file-browser-context';
 
 interface FileBrowserHeaderProps {
 	rewindId: number;
@@ -18,7 +18,6 @@ interface FileBrowserHeaderProps {
 		excludePaths: string
 	) => void;
 	onRequestGranularRestore: ( siteSlug: string, rewindId: number ) => void;
-	fileBrowserState: FileBrowserStateActions;
 }
 
 function FileBrowserHeader( {
@@ -31,8 +30,8 @@ function FileBrowserHeader( {
 	onTrackEvent,
 	onRequestGranularDownload,
 	onRequestGranularRestore,
-	fileBrowserState,
 }: FileBrowserHeaderProps ) {
+	const { fileBrowserState } = useFileBrowserContext();
 	const { getNode, getCheckList, setNodeCheckState } = fileBrowserState;
 	const rootNode = getNode( '/' );
 	const browserCheckList = getCheckList();

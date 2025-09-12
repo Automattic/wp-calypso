@@ -6,13 +6,14 @@ import { useEffect } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useDispatch } from 'calypso/state';
 import { PREPARE_DOWNLOAD_STATUS } from './constants';
+import { useFileBrowserContext } from './file-browser-context';
 import FilePreview from './file-preview';
 import {
 	onPreparingDownloadError,
 	onProcessingDownloadError,
 	onRetrievingFileInfoError,
 } from './notices';
-import { FileBrowserItem, FileBrowserStateActions } from './types';
+import { FileBrowserItem } from './types';
 import { useBackupPathInfoQuery } from './use-backup-path-info-query';
 import { usePrepareDownload } from './use-prepare-download';
 import { encodeToBase64, convertBytes } from './util';
@@ -26,7 +27,6 @@ interface FileInfoCardProps {
 	siteSlug: string;
 	hasCredentials?: boolean;
 	isRestoreEnabled?: boolean;
-	fileBrowserState: FileBrowserStateActions;
 	onTrackEvent: ( eventName: string, properties?: Record< string, unknown > ) => void;
 	onRequestGranularRestore: ( siteSlug: string, rewindId: number ) => void;
 }
@@ -40,12 +40,12 @@ function FileInfoCard( {
 	siteSlug,
 	hasCredentials,
 	isRestoreEnabled,
-	fileBrowserState,
 	onTrackEvent,
 	onRequestGranularRestore,
 }: FileInfoCardProps ) {
 	const moment = useLocalizedMoment();
 	const dispatch = useDispatch();
+	const { fileBrowserState } = useFileBrowserContext();
 	const { setNodeCheckState } = fileBrowserState;
 
 	const {

@@ -7,7 +7,6 @@ import { createInterpolateElement, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import useGetDisplayDate from 'calypso/components/jetpack/daily-backup-status/use-get-display-date';
 import { useFirstMatchingBackupAttempt } from 'calypso/my-sites/backup/hooks';
-import { useFileBrowserContext } from './file-browser-context';
 import FileBrowserHeader from './file-browser-header';
 import FileBrowserNode from './file-browser-node';
 import { FileBrowserItem } from './types';
@@ -61,7 +60,6 @@ function FileBrowser( {
 	onRequestGranularDownload,
 	onRequestGranularRestore = () => {},
 }: FileBrowserProps ) {
-	const { fileBrowserState } = useFileBrowserContext();
 	// This is the path of the node that is clicked
 	const [ activeNodePath, setActiveNodePath ] = useState< string >( '' );
 	const getDisplayDate = useGetDisplayDate( siteId );
@@ -97,7 +95,6 @@ function FileBrowser( {
 				onTrackEvent={ onTrackEvent }
 				onRequestGranularDownload={ onRequestGranularDownload }
 				onRequestGranularRestore={ onRequestGranularRestore }
-				fileBrowserState={ fileBrowserState }
 			/>
 			{ fileBrowserConfig?.showBackupTime && (
 				<HStack alignment="left" spacing={ 1 }>
@@ -128,7 +125,6 @@ function FileBrowser( {
 				isRestoreEnabled={ isRestoreEnabled }
 				onTrackEvent={ onTrackEvent }
 				onRequestGranularRestore={ onRequestGranularRestore }
-				fileBrowserState={ fileBrowserState }
 			/>
 		</div>
 	);

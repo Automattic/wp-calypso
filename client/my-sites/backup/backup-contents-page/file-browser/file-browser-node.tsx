@@ -3,10 +3,11 @@ import { useCallback, useState, useEffect } from '@wordpress/element';
 import { __, sprintf, isRTL } from '@wordpress/i18n';
 import { chevronDown, chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
+import { useFileBrowserContext } from './file-browser-context';
 import FileInfoCard from './file-info-card';
 import FileTypeIcon from './file-type-icon';
 import { useTruncatedFileName } from './hooks';
-import { FileBrowserItem, FileBrowserCheckState, FileBrowserStateActions } from './types';
+import { FileBrowserItem, FileBrowserCheckState } from './types';
 import { useBackupContentsQuery } from './use-backup-contents-query';
 import type { FileBrowserConfig } from './index';
 
@@ -23,7 +24,6 @@ interface FileBrowserNodeProps {
 	siteSlug: string;
 	hasCredentials?: boolean;
 	isRestoreEnabled?: boolean;
-	fileBrowserState: FileBrowserStateActions;
 	onTrackEvent?: ( eventName: string, properties?: Record< string, unknown > ) => void;
 	onRequestGranularRestore: ( siteSlug: string, rewindId: number ) => void;
 }
@@ -41,10 +41,10 @@ function FileBrowserNode( {
 	siteSlug,
 	hasCredentials,
 	isRestoreEnabled,
-	fileBrowserState,
 	onTrackEvent,
 	onRequestGranularRestore,
 }: FileBrowserNodeProps ) {
+	const { fileBrowserState } = useFileBrowserContext();
 	const isRoot = path === '/';
 	const isCurrentNodeClicked = activeNodePath === path;
 	const showFileCard = fileBrowserConfig?.showFileCard ?? true;
@@ -285,7 +285,6 @@ function FileBrowserNode( {
 						siteSlug={ siteSlug }
 						hasCredentials={ hasCredentials }
 						isRestoreEnabled={ isRestoreEnabled }
-						fileBrowserState={ fileBrowserState }
 						onTrackEvent={ onTrackEvent }
 						onRequestGranularRestore={ onRequestGranularRestore }
 						// Hacky way to pass extensions details to the child node
@@ -381,7 +380,6 @@ function FileBrowserNode( {
 					siteSlug={ siteSlug }
 					hasCredentials={ hasCredentials }
 					isRestoreEnabled={ isRestoreEnabled }
-					fileBrowserState={ fileBrowserState }
 					onTrackEvent={ onTrackEvent }
 					onRequestGranularRestore={ onRequestGranularRestore }
 				/>
