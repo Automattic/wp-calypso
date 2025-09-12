@@ -5,7 +5,9 @@ import {
 	StepContainer,
 	isStartWritingFlow,
 	Step,
+	DOMAIN_FLOW,
 } from '@automattic/onboarding';
+import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
@@ -32,6 +34,7 @@ const UseMyDomain: StepType< {
 				mode: 'transfer' | 'connect';
 				domain: string;
 		  }
+		| { domainCartItem: MinimalRequestCartProduct }
 		| undefined;
 } > = function UseMyDomain( { navigation, flow } ) {
 	const { __ } = useI18n();
@@ -63,7 +66,7 @@ const UseMyDomain: StepType< {
 		setHideFreePlan( true );
 		setDomainCartItem( domainCartItem );
 
-		submit?.( undefined );
+		submit?.( { domainCartItem } );
 	};
 
 	const handleOnConnect = async ( domain: string ) => {
@@ -71,7 +74,7 @@ const UseMyDomain: StepType< {
 		setHideFreePlan( true );
 		setDomainCartItem( domainCartItem );
 
-		submit?.( undefined );
+		submit?.( { domainCartItem } );
 	};
 
 	const getInitialQuery = function () {
@@ -118,6 +121,7 @@ const UseMyDomain: StepType< {
 		switch ( flow ) {
 			case START_WRITING_FLOW:
 			case ONBOARDING_FLOW:
+			case DOMAIN_FLOW:
 				return getBlogOnboardingFlowStepContent();
 			default:
 				return getDefaultStepContent();

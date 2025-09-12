@@ -3,6 +3,8 @@ import {
 	stagingSiteCreateMutation,
 	isDeletingStagingSiteQuery,
 	hasStagingSiteQuery,
+	hasValidQuotaQuery,
+	jetpackConnectionHealthQuery,
 	siteLatestAtomicTransferQuery,
 	isCreatingStagingSiteQuery,
 	siteBySlugQuery,
@@ -23,6 +25,7 @@ import { useEffect } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { Icon, chevronDownSmall, plus } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
+import { useHelpCenter } from '../../app/help-center';
 import { production, staging } from '../../components/icons';
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
 import {
@@ -210,6 +213,8 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 		enabled: !! productionSiteId && isStagingSiteDeleting,
 	} );
 
+	const { createSuccessNotice, createNotice, createErrorNotice } = useDispatch( noticesStore );
+
 	// Clean up deletion flag when staging site no longer exists
 	useEffect( () => {
 		const invalidateQueries = async (
@@ -229,6 +234,9 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 			productionSite &&
 			stagingSiteId
 		) {
+			createSuccessNotice( __( 'Staging site deleted.' ), {
+				type: 'snackbar',
+			} );
 			invalidateQueries( productionSiteId, productionSite?.slug, stagingSiteId );
 		}
 	}, [
@@ -238,9 +246,10 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 		stagingSiteId,
 		productionSiteId,
 		productionSite,
+		createSuccessNotice,
 	] );
 
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { setShowHelpCenter, setNavigateToRoute } = useHelpCenter();
 
 	const isStagingSiteReady =
 		isStagingSiteCreating && stagingSite && isAtomicTransferredSite( stagingSite );
@@ -271,8 +280,79 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 
 	const mutation = useMutation( stagingSiteCreateMutation( productionSite?.ID ?? 0 ) );
 
+	const { data: hasValidQuota, error: isErrorValidQuota } = useQuery( {
+		...hasValidQuotaQuery( productionSite?.ID ?? 0 ),
+		enabled: !! productionSite?.ID && ! stagingSite && ! isStagingSiteCreating,
+		meta: {
+			persist: false,
+		},
+	} );
+
+	const { data: connectionHealth } = useQuery( {
+		...jetpackConnectionHealthQuery( productionSite?.ID ?? 0 ),
+		enabled: !! productionSite?.ID && ! stagingSite && ! isStagingSiteCreating,
+	} );
+
 	const handleAddStagingSite = () => {
 		recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_click' );
+
+		if ( isErrorValidQuota ) {
+			createNotice(
+				'error',
+				__( 'Cannot add a staging site due to site quota validation issue.' ),
+				{
+					type: 'snackbar',
+					actions: [
+						{
+							label: __( 'Contact support' ),
+							url: null,
+							onClick: () => {
+								setNavigateToRoute( '/odie' );
+								setShowHelpCenter( true );
+							},
+						},
+					],
+				}
+			);
+			return;
+		}
+
+		if ( ! hasValidQuota ) {
+			createErrorNotice(
+				__(
+					'Your available storage space is below 50%, which is insufficient for creating a staging site.'
+				),
+				{
+					type: 'snackbar',
+				}
+			);
+			return;
+		}
+
+		if ( ! connectionHealth?.is_healthy ) {
+			createNotice( 'error', __( 'Cannot add a staging site due to a Jetpack connection issue.' ), {
+				type: 'snackbar',
+				actions: [
+					{
+						label: __( 'Contact support' ),
+						url: null,
+						onClick: () => {
+							setNavigateToRoute( '/odie' );
+							setShowHelpCenter( true );
+						},
+					},
+				],
+			} );
+			return;
+		}
+
+		createSuccessNotice(
+			__( 'We are adding your staging site. We will send you an email when it is done.' ),
+			{
+				type: 'snackbar',
+			}
+		);
+
 		mutation.mutate( undefined, {
 			onSuccess: () => {
 				queryClient.invalidateQueries( siteByIdQuery( productionSiteId ?? 0 ) );

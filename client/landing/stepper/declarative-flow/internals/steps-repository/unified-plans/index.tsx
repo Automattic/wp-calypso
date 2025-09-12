@@ -1,6 +1,7 @@
 import { OnboardSelect } from '@automattic/data-stores';
 import {
 	AI_SITE_BUILDER_FLOW,
+	DOMAIN_FLOW,
 	EXAMPLE_FLOW,
 	NEW_HOSTED_SITE_FLOW,
 	NEWSLETTER_FLOW,
@@ -166,7 +167,8 @@ const PlansStepAdaptor: StepType< {
 		setPlanInterval( intervalType );
 	};
 
-	const isUsingStepContainerV2 = shouldUseStepContainerV2( props.flow );
+	const isUsingStepContainerV2 =
+		shouldUseStepContainerV2( props.flow ) || props.flow === DOMAIN_FLOW;
 
 	if ( isLoadingSelectedTheme ) {
 		return isUsingStepContainerV2 ? <Step.Loading /> : <Loading />;

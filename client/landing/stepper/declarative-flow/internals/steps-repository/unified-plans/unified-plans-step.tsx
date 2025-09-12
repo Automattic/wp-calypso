@@ -4,6 +4,7 @@ import { UrlFriendlyTermType } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { FREE_THEME } from '@automattic/design-picker';
 import {
+	DOMAIN_FLOW,
 	isNewHostedSiteCreationFlow,
 	isTailoredSignupFlow,
 	ONBOARDING_FLOW,
@@ -389,7 +390,8 @@ function UnifiedPlansStep( {
 	}
 
 	const deemphasizeFreePlan =
-		( ONBOARDING_FLOW === flowName && ( paidDomainName != null || isPaidTheme ) ) ||
+		( [ ONBOARDING_FLOW, DOMAIN_FLOW ].includes( flowName ) &&
+			( paidDomainName != null || isPaidTheme ) ) ||
 		deemphasizeFreePlanFromProps;
 
 	const getSubheaderText = () => {
