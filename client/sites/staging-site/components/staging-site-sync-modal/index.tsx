@@ -30,6 +30,7 @@ import { SectionHeader } from 'calypso/dashboard/components/section-header';
 import SiteEnvironmentBadge, {
 	EnvironmentType,
 } from 'calypso/dashboard/components/site-environment-badge';
+import useGetDisplayDate from 'calypso/components/jetpack/daily-backup-status/use-get-display-date';
 import FileBrowser from 'calypso/my-sites/backup/backup-contents-page/file-browser';
 import {
 	FileBrowserProvider,
@@ -214,6 +215,7 @@ function SyncModal( {
 		targetEnvironment === 'production' ? productionSiteTitle : stagingSiteTitle;
 
 	const querySiteId = sourceEnvironment === 'staging' ? stagingSiteId : productionSiteId;
+	const getDisplayDate = useGetDisplayDate( querySiteId );
 
 	const browserCheckList = fileBrowserState.getCheckList();
 
@@ -263,6 +265,10 @@ function SyncModal( {
 			successOnly: true,
 		} );
 	const rewindId = lastKnownBackupAttempt?.rewindId;
+
+	const displayBackupDate = lastKnownBackupAttempt
+		? getDisplayDate( lastKnownBackupAttempt.activityTs, false )
+		: null;
 
 	const shouldDisableGranularSync = ! lastKnownBackupAttempt && ! isLoadingBackupAttempt;
 
@@ -494,6 +500,7 @@ function SyncModal( {
 									siteId={ querySiteId }
 									siteSlug={ querySiteSlug }
 									fileBrowserConfig={ fileBrowserConfig }
+									displayBackupDate={ displayBackupDate }
 								/>
 							</div>
 							<HStack
