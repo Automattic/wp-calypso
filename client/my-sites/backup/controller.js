@@ -13,6 +13,7 @@ import { setFilter } from 'calypso/state/activity-log/actions';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import BackupContentsPage from './backup-contents-page';
+import { FileBrowserProvider } from './backup-contents-page/file-browser/file-browser-context';
 import BackupUpsell from './backup-upsell';
 import BackupCloneFlow from './clone-flow';
 import BackupsPage from './main';
@@ -153,14 +154,16 @@ export function backupRestore( context, next ) {
 /* handles /backup/:site/granular-restore/:rewindId, see `backupGranularRestorePath` */
 export function backupGranularRestore( context, next ) {
 	debug( 'controller: backupGranularRestore', context.params );
+	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
 
 	context.primary = (
-		<>
+		<FileBrowserProvider siteId={ siteId } rewindId={ Number( context.params.rewindId ) }>
 			<BackupRewindFlow
 				rewindId={ context.params.rewindId }
 				purpose={ RewindFlowPurpose.GRANULAR_RESTORE }
 			/>
-		</>
+		</FileBrowserProvider>
 	);
 	next();
 }
@@ -181,6 +184,10 @@ export function backupContents( context, next ) {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 
-	context.primary = <BackupContentsPage siteId={ siteId } rewindId={ context.params.rewindId } />;
+	context.primary = (
+		<FileBrowserProvider siteId={ siteId } rewindId={ Number( context.params.rewindId ) }>
+			<BackupContentsPage siteId={ siteId } rewindId={ context.params.rewindId } />
+		</FileBrowserProvider>
+	);
 	next();
 }

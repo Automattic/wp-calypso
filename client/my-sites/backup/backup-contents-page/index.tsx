@@ -18,11 +18,11 @@ import { rewindRequestGranularBackup } from 'calypso/state/activity-log/actions'
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { hasJetpackCredentials } from 'calypso/state/jetpack/credentials/selectors';
 import canRestoreSite from 'calypso/state/rewind/selectors/can-restore-site';
-import getBackupBrowserCheckList from 'calypso/state/rewind/selectors/get-backup-browser-check-list';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
 import { backupDownloadPath, backupGranularRestorePath, backupMainPath } from '../paths';
 import FileBrowser from './file-browser';
+import { useFileBrowserContext } from './file-browser/file-browser-context';
 import './style.scss';
 
 interface OwnProps {
@@ -36,8 +36,7 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 	const getDisplayDate = useGetDisplayDate();
 	const moment = useLocalizedMoment();
 	const displayDate = getDisplayDate( moment.unix( rewindId ), false );
-
-	const browserCheckList = useSelector( ( state ) => getBackupBrowserCheckList( state, siteId ) );
+	const { fileBrowserState } = useFileBrowserContext();
 	const isMultiSite = useSelector( ( state ) => isJetpackSiteMultiSite( state, siteId ) );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) ) as string;
 	const hasCredentials = useSelector( ( state ) => hasJetpackCredentials( state, siteId ) );
@@ -100,7 +99,7 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 							</div>
 						</div>
 						<div className="status-card__title">{ displayDate }</div>
-						{ browserCheckList.totalItems === 0 && (
+						{ fileBrowserState.getCheckList().totalItems === 0 && (
 							<ActionButtons isMultiSite={ isMultiSite } rewindId={ rewindId.toString() } />
 						) }
 					</div>

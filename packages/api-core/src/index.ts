@@ -67,6 +67,7 @@ export * from './site-launchpad';
 export * from './site-logs';
 export * from './site-marketplace';
 export * from './site-media-storage';
+export * from './site-migration-status';
 export * from './site-owner-transfer';
 export * from './site-plans';
 export * from './site-preview-links';

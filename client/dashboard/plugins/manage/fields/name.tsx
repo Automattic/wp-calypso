@@ -11,7 +11,7 @@ export const nameField: Field< PluginListRow > = {
 	enableSorting: true,
 	getValue: ( { item } ) => item.name,
 	render: ( { item, field } ) => (
-		<Link to={ pluginRoute.to } params={ { pluginId: item.id } }>
+		<Link to={ pluginRoute.to } params={ { pluginId: item.slug } }>
 			{ field.getValue( { item } ) }
 		</Link>
 	),

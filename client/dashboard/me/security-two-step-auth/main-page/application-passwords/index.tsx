@@ -1,6 +1,6 @@
 import {
-	applicationPasswordsQuery,
-	deleteApplicationPasswordMutation,
+	twoStepAuthApplicationPasswordsQuery,
+	deleteTwoStepAuthApplicationPasswordMutation,
 } from '@automattic/api-queries';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useQuery, useMutation } from '@tanstack/react-query';
@@ -22,13 +22,13 @@ import { useState } from 'react';
 import InlineSupportLink from '../../../../components/inline-support-link';
 import { SectionHeader } from '../../../../components/section-header';
 import RegisterApplicationPassword from './register-application-password';
-import type { ApplicationPassword } from '@automattic/api-core';
+import type { TwoStepAuthApplicationPassword } from '@automattic/api-core';
 
 const fields = [
 	{
 		id: 'name',
 		label: __( 'Name' ),
-		getValue: ( { item }: { item: ApplicationPassword } ) => item.name,
+		getValue: ( { item }: { item: TwoStepAuthApplicationPassword } ) => item.name,
 	},
 ];
 
@@ -42,16 +42,17 @@ const ApplicationPasswordsList = ( {
 	data,
 	isLoading,
 }: {
-	data: ApplicationPassword[];
+	data: TwoStepAuthApplicationPassword[];
 	isLoading: boolean;
 } ) => {
-	const { mutate: deleteApplicationPassword } = useMutation( deleteApplicationPasswordMutation() );
+	const { mutate: deleteApplicationPassword } = useMutation(
+		deleteTwoStepAuthApplicationPasswordMutation()
+	);
 
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
-	const [ selectedKeyToRemove, setSelectedKeyToRemove ] = useState< ApplicationPassword | null >(
-		null
-	);
+	const [ selectedKeyToRemove, setSelectedKeyToRemove ] =
+		useState< TwoStepAuthApplicationPassword | null >( null );
 
 	const handleRemove = () => {
 		const selectedApplicationPassword = selectedKeyToRemove;
@@ -79,7 +80,7 @@ const ApplicationPasswordsList = ( {
 
 	return (
 		<>
-			<DataViews< ApplicationPassword >
+			<DataViews< TwoStepAuthApplicationPassword >
 				data={ data }
 				fields={ fields }
 				view={ view }
@@ -95,7 +96,7 @@ const ApplicationPasswordsList = ( {
 						label: __( 'Remove' ),
 						icon: <Icon icon={ closeSmall } />,
 						isPrimary: true,
-						callback: ( items: ApplicationPassword[] ) => {
+						callback: ( items: TwoStepAuthApplicationPassword[] ) => {
 							const item = items[ 0 ];
 							setSelectedKeyToRemove( item );
 						},
@@ -120,7 +121,9 @@ export default function ApplicationPasswords() {
 	const [ isAddApplicationPasswordModalOpen, setIsAddApplicationPasswordModalOpen ] =
 		useState( false );
 
-	const { data: applicationPasswords, isLoading } = useQuery( applicationPasswordsQuery() );
+	const { data: applicationPasswords, isLoading } = useQuery(
+		twoStepAuthApplicationPasswordsQuery()
+	);
 
 	return (
 		<>
