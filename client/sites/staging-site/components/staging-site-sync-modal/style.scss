@@ -307,15 +307,3 @@
 	left: 0;
 
 }
-
-// Expand modal when warning is shown
-.components-modal__content:has(.staging-site-card.has-warning) {
-	min-height: 550px;
-	height: auto;
-}
-
-// Expand modal more when WooCommerce warning is shown
-.components-modal__content:has(.staging-site-card.has-warning.has-woocommerce-warning) {
-	min-height: 600px;
-	height: auto;
-}

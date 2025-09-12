@@ -416,19 +416,31 @@ export default function SyncModal( {
 				spacing={ 5 }
 				style={ {
 					paddingBottom: ( () => {
+						let basePadding = '0px';
+						let extraPadding = '0px';
+
+						// Add base padding when NO domain confirmation (footer is smaller)
+						if ( ! showDomainConfirmation ) {
+							basePadding = '40px'; // Base padding for normal footer
+						}
+
+						// Add extra padding when domain confirmation appears
+						if ( showDomainConfirmation ) {
+							basePadding = '130px'; // Padding for domain confirmation footer
+						}
+
+						// Add warning padding
 						if ( hasWarning && isFileBrowserVisible && showWooCommerceWarning ) {
-							return '320px';
+							extraPadding = '180px'; // Warning + file browser + WooCommerce warning
+						} else if ( hasWarning && isFileBrowserVisible ) {
+							extraPadding = '110px'; // Warning + file browser
+						} else if ( hasWarning && showWooCommerceWarning ) {
+							extraPadding = '180px'; // Warning + WooCommerce warning
+						} else if ( hasWarning ) {
+							extraPadding = '120px'; // Basic warning only
 						}
-						if ( hasWarning && isFileBrowserVisible ) {
-							return '280px';
-						}
-						if ( hasWarning && showWooCommerceWarning ) {
-							return '50px';
-						}
-						if ( hasWarning ) {
-							return '0px';
-						}
-						return '140px';
+
+						return `calc(${ basePadding } + ${ extraPadding })`;
 					} )(),
 				} }
 			>
