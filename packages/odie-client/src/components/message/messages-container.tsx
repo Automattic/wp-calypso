@@ -29,8 +29,10 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	const createZendeskConversation = useCreateZendeskConversation();
 	const { resetSupportInteraction } = useResetSupportInteraction();
 	const [ searchParams, setSearchParams ] = useSearchParams();
-	const isForwardingToZendesk =
-		searchParams.get( 'provider' ) === 'zendesk' && chat.provider !== 'zendesk';
+
+	const [ isForwardingToZendesk, setIsForwardingToZendesk ] = useState(
+		searchParams.get( 'provider' ) === 'zendesk' && chat.provider !== 'zendesk'
+	);
 	const [ hasForwardedToZendesk, setHasForwardedToZendesk ] = useState( false );
 	const [ chatMessagesLoaded, setChatMessagesLoaded ] = useState( false );
 	const [ shouldEnableAutoScroll, setShouldEnableAutoScroll ] = useState( true );
@@ -67,6 +69,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	useEffect( () => {
 		if ( isForwardingToZendesk && ! isUserEligibleForPaidSupport ) {
 			searchParams.delete( 'provider' );
+			setIsForwardingToZendesk( false );
 			setChatMessagesLoaded( true );
 		}
 	}, [ isForwardingToZendesk, isUserEligibleForPaidSupport, setChatMessagesLoaded, searchParams ] );
@@ -90,6 +93,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 			isChatLoaded &&
 			! forceEmailSupport
 		) {
+			setIsForwardingToZendesk( false );
 			searchParams.delete( 'provider' );
 			searchParams.set( 'direct-zd-chat', '1' );
 			setSearchParams( searchParams );
