@@ -167,7 +167,7 @@ const PostErrorsMessage = ( { postErrors }: { postErrors: PostErrorsType } ) => 
 				<>
 					<p>
 						{ __(
-							"Some of the content could not not be converted properly. Don't fret, you can manually add them to your site using the blocks below."
+							'Some of the content could not not be converted properly. You can manually add them to your site using the blocks below.'
 						) }
 					</p>
 					{ Object.entries( nodeFailedErrors ).map(
