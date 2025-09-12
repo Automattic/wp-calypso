@@ -1,15 +1,16 @@
 import { useState, useCallback } from '@wordpress/element';
 import {
-	NodeCheckState,
+	FileBrowserCheckState,
 	FileBrowserItem,
 	FileBrowserNode,
 	FileBrowserNodeType,
 	FileBrowserNodeCheckList,
 	FileBrowserState,
 	FileBrowserStateActions,
+	FileBrowserCheckListInfo,
 } from './types';
 
-const initialState: FileBrowserState = {
+const createInitialState = (): FileBrowserState => ( {
 	rootNode: {
 		id: '',
 		path: '/',
@@ -20,10 +21,10 @@ const initialState: FileBrowserState = {
 		children: [],
 		totalItems: 0,
 	},
-};
+} );
 
 export function useFileBrowserState(): FileBrowserStateActions {
-	const [ state, setState ] = useState< FileBrowserState >( initialState );
+	const [ state, setState ] = useState< FileBrowserState >( createInitialState );
 
 	const getNodeFromState = useCallback(
 		( currentState: FileBrowserState, fullPath: string[] | string ): FileBrowserNode | null => {
@@ -110,28 +111,32 @@ export function useFileBrowserState(): FileBrowserStateActions {
 		[]
 	);
 
-	const getCheckedStatus = useCallback( ( nodeToIterate: FileBrowserNode ): NodeCheckState => {
-		let isMixed = false;
-		let isChecked = false;
-		let isUnchecked = false;
-		nodeToIterate.children.forEach( ( child: FileBrowserNode ) => {
-			if ( child.checkState === 'mixed' ) {
-				isMixed = true;
-			} else if ( child.checkState === 'checked' ) {
-				isChecked = true;
-			} else {
-				isUnchecked = true;
+	const getCheckedStatus = useCallback(
+		( nodeToIterate: FileBrowserNode ): FileBrowserCheckState => {
+			let isMixed = false;
+			let isChecked = false;
+			let isUnchecked = false;
+			nodeToIterate.children.forEach( ( child: FileBrowserNode ) => {
+				if ( child.checkState === 'mixed' ) {
+					isMixed = true;
+				} else if ( child.checkState === 'checked' ) {
+					isChecked = true;
+				} else {
+					isUnchecked = true;
+				}
+			} );
+
+			if ( isMixed ) {
+				return 'mixed';
+			} else if ( isChecked && isUnchecked ) {
+				return 'mixed';
+			} else if ( isChecked ) {
+				return 'checked';
 			}
-		} );
-		if ( isMixed ) {
-			return 'mixed';
-		} else if ( isChecked && isUnchecked ) {
-			return 'mixed';
-		} else if ( isChecked ) {
-			return 'checked';
-		}
-		return 'unchecked';
-	}, [] );
+			return 'unchecked';
+		},
+		[]
+	);
 
 	const fileBrowserToRestoreType = useCallback( ( type: string ): FileBrowserNodeType => {
 		switch ( type ) {
@@ -167,7 +172,7 @@ export function useFileBrowserState(): FileBrowserStateActions {
 	);
 
 	const setNodeCheckState = useCallback(
-		( siteId: number, nodePath: string, checkState: NodeCheckState ) => {
+		( nodePath: string, checkState: FileBrowserCheckState ) => {
 			setState( ( prevState ) => {
 				const newState = { ...prevState };
 				// Payload needs to give us the path to the node and the new checkState
@@ -205,7 +210,7 @@ export function useFileBrowserState(): FileBrowserStateActions {
 	);
 
 	const addChildNodes = useCallback(
-		( siteId: number, parentPath: string, childrenPaths: FileBrowserItem[] ) => {
+		( parentPath: string, childrenPaths: FileBrowserItem[] ) => {
 			setState( ( prevState ) => {
 				// Payload needs to give us the path to the parent and a list of children paths
 				// We need to find the parent node in the tree
@@ -261,6 +266,7 @@ export function useFileBrowserState(): FileBrowserStateActions {
 				currentList.includeList.push( {
 					id: currentNode.id,
 					path: getNodeFullPath( currentNode ),
+					type: currentNode.type,
 				} );
 
 				// If the current node is the root, let's go through direct children and
@@ -289,6 +295,7 @@ export function useFileBrowserState(): FileBrowserStateActions {
 				currentList.includeList.push( {
 					id: currentNode.id,
 					path: getNodeFullPath( currentNode ),
+					type: currentNode.type,
 				} );
 				return currentList;
 			}
@@ -306,6 +313,7 @@ export function useFileBrowserState(): FileBrowserStateActions {
 				currentList.includeList.push( {
 					id: currentNode.id,
 					path: getNodeFullPath( currentNode ),
+					type: currentNode.type,
 				} );
 
 				currentNode.children.forEach( ( node: FileBrowserNode ) => {
@@ -317,6 +325,7 @@ export function useFileBrowserState(): FileBrowserStateActions {
 						currentList.excludeList.push( {
 							id: node.id,
 							path: getNodeFullPath( node ),
+							type: node.type,
 						} );
 					}
 				} );
@@ -327,7 +336,11 @@ export function useFileBrowserState(): FileBrowserStateActions {
 			// For each mixed child, call addChildrenToList
 			currentNode.children.forEach( ( node: FileBrowserNode ) => {
 				if ( 'checked' === node.checkState ) {
-					currentList.includeList.push( { id: node.id, path: getNodeFullPath( node ) } );
+					currentList.includeList.push( {
+						id: node.id,
+						path: getNodeFullPath( node ),
+						type: node.type,
+					} );
 					currentList.totalItems += node.totalItems;
 				}
 				if ( 'mixed' === node.checkState ) {
@@ -338,6 +351,49 @@ export function useFileBrowserState(): FileBrowserStateActions {
 		},
 		[ getNodeFullPath ]
 	);
+
+	const addSelectedItemsToList = useCallback(
+		(
+			currentNode: FileBrowserNode,
+			selectedList: FileBrowserCheckListInfo[]
+		): FileBrowserCheckListInfo[] => {
+			// If we're unchecked, skip this node and its children
+			if ( currentNode.checkState === 'unchecked' ) {
+				return selectedList;
+			}
+
+			// If we're checked, add this node
+			if ( currentNode.checkState === 'checked' ) {
+				selectedList.push( {
+					id: currentNode.id,
+					path: getNodeFullPath( currentNode ),
+					type: currentNode.type,
+				} );
+				return selectedList;
+			}
+
+			// If we're mixed, recursively check children
+			currentNode.children.forEach( ( node: FileBrowserNode ) => {
+				selectedList = addSelectedItemsToList( node, selectedList );
+			} );
+
+			return selectedList;
+		},
+		[ getNodeFullPath ]
+	);
+
+	const getSelectedList = useCallback( (): FileBrowserCheckListInfo[] => {
+		let selectedList: FileBrowserCheckListInfo[] = [];
+
+		const currentNode = state.rootNode;
+		if ( currentNode === undefined ) {
+			return selectedList;
+		}
+
+		selectedList = addSelectedItemsToList( currentNode, selectedList );
+
+		return selectedList;
+	}, [ state.rootNode, addSelectedItemsToList ] );
 
 	const getCheckList = useCallback( (): FileBrowserNodeCheckList => {
 		let checkList: FileBrowserNodeCheckList = {
@@ -367,6 +423,7 @@ export function useFileBrowserState(): FileBrowserStateActions {
 	return {
 		getNode,
 		getCheckList,
+		getSelectedList,
 		setNodeCheckState,
 		addChildNodes,
 	};

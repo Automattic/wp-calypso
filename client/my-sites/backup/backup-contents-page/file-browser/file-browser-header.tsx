@@ -53,7 +53,7 @@ function FileBrowserHeader( {
 	// A simple toggle.  Mixed will go to unchecked.
 	const onCheckboxChange = () => {
 		const newCheckState = rootNode && rootNode.checkState === 'unchecked' ? 'checked' : 'unchecked';
-		setNodeCheckState( siteId, '/', newCheckState );
+		setNodeCheckState( '/', newCheckState );
 	};
 
 	return (

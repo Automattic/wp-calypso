@@ -31,7 +31,7 @@ import SiteEnvironmentBadge, {
 	EnvironmentType,
 } from 'calypso/dashboard/components/site-environment-badge';
 import FileBrowser from 'calypso/my-sites/backup/backup-contents-page/file-browser';
-import { useFileBrowserState } from 'calypso/my-sites/backup/backup-contents-page/file-browser/use-file-browser-state';
+import { FileBrowserProvider, useFileBrowserContext } from 'calypso/my-sites/backup/backup-contents-page/file-browser/file-browser-context';
 import { useFirstMatchingBackupAttempt } from 'calypso/my-sites/backup/hooks';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -179,7 +179,7 @@ const getSyncConfig = ( type: 'pull' | 'push' ): SyncConfig => {
 	};
 };
 
-export default function SyncModal( {
+function SyncModal( {
 	onClose,
 	syncType,
 	environment,
@@ -191,7 +191,7 @@ export default function SyncModal( {
 	const syncConfig = getSyncConfig( syncType );
 	const [ isFileBrowserVisible, setIsFileBrowserVisible ] = useState( false );
 	const [ domainConfirmation, setDomainConfirmation ] = useState( '' );
-	const fileBrowserState = useFileBrowserState();
+	const { fileBrowserState } = useFileBrowserContext();
 
 	const targetEnvironment = syncConfig[ environment ].syncTo;
 	const sourceEnvironment = syncConfig[ environment ].syncFrom;
@@ -247,9 +247,9 @@ export default function SyncModal( {
 	}, [ wpContentNode, wpConfigNode ] );
 
 	const handleClose = useCallback( () => {
-		fileBrowserState.setNodeCheckState( querySiteId, WP_ROOT_PATH, 'unchecked' );
+		fileBrowserState.setNodeCheckState( WP_ROOT_PATH, 'unchecked' );
 		onClose();
-	}, [ fileBrowserState, onClose, querySiteId ] );
+	}, [ fileBrowserState, onClose ] );
 
 	const pullMutation = useMutation( pullFromStagingMutation( productionSiteId, stagingSiteId ) );
 	const pushMutation = useMutation( pushToStagingMutation( productionSiteId, stagingSiteId ) );
@@ -266,11 +266,11 @@ export default function SyncModal( {
 	useEffect( () => {
 		if ( shouldDisableGranularSync ) {
 			// Ensure all content and database are marked as selected in state when granular sync is disabled
-			fileBrowserState.setNodeCheckState( querySiteId, WP_CONTENT_PATH, 'checked' );
-			fileBrowserState.setNodeCheckState( querySiteId, WP_CONFIG_PATH, 'checked' );
-			fileBrowserState.setNodeCheckState( querySiteId, SQL_PATH, 'checked' );
+			fileBrowserState.setNodeCheckState( WP_CONTENT_PATH, 'checked' );
+			fileBrowserState.setNodeCheckState( WP_CONFIG_PATH, 'checked' );
+			fileBrowserState.setNodeCheckState( SQL_PATH, 'checked' );
 		}
-	}, [ shouldDisableGranularSync, fileBrowserState, querySiteId ] );
+	}, [ shouldDisableGranularSync, fileBrowserState ] );
 
 	const handleConfirm = () => {
 		let include_paths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
@@ -346,10 +346,10 @@ export default function SyncModal( {
 
 	const updateFilesAndFoldersCheckState = useCallback(
 		( checkState: 'checked' | 'unchecked' | 'mixed' ) => {
-			fileBrowserState.setNodeCheckState( querySiteId, WP_CONTENT_PATH, checkState );
-			fileBrowserState.setNodeCheckState( querySiteId, WP_CONFIG_PATH, checkState );
+			fileBrowserState.setNodeCheckState( WP_CONTENT_PATH, checkState );
+			fileBrowserState.setNodeCheckState( WP_CONFIG_PATH, checkState );
 		},
-		[ fileBrowserState, querySiteId ]
+		[ fileBrowserState ]
 	);
 
 	const handleDomainConfirmation = useCallback(
@@ -365,9 +365,9 @@ export default function SyncModal( {
 
 	const handleDatabaseCheckboxChange = () => {
 		if ( sqlNode?.checkState === 'checked' ) {
-			fileBrowserState.setNodeCheckState( querySiteId, SQL_PATH, 'unchecked' );
+			fileBrowserState.setNodeCheckState( SQL_PATH, 'unchecked' );
 		} else {
-			fileBrowserState.setNodeCheckState( querySiteId, SQL_PATH, 'checked' );
+			fileBrowserState.setNodeCheckState( SQL_PATH, 'checked' );
 		}
 	};
 
@@ -491,7 +491,6 @@ export default function SyncModal( {
 									siteId={ querySiteId }
 									siteSlug={ querySiteSlug }
 									fileBrowserConfig={ fileBrowserConfig }
-									fileBrowserState={ fileBrowserState }
 								/>
 							</div>
 							<HStack
@@ -600,5 +599,14 @@ export default function SyncModal( {
 				</VStack>
 			</VStack>
 		</Modal>
+	);
+}
+
+// Wrapper component to provide FileBrowser context
+export default function SyncModalWrapper( props: SyncModalProps ) {
+	return (
+		<FileBrowserProvider>
+			<SyncModal { ...props } />
+		</FileBrowserProvider>
 	);
 }

@@ -1,4 +1,12 @@
-export type ApiFileType = 'file' | 'dir' | 'wordpress' | 'table' | 'theme' | 'plugin' | 'archive';
+export type FileBrowserNodeType =
+	| 'file'
+	| 'dir'
+	| 'wordpress'
+	| 'table'
+	| 'theme'
+	| 'plugin'
+	| 'archive';
+
 export type FileType =
 	| 'dir'
 	| 'image'
@@ -40,7 +48,7 @@ export interface BackupLsResponse {
 export interface BackupLsResponseContents {
 	[ key: string ]: {
 		id?: string;
-		type: ApiFileType;
+		type: FileBrowserNodeType;
 		has_children: boolean;
 		period?: string;
 		sort?: number;
@@ -74,8 +82,6 @@ export interface FileBrowserItemInfo {
 
 export type FileBrowserCheckState = 'checked' | 'unchecked' | 'mixed';
 
-export type FileBrowserNodeType = ApiFileType; // Use the complete API type set
-
 export interface FileBrowserNode {
 	id: string;
 	path: string;
@@ -90,6 +96,7 @@ export interface FileBrowserNode {
 export interface FileBrowserCheckListInfo {
 	id: string;
 	path: string;
+	type?: FileBrowserNodeType;
 }
 
 export interface FileBrowserNodeCheckList {
@@ -105,10 +112,7 @@ export interface FileBrowserState {
 export interface FileBrowserStateActions {
 	getNode: ( path: string ) => FileBrowserNode | null;
 	getCheckList: () => FileBrowserNodeCheckList;
-	setNodeCheckState: (
-		siteId: number,
-		nodePath: string,
-		checkState: FileBrowserCheckState
-	) => void;
-	addChildNodes: ( siteId: number, parentPath: string, childrenPaths: FileBrowserItem[] ) => void;
+	getSelectedList: () => FileBrowserCheckListInfo[];
+	setNodeCheckState: ( nodePath: string, checkState: FileBrowserCheckState ) => void;
+	addChildNodes: ( parentPath: string, childrenPaths: FileBrowserItem[] ) => void;
 }

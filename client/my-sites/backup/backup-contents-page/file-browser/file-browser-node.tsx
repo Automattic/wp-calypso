@@ -105,9 +105,9 @@ function FileBrowserNode( {
 
 	// When we load the children from the API we'll add their check status info to the state
 	const addChildrenWhenLoaded = useCallback(
-		( siteId: number, path: string, backupFiles: FileBrowserItem[] ) => {
+		( path: string, backupFiles: FileBrowserItem[] ) => {
 			if ( backupFiles ) {
-				addChildNodes( siteId, path, backupFiles.filter( shouldAddChildNode ) );
+				addChildNodes( path, backupFiles.filter( shouldAddChildNode ) );
 			}
 		},
 		[ addChildNodes, shouldAddChildNode ]
@@ -115,8 +115,8 @@ function FileBrowserNode( {
 
 	// When the checkbox is clicked, we'll update the check state in the state
 	const updateNodeCheckState = useCallback(
-		( siteId: number, path: string, checkState: FileBrowserCheckState ) => {
-			setNodeCheckState( siteId, path, checkState );
+		( path: string, checkState: FileBrowserCheckState ) => {
+			setNodeCheckState( path, checkState );
 		},
 		[ setNodeCheckState ]
 	);
@@ -126,7 +126,7 @@ function FileBrowserNode( {
 		if ( isSuccess ) {
 			if ( item.hasChildren && ! addedAnyChildren ) {
 				// Add children to the node
-				addChildrenWhenLoaded( siteId, path, backupFiles );
+				addChildrenWhenLoaded( path, backupFiles );
 				setAddedAnyChildren( true );
 			}
 		}
@@ -150,11 +150,10 @@ function FileBrowserNode( {
 	// A simple toggle.  Mixed will go to unchecked.
 	const onCheckboxChange = useCallback( () => {
 		updateNodeCheckState(
-			siteId,
 			path,
 			browserNodeItem && browserNodeItem.checkState === 'unchecked' ? 'checked' : 'unchecked'
 		);
-	}, [ siteId, path, browserNodeItem, updateNodeCheckState ] );
+	}, [ path, browserNodeItem, updateNodeCheckState ] );
 
 	const handleClick = useCallback( () => {
 		if ( ! isOpen ) {

@@ -7,9 +7,10 @@ import { createInterpolateElement, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import useGetDisplayDate from 'calypso/components/jetpack/daily-backup-status/use-get-display-date';
 import { useFirstMatchingBackupAttempt } from 'calypso/my-sites/backup/hooks';
+import { useFileBrowserContext } from './file-browser-context';
 import FileBrowserHeader from './file-browser-header';
 import FileBrowserNode from './file-browser-node';
-import { FileBrowserItem, FileBrowserStateActions } from './types';
+import { FileBrowserItem } from './types';
 
 export interface FileBrowserConfig {
 	restrictedPaths?: string[];
@@ -29,7 +30,6 @@ interface FileBrowserProps {
 	siteId: number;
 	siteSlug: string;
 	fileBrowserConfig?: FileBrowserConfig;
-	fileBrowserState: FileBrowserStateActions;
 
 	// Optional site data props
 	hasCredentials?: boolean;
@@ -60,8 +60,8 @@ function FileBrowser( {
 	onTrackEvent,
 	onRequestGranularDownload,
 	onRequestGranularRestore = () => {},
-	fileBrowserState,
 }: FileBrowserProps ) {
+	const { fileBrowserState } = useFileBrowserContext();
 	// This is the path of the node that is clicked
 	const [ activeNodePath, setActiveNodePath ] = useState< string >( '' );
 	const getDisplayDate = useGetDisplayDate( siteId );

@@ -22,7 +22,7 @@ import { getSiteSlug } from 'calypso/state/sites/selectors';
 import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
 import { backupDownloadPath, backupGranularRestorePath, backupMainPath } from '../paths';
 import FileBrowser from './file-browser';
-import { useFileBrowserState } from './file-browser/use-file-browser-state';
+import { useFileBrowserContext } from './file-browser/file-browser-context';
 import './style.scss';
 
 interface OwnProps {
@@ -36,7 +36,7 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 	const getDisplayDate = useGetDisplayDate();
 	const moment = useLocalizedMoment();
 	const displayDate = getDisplayDate( moment.unix( rewindId ), false );
-	const fileBrowserState = useFileBrowserState();
+	const { fileBrowserState } = useFileBrowserContext();
 	const isMultiSite = useSelector( ( state ) => isJetpackSiteMultiSite( state, siteId ) );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) ) as string;
 	const hasCredentials = useSelector( ( state ) => hasJetpackCredentials( state, siteId ) );
@@ -113,7 +113,6 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 							onTrackEvent={ handleTrackEvent }
 							onRequestGranularDownload={ handleRequestGranularDownload }
 							onRequestGranularRestore={ handleRequestGranularRestore }
-							fileBrowserState={ fileBrowserState }
 						/>
 					</div>
 				</Card>
