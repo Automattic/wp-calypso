@@ -57,7 +57,7 @@ const UnsupportedFilesMessage = ( {
 					fileEntries[ 0 ][ 0 ]
 			  )
 			: sprintf(
-					/* translators: %s is the file type */
+					/* translators: %s is a comma separated list of file types */
 					__(
 						'You had some image file types that we do not support. You will need to convert any %s files to a different format and upload them.'
 					),
@@ -161,11 +161,7 @@ const PostErrorsMessage = ( { postErrors }: { postErrors: PostErrorsType } ) => 
 	return (
 		<div className="conversion-summary__post-errors">
 			{ gutenbergFailedErrors && (
-				<p>
-					{ __(
-						'We found some posts that had no content in them. There is nothing to do here, just thought you should know.'
-					) }
-				</p>
+				<p>{ __( 'We found some posts that had no content in them so they were skipped.' ) }</p>
 			) }
 			{ hasNodeFailedErrors && (
 				<>
