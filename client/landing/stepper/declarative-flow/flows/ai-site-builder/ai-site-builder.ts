@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { getAssemblerDesign } from '@automattic/design-picker';
 import { addPlanToCart, addProductsToCart, AI_SITE_BUILDER_FLOW } from '@automattic/onboarding';
@@ -36,10 +37,10 @@ const deletePage = async ( siteId: string | number, pageId: number ): Promise< b
 };
 
 function initialize() {
-	// If spec_id is present, skip the SiteSpec widget and go directly to site creation
-	// If not present, show the SiteSpec widget to collect specifications
+	// Check for spec_id parameter - if present, skip SiteSpec and go directly to site creation
 	const queryParams = new URLSearchParams( window.location.search );
 	const hasSpecId = queryParams.get( 'spec_id' );
+
 	const defaultSteps = stepsWithRequiredLogin( [
 		STEPS.SITE_CREATION_STEP,
 		STEPS.PROCESSING,
@@ -55,8 +56,13 @@ function initialize() {
 		return defaultSteps;
 	}
 
-	// Show SiteSpec widget to collect specifications, then continue
-	return [ STEPS.SITE_SPEC, ...defaultSteps ];
+	// If site-spec feature flag is enabled, show SiteSpec widget to collect specifications
+	if ( config.isEnabled( 'site-spec' ) ) {
+		return [ STEPS.SITE_SPEC, ...defaultSteps ];
+	}
+
+	// Original behavior - skip SiteSpec widget entirely and go directly to site creation
+	return defaultSteps;
 }
 
 const aiSiteBuilder: FlowV2< typeof initialize > = {
