@@ -5,6 +5,7 @@ import {
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
+	__experimentalSpacer as Spacer,
 	ToggleControl,
 	Card,
 	CardBody,
@@ -14,6 +15,7 @@ import { __ } from '@wordpress/i18n';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
+import { Text } from '../../components/text';
 import type { WpcomNotificationSettings } from '@automattic/api-core';
 
 const wpcomOptionKeys = [
@@ -28,7 +30,10 @@ const wpcomOptionKeys = [
 	'scheduled_updates',
 ] as const;
 
-type WpcomOptionKey = ( typeof wpcomOptionKeys )[ number ];
+type WpcomOptionKey = Extract<
+	keyof WpcomNotificationSettings,
+	( typeof wpcomOptionKeys )[ number ]
+>;
 
 const titles: Record< WpcomOptionKey, string > = {
 	marketing: __( 'Suggestions' ),
@@ -62,7 +67,10 @@ const jetpackOptionKeys = [
 	'jetpack_reports',
 ] as const;
 
-type JetpackOptionKey = ( typeof jetpackOptionKeys )[ number ];
+type JetpackOptionKey = Extract<
+	keyof WpcomNotificationSettings,
+	( typeof jetpackOptionKeys )[ number ]
+>;
 
 const jetpackTitles: Record< JetpackOptionKey, string > = {
 	jetpack_marketing: __( 'Suggestions' ),
@@ -135,7 +143,7 @@ export default function NotificationsExtras() {
 		if ( ! extraSettings || ! hasJetpackOptions ) {
 			return false;
 		}
-		return jetpackOptionKeys.some( ( key ) => !! ( extraSettings as any )[ key ] );
+		return jetpackOptionKeys.some( ( key ) => !! extraSettings[ key ] );
 	}, [ extraSettings, hasJetpackOptions ] );
 
 	const handleJetpackTopToggle = useCallback(
@@ -145,9 +153,9 @@ export default function NotificationsExtras() {
 			}
 			const payload: Partial< WpcomNotificationSettings > = {};
 			jetpackOptionKeys.forEach( ( key ) => {
-				const current = ( extraSettings as any )[ key ] as boolean | undefined;
+				const current = extraSettings[ key ];
 				if ( current !== nextValue ) {
-					( payload as any )[ key ] = nextValue;
+					payload[ key ] = nextValue;
 				}
 			} );
 			if ( Object.keys( payload ).length > 0 ) {
@@ -159,7 +167,7 @@ export default function NotificationsExtras() {
 
 	const handleSingleJetpackToggle = useCallback(
 		( key: JetpackOptionKey ) => ( nextValue: boolean ) => {
-			mutation.mutate( { [ key ]: nextValue } as any );
+			mutation.mutate( { [ key ]: nextValue } as Partial< WpcomNotificationSettings > );
 		},
 		[ mutation ]
 	);
@@ -176,53 +184,87 @@ export default function NotificationsExtras() {
 				/>
 			}
 		>
-			<VStack spacing={ 4 }>
+			<VStack spacing={ 8 }>
 				<Card>
 					<CardBody>
 						<SectionHeader level={ 3 } title={ __( 'Email from WordPress.com' ) } />
-						<ToggleControl
-							checked={ topToggleChecked }
-							label={ topToggleChecked ? __( 'Unsubscribe from all' ) : __( 'Subscribe to all' ) }
-							onChange={ handleTopToggle }
-							disabled={ isSaving || ! extraSettings }
-						/>
 
-						{ wpcomOptionKeys.map( ( key ) => (
+						<Spacer marginTop={ 8 }>
 							<ToggleControl
-								key={ key }
-								checked={ !! extraSettings?.[ key ] }
-								label={ titles[ key ] }
-								help={ descriptions[ key ] }
-								onChange={ handleSingleToggle( key ) }
+								__nextHasNoMarginBottom
+								checked={ topToggleChecked }
+								label={
+									<Text weight="bold">
+										{ topToggleChecked ? __( 'Unsubscribe from all' ) : __( 'Subscribe to all' ) }
+									</Text>
+								}
+								onChange={ handleTopToggle }
 								disabled={ isSaving || ! extraSettings }
 							/>
-						) ) }
+						</Spacer>
+
+						<Spacer marginTop={ 8 }>
+							{ wpcomOptionKeys.map( ( key ) => (
+								<Spacer key={ key }>
+									<ToggleControl
+										__nextHasNoMarginBottom
+										checked={ !! extraSettings?.[ key ] }
+										label={ titles[ key ] }
+										help={ descriptions[ key ] }
+										onChange={ handleSingleToggle( key ) }
+										disabled={ isSaving || ! extraSettings }
+									/>
+								</Spacer>
+							) ) }
+						</Spacer>
 					</CardBody>
 				</Card>
 
 				{ hasJetpackOptions && (
 					<Card>
 						<CardBody>
-							<SectionHeader level={ 3 } title={ __( 'Email from Jetpack' ) } />
-							<ToggleControl
-								checked={ jetpackTopToggleChecked }
-								label={
-									jetpackTopToggleChecked ? __( 'Unsubscribe from all' ) : __( 'Subscribe to all' )
+							<SectionHeader
+								level={ 3 }
+								title={ __( 'Email from Jetpack' ) }
+								description={
+									<Text variant="muted" lineHeight="20px">
+										{ __(
+											'Jetpack is a suite of tools connected to your WordPress site, like backups, security, and performance reports.'
+										) }
+									</Text>
 								}
-								onChange={ handleJetpackTopToggle }
-								disabled={ isSaving || ! extraSettings }
 							/>
 
-							{ jetpackOptionKeys.map( ( key ) => (
+							<Spacer marginTop={ 8 }>
 								<ToggleControl
-									key={ key }
-									checked={ !! ( extraSettings as any )?.[ key ] }
-									label={ jetpackTitles[ key ] }
-									help={ jetpackDescriptions[ key ] }
-									onChange={ handleSingleJetpackToggle( key ) }
+									__nextHasNoMarginBottom
+									checked={ jetpackTopToggleChecked }
+									label={
+										<Text weight="bold">
+											{ jetpackTopToggleChecked
+												? __( 'Unsubscribe from all' )
+												: __( 'Subscribe to all' ) }
+										</Text>
+									}
+									onChange={ handleJetpackTopToggle }
 									disabled={ isSaving || ! extraSettings }
 								/>
-							) ) }
+							</Spacer>
+
+							<Spacer marginTop={ 8 }>
+								{ jetpackOptionKeys.map( ( key ) => (
+									<Spacer key={ key }>
+										<ToggleControl
+											__nextHasNoMarginBottom
+											checked={ !! extraSettings?.[ key ] }
+											label={ jetpackTitles[ key ] }
+											help={ jetpackDescriptions[ key ] }
+											onChange={ handleSingleJetpackToggle( key ) }
+											disabled={ isSaving || ! extraSettings }
+										/>
+									</Spacer>
+								) ) }
+							</Spacer>
 						</CardBody>
 					</Card>
 				) }
