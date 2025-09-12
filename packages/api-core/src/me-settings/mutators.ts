@@ -20,6 +20,8 @@ export async function updateUserSettings(
 		'i18n_empathy_mode',
 		'use_fallback_for_incomplete_languages',
 		'enable_translator',
+		'two_step_sms_country',
+		'two_step_sms_phone_number',
 	];
 	const payload = Object.fromEntries(
 		saveableKeys.filter( ( key ) => key in data ).map( ( key ) => [ key, data[ key ] ] )

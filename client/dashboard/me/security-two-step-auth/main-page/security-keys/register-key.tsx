@@ -1,4 +1,4 @@
-import { registerSecurityKeyMutation } from '@automattic/api-queries';
+import { registerTwoStepAuthSecurityKeyMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
 	Modal,
@@ -26,7 +26,7 @@ export default function RegisterKey( { onClose }: { onClose: () => void } ) {
 
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { mutateAsync: registerSecurityKey, isPending: isRegisteringSecurityKey } = useMutation(
-		registerSecurityKeyMutation()
+		registerTwoStepAuthSecurityKeyMutation()
 	);
 
 	const handleSubmit = async ( e: React.FormEvent< HTMLFormElement > ) => {

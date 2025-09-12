@@ -14,8 +14,9 @@ import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { seen, unseen } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
+import FlashMessage from '../../components/flash-message';
 import PageLayout from '../../components/page-layout';
 import SecurityPageHeader from '../security-page-header';
 import type { Field } from '@wordpress/dataviews';
@@ -28,23 +29,13 @@ type SecurityPasswordFormData = {
 
 export default function SecurityPassword() {
 	const mutation = useMutation( userSettingsMutation() );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { createErrorNotice } = useDispatch( noticesStore );
+	const [ isReloading, setIsReloading ] = useState( false );
 
 	const [ isPasswordVisible, setIsPasswordVisible ] = useState( false );
 	const [ formData, setFormData ] = useState< SecurityPasswordFormData >( {
 		password: '',
 	} );
-
-	useEffect( () => {
-		const params = new URLSearchParams( window.location.search );
-		if ( params.get( 'updated' ) === 'password' ) {
-			createSuccessNotice( __( 'Your password was saved successfully.' ), {
-				type: 'snackbar',
-			} );
-
-			window.history.replaceState( {}, '', window.location.pathname );
-		}
-	}, [ createSuccessNotice ] );
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
@@ -52,11 +43,8 @@ export default function SecurityPassword() {
 			{ password: formData.password },
 			{
 				onSuccess: () => {
-					createSuccessNotice( __( 'Your password was saved successfully.' ), {
-						type: 'snackbar',
-					} );
-
 					// Since changing a user's password invalidates the session, we reload.
+					setIsReloading( true );
 					window.location.replace( '?updated=password' );
 				},
 				onError: ( error: Error ) => {
@@ -130,6 +118,7 @@ export default function SecurityPassword() {
 				/>
 			}
 		>
+			<FlashMessage value="password" message={ __( 'Your password was saved successfully.' ) } />
 			<Card className="security-password-card">
 				<CardBody>
 					<form onSubmit={ handleSubmit }>
@@ -146,8 +135,8 @@ export default function SecurityPassword() {
 								<Button
 									variant="primary"
 									type="submit"
-									isBusy={ mutation.isPending }
-									disabled={ mutation.isPending }
+									isBusy={ mutation.isPending || isReloading }
+									disabled={ mutation.isPending || isReloading }
 								>
 									{ __( 'Save' ) }
 								</Button>

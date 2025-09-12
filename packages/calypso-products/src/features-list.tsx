@@ -447,10 +447,10 @@ const FEATURES_LIST: FeatureList = {
 		getDescription: () => {
 			return isEnabled( 'themes/premium' )
 				? i18n.translate(
-						'Including premium themes, advanced design and monetization options, Pay with PayPal buttons, and a custom domain name for one year.'
+						'Including premium themes, advanced design and monetization options, PayPal Payment Buttons, and a custom domain name for one year.'
 				  )
 				: i18n.translate(
-						'Including advanced design and monetization options, Pay with PayPal buttons, and a custom domain name for one year.'
+						'Including advanced design and monetization options, PayPal Payment Buttons, and a custom domain name for one year.'
 				  );
 		},
 	},
@@ -766,7 +766,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_SIMPLE_PAYMENTS ]: {
 		getSlug: () => FEATURE_SIMPLE_PAYMENTS,
-		getTitle: () => i18n.translate( 'Pay with PayPal' ),
+		getTitle: () => i18n.translate( 'PayPal Payment Buttons' ),
 		getDescription: () => i18n.translate( 'Sell anything with a simple PayPal button.' ),
 	},
 	[ FEATURE_NO_BRANDING ]: {

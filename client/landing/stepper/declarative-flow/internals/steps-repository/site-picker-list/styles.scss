@@ -2,7 +2,21 @@
 @import "@automattic/onboarding/styles/mixins";
 @import "../hundred-year-plan-step-wrapper/mixins";
 
-.site-picker {
+.step-container-v2--site-picker {
+	.sites-list {
+		border: 1px solid var(--studio-gray-5);
+	}
+
+	.site {
+		cursor: pointer;
+
+		&:hover {
+			background-color: var(--studio-gray-0);
+		}
+	}
+}
+
+.site-picker-step {
 	.step-container__header {
 		margin: 44px 24px 24px;
 

@@ -1240,7 +1240,11 @@ class RenderDomainsStepComponent extends Component {
 					this.props.forceHideFreeDomainExplainerAndStrikeoutUi
 				}
 				isOnboarding
-				sideContent={ ! shouldUseStepContainerV2( this.props.flowName ) && this.getSideContent() }
+				sideContent={
+					! this.props.useStepperWrapper &&
+					! shouldUseStepContainerV2( this.props.flowName ) &&
+					this.getSideContent()
+				}
 				isInLaunchFlow={ 'launch-site' === this.props.flowName }
 				promptText={
 					isHostingSignupFlow( this.props.flowName )
@@ -1527,7 +1531,7 @@ class RenderDomainsStepComponent extends Component {
 			return null;
 		}
 
-		if ( shouldUseStepContainerV2( flowName ) ) {
+		if ( this.props.useStepperWrapper && shouldUseStepContainerV2( flowName ) ) {
 			return (
 				<Step.LinkButton onClick={ this.handleUseYourDomainClick }>
 					{ translate( 'Use a domain I already own' ) }
@@ -1672,7 +1676,7 @@ class RenderDomainsStepComponent extends Component {
 			} );
 		}
 
-		if ( shouldUseStepContainerV2( flowName ) ) {
+		if ( this.props.useStepperWrapper && shouldUseStepContainerV2( flowName ) ) {
 			const [ content, sideContent ] = this.getContentColumns();
 
 			const backButton = ( backUrl || goBack ) && (
@@ -1788,7 +1792,7 @@ const StyleWrappedDomainsStepComponent = ( props ) => {
 	const [ isLoading, shouldUseDomainSearchV2 ] = useIsDomainSearchV2Enabled( props.flowName );
 
 	if ( isLoading ) {
-		if ( shouldUseStepContainerV2( props.flowName ) ) {
+		if ( props.useStepperWrapper && shouldUseStepContainerV2( props.flowName ) ) {
 			return <Step.Loading />;
 		}
 
