@@ -1,8 +1,8 @@
+import { FoldableCard } from '@automattic/components';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
-import FoldableCard from '../foldable';
 import SupportDocLink from '../support-link';
 import type { Message, Source } from '../../types';
 
@@ -47,7 +47,9 @@ export const Sources = ( { message }: { message: Message } ) => {
 		<FoldableCard
 			className="odie-sources-foldable-card"
 			clickableHeader
-			header={ __( 'Related Guides', __i18n_text_domain__ ) }
+			expandedSummary={ __( 'Sources', __i18n_text_domain__ ) }
+			summary={ __( 'Sources', __i18n_text_domain__ ) }
+			smooth
 			onClose={ () =>
 				trackEvent( 'chat_message_action_sources', {
 					action: 'close',
