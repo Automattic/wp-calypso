@@ -36,19 +36,21 @@ export default function Snackbars() {
 	// the `useMutation` hook.
 	useEffect( () => {
 		const cleanupSuccess = registerMutationSuccessCallback(
-			( data, variables, context, mutation ) => {
+			( _data, _variables, _context, mutation ) => {
 				const message = mutation.meta?.snackbar?.success;
 				if ( message ) {
 					createSuccessNotice( message, { type: 'snackbar' } );
 				}
 			}
 		);
-		const cleanupError = registerMutationErrorCallback( ( error, variables, context, mutation ) => {
-			const message = mutation.meta?.snackbar?.error;
-			if ( message ) {
-				createErrorNotice( message, { type: 'snackbar' } );
+		const cleanupError = registerMutationErrorCallback(
+			( _error, _variables, _context, mutation ) => {
+				const message = mutation.meta?.snackbar?.error;
+				if ( message ) {
+					createErrorNotice( message, { type: 'snackbar' } );
+				}
 			}
-		} );
+		);
 		return () => {
 			cleanupSuccess();
 			cleanupError();
