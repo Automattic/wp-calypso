@@ -14,6 +14,7 @@ boot( {
 			monitoring: true,
 			logs: true,
 			backups: true,
+			scan: true,
 			domains: true,
 			emails: true,
 		},
