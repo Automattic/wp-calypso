@@ -69,6 +69,11 @@ const SiteMenu = ( { site }: { site: Site } ) => {
 					{ __( 'Logs' ) }
 				</ResponsiveMenu.Item>
 			) }
+			{ hasAppSupport( supports, 'scan' ) && (
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/scan` }>
+					{ __( 'Scan' ) }
+				</ResponsiveMenu.Item>
+			) }
 			{ hasAppSupport( supports, 'backups' ) && (
 				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/backups` }>
 					{ __( 'Backups' ) }
