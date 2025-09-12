@@ -1,0 +1,27 @@
+import { fetchMeNotificationSettings, updateWpcomNotificationSettings } from '@automattic/api-core';
+import { queryOptions, mutationOptions } from '@tanstack/react-query';
+import { queryClient } from './query-client';
+
+export const meNotificationsSettingsQuery = () =>
+	queryOptions( {
+		queryKey: [ 'me', 'notifications', 'settings' ],
+		queryFn: fetchMeNotificationSettings,
+	} );
+
+export const meNotificationsExtrasSettingsMutation = () =>
+	mutationOptions( {
+		mutationFn: updateWpcomNotificationSettings,
+		onSuccess: ( newData ) => {
+			queryClient.setQueryData(
+				meNotificationsSettingsQuery().queryKey,
+				( oldData ) =>
+					oldData && {
+						...oldData,
+						wpcom: {
+							...oldData.wpcom,
+							...newData,
+						},
+					}
+			);
+		},
+	} );
