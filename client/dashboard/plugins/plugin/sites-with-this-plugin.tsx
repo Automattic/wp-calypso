@@ -21,6 +21,19 @@ const defaultView: View = {
 	titleField: 'domain',
 };
 
+const mapToPluginListRow = (
+	plugin: ReturnType< typeof usePlugin >[ 'plugin' ],
+	items: SiteWithPluginActivationStatus[]
+): Partial< PluginListRow > => {
+	return {
+		id: plugin && 'id' in plugin ? String( plugin.id ) : '',
+		slug: plugin?.slug,
+		name: plugin?.name,
+		siteIds: items.map( ( item ) => item.ID ),
+		sitesCount: items.length,
+	};
+};
+
 export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) => {
 	const [ view, setView ] = useState< View >( defaultView );
 	const { isLoading, plugin, pluginBySiteId, sitesWithThisPlugin } = usePlugin( pluginSlug );
@@ -88,13 +101,7 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 						return (
 							<ActionRenderModal
 								actionId="activate"
-								items={ [
-									{
-										...plugin,
-										siteIds: items.map( ( item ) => item.ID ),
-										sitesCount: items.length,
-									} as PluginListRow,
-								] }
+								items={ [ mapToPluginListRow( plugin, items ) as PluginListRow ] }
 								closeModal={ closeModal }
 								onExecute={ action }
 								onActionPerformed={ invalidatePlugins }
@@ -116,13 +123,7 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 						return (
 							<ActionRenderModal
 								actionId="deactivate"
-								items={ [
-									{
-										...plugin,
-										siteIds: items.map( ( item ) => item.ID ),
-										sitesCount: items.length,
-									} as PluginListRow,
-								] }
+								items={ [ mapToPluginListRow( plugin, items ) as PluginListRow ] }
 								closeModal={ closeModal }
 								onExecute={ action }
 								onActionPerformed={ invalidatePlugins }
