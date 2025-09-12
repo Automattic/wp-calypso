@@ -637,6 +637,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 			billingIndexRoute,
 			billingHistoryRoute,
 			monetizeSubscriptionsRoute,
+			monetizeSubscriptionRoute,
 			purchasesRoute,
 			purchaseSettingsRoute,
 			paymentMethodsRoute,
