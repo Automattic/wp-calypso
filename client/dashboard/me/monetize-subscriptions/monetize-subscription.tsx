@@ -1,26 +1,24 @@
-import { Card, Gridicon, MaterialIcon } from '@automattic/components';
+import { monetizeSubscriptionQuery } from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
 import { CALYPSO_CONTACT } from '@automattic/urls';
+import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
+import { Card, Notice } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { formatDate } from 'date-fns';
 import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { monetizeSubscriptionRoute } from '../../app/router/me';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { getMonetizeSubscriptionsUrl } from '../../me/monetize-subscriptions/urls';
 import {
 	requestAutoRenewDisable,
 	requestAutoRenewResume,
 	requestSubscriptionStop,
 } from './actions';
-import { Notice } from '@wordpress/components';
-import {
-	getMonetizeSubscriptionsUrl,
-	getMonetizeSubscriptionUrl,
-} from 'calypso/dashboard/me/monetize-subscriptions/urls';
-import { useNavigate } from '@tanstack/react-router';
-import { createInterpolateElement } from '@wordpress/element';
 
 function MembershipSiteHeader( { name, domain }: { name: string; domain: string } ) {
 	return (
@@ -38,7 +36,15 @@ export default function MonetizeSubscription() {
 	const params = monetizeSubscriptionRoute.useParams();
 	const subscriptionId = params.subscriptionId;
 
+	const { data: subscription } = useQuery( monetizeSubscriptionQuery( subscriptionId ) );
+
 	const dispatch = useDispatch();
+
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+
+	// TEST
+	const stoppingStatus = '';
+	const updatingStatus = '';
 
 	const isStopping = stoppingStatus === 'start';
 	const isUpdating = updatingStatus === 'start';
@@ -59,56 +65,50 @@ export default function MonetizeSubscription() {
 		if ( stoppingStatus === 'fail' || updatingStatus === 'fail' ) {
 			// run is-error notice to contact support
 			if ( isProduct ) {
-				dispatch(
-					errorNotice(
-						translate(
-							'There was a problem while removing your product, please {{a}}{{strong}}contact support{{/strong}}{{/a}}.',
-							{
-								components: {
-									a: <a href={ CALYPSO_CONTACT } />,
-									strong: <strong />,
-								},
-							}
-						)
+				createErrorNotice(
+					createInterpolateElement(
+						__(
+							'There was a problem while removing your product, please <a><strong>contact support</strong></a>.'
+						),
+						{
+							a: <a href={ CALYPSO_CONTACT } />,
+							strong: <strong />,
+						}
 					)
 				);
 			} else if ( stoppingStatus === 'fail' ) {
-				dispatch(
-					errorNotice(
-						createInterpolateElement(
-							__(
-								'There was a problem while stopping your subscription, please <a><strong>contact support</strong></a>.'
-							),
-							{
-								a: <a href={ CALYPSO_CONTACT } />,
-								strong: <strong />,
-							}
-						)
+				createErrorNotice(
+					createInterpolateElement(
+						__(
+							'There was a problem while stopping your subscription, please <a><strong>contact support</strong></a>.'
+						),
+						{
+							a: <a href={ CALYPSO_CONTACT } />,
+							strong: <strong />,
+						}
 					)
 				);
 			} else if ( updatingStatus === 'fail' ) {
-				dispatch(
-					errorNotice(
-						createInterpolateElement(
-							__(
-								'There was a problem while updating your subscription, please <a><strong>contact support</strong></a>.'
-							),
-							{
-								a: <a href={ CALYPSO_CONTACT } />,
-								strong: <strong />,
-							}
-						)
+				createErrorNotice(
+					createInterpolateElement(
+						__(
+							'There was a problem while updating your subscription, please <a><strong>contact support</strong></a>.'
+						),
+						{
+							a: <a href={ CALYPSO_CONTACT } />,
+							strong: <strong />,
+						}
 					)
 				);
 			}
 		} else if ( stoppingStatus === 'success' ) {
 			// redirect back to Purchases list
-			dispatch( successNotice( __( 'This item has been removed.' ), { displayOnNextPage: true } ) );
+			createSuccessNotice( __( 'This item has been removed.' ), { displayOnNextPage: true } );
 			navigate( {
 				to: getMonetizeSubscriptionsUrl(),
 			} );
 		}
-	}, [ stoppingStatus, updatingStatus, dispatch, isProduct ] );
+	}, [ stoppingStatus, updatingStatus, isProduct ] );
 
 	return (
 		<PageLayout
