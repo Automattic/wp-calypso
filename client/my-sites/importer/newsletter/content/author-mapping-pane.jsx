@@ -8,8 +8,6 @@ import AuthorMapping from 'calypso/my-sites/importer/author-mapping-item';
 import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
 import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
 
-import './author-mapping-pane.scss';
-
 class AuthorMappingPane extends PureComponent {
 	static displayName = 'AuthorMappingPane';
 

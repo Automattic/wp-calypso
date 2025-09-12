@@ -10,8 +10,6 @@ import { useDispatch } from 'calypso/state';
 import { startMappingAuthors, cancelImport } from 'calypso/state/imports/actions';
 import { SummaryStat } from '../components';
 
-import './conversion-summary.scss';
-
 interface UnsupportedFilesType {
 	[ key: string ]: number;
 }
