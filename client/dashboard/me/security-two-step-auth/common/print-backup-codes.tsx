@@ -1,4 +1,4 @@
-import { generateBackupCodesMutation } from '@automattic/api-queries';
+import { generateTwoStepAuthBackupCodesMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
@@ -31,7 +31,7 @@ export default function PrintBackupCodes( {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const { mutate: generateBackupCodes, data: backupCodes } = useMutation(
-		generateBackupCodesMutation()
+		generateTwoStepAuthBackupCodesMutation()
 	);
 
 	const [ isBackupCodesPrinted, setIsBackupCodesPrinted ] = useState( false );

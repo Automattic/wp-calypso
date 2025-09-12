@@ -12,6 +12,7 @@ import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import QueryRewindRestoreStatus from 'calypso/components/data/query-rewind-restore-status';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
+import { useFileBrowserContext } from 'calypso/my-sites/backup/backup-contents-page/file-browser/file-browser-context';
 import { useDispatch, useSelector } from 'calypso/state';
 import { rewindGranularRestore } from 'calypso/state/activity-log/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
@@ -22,8 +23,8 @@ import {
 import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
 import {
-	BackupBrowserSelectedItem,
 	BackupBrowserItemType,
+	BackupBrowserCheckListInfo,
 } from 'calypso/state/rewind/browser/types';
 import {
 	useEnqueuePreflightCheck,
@@ -32,8 +33,6 @@ import {
 import { getPreflightStatus } from 'calypso/state/rewind/preflight/selectors';
 import { PreflightTestStatus } from 'calypso/state/rewind/preflight/types';
 import { getInProgressBackupForSite } from 'calypso/state/rewind/selectors';
-import getBackupBrowserCheckList from 'calypso/state/rewind/selectors/get-backup-browser-check-list';
-import getBackupBrowserSelectedList from 'calypso/state/rewind/selectors/get-backup-browser-selected-list';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
 import getInProgressRewindStatus from 'calypso/state/selectors/get-in-progress-rewind-status';
 import getIsRestoreInProgress from 'calypso/state/selectors/get-is-restore-in-progress';
@@ -168,10 +167,10 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 		status,
 	} = useSelector( ( state ) => getRestoreProgress( state, siteId ) || ( {} as RestoreProgress ) );
 
-	const browserCheckList = useSelector( ( state ) => getBackupBrowserCheckList( state, siteId ) );
-	const browserSelectedList = useSelector( ( state ) =>
-		getBackupBrowserSelectedList( state, siteId )
-	);
+	const { fileBrowserState } = useFileBrowserContext();
+	const browserCheckList = fileBrowserState.getCheckList();
+	const browserSelectedList = fileBrowserState.getSelectedList();
+
 	const [ loading, setLoading ] = useState( true );
 
 	const requestRestore = useCallback( () => {
@@ -378,8 +377,8 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 			}
 			return null;
 		}
-		let displayItems: BackupBrowserSelectedItem[] = [];
-		let extendedItems: BackupBrowserSelectedItem[] = [];
+		let displayItems: BackupBrowserCheckListInfo[] = [];
+		let extendedItems: BackupBrowserCheckListInfo[] = [];
 		if ( items.length > fileDisplayLimit ) {
 			displayItems = items.slice( 0, fileDisplayLimit );
 			extendedItems = items.slice( fileDisplayLimit );
