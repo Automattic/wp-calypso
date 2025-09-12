@@ -747,7 +747,7 @@ export class FullPostView extends Component {
 										/>
 									) }
 
-									{ shouldShowComments( post ) && (
+									{ shouldShowComments( post ) && ! commentsApiDisabled && (
 										<CommentButton
 											key="comment-button"
 											commentCount={ commentCount }
