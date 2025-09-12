@@ -1,10 +1,10 @@
 import page from '@automattic/calypso-router';
 import { translate } from 'i18n-calypso';
 import { createElement } from 'react';
+import { navigate } from 'calypso/lib/navigate';
 import SharingConnections from 'calypso/sites/marketing/connections/connections';
 import SharingButtons from 'calypso/sites/marketing/sharing/buttons';
 import MarketingTools from 'calypso/sites/marketing/tools';
-import JetpackTraffic from 'calypso/sites/marketing/traffic/jetpack-traffic';
 import Traffic from 'calypso/sites/marketing/traffic/traffic';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
@@ -13,11 +13,9 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import { setExpandedService } from 'calypso/state/sharing/actions';
 import { requestSite } from 'calypso/state/sites/actions';
-import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteSlug, isJetpackSite, getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Sharing from './main';
-import SettingsSharing from './settings-sharing';
-import ToolsMarketing from './tools-marketing';
 
 export const redirectConnections = ( context ) => {
 	const serviceParam = context.params.service ? `?service=${ context.params.service }` : '';
@@ -111,26 +109,17 @@ export const sharingButtons = ( context, next ) => {
 	}
 
 	const isJetpack = isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } );
+	if ( ! isJetpack ) {
+		return navigate( getSiteAdminUrl( state, siteId, 'options-general.php?page=sharing' ) );
+	}
 
-	context.contentComponent = createElement( isJetpack ? SharingButtons : SettingsSharing );
+	context.contentComponent = createElement( SharingButtons );
 
 	next();
 };
 
 export const traffic = ( context, next ) => {
 	context.primary = createElement( Traffic );
-
-	next();
-};
-
-export const jetpackTraffic = ( context, next ) => {
-	context.contentComponent = createElement( JetpackTraffic );
-
-	next();
-};
-
-export const toolsMarketing = ( context, next ) => {
-	context.primary = createElement( ToolsMarketing );
 
 	next();
 };

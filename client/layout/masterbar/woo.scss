@@ -496,13 +496,6 @@ $breakpoint-mobile: 660px;
 			padding-top: 24px;
 		}
 
-		&.feature-flag-woocommerce-core-profiler-passwordless-auth {
-			.signup-form {
-				max-width: 515px;
-				margin: 48px auto;
-			}
-		}
-
 		.login__form-userdata label.form-label {
 			line-height: 16px;
 		}
@@ -1077,11 +1070,6 @@ $breakpoint-mobile: 660px;
 				background-color: var( --studio-gray-0 );
 				color: var( --studio-gray-20 );
 			}
-		}
-
-		.signup-form {
-			max-width: 327px;
-			margin-top: 48px;
 		}
 
 		.jetpack-connect__main-logo {

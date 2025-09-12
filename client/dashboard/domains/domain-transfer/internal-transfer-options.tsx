@@ -1,5 +1,6 @@
 import { DomainSubtype } from '@automattic/api-core';
 import { __ } from '@wordpress/i18n';
+import { domainTransferToOtherSiteRoute } from '../../app/router/domains';
 import { ActionList } from '../../components/action-list';
 import RouterLinkButton from '../../components/router-link-button';
 import { getTopLevelOfTld } from '../../utils/domain';
@@ -71,7 +72,8 @@ export default function InternalTransferOptions( { domain }: InternalTransferOpt
 					<RouterLinkButton
 						variant="secondary"
 						size="compact"
-						to={ `/domains/${ domain.domain }/transfer/other-site` }
+						to={ domainTransferToOtherSiteRoute.fullPath }
+						params={ { domainName: domain.domain } }
 					>
 						{ __( 'Continue' ) }
 					</RouterLinkButton>
