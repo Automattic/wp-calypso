@@ -15,8 +15,6 @@ import { appStates } from 'calypso/state/imports/constants';
 import { infoNotice } from 'calypso/state/notices/actions';
 import AuthorMappingPane from './author-mapping-pane';
 
-import './importing-pane.scss';
-
 const sum = ( a, b ) => a + b;
 
 /*
