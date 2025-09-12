@@ -98,7 +98,7 @@ export const siteRoute = createRoute( {
 			throw redirect( { to: difmUrl } );
 		}
 
-		const migrationUrl = `/sites/${ siteSlug }/site-migration-in-progress`;
+		const migrationUrl = `/sites/${ siteSlug }/migration-overview`;
 		if ( isSiteMigrationInProgress( site ) && ! location.pathname.includes( migrationUrl ) ) {
 			throw redirect( { to: migrationUrl } );
 		}
@@ -609,6 +609,17 @@ export const siteSettingsWpcomLoginRoute = createRoute( {
 	)
 );
 
+export const siteSettingsRepositoriesRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/repositories',
+} ).lazy( () =>
+	import( '../../sites/settings-repositories' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-repositories' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const siteTrialEndedRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'trial-ended',
@@ -661,9 +672,9 @@ export const siteDifmLiteInProgressRoute = createRoute( {
 	)
 );
 
-export const siteMigrationInProgressRoute = createRoute( {
+export const siteMigrationOverviewRoute = createRoute( {
 	getParentRoute: () => siteRoute,
-	path: 'site-migration-in-progress',
+	path: 'migration-overview',
 	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
 		if ( cause !== 'enter' ) {
 			return;
@@ -675,8 +686,8 @@ export const siteMigrationInProgressRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/migration-in-progress' ).then( ( d ) =>
-		createLazyRoute( 'site-migration-in-progress' )( {
+	import( '../../sites/migration-overview' ).then( ( d ) =>
+		createLazyRoute( 'migration-overview' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
@@ -704,6 +715,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteSettingsAgencyRoute,
 		siteSettingsMcpRoute,
 		siteSettingsMcpSetupRoute,
+		siteSettingsRepositoriesRoute,
 		siteSettingsHundredYearPlanRoute,
 		siteSettingsPrimaryDataCenterRoute,
 		siteSettingsStaticFile404Route,
@@ -715,7 +727,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteSettingsWpcomLoginRoute,
 		siteTrialEndedRoute,
 		siteDifmLiteInProgressRoute,
-		siteMigrationInProgressRoute,
+		siteMigrationOverviewRoute,
 	];
 
 	if ( config.supports.sites.deployments ) {

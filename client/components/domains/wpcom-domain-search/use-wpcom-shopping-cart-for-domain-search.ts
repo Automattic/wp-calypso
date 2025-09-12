@@ -77,6 +77,10 @@ export const useWPCOMShoppingCartForDomainSearch = ( {
 			onRemoveItem: ( uuid ) => removeProductFromCart( uuid ),
 		};
 
-		return { cart, isNextDomainFree: responseCart.next_domain_is_free };
+		return {
+			cart,
+			isNextDomainFree: responseCart.next_domain_is_free,
+			items: domainItems,
+		};
 	}, [ responseCart, removeProductFromCart, addProductsToCart, flowName ] );
 };

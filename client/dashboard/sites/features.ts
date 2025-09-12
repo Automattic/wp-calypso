@@ -63,7 +63,7 @@ export function canResetSite( site: Site ) {
 }
 
 export function canSwitchEnvironment( site: Site ) {
-	if ( isSiteMigrationInProgress( site ) ) {
+	if ( isSiteMigrationInProgress( site ) || site.is_a4a_dev_site ) {
 		return false;
 	}
 
@@ -71,7 +71,7 @@ export function canSwitchEnvironment( site: Site ) {
 }
 
 export function canCreateStagingSite( site: Site ) {
-	if ( isSiteMigrationInProgress( site ) ) {
+	if ( isSiteMigrationInProgress( site ) || site.is_a4a_dev_site ) {
 		return false;
 	}
 

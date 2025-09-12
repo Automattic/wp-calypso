@@ -16,7 +16,8 @@ import { MarketingToolsFeatureData } from './types';
 export const getMarketingFeaturesData = (
 	selectedSiteSlug: T.SiteSlug | null,
 	translate: ( text: string, options?: any ) => string,
-	localizeUrl: ( url: string ) => string
+	localizeUrl: ( url: string ) => string,
+	activityPubStatus: any
 ): MarketingToolsFeatureData[] => {
 	const isEnglish = ( config( 'english_locales' ) as string[] ).includes( getLocaleSlug() ?? '' );
 	const currentDate = new Date();
@@ -71,21 +72,6 @@ export const getMarketingFeaturesData = (
 			},
 		},
 		{
-			title: translate( 'Share your blog with a new audience' ),
-			description: translate(
-				'Connect your WordPress.com site to the social web. Let people follow your posts from platforms like Mastodon, Threads, and more—no extra work needed.'
-			),
-			categories: [ 'share', 'new' ],
-			imagePath: activityPubLogo,
-			imageAlt: translate( 'Activitypub logo' ),
-			buttonText: translate( 'Enter the fediverse' ),
-			onClick: () => {
-				recordTracksEvent( 'calypso_marketing_tools_activitypub_button_click' );
-
-				page( marketingConnections( selectedSiteSlug ) );
-			},
-		},
-		{
 			title: translate( 'Hire an SEO expert' ),
 			description: translate(
 				'In today‘s digital age, visibility is key. Hire an SEO expert to boost your online presence and capture valuable opportunities.'
@@ -116,6 +102,27 @@ export const getMarketingFeaturesData = (
 			},
 		},
 	];
+
+	if ( ! activityPubStatus?.isEnabled ) {
+		result.splice( 3, 0, {
+			title: translate( 'Share your blog with a new audience' ),
+			description: translate(
+				'Connect your WordPress.com site to the social web. Let people follow your posts from platforms like Mastodon, Threads, and more—no extra work needed.'
+			),
+			categories: [ 'share', 'new' ],
+			imagePath: activityPubLogo,
+			imageAlt: translate( 'Activitypub logo' ),
+			buttonText: activityPubStatus.isLoading
+				? translate( 'Joining…' )
+				: translate( 'Join the open social web' ),
+			onClick: () => {
+				recordTracksEvent( 'calypso_marketing_tools_activitypub_button_click' );
+
+				// @ts-ignore There are no type definitions in useActivityPubStatus
+				activityPubStatus.setEnabled( true );
+			},
+		} );
+	}
 
 	// Add Facebook feature conditionally as 3rd item
 	if ( shouldShowFacebook ) {

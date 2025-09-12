@@ -3,6 +3,7 @@ import {
 	stagingSiteCreateMutation,
 	isDeletingStagingSiteQuery,
 	hasStagingSiteQuery,
+	hasValidQuotaQuery,
 	jetpackConnectionHealthQuery,
 	siteLatestAtomicTransferQuery,
 	isCreatingStagingSiteQuery,
@@ -280,6 +281,14 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 
 	const mutation = useMutation( stagingSiteCreateMutation( productionSite?.ID ?? 0 ) );
 
+	const { data: hasValidQuota } = useQuery( {
+		...hasValidQuotaQuery( productionSite?.ID ?? 0 ),
+		enabled: !! productionSite?.ID && ! stagingSite && ! isStagingSiteCreating,
+		meta: {
+			persist: false,
+		},
+	} );
+
 	const { data: connectionHealth } = useQuery( {
 		...jetpackConnectionHealthQuery( productionSite?.ID ?? 0 ),
 		enabled: !! productionSite?.ID && ! stagingSite && ! isStagingSiteCreating,
@@ -287,6 +296,18 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 
 	const handleAddStagingSite = () => {
 		recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_click' );
+
+		if ( ! hasValidQuota ) {
+			createErrorNotice(
+				__(
+					'Your available storage space is below 50%, which is insufficient for creating a staging site.'
+				),
+				{
+					type: 'snackbar',
+				}
+			);
+			return;
+		}
 
 		if ( ! connectionHealth?.is_healthy ) {
 			createNotice( 'error', __( 'Cannot add a staging site due to a Jetpack connection issue.' ), {
@@ -304,6 +325,13 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 			} );
 			return;
 		}
+
+		createSuccessNotice(
+			__( 'We are adding your staging site. We will send you an email when it is done.' ),
+			{
+				type: 'snackbar',
+			}
+		);
 
 		mutation.mutate( undefined, {
 			onSuccess: () => {
