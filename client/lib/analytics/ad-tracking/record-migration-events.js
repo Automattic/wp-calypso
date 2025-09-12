@@ -63,3 +63,35 @@ export function recordMigrationSignupEvent( componentName ) {
 		componentName
 	);
 }
+
+/**
+ * Fires a Facebook custom event for migration flow start
+ * @param {string} componentName - The name of the component firing the event
+ * @returns {void}
+ */
+export function recordMigrationFlowStartFacebookEvent( componentName ) {
+	if ( ! mayWeTrackByTracker( 'facebook' ) ) {
+		debug( `${ componentName }: skipping Facebook tracking as ad tracking is disallowed` );
+		return;
+	}
+
+	const params = [ 'trackCustom', 'MigrationFlowStart' ];
+	debug( `${ componentName }: [Facebook] Migration Flow Start`, params );
+	window.fbq( ...params );
+}
+
+/**
+ * Fires a Facebook custom event for migration credentials submission
+ * @param {string} componentName - The name of the component firing the event
+ * @returns {void}
+ */
+export function recordMigrationCredentialsFacebookEvent( componentName ) {
+	if ( ! mayWeTrackByTracker( 'facebook' ) ) {
+		debug( `${ componentName }: skipping Facebook tracking as ad tracking is disallowed` );
+		return;
+	}
+
+	const params = [ 'trackCustom', 'MigrationCredentials' ];
+	debug( `${ componentName }: [Facebook] Migration Credentials`, params );
+	window.fbq( ...params );
+}
