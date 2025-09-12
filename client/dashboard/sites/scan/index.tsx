@@ -39,9 +39,9 @@ export function SiteScanCallout( {
 			description={
 				<>
 					<Text as="p" variant="muted">
-						{ __(
-							'Automated daily scans check for malware and security vulnerabilities, with automated fixes for many issues.'
-						) }
+						{ /* @TODO: update copy when the design is ready and add translation */ }
+						Automated daily scans check for malware and security vulnerabilities, with automated
+						fixes for many issues.
 					</Text>
 					<Text as="p" variant="muted">
 						{ __( 'Available on the WordPress.com Business and Commerce plans.' ) }
