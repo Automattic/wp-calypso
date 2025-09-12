@@ -9,12 +9,15 @@ import {
 	fetchAppAuthSetup,
 	validateTwoStepCode,
 	generateBackupCodes,
+	updateUserSettings,
+	sendTwoStepAuthSMSCode,
 } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import { create } from '@github/webauthn-json';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { userSettingsQuery } from './me-settings';
 import { queryClient } from './query-client';
+import type { UserSettings } from '@automattic/api-core';
 
 export const securityKeysQuery = () =>
 	queryOptions( {
@@ -87,12 +90,36 @@ export const appAuthSetupQuery = () =>
 export const validateTwoStepCodeMutation = () =>
 	mutationOptions( {
 		mutationFn: validateTwoStepCode,
-		onSuccess: () => {
-			queryClient.invalidateQueries( userSettingsQuery() );
+		onSuccess: ( data ) => {
+			// This is a workaround to handle the error/success response
+			// from the API as it always returns 200 status code.
+			if ( data.success === true ) {
+				queryClient.invalidateQueries( userSettingsQuery() );
+			} else {
+				// when invalid code, data.success is false
+				throw new Error( 'Invalid code', { cause: 'invalid_code' } );
+			}
 		},
 	} );
 
 export const generateBackupCodesMutation = () =>
 	mutationOptions( {
 		mutationFn: generateBackupCodes,
+	} );
+
+export const setupTwoStepAuthSMSMutation = () =>
+	mutationOptions( {
+		mutationFn: async ( data: Partial< UserSettings > ) => {
+			try {
+				await updateUserSettings( data );
+				return await sendTwoStepAuthSMSCode();
+			} catch ( error ) {
+				throw new Error( 'SMS setup failed.', { cause: error } );
+			}
+		},
+	} );
+
+export const resendTwoStepAuthSMSCodeMutation = () =>
+	mutationOptions( {
+		mutationFn: sendTwoStepAuthSMSCode,
 	} );

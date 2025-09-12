@@ -20,6 +20,7 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		onRegisterDomainClick: noop,
 		onCheckTransferStatusClick: noop,
 		onMapDomainClick: noop,
+		onQueryChange: noop,
 	},
 	queries: {
 		availableTlds: ( search?: string, vendor?: string ) => availableTldsQuery( vendor, search ),
@@ -137,7 +138,10 @@ export const useDomainSearchContextValue = (
 			closeFullCart,
 			openFullCart,
 			query,
-			setQuery,
+			setQuery: ( query ) => {
+				setQuery( query );
+				normalizedEvents.onQueryChange( query );
+			},
 			slots,
 			currentSiteUrl,
 			filter,

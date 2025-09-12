@@ -1,6 +1,7 @@
 export * from './query-client';
 
 export * from './domain-availability';
+export * from './domain-connection-setup';
 export * from './domain-dns-records';
 export * from './domain-dnssec';
 export * from './domain-forwarding';
@@ -26,8 +27,10 @@ export * from './me-settings';
 export * from './me-tax-details';
 export * from './me-two-step';
 export * from './meta-sms-country-codes';
+export * from './notification-devices';
 export * from './p2';
 export * from './performance';
+export * from './plugin';
 export * from './purchase';
 export * from './site-activity-log';
 export * from './site-address-change';
@@ -75,5 +78,3 @@ export * from './site';
 export * from './sites';
 export * from './ssh';
 export * from './plugins';
-export * from './wp-org-plugin';
-export * from './wp-com-plugin';

@@ -67,3 +67,10 @@ export async function deleteApplicationPassword(
 		apiVersion: '1.1',
 	} );
 }
+
+export async function sendTwoStepAuthSMSCode(): Promise< Record< string, unknown > > {
+	return wpcom.req.post( {
+		path: '/me/two-step/sms/new',
+		apiVersion: '1.1',
+	} );
+}

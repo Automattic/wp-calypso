@@ -22,6 +22,7 @@ interface OneLoginLayoutProps {
 	isSectionSignup?: boolean;
 	loginUrl?: string;
 	isLostPasswordView?: boolean;
+	noThanksRedirectUrl?: string;
 }
 
 const OneLoginLayout = ( {
@@ -31,6 +32,7 @@ const OneLoginLayout = ( {
 	isSectionSignup,
 	loginUrl,
 	isLostPasswordView,
+	noThanksRedirectUrl,
 }: OneLoginLayoutProps ) => {
 	const translate = useTranslate();
 	const locale = useSelector( getCurrentUserLocale );
@@ -79,17 +81,39 @@ const OneLoginLayout = ( {
 		);
 	};
 
+	const NoThanksLink = () => {
+		if ( ! noThanksRedirectUrl ) {
+			return null;
+		}
+
+		const handleClick = () => {
+			recordTracksEvent( 'calypso_login_no_thanks_click', {
+				page: currentRoute,
+			} );
+		};
+
+		const href = noThanksRedirectUrl;
+
+		return (
+			<Step.LinkButton href={ href } key="no-thanks-link" rel="external" onClick={ handleClick }>
+				{ translate( 'No, thanks' ) }
+			</Step.LinkButton>
+		);
+	};
+
+	const topBar = (): JSX.Element => {
+		const rightElement = (
+			<nav className="wp-login__one-login-layout-top-right">
+				{ isSectionSignup ? <LoginLink /> : <SignUpLink /> }
+				{ noThanksRedirectUrl && <NoThanksLink /> }
+			</nav>
+		);
+
+		return <Step.TopBar rightElement={ rightElement } compactLogo="always" />;
+	};
+
 	return (
-		<Step.CenteredColumnLayout
-			columnWidth={ 6 }
-			topBar={
-				<Step.TopBar
-					rightElement={ isSectionSignup ? <LoginLink /> : <SignUpLink /> }
-					compactLogo="always"
-				/>
-			}
-			verticalAlign="center"
-		>
+		<Step.CenteredColumnLayout columnWidth={ 6 } topBar={ topBar() } verticalAlign="center">
 			<div className="wp-login__one-login-layout-content-wrapper">
 				<div className="wp-login__one-login-layout-heading">
 					<HeadingLogo isJetpack={ isJetpack } />

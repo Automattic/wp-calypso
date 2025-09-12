@@ -2,7 +2,7 @@ import {
 	deleteSiteMigrationPendingStatusQuery,
 	siteMigrationKeyQuery,
 } from '@automattic/api-queries';
-import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
@@ -105,67 +105,73 @@ export function PendingContentInfo( {
 } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { createSuccessNotice } = useDispatch( noticesStore );
-	const { data: migrationKey } = useSuspenseQuery( siteMigrationKeyQuery( site.ID ) );
+	const { data: migrationKey, isLoading } = useQuery( siteMigrationKeyQuery( site.ID ) );
 	const [ isCancellationModalOpen, setIsCancellationModalOpen ] = useState( false );
 	const continueMigrationUrl = getContinueMigrationUrl( site );
 
+	if ( isLoading ) {
+		return null;
+	}
+
 	return (
-		<VStack spacing={ 8 }>
-			<PageHeader
-				title={ __( 'Your WordPress site is ready to be migrated' ) }
-				description={
-					type === 'diy'
-						? createInterpolateElement(
-								__(
-									'Get ready for unmatched WordPress hosting. Use your migration key to complete your migration in the <em>Migrate to WordPress.com</em> plugin.'
-								),
-								{
-									em: <em />,
-								}
-						  )
-						: __( 'Start your migration today and get ready for unmatched WordPress hosting.' )
-				}
-			/>
-			{ continueMigrationUrl && (
-				<HStack justify="flex-start">
-					<ButtonStack justify="flex-start" expanded={ false }>
-						{ type === 'diy' && migrationKey && (
-							<Button
-								variant="secondary"
-								onClick={ () => {
-									navigator.clipboard.writeText( migrationKey );
-									recordTracksEvent( 'calypso_dashboard_migration_in_progress_copy_key_click' );
-									createSuccessNotice( __( 'Migration key copied successfully.' ), {
-										type: 'snackbar',
-									} );
-								} }
-							>
-								{ __( 'Copy migration key' ) }
-							</Button>
-						) }
-						<Button href={ continueMigrationUrl } variant="primary">
-							{ type === 'diy' ? __( 'Complete migration' ) : __( 'Start your migration' ) }
-						</Button>
-					</ButtonStack>
-					<Text as="p" variant="muted">
-						{ createInterpolateElement( __( 'or <button>cancel migration</button>.' ), {
-							button: (
+		<>
+			<VStack spacing={ 8 }>
+				<PageHeader
+					title={ __( 'Your WordPress site is ready to be migrated' ) }
+					description={
+						type === 'diy'
+							? createInterpolateElement(
+									__(
+										'Get ready for unmatched WordPress hosting. Use your migration key to complete your migration in the <em>Migrate to WordPress.com</em> plugin.'
+									),
+									{
+										em: <em />,
+									}
+							  )
+							: __( 'Start your migration today and get ready for unmatched WordPress hosting.' )
+					}
+				/>
+				{ continueMigrationUrl && (
+					<HStack justify="flex-start">
+						<ButtonStack justify="flex-start" expanded={ false }>
+							{ type === 'diy' && migrationKey && (
 								<Button
-									variant="link"
+									variant="secondary"
 									onClick={ () => {
-										setIsCancellationModalOpen( true );
-										recordTracksEvent( 'calypso_dashboard_migration_in_progress_cancel_click' );
+										navigator.clipboard.writeText( migrationKey );
+										recordTracksEvent( 'calypso_dashboard_migration_in_progress_copy_key_click' );
+										createSuccessNotice( __( 'Migration key copied successfully.' ), {
+											type: 'snackbar',
+										} );
 									} }
-								/>
-							),
-						} ) }
-					</Text>
-				</HStack>
-			) }
-			<HostingCards />
+								>
+									{ __( 'Copy migration key' ) }
+								</Button>
+							) }
+							<Button href={ continueMigrationUrl } variant="primary">
+								{ type === 'diy' ? __( 'Complete migration' ) : __( 'Start your migration' ) }
+							</Button>
+						</ButtonStack>
+						<Text as="p" variant="muted">
+							{ createInterpolateElement( __( 'or <button>cancel migration</button>.' ), {
+								button: (
+									<Button
+										variant="link"
+										onClick={ () => {
+											setIsCancellationModalOpen( true );
+											recordTracksEvent( 'calypso_dashboard_migration_in_progress_cancel_click' );
+										} }
+									/>
+								),
+							} ) }
+						</Text>
+					</HStack>
+				) }
+				<HostingCards />
+			</VStack>
 			{ isCancellationModalOpen && (
 				<CancellationModal site={ site } onClose={ () => setIsCancellationModalOpen( false ) } />
 			) }
-		</VStack>
+		</>
 	);
 }

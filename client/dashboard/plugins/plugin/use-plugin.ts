@@ -1,9 +1,9 @@
 import { PluginItem, Site } from '@automattic/api-core';
 import {
-	wpOrgPluginQuery,
 	pluginsQuery,
 	sitesQuery,
-	wpComPluginQuery,
+	marketplacePluginQuery,
+	wpOrgPluginQuery,
 } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
@@ -13,11 +13,11 @@ export const usePlugin = ( pluginId: string ) => {
 	const locale = useLocale();
 	const { data: sitesPlugins, isLoading: isLoadingSitesPlugins } = useQuery( pluginsQuery() );
 	const { data: sites, isLoading: isLoadingSites } = useQuery( sitesQuery() );
+	const { data: marketplacePlugin, isLoading: isLoadingMarketplacePlugin } = useQuery(
+		marketplacePluginQuery( pluginId )
+	);
 	const { data: wpOrgPlugin, isLoading: isLoadingWpOrgPlugin } = useQuery(
 		wpOrgPluginQuery( pluginId, locale )
-	);
-	const { data: wpComPlugin, isLoading: isLoadingWpComPlugin } = useQuery(
-		wpComPluginQuery( pluginId )
 	);
 
 	const pluginBySiteId = useMemo(
@@ -54,10 +54,10 @@ export const usePlugin = ( pluginId: string ) => {
 
 	return {
 		isLoading:
-			isLoadingSitesPlugins || isLoadingSites || isLoadingWpOrgPlugin || isLoadingWpComPlugin,
+			isLoadingSitesPlugins || isLoadingSites || isLoadingWpOrgPlugin || isLoadingMarketplacePlugin,
 		pluginBySiteId,
 		sitesWithThisPlugin,
 		sitesWithoutThisPlugin,
-		plugin: wpOrgPlugin || wpComPlugin || pluginData,
+		plugin: wpOrgPlugin || marketplacePlugin || pluginData,
 	};
 };
