@@ -927,7 +927,20 @@ export function getDomainPriceRule(
 		return DOMAIN_PRICE_RULE.FREE_WITH_PLAN;
 	}
 
-	if ( shouldBundleDomainWithPlan( withPlansOnly, selectedSite, cart, suggestion ) ) {
+	if ( flowName === 'onboarding' ) {
+		// If there are no domains in the cart, the suggestions should show the "Free domain with a plan" discount
+		if ( isThereAtLeastOneDomainRegistrationInCart( cart ) ) {
+			return DOMAIN_PRICE_RULE.PRICE;
+		}
+		// Otherwise, the suggestions should show their normal price
+		return DOMAIN_PRICE_RULE.PRICE;
+	}
+
+	// The domain-only flow should not show the "Free domain with a plan" discount
+	if (
+		flowName !== 'domain' &&
+		shouldBundleDomainWithPlan( withPlansOnly, selectedSite, cart, suggestion )
+	) {
 		return DOMAIN_PRICE_RULE.INCLUDED_IN_HIGHER_PLAN;
 	}
 
@@ -936,6 +949,16 @@ export function getDomainPriceRule(
 	}
 
 	return DOMAIN_PRICE_RULE.PRICE;
+}
+
+function isThereAtLeastOneDomainRegistrationInCart( cart: ResponseCart ): boolean {
+	let numberOfDomainRegistrations = 0;
+	cart.products.forEach( ( product ) => {
+		if ( isDomainRegistration( product ) ) {
+			numberOfDomainRegistrations++;
+		}
+	} );
+	return numberOfDomainRegistrations >= 1;
 }
 
 export function getPlanCartItem( cartItems?: MinimalRequestCartProduct[] | null ) {
