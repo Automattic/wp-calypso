@@ -1,6 +1,3 @@
-import { ExternalLink } from '@wordpress/components';
-import { createInterpolateElement, useMemo } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
 import { ReactNode } from 'react';
 import {
 	getOdieForwardToForumsMessage,
@@ -12,14 +9,9 @@ import {
 } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
 import { useCurrentSupportInteraction } from '../../data/use-current-support-interaction';
-import {
-	interactionHasZendeskEvent,
-	userProvidedEnoughInformation,
-	getIsRequestingHumanSupport,
-} from '../../utils';
+import { interactionHasZendeskEvent, getIsRequestingHumanSupport } from '../../utils';
 import BotMessageActions from './bot-message-actions';
 import CustomALink from './custom-a-link';
-import { DirectEscalationLink } from './direct-escalation-link';
 import { GetSupport } from './get-support';
 import { MarkdownOrChildren } from './mardown-or-children';
 import Sources from './sources';
@@ -64,22 +56,13 @@ export const UserMessage = ( {
 	message: Message;
 	isMessageWithEscalationOption?: boolean;
 } ) => {
-	const { isUserEligibleForPaidSupport, trackEvent, chat, canConnectToZendesk, forceEmailSupport } =
+	const { isUserEligibleForPaidSupport, trackEvent, canConnectToZendesk, forceEmailSupport } =
 		useOdieAssistantContext();
 
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 
 	const hasCannedResponse = message.context?.flags?.canned_response;
 	const isRequestingHumanSupport = getIsRequestingHumanSupport( message );
-
-	const showDirectEscalationLink = useMemo( () => {
-		return (
-			canConnectToZendesk &&
-			! chat.conversationId &&
-			userProvidedEnoughInformation( chat?.messages ) &&
-			! interactionHasZendeskEvent( currentSupportInteraction )
-		);
-	}, [ chat.conversationId, currentSupportInteraction, chat?.messages, canConnectToZendesk ] );
 
 	const displayMessage = getDisplayMessage(
 		isUserEligibleForPaidSupport,
@@ -93,37 +76,6 @@ export const UserMessage = ( {
 
 	const isMessageShowingDisclaimer =
 		message.context?.question_tags?.inquiry_type !== 'request-for-human-support';
-
-	const handleGuidelinesClick = () => {
-		trackEvent?.( 'ai_guidelines_link_clicked' );
-	};
-
-	const renderDisclaimers = () => (
-		<>
-			<div className="disclaimer">
-				{ createInterpolateElement(
-					__(
-						'Powered by Support AI. Some responses may be inaccurate. <a>Learn more</a>.',
-						__i18n_text_domain__
-					),
-					{
-						a: (
-							// @ts-expect-error Children must be passed to External link. This is done by createInterpolateElement, but the types don't see that.
-							<ExternalLink
-								href="https://automattic.com/ai-guidelines"
-								onClick={ handleGuidelinesClick }
-							/>
-						),
-					}
-				) }
-			</div>
-			{ ! interactionHasZendeskEvent( currentSupportInteraction ) && (
-				<>
-					{ showDirectEscalationLink && <DirectEscalationLink messageId={ message.message_id } /> }
-				</>
-			) }
-		</>
-	);
 
 	const messageContent = isRequestingHumanSupport ? displayMessage : message.content;
 
@@ -145,7 +97,10 @@ export const UserMessage = ( {
 						<BotMessageActions message={ message } />
 					) }
 					<div className="chat-feedback-wrapper">
-						<Sources message={ message } />
+						<Sources
+							message={ message }
+							isMessageShowingDisclaimer={ isMessageShowingDisclaimer }
+						/>
 						{ isRequestingHumanSupport && (
 							<GetSupport
 								onClickAdditionalEvent={ ( destination ) => {
@@ -156,7 +111,6 @@ export const UserMessage = ( {
 								} }
 							/>
 						) }
-						{ isMessageShowingDisclaimer && renderDisclaimers() }
 					</div>
 				</>
 			) }

@@ -1,4 +1,6 @@
 import { FoldableCard } from '@automattic/components';
+import { ExternalLink } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -6,7 +8,13 @@ import { useOdieAssistantContext } from '../../context';
 import SupportDocLink from '../support-link';
 import type { Message, Source } from '../../types';
 
-export const Sources = ( { message }: { message: Message } ) => {
+export const Sources = ( {
+	message,
+	isMessageShowingDisclaimer,
+}: {
+	message: Message;
+	isMessageShowingDisclaimer: boolean;
+} ) => {
 	const navigate = useNavigate();
 	const { trackEvent } = useOdieAssistantContext();
 	const sources = useMemo( () => {
@@ -42,6 +50,29 @@ export const Sources = ( { message }: { message: Message } ) => {
 	if ( ! hasSources ) {
 		return null;
 	}
+
+	const handleGuidelinesClick = () => {
+		trackEvent?.( 'ai_guidelines_link_clicked' );
+	};
+
+	const renderDisclaimers = () => (
+		<>
+			<div className="disclaimer">
+				{ createInterpolateElement(
+					__( 'Some responses may be inaccurate. <a>Learn more</a>.', __i18n_text_domain__ ),
+					{
+						a: (
+							// @ts-expect-error Children must be passed to External link. This is done by createInterpolateElement, but the types don't see that.
+							<ExternalLink
+								href="https://automattic.com/ai-guidelines"
+								onClick={ handleGuidelinesClick }
+							/>
+						),
+					}
+				) }
+			</div>
+		</>
+	);
 
 	return (
 		<FoldableCard
@@ -88,6 +119,7 @@ export const Sources = ( { message }: { message: Message } ) => {
 						/>
 					) ) }
 			</div>
+			{ isMessageShowingDisclaimer && renderDisclaimers() }
 		</FoldableCard>
 	);
 };
