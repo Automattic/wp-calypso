@@ -31,12 +31,13 @@ import SiteEnvironmentBadge, {
 	EnvironmentType,
 } from 'calypso/dashboard/components/site-environment-badge';
 import FileBrowser from 'calypso/my-sites/backup/backup-contents-page/file-browser';
+import {
+	FileBrowserProvider,
+	useFileBrowserContext,
+} from 'calypso/my-sites/backup/backup-contents-page/file-browser/file-browser-context';
 import { useFirstMatchingBackupAttempt } from 'calypso/my-sites/backup/hooks';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { setNodeCheckState } from 'calypso/state/rewind/browser/actions';
-import getBackupBrowserCheckList from 'calypso/state/rewind/selectors/get-backup-browser-check-list';
-import getBackupBrowserNode from 'calypso/state/rewind/selectors/get-backup-browser-node';
 import isSiteStore from 'calypso/state/selectors/is-site-store';
 import { getSiteSlug, getSiteTitle } from 'calypso/state/sites/selectors';
 import type { FileBrowserConfig } from 'calypso/my-sites/backup/backup-contents-page/file-browser';
@@ -181,7 +182,7 @@ const getSyncConfig = ( type: 'pull' | 'push' ): SyncConfig => {
 	};
 };
 
-export default function SyncModal( {
+function SyncModal( {
 	onClose,
 	syncType,
 	environment,
@@ -193,6 +194,7 @@ export default function SyncModal( {
 	const syncConfig = getSyncConfig( syncType );
 	const [ isFileBrowserVisible, setIsFileBrowserVisible ] = useState( false );
 	const [ domainConfirmation, setDomainConfirmation ] = useState( '' );
+	const { fileBrowserState } = useFileBrowserContext();
 
 	const targetEnvironment = syncConfig[ environment ].syncTo;
 	const sourceEnvironment = syncConfig[ environment ].syncFrom;
@@ -213,18 +215,12 @@ export default function SyncModal( {
 
 	const querySiteId = sourceEnvironment === 'staging' ? stagingSiteId : productionSiteId;
 
-	const browserCheckList = useSelector( ( state ) =>
-		getBackupBrowserCheckList( state, querySiteId )
-	);
+	const browserCheckList = fileBrowserState.getCheckList();
 
 	// Calculate checkbox state based only on visible nodes (wp-content and wp-config.php)
-	const wpContentNode = useSelector( ( state ) =>
-		getBackupBrowserNode( state, querySiteId, WP_CONTENT_PATH )
-	);
-	const wpConfigNode = useSelector( ( state ) =>
-		getBackupBrowserNode( state, querySiteId, WP_CONFIG_PATH )
-	);
-	const sqlNode = useSelector( ( state ) => getBackupBrowserNode( state, querySiteId, SQL_PATH ) );
+	const wpContentNode = fileBrowserState.getNode( WP_CONTENT_PATH );
+	const wpConfigNode = fileBrowserState.getNode( WP_CONFIG_PATH );
+	const sqlNode = fileBrowserState.getNode( SQL_PATH );
 
 	const isSiteWooStore = !! useSelector( ( state ) => isSiteStore( state, querySiteId ) );
 	const querySiteSlug = useSelector( ( state ) => getSiteSlug( state, querySiteId ) ) as string;
@@ -254,9 +250,9 @@ export default function SyncModal( {
 	}, [ wpContentNode, wpConfigNode ] );
 
 	const handleClose = useCallback( () => {
-		dispatch( setNodeCheckState( querySiteId, WP_ROOT_PATH, 'unchecked' ) );
+		fileBrowserState.setNodeCheckState( WP_ROOT_PATH, 'unchecked' );
 		onClose();
-	}, [ dispatch, onClose, querySiteId ] );
+	}, [ fileBrowserState, onClose ] );
 
 	const pullMutation = useMutation( pullFromStagingMutation( productionSiteId, stagingSiteId ) );
 	const pushMutation = useMutation( pushToStagingMutation( productionSiteId, stagingSiteId ) );
@@ -273,11 +269,11 @@ export default function SyncModal( {
 	useEffect( () => {
 		if ( shouldDisableGranularSync ) {
 			// Ensure all content and database are marked as selected in state when granular sync is disabled
-			dispatch( setNodeCheckState( querySiteId, WP_CONTENT_PATH, 'checked' ) );
-			dispatch( setNodeCheckState( querySiteId, WP_CONFIG_PATH, 'checked' ) );
-			dispatch( setNodeCheckState( querySiteId, SQL_PATH, 'checked' ) );
+			fileBrowserState.setNodeCheckState( WP_CONTENT_PATH, 'checked' );
+			fileBrowserState.setNodeCheckState( WP_CONFIG_PATH, 'checked' );
+			fileBrowserState.setNodeCheckState( SQL_PATH, 'checked' );
 		}
-	}, [ shouldDisableGranularSync, dispatch, querySiteId ] );
+	}, [ shouldDisableGranularSync, fileBrowserState ] );
 
 	const handleConfirm = () => {
 		let include_paths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
@@ -353,10 +349,10 @@ export default function SyncModal( {
 
 	const updateFilesAndFoldersCheckState = useCallback(
 		( checkState: 'checked' | 'unchecked' | 'mixed' ) => {
-			dispatch( setNodeCheckState( querySiteId, WP_CONTENT_PATH, checkState ) );
-			dispatch( setNodeCheckState( querySiteId, WP_CONFIG_PATH, checkState ) );
+			fileBrowserState.setNodeCheckState( WP_CONTENT_PATH, checkState );
+			fileBrowserState.setNodeCheckState( WP_CONFIG_PATH, checkState );
 		},
-		[ dispatch, querySiteId ]
+		[ fileBrowserState ]
 	);
 
 	const handleDomainConfirmation = useCallback(
@@ -372,9 +368,9 @@ export default function SyncModal( {
 
 	const handleDatabaseCheckboxChange = () => {
 		if ( sqlNode?.checkState === 'checked' ) {
-			dispatch( setNodeCheckState( querySiteId, SQL_PATH, 'unchecked' ) );
+			fileBrowserState.setNodeCheckState( SQL_PATH, 'unchecked' );
 		} else {
-			dispatch( setNodeCheckState( querySiteId, SQL_PATH, 'checked' ) );
+			fileBrowserState.setNodeCheckState( SQL_PATH, 'checked' );
 		}
 	};
 
@@ -606,5 +602,14 @@ export default function SyncModal( {
 				</VStack>
 			</VStack>
 		</Modal>
+	);
+}
+
+// Wrapper component to provide FileBrowser context
+export default function SyncModalWrapper( props: SyncModalProps ) {
+	return (
+		<FileBrowserProvider>
+			<SyncModal { ...props } />
+		</FileBrowserProvider>
 	);
 }
