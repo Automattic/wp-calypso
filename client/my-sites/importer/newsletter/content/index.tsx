@@ -27,37 +27,44 @@ interface ContentProps {
 	skipNextStep: () => void;
 }
 
-const isShowStart = ( importerState: ImporterState ) => {
-	return ( [ appStates.DISABLED, appStates.INACTIVE ] as ImporterState[] ).includes(
-		importerState
+const isShowStart = ( importerState: ImporterState | undefined ) => {
+	return (
+		importerState &&
+		( [ appStates.DISABLED, appStates.INACTIVE ] as ImporterState[] ).includes( importerState )
 	);
 };
 
-const isImporting = ( importerState: ImporterState ) => {
+const isImporting = ( importerState: ImporterState | undefined ) => {
 	return (
-		[
-			appStates.IMPORT_FAILURE,
-			appStates.IMPORT_SUCCESS,
-			appStates.IMPORTING,
-			appStates.MAP_AUTHORS,
-		] as ImporterState[]
-	 ).includes( importerState );
+		importerState &&
+		(
+			[
+				appStates.IMPORT_FAILURE,
+				appStates.IMPORT_SUCCESS,
+				appStates.IMPORTING,
+				appStates.MAP_AUTHORS,
+			] as ImporterState[]
+		 ).includes( importerState )
+	);
 };
 
-const isUploading = ( importerState: ImporterState ) => {
+const isUploading = ( importerState: ImporterState | undefined ) => {
 	return (
-		[
-			appStates.UPLOAD_PROCESSING,
-			appStates.READY_FOR_UPLOAD,
-			appStates.UPLOAD_FAILURE,
-			appStates.UPLOAD_SUCCESS,
-			appStates.UPLOADING,
-		] as ImporterState[]
-	 ).includes( importerState );
+		importerState &&
+		(
+			[
+				appStates.UPLOAD_PROCESSING,
+				appStates.READY_FOR_UPLOAD,
+				appStates.UPLOAD_FAILURE,
+				appStates.UPLOAD_SUCCESS,
+				appStates.UPLOADING,
+			] as ImporterState[]
+		 ).includes( importerState )
+	);
 };
 
 const isEnabled = ( importerState: ImporterState ) => {
-	return appStates.DISABLED !== importerState;
+	return importerState && appStates.DISABLED !== importerState;
 };
 
 export default function Content( {
