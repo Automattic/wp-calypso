@@ -216,23 +216,6 @@ export const getSettings = ( data: UserSettings ): SettingsData => {
 	}, {} as SettingsData );
 };
 
-/**
- * Workaround for a known issue https://github.com/WordPress/gutenberg/issues/71616 where integer fields
- * are returned as strings in the onChange callback, regardless of their defined Field type.
- * This function ensures that integer fields are properly converted to numbers.
- */
-const normalizeDataState = ( dataState: Partial< SettingsData > ) => {
-	if ( typeof dataState.subscription_delivery_hour === 'string' ) {
-		dataState.subscription_delivery_hour = parseInt( dataState.subscription_delivery_hour );
-	}
-
-	if ( typeof dataState.subscription_delivery_day === 'string' ) {
-		dataState.subscription_delivery_day = parseInt( dataState.subscription_delivery_day );
-	}
-
-	return dataState;
-};
-
 interface FormProps {
 	data: SettingsData;
 	isAutomattician: boolean;
@@ -242,7 +225,7 @@ interface FormProps {
 export const SubscriptionSettingsForm = ( { data, isAutomattician, onChange }: FormProps ) => {
 	const handleChange = useCallback(
 		( edit: Partial< SettingsData > ) => {
-			onChange( Object.assign( {}, data, normalizeDataState( edit ) ) as SettingsData );
+			onChange( Object.assign( {}, data, edit ) as SettingsData );
 		},
 		[ onChange, data ]
 	);
