@@ -13,4 +13,15 @@
 	.dashboard-monitoring-card__header {
 		flex-grow: 1;
 	}
+
+	.dashboard-monitoring-card__line-chart {
+		& > [role="list"] {
+			display: flex;
+			gap: 20px;
+
+			.legend-module_legend-item__feemn > svg {
+				margin-right: 5px;
+			}
+		}
+	}
 }

@@ -1,4 +1,5 @@
 import { siteMetricsQuery } from '@automattic/api-queries';
+import { LineChart, SeriesData } from '@automattic/charts';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -35,34 +36,17 @@ function useSiteMetricsData( siteId: number, timeRange: number ) {
 		return null;
 	};
 
-	// Process the data in the format accepted by uPlot
-	const formattedData =
-		requestsData?.data?.periods?.reduce(
-			( acc, period, index ) => {
-				// Check if the timestamp is already in the arrays, if not, push it
-				if ( acc[ 0 ][ acc[ 0 ].length - 1 ] !== period.timestamp ) {
-					acc[ 0 ].push( period.timestamp );
+	const formatPeriod = ( period ) => {
+		return {
+			date: new Date( period.timestamp * 1000 ),
+			value: Math.round( getDimensionValue( period ) * 100 ) / 100,
+		};
+	};
 
-					const requestsPerSecondValue = getDimensionValue( period );
-					if ( requestsPerSecondValue !== null ) {
-						const requestsPerMinuteValue = requestsPerSecondValue * 60; // Convert to requests per minute
-						acc[ 1 ].push( requestsPerMinuteValue ); // Push RPM value into the array
-					}
-					// Add response time data as a green line
-					if ( responseTimeData?.data?.periods && responseTimeData.data.periods[ index ] ) {
-						const responseTimeAverageValue = getDimensionValue(
-							responseTimeData.data.periods[ index ]
-						);
-						if ( responseTimeAverageValue !== null ) {
-							acc[ 2 ].push( responseTimeAverageValue * 1000 ); // Convert to response time average in milliseconds
-						}
-					}
-				}
-
-				return acc;
-			},
-			[ [], [], [] ] as Array< Array< number | null > > // Adjust the initial value with placeholders for both lines
-		) || ( [ [], [], [] ] as Array< Array< number | null > > ); // Return default value when data is not available yet
+	const formattedData = [
+		requestsData?.data?.periods.map( formatPeriod ),
+		responseTimeData?.data?.periods.map( formatPeriod ),
+	];
 
 	return {
 		formattedData,
@@ -79,6 +63,17 @@ export default function MonitoringPerformanceCard( {
 } ) {
 	const { formattedData, isLoading } = useSiteMetricsData( site.ID, timeRange );
 
+	const data: SeriesData[] = [
+		{
+			label: __( 'Requests per minute' ),
+			data: formattedData[ 0 ],
+		},
+		{
+			label: __( 'Average response time (ms)' ),
+			data: formattedData[ 1 ],
+		},
+	];
+
 	return (
 		<MonitoringCard
 			title={ __( 'Server performance' ) }
@@ -87,7 +82,18 @@ export default function MonitoringPerformanceCard( {
 			onAnchorClick={ () => {} }
 			isLoading={ isLoading }
 		>
-			<pre>{ JSON.stringify( formattedData, null, 2 ) }</pre>
+			<LineChart
+				className="dashboard-monitoring-card__line-chart"
+				data={ data }
+				withGradientFill
+				legendAlignmentVertical="top"
+				legendOrientation="horizontal"
+				legendShape="line"
+				legendAlignmentHorizontal="left"
+				height={ 300 }
+				showLegend
+				withLegendGlyph
+			/>
 		</MonitoringCard>
 	);
 }
