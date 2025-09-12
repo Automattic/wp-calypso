@@ -61,6 +61,7 @@ export const TRACKING_IDS = {
 	wpcomGoogleAdsGtagDomainTransferPurchase: 'AW-946162814/8T2PCL3d7rsYEP6YlcMD',
 	wpcomGoogleAdsGtagMigrationStart: 'AW-946162814/0qOACLyvvccZEP6YlcMD',
 	wpcomGoogleAdsGtagMigrationCredentials: 'AW-946162814/59yUCNG15tYZEP6YlcMD',
+	wpcomGoogleAdsGtagMigrationSignup: 'AW-946162814/Uev_COubnpkbEP6YlcMD',
 	wpcomGoogleGA4Gtag: 'G-1H4VG5F5JF',
 	jetpackGoogleTagManagerId: 'GTM-MWWK6WM',
 	jetpackGoogleGA4Gtag: 'G-K8CRH0LL00',

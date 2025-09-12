@@ -42,4 +42,17 @@ export async function adTrackSignupStart( flow ) {
 		debug( 'adTrackSignupStart: [Google Ads Gtag]', params );
 		window.gtag( ...params );
 	}
+
+	// Google Ads for site-migration flow.
+	if ( mayWeTrackByTracker( 'googleAds' ) && 'site-migration' === flow ) {
+		const params = [
+			'event',
+			'conversion',
+			{
+				send_to: TRACKING_IDS.wpcomGoogleAdsGtagMigrationSignup,
+			},
+		];
+		debug( 'adTrackSignupStart: [Google Ads Gtag] Site Migration Signup', params );
+		window.gtag( ...params );
+	}
 }

@@ -50,3 +50,16 @@ export function recordMigrationCredentialsEvent( componentName ) {
 		componentName
 	);
 }
+
+/**
+ * Fires a Google Ads conversion event for migration signup start
+ * @param {string} componentName - The name of the component firing the event
+ * @returns {void}
+ */
+export function recordMigrationSignupEvent( componentName ) {
+	recordMigrationEvent(
+		'Migration Signup Start',
+		TRACKING_IDS.wpcomGoogleAdsGtagMigrationSignup,
+		componentName
+	);
+}
