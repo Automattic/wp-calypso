@@ -65,6 +65,29 @@ const baseFields: Field< SettingsData >[] = [
 			{ label: __( 'Friday' ), value: 5 },
 			{ label: __( 'Saturday' ), value: 6 },
 		],
+		Edit: ( { field, data, onChange } ) => {
+			const { id, getValue } = field;
+			return (
+				<SelectControl
+					label={ field.label }
+					hideLabelFromVision
+					value={ getValue( { item: data } ) }
+					options={ field.elements ?? [] }
+					help={ field.description }
+					onChange={ ( value ) => {
+						onChange( { [ id ]: parseInt( value ) } );
+					} }
+					__nextHasNoMarginBottom
+					__next40pxDefaultSize
+				>
+					{ field.elements?.map( ( element ) => (
+						<option key={ element.value } value={ element.value }>
+							{ element.label }
+						</option>
+					) ) }
+				</SelectControl>
+			);
+		},
 	},
 	{
 		id: 'subscription_delivery_hour',
@@ -96,12 +119,14 @@ const baseFields: Field< SettingsData >[] = [
 			return (
 				<SelectControl
 					label={ field.label }
+					hideLabelFromVision
 					value={ getValue( { item: data } ) }
 					options={ field.elements ?? [] }
 					help={ field.description }
 					onChange={ ( value ) => {
 						onChange( { [ id ]: parseInt( value ) } );
 					} }
+					__next40pxDefaultSize
 					__nextHasNoMarginBottom
 				>
 					{ field.elements?.map( ( element ) => (
