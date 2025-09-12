@@ -270,6 +270,8 @@ export default function SyncModal( {
 
 	const shouldDisableGranularSync = ! lastKnownBackupAttempt && ! isLoadingBackupAttempt;
 
+	const hasWarning = shouldDisableGranularSync || sqlNode?.checkState === 'checked';
+
 	useEffect( () => {
 		if ( shouldDisableGranularSync ) {
 			// Ensure all content and database are marked as selected in state when granular sync is disabled
@@ -414,7 +416,6 @@ export default function SyncModal( {
 				spacing={ 5 }
 				style={ {
 					paddingBottom: ( () => {
-						const hasWarning = shouldDisableGranularSync || sqlNode?.checkState === 'checked';
 						if ( hasWarning && isFileBrowserVisible && showWooCommerceWarning ) {
 							return '320px';
 						}
@@ -453,7 +454,7 @@ export default function SyncModal( {
 				<div
 					className={ clsx( 'staging-site-card', {
 						'confirmation-input': showDomainConfirmation,
-						'has-warning': shouldDisableGranularSync || sqlNode?.checkState === 'checked',
+						'has-warning': hasWarning,
 						'has-file-browser': isFileBrowserVisible,
 						'has-woocommerce-warning': showWooCommerceWarning,
 					} ) }
@@ -540,7 +541,7 @@ export default function SyncModal( {
 										__nextHasNoMarginBottom
 										label={ __( 'Database' ) }
 										disabled={ shouldDisableGranularSync }
-										checked={ shouldDisableGranularSync || sqlNode?.checkState === 'checked' }
+										checked={ hasWarning }
 										onChange={ handleDatabaseCheckboxChange }
 									/>
 								) }
@@ -549,7 +550,7 @@ export default function SyncModal( {
 					</Tooltip>
 				</div>
 				<VStack className="staging-site-card__footer" spacing={ 6 }>
-					{ ( shouldDisableGranularSync || sqlNode?.checkState === 'checked' ) && (
+					{ hasWarning && (
 						<VStack>
 							<Notice status="warning" isDismissible={ false }>
 								<Text as="p" weight="bold" style={ { lineHeight: '24px' } }>
