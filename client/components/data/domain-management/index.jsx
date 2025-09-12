@@ -2,6 +2,7 @@ import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { createElement, Component } from 'react';
 import { connect } from 'react-redux';
+import QueryDomainDetails from 'calypso/components/data/query-domain-details';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
@@ -26,6 +27,7 @@ class DomainManagementData extends Component {
 		isRequestingSiteDomains: PropTypes.bool,
 		needsDns: PropTypes.bool,
 		needsDomains: PropTypes.bool,
+		needsIndividualDomain: PropTypes.bool,
 		needsPlans: PropTypes.bool,
 		needsProductsList: PropTypes.bool,
 		productsList: PropTypes.object,
@@ -35,11 +37,21 @@ class DomainManagementData extends Component {
 	};
 
 	render() {
-		const { needsDomains, needsPlans, needsProductsList, selectedSite } = this.props;
+		const {
+			needsDomains,
+			needsIndividualDomain,
+			needsPlans,
+			needsProductsList,
+			selectedDomainName,
+			selectedSite,
+		} = this.props;
 
 		return (
 			<div>
 				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsTitle } />
+				{ selectedDomainName && needsIndividualDomain && (
+					<QueryDomainDetails domainName={ selectedDomainName } />
+				) }
 				{ selectedSite && needsDomains && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 				{ selectedSite && needsPlans && <QuerySitePlans siteId={ selectedSite.ID } /> }
 				{ needsProductsList && <QueryProductsList /> }

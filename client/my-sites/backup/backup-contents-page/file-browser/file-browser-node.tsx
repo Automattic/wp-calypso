@@ -3,9 +3,7 @@ import { useCallback, useState, useEffect } from '@wordpress/element';
 import { __, sprintf, isRTL } from '@wordpress/i18n';
 import { chevronDown, chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useDispatch, useSelector } from 'calypso/state';
-import { addChildNodes, setNodeCheckState } from 'calypso/state/rewind/browser/actions';
-import getBackupBrowserNode from 'calypso/state/rewind/selectors/get-backup-browser-node';
+import { useFileBrowserContext } from './file-browser-context';
 import FileInfoCard from './file-info-card';
 import FileTypeIcon from './file-type-icon';
 import { useTruncatedFileName } from './hooks';
@@ -46,8 +44,8 @@ function FileBrowserNode( {
 	onTrackEvent,
 	onRequestGranularRestore,
 }: FileBrowserNodeProps ) {
+	const { fileBrowserState } = useFileBrowserContext();
 	const isRoot = path === '/';
-	const dispatch = useDispatch();
 	const isCurrentNodeClicked = activeNodePath === path;
 	const showFileCard = fileBrowserConfig?.showFileCard ?? true;
 	const showSeparateExpandButton = fileBrowserConfig?.showSeparateExpandButton ?? false;
@@ -55,7 +53,8 @@ function FileBrowserNode( {
 	const [ fetchContentsOnMount, setFetchContentsOnMount ] = useState< boolean >( isRoot );
 	const [ isOpen, setIsOpen ] = useState< boolean >( isRoot );
 	const [ addedAnyChildren, setAddedAnyChildren ] = useState< boolean >( false );
-	const browserNodeItem = useSelector( ( state ) => getBackupBrowserNode( state, siteId, path ) );
+	const { getNode, addChildNodes, setNodeCheckState } = fileBrowserState;
+	const browserNodeItem = getNode( path );
 	const expandIcon = isRTL() ? chevronLeft : chevronRight;
 	const expandDirectoriesOnClick = fileBrowserConfig?.expandDirectoriesOnClick ?? true;
 
@@ -106,33 +105,20 @@ function FileBrowserNode( {
 
 	// When we load the children from the API we'll add their check status info to the state
 	const addChildrenWhenLoaded = useCallback(
-		( siteId: number, path: string, backupFiles: FileBrowserItem[] ) => {
+		( path: string, backupFiles: FileBrowserItem[] ) => {
 			if ( backupFiles ) {
-				dispatch(
-					addChildNodes(
-						siteId,
-						path,
-						backupFiles.filter( shouldAddChildNode ).map( ( childItem: FileBrowserItem ) => {
-							return {
-								id: childItem.id ?? '',
-								path: childItem.name,
-								type: childItem.type,
-								totalItems: childItem.totalItems,
-							};
-						} )
-					)
-				);
+				addChildNodes( path, backupFiles.filter( shouldAddChildNode ) );
 			}
 		},
-		[ dispatch, shouldAddChildNode ]
+		[ addChildNodes, shouldAddChildNode ]
 	);
 
 	// When the checkbox is clicked, we'll update the check state in the state
 	const updateNodeCheckState = useCallback(
-		( siteId: number, path: string, checkState: FileBrowserCheckState ) => {
-			dispatch( setNodeCheckState( siteId, path, checkState ) );
+		( path: string, checkState: FileBrowserCheckState ) => {
+			setNodeCheckState( path, checkState );
 		},
-		[ dispatch ]
+		[ setNodeCheckState ]
 	);
 
 	// Using isSuccess to track the API call status
@@ -140,7 +126,7 @@ function FileBrowserNode( {
 		if ( isSuccess ) {
 			if ( item.hasChildren && ! addedAnyChildren ) {
 				// Add children to the node
-				addChildrenWhenLoaded( siteId, path, backupFiles );
+				addChildrenWhenLoaded( path, backupFiles );
 				setAddedAnyChildren( true );
 			}
 		}
@@ -164,11 +150,10 @@ function FileBrowserNode( {
 	// A simple toggle.  Mixed will go to unchecked.
 	const onCheckboxChange = useCallback( () => {
 		updateNodeCheckState(
-			siteId,
 			path,
 			browserNodeItem && browserNodeItem.checkState === 'unchecked' ? 'checked' : 'unchecked'
 		);
-	}, [ siteId, path, browserNodeItem, updateNodeCheckState ] );
+	}, [ path, browserNodeItem, updateNodeCheckState ] );
 
 	const handleClick = useCallback( () => {
 		if ( ! isOpen ) {
@@ -321,8 +306,8 @@ function FileBrowserNode( {
 		return (
 			<CheckboxControl
 				__nextHasNoMarginBottom
-				checked={ browserNodeItem ? browserNodeItem.checkState === 'checked' : false }
-				indeterminate={ browserNodeItem && browserNodeItem.checkState === 'mixed' }
+				checked={ browserNodeItem?.checkState === 'checked' }
+				indeterminate={ browserNodeItem?.checkState === 'mixed' }
 				onChange={ onCheckboxChange }
 				// translators: %s is a file or directory name
 				aria-label={ sprintf( __( 'Select %s' ), item.name ) }

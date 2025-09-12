@@ -1,4 +1,4 @@
-export interface UserSecurityKeys {
+export interface UserTwoStepAuthSecurityKeys {
 	registrations: {
 		id: string;
 		name: string;
@@ -6,7 +6,7 @@ export interface UserSecurityKeys {
 	}[];
 }
 
-export interface SecurityKeyRegistrationChallenge {
+export interface TwoStepAuthSecurityKeyRegistrationChallenge {
 	rp: {
 		id: string;
 		name: string;
@@ -24,42 +24,42 @@ export interface SecurityKeyRegistrationChallenge {
 	timeout: number;
 }
 
-export interface DeleteSecurityKeyArgs {
+export interface DeleteTwoStepAuthSecurityKeyArgs {
 	credential_id: string;
 }
 
-export interface SecurityKeyRegistrationChallengeArgs {
+export interface TwoStepAuthSecurityKeyRegistrationChallengeArgs {
 	hostname?: string;
 }
 
-export interface ValidateSecurityKeyRegistrationArgs {
+export interface ValidateTwoStepAuthSecurityKeyRegistrationArgs {
 	data: string;
 	name: string;
 	hostname?: string;
 }
-export interface ApplicationPassword {
+export interface TwoStepAuthApplicationPassword {
 	ID: string;
 	name: string;
 	generated: string;
 }
 
-export interface CreateApplicationPasswordArgs {
+export interface CreateTwoStepAuthApplicationPasswordArgs {
 	application_name: string;
 }
 
-export interface CreateApplicationPasswordResponse {
+export interface CreateTwoStepAuthApplicationPasswordResponse {
 	application_password: string;
 }
-export interface AppAuthSetup {
+export interface TwoStepAuthAppAuthSetup {
 	otpauth_uri: string;
 	time_code: string;
 }
 
-export interface ValidateTwoStepCodeArgs {
+export interface ValidateTwoStepAuthCodeArgs {
 	code: string;
 	action: string;
 }
 
-export interface GenerateBackupCodesResponse {
+export interface GenerateTwoStepAuthBackupCodesResponse {
 	codes: string[];
 }

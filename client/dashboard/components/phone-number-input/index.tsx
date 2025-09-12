@@ -6,11 +6,15 @@ import {
 	SelectControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import type { SecuritySMSNumber } from './types';
 
 import './style.scss';
 
-// TODO: We could potentially move this component to a shared place
+export type SecuritySMSNumber = {
+	phoneNumber: string;
+	countryCode: string;
+	countryNumericCode: string;
+};
+
 export default function PhoneNumberInput( {
 	data,
 	onChange,

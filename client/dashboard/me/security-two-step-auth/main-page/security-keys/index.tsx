@@ -1,4 +1,7 @@
-import { securityKeysQuery, deleteSecurityKeyMutation } from '@automattic/api-queries';
+import {
+	twoStepAuthSecurityKeysQuery,
+	deleteTwoStepAuthSecurityKeyMutation,
+} from '@automattic/api-queries';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import {
 	__experimentalConfirmDialog as ConfirmDialog,
@@ -19,9 +22,9 @@ import InlineSupportLink from '../../../../components/inline-support-link';
 import { SectionHeader } from '../../../../components/section-header';
 import { isWebAuthnSupported } from '../../utils';
 import RegisterKey from './register-key';
-import type { UserSecurityKeys } from '@automattic/api-core';
+import type { UserTwoStepAuthSecurityKeys } from '@automattic/api-core';
 
-type SecurityKeyRegistration = UserSecurityKeys[ 'registrations' ][ number ];
+type SecurityKeyRegistration = UserTwoStepAuthSecurityKeys[ 'registrations' ][ number ];
 
 const fields = [
 	{
@@ -44,7 +47,7 @@ const SecurityKeysList = ( {
 	data: SecurityKeyRegistration[];
 	isLoading: boolean;
 } ) => {
-	const { mutate: deleteSecurityKey } = useMutation( deleteSecurityKeyMutation() );
+	const { mutate: deleteSecurityKey } = useMutation( deleteTwoStepAuthSecurityKeyMutation() );
 
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
@@ -114,7 +117,7 @@ const SecurityKeysList = ( {
 export default function SecurityKeys() {
 	const [ isAddKeyModalOpen, setIsAddKeyModalOpen ] = useState( false );
 
-	const { data: securityKeys, isLoading } = useQuery( securityKeysQuery() );
+	const { data: securityKeys, isLoading } = useQuery( twoStepAuthSecurityKeysQuery() );
 
 	const registrations = securityKeys?.registrations ?? [];
 

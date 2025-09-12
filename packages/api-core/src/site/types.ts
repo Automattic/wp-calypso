@@ -22,6 +22,7 @@ export interface SiteOptions {
 	is_difm_lite_in_progress?: boolean;
 	is_summer_special_2025?: boolean;
 	is_wpforteams_site?: boolean;
+	migration_source_site_domain?: string;
 	p2_hub_blog_id?: number;
 	site_creation_flow?: string;
 	site_intent?: string;

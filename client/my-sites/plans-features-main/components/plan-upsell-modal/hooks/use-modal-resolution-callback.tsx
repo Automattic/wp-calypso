@@ -1,6 +1,6 @@
 import { isFreePlan, PLAN_FREE } from '@automattic/calypso-products';
 import { FREE_THEME } from '@automattic/design-picker';
-import { ONBOARDING_FLOW } from '@automattic/onboarding';
+import { DOMAIN_FLOW, ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useCallback } from '@wordpress/element';
 import {
 	FREE_PLAN_FREE_DOMAIN_DIALOG,
@@ -51,7 +51,7 @@ export function useModalResolutionCallback( {
 			// TODO: look into decoupling the flowName from here as well.
 			if (
 				paidDomainName &&
-				( ( flowName && ONBOARDING_FLOW === flowName ) ||
+				( ( flowName && [ ONBOARDING_FLOW, DOMAIN_FLOW ].includes( flowName ) ) ||
 					[ 'plans-jetpack-app-site-creation', 'plans-site-selected-legacy' ].includes(
 						intent || ''
 					) )
