@@ -26,7 +26,7 @@ const mapToPluginListRow = (
 	items: SiteWithPluginActivationStatus[]
 ): Partial< PluginListRow > => {
 	return {
-		id: plugin && 'id' in plugin ? String( plugin.id ) : '',
+		id: plugin?.id,
 		slug: plugin?.slug,
 		name: plugin?.name,
 		siteIds: items.map( ( item ) => item.ID ),

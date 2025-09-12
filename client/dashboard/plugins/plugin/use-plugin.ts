@@ -67,6 +67,7 @@ export const usePlugin = ( pluginSlug: string ) => {
 		pluginBySiteId,
 		sitesWithThisPlugin,
 		sitesWithoutThisPlugin,
-		plugin: pluginData || wpOrgPlugin || marketplacePlugin,
+		plugin: pluginData,
+		icons: wpOrgPlugin?.icons || marketplacePlugin?.icons,
 	};
 };
