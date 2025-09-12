@@ -1,15 +1,204 @@
-import { __ } from '@wordpress/i18n';
+import { Card, Gridicon, MaterialIcon } from '@automattic/components';
+import { formatCurrency } from '@automattic/number-formatters';
+import { CALYPSO_CONTACT } from '@automattic/urls';
+import { __, sprintf } from '@wordpress/i18n';
+import { formatDate } from 'date-fns';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { monetizeSubscriptionRoute } from '../../app/router/me';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import {
+	requestAutoRenewDisable,
+	requestAutoRenewResume,
+	requestSubscriptionStop,
+} from './actions';
+import { Notice } from '@wordpress/components';
+import {
+	getMonetizeSubscriptionsUrl,
+	getMonetizeSubscriptionUrl,
+} from 'calypso/dashboard/me/monetize-subscriptions/urls';
+import { useNavigate } from '@tanstack/react-router';
+import { createInterpolateElement } from '@wordpress/element';
+
+function MembershipSiteHeader( { name, domain }: { name: string; domain: string } ) {
+	return (
+		<Card>
+			<Gridicon icon="globe" />
+			<div>
+				<div>{ name }</div>
+				<div>{ domain }</div>
+			</div>
+		</Card>
+	);
+}
 
 export default function MonetizeSubscription() {
 	const params = monetizeSubscriptionRoute.useParams();
 	const subscriptionId = params.subscriptionId;
 
+	const dispatch = useDispatch();
+
+	const isStopping = stoppingStatus === 'start';
+	const isUpdating = updatingStatus === 'start';
+	const isProcessing = isStopping || isUpdating;
+	const stopSubscription = () =>
+		dispatch( ! isProcessing && requestSubscriptionStop( subscription.ID ) );
+	const disableAutoRenew = () =>
+		dispatch( ! isProcessing && requestAutoRenewDisable( subscription.ID ) );
+	const enableAutoRenew = () =>
+		dispatch( ! isProcessing && requestAutoRenewResume( subscription.ID ) );
+	const isRenewable = subscription && ( subscription.renew_interval || subscription.is_renewable ); // can remove renew_interval once backend is deployed
+	const isAutoRenewing = isRenewable && subscription.renew_interval;
+	const isProduct = subscription && ! isRenewable;
+	const isDisabledAutorenewing = isRenewable && ! subscription.renew_interval;
+	const navigate = useNavigate();
+
+	useEffect( () => {
+		if ( stoppingStatus === 'fail' || updatingStatus === 'fail' ) {
+			// run is-error notice to contact support
+			if ( isProduct ) {
+				dispatch(
+					errorNotice(
+						translate(
+							'There was a problem while removing your product, please {{a}}{{strong}}contact support{{/strong}}{{/a}}.',
+							{
+								components: {
+									a: <a href={ CALYPSO_CONTACT } />,
+									strong: <strong />,
+								},
+							}
+						)
+					)
+				);
+			} else if ( stoppingStatus === 'fail' ) {
+				dispatch(
+					errorNotice(
+						createInterpolateElement(
+							__(
+								'There was a problem while stopping your subscription, please <a><strong>contact support</strong></a>.'
+							),
+							{
+								a: <a href={ CALYPSO_CONTACT } />,
+								strong: <strong />,
+							}
+						)
+					)
+				);
+			} else if ( updatingStatus === 'fail' ) {
+				dispatch(
+					errorNotice(
+						createInterpolateElement(
+							__(
+								'There was a problem while updating your subscription, please <a><strong>contact support</strong></a>.'
+							),
+							{
+								a: <a href={ CALYPSO_CONTACT } />,
+								strong: <strong />,
+							}
+						)
+					)
+				);
+			}
+		} else if ( stoppingStatus === 'success' ) {
+			// redirect back to Purchases list
+			dispatch( successNotice( __( 'This item has been removed.' ), { displayOnNextPage: true } ) );
+			navigate( {
+				to: getMonetizeSubscriptionsUrl(),
+			} );
+		}
+	}, [ stoppingStatus, updatingStatus, dispatch, isProduct ] );
+
 	return (
-		<PageLayout size="large" header={ <PageHeader title={ __( 'Monetize subscription' ) } /> }>
-			<div>{ subscriptionId }</div>
+		<PageLayout
+			size="large"
+			header={
+				<PageHeader title={ isProduct ? __( 'Product Details' ) : __( 'Subscription Details' ) } />
+			}
+		>
+			{ isStopping && (
+				<Notice
+					status="info"
+					isLoading
+					text={ isProduct ? __( 'Removing this product' ) : __( 'Stopping this subscription' ) }
+				/>
+			) }
+			{ isUpdating && (
+				<Notice status="info" isLoading text={ __( 'Updating subscription auto-renew' ) } />
+			) }
+			{ subscription && (
+				<>
+					<Card className="memberships__subscription-meta">
+						<MembershipSiteHeader
+							name={ subscription.site_title }
+							domain={ subscription.site_url }
+						/>
+						<div className="memberships__subscription-header">
+							<div className="memberships__subscription-title">{ subscription.title }</div>
+							<div className="memberships__subscription-price">
+								{ formatCurrency( subscription.renewal_price, subscription.currency ) }
+							</div>
+						</div>
+						<ul className="memberships__subscription-inner-meta">
+							<li>
+								<em className="memberships__subscription-inner-detail-label">
+									{ __( 'Renew interval' ) }
+								</em>
+								<span className="memberships__subscription-inner-detail">
+									{ subscription.renew_interval || '-' }
+								</span>
+							</li>
+							<li>
+								<em className="memberships__subscription-inner-detail-label">
+									{ __( 'Subscribed On' ) }
+								</em>
+								<span className="memberships__subscription-inner-detail">
+									{ formatDate( subscription.start_date, 'll' ) }
+								</span>
+							</li>
+							<li>
+								<em className="memberships__subscription-inner-detail-label">
+									{ isDisabledAutorenewing ? __( 'Expires on' ) : __( 'Renews on' ) }
+								</em>
+								<div className="memberships__subscription-inner-detail">
+									{ subscription.end_date
+										? formatDate( subscription.end_date, 'll' )
+										: __( 'Never Expires' ) }
+								</div>
+								{ ! isProduct && (
+									<div className="memberships__subscription-inner-detail">
+										{ subscription.renew_interval
+											? __( 'Auto-renew is ON' )
+											: __( 'Auto-renew is OFF' ) }
+									</div>
+								) }
+							</li>
+						</ul>
+					</Card>
+					{ isRenewable && (
+						<Card
+							tagName="button"
+							className="auto-renew-toggle__card"
+							onClick={ isAutoRenewing ? disableAutoRenew : enableAutoRenew }
+							disabled={ isUpdating }
+						>
+							<MaterialIcon icon="autorenew" className="card__icon" />
+							{ isAutoRenewing ? __( 'Disable auto-renew' ) : __( 'Enable auto-renew' ) }
+							<Gridicon className="card__link-indicator" icon="chevron-right" />
+						</Card>
+					) }
+					<Card tagName="button" className="remove-purchase__card" onClick={ stopSubscription }>
+						<MaterialIcon icon="delete" className="card__icon" />
+						{ isProduct
+							? // eslint-disable-next-line @wordpress/i18n-translator-comments
+							  sprintf( __( 'Remove %s product' ), subscription.title )
+							: // eslint-disable-next-line @wordpress/i18n-translator-comments
+							  sprintf( __( 'Stop %s subscription' ), subscription.title ) }
+						<Gridicon className="card__link-indicator" icon="chevron-right" />
+					</Card>
+				</>
+			) }
 		</PageLayout>
 	);
 }
