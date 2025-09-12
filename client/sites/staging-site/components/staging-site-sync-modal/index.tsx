@@ -31,7 +31,10 @@ import SiteEnvironmentBadge, {
 	EnvironmentType,
 } from 'calypso/dashboard/components/site-environment-badge';
 import FileBrowser from 'calypso/my-sites/backup/backup-contents-page/file-browser';
-import { FileBrowserProvider, useFileBrowserContext } from 'calypso/my-sites/backup/backup-contents-page/file-browser/file-browser-context';
+import {
+	FileBrowserProvider,
+	useFileBrowserContext,
+} from 'calypso/my-sites/backup/backup-contents-page/file-browser/file-browser-context';
 import { useFirstMatchingBackupAttempt } from 'calypso/my-sites/backup/hooks';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
