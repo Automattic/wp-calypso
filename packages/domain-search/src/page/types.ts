@@ -18,7 +18,9 @@ export interface SelectedDomain {
 	domain: string;
 	tld: string;
 	salePrice?: string;
+	salePriceInteger?: number;
 	price: string;
+	priceInteger: number;
 }
 
 export interface DomainSearchCart {

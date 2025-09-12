@@ -15,18 +15,22 @@ const wpcomCartToDomainSearchCart = ( domain: ResponseCartProduct ) => {
 		isSmallestUnit: true,
 		stripZeros: true,
 	} );
+	const currentPriceInteger = domain.item_subtotal_integer;
 
 	const originalPrice = formatCurrency( domain.item_original_cost_integer, domain.currency, {
 		isSmallestUnit: true,
 		stripZeros: true,
 	} );
+	const originalPriceInteger = domain.item_original_cost_integer;
 
 	return {
 		uuid: domain.uuid,
 		domain: domainName,
 		tld: tld.join( '.' ),
 		salePrice: hasPromotion ? currentPrice : undefined,
+		salePriceInteger: hasPromotion ? currentPriceInteger : undefined,
 		price: hasPromotion ? originalPrice : currentPrice,
+		priceInteger: hasPromotion ? originalPriceInteger : currentPriceInteger,
 	};
 };
 
@@ -45,6 +49,11 @@ export const useWPCOMShoppingCartForDomainSearch = ( {
 		const domainItems = responseCart.products.filter(
 			( product ) => product.is_domain_registration
 		);
+
+		// Order domains from most expensive to least expensive
+		domainItems.sort( ( a, b ) => {
+			return b.item_subtotal_integer - a.item_subtotal_integer;
+		} );
 
 		const total = formatCurrency(
 			domainItems.reduce( ( acc, item ) => acc + item.item_subtotal_integer, 0 ),
