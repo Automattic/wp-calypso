@@ -236,7 +236,6 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 		) {
 			createSuccessNotice( __( 'Staging site deleted.' ), {
 				type: 'snackbar',
-				explicitDismiss: true,
 			} );
 			invalidateQueries( productionSiteId, productionSite?.slug, stagingSiteId );
 		}
