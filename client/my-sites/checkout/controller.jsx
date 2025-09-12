@@ -275,9 +275,23 @@ export function redirectWpcomPlansToPlansGrid( context, next ) {
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
 
+	// Handle common plan aliases like the checkout system does
+	const planAliasMap = {
+		personal: 'personal-bundle',
+		premium: 'value_bundle',
+		business: 'business-bundle',
+		ecommerce: 'ecommerce-bundle',
+		'personal-monthly': 'personal-bundle-monthly',
+		'premium-monthly': 'value_bundle_monthly',
+		'business-monthly': 'business-bundle-monthly',
+		'ecommerce-monthly': 'ecommerce-bundle-monthly',
+	};
+
+	const actualProduct = planAliasMap[ product ] || product;
+
 	// Only redirect direct /checkout requests, not /checkout/from-plans, and only for WordPress.com plans
 	if (
-		isWpComPlan( product ) &&
+		isWpComPlan( actualProduct ) &&
 		config.isEnabled( 'enforce_interstitial_plans_grid' ) &&
 		! context.pathname.startsWith( '/checkout/from-plans/' )
 	) {
@@ -285,10 +299,10 @@ export function redirectWpcomPlansToPlansGrid( context, next ) {
 		const existingQuery = context.querystring ? `&${ context.querystring }` : '';
 		const redirectUrl = `/plans/${
 			selectedSite?.slug || ''
-		}?product=${ product }${ existingQuery }`;
+		}?product=${ actualProduct }${ existingQuery }`;
 
 		debug(
-			`Redirecting WordPress.com plan checkout to plans grid: ${ context.pathname } -> ${ redirectUrl }`
+			`Redirecting WordPress.com plan checkout to plans grid: ${ context.pathname } -> ${ redirectUrl } (alias: ${ product } -> ${ actualProduct })`
 		);
 		page( redirectUrl );
 		return;
