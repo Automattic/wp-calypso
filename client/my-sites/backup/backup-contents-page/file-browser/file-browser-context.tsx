@@ -22,7 +22,6 @@ interface FileBrowserProviderProps {
 
 /**
  * Provider that wraps backup pages with FileBrowser context
- * Resets state when rewindId changes
  */
 export function FileBrowserProvider( { children }: FileBrowserProviderProps ) {
 	const fileBrowserState = useFileBrowserState();
