@@ -1,9 +1,13 @@
 import { Site } from '@automattic/api-core';
-import { sitePluginActivateMutation } from '@automattic/api-queries';
+import {
+	invalidatePlugins,
+	sitePluginActivateMutation,
+	sitePluginDeactivateMutation,
+} from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { check } from '@wordpress/icons';
+import { check, close } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
 import ActionRenderModal, { getModalHeader } from '../manage/components/action-render-modal';
 import { buildBulkSitesPluginAction } from '../manage/utils';
@@ -93,10 +97,39 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 								] }
 								closeModal={ closeModal }
 								onExecute={ action }
+								onActionPerformed={ invalidatePlugins }
 							/>
 						);
 					},
 					isEligible: ( item ) => ! item.isPluginActive,
+					supportsBulk: true,
+				},
+				{
+					id: 'deactivate',
+					icon: close,
+					label: __( 'Deactivate' ),
+					modalHeader: getModalHeader( 'deactivate' ),
+					RenderModal: ( { items, closeModal } ) => {
+						const { mutateAsync } = useMutation( sitePluginDeactivateMutation() );
+						const action = buildBulkSitesPluginAction( mutateAsync );
+
+						return (
+							<ActionRenderModal
+								actionId="deactivate"
+								items={ [
+									{
+										...plugin,
+										siteIds: items.map( ( item ) => item.ID ),
+										sitesCount: items.length,
+									} as PluginListRow,
+								] }
+								closeModal={ closeModal }
+								onExecute={ action }
+								onActionPerformed={ invalidatePlugins }
+							/>
+						);
+					},
+					isEligible: ( item ) => item.isPluginActive,
 					supportsBulk: true,
 				},
 				{
