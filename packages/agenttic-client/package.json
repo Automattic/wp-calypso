@@ -21,10 +21,8 @@
 		"README.md"
 	],
 	"scripts": {
-		"build": "pnpm run clean && tsup src/index.ts src/mocks/index.ts --format esm --target node18 && tsc --project tsconfig.json --emitDeclarationOnly",
-		"build:no-splitting": "pnpm run clean && tsup src/index.ts --format esm --target node18 --splitting=false && tsc --project tsconfig.json --emitDeclarationOnly",
-		"dev": "tsup src/index.ts --format esm --watch",
-		"dev:no-splitting": "tsup src/index.ts --format esm --target node18 --splitting=false --watch",
+		"build": "pnpm run clean && vite build && tsc --project tsconfig.json --emitDeclarationOnly",
+		"dev": "vite build --watch",
 		"clean": "rm -rf dist",
 		"type-check": "tsc --noEmit",
 		"lint": "wp-scripts lint-js src --ext .ts,.tsx",
@@ -51,16 +49,17 @@
 	},
 	"devDependencies": {
 		"@wordpress/api-fetch": "^7.0.0",
-		"tsup": "^8.0.0",
+		"autoprefixer": "^10.4.0",
 		"typescript": "^5.0.0",
 		"unified": "^11.0.5",
+		"vite": "^5.0.0",
+		"vite-plugin-lib-inject-css": "^2.2.2",
 		"vitest": "^1.0.0"
 	},
 	"dependencies": {
 		"@automattic/charts": ">=0.14.0 <1.0.0",
 		"@types/react": "^18.0.0",
 		"@visx/xychart": "^3.12.0",
-		"@wordpress/element": "^6.2.0",
 		"@wordpress/i18n": "^6.1.0",
 		"react": "^18.0.0",
 		"react-markdown": "^10.1.0",

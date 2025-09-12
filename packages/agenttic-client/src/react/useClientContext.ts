@@ -1,4 +1,4 @@
-import { useMemo } from '@wordpress/element';
+import { useMemo } from 'react';
 import { logger } from '../client/utils/logger';
 import type { ClientContext, ContextProvider } from '../client/types/index';
 

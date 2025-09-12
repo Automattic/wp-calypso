@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from '@wordpress/element';
+import { useCallback, useMemo } from 'react';
 import { logger } from '../client/utils/logger';
 import type { Tool, ToolProvider } from '../client/types/index';
 

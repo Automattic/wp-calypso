@@ -51,7 +51,7 @@ const config: StorybookConfig = {
       },
       resolve: {
         alias: {
-          '@wordpress/data': path.resolve(__dirname, './mocks/@wordpress/data.ts'),
+          // No aliases needed currently
         },
       },
       optimizeDeps: {
@@ -63,8 +63,6 @@ const config: StorybookConfig = {
           '@storybook/blocks',
         ],
         exclude: [
-          '@wordpress/element',
-          '@wordpress/data',
         ],
       },
       define: {
