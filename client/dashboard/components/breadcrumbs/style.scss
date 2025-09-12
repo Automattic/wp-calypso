@@ -1,0 +1,13 @@
+@import '@wordpress/base-styles/colors';
+
+.dashboard-breadcrumbs {
+	&__button, &__button.components-button.has-icon.has-text {
+		padding-inline: 0;
+		color: $gray-700;
+	}
+
+	&__separator {
+		margin: 0 10px;
+		color: $gray-300;
+	}
+}

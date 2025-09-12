@@ -11,7 +11,8 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useCallback } from 'react';
 import { useAuth } from '../../app/auth';
-import { domainRoute } from '../../app/router/domains';
+import { domainRoute, domainOverviewRoute } from '../../app/router/domains';
+import { Breadcrumbs } from '../../components/breadcrumbs';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getDomainSiteSlug } from '../../utils/domain';
@@ -53,7 +54,25 @@ export default function NameServers() {
 	);
 
 	return (
-		<PageLayout size="small" header={ <PageHeader title={ __( 'Name servers' ) } /> }>
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					prefix={
+						<Breadcrumbs
+							items={ [
+								{
+									label: __( 'Overview' ),
+									to: domainOverviewRoute.fullPath,
+									params: { domainName },
+								},
+							] }
+						/>
+					}
+					title={ __( 'Name servers' ) }
+				/>
+			}
+		>
 			<Card>
 				<CardBody>
 					<NameServersForm

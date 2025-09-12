@@ -14,7 +14,8 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { domainDnsAddRoute, domainRoute } from '../../app/router/domains';
+import { domainDnsAddRoute, domainRoute, domainOverviewRoute } from '../../app/router/domains';
+import { Breadcrumbs } from '../../components/breadcrumbs';
 import { DataViewsCard } from '../../components/dataviews-card';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
@@ -285,6 +286,17 @@ export default function DomainDns() {
 				<VStack>
 					<PageHeader
 						title={ __( 'DNS records' ) }
+						prefix={
+							<Breadcrumbs
+								items={ [
+									{
+										label: __( 'Overview' ),
+										to: domainOverviewRoute.fullPath,
+										params: { domainName },
+									},
+								] }
+							/>
+						}
 						actions={
 							<>
 								<ImportBindFileButton
