@@ -9,11 +9,11 @@ import { useSendOdieFeedback } from '../../data';
 import type { Message } from '../../types';
 
 const BotMessageActions = ( { message }: { message: Message } ) => {
-	const { setMessageLikedStatus, trackEvent, setChatStatus } = useOdieAssistantContext();
+	const { setMessageLikedStatus, trackEvent } = useOdieAssistantContext();
 	const { mutateAsync: sendOdieMessageFeedback } = useSendOdieFeedback();
 	const [ isCopied, setIsCopied ] = useState( false );
 
-	const liked = message.rating_value?.toString() === '1' || message.liked;
+	const liked = message.rating_value?.toString() === '1' || message.liked || false;
 	const notLiked = message.rating_value?.toString() === '0' || message.liked === false;
 	const rated = liked || notLiked;
 
@@ -24,11 +24,6 @@ const BotMessageActions = ( { message }: { message: Message } ) => {
 		} );
 
 		setMessageLikedStatus( message, isHelpful );
-		if ( ! isHelpful ) {
-			setTimeout( () => {
-				setChatStatus( 'dislike' );
-			}, 1000 );
-		}
 
 		trackEvent( 'chat_message_action_feedback', {
 			action: 'feedback',
