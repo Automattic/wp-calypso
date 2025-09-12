@@ -1,17 +1,13 @@
 import { Site } from '@automattic/api-core';
 import { sitePluginActivateMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import {
-	__experimentalVStack as VStack,
-	__experimentalHStack as HStack,
-	__experimentalText as Text,
-	Button,
-} from '@wordpress/components';
 import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
+import ActionRenderModal, { getModalHeader } from '../manage/components/action-render-modal';
 import { buildBulkSitesPluginAction } from '../manage/utils';
 import { usePlugin } from './use-plugin';
+import type { PluginListRow } from '../manage/types';
 
 const defaultView: View = {
 	type: 'table',
@@ -20,90 +16,9 @@ const defaultView: View = {
 	titleField: 'domain',
 };
 
-const ActionRenderModal = ( { actionId, item, closeModal, onExecute, pluginId } ) => {
-	const [ isBusy, setIsBusy ] = useState( false );
-
-	const handleConfirm = async () => {
-		setIsBusy( true );
-		try {
-			const { successCount, errorCount } = await onExecute( [
-				{ id: pluginId, siteIds: [ item.ID ] },
-			] );
-
-			console.debug( 'successCount', successCount );
-			console.debug( 'errorCount', errorCount );
-			// if ( successCount > 0 ) {
-			// 	const prefix = buildSuccessPrefix( actionId, items );
-			// 	createSuccessNotice(
-			// 		sprintf(
-			// 			// translators: %d is the number of sites.
-			// 			_n( '%1$s on %2$d site', '%1$s on %2$d sites', successCount, 'next-admin' ),
-			// 			prefix,
-			// 			successCount
-			// 		),
-			// 		{
-			// 			type: 'snackbar',
-			// 		}
-			// 	);
-			// }
-			// if ( errorCount > 0 ) {
-			// 	const errorPrefix = buildErrorPrefix( actionId, items );
-			// 	createErrorNotice(
-			// 		sprintf(
-			// 			// translators: %d is the number of sites.
-			// 			_n( '%1$s on %2$d site', '%1$s on %2$d sites', errorCount, 'next-admin' ),
-			// 			errorPrefix,
-			// 			errorCount
-			// 		),
-			// 		{
-			// 			type: 'snackbar',
-			// 		}
-			// 	);
-			// }
-		} finally {
-			setIsBusy( false );
-			closeModal?.();
-		}
-	};
-
-	return (
-		<VStack spacing={ 4 }>
-			<Text>
-				{ sprintf(
-					// translators: %1$s is the plugin name. %2$d is the number of sites.
-					__( 'You are about to activate the %1$s plugin installed on %2$d sites.' ),
-					'foo',
-					1
-				) }
-			</Text>
-			<HStack justify="right">
-				<Button
-					__next40pxDefaultSize
-					variant="tertiary"
-					onClick={ closeModal }
-					disabled={ isBusy }
-					accessibleWhenDisabled
-				>
-					{ __( 'Cancel' ) }
-				</Button>
-				<Button
-					__next40pxDefaultSize
-					variant="primary"
-					onClick={ handleConfirm }
-					isBusy={ isBusy }
-					disabled={ isBusy }
-					accessibleWhenDisabled
-				>
-					{ __( 'Activate' ) }
-				</Button>
-			</HStack>
-		</VStack>
-	);
-};
-
 export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) => {
 	const [ view, setView ] = useState< View >( defaultView );
-	const { isLoading, pluginBySiteId, sitesWithThisPlugin } = usePlugin( pluginSlug );
+	const { isLoading, plugin, pluginBySiteId, sitesWithThisPlugin } = usePlugin( pluginSlug );
 
 	const fields = useMemo(
 		() => [
@@ -158,23 +73,22 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 				{
 					id: 'activate',
 					label: __( 'Activate' ),
-					modalHeader: __( 'Activate plugin' ),
+					modalHeader: getModalHeader( 'activate' ),
 					RenderModal: ( { items, closeModal } ) => {
 						const [ item ] = items;
-						console.debug( 'item', item );
 						const { mutateAsync } = useMutation( sitePluginActivateMutation() );
 						const action = buildBulkSitesPluginAction( mutateAsync );
+
 						return (
 							<ActionRenderModal
 								actionId="activate"
-								item={ item }
+								items={ [ { ...plugin, siteIds: [ item.ID ], sitesCount: 1 } as PluginListRow ] }
 								closeModal={ closeModal }
 								onExecute={ action }
-								pluginId={ pluginId }
 							/>
 						);
 					},
-					isEligible: ( item ) => ! item.isActive,
+					isEligible: ( item ) => ! item.isPluginActive,
 					supportsBulk: true,
 				},
 				{

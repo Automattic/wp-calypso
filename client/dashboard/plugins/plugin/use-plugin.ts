@@ -9,6 +9,10 @@ import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { useLocale } from '../../app/locale';
 
+interface SiteWithPluginActivationStatus extends Site {
+	isPluginActive: boolean;
+}
+
 export const usePlugin = ( pluginSlug: string ) => {
 	const locale = useLocale();
 	const { data: sitesPlugins, isLoading: isLoadingSitesPlugins } = useQuery( pluginsQuery() );
@@ -42,19 +46,15 @@ export const usePlugin = ( pluginSlug: string ) => {
 		? sites.reduce(
 				( acc, site ) => {
 					if ( siteIdsWithThisPlugin.includes( site.ID ) ) {
-						const isActive = pluginBySiteId.get( site.ID )?.active ?? false;
+						const isPluginActive = pluginBySiteId.get( site.ID )?.active ?? false;
 
-						if ( ! isActive ) {
-							console.debug( 'not active - site', site );
-						}
-
-						acc[ 0 ].push( { ...site, isActive } );
+						acc[ 0 ].push( { ...site, isPluginActive } );
 					} else {
 						acc[ 1 ].push( site );
 					}
 					return acc;
 				},
-				[ [], [] ] as [ Site[], Site[] ]
+				[ [], [] ] as [ SiteWithPluginActivationStatus[], Site[] ]
 		  )
 		: [ [], [] ];
 
@@ -64,6 +64,6 @@ export const usePlugin = ( pluginSlug: string ) => {
 		pluginBySiteId,
 		sitesWithThisPlugin,
 		sitesWithoutThisPlugin,
-		plugin: wpOrgPlugin || marketplacePlugin || pluginData,
+		plugin: pluginData || wpOrgPlugin || marketplacePlugin,
 	};
 };
