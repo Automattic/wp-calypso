@@ -58,8 +58,9 @@ const BotMessageActions = ( { message }: { message: Message } ) => {
 
 	const messageActions = [
 		// Only show thumbs up if not already disliked
-		...( ! notLiked
-			? [
+		...( notLiked
+			? []
+			: [
 					{
 						id: 'thumbs-up',
 						icon: <ThumbsUpIcon />,
@@ -69,11 +70,11 @@ const BotMessageActions = ( { message }: { message: Message } ) => {
 						pressed: rated && liked,
 						tooltip: __( 'Yes, this was helpful', __i18n_text_domain__ ),
 					},
-			  ]
-			: [] ),
+			  ] ),
 		// Only show thumbs down if not already liked
-		...( ! liked
-			? [
+		...( liked
+			? []
+			: [
 					{
 						id: 'thumbs-down',
 						icon: <ThumbsDownIcon />,
@@ -83,8 +84,7 @@ const BotMessageActions = ( { message }: { message: Message } ) => {
 						pressed: rated && notLiked,
 						tooltip: __( 'No, this was not helpful', __i18n_text_domain__ ),
 					},
-			  ]
-			: [] ),
+			  ] ),
 		{
 			id: 'copy',
 			icon: isCopied ? <Icon icon={ check } size={ 24 } /> : <CopyIcon />,
