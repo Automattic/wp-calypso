@@ -14,6 +14,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import FlashMessage from '../../components/flash-message';
 import { Text } from '../../components/text';
 import type { Field } from '@wordpress/dataviews';
 
@@ -114,6 +115,7 @@ export default function PreferencesLanguageForm() {
 
 	return (
 		<Card>
+			<FlashMessage value="dashboard" message={ __( 'Successfully saved preference.' ) } />
 			<CardBody>
 				<VStack as="form" onSubmit={ handleSubmit } spacing={ 6 } alignment="flex-start">
 					<DataForm< OptInFormData >
