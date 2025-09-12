@@ -395,6 +395,25 @@ export default function SyncModal( {
 
 	const showDomainConfirmation = targetEnvironment === 'production' && ! isLoadingBackupAttempt;
 
+	const calculateWarningPaddingBottom = useCallback( () => {
+		const basePadding = showDomainConfirmation ? '130px' : '40px';
+
+		let extraPadding = '0px';
+		if ( hasWarning ) {
+			if ( isFileBrowserVisible && showWooCommerceWarning ) {
+				extraPadding = '180px';
+			} else if ( isFileBrowserVisible ) {
+				extraPadding = '110px';
+			} else if ( showWooCommerceWarning ) {
+				extraPadding = '180px';
+			} else {
+				extraPadding = '120px';
+			}
+		}
+
+		return `calc(${ basePadding } + ${ extraPadding })`;
+	}, [ showDomainConfirmation, hasWarning, isFileBrowserVisible, showWooCommerceWarning ] );
+
 	// Allow button if there is no backup if the confirmation passes
 	// regardless of browserCheckList
 	const isButtonDisabled =
@@ -415,33 +434,7 @@ export default function SyncModal( {
 			<VStack
 				spacing={ 5 }
 				style={ {
-					paddingBottom: ( () => {
-						let basePadding = '0px';
-						let extraPadding = '0px';
-
-						// Add base padding when NO domain confirmation (footer is smaller)
-						if ( ! showDomainConfirmation ) {
-							basePadding = '40px'; // Base padding for normal footer
-						}
-
-						// Add extra padding when domain confirmation appears
-						if ( showDomainConfirmation ) {
-							basePadding = '130px'; // Padding for domain confirmation footer
-						}
-
-						// Add warning padding
-						if ( hasWarning && isFileBrowserVisible && showWooCommerceWarning ) {
-							extraPadding = '180px'; // Warning + file browser + WooCommerce warning
-						} else if ( hasWarning && isFileBrowserVisible ) {
-							extraPadding = '110px'; // Warning + file browser
-						} else if ( hasWarning && showWooCommerceWarning ) {
-							extraPadding = '180px'; // Warning + WooCommerce warning
-						} else if ( hasWarning ) {
-							extraPadding = '120px'; // Basic warning only
-						}
-
-						return `calc(${ basePadding } + ${ extraPadding })`;
-					} )(),
+					paddingBottom: calculateWarningPaddingBottom(),
 				} }
 			>
 				<Text>
