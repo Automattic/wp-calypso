@@ -178,6 +178,14 @@ $blueberry-color: #3858e9;
 				padding-right: 20px;
 			}
 		}
+
+		button[aria-pressed='true'] {
+			background-color: var( --studio-gray-5 );
+			opacity: 1;
+			svg {
+				color: var(--color-foreground);
+			}
+		}
 	}
 
 	&.odie-chatbox-message-error {
@@ -388,6 +396,7 @@ $blueberry-color: #3858e9;
 
 .odie-chatbox-message.odie-chatbox-message-bot.odie-chatbox-message-message {
 	flex-wrap: wrap;
+	flex-direction: column;
 }
 
 .odie-fullscreen {
@@ -486,17 +495,6 @@ $feedback-button-size: 28px;
 			pointer-events: none;
 		}
 	}
-}
-
-.odie-feedback-component-button-icon-disabled {
-	background-color: var( --color-surface );
-	pointer-events: none;
-	fill: var( --color-neutral-20 );
-}
-
-.odie-feedback-component-button-icon-pressed {
-	background-color: $blueberry-color;
-	fill: var( --color-text-inverted );
 }
 
 $custom-border-corner-size: 16px;

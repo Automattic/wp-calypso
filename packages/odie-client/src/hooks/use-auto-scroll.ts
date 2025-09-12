@@ -21,10 +21,6 @@ export const useAutoScroll = (
 			return;
 		}
 
-		if ( chat.status === 'dislike' ) {
-			return;
-		}
-
 		setIsScrolling( true );
 
 		if ( debounceTimeoutIdRef.current ) {

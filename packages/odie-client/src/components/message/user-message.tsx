@@ -1,7 +1,6 @@
 import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import clsx from 'clsx';
 import { ReactNode } from 'react';
 import {
 	getOdieForwardToForumsMessage,
@@ -18,12 +17,12 @@ import {
 	userProvidedEnoughInformation,
 	getIsRequestingHumanSupport,
 } from '../../utils';
+import BotMessageActions from './bot-message-actions';
 import CustomALink from './custom-a-link';
 import { DirectEscalationLink } from './direct-escalation-link';
 import { GetSupport } from './get-support';
 import { MarkdownOrChildren } from './mardown-or-children';
 import Sources from './sources';
-import WasThisHelpfulButtons from './was-this-helpful-buttons';
 import type { Message } from '../../types';
 
 const getDisplayMessage = (
@@ -60,10 +59,8 @@ const getDisplayMessage = (
 
 export const UserMessage = ( {
 	message,
-	isDisliked = false,
 	isMessageWithEscalationOption = false,
 }: {
-	isDisliked?: boolean;
 	message: Message;
 	isMessageWithEscalationOption?: boolean;
 } ) => {
@@ -93,8 +90,6 @@ export const UserMessage = ( {
 		forceEmailSupport,
 		message?.context?.flags?.is_error_message
 	);
-	const displayingThirdPartyMessage =
-		isUserEligibleForPaidSupport && ! canConnectToZendesk && isRequestingHumanSupport;
 
 	const isMessageShowingDisclaimer =
 		message.context?.question_tags?.inquiry_type !== 'request-for-human-support';
@@ -125,9 +120,6 @@ export const UserMessage = ( {
 			{ ! interactionHasZendeskEvent( currentSupportInteraction ) && (
 				<>
 					{ showDirectEscalationLink && <DirectEscalationLink messageId={ message.message_id } /> }
-					{ ! message.rating_value && (
-						<WasThisHelpfulButtons message={ message } isDisliked={ isDisliked } />
-					) }
 				</>
 			) }
 		</>
@@ -148,25 +140,25 @@ export const UserMessage = ( {
 				/>
 			</div>
 			{ isMessageWithEscalationOption && (
-				<div
-					className={ clsx( 'chat-feedback-wrapper', {
-						'chat-feedback-wrapper-no-extra-contact': ! isRequestingHumanSupport,
-						'chat-feedback-wrapper-third-party-cookies': displayingThirdPartyMessage,
-					} ) }
-				>
-					<Sources message={ message } />
-					{ isRequestingHumanSupport && (
-						<GetSupport
-							onClickAdditionalEvent={ ( destination ) => {
-								trackEvent( 'chat_get_support', {
-									location: 'user-message',
-									destination,
-								} );
-							} }
-						/>
+				<>
+					{ ! interactionHasZendeskEvent( currentSupportInteraction ) && (
+						<BotMessageActions message={ message } />
 					) }
-					{ isMessageShowingDisclaimer && renderDisclaimers() }
-				</div>
+					<div className="chat-feedback-wrapper">
+						<Sources message={ message } />
+						{ isRequestingHumanSupport && (
+							<GetSupport
+								onClickAdditionalEvent={ ( destination ) => {
+									trackEvent( 'chat_get_support', {
+										location: 'user-message',
+										destination,
+									} );
+								} }
+							/>
+						) }
+						{ isMessageShowingDisclaimer && renderDisclaimers() }
+					</div>
+				</>
 			) }
 		</>
 	);
