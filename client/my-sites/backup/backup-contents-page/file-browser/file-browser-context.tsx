@@ -4,6 +4,7 @@ import { useFileBrowserState } from './use-file-browser-state';
 
 interface FileBrowserContextValue {
 	fileBrowserState: FileBrowserStateActions;
+	locale: string;
 }
 
 const FileBrowserContext = createContext< FileBrowserContextValue | null >( null );
@@ -18,16 +19,17 @@ export const useFileBrowserContext = () => {
 
 interface FileBrowserProviderProps {
 	children: React.ReactNode;
+	locale: string;
 }
 
 /**
  * Provider that wraps backup pages with FileBrowser context
  */
-export function FileBrowserProvider( { children }: FileBrowserProviderProps ) {
+export function FileBrowserProvider( { children, locale }: FileBrowserProviderProps ) {
 	const fileBrowserState = useFileBrowserState();
 
 	return (
-		<FileBrowserContext.Provider value={ { fileBrowserState } }>
+		<FileBrowserContext.Provider value={ { fileBrowserState, locale } }>
 			{ children }
 		</FileBrowserContext.Provider>
 	);
