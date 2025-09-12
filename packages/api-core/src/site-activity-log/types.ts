@@ -3,7 +3,7 @@ export interface ActivityLogEntry {
 	actor: ActivityActor;
 	content: {
 		text: string;
-		range?: ActivityNotificationRange;
+		ranges?: ActivityNotificationRange[];
 	};
 	type: 'Announce'; // What else?
 	gridicon: string;
