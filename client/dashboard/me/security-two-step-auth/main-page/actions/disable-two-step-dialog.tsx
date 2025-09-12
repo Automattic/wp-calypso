@@ -102,9 +102,13 @@ export default function DisableTwoStepDialog( { onClose }: { onClose: () => void
 					onClose();
 				},
 				onError: ( e: Error ) => {
+					const errorMessage =
+						e.cause === 'invalid_code'
+							? __( 'You entered an invalid code. Please try again.' )
+							: e.message;
 					setError( {
 						title: __( 'Unable to disable two-step authentication' ),
-						message: e.message,
+						message: errorMessage,
 					} );
 				},
 			}
