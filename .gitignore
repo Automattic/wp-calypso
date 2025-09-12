@@ -133,3 +133,6 @@ packages/plans-grid-next/static/mockServiceWorker.js
 playwright-report/
 /cookies
 output/
+
+# Claude settings
+CLAUDE.md
