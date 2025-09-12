@@ -197,6 +197,7 @@ $blueberry-color: #3858e9;
 
 		.odie-sources-foldable-card {
 			box-shadow: none;
+			margin-bottom: 0;
 
 			&:not(.is-expanded) {
 				.foldable-card__content {
@@ -223,8 +224,12 @@ $blueberry-color: #3858e9;
 
 			.foldable-card__content {
 				margin-top: 12px;
-				border: 1px solid var(--color-neutral-5);
-				border-radius: 8px;
+				border: none;
+
+				.odie-chatbox-message-sources {
+					border: 1px solid var(--color-neutral-5);
+					border-radius: 8px;
+				}
 
 				.odie-support-doc-link__link {
 					a {
@@ -239,16 +244,14 @@ $blueberry-color: #3858e9;
 		}
 
 		.disclaimer {
-			$disclaimer-font-color: #000;
-
-			color: #000;
+			color: var( --studio-gray-20 );
 			font-size: $font-body-extra-small;
 			text-align: start;
-			margin: 16px 0;
+			margin: 8px 0;
 
 			.odie-button-link,
 			.components-external-link {
-				color: $blueberry-color;
+				color: var( --studio-gray-20 );
 			}
 		}
 	}
