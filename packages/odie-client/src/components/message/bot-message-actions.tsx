@@ -13,7 +13,7 @@ const BotMessageActions = ( { message }: { message: Message } ) => {
 	const { mutateAsync: sendOdieMessageFeedback } = useSendOdieFeedback();
 	const [ isCopied, setIsCopied ] = useState( false );
 
-	const liked = message.rating_value?.toString() === '1' || message.liked || false;
+	const liked = message.rating_value?.toString() === '1' || message.liked;
 	const notLiked = message.rating_value?.toString() === '0' || message.liked === false;
 	const rated = liked || notLiked;
 
@@ -45,7 +45,7 @@ const BotMessageActions = ( { message }: { message: Message } ) => {
 			setIsCopied( true );
 			setTimeout( () => {
 				setIsCopied( false );
-			}, 2000 );
+			}, 1000 );
 
 			trackEvent( 'chat_message_action_copy', {
 				action: 'copy',
