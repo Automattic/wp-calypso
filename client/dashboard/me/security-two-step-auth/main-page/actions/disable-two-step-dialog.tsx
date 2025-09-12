@@ -197,6 +197,7 @@ export default function DisableTwoStepDialog( { onClose }: { onClose: () => void
 							{ __( 'Cancel' ) }
 						</Button>
 						<Button
+							isDestructive
 							variant="primary"
 							onClick={ handleSubmit }
 							isBusy={ isValidateTwoStepCodePending }
