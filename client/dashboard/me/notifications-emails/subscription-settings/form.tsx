@@ -1,7 +1,7 @@
 import { UserSettings } from '@automattic/api-core';
-import { CheckboxControl } from '@wordpress/components';
+import { CheckboxControl, SelectControl } from '@wordpress/components';
 import { DataForm, Field, type Form } from '@wordpress/dataviews';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useCallback, useMemo } from 'react';
 import InlineSupportLink from '../../../components/inline-support-link';
 
@@ -70,6 +70,14 @@ const baseFields: Field< SettingsData >[] = [
 		id: 'subscription_delivery_hour',
 		label: __( 'Hour' ),
 		type: 'integer' as const,
+		description: sprintf(
+			// translators: %s is the timezone E.g. America/New_York
+			__( 'Timezone: %(timezone)s' ),
+			{
+				context: 'Timezone description',
+				timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+			}
+		),
 		elements: [
 			...Array.from( { length: 12 }, ( _, i ) => {
 				const startHour = i * 2;
@@ -83,6 +91,27 @@ const baseFields: Field< SettingsData >[] = [
 				};
 			} ),
 		],
+		Edit: ( { field, data, onChange } ) => {
+			const { id, getValue } = field;
+			return (
+				<SelectControl
+					label={ field.label }
+					value={ getValue( { item: data } ) }
+					options={ field.elements ?? [] }
+					help={ field.description }
+					onChange={ ( value ) => {
+						onChange( { [ id ]: parseInt( value ) } );
+					} }
+					__nextHasNoMarginBottom
+				>
+					{ field.elements?.map( ( element ) => (
+						<option key={ element.value } value={ element.value }>
+							{ element.label }
+						</option>
+					) ) }
+				</SelectControl>
+			);
+		},
 	},
 	{
 		id: 'subscription_delivery_jabber_default',
