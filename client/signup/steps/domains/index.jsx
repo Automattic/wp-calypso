@@ -50,10 +50,7 @@ import {
 	domainTransfer,
 	updatePrivacyForDomain,
 	planItem,
-	hasPlan,
-	hasDomainRegistration,
 	getDomainsInCart,
-	hasPersonalPlan,
 } from 'calypso/lib/cart-values/cart-items';
 import {
 	getDomainProductSlug,
@@ -222,30 +219,6 @@ class RenderDomainsStepComponent extends Component {
 	componentDidMount() {
 		if ( isTailoredSignupFlow( this.props.flowName ) ) {
 			triggerGuidesForStep( this.props.flowName, 'domains' );
-		}
-
-		// We add a plan to cart on Multi Domains to show the proper discount on the mini-cart.
-		if (
-			shouldUseMultipleDomainsInCart( this.props.flowName ) &&
-			hasDomainRegistration( this.props.cart ) &&
-			this.props.multiDomainDefaultPlan
-		) {
-			// This call is expensive, so we only do it if the mini-cart hasDomainRegistration.
-			this.props.shoppingCartManager.addProductsToCart( [ this.props.multiDomainDefaultPlan ] );
-		}
-	}
-
-	componentDidUpdate( prevProps ) {
-		if ( prevProps?.cart?.products?.length !== this.props?.cart?.products?.length ) {
-			if (
-				shouldUseMultipleDomainsInCart( this.props.flowName ) &&
-				hasDomainRegistration( this.props.cart ) &&
-				! hasPersonalPlan( this.props.cart ) &&
-				this.props.multiDomainDefaultPlan
-			) {
-				// This call is expensive, so we only do it if the mini-cart hasDomainRegistration.
-				this.props.shoppingCartManager.addProductsToCart( [ this.props.multiDomainDefaultPlan ] );
-			}
 		}
 	}
 
@@ -762,10 +735,7 @@ class RenderDomainsStepComponent extends Component {
 
 			// We add a plan to cart on Multi Domains to show the proper discount on the mini-cart.
 			// TODO: remove productsToAdd
-			const productsToAdd =
-				! hasPlan( this.props.cart ) && this.props.multiDomainDefaultPlan
-					? [ registration, this.props.multiDomainDefaultPlan ]
-					: [ registration ];
+			const productsToAdd = [ registration ];
 
 			// Replace the products in the cart with the freshly sorted products.
 			clearTimeout( this.state.addDomainTimeout );
