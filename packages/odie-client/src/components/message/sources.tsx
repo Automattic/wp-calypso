@@ -50,7 +50,6 @@ export const Sources = ( { message }: { message: Message } ) => {
 			expandedSummary={ __( 'Sources', __i18n_text_domain__ ) }
 			summary={ __( 'Sources', __i18n_text_domain__ ) }
 			smooth
-			expanded
 			onClose={ () =>
 				trackEvent( 'chat_message_action_sources', {
 					action: 'close',
