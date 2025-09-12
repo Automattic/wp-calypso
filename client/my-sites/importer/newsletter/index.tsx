@@ -15,15 +15,14 @@ import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-q
 import { useCompleteImportSubscribersTask } from 'calypso/my-sites/subscribers/hooks/use-complete-import-subscribers-task';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { LogoChain, SelectNewsletterForm } from './components';
 import Content from './content';
-import LogoChain from './logo-chain';
-import SelectNewsletterForm from './select-newsletter-form';
 import Subscribers from './subscribers';
 import Summary from './summary';
 import { EngineTypes } from './types';
 import { getStepsProgress, getImporterStatus } from './utils';
 
-import './importer.scss';
+import './style.scss';
 
 const stepSlugs: StepId[] = [ 'content', 'subscribers', 'summary' ];
 

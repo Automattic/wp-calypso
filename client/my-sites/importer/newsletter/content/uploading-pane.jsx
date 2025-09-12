@@ -22,8 +22,6 @@ import {
 	getUploadPercentComplete,
 } from 'calypso/state/imports/uploads/selectors';
 
-import './uploading-pane.scss';
-
 const noop = () => {};
 
 export class UploadingPane extends PureComponent {
@@ -38,6 +36,7 @@ export class UploadingPane extends PureComponent {
 		percentComplete: PropTypes.number,
 		site: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
+			URL: PropTypes.string.isRequired,
 			single_user_site: PropTypes.bool.isRequired,
 		} ).isRequired,
 		optionalUrl: PropTypes.shape( {

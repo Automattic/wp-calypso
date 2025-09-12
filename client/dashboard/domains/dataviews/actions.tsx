@@ -1,15 +1,8 @@
 import { DomainTransferStatus, DomainSubtype } from '@automattic/api-core';
 import { userPurchasesQuery, siteSetPrimaryDomainMutation } from '@automattic/api-queries';
-import { useMyDomainInputMode } from '@automattic/domains-table/src/utils/constants';
 import { isFreeUrlDomainName } from '@automattic/domains-table/src/utils/is-free-url-domain-name';
-import {
-	domainManagementDNS,
-	domainManagementEditContactInfo,
-	domainManagementLink,
-	domainMappingSetup,
-	domainUseMyDomain,
-} from '@automattic/domains-table/src/utils/paths';
 import { useQuery, useMutation } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
 import { Icon } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { sprintf, __ } from '@wordpress/i18n';
@@ -17,12 +10,19 @@ import { payment, tool } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, Suspense, lazy } from 'react';
 import {
+	domainOverviewRoute,
+	domainDnsRoute,
+	domainContactInfoRoute,
+	domainConnectionSetupRoute,
+	domainTransferToAnyUserRoute,
+	domainTransferToOtherSiteRoute,
+} from '../../app/router/domains';
+import {
 	isRecentlyRegistered,
 	isDomainRenewable,
 	isDomainUpdatable,
 	isDomainInGracePeriod,
 	canSetAsPrimary,
-	getDomainSiteSlug,
 	getDomainRenewalUrl,
 } from '../../utils/domain';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
@@ -39,10 +39,10 @@ const SiteChangeAddressContent = lazy(
 const noop = () => {};
 
 export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
+	const router = useRouter();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: purchases } = useQuery( userPurchasesQuery() );
 	const setPrimaryDomainMutation = useMutation( siteSetPrimaryDomainMutation() );
-	const context = site ? 'site' : 'domains';
 	const actions: Action< DomainSummary >[] = useMemo(
 		() => [
 			{
@@ -71,10 +71,13 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				label: __( 'Set up connection' ),
 				callback: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
-					const siteSlug = getDomainSiteSlug( domain );
 
-					// Use href instead of pathname to preserve query parameters.
-					window.location.href = domainMappingSetup( siteSlug, domain.domain );
+					router.navigate( {
+						to: domainConnectionSetupRoute.fullPath,
+						params: {
+							domainName: domain.domain,
+						},
+					} );
 				},
 				isEligible: ( item: DomainSummary ) =>
 					item.subtype.id === DomainSubtype.DOMAIN_CONNECTION && ! item.points_to_wpcom,
@@ -90,8 +93,13 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				supportsBulk: false,
 				callback: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
-					const siteSlug = getDomainSiteSlug( domain );
-					window.location.pathname = domainManagementLink( domain, siteSlug, false );
+
+					router.navigate( {
+						to: domainOverviewRoute.fullPath,
+						params: {
+							domainName: domain.domain,
+						},
+					} );
 				},
 				isEligible: ( item: DomainSummary ) => {
 					return item.subtype.id !== DomainSubtype.DEFAULT_ADDRESS;
@@ -103,8 +111,13 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				supportsBulk: false,
 				callback: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
-					const siteSlug = getDomainSiteSlug( domain );
-					window.location.pathname = domainManagementDNS( siteSlug, domain.domain, context );
+
+					router.navigate( {
+						to: domainDnsRoute.fullPath,
+						params: {
+							domainName: domain.domain,
+						},
+					} );
 				},
 				isEligible: ( item: DomainSummary ) => {
 					return (
@@ -120,13 +133,13 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				supportsBulk: false,
 				callback: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
-					const siteSlug = getDomainSiteSlug( domain );
-					window.location.pathname = domainManagementEditContactInfo(
-						siteSlug,
-						domain.domain,
-						null,
-						context
-					);
+
+					router.navigate( {
+						to: domainContactInfoRoute.fullPath,
+						params: {
+							domainName: domain.domain,
+						},
+					} );
 				},
 				isEligible: ( item: DomainSummary ) => {
 					return (
@@ -189,12 +202,13 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				supportsBulk: false,
 				callback: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
-					const siteSlug = getDomainSiteSlug( domain );
-					window.location.pathname = domainUseMyDomain(
-						siteSlug,
-						domain.domain,
-						useMyDomainInputMode.transferDomain
-					);
+
+					router.navigate( {
+						to: domainTransferToAnyUserRoute.fullPath,
+						params: {
+							domainName: domain.domain,
+						},
+					} );
 				},
 				isEligible: ( item: DomainSummary ) => {
 					return isTransferrableToWpcom( item );
@@ -204,7 +218,16 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 				id: 'connect-to-site',
 				label: __( 'Attach to an existing site' ),
 				supportsBulk: false,
-				callback: () => {},
+				callback: ( items: DomainSummary[] ) => {
+					const domain = items[ 0 ];
+
+					router.navigate( {
+						to: domainTransferToOtherSiteRoute.fullPath,
+						params: {
+							domainName: domain.domain,
+						},
+					} );
+				},
 				isEligible: () => false,
 			},
 			{
@@ -237,7 +260,7 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 		[
 			user,
 			site,
-			context,
+			router,
 			purchases,
 			setPrimaryDomainMutation,
 			createSuccessNotice,

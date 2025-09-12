@@ -213,6 +213,8 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 		enabled: !! productionSiteId && isStagingSiteDeleting,
 	} );
 
+	const { createSuccessNotice, createNotice, createErrorNotice } = useDispatch( noticesStore );
+
 	// Clean up deletion flag when staging site no longer exists
 	useEffect( () => {
 		const invalidateQueries = async (
@@ -232,6 +234,9 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 			productionSite &&
 			stagingSiteId
 		) {
+			createSuccessNotice( __( 'Staging site deleted.' ), {
+				type: 'snackbar',
+			} );
 			invalidateQueries( productionSiteId, productionSite?.slug, stagingSiteId );
 		}
 	}, [
@@ -241,9 +246,9 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 		stagingSiteId,
 		productionSiteId,
 		productionSite,
+		createSuccessNotice,
 	] );
 
-	const { createSuccessNotice, createNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { setShowHelpCenter, setNavigateToRoute } = useHelpCenter();
 
 	const isStagingSiteReady =
@@ -275,7 +280,7 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 
 	const mutation = useMutation( stagingSiteCreateMutation( productionSite?.ID ?? 0 ) );
 
-	const { data: hasValidQuota } = useQuery( {
+	const { data: hasValidQuota, error: isErrorValidQuota } = useQuery( {
 		...hasValidQuotaQuery( productionSite?.ID ?? 0 ),
 		enabled: !! productionSite?.ID && ! stagingSite && ! isStagingSiteCreating,
 		meta: {
@@ -290,6 +295,27 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 
 	const handleAddStagingSite = () => {
 		recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_click' );
+
+		if ( isErrorValidQuota ) {
+			createNotice(
+				'error',
+				__( 'Cannot add a staging site due to site quota validation issue.' ),
+				{
+					type: 'snackbar',
+					actions: [
+						{
+							label: __( 'Contact support' ),
+							url: null,
+							onClick: () => {
+								setNavigateToRoute( '/odie' );
+								setShowHelpCenter( true );
+							},
+						},
+					],
+				}
+			);
+			return;
+		}
 
 		if ( ! hasValidQuota ) {
 			createErrorNotice(

@@ -13,6 +13,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { pluginsPath } from 'calypso/my-sites/marketing/paths';
 import { useSelector } from 'calypso/state';
 import { useActivityPubStatus } from 'calypso/state/activitypub/use-activitypub-status';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import * as T from 'calypso/types';
@@ -30,6 +31,7 @@ export default function MarketingTools() {
 	const searchRef = useRef< ImperativeHandle >( null );
 	const selectedSiteSlug: T.SiteSlug | null = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId ) || 0;
+	const isPrivate = useSelector( ( state ) => isPrivateSite( state, siteId ) );
 	const items = [
 		{ key: '', text: translate( 'All' ) },
 		{ key: 'new', text: translate( 'New tools' ) },
@@ -49,7 +51,8 @@ export default function MarketingTools() {
 		selectedSiteSlug,
 		translate,
 		localizeUrl,
-		activityPubStatus
+		activityPubStatus,
+		isPrivate
 	);
 
 	const marketingFeaturesFiltered = useMemo( () => {
