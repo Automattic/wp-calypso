@@ -168,7 +168,9 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 							const site = await resolveSelect( SITE_STORE ).getSite(
 								providedDependencies.siteSlug
 							);
-							window.location.replace( site.URL );
+							window.location.replace(
+								`${ site.URL }/wp-admin/site-editor.php?canvas=edit&p=%2F&checkout=success`
+							);
 						}
 					}
 					return;
