@@ -21,7 +21,7 @@ export default function PurchasesModal( { onClose }: PurchasesModalProps ) {
 				<Text>
 					{ createInterpolateElement(
 						__(
-							'To delete your account, you‘ll need to cancel any active purchases in <a>Manage Purchases</a> before proceeding.'
+							'To delete your account, you‘ll need to <a>cancel any active purchases</a> before proceeding.'
 						),
 						{
 							a: <RouterLinkButton variant="link" to="/me/billing/purchases" />,
