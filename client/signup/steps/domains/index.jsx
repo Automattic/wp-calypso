@@ -17,7 +17,7 @@ import {
 } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
-import { getQueryArg } from '@wordpress/url';
+import { getQueryArg, getProtocol } from '@wordpress/url';
 import { withViewportMatch } from '@wordpress/viewport';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -1646,6 +1646,12 @@ class RenderDomainsStepComponent extends Component {
 			} else if ( backUrl === this.removeQueryParam( this.props.path ) ) {
 				backUrl = defaultBackUrl;
 				backLabelText = sitesBackLabelText;
+			}
+
+			const backTo = getQueryArg( window.location.href, 'back_to' );
+			if ( backTo && ! backTo.startsWith( '//' ) && ! getProtocol( backTo ) ) {
+				backUrl = backTo;
+				backLabelText = translate( 'Back' );
 			}
 
 			const externalBackUrl = getExternalBackUrl( source, stepSectionName );
