@@ -27,11 +27,19 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
+		flex: 1;
 	}
 
 	.domain-search--initial-state {
 		width: 100%;
 		max-width: var( --domain-search-initial-state-max-width );
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.domain-search--initial-state__already-own-domain-cta {
+		margin-top: auto !important;
 	}
 
 	.domain-search--results {

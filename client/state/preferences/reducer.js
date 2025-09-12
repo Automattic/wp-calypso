@@ -91,12 +91,24 @@ const lastFetchedTimestamp = ( state = false, action ) => {
 	return state;
 };
 
+const lastSaveError = ( state = null, action ) => {
+	switch ( action.type ) {
+		case PREFERENCES_SAVE_SUCCESS:
+			return null;
+		case PREFERENCES_SAVE_FAILURE:
+			return action.error;
+		default:
+			return state;
+	}
+};
+
 const combinedReducer = combineReducers( {
 	localValues,
 	remoteValues,
 	fetching,
 	saving,
 	lastFetchedTimestamp,
+	lastSaveError,
 } );
 const preferencesReducer = withStorageKey( 'preferences', combinedReducer );
 export default preferencesReducer;

@@ -1,4 +1,4 @@
-import { DomainTypes, DomainTransferStatus } from '@automattic/api-core';
+import { DomainTransferStatus, DomainSubtype } from '@automattic/api-core';
 import { userPurchasesQuery, siteSetPrimaryDomainMutation } from '@automattic/api-queries';
 import { useMyDomainInputMode } from '@automattic/domains-table/src/utils/constants';
 import { isFreeUrlDomainName } from '@automattic/domains-table/src/utils/is-free-url-domain-name';
@@ -77,13 +77,13 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 					window.location.href = domainMappingSetup( siteSlug, domain.domain );
 				},
 				isEligible: ( item: DomainSummary ) =>
-					item.type === DomainTypes.MAPPED && ! item.points_to_wpcom,
+					item.subtype.id === DomainSubtype.DOMAIN_CONNECTION && ! item.points_to_wpcom,
 			},
 			{
 				id: 'manage-domain',
 				label: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
-					return domain.type === DomainTypes.TRANSFER
+					return domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER
 						? __( 'View transfer' )
 						: __( 'View settings' );
 				},
@@ -94,7 +94,7 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 					window.location.pathname = domainManagementLink( domain, siteSlug, false );
 				},
 				isEligible: ( item: DomainSummary ) => {
-					return item.type !== DomainTypes.WPCOM;
+					return item.subtype.id !== DomainSubtype.DEFAULT_ADDRESS;
 				},
 			},
 			{
@@ -110,7 +110,7 @@ export const useActions = ( { user, site }: { user: User; site?: Site } ) => {
 					return (
 						item.can_manage_dns_records &&
 						item.transfer_status !== DomainTransferStatus.PENDING_ASYNC &&
-						item.type !== DomainTypes.SITE_REDIRECT
+						item.subtype.id !== DomainSubtype.SITE_REDIRECT
 					);
 				},
 			},

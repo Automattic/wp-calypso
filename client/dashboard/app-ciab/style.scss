@@ -1,0 +1,50 @@
+@import '@wordpress/base-styles/colors';
+
+/**
+ * DotCom theme variables for dashboard
+ */
+
+:root {
+	// Theme
+	--wp-admin-theme-color: #3858e9;
+	--wp-admin-theme-color--rgb: 56, 88, 233;
+	--wp-admin-theme-color-darker-10: #2145e6;
+	--wp-admin-theme-color-darker-10--rgb: 33, 69, 230;
+	--wp-admin-theme-color-darker-20: #183ad6;
+	--wp-admin-theme-color-darker-20--rgb: 24, 58, 214;
+	--wp-admin-border-width-focus: 2px;
+
+	// Layout
+	--dashboard__background-color: #fcfcfc;
+	--dashboard__background-color-success: #3ca758;
+	--dashboard__background-color-warning: #d47608;
+	--dashboard__background-color-error: #{$alert-red};
+	--dashboard__foreground-color-success: #21873b;
+	--dashboard__foreground-color-warning: #b36100;
+	--dashboard__foreground-color-error: #{$alert-red};
+	--dashboard__text-color: #{$gray-900};
+	--dashboard__text-max-width: 660px;
+
+	// Header bar
+	--dashboard-header__background-color: rgba(252, 252, 252, 0.90);
+	--dashboard-header__support-background-color: rgba(252, 165, 0, 0.5);
+	--dashboard-header__color: #{$gray-900};
+	--dashboard-header__border-color: #{$gray-100};
+	--dashboard-header__divider-color: #{$gray-200};
+
+	// Menu
+	--dashboard-menu-item__color: #{$gray-700};
+	--dashboard-menu-item-active__color: #{$black};
+
+	// Secondary menu
+	--dashboard-secondary-menu-item__color: #{$gray-900};
+
+	// Headings
+	--dashboard-h1__font-size: 40px;
+	--dashboard-h1__font-weight: 400;
+	--dashboard-h1__line-height: 54px;
+	--dashboard-h1__font-family: Recoleta, sans-serif;
+
+	// Overview
+	--dashboard-overview__divider-color: #{$gray-100};
+}
