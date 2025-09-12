@@ -280,7 +280,7 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 
 	const mutation = useMutation( stagingSiteCreateMutation( productionSite?.ID ?? 0 ) );
 
-	const { data: hasValidQuota } = useQuery( {
+	const { data: hasValidQuota, error: isErrorValidQuota } = useQuery( {
 		...hasValidQuotaQuery( productionSite?.ID ?? 0 ),
 		enabled: !! productionSite?.ID && ! stagingSite && ! isStagingSiteCreating,
 		meta: {
@@ -295,6 +295,27 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 
 	const handleAddStagingSite = () => {
 		recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_click' );
+
+		if ( isErrorValidQuota ) {
+			createNotice(
+				'error',
+				__( 'Cannot add a staging site due to site quota validation issue.' ),
+				{
+					type: 'snackbar',
+					actions: [
+						{
+							label: __( 'Contact support' ),
+							url: null,
+							onClick: () => {
+								setNavigateToRoute( '/odie' );
+								setShowHelpCenter( true );
+							},
+						},
+					],
+				}
+			);
+			return;
+		}
 
 		if ( ! hasValidQuota ) {
 			createErrorNotice(

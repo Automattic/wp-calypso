@@ -5,8 +5,8 @@ import { __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useDispatch } from 'calypso/state';
-import { setNodeCheckState } from 'calypso/state/rewind/browser/actions';
 import { PREPARE_DOWNLOAD_STATUS } from './constants';
+import { useFileBrowserContext } from './file-browser-context';
 import FilePreview from './file-preview';
 import {
 	onPreparingDownloadError,
@@ -45,6 +45,8 @@ function FileInfoCard( {
 }: FileInfoCardProps ) {
 	const moment = useLocalizedMoment();
 	const dispatch = useDispatch();
+	const { fileBrowserState } = useFileBrowserContext();
+	const { setNodeCheckState } = fileBrowserState;
 
 	const {
 		isSuccess,
@@ -175,10 +177,10 @@ function FileInfoCard( {
 
 	const restoreFile = useCallback( () => {
 		// Reset checklist
-		dispatch( setNodeCheckState( siteId, '/', 'unchecked' ) );
+		setNodeCheckState( '/', 'unchecked' );
 
 		// Mark this file as selected
-		dispatch( setNodeCheckState( siteId, path, 'checked' ) );
+		setNodeCheckState( path, 'checked' );
 
 		// Request granular restore
 		onRequestGranularRestore( siteSlug, rewindId );
@@ -189,8 +191,7 @@ function FileInfoCard( {
 			...( hasCredentials !== undefined && { has_credentials: hasCredentials } ),
 		} );
 	}, [
-		dispatch,
-		siteId,
+		setNodeCheckState,
 		path,
 		onRequestGranularRestore,
 		siteSlug,
