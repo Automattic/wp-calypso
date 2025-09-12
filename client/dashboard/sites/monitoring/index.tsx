@@ -21,6 +21,7 @@ import PageLayout from '../../components/page-layout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { hasHostingFeature } from '../../utils/site-features';
 import MonitoringCard from '../monitoring-card';
+import MonitoringPerformanceCard from '../monitoring-performance-card';
 import illustrationUrl from './monitoring-callout-illustration.svg';
 import type { Site } from '@automattic/api-core';
 
@@ -101,14 +102,7 @@ function SiteMonitoringBody( {
 		<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
 			<Text variant="muted">{ getDateRange( timeRange, locale ) }</Text>
 
-			<MonitoringCard
-				title={ __( 'Server performance' ) }
-				description={ __( 'Requests per minute and average server response time.' ) }
-				onDownloadClick={ () => {} }
-				onAnchorClick={ () => {} }
-			>
-				[Server performance graph]
-			</MonitoringCard>
+			<MonitoringPerformanceCard site={ site } timeRange={ hoursMap[ timeRange ] } />
 
 			<HStack wrap alignment="stretch" spacing={ isSmallViewport ? 4 : 8 }>
 				<MonitoringCard

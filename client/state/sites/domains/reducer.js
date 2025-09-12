@@ -23,6 +23,10 @@ import {
 	DOMAIN_MARK_AS_PENDING_MOVE,
 	DOMAIN_MANAGEMENT_PRIMARY_DOMAIN_SAVE_SUCCESS,
 	DOMAIN_MANAGEMENT_PRIMARY_DOMAIN_UPDATE,
+	DOMAIN_DETAILS_RECEIVE,
+	DOMAIN_DETAILS_REQUEST,
+	DOMAIN_DETAILS_REQUEST_FAILURE,
+	DOMAIN_DETAILS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { itemsSchema } from './schema';
@@ -36,13 +40,24 @@ import { itemsSchema } from './schema';
  * @returns {any} - new copy of the state
  */
 const modifySiteDomainObjectImmutable = ( state, siteId, domain, modifyDomainProperties ) => {
+	// state[ siteId ] might not be defined yet when using the `domain-details` query
+	if ( ! state[ siteId ] ) {
+		return Object.assign( {}, state, {
+			[ siteId ]: [ { ...modifyDomainProperties } ],
+		} );
+	}
+
 	// Find the domain we want to update
 	const targetDomain = find( state[ siteId ], { domain: domain } );
 	const domainIndex = state[ siteId ].indexOf( targetDomain );
 	// Copy as we shouldn't mutate original state
 	const newDomains = [ ...state[ siteId ] ];
 	// Update privacy
-	newDomains.splice( domainIndex, 1, Object.assign( {}, targetDomain, modifyDomainProperties ) );
+	if ( domainIndex === -1 ) {
+		newDomains.push( Object.assign( {}, targetDomain, modifyDomainProperties ) );
+	} else {
+		newDomains.splice( domainIndex, 1, Object.assign( {}, targetDomain, modifyDomainProperties ) );
+	}
 
 	return Object.assign( {}, state, {
 		[ siteId ]: newDomains,
@@ -95,6 +110,10 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 			return modifySiteDomainObjectImmutable( state, siteId, action.domain, {
 				isDnssecEnabled: true,
 				dnssecRecords: action.dnssecRecords,
+			} );
+		case DOMAIN_DETAILS_RECEIVE:
+			return modifySiteDomainObjectImmutable( state, siteId, action.domain, {
+				...action.domainDetails,
 			} );
 	}
 
@@ -176,6 +195,12 @@ export const requesting = ( state = {}, action ) => {
 			return Object.assign( {}, state, {
 				[ action.siteId ]: action.type === SITE_DOMAINS_REQUEST,
 			} );
+		case DOMAIN_DETAILS_REQUEST:
+		case DOMAIN_DETAILS_REQUEST_SUCCESS:
+		case DOMAIN_DETAILS_REQUEST_FAILURE:
+			return Object.assign( {}, state, {
+				[ action.domain ]: action.type === DOMAIN_DETAILS_REQUEST,
+			} );
 	}
 
 	return state;
@@ -198,6 +223,15 @@ export const errors = ( state = {}, action ) => {
 		case SITE_DOMAINS_REQUEST_FAILURE:
 			return Object.assign( {}, state, {
 				[ action.siteId ]: action.error,
+			} );
+		case DOMAIN_DETAILS_REQUEST:
+		case DOMAIN_DETAILS_REQUEST_SUCCESS:
+			return Object.assign( {}, state, {
+				[ action.domain ]: null,
+			} );
+		case DOMAIN_DETAILS_REQUEST_FAILURE:
+			return Object.assign( {}, state, {
+				[ action.domain ]: action.error,
 			} );
 	}
 

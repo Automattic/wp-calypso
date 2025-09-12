@@ -24,13 +24,17 @@
 import {
 	AppleLoginPage,
 	BlockWidgetEditorComponent,
+	DashboardPage,
+	DashboardVisibilitySettingsPage,
 	DataHelper,
 	EditorPage,
 	EmailClient,
 	envToFeatureKey,
 	envVariables,
 	getTestAccountByFeature,
+	IncognitoPage,
 	LoginPage,
+	NewSiteResponse,
 	PreviewComponent,
 	RestAPIClient,
 	Secrets,
@@ -40,8 +44,10 @@ import {
 	TestAccount,
 	ThemesDetailPage,
 	ThemesPage,
+	UserSignupPage,
 } from '@automattic/calypso-e2e';
 import { test as base, expect } from '@playwright/test';
+import { apiCloseAccount } from '../specs/shared';
 import { getAccount } from './get-account';
 
 export const test = base.extend< {
@@ -94,9 +100,21 @@ export const test = base.extend< {
 	 */
 	pageAppleLogin: AppleLoginPage;
 	/**
+	 * Page object representing the WordPress.com dashboard.
+	 */
+	pageDashboard: DashboardPage;
+	/**
+	 * Page object representing the WordPress.com dashboard visibility settings page.
+	 */
+	pageDashboardVisibilitySettings: DashboardVisibilitySettingsPage;
+	/**
 	 * Page object representing the WordPress editor page.
 	 */
 	pageEditor: EditorPage;
+	/**
+	 * Playwright `Page` representing an incognito browser context with no signed in state.
+	 */
+	pageIncognito: IncognitoPage;
 	/**
 	 * Page object representing the WordPress.com login page.
 	 */
@@ -113,6 +131,10 @@ export const test = base.extend< {
 	 * Secrets needed for end-to-end tests.
 	 */
 	secrets: Secrets;
+	/**
+	 * Creates a new site with public visibility for testing.
+	 */
+	sitePublic: NewSiteResponse;
 } >( {
 	accountGivenByEnvironment: async ( { page }, use ) => {
 		const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
@@ -161,9 +183,23 @@ export const test = base.extend< {
 		const appleLoginPage = new AppleLoginPage( page );
 		await use( appleLoginPage );
 	},
+	pageDashboard: async ( { page }, use ) => {
+		const dashboardPage = new DashboardPage( page );
+		await use( dashboardPage );
+	},
+	pageDashboardVisibilitySettings: async ( { page }, use ) => {
+		const dashboardVisibilitySettingsPage = new DashboardVisibilitySettingsPage( page );
+		await use( dashboardVisibilitySettingsPage );
+	},
 	pageEditor: async ( { page }, use ) => {
 		const editorPage = new EditorPage( page );
 		await use( editorPage );
+	},
+	pageIncognito: async ( { browser }, use ) => {
+		const incognitoPage = new IncognitoPage( browser );
+		await incognitoPage.spawn();
+		await use( incognitoPage );
+		await incognitoPage.close();
 	},
 	pageLogin: async ( { page }, use ) => {
 		const loginPage = new LoginPage( page );
@@ -180,6 +216,34 @@ export const test = base.extend< {
 	secrets: async ( {}, use ) => {
 		const secrets = SecretsManager.secrets;
 		await use( secrets );
+	},
+	sitePublic: async ( { page, helperData }, use ) => {
+		const testUser = helperData.getNewTestUser();
+		const siteName = helperData.getBlogName();
+		const loginPage = new LoginPage( page );
+		await loginPage.visit();
+		await loginPage.clickCreateNewAccount();
+		const userSignupPage = new UserSignupPage( page );
+		const newUserDetails = await userSignupPage.signupSocialFirstWithEmail( testUser.email );
+		const restAPIClient = new RestAPIClient(
+			{ username: testUser.username, password: testUser.password },
+			newUserDetails.body.bearer_token
+		);
+		const site = await restAPIClient.createSite( {
+			name: siteName,
+			title: siteName,
+		} );
+		await use( site );
+		await restAPIClient.deleteSite( {
+			id: site.blog_details.blogid,
+			domain: site.blog_details.url,
+		} );
+
+		await apiCloseAccount( restAPIClient, {
+			userID: newUserDetails.body.user_id,
+			username: newUserDetails.body.username,
+			email: testUser.email,
+		} );
 	},
 } );
 

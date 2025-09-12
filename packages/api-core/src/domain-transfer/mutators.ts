@@ -96,3 +96,13 @@ export async function domainTransferToUser(
 		path: `/sites/${ siteId }/domains/${ domain }/transfer-to-user/${ userId }`,
 	} );
 }
+
+export async function transferDomainToSite(
+	domain: string,
+	siteId: number,
+	targetSiteId: number
+): Promise< void > {
+	return wpcom.req.post( {
+		path: `/sites/${ siteId }/domains/${ domain }/transfer-to-site/${ targetSiteId }`,
+	} );
+}

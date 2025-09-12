@@ -75,6 +75,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/domains/',
 		post_id: 1988,
 	},
+	'connect-subdomain': {
+		link: 'https://wordpress.com/support/domains/connect-subdomain/',
+		post_id: 3475,
+	},
 	donations: {
 		link: 'https://wordpress.com/support/wordpress-editor/blocks/donations/',
 		post_id: 171110,

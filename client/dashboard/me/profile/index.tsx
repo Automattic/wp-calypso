@@ -1,4 +1,4 @@
-import { profileQuery } from '@automattic/api-queries';
+import { userSettingsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -9,7 +9,7 @@ import GravatarProfileSection from '../profile-gravatar';
 import PersonalDetailsSection from '../profile-personal-details';
 
 export default function Profile() {
-	const { data: serverData } = useQuery( profileQuery() );
+	const { data: serverData } = useQuery( userSettingsQuery() );
 
 	if ( ! serverData ) {
 		return null;

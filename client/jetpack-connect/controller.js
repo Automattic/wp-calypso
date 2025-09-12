@@ -415,6 +415,7 @@ export function signupForm( context, next ) {
 
 		const authorizeUrlWithApproval = addQueryArgs( { auth_approved: true }, context.path );
 		const { woodna_service_name, woodna_help_url, plugin_name } = context.query || {};
+
 		const urlQueryArgs = {
 			redirect_to: authorizeUrlWithApproval,
 			from,

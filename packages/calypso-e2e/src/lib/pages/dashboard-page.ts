@@ -17,7 +17,7 @@ export class DashboardPage {
 	/**
 	 * Reference to the Playwright page object.
 	 */
-	private page: Page;
+	page: Page;
 
 	/**
 	 * Constructs a new DashboardPage instance.

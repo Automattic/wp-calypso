@@ -145,12 +145,13 @@ export const useCreateSite = () => {
 	/**
 	 * Support singular and multiple domain cart items.
 	 */
-	const mergedDomainCartItems = Array.isArray( domains?.domainCart )
-		? domains?.domainCart.slice( 0 )
-		: [];
+	const mergedDomainCartItems =
+		domains && 'domainCart' in domains && Array.isArray( domains.domainCart )
+			? domains.domainCart.slice( 0 )
+			: [];
 
 	if ( domains?.domainItem ) {
-		mergedDomainCartItems.push( domains?.domainItem );
+		mergedDomainCartItems.push( domains.domainItem );
 	}
 
 	return useMutation( {

@@ -10,6 +10,8 @@ import {
 	siteByIdQuery,
 	queryClient,
 	domainTransferRequestQuery,
+	domainWhoisQuery,
+	domainConnectionSetupInfoQuery,
 } from '@automattic/api-queries';
 import {
 	createRoute,
@@ -19,6 +21,7 @@ import {
 	lazyRouteComponent,
 } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
+import { StepName } from '../../domains/domain-connection-setup/types';
 import { rootRoute } from './root';
 
 // Standalone domains route - requires rootRoute
@@ -190,6 +193,8 @@ export const domainForwardingEditRoute = createRoute( {
 export const domainContactInfoRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'contact-info',
+	loader: ( { params: { domainName } } ) =>
+		queryClient.ensureQueryData( domainWhoisQuery( domainName ) ),
 } ).lazy( () =>
 	import( '../../domains/domain-contact-details' ).then( ( d ) =>
 		createLazyRoute( 'domain-contact-info' )( {
@@ -311,6 +316,41 @@ export const domainTransferToOtherUserRoute = createRoute( {
 	)
 );
 
+export const domainTransferToOtherSiteRoute = createRoute( {
+	getParentRoute: () => domainRoute,
+	path: 'transfer/other-site',
+	loader: async ( { params: { domainName } } ) => {
+		return queryClient.ensureQueryData( domainQuery( domainName ) );
+	},
+} ).lazy( () =>
+	import( '../../domains/domain-transfer/transfer-domain-to-other-site' ).then( ( d ) =>
+		createLazyRoute( 'domain-transfer-to-other-site' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const domainConnectionSetupRoute = createRoute( {
+	getParentRoute: () => domainRoute,
+	path: 'domain-connection-setup',
+	loader: async ( { params: { domainName } } ) => {
+		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
+		await queryClient.ensureQueryData(
+			domainConnectionSetupInfoQuery(
+				domainName,
+				domain.blog_id,
+				`${ window.location.href }?step=${ StepName.DC_RETURN }`
+			)
+		);
+	},
+} ).lazy( () =>
+	import( '../../domains/domain-connection-setup' ).then( ( d ) =>
+		createLazyRoute( 'domain-connection-setup' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const createDomainsRoutes = () => {
 	return [
 		domainsRoute,
@@ -319,6 +359,7 @@ export const createDomainsRoutes = () => {
 			domainDnsRoute,
 			domainDnsAddRoute,
 			domainDnsEditRoute,
+			domainConnectionSetupRoute,
 			domainForwardingsRoute,
 			domainForwardingAddRoute,
 			domainForwardingEditRoute,
@@ -330,6 +371,7 @@ export const createDomainsRoutes = () => {
 			domainTransferRoute,
 			domainTransferToAnyUserRoute,
 			domainTransferToOtherUserRoute,
+			domainTransferToOtherSiteRoute,
 			domainSecurityRoute,
 		] ),
 	];
