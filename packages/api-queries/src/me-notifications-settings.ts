@@ -12,14 +12,15 @@ export const meNotificationsExtrasSettingsMutation = () =>
 	mutationOptions( {
 		mutationFn: updateWpcomNotificationSettings,
 		onSuccess: ( newData ) => {
+			const wpcomUpdate = ( newData as any )?.wpcom ?? newData;
 			queryClient.setQueryData(
 				meNotificationsSettingsQuery().queryKey,
-				( oldData ) =>
+				( oldData: any ) =>
 					oldData && {
 						...oldData,
 						wpcom: {
 							...oldData.wpcom,
-							...newData,
+							...wpcomUpdate,
 						},
 					}
 			);
