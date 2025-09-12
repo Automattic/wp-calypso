@@ -19,21 +19,46 @@ import { __, sprintf } from '@wordpress/i18n';
 import { closeSmall } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import { useLocale } from '../../../../app/locale';
 import InlineSupportLink from '../../../../components/inline-support-link';
 import { SectionHeader } from '../../../../components/section-header';
 import RegisterApplicationPassword from './register-application-password';
 import type { TwoStepAuthApplicationPassword } from '@automattic/api-core';
 
-const fields = [
+const fields = ( locale: string ) => [
 	{
 		id: 'name',
 		label: __( 'Name' ),
 		getValue: ( { item }: { item: TwoStepAuthApplicationPassword } ) => item.name,
 	},
+	{
+		id: 'generated',
+		label: __( 'Generated' ),
+		getValue: ( { item }: { item: TwoStepAuthApplicationPassword } ) => {
+			const date = new Date( item.generated );
+			const formattedDate =
+				date.toLocaleDateString( locale, {
+					day: 'numeric',
+					month: 'long',
+					year: 'numeric',
+				} ) +
+				' ' +
+				date.toLocaleTimeString( locale, {
+					hour: '2-digit',
+					minute: '2-digit',
+					hour12: false,
+				} );
+			return sprintf(
+				/* translators: %s is the date of the generated password */
+				__( 'Generated on %s' ),
+				formattedDate
+			);
+		},
+	},
 ];
 
 const view = {
-	fields: [],
+	fields: [ 'generated' ],
 	type: 'list' as const,
 	titleField: 'name',
 };
@@ -45,6 +70,8 @@ const ApplicationPasswordsList = ( {
 	data: TwoStepAuthApplicationPassword[];
 	isLoading: boolean;
 } ) => {
+	const locale = useLocale();
+
 	const { mutate: deleteApplicationPassword } = useMutation(
 		deleteTwoStepAuthApplicationPasswordMutation()
 	);
@@ -82,7 +109,7 @@ const ApplicationPasswordsList = ( {
 		<>
 			<DataViews< TwoStepAuthApplicationPassword >
 				data={ data }
-				fields={ fields }
+				fields={ fields( locale ) }
 				view={ view }
 				onChangeView={ () => {} }
 				getItemId={ ( item ) => item.ID }
