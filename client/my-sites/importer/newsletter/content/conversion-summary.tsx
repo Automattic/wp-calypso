@@ -229,14 +229,15 @@ const ConversionSummary = ( {
 		dispatch( cancelImport( siteId, importerStatus.importerId ) );
 	};
 
-	const posts = 712;
+	const posts = importerStatus?.customData?.postsNumber || 0;
 	const pages = importerStatus?.customData?.pagesNumber || 0;
-	const attachments = 2989;
-	const unsupportedFiles = {};
-	const postErrors = {};
+	const attachments = importerStatus?.customData?.attachmentsNumber || 0;
+	const unsupportedFiles = importerStatus?.customData?.unsupportedFileTypes || {};
+	const postErrors = importerStatus?.customData?.postErrors || {};
 
 	const hasUnsupportedFiles = Object.keys( unsupportedFiles ).length > 0;
 	const hasPostErrors = Object.keys( postErrors ).length > 0;
+
 	const hasIssues = hasUnsupportedFiles || hasPostErrors;
 
 	return (
