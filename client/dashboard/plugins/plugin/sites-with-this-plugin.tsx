@@ -3,10 +3,11 @@ import { sitePluginActivateMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
+import { check } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
 import ActionRenderModal, { getModalHeader } from '../manage/components/action-render-modal';
 import { buildBulkSitesPluginAction } from '../manage/utils';
-import { usePlugin } from './use-plugin';
+import { SiteWithPluginActivationStatus, usePlugin } from './use-plugin';
 import type { PluginListRow } from '../manage/types';
 
 const defaultView: View = {
@@ -19,6 +20,7 @@ const defaultView: View = {
 export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) => {
 	const [ view, setView ] = useState< View >( defaultView );
 	const { isLoading, plugin, pluginBySiteId, sitesWithThisPlugin } = usePlugin( pluginSlug );
+	const [ selection, setSelection ] = useState< SiteWithPluginActivationStatus[] >( [] );
 
 	const fields = useMemo(
 		() => [
@@ -72,17 +74,23 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 			actions={ [
 				{
 					id: 'activate',
+					icon: check,
 					label: __( 'Activate' ),
 					modalHeader: getModalHeader( 'activate' ),
 					RenderModal: ( { items, closeModal } ) => {
-						const [ item ] = items;
 						const { mutateAsync } = useMutation( sitePluginActivateMutation() );
 						const action = buildBulkSitesPluginAction( mutateAsync );
 
 						return (
 							<ActionRenderModal
 								actionId="activate"
-								items={ [ { ...plugin, siteIds: [ item.ID ], sitesCount: 1 } as PluginListRow ] }
+								items={ [
+									{
+										...plugin,
+										siteIds: items.map( ( item ) => item.ID ),
+										sitesCount: items.length,
+									} as PluginListRow,
+								] }
 								closeModal={ closeModal }
 								onExecute={ action }
 							/>
@@ -104,6 +112,10 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 			] }
 			getItemId={ ( item ) => String( item.ID ) }
 			paginationInfo={ paginationInfo }
+			selection={ selection.map( ( site ) => String( site.ID ) ) }
+			onChangeSelection={ ( ids ) => {
+				setSelection( sitesWithThisPlugin.filter( ( site ) => ids.includes( String( site.ID ) ) ) );
+			} }
 		/>
 	);
 };

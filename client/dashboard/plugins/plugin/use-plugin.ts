@@ -9,7 +9,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { useLocale } from '../../app/locale';
 
-interface SiteWithPluginActivationStatus extends Site {
+export interface SiteWithPluginActivationStatus extends Site {
 	isPluginActive: boolean;
 }
 
@@ -42,7 +42,10 @@ export const usePlugin = ( pluginSlug: string ) => {
 		? pluginBySiteId.get( siteIdsWithThisPlugin[ 0 ] )
 		: undefined;
 
-	const [ sitesWithThisPlugin, sitesWithoutThisPlugin ] = sites
+	const [ sitesWithThisPlugin, sitesWithoutThisPlugin ]: [
+		SiteWithPluginActivationStatus[],
+		Site[],
+	] = sites
 		? sites.reduce(
 				( acc, site ) => {
 					if ( siteIdsWithThisPlugin.includes( site.ID ) ) {
