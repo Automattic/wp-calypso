@@ -928,15 +928,15 @@ export function getDomainPriceRule(
 	}
 
 	if ( flowName === 'onboarding' ) {
-		// If there are no domains in the cart, the suggestions should show the "Free domain with a plan" discount
+		// If the user already selected a domain in onboarding, the suggestions should show their normal price
 		if ( isThereAtLeastOneDomainRegistrationInCart( cart ) ) {
 			return DOMAIN_PRICE_RULE.PRICE;
 		}
-		// Otherwise, the suggestions should show their normal price
-		return DOMAIN_PRICE_RULE.PRICE;
+		// Otherwise, the suggestions should show the "Free for the first year" discount
+		return DOMAIN_PRICE_RULE.INCLUDED_IN_HIGHER_PLAN;
 	}
 
-	// The domain-only flow should not show the "Free domain with a plan" discount
+	// The domain-only flow should not show the "Free for the first year" discount
 	if (
 		flowName !== 'domain' &&
 		shouldBundleDomainWithPlan( withPlansOnly, selectedSite, cart, suggestion )
