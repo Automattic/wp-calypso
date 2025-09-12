@@ -1,9 +1,10 @@
-import { MembershipSubscription, Site } from '@automattic/api-core';
+import { MembershipSubscription } from '@automattic/api-core';
+import { siteByIdQuery } from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
+import { useQuery } from '@tanstack/react-query';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { formatDate } from 'date-fns';
-import { useEffect, useState } from 'react';
 import SiteIcon from '../../sites/site-icon';
 
 export const MembershipTerms = ( { subscription }: { subscription: MembershipSubscription } ) => {
@@ -67,26 +68,11 @@ export const MembershipType = ( { subscription }: { subscription: MembershipSubs
 };
 
 export const MembershipIcon = ( { subscription }: { subscription: MembershipSubscription } ) => {
-	const [ hasError, setErrors ] = useState( false );
-	const [ site, setSite ] = useState< Site >();
 	const siteId = subscription.site_id;
 
-	useEffect( () => {
-		async function fetchData() {
-			const data = await fetch( 'https://public-api.wordpress.com/rest/v1.1/sites/' + siteId );
+	const { data: site, isError: isError } = useQuery( siteByIdQuery( parseInt( siteId ) ) );
 
-			data
-				.json()
-				.then( ( data ) => {
-					setSite( data );
-				} )
-				.catch( ( err ) => setErrors( err ) );
-		}
-
-		fetchData();
-	}, [ siteId ] );
-
-	if ( site && ! hasError && site.icon ) {
+	if ( site && ! isError && site.icon ) {
 		return <SiteIcon site={ site } size={ 36 } />;
 	}
 
