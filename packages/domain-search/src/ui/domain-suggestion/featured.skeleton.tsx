@@ -18,6 +18,7 @@ interface SkeletonProps {
 	price: React.ReactNode;
 	cta: React.ReactNode;
 	isSingleFeaturedSuggestion?: boolean;
+	domainName?: string;
 }
 
 export const FeaturedSkeleton = forwardRef< HTMLDivElement, SkeletonProps >( ( props, ref ) => {
@@ -30,6 +31,7 @@ export const FeaturedSkeleton = forwardRef< HTMLDivElement, SkeletonProps >( ( p
 		price,
 		cta,
 		isSingleFeaturedSuggestion,
+		domainName,
 	} = props;
 
 	const getContent = () => {
@@ -107,7 +109,11 @@ export const FeaturedSkeleton = forwardRef< HTMLDivElement, SkeletonProps >( ( p
 	};
 
 	return (
-		<Card ref={ ref } className={ clsx( 'domain-suggestion-featured', className ) }>
+		<Card
+			ref={ ref }
+			className={ clsx( 'domain-suggestion-featured', className ) }
+			data-e2e-domain-suggestion={ domainName }
+		>
 			<CardBody
 				className="domain-suggestion-featured__body"
 				style={ { padding: activeQuery === 'large' ? '1.5rem' : '1rem' } }

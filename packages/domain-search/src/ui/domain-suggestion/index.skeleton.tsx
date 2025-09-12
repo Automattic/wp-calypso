@@ -7,10 +7,12 @@ import {
 import { useDomainSuggestionContainerContext } from '../../hooks/use-domain-suggestion-container';
 
 export const SuggestionSkeleton = ( {
+	originalDomainName,
 	domainName,
 	price,
 	cta,
 }: {
+	originalDomainName?: string;
 	domainName: React.ReactNode;
 	price: React.ReactNode;
 	cta: React.ReactNode;
@@ -49,7 +51,11 @@ export const SuggestionSkeleton = ( {
 	};
 
 	return (
-		<Card isBorderless size={ activeQuery === 'large' ? 'medium' : 'small' }>
+		<Card
+			isBorderless
+			size={ activeQuery === 'large' ? 'medium' : 'small' }
+			data-e2e-domain-suggestion={ originalDomainName }
+		>
 			<CardBody style={ { borderRadius: 0 } }>{ getContent() }</CardBody>
 		</Card>
 	);

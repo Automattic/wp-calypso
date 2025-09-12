@@ -71,6 +71,7 @@ const Featured = ( {
 		<DomainSuggestionContainerContext.Provider value={ contextValue }>
 			<FeaturedSkeleton
 				ref={ containerRef }
+				domainName={ `${ domain }.${ tld }` }
 				activeQuery={ activeQuery }
 				className={ clsx( 'domain-suggestion-featured', {
 					'domain-suggestion-featured--highlighted': isHighlighted,
