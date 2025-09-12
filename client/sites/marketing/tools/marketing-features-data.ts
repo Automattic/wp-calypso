@@ -17,7 +17,8 @@ export const getMarketingFeaturesData = (
 	selectedSiteSlug: T.SiteSlug | null,
 	translate: ( text: string, options?: any ) => string,
 	localizeUrl: ( url: string ) => string,
-	activityPubStatus: any
+	activityPubStatus: any,
+	isPrivate: boolean | null
 ): MarketingToolsFeatureData[] => {
 	const isEnglish = ( config( 'english_locales' ) as string[] ).includes( getLocaleSlug() ?? '' );
 	const currentDate = new Date();
@@ -86,7 +87,10 @@ export const getMarketingFeaturesData = (
 				recordTracksEvent( 'calypso_marketing_tools_hire_an_seo_expert_button_click' );
 			},
 		},
-		{
+	];
+
+	if ( ! isPrivate ) {
+		result.push( {
 			title: translate( 'Get social, and share your blog posts where the people are' ),
 			description: translate(
 				"Use your site's Jetpack Social tools to connect your site and your social media accounts, and share your new posts automatically. Connect to Facebook, LinkedIn, and more."
@@ -100,8 +104,8 @@ export const getMarketingFeaturesData = (
 
 				page( marketingConnections( selectedSiteSlug ) );
 			},
-		},
-	];
+		} );
+	}
 
 	if ( ! activityPubStatus?.isEnabled ) {
 		result.splice( 3, 0, {
