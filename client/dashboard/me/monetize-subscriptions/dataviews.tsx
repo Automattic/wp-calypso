@@ -55,13 +55,9 @@ export function getMembershipsFieldDefinitions(): Fields< MembershipSubscription
 			},
 			render: ( { item }: { item: MembershipSubscription } ) => {
 				return (
-					<div className="membership-item__information purchase-item__information">
-						<div className="membership-item__title purchase-item__title">
-							<a title={ __( 'Manage purchase' ) } href={ getPurchaseUrl( item ) }>
-								{ item.title }
-							</a>
-						</div>
-					</div>
+					<a title={ __( 'Manage purchase' ) } href={ getPurchaseUrl( item ) }>
+						{ item.title }
+					</a>
 				);
 			},
 		},
@@ -77,13 +73,7 @@ export function getMembershipsFieldDefinitions(): Fields< MembershipSubscription
 				return item.title + ' ' + item.site_title + ' ' + item.site_url;
 			},
 			render: ( { item }: { item: MembershipSubscription } ) => {
-				return (
-					<div className="membership-item__information purchase-item__information">
-						<div className="membership-item__purchase-type purchase-item__purchase-type">
-							<MembershipType subscription={ item } />
-						</div>
-					</div>
-				);
+				return <MembershipType subscription={ item } />;
 			},
 		},
 		{
@@ -98,11 +88,7 @@ export function getMembershipsFieldDefinitions(): Fields< MembershipSubscription
 				return item.end_date ?? '';
 			},
 			render: ( { item }: { item: MembershipSubscription } ) => {
-				return (
-					<div className="membership-item__status purchase-item__status">
-						<MembershipTerms subscription={ item } />
-					</div>
-				);
+				return <MembershipTerms subscription={ item } />;
 			},
 		},
 	];
