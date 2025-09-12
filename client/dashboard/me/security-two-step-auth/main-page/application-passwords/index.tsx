@@ -4,14 +4,7 @@ import {
 } from '@automattic/api-queries';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import {
-	__experimentalConfirmDialog as ConfirmDialog,
-	Button,
-	Card,
-	CardHeader,
-	CardBody,
-	Icon,
-} from '@wordpress/components';
+import { Button, Card, CardHeader, CardBody, Icon } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataViews } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
@@ -20,6 +13,7 @@ import { closeSmall } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useLocale } from '../../../../app/locale';
+import ConfirmModal from '../../../../components/confirm-modal';
 import InlineSupportLink from '../../../../components/inline-support-link';
 import { SectionHeader } from '../../../../components/section-header';
 import RegisterApplicationPassword from './register-application-password';
@@ -72,9 +66,8 @@ const ApplicationPasswordsList = ( {
 } ) => {
 	const locale = useLocale();
 
-	const { mutate: deleteApplicationPassword } = useMutation(
-		deleteTwoStepAuthApplicationPasswordMutation()
-	);
+	const { mutate: deleteApplicationPassword, isPending: isDeletingApplicationPassword } =
+		useMutation( deleteTwoStepAuthApplicationPasswordMutation() );
 
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
@@ -82,15 +75,12 @@ const ApplicationPasswordsList = ( {
 		useState< TwoStepAuthApplicationPassword | null >( null );
 
 	const handleRemove = () => {
-		const selectedApplicationPassword = selectedKeyToRemove;
-		setSelectedKeyToRemove( null );
-
-		if ( selectedApplicationPassword ) {
-			deleteApplicationPassword( selectedApplicationPassword.ID, {
+		if ( selectedKeyToRemove ) {
+			deleteApplicationPassword( selectedKeyToRemove.ID, {
 				onSuccess: () => {
 					createSuccessNotice(
 						/* translators: %s is the application name */
-						sprintf( __( 'Application password "%s" removed.' ), selectedApplicationPassword.name ),
+						sprintf( __( 'Application password "%s" removed.' ), selectedKeyToRemove.name ),
 						{
 							type: 'snackbar',
 						}
@@ -100,6 +90,9 @@ const ApplicationPasswordsList = ( {
 					createErrorNotice( __( 'Failed to remove application password.' ), {
 						type: 'snackbar',
 					} );
+				},
+				onSettled: () => {
+					setSelectedKeyToRemove( null );
 				},
 			} );
 		}
@@ -132,14 +125,18 @@ const ApplicationPasswordsList = ( {
 			>
 				<DataViews.Layout />
 			</DataViews>
-			<ConfirmDialog
+			<ConfirmModal
 				isOpen={ !! selectedKeyToRemove }
-				confirmButtonText={ __( 'Remove application password' ) }
+				confirmButtonProps={ {
+					label: __( 'Remove application password' ),
+					isBusy: isDeletingApplicationPassword,
+					disabled: isDeletingApplicationPassword,
+				} }
 				onCancel={ () => setSelectedKeyToRemove( null ) }
 				onConfirm={ handleRemove }
 			>
 				{ __( 'Are you sure you want to remove this application password?' ) }
-			</ConfirmDialog>
+			</ConfirmModal>
 		</>
 	);
 };
