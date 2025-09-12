@@ -33,7 +33,7 @@ export function recordMigrationEvent( eventName, trackingId, componentName ) {
 export function recordMigrationStartEvent( componentName ) {
 	recordMigrationEvent(
 		'Migration Start',
-		TRACKING_IDS.wpcomGoogleAdsGtagMigrationStart,
+		TRACKING_IDS.wpcomGoogleAdsGtagMigrationFlowStart,
 		componentName
 	);
 }
@@ -59,7 +59,7 @@ export function recordMigrationCredentialsEvent( componentName ) {
 export function recordMigrationSignupEvent( componentName ) {
 	recordMigrationEvent(
 		'Migration Signup Start',
-		TRACKING_IDS.wpcomGoogleAdsGtagMigrationSignup,
+		TRACKING_IDS.wpcomGoogleAdsGtagMigrationSignupStart,
 		componentName
 	);
 }
