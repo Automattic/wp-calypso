@@ -4,6 +4,7 @@ import { mayWeTrackByTracker } from '../tracker-buckets';
 import { debug, TRACKING_IDS } from './constants';
 import { recordParamsInFloodlightGtag } from './floodlight';
 import { loadTrackingScripts } from './load-tracking-scripts';
+import { recordMigrationSignupEvent } from './record-migration-events';
 
 // Ensure setup has run.
 import './setup';
@@ -44,15 +45,7 @@ export async function adTrackSignupStart( flow ) {
 	}
 
 	// Google Ads for site-migration flow.
-	if ( mayWeTrackByTracker( 'googleAds' ) && 'site-migration' === flow ) {
-		const params = [
-			'event',
-			'conversion',
-			{
-				send_to: TRACKING_IDS.wpcomGoogleAdsGtagMigrationSignup,
-			},
-		];
-		debug( 'adTrackSignupStart: [Google Ads Gtag] Site Migration Signup', params );
-		window.gtag( ...params );
+	if ( 'site-migration' === flow ) {
+		recordMigrationSignupEvent( 'adTrackSignupStart' );
 	}
 }
