@@ -1,7 +1,6 @@
 import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import clsx from 'clsx';
 import { ReactNode } from 'react';
 import {
 	getOdieForwardToForumsMessage,
@@ -91,8 +90,6 @@ export const UserMessage = ( {
 		forceEmailSupport,
 		message?.context?.flags?.is_error_message
 	);
-	const displayingThirdPartyMessage =
-		isUserEligibleForPaidSupport && ! canConnectToZendesk && isRequestingHumanSupport;
 
 	const isMessageShowingDisclaimer =
 		message.context?.question_tags?.inquiry_type !== 'request-for-human-support';
@@ -147,12 +144,7 @@ export const UserMessage = ( {
 					{ ! interactionHasZendeskEvent( currentSupportInteraction ) && (
 						<BotMessageActions message={ message } />
 					) }
-					<div
-						className={ clsx( 'chat-feedback-wrapper', {
-							'chat-feedback-wrapper-no-extra-contact': ! isRequestingHumanSupport,
-							'chat-feedback-wrapper-third-party-cookies': displayingThirdPartyMessage,
-						} ) }
-					>
+					<div className="chat-feedback-wrapper">
 						<Sources message={ message } />
 						{ isRequestingHumanSupport && (
 							<GetSupport
