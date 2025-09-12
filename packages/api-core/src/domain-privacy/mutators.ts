@@ -14,3 +14,17 @@ export function disableDomainPrivacy( domainName: string ): Promise< DomainPriva
 		apiVersion: '1.1',
 	} );
 }
+
+export function discloseDomainPrivacy( domainName: string ): Promise< DomainPrivacyResponse > {
+	return wpcom.req.post( {
+		path: `/domains/${ domainName }/privacy/disclose`,
+		apiVersion: '1.1',
+	} );
+}
+
+export function redactDomainPrivacy( domainName: string ): Promise< DomainPrivacyResponse > {
+	return wpcom.req.post( {
+		path: `/domains/${ domainName }/privacy/redact`,
+		apiVersion: '1.1',
+	} );
+}
