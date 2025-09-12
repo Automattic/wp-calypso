@@ -54,6 +54,32 @@ const descriptions: Record< WpcomOptionKey, string > = {
 	scheduled_updates: __( 'Complimentary reports regarding scheduled plugin updates.' ),
 };
 
+const jetpackOptionKeys = [
+	'jetpack_marketing',
+	'jetpack_research',
+	'jetpack_promotion',
+	'jetpack_news',
+	'jetpack_reports',
+] as const;
+
+type JetpackOptionKey = ( typeof jetpackOptionKeys )[ number ];
+
+const jetpackTitles: Record< JetpackOptionKey, string > = {
+	jetpack_marketing: __( 'Suggestions' ),
+	jetpack_research: __( 'Research' ),
+	jetpack_promotion: __( 'Promotions' ),
+	jetpack_news: __( 'Newsletter' ),
+	jetpack_reports: __( 'Reports' ),
+};
+
+const jetpackDescriptions: Record< JetpackOptionKey, string > = {
+	jetpack_marketing: __( 'Tips for getting the most out of Jetpack.' ),
+	jetpack_research: __( 'Opportunities to participate in Jetpack research and surveys.' ),
+	jetpack_promotion: __( 'Sales and promotions for Jetpack products and services.' ),
+	jetpack_news: __( 'Jetpack news, announcements, and product spotlights.' ),
+	jetpack_reports: __( 'Jetpack security and performance reports.' ),
+};
+
 export default function NotificationsExtras() {
 	const { data } = useQuery( {
 		...meNotificationsSettingsQuery(),
@@ -98,6 +124,46 @@ export default function NotificationsExtras() {
 		[ mutation ]
 	);
 
+	const hasJetpackOptions = useMemo( () => {
+		if ( ! extraSettings ) {
+			return false;
+		}
+		return jetpackOptionKeys.some( ( key ) => key in extraSettings );
+	}, [ extraSettings ] );
+
+	const jetpackTopToggleChecked = useMemo( () => {
+		if ( ! extraSettings || ! hasJetpackOptions ) {
+			return false;
+		}
+		return jetpackOptionKeys.some( ( key ) => !! ( extraSettings as any )[ key ] );
+	}, [ extraSettings, hasJetpackOptions ] );
+
+	const handleJetpackTopToggle = useCallback(
+		( nextValue: boolean ) => {
+			if ( ! extraSettings ) {
+				return;
+			}
+			const payload: Partial< WpcomNotificationSettings > = {};
+			jetpackOptionKeys.forEach( ( key ) => {
+				const current = ( extraSettings as any )[ key ] as boolean | undefined;
+				if ( current !== nextValue ) {
+					( payload as any )[ key ] = nextValue;
+				}
+			} );
+			if ( Object.keys( payload ).length > 0 ) {
+				mutation.mutate( payload );
+			}
+		},
+		[ extraSettings, mutation ]
+	);
+
+	const handleSingleJetpackToggle = useCallback(
+		( key: JetpackOptionKey ) => ( nextValue: boolean ) => {
+			mutation.mutate( { [ key ]: nextValue } as any );
+		},
+		[ mutation ]
+	);
+
 	return (
 		<PageLayout
 			size="small"
@@ -133,6 +199,33 @@ export default function NotificationsExtras() {
 						) ) }
 					</CardBody>
 				</Card>
+
+				{ hasJetpackOptions && (
+					<Card>
+						<CardBody>
+							<SectionHeader level={ 3 } title={ __( 'Email from Jetpack' ) } />
+							<ToggleControl
+								checked={ jetpackTopToggleChecked }
+								label={
+									jetpackTopToggleChecked ? __( 'Unsubscribe from all' ) : __( 'Subscribe to all' )
+								}
+								onChange={ handleJetpackTopToggle }
+								disabled={ isSaving || ! extraSettings }
+							/>
+
+							{ jetpackOptionKeys.map( ( key ) => (
+								<ToggleControl
+									key={ key }
+									checked={ !! ( extraSettings as any )?.[ key ] }
+									label={ jetpackTitles[ key ] }
+									help={ jetpackDescriptions[ key ] }
+									onChange={ handleSingleJetpackToggle( key ) }
+									disabled={ isSaving || ! extraSettings }
+								/>
+							) ) }
+						</CardBody>
+					</Card>
+				) }
 			</VStack>
 		</PageLayout>
 	);
