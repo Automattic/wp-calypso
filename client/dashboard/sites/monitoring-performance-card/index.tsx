@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 import MonitoringCard from '../monitoring-card';
 import type { PeriodData, TimeRange } from '../monitoring/types';
 import type { Site } from '@automattic/api-core';
+import type { DataPointDate } from '@automattic/charts/dist/types/types';
 
 function convertTimeRangeToUnix( timeRange: number ): TimeRange {
 	const start = Math.floor( new Date().getTime() / 1000 ) - timeRange * 3600;
@@ -13,6 +14,11 @@ function convertTimeRangeToUnix( timeRange: number ): TimeRange {
 
 	return { start, end };
 }
+
+type SiteMetricsData = {
+	requestsData: DataPointDate[] | undefined;
+	responseTimeData: DataPointDate[] | undefined;
+};
 
 function useSiteMetricsData( siteId: number, timeRange: number ) {
 	// Memoize timestamps to prevent graph reloading on every render. Only refresh the data on time range change.
@@ -36,17 +42,17 @@ function useSiteMetricsData( siteId: number, timeRange: number ) {
 		return null;
 	};
 
-	const formatPeriod = ( period ) => {
+	const formatPeriod = ( period: PeriodData ) => {
 		return {
 			date: new Date( period.timestamp * 1000 ),
 			value: Math.round( getDimensionValue( period ) * 100 ) / 100,
 		};
 	};
 
-	const formattedData = [
-		requestsData?.data?.periods.map( formatPeriod ),
-		responseTimeData?.data?.periods.map( formatPeriod ),
-	];
+	const formattedData: SiteMetricsData = {
+		requestsData: requestsData?.data?.periods.map( formatPeriod ),
+		responseTimeData: responseTimeData?.data?.periods.map( formatPeriod ),
+	};
 
 	return {
 		formattedData,
@@ -66,11 +72,11 @@ export default function MonitoringPerformanceCard( {
 	const data: SeriesData[] = [
 		{
 			label: __( 'Requests per minute' ),
-			data: formattedData[ 0 ],
+			data: formattedData?.requestsData || [],
 		},
 		{
 			label: __( 'Average response time (ms)' ),
-			data: formattedData[ 1 ],
+			data: formattedData?.responseTimeData || [],
 		},
 	];
 
