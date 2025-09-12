@@ -1,4 +1,5 @@
 import { DomainSearch } from '@automattic/domain-search';
+import { DOMAIN_FLOW, ONBOARDING_FLOW } from '@automattic/onboarding';
 import { ResponseCartProduct, ShoppingCartProvider } from '@automattic/shopping-cart';
 import { useMemo, type ComponentProps } from 'react';
 import { shoppingCartManagerClient } from 'calypso/dashboard/app/shopping-cart';
@@ -12,6 +13,7 @@ type DomainSearchProps = Omit< ComponentProps< typeof DomainSearch >, 'cart' | '
 	};
 };
 
+const DOMAINS_WITH_FREE_FIRST_YEAR = [ ONBOARDING_FLOW, DOMAIN_FLOW ];
 const SESSION_STORAGE_QUERY_KEY = 'domain-search-query';
 
 const getInitialQuery = () => {
@@ -44,15 +46,19 @@ const DomainSearchWithCart = ( {
 		return externalInitialQuery ?? getInitialQuery();
 	}, [ externalInitialQuery ] );
 
+	const cartItemsLength = cart.items.length;
+
 	const config = useMemo( () => {
 		return {
 			...externalConfig,
 			priceRules: {
 				...externalConfig?.priceRules,
-				freeForFirstYear: isNextDomainFree,
+				freeForFirstYear:
+					( cartItemsLength === 0 && DOMAINS_WITH_FREE_FIRST_YEAR.includes( flowName ) ) ||
+					isNextDomainFree,
 			},
 		};
-	}, [ externalConfig, isNextDomainFree ] );
+	}, [ externalConfig, isNextDomainFree, cartItemsLength, flowName ] );
 
 	const events = useMemo( () => {
 		return {
