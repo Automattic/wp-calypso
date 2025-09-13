@@ -113,9 +113,19 @@ export class CartCheckoutPage {
 	 * Validates that an item is in the cart with the expected text. Throws if it isn't.
 	 *
 	 * @param {string} expectedCartItemName Expected text for the name of the item in the cart.
+	 * @param {string} expectedDescription Expected text for the description of the item in the cart.
 	 * @throws If the expected cart item is not found in the timeout period.
 	 */
-	async validateCartItem( expectedCartItemName: string ): Promise< void > {
+	async validateCartItem(
+		expectedCartItemName: string,
+		expectedDescription?: string
+	): Promise< void > {
+		if ( expectedDescription ) {
+			return this.page
+				.locator( selectors.cartItem( expectedCartItemName ), { hasText: expectedDescription } )
+				.waitFor( { state: 'visible' } );
+		}
+
 		await this.page.waitForSelector( selectors.cartItem( expectedCartItemName ) );
 	}
 

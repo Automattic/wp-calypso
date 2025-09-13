@@ -58,6 +58,13 @@ export class RewrittenDomainSearchComponent {
 	}
 
 	/**
+	 * Clicks on the button to bring over an external domain to WordPress.com
+	 */
+	async clickBringItOver(): Promise< void > {
+		await this.page.getByRole( 'button', { name: 'Bring it over' } ).click();
+	}
+
+	/**
 	 * Select a domain matching the keyword.
 	 *
 	 * The keyword can be anything that uniquely identifies the desired domain name

@@ -28,6 +28,13 @@ export class UseADomainIOwnPage {
 	 */
 	async search( domainName: string ): Promise< void > {
 		await this.page.fill( selectors.ownedDomainInput, domainName );
+		await this.clickContinue();
+	}
+
+	/**
+	 * Clicks on the button to continue
+	 */
+	async clickContinue(): Promise< void > {
 		await this.page.click( selectors.nextButton );
 	}
 
@@ -37,5 +44,12 @@ export class UseADomainIOwnPage {
 	async validateButtonToConnectDomain(): Promise< void > {
 		const elementHandle = await this.page.waitForSelector( selectors.connectDomainButton );
 		await elementHandle.waitForElementState( 'enabled' );
+	}
+
+	/**
+	 * Clicks on the button to connect/map your selected domain
+	 */
+	async clickButtonToConnectDomain(): Promise< void > {
+		await this.page.click( selectors.connectDomainButton );
 	}
 }
