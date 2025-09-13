@@ -5,20 +5,19 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import clsx from 'clsx';
-import { forwardRef } from 'react';
+import { type ComponentProps, forwardRef } from 'react';
 
 import './featured.scss';
 
-interface SkeletonProps {
+interface SkeletonProps extends Omit< ComponentProps< typeof Card >, 'children' > {
 	activeQuery: 'small' | 'large';
 	className?: string;
 	badges?: React.ReactNode;
-	title: React.ReactNode;
+	domainName: React.ReactNode;
 	matchReasonsList?: React.ReactNode;
 	price: React.ReactNode;
 	cta: React.ReactNode;
 	isSingleFeaturedSuggestion?: boolean;
-	domainName?: string;
 }
 
 export const FeaturedSkeleton = forwardRef< HTMLDivElement, SkeletonProps >( ( props, ref ) => {
@@ -26,12 +25,12 @@ export const FeaturedSkeleton = forwardRef< HTMLDivElement, SkeletonProps >( ( p
 		activeQuery,
 		className,
 		badges,
-		title,
+		domainName,
 		matchReasonsList,
 		price,
 		cta,
 		isSingleFeaturedSuggestion,
-		domainName,
+		...cardProps
 	} = props;
 
 	const getContent = () => {
@@ -46,7 +45,7 @@ export const FeaturedSkeleton = forwardRef< HTMLDivElement, SkeletonProps >( ( p
 								alignment="left"
 								style={ { alignSelf: 'stretch', justifyContent: 'flex-start' } }
 							>
-								{ title }
+								{ domainName }
 								{ matchReasonsList }
 							</VStack>
 						</VStack>
@@ -67,7 +66,7 @@ export const FeaturedSkeleton = forwardRef< HTMLDivElement, SkeletonProps >( ( p
 					<HStack spacing={ 6 } className="domain-suggestion-featured__content">
 						<VStack spacing={ 3 } style={ { justifyContent: 'center', height: '100%' } }>
 							{ badges }
-							{ title }
+							{ domainName }
 						</VStack>
 						<VStack
 							spacing={ 5 }
@@ -85,7 +84,7 @@ export const FeaturedSkeleton = forwardRef< HTMLDivElement, SkeletonProps >( ( p
 				<VStack spacing={ 3 } className="domain-suggestion-featured__content">
 					<VStack spacing={ 3 } alignment="left">
 						{ badges }
-						{ title }
+						{ domainName }
 					</VStack>
 					<HStack>
 						{ price }
@@ -99,7 +98,7 @@ export const FeaturedSkeleton = forwardRef< HTMLDivElement, SkeletonProps >( ( p
 			<VStack spacing={ 4 } className="domain-suggestion-featured__content--small">
 				<VStack spacing={ 3 }>
 					{ badges }
-					{ title }
+					{ domainName }
 					{ price }
 					{ matchReasonsList }
 				</VStack>
@@ -110,9 +109,9 @@ export const FeaturedSkeleton = forwardRef< HTMLDivElement, SkeletonProps >( ( p
 
 	return (
 		<Card
+			{ ...cardProps }
 			ref={ ref }
 			className={ clsx( 'domain-suggestion-featured', className ) }
-			data-e2e-domain-suggestion={ domainName }
 		>
 			<CardBody
 				className="domain-suggestion-featured__body"

@@ -80,9 +80,7 @@ export class RewrittenDomainSearchComponent {
 	 * @returns {string} Domain that was selected.
 	 */
 	async selectDomain( keyword: string ): Promise< string > {
-		const targetRow = this.page.locator( '[data-e2e-domain-suggestion]' ).filter( {
-			has: this.page.getByLabel( keyword ),
-		} );
+		const targetRow = this.page.getByTitle( keyword );
 		await targetRow.waitFor();
 
 		const target = targetRow.getByRole( 'button' );
@@ -90,7 +88,7 @@ export class RewrittenDomainSearchComponent {
 
 		await target.click();
 
-		const domainName = await targetRow.getAttribute( 'data-e2e-domain-suggestion' );
+		const domainName = await targetRow.getAttribute( 'title' );
 
 		if ( ! domainName ) {
 			throw new Error( `No domain found for keyword: ${ keyword }` );
@@ -105,14 +103,14 @@ export class RewrittenDomainSearchComponent {
 	 * @returns {string} Domain that was selected.
 	 */
 	async selectFirstSuggestion(): Promise< string > {
-		const targetItem = this.page.locator( '[data-e2e-domain-suggestion]' ).first();
-		const selectedDomain = await targetItem.getAttribute( 'data-e2e-domain-suggestion' );
+		const targetItem = this.page.getByRole( 'listitem' ).first();
+		await targetItem.waitFor();
+
+		const selectedDomain = await targetItem.getAttribute( 'title' );
 
 		if ( ! selectedDomain ) {
 			throw new Error( 'No domain found for first suggestion' );
 		}
-
-		await targetItem.waitFor();
 
 		const target = targetItem.getByRole( 'button', { name: 'Add to cart' } );
 		await target.waitFor();

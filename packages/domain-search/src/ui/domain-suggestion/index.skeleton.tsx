@@ -5,18 +5,20 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useDomainSuggestionContainerContext } from '../../hooks/use-domain-suggestion-container';
+import type { ComponentProps } from 'react';
 
-export const SuggestionSkeleton = ( {
-	originalDomainName,
-	domainName,
-	price,
-	cta,
-}: {
-	originalDomainName?: string;
+interface SuggestionSkeletonProps extends Omit< ComponentProps< typeof Card >, 'children' > {
 	domainName: React.ReactNode;
 	price: React.ReactNode;
 	cta: React.ReactNode;
-} ) => {
+}
+
+export const SuggestionSkeleton = ( {
+	domainName,
+	price,
+	cta,
+	...cardProps
+}: SuggestionSkeletonProps ) => {
 	const listContext = useDomainSuggestionContainerContext();
 
 	if ( ! listContext ) {
@@ -51,11 +53,7 @@ export const SuggestionSkeleton = ( {
 	};
 
 	return (
-		<Card
-			isBorderless
-			size={ activeQuery === 'large' ? 'medium' : 'small' }
-			data-e2e-domain-suggestion={ originalDomainName }
-		>
+		<Card { ...cardProps } isBorderless size={ activeQuery === 'large' ? 'medium' : 'small' }>
 			<CardBody style={ { borderRadius: 0 } }>{ getContent() }</CardBody>
 		</Card>
 	);

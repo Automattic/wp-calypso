@@ -70,7 +70,8 @@ const DomainSuggestionComponent = ( {
 
 	return (
 		<SuggestionSkeleton
-			originalDomainName={ `${ domain }.${ tld }` }
+			role="listitem"
+			title={ `${ domain }.${ tld }` }
 			domainName={ domainNameElement }
 			price={ price }
 			cta={ cta }
