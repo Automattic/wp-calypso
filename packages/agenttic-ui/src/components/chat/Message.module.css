@@ -51,6 +51,7 @@
 .message ol,
 .message ul {
     margin-bottom: var(--spacing-3);
+    padding-left: var(--spacing-6);
 }
 
 .message p+:where(ol,ul) {
