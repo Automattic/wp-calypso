@@ -19,7 +19,7 @@ import { apiDeleteSite } from '../shared/api-delete-site';
 
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( 'Domain flow: Connect a domain to a site' ), function () {
+describe( DataHelper.createSuiteTitle( 'Domain flow: Transfer a domain to a site' ), function () {
 	// TODO: Use a domain that we own. Which one though?
 	const targetDomain = 'zaguini.me';
 
@@ -55,10 +55,10 @@ describe( DataHelper.createSuiteTitle( 'Domain flow: Connect a domain to a site'
 		await domainSearchComponent.clickBringItOver();
 	} );
 
-	it( 'Click the connect button', async function () {
+	it( 'Click the transfer button', async function () {
 		const useADomainIOwnPage = new UseADomainIOwnPage( page );
 		await useADomainIOwnPage.clickContinue();
-		await useADomainIOwnPage.clickButtonToConnectDomain();
+		await useADomainIOwnPage.clickButtonToTransferDomain();
 	} );
 
 	it( 'Continue to next step', async function () {
@@ -80,11 +80,11 @@ describe( DataHelper.createSuiteTitle( 'Domain flow: Connect a domain to a site'
 		] );
 	} );
 
-	it( 'See plan and domain connection product at checkout', async function () {
+	it( 'See plan and domain transfer product at checkout', async function () {
 		const cartCheckoutPage = new CartCheckoutPage( page );
 
 		await cartCheckoutPage.validateCartItem( `WordPress.com ${ planName }` );
-		await cartCheckoutPage.validateCartItem( targetDomain, 'Domain Connection' );
+		await cartCheckoutPage.validateCartItem( targetDomain, 'Domain Transfer' );
 	} );
 
 	afterAll( async function () {
