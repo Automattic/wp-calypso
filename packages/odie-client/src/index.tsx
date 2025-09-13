@@ -31,13 +31,16 @@ export const OdieAssistant: React.FC = () => {
 				event_source: 'help-center',
 				event_external_id: newID,
 			} ).then( ( interaction ) => {
-				navigate( `/odie?id=${ interaction.uuid }`, { replace: true } );
+				const params = new URLSearchParams( search );
+				params.set( 'id', interaction.uuid );
+				navigate( `/odie?${ params.toString() }`, { replace: true } );
 			} );
 		}
 	}, [
 		interactionId,
 		startNewInteraction,
 		navigate,
+		search,
 		queryClient,
 		currentInteractionQuery,
 		isStartingNewInteraction,
