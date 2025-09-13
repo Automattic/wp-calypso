@@ -18,7 +18,7 @@
 
 		&:not( .small ) {
 			@include break-large {
-				font-size: 2.75rem;
+				font-size: rem( 40px );
 				line-height: 1.15;
 			}
 		}

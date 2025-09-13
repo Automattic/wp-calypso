@@ -12,6 +12,21 @@
 	text-align: center;
 }
 
+/**
+ * By default, all headings get .wp-brand-font class and it applies a 40px font size. That size should only be used
+ * for Recoleta font. Any other heading, should be 32px. This rule achieves this affect.
+
+ * TODO: to clean up this code, we should apply .wp-brand-font selectively, only when we use Recoleta.
+ */
+.is-jetpack-login,
+.jetpack-cloud,
+.woo,
+.is-blaze-pro {
+	.wp-login__one-login-layout-heading-text {
+		font-size: 2rem;
+	}
+}
+
 .wp-login__one-login-layout-heading-logo {
 	margin-bottom: 16px;
 
@@ -43,7 +58,7 @@
 	text-wrap: balance;
 	color: var( --studio-gray-50, #646970 );
 	margin-block: 0.5rem 0;
-	font-size: $font-body;
+	font-size: rem( 15px );
 
 	a {
 		color: var( --studio-gray-50, #646970 );
@@ -51,7 +66,7 @@
 	}
 
 	&.is-secondary {
-		font-size: $font-body-extra-small;
+		font-size: rem( 13px );
 		color: var( --studio-gray-30 );
 
 		a {
