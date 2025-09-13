@@ -7,13 +7,7 @@ import MarkdownOrChildren from './mardown-or-children';
 import { UserMessage } from './user-message';
 import type { ZendeskMessage, Message } from '../../types';
 
-export const MessageContent = ( {
-	message,
-	header,
-}: {
-	message: Message;
-	header?: React.ReactNode;
-} ) => {
+export const MessageContent = ( { message }: { message: Message } ) => {
 	const isFeedbackMessage = isCSATMessage( message );
 	const messageClasses = clsx(
 		'odie-chatbox-message',
@@ -56,7 +50,6 @@ export const MessageContent = ( {
 
 	return (
 		<div className={ messageClasses }>
-			{ header && <div className="message-header business">{ header }</div> }
 			{ message.type === 'error' && <MarkdownOrChildren messageContent={ message.content } /> }
 			{ ( [ 'message', 'image', 'image-placeholder', 'file', 'text' ].includes( message.type ) ||
 				! message.type ) && (

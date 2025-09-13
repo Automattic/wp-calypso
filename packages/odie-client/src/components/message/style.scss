@@ -49,14 +49,18 @@ $blueberry-color: #3858e9;
 }
 
 .odie-chatbox-message {
+	display: flex;
 	word-wrap: break-word;
 	color: $gray-900;
 	font-size: $font-size-large;
 	line-height: 1.6;
+	flex-direction: row;
+	gap: 8px;
 	width: 100%;
 	box-sizing: border-box;
 	text-wrap: pretty;
 	word-break: break-word;
+	column-gap: 0;
 
 	&.is-sending {
 		opacity: 0.5;

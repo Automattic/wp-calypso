@@ -12,7 +12,6 @@ export type ChatMessageProps = {
 	currentUser: CurrentUser;
 	displayChatWithSupportLabel?: boolean;
 	displayCSAT?: boolean;
-	header?: React.ReactNode;
 };
 
 export type MessageIndicators = {
@@ -22,7 +21,7 @@ export type MessageIndicators = {
 	isLastMessage: boolean;
 };
 
-const ChatMessage = ( { message, currentUser, header }: ChatMessageProps ) => {
+const ChatMessage = ( { message, currentUser }: ChatMessageProps ) => {
 	const { botName } = useOdieAssistantContext();
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
 
@@ -50,7 +49,7 @@ const ChatMessage = ( { message, currentUser, header }: ChatMessageProps ) => {
 
 	return (
 		<>
-			<MessageContent message={ message } header={ header } />
+			<MessageContent message={ message } />
 			{ isFullscreen && ReactDOM.createPortal( fullscreenContent, document.body ) }
 		</>
 	);
