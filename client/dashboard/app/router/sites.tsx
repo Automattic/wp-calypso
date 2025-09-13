@@ -220,6 +220,53 @@ export const siteLogsServerRoute = createRoute( {
 	)
 );
 
+export const siteScanRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'scan',
+} );
+
+export const siteScanIndexRoute = createRoute( {
+	getParentRoute: () => siteScanRoute,
+	path: '/',
+	beforeLoad: ( { params } ) => {
+		throw redirect( { to: `/sites/${ params.siteSlug }/scan/active` } );
+	},
+} );
+
+export const siteScanActiveThreatsRoute = createRoute( {
+	getParentRoute: () => siteScanRoute,
+	path: 'active',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( hasHostingFeature( site, HostingFeatures.SCAN ) ) {
+			await queryClient.ensureQueryData( siteScanQuery( site.ID ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../../sites/scan' ).then( ( d ) =>
+		createLazyRoute( 'site-scan-active-threats' )( {
+			component: () => <d.default scanTab="active" />,
+		} )
+	)
+);
+
+export const siteScanHistoryRoute = createRoute( {
+	getParentRoute: () => siteScanRoute,
+	path: 'history',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( hasHostingFeature( site, HostingFeatures.SCAN ) ) {
+			await queryClient.ensureQueryData( siteScanQuery( site.ID ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../../sites/scan' ).then( ( d ) =>
+		createLazyRoute( 'site-scan-history' )( {
+			component: () => <d.default scanTab="history" />,
+		} )
+	)
+);
+
 export const siteBackupsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'backups',
@@ -754,6 +801,16 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 				siteBackupsIndexRoute,
 				siteBackupRestoreRoute,
 				siteBackupDownloadRoute,
+			] )
+		);
+	}
+
+	if ( config.supports.sites.scan ) {
+		siteRoutes.push(
+			siteScanRoute.addChildren( [
+				siteScanIndexRoute,
+				siteScanActiveThreatsRoute,
+				siteScanHistoryRoute,
 			] )
 		);
 	}

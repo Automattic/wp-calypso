@@ -4,7 +4,7 @@
 import { screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { render } from '../../../test-utils';
-import AccountDeletionConfirmModal from '../confirmation-modal';
+import AccountDeletionModal from '../account-deletion-modal';
 
 const defaultProps = {
 	onClose: jest.fn(),
@@ -12,15 +12,16 @@ const defaultProps = {
 	username: 'testuser',
 	isDeleting: false,
 	siteCount: 2,
+	purchases: [],
 };
 
-describe( 'AccountDeletionConfirmModal', () => {
+describe( 'AccountDeletionModal', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 	} );
 
 	it( 'renders the alternatives screen by default', () => {
-		render( <AccountDeletionConfirmModal { ...defaultProps } /> );
+		render( <AccountDeletionModal { ...defaultProps } /> );
 
 		// Check that the correct title is present
 		expect( screen.getByText( 'Are you sure?' ) ).toBeInTheDocument();
@@ -31,7 +32,7 @@ describe( 'AccountDeletionConfirmModal', () => {
 	} );
 
 	it( 'shows site-specific options only when user has sites', () => {
-		render( <AccountDeletionConfirmModal { ...defaultProps } siteCount={ 0 } /> );
+		render( <AccountDeletionModal { ...defaultProps } siteCount={ 0 } /> );
 
 		expect( screen.queryByText( "Change your site's address" ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'Delete a site' ) ).not.toBeInTheDocument();
@@ -39,7 +40,7 @@ describe( 'AccountDeletionConfirmModal', () => {
 	} );
 
 	it( 'transitions to confirmation screen when Continue is clicked', () => {
-		render( <AccountDeletionConfirmModal { ...defaultProps } /> );
+		render( <AccountDeletionModal { ...defaultProps } /> );
 
 		fireEvent.click( screen.getByText( 'Continue' ) );
 
@@ -53,7 +54,7 @@ describe( 'AccountDeletionConfirmModal', () => {
 	} );
 
 	it( 'enables delete button only when username is correctly typed', () => {
-		render( <AccountDeletionConfirmModal { ...defaultProps } /> );
+		render( <AccountDeletionModal { ...defaultProps } /> );
 
 		// Go to confirmation screen
 		fireEvent.click( screen.getByText( 'Continue' ) );
@@ -72,7 +73,7 @@ describe( 'AccountDeletionConfirmModal', () => {
 
 	it( 'calls onClose when Cancel is clicked', () => {
 		const onClose = jest.fn();
-		render( <AccountDeletionConfirmModal { ...defaultProps } onClose={ onClose } /> );
+		render( <AccountDeletionModal { ...defaultProps } onClose={ onClose } /> );
 
 		fireEvent.click( screen.getByText( 'Cancel' ) );
 
@@ -81,7 +82,7 @@ describe( 'AccountDeletionConfirmModal', () => {
 
 	it( 'calls onConfirm when Delete account is clicked with correct username', () => {
 		const onConfirm = jest.fn();
-		render( <AccountDeletionConfirmModal { ...defaultProps } onConfirm={ onConfirm } /> );
+		render( <AccountDeletionModal { ...defaultProps } onConfirm={ onConfirm } /> );
 
 		// Go to confirmation screen
 		fireEvent.click( screen.getByText( 'Continue' ) );
@@ -92,5 +93,24 @@ describe( 'AccountDeletionConfirmModal', () => {
 		fireEvent.click( screen.getByText( 'Delete account' ) );
 
 		expect( onConfirm ).toHaveBeenCalled();
+	} );
+
+	it( 'blocks deletion when user has active purchases', async () => {
+		render(
+			<AccountDeletionModal
+				{ ...defaultProps }
+				purchases={ [
+					{
+						expiry_status: 'active',
+						product_slug: 'pro_plan',
+						is_refundable: true,
+						is_cancelable: true,
+					},
+				] }
+			/>
+		);
+
+		await screen.findByText( 'You still have active purchases on your account.' );
+		expect( screen.getByText( 'Manage purchases' ) ).toBeInTheDocument();
 	} );
 } );

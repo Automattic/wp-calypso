@@ -26,6 +26,10 @@ export const sitePluginsQuery = ( siteId: number ) =>
 
 // Mutations for site-level plugin operations
 
+export const invalidatePlugins = () => {
+	queryClient.invalidateQueries( pluginsQuery() );
+};
+
 const invalidateSitePlugins = ( siteId: number ) => {
 	queryClient.invalidateQueries( sitePluginsQuery( siteId ) );
 };
