@@ -173,12 +173,18 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 				<JumpToRecent containerReference={ messagesContainerRef } />
 
 				{ chat.provider === 'odie' && chat.status === 'sending' && (
-					<div className="odie-chatbox__action-message">
+					<div
+						className="odie-chatbox__action-message"
+						ref={ ( div ) => div?.scrollIntoView( { behavior: 'smooth', block: 'end' } ) }
+					>
 						<ThinkingPlaceholder />
 					</div>
 				) }
 				{ chat.provider.startsWith( 'zendesk' ) && typingStatus && (
-					<div className="odie-chatbox__action-message" ref={ ( div ) => div?.scrollIntoView() }>
+					<div
+						className="odie-chatbox__action-message"
+						ref={ ( div ) => div?.scrollIntoView( { behavior: 'smooth', block: 'end' } ) }
+					>
 						<TypingPlaceholder />
 					</div>
 				) }
