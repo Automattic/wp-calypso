@@ -13,6 +13,17 @@ const showHelpCenter: Reducer< boolean | undefined, HelpCenterAction > = ( state
 	return state;
 };
 
+const typingConversationStatus: Reducer<
+	Record< string, boolean > | undefined,
+	HelpCenterAction
+> = ( state = undefined, action ) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_TYPING_STATUS':
+			return { ...state, [ action.conversationId ]: action.isTyping };
+	}
+	return state;
+};
+
 const zendeskConnectionStatus: Reducer<
 	'disconnected' | 'reconnecting' | 'connected',
 	HelpCenterAction
@@ -197,6 +208,7 @@ const reducer = combineReducers( {
 	userDeclaredSiteUrl,
 	isMinimized,
 	isChatLoaded,
+	typingConversationStatus,
 	areSoundNotificationsEnabled,
 	zendeskClientId,
 	unreadCount,

@@ -131,6 +131,9 @@ export const useCreateZendeskConversation = (): ( ( {
 			} );
 		}
 
+		// We need to load the conversation to get typing events. Load simply means "focus on"..
+		Smooch.loadConversation( conversation.id );
+
 		setChat( ( prevChat ) => ( {
 			...prevChat,
 			conversationId: conversation.id,

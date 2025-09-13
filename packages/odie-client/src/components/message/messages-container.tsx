@@ -1,5 +1,8 @@
+import { HelpCenterSelect } from '@automattic/data-stores';
 import { useResetSupportInteraction } from '@automattic/help-center/src/hooks/use-reset-support-interaction';
+import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { Spinner } from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
 import clx from 'classnames';
 import { useEffect, useRef, useState } from 'react';
 import { NavigationType, useNavigationType, useSearchParams } from 'react-router-dom';
@@ -17,6 +20,7 @@ import { interactionHasZendeskEvent, interactionHasEnded } from '../../utils';
 import { JumpToRecent } from './jump-to-recent';
 import { MessagesClusterizer } from './messages-cluster/messages-cluster';
 import { ThinkingPlaceholder } from './thinking-placeholder';
+import { TypingPlaceholder } from './typing-placeholder';
 import ChatMessage from '.';
 import type { CurrentUser } from '../../types';
 interface ChatMessagesProps {
@@ -35,6 +39,13 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	const [ chatMessagesLoaded, setChatMessagesLoaded ] = useState( false );
 	const [ shouldEnableAutoScroll, setShouldEnableAutoScroll ] = useState( true );
 	const navType: NavigationType = useNavigationType();
+	const typingStatus = useSelect(
+		( select ) =>
+			( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getSupportTypingStatus(
+				chat.conversationId ?? ''
+			),
+		[ chat.conversationId ]
+	);
 
 	const messagesContainerRef = useRef< HTMLDivElement >( null );
 	const scrollParentRef = useRef< HTMLElement | null >( null );
@@ -164,6 +175,11 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 				{ chat.provider === 'odie' && chat.status === 'sending' && (
 					<div className="odie-chatbox__action-message">
 						<ThinkingPlaceholder />
+					</div>
+				) }
+				{ chat.provider.startsWith( 'zendesk' ) && typingStatus && (
+					<div className="odie-chatbox__action-message" ref={ ( div ) => div?.scrollIntoView() }>
+						<TypingPlaceholder />
 					</div>
 				) }
 			</>
