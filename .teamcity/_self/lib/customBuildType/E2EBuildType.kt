@@ -131,6 +131,9 @@ open class E2EBuildType(
 					shopt -s globstar
 					set -x
 
+					# Set CI=true to know we're on CI
+					export CI=true
+
 					# For Calypso E2E build configurations, the URL environment variable
 					# is computed and exported by a script that must be executed at runtime.
 					# Unset variables throw an error, so we initialize CALYPSO_LIVE_URL as empty first.
