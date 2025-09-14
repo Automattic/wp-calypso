@@ -12,12 +12,12 @@ import { Steps, StepStatus } from 'calypso/data/paid-newsletter/use-paid-newslet
 import { useResetMutation } from 'calypso/data/paid-newsletter/use-reset-mutation';
 import { useSelector } from 'calypso/state';
 import { isJetpackSite, getSiteAdminUrl } from 'calypso/state/sites/selectors';
-import ImporterActionButton from '../importer-action-buttons/action-button';
-import ImporterActionButtonContainer from '../importer-action-buttons/container';
-import ContentSummary from './summary/content';
-import SubscribersSummary from './summary/subscribers';
-import { EngineTypes } from './types';
-import { getImporterStatus, normalizeFromSite } from './utils';
+import ImporterActionButton from '../../importer-action-buttons/action-button';
+import ImporterActionButtonContainer from '../../importer-action-buttons/container';
+import { EngineTypes } from '../types';
+import { getImporterStatus, normalizeFromSite } from '../utils';
+import ContentSummary from './content';
+import SubscribersSummary from './subscribers';
 
 interface SummaryProps {
 	selectedSite: SiteDetails;
