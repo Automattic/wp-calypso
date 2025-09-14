@@ -5,6 +5,7 @@
 // Mock dependencies before importing the module
 jest.mock( '@automattic/calypso-analytics', () => ( {
 	getCurrentUser: jest.fn(),
+	recordTracksEvent: jest.fn(),
 } ) );
 
 jest.mock( '@automattic/calypso-config', () => jest.fn() );
@@ -19,7 +20,7 @@ jest.mock( 'calypso/lib/i18n-utils', () => ( {
 
 jest.mock( 'debug', () => () => jest.fn() );
 
-import { getCurrentUser } from '@automattic/calypso-analytics';
+import { getCurrentUser, recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { isMobile } from '@automattic/viewport';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
@@ -191,6 +192,7 @@ describe( 'survicate', () => {
 			expect( global._sva.setVisitorTraits ).toHaveBeenCalledWith( {
 				email: 'test@example.com',
 			} );
+			expect( recordTracksEvent ).not.toHaveBeenCalled();
 		} );
 
 		test( 'should not set visitor traits when user is not logged in', () => {
@@ -206,6 +208,27 @@ describe( 'survicate', () => {
 			mockScript.onload();
 
 			expect( global._sva.setVisitorTraits ).not.toHaveBeenCalled();
+		} );
+
+		test( 'should log error when user is not logged in', () => {
+			getCurrentUser.mockReturnValue( null );
+
+			global._sva = {
+				setVisitorTraits: jest.fn(),
+			};
+
+			addSurvicate();
+
+			// Simulate script load
+			mockScript.onload();
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_survicate_user_not_available_error',
+				{
+					user_exists: false,
+					user_has_email: false,
+				}
+			);
 		} );
 
 		test( 'should not set visitor traits when user has no email', () => {
@@ -224,6 +247,30 @@ describe( 'survicate', () => {
 			mockScript.onload();
 
 			expect( global._sva.setVisitorTraits ).not.toHaveBeenCalled();
+		} );
+
+		test( 'should log error when user has no email', () => {
+			const mockUser = {
+				id: 123,
+			};
+			getCurrentUser.mockReturnValue( mockUser );
+
+			global._sva = {
+				setVisitorTraits: jest.fn(),
+			};
+
+			addSurvicate();
+
+			// Simulate script load
+			mockScript.onload();
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_survicate_user_not_available_error',
+				{
+					user_exists: true,
+					user_has_email: false,
+				}
+			);
 		} );
 
 		test( 'should handle case when _sva object is not available', () => {
