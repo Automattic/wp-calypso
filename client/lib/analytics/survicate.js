@@ -41,6 +41,11 @@ export function addSurvicate() {
 
 			const user = getCurrentUser();
 
+			if ( ! user || ! user.email ) {
+				survicateDebug( 'Not setting Survicate visitor traits because user is not logged in' );
+				return;
+			}
+
 			setTimeout( () => {
 				// eslint-disable-next-line no-undef
 				if ( typeof _sva !== 'undefined' && _sva.setVisitorTraits ) {
