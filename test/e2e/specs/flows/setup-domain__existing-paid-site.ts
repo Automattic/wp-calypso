@@ -64,15 +64,17 @@ describe(
 		} );
 
 		it( 'Select the site', async function () {
-			const domainSearchComponent = new SiteSelectComponent( page );
-			await domainSearchComponent.selectSite( testAccountUser.testSites?.primary?.url as string );
+			const siteSelectComponent = new SiteSelectComponent( page );
+			await siteSelectComponent.selectSite(
+				testAccountUser.testSites?.primary?.url as string,
+				false
+			);
 		} );
 
 		it( 'See domain at checkout', async function () {
 			const cartCheckoutPage = new CartCheckoutPage( page );
 
 			await cartCheckoutPage.validateCartItem( selectedDomain );
-			await cartCheckoutPage.removeCartItem( selectedDomain );
 		} );
 	}
 );

@@ -62,7 +62,6 @@ describe(
 			const cartCheckoutPage = new CartCheckoutPage( page );
 
 			await cartCheckoutPage.validateCartItem( selectedDomain );
-			await cartCheckoutPage.removeCartItem( selectedDomain );
 		} );
 	}
 );

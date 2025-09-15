@@ -2,7 +2,7 @@ import { Page } from 'playwright';
 
 const selectors = {
 	ownedDomainInput: '.use-my-domain__domain-input-fieldset input',
-	nextButton: 'button:text("Next")',
+	continueButton: 'button:text("Continue")',
 	connectDomainButton: '.option-content:has-text("Connect your domain") button:text("Select")',
 	transferDomainButton: '.option-content:has-text("Transfer your domain") button:text("Select")',
 };
@@ -36,7 +36,7 @@ export class UseADomainIOwnPage {
 	 * Clicks on the button to continue
 	 */
 	async clickContinue(): Promise< void > {
-		await this.page.click( selectors.nextButton );
+		await this.page.click( selectors.continueButton );
 	}
 
 	/**

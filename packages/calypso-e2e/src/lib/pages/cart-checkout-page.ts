@@ -12,7 +12,7 @@ const selectors = {
 
 	// Cart item
 	cartItem: ( itemName: string ) =>
-		`[data-testid="review-order-step--visible"] .checkout-line-item >> text=${ itemName.trim() }`,
+		`[data-testid="review-order-step--visible"] .checkout-line-item:has-text("${ itemName.trim() }")`,
 	removeCartItemButton: ( itemName: string ) =>
 		`[data-testid="review-order-step--visible"] button[aria-label*="Remove ${ itemName.trim() } from cart"]`,
 	cartItems: '[data-testid="review-order-step--visible"] .checkout-line-item',

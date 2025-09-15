@@ -20,7 +20,7 @@ import { apiDeleteSite } from '../shared/api-delete-site';
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Domain flow: Connect a domain to a site' ), function () {
-	const targetDomain = 'a8ctesting.com';
+	const targetDomain = 'testwoo.com';
 
 	const planName = 'Personal';
 	let page: Page;
@@ -58,11 +58,6 @@ describe( DataHelper.createSuiteTitle( 'Domain flow: Connect a domain to a site'
 		const useADomainIOwnPage = new UseADomainIOwnPage( page );
 		await useADomainIOwnPage.clickContinue();
 		await useADomainIOwnPage.clickButtonToConnectDomain();
-	} );
-
-	it( 'Continue to next step', async function () {
-		const domainSearchComponent = new RewrittenDomainSearchComponent( page );
-		await domainSearchComponent.continue();
 	} );
 
 	it( 'Select new site option', async function () {

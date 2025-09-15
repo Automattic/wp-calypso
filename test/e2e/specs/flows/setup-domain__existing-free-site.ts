@@ -24,7 +24,7 @@ describe(
 		const planName = 'Personal';
 		let page: Page;
 		let selectedDomain: string;
-		const testAccountName = 'simpleSiteFreePlanUser';
+		const testAccountName = 'siteEditorSimpleSiteUser';
 		const testAccountUser = SecretsManager.secrets.testAccounts[ testAccountName ];
 		const testAccount = new TestAccount( testAccountName );
 		let restAPIClient: RestAPIClient;
@@ -66,8 +66,11 @@ describe(
 		} );
 
 		it( 'Select the site', async function () {
-			const domainSearchComponent = new SiteSelectComponent( page );
-			await domainSearchComponent.selectSite( testAccountUser.testSites?.primary?.url as string );
+			const siteSelectComponent = new SiteSelectComponent( page );
+			await siteSelectComponent.selectSite(
+				testAccountUser.testSites?.primary?.url as string,
+				false
+			);
 		} );
 
 		it( `Select ${ planName } plan`, async function () {
@@ -84,9 +87,6 @@ describe(
 
 			await cartCheckoutPage.validateCartItem( `WordPress.com ${ planName }` );
 			await cartCheckoutPage.validateCartItem( selectedDomain );
-
-			await cartCheckoutPage.removeCartItem( `WordPress.com ${ planName }` );
-			await cartCheckoutPage.removeCartItem( selectedDomain );
 		} );
 	}
 );

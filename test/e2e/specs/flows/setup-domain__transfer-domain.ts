@@ -60,11 +60,6 @@ describe( DataHelper.createSuiteTitle( 'Domain flow: Transfer a domain to a site
 		await useADomainIOwnPage.clickButtonToTransferDomain();
 	} );
 
-	it( 'Continue to next step', async function () {
-		const domainSearchComponent = new RewrittenDomainSearchComponent( page );
-		await domainSearchComponent.continue();
-	} );
-
 	it( 'Select new site option', async function () {
 		const domainSearchComponent = new SelectItemsComponent( page );
 		await domainSearchComponent.clickButton( 'New site', 'Create a new site' );

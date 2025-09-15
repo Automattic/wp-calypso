@@ -22,7 +22,7 @@ describe(
 		const planName = 'Personal';
 		let page: Page;
 		let selectedDomain: string;
-		const testAccountName = 'simpleSiteFreePlanUser';
+		const testAccountName = 'siteEditorSimpleSiteUser';
 		const testAccountUser = SecretsManager.secrets.testAccounts[ testAccountName ];
 		const testAccount = new TestAccount( testAccountName );
 		let restAPIClient: RestAPIClient;
@@ -74,9 +74,6 @@ describe(
 
 			await cartCheckoutPage.validateCartItem( `WordPress.com ${ planName }` );
 			await cartCheckoutPage.validateCartItem( selectedDomain );
-
-			await cartCheckoutPage.removeCartItem( `WordPress.com ${ planName }` );
-			await cartCheckoutPage.removeCartItem( selectedDomain );
 		} );
 	}
 );
