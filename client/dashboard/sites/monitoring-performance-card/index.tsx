@@ -18,9 +18,10 @@ function convertTimeRangeToUnix( timeRange: number ): TimeRange {
 type SiteMetricsData = {
 	requestsData: DataPointDate[] | undefined;
 	responseTimeData: DataPointDate[] | undefined;
+	isLoading: boolean;
 };
 
-function useSiteMetricsData( siteId: number, timeRange: number ) {
+function useSiteMetricsData( siteId: number, timeRange: number ): SiteMetricsData {
 	// Memoize timestamps to prevent graph reloading on every render. Only refresh the data on time range change.
 	const { start, end } = useMemo( () => convertTimeRangeToUnix( timeRange ), [ timeRange ] );
 
@@ -43,19 +44,16 @@ function useSiteMetricsData( siteId: number, timeRange: number ) {
 	};
 
 	const formatPeriod = ( period: PeriodData ) => {
+		const value = getDimensionValue( period );
 		return {
 			date: new Date( period.timestamp * 1000 ),
-			value: Math.round( getDimensionValue( period ) * 100 ) / 100,
+			value: value === null ? 0 : Math.round( value * 100 ) / 100,
 		};
 	};
 
-	const formattedData: SiteMetricsData = {
+	return {
 		requestsData: requestsData?.data?.periods.map( formatPeriod ),
 		responseTimeData: responseTimeData?.data?.periods.map( formatPeriod ),
-	};
-
-	return {
-		formattedData,
 		isLoading: isLoadingRequestsData || isLoadingResponseTimeData,
 	};
 }
@@ -67,16 +65,16 @@ export default function MonitoringPerformanceCard( {
 	site: Site;
 	timeRange: number;
 } ) {
-	const { formattedData, isLoading } = useSiteMetricsData( site.ID, timeRange );
+	const { requestsData, responseTimeData, isLoading } = useSiteMetricsData( site.ID, timeRange );
 
 	const data: SeriesData[] = [
 		{
 			label: __( 'Requests per minute' ),
-			data: formattedData?.requestsData || [],
+			data: requestsData || [],
 		},
 		{
 			label: __( 'Average response time (ms)' ),
-			data: formattedData?.responseTimeData || [],
+			data: responseTimeData || [],
 		},
 	];
 
