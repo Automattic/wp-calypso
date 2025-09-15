@@ -3,11 +3,15 @@ import {
 	invalidatePlugins,
 	sitePluginActivateMutation,
 	sitePluginDeactivateMutation,
+	sitePluginRemoveMutation,
+	sitePluginAutoupdateEnableMutation,
+	sitePluginAutoupdateDisableMutation,
 } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
+import { Icon, ToggleControl } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { check, close } from '@wordpress/icons';
+import { check, close, trash } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
 import ActionRenderModal, { getModalHeader } from '../manage/components/action-render-modal';
 import { buildBulkSitesPluginAction } from '../manage/utils';
@@ -36,7 +40,20 @@ const mapToPluginListRow = (
 
 export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) => {
 	const [ view, setView ] = useState< View >( defaultView );
-	const { isLoading, plugin, pluginBySiteId, sitesWithThisPlugin } = usePlugin( pluginSlug );
+	const { mutateAsync: activateMutate, isPending: isActivating } = useMutation(
+		sitePluginActivateMutation()
+	);
+	const { mutateAsync: deactivateMutate, isPending: isDeactivating } = useMutation(
+		sitePluginDeactivateMutation()
+	);
+	const { mutateAsync: enableAutoupdateMutate, isPending: isEnablingAutoupdate } = useMutation(
+		sitePluginAutoupdateEnableMutation()
+	);
+	const { mutateAsync: disableAutoupdateMutate, isPending: isDisablingAutoupdate } = useMutation(
+		sitePluginAutoupdateDisableMutation()
+	);
+	const { isLoading, plugin, pluginBySiteId, sitesWithThisPlugin, isFetching } =
+		usePlugin( pluginSlug );
 	const [ selection, setSelection ] = useState< SiteWithPluginActivationStatus[] >( [] );
 
 	const fields = useMemo(
@@ -54,7 +71,26 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 				id: 'active',
 				label: __( 'Active' ),
 				getValue: ( { item }: { item: Site } ) => pluginBySiteId.get( item.ID )?.active ?? false,
-				render: ( { item }: { item: Site } ) => pluginBySiteId.get( item.ID )?.active ?? false,
+				render: ( { item }: { item: Site } ) => {
+					const pluginItem = pluginBySiteId.get( item.ID );
+					const checked = pluginItem?.active ?? false;
+					const isBusy = isActivating || isDeactivating || isFetching;
+					return (
+						<ToggleControl
+							label={ __( 'Active' ) }
+							checked={ checked }
+							onClick={ ( e ) => e.preventDefault() }
+							onChange={ ( next ) => {
+								if ( next ) {
+									activateMutate( { siteId: item.ID, pluginId: plugin?.id || '' } );
+								} else {
+									deactivateMutate( { siteId: item.ID, pluginId: plugin?.id || '' } );
+								}
+							} }
+							disabled={ isBusy }
+						/>
+					);
+				},
 				enableHiding: false,
 				enableSorting: true,
 			},
@@ -63,7 +99,26 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 				label: __( 'Autoupdate' ),
 				getValue: ( { item }: { item: Site } ) =>
 					pluginBySiteId.get( item.ID )?.autoupdate ?? false,
-				render: ( { item }: { item: Site } ) => pluginBySiteId.get( item.ID )?.autoupdate ?? false,
+				render: ( { item }: { item: Site } ) => {
+					const pluginItem = pluginBySiteId.get( item.ID );
+					const checked = pluginItem?.autoupdate ?? false;
+					const isBusy = isEnablingAutoupdate || isDisablingAutoupdate || isFetching;
+					return (
+						<ToggleControl
+							label={ __( 'Autoupdate' ) }
+							checked={ checked }
+							onClick={ ( e ) => e.preventDefault() }
+							onChange={ ( next ) => {
+								if ( next ) {
+									enableAutoupdateMutate( { siteId: item.ID, pluginId: plugin?.id || '' } );
+								} else {
+									disableAutoupdateMutate( { siteId: item.ID, pluginId: plugin?.id || '' } );
+								}
+							} }
+							disabled={ isBusy }
+						/>
+					);
+				},
 				enableHiding: false,
 				enableSorting: true,
 			},
@@ -75,7 +130,19 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 				enableSorting: false,
 			},
 		],
-		[ pluginBySiteId ]
+		[
+			isFetching,
+			pluginBySiteId,
+			isActivating,
+			isDeactivating,
+			isEnablingAutoupdate,
+			isDisablingAutoupdate,
+			activateMutate,
+			deactivateMutate,
+			enableAutoupdateMutate,
+			disableAutoupdateMutate,
+			plugin?.id,
+		]
 	);
 
 	const { data, paginationInfo } = filterSortAndPaginate( sitesWithThisPlugin, view, fields );
@@ -134,14 +201,66 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 					supportsBulk: true,
 				},
 				{
+					id: 'enable-autoupdate',
+					label: __( 'Enable auto‑updates' ),
+					modalHeader: getModalHeader( 'enable-autoupdate' ),
+					RenderModal: ( { items, closeModal } ) => {
+						const { mutateAsync } = useMutation( sitePluginAutoupdateEnableMutation() );
+						const action = buildBulkSitesPluginAction( mutateAsync );
+						return (
+							<ActionRenderModal
+								actionId="enable-autoupdate"
+								items={ [ mapToPluginListRow( plugin, items ) as PluginListRow ] }
+								closeModal={ closeModal }
+								onExecute={ action }
+								onActionPerformed={ invalidatePlugins }
+							/>
+						);
+					},
+					isEligible: ( item ) => ! ( pluginBySiteId.get( item.ID )?.autoupdate ?? false ),
+					supportsBulk: true,
+				},
+				{
+					id: 'disable-autoupdate',
+					label: __( 'Disable auto‑updates' ),
+					modalHeader: getModalHeader( 'disable-autoupdate' ),
+					RenderModal: ( { items, closeModal } ) => {
+						const { mutateAsync } = useMutation( sitePluginAutoupdateDisableMutation() );
+						const action = buildBulkSitesPluginAction( mutateAsync );
+						return (
+							<ActionRenderModal
+								actionId="disable-autoupdate"
+								items={ [ mapToPluginListRow( plugin, items ) as PluginListRow ] }
+								closeModal={ closeModal }
+								onExecute={ action }
+								onActionPerformed={ invalidatePlugins }
+							/>
+						);
+					},
+					isEligible: ( item ) => pluginBySiteId.get( item.ID )?.autoupdate ?? false,
+					supportsBulk: true,
+				},
+				{
 					id: 'delete',
 					label: __( 'Delete' ),
-					isPrimary: false,
-					callback: ( items ) => {
-						// Dummy delete action for now
-						// eslint-disable-next-line no-console
-						console.log( 'Delete clicked for plugin', items[ 0 ] );
+					modalHeader: getModalHeader( 'delete' ),
+					RenderModal: ( { items, closeModal } ) => {
+						const { mutateAsync } = useMutation( sitePluginRemoveMutation() );
+						const action = buildBulkSitesPluginAction( mutateAsync );
+						const siteIds = items.map( ( site ) => site.ID );
+
+						return (
+							<ActionRenderModal
+								actionId="delete"
+								items={ [ { ...plugin, siteIds, sitesCount: items.length } as PluginListRow ] }
+								closeModal={ closeModal }
+								onExecute={ action }
+							/>
+						);
 					},
+					isEligible: ( item ) => ! item.isPluginActive,
+					supportsBulk: true,
+					icon: <Icon icon={ trash } />,
 				},
 			] }
 			getItemId={ ( item ) => String( item.ID ) }
