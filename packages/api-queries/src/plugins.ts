@@ -8,6 +8,7 @@ import {
 	disableSitePluginAutoupdate,
 	installSitePlugin,
 	removeSitePlugin,
+	fetchSiteCorePlugins,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
@@ -22,6 +23,12 @@ export const sitePluginsQuery = ( siteId: number ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'plugins' ],
 		queryFn: () => fetchSitePlugins( siteId ),
+	} );
+
+export const siteCorePluginsQuery = ( siteId: number ) =>
+	queryOptions( {
+		queryKey: [ 'site', siteId, 'core-plugins' ],
+		queryFn: () => fetchSiteCorePlugins( siteId ),
 	} );
 
 // Mutations for site-level plugin operations
