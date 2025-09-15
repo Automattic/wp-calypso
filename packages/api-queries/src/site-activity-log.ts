@@ -9,7 +9,7 @@ export const siteLastFiveActivityLogEntriesQuery = ( siteId: number ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'activity-log', 'last-five' ],
 		queryFn: () => fetchSiteActivityLog( siteId, { number: 5 } ),
-		select: ( data ) => data.current?.orderedItems?.slice( 0, 5 ) ?? [],
+		select: ( data ) => data.activityLogs?.slice( 0, 5 ) ?? [],
 	} );
 
 export const siteRewindableActivityLogEntriesQuery = (
