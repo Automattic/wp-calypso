@@ -667,6 +667,17 @@ export const siteSettingsRepositoriesRoute = createRoute( {
 	)
 );
 
+export const siteSettingsRepositoriesConnectRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/repositories/connect',
+} ).lazy( () =>
+	import( '../../sites/settings-repositories/connect-repository' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-repositories-connect' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const siteTrialEndedRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'trial-ended',
@@ -763,6 +774,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteSettingsMcpRoute,
 		siteSettingsMcpSetupRoute,
 		siteSettingsRepositoriesRoute,
+		siteSettingsRepositoriesConnectRoute,
 		siteSettingsHundredYearPlanRoute,
 		siteSettingsPrimaryDataCenterRoute,
 		siteSettingsStaticFile404Route,
