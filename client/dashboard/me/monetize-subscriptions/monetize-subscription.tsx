@@ -3,13 +3,12 @@ import { formatCurrency } from '@automattic/number-formatters';
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { Card, Notice, Gridicon } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
+import { Card, Notice } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, trash, replace } from '@wordpress/icons';
-import { store as noticesStore } from '@wordpress/notices';
 import { formatDate } from 'date-fns';
 import { useEffect } from 'react';
+import { useNotice } from '../../app/hooks/use-notice';
 import { monetizeSubscriptionRoute } from '../../app/router/me';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -38,9 +37,7 @@ export default function MonetizeSubscription() {
 
 	const { data: subscription } = useQuery( monetizeSubscriptionQuery( subscriptionId ) );
 
-	const dispatch = useDispatch();
-
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { createSuccessNotice, createErrorNotice } = useNotice();
 
 	// TEST
 	const stoppingStatus = '';
