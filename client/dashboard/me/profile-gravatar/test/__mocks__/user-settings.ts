@@ -1,0 +1,25 @@
+import type { UserSettings } from '@automattic/api-core';
+
+export const mockUserSettings: UserSettings = {
+	advertising_targeting_opt_out: false,
+	avatar_URL: 'https://gravatar.com/avatar/test',
+	description: 'Test description',
+	display_name: 'Test User',
+	is_dev_account: false,
+	password: 'password',
+	tracks_opt_out: false,
+	user_email: 'test@example.com',
+	user_login: 'testuser',
+	user_URL: 'https://example.com',
+	first_name: 'Test First Name',
+	last_name: 'Test Last Name',
+	two_step_app_enabled: false,
+	two_step_backup_codes_printed: false,
+	two_step_enabled: false,
+	two_step_enhanced_security: false,
+	two_step_enhanced_security_forced: false,
+	two_step_security_key_enabled: false,
+	two_step_sms_country: 'US',
+	two_step_sms_enabled: false,
+	two_step_sms_phone_number: '1234567890',
+};

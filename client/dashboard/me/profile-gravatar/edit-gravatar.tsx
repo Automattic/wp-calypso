@@ -240,8 +240,8 @@ const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGra
 							<div
 								style={ {
 									position: 'relative',
-									width: 150,
-									height: 150,
+									width: 48,
+									height: 48,
 									borderRadius: '50%',
 									overflow: 'hidden',
 								} }
@@ -276,8 +276,8 @@ const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGra
 								<img
 									src={ tempImage || avatarUrl }
 									alt={ __( 'Gravatar' ) }
-									width={ 150 }
-									height={ 150 }
+									width={ 48 }
+									height={ 48 }
 									style={ { objectFit: 'cover' } }
 								/>
 
