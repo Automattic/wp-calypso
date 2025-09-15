@@ -3,10 +3,10 @@ import {
 	LogType,
 	PHPLog,
 	ServerLog,
+	SiteActivityLog,
 	SiteLogsParams,
 	SiteLogsData,
-	ActivityLogEntry,
-	ActivityLog,
+	ActivityLogsData,
 	ActivityLogParams,
 } from '@automattic/api-core';
 import {
@@ -57,15 +57,15 @@ import type { Action } from '@wordpress/dataviews';
 import './style.scss';
 
 // Helper types and functions
-type LogsData = SiteLogsData | ActivityLog | undefined;
+type LogsData = SiteLogsData | ActivityLogsData | undefined;
 
 // Type guards
 const isSiteLogsData = ( data: LogsData ): data is SiteLogsData => {
 	return data != null && 'logs' in data && 'total_results' in data;
 };
 
-const isActivityLogData = ( data: LogsData ): data is ActivityLog => {
-	return data != null && 'current' in data;
+const isActivityLogData = ( data: LogsData ): data is ActivityLogsData => {
+	return data != null && 'activityLogs' in data;
 };
 
 export function SiteLogsCallout( {
@@ -285,7 +285,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	if ( isSiteLogsData( siteLogs ) ) {
 		siteLogsArray = siteLogs.logs;
 	} else if ( isActivityLogData( siteLogs ) ) {
-		siteLogsArray = siteLogs.current?.orderedItems;
+		siteLogsArray = siteLogs.activityLogs;
 	} else {
 		siteLogsArray = undefined;
 	}
@@ -293,13 +293,13 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		const suffix = scrollId ? scrollId.slice( 0, 8 ) : `p${ view.page }`;
 
 		const items = siteLogsArray ?? [];
-		return items.map( ( log: PHPLog | ServerLog | ActivityLogEntry, index: number ) => {
+		return items.map( ( log: PHPLog | ServerLog | SiteActivityLog, index: number ) => {
 			if ( logType === LogType.ACTIVITY ) {
-				const activity = log as ActivityLogEntry;
+				const activity = log as SiteActivityLog;
 				return {
 					...activity,
 					id: `${ activity.activity_id }|${ suffix }|${ String( index ) }`,
-				} as ActivityLogEntry & { id: string };
+				};
 			}
 			if ( logType === LogType.PHP ) {
 				const php = log as PHPLog;
@@ -508,7 +508,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 									if ( logType === LogType.PHP ) {
 										return (
 											<DataViews< PHPLog & { id: string } >
-												data={ logs as ( PHPLog & { id: string } )[] }
+												data={ logs as PHPLog[] }
 												isLoading={ isFetching }
 												paginationInfo={ paginationInfo }
 												fields={ fields as Field< PHPLog & { id: string } >[] }
@@ -525,15 +525,13 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 
 									if ( logType === LogType.ACTIVITY ) {
 										return (
-											<DataViews< ActivityLogEntry & { id: string } >
-												data={ logs as ( ActivityLogEntry & { id: string } )[] }
+											<DataViews< SiteActivityLog & { id: string } >
+												data={ logs as SiteActivityLog[] }
 												isLoading={ isFetching }
 												paginationInfo={ paginationInfo }
-												fields={ fields as unknown as Field< ActivityLogEntry & { id: string } >[] }
+												fields={ fields as unknown as Field< SiteActivityLog >[] }
 												view={ view }
-												actions={
-													actions as unknown as Action< ActivityLogEntry & { id: string } >[]
-												}
+												actions={ actions as unknown as Action< SiteActivityLog >[] }
 												search={ false }
 												defaultLayouts={ { table: {} } }
 												onChangeView={ onChangeView }

@@ -44,7 +44,7 @@ export interface ActivityNotificationRange {
 	intent?: string;
 }
 
-export interface ActivityLog {
+export interface ActivityLogAPIResponse {
 	current?: {
 		orderedItems: ActivityLogEntry[];
 	};
@@ -98,4 +98,16 @@ export interface ActivityLogParams {
 	group?: string;
 	name?: string;
 	text_search?: string;
+}
+
+export interface SiteActivityLog extends ActivityLogEntry {
+	id: string;
+}
+
+export interface ActivityLogsData {
+	activityLogs: SiteActivityLog[];
+	totalItems: number;
+	pages: number;
+	itemsPerPage: number;
+	totalPages: number;
 }
