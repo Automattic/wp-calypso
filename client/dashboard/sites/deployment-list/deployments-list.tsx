@@ -91,7 +91,7 @@ export function DeploymentsList() {
 			} ) );
 	}, [ deploymentRuns ] );
 
-	const fields = useDeploymentFields( { repositoryOptions, userNameOptions } );
+	const fields = useDeploymentFields( { repositoryOptions, userNameOptions, siteId: site.ID } );
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
 		deploymentRuns,
 		view,
