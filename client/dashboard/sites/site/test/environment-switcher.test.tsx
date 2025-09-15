@@ -242,4 +242,59 @@ describe( 'EnvironmentSwitcher', () => {
 			{ type: 'snackbar' }
 		);
 	} );
+
+	test( 'shows error notice when jetpack connection is unhealthy', async () => {
+		const { useQuery } = require( '@tanstack/react-query' );
+
+		// Mock to simulate unhealthy jetpack connection
+		useQuery.mockImplementation(
+			( options: { queryKey?: ( string | number )[]; enabled?: boolean } ) => {
+				// Return production site
+				if ( options?.queryKey?.includes( 'site-by-id' ) && options?.queryKey?.includes( 1 ) ) {
+					return { data: mockProductionSiteWithStaging, isLoading: false, error: null };
+				}
+				// Return true for has-valid-quota query
+				if ( options?.queryKey?.includes( 'has-valid-quota' ) ) {
+					return { data: true, isLoading: false, error: null };
+				}
+				// Return unhealthy connection
+				if ( options?.queryKey?.includes( 'jetpack-connection' ) ) {
+					return { data: { is_healthy: false }, isLoading: false, error: null };
+				}
+				// Return false for creating staging site query
+				if ( options?.queryKey?.includes( 'is-creating-staging' ) ) {
+					return { data: false, isLoading: false, error: null };
+				}
+				// Return false for all other queries
+				return { data: false, isLoading: false, error: null };
+			}
+		);
+
+		const user = userEvent.setup();
+		render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } /> );
+
+		// Click the dropdown button to open it
+		const button = screen.getByRole( 'button' );
+		await user.click( button );
+
+		// Click the "Add staging site" button
+		const addButton = screen.getByText( 'Add staging site' );
+		await user.click( addButton );
+
+		// Check that error notice was called
+		expect( mockCreateNotice ).toHaveBeenCalledWith(
+			'error',
+			'Cannot add a staging site due to a Jetpack connection issue.',
+			{
+				type: 'snackbar',
+				actions: [
+					{
+						label: 'Contact support',
+						url: null,
+						onClick: expect.any( Function ),
+					},
+				],
+			}
+		);
+	} );
 } );
