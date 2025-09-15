@@ -149,6 +149,29 @@ const mockStagingSite: Site = {
 	},
 } as Site;
 
+// Test helpers
+const mockUseQuery = ( mockData: Record< string, unknown > ) => {
+	const { useQuery } = require( '@tanstack/react-query' );
+	useQuery.mockImplementation(
+		( options: { queryKey?: ( string | number )[]; enabled?: boolean } ) => {
+			const queryKey = options?.queryKey?.join( '-' ) || '';
+
+			for ( const [ key, value ] of Object.entries( mockData ) ) {
+				if ( queryKey.includes( key ) ) {
+					return { data: value, isLoading: false, error: null };
+				}
+			}
+
+			return { data: false, isLoading: false, error: null };
+		}
+	);
+};
+
+const clickDropdown = async ( user: ReturnType< typeof userEvent.setup > ) => {
+	const button = screen.getByRole( 'button' );
+	await user.click( button );
+};
+
 describe( 'EnvironmentSwitcher', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
@@ -165,78 +188,32 @@ describe( 'EnvironmentSwitcher', () => {
 	} );
 
 	test( 'displays "Add staging site" button when no staging site exists', async () => {
-		const { useQuery } = require( '@tanstack/react-query' );
-
-		// Mock to return specific data based on query type
-		useQuery.mockImplementation(
-			( options: { queryKey?: ( string | number )[]; enabled?: boolean } ) => {
-				// Return production site only for production site ID (1)
-				if ( options?.queryKey?.includes( 'site-by-id' ) && options?.queryKey?.includes( 1 ) ) {
-					return { data: mockProductionSiteWithStaging, isLoading: false, error: null };
-				}
-				// Return undefined for staging site queries (getStagingSiteId returns undefined anyway)
-				if ( options?.queryKey?.includes( 'site-by-id' ) && options?.enabled === false ) {
-					return { data: undefined, isLoading: false, error: null };
-				}
-				// Return false for creating staging site query (not currently creating)
-				if ( options?.queryKey?.includes( 'is-creating-staging' ) ) {
-					return { data: false, isLoading: false, error: null };
-				}
-				// Return false for all other queries
-				return { data: false, isLoading: false, error: null };
-			}
-		);
+		mockUseQuery( {
+			'site-by-id-1': mockProductionSiteWithStaging,
+			'is-creating-staging': false,
+		} );
 
 		const user = userEvent.setup();
 		render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } /> );
 
-		// Click the dropdown button to open it
-		const button = screen.getByRole( 'button' );
-		await user.click( button );
-
-		// Check for "Add staging site" button
+		await clickDropdown( user );
 		expect( screen.getByText( 'Add staging site' ) ).toBeInTheDocument();
 	} );
 
 	test( 'shows error notice when user has insufficient quota', async () => {
-		const { useQuery } = require( '@tanstack/react-query' );
-
-		// Mock to simulate insufficient quota scenario
-		useQuery.mockImplementation(
-			( options: { queryKey?: ( string | number )[]; enabled?: boolean } ) => {
-				// Return production site
-				if ( options?.queryKey?.includes( 'site-by-id' ) && options?.queryKey?.includes( 1 ) ) {
-					return { data: mockProductionSiteWithStaging, isLoading: false, error: null };
-				}
-				// Return false for has-valid-quota query (insufficient quota)
-				if ( options?.queryKey?.includes( 'has-valid-quota' ) ) {
-					return { data: false, isLoading: false, error: null };
-				}
-				// Return true for connection health
-				if ( options?.queryKey?.includes( 'jetpack-connection' ) ) {
-					return { data: { is_healthy: true }, isLoading: false, error: null };
-				}
-				// Return false for creating staging site query
-				if ( options?.queryKey?.includes( 'is-creating-staging' ) ) {
-					return { data: false, isLoading: false, error: null };
-				}
-				// Return false for all other queries
-				return { data: false, isLoading: false, error: null };
-			}
-		);
+		mockUseQuery( {
+			'site-by-id-1': mockProductionSiteWithStaging,
+			'has-valid-quota': false,
+			'jetpack-connection': { is_healthy: true },
+			'is-creating-staging': false,
+		} );
 
 		const user = userEvent.setup();
 		render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } /> );
 
-		// Click the dropdown button to open it
-		const button = screen.getByRole( 'button' );
-		await user.click( button );
+		await clickDropdown( user );
+		await user.click( screen.getByText( 'Add staging site' ) );
 
-		// Click the "Add staging site" button
-		const addButton = screen.getByText( 'Add staging site' );
-		await user.click( addButton );
-
-		// Check that error notice was called
 		expect( mockCreateErrorNotice ).toHaveBeenCalledWith(
 			'Your available storage space is below 50%, which is insufficient for creating a staging site.',
 			{ type: 'snackbar' }
@@ -244,44 +221,19 @@ describe( 'EnvironmentSwitcher', () => {
 	} );
 
 	test( 'shows error notice when jetpack connection is unhealthy', async () => {
-		const { useQuery } = require( '@tanstack/react-query' );
-
-		// Mock to simulate unhealthy jetpack connection
-		useQuery.mockImplementation(
-			( options: { queryKey?: ( string | number )[]; enabled?: boolean } ) => {
-				// Return production site
-				if ( options?.queryKey?.includes( 'site-by-id' ) && options?.queryKey?.includes( 1 ) ) {
-					return { data: mockProductionSiteWithStaging, isLoading: false, error: null };
-				}
-				// Return true for has-valid-quota query
-				if ( options?.queryKey?.includes( 'has-valid-quota' ) ) {
-					return { data: true, isLoading: false, error: null };
-				}
-				// Return unhealthy connection
-				if ( options?.queryKey?.includes( 'jetpack-connection' ) ) {
-					return { data: { is_healthy: false }, isLoading: false, error: null };
-				}
-				// Return false for creating staging site query
-				if ( options?.queryKey?.includes( 'is-creating-staging' ) ) {
-					return { data: false, isLoading: false, error: null };
-				}
-				// Return false for all other queries
-				return { data: false, isLoading: false, error: null };
-			}
-		);
+		mockUseQuery( {
+			'site-by-id-1': mockProductionSiteWithStaging,
+			'has-valid-quota': true,
+			'jetpack-connection': { is_healthy: false },
+			'is-creating-staging': false,
+		} );
 
 		const user = userEvent.setup();
 		render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } /> );
 
-		// Click the dropdown button to open it
-		const button = screen.getByRole( 'button' );
-		await user.click( button );
+		await clickDropdown( user );
+		await user.click( screen.getByText( 'Add staging site' ) );
 
-		// Click the "Add staging site" button
-		const addButton = screen.getByText( 'Add staging site' );
-		await user.click( addButton );
-
-		// Check that error notice was called
 		expect( mockCreateNotice ).toHaveBeenCalledWith(
 			'error',
 			'Cannot add a staging site due to a Jetpack connection issue.',
@@ -299,70 +251,30 @@ describe( 'EnvironmentSwitcher', () => {
 	} );
 
 	test( 'displays "Adding staging site..." when staging site is being created', async () => {
-		const { useQuery } = require( '@tanstack/react-query' );
-
-		// Mock to simulate staging site creation in progress
-		useQuery.mockImplementation(
-			( options: { queryKey?: ( string | number )[]; enabled?: boolean } ) => {
-				// Return production site
-				if ( options?.queryKey?.includes( 'site-by-id' ) && options?.queryKey?.includes( 1 ) ) {
-					return { data: mockProductionSiteWithStaging, isLoading: false, error: null };
-				}
-				// Return true for creating staging site query (creation in progress)
-				if ( options?.queryKey?.includes( 'is-creating-staging' ) ) {
-					return { data: true, isLoading: false, error: null };
-				}
-				// Return false for all other queries
-				return { data: false, isLoading: false, error: null };
-			}
-		);
+		mockUseQuery( {
+			'site-by-id-1': mockProductionSiteWithStaging,
+			'is-creating-staging': true,
+		} );
 
 		const user = userEvent.setup();
 		render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } /> );
 
-		// Click the dropdown button to open it
-		const button = screen.getByRole( 'button' );
-		await user.click( button );
-
-		// Check for "Adding staging site..." text
+		await clickDropdown( user );
 		expect( screen.getByText( 'Adding staging site…' ) ).toBeInTheDocument();
 	} );
 
 	test( 'displays "Deleting staging site..." when staging site is being deleted', async () => {
-		const { useQuery } = require( '@tanstack/react-query' );
-
-		// Mock to simulate staging site deletion in progress
-		useQuery.mockImplementation(
-			( options: { queryKey?: ( string | number )[]; enabled?: boolean } ) => {
-				// Return production site
-				if ( options?.queryKey?.includes( 'site-by-id' ) && options?.queryKey?.includes( 1 ) ) {
-					return { data: mockProductionSiteWithStaging, isLoading: false, error: null };
-				}
-				// Return staging site
-				if ( options?.queryKey?.includes( 'site-by-id' ) && options?.queryKey?.includes( 2 ) ) {
-					return { data: mockStagingSite, isLoading: false, error: null };
-				}
-				// Return true for deleting staging site query (deletion in progress)
-				if ( options?.queryKey?.includes( 'is-deleting-staging' ) ) {
-					return { data: true, isLoading: false, error: null };
-				}
-				// Return false for creating staging site query
-				if ( options?.queryKey?.includes( 'is-creating-staging' ) ) {
-					return { data: false, isLoading: false, error: null };
-				}
-				// Return false for all other queries
-				return { data: false, isLoading: false, error: null };
-			}
-		);
+		mockUseQuery( {
+			'site-by-id-1': mockProductionSiteWithStaging,
+			'site-by-id-2': mockStagingSite,
+			'is-deleting-staging': true,
+			'is-creating-staging': false,
+		} );
 
 		const user = userEvent.setup();
 		render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } /> );
 
-		// Click the dropdown button to open it
-		const button = screen.getByRole( 'button' );
-		await user.click( button );
-
-		// Check for "Deleting staging site..." text
+		await clickDropdown( user );
 		expect( screen.getByText( 'Deleting staging site…' ) ).toBeInTheDocument();
 	} );
 } );
