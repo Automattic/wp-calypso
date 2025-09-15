@@ -19,11 +19,5 @@
 	.odie-attachment-send-button {
 		border-radius: 50%;
 		box-sizing: border-box;
-		background-color: var( --color-primary );
-        --wp-admin-border-width-focus: var( --color-primary );
-
-		&:hover:not( :disabled ) {
-			background-color: color-mix( in srgb, var( --color-primary ) 85%, #000 );
-		}
 	}
 }
