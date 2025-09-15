@@ -73,7 +73,7 @@ export const useSuggestionsList = () => {
 				.map( ( suggestion ) => suggestion.domain_name )
 				.filter( ( suggestion ) => ! unavailablePremiumDomains.includes( suggestion ) ),
 			query,
-			deemphasiseTlds: config.deemphasizedTlds,
+			deemphasizedTlds: config.deemphasizedTlds,
 		} );
 	}, [ suggestions, query, config.deemphasizedTlds, unavailablePremiumDomains ] );
 

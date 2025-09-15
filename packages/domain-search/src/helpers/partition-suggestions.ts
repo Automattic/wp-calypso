@@ -13,13 +13,13 @@ interface PartitionedSuggestions {
 interface PartitionSuggestionsParams {
 	suggestions: string[];
 	query: string;
-	deemphasiseTlds: string[];
+	deemphasizedTlds: string[];
 }
 
 export const partitionSuggestions = ( {
 	suggestions,
 	query,
-	deemphasiseTlds,
+	deemphasizedTlds,
 }: PartitionSuggestionsParams ): PartitionedSuggestions => {
 	const exactMatch = suggestions.find( ( suggestion ) => suggestion === query );
 
@@ -39,7 +39,7 @@ export const partitionSuggestions = ( {
 	const regularSuggestions: string[] = [];
 
 	for ( const suggestion of suggestions ) {
-		if ( deemphasiseTlds.some( ( tld ) => suggestion.endsWith( `.${ tld }` ) ) ) {
+		if ( deemphasizedTlds.some( ( tld ) => suggestion.endsWith( `.${ tld }` ) ) ) {
 			regularSuggestions.push( suggestion );
 			continue;
 		}

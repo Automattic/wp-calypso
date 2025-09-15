@@ -135,6 +135,15 @@ export const useDomainSearchContextValue = (
 				} ),
 				availableTlds: ( vendor, search ) => ( {
 					...availableTldsQuery( vendor, search ),
+					select: ( data ) => {
+						const { allowedTlds = [] } = normalizedConfig;
+
+						if ( allowedTlds.length > 0 ) {
+							return data.filter( ( tld ) => allowedTlds.includes( tld ) );
+						}
+
+						return data;
+					},
 					enabled: false,
 				} ),
 			},
