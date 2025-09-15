@@ -308,7 +308,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 					id: `${ php.timestamp }|${ php.file }|${ String( php.line ) }|${ suffix }|${ String(
 						index
 					) }`,
-				} as PHPLog & { id: string };
+				};
 			}
 			const server = log as ServerLog;
 			return {
