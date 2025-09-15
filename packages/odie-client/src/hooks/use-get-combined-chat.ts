@@ -3,6 +3,7 @@ import { HelpCenterSelect } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect, useRef } from '@wordpress/element';
+import Smooch from 'smooch';
 import { getOdieTransferMessage } from '../constants';
 import { emptyChat } from '../context';
 import { useGetZendeskConversation, useManageSupportInteraction, useOdieChat } from '../data';
@@ -102,6 +103,8 @@ export const useGetCombinedChat = (
 					conversationId: conversationId?.toString(),
 				} )?.then( ( conversation ) => {
 					if ( conversation ) {
+						// We need to load the conversation to get typing events. Load simply means "focus on".
+						Smooch.loadConversation( conversation.id );
 						setMainChatState( {
 							...( odieChat ? odieChat : {} ),
 							supportInteractionId: currentSupportInteraction.uuid,
