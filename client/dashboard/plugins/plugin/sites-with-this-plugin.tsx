@@ -3,8 +3,10 @@ import {
 	invalidatePlugins,
 	sitePluginActivateMutation,
 	sitePluginDeactivateMutation,
+	sitePluginUpdateMutation,
 } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
+import { __experimentalText as Text, Button, Modal } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { check, close } from '@wordpress/icons';
@@ -49,16 +51,23 @@ export const getAllowedPluginActions = ( site: Site, pluginSlug: string ) => {
 };
 
 export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) => {
-	const [ view, setView ] = useState< View >( defaultView );
+	const { mutateAsync } = useMutation( sitePluginUpdateMutation() );
+	const updateAction = buildBulkSitesPluginAction( mutateAsync );
 	const { isLoading, plugin, pluginBySiteId, sitesWithThisPlugin } = usePlugin( pluginSlug );
+	const [ view, setView ] = useState< View >( defaultView );
 	const [ selection, setSelection ] = useState< SiteWithPluginActivationStatus[] >( [] );
+	const [ updateModalOpen, setUpdateModalOpen ] = useState( false );
+	const [ siteToUpdate, setSiteToUpdate ] = useState< SiteWithPluginActivationStatus | null >(
+		null
+	);
+
 	const fields = useMemo(
 		() => [
 			{
 				id: 'domain',
 				label: __( 'Site' ),
-				getValue: ( { item }: { item: Site } ) => item.URL,
-				render: ( { item }: { item: Site } ) => item.URL,
+				getValue: ( { item }: { item: SiteWithPluginActivationStatus } ) => item.URL,
+				render: ( { item }: { item: SiteWithPluginActivationStatus } ) => item.URL,
 				enableHiding: false,
 				enableSorting: true,
 				enableGlobalSearch: true,
@@ -66,39 +75,54 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 			{
 				id: 'active',
 				label: __( 'Active' ),
-				getValue: ( { item }: { item: Site } ) => pluginBySiteId.get( item.ID )?.active ?? false,
-				render: ( { item }: { item: Site } ) => pluginBySiteId.get( item.ID )?.active ?? false,
+				getValue: ( { item }: { item: SiteWithPluginActivationStatus } ) =>
+					pluginBySiteId.get( item.ID )?.active ?? false,
+				render: ( { item }: { item: SiteWithPluginActivationStatus } ) =>
+					pluginBySiteId.get( item.ID )?.active ?? false,
 				enableHiding: false,
 				enableSorting: true,
 			},
 			{
 				id: 'autoupdate',
 				label: __( 'Autoupdate' ),
-				getValue: ( { item }: { item: Site } ) =>
+				getValue: ( { item }: { item: SiteWithPluginActivationStatus } ) =>
 					pluginBySiteId.get( item.ID )?.autoupdate ?? false,
-				render: ( { item }: { item: Site } ) => pluginBySiteId.get( item.ID )?.autoupdate ?? false,
+				render: ( { item }: { item: SiteWithPluginActivationStatus } ) =>
+					pluginBySiteId.get( item.ID )?.autoupdate ?? false,
 				enableHiding: false,
 				enableSorting: true,
 			},
 			{
 				id: 'update',
 				label: __( 'Update' ),
-				render: ( { item }: { item: Site } ) => {
+				render: ( { item }: { item: SiteWithPluginActivationStatus } ) => {
 					const update = pluginBySiteId.get( item.ID )?.update;
 
 					const { autoupdate } = getAllowedPluginActions( item, pluginSlug );
 					if ( ! autoupdate ) {
-						return __( 'Auto-managed on this site' );
+						return <Text>{ __( 'Auto-managed on this site' ) }</Text>;
 					}
 
 					if ( ! update ) {
 						return null;
 					}
 
-					return sprintf(
-						// translators: %(version) is the new version of the plugin.
-						__( 'Update to version %(version)s', update.new_version ),
-						{ version: update.new_version }
+					return (
+						<Button
+							variant="link"
+							onClick={ ( e: React.MouseEvent ) => {
+								e.preventDefault();
+								setSiteToUpdate( item );
+								setUpdateModalOpen( true );
+							} }
+							__next40pxDefaultSize
+						>
+							{ sprintf(
+								// translators: %(version) is the new version of the plugin.
+								__( 'Update to version %(version)s', update.new_version ),
+								{ version: update.new_version }
+							) }
+						</Button>
 					);
 				},
 				enableHiding: false,
@@ -110,75 +134,100 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 	const { data, paginationInfo } = filterSortAndPaginate( sitesWithThisPlugin, view, fields );
 
 	return (
-		<DataViews
-			isLoading={ isLoading }
-			data={ data }
-			fields={ fields }
-			view={ view }
-			onChangeView={ setView }
-			defaultLayouts={ { table: {} } }
-			actions={ [
-				{
-					id: 'activate',
-					icon: check,
-					label: __( 'Activate' ),
-					modalHeader: getModalHeader( 'activate' ),
-					RenderModal: ( { items, closeModal } ) => {
-						const { mutateAsync } = useMutation( sitePluginActivateMutation() );
-						const action = buildBulkSitesPluginAction( mutateAsync );
+		<>
+			<DataViews
+				isLoading={ isLoading }
+				data={ data }
+				fields={ fields }
+				view={ view }
+				onChangeView={ setView }
+				defaultLayouts={ { table: {} } }
+				actions={ [
+					{
+						id: 'activate',
+						icon: check,
+						label: __( 'Activate' ),
+						modalHeader: getModalHeader( 'activate' ),
+						RenderModal: ( { items, closeModal } ) => {
+							const { mutateAsync } = useMutation( sitePluginActivateMutation() );
+							const action = buildBulkSitesPluginAction( mutateAsync );
 
-						return (
-							<ActionRenderModal
-								actionId="activate"
-								items={ [ mapToPluginListRow( plugin, items ) as PluginListRow ] }
-								closeModal={ closeModal }
-								onExecute={ action }
-								onActionPerformed={ invalidatePlugins }
-							/>
-						);
+							return (
+								<ActionRenderModal
+									actionId="activate"
+									items={ [ mapToPluginListRow( plugin, items ) as PluginListRow ] }
+									closeModal={ closeModal }
+									onExecute={ action }
+									onActionPerformed={ invalidatePlugins }
+								/>
+							);
+						},
+						isEligible: ( item ) => ! item.isPluginActive,
+						supportsBulk: true,
 					},
-					isEligible: ( item ) => ! item.isPluginActive,
-					supportsBulk: true,
-				},
-				{
-					id: 'deactivate',
-					icon: close,
-					label: __( 'Deactivate' ),
-					modalHeader: getModalHeader( 'deactivate' ),
-					RenderModal: ( { items, closeModal } ) => {
-						const { mutateAsync } = useMutation( sitePluginDeactivateMutation() );
-						const action = buildBulkSitesPluginAction( mutateAsync );
+					{
+						id: 'deactivate',
+						icon: close,
+						label: __( 'Deactivate' ),
+						modalHeader: getModalHeader( 'deactivate' ),
+						RenderModal: ( { items, closeModal } ) => {
+							const { mutateAsync } = useMutation( sitePluginDeactivateMutation() );
+							const action = buildBulkSitesPluginAction( mutateAsync );
 
-						return (
-							<ActionRenderModal
-								actionId="deactivate"
-								items={ [ mapToPluginListRow( plugin, items ) as PluginListRow ] }
-								closeModal={ closeModal }
-								onExecute={ action }
-								onActionPerformed={ invalidatePlugins }
-							/>
-						);
+							return (
+								<ActionRenderModal
+									actionId="deactivate"
+									items={ [ mapToPluginListRow( plugin, items ) as PluginListRow ] }
+									closeModal={ closeModal }
+									onExecute={ action }
+									onActionPerformed={ invalidatePlugins }
+								/>
+							);
+						},
+						isEligible: ( item ) => item.isPluginActive,
+						supportsBulk: true,
 					},
-					isEligible: ( item ) => item.isPluginActive,
-					supportsBulk: true,
-				},
-				{
-					id: 'delete',
-					label: __( 'Delete' ),
-					isPrimary: false,
-					callback: ( items ) => {
-						// Dummy delete action for now
-						// eslint-disable-next-line no-console
-						console.log( 'Delete clicked for plugin', items[ 0 ] );
+					{
+						id: 'delete',
+						label: __( 'Delete' ),
+						isPrimary: false,
+						callback: ( items ) => {
+							// Dummy delete action for now
+							// eslint-disable-next-line no-console
+							console.log( 'Delete clicked for plugin', items[ 0 ] );
+						},
 					},
-				},
-			] }
-			getItemId={ ( item ) => String( item.ID ) }
-			paginationInfo={ paginationInfo }
-			selection={ selection.map( ( site ) => String( site.ID ) ) }
-			onChangeSelection={ ( ids ) => {
-				setSelection( sitesWithThisPlugin.filter( ( site ) => ids.includes( String( site.ID ) ) ) );
-			} }
-		/>
+				] }
+				getItemId={ ( item ) => String( item.ID ) }
+				paginationInfo={ paginationInfo }
+				selection={ selection.map( ( site ) => String( site.ID ) ) }
+				onChangeSelection={ ( ids ) => {
+					setSelection(
+						sitesWithThisPlugin.filter( ( site ) => ids.includes( String( site.ID ) ) )
+					);
+				} }
+			/>
+
+			{ updateModalOpen && siteToUpdate && (
+				<Modal
+					title={ __( 'Update Plugin' ) }
+					onRequestClose={ () => {
+						setUpdateModalOpen( false );
+						setSiteToUpdate( null );
+					} }
+				>
+					<ActionRenderModal
+						actionId="update"
+						items={ [ mapToPluginListRow( plugin, [ siteToUpdate ] ) as PluginListRow ] }
+						closeModal={ () => {
+							setUpdateModalOpen( false );
+							setSiteToUpdate( null );
+						} }
+						onExecute={ updateAction }
+						onActionPerformed={ invalidatePlugins }
+					/>
+				</Modal>
+			) }
+		</>
 	);
 };
