@@ -23,6 +23,11 @@ export default function useConnectionStatusNotice( isLiveChat: boolean = false )
 		if ( connectionStatus === 'disconnected' ) {
 			setShouldWarn( true );
 		}
+
+		if ( connectionStatus === 'connected' ) {
+			const timeout = setTimeout( setShouldWarn, 2000, false );
+			return () => clearTimeout( timeout );
+		}
 	}, [ connectionStatus, isLiveChat ] );
 
 	if ( ! shouldWarn ) {
