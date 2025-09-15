@@ -1,5 +1,7 @@
-import { createJetpackMonitorSettings } from '@automattic/api-core';
-import { updateSchedulesBatchCreateMutation } from '@automattic/api-queries';
+import {
+	siteJetpackMonitorSettingsBatchCreateMutation,
+	updateSchedulesBatchCreateMutation,
+} from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
 	Button,
@@ -37,12 +39,14 @@ function ScheduledUpdatesNew() {
 		[ selectedSiteIds ]
 	);
 	const createMutation = useMutation( updateSchedulesBatchCreateMutation( siteIdsAsNumbers ) );
+	const { mutateAsync: runBatchMonitor } = useMutation(
+		siteJetpackMonitorSettingsBatchCreateMutation()
+	);
 
 	const handleCreate = useCallback( () => {
 		if ( ! isValid ) {
 			return;
 		}
-
 		const timestamp = prepareTimestamp( frequency, weekday, time );
 		const body = {
 			plugins: selectedPluginSlugs,
@@ -57,20 +61,24 @@ function ScheduledUpdatesNew() {
 			onSuccess: async () => {
 				// Create monitor settings for each selected site
 				const siteMap = new Map( ( eligibleSites as Site[] ).map( ( s ) => [ s.ID, s ] ) );
-				const requests = siteIdsAsNumbers
+				// Create monitor settings only for successfully scheduled sites using batch mutation
+				const monitorItems = siteIdsAsNumbers
 					.map( ( siteId ) => siteMap.get( siteId ) )
 					.filter( Boolean )
 					.map( ( site ) => {
 						const s = site as Site;
 						const siteUrl = s.URL as string;
-						return createJetpackMonitorSettings( s.ID, {
-							urls: [
-								{ monitor_url: siteUrl, check_interval: CRON_CHECK_INTERVAL },
-								{ monitor_url: siteUrl + '/wp-cron.php', check_interval: CRON_CHECK_INTERVAL },
-							],
-						} );
+						return {
+							siteId: s.ID,
+							body: {
+								urls: [
+									{ monitor_url: siteUrl, check_interval: CRON_CHECK_INTERVAL },
+									{ monitor_url: siteUrl + '/wp-cron.php', check_interval: CRON_CHECK_INTERVAL },
+								],
+							},
+						};
 					} );
-				await Promise.allSettled( requests );
+				await runBatchMonitor( monitorItems );
 			},
 		} );
 	}, [
@@ -82,6 +90,7 @@ function ScheduledUpdatesNew() {
 		createMutation,
 		eligibleSites,
 		siteIdsAsNumbers,
+		runBatchMonitor,
 	] );
 
 	return (
