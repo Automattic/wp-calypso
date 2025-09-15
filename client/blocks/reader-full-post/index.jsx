@@ -77,6 +77,7 @@ import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { disableAppBanner, enableAppBanner } from 'calypso/state/ui/actions';
+import ContentProcessor from './content-processor';
 import ReaderFullPostHeader from './header';
 import ReaderFullPostContentPlaceholder from './placeholders/content';
 import ScrollTracker from './scroll-tracker';
@@ -789,9 +790,10 @@ export class FullPostView extends Component {
 									<AutoDirection>
 										<div
 											ref={ this.postContentWrapper }
-											className="reader-full-post__story-content"
-											dangerouslySetInnerHTML={ { __html: post.content } }
-										/>
+											className="reader-full-post__story-content-container"
+										>
+											<ContentProcessor content={ post.content } />
+										</div>
 									</AutoDirection>
 								</EmbedContainer>
 							) }
