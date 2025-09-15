@@ -44,7 +44,14 @@ $blueberry-color: #3858e9;
 	}
 
 	.odie-chatbox-typing-placeholder {
-		margin: 0 16px
+		margin: 0 16px;
+
+		// The typing placeholder uses ThinkingMessage component from Agenttic UI.
+		// We need to hide the svg icon because it's meant for AI, not human responses.
+		// We need the `ThinkingMessage` because of its cool shimmering effect.
+		[data-slot='thinking'] > div {
+			display: none;
+		}
 	}
 }
 
@@ -189,7 +196,7 @@ $blueberry-color: #3858e9;
 			background-color: var( --studio-gray-5 );
 			opacity: 1;
 			svg {
-				color: var(--color-foreground);
+				color: var( --color-foreground );
 			}
 		}
 	}
@@ -205,7 +212,7 @@ $blueberry-color: #3858e9;
 			box-shadow: none;
 			margin-bottom: 0;
 
-			&:not(.is-expanded) {
+			&:not( .is-expanded ) {
 				.foldable-card__content {
 					border: none;
 				}
@@ -213,10 +220,10 @@ $blueberry-color: #3858e9;
 
 			.foldable-card__header {
 				min-height: 24px;
-				padding: 0;	
+				padding: 0;
 			}
 
-			.foldable-card__summary, 
+			.foldable-card__summary,
 			.foldable-card__summary-expanded {
 				margin-right: 24px;
 			}
@@ -233,7 +240,7 @@ $blueberry-color: #3858e9;
 				border: none;
 
 				.odie-chatbox-message-sources {
-					border: 1px solid var(--color-neutral-5);
+					border: 1px solid var( --color-neutral-5 );
 					border-radius: 8px;
 				}
 
@@ -243,7 +250,7 @@ $blueberry-color: #3858e9;
 						align-items: center;
 						justify-content: space-between;
 						padding: 4px 8px;
-						gap: 8px;	
+						gap: 8px;
 					}
 				}
 			}
