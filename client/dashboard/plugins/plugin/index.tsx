@@ -12,8 +12,8 @@ import { SitesWithoutThisPlugin } from './sites-without-this-plugin';
 import { usePlugin } from './use-plugin';
 
 export default function Plugin() {
-	const { pluginId } = pluginRoute.useParams();
-	const { isLoading, sitesWithThisPlugin, plugin } = usePlugin( pluginId );
+	const { pluginId: pluginSlug } = pluginRoute.useParams();
+	const { isLoading, sitesWithThisPlugin, plugin } = usePlugin( pluginSlug );
 
 	if ( ! isLoading && ! plugin ) {
 		return (
@@ -38,7 +38,7 @@ export default function Plugin() {
 								// @ts-expect-error: Can only set one of `children` or `props.dangerouslySetInnerHTML`.
 								<Text dangerouslySetInnerHTML={ { __html: plugin.name } } />
 							) : (
-								<TextBlur>{ pluginId }</TextBlur>
+								<TextBlur>{ pluginSlug }</TextBlur>
 							)
 						}
 					/>
@@ -60,7 +60,7 @@ export default function Plugin() {
 					/>
 
 					<DataViewsCard>
-						<SitesWithThisPlugin pluginId={ pluginId } />
+						<SitesWithThisPlugin pluginSlug={ pluginSlug } />
 					</DataViewsCard>
 				</VStack>
 
@@ -68,7 +68,7 @@ export default function Plugin() {
 					<SectionHeader title={ __( 'Available on' ) } />
 
 					<DataViewsCard>
-						<SitesWithoutThisPlugin pluginId={ pluginId } />
+						<SitesWithoutThisPlugin pluginSlug={ pluginSlug } />
 					</DataViewsCard>
 				</VStack>
 			</VStack>

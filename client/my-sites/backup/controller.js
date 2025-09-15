@@ -10,6 +10,7 @@ import UpsellSwitch from 'calypso/components/jetpack/upsell-switch';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { setFilter } from 'calypso/state/activity-log/actions';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import BackupContentsPage from './backup-contents-page';
@@ -155,10 +156,9 @@ export function backupRestore( context, next ) {
 export function backupGranularRestore( context, next ) {
 	debug( 'controller: backupGranularRestore', context.params );
 	const state = context.store.getState();
-	const siteId = getSelectedSiteId( state );
 
 	context.primary = (
-		<FileBrowserProvider siteId={ siteId } rewindId={ Number( context.params.rewindId ) }>
+		<FileBrowserProvider locale={ getCurrentUserLocale( state ) || 'en' }>
 			<BackupRewindFlow
 				rewindId={ context.params.rewindId }
 				purpose={ RewindFlowPurpose.GRANULAR_RESTORE }
@@ -185,7 +185,7 @@ export function backupContents( context, next ) {
 	const siteId = getSelectedSiteId( state );
 
 	context.primary = (
-		<FileBrowserProvider siteId={ siteId } rewindId={ Number( context.params.rewindId ) }>
+		<FileBrowserProvider locale={ getCurrentUserLocale( state ) || 'en' }>
 			<BackupContentsPage siteId={ siteId } rewindId={ context.params.rewindId } />
 		</FileBrowserProvider>
 	);
