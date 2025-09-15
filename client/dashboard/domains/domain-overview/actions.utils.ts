@@ -60,6 +60,23 @@ export const shouldShowDeleteAction = ( domain: Domain, purchase?: Purchase, sit
 	return true;
 };
 
+export const shouldShowCancelAction = ( domain: Domain, purchase?: Purchase ) => {
+	if (
+		! domain.current_user_is_owner ||
+		domain.pending_registration ||
+		domain.move_to_new_site_pending ||
+		domain.transfer_status === DomainTransferStatus.PENDING_ASYNC
+	) {
+		return false;
+	}
+
+	if ( ! purchase || ! purchase.is_cancelable ) {
+		return false;
+	}
+
+	return true;
+};
+
 // Delete action utils
 export const getDeleteTitle = ( domain: Domain ) => {
 	switch ( domain.subtype.id ) {
