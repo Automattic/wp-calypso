@@ -186,7 +186,7 @@ export const siteLogsIndexRoute = createRoute( {
 	getParentRoute: () => siteLogsRoute,
 	path: '/',
 	beforeLoad: ( { params } ) => {
-		throw redirect( { to: `/sites/${ params.siteSlug }/logs/php` } );
+		throw redirect( { to: `/sites/${ params.siteSlug }/logs/${ LogType.ACTIVITY }` } );
 	},
 } );
 
@@ -230,7 +230,7 @@ export const siteLogsActivityRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../sites/logs' ).then( ( d ) =>
 		createLazyRoute( 'site-logs-activity' )( {
-			component: () => <d.default logType="activity" />,
+			component: () => <d.default logType={ LogType.ACTIVITY } />,
 		} )
 	)
 );
