@@ -364,6 +364,18 @@ export const appsRoute = createRoute( {
 	)
 );
 
+export const accountClosedRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'account/closed',
+	staticData: { hideHeaders: true },
+} ).lazy( () =>
+	import( '../../me/account-closed' ).then( ( d ) =>
+		createLazyRoute( 'account-closed' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const createMeRoutes = ( config: AppConfig ) => {
 	if ( ! config.supports.me ) {
 		return [];
@@ -393,6 +405,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 		notificationsEmailsRoute,
 		notificationsCommentsRoute,
 		notificationsExtrasRoute,
+		accountClosedRoute,
 	];
 
 	if ( config.supports.me.privacy ) {
