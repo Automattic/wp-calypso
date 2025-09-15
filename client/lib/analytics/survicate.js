@@ -1,4 +1,4 @@
-import { getCurrentUser } from '@automattic/calypso-analytics';
+import { getCurrentUser, recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { isMobile } from '@automattic/viewport';
 import debug from 'debug';
@@ -6,6 +6,36 @@ import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 const survicateDebug = debug( 'calypso:analytics:survicate' );
 
 let survicateScriptLoaded = false;
+
+/**
+ * Sets Survicate visitor traits with current user data
+ */
+const setSurvicateVisitorTraits = () => {
+	const user = getCurrentUser();
+
+	if ( ! user || ! user.email ) {
+		survicateDebug( 'Not setting Survicate visitor traits because user is not logged in' );
+
+		// Log error to backend for monitoring
+		recordTracksEvent( 'calypso_survicate_user_not_available_error', {
+			user_exists: !! user,
+			user_has_email: !! ( user && user.email ),
+		} );
+
+		return;
+	}
+
+	// eslint-disable-next-line no-undef
+	if ( typeof _sva !== 'undefined' && _sva.setVisitorTraits ) {
+		// eslint-disable-next-line no-undef
+		_sva.setVisitorTraits( {
+			email: user.email,
+		} );
+		survicateDebug( 'Survicate visitor traits set with email: ' + user.email );
+	} else {
+		survicateDebug( 'Survicate _sva object not available' );
+	}
+};
 
 export function mayWeLoadSurvicateScript() {
 	return config( 'survicate_enabled' );
@@ -38,21 +68,7 @@ export function addSurvicate() {
 		// Wait for the script to load before setting visitor traits
 		s.onload = function () {
 			survicateDebug( 'Survicate script loaded' );
-
-			const user = getCurrentUser();
-
-			setTimeout( () => {
-				// eslint-disable-next-line no-undef
-				if ( typeof _sva !== 'undefined' && _sva.setVisitorTraits ) {
-					// eslint-disable-next-line no-undef
-					_sva.setVisitorTraits( {
-						email: user.email,
-					} );
-					survicateDebug( 'Survicate visitor traits set with email: ' + user.email );
-				} else {
-					survicateDebug( 'Survicate _sva object not available' );
-				}
-			}, 1000 );
+			setTimeout( setSurvicateVisitorTraits, 1000 );
 		};
 
 		s.onerror = function () {
