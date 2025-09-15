@@ -120,6 +120,13 @@ export const setZendeskConnectionStatus = (
 		connectionStatus,
 	} ) as const;
 
+export const setSupportTypingStatus = ( conversationId: string, isTyping: false ) =>
+	( {
+		type: 'HELP_CENTER_SET_TYPING_STATUS',
+		conversationId,
+		isTyping,
+	} ) as const;
+
 export const setShowMessagingLauncher = ( show: boolean ) =>
 	( {
 		type: 'HELP_CENTER_SET_SHOW_MESSAGING_LAUNCHER',
@@ -288,6 +295,7 @@ export type HelpCenterAction =
 			| typeof setIsChatLoaded
 			| typeof setAreSoundNotificationsEnabled
 			| typeof setZendeskClientId
+			| typeof setSupportTypingStatus
 			| typeof setZendeskConnectionStatus
 			| typeof setNavigateToRoute
 			| typeof setOdieInitialPromptText

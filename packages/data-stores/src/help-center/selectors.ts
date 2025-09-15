@@ -21,3 +21,5 @@ export const getOdieBotNameSlug = ( state: State ) => state.odieBotNameSlug;
 export const getAllowPremiumSupport = ( state: State ) => state.allowPremiumSupport;
 export const getHelpCenterOptions = ( state: State ) => state.helpCenterOptions;
 export const getContextTerm = ( state: State ) => state.contextTerm;
+export const getSupportTypingStatus = ( state: State, conversationId: string ) =>
+	state.typingConversationStatus?.[ conversationId ];
