@@ -105,6 +105,9 @@ fun BuildSteps.runE2eTestsWithRetry(
             # Configure bash shell.
             set -x
 
+            # Set CI=true to know we're on CI
+            export CI=true
+
             # Export additional environment variables.
             $envVarExport
 
