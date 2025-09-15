@@ -107,16 +107,20 @@ export function BackupsListPage() {
 		);
 	};
 
+	const isMobileDetailsView = isSmallViewport && showDetails;
+	const shouldShowActions = hasBackups && ! isMobileDetailsView;
+	const shouldShowNotices = ! isMobileDetailsView;
+
 	return (
 		<PageLayout
 			header={
 				<PageHeader
-					title={ isSmallViewport && showDetails ? __( 'Backup details' ) : __( 'Backups' ) }
-					prefix={ isSmallViewport && showDetails ? backButton : undefined }
-					actions={ hasBackups && <BackupNowButton site={ site } /> }
+					title={ isMobileDetailsView ? __( 'Backup details' ) : __( 'Backups' ) }
+					prefix={ isMobileDetailsView ? backButton : undefined }
+					actions={ shouldShowActions ? <BackupNowButton site={ site } /> : undefined }
 				/>
 			}
-			notices={ <BackupNotices site={ site } /> }
+			notices={ shouldShowNotices ? <BackupNotices site={ site } /> : undefined }
 		>
 			{ hasBackups && (
 				<>

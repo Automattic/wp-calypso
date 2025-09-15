@@ -4,10 +4,6 @@
 */
 
 .staging-site-card {
-	padding-bottom: 48px;
-	&.confirmation-input {
-		padding-bottom: 100px;
-	}
 	.card {
 		padding: 24px 22px;
 	}
@@ -303,10 +299,11 @@
 
 .staging-site-card__footer {
 	border-top: 1px solid var( --studio-gray-5 );
+	padding: 16px 32px 16px;
+	background: #fff;
 	position: absolute;
 	bottom: 0;
 	width: 100%;
 	left: 0;
-	padding: 16px 32px 16px;
-	background: #fff;
+
 }

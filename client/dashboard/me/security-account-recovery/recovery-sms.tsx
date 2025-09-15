@@ -21,9 +21,9 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
+import PhoneNumberInput from '../../components/phone-number-input';
 import { SectionHeader } from '../../components/section-header';
 import { validatePhone } from '../../utils/phone-number';
-import PhoneNumberInput from './phone-number-input';
 import type { SecuritySMSFormData } from './types';
 import type { Field } from '@wordpress/dataviews';
 

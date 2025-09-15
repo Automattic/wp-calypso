@@ -7,6 +7,13 @@ export interface ActivityLogEntry {
 	};
 	type: 'Announce'; // What else?
 	gridicon: string;
+	image?: {
+		available: boolean;
+		medium_url: string;
+		name: string;
+		url: string;
+	};
+	last_published: string;
 	name: string;
 	generator?: ActivityGenerator;
 	object?: {
@@ -22,6 +29,7 @@ export interface ActivityLogEntry {
 	rewind_id: string;
 	status: ActivityStatus;
 	summary: string;
+	streams: ActivityLogEntry[];
 }
 export interface ActivityLogIcon {
 	type: 'Image';

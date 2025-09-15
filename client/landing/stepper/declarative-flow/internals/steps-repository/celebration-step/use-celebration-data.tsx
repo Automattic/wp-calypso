@@ -29,7 +29,7 @@ const useCelebrationData = ( { flow, siteSlug = '', isFirstPostPublished = false
 			? translate( 'Connect to social' )
 			: translate( 'Write your first post' ),
 		primaryCtaLink: isStartWritingFlowOrFirstPostPublished
-			? `/marketing/connections/${ siteSlug }`
+			? `https://${ siteSlug }/wp-admin/admin.php?page=jetpack-social`
 			: `/post/${ siteSlug }`,
 		secondaryCtaName: 'Visit your blog',
 		secondaryCtaText: translate( 'Visit your blog' ),
