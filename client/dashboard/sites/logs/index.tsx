@@ -2,36 +2,25 @@ import { HostingFeatures, LogType, PHPLog, ServerLog, SiteLogsParams } from '@au
 import { siteLogsQuery, siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import {
-	__experimentalText as Text,
-	TabPanel,
-	ToggleControl,
-	Card,
-	CardHeader,
-	CardBody,
-} from '@wordpress/components';
+import { TabPanel, ToggleControl, Card, CardHeader, CardBody } from '@wordpress/components';
 import { DataViews, View, Filter, Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { chartBar } from '@wordpress/icons';
 import { getUnixTime, subDays, isSameSecond } from 'date-fns';
 import { useMemo, useState, useRef, useEffect } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useLocale } from '../../app/locale';
 import { siteRoute } from '../../app/router/sites';
-import { Callout } from '../../components/callout';
-import { CalloutOverlay } from '../../components/callout-overlay';
 import { DateRangePicker } from '../../components/date-range-picker';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import UpsellCTAButton from '../../components/upsell-cta-button';
-import { hasHostingFeature } from '../../utils/site-features';
+import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import { useActions } from './dataviews/actions';
 import { useFields } from './dataviews/fields';
 import { getInitialFiltersFromSearch, getAllowedFields } from './dataviews/filters';
 import { useView, toFilterParams } from './dataviews/views';
 import { LogsDownloader } from './downloader';
-import illustrationUrl from './logs-callout-illustration.svg';
+import { getLogsCalloutProps } from './logs-callout';
 import {
 	buildTimeRangeInSeconds,
 	getInitialDateRangeFromSearch,
@@ -40,43 +29,6 @@ import {
 import type { Action } from '@wordpress/dataviews';
 
 import './style.scss';
-
-export function SiteLogsCallout( {
-	siteSlug,
-	titleAs = 'h1',
-}: {
-	siteSlug: string;
-	titleAs?: React.ElementType | keyof JSX.IntrinsicElements;
-} ) {
-	return (
-		<Callout
-			icon={ chartBar }
-			title={ __( 'Access detailed logs' ) }
-			titleAs={ titleAs }
-			image={ illustrationUrl }
-			description={
-				<>
-					<Text as="p" variant="muted">
-						{ __(
-							'Quickly identify and fix issues before they impact your visitors with full visibility into your site‘s web server logs and PHP errors.'
-						) }
-					</Text>
-					<Text as="p" variant="muted">
-						{ __( 'Available on the WordPress.com Business and Commerce plans.' ) }
-					</Text>
-				</>
-			}
-			actions={
-				<UpsellCTAButton
-					text={ __( 'Upgrade plan' ) }
-					tracksId="logs"
-					variant="primary"
-					href={ `/checkout/${ siteSlug }/business` }
-				/>
-			}
-		/>
-	);
-}
 
 const LOG_TABS = [
 	{ name: 'php', title: __( 'PHP errors' ) },
@@ -378,68 +330,70 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 					<Notice variant={ notice.variant }>{ notice.message }</Notice>
 				</div>
 			) }
-			<CalloutOverlay
-				showCallout={ ! hasHostingFeature( site, HostingFeatures.LOGS ) }
-				callout={ <SiteLogsCallout siteSlug={ site.slug } /> }
-				main={
-					<>
-						<DateRangePicker
-							start={ dateRange.start }
-							end={ dateRange.end }
-							gmtOffset={ gmtOffset }
-							timezoneString={ timezoneString }
-							locale={ locale }
-							onChange={ handleDateRangeChange }
-						/>
-						<Card className="site-logs-card">
-							<CardHeader style={ { paddingBottom: '0' } }>
-								<TabPanel
-									className="site-logs-tabs"
-									activeClass="is-active"
-									tabs={ LOG_TABS }
-									onSelect={ ( tabName ) => {
-										if ( tabName === LogType.PHP || tabName === LogType.SERVER ) {
-											handleTabChange( tabName );
-										}
-									} }
-									initialTabName={ logType }
-								>
-									{ () => null }
-								</TabPanel>
-							</CardHeader>
-							<CardBody>
-								{ logType === LogType.PHP ? (
-									<DataViews< PHPLog >
-										data={ logs as PHPLog[] }
-										isLoading={ isFetching }
-										paginationInfo={ paginationInfo }
-										fields={ fields as Field< PHPLog >[] }
-										view={ view }
-										actions={ actions as Action< PHPLog >[] }
-										search={ false }
-										defaultLayouts={ { table: {} } }
-										onChangeView={ onChangeView }
-										header={ LogsHeader }
-									/>
-								) : (
-									<DataViews< ServerLog >
-										data={ logs as ServerLog[] }
-										isLoading={ isFetching }
-										paginationInfo={ paginationInfo }
-										fields={ fields as Field< ServerLog >[] }
-										view={ view }
-										actions={ actions as Action< ServerLog >[] }
-										search={ false }
-										defaultLayouts={ { table: {} } }
-										onChangeView={ onChangeView }
-										header={ LogsHeader }
-									/>
-								) }
-							</CardBody>
-						</Card>
-					</>
-				}
-			/>
+
+			<HostingFeatureGatedWithCallout
+				site={ site }
+				feature={ HostingFeatures.LOGS }
+				asOverlay
+				{ ...getLogsCalloutProps() }
+			>
+				<>
+					<DateRangePicker
+						start={ dateRange.start }
+						end={ dateRange.end }
+						gmtOffset={ gmtOffset }
+						timezoneString={ timezoneString }
+						locale={ locale }
+						onChange={ handleDateRangeChange }
+					/>
+					<Card className="site-logs-card">
+						<CardHeader style={ { paddingBottom: '0' } }>
+							<TabPanel
+								className="site-logs-tabs"
+								activeClass="is-active"
+								tabs={ LOG_TABS }
+								onSelect={ ( tabName ) => {
+									if ( tabName === LogType.PHP || tabName === LogType.SERVER ) {
+										handleTabChange( tabName );
+									}
+								} }
+								initialTabName={ logType }
+							>
+								{ () => null }
+							</TabPanel>
+						</CardHeader>
+						<CardBody>
+							{ logType === LogType.PHP ? (
+								<DataViews< PHPLog >
+									data={ logs as PHPLog[] }
+									isLoading={ isFetching }
+									paginationInfo={ paginationInfo }
+									fields={ fields as Field< PHPLog >[] }
+									view={ view }
+									actions={ actions as Action< PHPLog >[] }
+									search={ false }
+									defaultLayouts={ { table: {} } }
+									onChangeView={ onChangeView }
+									header={ LogsHeader }
+								/>
+							) : (
+								<DataViews< ServerLog >
+									data={ logs as ServerLog[] }
+									isLoading={ isFetching }
+									paginationInfo={ paginationInfo }
+									fields={ fields as Field< ServerLog >[] }
+									view={ view }
+									actions={ actions as Action< ServerLog >[] }
+									search={ false }
+									defaultLayouts={ { table: {} } }
+									onChangeView={ onChangeView }
+									header={ LogsHeader }
+								/>
+							) }
+						</CardBody>
+					</Card>
+				</>
+			</HostingFeatureGatedWithCallout>
 		</PageLayout>
 	);
 }
