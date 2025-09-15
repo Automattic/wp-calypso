@@ -62,7 +62,11 @@ export const useWPCOMShoppingCartForDomainSearch = ( {
 		} );
 
 		const total = formatCurrency(
-			domainItems.reduce( ( acc, item ) => acc + item.item_subtotal_integer, 0 ),
+			domainItems.reduce(
+				( acc, item, index ) =>
+					acc + ( index === 0 && isFirstDomainFree ? 0 : item.item_subtotal_integer ),
+				0
+			),
 			responseCart.currency ?? 'USD',
 			{
 				isSmallestUnit: true,
