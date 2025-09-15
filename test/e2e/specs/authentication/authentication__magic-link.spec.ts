@@ -2,6 +2,11 @@ import { Message } from 'mailosaur/lib/models';
 import { tags, test, expect } from '../../lib/pw-base';
 
 test.describe( 'Authentication: Magic Link', { tag: [ tags.AUTHENTICATION ] }, () => {
+	test.skip(
+		!! process.env.CI,
+		'These tests are problematic on CI since they seem to hit the magic link rate limit'
+	);
+
 	test( 'As a WordPress.com user, I can use a magic link to login to WordPress.com', async ( {
 		clientEmail,
 		page,
