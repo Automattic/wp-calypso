@@ -40,6 +40,7 @@ const DomainSearchWithCart = ( {
 	const { cart, isNextDomainFree, items } = useWPCOMShoppingCartForDomainSearch( {
 		cartKey,
 		flowName,
+		isFirstDomainFree: DOMAINS_WITH_FREE_FIRST_YEAR.includes( flowName ),
 	} );
 
 	const initialQuery = useMemo( () => {
@@ -56,7 +57,6 @@ const DomainSearchWithCart = ( {
 				freeForFirstYear:
 					( cartItemsLength === 0 && DOMAINS_WITH_FREE_FIRST_YEAR.includes( flowName ) ) ||
 					isNextDomainFree,
-				showFirstDomainInCartAsFree: DOMAINS_WITH_FREE_FIRST_YEAR.includes( flowName ),
 			},
 		};
 	}, [ externalConfig, isNextDomainFree, cartItemsLength, flowName ] );

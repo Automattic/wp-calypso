@@ -1,5 +1,4 @@
 import { useIsMutating, useMutation } from '@tanstack/react-query';
-import { useI18n } from '@wordpress/react-i18n';
 import { useIsCurrentMutation } from '../../hooks/use-is-current-mutation';
 import { useDomainSearch } from '../../page/context';
 import {
@@ -44,15 +43,7 @@ const CartItem = ( { item }: { item: SelectedDomain } ) => {
 };
 
 export const Cart = () => {
-	const { __ } = useI18n();
-	const { cart, config, isFullCartOpen, closeFullCart, events, openFullCart, slots } =
-		useDomainSearch();
-
-	if ( cart.items.length > 0 && config.priceRules?.showFirstDomainInCartAsFree ) {
-		// The first domain is the most expensive and should be shown as free for the first year
-		cart.items[ 0 ].salePriceInteger = 0;
-		cart.items[ 0 ].salePrice = __( 'Free for the first year' );
-	}
+	const { cart, isFullCartOpen, closeFullCart, events, openFullCart, slots } = useDomainSearch();
 
 	const totalItems = cart.items.length;
 	const totalPrice = cart.total;

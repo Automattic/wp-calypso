@@ -16,7 +16,6 @@ export interface PriceRulesConfig {
 	oneTimePrice?: boolean;
 	forceRegularPrice?: boolean;
 	freeForFirstYear?: boolean;
-	showFirstDomainInCartAsFree?: boolean;
 }
 
 const getPriceRuleForSuggestion = ( {
