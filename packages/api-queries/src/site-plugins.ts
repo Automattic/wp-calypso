@@ -5,12 +5,10 @@ export const sitePluginsQuery = ( siteId: number ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'plugins' ],
 		queryFn: () => fetchSitePlugins( siteId ),
-		retry: false,
 	} );
 
 export const siteCorePluginsQuery = ( siteId: number ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'core-plugins' ],
 		queryFn: () => fetchSiteCorePlugins( siteId ),
-		retry: false,
 	} );
