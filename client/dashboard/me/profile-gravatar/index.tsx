@@ -11,10 +11,13 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { DataForm } from '@wordpress/dataviews';
+import { useDispatch } from '@wordpress/data';
+import { DataForm, isItemValid } from '@wordpress/dataviews';
 import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import { isValidUrl } from '../../../lib/importer/url-validation';
 import { SectionHeader } from '../../components/section-header';
 import EditGravatar from './edit-gravatar';
 import GravatarLogo from './gravatar-logo';
@@ -42,8 +45,34 @@ const fields: Field< UserSettings >[] = [
 			);
 		},
 	},
-	{ id: 'display_name', label: __( 'Display name' ), type: 'text' },
-	{ id: 'user_URL', label: __( 'Web address' ), type: 'text' },
+	{
+		id: 'display_name',
+		label: __( 'Display name' ),
+		type: 'text',
+		isValid: {
+			custom: ( item ) => {
+				const value = item.display_name;
+				if ( value && value.length > 250 ) {
+					return __( 'Display name must be 250 characters or less.' );
+				}
+				return null;
+			},
+		},
+	},
+	{
+		id: 'user_URL',
+		label: __( 'Web address' ),
+		type: 'text',
+		isValid: {
+			custom: ( item ) => {
+				const value = item.user_URL?.trim();
+				if ( value && ! isValidUrl( value ) ) {
+					return __( 'Please enter a valid URL.' );
+				}
+				return null;
+			},
+		},
+	},
 	{
 		id: 'description',
 		label: __( 'About me' ),
@@ -61,9 +90,7 @@ const fields: Field< UserSettings >[] = [
 
 const form: Form = {
 	layout: { type: 'regular' as const, labelPosition: 'top' as const },
-	fields: [
-		{ id: 'gravatar', children: [ 'avatar_URL', 'display_name', 'user_URL', 'description' ] },
-	],
+	fields: [ 'avatar_URL', 'display_name', 'user_URL', 'description' ],
 };
 
 // Derive controlled keys from fields, excluding avatar_URL since it's not editable
@@ -77,10 +104,12 @@ export default function GravatarProfileSection( {
 	const [ edits, setEdits ] = useState< Partial< UserSettings > >( {} );
 	const data = useMemo( () => ( { ...serverProfile, ...edits } ), [ serverProfile, edits ] );
 	const mutation = useMutation( userSettingsMutation() );
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const isSaving = mutation.isPending;
 	const isDirty = controlledKeys.some(
 		( key ) => data[ key as keyof UserSettings ] !== serverProfile[ key as keyof UserSettings ]
 	);
+	const isValid = isItemValid( data, fields, form );
 
 	const onChange = ( partial: Partial< UserSettings > ) => {
 		setEdits( ( current ) => ( { ...current, ...partial } ) );
@@ -93,7 +122,23 @@ export default function GravatarProfileSection( {
 			return;
 		}
 
-		mutation.mutate( edits, { onSuccess: () => setEdits( {} ) } );
+		if ( ! isValid ) {
+			return;
+		}
+
+		mutation.mutate( edits, {
+			onSuccess: () => {
+				setEdits( {} );
+				createSuccessNotice( __( 'Public Gravatar profile saved successfully.' ), {
+					type: 'snackbar',
+				} );
+			},
+			onError: ( error: Error ) => {
+				createErrorNotice( error.message || __( 'Failed to save public Gravatar profile.' ), {
+					type: 'snackbar',
+				} );
+			},
+		} );
 	};
 
 	return (
@@ -105,10 +150,7 @@ export default function GravatarProfileSection( {
 							decoration={ <GravatarLogo /> }
 							level={ 3 }
 							title={ __( 'Public Gravatar profile' ) }
-						/>
-
-						<Text>
-							{ createInterpolateElement(
+							description={ createInterpolateElement(
 								sprintf(
 									/* translators: %1$s: User email */
 									__(
@@ -122,7 +164,7 @@ export default function GravatarProfileSection( {
 									external: <ExternalLink href="https://gravatar.com" />,
 								}
 							) }
-						</Text>
+						/>
 
 						<DataForm< UserSettings >
 							data={ data }
@@ -138,7 +180,7 @@ export default function GravatarProfileSection( {
 								variant="primary"
 								type="submit"
 								isBusy={ isSaving }
-								disabled={ isSaving || ! isDirty }
+								disabled={ isSaving || ! isDirty || ! isValid }
 							>
 								{ __( 'Save' ) }
 							</Button>
