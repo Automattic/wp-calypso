@@ -8,6 +8,7 @@ import NotFound from '../404';
 import CommandPalette from '../command-palette';
 import { useAppContext } from '../context';
 import Header from '../header';
+import useRouteStaticData from '../hooks/use-route-static-data';
 import Snackbars from '../snackbars';
 import './style.scss';
 
@@ -27,12 +28,14 @@ function Root() {
 	// empty, but remain set after subsequent navigations.
 	// https://tanstack.com/router/latest/docs/framework/react/api/router/RouterStateType#resolvedlocation-property
 	const isInitialLoad = ! router.resolvedLocation;
+	const routeStaticData = useRouteStaticData();
+	const hideHeaders = routeStaticData?.hideHeaders;
 
 	return (
 		<div className="dashboard-root__layout">
 			{ ( isFetching > 0 || isNavigating ) && <LoadingLine /> }
 			{ isInitialLoad && <LoadingLogo className="wpcom-site__logo" /> }
-			{ ! isInitialLoad && <Header /> }
+			{ ! isInitialLoad && ! hideHeaders && <Header /> }
 			<main>
 				<CatchNotFound fallback={ NotFound }>
 					<Outlet />
