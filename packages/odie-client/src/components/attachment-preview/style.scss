@@ -31,9 +31,10 @@
 		margin: 0;
 		padding: 0;
 
-
-		svg {
-			fill: $gray-700;
+		&:not( :hover ) {
+			svg {
+				fill: $gray-700;
+			}
 		}
 	}
 
