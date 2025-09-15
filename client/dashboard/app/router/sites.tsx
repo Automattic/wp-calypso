@@ -3,7 +3,7 @@ import {
 	isAutomatticianQuery,
 	rawUserPreferencesQuery,
 	siteLastFiveActivityLogEntriesQuery,
-	siteRewindableActivityLogEntriesQuery,
+	siteBackupActivityLogEntriesQuery,
 	siteAgencyBlogQuery,
 	siteLastBackupQuery,
 	siteEdgeCacheStatusQuery,
@@ -285,7 +285,7 @@ export const siteBackupsIndexRoute = createRoute( {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		// Preload activity log backup-related entries.
 		if ( hasHostingFeature( site, HostingFeatures.BACKUPS ) ) {
-			queryClient.ensureQueryData( siteRewindableActivityLogEntriesQuery( site.ID ) );
+			queryClient.ensureQueryData( siteBackupActivityLogEntriesQuery( site.ID ) );
 		}
 	},
 } ).lazy( () =>

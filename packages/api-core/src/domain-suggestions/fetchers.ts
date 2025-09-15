@@ -23,7 +23,10 @@ export async function fetchDomainSuggestions(
 	return suggestions;
 }
 
-export async function fetchFreeDomainSuggestion( search: string ): Promise< FreeDomainSuggestion > {
+export async function fetchFreeDomainSuggestion(
+	search: string,
+	params: Partial< DomainSuggestionQuery > = {}
+): Promise< FreeDomainSuggestion > {
 	const [ suggestion ] = await wpcom.req.get(
 		{
 			apiVersion: '1.1',
@@ -36,6 +39,7 @@ export async function fetchFreeDomainSuggestion( search: string ): Promise< Free
 			only_wordpressdotcom: false,
 			vendor: 'dot',
 			query: search.trim().toLocaleLowerCase(),
+			...params,
 		}
 	);
 

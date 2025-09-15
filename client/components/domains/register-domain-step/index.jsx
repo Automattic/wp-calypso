@@ -428,7 +428,7 @@ class RegisterDomainStep extends Component {
 	}
 
 	focusSearchCard = () => {
-		this.searchCard.focus();
+		this.searchCard?.focus();
 	};
 
 	bindSearchCardReference = ( searchCard ) => {
