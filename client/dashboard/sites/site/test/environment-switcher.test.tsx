@@ -18,12 +18,10 @@ const mockMutate = jest.fn();
 const mockInvalidateQueries = jest.fn();
 const mockSetQueryData = jest.fn();
 
-// Mock calypso analytics
 jest.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: jest.fn(),
 } ) );
 
-// Mock WordPress data
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		createSuccessNotice: mockCreateSuccessNotice,
@@ -82,7 +80,6 @@ jest.mock( '@automattic/api-queries', () => ( {
 	} ) ),
 } ) );
 
-// Mock React Query hooks
 jest.mock( '@tanstack/react-query', () => ( {
 	QueryClient: jest.fn().mockImplementation( () => ( {
 		invalidateQueries: mockInvalidateQueries,
@@ -106,7 +103,6 @@ jest.mock( '@tanstack/react-query-persist-client', () => ( {
 	persistQueryClient: jest.fn( () => [ jest.fn(), Promise.resolve() ] ),
 } ) );
 
-// Mock utility functions
 jest.mock( '../../../utils/site-atomic-transfers', () => ( {
 	isAtomicTransferInProgress: jest.fn( () => false ),
 	isAtomicTransferredSite: jest.fn( () => true ),
@@ -117,7 +113,6 @@ jest.mock( '../../../utils/site-staging-site', () => ( {
 	getStagingSiteId: jest.fn( ( site: Site ) => site.ID + 1 ),
 } ) );
 
-// Mock features
 jest.mock( '../../features', () => ( {
 	canManageSite: jest.fn( () => true ),
 	canCreateStagingSite: jest.fn( () => true ),
@@ -134,7 +129,7 @@ const mockProductionSiteWithStaging: Site = {
 		manage_options: true,
 	},
 	options: {
-		wpcom_staging_blog_ids: [ 2 ], // Has staging site
+		wpcom_staging_blog_ids: [ 2 ],
 	},
 } as Site;
 
@@ -149,7 +144,7 @@ const mockStagingSite: Site = {
 	},
 } as Site;
 
-// Test helpers
+// Test helpers for query mocking and common interactions
 const mockUseQuery = ( mockData: Record< string, unknown > ) => {
 	const { useQuery } = require( '@tanstack/react-query' );
 	useQuery.mockImplementation(
