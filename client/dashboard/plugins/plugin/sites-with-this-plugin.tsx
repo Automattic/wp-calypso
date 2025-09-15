@@ -6,7 +6,7 @@ import {
 } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { check, close } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
 import ActionRenderModal, { getModalHeader } from '../manage/components/action-render-modal';
@@ -95,10 +95,13 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 						return null;
 					}
 
-					return update ? __( 'Update Available' ) : __( 'No Update Available' );
+					return sprintf(
+						// translators: %(version) is the new version of the plugin.
+						__( 'Update to version %(version)s', update.new_version ),
+						{ version: update.new_version }
+					);
 				},
 				enableHiding: false,
-				enableSorting: false,
 			},
 		],
 		[ pluginBySiteId, pluginSlug ]
