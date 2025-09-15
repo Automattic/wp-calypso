@@ -308,28 +308,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/agenttic-client@npm:0.1.10":
-  version: 0.1.10
-  resolution: "@automattic/agenttic-client@npm:0.1.10"
-  dependencies:
-    "@automattic/charts": "npm:>=0.14.0 <1.0.0"
-    "@types/react": "npm:^18.0.0"
-    "@visx/xychart": "npm:^3.12.0"
-    "@wordpress/element": "npm:^6.2.0"
-    "@wordpress/i18n": "npm:^6.1.0"
-    react: "npm:^18.0.0"
-    react-markdown: "npm:^10.1.0"
-    remark-gfm: "npm:^4.0.1"
-  peerDependencies:
-    "@wordpress/api-fetch": ^6.0.0 || ^7.0.0
-    react: ^18.0.0
-  peerDependenciesMeta:
-    "@wordpress/api-fetch":
-      optional: true
-  checksum: ade8f2e46632764cb4034ec60ca3e422066cc9cb7c27c0d63005c66c17d9b6d585e8ee9d564102473f371440cf3e741c48eeb355c2dfbeb246273012444fb2ea
-  languageName: node
-  linkType: hard
-
 "@automattic/agenttic-client@npm:0.1.12":
   version: 0.1.12
   resolution: "@automattic/agenttic-client@npm:0.1.12"
@@ -352,34 +330,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@automattic/agenttic-ui@npm:^0.1.10, @automattic/agenttic-ui@npm:^0.1.9":
-  version: 0.1.10
-  resolution: "@automattic/agenttic-ui@npm:0.1.10"
-  dependencies:
-    "@automattic/agenttic-client": "npm:0.1.10"
-    "@automattic/charts": "npm:>=0.14.0 <1.0.0"
-    "@radix-ui/react-scroll-area": "npm:^1.2.9"
-    "@radix-ui/react-slot": "npm:^1.2.3"
-    "@visx/xychart": "npm:^3.12.0"
-    "@wordpress/data": "npm:^10.0.0"
-    "@wordpress/element": "npm:^6.24.0"
-    "@wordpress/i18n": "npm:^6.1.0"
-    class-variance-authority: "npm:^0.7.1"
-    clsx: "npm:^2.1.1"
-    framer-motion: "npm:^12.23.0"
-    lucide-react: "npm:^0.525.0"
-    react: "npm:^18.0.0"
-    react-dom: "npm:^18.0.0"
-    react-markdown: "npm:^10.1.0"
-    react-textarea-autosize: "npm:^8.5.9"
-  peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  checksum: c07a10f3d7fefa32d1aefcf21776fa315ba5f7608195c3704e0142a8da8c5a50ac6a474ccf24d032a03f3d1bee5807e34d3efe51446f60b6c628e21a9e492f5f
-  languageName: node
-  linkType: hard
-
-"@automattic/agenttic-ui@npm:^0.1.12":
+"@automattic/agenttic-ui@npm:^0.1.10, @automattic/agenttic-ui@npm:^0.1.12, @automattic/agenttic-ui@npm:^0.1.9":
   version: 0.1.12
   resolution: "@automattic/agenttic-ui@npm:0.1.12"
   dependencies:
@@ -18108,19 +18059,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"d3-array@npm:1 - 2":
+"d3-array@npm:1 - 2, d3-array@npm:1.2.0 - 2, d3-array@npm:^2.4.0":
   version: 2.12.1
   resolution: "d3-array@npm:2.12.1"
   dependencies:
     internmap: "npm:^1.0.0"
   checksum: 7eca10427a9f113a4ca6a0f7301127cab26043fd5e362631ef5a0edd1c4b2dd70c56ed317566700c31e4a6d88b55f3951aaba192291817f243b730cb2352882e
-  languageName: node
-  linkType: hard
-
-"d3-array@npm:1.2.0 - 2, d3-array@npm:^2.4.0":
-  version: 2.4.0
-  resolution: "d3-array@npm:2.4.0"
-  checksum: 994b80f794bb2c605c78e8398b1009350e532b809b8c3beb049604a86b5e8f45c7a42647355f00168eb08fb1e43684f6f84d5831055bdd757abd061e28a4f857
   languageName: node
   linkType: hard
 
@@ -18682,14 +18626,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dayjs@npm:^1.10.0":
-  version: 1.10.7
-  resolution: "dayjs@npm:1.10.7"
-  checksum: 2ce908776ea5b383dba2c01c72290ff12ad97cafa81b9c72a9cc4f801d736d592f20bd992ea1dff083ab80e807080b5af21f634bb09e67f89f66582a9059053a
-  languageName: node
-  linkType: hard
-
-"dayjs@npm:^1.11.13":
+"dayjs@npm:^1.10.0, dayjs@npm:^1.11.13":
   version: 1.11.18
   resolution: "dayjs@npm:1.11.18"
   checksum: 83b67f5d977e2634edf4f5abdd91d9041a696943143638063016915d2cd8c7e57e0751e40379a07ebca8be7a48dd380bef8752d22a63670f2d15970e34f96d7a
@@ -27299,23 +27236,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mdast-util-to-markdown@npm:^2.0.0":
-  version: 2.1.0
-  resolution: "mdast-util-to-markdown@npm:2.1.0"
-  dependencies:
-    "@types/mdast": "npm:^4.0.0"
-    "@types/unist": "npm:^3.0.0"
-    longest-streak: "npm:^3.0.0"
-    mdast-util-phrasing: "npm:^4.0.0"
-    mdast-util-to-string: "npm:^4.0.0"
-    micromark-util-decode-string: "npm:^2.0.0"
-    unist-util-visit: "npm:^5.0.0"
-    zwitch: "npm:^2.0.0"
-  checksum: 8bd37a9627a438ef6418d6642661904d0cc03c5c732b8b018a8e238ef5cc82fe8aef1940b19c6f563245e58b9659f35e527209bd3fe145f3c723ba14d18fc3e6
-  languageName: node
-  linkType: hard
-
-"mdast-util-to-markdown@npm:^2.1.0":
+"mdast-util-to-markdown@npm:^2.0.0, mdast-util-to-markdown@npm:^2.1.0":
   version: 2.1.2
   resolution: "mdast-util-to-markdown@npm:2.1.2"
   dependencies:
@@ -37645,14 +37566,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-dedent@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "ts-dedent@npm:2.0.0"
-  checksum: dc22c2a7184ce80cb19b5619199dc33128750c7ffe366eecdb50fcc39a19347921d950c90af8418ef4d15271528bc75340efa23acce271aeb618c9a54fd0383c
-  languageName: node
-  linkType: hard
-
-"ts-dedent@npm:^2.2.0":
+"ts-dedent@npm:^2.0.0, ts-dedent@npm:^2.2.0":
   version: 2.2.0
   resolution: "ts-dedent@npm:2.2.0"
   checksum: 175adea838468cc2ff7d5e97f970dcb798bbcb623f29c6088cb21aa2880d207c5784be81ab1741f56b9ac37840cbaba0c0d79f7f8b67ffe61c02634cafa5c303
