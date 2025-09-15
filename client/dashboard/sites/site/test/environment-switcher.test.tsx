@@ -197,4 +197,49 @@ describe( 'EnvironmentSwitcher', () => {
 		// Check for "Add staging site" button
 		expect( screen.getByText( 'Add staging site' ) ).toBeInTheDocument();
 	} );
+
+	test( 'shows error notice when user has insufficient quota', async () => {
+		const { useQuery } = require( '@tanstack/react-query' );
+
+		// Mock to simulate insufficient quota scenario
+		useQuery.mockImplementation(
+			( options: { queryKey?: ( string | number )[]; enabled?: boolean } ) => {
+				// Return production site
+				if ( options?.queryKey?.includes( 'site-by-id' ) && options?.queryKey?.includes( 1 ) ) {
+					return { data: mockProductionSiteWithStaging, isLoading: false, error: null };
+				}
+				// Return false for has-valid-quota query (insufficient quota)
+				if ( options?.queryKey?.includes( 'has-valid-quota' ) ) {
+					return { data: false, isLoading: false, error: null };
+				}
+				// Return true for connection health
+				if ( options?.queryKey?.includes( 'jetpack-connection' ) ) {
+					return { data: { is_healthy: true }, isLoading: false, error: null };
+				}
+				// Return false for creating staging site query
+				if ( options?.queryKey?.includes( 'is-creating-staging' ) ) {
+					return { data: false, isLoading: false, error: null };
+				}
+				// Return false for all other queries
+				return { data: false, isLoading: false, error: null };
+			}
+		);
+
+		const user = userEvent.setup();
+		render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } /> );
+
+		// Click the dropdown button to open it
+		const button = screen.getByRole( 'button' );
+		await user.click( button );
+
+		// Click the "Add staging site" button
+		const addButton = screen.getByText( 'Add staging site' );
+		await user.click( addButton );
+
+		// Check that error notice was called
+		expect( mockCreateErrorNotice ).toHaveBeenCalledWith(
+			'Your available storage space is below 50%, which is insufficient for creating a staging site.',
+			{ type: 'snackbar' }
+		);
+	} );
 } );
