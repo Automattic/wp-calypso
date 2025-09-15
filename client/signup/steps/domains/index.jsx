@@ -107,6 +107,8 @@ import {
 } from './utils';
 import './style.scss';
 
+const isRelativeUrl = ( url ) => ! url.startsWith( '//' ) && ! getProtocol( url );
+
 class RenderDomainsStepComponent extends Component {
 	static propTypes = {
 		cart: PropTypes.object,
@@ -1649,7 +1651,7 @@ class RenderDomainsStepComponent extends Component {
 			}
 
 			const backTo = getQueryArg( window.location.href, 'back_to' );
-			if ( backTo && ! backTo.startsWith( '//' ) && ! getProtocol( backTo ) ) {
+			if ( backTo && isRelativeUrl( backTo ) ) {
 				backUrl = backTo;
 				backLabelText = translate( 'Back' );
 			}
