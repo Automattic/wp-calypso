@@ -56,6 +56,8 @@ $blueberry-color: #3858e9;
 }
 
 .odie-chatbox-message {
+	display: flex;
+	flex-direction: column;
 	word-wrap: break-word;
 	color: $gray-900;
 	font-size: $font-size-large;
