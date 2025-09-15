@@ -20,8 +20,7 @@ import { apiDeleteSite } from '../shared/api-delete-site';
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Domain flow: Connect a domain to a site' ), function () {
-	// TODO: Use a domain that we own. Which one though?
-	const targetDomain = 'zaguini.me';
+	const targetDomain = 'a8ctesting.com';
 
 	const planName = 'Personal';
 	let page: Page;
