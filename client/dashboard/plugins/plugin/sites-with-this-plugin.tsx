@@ -34,11 +34,24 @@ const mapToPluginListRow = (
 	};
 };
 
+export const getAllowedPluginActions = ( site: Site, pluginSlug: string ) => {
+	const autoManagedPlugins = [ 'jetpack', 'vaultpress', 'akismet' ];
+	const siteIsAtomic = site.is_wpcom_atomic;
+	const siteIsJetpack = site.jetpack;
+	const hasManagePlugins = site.plan?.features.active.includes( 'manage-plugins' );
+	const isManagedPlugin = siteIsAtomic && autoManagedPlugins.includes( pluginSlug );
+	const canManagePlugins =
+		( siteIsJetpack && ! siteIsAtomic ) || ( siteIsAtomic && hasManagePlugins );
+
+	return {
+		autoupdate: ! isManagedPlugin && canManagePlugins,
+	};
+};
+
 export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) => {
 	const [ view, setView ] = useState< View >( defaultView );
 	const { isLoading, plugin, pluginBySiteId, sitesWithThisPlugin } = usePlugin( pluginSlug );
 	const [ selection, setSelection ] = useState< SiteWithPluginActivationStatus[] >( [] );
-
 	const fields = useMemo(
 		() => [
 			{
@@ -70,12 +83,25 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 			{
 				id: 'update',
 				label: __( 'Update' ),
-				render: () => 'Update',
+				render: ( { item }: { item: Site } ) => {
+					const update = pluginBySiteId.get( item.ID )?.update;
+
+					const { autoupdate } = getAllowedPluginActions( item, pluginSlug );
+					if ( ! autoupdate ) {
+						return __( 'Auto-managed on this site' );
+					}
+
+					if ( ! update ) {
+						return null;
+					}
+
+					return update ? __( 'Update Available' ) : __( 'No Update Available' );
+				},
 				enableHiding: false,
 				enableSorting: false,
 			},
 		],
-		[ pluginBySiteId ]
+		[ pluginBySiteId, pluginSlug ]
 	);
 
 	const { data, paginationInfo } = filterSortAndPaginate( sitesWithThisPlugin, view, fields );
