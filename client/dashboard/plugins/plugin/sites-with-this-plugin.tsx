@@ -14,6 +14,7 @@ import ActionRenderModal, { getModalHeader } from '../manage/components/action-r
 import { buildBulkSitesPluginAction } from '../manage/utils';
 import { SiteWithPluginActivationStatus, usePlugin } from './use-plugin';
 import { getAllowedPluginActions } from './utils/get-allowed-plugin-actions';
+import { mapToPluginListRow } from './utils/map-to-plugin-list-row';
 import type { PluginListRow } from '../manage/types';
 
 const defaultView: View = {
@@ -21,19 +22,6 @@ const defaultView: View = {
 	fields: [ 'active', 'autoupdate', 'update' ],
 	sort: { field: 'name', direction: 'asc' },
 	titleField: 'domain',
-};
-
-const mapToPluginListRow = (
-	plugin: ReturnType< typeof usePlugin >[ 'plugin' ],
-	items: SiteWithPluginActivationStatus[]
-): Partial< PluginListRow > => {
-	return {
-		id: plugin?.id,
-		slug: plugin?.slug,
-		name: plugin?.name,
-		siteIds: items.map( ( item ) => item.ID ),
-		sitesCount: items.length,
-	};
 };
 
 export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) => {
