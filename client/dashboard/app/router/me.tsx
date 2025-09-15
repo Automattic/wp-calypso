@@ -9,6 +9,7 @@ import {
 	accountRecoveryQuery,
 	smsCountryCodesQuery,
 	twoStepAuthAppSetupQuery,
+	sshKeysQuery,
 } from '@automattic/api-queries';
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
@@ -380,6 +381,7 @@ export const securitySshKeyRoute = createRoute( {
 		],
 	} ),
 	getParentRoute: () => securityRoute,
+	loader: () => queryClient.ensureQueryData( sshKeysQuery() ),
 	path: '/ssh-key',
 } ).lazy( () =>
 	import( '../../me/security-ssh-key' ).then( ( d ) =>
