@@ -1769,16 +1769,7 @@ class RenderDomainsStepComponent extends Component {
 }
 
 const StyleWrappedDomainsStepComponent = ( props ) => {
-	const [ isLoading, shouldUseDomainSearchV2 ] = useIsDomainSearchV2Enabled( props.flowName );
-
-	if ( isLoading ) {
-		if ( props.useStepperWrapper && shouldUseStepContainerV2( props.flowName ) ) {
-			return <Step.Loading />;
-		}
-
-		// TODO: Add a loading state to indicate that the experiment is loading.
-		return null;
-	}
+	const shouldUseDomainSearchV2 = useIsDomainSearchV2Enabled();
 
 	return (
 		<>
