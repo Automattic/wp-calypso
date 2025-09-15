@@ -2,14 +2,20 @@
  * @group authentication
  */
 
-import { DataHelper, EmailClient, LoginPage, SecretsManager } from '@automattic/calypso-e2e';
+import {
+	DataHelper,
+	EmailClient,
+	envVariables,
+	LoginPage,
+	SecretsManager,
+} from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { skipDescribeIf } from '../../jest-helpers';
 import type { Message } from 'mailosaur/lib/models';
 
 declare const browser: Browser;
 
-skipDescribeIf( !! process.env.CI )(
+skipDescribeIf( envVariables.CALYPSO_BASE_URL !== 'http://calypso.localhost:3000' )(
 	DataHelper.createSuiteTitle( 'Authentication: Magic Link' ),
 	function () {
 		const credentials = SecretsManager.secrets.testAccounts.defaultUser;
