@@ -1,15 +1,15 @@
 import { wpcom } from '../wpcom-fetcher';
 import type {
-	CreateUpdateScheduleBody,
-	EditUpdateScheduleBody,
-	MultisiteSchedulesUpdatesResponse,
-	ScheduleUpdates,
+	CreateScheduledUpdateBody,
+	EditScheduledUpdateBody,
+	MultisiteScheduledUpdatesResponse,
+	ScheduledUpdate,
 } from './types';
 
 // Single-site list
-export async function fetchSiteUpdateSchedules(
+export async function fetchSiteScheduledUpdates(
 	siteId: number
-): Promise< Record< string, ScheduleUpdates > > {
+): Promise< Record< string, ScheduledUpdate > > {
 	return await wpcom.req.get( {
 		path: `/sites/${ siteId }/update-schedules`,
 		apiNamespace: 'wpcom/v2',
@@ -17,9 +17,9 @@ export async function fetchSiteUpdateSchedules(
 }
 
 // Single-site create
-export async function createSiteUpdateSchedule(
+export async function createSiteScheduledUpdate(
 	siteId: number,
-	body: CreateUpdateScheduleBody
+	body: CreateScheduledUpdateBody
 ): Promise< unknown > {
 	return await wpcom.req.post( {
 		path: `/sites/${ siteId }/update-schedules`,
@@ -29,10 +29,10 @@ export async function createSiteUpdateSchedule(
 }
 
 // Single-site edit
-export async function editSiteUpdateSchedule(
+export async function editSiteScheduledUpdate(
 	siteId: number,
 	scheduleId: string,
-	body: EditUpdateScheduleBody
+	body: EditScheduledUpdateBody
 ): Promise< unknown > {
 	return await wpcom.req.put( {
 		path: `/sites/${ siteId }/update-schedules/${ scheduleId }`,
@@ -42,7 +42,7 @@ export async function editSiteUpdateSchedule(
 }
 
 // Single-site delete
-export async function deleteSiteUpdateSchedule(
+export async function deleteSiteScheduledUpdate(
 	siteId: number,
 	scheduleId: string
 ): Promise< unknown > {
@@ -53,7 +53,7 @@ export async function deleteSiteUpdateSchedule(
 }
 
 // Multisite list (aggregated by hosting endpoint)
-export async function fetchMultisiteUpdateSchedules(): Promise< MultisiteSchedulesUpdatesResponse > {
+export async function fetchMultisiteScheduledUpdates(): Promise< MultisiteScheduledUpdatesResponse > {
 	return await wpcom.req.get( {
 		path: '/hosting/update-schedules',
 		apiNamespace: 'wpcom/v2',

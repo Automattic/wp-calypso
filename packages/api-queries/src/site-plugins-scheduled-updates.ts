@@ -1,11 +1,11 @@
 import {
-	type CreateUpdateScheduleBody,
-	type EditUpdateScheduleBody,
-	type ScheduleUpdates,
-	createSiteUpdateSchedule,
-	editSiteUpdateSchedule,
-	deleteSiteUpdateSchedule,
-	fetchSiteUpdateSchedules,
+	type CreateScheduledUpdateBody,
+	type EditScheduledUpdateBody,
+	type ScheduledUpdate,
+	createSiteScheduledUpdate,
+	editSiteScheduledUpdate,
+	deleteSiteScheduledUpdate,
+	fetchSiteScheduledUpdates,
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
@@ -15,9 +15,9 @@ export const siteScheduledUpdatesQuery = ( siteId: number ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'scheduled-updates' ],
 		queryFn: async () => {
-			const response = await fetchSiteUpdateSchedules( siteId );
+			const response = await fetchSiteScheduledUpdates( siteId );
 			// Convert map to array and attach id
-			const list: ScheduleUpdates[] = Object.keys( response ).map( ( id ) => ( {
+			const list: ScheduledUpdate[] = Object.keys( response ).map( ( id ) => ( {
 				...response[ id ],
 				id,
 			} ) );
@@ -25,17 +25,15 @@ export const siteScheduledUpdatesQuery = ( siteId: number ) =>
 			list.sort( ( a, b ) => ( a.timestamp ?? 0 ) - ( b.timestamp ?? 0 ) );
 			return list;
 		},
-		retry: false,
-		refetchOnWindowFocus: false,
 	} );
 
 // Mutation: create single-site schedule with optimistic update
 export const siteScheduledUpdatesCreateMutation = ( siteId: number ) =>
 	mutationOptions( {
-		mutationFn: ( body: CreateUpdateScheduleBody ) => createSiteUpdateSchedule( siteId, body ),
-		onMutate: ( body: CreateUpdateScheduleBody ) => {
+		mutationFn: ( body: CreateScheduledUpdateBody ) => createSiteScheduledUpdate( siteId, body ),
+		onMutate: ( body: CreateScheduledUpdateBody ) => {
 			const key = siteScheduledUpdatesQuery( siteId ).queryKey;
-			const previous = ( queryClient.getQueryData( key ) as ScheduleUpdates[] ) || [];
+			const previous = ( queryClient.getQueryData( key ) as ScheduledUpdate[] ) || [];
 			const optimistic = [
 				...previous,
 				{
@@ -45,7 +43,7 @@ export const siteScheduledUpdatesCreateMutation = ( siteId: number ) =>
 					schedule: body.schedule.interval,
 					// Keep parity with legacy optimistic field mapping
 					interval: body.schedule.timestamp as unknown as number,
-				} as unknown as ScheduleUpdates,
+				} as unknown as ScheduledUpdate,
 			];
 			queryClient.setQueryData( key, optimistic );
 			return { previous };
@@ -64,11 +62,11 @@ export const siteScheduledUpdatesCreateMutation = ( siteId: number ) =>
 // Mutation: edit single-site schedule with optimistic update
 export const siteScheduledUpdatesEditMutation = ( siteId: number ) =>
 	mutationOptions( {
-		mutationFn: ( variables: { scheduleId: string; body: EditUpdateScheduleBody } ) =>
-			editSiteUpdateSchedule( siteId, variables.scheduleId, variables.body ),
-		onMutate: ( variables: { scheduleId: string; body: EditUpdateScheduleBody } ) => {
+		mutationFn: ( variables: { scheduleId: string; body: EditScheduledUpdateBody } ) =>
+			editSiteScheduledUpdate( siteId, variables.scheduleId, variables.body ),
+		onMutate: ( variables: { scheduleId: string; body: EditScheduledUpdateBody } ) => {
 			const key = siteScheduledUpdatesQuery( siteId ).queryKey;
-			const previous = ( queryClient.getQueryData( key ) as ScheduleUpdates[] ) || [];
+			const previous = ( queryClient.getQueryData( key ) as ScheduledUpdate[] ) || [];
 			const index = previous.findIndex( ( s ) => s.id === variables.scheduleId );
 			if ( index === -1 ) {
 				return { previous };
@@ -81,7 +79,7 @@ export const siteScheduledUpdatesEditMutation = ( siteId: number ) =>
 					timestamp: variables.body.schedule.timestamp,
 					schedule: variables.body.schedule.interval,
 					interval: variables.body.schedule.timestamp as unknown as number,
-				} as unknown as ScheduleUpdates,
+				} as unknown as ScheduledUpdate,
 				...previous.slice( index + 1 ),
 			];
 			queryClient.setQueryData( key, updated );
@@ -101,10 +99,10 @@ export const siteScheduledUpdatesEditMutation = ( siteId: number ) =>
 // Mutation: delete single-site schedule with optimistic update
 export const siteScheduledUpdatesDeleteMutation = ( siteId: number ) =>
 	mutationOptions( {
-		mutationFn: ( scheduleId: string ) => deleteSiteUpdateSchedule( siteId, scheduleId ),
+		mutationFn: ( scheduleId: string ) => deleteSiteScheduledUpdate( siteId, scheduleId ),
 		onMutate: ( scheduleId: string ) => {
 			const key = siteScheduledUpdatesQuery( siteId ).queryKey;
-			const previous = ( queryClient.getQueryData( key ) as ScheduleUpdates[] ) || [];
+			const previous = ( queryClient.getQueryData( key ) as ScheduledUpdate[] ) || [];
 			queryClient.setQueryData(
 				key,
 				previous.filter( ( s ) => s.id !== scheduleId )
@@ -122,11 +120,11 @@ export const siteScheduledUpdatesDeleteMutation = ( siteId: number ) =>
 // Batch create across multiple sites, mirroring legacy behavior
 export const siteScheduledUpdatesBatchCreateMutation = ( siteIds: number[] ) =>
 	mutationOptions( {
-		mutationFn: async ( body: CreateUpdateScheduleBody ) => {
+		mutationFn: async ( body: CreateScheduledUpdateBody ) => {
 			const results = await Promise.all(
 				siteIds.map( async ( siteId ) => {
 					try {
-						const response = await createSiteUpdateSchedule( siteId, body );
+						const response = await createSiteScheduledUpdate( siteId, body );
 						return { siteId, response } as const;
 					} catch ( error ) {
 						return { siteId, error } as const;
@@ -135,11 +133,11 @@ export const siteScheduledUpdatesBatchCreateMutation = ( siteIds: number[] ) =>
 			);
 			return results;
 		},
-		onMutate: ( body: CreateUpdateScheduleBody ) => {
-			const previous: Record< number, ScheduleUpdates[] > = {};
+		onMutate: ( body: CreateScheduledUpdateBody ) => {
+			const previous: Record< number, ScheduledUpdate[] > = {};
 			siteIds.forEach( ( siteId ) => {
 				const key = siteScheduledUpdatesQuery( siteId ).queryKey;
-				const prev = ( queryClient.getQueryData( key ) as ScheduleUpdates[] ) || [];
+				const prev = ( queryClient.getQueryData( key ) as ScheduledUpdate[] ) || [];
 				previous[ siteId ] = prev;
 				const optimistic = [
 					...prev,
@@ -149,14 +147,14 @@ export const siteScheduledUpdatesBatchCreateMutation = ( siteIds: number[] ) =>
 						timestamp: body.schedule.timestamp,
 						schedule: body.schedule.interval,
 						interval: body.schedule.timestamp as unknown as number,
-					} as unknown as ScheduleUpdates,
+					} as unknown as ScheduledUpdate,
 				];
 				queryClient.setQueryData( key, optimistic );
 			} );
 			return { previous };
 		},
 		onError: ( _err, _vars, ctx ) => {
-			const prev = ctx?.previous as Record< number, ScheduleUpdates[] > | undefined;
+			const prev = ctx?.previous as Record< number, ScheduledUpdate[] > | undefined;
 			if ( prev ) {
 				Object.entries( prev ).forEach( ( [ siteId, list ] ) => {
 					const key = siteScheduledUpdatesQuery( Number( siteId ) ).queryKey;

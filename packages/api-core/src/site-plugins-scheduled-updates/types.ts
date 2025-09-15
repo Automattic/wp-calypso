@@ -13,7 +13,7 @@ export type LastRunStatus =
 	| 'failure-and-rollback-fail'
 	| null;
 
-export type ScheduleUpdates = {
+export type ScheduledUpdate = {
 	id: string;
 	hook?: string;
 	interval: number;
@@ -26,11 +26,11 @@ export type ScheduleUpdates = {
 	active: boolean;
 };
 
-export type MultisiteSchedulesUpdatesResponse = {
-	sites: { [ site_id: string ]: { [ scheduleId: string ]: ScheduleUpdates } };
+export type MultisiteScheduledUpdatesResponse = {
+	sites: { [ site_id: string ]: { [ scheduleId: string ]: ScheduledUpdate } };
 };
 
-export type CreateUpdateScheduleBody = {
+export type CreateScheduledUpdateBody = {
 	plugins: string[];
 	schedule: {
 		interval: 'daily' | 'weekly';
@@ -45,4 +45,4 @@ export type CreateUpdateScheduleBody = {
 	health_check_paths?: string[];
 };
 
-export type EditUpdateScheduleBody = CreateUpdateScheduleBody;
+export type EditScheduledUpdateBody = CreateScheduledUpdateBody;
