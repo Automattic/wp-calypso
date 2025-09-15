@@ -98,11 +98,6 @@ jest.mock( '@tanstack/react-query', () => ( {
 	} ) ),
 } ) );
 
-// Mock React Query Persist
-jest.mock( '@tanstack/react-query-persist-client', () => ( {
-	persistQueryClient: jest.fn( () => [ jest.fn(), Promise.resolve() ] ),
-} ) );
-
 jest.mock( '../../../utils/site-atomic-transfers', () => ( {
 	isAtomicTransferInProgress: jest.fn( () => false ),
 	isAtomicTransferredSite: jest.fn( () => true ),
@@ -172,104 +167,108 @@ describe( 'EnvironmentSwitcher', () => {
 		jest.clearAllMocks();
 	} );
 
-	test( 'displays "Production" for production sites', () => {
-		render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } /> );
-		expect( screen.getByText( 'Production' ) ).toBeInTheDocument();
-	} );
-
-	test( 'displays "Staging" for staging sites', () => {
-		render( <EnvironmentSwitcher site={ mockStagingSite } /> );
-		expect( screen.getByText( 'Staging' ) ).toBeInTheDocument();
-	} );
-
-	test( 'displays "Add staging site" button when no staging site exists', async () => {
-		mockUseQuery( {
-			'site-by-id-1': mockProductionSiteWithStaging,
-			'is-creating-staging': false,
+	describe( 'Environment Display', () => {
+		test( 'displays "Production" for production sites', () => {
+			render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } /> );
+			expect( screen.getByText( 'Production' ) ).toBeInTheDocument();
 		} );
 
-		const user = userEvent.setup();
-		render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } /> );
-
-		await clickDropdown( user );
-		expect( screen.getByText( 'Add staging site' ) ).toBeInTheDocument();
+		test( 'displays "Staging" for staging sites', () => {
+			render( <EnvironmentSwitcher site={ mockStagingSite } /> );
+			expect( screen.getByText( 'Staging' ) ).toBeInTheDocument();
+		} );
 	} );
 
-	test( 'shows error notice when user has insufficient quota', async () => {
-		mockUseQuery( {
-			'site-by-id-1': mockProductionSiteWithStaging,
-			'has-valid-quota': false,
-			'jetpack-connection': { is_healthy: true },
-			'is-creating-staging': false,
+	describe( 'Staging Site Actions', () => {
+		test( 'displays "Add staging site" button when no staging site exists', async () => {
+			mockUseQuery( {
+				'site-by-id-1': mockProductionSiteWithStaging,
+				'is-creating-staging': false,
+			} );
+
+			const user = userEvent.setup();
+			render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } /> );
+
+			await clickDropdown( user );
+			expect( screen.getByText( 'Add staging site' ) ).toBeInTheDocument();
 		} );
 
-		const user = userEvent.setup();
-		render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } /> );
+		test( 'shows error notice when user has insufficient quota', async () => {
+			mockUseQuery( {
+				'site-by-id-1': mockProductionSiteWithStaging,
+				'has-valid-quota': false,
+				'jetpack-connection': { is_healthy: true },
+				'is-creating-staging': false,
+			} );
 
-		await clickDropdown( user );
-		await user.click( screen.getByText( 'Add staging site' ) );
+			const user = userEvent.setup();
+			render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } /> );
 
-		expect( mockCreateErrorNotice ).toHaveBeenCalledWith(
-			'Your available storage space is below 50%, which is insufficient for creating a staging site.',
-			{ type: 'snackbar' }
-		);
-	} );
+			await clickDropdown( user );
+			await user.click( screen.getByText( 'Add staging site' ) );
 
-	test( 'shows error notice when jetpack connection is unhealthy', async () => {
-		mockUseQuery( {
-			'site-by-id-1': mockProductionSiteWithStaging,
-			'has-valid-quota': true,
-			'jetpack-connection': { is_healthy: false },
-			'is-creating-staging': false,
+			expect( mockCreateErrorNotice ).toHaveBeenCalledWith(
+				'Your available storage space is below 50%, which is insufficient for creating a staging site.',
+				{ type: 'snackbar' }
+			);
 		} );
 
-		const user = userEvent.setup();
-		render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } /> );
+		test( 'shows error notice when jetpack connection is unhealthy', async () => {
+			mockUseQuery( {
+				'site-by-id-1': mockProductionSiteWithStaging,
+				'has-valid-quota': true,
+				'jetpack-connection': { is_healthy: false },
+				'is-creating-staging': false,
+			} );
 
-		await clickDropdown( user );
-		await user.click( screen.getByText( 'Add staging site' ) );
+			const user = userEvent.setup();
+			render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } /> );
 
-		expect( mockCreateNotice ).toHaveBeenCalledWith(
-			'error',
-			'Cannot add a staging site due to a Jetpack connection issue.',
-			{
-				type: 'snackbar',
-				actions: [
-					{
-						label: 'Contact support',
-						url: null,
-						onClick: expect.any( Function ),
-					},
-				],
-			}
-		);
-	} );
+			await clickDropdown( user );
+			await user.click( screen.getByText( 'Add staging site' ) );
 
-	test( 'displays "Adding staging site..." when staging site is being created', async () => {
-		mockUseQuery( {
-			'site-by-id-1': mockProductionSiteWithStaging,
-			'is-creating-staging': true,
+			expect( mockCreateNotice ).toHaveBeenCalledWith(
+				'error',
+				'Cannot add a staging site due to a Jetpack connection issue.',
+				{
+					type: 'snackbar',
+					actions: [
+						{
+							label: 'Contact support',
+							url: null,
+							onClick: expect.any( Function ),
+						},
+					],
+				}
+			);
 		} );
 
-		const user = userEvent.setup();
-		render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } /> );
+		test( 'displays "Adding staging site..." when staging site is being created', async () => {
+			mockUseQuery( {
+				'site-by-id-1': mockProductionSiteWithStaging,
+				'is-creating-staging': true,
+			} );
 
-		await clickDropdown( user );
-		expect( screen.getByText( 'Adding staging site…' ) ).toBeInTheDocument();
-	} );
+			const user = userEvent.setup();
+			render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } /> );
 
-	test( 'displays "Deleting staging site..." when staging site is being deleted', async () => {
-		mockUseQuery( {
-			'site-by-id-1': mockProductionSiteWithStaging,
-			'site-by-id-2': mockStagingSite,
-			'is-deleting-staging': true,
-			'is-creating-staging': false,
+			await clickDropdown( user );
+			expect( screen.getByText( 'Adding staging site…' ) ).toBeInTheDocument();
 		} );
 
-		const user = userEvent.setup();
-		render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } /> );
+		test( 'displays "Deleting staging site..." when staging site is being deleted', async () => {
+			mockUseQuery( {
+				'site-by-id-1': mockProductionSiteWithStaging,
+				'site-by-id-2': mockStagingSite,
+				'is-deleting-staging': true,
+				'is-creating-staging': false,
+			} );
 
-		await clickDropdown( user );
-		expect( screen.getByText( 'Deleting staging site…' ) ).toBeInTheDocument();
+			const user = userEvent.setup();
+			render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } /> );
+
+			await clickDropdown( user );
+			expect( screen.getByText( 'Deleting staging site…' ) ).toBeInTheDocument();
+		} );
 	} );
 } );
