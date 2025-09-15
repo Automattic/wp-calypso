@@ -297,4 +297,72 @@ describe( 'EnvironmentSwitcher', () => {
 			}
 		);
 	} );
+
+	test( 'displays "Adding staging site..." when staging site is being created', async () => {
+		const { useQuery } = require( '@tanstack/react-query' );
+
+		// Mock to simulate staging site creation in progress
+		useQuery.mockImplementation(
+			( options: { queryKey?: ( string | number )[]; enabled?: boolean } ) => {
+				// Return production site
+				if ( options?.queryKey?.includes( 'site-by-id' ) && options?.queryKey?.includes( 1 ) ) {
+					return { data: mockProductionSiteWithStaging, isLoading: false, error: null };
+				}
+				// Return true for creating staging site query (creation in progress)
+				if ( options?.queryKey?.includes( 'is-creating-staging' ) ) {
+					return { data: true, isLoading: false, error: null };
+				}
+				// Return false for all other queries
+				return { data: false, isLoading: false, error: null };
+			}
+		);
+
+		const user = userEvent.setup();
+		render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } /> );
+
+		// Click the dropdown button to open it
+		const button = screen.getByRole( 'button' );
+		await user.click( button );
+
+		// Check for "Adding staging site..." text
+		expect( screen.getByText( 'Adding staging site…' ) ).toBeInTheDocument();
+	} );
+
+	test( 'displays "Deleting staging site..." when staging site is being deleted', async () => {
+		const { useQuery } = require( '@tanstack/react-query' );
+
+		// Mock to simulate staging site deletion in progress
+		useQuery.mockImplementation(
+			( options: { queryKey?: ( string | number )[]; enabled?: boolean } ) => {
+				// Return production site
+				if ( options?.queryKey?.includes( 'site-by-id' ) && options?.queryKey?.includes( 1 ) ) {
+					return { data: mockProductionSiteWithStaging, isLoading: false, error: null };
+				}
+				// Return staging site
+				if ( options?.queryKey?.includes( 'site-by-id' ) && options?.queryKey?.includes( 2 ) ) {
+					return { data: mockStagingSite, isLoading: false, error: null };
+				}
+				// Return true for deleting staging site query (deletion in progress)
+				if ( options?.queryKey?.includes( 'is-deleting-staging' ) ) {
+					return { data: true, isLoading: false, error: null };
+				}
+				// Return false for creating staging site query
+				if ( options?.queryKey?.includes( 'is-creating-staging' ) ) {
+					return { data: false, isLoading: false, error: null };
+				}
+				// Return false for all other queries
+				return { data: false, isLoading: false, error: null };
+			}
+		);
+
+		const user = userEvent.setup();
+		render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } /> );
+
+		// Click the dropdown button to open it
+		const button = screen.getByRole( 'button' );
+		await user.click( button );
+
+		// Check for "Deleting staging site..." text
+		expect( screen.getByText( 'Deleting staging site…' ) ).toBeInTheDocument();
+	} );
 } );
