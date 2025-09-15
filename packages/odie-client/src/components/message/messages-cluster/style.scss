@@ -1,6 +1,6 @@
 @import '@wordpress/base-styles/variables';
 
-.odie-chatbox-messages-cluster {
+.odie-chatbox-messages-cluster { 
 	width: 100%;
 	padding: 0;
 	box-sizing: border-box;
@@ -18,13 +18,12 @@
 			padding: 0;
 		}
 
-		animation: fadeIn 0.5s ease-in-out forwards;
-		transform-origin: center bottom;
+		animation: fadeInAttachment 0.2s ease-in-out forwards;
+		transform-origin: center top;
 
-		@keyframes fadeIn {
+		@keyframes fadeInAttachment {
 			from {
 				opacity: 0;
-				transform: scaleX( 0 );
 			}
 			to {
 				opacity: 1;
