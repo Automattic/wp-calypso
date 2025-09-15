@@ -8,7 +8,7 @@ import type { Message } from 'mailosaur/lib/models';
 
 declare const browser: Browser;
 
-describe.skip( DataHelper.createSuiteTitle( 'Authentication: Magic Link' ), function () {
+describe( DataHelper.createSuiteTitle( 'Authentication: Magic Link' ), function () {
 	const credentials = SecretsManager.secrets.testAccounts.defaultUser;
 	let page: Page;
 	let loginPage: LoginPage;
