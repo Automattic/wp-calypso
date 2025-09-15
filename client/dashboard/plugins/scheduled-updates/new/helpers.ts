@@ -1,6 +1,8 @@
+import type { Frequency, Weekday } from './components/frequency-selection';
+
 export function prepareTimestamp(
-	frequency: 'daily' | 'weekly',
-	weekday: 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday',
+	frequency: Frequency,
+	weekday: Weekday,
 	time: string // HH:MM (24h)
 ): number {
 	const event = new Date();
@@ -15,7 +17,7 @@ export function prepareTimestamp(
 	}
 
 	if ( frequency === 'weekly' ) {
-		const weekdayToNumber: Record< string, number > = {
+		const weekdayToNumber: Record< Weekday, number > = {
 			Sunday: 0,
 			Monday: 1,
 			Tuesday: 2,
