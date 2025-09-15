@@ -65,6 +65,10 @@
 				min-width: 0;
 				box-sizing: border-box;
 
+				svg {
+					flex-shrink: 0;
+				}
+
 				> svg:first-child {
 					margin-right: 10px;
 					fill: $gray-700;
