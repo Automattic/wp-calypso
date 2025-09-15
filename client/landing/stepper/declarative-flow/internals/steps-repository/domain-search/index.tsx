@@ -2,6 +2,7 @@ import {
 	isDomainFlow,
 	isHundredYearDomainFlow,
 	isHundredYearPlanFlow,
+	isNewsletterFlow,
 	Step,
 	StepContainer,
 } from '@automattic/onboarding';
@@ -48,6 +49,8 @@ const DomainSearchStep: StepType< {
 			hidePrice: isHundredYearPlanFlow( flow ),
 			oneTimePrice: isHundredYearDomainFlow( flow ),
 		},
+		includeDotBlogSubdomain: isNewsletterFlow( flow ),
+		skippable: isNewsletterFlow( flow ),
 	};
 
 	if ( shouldUseStepContainerV2( flow ) ) {
@@ -97,6 +100,7 @@ const DomainSearchStep: StepType< {
 	return (
 		<StepContainer
 			stepName="domain-search"
+			isWideLayout
 			flowName={ flow }
 			goBack={ () => {} }
 			goNext={ () => {} }

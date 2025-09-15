@@ -45,6 +45,7 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		vendor: 'variation2_front',
 		skippable: false,
 		deemphasizedTlds: [],
+		includeDotBlogSubdomain: false,
 		priceRules: {
 			hidePrice: false,
 			oneTimePrice: false,
@@ -121,7 +122,11 @@ export const useDomainSearchContextValue = (
 					enabled: false,
 				} ),
 				freeSuggestion: ( query ) => ( {
-					...freeSuggestionQuery( query ),
+					...freeSuggestionQuery( query, {
+						include_dotblogsubdomain: normalizedConfig.includeDotBlogSubdomain
+							? query.includes( '.blog' )
+							: false,
+					} ),
 					enabled: normalizedConfig.skippable,
 				} ),
 				domainAvailability: ( domainName ) => ( {
