@@ -4,10 +4,7 @@ import { formatCurrency } from '@automattic/number-formatters';
 import { type CartKey, type ResponseCartProduct, useShoppingCart } from '@automattic/shopping-cart';
 import { ComponentProps, useMemo } from 'react';
 
-const wpcomCartToDomainSearchCart = (
-	domain: ResponseCartProduct,
-	isFirstDomainFree?: boolean
-) => {
+const wpcomCartToDomainSearchCart = ( domain: ResponseCartProduct, isFirstDomainFree: boolean ) => {
 	const [ domainName, ...tld ] = domain.meta.split( '.' );
 
 	const hasPromotion =
@@ -41,7 +38,7 @@ const wpcomCartToDomainSearchCart = (
 interface UseWPCOMShoppingCartForDomainSearchOptions {
 	cartKey: CartKey;
 	flowName?: string;
-	isFirstDomainFree?: boolean;
+	isFirstDomainFree: boolean;
 }
 
 export const useWPCOMShoppingCartForDomainSearch = ( {
