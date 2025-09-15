@@ -288,5 +288,27 @@ describe( 'EnvironmentSwitcher', () => {
 			await clickDropdown( user );
 			expect( screen.getByText( 'Deleting staging site…' ) ).toBeInTheDocument();
 		} );
+
+		test( 'shows success notice and calls mutation when "Add staging site" button is clicked', async () => {
+			mockUseQuery( {
+				'site-by-id-1': mockProductionSiteWithoutStaging,
+				'has-valid-quota': true,
+				'jetpack-connection': { is_healthy: true },
+				'is-creating-staging': false,
+			} );
+
+			const user = userEvent.setup();
+			render( <EnvironmentSwitcher site={ mockProductionSiteWithoutStaging } /> );
+
+			await clickDropdown( user );
+			await user.click( screen.getByText( 'Add staging site' ) );
+
+			expect( mockCreateSuccessNotice ).toHaveBeenCalledWith(
+				'We are adding your staging site. We will send you an email when it is done.',
+				{ type: 'snackbar' }
+			);
+
+			expect( mockMutate ).toHaveBeenCalled();
+		} );
 	} );
 } );
