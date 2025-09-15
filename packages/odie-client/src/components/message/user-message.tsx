@@ -20,13 +20,12 @@ import type { Message } from '../../types';
 const getDisplayMessage = (
 	isUserEligibleForPaidSupport: boolean,
 	canConnectToZendesk: boolean,
-	isRequestingHumanSupport: boolean,
 	messageContent: ReactNode,
 	hasCannedResponse?: boolean,
 	forceEmailSupport?: boolean,
 	isErrorMessage?: boolean
 ) => {
-	if ( isUserEligibleForPaidSupport && ! canConnectToZendesk && isRequestingHumanSupport ) {
+	if ( isUserEligibleForPaidSupport && ! canConnectToZendesk ) {
 		return getOdieThirdPartyMessageContent();
 	}
 
@@ -34,7 +33,7 @@ const getDisplayMessage = (
 		return messageContent;
 	}
 
-	if ( isUserEligibleForPaidSupport && forceEmailSupport && isRequestingHumanSupport ) {
+	if ( isUserEligibleForPaidSupport && forceEmailSupport ) {
 		return getOdieEmailFallbackMessageContent();
 	}
 
@@ -64,20 +63,19 @@ export const UserMessage = ( {
 	const hasCannedResponse = message.context?.flags?.canned_response;
 	const isRequestingHumanSupport = getIsRequestingHumanSupport( message );
 
-	const displayMessage = getDisplayMessage(
-		isUserEligibleForPaidSupport,
-		canConnectToZendesk,
-		isRequestingHumanSupport,
-		message.content,
-		hasCannedResponse,
-		forceEmailSupport,
-		message?.context?.flags?.is_error_message
-	);
-
 	const isMessageShowingDisclaimer =
 		message.context?.question_tags?.inquiry_type !== 'request-for-human-support';
 
-	const messageContent = isRequestingHumanSupport ? displayMessage : message.content;
+	const messageContent = isRequestingHumanSupport
+		? getDisplayMessage(
+				isUserEligibleForPaidSupport,
+				canConnectToZendesk,
+				message.content,
+				hasCannedResponse,
+				forceEmailSupport,
+				message?.context?.flags?.is_error_message
+		  )
+		: message.content;
 
 	return (
 		<>
@@ -93,9 +91,10 @@ export const UserMessage = ( {
 			</div>
 			{ isMessageWithEscalationOption && (
 				<>
-					{ ! interactionHasZendeskEvent( currentSupportInteraction ) && (
-						<BotMessageActions message={ message } />
-					) }
+					{ ! isRequestingHumanSupport &&
+						! interactionHasZendeskEvent( currentSupportInteraction ) && (
+							<BotMessageActions message={ message } />
+						) }
 					<div className="chat-feedback-wrapper">
 						<Sources
 							message={ message }
