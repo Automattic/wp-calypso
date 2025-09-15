@@ -10,15 +10,9 @@ import {
 import { useCallback, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
-import { useDispatch } from 'calypso/state';
 import { PREPARE_DOWNLOAD_STATUS } from './constants';
 import { useFileBrowserContext } from './file-browser-context';
 import FilePreview from './file-preview';
-import {
-	onPreparingDownloadError,
-	onProcessingDownloadError,
-	onRetrievingFileInfoError,
-} from './notices';
 import { FileBrowserItem } from './types';
 import { useBackupPathInfoQuery } from './use-backup-path-info-query';
 import { usePrepareDownload } from './use-prepare-download';
@@ -49,8 +43,7 @@ function FileInfoCard( {
 	onTrackEvent,
 	onRequestGranularRestore,
 }: FileInfoCardProps ) {
-	const dispatch = useDispatch();
-	const { fileBrowserState, locale } = useFileBrowserContext();
+	const { fileBrowserState, locale, notices } = useFileBrowserContext();
 	const { setNodeCheckState } = fileBrowserState;
 
 	const {
@@ -67,8 +60,8 @@ function FileInfoCard( {
 
 	// Dispatch an error notice if the download could not be prepared
 	const handlePrepareDownloadError = useCallback( () => {
-		dispatch( onPreparingDownloadError() );
-	}, [ dispatch ] );
+		notices.showError( __( 'There was an error preparing your download. Please, try again.' ) );
+	}, [ notices ] );
 
 	const { prepareDownload, prepareDownloadStatus, downloadUrl } = usePrepareDownload(
 		siteId,
@@ -87,8 +80,8 @@ function FileInfoCard( {
 
 	const handleDownloadError = useCallback( () => {
 		setIsProcessingDownload( false );
-		dispatch( onProcessingDownloadError() );
-	}, [ dispatch ] );
+		notices.showError( __( 'There was an error processing your download. Please, try again.' ) );
+	}, [ notices ] );
 
 	const trackDownloadByType = useCallback(
 		( fileType: string ) => {
@@ -178,12 +171,12 @@ function FileInfoCard( {
 
 	const prepareDownloadClick = useCallback( () => {
 		if ( ! item.period || ! fileInfo?.manifestFilter || ! fileInfo?.dataType ) {
-			dispatch( onPreparingDownloadError() );
+			notices.showError( __( 'There was an error preparing your download. Please, try again.' ) );
 			return;
 		}
 
 		prepareDownload( siteId, item.period, fileInfo.manifestFilter, fileInfo.dataType );
-	}, [ dispatch, fileInfo, item.period, prepareDownload, siteId ] );
+	}, [ notices, fileInfo, item.period, prepareDownload, siteId ] );
 
 	const restoreFile = useCallback( () => {
 		// Reset checklist
@@ -239,9 +232,11 @@ function FileInfoCard( {
 	// Dispatch an error notice if the file info could not be retrieved
 	useEffect( () => {
 		if ( isError ) {
-			dispatch( onRetrievingFileInfoError() );
+			notices.showError(
+				__( 'There was an error retrieving your file information. Please, try again.' )
+			);
 		}
-	}, [ dispatch, isError ] );
+	}, [ notices, isError ] );
 
 	const showActions =
 		item.type !== 'archive' || ( item.type === 'archive' && item.extensionType === 'unchanged' );
