@@ -39,6 +39,7 @@ const DomainSearchStep: StepType< {
 } > = function DomainSearchStep( { navigation, flow } ) {
 	const site = useSite();
 	const initialQuery = useQuery().get( 'new' ) ?? site?.slug;
+	const allowedTlds = useQuery().get( 'tld' )?.split( ',' ) ?? [];
 
 	const config = {
 		vendor: getSuggestionsVendor( {
@@ -52,6 +53,7 @@ const DomainSearchStep: StepType< {
 		},
 		includeDotBlogSubdomain: isNewsletterFlow( flow ),
 		skippable: isNewsletterFlow( flow ),
+		allowedTlds,
 	};
 
 	const text = __( 'Claim your space on the web' );
