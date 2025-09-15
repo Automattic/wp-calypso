@@ -20,7 +20,7 @@ interface Banners {
 	high: string;
 }
 
-interface Icons {
+export interface Icons {
 	'1x': string;
 	'2x': string;
 }

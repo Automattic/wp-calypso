@@ -1,6 +1,6 @@
 import ImporterLogo from 'calypso/my-sites/importer/importer-logo';
 
-import './styles.scss';
+import './logo-chain.scss';
 
 type Logo = {
 	name: string;

@@ -14,6 +14,7 @@ import {
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_EMPTY_SUCCESS,
 	COMMENTS_TOGGLE_INLINE_EXPANDED,
+	COMMENTS_API_DISABLED,
 } from '../../action-types';
 import { expandComments, setActiveReply } from '../actions';
 import { PLACEHOLDER_STATE } from '../constants';
@@ -27,6 +28,7 @@ import {
 	fetchStatusInitialState,
 	activeReplies,
 	inlineExpansion,
+	apiDisabled,
 } from '../reducer';
 
 const commentsNestedTree = [
@@ -1063,6 +1065,38 @@ describe( 'reducer', () => {
 					},
 				},
 			} );
+		} );
+	} );
+
+	describe( '#apiDisabled', () => {
+		test( 'should set API as disabled for a site', () => {
+			const state = {};
+			const action = {
+				type: COMMENTS_API_DISABLED,
+				siteId: 123,
+			};
+
+			const newState = apiDisabled( state, action );
+			expect( newState ).toEqual( { 123: true } );
+		} );
+
+		test( 'should preserve existing disabled sites when adding new ones', () => {
+			const state = { 456: true };
+			const action = {
+				type: COMMENTS_API_DISABLED,
+				siteId: 123,
+			};
+
+			const newState = apiDisabled( state, action );
+			expect( newState ).toEqual( { 456: true, 123: true } );
+		} );
+
+		test( 'should return unchanged state for unknown actions', () => {
+			const state = { 123: true };
+			const action = { type: 'UNKNOWN_ACTION' };
+
+			const newState = apiDisabled( state, action );
+			expect( newState ).toEqual( state );
 		} );
 	} );
 } );
