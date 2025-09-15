@@ -15,6 +15,7 @@ export { AgentUIFooter } from './components/composable/AgentUIFooter';
 export { AgentUIConversationView } from './components/composable/AgentUIConversationView';
 
 // Context for advanced usage
+export { AgentUIProvider } from './context/AgentUIContext';
 export { useAgentUIContext } from './context/AgentUIContext';
 export type { AgentUIContextValue } from './context/AgentUIContext';
 
