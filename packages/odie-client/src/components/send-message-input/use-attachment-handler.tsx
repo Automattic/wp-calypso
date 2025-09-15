@@ -67,6 +67,7 @@ export const useAttachmentHandler = () => {
 		async ( files: File[] ) => {
 			const limitedFiles = files.slice( 0, MAX_ATTACHMENTS );
 			const newAttachmentPreviewFiles = [ ...attachmentPreviewFiles ];
+			const unsupportedFormats = new Set< string >();
 			for ( const file of limitedFiles ) {
 				if ( isSupportedImageType( file.type ) ) {
 					// Avoid duplicates.
@@ -74,10 +75,15 @@ export const useAttachmentHandler = () => {
 						newAttachmentPreviewFiles.push( file );
 					}
 				} else {
-					addMessage( getOdieWrongFileTypeMessage( file.name ) );
+					unsupportedFormats.add(
+						file.name.split( '.' ).pop() || __( 'unknown', __i18n_text_domain__ )
+					);
 				}
 			}
 			setAttachmentPreviewFiles( newAttachmentPreviewFiles );
+			if ( unsupportedFormats.size > 0 ) {
+				addMessage( getOdieWrongFileTypeMessage( Array.from( unsupportedFormats ).join( ', ' ) ) );
+			}
 		},
 
 		[ addMessage, setAttachmentPreviewFiles, attachmentPreviewFiles ]

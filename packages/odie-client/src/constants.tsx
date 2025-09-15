@@ -79,14 +79,14 @@ export const getOdieThirdPartyMessageContent = (): string =>
 		__i18n_text_domain__
 	) }`;
 
-export const getOdieWrongFileTypeMessage = ( name: string ): Message => ( {
+export const getOdieWrongFileTypeMessage = ( formats: string ): Message => ( {
 	content: sprintf(
 		/* translators: %s is the name of the file that is not supported */
 		__(
-			'Sorry! The file (%s) you are trying to upload is not supported. Please upload a .jpg, .png, or .gif file.',
+			"We don't support %s files at this time. Please upload a .jpg, .png, or .gif.",
 			__i18n_text_domain__
 		),
-		name
+		formats
 	),
 	role: 'bot',
 	type: 'message',
