@@ -1,5 +1,12 @@
 import { fetchBackupExtensionUrl, fetchBackupFileUrl } from '@automattic/api-core';
-import { Button } from '@wordpress/components';
+import {
+	Card,
+	Button,
+	CardBody,
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	__experimentalText as Text,
+} from '@wordpress/components';
 import { useCallback, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
@@ -298,84 +305,80 @@ function FileInfoCard( {
 		return downloadFileButton;
 	};
 
-	return (
-		<div className="file-card">
-			<div className="file-card__details">
-				{ item.type === 'table' && (
-					<div className="file-card__detail">
-						<span className="file-card__label">
-							{
-								/* translators: This refers to database table rows. */
-								__( 'Rows:' )
-							}{ ' ' }
-						</span>
-						<span className="file-card__value">{ item.rowCount }</span>
-					</div>
-				) }
-
-				<div className="file-card__detail-group">
-					{ modifiedTime && (
-						<div className="file-card__detail">
-							<span className="file-card__label">
-								{
-									/* translators: This refers to the date when the file was modified. */
-									__( 'Modified:' )
-								}{ ' ' }
-							</span>
-							<span className="file-card__value">{ modifiedTime }</span>
-						</div>
-					) }
-
-					{ size && (
-						<div className="file-card__detail">
-							<span className="file-card__label">
-								{
-									/* translators: This refers to the file size (bytes, kilobytes, gigabytes, etc.). */
-									__( 'Size:' )
-								}{ ' ' }
-							</span>
-							<span className="file-card__value">
-								{ size.unitAmount } { size.unit }
-							</span>
-						</div>
-					) }
-				</div>
-
-				{ fileInfo?.hash && (
-					<div className="file-card__detail">
-						<span className="file-card__label">
-							{
-								/* translators: This refers to a unique identifier or checksum. */
-								__( 'Hash:' )
-							}{ ' ' }
-						</span>
-						<span className="file-card__value">{ fileInfo.hash }</span>
-					</div>
-				) }
+	const FileDetail = ( { label, value }: { label: string; value: string | number } ) => {
+		return (
+			<div className="file-card__detail">
+				<Text weight={ 700 }>{ label } </Text>
+				<Text>{ value }</Text>
 			</div>
+		);
+	};
 
-			{ showActions && (
-				<>
-					<div className="file-card__actions">
-						{ renderDownloadButton() }
-						{ item.type !== 'wordpress' && (
-							<Button
-								className="file-card__action"
-								onClick={ restoreFile }
-								disabled={ ! isRestoreEnabled }
-								variant="secondary"
-							>
-								{ __( 'Restore' ) }
-							</Button>
+	return (
+		<Card isRounded={ false } variant="secondary" isBorderless>
+			<CardBody>
+				<VStack>
+					<VStack spacing={ 0 }>
+						{ item.type === 'table' && (
+							<FileDetail
+								label={
+									/* translators: This refers to database table rows. */
+									__( 'Rows:' )
+								}
+								value={ item.rowCount ?? 0 }
+							/>
 						) }
-					</div>
-				</>
-			) }
 
-			{ fileInfo?.size !== undefined && fileInfo.size > 0 && (
-				<FilePreview item={ item } siteId={ siteId } onTrackEvent={ onTrackEvent } />
-			) }
-		</div>
+						<HStack justify="space-between">
+							{ modifiedTime && (
+								<FileDetail
+									label={
+										/* translators: This refers to the date when the file was modified. */
+										__( 'Modified:' )
+									}
+									value={ modifiedTime }
+								/>
+							) }
+
+							{ size && (
+								<FileDetail
+									label={
+										/* translators: This refers to the file size (bytes, kilobytes, gigabytes, etc.). */
+										__( 'Size:' )
+									}
+									value={ `${ size.unitAmount } ${ size.unit }` }
+								/>
+							) }
+						</HStack>
+
+						{ fileInfo?.hash && (
+							<FileDetail
+								label={
+									/* translators: This refers to a unique identifier or checksum. */
+									__( 'Hash:' )
+								}
+								value={ fileInfo.hash }
+							/>
+						) }
+					</VStack>
+
+					{ showActions && (
+						<HStack justify="flex-start" spacing={ 4 }>
+							{ renderDownloadButton() }
+							{ item.type !== 'wordpress' && (
+								<Button disabled={ ! isRestoreEnabled } onClick={ restoreFile } variant="secondary">
+									{ __( 'Restore' ) }
+								</Button>
+							) }
+						</HStack>
+					) }
+
+					{ fileInfo?.size !== undefined && fileInfo.size > 0 && (
+						<FilePreview item={ item } siteId={ siteId } onTrackEvent={ onTrackEvent } />
+					) }
+				</VStack>
+			</CardBody>
+		</Card>
 	);
 }
 
