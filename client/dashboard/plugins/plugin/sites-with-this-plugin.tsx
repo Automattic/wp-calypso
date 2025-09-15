@@ -5,13 +5,14 @@ import {
 	sitePluginUpdateMutation,
 } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import { __experimentalText as Text, Button, Modal } from '@wordpress/components';
+import { __experimentalText as Text, Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { check, close } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
 import ActionRenderModal, { getModalHeader } from '../manage/components/action-render-modal';
 import { buildBulkSitesPluginAction } from '../manage/utils';
+import { ActionRenderModalWrapper } from './components/action-render-modal-wrapper';
 import { SiteWithPluginActivationStatus, usePlugin } from './use-plugin';
 import { getAllowedPluginActions } from './utils/get-allowed-plugin-actions';
 import { mapToPluginListRow } from './utils/map-to-plugin-list-row';
@@ -34,6 +35,10 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 	const [ siteToUpdate, setSiteToUpdate ] = useState< SiteWithPluginActivationStatus | null >(
 		null
 	);
+	const closeUpdateModal = () => {
+		setUpdateModalOpen( false );
+		setSiteToUpdate( null );
+	};
 
 	const fields = useMemo(
 		() => [
@@ -183,24 +188,15 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 			/>
 
 			{ updateModalOpen && siteToUpdate && (
-				<Modal
+				<ActionRenderModalWrapper
+					actionId="update"
+					closeModal={ closeUpdateModal }
+					items={ [ mapToPluginListRow( plugin, [ siteToUpdate ] ) as PluginListRow ] }
+					onExecute={ updateAction }
+					onActionPerformed={ invalidatePlugins }
+					onRequestClose={ closeUpdateModal }
 					title={ __( 'Update Plugin' ) }
-					onRequestClose={ () => {
-						setUpdateModalOpen( false );
-						setSiteToUpdate( null );
-					} }
-				>
-					<ActionRenderModal
-						actionId="update"
-						items={ [ mapToPluginListRow( plugin, [ siteToUpdate ] ) as PluginListRow ] }
-						closeModal={ () => {
-							setUpdateModalOpen( false );
-							setSiteToUpdate( null );
-						} }
-						onExecute={ updateAction }
-						onActionPerformed={ invalidatePlugins }
-					/>
-				</Modal>
+				/>
 			) }
 		</>
 	);
