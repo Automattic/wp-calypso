@@ -1,8 +1,8 @@
-import StepDone from './subscribers/step-done';
-import StepImporting from './subscribers/step-importing';
-import StepInitial from './subscribers/step-initial';
-import StepPending from './subscribers/step-pending';
-import { SubscribersStepProps } from './types';
+import { SubscribersStepProps } from '../types';
+import StepDone from './step-done';
+import StepImporting from './step-importing';
+import StepInitial from './step-initial';
+import StepPending from './step-pending';
 
 export default function Subscribers( {
 	nextStepUrl,

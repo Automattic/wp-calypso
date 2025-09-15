@@ -84,11 +84,19 @@ export const UserMessage = ( {
 			<div className="odie-chatbox-message__content">
 				<MarkdownOrChildren
 					messageContent={ messageContent }
-					components={ {
-						a: ( props: React.ComponentProps< 'a' > ) => (
-							<CustomALink { ...props } target="_blank" />
-						),
-					} }
+					components={
+						message.role === 'user'
+							? {
+									a: ( props: React.ComponentProps< 'a' > ) => (
+										<a rel="noopener noreferrer" target="_blank" { ...props } />
+									),
+							  }
+							: {
+									a: ( props: React.ComponentProps< 'a' > ) => (
+										<CustomALink { ...props } target="_blank" />
+									),
+							  }
+					}
 				/>
 			</div>
 			{ isMessageWithEscalationOption && (

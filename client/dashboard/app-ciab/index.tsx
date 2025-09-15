@@ -14,6 +14,7 @@ boot( {
 			monitoring: false,
 			logs: false,
 			backups: false,
+			scan: false,
 			domains: false,
 			emails: false,
 		},

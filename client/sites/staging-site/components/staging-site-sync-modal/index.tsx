@@ -1,4 +1,5 @@
 import { pushToStagingMutation, pullFromStagingMutation } from '@automattic/api-queries';
+import { useLocale } from '@automattic/i18n-utils';
 import { useMutation } from '@tanstack/react-query';
 import {
 	Button,
@@ -25,6 +26,7 @@ import { __, isRTL } from '@wordpress/i18n';
 import { chevronRight, chevronLeft } from '@wordpress/icons';
 import clsx from 'clsx';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import useGetDisplayDate from 'calypso/components/jetpack/daily-backup-status/use-get-display-date';
 import InlineSupportLink from 'calypso/dashboard/components/inline-support-link';
 import { SectionHeader } from 'calypso/dashboard/components/section-header';
 import SiteEnvironmentBadge, {
@@ -214,6 +216,7 @@ function SyncModal( {
 		targetEnvironment === 'production' ? productionSiteTitle : stagingSiteTitle;
 
 	const querySiteId = sourceEnvironment === 'staging' ? stagingSiteId : productionSiteId;
+	const getDisplayDate = useGetDisplayDate( querySiteId );
 
 	const browserCheckList = fileBrowserState.getCheckList();
 
@@ -263,6 +266,10 @@ function SyncModal( {
 			successOnly: true,
 		} );
 	const rewindId = lastKnownBackupAttempt?.rewindId;
+
+	const displayBackupDate = lastKnownBackupAttempt
+		? getDisplayDate( lastKnownBackupAttempt.activityTs, false )
+		: null;
 
 	const shouldDisableGranularSync = ! lastKnownBackupAttempt && ! isLoadingBackupAttempt;
 
@@ -523,6 +530,7 @@ function SyncModal( {
 									siteId={ querySiteId }
 									siteSlug={ querySiteSlug }
 									fileBrowserConfig={ fileBrowserConfig }
+									displayBackupDate={ displayBackupDate }
 								/>
 							</div>
 							<HStack
@@ -634,8 +642,10 @@ function SyncModal( {
 
 // Wrapper component to provide FileBrowser context
 export default function SyncModalWrapper( props: SyncModalProps ) {
+	const locale = useLocale();
+
 	return (
-		<FileBrowserProvider>
+		<FileBrowserProvider locale={ locale }>
 			<SyncModal { ...props } />
 		</FileBrowserProvider>
 	);
