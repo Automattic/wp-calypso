@@ -15,7 +15,6 @@ import {
 	JETPACK_OPTION_KEYS,
 	JETPACK_TITLES,
 	JETPACK_DESCRIPTIONS,
-	JETPACK_SECTION_DESCRIPTION,
 } from './extras-config';
 import { ExtrasToggleCard } from './extras-toggle-card';
 import type { WpcomNotificationSettings } from '@automattic/api-core';
@@ -63,10 +62,11 @@ export default function NotificationsExtras() {
 					sectionTitle={ __( 'Email from Jetpack' ) }
 					sectionDescription={
 						<Text variant="muted" lineHeight="20px">
-							{ JETPACK_SECTION_DESCRIPTION }
+							{ __(
+								'Jetpack is a suite of tools connected to your WordPress site, like backups, security, and performance reports.'
+							) }
 						</Text>
 					}
-					hideIfNoKeysInSettings
 				/>
 			</VStack>
 		</PageLayout>

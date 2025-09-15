@@ -19,7 +19,6 @@ export type ExtrasToggleCardProps< Key extends keyof WpcomNotificationSettings &
 	descriptions?: Record< Key, string >;
 	sectionTitle: string;
 	sectionDescription?: JSX.Element | null;
-	hideIfNoKeysInSettings?: boolean;
 };
 
 export function ExtrasToggleCard< Key extends keyof WpcomNotificationSettings & string >( {
@@ -31,15 +30,7 @@ export function ExtrasToggleCard< Key extends keyof WpcomNotificationSettings & 
 	descriptions,
 	sectionTitle,
 	sectionDescription,
-	hideIfNoKeysInSettings,
 }: ExtrasToggleCardProps< Key > ) {
-	const hasKeysPresent = useMemo( () => {
-		if ( ! extraSettings ) {
-			return false;
-		}
-		return optionKeys.some( ( key ) => key in extraSettings );
-	}, [ extraSettings, optionKeys ] );
-
 	const topToggleChecked = useMemo( () => {
 		if ( ! extraSettings ) {
 			return false;
@@ -71,10 +62,6 @@ export function ExtrasToggleCard< Key extends keyof WpcomNotificationSettings & 
 		},
 		[ onMutate ]
 	);
-
-	if ( hideIfNoKeysInSettings && ! hasKeysPresent ) {
-		return null;
-	}
 
 	return (
 		<Card>

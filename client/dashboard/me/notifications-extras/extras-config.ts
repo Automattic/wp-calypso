@@ -70,7 +70,3 @@ export const JETPACK_DESCRIPTIONS: Record< JetpackOptionKey, string > = {
 	jetpack_news: __( 'Jetpack news, announcements, and product spotlights.' ),
 	jetpack_reports: __( 'Jetpack security and performance reports.' ),
 };
-
-export const JETPACK_SECTION_DESCRIPTION = __(
-	'Jetpack is a suite of tools connected to your WordPress site, like backups, security, and performance reports.'
-);
