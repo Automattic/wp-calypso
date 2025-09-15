@@ -80,12 +80,6 @@ $blueberry-color: #3858e9;
 			padding: 0;
 			span {
 				background-color: transparent;
-				a {
-					color: var( --studio-white );
-					&:hover {
-						color: var( --studio-blue-40 );
-					}
-				}
 			}
 		}
 
@@ -160,6 +154,14 @@ $blueberry-color: #3858e9;
 
 		span {
 			font-size: $font-size-large;
+
+			a {
+				color: inherit;
+
+				&:hover {
+					text-decoration: none;
+				}
+			}
 		}
 	}
 
@@ -447,10 +449,13 @@ $blueberry-color: #3858e9;
 
 	.odie-sources-link {
 		overflow-wrap: anywhere;
-		color: $blueberry-color;
 		font-style: normal;
-		font-weight: 600;
 		padding: 4px 16px;
+		color: inherit;
+
+		&:hover {
+			text-decoration: none;
+		}
 	}
 
 	svg.gridicons-external {
