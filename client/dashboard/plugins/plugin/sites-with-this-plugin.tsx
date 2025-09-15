@@ -1,4 +1,3 @@
-import { Site } from '@automattic/api-core';
 import {
 	invalidatePlugins,
 	sitePluginActivateMutation,
@@ -14,6 +13,7 @@ import { useMemo, useState } from 'react';
 import ActionRenderModal, { getModalHeader } from '../manage/components/action-render-modal';
 import { buildBulkSitesPluginAction } from '../manage/utils';
 import { SiteWithPluginActivationStatus, usePlugin } from './use-plugin';
+import { getAllowedPluginActions } from './utils/get-allowed-plugin-actions';
 import type { PluginListRow } from '../manage/types';
 
 const defaultView: View = {
@@ -33,20 +33,6 @@ const mapToPluginListRow = (
 		name: plugin?.name,
 		siteIds: items.map( ( item ) => item.ID ),
 		sitesCount: items.length,
-	};
-};
-
-export const getAllowedPluginActions = ( site: Site, pluginSlug: string ) => {
-	const autoManagedPlugins = [ 'jetpack', 'vaultpress', 'akismet' ];
-	const siteIsAtomic = site.is_wpcom_atomic;
-	const siteIsJetpack = site.jetpack;
-	const hasManagePlugins = site.plan?.features.active.includes( 'manage-plugins' );
-	const isManagedPlugin = siteIsAtomic && autoManagedPlugins.includes( pluginSlug );
-	const canManagePlugins =
-		( siteIsJetpack && ! siteIsAtomic ) || ( siteIsAtomic && hasManagePlugins );
-
-	return {
-		autoupdate: ! isManagedPlugin && canManagePlugins,
 	};
 };
 
