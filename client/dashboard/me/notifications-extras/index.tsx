@@ -5,7 +5,6 @@ import {
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
-	__experimentalSpacer as Spacer,
 	ToggleControl,
 	Card,
 	CardBody,
@@ -184,9 +183,9 @@ export default function NotificationsExtras() {
 			<VStack spacing={ 8 }>
 				<Card>
 					<CardBody>
-						<SectionHeader level={ 3 } title={ __( 'Email from WordPress.com' ) } />
+						<VStack spacing={ 8 }>
+							<SectionHeader level={ 3 } title={ __( 'Email from WordPress.com' ) } />
 
-						<Spacer marginTop={ 8 }>
 							<ToggleControl
 								__nextHasNoMarginBottom
 								checked={ topToggleChecked }
@@ -198,41 +197,40 @@ export default function NotificationsExtras() {
 								onChange={ handleTopToggle }
 								disabled={ isSaving || ! extraSettings }
 							/>
-						</Spacer>
 
-						<Spacer marginTop={ 8 }>
-							{ wpcomOptionKeys.map( ( key ) => (
-								<Spacer key={ key }>
+							<VStack>
+								{ wpcomOptionKeys.map( ( key ) => (
 									<ToggleControl
 										__nextHasNoMarginBottom
+										key={ key }
 										checked={ !! extraSettings?.[ key ] }
 										label={ titles[ key ] }
 										help={ descriptions[ key ] }
 										onChange={ handleSingleToggle( key ) }
 										disabled={ isSaving || ! extraSettings }
 									/>
-								</Spacer>
-							) ) }
-						</Spacer>
+								) ) }
+							</VStack>
+						</VStack>
 					</CardBody>
 				</Card>
 
 				{ hasJetpackOptions && (
 					<Card>
 						<CardBody>
-							<SectionHeader
-								level={ 3 }
-								title={ __( 'Email from Jetpack' ) }
-								description={
-									<Text variant="muted" lineHeight="20px">
-										{ __(
-											'Jetpack is a suite of tools connected to your WordPress site, like backups, security, and performance reports.'
-										) }
-									</Text>
-								}
-							/>
+							<VStack spacing={ 8 }>
+								<SectionHeader
+									level={ 3 }
+									title={ __( 'Email from Jetpack' ) }
+									description={
+										<Text variant="muted" lineHeight="20px">
+											{ __(
+												'Jetpack is a suite of tools connected to your WordPress site, like backups, security, and performance reports.'
+											) }
+										</Text>
+									}
+								/>
 
-							<Spacer marginTop={ 8 }>
 								<ToggleControl
 									__nextHasNoMarginBottom
 									checked={ jetpackTopToggleChecked }
@@ -246,12 +244,11 @@ export default function NotificationsExtras() {
 									onChange={ handleJetpackTopToggle }
 									disabled={ isSaving || ! extraSettings }
 								/>
-							</Spacer>
 
-							<Spacer marginTop={ 8 }>
-								{ jetpackOptionKeys.map( ( key ) => (
-									<Spacer key={ key }>
+								<VStack>
+									{ jetpackOptionKeys.map( ( key ) => (
 										<ToggleControl
+											key={ key }
 											__nextHasNoMarginBottom
 											checked={ !! extraSettings?.[ key ] }
 											label={ jetpackTitles[ key ] }
@@ -259,9 +256,9 @@ export default function NotificationsExtras() {
 											onChange={ handleSingleJetpackToggle( key ) }
 											disabled={ isSaving || ! extraSettings }
 										/>
-									</Spacer>
-								) ) }
-							</Spacer>
+									) ) }
+								</VStack>
+							</VStack>
 						</CardBody>
 					</Card>
 				) }
