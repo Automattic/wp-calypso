@@ -128,6 +128,22 @@ const mockProductionSiteWithStaging: Site = {
 	},
 } as Site;
 
+const mockProductionSiteWithoutStaging: Site = {
+	ID: 1,
+	slug: 'test-site',
+	name: 'Test Site',
+	URL: 'https://test-site.wordpress.com',
+	is_wpcom_staging_site: false,
+	capabilities: {
+		manage_options: true,
+	},
+	options: {
+		wpcom_staging_blog_ids: [] as number[],
+		admin_url: 'https://test-site.wordpress.com/wp-admin/',
+		software_version: '6.0',
+	},
+} as Site;
+
 const mockStagingSite: Site = {
 	ID: 2,
 	slug: 'test-site-staging',
@@ -181,13 +197,15 @@ describe( 'EnvironmentSwitcher', () => {
 
 	describe( 'Staging Site Actions', () => {
 		test( 'displays "Add staging site" button when no staging site exists', async () => {
+			// Test true "no staging site" scenario: empty wpcom_staging_blog_ids array
+			// means getStagingSiteId() returns undefined, so no staging site queries run
 			mockUseQuery( {
-				'site-by-id-1': mockProductionSiteWithStaging,
+				'site-by-id-1': mockProductionSiteWithoutStaging,
 				'is-creating-staging': false,
 			} );
 
 			const user = userEvent.setup();
-			render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } /> );
+			render( <EnvironmentSwitcher site={ mockProductionSiteWithoutStaging } /> );
 
 			await clickDropdown( user );
 			expect( screen.getByText( 'Add staging site' ) ).toBeInTheDocument();
