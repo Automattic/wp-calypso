@@ -2,7 +2,7 @@
 
 .odie-chatbox-messages-cluster {
 	width: 100%;
-    padding: 0;
+	padding: 0;
 	box-sizing: border-box;
 
 	&.role-attachment {
@@ -17,6 +17,19 @@
 			border-radius: 0;
 			padding: 0;
 		}
+
+		animation: fadeIn 0.5s ease-in-out forwards;
+		transform-origin: center bottom;
+
+		@keyframes fadeIn {
+			from {
+				opacity: 0;
+				transform: scaleX( 0 );
+			}
+			to {
+				opacity: 1;
+			}
+		}
 	}
 
 	&.role-bot {
@@ -28,7 +41,7 @@
 			margin-bottom: 16px;
 		}
 	}
-	
+
 	&.role-business {
 		flex-direction: column;
 		align-self: flex-start;
@@ -39,10 +52,10 @@
 		border: 1px solid $gray-200;
 		max-width: calc( 100% - 32px );
 
-        .message-header {
-            font-weight: $font-weight-medium;
-            margin-right: 16px;
-        }
+		.message-header {
+			font-weight: $font-weight-medium;
+			margin-right: 16px;
+		}
 	}
 
 	&.role-user {

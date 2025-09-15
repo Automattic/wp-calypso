@@ -6,12 +6,13 @@ import {
 } from '@automattic/zendesk-client';
 import { DropZone, Icon } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
-import { useCallback } from '@wordpress/element';
+import { useCallback, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { image } from '@wordpress/icons';
 import { getOdieWrongFileTypeMessage } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
 import { zendeskMessageConverter } from '../../utils';
+import { AttachmentPreview } from '../attachment-preview';
 
 const getFileType = ( file: File ) => {
 	if ( file.type.startsWith( 'image/' ) ) {
@@ -34,6 +35,7 @@ const getPlaceholderAttachmentMessage = ( file: File ) => {
 
 export const useAttachmentHandler = () => {
 	const { trackEvent, chat, addMessage, isUserEligibleForPaidSupport } = useOdieAssistantContext();
+	const [ attachmentPreviewFile, setAttachmentPreviewFile ] = useState< File | null >( null );
 
 	const { data: authData } = useAuthenticateZendeskMessaging(
 		isUserEligibleForPaidSupport,
@@ -57,30 +59,38 @@ export const useAttachmentHandler = () => {
 	const handleFileUpload = useCallback(
 		async ( file: File ) => {
 			if ( file.type.startsWith( 'image/' ) ) {
-				if ( authData && chat.conversationId && inferredClientId && file ) {
-					attachFileToConversation( {
-						authData,
-						file,
-						conversationId: chat.conversationId,
-						clientId: inferredClientId,
-					} ).then( () => {
-						addMessage( getPlaceholderAttachmentMessage( file ) );
-						trackEvent( 'send_message_attachment', { type: file.type } );
-					} );
-				}
+				setAttachmentPreviewFile( file );
 			} else {
 				addMessage( getOdieWrongFileTypeMessage() );
 			}
 		},
-		[
-			authData,
-			chat.conversationId,
-			inferredClientId,
-			attachFileToConversation,
-			addMessage,
-			trackEvent,
-		]
+		[ addMessage, setAttachmentPreviewFile ]
 	);
+
+	const sendAttachment = useCallback( async () => {
+		if ( attachmentPreviewFile ) {
+			if ( authData && chat.conversationId && inferredClientId ) {
+				attachFileToConversation( {
+					authData,
+					file: attachmentPreviewFile,
+					conversationId: chat.conversationId,
+					clientId: inferredClientId,
+				} ).then( () => {
+					setAttachmentPreviewFile( null );
+					addMessage( getPlaceholderAttachmentMessage( attachmentPreviewFile ) );
+					trackEvent( 'send_message_attachment', { type: attachmentPreviewFile.type } );
+				} );
+			}
+		}
+	}, [
+		attachmentPreviewFile,
+		attachFileToConversation,
+		authData,
+		chat.conversationId,
+		inferredClientId,
+		addMessage,
+		trackEvent,
+	] );
 
 	const onFilesDrop = ( files: File[] ) => {
 		const file = files?.[ 0 ];
@@ -156,6 +166,15 @@ export const useAttachmentHandler = () => {
 
 	return {
 		handleFileUpload,
+		sendAttachment,
+		attachmentPreview: attachmentPreviewFile ? (
+			<AttachmentPreview
+				attachmentPreview={ attachmentPreviewFile }
+				onSend={ sendAttachment }
+				isAttachingFile={ isAttachingFile }
+				onCancel={ () => setAttachmentPreviewFile( null ) }
+			/>
+		) : null,
 		handleImagePaste,
 		attachmentAction,
 		isAttachingFile,

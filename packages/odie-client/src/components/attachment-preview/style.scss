@@ -1,0 +1,29 @@
+.odie-attachment-preview {
+	display: flex;
+	gap: 10px;
+	padding: 20px;
+	position: relative;
+	z-index: 6;
+	border: 1px solid #e0e0e0;
+	box-sizing: border-box;
+	border-radius: 16px;
+
+	img {
+		max-height: 100%;
+		max-height: 250px;
+		align-self: top;
+		border-radius: 8px;
+		flex: 1;
+	}
+
+	.odie-attachment-send-button {
+		border-radius: 50%;
+		box-sizing: border-box;
+		background-color: var( --color-primary );
+        --wp-admin-border-width-focus: var( --color-primary );
+
+		&:hover:not( :disabled ) {
+			background-color: color-mix( in srgb, var( --color-primary ) 85%, #000 );
+		}
+	}
+}
