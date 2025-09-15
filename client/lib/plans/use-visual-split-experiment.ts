@@ -3,7 +3,7 @@ import { useExperiment } from 'calypso/lib/explat';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
-const EXPERIMENT_NAME = 'calypso_plans_page_visual_separation_2025_09';
+const EXPERIMENT_NAME = 'calypso_plans_page_visual_separation_2025_09_v2';
 
 /**
  * This hook is used to determine if the visual split feature is enabled for a given flow.

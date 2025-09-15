@@ -98,7 +98,7 @@ export const siteRoute = createRoute( {
 			throw redirect( { to: difmUrl } );
 		}
 
-		const migrationUrl = `/sites/${ siteSlug }/site-migration-in-progress`;
+		const migrationUrl = `/sites/${ siteSlug }/migration-overview`;
 		if ( isSiteMigrationInProgress( site ) && ! location.pathname.includes( migrationUrl ) ) {
 			throw redirect( { to: migrationUrl } );
 		}
@@ -216,6 +216,53 @@ export const siteLogsServerRoute = createRoute( {
 	import( '../../sites/logs' ).then( ( d ) =>
 		createLazyRoute( 'site-logs-server' )( {
 			component: () => <d.default logType={ LogType.SERVER } />,
+		} )
+	)
+);
+
+export const siteScanRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'scan',
+} );
+
+export const siteScanIndexRoute = createRoute( {
+	getParentRoute: () => siteScanRoute,
+	path: '/',
+	beforeLoad: ( { params } ) => {
+		throw redirect( { to: `/sites/${ params.siteSlug }/scan/active` } );
+	},
+} );
+
+export const siteScanActiveThreatsRoute = createRoute( {
+	getParentRoute: () => siteScanRoute,
+	path: 'active',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( hasHostingFeature( site, HostingFeatures.SCAN ) ) {
+			await queryClient.ensureQueryData( siteScanQuery( site.ID ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../../sites/scan' ).then( ( d ) =>
+		createLazyRoute( 'site-scan-active-threats' )( {
+			component: () => <d.default scanTab="active" />,
+		} )
+	)
+);
+
+export const siteScanHistoryRoute = createRoute( {
+	getParentRoute: () => siteScanRoute,
+	path: 'history',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( hasHostingFeature( site, HostingFeatures.SCAN ) ) {
+			await queryClient.ensureQueryData( siteScanQuery( site.ID ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../../sites/scan' ).then( ( d ) =>
+		createLazyRoute( 'site-scan-history' )( {
+			component: () => <d.default scanTab="history" />,
 		} )
 	)
 );
@@ -609,6 +656,17 @@ export const siteSettingsWpcomLoginRoute = createRoute( {
 	)
 );
 
+export const siteSettingsRepositoriesRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/repositories',
+} ).lazy( () =>
+	import( '../../sites/settings-repositories' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-repositories' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const siteTrialEndedRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'trial-ended',
@@ -661,9 +719,9 @@ export const siteDifmLiteInProgressRoute = createRoute( {
 	)
 );
 
-export const siteMigrationInProgressRoute = createRoute( {
+export const siteMigrationOverviewRoute = createRoute( {
 	getParentRoute: () => siteRoute,
-	path: 'site-migration-in-progress',
+	path: 'migration-overview',
 	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
 		if ( cause !== 'enter' ) {
 			return;
@@ -675,8 +733,8 @@ export const siteMigrationInProgressRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/migration-in-progress' ).then( ( d ) =>
-		createLazyRoute( 'site-migration-in-progress' )( {
+	import( '../../sites/migration-overview' ).then( ( d ) =>
+		createLazyRoute( 'migration-overview' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
@@ -704,6 +762,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteSettingsAgencyRoute,
 		siteSettingsMcpRoute,
 		siteSettingsMcpSetupRoute,
+		siteSettingsRepositoriesRoute,
 		siteSettingsHundredYearPlanRoute,
 		siteSettingsPrimaryDataCenterRoute,
 		siteSettingsStaticFile404Route,
@@ -715,7 +774,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteSettingsWpcomLoginRoute,
 		siteTrialEndedRoute,
 		siteDifmLiteInProgressRoute,
-		siteMigrationInProgressRoute,
+		siteMigrationOverviewRoute,
 	];
 
 	if ( config.supports.sites.deployments ) {
@@ -742,6 +801,16 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 				siteBackupsIndexRoute,
 				siteBackupRestoreRoute,
 				siteBackupDownloadRoute,
+			] )
+		);
+	}
+
+	if ( config.supports.sites.scan ) {
+		siteRoutes.push(
+			siteScanRoute.addChildren( [
+				siteScanIndexRoute,
+				siteScanActiveThreatsRoute,
+				siteScanHistoryRoute,
 			] )
 		);
 	}

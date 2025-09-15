@@ -3,10 +3,9 @@ import { Button } from '@wordpress/components';
 import { useCallback, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useDispatch } from 'calypso/state';
-import { setNodeCheckState } from 'calypso/state/rewind/browser/actions';
 import { PREPARE_DOWNLOAD_STATUS } from './constants';
+import { useFileBrowserContext } from './file-browser-context';
 import FilePreview from './file-preview';
 import {
 	onPreparingDownloadError,
@@ -43,8 +42,9 @@ function FileInfoCard( {
 	onTrackEvent,
 	onRequestGranularRestore,
 }: FileInfoCardProps ) {
-	const moment = useLocalizedMoment();
 	const dispatch = useDispatch();
+	const { fileBrowserState, locale } = useFileBrowserContext();
+	const { setNodeCheckState } = fileBrowserState;
 
 	const {
 		isSuccess,
@@ -68,7 +68,12 @@ function FileInfoCard( {
 		handlePrepareDownloadError
 	);
 
-	const modifiedTime = fileInfo?.mtime ? moment.unix( fileInfo.mtime ).format( 'lll' ) : null;
+	const modifiedTime = fileInfo?.mtime
+		? new Intl.DateTimeFormat( locale, {
+				dateStyle: 'medium',
+				timeStyle: 'short',
+		  } ).format( new Date( fileInfo.mtime * 1000 ) )
+		: null;
 	const size = fileInfo?.size !== undefined ? convertBytes( fileInfo.size ) : null;
 
 	const [ isProcessingDownload, setIsProcessingDownload ] = useState< boolean >( false );
@@ -175,10 +180,10 @@ function FileInfoCard( {
 
 	const restoreFile = useCallback( () => {
 		// Reset checklist
-		dispatch( setNodeCheckState( siteId, '/', 'unchecked' ) );
+		setNodeCheckState( '/', 'unchecked' );
 
 		// Mark this file as selected
-		dispatch( setNodeCheckState( siteId, path, 'checked' ) );
+		setNodeCheckState( path, 'checked' );
 
 		// Request granular restore
 		onRequestGranularRestore( siteSlug, rewindId );
@@ -189,8 +194,7 @@ function FileInfoCard( {
 			...( hasCredentials !== undefined && { has_credentials: hasCredentials } ),
 		} );
 	}, [
-		dispatch,
-		siteId,
+		setNodeCheckState,
 		path,
 		onRequestGranularRestore,
 		siteSlug,

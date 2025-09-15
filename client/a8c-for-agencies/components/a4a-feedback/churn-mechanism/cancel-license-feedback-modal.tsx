@@ -4,6 +4,7 @@ import { Icon, external, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import A4AModal from 'calypso/a8c-for-agencies/components/a4a-modal';
+import useScheduleCall from 'calypso/a8c-for-agencies/hooks/use-schedule-call';
 import {
 	isWPCOMHostingProduct,
 	isPressableHostingProduct,
@@ -53,7 +54,6 @@ const CancelLicenseFeedbackModal = ( {
 
 	const [ comments, setComments ] = useState< string >( '' );
 	const [ suggestions, setSuggestions ] = useState< FeedbackSuggestion[] >( [] );
-	const [ selectedCTA, setSelectedCTA ] = useState< 'cancel' | 'speak-with-partner-manager' >();
 
 	const onSuggestionChange = ( option: FeedbackSuggestion ) => {
 		if ( suggestions.find( ( suggestion ) => suggestion.value === option.value ) ) {
@@ -94,22 +94,12 @@ const CancelLicenseFeedbackModal = ( {
 
 	const isLoading = isRevokingLicense || isSavingFeedback;
 
-	// If the user clicks cancel and provides feedback, the feedback is valid
-	// If the user clicks cancel and does not provide feedback, the feedback is not valid
-	// If the user clicks speak with partner manager and provides feedback, the feedback is valid
-	// If the user clicks speak with partner manager and does not provide feedback, the feedback is valid
-	const isFeedbackValid = useCallback(
-		( cta: 'cancel' | 'speak-with-partner-manager' ) => {
-			if ( cta === 'cancel' ) {
-				return comments || suggestions.length;
-			}
-			return true;
-		},
-		[ comments, suggestions ]
-	);
+	const isFeedbackValid = useCallback( () => {
+		return comments || suggestions.length;
+	}, [ comments, suggestions ] );
 
-	const handleSubmitFeedback = ( cta: 'cancel' | 'speak-with-partner-manager' ) => {
-		if ( agencyId && isFeedbackValid( cta ) ) {
+	const handleSubmitFeedback = () => {
+		if ( agencyId && isFeedbackValid() ) {
 			const params = {
 				site_id: agencyId,
 				survey_id: type,
@@ -118,7 +108,7 @@ const CancelLicenseFeedbackModal = ( {
 					suggestions: {
 						text: suggestions?.map( ( suggestion ) => suggestion.value ).join( ', ' ) ?? '',
 					},
-					cta,
+					cta: 'cancel',
 					meta: {
 						product_name: productName,
 						license_key: licenseKey,
@@ -142,25 +132,22 @@ const CancelLicenseFeedbackModal = ( {
 		}
 	};
 
-	const handleCTAClick = ( cta: 'cancel' | 'speak-with-partner-manager' ) => {
+	const handleOnCancel = () => {
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_churn_feedback_cta_click', {
 				agency_id: agencyId,
 				survey_id: type,
-				cta,
+				cta: 'cancel',
 			} )
 		);
-		setSelectedCTA( cta );
-		if ( cta === 'cancel' ) {
-			if ( isAtomicSite ) {
-				window.open( `https://wordpress.com/purchases/subscriptions/${ siteSlug }`, '_blank' );
-			} else {
-				revokeLicense( {
-					licenseKey,
-				} );
-			}
+		if ( isAtomicSite ) {
+			window.open( `https://wordpress.com/purchases/subscriptions/${ siteSlug }`, '_blank' );
+		} else {
+			revokeLicense( {
+				licenseKey,
+			} );
 		}
-		handleSubmitFeedback( cta );
+		handleSubmitFeedback();
 	};
 
 	const handleCloseAndRefreshLicences = useCallback( () => {
@@ -177,29 +164,14 @@ const CancelLicenseFeedbackModal = ( {
 				duration: 10000,
 			} )
 		);
-		if ( ! isFeedbackValid( 'cancel' ) ) {
+		if ( ! isFeedbackValid() ) {
 			handleCloseAndRefreshLicences();
 		}
 	}, [ dispatch, translate, isFeedbackValid, handleCloseAndRefreshLicences ] );
 
-	// Function to handle success notice for speaking with partner manager
-	const handlePartnerManagerSuccess = useCallback( () => {
-		dispatch(
-			successNotice( translate( 'Thanks! We will connect you with your partner manager.' ), {
-				displayOnNextPage: true,
-				id: 'submit-product-feedback-success',
-				duration: 10000,
-			} )
-		);
-		onClose();
-	}, [ dispatch, onClose, translate ] );
-
 	useEffect( () => {
-		if ( selectedCTA === 'cancel' && revokeLicenseStatus === 'success' ) {
+		if ( revokeLicenseStatus === 'success' ) {
 			handleLicenseRevocationSuccess();
-		}
-		if ( selectedCTA === 'speak-with-partner-manager' && saveFeedbackStatus === 'success' ) {
-			handlePartnerManagerSuccess();
 		}
 		if (
 			( revokeLicenseStatus === 'success' || isAtomicSite ) &&
@@ -210,12 +182,26 @@ const CancelLicenseFeedbackModal = ( {
 	}, [
 		handleCloseAndRefreshLicences,
 		handleLicenseRevocationSuccess,
-		handlePartnerManagerSuccess,
 		isAtomicSite,
 		revokeLicenseStatus,
 		saveFeedbackStatus,
-		selectedCTA,
 	] );
+
+	const { scheduleCall, isLoading: isFetchingScheduleCallLink } = useScheduleCall( {
+		onSuccess: onClose,
+	} );
+
+	const onSpeakWithManager = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_churn_feedback_cta_click', {
+				agency_id: agencyId,
+				survey_id: type,
+				cta: 'speak-with-partner-manager',
+			} )
+		);
+
+		scheduleCall();
+	}, [ agencyId, dispatch, scheduleCall, type ] );
 
 	return (
 		<A4AModal
@@ -229,19 +215,19 @@ const CancelLicenseFeedbackModal = ( {
 				<>
 					<Button
 						isDestructive
-						onClick={ () => handleCTAClick( 'cancel' ) }
+						onClick={ handleOnCancel }
 						variant="secondary"
 						disabled={ isLoading }
-						isBusy={ selectedCTA === 'cancel' && isLoading }
+						isBusy={ isLoading }
 					>
 						{ translate( 'Cancel license' ) }
 						{ isAtomicSite && <Icon icon={ external } size={ 18 } /> }
 					</Button>
 					<Button
-						onClick={ () => handleCTAClick( 'speak-with-partner-manager' ) }
+						onClick={ onSpeakWithManager }
 						variant="primary"
-						disabled={ isLoading }
-						isBusy={ selectedCTA === 'speak-with-partner-manager' && isLoading }
+						disabled={ isFetchingScheduleCallLink }
+						isBusy={ isFetchingScheduleCallLink }
 					>
 						{ translate( 'Speak with my Partner Manager' ) }
 					</Button>

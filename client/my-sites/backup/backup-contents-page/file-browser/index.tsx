@@ -5,8 +5,6 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import useGetDisplayDate from 'calypso/components/jetpack/daily-backup-status/use-get-display-date';
-import { useFirstMatchingBackupAttempt } from 'calypso/my-sites/backup/hooks';
 import FileBrowserHeader from './file-browser-header';
 import FileBrowserNode from './file-browser-node';
 import { FileBrowserItem } from './types';
@@ -33,6 +31,7 @@ interface FileBrowserProps {
 	// Optional site data props
 	hasCredentials?: boolean;
 	isRestoreEnabled?: boolean;
+	displayBackupDate?: string;
 
 	// Tracks analytics callback
 	onTrackEvent?: ( eventName: string, properties?: Record< string, unknown > ) => void;
@@ -56,22 +55,13 @@ function FileBrowser( {
 	siteSlug,
 	hasCredentials,
 	isRestoreEnabled,
+	displayBackupDate,
 	onTrackEvent,
 	onRequestGranularDownload,
 	onRequestGranularRestore = () => {},
 }: FileBrowserProps ) {
 	// This is the path of the node that is clicked
 	const [ activeNodePath, setActiveNodePath ] = useState< string >( '' );
-	const getDisplayDate = useGetDisplayDate( siteId );
-
-	const { backupAttempt: lastKnownBackupAttempt } = useFirstMatchingBackupAttempt( siteId, {
-		sortOrder: 'desc',
-		successOnly: true,
-	} );
-
-	const displayBackupDate = lastKnownBackupAttempt
-		? getDisplayDate( lastKnownBackupAttempt.activityTs, false )
-		: null;
 
 	const handleClick = ( path: string ) => {
 		setActiveNodePath( path );
@@ -96,7 +86,7 @@ function FileBrowser( {
 				onRequestGranularDownload={ onRequestGranularDownload }
 				onRequestGranularRestore={ onRequestGranularRestore }
 			/>
-			{ fileBrowserConfig?.showBackupTime && (
+			{ fileBrowserConfig?.showBackupTime && displayBackupDate && (
 				<HStack alignment="left" spacing={ 1 }>
 					<Text
 						color="var(--studio-gray-40)"

@@ -1,4 +1,5 @@
 import { pushToStagingMutation, pullFromStagingMutation } from '@automattic/api-queries';
+import { useLocale } from '@automattic/i18n-utils';
 import { useMutation } from '@tanstack/react-query';
 import {
 	Button,
@@ -25,18 +26,20 @@ import { __, isRTL } from '@wordpress/i18n';
 import { chevronRight, chevronLeft } from '@wordpress/icons';
 import clsx from 'clsx';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import useGetDisplayDate from 'calypso/components/jetpack/daily-backup-status/use-get-display-date';
 import InlineSupportLink from 'calypso/dashboard/components/inline-support-link';
 import { SectionHeader } from 'calypso/dashboard/components/section-header';
 import SiteEnvironmentBadge, {
 	EnvironmentType,
 } from 'calypso/dashboard/components/site-environment-badge';
 import FileBrowser from 'calypso/my-sites/backup/backup-contents-page/file-browser';
+import {
+	FileBrowserProvider,
+	useFileBrowserContext,
+} from 'calypso/my-sites/backup/backup-contents-page/file-browser/file-browser-context';
 import { useFirstMatchingBackupAttempt } from 'calypso/my-sites/backup/hooks';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { setNodeCheckState } from 'calypso/state/rewind/browser/actions';
-import getBackupBrowserCheckList from 'calypso/state/rewind/selectors/get-backup-browser-check-list';
-import getBackupBrowserNode from 'calypso/state/rewind/selectors/get-backup-browser-node';
 import isSiteStore from 'calypso/state/selectors/is-site-store';
 import { getSiteSlug, getSiteTitle } from 'calypso/state/sites/selectors';
 import type { FileBrowserConfig } from 'calypso/my-sites/backup/backup-contents-page/file-browser';
@@ -181,7 +184,7 @@ const getSyncConfig = ( type: 'pull' | 'push' ): SyncConfig => {
 	};
 };
 
-export default function SyncModal( {
+function SyncModal( {
 	onClose,
 	syncType,
 	environment,
@@ -193,6 +196,7 @@ export default function SyncModal( {
 	const syncConfig = getSyncConfig( syncType );
 	const [ isFileBrowserVisible, setIsFileBrowserVisible ] = useState( false );
 	const [ domainConfirmation, setDomainConfirmation ] = useState( '' );
+	const { fileBrowserState } = useFileBrowserContext();
 
 	const targetEnvironment = syncConfig[ environment ].syncTo;
 	const sourceEnvironment = syncConfig[ environment ].syncFrom;
@@ -212,19 +216,14 @@ export default function SyncModal( {
 		targetEnvironment === 'production' ? productionSiteTitle : stagingSiteTitle;
 
 	const querySiteId = sourceEnvironment === 'staging' ? stagingSiteId : productionSiteId;
+	const getDisplayDate = useGetDisplayDate( querySiteId );
 
-	const browserCheckList = useSelector( ( state ) =>
-		getBackupBrowserCheckList( state, querySiteId )
-	);
+	const browserCheckList = fileBrowserState.getCheckList();
 
 	// Calculate checkbox state based only on visible nodes (wp-content and wp-config.php)
-	const wpContentNode = useSelector( ( state ) =>
-		getBackupBrowserNode( state, querySiteId, WP_CONTENT_PATH )
-	);
-	const wpConfigNode = useSelector( ( state ) =>
-		getBackupBrowserNode( state, querySiteId, WP_CONFIG_PATH )
-	);
-	const sqlNode = useSelector( ( state ) => getBackupBrowserNode( state, querySiteId, SQL_PATH ) );
+	const wpContentNode = fileBrowserState.getNode( WP_CONTENT_PATH );
+	const wpConfigNode = fileBrowserState.getNode( WP_CONFIG_PATH );
+	const sqlNode = fileBrowserState.getNode( SQL_PATH );
 
 	const isSiteWooStore = !! useSelector( ( state ) => isSiteStore( state, querySiteId ) );
 	const querySiteSlug = useSelector( ( state ) => getSiteSlug( state, querySiteId ) ) as string;
@@ -254,9 +253,9 @@ export default function SyncModal( {
 	}, [ wpContentNode, wpConfigNode ] );
 
 	const handleClose = useCallback( () => {
-		dispatch( setNodeCheckState( querySiteId, WP_ROOT_PATH, 'unchecked' ) );
+		fileBrowserState.setNodeCheckState( WP_ROOT_PATH, 'unchecked' );
 		onClose();
-	}, [ dispatch, onClose, querySiteId ] );
+	}, [ fileBrowserState, onClose ] );
 
 	const pullMutation = useMutation( pullFromStagingMutation( productionSiteId, stagingSiteId ) );
 	const pushMutation = useMutation( pushToStagingMutation( productionSiteId, stagingSiteId ) );
@@ -268,16 +267,22 @@ export default function SyncModal( {
 		} );
 	const rewindId = lastKnownBackupAttempt?.rewindId;
 
+	const displayBackupDate = lastKnownBackupAttempt
+		? getDisplayDate( lastKnownBackupAttempt.activityTs, false )
+		: null;
+
 	const shouldDisableGranularSync = ! lastKnownBackupAttempt && ! isLoadingBackupAttempt;
+
+	const hasWarning = shouldDisableGranularSync || sqlNode?.checkState === 'checked';
 
 	useEffect( () => {
 		if ( shouldDisableGranularSync ) {
 			// Ensure all content and database are marked as selected in state when granular sync is disabled
-			dispatch( setNodeCheckState( querySiteId, WP_CONTENT_PATH, 'checked' ) );
-			dispatch( setNodeCheckState( querySiteId, WP_CONFIG_PATH, 'checked' ) );
-			dispatch( setNodeCheckState( querySiteId, SQL_PATH, 'checked' ) );
+			fileBrowserState.setNodeCheckState( WP_CONTENT_PATH, 'checked' );
+			fileBrowserState.setNodeCheckState( WP_CONFIG_PATH, 'checked' );
+			fileBrowserState.setNodeCheckState( SQL_PATH, 'checked' );
 		}
-	}, [ shouldDisableGranularSync, dispatch, querySiteId ] );
+	}, [ shouldDisableGranularSync, fileBrowserState ] );
 
 	const handleConfirm = () => {
 		let include_paths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
@@ -353,10 +358,10 @@ export default function SyncModal( {
 
 	const updateFilesAndFoldersCheckState = useCallback(
 		( checkState: 'checked' | 'unchecked' | 'mixed' ) => {
-			dispatch( setNodeCheckState( querySiteId, WP_CONTENT_PATH, checkState ) );
-			dispatch( setNodeCheckState( querySiteId, WP_CONFIG_PATH, checkState ) );
+			fileBrowserState.setNodeCheckState( WP_CONTENT_PATH, checkState );
+			fileBrowserState.setNodeCheckState( WP_CONFIG_PATH, checkState );
 		},
-		[ dispatch, querySiteId ]
+		[ fileBrowserState ]
 	);
 
 	const handleDomainConfirmation = useCallback(
@@ -372,9 +377,9 @@ export default function SyncModal( {
 
 	const handleDatabaseCheckboxChange = () => {
 		if ( sqlNode?.checkState === 'checked' ) {
-			dispatch( setNodeCheckState( querySiteId, SQL_PATH, 'unchecked' ) );
+			fileBrowserState.setNodeCheckState( SQL_PATH, 'unchecked' );
 		} else {
-			dispatch( setNodeCheckState( querySiteId, SQL_PATH, 'checked' ) );
+			fileBrowserState.setNodeCheckState( SQL_PATH, 'checked' );
 		}
 	};
 
@@ -393,6 +398,25 @@ export default function SyncModal( {
 
 	const showDomainConfirmation = targetEnvironment === 'production' && ! isLoadingBackupAttempt;
 
+	const calculateWarningPaddingBottom = useCallback( () => {
+		const basePadding = showDomainConfirmation ? '130px' : '40px';
+
+		let extraPadding = '0px';
+		if ( hasWarning ) {
+			if ( isFileBrowserVisible && showWooCommerceWarning ) {
+				extraPadding = '180px';
+			} else if ( isFileBrowserVisible ) {
+				extraPadding = '110px';
+			} else if ( showWooCommerceWarning ) {
+				extraPadding = '180px';
+			} else {
+				extraPadding = '120px';
+			}
+		}
+
+		return `calc(${ basePadding } + ${ extraPadding })`;
+	}, [ showDomainConfirmation, hasWarning, isFileBrowserVisible, showWooCommerceWarning ] );
+
 	// Allow button if there is no backup if the confirmation passes
 	// regardless of browserCheckList
 	const isButtonDisabled =
@@ -410,7 +434,12 @@ export default function SyncModal( {
 			style={ { maxWidth: '668px' } }
 		>
 			<QueryRewindState siteId={ querySiteId } />
-			<VStack spacing={ 5 }>
+			<VStack
+				spacing={ 5 }
+				style={ {
+					paddingBottom: calculateWarningPaddingBottom(),
+				} }
+			>
 				<Text>
 					{ createInterpolateElement( syncConfig[ environment ].description, {
 						a: <ExternalLink href={ `/activity-log/${ targetSiteSlug }` } children={ null } />,
@@ -433,6 +462,9 @@ export default function SyncModal( {
 				<div
 					className={ clsx( 'staging-site-card', {
 						'confirmation-input': showDomainConfirmation,
+						'has-warning': hasWarning,
+						'has-file-browser': isFileBrowserVisible,
+						'has-woocommerce-warning': showWooCommerceWarning,
 					} ) }
 				>
 					<Tooltip
@@ -498,6 +530,7 @@ export default function SyncModal( {
 									siteId={ querySiteId }
 									siteSlug={ querySiteSlug }
 									fileBrowserConfig={ fileBrowserConfig }
+									displayBackupDate={ displayBackupDate }
 								/>
 							</div>
 							<HStack
@@ -508,8 +541,6 @@ export default function SyncModal( {
 									borderBottom: '1px solid var(--wp-components-color-gray-300, #ddd)',
 									padding: '16px 0',
 									marginTop: '8px',
-									marginBottom:
-										shouldDisableGranularSync || sqlNode?.checkState === 'checked' ? '0px' : '24px',
 								} }
 							>
 								{ isLoadingBackupAttempt ? (
@@ -519,46 +550,46 @@ export default function SyncModal( {
 										__nextHasNoMarginBottom
 										label={ __( 'Database' ) }
 										disabled={ shouldDisableGranularSync }
-										checked={ shouldDisableGranularSync || sqlNode?.checkState === 'checked' }
+										checked={ hasWarning }
 										onChange={ handleDatabaseCheckboxChange }
 									/>
 								) }
 							</HStack>
-							{ ( shouldDisableGranularSync || sqlNode?.checkState === 'checked' ) && (
-								<VStack style={ { paddingTop: '20px', paddingBottom: '48px' } }>
-									<Notice status="warning" isDismissible={ false }>
-										<Text as="p" weight="bold" style={ { lineHeight: '24px' } }>
-											{ __( 'Warning! Database will be overwritten.' ) }
-										</Text>
-										<Text as="p">
-											{ __(
-												'Selecting this option will overwrite the site database, including any posts, pages, products, or orders.'
-											) }
-										</Text>
-										{ showWooCommerceWarning && (
-											<Text as="p" style={ { marginTop: '16px' } }>
-												{ createInterpolateElement(
-													__(
-														'This site also has WooCommerce installed. We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins. <a>Learn more</a>'
-													),
-													{
-														a: (
-															<ExternalLink
-																href="https://developer.wordpress.com/docs/developer-tools/staging-sites/sync-staging-production/#staging-to-production"
-																children={ null }
-															/>
-														),
-													}
-												) }
-											</Text>
-										) }
-									</Notice>
-								</VStack>
-							) }
 						</div>
 					</Tooltip>
 				</div>
 				<VStack className="staging-site-card__footer" spacing={ 6 }>
+					{ hasWarning && (
+						<VStack>
+							<Notice status="warning" isDismissible={ false }>
+								<Text as="p" weight="bold" style={ { lineHeight: '24px' } }>
+									{ __( 'Warning! Database will be overwritten.' ) }
+								</Text>
+								<Text as="p">
+									{ __(
+										'Selecting database option will overwrite the site database, including any posts, pages, products, or orders.'
+									) }
+								</Text>
+								{ showWooCommerceWarning && (
+									<Text as="p" style={ { marginTop: '16px' } }>
+										{ createInterpolateElement(
+											__(
+												'This site also has WooCommerce installed. We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins. <a>Learn more</a>'
+											),
+											{
+												a: (
+													<ExternalLink
+														href="https://developer.wordpress.com/docs/developer-tools/staging-sites/sync-staging-production/#staging-to-production"
+														children={ null }
+													/>
+												),
+											}
+										) }
+									</Text>
+								) }
+							</Notice>
+						</VStack>
+					) }
 					{ showDomainConfirmation && (
 						<InputControl
 							__next40pxDefaultSize
@@ -606,5 +637,16 @@ export default function SyncModal( {
 				</VStack>
 			</VStack>
 		</Modal>
+	);
+}
+
+// Wrapper component to provide FileBrowser context
+export default function SyncModalWrapper( props: SyncModalProps ) {
+	const locale = useLocale();
+
+	return (
+		<FileBrowserProvider locale={ locale }>
+			<SyncModal { ...props } />
+		</FileBrowserProvider>
 	);
 }
