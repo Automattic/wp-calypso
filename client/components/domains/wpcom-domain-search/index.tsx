@@ -1,5 +1,4 @@
 import { DomainSearch } from '@automattic/domain-search';
-import { DOMAIN_FLOW, ONBOARDING_FLOW } from '@automattic/onboarding';
 import { ResponseCartProduct, ShoppingCartProvider } from '@automattic/shopping-cart';
 import { useMemo, type ComponentProps } from 'react';
 import { shoppingCartManagerClient } from 'calypso/dashboard/app/shopping-cart';
@@ -11,9 +10,9 @@ type DomainSearchProps = Omit< ComponentProps< typeof DomainSearch >, 'cart' | '
 	events?: Omit< Required< ComponentProps< typeof DomainSearch > >[ 'events' ], 'onContinue' > & {
 		onContinue?: ( items: ResponseCartProduct[] ) => void;
 	};
+	isFirstDomainFreeForFirstYear?: boolean;
 };
 
-const DOMAINS_WITH_FREE_FIRST_YEAR = [ ONBOARDING_FLOW, DOMAIN_FLOW ];
 const SESSION_STORAGE_QUERY_KEY = 'domain-search-query';
 
 const getInitialQuery = () => {
@@ -33,6 +32,7 @@ const DomainSearchWithCart = ( {
 	flowName,
 	initialQuery: externalInitialQuery,
 	config: externalConfig,
+	isFirstDomainFreeForFirstYear,
 	...props
 }: DomainSearchProps ) => {
 	const cartKey = currentSiteId ?? 'no-site';
@@ -40,7 +40,7 @@ const DomainSearchWithCart = ( {
 	const { cart, isNextDomainFree, items } = useWPCOMShoppingCartForDomainSearch( {
 		cartKey,
 		flowName,
-		isFirstDomainFree: DOMAINS_WITH_FREE_FIRST_YEAR.includes( flowName ),
+		isFirstDomainFreeForFirstYear: isFirstDomainFreeForFirstYear ?? false,
 	} );
 
 	const initialQuery = useMemo( () => {
@@ -55,11 +55,10 @@ const DomainSearchWithCart = ( {
 			priceRules: {
 				...externalConfig?.priceRules,
 				freeForFirstYear:
-					( cartItemsLength === 0 && DOMAINS_WITH_FREE_FIRST_YEAR.includes( flowName ) ) ||
-					isNextDomainFree,
+					( cartItemsLength === 0 && isFirstDomainFreeForFirstYear ) || isNextDomainFree,
 			},
 		};
-	}, [ externalConfig, isNextDomainFree, cartItemsLength, flowName ] );
+	}, [ externalConfig, isNextDomainFree, cartItemsLength, isFirstDomainFreeForFirstYear ] );
 
 	const events = useMemo( () => {
 		return {

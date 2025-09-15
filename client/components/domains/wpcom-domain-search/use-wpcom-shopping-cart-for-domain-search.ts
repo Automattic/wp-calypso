@@ -4,15 +4,18 @@ import { formatCurrency } from '@automattic/number-formatters';
 import { type CartKey, type ResponseCartProduct, useShoppingCart } from '@automattic/shopping-cart';
 import { ComponentProps, useMemo } from 'react';
 
-const wpcomCartToDomainSearchCart = ( domain: ResponseCartProduct, isFirstDomainFree: boolean ) => {
+const wpcomCartToDomainSearchCart = (
+	domain: ResponseCartProduct,
+	isFirstDomainFreeForFirstYear: boolean
+) => {
 	const [ domainName, ...tld ] = domain.meta.split( '.' );
 
 	const hasPromotion =
-		isFirstDomainFree ||
+		isFirstDomainFreeForFirstYear ||
 		domain.cost_overrides?.some( ( override ) => ! override.does_override_original_cost );
 
 	const currentPrice = formatCurrency(
-		isFirstDomainFree ? 0 : domain.item_subtotal_integer,
+		isFirstDomainFreeForFirstYear ? 0 : domain.item_subtotal_integer,
 		domain.currency,
 		{
 			isSmallestUnit: true,
@@ -31,20 +34,20 @@ const wpcomCartToDomainSearchCart = ( domain: ResponseCartProduct, isFirstDomain
 		tld: tld.join( '.' ),
 		salePrice: hasPromotion ? currentPrice : undefined,
 		price: hasPromotion ? originalPrice : currentPrice,
-		isFirstDomainFree,
+		isFirstDomainFreeForFirstYear,
 	};
 };
 
 interface UseWPCOMShoppingCartForDomainSearchOptions {
 	cartKey: CartKey;
 	flowName?: string;
-	isFirstDomainFree: boolean;
+	isFirstDomainFreeForFirstYear: boolean;
 }
 
 export const useWPCOMShoppingCartForDomainSearch = ( {
 	cartKey,
 	flowName,
-	isFirstDomainFree,
+	isFirstDomainFreeForFirstYear,
 }: UseWPCOMShoppingCartForDomainSearchOptions ) => {
 	const { responseCart, addProductsToCart, removeProductFromCart } = useShoppingCart( cartKey );
 
@@ -61,7 +64,7 @@ export const useWPCOMShoppingCartForDomainSearch = ( {
 		const total = formatCurrency(
 			domainItems.reduce(
 				( acc, item, index ) =>
-					acc + ( index === 0 && isFirstDomainFree ? 0 : item.item_subtotal_integer ),
+					acc + ( index === 0 && isFirstDomainFreeForFirstYear ? 0 : item.item_subtotal_integer ),
 				0
 			),
 			responseCart.currency ?? 'USD',
@@ -73,7 +76,7 @@ export const useWPCOMShoppingCartForDomainSearch = ( {
 
 		const cart: ComponentProps< typeof DomainSearch >[ 'cart' ] = {
 			items: domainItems.map( ( domainItem, index ) =>
-				wpcomCartToDomainSearchCart( domainItem, index === 0 && isFirstDomainFree )
+				wpcomCartToDomainSearchCart( domainItem, index === 0 && isFirstDomainFreeForFirstYear )
 			),
 			total,
 			hasItem: ( domain ) => !! domainItems.find( ( item ) => item.meta === domain ),
@@ -97,8 +100,16 @@ export const useWPCOMShoppingCartForDomainSearch = ( {
 
 		return {
 			cart,
-			isNextDomainFree: responseCart.next_domain_is_free,
+			isNextDomainFree: isFirstDomainFreeForFirstYear
+				? domainItems.length === 0
+				: responseCart.next_domain_is_free,
 			items: domainItems,
 		};
-	}, [ responseCart, removeProductFromCart, addProductsToCart, flowName, isFirstDomainFree ] );
+	}, [
+		responseCart,
+		removeProductFromCart,
+		addProductsToCart,
+		flowName,
+		isFirstDomainFreeForFirstYear,
+	] );
 };
