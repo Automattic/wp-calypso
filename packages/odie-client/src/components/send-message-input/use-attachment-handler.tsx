@@ -15,6 +15,7 @@ import { zendeskMessageConverter } from '../../utils';
 import { AttachmentPreviews } from '../attachment-preview';
 
 const SUPPORTED_IMAGE_TYPES = [ 'image/png', 'image/jpg', 'image/jpeg', 'image/gif' ];
+const MAX_ATTACHMENTS = 5;
 
 function isSupportedImageType( type: string ) {
 	return SUPPORTED_IMAGE_TYPES.includes( type );
@@ -64,8 +65,9 @@ export const useAttachmentHandler = () => {
 
 	const handleFileUpload = useCallback(
 		async ( files: File[] ) => {
+			const limitedFiles = files.slice( 0, MAX_ATTACHMENTS );
 			const newAttachmentPreviewFiles = [ ...attachmentPreviewFiles ];
-			for ( const file of files ) {
+			for ( const file of limitedFiles ) {
 				if ( isSupportedImageType( file.type ) ) {
 					// Avoid duplicates.
 					if ( ! newAttachmentPreviewFiles.some( ( f ) => f.name === file.name ) ) {
