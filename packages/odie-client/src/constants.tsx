@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import type { Context, Message, OdieAllowedBots } from './types';
 declare const __i18n_text_domain__: string;
 
@@ -79,10 +79,14 @@ export const getOdieThirdPartyMessageContent = (): string =>
 		__i18n_text_domain__
 	) }`;
 
-export const getOdieWrongFileTypeMessage = (): Message => ( {
-	content: __(
-		'Sorry! The file you are trying to upload is not supported. Please upload a .jpg, .png, or .gif file.',
-		__i18n_text_domain__
+export const getOdieWrongFileTypeMessage = ( name: string ): Message => ( {
+	content: sprintf(
+		/* translators: %s is the name of the file that is not supported */
+		__(
+			'Sorry! The file (%s) you are trying to upload is not supported. Please upload a .jpg, .png, or .gif file.',
+			__i18n_text_domain__
+		),
+		name
 	),
 	role: 'bot',
 	type: 'message',

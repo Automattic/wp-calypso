@@ -1,4 +1,3 @@
-import { ChatFooter } from '@automattic/agenttic-ui';
 import '@automattic/agenttic-ui/index.css';
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { EmailFallbackNotice } from '@automattic/help-center/src/components/notices';
@@ -10,6 +9,7 @@ import Smooch from 'smooch';
 import { useOdieAssistantContext } from '../../context';
 import { useSendChatMessage } from '../../hooks';
 import { Message } from '../../types';
+import { AgentUIFooter } from '../chat-footer';
 import { useConnectionStatusNotice, useMessageSizeErrorNotice } from '../notices';
 import { useAttachmentHandler } from './use-attachment-handler';
 
@@ -62,7 +62,8 @@ export const OdieSendMessageButton = () => {
 	}, [ inputValue, isLiveChat ] );
 
 	const {
-		attachmentPreview,
+		attachmentPreviews,
+		sendAttachments,
 		handleImagePaste,
 		attachmentAction,
 		isAttachingFile,
@@ -101,6 +102,7 @@ export const OdieSendMessageButton = () => {
 			setInputValue( '' );
 		} else if ( chat.conversationId ) {
 			Smooch.stopTyping();
+			await sendAttachments();
 		}
 
 		try {
@@ -139,7 +141,15 @@ export const OdieSendMessageButton = () => {
 		} finally {
 			textareaRef.current?.focus();
 		}
-	}, [ inputValue, isChatBusy, chat?.provider, sendMessage, trackEvent, chat.conversationId ] );
+	}, [
+		inputValue,
+		isChatBusy,
+		chat?.provider,
+		sendMessage,
+		trackEvent,
+		chat.conversationId,
+		sendAttachments,
+	] );
 
 	const isEmailFallback = chat?.provider === 'zendesk' && forceEmailSupport;
 
@@ -159,13 +169,13 @@ export const OdieSendMessageButton = () => {
 	// When there is a reason to disable the input, we should not convey a processing state.
 	const isProcessing = ( isChatBusy || isAttachingFile || cantTransferToZendesk ) && ! isDisabled;
 
-	if ( attachmentPreview ) {
-		return (
-			<div className="odie-chat-message-input-container agenttic" ref={ divContainerRef }>
-				{ attachmentPreview }
-			</div>
-		);
-	}
+	// if ( attachmentPreview ) {
+	// 	return (
+	// 		<div className="odie-chat-message-input-container agenttic" ref={ divContainerRef }>
+	// 			{ attachmentPreview }
+	// 		</div>
+	// 	);
+	// }
 
 	return (
 		<>
@@ -173,10 +183,11 @@ export const OdieSendMessageButton = () => {
 				{ isEmailFallback ? (
 					<EmailFallbackNotice />
 				) : (
-					<ChatFooter
-						inputValue={ inputValue }
-						onInputChange={ setInputValue }
+					<AgentUIFooter
+						value={ inputValue }
+						onChange={ setInputValue }
 						onSubmit={ sendMessageHandler }
+						attachmentPreviews={ attachmentPreviews }
 						onKeyDown={ handleKeyDown }
 						textareaRef={ textareaRef }
 						disabled={ isDisabled }

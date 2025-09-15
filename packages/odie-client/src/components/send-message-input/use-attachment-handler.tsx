@@ -12,7 +12,13 @@ import { image } from '@wordpress/icons';
 import { getOdieWrongFileTypeMessage } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
 import { zendeskMessageConverter } from '../../utils';
-import { AttachmentPreview } from '../attachment-preview';
+import { AttachmentPreviews } from '../attachment-preview';
+
+const SUPPORTED_IMAGE_TYPES = [ 'image/png', 'image/jpg', 'image/jpeg', 'image/gif' ];
+
+function isSupportedImageType( type: string ) {
+	return SUPPORTED_IMAGE_TYPES.includes( type );
+}
 
 const getFileType = ( file: File ) => {
 	if ( file.type.startsWith( 'image/' ) ) {
@@ -35,7 +41,7 @@ const getPlaceholderAttachmentMessage = ( file: File ) => {
 
 export const useAttachmentHandler = () => {
 	const { trackEvent, chat, addMessage, isUserEligibleForPaidSupport } = useOdieAssistantContext();
-	const [ attachmentPreviewFile, setAttachmentPreviewFile ] = useState< File | null >( null );
+	const [ attachmentPreviewFiles, setAttachmentPreviewFiles ] = useState< File[] >( [] );
 
 	const { data: authData } = useAuthenticateZendeskMessaging(
 		isUserEligibleForPaidSupport,
@@ -57,33 +63,46 @@ export const useAttachmentHandler = () => {
 		useAttachFileToConversation();
 
 	const handleFileUpload = useCallback(
-		async ( file: File ) => {
-			if ( file.type.startsWith( 'image/' ) ) {
-				setAttachmentPreviewFile( file );
-			} else {
-				addMessage( getOdieWrongFileTypeMessage() );
+		async ( files: File[] ) => {
+			const newAttachmentPreviewFiles = [ ...attachmentPreviewFiles ];
+			for ( const file of files ) {
+				if ( isSupportedImageType( file.type ) ) {
+					// Avoid duplicates.
+					if ( ! newAttachmentPreviewFiles.some( ( f ) => f.name === file.name ) ) {
+						newAttachmentPreviewFiles.push( file );
+					}
+				} else {
+					addMessage( getOdieWrongFileTypeMessage( file.name ) );
+				}
 			}
+			setAttachmentPreviewFiles( newAttachmentPreviewFiles );
 		},
-		[ addMessage, setAttachmentPreviewFile ]
+
+		[ addMessage, setAttachmentPreviewFiles, attachmentPreviewFiles ]
 	);
 
-	const sendAttachment = useCallback( async () => {
-		if ( attachmentPreviewFile ) {
+	const sendAttachments = useCallback( async () => {
+		if ( attachmentPreviewFiles.length > 0 ) {
 			if ( authData && chat.conversationId && inferredClientId ) {
-				attachFileToConversation( {
-					authData,
-					file: attachmentPreviewFile,
-					conversationId: chat.conversationId,
-					clientId: inferredClientId,
-				} ).then( () => {
-					setAttachmentPreviewFile( null );
-					addMessage( getPlaceholderAttachmentMessage( attachmentPreviewFile ) );
-					trackEvent( 'send_message_attachment', { type: attachmentPreviewFile.type } );
+				Promise.all(
+					attachmentPreviewFiles.map( ( file ) =>
+						attachFileToConversation( {
+							authData,
+							file,
+							conversationId: chat.conversationId as string,
+							clientId: inferredClientId,
+						} ).then( () => {
+							addMessage( getPlaceholderAttachmentMessage( file ) );
+							trackEvent( 'send_message_attachment', { type: file.type } );
+						} )
+					)
+				).then( () => {
+					setAttachmentPreviewFiles( [] );
 				} );
 			}
 		}
 	}, [
-		attachmentPreviewFile,
+		attachmentPreviewFiles,
 		attachFileToConversation,
 		authData,
 		chat.conversationId,
@@ -93,9 +112,8 @@ export const useAttachmentHandler = () => {
 	] );
 
 	const onFilesDrop = ( files: File[] ) => {
-		const file = files?.[ 0 ];
-		if ( file ) {
-			handleFileUpload( file );
+		if ( files.length > 0 ) {
+			handleFileUpload( files );
 		}
 	};
 
@@ -112,10 +130,10 @@ export const useAttachmentHandler = () => {
 						.then( ( items ) => {
 							for ( const item of items ) {
 								for ( const type of item.types ) {
-									if ( type.startsWith( 'image/' ) ) {
+									if ( isSupportedImageType( type ) ) {
 										item.getType( type ).then( ( blob ) => {
 											const file = new File( [ blob ], 'pasted-image.png', { type } );
-											handleFileUpload( file );
+											handleFileUpload( [ file ] );
 										} );
 										break;
 									}
@@ -150,11 +168,12 @@ export const useAttachmentHandler = () => {
 		onClick: () => {
 			const input = document.createElement( 'input' );
 			input.type = 'file';
-			input.accept = 'image/*';
+			input.multiple = true;
+			input.accept = 'image/png, image/jpg, image/jpeg, image/gif';
 			input.onchange = ( e ) => {
-				const file = ( e.target as HTMLInputElement ).files?.[ 0 ];
-				if ( file ) {
-					handleFileUpload( file );
+				const files = ( e.target as HTMLInputElement ).files;
+				if ( files?.length ) {
+					handleFileUpload( Array.from( files ) );
 				}
 			};
 			input.click();
@@ -166,13 +185,14 @@ export const useAttachmentHandler = () => {
 
 	return {
 		handleFileUpload,
-		sendAttachment,
-		attachmentPreview: attachmentPreviewFile ? (
-			<AttachmentPreview
-				attachmentPreview={ attachmentPreviewFile }
-				onSend={ sendAttachment }
+		sendAttachments,
+		attachmentPreviews: attachmentPreviewFiles.length ? (
+			<AttachmentPreviews
+				attachmentPreviews={ attachmentPreviewFiles }
 				isAttachingFile={ isAttachingFile }
-				onCancel={ () => setAttachmentPreviewFile( null ) }
+				onCancel={ ( index ) =>
+					setAttachmentPreviewFiles( attachmentPreviewFiles.filter( ( _, i ) => i !== index ) )
+				}
 			/>
 		) : null,
 		handleImagePaste,

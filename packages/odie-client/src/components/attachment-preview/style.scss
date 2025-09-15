@@ -1,22 +1,84 @@
+@import '@wordpress/base-styles/variables';
+
+.Suggestions-module_container {
+	height: unset;
+	.button-module_button.button-module_outline {
+		height: unset;
+		padding: 0;
+	}
+}
+
 .odie-attachment-preview {
 	display: flex;
-	gap: 10px;
-	padding: 20px;
+	gap: 6px;
 	position: relative;
-	z-index: 6;
-	border: 1px solid #e0e0e0;
 	box-sizing: border-box;
-	border-radius: 16px;
+	width: 128px;
+	padding: 6px;
+	background-color: $gray-100;
+	align-items: center;
+	border-radius: 4px;
+	flex-shrink: 0;
+
+	.odie-attachment-preview-cancel {
+		$width: 18px;
+		$height: 10px;
+		position: absolute;
+		height: $height;
+		width: $width;
+		top: -$height / 2;
+		right: -$width / 2;
+		margin: 0;
+		padding: 0;
+
+
+		svg {
+			fill: $gray-700;
+		}
+	}
+
+	.odie-attachment-preview-name,
+	.odie-attachment-preview-file-type {
+		margin: 2px;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		white-space: nowrap;
+		max-width: 68px;
+	}
+
+	.odie-attachment-preview-name {
+		font-size: 12px;
+		line-height: 16px;
+		font-weight: 500;
+		color: $gray-900;
+		text-align: left;
+	}
+
+	.odie-attachment-preview-file-type {
+		font-size: 12px;
+		line-height: 16px;
+		font-weight: 400;
+		color: $gray-700;
+		text-align: left;
+	}
 
 	img {
-		max-height: 250px;
-		max-width: 250px;
-		border-radius: 8px;
-		flex: 1;
+		width: 40px;
+		height: 40px;
+		object-fit: cover;
+		border-radius: 4px;
 	}
 
 	.odie-attachment-send-button {
 		border-radius: 50%;
 		box-sizing: border-box;
 	}
+}
+
+.odie-attachment-previews {
+	display: flex;
+	overflow-x: auto;
+	padding: 8px;
+	gap: 6px;
+	box-sizing: content-box;
 }
