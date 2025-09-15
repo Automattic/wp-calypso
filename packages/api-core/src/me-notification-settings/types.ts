@@ -24,7 +24,7 @@ export interface WpcomNotificationSettings {
 	gravatar_onboarding: boolean;
 }
 
-export interface MeNotificationSettings {
+export interface UserNotificationSettings {
 	blogs: Record< string, unknown >;
 	other: Record< string, unknown >;
 	wpcom: WpcomNotificationSettings;

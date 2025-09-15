@@ -1,20 +1,23 @@
-import { fetchMeNotificationSettings, updateWpcomNotificationSettings } from '@automattic/api-core';
+import {
+	fetchUserNotificationSettings,
+	updateWpcomNotificationSettings,
+} from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
 
-export const meNotificationsSettingsQuery = () =>
+export const userNotificationsSettingsQuery = () =>
 	queryOptions( {
 		queryKey: [ 'me', 'notifications', 'settings' ],
-		queryFn: fetchMeNotificationSettings,
+		queryFn: fetchUserNotificationSettings,
 	} );
 
-export const meNotificationsExtrasSettingsMutation = () =>
+export const userNotificationsExtrasSettingsMutation = () =>
 	mutationOptions( {
 		mutationFn: updateWpcomNotificationSettings,
 		onSuccess: ( newData ) => {
 			const wpcomUpdate = ( newData as any )?.wpcom ?? newData;
 			queryClient.setQueryData(
-				meNotificationsSettingsQuery().queryKey,
+				userNotificationsSettingsQuery().queryKey,
 				( oldData: any ) =>
 					oldData && {
 						...oldData,

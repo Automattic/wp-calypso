@@ -1,6 +1,6 @@
 import {
-	meNotificationsExtrasSettingsMutation,
-	meNotificationsSettingsQuery,
+	userNotificationsExtrasSettingsMutation,
+	userNotificationsSettingsQuery,
 } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
@@ -88,8 +88,8 @@ const jetpackDescriptions: Record< JetpackOptionKey, string > = {
 };
 
 export default function NotificationsExtras() {
-	const { data } = useSuspenseQuery( meNotificationsSettingsQuery() );
-	const mutation = useMutation( meNotificationsExtrasSettingsMutation() );
+	const { data } = useSuspenseQuery( userNotificationsSettingsQuery() );
+	const mutation = useMutation( userNotificationsExtrasSettingsMutation() );
 
 	const extraSettings: Partial< WpcomNotificationSettings > | undefined = data?.wpcom;
 

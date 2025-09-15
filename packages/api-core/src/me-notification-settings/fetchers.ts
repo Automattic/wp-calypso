@@ -1,6 +1,6 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { MeNotificationSettings } from './types';
+import type { UserNotificationSettings } from './types';
 
-export async function fetchMeNotificationSettings(): Promise< MeNotificationSettings > {
+export async function fetchUserNotificationSettings(): Promise< UserNotificationSettings > {
 	return await wpcom.req.get( '/me/notifications/settings' );
 }
