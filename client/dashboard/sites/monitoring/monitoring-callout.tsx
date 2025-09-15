@@ -5,8 +5,6 @@ import UpsellCallout from '../hosting-feature-gated-with-callout/upsell';
 import illustrationUrl from './monitoring-callout-illustration.svg';
 import type { Site } from '@automattic/api-core';
 
-const noop = () => {};
-
 export function getMonitoringCalloutProps() {
 	return {
 		tracksFeatureId: 'monitoring',
@@ -35,7 +33,6 @@ export function MonitoringCallout( {
 			{ ...getMonitoringCalloutProps() }
 			upsellTitleAs={ titleAs }
 			site={ { slug: siteSlug } as Site }
-			onClick={ noop }
 		/>
 	);
 }
