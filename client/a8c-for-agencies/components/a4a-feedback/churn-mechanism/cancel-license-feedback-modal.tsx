@@ -217,7 +217,7 @@ const CancelLicenseFeedbackModal = ( {
 						isDestructive
 						onClick={ handleOnCancel }
 						variant="secondary"
-						disabled={ isLoading || ( suggestion && ! isHostingLicense && ! suggestions.length ) }
+						disabled={ isLoading || ( suggestion && ! suggestions.length ) }
 						isBusy={ isLoading }
 					>
 						{ translate( 'Cancel license' ) }
@@ -273,7 +273,7 @@ const CancelLicenseFeedbackModal = ( {
 					</div>
 				</div>
 
-				{ suggestion && ! isHostingLicense && (
+				{ suggestion && (
 					<FormFieldset>
 						<FormLabel className="a4a-feedback__comments-label" htmlFor="suggestion" required>
 							{ suggestion.label }
@@ -295,21 +295,13 @@ const CancelLicenseFeedbackModal = ( {
 				) }
 				<FormFieldset>
 					<FormLabel className="a4a-feedback__comments-label" htmlFor="comments">
-						{ isHostingLicense
-							? translate( "Can you tell us why you're canceling the %(productName)s plan?", {
-									args: { productName },
-							  } )
-							: translate( 'Anything else we should know?' ) }
+						{ translate( 'Anything else we should know?' ) }
 					</FormLabel>
 					<FormTextarea
 						className="a4a-feedback__comments"
 						name="comments"
 						id="comments"
-						placeholder={
-							isHostingLicense
-								? translate( 'Enter your reason' )
-								: translate( 'Enter the issues you encountered' )
-						}
+						placeholder={ translate( 'Enter the issues you encountered' ) }
 						value={ comments }
 						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
 							setComments( event.target.value )
