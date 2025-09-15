@@ -6,13 +6,10 @@ import { partitionSuggestions } from '../helpers/partition-suggestions';
 import { useDomainSearch } from '../page/context';
 
 export const useSuggestionsList = () => {
-	const { query, queries, config, filter } = useDomainSearch();
+	const { query, queries, config } = useDomainSearch();
 
 	const { data: suggestions = [], isLoading: isLoadingSuggestions } = useQuery( {
-		...queries.domainSuggestions( query, {
-			tlds: filter.tlds,
-			exact_sld_matches_only: filter.exactSldMatchesOnly,
-		} ),
+		...queries.domainSuggestions( query ),
 		enabled: true,
 	} );
 

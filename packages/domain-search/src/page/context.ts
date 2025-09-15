@@ -108,16 +108,21 @@ export const useDomainSearchContextValue = (
 	}, [ config ] );
 
 	return useMemo( () => {
+		const allowedTlds = normalizedConfig.allowedTlds?.length
+			? normalizedConfig.allowedTlds
+			: undefined;
+
 		return {
 			...DEFAULT_CONTEXT_VALUE,
 			events: normalizedEvents,
 			config: normalizedConfig,
 			queries: {
-				domainSuggestions: ( query, params = {} ) => ( {
+				domainSuggestions: ( query ) => ( {
 					...domainSuggestionsQuery( query, {
-						...params,
 						quantity: 30,
 						vendor: normalizedConfig.vendor,
+						tlds: filter.tlds.length > 0 ? filter.tlds : allowedTlds,
+						exact_sld_matches_only: filter.exactSldMatchesOnly,
 					} ),
 					enabled: false,
 				} ),
@@ -136,9 +141,7 @@ export const useDomainSearchContextValue = (
 				availableTlds: ( vendor, search ) => ( {
 					...availableTldsQuery( vendor, search ),
 					select: ( data ) => {
-						const { allowedTlds = [] } = normalizedConfig;
-
-						if ( allowedTlds.length > 0 ) {
+						if ( allowedTlds ) {
 							return data.filter( ( tld ) => allowedTlds.includes( tld ) );
 						}
 
