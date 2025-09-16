@@ -12,11 +12,8 @@ import type { Site } from '@automattic/api-core';
 const mockCreateSuccessNotice = jest.fn();
 const mockCreateNotice = jest.fn();
 const mockCreateErrorNotice = jest.fn();
-const mockSetShowHelpCenter = jest.fn();
-const mockSetNavigateToRoute = jest.fn();
 const mockMutate = jest.fn();
 const mockInvalidateQueries = jest.fn();
-const mockSetQueryData = jest.fn();
 
 jest.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: jest.fn(),
@@ -28,18 +25,11 @@ jest.mock( '@wordpress/data', () => ( {
 		createNotice: mockCreateNotice,
 		createErrorNotice: mockCreateErrorNotice,
 	} ),
+	useSelect: jest.fn( () => ( {} ) ),
 	combineReducers: jest.fn( ( reducers ) => reducers ),
 	createReduxStore: jest.fn(),
 	register: jest.fn(),
 	createSelector: jest.fn(),
-} ) );
-
-// Mock help center
-jest.mock( '../../../app/help-center', () => ( {
-	useHelpCenter: () => ( {
-		setShowHelpCenter: mockSetShowHelpCenter,
-		setNavigateToRoute: mockSetNavigateToRoute,
-	} ),
 } ) );
 
 jest.mock( '@automattic/api-queries', () => ( {
@@ -83,7 +73,6 @@ jest.mock( '@automattic/api-queries', () => ( {
 jest.mock( '@tanstack/react-query', () => ( {
 	QueryClient: jest.fn().mockImplementation( () => ( {
 		invalidateQueries: mockInvalidateQueries,
-		setQueryData: mockSetQueryData,
 	} ) ),
 	QueryClientProvider: ( { children }: { children: React.ReactNode } ) => children,
 	useQuery: jest.fn( () => ( { data: undefined, isLoading: false, error: null } ) ),
@@ -94,7 +83,6 @@ jest.mock( '@tanstack/react-query', () => ( {
 	} ) ),
 	useQueryClient: jest.fn( () => ( {
 		invalidateQueries: mockInvalidateQueries,
-		setQueryData: mockSetQueryData,
 	} ) ),
 } ) );
 
@@ -139,8 +127,6 @@ const mockProductionSiteWithoutStaging: Site = {
 	},
 	options: {
 		wpcom_staging_blog_ids: [] as number[],
-		admin_url: 'https://test-site.wordpress.com/wp-admin/',
-		software_version: '6.0',
 	},
 } as Site;
 
