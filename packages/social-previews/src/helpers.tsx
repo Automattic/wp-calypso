@@ -29,6 +29,74 @@ export const truncatedAtSpace: ( a: number, b: number ) => ConditionalFormatter 
 export const hardTruncation: ( n: number ) => Formatter = ( limit ) => ( title ) =>
 	title.slice( 0, limit ).concat( '…' );
 
+export const truncateAtSentence: ( n: number ) => Formatter = ( limit ) => ( text ) => {
+	if ( text.length <= limit ) {
+		return text;
+	}
+	// Abbreviations that contain periods but are not sentence endings
+	const abbreviations: Record<string, string> = {
+		'a.m.': 'a-m-',
+		'p.m.': 'p-m-',
+		'e.g.': 'e-g-',
+		'i.e.': 'i-e-',
+		'etc.': 'etc-',
+		'cf.': 'cf-',
+		'viz.': 'viz-',
+		'vs.': 'vs-',
+		'dr.': 'dr-',
+		'mr.': 'mr-',
+		'mrs.': 'mrs-',
+		'ms.': 'ms-',
+		'mx.': 'mx-',
+		'prof.': 'prof-',
+		'sr.': 'sr-',
+		'jr.': 'jr-',
+		'hon.': 'hon-',
+		'rev.': 'rev-',
+		'capt.': 'capt-',
+		'col.': 'col-',
+		'gen.': 'gen-',
+		'lt.': 'lt-',
+		'sgt.': 'sgt-',
+		'st.': 'st-',
+		'mt.': 'mt-',
+		'ft.': 'ft-',
+		'inc.': 'inc-',
+		'ltd.': 'ltd-',
+		'co.': 'co-',
+		'corp.': 'corp-',
+		'llc.': 'llc-',
+		'no.': 'no-',
+		'vol.': 'vol-',
+		'ed.': 'ed-',
+		'ch.': 'ch-',
+		'fig.': 'fig-',
+		'pp.': 'pp-',
+		'p.': 'p-',
+		'al.': 'al-',
+	};
+
+	// Take the first 'limit' characters
+	const truncated = text.slice( 0, limit );
+
+	// Replace abbreviations with hyphenated versions to avoid false sentence endings
+	let processedText = truncated;
+	Object.entries( abbreviations ).forEach( ( [ abbrev, replacement ] ) => {
+		const regex = new RegExp( `\\b${ abbrev.replace( /[.*+?^${}()|[\]\\]/g, '\\$&' ) }\\b`, 'gi' );
+		processedText = processedText.replace( regex, replacement );
+	} );
+
+	// Find the last sentence ending (., !, ?) within the processed text
+	const lastSentenceEnd = processedText.lastIndexOf( '.' );
+	// If we found a sentence end and it's not too close to the beginning, use it
+	if ( lastSentenceEnd > 0 && lastSentenceEnd > limit * 0.5 ) {
+		return truncated.slice( 0, lastSentenceEnd + 1 );
+	}
+
+	// Otherwise, fall back to hard truncation
+	return truncated.concat( '…' );
+};
+
 export const firstValid: ( ...args: ConditionalFormatter[] ) => NullableFormatter =
 	( ...predicates ) =>
 	( a ) =>
@@ -123,16 +191,14 @@ export function preparePreviewText( text: string, options: PreviewTextOptions ):
 		// Instagram doesn't support hyperlink URLs at the moment.
 		hyperlinkUrls = 'instagram' !== platform,
 	} = options;
-
 	let result = stripHtmlTags( text );
-
 	// Replace multiple new lines (2+) with 2 new lines
 	// There can be any whitespace characters in empty lines
 	// That is why "\s*"
 	result = result.replaceAll( /(?:\s*[\n\r]){2,}/g, '\n\n' );
 
 	if ( maxChars && result.length > maxChars ) {
-		result = hardTruncation( maxChars )( result );
+		result = truncateAtSentence( maxChars )( result );
 	}
 
 	if ( maxLines ) {
