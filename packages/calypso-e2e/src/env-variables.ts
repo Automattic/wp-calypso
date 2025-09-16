@@ -8,6 +8,7 @@ import { TestAccountName } from '.';
 
 class EnvVariables implements SupportedEnvVariables {
 	private _defaultEnvVariables: SupportedEnvVariables = {
+		A8C_FOR_AGENCIES_URL: 'https://agencies.automattic.com',
 		ALLURE_RESULTS_PATH: '',
 		ARTIFACTS_PATH: path.join( process.cwd(), 'results' ),
 		ATOMIC_VARIATION: 'default',
@@ -185,44 +186,41 @@ class EnvVariables implements SupportedEnvVariables {
 	}
 
 	/**
+	 * Returns the Automattic For Agencies base URL.
+	 * @example 'https://agencies.automattic.com'
+	 */
+	get A8C_FOR_AGENCIES_URL(): string {
+		const value = process.env.A8C_FOR_AGENCIES_URL;
+		if ( ! value ) {
+			return this._defaultEnvVariables.A8C_FOR_AGENCIES_URL;
+		}
+		validateUrlOrThrow( value, 'A8C_FOR_AGENCIES_URL' );
+		return value;
+	}
+
+	/**
 	 * Returns the Calypso base URL.
-	 * @example 'http://localhost:3000'
+	 * @example 'http://calypso.localhost:3000'
 	 */
 	get CALYPSO_BASE_URL(): string {
 		const value = process.env.CALYPSO_BASE_URL;
 		if ( ! value ) {
 			return this._defaultEnvVariables.CALYPSO_BASE_URL;
 		}
-
-		try {
-			// Disabling eslint because this constructor is really the simplest way to validate a URL.
-			// eslint-disable-next-line no-new
-			new URL( value );
-		} catch ( error ) {
-			throw new Error(
-				`Invalid CALYPSO_BASE_URL value: ${ value }.\nYou must provide a valid URL.`
-			);
-		}
+		validateUrlOrThrow( value, 'CALYPSO_BASE_URL' );
 		return value;
 	}
 
 	/**
-	 * Returns the WordPress.com base URL typically used for testing non-Calypso Marketing pages.
-	 * @example 'https://wordpress.com'
+	 * Returns the WordPress.com base URL, typically used for testing non-Calypso Marketing pages.
+	 * @example 'https://wordpress.com' // Used for non-Calypso Marketing page tests
 	 */
 	get WPCOM_BASE_URL(): string {
 		const value = process.env.WPCOM_BASE_URL;
 		if ( ! value ) {
 			return this._defaultEnvVariables.WPCOM_BASE_URL;
 		}
-
-		try {
-			// Disabling eslint because this constructor is really the simplest way to validate a URL.
-			// eslint-disable-next-line no-new
-			new URL( value );
-		} catch ( error ) {
-			throw new Error( `Invalid WPCOM_BASE_URL value: ${ value }.\nYou must provide a valid URL.` );
-		}
+		validateUrlOrThrow( value, 'WPCOM_BASE_URL' );
 		return value;
 	}
 
@@ -252,6 +250,10 @@ class EnvVariables implements SupportedEnvVariables {
 		return value ? castAsNumber( 'RETRY_COUNT', value ) : this._defaultEnvVariables.RETRY_COUNT;
 	}
 
+	/**
+	 * Validates all environment variables by accessing their getters.
+	 * Throws an error if any environment variable is invalid.
+	 */
 	validate() {
 		for ( const property in this._defaultEnvVariables ) {
 			const envVarName = property as keyof SupportedEnvVariables;
@@ -284,6 +286,22 @@ function getAtomicVariationInMixedRun() {
 
 function hashTestFileName( testFileName: string ): number {
 	return Math.abs( crypto.createHash( 'md5' ).update( testFileName ).digest().readInt8() );
+}
+
+/**
+ * Validates that a string is a valid URL.
+ * Throws an error if the string is not a valid URL.
+ */
+function validateUrlOrThrow( value: string, variableName: string ): void {
+	try {
+		// Disabling eslint because this constructor is really the simplest way to validate a URL.
+		// eslint-disable-next-line no-new
+		new URL( value );
+	} catch ( error ) {
+		throw new Error(
+			`Invalid ${ variableName } value: ${ value }.\nYou must provide a valid URL.`
+		);
+	}
 }
 
 function castAsNumber( name: string, value: string ): number {

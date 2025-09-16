@@ -1,3 +1,4 @@
+import { DataHelper } from '@automattic/calypso-e2e';
 import { tags, test, expect } from '../../lib/pw-base';
 
 test.describe( 'Authentication: Apple', { tag: [ tags.AUTHENTICATION ] }, () => {
@@ -5,6 +6,10 @@ test.describe( 'Authentication: Apple', { tag: [ tags.AUTHENTICATION ] }, () => 
 	test.skip(
 		!! process.env.CI,
 		'These tests are problematic on CI since they rely on Apple ID MFA which has a rate limit'
+	);
+	test.skip(
+		DataHelper.isCalypsoProduction() === false,
+		'Skipping unless running on WordPress.com as Apple authentication requires prod callbacks'
 	);
 
 	let code: string;
@@ -76,7 +81,6 @@ test.describe( 'Authentication: Apple', { tag: [ tags.AUTHENTICATION ] }, () => 
 		secrets,
 	}, workerInfo ) => {
 		test.skip( workerInfo.project.name !== 'chrome', 'We only run Apple Authentication in Chrome' );
-
 		let timestamp: Date;
 
 		await test.step( 'Given I am on the login page', async function () {

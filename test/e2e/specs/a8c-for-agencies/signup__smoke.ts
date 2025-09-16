@@ -1,34 +1,24 @@
 /**
- * @group calypso-pr
+ * @group a8c-for-agencies
  */
 
-import {
-	TestAccount,
-	getTestAccountByFeature,
-	envToFeatureKey,
-	envVariables,
-} from '@automattic/calypso-e2e';
+import { envVariables } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
-
-const A4A_URL = 'https://agencies.automattic.com';
 
 /**
  * Verify the A4A > Signup page loads
  */
 describe( 'A4A > Signup: Smoke Test', function () {
 	let page: Page;
-	const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
-	const testAccount = new TestAccount( accountName );
 
 	beforeAll( async function () {
 		page = await browser.newPage();
-		await testAccount.authenticate( page );
 	} );
 
 	it( 'Navigate to A4A > Signup', async function () {
-		await page.goto( `${ A4A_URL }/signup` );
+		await page.goto( `${ envVariables.A8C_FOR_AGENCIES_URL }/signup` );
 
 		// Enter first name
 		const firstName = 'John';
