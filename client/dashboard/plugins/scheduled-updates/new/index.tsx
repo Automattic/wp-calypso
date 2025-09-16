@@ -42,7 +42,7 @@ function ScheduledUpdatesNew() {
 		() => selectedSiteIds.map( ( id ) => Number( id ) ),
 		[ selectedSiteIds ]
 	);
-	const createMutation = useMutation( updateSchedulesBatchCreateMutation( siteIdsAsNumbers ) );
+	const createBatch = useMutation( updateSchedulesBatchCreateMutation( siteIdsAsNumbers ) );
 	const { mutateAsync: createMonitorForSite } = useMutation(
 		siteJetpackMonitorSettingsCreateMutation()
 	);
@@ -61,13 +61,16 @@ function ScheduledUpdatesNew() {
 			},
 			health_check_paths: [],
 		};
-		createMutation.mutate( body, {
-			onSuccess: async ( results ) => {
-				const successfulSiteIds = ( results || [] )
-					.filter( ( result ) => ! result.error )
-					.map( ( result ) => result.siteId );
 
-				// Compute hours and weekday from the scheduled timestamp (parity with legacy)
+		createBatch.mutate( body, {
+			onSuccess: async (
+				results: Array< { siteId: number; response?: unknown; error?: unknown } >
+			) => {
+				const successfulSiteIds = ( results || [] )
+					.filter( ( r ) => ! r.error )
+					.map( ( r ) => r.siteId );
+
+				// Precompute values reused per site for Tracks
 				const eventDate = new Date( timestamp * 1000 );
 				const hours = eventDate.getHours();
 				const weekdayIndex = frequency === 'weekly' ? eventDate.getDay() : undefined;
@@ -110,10 +113,10 @@ function ScheduledUpdatesNew() {
 		weekday,
 		time,
 		selectedPluginSlugs,
-		createMutation,
+		createBatch,
 		eligibleSites,
-		navigate,
 		createMonitorForSite,
+		navigate,
 	] );
 
 	return (
