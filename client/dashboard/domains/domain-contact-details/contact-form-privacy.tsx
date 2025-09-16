@@ -55,7 +55,7 @@ export default function ContactFormPrivacy( { domainName }: ContactFormPrivacyPr
 		} else {
 			enablePrivacyMutation.mutate( undefined, {
 				onSuccess: () => {
-					createSuccessNotice( __( 'Yay, privacy has been successfully enabled!' ), {
+					createSuccessNotice( __( 'Privacy has been successfully enabled!' ), {
 						type: 'snackbar',
 					} );
 				},
