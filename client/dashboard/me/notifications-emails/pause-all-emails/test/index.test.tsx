@@ -33,6 +33,7 @@ describe( 'PauseAllEmails', () => {
 	beforeAll( () => {
 		nock.disableNetConnect();
 		nock.cleanAll();
+		// Snackbar component requires it to work and jest doesn't mock it
 		window.scrollTo = jest.fn();
 	} );
 
