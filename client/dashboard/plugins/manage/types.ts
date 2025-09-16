@@ -1,7 +1,8 @@
 // Centralized types for the dashboard plugins package
 
 export type PluginListRow = {
-	id: string; // plugin slug
+	id: string;
+	slug: string;
 	name: string;
 	sitesCount: number;
 	isActive: 'all' | 'some' | 'none';

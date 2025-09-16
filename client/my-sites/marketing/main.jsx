@@ -13,6 +13,7 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { useSelector } from 'calypso/state';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { getSiteSlug, isAdminInterfaceWPAdmin, isJetpackSite } from 'calypso/state/sites/selectors';
@@ -47,7 +48,7 @@ export const Sharing = ( {
 	// verify that the required Jetpack module is active
 	const connectionsFilter = {
 		id: 'sharing-connections',
-		route: '/marketing/connections' + pathSuffix,
+		route: '/marketing/jetpack-social' + pathSuffix,
 		title: translate( 'Connections' ),
 		description: translate(
 			'Connect your site to social networks and other services. {{learnMoreLink/}}',
@@ -79,7 +80,10 @@ export const Sharing = ( {
 	const selected = find( filters, { route: pathname } );
 	const isFirstFilterSelected = filters[ 0 ]?.route === pathname;
 
-	const showFilters = filters.length > 0 && ! pathname.startsWith( '/marketing/sharing-buttons' );
+	const showFilters =
+		filters.length > 0 &&
+		! pathname.startsWith( '/marketing/sharing-buttons' ) &&
+		! pathname.startsWith( '/marketing/connections' );
 
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
@@ -145,10 +149,12 @@ Sharing.propTypes = {
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const isJetpack = isJetpackSite( state, siteId );
+	const userId = getCurrentUserId( state );
 
 	return {
 		isP2Hub: isSiteP2Hub( state, siteId ),
-		showConnections: !! siteId,
+		// Temporary "Marketing > Connections" menu for existing users that shows a callout informing that the screen has moved to "Jetpack > Social".
+		showConnections: !! siteId && userId < 271300000,
 		isVip: isVipSite( state, siteId ),
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),

@@ -1,12 +1,10 @@
 import { userPreferenceQuery, userPreferenceMutation } from '@automattic/api-queries';
-import { Badge } from '@automattic/ui';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Button,
 	Card,
 	CardBody,
 	CheckboxControl,
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -30,12 +28,7 @@ const form = {
 	fields: [
 		{
 			id: 'optInForm',
-			label: (
-				<HStack spacing={ 1 }>
-					<span>{ __( 'Try the new Hosting Dashboard' ) }</span>
-					<Badge intent="info">{ __( 'New feature' ) }</Badge>
-				</HStack>
-			),
+			label: __( 'Try the new Hosting Dashboard' ),
 			children: [ 'description', 'enabled' ],
 		},
 	],

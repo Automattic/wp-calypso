@@ -3,7 +3,7 @@ import {
 	isAutomatticianQuery,
 	rawUserPreferencesQuery,
 	siteLastFiveActivityLogEntriesQuery,
-	siteRewindableActivityLogEntriesQuery,
+	siteBackupActivityLogEntriesQuery,
 	siteAgencyBlogQuery,
 	siteLastBackupQuery,
 	siteEdgeCacheStatusQuery,
@@ -36,6 +36,7 @@ import { canViewHundredYearPlanSettings, canViewWordPressSettings } from '../../
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import { isSiteMigrationInProgress } from '../../utils/site-status';
 import { hasSiteTrialEnded } from '../../utils/site-trial';
+import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
 import type { AnyRoute } from '@tanstack/react-router';
@@ -77,11 +78,16 @@ export const siteRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites/$siteSlug',
 	beforeLoad: async ( { cause, params: { siteSlug }, location, matches } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+
+		const overviewUrl = `/sites/${ siteSlug }`;
+		if ( isSelfHostedJetpackConnected( site ) && ! location.pathname.endsWith( overviewUrl ) ) {
+			throw redirect( { to: overviewUrl } );
+		}
+
 		if ( cause !== 'enter' ) {
 			return;
 		}
-
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 
 		const trialExpiredUrl = `/sites/${ siteSlug }/trial-ended`;
 		if ( hasSiteTrialEnded( site ) && ! location.pathname.includes( trialExpiredUrl ) ) {
@@ -220,6 +226,53 @@ export const siteLogsServerRoute = createRoute( {
 	)
 );
 
+export const siteScanRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'scan',
+} );
+
+export const siteScanIndexRoute = createRoute( {
+	getParentRoute: () => siteScanRoute,
+	path: '/',
+	beforeLoad: ( { params } ) => {
+		throw redirect( { to: `/sites/${ params.siteSlug }/scan/active` } );
+	},
+} );
+
+export const siteScanActiveThreatsRoute = createRoute( {
+	getParentRoute: () => siteScanRoute,
+	path: 'active',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( hasHostingFeature( site, HostingFeatures.SCAN ) ) {
+			await queryClient.ensureQueryData( siteScanQuery( site.ID ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../../sites/scan' ).then( ( d ) =>
+		createLazyRoute( 'site-scan-active-threats' )( {
+			component: () => <d.default scanTab="active" />,
+		} )
+	)
+);
+
+export const siteScanHistoryRoute = createRoute( {
+	getParentRoute: () => siteScanRoute,
+	path: 'history',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( hasHostingFeature( site, HostingFeatures.SCAN ) ) {
+			await queryClient.ensureQueryData( siteScanQuery( site.ID ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../../sites/scan' ).then( ( d ) =>
+		createLazyRoute( 'site-scan-history' )( {
+			component: () => <d.default scanTab="history" />,
+		} )
+	)
+);
+
 export const siteBackupsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'backups',
@@ -238,7 +291,7 @@ export const siteBackupsIndexRoute = createRoute( {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		// Preload activity log backup-related entries.
 		if ( hasHostingFeature( site, HostingFeatures.BACKUPS ) ) {
-			queryClient.ensureQueryData( siteRewindableActivityLogEntriesQuery( site.ID ) );
+			queryClient.ensureQueryData( siteBackupActivityLogEntriesQuery( site.ID ) );
 		}
 	},
 } ).lazy( () =>
@@ -754,6 +807,16 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 				siteBackupsIndexRoute,
 				siteBackupRestoreRoute,
 				siteBackupDownloadRoute,
+			] )
+		);
+	}
+
+	if ( config.supports.sites.scan ) {
+		siteRoutes.push(
+			siteScanRoute.addChildren( [
+				siteScanIndexRoute,
+				siteScanActiveThreatsRoute,
+				siteScanHistoryRoute,
 			] )
 		);
 	}

@@ -9,27 +9,31 @@ import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { useLocale } from '../../app/locale';
 
-export const usePlugin = ( pluginId: string ) => {
+export interface SiteWithPluginActivationStatus extends Site {
+	isPluginActive: boolean;
+}
+
+export const usePlugin = ( pluginSlug: string ) => {
 	const locale = useLocale();
 	const { data: sitesPlugins, isLoading: isLoadingSitesPlugins } = useQuery( pluginsQuery() );
 	const { data: sites, isLoading: isLoadingSites } = useQuery( sitesQuery() );
 	const { data: marketplacePlugin, isLoading: isLoadingMarketplacePlugin } = useQuery(
-		marketplacePluginQuery( pluginId )
+		marketplacePluginQuery( pluginSlug )
 	);
 	const { data: wpOrgPlugin, isLoading: isLoadingWpOrgPlugin } = useQuery(
-		wpOrgPluginQuery( pluginId, locale )
+		wpOrgPluginQuery( pluginSlug, locale )
 	);
 
 	const pluginBySiteId = useMemo(
 		() =>
 			Object.entries( sitesPlugins?.sites || {} ).reduce( ( acc, [ siteId, plugins ] ) => {
-				const plugin = plugins.find( ( p ) => p.slug === pluginId );
+				const plugin = plugins.find( ( p ) => p.slug === pluginSlug );
 				if ( plugin ) {
 					acc.set( Number( siteId ), plugin );
 				}
 				return acc;
 			}, new Map< number, PluginItem >() ),
-		[ sitesPlugins, pluginId ]
+		[ sitesPlugins, pluginSlug ]
 	);
 
 	const siteIdsWithThisPlugin = Array.from( pluginBySiteId.keys() );
@@ -38,17 +42,22 @@ export const usePlugin = ( pluginId: string ) => {
 		? pluginBySiteId.get( siteIdsWithThisPlugin[ 0 ] )
 		: undefined;
 
-	const [ sitesWithThisPlugin, sitesWithoutThisPlugin ] = sites
+	const [ sitesWithThisPlugin, sitesWithoutThisPlugin ]: [
+		SiteWithPluginActivationStatus[],
+		Site[],
+	] = sites
 		? sites.reduce(
 				( acc, site ) => {
 					if ( siteIdsWithThisPlugin.includes( site.ID ) ) {
-						acc[ 0 ].push( site );
+						const isPluginActive = pluginBySiteId.get( site.ID )?.active ?? false;
+
+						acc[ 0 ].push( { ...site, isPluginActive } );
 					} else {
 						acc[ 1 ].push( site );
 					}
 					return acc;
 				},
-				[ [], [] ] as [ Site[], Site[] ]
+				[ [], [] ] as [ SiteWithPluginActivationStatus[], Site[] ]
 		  )
 		: [ [], [] ];
 
@@ -58,6 +67,7 @@ export const usePlugin = ( pluginId: string ) => {
 		pluginBySiteId,
 		sitesWithThisPlugin,
 		sitesWithoutThisPlugin,
-		plugin: wpOrgPlugin || marketplacePlugin || pluginData,
+		plugin: pluginData,
+		icons: wpOrgPlugin?.icons || marketplacePlugin?.icons,
 	};
 };

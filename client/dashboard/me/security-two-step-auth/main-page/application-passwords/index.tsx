@@ -1,17 +1,10 @@
 import {
-	applicationPasswordsQuery,
-	deleteApplicationPasswordMutation,
+	twoStepAuthApplicationPasswordsQuery,
+	deleteTwoStepAuthApplicationPasswordMutation,
 } from '@automattic/api-queries';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import {
-	__experimentalConfirmDialog as ConfirmDialog,
-	Button,
-	Card,
-	CardHeader,
-	CardBody,
-	Icon,
-} from '@wordpress/components';
+import { Button, Card, CardHeader, CardBody, Icon } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataViews } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
@@ -19,21 +12,47 @@ import { __, sprintf } from '@wordpress/i18n';
 import { closeSmall } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import { useLocale } from '../../../../app/locale';
+import ConfirmModal from '../../../../components/confirm-modal';
 import InlineSupportLink from '../../../../components/inline-support-link';
 import { SectionHeader } from '../../../../components/section-header';
 import RegisterApplicationPassword from './register-application-password';
-import type { ApplicationPassword } from '@automattic/api-core';
+import type { TwoStepAuthApplicationPassword } from '@automattic/api-core';
 
-const fields = [
+const fields = ( locale: string ) => [
 	{
 		id: 'name',
 		label: __( 'Name' ),
-		getValue: ( { item }: { item: ApplicationPassword } ) => item.name,
+		getValue: ( { item }: { item: TwoStepAuthApplicationPassword } ) => item.name,
+	},
+	{
+		id: 'generated',
+		label: __( 'Generated' ),
+		getValue: ( { item }: { item: TwoStepAuthApplicationPassword } ) => {
+			const date = new Date( item.generated );
+			const formattedDate =
+				date.toLocaleDateString( locale, {
+					day: 'numeric',
+					month: 'long',
+					year: 'numeric',
+				} ) +
+				' ' +
+				date.toLocaleTimeString( locale, {
+					hour: '2-digit',
+					minute: '2-digit',
+					hour12: false,
+				} );
+			return sprintf(
+				/* translators: %s is the date of the generated password */
+				__( 'Generated on %s' ),
+				formattedDate
+			);
+		},
 	},
 ];
 
 const view = {
-	fields: [],
+	fields: [ 'generated' ],
 	type: 'list' as const,
 	titleField: 'name',
 };
@@ -42,27 +61,26 @@ const ApplicationPasswordsList = ( {
 	data,
 	isLoading,
 }: {
-	data: ApplicationPassword[];
+	data: TwoStepAuthApplicationPassword[];
 	isLoading: boolean;
 } ) => {
-	const { mutate: deleteApplicationPassword } = useMutation( deleteApplicationPasswordMutation() );
+	const locale = useLocale();
+
+	const { mutate: deleteApplicationPassword, isPending: isDeletingApplicationPassword } =
+		useMutation( deleteTwoStepAuthApplicationPasswordMutation() );
 
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
-	const [ selectedKeyToRemove, setSelectedKeyToRemove ] = useState< ApplicationPassword | null >(
-		null
-	);
+	const [ selectedKeyToRemove, setSelectedKeyToRemove ] =
+		useState< TwoStepAuthApplicationPassword | null >( null );
 
 	const handleRemove = () => {
-		const selectedApplicationPassword = selectedKeyToRemove;
-		setSelectedKeyToRemove( null );
-
-		if ( selectedApplicationPassword ) {
-			deleteApplicationPassword( selectedApplicationPassword.ID, {
+		if ( selectedKeyToRemove ) {
+			deleteApplicationPassword( selectedKeyToRemove.ID, {
 				onSuccess: () => {
 					createSuccessNotice(
 						/* translators: %s is the application name */
-						sprintf( __( 'Application password "%s" removed.' ), selectedApplicationPassword.name ),
+						sprintf( __( 'Application password "%s" removed.' ), selectedKeyToRemove.name ),
 						{
 							type: 'snackbar',
 						}
@@ -73,15 +91,18 @@ const ApplicationPasswordsList = ( {
 						type: 'snackbar',
 					} );
 				},
+				onSettled: () => {
+					setSelectedKeyToRemove( null );
+				},
 			} );
 		}
 	};
 
 	return (
 		<>
-			<DataViews< ApplicationPassword >
+			<DataViews< TwoStepAuthApplicationPassword >
 				data={ data }
-				fields={ fields }
+				fields={ fields( locale ) }
 				view={ view }
 				onChangeView={ () => {} }
 				getItemId={ ( item ) => item.ID }
@@ -95,7 +116,7 @@ const ApplicationPasswordsList = ( {
 						label: __( 'Remove' ),
 						icon: <Icon icon={ closeSmall } />,
 						isPrimary: true,
-						callback: ( items: ApplicationPassword[] ) => {
+						callback: ( items: TwoStepAuthApplicationPassword[] ) => {
 							const item = items[ 0 ];
 							setSelectedKeyToRemove( item );
 						},
@@ -104,14 +125,18 @@ const ApplicationPasswordsList = ( {
 			>
 				<DataViews.Layout />
 			</DataViews>
-			<ConfirmDialog
+			<ConfirmModal
 				isOpen={ !! selectedKeyToRemove }
-				confirmButtonText={ __( 'Remove application password' ) }
+				confirmButtonProps={ {
+					label: __( 'Remove application password' ),
+					isBusy: isDeletingApplicationPassword,
+					disabled: isDeletingApplicationPassword,
+				} }
 				onCancel={ () => setSelectedKeyToRemove( null ) }
 				onConfirm={ handleRemove }
 			>
 				{ __( 'Are you sure you want to remove this application password?' ) }
-			</ConfirmDialog>
+			</ConfirmModal>
 		</>
 	);
 };
@@ -120,7 +145,9 @@ export default function ApplicationPasswords() {
 	const [ isAddApplicationPasswordModalOpen, setIsAddApplicationPasswordModalOpen ] =
 		useState( false );
 
-	const { data: applicationPasswords, isLoading } = useQuery( applicationPasswordsQuery() );
+	const { data: applicationPasswords, isLoading } = useQuery(
+		twoStepAuthApplicationPasswordsQuery()
+	);
 
 	return (
 		<>
