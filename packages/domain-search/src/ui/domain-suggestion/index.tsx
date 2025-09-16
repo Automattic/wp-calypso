@@ -68,7 +68,15 @@ const DomainSuggestionComponent = ( {
 			domainName
 		);
 
-	return <SuggestionSkeleton domainName={ domainNameElement } price={ price } cta={ cta } />;
+	return (
+		<SuggestionSkeleton
+			role="listitem"
+			title={ `${ domain }.${ tld }` }
+			domainName={ domainNameElement }
+			price={ price }
+			cta={ cta }
+		/>
+	);
 };
 
 export const DomainSuggestion = ( props: DomainSuggestionProps ) => {
