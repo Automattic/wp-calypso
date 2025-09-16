@@ -80,7 +80,7 @@ function FileInfoCard( {
 
 	const handleDownloadError = useCallback( () => {
 		setIsProcessingDownload( false );
-		notices.showError( __( 'There was an error processing your download. Please, try again.' ) );
+		notices.showError( __( 'There was an error processing your download. Please try again.' ) );
 	}, [ notices ] );
 
 	const trackDownloadByType = useCallback(
