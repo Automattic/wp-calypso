@@ -4,6 +4,7 @@ import Settings
 import _self.bashNodeScript
 import _self.lib.customBuildType.E2EBuildType
 import _self.lib.utils.mergeTrunk
+import _self.CalypsoE2ETestsBuildTemplate
 
 import jetbrains.buildServer.configs.kotlin.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.*
