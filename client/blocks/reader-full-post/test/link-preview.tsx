@@ -6,7 +6,8 @@ import React from 'react';
 import LinkPreview from '../link-preview';
 
 // Mock fetch for testing
-global.fetch = jest.fn();
+const mockFetch = jest.fn();
+global.fetch = mockFetch;
 
 // Helper function to create a mock HTML response with OpenGraph tags
 const createMockHtml = ( title: string, description: string ) => `
@@ -25,7 +26,18 @@ const createMockHtml = ( title: string, description: string ) => `
 
 describe( 'LinkPreview', () => {
 	beforeEach( () => {
-		( fetch as jest.Mock ).mockClear();
+		mockFetch.mockClear();
+		mockFetch.mockReset();
+	} );
+
+	it( 'should render nothing when fetch fails', async () => {
+		mockFetch.mockRejectedValue( new Error( 'Network error' ) );
+
+		const { container } = render( <LinkPreview url="https://example.com/test" /> );
+
+		await waitFor( () => {
+			expect( container.firstChild ).toBeNull();
+		} );
 	} );
 
 	it( 'should decode HTML entities in OpenGraph title and description', async () => {
@@ -34,7 +46,7 @@ describe( 'LinkPreview', () => {
 
 		const mockHtml = createMockHtml( titleWithEntities, descriptionWithEntities );
 
-		( fetch as jest.Mock ).mockResolvedValueOnce( {
+		mockFetch.mockResolvedValueOnce( {
 			ok: true,
 			text: () => Promise.resolve( mockHtml ),
 		} );
@@ -64,7 +76,7 @@ describe( 'LinkPreview', () => {
 </html>
 `;
 
-		( fetch as jest.Mock ).mockResolvedValueOnce( {
+		mockFetch.mockResolvedValueOnce( {
 			ok: true,
 			text: () => Promise.resolve( mockHtml ),
 		} );
@@ -82,7 +94,7 @@ describe( 'LinkPreview', () => {
 
 		const mockHtml = createMockHtml( titleWithCommonEntities, 'Simple description' );
 
-		( fetch as jest.Mock ).mockResolvedValueOnce( {
+		mockFetch.mockResolvedValueOnce( {
 			ok: true,
 			text: () => Promise.resolve( mockHtml ),
 		} );
@@ -111,7 +123,7 @@ describe( 'LinkPreview', () => {
 </html>
 `;
 
-		( fetch as jest.Mock ).mockResolvedValueOnce( {
+		mockFetch.mockResolvedValueOnce( {
 			ok: true,
 			text: () => Promise.resolve( mockHtml ),
 		} );
@@ -144,7 +156,7 @@ describe( 'LinkPreview', () => {
 </html>
 `;
 
-		( fetch as jest.Mock ).mockResolvedValueOnce( {
+		mockFetch.mockResolvedValueOnce( {
 			ok: true,
 			text: () => Promise.resolve( mockHtml ),
 		} );
@@ -161,7 +173,7 @@ describe( 'LinkPreview', () => {
 		} );
 	} );
 
-	it( 'should fallback to Google favicon service when favicon fails to load', async () => {
+	it( 'should hide favicon when it fails to load', async () => {
 		const mockHtml = `
 <!DOCTYPE html>
 <html>
@@ -176,7 +188,7 @@ describe( 'LinkPreview', () => {
 </html>
 `;
 
-		( fetch as jest.Mock ).mockResolvedValueOnce( {
+		mockFetch.mockResolvedValueOnce( {
 			ok: true,
 			text: () => Promise.resolve( mockHtml ),
 		} );
@@ -194,11 +206,8 @@ describe( 'LinkPreview', () => {
 			Object.defineProperty( errorEvent, 'target', { value: favicon, enumerable: true } );
 			favicon.dispatchEvent( errorEvent );
 
-			// Should fallback to Google favicon service
-			expect( favicon ).toHaveAttribute(
-				'src',
-				'https://www.google.com/s2/favicons?domain=example.com'
-			);
+			// Should be hidden when it fails to load
+			expect( favicon ).toHaveStyle( 'display: none' );
 		} );
 	} );
 
@@ -219,7 +228,7 @@ describe( 'LinkPreview', () => {
 </html>
 `;
 
-		( fetch as jest.Mock ).mockResolvedValueOnce( {
+		mockFetch.mockResolvedValueOnce( {
 			ok: true,
 			text: () => Promise.resolve( mockHtml ),
 		} );

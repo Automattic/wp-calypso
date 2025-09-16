@@ -142,37 +142,33 @@ export default function LinkPreview( { url }: LinkPreviewProps ): JSX.Element | 
 
 				const corsProxy = 'https://api.allorigins.win/raw?url=';
 
-				try {
-					// Try to fetch the page directly using CORS proxy
-					const response = await fetch( corsProxy + encodeURIComponent( url ) );
+				// Try to fetch the page directly using CORS proxy
+				const response = await fetch( corsProxy + encodeURIComponent( url ) );
 
-					if ( response.ok ) {
-						const html = await response.text();
-						const ogData = parseOpenGraphTags( html, url );
+				if ( response.ok ) {
+					const html = await response.text();
+					const ogData = parseOpenGraphTags( html, url );
 
-						// Only create preview if we have title AND at least one other useful piece of metadata
-						if ( ogData.title && ( ogData.description || ogData.image || ogData.siteName ) ) {
-							const domain = new URL( url ).hostname;
-							setPreviewData( {
-								title: ogData.title || domain,
-								description: ogData.description || url,
-								image: ogData.image || undefined,
-								favicon:
-									ogData.favicon || `https://www.google.com/s2/favicons?domain=${ domain }&sz=48`,
-								siteName: ogData.siteName || domain,
-								type: ogData.type || undefined,
-								publishedTime: ogData.publishedTime || undefined,
-								modifiedTime: ogData.modifiedTime || undefined,
-								imageAlt: ogData.imageAlt || ogData.title || '',
-								url: url,
-								domain: domain,
-							} );
-							setIsLoading( false );
-							return;
-						}
+					// Only create preview if we have title AND at least one other useful piece of metadata
+					if ( ogData.title && ( ogData.description || ogData.image || ogData.siteName ) ) {
+						const domain = new URL( url ).hostname;
+						setPreviewData( {
+							title: ogData.title || domain,
+							description: ogData.description || url,
+							image: ogData.image || undefined,
+							favicon:
+								ogData.favicon || `https://www.google.com/s2/favicons?domain=${ domain }&sz=48`,
+							siteName: ogData.siteName || domain,
+							type: ogData.type || undefined,
+							publishedTime: ogData.publishedTime || undefined,
+							modifiedTime: ogData.modifiedTime || undefined,
+							imageAlt: ogData.imageAlt || ogData.title || '',
+							url: url,
+							domain: domain,
+						} );
+						setIsLoading( false );
+						return;
 					}
-				} catch ( apiError ) {
-					// Silently continue to fallback
 				}
 			} catch ( err ) {
 				setError( 'Could not load preview' );
