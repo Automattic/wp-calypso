@@ -1,6 +1,8 @@
 package _self
 
 import jetbrains.buildServer.configs.kotlin.v2019_2.*
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.*
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.*
 
 object CalypsoE2ETestsBuildTemplate : Template({
 	name = "Calypso E2E Tests Build Template"
