@@ -208,6 +208,7 @@ $blueberry-color: #3858e9;
 		.odie-sources-foldable-card {
 			box-shadow: none;
 			margin-bottom: 0;
+			padding: 0;
 
 			&:not( .is-expanded ) {
 				.foldable-card__content {

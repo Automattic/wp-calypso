@@ -106,4 +106,8 @@ $blueberry-blue: #3858e9;
 			fill: #8C0B0B;
 		}
 	}
+
+	.Textarea-module_textarea:focus {
+		box-shadow: none;
+	}
 }
