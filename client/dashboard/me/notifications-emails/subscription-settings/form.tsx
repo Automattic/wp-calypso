@@ -1,6 +1,6 @@
 import { UserSettings } from '@automattic/api-core';
 import { CheckboxControl, SelectControl } from '@wordpress/components';
-import { DataForm, Field, type Form } from '@wordpress/dataviews';
+import { DataForm, DataFormControlProps, Field, type Form } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { useCallback, useMemo } from 'react';
 import InlineSupportLink from '../../../components/inline-support-link';
@@ -31,6 +31,30 @@ export type SettingsData = Pick<
 	| 'subscription_delivery_mail_option'
 >;
 
+const CustomSelectControl = ( { field, data, onChange }: DataFormControlProps< SettingsData > ) => {
+	const { id, getValue } = field;
+	return (
+		<SelectControl
+			label={ field.label }
+			hideLabelFromVision
+			value={ getValue( { item: data } ) }
+			options={ field.elements ?? [] }
+			help={ field.description }
+			onChange={ ( value ) => {
+				onChange( { [ id ]: value } );
+			} }
+			__next40pxDefaultSize
+			__nextHasNoMarginBottom
+		>
+			{ field.elements?.map( ( element: { label: string; value: string } ) => (
+				<option key={ element.value } value={ element.value }>
+					{ element.label }
+				</option>
+			) ) }
+		</SelectControl>
+	);
+};
+
 const baseFields: Field< SettingsData >[] = [
 	{
 		id: 'subscription_delivery_email_default',
@@ -42,6 +66,7 @@ const baseFields: Field< SettingsData >[] = [
 			{ label: __( 'Send email daily' ), value: 'daily' },
 			{ label: __( 'Send email every week' ), value: 'weekly' },
 		],
+		Edit: CustomSelectControl,
 	},
 	{
 		id: 'subscription_delivery_mail_option',
@@ -51,6 +76,7 @@ const baseFields: Field< SettingsData >[] = [
 			{ label: __( 'HTML' ), value: 'html' },
 			{ label: __( 'Plain text' ), value: 'text' },
 		],
+		Edit: CustomSelectControl,
 	},
 	{
 		id: 'subscription_delivery_day',
@@ -65,29 +91,7 @@ const baseFields: Field< SettingsData >[] = [
 			{ label: __( 'Friday' ), value: 5 },
 			{ label: __( 'Saturday' ), value: 6 },
 		],
-		Edit: ( { field, data, onChange } ) => {
-			const { id, getValue } = field;
-			return (
-				<SelectControl
-					label={ field.label }
-					hideLabelFromVision
-					value={ getValue( { item: data } ) }
-					options={ field.elements ?? [] }
-					help={ field.description }
-					onChange={ ( value ) => {
-						onChange( { [ id ]: parseInt( value ) } );
-					} }
-					__nextHasNoMarginBottom
-					__next40pxDefaultSize
-				>
-					{ field.elements?.map( ( element ) => (
-						<option key={ element.value } value={ element.value }>
-							{ element.label }
-						</option>
-					) ) }
-				</SelectControl>
-			);
-		},
+		Edit: CustomSelectControl,
 	},
 	{
 		id: 'subscription_delivery_hour',
@@ -114,29 +118,7 @@ const baseFields: Field< SettingsData >[] = [
 				};
 			} ),
 		],
-		Edit: ( { field, data, onChange } ) => {
-			const { id, getValue } = field;
-			return (
-				<SelectControl
-					label={ field.label }
-					hideLabelFromVision
-					value={ getValue( { item: data } ) }
-					options={ field.elements ?? [] }
-					help={ field.description }
-					onChange={ ( value ) => {
-						onChange( { [ id ]: parseInt( value ) } );
-					} }
-					__next40pxDefaultSize
-					__nextHasNoMarginBottom
-				>
-					{ field.elements?.map( ( element ) => (
-						<option key={ element.value } value={ element.value }>
-							{ element.label }
-						</option>
-					) ) }
-				</SelectControl>
-			);
-		},
+		Edit: CustomSelectControl,
 	},
 	{
 		id: 'subscription_delivery_jabber_default',
@@ -144,13 +126,14 @@ const baseFields: Field< SettingsData >[] = [
 		type: 'boolean' as const,
 		Edit: ( { field, data, onChange } ) => {
 			const { id, getValue } = field;
+
 			return (
 				<CheckboxControl
 					__nextHasNoMarginBottom
 					label={ field.label }
 					help={
 						<span>
-							{ __( 'Receive subscription updates via instant message.' ) }{ ' ' }
+							{ __( 'Receive subscription updates via instant message.' ) }
 							<InlineSupportLink supportContext="jabber-subscription-updates" />
 						</span>
 					}
