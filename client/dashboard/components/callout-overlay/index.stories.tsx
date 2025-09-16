@@ -31,7 +31,6 @@ type Story = StoryObj< typeof meta >;
 
 export const Default: Story = {
 	args: {
-		showCallout: true,
 		callout: (
 			<Callout
 				title="Let our WordPress.com experts build your site!"
