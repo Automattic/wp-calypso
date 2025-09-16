@@ -9,8 +9,8 @@ export default function Preferences() {
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Preferences' ) } /> }>
 			<PreferencesNewHostingDashboard />
-			<PreferencesLogin />
 			<PreferencesLanguageForm />
+			<PreferencesLogin />
 		</PageLayout>
 	);
 }
