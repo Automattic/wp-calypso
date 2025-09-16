@@ -6,13 +6,10 @@ import { partitionSuggestions } from '../helpers/partition-suggestions';
 import { useDomainSearch } from '../page/context';
 
 export const useSuggestionsList = () => {
-	const { query, queries, config, filter } = useDomainSearch();
+	const { query, queries, config } = useDomainSearch();
 
 	const { data: suggestions = [], isLoading: isLoadingSuggestions } = useQuery( {
-		...queries.domainSuggestions( query, {
-			tlds: filter.tlds,
-			exact_sld_matches_only: filter.exactSldMatchesOnly,
-		} ),
+		...queries.domainSuggestions( query ),
 		enabled: true,
 	} );
 
@@ -73,7 +70,7 @@ export const useSuggestionsList = () => {
 				.map( ( suggestion ) => suggestion.domain_name )
 				.filter( ( suggestion ) => ! unavailablePremiumDomains.includes( suggestion ) ),
 			query,
-			deemphasiseTlds: config.deemphasizedTlds,
+			deemphasizedTlds: config.deemphasizedTlds,
 		} );
 	}, [ suggestions, query, config.deemphasizedTlds, unavailablePremiumDomains ] );
 

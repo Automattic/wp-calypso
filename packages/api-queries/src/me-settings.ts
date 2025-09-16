@@ -12,6 +12,13 @@ export const userSettingsMutation = () =>
 	mutationOptions( {
 		mutationFn: updateUserSettings,
 		onSuccess: ( newData ) => {
-			queryClient.setQueryData( userSettingsQuery().queryKey, newData );
+			queryClient.setQueryData(
+				userSettingsQuery().queryKey,
+				( oldData ) =>
+					oldData && {
+						...oldData,
+						...newData,
+					}
+			);
 		},
 	} );

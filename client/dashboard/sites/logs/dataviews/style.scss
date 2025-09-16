@@ -1,3 +1,5 @@
+@import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/variables';
 /* Wrapping multi-line fields */
 .site-logs-wrap {
 	overflow: visible;
@@ -12,25 +14,25 @@
 	text-overflow: ellipsis;
 }
 
-/* Badges */
-.site-logs-card, .site-logs-details-modal {
-
+.site-logs-card,
+.site-logs-details-modal {
+	/* Badges */
 	.badge--POST,
 	.badge--deprecated {
-		background-color: #BBE0FA;
-		color: #02395C;
+		background-color: #bbe0fa;
+		color: #02395c;
 	}
 
 	.badge--GET {
-		background-color: #B8E6BF;
-		color: #00450C;
+		background-color: #b8e6bf;
+		color: #00450c;
 	}
 
 	.badge--DELETE,
 	.badge--error,
 	.badge--fatal {
-		background-color: #FACFD2;
-		color: #691C1C;
+		background-color: #facfd2;
+		color: #691c1c;
 	}
 
 	.badge--fatal {
@@ -38,12 +40,24 @@
 	}
 
 	.badge--warning {
-		background-color: #FFF2D7;
-		color: #4F3500;
+		background-color: #fff2d7;
+		color: #4f3500;
 	}
 
 	.badge--user {
-		background-color: #DCDCEE;
-		color: #2C3338;
+		background-color: #dcdcee;
+		color: #2c3338;
+	}
+	/** Activity log icon and event color **/
+
+	.site-activity-logs__event-icon {
+		fill: $gray-700;
+		background-color: $gray-100;
+		border-radius: $radius-small;
+		padding: 4px;
+	}
+
+	.site-activity-logs__event {
+		color: $gray-900;
 	}
 }

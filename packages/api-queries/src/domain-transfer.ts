@@ -7,6 +7,7 @@ import {
 	updateDomainTransferRequest,
 	deleteDomainTransferRequest,
 	domainTransferToUser,
+	transferDomainToSite,
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { domainQuery } from './domain';
@@ -77,5 +78,13 @@ export const domainTransferToUserMutation = ( domain: string, siteId: number ) =
 		mutationFn: ( userId: string ) => domainTransferToUser( domain, siteId, userId ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( domainsQuery() );
+		},
+	} );
+
+export const transferDomainToSiteMutation = ( domain: string, siteId: number ) =>
+	mutationOptions( {
+		mutationFn: ( targetSiteId: number ) => transferDomainToSite( domain, siteId, targetSiteId ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( domainQuery( domain ) );
 		},
 	} );

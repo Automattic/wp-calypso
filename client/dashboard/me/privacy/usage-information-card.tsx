@@ -1,4 +1,4 @@
-import { profileMutation, profileQuery } from '@automattic/api-queries';
+import { userSettingsMutation, userSettingsQuery } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
@@ -16,8 +16,8 @@ import { SectionHeader } from '../../components/section-header';
 import { Text } from '../../components/text';
 
 export default function UsageInformationCard() {
-	const { data: userProfile } = useQuery( profileQuery() );
-	const mutation = useMutation( profileMutation() );
+	const { data: userSettings } = useQuery( userSettingsQuery() );
+	const mutation = useMutation( userSettingsMutation() );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const handleChange = ( { tracks_opt_out }: { tracks_opt_out?: boolean } ) => {
@@ -70,7 +70,7 @@ export default function UsageInformationCard() {
 		fields: [ 'tracks_opt_out' ],
 	};
 
-	const data = { tracks_opt_out: userProfile?.tracks_opt_out ?? true };
+	const data = { tracks_opt_out: userSettings?.tracks_opt_out ?? true };
 
 	return (
 		<Card>

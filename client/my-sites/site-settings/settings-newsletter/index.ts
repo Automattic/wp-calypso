@@ -5,18 +5,9 @@ import {
 	redirectToJetpackNewsletterSettingsIfNeeded,
 	siteSettings,
 } from 'calypso/my-sites/site-settings/settings-controller';
-import { createNewsletterSettings, jetpackNewsletter } from './controller';
+import { createNewsletterSettings } from './controller';
 
 export default function () {
-	page(
-		'/settings/jetpack-newsletter/:site_id',
-		siteSelection,
-		navigation,
-		siteSettings,
-		jetpackNewsletter,
-		makeLayout,
-		clientRender
-	);
 	page(
 		'/settings/newsletter/:site_id',
 		siteSelection,

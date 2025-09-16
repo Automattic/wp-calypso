@@ -49,7 +49,10 @@ export default function StagingSiteDeleteModal( {
 			onSuccess: () => {
 				recordTracksEvent( 'calypso_hosting_configuration_staging_site_delete_success' );
 				if ( window?.location?.pathname?.startsWith( '/v2' ) ) {
-					createSuccessNotice( __( 'Staging site deleted.' ), { type: 'snackbar' } );
+					createSuccessNotice(
+						__( 'We are deleting your staging site. We will notify you when it is done.' ),
+						{ type: 'snackbar' }
+					);
 					onClose();
 					if ( productionSiteSlug ) {
 						navigate( {

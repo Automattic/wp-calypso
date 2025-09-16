@@ -11,6 +11,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { getPostIcon } from 'calypso/reader/get-helpers';
 import FollowingEmptyContent from 'calypso/reader/stream/empty';
+import { isCommentsApiDisabled } from 'calypso/state/comments/selectors/get-comments-api-disabled';
 import { getReaderFollowForFeed } from 'calypso/state/reader/follows/selectors';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { requestPaginatedStream } from 'calypso/state/reader/streams/actions';
@@ -109,6 +110,15 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 		},
 		[ posts ]
 	);
+
+	// Get comments API disabled status for the selected post
+	const commentsApiDisabled = useSelector( ( state: AppState ) => {
+		if ( ! selectedItem ) {
+			return false;
+		}
+		const post = getPostFromItem( selectedItem );
+		return post?.site_ID ? isCommentsApiDisabled( state, post.site_ID ) : false;
+	} );
 
 	const fields = useMemo(
 		() => [
@@ -294,7 +304,11 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 							setSelectedItem={ setSelectedItem }
 							layout="recent"
 						/>
-						<EngagementBar feedId={ selectedItem?.feedId } postId={ selectedItem?.postId } />
+						<EngagementBar
+							feedId={ selectedItem?.feedId }
+							postId={ selectedItem?.postId }
+							commentsApiDisabled={ commentsApiDisabled }
+						/>
 					</>
 				) }
 			</section>

@@ -4,10 +4,6 @@
 */
 
 .staging-site-card {
-	padding-bottom: 48px;
-	&.confirmation-input {
-		padding-bottom: 100px;
-	}
 	.card {
 		padding: 24px 22px;
 	}
@@ -202,13 +198,6 @@
 				font-weight: bold;
 			}
 
-			&__prepare-download-spinner {
-				display: inline-block;
-				margin-right: 6px;
-				margin-top: -3px;
-				vertical-align: middle;
-			}
-
 			&__preview {
 				margin: 16px auto 0;
 				padding: 0 8px;
@@ -277,10 +266,6 @@
 	.file-browser-header {
 		padding: 0 2px;
 		border-bottom: 1px solid var( --studio-gray-5 );
-		.file-browser-header__action-buttons .button {
-			padding: 8px 32px;
-			margin-right: 16px;
-		}
 		.file-browser-header__selecting {
 			display: none;
 		}
@@ -314,10 +299,11 @@
 
 .staging-site-card__footer {
 	border-top: 1px solid var( --studio-gray-5 );
+	padding: 16px 32px 16px;
+	background: #fff;
 	position: absolute;
 	bottom: 0;
 	width: 100%;
 	left: 0;
-	padding: 16px 32px 16px;
-	background: #fff;
+
 }

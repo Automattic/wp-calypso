@@ -156,6 +156,7 @@ export default function LicenseDetailsActions( {
 				) }
 
 			{ canRevoke &&
+				! isClientLicense &&
 				( isChildLicense
 					? licenseState === LicenseState.Attached
 					: licenseState !== LicenseState.Revoked ) &&

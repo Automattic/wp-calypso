@@ -22,6 +22,7 @@ const ReaderPostActions = ( {
 	iconSize = 20,
 	className,
 	fullPost,
+	commentsApiDisabled = false,
 } ) => {
 	const translate = useTranslate();
 	const hasSites = !! useSelector( getPrimarySiteId );
@@ -60,7 +61,7 @@ const ReaderPostActions = ( {
 					/>
 				</li>
 			) }
-			{ showComments && (
+			{ showComments && ! commentsApiDisabled && (
 				<li className="reader-post-actions__item">
 					<CommentButton
 						key="comment-button"
@@ -109,6 +110,7 @@ ReaderPostActions.propTypes = {
 	onCommentClick: PropTypes.func,
 	iconSize: PropTypes.number,
 	fullPost: PropTypes.bool,
+	commentsApiDisabled: PropTypes.bool,
 };
 
 export default ReaderPostActions;

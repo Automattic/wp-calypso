@@ -49,13 +49,10 @@ const getPriceRuleForSuggestion = ( {
 };
 
 export const useSuggestion = ( domainName: string ) => {
-	const { query, queries, filter, config } = useDomainSearch();
+	const { query, queries, config } = useDomainSearch();
 
 	const { data: suggestion } = useQuery( {
-		...queries.domainSuggestions( query, {
-			tlds: filter.tlds,
-			exact_sld_matches_only: filter.exactSldMatchesOnly,
-		} ),
+		...queries.domainSuggestions( query ),
 		select: ( data ) => {
 			const suggestion = data.find( ( suggestion ) => suggestion.domain_name === domainName );
 

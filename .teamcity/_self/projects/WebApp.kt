@@ -910,7 +910,7 @@ object PlaywrightTestPRMatrix : BuildType({
 	id("calypso_WebApp_Calypso_E2E_Playwright_Test_Matrix")
 	uuid = "074d8ae0-0859-4b4d-bf66-709f24ae5406"
 	name = "E2E Tests (Playwright Test)"
-	description = "Runs Calypso e2e tests using Playwright Test runner with build matrix"
+	description = "Runs Calypso e2e tests on pull requests using Playwright Test runner with build matrix"
 
 	vcs {
 		root(Settings.WpCalypso)
@@ -1004,12 +1004,14 @@ object PlaywrightTestPRMatrix : BuildType({
 			scriptContent = """
 				echo "Getting Calypso url for build ${BuildDockerImage.depParamRefs.buildNumber}"
 				chmod +x ./bin/get-calypso-live-url.sh
-				CALYPSO_LIVE_URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
+				CALYPSO_BASE_URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
 				if [[ ${'$'}? -ne 0 ]]; then
-					// Command failed. CALYPSO_LIVE_URL contains stderr
-					echo ${'$'}CALYPSO_LIVE_URL
+					// Command failed. CALYPSO_BASE_URL contains stderr
+					echo ${'$'}CALYPSO_BASE_URL
 					exit 1
 				fi
+				
+				export CALYPSO_BASE_URL
 
 				# Check if test/e2e or packages/calypso-e2e files have been changed
 				CHANGED_FILES=${'$'}(git diff --name-only refs/remotes/origin/trunk...HEAD)
@@ -1364,6 +1366,7 @@ object AuthenticationE2ETests : E2EBuildType(
 	concurrentBuilds = 1,
 	testGroup = "authentication",
 	buildParams = {
+		param("env.CALYPSO_BASE_URL", "https://wordpress.com")
 		param("env.VIEWPORT_NAME", "desktop")
 	},
 	buildFeatures = {

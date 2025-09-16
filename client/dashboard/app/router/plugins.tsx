@@ -1,3 +1,4 @@
+import { sitesQuery, queryClient } from '@automattic/api-queries';
 import { createRoute, createLazyRoute, redirect } from '@tanstack/react-router';
 import { rootRoute } from './root';
 import type { AnyRoute } from '@tanstack/react-router';
@@ -20,6 +21,17 @@ export const pluginsIndexRoute = createRoute( {
 		throw redirect( { to: '/plugins/manage' } );
 	},
 } );
+
+export const pluginRoute = createRoute( {
+	getParentRoute: () => pluginsRoute,
+	path: '$pluginId',
+} ).lazy( () =>
+	import( '../../plugins/plugin' ).then( ( d ) =>
+		createLazyRoute( 'plugin' )( {
+			component: d.default,
+		} )
+	)
+);
 
 export const pluginsManageRoute = createRoute( {
 	getParentRoute: () => pluginsRoute,
@@ -46,6 +58,7 @@ export const pluginsScheduledUpdatesRoute = createRoute( {
 export const pluginsScheduledUpdatesNewRoute = createRoute( {
 	getParentRoute: () => pluginsRoute,
 	path: 'scheduled-updates/new',
+	loader: () => queryClient.ensureQueryData( sitesQuery() ),
 } ).lazy( () =>
 	import( '../../plugins/scheduled-updates/new' ).then( ( d ) =>
 		createLazyRoute( 'plugins-scheduled-updates-new' )( {
@@ -57,6 +70,7 @@ export const pluginsScheduledUpdatesNewRoute = createRoute( {
 export const createPluginsRoutes = () => {
 	const childRoutes: AnyRoute[] = [
 		pluginsIndexRoute,
+		pluginRoute,
 		pluginsManageRoute,
 		pluginsScheduledUpdatesRoute,
 		pluginsScheduledUpdatesNewRoute,

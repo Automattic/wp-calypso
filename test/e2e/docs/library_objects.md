@@ -10,6 +10,8 @@ The `@automattic/calypso-e2e` package offers a robust set of library objects pat
 
 For a brief introduction to Page Object Models, please refer to [this page](https://playwright.dev/docs/test-pom).
 
+> ⚠️ **If adding a new library object file to `calypso-e2e`**: Make sure you update `index.ts` in the same directory to export the file's content otherwise it won't be available from the test project.
+
 <!-- TOC -->
 
 - [Library Objects](#library-objects)
@@ -43,8 +45,6 @@ Example: [StartSiteFlow](../../../packages/calypso-e2e/src/lib/flows/start-site-
 Components represent a sub-portion of the page, and are typically shared across multiple pages. A good example is the `SidebarComponent`, persisting across multiple pages in the Calypso dashboard.
 
 The SidebarComponent, as an example, encapsulates element selectors and actions for only the Sidebar, leaving interactions on the main content pane for the respective Page objects.
-
-<img src="https://cldup.com/0n1U57DidJ.png"/>
 
 ```typescript
 const selectors = {

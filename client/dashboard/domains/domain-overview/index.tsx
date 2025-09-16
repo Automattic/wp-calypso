@@ -1,7 +1,8 @@
 import { domainQuery, sitePurchaseQuery } from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
+import { Badge } from '@automattic/ui';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { Button } from '@wordpress/components';
+import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { useLocale } from '../../app/locale';
@@ -40,10 +41,21 @@ export default function DomainOverview() {
 			header={
 				<PageHeader
 					title={ wrappableDomainName }
-					// translators: date is the date the domain was registered.
-					description={ sprintf( __( 'Registered on %(date)s' ), {
-						date: formatDate( new Date( domain.registration_date ), locale, { dateStyle: 'long' } ),
-					} ) }
+					description={
+						<HStack spacing={ 2 } alignment="center" justify="flex-start">
+							{ domain.subtype?.label && <Badge>{ domain.subtype.label }</Badge> }
+							<span>
+								{
+									// translators: date is the date the domain was registered.
+									sprintf( __( 'Registered on %(date)s' ), {
+										date: formatDate( new Date( domain.registration_date ), locale, {
+											dateStyle: 'long',
+										} ),
+									} )
+								}
+							</span>
+						</HStack>
+					}
 					actions={
 						purchase?.can_explicit_renew && (
 							<Button
