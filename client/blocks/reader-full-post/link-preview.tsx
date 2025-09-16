@@ -4,6 +4,7 @@
 import { Card, Spinner } from '@automattic/components';
 import React, { useState, useEffect } from 'react';
 import { getRelativeTimeString } from 'calypso/dashboard/utils/datetime';
+import { decodeEntities } from 'calypso/lib/formatting';
 import './link-preview.scss';
 
 interface LinkPreviewProps {
@@ -67,7 +68,9 @@ function parseOpenGraphTags( html: string ): OpenGraphData {
 	for ( const [ property, key ] of Object.entries( propertyMap ) ) {
 		const value = extractMetaContent( property );
 		if ( value ) {
-			ogData[ key ] = value;
+			// Decode HTML entities for text content
+			const shouldDecode = [ 'title', 'description', 'imageAlt', 'siteName' ].includes( key );
+			ogData[ key ] = shouldDecode ? decodeEntities( value ) : value;
 		}
 	}
 
@@ -75,7 +78,7 @@ function parseOpenGraphTags( html: string ): OpenGraphData {
 	if ( ! ogData.title ) {
 		const titleMatch = html.match( /<title[^>]*>([^<]+)<\/title>/i );
 		if ( titleMatch ) {
-			ogData.title = titleMatch[ 1 ];
+			ogData.title = decodeEntities( titleMatch[ 1 ] );
 		}
 	}
 
