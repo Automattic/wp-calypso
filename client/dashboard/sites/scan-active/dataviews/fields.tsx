@@ -5,10 +5,10 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { check } from '@wordpress/icons';
-import { useFormattedTime } from '../../../../components/formatted-time';
-import { formatYmd } from '../../../../utils/datetime';
-import { getSeverityLabel, SeverityBadge } from '../../severity-badge';
-import { getThreatIcon, getThreatMessage } from '../../utils';
+import { useFormattedTime } from '../../../components/formatted-time';
+import { formatYmd } from '../../../utils/datetime';
+import { getSeverityLabel, SeverityBadge } from '../../scan/severity-badge';
+import { getThreatIcon, getThreatMessage } from '../../scan/utils';
 import type { Threat } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 

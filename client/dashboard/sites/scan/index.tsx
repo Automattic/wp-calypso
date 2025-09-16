@@ -17,8 +17,9 @@ import { ButtonStack } from '../../components/button-stack';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
-import { ActiveThreatsDataViews } from './active-threats';
+import { ActiveThreatsDataViews } from '../scan-active';
 import illustrationUrl from './scan-callout-illustration.svg';
+import './style.scss';
 
 const SCAN_TABS = [
 	{ name: 'active', title: __( 'Active threats' ) },

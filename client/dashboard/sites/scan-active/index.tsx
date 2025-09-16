@@ -7,7 +7,6 @@ import { getActions } from './dataviews/actions';
 import { getFields } from './dataviews/fields';
 import type { Threat, Site } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
-import '../style.scss';
 
 export function ActiveThreatsDataViews( { site }: { site: Site } ) {
 	const [ view, setView ] = useState< View >( {
