@@ -1,7 +1,4 @@
-import {
-	registerMutationSuccessCallback,
-	registerMutationErrorCallback,
-} from '@automattic/api-queries';
+import { useQueryClient } from '@tanstack/react-query';
 import { SnackbarList } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { Icon, published, error } from '@wordpress/icons';
@@ -31,31 +28,28 @@ declare module '@tanstack/react-query' {
 export default function Snackbars() {
 	const notices = useSelect( ( select ) => select( noticesStore ).getNotices(), [] );
 	const { removeNotice, createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const queryClient = useQueryClient();
 
 	// Displays snackbars which have been requested through the `meta` option of
 	// the `useMutation` hook.
 	useEffect( () => {
-		const cleanupSuccess = registerMutationSuccessCallback(
-			( _data, _variables, _context, mutation ) => {
-				const message = mutation.meta?.snackbar?.success;
-				if ( message ) {
-					createSuccessNotice( message, { type: 'snackbar' } );
+		return queryClient.getMutationCache().subscribe( ( event ) => {
+			const { type, mutation } = event;
+			if ( type === 'updated' ) {
+				if ( event.action.type === 'success' ) {
+					const message = mutation.meta?.snackbar?.success;
+					if ( message ) {
+						createSuccessNotice( message, { type: 'snackbar' } );
+					}
+				} else if ( event.action.type === 'error' ) {
+					const message = mutation.meta?.snackbar?.error;
+					if ( message ) {
+						createErrorNotice( message, { type: 'snackbar' } );
+					}
 				}
 			}
-		);
-		const cleanupError = registerMutationErrorCallback(
-			( _error, _variables, _context, mutation ) => {
-				const message = mutation.meta?.snackbar?.error;
-				if ( message ) {
-					createErrorNotice( message, { type: 'snackbar' } );
-				}
-			}
-		);
-		return () => {
-			cleanupSuccess();
-			cleanupError();
-		};
-	}, [ createSuccessNotice, createErrorNotice ] );
+		} );
+	}, [ queryClient, createSuccessNotice, createErrorNotice ] );
 
 	const snackbarNotices = notices
 		.filter( ( { type } ) => type === 'snackbar' )
