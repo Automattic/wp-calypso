@@ -268,7 +268,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 				id: `${ String( server.timestamp ) }|${ server.request_type }|${ server.status }|${
 					server.request_url
 				}|${ server.user_ip }|${ suffix }|${ String( index ) }`,
-			} as ServerLog & { id: string };
+			};
 		} );
 	}, [ scrollId, view.page, siteLogsArray, logType ] );
 
