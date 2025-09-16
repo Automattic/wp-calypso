@@ -125,23 +125,30 @@ export function DeploymentLogsModal( {
 
 			{ logEntries.length > 0 && (
 				<VStack spacing={ 2 }>
-					<VStack
+					<div
 						style={ {
-							width: '100%',
-							padding: '16px',
+							maxHeight: '216px',
+							overflowY: 'auto',
 							backgroundColor: 'var(--dashboard__text-color)',
 							borderRadius: '4px',
 						} }
 					>
-						{ logEntries.map( ( entry, index ) => (
-							<DeploymentLogsEntry
-								key={ `${ entry.message }-${ index }` }
-								entry={ entry }
-								deployment={ deployment }
-								siteId={ siteId }
-							/>
-						) ) }
-					</VStack>
+						<VStack
+							style={ {
+								width: '100%',
+								padding: '16px',
+							} }
+						>
+							{ logEntries.map( ( entry, index ) => (
+								<DeploymentLogsEntry
+									key={ `${ entry.message }-${ index }` }
+									entry={ entry }
+									deployment={ deployment }
+									siteId={ siteId }
+								/>
+							) ) }
+						</VStack>
+					</div>
 					<Text align="right">
 						{ formatDate( new Date( deployment.created_on ), locale, {
 							dateStyle: 'medium',
