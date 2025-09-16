@@ -15,7 +15,7 @@ import { AttachmentPreviews } from '../attachment-preview';
 
 const NOTICE_BAD_FORMAT = {
 	icon: <Icon size={ 24 } icon={ error } />,
-	message: __( 'Only .jpg, .png, .gif files are supported.', __i18n_text_domain__ ),
+	message: __( 'Only .jpg, .png, or .gif files are supported.', __i18n_text_domain__ ),
 	dismissible: true,
 };
 
