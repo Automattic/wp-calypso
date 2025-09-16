@@ -11,14 +11,14 @@ import {
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { shield } from '@wordpress/icons';
 import { siteRoute } from '../../app/router/sites';
 import { ButtonStack } from '../../components/button-stack';
-import { CalloutOverlay } from '../../components/callout-overlay';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { hasHostingFeature } from '../../utils/site-features';
+import illustrationUrl from '../backups/backups-callout-illustration.svg';
+import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import { ActiveThreatsDataViews } from './active-threats';
-import { ScanCallout } from './scan-callout';
 
 const SCAN_TABS = [
 	{ name: 'active', title: __( 'Active threats' ) },
@@ -64,36 +64,47 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 				/>
 			}
 		>
-			<CalloutOverlay
-				showCallout={ ! hasHostingFeature( site, HostingFeatures.SCAN ) }
-				callout={ <ScanCallout siteSlug={ site.slug } /> }
-				main={
-					<Card>
-						<CardHeader style={ { paddingBottom: '0' } }>
-							<TabPanel
-								activeClass="is-active"
-								tabs={ SCAN_TABS }
-								onSelect={ ( tabName ) => {
-									if ( tabName === 'active' || tabName === 'history' ) {
-										handleTabChange( tabName );
-									}
-								} }
-								initialTabName={ scanTab }
-							>
-								{ () => null }
-							</TabPanel>
-						</CardHeader>
-						<CardBody>
-							{ scanTab === 'active' && <ActiveThreatsDataViews site={ site } /> }
-							{ scanTab === 'history' && (
-								<Text as="p" variant="muted">
-									{ __( 'So far, there are no archived threats on your site.' ) }
-								</Text>
-							) }
-						</CardBody>
-					</Card>
+			<HostingFeatureGatedWithCallout
+				site={ site }
+				feature={ HostingFeatures.SCAN }
+				tracksFeatureId="scan"
+				asOverlay
+				upsellIcon={ shield }
+				upsellTitle={ __( 'Scan for security threats' ) }
+				upsellImage={ illustrationUrl }
+				upsellDescription={
+					<Text as="p" variant="muted">
+						{ /* @TODO: update copy when the design is ready and add translation */ }
+						Automated daily scans check for malware and security vulnerabilities, with automated
+						fixes for many issues.
+					</Text>
 				}
-			/>
+			>
+				<Card>
+					<CardHeader style={ { paddingBottom: '0' } }>
+						<TabPanel
+							activeClass="is-active"
+							tabs={ SCAN_TABS }
+							onSelect={ ( tabName ) => {
+								if ( tabName === 'active' || tabName === 'history' ) {
+									handleTabChange( tabName );
+								}
+							} }
+							initialTabName={ scanTab }
+						>
+							{ () => null }
+						</TabPanel>
+					</CardHeader>
+					<CardBody>
+						{ scanTab === 'active' && <ActiveThreatsDataViews site={ site } /> }
+						{ scanTab === 'history' && (
+							<Text as="p" variant="muted">
+								{ __( 'So far, there are no archived threats on your site.' ) }
+							</Text>
+						) }
+					</CardBody>
+				</Card>
+			</HostingFeatureGatedWithCallout>
 		</PageLayout>
 	);
 }
