@@ -66,6 +66,7 @@ $blueberry-color: #3858e9;
 	box-sizing: border-box;
 	text-wrap: pretty;
 	word-break: break-word;
+	max-width: 100%;
 
 	&.is-sending {
 		opacity: 0.5;

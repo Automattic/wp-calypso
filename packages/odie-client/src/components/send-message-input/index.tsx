@@ -124,7 +124,11 @@ export const OdieSendMessageButton = () => {
 				metadata: { temporary_id: crypto.randomUUID() },
 			} as Message;
 
-			sendMessage( messageObj );
+			sendMessage( messageObj ).catch( ( error ) => {
+				if ( error?.type === 'abort' ) {
+					setInputValue( inputValue );
+				}
+			} );
 
 			// Clear input after zendesk messages are sent
 			if ( chat?.provider === 'zendesk' ) {
