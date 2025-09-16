@@ -11,6 +11,11 @@ interface ContentProcessorProps {
  * @returns {string|null} - First detected URL or null if none found.
  */
 export function detectUrls( content: string ): string | null {
+	// Skip URL detection if content contains media elements
+	if ( /<(img|video|audio)[^>]*>/i.test( content ) ) {
+		return null;
+	}
+
 	// First, look for plain text URLs (not in HTML tags)
 	const urlRegex = /(https?:\/\/[^\s<>"']+)/g;
 	const plainTextUrlMatches = content.matchAll( urlRegex );
@@ -28,7 +33,10 @@ export function detectUrls( content: string ): string | null {
 	// Then, extract URLs from href attributes
 	const hrefRegex = /<a[^>]+href=["']([^"']+)["'][^>]*>(.*?)<\/a>/gi;
 	let match;
+	let fallbackUrl: string | null = null;
 
+	// First pass: look for links where the link text is a URL
+	hrefRegex.lastIndex = 0; // Reset regex position
 	while ( ( match = hrefRegex.exec( content ) ) !== null ) {
 		const [ , url, linkText ] = match;
 		// Only include http/https URLs, skip mentions/hashtags
@@ -37,11 +45,21 @@ export function detectUrls( content: string ): string | null {
 			! linkText.trim().startsWith( '@' ) &&
 			! linkText.trim().startsWith( '#' )
 		) {
-			return url; // Return immediately after finding the first valid URL
+			// Check if link text looks like a URL
+			const linkTextTrimmed = linkText.trim();
+			if ( linkTextTrimmed.match( /^https?:\/\// ) ) {
+				return url; // Prioritize links where text is also a URL
+			}
+
+			// Store as fallback if we haven't found one yet
+			if ( ! fallbackUrl ) {
+				fallbackUrl = url;
+			}
 		}
 	}
 
-	return null;
+	// Return fallback URL if found
+	return fallbackUrl;
 }
 
 /**

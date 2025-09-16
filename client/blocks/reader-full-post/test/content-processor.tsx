@@ -129,4 +129,84 @@ describe( 'detectUrls', () => {
 			expect( url ).toBe( 'https://example.com' );
 		} );
 	} );
+
+	describe( 'media element detection', () => {
+		it( 'should return null when content contains images', () => {
+			const content = `
+				<p>Check out this site: https://example.com</p>
+				<img src="image.jpg" alt="Test image" />
+			`;
+			const url = detectUrls( content );
+			expect( url ).toBe( null );
+		} );
+
+		it( 'should return null when content contains videos', () => {
+			const content = `
+				<a href="https://example.com">Example Link</a>
+				<video src="video.mp4" controls></video>
+			`;
+			const url = detectUrls( content );
+			expect( url ).toBe( null );
+		} );
+
+		it( 'should return null when content contains audio', () => {
+			const content = `
+				Visit https://test.com for more info
+				<audio src="audio.mp3" controls></audio>
+			`;
+			const url = detectUrls( content );
+			expect( url ).toBe( null );
+		} );
+
+		it( 'should return null when content contains multiple media types', () => {
+			const content = `
+				<a href="https://example.com">Link</a>
+				<img src="image.jpg" alt="Image" />
+				<video src="video.mp4"></video>
+				<audio src="audio.mp3"></audio>
+				https://plaintext.com
+			`;
+			const url = detectUrls( content );
+			expect( url ).toBe( null );
+		} );
+
+		it( 'should detect URLs normally when no media elements are present', () => {
+			const content = `
+				<p>Some text content</p>
+				<a href="https://example.com">Example Link</a>
+				<div>More content</div>
+			`;
+			const url = detectUrls( content );
+			expect( url ).toBe( 'https://example.com' );
+		} );
+
+		it( 'should prioritize HTML links where link text is a URL', () => {
+			const content = `
+				<a href="https://example.com">Click here</a>
+				<a href="https://test.com">https://test.com</a>
+			`;
+			const url = detectUrls( content );
+			expect( url ).toBe( 'https://test.com' );
+		} );
+
+		it( 'should prioritize URL link text even when it appears later', () => {
+			const content = `
+				<a href="https://first.com">First Link</a>
+				<a href="https://second.com">Some text</a>
+				<a href="https://third.com">https://third.com</a>
+				<a href="https://fourth.com">Another link</a>
+			`;
+			const url = detectUrls( content );
+			expect( url ).toBe( 'https://third.com' );
+		} );
+
+		it( 'should fall back to regular HTML links if no URL link text found', () => {
+			const content = `
+				<a href="https://example.com">Click here</a>
+				<a href="https://test.com">Visit this site</a>
+			`;
+			const url = detectUrls( content );
+			expect( url ).toBe( 'https://example.com' );
+		} );
+	} );
 } );
