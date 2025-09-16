@@ -17,11 +17,11 @@ export default function FeaturedCards() {
 			{ domain.subtype.id !== DomainSubtype.DOMAIN_CONNECTION && (
 				<FeaturedCardRenew domain={ domain } />
 			) }
-			{ domain.subtype.id !== DomainSubtype.DOMAIN_CONNECTION && (
-				<FeaturedCardSite domain={ domain } />
-			) }
+			<FeaturedCardSite domain={ domain } />
 			<FeaturedCardEmails domain={ domain } />
-			<FeaturedCardPrivacy domain={ domain } />
+			{ domain.subtype.id !== DomainSubtype.DOMAIN_CONNECTION && (
+				<FeaturedCardPrivacy domain={ domain } />
+			) }
 		</Grid>
 	);
 }
