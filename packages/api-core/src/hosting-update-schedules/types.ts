@@ -16,16 +16,20 @@ export type HostingUpdateScheduleStatus =
 	| 'failure'
 	| 'failure-and-rollback'
 	| 'failure-and-rollback-fail';
+export type HostingUpdateScheduleFrequency = 'daily' | 'weekly';
+export type HostingUpdateSchedulePlugin = `${ string }/${ string }.php`;
 export interface HostingUpdateSchedule {
 	timestamp: number;
-	schedule: string;
-	args: string[];
+	schedule: HostingUpdateScheduleFrequency;
+	args: HostingUpdateSchedulePlugin[];
 	interval: number;
-	last_run_timestamp: number;
-	last_run_status: HostingUpdateScheduleStatus;
+	last_run_timestamp: number | null;
+	last_run_status: HostingUpdateScheduleStatus | null;
 	active: boolean;
 }
 
 export interface HostingUpdateScheduleSites {
-	[ key: string ]: Record< string, HostingUpdateSchedule >;
+	[ siteId: string ]: {
+		[ scheduleId: string ]: HostingUpdateSchedule;
+	};
 }
