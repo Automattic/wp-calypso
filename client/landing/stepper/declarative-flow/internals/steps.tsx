@@ -168,7 +168,7 @@ export const STEPS = {
 	},
 
 	SITE_SPEC: {
-		slug: '', // Empty slug means no step in URL
+		slug: 'site-spec',
 		asyncComponent: () => import( './steps-repository/site-spec' ),
 	},
 
