@@ -68,14 +68,14 @@ export const GuidedTourContextProvider = ( {
 	const startTour = useCallback( () => {
 		if ( ! isStartedRef.current ) {
 			isStartedRef.current = true;
-			recordTracksEvent( 'calypso_dashboard_start_tour', { tourId } );
+			recordTracksEvent( 'calypso_dashboard_start_tour', { tour_id: tourId } );
 		}
 	}, [ isStartedRef, tourId, recordTracksEvent ] );
 
 	const endTour = useCallback( () => {
 		// Save the dismissed timestamp so we can show the new steps that are added after it in the future.
 		updateCompletedTimestamp( new Date().toISOString() );
-		recordTracksEvent( 'calypso_dashboard_end_tour', { tourId } );
+		recordTracksEvent( 'calypso_dashboard_end_tour', { tour_id: tourId } );
 	}, [ tourId, updateCompletedTimestamp, recordTracksEvent ] );
 
 	const previousStep = useCallback( () => {
