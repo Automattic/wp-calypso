@@ -155,7 +155,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	const filter = useMemo( () => toFilterParams( { view, logType } ), [ view, logType ] );
 
 	const siteLogQueryParams: SiteLogsParams | null =
-		logType !== 'activity'
+		logType !== LogType.ACTIVITY
 			? {
 					logType: logType as LogType,
 					start: startSec,
@@ -166,7 +166,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 			  }
 			: null;
 	const activityLogQueryParams: ActivityLogParams | null =
-		logType === 'activity'
+		logType === LogType.ACTIVITY
 			? {
 					sort_order: view.sort?.direction,
 					number: view.perPage || 20,
@@ -389,25 +389,25 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	// Simple header const to eliminate duplication
 	const LogsHeader = (
 		<>
-			{ logType !== 'activity' && (
-				<LogsDownloader
-					siteId={ siteId }
-					siteSlug={ site.slug }
-					logType={ logType as LogType }
-					startSec={ startSec }
-					endSec={ endSec }
-					filter={ filter }
-					onSuccess={ ( message ) => setNotice( { variant: 'success', message } ) }
-					onError={ ( message ) => setNotice( { variant: 'error', message } ) }
-				/>
-			) }
-			{ logType !== 'activity' && (
-				<ToggleControl
-					__nextHasNoMarginBottom
-					label={ __( 'Auto-refresh' ) }
-					checked={ autoRefresh }
-					onChange={ handleAutoRefreshClick }
-				/>
+			{ logType !== LogType.ACTIVITY && (
+				<>
+					<LogsDownloader
+						siteId={ siteId }
+						siteSlug={ site.slug }
+						logType={ logType as LogType }
+						startSec={ startSec }
+						endSec={ endSec }
+						filter={ filter }
+						onSuccess={ ( message ) => setNotice( { variant: 'success', message } ) }
+						onError={ ( message ) => setNotice( { variant: 'error', message } ) }
+					/>
+					<ToggleControl
+						__nextHasNoMarginBottom
+						label={ __( 'Auto-refresh' ) }
+						checked={ autoRefresh }
+						onChange={ handleAutoRefreshClick }
+					/>
+				</>
 			) }
 		</>
 	);
