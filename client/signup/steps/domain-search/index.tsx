@@ -10,9 +10,12 @@ export type StepProps = {
 	goToStep: () => void;
 	goToNextStep: () => void;
 	submitSignupStep: ( step: unknown, dependencies: unknown ) => void;
+	queryObject: Record< string, string | undefined >;
 };
 
 export default function DomainSearchStep( props: StepProps ) {
+	const allowedTlds = props.queryObject.tld?.split( ',' ) ?? [];
+
 	const getContent = () => {
 		return (
 			<WPCOMDomainSearch
@@ -26,6 +29,7 @@ export default function DomainSearchStep( props: StepProps ) {
 					priceRules: {
 						forceRegularPrice: isMonthlyOrFreeFlow( props.flowName ),
 					},
+					allowedTlds,
 				} }
 			/>
 		);

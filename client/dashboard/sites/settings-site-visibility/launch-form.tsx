@@ -147,6 +147,7 @@ export function LaunchForm( {
 			siteSlug: site.slug,
 			new: site.name,
 			hide_initial_query: 'yes',
+			back_to: window.location.href.replace( window.location.origin, '' ),
 		} );
 	};
 
