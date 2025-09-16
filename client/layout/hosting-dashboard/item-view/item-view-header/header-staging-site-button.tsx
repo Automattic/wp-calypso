@@ -23,7 +23,6 @@ import { getStagingSiteStatus } from 'calypso/state/staging-site/selectors/get-s
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 const stagingSiteAddSuccessNoticeId = 'staging-site-add-success';
-const USE_STAGING_SITE_LOCK_QUERY_KEY = 'staging-site-lock';
 
 interface HeaderStagingSiteButtonProps {
 	siteId: number;
@@ -128,11 +127,9 @@ export default function HeaderStagingSiteButton( {
 				removeAllNotices();
 			},
 			onSuccess: ( response ) => {
-				queryClient.invalidateQueries( { queryKey: [ USE_STAGING_SITE_LOCK_QUERY_KEY, siteId ] } );
 				dispatch( fetchAutomatedTransferStatus( response.id ) );
 			},
 			onError: ( error ) => {
-				queryClient.invalidateQueries( { queryKey: [ USE_STAGING_SITE_LOCK_QUERY_KEY, siteId ] } );
 				dispatch(
 					recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_failure', {
 						code: error.code,
