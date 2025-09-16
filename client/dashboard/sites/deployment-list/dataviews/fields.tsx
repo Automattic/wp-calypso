@@ -10,7 +10,7 @@ import { __ } from '@wordpress/i18n';
 import { ReactNode, useMemo, useState } from 'react';
 import TimeSince from '../../../components/time-since';
 import { BranchDisplay } from '../branch-display';
-import { DeploymentLogsModal } from '../deployment-logs-modal';
+import { DeploymentLogsModal } from '../deployment-logs/deployment-logs-modal';
 import { DeploymentStatusBadge, DeploymentStatusValue } from '../deployment-status-badge';
 import type { DeploymentRunWithDeploymentInfo } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
