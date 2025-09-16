@@ -27,29 +27,28 @@ export const HelpCenterContactButton = () => {
 	};
 
 	return (
-		<Button
-			onClick={ handleClick }
-			variant="secondary"
-			className="button help-center-contact-page__button"
-			__next40pxDefaultSize
-		>
-			{ __( 'Need help? Get in touch', __i18n_text_domain__ ) }
-		</Button>
+		<CardFooter className="help-center__container-footer">
+			<Button
+				onClick={ handleClick }
+				variant="secondary"
+				className="button help-center-contact-page__button"
+				__next40pxDefaultSize
+			>
+				{ __( 'Need help? Get in touch', __i18n_text_domain__ ) }
+			</Button>
+		</CardFooter>
 	);
 };
 
 const HelpCenterFooter: React.FC = () => {
 	return (
 		<>
-			<CardFooter className="help-center__container-footer">
-				<div className="help-center-footer-blender"></div>
-				<Routes>
-					<Route path="/" element={ <HelpCenterContactButton /> } />
-					<Route path="/post" element={ <HelpCenterContactButton /> } />
-					<Route path="/chat-history" element={ <HelpCenterContactButton /> } />
-					<Route path="*" element={ null } />
-				</Routes>
-			</CardFooter>
+			<Routes>
+				<Route path="/" element={ <HelpCenterContactButton /> } />
+				<Route path="/post" element={ <HelpCenterContactButton /> } />
+				<Route path="/chat-history" element={ <HelpCenterContactButton /> } />
+				<Route path="*" element={ null } />
+			</Routes>
 		</>
 	);
 };
