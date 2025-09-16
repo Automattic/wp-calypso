@@ -170,6 +170,15 @@ describe( 'detectUrls', () => {
 			expect( url ).toBe( null );
 		} );
 
+		it( 'should return null when content contains iframes', () => {
+			const content = `
+				<p>Check out this site: https://example.com</p>
+				<iframe src="https://youtube.com/embed/video123" width="560" height="315"></iframe>
+			`;
+			const url = detectUrls( content );
+			expect( url ).toBe( null );
+		} );
+
 		it( 'should detect URLs normally when no media elements are present', () => {
 			const content = `
 				<p>Some text content</p>

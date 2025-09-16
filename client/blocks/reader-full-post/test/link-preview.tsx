@@ -56,6 +56,7 @@ describe( 'LinkPreview', () => {
 <html>
 <head>
 	<title>${ titleWithEntities }</title>
+	<meta property="og:description" content="Test description" />
 </head>
 <body>
 	<h1>Test Page</h1>
@@ -94,7 +95,7 @@ describe( 'LinkPreview', () => {
 		} );
 	} );
 
-	it( 'should resolve relative URLs for favicons only', async () => {
+	it( 'should resolve relative URLs for favicons and images', async () => {
 		const mockHtml = `
 <!DOCTYPE html>
 <html>
@@ -118,9 +119,9 @@ describe( 'LinkPreview', () => {
 		render( <LinkPreview url="https://example.com/test" /> );
 
 		await waitFor( () => {
-			// Check that favicon relative URLs are resolved but OpenGraph images are not
+			// Check that both favicon and image relative URLs are resolved
 			const image = screen.getByRole( 'img', { name: /test page/i } );
-			expect( image ).toHaveAttribute( 'src', '/images/preview.jpg' );
+			expect( image ).toHaveAttribute( 'src', 'https://example.com/images/preview.jpg' );
 
 			// Find favicon by its CSS class since it might not have alt text
 			const favicon = document.querySelector( '.reader-full-post__link-preview-favicon' );
@@ -166,6 +167,7 @@ describe( 'LinkPreview', () => {
 <html>
 <head>
 	<meta property="og:title" content="Test Page" />
+	<meta property="og:description" content="Test description" />
 	<link rel="icon" href="/broken-favicon.ico" />
 </head>
 <body>
@@ -206,6 +208,7 @@ describe( 'LinkPreview', () => {
 <html>
 <head>
 	<meta property="og:title" content="Test Page" />
+	<meta property="og:description" content="Test description" />
 	<link rel="shortcut icon" href="https://example.org/wp-content/themes/theme/assets/img/touch/apple-touch-icon.png" />
 	<link href="https://example.org/wp-content/themes/theme/favicon.ico" type="image/x-icon" rel="icon" />
 	<link href="https://example.org/wp-content/themes/theme/favicon.ico" type="image/x-icon" rel="shortcut icon" />
