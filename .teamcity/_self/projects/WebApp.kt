@@ -956,7 +956,34 @@ object PlaywrightTestPRMatrix : BuildType({
 		param("REPORT_URL", "https://automattic.github.io/wp-calypso-test-results/r")
 	}
 
-	steps {		
+	steps {	
+		bashNodeScript {
+			name = "Determine Calypso URL"
+			id = "run_e2e_tests"
+			scriptContent = """
+				echo "Getting Calypso url for build ${BuildDockerImage.depParamRefs.buildNumber}"
+				chmod +x ./bin/get-calypso-live-url.sh
+				CALYPSO_BASE_URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
+				if [[ ${'$'}? -ne 0 ]]; then
+					// Command failed. CALYPSO_BASE_URL contains stderr
+					echo ${'$'}CALYPSO_BASE_URL
+					exit 1
+				fi
+				
+				export CALYPSO_BASE_URL
+			"""
+			dockerImage = "%docker_image_e2e%"
+		}
+	}
+
+    CalypsoE2ETestsBuildTemplate().apply {
+        this.steps.forEach {
+            stepsOrder.add(it.id)
+        }
+    }
+
+	steps {
+
 		bashNodeScript {
 			name = "Upload report and send Slack notification"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE

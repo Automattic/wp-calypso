@@ -63,17 +63,6 @@ object CalypsoE2ETestsBuildTemplate : Template({
 			name = "Run e2e tests"
 			id = "run_e2e_tests"
 			scriptContent = """
-				echo "Getting Calypso url for build ${BuildDockerImage.depParamRefs.buildNumber}"
-				chmod +x ./bin/get-calypso-live-url.sh
-				CALYPSO_BASE_URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
-				if [[ ${'$'}? -ne 0 ]]; then
-					// Command failed. CALYPSO_BASE_URL contains stderr
-					echo ${'$'}CALYPSO_BASE_URL
-					exit 1
-				fi
-				
-				export CALYPSO_BASE_URL
-
 				# Check if test/e2e or packages/calypso-e2e files have been changed
 				CHANGED_FILES=${'$'}(git diff --name-only refs/remotes/origin/trunk...HEAD)
 				if echo "${'$'}CHANGED_FILES" | grep -q -E "^(test/e2e/|packages/calypso-e2e/)"; then
@@ -83,6 +72,8 @@ object CalypsoE2ETestsBuildTemplate : Template({
 					echo "No changes in test/e2e/ or packages/calypso-e2e/, running @calypso-pr tests only"
 					GREP_FLAG="--grep=@calypso-pr"
 				fi
+
+        echo "CALYPSO_BASE_URL=${'$'}CALYPSO_BASE_URL"
 
 				cd test/e2e
 				echo "Running Playwright tests for project: %playwrightProject%"
