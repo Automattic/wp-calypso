@@ -7,7 +7,6 @@ import { render } from '../../../test-utils';
 import StagingSiteDeleteModal from '../index';
 import type { Site } from '@automattic/api-core';
 
-// Mock the hooks and dependencies
 const mockMutate = jest.fn();
 
 jest.mock( '@automattic/calypso-analytics', () => ( {
@@ -48,7 +47,6 @@ jest.mock( '@tanstack/react-query', () => ( {
 	} ) ),
 } ) );
 
-// Test data factory
 const createMockSite = ( options = {} ): Site =>
 	( {
 		ID: 2,
