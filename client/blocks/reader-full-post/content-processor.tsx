@@ -6,13 +6,34 @@ interface ContentProcessorProps {
 }
 
 /**
+ * Validates if a URL is properly formatted and from an allowed domain
+ * @param {string} url - The URL to validate
+ * @returns {boolean} - True if URL is valid and allowed
+ */
+function isValidUrl( url: string ): boolean {
+	try {
+		const urlObj = new URL( url );
+
+		// Ensure it's http or https
+		if ( ! [ 'http:', 'https:' ].includes( urlObj.protocol ) ) {
+			return false;
+		}
+
+		// Reject URLs with invalid hostnames (must contain at least one dot for TLD)
+		return urlObj.hostname.includes( '.' );
+	} catch {
+		return false;
+	}
+}
+
+/**
  * Detects URLs in HTML content - both plain text URLs and URLs from href attributes.
  * @param {string} content - The HTML content to scan for URLs.
  * @returns {string|null} - First detected URL or null if none found.
  */
 export function detectUrls( content: string ): string | null {
 	// Skip URL detection if content contains media elements
-	if ( /<(img|video|audio)[^>]*>/i.test( content ) ) {
+	if ( /<(img|video|audio|iframe)[^>]*>/i.test( content ) ) {
 		return null;
 	}
 
@@ -24,8 +45,8 @@ export function detectUrls( content: string ): string | null {
 		const url = urlMatch[ 0 ];
 		const position = urlMatch.index;
 
-		// Check if this URL is NOT part of an HTML tag
-		if ( position !== undefined && ! isUrlInHtmlTag( content, position ) ) {
+		// Check if this URL is NOT part of an HTML tag and is valid
+		if ( position !== undefined && ! isUrlInHtmlTag( content, position ) && isValidUrl( url ) ) {
 			return url; // Return immediately after finding the first valid URL
 		}
 	}
@@ -39,14 +60,14 @@ export function detectUrls( content: string ): string | null {
 	hrefRegex.lastIndex = 0; // Reset regex position
 	while ( ( match = hrefRegex.exec( content ) ) !== null ) {
 		const [ , url, linkText ] = match;
-		// Only include http/https URLs, skip mentions/hashtags
+		// Only include valid URLs, skip mentions/hashtags
 		if (
-			url.startsWith( 'http' ) &&
+			isValidUrl( url ) &&
 			! linkText.trim().startsWith( '@' ) &&
 			! linkText.trim().startsWith( '#' )
 		) {
-			// Check if link text looks like a URL
-			const linkTextTrimmed = linkText.trim();
+			// Check if link text looks like a URL (strip HTML tags first)
+			const linkTextTrimmed = linkText.replace( /<[^>]*>/g, '' ).trim();
 			if ( linkTextTrimmed.match( /^https?:\/\// ) ) {
 				return url; // Prioritize links where text is also a URL
 			}

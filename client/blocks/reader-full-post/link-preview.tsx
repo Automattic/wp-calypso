@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { Card, Spinner } from '@automattic/components';
+import { Card } from '@automattic/components';
 import React, { useState, useEffect } from 'react';
 import { getRelativeTimeString } from 'calypso/dashboard/utils/datetime';
 import { decodeEntities } from 'calypso/lib/formatting';
@@ -38,11 +38,26 @@ interface OpenGraphData {
 }
 
 /**
+ * Resolves a relative URL to an absolute URL using a base URL
+ * @param {string} url - The URL to resolve (may be relative or absolute)
+ * @param {string} baseUrl - The base URL to resolve against
+ * @returns {string} - The resolved absolute URL
+ */
+function resolveUrl( url: string, baseUrl: string ): string {
+	try {
+		return new URL( url, baseUrl ).href;
+	} catch {
+		return url; // Return original if resolution fails
+	}
+}
+
+/**
  * Parses OpenGraph tags from HTML content
  * @param {string} html - HTML content to parse
+ * @param {string} baseUrl - The base URL for resolving relative URLs
  * @returns {Object} - Extracted OpenGraph data
  */
-function parseOpenGraphTags( html: string ): OpenGraphData {
+function parseOpenGraphTags( html: string, baseUrl: string ): OpenGraphData {
 	const ogData: OpenGraphData = {};
 
 	// Helper function to extract meta tag content
@@ -70,7 +85,9 @@ function parseOpenGraphTags( html: string ): OpenGraphData {
 		if ( value ) {
 			// Decode HTML entities for text content
 			const shouldDecode = [ 'title', 'description', 'imageAlt', 'siteName' ].includes( key );
-			ogData[ key ] = shouldDecode ? decodeEntities( value ) : value;
+			const processedValue = shouldDecode ? decodeEntities( value ) : value;
+			// Resolve relative URLs for images
+			ogData[ key ] = key === 'image' ? resolveUrl( processedValue, baseUrl ) : processedValue;
 		}
 	}
 
@@ -82,13 +99,23 @@ function parseOpenGraphTags( html: string ): OpenGraphData {
 		}
 	}
 
-	// Extract favicon from link tags
+	// Extract favicon from link tags, prioritizing image/x-icon type
 	if ( ! ogData.favicon ) {
-		const faviconMatch =
-			html.match( /<link[^>]+rel=["'](?:icon|shortcut icon)["'][^>]+href=["']([^"']*?)["']/i ) ||
-			html.match( /<link[^>]+href=["']([^"']*?)["'][^>]+rel=["'](?:icon|shortcut icon)["']/i );
-		if ( faviconMatch ) {
-			ogData.favicon = faviconMatch[ 1 ];
+		// First try to find image/x-icon favicons
+		const xIconMatch =
+			html.match( /<link[^>]*type=["']image\/x-icon["'][^>]*href=["']([^"']*?)["']/i ) ||
+			html.match( /<link[^>]*href=["']([^"']*?)["'][^>]*type=["']image\/x-icon["']/i );
+
+		if ( xIconMatch ) {
+			ogData.favicon = resolveUrl( xIconMatch[ 1 ], baseUrl );
+		} else {
+			// Fallback to any favicon
+			const faviconMatch =
+				html.match( /<link[^>]+rel=["'](?:icon|shortcut icon)["'][^>]+href=["']([^"']*?)["']/i ) ||
+				html.match( /<link[^>]+href=["']([^"']*?)["'][^>]+rel=["'](?:icon|shortcut icon)["']/i );
+			if ( faviconMatch ) {
+				ogData.favicon = resolveUrl( faviconMatch[ 1 ], baseUrl );
+			}
 		}
 	}
 
@@ -103,7 +130,7 @@ function parseOpenGraphTags( html: string ): OpenGraphData {
  * @param {string} props.url - The URL to preview
  * @returns {React.Component} Link preview component
  */
-export default function LinkPreview( { url }: LinkPreviewProps ): JSX.Element {
+export default function LinkPreview( { url }: LinkPreviewProps ): JSX.Element | null {
 	const [ previewData, setPreviewData ] = useState< PreviewData | null >( null );
 	const [ isLoading, setIsLoading ] = useState< boolean >( true );
 	const [ error, setError ] = useState< string | null >( null );
@@ -113,23 +140,25 @@ export default function LinkPreview( { url }: LinkPreviewProps ): JSX.Element {
 			try {
 				setIsLoading( true );
 
-				// For development/demo, let's try a CORS proxy approach
 				const corsProxy = 'https://api.allorigins.win/raw?url=';
 
 				try {
 					// Try to fetch the page directly using CORS proxy
 					const response = await fetch( corsProxy + encodeURIComponent( url ) );
+
 					if ( response.ok ) {
 						const html = await response.text();
-						const ogData = parseOpenGraphTags( html );
+						const ogData = parseOpenGraphTags( html, url );
 
-						if ( ogData.title ) {
+						// Only create preview if we have title AND at least one other useful piece of metadata
+						if ( ogData.title && ( ogData.description || ogData.image || ogData.siteName ) ) {
 							const domain = new URL( url ).hostname;
 							setPreviewData( {
 								title: ogData.title || domain,
 								description: ogData.description || url,
 								image: ogData.image || undefined,
-								favicon: ogData.favicon || `https://www.google.com/s2/favicons?domain=${ domain }`,
+								favicon:
+									ogData.favicon || `https://www.google.com/s2/favicons?domain=${ domain }&sz=48`,
 								siteName: ogData.siteName || domain,
 								type: ogData.type || undefined,
 								publishedTime: ogData.publishedTime || undefined,
@@ -145,50 +174,22 @@ export default function LinkPreview( { url }: LinkPreviewProps ): JSX.Element {
 				} catch ( apiError ) {
 					// Silently continue to fallback
 				}
-
-				// Fallback to basic metadata
-				const domain = new URL( url ).hostname;
-				setPreviewData( {
-					title: domain,
-					description: url,
-					favicon: `https://www.google.com/s2/favicons?domain=${ domain }`,
-					url: url,
-					domain: domain,
-				} );
-
-				setIsLoading( false );
 			} catch ( err ) {
 				setError( 'Could not load preview' );
-				setIsLoading( false );
 			}
+
+			setIsLoading( false );
 		};
 
 		fetchPreviewData();
 	}, [ url ] );
 
-	if ( isLoading ) {
-		return (
-			<Card className="reader-full-post__link-preview is-loading">
-				<Spinner />
-			</Card>
-		);
+	if ( isLoading || error || ! previewData ) {
+		return null;
 	}
-
-	if ( error || ! previewData ) {
-		return (
-			<Card className="reader-full-post__link-preview is-error">
-				<a href={ url } target="_blank" rel="noopener noreferrer">
-					{ url }
-				</a>
-			</Card>
-		);
-	}
-
-	const hasImage = !! previewData.image;
-	const cardClass = `reader-full-post__link-preview ${ hasImage ? 'has-image' : 'no-image' }`;
 
 	return (
-		<Card className={ cardClass }>
+		<Card className="reader-full-post__link-preview">
 			<a
 				href={ url }
 				target="_blank"
@@ -200,6 +201,10 @@ export default function LinkPreview( { url }: LinkPreviewProps ): JSX.Element {
 						src={ previewData.image }
 						alt={ previewData.imageAlt || previewData.title }
 						className="reader-full-post__link-preview-image"
+						onError={ ( e ) => {
+							const target = e.target as HTMLImageElement;
+							target.style.display = 'none';
+						} }
 					/>
 				) }
 				<div className="reader-full-post__link-preview-content">
@@ -209,6 +214,10 @@ export default function LinkPreview( { url }: LinkPreviewProps ): JSX.Element {
 								src={ previewData.favicon }
 								alt=""
 								className="reader-full-post__link-preview-favicon"
+								onError={ ( e ) => {
+									const target = e.target as HTMLImageElement;
+									target.style.display = 'none';
+								} }
 							/>
 						) }
 						<span className="reader-full-post__link-preview-site-name">

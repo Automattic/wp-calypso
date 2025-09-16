@@ -93,4 +93,143 @@ describe( 'LinkPreview', () => {
 			expect( screen.getByText( /Script.*Quotes.*Test/ ) ).toBeInTheDocument();
 		} );
 	} );
+
+	it( 'should resolve relative URLs for favicons only', async () => {
+		const mockHtml = `
+<!DOCTYPE html>
+<html>
+<head>
+	<meta property="og:title" content="Test Page" />
+	<meta property="og:description" content="Test description" />
+	<meta property="og:image" content="/images/preview.jpg" />
+	<link rel="icon" href="/favicon.ico" />
+</head>
+<body>
+	<h1>Test Page</h1>
+</body>
+</html>
+`;
+
+		( fetch as jest.Mock ).mockResolvedValueOnce( {
+			ok: true,
+			text: () => Promise.resolve( mockHtml ),
+		} );
+
+		render( <LinkPreview url="https://example.com/test" /> );
+
+		await waitFor( () => {
+			// Check that favicon relative URLs are resolved but OpenGraph images are not
+			const image = screen.getByRole( 'img', { name: /test page/i } );
+			expect( image ).toHaveAttribute( 'src', '/images/preview.jpg' );
+
+			// Find favicon by its CSS class since it might not have alt text
+			const favicon = document.querySelector( '.reader-full-post__link-preview-favicon' );
+			expect( favicon ).toHaveAttribute( 'src', 'https://example.com/favicon.ico' );
+		} );
+	} );
+
+	it( 'should handle absolute URLs correctly without modification', async () => {
+		const mockHtml = `
+<!DOCTYPE html>
+<html>
+<head>
+	<meta property="og:title" content="Test Page" />
+	<meta property="og:image" content="https://cdn.example.com/image.jpg" />
+	<link rel="icon" href="https://static.example.com/favicon.ico" />
+</head>
+<body>
+	<h1>Test Page</h1>
+</body>
+</html>
+`;
+
+		( fetch as jest.Mock ).mockResolvedValueOnce( {
+			ok: true,
+			text: () => Promise.resolve( mockHtml ),
+		} );
+
+		render( <LinkPreview url="https://example.com/test" /> );
+
+		await waitFor( () => {
+			// Check that absolute URLs remain unchanged for both images and favicons
+			const image = screen.getByRole( 'img', { name: /test page/i } );
+			expect( image ).toHaveAttribute( 'src', 'https://cdn.example.com/image.jpg' );
+
+			const favicon = document.querySelector( '.reader-full-post__link-preview-favicon' );
+			expect( favicon ).toHaveAttribute( 'src', 'https://static.example.com/favicon.ico' );
+		} );
+	} );
+
+	it( 'should fallback to Google favicon service when favicon fails to load', async () => {
+		const mockHtml = `
+<!DOCTYPE html>
+<html>
+<head>
+	<meta property="og:title" content="Test Page" />
+	<link rel="icon" href="/broken-favicon.ico" />
+</head>
+<body>
+	<h1>Test Page</h1>
+</body>
+</html>
+`;
+
+		( fetch as jest.Mock ).mockResolvedValueOnce( {
+			ok: true,
+			text: () => Promise.resolve( mockHtml ),
+		} );
+
+		render( <LinkPreview url="https://example.com/test" /> );
+
+		await waitFor( () => {
+			const favicon = document.querySelector(
+				'.reader-full-post__link-preview-favicon'
+			) as HTMLImageElement;
+			expect( favicon ).toHaveAttribute( 'src', 'https://example.com/broken-favicon.ico' );
+
+			// Simulate favicon load error by firing the error event
+			const errorEvent = new Event( 'error' );
+			Object.defineProperty( errorEvent, 'target', { value: favicon, enumerable: true } );
+			favicon.dispatchEvent( errorEvent );
+
+			// Should fallback to Google favicon service
+			expect( favicon ).toHaveAttribute(
+				'src',
+				'https://www.google.com/s2/favicons?domain=example.com'
+			);
+		} );
+	} );
+
+	it( 'should prioritize image/x-icon type favicons', async () => {
+		const mockHtml = `
+<!DOCTYPE html>
+<html>
+<head>
+	<meta property="og:title" content="Test Page" />
+	<link rel="shortcut icon" href="https://example.org/wp-content/themes/theme/assets/img/touch/apple-touch-icon.png" />
+	<link href="https://example.org/wp-content/themes/theme/favicon.ico" type="image/x-icon" rel="icon" />
+	<link href="https://example.org/wp-content/themes/theme/favicon.ico" type="image/x-icon" rel="shortcut icon" />
+</head>
+<body>
+	<h1>Test Page</h1>
+</body>
+</html>
+`;
+
+		( fetch as jest.Mock ).mockResolvedValueOnce( {
+			ok: true,
+			text: () => Promise.resolve( mockHtml ),
+		} );
+
+		render( <LinkPreview url="https://example.com/test" /> );
+
+		await waitFor( () => {
+			// Should pick the image/x-icon type instead of the first favicon found
+			const favicon = document.querySelector( '.reader-full-post__link-preview-favicon' );
+			expect( favicon ).toHaveAttribute(
+				'src',
+				'https://example.org/wp-content/themes/theme/favicon.ico'
+			);
+		} );
+	} );
 } );
