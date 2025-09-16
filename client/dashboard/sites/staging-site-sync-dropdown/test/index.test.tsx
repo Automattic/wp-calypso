@@ -70,8 +70,8 @@ const createMockStagingSite = ( options = {} ): Site =>
 // Helper functions
 const getDropdownButton = () => screen.getByRole( 'button', { name: /sync/i } );
 const getMenuItem = ( name: string ) => screen.getByRole( 'menuitem', { name } );
-const renderDropdown = ( siteSlug = 'test-site', onSyncStart = mockOnSyncStart ) =>
-	render( <StagingSiteSyncDropdown siteSlug={ siteSlug } onSyncStart={ onSyncStart } /> );
+const renderDropdown = ( siteSlug = 'test-site' ) =>
+	render( <StagingSiteSyncDropdown siteSlug={ siteSlug } onSyncStart={ mockOnSyncStart } /> );
 
 const mockUseQueryWithSite = (
 	site: Site,
