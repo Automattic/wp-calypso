@@ -30,6 +30,13 @@ object CalypsoE2ETestsBuildTemplate : Template({
 	}
 
   steps {
+    bashNodeScript {
+			name = "Template check"
+			scriptContent = """
+				echo "This is the Calypso E2E Tests Build Template"
+			""".trimIndent()
+			dockerImage = "%docker_image_e2e%"
+		}
 		mergeTrunk( skipIfConflict = true )
   }
 })
