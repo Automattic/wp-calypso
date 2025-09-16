@@ -10,6 +10,7 @@ import { check, globe } from '@wordpress/icons';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSiteDisplayUrl } from '../../utils/site-url';
 import type { Site } from '@automattic/api-core';
+import './site-dropdown.scss';
 
 interface SiteOption {
 	value: string;
@@ -102,17 +103,18 @@ export default function PreferencesLoginSiteDropdown( {
 		return (
 			<HStack spacing={ 3 } alignment="left" justify="space-between">
 				<HStack spacing={ 3 } alignment="left">
-					<SiteIcon site={ siteOption.site } size={ 24 } />
+					<SiteIcon site={ siteOption.site } size={ 32 } />
 					<VStack spacing={ 0 }>
-						<Text as="div" weight={ 500 } lineHeight={ 1.2 }>
+						{ /**using inherit to allow the text to be styled as white when hovering, otherwise it won't be readable */ }
+						<Text as="div" weight={ 500 } size={ 14 } lineHeight={ 1.5 } color="inherit">
 							{ item.label }
 						</Text>
-						<Text as="div" variant="muted" size={ 13 } lineHeight={ 1.2 }>
+						<Text as="div" size={ 12 } weight={ 300 } lineHeight={ 1.2 } color="inherit">
 							{ getSiteDisplayUrl( siteOption.site ) }
 						</Text>
 					</VStack>
 				</HStack>
-				{ isSelected && <Icon icon={ check } size={ 18 } /> }
+				{ isSelected && <Icon icon={ check } size={ 24 } /> }
 			</HStack>
 		);
 	};
@@ -121,10 +123,12 @@ export default function PreferencesLoginSiteDropdown( {
 		<ComboboxControl
 			__next40pxDefaultSize
 			__nextHasNoMarginBottom
+			className="dashboard-preferences__login-site-dropdown"
 			label={ hideLabelFromVision ? '' : label }
 			value={ value }
 			onChange={ onChange }
 			options={ options }
+			allowReset={ false }
 			__experimentalRenderItem={ renderItem }
 		/>
 	);
