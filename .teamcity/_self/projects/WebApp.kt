@@ -1366,6 +1366,7 @@ object AuthenticationE2ETests : E2EBuildType(
 	concurrentBuilds = 1,
 	testGroup = "authentication",
 	buildParams = {
+		param("env.CALYPSO_BASE_URL", "https://wordpress.com")
 		param("env.VIEWPORT_NAME", "desktop")
 	},
 	buildFeatures = {

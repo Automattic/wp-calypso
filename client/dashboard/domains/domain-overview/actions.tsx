@@ -27,6 +27,7 @@ import {
 	shouldShowTransferAction,
 	shouldShowDisconnectAction,
 	shouldShowDeleteAction,
+	shouldShowCancelAction,
 	getDeleteTitle,
 	getDeleteLabel,
 	getDeleteDescription,
@@ -143,6 +144,22 @@ export default function Actions() {
 								isBusy={ isDeleting }
 								disabled={ isDeleting }
 								onClick={ () => setIsDeleteDialogOpen( true ) }
+							>
+								{ getDeleteLabel( domain ) }
+							</Button>
+						}
+					/>
+				) }
+				{ shouldShowCancelAction( domain, purchase ) && (
+					<ActionList.ActionItem
+						title={ getDeleteTitle( domain ) }
+						description={ getDeleteDescription( domain ) }
+						actions={
+							<Button
+								size="compact"
+								variant="secondary"
+								isDestructive
+								href={ `/me/purchases/${ domain.domain }/${ purchase?.ID }/cancel` }
 							>
 								{ getDeleteLabel( domain ) }
 							</Button>
