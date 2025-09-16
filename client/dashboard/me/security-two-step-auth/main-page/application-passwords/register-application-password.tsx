@@ -1,4 +1,4 @@
-import { createApplicationPasswordMutation } from '@automattic/api-queries';
+import { createTwoStepAuthApplicationPasswordMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
 	Modal,
@@ -30,7 +30,7 @@ export default function RegisterApplicationPassword( { onClose }: { onClose: () 
 	const [ applicationPassword, setApplicationPassword ] = useState< string | null >( '' );
 
 	const { mutate: registerApplicationPassword, isPending: isRegisteringApplicationPassword } =
-		useMutation( createApplicationPasswordMutation() );
+		useMutation( createTwoStepAuthApplicationPasswordMutation() );
 
 	const handleSubmit = async ( e: React.FormEvent< HTMLFormElement > ) => {
 		e.preventDefault();

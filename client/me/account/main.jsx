@@ -2,8 +2,7 @@ import config from '@automattic/calypso-config';
 import { Button, Card, Dialog, FormInputValidation, FormLabel } from '@automattic/components';
 import { canBeTranslated, getLanguage, isLocaleVariant } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
-import { Badge } from '@automattic/ui';
-import { ExternalLink, __experimentalHStack as HStack } from '@wordpress/components';
+import { ExternalLink } from '@wordpress/components';
 import debugFactory from 'debug';
 import { fixMe, localize } from 'i18n-calypso';
 import { debounce, flowRight as compose, get, map, size } from 'lodash';
@@ -58,8 +57,8 @@ import {
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import { saveUnsavedUserSettings } from 'calypso/state/user-settings/thunks';
 import AccountSettingsCloseLink from './close-link';
+import HostingDashboardOptInForm from './hosting-dashboard-opt-in-form';
 import ToggleLandingPageSettings from './toggle-landing-page';
-import ToggleNewHostingDashboard from './toggle-new-hosting-dashboard.tsx';
 import ToggleUseCommunityTranslator from './toggle-use-community-translator';
 
 import './style.scss';
@@ -103,6 +102,7 @@ class Account extends Component {
 		usernameAction: 'new',
 		validationResult: false,
 		accountSubmitDisable: false,
+		isSubmittingHostingDashboard: false,
 	};
 
 	componentDidUpdate() {
@@ -959,23 +959,6 @@ class Account extends Component {
 				<SectionHeader label={ translate( 'Interface settings' ) } />
 				<Card className="account__settings">
 					<form onSubmit={ this.saveInterfaceSettings }>
-						{ config.isEnabled( 'dashboard/v2' ) && (
-							<FormFieldset className="account__settings-admin-home">
-								<FormLabel id="account__new-hosting-dashboard">
-									<HStack justify="flex-start">
-										<div>{ translate( 'Hosting Dashboard' ) }</div>
-										<Badge intent="info">{ translate( 'New feature' ) }</Badge>
-									</HStack>
-								</FormLabel>
-								<ToggleNewHostingDashboard />
-								<FormSettingExplanation>
-									{ translate(
-										'We’ve recently updated the dashboard with a modern design and smarter tools for managing your hosting.'
-									) }
-								</FormSettingExplanation>
-							</FormFieldset>
-						) }
-
 						<FormFieldset>
 							<FormLabel id="account__language" htmlFor="language">
 								{ translate( 'Interface language' ) }
@@ -1042,6 +1025,8 @@ class Account extends Component {
 						</FormFieldset>
 					</form>
 				</Card>
+
+				{ config.isEnabled( 'dashboard/v2' ) && <HostingDashboardOptInForm /> }
 
 				{ config.isEnabled( 'me/account-close' ) && <AccountSettingsCloseLink /> }
 			</Main>

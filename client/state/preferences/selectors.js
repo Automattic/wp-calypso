@@ -40,6 +40,8 @@ export function getAllRemotePreferences( state ) {
 
 export const preferencesLastFetchedTimestamp = ( state ) => state.preferences.lastFetchedTimestamp;
 
+export const preferencesLastSaveError = ( state ) => state.preferences.lastSaveError;
+
 /**
  * Returns true if preferences have been received from the remote source, or
  * false otherwise.

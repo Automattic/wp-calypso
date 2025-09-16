@@ -8,5 +8,5 @@
 .dashboard-root__layout > main > .dashboard-header-bar {
 	position: sticky;
 	top: 0;
-	z-index: 2; // DataViews header seems to have z-index: 1
+	z-index: 3; // DataViews header seems to have z-index: 1; CalloutOverlay has z-index: 2
 }

@@ -31,7 +31,7 @@ export default function DashboardBackportSiteSettingsRenderer( {
 	const user = useSelector( ( state ) => getCurrentUser( state ) );
 	const site = useSelector( ( state ) => getSite( state, siteSlug ) );
 	const siteSettings = useSelector( ( state ) => site?.ID && getSiteSettings( state, site.ID ) );
-	const analyticsClient = useAnalyticsClient();
+	const analyticsClient = useAnalyticsClient( router );
 
 	// Initialize the root instance.
 	useEffect( () => {

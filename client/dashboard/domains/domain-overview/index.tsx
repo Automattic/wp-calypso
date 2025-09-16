@@ -1,7 +1,9 @@
+import { DomainSubtype } from '@automattic/api-core';
 import { domainQuery, sitePurchaseQuery } from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
+import { Badge } from '@automattic/ui';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { Button } from '@wordpress/components';
+import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { useLocale } from '../../app/locale';
@@ -34,16 +36,28 @@ export default function DomainOverview() {
 		);
 	}, [ domain.domain ] );
 
+	const formattedRegistrationDate = formatDate( new Date( domain.registration_date ), locale, {
+		dateStyle: 'long',
+	} );
+
 	return (
 		<PageLayout
 			size="small"
 			header={
 				<PageHeader
 					title={ wrappableDomainName }
-					// translators: date is the date the domain was registered.
-					description={ sprintf( __( 'Registered on %(date)s' ), {
-						date: formatDate( new Date( domain.registration_date ), locale, { dateStyle: 'long' } ),
-					} ) }
+					description={
+						<HStack spacing={ 2 } alignment="center" justify="flex-start">
+							{ domain.subtype?.label && <Badge>{ domain.subtype.label }</Badge> }
+							<span>
+								{ domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION
+									? // translators: date is the date the domain was connected.
+									  sprintf( __( 'Connected on %(date)s' ), { date: formattedRegistrationDate } )
+									: // translators: date is the date the domain was registered.
+									  sprintf( __( 'Registered on %(date)s' ), { date: formattedRegistrationDate } ) }
+							</span>
+						</HStack>
+					}
 					actions={
 						purchase?.can_explicit_renew && (
 							<Button

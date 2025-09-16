@@ -22,6 +22,7 @@ import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 import {
 	DASHBOARD_SECTION_DEFINITION,
 	DASHBOARD_A4A_SECTION_DEFINITION,
+	DASHBOARD_CIAB_SECTION_DEFINITION,
 } from 'calypso/dashboard/section';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
@@ -997,6 +998,9 @@ export default function pages() {
 
 	// Set up v2-a4a dashboard routing.
 	handleSectionPath( DASHBOARD_A4A_SECTION_DEFINITION, '/v2-a4a', 'entry-dashboard-a4a' );
+
+	// Set up CIAB dashboard routing.
+	handleSectionPath( DASHBOARD_CIAB_SECTION_DEFINITION, '/ciab', 'entry-dashboard-ciab' );
 
 	handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper' );
 	handleSectionPath( SUBSCRIPTIONS_SECTION_DEFINITION, '/subscriptions', 'entry-subscriptions' );

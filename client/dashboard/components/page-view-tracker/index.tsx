@@ -10,7 +10,8 @@ export function PageViewTracker() {
 	useEffect( () => {
 		return router.subscribe( 'onResolved', () => {
 			const leafMatch = router.state.matches.at( -1 );
-			const path = leafMatch?.context?.config?.basePath + leafMatch?.routeId;
+			const basePath = leafMatch?.context?.config?.basePath;
+			const path = ( basePath !== '/' ? basePath : '' ) + leafMatch?.routeId;
 
 			if ( path && ( ! lastPath.current || lastPath.current !== path ) ) {
 				recordPageView( path, document.title );

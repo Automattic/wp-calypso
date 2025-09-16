@@ -8,7 +8,6 @@ import { useState, useEffect } from 'react';
 import { isSimplifiedOnboarding } from 'calypso/landing/stepper/hooks/use-simplified-onboarding';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { addSurvicate } from 'calypso/lib/analytics/survicate';
-import { shouldRenderRewrittenDomainSearch } from 'calypso/lib/domains/should-render-rewritten-domain-search';
 import { useIsDomainSearchV2Enabled } from 'calypso/lib/domains/use-domain-search-v2';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { pathToUrl } from 'calypso/lib/url';
@@ -58,7 +57,7 @@ const withLocale = ( url: string, locale: string ) => {
 
 function initialize() {
 	const steps = [
-		shouldRenderRewrittenDomainSearch() ? STEPS.DOMAIN_SEARCH : STEPS.UNIFIED_DOMAINS,
+		STEPS.UNIFIED_DOMAINS,
 		STEPS.USE_MY_DOMAIN,
 		STEPS.UNIFIED_PLANS,
 		STEPS.SITE_CREATION_STEP,
@@ -99,6 +98,8 @@ const onboarding: FlowV2< typeof initialize > = {
 		const [ useMyDomainTracksEventProps, setUseMyDomainTracksEventProps ] = useState( {} );
 		const { setShouldShowNotification } = usePurchasePlanNotification();
 
+		const playgroundId = useQuery().get( 'playground' );
+
 		/**
 		 * Returns [destination, backDestination] for the post-checkout destination.
 		 */
@@ -109,7 +110,6 @@ const onboarding: FlowV2< typeof initialize > = {
 				return [ `/home/${ providedDependencies.siteSlug }`, null ];
 			}
 
-			const playgroundId = getQueryArg( window.location.href, 'playground' );
 			if ( playgroundId && providedDependencies.siteSlug ) {
 				return [
 					addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
@@ -193,7 +193,12 @@ const onboarding: FlowV2< typeof initialize > = {
 					return navigate( 'plans' );
 				case 'use-my-domain':
 					setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
-					if ( providedDependencies?.mode && providedDependencies?.domain ) {
+					if (
+						providedDependencies &&
+						'mode' in providedDependencies &&
+						providedDependencies.mode &&
+						providedDependencies.domain
+					) {
 						setUseMyDomainTracksEventProps( {
 							...useMyDomainTracksEventProps,
 							signup_domain_origin: SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN,
@@ -301,7 +306,6 @@ const onboarding: FlowV2< typeof initialize > = {
 					return;
 			}
 		};
-
 		return { submit };
 	},
 	useAssertConditions() {

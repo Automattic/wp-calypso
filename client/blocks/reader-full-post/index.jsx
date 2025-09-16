@@ -48,6 +48,8 @@ import {
 	recordPermalinkClick,
 } from 'calypso/reader/stats';
 import { showSelectedPost } from 'calypso/reader/utils';
+import { requestPostComments } from 'calypso/state/comments/actions';
+import { isCommentsApiDisabled } from 'calypso/state/comments/selectors/get-comments-api-disabled';
 import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
 import { userCan } from 'calypso/state/posts/utils';
@@ -97,6 +99,7 @@ export class FullPostView extends Component {
 		layout: PropTypes.oneOf( [ 'default', 'recent' ] ),
 		currentPath: PropTypes.string,
 		isAutomattician: PropTypes.bool,
+		commentsApiDisabled: PropTypes.bool,
 	};
 
 	hasScrolledToCommentAnchor = false;
@@ -132,6 +135,9 @@ export class FullPostView extends Component {
 		if ( this.hasCommentAnchor && ! this.hasScrolledToCommentAnchor ) {
 			this.scrollToComments();
 		}
+
+		// Ensure we check comments API availability for this post
+		this.checkCommentsApiAvailability();
 
 		// Adds WPiFrameResize listener for setting the corect height in embedded iFrames.
 		this.stopResize =
@@ -172,6 +178,9 @@ export class FullPostView extends Component {
 				this.setReadingStartTime();
 				this.resetScroll();
 			}
+
+			// Check comments API availability when post changes
+			this.checkCommentsApiAvailability();
 		}
 
 		if ( this.props.shouldShowComments && ! prevProps.shouldShowComments ) {
@@ -584,6 +593,19 @@ export class FullPostView extends Component {
 		}
 	};
 
+	checkCommentsApiAvailability = () => {
+		const { post, commentsApiDisabled } = this.props;
+
+		// Only check if we don't already know the API is disabled
+		// and if we have a valid post with a site ID
+		if ( ! commentsApiDisabled && post?.site_ID && post?.ID && ! post.is_external ) {
+			this.props.requestPostComments( {
+				siteId: post.site_ID,
+				postId: post.ID,
+			} );
+		}
+	};
+
 	renderMarkAsSenButton = () => {
 		const { post } = this.props;
 		return (
@@ -613,6 +635,7 @@ export class FullPostView extends Component {
 			postId,
 			hasOrganization,
 			isWPForTeamsItem,
+			commentsApiDisabled,
 		} = this.props;
 
 		if ( post.is_error ) {
@@ -725,7 +748,7 @@ export class FullPostView extends Component {
 										/>
 									) }
 
-									{ shouldShowComments( post ) && (
+									{ shouldShowComments( post ) && ! commentsApiDisabled && (
 										<CommentButton
 											key="comment-button"
 											commentCount={ commentCount }
@@ -805,12 +828,13 @@ export class FullPostView extends Component {
 								site={ site }
 								onCommentClick={ this.handleCommentClick }
 								fullPost
+								commentsApiDisabled={ commentsApiDisabled }
 							/>
 
 							{ ! isLoading && <ReaderPerformanceTrackerStop /> }
 
 							<div className="reader-full-post__comments-wrapper" ref={ this.commentsWrapper }>
-								{ shouldShowComments( post ) && (
+								{ ! commentsApiDisabled && shouldShowComments( post ) && (
 									<Comments
 										showNestingReplyArrow
 										post={ post }
@@ -900,6 +924,7 @@ export default connect(
 			currentPath,
 			referralStream: getPreviousPath( state ),
 			previousRoute: getPreviousRoute( state ),
+			commentsApiDisabled: isCommentsApiDisabled( state, siteId ),
 		};
 
 		if ( ! isExternal && siteId ) {
@@ -939,5 +964,6 @@ export default connect(
 		requestMarkAsSeenBlog,
 		requestMarkAsUnseenBlog,
 		showSelectedPost,
+		requestPostComments,
 	}
 )( FullPostView );

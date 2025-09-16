@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import globalPageInstance from '@automattic/calypso-router';
+import { pathToUrl } from 'calypso/lib/url/path-to-url';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
@@ -13,6 +14,7 @@ import {
 	getSiteAdminUrl,
 	isAdminInterfaceWPAdmin,
 } from 'calypso/state/sites/selectors';
+import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import { hasReadersAsLandingPage } from 'calypso/state/sites/selectors/has-reader-as-landing-page';
 import { hasSitesAsLandingPage } from 'calypso/state/sites/selectors/has-sites-as-landing-page';
 import { getSelectedSiteId } from './state/ui/selectors';
@@ -89,8 +91,13 @@ const waitForPrefs = () => async ( dispatch, getState ) => {
 async function getLoggedInLandingPage( { dispatch, getState } ) {
 	await dispatch( waitForPrefs() );
 	const useSitesAsLandingPage = hasSitesAsLandingPage( getState() );
+	const hostingDashboardOptIn = hasHostingDashboardOptIn( getState() );
 
 	if ( useSitesAsLandingPage ) {
+		if ( hostingDashboardOptIn ) {
+			// Use absolute URL to force a hard reload.
+			return pathToUrl( '/v2/sites' );
+		}
 		return '/sites';
 	}
 

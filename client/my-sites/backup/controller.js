@@ -10,9 +10,12 @@ import UpsellSwitch from 'calypso/components/jetpack/upsell-switch';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { setFilter } from 'calypso/state/activity-log/actions';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import BackupContentsPage from './backup-contents-page';
+import { FileBrowserProvider } from './backup-contents-page/file-browser/file-browser-context';
 import BackupUpsell from './backup-upsell';
 import BackupCloneFlow from './clone-flow';
 import BackupsPage from './main';
@@ -22,6 +25,12 @@ import WPCOMBackupUpsell from './wpcom-backup-upsell';
 import WpcomBackupUpsellPlaceholder from './wpcom-backup-upsell-placeholder';
 
 const debug = new Debug( 'calypso:my-sites:backup:controller' );
+
+// Helper function to create Calypso notice handlers
+const createCalypsoNotices = ( store, options = {} ) => ( {
+	showError: ( message ) => store.dispatch( errorNotice( message, options ) ),
+	showSuccess: ( message ) => store.dispatch( successNotice( message, options ) ),
+} );
 
 export function showUpsellIfNoBackup( context, next ) {
 	debug( 'controller: showUpsellIfNoBackup', context.params );
@@ -153,14 +162,21 @@ export function backupRestore( context, next ) {
 /* handles /backup/:site/granular-restore/:rewindId, see `backupGranularRestorePath` */
 export function backupGranularRestore( context, next ) {
 	debug( 'controller: backupGranularRestore', context.params );
+	const state = context.store.getState();
 
 	context.primary = (
-		<>
+		<FileBrowserProvider
+			locale={ getCurrentUserLocale( state ) || 'en' }
+			notices={ createCalypsoNotices( context.store, {
+				duration: 5000,
+				isPersistent: true,
+			} ) }
+		>
 			<BackupRewindFlow
 				rewindId={ context.params.rewindId }
 				purpose={ RewindFlowPurpose.GRANULAR_RESTORE }
 			/>
-		</>
+		</FileBrowserProvider>
 	);
 	next();
 }
@@ -181,6 +197,16 @@ export function backupContents( context, next ) {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 
-	context.primary = <BackupContentsPage siteId={ siteId } rewindId={ context.params.rewindId } />;
+	context.primary = (
+		<FileBrowserProvider
+			locale={ getCurrentUserLocale( state ) || 'en' }
+			notices={ createCalypsoNotices( context.store, {
+				duration: 5000,
+				isPersistent: true,
+			} ) }
+		>
+			<BackupContentsPage siteId={ siteId } rewindId={ context.params.rewindId } />
+		</FileBrowserProvider>
+	);
 	next();
 }

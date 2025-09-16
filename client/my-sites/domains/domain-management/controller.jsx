@@ -87,7 +87,7 @@ export default {
 				analyticsTitle="Domain Management > Edit"
 				component={ DomainManagement.Settings }
 				context={ pageContext }
-				needsDomains
+				needsIndividualDomain
 				needsPlans
 				needsProductsList
 				selectedDomainName={ selectedDomainName }
