@@ -165,7 +165,7 @@ export const siteDeploymentsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'deployments',
 } ).lazy( () =>
-	import( '../../sites/deployment-list' ).then( ( d ) =>
+	import( '../../sites/deployments' ).then( ( d ) =>
 		createLazyRoute( 'site-deployments' )( {
 			component: d.default,
 		} )
