@@ -98,6 +98,8 @@ const onboarding: FlowV2< typeof initialize > = {
 		const [ useMyDomainTracksEventProps, setUseMyDomainTracksEventProps ] = useState( {} );
 		const { setShouldShowNotification } = usePurchasePlanNotification();
 
+		const playgroundId = useQuery().get( 'playground' );
+
 		/**
 		 * Returns [destination, backDestination] for the post-checkout destination.
 		 */
@@ -108,7 +110,6 @@ const onboarding: FlowV2< typeof initialize > = {
 				return [ `/home/${ providedDependencies.siteSlug }`, null ];
 			}
 
-			const playgroundId = getQueryArg( window.location.href, 'playground' );
 			if ( playgroundId && providedDependencies.siteSlug ) {
 				return [
 					addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
@@ -306,7 +307,15 @@ const onboarding: FlowV2< typeof initialize > = {
 			}
 		};
 
-		return { submit };
+		const getGoBack = () => {
+			if ( currentStepSlug === STEPS.UNIFIED_DOMAINS.slug && playgroundId ) {
+				return () => {
+					return navigate( STEPS.PLAYGROUND.slug );
+				};
+			}
+		};
+
+		return { submit, goBack: getGoBack() };
 	},
 	useAssertConditions() {
 		const [ isLoading ] = useIsDomainSearchV2Enabled( this.name );
