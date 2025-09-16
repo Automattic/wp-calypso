@@ -9,7 +9,6 @@ import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalInputControl as InputControl,
 	__experimentalVStack as VStack,
-	__experimentalConfirmDialog as ConfirmDialog,
 	Button,
 	Card,
 	CardBody,
@@ -20,6 +19,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
+import ConfirmModal from '../../components/confirm-modal';
 import Notice from '../../components/notice';
 import { SectionHeader } from '../../components/section-header';
 import type { Field } from '@wordpress/dataviews';
@@ -69,7 +69,6 @@ export default function RecoveryEmail() {
 	};
 
 	const handleRemove = () => {
-		setIsRemoveDialogOpen( false );
 		removeEmail( undefined, {
 			onSuccess: () => {
 				createSuccessNotice( __( 'Your recovery email was removed successfully.' ), {
@@ -81,6 +80,9 @@ export default function RecoveryEmail() {
 				createErrorNotice( error.message || __( 'Failed to remove recovery email.' ), {
 					type: 'snackbar',
 				} );
+			},
+			onSettled: () => {
+				setIsRemoveDialogOpen( false );
 			},
 		} );
 	};
@@ -200,14 +202,18 @@ export default function RecoveryEmail() {
 					</VStack>
 				</CardBody>
 			</Card>
-			<ConfirmDialog
+			<ConfirmModal
 				isOpen={ isRemoveDialogOpen }
-				confirmButtonText={ __( 'Remove email' ) }
+				confirmButtonProps={ {
+					label: __( 'Remove email' ),
+					isBusy: isRemoveEmailPending,
+					disabled: isRemoveEmailPending,
+				} }
 				onCancel={ () => setIsRemoveDialogOpen( false ) }
 				onConfirm={ handleRemove }
 			>
 				{ __( 'Are you sure you want to remove this email?' ) }
-			</ConfirmDialog>
+			</ConfirmModal>
 		</>
 	);
 }

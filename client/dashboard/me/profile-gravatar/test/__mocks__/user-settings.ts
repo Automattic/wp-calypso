@@ -22,4 +22,10 @@ export const mockUserSettings: UserSettings = {
 	two_step_sms_country: 'US',
 	two_step_sms_enabled: false,
 	two_step_sms_phone_number: '1234567890',
+	subscription_delivery_email_default: 'daily',
+	subscription_delivery_mail_option: 'html',
+	subscription_delivery_day: 1,
+	subscription_delivery_hour: 12,
+	subscription_delivery_jabber_default: false,
+	p2_disable_autofollow_on_comment: false,
 };

@@ -5,6 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { domainRoute } from '../../app/router/domains';
 import { SectionHeader } from '../../components/section-header';
 import { SummaryButtonList } from '../../components/summary-button-list';
+import DomainConnectionSetupSummary from '../domain-connection-setup/summary';
 import DomainContactDetailsSettingsSummary from '../domain-contact-details/summary';
 import DnsSettingsSummary from '../domain-dns/summary';
 import DomainForwardingsSettingsSummary from '../domain-forwardings/summary';
@@ -19,6 +20,7 @@ export default function DomainOverviewSettings() {
 		<VStack spacing={ 3 }>
 			<SectionHeader title={ __( 'Settings' ) } level={ 3 } />
 			<SummaryButtonList>
+				<DomainConnectionSetupSummary domain={ domain } />
 				<NameServersSettingsSummary domain={ domain } />
 				<DnsSettingsSummary domain={ domain } />
 				<DomainForwardingsSettingsSummary domain={ domain } />

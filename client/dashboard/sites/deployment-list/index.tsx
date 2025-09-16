@@ -1,7 +1,7 @@
 import { HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { Button, __experimentalText as Text } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useCodeDeploymentsQuery } from '../../../sites/deployments/deployments/use-code-deployments-query';
@@ -10,10 +10,9 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
-import illustrationUrl from './deployments-callout-illustration.svg';
+import { getDeploymentsCalloutProps } from './deployments-callout';
 import { DeploymentsList } from './deployments-list';
-import TriggerDeploymentModal from './dialogs/trigger-deployment';
-import ghIconUrl from './gh-icon.svg';
+import { TriggerDeploymentModal } from './modals/trigger-deployment';
 
 function SiteDeployments() {
 	const { siteSlug } = siteRoute.useParams();
@@ -68,19 +67,8 @@ function SiteDeployments() {
 			<HostingFeatureGatedWithCallout
 				site={ site }
 				feature={ HostingFeatures.DEPLOYMENT }
-				tracksFeatureId="deployments-list"
-				upsellIcon={ <img src={ ghIconUrl } alt={ __( 'GitHub logo' ) } /> }
-				upsellImage={ illustrationUrl }
-				upsellTitle={ __( 'Deploy from GitHub' ) }
-				upsellDescription={
-					<>
-						<Text as="p" variant="muted">
-							{ __(
-								'Connect your GitHub repo directly to your WordPress.com site—with seamless integration, straightforward version control, and automated workflows.'
-							) }
-						</Text>
-					</>
-				}
+				asOverlay
+				{ ...getDeploymentsCalloutProps() }
 			>
 				<DeploymentsList />
 			</HostingFeatureGatedWithCallout>

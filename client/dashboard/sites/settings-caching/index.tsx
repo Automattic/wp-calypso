@@ -18,11 +18,9 @@ import {
 	Button,
 	Tooltip,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useState } from 'react';
 import { ActionList } from '../../components/action-list';
 import { ButtonStack } from '../../components/button-stack';
@@ -72,12 +70,6 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 		enabled: canView,
 	} );
 
-	const edgeCacheStatusMutation = useMutation( siteEdgeCacheStatusMutation( site.ID ) );
-	const edgeCacheClearMutation = useMutation( siteEdgeCacheClearMutation( site.ID ) );
-	const objectCacheClearMutation = useMutation( siteObjectCacheClearMutation( site.ID ) );
-
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-
 	const isEdgeCacheAvailable = site && getIsEdgeCacheAvailable( site );
 	const isEdgeCacheEnabled = isEdgeCacheAvailable && isEdgeCacheActive;
 
@@ -85,48 +77,50 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 		active: isEdgeCacheEnabled ?? false,
 	} );
 
+	const edgeCacheStatusMutation = useMutation( {
+		...siteEdgeCacheStatusMutation( site.ID ),
+		meta: {
+			snackbar: {
+				success: formData.active
+					? __( 'Global edge cache enabled.' )
+					: __( 'Global edge cache disabled.' ),
+				error: __( 'Failed to save global edge cache settings.' ),
+			},
+		},
+	} );
+	const edgeCacheClearMutation = useMutation( {
+		...siteEdgeCacheClearMutation( site.ID ),
+		meta: {
+			snackbar: {
+				success: __( 'Global edge cache cleared.' ),
+				error: __( 'Failed to clear global edge cache.' ),
+			},
+		},
+	} );
+	const objectCacheClearMutation = useMutation( {
+		...siteObjectCacheClearMutation( site.ID ),
+		meta: {
+			snackbar: {
+				success: __( 'Object cache cleared.' ),
+				error: __( 'Failed to clear object cache.' ),
+			},
+		},
+	} );
+
 	const isDirty = isEdgeCacheEnabled !== formData.active;
 	const { isPending } = edgeCacheStatusMutation;
 
 	const handleUpdateEdgeCacheStatus = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		edgeCacheStatusMutation.mutate( formData.active, {
-			onSuccess: () => {
-				createSuccessNotice(
-					formData.active
-						? __( 'Global edge cache enabled.' )
-						: __( 'Global edge cache disabled.' ),
-					{ type: 'snackbar' }
-				);
-			},
-			onError: () => {
-				createErrorNotice( __( 'Failed to save global edge cache settings.' ), {
-					type: 'snackbar',
-				} );
-			},
-		} );
+		edgeCacheStatusMutation.mutate( formData.active );
 	};
 
 	const handleClearEdgeCache = () => {
-		edgeCacheClearMutation.mutate( undefined, {
-			onSuccess: () => {
-				createSuccessNotice( __( 'Global edge cache cleared.' ), { type: 'snackbar' } );
-			},
-			onError: () => {
-				createErrorNotice( __( 'Failed to clear edge cache.' ), { type: 'snackbar' } );
-			},
-		} );
+		edgeCacheClearMutation.mutate( undefined );
 	};
 
 	const handleClearObjectCache = () => {
-		objectCacheClearMutation.mutate( 'Manually clearing again.', {
-			onSuccess: () => {
-				createSuccessNotice( __( 'Object cache cleared.' ), { type: 'snackbar' } );
-			},
-			onError: () => {
-				createErrorNotice( __( 'Failed to clear object cache.' ), { type: 'snackbar' } );
-			},
-		} );
+		objectCacheClearMutation.mutate( 'Manually clearing again.' );
 	};
 
 	const [ isClearingAllCaches, setIsClearingAllCaches ] = useState( false );

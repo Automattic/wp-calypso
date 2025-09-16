@@ -11,10 +11,7 @@ interface TriggerDeploymentModalProps {
 	deployments: CodeDeploymentData[];
 }
 
-export default function TriggerDeploymentModal( {
-	onClose,
-	deployments,
-}: TriggerDeploymentModalProps ) {
+export function TriggerDeploymentModal( { onClose, deployments }: TriggerDeploymentModalProps ) {
 	const { createSuccessNotice } = useDispatch( noticesStore );
 	const [ selectedDeployment, setSelectedDeployment ] = useState< CodeDeploymentData | null >(
 		null
