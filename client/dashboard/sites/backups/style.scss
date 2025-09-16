@@ -1,11 +1,3 @@
-.dashboard-backups__list-grid {
-	@media ( max-width: 782px ) {
-		> *:last-child {
-			order: -1;
-		}
-	}
-}
-
 .dashboard-backups__list-icon {
 	position: relative;
 	top: 50%;

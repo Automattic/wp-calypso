@@ -2,7 +2,7 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
 
-$woocommerce-purple-50: #720EEC;
+$alt-color: #FAF7F3;
 
 .woopayments-overview {
 	.hosting-dashboard-layout__header-actions {
@@ -46,16 +46,47 @@ $woocommerce-purple-50: #720EEC;
 	}
 }
 
+.woopayments-overview__revenue-share-section {
+	.page-section-column__content {
+		height: 100%;
+	}
+}
+
+.woopayments-overview__revenue-share-container {
+	padding: 24px;
+	background-color: $alt-color;
+	height: 100%;
+
+	.woopayments-overview__list .simple-list-icon {
+		fill: #000;
+	}
+}
+
+.woopayments-overview__revenue-share-icon {
+	margin-block-end: 12px;
+
+	img {
+		max-width: 45px;
+	}
+}
+
+.woopayments-overview__revenue-share-subheading {
+	font-weight: 600;
+}
+
+.woopayments-overview__legend {
+	@include body-small;
+}
+
 a.components-button.woopayments-overview__button {
 	&,
 	&:hover,
 	&:focus,
 	&:focus-visible {
-		color: $woocommerce-purple-50;
-		background-color: var(--color-surface);
-		border: none;
-		outline: none;
+		color: var(--studio-woocommerce-purple-40);
+		border: 1px solid var(--studio-woocommerce-purple-40);
 		box-shadow: none;
+		text-decoration: none;
 	}
 }
 
@@ -68,6 +99,12 @@ a.components-button.woopayments-overview__button {
 	&:focus,
 	&:focus-visible {
 		color: var(--color-text);
+	}
+}
+
+.woopayments-overview__list {
+	.simple-list-icon {
+		fill: var(--studio-woocommerce-purple-50);
 	}
 }
 
@@ -87,5 +124,38 @@ a.components-button.woopayments-overview__button {
 		a.components-button {
 			width: auto;
 		}
+	}
+}
+
+.woopayments-overview__commissions-table {
+	background-color: $alt-color;
+	width: 100%;
+	border: none;
+	border-radius: 4px;
+	border-collapse: collapse;
+
+	th,
+	td {
+		padding: 10px 12px;
+		border: 1px solid var(--studio-woocommerce-purple-0);
+	}
+
+	th:first-child,
+	td:first-child {
+		border-left: none;
+	}
+
+	th:last-child,
+	td:last-child {
+		border-right: none;
+	}
+
+	tr:first-child th,
+	tr:first-child td {
+		border-top: none;
+	}
+
+	tr:last-child td {
+		border-bottom: none;
 	}
 }

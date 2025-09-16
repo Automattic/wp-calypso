@@ -4,6 +4,7 @@ import {
 	freeSuggestionQuery,
 	domainAvailabilityQuery,
 } from '@automattic/api-queries';
+import { PriceRulesConfig } from '../hooks/use-suggestion';
 import type { FilterState } from '../components/search-bar/types';
 import type {
 	DomainSuggestion,
@@ -31,19 +32,23 @@ export interface DomainSearchCart {
 export interface DomainSearchEvents {
 	onContinue: () => void;
 	onSkip: ( suggestion?: FreeDomainSuggestion ) => void;
-	onExternalDomainClick?: ( domainName: string ) => void;
+	onExternalDomainClick?: ( domainName?: string ) => void;
 	onMakePrimaryAddressClick: ( domainName: string ) => void;
 	onMoveDomainToSiteClick: ( otherSiteDomain: string, domainName: string ) => void;
 	onTransferDomainToWordPressComClick: ( domainName: string ) => void;
 	onRegisterDomainClick: ( otherSiteDomain: string, domainName: string ) => void;
 	onCheckTransferStatusClick: ( domainName: string ) => void;
 	onMapDomainClick: ( currentSiteSlug: string, domainName: string ) => void;
+	onQueryChange: ( query: string ) => void;
 }
 
 export interface DomainSearchConfig {
 	vendor: DomainSuggestionQueryVendor;
 	skippable: boolean;
 	deemphasizedTlds: string[];
+	priceRules: PriceRulesConfig;
+	includeDotBlogSubdomain: boolean;
+	allowedTlds?: string[];
 }
 
 export interface DomainSearchProps {
@@ -62,7 +67,7 @@ export interface DomainSearchProps {
 export interface DomainSearchContextType
 	extends Omit<
 		DomainSearchProps,
-		'className' | 'initialQuery' | 'events' | 'queryClient' | 'config'
+		'className' | 'initialQuery' | 'events' | 'config' | 'getPriceRuleForSuggestion'
 	> {
 	events: DomainSearchEvents;
 	isFullCartOpen: boolean;
@@ -83,3 +88,5 @@ export interface DomainSearchContextType
 	};
 	config: DomainSearchConfig;
 }
+
+export type { PriceRulesConfig };

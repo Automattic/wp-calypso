@@ -1,5 +1,5 @@
-import { closeAccountMutation } from '@automattic/api-queries';
-import { useMutation } from '@tanstack/react-query';
+import { closeAccountMutation, userPurchasesQuery } from '@automattic/api-queries';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Button, Card, CardBody, Icon } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -9,7 +9,7 @@ import { trash } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useAuth } from '../../app/auth';
 import ActionItem from '../../components/action-list/action-item';
-import AccountDeletionConfirmModal from './confirmation-modal';
+import AccountDeletionConfirmModal from './account-deletion-modal';
 
 export default function AccountDeletionSection() {
 	const { user } = useAuth();
@@ -17,10 +17,7 @@ export default function AccountDeletionSection() {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const [ showConfirmModal, setShowConfirmModal ] = useState( false );
 	const mutation = useMutation( closeAccountMutation() );
-
-	const handleDeleteClick = () => {
-		setShowConfirmModal( true );
-	};
+	const { data: purchases, isLoading: isFetchingPurchases } = useQuery( userPurchasesQuery() );
 
 	const handleConfirmDelete = () => {
 		mutation.mutate( void 0, {
@@ -38,6 +35,10 @@ export default function AccountDeletionSection() {
 		} );
 	};
 
+	const handleDeleteClick = async () => {
+		setShowConfirmModal( true );
+	};
+
 	const handleCloseModal = () => {
 		setShowConfirmModal( false );
 	};
@@ -49,12 +50,12 @@ export default function AccountDeletionSection() {
 					<ActionItem
 						actions={
 							<Button
-								disabled={ mutation.isPending }
+								isBusy={ isFetchingPurchases }
+								disabled={ mutation.isPending || isFetchingPurchases }
 								onClick={ handleDeleteClick }
 								isDestructive
 								variant="secondary"
 								size="compact"
-								style={ { minWidth: 'fit-content' } }
 							>
 								{ __( 'Delete account' ) }
 							</Button>
@@ -73,6 +74,7 @@ export default function AccountDeletionSection() {
 					username={ user.username }
 					isDeleting={ mutation.isPending }
 					siteCount={ user.site_count || 0 }
+					purchases={ purchases || [] }
 				/>
 			) }
 		</>

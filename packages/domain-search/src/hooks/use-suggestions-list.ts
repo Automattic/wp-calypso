@@ -1,17 +1,15 @@
 import { type DomainAvailability, DomainAvailabilityStatus } from '@automattic/api-core';
 import { useQueries, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
+import { getTld } from '../helpers';
 import { partitionSuggestions } from '../helpers/partition-suggestions';
 import { useDomainSearch } from '../page/context';
 
 export const useSuggestionsList = () => {
-	const { query, queries, config, filter } = useDomainSearch();
+	const { query, queries, config } = useDomainSearch();
 
 	const { data: suggestions = [], isLoading: isLoadingSuggestions } = useQuery( {
-		...queries.domainSuggestions( query, {
-			tlds: filter.tlds,
-			exact_sld_matches_only: filter.exactSldMatchesOnly,
-		} ),
+		...queries.domainSuggestions( query ),
 		enabled: true,
 	} );
 
@@ -19,7 +17,7 @@ export const useSuggestionsList = () => {
 
 	const { isLoading: isLoadingQueryAvailability } = useQuery( {
 		...queries.domainAvailability( query ),
-		enabled: true,
+		enabled: !! getTld( query ),
 	} );
 
 	const premiumSuggestions = useMemo(
@@ -72,7 +70,7 @@ export const useSuggestionsList = () => {
 				.map( ( suggestion ) => suggestion.domain_name )
 				.filter( ( suggestion ) => ! unavailablePremiumDomains.includes( suggestion ) ),
 			query,
-			deemphasiseTlds: config.deemphasizedTlds,
+			deemphasizedTlds: config.deemphasizedTlds,
 		} );
 	}, [ suggestions, query, config.deemphasizedTlds, unavailablePremiumDomains ] );
 

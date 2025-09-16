@@ -101,7 +101,7 @@ export interface DomainSuggestion {
 	 * Reasons for suggestion the domain
 	 * @example [ "exact-match" ]
 	 */
-	match_reasons: string[];
+	match_reasons?: string[];
 
 	/**
 	 * Maximum number of years the domain can be registered for

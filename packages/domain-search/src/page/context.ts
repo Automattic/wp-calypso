@@ -6,7 +6,7 @@ import {
 } from '@automattic/api-queries';
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { FilterState } from '../components/search-bar/types';
-import type { DomainSearchProps, DomainSearchContextType } from './types';
+import { type DomainSearchProps, type DomainSearchContextType } from './types';
 
 const noop = () => {};
 
@@ -20,6 +20,7 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		onRegisterDomainClick: noop,
 		onCheckTransferStatusClick: noop,
 		onMapDomainClick: noop,
+		onQueryChange: noop,
 	},
 	queries: {
 		availableTlds: ( search?: string, vendor?: string ) => availableTldsQuery( vendor, search ),
@@ -44,6 +45,13 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		vendor: 'variation2_front',
 		skippable: false,
 		deemphasizedTlds: [],
+		includeDotBlogSubdomain: false,
+		priceRules: {
+			hidePrice: false,
+			oneTimePrice: false,
+			forceRegularPrice: false,
+			freeForFirstYear: false,
+		},
 	},
 	filter: {
 		exactSldMatchesOnly: false,
@@ -100,20 +108,30 @@ export const useDomainSearchContextValue = (
 	}, [ config ] );
 
 	return useMemo( () => {
+		const allowedTlds = normalizedConfig.allowedTlds?.length
+			? normalizedConfig.allowedTlds
+			: undefined;
+
 		return {
+			...DEFAULT_CONTEXT_VALUE,
 			events: normalizedEvents,
 			config: normalizedConfig,
 			queries: {
-				domainSuggestions: ( query, params = {} ) => ( {
+				domainSuggestions: ( query ) => ( {
 					...domainSuggestionsQuery( query, {
-						...params,
 						quantity: 30,
 						vendor: normalizedConfig.vendor,
+						tlds: filter.tlds.length > 0 ? filter.tlds : allowedTlds,
+						exact_sld_matches_only: filter.exactSldMatchesOnly,
 					} ),
 					enabled: false,
 				} ),
 				freeSuggestion: ( query ) => ( {
-					...freeSuggestionQuery( query ),
+					...freeSuggestionQuery( query, {
+						include_dotblogsubdomain: normalizedConfig.includeDotBlogSubdomain
+							? query.includes( '.blog' )
+							: false,
+					} ),
 					enabled: normalizedConfig.skippable,
 				} ),
 				domainAvailability: ( domainName ) => ( {
@@ -122,6 +140,13 @@ export const useDomainSearchContextValue = (
 				} ),
 				availableTlds: ( vendor, search ) => ( {
 					...availableTldsQuery( vendor, search ),
+					select: ( data ) => {
+						if ( allowedTlds ) {
+							return data.filter( ( tld ) => allowedTlds.includes( tld ) );
+						}
+
+						return data;
+					},
 					enabled: false,
 				} ),
 			},
@@ -130,7 +155,10 @@ export const useDomainSearchContextValue = (
 			closeFullCart,
 			openFullCart,
 			query,
-			setQuery,
+			setQuery: ( query ) => {
+				setQuery( query );
+				normalizedEvents.onQueryChange( query );
+			},
 			slots,
 			currentSiteUrl,
 			filter,

@@ -146,3 +146,7 @@ export const isAIBuilderFlow = ( flowName: string | null ) => {
 export const isPlaygroundFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ PLAYGROUND_FLOW ].includes( flowName ) );
 };
+
+export const isDomainFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ DOMAIN_FLOW ].includes( flowName ) );
+};

@@ -69,11 +69,12 @@ export const WooPaymentsStatusColumn = ( {
 
 		// If site is active but not in woopaymentsData, it's not eligible
 		if ( state === 'active' && ! siteExistsInWooPaymentsData ) {
-			return {
-				statusText: translate( 'Not eligible' ),
-				statusType: 'error',
-				showInfoIcon: true,
-			};
+			// @todo Temporarily disabled until this is fixed: p1757331076213279-slack-C091P0A65U5
+			// return {
+			// 	statusText: translate( 'Not eligible' ),
+			// 	statusType: 'error',
+			// 	showInfoIcon: true,
+			// };
 		}
 
 		switch ( state ) {

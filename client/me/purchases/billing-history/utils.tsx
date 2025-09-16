@@ -248,42 +248,48 @@ function renderSpaceAddOnquantitySummary(
 	} );
 }
 
-export function renderDomainTransactionVolumeSummary(
-	{ volume, product_slug, type }: BillingTransactionItem,
-	translate: LocalizeProps[ 'translate' ]
-) {
-	if ( ! volume ) {
+export function DomainTransactionVolumeSummary( { item }: { item: BillingTransactionItem } ) {
+	const translate = useTranslate();
+	if ( ! item.volume ) {
 		return null;
 	}
 
-	const isRenewal = 'recurring' === type;
+	const isRenewal = 'recurring' === item.type;
 
-	volume = parseInt( String( volume ) );
+	const volume = parseInt( String( item.volume ) );
 
-	if ( 'wp-domains' !== product_slug ) {
+	if ( 'wp-domains' !== item.product_slug || item.variation_slug === 'wp-domain-mapping' ) {
 		return null;
 	}
 
 	if ( isRenewal ) {
-		return translate(
-			'Domain renewed for %(quantity)d year',
-			'Domain renewed for %(quantity)d years',
-			{
-				args: { quantity: volume },
-				count: volume,
-				comment: '%(quantity)d is the number of years the domain has been renewed for',
-			}
+		return (
+			<em>
+				{ translate(
+					'Domain renewed for %(quantity)d year',
+					'Domain renewed for %(quantity)d years',
+					{
+						args: { quantity: volume },
+						count: volume,
+						comment: '%(quantity)d is the number of years the domain has been renewed for',
+					}
+				) }
+			</em>
 		);
 	}
 
-	return translate(
-		'Domain registered for %(quantity)d year',
-		'Domain registered for %(quantity)d years',
-		{
-			args: { quantity: volume },
-			count: volume,
-			comment: '%(quantity)d is number of years the domain has been registered for',
-		}
+	return (
+		<em>
+			{ translate(
+				'Domain registered for %(quantity)d year',
+				'Domain registered for %(quantity)d years',
+				{
+					args: { quantity: volume },
+					count: volume,
+					comment: '%(quantity)d is number of years the domain has been registered for',
+				}
+			) }
+		</em>
 	);
 }
 

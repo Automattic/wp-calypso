@@ -1,5 +1,6 @@
 import { useRouter } from '@tanstack/react-router';
 import {
+	__experimentalGrid as Grid,
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -17,17 +18,19 @@ import { ButtonStack } from '../../components/button-stack';
 import { useFormattedTime } from '../../components/formatted-time';
 import { SectionHeader } from '../../components/section-header';
 import { gridiconToWordPressIcon } from '../../utils/gridicons';
+import { ImagePreview } from './image-preview';
 import type { ActivityLogEntry, Site } from '@automattic/api-core';
 
 export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; site: Site } ) {
 	const router = useRouter();
-	const formattedTime = useFormattedTime( backup.published, {
+	const publishedTimestamp = backup.published || backup.last_published;
+	const formattedTime = useFormattedTime( publishedTimestamp, {
 		dateStyle: 'medium',
 		timeStyle: 'short',
 	} );
 
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
-	const direction = isSmallViewport ? 'column' : 'row';
+	const direction = isSmallViewport ? 'column-reverse' : 'row';
 
 	const handleRestoreClick = () => {
 		router.navigate( {
@@ -43,35 +46,38 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 		} );
 	};
 
+	const actions = backup.rewind_id ? (
+		<ButtonStack alignment="stretch" justify="center" direction={ direction }>
+			<Button
+				variant="tertiary"
+				size={ isSmallViewport ? 'default' : 'compact' }
+				icon={ download }
+				onClick={ handleDownloadClick }
+				style={ { justifyContent: 'center' } }
+			>
+				{ __( 'Download backup' ) }
+			</Button>
+			<Button
+				variant="primary"
+				size={ isSmallViewport ? 'default' : 'compact' }
+				icon={ rotateLeft }
+				onClick={ handleRestoreClick }
+				style={ { justifyContent: 'center' } }
+			>
+				{ __( 'Restore to this point' ) }
+			</Button>
+		</ButtonStack>
+	) : null;
+
 	return (
 		<Card>
 			<CardHeader style={ { flexDirection: 'column', alignItems: 'stretch' } }>
 				<SectionHeader
 					title={ backup.summary }
 					decoration={ <Icon icon={ gridiconToWordPressIcon( backup.gridicon ) } /> }
-					actions={
-						backup.rewind_id && (
-							<ButtonStack alignment="stretch" direction={ direction }>
-								<Button
-									variant="secondary"
-									size="compact"
-									icon={ download }
-									onClick={ handleDownloadClick }
-								>
-									{ __( 'Download backup' ) }
-								</Button>
-								<Button
-									variant="primary"
-									size="compact"
-									icon={ rotateLeft }
-									onClick={ handleRestoreClick }
-								>
-									{ __( 'Restore to this point' ) }
-								</Button>
-							</ButtonStack>
-						)
-					}
+					actions={ ! isSmallViewport ? actions : null }
 				/>
+				{ isSmallViewport ? actions : null }
 			</CardHeader>
 			<CardBody>
 				<VStack>
@@ -89,6 +95,15 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 							</Text>
 						) }
 					</HStack>
+					<Grid templateColumns="repeat(auto-fit, minmax(200px, 1fr))">
+						{ backup.streams ? (
+							backup.streams.map( ( item, index ) => (
+								<ImagePreview key={ index } item={ item } multipleImages />
+							) )
+						) : (
+							<ImagePreview item={ backup } />
+						) }
+					</Grid>
 				</VStack>
 			</CardBody>
 		</Card>

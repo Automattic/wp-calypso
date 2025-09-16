@@ -5,7 +5,7 @@ import {
 	ContentStepContent,
 	StepStatus,
 } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
-import SummaryStat from './SummaryStat';
+import { SummaryStat } from '../components';
 
 interface ContentSummaryProps {
 	stepContent: ContentStepContent;

@@ -1,7 +1,6 @@
 import { domainGlueRecordDeleteMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
-	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	Button,
@@ -10,6 +9,7 @@ import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../app/analytics';
+import { ButtonStack } from '../../components/button-stack';
 import type { DomainGlueRecord } from '@automattic/api-core';
 
 interface DomainGlueRecordDeleteModalProps {
@@ -62,7 +62,7 @@ const DomainGlueRecordDeleteModal = ( {
 	return (
 		<VStack spacing={ 6 }>
 			<Text>{ __( 'Are you sure you want to delete this glue record?' ) }</Text>
-			<HStack justify="flex-end" spacing={ 2 }>
+			<ButtonStack justify="flex-end">
 				<Button onClick={ onClose } disabled={ deleteMutation.isPending }>
 					{ __( 'Cancel' ) }
 				</Button>
@@ -74,7 +74,7 @@ const DomainGlueRecordDeleteModal = ( {
 				>
 					{ __( 'Delete' ) }
 				</Button>
-			</HStack>
+			</ButtonStack>
 		</VStack>
 	);
 };
