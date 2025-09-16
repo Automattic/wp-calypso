@@ -187,17 +187,18 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 				} }
 			/>
 
-			{ updateModalOpen && siteToUpdate && (
-				<ActionRenderModalWrapper
-					actionId="update"
-					closeModal={ closeUpdateModal }
-					items={ [ mapToPluginListRow( plugin, [ siteToUpdate ] ) as PluginListRow ] }
-					onExecute={ updateAction }
-					onActionPerformed={ invalidatePlugins }
-					onRequestClose={ closeUpdateModal }
-					title={ __( 'Update Plugin' ) }
-				/>
-			) }
+			<ActionRenderModalWrapper
+				actionId="update"
+				closeModal={ closeUpdateModal }
+				isOpen={ updateModalOpen }
+				items={ [
+					mapToPluginListRow( plugin, siteToUpdate ? [ siteToUpdate ] : [] ) as PluginListRow,
+				] }
+				onExecute={ updateAction }
+				onActionPerformed={ invalidatePlugins }
+				onRequestClose={ closeUpdateModal }
+				title={ __( 'Update Plugin' ) }
+			/>
 		</>
 	);
 };

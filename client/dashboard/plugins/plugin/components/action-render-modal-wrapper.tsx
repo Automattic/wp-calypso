@@ -5,11 +5,12 @@ import ActionRenderModal, {
 } from '../../manage/components/action-render-modal';
 
 type ActionRenderModalWrapperProps = ActionRenderModalProps &
-	Pick< ComponentProps< typeof Modal >, 'onRequestClose' | 'title' >;
+	Pick< ComponentProps< typeof Modal >, 'onRequestClose' | 'title' > & { isOpen: boolean };
 
 export const ActionRenderModalWrapper = ( {
 	actionId,
 	closeModal,
+	isOpen = false,
 	items,
 	onActionPerformed,
 	onExecute,
@@ -17,14 +18,16 @@ export const ActionRenderModalWrapper = ( {
 	title,
 }: ActionRenderModalWrapperProps ) => {
 	return (
-		<Modal title={ title } onRequestClose={ onRequestClose }>
-			<ActionRenderModal
-				actionId={ actionId }
-				items={ items }
-				closeModal={ closeModal }
-				onExecute={ onExecute }
-				onActionPerformed={ onActionPerformed }
-			/>
-		</Modal>
+		isOpen && (
+			<Modal title={ title } onRequestClose={ onRequestClose }>
+				<ActionRenderModal
+					actionId={ actionId }
+					items={ items }
+					closeModal={ closeModal }
+					onExecute={ onExecute }
+					onActionPerformed={ onActionPerformed }
+				/>
+			</Modal>
+		)
 	);
 };
