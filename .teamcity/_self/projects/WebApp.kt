@@ -957,26 +957,6 @@ object PlaywrightTestPRMatrix : BuildType({
 		param("DOCKER_IMAGE_BUILD_NUMBER", BuildDockerImage.depParamRefs.buildNumber)
 	}
 
-	steps {	
-		bashNodeScript {
-			name = "Determine Calypso URL"
-			id = "run_e2e_tests"
-			scriptContent = """
-				echo "Getting Calypso url for build ${BuildDockerImage.depParamRefs.buildNumber}"
-				chmod +x ./bin/get-calypso-live-url.sh
-				CALYPSO_BASE_URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
-				if [[ ${'$'}? -ne 0 ]]; then
-					// Command failed. CALYPSO_BASE_URL contains stderr
-					echo ${'$'}CALYPSO_BASE_URL
-					exit 1
-				fi
-				
-				export CALYPSO_BASE_URL
-			"""
-			dockerImage = "%docker_image_e2e%"
-		}
-	}
-
 	steps {
 
 		bashNodeScript {
