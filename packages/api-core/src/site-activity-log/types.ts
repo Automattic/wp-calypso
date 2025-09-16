@@ -52,7 +52,7 @@ export interface ActivityNotificationRange {
 	intent?: string;
 }
 
-export interface ActivityLogAPIResponse {
+export interface ActivityLogResponse {
 	current?: {
 		orderedItems: ActivityLogEntry[];
 	};
