@@ -8,13 +8,19 @@ import StagingSiteDeleteModal from '../index';
 import type { Site } from '@automattic/api-core';
 
 const mockMutate = jest.fn();
+const mockCreateErrorNotice = jest.fn();
+const mockCreateSuccessNotice = jest.fn();
+const mockNavigate = jest.fn();
 
 jest.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: jest.fn(),
 } ) );
 
 jest.mock( '@wordpress/data', () => ( {
-	useDispatch: () => ( {} ),
+	useDispatch: () => ( {
+		createErrorNotice: mockCreateErrorNotice,
+		createSuccessNotice: mockCreateSuccessNotice,
+	} ),
 	combineReducers: jest.fn( ( reducers ) => reducers ),
 	createReduxStore: jest.fn(),
 	register: jest.fn(),
@@ -23,7 +29,7 @@ jest.mock( '@wordpress/data', () => ( {
 
 jest.mock( '@tanstack/react-router', () => ( {
 	...jest.requireActual( '@tanstack/react-router' ),
-	useNavigate: () => jest.fn(),
+	useNavigate: () => mockNavigate,
 } ) );
 
 jest.mock( '@automattic/api-queries', () => ( {
@@ -139,6 +145,114 @@ describe( 'StagingSiteDeleteModal', () => {
 
 			expect( getButton( 'Cancel' ) ).toBeDisabled();
 			expect( getButton( 'Delete staging site' ) ).toBeDisabled();
+		} );
+	} );
+
+	describe( 'Error Handling', () => {
+		test( 'shows error notice and tracks failure when deletion fails', () => {
+			const { useMutation } = require( '@tanstack/react-query' );
+			const { recordTracksEvent } = require( '@automattic/calypso-analytics' );
+
+			// Mock mutate to simulate calling onError callback with an error
+			const mockMutateWithError = jest.fn( ( _, options ) => {
+				if ( options?.onError ) {
+					options.onError( new Error( 'Network error' ) );
+				}
+			} );
+
+			useMutation.mockReturnValue( {
+				mutate: mockMutateWithError,
+				isPending: false,
+				error: null,
+			} );
+
+			renderModal( mockStagingSite );
+
+			fireEvent.click( getButton( 'Delete staging site' ) );
+
+			expect( mockCreateErrorNotice ).toHaveBeenCalledWith( 'Network error', {
+				type: 'snackbar',
+			} );
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_hosting_configuration_staging_site_delete_failure'
+			);
+		} );
+
+		test( 'shows default error message when no error message is provided', () => {
+			const { useMutation } = require( '@tanstack/react-query' );
+
+			// Mock mutate to simulate calling onError callback with an error without message
+			const mockMutateWithError = jest.fn( ( _, options ) => {
+				if ( options?.onError ) {
+					options.onError( new Error() );
+				}
+			} );
+
+			useMutation.mockReturnValue( {
+				mutate: mockMutateWithError,
+				isPending: false,
+				error: null,
+			} );
+
+			renderModal( mockStagingSite );
+
+			fireEvent.click( getButton( 'Delete staging site' ) );
+
+			expect( mockCreateErrorNotice ).toHaveBeenCalledWith( 'Failed to delete staging site', {
+				type: 'snackbar',
+			} );
+		} );
+	} );
+
+	describe( 'Success Handling', () => {
+		beforeEach( () => {
+			// Mock window.location for navigation tests
+			Object.defineProperty( window, 'location', {
+				writable: true,
+				value: {
+					pathname: '/v2/sites/test-site',
+				},
+			} );
+		} );
+
+		test( 'shows success notice, closes modal, and navigates on successful deletion', () => {
+			const { useMutation } = require( '@tanstack/react-query' );
+			const { recordTracksEvent } = require( '@automattic/calypso-analytics' );
+
+			// Mock mutate to simulate calling onSuccess callback
+			const mockMutateWithSuccess = jest.fn( ( _, options ) => {
+				if ( options?.onSuccess ) {
+					options.onSuccess();
+				}
+			} );
+
+			useMutation.mockReturnValue( {
+				mutate: mockMutateWithSuccess,
+				isPending: false,
+				error: null,
+			} );
+
+			const mockOnClose = jest.fn();
+			renderModal( mockStagingSite, mockOnClose );
+
+			fireEvent.click( getButton( 'Delete staging site' ) );
+
+			expect( mockCreateSuccessNotice ).toHaveBeenCalledWith(
+				'We are deleting your staging site. We will notify you when it is done.',
+				{ type: 'snackbar' }
+			);
+
+			expect( mockOnClose ).toHaveBeenCalledTimes( 1 );
+
+			expect( mockNavigate ).toHaveBeenCalledWith( {
+				to: '/sites/$siteSlug',
+				params: { siteSlug: 'production-site' },
+			} );
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_hosting_configuration_staging_site_delete_success'
+			);
 		} );
 	} );
 } );
