@@ -55,13 +55,13 @@ export const GuidedTourContextProvider = ( {
 	isSkippable?: boolean;
 } ) => {
 	const { recordTracksEvent } = useAnalytics();
-	const { data: completedTimestamp, isLoading } = useQuery( userPreferenceQuery( tourId ) );
+	const { data: completedISODate, isLoading } = useQuery( userPreferenceQuery( tourId ) );
 	const { mutate: updateCompletedTimestamp, isPending: isDismissing } = useMutation(
 		userPreferenceMutation( tourId )
 	);
 
 	const isStartedRef = useRef( false );
-	const isCompleted = isDismissing || !! completedTimestamp;
+	const isCompleted = isDismissing || !! completedISODate;
 
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 
@@ -74,7 +74,7 @@ export const GuidedTourContextProvider = ( {
 
 	const endTour = useCallback( () => {
 		// Save the dismissed timestamp so we can show the new steps that are added after it in the future.
-		updateCompletedTimestamp( Date.now() );
+		updateCompletedTimestamp( new Date().toISOString() );
 		recordTracksEvent( 'calypso_dashboard_end_tour', { tourId } );
 	}, [ tourId, updateCompletedTimestamp, recordTracksEvent ] );
 
@@ -111,10 +111,10 @@ export const GuidedTourContextProvider = ( {
 	);
 
 	useEffect( () => {
-		if ( currentStep === guidedTours.length && ! completedTimestamp ) {
+		if ( currentStep === guidedTours.length && ! isCompleted ) {
 			endTour();
 		}
-	}, [ currentStep, guidedTours, completedTimestamp, endTour ] );
+	}, [ currentStep, guidedTours, isCompleted, endTour ] );
 
 	if ( isLoading || isCompleted ) {
 		return null;
