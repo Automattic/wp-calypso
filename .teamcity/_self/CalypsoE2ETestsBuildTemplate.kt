@@ -60,6 +60,24 @@ object CalypsoE2ETestsBuildTemplate : Template({
 		}
 
     bashNodeScript {
+			name = "Determine Calypso URL"
+			id = "run_e2e_tests"
+			scriptContent = """
+				echo "Getting Calypso url for build ${%DOCKER_IMAGE_BUILD_NUMBER%}"
+				chmod +x ./bin/get-calypso-live-url.sh
+				CALYPSO_BASE_URL=${'$'}(./bin/get-calypso-live-url.sh ${%DOCKER_IMAGE_BUILD_NUMBER%})
+				if [[ ${'$'}? -ne 0 ]]; then
+					// Command failed. CALYPSO_BASE_URL contains stderr
+					echo ${'$'}CALYPSO_BASE_URL
+					exit 1
+				fi
+				
+				export CALYPSO_BASE_URL
+			"""
+			dockerImage = "%docker_image_e2e%"
+		}
+
+    bashNodeScript {
 			name = "Run e2e tests"
 			id = "run_e2e_tests"
 			scriptContent = """
