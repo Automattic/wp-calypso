@@ -75,10 +75,10 @@ const domain: FlowV2< typeof initialize > = {
 
 		const { siteSlug, site } = useSiteData();
 
-		const { signupDomainOrigin, productCartItems } = useSelect(
+		const { signupDomainOrigin, domainCartItems } = useSelect(
 			( select ) => ( {
 				signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
-				productCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getProductCartItems(),
+				domainCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItems(),
 			} ),
 			[]
 		);
@@ -226,7 +226,9 @@ const domain: FlowV2< typeof initialize > = {
 					}
 
 					setPendingAction( async () => {
-						await addProductsToCart( providedDependencies.siteSlug, this.name, productCartItems );
+						if ( domainCartItems ) {
+							await addProductsToCart( providedDependencies.siteSlug, this.name, domainCartItems );
+						}
 
 						return {
 							siteSlug: providedDependencies.siteSlug,

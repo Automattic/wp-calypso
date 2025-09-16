@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Locator, Page } from 'playwright';
 import { reloadAndRetry, waitForElementEnabled } from '../../element-helper';
 
 /**
@@ -81,20 +81,13 @@ export class RewrittenDomainSearchComponent {
 	 */
 	async selectDomain( keyword: string ): Promise< string > {
 		const targetRow = this.page.getByTitle( keyword );
-		await targetRow.waitFor();
+		const suggestion = await this.selectSuggestion( targetRow );
 
-		const target = targetRow.getByRole( 'button' );
-		await target.waitFor();
-
-		await target.click();
-
-		const domainName = await targetRow.getAttribute( 'title' );
-
-		if ( ! domainName ) {
+		if ( ! suggestion ) {
 			throw new Error( `No domain found for keyword: ${ keyword }` );
 		}
 
-		return domainName;
+		return suggestion;
 	}
 
 	/**
@@ -103,19 +96,39 @@ export class RewrittenDomainSearchComponent {
 	 * @returns {string} Domain that was selected.
 	 */
 	async selectFirstSuggestion(): Promise< string > {
-		const targetItem = this.page.getByRole( 'listitem' ).first();
-		await targetItem.waitFor();
+		const targetRow = this.page.getByRole( 'listitem' ).first();
+		const suggestion = await this.selectSuggestion( targetRow );
 
-		const selectedDomain = await targetItem.getAttribute( 'title' );
-
-		if ( ! selectedDomain ) {
+		if ( ! suggestion ) {
 			throw new Error( 'No domain found for first suggestion' );
 		}
 
-		const target = targetItem.getByRole( 'button', { name: 'Add to cart' } );
-		await target.waitFor();
+		return suggestion;
+	}
 
-		await target.click();
+	/**
+	 * Select a domain suggestion.
+	 *
+	 * @param {Locator} row The row to select.
+	 * @returns {string | null} Domain that was selected.
+	 */
+	private async selectSuggestion( row: Locator ): Promise< string | null > {
+		await row.waitFor();
+
+		const selectedDomain = await row.getAttribute( 'title' );
+
+		if ( ! selectedDomain ) {
+			return null;
+		}
+
+		const addToCartButton = row.getByRole( 'button', { name: 'Add to cart' } );
+		await addToCartButton.waitFor();
+
+		await addToCartButton.click();
+		await addToCartButton.waitFor( { state: 'detached' } );
+
+		const continueButton = row.getByRole( 'button', { name: 'Continue' } );
+		await continueButton.waitFor();
 
 		return selectedDomain;
 	}
