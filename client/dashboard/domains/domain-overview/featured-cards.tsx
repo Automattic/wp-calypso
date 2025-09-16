@@ -1,3 +1,4 @@
+import { DomainSubtype } from '@automattic/api-core';
 import { domainQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalGrid as Grid } from '@wordpress/components';
@@ -13,8 +14,12 @@ export default function FeaturedCards() {
 
 	return (
 		<Grid columns={ 2 }>
-			<FeaturedCardRenew domain={ domain } />
-			<FeaturedCardSite domain={ domain } />
+			{ domain.subtype.id !== DomainSubtype.DOMAIN_CONNECTION && (
+				<FeaturedCardRenew domain={ domain } />
+			) }
+			{ domain.subtype.id !== DomainSubtype.DOMAIN_CONNECTION && (
+				<FeaturedCardSite domain={ domain } />
+			) }
 			<FeaturedCardEmails domain={ domain } />
 			<FeaturedCardPrivacy domain={ domain } />
 		</Grid>
