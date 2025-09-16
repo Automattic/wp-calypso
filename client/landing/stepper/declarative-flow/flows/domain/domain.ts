@@ -73,7 +73,7 @@ const domain: FlowV2< typeof initialize > = {
 			setPendingAction,
 		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
 
-		const { siteSlug } = useSiteData();
+		const { siteSlug, site } = useSiteData();
 
 		const { signupDomainOrigin, productCartItems } = useSelect(
 			( select ) => ( {
@@ -121,24 +121,28 @@ const domain: FlowV2< typeof initialize > = {
 					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
 					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
 
-					if ( siteSlug ) {
-						setSignupCompleteFlowName( this.name );
-						setSignupCompleteSlug( siteSlug );
-
-						// replace the location to delete processing step from history.
-						return window.location.assign(
-							addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
-								redirect_to: `/domains/manage/${ siteSlug }`,
-								signup: 1,
-								cancel_to: new URL(
-									addQueryArgs( '/setup/domain', { siteSlug } ),
-									window.location.href
-								).href,
-							} )
-						);
+					if ( ! site ) {
+						return navigate( STEPS.NEW_OR_EXISTING_SITE.slug );
 					}
 
-					return navigate( STEPS.NEW_OR_EXISTING_SITE.slug );
+					if ( ! siteHasPaidPlan( site ) ) {
+						return navigate( STEPS.UNIFIED_PLANS.slug );
+					}
+
+					setSignupCompleteFlowName( this.name );
+					setSignupCompleteSlug( siteSlug );
+
+					// replace the location to delete processing step from history.
+					return window.location.assign(
+						addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
+							redirect_to: `/domains/manage/${ siteSlug }`,
+							signup: 1,
+							cancel_to: new URL(
+								addQueryArgs( '/setup/domain', { siteSlug } ),
+								window.location.href
+							).href,
+						} )
+					);
 				case STEPS.USE_MY_DOMAIN.slug:
 					setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
 					if (
@@ -303,7 +307,6 @@ const domain: FlowV2< typeof initialize > = {
 		const reduxDispatch = useReduxDispatch();
 		const { resetOnboardStore } = useDispatch( ONBOARD_STORE ) as OnboardActions;
 		const { siteId } = useSiteData();
-
 		/**
 		 * Clears every state we're persisting during the flow
 		 * when entering it. This is to ensure that the user

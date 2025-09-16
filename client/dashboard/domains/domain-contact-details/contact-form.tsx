@@ -4,8 +4,9 @@ import {
 	statesListQuery,
 	domainWhoisMutation,
 	domainWhoisValidateMutation,
+	domainQuery,
 } from '@automattic/api-queries';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	ExternalLink,
 	__experimentalVStack as VStack,
@@ -24,6 +25,7 @@ import { ButtonStack } from '../../components/button-stack';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { getContactFormFields } from './contact-form-fields';
+import ContactFormPrivacy from './contact-form-privacy';
 
 interface ContactFormProps {
 	domainName: string;
@@ -31,6 +33,7 @@ interface ContactFormProps {
 }
 
 export default function ContactForm( { domainName, initialData }: ContactFormProps ) {
+	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: countryList } = useQuery( countryListQuery() );
 	const [ formData, setFormData ] = useState< DomainContactDetails >(
@@ -144,6 +147,14 @@ export default function ContactForm( { domainName, initialData }: ContactFormPro
 					</Text>
 				</VStack>
 			</Notice>
+
+			{ ! domain.is_hundred_year_domain && (
+				<Card>
+					<CardBody>
+						<ContactFormPrivacy domainName={ domainName } />
+					</CardBody>
+				</Card>
+			) }
 
 			<Card>
 				<CardBody>

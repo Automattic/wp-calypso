@@ -98,6 +98,8 @@ const onboarding: FlowV2< typeof initialize > = {
 		const [ useMyDomainTracksEventProps, setUseMyDomainTracksEventProps ] = useState( {} );
 		const { setShouldShowNotification } = usePurchasePlanNotification();
 
+		const playgroundId = useQuery().get( 'playground' );
+
 		/**
 		 * Returns [destination, backDestination] for the post-checkout destination.
 		 */
@@ -108,7 +110,6 @@ const onboarding: FlowV2< typeof initialize > = {
 				return [ `/home/${ providedDependencies.siteSlug }`, null ];
 			}
 
-			const playgroundId = getQueryArg( window.location.href, 'playground' );
 			if ( playgroundId && providedDependencies.siteSlug ) {
 				return [
 					addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
@@ -305,7 +306,6 @@ const onboarding: FlowV2< typeof initialize > = {
 					return;
 			}
 		};
-
 		return { submit };
 	},
 	useAssertConditions() {

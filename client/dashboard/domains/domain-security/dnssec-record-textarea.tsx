@@ -7,37 +7,41 @@ interface DnsSecRecordTextareaProps {
 	label: string;
 }
 
+const MIN_ROWS = 2;
+
 export function DnsSecRecordTextarea( { value, label }: DnsSecRecordTextareaProps ) {
 	const textareaRef = useRef< HTMLTextAreaElement >( null );
-	const [ textareaHeight, setTextareaHeight ] = useState< number >( 0 );
+	const [ textareaRows, setTextareaRows ] = useState< number >( MIN_ROWS );
 
-	// Calculate and set textarea height
-	const updateTextareaHeight = () => {
-		if ( textareaRef.current ) {
-			const textarea = textareaRef.current;
-			// Reset height to auto to get the correct scrollHeight
-			textarea.style.height = 'auto';
-			const newHeight = textarea.scrollHeight;
-			setTextareaHeight( newHeight );
+	// Calculate and set textarea rows
+	const updateTextareaRows = () => {
+		const textareaElement = textareaRef.current;
+		if ( ! textareaElement ) {
+			return;
 		}
+
+		// Calculate the required rows
+		const style = window.getComputedStyle( textareaElement );
+		const lineHeight = ! isNaN( parseInt( style.lineHeight ) ) ? parseInt( style.lineHeight ) : 20;
+		const rows = Math.floor( textareaElement.scrollHeight / lineHeight );
+
+		// Set to latest rows
+		textareaElement.rows = Math.max( rows, MIN_ROWS );
+		setTextareaRows( textareaElement.rows );
 	};
 
-	// Update height on mount and when value changes
+	// Update textarea rows on mount and when value changes
 	useEffect( () => {
-		updateTextareaHeight();
+		updateTextareaRows();
 	}, [ value ] );
 
-	// Handle window resize to re-adjust textarea height
+	// Handle window resize to re-adjust textarea rows
 	useEffect( () => {
-		const handleResize = () => {
-			updateTextareaHeight();
-		};
-
-		window.addEventListener( 'resize', handleResize );
+		window.addEventListener( 'resize', updateTextareaRows );
 
 		// Cleanup event listener on unmount
 		return () => {
-			window.removeEventListener( 'resize', handleResize );
+			window.removeEventListener( 'resize', updateTextareaRows );
 		};
 	}, [] );
 
@@ -49,11 +53,9 @@ export function DnsSecRecordTextarea( { value, label }: DnsSecRecordTextareaProp
 			label={ label }
 			disabled
 			readOnly
-			rows={ 1 }
+			rows={ textareaRows }
 			__nextHasNoMarginBottom
 			className="dnssec-record-textarea"
-			style={ { '--textarea-height': `${ textareaHeight }px` } as React.CSSProperties }
-			onInput={ updateTextareaHeight }
 		/>
 	);
 }

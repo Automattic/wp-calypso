@@ -15,4 +15,5 @@ export const nameField: Field< PluginListRow > = {
 			{ field.getValue( { item } ) }
 		</Link>
 	),
+	enableGlobalSearch: true,
 };
