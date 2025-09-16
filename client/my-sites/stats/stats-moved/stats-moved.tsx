@@ -7,66 +7,45 @@ import DocumentHead from 'calypso/components/data/document-head';
 import FeatureMoved from 'calypso/components/feature-moved';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import { getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './styles.scss';
-// import imageAr from './images/menu-ar.png';
-// import imageDe from './images/menu-de.png';
+import imageAr from './images/menu-ar.png';
+import imageDe from './images/menu-de.png';
 import imageEn from './images/menu-en.png';
-// import imageEs from './images/menu-es.png';
-// import imageFr from './images/menu-fr.png';
-// import imageHe from './images/menu-he.png';
-// import imageId from './images/menu-id.png';
-// import imageIt from './images/menu-it.png';
-// import imageJa from './images/menu-ja.png';
-// import imageKo from './images/menu-ko.png';
-// import imageNl from './images/menu-nl.png';
-// import imagePtBr from './images/menu-pt-br.png';
-// import imageRu from './images/menu-ru.png';
-// import imageSv from './images/menu-sv.png';
-// import imageTr from './images/menu-tr.png';
-// import imageZhCn from './images/menu-zh-cn.png';
-// import imageZhTw from './images/menu-zh-tw.png';
+import imageEs from './images/menu-es.png';
+import imageFr from './images/menu-fr.png';
+import imageHe from './images/menu-he.png';
+import imageId from './images/menu-id.png';
+import imageIt from './images/menu-it.png';
+import imageJa from './images/menu-ja.png';
+import imageKo from './images/menu-ko.png';
+import imageNl from './images/menu-nl.png';
+import imagePtBr from './images/menu-pt-br.png';
+import imageRu from './images/menu-ru.png';
+import imageSv from './images/menu-sv.png';
+import imageTr from './images/menu-tr.png';
+import imageZhCn from './images/menu-zh-cn.png';
+import imageZhTw from './images/menu-zh-tw.png';
 
-const images: Record< 'wpcom' | 'jetpack', Record< string, string > > = {
-	wpcom: {
-		// ar: imageAr,
-		// de: imageDe,
-		en: imageEn,
-		// es: imageEs,
-		// fr: imageFr,
-		// he: imageHe,
-		// id: imageId,
-		// it: imageIt,
-		// ja: imageJa,
-		// ko: imageKo,
-		// nl: imageNl,
-		// 'pt-br': imagePtBr,
-		// ru: imageRu,
-		// sv: imageSv,
-		// tr: imageTr,
-		// 'zh-cn': imageZhCn,
-		// 'zh-tw': imageZhTw,
-	},
-	jetpack: {
-		// ar: imageAr,
-		// de: imageDe,
-		en: imageEn,
-		// es: imageEs,
-		// fr: imageFr,
-		// he: imageHe,
-		// id: imageId,
-		// it: imageIt,
-		// ja: imageJa,
-		// ko: imageKo,
-		// nl: imageNl,
-		// 'pt-br': imagePtBr,
-		// ru: imageRu,
-		// sv: imageSv,
-		// tr: imageTr,
-		// 'zh-cn': imageZhCn,
-		// 'zh-tw': imageZhTw,
-	},
+const images: Record< string, string > = {
+	ar: imageAr,
+	de: imageDe,
+	en: imageEn,
+	es: imageEs,
+	fr: imageFr,
+	he: imageHe,
+	id: imageId,
+	it: imageIt,
+	ja: imageJa,
+	ko: imageKo,
+	nl: imageNl,
+	'pt-br': imagePtBr,
+	ru: imageRu,
+	sv: imageSv,
+	tr: imageTr,
+	'zh-cn': imageZhCn,
+	'zh-tw': imageZhTw,
 };
 
 const StatsMoved = () => {
@@ -77,16 +56,14 @@ const StatsMoved = () => {
 		getSiteAdminUrl( state, siteId, 'admin.php?page=stats' )
 	) as string;
 	const userLocale = useSelector( getCurrentUserLocale );
-	const isSiteJetpack = useSelector( ( state ) =>
-		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
-	);
 
-	const siteType = isSiteJetpack ? 'jetpack' : 'wpcom';
-	const image = images[ siteType ][ userLocale ] ?? images[ siteType ].en;
+	const image = images[ userLocale ] ?? images.en;
 
 	if (
-		! hasEnTranslation( 'Stats has moved' ) ||
-		! hasEnTranslation( 'Stats are now accessed via Stats in your dashboard.' ) ||
+		! hasEnTranslation( 'Jetpack Stats has moved' ) ||
+		! hasEnTranslation(
+			'Jetpack Stats is now easier to find, right in your main navigation. Track traffic, engagement, and performance in just one click. <br /> Use the button below to explore the new Stats page location.'
+		) ||
 		! hasEnTranslation( 'Go to Stats' )
 	) {
 		page.redirect( wpAdminUrl );
@@ -95,14 +72,23 @@ const StatsMoved = () => {
 
 	return (
 		<Main>
-			<DocumentHead title={ translate( 'Stats' ) } />
+			<DocumentHead title={ translate( 'Jetpack Stats' ) } />
 			<FeatureMoved
 				icon={ chartBar }
 				title={ translate( 'Jetpack Stats has moved' ) }
-				description={ translate(
-					'Jetpack Stats is now accessed via the Stats top-level menu in your dashboard.'
-				) }
-				buttonText={ translate( 'Go to Jetpack Stats' ) }
+				description={
+					<>
+						<span style={ { display: 'block', marginBottom: '1em' } }>
+							{ translate(
+								'Jetpack Stats is now easier to find, right in your main navigation. Track traffic, engagement, and performance in just one click.'
+							) }
+						</span>
+						<span>
+							{ translate( 'Use the button below to explore the new Stats page location.' ) }
+						</span>
+					</>
+				}
+				buttonText={ translate( 'Go to Stats' ) }
 				buttonLink={ wpAdminUrl }
 				image={ image }
 			/>
