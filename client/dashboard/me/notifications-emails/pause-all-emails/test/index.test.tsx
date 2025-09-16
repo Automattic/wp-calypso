@@ -7,6 +7,28 @@ import { PropsWithChildren, Suspense } from 'react';
 import Snackbars from '../../../../app/snackbars';
 import { PauseAllEmails } from '../index';
 
+const notificationSnackBar = () => {
+	//Snackbar requires a custom matcher because it's aria-live is not supported by the testing library
+	return document.getElementById( 'a11y-speak-polite' );
+};
+
+const confirmationModal = () => {
+	return screen.queryByRole( 'dialog', { name: /Pause all emails\?/ } );
+};
+const saveButton = () => {
+	return screen.findByRole( 'button', { name: /Save/ } );
+};
+const cancelButton = () => {
+	return screen.findByRole( 'button', { name: /Cancel/ } );
+};
+const confirmButton = () => {
+	return screen.findByRole( 'button', { name: /Yes, I want to pause all emails/ } );
+};
+
+const pauseCheckbox = () => {
+	return screen.findByRole( 'checkbox', { name: /Pause all emails/ } );
+};
+
 describe( 'PauseAllEmails', () => {
 	beforeAll( () => {
 		nock.disableNetConnect();
@@ -14,20 +36,14 @@ describe( 'PauseAllEmails', () => {
 		window.scrollTo = jest.fn();
 	} );
 
-	const Wrapper =
-		( queryClient = new QueryClient() ) =>
-		( { children }: PropsWithChildren ) => {
-			return (
-				<QueryClientProvider client={ queryClient }>
-					<Snackbars />
-					<Suspense>{ children }</Suspense>
-				</QueryClientProvider>
-			);
-		};
-
-	const getSnackbar = () => {
-		//Snackbar requires a custom matcher because it's aria-live is not supported by the testing library
-		return document.getElementById( 'a11y-speak-polite' );
+	const Wrapper = ( { children }: PropsWithChildren ) => {
+		const queryClient = new QueryClient();
+		return (
+			<QueryClientProvider client={ queryClient }>
+				<Snackbars />
+				<Suspense>{ children }</Suspense>
+			</QueryClientProvider>
+		);
 	};
 
 	it( 'renders unchecked when all emails are not blocked', async () => {
@@ -35,10 +51,10 @@ describe( 'PauseAllEmails', () => {
 			subscription_delivery_email_blocked: false,
 		} );
 
-		render( <PauseAllEmails />, { wrapper: Wrapper() } );
+		render( <PauseAllEmails />, { wrapper: Wrapper } );
 
-		await waitFor( () => {
-			expect( screen.getByRole( 'checkbox', { name: /Pause all emails/ } ) ).not.toBeChecked();
+		await waitFor( async () => {
+			expect( await pauseCheckbox() ).not.toBeChecked();
 		} );
 	} );
 
@@ -47,10 +63,8 @@ describe( 'PauseAllEmails', () => {
 			subscription_delivery_email_blocked: true,
 		} );
 
-		render( <PauseAllEmails />, { wrapper: Wrapper() } );
-		await waitFor( () => {
-			expect( screen.getByRole( 'checkbox', { name: /Pause all emails/ } ) ).toBeChecked();
-		} );
+		render( <PauseAllEmails />, { wrapper: Wrapper } );
+		expect( await pauseCheckbox() ).toBeChecked();
 	} );
 
 	it( 'cancels the change when the cancel button is clicked', async () => {
@@ -58,21 +72,24 @@ describe( 'PauseAllEmails', () => {
 			subscription_delivery_email_blocked: false,
 		} );
 
-		render( <PauseAllEmails />, { wrapper: Wrapper() } );
-		await userEvent.click( await screen.findByRole( 'checkbox', { name: /Pause all emails/ } ) );
-		await userEvent.click( await screen.getByRole( 'button', { name: /Save/ } ) );
+		render( <PauseAllEmails />, { wrapper: Wrapper } );
+		await userEvent.click( await pauseCheckbox() );
+		await userEvent.click( await saveButton() );
 
-		await waitFor( () => {
-			expect( screen.getByRole( 'dialog', { name: /Pause all emails\?/ } ) ).toBeInTheDocument();
+		await waitFor( async () => {
+			expect( confirmationModal() ).toBeVisible();
 		} );
 
-		await userEvent.click( screen.getByRole( 'button', { name: /Cancel/ } ) );
-		expect(
-			screen.queryByText( /Are you sure you want to pause all emails?/ )
-		).not.toBeInTheDocument();
+		await userEvent.click( await cancelButton() );
+
+		await waitFor( async () => {
+			expect( confirmationModal() ).not.toBeInTheDocument();
+		} );
+
+		expect( await pauseCheckbox() ).not.toBeChecked();
 	} );
 
-	it( 'shows confirmation message when the settings all emails are paused', async () => {
+	it( 'shows confirmation message when the user blocks all emails are paused', async () => {
 		const initialSettings = {
 			subscription_delivery_email_blocked: false,
 		};
@@ -88,19 +105,17 @@ describe( 'PauseAllEmails', () => {
 			.post( '/rest/v1.1/me/settings' )
 			.reply( 200, updatedSettings );
 
-		render( <PauseAllEmails />, { wrapper: Wrapper() } );
+		render( <PauseAllEmails />, { wrapper: Wrapper } );
 
-		await userEvent.click( await screen.findByRole( 'checkbox', { name: /Pause all emails/ } ) );
-		await userEvent.click( await screen.getByRole( 'button', { name: /Save/ } ) );
+		await userEvent.click( await pauseCheckbox() );
+		await userEvent.click( await saveButton() );
 
-		expect( await screen.findByText( /Pause all emails\?/ ) ).toBeVisible();
+		expect( await confirmationModal() ).toBeVisible();
 
-		await userEvent.click(
-			screen.getByRole( 'button', { name: /Yes, I want to pause all emails/ } )
-		);
+		await userEvent.click( await confirmButton() );
 
 		await waitFor( () => {
-			const snackbar = getSnackbar();
+			const snackbar = notificationSnackBar();
 			expect( snackbar ).toBeVisible();
 			expect( snackbar ).toHaveTextContent( /All emails paused/ );
 		} );
@@ -122,13 +137,13 @@ describe( 'PauseAllEmails', () => {
 			.post( '/rest/v1.1/me/settings' )
 			.reply( 200, updatedSettings );
 
-		render( <PauseAllEmails />, { wrapper: Wrapper() } );
+		render( <PauseAllEmails />, { wrapper: Wrapper } );
 
-		await userEvent.click( await screen.findByRole( 'checkbox', { name: /Pause all emails/ } ) );
-		await userEvent.click( await screen.getByRole( 'button', { name: /Save/ } ) );
+		await userEvent.click( await pauseCheckbox() );
+		await userEvent.click( await saveButton() );
 
 		await waitFor( () => {
-			const snackbar = getSnackbar();
+			const snackbar = notificationSnackBar();
 			expect( snackbar ).toBeVisible();
 			expect( snackbar ).toHaveTextContent( /All emails unpaused/ );
 		} );
