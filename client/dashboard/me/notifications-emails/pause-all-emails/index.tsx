@@ -20,22 +20,21 @@ const isAllWpcomEmailsDisabled = ( settings: UserSettings ) => {
 export const PauseAllEmails = () => {
 	const { data: settings } = useSuspenseQuery( userSettingsQuery() );
 	const { createSuccessNotice } = useNotice();
-
 	const {
 		mutate: updateSettings,
 		isPending: isSaving,
-		isSuccess,
+		isSuccess: isSettingsUpdated,
 	} = useMutation( userSettingsMutation() );
 	const originalState = isAllWpcomEmailsDisabled( settings );
 	const [ isConfirmDialogOpen, setIsConfirmDialogOpen ] = useState( false );
 	const [ enabled, setEnabled ] = useState( isAllWpcomEmailsDisabled( settings ) );
 
 	useEffect( () => {
-		if ( isSuccess ) {
+		if ( isSettingsUpdated ) {
 			const message = enabled ? __( 'All emails paused.' ) : __( 'All emails unpaused.' );
 			createSuccessNotice( message, { type: 'snackbar' } );
 		}
-	}, [ createSuccessNotice, enabled, isSuccess ] );
+	}, [ createSuccessNotice, enabled, isSettingsUpdated ] );
 
 	useEffect( () => {
 		if ( isSaving ) {
