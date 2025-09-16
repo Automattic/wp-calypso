@@ -8,7 +8,8 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
+import { Icon, published } from '@wordpress/icons';
 import { useLocale } from '../../../app/locale';
 import { formatDate } from '../../../utils/datetime';
 import { BranchDisplay } from '../branch-display';
@@ -21,6 +22,19 @@ interface DeploymentLogsModalProps {
 	onRequestClose: () => void;
 	deployment: DeploymentRunWithDeploymentInfo;
 	siteId: number;
+}
+
+function formatDuration( startedOn: string, completedOn: string ) {
+	if ( ! startedOn ) {
+		return '-';
+	}
+	const startedOnDate = new Date( startedOn ).valueOf();
+	const completedOnDate = completedOn ? new Date( completedOn ).valueOf() : new Date().valueOf();
+	const totalSeconds = Math.ceil( ( completedOnDate - startedOnDate ) / 1000 );
+	const minutes = Math.floor( totalSeconds / 60 );
+	const seconds = totalSeconds % 60;
+
+	return `${ minutes > 0 ? `${ minutes }m ` : '' }${ seconds }s`;
 }
 
 export function DeploymentLogsModal( {
@@ -53,14 +67,16 @@ export function DeploymentLogsModal( {
 			shouldCloseOnClickOutside
 			shouldCloseOnEsc
 		>
-			<HStack spacing={ 3 } justify="flex-start" style={ { width: 'auto', marginBottom: '16px' } }>
+			<HStack spacing={ 3 } alignment="left" style={ { width: '100%', marginBottom: '16px' } }>
 				{ deployment.is_active_deployment && (
 					<Badge style={ { flexShrink: 0 } }>{ __( 'Active deployment' ) }</Badge>
 				) }
 
-				<BranchDisplay branchName="add/dotdash-373-deployments-github-logs" />
+				<div style={ { width: 'auto', flexShrink: 0, maxWidth: '33vw' } }>
+					<BranchDisplay branchName={ deployment.branch_name } />
+				</div>
 
-				<HStack spacing={ 1.5 } alignment="left">
+				<HStack spacing={ 1.5 } alignment="left" style={ { width: 'auto', flexShrink: 0 } }>
 					<img
 						src={ author.avatar_url }
 						alt={ author.name }
@@ -72,6 +88,25 @@ export function DeploymentLogsModal( {
 						{ author.name }
 					</Text>
 				</HStack>
+
+				{ deployment.status === 'success' && (
+					<HStack spacing={ 1.5 } alignment="left">
+						<Icon
+							icon={ published }
+							style={ {
+								flexShrink: 0,
+								fill: 'var(--dashboard__foreground-color-success)',
+							} }
+						/>
+						<Text size="small" style={ { color: '#3b3b3b' } }>
+							{ sprintf(
+								// translators: %s is the duration of the deployment. e.g. 'Deploy completed in 2min 30s'.
+								__( 'Deploy completed in %s' ),
+								formatDuration( deployment.started_on, deployment.completed_on )
+							) }
+						</Text>
+					</HStack>
+				) }
 			</HStack>
 
 			{ isLoading && (
