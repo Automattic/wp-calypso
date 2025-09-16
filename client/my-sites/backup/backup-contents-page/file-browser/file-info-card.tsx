@@ -60,7 +60,7 @@ function FileInfoCard( {
 
 	// Dispatch an error notice if the download could not be prepared
 	const handlePrepareDownloadError = useCallback( () => {
-		notices.showError( __( 'There was an error preparing your download. Please, try again.' ) );
+		notices.showError( __( 'There was an error preparing your download. Please try again.' ) );
 	}, [ notices ] );
 
 	const { prepareDownload, prepareDownloadStatus, downloadUrl } = usePrepareDownload(
