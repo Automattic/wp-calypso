@@ -4,15 +4,20 @@ import {
 	useAttachFileToConversation,
 	useAuthenticateZendeskMessaging,
 } from '@automattic/zendesk-client';
-import { DropZone, Icon } from '@wordpress/components';
+import { DropZone } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useCallback, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { image } from '@wordpress/icons';
-import { getOdieWrongFileTypeMessage } from '../../constants';
+import { error, image, Icon } from '@wordpress/icons';
 import { useOdieAssistantContext } from '../../context';
 import { zendeskMessageConverter } from '../../utils';
 import { AttachmentPreviews } from '../attachment-preview';
+
+const NOTICE_BAD_FORMAT = {
+	icon: <Icon size={ 24 } icon={ error } />,
+	message: __( 'Only .jpg, .png, .gif files are supported.', __i18n_text_domain__ ),
+	dismissible: true,
+};
 
 const SUPPORTED_IMAGE_TYPES = [ 'image/png', 'image/jpg', 'image/jpeg', 'image/gif' ];
 const MAX_ATTACHMENTS = 5;
@@ -43,6 +48,7 @@ const getPlaceholderAttachmentMessage = ( file: File ) => {
 export const useAttachmentHandler = () => {
 	const { trackEvent, chat, addMessage, isUserEligibleForPaidSupport } = useOdieAssistantContext();
 	const [ attachmentPreviewFiles, setAttachmentPreviewFiles ] = useState< File[] >( [] );
+	const [ badFormatNotice, setBadFormatNotice ] = useState< typeof NOTICE_BAD_FORMAT >();
 
 	const { data: authData } = useAuthenticateZendeskMessaging(
 		isUserEligibleForPaidSupport,
@@ -65,9 +71,10 @@ export const useAttachmentHandler = () => {
 
 	const handleFileUpload = useCallback(
 		async ( files: File[] ) => {
+			setBadFormatNotice( undefined );
 			const limitedFiles = files.slice( 0, MAX_ATTACHMENTS );
 			const newAttachmentPreviewFiles = [ ...attachmentPreviewFiles ];
-			const unsupportedFormats = new Set< string >();
+			let anyUnsupportedFormats = false;
 			for ( const file of limitedFiles ) {
 				if ( isSupportedImageType( file.type ) ) {
 					// Avoid duplicates.
@@ -75,21 +82,20 @@ export const useAttachmentHandler = () => {
 						newAttachmentPreviewFiles.push( file );
 					}
 				} else {
-					unsupportedFormats.add(
-						file.name.split( '.' ).pop() || __( 'unknown', __i18n_text_domain__ )
-					);
+					anyUnsupportedFormats = true;
 				}
 			}
 			setAttachmentPreviewFiles( newAttachmentPreviewFiles );
-			if ( unsupportedFormats.size > 0 ) {
-				addMessage( getOdieWrongFileTypeMessage( Array.from( unsupportedFormats ).join( ', ' ) ) );
+			if ( anyUnsupportedFormats ) {
+				setBadFormatNotice( NOTICE_BAD_FORMAT );
 			}
 		},
 
-		[ addMessage, setAttachmentPreviewFiles, attachmentPreviewFiles ]
+		[ setAttachmentPreviewFiles, attachmentPreviewFiles, setBadFormatNotice ]
 	);
 
 	const sendAttachments = useCallback( async () => {
+		setBadFormatNotice( undefined );
 		if ( attachmentPreviewFiles.length > 0 ) {
 			if ( authData && chat.conversationId && inferredClientId ) {
 				Promise.all(
@@ -117,6 +123,7 @@ export const useAttachmentHandler = () => {
 		inferredClientId,
 		addMessage,
 		trackEvent,
+		setBadFormatNotice,
 	] );
 
 	const onFilesDrop = ( files: File[] ) => {
@@ -203,6 +210,7 @@ export const useAttachmentHandler = () => {
 				}
 			/>
 		) : null,
+		badFormatNotice,
 		handleImagePaste,
 		attachmentAction,
 		isAttachingFile,

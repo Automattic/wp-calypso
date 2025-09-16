@@ -1,4 +1,4 @@
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import type { Context, Message, OdieAllowedBots } from './types';
 declare const __i18n_text_domain__: string;
 
@@ -78,26 +78,6 @@ export const getOdieThirdPartyMessageContent = (): string =>
 		'Once you’re done, you can come back here to start talking with someone by clicking on the following button.',
 		__i18n_text_domain__
 	) }`;
-
-export const getOdieWrongFileTypeMessage = ( formats: string ): Message => ( {
-	content: sprintf(
-		/* translators: %s is the name of the file that is not supported */
-		__(
-			"We don't support %s files at this time. Please upload a .jpg, .png, or .gif.",
-			__i18n_text_domain__
-		),
-		formats
-	),
-	role: 'bot',
-	type: 'message',
-	context: {
-		flags: {
-			hide_disclaimer_content: true,
-			show_contact_support_msg: false,
-		},
-		site_id: null,
-	},
-} );
 
 export const getOdieEmailFallbackMessageContent = (): string =>
 	__(

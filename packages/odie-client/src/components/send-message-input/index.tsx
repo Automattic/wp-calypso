@@ -41,9 +41,6 @@ export const OdieSendMessageButton = () => {
 	const messageSizeNotice = useMessageSizeErrorNotice( inputValue.trim().length );
 	const connectionNotice = useConnectionStatusNotice( isLiveChat );
 
-	// Prioritize connection status notice over message size notice
-	const notice = connectionNotice || messageSizeNotice;
-
 	const { connectionStatus } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return {
@@ -69,7 +66,11 @@ export const OdieSendMessageButton = () => {
 		isAttachingFile,
 		showAttachmentButton,
 		AttachmentDropZone,
+		badFormatNotice,
 	} = useAttachmentHandler();
+
+	// Prioritize connection status notice over message size notice
+	const notice = connectionNotice || messageSizeNotice || badFormatNotice;
 
 	useEffect( () => {
 		function handleBlur() {
