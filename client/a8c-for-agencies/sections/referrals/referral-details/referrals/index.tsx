@@ -6,6 +6,7 @@ import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-prod
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useHandleReferralArchive from '../../hooks/use-handle-referral-archive';
+import useHandleReferralResend from '../../hooks/use-handle-referral-resend';
 import ClientReferrals from '../client-referrals';
 import ClientReferralsMobile from '../mobile/referrals-mobile';
 import type { ReferralAPIResponse } from '../../types';
@@ -21,6 +22,8 @@ const ReferralDetailsReferrals = ( { referrals }: { referrals: ReferralAPIRespon
 
 	const { handleArchiveReferral, isPending: isArchivingReferral } = useHandleReferralArchive();
 
+	const { handleResendReferralEmail } = useHandleReferralResend();
+
 	const { data: productsData, isFetching: isFetchingProducts } = useProductsQuery(
 		false,
 		false,
@@ -28,6 +31,21 @@ const ReferralDetailsReferrals = ( { referrals }: { referrals: ReferralAPIRespon
 	);
 
 	const referralActions = [
+		{
+			id: 'resend-referral-email',
+			label: translate( 'Resend email' ),
+			isPrimary: false,
+			callback( items: SetStateAction< ReferralAPIResponse | null >[] ) {
+				dispatch( recordTracksEvent( 'calypso_a4a_referrals_resend_email_button_click' ) );
+				const referral = items[ 0 ] as ReferralAPIResponse;
+				if ( referral ) {
+					handleResendReferralEmail( referral );
+				}
+			},
+			isEligible( referral: ReferralAPIResponse ) {
+				return referral.status === 'pending';
+			},
+		},
 		{
 			id: 'archive-referral',
 			label: translate( 'Archive' ),
