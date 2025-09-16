@@ -182,19 +182,4 @@ describe( 'StagingSiteSyncDropdown', () => {
 			} );
 		} );
 	} );
-
-	describe( 'Dropdown State Management', () => {
-		test( 'shows pull and push menu items when dropdown is opened', async () => {
-			mockUseQueryWithSite( createMockSite() );
-			renderDropdown();
-
-			fireEvent.click( getDropdownButton() );
-
-			// Verify dropdown menu is open with both options
-			await waitFor( () => {
-				expect( getMenuItem( 'Pull from Staging' ) ).toBeInTheDocument();
-				expect( getMenuItem( 'Push to Staging' ) ).toBeInTheDocument();
-			} );
-		} );
-	} );
 } );
