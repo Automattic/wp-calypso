@@ -8,8 +8,6 @@ import StagingSiteSyncDropdown from '../index';
 import type { Site } from '@automattic/api-core';
 import type { UseQueryOptions } from '@tanstack/react-query';
 
-const mockOnSyncStart = jest.fn();
-
 jest.mock( '@automattic/api-queries', () => ( {
 	siteBySlugQuery: jest.fn( () => ( {
 		queryKey: [ 'site-by-slug' ],
@@ -71,7 +69,7 @@ const createMockStagingSite = ( options = {} ): Site =>
 const getDropdownButton = () => screen.getByRole( 'button', { name: /sync/i } );
 const getMenuItem = ( name: string ) => screen.getByRole( 'menuitem', { name } );
 const renderDropdown = ( siteSlug = 'test-site' ) =>
-	render( <StagingSiteSyncDropdown siteSlug={ siteSlug } onSyncStart={ mockOnSyncStart } /> );
+	render( <StagingSiteSyncDropdown siteSlug={ siteSlug } /> );
 
 const mockUseQueryWithSite = (
 	site: Site,
