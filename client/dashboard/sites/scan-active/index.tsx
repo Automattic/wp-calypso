@@ -13,8 +13,7 @@ export function ActiveThreatsDataViews( { site }: { site: Site } ) {
 		type: 'table',
 		fields: [ 'severity', 'threat', 'first_detected', 'auto_fix' ],
 		perPage: 10,
-		filters: [],
-		search: '',
+		sort: { field: 'severity', direction: 'desc' },
 	} );
 
 	const emptyMessage =
