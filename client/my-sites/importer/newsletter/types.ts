@@ -10,7 +10,7 @@ export interface SubscribersStepProps {
 	cardData: any;
 	status: StepStatus;
 	engine: 'substack';
-	fromSite: string;
+	originSite: string;
 	nextStepUrl: string;
 	selectedSite: SiteDetails;
 	setAutoFetchData: Dispatch< SetStateAction< boolean > >;

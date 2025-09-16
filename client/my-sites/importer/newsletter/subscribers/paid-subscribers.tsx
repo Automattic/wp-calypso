@@ -10,7 +10,7 @@ import MapPlans from './paid-subscribers/map-plans';
 export default function PaidSubscribers( {
 	nextStepUrl,
 	selectedSite,
-	fromSite,
+	originSite,
 	siteSlug,
 	skipNextStep,
 	cardData,
@@ -39,7 +39,7 @@ export default function PaidSubscribers( {
 					status={ status }
 					cardData={ cardData }
 					engine={ engine }
-					fromSite={ fromSite }
+					originSite={ originSite }
 					nextStepUrl={ nextStepUrl }
 					selectedSite={ selectedSite }
 					setAutoFetchData={ setAutoFetchData }
@@ -52,9 +52,9 @@ export default function PaidSubscribers( {
 					status={ status }
 					cardData={ cardData }
 					engine={ engine }
-					fromSite={ fromSite }
 					nextStepUrl={ nextStepUrl }
 					selectedSite={ selectedSite }
+					originSite={ originSite }
 					setAutoFetchData={ setAutoFetchData }
 					siteSlug={ siteSlug }
 					skipNextStep={ skipNextStep }

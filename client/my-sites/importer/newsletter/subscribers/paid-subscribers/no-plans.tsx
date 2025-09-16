@@ -18,16 +18,9 @@ type NoPlansProps = {
 	selectedSite: SiteDetails;
 	engine: string;
 	siteSlug: string;
-	fromSite: string;
 };
 
-export default function NoPlans( {
-	cardData,
-	selectedSite,
-	engine,
-	siteSlug,
-	fromSite,
-}: NoPlansProps ) {
+export default function NoPlans( { cardData, selectedSite, engine, siteSlug }: NoPlansProps ) {
 	const { __ } = useI18n();
 	const currentStep = 'subscribers';
 	const [ showDisconnectStripeDialog, setShowDisconnectStripeDialog ] = useState( false );
@@ -94,7 +87,7 @@ export default function NoPlans( {
 					step={ currentStep }
 					label={ __( 'Only import free subscribers' ) }
 					navigate={ () => {
-						navigate( `/import/newsletter/${ engine }/${ siteSlug }/summary?from=${ fromSite }` );
+						navigate( `/import/newsletter/${ engine }/${ siteSlug }/summary` );
 					} }
 				/>
 			</ImporterActionButtonContainer>

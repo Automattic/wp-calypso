@@ -23,7 +23,7 @@ interface ContentProps {
 	engine: EngineTypes;
 	selectedSite: SiteDetails;
 	siteSlug: string;
-	fromSite: string;
+	originSite: string;
 	skipNextStep: () => void;
 }
 
@@ -72,7 +72,7 @@ export default function Content( {
 	engine,
 	selectedSite,
 	siteSlug,
-	fromSite,
+	originSite,
 	skipNextStep,
 }: ContentProps ) {
 	const siteTitle = selectedSite.title;
@@ -156,7 +156,7 @@ export default function Content( {
 		<Card>
 			<Interval onTick={ fetchImporters } period={ EVERY_FIVE_SECONDS } />
 			{ ! isImporting( importerState ) && (
-				<ExportDataGuide fromSite={ fromSite } selectedSiteUrl={ selectedSite.URL } />
+				<ExportDataGuide fromSite={ originSite } selectedSiteUrl={ selectedSite.URL } />
 			) }
 			{ importerStatus && (
 				<Card { ...cardProps }>
@@ -180,7 +180,7 @@ export default function Content( {
 							importerStatus={ importerStatus }
 							site={ selectedSite }
 							optionalUrl={ optionalUrl }
-							fromSite={ fromSite }
+							originSite={ originSite }
 							acceptedFileTypes={ acceptedFileTypes }
 							nextStepUrl={ nextStepUrl }
 							skipNextStep={ skipNextStep }

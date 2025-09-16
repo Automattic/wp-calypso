@@ -5,7 +5,7 @@ import PaidSubscribers from './paid-subscribers';
 export default function StepPending( {
 	nextStepUrl,
 	selectedSite,
-	fromSite,
+	originSite,
 	siteSlug,
 	skipNextStep,
 	cardData,
@@ -18,7 +18,7 @@ export default function StepPending( {
 			<PaidSubscribers
 				cardData={ cardData }
 				engine={ engine }
-				fromSite={ fromSite }
+				originSite={ originSite }
 				nextStepUrl={ nextStepUrl }
 				selectedSite={ selectedSite }
 				setAutoFetchData={ setAutoFetchData }

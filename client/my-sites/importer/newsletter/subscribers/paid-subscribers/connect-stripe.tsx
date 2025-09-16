@@ -15,15 +15,19 @@ import SuccessNotice from './success-notice';
 /**
  * Update the connect URL with the from_site and engine parameters.
  * @param connectUrl
- * @param fromSite
+ * @param originSite
  * @returns string
  */
-function updateConnectUrl( connectUrl: string, fromSite: QueryArgParsed, engine: string ): string {
+function updateConnectUrl(
+	connectUrl: string,
+	originSite: QueryArgParsed,
+	engine: string
+): string {
 	let stateQueryString = getQueryArg( connectUrl, 'state' ) as string | string[];
 	stateQueryString = Array.isArray( stateQueryString ) ? stateQueryString[ 0 ] : stateQueryString;
 
 	const decodedState = JSON.parse( atob( stateQueryString ) );
-	decodedState.from_site = fromSite;
+	decodedState.from_site = originSite;
 	decodedState.engine = engine;
 
 	return addQueryArgs( connectUrl, { state: btoa( JSON.stringify( decodedState ) ) } );
@@ -31,7 +35,7 @@ function updateConnectUrl( connectUrl: string, fromSite: QueryArgParsed, engine:
 
 export default function ConnectStripe( {
 	cardData,
-	fromSite,
+	originSite,
 	engine,
 	selectedSite,
 	siteSlug,
@@ -41,7 +45,7 @@ export default function ConnectStripe( {
 		return null;
 	}
 
-	const connectUrl = updateConnectUrl( cardData?.connect_url ?? '', fromSite, engine );
+	const connectUrl = updateConnectUrl( cardData?.connect_url ?? '', originSite, engine );
 	const allEmailsCount = parseInt( cardData?.meta?.email_count || '0' );
 
 	return (
@@ -79,7 +83,7 @@ export default function ConnectStripe( {
 					step="subscribers"
 					primary={ false }
 					navigate={ () => {
-						navigate( `/import/newsletter/${ engine }/${ siteSlug }/summary?from=${ fromSite }` );
+						navigate( `/import/newsletter/${ engine }/${ siteSlug }/summary` );
 					} }
 					label={
 						fixMe( {

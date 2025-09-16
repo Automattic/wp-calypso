@@ -9,12 +9,10 @@ import { fixMe, translate } from 'i18n-calypso';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import pauseSubstackBillingImg from 'calypso/assets/images/importer/pause-substack-billing.png';
 import { Steps, StepStatus } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
-import { useResetMutation } from 'calypso/data/paid-newsletter/use-reset-mutation';
 import { useSelector } from 'calypso/state';
 import { isJetpackSite, getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import ImporterActionButton from '../../importer-action-buttons/action-button';
 import ImporterActionButtonContainer from '../../importer-action-buttons/container';
-import { EngineTypes } from '../types';
 import { getImporterStatus, normalizeFromSite } from '../utils';
 import ContentSummary from './content';
 import SubscribersSummary from './subscribers';
@@ -22,7 +20,7 @@ import SubscribersSummary from './subscribers';
 interface SummaryProps {
 	selectedSite: SiteDetails;
 	steps: Steps;
-	engine: EngineTypes;
+	resetImporter: () => void;
 	fromSite: string;
 	showConfetti: boolean;
 	shouldShownConfetti: Dispatch< SetStateAction< boolean > >;
@@ -50,20 +48,19 @@ function getSummaryDescription( contentStepStatus: StepStatus, subscribersStepSt
 export default function Summary( {
 	steps,
 	selectedSite,
-	engine,
+	resetImporter,
 	fromSite,
 	showConfetti,
 	shouldShownConfetti,
 }: SummaryProps ) {
 	const { __ } = useI18n();
-	const { resetPaidNewsletter } = useResetMutation();
 	const prefersReducedMotion = useReducedMotion();
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite.ID ) );
 	const siteAdmminUrl = useSelector( ( state ) => getSiteAdminUrl( state, selectedSite.ID ) );
 	const [ isImportCompleted, setIsImportCompleted ] = useState( false );
 	const [ importStepsResults, setImportStepsResults ] = useState< Steps | null >();
 	const importerStatus = getImporterStatus( steps );
-	const resetImporter = () => resetPaidNewsletter( selectedSite.ID, engine, 'content', fromSite );
+
 	const paidSubscribersCount = parseInt(
 		steps.subscribers.content?.meta?.paid_subscribed_count || '0'
 	);
@@ -91,7 +88,7 @@ export default function Summary( {
 		if ( isImportCompleted && importStepsResults ) {
 			resetImporter();
 		}
-	}, [ importerStatus, importStepsResults, isImportCompleted, steps ] );
+	}, [ importerStatus, importStepsResults, isImportCompleted, steps, resetImporter ] );
 
 	useEffect( () => {
 		if ( importerStatus === 'expired' && ! isImportCompleted ) {
@@ -142,9 +139,7 @@ export default function Summary( {
 				</div>
 				<ImporterActionButtonContainer noSpacing>
 					<ImporterActionButton
-						href={ `/import/newsletter/substack/${
-							selectedSite.slug
-						}/${ 'content' }?from=${ fromSite }` }
+						href={ `/import/newsletter/substack/${ selectedSite.slug }` }
 						onClick={ resetImporter }
 						primary
 					>

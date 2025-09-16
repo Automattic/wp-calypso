@@ -1,5 +1,4 @@
 import { __, sprintf } from '@wordpress/i18n';
-import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import { useState, useEffect, useRef } from 'react';
 import { UrlData } from 'calypso/blocks/import/types';
@@ -49,33 +48,14 @@ function getTitle( engine: EngineTypes, urlData?: UrlData ) {
 	return __( 'Import your newsletter' );
 }
 
-function updatePathToContent( path: string ) {
-	if ( path.endsWith( '/content' ) ) {
-		return path;
-	}
-	return path + '/content';
-}
-
 export default function NewsletterImporter( {
 	siteSlug,
 	engine,
 	step = 'reset',
 }: NewsletterImporterProps ) {
-	const fromSite = getQueryArg( window.location.href, 'from' ) as string;
 	const selectedSite = useSelector( getSelectedSite ) ?? undefined;
-	const [ validFromSite, setValidFromSite ] = useState( false );
 	const [ autoFetchData, setAutoFetchData ] = useState( false );
-	const [ shouldResetImport, setShouldResetImport ] = useState( step === 'reset' );
 	const completeImportSubscribersTask = useCompleteImportSubscribersTask();
-	const previousFromSite = useRef( fromSite );
-
-	// Reset validFromSite when fromSite changes or is removed
-	useEffect( () => {
-		if ( fromSite !== previousFromSite.current ) {
-			setValidFromSite( false );
-			previousFromSite.current = fromSite;
-		}
-	}, [ fromSite ] );
 
 	if ( step === 'reset' ) {
 		step = 'content';
@@ -87,33 +67,26 @@ export default function NewsletterImporter( {
 		selectedSite?.ID,
 		autoFetchData
 	);
+	const { content, subscribers } = paidNewsletterData?.steps || {};
+	const originSite = content?.content?.originSite || '';
 
 	useEffect( () => {
-		if (
-			paidNewsletterData?.steps?.content?.status === 'importing' ||
-			paidNewsletterData?.steps?.subscribers?.status === 'importing'
-		) {
+		if ( content?.status === 'importing' || subscribers?.status === 'importing' ) {
 			setAutoFetchData( true );
 		} else {
 			setAutoFetchData( false );
 		}
-	}, [
-		paidNewsletterData?.steps?.content?.status,
-		paidNewsletterData?.steps?.subscribers?.status,
-		step,
-		setAutoFetchData,
-		paidNewsletterData?.steps,
-	] );
+	}, [ content?.status, subscribers?.status, step, setAutoFetchData, paidNewsletterData?.steps ] );
 
 	useEffect( () => {
 		// Mark the task complete once importing starts. Since we prompt users to leave the page while
 		// importing is happening, it may not be called if we wait until completion.
-		if ( paidNewsletterData?.steps?.subscribers?.status === 'importing' ) {
+		if ( subscribers?.status === 'importing' ) {
 			// We do this here instead of in the Subscribers component because steps skip over the
 			// component when not importing paid subscribers.
 			completeImportSubscribersTask();
 		}
-	}, [ paidNewsletterData?.steps?.subscribers?.status, completeImportSubscribersTask ] );
+	}, [ subscribers?.status, completeImportSubscribersTask ] );
 
 	const { currentStepNumber, nextStepSlug } = stepSlugs.reduce(
 		function ( result, curr, index ) {
@@ -131,52 +104,21 @@ export default function NewsletterImporter( {
 	);
 
 	const { skipNextStep } = useSkipNextStepMutation();
-	const { resetPaidNewsletter, isPending: isResetPaidNewsletterPending } = useResetMutation();
+	const { isPending: isResetPaidNewsletterPending, resetPaidNewsletter } = useResetMutation();
 
 	const {
 		data: urlData,
 		isFetching: isUrlFetching,
 		isError: isUrlError,
-	} = useAnalyzeUrlQuery( fromSite );
-
-	useEffect( () => {
-		if ( urlData?.platform === engine ) {
-			if ( selectedSite && shouldResetImport && validFromSite === false ) {
-				resetPaidNewsletter( selectedSite.ID, engine, stepSlugs[ 0 ], fromSite );
-				setShouldResetImport( false );
-				window.history.replaceState(
-					null,
-					'',
-					updatePathToContent( window.location.pathname ) + window.location.search
-				);
-			}
-
-			setValidFromSite( true );
-		}
-	}, [
-		urlData,
-		fromSite,
-		engine,
-		selectedSite,
-		resetPaidNewsletter,
-		step,
-		validFromSite,
-		shouldResetImport,
-	] );
+	} = useAnalyzeUrlQuery( originSite );
 
 	const stepsProgress = getStepsProgress(
 		engine,
 		selectedSite?.slug || '',
-		fromSite,
+		originSite,
 		paidNewsletterData
 	);
-	const stepUrl = `/import/newsletter/${ engine }/${ siteSlug }/${ step }`;
-	const nextStepUrl = addQueryArgs(
-		`/import/newsletter/${ engine }/${ siteSlug }/${ nextStepSlug }`,
-		{
-			from: fromSite,
-		}
-	);
+	const nextStepUrl = `/import/newsletter/${ engine }/${ siteSlug }/${ nextStepSlug }`;
 
 	// Helps only show the confetti once even if you navigate between the different steps.
 	const shouldShowConfettiRef = useRef( false );
@@ -195,27 +137,29 @@ export default function NewsletterImporter( {
 			<LogoChain logos={ logoChainLogos } />
 			<FormattedHeader headerText={ getTitle( engine, urlData ) } />
 
-			{ ( ! validFromSite || isResetPaidNewsletterPending ) && (
+			{ ( ! originSite || isResetPaidNewsletterPending ) && (
 				<SelectNewsletterForm
-					redirectUrl={ stepUrl }
-					value={ fromSite }
+					siteId={ selectedSite?.ID ?? 0 }
+					value={ originSite }
+					siteSlug={ siteSlug }
+					engine={ engine }
 					isLoading={ isUrlFetching || isResetPaidNewsletterPending }
 					isError={ isUrlError || ( !! urlData?.platform && urlData.platform !== engine ) }
 				/>
 			) }
 
-			{ validFromSite && ! isResetPaidNewsletterPending && (
+			{ originSite && ! isResetPaidNewsletterPending && (
 				<StepProgress steps={ stepsProgress } currentStep={ currentStepNumber } />
 			) }
 
-			{ selectedSite && validFromSite && ! isResetPaidNewsletterPending && paidNewsletterData && (
+			{ selectedSite && originSite && ! isResetPaidNewsletterPending && paidNewsletterData && (
 				<>
 					{ step === 'content' && (
 						<Content
 							nextStepUrl={ nextStepUrl }
 							engine={ engine }
 							selectedSite={ selectedSite }
-							fromSite={ fromSite }
+							originSite={ originSite }
 							siteSlug={ siteSlug }
 							skipNextStep={ () => {
 								skipNextStep( selectedSite.ID, engine, nextStepSlug, step );
@@ -227,7 +171,7 @@ export default function NewsletterImporter( {
 							siteSlug={ siteSlug }
 							nextStepUrl={ nextStepUrl }
 							selectedSite={ selectedSite }
-							fromSite={ fromSite }
+							originSite={ originSite }
 							skipNextStep={ () => {
 								skipNextStep( selectedSite.ID, engine, nextStepSlug, step );
 							} }
@@ -241,8 +185,8 @@ export default function NewsletterImporter( {
 						<Summary
 							selectedSite={ selectedSite }
 							steps={ paidNewsletterData.steps }
-							engine={ engine }
-							fromSite={ fromSite }
+							resetImporter={ () => resetPaidNewsletter( selectedSite?.ID, engine, 'content' ) }
+							fromSite={ originSite }
 							showConfetti={ showConfetti }
 							shouldShownConfetti={ setShowConfetti }
 						/>

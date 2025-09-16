@@ -7,7 +7,7 @@ import StepPending from './step-pending';
 export default function Subscribers( {
 	nextStepUrl,
 	selectedSite,
-	fromSite,
+	originSite,
 	status,
 	siteSlug,
 	skipNextStep,
@@ -33,7 +33,7 @@ export default function Subscribers( {
 		<Step
 			cardData={ cardData }
 			engine={ engine }
-			fromSite={ fromSite }
+			originSite={ originSite }
 			nextStepUrl={ nextStepUrl }
 			selectedSite={ selectedSite }
 			setAutoFetchData={ setAutoFetchData }
