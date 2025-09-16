@@ -958,53 +958,6 @@ object PlaywrightTestPRMatrix : BuildType({
 
 	steps {		
 		bashNodeScript {
-			name = "Prepare environment"
-			scriptContent = """
-				# Install deps
-				yarn workspaces focus wp-e2e-tests @automattic/calypso-e2e
-
-				# Decrypt secrets
-				E2E_SECRETS_KEY="%E2E_SECRETS_ENCRYPTION_KEY_CURRENT%" yarn workspace @automattic/calypso-e2e decrypt-secrets
-
-				# Build packages
-				yarn workspace @automattic/calypso-e2e build
-			""".trimIndent()
-			dockerImage = "%docker_image_e2e%"
-		}
-
-		bashNodeScript {
-			name = "Run e2e tests"
-			id = "run_e2e_tests"
-			scriptContent = """
-				echo "Getting Calypso url for build ${BuildDockerImage.depParamRefs.buildNumber}"
-				chmod +x ./bin/get-calypso-live-url.sh
-				CALYPSO_BASE_URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
-				if [[ ${'$'}? -ne 0 ]]; then
-					// Command failed. CALYPSO_BASE_URL contains stderr
-					echo ${'$'}CALYPSO_BASE_URL
-					exit 1
-				fi
-				
-				export CALYPSO_BASE_URL
-
-				# Check if test/e2e or packages/calypso-e2e files have been changed
-				CHANGED_FILES=${'$'}(git diff --name-only refs/remotes/origin/trunk...HEAD)
-				if echo "${'$'}CHANGED_FILES" | grep -q -E "^(test/e2e/|packages/calypso-e2e/)"; then
-					echo "Changes detected in test/e2e/ or packages/calypso-e2e/, running all tests"
-					GREP_FLAG=""
-				else
-					echo "No changes in test/e2e/ or packages/calypso-e2e/, running @calypso-pr tests only"
-					GREP_FLAG="--grep=@calypso-pr"
-				fi
-
-				cd test/e2e
-				echo "Running Playwright tests for project: %playwrightProject%"
-				yarn test:pw:%playwrightProject% ${'$'}GREP_FLAG
-			"""
-			dockerImage = "%docker_image_e2e%"
-		}
-
-		bashNodeScript {
 			name = "Upload report and send Slack notification"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			conditions {
@@ -1032,11 +985,6 @@ object PlaywrightTestPRMatrix : BuildType({
 			dockerImage = "%docker_image_e2e%"
 		}
 	}
-
-	artifactRules = """
-		test/e2e/output => %playwrightProject%/output
-		test/e2e/blob-report => blob-report
-	""".trimIndent()
 })
 
 object PlaywrightTestPreReleaseMatrix : BuildType({
