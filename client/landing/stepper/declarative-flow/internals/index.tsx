@@ -195,10 +195,17 @@ export const FlowRenderer: React.FC< {
 		}
 
 		if ( step.slug === PRIVATE_STEPS.USER.slug ) {
+			const postAuthStepPath = createPath( {
+				pathname: generatePath( '/setup/:flow/', {
+					flow: flow.variantSlug ?? flow.name,
+				} ),
+				search: window.location.search,
+				hash: window.location.hash,
+			} );
 			// In this case, the user step is not able to determine the next step after auth. This happens when users somehow land in /flow/user directly.
 			// So we navigate to the landing page of the flow and let the flow decide what to do.
 			// If you intend to land in /flow/user, please point your URL to the step itself and Stepper will automatically redirect to the user step if needed.
-			return <Navigate to={ `/${ flow.variantSlug ?? flow.name }/` } replace />;
+			return <Navigate to={ postAuthStepPath } replace />;
 		}
 
 		return (
