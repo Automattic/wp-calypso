@@ -7,10 +7,7 @@ import { render } from '../../../test-utils';
 import StagingSiteDeleteModal from '../index';
 import type { Site } from '@automattic/api-core';
 
-const mockCreateErrorNotice = jest.fn();
-const mockCreateSuccessNotice = jest.fn();
-const mockCreateNotice = jest.fn();
-const mockNavigate = jest.fn();
+// Mock the hooks and dependencies
 const mockMutate = jest.fn();
 
 jest.mock( '@automattic/calypso-analytics', () => ( {
@@ -18,11 +15,7 @@ jest.mock( '@automattic/calypso-analytics', () => ( {
 } ) );
 
 jest.mock( '@wordpress/data', () => ( {
-	useDispatch: () => ( {
-		createSuccessNotice: mockCreateSuccessNotice,
-		createNotice: mockCreateNotice,
-		createErrorNotice: mockCreateErrorNotice,
-	} ),
+	useDispatch: () => ( {} ),
 	combineReducers: jest.fn( ( reducers ) => reducers ),
 	createReduxStore: jest.fn(),
 	register: jest.fn(),
@@ -31,16 +24,16 @@ jest.mock( '@wordpress/data', () => ( {
 
 jest.mock( '@tanstack/react-router', () => ( {
 	...jest.requireActual( '@tanstack/react-router' ),
-	useNavigate: () => mockNavigate,
+	useNavigate: () => jest.fn(),
 } ) );
 
 jest.mock( '@automattic/api-queries', () => ( {
-	siteByIdQuery: jest.fn( ( siteId ) => ( {
-		queryKey: [ 'site-by-id', siteId ],
-		queryFn: () => Promise.resolve( { ID: siteId, slug: `production-site-${ siteId }` } ),
+	siteByIdQuery: jest.fn( () => ( {
+		queryKey: [ 'site-by-id' ],
+		queryFn: () => Promise.resolve( {} ),
 	} ) ),
 	stagingSiteDeleteMutation: jest.fn( () => ( {
-		mutationFn: () => Promise.resolve( { success: true } ),
+		mutationFn: () => Promise.resolve( {} ),
 	} ) ),
 } ) );
 
@@ -55,42 +48,41 @@ jest.mock( '@tanstack/react-query', () => ( {
 	} ) ),
 } ) );
 
-// Test data
-const mockStagingSite: Site = {
-	ID: 2,
-	slug: 'staging-site',
-	name: 'Staging Site',
-	URL: 'https://staging-site.wordpress.com',
-	is_wpcom_staging_site: true,
-	options: {
-		wpcom_production_blog_id: 1,
-	},
-	capabilities: {
-		manage_options: true,
-	},
-} as Site;
+// Test data factory
+const createMockSite = ( options = {} ): Site =>
+	( {
+		ID: 2,
+		slug: 'staging-site',
+		name: 'Staging Site',
+		URL: 'https://staging-site.wordpress.com',
+		is_wpcom_staging_site: true,
+		capabilities: {
+			manage_options: true,
+		},
+		options: {
+			wpcom_production_blog_id: 1,
+			...options,
+		},
+	} ) as Site;
 
-const mockStagingSiteWithoutProductionId: Site = {
-	ID: 2,
-	slug: 'staging-site',
-	name: 'Staging Site',
-	URL: 'https://staging-site.wordpress.com',
-	is_wpcom_staging_site: true,
-	options: {},
-	capabilities: {
-		manage_options: true,
-	},
-} as Site;
+const mockStagingSite = createMockSite();
+const mockStagingSiteWithoutProductionId = createMockSite( {
+	wpcom_production_blog_id: undefined,
+} );
+
+// Helper functions
+const getButton = ( name: string ) => screen.getByRole( 'button', { name } );
+const renderModal = ( site: Site, onClose = jest.fn() ) =>
+	render( <StagingSiteDeleteModal site={ site } onClose={ onClose } /> );
 
 describe( 'StagingSiteDeleteModal', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		mockMutate.mockImplementation( jest.fn() );
 	} );
 
 	describe( 'Modal Display', () => {
 		test( 'renders modal with correct title and content', () => {
-			render( <StagingSiteDeleteModal site={ mockStagingSite } onClose={ jest.fn() } /> );
+			renderModal( mockStagingSite );
 
 			expect( screen.getByRole( 'dialog', { name: 'Delete staging site' } ) ).toBeInTheDocument();
 			expect(
@@ -101,16 +93,14 @@ describe( 'StagingSiteDeleteModal', () => {
 		} );
 
 		test( 'displays cancel and delete buttons', () => {
-			render( <StagingSiteDeleteModal site={ mockStagingSite } onClose={ jest.fn() } /> );
+			renderModal( mockStagingSite );
 
-			expect( screen.getByRole( 'button', { name: 'Cancel' } ) ).toBeInTheDocument();
-			expect( screen.getByRole( 'button', { name: 'Delete staging site' } ) ).toBeInTheDocument();
+			expect( getButton( 'Cancel' ) ).toBeInTheDocument();
+			expect( getButton( 'Delete staging site' ) ).toBeInTheDocument();
 		} );
 
 		test( 'returns null when no production site ID is provided', () => {
-			const { container } = render(
-				<StagingSiteDeleteModal site={ mockStagingSiteWithoutProductionId } onClose={ jest.fn() } />
-			);
+			const { container } = renderModal( mockStagingSiteWithoutProductionId );
 
 			expect( container.firstChild ).toBeNull();
 		} );
@@ -119,18 +109,17 @@ describe( 'StagingSiteDeleteModal', () => {
 	describe( 'User Interactions', () => {
 		test( 'calls onClose when cancel button is clicked', () => {
 			const mockOnClose = jest.fn();
+			renderModal( mockStagingSite, mockOnClose );
 
-			render( <StagingSiteDeleteModal site={ mockStagingSite } onClose={ mockOnClose } /> );
-
-			fireEvent.click( screen.getByRole( 'button', { name: 'Cancel' } ) );
+			fireEvent.click( getButton( 'Cancel' ) );
 
 			expect( mockOnClose ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		test( 'triggers mutation when delete button is clicked', () => {
-			render( <StagingSiteDeleteModal site={ mockStagingSite } onClose={ jest.fn() } /> );
+			renderModal( mockStagingSite );
 
-			fireEvent.click( screen.getByRole( 'button', { name: 'Delete staging site' } ) );
+			fireEvent.click( getButton( 'Delete staging site' ) );
 
 			expect( mockMutate ).toHaveBeenCalledWith( undefined, {
 				onError: expect.any( Function ),
@@ -148,24 +137,10 @@ describe( 'StagingSiteDeleteModal', () => {
 				error: null,
 			} );
 
-			render( <StagingSiteDeleteModal site={ mockStagingSite } onClose={ jest.fn() } /> );
+			renderModal( mockStagingSite );
 
-			expect( screen.getByRole( 'button', { name: 'Cancel' } ) ).toBeDisabled();
-			expect( screen.getByRole( 'button', { name: 'Delete staging site' } ) ).toBeDisabled();
-		} );
-
-		test( 'shows busy state on delete button when mutation is pending', () => {
-			const { useMutation } = require( '@tanstack/react-query' );
-			useMutation.mockReturnValue( {
-				mutate: mockMutate,
-				isPending: true,
-				error: null,
-			} );
-
-			render( <StagingSiteDeleteModal site={ mockStagingSite } onClose={ jest.fn() } /> );
-
-			const deleteButton = screen.getByRole( 'button', { name: 'Delete staging site' } );
-			expect( deleteButton ).toBeDisabled();
+			expect( getButton( 'Cancel' ) ).toBeDisabled();
+			expect( getButton( 'Delete staging site' ) ).toBeDisabled();
 		} );
 	} );
 } );
