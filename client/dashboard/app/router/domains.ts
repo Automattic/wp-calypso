@@ -11,6 +11,7 @@ import {
 	queryClient,
 	domainTransferRequestQuery,
 	domainWhoisQuery,
+	domainConnectionSetupInfoQuery,
 } from '@automattic/api-queries';
 import {
 	createRoute,
@@ -20,6 +21,7 @@ import {
 	lazyRouteComponent,
 } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
+import { StepName } from '../../domains/domain-connection-setup/types';
 import { rootRoute } from './root';
 
 // Standalone domains route - requires rootRoute
@@ -328,6 +330,27 @@ export const domainTransferToOtherSiteRoute = createRoute( {
 	)
 );
 
+export const domainConnectionSetupRoute = createRoute( {
+	getParentRoute: () => domainRoute,
+	path: 'domain-connection-setup',
+	loader: async ( { params: { domainName } } ) => {
+		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
+		await queryClient.ensureQueryData(
+			domainConnectionSetupInfoQuery(
+				domainName,
+				domain.blog_id,
+				`${ window.location.href }?step=${ StepName.DC_RETURN }`
+			)
+		);
+	},
+} ).lazy( () =>
+	import( '../../domains/domain-connection-setup' ).then( ( d ) =>
+		createLazyRoute( 'domain-connection-setup' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const createDomainsRoutes = () => {
 	return [
 		domainsRoute,
@@ -336,6 +359,7 @@ export const createDomainsRoutes = () => {
 			domainDnsRoute,
 			domainDnsAddRoute,
 			domainDnsEditRoute,
+			domainConnectionSetupRoute,
 			domainForwardingsRoute,
 			domainForwardingAddRoute,
 			domainForwardingEditRoute,

@@ -2525,7 +2525,7 @@ const getPlanJetpackGrowthDetails = (): IncompleteJetpackPlan => ( {
 	getWhatIsIncluded: () => [
 		translate( '40+ Jetpack blocks' ),
 		translate( 'Display ads with WordAds' ),
-		translate( 'Pay with PayPal' ),
+		translate( 'PayPal Payment Buttons' ),
 		translate( 'Paid content gating' ),
 		translate( 'Paywall access' ),
 		translate( 'Newsletter' ),

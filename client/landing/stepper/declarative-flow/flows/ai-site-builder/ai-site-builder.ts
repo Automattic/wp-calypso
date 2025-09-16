@@ -168,7 +168,12 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 							const site = await resolveSelect( SITE_STORE ).getSite(
 								providedDependencies.siteSlug
 							);
-							window.location.replace( site.URL );
+							let bigSkyUrl = `${ site.URL }/wp-admin/site-editor.php?canvas=edit&p=%2F`;
+							const checkout = queryParams.get( 'checkout' );
+							if ( checkout ) {
+								bigSkyUrl += '&checkout=success';
+							}
+							window.location.replace( bigSkyUrl );
 						}
 					}
 					return;
@@ -206,6 +211,7 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 					const bigSkyUrl = `${ site.URL }/wp-admin/site-editor.php?canvas=edit&p=%2F`;
 					const siteLaunchUrl = addQueryArgs( '/setup/ai-site-builder/site-launch', {
 						siteId: siteIdFromSiteData,
+						checkout: 'success',
 					} );
 					window.location.assign(
 						addQueryArgs( `/checkout/${ encodeURIComponent( siteSlugFromSiteData || '' ) }`, {

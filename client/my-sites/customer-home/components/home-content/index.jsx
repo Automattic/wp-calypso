@@ -47,6 +47,7 @@ import {
 	getSitePlan,
 	getSiteOption,
 } from 'calypso/state/sites/selectors';
+import { hasHostingDashboardOptIn } from 'calypso/state/sites/selectors/has-hosting-dashboard-opt-in';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CelebrateLaunchModal from '../celebrate-launch-modal';
@@ -70,6 +71,7 @@ const HomeContent = ( {
 	fetchingJetpackModules,
 	handleVerifyIcannEmail,
 	isAdmin,
+	hostingDashboardOptIn,
 } ) => {
 	const [ celebrateLaunchModalIsOpen, setCelebrateLaunchModalIsOpen ] = useState( false );
 	const [ launchedSiteId, setLaunchedSiteId ] = useState( null );
@@ -183,8 +185,13 @@ const HomeContent = ( {
 				{ translate( 'View site' ) }
 			</Button>
 			{ isAdmin && ! isP2 && (
-				<Button primary href={ `/overview/${ site.slug }` }>
-					{ translate( 'Hosting Overview' ) }
+				<Button
+					primary
+					href={ hostingDashboardOptIn ? `/v2/sites/${ site.slug }` : `/overview/${ site.slug }` }
+				>
+					{ hostingDashboardOptIn
+						? translate( 'Hosting Dashboard' )
+						: translate( 'Hosting Overview' ) }
 				</Button>
 			) }
 		</>
@@ -375,6 +382,7 @@ const mapStateToProps = ( state ) => {
 		fetchingJetpackModules: !! isFetchingJetpackModules( state, siteId ),
 		isSiteLaunching: getRequest( state, launchSite( siteId ) )?.isLoading ?? false,
 		isAdmin: canCurrentUser( state, siteId, 'manage_options' ),
+		hostingDashboardOptIn: hasHostingDashboardOptIn( state ),
 	};
 };
 

@@ -23,10 +23,13 @@ export const domainSuggestionsQuery = (
 		meta: { persist: false },
 	} );
 
-export const freeSuggestionQuery = ( query: string ) =>
+export const freeSuggestionQuery = (
+	query: string,
+	params: Partial< DomainSuggestionQuery > = {}
+) =>
 	queryOptions( {
-		queryKey: [ 'free-suggestion', query ],
-		queryFn: () => fetchFreeDomainSuggestion( query ),
+		queryKey: [ 'free-suggestion', query, params ],
+		queryFn: () => fetchFreeDomainSuggestion( query, params ),
 	} );
 
 export const availableTldsQuery = ( query?: string, vendor?: string ) =>

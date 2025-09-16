@@ -14,24 +14,16 @@ import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
-import {
-	getSiteSlug,
-	isAdminInterfaceWPAdmin,
-	isJetpackSite,
-	getSiteAdminUrl,
-} from 'calypso/state/sites/selectors';
+import { getSiteSlug, isAdminInterfaceWPAdmin, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import 'calypso/sites/marketing/style.scss';
 
 export const Sharing = ( {
 	contentComponent,
 	pathname,
-	showButtons,
 	showConnections,
-	showTraffic,
 	siteId,
 	isJetpack,
 	isP2Hub,
@@ -42,9 +34,6 @@ export const Sharing = ( {
 	const adminInterfaceIsWPAdmin = useSelector( ( state ) =>
 		isAdminInterfaceWPAdmin( state, siteId )
 	);
-	const isJetpackClassic = isJetpack && adminInterfaceIsWPAdmin;
-
-	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 
 	const pathSuffix = siteSlug ? '/' + siteSlug : '';
 	let filters = [];
@@ -59,7 +48,7 @@ export const Sharing = ( {
 	// verify that the required Jetpack module is active
 	const connectionsFilter = {
 		id: 'sharing-connections',
-		route: '/marketing/connections' + pathSuffix,
+		route: '/marketing/jetpack-social' + pathSuffix,
 		title: translate( 'Connections' ),
 		description: translate(
 			'Connect your site to social networks and other services. {{learnMoreLink/}}',
@@ -74,49 +63,6 @@ export const Sharing = ( {
 	};
 	if ( showConnections ) {
 		filters.push( connectionsFilter );
-	}
-
-	// Include SEO link if a site is selected and the
-	// required Jetpack module is active
-	if ( showTraffic ) {
-		filters.push( {
-			id: 'traffic',
-			route: '/marketing/jetpack-traffic' + pathSuffix,
-			title: translate( 'Traffic' ),
-			description: translate(
-				'Manage settings and tools related to the traffic your website receives. {{learnMoreLink/}}',
-				{
-					components: {
-						learnMoreLink: (
-							<InlineSupportLink key="traffic" supportContext="traffic" showIcon={ false } />
-						),
-					},
-				}
-			),
-		} );
-	}
-
-	// Include Sharing Buttons link if a site is selected and the
-	// required Jetpack module is active
-	if ( showButtons ) {
-		filters.push( {
-			id: 'sharing-buttons',
-			route: isJetpackClassic
-				? siteAdminUrl + 'admin.php?page=jetpack#/sharing'
-				: '/marketing/sharing-buttons' + pathSuffix,
-			isExternalLink: isJetpackClassic,
-			title: translate( 'Sharing Buttons' ),
-			description: translate(
-				'Make it easy for your readers to share your content online. {{learnMoreLink/}}',
-				{
-					components: {
-						learnMoreLink: (
-							<InlineSupportLink key="sharing" supportContext="sharing" showIcon={ false } />
-						),
-					},
-				}
-			),
-		} );
 	}
 
 	let titleHeader = translate( 'Marketing and Integrations' );
@@ -134,6 +80,11 @@ export const Sharing = ( {
 	const selected = find( filters, { route: pathname } );
 	const isFirstFilterSelected = filters[ 0 ]?.route === pathname;
 
+	const showFilters =
+		filters.length > 0 &&
+		! pathname.startsWith( '/marketing/sharing-buttons' ) &&
+		! pathname.startsWith( '/marketing/connections' );
+
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		<Main wideLayout className="sharing">
@@ -149,7 +100,7 @@ export const Sharing = ( {
 					)
 				}
 			/>
-			{ filters.length > 0 && (
+			{ showFilters && (
 				<SectionNav selectedText={ selected?.title ?? '' }>
 					<NavTabs>
 						{ filters.map( ( { id, route, isExternalLink, title } ) => (
@@ -189,7 +140,6 @@ Sharing.propTypes = {
 	contentComponent: PropTypes.node,
 	isVipSite: PropTypes.bool,
 	path: PropTypes.string,
-	showButtons: PropTypes.bool,
 	showConnections: PropTypes.bool,
 	siteId: PropTypes.number,
 	siteSlug: PropTypes.string,
@@ -199,15 +149,12 @@ Sharing.propTypes = {
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const isJetpack = isJetpackSite( state, siteId );
-	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
 	const userId = getCurrentUserId( state );
 
 	return {
 		isP2Hub: isSiteP2Hub( state, siteId ),
-		showButtons: siteId && canManageOptions,
-		showConnections: !! siteId,
-		// Temporary "Marketing > Traffic" menu for existing users that shows a callout informing that the screen has moved to "Jetpack (> Settings) > Traffic".
-		showTraffic: canManageOptions && !! siteId && userId < 269750000,
+		// Temporary "Marketing > Connections" menu for existing users that shows a callout informing that the screen has moved to "Jetpack > Social".
+		showConnections: !! siteId && userId < 271300000,
 		isVip: isVipSite( state, siteId ),
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
