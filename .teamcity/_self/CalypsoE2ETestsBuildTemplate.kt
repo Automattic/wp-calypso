@@ -21,7 +21,6 @@ object CalypsoE2ETestsBuildTemplate : Template({
 		param("env.LOCALE", "en")
 		param("env.AUTHENTICATE_ACCOUNTS", "simpleSitePersonalPlanUser,gutenbergSimpleSiteUser,defaultUser")
 		param("env.CI", "true")
-    param("DOCKER_IMAGE_BUILD_NUMBER", "")
     param("VIEWPORT", "desktop")
     param("TEST_GROUP", "") // empty will run all, calypso-pr, calypso-release, authentication, etc
 	}
@@ -42,7 +41,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 			scriptContent = """
         echo "VIEWPORT=%VIEWPORT%"
         echo "TEST_GROUP=%TEST_GROUP%"
-        echo "DOCKER_IMAGE_BUILD_NUMBER=%DOCKER_IMAGE_BUILD_NUMBER%"
+        // echo "DOCKER_IMAGE_BUILD_NUMBER=%DOCKER_IMAGE_BUILD_NUMBER%"
 				// todo: if CALYPSO_BASE_URL env variable is not set, we need the DOCKER_IMAGE_BUILD_NUMBER param to be set
         // todo: if CALYPSO_BASE_URL is not set, we need the DOCKER_IMAGE_BUILD_NUMBER to be set
 			""".trimIndent()

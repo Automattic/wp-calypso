@@ -952,11 +952,11 @@ object PlaywrightTestPRMatrix : BuildType({
 	}
 
 	params {
-		param("DOCKER_IMAGE_BUILD_NUMBER", "${BuildDockerImage.depParamRefs.buildNumber}")
+		// todo update me to use live url!
+		param("env.CALYPSO_BASE_URL", "https://wordpress.com")
 	}
 
 	steps {
-
 		bashNodeScript {
 			name = "Upload report and send Slack notification"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
