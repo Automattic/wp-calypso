@@ -20,8 +20,7 @@ import FrequencySelection, { type Frequency, type Weekday } from './components/f
 import PluginsSelection from './components/plugins-selection';
 import SitesSelection from './components/sites-selection';
 import { DEFAULT_FREQUENCY, DEFAULT_TIME, DEFAULT_WEEKDAY, CRON_CHECK_INTERVAL } from './constants';
-import { prepareTimestamp } from './helpers';
-import type { Site } from '@automattic/api-core';
+import { prepareTimestamp, runWithConcurrency } from './helpers';
 
 const BLOCK_CREATE = true;
 
@@ -59,30 +58,33 @@ function ScheduledUpdatesNew() {
 		};
 		createMutation.mutate( body, {
 			onSuccess: async ( results ) => {
-				// Per-site success filtering to mirror legacy behavior
 				const successfulSiteIds = ( results || [] )
 					.filter( ( result ) => ! result.error )
 					.map( ( result ) => result.siteId );
 
 				// Create monitor settings for each successful site using per-site mutation (with retry)
-				const siteMap = new Map( ( eligibleSites as Site[] ).map( ( s ) => [ s.ID, s ] ) );
-				const monitorPromises = successfulSiteIds
+				const siteMap = new Map( eligibleSites.map( ( site ) => [ site.ID, site ] ) );
+				const monitorTasks = successfulSiteIds
 					.map( ( siteId ) => siteMap.get( siteId ) )
 					.filter( Boolean )
 					.map( ( site ) => {
-						const s = site as Site;
-						const siteUrl = s.URL as string;
-						return createMonitorForSite( {
-							siteId: s.ID,
-							body: {
-								urls: [
-									{ monitor_url: siteUrl, check_interval: CRON_CHECK_INTERVAL },
-									{ monitor_url: siteUrl + '/wp-cron.php', check_interval: CRON_CHECK_INTERVAL },
-								],
-							},
-						} );
+						if ( ! site ) {
+							return async () => {};
+						}
+
+						return async () => {
+							await createMonitorForSite( {
+								siteId: site.ID,
+								body: {
+									urls: [
+										{ monitor_url: site.URL, check_interval: CRON_CHECK_INTERVAL },
+										{ monitor_url: site.URL + '/wp-cron.php', check_interval: CRON_CHECK_INTERVAL },
+									],
+								},
+							} );
+						};
 					} );
-				await Promise.allSettled( monitorPromises );
+				await runWithConcurrency( monitorTasks, 4 );
 			},
 		} );
 	}, [
