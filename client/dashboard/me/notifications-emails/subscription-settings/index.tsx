@@ -38,9 +38,7 @@ export const SubscriptionSettings = () => {
 		isPending: isSaving,
 		isSuccess: isSuccessSaving,
 		isError: isErrorSaving,
-	} = useMutation( {
-		...userSettingsMutation(),
-	} );
+	} = useMutation( userSettingsMutation() );
 
 	useEffect( () => {
 		if ( isSuccessSaving ) {
