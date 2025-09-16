@@ -38,8 +38,8 @@ object CalypsoE2ETestsBuildTemplate : Template({
     bashNodeScript {
 			name = "Validate parameters"
 			scriptContent = """
-      echo "VIEWPORT=%VIEWPORT%"
-      echo "DOCKER_IMAGE_BUILD_NUMBER=%DOCKER_IMAGE_BUILD_NUMBER%"
+        echo "VIEWPORT=%VIEWPORT%"
+        echo "DOCKER_IMAGE_BUILD_NUMBER=%DOCKER_IMAGE_BUILD_NUMBER%"
 				// todo: if CALYPSO_BASE_URL env variable is not set, we need the DOCKER_IMAGE_BUILD_NUMBER param to be set
         // todo: if CALYPSO_BASE_URL is not set, we need the DOCKER_IMAGE_BUILD_NUMBER to be set
 			""".trimIndent()
@@ -50,6 +50,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 
     bashNodeScript {
 			name = "Prepare environment"
+      id = "prepare_e2e_environment"
 			scriptContent = """
 				# Install deps
 				yarn workspaces focus wp-e2e-tests @automattic/calypso-e2e
@@ -65,7 +66,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 
     bashNodeScript {
 			name = "Determine Calypso URL"
-			id = "run_e2e_tests"
+			id = "determine_calypso_url"
 			scriptContent = """
 				echo "Getting Calypso url for build %DOCKER_IMAGE_BUILD_NUMBER%"
 				chmod +x ./bin/get-calypso-live-url.sh
@@ -77,13 +78,14 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				fi
 				
 				export CALYPSO_BASE_URL
+        echo "CALYPSO_BASE_URL is set to ${'$'}CALYPSO_BASE_URL"
 			"""
 			dockerImage = "%docker_image_e2e%"
 		}
 
     bashNodeScript {
 			name = "Run e2e tests"
-			id = "run_e2e_tests"
+			id = "run_tests"
 			scriptContent = """
 				# Check if test/e2e or packages/calypso-e2e files have been changed
 				CHANGED_FILES=${'$'}(git diff --name-only refs/remotes/origin/trunk...HEAD)
