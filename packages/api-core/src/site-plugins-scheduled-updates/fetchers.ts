@@ -1,10 +1,10 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { MultisiteScheduledUpdatesResponse, ScheduledUpdate } from './types';
+import type { MultisiteScheduledUpdatesResponse, SiteScheduledUpdatesResponse } from './types';
 
 // Single-site list
 export async function fetchSiteScheduledUpdates(
 	siteId: number
-): Promise< Record< string, ScheduledUpdate > > {
+): Promise< SiteScheduledUpdatesResponse > {
 	return await wpcom.req.get( {
 		path: `/sites/${ siteId }/update-schedules`,
 		apiNamespace: 'wpcom/v2',

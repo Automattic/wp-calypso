@@ -26,8 +26,10 @@ export type ScheduledUpdate = {
 	active: boolean;
 };
 
+export type SiteScheduledUpdatesResponse = Record< string, Omit< ScheduledUpdate, 'id' > >;
+
 export type MultisiteScheduledUpdatesResponse = {
-	sites: { [ site_id: string ]: { [ scheduleId: string ]: ScheduledUpdate } };
+	sites: { [ site_id: string ]: SiteScheduledUpdatesResponse };
 };
 
 export type CreateScheduledUpdateBody = {

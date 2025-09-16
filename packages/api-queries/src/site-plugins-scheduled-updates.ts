@@ -16,14 +16,14 @@ export const siteScheduledUpdatesQuery = ( siteId: number ) =>
 		queryKey: [ 'site', siteId, 'scheduled-updates' ],
 		queryFn: async () => {
 			const response = await fetchSiteScheduledUpdates( siteId );
-			// Convert map to array and attach id
-			const list: ScheduledUpdate[] = Object.keys( response ).map( ( id ) => ( {
-				...response[ id ],
-				id,
-			} ) );
-			// Sort by timestamp ascending
-			list.sort( ( a, b ) => ( a.timestamp ?? 0 ) - ( b.timestamp ?? 0 ) );
-			return list;
+
+			return (
+				Object.entries( response )
+					// Convert map to array and attach id
+					.map( ( [ id, update ] ) => ( { ...update, id } ) as ScheduledUpdate )
+					// Sort by timestamp ascending
+					.sort( ( a, b ) => ( a.timestamp ?? 0 ) - ( b.timestamp ?? 0 ) )
+			);
 		},
 	} );
 
