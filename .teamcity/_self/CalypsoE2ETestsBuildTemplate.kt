@@ -21,7 +21,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 		param("env.LOCALE", "en")
 		param("env.AUTHENTICATE_ACCOUNTS", "simpleSitePersonalPlanUser,gutenbergSimpleSiteUser,defaultUser")
 		param("env.CI", "true")
-		param("TEST_GROUP", "undefined")
+		param("TEST_GROUP", "", allowEmpty = true)
 		param("VIEWPORT", "desktop")
 	}
 
@@ -42,6 +42,12 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				echo "Validating required parameters..."
 				echo "VIEWPORT=%VIEWPORT%"
 				echo "TEST_GROUP=%TEST_GROUP%"
+
+				if [ -z "%TEST_GROUP%" ]; then
+					echo "WARNING: TEST_GROUP is empty"
+				else
+					echo "TEST_GROUP is set to: %TEST_GROUP%"
+				fi
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 		}
