@@ -171,7 +171,7 @@ function FileInfoCard( {
 
 	const prepareDownloadClick = useCallback( () => {
 		if ( ! item.period || ! fileInfo?.manifestFilter || ! fileInfo?.dataType ) {
-			notices.showError( __( 'There was an error preparing your download. Please, try again.' ) );
+			notices.showError( __( 'There was an error preparing your download. Please try again.' ) );
 			return;
 		}
 
