@@ -16,9 +16,9 @@ import { siteRoute } from '../../app/router/sites';
 import { ButtonStack } from '../../components/button-stack';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import illustrationUrl from '../backups/backups-callout-illustration.svg';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import { ActiveThreatsDataViews } from './active-threats';
+import illustrationUrl from './scan-callout-illustration.svg';
 
 const SCAN_TABS = [
 	{ name: 'active', title: __( 'Active threats' ) },
@@ -74,9 +74,8 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 				upsellImage={ illustrationUrl }
 				upsellDescription={
 					<Text as="p" variant="muted">
-						{ /* @TODO: update copy when the design is ready and add translation */ }
 						Automated daily scans check for malware and security vulnerabilities, with automated
-						fixes for many issues.
+						fixes for most issues.
 					</Text>
 				}
 			>
