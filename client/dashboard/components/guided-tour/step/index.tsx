@@ -136,11 +136,11 @@ export function GuidedTourStep( {
 						) }
 						<HStack spacing={ 3 } justify="flex-end">
 							{ currentStep > 0 && (
-								<Button variant="tertiary" onClick={ () => previousStep() }>
+								<Button variant="tertiary" size="compact" onClick={ () => previousStep() }>
 									{ __( 'Previous' ) }
 								</Button>
 							) }
-							<Button variant="primary" onClick={ () => nextStep() }>
+							<Button variant="primary" size="compact" onClick={ () => nextStep() }>
 								{ renderNext() }
 							</Button>
 						</HStack>
