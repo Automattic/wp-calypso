@@ -247,6 +247,10 @@ const EmbeddedDemo: React.FC = () => {
 		[ registerSuggestions, suggestionSets ]
 	);
 
+	const handleSuggestionSelect = useCallback( ( message: string ) => {
+		console.log( 'Selected suggestion:', message );
+	}, [] );
+
 	return (
 		<>
 			<style>
@@ -368,7 +372,9 @@ const EmbeddedDemo: React.FC = () => {
 							<AgentUI.Notice />
 							<AgentUI.Input />
 						</AgentUI.Footer>
-						<AgentUI.Suggestions />
+						<AgentUI.Suggestions
+							onSelect={ handleSuggestionSelect }
+						/>
 					</AgentUI.ConversationView>
 				</AgentUI.Container>
 			</div>
