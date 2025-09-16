@@ -272,21 +272,20 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		} );
 	}, [ scrollId, view.page, siteLogsArray, logType ] );
 
-	const paginationInfo = {
-		totalItems: ( () => {
-			if ( isActivityLogData( siteLogs ) ) {
-				return siteLogs.totalItems;
-			}
-			return isSiteLogsData( siteLogs ) ? siteLogs.total_results : 0;
-		} )(),
-		totalPages: ( () => {
-			if ( isActivityLogData( siteLogs ) ) {
-				return siteLogs.totalPages;
-			}
-			const totalResults = isSiteLogsData( siteLogs ) ? siteLogs.total_results : 0;
-			return totalResults && view.perPage ? Math.ceil( totalResults / view.perPage ) : 0;
-		} )(),
-	};
+	const paginationInfo = isActivityLogData( siteLogs )
+		? {
+				totalItems: siteLogs.totalItems,
+				totalPages: siteLogs.totalPages,
+		  }
+		: {
+				totalItems: ( () => {
+					return isSiteLogsData( siteLogs ) ? siteLogs.total_results : 0;
+				} )(),
+				totalPages: ( () => {
+					const totalResults = isSiteLogsData( siteLogs ) ? siteLogs.total_results : 0;
+					return totalResults && view.perPage ? Math.ceil( totalResults / view.perPage ) : 0;
+				} )(),
+		  };
 
 	const handleTabChange = ( tab: LogType ) => {
 		if ( tab === LogType.PHP ) {
