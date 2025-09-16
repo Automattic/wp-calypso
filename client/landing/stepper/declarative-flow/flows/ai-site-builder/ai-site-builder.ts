@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { getAssemblerDesign } from '@automattic/design-picker';
 import { addPlanToCart, addProductsToCart, AI_SITE_BUILDER_FLOW } from '@automattic/onboarding';
@@ -37,11 +36,8 @@ const deletePage = async ( siteId: string | number, pageId: number ): Promise< b
 };
 
 function initialize() {
-	// Check for spec_id parameter - if present, skip SiteSpec and go directly to site creation
-	const queryParams = new URLSearchParams( window.location.search );
-	const hasSpecId = queryParams.get( 'spec_id' );
-
-	const defaultSteps = stepsWithRequiredLogin( [
+	// stepsWithRequiredLogin will take care of redirecting to the login step if the user is not logged in.
+	return stepsWithRequiredLogin( [
 		STEPS.SITE_CREATION_STEP,
 		STEPS.PROCESSING,
 		STEPS.ERROR,
@@ -49,20 +45,7 @@ function initialize() {
 		STEPS.UNIFIED_PLANS,
 		STEPS.SITE_LAUNCH,
 		STEPS.PROCESSING,
-	] );
-
-	if ( hasSpecId ) {
-		// Skip SiteSpec widget, go directly to site creation
-		return defaultSteps;
-	}
-
-	// If site-spec feature flag is enabled, show SiteSpec widget to collect specifications
-	if ( config.isEnabled( 'site-spec' ) ) {
-		return [ STEPS.SITE_SPEC, ...defaultSteps ];
-	}
-
-	// Original behavior - skip SiteSpec widget entirely and go directly to site creation
-	return defaultSteps;
+	] as const );
 }
 
 const aiSiteBuilder: FlowV2< typeof initialize > = {
@@ -80,7 +63,7 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 			if ( siteId ) {
 				dispatch( setSelectedSiteId( parseInt( siteId ) ) );
 			}
-		}, [ siteId, dispatch ] );
+		}, [ siteId ] );
 		useEffect( () => {
 			if ( prompt && prompt.length > 0 ) {
 				window.sessionStorage.setItem( 'stored_ai_prompt', prompt );
@@ -99,11 +82,6 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 		const submit: SubmitHandler< typeof initialize > = async function ( submittedStep ) {
 			const { slug, providedDependencies } = submittedStep;
 			switch ( slug ) {
-				case 'site-spec': {
-					// SiteSpec widget will redirect to this flow with spec_id parameter
-					// This case should not be reached in normal flow
-					return;
-				}
 				// The create-site step will start creating a site and will add the promise of that operation to pendingAction field in the store.
 				case 'create-site': {
 					// Go to the processing step and pass `true` to remove it from history. So clicking back will not go back to the create-site step.
