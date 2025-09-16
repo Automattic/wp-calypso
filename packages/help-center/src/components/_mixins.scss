@@ -51,13 +51,10 @@
             }
 
             a,
-            button {
-                background-color: transparent;
-                border-width: 0;
+button {
+                all: unset;
                 padding-top: 16px;
                 padding-bottom: 16px;
-                padding-inline-start: 0;
-                padding-inline-end: 0;
                 display: flex;
                 text-decoration: none;
                 color: var(--studio-gray-100);
