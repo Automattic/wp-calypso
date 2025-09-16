@@ -14,6 +14,7 @@ import type { Field } from '@wordpress/dataviews';
 
 const FormattedTime = ( { timestamp }: { timestamp: string } ) => {
 	const formattedTime = useFormattedTime( timestamp, {
+		dateStyle: 'medium',
 		timeStyle: 'short',
 	} );
 	return <>{ formattedTime }</>;
@@ -40,7 +41,7 @@ export function getFields(): Field< Threat >[] {
 			label: __( 'Threat' ),
 			getValue: ( { item } ) => getThreatMessage( item ),
 			render: ( { item } ) => (
-				<HStack spacing={ 2 } justify="flex-start">
+				<HStack spacing={ 2 } justify="flex-start" wrap>
 					<Icon
 						className="site-scan-threats__type-icon"
 						icon={ getThreatIcon( item ) }
