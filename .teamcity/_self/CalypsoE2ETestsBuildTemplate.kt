@@ -67,6 +67,9 @@ object CalypsoE2ETestsBuildTemplate : Template({
     bashNodeScript {
 			name = "Determine Calypso URL"
 			id = "determine_calypso_url"
+			conditions {
+				doesNotExist("env.CALYPSO_BASE_URL")
+			}
 			scriptContent = """
 				echo "Getting Calypso url for build %DOCKER_IMAGE_BUILD_NUMBER%"
 				chmod +x ./bin/get-calypso-live-url.sh
@@ -79,6 +82,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				
 				export CALYPSO_BASE_URL
         echo "CALYPSO_BASE_URL is set to ${'$'}CALYPSO_BASE_URL"
+				echo "##teamcity[setParameter name='env.CALYPSO_BASE_URL' value='${'$'}CALYPSO_BASE_URL']"
 			"""
 			dockerImage = "%docker_image_e2e%"
 		}
