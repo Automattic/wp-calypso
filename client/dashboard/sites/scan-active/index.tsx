@@ -26,10 +26,7 @@ export function ActiveThreatsDataViews( { site }: { site: Site } ) {
 				view.search
 			);
 		}
-		if ( view.filters && view.filters.length > 0 ) {
-			return __( 'No active threats found for the selected filters.' );
-		}
-		return __( 'No threats found' );
+		return __( 'No active threats found for the selected filters.' );
 	};
 
 	const { data: threats = [], isLoading } = useQuery( {
@@ -40,12 +37,22 @@ export function ActiveThreatsDataViews( { site }: { site: Site } ) {
 	const fields = getFields();
 	const actions = getActions();
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( threats, view, fields );
+	const recentScanRelativeTime = 'X hours ago'; // @TODO: replace with the actual relative time
 
 	if ( ! isLoading && threats.length === 0 ) {
 		return (
 			<VStack spacing={ 10 } alignment="center" style={ { padding: '40px 0' } }>
 				<img src={ noThreatsIllustration } alt={ __( 'No threats found illustration' ) } />
-				<Text>{ getEmptyMessage() }</Text>
+				<VStack alignment="center" spacing={ 2 }>
+					<Text weight="bold">{ __( 'Don’t worry about a thing' ) }</Text>
+					<Text>
+						{ sprintf(
+							/** translators: %s: relative time string like "2 hours ago" */
+							__( 'The last scan ran %s and everything looked great.' ),
+							recentScanRelativeTime
+						) }
+					</Text>
+				</VStack>
 			</VStack>
 		);
 	}
