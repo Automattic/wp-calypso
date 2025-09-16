@@ -11,54 +11,14 @@ import {
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { shield } from '@wordpress/icons';
 import { siteRoute } from '../../app/router/sites';
 import { ButtonStack } from '../../components/button-stack';
-import { Callout } from '../../components/callout';
 import { CalloutOverlay } from '../../components/callout-overlay';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import UpsellCTAButton from '../../components/upsell-cta-button';
 import { hasHostingFeature } from '../../utils/site-features';
-// @TODO: replace with Scan callout illustration
-import illustrationUrl from '../backups/backups-callout-illustration.svg';
-
-export function SiteScanCallout( {
-	siteSlug,
-	titleAs = 'h1',
-}: {
-	siteSlug: string;
-	titleAs?: React.ElementType | keyof JSX.IntrinsicElements;
-} ) {
-	return (
-		<Callout
-			icon={ shield }
-			title={ __( 'Scan for security threats' ) }
-			titleAs={ titleAs }
-			image={ illustrationUrl }
-			description={
-				<>
-					<Text as="p" variant="muted">
-						{ /* @TODO: update copy when the design is ready and add translation */ }
-						Automated daily scans check for malware and security vulnerabilities, with automated
-						fixes for many issues.
-					</Text>
-					<Text as="p" variant="muted">
-						{ __( 'Available on the WordPress.com Business and Commerce plans.' ) }
-					</Text>
-				</>
-			}
-			actions={
-				<UpsellCTAButton
-					text={ __( 'Upgrade plan' ) }
-					tracksId="scan"
-					variant="primary"
-					href={ `/checkout/${ siteSlug }/business` }
-				/>
-			}
-		/>
-	);
-}
+import { ActiveThreatsDataViews } from './active-threats';
+import { ScanCallout } from './scan-callout';
 
 const SCAN_TABS = [
 	{ name: 'active', title: __( 'Active threats' ) },
@@ -106,7 +66,7 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 		>
 			<CalloutOverlay
 				showCallout={ ! hasHostingFeature( site, HostingFeatures.SCAN ) }
-				callout={ <SiteScanCallout siteSlug={ site.slug } /> }
+				callout={ <ScanCallout siteSlug={ site.slug } /> }
 				main={
 					<Card>
 						<CardHeader style={ { paddingBottom: '0' } }>
@@ -124,11 +84,8 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 							</TabPanel>
 						</CardHeader>
 						<CardBody>
-							{ scanTab === 'active' ? (
-								<Text as="p" variant="muted">
-									{ __( 'No active threats found. Your site is secure.' ) }
-								</Text>
-							) : (
+							{ scanTab === 'active' && <ActiveThreatsDataViews site={ site } /> }
+							{ scanTab === 'history' && (
 								<Text as="p" variant="muted">
 									{ __( 'So far, there are no archived threats on your site.' ) }
 								</Text>
