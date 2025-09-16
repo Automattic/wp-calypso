@@ -20,9 +20,6 @@ export function DnsSecRecordTextarea( { value, label }: DnsSecRecordTextareaProp
 			return;
 		}
 
-		// Reset to minimum rows first
-		textareaElement.rows = MIN_ROWS;
-
 		// Calculate the required rows
 		const style = window.getComputedStyle( textareaElement );
 		const lineHeight = ! isNaN( parseInt( style.lineHeight ) ) ? parseInt( style.lineHeight ) : 20;
