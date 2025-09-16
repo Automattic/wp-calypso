@@ -21,7 +21,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 		param("env.LOCALE", "en")
 		param("env.AUTHENTICATE_ACCOUNTS", "simpleSitePersonalPlanUser,gutenbergSimpleSiteUser,defaultUser")
 		param("env.CI", "true")
-		param("TEST_GROUP", "", allowEmpty = true)
+		text("TEST_GROUP", "")
 		param("VIEWPORT", "desktop")
 	}
 
