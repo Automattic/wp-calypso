@@ -114,7 +114,13 @@ export default function PreferencesLoginSiteDropdown( {
 						</Text>
 					</VStack>
 				</HStack>
-				{ isSelected && <Icon icon={ check } size={ 24 } /> }
+				{ isSelected && (
+					<Icon
+						icon={ check }
+						size={ 24 }
+						className="dashboard-preferences__login-site-dropdown-icon"
+					/>
+				) }
 			</HStack>
 		);
 	};
