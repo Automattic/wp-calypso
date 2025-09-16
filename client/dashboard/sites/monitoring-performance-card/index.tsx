@@ -94,7 +94,8 @@ export default function MonitoringPerformanceCard( {
 				legendOrientation="horizontal"
 				legendShape="line"
 				legendAlignmentHorizontal="left"
-				height={ 300 }
+				height={ 450 }
+				maxWidth={ 1400 }
 				showLegend
 				withLegendGlyph
 			/>
