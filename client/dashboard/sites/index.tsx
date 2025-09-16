@@ -230,12 +230,12 @@ export default function Sites() {
 					<GuidedTourStep
 						id="hosting-dashboard-tours-sites-switch-layouts"
 						selector={ `.dataviews__view-actions button[aria-label="${ __( 'Layout' ) }"]` }
-						placement="bottom-end"
+						placement="bottom"
 					/>
 					<GuidedTourStep
 						id="hosting-dashboard-tours-sites-appearance-options"
 						selector={ `.dataviews__view-actions button[aria-label="${ __( 'View options' ) }"]` }
-						placement="bottom-end"
+						placement="bottom"
 					/>
 				</GuidedTourContextProvider>
 			</PageLayout>

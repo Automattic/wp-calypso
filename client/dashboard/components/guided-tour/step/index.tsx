@@ -103,10 +103,12 @@ export function GuidedTourStep( {
 			anchor={ anchor }
 			offset={ 10 }
 			noArrow={ false }
-			resize
+			shift
+			resize={ false }
 			focusOnMount={ false }
+			style={ { padding: '0 16px' } }
 		>
-			<CardBody style={ { width: '350px' } }>
+			<CardBody style={ { width: 'min(80vw, 350px)' } }>
 				<VStack spacing={ 6 }>
 					<VStack spacing={ 2 }>
 						<HStack justify="space-between">
