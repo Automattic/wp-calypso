@@ -34,7 +34,7 @@ export const getOdieForwardToForumsMessage = (): string =>
 
 export const getOdieForwardToZendeskMessage = (): string =>
 	__(
-		'No problem. We noticed you’re already talking with one of our agents. Would you like to continue talking with them?',
+		'We noticed you have an ongoing conversation. Would you like to continue it?',
 		__i18n_text_domain__
 	);
 
