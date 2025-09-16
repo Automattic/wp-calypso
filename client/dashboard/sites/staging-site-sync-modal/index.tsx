@@ -102,7 +102,7 @@ const getSyncConfig = ( type: 'pull' | 'push' ): SyncConfig => {
 				syncTo: 'staging',
 			},
 			production: {
-				title: __( 'Pull from Staging 2' ),
+				title: __( 'Pull from Staging' ),
 				description: __(
 					'Pulling will replace the existing files and database of the production site. An automatic backup of your environment will be created, allowing you to revert changes from the <a>Activity log</a> if needed.'
 				),
