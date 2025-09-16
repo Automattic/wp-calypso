@@ -39,7 +39,7 @@ export const DomainSuggestionsList = ( { children }: DomainSuggestionsListProps 
 	}, [ children ] );
 
 	return (
-		<Card ref={ containerRef }>
+		<Card ref={ containerRef } role="list">
 			<DomainSuggestionContainerContext.Provider value={ contextValue }>
 				{ childrenWithSeparators }
 			</DomainSuggestionContainerContext.Provider>
