@@ -1,6 +1,6 @@
 import { type UserSettings } from '@automattic/api-core';
 import { userSettingsMutation, userSettingsQuery } from '@automattic/api-queries';
-import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Card,
 	CardBody,
@@ -20,26 +20,25 @@ const isAllWpcomEmailsDisabled = ( settings: UserSettings ) => {
 export const PauseAllEmails = () => {
 	const [ enabled, setEnabled ] = useState( false );
 	const { data: settings } = useSuspenseQuery( userSettingsQuery() );
-	const { createSuccessNotice, createErrorNotice } = useNotice();
-	const queryClient = useQueryClient();
+	const { createSuccessNotice } = useNotice();
 
-	const { mutate: updateSettings, isPending: isSaving } = useMutation( {
-		...userSettingsMutation(),
-		onSuccess: async () => {
-			const message = enabled ? __( 'All emails paused.' ) : __( 'All emails unpaused.' );
-			createSuccessNotice( message, { type: 'snackbar' } );
-			await queryClient.invalidateQueries( { queryKey: userSettingsQuery().queryKey } );
-		},
-		onError: () => {
-			createErrorNotice( __( 'Failed to save settings.' ), { type: 'snackbar' } );
-		},
-	} );
+	const {
+		mutate: updateSettings,
+		isPending: isSaving,
+		isSuccess,
+	} = useMutation( userSettingsMutation() );
 	const originalState = isAllWpcomEmailsDisabled( settings );
-	const [ isConfirmDialogOpen, setIsConfirmDialogOpen ] = useState( false );
+
+	const [ isConfirmDialogOpen, setIsConfirmDialogOpen ] = useState(
+		isAllWpcomEmailsDisabled( settings )
+	);
 
 	useEffect( () => {
-		setEnabled( isAllWpcomEmailsDisabled( settings ) );
-	}, [ settings ] );
+		if ( isSuccess ) {
+			const message = enabled ? __( 'All emails paused.' ) : __( 'All emails unpaused.' );
+			createSuccessNotice( message, { type: 'snackbar' } );
+		}
+	}, [ createSuccessNotice, enabled, isSuccess ] );
 
 	useEffect( () => {
 		if ( isSaving ) {
@@ -56,15 +55,17 @@ export const PauseAllEmails = () => {
 			subscription_delivery_email_blocked: enabled,
 		} );
 	};
+	const askForConfirmation = () => {
+		setIsConfirmDialogOpen( true );
+	};
 
 	const handleSubmit = ( e: React.FormEvent< HTMLFormElement > ) => {
 		e.preventDefault();
+
 		if ( enabled ) {
-			setIsConfirmDialogOpen( true );
+			askForConfirmation();
 		} else {
-			updateSettings( {
-				subscription_delivery_email_blocked: enabled,
-			} );
+			handleConfirmation();
 		}
 	};
 
