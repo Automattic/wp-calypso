@@ -62,8 +62,9 @@ const StatsMoved = () => {
 	if (
 		! hasEnTranslation( 'Jetpack Stats has moved' ) ||
 		! hasEnTranslation(
-			'Jetpack Stats is now easier to find, right in your main navigation. Track traffic, engagement, and performance in just one click. <br /> Use the button below to explore the new Stats page location.'
+			'Jetpack Stats is now easier to find, right in your main navigation. Track traffic, engagement, and performance in just one click.'
 		) ||
+		! hasEnTranslation( 'Use the button below to explore the new Stats page location.' ) ||
 		! hasEnTranslation( 'Go to Stats' )
 	) {
 		page.redirect( wpAdminUrl );
