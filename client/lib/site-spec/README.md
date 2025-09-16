@@ -32,11 +32,11 @@ Define the following configuration values:
 
 - `site_spec.script_url`: Base URL for the Site-Spec JavaScript bundle
 - `site_spec.css_url`: URL for the Site-Spec CSS styles
-- `site_spec.agent_id`: Identifier for the Site-Spec agent
+- `site_spec.agent_id`: (Optional) Identifier for the Site-Spec agent
 - `site_spec.agent_url`: (Optional) API endpoint for the Site-Spec agent
 - `site_spec.build_site_url`: (Optional) URL template for building sites
 
-**Note:** `agent_url` and `build_site_url` are optional. If not provided, the Site-Spec library will use its own defaults.
+**Note:** `agent_id`, `agent_url`, `build_site_url` are optional. If not provided, the Site-Spec library will use its own defaults.
 
 ### Environment-Specific Configuration
 
