@@ -1,13 +1,5 @@
 @import '@wordpress/base-styles/variables';
 
-.Suggestions-module_container {
-	height: unset;
-	.button-module_button.button-module_outline {
-		height: unset;
-		padding: 0;
-	}
-}
-
 .odie-attachment-preview {
 	display: flex;
 	gap: 6px;
