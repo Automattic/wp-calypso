@@ -41,6 +41,11 @@ export const OdieSendMessageButton = () => {
 	const messageSizeNotice = useMessageSizeErrorNotice( inputValue.trim().length );
 	const connectionNotice = useConnectionStatusNotice( isLiveChat );
 
+	// Focus the textarea when the component mounts
+	useEffect( () => {
+		textareaRef.current?.focus();
+	}, [ textareaRef ] );
+
 	const { connectionStatus } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return {

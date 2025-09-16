@@ -35,7 +35,7 @@ $blueberry-blue: #3858e9;
 	height: 100%;
 	overscroll-behavior: contain;
 	padding-top: 16px;
-	gap: 28px;
+	gap: 24px;
 	box-sizing: border-box;
 
 	.chatbox-loading-chat__spinner {
@@ -105,5 +105,9 @@ $blueberry-blue: #3858e9;
 		svg {
 			fill: #8C0B0B;
 		}
+	}
+
+	.Textarea-module_textarea:focus {
+		box-shadow: none;
 	}
 }
