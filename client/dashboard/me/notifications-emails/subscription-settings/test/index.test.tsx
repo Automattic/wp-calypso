@@ -99,6 +99,7 @@ describe( 'SubscriptionSettings', () => {
 	beforeEach( () => {
 		nock.disableNetConnect();
 		nock.cleanAll();
+		//Snackbar requires window.scrollTo to be defined
 		window.scrollTo = jest.fn();
 	} );
 
