@@ -1,15 +1,19 @@
 import { Badge } from '@automattic/ui';
 import { useQuery } from '@tanstack/react-query';
 import {
+	Button,
+	ExternalLink,
 	Modal,
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { deploymentRunLogsQuery } from '../../../app/queries/deployment-logs';
+import { useLocale } from '../../../app/locale';
+import { formatDate } from '../../../utils/datetime';
 import { BranchDisplay } from '../branch-display';
 import { DeploymentLogsEntry } from './deployment-logs-entry';
+import { deploymentRunLogsQuery } from './deployment-logs-queries';
 import type { DeploymentRunWithDeploymentInfo } from '@automattic/api-core';
 
 interface DeploymentLogsModalProps {
@@ -25,6 +29,7 @@ export function DeploymentLogsModal( {
 	deployment,
 	siteId,
 }: DeploymentLogsModalProps ) {
+	const locale = useLocale();
 	const {
 		data: logEntries = [],
 		isLoading,
@@ -84,24 +89,43 @@ export function DeploymentLogsModal( {
 			) }
 
 			{ logEntries.length > 0 && (
-				<VStack
-					style={ {
-						width: '100%',
-						padding: '16px',
-						backgroundColor: 'var(--dashboard__text-color)',
-						borderRadius: '4px',
-					} }
-				>
-					{ logEntries.map( ( entry, index ) => (
-						<DeploymentLogsEntry
-							key={ `${ entry.message }-${ index }` }
-							entry={ entry }
-							deployment={ deployment }
-							siteId={ siteId }
-						/>
-					) ) }
+				<VStack spacing={ 2 }>
+					<VStack
+						style={ {
+							width: '100%',
+							padding: '16px',
+							backgroundColor: 'var(--dashboard__text-color)',
+							borderRadius: '4px',
+						} }
+					>
+						{ logEntries.map( ( entry, index ) => (
+							<DeploymentLogsEntry
+								key={ `${ entry.message }-${ index }` }
+								entry={ entry }
+								deployment={ deployment }
+								siteId={ siteId }
+							/>
+						) ) }
+					</VStack>
+					<Text align="right">
+						{ formatDate( new Date( deployment.created_on ), locale, {
+							dateStyle: 'medium',
+							timeStyle: 'long',
+						} ) }
+					</Text>
 				</VStack>
 			) }
+
+			<HStack alignment="right" spacing={ 5 } style={ { marginTop: '24px' } }>
+				<ExternalLink
+					href={ `https://github.com/${ deployment.repository_name }/commit/${ deployment.metadata.commit_sha }` }
+				>
+					{ __( 'View deployment in Github' ) }
+				</ExternalLink>
+				<Button variant="primary" onClick={ onRequestClose }>
+					{ __( 'Close' ) }
+				</Button>
+			</HStack>
 		</Modal>
 	);
 }
