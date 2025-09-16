@@ -48,8 +48,8 @@
 
 	.is-progress & {
 		background: var(--wp-admin-theme-color);
-        animation-name: progress;
-        animation-timing-function: ease;
-        // animation-duration is set dynamically
+		animation-name: progress;
+		animation-timing-function: ease;
+		// animation-duration is set dynamically
 	}
 }
