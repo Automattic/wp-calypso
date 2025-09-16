@@ -40,6 +40,9 @@ export interface Domain extends DomainSummary {
 	is_subdomain: boolean;
 	is_pending_icann_verification: boolean;
 	move_to_new_site_pending: boolean;
+	owner: string;
+	is_pending_registration: boolean;
+	is_pending_registration_at_registry: boolean;
 	private_domain: boolean;
 	privacy_available: boolean;
 	renewable_until: string;
