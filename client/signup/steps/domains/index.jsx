@@ -302,7 +302,7 @@ class RenderDomainsStepComponent extends Component {
 		}
 
 		if ( shouldUseMultipleDomainsInCart( this.props.flowName ) && suggestion ) {
-			await this.handleDomainToDomainCart( previousState );
+			await this.handleDomainToDomainCart( previousState, suggestion );
 
 			// If we already have a free selection in place, let's enforce that as a free site suggestion
 			if ( this.state.wpcomSubdomainSelected ) {
@@ -425,9 +425,7 @@ class RenderDomainsStepComponent extends Component {
 		}
 	};
 
-	handleDomainToDomainCart = async ( previousState ) => {
-		const { suggestion } = this.props.step;
-
+	handleDomainToDomainCart = async ( previousState, suggestion ) => {
 		if ( previousState ) {
 			await this.removeDomain( suggestion );
 		} else {
