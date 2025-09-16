@@ -22,12 +22,12 @@ export function ActiveThreatsDataViews( { site }: { site: Site } ) {
 		if ( view.search ) {
 			return sprintf(
 				/** translators: %s: search query string */
-				__( 'No active threats found. Your search for "%s" did not return any results.' ),
+				__( 'Your search for "%s" did not return any results.' ),
 				view.search
 			);
 		}
 		if ( view.filters && view.filters.length > 0 ) {
-			return __( 'No active threats found with the current filters.' );
+			return __( 'No active threats found for the selected filters.' );
 		}
 		return __( 'No threats found' );
 	};
