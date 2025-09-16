@@ -204,10 +204,9 @@ describe( 'SubscriptionSettings', () => {
 
 		await waitFor( () => {
 			expect( saveSettingsApi.isDone() ).toBe( true );
-		} );
-
-		expect( createSuccessNotice ).toHaveBeenCalledWith( 'Settings saved successfully.', {
-			type: 'snackbar',
+			expect( createSuccessNotice ).toHaveBeenCalledWith( 'Settings saved successfully.', {
+				type: 'snackbar',
+			} );
 		} );
 	} );
 } );

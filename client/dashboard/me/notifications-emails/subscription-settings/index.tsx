@@ -3,7 +3,7 @@ import {
 	userSettingsMutation,
 	userSettingsQuery,
 } from '@automattic/api-queries';
-import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { useBlocker } from '@tanstack/react-router';
 import {
 	Card,
@@ -13,7 +13,7 @@ import {
 	Button,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNotice } from '../../../app/hooks/use-notice';
 import { getSettings, getSettingsKeys, SubscriptionSettingsForm, type SettingsData } from './form';
 
@@ -30,27 +30,33 @@ export const SubscriptionSettings = () => {
 	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
 	const { data: rawSettings } = useSuspenseQuery( userSettingsQuery() );
 	const originalSettings = getSettings( rawSettings );
-
 	const [ dataState, setDataState ] = useState< SettingsData >( originalSettings );
-
 	const { createSuccessNotice, createErrorNotice } = useNotice();
-	const queryClient = useQueryClient();
 
-	const { mutate: saveSettings, isPending: isSaving } = useMutation( {
+	const {
+		mutate: saveSettings,
+		isPending: isSaving,
+		isSuccess: isSuccessSaving,
+		isError: isErrorSaving,
+	} = useMutation( {
 		...userSettingsMutation(),
-		onSuccess: async () => {
+	} );
+
+	useEffect( () => {
+		if ( isSuccessSaving ) {
 			createSuccessNotice( __( 'Settings saved successfully.' ), {
 				type: 'snackbar',
 			} );
-			//It is necessary to make the UI load the updated originalSettings
-			await queryClient.invalidateQueries( userSettingsQuery() );
-		},
-		onError: () => {
+		}
+	}, [ isSuccessSaving, createSuccessNotice ] );
+
+	useEffect( () => {
+		if ( isErrorSaving ) {
 			createErrorNotice( __( 'Failed to save settings.' ), {
 				type: 'snackbar',
 			} );
-		},
-	} );
+		}
+	}, [ isErrorSaving, createErrorNotice ] );
 
 	const isDataStateDirty = useMemo(
 		() => isDirty( dataState, originalSettings ),
