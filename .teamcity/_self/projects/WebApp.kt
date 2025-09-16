@@ -961,9 +961,9 @@ object PlaywrightTestPRMatrix : BuildType({
 			name = "Run e2e tests"
 			id = "run_tests"
 			scriptContent = """
-				echo "Getting Calypso url for build %DOCKER_IMAGE_BUILD_NUMBER%"
+				echo "Getting Calypso url for build ${BuildDockerImage.depParamRefs.buildNumber}"
 				chmod +x ./bin/get-calypso-live-url.sh
-				CALYPSO_BASE_URL=${'$'}(./bin/get-calypso-live-url.sh %DOCKER_IMAGE_BUILD_NUMBER%)
+				CALYPSO_BASE_URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
 				if [[ ${'$'}? -ne 0 ]]; then
 					// Command failed. CALYPSO_BASE_URL contains stderr
 					echo ${'$'}CALYPSO_BASE_URL
@@ -998,7 +998,7 @@ object PlaywrightTestPRMatrix : BuildType({
 				equals("teamcity.build.step.status.run_e2e_tests", "failure")
 			}
 			scriptContent = """
-				ARCHIVE_NAME="%build.counter%-%build.vcs.number%-%playwrightProject%"
+				ARCHIVE_NAME="%build.counter%-%build.vcs.number%-%VIEWPORT%"
 				export E2E_SECRETS_KEY="%E2E_SECRETS_ENCRYPTION_KEY_CURRENT%"
 				
 				# Need to use -C to avoid creation of an unnecessary top level directory.
@@ -1011,7 +1011,7 @@ object PlaywrightTestPRMatrix : BuildType({
 
 				# Send custom Slack notification
 				REPORT_URL="https://automattic.github.io/wp-calypso-test-results/r"
-				echo "##teamcity[notification notifier='slack' message='Report available: %REPORT_URL%/${'$'}{ARCHIVE_NAME}.tgz.enc|nBranch: %teamcity.build.branch%' sendTo='calypso-e2e-reports-ext' connectionId='PROJECT_EXT_11']"
+				echo "##teamcity[notification notifier='slack' message='Report available: ${'$'}{REPORT_URL}/${'$'}{ARCHIVE_NAME}.tgz.enc|nBranch: %teamcity.build.branch%' sendTo='calypso-e2e-reports-ext' connectionId='PROJECT_EXT_11']"
 			""".trimIndent()
 			conditions {
 				matches("teamcity.build.branch", ".*e2e.*")
@@ -1029,7 +1029,7 @@ object PlaywrightTestPreReleaseMatrix : BuildType({
 
 	features {
 		matrix {
-			param("playwrightProject", listOf(
+			param("VIEWPORT", listOf(
 				value("desktop", label = "Desktop"),
 				value("mobile", label = "Mobile")
 			))
@@ -1051,7 +1051,7 @@ object PlaywrightTestPreReleaseMatrix : BuildType({
 		bashNodeScript {
 			name = "Test step"
 			scriptContent = """
-				echo "Running pre-release Playwright tests for project: %playwrightProject%"
+				echo "Running pre-release Playwright tests for viewport: %VIEWPORT%"
 			"""
 		}
 	}

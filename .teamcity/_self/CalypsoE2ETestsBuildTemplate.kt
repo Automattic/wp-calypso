@@ -21,6 +21,8 @@ object CalypsoE2ETestsBuildTemplate : Template({
 		param("env.LOCALE", "en")
 		param("env.AUTHENTICATE_ACCOUNTS", "simpleSitePersonalPlanUser,gutenbergSimpleSiteUser,defaultUser")
 		param("env.CI", "true")
+		param("env.TEST_GROUP", "")
+		param("env.VIEWPORT", "")
 	}
 
   	features {
@@ -38,8 +40,8 @@ object CalypsoE2ETestsBuildTemplate : Template({
 			name = "Validate parameters"
 			scriptContent = """
 				echo "Validating required parameters..."
-				// echo "VIEWPORT=%VIEWPORT%"
-				// echo "TEST_GROUP=%TEST_GROUP%"
+				echo "VIEWPORT=%VIEWPORT%"
+				echo "TEST_GROUP=%TEST_GROUP%"
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 		}
