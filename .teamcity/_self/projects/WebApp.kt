@@ -916,7 +916,7 @@ object PlaywrightTestPRMatrix : BuildType({
 
 	features {
 		matrix {
-			param("playwrightProject", listOf(
+			param("VIEWPORT", listOf(
 				value("desktop", label = "Desktop"),
 				value("mobile", label = "Mobile")
 			))

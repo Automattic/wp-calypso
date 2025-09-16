@@ -21,6 +21,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 		param("env.LOCALE", "en")
 		param("env.AUTHENTICATE_ACCOUNTS", "simpleSitePersonalPlanUser,gutenbergSimpleSiteUser,defaultUser")
 		param("env.CI", "true")
+    param("VIEWPORT", "dektop")
 	}
 
   features {
@@ -35,9 +36,12 @@ object CalypsoE2ETestsBuildTemplate : Template({
 
   steps {
     bashNodeScript {
-			name = "Template check"
+			name = "Validate parameters"
 			scriptContent = """
-				echo "This is the Calypso E2E Tests Build Template"
+      echo "VIEWPORT=%VIEWPORT%"
+      echo "DOCKER_IMAGE_BUILD_NUMBER=%DOCKER_IMAGE_BUILD_NUMBER%"
+				// todo: if CALYPSO_BASE_URL env variable is not set, we need the DOCKER_IMAGE_BUILD_NUMBER param to be set
+        // todo: if CALYPSO_BASE_URL is not set, we need the DOCKER_IMAGE_BUILD_NUMBER to be set
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 		}
@@ -63,9 +67,9 @@ object CalypsoE2ETestsBuildTemplate : Template({
 			name = "Determine Calypso URL"
 			id = "run_e2e_tests"
 			scriptContent = """
-				echo "Getting Calypso url for build ${%DOCKER_IMAGE_BUILD_NUMBER%}"
+				echo "Getting Calypso url for build %DOCKER_IMAGE_BUILD_NUMBER%"
 				chmod +x ./bin/get-calypso-live-url.sh
-				CALYPSO_BASE_URL=${'$'}(./bin/get-calypso-live-url.sh ${%DOCKER_IMAGE_BUILD_NUMBER%})
+				CALYPSO_BASE_URL=${'$'}(./bin/get-calypso-live-url.sh %DOCKER_IMAGE_BUILD_NUMBER%)
 				if [[ ${'$'}? -ne 0 ]]; then
 					// Command failed. CALYPSO_BASE_URL contains stderr
 					echo ${'$'}CALYPSO_BASE_URL
@@ -94,15 +98,15 @@ object CalypsoE2ETestsBuildTemplate : Template({
         echo "CALYPSO_BASE_URL=${'$'}CALYPSO_BASE_URL"
 
 				cd test/e2e
-				echo "Running Playwright tests for project: %playwrightProject%"
-				yarn test:pw:%playwrightProject% ${'$'}GREP_FLAG
+				echo "Running Playwright tests for project: %VIEWPORT%"
+				yarn test:pw:%VIEWPORT% ${'$'}GREP_FLAG
 			"""
 			dockerImage = "%docker_image_e2e%"
 		}
   }
 
   artifactRules = """
-		test/e2e/output => %playwrightProject%/output
+		test/e2e/output => %VIEWPORT%/output
 		test/e2e/blob-report => blob-report
 	""".trimIndent()
 })
