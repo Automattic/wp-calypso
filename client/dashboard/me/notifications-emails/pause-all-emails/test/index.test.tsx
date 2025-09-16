@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
-import { PropsWithChildren } from 'react';
+import { PropsWithChildren, Suspense } from 'react';
 import { useNotice } from '../../../../app/hooks/use-notice';
 import { PauseAllEmails } from '../index';
 
@@ -22,7 +22,11 @@ describe( 'PauseAllEmails', () => {
 	const Wrapper =
 		( queryClient = new QueryClient() ) =>
 		( { children }: PropsWithChildren ) => {
-			return <QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>;
+			return (
+				<QueryClientProvider client={ queryClient }>
+					<Suspense>{ children }</Suspense>
+				</QueryClientProvider>
+			);
 		};
 
 	it( 'renders unchecked when all emails are not not blocked', async () => {
@@ -46,6 +50,25 @@ describe( 'PauseAllEmails', () => {
 		await waitFor( () => {
 			expect( screen.getByRole( 'checkbox', { name: /Pause all emails/ } ) ).toBeChecked();
 		} );
+	} );
+
+	it( 'cancels the confirmation dialog when the cancel button is clicked', async () => {
+		nock( 'https://public-api.wordpress.com:443' ).get( '/rest/v1.1/me/settings' ).reply( 200, {
+			subscription_delivery_email_blocked: false,
+		} );
+
+		render( <PauseAllEmails />, { wrapper: Wrapper() } );
+		await userEvent.click( await screen.findByRole( 'checkbox', { name: /Pause all emails/ } ) );
+		await userEvent.click( await screen.getByRole( 'button', { name: /Save/ } ) );
+
+		await waitFor( () => {
+			expect( screen.getByRole( 'dialog', { name: /Pause all emails\?/ } ) ).toBeInTheDocument();
+		} );
+
+		await userEvent.click( screen.getByRole( 'button', { name: /Cancel/ } ) );
+		expect(
+			screen.queryByText( /Are you sure you want to pause all emails?/ )
+		).not.toBeInTheDocument();
 	} );
 
 	it( 'updates the settings when the form is submitted', async () => {
@@ -75,7 +98,7 @@ describe( 'PauseAllEmails', () => {
 		await userEvent.click( await screen.findByRole( 'checkbox', { name: /Pause all emails/ } ) );
 		await userEvent.click( await screen.getByRole( 'button', { name: /Save/ } ) );
 
-		expect( await screen.findByText( /Are you sure you want to pause all emails?/ ) ).toBeVisible();
+		expect( await screen.findByText( /Pause all emails\?/ ) ).toBeVisible();
 
 		await userEvent.click(
 			screen.getByRole( 'button', { name: /Yes, I want to pause all emails/ } )
