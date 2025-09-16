@@ -51,6 +51,7 @@ function ScheduledUpdatesNew() {
 		if ( ! isValid ) {
 			return;
 		}
+
 		const timestamp = prepareTimestamp( frequency, weekday, time );
 		const body = {
 			plugins: selectedPluginSlugs,
