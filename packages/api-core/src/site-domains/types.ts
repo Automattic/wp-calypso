@@ -8,7 +8,7 @@ export interface GoogleEmailSubscription extends EmailSubscription {}
 
 export interface TitanEmailSubscription extends EmailSubscription {}
 
-export type SiteDomain = Omit< DomainSummary, 'domain_status' > & {
+export type SiteDomain = DomainSummary & {
 	google_apps_subscription?: GoogleEmailSubscription | null;
 	titan_mail_subscription?: TitanEmailSubscription | null;
 };

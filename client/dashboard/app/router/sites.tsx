@@ -3,7 +3,7 @@ import {
 	isAutomatticianQuery,
 	rawUserPreferencesQuery,
 	siteLastFiveActivityLogEntriesQuery,
-	siteRewindableActivityLogEntriesQuery,
+	siteBackupActivityLogEntriesQuery,
 	siteAgencyBlogQuery,
 	siteLastBackupQuery,
 	siteEdgeCacheStatusQuery,
@@ -36,6 +36,7 @@ import { canViewHundredYearPlanSettings, canViewWordPressSettings } from '../../
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import { isSiteMigrationInProgress } from '../../utils/site-status';
 import { hasSiteTrialEnded } from '../../utils/site-trial';
+import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
 import type { AnyRoute } from '@tanstack/react-router';
@@ -77,11 +78,16 @@ export const siteRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites/$siteSlug',
 	beforeLoad: async ( { cause, params: { siteSlug }, location, matches } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+
+		const overviewUrl = `/sites/${ siteSlug }`;
+		if ( isSelfHostedJetpackConnected( site ) && ! location.pathname.endsWith( overviewUrl ) ) {
+			throw redirect( { to: overviewUrl } );
+		}
+
 		if ( cause !== 'enter' ) {
 			return;
 		}
-
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 
 		const trialExpiredUrl = `/sites/${ siteSlug }/trial-ended`;
 		if ( hasSiteTrialEnded( site ) && ! location.pathname.includes( trialExpiredUrl ) ) {
@@ -186,7 +192,7 @@ export const siteLogsIndexRoute = createRoute( {
 	getParentRoute: () => siteLogsRoute,
 	path: '/',
 	beforeLoad: ( { params } ) => {
-		throw redirect( { to: `/sites/${ params.siteSlug }/logs/php` } );
+		throw redirect( { to: `/sites/${ params.siteSlug }/logs/${ LogType.ACTIVITY }` } );
 	},
 } );
 
@@ -216,6 +222,21 @@ export const siteLogsServerRoute = createRoute( {
 	import( '../../sites/logs' ).then( ( d ) =>
 		createLazyRoute( 'site-logs-server' )( {
 			component: () => <d.default logType={ LogType.SERVER } />,
+		} )
+	)
+);
+
+export const siteLogsActivityRoute = createRoute( {
+	getParentRoute: () => siteLogsRoute,
+	path: 'activity',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
+	},
+} ).lazy( () =>
+	import( '../../sites/logs' ).then( ( d ) =>
+		createLazyRoute( 'site-logs-activity' )( {
+			component: () => <d.default logType={ LogType.ACTIVITY } />,
 		} )
 	)
 );
@@ -285,7 +306,7 @@ export const siteBackupsIndexRoute = createRoute( {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		// Preload activity log backup-related entries.
 		if ( hasHostingFeature( site, HostingFeatures.BACKUPS ) ) {
-			queryClient.ensureQueryData( siteRewindableActivityLogEntriesQuery( site.ID ) );
+			queryClient.ensureQueryData( siteBackupActivityLogEntriesQuery( site.ID ) );
 		}
 	},
 } ).lazy( () =>
@@ -791,7 +812,12 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 
 	if ( config.supports.sites.logs ) {
 		siteRoutes.push(
-			siteLogsRoute.addChildren( [ siteLogsIndexRoute, siteLogsPhpRoute, siteLogsServerRoute ] )
+			siteLogsRoute.addChildren( [
+				siteLogsIndexRoute,
+				siteLogsPhpRoute,
+				siteLogsServerRoute,
+				siteLogsActivityRoute,
+			] )
 		);
 	}
 

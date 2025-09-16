@@ -1,7 +1,7 @@
 import { WordPressLogo } from '@automattic/components/src/logos/wordpress-logo';
 import { useIsFetching } from '@tanstack/react-query';
 import { CatchNotFound, Outlet, useRouterState } from '@tanstack/react-router';
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useEffect, useState } from 'react';
 import { LoadingLine } from '../../components/loading-line';
 import { PageViewTracker } from '../../components/page-view-tracker';
 import NotFound from '../404';
@@ -18,6 +18,9 @@ const WebpackBuildMonitor = lazy(
 		)
 );
 
+const SLOW_THRESHOLD_MS = 300;
+const VERY_SLOW_THRESHOLD_MS = 6000;
+
 function Root() {
 	const { LoadingLogo = WordPressLogo } = useAppContext();
 	const isFetching = useIsFetching();
@@ -28,16 +31,43 @@ function Root() {
 	// https://tanstack.com/router/latest/docs/framework/react/api/router/RouterStateType#resolvedlocation-property
 	const isInitialLoad = ! router.resolvedLocation;
 
+	const [ navigationTime, setNavigationTime ] = useState< 'none' | 'slow' | 'veryslow' >( 'none' );
+
+	useEffect( () => {
+		let slowTimeout: NodeJS.Timeout;
+		let verySlowTimeout: NodeJS.Timeout;
+		if ( isNavigating ) {
+			slowTimeout = setTimeout( () => setNavigationTime( 'slow' ), SLOW_THRESHOLD_MS );
+			verySlowTimeout = setTimeout( () => setNavigationTime( 'veryslow' ), VERY_SLOW_THRESHOLD_MS );
+		} else {
+			setNavigationTime( 'none' );
+		}
+		return () => {
+			clearTimeout( slowTimeout );
+			clearTimeout( verySlowTimeout );
+		};
+	}, [ isNavigating ] );
+
+	const isSlowNavigation = isNavigating && navigationTime === 'slow';
+	const isVerySlowNavigation = isNavigating && navigationTime === 'veryslow';
+
 	return (
 		<div className="dashboard-root__layout">
-			{ ( isFetching > 0 || isNavigating ) && <LoadingLine /> }
-			{ isInitialLoad && <LoadingLogo className="wpcom-site__logo" /> }
+			{ ( isFetching > 0 || isSlowNavigation ) && (
+				<LoadingLine
+					variant={ isSlowNavigation ? 'progress' : 'spinner' }
+					progressDuration={ `${ VERY_SLOW_THRESHOLD_MS }ms` }
+				/>
+			) }
+			{ ( isInitialLoad || isVerySlowNavigation ) && <LoadingLogo className="wpcom-site__logo" /> }
 			{ ! isInitialLoad && <Header /> }
-			<main>
-				<CatchNotFound fallback={ NotFound }>
-					<Outlet />
-				</CatchNotFound>
-			</main>
+			{ ! isVerySlowNavigation && (
+				<main>
+					<CatchNotFound fallback={ NotFound }>
+						<Outlet />
+					</CatchNotFound>
+				</main>
+			) }
 			<CommandPalette />
 			<Snackbars />
 			<PageViewTracker />

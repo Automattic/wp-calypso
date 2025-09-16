@@ -3,14 +3,7 @@ import {
 	deleteTwoStepAuthSecurityKeyMutation,
 } from '@automattic/api-queries';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import {
-	__experimentalConfirmDialog as ConfirmDialog,
-	Button,
-	Card,
-	CardHeader,
-	CardBody,
-	Icon,
-} from '@wordpress/components';
+import { Button, Card, CardHeader, CardBody, Icon } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataViews } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
@@ -18,6 +11,7 @@ import { __ } from '@wordpress/i18n';
 import { closeSmall } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import ConfirmModal from '../../../../components/confirm-modal';
 import InlineSupportLink from '../../../../components/inline-support-link';
 import { SectionHeader } from '../../../../components/section-header';
 import { isWebAuthnSupported } from '../../utils';
@@ -47,7 +41,9 @@ const SecurityKeysList = ( {
 	data: SecurityKeyRegistration[];
 	isLoading: boolean;
 } ) => {
-	const { mutate: deleteSecurityKey } = useMutation( deleteTwoStepAuthSecurityKeyMutation() );
+	const { mutate: deleteSecurityKey, isPending: isDeletingSecurityKey } = useMutation(
+		deleteTwoStepAuthSecurityKeyMutation()
+	);
 
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
@@ -55,7 +51,6 @@ const SecurityKeysList = ( {
 		useState< SecurityKeyRegistration | null >( null );
 
 	const handleRemove = () => {
-		setSelectedKeyToRemove( null );
 		if ( selectedKeyToRemove ) {
 			deleteSecurityKey(
 				{ credential_id: selectedKeyToRemove.id },
@@ -69,6 +64,9 @@ const SecurityKeysList = ( {
 						createErrorNotice( __( 'Failed to remove security key.' ), {
 							type: 'snackbar',
 						} );
+					},
+					onSettled: () => {
+						setSelectedKeyToRemove( null );
 					},
 				}
 			);
@@ -102,14 +100,18 @@ const SecurityKeysList = ( {
 			>
 				<DataViews.Layout />
 			</DataViews>
-			<ConfirmDialog
+			<ConfirmModal
 				isOpen={ !! selectedKeyToRemove }
-				confirmButtonText={ __( 'Remove security key' ) }
+				confirmButtonProps={ {
+					label: __( 'Remove security key' ),
+					isBusy: isDeletingSecurityKey,
+					disabled: isDeletingSecurityKey,
+				} }
 				onCancel={ () => setSelectedKeyToRemove( null ) }
 				onConfirm={ handleRemove }
 			>
 				{ __( 'Are you sure you want to remove this security key?' ) }
-			</ConfirmDialog>
+			</ConfirmModal>
 		</>
 	);
 };

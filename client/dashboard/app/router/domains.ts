@@ -193,8 +193,12 @@ export const domainForwardingEditRoute = createRoute( {
 export const domainContactInfoRoute = createRoute( {
 	getParentRoute: () => domainRoute,
 	path: 'contact-info',
-	loader: ( { params: { domainName } } ) =>
-		queryClient.ensureQueryData( domainWhoisQuery( domainName ) ),
+	loader: async ( { params: { domainName } } ) => {
+		await Promise.all( [
+			queryClient.ensureQueryData( domainQuery( domainName ) ),
+			queryClient.ensureQueryData( domainWhoisQuery( domainName ) ),
+		] );
+	},
 } ).lazy( () =>
 	import( '../../domains/domain-contact-details' ).then( ( d ) =>
 		createLazyRoute( 'domain-contact-info' )( {
