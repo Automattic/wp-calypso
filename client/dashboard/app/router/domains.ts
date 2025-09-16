@@ -25,6 +25,7 @@ import {
 	checkDomainNameServersPermissions,
 	checkDomainTransferPermissions,
 	checkDomainContactInfoPermissions,
+	checkDomainDnsRecordsPermissions,
 } from '../../utils/domain-permissions';
 import { rootRoute } from './root';
 
@@ -50,6 +51,7 @@ export const domainRoute = createRoute( {
 		const isNameServersSubRoute = location.pathname.includes( '/name-servers' );
 		const isTransferSubRoute = location.pathname.includes( '/transfer' );
 		const isContactInfoSubRoute = location.pathname.includes( '/contact-info' );
+		const isDnsSubRoute = location.pathname.includes( '/dns' );
 
 		// For generic sub-routes permissions checks,
 		// throw error and handle it with the global error boundary
@@ -63,6 +65,10 @@ export const domainRoute = createRoute( {
 
 		if ( isContactInfoSubRoute ) {
 			checkDomainContactInfoPermissions( domain );
+		}
+
+		if ( isDnsSubRoute ) {
+			checkDomainDnsRecordsPermissions( domain );
 		}
 
 		return domain;

@@ -21,7 +21,6 @@ export interface Domain extends DomainSummary {
 	can_manage_name_servers: boolean;
 	can_transfer_to_any_user: boolean;
 	can_transfer_to_other_site: boolean;
-	cannot_manage_name_servers_reason: null | string;
 	contact_info_disclosure_available: boolean;
 	contact_info_disclosed: boolean;
 	dnssec_records?: {

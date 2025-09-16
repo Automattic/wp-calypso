@@ -36,10 +36,14 @@ const checkCanUpdateContactInfo: DomainCheckFunction = ( domain: Domain ) =>
 const checkNotPendingWhoisUpdate: DomainCheckFunction = ( domain: Domain ) =>
 	! domain.is_pending_whois_update;
 
+const checkCanManageDnsRecords: DomainCheckFunction = ( domain: Domain ) =>
+	!! domain.can_manage_dns_records;
+
 export const PermissionCheck = {
 	TRANSFER: 'transfer',
 	NAME_SERVERS: 'name-servers',
 	CONTACT_INFO: 'contact-info',
+	DNS_RECORDS: 'dns-records',
 } as const;
 
 /**
@@ -113,6 +117,14 @@ const DOMAIN_PERMISSION_CHECKS = {
 				__( 'You do not have permission to manage name servers.' ),
 		},
 	],
+	[ PermissionCheck.DNS_RECORDS ]: [
+		{
+			check: checkCanManageDnsRecords,
+			getErrorMessage: ( domain: Domain ) =>
+				domain.cannot_manage_dns_records_reason ||
+				__( 'You do not have permission to manage DNS.' ),
+		},
+	],
 	[ PermissionCheck.CONTACT_INFO ]: [
 		{
 			check: checkNotInSupportSession,
@@ -166,4 +178,8 @@ export function checkDomainNameServersPermissions( domain: Domain ): void {
 
 export function checkDomainContactInfoPermissions( domain: Domain ): void {
 	checkDomainPermissions( domain, PermissionCheck.CONTACT_INFO );
+}
+
+export function checkDomainDnsRecordsPermissions( domain: Domain ): void {
+	checkDomainPermissions( domain, PermissionCheck.DNS_RECORDS );
 }
