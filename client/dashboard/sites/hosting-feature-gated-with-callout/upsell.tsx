@@ -12,6 +12,7 @@ export interface UpsellCalloutProps {
 	upsellIcon?: CalloutProps[ 'icon' ];
 	upsellImage?: CalloutProps[ 'image' ];
 	upsellTitle?: CalloutProps[ 'title' ];
+	upsellTitleAs?: CalloutProps[ 'titleAs' ];
 	upsellDescription?: CalloutProps[ 'description' ];
 }
 
@@ -22,14 +23,15 @@ export default function UpsellCallout( {
 	upsellIcon,
 	upsellImage,
 	upsellTitle,
+	upsellTitleAs,
 	upsellDescription,
 }: {
 	site: Site;
 	tracksFeatureId: string;
-	onClick: () => void;
+	onClick?: () => void;
 } & UpsellCalloutProps ) {
 	const handleUpsellClick = () => {
-		onClick();
+		onClick?.();
 
 		const backUrl = window.location.href.replace( window.location.origin, '' );
 
@@ -56,6 +58,7 @@ export default function UpsellCallout( {
 			icon={ upsellIcon ?? defaultProps.icon }
 			image={ upsellImage ?? defaultProps.image }
 			title={ upsellTitle ?? defaultProps.title }
+			titleAs={ upsellTitleAs }
 			description={
 				<>
 					<Text variant="muted">{ upsellDescription ?? defaultProps.description }</Text>

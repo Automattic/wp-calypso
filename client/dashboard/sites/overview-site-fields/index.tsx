@@ -74,7 +74,11 @@ const SiteOverviewFields = ( { site }: { site: Site } ) => {
 			</Field>
 			{ wpVersion && (
 				<Field title={ __( 'WordPress' ) }>
-					<Link to={ `/sites/${ site.slug }/settings/wordpress` }>{ wpVersion }</Link>
+					{ isSelfHostedJetpackConnected( site ) ? (
+						<Text variant="muted">{ wpVersion }</Text>
+					) : (
+						<Link to={ `/sites/${ site.slug }/settings/wordpress` }>{ wpVersion }</Link>
+					) }
 				</Field>
 			) }
 			{ hasPHPFeature && (
