@@ -11,6 +11,7 @@ import { DataForm, Field } from '@wordpress/dataviews';
 import { useState, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { SectionHeader } from '../../components/section-header';
 import {
 	LandingPage,
 	useLoginPreferences,
@@ -128,10 +129,8 @@ export default function PreferencesLogin() {
 		<Card className="preferences-login-card">
 			<CardBody>
 				<form onSubmit={ handleSubmit }>
-					<VStack>
-						<Text as="h3" weight={ 500 }>
-							{ __( 'Login preferences' ) }
-						</Text>
+					<VStack spacing={ 3 }>
+						<SectionHeader level={ 3 } title={ __( 'Login preferences' ) } />
 
 						<DataForm< LoginPreferencesFormData >
 							data={ formData }
