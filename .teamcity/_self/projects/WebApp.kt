@@ -952,7 +952,6 @@ object PlaywrightTestPRMatrix : BuildType({
 	}
 
 	params {
-		param("REPORT_URL", "https://automattic.github.io/wp-calypso-test-results/r")
 		param("DOCKER_IMAGE_BUILD_NUMBER", "${BuildDockerImage.depParamRefs.buildNumber}")
 	}
 
@@ -978,6 +977,7 @@ object PlaywrightTestPRMatrix : BuildType({
 				aws s3 cp ${'$'}{ARCHIVE_NAME}.tgz.enc %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT%/archive/
 
 				# Send custom Slack notification
+				REPORT_URL="https://automattic.github.io/wp-calypso-test-results/r"
 				echo "##teamcity[notification notifier='slack' message='Report available: %REPORT_URL%/${'$'}{ARCHIVE_NAME}.tgz.enc|nBranch: %teamcity.build.branch%' sendTo='calypso-e2e-reports-ext' connectionId='PROJECT_EXT_11']"
 			""".trimIndent()
 			conditions {
