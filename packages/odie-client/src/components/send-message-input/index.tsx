@@ -41,6 +41,11 @@ export const OdieSendMessageButton = () => {
 	const messageSizeNotice = useMessageSizeErrorNotice( inputValue.trim().length );
 	const connectionNotice = useConnectionStatusNotice( isLiveChat );
 
+	// Focus the textarea when the component mounts
+	useEffect( () => {
+		textareaRef.current?.focus();
+	}, [ textareaRef ] );
+
 	// Prioritize connection status notice over message size notice
 	const notice = connectionNotice || messageSizeNotice;
 
