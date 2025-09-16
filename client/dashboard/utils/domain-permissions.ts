@@ -112,12 +112,6 @@ const DOMAIN_PERMISSION_CHECKS = {
 				domain.cannot_manage_name_servers_reason ||
 				__( 'You do not have permission to manage name servers.' ),
 		},
-		{
-			check: checkCanManageNameServers,
-			getErrorMessage: ( domain: Domain ) =>
-				domain.cannot_manage_name_servers_reason ||
-				__( 'You do not have permission to manage name servers.' ),
-		},
 	],
 	[ PermissionCheck.CONTACT_INFO ]: [
 		{
