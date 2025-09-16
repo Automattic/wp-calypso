@@ -954,7 +954,7 @@ object PlaywrightTestPRMatrix : BuildType({
 	params {
 		param("env.LIVEBRANCHES", "true")
 		param("REPORT_URL", "https://automattic.github.io/wp-calypso-test-results/r")
-		param("DOCKER_IMAGE_BUILD_NUMBER", BuildDockerImage.depParamRefs.buildNumber)
+		param("DOCKER_IMAGE_BUILD_NUMBER", "${BuildDockerImage.depParamRefs.buildNumber}")
 	}
 
 	steps {
