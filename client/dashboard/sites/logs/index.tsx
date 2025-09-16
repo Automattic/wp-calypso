@@ -473,7 +473,6 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 											defaultLayouts={ { table: {} } }
 											onChangeView={ onChangeView }
 											header={ LogsHeader }
-											getItemId={ ( item ) => item.id }
 										/>
 									);
 								}
@@ -491,7 +490,6 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 											defaultLayouts={ { table: {} } }
 											onChangeView={ onChangeView }
 											header={ LogsHeader }
-											getItemId={ ( item ) => item.id }
 										/>
 									);
 								}
@@ -508,7 +506,6 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 										defaultLayouts={ { table: {} } }
 										onChangeView={ onChangeView }
 										header={ LogsHeader }
-										getItemId={ ( item ) => item.id }
 									/>
 								);
 							} )() }
