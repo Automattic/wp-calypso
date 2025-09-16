@@ -1,4 +1,4 @@
-import { sshKeysQuery } from '@automattic/api-queries';
+import { sshKeysQuery, userSettingsQuery } from '@automattic/api-queries';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createInterpolateElement } from '@wordpress/element';
@@ -13,6 +13,9 @@ import SshKeyForm from './ssh-key-form';
 export default function SecuritySshKey() {
 	const { data: sshKeys } = useSuspenseQuery( sshKeysQuery() );
 	const sshKey = sshKeys[ 0 ] ?? null;
+
+	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
+	const username = userSettings.user_login;
 
 	const [ isEditing, setIsEditing ] = useState( false );
 
@@ -53,9 +56,14 @@ export default function SecuritySshKey() {
 			}
 		>
 			{ sshKey && ! isEditing ? (
-				<SshKey sshKey={ sshKey } setIsEditing={ setIsEditing } />
+				<SshKey sshKey={ sshKey } setIsEditing={ setIsEditing } username={ username } />
 			) : (
-				<SshKeyForm sshKey={ sshKey } isEditing={ isEditing } setIsEditing={ setIsEditing } />
+				<SshKeyForm
+					sshKey={ sshKey }
+					isEditing={ isEditing }
+					setIsEditing={ setIsEditing }
+					username={ username }
+				/>
 			) }
 		</PageLayout>
 	);

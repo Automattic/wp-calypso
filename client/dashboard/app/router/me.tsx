@@ -381,7 +381,12 @@ export const securitySshKeyRoute = createRoute( {
 		],
 	} ),
 	getParentRoute: () => securityRoute,
-	loader: () => queryClient.ensureQueryData( sshKeysQuery() ),
+	loader: async () => {
+		await Promise.all( [
+			queryClient.ensureQueryData( sshKeysQuery() ),
+			queryClient.ensureQueryData( userSettingsQuery() ),
+		] );
+	},
 	path: '/ssh-key',
 } ).lazy( () =>
 	import( '../../me/security-ssh-key' ).then( ( d ) =>

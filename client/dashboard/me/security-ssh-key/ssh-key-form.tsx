@@ -31,10 +31,12 @@ export default function SshKeyForm( {
 	sshKey,
 	isEditing,
 	setIsEditing,
+	username,
 }: {
 	sshKey?: UserSshKey;
 	isEditing?: boolean;
 	setIsEditing?: ( isEditing: boolean ) => void;
+	username: string;
 } ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
@@ -169,7 +171,7 @@ export default function SshKeyForm( {
 									<CardBody>
 										<VStack spacing={ 2 }>
 											<Text weight={ 500 } lineHeight="20px">
-												{ sshKey.name }
+												{ username }-{ sshKey.name }
 											</Text>
 											<Text variant="muted" lineHeight="20px" size="13px">
 												{ sshKey.sha256 }

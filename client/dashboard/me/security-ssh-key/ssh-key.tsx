@@ -23,11 +23,13 @@ import type { UserSshKey } from '@automattic/api-core';
 export default function SshKey( {
 	sshKey,
 	setIsEditing,
+	username,
 }: {
 	sshKey: UserSshKey;
 	setIsEditing: ( isEditing: boolean ) => void;
+	username: string;
 } ) {
-	const locale = useLocale();
+	const userLocale = useLocale();
 
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
@@ -63,31 +65,23 @@ export default function SshKey( {
 		<>
 			<Card>
 				<CardBody>
-					<HStack spacing={ 3 } justify="space-between" alignment="center">
-						<VStack spacing={ 3 }>
+					<HStack spacing={ 4 } justify="space-between" alignment="flex-start">
+						<VStack spacing={ 3 } alignment="flex-start">
 							<Text weight={ 500 } lineHeight="20px">
-								{ sshKey.name }
+								{ username }-{ sshKey.name }
 							</Text>
 							<Text variant="muted" lineHeight="20px" size="13px">
 								{ sshKey.sha256 }
 							</Text>
-							<Badge intent="success">
-								{
-									/* translators: date is the date when the SSH key was attached,
-									time is the time when the SSH key was attached */
-									sprintf( __( 'Attached on %(date)s at %(time)s' ), {
-										date: new Date( sshKey.created_at ).toLocaleDateString( locale, {
-											day: 'numeric',
-											month: 'long',
-											year: 'numeric',
-										} ),
-										time: new Date( sshKey.created_at ).toLocaleTimeString( locale, {
-											hour: '2-digit',
-											minute: '2-digit',
-											hour12: false,
-										} ),
-									} )
-								}
+							<Badge intent="info">
+								{ sprintf(
+									/* translators: %s is when the SSH key was attached. */
+									__( 'Attached on %s' ),
+									new Intl.DateTimeFormat( userLocale, {
+										dateStyle: 'long',
+										timeStyle: 'medium',
+									} ).format( new Date( sshKey.created_at ) )
+								) }
 							</Badge>
 						</VStack>
 						<ButtonStack justify="flex-end" expanded={ false }>
