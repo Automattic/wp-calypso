@@ -1,10 +1,12 @@
 import { siteScanQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
+import { __experimentalVStack as VStack, __experimentalText as Text } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import { getActions } from './dataviews/actions';
 import { getFields } from './dataviews/fields';
+import noThreatsIllustration from './no-threats-illustration.svg';
 import type { Threat, Site } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 
@@ -16,10 +18,19 @@ export function ActiveThreatsDataViews( { site }: { site: Site } ) {
 		sort: { field: 'severity', direction: 'desc' },
 	} );
 
-	const emptyMessage =
-		view.filters && view.filters.length > 0
-			? __( 'No active threats found with the current filters.' )
-			: __( 'No active threats found. Your site is secure.' );
+	const getEmptyMessage = () => {
+		if ( view.search ) {
+			return sprintf(
+				/** translators: %s: search query string */
+				__( 'No active threats found. Your search for "%s" did not return any results.' ),
+				view.search
+			);
+		}
+		if ( view.filters && view.filters.length > 0 ) {
+			return __( 'No active threats found with the current filters.' );
+		}
+		return __( 'No threats found' );
+	};
 
 	const { data: threats = [], isLoading } = useQuery( {
 		...siteScanQuery( site.ID ),
@@ -30,12 +41,21 @@ export function ActiveThreatsDataViews( { site }: { site: Site } ) {
 	const actions = getActions();
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( threats, view, fields );
 
+	if ( ! isLoading && threats.length === 0 ) {
+		return (
+			<VStack spacing={ 10 } alignment="center" style={ { padding: '40px 0' } }>
+				<img src={ noThreatsIllustration } alt={ __( 'No threats found illustration' ) } />
+				<Text>{ getEmptyMessage() }</Text>
+			</VStack>
+		);
+	}
+
 	return (
 		<DataViews< Threat >
 			actions={ actions }
 			data={ filteredData }
 			defaultLayouts={ { table: {} } }
-			empty={ emptyMessage }
+			empty={ getEmptyMessage() }
 			fields={ fields }
 			getItemId={ ( item ) => item.id.toString() }
 			isLoading={ isLoading }
