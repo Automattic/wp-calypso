@@ -13,8 +13,10 @@ import DomainGlueRecordsSettingsSummary from '../overview-glue-records/summary';
 export default function DomainOverviewSettings( { domain }: { domain: Domain } ) {
 	const buttonListItems = [];
 
-	if ( domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ) {
-		buttonListItems.push( <DomainConnectionSetupSummary domain={ domain } /> );
+	if ( domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION && ! domain.points_to_wpcom ) {
+		buttonListItems.push(
+			<DomainConnectionSetupSummary key="connection-setup" domain={ domain } />
+		);
 	}
 
 	if (

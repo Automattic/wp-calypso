@@ -265,22 +265,12 @@ describe( 'DomainOverviewSettings', () => {
 		} );
 
 		test( 'hides settings when transfer is pending async', async () => {
-			renderDomainSettings( {
+			const { container } = renderDomainSettings( {
 				subtype: { id: DomainSubtype.DOMAIN_CONNECTION, label: 'Domain Connection' },
 				can_manage_dns_records: true,
 				transfer_status: DomainTransferStatus.PENDING_ASYNC,
+				points_to_wpcom: true, // This makes DomainConnectionSetupSummary return null
 			} );
-
-			// Should render nothing or empty state when transfer is pending async
-			const { container } = render(
-				<DomainOverviewSettings
-					domain={ getMockedDomainData( {
-						subtype: { id: DomainSubtype.DOMAIN_CONNECTION, label: 'Domain Connection' },
-						can_manage_dns_records: true,
-						transfer_status: DomainTransferStatus.PENDING_ASYNC,
-					} ) }
-				/>
-			);
 
 			// Should not show any settings
 			expect( screen.queryByText( 'Settings' ) ).not.toBeInTheDocument();
@@ -297,6 +287,7 @@ describe( 'DomainOverviewSettings', () => {
 						subtype: { id: DomainSubtype.DOMAIN_CONNECTION, label: 'Domain Connection' },
 						can_manage_dns_records: false,
 						transfer_status: DomainTransferStatus.PENDING_ASYNC,
+						points_to_wpcom: true, // This makes DomainConnectionSetupSummary return null
 					} ) }
 				/>
 			);
