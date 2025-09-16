@@ -77,24 +77,20 @@ export default function Summary( {
 	 * Otherwise when we reset the importer we lose the returned data.
 	 */
 	useEffect( () => {
-		if ( ! isImportCompleted && importerStatus === 'done' ) {
+		if ( ! isImportCompleted && ( importerStatus === 'done' || importerStatus === 'skipped' ) ) {
 			setIsImportCompleted( true );
 
 			if ( ! importStepsResults && steps ) {
 				setImportStepsResults( steps );
 			}
-		}
 
-		if ( isImportCompleted && importStepsResults ) {
-			resetImporter();
+			// Reset the importer if it's completed and the Summary page is exited.
+			page.exit( '/import/newsletter/substack/*', ( context, next ) => {
+				resetImporter();
+				next();
+			} );
 		}
 	}, [ importerStatus, importStepsResults, isImportCompleted, steps, resetImporter ] );
-
-	useEffect( () => {
-		if ( importerStatus === 'expired' && ! isImportCompleted ) {
-			page.redirect( `/import/${ selectedSite.slug }` );
-		}
-	}, [] );
 
 	// Either content- or subscriber-import is still in progress
 	if ( importerStatus === 'importing' ) {

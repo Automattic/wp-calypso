@@ -132,6 +132,12 @@ export default function NewsletterImporter( {
 		}
 	}, [ importerStatus, showConfetti ] );
 
+	const resetImporter = () => {
+		if ( selectedSite?.ID ) {
+			resetPaidNewsletter( selectedSite?.ID, engine, 'reset' );
+		}
+	};
+
 	return (
 		<div className={ clsx( 'newsletter-importer', 'newsletter-importer__step-' + step ) }>
 			<LogoChain logos={ logoChainLogos } />
@@ -185,7 +191,7 @@ export default function NewsletterImporter( {
 						<Summary
 							selectedSite={ selectedSite }
 							steps={ paidNewsletterData.steps }
-							resetImporter={ () => resetPaidNewsletter( selectedSite?.ID, engine, 'content' ) }
+							resetImporter={ resetImporter }
 							fromSite={ originSite }
 							showConfetti={ showConfetti }
 							shouldShownConfetti={ setShowConfetti }
