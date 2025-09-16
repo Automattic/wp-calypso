@@ -97,7 +97,6 @@ export const FlowRenderer: React.FC< {
 
 	const stepNavigation = useStepNavigationWithTracking( {
 		flow,
-		stepSlugs: stepPaths,
 		currentStepRoute,
 		navigate,
 	} );

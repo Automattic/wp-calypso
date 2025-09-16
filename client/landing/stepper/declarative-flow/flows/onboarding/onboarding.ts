@@ -306,16 +306,7 @@ const onboarding: FlowV2< typeof initialize > = {
 					return;
 			}
 		};
-
-		const getGoBack = () => {
-			if ( currentStepSlug === STEPS.UNIFIED_DOMAINS.slug && playgroundId ) {
-				return () => {
-					return navigate( STEPS.PLAYGROUND.slug );
-				};
-			}
-		};
-
-		return { submit, goBack: getGoBack() };
+		return { submit };
 	},
 	useAssertConditions() {
 		const [ isLoading ] = useIsDomainSearchV2Enabled( this.name );
