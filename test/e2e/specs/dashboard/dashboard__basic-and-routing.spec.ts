@@ -1,6 +1,6 @@
-import { test, expect } from '../../lib/pw-base';
+import { test, expect, tags } from '../../lib/pw-base';
 
-test.describe( 'Dashboard: Basic & Routing', { tag: [ '@dashboard' ] }, () => {
+test.describe( 'Dashboard: Basic & Routing', { tag: [ tags.DASHBOARD, tags.CALYPSO_PR ] }, () => {
 	test.skip(
 		! process.env.CALYPSO_BASE_URL || process.env.CALYPSO_BASE_URL === 'https://wordpress.com',
 		'Skipping for wordpress.com or if CALYPSO_BASE_URL is undefined, as v2 dashboard is not enabled yet.'

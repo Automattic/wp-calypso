@@ -1,8 +1,8 @@
-import { test, expect } from '../../lib/pw-base';
+import { test, expect, tags } from '../../lib/pw-base';
 
 test.describe(
 	'Dashboard: Site Visibility Settings',
-	{ tag: [ '@dashboard', '@calypso-pr' ] },
+	{ tag: [ tags.DASHBOARD, tags.CALYPSO_PR ] },
 	() => {
 		test.skip(
 			! process.env.CALYPSO_BASE_URL || process.env.CALYPSO_BASE_URL === 'https://wordpress.com',
