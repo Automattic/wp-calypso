@@ -30,7 +30,9 @@
 				width: 100%;
 				pointer-events: none;
 				opacity: 1;
-				animation: linear hideOnScroll both;
+				animation-timing-function: linear;
+				animation-name: hideOnScroll;
+				animation-fill-mode: both;
 				animation-timeline: --help-center-scroll;
 
 				@keyframes hideOnScroll {
