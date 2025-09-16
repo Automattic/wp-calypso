@@ -8,3 +8,12 @@ export async function fetchSiteMigrationKey( siteId: number ): Promise< string >
 
 	return migration_key;
 }
+
+export async function fetchSiteMigrationZendeskTicket( siteId: number ): Promise< string > {
+	const { ticket_id } = await wpcom.req.get( {
+		path: `/sites/${ siteId }/automated-migration/find-ticket`,
+		apiNamespace: 'wpcom/v2',
+	} );
+
+	return ticket_id;
+}

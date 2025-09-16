@@ -6,6 +6,7 @@ export type SiteFeatureSupports = {
 	monitoring: boolean;
 	logs: boolean;
 	backups: boolean;
+	scan: boolean;
 	domains: boolean;
 	emails: boolean;
 };

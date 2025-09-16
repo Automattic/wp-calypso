@@ -1,4 +1,4 @@
-import { appAuthSetupQuery } from '@automattic/api-queries';
+import { twoStepAuthAppSetupQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
@@ -17,7 +17,7 @@ import VerifyCodeForm from '../security-two-step-auth/common/verify-code-form';
 export default function ScanQRCode() {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
-	const { data: appAuthSetup } = useSuspenseQuery( appAuthSetupQuery() );
+	const { data: appAuthSetup } = useSuspenseQuery( twoStepAuthAppSetupQuery() );
 
 	const handleCopy = () => {
 		createSuccessNotice( __( 'Setup key copied to clipboard.' ), {

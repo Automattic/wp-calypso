@@ -3,6 +3,7 @@ import type { PluginItem, PluginsResponse } from '@automattic/api-core';
 
 type Aggregated = {
 	name: string;
+	slug: string;
 	count: number;
 	activeCount: number;
 	updateCount: number;
@@ -34,7 +35,8 @@ export function mapApiPluginsToDataViewPlugins( response?: PluginsResponse ): Pl
 			}
 
 			const entry: Aggregated = map.get( p.id ) || {
-				name: p.name || p.slug,
+				name: p.name,
+				slug: p.slug,
 				count: 0,
 				activeCount: 0,
 				updateCount: 0,
@@ -42,7 +44,6 @@ export function mapApiPluginsToDataViewPlugins( response?: PluginsResponse ): Pl
 				siteIds: [],
 			};
 			entry.count += 1;
-			entry.name = p.name || entry.name;
 			entry.siteIds.push( siteId );
 			if ( p.active ) {
 				entry.activeCount += 1;
@@ -58,9 +59,10 @@ export function mapApiPluginsToDataViewPlugins( response?: PluginsResponse ): Pl
 	} );
 
 	return Array.from( map.entries() ).map(
-		( [ id, { name, count, activeCount, updateCount, autoupdateCount, siteIds } ] ) => ( {
+		( [ id, { name, slug, count, activeCount, updateCount, autoupdateCount, siteIds } ] ) => ( {
 			id,
 			name,
+			slug,
 			sitesCount: count,
 			hasUpdate: mapCountToQuantifier( updateCount, count ),
 			isActive: mapCountToQuantifier( activeCount, count ),

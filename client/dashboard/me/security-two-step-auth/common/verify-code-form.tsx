@@ -1,4 +1,4 @@
-import { validateTwoStepCodeMutation } from '@automattic/api-queries';
+import { validateTwoStepAuthCodeMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
@@ -49,7 +49,7 @@ export default function VerifyCodeForm( {
 	} );
 
 	const { mutate: validateTwoStepCode, isPending: isValidateTwoStepCodePending } = useMutation(
-		validateTwoStepCodeMutation()
+		validateTwoStepAuthCodeMutation()
 	);
 
 	const handleSubmit = ( e: React.FormEvent ) => {

@@ -17,9 +17,9 @@ const defaultView: View = {
 	titleField: 'domain',
 };
 
-export const SitesWithoutThisPlugin = ( { pluginId }: { pluginId: string } ) => {
+export const SitesWithoutThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) => {
 	const [ view, setView ] = useState< View >( defaultView );
-	const { isLoading, sitesWithoutThisPlugin } = usePlugin( pluginId );
+	const { isLoading, sitesWithoutThisPlugin } = usePlugin( pluginSlug );
 
 	const fields = useMemo(
 		() => [
@@ -37,11 +37,13 @@ export const SitesWithoutThisPlugin = ( { pluginId }: { pluginId: string } ) => 
 				header: <div />,
 				getValue: ( { item }: { item: Site } ) => item.URL,
 				render: ( { item }: { item: Site } ) => (
-					<Link to={ `/plugins/${ pluginId }/${ item.slug }` }>{ __( 'Go to plugin page' ) }</Link>
+					<Link to={ `/plugins/${ pluginSlug }/${ item.slug }` }>
+						{ __( 'Go to plugin page' ) }
+					</Link>
 				),
 			},
 		],
-		[ pluginId ]
+		[ pluginSlug ]
 	);
 
 	const { data, paginationInfo } = filterSortAndPaginate( sitesWithoutThisPlugin, view, fields );

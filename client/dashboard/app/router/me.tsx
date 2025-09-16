@@ -8,7 +8,7 @@ import {
 	queryClient,
 	accountRecoveryQuery,
 	smsCountryCodesQuery,
-	appAuthSetupQuery,
+	twoStepAuthAppSetupQuery,
 } from '@automattic/api-queries';
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { rootRoute } from './root';
@@ -203,7 +203,7 @@ export const securityTwoStepAuthAppRoute = createRoute( {
 	loader: async () => {
 		await Promise.all( [
 			queryClient.ensureQueryData( userSettingsQuery() ),
-			queryClient.ensureQueryData( appAuthSetupQuery() ),
+			queryClient.ensureQueryData( twoStepAuthAppSetupQuery() ),
 		] );
 	},
 } ).lazy( () =>
