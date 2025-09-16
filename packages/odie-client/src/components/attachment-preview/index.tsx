@@ -8,7 +8,7 @@ import './style.scss';
 export const AttachmentPreview = ( {
 	attachmentPreview,
 	onCancel,
-	isAttachingFile,
+	isAttachingFile = true,
 }: {
 	attachmentPreview: File;
 	onCancel: () => void;

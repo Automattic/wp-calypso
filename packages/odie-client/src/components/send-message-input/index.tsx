@@ -102,7 +102,7 @@ export const OdieSendMessageButton = () => {
 			setInputValue( '' );
 		} else if ( chat.conversationId ) {
 			Smooch.stopTyping();
-			await sendAttachments();
+			sendAttachments();
 		}
 
 		try {
@@ -168,14 +168,6 @@ export const OdieSendMessageButton = () => {
 	const isDisabled = !! messageSizeNotice || ( isLiveChat && connectionStatus !== 'connected' );
 	// When there is a reason to disable the input, we should not convey a processing state.
 	const isProcessing = ( isChatBusy || isAttachingFile || cantTransferToZendesk ) && ! isDisabled;
-
-	// if ( attachmentPreview ) {
-	// 	return (
-	// 		<div className="odie-chat-message-input-container agenttic" ref={ divContainerRef }>
-	// 			{ attachmentPreview }
-	// 		</div>
-	// 	);
-	// }
 
 	return (
 		<>

@@ -12,6 +12,29 @@
 	border-radius: 4px;
 	flex-shrink: 0;
 
+	&.is-attaching-file {
+		background: linear-gradient(
+			90deg,
+			color-mix( in srgb, $gray-100 20%, $gray-400 ),
+			$gray-100,
+			color-mix( in srgb, $gray-100 20%, $gray-400 )
+		);
+		background-size: 200% 100%;
+		animation: shimmer 2000ms infinite linear 0ms;
+	}
+
+	@keyframes shimmer {
+		0% {
+			background-position: 0 0;
+		}
+		50% {
+			opacity: 0.5;
+		}
+		100% {
+			background-position: 200% 0;
+		}
+	}
+
 	.odie-attachment-preview-cancel {
 		$width: 18px;
 		$height: 10px;
