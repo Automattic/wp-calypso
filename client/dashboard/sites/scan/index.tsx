@@ -50,6 +50,7 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 					actions={
 						<ButtonStack>
 							<Button variant="secondary">{ __( 'Scan now' ) }</Button>
+							{ /* @TODO: Hide this button if there are no fixable threats */ }
 							<Button variant="primary">
 								{ sprintf(
 									/* translators: %d: number of threats */
