@@ -9,7 +9,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNotice } from '../../../app/hooks/use-notice';
 import { ConfirmationModal } from './confirmation-modal';
 
@@ -25,6 +25,7 @@ export const PauseAllEmails = () => {
 		isPending: isSaving,
 		isSuccess: isSettingsUpdated,
 	} = useMutation( userSettingsMutation() );
+
 	const originalState = isAllWpcomEmailsDisabled( settings );
 	const [ isConfirmDialogOpen, setIsConfirmDialogOpen ] = useState( false );
 	const [ enabled, setEnabled ] = useState( isAllWpcomEmailsDisabled( settings ) );
@@ -46,33 +47,38 @@ export const PauseAllEmails = () => {
 		setEnabled( checked );
 	};
 
-	const handleConfirmation = () => {
+	const handleConfirmation = useCallback( () => {
 		updateSettings( {
 			subscription_delivery_email_blocked: enabled,
 		} );
-	};
+	}, [ enabled, updateSettings ] );
 
-	const askForConfirmation = () => {
+	const askForConfirmation = useCallback( () => {
 		setIsConfirmDialogOpen( true );
-	};
+	}, [ setIsConfirmDialogOpen ] );
 
-	const handleSubmit = ( e: React.FormEvent< HTMLFormElement > ) => {
-		e.preventDefault();
+	const handleCancel = useCallback( () => {
+		setIsConfirmDialogOpen( false );
+		setEnabled( originalState );
+	}, [ setIsConfirmDialogOpen, setEnabled, originalState ] );
 
-		if ( enabled ) {
-			askForConfirmation();
-		} else {
-			handleConfirmation();
-		}
-	};
+	const handleSubmit = useCallback(
+		( e: React.FormEvent< HTMLFormElement > ) => {
+			e.preventDefault();
+
+			if ( enabled ) {
+				askForConfirmation();
+			} else {
+				handleConfirmation();
+			}
+		},
+		[ enabled, askForConfirmation, handleConfirmation ]
+	);
 
 	return (
 		<>
 			{ isConfirmDialogOpen && (
-				<ConfirmationModal
-					onCancel={ () => setIsConfirmDialogOpen( false ) }
-					onConfirm={ handleConfirmation }
-				/>
+				<ConfirmationModal onCancel={ handleCancel } onConfirm={ handleConfirmation } />
 			) }
 			<Card>
 				<CardBody>
