@@ -8,24 +8,10 @@ interface ContentProcessorProps {
 /**
  * Detects URLs in HTML content - both plain text URLs and URLs from href attributes.
  * @param {string} content - The HTML content to scan for URLs.
- * @returns {Array} - Array of detected URLs.
+ * @returns {string|null} - First detected URL or null if none found.
  */
-function detectUrls( content: string ): string[] {
-	const urls: string[] = [];
-
-	// First, extract URLs from href attributes
-	const hrefRegex = /<a[^>]+href=["']([^"']+)["'][^>]*>/gi;
-	let match;
-
-	while ( ( match = hrefRegex.exec( content ) ) !== null ) {
-		const url = match[ 1 ];
-		// Only include http/https URLs and avoid duplicates
-		if ( url.startsWith( 'http' ) && ! urls.includes( url ) ) {
-			urls.push( url );
-		}
-	}
-
-	// Then, look for plain text URLs (not in HTML tags)
+export function detectUrls( content: string ): string | null {
+	// First, look for plain text URLs (not in HTML tags)
 	const urlRegex = /(https?:\/\/[^\s<>"']+)/g;
 	const plainTextUrlMatches = content.matchAll( urlRegex );
 
@@ -34,16 +20,28 @@ function detectUrls( content: string ): string[] {
 		const position = urlMatch.index;
 
 		// Check if this URL is NOT part of an HTML tag
-		if (
-			position !== undefined &&
-			! isUrlInHtmlTag( content, position ) &&
-			! urls.includes( url )
-		) {
-			urls.push( url );
+		if ( position !== undefined && ! isUrlInHtmlTag( content, position ) ) {
+			return url; // Return immediately after finding the first valid URL
 		}
 	}
 
-	return urls;
+	// Then, extract URLs from href attributes
+	const hrefRegex = /<a[^>]+href=["']([^"']+)["'][^>]*>(.*?)<\/a>/gi;
+	let match;
+
+	while ( ( match = hrefRegex.exec( content ) ) !== null ) {
+		const [ , url, linkText ] = match;
+		// Only include http/https URLs, skip mentions/hashtags
+		if (
+			url.startsWith( 'http' ) &&
+			! linkText.trim().startsWith( '@' ) &&
+			! linkText.trim().startsWith( '#' )
+		) {
+			return url; // Return immediately after finding the first valid URL
+		}
+	}
+
+	return null;
 }
 
 /**
@@ -81,31 +79,17 @@ export default function ContentProcessor( { content }: ContentProcessorProps ): 
 		return null;
 	}
 
-	// Detect URLs in the content.
-	const urls = detectUrls( content );
+	// Detect URL in the content.
+	const url = detectUrls( content );
 
-	// If no URLs found, just return the original content.
-	if ( urls.length === 0 ) {
-		return (
-			<div
-				className="reader-full-post__story-content"
-				// eslint-disable-next-line react/no-danger
-				dangerouslySetInnerHTML={ { __html: content } }
-			/>
-		);
-	}
-
-	// Create link previews for each URL.
 	return (
-		<div className="reader-full-post__processed-content">
+		<>
 			<div
 				className="reader-full-post__story-content"
 				// eslint-disable-next-line react/no-danger
 				dangerouslySetInnerHTML={ { __html: content } }
 			/>
-			{ urls.map( ( url, index ) => (
-				<LinkPreview key={ `link-preview-${ index }` } url={ url } />
-			) ) }
-		</div>
+			{ url && <LinkPreview url={ url } /> }
+		</>
 	);
 }
