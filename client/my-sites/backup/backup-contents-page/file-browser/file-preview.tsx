@@ -1,6 +1,10 @@
+import {
+	Button,
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import clsx from 'clsx';
 import { useCallback } from 'react';
 import { FileBrowserItem } from './types';
 import { useBackupFileQuery } from './use-backup-file-query';
@@ -54,12 +58,14 @@ function FilePreview( { item, siteId, onTrackEvent }: FilePreviewProps ) {
 
 	if ( isSensitive && ! showSensitivePreview ) {
 		return (
-			<div className="file-card__preview-sensitive">
-				<p>{ __( 'This preview is hidden because it contains sensitive information.' ) }</p>
-				<button className="button button-small" onClick={ handleShowPreviewClick }>
+			<VStack className="file-card__preview-sensitive" alignment="center">
+				<Text as="p">
+					{ __( 'This preview is hidden because it contains sensitive information.' ) }
+				</Text>
+				<Button size="compact" variant="primary" onClick={ handleShowPreviewClick }>
 					{ __( 'Show preview' ) }
-				</button>
-			</div>
+				</Button>
+			</VStack>
 		);
 	}
 
@@ -73,7 +79,11 @@ function FilePreview( { item, siteId, onTrackEvent }: FilePreviewProps ) {
 		switch ( item.type ) {
 			case 'text':
 			case 'code':
-				content = <pre>{ fileContent }</pre>;
+				content = (
+					<Text as="pre" style={ { backgroundColor: 'var(--color-surface)' } }>
+						{ fileContent }
+					</Text>
+				);
 				break;
 			case 'image':
 				content = <img src={ data?.url } alt="file-preview" />;
@@ -82,7 +92,7 @@ function FilePreview( { item, siteId, onTrackEvent }: FilePreviewProps ) {
 				content = (
 					// We don't have captions for backed up audio files
 					// eslint-disable-next-line jsx-a11y/media-has-caption
-					<audio controls>
+					<audio controls style={ { width: '100%' } }>
 						<source src={ data?.url } type="audio/mpeg" />
 					</audio>
 				);
@@ -91,7 +101,7 @@ function FilePreview( { item, siteId, onTrackEvent }: FilePreviewProps ) {
 				content = (
 					// We don't have captions for backed up video files
 					// eslint-disable-next-line jsx-a11y/media-has-caption
-					<video controls>
+					<video controls style={ { width: '100%' } }>
 						<source src={ data?.url } type="video/mp4" />
 					</video>
 				);
@@ -108,17 +118,12 @@ function FilePreview( { item, siteId, onTrackEvent }: FilePreviewProps ) {
 
 	const isLoading = isTextContent ? ! fileContent && ! isError : isQueryLoading;
 	const isReady = isTextContent ? fileContent : isSuccess;
-	const classNames = clsx( 'file-card__preview', item.type, {
-		'file-card__preview--is-loading': isLoading,
-	} );
 
 	return (
-		<>
-			<div className={ classNames }>
-				{ isLoading && <div className="file-browser-node__loading placeholder" /> }
-				{ isReady ? renderFileContent() : null }
-			</div>
-		</>
+		<div className="file-card__preview">
+			{ isLoading && <div className="file-browser-node__loading placeholder" /> }
+			{ isReady ? renderFileContent() : null }
+		</div>
 	);
 }
 

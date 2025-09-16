@@ -27,6 +27,7 @@ export type SiteLogsQueryOptions = { keepPreviousData?: boolean };
 export const LogType = {
 	PHP: 'php',
 	SERVER: 'server',
+	ACTIVITY: 'activity',
 } as const;
 
 export type LogType = ( typeof LogType )[ keyof typeof LogType ];

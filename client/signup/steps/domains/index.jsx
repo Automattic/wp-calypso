@@ -17,7 +17,7 @@ import {
 } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
-import { getQueryArg } from '@wordpress/url';
+import { getQueryArg, getProtocol } from '@wordpress/url';
 import { withViewportMatch } from '@wordpress/viewport';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -37,11 +37,6 @@ import UseMyDomain from 'calypso/components/domains/use-my-domain';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Notice from 'calypso/components/notice';
 import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
-import {
-	LOCAL_STORAGE_KEY_FOR_PG_ID as PG_ID,
-	LOCAL_STORAGE_KEY_FOR_PG_ID_TS as PG_TS,
-	LOCAL_STORAGE_KEY_FOR_PG_VALIDITY as PG_ID_VALIDITY,
-} from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/playground/lib/initialize-playground';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import {
@@ -106,6 +101,8 @@ import {
 	sortProductsByPriceDescending,
 } from './utils';
 import './style.scss';
+
+const isRelativeUrl = ( url ) => ! url.startsWith( '//' ) && ! getProtocol( url );
 
 class RenderDomainsStepComponent extends Component {
 	static propTypes = {
@@ -182,25 +179,6 @@ class RenderDomainsStepComponent extends Component {
 		}
 		this.setCurrentFlowStep = this.setCurrentFlowStep.bind( this );
 
-		// Get playground ID from either GET param or localStorage
-		const playgroundIdFromUrl = getQueryArg( window.location.href, 'playground' );
-		const playgroundIdFromStorage = window.localStorage.getItem( PG_ID );
-		const playgroundIdTimestamp = window.localStorage.getItem( PG_TS );
-		const playgroundId =
-			playgroundIdFromUrl ||
-			( Date.now() - playgroundIdTimestamp < PG_ID_VALIDITY ? playgroundIdFromStorage : null );
-
-		// Clean up localStorage regardless of whether we used the value
-		window.localStorage.removeItem( PG_ID );
-		window.localStorage.removeItem( PG_TS );
-
-		// Update URL if we got the ID from localStorage
-		if ( playgroundId && playgroundIdFromStorage && ! playgroundIdFromUrl ) {
-			const url = new URL( window.location.href );
-			url.searchParams.set( 'playground', playgroundId );
-			window.history.replaceState( {}, '', url.toString() );
-		}
-
 		this.state = {
 			currentStep: null,
 			isCartPendingUpdateDomain: null,
@@ -215,7 +193,6 @@ class RenderDomainsStepComponent extends Component {
 			checkDomainAvailabilityPromises: [],
 			removeDomainTimeout: 0,
 			addDomainTimeout: 0,
-			playgroundId,
 		};
 	}
 
@@ -1630,10 +1607,7 @@ class RenderDomainsStepComponent extends Component {
 		} else if ( ! isNewHostedSiteCreationFlow( flowName ) ) {
 			backUrl = getStepUrl( flowName, stepName, null, this.getLocale() );
 
-			if ( this.state.playgroundId ) {
-				backUrl = `/setup/onboarding/playground?playground=${ this.state.playgroundId }`;
-				backLabelText = translate( 'Back' );
-			} else if ( 'site' === source && siteUrl ) {
+			if ( 'site' === source && siteUrl ) {
 				backUrl = siteUrl;
 				backLabelText = translate( 'Back to My Site' );
 				isExternalBackUrl = true;
@@ -1646,6 +1620,12 @@ class RenderDomainsStepComponent extends Component {
 			} else if ( backUrl === this.removeQueryParam( this.props.path ) ) {
 				backUrl = defaultBackUrl;
 				backLabelText = sitesBackLabelText;
+			}
+
+			const backTo = getQueryArg( window.location.href, 'back_to' );
+			if ( backTo && isRelativeUrl( backTo ) ) {
+				backUrl = backTo;
+				backLabelText = translate( 'Back' );
 			}
 
 			const externalBackUrl = getExternalBackUrl( source, stepSectionName );
