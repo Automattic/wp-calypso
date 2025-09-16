@@ -233,7 +233,7 @@ function FileInfoCard( {
 	useEffect( () => {
 		if ( isError ) {
 			notices.showError(
-				__( 'There was an error retrieving your file information. Please, try again.' )
+				__( 'There was an error retrieving your file information. Please try again.' )
 			);
 		}
 	}, [ notices, isError ] );
