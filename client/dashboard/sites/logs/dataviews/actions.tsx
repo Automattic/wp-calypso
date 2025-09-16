@@ -1,4 +1,4 @@
-import { LogType, PHPLog, ServerLog, ActivityLogEntry } from '@automattic/api-core';
+import { LogType, PHPLog, ServerLog, SiteActivityLog } from '@automattic/api-core';
 import { useDispatch } from '@wordpress/data';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -23,7 +23,7 @@ export function useActions( {
 }: UseLogActionsOptions ):
 	| Action< PHPLog >[]
 	| Action< ServerLog >[]
-	| Action< ActivityLogEntry >[] {
+	| Action< SiteActivityLog >[] {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	return useMemo( () => {
@@ -64,7 +64,7 @@ export function useActions( {
 		}
 
 		if ( logType === LogType.ACTIVITY ) {
-			const copySummaryAction: Action< ActivityLogEntry > = {
+			const copySummaryAction: Action< SiteActivityLog > = {
 				id: 'copy-summary',
 				label: __( 'Copy activity summary' ),
 				disabled: isLoading,

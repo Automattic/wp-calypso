@@ -1,4 +1,4 @@
-import { LogType, PHPLog, ServerLog, ActivityLogEntry } from '@automattic/api-core';
+import { LogType, PHPLog, ServerLog, SiteActivityLog } from '@automattic/api-core';
 import { formatNumber } from '@automattic/number-formatters';
 import { Badge } from '@automattic/ui';
 import { __experimentalHStack as HStack } from '@wordpress/components';
@@ -52,7 +52,7 @@ export function useFields( {
 	logType,
 	timezoneString,
 	gmtOffset,
-}: UseFieldsArgs ): Field< PHPLog >[] | Field< ServerLog >[] | Field< ActivityLogEntry >[] {
+}: UseFieldsArgs ): Field< PHPLog >[] | Field< ServerLog >[] | Field< SiteActivityLog >[] {
 	const locale = useLocale();
 
 	let dateTimeLabel = __( 'Date & time' );
@@ -222,7 +222,7 @@ export function useFields( {
 					render: ( { item } ) => <span>{ item.actor?.name || __( 'Unknown' ) }</span>,
 					filterBy: { operators: [] },
 				},
-			] satisfies Field< ActivityLogEntry >[];
+			] satisfies Field< SiteActivityLog >[];
 		}
 
 		// server (web) logs
