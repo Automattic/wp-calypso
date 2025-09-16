@@ -15,6 +15,7 @@ import { setExpandedService } from 'calypso/state/sharing/actions';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSiteSlug, isJetpackSite, getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import JetpackSocial from './jetpack-social';
 import Sharing from './main';
 
 export const redirectConnections = ( context ) => {
@@ -87,6 +88,12 @@ export const connections = ( context, next ) => {
 	const siteSlug = getSiteSlug( state, siteId );
 
 	context.contentComponent = createElement( SharingConnections, { isP2Hub, siteId, siteSlug } );
+
+	next();
+};
+
+export const jetpackSocial = ( context, next ) => {
+	context.contentComponent = createElement( JetpackSocial );
 
 	next();
 };

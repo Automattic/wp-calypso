@@ -15,7 +15,7 @@ export default function DashboardBackportSiteOverview( { siteSlug }: { siteSlug?
 	const containerRef = useRef< HTMLDivElement >( null );
 	const user = useSelector( ( state ) => getCurrentUser( state ) );
 	const site = useSelector( ( state ) => getSite( state, siteSlug ) );
-	const analyticsClient = useAnalyticsClient();
+	const analyticsClient = useAnalyticsClient( router );
 
 	// Initialize the root instance.
 	useEffect( () => {
