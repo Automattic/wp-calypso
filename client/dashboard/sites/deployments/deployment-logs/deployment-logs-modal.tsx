@@ -18,14 +18,12 @@ import { DeploymentLogsStatus } from './deployment-logs-status';
 import type { DeploymentRunWithDeploymentInfo } from '@automattic/api-core';
 
 interface DeploymentLogsModalProps {
-	isOpen: boolean;
 	onRequestClose: () => void;
 	deployment: DeploymentRunWithDeploymentInfo;
 	siteId: number;
 }
 
 export function DeploymentLogsModal( {
-	isOpen,
 	onRequestClose,
 	deployment,
 	siteId,
@@ -43,14 +41,9 @@ export function DeploymentLogsModal( {
 		isError,
 	} = useQuery( {
 		...deploymentRunLogsQuery( siteId, deployment.code_deployment_id, deployment.id ),
-		enabled: isOpen,
-
-		refetchInterval: isOpen && ! isFinalState ? 1000 : undefined,
+		refetchInterval: ! isFinalState ? 1000 : undefined,
 	} );
 
-	if ( ! isOpen ) {
-		return null;
-	}
 	const { commit_message, commit_sha, author } = deployment.metadata;
 	const shortSha = commit_sha?.substring( 0, 7 ) || '';
 

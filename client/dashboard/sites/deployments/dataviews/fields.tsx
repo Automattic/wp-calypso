@@ -7,10 +7,9 @@ import {
 	Button,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { ReactNode, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import TimeSince from '../../../components/time-since';
 import { BranchDisplay } from '../branch-display';
-import { DeploymentLogsModal } from '../deployment-logs/deployment-logs-modal';
 import { DeploymentStatusBadge, DeploymentStatusValue } from '../deployment-status-badge';
 import type { DeploymentRunWithDeploymentInfo } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
@@ -18,39 +17,13 @@ import type { Field } from '@wordpress/dataviews';
 interface FilterOptions {
 	repositoryOptions: { value: string; label: string }[];
 	userNameOptions: { value: string; label: string }[];
-	siteId: number;
+	onOpenLogs: ( deployment: DeploymentRunWithDeploymentInfo ) => void;
 }
-
-const LogsButton = ( {
-	item,
-	siteId,
-	children,
-}: {
-	item: DeploymentRunWithDeploymentInfo;
-	siteId: number;
-	children: ReactNode;
-} ) => {
-	const [ isModalOpen, setIsModalOpen ] = useState( false );
-
-	return (
-		<>
-			<Button variant="link" size="small" onClick={ () => setIsModalOpen( true ) }>
-				{ children }
-			</Button>
-			<DeploymentLogsModal
-				isOpen={ isModalOpen }
-				onRequestClose={ () => setIsModalOpen( false ) }
-				deployment={ item }
-				siteId={ siteId }
-			/>
-		</>
-	);
-};
 
 export function useDeploymentFields( {
 	repositoryOptions = [],
 	userNameOptions = [],
-	siteId,
+	onOpenLogs,
 }: FilterOptions ): Field< DeploymentRunWithDeploymentInfo >[] {
 	return useMemo(
 		() => [
@@ -170,9 +143,9 @@ export function useDeploymentFields( {
 				},
 				render: ( { item } ) => {
 					return (
-						<LogsButton item={ item } siteId={ siteId }>
+						<Button variant="link" size="small" onClick={ () => onOpenLogs( item ) }>
 							<TimeSince timestamp={ item.created_on } />
-						</LogsButton>
+						</Button>
 					);
 				},
 			},
@@ -193,6 +166,6 @@ export function useDeploymentFields( {
 				render: ( { item } ) => ( item.is_active_deployment ? __( 'Active' ) : __( 'Not active' ) ),
 			},
 		],
-		[ repositoryOptions, userNameOptions, siteId ]
+		[ repositoryOptions, userNameOptions, onOpenLogs ]
 	);
 }

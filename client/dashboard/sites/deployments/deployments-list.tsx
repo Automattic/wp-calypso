@@ -11,6 +11,7 @@ import { siteRoute } from '../../app/router/sites';
 import { DataViewsCard } from '../../components/dataviews-card';
 import { useDeploymentFields } from './dataviews/fields';
 import { DEFAULT_VIEW, DEFAULT_LAYOUTS } from './dataviews/views';
+import { DeploymentLogsModal } from './deployment-logs/deployment-logs-modal';
 import type {
 	DeploymentRun,
 	DeploymentRunWithDeploymentInfo,
@@ -22,7 +23,8 @@ export function DeploymentsList() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
-
+	const [ selectedDeployment, setSelectedDeployment ] =
+		useState< DeploymentRunWithDeploymentInfo | null >( null );
 	const { data: deployments = [], isLoading: deploymentsLoading } = useQuery(
 		codeDeploymentsQuery( site.ID )
 	);
@@ -91,7 +93,11 @@ export function DeploymentsList() {
 			} ) );
 	}, [ deploymentRuns ] );
 
-	const fields = useDeploymentFields( { repositoryOptions, userNameOptions, siteId: site.ID } );
+	const fields = useDeploymentFields( {
+		repositoryOptions,
+		userNameOptions,
+		onOpenLogs: setSelectedDeployment,
+	} );
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
 		deploymentRuns,
 		view,
@@ -102,18 +108,28 @@ export function DeploymentsList() {
 	const emptyTitle = hasFilterOrSearch ? __( 'No deployments found' ) : __( 'No deployments yet' );
 
 	return (
-		<DataViewsCard>
-			<DataViews
-				data={ filteredData }
-				fields={ fields }
-				view={ view }
-				onChangeView={ setView }
-				isLoading={ isLoading }
-				defaultLayouts={ DEFAULT_LAYOUTS }
-				paginationInfo={ paginationInfo }
-				getItemId={ ( item ) => item.id.toString() }
-				empty={ emptyTitle }
-			/>
-		</DataViewsCard>
+		<>
+			<DataViewsCard>
+				<DataViews
+					data={ filteredData }
+					fields={ fields }
+					view={ view }
+					onChangeView={ setView }
+					isLoading={ isLoading }
+					defaultLayouts={ DEFAULT_LAYOUTS }
+					paginationInfo={ paginationInfo }
+					getItemId={ ( item ) => item.id.toString() }
+					empty={ emptyTitle }
+				/>
+			</DataViewsCard>
+
+			{ selectedDeployment && (
+				<DeploymentLogsModal
+					onRequestClose={ () => setSelectedDeployment( null ) }
+					deployment={ selectedDeployment }
+					siteId={ site.ID }
+				/>
+			) }
+		</>
 	);
 }
