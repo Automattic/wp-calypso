@@ -32,7 +32,7 @@ export const useSetOriginSiteMutation = (
 				}
 			);
 
-			if ( ! response.steps.content.content.originSite ) {
+			if ( ! response.import_url ) {
 				throw new Error( `Failed to set origin site: ${ JSON.stringify( response ) }` );
 			}
 

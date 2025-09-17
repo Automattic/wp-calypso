@@ -21,7 +21,6 @@ interface ContentStepContentProgress {
 export interface ContentStepContent {
 	importId: string;
 	importStatus: string;
-	originSite: string | false;
 	progress: {
 		attachment: ContentStepContentProgress;
 		comment: ContentStepContentProgress;
@@ -87,6 +86,7 @@ export interface Steps {
 }
 
 export interface PaidNewsletterData {
+	import_url: string;
 	current_step: StepId;
 	steps: Steps;
 }

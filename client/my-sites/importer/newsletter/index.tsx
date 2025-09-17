@@ -68,7 +68,7 @@ export default function NewsletterImporter( {
 		autoFetchData
 	);
 	const { content, subscribers } = paidNewsletterData?.steps || {};
-	const originSite = content?.content?.originSite || '';
+	const originSite = paidNewsletterData?.import_url || '';
 
 	useEffect( () => {
 		if ( content?.status === 'importing' || subscribers?.status === 'importing' ) {
@@ -134,7 +134,7 @@ export default function NewsletterImporter( {
 
 	const resetImporter = () => {
 		if ( selectedSite?.ID ) {
-			resetPaidNewsletter( selectedSite?.ID, engine, 'reset' );
+			resetPaidNewsletter( selectedSite?.ID, engine, 'content' );
 		}
 	};
 
