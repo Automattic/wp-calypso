@@ -24,7 +24,7 @@ import SiteEnvironmentBadge, { EnvironmentType } from '../../components/site-env
 
 const DirectionArrow = () => {
 	return (
-		<div style={ { marginTop: '44px' } }>
+		<div style={ { marginTop: '5px' } }>
 			<Icon
 				icon={ isRTL() ? chevronLeft : chevronRight }
 				style={ {
