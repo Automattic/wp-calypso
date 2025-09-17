@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import {
-	__experimentalText as Text,
 	Button,
+	Spinner,
+	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
@@ -63,7 +64,11 @@ export const DeploymentLogsEntry = ( {
 		}
 
 		if ( isLoading ) {
-			return __( 'Fetching log details…' );
+			return (
+				<HStack alignment="center">
+					<Spinner />
+				</HStack>
+			);
 		}
 
 		if ( isError ) {
