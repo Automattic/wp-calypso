@@ -19,6 +19,7 @@ export * from './domain-whois';
 export * from './domains';
 export * from './emails';
 export * from './geo';
+export * from './github';
 export * from './marketplace-products';
 export * from './me';
 export * from './me-account';
