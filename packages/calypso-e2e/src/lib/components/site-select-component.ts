@@ -43,8 +43,8 @@ export class SiteSelectComponent {
 	 * @param {string} url URL of the desired site. Must not include the protocol (https).
 	 * @returns {Promise<void>} No return value.
 	 */
-	async selectSite( url: string ): Promise< void > {
-		await this.page.fill( selectors.searchInput, url );
+	async selectSite( url: string, navigatesHome = true ): Promise< void > {
+		await this.page.fill( selectors.searchInput, url, { timeout: 60 * 1000 } );
 		// For some accounts with many sites, the search process takes a looooong time.
 		await this.page.waitForSelector( '.is-loading', { state: 'hidden', timeout: 60 * 1000 } );
 
@@ -53,7 +53,9 @@ export class SiteSelectComponent {
 			this.page.click( `${ selectors.siteList } :text("${ url }")`, { timeout: 60 * 1000 } ),
 		] );
 
-		// Assert the resulting URL is in the form of <protocol><calypsoBaseURL>/home/<url>.
-		await this.page.waitForURL( `**/home/${ url }` );
+		if ( navigatesHome ) {
+			// Assert the resulting URL is in the form of <protocol><calypsoBaseURL>/home/<url>.
+			await this.page.waitForURL( `**/home/${ url }` );
+		}
 	}
 }

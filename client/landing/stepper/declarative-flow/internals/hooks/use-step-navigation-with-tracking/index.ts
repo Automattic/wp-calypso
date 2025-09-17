@@ -18,17 +18,11 @@ import type { Flow, FlowV2, Navigate, ProvidedDependencies, StepperStep } from '
 
 interface Params {
 	flow: Flow | FlowV2< any >;
-	stepSlugs: string[];
 	currentStepRoute: StepperStep[ 'slug' ];
 	navigate: Navigate;
 }
 
-export const useStepNavigationWithTracking = ( {
-	flow,
-	currentStepRoute,
-	navigate,
-	stepSlugs,
-}: Params ) => {
+export const useStepNavigationWithTracking = ( { flow, currentStepRoute, navigate }: Params ) => {
 	// We don't know the type of the return value of useStepNavigation, because we don't know which flow is this.
 	// So we cast it to any.
 	const stepNavigation: any = flow.useStepNavigation( currentStepRoute, navigate );
@@ -54,7 +48,6 @@ export const useStepNavigationWithTracking = ( {
 	 */
 	const canUserGoBack =
 		( stepData?.previousStep &&
-			currentStepRoute !== stepSlugs[ 0 ] &&
 			history.length > 1 &&
 			stepData.previousStep !== currentStepRoute ) ||
 		canUseAutomaticGoBack();

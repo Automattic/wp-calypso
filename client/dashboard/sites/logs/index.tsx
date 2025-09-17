@@ -1,37 +1,41 @@
-import { HostingFeatures, LogType, PHPLog, ServerLog, SiteLogsParams } from '@automattic/api-core';
-import { siteLogsQuery, siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
 import {
-	__experimentalText as Text,
-	TabPanel,
-	ToggleControl,
-	Card,
-	CardHeader,
-	CardBody,
-} from '@wordpress/components';
+	HostingFeatures,
+	LogType,
+	PHPLog,
+	ServerLog,
+	SiteActivityLog,
+	SiteLogsParams,
+	SiteLogsData,
+	ActivityLogsData,
+	ActivityLogParams,
+} from '@automattic/api-core';
+import {
+	siteLogsQuery,
+	siteBySlugQuery,
+	siteSettingsQuery,
+	siteActivityLogQuery,
+} from '@automattic/api-queries';
+import { useQuery, useSuspenseQuery, skipToken } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
+import { TabPanel, ToggleControl, Card, CardHeader, CardBody } from '@wordpress/components';
 import { DataViews, View, Filter, Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { chartBar } from '@wordpress/icons';
 import { getUnixTime, subDays, isSameSecond } from 'date-fns';
 import { useMemo, useState, useRef, useEffect } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useLocale } from '../../app/locale';
 import { siteRoute } from '../../app/router/sites';
-import { Callout } from '../../components/callout';
-import { CalloutOverlay } from '../../components/callout-overlay';
 import { DateRangePicker } from '../../components/date-range-picker';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import UpsellCTAButton from '../../components/upsell-cta-button';
-import { hasHostingFeature } from '../../utils/site-features';
+import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import { useActions } from './dataviews/actions';
 import { useFields } from './dataviews/fields';
 import { getInitialFiltersFromSearch, getAllowedFields } from './dataviews/filters';
 import { useView, toFilterParams } from './dataviews/views';
 import { LogsDownloader } from './downloader';
-import illustrationUrl from './logs-callout-illustration.svg';
+import { getLogsCalloutProps } from './logs-callout';
 import {
 	buildTimeRangeInSeconds,
 	getInitialDateRangeFromSearch,
@@ -41,44 +45,20 @@ import type { Action } from '@wordpress/dataviews';
 
 import './style.scss';
 
-export function SiteLogsCallout( {
-	siteSlug,
-	titleAs = 'h1',
-}: {
-	siteSlug: string;
-	titleAs?: React.ElementType | keyof JSX.IntrinsicElements;
-} ) {
-	return (
-		<Callout
-			icon={ chartBar }
-			title={ __( 'Access detailed logs' ) }
-			titleAs={ titleAs }
-			image={ illustrationUrl }
-			description={
-				<>
-					<Text as="p" variant="muted">
-						{ __(
-							'Quickly identify and fix issues before they impact your visitors with full visibility into your site‘s web server logs and PHP errors.'
-						) }
-					</Text>
-					<Text as="p" variant="muted">
-						{ __( 'Available on the WordPress.com Business and Commerce plans.' ) }
-					</Text>
-				</>
-			}
-			actions={
-				<UpsellCTAButton
-					text={ __( 'Upgrade plan' ) }
-					tracksId="logs"
-					variant="primary"
-					href={ `/checkout/${ siteSlug }/business` }
-				/>
-			}
-		/>
-	);
-}
+// Helper types and functions
+type LogsData = SiteLogsData | ActivityLogsData | undefined;
+
+// Type guards
+const isSiteLogsData = ( data: LogsData ): data is SiteLogsData => {
+	return data != null && 'logs' in data && 'total_results' in data;
+};
+
+const isActivityLogData = ( data: LogsData ): data is ActivityLogsData => {
+	return data != null && 'activityLogs' in data;
+};
 
 const LOG_TABS = [
+	{ name: 'activity', title: __( 'Activity' ) },
 	{ name: 'php', title: __( 'PHP errors' ) },
 	{ name: 'server', title: __( 'Web server' ) },
 ];
@@ -174,36 +154,67 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 
 	const filter = useMemo( () => toFilterParams( { view, logType } ), [ view, logType ] );
 
-	const params: SiteLogsParams = {
-		logType,
-		start: startSec,
-		end: endSec,
-		filter,
-		sortOrder: view.sort?.direction,
-		pageSize: view.perPage,
-	};
+	const siteLogQueryParams: SiteLogsParams | null =
+		logType !== LogType.ACTIVITY
+			? {
+					logType: logType as LogType,
+					start: startSec,
+					end: endSec,
+					filter,
+					sortOrder: view.sort?.direction,
+					pageSize: view.perPage,
+			  }
+			: null;
+	const activityLogQueryParams: ActivityLogParams | null =
+		logType === LogType.ACTIVITY
+			? {
+					sort_order: view.sort?.direction,
+					number: view.perPage || 20,
+					page: view.page,
+			  }
+			: null;
 
 	// This keeps a per-page cursor cache - page 1 has no cursor.
 	const cursorsRef = useRef< Map< number, string > >( new Map() );
 
 	// For the current page, use its cursor (or null/undefined on page 1).
 	const scrollId = cursorsRef.current.get( view.page ?? 1 ) ?? null;
+	const isActivityLogType = logType === LogType.ACTIVITY;
+	// For activity logs, we use a different query
+	const shouldFetchRegularLogs = logType !== LogType.ACTIVITY && !! siteLogQueryParams;
+	const { data: siteLogsData, isFetching: isFetchingLogs } = useQuery(
+		shouldFetchRegularLogs && siteLogQueryParams
+			? siteLogsQuery( siteId, siteLogQueryParams, scrollId )
+			: { queryKey: [ 'disabled-logs' ], queryFn: skipToken }
+	);
 
-	const { data: siteLogs, isFetching } = useQuery( siteLogsQuery( siteId, params, scrollId ) );
+	const shouldFetchActivityLogs = isActivityLogType && !! activityLogQueryParams;
+	const { data: activityLogData, isFetching: isFetchingActivity } = useQuery(
+		shouldFetchActivityLogs
+			? siteActivityLogQuery( siteId, activityLogQueryParams )
+			: { queryKey: [ 'disabled-activity' ], queryFn: skipToken }
+	);
+
+	const siteLogs: LogsData = isActivityLogType ? activityLogData : siteLogsData;
+	const isFetching = isActivityLogType ? isFetchingActivity : isFetchingLogs;
 
 	useEffect( () => {
-		if ( ! siteLogs ) {
+		if ( ! siteLogs || isActivityLogType ) {
 			return;
 		}
 		const nextPage = ( view.page ?? 1 ) + 1;
-		const id = siteLogs.scroll_id;
+		let id: string | undefined;
+
+		if ( isSiteLogsData( siteLogs ) ) {
+			id = siteLogs.scroll_id || undefined;
+		}
 
 		if ( id ) {
 			cursorsRef.current.set( nextPage, id );
 		} else {
 			cursorsRef.current.delete( nextPage );
 		}
-	}, [ siteLogs, view.page ] );
+	}, [ siteLogs, view.page, logType, isActivityLogType ] );
 
 	const handleDateRangeChange = ( next: { start: Date; end: Date } ) => {
 		setAutoRefresh( false );
@@ -220,11 +231,28 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		window.history.replaceState( null, '', url.pathname + url.search );
 	};
 
+	// Extract the data for memoization
+
+	let siteLogsArray;
+	if ( isSiteLogsData( siteLogs ) ) {
+		siteLogsArray = siteLogs.logs;
+	} else if ( isActivityLogData( siteLogs ) ) {
+		siteLogsArray = siteLogs.activityLogs;
+	} else {
+		siteLogsArray = undefined;
+	}
 	const logs = useMemo( () => {
 		const suffix = scrollId ? scrollId.slice( 0, 8 ) : `p${ view.page }`;
-		const items = siteLogs?.logs ?? [];
 
-		return items.map( ( log, index ) => {
+		const items = siteLogsArray ?? [];
+		return items.map( ( log: PHPLog | ServerLog | SiteActivityLog, index: number ) => {
+			if ( logType === LogType.ACTIVITY ) {
+				const activity = log as SiteActivityLog;
+				return {
+					...activity,
+					id: `${ activity.activity_id }|${ suffix }|${ String( index ) }`,
+				};
+			}
 			if ( logType === LogType.PHP ) {
 				const php = log as PHPLog;
 				return {
@@ -242,21 +270,30 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 				}|${ server.user_ip }|${ suffix }|${ String( index ) }`,
 			};
 		} );
-	}, [ scrollId, view.page, siteLogs?.logs, logType ] );
+	}, [ scrollId, view.page, siteLogsArray, logType ] );
 
-	const paginationInfo = {
-		totalItems: siteLogs?.total_results || 0,
-		totalPages:
-			!! siteLogs?.total_results && !! view.perPage
-				? Math.ceil( siteLogs.total_results / view.perPage )
-				: 0,
-	};
+	const paginationInfo = isActivityLogData( siteLogs )
+		? {
+				totalItems: siteLogs.totalItems,
+				totalPages: siteLogs.totalPages,
+		  }
+		: {
+				totalItems: ( () => {
+					return isSiteLogsData( siteLogs ) ? siteLogs.total_results : 0;
+				} )(),
+				totalPages: ( () => {
+					const totalResults = isSiteLogsData( siteLogs ) ? siteLogs.total_results : 0;
+					return totalResults && view.perPage ? Math.ceil( totalResults / view.perPage ) : 0;
+				} )(),
+		  };
 
 	const handleTabChange = ( tab: LogType ) => {
 		if ( tab === LogType.PHP ) {
 			router.navigate( { to: `/sites/${ siteSlug }/logs/php` } );
-		} else {
+		} else if ( tab === LogType.SERVER ) {
 			router.navigate( { to: `/sites/${ siteSlug }/logs/server` } );
+		} else if ( tab === LogType.ACTIVITY ) {
+			router.navigate( { to: `/sites/${ siteSlug }/logs/activity` } );
 		}
 	};
 
@@ -352,22 +389,26 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	// Simple header const to eliminate duplication
 	const LogsHeader = (
 		<>
-			<LogsDownloader
-				siteId={ siteId }
-				siteSlug={ site.slug }
-				logType={ logType }
-				startSec={ startSec }
-				endSec={ endSec }
-				filter={ filter }
-				onSuccess={ ( message ) => setNotice( { variant: 'success', message } ) }
-				onError={ ( message ) => setNotice( { variant: 'error', message } ) }
-			/>
-			<ToggleControl
-				__nextHasNoMarginBottom
-				label={ __( 'Auto-refresh' ) }
-				checked={ autoRefresh }
-				onChange={ handleAutoRefreshClick }
-			/>
+			{ logType !== LogType.ACTIVITY && (
+				<>
+					<LogsDownloader
+						siteId={ siteId }
+						siteSlug={ site.slug }
+						logType={ logType as LogType }
+						startSec={ startSec }
+						endSec={ endSec }
+						filter={ filter }
+						onSuccess={ ( message ) => setNotice( { variant: 'success', message } ) }
+						onError={ ( message ) => setNotice( { variant: 'error', message } ) }
+					/>
+					<ToggleControl
+						__nextHasNoMarginBottom
+						label={ __( 'Auto-refresh' ) }
+						checked={ autoRefresh }
+						onChange={ handleAutoRefreshClick }
+					/>
+				</>
+			) }
 		</>
 	);
 
@@ -378,11 +419,15 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 					<Notice variant={ notice.variant }>{ notice.message }</Notice>
 				</div>
 			) }
-			<CalloutOverlay
-				showCallout={ ! hasHostingFeature( site, HostingFeatures.LOGS ) }
-				callout={ <SiteLogsCallout siteSlug={ site.slug } /> }
-				main={
-					<>
+
+			<HostingFeatureGatedWithCallout
+				site={ site }
+				feature={ HostingFeatures.LOGS }
+				asOverlay
+				{ ...getLogsCalloutProps() }
+			>
+				<>
+					{ logType !== LogType.ACTIVITY && (
 						<DateRangePicker
 							start={ dateRange.start }
 							end={ dateRange.end }
@@ -391,37 +436,64 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 							locale={ locale }
 							onChange={ handleDateRangeChange }
 						/>
-						<Card className="site-logs-card">
-							<CardHeader style={ { paddingBottom: '0' } }>
-								<TabPanel
-									className="site-logs-tabs"
-									activeClass="is-active"
-									tabs={ LOG_TABS }
-									onSelect={ ( tabName ) => {
-										if ( tabName === LogType.PHP || tabName === LogType.SERVER ) {
-											handleTabChange( tabName );
-										}
-									} }
-									initialTabName={ logType }
-								>
-									{ () => null }
-								</TabPanel>
-							</CardHeader>
-							<CardBody>
-								{ logType === LogType.PHP ? (
-									<DataViews< PHPLog >
-										data={ logs as PHPLog[] }
-										isLoading={ isFetching }
-										paginationInfo={ paginationInfo }
-										fields={ fields as Field< PHPLog >[] }
-										view={ view }
-										actions={ actions as Action< PHPLog >[] }
-										search={ false }
-										defaultLayouts={ { table: {} } }
-										onChangeView={ onChangeView }
-										header={ LogsHeader }
-									/>
-								) : (
+					) }
+					<Card className="site-logs-card">
+						<CardHeader style={ { paddingBottom: '0' } }>
+							<TabPanel
+								className="site-logs-tabs"
+								activeClass="is-active"
+								tabs={ LOG_TABS }
+								onSelect={ ( tabName ) => {
+									if (
+										tabName === LogType.PHP ||
+										tabName === LogType.SERVER ||
+										tabName === LogType.ACTIVITY
+									) {
+										handleTabChange( tabName as LogType );
+									}
+								} }
+								initialTabName={ logType }
+							>
+								{ () => null }
+							</TabPanel>
+						</CardHeader>
+						<CardBody>
+							{ ( () => {
+								if ( logType === LogType.PHP ) {
+									return (
+										<DataViews< PHPLog >
+											data={ logs as PHPLog[] }
+											isLoading={ isFetching }
+											paginationInfo={ paginationInfo }
+											fields={ fields as Field< PHPLog >[] }
+											view={ view }
+											actions={ actions as Action< PHPLog >[] }
+											search={ false }
+											defaultLayouts={ { table: {} } }
+											onChangeView={ onChangeView }
+											header={ LogsHeader }
+										/>
+									);
+								}
+
+								if ( logType === LogType.ACTIVITY ) {
+									return (
+										<DataViews< SiteActivityLog >
+											data={ logs as SiteActivityLog[] }
+											isLoading={ isFetching }
+											paginationInfo={ paginationInfo }
+											fields={ fields as unknown as Field< SiteActivityLog >[] }
+											view={ view }
+											actions={ actions as unknown as Action< SiteActivityLog >[] }
+											search={ false }
+											defaultLayouts={ { table: {} } }
+											onChangeView={ onChangeView }
+											header={ LogsHeader }
+										/>
+									);
+								}
+
+								return (
 									<DataViews< ServerLog >
 										data={ logs as ServerLog[] }
 										isLoading={ isFetching }
@@ -434,12 +506,12 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 										onChangeView={ onChangeView }
 										header={ LogsHeader }
 									/>
-								) }
-							</CardBody>
-						</Card>
-					</>
-				}
-			/>
+								);
+							} )() }
+						</CardBody>
+					</Card>
+				</>
+			</HostingFeatureGatedWithCallout>
 		</PageLayout>
 	);
 }

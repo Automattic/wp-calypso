@@ -20,6 +20,12 @@ export async function updateUserSettings(
 		'i18n_empathy_mode',
 		'use_fallback_for_incomplete_languages',
 		'enable_translator',
+		'subscription_delivery_email_default',
+		'subscription_delivery_mail_option',
+		'subscription_delivery_day',
+		'subscription_delivery_hour',
+		'subscription_delivery_jabber_default',
+		'p2_disable_autofollow_on_comment',
 		'two_step_sms_country',
 		'two_step_sms_phone_number',
 	];

@@ -12,6 +12,8 @@ import BackupCodes from './backup-codes';
 import SecurityKeys from './security-keys';
 import type { UserSettings } from '@automattic/api-core';
 
+import './style.scss';
+
 export default function SecurityTwoStepAuthMainPage( {
 	userSettings,
 }: {
@@ -36,7 +38,7 @@ export default function SecurityTwoStepAuthMainPage( {
 			: two_step_sms_phone_number;
 
 	return (
-		<VStack spacing={ 8 }>
+		<VStack className="security-two-step-auth-main-page" spacing={ 8 }>
 			<Notice variant="info" title={ __( 'Two-step authentication is enabled' ) }>
 				{ two_step_sms_enabled &&
 					sprintf(
