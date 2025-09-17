@@ -29,10 +29,90 @@ export const truncatedAtSpace: ( a: number, b: number ) => ConditionalFormatter 
 export const hardTruncation: ( n: number ) => Formatter = ( limit ) => ( title ) =>
 	title.slice( 0, limit ).concat( '…' );
 
-export const truncateAtSentence: ( n: number ) => Formatter = ( limit ) => ( text ) => {
-	if ( text.length <= limit ) {
-		return text;
+/**
+ * Helper function to get the current locale
+ * Falls back to 'en' if locale cannot be determined
+ */
+const getCurrentLocale = (): string => {
+	try {
+		// Try to get the locale from the HTML lang attribute first
+		if ( typeof document !== 'undefined' && document.documentElement ) {
+			const htmlLang = document.documentElement.lang;
+			if ( htmlLang ) {
+				// Convert WordPress locale format (e.g., 'en_US') to BCP 47 format (e.g., 'en-US')
+				return htmlLang.replace( '_', '-' );
+			}
+		}
+
+		// Fallback to browser's navigator.language
+		if ( typeof navigator !== 'undefined' && navigator.language ) {
+			return navigator.language;
+		}
+
+		// Final fallback to English
+		return 'en';
+	} catch ( error ) {
+		// Fallback to English if locale detection fails
+		return 'en';
 	}
+};
+
+/**
+ * Truncate text using Intl.Segmenter for better sentence detection
+ * @param text - The text to truncate
+ * @param limit - The character limit
+ * @returns The truncated text or null if Intl.Segmenter is not available or fails
+ */
+const truncateWithIntlSegmenter = ( text: string, limit: number ): string | null => {
+	if ( typeof Intl === 'undefined' || !( 'Segmenter' in Intl ) ) {
+		return null;
+	}
+
+	try {
+		const locale = getCurrentLocale();
+		const segmenter = new Intl.Segmenter( locale, { granularity: 'sentence' } );
+
+		// Segment the full text, not the truncated version
+		const segments = Array.from( segmenter.segment( text ) );
+
+		// Find the last complete sentence that fits within the limit
+		let result = '';
+		let currentLength = 0;
+
+		for ( const segment of segments ) {
+			const segmentText = segment.segment;
+			// Check if adding this segment would exceed the limit
+			if ( currentLength + segmentText.length <= limit ) {
+				result += segmentText;
+				currentLength += segmentText.length;
+			} else {
+				// If this segment would exceed the limit, stop here
+				break;
+			}
+		}
+
+		// If we found at least one complete sentence and it's not too short, use it
+		if ( result.trim().length > 0 && result.length > limit * 0.3 ) {
+			return result.trim();
+		}
+
+		return null;
+	} catch ( error ) {
+		// If Intl.Segmenter fails, return null to fall back to manual method
+		console.warn( 'Intl.Segmenter failed, falling back to manual sentence detection:', error );
+		return null;
+	}
+};
+
+/**
+ * Truncate text using manual sentence detection with abbreviation handling
+ * @param text - The text to truncate
+ * @param limit - The character limit
+ * @returns The truncated text
+ */
+const truncateWithManualDetection = ( text: string, limit: number ): string => {
+	const truncated = text.slice( 0, limit );
+
 	// Abbreviations that contain periods but are not sentence endings
 	const abbreviations: Record<string, string> = {
 		'a.m.': 'a-m-',
@@ -76,9 +156,6 @@ export const truncateAtSentence: ( n: number ) => Formatter = ( limit ) => ( tex
 		'al.': 'al-',
 	};
 
-	// Take the first 'limit' characters
-	const truncated = text.slice( 0, limit );
-
 	// Replace abbreviations with hyphenated versions to avoid false sentence endings
 	let processedText = truncated;
 	Object.entries( abbreviations ).forEach( ( [ abbrev, replacement ] ) => {
@@ -95,6 +172,26 @@ export const truncateAtSentence: ( n: number ) => Formatter = ( limit ) => ( tex
 
 	// Otherwise, fall back to hard truncation
 	return truncated.concat( '…' );
+};
+
+/**
+ * Truncate text at the last complete sentence.
+ * @param limit - The character limit.
+ * @returns The truncated text.
+ */
+export const truncateAtSentence: ( n: number ) => Formatter = ( limit ) => ( text ) => {
+	if ( text.length <= limit ) {
+		return text;
+	}
+
+	// Try to use Intl.Segmenter for better sentence detection
+	const intlResult = truncateWithIntlSegmenter( text, limit );
+	if ( intlResult !== null ) {
+		return intlResult;
+	}
+
+	// Fallback to manual sentence detection
+	return truncateWithManualDetection( text, limit );
 };
 
 export const firstValid: ( ...args: ConditionalFormatter[] ) => NullableFormatter =
