@@ -77,7 +77,7 @@ export function MessagesClusterizer( { messages }: { messages: Message[] } ) {
 			if ( group.role === 'business' ) {
 				return (
 					<div className="message-header business">
-						{ __( 'Happiness engineer', __i18n_text_domain__ ) }
+						{ __( 'Happiness Engineer', __i18n_text_domain__ ) }
 					</div>
 				);
 			}
