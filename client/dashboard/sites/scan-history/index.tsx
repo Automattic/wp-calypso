@@ -1,40 +1,36 @@
-import { siteScanQuery } from '@automattic/api-queries';
+import { siteScanHistoryQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import { DataViewsEmptyState } from '../../components/dataviews-empty-state';
-import { useTimeSince } from '../../components/time-since';
+import noThreatsIllustration from '../scan-active/no-threats-illustration.svg';
 import { getActions } from './dataviews/actions';
 import { getFields } from './dataviews/fields';
-import noThreatsIllustration from './no-threats-illustration.svg';
 import type { Threat, Site } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 
-export function ActiveThreatsDataViews( { site }: { site: Site } ) {
+export function ScanHistoryDataViews( { site }: { site: Site } ) {
 	const [ view, setView ] = useState< View >( {
 		type: 'table',
-		fields: [ 'severity', 'threat', 'first_detected', 'auto_fix' ],
+		fields: [ 'status', 'fixed_on', 'threat', 'severity' ],
 		perPage: 10,
-		sort: { field: 'severity', direction: 'desc' },
+		sort: {
+			field: 'fixed_on',
+			direction: 'desc',
+		},
 	} );
 
-	const { data: scan, isLoading } = useQuery( siteScanQuery( site.ID ) );
-	const threats = scan?.threats.filter( ( threat ) => threat.status === 'current' ) || [];
+	const { data: scanHistory, isLoading } = useQuery( siteScanHistoryQuery( site.ID ) );
+	const threats = scanHistory?.threats || [];
 
 	const fields = getFields();
 	const actions = getActions();
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( threats, view, fields );
-	const lastScanTime = scan?.most_recent?.timestamp;
-	const recentScanRelativeTime = useTimeSince( lastScanTime || '' );
 
-	const NoActiveThreatsFound = () => {
-		let title = __( 'Don’t worry about a thing' );
-		let description = sprintf(
-			/** translators: %s: relative time string like "2 hours ago" */
-			__( 'The last scan ran %s and everything looked great.' ),
-			recentScanRelativeTime
-		);
+	const NoArchivedThreatsFound = () => {
+		let title = __( 'No history yet' );
+		let description = __( 'So far, there are no archived threats on your site.' );
 
 		if ( view.search || view.filters ) {
 			title = __( 'No archived threats found' );
@@ -48,7 +44,7 @@ export function ActiveThreatsDataViews( { site }: { site: Site } ) {
 			}
 
 			if ( view.filters ) {
-				description = __( 'No active threats found for the selected filters.' );
+				description = __( 'No archived threats found for the selected filters.' );
 			}
 		}
 
@@ -73,7 +69,7 @@ export function ActiveThreatsDataViews( { site }: { site: Site } ) {
 			actions={ actions }
 			data={ filteredData }
 			defaultLayouts={ { table: {} } }
-			empty={ <NoActiveThreatsFound /> }
+			empty={ <NoArchivedThreatsFound /> }
 			fields={ fields }
 			getItemId={ ( item ) => item.id.toString() }
 			isLoading={ isLoading }

@@ -128,3 +128,10 @@ export const getThreatIcon = ( threat: Threat ) => {
 			return warning;
 	}
 };
+
+export function sortSeverity( a: Threat, b: Threat, direction: 'asc' | 'desc' ): number {
+	// Custom sort to use numeric severity values instead of string labels
+	// Higher severity numbers (5=Critical, 4-3=High, 1-2=Low) should sort first
+	const diff = b.severity - a.severity;
+	return direction === 'asc' ? -diff : diff;
+}
