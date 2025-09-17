@@ -101,6 +101,8 @@ export function DeploymentLogsModal( {
 				<VStack spacing={ 2 }>
 					<div
 						style={ {
+							width: '752px',
+							maxWidth: '100%',
 							maxHeight: '216px',
 							overflowY: 'auto',
 							backgroundColor: 'var(--dashboard__text-color)',

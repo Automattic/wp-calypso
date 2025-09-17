@@ -75,27 +75,24 @@ export const DeploymentLogsEntry = ( {
 
 	return (
 		<HStack spacing={ 3 }>
-			<VStack>
-				<HStack>
-					<Text style={ { color: '#FBFBFB' } }>
-						<Text style={ { color: '#B3AFAE' } }> { entry.timestamp } </Text>{ ' ' }
-						{ entry.level.toUpperCase() } { entry.message }
-					</Text>
+			<VStack spacing={ 2 }>
+				<Text style={ { color: '#FBFBFB' } }>
+					<Text style={ { color: '#B3AFAE' } }> { entry.timestamp } </Text>{ ' ' }
+					{ entry.level.toUpperCase() } { entry.message }
 					{ hasDetail && (
 						<Button
-							variant="tertiary"
+							variant="link"
 							style={ {
-								cursor: hasDetail ? 'pointer' : 'default',
+								color: '#FBFBFB',
+								marginInlineStart: '4px',
 							} }
 							onClick={ toggleExpandDetail }
 							disabled={ ! hasDetail }
 						>
-							<span className="deployment-logs-modal__show-more">
-								{ detailExpanded ? __( 'show less' ) : __( 'show more' ) }
-							</span>
+							{ detailExpanded ? __( 'show less' ) : __( 'show more' ) }
 						</Button>
 					) }
-				</HStack>
+				</Text>
 				{ detailExpanded && <Text style={ { color: '#FBFBFB' } }> { getDetail() }</Text> }
 			</VStack>
 		</HStack>
