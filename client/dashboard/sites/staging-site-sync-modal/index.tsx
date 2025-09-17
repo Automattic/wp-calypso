@@ -47,6 +47,7 @@ const EnvironmentLabel = ( { environmentType, siteTitle }: EnvironmentLabelProps
 				<SiteEnvironmentBadge environmentType={ environmentType } />
 				{ siteTitle && (
 					<Text
+						variant="muted"
 						style={ {
 							whiteSpace: 'nowrap',
 							overflow: 'hidden',
