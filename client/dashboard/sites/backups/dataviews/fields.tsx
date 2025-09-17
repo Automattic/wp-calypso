@@ -21,6 +21,7 @@ export function getFields(): Field< ActivityLogEntry >[] {
 		{
 			id: 'icon',
 			label: __( 'Icon' ),
+			enableSorting: false,
 			render: ( { item } ) => (
 				<Icon
 					icon={ gridiconToWordPressIcon( item.gridicon ) }
