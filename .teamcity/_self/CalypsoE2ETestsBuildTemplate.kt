@@ -23,6 +23,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 		param("env.CI", "true")
 		param("VIEWPORT", "desktop")
 		text("TEST_GROUP", "")
+		text("env.CALYPSO_BASE_URL", "")
 	}
 
   	features {

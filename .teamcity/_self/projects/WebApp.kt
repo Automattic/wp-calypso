@@ -952,7 +952,7 @@ object PlaywrightTestPRMatrix : BuildType({
 	}
 
 	params {
-		
+		text("TEST_GROUP", "@calypso-pr")
 	}
 
 	steps {
