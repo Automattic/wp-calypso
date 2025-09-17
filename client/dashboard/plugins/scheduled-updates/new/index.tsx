@@ -21,6 +21,7 @@ import PluginsSelection from './components/plugins-selection';
 import SitesSelection from './components/sites-selection';
 import { DEFAULT_FREQUENCY, DEFAULT_TIME, DEFAULT_WEEKDAY, CRON_CHECK_INTERVAL } from './constants';
 import { prepareTimestamp, runWithConcurrency } from './helpers';
+import type { Site } from '@automattic/api-core';
 
 const BLOCK_CREATE = true;
 
@@ -66,12 +67,8 @@ function ScheduledUpdatesNew() {
 				const siteMap = new Map( eligibleSites.map( ( site ) => [ site.ID, site ] ) );
 				const monitorTasks = successfulSiteIds
 					.map( ( siteId ) => siteMap.get( siteId ) )
-					.filter( Boolean )
+					.filter( ( site ): site is Site => Boolean( site ) )
 					.map( ( site ) => {
-						if ( ! site ) {
-							return async () => {};
-						}
-
 						return async () => {
 							await createMonitorForSite( {
 								siteId: site.ID,
