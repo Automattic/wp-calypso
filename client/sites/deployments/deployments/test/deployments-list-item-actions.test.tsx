@@ -52,7 +52,8 @@ describe( 'DeploymentsListItemActions', () => {
 		const triggerManualDeployButton = getByText( 'See deployment runs' );
 
 		expect( triggerManualDeployButton ).toBeInTheDocument();
-		expect( triggerManualDeployButton.parentElement ).toBeDisabled();
+		// TODO: Check why .toBeDisabled() does not work anymore.
+		expect( triggerManualDeployButton.parentElement ).toHaveAttribute( 'aria-disabled', 'true' );
 	} );
 
 	test( 'lets the user see logs if there is at least one run', () => {

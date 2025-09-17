@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { MaterialIcon, ExternalLink, Gridicon } from '@automattic/components';
+import { MaterialIcon, ExternalLink } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { formatNumber } from '@automattic/number-formatters';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from '@automattic/urls';
@@ -447,10 +447,10 @@ const FEATURES_LIST: FeatureList = {
 		getDescription: () => {
 			return isEnabled( 'themes/premium' )
 				? i18n.translate(
-						'Including premium themes, advanced design and monetization options, Pay with PayPal buttons, and a custom domain name for one year.'
+						'Including premium themes, advanced design and monetization options, PayPal Payment Buttons, and a custom domain name for one year.'
 				  )
 				: i18n.translate(
-						'Including advanced design and monetization options, Pay with PayPal buttons, and a custom domain name for one year.'
+						'Including advanced design and monetization options, PayPal Payment Buttons, and a custom domain name for one year.'
 				  );
 		},
 	},
@@ -766,7 +766,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_SIMPLE_PAYMENTS ]: {
 		getSlug: () => FEATURE_SIMPLE_PAYMENTS,
-		getTitle: () => i18n.translate( 'Pay with PayPal' ),
+		getTitle: () => i18n.translate( 'PayPal Payment Buttons' ),
 		getDescription: () => i18n.translate( 'Sell anything with a simple PayPal button.' ),
 	},
 	[ FEATURE_NO_BRANDING ]: {
@@ -799,23 +799,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL ]: {
 		getSlug: () => FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL,
-		getTitle: () => {
-			return (
-				<span style={ { fontWeight: 500 } }>
-					{ i18n.translate( 'Install plugins' ) }
-					<Gridicon
-						icon="info-outline"
-						size={ 16 }
-						style={ {
-							fill: 'var(--studio-blue-50)',
-							verticalAlign: 'middle',
-							marginLeft: '2px',
-							marginTop: '-2px',
-						} }
-					/>
-				</span>
-			);
-		},
+		getTitle: () => i18n.translate( 'Install plugins' ),
 		getDescription: () =>
 			i18n.translate(
 				'Plugins extend the functionality of your site and ' +

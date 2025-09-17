@@ -3,7 +3,7 @@ import {
 	isAutomatticianQuery,
 	rawUserPreferencesQuery,
 	siteLastFiveActivityLogEntriesQuery,
-	siteRewindableActivityLogEntriesQuery,
+	siteBackupActivityLogEntriesQuery,
 	siteAgencyBlogQuery,
 	siteLastBackupQuery,
 	siteEdgeCacheStatusQuery,
@@ -32,14 +32,26 @@ import {
 } from '@automattic/api-queries';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { createRoute, redirect, createLazyRoute, lazyRouteComponent } from '@tanstack/react-router';
+import { __ } from '@wordpress/i18n';
 import { canViewHundredYearPlanSettings, canViewWordPressSettings } from '../../sites/features';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
+import { getSiteDisplayName } from '../../utils/site-name';
+import { isSiteMigrationInProgress, getSiteMigrationState } from '../../utils/site-status';
 import { hasSiteTrialEnded } from '../../utils/site-trial';
+import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
+import type { DifmWebsiteContentResponse, Site } from '@automattic/api-core';
 import type { AnyRoute } from '@tanstack/react-router';
 
 export const sitesRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Sites' ),
+			},
+		],
+	} ),
 	getParentRoute: () => rootRoute,
 	path: 'sites',
 	loader: async () => {
@@ -73,14 +85,26 @@ export const sitesRoute = createRoute( {
 );
 
 export const siteRoute = createRoute( {
+	head: ( { loaderData }: { loaderData?: { site: Site } } ) => ( {
+		meta: [
+			{
+				title: loaderData && getSiteDisplayName( loaderData.site ),
+			},
+		],
+	} ),
 	getParentRoute: () => rootRoute,
 	path: 'sites/$siteSlug',
 	beforeLoad: async ( { cause, params: { siteSlug }, location, matches } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+
+		const overviewUrl = `/sites/${ siteSlug }`;
+		if ( isSelfHostedJetpackConnected( site ) && ! location.pathname.endsWith( overviewUrl ) ) {
+			throw redirect( { to: overviewUrl } );
+		}
+
 		if ( cause !== 'enter' ) {
 			return;
 		}
-
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 
 		const trialExpiredUrl = `/sites/${ siteSlug }/trial-ended`;
 		if ( hasSiteTrialEnded( site ) && ! location.pathname.includes( trialExpiredUrl ) ) {
@@ -96,6 +120,11 @@ export const siteRoute = createRoute( {
 		) {
 			throw redirect( { to: difmUrl } );
 		}
+
+		const migrationUrl = `/sites/${ siteSlug }/migration-overview`;
+		if ( isSiteMigrationInProgress( site ) && ! location.pathname.includes( migrationUrl ) ) {
+			throw redirect( { to: migrationUrl } );
+		}
 	},
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
@@ -105,6 +134,8 @@ export const siteRoute = createRoute( {
 		if ( otherEnvironmentSiteId ) {
 			await queryClient.ensureQueryData( siteByIdQuery( otherEnvironmentSiteId ) );
 		}
+
+		return { site };
 	},
 	errorComponent: lazyRouteComponent( () => import( '../../sites/site/error' ) ),
 } ).lazy( () =>
@@ -150,6 +181,13 @@ export const siteOverviewRoute = createRoute( {
 );
 
 export const siteDeploymentsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Deployments' ),
+			},
+		],
+	} ),
 	getParentRoute: () => siteRoute,
 	path: 'deployments',
 } ).lazy( () =>
@@ -161,6 +199,13 @@ export const siteDeploymentsRoute = createRoute( {
 );
 
 export const siteMonitoringRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Monitoring' ),
+			},
+		],
+	} ),
 	getParentRoute: () => siteRoute,
 	path: 'monitoring',
 } ).lazy( () =>
@@ -172,6 +217,13 @@ export const siteMonitoringRoute = createRoute( {
 );
 
 export const siteLogsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Logs' ),
+			},
+		],
+	} ),
 	getParentRoute: () => siteRoute,
 	path: 'logs',
 } );
@@ -180,11 +232,18 @@ export const siteLogsIndexRoute = createRoute( {
 	getParentRoute: () => siteLogsRoute,
 	path: '/',
 	beforeLoad: ( { params } ) => {
-		throw redirect( { to: `/sites/${ params.siteSlug }/logs/php` } );
+		throw redirect( { to: `/sites/${ params.siteSlug }/logs/${ LogType.ACTIVITY }` } );
 	},
 } );
 
 export const siteLogsPhpRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'PHP errors' ),
+			},
+		],
+	} ),
 	getParentRoute: () => siteLogsRoute,
 	path: 'php',
 	loader: async ( { params: { siteSlug } } ) => {
@@ -200,6 +259,13 @@ export const siteLogsPhpRoute = createRoute( {
 );
 
 export const siteLogsServerRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Web server' ),
+			},
+		],
+	} ),
 	getParentRoute: () => siteLogsRoute,
 	path: 'server',
 	loader: async ( { params: { siteSlug } } ) => {
@@ -214,7 +280,97 @@ export const siteLogsServerRoute = createRoute( {
 	)
 );
 
+export const siteLogsActivityRoute = createRoute( {
+	getParentRoute: () => siteLogsRoute,
+	path: 'activity',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
+	},
+} ).lazy( () =>
+	import( '../../sites/logs' ).then( ( d ) =>
+		createLazyRoute( 'site-logs-activity' )( {
+			component: () => <d.default logType={ LogType.ACTIVITY } />,
+		} )
+	)
+);
+
+export const siteScanRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Scan' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteRoute,
+	path: 'scan',
+} );
+
+export const siteScanIndexRoute = createRoute( {
+	getParentRoute: () => siteScanRoute,
+	path: '/',
+	beforeLoad: ( { params } ) => {
+		throw redirect( { to: `/sites/${ params.siteSlug }/scan/active` } );
+	},
+} );
+
+export const siteScanActiveThreatsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Active threats' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteScanRoute,
+	path: 'active',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( hasHostingFeature( site, HostingFeatures.SCAN ) ) {
+			await queryClient.ensureQueryData( siteScanQuery( site.ID ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../../sites/scan' ).then( ( d ) =>
+		createLazyRoute( 'site-scan-active-threats' )( {
+			component: () => <d.default scanTab="active" />,
+		} )
+	)
+);
+
+export const siteScanHistoryRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'History' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteScanRoute,
+	path: 'history',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( hasHostingFeature( site, HostingFeatures.SCAN ) ) {
+			await queryClient.ensureQueryData( siteScanQuery( site.ID ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../../sites/scan' ).then( ( d ) =>
+		createLazyRoute( 'site-scan-history' )( {
+			component: () => <d.default scanTab="history" />,
+		} )
+	)
+);
+
 export const siteBackupsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Backups' ),
+			},
+		],
+	} ),
 	getParentRoute: () => siteRoute,
 	path: 'backups',
 } ).lazy( () =>
@@ -232,7 +388,7 @@ export const siteBackupsIndexRoute = createRoute( {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		// Preload activity log backup-related entries.
 		if ( hasHostingFeature( site, HostingFeatures.BACKUPS ) ) {
-			queryClient.ensureQueryData( siteRewindableActivityLogEntriesQuery( site.ID ) );
+			queryClient.ensureQueryData( siteBackupActivityLogEntriesQuery( site.ID ) );
 		}
 	},
 } ).lazy( () =>
@@ -244,6 +400,13 @@ export const siteBackupsIndexRoute = createRoute( {
 );
 
 export const siteBackupRestoreRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Site restore' ),
+			},
+		],
+	} ),
 	getParentRoute: () => siteBackupsRoute,
 	path: '$rewindId/restore',
 } ).lazy( () =>
@@ -255,6 +418,13 @@ export const siteBackupRestoreRoute = createRoute( {
 );
 
 export const siteBackupDownloadRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Sites' ),
+			},
+		],
+	} ),
 	getParentRoute: () => siteBackupsRoute,
 	path: '$rewindId/download',
 } ).lazy( () =>
@@ -266,6 +436,13 @@ export const siteBackupDownloadRoute = createRoute( {
 );
 
 export const siteDomainsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Domains' ),
+			},
+		],
+	} ),
 	getParentRoute: () => siteRoute,
 	path: 'domains',
 } ).lazy( () =>
@@ -277,6 +454,13 @@ export const siteDomainsRoute = createRoute( {
 );
 
 export const siteEmailsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Emails' ),
+			},
+		],
+	} ),
 	getParentRoute: () => siteRoute,
 	path: 'emails',
 } ).lazy( () =>
@@ -288,6 +472,13 @@ export const siteEmailsRoute = createRoute( {
 );
 
 export const sitePerformanceRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Performance' ),
+			},
+		],
+	} ),
 	getParentRoute: () => siteRoute,
 	path: 'performance',
 } ).lazy( () =>
@@ -299,6 +490,13 @@ export const sitePerformanceRoute = createRoute( {
 );
 
 export const siteSettingsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Settings' ),
+			},
+		],
+	} ),
 	getParentRoute: () => siteRoute,
 	path: 'settings',
 	loader: async ( { params: { siteSlug } } ) => {
@@ -314,6 +512,13 @@ export const siteSettingsRoute = createRoute( {
 );
 
 export const siteSettingsSiteVisibilityRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Site visibility' ),
+			},
+		],
+	} ),
 	getParentRoute: () => siteRoute,
 	path: 'settings/site-visibility',
 	loader: async ( { params: { siteSlug } } ) => {
@@ -335,6 +540,13 @@ export const siteSettingsSiteVisibilityRoute = createRoute( {
 );
 
 export const siteSettingsSubscriptionGiftingRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Accept a gift subscription' ),
+			},
+		],
+	} ),
 	getParentRoute: () => siteRoute,
 	path: 'settings/subscription-gifting',
 	loader: async ( { params: { siteSlug } } ) => {
@@ -350,6 +562,13 @@ export const siteSettingsSubscriptionGiftingRoute = createRoute( {
 );
 
 export const siteSettingsWordPressRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: 'WordPress',
+			},
+		],
+	} ),
 	getParentRoute: () => siteRoute,
 	path: 'settings/wordpress',
 	loader: async ( { params: { siteSlug } } ) => {
@@ -367,6 +586,13 @@ export const siteSettingsWordPressRoute = createRoute( {
 );
 
 export const siteSettingsPHPRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: 'PHP',
+			},
+		],
+	} ),
 	getParentRoute: () => siteRoute,
 	path: 'settings/php',
 	loader: async ( { params: { siteSlug } } ) => {
@@ -384,6 +610,13 @@ export const siteSettingsPHPRoute = createRoute( {
 );
 
 export const siteSettingsDatabaseRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Database' ),
+			},
+		],
+	} ),
 	getParentRoute: () => siteRoute,
 	path: 'settings/database',
 } ).lazy( () =>
@@ -395,6 +628,13 @@ export const siteSettingsDatabaseRoute = createRoute( {
 );
 
 export const siteSettingsAgencyRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Agency settings' ),
+			},
+		],
+	} ),
 	getParentRoute: () => siteRoute,
 	path: 'settings/agency',
 	loader: async ( { params: { siteSlug } } ) => {
@@ -412,6 +652,13 @@ export const siteSettingsAgencyRoute = createRoute( {
 );
 
 export const siteSettingsMcpRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Model Context Protocol (MCP) Settings' ),
+			},
+		],
+	} ),
 	getParentRoute: () => siteRoute,
 	path: 'settings/mcp',
 	loader: async ( { params: { siteSlug } } ) => {
@@ -429,6 +676,13 @@ export const siteSettingsMcpRoute = createRoute( {
 );
 
 export const siteSettingsMcpSetupRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'MCP Setup' ),
+			},
+		],
+	} ),
 	getParentRoute: () => siteRoute,
 	path: 'settings/mcp-setup',
 	loader: async ( { params: { siteSlug } } ) => {
@@ -446,6 +700,13 @@ export const siteSettingsMcpSetupRoute = createRoute( {
 );
 
 export const siteSettingsHundredYearPlanRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Control your legacy' ),
+			},
+		],
+	} ),
 	getParentRoute: () => siteRoute,
 	path: 'settings/hundred-year-plan',
 	loader: async ( { params: { siteSlug } } ) => {
@@ -463,6 +724,13 @@ export const siteSettingsHundredYearPlanRoute = createRoute( {
 );
 
 export const siteSettingsPrimaryDataCenterRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Primary data center' ),
+			},
+		],
+	} ),
 	getParentRoute: () => siteRoute,
 	path: 'settings/primary-data-center',
 	loader: async ( { params: { siteSlug } } ) => {
@@ -480,6 +748,13 @@ export const siteSettingsPrimaryDataCenterRoute = createRoute( {
 );
 
 export const siteSettingsStaticFile404Route = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Handling requests for nonexistent assets' ),
+			},
+		],
+	} ),
 	getParentRoute: () => siteRoute,
 	path: 'settings/static-file-404',
 	loader: async ( { params: { siteSlug } } ) => {
@@ -497,6 +772,13 @@ export const siteSettingsStaticFile404Route = createRoute( {
 );
 
 export const siteSettingsCachingRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Caching' ),
+			},
+		],
+	} ),
 	getParentRoute: () => siteRoute,
 	path: 'settings/caching',
 	loader: async ( { params: { siteSlug } } ) => {
@@ -514,6 +796,13 @@ export const siteSettingsCachingRoute = createRoute( {
 );
 
 export const siteSettingsDefensiveModeRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Defensive mode' ),
+			},
+		],
+	} ),
 	getParentRoute: () => siteRoute,
 	path: 'settings/defensive-mode',
 	loader: async ( { params: { siteSlug } } ) => {
@@ -531,6 +820,13 @@ export const siteSettingsDefensiveModeRoute = createRoute( {
 );
 
 export const siteSettingsSftpSshRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'SFTP/SSH' ),
+			},
+		],
+	} ),
 	getParentRoute: () => siteRoute,
 	path: 'settings/sftp-ssh',
 	loader: async ( { params: { siteSlug } } ) => {
@@ -551,6 +847,13 @@ export const siteSettingsSftpSshRoute = createRoute( {
 );
 
 export const siteSettingsTransferSiteRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Transfer site' ),
+			},
+		],
+	} ),
 	getParentRoute: () => siteRoute,
 	path: 'settings/transfer-site',
 } ).lazy( () =>
@@ -564,6 +867,13 @@ export const siteSettingsTransferSiteRoute = createRoute( {
 );
 
 export const siteSettingsWebApplicationFirewallRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Web Application Firewall (WAF)' ),
+			},
+		],
+	} ),
 	getParentRoute: () => siteRoute,
 	path: 'settings/web-application-firewall',
 	loader: async ( { params: { siteSlug } } ) => {
@@ -584,6 +894,13 @@ export const siteSettingsWebApplicationFirewallRoute = createRoute( {
 );
 
 export const siteSettingsWpcomLoginRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'WordPress.com login' ),
+			},
+		],
+	} ),
 	getParentRoute: () => siteRoute,
 	path: 'settings/wpcom-login',
 	loader: async ( { params: { siteSlug } } ) => {
@@ -603,7 +920,32 @@ export const siteSettingsWpcomLoginRoute = createRoute( {
 	)
 );
 
+export const siteSettingsRepositoriesRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Repositories' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteRoute,
+	path: 'settings/repositories',
+} ).lazy( () =>
+	import( '../../sites/settings-repositories' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-repositories' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const siteTrialEndedRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Your free trial has ended' ),
+			},
+		],
+	} ),
 	getParentRoute: () => siteRoute,
 	path: 'trial-ended',
 	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
@@ -625,6 +967,15 @@ export const siteTrialEndedRoute = createRoute( {
 );
 
 export const siteDifmLiteInProgressRoute = createRoute( {
+	head: ( { loaderData }: { loaderData?: { websiteContent: DifmWebsiteContentResponse } } ) => ( {
+		meta: [
+			{
+				title: loaderData?.websiteContent?.is_website_content_submitted
+					? __( 'Your content submission was successful!' )
+					: __( 'Website content not submitted' ),
+			},
+		],
+	} ),
 	getParentRoute: () => siteRoute,
 	path: 'site-building-in-progress',
 	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
@@ -646,6 +997,10 @@ export const siteDifmLiteInProgressRoute = createRoute( {
 		if ( ! websiteContent.is_website_content_submitted ) {
 			await queryClient.ensureQueryData( sitePurchasesQuery( site.ID ) );
 		}
+
+		return {
+			websiteContent,
+		};
 	},
 } ).lazy( () =>
 	import( '../../sites/difm-lite-in-progress' ).then( ( d ) =>
@@ -655,11 +1010,49 @@ export const siteDifmLiteInProgressRoute = createRoute( {
 	)
 );
 
-export const siteLogsChildRoutes: AnyRoute[] = [
-	siteLogsIndexRoute,
-	siteLogsPhpRoute,
-	siteLogsServerRoute,
-];
+export const siteMigrationOverviewRoute = createRoute( {
+	head: ( { loaderData }: { loaderData?: { site: Site } } ) => {
+		const migrationState = loaderData && getSiteMigrationState( loaderData.site );
+		let title;
+		if ( migrationState?.status === 'pending' ) {
+			title = __( 'Your WordPress site is ready to be migrated' );
+		} else if ( migrationState?.type === 'difm' ) {
+			title = __( 'We’ve received your migration request' );
+		} else {
+			title = __( 'Your migration is underway' );
+		}
+
+		return {
+			meta: [
+				{
+					title,
+				},
+			],
+		};
+	},
+	getParentRoute: () => siteRoute,
+	path: 'migration-overview',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause !== 'enter' ) {
+			return;
+		}
+
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! isSiteMigrationInProgress( site ) ) {
+			throw redirect( { to: `/sites/${ siteSlug }` } );
+		}
+
+		return {
+			site,
+		};
+	},
+} ).lazy( () =>
+	import( '../../sites/migration-overview' ).then( ( d ) =>
+		createLazyRoute( 'migration-overview' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
 
 export const createSitesRoutes = ( config: AppConfig ) => {
 	if ( ! config.supports.sites ) {
@@ -677,6 +1070,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteSettingsAgencyRoute,
 		siteSettingsMcpRoute,
 		siteSettingsMcpSetupRoute,
+		siteSettingsRepositoriesRoute,
 		siteSettingsHundredYearPlanRoute,
 		siteSettingsPrimaryDataCenterRoute,
 		siteSettingsStaticFile404Route,
@@ -688,6 +1082,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteSettingsWpcomLoginRoute,
 		siteTrialEndedRoute,
 		siteDifmLiteInProgressRoute,
+		siteMigrationOverviewRoute,
 	];
 
 	if ( config.supports.sites.deployments ) {
@@ -704,7 +1099,12 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 
 	if ( config.supports.sites.logs ) {
 		siteRoutes.push(
-			siteLogsRoute.addChildren( [ siteLogsIndexRoute, siteLogsPhpRoute, siteLogsServerRoute ] )
+			siteLogsRoute.addChildren( [
+				siteLogsIndexRoute,
+				siteLogsPhpRoute,
+				siteLogsServerRoute,
+				siteLogsActivityRoute,
+			] )
 		);
 	}
 
@@ -714,6 +1114,16 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 				siteBackupsIndexRoute,
 				siteBackupRestoreRoute,
 				siteBackupDownloadRoute,
+			] )
+		);
+	}
+
+	if ( config.supports.sites.scan ) {
+		siteRoutes.push(
+			siteScanRoute.addChildren( [
+				siteScanIndexRoute,
+				siteScanActiveThreatsRoute,
+				siteScanHistoryRoute,
 			] )
 		);
 	}

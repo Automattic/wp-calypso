@@ -3,6 +3,7 @@ import { Logo, LoadingLogo } from './logo';
 import './style.scss';
 
 boot( {
+	name: 'Automattic for Agencies',
 	basePath: '/v2-a4a',
 	mainRoute: '/overview',
 	LoadingLogo,
@@ -15,6 +16,7 @@ boot( {
 			monitoring: true,
 			logs: true,
 			backups: true,
+			scan: true,
 			domains: false,
 			emails: false,
 		},

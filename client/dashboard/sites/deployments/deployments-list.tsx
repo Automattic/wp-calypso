@@ -3,7 +3,7 @@ import {
 	codeDeploymentsQuery,
 	codeDeploymentRunsQuery,
 } from '@automattic/api-queries';
-import { useQuery, useQueries } from '@tanstack/react-query';
+import { useSuspenseQuery, useQuery, useQueries } from '@tanstack/react-query';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
@@ -20,19 +20,17 @@ import type { View } from '@wordpress/dataviews';
 
 export function DeploymentsList() {
 	const { siteSlug } = siteRoute.useParams();
-	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
 
-	const { data: deployments = [], isLoading: deploymentsLoading } = useQuery( {
-		...codeDeploymentsQuery( site?.ID || 0 ),
-		enabled: !! site?.ID,
-	} );
+	const { data: deployments = [], isLoading: deploymentsLoading } = useQuery(
+		codeDeploymentsQuery( site.ID )
+	);
 
 	// Fetch all deployment runs in parallel
 	const deploymentRunsQueries = useQueries( {
 		queries: deployments.map( ( deployment: CodeDeploymentData ) => ( {
-			...codeDeploymentRunsQuery( site?.ID || 0, deployment.id ),
-			enabled: !! site?.ID,
+			...codeDeploymentRunsQuery( site.ID, deployment.id ),
 			refetchInterval: 5000,
 			meta: {
 				persist: false,

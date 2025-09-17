@@ -36,7 +36,7 @@ describe( 'The useCelebrationData hook', () => {
 				subTitle: 'Now it’s time to connect your social accounts.',
 				primaryCtaName: 'Connect to social',
 				primaryCtaText: 'Connect to social',
-				primaryCtaLink: `/marketing/connections/${ siteSlug }`,
+				primaryCtaLink: `https://${ siteSlug }/wp-admin/admin.php?page=jetpack-social`,
 				secondaryCtaName: 'Visit your blog',
 				secondaryCtaText: 'Visit your blog',
 				secondaryCtaLink: `https://${ siteSlug }`,

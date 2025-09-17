@@ -1,10 +1,13 @@
 @import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/variables';
 
 .wpnc__note-list .dataviews-view-list {
 	// When displaying fields in the DataViews, using the --wp-admin-theme-color color on hover is overwhelming.
 	// We override the hover color with the text color.
 	div[role="article"] {
 		.dataviews-view-list__item-wrapper {
+			padding: $grid-unit-15 $grid-unit-20;
+
 			.dataviews-view-list__fields {
 				color: $gray-700;
 			}
@@ -31,7 +34,29 @@
 		}
 	}
 
+	// We override the media field
+	.dataviews-view-list__media-wrapper {
+		width: 32px;
+		height: 32px;
+		margin-inline-end: $grid-unit-05;
+		border-radius: 50%;
+		overflow: visible;
+
+		&::after {
+			display: none;
+		}
+	}
+
 	.dataviews-view-list__item-actions {
 		align-self: flex-start;
+		margin-inline-start: $grid-unit-20;
+	}
+
+	.dataviews-view-list__item-actions button {
+		color: $gray-700;
+	}
+
+	div[role="article"]:where(.is-hovered) .dataviews-view-list__item-actions button {
+		color: initial;
 	}
 }

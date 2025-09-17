@@ -70,6 +70,8 @@ const DomainSearchSkipSuggestion = ( {
 		return null;
 	}
 
+	const domain = existingSiteUrl ?? freeSuggestion;
+
 	return (
 		<DomainSearchSkipSuggestionSkeleton
 			title={
@@ -82,6 +84,8 @@ const DomainSearchSkipSuggestion = ( {
 				<Button
 					className="domain-search-skip-suggestion__btn"
 					variant="secondary"
+					// translators: %(domain)s is the domain name
+					label={ sprintf( __( 'Skip purchase and continue with %(domain)s' ), { domain } ) }
 					onClick={ onSkip }
 					disabled={ disabled }
 					isBusy={ isBusy }

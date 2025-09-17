@@ -1,32 +1,23 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { ActivityLog } from './types';
+import type { ActivityLogParams, ActivityLogsData } from './types';
 
 export async function fetchSiteActivityLog(
 	siteId: number,
-	{ number }: { number: number }
-): Promise< ActivityLog > {
-	return wpcom.req.get(
+	params: ActivityLogParams
+): Promise< ActivityLogsData > {
+	const response = await wpcom.req.get(
 		{
 			path: `/sites/${ siteId }/activity`,
 			apiNamespace: 'wpcom/v2',
 		},
-		{
-			number,
-		}
+		params
 	);
-}
 
-export async function fetchSiteRewindableActivityLog(
-	siteId: number,
-	{ number }: { number: number }
-): Promise< ActivityLog > {
-	return wpcom.req.get(
-		{
-			path: `/sites/${ siteId }/activity/rewindable`,
-			apiNamespace: 'wpcom/v2',
-		},
-		{
-			number,
-		}
-	);
+	return {
+		activityLogs: response.current?.orderedItems ?? [],
+		totalItems: response.totalItems,
+		pages: response.pages,
+		itemsPerPage: response.itemsPerPage,
+		totalPages: response.totalPages,
+	};
 }

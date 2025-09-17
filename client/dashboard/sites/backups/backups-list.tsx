@@ -1,10 +1,11 @@
-import { siteRewindableActivityLogEntriesQuery } from '@automattic/api-queries';
+import { siteBackupActivityLogEntriesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useBackupState } from '../../app/hooks/site-backup-state';
 import { DataViewsCard } from '../../components/dataviews-card';
+import { buildTimeRangeForActivityLog } from '../../utils/site-activity-log';
 import { getFields } from './dataviews/fields';
 import type { ActivityLogEntry, Site } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
@@ -13,10 +14,18 @@ export function BackupsList( {
 	site,
 	selectedBackup,
 	setSelectedBackup,
+	autoSelect = true,
+	dateRange,
+	timezoneString,
+	gmtOffset,
 }: {
 	site: Site;
 	selectedBackup: ActivityLogEntry | null;
 	setSelectedBackup: ( backup: ActivityLogEntry | null ) => void;
+	autoSelect?: boolean;
+	dateRange?: { start: Date; end: Date };
+	timezoneString?: string;
+	gmtOffset?: number;
 } ) {
 	const [ view, setView ] = useState< View >( {
 		type: 'list',
@@ -28,8 +37,21 @@ export function BackupsList( {
 
 	const { backup, hasRecentlyCompleted } = useBackupState( site.ID );
 
+	const { after, before } = useMemo( () => {
+		if ( ! dateRange ) {
+			return { after: undefined, before: undefined };
+		}
+
+		return buildTimeRangeForActivityLog(
+			dateRange.start,
+			dateRange.end,
+			timezoneString,
+			gmtOffset
+		);
+	}, [ dateRange, timezoneString, gmtOffset ] );
+
 	const { data: activityLog = [], isLoading: isLoadingActivityLog } = useQuery( {
-		...siteRewindableActivityLogEntriesQuery( site.ID ),
+		...siteBackupActivityLogEntriesQuery( site.ID, undefined, true, after, before ),
 		// Refetch the activity log every 3 seconds when a recent backup completed until the backup is found in the Activity Log
 		refetchInterval: ( query ) => {
 			if ( ! backup || ! hasRecentlyCompleted ) {
@@ -53,11 +75,34 @@ export function BackupsList( {
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( activityLog, view, fields );
 
 	useEffect( () => {
-		if ( ! isLoadingActivityLog && activityLog.length > 0 && ! selectedBackup ) {
-			const firstBackup = activityLog[ 0 ];
-			setSelectedBackup( firstBackup );
+		if ( ! autoSelect || isLoadingActivityLog ) {
+			return;
 		}
-	}, [ isLoadingActivityLog, activityLog, selectedBackup, setSelectedBackup ] );
+
+		if ( activityLog.length === 0 ) {
+			setSelectedBackup( null );
+			return;
+		}
+
+		const isCurrentSelectionValid =
+			selectedBackup &&
+			activityLog.some( ( backup ) => backup.activity_id === selectedBackup.activity_id );
+
+		if ( ! isCurrentSelectionValid ) {
+			setSelectedBackup( activityLog[ 0 ] );
+		}
+	}, [
+		autoSelect,
+		isLoadingActivityLog,
+		activityLog,
+		selectedBackup,
+		setSelectedBackup,
+		dateRange,
+	] );
+
+	useEffect( () => {
+		setView( ( currentView ) => ( { ...currentView, page: 1 } ) );
+	}, [ dateRange ] );
 
 	const onChangeSelection = ( selection: string[] ) => {
 		const backup =
@@ -67,6 +112,10 @@ export function BackupsList( {
 		setSelectedBackup( backup );
 	};
 
+	const onChangeView = ( newView: View ) => {
+		setView( newView );
+	};
+
 	return (
 		<DataViewsCard>
 			<DataViews< ActivityLogEntry >
@@ -74,7 +123,7 @@ export function BackupsList( {
 				data={ filteredData }
 				fields={ fields }
 				view={ view }
-				onChangeView={ setView }
+				onChangeView={ onChangeView }
 				isLoading={ isLoadingActivityLog }
 				defaultLayouts={ { table: {} } }
 				paginationInfo={ paginationInfo }

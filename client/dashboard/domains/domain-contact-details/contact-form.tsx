@@ -4,8 +4,9 @@ import {
 	statesListQuery,
 	domainWhoisMutation,
 	domainWhoisValidateMutation,
+	domainQuery,
 } from '@automattic/api-queries';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	ExternalLink,
 	__experimentalVStack as VStack,
@@ -24,21 +25,15 @@ import { ButtonStack } from '../../components/button-stack';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { getContactFormFields } from './contact-form-fields';
+import ContactFormPrivacy from './contact-form-privacy';
 
 interface ContactFormProps {
 	domainName: string;
 	initialData?: DomainContactDetails;
-	onSubmit?: ( data: DomainContactDetails ) => void;
-	onCancel?: () => void;
-	errors?: Partial< Record< keyof DomainContactDetails, string > >;
 }
 
-export default function ContactForm( {
-	domainName,
-	initialData,
-	onSubmit,
-	onCancel,
-}: ContactFormProps ) {
+export default function ContactForm( { domainName, initialData }: ContactFormProps ) {
+	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: countryList } = useQuery( countryListQuery() );
 	const [ formData, setFormData ] = useState< DomainContactDetails >(
@@ -65,7 +60,6 @@ export default function ContactForm( {
 						{
 							onSuccess: () => {
 								createSuccessNotice( __( 'Contact details saved.' ), { type: 'snackbar' } );
-								onSubmit?.( formData );
 							},
 							onError: ( error: Error ) => {
 								createErrorNotice( error.message, {
@@ -154,6 +148,14 @@ export default function ContactForm( {
 				</VStack>
 			</Notice>
 
+			{ ! domain.is_hundred_year_domain && (
+				<Card>
+					<CardBody>
+						<ContactFormPrivacy domainName={ domainName } />
+					</CardBody>
+				</Card>
+			) }
+
 			<Card>
 				<CardBody>
 					<VStack spacing={ 4 }>
@@ -194,9 +196,6 @@ export default function ContactForm( {
 									disabled={ ! canSave || ! isDirty || isSubmitting }
 								>
 									{ __( 'Save contact info' ) }
-								</Button>
-								<Button variant="secondary" onClick={ onCancel }>
-									{ __( 'Cancel' ) }
 								</Button>
 							</ButtonStack>
 						</form>

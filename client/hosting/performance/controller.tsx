@@ -1,4 +1,4 @@
-import { SitePerformanceCallout } from 'calypso/dashboard/sites/performance';
+import { PerformanceCallout } from 'calypso/dashboard/sites/performance/performance-callout';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { hostingFeaturesCallout } from 'calypso/sites/hosting/controller';
 import { SitePerformance } from './site-performance';
@@ -15,4 +15,4 @@ export function sitePerformance( context: PageJSContext, next: () => void ) {
 	next();
 }
 
-export const sitePerformanceCallout = hostingFeaturesCallout( SitePerformanceCallout );
+export const sitePerformanceCallout = hostingFeaturesCallout( PerformanceCallout );

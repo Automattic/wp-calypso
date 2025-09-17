@@ -10,9 +10,15 @@ interface EngagementBarProps {
 	className?: string;
 	feedId?: string | number;
 	postId?: string | number;
+	commentsApiDisabled?: boolean;
 }
 
-const EngagementBar = ( { className = '', feedId, postId }: EngagementBarProps ) => {
+const EngagementBar = ( {
+	className = '',
+	feedId,
+	postId,
+	commentsApiDisabled = false,
+}: EngagementBarProps ) => {
 	const barRef = useRef< HTMLDivElement >( null );
 	const post = useSelector( ( state ) =>
 		feedId && postId ? getPostByKey( state, { feedId, postId } ) : null
@@ -133,6 +139,7 @@ const EngagementBar = ( { className = '', feedId, postId }: EngagementBarProps )
 					className="engagement-bar__actions"
 					post={ post }
 					onCommentClick={ handleCommentClick }
+					commentsApiDisabled={ commentsApiDisabled }
 				/>
 			) }
 		</div>

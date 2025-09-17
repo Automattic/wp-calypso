@@ -10,6 +10,8 @@ import {
 	siteByIdQuery,
 	queryClient,
 	domainTransferRequestQuery,
+	domainWhoisQuery,
+	domainConnectionSetupInfoQuery,
 } from '@automattic/api-queries';
 import {
 	createRoute,
@@ -19,10 +21,18 @@ import {
 	lazyRouteComponent,
 } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
+import { StepName } from '../../domains/domain-connection-setup/types';
 import { rootRoute } from './root';
 
 // Standalone domains route - requires rootRoute
 export const domainsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Domains' ),
+			},
+		],
+	} ),
 	getParentRoute: () => rootRoute,
 	path: 'domains',
 	loader: () => queryClient.ensureQueryData( domainsQuery() ),
@@ -36,6 +46,13 @@ export const domainsRoute = createRoute( {
 
 // Domain management root route
 export const domainRoute = createRoute( {
+	head: ( { params } ) => ( {
+		meta: [
+			{
+				title: params.domainName,
+			},
+		],
+	} ),
 	getParentRoute: () => rootRoute,
 	path: 'domains/$domainName',
 	loader: async ( { params: { domainName }, location } ) => {
@@ -62,6 +79,13 @@ export const domainRoute = createRoute( {
 );
 
 export const domainOverviewRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Overview' ),
+			},
+		],
+	} ),
 	getParentRoute: () => domainRoute,
 	path: '/',
 	loader: async ( { params: { domainName } } ) => {
@@ -83,6 +107,13 @@ export const domainOverviewRoute = createRoute( {
 
 // Domain DNS routes
 export const domainDnsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'DNS records' ),
+			},
+		],
+	} ),
 	getParentRoute: () => domainRoute,
 	path: 'dns',
 	loader: ( { params: { domainName } } ) =>
@@ -96,6 +127,13 @@ export const domainDnsRoute = createRoute( {
 );
 
 export const domainDnsAddRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Add a new DNS record' ),
+			},
+		],
+	} ),
 	getParentRoute: () => domainRoute,
 	path: 'dns/add',
 } ).lazy( () =>
@@ -107,6 +145,13 @@ export const domainDnsAddRoute = createRoute( {
 );
 
 export const domainDnsEditRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Edit DNS record' ),
+			},
+		],
+	} ),
 	getParentRoute: () => domainRoute,
 	path: 'dns/edit',
 	beforeLoad: async ( { params: { domainName }, search } ) => {
@@ -137,6 +182,13 @@ export const domainDnsEditRoute = createRoute( {
 
 // Domain forwardings routes
 export const domainForwardingsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Domain forwarding' ),
+			},
+		],
+	} ),
 	getParentRoute: () => domainRoute,
 	path: 'forwardings',
 	loader: async ( { params: { domainName } } ) => {
@@ -154,6 +206,13 @@ export const domainForwardingsRoute = createRoute( {
 );
 
 export const domainForwardingAddRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Add domain forwarding' ),
+			},
+		],
+	} ),
 	getParentRoute: () => domainRoute,
 	path: 'forwardings/add',
 	loader: async ( { params: { domainName } } ) => {
@@ -171,6 +230,13 @@ export const domainForwardingAddRoute = createRoute( {
 );
 
 export const domainForwardingEditRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Edit domain forwarding' ),
+			},
+		],
+	} ),
 	getParentRoute: () => domainRoute,
 	path: 'forwardings/edit/$forwardingId',
 	loader: async ( { params: { domainName } } ) => {
@@ -188,8 +254,21 @@ export const domainForwardingEditRoute = createRoute( {
 );
 
 export const domainContactInfoRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Contact details' ),
+			},
+		],
+	} ),
 	getParentRoute: () => domainRoute,
 	path: 'contact-info',
+	loader: async ( { params: { domainName } } ) => {
+		await Promise.all( [
+			queryClient.ensureQueryData( domainQuery( domainName ) ),
+			queryClient.ensureQueryData( domainWhoisQuery( domainName ) ),
+		] );
+	},
 } ).lazy( () =>
 	import( '../../domains/domain-contact-details' ).then( ( d ) =>
 		createLazyRoute( 'domain-contact-info' )( {
@@ -199,6 +278,13 @@ export const domainContactInfoRoute = createRoute( {
 );
 
 export const domainNameServersRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Name servers' ),
+			},
+		],
+	} ),
 	getParentRoute: () => domainRoute,
 	path: 'name-servers',
 	loader: ( { params: { domainName } } ) =>
@@ -208,6 +294,13 @@ export const domainNameServersRoute = createRoute( {
 } );
 
 export const domainGlueRecordsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Glue records' ),
+			},
+		],
+	} ),
 	getParentRoute: () => domainRoute,
 	path: 'glue-records',
 	loader: ( { params: { domainName } } ) =>
@@ -221,6 +314,13 @@ export const domainGlueRecordsRoute = createRoute( {
 );
 
 export const domainGlueRecordsAddRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Add glue record' ),
+			},
+		],
+	} ),
 	getParentRoute: () => domainRoute,
 	path: 'glue-records/add',
 } ).lazy( () =>
@@ -232,6 +332,13 @@ export const domainGlueRecordsAddRoute = createRoute( {
 );
 
 export const domainGlueRecordsEditRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Edit glue record' ),
+			},
+		],
+	} ),
 	getParentRoute: () => domainRoute,
 	path: 'glue-records/edit/$nameServer',
 	beforeLoad: async ( { params: { domainName, nameServer } } ) => {
@@ -257,6 +364,13 @@ export const domainGlueRecordsEditRoute = createRoute( {
 );
 
 export const domainSecurityRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Security' ),
+			},
+		],
+	} ),
 	getParentRoute: () => domainRoute,
 	path: 'security',
 	loader: ( { params: { domainName } } ) => {
@@ -271,6 +385,13 @@ export const domainSecurityRoute = createRoute( {
 );
 
 export const domainTransferRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Transfer' ),
+			},
+		],
+	} ),
 	getParentRoute: () => domainRoute,
 	path: 'transfer',
 } ).lazy( () =>
@@ -282,6 +403,13 @@ export const domainTransferRoute = createRoute( {
 );
 
 export const domainTransferToAnyUserRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Transfer to another user' ),
+			},
+		],
+	} ),
 	getParentRoute: () => domainRoute,
 	path: 'transfer/any-user',
 	loader: async ( { params: { domainName } } ) => {
@@ -297,6 +425,13 @@ export const domainTransferToAnyUserRoute = createRoute( {
 );
 
 export const domainTransferToOtherUserRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Transfer to another user' ),
+			},
+		],
+	} ),
 	getParentRoute: () => domainRoute,
 	path: 'transfer/other-user',
 	loader: async ( { params: { domainName } } ) => {
@@ -311,6 +446,55 @@ export const domainTransferToOtherUserRoute = createRoute( {
 	)
 );
 
+export const domainTransferToOtherSiteRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Attach to another site' ),
+			},
+		],
+	} ),
+	getParentRoute: () => domainRoute,
+	path: 'transfer/other-site',
+	loader: async ( { params: { domainName } } ) => {
+		return queryClient.ensureQueryData( domainQuery( domainName ) );
+	},
+} ).lazy( () =>
+	import( '../../domains/domain-transfer/transfer-domain-to-other-site' ).then( ( d ) =>
+		createLazyRoute( 'domain-transfer-to-other-site' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const domainConnectionSetupRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Domain connection setup' ),
+			},
+		],
+	} ),
+	getParentRoute: () => domainRoute,
+	path: 'domain-connection-setup',
+	loader: async ( { params: { domainName } } ) => {
+		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
+		await queryClient.ensureQueryData(
+			domainConnectionSetupInfoQuery(
+				domainName,
+				domain.blog_id,
+				`${ window.location.href }?step=${ StepName.DC_RETURN }`
+			)
+		);
+	},
+} ).lazy( () =>
+	import( '../../domains/domain-connection-setup' ).then( ( d ) =>
+		createLazyRoute( 'domain-connection-setup' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const createDomainsRoutes = () => {
 	return [
 		domainsRoute,
@@ -319,6 +503,7 @@ export const createDomainsRoutes = () => {
 			domainDnsRoute,
 			domainDnsAddRoute,
 			domainDnsEditRoute,
+			domainConnectionSetupRoute,
 			domainForwardingsRoute,
 			domainForwardingAddRoute,
 			domainForwardingEditRoute,
@@ -330,6 +515,7 @@ export const createDomainsRoutes = () => {
 			domainTransferRoute,
 			domainTransferToAnyUserRoute,
 			domainTransferToOtherUserRoute,
+			domainTransferToOtherSiteRoute,
 			domainSecurityRoute,
 		] ),
 	];

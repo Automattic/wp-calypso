@@ -1,24 +1,18 @@
 import { fetchBackupExtensionUrl, fetchBackupFileUrl } from '@automattic/api-core';
-import page from '@automattic/calypso-router';
-import { Button, Spinner } from '@automattic/components';
-import { useCallback, useState } from '@wordpress/element';
-import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent, useEffect } from 'react';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { useDispatch, useSelector } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
-import { hasJetpackCredentials } from 'calypso/state/jetpack/credentials/selectors';
-import { setNodeCheckState } from 'calypso/state/rewind/browser/actions';
-import canRestoreSite from 'calypso/state/rewind/selectors/can-restore-site';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { backupGranularRestorePath } from '../../paths';
-import { PREPARE_DOWNLOAD_STATUS } from './constants';
-import FilePreview from './file-preview';
 import {
-	onPreparingDownloadError,
-	onProcessingDownloadError,
-	onRetrievingFileInfoError,
-} from './notices';
+	Card,
+	Button,
+	CardBody,
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	__experimentalText as Text,
+} from '@wordpress/components';
+import { useCallback, useState } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
+import { useEffect } from 'react';
+import { PREPARE_DOWNLOAD_STATUS } from './constants';
+import { useFileBrowserContext } from './file-browser-context';
+import FilePreview from './file-preview';
 import { FileBrowserItem } from './types';
 import { useBackupPathInfoQuery } from './use-backup-path-info-query';
 import { usePrepareDownload } from './use-prepare-download';
@@ -30,22 +24,31 @@ interface FileInfoCardProps {
 	rewindId: number;
 	parentItem?: FileBrowserItem; // This is used to pass the extension details to the child node
 	path: string;
+	siteSlug: string;
+	hasCredentials?: boolean;
+	isRestoreEnabled?: boolean;
+	onTrackEvent: ( eventName: string, properties?: Record< string, unknown > ) => void;
+	onRequestGranularRestore: ( siteSlug: string, rewindId: number ) => void;
 }
 
-const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
+function FileInfoCard( {
 	siteId,
 	item,
 	rewindId,
 	parentItem,
 	path,
-} ) => {
-	const translate = useTranslate();
-	const moment = useLocalizedMoment();
-	const dispatch = useDispatch();
+	siteSlug,
+	hasCredentials,
+	isRestoreEnabled,
+	onTrackEvent,
+	onRequestGranularRestore,
+}: FileInfoCardProps ) {
+	const { fileBrowserState, locale, notices } = useFileBrowserContext();
+	const { setNodeCheckState } = fileBrowserState;
 
 	const {
 		isSuccess,
-		isInitialLoading,
+		isLoading,
 		isError,
 		data: fileInfo,
 	} = useBackupPathInfoQuery(
@@ -55,42 +58,40 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 		item.extensionType ?? ''
 	);
 
-	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) ) as string;
-
-	const isRestoreDisabled = useSelector( ( state ) => ! canRestoreSite( state, siteId ) );
-	const hasCredentials = useSelector( ( state ) => hasJetpackCredentials( state, siteId ) );
-
 	// Dispatch an error notice if the download could not be prepared
 	const handlePrepareDownloadError = useCallback( () => {
-		dispatch( onPreparingDownloadError() );
-	}, [ dispatch ] );
+		notices.showError( __( 'There was an error preparing your download. Please try again.' ) );
+	}, [ notices ] );
 
 	const { prepareDownload, prepareDownloadStatus, downloadUrl } = usePrepareDownload(
 		siteId,
 		handlePrepareDownloadError
 	);
 
-	const modifiedTime = fileInfo?.mtime ? moment.unix( fileInfo.mtime ).format( 'lll' ) : null;
+	const modifiedTime = fileInfo?.mtime
+		? new Intl.DateTimeFormat( locale, {
+				dateStyle: 'medium',
+				timeStyle: 'short',
+		  } ).format( new Date( fileInfo.mtime * 1000 ) )
+		: null;
 	const size = fileInfo?.size !== undefined ? convertBytes( fileInfo.size ) : null;
 
 	const [ isProcessingDownload, setIsProcessingDownload ] = useState< boolean >( false );
 
 	const handleDownloadError = useCallback( () => {
 		setIsProcessingDownload( false );
-		dispatch( onProcessingDownloadError() );
-	}, [ dispatch ] );
+		notices.showError( __( 'There was an error processing your download. Please try again.' ) );
+	}, [ notices ] );
 
 	const trackDownloadByType = useCallback(
 		( fileType: string ) => {
-			dispatch(
-				recordTracksEvent( 'calypso_jetpack_backup_browser_download', {
-					file_type: fileType,
-				} )
-			);
+			onTrackEvent( 'calypso_jetpack_backup_browser_download', {
+				file_type: fileType,
+			} );
 
 			return;
 		},
-		[ dispatch ]
+		[ onTrackEvent ]
 	);
 
 	const triggerFileDownload = useCallback( ( fileUrl: string ) => {
@@ -170,31 +171,38 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 
 	const prepareDownloadClick = useCallback( () => {
 		if ( ! item.period || ! fileInfo?.manifestFilter || ! fileInfo?.dataType ) {
-			dispatch( onPreparingDownloadError() );
+			notices.showError( __( 'There was an error preparing your download. Please try again.' ) );
 			return;
 		}
 
 		prepareDownload( siteId, item.period, fileInfo.manifestFilter, fileInfo.dataType );
-	}, [ dispatch, fileInfo, item.period, prepareDownload, siteId ] );
+	}, [ notices, fileInfo, item.period, prepareDownload, siteId ] );
 
 	const restoreFile = useCallback( () => {
 		// Reset checklist
-		dispatch( setNodeCheckState( siteId, '/', 'unchecked' ) );
+		setNodeCheckState( '/', 'unchecked' );
 
 		// Mark this file as selected
-		dispatch( setNodeCheckState( siteId, path, 'checked' ) );
+		setNodeCheckState( path, 'checked' );
 
-		// Redirect to granular restore page
-		page.redirect( backupGranularRestorePath( siteSlug, rewindId as unknown as string ) );
+		// Request granular restore
+		onRequestGranularRestore( siteSlug, rewindId );
 
 		// Tracks restore interest
-		dispatch(
-			recordTracksEvent( 'calypso_jetpack_backup_browser_restore_single_file', {
-				file_type: item.type,
-				has_credentials: hasCredentials,
-			} )
-		);
-	}, [ dispatch, hasCredentials, item.type, path, rewindId, siteId, siteSlug ] );
+		onTrackEvent( 'calypso_jetpack_backup_browser_restore_single_file', {
+			file_type: item.type,
+			...( hasCredentials !== undefined && { has_credentials: hasCredentials } ),
+		} );
+	}, [
+		setNodeCheckState,
+		path,
+		onRequestGranularRestore,
+		siteSlug,
+		rewindId,
+		onTrackEvent,
+		item.type,
+		hasCredentials,
+	] );
 
 	useEffect( () => {
 		if ( prepareDownloadStatus === PREPARE_DOWNLOAD_STATUS.PREPARING ) {
@@ -224,9 +232,11 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 	// Dispatch an error notice if the file info could not be retrieved
 	useEffect( () => {
 		if ( isError ) {
-			dispatch( onRetrievingFileInfoError() );
+			notices.showError(
+				__( 'There was an error retrieving your file information. Please try again.' )
+			);
 		}
-	}, [ dispatch, isError ] );
+	}, [ notices, isError ] );
 
 	const showActions =
 		item.type !== 'archive' || ( item.type === 'archive' && item.extensionType === 'unchanged' );
@@ -236,7 +246,7 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 		return null;
 	}
 
-	if ( isInitialLoading ) {
+	if ( isLoading ) {
 		return <div className="file-browser-node__loading placeholder" />;
 	}
 
@@ -249,8 +259,10 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 			className="file-card__action"
 			onClick={ downloadFile }
 			disabled={ isProcessingDownload }
+			isBusy={ isProcessingDownload }
+			variant="secondary"
 		>
-			{ isProcessingDownload ? <Spinner /> : translate( 'Download file' ) }
+			{ isProcessingDownload ? __( 'Preparing' ) : __( 'Download file' ) }
 		</Button>
 	);
 
@@ -259,8 +271,9 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 			className="file-card__action"
 			href={ fileInfo.downloadUrl }
 			onClick={ () => trackDownloadByType( item.type ) }
+			variant="secondary"
 		>
-			{ translate( 'Download file' ) }
+			{ __( 'Download file' ) }
 		</Button>
 	);
 
@@ -269,15 +282,10 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 			className="file-card__action"
 			onClick={ prepareDownloadClick }
 			disabled={ isProcessingDownload }
+			isBusy={ isProcessingDownload }
+			variant="secondary"
 		>
-			{ isProcessingDownload ? (
-				<>
-					<Spinner className="file-card__prepare-download-spinner" size={ 16 } />
-					{ translate( 'Preparing' ) }
-				</>
-			) : (
-				translate( 'Prepare and download' )
-			) }
+			{ isProcessingDownload ? __( 'Preparing' ) : __( 'Prepare and download' ) }
 		</Button>
 	);
 
@@ -292,76 +300,81 @@ const FileInfoCard: FunctionComponent< FileInfoCardProps > = ( {
 		return downloadFileButton;
 	};
 
-	return (
-		<div className="file-card">
-			<div className="file-card__details">
-				{ item.type === 'table' && (
-					<div className="file-card__detail">
-						<span className="file-card__label">
-							{ translate( 'Rows:', { comment: 'Rows refers to database table rows.' } ) }{ ' ' }
-						</span>
-						<span className="file-card__value">{ item.rowCount }</span>
-					</div>
-				) }
-
-				<div className="file-card__detail-group">
-					{ modifiedTime && (
-						<div className="file-card__detail">
-							<span className="file-card__label">
-								{ translate( 'Modified:', { comment: 'Date when the file was modified.' } ) }{ ' ' }
-							</span>
-							<span className="file-card__value">{ modifiedTime }</span>
-						</div>
-					) }
-
-					{ size && (
-						<div className="file-card__detail">
-							<span className="file-card__label">
-								{ translate( 'Size:', {
-									comment: 'This refers to file size (bytes, kilobytes, gigabytes, etc.',
-								} ) }{ ' ' }
-							</span>
-							<span className="file-card__value">
-								{ size.unitAmount } { size.unit }
-							</span>
-						</div>
-					) }
-				</div>
-
-				{ fileInfo?.hash && (
-					<div className="file-card__detail">
-						<span className="file-card__label">
-							{ translate( 'Hash:', {
-								comment: 'This refers to a unique identifier or checksum.',
-							} ) }{ ' ' }
-						</span>
-						<span className="file-card__value">{ fileInfo.hash }</span>
-					</div>
-				) }
+	const FileDetail = ( { label, value }: { label: string; value: string | number } ) => {
+		return (
+			<div className="file-card__detail">
+				<Text weight={ 700 }>{ label } </Text>
+				<Text>{ value }</Text>
 			</div>
+		);
+	};
 
-			{ showActions && (
-				<>
-					<div className="file-card__actions">
-						{ renderDownloadButton() }
-						{ item.type !== 'wordpress' && (
-							<Button
-								className="file-card__action"
-								onClick={ restoreFile }
-								disabled={ isRestoreDisabled }
-							>
-								{ translate( 'Restore' ) }
-							</Button>
+	return (
+		<Card isRounded={ false } variant="secondary" isBorderless>
+			<CardBody>
+				<VStack>
+					<VStack spacing={ 0 }>
+						{ item.type === 'table' && (
+							<FileDetail
+								label={
+									/* translators: This refers to database table rows. */
+									__( 'Rows:' )
+								}
+								value={ item.rowCount ?? 0 }
+							/>
 						) }
-					</div>
-				</>
-			) }
 
-			{ fileInfo?.size !== undefined && fileInfo.size > 0 && (
-				<FilePreview item={ item } siteId={ siteId } />
-			) }
-		</div>
+						<HStack justify="space-between">
+							{ modifiedTime && (
+								<FileDetail
+									label={
+										/* translators: This refers to the date when the file was modified. */
+										__( 'Modified:' )
+									}
+									value={ modifiedTime }
+								/>
+							) }
+
+							{ size && (
+								<FileDetail
+									label={
+										/* translators: This refers to the file size (bytes, kilobytes, gigabytes, etc.). */
+										__( 'Size:' )
+									}
+									value={ `${ size.unitAmount } ${ size.unit }` }
+								/>
+							) }
+						</HStack>
+
+						{ fileInfo?.hash && (
+							<FileDetail
+								label={
+									/* translators: This refers to a unique identifier or checksum. */
+									__( 'Hash:' )
+								}
+								value={ fileInfo.hash }
+							/>
+						) }
+					</VStack>
+
+					{ showActions && (
+						<HStack justify="flex-start" spacing={ 4 }>
+							{ renderDownloadButton() }
+							{ item.type !== 'wordpress' && (
+								<Button disabled={ ! isRestoreEnabled } onClick={ restoreFile } variant="secondary">
+									{ __( 'Restore' ) }
+								</Button>
+							) }
+						</HStack>
+					) }
+
+					{ fileInfo?.size !== undefined && fileInfo.size > 0 && (
+						<FilePreview item={ item } siteId={ siteId } onTrackEvent={ onTrackEvent } />
+					) }
+				</VStack>
+			</CardBody>
+		</Card>
 	);
-};
+}
 
 export default FileInfoCard;

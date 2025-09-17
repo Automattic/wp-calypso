@@ -910,7 +910,7 @@ object PlaywrightTestPRMatrix : BuildType({
 	id("calypso_WebApp_Calypso_E2E_Playwright_Test_Matrix")
 	uuid = "074d8ae0-0859-4b4d-bf66-709f24ae5406"
 	name = "E2E Tests (Playwright Test)"
-	description = "Runs Calypso e2e tests using Playwright Test runner with build matrix"
+	description = "Runs Calypso e2e tests on pull requests using Playwright Test runner with build matrix"
 
 	vcs {
 		root(Settings.WpCalypso)
@@ -977,6 +977,7 @@ object PlaywrightTestPRMatrix : BuildType({
 		param("env.AUTHENTICATE_ACCOUNTS", "simpleSitePersonalPlanUser,gutenbergSimpleSiteUser,defaultUser")
 		param("env.LIVEBRANCHES", "true")
 		param("env.CI", "true")
+		param("REPORT_URL", "https://automattic.github.io/wp-calypso-test-results/r")
 	}
 
 	steps {
@@ -999,15 +1000,18 @@ object PlaywrightTestPRMatrix : BuildType({
 
 		bashNodeScript {
 			name = "Run e2e tests"
+			id = "run_e2e_tests"
 			scriptContent = """
 				echo "Getting Calypso url for build ${BuildDockerImage.depParamRefs.buildNumber}"
 				chmod +x ./bin/get-calypso-live-url.sh
-				CALYPSO_LIVE_URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
+				CALYPSO_BASE_URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
 				if [[ ${'$'}? -ne 0 ]]; then
-					// Command failed. CALYPSO_LIVE_URL contains stderr
-					echo ${'$'}CALYPSO_LIVE_URL
+					// Command failed. CALYPSO_BASE_URL contains stderr
+					echo ${'$'}CALYPSO_BASE_URL
 					exit 1
 				fi
+				
+				export CALYPSO_BASE_URL
 
 				# Check if test/e2e or packages/calypso-e2e files have been changed
 				CHANGED_FILES=${'$'}(git diff --name-only refs/remotes/origin/trunk...HEAD)
@@ -1023,6 +1027,34 @@ object PlaywrightTestPRMatrix : BuildType({
 				echo "Running Playwright tests for project: %playwrightProject%"
 				yarn test:pw:%playwrightProject% ${'$'}GREP_FLAG
 			"""
+			dockerImage = "%docker_image_e2e%"
+		}
+
+		bashNodeScript {
+			name = "Upload report and send Slack notification"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			conditions {
+				matches("teamcity.build.branch", ".*e2e.*")
+				equals("teamcity.build.step.status.run_e2e_tests", "failure")
+			}
+			scriptContent = """
+				ARCHIVE_NAME="%build.counter%-%build.vcs.number%-%playwrightProject%"
+				export E2E_SECRETS_KEY="%E2E_SECRETS_ENCRYPTION_KEY_CURRENT%"
+				
+				# Need to use -C to avoid creation of an unnecessary top level directory.
+				tar cvfz - -C test/e2e/output/html . | openssl enc -aes-256-cbc -salt -out ${'$'}{ARCHIVE_NAME}.tgz.enc -pass env:E2E_SECRETS_KEY
+
+				aws configure set aws_access_key_id %CALYPSO_E2E_DASHBOARD_AWS_S3_ACCESS_KEY_ID%
+				aws configure set aws_secret_access_key %CALYPSO_E2E_DASHBOARD_AWS_S3_SECRET_ACCESS_KEY%
+
+				aws s3 cp ${'$'}{ARCHIVE_NAME}.tgz.enc %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT%/archive/
+
+				# Send custom Slack notification
+				echo "##teamcity[notification notifier='slack' message='Report available: %REPORT_URL%/${'$'}{ARCHIVE_NAME}.tgz.enc|nBranch: %teamcity.build.branch%' sendTo='calypso-e2e-reports-ext' connectionId='PROJECT_EXT_11']"
+			""".trimIndent()
+			conditions {
+				matches("teamcity.build.branch", ".*e2e.*")
+			}
 			dockerImage = "%docker_image_e2e%"
 		}
 	}
@@ -1334,6 +1366,7 @@ object AuthenticationE2ETests : E2EBuildType(
 	concurrentBuilds = 1,
 	testGroup = "authentication",
 	buildParams = {
+		param("env.CALYPSO_BASE_URL", "https://wordpress.com")
 		param("env.VIEWPORT_NAME", "desktop")
 	},
 	buildFeatures = {

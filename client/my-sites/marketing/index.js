@@ -13,8 +13,7 @@ import {
 	redirectSharingButtons,
 	sharingButtons,
 	traffic,
-	jetpackTraffic,
-	toolsMarketing,
+	jetpackSocial,
 } from './controller';
 
 export default function () {
@@ -57,20 +56,20 @@ export default function () {
 	);
 
 	page(
-		'/marketing/traffic/:domain',
+		'/marketing/jetpack-social/:domain',
 		siteSelection,
 		navigation,
-		traffic,
+		jetpackSocial,
+		layout,
 		makeLayout,
 		clientRender
 	);
 
 	page(
-		'/marketing/jetpack-traffic/:domain',
+		'/marketing/traffic/:domain',
 		siteSelection,
 		navigation,
-		jetpackTraffic,
-		layout,
+		traffic,
 		makeLayout,
 		clientRender
 	);
@@ -91,15 +90,6 @@ export default function () {
 		navigation,
 		marketingTools,
 		layout,
-		makeLayout,
-		clientRender
-	);
-
-	page(
-		'/marketing/tools-marketing/:domain',
-		siteSelection,
-		navigation,
-		toolsMarketing,
 		makeLayout,
 		clientRender
 	);

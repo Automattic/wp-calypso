@@ -12,8 +12,8 @@ import {
 import { useResetMutation } from 'calypso/data/paid-newsletter/use-reset-mutation';
 import { useSkipNextStepMutation } from 'calypso/data/paid-newsletter/use-skip-next-step-mutation';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
+import LogoChain from 'calypso/my-sites/importer/newsletter/components/logo-chain';
 import Content from 'calypso/my-sites/importer/newsletter/content';
-import LogoChain from 'calypso/my-sites/importer/newsletter/logo-chain';
 import Subscribers from 'calypso/my-sites/importer/newsletter/subscribers';
 import Summary from 'calypso/my-sites/importer/newsletter/summary';
 import { EngineTypes } from 'calypso/my-sites/importer/newsletter/types';
@@ -24,7 +24,7 @@ import { importSite } from 'calypso/state/imports/site-importer/actions';
 import { Importer, ImporterBaseProps } from '../types';
 import { getStepsProgress } from './utils';
 
-import 'calypso/my-sites/importer/newsletter/importer.scss';
+import 'calypso/my-sites/importer/newsletter/style.scss';
 
 const stepSlugs: StepId[] = [ 'content', 'subscribers', 'summary' ];
 
@@ -173,7 +173,6 @@ export const SubstackImporter: React.FunctionComponent< ImporterBaseProps > = ( 
 							selectedSite={ selectedSite }
 							fromSite={ fromSite }
 							siteSlug={ siteSlug }
-							onContinue={ () => setStep( 'subscribers' ) }
 							skipNextStep={ () => {
 								setStep( 'subscribers' );
 								skipNextStep( selectedSite.ID, engine, nextStepSlug, step );

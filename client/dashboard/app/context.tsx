@@ -6,6 +6,7 @@ export type SiteFeatureSupports = {
 	monitoring: boolean;
 	logs: boolean;
 	backups: boolean;
+	scan: boolean;
 	domains: boolean;
 	emails: boolean;
 };
@@ -16,6 +17,7 @@ export type MeSupports = {
 };
 
 export type AppConfig = {
+	name: string;
 	basePath: string;
 	mainRoute: string;
 	Logo: React.FC | null;
@@ -34,6 +36,7 @@ export type AppConfig = {
 };
 
 const AppContext = createContext< AppConfig >( {
+	name: '',
 	basePath: '',
 	mainRoute: '',
 	Logo: null,

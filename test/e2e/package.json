@@ -25,7 +25,7 @@
 		"debug:mobile": "PWDEBUG=1 DEBUG=pw:api yarn run test:mobile",
 		"test:pw:mobile": "yarn playwright test --project=pixel",
 		"test:pw:desktop": "yarn playwright test --project=chrome",
-		"test:pw": "yarn playwright test",
+		"test:pw": "yarn playwright test --project=pixel --project=chrome",
 		"test:pw:i18n": "yarn playwright test --project=chrome --grep @i18n"
 	},
 	"devDependencies": {
