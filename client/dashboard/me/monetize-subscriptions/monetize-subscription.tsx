@@ -8,7 +8,7 @@ import { formatCurrency } from '@automattic/number-formatters';
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { Card, Notice } from '@wordpress/components';
+import { Card, Button, Notice } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, trash, replace, globe, chevronRight } from '@wordpress/icons';
 import { formatDate } from 'date-fns';
@@ -173,24 +173,27 @@ export default function MonetizeSubscription() {
 						</ul>
 					</Card>
 					{ isRenewable && (
-						<Card
-							tagName="button"
-							className="auto-renew-toggle__card"
-							onClick={ isAutoRenewing ? disableAutoRenew : enableAutoRenew }
-							disabled={ isUpdating }
-						>
+						<Card>
 							<Icon icon={ replace } />
-							{ isAutoRenewing ? __( 'Disable auto-renew' ) : __( 'Enable auto-renew' ) }
+							<Button
+								onClick={ isAutoRenewing ? disableAutoRenew : enableAutoRenew }
+								disabled={ isUpdating }
+							>
+								{ isAutoRenewing ? __( 'Disable auto-renew' ) : __( 'Enable auto-renew' ) }
+							</Button>
 							<Icon className="card__link-indicator" icon={ chevronRight } />
 						</Card>
 					) }
-					<Card tagName="button" onClick={ stopSubscription }>
+					<Card>
 						<Icon icon={ trash } />
-						{ isProduct
-							? // eslint-disable-next-line @wordpress/i18n-translator-comments
-							  sprintf( __( 'Remove %s product' ), subscription.title )
-							: // eslint-disable-next-line @wordpress/i18n-translator-comments
-							  sprintf( __( 'Stop %s subscription' ), subscription.title ) }
+						<Button onClick={ stopSubscription }>
+							{ isProduct
+								? // eslint-disable-next-line @wordpress/i18n-translator-comments
+								  sprintf( __( 'Remove %s product' ), subscription.title )
+								: // eslint-disable-next-line @wordpress/i18n-translator-comments
+								  sprintf( __( 'Stop %s subscription' ), subscription.title ) }
+						</Button>
+
 						<Icon className="card__link-indicator" icon={ chevronRight } />
 					</Card>
 				</>
