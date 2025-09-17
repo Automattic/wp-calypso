@@ -8,7 +8,6 @@ import { useState, useEffect } from 'react';
 import { isSimplifiedOnboarding } from 'calypso/landing/stepper/hooks/use-simplified-onboarding';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { addSurvicate } from 'calypso/lib/analytics/survicate';
-import { useIsDomainSearchV2Enabled } from 'calypso/lib/domains/use-domain-search-v2';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { pathToUrl } from 'calypso/lib/url';
 import {
@@ -31,12 +30,7 @@ import { recordStepNavigation } from '../../internals/analytics/record-step-navi
 import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-plan-notification';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
-import {
-	AssertConditionState,
-	type FlowV2,
-	type ProvidedDependencies,
-	type SubmitHandler,
-} from '../../internals/types';
+import { type FlowV2, type ProvidedDependencies, type SubmitHandler } from '../../internals/types';
 import type { DomainSuggestion } from '@automattic/api-core';
 
 const clearUseMyDomainsQueryParams = ( currentStepSlug: string | undefined ) => {
@@ -307,13 +301,6 @@ const onboarding: FlowV2< typeof initialize > = {
 			}
 		};
 		return { submit };
-	},
-	useAssertConditions() {
-		const [ isLoading ] = useIsDomainSearchV2Enabled( this.name );
-
-		return {
-			state: isLoading ? AssertConditionState.CHECKING : AssertConditionState.SUCCESS,
-		};
 	},
 	useSideEffect( currentStepSlug ) {
 		const reduxDispatch = useReduxDispatch();

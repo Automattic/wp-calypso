@@ -63,7 +63,7 @@ export function DomainFormControl( {
 	isCartPendingUpdate,
 	isCartPendingUpdateDomain,
 }: DomainFormControlProps ) {
-	const [ , isDomainSearchV2Enabled ] = useIsDomainSearchV2Enabled( flow ?? '' );
+	const isDomainSearchV2Enabled = useIsDomainSearchV2Enabled();
 
 	const selectedSite = useSelector( getSelectedSite );
 	const productsList = useSelector( getAvailableProductsList );

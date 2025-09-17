@@ -3,6 +3,7 @@ import {
 	isHundredYearDomainFlow,
 	isHundredYearPlanFlow,
 	isNewsletterFlow,
+	isOnboardingFlow,
 	Step,
 	StepContainer,
 } from '@automattic/onboarding';
@@ -79,6 +80,7 @@ const DomainSearchStep: StepType< {
 					flowName={ flow }
 					config={ config }
 					initialQuery={ initialQuery }
+					isFirstDomainFreeForFirstYear={ isOnboardingFlow( flow ) || isDomainFlow( flow ) }
 					events={ {
 						onExternalDomainClick: ( domainName ) => {
 							navigation.submit( {

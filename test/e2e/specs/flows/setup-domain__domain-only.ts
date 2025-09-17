@@ -38,7 +38,7 @@ describe( DataHelper.createSuiteTitle( 'Domain flow: Purchase only a domain' ), 
 
 	it( 'Search for a domain', async function () {
 		const domainSearchComponent = new RewrittenDomainSearchComponent( page );
-		await domainSearchComponent.search( 'example' );
+		await domainSearchComponent.search( DataHelper.getBlogName() );
 	} );
 
 	it( 'Add the first suggestion to the cart', async function () {

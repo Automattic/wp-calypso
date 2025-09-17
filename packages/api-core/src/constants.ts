@@ -1,21 +1,24 @@
 import { __ } from '@wordpress/i18n';
 import { DataCenterOption } from './site-hosting/types';
 
-export enum DotcomPlans {
-	BUSINESS = 'business-bundle',
-	BUSINESS_MONTHLY = 'business-bundle-monthly',
-	BUSINESS_2_YEARS = 'business-bundle-2y',
-	BUSINESS_3_YEARS = 'business-bundle-3y',
-	ECOMMERCE_TRIAL_MONTHLY = 'ecommerce-trial-bundle-monthly',
-	FREE_PLAN = 'free_plan',
-	HOSTING_TRIAL_MONTHLY = 'wp_bundle_hosting_trial_monthly',
-	JETPACK_FREE = 'jetpack_free',
-	MIGRATION_TRIAL_MONTHLY = 'wp_bundle_migration_trial_monthly',
-	PREMIUM = 'value_bundle',
-	PREMIUM_MONTHLY = 'value_bundle_monthly',
-	PREMIUM_2_YEARS = 'value_bundle-2y',
-	PREMIUM_3_YEARS = 'value_bundle-3y',
-}
+export const DotcomPlans = {
+	BUSINESS: 'business-bundle',
+	BUSINESS_MONTHLY: 'business-bundle-monthly',
+	BUSINESS_2_YEARS: 'business-bundle-2y',
+	BUSINESS_3_YEARS: 'business-bundle-3y',
+	ECOMMERCE: 'ecommerce-bundle',
+	ECOMMERCE_TRIAL_MONTHLY: 'ecommerce-trial-bundle-monthly',
+	FREE_PLAN: 'free_plan',
+	HOSTING_TRIAL_MONTHLY: 'wp_bundle_hosting_trial_monthly',
+	JETPACK_FREE: 'jetpack_free',
+	MIGRATION_TRIAL_MONTHLY: 'wp_bundle_migration_trial_monthly',
+	PREMIUM: 'value_bundle',
+	PREMIUM_MONTHLY: 'value_bundle_monthly',
+	PREMIUM_2_YEARS: 'value_bundle-2y',
+	PREMIUM_3_YEARS: 'value_bundle-3y',
+} as const;
+
+export type DotcomPlanSlug = ( typeof DotcomPlans )[ keyof typeof DotcomPlans ];
 
 export enum DotcomFeatures {
 	ATOMIC = 'atomic',
@@ -249,4 +252,10 @@ export const getDataCenterOptions = (): Record< DataCenterOption, string > => ( 
 	dfw: __( 'US Central (Dallas-Fort Worth, Texas)' ),
 	dca: __( 'US East (Washington, D.C.)' ),
 	ams: __( 'EU West (Amsterdam, Netherlands)' ),
+} );
+
+export const getPlanNames = () => ( {
+	[ DotcomPlans.BUSINESS ]: __( 'Business' ),
+	[ DotcomPlans.ECOMMERCE ]: __( 'Commerce' ),
+	[ DotcomPlans.PREMIUM ]: __( 'Premium' ),
 } );
