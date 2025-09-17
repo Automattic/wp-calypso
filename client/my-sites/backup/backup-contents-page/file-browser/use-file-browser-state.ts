@@ -412,7 +412,6 @@ export function useFileBrowserState(): FileBrowserStateActions {
 		return checkList;
 	}, [ state.rootNode, addChildrenToList ] );
 
-	// Public interface matching Redux selectors
 	const getNode = useCallback(
 		( path: string ): FileBrowserNode | null => {
 			return getNodeFromState( state, path );

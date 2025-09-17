@@ -1,13 +1,28 @@
-import { HostingFeatures, LogType, PHPLog, ServerLog, SiteLogsParams } from '@automattic/api-core';
-import { siteLogsQuery, siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import {
+	HostingFeatures,
+	LogType,
+	PHPLog,
+	ServerLog,
+	SiteActivityLog,
+	SiteLogsParams,
+	SiteLogsData,
+	ActivityLogsData,
+	ActivityLogParams,
+} from '@automattic/api-core';
+import {
+	siteLogsQuery,
+	siteBySlugQuery,
+	siteSettingsQuery,
+	siteActivityLogQuery,
+} from '@automattic/api-queries';
+import { useQuery, useSuspenseQuery, skipToken } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { TabPanel, ToggleControl, Card, CardHeader, CardBody } from '@wordpress/components';
 import { DataViews, View, Filter, Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { getUnixTime, subDays, isSameSecond } from 'date-fns';
 import { useMemo, useState, useRef, useEffect } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { useDateRange } from '../../app/hooks/use-date-range';
 import { useLocale } from '../../app/locale';
 import { siteRoute } from '../../app/router/sites';
 import { DateRangePicker } from '../../components/date-range-picker';
@@ -21,16 +36,25 @@ import { getInitialFiltersFromSearch, getAllowedFields } from './dataviews/filte
 import { useView, toFilterParams } from './dataviews/views';
 import { LogsDownloader } from './downloader';
 import { getLogsCalloutProps } from './logs-callout';
-import {
-	buildTimeRangeInSeconds,
-	getInitialDateRangeFromSearch,
-	getDefaultDateRange,
-} from './utils';
+import { buildTimeRangeInSeconds } from './utils';
 import type { Action } from '@wordpress/dataviews';
 
 import './style.scss';
 
+// Helper types and functions
+type LogsData = SiteLogsData | ActivityLogsData | undefined;
+
+// Type guards
+const isSiteLogsData = ( data: LogsData ): data is SiteLogsData => {
+	return data != null && 'logs' in data && 'total_results' in data;
+};
+
+const isActivityLogData = ( data: LogsData ): data is ActivityLogsData => {
+	return data != null && 'activityLogs' in data;
+};
+
 const LOG_TABS = [
+	{ name: 'activity', title: __( 'Activity' ) },
 	{ name: 'php', title: __( 'PHP errors' ) },
 	{ name: 'server', title: __( 'Web server' ) },
 ];
@@ -78,46 +102,11 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		initialFilters: getInitialFiltersFromSearch( logType, search ),
 	} );
 
-	const initial = getDefaultDateRange( timezoneString, gmtOffset );
-
-	const initialFromUrl = getInitialDateRangeFromSearch( search );
-
-	const [ dateRange, setDateRange ] = useState< { start: Date; end: Date } >(
-		() => initialFromUrl ?? initial
-	);
-
-	const lastUrlRangeRef = useRef< { from: number; to: number } | null >( null );
-
-	useEffect( () => {
-		if ( ! autoRefresh ) {
-			return;
-		}
-		const tick = () => {
-			const end = new Date();
-			const start = subDays( end, 6 );
-
-			setDateRange( ( prev ) =>
-				isSameSecond( prev.start, start ) && isSameSecond( prev.end, end ) ? prev : { start, end }
-			);
-			const from = getUnixTime( start );
-			const to = getUnixTime( end );
-
-			const last = lastUrlRangeRef.current;
-			// Only sync URL when from/to change to avoid unnecessary history updates.
-			if ( ! last || last.from !== from || last.to !== to ) {
-				const url = new URL( window.location.href );
-				url.searchParams.set( 'from', String( from ) );
-				url.searchParams.set( 'to', String( to ) );
-				window.history.replaceState( null, '', url.pathname + url.search );
-				lastUrlRangeRef.current = { from, to };
-			}
-		};
-
-		// Run immediately, then every 10s
-		tick();
-		const intervalId = setInterval( tick, 10 * 1000 );
-		return () => clearInterval( intervalId );
-	}, [ autoRefresh ] );
+	const { dateRange, handleDateRangeChange } = useDateRange( {
+		timezoneString,
+		gmtOffset,
+		autoRefresh,
+	} );
 
 	const { startSec, endSec } = useMemo(
 		() => buildTimeRangeInSeconds( dateRange.start, dateRange.end, timezoneString, gmtOffset ),
@@ -126,57 +115,99 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 
 	const filter = useMemo( () => toFilterParams( { view, logType } ), [ view, logType ] );
 
-	const params: SiteLogsParams = {
-		logType,
-		start: startSec,
-		end: endSec,
-		filter,
-		sortOrder: view.sort?.direction,
-		pageSize: view.perPage,
-	};
+	const siteLogQueryParams: SiteLogsParams | null =
+		logType !== LogType.ACTIVITY
+			? {
+					logType: logType as LogType,
+					start: startSec,
+					end: endSec,
+					filter,
+					sortOrder: view.sort?.direction,
+					pageSize: view.perPage,
+			  }
+			: null;
+	const activityLogQueryParams: ActivityLogParams | null =
+		logType === LogType.ACTIVITY
+			? {
+					sort_order: view.sort?.direction,
+					number: view.perPage || 20,
+					page: view.page,
+			  }
+			: null;
 
 	// This keeps a per-page cursor cache - page 1 has no cursor.
 	const cursorsRef = useRef< Map< number, string > >( new Map() );
 
 	// For the current page, use its cursor (or null/undefined on page 1).
 	const scrollId = cursorsRef.current.get( view.page ?? 1 ) ?? null;
+	const isActivityLogType = logType === LogType.ACTIVITY;
+	// For activity logs, we use a different query
+	const shouldFetchRegularLogs = logType !== LogType.ACTIVITY && !! siteLogQueryParams;
+	const { data: siteLogsData, isFetching: isFetchingLogs } = useQuery(
+		shouldFetchRegularLogs && siteLogQueryParams
+			? siteLogsQuery( siteId, siteLogQueryParams, scrollId )
+			: { queryKey: [ 'disabled-logs' ], queryFn: skipToken }
+	);
 
-	const { data: siteLogs, isFetching } = useQuery( siteLogsQuery( siteId, params, scrollId ) );
+	const shouldFetchActivityLogs = isActivityLogType && !! activityLogQueryParams;
+	const { data: activityLogData, isFetching: isFetchingActivity } = useQuery(
+		shouldFetchActivityLogs
+			? siteActivityLogQuery( siteId, activityLogQueryParams )
+			: { queryKey: [ 'disabled-activity' ], queryFn: skipToken }
+	);
+
+	const siteLogs: LogsData = isActivityLogType ? activityLogData : siteLogsData;
+	const isFetching = isActivityLogType ? isFetchingActivity : isFetchingLogs;
 
 	useEffect( () => {
-		if ( ! siteLogs ) {
+		if ( ! siteLogs || isActivityLogType ) {
 			return;
 		}
 		const nextPage = ( view.page ?? 1 ) + 1;
-		const id = siteLogs.scroll_id;
+		let id: string | undefined;
+
+		if ( isSiteLogsData( siteLogs ) ) {
+			id = siteLogs.scroll_id || undefined;
+		}
 
 		if ( id ) {
 			cursorsRef.current.set( nextPage, id );
 		} else {
 			cursorsRef.current.delete( nextPage );
 		}
-	}, [ siteLogs, view.page ] );
+	}, [ siteLogs, view.page, logType, isActivityLogType ] );
 
-	const handleDateRangeChange = ( next: { start: Date; end: Date } ) => {
+	const handleDateRangeChangeWrapper = ( next: { start: Date; end: Date } ) => {
 		setAutoRefresh( false );
-		setDateRange( next );
+		handleDateRangeChange( next );
 
 		// Reset pagination + cursors
 		cursorsRef.current.clear();
 		setView( ( value ) => ( { ...value, page: 1 } ) );
-
-		// Sync from/to to the URL as UNIX seconds
-		const url = new URL( window.location.href );
-		url.searchParams.set( 'from', String( getUnixTime( next.start ) ) );
-		url.searchParams.set( 'to', String( getUnixTime( next.end ) ) );
-		window.history.replaceState( null, '', url.pathname + url.search );
 	};
 
+	// Extract the data for memoization
+
+	let siteLogsArray;
+	if ( isSiteLogsData( siteLogs ) ) {
+		siteLogsArray = siteLogs.logs;
+	} else if ( isActivityLogData( siteLogs ) ) {
+		siteLogsArray = siteLogs.activityLogs;
+	} else {
+		siteLogsArray = undefined;
+	}
 	const logs = useMemo( () => {
 		const suffix = scrollId ? scrollId.slice( 0, 8 ) : `p${ view.page }`;
-		const items = siteLogs?.logs ?? [];
 
-		return items.map( ( log, index ) => {
+		const items = siteLogsArray ?? [];
+		return items.map( ( log: PHPLog | ServerLog | SiteActivityLog, index: number ) => {
+			if ( logType === LogType.ACTIVITY ) {
+				const activity = log as SiteActivityLog;
+				return {
+					...activity,
+					id: `${ activity.activity_id }|${ suffix }|${ String( index ) }`,
+				};
+			}
 			if ( logType === LogType.PHP ) {
 				const php = log as PHPLog;
 				return {
@@ -194,21 +225,30 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 				}|${ server.user_ip }|${ suffix }|${ String( index ) }`,
 			};
 		} );
-	}, [ scrollId, view.page, siteLogs?.logs, logType ] );
+	}, [ scrollId, view.page, siteLogsArray, logType ] );
 
-	const paginationInfo = {
-		totalItems: siteLogs?.total_results || 0,
-		totalPages:
-			!! siteLogs?.total_results && !! view.perPage
-				? Math.ceil( siteLogs.total_results / view.perPage )
-				: 0,
-	};
+	const paginationInfo = isActivityLogData( siteLogs )
+		? {
+				totalItems: siteLogs.totalItems,
+				totalPages: siteLogs.totalPages,
+		  }
+		: {
+				totalItems: ( () => {
+					return isSiteLogsData( siteLogs ) ? siteLogs.total_results : 0;
+				} )(),
+				totalPages: ( () => {
+					const totalResults = isSiteLogsData( siteLogs ) ? siteLogs.total_results : 0;
+					return totalResults && view.perPage ? Math.ceil( totalResults / view.perPage ) : 0;
+				} )(),
+		  };
 
 	const handleTabChange = ( tab: LogType ) => {
 		if ( tab === LogType.PHP ) {
 			router.navigate( { to: `/sites/${ siteSlug }/logs/php` } );
-		} else {
+		} else if ( tab === LogType.SERVER ) {
 			router.navigate( { to: `/sites/${ siteSlug }/logs/server` } );
+		} else if ( tab === LogType.ACTIVITY ) {
+			router.navigate( { to: `/sites/${ siteSlug }/logs/activity` } );
 		}
 	};
 
@@ -304,22 +344,26 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	// Simple header const to eliminate duplication
 	const LogsHeader = (
 		<>
-			<LogsDownloader
-				siteId={ siteId }
-				siteSlug={ site.slug }
-				logType={ logType }
-				startSec={ startSec }
-				endSec={ endSec }
-				filter={ filter }
-				onSuccess={ ( message ) => setNotice( { variant: 'success', message } ) }
-				onError={ ( message ) => setNotice( { variant: 'error', message } ) }
-			/>
-			<ToggleControl
-				__nextHasNoMarginBottom
-				label={ __( 'Auto-refresh' ) }
-				checked={ autoRefresh }
-				onChange={ handleAutoRefreshClick }
-			/>
+			{ logType !== LogType.ACTIVITY && (
+				<>
+					<LogsDownloader
+						siteId={ siteId }
+						siteSlug={ site.slug }
+						logType={ logType as LogType }
+						startSec={ startSec }
+						endSec={ endSec }
+						filter={ filter }
+						onSuccess={ ( message ) => setNotice( { variant: 'success', message } ) }
+						onError={ ( message ) => setNotice( { variant: 'error', message } ) }
+					/>
+					<ToggleControl
+						__nextHasNoMarginBottom
+						label={ __( 'Auto-refresh' ) }
+						checked={ autoRefresh }
+						onChange={ handleAutoRefreshClick }
+					/>
+				</>
+			) }
 		</>
 	);
 
@@ -338,14 +382,16 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 				{ ...getLogsCalloutProps() }
 			>
 				<>
-					<DateRangePicker
-						start={ dateRange.start }
-						end={ dateRange.end }
-						gmtOffset={ gmtOffset }
-						timezoneString={ timezoneString }
-						locale={ locale }
-						onChange={ handleDateRangeChange }
-					/>
+					{ logType !== LogType.ACTIVITY && (
+						<DateRangePicker
+							start={ dateRange.start }
+							end={ dateRange.end }
+							gmtOffset={ gmtOffset }
+							timezoneString={ timezoneString }
+							locale={ locale }
+							onChange={ handleDateRangeChangeWrapper }
+						/>
+					) }
 					<Card className="site-logs-card">
 						<CardHeader style={ { paddingBottom: '0' } }>
 							<TabPanel
@@ -353,8 +399,12 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 								activeClass="is-active"
 								tabs={ LOG_TABS }
 								onSelect={ ( tabName ) => {
-									if ( tabName === LogType.PHP || tabName === LogType.SERVER ) {
-										handleTabChange( tabName );
+									if (
+										tabName === LogType.PHP ||
+										tabName === LogType.SERVER ||
+										tabName === LogType.ACTIVITY
+									) {
+										handleTabChange( tabName as LogType );
 									}
 								} }
 								initialTabName={ logType }
@@ -363,33 +413,56 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 							</TabPanel>
 						</CardHeader>
 						<CardBody>
-							{ logType === LogType.PHP ? (
-								<DataViews< PHPLog >
-									data={ logs as PHPLog[] }
-									isLoading={ isFetching }
-									paginationInfo={ paginationInfo }
-									fields={ fields as Field< PHPLog >[] }
-									view={ view }
-									actions={ actions as Action< PHPLog >[] }
-									search={ false }
-									defaultLayouts={ { table: {} } }
-									onChangeView={ onChangeView }
-									header={ LogsHeader }
-								/>
-							) : (
-								<DataViews< ServerLog >
-									data={ logs as ServerLog[] }
-									isLoading={ isFetching }
-									paginationInfo={ paginationInfo }
-									fields={ fields as Field< ServerLog >[] }
-									view={ view }
-									actions={ actions as Action< ServerLog >[] }
-									search={ false }
-									defaultLayouts={ { table: {} } }
-									onChangeView={ onChangeView }
-									header={ LogsHeader }
-								/>
-							) }
+							{ ( () => {
+								if ( logType === LogType.PHP ) {
+									return (
+										<DataViews< PHPLog >
+											data={ logs as PHPLog[] }
+											isLoading={ isFetching }
+											paginationInfo={ paginationInfo }
+											fields={ fields as Field< PHPLog >[] }
+											view={ view }
+											actions={ actions as Action< PHPLog >[] }
+											search={ false }
+											defaultLayouts={ { table: {} } }
+											onChangeView={ onChangeView }
+											header={ LogsHeader }
+										/>
+									);
+								}
+
+								if ( logType === LogType.ACTIVITY ) {
+									return (
+										<DataViews< SiteActivityLog >
+											data={ logs as SiteActivityLog[] }
+											isLoading={ isFetching }
+											paginationInfo={ paginationInfo }
+											fields={ fields as unknown as Field< SiteActivityLog >[] }
+											view={ view }
+											actions={ actions as unknown as Action< SiteActivityLog >[] }
+											search={ false }
+											defaultLayouts={ { table: {} } }
+											onChangeView={ onChangeView }
+											header={ LogsHeader }
+										/>
+									);
+								}
+
+								return (
+									<DataViews< ServerLog >
+										data={ logs as ServerLog[] }
+										isLoading={ isFetching }
+										paginationInfo={ paginationInfo }
+										fields={ fields as Field< ServerLog >[] }
+										view={ view }
+										actions={ actions as Action< ServerLog >[] }
+										search={ false }
+										defaultLayouts={ { table: {} } }
+										onChangeView={ onChangeView }
+										header={ LogsHeader }
+									/>
+								);
+							} )() }
 						</CardBody>
 					</Card>
 				</>

@@ -1,4 +1,10 @@
-import { Button, CheckboxControl, Icon } from '@wordpress/components';
+import {
+	Button,
+	CheckboxControl,
+	Icon,
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { useCallback, useState, useEffect } from '@wordpress/element';
 import { __, sprintf, isRTL } from '@wordpress/i18n';
 import { chevronDown, chevronLeft, chevronRight } from '@wordpress/icons';
@@ -272,24 +278,25 @@ function FileBrowserNode( {
 				childIsAlternate = ! childIsAlternate;
 
 				return (
-					<FileBrowserNode
-						key={ childItem.name }
-						item={ childItem }
-						path={ `${ path }${ childItem.name }/` }
-						rewindId={ rewindId }
-						isAlternate={ childIsAlternate }
-						activeNodePath={ activeNodePath }
-						setActiveNodePath={ setActiveNodePath }
-						fileBrowserConfig={ fileBrowserConfig }
-						siteId={ siteId }
-						siteSlug={ siteSlug }
-						hasCredentials={ hasCredentials }
-						isRestoreEnabled={ isRestoreEnabled }
-						onTrackEvent={ onTrackEvent }
-						onRequestGranularRestore={ onRequestGranularRestore }
-						// Hacky way to pass extensions details to the child node
-						{ ...( childItem.type === 'archive' ? { parentItem: item } : {} ) }
-					/>
+					<div key={ childItem.name } style={ isRoot ? { marginLeft: 0 } : { marginLeft: 26 } }>
+						<FileBrowserNode
+							item={ childItem }
+							path={ `${ path }${ childItem.name }/` }
+							rewindId={ rewindId }
+							isAlternate={ childIsAlternate }
+							activeNodePath={ activeNodePath }
+							setActiveNodePath={ setActiveNodePath }
+							fileBrowserConfig={ fileBrowserConfig }
+							siteId={ siteId }
+							siteSlug={ siteSlug }
+							hasCredentials={ hasCredentials }
+							isRestoreEnabled={ isRestoreEnabled }
+							onTrackEvent={ onTrackEvent }
+							onRequestGranularRestore={ onRequestGranularRestore }
+							// Hacky way to pass extensions details to the child node
+							{ ...( childItem.type === 'archive' ? { parentItem: item } : {} ) }
+						/>
+					</div>
 				);
 			} );
 		}
@@ -333,6 +340,7 @@ function FileBrowserNode( {
 				// translators: %s is a directory name
 				aria-label={ sprintf( __( 'Expand contents of %s' ), item.name ) }
 				aria-expanded={ isOpen }
+				size="compact"
 			/>
 		);
 	};
@@ -350,26 +358,25 @@ function FileBrowserNode( {
 		showSeparateExpandButton && item.hasChildren && ! shouldRestrictChildren( item );
 
 	return (
-		<div className={ nodeClassName }>
-			<div className={ nodeItemClassName }>
-				{ ! isRoot && (
-					<>
-						{ renderCheckbox() }
-						<Button
-							icon={ renderSeparateExpandButton ? null : buttonExpandIcon }
-							className="file-browser-node__title has-text has-icon"
-							onClick={ handleClick }
-							showTooltip={ isLabelTruncated }
-							label={ item.name }
-							variant="tertiary"
-							tabIndex={ showSeparateExpandButton && ! showFileCard ? -1 : 0 }
-						>
-							<FileTypeIcon type={ item.type } /> { label }
-						</Button>
-						{ renderSeparateExpandButton && expandButton() }
-					</>
-				) }
-			</div>
+		<VStack className={ nodeClassName } spacing={ 0.5 }>
+			{ ! isRoot && (
+				<HStack className={ nodeItemClassName } justify="flex-start" spacing={ 0 }>
+					{ renderCheckbox() }
+					<Button
+						icon={ renderSeparateExpandButton ? null : buttonExpandIcon }
+						className="file-browser-node__title has-text has-icon"
+						onClick={ handleClick }
+						showTooltip={ isLabelTruncated }
+						label={ item.name }
+						variant="tertiary"
+						tabIndex={ showSeparateExpandButton && ! showFileCard ? -1 : 0 }
+						size="compact"
+					>
+						<FileTypeIcon type={ item.type } /> { label }
+					</Button>
+					{ renderSeparateExpandButton && expandButton() }
+				</HStack>
+			) }
 			{ isCurrentNodeClicked && showFileCard && isRestoreEnabled !== undefined && onTrackEvent && (
 				<FileInfoCard
 					siteId={ siteId }
@@ -387,11 +394,13 @@ function FileBrowserNode( {
 			{ isOpen && (
 				<>
 					{ item.hasChildren && ! shouldRestrictChildren( item ) && (
-						<div className="file-browser-node__contents">{ renderChildren() }</div>
+						<VStack className="file-browser-node__contents" spacing={ 1 }>
+							{ renderChildren() }
+						</VStack>
 					) }
 				</>
 			) }
-		</div>
+		</VStack>
 	);
 }
 
