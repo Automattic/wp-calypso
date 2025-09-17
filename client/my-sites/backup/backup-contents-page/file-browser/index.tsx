@@ -23,7 +23,6 @@ export interface FileBrowserConfig {
 	showHeader?: boolean;
 	inheritNodeColor?: boolean;
 	nodesIndentInlineStart?: number;
-	backupTextColor?: string;
 }
 
 interface FileBrowserProps {
@@ -95,13 +94,8 @@ function FileBrowser( {
 			{ fileBrowserConfig?.showBackupTime && displayBackupDate && (
 				<HStack alignment="left" spacing={ 1 }>
 					<Text
-						style={ {
-							marginInlineStart: '14px',
-							marginTop: '10px',
-							...( fileBrowserConfig?.backupTextColor
-								? { color: fileBrowserConfig.backupTextColor }
-								: {} ),
-						} }
+						color="var(--studio-gray-40)"
+						style={ { marginInlineStart: '14px', marginTop: '10px' } }
 					>
 						{ displayBackupDate
 							? createInterpolateElement( __( 'Content from the latest backup: <date />.' ), {
