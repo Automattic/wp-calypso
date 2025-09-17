@@ -1,12 +1,13 @@
-import { test, expect } from '../../lib/pw-base';
+import { DataHelper } from '@automattic/calypso-e2e';
+import { expect, test } from '../../lib/pw-base';
 
 test.describe(
 	'Dashboard: Site Visibility Settings',
 	{ tag: [ '@dashboard', '@calypso-pr' ] },
 	() => {
 		test.skip(
-			! process.env.CALYPSO_BASE_URL || process.env.CALYPSO_BASE_URL === 'https://wordpress.com',
-			'Skipping for wordpress.com or if CALYPSO_BASE_URL is undefined, as v2 dashboard is not enabled yet.'
+			DataHelper.isCalypsoProduction(),
+			'Skipping for WordPress.com as v2 dashboard is not enabled yet.'
 		);
 
 		test( 'As a new simple site user, I can set my site visibility to Private, so that only I can see my site', async ( {
