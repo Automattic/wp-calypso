@@ -37,10 +37,7 @@ export const HelpCenterMoreResources = () => {
 			<h3 className="help-center__section-title">
 				{ __( 'More resources', __i18n_text_domain__ ) }
 			</h3>
-			<ul
-				className="help-center-more-resources__resources"
-				aria-labelledby="help-center-more-resources__resources"
-			>
+			<ul aria-labelledby="help-center-more-resources__resources">
 				<li className="help-center-more-resources__resource-item help-center-link__item">
 					<div className="help-center-more-resources__resource-cell help-center-link__cell">
 						<button

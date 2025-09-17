@@ -6,15 +6,6 @@
 	position: relative;
 	padding: 0;
 
-	.help-center-footer-blender {
-		height: 80px;
-		margin-top: -80px;
-		background: linear-gradient(to bottom, transparent, #fff);
-		position: absolute;
-		width: 100%;
-		pointer-events: none;
-	}
-
 	// hide when empty
 	&:empty {
 		display: none;
@@ -22,7 +13,6 @@
 
 	.button.help-center-contact-page__button {
 		margin: 16px;
-		margin-top: 0;
 		width: calc(100% - 32px);
 		border-radius: 8px;
 	}
