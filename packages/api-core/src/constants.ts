@@ -18,7 +18,7 @@ export const DotcomPlans = {
 	PREMIUM_3_YEARS: 'value_bundle-3y',
 } as const;
 
-export type DotcomPlan = ( typeof DotcomPlans )[ keyof typeof DotcomPlans ];
+export type DotcomPlanSlug = ( typeof DotcomPlans )[ keyof typeof DotcomPlans ];
 
 export enum DotcomFeatures {
 	ATOMIC = 'atomic',
