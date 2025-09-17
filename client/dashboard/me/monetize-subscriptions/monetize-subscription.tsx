@@ -1,11 +1,16 @@
-import { monetizeSubscriptionQuery } from '@automattic/api-queries';
+import {
+	monetizeSubscriptionDisableAutoRenew,
+	monetizeSubscriptionQuery,
+	monetizeSubscriptionResumeAutoRenew,
+	monetizeSubscriptionStop,
+} from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
 import { CALYPSO_CONTACT } from '@automattic/urls';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Card, Notice } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { Icon, trash, replace } from '@wordpress/icons';
+import { Icon, trash, replace, globe, chevronRight } from '@wordpress/icons';
 import { formatDate } from 'date-fns';
 import { useEffect } from 'react';
 import { useNotice } from '../../app/hooks/use-notice';
@@ -13,16 +18,11 @@ import { monetizeSubscriptionRoute } from '../../app/router/me';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getMonetizeSubscriptionsUrl } from '../../me/monetize-subscriptions/urls';
-import {
-	requestAutoRenewDisable,
-	requestAutoRenewResume,
-	requestSubscriptionStop,
-} from './actions';
 
 function MembershipSiteHeader( { name, domain }: { name: string; domain: string } ) {
 	return (
 		<Card>
-			<Gridicon icon="globe" />
+			<Icon icon={ globe } />
 			<div>
 				<div>{ name }</div>
 				<div>{ domain }</div>
@@ -33,33 +33,40 @@ function MembershipSiteHeader( { name, domain }: { name: string; domain: string 
 
 export default function MonetizeSubscription() {
 	const params = monetizeSubscriptionRoute.useParams();
-	const subscriptionId = params.subscriptionId;
+	const subscriptionId: string = params.subscriptionId;
 
 	const { data: subscription } = useQuery( monetizeSubscriptionQuery( subscriptionId ) );
 
 	const { createSuccessNotice, createErrorNotice } = useNotice();
 
-	// TEST
-	const stoppingStatus = '';
-	const updatingStatus = '';
+	const {
+		mutate: stopSubscription,
+		isError: stoppingStatusError,
+		isLoading: isStopping,
+		isSuccess: stoppingStatusSuccess,
+	} = useMutation( monetizeSubscriptionStop( subscriptionId ) );
 
-	const isStopping = stoppingStatus === 'start';
-	const isUpdating = updatingStatus === 'start';
-	const isProcessing = isStopping || isUpdating;
-	const stopSubscription = () =>
-		dispatch( ! isProcessing && requestSubscriptionStop( subscription.ID ) );
-	const disableAutoRenew = () =>
-		dispatch( ! isProcessing && requestAutoRenewDisable( subscription.ID ) );
-	const enableAutoRenew = () =>
-		dispatch( ! isProcessing && requestAutoRenewResume( subscription.ID ) );
+	const {
+		mutate: disableAutoRenew,
+		isError: disableAutoRenewError,
+		isLoading: isDisablingAutoRenew,
+	} = useMutation( monetizeSubscriptionDisableAutoRenew( subscriptionId ) );
+
+	const {
+		mutate: enableAutoRenew,
+		isError: enableAutoRenewError,
+		isLoading: isEnablingAutoRenew,
+	} = useMutation( monetizeSubscriptionResumeAutoRenew( subscriptionId ) );
+
 	const isRenewable = subscription && ( subscription.renew_interval || subscription.is_renewable ); // can remove renew_interval once backend is deployed
 	const isAutoRenewing = isRenewable && subscription.renew_interval;
 	const isProduct = subscription && ! isRenewable;
 	const isDisabledAutorenewing = isRenewable && ! subscription.renew_interval;
-	const navigate = useNavigate();
+	const isUpdating = isEnablingAutoRenew || isDisablingAutoRenew;
 
+	const navigate = useNavigate();
 	useEffect( () => {
-		if ( stoppingStatus === 'fail' || updatingStatus === 'fail' ) {
+		if ( stoppingStatusError || disableAutoRenewError || enableAutoRenewError ) {
 			// run is-error notice to contact support
 			if ( isProduct ) {
 				createErrorNotice( __( 'There was a problem while removing your product.' ), {
@@ -70,7 +77,7 @@ export default function MonetizeSubscription() {
 						},
 					],
 				} );
-			} else if ( stoppingStatus === 'fail' ) {
+			} else if ( stoppingStatusError ) {
 				createErrorNotice( __( 'There was a problem while stopping your subscription.' ), {
 					actions: [
 						{
@@ -79,20 +86,26 @@ export default function MonetizeSubscription() {
 						},
 					],
 				} );
-			} else if ( updatingStatus === 'fail' ) {
+			} else if ( disableAutoRenewError || enableAutoRenewError ) {
 				createErrorNotice( __( 'There was a problem while updating your subscription.' ), {
 					url: CALYPSO_CONTACT,
 					label: __( 'Please contact support' ),
 				} );
 			}
-		} else if ( stoppingStatus === 'success' ) {
+		} else if ( stoppingStatusSuccess ) {
 			// redirect back to Purchases list
 			createSuccessNotice( __( 'This item has been removed.' ), { displayOnNextPage: true } );
 			navigate( {
 				to: getMonetizeSubscriptionsUrl(),
 			} );
 		}
-	}, [ stoppingStatus, updatingStatus, isProduct ] );
+	}, [
+		stoppingStatusSuccess,
+		stoppingStatusError,
+		isProduct,
+		enableAutoRenewError,
+		disableAutoRenewError,
+	] );
 
 	return (
 		<PageLayout
@@ -137,7 +150,7 @@ export default function MonetizeSubscription() {
 									{ __( 'Subscribed On' ) }
 								</em>
 								<span className="memberships__subscription-inner-detail">
-									{ formatDate( subscription.start_date, 'll' ) }
+									{ formatDate( subscription.start_date, 'MMM dd, yyyy' ) }
 								</span>
 							</li>
 							<li>
@@ -146,7 +159,7 @@ export default function MonetizeSubscription() {
 								</em>
 								<div className="memberships__subscription-inner-detail">
 									{ subscription.end_date
-										? formatDate( subscription.end_date, 'll' )
+										? formatDate( subscription.end_date, 'MMM dd, yyyy' )
 										: __( 'Never Expires' ) }
 								</div>
 								{ ! isProduct && (
@@ -168,7 +181,7 @@ export default function MonetizeSubscription() {
 						>
 							<Icon icon={ replace } />
 							{ isAutoRenewing ? __( 'Disable auto-renew' ) : __( 'Enable auto-renew' ) }
-							<Gridicon className="card__link-indicator" icon="chevron-right" />
+							<Icon className="card__link-indicator" icon={ chevronRight } />
 						</Card>
 					) }
 					<Card tagName="button" onClick={ stopSubscription }>
@@ -178,7 +191,7 @@ export default function MonetizeSubscription() {
 							  sprintf( __( 'Remove %s product' ), subscription.title )
 							: // eslint-disable-next-line @wordpress/i18n-translator-comments
 							  sprintf( __( 'Stop %s subscription' ), subscription.title ) }
-						<Gridicon className="card__link-indicator" icon="chevron-right" />
+						<Icon className="card__link-indicator" icon={ chevronRight } />
 					</Card>
 				</>
 			) }
