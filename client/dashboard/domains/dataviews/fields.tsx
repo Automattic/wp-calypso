@@ -43,7 +43,8 @@ export const useFields = ( {
 			{
 				id: 'is_primary_domain',
 				label: __( 'Primary' ),
-				getValue: ( { item }: { item: DomainSummary } ) => item.primary_domain,
+				getValue: ( { item }: { item: DomainSummary } ) =>
+					item.primary_domain ? __( 'Primary' ) : '',
 				render: ( { field, item } ) =>
 					field.getValue( { item } ) ? <Text>{ __( 'Primary' ) }</Text> : <IneligibleIndicator />,
 			},
