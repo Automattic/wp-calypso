@@ -14,9 +14,10 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState, useEffect, useMemo, useCallback } from 'react';
+import wpcom from 'calypso/lib/wp';
 import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';
-import { getSiteMcpAbilities, createSiteSpecificApiPayload, saveMcpAbilities } from './utils';
+import { getSiteMcpAbilities, createSiteSpecificApiPayload } from './utils';
 import type { SiteMcpAbilities } from '@automattic/api-core';
 
 function SettingsMcpComponent( { siteSlug }: { siteSlug: string } ) {
@@ -24,7 +25,13 @@ function SettingsMcpComponent( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
 	const { data: userSettings } = useQuery( userSettingsQuery() );
-	const saveMcpMutation = useMutation( { mutationFn: saveMcpAbilities } );
+	// Custom mutation that bypasses the saveableKeys filtering
+	const saveMcpMutation = useMutation( {
+		mutationFn: async ( data: { mcp_abilities: any } ) => {
+			// Use wpcom API call to bypass saveableKeys filtering
+			return await wpcom.req.post( '/me/settings', data );
+		},
+	} );
 
 	// Get tools from user settings using the new nested structure
 	const availableTools = useMemo( (): [ string, SiteMcpAbilities[ string ] ][] => {

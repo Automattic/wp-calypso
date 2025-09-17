@@ -1,4 +1,3 @@
-import { wpcom } from '@automattic/api-core';
 import type { SiteMcpAbilities } from '@automattic/api-core';
 
 export type McpAbilitiesStructure = {
@@ -32,7 +31,7 @@ export function getSiteMcpAbilities(
 	// Start with default site abilities
 	const defaultSiteAbilities = mcpData.site || {};
 
-	// Apply site-specific overrides if they exist
+	// Apply site-specific overrides if they exist (now only contains enabled/disabled values: 0 or 1)
 	const siteOverrides = mcpData.sites?.[ siteIdStr ] || {};
 
 	// Merge defaults with overrides
@@ -46,11 +45,14 @@ export function getSiteMcpAbilities(
 		}
 	} );
 
-	// Then, apply any site-specific overrides
-	Object.entries( siteOverrides ).forEach( ( [ abilityName, ability ] ) => {
-		if ( ability && typeof ability === 'object' ) {
-			// @ts-ignore - TypeScript spread operator issue with potentially undefined values
-			mergedAbilities[ abilityName ] = { ...ability };
+	// Then, apply any site-specific overrides (only enabled/disabled state)
+	Object.entries( siteOverrides ).forEach( ( [ abilityName, enabledValue ] ) => {
+		// enabledValue is now just 0 or 1, not a full ability object
+		if ( mergedAbilities[ abilityName ] ) {
+			mergedAbilities[ abilityName ] = {
+				...mergedAbilities[ abilityName ],
+				enabled: enabledValue === 1,
+			};
 		}
 	} );
 
@@ -73,9 +75,9 @@ export function getSiteAbilityState(
 		return false;
 	}
 
-	// Check if site has custom override
-	if ( mcpData.sites?.[ siteIdStr ]?.[ abilityName ] ) {
-		return mcpData.sites[ siteIdStr ][ abilityName ].enabled;
+	// Check if site has custom override (now just 0 or 1)
+	if ( mcpData.sites?.[ siteIdStr ]?.[ abilityName ] !== undefined ) {
+		return mcpData.sites[ siteIdStr ][ abilityName ] === 1;
 	}
 
 	// Fall back to default from 'site' section
@@ -113,14 +115,14 @@ export function updateSiteMcpAbilities(
 	const mcpData = userSettings?.mcp_abilities;
 	const defaultSiteAbilities = mcpData?.site || {};
 
-	// Find only the abilities that differ from defaults
-	const siteOverrides: SiteMcpAbilities = {};
+	// Find only the abilities that differ from defaults (store only enabled/disabled values)
+	const siteOverrides: Record< string, number > = {};
 	Object.entries( abilities ).forEach( ( [ abilityName, ability ] ) => {
 		const defaultAbility = defaultSiteAbilities[ abilityName ];
 
 		// Only store if it differs from the default
 		if ( ! defaultAbility || defaultAbility.enabled !== ability.enabled ) {
-			siteOverrides[ abilityName ] = Object.assign( {}, ability );
+			siteOverrides[ abilityName ] = ability.enabled ? 1 : 0;
 		}
 	} );
 
@@ -233,11 +235,4 @@ export function createSiteSpecificApiPayload(
 	}
 
 	return { mcp_abilities: payload };
-}
-
-/**
- * Custom mutation function for saving MCP abilities that bypasses the saveableKeys filtering
- */
-export async function saveMcpAbilities( data: { mcp_abilities: McpAbilitiesApiStructure } ) {
-	return await wpcom.req.post( '/me/settings', data );
 }
