@@ -1,4 +1,9 @@
-import { isAutomatticianQuery, siteBySlugQuery, userSettingsQuery } from '@automattic/api-queries';
+import {
+	isAutomatticianQuery,
+	siteBySlugQuery,
+	userSettingsQuery,
+	userSettingsMutation,
+} from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
@@ -14,7 +19,6 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import wpcom from 'calypso/lib/wp';
 import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';
 import { getSiteMcpAbilities, createSiteSpecificApiPayload } from './utils';
@@ -25,13 +29,8 @@ function SettingsMcpComponent( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
 	const { data: userSettings } = useQuery( userSettingsQuery() );
-	// Custom mutation that bypasses the saveableKeys filtering
-	const saveMcpMutation = useMutation( {
-		mutationFn: async ( data: { mcp_abilities: any } ) => {
-			// Use wpcom API call to bypass saveableKeys filtering
-			return await wpcom.req.post( '/me/settings', data );
-		},
-	} );
+	// Use the standard userSettingsMutation (now supports mcp_abilities)
+	const saveMcpMutation = useMutation( userSettingsMutation() );
 
 	// Get tools from user settings using the new nested structure
 	const availableTools = useMemo( (): [ string, SiteMcpAbilities[ string ] ][] => {
