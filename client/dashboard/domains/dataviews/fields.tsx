@@ -8,12 +8,11 @@ import { DomainNameField } from './field-domain-name';
 import { DomainSiteField } from './field-domain-site';
 import { DomainExpiryField } from './field-expiry';
 import { DomainSslField } from './field-ssl';
+import { IneligibleIndicator } from './ineligible-indicator';
 import type { DomainSummary, Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 const THREE_DAYS_IN_MINUTES = 3 * 1440;
-
-const IneligibleIndicator = () => <Text color="#CCCCCC">-</Text>;
 
 export const useFields = ( {
 	site,
