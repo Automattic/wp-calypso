@@ -235,11 +235,7 @@ export default function StagingSiteSyncModal( {
 	const isSubmitDisabled = showDomainConfirmation && domainConfirmation !== productionSiteSlug;
 
 	return (
-		<Modal
-			title={ syncConfig[ environment ].title }
-			onRequestClose={ handleClose }
-			style={ { maxWidth: '668px' } }
-		>
+		<Modal title={ syncConfig[ environment ].title } onRequestClose={ handleClose } size="large">
 			<VStack spacing={ 5 }>
 				<Text>
 					{ createInterpolateElement( syncConfig[ environment ].description, {
