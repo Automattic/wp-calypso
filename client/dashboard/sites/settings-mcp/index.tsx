@@ -18,7 +18,7 @@ import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';
 import { getSiteMcpAbilities, createSiteSpecificApiPayload } from './utils';
@@ -28,7 +28,7 @@ function SettingsMcpComponent( { siteSlug }: { siteSlug: string } ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
-	const { data: userSettings } = useQuery( userSettingsQuery() );
+	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 	// Use the standard userSettingsMutation (now supports mcp_abilities)
 	const saveMcpMutation = useMutation( userSettingsMutation() );
 
@@ -47,12 +47,6 @@ function SettingsMcpComponent( { siteSlug }: { siteSlug: string } ) {
 	// Calculate if any tools are enabled in form data (for master toggle state)
 	const anyToolsEnabled = hasTools && Object.values( formData ).some( ( tool ) => tool.enabled );
 
-	// Update form data when userSettings changes
-	useEffect( () => {
-		const abilities = getSiteMcpAbilities( userSettings, site.ID );
-		setFormData( abilities );
-	}, [ userSettings, site.ID ] );
-
 	const handleSubmit = useCallback(
 		( e: React.FormEvent ) => {
 			e.preventDefault();
@@ -62,7 +56,7 @@ function SettingsMcpComponent( { siteSlug }: { siteSlug: string } ) {
 				const apiData = createSiteSpecificApiPayload( userSettings, site.ID, formData );
 
 				// Save using custom mutation (bypasses saveableKeys filtering)
-				saveMcpMutation.mutate( apiData, {
+				saveMcpMutation.mutate( apiData as any, {
 					onSuccess: () => {
 						createSuccessNotice( __( 'MCP tools saved.' ), { type: 'snackbar' } );
 					},

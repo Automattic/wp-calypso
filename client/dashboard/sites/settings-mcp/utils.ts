@@ -1,10 +1,4 @@
-import type { SiteMcpAbilities } from '@automattic/api-core';
-
-export type McpAbilitiesStructure = {
-	account?: SiteMcpAbilities;
-	site?: SiteMcpAbilities; // Default values for all sites
-	sites?: Record< string, Record< string, number > >; // Custom overrides per site (0/1 values only)
-};
+import type { SiteMcpAbilities, McpAbilities } from '@automattic/api-core';
 
 // API payload structure (simplified format for API calls)
 export type McpAbilitiesApiStructure = {
@@ -18,7 +12,7 @@ export type McpAbilitiesApiStructure = {
  * Falls back to default site abilities, then account-level abilities
  */
 export function getSiteMcpAbilities(
-	userSettings: { mcp_abilities?: McpAbilitiesStructure } | null | undefined,
+	userSettings: { mcp_abilities?: McpAbilities } | null | undefined,
 	siteId: string | number
 ): SiteMcpAbilities {
 	const siteIdStr = String( siteId );
@@ -66,7 +60,7 @@ export function getSiteMcpAbilities(
 export function getSiteAbilityState(
 	abilityName: string,
 	siteId: string | number,
-	userSettings: { mcp_abilities?: McpAbilitiesStructure } | null | undefined
+	userSettings: { mcp_abilities?: McpAbilities } | null | undefined
 ): boolean {
 	const siteIdStr = String( siteId );
 	const mcpData = userSettings?.mcp_abilities;
@@ -98,7 +92,7 @@ export function getSiteAbilityState(
  * Get account-level MCP abilities
  */
 export function getAccountMcpAbilities(
-	userSettings: { mcp_abilities?: McpAbilitiesStructure } | null
+	userSettings: { mcp_abilities?: McpAbilities } | null
 ): SiteMcpAbilities {
 	return userSettings?.mcp_abilities?.account || {};
 }
@@ -108,10 +102,10 @@ export function getAccountMcpAbilities(
  * Only stores differences from the default site abilities
  */
 export function updateSiteMcpAbilities(
-	userSettings: { mcp_abilities?: McpAbilitiesStructure } | null | undefined,
+	userSettings: { mcp_abilities?: McpAbilities } | null | undefined,
 	siteId: string | number,
 	abilities: SiteMcpAbilities
-): McpAbilitiesStructure {
+): McpAbilities {
 	const siteIdStr = String( siteId );
 	const mcpData = userSettings?.mcp_abilities;
 	const defaultSiteAbilities = mcpData?.site || {};
@@ -178,7 +172,7 @@ export function convertAbilitiesFromApi(
  * Uses the new 'site' key format for single site updates
  */
 export function createSiteSpecificApiPayload(
-	userSettings: { mcp_abilities?: McpAbilitiesStructure } | null | undefined,
+	userSettings: { mcp_abilities?: McpAbilities } | null | undefined,
 	siteId: string | number,
 	abilities: SiteMcpAbilities
 ): { mcp_abilities: McpAbilitiesApiStructure } {
