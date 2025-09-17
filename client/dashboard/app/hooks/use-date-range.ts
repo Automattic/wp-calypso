@@ -1,5 +1,5 @@
 import { useRouter } from '@tanstack/react-router';
-import { getUnixTime, fromUnixTime, isValid as isValidDate } from 'date-fns';
+import { getUnixTime, fromUnixTime, isValid as isValidDate, subDays, isSameSecond } from 'date-fns';
 import { useState, useRef, useEffect } from 'react';
 import { formatYmd, parseYmdLocal } from '../../utils/datetime';
 
@@ -43,18 +43,15 @@ export function useDateRange( {
 		}
 
 		const tick = () => {
-			const newDefault = getDefaultDateRange( timezoneString, gmtOffset );
+			const end = new Date();
+			const start = subDays( end, 6 );
 
-			setDateRange( ( prev ) => {
-				// Only update if dates actually changed to avoid unnecessary re-renders
-				const isSame =
-					prev.start.getTime() === newDefault.start.getTime() &&
-					prev.end.getTime() === newDefault.end.getTime();
-				return isSame ? prev : newDefault;
-			} );
+			setDateRange( ( prev ) =>
+				isSameSecond( prev.start, start ) && isSameSecond( prev.end, end ) ? prev : { start, end }
+			);
 
-			const from = getUnixTime( newDefault.start );
-			const to = getUnixTime( newDefault.end );
+			const from = getUnixTime( start );
+			const to = getUnixTime( end );
 
 			const last = lastUrlRangeRef.current;
 			// Only sync URL when from/to change to avoid unnecessary history updates
