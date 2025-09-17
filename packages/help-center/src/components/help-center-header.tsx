@@ -65,6 +65,22 @@ const SupportModeTitle = () => {
 	}
 };
 
+const MutedBellIcon = () => (
+	<div style={ { position: 'relative', display: 'inline-block' } }>
+		<Icon icon={ bell } width={ 24 } height={ 24 } />
+		<svg
+			style={ { position: 'absolute', top: 0, left: 0 } }
+			xmlns="http://www.w3.org/2000/svg"
+			width="24"
+			height="24"
+			viewBox="0 0 24 24"
+			fill="none"
+		>
+			<path d="M2 22L22 2" stroke="#757575" strokeWidth="1.5" />
+		</svg>
+	</div>
+);
+
 const EllipsisMenu = () => {
 	const { __ } = useI18n();
 	const navigate = useNavigate();
@@ -123,7 +139,13 @@ const EllipsisMenu = () => {
 				<Menu.Separator />
 				<Menu.Item
 					onClick={ toggleSoundNotifications }
-					prefix={ <Icon icon={ bell } width={ 24 } height={ 24 } /> }
+					prefix={
+						areSoundNotificationsEnabled ? (
+							<MutedBellIcon />
+						) : (
+							<Icon icon={ bell } width={ 24 } height={ 24 } />
+						)
+					}
 				>
 					<Menu.ItemLabel>
 						{ areSoundNotificationsEnabled
