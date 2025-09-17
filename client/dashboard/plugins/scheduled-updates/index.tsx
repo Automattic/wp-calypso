@@ -1,9 +1,10 @@
 import { hostingScheduledUpdatesQuery, sitesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { Button } from '@wordpress/components';
+import { Button, FormToggle } from '@wordpress/components';
 import { DataViews, type Field, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
+import { format, fromUnixTime } from 'date-fns';
 import { useState, useMemo } from 'react';
 import {
 	pluginsScheduledUpdatesNewRoute,
@@ -28,6 +29,40 @@ export const fields: Field< ScheduledUpdateRow >[] = [
 			</>
 		),
 	},
+	{
+		id: 'lastUpdate',
+		type: 'text',
+		label: __( 'Last Update' ),
+		render: ( { item } ) =>
+			item.lastUpdate ? format( fromUnixTime( item.lastUpdate ), 'MMM d, yyyy H:mm' ) : '-',
+	},
+	{
+		id: 'nextUpdate',
+		type: 'text',
+		label: __( 'Next Update' ),
+		render: ( { item } ) => format( fromUnixTime( item.nextUpdate ), 'MMM d, yyyy H:mm' ),
+	},
+	{
+		id: 'schedule',
+		type: 'text',
+		label: __( 'Frequency' ),
+		render: ( { item } ) => item.schedule[ 0 ].toUpperCase() + item.schedule.slice( 1 ),
+	},
+	{
+		id: 'active',
+		type: 'text',
+		label: __( 'Active' ),
+		render: ( { item } ) => <FormToggle checked={ item.active } onChange={ () => {} } />,
+	},
+	{
+		id: 'actions',
+		type: 'text',
+		label: __( 'Actions' ),
+	},
+	{
+		id: 'scheduleId',
+		label: __( 'Schedule' ),
+	},
 ];
 
 export const defaultView: View = {
@@ -37,9 +72,9 @@ export const defaultView: View = {
 	search: '',
 	filters: [],
 	titleField: 'site',
-	fields: [],
+	fields: [ 'lastUpdate', 'nextUpdate', 'schedule', 'active' ],
 	sort: { field: 'site', direction: 'asc' },
-	groupByField: 'schedule',
+	groupByField: 'scheduleId',
 };
 
 export default function PluginsScheduledUpdates() {
@@ -69,10 +104,11 @@ export default function PluginsScheduledUpdates() {
 				result.push( {
 					id,
 					site: site,
+					lastUpdate: last_run_timestamp,
+					nextUpdate: timestamp,
 					active,
-					next_run: timestamp,
-					last_run: last_run_timestamp,
 					schedule,
+					scheduleId,
 				} );
 			}
 		}
@@ -80,7 +116,7 @@ export default function PluginsScheduledUpdates() {
 		// sort by schedule (daily/weekly) then timestamp
 		result.sort( ( a, b ) => {
 			if ( a.schedule === b.schedule ) {
-				return a.next_run - b.next_run;
+				return a.nextUpdate - b.nextUpdate;
 			}
 			return a.schedule.localeCompare( b.schedule );
 		} );
@@ -119,7 +155,22 @@ export default function PluginsScheduledUpdates() {
 					view={ view }
 					onChangeView={ setView }
 					isLoading={ isLoading }
-					empty={ __( 'Please create a new scheduled update.' ) }
+					empty={ __(
+						"Oops! We couldn't find any schedules based on your search criteria. You might want to check your search terms and try again."
+					) }
+					actions={ [
+						{
+							id: 'edit',
+							label: __( 'Edit' ),
+							isPrimary: true,
+							callback: () => {},
+						},
+						{
+							id: 'remove',
+							label: __( 'Remove' ),
+							callback: () => {},
+						},
+					] }
 				/>
 			</DataViewsCard>
 		</PageLayout>

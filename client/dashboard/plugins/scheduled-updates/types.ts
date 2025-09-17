@@ -21,8 +21,9 @@ export type ScheduleCollisions = {
 export interface ScheduledUpdateRow {
 	id: string;
 	site: Site;
-	last_run: number | null;
-	next_run: number;
+	lastUpdate: number | null;
+	nextUpdate: number;
 	active: boolean;
 	schedule: HostingUpdateScheduleFrequency;
+	scheduleId: string;
 }
