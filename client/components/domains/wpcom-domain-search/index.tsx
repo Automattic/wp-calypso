@@ -10,6 +10,7 @@ type DomainSearchProps = Omit< ComponentProps< typeof DomainSearch >, 'cart' | '
 	events?: Omit< Required< ComponentProps< typeof DomainSearch > >[ 'events' ], 'onContinue' > & {
 		onContinue?: ( items: ResponseCartProduct[] ) => void;
 	};
+	isFirstDomainFreeForFirstYear?: boolean;
 };
 
 const SESSION_STORAGE_QUERY_KEY = 'domain-search-query';
@@ -28,9 +29,11 @@ const setInitialQuery = ( query: string ) => {
 
 const DomainSearchWithCart = ( {
 	currentSiteId,
+	currentSiteUrl,
 	flowName,
 	initialQuery: externalInitialQuery,
 	config: externalConfig,
+	isFirstDomainFreeForFirstYear,
 	...props
 }: DomainSearchProps ) => {
 	const cartKey = currentSiteId ?? 'no-site';
@@ -38,21 +41,25 @@ const DomainSearchWithCart = ( {
 	const { cart, isNextDomainFree, items } = useWPCOMShoppingCartForDomainSearch( {
 		cartKey,
 		flowName,
+		isFirstDomainFreeForFirstYear: isFirstDomainFreeForFirstYear ?? false,
 	} );
 
 	const initialQuery = useMemo( () => {
-		return externalInitialQuery ?? getInitialQuery();
-	}, [ externalInitialQuery ] );
+		return externalInitialQuery || currentSiteUrl || getInitialQuery();
+	}, [ externalInitialQuery, currentSiteUrl ] );
+
+	const cartItemsLength = cart.items.length;
 
 	const config = useMemo( () => {
 		return {
 			...externalConfig,
 			priceRules: {
 				...externalConfig?.priceRules,
-				freeForFirstYear: isNextDomainFree,
+				freeForFirstYear:
+					( cartItemsLength === 0 && isFirstDomainFreeForFirstYear ) || isNextDomainFree,
 			},
 		};
-	}, [ externalConfig, isNextDomainFree ] );
+	}, [ externalConfig, isNextDomainFree, cartItemsLength, isFirstDomainFreeForFirstYear ] );
 
 	const events = useMemo( () => {
 		return {
@@ -69,6 +76,7 @@ const DomainSearchWithCart = ( {
 	return (
 		<DomainSearch
 			{ ...props }
+			currentSiteUrl={ currentSiteUrl }
 			config={ config }
 			cart={ cart }
 			events={ events }

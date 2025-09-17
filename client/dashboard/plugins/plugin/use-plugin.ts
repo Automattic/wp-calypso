@@ -15,7 +15,11 @@ export interface SiteWithPluginActivationStatus extends Site {
 
 export const usePlugin = ( pluginSlug: string ) => {
 	const locale = useLocale();
-	const { data: sitesPlugins, isLoading: isLoadingSitesPlugins } = useQuery( pluginsQuery() );
+	const {
+		data: sitesPlugins,
+		isLoading: isLoadingSitesPlugins,
+		isFetching: isFetchingSitePlugins,
+	} = useQuery( pluginsQuery() );
 	const { data: sites, isLoading: isLoadingSites } = useQuery( sitesQuery() );
 	const { data: marketplacePlugin, isLoading: isLoadingMarketplacePlugin } = useQuery(
 		marketplacePluginQuery( pluginSlug )
@@ -64,6 +68,7 @@ export const usePlugin = ( pluginSlug: string ) => {
 	return {
 		isLoading:
 			isLoadingSitesPlugins || isLoadingSites || isLoadingWpOrgPlugin || isLoadingMarketplacePlugin,
+		isFetching: isFetchingSitePlugins,
 		pluginBySiteId,
 		sitesWithThisPlugin,
 		sitesWithoutThisPlugin,

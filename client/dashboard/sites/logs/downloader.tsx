@@ -1,4 +1,4 @@
-import { fetchSiteLogsBatch } from '@automattic/api-core';
+import { LogType, fetchSiteLogsBatch } from '@automattic/api-core';
 import { TZDate } from '@automattic/ui';
 import {
 	Button,
@@ -11,7 +11,7 @@ import { __ } from '@wordpress/i18n';
 import { download } from '@wordpress/icons';
 import { format } from 'date-fns';
 import { useAnalytics } from '../../app/analytics';
-import type { LogType, FilterType } from '@automattic/api-core';
+import type { FilterType } from '@automattic/api-core';
 
 const MAX_LOGS_DOWNLOAD = 10_000;
 
@@ -46,6 +46,14 @@ async function downloadSiteLogs( args: {
 	filter: FilterType;
 } ): Promise< DownloadLogsResult > {
 	const { siteId, siteSlug, logType, startSec, endSec, filter } = args;
+
+	// Activity logs don't support batch downloads yet
+	if ( LogType.ACTIVITY ) {
+		return {
+			ok: false,
+			message: __( 'Activity log downloads are not yet supported.' ),
+		};
+	}
 
 	let scrollId: string | null = null;
 	const rows: string[] = [];

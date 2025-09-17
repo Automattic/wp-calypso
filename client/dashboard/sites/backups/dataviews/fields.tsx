@@ -1,7 +1,6 @@
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useFormattedTime } from '../../../components/formatted-time';
-import { formatYmd } from '../../../utils/datetime';
 import { gridiconToWordPressIcon } from '../../../utils/gridicons';
 import type { ActivityLogEntry } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
@@ -13,8 +12,6 @@ const FormattedTime = ( { timestamp }: { timestamp: string } ) => {
 	} );
 	return <>{ formattedTime }</>;
 };
-
-const getPublishedTimestamp = ( item: ActivityLogEntry ) => item.published || item.last_published;
 
 export function getFields(): Field< ActivityLogEntry >[] {
 	return [
@@ -41,15 +38,7 @@ export function getFields(): Field< ActivityLogEntry >[] {
 		{
 			id: 'date',
 			label: __( 'Date' ),
-			type: 'date',
-			filterBy: {
-				operators: [ 'on' ],
-			},
-			getValue: ( { item } ) => {
-				const date = new Date( getPublishedTimestamp( item ) );
-				return formatYmd( date );
-			},
-			render: ( { item } ) => <FormattedTime timestamp={ getPublishedTimestamp( item ) } />,
+			render: ( { item } ) => <FormattedTime timestamp={ item.published || item.last_published } />,
 		},
 		{
 			id: 'content_text',
