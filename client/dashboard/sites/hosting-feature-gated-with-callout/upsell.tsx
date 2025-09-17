@@ -1,4 +1,4 @@
-import { DotcomPlans, getPlanName } from '@automattic/api-core';
+import { DotcomPlans, getPlanNames } from '@automattic/api-core';
 import { __experimentalText as Text } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { settings } from '@wordpress/icons';
@@ -70,8 +70,8 @@ export default function UpsellCallout( {
 								'Available on the WordPress.com %(businessPlanName)s and %(commercePlanName)s plans.'
 							),
 							{
-								businessPlanName: getPlanName()[ DotcomPlans.BUSINESS ],
-								commercePlanName: getPlanName()[ DotcomPlans.ECOMMERCE ],
+								businessPlanName: getPlanNames()[ DotcomPlans.BUSINESS ],
+								commercePlanName: getPlanNames()[ DotcomPlans.ECOMMERCE ],
 							}
 						) }
 					</Text>

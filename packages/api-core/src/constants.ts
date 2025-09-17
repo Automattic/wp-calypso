@@ -254,7 +254,7 @@ export const getDataCenterOptions = (): Record< DataCenterOption, string > => ( 
 	ams: __( 'EU West (Amsterdam, Netherlands)' ),
 } );
 
-export const getPlanName = () => ( {
+export const getPlanNames = () => ( {
 	[ DotcomPlans.BUSINESS ]: __( 'Business' ),
 	[ DotcomPlans.ECOMMERCE ]: __( 'Commerce' ),
 	[ DotcomPlans.PREMIUM ]: __( 'Premium' ),

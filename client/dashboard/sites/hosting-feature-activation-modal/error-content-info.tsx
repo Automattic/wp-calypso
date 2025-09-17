@@ -1,4 +1,4 @@
-import { DotcomPlans, getPlanName } from '@automattic/api-core';
+import { DotcomPlans, getPlanNames } from '@automattic/api-core';
 import {
 	__experimentalVStack as VStack,
 	Card,
@@ -93,10 +93,10 @@ const HoldingMessages: Partial< Record< EligibilityErrors, HoldingMessage > > = 
 	[ EligibilityErrors.NO_BUSINESS_PLAN ]: {
 		code: EligibilityErrors.NO_BUSINESS_PLAN,
 		title: sprintf(
-			// translators: %(businessPlanName)s is the name of the Business plan
-			__( '%(businessPlanName)s plan required' ),
+			// translators: %(planName)s is the name of the plan
+			__( '%(planName)s plan required' ),
 			{
-				businessPlanName: getPlanName()[ DotcomPlans.BUSINESS ],
+				planName: getPlanNames()[ DotcomPlans.BUSINESS ],
 			}
 		),
 		description: __( 'You’ll also get to install custom themes, plugins, and have more storage.' ),
