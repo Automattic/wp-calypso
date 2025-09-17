@@ -954,6 +954,7 @@ object PlaywrightTestPRMatrix : BuildType({
 	params {
 		// todo update me to use live url!
 		param("env.CALYPSO_BASE_URL", "https://wordpress.com")
+		text("DOCKER_IMAGE_BUILD_NUMBER", "%BuildDockerImage.depParamRefs.buildNumber%")
 	}
 
 	steps {
