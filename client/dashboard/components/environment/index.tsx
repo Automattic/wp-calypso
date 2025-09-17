@@ -10,7 +10,7 @@ interface EnvironmentProps {
 const Environment = ( { environmentType }: EnvironmentProps ) => {
 	if ( environmentType === 'staging' ) {
 		return (
-			<HStack justify="flex-start" style={ { width: 'auto', flexShrink: 0 } }>
+			<HStack justify="flex-start" spacing={ 1 } style={ { width: 'auto', flexShrink: 0 } }>
 				<Icon icon={ staging } />
 				<span>{ __( 'Staging' ) }</span>
 			</HStack>
@@ -18,7 +18,7 @@ const Environment = ( { environmentType }: EnvironmentProps ) => {
 	}
 
 	return (
-		<HStack justify="flex-start" style={ { width: 'auto', flexShrink: 0 } }>
+		<HStack justify="flex-start" spacing={ 1 } style={ { width: 'auto', flexShrink: 0 } }>
 			<Icon icon={ production } />
 			<span>{ __( 'Production' ) }</span>
 		</HStack>
