@@ -73,6 +73,7 @@ export * from './site-migration-status';
 export * from './site-owner-transfer';
 export * from './site-plans';
 export * from './site-plugins';
+export * from './site-plugins-scheduled-updates';
 export * from './site-preview-links';
 export * from './site-profiler';
 export * from './site-purchases';

@@ -40,6 +40,7 @@ import {
 import { useFirstMatchingBackupAttempt } from 'calypso/my-sites/backup/hooks';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isSiteStore from 'calypso/state/selectors/is-site-store';
 import { getSiteSlug, getSiteTitle } from 'calypso/state/sites/selectors';
 import type { FileBrowserConfig } from 'calypso/my-sites/backup/backup-contents-page/file-browser';
@@ -643,9 +644,14 @@ function SyncModal( {
 // Wrapper component to provide FileBrowser context
 export default function SyncModalWrapper( props: SyncModalProps ) {
 	const locale = useLocale();
+	const dispatch = useDispatch();
+	const notices = {
+		showError: ( message: string ) => dispatch( errorNotice( message ) ),
+		showSuccess: ( message: string ) => dispatch( successNotice( message ) ),
+	};
 
 	return (
-		<FileBrowserProvider locale={ locale }>
+		<FileBrowserProvider locale={ locale } notices={ notices }>
 			<SyncModal { ...props } />
 		</FileBrowserProvider>
 	);

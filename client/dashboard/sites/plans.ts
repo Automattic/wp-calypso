@@ -1,11 +1,11 @@
-import { DotcomPlans, type Site } from '@automattic/api-core';
+import { DotcomPlans, type DotcomPlanSlug, type Site } from '@automattic/api-core';
 
-export const isSitePlanNotOneOf = ( site: Site, plans: DotcomPlans[] ) => {
+export const isSitePlanNotOneOf = ( site: Site, plans: DotcomPlanSlug[] ) => {
 	if ( ! site.plan ) {
 		return false;
 	}
 
-	return ! plans.includes( site.plan.product_slug as DotcomPlans );
+	return ! plans.includes( site.plan.product_slug as DotcomPlanSlug );
 };
 
 export const isSitePlanBigSkyTrial = ( site: Site ) => {
@@ -47,9 +47,11 @@ export const isSitePlanLaunchable = ( site: Site ) => {
 };
 
 export function isSitePlanTrial( site: Site ) {
-	return [
+	const trialPlans = [
 		DotcomPlans.ECOMMERCE_TRIAL_MONTHLY,
 		DotcomPlans.HOSTING_TRIAL_MONTHLY,
 		DotcomPlans.MIGRATION_TRIAL_MONTHLY,
-	].includes( site.plan?.product_slug as DotcomPlans );
+	] as DotcomPlanSlug[];
+
+	return trialPlans.includes( site.plan?.product_slug as DotcomPlanSlug );
 }

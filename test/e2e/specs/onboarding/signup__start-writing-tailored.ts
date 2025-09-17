@@ -8,8 +8,8 @@ import {
 	BrowserManager,
 	NewUserResponse,
 	RestAPIClient,
-	DomainSearchComponent,
 	EditorPage,
+	RewrittenDomainSearchComponent,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiCloseAccount } from '../shared';
@@ -59,17 +59,13 @@ describe( 'Signup: Tailored Start Writing Flow', () => {
 
 	it( 'Ensure domain search is working', async function () {
 		await page.getByRole( 'link', { name: 'Select to choose a domain' } ).click();
-		const domainSearchComponent = new DomainSearchComponent( page );
+		const domainSearchComponent = new RewrittenDomainSearchComponent( page );
 		await domainSearchComponent.search( 'test' );
-		await page
-			.locator( '.domain-search-results' )
-			.getByRole( 'button', { name: 'Select' } )
-			.first()
-			.waitFor();
 	} );
 
 	it( 'Skip the domain selection step', async function () {
-		await page.getByText( 'Decide later' ).click();
+		const domainSearchComponent = new RewrittenDomainSearchComponent( page );
+		await domainSearchComponent.skipPurchase();
 	} );
 
 	it( 'Select WordPress.com Free plan', async function () {
