@@ -13,11 +13,12 @@ import { EngineTypes } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
 
 interface ContentProps {
-	nextStepUrl: string;
+	nextStepUrl?: string;
 	engine: EngineTypes;
 	selectedSite: SiteDetails;
 	siteSlug: string;
 	fromSite: string;
+	onContinue?: () => void;
 	skipNextStep: () => void;
 }
 
@@ -25,6 +26,7 @@ export default function Content( {
 	nextStepUrl,
 	engine,
 	selectedSite,
+	onContinue,
 	siteSlug,
 	fromSite,
 	skipNextStep,
@@ -84,6 +86,7 @@ export default function Content( {
 					importerStatus={ importerStatus }
 					importerData={ importerData }
 					fromSite={ fromSite }
+					onContinue={ onContinue }
 					nextStepUrl={ nextStepUrl }
 					skipNextStep={ skipNextStep }
 					invalidateCardData={ invalidateCardData }

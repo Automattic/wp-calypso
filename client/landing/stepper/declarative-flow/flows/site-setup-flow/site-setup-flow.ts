@@ -439,8 +439,8 @@ const siteSetupFlow: Flow = {
 
 				case 'importerWix':
 				case 'importerBlogger':
-				case 'importerMedium':
 				case 'importerSubstack':
+				case 'importerMedium':
 				case 'importerSquarespace': {
 					if ( providedDependencies?.type === 'redirect' ) {
 						return exitFlow( providedDependencies?.url as string );

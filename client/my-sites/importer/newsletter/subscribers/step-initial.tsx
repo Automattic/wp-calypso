@@ -15,10 +15,9 @@ import SubscriberUploadForm from './upload-form';
 export default function StepInitial( {
 	selectedSite,
 	fromSite,
-	siteSlug,
 	skipNextStep,
 	cardData,
-	engine,
+	nextStepUrl,
 	setAutoFetchData,
 }: SubscribersStepProps ) {
 	const translate = useTranslate();
@@ -84,11 +83,11 @@ export default function StepInitial( {
 			</Button>
 			<hr />
 			<h2>{ translate( 'Step 2: Import your subscribers' ) }</h2>
-			<SubscriberImportLimitNotice />
+			<SubscriberImportLimitNotice selectedSite={ selectedSite } />
 			{ selectedSite.ID && (
 				<SubscriberUploadForm
 					siteId={ selectedSite.ID }
-					nextStepUrl={ `/import/newsletter/${ engine }/${ siteSlug }/summary?from=${ fromSite }` }
+					nextStepUrl={ nextStepUrl }
 					skipNextStep={ skipNextStep }
 					cardData={ cardData }
 				/>

@@ -1,21 +1,22 @@
 import { isJetpackFreePlan, isFreePlan } from '@automattic/calypso-products';
+import { SiteDetails } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Notice } from '@wordpress/components';
 import { useTranslate, fixMe } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
 export default function SubscriberImportLimitNotice( {
 	closeModal = () => {},
+	selectedSite,
 }: {
 	closeModal?: () => void;
+	selectedSite: SiteDetails;
 } ) {
 	const translate = useTranslate();
-	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
 	const currentPlan = selectedSite?.plan?.product_slug || '';
 	const isOnFreePlan = isFreePlan( currentPlan ) || isJetpackFreePlan( currentPlan );
 	const isWPCOMSite = useSelector( ( state ) => getIsSiteWPCOM( state, selectedSite?.ID ) );

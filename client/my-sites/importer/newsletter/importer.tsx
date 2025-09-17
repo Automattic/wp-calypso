@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
@@ -242,6 +243,13 @@ export default function NewsletterImporter( {
 						<Summary
 							selectedSite={ selectedSite }
 							steps={ paidNewsletterData.steps }
+							onResetImporter={ () => {
+								page.redirect(
+									`/import/newsletter/substack/${
+										selectedSite.slug
+									}/${ 'content' }?from=${ fromSite }`
+								);
+							} }
 							engine={ engine }
 							fromSite={ fromSite }
 							showConfetti={ showConfetti }

@@ -83,11 +83,6 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/subscribers' ),
 	},
 
-	IMPORT_SUBSCRIBERS: {
-		slug: 'importSubscribers',
-		asyncComponent: () => import( './steps-repository/import-subscribers' ),
-	},
-
 	FREE_POST_SETUP: {
 		slug: 'freePostSetup',
 		asyncComponent: () => import( './steps-repository/free-post-setup' ),

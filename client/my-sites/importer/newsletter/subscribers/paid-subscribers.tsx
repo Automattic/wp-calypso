@@ -7,8 +7,11 @@ import { SubscribersStepProps } from '../types';
 import ConnectStripe from './paid-subscribers/connect-stripe';
 import MapPlans from './paid-subscribers/map-plans';
 
+interface PaidSubscribersProps extends SubscribersStepProps {
+	onStartImport: () => void;
+}
+
 export default function PaidSubscribers( {
-	nextStepUrl,
 	selectedSite,
 	fromSite,
 	siteSlug,
@@ -17,7 +20,8 @@ export default function PaidSubscribers( {
 	engine,
 	setAutoFetchData,
 	status,
-}: SubscribersStepProps ) {
+	onStartImport,
+}: PaidSubscribersProps ) {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const isCancelled = hasQueryArg( window.location.href, 'stripe_connect_cancelled' );
@@ -40,10 +44,10 @@ export default function PaidSubscribers( {
 					cardData={ cardData }
 					engine={ engine }
 					fromSite={ fromSite }
-					nextStepUrl={ nextStepUrl }
 					selectedSite={ selectedSite }
 					setAutoFetchData={ setAutoFetchData }
 					siteSlug={ siteSlug }
+					onStartImport={ onStartImport }
 					skipNextStep={ skipNextStep }
 				/>
 			) }
@@ -53,10 +57,10 @@ export default function PaidSubscribers( {
 					cardData={ cardData }
 					engine={ engine }
 					fromSite={ fromSite }
-					nextStepUrl={ nextStepUrl }
 					selectedSite={ selectedSite }
 					setAutoFetchData={ setAutoFetchData }
 					siteSlug={ siteSlug }
+					onStartImport={ onStartImport }
 					skipNextStep={ skipNextStep }
 				/>
 			) }

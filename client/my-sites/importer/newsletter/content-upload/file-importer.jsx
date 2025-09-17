@@ -56,6 +56,7 @@ class FileImporter extends PureComponent {
 		nextStepUrl: PropTypes.string,
 		skipNextStep: PropTypes.func,
 		invalidateCardData: PropTypes.func,
+		onContinue: PropTypes.func,
 	};
 
 	handleClick = ( shouldStartImport ) => {
@@ -129,6 +130,7 @@ class FileImporter extends PureComponent {
 						importerStatus={ importerStatus }
 						sourceType={ title }
 						site={ site }
+						onContinue={ this.props.onContinue }
 						nextStepUrl={ nextStepUrl }
 						invalidateCardData={ invalidateCardData }
 					/>

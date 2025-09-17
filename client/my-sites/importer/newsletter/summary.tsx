@@ -24,6 +24,7 @@ interface SummaryProps {
 	steps: Steps;
 	engine: EngineTypes;
 	fromSite: string;
+	onResetImporter?: () => void;
 	showConfetti: boolean;
 	shouldShownConfetti: Dispatch< SetStateAction< boolean > >;
 }
@@ -53,6 +54,7 @@ export default function Summary( {
 	engine,
 	fromSite,
 	showConfetti,
+	onResetImporter = () => {},
 	shouldShownConfetti,
 }: SummaryProps ) {
 	const { __ } = useI18n();
@@ -141,13 +143,7 @@ export default function Summary( {
 					) }
 				</div>
 				<ImporterActionButtonContainer noSpacing>
-					<ImporterActionButton
-						href={ `/import/newsletter/substack/${
-							selectedSite.slug
-						}/${ 'content' }?from=${ fromSite }` }
-						onClick={ resetImporter }
-						primary
-					>
+					<ImporterActionButton onClick={ onResetImporter } primary>
 						{ __( 'Start over' ) }
 					</ImporterActionButton>
 				</ImporterActionButtonContainer>
@@ -238,7 +234,7 @@ export default function Summary( {
 						{ __( 'Customize your newsletter' ) }
 					</ImporterActionButton>
 					{ steps?.content && (
-						<ImporterActionButton href={ '/posts/' + selectedSite.slug }>
+						<ImporterActionButton href={ `${ selectedSite.URL }/wp-admin/edit.php` }>
 							{ __( 'View content' ) }
 						</ImporterActionButton>
 					) }
