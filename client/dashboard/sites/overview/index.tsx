@@ -72,10 +72,12 @@ function SiteOverview( {
 	siteSlug,
 	hideSitePreview = false,
 	breakpoints,
+	useUpdatedActivityLogLink = false,
 }: {
 	siteSlug: string;
 	hideSitePreview?: boolean;
 	breakpoints?: { large: WPBreakpoint; small: WPBreakpoint };
+	useUpdatedActivityLogLink?: boolean;
 } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const isLargeViewport = useViewportMatch( breakpoints?.large ?? 'xlarge' );
@@ -159,7 +161,11 @@ function SiteOverview( {
 					spacing={ spacing }
 					alignment="flex-start"
 				>
-					<LatestActivityCard site={ site } isCompact={ isSmallViewport } />
+					<LatestActivityCard
+						site={ site }
+						isCompact={ isSmallViewport }
+						useUpdatedActivityLogLink={ useUpdatedActivityLogLink }
+					/>
 					<VStack spacing={ spacing } justify="start">
 						<DomainsCard site={ site } isCompact={ isSmallViewport } />
 						<DIFMUpsellCard site={ site } />

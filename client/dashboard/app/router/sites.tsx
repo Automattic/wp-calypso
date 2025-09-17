@@ -175,7 +175,9 @@ export const siteOverviewRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../sites/overview' ).then( ( d ) =>
 		createLazyRoute( 'site-overview' )( {
-			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+			component: () => (
+				<d.default siteSlug={ siteRoute.useParams().siteSlug } useUpdatedActivityLogLink />
+			),
 		} )
 	)
 );

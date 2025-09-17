@@ -44,18 +44,25 @@ const fields: Field< ActivityLogEntry >[] = [
 	},
 ];
 
-function getActivityLogUrl( site: Site ) {
-	return isSelfHostedJetpackConnected( site )
-		? `https://cloud.jetpack.com/activity-log/${ site.slug }`
-		: `/v2/sites/${ site.slug }/logs/activity`;
+function getActivityLogUrl( site: Site, useUpdatedActivityLogLink: boolean ) {
+	if ( isSelfHostedJetpackConnected( site ) ) {
+		return `https://cloud.jetpack.com/activity-log/${ site.slug }`;
+	}
+	if ( useUpdatedActivityLogLink ) {
+		return `/v2/sites/${ site.slug }/logs/activity`;
+	}
+
+	return `/activity-log/${ site.slug }`;
 }
 
 export default function LatestActivityCard( {
 	site,
 	isCompact = false,
+	useUpdatedActivityLogLink = false,
 }: {
 	site: Site;
 	isCompact?: boolean;
+	useUpdatedActivityLogLink?: boolean;
 } ) {
 	const { data } = useQuery( siteLastFiveActivityLogEntriesQuery( site.ID ) );
 	const { recordTracksEvent } = useAnalytics();
@@ -98,7 +105,7 @@ export default function LatestActivityCard( {
 			{ data && data.length > 0 && (
 				<SummaryButtonCardFooter
 					title={ __( 'See all activity' ) }
-					href={ getActivityLogUrl( site ) }
+					href={ getActivityLogUrl( site, useUpdatedActivityLogLink ) }
 					density="medium"
 					onClick={ handleClickSeeAll }
 				/>
