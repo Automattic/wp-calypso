@@ -1,3 +1,4 @@
+import { CalloutOverlay } from '../../components/callout-overlay';
 import HostingFeatureGate from '../hosting-feature-gate';
 import ActivationCallout from './activation';
 import UpsellCallout, { UpsellCalloutProps } from './upsell';
@@ -7,9 +8,12 @@ type HostingFeatureGatedWithCalloutProps = Omit<
 	HostingFeatureGateProps,
 	'renderUpsellComponent' | 'renderActivationComponent'
 > &
-	UpsellCalloutProps;
+	UpsellCalloutProps & {
+		asOverlay?: boolean;
+	};
 
 export default function HostingFeatureGatedWithCallout( {
+	asOverlay,
 	upsellIcon,
 	upsellImage,
 	upsellTitle,
@@ -21,18 +25,28 @@ export default function HostingFeatureGatedWithCallout( {
 	return (
 		<HostingFeatureGate
 			{ ...props }
-			renderUpsellComponent={ ( { onClick } ) => (
-				<UpsellCallout
-					site={ site }
-					tracksFeatureId={ tracksFeatureId }
-					onClick={ onClick }
-					upsellIcon={ upsellIcon }
-					upsellImage={ upsellImage }
-					upsellTitle={ upsellTitle }
-					upsellDescription={ upsellDescription }
-				/>
+			renderUpsellComponent={ ( { onClick } ) => {
+				const callout = (
+					<UpsellCallout
+						site={ site }
+						tracksFeatureId={ tracksFeatureId }
+						onClick={ onClick }
+						upsellIcon={ upsellIcon }
+						upsellImage={ upsellImage }
+						upsellTitle={ upsellTitle }
+						upsellDescription={ upsellDescription }
+					/>
+				);
+
+				if ( asOverlay ) {
+					return <CalloutOverlay callout={ callout } />;
+				}
+
+				return callout;
+			} }
+			renderActivationComponent={ ( { onClick } ) => (
+				<ActivationCallout asOverlay={ asOverlay } onClick={ onClick } />
 			) }
-			renderActivationComponent={ ( { onClick } ) => <ActivationCallout onClick={ onClick } /> }
 		/>
 	);
 }

@@ -1,4 +1,10 @@
-import { Button, CheckboxControl } from '@wordpress/components';
+import {
+	Button,
+	CheckboxControl,
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	__experimentalText as Text,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { ButtonStack } from 'calypso/dashboard/components/button-stack';
 import { useFileBrowserContext } from './file-browser-context';
@@ -56,7 +62,7 @@ function FileBrowserHeader( {
 	};
 
 	return (
-		<div className="file-browser-header">
+		<VStack className="file-browser-header">
 			{ showHeaderButtons && browserCheckList.totalItems > 0 && (
 				<ButtonStack justify="flex-start">
 					<Button __next40pxDefaultSize onClick={ onDownloadClick }>
@@ -72,19 +78,18 @@ function FileBrowserHeader( {
 					</Button>
 				</ButtonStack>
 			) }
-			<div className="file-browser-header__selecting">
+			<HStack className="file-browser-header__selecting" justify="flex-start" spacing={ 0 }>
 				<CheckboxControl
 					__nextHasNoMarginBottom
 					checked={ rootNode ? rootNode.checkState === 'checked' : false }
 					indeterminate={ rootNode?.checkState === 'mixed' }
 					onChange={ onCheckboxChange }
-					className={ `${ rootNode && rootNode.checkState === 'mixed' ? 'mixed' : '' }` }
 				/>
-				<div className="file-browser-header__selecting-info">
+				<Text size="small">
 					{ browserCheckList.totalItems } { __( 'files selected' ) }
-				</div>
-			</div>
-		</div>
+				</Text>
+			</HStack>
+		</VStack>
 	);
 }
 

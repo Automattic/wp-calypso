@@ -11,11 +11,21 @@ import {
 	twoStepAuthAppSetupQuery,
 } from '@automattic/api-queries';
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
+import { __ } from '@wordpress/i18n';
+import { getTitleForDisplay } from '../../utils/purchase';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
+import type { Purchase } from '@automattic/api-core';
 import type { AnyRoute } from '@tanstack/react-router';
 
 export const meRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Account' ),
+			},
+		],
+	} ),
 	getParentRoute: () => rootRoute,
 	path: 'me',
 	loader: () => queryClient.ensureQueryData( userSettingsQuery() ),
@@ -39,6 +49,13 @@ export const meRoute = createRoute( {
 );
 
 export const profileRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Profile' ),
+			},
+		],
+	} ),
 	getParentRoute: () => meRoute,
 	path: 'profile',
 } ).lazy( () =>
@@ -50,6 +67,13 @@ export const profileRoute = createRoute( {
 );
 
 const preferencesRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Preferences' ),
+			},
+		],
+	} ),
 	getParentRoute: () => meRoute,
 	path: 'preferences',
 	loader: () => queryClient.ensureQueryData( rawUserPreferencesQuery() ),
@@ -62,8 +86,20 @@ const preferencesRoute = createRoute( {
 );
 
 export const billingRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Billing' ),
+			},
+		],
+	} ),
 	getParentRoute: () => meRoute,
 	path: 'billing',
+} );
+
+export const billingIndexRoute = createRoute( {
+	getParentRoute: () => billingRoute,
+	path: '/',
 } ).lazy( () =>
 	import( '../../me/billing' ).then( ( d ) =>
 		createLazyRoute( 'billing' )( {
@@ -73,8 +109,15 @@ export const billingRoute = createRoute( {
 );
 
 export const billingHistoryRoute = createRoute( {
-	getParentRoute: () => meRoute,
-	path: 'billing/billing-history',
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Billing history' ),
+			},
+		],
+	} ),
+	getParentRoute: () => billingRoute,
+	path: '/billing-history',
 } ).lazy( () =>
 	import( '../../me/billing-history' ).then( ( d ) =>
 		createLazyRoute( 'billing-history' )( {
@@ -84,11 +127,21 @@ export const billingHistoryRoute = createRoute( {
 );
 
 export const purchaseSettingsRoute = createRoute( {
-	getParentRoute: () => meRoute,
+	head: ( { loaderData }: { loaderData?: { purchase: Purchase } } ) => ( {
+		meta: [
+			{
+				title: loaderData && getTitleForDisplay( loaderData.purchase ),
+			},
+		],
+	} ),
+	getParentRoute: () => billingRoute,
 	loader: async ( { params: { purchaseId } } ) => {
-		await queryClient.ensureQueryData( purchaseQuery( parseInt( purchaseId ) ) );
+		const purchase = await queryClient.ensureQueryData( purchaseQuery( parseInt( purchaseId ) ) );
+		return {
+			purchase,
+		};
 	},
-	path: 'billing/purchases/purchase/$purchaseId',
+	path: '/purchases/purchase/$purchaseId',
 } ).lazy( () =>
 	import( '../../me/billing-purchases/purchase-settings' ).then( ( d ) =>
 		createLazyRoute( 'purchases-purchase-settings' )( {
@@ -98,7 +151,14 @@ export const purchaseSettingsRoute = createRoute( {
 );
 
 export const purchasesRoute = createRoute( {
-	getParentRoute: () => meRoute,
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Active upgrades' ),
+			},
+		],
+	} ),
+	getParentRoute: () => billingRoute,
 	loader: async () => {
 		await Promise.all( [
 			queryClient.ensureQueryData( userPurchasesQuery() ),
@@ -110,7 +170,7 @@ export const purchasesRoute = createRoute( {
 			site: typeof search.site === 'string' ? search.site : undefined,
 		};
 	},
-	path: 'billing/purchases',
+	path: '/purchases',
 } ).lazy( () =>
 	import( '../../me/billing-purchases' ).then( ( d ) =>
 		createLazyRoute( 'purchases' )( {
@@ -120,8 +180,15 @@ export const purchasesRoute = createRoute( {
 );
 
 export const paymentMethodsRoute = createRoute( {
-	getParentRoute: () => meRoute,
-	path: 'billing/payment-methods',
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Payment methods' ),
+			},
+		],
+	} ),
+	getParentRoute: () => billingRoute,
+	path: '/payment-methods',
 } ).lazy( () =>
 	import( '../../me/billing-payment-methods' ).then( ( d ) =>
 		createLazyRoute( 'payment-methods' )( {
@@ -131,8 +198,15 @@ export const paymentMethodsRoute = createRoute( {
 );
 
 export const taxDetailsRoute = createRoute( {
-	getParentRoute: () => meRoute,
-	path: 'billing/tax-details',
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Tax details' ),
+			},
+		],
+	} ),
+	getParentRoute: () => billingRoute,
+	path: '/tax-details',
 } ).lazy( () =>
 	import( '../../me/tax-details' ).then( ( d ) =>
 		createLazyRoute( 'tax-details' )( {
@@ -142,8 +216,20 @@ export const taxDetailsRoute = createRoute( {
 );
 
 export const securityRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Security' ),
+			},
+		],
+	} ),
 	getParentRoute: () => meRoute,
 	path: 'security',
+} );
+
+export const securityIndexRoute = createRoute( {
+	getParentRoute: () => securityRoute,
+	path: '/',
 } ).lazy( () =>
 	import( '../../me/security' ).then( ( d ) =>
 		createLazyRoute( 'security' )( {
@@ -153,8 +239,15 @@ export const securityRoute = createRoute( {
 );
 
 export const securityPasswordRoute = createRoute( {
-	getParentRoute: () => meRoute,
-	path: 'security/password',
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Password' ),
+			},
+		],
+	} ),
+	getParentRoute: () => securityRoute,
+	path: '/password',
 } ).lazy( () =>
 	import( '../../me/security-password' ).then( ( d ) =>
 		createLazyRoute( 'security-password' )( {
@@ -164,8 +257,15 @@ export const securityPasswordRoute = createRoute( {
 );
 
 export const securityAccountRecoveryRoute = createRoute( {
-	getParentRoute: () => meRoute,
-	path: 'security/account-recovery',
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Account recovery' ),
+			},
+		],
+	} ),
+	getParentRoute: () => securityRoute,
+	path: '/account-recovery',
 	loader: async () => {
 		await Promise.all( [
 			queryClient.ensureQueryData( accountRecoveryQuery() ),
@@ -181,8 +281,15 @@ export const securityAccountRecoveryRoute = createRoute( {
 );
 
 export const securityTwoStepAuthRoute = createRoute( {
-	getParentRoute: () => meRoute,
-	path: 'security/two-step-auth',
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Two-step authentication' ),
+			},
+		],
+	} ),
+	getParentRoute: () => securityRoute,
+	path: '/two-step-auth',
 	loader: async () => {
 		await Promise.all( [
 			queryClient.ensureQueryData( userSettingsQuery() ),
@@ -198,8 +305,15 @@ export const securityTwoStepAuthRoute = createRoute( {
 );
 
 export const securityTwoStepAuthAppRoute = createRoute( {
-	getParentRoute: () => meRoute,
-	path: 'security/two-step-auth/app',
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Set up two-step authentication' ),
+			},
+		],
+	} ),
+	getParentRoute: () => securityRoute,
+	path: '/two-step-auth/app',
 	loader: async () => {
 		await Promise.all( [
 			queryClient.ensureQueryData( userSettingsQuery() ),
@@ -215,8 +329,15 @@ export const securityTwoStepAuthAppRoute = createRoute( {
 );
 
 export const securityTwoStepAuthSMSRoute = createRoute( {
-	getParentRoute: () => meRoute,
-	path: 'security/two-step-auth/sms',
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Set up two-step authentication' ),
+			},
+		],
+	} ),
+	getParentRoute: () => securityRoute,
+	path: '/two-step-auth/sms',
 	loader: async () => {
 		await Promise.all( [
 			queryClient.ensureQueryData( userSettingsQuery() ),
@@ -232,8 +353,15 @@ export const securityTwoStepAuthSMSRoute = createRoute( {
 );
 
 export const securityTwoStepAuthBackupCodesRoute = createRoute( {
-	getParentRoute: () => meRoute,
-	path: 'security/two-step-auth/backup-codes',
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Backup codes' ),
+			},
+		],
+	} ),
+	getParentRoute: () => securityRoute,
+	path: '/two-step-auth/backup-codes',
 	loader: () => queryClient.ensureQueryData( userSettingsQuery() ),
 } ).lazy( () =>
 	import( '../../me/security-two-step-auth-backup-codes' ).then( ( d ) =>
@@ -244,8 +372,15 @@ export const securityTwoStepAuthBackupCodesRoute = createRoute( {
 );
 
 export const securitySshKeyRoute = createRoute( {
-	getParentRoute: () => meRoute,
-	path: 'security/ssh-key',
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'SSH key' ),
+			},
+		],
+	} ),
+	getParentRoute: () => securityRoute,
+	path: '/ssh-key',
 } ).lazy( () =>
 	import( '../../me/security-ssh-key' ).then( ( d ) =>
 		createLazyRoute( 'security-ssh-key' )( {
@@ -255,8 +390,15 @@ export const securitySshKeyRoute = createRoute( {
 );
 
 export const securityConnectedAppsRoute = createRoute( {
-	getParentRoute: () => meRoute,
-	path: 'security/connected-apps',
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Connected applications' ),
+			},
+		],
+	} ),
+	getParentRoute: () => securityRoute,
+	path: '/connected-apps',
 } ).lazy( () =>
 	import( '../../me/security-connected-apps' ).then( ( d ) =>
 		createLazyRoute( 'security-connected-apps' )( {
@@ -266,8 +408,15 @@ export const securityConnectedAppsRoute = createRoute( {
 );
 
 export const securitySocialLoginsRoute = createRoute( {
-	getParentRoute: () => meRoute,
-	path: 'security/social-logins',
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Social logins' ),
+			},
+		],
+	} ),
+	getParentRoute: () => securityRoute,
+	path: '/social-logins',
 } ).lazy( () =>
 	import( '../../me/security-social-logins' ).then( ( d ) =>
 		createLazyRoute( 'security-social-logins' )( {
@@ -277,6 +426,13 @@ export const securitySocialLoginsRoute = createRoute( {
 );
 
 export const privacyRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Privacy' ),
+			},
+		],
+	} ),
 	getParentRoute: () => meRoute,
 	path: 'privacy',
 } ).lazy( () =>
@@ -288,8 +444,20 @@ export const privacyRoute = createRoute( {
 );
 
 export const notificationsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Notifications' ),
+			},
+		],
+	} ),
 	getParentRoute: () => meRoute,
 	path: 'notifications',
+} );
+
+export const notificationsIndexRoute = createRoute( {
+	getParentRoute: () => notificationsRoute,
+	path: '/',
 } ).lazy( () =>
 	import( '../../me/notifications' ).then( ( d ) =>
 		createLazyRoute( 'notifications' )( {
@@ -299,8 +467,15 @@ export const notificationsRoute = createRoute( {
 );
 
 export const notificationsSitesRoute = createRoute( {
-	getParentRoute: () => meRoute,
-	path: 'notifications/sites',
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Sites' ),
+			},
+		],
+	} ),
+	getParentRoute: () => notificationsRoute,
+	path: '/sites',
 } ).lazy( () =>
 	import( '../../me/notifications-sites' ).then( ( d ) =>
 		createLazyRoute( 'notifications-sites' )( {
@@ -310,8 +485,15 @@ export const notificationsSitesRoute = createRoute( {
 );
 
 export const notificationsEmailsRoute = createRoute( {
-	getParentRoute: () => meRoute,
-	path: 'notifications/emails',
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Emails' ),
+			},
+		],
+	} ),
+	getParentRoute: () => notificationsRoute,
+	path: '/emails',
 } ).lazy( () =>
 	import( '../../me/notifications-emails' ).then( ( d ) =>
 		createLazyRoute( 'notifications-emails' )( {
@@ -321,8 +503,15 @@ export const notificationsEmailsRoute = createRoute( {
 );
 
 export const notificationsCommentsRoute = createRoute( {
-	getParentRoute: () => meRoute,
-	path: 'notifications/comments',
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Comments' ),
+			},
+		],
+	} ),
+	getParentRoute: () => notificationsRoute,
+	path: '/comments',
 } ).lazy( () =>
 	import( '../../me/notifications-comments' ).then( ( d ) =>
 		createLazyRoute( 'notifications-comments' )( {
@@ -332,8 +521,15 @@ export const notificationsCommentsRoute = createRoute( {
 );
 
 export const notificationsExtrasRoute = createRoute( {
-	getParentRoute: () => meRoute,
-	path: 'notifications/extras',
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Extras' ),
+			},
+		],
+	} ),
+	getParentRoute: () => notificationsRoute,
+	path: '/extras',
 } ).lazy( () =>
 	import( '../../me/notifications-extras' ).then( ( d ) =>
 		createLazyRoute( 'notifications-extras' )( {
@@ -343,6 +539,13 @@ export const notificationsExtrasRoute = createRoute( {
 );
 
 export const blockedSitesRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Blocked sites' ),
+			},
+		],
+	} ),
 	getParentRoute: () => meRoute,
 	path: 'blocked-sites',
 } ).lazy( () =>
@@ -354,6 +557,13 @@ export const blockedSitesRoute = createRoute( {
 );
 
 export const appsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Apps' ),
+			},
+		],
+	} ),
 	getParentRoute: () => meRoute,
 	path: 'apps',
 } ).lazy( () =>
@@ -369,31 +579,43 @@ export const createMeRoutes = ( config: AppConfig ) => {
 		return [];
 	}
 
-	const meRoutes: AnyRoute[] = [
-		profileRoute,
-		preferencesRoute,
-		billingRoute,
-		billingHistoryRoute,
-		purchasesRoute,
-		purchaseSettingsRoute,
-		paymentMethodsRoute,
-		taxDetailsRoute,
-		securityRoute,
-		securityPasswordRoute,
-		securityAccountRecoveryRoute,
-		securityTwoStepAuthRoute,
-		securityTwoStepAuthAppRoute,
-		securityTwoStepAuthSMSRoute,
-		securityTwoStepAuthBackupCodesRoute,
-		securitySshKeyRoute,
-		securityConnectedAppsRoute,
-		securitySocialLoginsRoute,
-		notificationsRoute,
-		notificationsSitesRoute,
-		notificationsEmailsRoute,
-		notificationsCommentsRoute,
-		notificationsExtrasRoute,
-	];
+	const meRoutes: AnyRoute[] = [ profileRoute, preferencesRoute ];
+
+	meRoutes.push(
+		billingRoute.addChildren( [
+			billingIndexRoute,
+			billingHistoryRoute,
+			purchasesRoute,
+			purchaseSettingsRoute,
+			paymentMethodsRoute,
+			taxDetailsRoute,
+		] )
+	);
+
+	meRoutes.push(
+		securityRoute.addChildren( [
+			securityIndexRoute,
+			securityPasswordRoute,
+			securityAccountRecoveryRoute,
+			securityTwoStepAuthRoute,
+			securityTwoStepAuthAppRoute,
+			securityTwoStepAuthSMSRoute,
+			securityTwoStepAuthBackupCodesRoute,
+			securitySshKeyRoute,
+			securityConnectedAppsRoute,
+			securitySocialLoginsRoute,
+		] )
+	);
+
+	meRoutes.push(
+		notificationsRoute.addChildren( [
+			notificationsIndexRoute,
+			notificationsSitesRoute,
+			notificationsEmailsRoute,
+			notificationsCommentsRoute,
+			notificationsExtrasRoute,
+		] )
+	);
 
 	if ( config.supports.me.privacy ) {
 		meRoutes.push( privacyRoute );
