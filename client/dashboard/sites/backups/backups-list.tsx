@@ -1,4 +1,4 @@
-import { siteRewindableActivityLogEntriesQuery } from '@automattic/api-queries';
+import { siteBackupActivityLogEntriesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
@@ -31,7 +31,7 @@ export function BackupsList( {
 	const { backup, hasRecentlyCompleted } = useBackupState( site.ID );
 
 	const { data: activityLog = [], isLoading: isLoadingActivityLog } = useQuery( {
-		...siteRewindableActivityLogEntriesQuery( site.ID, undefined, true ),
+		...siteBackupActivityLogEntriesQuery( site.ID, undefined, true ),
 		// Refetch the activity log every 3 seconds when a recent backup completed until the backup is found in the Activity Log
 		refetchInterval: ( query ) => {
 			if ( ! backup || ! hasRecentlyCompleted ) {

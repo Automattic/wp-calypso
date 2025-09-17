@@ -22,6 +22,8 @@ export interface Domain extends DomainSummary {
 	can_transfer_to_any_user: boolean;
 	can_transfer_to_other_site: boolean;
 	cannot_manage_name_servers_reason: null | string;
+	contact_info_disclosure_available: boolean;
+	contact_info_disclosed: boolean;
 	dnssec_records?: {
 		dnskey: string[];
 		ds_data: string[];
@@ -36,6 +38,7 @@ export interface Domain extends DomainSummary {
 	is_locked: boolean;
 	is_root_domain_registered_with_automattic: boolean;
 	is_subdomain: boolean;
+	is_pending_icann_verification: boolean;
 	move_to_new_site_pending: boolean;
 	private_domain: boolean;
 	privacy_available: boolean;
