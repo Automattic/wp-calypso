@@ -26,7 +26,6 @@ export default function McpSettingsSummary( { site, density }: { site: Site; den
 	}
 
 	// Get MCP abilities from user settings using the new nested structure
-	// @ts-ignore - userSettings type doesn't include mcp_abilities yet
 	const mcpAbilities = getSiteMcpAbilities( userSettings, site.ID );
 
 	if ( ! mcpAbilities || Object.keys( mcpAbilities ).length === 0 ) {

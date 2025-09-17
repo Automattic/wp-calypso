@@ -34,7 +34,6 @@ function SettingsMcpComponent( { siteSlug }: { siteSlug: string } ) {
 
 	// Get tools from user settings using the new nested structure
 	const availableTools = useMemo( (): [ string, SiteMcpAbilities[ string ] ][] => {
-		// @ts-ignore - userSettings type doesn't include mcp_abilities yet
 		const abilities = getSiteMcpAbilities( userSettings, site.ID );
 		return Object.entries( abilities );
 	}, [ userSettings, site.ID ] );
@@ -42,7 +41,6 @@ function SettingsMcpComponent( { siteSlug }: { siteSlug: string } ) {
 	const hasTools = availableTools.length > 0;
 
 	const [ formData, setFormData ] = useState< SiteMcpAbilities >( () =>
-		// @ts-ignore - userSettings type doesn't include mcp_abilities yet
 		getSiteMcpAbilities( userSettings, site.ID )
 	);
 
@@ -51,7 +49,6 @@ function SettingsMcpComponent( { siteSlug }: { siteSlug: string } ) {
 
 	// Update form data when userSettings changes
 	useEffect( () => {
-		// @ts-ignore - userSettings type doesn't include mcp_abilities yet
 		const abilities = getSiteMcpAbilities( userSettings, site.ID );
 		setFormData( abilities );
 	}, [ userSettings, site.ID ] );
@@ -62,7 +59,6 @@ function SettingsMcpComponent( { siteSlug }: { siteSlug: string } ) {
 
 			try {
 				// Create optimized API payload using the new structure
-				// @ts-ignore - userSettings type doesn't include mcp_abilities yet
 				const apiData = createSiteSpecificApiPayload( userSettings, site.ID, formData );
 
 				// Save using custom mutation (bypasses saveableKeys filtering)
@@ -84,7 +80,6 @@ function SettingsMcpComponent( { siteSlug }: { siteSlug: string } ) {
 	const handleMasterToggle = useCallback(
 		( enabled: boolean ) => {
 			// Get the complete list of available tools from userSettings
-			// @ts-ignore - userSettings type doesn't include mcp_abilities yet
 			const currentAbilities = getSiteMcpAbilities( userSettings, site.ID );
 			const updatedTools: SiteMcpAbilities = {};
 

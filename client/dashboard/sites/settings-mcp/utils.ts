@@ -18,7 +18,7 @@ export type McpAbilitiesApiStructure = {
  * Falls back to default site abilities, then account-level abilities
  */
 export function getSiteMcpAbilities(
-	userSettings: any,
+	userSettings: { mcp_abilities?: McpAbilitiesStructure } | null | undefined,
 	siteId: string | number
 ): SiteMcpAbilities {
 	const siteIdStr = String( siteId );
@@ -66,7 +66,7 @@ export function getSiteMcpAbilities(
 export function getSiteAbilityState(
 	abilityName: string,
 	siteId: string | number,
-	userSettings: any
+	userSettings: { mcp_abilities?: McpAbilitiesStructure } | null | undefined
 ): boolean {
 	const siteIdStr = String( siteId );
 	const mcpData = userSettings?.mcp_abilities;
@@ -107,7 +107,7 @@ export function getAccountMcpAbilities(
  * Only stores differences from the default site abilities
  */
 export function updateSiteMcpAbilities(
-	userSettings: any,
+	userSettings: { mcp_abilities?: McpAbilitiesStructure } | null | undefined,
 	siteId: string | number,
 	abilities: SiteMcpAbilities
 ): McpAbilitiesStructure {
@@ -177,7 +177,7 @@ export function convertAbilitiesFromApi(
  * Uses the new 'site' key format for single site updates
  */
 export function createSiteSpecificApiPayload(
-	userSettings: any,
+	userSettings: { mcp_abilities?: McpAbilitiesStructure } | null | undefined,
 	siteId: string | number,
 	abilities: SiteMcpAbilities
 ): { mcp_abilities: McpAbilitiesApiStructure } {

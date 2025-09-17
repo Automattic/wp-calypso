@@ -128,7 +128,6 @@ function McpSetupComponent( { siteSlug }: { siteSlug: string } ) {
 
 	// Check if any tools are enabled using the new userSettings structure
 	const hasEnabledTools = useMemo( () => {
-		// @ts-ignore - userSettings type doesn't include mcp_abilities yet
 		const abilities = getSiteMcpAbilities( userSettings, site.ID );
 		return Object.values( abilities ).some( ( tool ) => tool.enabled );
 	}, [ userSettings, site.ID ] );
