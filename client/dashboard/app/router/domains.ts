@@ -471,7 +471,7 @@ export const domainConnectionSetupRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Domain Connection Setup' ),
+				title: __( 'Domain connection setup' ),
 			},
 		],
 	} ),

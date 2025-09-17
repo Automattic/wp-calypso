@@ -201,7 +201,7 @@ export const taxDetailsRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Tax Details' ),
+				title: __( 'Tax details' ),
 			},
 		],
 	} ),
