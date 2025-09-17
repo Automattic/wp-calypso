@@ -37,8 +37,12 @@ export default function IcannSuspensionNotice( { domainName }: { domainName: str
 						'You must respond to the ICANN email to verify your domain email address or your domain will stop working. Check your contact information is correct below.'
 					) }
 				</Text>
-				<Button variant="link" onClick={ onClick }>
-					{ __( 'Resend email' ) }
+				<Button
+					variant="link"
+					onClick={ onClick }
+					disabled={ resendIcannVerificationEmail.isPending }
+				>
+					{ resendIcannVerificationEmail.isPending ? __( 'Sending…' ) : __( 'Resend email' ) }
 				</Button>
 			</VStack>
 		</Notice>
