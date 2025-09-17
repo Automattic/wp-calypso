@@ -51,7 +51,7 @@ function createMockSite( overrides: Partial< Site > = {} ): Site {
 		slug: 'test-site',
 		name: 'Test Site',
 		URL: 'https://test.com',
-		capabilities: { manage_options: true },
+		capabilities: { manage_options: true, update_plugins: false },
 		is_a4a_dev_site: false,
 		is_a8c: false,
 		is_deleted: false,
