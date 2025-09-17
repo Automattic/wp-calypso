@@ -33,10 +33,7 @@ const PROPERTIES_TO_DECODE = new Set( [ 'display_name', 'description', 'user_URL
  * ex. advertising_targeting_opt_out should fail quietly in the event they have an expired 2fa token
  * and a success notification is not standard when accepting or denying cookies
  */
-const PROPERTIES_TO_SUPRESS_NOTIFICATIONS = new Set( [
-	'advertising_targeting_opt_out',
-	'mcp_abilities',
-] );
+const PROPERTIES_TO_SUPRESS_NOTIFICATIONS = new Set( [ 'advertising_targeting_opt_out' ] );
 
 export const fromApi = ( apiResponse ) =>
 	mapValues( apiResponse, ( value, name ) =>
@@ -151,6 +148,15 @@ export const userSettingsSaveSuccess =
 			Object.keys( settingsOverride ).every( ( key ) =>
 				PROPERTIES_TO_SUPRESS_NOTIFICATIONS.has( key )
 			)
+		) {
+			return;
+		}
+
+		// Suppress notifications for site-specific MCP updates (they handle their own notifications)
+		if (
+			settingsOverride?.mcp_abilities &&
+			settingsOverride.mcp_abilities.sites &&
+			Object.keys( settingsOverride.mcp_abilities.sites ).length > 0
 		) {
 			return;
 		}
