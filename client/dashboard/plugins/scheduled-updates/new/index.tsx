@@ -78,9 +78,9 @@ function ScheduledUpdatesNew() {
 				const eventDate = new Date( timestamp * 1000 );
 				const hours = eventDate.getHours();
 				const weekdayIndex = frequency === 'weekly' ? eventDate.getDay() : undefined;
+				const siteMap = new Map( eligibleSites.map( ( site ) => [ site.ID, site ] ) );
 
 				// Create monitor settings for each successful site using per-site mutation (with retry)
-				const siteMap = new Map( eligibleSites.map( ( site ) => [ site.ID, site ] ) );
 				const monitorTasks = successfulSiteIds
 					.map( ( siteId ) => siteMap.get( siteId ) )
 					.filter( ( site ): site is Site => Boolean( site ) )

@@ -37,6 +37,39 @@ export function prepareTimestamp(
 	return event.getTime() / 1000;
 }
 
+export type TimeSlot = { frequency: Frequency; timestamp: number };
+
+export function hasTimeSlotCollision( proposed: TimeSlot, existing: TimeSlot[] = [] ): boolean {
+	const newDate = new Date( proposed.timestamp * 1000 );
+	// Future check (legacy parity)
+	if ( newDate < new Date() ) {
+		return true;
+	}
+
+	for ( const slot of existing ) {
+		const existingDate = new Date( slot.timestamp * 1000 );
+
+		// If either side is daily, same hour collides (legacy parity)
+		if (
+			( proposed.frequency === 'daily' || slot.frequency === 'daily' ) &&
+			existingDate.getHours() === newDate.getHours()
+		) {
+			return true;
+		}
+
+		// Weekly-only collision: same weekday and same hour (legacy parity)
+		if (
+			proposed.frequency === 'weekly' &&
+			slot.frequency === 'weekly' &&
+			newDate.getDay() === existingDate.getDay() &&
+			newDate.getHours() === existingDate.getHours()
+		) {
+			return true;
+		}
+	}
+	return false;
+}
+
 /**
  * Limited concurrency runner
  */
