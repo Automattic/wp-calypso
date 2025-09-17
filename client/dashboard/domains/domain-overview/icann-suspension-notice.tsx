@@ -1,6 +1,10 @@
 import { resendIcannVerificationEmailMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import { Button, __experimentalText as Text } from '@wordpress/components';
+import {
+	Button,
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
@@ -26,13 +30,17 @@ export default function IcannSuspensionNotice( { domainName }: { domainName: str
 		} );
 	};
 	return (
-		<Notice variant="error" title={ __( 'Download failed' ) }>
-			<Text>
-				{ __(
-					'You must respond to the ICANN email to verify your domain email address or your domain will stop working. Check your contact information is correct below.'
-				) }
-			</Text>
-			<Button variant="link" onClick={ onClick } />,
+		<Notice variant="error" title={ __( 'Email verification required' ) }>
+			<VStack spacing={ 4 }>
+				<Text>
+					{ __(
+						'You must respond to the ICANN email to verify your domain email address or your domain will stop working. Check your contact information is correct below.'
+					) }
+				</Text>
+				<Button variant="link" onClick={ onClick }>
+					{ __( 'Resend email' ) }
+				</Button>
+			</VStack>
 		</Notice>
 	);
 }
