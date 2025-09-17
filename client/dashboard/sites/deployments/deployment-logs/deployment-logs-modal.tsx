@@ -7,6 +7,7 @@ import {
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
+	Spinner,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useLocale } from '../../../app/locale';
@@ -35,7 +36,11 @@ export function DeploymentLogsModal( {
 	};
 
 	const isFinalState = isDeploymentInFinalState( deployment.status );
-	const { data: logEntries = [], isError } = useQuery( {
+	const {
+		data: logEntries = [],
+		isLoading,
+		isError,
+	} = useQuery( {
 		...deploymentRunLogsQuery( siteId, deployment.code_deployment_id, deployment.id ),
 		refetchInterval: ! isFinalState ? 1000 : undefined,
 	} );
@@ -81,8 +86,14 @@ export function DeploymentLogsModal( {
 			</HStack>
 
 			{ isError && <Text>{ __( 'Failed to load deployment logs. Please try again.' ) }</Text> }
-			{ isDeploymentInFinalState( deployment.status ) && logEntries.length === 0 && (
+			{ isDeploymentInFinalState( deployment.status ) && logEntries.length === 0 && ! isLoading && (
 				<Text>{ __( 'No logs available for this deployment.' ) }</Text>
+			) }
+
+			{ isLoading && (
+				<HStack alignment="center">
+					<Spinner />
+				</HStack>
 			) }
 
 			{ ( logEntries.length > 0 || ! isDeploymentInFinalState( deployment.status ) ) && (
