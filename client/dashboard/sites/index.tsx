@@ -15,6 +15,7 @@ import { useAuth } from '../app/auth';
 import { sitesRoute } from '../app/router/sites';
 import { DataViewsCard } from '../components/dataviews-card';
 import { DataViewsEmptyState } from '../components/dataviews-empty-state';
+import { GuidedTourContextProvider, GuidedTourStep } from '../components/guided-tour';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import { getActions } from './actions';
@@ -206,6 +207,39 @@ export default function Sites() {
 						}
 					/>
 				</DataViewsCard>
+				<GuidedTourContextProvider
+					tourId="hosting-dashboard-tours-sites"
+					isSkippable
+					guidedTours={ [
+						{
+							id: 'hosting-dashboard-tours-sites-switch-layouts',
+							title: __( 'Switch layouts' ),
+							description: __(
+								'Choose between a visual grid view and a more compact table view of your sites.'
+							),
+						},
+						{
+							id: 'hosting-dashboard-tours-sites-appearance-options',
+							title: __( 'Appearance options' ),
+							description: __(
+								'Choose which site properties you see as well as sorting, density, and the number of sites displayed on each page.'
+							),
+						},
+					] }
+				>
+					<GuidedTourStep
+						id="hosting-dashboard-tours-sites-switch-layouts"
+						selector={ `.dataviews__view-actions button[aria-label="${ __( 'Layout' ) }"]` }
+						placement="bottom"
+						inline
+					/>
+					<GuidedTourStep
+						id="hosting-dashboard-tours-sites-appearance-options"
+						selector={ `.dataviews__view-actions button[aria-label="${ __( 'View options' ) }"]` }
+						placement="bottom"
+						inline
+					/>
+				</GuidedTourContextProvider>
 			</PageLayout>
 		</>
 	);

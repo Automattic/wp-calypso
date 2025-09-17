@@ -910,7 +910,7 @@ object PlaywrightTestPRMatrix : BuildType({
 	id("calypso_WebApp_Calypso_E2E_Playwright_Test_Matrix")
 	uuid = "074d8ae0-0859-4b4d-bf66-709f24ae5406"
 	name = "E2E Tests (Playwright Test)"
-	description = "Runs Calypso e2e tests using Playwright Test runner with build matrix"
+	description = "Runs Calypso e2e tests on pull requests using Playwright Test runner with build matrix"
 
 	vcs {
 		root(Settings.WpCalypso)

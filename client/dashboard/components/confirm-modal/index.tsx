@@ -9,6 +9,18 @@ import { useRef } from 'react';
 import { ButtonStack } from '../button-stack';
 import type { ButtonProps } from '@wordpress/components/build-types/button/types';
 
+interface Props {
+	onCancel: () => void;
+	title?: string;
+	children: React.ReactNode;
+	cancelButtonText?: string;
+	confirmButtonProps: ButtonProps;
+	onConfirm?: () => void;
+	isOpen: boolean;
+	__experimentalHideHeader?: boolean;
+	isDismissible?: boolean;
+}
+
 export default function ConfirmModal( {
 	onCancel,
 	title,
@@ -17,15 +29,9 @@ export default function ConfirmModal( {
 	confirmButtonProps,
 	onConfirm,
 	isOpen,
-}: {
-	onCancel: () => void;
-	title?: string;
-	children: React.ReactNode;
-	cancelButtonText?: string;
-	confirmButtonProps: ButtonProps;
-	onConfirm?: () => void;
-	isOpen: boolean;
-} ) {
+	__experimentalHideHeader = true,
+	isDismissible = true,
+}: Props ) {
 	const cancelButtonRef = useRef();
 	const confirmButtonRef = useRef();
 
@@ -52,8 +58,8 @@ export default function ConfirmModal( {
 
 	return (
 		<Modal
-			__experimentalHideHeader
-			isDismissible
+			__experimentalHideHeader={ __experimentalHideHeader }
+			isDismissible={ isDismissible }
 			onKeyDown={ handleEnter }
 			onRequestClose={ onCancel }
 			closeButtonLabel={ closeButtonLabel }
@@ -62,7 +68,12 @@ export default function ConfirmModal( {
 			<VStack spacing={ 8 }>
 				<Text>{ children }</Text>
 				<ButtonStack justify="flex-end">
-					<Button variant="tertiary" onClick={ onCancel } ref={ cancelButtonRef }>
+					<Button
+						variant="tertiary"
+						onClick={ onCancel }
+						ref={ cancelButtonRef }
+						disabled={ confirmButtonProps?.isBusy }
+					>
 						{ closeButtonLabel }
 					</Button>
 					<Button
