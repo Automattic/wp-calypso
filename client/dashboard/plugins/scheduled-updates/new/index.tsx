@@ -18,13 +18,15 @@ import SitesSelection from './components/sites-selection';
 import { DEFAULT_FREQUENCY, DEFAULT_TIME, DEFAULT_WEEKDAY } from './constants';
 import { prepareTimestamp } from './helpers';
 
+const BLOCK_CREATE = true;
+
 function ScheduledUpdatesNew() {
 	const [ selectedSiteIds, setSelectedSiteIds ] = useState< string[] >( [] );
 	const [ selectedPluginSlugs, setSelectedPluginSlugs ] = useState< string[] >( [] );
 	const [ frequency, setFrequency ] = useState< Frequency >( DEFAULT_FREQUENCY );
 	const [ weekday, setWeekday ] = useState< Weekday >( DEFAULT_WEEKDAY );
 	const [ time, setTime ] = useState( DEFAULT_TIME );
-	const isValid = selectedSiteIds.length > 0 && selectedPluginSlugs.length > 0;
+	const isValid = selectedSiteIds.length > 0 && selectedPluginSlugs.length > 0 && ! BLOCK_CREATE;
 
 	const siteIdsAsNumbers = useMemo(
 		() => selectedSiteIds.map( ( id ) => Number( id ) ),
