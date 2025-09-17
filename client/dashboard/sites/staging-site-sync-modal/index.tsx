@@ -20,7 +20,6 @@ import { __, isRTL } from '@wordpress/i18n';
 import { chevronRight, chevronLeft } from '@wordpress/icons';
 import { ButtonStack } from '../../components/button-stack';
 import InlineSupportLink from '../../components/inline-support-link';
-import { SectionHeader } from '../../components/section-header';
 import SiteEnvironmentBadge, { EnvironmentType } from '../../components/site-environment-badge';
 
 const DirectionArrow = () => {
@@ -37,15 +36,13 @@ const DirectionArrow = () => {
 };
 
 interface EnvironmentLabelProps {
-	label: string;
 	environmentType: EnvironmentType;
 	siteTitle?: string;
 }
 
-const EnvironmentLabel = ( { label, environmentType, siteTitle }: EnvironmentLabelProps ) => {
+const EnvironmentLabel = ( { environmentType, siteTitle }: EnvironmentLabelProps ) => {
 	return (
 		<VStack spacing={ 1 }>
-			<SectionHeader level={ 3 } title={ label } />
 			<HStack spacing={ 2 }>
 				<SiteEnvironmentBadge environmentType={ environmentType } />
 				{ siteTitle && (
@@ -84,8 +81,6 @@ interface EnvironmentConfig {
 interface SyncConfig {
 	staging: EnvironmentConfig;
 	production: EnvironmentConfig;
-	fromLabel: string;
-	toLabel: string;
 	learnMore: string;
 	submit: string;
 }
@@ -109,8 +104,6 @@ const getSyncConfig = ( type: 'pull' | 'push' ): SyncConfig => {
 				syncFrom: 'staging',
 				syncTo: 'production',
 			},
-			fromLabel: __( 'Pull' ),
-			toLabel: __( 'To' ),
 			learnMore: __( 'Read more about <a>environment pull</a>.' ),
 			submit: __( 'Pull' ),
 		};
@@ -133,8 +126,6 @@ const getSyncConfig = ( type: 'pull' | 'push' ): SyncConfig => {
 			syncFrom: 'production',
 			syncTo: 'staging',
 		},
-		fromLabel: __( 'Push' ),
-		toLabel: __( 'To' ),
 		learnMore: __( 'Read more about <a>environment push</a>.' ),
 		submit: __( 'Push' ),
 	};
@@ -256,17 +247,9 @@ export default function StagingSiteSyncModal( {
 					} ) }
 				</Text>
 				<HStack spacing={ 4 } alignment="left">
-					<EnvironmentLabel
-						label={ syncConfig.fromLabel }
-						environmentType={ sourceEnvironment }
-						siteTitle={ sourceSiteTitle }
-					/>
+					<EnvironmentLabel environmentType={ sourceEnvironment } siteTitle={ sourceSiteTitle } />
 					<DirectionArrow />
-					<EnvironmentLabel
-						label={ syncConfig.toLabel }
-						environmentType={ targetEnvironment }
-						siteTitle={ targetSiteTitle }
-					/>
+					<EnvironmentLabel environmentType={ targetEnvironment } siteTitle={ targetSiteTitle } />
 				</HStack>
 				<VStack spacing={ 6 }>
 					{ showDomainConfirmation && (
