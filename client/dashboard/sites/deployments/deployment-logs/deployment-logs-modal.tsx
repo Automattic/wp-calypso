@@ -86,7 +86,7 @@ export function DeploymentLogsModal( {
 			</HStack>
 
 			{ isError && <Text>{ __( 'Failed to load deployment logs. Please try again.' ) }</Text> }
-			{ isDeploymentInFinalState( deployment.status ) && logEntries.length === 0 && ! isLoading && (
+			{ ! isLoading && isDeploymentInFinalState( deployment.status ) && logEntries.length === 0 && (
 				<Text>{ __( 'No logs available for this deployment.' ) }</Text>
 			) }
 
@@ -96,43 +96,44 @@ export function DeploymentLogsModal( {
 				</HStack>
 			) }
 
-			{ ( logEntries.length > 0 || ! isDeploymentInFinalState( deployment.status ) ) && (
-				<VStack spacing={ 2 }>
-					<div
-						style={ {
-							width: '752px',
-							maxWidth: '100%',
-							height: '216px',
-							maxHeight: '100%',
-							overflowY: 'auto',
-							backgroundColor: 'var(--dashboard__text-color)',
-							borderRadius: '4px',
-						} }
-					>
-						<VStack
+			{ ! isLoading &&
+				( logEntries.length > 0 || ! isDeploymentInFinalState( deployment.status ) ) && (
+					<VStack spacing={ 2 }>
+						<div
 							style={ {
-								width: '100%',
-								padding: '16px',
+								width: '752px',
+								maxWidth: '100%',
+								height: '216px',
+								maxHeight: '100%',
+								overflowY: 'auto',
+								backgroundColor: 'var(--dashboard__text-color)',
+								borderRadius: '4px',
 							} }
 						>
-							{ logEntries.map( ( entry, index ) => (
-								<DeploymentLogsEntry
-									key={ `${ entry.message }-${ index }` }
-									entry={ entry }
-									deployment={ deployment }
-									siteId={ siteId }
-								/>
-							) ) }
-						</VStack>
-					</div>
-					<Text align="right">
-						{ formatDate( new Date( deployment.created_on ), locale, {
-							dateStyle: 'medium',
-							timeStyle: 'long',
-						} ) }
-					</Text>
-				</VStack>
-			) }
+							<VStack
+								style={ {
+									width: '100%',
+									padding: '16px',
+								} }
+							>
+								{ logEntries.map( ( entry, index ) => (
+									<DeploymentLogsEntry
+										key={ `${ entry.message }-${ index }` }
+										entry={ entry }
+										deployment={ deployment }
+										siteId={ siteId }
+									/>
+								) ) }
+							</VStack>
+						</div>
+						<Text align="right">
+							{ formatDate( new Date( deployment.created_on ), locale, {
+								dateStyle: 'medium',
+								timeStyle: 'long',
+							} ) }
+						</Text>
+					</VStack>
+				) }
 
 			<HStack alignment="right" spacing={ 5 } style={ { marginTop: '24px' } }>
 				<ExternalLink
