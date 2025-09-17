@@ -22,7 +22,8 @@ const ReferralDetailsReferrals = ( { referrals }: { referrals: ReferralAPIRespon
 
 	const { handleArchiveReferral, isPending: isArchivingReferral } = useHandleReferralArchive();
 
-	const { handleResendReferralEmail } = useHandleReferralResend();
+	const { handleResendReferralEmail, isPending: isResendingReferralEmail } =
+		useHandleReferralResend();
 
 	const { data: productsData, isFetching: isFetchingProducts } = useProductsQuery(
 		false,
@@ -35,6 +36,7 @@ const ReferralDetailsReferrals = ( { referrals }: { referrals: ReferralAPIRespon
 			id: 'resend-referral-email',
 			label: translate( 'Resend email' ),
 			isPrimary: false,
+			disabled: isResendingReferralEmail,
 			callback( items: SetStateAction< ReferralAPIResponse | null >[] ) {
 				dispatch( recordTracksEvent( 'calypso_a4a_referrals_resend_email_button_click' ) );
 				const referral = items[ 0 ] as ReferralAPIResponse;
