@@ -98,80 +98,10 @@ const truncateWithIntlSegmenter = ( text: string, limit: number ): string | null
 
 		return null;
 	} catch ( error ) {
-		// If Intl.Segmenter fails, return null to fall back to manual method
-		console.warn( 'Intl.Segmenter failed, falling back to manual sentence detection:', error );
+		// If Intl.Segmenter fails, return null to fall back to simple truncation
+		console.warn( 'Intl.Segmenter failed, falling back to simple truncation:', error );
 		return null;
 	}
-};
-
-/**
- * Truncate text using manual sentence detection with abbreviation handling
- * @param text - The text to truncate
- * @param limit - The character limit
- * @returns The truncated text
- */
-const truncateWithManualDetection = ( text: string, limit: number ): string => {
-	const truncated = text.slice( 0, limit );
-
-	// Abbreviations that contain periods but are not sentence endings
-	const abbreviations: Record<string, string> = {
-		'a.m.': 'a-m-',
-		'p.m.': 'p-m-',
-		'e.g.': 'e-g-',
-		'i.e.': 'i-e-',
-		'etc.': 'etc-',
-		'cf.': 'cf-',
-		'viz.': 'viz-',
-		'vs.': 'vs-',
-		'dr.': 'dr-',
-		'mr.': 'mr-',
-		'mrs.': 'mrs-',
-		'ms.': 'ms-',
-		'mx.': 'mx-',
-		'prof.': 'prof-',
-		'sr.': 'sr-',
-		'jr.': 'jr-',
-		'hon.': 'hon-',
-		'rev.': 'rev-',
-		'capt.': 'capt-',
-		'col.': 'col-',
-		'gen.': 'gen-',
-		'lt.': 'lt-',
-		'sgt.': 'sgt-',
-		'st.': 'st-',
-		'mt.': 'mt-',
-		'ft.': 'ft-',
-		'inc.': 'inc-',
-		'ltd.': 'ltd-',
-		'co.': 'co-',
-		'corp.': 'corp-',
-		'llc.': 'llc-',
-		'no.': 'no-',
-		'vol.': 'vol-',
-		'ed.': 'ed-',
-		'ch.': 'ch-',
-		'fig.': 'fig-',
-		'pp.': 'pp-',
-		'p.': 'p-',
-		'al.': 'al-',
-	};
-
-	// Replace abbreviations with hyphenated versions to avoid false sentence endings
-	let processedText = truncated;
-	Object.entries( abbreviations ).forEach( ( [ abbrev, replacement ] ) => {
-		const regex = new RegExp( `\\b${ abbrev.replace( /[.*+?^${}()|[\]\\]/g, '\\$&' ) }\\b`, 'gi' );
-		processedText = processedText.replace( regex, replacement );
-	} );
-
-	// Find the last sentence ending (., !, ?) within the processed text
-	const lastSentenceEnd = processedText.lastIndexOf( '.' );
-	// If we found a sentence end and it's not too close to the beginning, use it
-	if ( lastSentenceEnd > 0 && lastSentenceEnd > limit * 0.5 ) {
-		return truncated.slice( 0, lastSentenceEnd + 1 );
-	}
-
-	// Otherwise, fall back to hard truncation
-	return truncated.concat( '…' );
 };
 
 /**
@@ -190,8 +120,8 @@ export const truncateAtSentence: ( n: number ) => Formatter = ( limit ) => ( tex
 		return intlResult;
 	}
 
-	// Fallback to manual sentence detection
-	return truncateWithManualDetection( text, limit );
+	// Fallback to hard truncation.
+	return hardTruncation( limit )( text );
 };
 
 export const firstValid: ( ...args: ConditionalFormatter[] ) => NullableFormatter =
