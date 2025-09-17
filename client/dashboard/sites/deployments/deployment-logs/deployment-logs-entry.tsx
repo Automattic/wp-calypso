@@ -19,7 +19,7 @@ export const DeploymentLogsEntry = ( {
 	siteId: number;
 } ) => {
 	const [ detailExpanded, setDetailExpanded ] = useState( false );
-	const openDetail = () => setDetailExpanded( ( v ) => ! v );
+	const toggleExpandDetail = () => setDetailExpanded( ( v ) => ! v );
 
 	const commandIdentifier = entry.context?.command.command_identifier;
 	const hasDetail = !! commandIdentifier;
@@ -59,24 +59,18 @@ export const DeploymentLogsEntry = ( {
 
 	const getDetail = () => {
 		if ( detail ) {
-			return <Text>{ detail }</Text>;
+			return detail;
 		}
 
 		if ( isLoading ) {
-			return <Text>{ __( 'Fetching log details…' ) }</Text>;
+			return __( 'Fetching log details…' );
 		}
 
 		if ( isError ) {
-			return <Text>{ __( 'Failed to fetch logs. Please try again.' ) }</Text>;
+			return __( 'Failed to fetch logs. Please try again.' );
 		}
 
 		return null;
-	};
-
-	const handleToggleExpand = () => {
-		if ( hasDetail ) {
-			openDetail();
-		}
 	};
 
 	return (
@@ -93,7 +87,7 @@ export const DeploymentLogsEntry = ( {
 							style={ {
 								cursor: hasDetail ? 'pointer' : 'default',
 							} }
-							onClick={ handleToggleExpand }
+							onClick={ toggleExpandDetail }
 							disabled={ ! hasDetail }
 						>
 							<span className="deployment-logs-modal__show-more">
@@ -102,7 +96,7 @@ export const DeploymentLogsEntry = ( {
 						</Button>
 					) }
 				</HStack>
-				<Text style={ { color: '#FBFBFB' } }> { detailExpanded && getDetail() }</Text>
+				{ detailExpanded && <Text style={ { color: '#FBFBFB' } }> { getDetail() }</Text> }
 			</VStack>
 		</HStack>
 	);
