@@ -25,6 +25,7 @@ function getStatusText(
 	const duration = formatDuration( startedOn, completedOn );
 
 	switch ( status ) {
+		case 'dispatched':
 		case 'pending':
 			return __( 'Deploy pending' );
 		case 'queued':
@@ -55,6 +56,7 @@ const getStatusIcon = (
 	status: DeploymentRunStatus
 ): { icon: React.ReactElement; fill: string } | null => {
 	switch ( status ) {
+		case 'dispatched':
 		case 'pending':
 		case 'queued':
 			return {
