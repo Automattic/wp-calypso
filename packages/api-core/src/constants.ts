@@ -17,64 +17,72 @@ export enum DotcomPlans {
 	PREMIUM_3_YEARS = 'value_bundle-3y',
 }
 
-export enum DotcomFeatures {
-	ATOMIC = 'atomic',
-	BACKUPS = 'backups',
-	SUBSCRIPTION_GIFTING = 'subscription-gifting',
-	COPY_SITE = 'copy-site',
-	LEGACY_CONTACT = 'legacy-contact',
-	LOCKED_MODE = 'locked-mode',
-	SCAN = 'scan',
-	SECURITY_SETTINGS = 'security-settings',
-	SET_PRIMARY_CUSTOM_DOMAIN = 'set-primary-custom-domain',
-	SFTP = 'sftp',
-	SSH = 'ssh',
-	SITE_PREVIEW_LINKS = 'site-preview-links',
-	STAGING_SITES = 'staging-sites',
-}
+export const DotcomFeatures = {
+	ATOMIC: 'atomic',
+	BACKUPS: 'backups',
+	SUBSCRIPTION_GIFTING: 'subscription-gifting',
+	COPY_SITE: 'copy-site',
+	LEGACY_CONTACT: 'legacy-contact',
+	LOCKED_MODE: 'locked-mode',
+	SCAN: 'scan',
+	SECURITY_SETTINGS: 'security-settings',
+	SET_PRIMARY_CUSTOM_DOMAIN: 'set-primary-custom-domain',
+	SFTP: 'sftp',
+	SSH: 'ssh',
+	SITE_PREVIEW_LINKS: 'site-preview-links',
+	STAGING_SITES: 'staging-sites',
+} as const;
+
+export type DotcomFeatureSlug = ( typeof DotcomFeatures )[ keyof typeof DotcomFeatures ];
 
 // Features that are used to identify the paid product.
 // Feature slug extracted from https://github.com/Automattic/jetpack/tree/trunk/projects/packages/my-jetpack/src/products.
-export enum JetpackFeatures {
-	ANTISPAM = 'antispam',
-	BACKUPS = 'backups',
-	CLOUD_CRITICAL_CSS = 'cloud-critical-css',
-	MONITOR = 'monitor',
-	SCAN = 'scan',
-	SOCIAL_ENHANCED_PUBLISHING = 'social-enhanced-publishing',
-	STATS = 'stats-paid',
-	SEARCH = 'search',
-	VIDEOPRESS = 'videopress',
-}
+export const JetpackFeatures = {
+	ANTISPAM: 'antispam',
+	BACKUPS: 'backups',
+	CLOUD_CRITICAL_CSS: 'cloud-critical-css',
+	MONITOR: 'monitor',
+	SCAN: 'scan',
+	SOCIAL_ENHANCED_PUBLISHING: 'social-enhanced-publishing',
+	STATS: 'stats-paid',
+	SEARCH: 'search',
+	VIDEOPRESS: 'videopress',
+} as const;
 
-export enum JetpackModules {
-	MONITOR = 'monitor',
-	PROTECT = 'protect',
-	SSO = 'sso',
-	STATS = 'stats',
-	WAF = 'waf',
-}
+export type JetpackFeatureSlug = ( typeof JetpackFeatures )[ keyof typeof JetpackFeatures ];
+
+export const JetpackModules = {
+	MONITOR: 'monitor',
+	PROTECT: 'protect',
+	SSO: 'sso',
+	STATS: 'stats',
+	WAF: 'waf',
+} as const;
+
+export type JetpackModuleSlug = ( typeof JetpackModules )[ keyof typeof JetpackModules ];
 
 // Features that needs Atomic or self-hosted infrastructure,
 // mapped to the required WordPress.com plan feature.
-export enum HostingFeatures {
-	BACKUPS = DotcomFeatures.BACKUPS,
-	CACHING = DotcomFeatures.ATOMIC,
-	DATABASE = DotcomFeatures.SFTP,
-	DEFENSIVE_MODE = DotcomFeatures.SFTP,
-	DEPLOYMENT = DotcomFeatures.ATOMIC,
-	LOGS = DotcomFeatures.ATOMIC,
-	MONITOR = DotcomFeatures.ATOMIC,
-	PERFORMANCE = DotcomFeatures.ATOMIC,
-	PHP = DotcomFeatures.SFTP,
-	PRIMARY_DATA_CENTER = DotcomFeatures.SFTP,
-	SCAN = DotcomFeatures.SCAN,
-	SECURITY_SETTINGS = DotcomFeatures.SECURITY_SETTINGS,
-	SFTP = DotcomFeatures.SFTP,
-	SSH = DotcomFeatures.SSH,
-	STAGING_SITE = DotcomFeatures.STAGING_SITES,
-	STATIC_FILE_404 = DotcomFeatures.SFTP,
-}
+export const HostingFeatures = {
+	BACKUPS: DotcomFeatures.BACKUPS,
+	CACHING: DotcomFeatures.ATOMIC,
+	DATABASE: DotcomFeatures.SFTP,
+	DEFENSIVE_MODE: DotcomFeatures.SFTP,
+	DEPLOYMENT: DotcomFeatures.ATOMIC,
+	LOGS: DotcomFeatures.ATOMIC,
+	MONITOR: DotcomFeatures.ATOMIC,
+	PERFORMANCE: DotcomFeatures.ATOMIC,
+	PHP: DotcomFeatures.SFTP,
+	PRIMARY_DATA_CENTER: DotcomFeatures.SFTP,
+	SCAN: DotcomFeatures.SCAN,
+	SECURITY_SETTINGS: DotcomFeatures.SECURITY_SETTINGS,
+	SFTP: DotcomFeatures.SFTP,
+	SSH: DotcomFeatures.SSH,
+	STAGING_SITE: DotcomFeatures.STAGING_SITES,
+	STATIC_FILE_404: DotcomFeatures.SFTP,
+} as const;
+
+export type HostingFeatureSlug = ( typeof HostingFeatures )[ keyof typeof HostingFeatures ];
 
 export const SubscriptionBillPeriod = {
 	PLAN_ONE_TIME_PERIOD: -1,
