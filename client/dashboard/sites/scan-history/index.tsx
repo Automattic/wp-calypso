@@ -15,6 +15,10 @@ export function ScanHistoryDataViews( { site }: { site: Site } ) {
 		type: 'table',
 		fields: [ 'status', 'fixed_on', 'threat', 'severity' ],
 		perPage: 10,
+		sort: {
+			field: 'fixed_on',
+			direction: 'desc',
+		},
 	} );
 
 	const getEmptyMessage = () => {
