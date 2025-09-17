@@ -2,7 +2,8 @@
  * @jest-environment jsdom
  */
 
-import { screen, fireEvent } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { render } from '../../../test-utils';
 import StagingSiteDeleteModal from '../index';
 import type { Site } from '@automattic/api-core';
@@ -111,19 +112,21 @@ describe( 'StagingSiteDeleteModal', () => {
 	} );
 
 	describe( 'User Interactions', () => {
-		test( 'calls onClose when cancel button is clicked', () => {
+		test( 'calls onClose when cancel button is clicked', async () => {
+			const user = userEvent.setup();
 			const mockOnClose = jest.fn();
 			renderModal( mockStagingSite, mockOnClose );
 
-			fireEvent.click( getButton( 'Cancel' ) );
+			await user.click( getButton( 'Cancel' ) );
 
 			expect( mockOnClose ).toHaveBeenCalledTimes( 1 );
 		} );
 
-		test( 'triggers mutation when delete button is clicked', () => {
+		test( 'triggers mutation when delete button is clicked', async () => {
+			const user = userEvent.setup();
 			renderModal( mockStagingSite );
 
-			fireEvent.click( getButton( 'Delete staging site' ) );
+			await user.click( getButton( 'Delete staging site' ) );
 
 			expect( mockMutate ).toHaveBeenCalledWith( undefined, {
 				onError: expect.any( Function ),
@@ -149,7 +152,8 @@ describe( 'StagingSiteDeleteModal', () => {
 	} );
 
 	describe( 'Error Handling', () => {
-		test( 'shows error notice and tracks failure when deletion fails', () => {
+		test( 'shows error notice and tracks failure when deletion fails', async () => {
+			const user = userEvent.setup();
 			const { useMutation } = require( '@tanstack/react-query' );
 			const { recordTracksEvent } = require( '@automattic/calypso-analytics' );
 
@@ -168,7 +172,7 @@ describe( 'StagingSiteDeleteModal', () => {
 
 			renderModal( mockStagingSite );
 
-			fireEvent.click( getButton( 'Delete staging site' ) );
+			await user.click( getButton( 'Delete staging site' ) );
 
 			expect( mockCreateErrorNotice ).toHaveBeenCalledWith( 'Network error', {
 				type: 'snackbar',
@@ -179,7 +183,8 @@ describe( 'StagingSiteDeleteModal', () => {
 			);
 		} );
 
-		test( 'shows default error message when no error message is provided', () => {
+		test( 'shows default error message when no error message is provided', async () => {
+			const user = userEvent.setup();
 			const { useMutation } = require( '@tanstack/react-query' );
 
 			// Mock mutate to simulate calling onError callback with an error without message
@@ -197,7 +202,7 @@ describe( 'StagingSiteDeleteModal', () => {
 
 			renderModal( mockStagingSite );
 
-			fireEvent.click( getButton( 'Delete staging site' ) );
+			await user.click( getButton( 'Delete staging site' ) );
 
 			expect( mockCreateErrorNotice ).toHaveBeenCalledWith( 'Failed to delete staging site', {
 				type: 'snackbar',
@@ -216,7 +221,8 @@ describe( 'StagingSiteDeleteModal', () => {
 			} );
 		} );
 
-		test( 'shows success notice, closes modal, and navigates on successful deletion', () => {
+		test( 'shows success notice, closes modal, and navigates on successful deletion', async () => {
+			const user = userEvent.setup();
 			const { useMutation } = require( '@tanstack/react-query' );
 			const { recordTracksEvent } = require( '@automattic/calypso-analytics' );
 
@@ -236,7 +242,7 @@ describe( 'StagingSiteDeleteModal', () => {
 			const mockOnClose = jest.fn();
 			renderModal( mockStagingSite, mockOnClose );
 
-			fireEvent.click( getButton( 'Delete staging site' ) );
+			await user.click( getButton( 'Delete staging site' ) );
 
 			expect( mockCreateSuccessNotice ).toHaveBeenCalledWith(
 				'We are deleting your staging site. We will notify you when it is done.',
