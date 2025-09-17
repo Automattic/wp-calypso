@@ -351,7 +351,11 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 								activeClass="is-active"
 								tabs={ LOG_TABS }
 								onSelect={ ( tabName ) => {
-									if ( tabName === LogType.PHP || tabName === LogType.SERVER ) {
+									if (
+										tabName === LogType.PHP ||
+										tabName === LogType.SERVER ||
+										tabName === LogType.ACTIVITY
+									) {
 										handleTabChange( tabName );
 									}
 								} }
