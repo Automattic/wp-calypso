@@ -14,7 +14,6 @@
 	z-index: $help-center-z-index;
 	cursor: default;
 	transition: max-height 0.5s;
-
 	animation: slideIn 0.2s ease-out forwards;
 	transform-origin: bottom;
 	position: fixed;
@@ -105,12 +104,25 @@
 		right: 50px;
 		bottom: 50px;
 
+		&:not( .react-draggable-dragging ) {
+			transition: all 0.2s ease-in-out;
+		}
+
+		.help-center__container-content {
+			visibility: visible;
+		}
+
 		&.is-minimized {
 			height: $head-foot-height;
 			bottom: 0;
 
 			border-bottom-left-radius: 0;
 			border-bottom-right-radius: 0;
+
+			.help-center__container-content {
+				// It's much faster to transition the help center when it's most populated child is invisible.
+				visibility: hidden;
+			}
 		}
 	}
 
