@@ -8,13 +8,13 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
-import { Icon, published } from '@wordpress/icons';
+import { __ } from '@wordpress/i18n';
 import { useLocale } from '../../../app/locale';
 import { formatDate } from '../../../utils/datetime';
 import { BranchDisplay } from '../branch-display';
 import { DeploymentLogsEntry } from './deployment-logs-entry';
 import { deploymentRunLogsQuery } from './deployment-logs-queries';
+import { DeploymentLogsStatus } from './deployment-logs-status';
 import type { DeploymentRunWithDeploymentInfo } from '@automattic/api-core';
 
 interface DeploymentLogsModalProps {
@@ -22,19 +22,6 @@ interface DeploymentLogsModalProps {
 	onRequestClose: () => void;
 	deployment: DeploymentRunWithDeploymentInfo;
 	siteId: number;
-}
-
-function formatDuration( startedOn: string, completedOn: string ) {
-	if ( ! startedOn ) {
-		return '-';
-	}
-	const startedOnDate = new Date( startedOn ).valueOf();
-	const completedOnDate = completedOn ? new Date( completedOn ).valueOf() : new Date().valueOf();
-	const totalSeconds = Math.ceil( ( completedOnDate - startedOnDate ) / 1000 );
-	const minutes = Math.floor( totalSeconds / 60 );
-	const seconds = totalSeconds % 60;
-
-	return `${ minutes > 0 ? `${ minutes }m ` : '' }${ seconds }s`;
 }
 
 export function DeploymentLogsModal( {
@@ -89,24 +76,11 @@ export function DeploymentLogsModal( {
 					</Text>
 				</HStack>
 
-				{ deployment.status === 'success' && (
-					<HStack spacing={ 1.5 } alignment="left">
-						<Icon
-							icon={ published }
-							style={ {
-								flexShrink: 0,
-								fill: 'var(--dashboard__foreground-color-success)',
-							} }
-						/>
-						<Text size="small" style={ { color: '#3b3b3b' } }>
-							{ sprintf(
-								// translators: %s is the duration of the deployment. e.g. 'Deploy completed in 2min 30s'.
-								__( 'Deploy completed in %s' ),
-								formatDuration( deployment.started_on, deployment.completed_on )
-							) }
-						</Text>
-					</HStack>
-				) }
+				<DeploymentLogsStatus
+					status={ deployment.status }
+					startedOn={ deployment.started_on }
+					completedOn={ deployment.completed_on }
+				/>
 			</HStack>
 
 			{ isLoading && (
