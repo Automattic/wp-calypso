@@ -107,13 +107,15 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 							<ImagePreview item={ backup } />
 						) }
 					</Grid>
-					<FileBrowser
-						rewindId={ Number( backup.rewind_id ) }
-						siteId={ site.ID }
-						siteSlug={ site.slug }
-						isRestoreEnabled
-						onTrackEvent={ recordTracksEvent }
-					/>
+					<div className="backup-details__file-browser">
+						<FileBrowser
+							rewindId={ Number( backup.rewind_id ) }
+							siteId={ site.ID }
+							siteSlug={ site.slug }
+							isRestoreEnabled
+							onTrackEvent={ recordTracksEvent }
+						/>
+					</div>
 				</VStack>
 			</CardBody>
 		</Card>
