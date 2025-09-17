@@ -1,5 +1,5 @@
 import { HostingFeatures } from '@automattic/api-core';
-import { siteBySlugQuery } from '@automattic/api-queries';
+import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet } from '@tanstack/react-router';
 import {
@@ -14,8 +14,10 @@ import { backup, chevronLeft, chevronRight } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { FileBrowserProvider } from 'calypso/my-sites/backup/backup-contents-page/file-browser/file-browser-context';
+import { useDateRange } from '../../app/hooks/use-date-range';
 import { useLocale } from '../../app/locale';
 import { siteRoute } from '../../app/router/sites';
+import { DateRangePicker } from '../../components/date-range-picker';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { hasHostingFeature } from '../../utils/site-features';
@@ -29,9 +31,30 @@ import './style.scss';
 import type { ActivityLogEntry } from '@automattic/api-core';
 
 export function BackupsListPage() {
+	const locale = useLocale();
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+
+	const { data: siteSettings } = useSuspenseQuery( {
+		...siteSettingsQuery( site.ID ),
+		select: ( s ) => ( {
+			gmtOffset: typeof s?.gmt_offset === 'number' ? s.gmt_offset : 0,
+			timezoneString: s?.timezone_string || undefined,
+		} ),
+	} );
+
+	const { gmtOffset, timezoneString } = siteSettings;
+
+	const { dateRange, handleDateRangeChange } = useDateRange( {
+		timezoneString,
+		gmtOffset,
+	} );
 	const [ selectedBackup, setSelectedBackup ] = useState< ActivityLogEntry | null >( null );
+
+	const handleDateRangeChangeWrapper = ( next: { start: Date; end: Date } ) => {
+		handleDateRangeChange( next );
+		setSelectedBackup( null );
+	};
 	const [ showDetails, setShowDetails ] = useState( false );
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	const columns = isSmallViewport ? 1 : 2;
@@ -68,6 +91,9 @@ export function BackupsListPage() {
 				selectedBackup={ selectedBackup }
 				setSelectedBackup={ handleBackupSelection }
 				autoSelect={ false }
+				dateRange={ dateRange }
+				timezoneString={ timezoneString }
+				gmtOffset={ gmtOffset }
 			/>
 		);
 	};
@@ -76,13 +102,30 @@ export function BackupsListPage() {
 	const shouldShowActions = hasBackups && ! isMobileDetailsView;
 	const shouldShowNotices = ! isMobileDetailsView;
 
+	const actions = (
+		<>
+			{ /* This div is required to fix a layout width issue when the DateRangePicker is placed together with the BackupNowButton. */ }
+			<div>
+				<DateRangePicker
+					start={ dateRange.start }
+					end={ dateRange.end }
+					gmtOffset={ gmtOffset }
+					timezoneString={ timezoneString }
+					locale={ locale }
+					onChange={ handleDateRangeChangeWrapper }
+				/>
+			</div>
+			<BackupNowButton site={ site } />
+		</>
+	);
+
 	return (
 		<PageLayout
 			header={
 				<PageHeader
 					title={ isMobileDetailsView ? __( 'Backup details' ) : __( 'Backups' ) }
 					prefix={ isMobileDetailsView ? backButton : undefined }
-					actions={ shouldShowActions ? <BackupNowButton site={ site } /> : undefined }
+					actions={ shouldShowActions ? actions : undefined }
 				/>
 			}
 			notices={ shouldShowNotices ? <BackupNotices site={ site } /> : undefined }
@@ -97,6 +140,9 @@ export function BackupsListPage() {
 								site={ site }
 								selectedBackup={ selectedBackup }
 								setSelectedBackup={ handleBackupSelection }
+								dateRange={ dateRange }
+								timezoneString={ timezoneString }
+								gmtOffset={ gmtOffset }
 							/>
 
 							{ selectedBackup && <BackupDetails backup={ selectedBackup } site={ site } /> }

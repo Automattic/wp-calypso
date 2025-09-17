@@ -81,7 +81,7 @@ export default function DomainOverview() {
 			}
 		>
 			<FeaturedCards />
-			<DomainOverviewSettings />
+			<DomainOverviewSettings domain={ domain } />
 			<Actions />
 		</PageLayout>
 	);
