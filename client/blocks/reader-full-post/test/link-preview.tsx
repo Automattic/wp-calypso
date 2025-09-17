@@ -3,35 +3,36 @@
  */
 import { render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
+import wpcom from 'calypso/lib/wp';
 import LinkPreview from '../link-preview';
 
-// Mock fetch for testing
-const mockFetch = jest.fn();
-global.fetch = mockFetch;
+// Mock wpcom
+jest.mock( 'calypso/lib/wp', () => ( {
+	req: {
+		get: jest.fn(),
+	},
+} ) );
+const mockWpcomGet = wpcom.req.get as jest.MockedFunction< typeof wpcom.req.get >;
 
-// Helper function to create a mock HTML response with OpenGraph tags
-const createMockHtml = ( title: string, description: string ) => `
-<!DOCTYPE html>
-<html>
-<head>
-	<meta property="og:title" content="${ title }" />
-	<meta property="og:description" content="${ description }" />
-	<meta property="og:site_name" content="Test Site" />
-</head>
-<body>
-	<h1>Test Page</h1>
-</body>
-</html>
-`;
+// Helper function to create mock API response data
+const createMockApiResponse = ( title: string, description: string, additionalData = {} ) => ( {
+	title,
+	description,
+	favicon: 'https://www.google.com/s2/favicons?domain=example.com&sz=48',
+	site_name: 'Test Site',
+	domain: 'example.com',
+	url: 'https://example.com/test',
+	...additionalData,
+} );
 
 describe( 'LinkPreview', () => {
 	beforeEach( () => {
-		mockFetch.mockClear();
-		mockFetch.mockReset();
+		mockWpcomGet.mockClear();
+		mockWpcomGet.mockReset();
 	} );
 
-	it( 'should render nothing when fetch fails', async () => {
-		mockFetch.mockRejectedValue( new Error( 'Network error' ) );
+	it( 'should render nothing when API call fails', async () => {
+		mockWpcomGet.mockRejectedValue( new Error( 'API error' ) );
 
 		const { container } = render( <LinkPreview url="https://example.com/test" /> );
 
@@ -40,158 +41,58 @@ describe( 'LinkPreview', () => {
 		} );
 	} );
 
-	it( 'should decode HTML entities in OpenGraph title and description', async () => {
-		const titleWithEntities = 'Test&#8217;s Page &amp; More';
-		const descriptionWithEntities = 'A description with &#8220;quotes&#8221; &amp; entities';
-
-		const mockHtml = createMockHtml( titleWithEntities, descriptionWithEntities );
-
-		mockFetch.mockResolvedValueOnce( {
-			ok: true,
-			text: () => Promise.resolve( mockHtml ),
-		} );
+	it( 'should render preview when API returns valid data', async () => {
+		const mockData = createMockApiResponse( 'Test Title', 'Test description' );
+		mockWpcomGet.mockResolvedValue( mockData );
 
 		render( <LinkPreview url="https://example.com/test" /> );
 
 		await waitFor( () => {
-			// Check that HTML entities are properly decoded
-			expect( screen.getByText( /Test.*Page.*More/ ) ).toBeInTheDocument();
-			expect( screen.getByText( /description.*quotes.*entities/ ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Test Title' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Test description' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Test Site' ) ).toBeInTheDocument();
 		} );
 	} );
 
-	it( 'should decode HTML entities in fallback title tag', async () => {
-		const titleWithEntities = 'Fallback Title with &#8217;s &amp; Entities';
-
-		const mockHtml = `
-<!DOCTYPE html>
-<html>
-<head>
-	<title>${ titleWithEntities }</title>
-	<meta property="og:description" content="Test description" />
-</head>
-<body>
-	<h1>Test Page</h1>
-</body>
-</html>
-`;
-
-		mockFetch.mockResolvedValueOnce( {
-			ok: true,
-			text: () => Promise.resolve( mockHtml ),
-		} );
+	it( 'should handle API response with entities already decoded', async () => {
+		const mockData = createMockApiResponse(
+			"Test's Page & More",
+			'A description with "quotes" & entities'
+		);
+		mockWpcomGet.mockResolvedValue( mockData );
 
 		render( <LinkPreview url="https://example.com/test" /> );
 
 		await waitFor( () => {
-			// Check that HTML entities in title tag are properly decoded
-			expect( screen.getByText( /Fallback.*Title.*Entities/ ) ).toBeInTheDocument();
+			expect( screen.getByText( "Test's Page & More" ) ).toBeInTheDocument();
+			expect( screen.getByText( 'A description with "quotes" & entities' ) ).toBeInTheDocument();
 		} );
 	} );
 
-	it( 'should handle common HTML entities correctly', async () => {
-		const titleWithCommonEntities = '&lt;Script&gt; &amp; &#39;Quotes&#39; &#8211; Test';
-
-		const mockHtml = createMockHtml( titleWithCommonEntities, 'Simple description' );
-
-		mockFetch.mockResolvedValueOnce( {
-			ok: true,
-			text: () => Promise.resolve( mockHtml ),
+	it( 'should display images and favicons from API response', async () => {
+		const mockData = createMockApiResponse( 'Test Page', 'Test description', {
+			image: 'https://example.com/images/preview.jpg',
+			favicon: 'https://example.com/favicon.ico',
+			image_alt: 'Test image alt text',
 		} );
+		mockWpcomGet.mockResolvedValue( mockData );
 
 		render( <LinkPreview url="https://example.com/test" /> );
 
 		await waitFor( () => {
-			// Check that various HTML entities are properly decoded
-			expect( screen.getByText( /Script.*Quotes.*Test/ ) ).toBeInTheDocument();
-		} );
-	} );
-
-	it( 'should resolve relative URLs for favicons and images', async () => {
-		const mockHtml = `
-<!DOCTYPE html>
-<html>
-<head>
-	<meta property="og:title" content="Test Page" />
-	<meta property="og:description" content="Test description" />
-	<meta property="og:image" content="/images/preview.jpg" />
-	<link rel="icon" href="/favicon.ico" />
-</head>
-<body>
-	<h1>Test Page</h1>
-</body>
-</html>
-`;
-
-		mockFetch.mockResolvedValueOnce( {
-			ok: true,
-			text: () => Promise.resolve( mockHtml ),
-		} );
-
-		render( <LinkPreview url="https://example.com/test" /> );
-
-		await waitFor( () => {
-			// Check that both favicon and image relative URLs are resolved
-			const image = screen.getByRole( 'img', { name: /test page/i } );
+			const image = screen.getByRole( 'img', { name: /test image alt text/i } );
 			expect( image ).toHaveAttribute( 'src', 'https://example.com/images/preview.jpg' );
 
-			// Find favicon by its CSS class since it might not have alt text
 			const favicon = document.querySelector( '.reader-full-post__link-preview-favicon' );
 			expect( favicon ).toHaveAttribute( 'src', 'https://example.com/favicon.ico' );
 		} );
 	} );
 
-	it( 'should handle absolute URLs correctly without modification', async () => {
-		const mockHtml = `
-<!DOCTYPE html>
-<html>
-<head>
-	<meta property="og:title" content="Test Page" />
-	<meta property="og:image" content="https://cdn.example.com/image.jpg" />
-	<link rel="icon" href="https://static.example.com/favicon.ico" />
-</head>
-<body>
-	<h1>Test Page</h1>
-</body>
-</html>
-`;
-
-		mockFetch.mockResolvedValueOnce( {
-			ok: true,
-			text: () => Promise.resolve( mockHtml ),
-		} );
-
-		render( <LinkPreview url="https://example.com/test" /> );
-
-		await waitFor( () => {
-			// Check that absolute URLs remain unchanged for both images and favicons
-			const image = screen.getByRole( 'img', { name: /test page/i } );
-			expect( image ).toHaveAttribute( 'src', 'https://cdn.example.com/image.jpg' );
-
-			const favicon = document.querySelector( '.reader-full-post__link-preview-favicon' );
-			expect( favicon ).toHaveAttribute( 'src', 'https://static.example.com/favicon.ico' );
-		} );
-	} );
-
 	it( 'should hide favicon when it fails to load', async () => {
-		const mockHtml = `
-<!DOCTYPE html>
-<html>
-<head>
-	<meta property="og:title" content="Test Page" />
-	<meta property="og:description" content="Test description" />
-	<link rel="icon" href="/broken-favicon.ico" />
-</head>
-<body>
-	<h1>Test Page</h1>
-</body>
-</html>
-`;
-
-		mockFetch.mockResolvedValueOnce( {
-			ok: true,
-			text: () => Promise.resolve( mockHtml ),
+		const mockData = createMockApiResponse( 'Test Page', 'Test description', {
+			favicon: 'https://example.com/broken-favicon.ico',
 		} );
+		mockWpcomGet.mockResolvedValue( mockData );
 
 		render( <LinkPreview url="https://example.com/test" /> );
 
@@ -211,37 +112,46 @@ describe( 'LinkPreview', () => {
 		} );
 	} );
 
-	it( 'should prioritize image/x-icon type favicons', async () => {
-		const mockHtml = `
-<!DOCTYPE html>
-<html>
-<head>
-	<meta property="og:title" content="Test Page" />
-	<meta property="og:description" content="Test description" />
-	<link rel="shortcut icon" href="https://example.org/wp-content/themes/theme/assets/img/touch/apple-touch-icon.png" />
-	<link href="https://example.org/wp-content/themes/theme/favicon.ico" type="image/x-icon" rel="icon" />
-	<link href="https://example.org/wp-content/themes/theme/favicon.ico" type="image/x-icon" rel="shortcut icon" />
-</head>
-<body>
-	<h1>Test Page</h1>
-</body>
-</html>
-`;
-
-		mockFetch.mockResolvedValueOnce( {
-			ok: true,
-			text: () => Promise.resolve( mockHtml ),
+	it( 'should display published time when available', async () => {
+		const publishedTime = '2023-12-01T10:00:00Z';
+		const mockData = createMockApiResponse( 'Test Page', 'Test description', {
+			published_time: publishedTime,
 		} );
+		mockWpcomGet.mockResolvedValue( mockData );
 
 		render( <LinkPreview url="https://example.com/test" /> );
 
 		await waitFor( () => {
-			// Should pick the image/x-icon type instead of the first favicon found
-			const favicon = document.querySelector( '.reader-full-post__link-preview-favicon' );
-			expect( favicon ).toHaveAttribute(
-				'src',
-				'https://example.org/wp-content/themes/theme/favicon.ico'
-			);
+			// Check that relative time is displayed (exact text depends on current date)
+			const dateElement = document.querySelector( '.reader-full-post__link-preview-date' );
+			expect( dateElement ).toBeInTheDocument();
+		} );
+	} );
+
+	it( 'should use site_name from API response', async () => {
+		const mockData = createMockApiResponse( 'Test Page', 'Test description', {
+			site_name: 'Custom Site Name',
+		} );
+		mockWpcomGet.mockResolvedValue( mockData );
+
+		render( <LinkPreview url="https://example.com/test" /> );
+
+		await waitFor( () => {
+			expect( screen.getByText( 'Custom Site Name' ) ).toBeInTheDocument();
+		} );
+	} );
+
+	it( 'should call wpcom API with correct parameters', async () => {
+		const mockData = createMockApiResponse( 'Test Title', 'Test description' );
+		mockWpcomGet.mockResolvedValue( mockData );
+
+		render( <LinkPreview url="https://example.com/test" /> );
+
+		await waitFor( () => {
+			expect( mockWpcomGet ).toHaveBeenCalledWith( {
+				path: '/link-preview?url=' + encodeURIComponent( 'https://example.com/test' ),
+				apiNamespace: 'wpcom/v2',
+			} );
 		} );
 	} );
 } );
