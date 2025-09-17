@@ -953,6 +953,7 @@ object PlaywrightTestPRMatrix : BuildType({
 
 	params {
 		text("TEST_GROUP", "@calypso-pr")
+        param("DOCKER_IMAGE_BUILD_NUMBER", "${BuildDockerImage.depParamRefs.buildNumber}")
 	}
 
 	steps {
