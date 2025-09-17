@@ -53,39 +53,29 @@ object CalypsoE2ETestsBuildTemplate : Template({
 
 				echo "CALYPSO_BASE_URL=%env.CALYPSO_BASE_URL%"
 
-				# Check for BuildDockerImage dependency
-				BUILD_NUMBER="%dep.BuildDockerImage.build.number%"
-				if [[ "${'$'}BUILD_NUMBER" != "%dep.BuildDockerImage.build.number%" ]]; then
-					echo "BuildDockerImage dependency detected: ${'$'}BUILD_NUMBER"
-				else
-					echo "No BuildDockerImage dependency found"
-				fi
+				echo "Configuration type: Build will attempt dynamic URL detection if BuildDockerImage dependency exists"
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 		}
 
 		bashNodeScript {
-			name = "Get Calypso live URL"
+			name = "Get Calypso live URL (for PR builds)"
 			id = "determine_calypso_live_url"
+			conditions {
+				exists("dep.BuildDockerImage.build.number")
+			}
 			scriptContent = """
-				# Check if we have a BuildDockerImage dependency
-				BUILD_NUMBER="%dep.BuildDockerImage.build.number%"
-				if [[ "${'$'}BUILD_NUMBER" != "%dep.BuildDockerImage.build.number%" ]]; then
-					echo "Getting Calypso url for build ${'$'}BUILD_NUMBER"
-					chmod +x ./bin/get-calypso-live-url.sh
-					CALYPSO_BASE_URL=${'$'}(./bin/get-calypso-live-url.sh ${'$'}BUILD_NUMBER)
-					if [[ ${'$'}? -ne 0 ]]; then
-						# Command failed. CALYPSO_BASE_URL contains stderr
-						echo ${'$'}CALYPSO_BASE_URL
-						exit 1
-					fi
-
-					export CALYPSO_BASE_URL
-					echo "CALYPSO_BASE_URL=${'$'}CALYPSO_BASE_URL"
-				else
-					echo "No BuildDockerImage dependency found, skipping live URL generation"
-					echo "Will use CALYPSO_BASE_URL parameter: %env.CALYPSO_BASE_URL%"
+				echo "Getting Calypso url for build %dep.BuildDockerImage.build.number%"
+				chmod +x ./bin/get-calypso-live-url.sh
+				CALYPSO_BASE_URL=${'$'}(./bin/get-calypso-live-url.sh %dep.BuildDockerImage.build.number%)
+				if [[ ${'$'}? -ne 0 ]]; then
+					# Command failed. CALYPSO_BASE_URL contains stderr
+					echo ${'$'}CALYPSO_BASE_URL
+					exit 1
 				fi
+
+				export CALYPSO_BASE_URL
+				echo "CALYPSO_BASE_URL=${'$'}CALYPSO_BASE_URL"
 			"""
 			dockerImage = "%docker_image_e2e%"
 		}
