@@ -22,6 +22,8 @@ export interface FileBrowserConfig {
 	siteId?: number;
 	showHeader?: boolean;
 	inheritNodeColor?: boolean;
+	nodesIndentInlineStart?: number;
+	backupTextColor?: string;
 }
 
 interface FileBrowserProps {
@@ -93,8 +95,13 @@ function FileBrowser( {
 			{ fileBrowserConfig?.showBackupTime && displayBackupDate && (
 				<HStack alignment="left" spacing={ 1 }>
 					<Text
-						color="var(--studio-gray-40)"
-						style={ { marginInlineStart: '14px', marginTop: '10px' } }
+						style={ {
+							marginInlineStart: '14px',
+							marginTop: '10px',
+							...( fileBrowserConfig?.backupTextColor
+								? { color: fileBrowserConfig.backupTextColor }
+								: {} ),
+						} }
 					>
 						{ displayBackupDate
 							? createInterpolateElement( __( 'Content from the latest backup: <date />.' ), {
@@ -105,21 +112,29 @@ function FileBrowser( {
 					</Text>
 				</HStack>
 			) }
-			<FileBrowserNode
-				rewindId={ rewindId }
-				item={ rootItem }
-				path="/"
-				isAlternate
-				setActiveNodePath={ handleClick }
-				activeNodePath={ activeNodePath }
-				fileBrowserConfig={ fileBrowserConfig }
-				siteId={ siteId }
-				siteSlug={ siteSlug }
-				hasCredentials={ hasCredentials }
-				isRestoreEnabled={ isRestoreEnabled }
-				onTrackEvent={ onTrackEvent }
-				onRequestGranularRestore={ onRequestGranularRestore }
-			/>
+			<div
+				style={
+					fileBrowserConfig?.nodesIndentInlineStart !== undefined
+						? { marginInlineStart: `${ fileBrowserConfig.nodesIndentInlineStart }px` }
+						: undefined
+				}
+			>
+				<FileBrowserNode
+					rewindId={ rewindId }
+					item={ rootItem }
+					path="/"
+					isAlternate
+					setActiveNodePath={ handleClick }
+					activeNodePath={ activeNodePath }
+					fileBrowserConfig={ fileBrowserConfig }
+					siteId={ siteId }
+					siteSlug={ siteSlug }
+					hasCredentials={ hasCredentials }
+					isRestoreEnabled={ isRestoreEnabled }
+					onTrackEvent={ onTrackEvent }
+					onRequestGranularRestore={ onRequestGranularRestore }
+				/>
+			</div>
 		</div>
 	);
 }
