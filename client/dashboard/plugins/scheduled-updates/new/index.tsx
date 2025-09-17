@@ -64,12 +64,10 @@ function ScheduledUpdatesNew() {
 		};
 
 		createBatch.mutate( body, {
-			onSuccess: async (
-				results: Array< { siteId: number; response?: unknown; error?: unknown } >
-			) => {
+			onSuccess: async ( results ) => {
 				const successfulSiteIds = ( results || [] )
-					.filter( ( r ) => ! r.error )
-					.map( ( r ) => r.siteId );
+					.filter( ( result ) => ! result.error )
+					.map( ( result ) => result.siteId );
 
 				// Precompute values reused per site for Tracks
 				const eventDate = new Date( timestamp * 1000 );
