@@ -217,7 +217,7 @@ const CancelLicenseFeedbackModal = ( {
 						isDestructive
 						onClick={ handleOnCancel }
 						variant="secondary"
-						disabled={ isLoading }
+						disabled={ isLoading || ( suggestion && ! isHostingLicense && ! suggestions.length ) }
 						isBusy={ isLoading }
 					>
 						{ translate( 'Cancel license' ) }
@@ -275,7 +275,7 @@ const CancelLicenseFeedbackModal = ( {
 
 				{ suggestion && ! isHostingLicense && (
 					<FormFieldset>
-						<FormLabel className="a4a-feedback__comments-label" htmlFor="suggestion">
+						<FormLabel className="a4a-feedback__comments-label" htmlFor="suggestion" required>
 							{ suggestion.label }
 						</FormLabel>
 						<div className="a4a-feedback__suggestions">

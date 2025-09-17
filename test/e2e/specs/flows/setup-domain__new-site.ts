@@ -9,12 +9,12 @@ import {
 	SelectItemsComponent,
 	CartCheckoutPage,
 	RestAPIClient,
-	TestAccount,
-	NewSiteResponse,
 	SignupPickPlanPage,
+	UserSignupPage,
+	NewUserResponse,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
-import { apiDeleteSite } from '../shared/api-delete-site';
+import { apiCloseAccount } from '../shared/api-close-account';
 
 declare const browser: Browser;
 
@@ -24,24 +24,23 @@ describe(
 		const planName = 'Personal';
 		let page: Page;
 		let selectedDomain: string;
-		const testAccount = new TestAccount( 'defaultUser' );
-		let newSiteDetails: NewSiteResponse;
-		let restAPIClient: RestAPIClient;
+		const testUser = DataHelper.getNewTestUser();
+		let newUserDetails: NewUserResponse;
 
 		beforeAll( async () => {
 			page = await browser.newPage();
 			await BrowserManager.setStoreCookie( page, { currency: 'USD' } );
-
-			await testAccount.authenticate( page );
-
-			restAPIClient = new RestAPIClient( testAccount.credentials );
-			await restAPIClient.clearMyShoppingCart( 'no-site' );
 		} );
 
 		it( 'Enter the flow', async function () {
 			const flowUrl = DataHelper.getCalypsoURL( '/setup/domain' );
 
 			await page.goto( flowUrl );
+		} );
+
+		it( 'Sign up as a new user', async function () {
+			const userSignupPage = new UserSignupPage( page );
+			newUserDetails = await userSignupPage.signupSocialFirstWithEmail( testUser.email );
 		} );
 
 		it( 'Search for a domain', async function () {
@@ -67,10 +66,7 @@ describe(
 		it( `Select ${ planName } plan`, async function () {
 			const plansPage = new SignupPickPlanPage( page );
 
-			[ newSiteDetails ] = await Promise.all( [
-				plansPage.selectPlan( planName ),
-				page.waitForURL( /.*\/checkout\/.*/, { timeout: 30 * 1000 } ),
-			] );
+			await plansPage.selectPlan( planName );
 		} );
 
 		it( 'See plan and domain at checkout', async function () {
@@ -81,14 +77,22 @@ describe(
 		} );
 
 		afterAll( async function () {
-			if ( ! newSiteDetails ) {
+			if ( ! newUserDetails ) {
 				return;
 			}
 
-			await apiDeleteSite( restAPIClient, {
-				url: newSiteDetails.blog_details.url,
-				id: newSiteDetails.blog_details.blogid,
-				name: newSiteDetails.blog_details.blogname,
+			const restAPIClient = new RestAPIClient(
+				{
+					username: testUser.username,
+					password: testUser.password,
+				},
+				newUserDetails.body.bearer_token
+			);
+
+			await apiCloseAccount( restAPIClient, {
+				userID: newUserDetails.body.user_id,
+				username: newUserDetails.body.username,
+				email: testUser.email,
 			} );
 		} );
 	}

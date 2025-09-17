@@ -29,6 +29,7 @@ const setInitialQuery = ( query: string ) => {
 
 const DomainSearchWithCart = ( {
 	currentSiteId,
+	currentSiteUrl,
 	flowName,
 	initialQuery: externalInitialQuery,
 	config: externalConfig,
@@ -44,8 +45,8 @@ const DomainSearchWithCart = ( {
 	} );
 
 	const initialQuery = useMemo( () => {
-		return externalInitialQuery ?? getInitialQuery();
-	}, [ externalInitialQuery ] );
+		return externalInitialQuery || currentSiteUrl || getInitialQuery();
+	}, [ externalInitialQuery, currentSiteUrl ] );
 
 	const cartItemsLength = cart.items.length;
 
@@ -75,6 +76,7 @@ const DomainSearchWithCart = ( {
 	return (
 		<DomainSearch
 			{ ...props }
+			currentSiteUrl={ currentSiteUrl }
 			config={ config }
 			cart={ cart }
 			events={ events }
