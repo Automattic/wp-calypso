@@ -17,6 +17,7 @@ const NOTICE_BAD_FORMAT = {
 	icon: <Icon size={ 24 } icon={ error } />,
 	message: __( 'Only .jpg, .png, or .gif files are supported.', __i18n_text_domain__ ),
 	dismissible: true,
+	onDismiss: () => {},
 };
 
 const SUPPORTED_IMAGE_TYPES = [ 'image/png', 'image/jpg', 'image/jpeg', 'image/gif' ];
@@ -87,7 +88,10 @@ export const useAttachmentHandler = () => {
 			}
 			setAttachmentPreviewFiles( newAttachmentPreviewFiles );
 			if ( anyUnsupportedFormats ) {
-				setBadFormatNotice( NOTICE_BAD_FORMAT );
+				setBadFormatNotice( {
+					...NOTICE_BAD_FORMAT,
+					onDismiss: () => setBadFormatNotice( undefined ),
+				} );
 			}
 		},
 
