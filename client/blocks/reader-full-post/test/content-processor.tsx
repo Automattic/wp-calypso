@@ -5,8 +5,14 @@ import { detectUrls } from '../content-processor';
 
 describe( 'detectUrls', () => {
 	describe( 'href attribute URLs', () => {
-		it( 'should detect URLs from href attributes', () => {
+		it( 'should NOT detect URLs from href attributes with regular anchor text', () => {
 			const content = '<a href="https://example.com">Regular link</a>';
+			const url = detectUrls( content );
+			expect( url ).toBe( null );
+		} );
+
+		it( 'should detect URLs from href attributes when link text is also a URL', () => {
+			const content = '<a href="https://example.com">https://example.com</a>';
 			const url = detectUrls( content );
 			expect( url ).toBe( 'https://example.com' );
 		} );
@@ -35,10 +41,10 @@ describe( 'detectUrls', () => {
 			expect( url ).toBe( null );
 		} );
 
-		it( 'should include URLs that contain @ or # in the middle of link text', () => {
+		it( 'should NOT include URLs that contain @ or # in the middle of link text', () => {
 			const content = '<a href="https://example.com">Contact us @ example.com</a>';
 			const url = detectUrls( content );
-			expect( url ).toBe( 'https://example.com' );
+			expect( url ).toBe( null );
 		} );
 
 		it( 'should skip non-http URLs', () => {
@@ -47,16 +53,16 @@ describe( 'detectUrls', () => {
 			expect( url ).toBe( null );
 		} );
 
-		it( 'should return only the first URL when duplicates exist', () => {
+		it( 'should return only the first URL when duplicates exist with URL text', () => {
 			const content =
-				'<a href="https://example.com">First</a> <a href="https://example.com">Second</a>';
+				'<a href="https://example.com">https://example.com</a> <a href="https://example.com">https://example.com</a>';
 			const url = detectUrls( content );
 			expect( url ).toBe( 'https://example.com' );
 		} );
 
-		it( 'should return only the first URL when multiple different URLs exist', () => {
+		it( 'should return only the first URL when multiple different URLs exist with URL text', () => {
 			const content =
-				'<a href="https://example.com">First</a> <a href="https://test.com">Second</a>';
+				'<a href="https://example.com">https://example.com</a> <a href="https://test.com">https://test.com</a>';
 			const url = detectUrls( content );
 			expect( url ).toBe( 'https://example.com' );
 		} );
@@ -75,8 +81,14 @@ describe( 'detectUrls', () => {
 			expect( url ).toBe( 'https://example.com' );
 		} );
 
-		it( 'should not detect URLs inside HTML tags', () => {
+		it( 'should not detect URLs inside HTML tags with regular anchor text', () => {
 			const content = '<a href="https://example.com">Link</a>';
+			const url = detectUrls( content );
+			expect( url ).toBe( null );
+		} );
+
+		it( 'should detect URLs inside HTML tags when link text is also a URL', () => {
+			const content = '<a href="https://example.com">https://example.com</a>';
 			const url = detectUrls( content );
 			expect( url ).toBe( 'https://example.com' );
 		} );
@@ -93,10 +105,10 @@ describe( 'detectUrls', () => {
 			expect( url ).toBe( 'https://example.com' );
 		} );
 
-		it( 'should fall back to HTML link URL when no plain text URLs exist', () => {
+		it( 'should NOT fall back to HTML link URL when no plain text URLs exist', () => {
 			const content = '<a href="https://example.com">Only HTML link</a>';
 			const url = detectUrls( content );
-			expect( url ).toBe( 'https://example.com' );
+			expect( url ).toBe( null );
 		} );
 	} );
 
@@ -112,18 +124,35 @@ describe( 'detectUrls', () => {
 			expect( url ).toBe( null );
 		} );
 
-		it( 'should handle complex HTML with nested elements', () => {
+		it( 'should NOT handle complex HTML with nested elements and regular anchor text', () => {
 			const content =
 				'<div><p>Text with <a href="https://example.com"><strong>bold link</strong></a></p></div>';
+			const url = detectUrls( content );
+			expect( url ).toBe( null );
+		} );
+
+		it( 'should handle complex HTML with nested elements when link text is a URL', () => {
+			const content =
+				'<div><p>Text with <a href="https://example.com"><strong>https://example.com</strong></a></p></div>';
 			const url = detectUrls( content );
 			expect( url ).toBe( 'https://example.com' );
 		} );
 
-		it( 'should return first valid URL, skipping mentions and hashtags', () => {
+		it( 'should return null when only mentions and hashtags exist', () => {
 			const content = `
 				<a href="https://twitter.com/user">@user</a>
 				<a href="https://twitter.com/hashtag/test">#test</a>
 				<a href="https://example.com">Regular Link</a>
+			`;
+			const url = detectUrls( content );
+			expect( url ).toBe( null );
+		} );
+
+		it( 'should return first valid URL with URL text, skipping mentions and hashtags', () => {
+			const content = `
+				<a href="https://twitter.com/user">@user</a>
+				<a href="https://twitter.com/hashtag/test">#test</a>
+				<a href="https://example.com">https://example.com</a>
 			`;
 			const url = detectUrls( content );
 			expect( url ).toBe( 'https://example.com' );
@@ -179,14 +208,14 @@ describe( 'detectUrls', () => {
 			expect( url ).toBe( null );
 		} );
 
-		it( 'should detect URLs normally when no media elements are present', () => {
+		it( 'should NOT detect URLs when no media elements are present but anchor text is regular', () => {
 			const content = `
 				<p>Some text content</p>
 				<a href="https://example.com">Example Link</a>
 				<div>More content</div>
 			`;
 			const url = detectUrls( content );
-			expect( url ).toBe( 'https://example.com' );
+			expect( url ).toBe( null );
 		} );
 
 		it( 'should prioritize HTML links where link text is a URL', () => {
@@ -209,13 +238,13 @@ describe( 'detectUrls', () => {
 			expect( url ).toBe( 'https://third.com' );
 		} );
 
-		it( 'should fall back to regular HTML links if no URL link text found', () => {
+		it( 'should NOT fall back to regular HTML links if no URL link text found', () => {
 			const content = `
 				<a href="https://example.com">Click here</a>
 				<a href="https://test.com">Visit this site</a>
 			`;
 			const url = detectUrls( content );
-			expect( url ).toBe( 'https://example.com' );
+			expect( url ).toBe( null );
 		} );
 	} );
 } );

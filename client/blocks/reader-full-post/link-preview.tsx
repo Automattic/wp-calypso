@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { Card } from '@automattic/components';
+import { Card, Spinner } from '@automattic/components';
 import React, { useState, useEffect } from 'react';
 import { getRelativeTimeString } from 'calypso/dashboard/utils/datetime';
 import wpcom from 'calypso/lib/wp';
@@ -55,7 +55,15 @@ export default function LinkPreview( { url }: LinkPreviewProps ): JSX.Element | 
 			} );
 	}, [ url ] );
 
-	if ( isLoading || ! previewData ) {
+	if ( isLoading ) {
+		return (
+			<Card className="reader-full-post__link-preview is-loading">
+				<Spinner />
+			</Card>
+		);
+	}
+
+	if ( ! previewData ) {
 		return null;
 	}
 

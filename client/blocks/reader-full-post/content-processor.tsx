@@ -51,10 +51,9 @@ export function detectUrls( content: string ): string | null {
 		}
 	}
 
-	// Then, extract URLs from href attributes
+	// Then, extract URLs from href attributes where the link text is also a URL
 	const hrefRegex = /<a[^>]+href=["']([^"']+)["'][^>]*>(.*?)<\/a>/gi;
 	let match;
-	let fallbackUrl: string | null = null;
 
 	// First pass: look for links where the link text is a URL
 	hrefRegex.lastIndex = 0; // Reset regex position
@@ -69,18 +68,12 @@ export function detectUrls( content: string ): string | null {
 			// Check if link text looks like a URL (strip HTML tags first)
 			const linkTextTrimmed = linkText.replace( /<[^>]*>/g, '' ).trim();
 			if ( linkTextTrimmed.match( /^https?:\/\// ) ) {
-				return url; // Prioritize links where text is also a URL
-			}
-
-			// Store as fallback if we haven't found one yet
-			if ( ! fallbackUrl ) {
-				fallbackUrl = url;
+				return url;
 			}
 		}
 	}
 
-	// Return fallback URL if found
-	return fallbackUrl;
+	return null;
 }
 
 /**
