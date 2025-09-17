@@ -7,17 +7,22 @@ import {
 import { formatCurrency } from '@automattic/number-formatters';
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useRouter } from '@tanstack/react-router';
 import { Card, Button, Notice } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
-import { Icon, trash, replace, globe, chevronRight } from '@wordpress/icons';
+import { __, isRTL, sprintf } from '@wordpress/i18n';
+import { Icon, globe, chevronRight, chevronLeft } from '@wordpress/icons';
 import { formatDate } from 'date-fns';
 import { useEffect } from 'react';
 import { useNotice } from '../../app/hooks/use-notice';
 import { monetizeSubscriptionRoute } from '../../app/router/me';
+import ActionList from '../../components/action-list';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { getMonetizeSubscriptionsUrl } from '../../me/monetize-subscriptions/urls';
+import {
+	getMonetizeSubscriptionsUrl,
+	getMonetizeSubscriptionsPageTitle,
+} from '../../me/monetize-subscriptions/urls';
+import type { MembershipSubscription } from '@automattic/api-core';
 
 function MembershipSiteHeader( { name, domain }: { name: string; domain: string } ) {
 	return (
@@ -30,6 +35,88 @@ function MembershipSiteHeader( { name, domain }: { name: string; domain: string 
 		</Card>
 	);
 }
+
+function AutoRenewButton( {
+	disableAutoRenew,
+	enableAutoRenew,
+	isAutoRenewing,
+	isUpdating,
+}: {
+	disableAutoRenew: any;
+	enableAutoRenew: any;
+	isUpdating: boolean;
+	isAutoRenewing: boolean;
+	subscription: MembershipSubscription;
+} ) {
+	const title = isAutoRenewing ? __( 'Disable auto-renew' ) : __( 'Enable auto-renew' );
+	return (
+		<ActionList.ActionItem
+			title={ title }
+			description={ title }
+			actions={
+				<Button
+					variant="secondary"
+					size="compact"
+					disabled={ isUpdating }
+					onClick={ isAutoRenewing ? disableAutoRenew : enableAutoRenew }
+				>
+					{ title }
+				</Button>
+			}
+		/>
+	);
+}
+
+function StopSubscriptionButton( {
+	stopSubscription,
+	isProduct,
+	subscription,
+}: {
+	stopSubscription: any;
+	isProduct: boolean;
+	subscription: MembershipSubscription;
+} ) {
+	const title = isProduct
+		? // eslint-disable-next-line @wordpress/i18n-translator-comments
+		  sprintf( __( 'Remove %s product' ), subscription.title )
+		: // eslint-disable-next-line @wordpress/i18n-translator-comments
+		  sprintf( __( 'Stop %s subscription' ), subscription.title );
+	return (
+		<ActionList.ActionItem
+			title={ title }
+			description={ title }
+			actions={
+				<Button
+					variant="secondary"
+					size="compact"
+					onClick={ () => {
+						stopSubscription();
+					} }
+				>
+					{ title }
+				</Button>
+			}
+		/>
+	);
+}
+
+const BackButton = () => {
+	const router = useRouter();
+
+	return (
+		<Button
+			className="dashboard-page-header__back-button"
+			icon={ isRTL() ? chevronRight : chevronLeft }
+			onClick={ () => {
+				router.navigate( {
+					to: getMonetizeSubscriptionsUrl(),
+				} );
+			} }
+		>
+			{ getMonetizeSubscriptionsPageTitle() }
+		</Button>
+	);
+};
 
 export default function MonetizeSubscription() {
 	const params = monetizeSubscriptionRoute.useParams();
@@ -60,7 +147,7 @@ export default function MonetizeSubscription() {
 
 	const isRenewable = subscription && ( subscription.renew_interval || subscription.is_renewable ); // can remove renew_interval once backend is deployed
 	const isAutoRenewing = isRenewable && subscription.renew_interval;
-	const isProduct = subscription && ! isRenewable;
+	const isProduct = !! subscription && ! isRenewable;
 	const isDisabledAutorenewing = isRenewable && ! subscription.renew_interval;
 	const isUpdating = isEnablingAutoRenew || isDisablingAutoRenew;
 
@@ -109,9 +196,12 @@ export default function MonetizeSubscription() {
 
 	return (
 		<PageLayout
-			size="large"
+			size="small"
 			header={
-				<PageHeader title={ isProduct ? __( 'Product Details' ) : __( 'Subscription Details' ) } />
+				<PageHeader
+					prefix={ <BackButton /> }
+					title={ isProduct ? __( 'Product Details' ) : __( 'Subscription Details' ) }
+				/>
 			}
 		>
 			{ isStopping && (
@@ -173,29 +263,20 @@ export default function MonetizeSubscription() {
 						</ul>
 					</Card>
 					{ isRenewable && (
-						<Card>
-							<Icon icon={ replace } />
-							<Button
-								onClick={ isAutoRenewing ? disableAutoRenew : enableAutoRenew }
-								disabled={ isUpdating }
-							>
-								{ isAutoRenewing ? __( 'Disable auto-renew' ) : __( 'Enable auto-renew' ) }
-							</Button>
-							<Icon className="card__link-indicator" icon={ chevronRight } />
-						</Card>
+						<AutoRenewButton
+							subscription={ subscription }
+							isAutoRenewing={ isAutoRenewing }
+							isUpdating={ isUpdating }
+							disableAutoRenew={ disableAutoRenew }
+							enableAutoRenew={ enableAutoRenew }
+						/>
 					) }
-					<Card>
-						<Icon icon={ trash } />
-						<Button onClick={ stopSubscription }>
-							{ isProduct
-								? // eslint-disable-next-line @wordpress/i18n-translator-comments
-								  sprintf( __( 'Remove %s product' ), subscription.title )
-								: // eslint-disable-next-line @wordpress/i18n-translator-comments
-								  sprintf( __( 'Stop %s subscription' ), subscription.title ) }
-						</Button>
 
-						<Icon className="card__link-indicator" icon={ chevronRight } />
-					</Card>
+					<StopSubscriptionButton
+						subscription={ subscription }
+						stopSubscription={ stopSubscription }
+						isProduct={ isProduct }
+					/>
 				</>
 			) }
 		</PageLayout>

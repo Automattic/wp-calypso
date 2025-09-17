@@ -11,7 +11,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { adjustDataViewFieldsForWidth } from '../../utils/dataviews-width';
 import { useMembershipsFieldDefinitions } from './dataviews';
-import { getMonetizeSubscriptionUrl } from './urls';
+import { getMonetizeSubscriptionsPageTitle, getMonetizeSubscriptionUrl } from './urls';
 
 const defaultPerPage = 10;
 
@@ -88,7 +88,10 @@ function MonetizeSubscriptions() {
 	};
 
 	return (
-		<PageLayout size="large" header={ <PageHeader title={ __( 'Monetize subscriptions' ) } /> }>
+		<PageLayout
+			size="large"
+			header={ <PageHeader title={ getMonetizeSubscriptionsPageTitle() } /> }
+		>
 			<div ref={ ref }>
 				<DataViewsCard>
 					<DataViews

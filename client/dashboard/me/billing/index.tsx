@@ -11,6 +11,7 @@ import {
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
+import { getMonetizeSubscriptionsPageTitle } from 'calypso/dashboard/me/monetize-subscriptions/urls';
 
 function Billing() {
 	return (
@@ -31,7 +32,7 @@ function Billing() {
 					to={ billingHistoryRoute.to }
 				/>
 				<RouterLinkSummaryButton
-					title={ __( 'Monetize subscriptions' ) }
+					title={ getMonetizeSubscriptionsPageTitle() }
 					description={ __( 'Manage Monetize subscriptions.' ) }
 					decoration={ <Icon icon={ currencyDollar } /> }
 					to={ monetizeSubscriptionsRoute.to }
