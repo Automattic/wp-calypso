@@ -8,6 +8,17 @@
 	.dashboard-monitoring-card__content {
 		padding: 16px 24px;
 		box-sizing: border-box;
+
+		&__is-loading {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+
+		&__server-performance {
+			/* Set a minimum height to prevent layout shift when the chart loads. */
+			height: 450px;
+		}
 	}
 
 	.dashboard-monitoring-card__header {

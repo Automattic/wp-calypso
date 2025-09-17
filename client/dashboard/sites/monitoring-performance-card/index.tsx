@@ -88,6 +88,7 @@ export default function MonitoringPerformanceCard( {
 
 	return (
 		<MonitoringCard
+			cardLabel="server-performance"
 			title={ __( 'Server performance' ) }
 			description={ __( 'Requests per minute and average server response time.' ) }
 			onDownloadClick={ () => {} }
