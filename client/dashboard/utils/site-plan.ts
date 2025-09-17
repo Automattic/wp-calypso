@@ -1,4 +1,9 @@
-import { DotcomPlans, JetpackFeatures, type Site } from '@automattic/api-core';
+import {
+	DotcomPlans,
+	JetpackFeatures,
+	type JetpackFeatureSlug,
+	type Site,
+} from '@automattic/api-core';
 import { __ } from '@wordpress/i18n';
 import {
 	chartBar,
@@ -69,7 +74,7 @@ export const JETPACK_PRODUCTS = [
 
 export function getJetpackProductsForSite( site: Site ) {
 	return JETPACK_PRODUCTS.filter( ( product ) =>
-		hasPlanFeature( site, product.id as JetpackFeatures )
+		hasPlanFeature( site, product.id as JetpackFeatureSlug )
 	);
 }
 

@@ -80,11 +80,24 @@ export default function Actions() {
 		[ purchase, deleteDomain, createSuccessNotice, createErrorNotice, router ]
 	);
 
+	const availableActions = {
+		renew: purchase?.is_renewable,
+		transfer: shouldShowTransferAction( domain ),
+		disconnect: shouldShowDisconnectAction( domain ),
+		delete: shouldShowDeleteAction( domain, purchase, site ),
+		cancel: shouldShowCancelAction( domain, purchase ),
+	};
+
+	// If none of the actions are available, don't render the actions section
+	if ( Object.values( availableActions ).every( ( action ) => ! action ) ) {
+		return null;
+	}
+
 	return (
 		<VStack spacing={ 4 }>
 			<SectionHeader level={ 3 } title={ __( 'Actions' ) } />
 			<ActionList>
-				{ purchase?.is_renewable && (
+				{ availableActions.renew && (
 					<ActionList.ActionItem
 						title={ __( 'Renew' ) }
 						description={ __( 'Renew domain registration.' ) }
@@ -92,14 +105,14 @@ export default function Actions() {
 							<Button
 								size="compact"
 								variant="secondary"
-								href={ getDomainRenewalUrl( domain, purchase ) }
+								href={ getDomainRenewalUrl( domain, purchase! ) }
 							>
 								{ __( 'Renew' ) }
 							</Button>
 						}
 					/>
 				) }
-				{ shouldShowTransferAction( domain ) && (
+				{ availableActions.transfer && (
 					<ActionList.ActionItem
 						title={ __( 'Transfer' ) }
 						description={ __( 'Transfer this domain to another site or WordPress.com user.' ) }
@@ -115,7 +128,7 @@ export default function Actions() {
 						}
 					/>
 				) }
-				{ shouldShowDisconnectAction( domain ) && (
+				{ availableActions.disconnect && (
 					<ActionList.ActionItem
 						title={ __( 'Detach' ) }
 						description={ __( 'Detach this domain from the site.' ) }
@@ -132,7 +145,7 @@ export default function Actions() {
 						}
 					/>
 				) }
-				{ shouldShowDeleteAction( domain, purchase, site ) && (
+				{ availableActions.delete && (
 					<ActionList.ActionItem
 						title={ getDeleteTitle( domain ) }
 						description={ getDeleteDescription( domain ) }
@@ -150,7 +163,7 @@ export default function Actions() {
 						}
 					/>
 				) }
-				{ shouldShowCancelAction( domain, purchase ) && (
+				{ availableActions.cancel && (
 					<ActionList.ActionItem
 						title={ getDeleteTitle( domain ) }
 						description={ getDeleteDescription( domain ) }

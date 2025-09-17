@@ -10,8 +10,8 @@ import {
 	RestAPIClient,
 	CartCheckoutPage,
 	TestAccount,
-	SignupDomainPage,
 	NewSiteResponse,
+	RewrittenDomainSearchComponent,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiDeleteSite } from '../shared';
@@ -47,9 +47,9 @@ describe(
 			} );
 
 			it( 'Skip domain selection', async function () {
-				const signupDomainPage = new SignupDomainPage( page );
-				await signupDomainPage.searchForFooDomains();
-				await signupDomainPage.skipDomainSelection();
+				const signupDomainPage = new RewrittenDomainSearchComponent( page );
+				await signupDomainPage.search( 'foo' );
+				await signupDomainPage.skipPurchase();
 			} );
 
 			it( `Select WordPress.com ${ planName } plan`, async function () {

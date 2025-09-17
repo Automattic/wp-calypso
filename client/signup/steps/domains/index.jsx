@@ -37,11 +37,6 @@ import UseMyDomain from 'calypso/components/domains/use-my-domain';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Notice from 'calypso/components/notice';
 import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
-import {
-	LOCAL_STORAGE_KEY_FOR_PG_ID as PG_ID,
-	LOCAL_STORAGE_KEY_FOR_PG_ID_TS as PG_TS,
-	LOCAL_STORAGE_KEY_FOR_PG_VALIDITY as PG_ID_VALIDITY,
-} from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/playground/lib/initialize-playground';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import {
@@ -184,25 +179,6 @@ class RenderDomainsStepComponent extends Component {
 		}
 		this.setCurrentFlowStep = this.setCurrentFlowStep.bind( this );
 
-		// Get playground ID from either GET param or localStorage
-		const playgroundIdFromUrl = getQueryArg( window.location.href, 'playground' );
-		const playgroundIdFromStorage = window.localStorage.getItem( PG_ID );
-		const playgroundIdTimestamp = window.localStorage.getItem( PG_TS );
-		const playgroundId =
-			playgroundIdFromUrl ||
-			( Date.now() - playgroundIdTimestamp < PG_ID_VALIDITY ? playgroundIdFromStorage : null );
-
-		// Clean up localStorage regardless of whether we used the value
-		window.localStorage.removeItem( PG_ID );
-		window.localStorage.removeItem( PG_TS );
-
-		// Update URL if we got the ID from localStorage
-		if ( playgroundId && playgroundIdFromStorage && ! playgroundIdFromUrl ) {
-			const url = new URL( window.location.href );
-			url.searchParams.set( 'playground', playgroundId );
-			window.history.replaceState( {}, '', url.toString() );
-		}
-
 		this.state = {
 			currentStep: null,
 			isCartPendingUpdateDomain: null,
@@ -217,7 +193,6 @@ class RenderDomainsStepComponent extends Component {
 			checkDomainAvailabilityPromises: [],
 			removeDomainTimeout: 0,
 			addDomainTimeout: 0,
-			playgroundId,
 		};
 	}
 
@@ -327,7 +302,7 @@ class RenderDomainsStepComponent extends Component {
 		}
 
 		if ( shouldUseMultipleDomainsInCart( this.props.flowName ) && suggestion ) {
-			await this.handleDomainToDomainCart( previousState );
+			await this.handleDomainToDomainCart( previousState, suggestion );
 
 			// If we already have a free selection in place, let's enforce that as a free site suggestion
 			if ( this.state.wpcomSubdomainSelected ) {
@@ -450,9 +425,7 @@ class RenderDomainsStepComponent extends Component {
 		}
 	};
 
-	handleDomainToDomainCart = async ( previousState ) => {
-		const { suggestion } = this.props.step;
-
+	handleDomainToDomainCart = async ( previousState, suggestion ) => {
 		if ( previousState ) {
 			await this.removeDomain( suggestion );
 		} else {
@@ -1632,10 +1605,7 @@ class RenderDomainsStepComponent extends Component {
 		} else if ( ! isNewHostedSiteCreationFlow( flowName ) ) {
 			backUrl = getStepUrl( flowName, stepName, null, this.getLocale() );
 
-			if ( this.state.playgroundId ) {
-				backUrl = `/setup/onboarding/playground?playground=${ this.state.playgroundId }`;
-				backLabelText = translate( 'Back' );
-			} else if ( 'site' === source && siteUrl ) {
+			if ( 'site' === source && siteUrl ) {
 				backUrl = siteUrl;
 				backLabelText = translate( 'Back to My Site' );
 				isExternalBackUrl = true;
@@ -1797,16 +1767,7 @@ class RenderDomainsStepComponent extends Component {
 }
 
 const StyleWrappedDomainsStepComponent = ( props ) => {
-	const [ isLoading, shouldUseDomainSearchV2 ] = useIsDomainSearchV2Enabled( props.flowName );
-
-	if ( isLoading ) {
-		if ( props.useStepperWrapper && shouldUseStepContainerV2( props.flowName ) ) {
-			return <Step.Loading />;
-		}
-
-		// TODO: Add a loading state to indicate that the experiment is loading.
-		return null;
-	}
+	const shouldUseDomainSearchV2 = useIsDomainSearchV2Enabled();
 
 	return (
 		<>
