@@ -39,12 +39,14 @@ export default function LinkPreview( { url }: LinkPreviewProps ): JSX.Element | 
 	useEffect( () => {
 		setIsLoading( true );
 
+		const params = {
+			path: '/link-preview',
+			apiNamespace: 'wpcom/v2',
+		};
+
 		// Use the WordPress REST API endpoint for link previews
 		wpcom.req
-			.get( {
-				path: `/link-preview?url=${ encodeURIComponent( url ) }`,
-				apiNamespace: 'wpcom/v2',
-			} )
+			.get( params, { url } )
 			.then( setPreviewData )
 			.catch( () => {
 				// Any error (400, 404, etc.) means no preview available
