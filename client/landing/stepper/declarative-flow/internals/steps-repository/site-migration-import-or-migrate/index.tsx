@@ -13,7 +13,7 @@ import { useHostingProviderUrlDetails } from 'calypso/data/site-profiler/use-hos
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import {
 	recordMigrationStartEvent,
-	recordMigrationFlowStartFacebookEvent,
+	recordMigrationStartFacebookEvent,
 } from 'calypso/lib/analytics/ad-tracking/record-migration-events';
 import FlowCard from '../components/flow-card';
 import type { Step as StepType } from '../../types';
@@ -72,7 +72,7 @@ const SiteMigrationImportOrMigrate: StepType< {
 	// Fire Google Ads tracking event when component loads
 	useEffect( () => {
 		recordMigrationStartEvent( 'SiteMigrationImportOrMigrate' );
-		recordMigrationFlowStartFacebookEvent( 'SiteMigrationImportOrMigrate' );
+		recordMigrationStartFacebookEvent( 'SiteMigrationImportOrMigrate' );
 	}, [] );
 
 	const handleClick = ( destination: 'migrate' | 'import' | 'upgrade' ) => {

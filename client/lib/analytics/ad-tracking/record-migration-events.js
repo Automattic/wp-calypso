@@ -65,18 +65,18 @@ export function recordMigrationSignupEvent( componentName ) {
 }
 
 /**
- * Fires a Facebook custom event for migration flow start
+ * Fires a Facebook custom event for migration start
  * @param {string} componentName - The name of the component firing the event
  * @returns {void}
  */
-export function recordMigrationFlowStartFacebookEvent( componentName ) {
+export function recordMigrationStartFacebookEvent( componentName ) {
 	if ( ! mayWeTrackByTracker( 'facebook' ) ) {
 		debug( `${ componentName }: skipping Facebook tracking as ad tracking is disallowed` );
 		return;
 	}
 
-	const params = [ 'trackCustom', 'MigrationFlowStart' ];
-	debug( `${ componentName }: [Facebook] Migration Flow Start`, params );
+	const params = [ 'trackCustom', 'MigrationStart' ];
+	debug( `${ componentName }: [Facebook] Migration Start`, params );
 	window.fbq( ...params );
 }
 
@@ -93,5 +93,21 @@ export function recordMigrationCredentialsFacebookEvent( componentName ) {
 
 	const params = [ 'trackCustom', 'MigrationCredentials' ];
 	debug( `${ componentName }: [Facebook] Migration Credentials`, params );
+	window.fbq( ...params );
+}
+
+/**
+ * Fires a Facebook custom event for migration signup start
+ * @param {string} componentName - The name of the component firing the event
+ * @returns {void}
+ */
+export function recordMigrationSignupFacebookEvent( componentName ) {
+	if ( ! mayWeTrackByTracker( 'facebook' ) ) {
+		debug( `${ componentName }: skipping Facebook tracking as ad tracking is disallowed` );
+		return;
+	}
+
+	const params = [ 'trackCustom', 'MigrationSignup' ];
+	debug( `${ componentName }: [Facebook] Migration Signup`, params );
 	window.fbq( ...params );
 }

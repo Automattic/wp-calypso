@@ -4,7 +4,10 @@ import { mayWeTrackByTracker } from '../tracker-buckets';
 import { debug, TRACKING_IDS } from './constants';
 import { recordParamsInFloodlightGtag } from './floodlight';
 import { loadTrackingScripts } from './load-tracking-scripts';
-import { recordMigrationSignupEvent } from './record-migration-events';
+import {
+	recordMigrationSignupEvent,
+	recordMigrationSignupFacebookEvent,
+} from './record-migration-events';
 
 // Ensure setup has run.
 import './setup';
@@ -44,8 +47,9 @@ export async function adTrackSignupStart( flow ) {
 		window.gtag( ...params );
 	}
 
-	// Google Ads for site-migration flow.
+	// Google Ads and Facebook for site-migration flow.
 	if ( 'site-migration' === flow ) {
 		recordMigrationSignupEvent( 'adTrackSignupStart' );
+		recordMigrationSignupFacebookEvent( 'adTrackSignupStart' );
 	}
 }
