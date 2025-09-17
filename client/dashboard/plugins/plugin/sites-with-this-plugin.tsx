@@ -11,7 +11,7 @@ import { useMutation } from '@tanstack/react-query';
 import { __experimentalText as Text, Button, Icon, ToggleControl } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
-import { check, close, trash } from '@wordpress/icons';
+import { link, linkOff, trash } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
 import ActionRenderModal, { getModalHeader } from '../manage/components/action-render-modal';
 import { buildBulkSitesPluginAction } from '../manage/utils';
@@ -161,17 +161,18 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 			},
 		],
 		[
-			isFetching,
 			pluginBySiteId,
 			isActivating,
 			isDeactivating,
+			isFetching,
+			activateMutate,
+			plugin?.id,
+			deactivateMutate,
 			isEnablingAutoupdate,
 			isDisablingAutoupdate,
-			activateMutate,
-			deactivateMutate,
 			enableAutoupdateMutate,
 			disableAutoupdateMutate,
-			plugin?.id,
+			pluginSlug,
 		]
 	);
 
@@ -189,7 +190,7 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 				actions={ [
 					{
 						id: 'activate',
-						icon: check,
+						icon: link,
 						label: __( 'Activate' ),
 						modalHeader: getModalHeader( 'activate' ),
 						RenderModal: ( { items, closeModal } ) => {
@@ -211,7 +212,7 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 					},
 					{
 						id: 'deactivate',
-						icon: close,
+						icon: linkOff,
 						label: __( 'Deactivate' ),
 						modalHeader: getModalHeader( 'deactivate' ),
 						RenderModal: ( { items, closeModal } ) => {

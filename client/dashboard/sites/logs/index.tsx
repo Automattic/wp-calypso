@@ -4,8 +4,8 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { TabPanel, Card, CardHeader, CardBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { getUnixTime } from 'date-fns';
 import { useState } from 'react';
+import { useDateRange } from '../../app/hooks/use-date-range';
 import { useLocale } from '../../app/locale';
 import { siteRoute } from '../../app/router/sites';
 import { DateRangePicker } from '../../components/date-range-picker';
@@ -15,7 +15,7 @@ import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callou
 import SiteActivityLogsDataView from '../logs-activity';
 import SiteLogsDataView from './components/dataview';
 import { getLogsCalloutProps } from './logs-callout';
-import { getInitialDateRangeFromSearch, getDefaultDateRange, LOG_TABS } from './utils';
+import { LOG_TABS } from './utils';
 
 import './style.scss';
 
@@ -23,8 +23,6 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	const locale = useLocale();
 	const { siteSlug } = siteRoute.useParams();
 	const router = useRouter();
-	const search = router.state.location.search;
-
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
 	const siteId = site.ID;
@@ -39,25 +37,19 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 
 	const { gmtOffset, timezoneString } = data!;
 
-	const initial = getDefaultDateRange( timezoneString, gmtOffset );
-
-	const initialFromUrl = getInitialDateRangeFromSearch( search );
-
-	const [ dateRange, setDateRange ] = useState< { start: Date; end: Date } >(
-		() => initialFromUrl ?? initial
-	);
+	const { dateRange, handleDateRangeChange } = useDateRange( {
+		timezoneString,
+		gmtOffset,
+		autoRefresh: false,
+	} );
 	// this is used to track changes across the dateRange to ensure the components can react to changes when they are triggered by a change in the DateRangePicker
 	const [ dateRangeVersion, setDateRangeVersion ] = useState( 0 );
 
-	const handleDateRangeChange = ( next: { start: Date; end: Date } ) => {
-		setDateRange( next );
-		setDateRangeVersion( ( v ) => v + 1 );
+	const handleDateRangeChangeWrapper = ( next: { start: Date; end: Date } ) => {
+		// setAutoRefresh( false );
+		handleDateRangeChange( next );
 
-		// Sync from/to to the URL as UNIX seconds
-		const url = new URL( window.location.href );
-		url.searchParams.set( 'from', String( getUnixTime( next.start ) ) );
-		url.searchParams.set( 'to', String( getUnixTime( next.end ) ) );
-		window.history.replaceState( null, '', url.pathname + url.search );
+		setDateRangeVersion( ( v ) => v + 1 );
 	};
 
 	const handleTabChange = ( tab: LogType ) => {
@@ -86,7 +78,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 							gmtOffset={ gmtOffset }
 							timezoneString={ timezoneString }
 							locale={ locale }
-							onChange={ handleDateRangeChange }
+							onChange={ handleDateRangeChangeWrapper }
 						/>
 					) }
 					<Card className="site-logs-card">
@@ -115,7 +107,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 									logType={ logType }
 									dateRange={ dateRange }
 									dateRangeVersion={ dateRangeVersion }
-									setDateRange={ setDateRange }
+									setDateRange={ handleDateRangeChange }
 									gmtOffset={ gmtOffset }
 									timezoneString={ timezoneString }
 									site={ site }
@@ -125,7 +117,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 									logType={ logType }
 									dateRange={ dateRange }
 									dateRangeVersion={ dateRangeVersion }
-									setDateRange={ setDateRange }
+									setDateRange={ handleDateRangeChange }
 									gmtOffset={ gmtOffset }
 									timezoneString={ timezoneString }
 									site={ site }
