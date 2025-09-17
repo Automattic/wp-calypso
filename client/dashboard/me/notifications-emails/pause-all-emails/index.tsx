@@ -34,14 +34,9 @@ export const PauseAllEmails = () => {
 		if ( isSettingsUpdated ) {
 			const message = enabled ? __( 'All emails paused.' ) : __( 'All emails unpaused.' );
 			createSuccessNotice( message, { type: 'snackbar' } );
-		}
-	}, [ createSuccessNotice, enabled, isSettingsUpdated ] );
-
-	useEffect( () => {
-		if ( isSaving ) {
 			setIsConfirmDialogOpen( false );
 		}
-	}, [ isSaving ] );
+	}, [ createSuccessNotice, enabled, isSettingsUpdated, setIsConfirmDialogOpen ] );
 
 	const handleChange = ( checked: boolean ) => {
 		setEnabled( checked );
@@ -77,9 +72,12 @@ export const PauseAllEmails = () => {
 
 	return (
 		<>
-			{ isConfirmDialogOpen && (
-				<ConfirmationModal onCancel={ handleCancel } onConfirm={ handleConfirmation } />
-			) }
+			<ConfirmationModal
+				onCancel={ handleCancel }
+				onConfirm={ handleConfirmation }
+				isBusy={ isSaving }
+				isOpen={ isConfirmDialogOpen }
+			/>
 			<Card>
 				<CardBody>
 					<form onSubmit={ handleSubmit }>

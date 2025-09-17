@@ -1,38 +1,26 @@
-import {
-	Modal,
-	Button,
-	__experimentalVStack as VStack,
-	__experimentalText as Text,
-} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { ButtonStack } from '../../../components/button-stack';
+import ConfirmModal from '../../../components/confirm-modal';
 
 interface Props {
 	onCancel: () => void;
 	onConfirm: () => void;
+	isBusy: boolean;
+	isOpen: boolean;
 }
 
-export const ConfirmationModal = ( { onCancel, onConfirm }: Props ) => {
+export const ConfirmationModal = ( { onCancel, onConfirm, isBusy, isOpen }: Props ) => {
 	return (
-		<Modal
-			onRequestClose={ () => onCancel() }
+		<ConfirmModal
+			isOpen={ isOpen }
 			title={ __( 'Pause all emails?' ) }
+			onCancel={ onCancel }
+			onConfirm={ onConfirm }
+			confirmButtonProps={ { label: __( 'Yes, I want to pause all emails' ), isBusy } }
+			cancelButtonText={ __( 'Cancel' ) }
+			__experimentalHideHeader={ false }
 			isDismissible={ false }
 		>
-			<VStack spacing={ 6 }>
-				<Text>
-					{ __( 'You won’t get updates from your newsletters while emails are paused.' ) }
-				</Text>
-
-				<ButtonStack justify="flex-end">
-					<Button variant="tertiary" onClick={ () => onCancel() }>
-						{ __( 'Cancel' ) }
-					</Button>
-					<Button variant="primary" onClick={ onConfirm }>
-						{ __( 'Yes, I want to pause all emails' ) }
-					</Button>
-				</ButtonStack>
-			</VStack>
-		</Modal>
+			{ __( 'You won’t get updates from your newsletters while emails are paused.' ) }
+		</ConfirmModal>
 	);
 };
