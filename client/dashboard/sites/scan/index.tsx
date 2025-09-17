@@ -42,7 +42,7 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 		if ( lastScanTime && lastScanRelativeTime ) {
 			return sprintf(
 				/* translators: %s: relative time since last scan */
-				__( 'Latest automated scan ran %s' ),
+				__( 'Latest automated scan ran %s.' ),
 				lastScanRelativeTime
 			);
 		}
