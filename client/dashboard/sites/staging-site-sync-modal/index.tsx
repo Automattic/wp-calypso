@@ -25,14 +25,12 @@ import { EnvironmentType } from '../../components/site-environment-badge';
 
 const DirectionArrow = () => {
 	return (
-		<div style={ { marginTop: '5px' } }>
-			<Icon
-				icon={ isRTL() ? chevronLeft : chevronRight }
-				style={ {
-					fill: '#949494',
-				} }
-			/>
-		</div>
+		<Icon
+			icon={ isRTL() ? chevronLeft : chevronRight }
+			style={ {
+				fill: '#949494',
+			} }
+		/>
 	);
 };
 
