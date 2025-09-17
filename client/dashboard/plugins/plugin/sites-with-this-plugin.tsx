@@ -161,17 +161,18 @@ export const SitesWithThisPlugin = ( { pluginSlug }: { pluginSlug: string } ) =>
 			},
 		],
 		[
-			isFetching,
 			pluginBySiteId,
 			isActivating,
 			isDeactivating,
+			isFetching,
+			activateMutate,
+			plugin?.id,
+			deactivateMutate,
 			isEnablingAutoupdate,
 			isDisablingAutoupdate,
-			activateMutate,
-			deactivateMutate,
 			enableAutoupdateMutate,
 			disableAutoupdateMutate,
-			plugin?.id,
+			pluginSlug,
 		]
 	);
 
