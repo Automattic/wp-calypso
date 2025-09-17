@@ -234,9 +234,9 @@ export const siteLogsActivityRoute = createRoute( {
 		await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
 	},
 } ).lazy( () =>
-	import( '../../sites/logs-activity' ).then( ( d ) =>
+	import( '../../sites/logs' ).then( ( d ) =>
 		createLazyRoute( 'site-logs-activity' )( {
-			component: d.default,
+			component: () => <d.default logType={ LogType.ACTIVITY } />,
 		} )
 	)
 );

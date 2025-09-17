@@ -68,7 +68,7 @@ export function useView( {
 	logType,
 	initialFilters,
 }: {
-	logType: LogType;
+	logType: Omit< LogType, 'activity' >;
 	initialFilters?: View[ 'filters' ];
 } ) {
 	const config = logType === LogType.PHP ? phpLogsViewConfig : serverLogsViewConfig;
