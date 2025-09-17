@@ -4,7 +4,6 @@
 
 import {
 	DataHelper,
-	BrowserManager,
 	RewrittenDomainSearchComponent,
 	SelectItemsComponent,
 	CartCheckoutPage,
@@ -29,7 +28,6 @@ describe( DataHelper.createSuiteTitle( 'Domain flow: Transfer a domain to a site
 
 	beforeAll( async () => {
 		page = await browser.newPage();
-		await BrowserManager.setStoreCookie( page, { currency: 'USD' } );
 	} );
 
 	it( 'Enter the flow', async function () {
