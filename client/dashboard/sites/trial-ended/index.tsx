@@ -1,3 +1,4 @@
+import { DotcomPlans, getPlanNames } from '@automattic/api-core';
 import { sitePlanBySlugQuery, siteBySlugQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
@@ -32,7 +33,7 @@ const PlanPrice = lazy( () =>
 const getProduct = ( site: Site ) => {
 	if ( wasEcommerceTrial( site ) ) {
 		return {
-			name: __( 'Commerce' ),
+			name: getPlanNames()[ DotcomPlans.ECOMMERCE ],
 			tagline: __( 'Grow your online store with commerce-optimized extensions.' ),
 			slug: 'ecommerce-bundle',
 			pathSlug: 'ecommerce',
@@ -40,7 +41,7 @@ const getProduct = ( site: Site ) => {
 	}
 
 	return {
-		name: __( 'Business' ),
+		name: getPlanNames()[ DotcomPlans.BUSINESS ],
 		tagline: __( 'Unlock next-level WordPress with custom plugins and themes.' ),
 		slug: 'business-bundle',
 		pathSlug: 'business',

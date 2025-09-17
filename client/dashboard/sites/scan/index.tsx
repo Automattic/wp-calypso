@@ -16,8 +16,10 @@ import { siteRoute } from '../../app/router/sites';
 import { ButtonStack } from '../../components/button-stack';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import illustrationUrl from '../backups/backups-callout-illustration.svg';
-import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout'; // @TODO: replace with Scan callout illustration
+import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
+import { ActiveThreatsDataViews } from '../scan-active';
+import illustrationUrl from './scan-callout-illustration.svg';
+import './style.scss';
 
 const SCAN_TABS = [
 	{ name: 'active', title: __( 'Active threats' ) },
@@ -48,6 +50,7 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 					actions={
 						<ButtonStack>
 							<Button variant="secondary">{ __( 'Scan now' ) }</Button>
+							{ /* @TODO: Hide this button if there are no fixable threats */ }
 							<Button variant="primary">
 								{ sprintf(
 									/* translators: %d: number of threats */
@@ -73,9 +76,8 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 				upsellImage={ illustrationUrl }
 				upsellDescription={
 					<Text as="p" variant="muted">
-						{ /* @TODO: update copy when the design is ready and add translation */ }
 						Automated daily scans check for malware and security vulnerabilities, with automated
-						fixes for many issues.
+						fixes for most issues.
 					</Text>
 				}
 			>
@@ -95,11 +97,8 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 						</TabPanel>
 					</CardHeader>
 					<CardBody>
-						{ scanTab === 'active' ? (
-							<Text as="p" variant="muted">
-								{ __( 'No active threats found. Your site is secure.' ) }
-							</Text>
-						) : (
+						{ scanTab === 'active' && <ActiveThreatsDataViews site={ site } /> }
+						{ scanTab === 'history' && (
 							<Text as="p" variant="muted">
 								{ __( 'So far, there are no archived threats on your site.' ) }
 							</Text>
