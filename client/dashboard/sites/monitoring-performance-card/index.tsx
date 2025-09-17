@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 import MonitoringCard from '../monitoring-card';
 import type { PeriodData, TimeRange } from '../monitoring/types';
 import type { Site } from '@automattic/api-core';
-import type { DataPointDate } from '@automattic/charts/dist/types/types';
+import type { DataPointDate, AxisOptions } from '@automattic/charts/dist/types/types';
 
 function convertTimeRangeToUnix( timeRange: number ): TimeRange {
 	const start = Math.floor( new Date().getTime() / 1000 ) - timeRange * 3600;
@@ -79,14 +79,38 @@ export default function MonitoringPerformanceCard( {
 		{
 			label: __( 'Requests per minute' ),
 			data: requestsData || [],
+			options: {
+				gradient: {
+					from: '#3858E9',
+					to: '#3858E9',
+					fromOpacity: 0.2,
+					toOpacity: 0,
+				},
+				stroke: '#3858E9',
+				legendShapeStyle: {
+					color: '#3858E9',
+				},
+			},
 		},
 		{
 			label: __( 'Average response time (ms)' ),
 			data: responseTimeData || [],
+			options: {
+				gradient: {
+					from: '#5BA300',
+					to: '#5BA300',
+					fromOpacity: 0.2,
+					toOpacity: 0,
+				},
+				stroke: '#5BA300',
+				legendShapeStyle: {
+					color: '#5BA300',
+				},
+			},
 		},
 	];
 
-	const xAxisOptions = {
+	const xAxisOptions: AxisOptions = {
 		tickFormat: ( date: string ) => {
 			const d = new Date( date );
 
@@ -132,6 +156,21 @@ export default function MonitoringPerformanceCard( {
 				maxWidth={ 1400 }
 				showLegend
 				withLegendGlyph
+				renderGlyph={ ( glyphProps ) => {
+					switch ( glyphProps.key ) {
+						case 'legend-glyph-Requests per minute':
+						case 'Requests per minute':
+							return (
+								<rect width="8" height="8" transform="translate(3, -1) rotate(45)" fill="#3858E9" />
+							);
+						case 'Average response time (ms)':
+							return <circle r="4" fill="#5BA300" strokeWidth="1.5" />;
+						case 'legend-glyph-Average response time (ms)':
+							return <circle cx="4" cy="4" r="4" fill="#5BA300" strokeWidth="1.5" />;
+					}
+
+					return <circle r="4" fill={ glyphProps.color } strokeWidth="1.5" />;
+				} }
 				options={ {
 					axis: {
 						x: xAxisOptions,
