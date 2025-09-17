@@ -14,14 +14,8 @@
 		flex-grow: 1;
 	}
 
-	.dashboard-monitoring-card__line-chart {
-		& > [role="list"] {
-			display: flex;
-			gap: 20px;
-
-			.legend-module_legend-item__feemn > svg {
-				margin-inline-end: 5px;
-			}
-		}
+	.dashboard-monitoring-card__line-chart svg {
+		/* Ensure the chart numbers are not clipped. */
+		overflow: visible;
 	}
 }
