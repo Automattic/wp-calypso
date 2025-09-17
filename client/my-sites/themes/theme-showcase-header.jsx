@@ -38,7 +38,7 @@ export default function ThemeShowcaseHeader( {
 		metaDescription: metaDescription,
 		header: themesHeaderTitle,
 		description: themesHeaderDescription,
-	} = isLoggedIn
+	} = ! isLoggedIn
 		? {
 				title: title,
 				metaDescription: description,
@@ -93,7 +93,7 @@ export default function ThemeShowcaseHeader( {
 				meta={ metas }
 				skipTitleFormatting={ skipTitleFormatting }
 			/>
-			{ isLoggedIn ? (
+			{ ! isLoggedIn ? (
 				<div className="themes__header-navigation-container">
 					<NavigationHeader
 						compactBreadcrumb={ false }

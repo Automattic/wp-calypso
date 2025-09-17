@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
+import { UniversalNavbarHeader } from '@automattic/wpcom-template-parts';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component, useEffect } from 'react';
@@ -170,6 +171,15 @@ class Layout extends Component {
 		}
 		if ( this.props.isBlazePro ) {
 			return <AsyncLoad require="calypso/layout/masterbar/blaze-pro" placeholder={ null } />;
+		}
+
+		if ( this.props.isUniversal ) {
+			return (
+				<UniversalNavbarHeader
+					isLoggedIn={ this.props.isLoggedIn }
+					sectionName={ this.props.sectionName }
+				/>
+			);
 		}
 
 		if ( this.props.needsColorScheme && this.props.isFetchingColorScheme ) {

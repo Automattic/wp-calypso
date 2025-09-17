@@ -44,7 +44,7 @@ export function upload( context, next ) {
 
 export function renderThemes( context, next ) {
 	const state = context.store.getState();
-	if ( isUserLoggedIn( state ) ) {
+	if ( ! isUserLoggedIn( state ) ) {
 		return loggedIn( context, next );
 	}
 

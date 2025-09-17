@@ -43,7 +43,6 @@ export default function ( router ) {
 		noSite,
 		fetchThemeDetailsData,
 		details,
-		addNavigationIfLoggedIn,
 		makeLayout,
 		clientRender
 	);
