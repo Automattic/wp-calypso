@@ -451,7 +451,6 @@ function StagingSiteSyncModalInner( {
 								showHeader: false,
 								inheritNodeColor: true,
 								nodesIndentInlineStart: 14,
-								backupTextColor: '#a0a5aa',
 							} }
 							displayBackupDate={ displayBackupDate ?? undefined }
 						/>
