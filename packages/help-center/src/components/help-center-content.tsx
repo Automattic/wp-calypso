@@ -92,7 +92,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 			const target = event.currentTarget as HTMLDivElement;
 			const { clientHeight, scrollHeight, scrollTop } = target;
 
-			// Sadly, Safari doesn't animation-timeline yet, once it does, you can use the CSS linked below and delete the JS.
+			// Sadly, Safari doesn't support animation-timeline yet, once it does, you can use the CSS linked below and delete the JS.
 			// https://github.com/Automattic/wp-calypso/pull/105777/commits/e07a4f09b045ed5008c1892641f45acd1ebfc514
 			target.style.setProperty(
 				'--blender-opacity',
