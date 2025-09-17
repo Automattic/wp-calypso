@@ -28,23 +28,21 @@ interface OptionalDraggableProps extends Partial< DraggableProps > {
 	children?: React.ReactNode;
 }
 
+const DEFAULT_POSITION = { x: 0, y: 0 };
+
 const OptionalDraggable: FC< OptionalDraggableProps > = ( { draggable, ...props } ) => {
 	const dims = useWindowDimensions();
 	const [ position, setPosition ] = useState( { x: 0, y: 0 } );
 
 	useEffect( () => {
 		// Reset drag position when window dimensions change
-		setPosition( { x: 0, y: 0 } );
+		setPosition( DEFAULT_POSITION );
 	}, [ dims.width, dims.height ] );
-
-	if ( ! draggable ) {
-		return <>{ props.children }</>;
-	}
 
 	return (
 		<Draggable
-			position={ position }
-			onDrag={ ( _, p ) => setPosition( p ) }
+			position={ draggable ? position : DEFAULT_POSITION }
+			onDrag={ ( _, p ) => draggable && setPosition( p ) }
 			bounds="body"
 			{ ...props }
 		/>
