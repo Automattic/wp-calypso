@@ -22,6 +22,8 @@ import { HelpCenterSearch } from './help-center-search';
 import { SuccessScreen } from './ticket-success-screen';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 
+const BLENDER_HEIGHT = 80;
+
 import './help-center-content.scss';
 
 // Disabled component only applies the class if isDisabled is true, we want it always.
@@ -86,13 +88,33 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	}, [ navigate, navigateToRoute, setNavigateToRoute, location ] );
 
 	useEffect( () => {
-		if (
-			containerRef.current &&
-			! location.hash &&
-			! location.pathname.includes( '/odie' ) &&
-			! location.pathname.includes( '/post' )
-		) {
-			containerRef.current.scrollTo( 0, 0 );
+		function handler( event: Event ) {
+			const target = event.currentTarget as HTMLDivElement;
+			const { clientHeight, scrollHeight, scrollTop } = target;
+
+			// Sadly, Safari doesn't animation-timeline yet, once it does, you can use the CSS linked below and delete the JS.
+			// https://github.com/Automattic/wp-calypso/pull/105777/commits/e07a4f09b045ed5008c1892641f45acd1ebfc514
+			target.style.setProperty(
+				'--blender-opacity',
+				// This keeps opacity at 1 until the scroll reaches bottom - BLENDER_HEIGHT.
+				Math.min( 1, ( scrollHeight - clientHeight - scrollTop ) / BLENDER_HEIGHT ).toString()
+			);
+		}
+
+		if ( containerRef.current ) {
+			const container = containerRef.current;
+			container.addEventListener( 'scroll', handler );
+
+			if (
+				! location.hash &&
+				! location.pathname.includes( '/odie' ) &&
+				! location.pathname.includes( '/post' )
+			) {
+				container.scrollTo( 0, 0 );
+			}
+			return () => {
+				container?.removeEventListener( 'scroll', handler );
+			};
 		}
 	}, [ location ] );
 
