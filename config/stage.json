@@ -138,6 +138,7 @@
 		"signup/social-first": true,
 		"site-indicator": true,
 		"site-profiler/metrics": false,
+		"site-spec": true,
 		"sites/drive-migrations": true,
 		"ssr/prefetch-timebox": true,
 		"stats/archive-breakdown": true,

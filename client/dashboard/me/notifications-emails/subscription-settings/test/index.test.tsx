@@ -7,7 +7,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Suspense } from 'react';
-import { useNotice } from '../../../../app/hooks/use-notice';
+import Snackbars from '../../../../app/snackbars';
 import { SubscriptionSettings } from '../index';
 
 //Required to prevent the inline support link from being rendered in the test
@@ -16,13 +16,6 @@ jest.mock(
 	() =>
 		( { children }: { children: React.ReactNode } ) => <span>{ children }</span>
 );
-
-jest.mock( '../../../../app/hooks/use-notice', () => ( {
-	useNotice: jest.fn().mockReturnValue( {
-		createSuccessNotice: jest.fn(),
-		createErrorNotice: jest.fn(),
-	} ),
-} ) );
 
 jest.mock( '@tanstack/react-router' );
 
@@ -44,16 +37,51 @@ const defaultUserSettings: Partial< UserSettings > = {
 	p2_disable_autofollow_on_comment: false,
 };
 
-const mockGetSettingsAPi = ( settings: Partial< UserSettings > = defaultUserSettings ) => {
+const mockGetSettingsApi = ( settings: Partial< UserSettings > = defaultUserSettings ) => {
 	return nock( 'https://public-api.wordpress.com:443' )
 		.get( '/rest/v1.1/me/settings' )
 		.reply( 200, settings );
 };
 
-const mockSaveSettingsAPi = ( expectedSettings: Partial< UserSettings > ) => {
+const mockSaveSettingsApi = ( expectedSettings: Partial< UserSettings > ) => {
 	return nock( 'https://public-api.wordpress.com:443' )
 		.post( '/rest/v1.1/me/settings' )
 		.reply( 200, expectedSettings );
+};
+
+const notificationSnackBar = () => {
+	//Snackbar requires a custom matcher because it's aria-live is not supported by the testing library
+	return document.getElementById( 'a11y-speak-polite' );
+};
+
+const saveButton = () => {
+	return screen.findByRole( 'button', { name: 'Save' } );
+};
+
+const defaultEmailDeliverySelect = () => {
+	return screen.findByRole( 'combobox', { name: 'Default email delivery' } );
+};
+
+const emailDeliveryFormatSelect = () => {
+	return screen.findByRole( 'combobox', { name: 'Email delivery format' } );
+};
+
+const daySelect = () => {
+	return screen.findByRole( 'combobox', { name: 'Day' } );
+};
+
+const hourSelect = () => {
+	return screen.findByRole( 'combobox', { name: 'Hour' } );
+};
+
+const jabberSubscriptionDeliveryCheckbox = () => {
+	return screen.findByRole( 'checkbox', { name: 'Jabber subscription delivery' } );
+};
+
+const automatticiansOnlyCheckbox = () => {
+	return screen.queryByLabelText(
+		'Automatically subscribe to P2 post notifications when you leave a comment.'
+	);
 };
 
 describe( 'SubscriptionSettings', () => {
@@ -62,6 +90,7 @@ describe( 'SubscriptionSettings', () => {
 		( { children }: { children: React.ReactNode } ) => {
 			return (
 				<QueryClientProvider client={ client }>
+					<Snackbars />
 					<Suspense>{ children }</Suspense>
 				</QueryClientProvider>
 			);
@@ -70,21 +99,17 @@ describe( 'SubscriptionSettings', () => {
 	beforeEach( () => {
 		nock.disableNetConnect();
 		nock.cleanAll();
+		//Snackbar requires window.scrollTo to be defined
+		window.scrollTo = jest.fn();
 	} );
 
 	it( "doesn't render the automatticians only checkbox", async () => {
 		mockGetIsAutomatticianApi( false );
-		mockGetSettingsAPi();
+		mockGetSettingsApi();
 
 		render( <SubscriptionSettings />, { wrapper: Wrapper() } );
 
-		await waitFor( () => {
-			expect(
-				screen.queryByRole( 'button', {
-					name: 'Save',
-				} )
-			).toBeVisible();
-		} );
+		expect( await saveButton() ).toBeVisible();
 
 		expect(
 			screen.queryByLabelText(
@@ -95,51 +120,40 @@ describe( 'SubscriptionSettings', () => {
 
 	it( 'starts with button disabled', async () => {
 		mockGetIsAutomatticianApi( false );
-		mockGetSettingsAPi();
+		mockGetSettingsApi();
 
 		render( <SubscriptionSettings />, { wrapper: Wrapper() } );
 
-		await waitFor( () => {
-			expect( screen.getByRole( 'button', { name: 'Save' } ) ).toBeDisabled();
-		} );
+		expect( await saveButton() ).toBeDisabled();
 	} );
 
 	it( 'enables the save button when any setting is changed', async () => {
 		mockGetIsAutomatticianApi( false );
-		mockGetSettingsAPi();
+		mockGetSettingsApi();
 
 		render( <SubscriptionSettings />, { wrapper: Wrapper() } );
 
-		await userEvent.selectOptions(
-			await screen.findByLabelText( 'Default email delivery' ),
-			'weekly'
-		);
+		await userEvent.selectOptions( await defaultEmailDeliverySelect(), 'weekly' );
 
-		await waitFor( () => {
-			expect( screen.getByRole( 'button', { name: 'Save' } ) ).toBeEnabled();
-		} );
+		expect( await saveButton() ).toBeEnabled();
 	} );
 
 	it( 'renders the automatticians only checkbox', async () => {
 		nock.cleanAll();
 
 		mockGetIsAutomatticianApi( true );
-		mockGetSettingsAPi();
+		mockGetSettingsApi();
 
 		render( <SubscriptionSettings />, { wrapper: Wrapper() } );
 
 		await waitFor( () => {
-			expect(
-				screen.queryByLabelText(
-					/Automatically subscribe to P2 post notifications when you leave a comment./
-				)
-			).toBeVisible();
+			expect( automatticiansOnlyCheckbox() ).toBeVisible();
 		} );
 	} );
 
 	it( 'shows the current settings', async () => {
 		mockGetIsAutomatticianApi( false );
-		mockGetSettingsAPi( {
+		mockGetSettingsApi( {
 			subscription_delivery_email_default: 'weekly',
 			subscription_delivery_jabber_default: false,
 			subscription_delivery_mail_option: 'html',
@@ -149,24 +163,14 @@ describe( 'SubscriptionSettings', () => {
 
 		render( <SubscriptionSettings />, { wrapper: Wrapper() } );
 
-		await waitFor( () => {
-			expect( screen.getByLabelText( 'Default email delivery' ) ).toHaveValue( 'weekly' );
-			expect( screen.getByLabelText( 'Email delivery format' ) ).toHaveValue( 'html' );
-			expect( screen.getByLabelText( 'Day' ) ).toHaveValue( '2' );
-			expect( screen.getByLabelText( 'Hour' ) ).toHaveValue( '10' );
-			expect( screen.getByLabelText( 'Jabber subscription delivery' ) ).not.toBeChecked();
-		} );
+		expect( await defaultEmailDeliverySelect() ).toHaveValue( 'weekly' );
+		expect( await emailDeliveryFormatSelect() ).toHaveValue( 'html' );
+		expect( await daySelect() ).toHaveValue( '2' );
+		expect( await hourSelect() ).toHaveValue( '10' );
+		expect( await jabberSubscriptionDeliveryCheckbox() ).not.toBeChecked();
 	} );
 
 	it( 'updates the settings on submit', async () => {
-		const createSuccessNotice = jest.fn();
-		const createErrorNotice = jest.fn();
-
-		jest.mocked( useNotice ).mockReturnValue( {
-			createSuccessNotice,
-			createErrorNotice,
-		} as unknown as ReturnType< typeof useNotice > );
-
 		const currentValues = {
 			subscription_delivery_email_default: 'weekly',
 			subscription_delivery_jabber_default: false,
@@ -182,31 +186,22 @@ describe( 'SubscriptionSettings', () => {
 			subscription_delivery_hour: 9,
 		};
 		mockGetIsAutomatticianApi( false );
-
-		mockGetSettingsAPi( currentValues );
-
-		const saveSettingsApi = mockSaveSettingsAPi( newValues );
+		mockGetSettingsApi( currentValues );
+		mockSaveSettingsApi( newValues );
 
 		render( <SubscriptionSettings />, { wrapper: Wrapper() } );
 
-		await userEvent.selectOptions(
-			await screen.findByLabelText( 'Default email delivery' ),
-			'daily'
-		);
-		await userEvent.selectOptions(
-			await screen.findByLabelText( 'Email delivery format' ),
-			'text'
-		);
-		await userEvent.selectOptions( await screen.findByLabelText( 'Day' ), '1' );
-		await userEvent.selectOptions( await screen.findByLabelText( 'Hour' ), '10' );
-		await userEvent.click( await screen.findByLabelText( 'Jabber subscription delivery' ) );
-		await userEvent.click( await screen.findByRole( 'button', { name: 'Save' } ) );
+		await userEvent.selectOptions( await defaultEmailDeliverySelect(), 'daily' );
+		await userEvent.selectOptions( await emailDeliveryFormatSelect(), 'text' );
+		await userEvent.selectOptions( await daySelect(), '1' );
+		await userEvent.selectOptions( await hourSelect(), '10' );
+		await userEvent.click( await jabberSubscriptionDeliveryCheckbox() );
+		await userEvent.click( await saveButton() );
 
 		await waitFor( () => {
-			expect( saveSettingsApi.isDone() ).toBe( true );
-			expect( createSuccessNotice ).toHaveBeenCalledWith( 'Settings saved successfully.', {
-				type: 'snackbar',
-			} );
+			const snackbar = notificationSnackBar();
+			expect( snackbar ).toBeVisible();
+			expect( snackbar ).toHaveTextContent( 'Settings saved successfully.' );
 		} );
 	} );
 } );
