@@ -1,4 +1,4 @@
-import { tags, test, expect } from '../../lib/pw-base';
+import { expect, tags, test } from '../../lib/pw-base';
 import { locale } from '../../lib/types-shared';
 
 const localesToTest: Array< locale > = [
@@ -23,8 +23,6 @@ const localesToTest: Array< locale > = [
 
 for ( const locale of localesToTest ) {
 	test.describe( `I18N: Homepage Redirect ${ locale }`, { tag: tags.I18N }, () => {
-		// TODO: Try to use `addLocaleToPathLocaleInFront` from `@automattic/i18n-utils` here instead of `helperData.getLocalePath`
-		// need to resolve ESM/CJS interop issues first
 		test.use( { locale: locale } );
 		test( `As an unauthenticated visitor using '${ locale }' as my locale, I can visit the homepage and see the correct URL`, async ( {
 			page,
