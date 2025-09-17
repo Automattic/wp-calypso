@@ -19,8 +19,9 @@ import { createInterpolateElement, useState, useCallback } from '@wordpress/elem
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronRight, chevronLeft } from '@wordpress/icons';
 import { ButtonStack } from '../../components/button-stack';
+import Environment from '../../components/environment';
 import InlineSupportLink from '../../components/inline-support-link';
-import SiteEnvironmentBadge, { EnvironmentType } from '../../components/site-environment-badge';
+import { EnvironmentType } from '../../components/site-environment-badge';
 
 const DirectionArrow = () => {
 	return (
@@ -44,7 +45,7 @@ const EnvironmentLabel = ( { environmentType, siteTitle }: EnvironmentLabelProps
 	return (
 		<VStack spacing={ 1 }>
 			<HStack spacing={ 2 }>
-				<SiteEnvironmentBadge environmentType={ environmentType } />
+				<Environment environmentType={ environmentType } />
 				{ siteTitle && (
 					<Text
 						variant="muted"
