@@ -143,7 +143,14 @@ export function useDeploymentFields( {
 				},
 				render: ( { item } ) => {
 					return (
-						<Button variant="link" size="small" onClick={ () => onOpenLogs( item ) }>
+						<Button
+							variant="link"
+							onClick={ () => onOpenLogs( item ) }
+							style={ {
+								color: '#757575',
+								textDecoration: 'none',
+							} }
+						>
 							<TimeSince timestamp={ item.created_on } />
 						</Button>
 					);
