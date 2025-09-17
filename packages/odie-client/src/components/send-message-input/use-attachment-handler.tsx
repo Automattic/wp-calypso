@@ -4,14 +4,28 @@ import {
 	useAttachFileToConversation,
 	useAuthenticateZendeskMessaging,
 } from '@automattic/zendesk-client';
-import { DropZone, Icon } from '@wordpress/components';
+import { DropZone } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
-import { useCallback } from '@wordpress/element';
+import { useCallback, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { image } from '@wordpress/icons';
-import { getOdieWrongFileTypeMessage } from '../../constants';
+import { error, image, Icon } from '@wordpress/icons';
 import { useOdieAssistantContext } from '../../context';
 import { zendeskMessageConverter } from '../../utils';
+import { AttachmentPreviews } from '../attachment-preview';
+
+const NOTICE_BAD_FORMAT = {
+	icon: <Icon size={ 24 } icon={ error } />,
+	message: __( 'Only .jpg, .png, or .gif files are supported.', __i18n_text_domain__ ),
+	dismissible: true,
+	onDismiss: () => {},
+};
+
+const SUPPORTED_IMAGE_TYPES = [ 'image/png', 'image/jpg', 'image/jpeg', 'image/gif' ];
+const MAX_ATTACHMENTS = 5;
+
+function isSupportedImageType( type: string ) {
+	return SUPPORTED_IMAGE_TYPES.includes( type );
+}
 
 const getFileType = ( file: File ) => {
 	if ( file.type.startsWith( 'image/' ) ) {
@@ -34,6 +48,8 @@ const getPlaceholderAttachmentMessage = ( file: File ) => {
 
 export const useAttachmentHandler = () => {
 	const { trackEvent, chat, addMessage, isUserEligibleForPaidSupport } = useOdieAssistantContext();
+	const [ attachmentPreviewFiles, setAttachmentPreviewFiles ] = useState< File[] >( [] );
+	const [ badFormatNotice, setBadFormatNotice ] = useState< typeof NOTICE_BAD_FORMAT >();
 
 	const { data: authData } = useAuthenticateZendeskMessaging(
 		isUserEligibleForPaidSupport,
@@ -55,37 +71,68 @@ export const useAttachmentHandler = () => {
 		useAttachFileToConversation();
 
 	const handleFileUpload = useCallback(
-		async ( file: File ) => {
-			if ( file.type.startsWith( 'image/' ) ) {
-				if ( authData && chat.conversationId && inferredClientId && file ) {
-					attachFileToConversation( {
-						authData,
-						file,
-						conversationId: chat.conversationId,
-						clientId: inferredClientId,
-					} ).then( () => {
-						addMessage( getPlaceholderAttachmentMessage( file ) );
-						trackEvent( 'send_message_attachment', { type: file.type } );
-					} );
+		async ( files: File[] ) => {
+			setBadFormatNotice( undefined );
+			const limitedFiles = files.slice( 0, MAX_ATTACHMENTS );
+			const newAttachmentPreviewFiles = [ ...attachmentPreviewFiles ];
+			let anyUnsupportedFormats = false;
+			for ( const file of limitedFiles ) {
+				if ( isSupportedImageType( file.type ) ) {
+					// Avoid duplicates.
+					if ( ! newAttachmentPreviewFiles.some( ( f ) => f.name === file.name ) ) {
+						newAttachmentPreviewFiles.push( file );
+					}
+				} else {
+					anyUnsupportedFormats = true;
 				}
-			} else {
-				addMessage( getOdieWrongFileTypeMessage() );
+			}
+			setAttachmentPreviewFiles( newAttachmentPreviewFiles );
+			if ( anyUnsupportedFormats ) {
+				setBadFormatNotice( {
+					...NOTICE_BAD_FORMAT,
+					onDismiss: () => setBadFormatNotice( undefined ),
+				} );
 			}
 		},
-		[
-			authData,
-			chat.conversationId,
-			inferredClientId,
-			attachFileToConversation,
-			addMessage,
-			trackEvent,
-		]
+
+		[ setAttachmentPreviewFiles, attachmentPreviewFiles, setBadFormatNotice ]
 	);
 
+	const sendAttachments = useCallback( async () => {
+		setBadFormatNotice( undefined );
+		if ( attachmentPreviewFiles.length > 0 ) {
+			if ( authData && chat.conversationId && inferredClientId ) {
+				Promise.all(
+					attachmentPreviewFiles.map( ( file ) =>
+						attachFileToConversation( {
+							authData,
+							file,
+							conversationId: chat.conversationId as string,
+							clientId: inferredClientId,
+						} ).then( () => {
+							addMessage( getPlaceholderAttachmentMessage( file ) );
+							trackEvent( 'send_message_attachment', { type: file.type } );
+						} )
+					)
+				).then( () => {
+					setAttachmentPreviewFiles( [] );
+				} );
+			}
+		}
+	}, [
+		attachmentPreviewFiles,
+		attachFileToConversation,
+		authData,
+		chat.conversationId,
+		inferredClientId,
+		addMessage,
+		trackEvent,
+		setBadFormatNotice,
+	] );
+
 	const onFilesDrop = ( files: File[] ) => {
-		const file = files?.[ 0 ];
-		if ( file ) {
-			handleFileUpload( file );
+		if ( files.length > 0 ) {
+			handleFileUpload( files );
 		}
 	};
 
@@ -102,10 +149,10 @@ export const useAttachmentHandler = () => {
 						.then( ( items ) => {
 							for ( const item of items ) {
 								for ( const type of item.types ) {
-									if ( type.startsWith( 'image/' ) ) {
+									if ( isSupportedImageType( type ) ) {
 										item.getType( type ).then( ( blob ) => {
 											const file = new File( [ blob ], 'pasted-image.png', { type } );
-											handleFileUpload( file );
+											handleFileUpload( [ file ] );
 										} );
 										break;
 									}
@@ -140,11 +187,12 @@ export const useAttachmentHandler = () => {
 		onClick: () => {
 			const input = document.createElement( 'input' );
 			input.type = 'file';
-			input.accept = 'image/*';
+			input.multiple = true;
+			input.accept = 'image/png, image/jpg, image/jpeg, image/gif';
 			input.onchange = ( e ) => {
-				const file = ( e.target as HTMLInputElement ).files?.[ 0 ];
-				if ( file ) {
-					handleFileUpload( file );
+				const files = ( e.target as HTMLInputElement ).files;
+				if ( files?.length ) {
+					handleFileUpload( Array.from( files ) );
 				}
 			};
 			input.click();
@@ -156,6 +204,17 @@ export const useAttachmentHandler = () => {
 
 	return {
 		handleFileUpload,
+		sendAttachments,
+		attachmentPreviews: attachmentPreviewFiles.length ? (
+			<AttachmentPreviews
+				attachmentPreviews={ attachmentPreviewFiles }
+				isAttachingFile={ isAttachingFile }
+				onCancel={ ( index ) =>
+					setAttachmentPreviewFiles( attachmentPreviewFiles.filter( ( _, i ) => i !== index ) )
+				}
+			/>
+		) : null,
+		badFormatNotice,
 		handleImagePaste,
 		attachmentAction,
 		isAttachingFile,

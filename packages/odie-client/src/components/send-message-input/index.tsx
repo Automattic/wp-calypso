@@ -1,4 +1,3 @@
-import { ChatFooter } from '@automattic/agenttic-ui';
 import '@automattic/agenttic-ui/index.css';
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { EmailFallbackNotice } from '@automattic/help-center/src/components/notices';
@@ -10,6 +9,7 @@ import Smooch from 'smooch';
 import { useOdieAssistantContext } from '../../context';
 import { useSendChatMessage } from '../../hooks';
 import { Message } from '../../types';
+import { AgentUIFooter } from '../chat-footer';
 import { useConnectionStatusNotice, useMessageSizeErrorNotice } from '../notices';
 import { useAttachmentHandler } from './use-attachment-handler';
 
@@ -46,9 +46,6 @@ export const OdieSendMessageButton = () => {
 		textareaRef.current?.focus();
 	}, [ textareaRef ] );
 
-	// Prioritize connection status notice over message size notice
-	const notice = connectionNotice || messageSizeNotice;
-
 	const { connectionStatus } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return {
@@ -67,12 +64,18 @@ export const OdieSendMessageButton = () => {
 	}, [ inputValue, isLiveChat ] );
 
 	const {
+		attachmentPreviews,
+		sendAttachments,
 		handleImagePaste,
 		attachmentAction,
 		isAttachingFile,
 		showAttachmentButton,
 		AttachmentDropZone,
+		badFormatNotice,
 	} = useAttachmentHandler();
+
+	// Prioritize connection status notice over message size notice
+	const notice = connectionNotice || messageSizeNotice || badFormatNotice;
 
 	useEffect( () => {
 		function handleBlur() {
@@ -105,6 +108,7 @@ export const OdieSendMessageButton = () => {
 			setInputValue( '' );
 		} else if ( chat.conversationId ) {
 			Smooch.stopTyping();
+			sendAttachments();
 		}
 
 		try {
@@ -147,7 +151,15 @@ export const OdieSendMessageButton = () => {
 		} finally {
 			textareaRef.current?.focus();
 		}
-	}, [ inputValue, isChatBusy, chat?.provider, sendMessage, trackEvent, chat.conversationId ] );
+	}, [
+		inputValue,
+		isChatBusy,
+		chat?.provider,
+		sendMessage,
+		trackEvent,
+		chat.conversationId,
+		sendAttachments,
+	] );
 
 	const isEmailFallback = chat?.provider === 'zendesk' && forceEmailSupport;
 
@@ -173,10 +185,11 @@ export const OdieSendMessageButton = () => {
 				{ isEmailFallback ? (
 					<EmailFallbackNotice />
 				) : (
-					<ChatFooter
-						inputValue={ inputValue }
-						onInputChange={ setInputValue }
+					<AgentUIFooter
+						value={ inputValue }
+						onChange={ setInputValue }
 						onSubmit={ sendMessageHandler }
+						attachmentPreviews={ attachmentPreviews }
 						onKeyDown={ handleKeyDown }
 						textareaRef={ textareaRef }
 						disabled={ isDisabled }
