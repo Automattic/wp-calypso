@@ -1,7 +1,8 @@
 import { Icon, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { staging, production } from '../icons';
-import { EnvironmentType } from '../site-environment-badge';
+
+export type EnvironmentType = 'production' | 'staging';
 
 interface EnvironmentProps {
 	environmentType: EnvironmentType;
