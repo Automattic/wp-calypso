@@ -16,6 +16,7 @@ export interface UserSettings {
 	i18n_empathy_mode?: boolean;
 	use_fallback_for_incomplete_languages?: boolean;
 	enable_translator?: boolean;
+	subscription_delivery_email_blocked?: boolean;
 	two_step_app_enabled: boolean;
 	two_step_backup_codes_printed: boolean;
 	two_step_enabled: boolean;
