@@ -8,9 +8,10 @@ import {
 	Button,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { useState, useEffect, useCallback } from 'react';
-import { useNotice } from '../../../app/hooks/use-notice';
 import { ConfirmationModal } from './confirmation-modal';
 
 const isAllWpcomEmailsDisabled = ( settings: UserSettings ) => {
@@ -19,7 +20,8 @@ const isAllWpcomEmailsDisabled = ( settings: UserSettings ) => {
 
 export const PauseAllEmails = () => {
 	const { data: settings } = useSuspenseQuery( userSettingsQuery() );
-	const { createSuccessNotice } = useNotice();
+	const { createSuccessNotice } = useDispatch( noticesStore );
+
 	const {
 		mutate: updateSettings,
 		isPending: isSaving,
