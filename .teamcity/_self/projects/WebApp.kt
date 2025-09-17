@@ -952,7 +952,7 @@ object PlaywrightTestPRMatrix : BuildType({
 	}
 
 	params {
-		text("DOCKER_IMAGE_BUILD_NUMBER", "%BuildDockerImage.depParamRefs.buildNumber%")
+		
 	}
 
 	steps {
