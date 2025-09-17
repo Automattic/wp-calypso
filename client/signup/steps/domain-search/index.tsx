@@ -12,6 +12,8 @@ import { getStepUrl } from '../../utils';
 import { USE_MY_DOMAIN_SECTION_NAME, UseMyDomain } from './use-my-domain';
 import type { StepProps } from './types';
 
+import './style.scss';
+
 function DomainSearchStep( props: StepProps & { locale: string } ) {
 	const {
 		flowName,
@@ -67,11 +69,13 @@ function DomainSearchStep( props: StepProps & { locale: string } ) {
 	return (
 		<StepWrapper
 			{ ...props }
+			className="step-wrapper--domain-search"
 			hideSkip
 			headerText="Domain Search"
 			subHeaderText="Domain Search"
 			stepContent={
 				<WPCOMDomainSearch
+					className="domain-search--step-wrapper"
 					flowName={ flowName }
 					events={ {
 						onExternalDomainClick( initialQuery ) {
