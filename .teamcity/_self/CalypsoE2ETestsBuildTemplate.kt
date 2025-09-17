@@ -58,15 +58,15 @@ object CalypsoE2ETestsBuildTemplate : Template({
 		}
 
 		bashNodeScript {
-			name = "Get Calypso live URL "
+			name = "Get Calypso live URL"
 			id = "determine_calypso_live_url"
 			conditions {
-				doesNotEqual("DOCKER_IMAGE_BUILD_NUMBER", "")
+				exists("dep.BuildDockerImage.build.number")
 			}
 			scriptContent = """
-				echo "Getting Calypso url for build %DOCKER_IMAGE_BUILD_NUMBER%"
+				echo "Getting Calypso url for build %dep.BuildDockerImage.build.number%"
 				chmod +x ./bin/get-calypso-live-url.sh
-				CALYPSO_BASE_URL=${'$'}(./bin/get-calypso-live-url.sh %DOCKER_IMAGE_BUILD_NUMBER%)
+				CALYPSO_BASE_URL=${'$'}(./bin/get-calypso-live-url.sh %dep.BuildDockerImage.build.number%)
 				if [[ ${'$'}? -ne 0 ]]; then
 					// Command failed. CALYPSO_BASE_URL contains stderr
 					echo ${'$'}CALYPSO_BASE_URL
