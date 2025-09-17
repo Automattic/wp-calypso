@@ -50,10 +50,6 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				else
 					echo "TEST_GROUP is set to: %TEST_GROUP%"
 				fi
-
-				echo "CALYPSO_BASE_URL=%env.CALYPSO_BASE_URL%"
-
-				echo "Configuration type: Build will attempt dynamic URL detection if BuildDockerImage dependency exists"
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 		}
