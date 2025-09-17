@@ -7,7 +7,7 @@ import { useDispatch } from '@wordpress/data';
 import { DataViews, View, Filter, Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useMemo, useState, useRef, useEffect } from 'react';
+import { useMemo, useRef, useEffect } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { useActions } from '../dataviews/actions';
 import { useFields } from '../dataviews/fields';
@@ -18,6 +18,7 @@ import { buildTimeRangeInSeconds } from '../utils';
 import type { Site } from '@automattic/api-core';
 import type { Action } from '@wordpress/dataviews';
 import './style.scss';
+import type { Dispatch, SetStateAction } from 'react';
 
 function filtersSignature(
 	filters: Filter[] | undefined,
@@ -36,7 +37,8 @@ function filtersSignature(
 
 export type SiteLogsDataViewProps = {
 	dateRange: { start: Date; end: Date };
-	setDateRange: ( next: { start: Date; end: Date } ) => void;
+	autoRefresh: boolean;
+	setAutoRefresh: Dispatch< SetStateAction< boolean > >;
 	dateRangeVersion?: number;
 	gmtOffset: number;
 	timezoneString: string | undefined;
@@ -49,14 +51,14 @@ function SiteLogsDataView( {
 	dateRangeVersion,
 	gmtOffset,
 	timezoneString,
+	autoRefresh,
+	setAutoRefresh,
 	site,
 }: SiteLogsDataViewProps & { logType: typeof LogType.PHP | typeof LogType.SERVER } ) {
 	const router = useRouter();
 	const { recordTracksEvent } = useAnalytics();
 	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
 	const search = router.state.location.search;
-
-	const [ autoRefresh, setAutoRefresh ] = useState( false ); // TODO fix autoRefresh support
 
 	const [ view, setView ] = useView( {
 		logType,
@@ -102,7 +104,6 @@ function SiteLogsDataView( {
 	}, [ siteLogs, view.page ] );
 
 	useEffect( () => {
-		setAutoRefresh( false );
 		setView( ( value ) => ( { ...value, page: 1 } ) );
 
 		// Reset pagination + cursors

@@ -24,6 +24,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	const { siteSlug } = siteRoute.useParams();
 	const router = useRouter();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const [ autoRefresh, setAutoRefresh ] = useState( false );
 
 	const siteId = site.ID;
 
@@ -40,13 +41,13 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 	const { dateRange, handleDateRangeChange } = useDateRange( {
 		timezoneString,
 		gmtOffset,
-		autoRefresh: false,
+		autoRefresh,
 	} );
 	// this is used to track changes across the dateRange to ensure the components can react to changes when they are triggered by a change in the DateRangePicker
 	const [ dateRangeVersion, setDateRangeVersion ] = useState( 0 );
 
 	const handleDateRangeChangeWrapper = ( next: { start: Date; end: Date } ) => {
-		// setAutoRefresh( false );
+		setAutoRefresh( false );
 		handleDateRangeChange( next );
 
 		setDateRangeVersion( ( v ) => v + 1 );
@@ -107,7 +108,8 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 									logType={ logType }
 									dateRange={ dateRange }
 									dateRangeVersion={ dateRangeVersion }
-									setDateRange={ handleDateRangeChange }
+									autoRefresh={ autoRefresh }
+									setAutoRefresh={ setAutoRefresh }
 									gmtOffset={ gmtOffset }
 									timezoneString={ timezoneString }
 									site={ site }
@@ -117,7 +119,8 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 									logType={ logType }
 									dateRange={ dateRange }
 									dateRangeVersion={ dateRangeVersion }
-									setDateRange={ handleDateRangeChange }
+									autoRefresh={ autoRefresh }
+									setAutoRefresh={ setAutoRefresh }
 									gmtOffset={ gmtOffset }
 									timezoneString={ timezoneString }
 									site={ site }
