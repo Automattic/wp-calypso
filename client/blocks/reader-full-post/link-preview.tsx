@@ -40,7 +40,7 @@ export default function LinkPreview( { url }: LinkPreviewProps ): JSX.Element | 
 		setIsLoading( true );
 
 		const params = {
-			path: '/link-preview',
+			path: '/read/link-preview',
 			apiNamespace: 'wpcom/v2',
 		};
 
