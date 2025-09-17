@@ -17,7 +17,7 @@
 
 		&__server-performance {
 			/* Set a minimum height to prevent layout shift when the chart loads. */
-			height: 450px;
+			min-height: 450px;
 		}
 	}
 

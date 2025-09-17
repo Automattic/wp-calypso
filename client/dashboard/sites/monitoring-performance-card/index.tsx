@@ -86,6 +86,31 @@ export default function MonitoringPerformanceCard( {
 		},
 	];
 
+	const xAxisOptions = {
+		tickFormat: ( date: string ) => {
+			const d = new Date( date );
+
+			if ( timeRange <= 24 ) {
+				return `${ d.getHours() }:${ d.getMinutes().toString().padStart( 2, '0' ) }`;
+			}
+
+			if ( timeRange > 72 ) {
+				return `${ d.toLocaleDateString() }`;
+			}
+
+			return `${ d.toLocaleDateString() } ${ d.getHours() }:${ d
+				.getMinutes()
+				.toString()
+				.padStart( 2, '0' ) }`;
+		},
+	};
+
+	if ( timeRange > 72 ) {
+		xAxisOptions.numTicks = timeRange / 24;
+	} else if ( timeRange > 24 ) {
+		xAxisOptions.numTicks = timeRange / 12;
+	}
+
 	return (
 		<MonitoringCard
 			cardLabel="server-performance"
@@ -107,6 +132,11 @@ export default function MonitoringPerformanceCard( {
 				maxWidth={ 1400 }
 				showLegend
 				withLegendGlyph
+				options={ {
+					axis: {
+						x: xAxisOptions,
+					},
+				} }
 			/>
 		</MonitoringCard>
 	);
