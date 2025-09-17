@@ -43,7 +43,15 @@ function useSiteMetricsData( siteId: number, timeRange: number ): SiteMetricsDat
 		return null;
 	};
 
-	const formatPeriod = ( period: PeriodData ) => {
+	const formatRequestsDataPeriod = ( period: PeriodData ) => {
+		const value = getDimensionValue( period );
+		return {
+			date: new Date( period.timestamp * 1000 ),
+			value: value === null ? 0 : Math.round( value * 60 * 100 ) / 100, // Convert to requests per minute and round to 2 decimals.
+		};
+	};
+
+	const formatResponseTimeDataPeriod = ( period: PeriodData ) => {
 		const value = getDimensionValue( period );
 		return {
 			date: new Date( period.timestamp * 1000 ),
@@ -52,8 +60,8 @@ function useSiteMetricsData( siteId: number, timeRange: number ): SiteMetricsDat
 	};
 
 	return {
-		requestsData: requestsData?.data?.periods.map( formatPeriod ),
-		responseTimeData: responseTimeData?.data?.periods.map( formatPeriod ),
+		requestsData: requestsData?.data?.periods.map( formatRequestsDataPeriod ),
+		responseTimeData: responseTimeData?.data?.periods.map( formatResponseTimeDataPeriod ),
 		isLoading: isLoadingRequestsData || isLoadingResponseTimeData,
 	};
 }
