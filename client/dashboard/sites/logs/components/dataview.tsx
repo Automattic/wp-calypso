@@ -7,8 +7,7 @@ import { useDispatch } from '@wordpress/data';
 import { DataViews, View, Filter, Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { getUnixTime, subDays, isSameSecond } from 'date-fns';
-import { useMemo, useState, useRef, useEffect, Dispatch, SetStateAction } from 'react';
+import { useMemo, useState, useRef, useEffect } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { useActions } from '../dataviews/actions';
 import { useFields } from '../dataviews/fields';
@@ -37,7 +36,7 @@ function filtersSignature(
 
 export type SiteLogsDataViewProps = {
 	dateRange: { start: Date; end: Date };
-	setDateRange: Dispatch< SetStateAction< { start: Date; end: Date } > >;
+	setDateRange: ( next: { start: Date; end: Date } ) => void;
 	dateRangeVersion?: number;
 	gmtOffset: number;
 	timezoneString: string | undefined;
@@ -47,7 +46,6 @@ export type SiteLogsDataViewProps = {
 function SiteLogsDataView( {
 	logType,
 	dateRange,
-	setDateRange,
 	dateRangeVersion,
 	gmtOffset,
 	timezoneString,
@@ -58,44 +56,12 @@ function SiteLogsDataView( {
 	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
 	const search = router.state.location.search;
 
-	const [ autoRefresh, setAutoRefresh ] = useState( false );
+	const [ autoRefresh, setAutoRefresh ] = useState( false ); // TODO fix autoRefresh support
 
 	const [ view, setView ] = useView( {
 		logType,
 		initialFilters: getInitialFiltersFromSearch( logType, search ),
 	} );
-	const lastUrlRangeRef = useRef< { from: number; to: number } | null >( null );
-
-	useEffect( () => {
-		if ( ! autoRefresh ) {
-			return;
-		}
-		const tick = () => {
-			const end = new Date();
-			const start = subDays( end, 6 );
-
-			setDateRange( ( prev ) =>
-				isSameSecond( prev.start, start ) && isSameSecond( prev.end, end ) ? prev : { start, end }
-			);
-			const from = getUnixTime( start );
-			const to = getUnixTime( end );
-
-			const last = lastUrlRangeRef.current;
-			// Only sync URL when from/to change to avoid unnecessary history updates.
-			if ( ! last || last.from !== from || last.to !== to ) {
-				const url = new URL( window.location.href );
-				url.searchParams.set( 'from', String( from ) );
-				url.searchParams.set( 'to', String( to ) );
-				window.history.replaceState( null, '', url.pathname + url.search );
-				lastUrlRangeRef.current = { from, to };
-			}
-		};
-
-		// Run immediately, then every 10s
-		tick();
-		const intervalId = setInterval( tick, 10 * 1000 );
-		return () => clearInterval( intervalId );
-	}, [ autoRefresh, setDateRange ] );
 
 	const { startSec, endSec } = useMemo(
 		() => buildTimeRangeInSeconds( dateRange.start, dateRange.end, timezoneString, gmtOffset ),
