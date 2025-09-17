@@ -31,6 +31,12 @@ export function DeploymentLogsModal( {
 	siteId,
 }: DeploymentLogsModalProps ) {
 	const locale = useLocale();
+
+	const isDeploymentInFinalState = ( status: string ) => {
+		return [ 'success', 'failed', 'warnings' ].includes( status );
+	};
+
+	const isFinalState = isDeploymentInFinalState( deployment.status );
 	const {
 		data: logEntries = [],
 		isLoading,
@@ -38,6 +44,8 @@ export function DeploymentLogsModal( {
 	} = useQuery( {
 		...deploymentRunLogsQuery( siteId, deployment.code_deployment_id, deployment.id ),
 		enabled: isOpen,
+
+		refetchInterval: isOpen && ! isFinalState ? 1000 : undefined,
 	} );
 
 	if ( ! isOpen ) {
