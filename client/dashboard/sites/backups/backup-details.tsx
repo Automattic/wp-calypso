@@ -13,6 +13,8 @@ import {
 import { useViewportMatch } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import { rotateLeft, download } from '@wordpress/icons';
+import FileBrowser from 'calypso/my-sites/backup/backup-contents-page/file-browser';
+import { useAnalytics } from '../../app/analytics';
 import { siteBackupRestoreRoute, siteBackupDownloadRoute } from '../../app/router/sites';
 import { ButtonStack } from '../../components/button-stack';
 import { useFormattedTime } from '../../components/formatted-time';
@@ -23,6 +25,7 @@ import type { ActivityLogEntry, Site } from '@automattic/api-core';
 
 export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; site: Site } ) {
 	const router = useRouter();
+	const { recordTracksEvent } = useAnalytics();
 	const publishedTimestamp = backup.published || backup.last_published;
 	const formattedTime = useFormattedTime( publishedTimestamp, {
 		dateStyle: 'medium',
@@ -104,6 +107,13 @@ export function BackupDetails( { backup, site }: { backup: ActivityLogEntry; sit
 							<ImagePreview item={ backup } />
 						) }
 					</Grid>
+					<FileBrowser
+						rewindId={ Number( backup.rewind_id ) }
+						siteId={ site.ID }
+						siteSlug={ site.slug }
+						isRestoreEnabled
+						onTrackEvent={ recordTracksEvent }
+					/>
 				</VStack>
 			</CardBody>
 		</Card>

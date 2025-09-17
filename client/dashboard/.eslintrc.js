@@ -25,6 +25,15 @@ module.exports = {
 							'calypso/assets/*',
 							'!calypso/assets/icons',
 							'!calypso/assets/images',
+							// Allowed: calypso/my-sites/backup/backup-contents-page/file-browser (TESTING)
+							'!calypso/my-sites',
+							'calypso/my-sites/*',
+							'!calypso/my-sites/backup',
+							'calypso/my-sites/backup/*',
+							'!calypso/my-sites/backup/backup-contents-page',
+							'calypso/my-sites/backup/backup-contents-page/*',
+							'!calypso/my-sites/backup/backup-contents-page/file-browser',
+							'!calypso/my-sites/backup/backup-contents-page/file-browser/file-browser-context',
 							// Please do not add exceptions unless agreed on
 							// with the #architecture group.
 						],
