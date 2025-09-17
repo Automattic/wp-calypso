@@ -446,7 +446,11 @@ function StagingSiteSyncModalInner( {
 							rewindId={ ( rewindId as number ) ?? 0 }
 							siteId={ querySiteId }
 							siteSlug={ querySiteSlug as string }
-							fileBrowserConfig={ { ...fileBrowserConfig, showHeader: false } }
+							fileBrowserConfig={ {
+								...fileBrowserConfig,
+								showHeader: false,
+								inheritNodeColor: true,
+							} }
 							displayBackupDate={ displayBackupDate ?? undefined }
 						/>
 					) }
