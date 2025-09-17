@@ -148,10 +148,13 @@ describe( 'LinkPreview', () => {
 		render( <LinkPreview url="https://example.com/test" /> );
 
 		await waitFor( () => {
-			expect( mockWpcomGet ).toHaveBeenCalledWith( {
-				path: '/link-preview?url=' + encodeURIComponent( 'https://example.com/test' ),
-				apiNamespace: 'wpcom/v2',
-			} );
+			expect( mockWpcomGet ).toHaveBeenCalledWith(
+				{
+					path: '/read/link-preview',
+					apiNamespace: 'wpcom/v2',
+				},
+				{ url: 'https://example.com/test' }
+			);
 		} );
 	} );
 } );
