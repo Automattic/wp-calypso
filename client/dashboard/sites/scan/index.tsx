@@ -19,6 +19,7 @@ import PageLayout from '../../components/page-layout';
 import { useTimeSince } from '../../components/time-since';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import { ActiveThreatsDataViews } from '../scan-active';
+import { ScanHistoryDataViews } from '../scan-history';
 import illustrationUrl from './scan-callout-illustration.svg';
 import './style.scss';
 
@@ -114,11 +115,7 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 					</CardHeader>
 					<CardBody>
 						{ scanTab === 'active' && <ActiveThreatsDataViews site={ site } /> }
-						{ scanTab === 'history' && (
-							<Text as="p" variant="muted">
-								{ __( 'So far, there are no archived threats on your site.' ) }
-							</Text>
-						) }
+						{ scanTab === 'history' && <ScanHistoryDataViews site={ site } /> }
 					</CardBody>
 				</Card>
 			</HostingFeatureGatedWithCallout>

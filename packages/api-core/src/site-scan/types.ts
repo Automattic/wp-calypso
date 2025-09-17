@@ -29,6 +29,7 @@ export interface Threat {
 	first_detected: string;
 	severity: number;
 	fixer?: ThreatFixer | null;
+	fixed_on?: string;
 	status: 'current' | 'fixed' | 'ignored';
 	fixable?: ThreatFixer | boolean;
 	extension?: ThreatExtension;
@@ -56,4 +57,13 @@ export interface SiteScan {
 		error: boolean;
 	};
 	reason?: string;
+}
+
+export interface SiteScanHistory {
+	threats: Threat[];
+	lifetime_stats: {
+		scans: number;
+		threats_found: number;
+		threats_resolved: number;
+	};
 }
