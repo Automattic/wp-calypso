@@ -441,7 +441,7 @@ function StagingSiteSyncModalInner( {
 						/>
 					</HStack>
 
-					{ isFileBrowserVisible && (
+					<div hidden={ ! isFileBrowserVisible }>
 						<FileBrowser
 							rewindId={ ( rewindId as number ) ?? 0 }
 							siteId={ querySiteId }
@@ -454,7 +454,7 @@ function StagingSiteSyncModalInner( {
 							} }
 							displayBackupDate={ displayBackupDate ?? undefined }
 						/>
-					) }
+					</div>
 
 					<HStack
 						alignment="left"
