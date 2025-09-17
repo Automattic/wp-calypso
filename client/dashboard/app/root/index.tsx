@@ -65,9 +65,7 @@ function Root() {
 	}, [ routeMeta ] );
 
 	useEffect( () => {
-		if ( title ) {
-			document.title = `${ title } - ${ name }`;
-		}
+		document.title = title ? `${ title } – ${ name }` : name;
 	}, [ name, title ] );
 
 	return (
