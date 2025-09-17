@@ -4,6 +4,7 @@ import { __experimentalVStack as VStack, __experimentalText as Text } from '@wor
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
+import { useTimeSince } from '../../components/time-since';
 import { getActions } from './dataviews/actions';
 import { getFields } from './dataviews/fields';
 import noThreatsIllustration from './no-threats-illustration.svg';
@@ -29,15 +30,14 @@ export function ActiveThreatsDataViews( { site }: { site: Site } ) {
 		return __( 'No active threats found for the selected filters.' );
 	};
 
-	const { data: threats = [], isLoading } = useQuery( {
-		...siteScanQuery( site.ID ),
-		select: ( scan ) => scan.threats.filter( ( threat ) => threat.status === 'current' ),
-	} );
+	const { data: scan, isLoading } = useQuery( siteScanQuery( site.ID ) );
+	const threats = scan?.threats.filter( ( threat ) => threat.status === 'current' ) || [];
 
 	const fields = getFields();
 	const actions = getActions();
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( threats, view, fields );
-	const recentScanRelativeTime = 'X hours ago'; // @TODO: replace with the actual relative time
+	const lastScanTime = scan?.most_recent?.timestamp;
+	const recentScanRelativeTime = useTimeSince( lastScanTime || '' );
 
 	if ( ! isLoading && threats.length === 0 ) {
 		return (
@@ -45,13 +45,17 @@ export function ActiveThreatsDataViews( { site }: { site: Site } ) {
 				<img src={ noThreatsIllustration } alt={ __( 'No threats found illustration' ) } />
 				<VStack alignment="center" spacing={ 2 }>
 					<Text weight="bold">{ __( 'Don’t worry about a thing' ) }</Text>
-					<Text>
-						{ sprintf(
-							/** translators: %s: relative time string like "2 hours ago" */
-							__( 'The last scan ran %s and everything looked great.' ),
-							recentScanRelativeTime
-						) }
-					</Text>
+					{ lastScanTime && recentScanRelativeTime ? (
+						<Text>
+							{ sprintf(
+								/** translators: %s: relative time string like "2 hours ago" */
+								__( 'The last scan ran %s and everything looked great.' ),
+								recentScanRelativeTime
+							) }
+						</Text>
+					) : (
+						<Text>{ __( 'Everything looked great.' ) }</Text>
+					) }
 				</VStack>
 			</VStack>
 		);
