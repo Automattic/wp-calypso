@@ -21,8 +21,9 @@ object CalypsoE2ETestsBuildTemplate : Template({
 		param("env.LOCALE", "en")
 		param("env.AUTHENTICATE_ACCOUNTS", "simpleSitePersonalPlanUser,gutenbergSimpleSiteUser,defaultUser")
 		param("env.CI", "true")
-		text("TEST_GROUP", "")
 		param("VIEWPORT", "desktop")
+		text("TEST_GROUP", "")
+		text("DOCKER_IMAGE_BUILD_NUMBER", "")
 	}
 
   	features {
@@ -36,23 +37,25 @@ object CalypsoE2ETestsBuildTemplate : Template({
 	}
 
   	steps {
+		mergeTrunk( skipIfConflict = true )
+
     	bashNodeScript {
 			name = "Validate parameters"
 			scriptContent = """
 				echo "Validating required parameters..."
 				echo "VIEWPORT=%VIEWPORT%"
-				echo "TEST_GROUP=%TEST_GROUP%"
 
 				if [ -z "%TEST_GROUP%" ]; then
 					echo "WARNING: TEST_GROUP is empty"
 				else
 					echo "TEST_GROUP is set to: %TEST_GROUP%"
 				fi
+
+				echo "DOCKER_IMAGE_BUILD_NUMBER=%DOCKER_IMAGE_BUILD_NUMBER%"
+				echo "CALYPSO_BASE_URL=%env.CALYPSO_BASE_URL%"
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 		}
-
-		mergeTrunk( skipIfConflict = true )
 
     	bashNodeScript {
 			name = "Prepare environment"
