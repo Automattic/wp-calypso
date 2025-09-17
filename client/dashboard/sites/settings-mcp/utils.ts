@@ -3,7 +3,7 @@ import type { SiteMcpAbilities } from '@automattic/api-core';
 export type McpAbilitiesStructure = {
 	account?: SiteMcpAbilities;
 	site?: SiteMcpAbilities; // Default values for all sites
-	sites?: Record< string, SiteMcpAbilities >; // Custom overrides per site
+	sites?: Record< string, Record< string, number > >; // Custom overrides per site (0/1 values only)
 };
 
 // API payload structure (simplified format for API calls)
@@ -32,7 +32,7 @@ export function getSiteMcpAbilities(
 	const defaultSiteAbilities = mcpData.site || {};
 
 	// Apply site-specific overrides if they exist (now only contains enabled/disabled values: 0 or 1)
-	const siteOverrides = mcpData.sites?.[ siteIdStr ] || {};
+	const siteOverrides: Record< string, number > = mcpData.sites?.[ siteIdStr ] || {};
 
 	// Merge defaults with overrides
 	const mergedAbilities: SiteMcpAbilities = {};
@@ -51,7 +51,7 @@ export function getSiteMcpAbilities(
 		if ( mergedAbilities[ abilityName ] ) {
 			mergedAbilities[ abilityName ] = {
 				...mergedAbilities[ abilityName ],
-				enabled: enabledValue === 1,
+				enabled: ( enabledValue as number ) === 1,
 			};
 		}
 	} );
@@ -76,8 +76,9 @@ export function getSiteAbilityState(
 	}
 
 	// Check if site has custom override (now just 0 or 1)
-	if ( mcpData.sites?.[ siteIdStr ]?.[ abilityName ] !== undefined ) {
-		return mcpData.sites[ siteIdStr ][ abilityName ] === 1;
+	const siteOverrides: Record< string, number > = mcpData.sites?.[ siteIdStr ] || {};
+	if ( siteOverrides[ abilityName ] !== undefined ) {
+		return ( siteOverrides[ abilityName ] as number ) === 1;
 	}
 
 	// Fall back to default from 'site' section
@@ -127,7 +128,7 @@ export function updateSiteMcpAbilities(
 	} );
 
 	// If no overrides needed, remove the site from sites object
-	const newSites = { ...mcpData?.sites };
+	const newSites: Record< string, Record< string, number > > = { ...mcpData?.sites };
 	if ( Object.keys( siteOverrides ).length === 0 ) {
 		delete newSites[ siteIdStr ];
 	} else {
