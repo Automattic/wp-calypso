@@ -53,11 +53,13 @@ export function GuidedTourStep( {
 	target,
 	selector,
 	placement,
+	inline,
 }: {
 	id: string;
 	target?: HTMLElement | null;
 	selector?: string;
 	placement?: ComponentProps< typeof Popover >[ 'placement' ];
+	inline?: boolean;
 } ) {
 	const {
 		guidedTours,
@@ -106,7 +108,8 @@ export function GuidedTourStep( {
 			shift
 			resize={ false }
 			focusOnMount={ false }
-			style={ { padding: '0 16px' } }
+			inline={ inline }
+			style={ { padding: '0 16px', zIndex: inline ? 1 : undefined } }
 		>
 			<CardBody style={ { width: 'min(80vw, 350px)' } }>
 				<VStack spacing={ 6 }>

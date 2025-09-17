@@ -231,11 +231,13 @@ export default function Sites() {
 						id="hosting-dashboard-tours-sites-switch-layouts"
 						selector={ `.dataviews__view-actions button[aria-label="${ __( 'Layout' ) }"]` }
 						placement="bottom"
+						inline
 					/>
 					<GuidedTourStep
 						id="hosting-dashboard-tours-sites-appearance-options"
 						selector={ `.dataviews__view-actions button[aria-label="${ __( 'View options' ) }"]` }
 						placement="bottom"
+						inline
 					/>
 				</GuidedTourContextProvider>
 			</PageLayout>
