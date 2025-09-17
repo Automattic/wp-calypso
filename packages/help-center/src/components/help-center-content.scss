@@ -27,7 +27,7 @@
 				position: absolute;
 				width: 100%;
 				pointer-events: none;
-				opacity: calc( var( --scroll-progress, 1 ) / $height );
+				opacity: calc( var( --scroll-progress, $height ) / $height );
 			}
 		}
 	}
