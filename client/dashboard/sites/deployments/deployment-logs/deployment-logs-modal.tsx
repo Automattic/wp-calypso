@@ -35,11 +35,7 @@ export function DeploymentLogsModal( {
 	};
 
 	const isFinalState = isDeploymentInFinalState( deployment.status );
-	const {
-		data: logEntries = [],
-		isLoading,
-		isError,
-	} = useQuery( {
+	const { data: logEntries = [], isError } = useQuery( {
 		...deploymentRunLogsQuery( siteId, deployment.code_deployment_id, deployment.id ),
 		refetchInterval: ! isFinalState ? 1000 : undefined,
 	} );
@@ -84,27 +80,19 @@ export function DeploymentLogsModal( {
 				/>
 			</HStack>
 
-			{ isLoading && (
-				<div className="deployment-logs-modal__loading">{ __( 'Loading deployment logs…' ) }</div>
-			) }
-			{ isError && (
-				<div className="deployment-logs-modal__error">
-					{ __( 'Failed to load deployment logs. Please try again.' ) }
-				</div>
-			) }
-			{ logEntries.length === 0 && (
-				<div className="deployment-logs-modal__empty">
-					{ __( 'No logs available for this deployment.' ) }
-				</div>
+			{ isError && <Text>{ __( 'Failed to load deployment logs. Please try again.' ) }</Text> }
+			{ isDeploymentInFinalState( deployment.status ) && logEntries.length === 0 && (
+				<Text>{ __( 'No logs available for this deployment.' ) }</Text>
 			) }
 
-			{ logEntries.length > 0 && (
+			{ ( logEntries.length > 0 || ! isDeploymentInFinalState( deployment.status ) ) && (
 				<VStack spacing={ 2 }>
 					<div
 						style={ {
 							width: '752px',
 							maxWidth: '100%',
-							maxHeight: '216px',
+							height: '216px',
+							maxHeight: '100%',
 							overflowY: 'auto',
 							backgroundColor: 'var(--dashboard__text-color)',
 							borderRadius: '4px',
