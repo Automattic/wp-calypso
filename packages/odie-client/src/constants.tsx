@@ -79,22 +79,6 @@ export const getOdieThirdPartyMessageContent = (): string =>
 		__i18n_text_domain__
 	) }`;
 
-export const getOdieWrongFileTypeMessage = (): Message => ( {
-	content: __(
-		'Sorry! The file you are trying to upload is not supported. Please upload a .jpg, .png, or .gif file.',
-		__i18n_text_domain__
-	),
-	role: 'bot',
-	type: 'message',
-	context: {
-		flags: {
-			hide_disclaimer_content: true,
-			show_contact_support_msg: false,
-		},
-		site_id: null,
-	},
-} );
-
 export const getOdieEmailFallbackMessageContent = (): string =>
 	__(
 		'We’re sorry, but live chat is temporarily unavailable for scheduled maintenance. Please feel free to reach out via email or check our Support Guides in the meantime.',
