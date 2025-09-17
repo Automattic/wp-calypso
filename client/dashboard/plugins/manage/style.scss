@@ -1,0 +1,18 @@
+.plugin-icon-wrapper {
+	border-radius: 4px;
+	position: relative;
+	width: 32px;
+	height: 32px;
+
+	&.is-fallback {
+		background: #c3c4c7;
+		fill: #fff;
+	}
+}
+
+.plugin-icon-fallback {
+	position: absolute;
+	top: 50%;
+	inset-inline-start: 50%;
+	transform: translate(-50%, -50%);
+}
