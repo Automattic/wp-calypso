@@ -23,7 +23,7 @@ export function DeploymentsList() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
-	const [ selectedDeployment, setSelectedDeployment ] =
+	const [ deploymentForModal, setDeploymentForModal ] =
 		useState< DeploymentRunWithDeploymentInfo | null >( null );
 	const { data: deployments = [], isLoading: deploymentsLoading } = useQuery(
 		codeDeploymentsQuery( site.ID )
@@ -96,7 +96,7 @@ export function DeploymentsList() {
 	const fields = useDeploymentFields( {
 		repositoryOptions,
 		userNameOptions,
-		onOpenLogs: setSelectedDeployment,
+		onOpenLogs: setDeploymentForModal,
 	} );
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
 		deploymentRuns,
@@ -106,7 +106,9 @@ export function DeploymentsList() {
 
 	const hasFilterOrSearch = ( view.filters && view.filters.length > 0 ) || view.search;
 	const emptyTitle = hasFilterOrSearch ? __( 'No deployments found' ) : __( 'No deployments yet' );
-
+	const deploymentStatusRefreshed =
+		deploymentRuns.find( ( deployment ) => deployment.id === deploymentForModal?.id )?.status ||
+		'unknown';
 	return (
 		<>
 			<DataViewsCard>
@@ -123,10 +125,13 @@ export function DeploymentsList() {
 				/>
 			</DataViewsCard>
 
-			{ selectedDeployment && (
+			{ deploymentForModal && (
 				<DeploymentLogsModal
-					onRequestClose={ () => setSelectedDeployment( null ) }
-					deployment={ selectedDeployment }
+					onRequestClose={ () => setDeploymentForModal( null ) }
+					deployment={ {
+						...deploymentForModal,
+						status: deploymentStatusRefreshed,
+					} }
 					siteId={ site.ID }
 				/>
 			) }
