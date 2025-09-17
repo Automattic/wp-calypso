@@ -28,8 +28,8 @@ function getStatusText(
 		case 'pending':
 			return __( 'Deploy pending' );
 		case 'queued':
-			return __( 'Deploy queued' );
-			break;
+			return __( 'Deploy starting' );
+		case 'building':
 		case 'running':
 			return sprintf(
 				/* translators: %s is the duration of the deployment. e.g. 'Deploy in progress… (32s)'. */
