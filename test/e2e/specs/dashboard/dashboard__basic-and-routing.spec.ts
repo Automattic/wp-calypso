@@ -1,7 +1,7 @@
 import { DataHelper } from '@automattic/calypso-e2e';
-import { expect, test } from '../../lib/pw-base';
+import { expect, tags, test } from '../../lib/pw-base';
 
-test.describe( 'Dashboard: Basic & Routing', { tag: [ '@dashboard' ] }, () => {
+test.describe( 'Dashboard: Basic & Routing', { tag: [ tags.CALYPSO_PR ] }, () => {
 	test.skip(
 		DataHelper.isCalypsoProduction(),
 		'Skipping for WordPress.com as v2 dashboard is not enabled yet.'
