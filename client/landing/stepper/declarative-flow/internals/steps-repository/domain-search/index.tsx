@@ -1,13 +1,16 @@
 import {
+	isAIBuilderFlow,
 	isDomainFlow,
 	isHundredYearDomainFlow,
 	isHundredYearPlanFlow,
+	isNewHostedSiteCreationFlow,
 	isNewsletterFlow,
 	isOnboardingFlow,
 	Step,
 	StepContainer,
 } from '@automattic/onboarding';
 import { __ } from '@wordpress/i18n';
+import { useMemo } from 'react';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -17,6 +20,7 @@ import { useSite } from '../../../../hooks/use-site';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import type { Step as StepType } from '../../types';
+import type { FreeDomainSuggestion } from '@automattic/api-core';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 import './style.scss';
@@ -57,22 +61,64 @@ const DomainSearchStep: StepType< {
 	const siteSlug = useSiteSlugParam();
 	const initialQuery = useQuery().get( 'new' ) ?? '';
 	const currentSiteUrl = site?.URL ? new URL( site.URL ).host : siteSlug ?? undefined;
-	const allowedTlds = useQuery().get( 'tld' )?.split( ',' ) ?? [];
+	const tldQuery = useQuery().get( 'tld' );
 
-	const config = {
-		vendor: getSuggestionsVendor( {
-			isSignup: false,
-			isDomainOnly: isDomainFlow( flow ),
-			flowName: flow,
-		} ),
-		priceRules: {
-			hidePrice: isHundredYearPlanFlow( flow ),
-			oneTimePrice: isHundredYearDomainFlow( flow ),
-		},
-		includeDotBlogSubdomain: isNewsletterFlow( flow ),
-		skippable: isNewsletterFlow( flow ) || isOnboardingFlow( flow ),
-		allowedTlds,
-	};
+	const config = useMemo( () => {
+		const allowedTlds = tldQuery?.split( ',' ) ?? [];
+
+		return {
+			vendor: getSuggestionsVendor( {
+				isSignup: false,
+				isDomainOnly: isDomainFlow( flow ),
+				flowName: flow,
+			} ),
+			priceRules: {
+				hidePrice: isHundredYearPlanFlow( flow ),
+				oneTimePrice: isHundredYearDomainFlow( flow ),
+			},
+			includeDotBlogSubdomain: isNewsletterFlow( flow ),
+			skippable: isNewsletterFlow( flow ) || isOnboardingFlow( flow ),
+			allowedTlds,
+			allowsUsingOwnDomain:
+				! isDomainFlow( flow ) &&
+				! isAIBuilderFlow( flow ) &&
+				! isNewHostedSiteCreationFlow( flow ),
+		};
+	}, [ flow, tldQuery ] );
+
+	const { submit } = navigation;
+
+	const events = useMemo( () => {
+		return {
+			onExternalDomainClick: ( domainName?: string ) => {
+				submit( {
+					navigateToUseMyDomain: true,
+					lastQuery: domainName,
+				} );
+			},
+			onContinue: ( domainCart: MinimalRequestCartProduct[] ) => {
+				const domainItem = domainCart[ 0 ];
+
+				submit( {
+					siteUrl: domainItem.meta,
+					domainItem,
+					domainCart,
+					suggestion: {
+						domain_name: domainItem.meta!,
+						is_free: false,
+					},
+				} );
+			},
+			onSkip: ( suggestion?: FreeDomainSuggestion ) => {
+				submit( {
+					siteUrl: suggestion?.domain_name.replace( '.wordpress.com', '' ),
+					domainItem: undefined,
+					domainCart: [],
+					suggestion,
+				} );
+			},
+		};
+	}, [ submit ] );
 
 	const domainSearchElement = (
 		<WPCOMDomainSearch
@@ -83,35 +129,7 @@ const DomainSearchStep: StepType< {
 			config={ config }
 			initialQuery={ initialQuery }
 			isFirstDomainFreeForFirstYear={ isOnboardingFlow( flow ) || isDomainFlow( flow ) }
-			events={ {
-				onExternalDomainClick: ( domainName ) => {
-					navigation.submit( {
-						navigateToUseMyDomain: true,
-						lastQuery: domainName,
-					} );
-				},
-				onContinue: ( domainCart ) => {
-					const domainItem = domainCart[ 0 ];
-
-					navigation.submit( {
-						siteUrl: domainItem.meta,
-						domainItem,
-						domainCart,
-						suggestion: {
-							domain_name: domainItem.meta,
-							is_free: false,
-						},
-					} );
-				},
-				onSkip: ( suggestion ) => {
-					navigation.submit( {
-						siteUrl: suggestion?.domain_name.replace( '.wordpress.com', '' ),
-						domainItem: undefined,
-						domainCart: [],
-						suggestion,
-					} );
-				},
-			} }
+			events={ events }
 		/>
 	);
 

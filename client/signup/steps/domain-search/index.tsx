@@ -1,5 +1,6 @@
 import { useMyDomainInputMode } from '@automattic/api-core';
 import page from '@automattic/calypso-router';
+import { isDomainForGravatarFlow, isFreeFlow } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { localize } from 'i18n-calypso';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
@@ -26,6 +27,8 @@ function DomainSearchStep( props: StepProps & { locale: string } ) {
 	} = props;
 
 	const isDomainOnlyFlow = flowName === 'domain';
+	const isOnboardingWithEmailFlow = flowName === 'onboarding-with-email';
+
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const locale = ! isLoggedIn ? externalLocale : '';
 
@@ -132,6 +135,11 @@ function DomainSearchStep( props: StepProps & { locale: string } ) {
 						},
 						allowedTlds,
 						skippable: isDomainOnlyFlow,
+						allowsUsingOwnDomain:
+							! isDomainForGravatarFlow( flowName ) &&
+							! isDomainOnlyFlow &&
+							! isOnboardingWithEmailFlow &&
+							! isFreeFlow( flowName ),
 					} }
 				/>
 			}
