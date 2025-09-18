@@ -28,7 +28,9 @@ for ( const locale of localesToTest ) {
 			page,
 			environment,
 			helperData,
-		} ) => {
+		}, workerInfo ) => {
+			test.skip( workerInfo.project.name !== 'chrome', 'The i18n tests only run in Chrome' );
+
 			const homePageURL = environment.WPCOM_BASE_URL;
 			const localisedHomePageURL = `${ homePageURL }/${ helperData.getLocalePath( locale ) }`;
 
@@ -49,7 +51,8 @@ for ( const locale of localesToTest ) {
 			page,
 			environment,
 			helperData,
-		} ) => {
+		}, workerInfo ) => {
+			test.skip( workerInfo.project.name !== 'chrome', 'The i18n tests only run in Chrome' );
 			const homePageURL = environment.WPCOM_BASE_URL;
 			const plansPageURL = `${ homePageURL }/${ helperData.getLocalePath( locale ) }plans/`;
 			const pricingPageURL = `${ homePageURL }/${ helperData.getLocalePath( locale ) }pricing/`;
