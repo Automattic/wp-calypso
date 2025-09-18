@@ -46,7 +46,7 @@ export default function AccountDeletionSection() {
 	return (
 		<>
 			<Card>
-				<CardBody>
+				<CardBody style={ { paddingTop: '0px', paddingBottom: '0px' } }>
 					<ActionItem
 						actions={
 							<Button
