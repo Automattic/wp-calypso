@@ -18,3 +18,9 @@
 		flex-grow: 1;
 	}
 }
+
+.dashboard-monitoring-card__donut-chart {
+	.visx-legend-label > span {
+		margin-left: 5px;
+	}
+}

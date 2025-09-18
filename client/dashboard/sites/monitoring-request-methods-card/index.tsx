@@ -1,5 +1,5 @@
 import { siteMetricsQuery } from '@automattic/api-queries';
-import { PieChart } from '@automattic/charts';
+import { DataPointPercentage, PieChart } from '@automattic/charts';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -26,7 +26,7 @@ function useSiteRequestMethodsData( siteId: number, timeRange: number ): SiteReq
 		siteMetricsQuery( siteId, { start, end, metric: 'requests_persec', dimension: 'http_verb' } )
 	);
 
-	const formatData = ( requestMethodsData ) => {
+	const formatData = ( requestMethodsData ): DataPointPercentage[] => {
 		if ( ! requestMethodsData?.data?.periods ) {
 			return [];
 		}
@@ -49,7 +49,7 @@ function useSiteRequestMethodsData( siteId: number, timeRange: number ): SiteReq
 		return Object.entries( methodsMap ).map( ( [ method, value ] ) => ( {
 			label: method.toUpperCase(),
 			value: Math.round( value * 100 ) / 100,
-			percentage: Math.round( ( ( value * 100 ) / sum ) * 100 ) / 100,
+			percentage: Math.round( ( value * 100 ) / sum ),
 		} ) );
 	};
 
@@ -79,15 +79,14 @@ export default function MonitoringRequestMethodsCard( {
 		>
 			<PieChart
 				thickness={ 0.3 }
+				gapScale={ 0.02 }
 				className="dashboard-monitoring-card__donut-chart"
 				data={ data }
 				legendAlignmentVertical="top"
 				legendOrientation="horizontal"
-				legendShape="line"
 				legendAlignmentHorizontal="left"
 				showLegend
 				withLegendGlyph
-				withTooltips
 			/>
 		</MonitoringCard>
 	);
