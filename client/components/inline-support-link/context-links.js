@@ -616,6 +616,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/wordpress-com-secure-sign-on-sso/',
 		post_id: 175831,
 	},
+	'switch-to-staging-site': {
+		link: 'https://wordpress.com/support/check-your-wordpress-version/#switch-to-a-previous-or-future-version-of-wordpress',
+		post_id: 225525,
+	},
 };
 
 export default contextLinks;
