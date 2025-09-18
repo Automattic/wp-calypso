@@ -963,7 +963,7 @@ object PlaywrightTestPRMatrix : BuildType({
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			conditions {
 				matches("teamcity.build.branch", ".*e2e.*")
-				equals("teamcity.build.step.status.run_e2e_tests", "failure")
+				equals("teamcity.build.step.status.run_tests", "failure")
 			}
 			scriptContent = """
 				ARCHIVE_NAME="%build.counter%-%build.vcs.number%-%VIEWPORT%"
