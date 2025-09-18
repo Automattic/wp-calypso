@@ -81,6 +81,7 @@ function DomainSearchStep( props: StepProps & { locale: string } ) {
 				<WPCOMDomainSearch
 					className="domain-search--step-wrapper"
 					flowName={ flowName }
+					initialQuery={ queryObject.new }
 					events={ {
 						onExternalDomainClick( initialQuery ) {
 							page(
