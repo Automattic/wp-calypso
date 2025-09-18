@@ -43,13 +43,14 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 		siteGmtOffset === 0 ? 'UTC' : `UTC${ siteGmtOffset > 0 ? '+' : '' }${ siteGmtOffset }`;
 
 	const getFormattedDate = useMemo(
-		() => ( value: string ) => {
-			const dateFormat = locale === 'en' ? 'll [at] h:mm A' : 'h:mm A, ll';
-			const formattedDate = moment( value )
-				.utcOffset( siteGmtOffset * 60 )
-				.format( dateFormat );
-			return <span>{ formattedDate }</span>;
-		},
+		() =>
+			function FormattedDate( value: string ) {
+				const dateFormat = locale === 'en' ? 'll [at] h:mm A' : 'h:mm A, ll';
+				const formattedDate = moment( value )
+					.utcOffset( siteGmtOffset * 60 )
+					.format( dateFormat );
+				return <span>{ formattedDate }</span>;
+			},
 		[ locale, siteGmtOffset ]
 	);
 
