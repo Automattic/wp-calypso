@@ -1,4 +1,4 @@
-import { hostingScheduledUpdatesQuery, sitesQuery } from '@automattic/api-queries';
+import { hostingUpdateSchedulesQuery, sitesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Button, FormToggle } from '@wordpress/components';
@@ -22,12 +22,6 @@ export const fields: Field< ScheduledUpdateRow >[] = [
 		type: 'text',
 		label: __( 'Site' ),
 		getValue: ( { item } ) => item.site.name,
-		render: ( { item } ) => (
-			<>
-				<SiteIconLink site={ item.site } />
-				{ '\u00A0' } { item.site.name }
-			</>
-		),
 	},
 	{
 		id: 'lastUpdate',
@@ -63,6 +57,13 @@ export const fields: Field< ScheduledUpdateRow >[] = [
 		id: 'scheduleId',
 		label: __( 'Schedule' ),
 	},
+	{
+		id: 'icon.ico',
+		label: __( 'Site icon' ),
+		render: ( { item } ) => <SiteIconLink site={ item.site } />,
+		enableSorting: false,
+		enableGlobalSearch: false,
+	},
 ];
 
 export const defaultView: View = {
@@ -75,27 +76,31 @@ export const defaultView: View = {
 	fields: [ 'lastUpdate', 'nextUpdate', 'schedule', 'active' ],
 	sort: { field: 'site', direction: 'asc' },
 	groupByField: 'scheduleId',
+	mediaField: 'icon.ico',
+	showMedia: true,
 };
 
 export default function PluginsScheduledUpdates() {
 	const [ view, setView ] = useState( defaultView );
 	const navigate = useNavigate( { from: pluginsScheduledUpdatesRoute.fullPath } );
 	const { data: scheduledUpdates, isLoading: isLoadingSchedules } = useQuery(
-		hostingScheduledUpdatesQuery()
+		hostingUpdateSchedulesQuery()
 	);
 	const { data: sites, isLoading: isLoadingSites } = useQuery( sitesQuery() );
-
 	const mappedData = useMemo( () => {
 		if ( ! scheduledUpdates || ! sites ) {
 			return [];
 		}
-
+		if ( ! scheduledUpdates.sites ) {
+			return [];
+		}
+		const updates = scheduledUpdates.sites;
 		const result: ScheduledUpdateRow[] = [];
 
-		for ( const site_id in scheduledUpdates ) {
-			for ( const scheduleId in scheduledUpdates[ site_id ] ) {
+		for ( const site_id in updates ) {
+			for ( const scheduleId in updates[ site_id ] ) {
 				const { timestamp, schedule, interval, last_run_timestamp, active } =
-					scheduledUpdates[ site_id ][ scheduleId ];
+					updates[ site_id ][ scheduleId ];
 				const id = `${ site_id }-${ scheduleId }-${ schedule }-${ interval }`;
 				const site = sites.find( ( s ) => s.ID === parseInt( site_id, 10 ) );
 				if ( ! site ) {
