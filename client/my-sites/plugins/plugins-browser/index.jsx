@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -108,6 +109,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 		? category.charAt( 0 ).toUpperCase() + category.slice( 1 )
 		: __( 'Plugins' );
 	const categoryName = categories[ category ]?.menu || fallbackCategoryName;
+	const shouldUseLoggedOutView = isEnabled( 'plugins/universal-header' );
 
 	// this is a temporary hack until we merge Phase 4 of the refactor
 	const renderList = () => {
@@ -151,7 +153,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 				'plugins-browser--site-view': !! selectedSite,
 			} ) }
 			wideLayout
-			isLoggedOut={ ! isLoggedIn }
+			isLoggedOut={ shouldUseLoggedOutView || ! isLoggedIn }
 		>
 			<QueryProductsList persist />
 			<QueryPlugins siteId={ selectedSite?.ID } />
@@ -180,7 +182,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 				{ selectedSite && isJetpack && isPossibleJetpackConnectionProblem && (
 					<JetpackConnectionHealthBanner siteId={ siteId } />
 				) }
-				{ isLoggedIn ? (
+				{ ! shouldUseLoggedOutView && isLoggedIn ? (
 					<>
 						<div ref={ loggedInSearchBoxRef } />
 						<SearchCategories

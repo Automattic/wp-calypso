@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { includes, some } from 'lodash';
 import { createElement } from 'react';
@@ -388,7 +389,9 @@ export function renderPluginsSidebar( context, next ) {
 	}
 
 	if ( ! siteUrl ) {
-		context.secondary = <PluginsSidebar path={ context.path } />;
+		context.secondary = isEnabled( 'plugins/universal-header' ) ? null : (
+			<PluginsSidebar path={ context.path } />
+		);
 	}
 
 	next();
