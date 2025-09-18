@@ -104,23 +104,21 @@ function FileBrowser( {
 					</Text>
 				</HStack>
 			) }
-			<div>
-				<FileBrowserNode
-					rewindId={ rewindId }
-					item={ rootItem }
-					path="/"
-					isAlternate
-					setActiveNodePath={ handleClick }
-					activeNodePath={ activeNodePath }
-					fileBrowserConfig={ fileBrowserConfig }
-					siteId={ siteId }
-					siteSlug={ siteSlug }
-					hasCredentials={ hasCredentials }
-					isRestoreEnabled={ isRestoreEnabled }
-					onTrackEvent={ onTrackEvent }
-					onRequestGranularRestore={ onRequestGranularRestore }
-				/>
-			</div>
+			<FileBrowserNode
+				rewindId={ rewindId }
+				item={ rootItem }
+				path="/"
+				isAlternate
+				setActiveNodePath={ handleClick }
+				activeNodePath={ activeNodePath }
+				fileBrowserConfig={ fileBrowserConfig }
+				siteId={ siteId }
+				siteSlug={ siteSlug }
+				hasCredentials={ hasCredentials }
+				isRestoreEnabled={ isRestoreEnabled }
+				onTrackEvent={ onTrackEvent }
+				onRequestGranularRestore={ onRequestGranularRestore }
+			/>
 		</div>
 	);
 }
