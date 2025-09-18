@@ -12,7 +12,7 @@ import { DateRangePicker } from '../../components/date-range-picker';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
-import SiteActivityLogsDataViews from '../logs-activity';
+import SiteActivityLogsDataViews from '../logs-activity/dataviews';
 import SiteLogsDataViews from './dataviews';
 import { getLogsCalloutProps } from './logs-callout';
 import { LOG_TABS } from './utils';
