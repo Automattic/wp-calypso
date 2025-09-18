@@ -1279,10 +1279,10 @@ fun e2ePreReleaseBuildType( targetDevice: String, buildUuid: String ): E2EBuildT
 
 object AuthenticationE2ETests : BuildType({
 	templates(CalypsoE2ETestsBuildTemplate)
-	id("calypso_WebApp_Calypso_E2E_Authentication"),
-	uuid = "f5036e29-f400-49ea-b5c5-4aba9307c5e8",
-	name = "Authentication E2E Tests",
-	description = "Runs the authentication group E2E tests",
+	id("calypso_WebApp_Calypso_E2E_Authentication")
+	uuid = "f5036e29-f400-49ea-b5c5-4aba9307c5e8"
+	name = "Authentication E2E Tests"
+	description = "Runs the authentication group E2E tests"
 
 	params {
 		text("TEST_GROUP", "@authentication")
@@ -1312,7 +1312,7 @@ object AuthenticationE2ETests : BuildType({
 		}
 	}
 
-	triggers = {
+	triggers {
 		schedule {
 			schedulingPolicy = cron {
 				hours = "*/6"
