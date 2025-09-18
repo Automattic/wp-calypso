@@ -937,6 +937,14 @@ export function hideNavigationIfLoggedInWithNoSites( context, next ) {
 
 export function addNavigationIfLoggedIn( context, next ) {
 	const state = context.store.getState();
+	const selectedSite = getSelectedSite( state );
+
+	// We don't want to show sidebar if the universal header is shown.
+	if ( config.isEnabled( 'themes/universal-header' ) && ! selectedSite ) {
+		next();
+		return;
+	}
+
 	if ( isUserLoggedIn( state ) ) {
 		navigation( context, next );
 	}

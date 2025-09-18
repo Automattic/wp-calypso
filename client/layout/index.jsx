@@ -173,7 +173,7 @@ class Layout extends Component {
 			return <AsyncLoad require="calypso/layout/masterbar/blaze-pro" placeholder={ null } />;
 		}
 
-		if ( this.props.isUniversal ) {
+		if ( this.props.isUniversalHeader ) {
 			return (
 				<UniversalNavbarHeader
 					isLoggedIn={ this.props.isLoggedIn }
@@ -430,6 +430,11 @@ export default withCurrentRoute(
 			currentRoute.startsWith( '/start/domain-for-gravatar' ) ||
 			( isCheckoutSection && hasGravatarDomainQueryParam( state ) );
 
+		const isUniversalHeader =
+			config.isEnabled( 'themes/universal-header' ) &&
+			! siteId &&
+			[ 'themes', 'theme' ].includes( sectionName );
+
 		return {
 			masterbarIsHidden,
 			sidebarIsHidden,
@@ -466,6 +471,7 @@ export default withCurrentRoute(
 			isUnifiedSiteSidebarVisible: shouldShowUnifiedSiteSidebar && ! sidebarIsHidden,
 			isNewUser: isUserNewerThan( WEEK_IN_MILLISECONDS )( state ),
 			isGravatarDomain,
+			isUniversalHeader,
 		};
 	} )( Layout )
 );

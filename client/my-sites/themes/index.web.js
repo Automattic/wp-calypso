@@ -74,6 +74,7 @@ export default function ( router ) {
 		fetchAndValidateVerticalsAndFilters,
 		noSite,
 		renderThemes,
+		addNavigationIfLoggedIn,
 		makeLayout,
 		clientRender
 	);

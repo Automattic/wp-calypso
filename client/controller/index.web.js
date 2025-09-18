@@ -57,11 +57,7 @@ export const ProviderWrappedLayout = ( {
 	const userLoggedIn = isUserLoggedIn( state );
 
 	const layout = userLoggedIn ? (
-		<Layout
-			primary={ primary }
-			secondary={ secondary }
-			isUniversal={ currentSection.name === 'themes' || currentSection.name === 'theme' }
-		/>
+		<Layout primary={ primary } secondary={ secondary } />
 	) : (
 		<LayoutLoggedOut
 			primary={ primary }
