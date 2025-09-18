@@ -60,7 +60,6 @@ const DomainSearchStep: StepType< {
 	const site = useSite();
 	const siteSlug = useSiteSlugParam();
 	const initialQuery = useQuery().get( 'new' ) ?? '';
-	const currentSiteUrl = site?.URL ? new URL( site.URL ).host : siteSlug ?? undefined;
 	const tldQuery = useQuery().get( 'tld' );
 
 	const config = useMemo( () => {
@@ -127,7 +126,8 @@ const DomainSearchStep: StepType< {
 		<WPCOMDomainSearch
 			className={ className }
 			currentSiteId={ site?.ID }
-			currentSiteUrl={ currentSiteUrl }
+			// eslint-disable-next-line no-nested-ternary
+			currentSiteUrl={ site?.URL ? site.URL : siteSlug ? `https://${ siteSlug }` : undefined }
 			flowName={ flow }
 			config={ config }
 			initialQuery={ initialQuery }
