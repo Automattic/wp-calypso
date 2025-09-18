@@ -990,6 +990,7 @@ object PlaywrightTestPRMatrix : BuildType({
 })
 
 object PlaywrightTestPreReleaseMatrix : BuildType({
+	templates(CalypsoE2ETestsBuildTemplate)
 	id("calypso_WebApp_Calypso_E2E_Playwright_Pre_Release_Matrix")
 	uuid = "a1b2c3d4-e5f6-7890-1234-56789abcdef0"
 	name = "Pre-Release E2E Tests (Playwright Test)"
@@ -1004,15 +1005,9 @@ object PlaywrightTestPreReleaseMatrix : BuildType({
 		}
 	}
 
-	dependencies {
-		snapshot(PreReleaseE2ETests) {
-			onDependencyFailure = FailureAction.IGNORE
-		}
-	}
-
-	vcs {
-		root(Settings.WpCalypso)
-		cleanCheckout = true
+	params {
+		text("TEST_GROUP", "@calypso-release")
+		param("CALYPSO_BASE_URL", "https://wpcalypso.wordpress.com")
 	}
 
 	steps {
