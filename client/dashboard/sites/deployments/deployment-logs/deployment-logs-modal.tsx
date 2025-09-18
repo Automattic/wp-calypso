@@ -56,95 +56,101 @@ export function DeploymentLogsModal( {
 			shouldCloseOnClickOutside
 			shouldCloseOnEsc
 		>
-			<HStack spacing={ 3 } alignment="left" style={ { width: '100%', marginBottom: '16px' } }>
-				{ deployment.is_active_deployment && (
-					<Badge style={ { flexShrink: 0 } }>{ __( 'Active deployment' ) }</Badge>
-				) }
+			<VStack spacing={ 4 }>
+				<HStack spacing={ 3 } alignment="left">
+					{ deployment.is_active_deployment && (
+						<Badge style={ { flexShrink: 0 } }>{ __( 'Active deployment' ) }</Badge>
+					) }
 
-				<div style={ { width: 'auto', flexShrink: 0, maxWidth: '33vw' } }>
-					<BranchDisplay branchName={ deployment.branch_name } />
-				</div>
+					<div style={ { width: 'auto', flexShrink: 0, maxWidth: '33vw' } }>
+						<BranchDisplay branchName={ deployment.branch_name } />
+					</div>
 
-				<HStack spacing={ 1.5 } alignment="left" style={ { width: 'auto', flexShrink: 0 } }>
-					<img
-						src={ author.avatar_url }
-						alt={ author.name }
-						width={ 16 }
-						height={ 16 }
-						style={ { borderRadius: '50%' } }
-					/>
-					<Text size="small" style={ { color: '#3b3b3b' } }>
-						{ author.name }
-					</Text>
-				</HStack>
-
-				<DeploymentLogsStatus
-					status={ deployment.status }
-					startedOn={ deployment.started_on }
-					completedOn={ deployment.completed_on }
-				/>
-			</HStack>
-
-			{ isError && <Text>{ __( 'Failed to load deployment logs. Please try again.' ) }</Text> }
-			{ ! isLoading && isDeploymentInFinalState( deployment.status ) && logEntries.length === 0 && (
-				<Text>{ __( 'No logs available for this deployment.' ) }</Text>
-			) }
-
-			{ isLoading && (
-				<HStack alignment="center">
-					<Spinner />
-				</HStack>
-			) }
-
-			{ ! isLoading &&
-				( logEntries.length > 0 || ! isDeploymentInFinalState( deployment.status ) ) && (
-					<VStack spacing={ 2 }>
-						<div
-							style={ {
-								width: '752px',
-								maxWidth: '100%',
-								height: '216px',
-								maxHeight: '100%',
-								overflowY: 'auto',
-								backgroundColor: 'var(--dashboard__text-color)',
-								borderRadius: '4px',
-							} }
-						>
-							<VStack
-								style={ {
-									width: '100%',
-									padding: '16px',
-								} }
-							>
-								{ logEntries.map( ( entry, index ) => (
-									<DeploymentLogsEntry
-										key={ `${ entry.message }-${ index }` }
-										entry={ entry }
-										deployment={ deployment }
-										siteId={ siteId }
-									/>
-								) ) }
-							</VStack>
-						</div>
-						<Text align="right">
-							{ formatDate( new Date( deployment.created_on ), locale, {
-								dateStyle: 'medium',
-								timeStyle: 'long',
-							} ) }
+					<HStack spacing={ 1.5 } alignment="left" style={ { width: 'auto', flexShrink: 0 } }>
+						<img
+							src={ author.avatar_url }
+							alt={ author.name }
+							width={ 16 }
+							height={ 16 }
+							style={ { borderRadius: '50%' } }
+						/>
+						<Text size="small" style={ { color: '#3b3b3b' } }>
+							{ author.name }
 						</Text>
-					</VStack>
+					</HStack>
+
+					<DeploymentLogsStatus
+						status={ deployment.status }
+						startedOn={ deployment.started_on }
+						completedOn={ deployment.completed_on }
+					/>
+				</HStack>
+
+				{ isError && <Text>{ __( 'Failed to load deployment logs. Please try again.' ) }</Text> }
+				{ ! isLoading &&
+					isDeploymentInFinalState( deployment.status ) &&
+					logEntries.length === 0 && (
+						<Text>{ __( 'No logs available for this deployment.' ) }</Text>
+					) }
+
+				{ isLoading && (
+					<HStack alignment="center">
+						<Spinner />
+					</HStack>
 				) }
 
-			<HStack alignment="right" spacing={ 5 } style={ { marginTop: '24px' } }>
-				<ExternalLink
-					href={ `https://github.com/${ deployment.repository_name }/commit/${ deployment.metadata.commit_sha }` }
-				>
-					{ __( 'View deployment in Github' ) }
-				</ExternalLink>
-				<Button variant="primary" onClick={ onRequestClose }>
-					{ __( 'Close' ) }
-				</Button>
-			</HStack>
+				<VStack spacing={ 6 }>
+					{ ! isLoading &&
+						( logEntries.length > 0 || ! isDeploymentInFinalState( deployment.status ) ) && (
+							<VStack spacing={ 2 }>
+								<div
+									style={ {
+										width: '752px',
+										maxWidth: '100%',
+										height: '216px',
+										maxHeight: '100%',
+										overflowY: 'auto',
+										backgroundColor: 'var(--dashboard__text-color)',
+										borderRadius: '4px',
+									} }
+								>
+									<VStack
+										style={ {
+											width: '100%',
+											padding: '16px',
+										} }
+									>
+										{ logEntries.map( ( entry, index ) => (
+											<DeploymentLogsEntry
+												key={ `${ entry.message }-${ index }` }
+												entry={ entry }
+												deployment={ deployment }
+												siteId={ siteId }
+											/>
+										) ) }
+									</VStack>
+								</div>
+								<Text align="right">
+									{ formatDate( new Date( deployment.created_on ), locale, {
+										dateStyle: 'medium',
+										timeStyle: 'long',
+									} ) }
+								</Text>
+							</VStack>
+						) }
+
+					<HStack alignment="right" spacing={ 5 }>
+						<ExternalLink
+							href={ `https://github.com/${ deployment.repository_name }/commit/${ deployment.metadata.commit_sha }` }
+						>
+							{ __( 'View deployment in Github' ) }
+						</ExternalLink>
+						<Button variant="primary" onClick={ onRequestClose }>
+							{ __( 'Close' ) }
+						</Button>
+					</HStack>
+				</VStack>
+			</VStack>
 		</Modal>
 	);
 }
