@@ -1,3 +1,5 @@
+import { codeDeploymentRunsQueryKeys } from '@automattic/api-queries';
+import { useQueryClient } from '@tanstack/react-query';
 import {
 	Button,
 	Modal,
@@ -56,6 +58,7 @@ function DeploymentSelectControl( { data, field, onChange }: DeploymentSelectCon
 }
 
 export function TriggerDeploymentModal( { onClose, deployments }: TriggerDeploymentModalProps ) {
+	const queryClient = useQueryClient();
 	const { createSuccessNotice } = useDispatch( noticesStore );
 	const [ deploymentFormData, setDeploymentFormData ] = useState< DeploymentFormData >( {
 		selectedDeploymentId: '',
@@ -98,7 +101,15 @@ export function TriggerDeploymentModal( { onClose, deployments }: TriggerDeploym
 		}
 
 		triggerManualDeployment();
-		createSuccessNotice( __( 'Deployment run created.' ), { type: 'snackbar' } );
+
+		setTimeout( () => {
+			createSuccessNotice( __( 'Deployment run created.' ), { type: 'snackbar' } );
+
+			queryClient.invalidateQueries( {
+				queryKey: codeDeploymentRunsQueryKeys( selectedDeployment.blog_id, selectedDeployment.id ),
+			} );
+		}, 1000 );
+
 		onClose();
 	};
 

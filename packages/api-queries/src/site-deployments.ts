@@ -7,8 +7,15 @@ export const codeDeploymentsQuery = ( siteId: number ) =>
 		queryFn: () => fetchCodeDeployments( siteId ),
 	} );
 
+export const codeDeploymentRunsQueryKeys = ( siteId: number, deploymentId: number ) => [
+	'site',
+	siteId,
+	'code-deployments-runs',
+	deploymentId,
+];
+
 export const codeDeploymentRunsQuery = ( siteId: number, deploymentId: number ) =>
 	queryOptions( {
-		queryKey: [ 'site', siteId, 'code-deployments-runs', deploymentId ],
+		queryKey: codeDeploymentRunsQueryKeys( siteId, deploymentId ),
 		queryFn: () => fetchCodeDeploymentRuns( siteId, deploymentId ),
 	} );
