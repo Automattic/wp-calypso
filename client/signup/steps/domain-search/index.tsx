@@ -2,6 +2,7 @@ import { FreeDomainSuggestion, useMyDomainInputMode } from '@automattic/api-core
 import page from '@automattic/calypso-router';
 import { isDomainForGravatarFlow, isFreeFlow } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import { addQueryArgs } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
@@ -27,6 +28,15 @@ const DomainSearchUI = ( props: StepProps & { locale: string } ) => {
 	const events = useMemo( () => {
 		return {
 			onExternalDomainClick( initialQuery?: string ) {
+				if ( isDomainOnlyFlow ) {
+					return page(
+						addQueryArgs( '/setup/domain-transfer/intro', {
+							new: initialQuery,
+							search: 'yes',
+						} )
+					);
+				}
+
 				page(
 					getStepUrl( flowName, stepName, USE_MY_DOMAIN_SECTION_NAME, locale, {
 						step: useMyDomainInputMode.domainInput,
@@ -68,7 +78,7 @@ const DomainSearchUI = ( props: StepProps & { locale: string } ) => {
 				goToNextStep();
 			},
 		};
-	}, [ flowName, stepName, submitSignupStep, goToNextStep, locale ] );
+	}, [ flowName, stepName, submitSignupStep, goToNextStep, locale, isDomainOnlyFlow ] );
 
 	const config = useMemo( () => {
 		const allowedTlds = Array.isArray( allowedTldParam )
@@ -88,7 +98,6 @@ const DomainSearchUI = ( props: StepProps & { locale: string } ) => {
 			skippable: ! isDomainOnlyFlow && ! isDomainForGravatarFlow( flowName ),
 			allowsUsingOwnDomain:
 				! isDomainForGravatarFlow( flowName ) &&
-				! isDomainOnlyFlow &&
 				! isOnboardingWithEmailFlow &&
 				! isFreeFlow( flowName ),
 		};
