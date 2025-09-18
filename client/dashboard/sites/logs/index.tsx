@@ -12,8 +12,8 @@ import { DateRangePicker } from '../../components/date-range-picker';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
-import SiteActivityLogsDataView from '../logs-activity';
-import SiteLogsDataView from './components/dataview';
+import SiteActivityLogsDataViews from '../logs-activity';
+import SiteLogsDataViews from './dataviews';
 import { getLogsCalloutProps } from './logs-callout';
 import { LOG_TABS } from './utils';
 
@@ -104,7 +104,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 						</CardHeader>
 						<CardBody>
 							{ logType === LogType.PHP || logType === LogType.SERVER ? (
-								<SiteLogsDataView
+								<SiteLogsDataViews
 									logType={ logType }
 									dateRange={ dateRange }
 									dateRangeVersion={ dateRangeVersion }
@@ -115,7 +115,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 									site={ site }
 								/>
 							) : (
-								<SiteActivityLogsDataView
+								<SiteActivityLogsDataViews
 									logType={ logType }
 									dateRange={ dateRange }
 									dateRangeVersion={ dateRangeVersion }

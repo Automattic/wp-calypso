@@ -3,16 +3,16 @@ import { siteActivityLogQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { DataViews, View, Field } from '@wordpress/dataviews';
 import { useMemo } from 'react';
-import { useActivityActions } from './dataviews/actions';
-import { useActivityFields } from './dataviews/fields';
-import { useActivityView } from './dataviews/views';
-import type { SiteLogsDataViewProps } from '../logs/components/dataview';
+import { useActivityActions } from './actions';
+import { useActivityFields } from './fields';
+import { useActivityView } from './views';
+import type { SiteLogsDataViewsProps } from '../../logs/dataviews';
 
-function SiteActivityLogsDataView( {
+function SiteActivityLogsDataViews( {
 	gmtOffset,
 	timezoneString,
 	site,
-}: SiteLogsDataViewProps & {
+}: SiteLogsDataViewsProps & {
 	logType: typeof LogType.ACTIVITY;
 } ) {
 	const [ view, setView ] = useActivityView();
@@ -70,4 +70,4 @@ function SiteActivityLogsDataView( {
 	);
 }
 
-export default SiteActivityLogsDataView;
+export default SiteActivityLogsDataViews;

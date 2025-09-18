@@ -9,12 +9,12 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useRef, useEffect } from 'react';
 import { useAnalytics } from '../../../app/analytics';
-import { useActions } from '../dataviews/actions';
-import { useFields } from '../dataviews/fields';
-import { getInitialFiltersFromSearch, getAllowedFields } from '../dataviews/filters';
-import { useView, toFilterParams } from '../dataviews/views';
 import { LogsDownloader } from '../downloader';
 import { buildTimeRangeInSeconds } from '../utils';
+import { useActions } from './actions';
+import { useFields } from './fields';
+import { getInitialFiltersFromSearch, getAllowedFields } from './filters';
+import { useView, toFilterParams } from './views';
 import type { Site } from '@automattic/api-core';
 import type { Action } from '@wordpress/dataviews';
 import './style.scss';
@@ -35,7 +35,7 @@ function filtersSignature(
 		.join( '|' );
 }
 
-export type SiteLogsDataViewProps = {
+export type SiteLogsDataViewsProps = {
 	dateRange: { start: Date; end: Date };
 	autoRefresh: boolean;
 	setAutoRefresh: Dispatch< SetStateAction< boolean > >;
@@ -45,7 +45,7 @@ export type SiteLogsDataViewProps = {
 	site: Site;
 };
 
-function SiteLogsDataView( {
+function SiteLogsDataViews( {
 	logType,
 	dateRange,
 	dateRangeVersion,
@@ -54,7 +54,7 @@ function SiteLogsDataView( {
 	autoRefresh,
 	setAutoRefresh,
 	site,
-}: SiteLogsDataViewProps & { logType: typeof LogType.PHP | typeof LogType.SERVER } ) {
+}: SiteLogsDataViewsProps & { logType: typeof LogType.PHP | typeof LogType.SERVER } ) {
 	const router = useRouter();
 	const { recordTracksEvent } = useAnalytics();
 	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
@@ -281,4 +281,4 @@ function SiteLogsDataView( {
 	);
 }
 
-export default SiteLogsDataView;
+export default SiteLogsDataViews;
