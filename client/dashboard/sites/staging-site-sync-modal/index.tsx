@@ -46,7 +46,6 @@ const fileBrowserConfig: FileBrowserConfig = {
 	expandDirectoriesOnClick: false,
 };
 
-// Types for activity log items we care about here
 type BackupActivity = { rewindId: number; activityTs: number };
 
 const DirectionArrow = () => {
