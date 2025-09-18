@@ -42,7 +42,7 @@ const fileBrowserConfig: FileBrowserConfig = {
 	excludeTypes: [ 'wordpress' ],
 	alwaysInclude: [ 'wp-config.php' ],
 	showFileCard: false,
-	showBackupTime: true,
+	showBackupTime: false,
 	showSeparateExpandButton: true,
 	expandDirectoriesOnClick: false,
 };
@@ -444,6 +444,19 @@ function StagingSiteSyncModalInner( {
 					<div hidden={ ! isFileBrowserVisible }>
 						<VStack spacing={ 0 }>
 							<CardDivider />
+							{ displayBackupDate && (
+								<HStack alignment="left" spacing={ 1 }>
+									<Text variant="muted" style={ { marginInlineStart: '14px', marginTop: '10px' } }>
+										{ createInterpolateElement( __( 'Content from the latest backup: <date />.' ), {
+											date: <span>{ displayBackupDate }</span>,
+										} ) }{ ' ' }
+										<ExternalLink
+											href={ `/backup/${ querySiteSlug as string }` }
+											children={ __( 'Create new backup' ) }
+										/>
+									</Text>
+								</HStack>
+							) }
 							<FileBrowser
 								rewindId={ ( rewindId as number ) ?? 0 }
 								siteId={ querySiteId }
@@ -451,9 +464,7 @@ function StagingSiteSyncModalInner( {
 								fileBrowserConfig={ {
 									...fileBrowserConfig,
 									showHeader: false,
-									nodesIndentInlineStart: 14,
 								} }
-								displayBackupDate={ displayBackupDate ?? undefined }
 							/>
 						</VStack>
 					</div>

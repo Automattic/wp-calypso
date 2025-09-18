@@ -106,13 +106,7 @@ function FileBrowser( {
 					</Text>
 				</HStack>
 			) }
-			<div
-				style={
-					fileBrowserConfig?.nodesIndentInlineStart !== undefined
-						? { marginInlineStart: `${ fileBrowserConfig.nodesIndentInlineStart }px` }
-						: undefined
-				}
-			>
+			<div>
 				<FileBrowserNode
 					rewindId={ rewindId }
 					item={ rootItem }
