@@ -50,7 +50,7 @@ function getActivityLogUrl( site: Site ) {
 	}
 
 	if ( window?.location?.pathname?.startsWith( '/v2' ) ) {
-		return `/v2/sites/${ site.slug }/logs/activity`;
+		return `/sites/${ site.slug }/logs/activity`; // no need for the /v2 prefix since it's handled by the RouterLinkSummaryButton in the SummaryButtonCardFooter
 	}
 	return `/activity-log/${ site.slug }`;
 }
