@@ -20,9 +20,9 @@ import { useRouter } from '@tanstack/react-router';
 import { TabPanel, ToggleControl, Card, CardHeader, CardBody } from '@wordpress/components';
 import { DataViews, View, Filter, Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { getUnixTime, subDays, isSameSecond } from 'date-fns';
 import { useMemo, useState, useRef, useEffect } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { useDateRange } from '../../app/hooks/use-date-range';
 import { useLocale } from '../../app/locale';
 import { siteRoute } from '../../app/router/sites';
 import { DateRangePicker } from '../../components/date-range-picker';
@@ -36,11 +36,7 @@ import { getInitialFiltersFromSearch, getAllowedFields } from './dataviews/filte
 import { useView, toFilterParams } from './dataviews/views';
 import { LogsDownloader } from './downloader';
 import { getLogsCalloutProps } from './logs-callout';
-import {
-	buildTimeRangeInSeconds,
-	getInitialDateRangeFromSearch,
-	getDefaultDateRange,
-} from './utils';
+import { buildTimeRangeInSeconds } from './utils';
 import type { Action } from '@wordpress/dataviews';
 
 import './style.scss';
@@ -106,46 +102,11 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		initialFilters: getInitialFiltersFromSearch( logType, search ),
 	} );
 
-	const initial = getDefaultDateRange( timezoneString, gmtOffset );
-
-	const initialFromUrl = getInitialDateRangeFromSearch( search );
-
-	const [ dateRange, setDateRange ] = useState< { start: Date; end: Date } >(
-		() => initialFromUrl ?? initial
-	);
-
-	const lastUrlRangeRef = useRef< { from: number; to: number } | null >( null );
-
-	useEffect( () => {
-		if ( ! autoRefresh ) {
-			return;
-		}
-		const tick = () => {
-			const end = new Date();
-			const start = subDays( end, 6 );
-
-			setDateRange( ( prev ) =>
-				isSameSecond( prev.start, start ) && isSameSecond( prev.end, end ) ? prev : { start, end }
-			);
-			const from = getUnixTime( start );
-			const to = getUnixTime( end );
-
-			const last = lastUrlRangeRef.current;
-			// Only sync URL when from/to change to avoid unnecessary history updates.
-			if ( ! last || last.from !== from || last.to !== to ) {
-				const url = new URL( window.location.href );
-				url.searchParams.set( 'from', String( from ) );
-				url.searchParams.set( 'to', String( to ) );
-				window.history.replaceState( null, '', url.pathname + url.search );
-				lastUrlRangeRef.current = { from, to };
-			}
-		};
-
-		// Run immediately, then every 10s
-		tick();
-		const intervalId = setInterval( tick, 10 * 1000 );
-		return () => clearInterval( intervalId );
-	}, [ autoRefresh ] );
+	const { dateRange, handleDateRangeChange } = useDateRange( {
+		timezoneString,
+		gmtOffset,
+		autoRefresh,
+	} );
 
 	const { startSec, endSec } = useMemo(
 		() => buildTimeRangeInSeconds( dateRange.start, dateRange.end, timezoneString, gmtOffset ),
@@ -216,19 +177,13 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		}
 	}, [ siteLogs, view.page, logType, isActivityLogType ] );
 
-	const handleDateRangeChange = ( next: { start: Date; end: Date } ) => {
+	const handleDateRangeChangeWrapper = ( next: { start: Date; end: Date } ) => {
 		setAutoRefresh( false );
-		setDateRange( next );
+		handleDateRangeChange( next );
 
 		// Reset pagination + cursors
 		cursorsRef.current.clear();
 		setView( ( value ) => ( { ...value, page: 1 } ) );
-
-		// Sync from/to to the URL as UNIX seconds
-		const url = new URL( window.location.href );
-		url.searchParams.set( 'from', String( getUnixTime( next.start ) ) );
-		url.searchParams.set( 'to', String( getUnixTime( next.end ) ) );
-		window.history.replaceState( null, '', url.pathname + url.search );
 	};
 
 	// Extract the data for memoization
@@ -434,7 +389,7 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 							gmtOffset={ gmtOffset }
 							timezoneString={ timezoneString }
 							locale={ locale }
-							onChange={ handleDateRangeChange }
+							onChange={ handleDateRangeChangeWrapper }
 						/>
 					) }
 					<Card className="site-logs-card">

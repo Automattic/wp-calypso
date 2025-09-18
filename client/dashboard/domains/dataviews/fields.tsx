@@ -8,12 +8,11 @@ import { DomainNameField } from './field-domain-name';
 import { DomainSiteField } from './field-domain-site';
 import { DomainExpiryField } from './field-expiry';
 import { DomainSslField } from './field-ssl';
+import { IneligibleIndicator } from './ineligible-indicator';
 import type { DomainSummary, Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 const THREE_DAYS_IN_MINUTES = 3 * 1440;
-
-const IneligibleIndicator = () => <Text color="#CCCCCC">-</Text>;
 
 export const useFields = ( {
 	site,
@@ -44,6 +43,14 @@ export const useFields = ( {
 				id: 'is_primary_domain',
 				label: __( 'Primary' ),
 				getValue: ( { item }: { item: DomainSummary } ) => item.primary_domain,
+				sort: ( a, b, direction ) => {
+					if ( a.primary_domain === b.primary_domain ) {
+						return 0;
+					}
+
+					const factor = direction === 'asc' ? 1 : -1;
+					return a.primary_domain ? -1 * factor : 1 * factor;
+				},
 				render: ( { field, item } ) =>
 					field.getValue( { item } ) ? <Text>{ __( 'Primary' ) }</Text> : <IneligibleIndicator />,
 			},

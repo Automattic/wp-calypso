@@ -3,9 +3,11 @@ import { HelpCenterSelect } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect, useRef } from '@wordpress/element';
+import Smooch from 'smooch';
 import { getOdieTransferMessage } from '../constants';
 import { emptyChat } from '../context';
 import { useGetZendeskConversation, useManageSupportInteraction, useOdieChat } from '../data';
+import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
 import {
 	getConversationIdFromInteraction,
 	getOdieIdFromInteraction,
@@ -21,22 +23,18 @@ export const useGetCombinedChat = (
 	canConnectToZendesk: boolean,
 	isLoadingCanConnectToZendesk: boolean
 ) => {
-	const { currentSupportInteraction, conversationId, odieId, isChatLoaded, connectionStatus } =
-		useSelect( ( select ) => {
-			const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
-			const currentSupportInteraction = store.getCurrentSupportInteraction();
+	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
+	const odieId = getOdieIdFromInteraction( currentSupportInteraction );
+	const conversationId = getConversationIdFromInteraction( currentSupportInteraction );
 
-			const odieId = getOdieIdFromInteraction( currentSupportInteraction );
-			const conversationId = getConversationIdFromInteraction( currentSupportInteraction );
+	const { isChatLoaded, connectionStatus } = useSelect( ( select ) => {
+		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 
-			return {
-				currentSupportInteraction,
-				conversationId,
-				odieId,
-				isChatLoaded: store.getIsChatLoaded(),
-				connectionStatus: store.getZendeskConnectionStatus(),
-			};
-		}, [] );
+		return {
+			isChatLoaded: store.getIsChatLoaded(),
+			connectionStatus: store.getZendeskConnectionStatus(),
+		};
+	}, [] );
 	const previousUuidRef = useRef< string | undefined >();
 	const [ mainChatState, setMainChatState ] = useState< Chat >( emptyChat );
 	const [ refreshingAfterReconnect, setRefreshingAfterReconnect ] = useState( false );
@@ -105,6 +103,8 @@ export const useGetCombinedChat = (
 					conversationId: conversationId?.toString(),
 				} )?.then( ( conversation ) => {
 					if ( conversation ) {
+						// We need to load the conversation to get typing events. Load simply means "focus on".
+						Smooch.loadConversation( conversation.id );
 						setMainChatState( {
 							...( odieChat ? odieChat : {} ),
 							supportInteractionId: currentSupportInteraction.uuid,

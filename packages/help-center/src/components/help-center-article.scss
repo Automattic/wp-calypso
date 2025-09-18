@@ -1,5 +1,7 @@
-@import "@automattic/typography/styles/variables";
-@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import '@automattic/typography/styles/variables';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+@import 'calypso/assets/stylesheets/shared/mixins/breakpoints';
 
 /**
  * Styling for '/post' route.
@@ -18,22 +20,23 @@
 	}
 
 	.help-center-article-content {
-		padding: 16px 30px 20px;
+		padding: 16px;
 		display: flex;
 		flex-direction: column;
 
 		.help-center-article-content__header {
-
 			.help-center-article-content__header-link {
-				color: var(--color-neutral-70);
+				@include body-medium;
+				color: $gray-800;
+				margin: 8px 0;
+				display: block;
+				text-decoration: none;
 			}
 
 			h1.help-center-article-content__header-title {
-				margin: 8px 0 0 0;
-				color: var(--color-neutral-70);
-				font-size: $font-title-medium;
+				font-size: 1.75rem;
 				font-weight: 600;
-				line-height: $font-headline-small;
+				line-height: 1.2;
 			}
 		}
 
@@ -43,20 +46,22 @@
 			h4,
 			h5 {
 				font-weight: 600;
-				color: var(--color-neutral-100);
+				color: var( --color-neutral-100 );
 				margin: 8px 0;
 			}
 
 			button.button.is-borderless:focus,
 			a.button.is-borderless:focus {
 				color: #043959;
-				box-shadow: 0 0 0 1px #4f94d4, 0 0 2px 1px rgba(79, 148, 212, 0.8);
+				box-shadow:
+					0 0 0 1px #4f94d4,
+					0 0 2px 1px rgba( 79, 148, 212, 0.8 );
 				outline: 1px solid transparent;
 				border-color: inherit;
 			}
 
-			a[name="toc"] span {
-				color: var(--color-neutral-80);
+			a[name='toc'] span {
+				color: var( --color-neutral-80 );
 				font-size: $font-body;
 			}
 
@@ -69,7 +74,7 @@
 			}
 
 			.wp-block-a8c-support-table-of-contents {
-				background-color: var(--studio-blue-5);
+				background-color: var( --studio-blue-5 );
 				padding: 16px;
 
 				ol {
@@ -81,7 +86,8 @@
 					margin-bottom: 0;
 
 					a {
-						font-size: $font-body-small;
+						font-size: $font-size-large;
+						line-height: 1.6;
 						text-decoration: none;
 					}
 
@@ -92,17 +98,20 @@
 			}
 
 			p {
-				font-size: $font-body-small;
-				color: var(--color-neutral-80);
+				font-size: $font-size-large;
+				line-height: 1.6;
+				color: var( --color-neutral-80 );
 			}
 
-			ul, ol.wp-block-list {
+			ul,
+			ol.wp-block-list {
 				font-size: $font-body-small;
-				color: var(--color-neutral-80);
+				color: var( --color-neutral-80 );
 				list-style-position: outside;
 				margin: 0 0 1.5em 1.5em;
 
-				ul, li {
+				ul,
+				li {
 					margin-bottom: 0;
 				}
 			}
@@ -112,7 +121,7 @@
 			}
 
 			span.noticon.noticon-star {
-				color: var(--studio-yellow-20);
+				color: var( --studio-yellow-20 );
 			}
 
 			.help-center-article-content__header {
@@ -120,25 +129,25 @@
 			}
 
 			.wp-block-quote {
-				background-color: var(--color-neutral-0);
+				background-color: var( --color-neutral-0 );
 				border-left: none;
 				padding: 16px;
-				color: var(--color-neutral-80);
+				color: var( --color-neutral-80 );
 			}
 
 			.wp-block-separator {
 				margin: auto;
-				border-bottom: 1px solid var(--color-neutral-10);
+				border-bottom: 1px solid var( --color-neutral-10 );
 				border-top: 0;
 				width: 100%;
 			}
 
 			.wp-block-group__inner-container {
-				background-color: var(--color-neutral-0);
+				background-color: var( --color-neutral-0 );
 				padding: 16px 0;
 			}
 
-			:where(.wp-block-group.has-background) {
+			:where( .wp-block-group.has-background ) {
 				padding: 0;
 			}
 
@@ -146,20 +155,19 @@
 				padding: 16px;
 
 				&.has-gray-theme-background-color {
-					background-color: var(--studio-gray-0);
+					background-color: var( --studio-gray-0 );
 				}
 			}
-
 
 			.wp-block-button {
 				width: 100%;
 
 				.wp-block-button__link {
-					background-color: var(--color-surface);
-					border: 1px solid var(--color-neutral-10);
+					background-color: var( --color-surface );
+					border: 1px solid var( --color-neutral-10 );
 					border-radius: 2px;
 					box-sizing: border-box;
-					color: var(--color-neutral-70);
+					color: var( --color-neutral-70 );
 					display: inline-block;
 					font-size: $font-body-small;
 					padding: 8px 14px;
@@ -170,22 +178,21 @@
 			}
 
 			.button-primary {
-				background-color: var(--wp-admin-theme-color);
-				border: 1px solid var(--wp-admin-theme-color);
+				background-color: var( --wp-admin-theme-color );
+				border: 1px solid var( --wp-admin-theme-color );
 				border-radius: 2px;
-				color: var(--color-text-inverted);
+				color: var( --color-text-inverted );
 				font-size: $font-body-small;
 				padding: 4px 14px;
 				width: 100%;
 			}
 
 			.callout .wp-block-column {
-
 				$callout-border: #dcdcde;
 				$callout-background: #fff;
 				$callout-large-font-size: 40px;
 
-				padding: .5em;
+				padding: 0.5em;
 				border-radius: 4px;
 				border: 1px solid $callout-border;
 				background: $callout-background;
@@ -210,17 +217,17 @@
 
 				.wp-block-jetpack-layout-grid {
 					display: grid;
-					grid-template-columns: repeat(4, 1fr);
+					grid-template-columns: repeat( 4, 1fr );
 
 					&.wp-block-jetpack-layout-gutter__none {
 						grid-gap: 0;
 					}
 
-					&.column1-tablet-grid__row-1>.wp-block-jetpack-layout-grid-column:nth-child(1) {
+					&.column1-tablet-grid__row-1 > .wp-block-jetpack-layout-grid-column:nth-child( 1 ) {
 						grid-row-start: 1;
 					}
 
-					&.column2-desktop-grid__start-2>.wp-block-jetpack-layout-grid-column:nth-child(2) {
+					&.column2-desktop-grid__start-2 > .wp-block-jetpack-layout-grid-column:nth-child( 2 ) {
 						grid-column-start: 2;
 						grid-column-end: span 4;
 					}
@@ -231,7 +238,7 @@
 				display: block;
 			}
 
-			color: var(--color-neutral-70);
+			color: var( --color-neutral-70 );
 			font-size: $font-body;
 			line-height: 1.7;
 			margin: 0;
@@ -247,6 +254,8 @@
 
 			.wp-block-heading {
 				scroll-margin-top: 15px;
+				line-height: 1.4;
+				margin: 1.5rem 0 0.25rem;
 			}
 
 			h1 {
@@ -256,28 +265,28 @@
 			}
 
 			h2 {
-				font-size: rem(20px);
+				font-size: rem( 20px );
 			}
 
 			h3 {
-				font-size: rem(15px);
+				font-size: rem( 15px );
 				font-weight: 600;
 				margin: 0 0 8px;
 			}
 
 			h4 {
-				font-size: rem(13px);
+				font-size: rem( 13px );
 				font-weight: 600;
 				margin: 0 0 8px;
 			}
 
 			h5 {
-				font-size: rem(11px);
+				font-size: rem( 11px );
 			}
 
 			p,
 			> div {
-				margin: 0 0 24px;
+				margin: 0 0 1em;
 
 				&:last-child {
 					margin-bottom: 0;
@@ -287,14 +296,14 @@
 			blockquote {
 				padding: 0 24px 0 32px;
 				margin: 16px 0 32px;
-				border-left: 3px solid var(--color-neutral-0);
-				color: var(--color-neutral-50);
+				border-left: 3px solid var( --color-neutral-0 );
+				color: var( --color-neutral-50 );
 				font-weight: 400;
 				background: transparent;
 			}
 
 			hr {
-				background: var(--color-neutral-0);
+				background: var( --color-neutral-0 );
 				margin: 24px 0;
 			}
 
@@ -317,14 +326,14 @@
 				margin: 24px auto;
 			}
 
-			iframe[class^="twitter-"],
-			iframe[class^="instagram-"],
+			iframe[class^='twitter-'],
+			iframe[class^='instagram-'],
 			.fb_iframe_widget {
 				display: block;
 				margin: 24px auto !important;
 			}
 
-			@include breakpoint-deprecated( ">660px" ) {
+			@include breakpoint-deprecated( '>660px' ) {
 				.alignleft {
 					max-width: 100%;
 					float: left;
@@ -343,7 +352,7 @@
 				}
 			}
 
-			@include breakpoint-deprecated( "<660px" ) {
+			@include breakpoint-deprecated( '<660px' ) {
 				.alignleft,
 				.alignright {
 					clear: both;
@@ -382,7 +391,7 @@
 				&.alignleft {
 					max-width: 100%;
 
-					@include breakpoint-deprecated( ">660px" ) {
+					@include breakpoint-deprecated( '>660px' ) {
 						max-width: 50%;
 					}
 
@@ -406,7 +415,7 @@
 				margin: 0;
 				font-size: $font-body-small;
 				text-align: center;
-				color: var(--color-neutral-40);
+				color: var( --color-neutral-40 );
 				display: block !important;
 			}
 
@@ -416,13 +425,13 @@
 				margin-bottom: 24px;
 				padding: 11px 24px;
 				border-radius: 2px;
-				background: var(--color-neutral-0);
+				background: var( --color-neutral-0 );
 				box-sizing: border-box;
 				font-size: $font-body-small;
 				line-height: 1.4285;
 				animation: appear 0.3s ease-in-out;
 
-				@include breakpoint-deprecated( ">660px" ) {
+				@include breakpoint-deprecated( '>660px' ) {
 					padding: 13px 48px;
 					font-size: inherit;
 				}
@@ -471,7 +480,7 @@
 				position: relative;
 
 				&::before {
-					content: "";
+					content: '';
 					display: block;
 					padding-top: 56.25%;
 				}
@@ -490,6 +499,7 @@
 			.wp-block-wpsupport3-update-plan-cta {
 				.container .card {
 					margin-top: 16px;
+
 					.small {
 						font-size: $font-body-extra-small;
 					}
@@ -506,7 +516,6 @@
 
 			// Show the tab component for the WP Support 3 tab component
 			.wp-block-wpsupport3-tabs {
-
 				.aligncenter {
 					margin-left: auto;
 					margin-right: auto;
@@ -587,7 +596,7 @@
 
 			// Screen reader text for accessibility
 			.screen-reader-text {
-				clip: rect(1px, 1px, 1px, 1px);
+				clip: rect( 1px, 1px, 1px, 1px );
 				position: absolute !important;
 				height: 1px;
 				width: 1px;
@@ -599,6 +608,6 @@
 	.help-center-article__error {
 		padding: 16px 30px 20px;
 		font-size: 0.875rem;
-		color: var(--color-neutral-80);
+		color: var( --color-neutral-80 );
 	}
 }
