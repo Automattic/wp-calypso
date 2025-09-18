@@ -20,6 +20,7 @@ export async function updateUserSettings(
 		'i18n_empathy_mode',
 		'use_fallback_for_incomplete_languages',
 		'enable_translator',
+		'subscription_delivery_email_blocked',
 		'subscription_delivery_email_default',
 		'subscription_delivery_mail_option',
 		'subscription_delivery_day',
