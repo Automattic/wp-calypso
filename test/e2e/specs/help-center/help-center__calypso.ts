@@ -62,6 +62,9 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Help Center in Calyp
 		it( 'can be minimized', async () => {
 			await helpCenterComponent.minimizePopover();
 
+			// Wait for the transition to complete.
+			await page.waitForTimeout( 200 );
+
 			const containerHeight = await helpCenterLocator.evaluate(
 				( el: HTMLElement ) => el.offsetHeight
 			);
