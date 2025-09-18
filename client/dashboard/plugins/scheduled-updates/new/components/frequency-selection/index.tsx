@@ -17,11 +17,13 @@ export type Weekday =
 	| 'Saturday'
 	| 'Sunday';
 
+export type Frequency = 'daily' | 'weekly';
+
 type Props = {
-	frequency: 'daily' | 'weekly';
+	frequency: Frequency;
 	weekday: Weekday;
 	time: string; // HH:MM 24h
-	onChange: ( next: { frequency: 'daily' | 'weekly'; weekday: Weekday; time: string } ) => void;
+	onChange: ( next: { frequency: Frequency; weekday: Weekday; time: string } ) => void;
 };
 
 const HOUR_OPTIONS_24 = [ ...Array( 24 ).keys() ].map( ( i ) => ( {

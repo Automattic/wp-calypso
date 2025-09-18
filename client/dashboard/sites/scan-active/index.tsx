@@ -1,9 +1,10 @@
 import { siteScanQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { __experimentalVStack as VStack, __experimentalText as Text } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
+import { DataViewsEmptyState } from '../../components/dataviews-empty-state';
+import { useTimeSince } from '../../components/time-since';
 import { getActions } from './dataviews/actions';
 import { getFields } from './dataviews/fields';
 import noThreatsIllustration from './no-threats-illustration.svg';
@@ -18,51 +19,61 @@ export function ActiveThreatsDataViews( { site }: { site: Site } ) {
 		sort: { field: 'severity', direction: 'desc' },
 	} );
 
-	const getEmptyMessage = () => {
-		if ( view.search ) {
-			return sprintf(
-				/** translators: %s: search query string */
-				__( 'Your search for "%s" did not return any results.' ),
-				view.search
-			);
-		}
-		return __( 'No active threats found for the selected filters.' );
-	};
-
-	const { data: threats = [], isLoading } = useQuery( {
-		...siteScanQuery( site.ID ),
-		select: ( scan ) => scan.threats.filter( ( threat ) => threat.status === 'current' ),
-	} );
+	const { data: scan, isLoading } = useQuery( siteScanQuery( site.ID ) );
+	const threats = scan?.threats.filter( ( threat ) => threat.status === 'current' ) || [];
 
 	const fields = getFields();
 	const actions = getActions();
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( threats, view, fields );
-	const recentScanRelativeTime = 'X hours ago'; // @TODO: replace with the actual relative time
+	const lastScanTime = scan?.most_recent?.timestamp;
+	const recentScanRelativeTime = useTimeSince( lastScanTime || '' );
 
-	if ( ! isLoading && threats.length === 0 ) {
-		return (
-			<VStack spacing={ 10 } alignment="center" style={ { padding: '40px 0' } }>
-				<img src={ noThreatsIllustration } alt={ __( 'No threats found illustration' ) } />
-				<VStack alignment="center" spacing={ 2 }>
-					<Text weight="bold">{ __( 'Don’t worry about a thing' ) }</Text>
-					<Text>
-						{ sprintf(
-							/** translators: %s: relative time string like "2 hours ago" */
-							__( 'The last scan ran %s and everything looked great.' ),
-							recentScanRelativeTime
-						) }
-					</Text>
-				</VStack>
-			</VStack>
+	const NoActiveThreatsFound = () => {
+		let title = __( 'Don’t worry about a thing' );
+		let description = sprintf(
+			/** translators: %s: relative time string like "2 hours ago" */
+			__( 'The last scan ran %s and everything looked great.' ),
+			recentScanRelativeTime
 		);
-	}
+
+		if ( view.search || view.filters ) {
+			title = __( 'No archived threats found' );
+
+			if ( view.search ) {
+				description = sprintf(
+					/** translators: %s: search query string */
+					__( 'Your search for "%s" did not return any results.' ),
+					view.search
+				);
+			}
+
+			if ( view.filters ) {
+				description = __( 'No active threats found for the selected filters.' );
+			}
+		}
+
+		return (
+			<DataViewsEmptyState
+				title={ title }
+				description={ description }
+				illustration={
+					<img
+						src={ noThreatsIllustration }
+						alt={ __( 'No threats found illustration' ) }
+						width={ 408 }
+						height={ 280 }
+					/>
+				}
+			/>
+		);
+	};
 
 	return (
 		<DataViews< Threat >
 			actions={ actions }
 			data={ filteredData }
 			defaultLayouts={ { table: {} } }
-			empty={ getEmptyMessage() }
+			empty={ <NoActiveThreatsFound /> }
 			fields={ fields }
 			getItemId={ ( item ) => item.id.toString() }
 			isLoading={ isLoading }

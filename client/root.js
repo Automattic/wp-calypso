@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import globalPageInstance from '@automattic/calypso-router';
-import { pathToUrl } from 'calypso/lib/url/path-to-url';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
@@ -96,7 +95,7 @@ async function getLoggedInLandingPage( { dispatch, getState } ) {
 	if ( useSitesAsLandingPage ) {
 		if ( hostingDashboardOptIn ) {
 			// Use absolute URL to force a hard reload.
-			return pathToUrl( '/v2/sites' );
+			return window.location.origin + '/v2/sites';
 		}
 		return '/sites';
 	}

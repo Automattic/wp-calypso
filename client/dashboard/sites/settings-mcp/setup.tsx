@@ -1,5 +1,5 @@
-import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { siteBySlugQuery, userSettingsQuery } from '@automattic/api-queries';
+import { useSuspenseQuery, useQuery } from '@tanstack/react-query';
 import {
 	Button,
 	ExternalLink,
@@ -13,13 +13,14 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { copy, check, error } from '@wordpress/icons';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';
+import { getSiteMcpAbilities } from './utils';
 
-export default function McpSetup( { siteSlug }: { siteSlug: string } ) {
+function McpSetupComponent( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const { data: siteSettings } = useSuspenseQuery( siteSettingsQuery( site.ID ) );
+	const { data: userSettings } = useQuery( userSettingsQuery() );
 	// MCP client selection for configuration format
 	const [ selectedMcpClient, setSelectedMcpClient ] = useState< string >( 'claude' );
 
@@ -125,10 +126,11 @@ export default function McpSetup( { siteSlug }: { siteSlug: string } ) {
 		}
 	};
 
-	// Check if any tools are enabled
-	const hasEnabledTools =
-		siteSettings?.mcp_abilities &&
-		Object.values( siteSettings.mcp_abilities ).some( ( tool ) => tool.enabled );
+	// Check if any tools are enabled using the new userSettings structure
+	const hasEnabledTools = useMemo( () => {
+		const abilities = getSiteMcpAbilities( userSettings, site.ID );
+		return Object.values( abilities ).some( ( tool ) => tool.enabled );
+	}, [ userSettings, site.ID ] );
 
 	if ( ! hasEnabledTools ) {
 		return (
@@ -354,3 +356,5 @@ export default function McpSetup( { siteSlug }: { siteSlug: string } ) {
 		</PageLayout>
 	);
 }
+
+export default McpSetupComponent;

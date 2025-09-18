@@ -19,37 +19,33 @@ import { createInterpolateElement, useState, useCallback } from '@wordpress/elem
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronRight, chevronLeft } from '@wordpress/icons';
 import { ButtonStack } from '../../components/button-stack';
+import Environment, { EnvironmentType } from '../../components/environment';
 import InlineSupportLink from '../../components/inline-support-link';
-import { SectionHeader } from '../../components/section-header';
-import SiteEnvironmentBadge, { EnvironmentType } from '../../components/site-environment-badge';
 
 const DirectionArrow = () => {
 	return (
-		<div style={ { marginTop: '44px' } }>
-			<Icon
-				icon={ isRTL() ? chevronLeft : chevronRight }
-				style={ {
-					fill: '#949494',
-				} }
-			/>
-		</div>
+		<Icon
+			icon={ isRTL() ? chevronLeft : chevronRight }
+			style={ {
+				fill: '#949494',
+			} }
+		/>
 	);
 };
 
 interface EnvironmentLabelProps {
-	label: string;
 	environmentType: EnvironmentType;
 	siteTitle?: string;
 }
 
-const EnvironmentLabel = ( { label, environmentType, siteTitle }: EnvironmentLabelProps ) => {
+const EnvironmentLabel = ( { environmentType, siteTitle }: EnvironmentLabelProps ) => {
 	return (
 		<VStack spacing={ 1 }>
-			<SectionHeader level={ 3 } title={ label } />
 			<HStack spacing={ 2 }>
-				<SiteEnvironmentBadge environmentType={ environmentType } />
+				<Environment environmentType={ environmentType } />
 				{ siteTitle && (
 					<Text
+						variant="muted"
 						style={ {
 							whiteSpace: 'nowrap',
 							overflow: 'hidden',
@@ -84,8 +80,6 @@ interface EnvironmentConfig {
 interface SyncConfig {
 	staging: EnvironmentConfig;
 	production: EnvironmentConfig;
-	fromLabel: string;
-	toLabel: string;
 	learnMore: string;
 	submit: string;
 }
@@ -96,7 +90,7 @@ const getSyncConfig = ( type: 'pull' | 'push' ): SyncConfig => {
 			staging: {
 				title: __( 'Pull from Production' ),
 				description: __(
-					'Pulling will replace the existing files and database of the staging site. An automatic backup of your environment will be created, allowing you to revert changes from the <a>Activity log</a> if needed.'
+					'Pulling will replace the existing files and database of the staging site. An automatic backup will be created of your environment, so you can revert it if needed in <a>Activity log</a>.'
 				),
 				syncFrom: 'production',
 				syncTo: 'staging',
@@ -104,13 +98,11 @@ const getSyncConfig = ( type: 'pull' | 'push' ): SyncConfig => {
 			production: {
 				title: __( 'Pull from Staging' ),
 				description: __(
-					'Pulling will replace the existing files and database of the production site. An automatic backup of your environment will be created, allowing you to revert changes from the <a>Activity log</a> if needed.'
+					'Pulling will replace the existing files and database of the production site. An automatic backup will be created of your environment, so you can revert it if needed in <a>Activity log</a>.'
 				),
 				syncFrom: 'staging',
 				syncTo: 'production',
 			},
-			fromLabel: __( 'Pull' ),
-			toLabel: __( 'To' ),
 			learnMore: __( 'Read more about <a>environment pull</a>.' ),
 			submit: __( 'Pull' ),
 		};
@@ -120,7 +112,7 @@ const getSyncConfig = ( type: 'pull' | 'push' ): SyncConfig => {
 		staging: {
 			title: __( 'Push to Production' ),
 			description: __(
-				'Pushing will replace the existing files and database of the production site. An automatic backup of your environment will be created, allowing you to revert changes from the <a>Activity log</a> if needed.'
+				'Pushing will replace the existing files and database of the production site. An automatic backup will be created of your environment, so you can revert it if needed in <a>Activity log</a>.'
 			),
 			syncFrom: 'staging',
 			syncTo: 'production',
@@ -128,13 +120,11 @@ const getSyncConfig = ( type: 'pull' | 'push' ): SyncConfig => {
 		production: {
 			title: __( 'Push to Staging' ),
 			description: __(
-				'Pushing will replace the existing files and database of the staging site. An automatic backup of your environment will be created, allowing you to revert changes from the <a>Activity log</a> if needed.'
+				'Pushing will replace the existing files and database of the staging site. An automatic backup will be created of your environment, so you can revert it if needed in <a>Activity log</a>.'
 			),
 			syncFrom: 'production',
 			syncTo: 'staging',
 		},
-		fromLabel: __( 'Push' ),
-		toLabel: __( 'To' ),
 		learnMore: __( 'Read more about <a>environment push</a>.' ),
 		submit: __( 'Push' ),
 	};
@@ -244,11 +234,7 @@ export default function StagingSiteSyncModal( {
 	const isSubmitDisabled = showDomainConfirmation && domainConfirmation !== productionSiteSlug;
 
 	return (
-		<Modal
-			title={ syncConfig[ environment ].title }
-			onRequestClose={ handleClose }
-			style={ { maxWidth: '668px' } }
-		>
+		<Modal title={ syncConfig[ environment ].title } onRequestClose={ handleClose } size="large">
 			<VStack spacing={ 5 }>
 				<Text>
 					{ createInterpolateElement( syncConfig[ environment ].description, {
@@ -256,17 +242,9 @@ export default function StagingSiteSyncModal( {
 					} ) }
 				</Text>
 				<HStack spacing={ 4 } alignment="left">
-					<EnvironmentLabel
-						label={ syncConfig.fromLabel }
-						environmentType={ sourceEnvironment }
-						siteTitle={ sourceSiteTitle }
-					/>
+					<EnvironmentLabel environmentType={ sourceEnvironment } siteTitle={ sourceSiteTitle } />
 					<DirectionArrow />
-					<EnvironmentLabel
-						label={ syncConfig.toLabel }
-						environmentType={ targetEnvironment }
-						siteTitle={ targetSiteTitle }
-					/>
+					<EnvironmentLabel environmentType={ targetEnvironment } siteTitle={ targetSiteTitle } />
 				</HStack>
 				<VStack spacing={ 6 }>
 					{ showDomainConfirmation && (
