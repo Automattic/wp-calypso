@@ -457,15 +457,17 @@ function StagingSiteSyncModalInner( {
 									</Text>
 								</HStack>
 							) }
-							<FileBrowser
-								rewindId={ ( rewindId as number ) ?? 0 }
-								siteId={ querySiteId }
-								siteSlug={ querySiteSlug as string }
-								fileBrowserConfig={ {
-									...fileBrowserConfig,
-									showHeader: false,
-								} }
-							/>
+							<HStack style={ { marginInlineStart: '14px' } }>
+								<FileBrowser
+									rewindId={ ( rewindId as number ) ?? 0 }
+									siteId={ querySiteId }
+									siteSlug={ querySiteSlug as string }
+									fileBrowserConfig={ {
+										...fileBrowserConfig,
+										showHeader: false,
+									} }
+								/>
+							</HStack>
 						</VStack>
 					</div>
 
