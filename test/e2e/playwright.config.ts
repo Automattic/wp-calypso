@@ -30,7 +30,7 @@ export default defineConfig( {
 	/* Global timeout for each test */
 	timeout: 60 * 1000,
 	/* Reporter to use. See https://playwright.dev/docs/test-reporters */
-	reporter: process.env.CI ? 'dot' : [ [ 'list', { printSteps: true } ], [ 'html' ] ],
+	reporter,
 	/* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
 	outputDir: `${ outputPath }/test-results`,
 	use: {
