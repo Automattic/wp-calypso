@@ -452,7 +452,6 @@ function StagingSiteSyncModalInner( {
 								fileBrowserConfig={ {
 									...fileBrowserConfig,
 									showHeader: false,
-									inheritNodeColor: true,
 									nodesIndentInlineStart: 14,
 								} }
 								displayBackupDate={ displayBackupDate ?? undefined }
