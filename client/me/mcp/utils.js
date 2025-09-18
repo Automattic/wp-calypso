@@ -62,15 +62,6 @@ export function createAccountApiPayload( userSettings, abilities ) {
 }
 
 /**
- * Get site-level MCP abilities (default site abilities)
- * @param {Object} userSettings - The user settings object
- * @returns {Record<string, McpAbility>} An object containing site-level MCP abilities
- */
-export function getSiteLevelMcpAbilities( userSettings ) {
-	return userSettings?.mcp_abilities?.site || {};
-}
-
-/**
  * Check if any account-level tools are enabled
  * @param {Object} userSettings - The user settings object
  * @returns {boolean} True if any account-level tools are enabled
