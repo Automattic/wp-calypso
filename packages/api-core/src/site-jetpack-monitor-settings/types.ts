@@ -1,14 +1,14 @@
-export type MonitorUrlOptions = {
+type MonitorUrlOptions = {
 	status_down_webhook_url?: string;
 };
 
-export type MonitorUrl = {
+type MonitorUrl = {
 	monitor_url: string;
 	check_interval: number;
 	options?: MonitorUrlOptions;
 };
 
-export type MonitorSettings = {
+export type JetpackMonitorSettings = {
 	monitor_active?: boolean;
 	wp_note_notifications?: boolean;
 	email_notifications?: boolean;
@@ -17,7 +17,7 @@ export type MonitorSettings = {
 	urls?: MonitorUrl[];
 };
 
-export type MonitorSettingsCreateResponse = {
+export type JetpackMonitorSettingsCreateResponse = {
 	success: boolean;
-	settings: MonitorSettings;
+	settings: JetpackMonitorSettings;
 };
