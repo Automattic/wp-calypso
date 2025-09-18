@@ -3,7 +3,7 @@ import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 
-export default function useFetchWooPaymentsData( isEnabled: boolean ) {
+export default function useFetchWooPaymentsData( autoRefresh: boolean, isEnabled: boolean ) {
 	const agencyId = useSelector( getActiveAgencyId );
 
 	return useQuery( {
@@ -16,5 +16,6 @@ export default function useFetchWooPaymentsData( isEnabled: boolean ) {
 		enabled: !! agencyId && isEnabled,
 		refetchOnWindowFocus: true,
 		staleTime: 0,
+		refetchInterval: autoRefresh ? 1000 * 10 : undefined,
 	} );
 }
