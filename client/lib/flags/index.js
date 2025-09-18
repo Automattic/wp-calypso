@@ -5,7 +5,7 @@
  */
 export function flagUrl( countryCode ) {
 	try {
-		const x = require( `flag-icon-css/flags/4x3/${ countryCode }.svg` );
+		const x = require( `flag-icons/flags/4x3/${ countryCode }.svg` );
 		if ( x.default ) {
 			return x.default;
 		}

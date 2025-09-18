@@ -122,6 +122,10 @@ export const ecommerceFlowRecurTypes = {
 	'3Y': '3Y',
 };
 
+export const isFreeFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ FREE_FLOW ].includes( flowName ) );
+};
+
 export const isDomainForGravatarFlow = ( flowName: string | null | undefined ) => {
 	return Boolean( flowName && [ DOMAIN_FOR_GRAVATAR_FLOW ].includes( flowName ) );
 };
