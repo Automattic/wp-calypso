@@ -1,4 +1,6 @@
 import { CodeDeploymentData } from '@automattic/api-core';
+import { codeDeploymentDeleteMutation, codeDeploymentsQuery } from '@automattic/api-queries';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -14,18 +16,39 @@ import { useState } from 'react';
 
 interface DisconnectRepositoryModalProps {
 	deployment: CodeDeploymentData;
-	onDisconnect: () => void;
 	onClose: () => void;
-	isDisconnecting: boolean;
 }
 
 export function DisconnectRepositoryModal( {
 	deployment,
-	onDisconnect,
 	onClose,
-	isDisconnecting,
 }: DisconnectRepositoryModalProps ) {
+	const queryClient = useQueryClient();
 	const [ removeFilesChecked, setRemoveFilesChecked ] = useState( false );
+
+	const { mutate: deleteDeployment, isPending: isDisconnecting } = useMutation( {
+		...codeDeploymentDeleteMutation( deployment?.blog_id, deployment?.id ),
+		meta: {
+			snackbar: {
+				success: __( 'Repository disconnected.' ),
+				error: __( 'Failed to disconnect repository.' ),
+			},
+		},
+	} );
+
+	const handleDisconnect = () => {
+		deleteDeployment( removeFilesChecked, {
+			onSuccess: async () => {
+				await queryClient.invalidateQueries( codeDeploymentsQuery( deployment.blog_id ) );
+				onClose();
+			},
+		} );
+	};
+
+	if ( ! deployment ) {
+		return null;
+	}
+
 	return (
 		<Modal title={ __( 'Disconnect repository' ) } onRequestClose={ onClose } size="medium">
 			<VStack spacing={ 4 }>
@@ -67,8 +90,8 @@ export function DisconnectRepositoryModal( {
 					<Button
 						variant="primary"
 						isDestructive
-						onClick={ onDisconnect }
-						disabled={ isDisconnecting }
+						onClick={ handleDisconnect }
+						isBusy={ isDisconnecting }
 						__next40pxDefaultSize
 					>
 						{ __( 'Disconnect repository' ) }

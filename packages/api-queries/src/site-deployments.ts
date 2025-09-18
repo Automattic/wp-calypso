@@ -17,11 +17,8 @@ export const codeDeploymentRunsQuery = ( siteId: number, deploymentId: number ) 
 		queryFn: () => fetchCodeDeploymentRuns( siteId, deploymentId ),
 	} );
 
-export const codeDeploymentDeleteMutation = (
-	siteId: number,
-	deploymentId: number,
-	removeFiles: boolean
-) =>
+export const codeDeploymentDeleteMutation = ( siteId: number, deploymentId: number ) =>
 	mutationOptions( {
-		mutationFn: () => deleteCodeDeployment( siteId, deploymentId, removeFiles ),
+		mutationFn: ( removeFiles: boolean ) =>
+			deleteCodeDeployment( siteId, deploymentId, removeFiles ),
 	} );
