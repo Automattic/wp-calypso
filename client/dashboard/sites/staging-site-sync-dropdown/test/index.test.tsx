@@ -2,7 +2,8 @@
  * @jest-environment jsdom
  */
 
-import { screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { render } from '../../../test-utils';
 import StagingSiteSyncDropdown from '../index';
 import type { Site } from '@automattic/api-core';
@@ -155,7 +156,8 @@ describe( 'StagingSiteSyncDropdown', () => {
 				expect( getDropdownButton() ).toBeInTheDocument();
 			} );
 
-			fireEvent.click( getDropdownButton() );
+			const user = userEvent.setup();
+			await user.click( getDropdownButton() );
 
 			await waitFor( () => {
 				expect( getMenuItem( 'Pull from Staging' ) ).toBeInTheDocument();
@@ -172,7 +174,8 @@ describe( 'StagingSiteSyncDropdown', () => {
 				expect( getDropdownButton() ).toBeInTheDocument();
 			} );
 
-			fireEvent.click( getDropdownButton() );
+			const user = userEvent.setup();
+			await user.click( getDropdownButton() );
 
 			await waitFor( () => {
 				expect( getMenuItem( 'Pull from Production' ) ).toBeInTheDocument();
