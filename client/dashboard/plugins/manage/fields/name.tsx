@@ -1,7 +1,7 @@
-import Gridicon from '@automattic/components/src/gridicon';
 import { Link } from '@tanstack/react-router';
-import { __experimentalHStack as HStack } from '@wordpress/components';
+import { __experimentalHStack as HStack, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { plugins } from '@wordpress/icons';
 import clsx from 'clsx';
 import { pluginRoute } from '../../../app/router/plugins';
 import type { PluginListRow } from '../types';
@@ -31,9 +31,7 @@ export const nameField: Field< PluginListRow > = {
 				/>
 			);
 		} else {
-			icon = (
-				<Gridicon icon="plugins" size={ FALLBACK_ICON_SIZE } className="plugin-icon-fallback" />
-			);
+			icon = <Icon icon={ plugins } size={ FALLBACK_ICON_SIZE } className="plugin-icon-fallback" />;
 		}
 
 		return (
@@ -41,7 +39,6 @@ export const nameField: Field< PluginListRow > = {
 				<div className={ clsx( 'plugin-icon-wrapper', { 'is-fallback': ! item.icons } ) }>
 					{ icon }
 				</div>
-
 				<Link to={ pluginRoute.to } params={ { pluginId: item.slug } }>
 					{ field.getValue( { item } ) }
 				</Link>
