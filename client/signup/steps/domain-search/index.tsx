@@ -85,7 +85,7 @@ const DomainSearchUI = ( props: StepProps & { locale: string } ) => {
 				forceRegularPrice: isMonthlyOrFreeFlow( flowName ),
 			},
 			allowedTlds,
-			skippable: isDomainOnlyFlow,
+			skippable: ! isDomainOnlyFlow && ! isDomainForGravatarFlow( flowName ),
 			allowsUsingOwnDomain:
 				! isDomainForGravatarFlow( flowName ) &&
 				! isDomainOnlyFlow &&

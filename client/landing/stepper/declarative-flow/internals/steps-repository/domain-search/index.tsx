@@ -77,7 +77,10 @@ const DomainSearchStep: StepType< {
 				oneTimePrice: isHundredYearDomainFlow( flow ),
 			},
 			includeDotBlogSubdomain: isNewsletterFlow( flow ),
-			skippable: isNewsletterFlow( flow ) || isOnboardingFlow( flow ),
+			skippable:
+				! isHundredYearPlanFlow( flow ) &&
+				! isHundredYearDomainFlow( flow ) &&
+				! isDomainFlow( flow ),
 			allowedTlds,
 			allowsUsingOwnDomain:
 				! isDomainFlow( flow ) &&
