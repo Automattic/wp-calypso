@@ -15,7 +15,7 @@ type DomainSearchProps = Omit< ComponentProps< typeof DomainSearch >, 'cart' | '
 
 const SESSION_STORAGE_QUERY_KEY = 'domain-search-query';
 
-const getInitialQuery = () => {
+const getSessionStorageQuery = () => {
 	try {
 		return sessionStorage.getItem( SESSION_STORAGE_QUERY_KEY ) ?? '';
 	} catch {
@@ -23,7 +23,7 @@ const getInitialQuery = () => {
 	}
 };
 
-const setInitialQuery = ( query: string ) => {
+const setSessionStorageQuery = ( query: string ) => {
 	sessionStorage.setItem( SESSION_STORAGE_QUERY_KEY, query );
 };
 
@@ -45,7 +45,15 @@ const DomainSearchWithCart = ( {
 	} );
 
 	const initialQuery = useMemo( () => {
-		return externalInitialQuery || currentSiteUrl || getInitialQuery();
+		if ( externalInitialQuery ) {
+			return externalInitialQuery;
+		}
+
+		if ( currentSiteUrl ) {
+			return new URL( currentSiteUrl ).host.replace( /\.(wordpress|wpcomstaging)\.com$/, '' );
+		}
+
+		return getSessionStorageQuery();
 	}, [ externalInitialQuery, currentSiteUrl ] );
 
 	const cartItemsLength = cart.items.length;
@@ -65,7 +73,7 @@ const DomainSearchWithCart = ( {
 		return {
 			...props.events,
 			onQueryChange: ( query: string ) => {
-				setInitialQuery( query );
+				setSessionStorageQuery( query );
 			},
 			onContinue: () => {
 				props.events?.onContinue?.( items );
