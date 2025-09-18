@@ -1,5 +1,5 @@
 import { siteMetricsQuery } from '@automattic/api-queries';
-import { DataPointPercentage, PieChart } from '@automattic/charts';
+import { DataPointPercentage, PieChart, Legend } from '@automattic/charts';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -18,6 +18,8 @@ type SiteRequestMethodsData = {
 	data: object[];
 	isLoading: boolean;
 };
+
+const chartColors = [ '#3858E9', '#5BA300', '#F57600', '#B51963' ];
 
 function useSiteRequestMethodsData( siteId: number, timeRange: number ): SiteRequestMethodsData {
 	const { start, end } = useMemo( () => convertTimeRangeToUnix( timeRange ), [ timeRange ] );
@@ -45,17 +47,27 @@ function useSiteRequestMethodsData( siteId: number, timeRange: number ): SiteReq
 		} );
 
 		const sum = Object.values( methodsMap ).reduce( ( acc, curr ) => acc + curr, 0 );
+		const chartColorsCopy = [ ...chartColors ];
 
 		return Object.entries( methodsMap ).map( ( [ method, value ] ) => ( {
 			label: method.toUpperCase(),
 			value: Math.round( value * 100 ) / 100,
 			percentage: Math.round( ( value * 100 ) / sum ),
+			color: chartColorsCopy.shift() || '#000000',
 		} ) );
 	};
 
 	return {
 		data: formatData( requestMethodsData ),
 		isLoading,
+	};
+}
+
+function mapDataForLegend( item: DataPointPercentage ) {
+	return {
+		label: item.label,
+		value: item.percentage + '%',
+		color: item.color,
 	};
 }
 
@@ -77,16 +89,13 @@ export default function MonitoringRequestMethodsCard( {
 			isLoading={ isLoading }
 			className="dashboard-monitoring-card--row-layout"
 		>
+			<Legend chartId="request-methods-chart" items={ data.map( mapDataForLegend ) } />
 			<PieChart
+				chartId="request-methods-chart"
 				thickness={ 0.3 }
 				gapScale={ 0.02 }
 				className="dashboard-monitoring-card__donut-chart"
 				data={ data }
-				legendAlignmentVertical="top"
-				legendOrientation="horizontal"
-				legendAlignmentHorizontal="left"
-				showLegend
-				withLegendGlyph
 			/>
 		</MonitoringCard>
 	);
