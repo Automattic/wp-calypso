@@ -1,3 +1,5 @@
+import { userLoginPreferencesMutation } from '@automattic/api-queries';
+import { useMutation } from '@tanstack/react-query';
 import {
 	Card,
 	CardBody,
@@ -12,15 +14,12 @@ import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { SectionHeader } from '../../components/section-header';
-import {
-	LandingPage,
-	useLoginPreferences,
-	useUpdateLoginPreferences,
-	type LoginPreferencesData,
-} from './query';
+import { LandingPage, useLoginPreferences } from './query';
 import PreferencesLoginSiteDropdown from './site-dropdown';
+import type { UserLoginPreferencesMutationProps } from '@automattic/api-queries';
 
-type LoginPreferencesFormData = LoginPreferencesData;
+type LoginPreferencesFormData = UserLoginPreferencesMutationProps;
+type LandingPage = 'primary-site-dashboard' | 'sites' | 'reader';
 
 export default function PreferencesLogin() {
 	// Fetch login preferences and sites using combined hook
@@ -29,6 +28,7 @@ export default function PreferencesLogin() {
 		sites = [],
 		isLoading: isLoadingPreferences,
 	} = useLoginPreferences();
+	const mutation = useMutation( userLoginPreferencesMutation() );
 
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
@@ -38,16 +38,13 @@ export default function PreferencesLogin() {
 		defaultLandingPage: loginPreferences.defaultLandingPage || 'primary-site-dashboard',
 	} ) );
 
-	// Update preferences using combined hook
-	const updatePreferences = useUpdateLoginPreferences();
-
 	// Check if form has been modified
 	const isDirty = Boolean(
 		loginPreferences.primarySiteId !== formData.primarySiteId ||
 			loginPreferences.defaultLandingPage !== formData.defaultLandingPage
 	);
 
-	const isBusy = updatePreferences.isPending || isLoadingPreferences;
+	const isBusy = mutation.isPending || isLoadingPreferences;
 
 	// Define form fields
 	const fields: Field< LoginPreferencesFormData >[] = [
@@ -99,16 +96,24 @@ export default function PreferencesLogin() {
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		updatePreferences.mutate( formData, {
-			onSuccess: () => {
-				createSuccessNotice( __( 'Login preferences saved successfully.' ), { type: 'snackbar' } );
+		mutation.mutate(
+			{
+				primarySiteId: formData.primarySiteId,
+				defaultLandingPage: formData.defaultLandingPage,
 			},
-			onError: () => {
-				createErrorNotice( __( 'Failed to save login preferences. Please try again.' ), {
-					type: 'snackbar',
-				} );
-			},
-		} );
+			{
+				onSuccess: () => {
+					createSuccessNotice( __( 'Login preferences saved successfully.' ), {
+						type: 'snackbar',
+					} );
+				},
+				onError: () => {
+					createErrorNotice( __( 'Failed to save login preferences. Please try again.' ), {
+						type: 'snackbar',
+					} );
+				},
+			}
+		);
 	};
 
 	return (
