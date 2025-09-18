@@ -1,0 +1,100 @@
+@import '@wordpress/base-styles/variables';
+
+.odie-attachment-preview {
+	display: flex;
+	gap: 6px;
+	position: relative;
+	box-sizing: border-box;
+	width: 128px;
+	padding: 6px;
+	background-color: $gray-100;
+	align-items: center;
+	border-radius: 4px;
+	flex-shrink: 0;
+
+	&.is-attaching-file {
+		background: linear-gradient(
+			90deg,
+			color-mix( in srgb, $gray-100 20%, $gray-400 ),
+			$gray-100,
+			color-mix( in srgb, $gray-100 20%, $gray-400 )
+		);
+		background-size: 200% 100%;
+		animation: shimmer 2000ms infinite linear 0ms;
+	}
+
+	@keyframes shimmer {
+		0% {
+			background-position: 0 0;
+		}
+		50% {
+			opacity: 0.5;
+		}
+		100% {
+			background-position: 200% 0;
+		}
+	}
+
+	.odie-attachment-preview-cancel {
+		$width: 18px;
+		$height: 10px;
+		position: absolute;
+		height: $height;
+		width: $width;
+		top: -$height / 2;
+		right: -$width / 2;
+		margin: 0;
+		padding: 0;
+
+		&:not( :hover ) {
+			svg {
+				fill: $gray-700;
+			}
+		}
+	}
+
+	.odie-attachment-preview-name,
+	.odie-attachment-preview-file-type {
+		margin: 2px;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		white-space: nowrap;
+		max-width: 68px;
+	}
+
+	.odie-attachment-preview-name {
+		font-size: 12px;
+		line-height: 16px;
+		font-weight: 500;
+		color: $gray-900;
+		text-align: left;
+	}
+
+	.odie-attachment-preview-file-type {
+		font-size: 12px;
+		line-height: 16px;
+		font-weight: 400;
+		color: $gray-700;
+		text-align: left;
+	}
+
+	img {
+		width: 40px;
+		height: 40px;
+		object-fit: cover;
+		border-radius: 4px;
+	}
+
+	.odie-attachment-send-button {
+		border-radius: 50%;
+		box-sizing: border-box;
+	}
+}
+
+.odie-attachment-previews {
+	display: flex;
+	overflow-x: auto;
+	padding: 8px;
+	gap: 6px;
+	box-sizing: content-box;
+}

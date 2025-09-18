@@ -1,38 +1,51 @@
-@import "variables";
+@import 'variables';
+
+.help-center-support-chat__conversation-sub-information {
+	color: var( --studio-gray-50, #646970 );
+	display: flex;
+	font-size: 0.75rem;
+	align-items: center;
+	gap: 4px;
+
+	.help-center-support-chat__conversation-information-name {
+		text-overflow: ellipsis;
+		overflow: hidden;
+		line-clamp: 1;
+	}
+
+	.help-center-support-chat__conversation-information-time {
+		flex: 0 0 auto;
+	}
+}
 
 .help-center-support-chat__conversation-container {
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
-
 	background-color: transparent;
 	padding: 16px;
-	gap: 6px;
-	max-height: 72px;
+	gap: 8px;
 	align-items: center;
 	border-bottom: 1px solid;
-	border-color: rgba(0, 0, 0, 0.1);
+	border-color: rgba( 0, 0, 0, 0.1 );
 	text-decoration: none;
 
 	&:hover {
 		border-bottom: 1px solid;
-		border-color: rgba(0, 0, 0, 0.2) !important;
-
-		.help-center-support-chat__open-conversation {
-			fill: $help-center-blue;
-		}
+		border-color: rgba( 0, 0, 0, 0.2 ) !important;
 	}
 
 	&.is-unread-message {
-		background-color: #EBF2FC;
+		background-color: #ebf2fc;
 		.help-center-support-chat__open-conversation {
 			fill: $help-center-blue;
 		}
 	}
 
-	&:not(.is-unread-message) {
-		&.is-closed, &.is-solved {
-			background-color: var(--studio-gray-0);
+	&:not( .is-unread-message ) {
+		&.is-closed,
+		&.is-solved {
+			background-color: var( --studio-gray-0 );
 		}
 	}
 
@@ -44,6 +57,13 @@
 		align-self: center;
 		flex-shrink: 0;
 		position: relative;
+
+		.wordpress-logo {
+			border-radius: 50%;
+			padding: 10px;
+			background-color: #3858e9;
+			margin:0;
+		}
 
 		img {
 			border-radius: 50%;
@@ -57,18 +77,18 @@
 			position: absolute;
 			top: 50%;
 			right: -0%;
-			transform: translate(50%, -50%);
+			transform: translate( 50%, -50% );
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			border: 2px solid #FFF;
+			border: 2px solid #fff;
 			border-radius: 12px; /* stylelint-disable-line scales/radii */
 			box-sizing: border-box;
 			min-width: 26px;
 			height: 20px;
 			font-size: 12px;
 			background-color: $help-center-blue;
-			color: #FFF;
+			color: #fff;
 		}
 	}
 
@@ -80,7 +100,7 @@
 
 		.help-center-support-chat__conversation-information-message {
 			display: -webkit-box;
-			color: #101517;
+			color: #000;
 			font-weight: 500;
 			font-size: 0.875rem;
 			line-height: 20px;
@@ -91,41 +111,24 @@
 			-webkit-line-clamp: 1;
 			-webkit-box-orient: vertical;
 		}
-
-		.help-center-support-chat__conversation-sub-information {
-			display: flex;
-			color: #787C82;
-			font-weight: 400;
-			font-size: 0.75rem;
-			line-height: 20px;
-			align-items: center;
-			gap: 4px;
-
-			.help-center-support-chat__conversation-information-name {
-				text-overflow: ellipsis;
-				display: -webkit-box;
-				overflow: hidden;
-				line-clamp: 1;
-				-webkit-line-clamp: 1;
-				-webkit-box-orient: vertical;
-			}
-
-			.help-center-support-chat__conversation-information-time {
-				flex: 0 0 auto;
-			}
-		}
 	}
 
 	.help-center-support-chat__open-conversation {
 		display: flex;
 		align-items: center;
-		fill: #787C82;
+	}
+
+	&:last-child {
+		// Make the last chat above the `.help-center-footer-blender`.
+		position: relative;
+		z-index: 1;
 	}
 }
+
 .help-center-chat-history__no-results {
 	display: flex;
 	flex-direction: row;
 	justify-content: center;
-	border-top: solid 1px #C3C4C7;
+	border-top: solid 1px #c3c4c7;
 	padding-top: 20px;
 }

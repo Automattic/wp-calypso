@@ -25,6 +25,7 @@ function DomainSearchStep( props: StepProps & { locale: string } ) {
 		queryObject,
 	} = props;
 
+	const isDomainOnlyFlow = flowName === 'domain';
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const locale = ! isLoggedIn ? externalLocale : '';
 
@@ -37,9 +38,9 @@ function DomainSearchStep( props: StepProps & { locale: string } ) {
 					isPurchasingItem: true,
 					siteUrl: domainItem.meta,
 					stepSectionName: stepSectionName,
-					domainCart: {},
+					domainCart: [],
 				},
-				{ domainItem, siteUrl: domainItem.meta, domainCart: {} }
+				{ domainItem, siteUrl: domainItem.meta, domainCart: [] }
 			);
 
 			goToNextStep();
@@ -47,8 +48,8 @@ function DomainSearchStep( props: StepProps & { locale: string } ) {
 
 		const handleSkip = () => {
 			submitSignupStep(
-				{ stepName, suggestion: undefined, domainCart: {}, siteUrl: '' },
-				{ suggestion: undefined, domainCart: {}, siteUrl: '' }
+				{ stepName, suggestion: undefined, isPurchasingItem: false, domainCart: [], siteUrl: '' },
+				{ suggestion: undefined, domainCart: [], siteUrl: '' }
 			);
 
 			goToNextStep();
@@ -86,17 +87,51 @@ function DomainSearchStep( props: StepProps & { locale: string } ) {
 								} )
 							);
 						},
+						onContinue( domainCart ) {
+							const domainItem = domainCart[ 0 ];
+
+							submitSignupStep(
+								{
+									stepName,
+									domainItem,
+									isPurchasingItem: true,
+									siteUrl: domainItem.meta,
+									stepSectionName: '',
+									domainCart,
+								},
+								{ domainItem, siteUrl: domainItem.meta, domainCart }
+							);
+
+							goToNextStep();
+						},
+						onSkip( suggestion ) {
+							const siteUrl = suggestion?.domain_name.replace( '.wordpress.com', '' );
+
+							submitSignupStep(
+								{
+									stepName,
+									domainItem: undefined,
+									isPurchasingItem: false,
+									domainCart: [],
+									siteUrl,
+								},
+								{ domainCart: [], siteUrl }
+							);
+
+							goToNextStep();
+						},
 					} }
 					config={ {
 						vendor: getSuggestionsVendor( {
 							isSignup: true,
-							isDomainOnly: flowName === 'domain',
+							isDomainOnly: isDomainOnlyFlow,
 							flowName: flowName,
 						} ),
 						priceRules: {
 							forceRegularPrice: isMonthlyOrFreeFlow( flowName ),
 						},
 						allowedTlds,
+						skippable: isDomainOnlyFlow,
 					} }
 				/>
 			}

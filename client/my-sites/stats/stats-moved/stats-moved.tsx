@@ -9,6 +9,7 @@ import Main from 'calypso/my-sites/stats/components/stats-main';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import './styles.scss';
 import imageAr from './images/menu-ar.png';
 import imageDe from './images/menu-de.png';
 import imageEn from './images/menu-en.png';
