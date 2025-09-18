@@ -98,21 +98,20 @@ object CalypsoE2ETestsBuildTemplate : Template({
 			name = "Determine test group"
 			id = "determine_test_group"
 			scriptContent = """
-				// todo pseudocode:
-				// Check if IGNORE_TEST_GROUP_FOR_E2E_CHANGES param is "true"
-				// If true, run the code that checks for changes in test/e2e or packages/calypso-e2e files
-				// if changes are detected set the TEST_GROUP to empty string
-				// if no changes are detected leave the TEST_GROUP as is
-				// Don't use GREP_FLAG here, use a different variable name to avoid confusion
+				# Check if IGNORE_TEST_GROUP_FOR_E2E_CHANGES param is "true"
+				if [[ "%IGNORE_TEST_GROUP_FOR_E2E_CHANGES%" == "true" ]]; then
+					echo "IGNORE_TEST_GROUP_FOR_E2E_CHANGES is true, checking for E2E changes..."
 
-				# Check if test/e2e or packages/calypso-e2e files have been changed
-				CHANGED_FILES=${'$'}(git diff --name-only refs/remotes/origin/trunk...HEAD)
-				if echo "${'$'}CHANGED_FILES" | grep -q -E "^(test/e2e/|packages/calypso-e2e/)"; then
-					echo "Changes detected in test/e2e/ or packages/calypso-e2e/, running all tests"
-					GREP_FLAG=""
+					# Check if test/e2e or packages/calypso-e2e files have been changed
+					CHANGED_FILES=${'$'}(git diff --name-only refs/remotes/origin/trunk...HEAD)
+					if echo "${'$'}CHANGED_FILES" | grep -q -E "^(test/e2e/|packages/calypso-e2e/)"; then
+						echo "Changes detected in test/e2e/ or packages/calypso-e2e/, clearing TEST_GROUP"
+						echo "##teamcity[setParameter name='TEST_GROUP' value='']"
+					else
+						echo "No changes in test/e2e/ or packages/calypso-e2e/, keeping TEST_GROUP as is"
+					fi
 				else
-					echo "No changes in test/e2e/ or packages/calypso-e2e/, running @calypso-pr tests only"
-					GREP_FLAG="--grep=@calypso-pr"
+					echo "IGNORE_TEST_GROUP_FOR_E2E_CHANGES is false, keeping TEST_GROUP as is"
 				fi
 				"""
 			dockerImage = "%docker_image_e2e%"
@@ -123,10 +122,14 @@ object CalypsoE2ETestsBuildTemplate : Template({
 			id = "run_tests"
 			scriptContent = """
 
-				// todo pseudocode:
-				// Check TEST_GROUP param
-				// If set, set the GREP_FLAG to --grep=TEST_GROUP
-				// If not set, set the GREP_FLAG to empty string
+				# Check TEST_GROUP param
+				if [[ -n "%TEST_GROUP%" ]]; then
+					echo "TEST_GROUP is set to: %TEST_GROUP%"
+					GREP_FLAG="--grep=%TEST_GROUP%"
+				else
+					echo "TEST_GROUP is not set, running all tests"
+					GREP_FLAG=""
+				fi
 
 				cd test/e2e
 				echo "CALYPSO_BASE_URL=%CALYPSO_BASE_URL%"
