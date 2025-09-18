@@ -17,22 +17,13 @@ export const nameField: Field< PluginListRow > = {
 	enableSorting: true,
 	getValue: ( { item } ) => item.name,
 	render: ( { item, field } ) => {
-		let icon;
+		const src = typeof item.icons === 'string' ? item.icons : item.icons?.[ '1x' ];
 
-		if ( typeof item.icons === 'string' ) {
-			icon = <img src={ item.icons } alt={ item.name } width={ ICON_SIZE } height={ ICON_SIZE } />;
-		} else if ( item.icons?.[ '1x' ] ) {
-			icon = (
-				<img
-					src={ item.icons[ '1x' ] }
-					alt={ item.name }
-					width={ ICON_SIZE }
-					height={ ICON_SIZE }
-				/>
-			);
-		} else {
-			icon = <Icon icon={ plugins } size={ FALLBACK_ICON_SIZE } className="plugin-icon-fallback" />;
-		}
+		const icon = src ? (
+			<img src={ src } alt={ item.name } width={ ICON_SIZE } height={ ICON_SIZE } />
+		) : (
+			<Icon icon={ plugins } size={ FALLBACK_ICON_SIZE } className="plugin-icon-fallback" />
+		);
 
 		return (
 			<HStack spacing={ 2 } justify="flex-start">
