@@ -18,7 +18,6 @@ import FormButton from 'calypso/components/forms/form-button';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
-import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import { saveUserSettings } from 'calypso/state/user-settings/actions';
@@ -138,7 +137,7 @@ function McpComponent( { path, userSettings, isUpdating } ) {
 		// Type descriptions
 		const typeDescriptions = {
 			tool: translate(
-				'Tools allow AI assistants to perform actions on your behalf, such as creating posts or managing site settings.'
+				'Tools allow AI assistants to read and search your WordPress.com data. These are view-only capabilities that cannot modify your content or settings.'
 			),
 			resource: translate(
 				'Resources provide AI assistants with read-only access to your data, such as site statistics or user information.'
@@ -157,16 +156,20 @@ function McpComponent( { path, userSettings, isUpdating } ) {
 
 		return (
 			<form onSubmit={ handleSubmit }>
-				<SectionHeader label={ translate( 'Account-level MCP tools' ) } />
 				<Card style={ { borderRadius: '0' } }>
+					<CardHeader size="small">
+						<VStack spacing={ 2 }>
+							<Text as="h1">{ translate( 'Account-level MCP tools' ) }</Text>
+							<Text as="p" variant="muted">
+								{ translate(
+									'These tools are available across all your sites. You can enable or disable them here to control access globally.'
+								) }
+							</Text>
+						</VStack>
+					</CardHeader>
 					<CardBody>
 						{ hasTools ? (
 							<VStack spacing={ 3 }>
-								<Text as="p" variant="muted">
-									{ translate(
-										'These tools are available across all your sites. You can enable or disable them here to control access globally.'
-									) }
-								</Text>
 								<div
 									style={ {
 										display: 'flex',

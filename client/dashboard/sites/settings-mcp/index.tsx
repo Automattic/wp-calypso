@@ -148,7 +148,7 @@ function SettingsMcpComponent( { siteSlug }: { siteSlug: string } ) {
 	// Type descriptions
 	const typeDescriptions: Record< string, string > = {
 		tool: __(
-			'Tools allow AI assistants to perform actions on your behalf, such as creating posts or managing site settings.'
+			'Tools allow AI assistants to read and search your WordPress.com data. These are view-only capabilities that cannot modify your content or settings.'
 		),
 		resource: __(
 			'Resources provide AI assistants with read-only access to your data, such as site statistics or user information.'
