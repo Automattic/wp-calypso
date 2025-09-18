@@ -12,6 +12,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { trash } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import useIntlCollator from '../../app/hooks/use-intl-collator';
 import ConfirmModal from '../../components/confirm-modal';
 import { DataViewsCard } from '../../components/dataviews-card';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -28,6 +29,8 @@ export default function SecurityConnectedApps() {
 		connectedApplicationsQuery()
 	);
 
+	const intlCollator = useIntlCollator();
+
 	const [ selectedApplicationToRemove, setSelectedApplicationToRemove ] =
 		useState< ConnectedApplication | null >( null );
 	const [ selectedApplicationToView, setSelectedApplicationToView ] =
@@ -43,7 +46,7 @@ export default function SecurityConnectedApps() {
 					createSuccessNotice(
 						sprintf(
 							/* translators: %s is the name of the application */
-							'The application %s no longer has access to your WordPress.com account.',
+							__( 'The application %s no longer has access to your WordPress.com account.' ),
 							selectedApplicationToRemove.title
 						),
 						{
@@ -64,6 +67,11 @@ export default function SecurityConnectedApps() {
 	};
 
 	const totalItems = connectedApplications.length;
+
+	// Sort applications alphabetically by title using the intlCollator
+	const sortedConnectedApplications = connectedApplications.sort( ( a, b ) => {
+		return intlCollator.compare( a.title, b.title );
+	} );
 
 	const fields =
 		totalItems > 0
@@ -147,7 +155,7 @@ export default function SecurityConnectedApps() {
 			<DataViewsCard>
 				<DataViews< ConnectedApplication >
 					getItemId={ ( item ) => item.ID }
-					data={ connectedApplications }
+					data={ sortedConnectedApplications }
 					fields={ totalItems > 0 ? fields : [] }
 					actions={ actions }
 					view={ view }
