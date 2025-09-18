@@ -8,7 +8,16 @@ import { formatCurrency } from '@automattic/number-formatters';
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate, useRouter } from '@tanstack/react-router';
-import { Card, Button, Notice } from '@wordpress/components';
+import {
+	__experimentalVStack as VStack,
+	__experimentalHStack as HStack,
+	__experimentalSpacer as Spacer,
+	Card,
+	CardHeader,
+	Button,
+	Notice,
+	CardBody,
+} from '@wordpress/components';
 import { __, isRTL, sprintf } from '@wordpress/i18n';
 import { Icon, globe, chevronRight, chevronLeft } from '@wordpress/icons';
 import { formatDate } from 'date-fns';
@@ -26,13 +35,18 @@ import type { MembershipSubscription } from '@automattic/api-core';
 
 function MembershipSiteHeader( { name, domain }: { name: string; domain: string } ) {
 	return (
-		<Card>
-			<Icon icon={ globe } />
-			<div>
-				<div>{ name }</div>
-				<div>{ domain }</div>
-			</div>
-		</Card>
+		<CardHeader>
+			<HStack spacing={ 5 } alignment="left">
+				<VStack alignment="center">
+					<Icon icon={ globe } />
+				</VStack>
+				<VStack>
+					<b>{ name }</b>
+					<div>{ domain }</div>
+				</VStack>
+				<Spacer />
+			</HStack>
+		</CardHeader>
 	);
 }
 
@@ -211,73 +225,76 @@ export default function MonetizeSubscription() {
 			) }
 			{ isUpdating && <Notice status="info">{ __( 'Updating subscription auto-renew' ) }</Notice> }
 			{ subscription && (
-				<>
-					<Card className="memberships__subscription-meta">
-						<MembershipSiteHeader
-							name={ subscription.site_title }
-							domain={ subscription.site_url }
-						/>
-						<div className="memberships__subscription-header">
-							<div className="memberships__subscription-title">{ subscription.title }</div>
-							<div className="memberships__subscription-price">
-								{ formatCurrency(
-									parseFloat( subscription.renewal_price ),
-									subscription.currency
-								) }
-							</div>
-						</div>
-						<ul className="memberships__subscription-inner-meta">
-							<li>
-								<em className="memberships__subscription-inner-detail-label">
-									{ __( 'Renew interval' ) }
-								</em>
-								<span className="memberships__subscription-inner-detail">
-									{ subscription.renew_interval || '-' }
-								</span>
-							</li>
-							<li>
-								<em className="memberships__subscription-inner-detail-label">
-									{ __( 'Subscribed On' ) }
-								</em>
-								<span className="memberships__subscription-inner-detail">
-									{ formatDate( subscription.start_date, 'MMM dd, yyyy' ) }
-								</span>
-							</li>
-							<li>
-								<em className="memberships__subscription-inner-detail-label">
-									{ isDisabledAutorenewing ? __( 'Expires on' ) : __( 'Renews on' ) }
-								</em>
-								<div className="memberships__subscription-inner-detail">
-									{ subscription.end_date
-										? formatDate( subscription.end_date, 'MMM dd, yyyy' )
-										: __( 'Never Expires' ) }
-								</div>
+				<Card>
+					<MembershipSiteHeader name={ subscription.site_title } domain={ subscription.site_url } />
+
+					<CardHeader>
+						<HStack alignment="center">
+							<VStack>
+								<HStack alignment="center">
+									<h3>{ subscription.title }</h3>
+									<b>
+										{ formatCurrency(
+											parseFloat( subscription.renewal_price ),
+											subscription.currency
+										) }
+									</b>
+								</HStack>
+
 								{ ! isProduct && (
-									<div className="memberships__subscription-inner-detail">
+									<center>
 										{ subscription.renew_interval
 											? __( 'Auto-renew is ON' )
 											: __( 'Auto-renew is OFF' ) }
-									</div>
+									</center>
 								) }
-							</li>
-						</ul>
-					</Card>
-					{ isRenewable && (
-						<AutoRenewButton
-							subscription={ subscription }
-							isAutoRenewing={ isAutoRenewing }
-							isUpdating={ isUpdating }
-							disableAutoRenew={ disableAutoRenew }
-							enableAutoRenew={ enableAutoRenew }
-						/>
-					) }
+							</VStack>
+						</HStack>
+					</CardHeader>
 
-					<StopSubscriptionButton
-						subscription={ subscription }
-						stopSubscription={ stopSubscription }
-						isProduct={ isProduct }
-					/>
-				</>
+					<CardBody>
+						<HStack>
+							<Card>
+								<CardHeader>{ __( 'Renew interval' ) }</CardHeader>
+								<CardBody>
+									<HStack alignment="center">{ subscription.renew_interval || '-' }</HStack>
+								</CardBody>
+							</Card>
+							<Card>
+								<CardHeader>{ __( 'Subscribed On' ) }</CardHeader>
+								<CardBody>{ formatDate( subscription.start_date, 'MMM dd, yyyy' ) }</CardBody>
+							</Card>
+							<Card>
+								<CardHeader>
+									{ isDisabledAutorenewing ? __( 'Expires on' ) : __( 'Renews on' ) }
+								</CardHeader>
+
+								<CardBody>
+									{ subscription.end_date
+										? formatDate( subscription.end_date, 'MMM dd, yyyy' )
+										: __( 'Never Expires' ) }
+								</CardBody>
+							</Card>
+						</HStack>
+					</CardBody>
+					<ActionList>
+						{ isRenewable && (
+							<AutoRenewButton
+								subscription={ subscription }
+								isAutoRenewing={ isAutoRenewing }
+								isUpdating={ isUpdating }
+								disableAutoRenew={ disableAutoRenew }
+								enableAutoRenew={ enableAutoRenew }
+							/>
+						) }
+
+						<StopSubscriptionButton
+							subscription={ subscription }
+							stopSubscription={ stopSubscription }
+							isProduct={ isProduct }
+						/>
+					</ActionList>
+				</Card>
 			) }
 		</PageLayout>
 	);
