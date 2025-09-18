@@ -7,7 +7,7 @@ import { Text } from '../../components/text';
 import MonitoringCard from '../monitoring-card';
 import type { PeriodData, TimeRange } from '../monitoring/types';
 import type { Site } from '@automattic/api-core';
-import type { DataPointDate, AxisOptions } from '@automattic/charts/dist/types/types';
+import type { DataPointDate } from '@automattic/charts/dist/types/types';
 
 function convertTimeRangeToUnix( timeRange: number ): TimeRange {
 	const start = Math.floor( new Date().getTime() / 1000 ) - timeRange * 3600;
@@ -111,7 +111,7 @@ export default function MonitoringPerformanceCard( {
 		},
 	];
 
-	const xAxisOptions: AxisOptions = {
+	const xAxisOptions = {
 		tickFormat: ( date: string ) => {
 			const d = new Date( date );
 
@@ -190,17 +190,26 @@ export default function MonitoringPerformanceCard( {
 				withLegendGlyph
 				renderGlyph={ ( glyphProps ) => getLegendIcon( glyphProps.key ) }
 				renderTooltip={ ( tooltipProps ) => {
-					const dateObj = new Date( tooltipProps.tooltipData.nearestDatum.datum.date );
-					const dateStr = dateObj.toLocaleDateString( 'en-US', {
-						weekday: 'short',
-						year: 'numeric',
-						month: 'short',
-						day: 'numeric',
-					} );
-					const timeStr = dateObj.toLocaleTimeString( 'en-US', {
-						hour12: false,
-						timeZoneName: 'short',
-					} );
+					if ( ! tooltipProps?.tooltipData?.nearestDatum?.datum?.date ) {
+						return null;
+					}
+
+					const dateStr = tooltipProps.tooltipData.nearestDatum.datum.date.toLocaleDateString(
+						'en-US',
+						{
+							weekday: 'short',
+							year: 'numeric',
+							month: 'short',
+							day: 'numeric',
+						}
+					);
+					const timeStr = tooltipProps.tooltipData.nearestDatum.datum.date.toLocaleTimeString(
+						'en-US',
+						{
+							hour12: false,
+							timeZoneName: 'short',
+						}
+					);
 					return (
 						<div className="dashboard-monitoring-card__line-chart--tooltip">
 							<Text isBlock weight="bold" size="larger">
