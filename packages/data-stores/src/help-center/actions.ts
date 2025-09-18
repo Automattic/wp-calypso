@@ -12,7 +12,6 @@ import type {
 	HelpCenterSelect,
 	HelpCenterShowOptions,
 } from './types';
-import type { SupportInteraction } from '@automattic/odie-client/src/types';
 import type { Location } from 'history';
 
 /**
@@ -53,13 +52,6 @@ export const saveOpenState = ( isShown: boolean | undefined, isMinimized: boolea
 		} as APIFetchOptions ).catch( () => {} );
 	}
 };
-
-export function setCurrentSupportInteraction( supportInteraction: SupportInteraction ) {
-	return {
-		type: 'HELP_CENTER_SET_CURRENT_SUPPORT_INTERACTION',
-		supportInteraction,
-	} as const;
-}
 
 export function setHelpCenterRouterHistory(
 	history: { entries: Location[]; index: number } | undefined
@@ -126,6 +118,13 @@ export const setZendeskConnectionStatus = (
 	( {
 		type: 'HELP_CENTER_SET_ZENDESK_CONNECTION_STATUS',
 		connectionStatus,
+	} ) as const;
+
+export const setSupportTypingStatus = ( conversationId: string, isTyping: false ) =>
+	( {
+		type: 'HELP_CENTER_SET_TYPING_STATUS',
+		conversationId,
+		isTyping,
 	} ) as const;
 
 export const setShowMessagingLauncher = ( show: boolean ) =>
@@ -296,11 +295,11 @@ export type HelpCenterAction =
 			| typeof setIsChatLoaded
 			| typeof setAreSoundNotificationsEnabled
 			| typeof setZendeskClientId
+			| typeof setSupportTypingStatus
 			| typeof setZendeskConnectionStatus
 			| typeof setNavigateToRoute
 			| typeof setOdieInitialPromptText
 			| typeof setOdieBotNameSlug
-			| typeof setCurrentSupportInteraction
 			| typeof setAllowPremiumSupport
 			| typeof setHelpCenterOptions
 	  >

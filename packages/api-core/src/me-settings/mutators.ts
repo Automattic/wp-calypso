@@ -29,6 +29,7 @@ export async function updateUserSettings(
 		'p2_disable_autofollow_on_comment',
 		'two_step_sms_country',
 		'two_step_sms_phone_number',
+		'mcp_abilities',
 	];
 	const payload = Object.fromEntries(
 		saveableKeys.filter( ( key ) => key in data ).map( ( key ) => [ key, data[ key ] ] )
