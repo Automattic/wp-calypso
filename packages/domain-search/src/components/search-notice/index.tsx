@@ -43,6 +43,22 @@ export const SearchNotice = () => {
 			return null;
 		}
 
+		// We don't want to show the availability notice for *.wpcomstaging.com subdomains and other managed subdomains,
+		// such as *.tech.blog, *.water.blog, etc.
+		if (
+			[
+				DomainAvailabilityStatus.WPCOM_STAGING_DOMAIN,
+				DomainAvailabilityStatus.DOTBLOG_SUBDOMAIN,
+			].includes( availability.status )
+		) {
+			return null;
+		}
+
+		// *.wordpress.com and *.wp.com subdomains have `mappable = restricted`, and we don't want to show the availability notice for them
+		if ( availability.mappable === DomainAvailabilityStatus.RESTRICTED ) {
+			return null;
+		}
+
 		let finalAvailability = availability;
 
 		const isDomainMapped = DomainAvailabilityStatus.MAPPED === availability.mappable;
