@@ -49,6 +49,11 @@ export interface SiteScan {
 	state: 'unavailable' | 'idle' | 'scanning' | 'provisioning';
 	threats: Threat[];
 	has_cloud: boolean;
+	current: {
+		is_initial: boolean;
+		timestamp: string;
+		progress: number;
+	};
 	most_recent: {
 		is_initial: boolean;
 		timestamp: string;
