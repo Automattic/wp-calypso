@@ -24,9 +24,33 @@
 	.dashboard-monitoring-card__header {
 		flex-grow: 1;
 	}
+}
 
-	.dashboard-monitoring-card__line-chart svg {
-		/* Ensure the chart numbers are not clipped. */
-		overflow: visible;
+.dashboard-monitoring-card__line-chart svg {
+	/* Ensure the chart numbers are not clipped. */
+	overflow: visible;
+}
+
+.dashboard-monitoring-card__line-chart--tooltip {
+	padding: 13px;
+	line-height: 16px;
+
+	.dashboard-monitoring-card__line-chart--tooltip-lines {
+		margin-top: 12px;
+
+		.dashboard-monitoring-card__line-chart--tooltip-lines--line {
+			display: flex;
+			padding: 3px 0;
+
+			svg {
+				margin-inline-end: 6px;
+			}
+
+			> :last-child {
+				padding-inline-start: 6px;
+				flex-grow: 1;
+				text-align: end;
+			}
+		}
 	}
 }

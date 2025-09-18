@@ -3,6 +3,7 @@ import { LineChart, SeriesData } from '@automattic/charts';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Text } from '../../components/text';
 import MonitoringCard from '../monitoring-card';
 import type { PeriodData, TimeRange } from '../monitoring/types';
 import type { Site } from '@automattic/api-core';
@@ -129,6 +130,37 @@ export default function MonitoringPerformanceCard( {
 		},
 	};
 
+	const getLegendIcon = ( key: string, isTooltip = false ) => {
+		const isLegendGlyph = key.startsWith( 'legend-glyph-' );
+		if ( isLegendGlyph ) {
+			key = key.replace( 'legend-glyph-', '' );
+		}
+
+		switch ( key ) {
+			case 'Requests per minute':
+				return (
+					<rect
+						width="6"
+						height="6"
+						transform={ ( isTooltip ? 'translate(4, 0) ' : 'translate(3, -1) ' ) + 'rotate(45)' }
+						fill="#3858E9"
+					/>
+				);
+			case 'Average response time (ms)':
+				return (
+					<circle
+						cx={ isLegendGlyph || isTooltip ? 4 : 0 }
+						cy={ isLegendGlyph || isTooltip ? 4 : 0 }
+						r="4"
+						fill="#5BA300"
+						strokeWidth="1.5"
+					/>
+				);
+		}
+
+		return null;
+	};
+
 	if ( timeRange > 72 ) {
 		xAxisOptions.numTicks = timeRange / 24;
 	} else if ( timeRange > 24 ) {
@@ -156,20 +188,44 @@ export default function MonitoringPerformanceCard( {
 				maxWidth={ 1400 }
 				showLegend
 				withLegendGlyph
-				renderGlyph={ ( glyphProps ) => {
-					switch ( glyphProps.key ) {
-						case 'legend-glyph-Requests per minute':
-						case 'Requests per minute':
-							return (
-								<rect width="8" height="8" transform="translate(3, -1) rotate(45)" fill="#3858E9" />
-							);
-						case 'Average response time (ms)':
-							return <circle r="4" fill="#5BA300" strokeWidth="1.5" />;
-						case 'legend-glyph-Average response time (ms)':
-							return <circle cx="4" cy="4" r="4" fill="#5BA300" strokeWidth="1.5" />;
-					}
+				renderGlyph={ ( glyphProps ) => getLegendIcon( glyphProps.key ) }
+				renderTooltip={ ( tooltipProps ) => {
+					const dateObj = new Date( tooltipProps.tooltipData.nearestDatum.datum.date );
+					const dateStr = dateObj.toLocaleDateString( 'en-US', {
+						weekday: 'short',
+						year: 'numeric',
+						month: 'short',
+						day: 'numeric',
+					} );
+					const timeStr = dateObj.toLocaleTimeString( 'en-US', {
+						hour12: false,
+						timeZoneName: 'short',
+					} );
+					return (
+						<div className="dashboard-monitoring-card__line-chart--tooltip">
+							<Text isBlock weight="bold" size="larger">
+								{ dateStr }
+							</Text>
+							<Text weight="normal">{ timeStr }</Text>
 
-					return <circle r="4" fill={ glyphProps.color } strokeWidth="1.5" />;
+							<div className="dashboard-monitoring-card__line-chart--tooltip-lines">
+								{ Object.values( tooltipProps.tooltipData.datumByKey ).map( ( series ) => (
+									<div
+										key={ 'tooltip-line-' + series.key }
+										className="dashboard-monitoring-card__line-chart--tooltip-lines--line"
+									>
+										<Text weight="normal">
+											<svg width="8" height="8">
+												{ getLegendIcon( series.key, true ) }
+											</svg>
+											{ series.key }
+										</Text>
+										<Text weight="normal">{ series.datum.value }</Text>
+									</div>
+								) ) }
+							</div>
+						</div>
+					);
 				} }
 				options={ {
 					axis: {
