@@ -1,8 +1,17 @@
+import { sitesQuery, queryClient } from '@automattic/api-queries';
 import { createRoute, createLazyRoute, redirect } from '@tanstack/react-router';
+import { __ } from '@wordpress/i18n';
 import { rootRoute } from './root';
 import type { AnyRoute } from '@tanstack/react-router';
 
 export const pluginsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Plugins' ),
+			},
+		],
+	} ),
 	getParentRoute: () => rootRoute,
 	path: 'plugins',
 } ).lazy( () =>
@@ -14,6 +23,13 @@ export const pluginsRoute = createRoute( {
 );
 
 export const pluginsIndexRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Sites' ),
+			},
+		],
+	} ),
 	getParentRoute: () => pluginsRoute,
 	path: '/',
 	beforeLoad: () => {
@@ -22,6 +38,13 @@ export const pluginsIndexRoute = createRoute( {
 } );
 
 export const pluginRoute = createRoute( {
+	head: ( { params } ) => ( {
+		meta: [
+			{
+				title: params.pluginId,
+			},
+		],
+	} ),
 	getParentRoute: () => pluginsRoute,
 	path: '$pluginId',
 } ).lazy( () =>
@@ -33,6 +56,13 @@ export const pluginRoute = createRoute( {
 );
 
 export const pluginsManageRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Manage plugins' ),
+			},
+		],
+	} ),
 	getParentRoute: () => pluginsRoute,
 	path: 'manage',
 } ).lazy( () =>
@@ -44,6 +74,13 @@ export const pluginsManageRoute = createRoute( {
 );
 
 export const pluginsScheduledUpdatesRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Scheduled updates' ),
+			},
+		],
+	} ),
 	getParentRoute: () => pluginsRoute,
 	path: 'scheduled-updates',
 } ).lazy( () =>
@@ -55,8 +92,16 @@ export const pluginsScheduledUpdatesRoute = createRoute( {
 );
 
 export const pluginsScheduledUpdatesNewRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'New schedule' ),
+			},
+		],
+	} ),
 	getParentRoute: () => pluginsRoute,
 	path: 'scheduled-updates/new',
+	loader: () => queryClient.ensureQueryData( sitesQuery() ),
 } ).lazy( () =>
 	import( '../../plugins/scheduled-updates/new' ).then( ( d ) =>
 		createLazyRoute( 'plugins-scheduled-updates-new' )( {

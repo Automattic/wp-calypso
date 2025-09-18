@@ -31,7 +31,6 @@ export function hostingFeatures( context: PageJSContext, next: () => void ) {
 				<PageViewTracker title="Sites > Hosting Features" path={ getRouteFromContext( context ) } />
 				<PageLayout>
 					<CalloutOverlay
-						showCallout
 						callout={
 							shouldShowActivationCallout ? (
 								<HostingActivationCallout siteId={ site.ID } redirectUrl={ redirectUrl } />
@@ -39,7 +38,6 @@ export function hostingFeatures( context: PageJSContext, next: () => void ) {
 								<HostingUpsellCallout siteSlug={ site.slug } />
 							)
 						}
-						main={ null }
 					/>
 				</PageLayout>
 			</>
@@ -84,7 +82,7 @@ export function hostingFeaturesCallout(
 
 			context.primary = (
 				<PageLayout>
-					<CalloutOverlay showCallout callout={ callout } main={ null } />
+					<CalloutOverlay callout={ callout } />
 				</PageLayout>
 			);
 		}

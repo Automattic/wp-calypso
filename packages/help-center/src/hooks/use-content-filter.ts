@@ -8,6 +8,23 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { HELP_CENTER_STORE } from '../stores';
 
+/**
+ * Temporary: the Odie backend returns links with no protocol.
+ * This function ensures that the link has a protocol.
+ * @param url - The URL to parse.
+ * @param baseUrl - The base URL to use for parsing.
+ * @returns The parsed URL or null if the URL is invalid.
+ * @todo Remove this function when the Odie backend is updated.
+ */
+function ensureProtocolAndParse( url: string, baseUrl?: string ) {
+	if ( URL.canParse( url, baseUrl ) ) {
+		return new URL( url, baseUrl );
+	} else if ( URL.canParse( 'https://' + url, baseUrl ) ) {
+		return new URL( 'https://' + url, baseUrl );
+	}
+	return null;
+}
+
 export const useContentFilter = ( node: HTMLDivElement | null ) => {
 	const navigate = useNavigate();
 	const [ searchParams ] = useSearchParams();
@@ -67,8 +84,15 @@ export const useContentFilter = ( node: HTMLDivElement | null ) => {
 				pattern: '.toc-parent-list a, a[href^="#"]',
 				action: ( element: HTMLAnchorElement ) => {
 					const hash = element.hash;
+					const url = ensureProtocolAndParse( hash, link );
 
-					element.setAttribute( 'href', new URL( hash, link ).href );
+					if ( ! url ) {
+						// disable the faulty link.
+						element.removeAttribute( 'href' );
+						return;
+					}
+
+					element.setAttribute( 'href', url?.href );
 					element.onclick = ( event: Event ) => {
 						event.preventDefault();
 						// We need to use CSS.escape since we can have non latin chars in the hash

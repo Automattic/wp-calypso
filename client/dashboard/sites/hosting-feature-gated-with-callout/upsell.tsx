@@ -1,5 +1,6 @@
+import { DotcomPlans, getPlanNames } from '@automattic/api-core';
 import { __experimentalText as Text } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { settings } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { Callout } from '../../components/callout';
@@ -12,6 +13,7 @@ export interface UpsellCalloutProps {
 	upsellIcon?: CalloutProps[ 'icon' ];
 	upsellImage?: CalloutProps[ 'image' ];
 	upsellTitle?: CalloutProps[ 'title' ];
+	upsellTitleAs?: CalloutProps[ 'titleAs' ];
 	upsellDescription?: CalloutProps[ 'description' ];
 }
 
@@ -22,14 +24,15 @@ export default function UpsellCallout( {
 	upsellIcon,
 	upsellImage,
 	upsellTitle,
+	upsellTitleAs,
 	upsellDescription,
 }: {
 	site: Site;
 	tracksFeatureId: string;
-	onClick: () => void;
+	onClick?: () => void;
 } & UpsellCalloutProps ) {
 	const handleUpsellClick = () => {
-		onClick();
+		onClick?.();
 
 		const backUrl = window.location.href.replace( window.location.origin, '' );
 
@@ -56,11 +59,21 @@ export default function UpsellCallout( {
 			icon={ upsellIcon ?? defaultProps.icon }
 			image={ upsellImage ?? defaultProps.image }
 			title={ upsellTitle ?? defaultProps.title }
+			titleAs={ upsellTitleAs }
 			description={
 				<>
 					<Text variant="muted">{ upsellDescription ?? defaultProps.description }</Text>
 					<Text variant="muted">
-						{ __( 'Available on the WordPress.com Business and Commerce plans.' ) }
+						{ sprintf(
+							// translators: %(businessPlanName)s is the name of the Business plan, %(commercePlanName)s is the name of the Commerce plan
+							__(
+								'Available on the WordPress.com %(businessPlanName)s and %(commercePlanName)s plans.'
+							),
+							{
+								businessPlanName: getPlanNames()[ DotcomPlans.BUSINESS ],
+								commercePlanName: getPlanNames()[ DotcomPlans.ECOMMERCE ],
+							}
+						) }
 					</Text>
 				</>
 			}
