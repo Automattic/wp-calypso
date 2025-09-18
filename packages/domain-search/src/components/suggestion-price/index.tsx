@@ -1,6 +1,5 @@
 import { formatCurrency } from '@automattic/number-formatters';
 import { useQuery } from '@tanstack/react-query';
-import { __ } from '@wordpress/i18n';
 import { DomainPriceRule, useSuggestion } from '../../hooks/use-suggestion';
 import { useDomainSearch } from '../../page/context';
 import { DomainSuggestionPrice as DomainSuggestionPriceComponent } from '../../ui';
@@ -30,10 +29,6 @@ export const DomainSuggestionPrice = ( { domainName }: DomainSuggestionPriceProp
 
 	if ( suggestion.price_rule === DomainPriceRule.ONE_TIME_PRICE ) {
 		return <DomainSuggestionPriceComponent price={ priceSource.cost } />;
-	}
-
-	if ( suggestion.price_rule === DomainPriceRule.DOMAIN_MOVE_PRICE ) {
-		return <DomainSuggestionPriceComponent price={ __( 'Move your existing domain' ) } />;
 	}
 
 	if ( suggestion.price_rule === DomainPriceRule.FREE_FOR_FIRST_YEAR ) {
