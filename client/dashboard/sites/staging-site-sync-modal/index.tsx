@@ -11,6 +11,7 @@ import {
 	ExternalLink,
 	Modal,
 	Icon,
+	CardDivider,
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -442,18 +443,21 @@ function StagingSiteSyncModalInner( {
 					</HStack>
 
 					<div hidden={ ! isFileBrowserVisible }>
-						<FileBrowser
-							rewindId={ ( rewindId as number ) ?? 0 }
-							siteId={ querySiteId }
-							siteSlug={ querySiteSlug as string }
-							fileBrowserConfig={ {
-								...fileBrowserConfig,
-								showHeader: false,
-								inheritNodeColor: true,
-								nodesIndentInlineStart: 14,
-							} }
-							displayBackupDate={ displayBackupDate ?? undefined }
-						/>
+						<VStack spacing={ 0 }>
+							<CardDivider />
+							<FileBrowser
+								rewindId={ ( rewindId as number ) ?? 0 }
+								siteId={ querySiteId }
+								siteSlug={ querySiteSlug as string }
+								fileBrowserConfig={ {
+									...fileBrowserConfig,
+									showHeader: false,
+									inheritNodeColor: true,
+									nodesIndentInlineStart: 14,
+								} }
+								displayBackupDate={ displayBackupDate ?? undefined }
+							/>
+						</VStack>
 					</div>
 
 					<HStack
