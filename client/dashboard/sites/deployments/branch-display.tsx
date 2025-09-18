@@ -32,11 +32,9 @@ export function BranchDisplay( { branchName, color = '#3b3b3b' }: BranchDisplayP
 			<Text
 				as="code"
 				size="small"
+				truncate
 				style={ {
 					color,
-					width: 'auto',
-					overflow: 'hidden',
-					textOverflow: 'ellipsis',
 					whiteSpace: 'nowrap',
 				} }
 			>
