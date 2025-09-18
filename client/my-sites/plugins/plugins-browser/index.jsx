@@ -204,12 +204,9 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 							searchTerm={ search }
 							isSearching={ isFetchingPluginsBySearchTerm }
 							title={ __( 'Flex your site’s features with plugins' ) }
-							subtitle={
-								! isLoggedIn &&
-								__(
-									'Add new functionality and integrations to your site with thousands of plugins.'
-								)
-							}
+							subtitle={ __(
+								'Add new functionality and integrations to your site with thousands of plugins.'
+							) }
 							searchTerms={ searchTerms }
 							renderTitleInH1={ ! category }
 						/>

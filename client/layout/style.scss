@@ -136,6 +136,10 @@ body.command-palette-modal-open {
 		.has-no-sidebar & {
 			padding-left: 0;
 		}
+
+		.is-section-plugins.has-no-sidebar.is-logged-in & {
+			padding: calc(var(--masterbar-height) + 1px) 0 0;
+		}
 	}
 }
 
