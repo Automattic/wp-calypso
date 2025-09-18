@@ -12,7 +12,7 @@ import RouterLinkButton from '../../components/router-link-button';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import { getDeploymentsCalloutProps } from './deployments-callout';
 import { DeploymentsList } from './deployments-list';
-import { TriggerDeploymentModal } from './modals/trigger-deployment';
+import { TriggerDeploymentModal } from './trigger-deployment_modal';
 
 function SiteDeployments() {
 	const { siteSlug } = siteRoute.useParams();

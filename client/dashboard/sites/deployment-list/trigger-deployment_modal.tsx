@@ -1,5 +1,13 @@
-import { Button, Modal, SelectControl, __experimentalText as Text } from '@wordpress/components';
+import {
+	Button,
+	Modal,
+	SelectControl,
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+	__experimentalHStack as HStack,
+} from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
+import { DataForm } from '@wordpress/dataviews';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
@@ -34,10 +42,10 @@ export function TriggerDeploymentModal( { onClose, deployments }: TriggerDeploym
 
 	return (
 		<Modal title={ __( 'Trigger manual deploy' ) } onRequestClose={ onClose } size="medium">
-			<div style={ { display: 'flex', flexDirection: 'column', gap: '16px' } }>
-				<Text as="p" variant="muted">
+			<VStack spacing={ 4 }>
+				<Text as="p">
 					{ __(
-						"You're about to deploy changes from the selected repository to your production site. This will update the deployed files and may affect your live site."
+						'You’re about to deploy changes from the selected repository to your production site. This will update the deployed files and may affect your live site.'
 					) }
 				</Text>
 
@@ -63,7 +71,7 @@ export function TriggerDeploymentModal( { onClose, deployments }: TriggerDeploym
 					} }
 				/>
 
-				<div style={ { display: 'flex', justifyContent: 'flex-end', gap: '8px' } }>
+				<HStack spacing={ 2 } style={ { justifyContent: 'flex-end' } }>
 					<Button variant="tertiary" onClick={ onClose } __next40pxDefaultSize>
 						{ __( 'Cancel' ) }
 					</Button>
@@ -75,8 +83,8 @@ export function TriggerDeploymentModal( { onClose, deployments }: TriggerDeploym
 					>
 						{ __( 'Deploy to production' ) }
 					</Button>
-				</div>
-			</div>
+				</HStack>
+			</VStack>
 		</Modal>
 	);
 }
