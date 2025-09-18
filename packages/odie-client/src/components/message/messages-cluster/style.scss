@@ -49,6 +49,13 @@
 		margin-left: 16px;
 		max-width: calc( 100% - 32px );
 
+		.odie-chatbox-message-business {
+			padding: 8px 16px;
+			width: max-content;
+			border: 1px solid $gray-200;
+			border-radius: 24px 8px 24px 8px;
+		}
+
 		.message-header {
 			font-weight: $font-weight-medium;
 			margin-right: 16px;
