@@ -89,15 +89,6 @@ export function getSiteAbilityState(
 }
 
 /**
- * Get account-level MCP abilities
- */
-export function getAccountMcpAbilities(
-	userSettings: { mcp_abilities?: McpAbilities } | null
-): SiteMcpAbilities {
-	return userSettings?.mcp_abilities?.account || {};
-}
-
-/**
  * Update MCP abilities for a specific site
  * Only stores differences from the default site abilities
  */
