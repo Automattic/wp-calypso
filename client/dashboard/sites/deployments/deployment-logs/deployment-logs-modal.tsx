@@ -52,9 +52,9 @@ export function DeploymentLogsModal( {
 		<Modal
 			title={ `${ shortSha } ${ commit_message }` }
 			onRequestClose={ onRequestClose }
-			className="deployment-logs-modal"
 			shouldCloseOnClickOutside
 			shouldCloseOnEsc
+			size="large"
 		>
 			<VStack spacing={ 4 }>
 				<HStack spacing={ 3 } alignment="left">
@@ -105,8 +105,6 @@ export function DeploymentLogsModal( {
 							<VStack spacing={ 2 }>
 								<div
 									style={ {
-										width: '752px',
-										maxWidth: '100%',
 										height: '216px',
 										maxHeight: '100%',
 										overflowY: 'auto',
