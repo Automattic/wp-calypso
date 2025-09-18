@@ -3,12 +3,16 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	Icon,
+	ExternalLink,
 } from '@wordpress/components';
 import { Action } from '@wordpress/dataviews';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { tool } from '@wordpress/icons';
 import { ButtonStack } from '../../../components/button-stack';
+import { Notice } from '../../../components/notice';
 import { ThreatsDetailCard } from '../../scan/components/threats-detail-card';
+import { CODEABLE_JETPACK_SCAN_URL } from '../../scan/constants';
 import type { Threat } from '@automattic/api-core';
 
 export function getActions(): Action< Threat >[] {
@@ -60,6 +64,16 @@ export function getActions(): Action< Threat >[] {
 
 					{ /* @TODO: render the proper threat description here */ }
 
+					<Notice variant="error">
+						{ createInterpolateElement(
+							__(
+								'By ignoring this threat you confirm that you have reviewed the detected code and assume the risks of keeping a potentially malicious file on your site. If you are unsure please request an estimate with <codeable />.'
+							),
+							{
+								codeable: <ExternalLink href={ CODEABLE_JETPACK_SCAN_URL }>Codeable</ExternalLink>,
+							}
+						) }
+					</Notice>
 					<ButtonStack justify="flex-end">
 						<Button variant="tertiary" onClick={ closeModal }>
 							{ __( 'Cancel' ) }
