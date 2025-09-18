@@ -1,8 +1,9 @@
 import {
 	updateSchedulesBatchCreateMutation,
 	siteJetpackMonitorSettingsCreateMutation,
+	hostingUpdateSchedulesQuery,
 } from '@automattic/api-queries';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
 	Button,
@@ -10,6 +11,7 @@ import {
 	CardBody,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
+	Notice,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
@@ -26,10 +28,15 @@ import FrequencySelection, { type Frequency, type Weekday } from './components/f
 import PluginsSelection from './components/plugins-selection';
 import SitesSelection from './components/sites-selection';
 import { DEFAULT_FREQUENCY, DEFAULT_TIME, DEFAULT_WEEKDAY, CRON_CHECK_INTERVAL } from './constants';
-import { prepareTimestamp, runWithConcurrency } from './helpers';
+import {
+	getTimeSlotsBySiteFromMultisite,
+	hasTimeSlotCollision,
+	prepareTimestamp,
+	runWithConcurrency,
+} from './helpers';
 import type { Site } from '@automattic/api-core';
 
-const BLOCK_CREATE = true;
+const BLOCK_CREATE = false;
 
 function ScheduledUpdatesNew() {
 	const [ selectedSiteIds, setSelectedSiteIds ] = useState< string[] >( [] );
@@ -37,6 +44,7 @@ function ScheduledUpdatesNew() {
 	const [ frequency, setFrequency ] = useState< Frequency >( DEFAULT_FREQUENCY );
 	const [ weekday, setWeekday ] = useState< Weekday >( DEFAULT_WEEKDAY );
 	const [ time, setTime ] = useState( DEFAULT_TIME );
+	const [ validationError, setValidationError ] = useState< string >( '' );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const isValid = selectedSiteIds.length > 0 && selectedPluginSlugs.length > 0 && ! BLOCK_CREATE;
 	const { recordTracksEvent } = useAnalytics();
@@ -50,13 +58,38 @@ function ScheduledUpdatesNew() {
 	const { mutateAsync: createMonitorForSite } = useMutation(
 		siteJetpackMonitorSettingsCreateMutation()
 	);
+	const { data: hostingSchedules } = useQuery( hostingUpdateSchedulesQuery() );
 
 	const handleCreate = useCallback( () => {
+		setValidationError( '' );
 		if ( ! isValid ) {
 			return;
 		}
 
 		const timestamp = prepareTimestamp( frequency, weekday, time );
+
+		// Pre-flight multi-site collision check
+		const slotsBySite = hostingSchedules ? getTimeSlotsBySiteFromMultisite( hostingSchedules ) : {};
+		const collidingSiteIds = siteIdsAsNumbers.filter( ( siteId ) =>
+			hasTimeSlotCollision( { frequency, timestamp }, slotsBySite[ siteId ] || [] )
+		);
+		if ( collidingSiteIds.length > 0 || new Date( timestamp * 1000 ) < new Date() ) {
+			// Build error string (legacy parity) + add sites on a new line
+			const baseError =
+				new Date( timestamp * 1000 ) < new Date()
+					? __( 'Please choose a time in the future for this schedule.' )
+					: __( 'Please choose another time, as this slot is already scheduled.' );
+			const siteMap = new Map( eligibleSites.map( ( s ) => [ s.ID, s ] ) );
+			const siteList = collidingSiteIds
+				.map( ( id ) => siteMap.get( id )?.slug || String( id ) )
+				.join( ', ' );
+			setValidationError(
+				siteList ? `${ baseError }\n${ __( 'Sites:' ) } ${ siteList }` : baseError
+			);
+			window.scrollTo( { top: 0, behavior: 'smooth' } );
+			return;
+		}
+
 		setIsSubmitting( true );
 		const body = {
 			plugins: selectedPluginSlugs,
@@ -111,8 +144,12 @@ function ScheduledUpdatesNew() {
 				// Navigate back to the schedules list
 				navigate( { to: pluginsScheduledUpdatesRoute.to } );
 			},
-			onError: () => {
+			onError: ( error ) => {
 				setIsSubmitting( false );
+				setValidationError(
+					( error as { message?: string } )?.message || __( 'Failed to create schedule.' )
+				);
+				window.scrollTo( { top: 0, behavior: 'smooth' } );
 			},
 		} );
 	}, [
@@ -126,6 +163,8 @@ function ScheduledUpdatesNew() {
 		createMonitorForSite,
 		navigate,
 		recordTracksEvent,
+		hostingSchedules,
+		siteIdsAsNumbers,
 	] );
 
 	return (
@@ -140,6 +179,13 @@ function ScheduledUpdatesNew() {
 				/>
 			}
 		>
+			{ validationError && (
+				<Notice status="error" isDismissible={ false }>
+					{ validationError.split( '\n' ).map( ( line, idx ) => (
+						<div key={ idx }>{ line }</div>
+					) ) }
+				</Notice>
+			) }
 			<Card>
 				<CardBody>
 					<VStack spacing={ 6 }>

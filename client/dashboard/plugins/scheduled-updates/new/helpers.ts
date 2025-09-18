@@ -1,5 +1,5 @@
 import type { Frequency, Weekday } from './components/frequency-selection';
-import type { MultisiteScheduledUpdatesResponse } from '@automattic/api-core';
+import type { HostingUpdateSchedulesResponse } from '@automattic/api-core';
 
 export function prepareTimestamp(
 	frequency: Frequency,
@@ -73,7 +73,7 @@ export function hasTimeSlotCollision( proposed: TimeSlot, existing: TimeSlot[] =
 
 // Build per-site time slots from the multisite aggregated response
 export function getTimeSlotsBySiteFromMultisite(
-	data: MultisiteScheduledUpdatesResponse
+	data: HostingUpdateSchedulesResponse
 ): Record< number, TimeSlot[] > {
 	const result: Record< number, TimeSlot[] > = {};
 	const sites = data?.sites;

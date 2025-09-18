@@ -1,4 +1,4 @@
-import { siteScheduledUpdatesQuery } from '@automattic/api-queries';
+import { siteUpdateSchedulesQuery } from '@automattic/api-queries';
 import { useQueries } from '@tanstack/react-query';
 import { hasTimeSlotCollision, type TimeSlot } from '../helpers';
 import type { Frequency } from '../components/frequency-selection';
@@ -9,7 +9,7 @@ export function useTimeSlotCollisionCheck(
 	timestamp: number
 ): { loading: boolean; error: string; sitesWithCollisions: number[] } {
 	const queries = useQueries( {
-		queries: siteIds.map( ( siteId ) => siteScheduledUpdatesQuery( siteId ) ),
+		queries: siteIds.map( ( siteId ) => siteUpdateSchedulesQuery( siteId ) ),
 	} );
 
 	const loading = queries.some( ( query ) => query.isLoading );
