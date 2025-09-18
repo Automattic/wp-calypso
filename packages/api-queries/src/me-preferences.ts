@@ -14,6 +14,7 @@ const defaultValues: Required< UserPreferences > = {
 		updatedAt: 0,
 	},
 	'hosting-dashboard-opt-in': { value: 'unset', updated_at: '' },
+	'hosting-dashboard-tours-sites': '',
 };
 
 // Returns all user preferences, without applying any defaults.

@@ -3,6 +3,7 @@ import {
 	isHundredYearDomainFlow,
 	isHundredYearPlanFlow,
 	isNewsletterFlow,
+	isOnboardingFlow,
 	Step,
 	StepContainer,
 } from '@automattic/onboarding';
@@ -13,6 +14,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { useQuery } from '../../../../hooks/use-query';
 import { useSite } from '../../../../hooks/use-site';
+import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import type { Step as StepType } from '../../types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -38,7 +40,9 @@ const DomainSearchStep: StepType< {
 	submits: UseMyDomain | StepSubmission;
 } > = function DomainSearchStep( { navigation, flow } ) {
 	const site = useSite();
-	const initialQuery = useQuery().get( 'new' ) ?? site?.slug;
+	const siteSlug = useSiteSlugParam();
+	const initialQuery = useQuery().get( 'new' ) ?? '';
+	const currentSiteUrl = site?.URL ? new URL( site.URL ).host : siteSlug ?? undefined;
 	const allowedTlds = useQuery().get( 'tld' )?.split( ',' ) ?? [];
 
 	const config = {
@@ -74,11 +78,13 @@ const DomainSearchStep: StepType< {
 				heading={ <Step.Heading text={ text } subText={ subText } /> }
 			>
 				<WPCOMDomainSearch
-					className="step-container-v2-domain-search"
+					className="domain-search--step-container-v2"
 					currentSiteId={ site?.ID }
+					currentSiteUrl={ currentSiteUrl }
 					flowName={ flow }
 					config={ config }
 					initialQuery={ initialQuery }
+					isFirstDomainFreeForFirstYear={ isOnboardingFlow( flow ) || isDomainFlow( flow ) }
 					events={ {
 						onExternalDomainClick: ( domainName ) => {
 							navigation.submit( {

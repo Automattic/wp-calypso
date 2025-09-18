@@ -140,6 +140,7 @@
 		"signup/social-first": true,
 		"site-indicator": true,
 		"site-profiler/metrics": false,
+		"site-spec": false,
 		"sites/drive-migrations": true,
 		"ssr/log-prefetch-errors": true,
 		"ssr/prefetch-timebox": true,

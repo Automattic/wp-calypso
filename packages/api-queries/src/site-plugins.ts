@@ -39,6 +39,7 @@ export const invalidatePlugins = () => {
 
 const invalidateSitePlugins = ( siteId: number ) => {
 	queryClient.invalidateQueries( sitePluginsQuery( siteId ) );
+	invalidatePlugins();
 };
 
 export const sitePluginActivateMutation = () =>

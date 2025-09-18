@@ -20,6 +20,7 @@ export async function updateUserSettings(
 		'i18n_empathy_mode',
 		'use_fallback_for_incomplete_languages',
 		'enable_translator',
+		'subscription_delivery_email_blocked',
 		'subscription_delivery_email_default',
 		'subscription_delivery_mail_option',
 		'subscription_delivery_day',
@@ -29,6 +30,7 @@ export async function updateUserSettings(
 		'two_step_sms_country',
 		'two_step_sms_phone_number',
 		'primary_site_ID',
+		'mcp_abilities',
 	];
 	const payload = Object.fromEntries(
 		saveableKeys.filter( ( key ) => key in data ).map( ( key ) => [ key, data[ key ] ] )
